@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.candidate_source.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.ads
 
-import com.twitter.adserver.thriftscala.AdImpression
-import com.twitter.adserver.thriftscala.AdRequestParams
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.adsewvew.thwiftscawa.adimpwession
+i-impowt c-com.twittew.adsewvew.thwiftscawa.adwequestpawams
+i-impowt com.twittew.adsewvew.thwiftscawa.newadsewvew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stitch.stitch
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class AdsProdThriftCandidateSource @Inject() (
-  adServerClient: NewAdServer.MethodPerEndpoint)
-    extends CandidateSource[AdRequestParams, AdImpression] {
+@singweton
+c-cwass adspwodthwiftcandidatesouwce @inject() (
+  adsewvewcwient: nyewadsewvew.methodpewendpoint)
+    e-extends candidatesouwce[adwequestpawams, mya a-adimpwession] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("AdsProdThrift")
+  ovewwide vaw identifiew: candidatesouwceidentifiew =
+    candidatesouwceidentifiew("adspwodthwift")
 
-  override def apply(request: AdRequestParams): Stitch[Seq[AdImpression]] =
-    Stitch.callFuture(adServerClient.makeAdRequest(request)).map(_.impressions)
+  o-ovewwide def appwy(wequest: a-adwequestpawams): s-stitch[seq[adimpwession]] =
+    stitch.cawwfutuwe(adsewvewcwient.makeadwequest(wequest)).map(_.impwessions)
 }

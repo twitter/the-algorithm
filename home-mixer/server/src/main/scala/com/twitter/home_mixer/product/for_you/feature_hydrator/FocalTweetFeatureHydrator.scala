@@ -1,84 +1,84 @@
-package com.twitter.home_mixer.product.for_you.feature_hydrator
+package com.twittew.home_mixew.pwoduct.fow_you.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleFocalTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetInNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetRealNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetScreenNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.RealNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.convewsationmoduwefocawtweetidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.convewsationmoduweidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.focawtweetauthowidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.focawtweetinnetwowkfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.focawtweetweawnamesfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.focawtweetscweennamesfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.innetwowkfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.weawnamesfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.scweennamesfeatuwe
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.stitch.stitch
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * Social context for convo modules is hydrated on the root Tweet but needs info about the focal
- * Tweet (e.g. author) to render the banner. This hydrator copies focal Tweet data into the root.
+ * sociaw context fow c-convo moduwes is hydwated on the woot tweet but nyeeds info about the focaw
+ * t-tweet (e.g. (U ﹏ U) authow) to wendew the b-bannew. (///ˬ///✿) this hydwatow c-copies focaw t-tweet data i-into the woot. 😳
  */
-@Singleton
-class FocalTweetFeatureHydrator @Inject() ()
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@singweton
+cwass focawtweetfeatuwehydwatow @inject() ()
+    extends b-buwkcandidatefeatuwehydwatow[pipewinequewy, 😳 tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("FocalTweet")
+  ovewwide v-vaw identifiew: featuwehydwatowidentifiew = featuwehydwatowidentifiew("focawtweet")
 
-  override val features: Set[Feature[_, _]] = Set(
-    FocalTweetAuthorIdFeature,
-    FocalTweetInNetworkFeature,
-    FocalTweetRealNamesFeature,
-    FocalTweetScreenNamesFeature
+  ovewwide vaw featuwes: set[featuwe[_, σωσ _]] = set(
+    focawtweetauthowidfeatuwe, rawr x3
+    f-focawtweetinnetwowkfeatuwe, OwO
+    focawtweetweawnamesfeatuwe, /(^•ω•^)
+    f-focawtweetscweennamesfeatuwe
   )
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(FocalTweetAuthorIdFeature, None)
-    .add(FocalTweetInNetworkFeature, None)
-    .add(FocalTweetRealNamesFeature, None)
-    .add(FocalTweetScreenNamesFeature, None)
-    .build()
+  p-pwivate vaw defauwtfeatuwemap = f-featuwemapbuiwdew()
+    .add(focawtweetauthowidfeatuwe, 😳😳😳 nyone)
+    .add(focawtweetinnetwowkfeatuwe, ( ͡o ω ͡o ) nyone)
+    .add(focawtweetweawnamesfeatuwe, >_< nyone)
+    .add(focawtweetscweennamesfeatuwe, >w< n-nyone)
+    .buiwd()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    // Build a map of all the focal tweets to their corresponding features
-    val focalTweetIdToFeatureMap = candidates.flatMap { candidate =>
-      val focalTweetId = candidate.features.getOrElse(ConversationModuleFocalTweetIdFeature, None)
-      if (focalTweetId.contains(candidate.candidate.id)) {
-        Some(candidate.candidate.id -> candidate.features)
-      } else None
-    }.toMap
+  o-ovewwide def appwy(
+    quewy: p-pipewinequewy, rawr
+    c-candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = {
+    // buiwd a map o-of aww the focaw tweets to theiw cowwesponding f-featuwes
+    vaw focawtweetidtofeatuwemap = c-candidates.fwatmap { candidate =>
+      v-vaw focawtweetid = c-candidate.featuwes.getowewse(convewsationmoduwefocawtweetidfeatuwe, 😳 nyone)
+      if (focawtweetid.contains(candidate.candidate.id)) {
+        some(candidate.candidate.id -> candidate.featuwes)
+      } ewse nyone
+    }.tomap
 
-    val updatedFeatureMap = candidates.map { candidate =>
-      val focalTweetId = candidate.features.getOrElse(ConversationModuleFocalTweetIdFeature, None)
-      val conversationId = candidate.features.getOrElse(ConversationModuleIdFeature, None)
+    vaw u-updatedfeatuwemap = c-candidates.map { candidate =>
+      v-vaw focawtweetid = c-candidate.featuwes.getowewse(convewsationmoduwefocawtweetidfeatuwe, n-nyone)
+      vaw convewsationid = candidate.featuwes.getowewse(convewsationmoduweidfeatuwe, >w< nyone)
 
-      // Check if the candidate is a root tweet and ensure its focal tweet's features are available
-      if (conversationId.contains(candidate.candidate.id)
-        && focalTweetId.exists(focalTweetIdToFeatureMap.contains)) {
-        val featureMap = focalTweetIdToFeatureMap.get(focalTweetId.get).get
-        FeatureMapBuilder()
-          .add(FocalTweetAuthorIdFeature, featureMap.getOrElse(AuthorIdFeature, None))
-          .add(FocalTweetInNetworkFeature, Some(featureMap.getOrElse(InNetworkFeature, true)))
+      // c-check if the candidate is a woot tweet and ensuwe its focaw tweet's f-featuwes awe avaiwabwe
+      if (convewsationid.contains(candidate.candidate.id)
+        && f-focawtweetid.exists(focawtweetidtofeatuwemap.contains)) {
+        vaw f-featuwemap = f-focawtweetidtofeatuwemap.get(focawtweetid.get).get
+        featuwemapbuiwdew()
+          .add(focawtweetauthowidfeatuwe, (⑅˘꒳˘) f-featuwemap.getowewse(authowidfeatuwe, OwO nyone))
+          .add(focawtweetinnetwowkfeatuwe, s-some(featuwemap.getowewse(innetwowkfeatuwe, (ꈍᴗꈍ) t-twue)))
           .add(
-            FocalTweetRealNamesFeature,
-            Some(featureMap.getOrElse(RealNamesFeature, Map.empty[Long, String])))
+            f-focawtweetweawnamesfeatuwe, 😳
+            some(featuwemap.getowewse(weawnamesfeatuwe, 😳😳😳 map.empty[wong, mya s-stwing])))
           .add(
-            FocalTweetScreenNamesFeature,
-            Some(featureMap.getOrElse(ScreenNamesFeature, Map.empty[Long, String])))
-          .build()
-      } else DefaultFeatureMap
+            f-focawtweetscweennamesfeatuwe, mya
+            s-some(featuwemap.getowewse(scweennamesfeatuwe, (⑅˘꒳˘) m-map.empty[wong, (U ﹏ U) s-stwing])))
+          .buiwd()
+      } ewse defauwtfeatuwemap
     }
 
-    Stitch.value(updatedFeatureMap)
+    stitch.vawue(updatedfeatuwemap)
   }
 }

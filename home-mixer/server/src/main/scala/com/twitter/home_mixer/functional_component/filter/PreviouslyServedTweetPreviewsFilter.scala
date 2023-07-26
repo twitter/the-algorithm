@@ -1,30 +1,30 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.twittew.home_mixew.functionaw_component.fiwtew
 
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetPreviewIdsFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.sewvedtweetpweviewidsfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-object PreviouslyServedTweetPreviewsFilter extends Filter[PipelineQuery, TweetCandidate] {
+o-object pweviouswysewvedtweetpweviewsfiwtew extends fiwtew[pipewinequewy, rawr t-tweetcandidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("PreviouslyServedTweetPreviews")
+  ovewwide v-vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("pweviouswysewvedtweetpweviews")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
+  ovewwide d-def appwy(
+    quewy: pipewinequewy, OwO
+    c-candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[fiwtewwesuwt[tweetcandidate]] = {
 
-    val servedTweetPreviewIds =
-      query.features.map(_.getOrElse(ServedTweetPreviewIdsFeature, Seq.empty)).toSeq.flatten.toSet
+    vaw sewvedtweetpweviewids =
+      quewy.featuwes.map(_.getowewse(sewvedtweetpweviewidsfeatuwe, seq.empty)).toseq.fwatten.toset
 
-    val (removed, kept) = candidates.partition { candidate =>
-      servedTweetPreviewIds.contains(candidate.candidate.id)
+    v-vaw (wemoved, (U ﹏ U) kept) = candidates.pawtition { candidate =>
+      sewvedtweetpweviewids.contains(candidate.candidate.id)
     }
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    stitch.vawue(fiwtewwesuwt(kept = k-kept.map(_.candidate), >_< wemoved = wemoved.map(_.candidate)))
   }
 }

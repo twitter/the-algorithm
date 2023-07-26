@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.model.common.identifier
+package com.twittew.pwoduct_mixew.cowe.modew.common.identifiew
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
+impowt com.fastewxmw.jackson.cowe.jsongenewatow
+impowt c-com.fastewxmw.jackson.databind.jsonsewiawizew
+i-impowt com.fastewxmw.jackson.databind.sewiawizewpwovidew
 
-private[identifier] class ComponentIdentifierStackSerializer()
-    extends JsonSerializer[ComponentIdentifierStack] {
-  override def serialize(
-    componentIdentifierStack: ComponentIdentifierStack,
-    gen: JsonGenerator,
-    serializers: SerializerProvider
-  ): Unit = serializers.defaultSerializeValue(componentIdentifierStack.componentIdentifiers, gen)
+p-pwivate[identifiew] c-cwass componentidentifiewstacksewiawizew()
+    e-extends jsonsewiawizew[componentidentifiewstack] {
+  o-ovewwide def s-sewiawize(
+    c-componentidentifiewstack: componentidentifiewstack, rawr
+    gen: jsongenewatow, σωσ
+    sewiawizews: sewiawizewpwovidew
+  ): unit = sewiawizews.defauwtsewiawizevawue(componentidentifiewstack.componentidentifiews, σωσ gen)
 }

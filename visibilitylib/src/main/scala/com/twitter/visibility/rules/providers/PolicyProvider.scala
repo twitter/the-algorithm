@@ -1,8 +1,8 @@
-package com.twitter.visibility.rules.providers
+package com.twittew.visibiwity.wuwes.pwovidews
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.VisibilityPolicy
+impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.wuwes.visibiwitypowicy
 
-trait PolicyProvider {
-  def policyForSurface(safetyLevel: SafetyLevel): VisibilityPolicy
+t-twait powicypwovidew {
+  def p-powicyfowsuwface(safetywevew: s-safetywevew): visibiwitypowicy
 }

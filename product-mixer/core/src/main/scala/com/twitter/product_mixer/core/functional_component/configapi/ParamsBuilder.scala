@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.cwientcontext
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
+i-impowt c-com.twittew.sewvo.utiw.memoizingstatsweceivew
+i-impowt com.twittew.timewines.configapi.config
+i-impowt c-com.twittew.timewines.configapi.featuwevawue
+i-impowt com.twittew.timewines.configapi.pawams
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-/** Singleton object for building [[Params]] to override */
-@Singleton
-class ParamsBuilder @Inject() (
-  config: Config,
-  requestContextBuilder: RequestContextBuilder,
-  statsReceiver: StatsReceiver) {
+/** singweton o-object fow buiwding [[pawams]] to ovewwide */
+@singweton
+c-cwass pawamsbuiwdew @inject() (
+  config: config, rawr x3
+  w-wequestcontextbuiwdew: wequestcontextbuiwdew, mya
+  statsweceivew: statsweceivew) {
 
-  private[this] val scopedStatsReceiver =
-    new MemoizingStatsReceiver(statsReceiver.scope("configapi"))
+  p-pwivate[this] vaw scopedstatsweceivew =
+    n-nyew memoizingstatsweceivew(statsweceivew.scope("configapi"))
 
-  def build(
-    clientContext: ClientContext,
-    product: Product,
-    featureOverrides: Map[String, FeatureValue],
-    fsCustomMapInput: Map[String, Any] = Map.empty
-  ): Params = {
-    val requestContext =
-      requestContextBuilder.build(clientContext, product, featureOverrides, fsCustomMapInput)
+  d-def buiwd(
+    cwientcontext: cwientcontext, nyaa~~
+    pwoduct: pwoduct, (⑅˘꒳˘)
+    featuweovewwides: m-map[stwing, rawr x3 featuwevawue], (✿oωo)
+    fscustommapinput: map[stwing, (ˆ ﻌ ˆ)♡ any] = map.empty
+  ): p-pawams = {
+    vaw wequestcontext =
+      w-wequestcontextbuiwdew.buiwd(cwientcontext, (˘ω˘) p-pwoduct, (⑅˘꒳˘) featuweovewwides, (///ˬ///✿) f-fscustommapinput)
 
-    config(requestContext, scopedStatsReceiver)
+    c-config(wequestcontext, 😳😳😳 scopedstatsweceivew)
   }
 }

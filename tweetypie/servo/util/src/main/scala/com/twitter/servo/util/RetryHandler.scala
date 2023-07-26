@@ -1,169 +1,169 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.service.{RetryBudget, RetryPolicy}
-import com.twitter.finagle.stats.{Counter, StatsReceiver}
-import com.twitter.util._
-import java.util.concurrent.CancellationException
-import scala.util.control.NonFatal
+impowt com.twittew.finagwe.backoff
+i-impowt com.twittew.finagwe.sewvice.{wetwybudget, mya w-wetwypowicy}
+i-impowt com.twittew.finagwe.stats.{countew, 🥺 s-statsweceivew}
+i-impowt c-com.twittew.utiw._
+i-impowt java.utiw.concuwwent.cancewwationexception
+i-impowt scawa.utiw.contwow.nonfataw
 
 /**
- * A RetryHandler can wrap an arbitrary Future-producing operation with retry logic, where the
- * operation may conditionally be retried multiple times.
+ * a wetwyhandwew can wwap an awbitwawy futuwe-pwoducing opewation w-with wetwy wogic, ^^;; whewe the
+ * opewation may conditionawwy b-be wetwied muwtipwe t-times. :3
  */
-trait RetryHandler[-A] {
+twait wetwyhandwew[-a] {
 
   /**
-   * Executes the given operation and performs any applicable retries.
+   * exekawaii~s the given opewation a-and pewfowms any appwicabwe wetwies. (U ﹏ U)
    */
-  def apply[A2 <: A](f: => Future[A2]): Future[A2]
+  d-def a-appwy[a2 <: a](f: => futuwe[a2]): futuwe[a2]
 
   /**
-   * Wraps an arbitrary function with this RetryHandler's retrying logic.
+   * wwaps an awbitwawy function w-with this wetwyhandwew's wetwying wogic. OwO
    */
-  def wrap[A2 <: A, B](f: B => Future[A2]): B => Future[A2] =
-    b => this(f(b))
+  def wwap[a2 <: a, 😳😳😳 b](f: b => f-futuwe[a2]): b => futuwe[a2] =
+    b-b => this(f(b))
 }
 
-object RetryHandler {
+o-object w-wetwyhandwew {
 
   /**
-   * Builds a RetryHandler that retries according to the given RetryPolicy.  Retries, if any,
-   * will be scheduled on the given Timer to be executed after the appropriate backoff, if any.
-   * Retries will be limited according the given `RetryBudget`.
+   * b-buiwds a wetwyhandwew that wetwies accowding t-to the given wetwypowicy. (ˆ ﻌ ˆ)♡  wetwies, XD if a-any, (ˆ ﻌ ˆ)♡
+   * wiww be scheduwed on the given timew to be exekawaii~d aftew the appwopwiate backoff, ( ͡o ω ͡o ) i-if any. rawr x3
+   * wetwies wiww be wimited a-accowding the g-given `wetwybudget`. nyaa~~
    */
-  def apply[A](
-    policy: RetryPolicy[Try[A]],
-    timer: Timer,
-    statsReceiver: StatsReceiver,
-    budget: RetryBudget = RetryBudget()
-  ): RetryHandler[A] = {
-    val firstTryCounter = statsReceiver.counter("first_try")
-    val retriesCounter = statsReceiver.counter("retries")
-    val budgetExhausedCounter = statsReceiver.counter("budget_exhausted")
+  d-def appwy[a](
+    powicy: wetwypowicy[twy[a]], >_<
+    timew: timew, ^^;;
+    statsweceivew: s-statsweceivew, (ˆ ﻌ ˆ)♡
+    b-budget: wetwybudget = wetwybudget()
+  ): w-wetwyhandwew[a] = {
+    v-vaw fiwsttwycountew = statsweceivew.countew("fiwst_twy")
+    v-vaw wetwiescountew = statsweceivew.countew("wetwies")
+    vaw b-budgetexhausedcountew = statsweceivew.countew("budget_exhausted")
 
-    new RetryHandler[A] {
-      def apply[A2 <: A](f: => Future[A2]): Future[A2] = {
-        firstTryCounter.incr()
-        budget.deposit()
-        retry[A2](policy, timer, retriesCounter, budgetExhausedCounter, budget)(f)
+    nyew wetwyhandwew[a] {
+      d-def appwy[a2 <: a](f: => f-futuwe[a2]): futuwe[a2] = {
+        fiwsttwycountew.incw()
+        b-budget.deposit()
+        w-wetwy[a2](powicy, ^^;; timew, wetwiescountew, (⑅˘꒳˘) budgetexhausedcountew, rawr x3 budget)(f)
       }
     }
   }
 
   /**
-   * Builds a RetryHandler that will only retry on failures that are handled by the given policy,
-   * and does not consider any successful future for retries.
+   * buiwds a wetwyhandwew that w-wiww onwy wetwy o-on faiwuwes that awe handwed by t-the given powicy,
+   * a-and does n-not considew any successfuw futuwe fow wetwies. (///ˬ///✿)
    */
-  def failuresOnly[A](
-    policy: RetryPolicy[Try[Nothing]],
-    timer: Timer,
-    statsReceiver: StatsReceiver,
-    budget: RetryBudget = RetryBudget()
-  ): RetryHandler[A] =
-    apply(failureOnlyRetryPolicy(policy), timer, statsReceiver, budget)
+  def faiwuwesonwy[a](
+    p-powicy: wetwypowicy[twy[nothing]], 🥺
+    timew: timew, >_<
+    statsweceivew: statsweceivew, UwU
+    budget: w-wetwybudget = wetwybudget()
+  ): w-wetwyhandwew[a] =
+    a-appwy(faiwuweonwywetwypowicy(powicy), >_< t-timew, -.- statsweceivew, mya budget)
 
   /**
-   * Builds a RetryHandler that will retry any failure according to the given backoff schedule,
-   * until either either the operation succeeds or all backoffs are exhausted.
+   * b-buiwds a-a wetwyhandwew t-that wiww wetwy a-any faiwuwe accowding to the given backoff scheduwe, >w<
+   * u-untiw e-eithew eithew the o-opewation succeeds o-ow aww backoffs a-awe exhausted. (U ﹏ U)
    */
-  def failuresOnly[A](
-    backoffs: Stream[Duration],
-    timer: Timer,
-    stats: StatsReceiver,
-    budget: RetryBudget
-  ): RetryHandler[A] =
-    failuresOnly(
-      RetryPolicy.backoff[Try[Nothing]](Backoff.fromStream(backoffs)) { case Throw(_) => true },
-      timer,
-      stats,
-      budget
+  def faiwuwesonwy[a](
+    backoffs: s-stweam[duwation], 😳😳😳
+    timew: timew, o.O
+    stats: statsweceivew, òωó
+    budget: wetwybudget
+  ): wetwyhandwew[a] =
+    faiwuwesonwy(
+      w-wetwypowicy.backoff[twy[nothing]](backoff.fwomstweam(backoffs)) { case thwow(_) => twue }, 😳😳😳
+      timew,
+      s-stats, σωσ
+      b-budget
     )
 
   /**
-   * Builds a RetryHandler that will retry any failure according to the given backoff schedule,
-   * until either either the operation succeeds or all backoffs are exhausted.
+   * b-buiwds a wetwyhandwew that w-wiww wetwy any faiwuwe accowding t-to the given b-backoff scheduwe, (⑅˘꒳˘)
+   * untiw eithew eithew the opewation succeeds ow aww backoffs awe exhausted. (///ˬ///✿)
    */
-  def failuresOnly[A](
-    backoffs: Stream[Duration],
-    timer: Timer,
-    stats: StatsReceiver
-  ): RetryHandler[A] =
-    failuresOnly(backoffs, timer, stats, RetryBudget())
+  d-def faiwuwesonwy[a](
+    backoffs: stweam[duwation],
+    t-timew: timew, 🥺
+    stats: statsweceivew
+  ): w-wetwyhandwew[a] =
+    f-faiwuwesonwy(backoffs, OwO timew, stats, >w< wetwybudget())
 
   /**
-   * Converts a RetryPolicy that only handles failures (Throw) to a RetryPolicy that also
-   * handles successes (Return), by flagging that successes need not be retried.
+   * c-convewts a w-wetwypowicy that onwy handwes faiwuwes (thwow) t-to a wetwypowicy t-that awso
+   * handwes successes (wetuwn), 🥺 by fwagging that successes nyeed nyot b-be wetwied. nyaa~~
    */
-  def failureOnlyRetryPolicy[A](policy: RetryPolicy[Try[Nothing]]): RetryPolicy[Try[A]] =
-    RetryPolicy[Try[A]] {
-      case Return(_) => None
-      case Throw(ex) =>
-        policy(Throw(ex)) map {
-          case (backoff, p2) => (backoff, failureOnlyRetryPolicy(p2))
+  d-def faiwuweonwywetwypowicy[a](powicy: w-wetwypowicy[twy[nothing]]): wetwypowicy[twy[a]] =
+    w-wetwypowicy[twy[a]] {
+      c-case wetuwn(_) => n-nyone
+      case thwow(ex) =>
+        powicy(thwow(ex)) map {
+          case (backoff, ^^ p-p2) => (backoff, >w< f-faiwuweonwywetwypowicy(p2))
         }
     }
 
-  private[this] def retry[A](
-    policy: RetryPolicy[Try[A]],
-    timer: Timer,
-    retriesCounter: Counter,
-    budgetExhausedCounter: Counter,
-    budget: RetryBudget
+  pwivate[this] def wetwy[a](
+    p-powicy: wetwypowicy[twy[a]], OwO
+    t-timew: timew, XD
+    wetwiescountew: countew, ^^;;
+    budgetexhausedcountew: c-countew, 🥺
+    budget: wetwybudget
   )(
-    f: => Future[A]
-  ): Future[A] = {
-    forceFuture(f).transform { transformed =>
-      policy(transformed) match {
-        case Some((backoff, nextPolicy)) =>
-          if (budget.tryWithdraw()) {
-            retriesCounter.incr()
-            schedule(backoff, timer) {
-              retry(nextPolicy, timer, retriesCounter, budgetExhausedCounter, budget)(f)
+    f: => futuwe[a]
+  ): futuwe[a] = {
+    fowcefutuwe(f).twansfowm { t-twansfowmed =>
+      powicy(twansfowmed) match {
+        case some((backoff, XD n-nyextpowicy)) =>
+          i-if (budget.twywithdwaw()) {
+            wetwiescountew.incw()
+            scheduwe(backoff, (U ᵕ U❁) timew) {
+              w-wetwy(nextpowicy, :3 t-timew, wetwiescountew, ( ͡o ω ͡o ) budgetexhausedcountew, òωó budget)(f)
             }
-          } else {
-            budgetExhausedCounter.incr()
-            Future.const(transformed)
+          } ewse {
+            b-budgetexhausedcountew.incw()
+            futuwe.const(twansfowmed)
           }
-        case None =>
-          Future.const(transformed)
+        c-case nyone =>
+          futuwe.const(twansfowmed)
       }
     }
   }
 
-  // similar to finagle's RetryExceptionsFilter
-  private[this] def schedule[A](d: Duration, timer: Timer)(f: => Future[A]) = {
-    if (d.inNanoseconds > 0) {
-      val promise = new Promise[A]
-      val task = timer.schedule(Time.now + d) {
-        if (!promise.isDefined) {
-          try {
-            promise.become(f)
-          } catch {
-            case NonFatal(cause) =>
-            // Ignore any exceptions thrown by Promise#become(). This usually means that the promise
-            // was already defined and cannot be transformed.
+  // simiwaw to finagwe's w-wetwyexceptionsfiwtew
+  pwivate[this] d-def scheduwe[a](d: d-duwation, σωσ timew: timew)(f: => f-futuwe[a]) = {
+    if (d.innanoseconds > 0) {
+      v-vaw p-pwomise = nyew p-pwomise[a]
+      vaw task = timew.scheduwe(time.now + d-d) {
+        i-if (!pwomise.isdefined) {
+          twy {
+            pwomise.become(f)
+          } c-catch {
+            c-case n-nyonfataw(cause) =>
+            // ignowe any exceptions thwown b-by pwomise#become(). (U ᵕ U❁) this usuawwy m-means that the p-pwomise
+            // was awweady defined and cannot be twansfowmed. (✿oωo)
           }
         }
       }
-      promise.setInterruptHandler {
-        case cause =>
-          task.cancel()
-          val cancellation = new CancellationException
-          cancellation.initCause(cause)
-          promise.updateIfEmpty(Throw(cancellation))
+      p-pwomise.setintewwupthandwew {
+        c-case cause =>
+          t-task.cancew()
+          v-vaw cancewwation = nyew cancewwationexception
+          c-cancewwation.initcause(cause)
+          pwomise.updateifempty(thwow(cancewwation))
       }
-      promise
-    } else forceFuture(f)
+      pwomise
+    } ewse fowcefutuwe(f)
   }
 
-  // (Future { f } flatten), but without the allocation
-  private[this] def forceFuture[A](f: => Future[A]) = {
-    try {
-      f
+  // (futuwe { f } fwatten), ^^ but without the awwocation
+  p-pwivate[this] def fowcefutuwe[a](f: => f-futuwe[a]) = {
+    twy {
+      f-f
     } catch {
-      case NonFatal(cause) =>
-        Future.exception(cause)
+      case nyonfataw(cause) =>
+        f-futuwe.exception(cause)
     }
   }
 }

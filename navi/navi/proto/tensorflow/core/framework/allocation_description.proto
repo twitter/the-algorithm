@@ -1,29 +1,29 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "AllocationDescriptionProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/allocation_description_go_proto";
+option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "awwocationdescwiptionpwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+option java_package = "owg.tensowfwow.fwamewowk";
+o-option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/awwocation_descwiption_go_pwoto";
 
-message AllocationDescription {
-  // Total number of bytes requested
-  int64 requested_bytes = 1;
+m-message awwocationdescwiption {
+  // t-totaw nyumbew o-of bytes wequested
+  int64 wequested_bytes = 1;
 
-  // Total number of bytes allocated if known
-  int64 allocated_bytes = 2;
+  // totaw nyumbew of bytes awwocated if known
+  i-int64 awwocated_bytes = 2;
 
-  // Name of the allocator used
-  string allocator_name = 3;
+  // nyame of the awwocatow used
+  s-stwing awwocatow_name = 3;
 
-  // Identifier of the allocated buffer if known
-  int64 allocation_id = 4;
+  // identifiew o-of the awwocated buffew if known
+  int64 awwocation_id = 4;
 
-  // Set if this tensor only has one remaining reference
-  bool has_single_reference = 5;
+  // set if this tensow o-onwy has one wemaining wefewence
+  b-boow has_singwe_wefewence = 5;
 
-  // Address of the allocation.
-  uint64 ptr = 6;
+  // a-addwess of the awwocation. XD
+  uint64 ptw = 6;
 }

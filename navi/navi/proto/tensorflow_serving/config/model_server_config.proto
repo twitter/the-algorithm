@@ -1,85 +1,85 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.serving;
+package tensowfwow.sewving;
 
-import "google/protobuf/any.proto";
-import "tensorflow_serving/config/file_system_storage_path_source.proto";
-import "tensorflow_serving/config/logging_config.proto";
+impowt "googwe/pwotobuf/any.pwoto";
+i-impowt "tensowfwow_sewving/config/fiwe_system_stowage_path_souwce.pwoto";
+i-impowt "tensowfwow_sewving/config/wogging_config.pwoto";
 
-option cc_enable_arenas = true;
+o-option cc_enabwe_awenas = t-twue;
 
-// The type of model.
-// TODO(b/31336131): DEPRECATED.
-enum ModelType {
-  MODEL_TYPE_UNSPECIFIED = 0 [deprecated = true];
-  TENSORFLOW = 1 [deprecated = true];
-  OTHER = 2 [deprecated = true];
+// the t-type of modew. (U ﹏ U)
+// t-todo(b/31336131): d-depwecated. -.-
+e-enum modewtype {
+  modew_type_unspecified = 0 [depwecated = twue];
+  tensowfwow = 1 [depwecated = twue];
+  othew = 2 [depwecated = t-twue];
 }
 
-// Common configuration for loading a model being served.
-message ModelConfig {
-  // Name of the model.
-  string name = 1;
+// common configuwation fow woading a-a modew being sewved. ^•ﻌ•^
+message modewconfig {
+  // n-nyame of the modew. rawr
+  stwing nyame = 1;
 
-  // Base path to the model, excluding the version directory.
-  // E.g> for a model at /foo/bar/my_model/123, where 123 is the version, the
-  // base path is /foo/bar/my_model.
+  // base path to the modew, (˘ω˘) excwuding t-the vewsion diwectowy. nyaa~~
+  // e.g> f-fow a modew at /foo/baw/my_modew/123, UwU w-whewe 123 is the vewsion, :3 the
+  // base path is /foo/baw/my_modew. (⑅˘꒳˘)
   //
-  // (This can be changed once a model is in serving, *if* the underlying data
-  // remains the same. Otherwise there are no guarantees about whether the old
-  // or new data will be used for model versions currently loaded.)
-  string base_path = 2;
+  // (this can b-be changed once a modew is in sewving, (///ˬ///✿) *if* the undewwying data
+  // wemains the s-same. ^^;; othewwise thewe awe nyo guawantees a-about w-whethew the owd
+  // o-ow nyew data w-wiww be used fow modew vewsions cuwwentwy woaded.)
+  s-stwing base_path = 2;
 
-  // Type of model.
-  // TODO(b/31336131): DEPRECATED. Please use 'model_platform' instead.
-  ModelType model_type = 3 [deprecated = true];
+  // type of modew. >_<
+  // todo(b/31336131): d-depwecated. rawr x3 pwease use 'modew_pwatfowm' instead. /(^•ω•^)
+  modewtype modew_type = 3 [depwecated = twue];
 
-  // Type of model (e.g. "tensorflow").
+  // type of modew (e.g. "tensowfwow"). :3
   //
-  // (This cannot be changed once a model is in serving.)
-  string model_platform = 4;
+  // (this c-cannot be changed once a modew i-is in sewving.)
+  s-stwing modew_pwatfowm = 4;
 
-  reserved 5, 9;
+  w-wesewved 5, (ꈍᴗꈍ) 9;
 
-  // Version policy for the model indicating which version(s) of the model to
-  // load and make available for serving simultaneously.
-  // The default option is to serve only the latest version of the model.
+  // vewsion powicy fow the modew indicating which v-vewsion(s) o-of the modew to
+  // woad and make a-avaiwabwe fow s-sewving simuwtaneouswy. /(^•ω•^)
+  // the d-defauwt option is to sewve onwy t-the watest vewsion of the modew. (⑅˘꒳˘)
   //
-  // (This can be changed once a model is in serving.)
-  FileSystemStoragePathSourceConfig.ServableVersionPolicy model_version_policy =
+  // (this can be changed o-once a modew is in sewving.)
+  f-fiwesystemstowagepathsouwceconfig.sewvabwevewsionpowicy modew_vewsion_powicy =
       7;
 
-  // String labels to associate with versions of the model, allowing inference
-  // queries to refer to versions by label instead of number. Multiple labels
-  // can map to the same version, but not vice-versa.
+  // stwing w-wabews to a-associate with vewsions of the modew, ( ͡o ω ͡o ) awwowing infewence
+  // quewies to wefew to vewsions by wabew instead of nyumbew. m-muwtipwe w-wabews
+  // can map to the same v-vewsion, òωó but nyot v-vice-vewsa. (⑅˘꒳˘)
   //
-  // An envisioned use-case for these labels is canarying tentative versions.
-  // For example, one can assign labels "stable" and "canary" to two specific
-  // versions. Perhaps initially "stable" is assigned to version 0 and "canary"
-  // to version 1. Once version 1 passes canary, one can shift the "stable"
-  // label to refer to version 1 (at that point both labels map to the same
-  // version -- version 1 -- which is fine). Later once version 2 is ready to
-  // canary one can move the "canary" label to version 2. And so on.
-  map<string, int64> version_labels = 8;
+  // a-an envisioned use-case fow these wabews is canawying tentative v-vewsions. XD
+  // fow exampwe, -.- one can assign wabews "stabwe" and "canawy" t-to two specific
+  // vewsions. :3 pewhaps i-initiawwy "stabwe" i-is assigned t-to vewsion 0 and "canawy"
+  // t-to vewsion 1. nyaa~~ o-once vewsion 1 p-passes canawy, 😳 o-one can shift the "stabwe"
+  // wabew to wefew to vewsion 1 (at t-that point both w-wabews map to the s-same
+  // vewsion -- v-vewsion 1 -- w-which is fine). (⑅˘꒳˘) watew once vewsion 2 is weady to
+  // canawy o-one can move the "canawy" wabew to vewsion 2. and so on. nyaa~~
+  map<stwing, OwO int64> vewsion_wabews = 8;
 
-  // Configures logging requests and responses, to the model.
+  // c-configuwes wogging wequests and wesponses, rawr x3 to the modew. XD
   //
-  // (This can be changed once a model is in serving.)
-  LoggingConfig logging_config = 6;
+  // (this c-can be changed o-once a modew is i-in sewving.)
+  woggingconfig wogging_config = 6;
 }
 
-// Static list of models to be loaded for serving.
-message ModelConfigList {
-  repeated ModelConfig config = 1;
+// s-static wist of modews to b-be woaded fow s-sewving. σωσ
+message modewconfigwist {
+  wepeated modewconfig config = 1;
 }
 
-// ModelServer config.
-message ModelServerConfig {
-  // ModelServer takes either a static file-based model config list or an Any
-  // proto representing custom model config that is fetched dynamically at
-  // runtime (through network RPC, custom service, etc.).
+// modewsewvew config. (U ᵕ U❁)
+m-message modewsewvewconfig {
+  // modewsewvew takes e-eithew a static fiwe-based modew c-config wist o-ow an any
+  // pwoto wepwesenting custom modew config t-that is fetched d-dynamicawwy at
+  // wuntime (thwough n-nyetwowk w-wpc, (U ﹏ U) custom sewvice, :3 etc.).
   oneof config {
-    ModelConfigList model_config_list = 1;
-    google.protobuf.Any custom_model_config = 2;
+    modewconfigwist modew_config_wist = 1;
+    g-googwe.pwotobuf.any c-custom_modew_config = 2;
   }
 }

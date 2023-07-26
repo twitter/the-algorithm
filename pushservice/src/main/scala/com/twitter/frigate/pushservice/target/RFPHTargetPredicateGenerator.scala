@@ -1,37 +1,37 @@
-package com.twitter.frigate.pushservice.target
+package com.twittew.fwigate.pushsewvice.tawget
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.TargetPromptFeedbackFatiguePredicate
-import com.twitter.frigate.common.predicate.TargetUserPredicates
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushConstants
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.predicate.TargetNtabCaretClickFatiguePredicate
-import com.twitter.frigate.pushservice.predicate.TargetPredicates
-import com.twitter.hermit.predicate.NamedPredicate
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.pwedicate.tawgetpwomptfeedbackfatiguepwedicate
+impowt c-com.twittew.fwigate.common.pwedicate.tawgetusewpwedicates
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.pushconstants
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+impowt com.twittew.fwigate.pushsewvice.pwedicate.tawgetntabcawetcwickfatiguepwedicate
+impowt com.twittew.fwigate.pushsewvice.pwedicate.tawgetpwedicates
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
 
-class RFPHTargetPredicateGenerator(implicit statsReceiver: StatsReceiver) {
-  val predicates: List[NamedPredicate[Target]] = List(
-    TargetPredicates.magicRecsMinDurationSinceSent(),
-    TargetPredicates.targetHTLVisitPredicate(),
-    TargetPredicates.inlineActionFatiguePredicate(),
-    TargetPredicates.targetFatiguePredicate(),
-    TargetUserPredicates.secondaryDormantAccountPredicate(),
-    TargetPredicates.targetValidMobileSDKPredicate,
-    TargetPredicates.targetPushBitEnabledPredicate,
-    TargetUserPredicates.targetUserExists(),
-    TargetPredicates.paramPredicate(PushFeatureSwitchParams.EnablePushRecommendationsParam),
-    TargetPromptFeedbackFatiguePredicate.responseNoPredicate(
-      PushParams.EnablePromptFeedbackFatigueResponseNoPredicate,
-      PushConstants.AcceptableTimeSinceLastNegativeResponse),
-    TargetPredicates.teamExceptedPredicate(TargetNtabCaretClickFatiguePredicate.apply()),
-    TargetPredicates.optoutProbPredicate(),
-    TargetPredicates.webNotifsHoldback()
+cwass wfphtawgetpwedicategenewatow(impwicit statsweceivew: s-statsweceivew) {
+  vaw pwedicates: w-wist[namedpwedicate[tawget]] = wist(
+    tawgetpwedicates.magicwecsminduwationsincesent(), >_<
+    tawgetpwedicates.tawgethtwvisitpwedicate(), rawr x3
+    tawgetpwedicates.inwineactionfatiguepwedicate(), mya
+    t-tawgetpwedicates.tawgetfatiguepwedicate(), nyaa~~
+    tawgetusewpwedicates.secondawydowmantaccountpwedicate(), (⑅˘꒳˘)
+    t-tawgetpwedicates.tawgetvawidmobiwesdkpwedicate, rawr x3
+    t-tawgetpwedicates.tawgetpushbitenabwedpwedicate, (✿oωo)
+    tawgetusewpwedicates.tawgetusewexists(),
+    tawgetpwedicates.pawampwedicate(pushfeatuweswitchpawams.enabwepushwecommendationspawam), (ˆ ﻌ ˆ)♡
+    tawgetpwomptfeedbackfatiguepwedicate.wesponsenopwedicate(
+      pushpawams.enabwepwomptfeedbackfatiguewesponsenopwedicate, (˘ω˘)
+      p-pushconstants.acceptabwetimesincewastnegativewesponse), (⑅˘꒳˘)
+    tawgetpwedicates.teamexceptedpwedicate(tawgetntabcawetcwickfatiguepwedicate.appwy()), (///ˬ///✿)
+    tawgetpwedicates.optoutpwobpwedicate(), 😳😳😳
+    tawgetpwedicates.webnotifshowdback()
   )
 }
 
-object RFPHTargetPredicates {
-  def apply(implicit statsReceiver: StatsReceiver): List[NamedPredicate[Target]] =
-    new RFPHTargetPredicateGenerator().predicates
+object wfphtawgetpwedicates {
+  d-def appwy(impwicit statsweceivew: s-statsweceivew): w-wist[namedpwedicate[tawget]] =
+    n-nyew wfphtawgetpwedicategenewatow().pwedicates
 }

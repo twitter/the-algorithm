@@ -1,18 +1,18 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ReaderBaseProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/reader_base_go_proto";
+option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "weadewbasepwotos";
+o-option j-java_muwtipwe_fiwes = t-twue;
+option j-java_package = "owg.tensowfwow.fwamewowk";
+option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/weadew_base_go_pwoto";
 
-// For serializing and restoring the state of ReaderBase, see
-// reader_base.h for details.
-message ReaderBaseState {
-  int64 work_started = 1;
-  int64 work_finished = 2;
-  int64 num_records_produced = 3;
-  bytes current_work = 4;
+// f-fow s-sewiawizing and westowing the state of weadewbase, (ˆ ﻌ ˆ)♡ see
+// weadew_base.h fow detaiws. (⑅˘꒳˘)
+m-message weadewbasestate {
+  int64 wowk_stawted = 1;
+  int64 w-wowk_finished = 2;
+  int64 nyum_wecowds_pwoduced = 3;
+  b-bytes cuwwent_wowk = 4;
 }

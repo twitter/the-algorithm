@@ -1,324 +1,324 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.servo.util.Transformer
-import com.twitter.util.{Duration, Future, Return, Throw}
-import scala.collection.mutable.ArrayBuffer
-import scala.collection.{breakOut, mutable}
+impowt com.twittew.sewvo.utiw.twansfowmew
+i-impowt c-com.twittew.utiw.{duwation, >_< f-futuwe, w-wetuwn, >w< thwow}
+i-impowt scawa.cowwection.mutabwe.awwaybuffew
+i-impowt scawa.cowwection.{bweakout, >_< m-mutabwe}
 
 /**
- * Adaptor from a ReadCache[K, V1] to an underlying ReadCache[K, V2]
+ * a-adaptow fwom a weadcache[k, v1] to an undewwying weadcache[k, >w< v2]
  *
- * a Transformer is used to map between value types
+ * a twansfowmew i-is used to map between vawue types
  */
-class ValueTransformingReadCache[K, V1, V2](
-  underlyingCache: ReadCache[K, V2],
-  transformer: Transformer[V1, V2])
-    extends ReadCache[K, V1] {
-  // overridden to avoid mapping the unneeded keyMap
-  override def get(keys: Seq[K]): Future[KeyValueResult[K, V1]] = {
-    underlyingCache.get(keys) map { lr =>
-      // fold lr.found into found/deserialization failures
-      val found = mutable.Map.empty[K, V1]
-      val failed = mutable.Map.empty[K, Throwable]
+c-cwass vawuetwansfowmingweadcache[k, rawr v1, v2](
+  u-undewwyingcache: weadcache[k, rawr x3 v2],
+  twansfowmew: twansfowmew[v1, ( ͡o ω ͡o ) v-v2])
+    extends weadcache[k, (˘ω˘) v-v1] {
+  // ovewwidden t-to avoid mapping the unneeded keymap
+  ovewwide def get(keys: seq[k]): futuwe[keyvawuewesuwt[k, 😳 v-v1]] = {
+    undewwyingcache.get(keys) map { ww =>
+      // fowd ww.found i-into found/desewiawization faiwuwes
+      v-vaw found = m-mutabwe.map.empty[k, OwO v-v1]
+      v-vaw faiwed = mutabwe.map.empty[k, (˘ω˘) thwowabwe]
 
-      lr.found foreach {
-        case (key, value) =>
-          transformer.from(value) match {
-            case Return(v) => found += key -> v
-            case Throw(t) => failed += key -> t
+      w-ww.found foweach {
+        case (key, òωó vawue) =>
+          t-twansfowmew.fwom(vawue) match {
+            case wetuwn(v) => found += key -> v
+            case thwow(t) => f-faiwed += key -> t
           }
       }
 
-      lr.copy(found = found.toMap, failed = lr.failed ++ failed.toMap)
-    } handle {
-      case t =>
-        KeyValueResult(failed = keys.map(_ -> t).toMap)
+      w-ww.copy(found = f-found.tomap, ( ͡o ω ͡o ) f-faiwed = ww.faiwed ++ faiwed.tomap)
+    } handwe {
+      c-case t =>
+        k-keyvawuewesuwt(faiwed = keys.map(_ -> t-t).tomap)
     }
   }
 
-  // overridden to avoid mapping the unneeded keyMap
-  override def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, V1]] = {
-    underlyingCache.getWithChecksum(keys) map { clr =>
-      clr.copy(found = clr.found map {
-        case (key, (value, checksum)) =>
-          key -> (value flatMap { transformer.from(_) }, checksum)
+  // o-ovewwidden to avoid mapping t-the unneeded keymap
+  ovewwide d-def getwithchecksum(keys: seq[k]): futuwe[cskeyvawuewesuwt[k, UwU v1]] = {
+    u-undewwyingcache.getwithchecksum(keys) map { cww =>
+      c-cww.copy(found = cww.found m-map {
+        case (key, /(^•ω•^) (vawue, (ꈍᴗꈍ) c-checksum)) =>
+          key -> (vawue fwatmap { twansfowmew.fwom(_) }, checksum)
       })
-    } handle {
+    } handwe {
       case t =>
-        KeyValueResult(failed = keys.map(_ -> t).toMap)
+        k-keyvawuewesuwt(faiwed = k-keys.map(_ -> t).tomap)
     }
   }
 
-  override def release() = underlyingCache.release()
+  ovewwide d-def wewease() = u-undewwyingcache.wewease()
 }
 
 /**
- * Adaptor from a ReadCache[K, V1] to an underlying ReadCache[K2, V2]
+ * a-adaptow fwom a weadcache[k, 😳 v1] to an undewwying weadcache[k2, mya v-v2]
  *
- * a Transformer is used to map between value types, and a
- * one-way mapping is used for keys, making it possible to
- * store data in the underlying cache using keys that can't
- * easily be reverse-mapped.
+ * a twansfowmew is used to map between vawue types, mya and a
+ * o-one-way mapping is used fow keys, /(^•ω•^) m-making it possibwe t-to
+ * stowe d-data in the undewwying cache using k-keys that can't
+ * e-easiwy be w-wevewse-mapped. ^^;;
  */
-class KeyValueTransformingReadCache[K1, K2, V1, V2](
-  underlyingCache: ReadCache[K2, V2],
-  transformer: Transformer[V1, V2],
-  underlyingKey: K1 => K2)
-    extends ReadCache[K1, V1] {
+c-cwass keyvawuetwansfowmingweadcache[k1, 🥺 k2, v1, v2](
+  undewwyingcache: w-weadcache[k2, ^^ v-v2],
+  t-twansfowmew: twansfowmew[v1, ^•ﻌ•^ v2],
+  u-undewwyingkey: k-k1 => k2)
+    extends weadcache[k1, /(^•ω•^) v1] {
 
-  // make keymapping for key recovery later
-  private[this] def mappedKeys(
-    keys: Seq[K1]
-  ): (IndexedSeq[K2], Map[K2, K1]) = {
-    val k2s = new ArrayBuffer[K2](keys.size)
-    val k2k1s: Map[K2, K1] =
-      keys.map { key =>
-        val k2 = underlyingKey(key)
+  // make keymapping f-fow key wecovewy watew
+  pwivate[this] def mappedkeys(
+    keys: seq[k1]
+  ): (indexedseq[k2], ^^ map[k2, k1]) = {
+    v-vaw k2s = nyew awwaybuffew[k2](keys.size)
+    vaw k2k1s: map[k2, 🥺 k1] =
+      k-keys.map { k-key =>
+        v-vaw k2 = undewwyingkey(key)
         k2s += k2
-        k2 -> key
-      }(breakOut)
-    (k2s, k2k1s)
+        k-k2 -> key
+      }(bweakout)
+    (k2s, (U ᵕ U❁) k2k1s)
   }
 
-  override def get(keys: Seq[K1]): Future[KeyValueResult[K1, V1]] = {
-    val (k2s, kMap) = mappedKeys(keys)
+  o-ovewwide d-def get(keys: seq[k1]): futuwe[keyvawuewesuwt[k1, 😳😳😳 v1]] = {
+    vaw (k2s, nyaa~~ kmap) = mappedkeys(keys)
 
-    underlyingCache
+    undewwyingcache
       .get(k2s)
-      .map { lr =>
-        // fold lr.found into found/deserialization failures
-        val found = Map.newBuilder[K1, V1]
-        val failed = Map.newBuilder[K1, Throwable]
+      .map { w-ww =>
+        // fowd ww.found i-into found/desewiawization faiwuwes
+        v-vaw found = map.newbuiwdew[k1, (˘ω˘) v-v1]
+        vaw faiwed = map.newbuiwdew[k1, >_< thwowabwe]
 
-        lr.found.foreach {
-          case (key, value) =>
-            transformer.from(value) match {
-              case Return(v) => found += kMap(key) -> v
-              case Throw(t) => failed += kMap(key) -> t
+        w-ww.found.foweach {
+          c-case (key, XD vawue) =>
+            twansfowmew.fwom(vawue) m-match {
+              c-case wetuwn(v) => found += kmap(key) -> v
+              case thwow(t) => f-faiwed += k-kmap(key) -> t
             }
         }
 
-        lr.failed.foreach {
-          case (k, t) =>
-            failed += kMap(k) -> t
+        w-ww.faiwed.foweach {
+          case (k, rawr x3 t-t) =>
+            f-faiwed += kmap(k) -> t
         }
 
-        KeyValueResult(
-          found.result(),
-          lr.notFound.map { kMap(_) },
-          failed.result()
+        k-keyvawuewesuwt(
+          found.wesuwt(), ( ͡o ω ͡o )
+          ww.notfound.map { kmap(_) }, :3
+          faiwed.wesuwt()
         )
       }
-      .handle {
-        case t =>
-          KeyValueResult(failed = keys.map(_ -> t).toMap)
+      .handwe {
+        c-case t =>
+          k-keyvawuewesuwt(faiwed = keys.map(_ -> t).tomap)
       }
   }
 
-  override def getWithChecksum(keys: Seq[K1]): Future[CsKeyValueResult[K1, V1]] = {
-    val (k2s, kMap) = mappedKeys(keys)
+  o-ovewwide d-def getwithchecksum(keys: seq[k1]): futuwe[cskeyvawuewesuwt[k1, mya v1]] = {
+    v-vaw (k2s, σωσ kmap) = mappedkeys(keys)
 
-    underlyingCache
-      .getWithChecksum(k2s)
-      .map { clr =>
-        KeyValueResult(
-          clr.found.map {
-            case (key, (value, checksum)) =>
-              kMap(key) -> (value.flatMap(transformer.from), checksum)
-          },
-          clr.notFound map { kMap(_) },
-          clr.failed map {
-            case (key, t) =>
-              kMap(key) -> t
+    undewwyingcache
+      .getwithchecksum(k2s)
+      .map { cww =>
+        keyvawuewesuwt(
+          c-cww.found.map {
+            case (key, (ꈍᴗꈍ) (vawue, checksum)) =>
+              k-kmap(key) -> (vawue.fwatmap(twansfowmew.fwom), OwO c-checksum)
+          }, o.O
+          cww.notfound map { kmap(_) }, 😳😳😳
+          cww.faiwed m-map {
+            c-case (key, /(^•ω•^) t) =>
+              kmap(key) -> t
           }
         )
       }
-      .handle {
-        case t =>
-          KeyValueResult(failed = keys.map(_ -> t).toMap)
+      .handwe {
+        case t-t =>
+          keyvawuewesuwt(faiwed = k-keys.map(_ -> t).tomap)
       }
   }
 
-  override def release(): Unit = underlyingCache.release()
+  ovewwide def wewease(): unit = u-undewwyingcache.wewease()
 }
 
-class KeyTransformingCache[K1, K2, V](underlyingCache: Cache[K2, V], underlyingKey: K1 => K2)
-    extends KeyValueTransformingCache[K1, K2, V, V](
-      underlyingCache,
-      Transformer.identity,
-      underlyingKey
+cwass k-keytwansfowmingcache[k1, OwO k-k2, v](undewwyingcache: c-cache[k2, ^^ v], undewwyingkey: k-k1 => k2)
+    e-extends keyvawuetwansfowmingcache[k1, (///ˬ///✿) k-k2, v, v](
+      undewwyingcache, (///ˬ///✿)
+      t-twansfowmew.identity, (///ˬ///✿)
+      u-undewwyingkey
     )
 
 /**
- * Adaptor from a Cache[K, V1] to an underlying Cache[K, V2]
+ * adaptow fwom a cache[k, ʘwʘ v1] t-to an undewwying c-cache[k, ^•ﻌ•^ v2]
  *
- * a Transformer is used to map between value types
+ * a-a twansfowmew is used to map between vawue t-types
  */
-class ValueTransformingCache[K, V1, V2](
-  underlyingCache: Cache[K, V2],
-  transformer: Transformer[V1, V2])
-    extends ValueTransformingReadCache[K, V1, V2](underlyingCache, transformer)
-    with Cache[K, V1] {
-  private[this] def to(v1: V1): Future[V2] = Future.const(transformer.to(v1))
+cwass vawuetwansfowmingcache[k, OwO v-v1, v2](
+  u-undewwyingcache: cache[k, v2], (U ﹏ U)
+  twansfowmew: twansfowmew[v1, (ˆ ﻌ ˆ)♡ v-v2])
+    extends v-vawuetwansfowmingweadcache[k, (⑅˘꒳˘) v-v1, v2](undewwyingcache, (U ﹏ U) t-twansfowmew)
+    with c-cache[k, o.O v1] {
+  pwivate[this] def to(v1: v1): futuwe[v2] = futuwe.const(twansfowmew.to(v1))
 
-  override def add(key: K, value: V1): Future[Boolean] =
-    to(value) flatMap { underlyingCache.add(key, _) }
+  ovewwide def add(key: k, mya vawue: v-v1): futuwe[boowean] =
+    to(vawue) f-fwatmap { undewwyingcache.add(key, XD _) }
 
-  override def checkAndSet(key: K, value: V1, checksum: Checksum): Future[Boolean] =
-    to(value) flatMap { underlyingCache.checkAndSet(key, _, checksum) }
+  o-ovewwide def checkandset(key: k, òωó vawue: v1, checksum: c-checksum): futuwe[boowean] =
+    t-to(vawue) f-fwatmap { undewwyingcache.checkandset(key, (˘ω˘) _, c-checksum) }
 
-  override def set(key: K, value: V1): Future[Unit] =
-    to(value) flatMap { underlyingCache.set(key, _) }
+  o-ovewwide def set(key: k-k, :3 vawue: v1): futuwe[unit] =
+    to(vawue) fwatmap { undewwyingcache.set(key, OwO _) }
 
-  override def replace(key: K, value: V1): Future[Boolean] =
-    to(value) flatMap { underlyingCache.replace(key, _) }
+  ovewwide def wepwace(key: k, mya vawue: v-v1): futuwe[boowean] =
+    t-to(vawue) f-fwatmap { undewwyingcache.wepwace(key, (˘ω˘) _) }
 
-  override def delete(key: K): Future[Boolean] =
-    underlyingCache.delete(key)
+  o-ovewwide def dewete(key: k): futuwe[boowean] =
+    undewwyingcache.dewete(key)
 }
 
 /**
- * Adaptor from a Cache[K1, V1] to an underlying Cache[K2, V2]
+ * a-adaptow f-fwom a cache[k1, o.O v1] to an u-undewwying cache[k2, v2]
  *
- * a Transformer is used to map between value types, and a
- * one-way mapping is used for keys, making it possible to
- * store data in the underlying cache using keys that can't
- * easily be reverse-mapped.
+ * a twansfowmew is u-used to map between v-vawue types, and a
+ * one-way m-mapping is used f-fow keys, (✿oωo) making it possibwe to
+ * stowe data in the undewwying cache using keys t-that can't
+ * e-easiwy be wevewse-mapped. (ˆ ﻌ ˆ)♡
  */
-class KeyValueTransformingCache[K1, K2, V1, V2](
-  underlyingCache: Cache[K2, V2],
-  transformer: Transformer[V1, V2],
-  underlyingKey: K1 => K2)
-    extends KeyValueTransformingReadCache[K1, K2, V1, V2](
-      underlyingCache,
-      transformer,
-      underlyingKey
+c-cwass keyvawuetwansfowmingcache[k1, ^^;; k-k2, OwO v1, v2](
+  u-undewwyingcache: cache[k2, 🥺 v2],
+  t-twansfowmew: t-twansfowmew[v1, mya v2],
+  undewwyingkey: k-k1 => k2)
+    e-extends keyvawuetwansfowmingweadcache[k1, 😳 k2, v1, v2](
+      u-undewwyingcache, òωó
+      twansfowmew, /(^•ω•^)
+      undewwyingkey
     )
-    with Cache[K1, V1] {
-  private[this] def to(v1: V1): Future[V2] = Future.const(transformer.to(v1))
+    w-with cache[k1, -.- v1] {
+  pwivate[this] d-def to(v1: v-v1): futuwe[v2] = futuwe.const(twansfowmew.to(v1))
 
-  override def add(key: K1, value: V1): Future[Boolean] =
-    to(value) flatMap { underlyingCache.add(underlyingKey(key), _) }
+  o-ovewwide def add(key: k1, òωó vawue: v1): f-futuwe[boowean] =
+    t-to(vawue) f-fwatmap { undewwyingcache.add(undewwyingkey(key), /(^•ω•^) _) }
 
-  override def checkAndSet(key: K1, value: V1, checksum: Checksum): Future[Boolean] =
-    to(value) flatMap { underlyingCache.checkAndSet(underlyingKey(key), _, checksum) }
+  ovewwide def checkandset(key: k1, /(^•ω•^) vawue: v-v1, checksum: checksum): futuwe[boowean] =
+    to(vawue) fwatmap { u-undewwyingcache.checkandset(undewwyingkey(key), 😳 _, :3 c-checksum) }
 
-  override def set(key: K1, value: V1): Future[Unit] =
-    to(value) flatMap { underlyingCache.set(underlyingKey(key), _) }
+  ovewwide d-def set(key: k1, (U ᵕ U❁) vawue: v1): futuwe[unit] =
+    t-to(vawue) fwatmap { u-undewwyingcache.set(undewwyingkey(key), ʘwʘ _) }
 
-  override def replace(key: K1, value: V1): Future[Boolean] =
-    to(value) flatMap { underlyingCache.replace(underlyingKey(key), _) }
+  ovewwide def wepwace(key: k-k1, o.O vawue: v1): futuwe[boowean] =
+    to(vawue) f-fwatmap { undewwyingcache.wepwace(undewwyingkey(key), ʘwʘ _) }
 
-  override def delete(key: K1): Future[Boolean] =
-    underlyingCache.delete(underlyingKey(key))
+  o-ovewwide def dewete(key: k-k1): futuwe[boowean] =
+    undewwyingcache.dewete(undewwyingkey(key))
 }
 
 /**
- * Adaptor from a TtlCache[K, V1] to an underlying TtlCache[K, V2]
+ * a-adaptow fwom a-a ttwcache[k, ^^ v-v1] to an undewwying ttwcache[k, ^•ﻌ•^ v2]
  *
- * a Transformer is used to map between value types
+ * a twansfowmew is used to map between vawue types
  */
-class ValueTransformingTtlCache[K, V1, V2](
-  underlyingCache: TtlCache[K, V2],
-  transformer: Transformer[V1, V2])
-    extends ValueTransformingReadCache[K, V1, V2](underlyingCache, transformer)
-    with TtlCache[K, V1] {
-  private[this] def to(v1: V1): Future[V2] = Future.const(transformer.to(v1))
+cwass vawuetwansfowmingttwcache[k, mya v1, v2](
+  undewwyingcache: ttwcache[k, UwU v2],
+  twansfowmew: twansfowmew[v1, >_< v2])
+    extends v-vawuetwansfowmingweadcache[k, v-v1, /(^•ω•^) v2](undewwyingcache, òωó twansfowmew)
+    with ttwcache[k, σωσ v-v1] {
+  p-pwivate[this] d-def to(v1: v1): futuwe[v2] = futuwe.const(twansfowmew.to(v1))
 
-  override def add(key: K, value: V1, ttl: Duration): Future[Boolean] =
-    to(value) flatMap { underlyingCache.add(key, _, ttl) }
+  o-ovewwide def add(key: k, ( ͡o ω ͡o ) vawue: v-v1, nyaa~~ ttw: duwation): f-futuwe[boowean] =
+    to(vawue) f-fwatmap { undewwyingcache.add(key, :3 _, t-ttw) }
 
-  override def checkAndSet(
-    key: K,
-    value: V1,
-    checksum: Checksum,
-    ttl: Duration
-  ): Future[Boolean] =
-    to(value) flatMap { underlyingCache.checkAndSet(key, _, checksum, ttl) }
+  o-ovewwide def checkandset(
+    key: k,
+    v-vawue: v1, UwU
+    checksum: c-checksum, o.O
+    t-ttw: duwation
+  ): f-futuwe[boowean] =
+    t-to(vawue) fwatmap { u-undewwyingcache.checkandset(key, (ˆ ﻌ ˆ)♡ _, c-checksum, ^^;; t-ttw) }
 
-  override def set(key: K, value: V1, ttl: Duration): Future[Unit] =
-    to(value) flatMap { underlyingCache.set(key, _, ttl) }
+  ovewwide d-def set(key: k, ʘwʘ vawue: v1, σωσ t-ttw: duwation): f-futuwe[unit] =
+    t-to(vawue) fwatmap { undewwyingcache.set(key, ^^;; _, t-ttw) }
 
-  override def replace(key: K, value: V1, ttl: Duration): Future[Boolean] =
-    to(value) flatMap { underlyingCache.replace(key, _, ttl) }
+  ovewwide def wepwace(key: k, ʘwʘ vawue: v-v1, ^^ ttw: duwation): futuwe[boowean] =
+    t-to(vawue) f-fwatmap { undewwyingcache.wepwace(key, _, nyaa~~ ttw) }
 
-  override def delete(key: K): Future[Boolean] =
-    underlyingCache.delete(key)
+  o-ovewwide def dewete(key: k-k): futuwe[boowean] =
+    undewwyingcache.dewete(key)
 }
 
 /**
- * Adaptor from a TtlCache[K1, V1] to an underlying TtlCache[K2, V2]
+ * a-adaptow fwom a ttwcache[k1, (///ˬ///✿) v1] t-to an undewwying ttwcache[k2, XD v-v2]
  *
- * a Transformer is used to map between value types, and a
- * one-way mapping is used for keys, making it possible to
- * store data in the underlying cache using keys that can't
- * easily be reverse-mapped.
+ * a twansfowmew is used to map between vawue types, :3 and a
+ * one-way mapping i-is used fow keys, òωó making it p-possibwe to
+ * s-stowe data in the undewwying cache using keys that can't
+ * easiwy b-be wevewse-mapped. ^^
  */
-class KeyValueTransformingTtlCache[K1, K2, V1, V2](
-  underlyingCache: TtlCache[K2, V2],
-  transformer: Transformer[V1, V2],
-  underlyingKey: K1 => K2)
-    extends KeyValueTransformingReadCache[K1, K2, V1, V2](
-      underlyingCache,
-      transformer,
-      underlyingKey
+cwass k-keyvawuetwansfowmingttwcache[k1, ^•ﻌ•^ k-k2, v1, σωσ v2](
+  u-undewwyingcache: ttwcache[k2, (ˆ ﻌ ˆ)♡ v2],
+  twansfowmew: t-twansfowmew[v1, v-v2], nyaa~~
+  undewwyingkey: k1 => k2)
+    e-extends keyvawuetwansfowmingweadcache[k1, ʘwʘ k2, v1, v2](
+      undewwyingcache, ^•ﻌ•^
+      t-twansfowmew, rawr x3
+      undewwyingkey
     )
-    with TtlCache[K1, V1] {
-  private[this] def to(v1: V1): Future[V2] = Future.const(transformer.to(v1))
+    w-with ttwcache[k1, 🥺 v-v1] {
+  pwivate[this] d-def to(v1: v1): futuwe[v2] = f-futuwe.const(twansfowmew.to(v1))
 
-  override def add(key: K1, value: V1, ttl: Duration): Future[Boolean] =
-    to(value) flatMap { underlyingCache.add(underlyingKey(key), _, ttl) }
+  o-ovewwide d-def add(key: k-k1, ʘwʘ vawue: v1, (˘ω˘) ttw: duwation): f-futuwe[boowean] =
+    t-to(vawue) f-fwatmap { undewwyingcache.add(undewwyingkey(key), o.O _, t-ttw) }
 
-  override def checkAndSet(
-    key: K1,
-    value: V1,
-    checksum: Checksum,
-    ttl: Duration
-  ): Future[Boolean] =
-    to(value) flatMap { underlyingCache.checkAndSet(underlyingKey(key), _, checksum, ttl) }
+  o-ovewwide def checkandset(
+    k-key: k1, σωσ
+    vawue: v-v1, (ꈍᴗꈍ)
+    checksum: c-checksum, (ˆ ﻌ ˆ)♡
+    ttw: duwation
+  ): f-futuwe[boowean] =
+    to(vawue) f-fwatmap { undewwyingcache.checkandset(undewwyingkey(key), o.O _, c-checksum, :3 ttw) }
 
-  override def set(key: K1, value: V1, ttl: Duration): Future[Unit] =
-    to(value) flatMap { underlyingCache.set(underlyingKey(key), _, ttl) }
+  o-ovewwide d-def set(key: k1, -.- vawue: v1, ( ͡o ω ͡o ) ttw: duwation): futuwe[unit] =
+    to(vawue) fwatmap { u-undewwyingcache.set(undewwyingkey(key), /(^•ω•^) _, ttw) }
 
-  override def replace(key: K1, value: V1, ttl: Duration): Future[Boolean] =
-    to(value) flatMap { underlyingCache.replace(underlyingKey(key), _, ttl) }
+  o-ovewwide d-def wepwace(key: k1, (⑅˘꒳˘) vawue: v1, òωó ttw: duwation): futuwe[boowean] =
+    t-to(vawue) f-fwatmap { undewwyingcache.wepwace(undewwyingkey(key), 🥺 _, (ˆ ﻌ ˆ)♡ ttw) }
 
-  override def delete(key: K1): Future[Boolean] =
-    underlyingCache.delete(underlyingKey(key))
+  o-ovewwide def d-dewete(key: k1): futuwe[boowean] =
+    undewwyingcache.dewete(undewwyingkey(key))
 }
 
-class KeyTransformingTtlCache[K1, K2, V](underlyingCache: TtlCache[K2, V], underlyingKey: K1 => K2)
-    extends KeyValueTransformingTtlCache[K1, K2, V, V](
-      underlyingCache,
-      Transformer.identity,
-      underlyingKey
+cwass keytwansfowmingttwcache[k1, -.- k-k2, v](undewwyingcache: t-ttwcache[k2, σωσ v], u-undewwyingkey: k-k1 => k2)
+    extends keyvawuetwansfowmingttwcache[k1, >_< k2, v, :3 v](
+      u-undewwyingcache, OwO
+      t-twansfowmew.identity, rawr
+      undewwyingkey
     )
 
-class KeyTransformingLockingCache[K1, K2, V](
-  underlyingCache: LockingCache[K2, V],
-  underlyingKey: K1 => K2)
-    extends KeyValueTransformingCache[K1, K2, V, V](
-      underlyingCache,
-      Transformer.identity,
-      underlyingKey
+cwass keytwansfowmingwockingcache[k1, (///ˬ///✿) k-k2, ^^ v](
+  undewwyingcache: wockingcache[k2, XD v-v], UwU
+  undewwyingkey: k1 => k2)
+    e-extends keyvawuetwansfowmingcache[k1, o.O k-k2, v, 😳 v](
+      undewwyingcache, (˘ω˘)
+      t-twansfowmew.identity, 🥺
+      u-undewwyingkey
     )
-    with LockingCache[K1, V] {
-  import LockingCache._
+    with wockingcache[k1, v-v] {
+  impowt wockingcache._
 
-  override def lockAndSet(key: K1, handler: Handler[V]): Future[Option[V]] =
-    underlyingCache.lockAndSet(underlyingKey(key), handler)
+  o-ovewwide d-def wockandset(key: k-k1, ^^ handwew: h-handwew[v]): futuwe[option[v]] =
+    u-undewwyingcache.wockandset(undewwyingkey(key), >w< h-handwew)
 }
 
-class KeyTransformingCounterCache[K1, K2](
-  underlyingCache: CounterCache[K2],
-  underlyingKey: K1 => K2)
-    extends KeyTransformingCache[K1, K2, Long](underlyingCache, underlyingKey)
-    with CounterCache[K1] {
-  override def incr(key: K1, delta: Int = 1): Future[Option[Long]] = {
-    underlyingCache.incr(underlyingKey(key), delta)
+c-cwass keytwansfowmingcountewcache[k1, k2](
+  u-undewwyingcache: countewcache[k2], ^^;;
+  undewwyingkey: k-k1 => k2)
+    e-extends keytwansfowmingcache[k1, k-k2, (˘ω˘) wong](undewwyingcache, OwO undewwyingkey)
+    with countewcache[k1] {
+  ovewwide def incw(key: k1, (ꈍᴗꈍ) dewta: i-int = 1): futuwe[option[wong]] = {
+    undewwyingcache.incw(undewwyingkey(key), òωó d-dewta)
   }
 
-  override def decr(key: K1, delta: Int = 1): Future[Option[Long]] = {
-    underlyingCache.decr(underlyingKey(key), delta)
+  o-ovewwide def decw(key: k1, ʘwʘ dewta: int = 1): futuwe[option[wong]] = {
+    u-undewwyingcache.decw(undewwyingkey(key), ʘwʘ dewta)
   }
 }

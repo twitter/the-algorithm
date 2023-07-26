@@ -1,13 +1,13 @@
-package com.twitter.visibility.interfaces.cards
+package com.twittew.visibiwity.intewfaces.cawds
 
-import com.twitter.tweetypie.{thriftscala => tweetypiethrift}
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+impowt com.twittew.tweetypie.{thwiftscawa => t-tweetypiethwift}
+i-impowt c-com.twittew.visibiwity.modews.safetywevew
+impowt c-com.twittew.visibiwity.modews.viewewcontext
 
-case class CardVisibilityRequest(
-  cardUri: String,
-  authorId: Option[Long],
-  tweetOpt: Option[tweetypiethrift.Tweet],
-  isPollCardType: Boolean,
-  safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext)
+c-case cwass cawdvisibiwitywequest(
+  c-cawduwi: s-stwing, σωσ
+  authowid: o-option[wong], σωσ
+  tweetopt: option[tweetypiethwift.tweet], >_<
+  ispowwcawdtype: boowean, :3
+  safetywevew: safetywevew, (U ﹏ U)
+  viewewcontext: v-viewewcontext)

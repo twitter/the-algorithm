@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.clients.adserver
+package com.twittew.fowwow_wecommendations.common.cwients.adsewvew
 
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
+impowt com.twittew.adsewvew.thwiftscawa.newadsewvew
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.thwiftmux
+i-impowt c-com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.common.basecwientmoduwe
 
-object AdserverModule extends BaseClientModule[NewAdServer.MethodPerEndpoint] with MtlsClient {
-  override val label = "adserver"
-  override val dest = "/s/ads/adserver"
+o-object adsewvewmoduwe e-extends b-basecwientmoduwe[newadsewvew.methodpewendpoint] with mtwscwient {
+  ovewwide vaw wabew = "adsewvew"
+  ovewwide v-vaw dest = "/s/ads/adsewvew"
 
-  override def configureThriftMuxClient(client: ThriftMux.Client): ThriftMux.Client =
-    client.withRequestTimeout(500.millis)
+  ovewwide def configuwethwiftmuxcwient(cwient: t-thwiftmux.cwient): thwiftmux.cwient =
+    c-cwient.withwequesttimeout(500.miwwis)
 }

@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.models
+package com.twittew.fowwow_wecommendations.modews
 
-import com.twitter.follow_recommendations.common.models.DebugOptions
-import com.twitter.follow_recommendations.common.models.DebugOptions.fromDebugParamsThrift
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.timelines.configapi.{FeatureValue => ConfigApiFeatureValue}
+impowt com.twittew.fowwow_wecommendations.common.modews.debugoptions
+i-impowt com.twittew.fowwow_wecommendations.common.modews.debugoptions.fwomdebugpawamsthwift
+i-impowt com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
+impowt c-com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
+impowt c-com.twittew.timewines.configapi.{featuwevawue => c-configapifeatuwevawue}
 
-case class DebugParams(
-  featureOverrides: Option[Map[String, ConfigApiFeatureValue]],
-  debugOptions: Option[DebugOptions])
+c-case cwass debugpawams(
+  featuweovewwides: option[map[stwing, rawr configapifeatuwevawue]], OwO
+  d-debugoptions: option[debugoptions])
 
-object DebugParams {
-  def fromThrift(thrift: t.DebugParams): DebugParams = DebugParams(
-    featureOverrides = thrift.featureOverrides.map { map =>
-      map.mapValues(FeatureValue.fromThrift).toMap
-    },
-    debugOptions = Some(
-      fromDebugParamsThrift(thrift)
+object d-debugpawams {
+  def fwomthwift(thwift: t-t.debugpawams): debugpawams = debugpawams(
+    featuweovewwides = t-thwift.featuweovewwides.map { map =>
+      m-map.mapvawues(featuwevawue.fwomthwift).tomap
+    }, (U ﹏ U)
+    d-debugoptions = some(
+      fwomdebugpawamsthwift(thwift)
     )
   )
-  def toOfflineThrift(model: DebugParams): offline.OfflineDebugParams =
-    offline.OfflineDebugParams(randomizationSeed = model.debugOptions.flatMap(_.randomizationSeed))
+  def tooffwinethwift(modew: debugpawams): o-offwine.offwinedebugpawams =
+    offwine.offwinedebugpawams(wandomizationseed = modew.debugoptions.fwatmap(_.wandomizationseed))
 }
 
-trait HasFrsDebugParams {
-  def frsDebugParams: Option[DebugParams]
+twait hasfwsdebugpawams {
+  d-def fwsdebugpawams: option[debugpawams]
 }

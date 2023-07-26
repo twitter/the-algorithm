@@ -1,22 +1,14 @@
-jvm_binary(
-    name = "bin",
-    basename = "representation-scorer",
-    main = "com.twitter.representationscorer.RepresentationScorerFedServerMain",
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/inject/inject-logback/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "representation-scorer/server/src/main/resources",
-        "representation-scorer/server/src/main/scala/com/twitter/representationscorer",
-        "twitter-server/logback-classic/src/main/scala",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "finatwa/inject/inject-cowe/swc/main/scawa", òωó
+        "wepwesentation-managew/sewvew/swc/main/scawa/com/twittew/wepwesentation_managew/cowumns", o.O
+        "wepwesentation-managew/sewvew/swc/main/scawa/com/twittew/wepwesentation_managew/moduwes", (U ᵕ U❁)
+        "wepwesentation-managew/sewvew/swc/main/scawa/com/twittew/wepwesentation_managew/stowe", (⑅˘꒳˘)
+        "wepwesentation-managew/sewvew/swc/main/thwift:thwift-scawa", ( ͡o ω ͡o )
+        "stwato/swc/main/scawa/com/twittew/stwato/fed", UwU
+        "stwato/swc/main/scawa/com/twittew/stwato/fed/sewvew", rawr x3
     ],
-)
-
-#  Aurora Workflows build phase convention requires a jvm_app named with ${project-name}-app
-jvm_app(
-    name = "representation-scorer-app",
-    archive = "zip",
-    binary = ":bin",
-    tags = ["bazel-compatible"],
 )

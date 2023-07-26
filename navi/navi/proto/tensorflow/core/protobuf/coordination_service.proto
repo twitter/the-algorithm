@@ -1,256 +1,256 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/compiler/xla/pjrt/distributed/protocol.proto";
-import "tensorflow/core/framework/device_attributes.proto";
+impowt "tensowfwow/compiwew/xwa/pjwt/distwibuted/pwotocow.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/device_attwibutes.pwoto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Represents a remote worker task, specified by job name and task id.
-message CoordinatedTask {
-  string job_name = 1;
+// w-wepwesents a-a wemote wowkew t-task, OwO specified b-by job nyame a-and task id. (˘ω˘)
+message c-coowdinatedtask {
+  stwing job_name = 1;
   int32 task_id = 2;
 }
 
-// Status payload for all coordination service errors.
-// Note: an empty proto may be set if the error is triggered by the task's own
-// agent calls (i.e. not propagated by the service from another remote task).
-message CoordinationServiceError {
-  // Removed fields which used to specify the error origin.
-  reserved 1, 2;
-  // If true, error is reported via the agent API by the user (and not an
-  // internal service error).
-  bool is_reported_error = 3;
-  // Denotes which task hit the error. If unset, the error originated from the
-  // same task that is processing this error.
-  CoordinatedTask source_task = 4;
+// status p-paywoad fow aww coowdination sewvice ewwows. òωó
+// n-note: an empty pwoto may be set i-if the ewwow is twiggewed by the task's own
+// agent cawws (i.e. ( ͡o ω ͡o ) n-nyot pwopagated by the sewvice f-fwom anothew wemote t-task). UwU
+message coowdinationsewviceewwow {
+  // wemoved fiewds which used to specify the ewwow o-owigin. /(^•ω•^)
+  wesewved 1, (ꈍᴗꈍ) 2;
+  // if twue, 😳 ewwow is wepowted via the agent api by the usew (and nyot a-an
+  // intewnaw sewvice ewwow). mya
+  b-boow is_wepowted_ewwow = 3;
+  // d-denotes which t-task hit the e-ewwow. mya if unset, the ewwow owiginated fwom the
+  // s-same task that is pwocessing this ewwow. /(^•ω•^)
+  c-coowdinatedtask souwce_task = 4;
 }
 
-// Represent device information from different runtimes.
-message TfDeviceList {
-  repeated DeviceAttributes devices = 1;
+// wepwesent device infowmation fwom diffewent wuntimes. ^^;;
+message t-tfdevicewist {
+  wepeated d-deviceattwibutes d-devices = 1;
 }
-message XlaDeviceList {
-  xla.GlobalTopologyProto devices = 1;
+m-message xwadevicewist {
+  xwa.gwobawtopowogypwoto devices = 1;
 }
-message CoordinationServiceDeviceInfo {
-  oneof type {
-    TfDeviceList tf = 1;
-    XlaDeviceList xla = 2;
+message coowdinationsewvicedeviceinfo {
+  o-oneof t-type {
+    tfdevicewist tf = 1;
+    x-xwadevicewist x-xwa = 2;
   }
 }
 
-// Request and response messages for registering a worker to the cluster leader.
-// Use `job` and `task` to represent the role of the worker, and use
-// `incarnation` to uniquely identify a worker process. Leader responds with its
-// `incarnation` to identify a leader process.
-message RegisterWorkerRequest {
-  // Removed fields which used to specify the task.
-  reserved 1, 2;
-  fixed64 incarnation = 3;
-  // Moved the field `local_device_attributes` from this request message to
-  // WaitForAllTasksRequest defined below.
-  reserved 4;
-  CoordinatedTask source_task = 5;
+// wequest and w-wesponse messages fow wegistewing a-a wowkew to the cwustew weadew. 🥺
+// use `job` a-and `task` to wepwesent the wowe o-of the wowkew, ^^ and use
+// `incawnation` t-to uniquewy i-identify a wowkew pwocess. ^•ﻌ•^ weadew wesponds with its
+// `incawnation` to identify a weadew pwocess. /(^•ω•^)
+message w-wegistewwowkewwequest {
+  // w-wemoved fiewds which u-used to specify t-the task. ^^
+  wesewved 1, 🥺 2;
+  f-fixed64 incawnation = 3;
+  // moved the fiewd `wocaw_device_attwibutes` fwom this w-wequest message to
+  // waitfowawwtaskswequest defined bewow. (U ᵕ U❁)
+  wesewved 4;
+  coowdinatedtask s-souwce_task = 5;
 }
 
-message RegisterWorkerResponse {
-  fixed64 leader_incarnation = 1;
+message wegistewwowkewwesponse {
+  f-fixed64 weadew_incawnation = 1;
 }
 
-// Request and response messages for sending heartbeats.
-message HeartbeatRequest {
-  // Removed fields which used to specify the remote task.
-  reserved 1, 2;
-  fixed64 incarnation = 3;
-  CoordinatedTask source_task = 4;
+// w-wequest a-and wesponse messages fow sending h-heawtbeats. 😳😳😳
+m-message heawtbeatwequest {
+  // w-wemoved fiewds w-which used to specify the wemote task. nyaa~~
+  wesewved 1, (˘ω˘) 2;
+  f-fixed64 i-incawnation = 3;
+  c-coowdinatedtask s-souwce_task = 4;
 }
 
-message HeartbeatResponse {
-  fixed64 leader_incarnation = 1;
-  // If there are failures in cluster, use additional metadata in response to
-  // broadcast error code and message to other workers.
+m-message heawtbeatwesponse {
+  fixed64 weadew_incawnation = 1;
+  // i-if thewe awe faiwuwes in cwustew, use additionaw metadata in wesponse to
+  // bwoadcast e-ewwow code and message to othew wowkews. >_<
 }
 
-// Request and response messages for waiting for all tasks.
-message WaitForAllTasksRequest {
-  // Removed fields which used to specify the remote task.
-  reserved 1, 2;
-  // Removed field that specifically used TF device info.
-  reserved 3;
-  // All local device attributes on the request sender.
-  CoordinationServiceDeviceInfo local_device_info = 4;
-  CoordinatedTask source_task = 5;
+// wequest and w-wesponse messages f-fow waiting fow a-aww tasks. XD
+message waitfowawwtaskswequest {
+  // w-wemoved fiewds which used to s-specify the wemote t-task. rawr x3
+  wesewved 1, ( ͡o ω ͡o ) 2;
+  // wemoved fiewd that specificawwy used tf device info. :3
+  wesewved 3;
+  // aww wocaw d-device attwibutes on the wequest s-sendew. mya
+  coowdinationsewvicedeviceinfo wocaw_device_info = 4;
+  c-coowdinatedtask s-souwce_task = 5;
 }
 
-message WaitForAllTasksResponse {
-  fixed64 leader_incarnation = 1;
-  // Removed field that specifically used TF device info.
-  reserved 2;
-  // All devices in the cluster.
-  CoordinationServiceDeviceInfo cluster_device_info = 3;
+message waitfowawwtaskswesponse {
+  f-fixed64 w-weadew_incawnation = 1;
+  // wemoved fiewd that s-specificawwy u-used tf device info. σωσ
+  wesewved 2;
+  // aww devices in the cwustew. (ꈍᴗꈍ)
+  coowdinationsewvicedeviceinfo c-cwustew_device_info = 3;
 }
 
-// Request and response messages for reporting errors to task.
-message ReportErrorToAgentRequest {
-  int32 error_code = 1;
-  string error_message = 2;
-  // Removed fields that are embedded in payload.
-  reserved 3, 4;
-  CoordinationServiceError error_payload = 5;
+// w-wequest and w-wesponse messages fow wepowting e-ewwows to task. OwO
+m-message wepowtewwowtoagentwequest {
+  int32 ewwow_code = 1;
+  s-stwing ewwow_message = 2;
+  // wemoved fiewds that awe embedded in p-paywoad. o.O
+  wesewved 3, 😳😳😳 4;
+  c-coowdinationsewviceewwow ewwow_paywoad = 5;
 }
 
-message ReportErrorToAgentResponse {}
+message w-wepowtewwowtoagentwesponse {}
 
-// Request and response messages for reporting errors to service instance.
-message ReportErrorToServiceRequest {
-  int32 error_code = 1;
-  string error_message = 2;
-  // Removed fields which used to specify the error origin.
-  reserved 3, 4;
-  CoordinatedTask error_origin = 5;
+// w-wequest and wesponse messages fow wepowting ewwows to sewvice i-instance. /(^•ω•^)
+message wepowtewwowtosewvicewequest {
+  int32 ewwow_code = 1;
+  stwing ewwow_message = 2;
+  // w-wemoved fiewds which used to specify t-the ewwow owigin. OwO
+  w-wesewved 3, ^^ 4;
+  coowdinatedtask ewwow_owigin = 5;
 }
 
-message ReportErrorToServiceResponse {}
+message w-wepowtewwowtosewvicewesponse {}
 
-// Message for configuration key value.
-// Key is structured like Unix file system, with multiple levels of directory
-// names separated by the slash ('/') characters.
-message KeyValueEntry {
-  string key = 1;
-  bytes value = 2;
+// m-message fow configuwation key vawue. (///ˬ///✿)
+// key is stwuctuwed w-wike unix fiwe system, (///ˬ///✿) with muwtipwe w-wevews of diwectowy
+// nyames sepawated by the swash ('/') c-chawactews. (///ˬ///✿)
+message keyvawueentwy {
+  s-stwing key = 1;
+  b-bytes vawue = 2;
 }
 
-// Request and response messages for inserting configuration key-value data.
-message InsertKeyValueRequest {
-  KeyValueEntry kv = 1;
+// w-wequest and wesponse messages fow i-insewting configuwation k-key-vawue d-data. ʘwʘ
+message insewtkeyvawuewequest {
+  k-keyvawueentwy k-kv = 1;
 }
 
-message InsertKeyValueResponse {}
+message insewtkeyvawuewesponse {}
 
-// Request and response messages for getting configuration key-value data.
-message GetKeyValueRequest {
-  string key = 1;
+// wequest a-and wesponse m-messages fow getting c-configuwation key-vawue data. ^•ﻌ•^
+message getkeyvawuewequest {
+  s-stwing key = 1;
 }
 
-message GetKeyValueResponse {
-  KeyValueEntry kv = 1;
+message getkeyvawuewesponse {
+  k-keyvawueentwy k-kv = 1;
 }
 
-// Request and response messages for deleting configuration key-value data.
-// When is_directory is true, delete key-values recursively under `key`.
-message DeleteKeyValueRequest {
-  string key = 1;
-  bool is_directory = 2;
+// wequest and wesponse messages fow deweting configuwation k-key-vawue d-data. OwO
+// when i-is_diwectowy i-is twue, (U ﹏ U) dewete key-vawues wecuwsivewy u-undew `key`. (ˆ ﻌ ˆ)♡
+message dewetekeyvawuewequest {
+  stwing key = 1;
+  boow is_diwectowy = 2;
 }
 
-message DeleteKeyValueResponse {}
+message dewetekeyvawuewesponse {}
 
-// Request and response messages for generic sync barriers.
-message BarrierRequest {
-  string barrier_id = 1;
-  int64 barrier_timeout_in_ms = 2;
-  // Denotes list of tasks that will wait for the barrier. If unspecified, it
-  // implies that the entire cluster is participating in the barrier.
-  repeated CoordinatedTask tasks = 3;
-  // Task that is making the request.
-  CoordinatedTask source_task = 4;
+// wequest a-and wesponse messages fow genewic s-sync bawwiews. (⑅˘꒳˘)
+message bawwiewwequest {
+  s-stwing bawwiew_id = 1;
+  i-int64 bawwiew_timeout_in_ms = 2;
+  // denotes w-wist of tasks t-that wiww wait f-fow the bawwiew. (U ﹏ U) i-if unspecified, o.O i-it
+  // impwies that the entiwe cwustew is pawticipating in the bawwiew. mya
+  wepeated coowdinatedtask tasks = 3;
+  // t-task that is m-making the wequest. XD
+  c-coowdinatedtask souwce_task = 4;
 }
 
-message BarrierResponse {}
+m-message bawwiewwesponse {}
 
-// Request and response messages for  cancelling generic sync barriers.
-message CancelBarrierRequest {
-  string barrier_id = 1;
-  // Task that is making the request.
-  CoordinatedTask source_task = 2;
+// wequest and wesponse m-messages fow  cancewwing g-genewic sync bawwiews. òωó
+m-message cancewbawwiewwequest {
+  stwing bawwiew_id = 1;
+  // task t-that is making t-the wequest. (˘ω˘)
+  coowdinatedtask s-souwce_task = 2;
 }
 
-message CancelBarrierResponse {}
+m-message cancewbawwiewwesponse {}
 
-// Coordination Service defines a TensorFlow service that controls and
-// coordinates distributed execution in a cluster of multiple workers.
+// coowdination sewvice defines a tensowfwow sewvice that c-contwows and
+// c-coowdinates distwibuted e-execution i-in a cwustew of m-muwtipwe wowkews.
 //
-// The service keeps track of the cluster configuration and the state of cluster
-// members or the leader depending on the role of the current worker. The
-// distributed runtime leverages this service to coordinate and perform cluster
-// initialization, check the healthiness of workers, and propagate error
-// messages to the cluster.
-service CoordinationService {
-  // Register task to coordination service so that the service starts to track
-  // liveness of the task. RPC blocks and returns only when it registers to
-  // the service successfully, or error happens in the registering process.
-  rpc RegisterWorker(RegisterWorkerRequest) returns (RegisterWorkerResponse);
+// the sewvice k-keeps twack o-of the cwustew configuwation and t-the state of c-cwustew
+// membews ow the weadew d-depending on the wowe of the cuwwent wowkew. :3 the
+// d-distwibuted wuntime wevewages t-this sewvice t-to coowdinate and pewfowm cwustew
+// i-initiawization, OwO check the heawthiness of wowkews, mya a-and pwopagate e-ewwow
+// messages t-to the cwustew. (˘ω˘)
+sewvice coowdinationsewvice {
+  // wegistew task to coowdination s-sewvice so that the sewvice stawts to twack
+  // w-wiveness o-of the task. o.O wpc bwocks and wetuwns o-onwy when it wegistews to
+  // t-the sewvice s-successfuwwy, (✿oωo) ow ewwow happens in the wegistewing p-pwocess. (ˆ ﻌ ˆ)♡
+  wpc wegistewwowkew(wegistewwowkewwequest) wetuwns (wegistewwowkewwesponse);
 
-  // Heartbeat message from task to coordination service. Heartbeat is sent from
-  // a task to refresh its timestamp on leader to avoid it becoming stale.
-  // RPC responds immediately after refreshing the timestamp on leader.
-  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+  // h-heawtbeat message f-fwom task to coowdination sewvice. ^^;; h-heawtbeat is sent fwom
+  // a-a task to wefwesh i-its timestamp o-on weadew to avoid it becoming stawe. OwO
+  // wpc wesponds immediatewy aftew wefweshing the timestamp on weadew. 🥺
+  wpc heawtbeat(heawtbeatwequest) wetuwns (heawtbeatwesponse);
 
-  // Wait for all tasks in the cluster to be up and running. The RPC request
-  // only gets responded when all workers are registered, or some error occurs.
-  rpc WaitForAllTasks(WaitForAllTasksRequest) returns (WaitForAllTasksResponse);
+  // wait fow aww tasks in the cwustew to be up and wunning. mya the w-wpc wequest
+  // o-onwy gets wesponded when aww wowkews awe wegistewed, 😳 o-ow some ewwow o-occuws. òωó
+  wpc w-waitfowawwtasks(waitfowawwtaskswequest) wetuwns (waitfowawwtaskswesponse);
 
-  // Report error to the task. RPC sets the receiving instance of coordination
-  // service agent to error state permanently.
-  // TODO(b/195990880): Consider splitting this into a different RPC service.
-  rpc ReportErrorToAgent(ReportErrorToAgentRequest)
-      returns (ReportErrorToAgentResponse);
+  // w-wepowt ewwow to the task. /(^•ω•^) wpc s-sets the weceiving i-instance of coowdination
+  // s-sewvice agent to ewwow state pewmanentwy. -.-
+  // t-todo(b/195990880): c-considew spwitting this into a diffewent wpc s-sewvice.
+  wpc w-wepowtewwowtoagent(wepowtewwowtoagentwequest)
+      w-wetuwns (wepowtewwowtoagentwesponse);
 
-  // Report task error to coordination service. RPC sets the service-side task
-  // state to error, and propagate the error to other tasks in the cluster.
-  rpc ReportErrorToService(ReportErrorToServiceRequest)
-      returns (ReportErrorToServiceResponse);
+  // w-wepowt task ewwow t-to coowdination s-sewvice. òωó wpc sets t-the sewvice-side t-task
+  // state t-to ewwow, /(^•ω•^) and pwopagate the e-ewwow to othew t-tasks in the cwustew.
+  w-wpc wepowtewwowtosewvice(wepowtewwowtosewvicewequest)
+      wetuwns (wepowtewwowtosewvicewesponse);
 
-  // Insert configuration key-value that will be accessible to all cluster
-  // workers. The key can be formatted as Unix file path with hierarchy. The
-  // coordination service key-value store should only be used for cluster
-  // configuration data.
-  rpc InsertKeyValue(InsertKeyValueRequest) returns (InsertKeyValueResponse);
+  // i-insewt configuwation key-vawue that wiww be accessibwe t-to aww cwustew
+  // wowkews. /(^•ω•^) t-the key can b-be fowmatted as u-unix fiwe path with hiewawchy. 😳 t-the
+  // coowdination sewvice key-vawue s-stowe shouwd onwy be used f-fow cwustew
+  // configuwation d-data. :3
+  wpc insewtkeyvawue(insewtkeyvawuewequest) wetuwns (insewtkeyvawuewesponse);
 
-  // Get configuration key-value. The request blocks until the key-value data
-  // becomes available (i.e., set by a worker in the cluster).
-  rpc GetKeyValue(GetKeyValueRequest) returns (GetKeyValueResponse);
+  // get configuwation key-vawue. (U ᵕ U❁) the wequest b-bwocks untiw the key-vawue d-data
+  // becomes a-avaiwabwe (i.e., set by a wowkew in the cwustew). ʘwʘ
+  wpc getkeyvawue(getkeyvawuewequest) w-wetuwns (getkeyvawuewesponse);
 
-  // Delete configuration key-value. If is_directory is set in request,
-  // recursively clean up all key-values under the path specified by `key`.
-  rpc DeleteKeyValue(DeleteKeyValueRequest) returns (DeleteKeyValueResponse);
+  // dewete configuwation k-key-vawue. o.O if i-is_diwectowy is s-set in wequest, ʘwʘ
+  // wecuwsivewy cwean up aww k-key-vawues undew t-the path specified by `key`. ^^
+  w-wpc dewetekeyvawue(dewetekeyvawuewequest) wetuwns (dewetekeyvawuewesponse);
 
-  // Blocks until all (or a subset of) tasks are at the barrier or the barrier
-  // fails.
+  // bwocks untiw aww (ow a-a subset of) tasks awe at t-the bawwiew ow t-the bawwiew
+  // f-faiws. ^•ﻌ•^
   //
-  // `barrier_id` should be unique across barriers. Once the barrier has passed
-  // or failed, subsequent calls will not block, and immediately respond with
-  // the previous response.
+  // `bawwiew_id` shouwd be unique a-acwoss bawwiews. mya o-once the bawwiew h-has passed
+  // o-ow faiwed, UwU subsequent cawws wiww n-not bwock, >_< and i-immediatewy wespond w-with
+  // t-the pwevious wesponse. /(^•ω•^)
   //
-  // The first WaitAtBarrier() call received by the service for a particular
-  // barrier id is special in that it determines the barrier deadline based on
-  // timeout duration.
-  // However, if subsequent calls by different agents specify a different set of
-  // `tasks` for the same `barrier_id`, the barrier will fail instantly.
+  // t-the fiwst waitatbawwiew() c-caww w-weceived by the s-sewvice fow a pawticuwaw
+  // bawwiew i-id is speciaw in that it detewmines t-the bawwiew deadwine based o-on
+  // timeout d-duwation. òωó
+  // h-howevew, σωσ if subsequent cawws by diffewent agents specify a diffewent s-set of
+  // `tasks` f-fow t-the same `bawwiew_id`, ( ͡o ω ͡o ) the bawwiew wiww faiw instantwy. nyaa~~
   //
-  // If no tasks are specified (default), the barrier will block for all the
-  // connected tasks.
+  // if nyo tasks a-awe specified (defauwt), :3 t-the bawwiew wiww bwock f-fow aww the
+  // c-connected tasks. UwU
   //
-  // Possible service errors:
-  //   - DeadlineExceeded: Timed out waiting for specified tasks at the barrier.
-  //      Deadline is determined by the server timestamp when it receives the
-  //      first WaitAtBarrier() + timeout duration.
-  //   - Cancelled: One of the tasks called CancelBarrier().
-  //   - Aborted: Service is shutting down.
-  //   - Internal: Any participating task is in ERROR state.
-  //   - InvalidArgument: (1) Conflicting tasks specified by different agents
-  //       for the same barrier, (2) one of the participating tasks is not in
-  //       the cluster, or (3) task making the request is not included in the
-  //       list of participating tasks.
-  rpc Barrier(BarrierRequest) returns (BarrierResponse);
+  // possibwe sewvice ewwows:
+  //   - deadwineexceeded: t-timed out waiting f-fow specified t-tasks at the bawwiew. o.O
+  //      d-deadwine is detewmined by the sewvew timestamp when i-it weceives t-the
+  //      fiwst waitatbawwiew() + timeout duwation. (ˆ ﻌ ˆ)♡
+  //   - c-cancewwed: one of the tasks cawwed cancewbawwiew(). ^^;;
+  //   - a-abowted: sewvice is s-shutting down. ʘwʘ
+  //   - i-intewnaw: any pawticipating t-task is in e-ewwow state.
+  //   - invawidawgument: (1) c-confwicting tasks specified b-by diffewent a-agents
+  //       f-fow the same b-bawwiew, σωσ (2) one of the pawticipating t-tasks i-is nyot in
+  //       t-the cwustew, ^^;; ow (3) task making t-the wequest is not incwuded in the
+  //       w-wist of pawticipating t-tasks. ʘwʘ
+  w-wpc bawwiew(bawwiewwequest) wetuwns (bawwiewwesponse);
 
-  // Aborts the barrier if it is ongoing.
-  // Current and future WaitAtBarrier() calls with the same id will return a
-  // CANCELLED error status.
-  // Possible service errors:
-  //   - FailedPrecondition: Barrier has already been passed.
-  //   - NotFound: No barrier with the specified id is found.
-  rpc CancelBarrier(CancelBarrierRequest) returns (CancelBarrierResponse);
+  // abowts the bawwiew if it is ongoing. ^^
+  // cuwwent and futuwe waitatbawwiew() c-cawws with the same i-id wiww wetuwn a-a
+  // cancewwed ewwow status. nyaa~~
+  // possibwe sewvice e-ewwows:
+  //   - faiwedpwecondition: b-bawwiew h-has awweady been p-passed. (///ˬ///✿)
+  //   - n-nyotfound: nyo b-bawwiew with the specified id is found. XD
+  wpc cancewbawwiew(cancewbawwiewwequest) wetuwns (cancewbawwiewwesponse);
 }

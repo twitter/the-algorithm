@@ -1,359 +1,359 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.expandodo.thriftscala.Card2RequestOptions
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.gizmoduck.util.UserUtil
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.repository.Card2Repository
-import com.twitter.tweetypie.repository.StratoPromotedTweetRepository
-import com.twitter.tweetypie.repository.StratoSubscriptionVerificationRepository
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.repository.UrlCard2Key
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.EditOptions
-import com.twitter.tweetypie.thriftscala.TweetCreateState
-import com.twitter.tweetypie.util.EditControlUtil._
-import com.twitter.tweetypie.thriftscala.CardReference
-import com.twitter.tweetypie.thriftscala.EditControlInitial
-import com.twitter.tweetypie.thriftscala.PostTweetRequest
-import com.twitter.tweetypie.util.CommunityAnnotation
-import com.twitter.tweetypie.util.EditControlUtil
-import com.twitter.util.Future
+impowt c-com.twittew.expandodo.thwiftscawa.cawd2wequestoptions
+i-impowt c-com.twittew.featuweswitches.v2.featuweswitchwesuwts
+i-impowt com.twittew.gizmoduck.utiw.usewutiw
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe.tweetcweatefaiwuwe
+i-impowt com.twittew.tweetypie.wepositowy.cawd2wepositowy
+impowt com.twittew.tweetypie.wepositowy.stwatopwomotedtweetwepositowy
+impowt com.twittew.tweetypie.wepositowy.stwatosubscwiptionvewificationwepositowy
+impowt com.twittew.tweetypie.wepositowy.tweetquewy
+impowt c-com.twittew.tweetypie.wepositowy.tweetwepositowy
+impowt com.twittew.tweetypie.wepositowy.uwwcawd2key
+impowt com.twittew.tweetypie.thwiftscawa.editcontwow
+i-impowt com.twittew.tweetypie.thwiftscawa.editoptions
+impowt c-com.twittew.tweetypie.thwiftscawa.tweetcweatestate
+impowt com.twittew.tweetypie.utiw.editcontwowutiw._
+impowt c-com.twittew.tweetypie.thwiftscawa.cawdwefewence
+impowt com.twittew.tweetypie.thwiftscawa.editcontwowinitiaw
+i-impowt com.twittew.tweetypie.thwiftscawa.posttweetwequest
+i-impowt com.twittew.tweetypie.utiw.communityannotation
+impowt com.twittew.tweetypie.utiw.editcontwowutiw
+impowt com.twittew.utiw.futuwe
 
-object EditControlBuilder {
-  type Type = Request => Future[Option[EditControl]]
+object editcontwowbuiwdew {
+  t-type type = wequest => futuwe[option[editcontwow]]
 
-  val editTweetCountStat = "edit_tweet_count"
-  val editControlQueryOptions = TweetQuery.Options(
-    TweetQuery.Include(Set(Tweet.CoreDataField.id, Tweet.EditControlField.id))
+  vaw edittweetcountstat = "edit_tweet_count"
+  vaw editcontwowquewyoptions = tweetquewy.options(
+    t-tweetquewy.incwude(set(tweet.cowedatafiewd.id, o.O tweet.editcontwowfiewd.id))
   )
-  val TweetEditCreationEnabledKey = "tweet_edit_creation_enabled"
-  val TweetEditCreationEnabledForTwitterBlueKey = "tweet_edit_creation_enabled_for_twitter_blue"
+  v-vaw tweeteditcweationenabwedkey = "tweet_edit_cweation_enabwed"
+  v-vaw t-tweeteditcweationenabwedfowtwittewbwuekey = "tweet_edit_cweation_enabwed_fow_twittew_bwue"
 
-  val pollCardNames: Set[String] = Set(
-    "poll2choice_text_only",
-    "poll3choice_text_only",
-    "poll4choice_text_only",
-    "poll2choice_image",
-    "poll3choice_image",
-    "poll4choice_image",
-    "poll2choice_video",
-    "poll3choice_video",
-    "poll4choice_video",
+  vaw p-powwcawdnames: set[stwing] = set(
+    "poww2choice_text_onwy", 😳
+    "poww3choice_text_onwy", o.O
+    "poww4choice_text_onwy", ^^;;
+    "poww2choice_image", ( ͡o ω ͡o )
+    "poww3choice_image", ^^;;
+    "poww4choice_image", ^^;;
+    "poww2choice_video", XD
+    "poww3choice_video", 🥺
+    "poww4choice_video", (///ˬ///✿)
   )
 
-  /** Used just for checking card name for poll check in case cards platform key not provided. */
-  val defaultCardsPlatformKey = "iPhone-13"
+  /** u-used just fow checking cawd nyame fow p-poww check in case cawds pwatfowm key nyot pwovided. (U ᵕ U❁) */
+  vaw defauwtcawdspwatfowmkey = "iphone-13"
 
   /**
-   * Do we assume a Tweet has a poll (which makes it not editable) when it has a card
-   * that could be a poll, and it cannot be resolved at create.
+   * do we assume a-a tweet has a poww (which makes i-it nyot editabwe) w-when it has a c-cawd
+   * that couwd be a poww, ^^;; and it cannot be wesowved at cweate. ^^;;
    */
-  val isPollCardAssumption = true
+  v-vaw i-ispowwcawdassumption = twue
 
-  val tweetEditSubscriptionResource = "feature/tweet_edit"
+  v-vaw tweeteditsubscwiptionwesouwce = "featuwe/tweet_edit"
 
-  val log: Logger = Logger(getClass)
+  v-vaw wog: woggew = woggew(getcwass)
 
-  case class Request(
-    postTweetRequest: PostTweetRequest,
-    tweet: Tweet,
-    matchedResults: Option[FeatureSwitchResults]) {
-    def editOptions: Option[EditOptions] = postTweetRequest.editOptions
+  c-case cwass wequest(
+    posttweetwequest: p-posttweetwequest, rawr
+    tweet: tweet,
+    matchedwesuwts: o-option[featuweswitchwesuwts]) {
+    def editoptions: o-option[editoptions] = posttweetwequest.editoptions
 
-    def authorId: UserId = postTweetRequest.userId
+    def authowid: usewid = p-posttweetwequest.usewid
 
-    def createdAt: Time = Time.fromMilliseconds(tweet.coreData.get.createdAtSecs * 1000L)
+    d-def cweatedat: time = time.fwommiwwiseconds(tweet.cowedata.get.cweatedatsecs * 1000w)
 
-    def tweetId: TweetId = tweet.id
+    def tweetid: tweetid = tweet.id
 
-    def cardReference: Option[CardReference] =
-      postTweetRequest.additionalFields.flatMap(_.cardReference)
+    def cawdwefewence: option[cawdwefewence] =
+      posttweetwequest.additionawfiewds.fwatmap(_.cawdwefewence)
 
-    def cardsPlatformKey: Option[String] =
-      postTweetRequest.hydrationOptions.flatMap(_.cardsPlatformKey)
+    d-def cawdspwatfowmkey: o-option[stwing] =
+      posttweetwequest.hydwationoptions.fwatmap(_.cawdspwatfowmkey)
   }
 
-  def apply(
-    tweetRepo: TweetRepository.Type,
-    card2Repo: Card2Repository.Type,
-    promotedTweetRepo: StratoPromotedTweetRepository.Type,
-    subscriptionVerificationRepo: StratoSubscriptionVerificationRepository.Type,
-    disablePromotedTweetEdit: Gate[Unit],
-    checkTwitterBlueSubscription: Gate[Unit],
-    setEditWindowToSixtyMinutes: Gate[Unit],
-    stats: StatsReceiver
-  ): Type = {
+  d-def appwy(
+    t-tweetwepo: t-tweetwepositowy.type, (˘ω˘)
+    cawd2wepo: cawd2wepositowy.type, 🥺
+    pwomotedtweetwepo: s-stwatopwomotedtweetwepositowy.type, nyaa~~
+    subscwiptionvewificationwepo: stwatosubscwiptionvewificationwepositowy.type, :3
+    disabwepwomotedtweetedit: gate[unit], /(^•ω•^)
+    c-checktwittewbwuesubscwiption: gate[unit], ^•ﻌ•^
+    s-seteditwindowtosixtyminutes: g-gate[unit], UwU
+    s-stats: statsweceivew
+  ): type = {
 
-    // Nullcast tweets not allowed, except if the tweet has a community annotation
-    def isNullcastedButNotCommunityTweet(request: Request): Boolean = {
+    // n-nyuwwcast t-tweets nyot a-awwowed, 😳😳😳 except i-if the tweet has a community annotation
+    def i-isnuwwcastedbutnotcommunitytweet(wequest: w-wequest): b-boowean = {
 
-      val isNullcasted: Boolean = request.tweet.coreData.get.nullcast
+      v-vaw isnuwwcasted: b-boowean = wequest.tweet.cowedata.get.nuwwcast
 
-      val communityIds: Option[Seq[CommunityId]] =
-        request.postTweetRequest.additionalFields
-          .flatMap(CommunityAnnotation.additionalFieldsToCommunityIDs)
+      vaw communityids: option[seq[communityid]] =
+        w-wequest.posttweetwequest.additionawfiewds
+          .fwatmap(communityannotation.additionawfiewdstocommunityids)
 
-      isNullcasted && !(communityIds.exists(_.nonEmpty))
+      isnuwwcasted && !(communityids.exists(_.nonempty))
     }
 
-    def isSuperFollow(tweet: Tweet): Boolean = tweet.exclusiveTweetControl.isDefined
+    def issupewfowwow(tweet: tweet): boowean = tweet.excwusivetweetcontwow.isdefined
 
-    def isCollabTweet(tweet: Tweet): Boolean = tweet.collabControl.isDefined
+    d-def iscowwabtweet(tweet: tweet): boowean = tweet.cowwabcontwow.isdefined
 
-    def isReplyToTweet(tweet: Tweet): Boolean =
-      getReply(tweet).flatMap(_.inReplyToStatusId).isDefined
+    def iswepwytotweet(tweet: t-tweet): b-boowean =
+      g-getwepwy(tweet).fwatmap(_.inwepwytostatusid).isdefined
 
-    // When card is tombstone, tweet is not considered a poll, and therefore can be edit eligible.
-    val cardReferenceUriIsTombstone = stats.counter("edit_control_builder_card_tombstoned")
-    // We check whether tweets are polls since these are not edit eligible.
-    // If we are not sure due to lookup failure, we take an `isPollCardAssumption`.
-    def isPoll(
-      card2Repo: Card2Repository.Type,
-      cardReference: CardReference,
-      cardsPlatformKey: String,
-    ): Stitch[Boolean] = {
-      if (cardReference.cardUri == "tombstone://card") {
-        cardReferenceUriIsTombstone.incr()
-        Stitch.value(false)
-      } else {
-        val key = UrlCard2Key(cardReference.cardUri)
-        // `allowNonTcoUrls = true` This allows us to check if non-tco urls (e.g. apple.com) have a card
-        // at this point in tweet builder urls can be in their original form and not tcoified.
-        val options = Card2RequestOptions(
-          platformKey = cardsPlatformKey,
-          allowNonTcoUrls = true
+    // when cawd is tombstone, OwO t-tweet is nyot considewed a-a poww, ^•ﻌ•^ and thewefowe c-can be edit ewigibwe. (ꈍᴗꈍ)
+    vaw cawdwefewenceuwiistombstone = stats.countew("edit_contwow_buiwdew_cawd_tombstoned")
+    // we check whethew tweets awe powws s-since these awe nyot edit ewigibwe. (⑅˘꒳˘)
+    // i-if we awe nyot suwe d-due to wookup f-faiwuwe, (⑅˘꒳˘) we take an `ispowwcawdassumption`. (ˆ ﻌ ˆ)♡
+    def ispoww(
+      c-cawd2wepo: cawd2wepositowy.type, /(^•ω•^)
+      c-cawdwefewence: cawdwefewence, òωó
+      c-cawdspwatfowmkey: stwing, (⑅˘꒳˘)
+    ): s-stitch[boowean] = {
+      if (cawdwefewence.cawduwi == "tombstone://cawd") {
+        cawdwefewenceuwiistombstone.incw()
+        stitch.vawue(fawse)
+      } ewse {
+        v-vaw key = u-uwwcawd2key(cawdwefewence.cawduwi)
+        // `awwownontcouwws = t-twue` this awwows us to check i-if nyon-tco uwws (e.g. (U ᵕ U❁) a-appwe.com) have a cawd
+        // a-at this point in tweet buiwdew uwws can be in theiw owiginaw fowm and n-nyot tcoified. >w<
+        v-vaw options = cawd2wequestoptions(
+          pwatfowmkey = c-cawdspwatfowmkey, σωσ
+          awwownontcouwws = t-twue
         )
-        card2Repo(key, options)
-          .map(card2 => pollCardNames.contains(card2.name))
+        cawd2wepo(key, -.- options)
+          .map(cawd2 => powwcawdnames.contains(cawd2.name))
       }
     }
 
-    def isFeatureSwitchEnabled(matchedResults: Option[FeatureSwitchResults], key: String): Boolean =
-      matchedResults.flatMap(_.getBoolean(key, shouldLogImpression = false)).contains(true)
+    def i-isfeatuweswitchenabwed(matchedwesuwts: option[featuweswitchwesuwts], o.O key: stwing): boowean =
+      matchedwesuwts.fwatmap(_.getboowean(key, ^^ shouwdwogimpwession = f-fawse)).contains(twue)
 
-    def wrapInitial(initial: EditControlInitial): Option[EditControl.Initial] =
-      Some(EditControl.Initial(initial = initial))
+    def wwapinitiaw(initiaw: editcontwowinitiaw): option[editcontwow.initiaw] =
+      s-some(editcontwow.initiaw(initiaw = i-initiaw))
 
-    // Checks for validity of an edit are implemented as procedures
-    // that throw an error in case a check fails. This composes way better than
-    // returning a Try/Future/Stitch because:
-    // 1. We do not need to decide which of the aforementioned containers to use.
-    // 2. The checks as below compose with callbacks in all the aforementioned containers.
+    // checks fow vawidity of an edit awe impwemented a-as pwoceduwes
+    // t-that thwow an ewwow in case a check faiws. >_< this composes w-way bettew than
+    // wetuwning a-a twy/futuwe/stitch because:
+    // 1. >w< we do nyot nyeed to d-decide which of the afowementioned c-containews to u-use. >_<
+    // 2. >w< the checks as bewow c-compose with cawwbacks in aww t-the afowementioned c-containews.
 
-    val editRequestOutsideOfAllowlist = stats.counter("edit_control_builder_rejected", "allowlist")
+    v-vaw editwequestoutsideofawwowwist = stats.countew("edit_contwow_buiwdew_wejected", rawr "awwowwist")
 
-    // This method uses two feature switches:
-    // - TweetEditCreationEnabledKey authorizes the user to edit tweets directly
-    // - TweetEditCreationEnabledForTwitterBlueKey authorizes the user to edit tweets if they have
-    //     a Twitter Blue subscription
+    // this m-method uses t-two featuwe switches:
+    // - tweeteditcweationenabwedkey authowizes the usew to e-edit tweets diwectwy
+    // - t-tweeteditcweationenabwedfowtwittewbwuekey a-authowizes the usew to edit tweets if t-they have
+    //     a twittew bwue s-subscwiption
     //
-    // Test users are always authorized to edit tweets.
-    def checkUserEligibility(
-      authorId: UserId,
-      matchedResults: Option[FeatureSwitchResults]
-    ): Stitch[Unit] = {
-      val isTestUser = UserUtil.isTestUserId(authorId)
-      val authorizedWithoutTwitterBlue =
-        isFeatureSwitchEnabled(matchedResults, TweetEditCreationEnabledKey)
+    // test u-usews awe awways authowized to edit tweets.
+    def checkusewewigibiwity(
+      a-authowid: usewid, rawr x3
+      m-matchedwesuwts: o-option[featuweswitchwesuwts]
+    ): s-stitch[unit] = {
+      vaw istestusew = u-usewutiw.istestusewid(authowid)
+      vaw authowizedwithouttwittewbwue =
+        isfeatuweswitchenabwed(matchedwesuwts, ( ͡o ω ͡o ) tweeteditcweationenabwedkey)
 
-      if (isTestUser || authorizedWithoutTwitterBlue) {
-        // If the editing user is a test user or is authorized by the non-Twitter Blue feature
-        // switch, allow editing.
-        Stitch.Done
-      } else {
-        // Otherwise, check if they're authorized by the Twitter Blue feature switch and if they're
-        // subscribed to Twitter Blue.
-        val authorizedWithTwitterBlue: Stitch[Boolean] =
-          if (checkTwitterBlueSubscription() &&
-            isFeatureSwitchEnabled(matchedResults, TweetEditCreationEnabledForTwitterBlueKey)) {
-            subscriptionVerificationRepo(authorId, tweetEditSubscriptionResource)
-          } else Stitch.value(false)
+      if (istestusew || a-authowizedwithouttwittewbwue) {
+        // if the editing u-usew is a test usew ow is authowized b-by the nyon-twittew bwue featuwe
+        // s-switch, (˘ω˘) awwow editing. 😳
+        stitch.done
+      } e-ewse {
+        // o-othewwise, OwO c-check if they'we a-authowized by t-the twittew bwue featuwe switch and if they'we
+        // subscwibed to twittew bwue. (˘ω˘)
+        vaw authowizedwithtwittewbwue: s-stitch[boowean] =
+          i-if (checktwittewbwuesubscwiption() &&
+            i-isfeatuweswitchenabwed(matchedwesuwts, òωó tweeteditcweationenabwedfowtwittewbwuekey)) {
+            s-subscwiptionvewificationwepo(authowid, ( ͡o ω ͡o ) tweeteditsubscwiptionwesouwce)
+          } ewse stitch.vawue(fawse)
 
-        authorizedWithTwitterBlue.flatMap { authorized =>
-          if (!authorized) {
-            log.error(s"User ${authorId} unauthorized to edit")
-            editRequestOutsideOfAllowlist.incr()
-            Stitch.exception(TweetCreateFailure.State(TweetCreateState.EditTweetUserNotAuthorized))
-          } else Stitch.Done
+        a-authowizedwithtwittewbwue.fwatmap { a-authowized =>
+          if (!authowized) {
+            w-wog.ewwow(s"usew ${authowid} unauthowized to edit")
+            e-editwequestoutsideofawwowwist.incw()
+            s-stitch.exception(tweetcweatefaiwuwe.state(tweetcweatestate.edittweetusewnotauthowized))
+          } ewse stitch.done
         }
       }
     }
 
-    val editRequestByNonAuthor = stats.counter("edit_control_builder_rejected", "not_author")
-    def checkAuthor(
-      authorId: UserId,
-      previousTweetAuthorId: UserId
-    ): Unit = {
-      if (authorId != previousTweetAuthorId) {
-        editRequestByNonAuthor.incr()
-        throw TweetCreateFailure.State(TweetCreateState.EditTweetUserNotAuthor)
+    v-vaw e-editwequestbynonauthow = stats.countew("edit_contwow_buiwdew_wejected", UwU "not_authow")
+    def checkauthow(
+      authowid: usewid, /(^•ω•^)
+      p-pwevioustweetauthowid: u-usewid
+    ): u-unit = {
+      if (authowid != pwevioustweetauthowid) {
+        e-editwequestbynonauthow.incw()
+        t-thwow tweetcweatefaiwuwe.state(tweetcweatestate.edittweetusewnotauthow)
       }
     }
 
-    val tweetEditForStaleTweet = stats.counter("edit_control_builder_rejected", "stale")
-    def checkLatestEdit(
-      previousTweetId: TweetId,
-      initial: EditControlInitial,
-    ): Unit = {
-      if (previousTweetId != initial.editTweetIds.last) {
-        tweetEditForStaleTweet.incr()
-        throw TweetCreateFailure.State(TweetCreateState.EditTweetNotLatestVersion)
+    vaw tweeteditfowstawetweet = s-stats.countew("edit_contwow_buiwdew_wejected", (ꈍᴗꈍ) "stawe")
+    d-def checkwatestedit(
+      pwevioustweetid: t-tweetid, 😳
+      i-initiaw: editcontwowinitiaw, mya
+    ): unit = {
+      i-if (pwevioustweetid != initiaw.edittweetids.wast) {
+        tweeteditfowstawetweet.incw()
+        thwow t-tweetcweatefaiwuwe.state(tweetcweatestate.edittweetnotwatestvewsion)
       }
     }
 
-    val tweetEditForLimitReached = stats.counter("edit_control_builder_rejected", "edits_limit")
-    def checkEditsRemaining(initial: EditControlInitial): Unit = {
-      initial.editsRemaining match {
-        case Some(number) if number > 0 => // OK
-        case _ =>
-          tweetEditForLimitReached.incr()
-          throw TweetCreateFailure.State(TweetCreateState.EditCountLimitReached)
+    vaw tweeteditfowwimitweached = s-stats.countew("edit_contwow_buiwdew_wejected", "edits_wimit")
+    d-def checkeditswemaining(initiaw: editcontwowinitiaw): unit = {
+      i-initiaw.editswemaining match {
+        case some(numbew) i-if nyumbew > 0 => // o-ok
+        c-case _ =>
+          tweeteditfowwimitweached.incw()
+          thwow tweetcweatefaiwuwe.state(tweetcweatestate.editcountwimitweached)
       }
     }
 
-    val editTweetExpired = stats.counter("edit_control_builder_rejected", "expired")
-    val editTweetExpiredNoEditControl =
-      stats.counter("edit_control_builder_rejected", "expired", "no_edit_control")
-    def checkEditTimeWindow(initial: EditControlInitial): Unit = {
-      initial.editableUntilMsecs match {
-        case Some(millis) if Time.now < Time.fromMilliseconds(millis) => // OK
-        case Some(_) =>
-          editTweetExpired.incr()
-          throw TweetCreateFailure.State(TweetCreateState.EditTimeLimitReached)
-        case editable =>
-          editTweetExpired.incr()
-          if (editable.isEmpty) {
-            editTweetExpiredNoEditControl.incr()
+    vaw edittweetexpiwed = s-stats.countew("edit_contwow_buiwdew_wejected", mya "expiwed")
+    vaw edittweetexpiwednoeditcontwow =
+      stats.countew("edit_contwow_buiwdew_wejected", /(^•ω•^) "expiwed", "no_edit_contwow")
+    def c-checkedittimewindow(initiaw: e-editcontwowinitiaw): unit = {
+      i-initiaw.editabweuntiwmsecs match {
+        case some(miwwis) i-if time.now < time.fwommiwwiseconds(miwwis) => // o-ok
+        case some(_) =>
+          edittweetexpiwed.incw()
+          t-thwow tweetcweatefaiwuwe.state(tweetcweatestate.edittimewimitweached)
+        case editabwe =>
+          e-edittweetexpiwed.incw()
+          i-if (editabwe.isempty) {
+            edittweetexpiwednoeditcontwow.incw()
           }
-          throw TweetCreateFailure.State(TweetCreateState.EditTimeLimitReached)
+          t-thwow tweetcweatefaiwuwe.state(tweetcweatestate.edittimewimitweached)
       }
     }
 
-    val tweetEditNotEligible = stats.counter("edit_control_builder_rejected", "not_eligible")
-    def checkIsEditEligible(initial: EditControlInitial): Unit = {
-      initial.isEditEligible match {
-        case Some(true) => // OK
+    vaw t-tweeteditnotewigibwe = s-stats.countew("edit_contwow_buiwdew_wejected", ^^;; "not_ewigibwe")
+    d-def checkiseditewigibwe(initiaw: editcontwowinitiaw): unit = {
+      initiaw.iseditewigibwe match {
+        case some(twue) => // ok
         case _ =>
-          tweetEditNotEligible.incr()
-          throw TweetCreateFailure.State(TweetCreateState.NotEligibleForEdit)
+          tweeteditnotewigibwe.incw()
+          thwow tweetcweatefaiwuwe.state(tweetcweatestate.notewigibwefowedit)
       }
     }
 
-    val editControlInitialMissing =
-      stats.counter("edit_control_builder_rejected", "initial_missing")
-    def findEditControlInitial(previousTweet: Tweet): EditControlInitial = {
-      previousTweet.editControl match {
-        case Some(EditControl.Initial(initial)) => initial
-        case Some(EditControl.Edit(edit)) =>
-          edit.editControlInitial.getOrElse {
-            editControlInitialMissing.incr()
-            throw new IllegalStateException(
-              "Encountered edit tweet with missing editControlInitial.")
+    vaw editcontwowinitiawmissing =
+      stats.countew("edit_contwow_buiwdew_wejected", 🥺 "initiaw_missing")
+    def findeditcontwowinitiaw(pwevioustweet: tweet): editcontwowinitiaw = {
+      p-pwevioustweet.editcontwow m-match {
+        case some(editcontwow.initiaw(initiaw)) => i-initiaw
+        c-case some(editcontwow.edit(edit)) =>
+          e-edit.editcontwowinitiaw.getowewse {
+            editcontwowinitiawmissing.incw()
+            t-thwow nyew iwwegawstateexception(
+              "encountewed e-edit tweet with m-missing editcontwowinitiaw.")
           }
         case _ =>
-          throw TweetCreateFailure.State(TweetCreateState.EditTimeLimitReached)
+          t-thwow tweetcweatefaiwuwe.state(tweetcweatestate.edittimewimitweached)
       }
     }
 
-    val editPromotedTweet = stats.counter("tweet_edit_for_promoted_tweet")
-    def checkPromotedTweet(
-      previousTweetId: TweetId,
-      promotedTweetRepo: StratoPromotedTweetRepository.Type,
-      disablePromotedTweetEdit: Gate[Unit]
-    ): Stitch[Unit] = {
-      if (disablePromotedTweetEdit()) {
-        promotedTweetRepo(previousTweetId).flatMap {
-          case false =>
-            Stitch.Done
-          case true =>
-            editPromotedTweet.incr()
-            Stitch.exception(TweetCreateFailure.State(TweetCreateState.EditTweetUserNotAuthorized))
+    vaw editpwomotedtweet = s-stats.countew("tweet_edit_fow_pwomoted_tweet")
+    d-def checkpwomotedtweet(
+      pwevioustweetid: t-tweetid, ^^
+      p-pwomotedtweetwepo: s-stwatopwomotedtweetwepositowy.type, ^•ﻌ•^
+      d-disabwepwomotedtweetedit: g-gate[unit]
+    ): s-stitch[unit] = {
+      i-if (disabwepwomotedtweetedit()) {
+        p-pwomotedtweetwepo(pwevioustweetid).fwatmap {
+          c-case fawse =>
+            s-stitch.done
+          c-case t-twue =>
+            editpwomotedtweet.incw()
+            s-stitch.exception(tweetcweatefaiwuwe.state(tweetcweatestate.edittweetusewnotauthowized))
         }
-      } else {
-        Stitch.Done
+      } ewse {
+        stitch.done
       }
     }
 
-    // Each time edit is made, count how many versions a tweet already has.
-    // Value should be always between 1 and 4.
-    val editTweetCount = 0
-      .to(EditControlUtil.maxTweetEditsAllowed)
-      .map(i => i -> stats.counter("edit_control_builder_edits_count", i.toString))
-      .toMap
-    // Overall counter and failures of card resolution for poll lookups. Needed because polls are not editable.
-    val pollCardResolutionTotal = stats.counter("edit_control_builder_card_resolution", "total")
-    val pollCardResolutionFailure =
-      stats.counter("edit_control_builder_card_resolution", "failures")
-    // Edit of initial tweet requested, and all edit checks successful.
-    val initialEditTweet = stats.counter("edit_control_builder_initial_edit")
-    request =>
-      Stitch.run {
-        request.editOptions match {
-          case None =>
-            val editControl =
-              makeEditControlInitial(
-                tweetId = request.tweetId,
-                createdAt = request.createdAt,
-                setEditWindowToSixtyMinutes = setEditWindowToSixtyMinutes
-              ).initial.copy(
-                isEditEligible = Some(
-                  !isNullcastedButNotCommunityTweet(request)
-                    && !isSuperFollow(request.tweet)
-                    && !isCollabTweet(request.tweet)
-                    && !isReplyToTweet(request.tweet)
-                ),
+    // e-each time edit is made, /(^•ω•^) count h-how many vewsions a-a tweet awweady h-has. ^^
+    // vawue shouwd be a-awways between 1 and 4.
+    vaw e-edittweetcount = 0
+      .to(editcontwowutiw.maxtweeteditsawwowed)
+      .map(i => i -> stats.countew("edit_contwow_buiwdew_edits_count", 🥺 i-i.tostwing))
+      .tomap
+    // ovewaww c-countew and faiwuwes of cawd wesowution fow poww wookups. (U ᵕ U❁) nyeeded because powws a-awe nyot editabwe. 😳😳😳
+    vaw powwcawdwesowutiontotaw = s-stats.countew("edit_contwow_buiwdew_cawd_wesowution", "totaw")
+    v-vaw powwcawdwesowutionfaiwuwe =
+      stats.countew("edit_contwow_buiwdew_cawd_wesowution", nyaa~~ "faiwuwes")
+    // edit of initiaw tweet w-wequested, (˘ω˘) and aww edit checks successfuw. >_<
+    vaw i-initiawedittweet = s-stats.countew("edit_contwow_buiwdew_initiaw_edit")
+    w-wequest =>
+      stitch.wun {
+        wequest.editoptions m-match {
+          c-case nyone =>
+            vaw editcontwow =
+              m-makeeditcontwowinitiaw(
+                tweetid = wequest.tweetid, XD
+                c-cweatedat = wequest.cweatedat, rawr x3
+                s-seteditwindowtosixtyminutes = s-seteditwindowtosixtyminutes
+              ).initiaw.copy(
+                i-iseditewigibwe = some(
+                  !isnuwwcastedbutnotcommunitytweet(wequest)
+                    && !issupewfowwow(wequest.tweet)
+                    && !iscowwabtweet(wequest.tweet)
+                    && !iswepwytotweet(wequest.tweet)
+                ), ( ͡o ω ͡o )
               )
-            (editControl.isEditEligible, request.cardReference) match {
-              case (Some(true), Some(reference)) =>
-                pollCardResolutionTotal.incr()
-                isPoll(
-                  card2Repo = card2Repo,
-                  cardReference = reference,
-                  cardsPlatformKey = request.cardsPlatformKey.getOrElse(defaultCardsPlatformKey),
-                ).rescue {
-                    // Revert to the assumed value if card cannot be resolved.
+            (editcontwow.iseditewigibwe, :3 w-wequest.cawdwefewence) m-match {
+              c-case (some(twue), mya s-some(wefewence)) =>
+                powwcawdwesowutiontotaw.incw()
+                ispoww(
+                  c-cawd2wepo = c-cawd2wepo, σωσ
+                  c-cawdwefewence = w-wefewence, (ꈍᴗꈍ)
+                  cawdspwatfowmkey = w-wequest.cawdspwatfowmkey.getowewse(defauwtcawdspwatfowmkey), OwO
+                ).wescue {
+                    // w-wevewt to the assumed v-vawue if c-cawd cannot be wesowved. o.O
                     case _ =>
-                      pollCardResolutionFailure.incr()
-                      Stitch.value(isPollCardAssumption)
+                      p-powwcawdwesowutionfaiwuwe.incw()
+                      stitch.vawue(ispowwcawdassumption)
                   }
-                  .map { tweetIsAPoll =>
-                    wrapInitial(editControl.copy(isEditEligible = Some(!tweetIsAPoll)))
+                  .map { t-tweetisapoww =>
+                    wwapinitiaw(editcontwow.copy(iseditewigibwe = s-some(!tweetisapoww)))
                   }
-              case _ => Stitch.value(wrapInitial(editControl))
+              c-case _ => s-stitch.vawue(wwapinitiaw(editcontwow))
             }
-          case Some(editOptions) =>
-            for {
-              (previousTweet, _, _) <- Stitch.join(
-                tweetRepo(editOptions.previousTweetId, editControlQueryOptions),
-                checkPromotedTweet(
-                  editOptions.previousTweetId,
-                  promotedTweetRepo,
-                  disablePromotedTweetEdit),
-                checkUserEligibility(
-                  authorId = request.authorId,
-                  matchedResults = request.matchedResults)
+          case some(editoptions) =>
+            fow {
+              (pwevioustweet, 😳😳😳 _, _) <- stitch.join(
+                t-tweetwepo(editoptions.pwevioustweetid, /(^•ω•^) e-editcontwowquewyoptions), OwO
+                c-checkpwomotedtweet(
+                  editoptions.pwevioustweetid, ^^
+                  pwomotedtweetwepo, (///ˬ///✿)
+                  disabwepwomotedtweetedit), (///ˬ///✿)
+                c-checkusewewigibiwity(
+                  a-authowid = wequest.authowid, (///ˬ///✿)
+                  m-matchedwesuwts = w-wequest.matchedwesuwts)
               )
-            } yield {
-              val initial = findEditControlInitial(previousTweet)
-              checkAuthor(
-                authorId = request.authorId,
-                previousTweetAuthorId = getUserId(previousTweet))
-              editTweetCount
-                .get(initial.editTweetIds.size)
-                .orElse(editTweetCount.get(EditControlUtil.maxTweetEditsAllowed))
-                .foreach(counter => counter.incr())
-              checkLatestEdit(previousTweet.id, initial)
-              checkEditsRemaining(initial)
-              checkEditTimeWindow(initial)
-              checkIsEditEligible(initial)
-              if (initial.editTweetIds == Seq(previousTweet.id)) {
-                initialEditTweet.incr()
+            } yiewd {
+              vaw initiaw = findeditcontwowinitiaw(pwevioustweet)
+              checkauthow(
+                a-authowid = wequest.authowid, ʘwʘ
+                p-pwevioustweetauthowid = g-getusewid(pwevioustweet))
+              e-edittweetcount
+                .get(initiaw.edittweetids.size)
+                .owewse(edittweetcount.get(editcontwowutiw.maxtweeteditsawwowed))
+                .foweach(countew => countew.incw())
+              checkwatestedit(pwevioustweet.id, ^•ﻌ•^ i-initiaw)
+              c-checkeditswemaining(initiaw)
+              checkedittimewindow(initiaw)
+              checkiseditewigibwe(initiaw)
+              if (initiaw.edittweetids == s-seq(pwevioustweet.id)) {
+                initiawedittweet.incw()
               }
-              Some(editControlEdit(initialTweetId = initial.editTweetIds.head))
+              some(editcontwowedit(initiawtweetid = initiaw.edittweetids.head))
             }
         }
       }

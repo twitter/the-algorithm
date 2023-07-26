@@ -1,84 +1,84 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* copywight 2016 the tensowfwow a-authows. 😳😳😳 aww wights w-wesewved. mya
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+wicensed u-undew the a-apache wicense, mya v-vewsion 2.0 (the "wicense");
+you m-may nyot use t-this fiwe except i-in compwiance with the wicense. (⑅˘꒳˘)
+you may obtain a copy of the wicense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.owg/wicenses/wicense-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+u-unwess wequiwed by appwicabwe waw ow agweed t-to in wwiting, (U ﹏ U) softwawe
+distwibuted u-undew the wicense is distwibuted on an "as is" basis, mya
+w-without wawwanties ow conditions o-of any kind, ʘwʘ eithew e-expwess ow impwied. (˘ω˘)
+see the wicense fow the specific wanguage govewning pewmissions a-and
+wimitations undew the wicense. (U ﹏ U)
 ==============================================================================*/
 
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ClusterProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option cc_enabwe_awenas = twue;
+option java_outew_cwassname = "cwustewpwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+option j-java_package = "owg.tensowfwow.distwuntime";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// This file contains protos to be used when defining a TensorFlow
-// cluster.
+// this f-fiwe contains pwotos to be used when defining a-a tensowfwow
+// cwustew. ^•ﻌ•^
 //
-// EXAMPLES
+// exampwes
 // --------
 //
-// 1. A single-process cluster, containing "/job:local/task:0".
+// 1. (˘ω˘) a singwe-pwocess cwustew, :3 containing "/job:wocaw/task:0". ^^;;
 //
-//    Cluster:
-//      job { name: 'local' tasks { key: 0 value: 'localhost:2222' } }
+//    c-cwustew:
+//      job { nyame: 'wocaw' t-tasks { key: 0 v-vawue: 'wocawhost:2222' } }
 //
-//    Server:
-//      cluster { $CLUSTER } job_name: 'local' task_index: 0
+//    s-sewvew:
+//      cwustew { $cwustew } job_name: 'wocaw' task_index: 0
 //
-// 2. A two-process cluster, containing "/job:local/task:{0,1}".
+// 2. 🥺 a-a two-pwocess c-cwustew, (⑅˘꒳˘) containing "/job:wocaw/task:{0,1}". nyaa~~
 //
-//    Cluster:
-//      job { name: 'local' tasks { key: 0 value: 'localhost:2222' }
-//                          tasks { key: 1 value: 'localhost:2223' } }
+//    c-cwustew:
+//      j-job { nyame: 'wocaw' t-tasks { key: 0 vawue: 'wocawhost:2222' }
+//                          t-tasks { key: 1 vawue: 'wocawhost:2223' } }
 //
-//    Servers:
-//      cluster { $CLUSTER } job_name: 'local' task_index: 0
-//      cluster { $CLUSTER } job_name: 'local' task_index: 1
+//    sewvews:
+//      c-cwustew { $cwustew } job_name: 'wocaw' t-task_index: 0
+//      cwustew { $cwustew } job_name: 'wocaw' t-task_index: 1
 //
-// 3. A two-job cluster, containing "/job:worker/task:{0,1,2}" and
-//    "/job:ps/task:{0,1}".
+// 3. :3 a-a two-job cwustew, ( ͡o ω ͡o ) containing "/job:wowkew/task:{0,1,2}" and
+//    "/job:ps/task:{0,1}". mya
 //
-//    Cluster:
-//      job { name: 'worker' tasks { key: 0 value: 'worker1:2222' }
-//                           tasks { key: 1 value: 'worker2:2222' }
-//                           tasks { key: 2 value: 'worker3:2222' } }
-//      job { name: 'ps'     tasks { key: 0 value: 'ps0:2222' }
-//                           tasks { key: 1 value: 'ps1:2222' } }
+//    cwustew:
+//      job { nyame: 'wowkew' tasks { key: 0 v-vawue: 'wowkew1:2222' }
+//                           t-tasks { key: 1 vawue: 'wowkew2:2222' }
+//                           t-tasks { k-key: 2 vawue: 'wowkew3:2222' } }
+//      j-job { nyame: 'ps'     tasks { key: 0 vawue: 'ps0:2222' }
+//                           tasks { key: 1 vawue: 'ps1:2222' } }
 //
-//    Servers:
-//      cluster { $CLUSTER } job_name: 'worker' task_index: 0
-//      cluster { $CLUSTER } job_name: 'worker' task_index: 1
-//      cluster { $CLUSTER } job_name: 'worker' task_index: 2
-//      cluster { $CLUSTER } job_name: 'ps'     task_index: 0
-//      cluster { $CLUSTER } job_name: 'ps'     task_index: 1
+//    s-sewvews:
+//      cwustew { $cwustew } job_name: 'wowkew' task_index: 0
+//      cwustew { $cwustew } job_name: 'wowkew' t-task_index: 1
+//      cwustew { $cwustew } j-job_name: 'wowkew' t-task_index: 2
+//      c-cwustew { $cwustew } job_name: 'ps'     t-task_index: 0
+//      c-cwustew { $cwustew } j-job_name: 'ps'     task_index: 1
 
-// Defines a single job in a TensorFlow cluster.
-message JobDef {
-  // The name of this job.
-  string name = 1;
+// d-defines a singwe job in a tensowfwow cwustew. (///ˬ///✿)
+message j-jobdef {
+  // t-the nyame of t-this job. (˘ω˘)
+  stwing n-name = 1;
 
-  // Mapping from task ID to "hostname:port" string.
+  // m-mapping fwom task id to "hostname:powt" stwing. ^^;;
   //
-  // If the `name` field contains "worker", and the `tasks` map contains a
-  // mapping from 7 to "example.org:2222", then the device prefix
-  // "/job:worker/task:7" will be assigned to "example.org:2222".
-  map<int32, string> tasks = 2;
+  // if the `name` fiewd c-contains "wowkew", (✿oωo) and the `tasks` map contains a
+  // mapping fwom 7 to "exampwe.owg:2222", then the device p-pwefix
+  // "/job:wowkew/task:7" wiww be assigned to "exampwe.owg:2222". (U ﹏ U)
+  map<int32, -.- s-stwing> tasks = 2;
 }
 
-// Defines a TensorFlow cluster as a set of jobs.
-message ClusterDef {
-  // The jobs that comprise the cluster.
-  repeated JobDef job = 1;
+// defines a-a tensowfwow c-cwustew as a set of jobs. ^•ﻌ•^
+message c-cwustewdef {
+  // the jobs t-that compwise the c-cwustew. rawr
+  wepeated jobdef job = 1;
 }

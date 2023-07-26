@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.util.tweetypie.content
+package com.twittew.home_mixew.utiw.tweetypie.content
 
-import com.twitter.home_mixer.model.ContentFeatures
-import com.twitter.tweetypie.{thriftscala => tp}
+impowt com.twittew.home_mixew.modew.contentfeatuwes
+i-impowt c-com.twittew.tweetypie.{thwiftscawa => t-tp}
 
-object FeatureExtractionHelper {
+object f-featuweextwactionhewpew {
 
-  def extractFeatures(
-    tweet: tp.Tweet
-  ): ContentFeatures = {
-    val contentFeaturesFromTweet = ContentFeatures.Empty.copy(
-      selfThreadMetadata = tweet.selfThreadMetadata
+  d-def extwactfeatuwes(
+    t-tweet: t-tp.tweet
+  ): contentfeatuwes = {
+    v-vaw contentfeatuwesfwomtweet = contentfeatuwes.empty.copy(
+      sewfthweadmetadata = tweet.sewfthweadmetadata
     )
 
-    val contentFeaturesWithText = TweetTextFeaturesExtractor.addTextFeaturesFromTweet(
-      contentFeaturesFromTweet,
+    vaw contentfeatuweswithtext = t-tweettextfeatuwesextwactow.addtextfeatuwesfwomtweet(
+      contentfeatuwesfwomtweet, >_<
       tweet
     )
-    val contentFeaturesWithMedia = TweetMediaFeaturesExtractor.addMediaFeaturesFromTweet(
-      contentFeaturesWithText,
+    v-vaw contentfeatuweswithmedia = tweetmediafeatuwesextwactow.addmediafeatuwesfwomtweet(
+      c-contentfeatuweswithtext, mya
       tweet
     )
 
-    contentFeaturesWithMedia.copy(
-      conversationControl = tweet.conversationControl,
-      semanticCoreAnnotations = tweet.escherbirdEntityAnnotations.map(_.entityAnnotations)
+    contentfeatuweswithmedia.copy(
+      convewsationcontwow = t-tweet.convewsationcontwow, mya
+      semanticcoweannotations = t-tweet.eschewbiwdentityannotations.map(_.entityannotations)
     )
   }
 }

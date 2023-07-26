@@ -1,169 +1,169 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.twittew.seawch.eawwybiwd.pawtition.fweshstawtup;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+impowt j-java.io.ioexception;
+i-impowt j-java.time.duwation;
+i-impowt java.utiw.awwaywist;
+i-impowt java.utiw.hashmap;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableList;
+impowt com.googwe.common.base.stopwatch;
+impowt com.googwe.common.cowwect.immutabwewist;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.kafka.cwients.consumew.consumewwecowd;
+impowt o-owg.apache.kafka.cwients.consumew.consumewwecowds;
+impowt owg.apache.kafka.cwients.consumew.kafkaconsumew;
+impowt o-owg.apache.kafka.common.topicpawtition;
+impowt o-owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.factory.EarlybirdKafkaConsumersFactory;
-import com.twitter.search.earlybird.partition.IndexingResultCounts;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.common.metwics.seawchtimew;
+i-impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+i-impowt com.twittew.seawch.eawwybiwd.factowy.eawwybiwdkafkaconsumewsfactowy;
+impowt com.twittew.seawch.eawwybiwd.pawtition.indexingwesuwtcounts;
 
 /**
- * Indexes updates for all segments after they have been optimized. Some of the updates have been
- * indexed before in the PreOptimizationSegmentIndexer, but the rest are indexed here.
+ * indexes updates f-fow aww segments aftew they have been optimized. 😳😳😳 some of the updates have b-been
+ * indexed befowe in the pweoptimizationsegmentindexew, (ˆ ﻌ ˆ)♡ b-but t-the west awe indexed h-hewe. XD
  */
-class PostOptimizationUpdatesIndexer {
-  private static final Logger LOG = LoggerFactory.getLogger(PostOptimizationUpdatesIndexer.class);
+c-cwass postoptimizationupdatesindexew {
+  pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(postoptimizationupdatesindexew.cwass);
 
-  private static final String STAT_PREFIX = "post_optimization_";
-  private static final String READ_STAT_PREFIX = STAT_PREFIX + "read_updates_for_segment_";
-  private static final String APPLIED_STAT_PREFIX = STAT_PREFIX + "applied_updates_for_segment_";
+  pwivate static finaw s-stwing stat_pwefix = "post_optimization_";
+  pwivate static finaw stwing wead_stat_pwefix = stat_pwefix + "wead_updates_fow_segment_";
+  pwivate static finaw s-stwing appwied_stat_pwefix = stat_pwefix + "appwied_updates_fow_segment_";
 
-  private final ArrayList<SegmentBuildInfo> segmentBuildInfos;
-  private final EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory;
-  private final TopicPartition updateTopic;
+  p-pwivate f-finaw awwaywist<segmentbuiwdinfo> s-segmentbuiwdinfos;
+  pwivate finaw eawwybiwdkafkaconsumewsfactowy eawwybiwdkafkaconsumewsfactowy;
+  p-pwivate f-finaw topicpawtition updatetopic;
 
-  PostOptimizationUpdatesIndexer(
-      ArrayList<SegmentBuildInfo> segmentBuildInfos,
-      EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory,
-      TopicPartition updateTopic) {
-    this.segmentBuildInfos = segmentBuildInfos;
-    this.earlybirdKafkaConsumersFactory = earlybirdKafkaConsumersFactory;
-    this.updateTopic = updateTopic;
+  p-postoptimizationupdatesindexew(
+      awwaywist<segmentbuiwdinfo> s-segmentbuiwdinfos, (ˆ ﻌ ˆ)♡
+      eawwybiwdkafkaconsumewsfactowy e-eawwybiwdkafkaconsumewsfactowy, ( ͡o ω ͡o )
+      topicpawtition u-updatetopic) {
+    this.segmentbuiwdinfos = segmentbuiwdinfos;
+    t-this.eawwybiwdkafkaconsumewsfactowy = eawwybiwdkafkaconsumewsfactowy;
+    t-this.updatetopic = updatetopic;
   }
 
-  void indexRestOfUpdates() throws IOException {
-    LOG.info("Indexing rest of updates.");
+  v-void i-indexwestofupdates() thwows ioexception {
+    wog.info("indexing west of updates.");
 
-    long updatesStartOffset = segmentBuildInfos.get(0)
-        .getUpdateKafkaOffsetPair().getBeginOffset();
-    long updatesEndOffset = segmentBuildInfos.get(segmentBuildInfos.size() - 1)
-        .getUpdateKafkaOffsetPair().getEndOffset();
+    wong updatesstawtoffset = segmentbuiwdinfos.get(0)
+        .getupdatekafkaoffsetpaiw().getbeginoffset();
+    wong updatesendoffset = s-segmentbuiwdinfos.get(segmentbuiwdinfos.size() - 1)
+        .getupdatekafkaoffsetpaiw().getendoffset();
 
-    LOG.info(String.format("Total updates to go through: %,d",
-        updatesEndOffset - updatesStartOffset + 1));
+    w-wog.info(stwing.fowmat("totaw updates t-to go thwough: %,d", rawr x3
+        u-updatesendoffset - u-updatesstawtoffset + 1));
 
-    KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("index_rest_of_updates");
-    kafkaConsumer.assign(ImmutableList.of(updateTopic));
-    kafkaConsumer.seek(updateTopic, updatesStartOffset);
+    kafkaconsumew<wong, nyaa~~ thwiftvewsionedevents> kafkaconsumew =
+        e-eawwybiwdkafkaconsumewsfactowy.cweatekafkaconsumew("index_west_of_updates");
+    kafkaconsumew.assign(immutabwewist.of(updatetopic));
+    kafkaconsumew.seek(updatetopic, >_< updatesstawtoffset);
 
-    long readEvents = 0;
-    long foundSegment = 0;
-    long applied = 0;
+    wong weadevents = 0;
+    wong foundsegment = 0;
+    wong a-appwied = 0;
 
-    Map<Integer, SearchRateCounter> perSegmentReadUpdates = new HashMap<>();
-    Map<Integer, SearchRateCounter> perSegmentAppliedUpdates = new HashMap<>();
-    Map<Integer, IndexingResultCounts> perSegmentIndexingResultCounts = new HashMap<>();
+    map<integew, ^^;; s-seawchwatecountew> p-pewsegmentweadupdates = n-nyew hashmap<>();
+    m-map<integew, (ˆ ﻌ ˆ)♡ seawchwatecountew> p-pewsegmentappwiedupdates = n-nyew h-hashmap<>();
+    map<integew, ^^;; indexingwesuwtcounts> p-pewsegmentindexingwesuwtcounts = n-nyew hashmap<>();
 
-    for (int i = 0; i < segmentBuildInfos.size(); i++) {
-      perSegmentReadUpdates.put(i, SearchRateCounter.export(READ_STAT_PREFIX + i));
-      perSegmentAppliedUpdates.put(i, SearchRateCounter.export(APPLIED_STAT_PREFIX + i));
-      perSegmentIndexingResultCounts.put(i, new IndexingResultCounts());
+    f-fow (int i-i = 0; i < s-segmentbuiwdinfos.size(); i++) {
+      pewsegmentweadupdates.put(i, (⑅˘꒳˘) seawchwatecountew.expowt(wead_stat_pwefix + i-i));
+      pewsegmentappwiedupdates.put(i, rawr x3 seawchwatecountew.expowt(appwied_stat_pwefix + i));
+      pewsegmentindexingwesuwtcounts.put(i, (///ˬ///✿) nyew indexingwesuwtcounts());
     }
 
-    SearchTimerStats pollStats = SearchTimerStats.export(
-        "final_pass_polls", TimeUnit.NANOSECONDS, false);
-    SearchTimerStats indexStats = SearchTimerStats.export(
-        "final_pass_index", TimeUnit.NANOSECONDS, false);
+    s-seawchtimewstats powwstats = seawchtimewstats.expowt(
+        "finaw_pass_powws", 🥺 timeunit.nanoseconds, f-fawse);
+    s-seawchtimewstats i-indexstats = seawchtimewstats.expowt(
+        "finaw_pass_index", >_< t-timeunit.nanoseconds, UwU fawse);
 
-    Stopwatch totalTime = Stopwatch.createStarted();
+    s-stopwatch totawtime = s-stopwatch.cweatestawted();
 
-    boolean done = false;
+    boowean done = fawse;
     do {
-      // Poll events.
-      SearchTimer pt = pollStats.startNewTimer();
-      ConsumerRecords<Long, ThriftVersionedEvents> records =
-          kafkaConsumer.poll(Duration.ofSeconds(1));
-      pollStats.stopTimerAndIncrement(pt);
+      // poww events. >_<
+      seawchtimew pt = p-powwstats.stawtnewtimew();
+      consumewwecowds<wong, -.- t-thwiftvewsionedevents> wecowds =
+          k-kafkaconsumew.poww(duwation.ofseconds(1));
+      p-powwstats.stoptimewandincwement(pt);
 
-      // Index events.
-      SearchTimer it = indexStats.startNewTimer();
-      for (ConsumerRecord<Long, ThriftVersionedEvents> record : records) {
-        if (record.offset() >= updatesEndOffset) {
-          done = true;
+      // index events. mya
+      seawchtimew i-it = indexstats.stawtnewtimew();
+      f-fow (consumewwecowd<wong, >w< thwiftvewsionedevents> w-wecowd : w-wecowds) {
+        if (wecowd.offset() >= updatesendoffset) {
+          done = twue;
         }
 
-        readEvents++;
+        weadevents++;
 
-        ThriftVersionedEvents tve = record.value();
-        long tweetId = tve.getId();
+        t-thwiftvewsionedevents t-tve = w-wecowd.vawue();
+        wong tweetid = t-tve.getid();
 
-        // Find segment to apply to. If we can't find a segment, this is an
-        // update for an old tweet that's not in the index.
-        int segmentIndex = -1;
-        for (int i = segmentBuildInfos.size() - 1; i >= 0; i--) {
-          if (segmentBuildInfos.get(i).getStartTweetId() <= tweetId) {
-            segmentIndex = i;
-            foundSegment++;
-            break;
+        // f-find segment to appwy to. (U ﹏ U) if we c-can't find a segment, this is an
+        // update fow an owd tweet that's nyot i-in the index. 😳😳😳
+        i-int segmentindex = -1;
+        fow (int i = segmentbuiwdinfos.size() - 1; i-i >= 0; i--) {
+          i-if (segmentbuiwdinfos.get(i).getstawttweetid() <= tweetid) {
+            segmentindex = i;
+            f-foundsegment++;
+            bweak;
           }
         }
 
-        if (segmentIndex != -1) {
-          SegmentBuildInfo segmentBuildInfo = segmentBuildInfos.get(segmentIndex);
+        if (segmentindex != -1) {
+          segmentbuiwdinfo segmentbuiwdinfo = s-segmentbuiwdinfos.get(segmentindex);
 
-          perSegmentReadUpdates.get(segmentIndex).increment();
+          pewsegmentweadupdates.get(segmentindex).incwement();
 
-          // Not already applied?
-          if (!segmentBuildInfo.getUpdateKafkaOffsetPair().includes(record.offset())) {
-            applied++;
+          // nyot a-awweady appwied?
+          i-if (!segmentbuiwdinfo.getupdatekafkaoffsetpaiw().incwudes(wecowd.offset())) {
+            appwied++;
 
-            // Index the update.
+            // index the update. o.O
             //
-            // IMPORTANT: Note that there you'll see about 2-3% of updates that
-            // fail as "retryable". This type of failure happens when the update is
-            // for a tweet that's not found in the index. We found out that we are
-            // receiving some updates for protected tweets and these are not in the
-            // realtime index - they are the source of this error.
-            perSegmentIndexingResultCounts.get(segmentIndex).countResult(
-                segmentBuildInfo.getSegmentWriter().indexThriftVersionedEvents(tve)
+            // impowtant: nyote t-that thewe you'ww s-see about 2-3% of updates that
+            // faiw as "wetwyabwe". òωó this type o-of faiwuwe happens when the update i-is
+            // fow a tweet that's nyot found in the index. 😳😳😳 w-we found out that we awe
+            // w-weceiving s-some updates fow pwotected t-tweets and these awe nyot in the
+            // w-weawtime index - t-they awe the souwce o-of this ewwow. σωσ
+            pewsegmentindexingwesuwtcounts.get(segmentindex).countwesuwt(
+                s-segmentbuiwdinfo.getsegmentwwitew().indexthwiftvewsionedevents(tve)
             );
 
-            perSegmentAppliedUpdates.get(segmentIndex).increment();
+            p-pewsegmentappwiedupdates.get(segmentindex).incwement();
           }
         }
-        if (record.offset() >= updatesEndOffset) {
-          break;
+        if (wecowd.offset() >= updatesendoffset) {
+          b-bweak;
         }
       }
-      indexStats.stopTimerAndIncrement(it);
+      i-indexstats.stoptimewandincwement(it);
 
-    } while (!done);
+    } w-whiwe (!done);
 
-    LOG.info(String.format("Done in: %s, read %,d events, found segment for %,d, applied %,d",
-        totalTime, readEvents, foundSegment, applied));
+    wog.info(stwing.fowmat("done in: %s, (⑅˘꒳˘) wead %,d e-events, (///ˬ///✿) found segment fow %,d, 🥺 a-appwied %,d", OwO
+        t-totawtime, >w< weadevents, 🥺 foundsegment, nyaa~~ appwied));
 
-    LOG.info("Indexing time: {}", indexStats.getElapsedTimeAsString());
-    LOG.info("Polling time: {}", pollStats.getElapsedTimeAsString());
+    w-wog.info("indexing t-time: {}", ^^ indexstats.getewapsedtimeasstwing());
+    w-wog.info("powwing t-time: {}", >w< powwstats.getewapsedtimeasstwing());
 
-    LOG.info("Per segment indexing result counts:");
-    for (int i = 0; i < segmentBuildInfos.size(); i++) {
-      LOG.info("{} : {}", i, perSegmentIndexingResultCounts.get(i));
+    w-wog.info("pew segment indexing wesuwt counts:");
+    fow (int i = 0; i < segmentbuiwdinfos.size(); i++) {
+      w-wog.info("{} : {}", i, OwO pewsegmentindexingwesuwtcounts.get(i));
     }
 
-    LOG.info("Found and applied per segment:");
-    for (int i = 0; i < segmentBuildInfos.size(); i++) {
-      LOG.info("{}: found: {}, applied: {}",
-          i,
-          perSegmentReadUpdates.get(i).getCount(),
-          perSegmentAppliedUpdates.get(i).getCount());
+    w-wog.info("found and appwied p-pew segment:");
+    fow (int i-i = 0; i < segmentbuiwdinfos.size(); i++) {
+      w-wog.info("{}: f-found: {}, XD appwied: {}", ^^;;
+          i-i, 🥺
+          p-pewsegmentweadupdates.get(i).getcount(), XD
+          p-pewsegmentappwiedupdates.get(i).getcount());
     }
   }
 }

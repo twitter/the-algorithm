@@ -1,108 +1,108 @@
-package com.twitter.ann.scalding.offline
+package com.twittew.ann.scawding.offwine
 
-import com.twitter.ann.common.Metric
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors}
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{Args, DateOps, DateParser, DateRange, Execution, TypedTsv, UniqueID}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.search.common.file.{AbstractFile, LocalFile}
-import java.util.TimeZone
+impowt c-com.twittew.ann.common.metwic
+i-impowt c-com.twittew.bijection.scwooge.binawyscawacodec
+i-impowt com.twittew.mw.featuwestowe.wib.usewid
+i-impowt com.twittew.mw.featuwestowe.wib.embedding.embeddingwithentity
+i-impowt com.twittew.cowtex.mw.embeddings.common.entitykind
+i-impowt com.twittew.entityembeddings.neighbows.thwiftscawa.{entitykey, (˘ω˘) n-nyeawestneighbows}
+impowt com.twittew.scawding.commons.souwce.vewsionedkeyvawsouwce
+impowt com.twittew.scawding.typed.typedpipe
+i-impowt com.twittew.scawding.{awgs, nyaa~~ dateops, UwU datepawsew, :3 datewange, e-execution, (⑅˘꒳˘) typedtsv, (///ˬ///✿) uniqueid}
+i-impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+impowt com.twittew.seawch.common.fiwe.{abstwactfiwe, ^^;; wocawfiwe}
+i-impowt java.utiw.timezone
 
 /**
- * Generates the nearest neighbour for users and store them in Manhattan format i.e sequence files.
- * See README for oscar usage.
+ * genewates t-the nyeawest nyeighbouw f-fow usews and stowe them in manhattan fowmat i.e sequence fiwes. >_<
+ * see w-weadme fow oscaw usage. rawr x3
  */
-object KnnOfflineJob extends TwitterExecutionApp {
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
-      val knnDirectoryOpt: Option[String] = args.optional("knn_directory")
-      knnDirectoryOpt match {
-        case Some(knnDirectory) =>
-          Execution.withCachedFile(knnDirectory) { directory =>
-            execute(args, Some(new LocalFile(directory.file)))
+object knnoffwinejob extends twittewexecutionapp {
+  ovewwide def j-job: execution[unit] = execution.withid { i-impwicit u-uniqueid =>
+    e-execution.getawgs.fwatmap { awgs: a-awgs =>
+      vaw knndiwectowyopt: option[stwing] = a-awgs.optionaw("knn_diwectowy")
+      knndiwectowyopt match {
+        c-case some(knndiwectowy) =>
+          execution.withcachedfiwe(knndiwectowy) { diwectowy =>
+            exekawaii~(awgs, /(^•ω•^) some(new wocawfiwe(diwectowy.fiwe)))
           }
-        case None =>
-          execute(args, None)
+        case n-nyone =>
+          exekawaii~(awgs, :3 n-nyone)
       }
     }
   }
 
   /**
-   * Execute KnnOfflineJob
-   * @param args: The args object for this job
-   * @param abstractFile: An optional of producer embedding path
+   * e-exekawaii~ k-knnoffwinejob
+   * @pawam awgs: the awgs object fow this job
+   * @pawam a-abstwactfiwe: an o-optionaw of pwoducew embedding p-path
    */
-  def execute(
-    args: Args,
-    abstractFile: Option[AbstractFile]
+  def e-exekawaii~(
+    awgs: awgs, (ꈍᴗꈍ)
+    a-abstwactfiwe: option[abstwactfiwe]
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
-    implicit val tz: TimeZone = TimeZone.getDefault()
-    implicit val dp: DateParser = DateParser.default
-    implicit val dateRange = DateRange.parse(args.list("date"))(DateOps.UTC, DateParser.default)
-    implicit val keyInject = BinaryScalaCodec(EntityKey)
-    implicit val valueInject = BinaryScalaCodec(NearestNeighbors)
+    i-impwicit uniqueid: uniqueid
+  ): execution[unit] = {
+    i-impwicit vaw tz: timezone = t-timezone.getdefauwt()
+    impwicit v-vaw dp: datepawsew = d-datepawsew.defauwt
+    impwicit vaw datewange = datewange.pawse(awgs.wist("date"))(dateops.utc, /(^•ω•^) datepawsew.defauwt)
+    impwicit vaw keyinject = binawyscawacodec(entitykey)
+    impwicit v-vaw vawueinject = b-binawyscawacodec(neawestneighbows)
 
-    val entityKind = EntityKind.getEntityKind(args("producer_entity_kind"))
-    val metric = Metric.fromString(args("metric"))
-    val outputPath: String = args("output_path")
-    val numNeighbors: Int = args("neighbors").toInt
-    val ef = args.getOrElse("ef", numNeighbors.toString).toInt
-    val reducers: Int = args("reducers").toInt
-    val knnDimension: Int = args("dimension").toInt
-    val debugOutputPath: Option[String] = args.optional("debug_output_path")
-    val filterPath: Option[String] = args.optional("users_filter_path")
-    val shards: Int = args.getOrElse("shards", "100").toInt
-    val useHashJoin: Boolean = args.getOrElse("use_hash_join", "false").toBoolean
-    val mhOutput = VersionedKeyValSource[EntityKey, NearestNeighbors](
-      path = outputPath,
-      sourceVersion = None,
-      sinkVersion = None,
-      maxFailures = 0,
-      versionsToKeep = 1
+    vaw entitykind = e-entitykind.getentitykind(awgs("pwoducew_entity_kind"))
+    v-vaw metwic = m-metwic.fwomstwing(awgs("metwic"))
+    vaw outputpath: stwing = awgs("output_path")
+    vaw n-nyumneighbows: int = awgs("neighbows").toint
+    vaw ef = awgs.getowewse("ef", (⑅˘꒳˘) nyumneighbows.tostwing).toint
+    vaw weducews: i-int = awgs("weducews").toint
+    vaw knndimension: i-int = awgs("dimension").toint
+    v-vaw debugoutputpath: o-option[stwing] = awgs.optionaw("debug_output_path")
+    v-vaw fiwtewpath: o-option[stwing] = a-awgs.optionaw("usews_fiwtew_path")
+    v-vaw shawds: int = awgs.getowewse("shawds", ( ͡o ω ͡o ) "100").toint
+    vaw usehashjoin: b-boowean = a-awgs.getowewse("use_hash_join", òωó "fawse").toboowean
+    v-vaw mhoutput = v-vewsionedkeyvawsouwce[entitykey, (⑅˘꒳˘) n-nyeawestneighbows](
+      path = outputpath, XD
+      souwcevewsion = nyone, -.-
+      s-sinkvewsion = none, :3
+      maxfaiwuwes = 0, nyaa~~
+      vewsionstokeep = 1
     )
 
-    val consumerEmbeddings: TypedPipe[EmbeddingWithEntity[UserId]] =
-      KnnHelper.getFilteredUserEmbeddings(
-        args,
-        filterPath,
-        reducers,
-        useHashJoin
+    vaw consumewembeddings: typedpipe[embeddingwithentity[usewid]] =
+      k-knnhewpew.getfiwtewedusewembeddings(
+        awgs, 😳
+        fiwtewpath, (⑅˘꒳˘)
+        weducews, nyaa~~
+        usehashjoin
       )
 
-    val neighborsPipe: TypedPipe[(EntityKey, NearestNeighbors)] = KnnHelper.getNeighborsPipe(
-      args,
-      entityKind,
-      metric,
-      ef,
-      consumerEmbeddings,
-      abstractFile,
-      reducers,
-      numNeighbors,
-      knnDimension
+    v-vaw nyeighbowspipe: t-typedpipe[(entitykey, OwO n-nyeawestneighbows)] = knnhewpew.getneighbowspipe(
+      a-awgs, rawr x3
+      entitykind, XD
+      m-metwic, σωσ
+      e-ef, (U ᵕ U❁)
+      consumewembeddings, (U ﹏ U)
+      abstwactfiwe, :3
+      weducews, ( ͡o ω ͡o )
+      nyumneighbows, σωσ
+      knndimension
     )
 
-    val neighborsExecution: Execution[Unit] = neighborsPipe
-      .writeExecution(mhOutput)
+    v-vaw nyeighbowsexecution: e-execution[unit] = nyeighbowspipe
+      .wwiteexecution(mhoutput)
 
-    // Write manual Inspection
-    debugOutputPath match {
-      case Some(path: String) =>
-        val debugExecution: Execution[Unit] = KnnDebug
-          .getDebugTable(
-            neighborsPipe = neighborsPipe,
-            shards = shards,
-            reducers = reducers
+    // wwite m-manuaw inspection
+    d-debugoutputpath match {
+      case some(path: s-stwing) =>
+        v-vaw debugexecution: e-execution[unit] = k-knndebug
+          .getdebugtabwe(
+            nyeighbowspipe = nyeighbowspipe,
+            shawds = shawds, >w<
+            w-weducews = w-weducews
           )
-          .writeExecution(TypedTsv(path))
-        Execution.zip(debugExecution, neighborsExecution).unit
-      case None => neighborsExecution
+          .wwiteexecution(typedtsv(path))
+        e-execution.zip(debugexecution, 😳😳😳 nyeighbowsexecution).unit
+      c-case n-none => nyeighbowsexecution
     }
   }
 }

@@ -1,49 +1,49 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.search.blender.services.strato.UserSearchSafetySettings
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelMap
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.visibility.common.UserSearchSafetySource
+i-impowt com.twittew.seawch.bwendew.sewvices.stwato.usewseawchsafetysettings
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.safetywabew
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywabewmap
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywabewtype
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.fetchew
+impowt com.twittew.stwato.cwient.{cwient => stwatocwient}
+impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
+i-impowt com.twittew.visibiwity.common.usewseawchsafetysouwce
 
-object StratoSafetyLabelsRepository {
-  type Type = (TweetId, SafetyLabelType) => Stitch[Option[SafetyLabel]]
+object stwatosafetywabewswepositowy {
+  t-type type = (tweetid, 🥺 safetywabewtype) => s-stitch[option[safetywabew]]
 
-  def apply(client: StratoClient): Type = {
-    val safetyLabelMapRepo = StratoSafetyLabelMapRepository(client)
+  def appwy(cwient: stwatocwient): type = {
+    v-vaw safetywabewmapwepo = stwatosafetywabewmapwepositowy(cwient)
 
-    (tweetId, safetyLabelType) =>
-      safetyLabelMapRepo(tweetId).map(
-        _.flatMap(_.labels).flatMap(_.get(safetyLabelType))
+    (tweetid, mya s-safetywabewtype) =>
+      s-safetywabewmapwepo(tweetid).map(
+        _.fwatmap(_.wabews).fwatmap(_.get(safetywabewtype))
       )
   }
 }
 
-object StratoSafetyLabelMapRepository {
-  type Type = TweetId => Stitch[Option[SafetyLabelMap]]
+object stwatosafetywabewmapwepositowy {
+  type type = tweetid => stitch[option[safetywabewmap]]
 
-  val column = "visibility/baseTweetSafetyLabelMap"
+  vaw c-cowumn = "visibiwity/basetweetsafetywabewmap"
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[TweetId, Unit, SafetyLabelMap] =
-      client.fetcher[TweetId, SafetyLabelMap](column)
+  def appwy(cwient: stwatocwient): type = {
+    vaw fetchew: fetchew[tweetid, 🥺 u-unit, >_< safetywabewmap] =
+      cwient.fetchew[tweetid, >_< s-safetywabewmap](cowumn)
 
-    tweetId => fetcher.fetch(tweetId).map(_.v)
+    t-tweetid => fetchew.fetch(tweetid).map(_.v)
   }
 }
 
-object StratoUserSearchSafetySourceRepository {
-  type Type = UserId => Stitch[UserSearchSafetySettings]
+o-object stwatousewseawchsafetysouwcewepositowy {
+  t-type type = usewid => stitch[usewseawchsafetysettings]
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[UserId, Unit, UserSearchSafetySettings] =
-      client.fetcher[UserId, UserSearchSafetySettings](UserSearchSafetySource.Column)
+  def appwy(cwient: s-stwatocwient): type = {
+    vaw fetchew: fetchew[usewid, (⑅˘꒳˘) u-unit, usewseawchsafetysettings] =
+      cwient.fetchew[usewid, /(^•ω•^) usewseawchsafetysettings](usewseawchsafetysouwce.cowumn)
 
-    userId => fetcher.fetch(userId).map(_.v.getOrElse(UserSearchSafetySource.DefaultSetting))
+    usewid => fetchew.fetch(usewid).map(_.v.getowewse(usewseawchsafetysouwce.defauwtsetting))
   }
 }

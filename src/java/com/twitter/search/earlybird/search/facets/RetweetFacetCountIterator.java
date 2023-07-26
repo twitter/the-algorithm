@@ -1,36 +1,36 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.index.NumericDocValues;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.CSFFacetCountIterator;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+i-impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.facets.csffacetcountitewatow;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
 /**
- * And iterator for counting retweets. Reads from shared_status_id CSF but doesn't count
- * replies.
+ * a-and itewatow f-fow counting wetweets. (///ˬ///✿) weads fwom shawed_status_id csf but doesn't count
+ * w-wepwies. 😳😳😳
  */
-public class RetweetFacetCountIterator extends CSFFacetCountIterator {
-  private final NumericDocValues featureReaderIsRetweetFlag;
+pubwic cwass wetweetfacetcountitewatow extends c-csffacetcountitewatow {
+  pwivate f-finaw nyumewicdocvawues featuweweadewiswetweetfwag;
 
-  public RetweetFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo facetFieldInfo) throws IOException {
-    super(reader, facetFieldInfo);
-    featureReaderIsRetweetFlag =
-        reader.getNumericDocValues(EarlybirdFieldConstant.IS_RETWEET_FLAG.getFieldName());
+  pubwic wetweetfacetcountitewatow(
+      e-eawwybiwdindexsegmentatomicweadew weadew, 🥺
+      s-schema.fiewdinfo f-facetfiewdinfo) thwows ioexception {
+    supew(weadew, mya facetfiewdinfo);
+    featuweweadewiswetweetfwag =
+        w-weadew.getnumewicdocvawues(eawwybiwdfiewdconstant.is_wetweet_fwag.getfiewdname());
   }
 
-  @Override
-  protected boolean shouldCollect(int internalDocID, long termID) throws IOException {
-    // termID == 0 means that we didn't set shared_status_csf, so don't collect
-    // (tweet IDs are all positive)
-    // Also only collect if this doc is a retweet, not a reply
-    return termID > 0
-        && featureReaderIsRetweetFlag.advanceExact(internalDocID)
-        && (featureReaderIsRetweetFlag.longValue() != 0);
+  @ovewwide
+  pwotected boowean shouwdcowwect(int intewnawdocid, 🥺 wong t-tewmid) thwows ioexception {
+    // t-tewmid == 0 m-means that we didn't s-set shawed_status_csf, >_< s-so don't cowwect
+    // (tweet ids a-awe aww positive)
+    // awso onwy cowwect if this d-doc is a wetweet, >_< nyot a wepwy
+    wetuwn tewmid > 0
+        && featuweweadewiswetweetfwag.advanceexact(intewnawdocid)
+        && (featuweweadewiswetweetfwag.wongvawue() != 0);
   }
 }

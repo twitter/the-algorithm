@@ -1,701 +1,701 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.twittew.simcwustews_v2.scawding.embedding
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingJob
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
-import java.util.TimeZone
+impowt com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt c-com.twittew.scawding._
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions
+i-impowt c-com.twittew.simcwustews_v2.hdfs_souwces._
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw._
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.simcwustewsembeddingjob
+impowt com.twittew.simcwustews_v2.thwiftscawa._
+impowt c-com.twittew.wtf.scawding.jobs.common.{adhocexecutionapp, (˘ω˘) scheduwedexecutionapp}
+impowt java.utiw.timezone
 
-object ProducerEmbeddingsFromInterestedInBatchAppUtil {
-  import ProducerEmbeddingsFromInterestedIn._
+object pwoducewembeddingsfwomintewestedinbatchapputiw {
+  i-impowt pwoducewembeddingsfwomintewestedin._
 
-  val user = System.getenv("USER")
+  v-vaw usew = system.getenv("usew")
 
-  val rootPath: String = s"/user/$user/manhattan_sequence_files"
+  vaw wootpath: stwing = s-s"/usew/$usew/manhattan_sequence_fiwes"
 
-  // Helps speed up the multiplication step which can get very big
-  val numReducersForMatrixMultiplication: Int = 12000
+  // hewps speed up t-the muwtipwication s-step which can get vewy big
+  vaw nyumweducewsfowmatwixmuwtipwication: int = 12000
 
   /**
-   * Given the producer x cluster matrix, key by producer / cluster individually, and write output
-   * to individual DAL datasets
+   * given the pwoducew x-x cwustew matwix, :3 key by pwoducew / cwustew individuawwy, >w< and wwite output
+   * t-to individuaw daw datasets
    */
-  def writeOutput(
-    producerClusterEmbedding: TypedPipe[((ClusterId, UserId), Double)],
-    producerTopKEmbeddingsDataset: KeyValDALDataset[KeyVal[Long, TopSimClustersWithScore]],
-    clusterTopKProducersDataset: KeyValDALDataset[
-      KeyVal[PersistedFullClusterId, TopProducersWithScore]
-    ],
-    producerTopKEmbeddingsPath: String,
-    clusterTopKProducersPath: String,
-    modelVersion: ModelVersion
-  ): Execution[Unit] = {
-    val keyedByProducer =
-      toSimClusterEmbedding(producerClusterEmbedding, topKClustersToKeep, modelVersion)
-        .map { case (userId, clusters) => KeyVal(userId, clusters) }
-        .writeDALVersionedKeyValExecution(
-          producerTopKEmbeddingsDataset,
-          D.Suffix(producerTopKEmbeddingsPath)
+  d-def wwiteoutput(
+    pwoducewcwustewembedding: t-typedpipe[((cwustewid, ^^ u-usewid), doubwe)], 😳😳😳
+    p-pwoducewtopkembeddingsdataset: keyvawdawdataset[keyvaw[wong, nyaa~~ topsimcwustewswithscowe]], (⑅˘꒳˘)
+    c-cwustewtopkpwoducewsdataset: keyvawdawdataset[
+      keyvaw[pewsistedfuwwcwustewid, :3 t-toppwoducewswithscowe]
+    ], ʘwʘ
+    pwoducewtopkembeddingspath: stwing, rawr x3
+    cwustewtopkpwoducewspath: stwing, (///ˬ///✿)
+    modewvewsion: m-modewvewsion
+  ): execution[unit] = {
+    vaw k-keyedbypwoducew =
+      t-tosimcwustewembedding(pwoducewcwustewembedding, 😳😳😳 t-topkcwustewstokeep, XD modewvewsion)
+        .map { case (usewid, >_< cwustews) => keyvaw(usewid, >w< c-cwustews) }
+        .wwitedawvewsionedkeyvawexecution(
+          p-pwoducewtopkembeddingsdataset, /(^•ω•^)
+          d.suffix(pwoducewtopkembeddingspath)
         )
 
-    val keyedBySimCluster = fromSimClusterEmbedding(
-      producerClusterEmbedding,
-      topKUsersToKeep,
-      modelVersion
+    v-vaw keyedbysimcwustew = f-fwomsimcwustewembedding(
+      pwoducewcwustewembedding, :3
+      t-topkusewstokeep, ʘwʘ
+      modewvewsion
     ).map {
-        case (clusterId, topProducers) => KeyVal(clusterId, topProducersToThrift(topProducers))
+        c-case (cwustewid, (˘ω˘) toppwoducews) => keyvaw(cwustewid, (ꈍᴗꈍ) t-toppwoducewstothwift(toppwoducews))
       }
-      .writeDALVersionedKeyValExecution(
-        clusterTopKProducersDataset,
-        D.Suffix(clusterTopKProducersPath)
+      .wwitedawvewsionedkeyvawexecution(
+        cwustewtopkpwoducewsdataset, ^^
+        d-d.suffix(cwustewtopkpwoducewspath)
       )
 
-    Execution.zip(keyedByProducer, keyedBySimCluster).unit
+    execution.zip(keyedbypwoducew, ^^ k-keyedbysimcwustew).unit
   }
 }
 
 /**
- * Base class for Fav based producer embeddings. Helps reuse the code for different model versions
+ * b-base cwass fow fav based pwoducew embeddings. ( ͡o ω ͡o ) hewps weuse the code fow diffewent modew vewsions
  */
-trait ProducerEmbeddingsFromInterestedInByFavScoreBase extends ScheduledExecutionApp {
-  import ProducerEmbeddingsFromInterestedIn._
-  import ProducerEmbeddingsFromInterestedInBatchAppUtil._
+t-twait pwoducewembeddingsfwomintewestedinbyfavscowebase e-extends scheduwedexecutionapp {
+  i-impowt p-pwoducewembeddingsfwomintewestedin._
+  i-impowt pwoducewembeddingsfwomintewestedinbatchapputiw._
 
-  def modelVersion: ModelVersion
+  def modewvewsion: modewvewsion
 
-  val producerTopKEmbeddingsByFavScorePathPrefix: String =
-    "/producer_top_k_simcluster_embeddings_by_fav_score_"
+  v-vaw pwoducewtopkembeddingsbyfavscowepathpwefix: stwing =
+    "/pwoducew_top_k_simcwustew_embeddings_by_fav_scowe_"
 
-  val clusterTopKProducersByFavScorePathPrefix: String =
-    "/simcluster_embedding_top_k_producers_by_fav_score_"
+  vaw cwustewtopkpwoducewsbyfavscowepathpwefix: stwing =
+    "/simcwustew_embedding_top_k_pwoducews_by_fav_scowe_"
 
-  val minNumFavers: Int = minNumFaversForProducer
+  v-vaw minnumfavews: int = minnumfavewsfowpwoducew
 
-  def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  d-def pwoducewtopksimcwustewembeddingsbyfavscowedataset: k-keyvawdawdataset[
+    k-keyvaw[wong, -.- topsimcwustewswithscowe]
   ]
 
-  def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  def s-simcwustewembeddingtopkpwoducewsbyfavscowedataset: k-keyvawdawdataset[
+    k-keyvaw[pewsistedfuwwcwustewid, ^^;; t-toppwoducewswithscowe]
   ]
 
-  def getInterestedInFn: (DateRange, TimeZone) => TypedPipe[(Long, ClustersUserIsInterestedIn)]
+  def getintewestedinfn: (datewange, ^•ﻌ•^ timezone) => t-typedpipe[(wong, (˘ω˘) c-cwustewsusewisintewestedin)]
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide d-def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: datewange, o.O
+    t-timezone: timezone, (✿oωo)
+    uniqueid: uniqueid
+  ): execution[unit] = {
 
-    val producerTopKEmbeddingsByFavScorePathUpdated: String =
-      rootPath + producerTopKEmbeddingsByFavScorePathPrefix + ModelVersions
-        .toKnownForModelVersion(modelVersion)
+    vaw pwoducewtopkembeddingsbyfavscowepathupdated: stwing =
+      w-wootpath + pwoducewtopkembeddingsbyfavscowepathpwefix + modewvewsions
+        .toknownfowmodewvewsion(modewvewsion)
 
-    val clusterTopKProducersByFavScorePathUpdated: String =
-      rootPath + clusterTopKProducersByFavScorePathPrefix + ModelVersions
-        .toKnownForModelVersion(modelVersion)
+    vaw cwustewtopkpwoducewsbyfavscowepathupdated: s-stwing =
+      w-wootpath + cwustewtopkpwoducewsbyfavscowepathpwefix + m-modewvewsions
+        .toknownfowmodewvewsion(modewvewsion)
 
-    val producerClusterEmbeddingByFavScore = getProducerClusterEmbedding(
-      getInterestedInFn(dateRange.embiggen(Days(5)), timeZone),
-      DataSources.userUserNormalizedGraphSource,
-      DataSources.userNormsAndCounts,
-      userToProducerFavScore,
-      userToClusterFavScore, // Fav score
-      _.faverCount.exists(_ > minNumFavers),
-      numReducersForMatrixMultiplication,
-      modelVersion,
-      cosineSimilarityThreshold
-    ).forceToDisk
+    vaw pwoducewcwustewembeddingbyfavscowe = g-getpwoducewcwustewembedding(
+      getintewestedinfn(datewange.embiggen(days(5)), 😳😳😳 t-timezone), (ꈍᴗꈍ)
+      d-datasouwces.usewusewnowmawizedgwaphsouwce, σωσ
+      datasouwces.usewnowmsandcounts, UwU
+      usewtopwoducewfavscowe,
+      usewtocwustewfavscowe, ^•ﻌ•^ // fav scowe
+      _.favewcount.exists(_ > minnumfavews), mya
+      nyumweducewsfowmatwixmuwtipwication, /(^•ω•^)
+      m-modewvewsion, rawr
+      cosinesimiwawitythweshowd
+    ).fowcetodisk
 
-    writeOutput(
-      producerClusterEmbeddingByFavScore,
-      producerTopKSimclusterEmbeddingsByFavScoreDataset,
-      simclusterEmbeddingTopKProducersByFavScoreDataset,
-      producerTopKEmbeddingsByFavScorePathUpdated,
-      clusterTopKProducersByFavScorePathUpdated,
-      modelVersion
+    wwiteoutput(
+      p-pwoducewcwustewembeddingbyfavscowe, nyaa~~
+      pwoducewtopksimcwustewembeddingsbyfavscowedataset, ( ͡o ω ͡o )
+      s-simcwustewembeddingtopkpwoducewsbyfavscowedataset, σωσ
+      p-pwoducewtopkembeddingsbyfavscowepathupdated, (✿oωo)
+      cwustewtopkpwoducewsbyfavscowepathupdated, (///ˬ///✿)
+      modewvewsion
     )
   }
 }
 
 /**
- * Base class for Follow based producer embeddings. Helps reuse the code for different model versions
+ * b-base cwass fow f-fowwow based pwoducew embeddings. σωσ h-hewps weuse t-the code fow diffewent modew vewsions
  */
-trait ProducerEmbeddingsFromInterestedInByFollowScoreBase extends ScheduledExecutionApp {
-  import ProducerEmbeddingsFromInterestedIn._
-  import ProducerEmbeddingsFromInterestedInBatchAppUtil._
+twait pwoducewembeddingsfwomintewestedinbyfowwowscowebase extends scheduwedexecutionapp {
+  i-impowt pwoducewembeddingsfwomintewestedin._
+  i-impowt pwoducewembeddingsfwomintewestedinbatchapputiw._
 
-  def modelVersion: ModelVersion
+  def m-modewvewsion: modewvewsion
 
-  val producerTopKEmbeddingsByFollowScorePathPrefix: String =
-    "/producer_top_k_simcluster_embeddings_by_follow_score_"
+  v-vaw pwoducewtopkembeddingsbyfowwowscowepathpwefix: s-stwing =
+    "/pwoducew_top_k_simcwustew_embeddings_by_fowwow_scowe_"
 
-  val clusterTopKProducersByFollowScorePathPrefix: String =
-    "/simcluster_embedding_top_k_producers_by_follow_score_"
+  vaw c-cwustewtopkpwoducewsbyfowwowscowepathpwefix: stwing =
+    "/simcwustew_embedding_top_k_pwoducews_by_fowwow_scowe_"
 
-  def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  def pwoducewtopksimcwustewembeddingsbyfowwowscowedataset: keyvawdawdataset[
+    keyvaw[wong, UwU t-topsimcwustewswithscowe]
   ]
 
-  def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  d-def simcwustewembeddingtopkpwoducewsbyfowwowscowedataset: keyvawdawdataset[
+    keyvaw[pewsistedfuwwcwustewid, (⑅˘꒳˘) t-toppwoducewswithscowe]
   ]
 
-  def getInterestedInFn: (DateRange, TimeZone) => TypedPipe[(Long, ClustersUserIsInterestedIn)]
+  d-def getintewestedinfn: (datewange, /(^•ω•^) timezone) => typedpipe[(wong, -.- cwustewsusewisintewestedin)]
 
-  val minNumFollowers: Int = minNumFollowersForProducer
+  v-vaw minnumfowwowews: int = minnumfowwowewsfowpwoducew
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide def wunondatewange(
+    awgs: a-awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: datewange, (ˆ ﻌ ˆ)♡
+    t-timezone: timezone, nyaa~~
+    u-uniqueid: uniqueid
+  ): execution[unit] = {
 
-    val producerTopKEmbeddingsByFollowScorePath: String =
-      rootPath + producerTopKEmbeddingsByFollowScorePathPrefix + ModelVersions
-        .toKnownForModelVersion(modelVersion)
+    vaw p-pwoducewtopkembeddingsbyfowwowscowepath: s-stwing =
+      wootpath + pwoducewtopkembeddingsbyfowwowscowepathpwefix + modewvewsions
+        .toknownfowmodewvewsion(modewvewsion)
 
-    val clusterTopKProducersByFollowScorePath: String =
-      rootPath + clusterTopKProducersByFollowScorePathPrefix + ModelVersions
-        .toKnownForModelVersion(modelVersion)
+    v-vaw cwustewtopkpwoducewsbyfowwowscowepath: stwing =
+      wootpath + c-cwustewtopkpwoducewsbyfowwowscowepathpwefix + modewvewsions
+        .toknownfowmodewvewsion(modewvewsion)
 
-    val producerClusterEmbeddingByFollowScore = getProducerClusterEmbedding(
-      getInterestedInFn(dateRange.embiggen(Days(5)), timeZone),
-      DataSources.userUserNormalizedGraphSource,
-      DataSources.userNormsAndCounts,
-      userToProducerFollowScore,
-      userToClusterFollowScore, // Follow score
-      _.followerCount.exists(_ > minNumFollowers),
-      numReducersForMatrixMultiplication,
-      modelVersion,
-      cosineSimilarityThreshold
-    ).forceToDisk
+    vaw pwoducewcwustewembeddingbyfowwowscowe = getpwoducewcwustewembedding(
+      g-getintewestedinfn(datewange.embiggen(days(5)), ʘwʘ timezone), :3
+      d-datasouwces.usewusewnowmawizedgwaphsouwce, (U ᵕ U❁)
+      d-datasouwces.usewnowmsandcounts,
+      usewtopwoducewfowwowscowe, (U ﹏ U)
+      usewtocwustewfowwowscowe, ^^ // f-fowwow scowe
+      _.fowwowewcount.exists(_ > m-minnumfowwowews), òωó
+      n-nyumweducewsfowmatwixmuwtipwication, /(^•ω•^)
+      m-modewvewsion, 😳😳😳
+      cosinesimiwawitythweshowd
+    ).fowcetodisk
 
-    writeOutput(
-      producerClusterEmbeddingByFollowScore,
-      producerTopKSimclusterEmbeddingsByFollowScoreDataset,
-      simclusterEmbeddingTopKProducersByFollowScoreDataset,
-      producerTopKEmbeddingsByFollowScorePath,
-      clusterTopKProducersByFollowScorePath,
-      modelVersion
+    w-wwiteoutput(
+      p-pwoducewcwustewembeddingbyfowwowscowe,
+      pwoducewtopksimcwustewembeddingsbyfowwowscowedataset, :3
+      simcwustewembeddingtopkpwoducewsbyfowwowscowedataset, (///ˬ///✿)
+      p-pwoducewtopkembeddingsbyfowwowscowepath, rawr x3
+      c-cwustewtopkpwoducewsbyfowwowscowepath, (U ᵕ U❁)
+      m-modewvewsion
     )
   }
 }
 
 /**
- capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_fav_score \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ capesospy-v2 update --buiwd_wocawwy --stawt_cwon \
+ --stawt_cwon p-pwoducew_embeddings_fwom_intewested_in_by_fav_scowe \
+ swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object ProducerEmbeddingsFromInterestedInByFavScoreBatchApp
-    extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
+o-object pwoducewembeddingsfwomintewestedinbyfavscowebatchapp
+    e-extends pwoducewembeddingsfwomintewestedinbyfavscowebase {
+  ovewwide def modewvewsion: modewvewsion = modewvewsion.modew20m145kupdated
 
-  override def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInUpdatedSource
+  o-ovewwide def getintewestedinfn: (
+    d-datewange, (⑅˘꒳˘)
+    t-timezone
+  ) => t-typedpipe[(usewid, cwustewsusewisintewestedin)] =
+    i-intewestedinsouwces.simcwustewsintewestedinupdatedsouwce
 
-  override val firstTime: RichDate = RichDate("2019-09-10")
+  ovewwide vaw fiwsttime: wichdate = wichdate("2019-09-10")
 
-  override val batchIncrement: Duration = Days(7)
+  ovewwide vaw batchincwement: d-duwation = days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  ovewwide d-def pwoducewtopksimcwustewembeddingsbyfavscowedataset: keyvawdawdataset[
+    k-keyvaw[wong, (˘ω˘) topsimcwustewswithscowe]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset
+    p-pwoducewtopksimcwustewembeddingsbyfavscoweupdatedscawadataset
 
-  override def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  ovewwide d-def simcwustewembeddingtopkpwoducewsbyfavscowedataset: k-keyvawdawdataset[
+    k-keyvaw[pewsistedfuwwcwustewid, :3 t-toppwoducewswithscowe]
   ] =
-    SimclusterEmbeddingTopKProducersByFavScoreUpdatedScalaDataset
+    s-simcwustewembeddingtopkpwoducewsbyfavscoweupdatedscawadataset
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_fav_score_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --buiwd_wocawwy --stawt_cwon \
+ --stawt_cwon pwoducew_embeddings_fwom_intewested_in_by_fav_scowe_2020 \
+ swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object ProducerEmbeddingsFromInterestedInByFavScore2020BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+object pwoducewembeddingsfwomintewestedinbyfavscowe2020batchapp
+    e-extends pwoducewembeddingsfwomintewestedinbyfavscowebase {
+  ovewwide d-def modewvewsion: m-modewvewsion = modewvewsion.modew20m145k2020
 
-  override def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedIn2020Source
+  o-ovewwide def getintewestedinfn: (
+    datewange, XD
+    timezone
+  ) => typedpipe[(usewid, >_< cwustewsusewisintewestedin)] =
+    i-intewestedinsouwces.simcwustewsintewestedin2020souwce
 
-  override val firstTime: RichDate = RichDate("2021-03-01")
+  o-ovewwide vaw fiwsttime: w-wichdate = wichdate("2021-03-01")
 
-  override val batchIncrement: Duration = Days(7)
+  ovewwide v-vaw batchincwement: d-duwation = days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  ovewwide d-def pwoducewtopksimcwustewembeddingsbyfavscowedataset: k-keyvawdawdataset[
+    keyvaw[wong, (✿oωo) topsimcwustewswithscowe]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFavScore2020ScalaDataset
+    pwoducewtopksimcwustewembeddingsbyfavscowe2020scawadataset
 
-  override def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  ovewwide def simcwustewembeddingtopkpwoducewsbyfavscowedataset: k-keyvawdawdataset[
+    k-keyvaw[pewsistedfuwwcwustewid, (ꈍᴗꈍ) t-toppwoducewswithscowe]
   ] =
-    SimclusterEmbeddingTopKProducersByFavScore2020ScalaDataset
+    s-simcwustewembeddingtopkpwoducewsbyfavscowe2020scawadataset
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_fav_score_dec11 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+c-capesospy-v2 update --buiwd_wocawwy --stawt_cwon \
+ --stawt_cwon p-pwoducew_embeddings_fwom_intewested_in_by_fav_scowe_dec11 \
+ s-swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object ProducerEmbeddingsFromInterestedInByFavScoreDec11BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kDec11
+object pwoducewembeddingsfwomintewestedinbyfavscowedec11batchapp
+    e-extends pwoducewembeddingsfwomintewestedinbyfavscowebase {
+  o-ovewwide def modewvewsion: modewvewsion = m-modewvewsion.modew20m145kdec11
 
-  override def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInDec11Source
+  ovewwide def getintewestedinfn: (
+    d-datewange, XD
+    timezone
+  ) => t-typedpipe[(usewid, c-cwustewsusewisintewestedin)] =
+    intewestedinsouwces.simcwustewsintewestedindec11souwce
 
-  override val firstTime: RichDate = RichDate("2019-11-18")
+  o-ovewwide vaw fiwsttime: wichdate = wichdate("2019-11-18")
 
-  override val batchIncrement: Duration = Days(7)
+  o-ovewwide vaw batchincwement: d-duwation = d-days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  ovewwide def pwoducewtopksimcwustewembeddingsbyfavscowedataset: keyvawdawdataset[
+    k-keyvaw[wong, :3 topsimcwustewswithscowe]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFavScoreScalaDataset
+    pwoducewtopksimcwustewembeddingsbyfavscowescawadataset
 
-  override def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  o-ovewwide def s-simcwustewembeddingtopkpwoducewsbyfavscowedataset: keyvawdawdataset[
+    k-keyvaw[pewsistedfuwwcwustewid, mya toppwoducewswithscowe]
   ] =
-    SimclusterEmbeddingTopKProducersByFavScoreScalaDataset
+    s-simcwustewembeddingtopkpwoducewsbyfavscowescawadataset
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_follow_score \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+c-capesospy-v2 update --buiwd_wocawwy --stawt_cwon \
+ --stawt_cwon pwoducew_embeddings_fwom_intewested_in_by_fowwow_scowe \
+ s-swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object ProducerEmbeddingsFromInterestedInByFollowScoreBatchApp
-    extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
+object pwoducewembeddingsfwomintewestedinbyfowwowscowebatchapp
+    e-extends p-pwoducewembeddingsfwomintewestedinbyfowwowscowebase {
+  ovewwide d-def modewvewsion: modewvewsion = m-modewvewsion.modew20m145kupdated
 
-  override def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInUpdatedSource
+  o-ovewwide d-def getintewestedinfn: (
+    datewange, òωó
+    timezone
+  ) => typedpipe[(usewid, nyaa~~ cwustewsusewisintewestedin)] =
+    intewestedinsouwces.simcwustewsintewestedinupdatedsouwce
 
-  override val firstTime: RichDate = RichDate("2019-09-10")
+  ovewwide vaw fiwsttime: wichdate = wichdate("2019-09-10")
 
-  override val batchIncrement: Duration = Days(7)
+  ovewwide vaw batchincwement: duwation = days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  ovewwide def pwoducewtopksimcwustewembeddingsbyfowwowscowedataset: k-keyvawdawdataset[
+    k-keyvaw[wong, 🥺 topsimcwustewswithscowe]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset
+    pwoducewtopksimcwustewembeddingsbyfowwowscoweupdatedscawadataset
 
-  override def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  ovewwide d-def simcwustewembeddingtopkpwoducewsbyfowwowscowedataset: k-keyvawdawdataset[
+    k-keyvaw[pewsistedfuwwcwustewid, -.- toppwoducewswithscowe]
   ] =
-    SimclusterEmbeddingTopKProducersByFollowScoreUpdatedScalaDataset
+    s-simcwustewembeddingtopkpwoducewsbyfowwowscoweupdatedscawadataset
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_follow_score_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --buiwd_wocawwy --stawt_cwon \
+ --stawt_cwon p-pwoducew_embeddings_fwom_intewested_in_by_fowwow_scowe_2020 \
+ s-swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object ProducerEmbeddingsFromInterestedInByFollowScore2020BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+object pwoducewembeddingsfwomintewestedinbyfowwowscowe2020batchapp
+    extends p-pwoducewembeddingsfwomintewestedinbyfowwowscowebase {
+  ovewwide def modewvewsion: m-modewvewsion = m-modewvewsion.modew20m145k2020
 
-  override def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedIn2020Source
+  ovewwide def getintewestedinfn: (
+    d-datewange, 🥺
+    timezone
+  ) => typedpipe[(usewid, (˘ω˘) c-cwustewsusewisintewestedin)] =
+    i-intewestedinsouwces.simcwustewsintewestedin2020souwce
 
-  override val firstTime: RichDate = RichDate("2021-03-01")
+  o-ovewwide v-vaw fiwsttime: w-wichdate = w-wichdate("2021-03-01")
 
-  override val batchIncrement: Duration = Days(7)
+  o-ovewwide v-vaw batchincwement: duwation = d-days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  ovewwide d-def pwoducewtopksimcwustewembeddingsbyfowwowscowedataset: k-keyvawdawdataset[
+    keyvaw[wong, t-topsimcwustewswithscowe]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFollowScore2020ScalaDataset
+    pwoducewtopksimcwustewembeddingsbyfowwowscowe2020scawadataset
 
-  override def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  ovewwide d-def simcwustewembeddingtopkpwoducewsbyfowwowscowedataset: keyvawdawdataset[
+    k-keyvaw[pewsistedfuwwcwustewid, òωó t-toppwoducewswithscowe]
   ] =
-    SimclusterEmbeddingTopKProducersByFollowScore2020ScalaDataset
+    s-simcwustewembeddingtopkpwoducewsbyfowwowscowe2020scawadataset
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_follow_score_dec11 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 u-update --buiwd_wocawwy --stawt_cwon \
+ --stawt_cwon pwoducew_embeddings_fwom_intewested_in_by_fowwow_scowe_dec11 \
+ s-swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object ProducerEmbeddingsFromInterestedInByFollowScoreDec11BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kDec11
+object pwoducewembeddingsfwomintewestedinbyfowwowscowedec11batchapp
+    e-extends pwoducewembeddingsfwomintewestedinbyfowwowscowebase {
+  ovewwide d-def modewvewsion: modewvewsion = modewvewsion.modew20m145kdec11
 
-  override def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInDec11Source
+  ovewwide def getintewestedinfn: (
+    d-datewange, UwU
+    timezone
+  ) => t-typedpipe[(usewid, ^•ﻌ•^ c-cwustewsusewisintewestedin)] =
+    intewestedinsouwces.simcwustewsintewestedindec11souwce
 
-  override val firstTime: RichDate = RichDate("2019-11-18")
+  ovewwide vaw fiwsttime: w-wichdate = wichdate("2019-11-18")
 
-  override val batchIncrement: Duration = Days(7)
+  ovewwide vaw b-batchincwement: d-duwation = days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  o-ovewwide def pwoducewtopksimcwustewembeddingsbyfowwowscowedataset: keyvawdawdataset[
+    k-keyvaw[wong, mya topsimcwustewswithscowe]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFollowScoreScalaDataset
+    p-pwoducewtopksimcwustewembeddingsbyfowwowscowescawadataset
 
-  override def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  ovewwide d-def simcwustewembeddingtopkpwoducewsbyfowwowscowedataset: keyvawdawdataset[
+    keyvaw[pewsistedfuwwcwustewid, (✿oωo) t-toppwoducewswithscowe]
   ] =
-    SimclusterEmbeddingTopKProducersByFollowScoreScalaDataset
+    simcwustewembeddingtopkpwoducewsbyfowwowscowescawadataset
 }
 
 /**
- * Adhoc job to calculate producer's simcluster embeddings, which essentially assigns interestedIn
- * SimClusters to each producer, regardless of whether the producer has a knownFor assignment.
+ * a-adhoc j-job to cawcuwate p-pwoducew's simcwustew embeddings, XD w-which essentiawwy a-assigns intewestedin
+ * s-simcwustews t-to each pwoducew, :3 wegawdwess o-of whethew t-the pwoducew has a-a knownfow assignment. (U ﹏ U)
  *
-$ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:producer_embeddings_from_interested_in-adhoc
+$ ./bazew b-bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/embedding:pwoducew_embeddings_fwom_intewested_in-adhoc
 
- $ scalding remote run \
- --main-class com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedInAdhocApp \
- --target src/scala/com/twitter/simclusters_v2/scalding/embedding:producer_embeddings_from_interested_in-adhoc \
- --user cassowary --cluster bluebird-qus1 \
- --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
- --principal service_acoount@TWITTER.BIZ \
- -- --date 2020-08-25 --model_version 20M_145K_updated \
- --outputDir /gcs/user/cassowary/adhoc/producerEmbeddings/
+ $ s-scawding w-wemote wun \
+ --main-cwass c-com.twittew.simcwustews_v2.scawding.embedding.pwoducewembeddingsfwomintewestedinadhocapp \
+ --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/embedding:pwoducew_embeddings_fwom_intewested_in-adhoc \
+ --usew cassowawy --cwustew bwuebiwd-qus1 \
+ --keytab /vaw/wib/tss/keys/fwoofy/keytabs/cwient/cassowawy.keytab \
+ --pwincipaw s-sewvice_acoount@twittew.biz \
+ -- --date 2020-08-25 --modew_vewsion 20m_145k_updated \
+ --outputdiw /gcs/usew/cassowawy/adhoc/pwoducewembeddings/
 
  */
-object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
+object p-pwoducewembeddingsfwomintewestedinadhocapp extends a-adhocexecutionapp {
 
-  import ProducerEmbeddingsFromInterestedIn._
+  i-impowt p-pwoducewembeddingsfwomintewestedin._
 
-  private val numReducersForMatrixMultiplication = 12000
+  pwivate vaw nyumweducewsfowmatwixmuwtipwication = 12000
 
   /**
-   * Calculate the embedding and writes the results keyed by producers and clusters separately into
-   * individual locations
+   * cawcuwate the embedding a-and wwites t-the wesuwts keyed b-by pwoducews and cwustews sepawatewy into
+   * individuaw wocations
    */
-  private def runAdhocByScore(
-    interestedInClusters: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    userUserNormalGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    keyedByProducerSinkPath: String,
-    keyedByClusterSinkPath: String,
-    userToProducerScoringFn: NeighborWithWeights => Double,
-    userToClusterScoringFn: UserToInterestedInClusterScores => Double,
-    userFilter: NormsAndCounts => Boolean,
-    modelVersion: ModelVersion
+  p-pwivate def wunadhocbyscowe(
+    i-intewestedincwustews: typedpipe[(wong, UwU c-cwustewsusewisintewestedin)], ʘwʘ
+    u-usewusewnowmawgwaph: typedpipe[usewandneighbows], >w<
+    usewnowmsandcounts: typedpipe[nowmsandcounts], 😳😳😳
+    k-keyedbypwoducewsinkpath: s-stwing, rawr
+    k-keyedbycwustewsinkpath: s-stwing, ^•ﻌ•^
+    usewtopwoducewscowingfn: nyeighbowwithweights => doubwe, σωσ
+    u-usewtocwustewscowingfn: u-usewtointewestedincwustewscowes => doubwe, :3
+    usewfiwtew: nyowmsandcounts => b-boowean, rawr x3
+    modewvewsion: modewvewsion
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit uniqueid: u-uniqueid
+  ): execution[unit] = {
 
-    val producerClusterEmbedding = getProducerClusterEmbedding(
-      interestedInClusters,
-      userUserNormalGraph,
-      userNormsAndCounts,
-      userToProducerScoringFn,
-      userToClusterScoringFn,
-      userFilter,
-      numReducersForMatrixMultiplication,
-      modelVersion,
-      cosineSimilarityThreshold
-    ).forceToDisk
+    v-vaw pwoducewcwustewembedding = g-getpwoducewcwustewembedding(
+      intewestedincwustews, nyaa~~
+      u-usewusewnowmawgwaph, :3
+      u-usewnowmsandcounts, >w<
+      usewtopwoducewscowingfn, rawr
+      u-usewtocwustewscowingfn, 😳
+      usewfiwtew, 😳
+      n-nyumweducewsfowmatwixmuwtipwication, 🥺
+      m-modewvewsion, rawr x3
+      c-cosinesimiwawitythweshowd
+    ).fowcetodisk
 
-    val keyByProducerExec =
-      toSimClusterEmbedding(producerClusterEmbedding, topKClustersToKeep, modelVersion)
-        .writeExecution(
-          AdhocKeyValSources.topProducerToClusterEmbeddingsSource(keyedByProducerSinkPath))
+    v-vaw keybypwoducewexec =
+      t-tosimcwustewembedding(pwoducewcwustewembedding, ^^ t-topkcwustewstokeep, ( ͡o ω ͡o ) modewvewsion)
+        .wwiteexecution(
+          a-adhockeyvawsouwces.toppwoducewtocwustewembeddingssouwce(keyedbypwoducewsinkpath))
 
-    val keyByClusterExec =
-      fromSimClusterEmbedding(producerClusterEmbedding, topKUsersToKeep, modelVersion)
-        .map { case (clusterId, topProducers) => (clusterId, topProducersToThrift(topProducers)) }
-        .writeExecution(
-          AdhocKeyValSources.topClusterEmbeddingsToProducerSource(keyedByClusterSinkPath))
+    vaw keybycwustewexec =
+      f-fwomsimcwustewembedding(pwoducewcwustewembedding, XD topkusewstokeep, ^^ modewvewsion)
+        .map { c-case (cwustewid, (⑅˘꒳˘) t-toppwoducews) => (cwustewid, (⑅˘꒳˘) t-toppwoducewstothwift(toppwoducews)) }
+        .wwiteexecution(
+          adhockeyvawsouwces.topcwustewembeddingstopwoducewsouwce(keyedbycwustewsinkpath))
 
-    Execution.zip(keyByProducerExec, keyByClusterExec).unit
+    execution.zip(keybypwoducewexec, ^•ﻌ•^ keybycwustewexec).unit
   }
 
-  // Calculate the embeddings using follow scores
-  private def runFollowScore(
-    interestedInClusters: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    userUserNormalGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    modelVersion: ModelVersion,
-    outputDir: String
+  // cawcuwate the e-embeddings using fowwow scowes
+  p-pwivate def wunfowwowscowe(
+    i-intewestedincwustews: typedpipe[(wong, ( ͡o ω ͡o ) cwustewsusewisintewestedin)], ( ͡o ω ͡o )
+    u-usewusewnowmawgwaph: typedpipe[usewandneighbows], (✿oωo)
+    u-usewnowmsandcounts: t-typedpipe[nowmsandcounts], 😳😳😳
+    m-modewvewsion: m-modewvewsion, OwO
+    o-outputdiw: stwing
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val keyByClusterSinkPath = outputDir + "keyedByCluster/byFollowScore_" + modelVersion
-    val keyByProducerSinkPath = outputDir + "keyedByProducer/byFollowScore_" + modelVersion
+    impwicit uniqueid: uniqueid
+  ): execution[unit] = {
+    vaw keybycwustewsinkpath = o-outputdiw + "keyedbycwustew/byfowwowscowe_" + modewvewsion
+    v-vaw keybypwoducewsinkpath = outputdiw + "keyedbypwoducew/byfowwowscowe_" + modewvewsion
 
-    runAdhocByScore(
-      interestedInClusters,
-      userUserNormalGraph,
-      userNormsAndCounts,
-      keyedByProducerSinkPath = keyByProducerSinkPath,
-      keyedByClusterSinkPath = keyByClusterSinkPath,
-      userToProducerScoringFn = userToProducerFollowScore,
-      userToClusterScoringFn = userToClusterFollowScore,
-      _.followerCount.exists(_ > minNumFollowersForProducer),
-      modelVersion
+    wunadhocbyscowe(
+      intewestedincwustews, ^^
+      u-usewusewnowmawgwaph, rawr x3
+      usewnowmsandcounts, 🥺
+      keyedbypwoducewsinkpath = keybypwoducewsinkpath, (ˆ ﻌ ˆ)♡
+      keyedbycwustewsinkpath = k-keybycwustewsinkpath, ( ͡o ω ͡o )
+      u-usewtopwoducewscowingfn = usewtopwoducewfowwowscowe, >w<
+      u-usewtocwustewscowingfn = usewtocwustewfowwowscowe, /(^•ω•^)
+      _.fowwowewcount.exists(_ > minnumfowwowewsfowpwoducew), 😳😳😳
+      m-modewvewsion
     )
   }
 
-  // Calculate the embeddings using fav scores
-  private def runFavScore(
-    interestedInClusters: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    userUserNormalGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    modelVersion: ModelVersion,
-    outputDir: String
+  // c-cawcuwate the embeddings using f-fav scowes
+  pwivate def wunfavscowe(
+    i-intewestedincwustews: typedpipe[(wong, (U ᵕ U❁) cwustewsusewisintewestedin)],
+    usewusewnowmawgwaph: t-typedpipe[usewandneighbows], (˘ω˘)
+    usewnowmsandcounts: typedpipe[nowmsandcounts], 😳
+    m-modewvewsion: m-modewvewsion, (ꈍᴗꈍ)
+    o-outputdiw: stwing
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val keyByClusterSinkPath = outputDir + "keyedByCluster/byFavScore_" + modelVersion
-    val keyByProducerSinkPath = outputDir + "keyedByProducer/byFavScore_" + modelVersion
+    impwicit u-uniqueid: uniqueid
+  ): execution[unit] = {
+    vaw keybycwustewsinkpath = outputdiw + "keyedbycwustew/byfavscowe_" + modewvewsion
+    v-vaw keybypwoducewsinkpath = o-outputdiw + "keyedbypwoducew/byfavscowe_" + m-modewvewsion
 
-    runAdhocByScore(
-      interestedInClusters,
-      userUserNormalGraph,
-      userNormsAndCounts,
-      keyedByProducerSinkPath = keyByProducerSinkPath,
-      keyedByClusterSinkPath = keyByClusterSinkPath,
-      userToProducerScoringFn = userToProducerFavScore,
-      userToClusterScoringFn = userToClusterFavScore,
-      _.faverCount.exists(_ > minNumFaversForProducer),
-      modelVersion
+    w-wunadhocbyscowe(
+      intewestedincwustews, :3
+      usewusewnowmawgwaph, /(^•ω•^)
+      u-usewnowmsandcounts, ^^;;
+      k-keyedbypwoducewsinkpath = keybypwoducewsinkpath, o.O
+      keyedbycwustewsinkpath = k-keybycwustewsinkpath, 😳
+      usewtopwoducewscowingfn = usewtopwoducewfavscowe,
+      u-usewtocwustewscowingfn = usewtocwustewfavscowe, UwU
+      _.favewcount.exists(_ > minnumfavewsfowpwoducew),
+      m-modewvewsion
     )
   }
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val outputDir = args("outputDir")
+    i-impwicit d-datewange: datewange, >w<
+    timezone: timezone, o.O
+    u-uniqueid: uniqueid
+  ): execution[unit] = {
+    vaw outputdiw = a-awgs("outputdiw")
 
-    val modelVersion =
-      ModelVersions.toModelVersion(args.required("model_version"))
+    vaw modewvewsion =
+      modewvewsions.tomodewvewsion(awgs.wequiwed("modew_vewsion"))
 
-    val interestedInClusters = modelVersion match {
-      case ModelVersion.Model20m145k2020 =>
-        InterestedInSources.simClustersInterestedIn2020Source(dateRange, timeZone).forceToDisk
-      case ModelVersion.Model20m145kUpdated =>
-        InterestedInSources.simClustersInterestedInUpdatedSource(dateRange, timeZone).forceToDisk
-      case _ =>
-        InterestedInSources.simClustersInterestedInDec11Source(dateRange, timeZone).forceToDisk
+    v-vaw intewestedincwustews = m-modewvewsion m-match {
+      case m-modewvewsion.modew20m145k2020 =>
+        i-intewestedinsouwces.simcwustewsintewestedin2020souwce(datewange, (˘ω˘) timezone).fowcetodisk
+      c-case modewvewsion.modew20m145kupdated =>
+        intewestedinsouwces.simcwustewsintewestedinupdatedsouwce(datewange, òωó timezone).fowcetodisk
+      c-case _ =>
+        intewestedinsouwces.simcwustewsintewestedindec11souwce(datewange, nyaa~~ t-timezone).fowcetodisk
     }
 
-    Execution
+    execution
       .zip(
-        runFavScore(
-          interestedInClusters,
-          DataSources.userUserNormalizedGraphSource,
-          DataSources.userNormsAndCounts,
-          modelVersion,
-          outputDir
-        ),
-        runFollowScore(
-          interestedInClusters,
-          DataSources.userUserNormalizedGraphSource,
-          DataSources.userNormsAndCounts,
-          modelVersion,
-          outputDir
+        wunfavscowe(
+          intewestedincwustews, ( ͡o ω ͡o )
+          d-datasouwces.usewusewnowmawizedgwaphsouwce, 😳😳😳
+          d-datasouwces.usewnowmsandcounts, ^•ﻌ•^
+          modewvewsion, (˘ω˘)
+          o-outputdiw
+        ), (˘ω˘)
+        wunfowwowscowe(
+          i-intewestedincwustews, -.-
+          d-datasouwces.usewusewnowmawizedgwaphsouwce, ^•ﻌ•^
+          datasouwces.usewnowmsandcounts, /(^•ω•^)
+          m-modewvewsion, (///ˬ///✿)
+          o-outputdiw
         )
       ).unit
   }
 }
 
 /**
- * Computes the producer's interestedIn cluster embedding. i.e. If a tweet author (producer) is not
- * associated with a KnownFor cluster, do a cross-product between
- * [user, interestedIn] and [user, producer] to find the similarity matrix [interestedIn, producer].
+ * computes t-the pwoducew's intewestedin cwustew embedding. mya i.e. if a tweet a-authow (pwoducew) is nyot
+ * associated w-with a knownfow cwustew, o.O do a cwoss-pwoduct b-between
+ * [usew, ^•ﻌ•^ i-intewestedin] a-and [usew, (U ᵕ U❁) pwoducew] to find t-the simiwawity m-matwix [intewestedin, :3 pwoducew]. (///ˬ///✿)
  */
-object ProducerEmbeddingsFromInterestedIn {
-  val minNumFollowersForProducer: Int = 100
-  val minNumFaversForProducer: Int = 100
-  val topKUsersToKeep: Int = 300
-  val topKClustersToKeep: Int = 60
-  val cosineSimilarityThreshold: Double = 0.01
+o-object pwoducewembeddingsfwomintewestedin {
+  vaw minnumfowwowewsfowpwoducew: i-int = 100
+  vaw minnumfavewsfowpwoducew: i-int = 100
+  v-vaw topkusewstokeep: int = 300
+  vaw topkcwustewstokeep: int = 60
+  vaw cosinesimiwawitythweshowd: d-doubwe = 0.01
 
-  type ClusterId = Int
+  t-type cwustewid = int
 
-  def topProducersToThrift(producersWithScore: Seq[(UserId, Double)]): TopProducersWithScore = {
-    val thrift = producersWithScore.map { producer =>
-      TopProducerWithScore(producer._1, producer._2)
+  def toppwoducewstothwift(pwoducewswithscowe: seq[(usewid, doubwe)]): t-toppwoducewswithscowe = {
+    vaw thwift = p-pwoducewswithscowe.map { p-pwoducew =>
+      toppwoducewwithscowe(pwoducew._1, (///ˬ///✿) pwoducew._2)
     }
-    TopProducersWithScore(thrift)
+    toppwoducewswithscowe(thwift)
   }
 
-  def userToProducerFavScore(neighbor: NeighborWithWeights): Double = {
-    neighbor.favScoreHalfLife100DaysNormalizedByNeighborFaversL2.getOrElse(0.0)
+  def usewtopwoducewfavscowe(neighbow: n-nyeighbowwithweights): doubwe = {
+    neighbow.favscowehawfwife100daysnowmawizedbyneighbowfavewsw2.getowewse(0.0)
   }
 
-  def userToProducerFollowScore(neighbor: NeighborWithWeights): Double = {
-    neighbor.followScoreNormalizedByNeighborFollowersL2.getOrElse(0.0)
+  d-def usewtopwoducewfowwowscowe(neighbow: nyeighbowwithweights): d-doubwe = {
+    n-neighbow.fowwowscowenowmawizedbyneighbowfowwowewsw2.getowewse(0.0)
   }
 
-  def userToClusterFavScore(clusterScore: UserToInterestedInClusterScores): Double = {
-    clusterScore.favScoreClusterNormalizedOnly.getOrElse(0.0)
+  def usewtocwustewfavscowe(cwustewscowe: u-usewtointewestedincwustewscowes): d-doubwe = {
+    c-cwustewscowe.favscowecwustewnowmawizedonwy.getowewse(0.0)
   }
 
-  def userToClusterFollowScore(clusterScore: UserToInterestedInClusterScores): Double = {
-    clusterScore.followScoreClusterNormalizedOnly.getOrElse(0.0)
+  d-def u-usewtocwustewfowwowscowe(cwustewscowe: u-usewtointewestedincwustewscowes): doubwe = {
+    cwustewscowe.fowwowscowecwustewnowmawizedonwy.getowewse(0.0)
   }
 
-  def getUserSimClustersMatrix(
-    simClustersSource: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    extractScore: UserToInterestedInClusterScores => Double,
-    modelVersion: ModelVersion
-  ): TypedPipe[(UserId, Seq[(Int, Double)])] = {
-    simClustersSource.collect {
-      case (userId, clusters)
-          if ModelVersions.toModelVersion(clusters.knownForModelVersion).equals(modelVersion) =>
-        userId -> clusters.clusterIdToScores
+  def getusewsimcwustewsmatwix(
+    simcwustewssouwce: typedpipe[(usewid, 🥺 c-cwustewsusewisintewestedin)], -.-
+    e-extwactscowe: u-usewtointewestedincwustewscowes => d-doubwe, nyaa~~
+    m-modewvewsion: m-modewvewsion
+  ): typedpipe[(usewid, (///ˬ///✿) seq[(int, 🥺 doubwe)])] = {
+    simcwustewssouwce.cowwect {
+      c-case (usewid, >w< c-cwustews)
+          if modewvewsions.tomodewvewsion(cwustews.knownfowmodewvewsion).equaws(modewvewsion) =>
+        usewid -> cwustews.cwustewidtoscowes
           .map {
-            case (clusterId, clusterScores) =>
-              (clusterId, extractScore(clusterScores))
-          }.toSeq.filter(_._2 > 0)
+            c-case (cwustewid, rawr x3 c-cwustewscowes) =>
+              (cwustewid, (⑅˘꒳˘) e-extwactscowe(cwustewscowes))
+          }.toseq.fiwtew(_._2 > 0)
     }
   }
 
   /**
-   * Given a weighted user-producer engagement history matrix, as well as a
-   * weighted user-interestedInCluster matrix, do the matrix multiplication to yield a weighted
-   * producer-cluster embedding matrix
+   * given a weighted usew-pwoducew e-engagement histowy matwix, σωσ as weww as a-a
+   * weighted u-usew-intewestedincwustew matwix, XD do the matwix m-muwtipwication to yiewd a weighted
+   * p-pwoducew-cwustew e-embedding matwix
    */
-  def getProducerClusterEmbedding(
-    interestedInClusters: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    userProducerEngagementGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    userToProducerScoringFn: NeighborWithWeights => Double,
-    userToClusterScoringFn: UserToInterestedInClusterScores => Double,
-    userFilter: NormsAndCounts => Boolean, // function to decide whether to compute embeddings for the user or not
-    numReducersForMatrixMultiplication: Int,
-    modelVersion: ModelVersion,
-    threshold: Double
+  d-def getpwoducewcwustewembedding(
+    i-intewestedincwustews: t-typedpipe[(usewid, -.- c-cwustewsusewisintewestedin)], >_<
+    u-usewpwoducewengagementgwaph: typedpipe[usewandneighbows], rawr
+    u-usewnowmsandcounts: typedpipe[nowmsandcounts], 😳😳😳
+    u-usewtopwoducewscowingfn: n-nyeighbowwithweights => doubwe, UwU
+    u-usewtocwustewscowingfn: usewtointewestedincwustewscowes => doubwe, (U ﹏ U)
+    u-usewfiwtew: nyowmsandcounts => b-boowean, (˘ω˘) // function to decide w-whethew to c-compute embeddings fow the usew ow nyot
+    numweducewsfowmatwixmuwtipwication: i-int, /(^•ω•^)
+    modewvewsion: modewvewsion, (U ﹏ U)
+    thweshowd: d-doubwe
   )(
-    implicit uid: UniqueID
-  ): TypedPipe[((ClusterId, UserId), Double)] = {
-    val userSimClustersMatrix = getUserSimClustersMatrix(
-      interestedInClusters,
-      userToClusterScoringFn,
-      modelVersion
+    i-impwicit uid: uniqueid
+  ): typedpipe[((cwustewid, ^•ﻌ•^ u-usewid), d-doubwe)] = {
+    vaw usewsimcwustewsmatwix = g-getusewsimcwustewsmatwix(
+      intewestedincwustews, >w<
+      usewtocwustewscowingfn, ʘwʘ
+      m-modewvewsion
     )
 
-    val userUserNormalizedGraph = getFilteredUserUserNormalizedGraph(
-      userProducerEngagementGraph,
-      userNormsAndCounts,
-      userToProducerScoringFn,
-      userFilter
+    vaw u-usewusewnowmawizedgwaph = getfiwtewedusewusewnowmawizedgwaph(
+      u-usewpwoducewengagementgwaph, òωó
+      u-usewnowmsandcounts, o.O
+      usewtopwoducewscowingfn, ( ͡o ω ͡o )
+      usewfiwtew
     )
 
-    SimClustersEmbeddingJob
-      .legacyMultiplyMatrices(
-        userUserNormalizedGraph,
-        userSimClustersMatrix,
-        numReducersForMatrixMultiplication
+    s-simcwustewsembeddingjob
+      .wegacymuwtipwymatwices(
+        u-usewusewnowmawizedgwaph, mya
+        u-usewsimcwustewsmatwix, >_<
+        n-nyumweducewsfowmatwixmuwtipwication
       )
-      .filter(_._2 >= threshold)
+      .fiwtew(_._2 >= thweshowd)
   }
 
-  def getFilteredUserUserNormalizedGraph(
-    userProducerEngagementGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    userToProducerScoringFn: NeighborWithWeights => Double,
-    userFilter: NormsAndCounts => Boolean
+  def getfiwtewedusewusewnowmawizedgwaph(
+    usewpwoducewengagementgwaph: typedpipe[usewandneighbows], rawr
+    usewnowmsandcounts: t-typedpipe[nowmsandcounts], >_<
+    u-usewtopwoducewscowingfn: n-nyeighbowwithweights => d-doubwe, (U ﹏ U)
+    u-usewfiwtew: n-nyowmsandcounts => boowean
   )(
-    implicit uid: UniqueID
-  ): TypedPipe[(UserId, (UserId, Double))] = {
-    val numUsersCount = Stat("num_users_with_engagements")
-    val userUserFilteredEdgeCount = Stat("num_filtered_user_user_engagements")
-    val validUsersCount = Stat("num_valid_users")
+    i-impwicit uid: u-uniqueid
+  ): typedpipe[(usewid, rawr (usewid, (U ᵕ U❁) d-doubwe))] = {
+    v-vaw nyumusewscount = stat("num_usews_with_engagements")
+    vaw u-usewusewfiwtewededgecount = stat("num_fiwtewed_usew_usew_engagements")
+    vaw vawidusewscount = s-stat("num_vawid_usews")
 
-    val validUsers = userNormsAndCounts.collect {
-      case user if userFilter(user) =>
-        validUsersCount.inc()
-        user.userId
+    vaw v-vawidusews = usewnowmsandcounts.cowwect {
+      c-case usew if usewfiwtew(usew) =>
+        vawidusewscount.inc()
+        u-usew.usewid
     }
 
-    userProducerEngagementGraph
-      .flatMap { userAndNeighbors =>
-        numUsersCount.inc()
-        userAndNeighbors.neighbors
-          .map { neighbor =>
-            userUserFilteredEdgeCount.inc()
-            (neighbor.neighborId, (userAndNeighbors.userId, userToProducerScoringFn(neighbor)))
+    u-usewpwoducewengagementgwaph
+      .fwatmap { u-usewandneighbows =>
+        nyumusewscount.inc()
+        u-usewandneighbows.neighbows
+          .map { n-nyeighbow =>
+            usewusewfiwtewededgecount.inc()
+            (neighbow.neighbowid, (ˆ ﻌ ˆ)♡ (usewandneighbows.usewid, >_< u-usewtopwoducewscowingfn(neighbow)))
           }
-          .filter(_._2._2 > 0.0)
+          .fiwtew(_._2._2 > 0.0)
       }
-      .join(validUsers.asKeys)
+      .join(vawidusews.askeys)
       .map {
-        case (neighborId, ((userId, score), _)) =>
-          (userId, (neighborId, score))
+        case (neighbowid, ^^;; ((usewid, s-scowe), ʘwʘ _)) =>
+          (usewid, (neighbowid, 😳😳😳 scowe))
       }
   }
 
-  def fromSimClusterEmbedding[T, E](
-    resultMatrix: TypedPipe[((ClusterId, T), Double)],
-    topK: Int,
-    modelVersion: ModelVersion
-  ): TypedPipe[(PersistedFullClusterId, Seq[(T, Double)])] = {
-    resultMatrix
+  d-def fwomsimcwustewembedding[t, UwU e-e](
+    wesuwtmatwix: typedpipe[((cwustewid, OwO t-t), doubwe)], :3
+    topk: int, -.-
+    modewvewsion: m-modewvewsion
+  ): typedpipe[(pewsistedfuwwcwustewid, 🥺 seq[(t, -.- doubwe)])] = {
+    wesuwtmatwix
       .map {
-        case ((clusterId, inputId), score) => (clusterId, (inputId, score))
+        case ((cwustewid, -.- inputid), (U ﹏ U) scowe) => (cwustewid, rawr (inputid, mya scowe))
       }
-      .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .gwoup
+      .sowtedwevewsetake(topk)(owdewing.by(_._2))
       .map {
-        case (clusterId, topEntitiesWithScore) =>
-          PersistedFullClusterId(modelVersion, clusterId) -> topEntitiesWithScore
+        case (cwustewid, ( ͡o ω ͡o ) t-topentitieswithscowe) =>
+          pewsistedfuwwcwustewid(modewvewsion, /(^•ω•^) cwustewid) -> topentitieswithscowe
       }
   }
 
-  def toSimClusterEmbedding[T](
-    resultMatrix: TypedPipe[((ClusterId, T), Double)],
-    topK: Int,
-    modelVersion: ModelVersion
+  def tosimcwustewembedding[t](
+    wesuwtmatwix: typedpipe[((cwustewid, >_< t-t), (✿oωo) doubwe)],
+    topk: int, 😳😳😳
+    modewvewsion: m-modewvewsion
   )(
-    implicit ordering: Ordering[T]
-  ): TypedPipe[(T, TopSimClustersWithScore)] = {
-    resultMatrix
+    impwicit o-owdewing: owdewing[t]
+  ): typedpipe[(t, (ꈍᴗꈍ) topsimcwustewswithscowe)] = {
+    w-wesuwtmatwix
       .map {
-        case ((clusterId, inputId), score) => (inputId, (clusterId, score))
+        case ((cwustewid, 🥺 i-inputid), scowe) => (inputid, mya (cwustewid, scowe))
       }
-      .group
-      //.withReducers(3000) // uncomment for producer-simclusters job
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .gwoup
+      //.withweducews(3000) // u-uncomment f-fow pwoducew-simcwustews job
+      .sowtedwevewsetake(topk)(owdewing.by(_._2))
       .map {
-        case (inputId, topSimClustersWithScore) =>
-          val topSimClusters = topSimClustersWithScore.map {
-            case (clusterId, score) => SimClusterWithScore(clusterId, score)
+        case (inputid, (ˆ ﻌ ˆ)♡ t-topsimcwustewswithscowe) =>
+          vaw topsimcwustews = topsimcwustewswithscowe.map {
+            case (cwustewid, (⑅˘꒳˘) s-scowe) => simcwustewwithscowe(cwustewid, òωó s-scowe)
           }
-          inputId -> TopSimClustersWithScore(topSimClusters, modelVersion)
+          inputid -> topsimcwustewswithscowe(topsimcwustews, m-modewvewsion)
       }
   }
 }

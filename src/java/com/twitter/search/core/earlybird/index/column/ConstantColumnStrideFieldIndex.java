@@ -1,18 +1,18 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.twittew.seawch.cowe.eawwybiwd.index.cowumn;
 
 /**
- * A ColumnStrideFieldIndex implementation that always returns the same value.
+ * a cowumnstwidefiewdindex i-impwementation t-that awways w-wetuwns the same v-vawue. (U ﹏ U)
  */
-public class ConstantColumnStrideFieldIndex extends ColumnStrideFieldIndex {
-  private final long defaultValue;
+pubwic c-cwass constantcowumnstwidefiewdindex e-extends c-cowumnstwidefiewdindex {
+  p-pwivate finaw wong defauwtvawue;
 
-  public ConstantColumnStrideFieldIndex(String name, long defaultValue) {
-    super(name);
-    this.defaultValue = defaultValue;
+  pubwic constantcowumnstwidefiewdindex(stwing name, -.- wong defauwtvawue) {
+    s-supew(name);
+    this.defauwtvawue = defauwtvawue;
   }
 
-  @Override
-  public long get(int docID) {
-    return defaultValue;
+  @ovewwide
+  pubwic wong g-get(int docid) {
+    wetuwn defauwtvawue;
   }
 }

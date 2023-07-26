@@ -1,4 +1,4 @@
-resources(
-    sources = ["*.xml"],
-    tags = ["bazel-compatible"],
+wesouwces(
+    souwces = ["*.xmw"], >_<
+    tags = ["bazew-compatibwe"], (ꈍᴗꈍ)
 )

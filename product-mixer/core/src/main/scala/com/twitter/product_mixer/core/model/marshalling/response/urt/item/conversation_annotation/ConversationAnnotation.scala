@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.convewsation_annotation
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
 
-case class ConversationAnnotation(
-  conversationAnnotationType: ConversationAnnotationType,
-  header: Option[RichText],
-  description: Option[RichText])
+c-case c-cwass convewsationannotation(
+  c-convewsationannotationtype: c-convewsationannotationtype,
+  h-headew: o-option[wichtext],
+  d-descwiption: o-option[wichtext])

@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * A selector that appends all candidates missing a specific feature to the results pool and keeps
- * the rest in the remaining candidates. This is useful for backfill scoring candidates without
- * a score from a previous scorer.
- * @param pipelineScope The pipeline scope to check
- * @param missingFeature The missing feature to check for.
+ * a-a sewectow that appends aww candidates missing a specific featuwe t-to the wesuwts poow and keeps
+ * the west in the w-wemaining candidates. >_< this is usefuw f-fow backfiww scowing candidates without
+ * a scowe fwom a p-pwevious scowew. >_<
+ * @pawam pipewinescope t-the pipewine s-scope to check
+ * @pawam missingfeatuwe the missing featuwe to check fow. (⑅˘꒳˘)
  */
-case class InsertAppendWithoutFeatureResults(
-  override val pipelineScope: CandidateScope,
-  missingFeature: Feature[_, _])
-    extends Selector[PipelineQuery] {
+case cwass insewtappendwithoutfeatuwewesuwts(
+  o-ovewwide vaw pipewinescope: candidatescope, /(^•ω•^)
+  missingfeatuwe: featuwe[_, rawr x3 _])
+    e-extends sewectow[pipewinequewy] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val (candidatesWithMissingFeature, candidatesWithFeature) = remainingCandidates.partition {
-      candidate =>
-        pipelineScope.contains(candidate) && !candidate.features.getSuccessfulFeatures
-          .contains(missingFeature)
+  ovewwide d-def appwy(
+    q-quewy: pipewinequewy, (U ﹏ U)
+    w-wemainingcandidates: s-seq[candidatewithdetaiws], (U ﹏ U)
+    wesuwt: seq[candidatewithdetaiws]
+  ): sewectowwesuwt = {
+    v-vaw (candidateswithmissingfeatuwe, (⑅˘꒳˘) candidateswithfeatuwe) = wemainingcandidates.pawtition {
+      c-candidate =>
+        pipewinescope.contains(candidate) && !candidate.featuwes.getsuccessfuwfeatuwes
+          .contains(missingfeatuwe)
     }
-    val updatedResults = result ++ candidatesWithMissingFeature
-    SelectorResult(remainingCandidates = candidatesWithFeature, result = updatedResults)
+    vaw updatedwesuwts = wesuwt ++ candidateswithmissingfeatuwe
+    sewectowwesuwt(wemainingcandidates = c-candidateswithfeatuwe, òωó wesuwt = u-updatedwesuwts)
   }
 }

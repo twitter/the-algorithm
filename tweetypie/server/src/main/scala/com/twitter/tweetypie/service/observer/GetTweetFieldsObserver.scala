@@ -1,159 +1,159 @@
-package com.twitter.tweetypie
-package service
-package observer
+package com.twittew.tweetypie
+package s-sewvice
+package o-obsewvew
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.sewvo.exception.thwiftscawa.cwientewwow
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
 
-private[service] object GetTweetFieldsObserver {
-  type Type = ObserveExchange[GetTweetFieldsRequest, Seq[GetTweetFieldsResult]]
+p-pwivate[sewvice] o-object gettweetfiewdsobsewvew {
+  t-type type = obsewveexchange[gettweetfiewdswequest, rawr x3 seq[gettweetfiewdswesuwt]]
 
-  def observeExchange(statsReceiver: StatsReceiver): Effect[Type] = {
-    val resultStateStats = ResultStateStats(statsReceiver)
+  def obsewveexchange(statsweceivew: statsweceivew): e-effect[type] = {
+    vaw wesuwtstatestats = wesuwtstatestats(statsweceivew)
 
-    val stats = statsReceiver.scope("results")
-    val tweetResultFailed = stats.counter("tweet_result_failed")
-    val quoteResultFailed = stats.counter("quote_result_failed")
-    val overCapacity = stats.counter("over_capacity")
+    v-vaw stats = statsweceivew.scope("wesuwts")
+    v-vaw tweetwesuwtfaiwed = stats.countew("tweet_wesuwt_faiwed")
+    vaw q-quotewesuwtfaiwed = stats.countew("quote_wesuwt_faiwed")
+    vaw o-ovewcapacity = s-stats.countew("ovew_capacity")
 
-    def observeFailedResult(r: GetTweetFieldsResult): Unit = {
-      r.tweetResult match {
-        case TweetFieldsResultState.Failed(failed) =>
-          tweetResultFailed.incr()
+    def obsewvefaiwedwesuwt(w: gettweetfiewdswesuwt): unit = {
+      w.tweetwesuwt m-match {
+        case tweetfiewdswesuwtstate.faiwed(faiwed) =>
+          tweetwesuwtfaiwed.incw()
 
-          if (failed.overCapacity) overCapacity.incr()
-        case _ =>
+          if (faiwed.ovewcapacity) ovewcapacity.incw()
+        c-case _ =>
       }
 
-      if (r.quotedTweetResult.exists(_.isInstanceOf[TweetFieldsResultState.Failed]))
-        quoteResultFailed.incr()
+      if (w.quotedtweetwesuwt.exists(_.isinstanceof[tweetfiewdswesuwtstate.faiwed]))
+        quotewesuwtfaiwed.incw()
     }
 
-    Effect {
-      case (request, response) =>
-        response match {
-          case Return(xs) =>
-            xs foreach {
-              case x if isFailedResult(x) =>
-                observeFailedResult(x)
-                resultStateStats.failed()
+    e-effect {
+      c-case (wequest, o.O w-wesponse) =>
+        w-wesponse match {
+          case wetuwn(xs) =>
+            x-xs foweach {
+              case x if isfaiwedwesuwt(x) =>
+                obsewvefaiwedwesuwt(x)
+                w-wesuwtstatestats.faiwed()
               case _ =>
-                resultStateStats.success()
+                wesuwtstatestats.success()
             }
-          case Throw(ClientError(_)) =>
-            resultStateStats.success(request.tweetIds.size)
-          case Throw(_) =>
-            resultStateStats.failed(request.tweetIds.size)
+          case thwow(cwientewwow(_)) =>
+            wesuwtstatestats.success(wequest.tweetids.size)
+          c-case thwow(_) =>
+            wesuwtstatestats.faiwed(wequest.tweetids.size)
         }
     }
   }
 
-  def observeRequest(stats: StatsReceiver, byClient: Boolean): Effect[GetTweetFieldsRequest] = {
-    val requestSizeStat = stats.stat("request_size")
-    val optionsScope = stats.scope("options")
-    val tweetFieldsScope = optionsScope.scope("tweet_field")
-    val countsFieldsScope = optionsScope.scope("counts_field")
-    val mediaFieldsScope = optionsScope.scope("media_field")
-    val includeRetweetedTweetCounter = optionsScope.counter("include_retweeted_tweet")
-    val includeQuotedTweetCounter = optionsScope.counter("include_quoted_tweet")
-    val forUserIdCounter = optionsScope.counter("for_user_id")
-    val cardsPlatformKeyCounter = optionsScope.counter("cards_platform_key")
-    val cardsPlatformKeyScope = optionsScope.scope("cards_platform_key")
-    val extensionsArgsCounter = optionsScope.counter("extensions_args")
-    val doNotCacheCounter = optionsScope.counter("do_not_cache")
-    val simpleQuotedTweetCounter = optionsScope.counter("simple_quoted_tweet")
-    val visibilityPolicyScope = optionsScope.scope("visibility_policy")
-    val userVisibleCounter = visibilityPolicyScope.counter("user_visible")
-    val noFilteringCounter = visibilityPolicyScope.counter("no_filtering")
-    val noSafetyLevelCounter = optionsScope.counter("no_safety_level")
-    val safetyLevelCounter = optionsScope.counter("safety_level")
-    val safetyLevelScope = optionsScope.scope("safety_level")
+  d-def obsewvewequest(stats: s-statsweceivew, rawr b-bycwient: boowean): effect[gettweetfiewdswequest] = {
+    vaw wequestsizestat = s-stats.stat("wequest_size")
+    v-vaw optionsscope = stats.scope("options")
+    v-vaw tweetfiewdsscope = o-optionsscope.scope("tweet_fiewd")
+    vaw countsfiewdsscope = optionsscope.scope("counts_fiewd")
+    v-vaw mediafiewdsscope = optionsscope.scope("media_fiewd")
+    v-vaw incwudewetweetedtweetcountew = optionsscope.countew("incwude_wetweeted_tweet")
+    vaw incwudequotedtweetcountew = o-optionsscope.countew("incwude_quoted_tweet")
+    vaw fowusewidcountew = o-optionsscope.countew("fow_usew_id")
+    vaw cawdspwatfowmkeycountew = o-optionsscope.countew("cawds_pwatfowm_key")
+    v-vaw cawdspwatfowmkeyscope = optionsscope.scope("cawds_pwatfowm_key")
+    vaw extensionsawgscountew = optionsscope.countew("extensions_awgs")
+    vaw donotcachecountew = optionsscope.countew("do_not_cache")
+    vaw simpwequotedtweetcountew = o-optionsscope.countew("simpwe_quoted_tweet")
+    v-vaw visibiwitypowicyscope = optionsscope.scope("visibiwity_powicy")
+    v-vaw usewvisibwecountew = v-visibiwitypowicyscope.countew("usew_visibwe")
+    v-vaw nofiwtewingcountew = visibiwitypowicyscope.countew("no_fiwtewing")
+    vaw nyosafetywevewcountew = optionsscope.countew("no_safety_wevew")
+    v-vaw safetywevewcountew = optionsscope.countew("safety_wevew")
+    vaw safetywevewscope = optionsscope.scope("safety_wevew")
 
-    Effect {
-      case GetTweetFieldsRequest(tweetIds, options) =>
-        requestSizeStat.add(tweetIds.size)
-        options.tweetIncludes.foreach {
-          case TweetInclude.TweetFieldId(id) => tweetFieldsScope.counter(id.toString).incr()
-          case TweetInclude.CountsFieldId(id) => countsFieldsScope.counter(id.toString).incr()
-          case TweetInclude.MediaEntityFieldId(id) => mediaFieldsScope.counter(id.toString).incr()
-          case _ =>
+    effect {
+      c-case gettweetfiewdswequest(tweetids, ʘwʘ o-options) =>
+        w-wequestsizestat.add(tweetids.size)
+        o-options.tweetincwudes.foweach {
+          case t-tweetincwude.tweetfiewdid(id) => t-tweetfiewdsscope.countew(id.tostwing).incw()
+          c-case tweetincwude.countsfiewdid(id) => c-countsfiewdsscope.countew(id.tostwing).incw()
+          case tweetincwude.mediaentityfiewdid(id) => mediafiewdsscope.countew(id.tostwing).incw()
+          c-case _ =>
         }
-        if (options.includeRetweetedTweet) includeRetweetedTweetCounter.incr()
-        if (options.includeQuotedTweet) includeQuotedTweetCounter.incr()
-        if (options.forUserId.nonEmpty) forUserIdCounter.incr()
-        if (options.cardsPlatformKey.nonEmpty) cardsPlatformKeyCounter.incr()
-        if (!byClient) {
-          options.cardsPlatformKey.foreach { cardsPlatformKey =>
-            cardsPlatformKeyScope.counter(cardsPlatformKey).incr()
+        i-if (options.incwudewetweetedtweet) i-incwudewetweetedtweetcountew.incw()
+        i-if (options.incwudequotedtweet) i-incwudequotedtweetcountew.incw()
+        if (options.fowusewid.nonempty) fowusewidcountew.incw()
+        if (options.cawdspwatfowmkey.nonempty) cawdspwatfowmkeycountew.incw()
+        if (!bycwient) {
+          options.cawdspwatfowmkey.foweach { c-cawdspwatfowmkey =>
+            cawdspwatfowmkeyscope.countew(cawdspwatfowmkey).incw()
           }
         }
-        if (options.extensionsArgs.nonEmpty) extensionsArgsCounter.incr()
-        if (options.safetyLevel.nonEmpty) {
-          safetyLevelCounter.incr()
-        } else {
-          noSafetyLevelCounter.incr()
+        if (options.extensionsawgs.nonempty) extensionsawgscountew.incw()
+        if (options.safetywevew.nonempty) {
+          safetywevewcountew.incw()
+        } e-ewse {
+          nyosafetywevewcountew.incw()
         }
-        options.visibilityPolicy match {
-          case TweetVisibilityPolicy.UserVisible => userVisibleCounter.incr()
-          case TweetVisibilityPolicy.NoFiltering => noFilteringCounter.incr()
+        options.visibiwitypowicy match {
+          c-case tweetvisibiwitypowicy.usewvisibwe => u-usewvisibwecountew.incw()
+          c-case tweetvisibiwitypowicy.nofiwtewing => nyofiwtewingcountew.incw()
           case _ =>
         }
-        options.safetyLevel.foreach { level => safetyLevelScope.counter(level.toString).incr() }
-        if (options.doNotCache) doNotCacheCounter.incr()
-        if (options.simpleQuotedTweet) simpleQuotedTweetCounter.incr()
+        o-options.safetywevew.foweach { wevew => s-safetywevewscope.countew(wevew.tostwing).incw() }
+        i-if (options.donotcache) donotcachecountew.incw()
+        if (options.simpwequotedtweet) simpwequotedtweetcountew.incw()
     }
   }
 
-  def observeResults(stats: StatsReceiver): Effect[Seq[GetTweetFieldsResult]] = {
-    val resultsCounter = stats.counter("results")
-    val resultsScope = stats.scope("results")
-    val observeState = GetTweetFieldsObserver.observeResultState(resultsScope)
+  def obsewvewesuwts(stats: statsweceivew): e-effect[seq[gettweetfiewdswesuwt]] = {
+    vaw wesuwtscountew = stats.countew("wesuwts")
+    v-vaw wesuwtsscope = stats.scope("wesuwts")
+    v-vaw obsewvestate = g-gettweetfiewdsobsewvew.obsewvewesuwtstate(wesuwtsscope)
 
-    Effect { results =>
-      resultsCounter.incr(results.size)
-      results.foreach { r =>
-        observeState(r.tweetResult)
-        r.quotedTweetResult.foreach { qtResult =>
-          resultsCounter.incr()
-          observeState(qtResult)
+    effect { wesuwts =>
+      w-wesuwtscountew.incw(wesuwts.size)
+      w-wesuwts.foweach { w =>
+        o-obsewvestate(w.tweetwesuwt)
+        w.quotedtweetwesuwt.foweach { q-qtwesuwt =>
+          wesuwtscountew.incw()
+          obsewvestate(qtwesuwt)
         }
       }
     }
   }
 
   /**
-   * Given a GetTweetFieldsResult result, do we observe the result as a failure or not.
+   * given a gettweetfiewdswesuwt wesuwt, 😳😳😳 do we obsewve t-the wesuwt a-as a faiwuwe ow n-nyot. ^^;;
    */
-  private def isFailedResult(result: GetTweetFieldsResult): Boolean = {
-    result.tweetResult.isInstanceOf[TweetFieldsResultState.Failed] ||
-    result.quotedTweetResult.exists(_.isInstanceOf[TweetFieldsResultState.Failed])
+  pwivate def isfaiwedwesuwt(wesuwt: g-gettweetfiewdswesuwt): b-boowean = {
+    wesuwt.tweetwesuwt.isinstanceof[tweetfiewdswesuwtstate.faiwed] ||
+    w-wesuwt.quotedtweetwesuwt.exists(_.isinstanceof[tweetfiewdswesuwtstate.faiwed])
   }
 
-  private def observeResultState(stats: StatsReceiver): Effect[TweetFieldsResultState] = {
-    val foundCounter = stats.counter("found")
-    val notFoundCounter = stats.counter("not_found")
-    val failedCounter = stats.counter("failed")
-    val filteredCounter = stats.counter("filtered")
-    val filteredReasonScope = stats.scope("filtered_reason")
-    val otherCounter = stats.counter("other")
-    val observeTweet = Observer
-      .countTweetAttributes(stats.scope("found"), byClient = false)
+  pwivate def obsewvewesuwtstate(stats: statsweceivew): effect[tweetfiewdswesuwtstate] = {
+    v-vaw foundcountew = s-stats.countew("found")
+    vaw notfoundcountew = stats.countew("not_found")
+    v-vaw faiwedcountew = s-stats.countew("faiwed")
+    vaw fiwtewedcountew = stats.countew("fiwtewed")
+    vaw fiwtewedweasonscope = s-stats.scope("fiwtewed_weason")
+    vaw othewcountew = stats.countew("othew")
+    vaw obsewvetweet = obsewvew
+      .counttweetattwibutes(stats.scope("found"), o.O b-bycwient = fawse)
 
-    Effect {
-      case TweetFieldsResultState.Found(found) =>
-        foundCounter.incr()
-        observeTweet(found.tweet)
-        found.retweetedTweet.foreach(observeTweet)
+    effect {
+      case tweetfiewdswesuwtstate.found(found) =>
+        f-foundcountew.incw()
+        o-obsewvetweet(found.tweet)
+        found.wetweetedtweet.foweach(obsewvetweet)
 
-      case TweetFieldsResultState.NotFound(_) => notFoundCounter.incr()
-      case TweetFieldsResultState.Failed(_) => failedCounter.incr()
-      case TweetFieldsResultState.Filtered(f) =>
-        filteredCounter.incr()
-        // Since reasons have parameters, eg. AuthorBlockViewer(true) and we don't
-        // need the "(true)" part, we do .getClass.getSimpleName to get rid of that
-        filteredReasonScope.counter(f.reason.getClass.getSimpleName).incr()
+      case tweetfiewdswesuwtstate.notfound(_) => n-nyotfoundcountew.incw()
+      c-case tweetfiewdswesuwtstate.faiwed(_) => faiwedcountew.incw()
+      case tweetfiewdswesuwtstate.fiwtewed(f) =>
+        fiwtewedcountew.incw()
+        // s-since weasons have p-pawametews, (///ˬ///✿) eg. σωσ authowbwockviewew(twue) and we don't
+        // nyeed the "(twue)" p-pawt, nyaa~~ we do .getcwass.getsimpwename to get wid o-of that
+        f-fiwtewedweasonscope.countew(f.weason.getcwass.getsimpwename).incw()
 
-      case _ => otherCounter.incr()
+      case _ => o-othewcountew.incw()
     }
   }
 

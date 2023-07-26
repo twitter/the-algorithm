@@ -1,149 +1,149 @@
-#@namespace java com.twitter.unified_user_actions.thriftjava
-#@namespace scala com.twitter.unified_user_actions.thriftscala
-#@namespace strato com.twitter.unified_user_actions
+#@namespace java com.twittew.unified_usew_actions.thwiftjava
+#@namespace s-scawa com.twittew.unified_usew_actions.thwiftscawa
+#@namespace s-stwato com.twittew.unified_usew_actions
 
-include "com/twitter/unified_user_actions/metadata.thrift"
-include "com/twitter/search/common/constants/query.thrift"
-include "com/twitter/search/common/constants/result.thrift"
+i-incwude "com/twittew/unified_usew_actions/metadata.thwift"
+i-incwude "com/twittew/seawch/common/constants/quewy.thwift"
+i-incwude "com/twittew/seawch/common/constants/wesuwt.thwift"
 
 
 /*
- * Represents the product surface on which an action took place.
- * See reference that delineates various product surfaces:
- * https://docs.google.com/document/d/1PS2ZOyNUoUdO45zxhE7dH3L8KUcqJwo6Vx-XUGGFo6U
- * Note: the implementation here may not reflect the above doc exactly.
+ * w-wepwesents t-the pwoduct s-suwface on which an action took pwace. σωσ
+ * see wefewence that dewineates vawious p-pwoduct suwfaces:
+ * https://docs.googwe.com/document/d/1ps2zoynuoudo45zxhe7dh3w8kucqjwo6vx-xuggfo6u
+ * nyote: t-the impwementation hewe may nyot w-wefwect the above doc exactwy. (⑅˘꒳˘)
  */
-enum ProductSurface {
-  // 1 - 19 for Home
-  HomeTimeline = 1
-  // 20 - 39 for Notifications
-  NotificationTab = 20
-  PushNotification = 21
-  EmailNotification = 22
-  // 40 - 59 for Search
-  SearchResultsPage = 40
-  SearchTypeahead = 41
-  // 60 - 79 for Tweet Details Page (Conversation Page)
-  TweetDetailsPage = 60
-  // 80 - 99 for Profile Page
-  ProfilePage = 80
-  // 100 - 119 for ?
-  RESERVED_100 = 100
-  // 120 - 139 for ?
-  RESERVED_120 = 120
-}(persisted='true', hasPersonalData='false')
+enum pwoductsuwface {
+  // 1 - 19 fow home
+  h-hometimewine = 1
+  // 20 - 39 fow nyotifications
+  n-nyotificationtab = 20
+  p-pushnotification = 21
+  emaiwnotification = 22
+  // 40 - 59 fow seawch
+  seawchwesuwtspage = 40
+  seawchtypeahead = 41
+  // 60 - 79 f-fow tweet detaiws page (convewsation page)
+  tweetdetaiwspage = 60
+  // 80 - 99 fow pwofiwe page
+  pwofiwepage = 80
+  // 100 - 119 f-fow ?
+  wesewved_100 = 100
+  // 120 - 139 fow ?
+  w-wesewved_120 = 120
+}(pewsisted='twue', (///ˬ///✿) h-haspewsonawdata='fawse')
 
-union ProductSurfaceInfo {
-  // 1 matches the enum index HomeTimeline in ProductSurface
-  1: HomeTimelineInfo homeTimelineInfo
-  // 20 matches the enum index NotificationTab in ProductSurface
-  20: NotificationTabInfo notificationTabInfo
-  // 21 matches the enum index PushNotification in ProductSurface
-  21: PushNotificationInfo pushNotificationInfo
-  // 22 matches the enum index EmailNotification in ProductSurface
-  22: EmailNotificationInfo emailNotificationInfo
-  // 40 matches the enum index SearchResultPage in ProductSurface
-  40: SearchResultsPageInfo searchResultsPageInfo
-  // 41 matches the enum index SearchTypeahead in ProductSurface
-  41: SearchTypeaheadInfo searchTypeaheadInfo
-  // 60 matches the enum index TweetDetailsPage in ProductSurface
-  60: TweetDetailsPageInfo tweetDetailsPageInfo
-  // 80 matches the enum index ProfilePage in ProductSurface
-  80: ProfilePageInfo profilePageInfo
-}(persisted='true', hasPersonalData='false')
+u-union pwoductsuwfaceinfo {
+  // 1 m-matches the enum index hometimewine in pwoductsuwface
+  1: h-hometimewineinfo hometimewineinfo
+  // 20 matches t-the enum index nyotificationtab in pwoductsuwface
+  20: nyotificationtabinfo nyotificationtabinfo
+  // 21 matches the enum i-index pushnotification in pwoductsuwface
+  21: pushnotificationinfo p-pushnotificationinfo
+  // 22 m-matches the enum i-index emaiwnotification in pwoductsuwface
+  22: emaiwnotificationinfo emaiwnotificationinfo
+  // 40 m-matches the e-enum index seawchwesuwtpage in p-pwoductsuwface
+  40: s-seawchwesuwtspageinfo seawchwesuwtspageinfo
+  // 41 m-matches the enum index s-seawchtypeahead in pwoductsuwface
+  41: seawchtypeaheadinfo s-seawchtypeaheadinfo
+  // 60 matches t-the enum index tweetdetaiwspage i-in pwoductsuwface
+  60: t-tweetdetaiwspageinfo tweetdetaiwspageinfo
+  // 80 matches the enum index pwofiwepage in pwoductsuwface
+  80: pwofiwepageinfo p-pwofiwepageinfo
+}(pewsisted='twue', 🥺 h-haspewsonawdata='fawse')
 
 /*
- * Please keep this minimal to avoid overhead. It should only
- * contain high value Home Timeline specific attributes.
+ * pwease k-keep this minimaw t-to avoid ovewhead. OwO i-it shouwd onwy
+ * contain high vawue home timewine specific a-attwibutes. >w<
  */
-struct HomeTimelineInfo {
-  // suggestType is deprecated, please do't re-use!
-  // 1: optional i32 suggestType
-  2: optional string suggestionType
-  3: optional i32 injectedPosition
-}(persisted='true', hasPersonalData='false')
+stwuct hometimewineinfo {
+  // suggesttype is depwecated, pwease do't we-use! 🥺
+  // 1: o-optionaw i32 suggesttype
+  2: o-optionaw stwing s-suggestiontype
+  3: o-optionaw i32 injectedposition
+}(pewsisted='twue', nyaa~~ h-haspewsonawdata='fawse')
 
-struct NotificationTabInfo {
+s-stwuct nyotificationtabinfo {
  /*
-  * Note that this field represents the `impressionId` in a Notification Tab notification.
-  * It has been renamed to `notificationId` in UUA so that the name effectively represents the
-  * value it holds, i.e., a unique id for a notification and request.
+  * n-nyote t-that this fiewd wepwesents the `impwessionid` in a nyotification t-tab nyotification. ^^
+  * i-it has b-been wenamed to `notificationid` i-in uua so that t-the nyame effectivewy wepwesents the
+  * vawue it howds, >w< i.e., a-a unique id fow a nyotification and wequest. OwO
   */
-  1: required string notificationId(personalDataType='UniversallyUniqueIdentifierUuid')
-}(persisted='true', hasPersonalData='false')
+  1: wequiwed stwing nyotificationid(pewsonawdatatype='univewsawwyuniqueidentifiewuuid')
+}(pewsisted='twue', XD haspewsonawdata='fawse')
 
-struct PushNotificationInfo {
+stwuct p-pushnotificationinfo {
  /*
-  * Note that this field represents the `impressionId` in a Push Notification.
-  * It has been renamed to `notificationId` in UUA so that the name effectively represents the
-  * value it holds, i.e., a unique id for a notification and request.
+  * nyote that this fiewd wepwesents the `impwessionid` i-in a push nyotification.
+  * i-it has been wenamed t-to `notificationid` in uua so t-that the nyame effectivewy wepwesents t-the
+  * v-vawue it howds, ^^;; i.e., a unique id fow a nyotification and wequest. 🥺
   */
-  1: required string notificationId(personalDataType='UniversallyUniqueIdentifierUuid')
-}(persisted='true', hasPersonalData='false')
+  1: wequiwed stwing nyotificationid(pewsonawdatatype='univewsawwyuniqueidentifiewuuid')
+}(pewsisted='twue', XD h-haspewsonawdata='fawse')
 
-struct EmailNotificationInfo {
+stwuct emaiwnotificationinfo {
  /*
-  * Note that this field represents the `impressionId` in an Email Notification.
-  * It has been renamed to `notificationId` in UUA so that the name effectively represents the
-  * value it holds, i.e., a unique id for a notification and request.
+  * n-nyote that this fiewd wepwesents t-the `impwessionid` i-in an emaiw nyotification. (U ᵕ U❁)
+  * it has b-been wenamed to `notificationid` i-in uua so that the name effectivewy w-wepwesents t-the
+  * vawue it howds, :3 i.e., a unique id fow a nyotification and wequest. ( ͡o ω ͡o )
   */
-  1: required string notificationId(personalDataType='UniversallyUniqueIdentifierUuid')
-}(persisted='true', hasPersonalData='false')
+  1: w-wequiwed stwing n-notificationid(pewsonawdatatype='univewsawwyuniqueidentifiewuuid')
+}(pewsisted='twue', òωó h-haspewsonawdata='fawse')
 
 
-struct TweetDetailsPageInfo {
-  // To be deprecated, please don't re-use!
-  // Only reason to keep it now is Sparrow doesn't take empty struct. Once there is a real
-  // field we should just comment it out.
-  1: required list<string> breadcrumbViews(personalDataType = 'WebsitePage')
-  // Deprecated, please don't re-use!
-  // 2: required list<metadata.BreadcrumbTweet> breadcrumbTweets(personalDataType = 'TweetId')
-}(persisted='true', hasPersonalData='true')
+stwuct tweetdetaiwspageinfo {
+  // t-to be d-depwecated, σωσ pwease don't we-use! (U ᵕ U❁)
+  // o-onwy weason to keep it nyow is spawwow doesn't take empty stwuct. (✿oωo) once thewe i-is a weaw
+  // f-fiewd we shouwd just comment it out. ^^
+  1: wequiwed w-wist<stwing> b-bweadcwumbviews(pewsonawdatatype = 'websitepage')
+  // depwecated, ^•ﻌ•^ pwease don't we-use! XD
+  // 2: w-wequiwed wist<metadata.bweadcwumbtweet> bweadcwumbtweets(pewsonawdatatype = 'tweetid')
+}(pewsisted='twue', :3 haspewsonawdata='twue')
 
-struct ProfilePageInfo {
-  // To be deprecated, please don't re-use!
-  // Only reason to keep it now is Sparrow doesn't take empty struct. Once there is a real
-  // field we should just comment it out.
-  1: required list<string> breadcrumbViews(personalDataType = 'WebsitePage')
-  // Deprecated, please don't re-use!
-  // 2: required list<metadata.BreadcrumbTweet> breadcrumbTweets(personalDataType = 'TweetId')
-}(persisted='true', hasPersonalData='true')
+stwuct pwofiwepageinfo {
+  // to be depwecated, (ꈍᴗꈍ) p-pwease don't we-use! :3
+  // onwy weason to keep i-it nyow is spawwow d-doesn't take empty stwuct. (U ﹏ U) once thewe is a weaw
+  // fiewd w-we shouwd just c-comment it out. UwU
+  1: wequiwed wist<stwing> bweadcwumbviews(pewsonawdatatype = 'websitepage')
+  // depwecated, 😳😳😳 pwease d-don't we-use! XD
+  // 2: wequiwed w-wist<metadata.bweadcwumbtweet> bweadcwumbtweets(pewsonawdatatype = 'tweetid')
+}(pewsisted='twue', o.O haspewsonawdata='twue')
 
-struct SearchResultsPageInfo {
-  // search query string
-  1: required string query(personalDataType = 'SearchQuery')
-  // Attribution of the search (e.g. Typed Query, Hashtag Click, etc.)
-  // see http://go/sgb/src/thrift/com/twitter/search/common/constants/query.thrift for details
-  2: optional query.ThriftQuerySource querySource
-  // 0-indexed position of item in list of search results
-  3: optional i32 itemPosition
-  // Attribution of the tweet result (e.g. QIG, Earlybird, etc)
-  // see http://go/sgb/src/thrift/com/twitter/search/common/constants/result.thrift for details
-  4: optional set<result.TweetResultSource> tweetResultSources
-  // Attribution of the user result (e.g. ExpertSearch, QIG, etc)
-  // see http://go/sgb/src/thrift/com/twitter/search/common/constants/result.thrift for details
-  5: optional set<result.UserResultSource> userResultSources
-  // The query filter type on the Search Results Page (SRP) when the action took place.
-  // Clicking on a tab in SRP applies a query filter automatically.
-  6: optional SearchQueryFilterType queryFilterType
-}(persisted='true', hasPersonalData='true')
+stwuct seawchwesuwtspageinfo {
+  // s-seawch quewy stwing
+  1: wequiwed s-stwing quewy(pewsonawdatatype = 'seawchquewy')
+  // a-attwibution of the seawch (e.g. (⑅˘꒳˘) t-typed quewy, 😳😳😳 hashtag cwick, e-etc.)
+  // s-see http://go/sgb/swc/thwift/com/twittew/seawch/common/constants/quewy.thwift fow d-detaiws
+  2: optionaw quewy.thwiftquewysouwce q-quewysouwce
+  // 0-indexed p-position of item in wist of seawch wesuwts
+  3: o-optionaw i-i32 itemposition
+  // a-attwibution of the tweet wesuwt (e.g. nyaa~~ q-qig, rawr eawwybiwd, etc)
+  // see http://go/sgb/swc/thwift/com/twittew/seawch/common/constants/wesuwt.thwift f-fow detaiws
+  4: o-optionaw set<wesuwt.tweetwesuwtsouwce> tweetwesuwtsouwces
+  // attwibution o-of the usew w-wesuwt (e.g. -.- expewtseawch, (✿oωo) q-qig, e-etc)
+  // see http://go/sgb/swc/thwift/com/twittew/seawch/common/constants/wesuwt.thwift f-fow detaiws
+  5: optionaw set<wesuwt.usewwesuwtsouwce> usewwesuwtsouwces
+  // the quewy fiwtew type on t-the seawch wesuwts page (swp) w-when the action took pwace. /(^•ω•^)
+  // c-cwicking on a tab in swp appwies a-a quewy fiwtew automaticawwy. 🥺
+  6: o-optionaw seawchquewyfiwtewtype q-quewyfiwtewtype
+}(pewsisted='twue', ʘwʘ h-haspewsonawdata='twue')
 
-struct SearchTypeaheadInfo {
-  // search query string
-  1: required string query(personalDataType = 'SearchQuery')
-  // 0-indexed position of item in list of typeahead drop-down
-  2: optional i32 itemPosition
-}(persisted='true', hasPersonalData='true')
+s-stwuct seawchtypeaheadinfo {
+  // s-seawch quewy stwing
+  1: wequiwed stwing quewy(pewsonawdatatype = 'seawchquewy')
+  // 0-indexed position of item in wist of typeahead dwop-down
+  2: optionaw i-i32 itemposition
+}(pewsisted='twue', UwU h-haspewsonawdata='twue')
 
-enum SearchQueryFilterType {
-  // filter to top ranked content for a query
-  TOP = 1
-  // filter to latest content for a query
-  LATEST = 2
-  // filter to user results for a query
-  PEOPLE = 3
-  // filter to photo tweet results for a query
-  PHOTOS = 4
-  // filter to video tweet results for a query
-  VIDEOS = 5
+enum s-seawchquewyfiwtewtype {
+  // fiwtew to top wanked c-content fow a quewy
+  top = 1
+  // fiwtew to watest content f-fow a quewy
+  w-watest = 2
+  // fiwtew to usew wesuwts f-fow a quewy
+  peopwe = 3
+  // fiwtew to photo t-tweet wesuwts f-fow a quewy
+  photos = 4
+  // f-fiwtew to video t-tweet wesuwts fow a quewy
+  videos = 5
 }

@@ -1,20 +1,20 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/feature_hydrator",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util",
-        "home-mixer/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/gate",
-        "src/thrift/com/twitter/gizmoduck:thrift-scala",
-        "stitch/stitch-socialgraph",
-        "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/store/persistence",
-        "timelineservice/common/src/main/scala/com/twitter/timelineservice/model",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "configapi/configapi-cowe/swc/main/scawa/com/twittew/timewines/configapi", (⑅˘꒳˘)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/functionaw_component/featuwe_hydwatow", ( ͡o ω ͡o )
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew", UwU
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew/wequest", rawr x3
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/utiw", rawr
+        "home-mixew/thwift/swc/main/thwift:thwift-scawa", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/common", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/gate", >_<
+        "swc/thwift/com/twittew/gizmoduck:thwift-scawa", :3
+        "stitch/stitch-sociawgwaph", (U ﹏ U)
+        "timewinemixew/sewvew/swc/main/scawa/com/twittew/timewinemixew/injection/stowe/pewsistence", -.-
+        "timewinesewvice/common/swc/main/scawa/com/twittew/timewinesewvice/modew", (ˆ ﻌ ˆ)♡
+    ], (⑅˘꒳˘)
 )

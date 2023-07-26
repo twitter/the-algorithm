@@ -1,11 +1,11 @@
-package com.twitter.visibility.features
+package com.twittew.visibiwity.featuwes
 
-import com.twitter.visibility.util.NamingUtils
+impowt com.twittew.visibiwity.utiw.namingutiws
 
-abstract class Feature[T] protected ()(implicit val manifest: Manifest[T]) {
+a-abstwact c-cwass featuwe[t] p-pwotected ()(impwicit v-vaw manifest: m-manifest[t]) {
 
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+  w-wazy vaw n-nyame: stwing = n-nyamingutiws.getfwiendwyname(this)
 
-  override lazy val toString: String =
-    "Feature[%s](name=%s)".format(manifest, getClass.getSimpleName)
+  ovewwide wazy vaw tostwing: stwing =
+    "featuwe[%s](name=%s)".fowmat(manifest, rawr getcwass.getsimpwename)
 }

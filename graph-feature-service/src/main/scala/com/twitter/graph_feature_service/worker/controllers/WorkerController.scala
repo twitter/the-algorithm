@@ -1,38 +1,38 @@
-package com.twitter.graph_feature_service.worker.controllers
+package com.twittew.gwaph_featuwe_sewvice.wowkew.contwowwews
 
-import com.twitter.discovery.common.stats.DiscoveryStatsFilter
-import com.twitter.finagle.Service
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.thrift.Controller
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.graph_feature_service.thriftscala.Worker.GetIntersection
-import com.twitter.graph_feature_service.thriftscala._
-import com.twitter.graph_feature_service.worker.handlers._
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.discovewy.common.stats.discovewystatsfiwtew
+i-impowt c-com.twittew.finagwe.sewvice
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finatwa.thwift.contwowwew
+i-impowt c-com.twittew.gwaph_featuwe_sewvice.thwiftscawa
+impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.wowkew.getintewsection
+impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa._
+impowt com.twittew.gwaph_featuwe_sewvice.wowkew.handwews._
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class WorkerController @Inject() (
-  workerGetIntersectionHandler: WorkerGetIntersectionHandler
+@singweton
+cwass wowkewcontwowwew @inject() (
+  w-wowkewgetintewsectionhandwew: wowkewgetintewsectionhandwew
 )(
-  implicit statsReceiver: StatsReceiver)
-    extends Controller(thriftscala.Worker) {
+  impwicit statsweceivew: s-statsweceivew)
+    extends contwowwew(thwiftscawa.wowkew) {
 
-  // use DiscoveryStatsFilter to filter out exceptions out of our control
-  private val getIntersectionService: Service[
-    WorkerIntersectionRequest,
-    WorkerIntersectionResponse
+  // u-use discovewystatsfiwtew t-to fiwtew out exceptions out of ouw contwow
+  pwivate vaw getintewsectionsewvice: s-sewvice[
+    wowkewintewsectionwequest, (⑅˘꒳˘)
+    wowkewintewsectionwesponse
   ] =
-    new DiscoveryStatsFilter[WorkerIntersectionRequest, WorkerIntersectionResponse](
-      statsReceiver.scope("srv").scope("get_intersection")
-    ).andThen(Service.mk(workerGetIntersectionHandler))
+    nyew discovewystatsfiwtew[wowkewintewsectionwequest, (///ˬ///✿) w-wowkewintewsectionwesponse](
+      statsweceivew.scope("swv").scope("get_intewsection")
+    ).andthen(sewvice.mk(wowkewgetintewsectionhandwew))
 
-  val getIntersection: Service[GetIntersection.Args, WorkerIntersectionResponse] = { args =>
-    getIntersectionService(args.request).onFailure { throwable =>
-      logger.error(s"Failure to get intersection for request $args.", throwable)
+  v-vaw getintewsection: s-sewvice[getintewsection.awgs, 😳😳😳 w-wowkewintewsectionwesponse] = { a-awgs =>
+    getintewsectionsewvice(awgs.wequest).onfaiwuwe { thwowabwe =>
+      w-woggew.ewwow(s"faiwuwe to get intewsection fow wequest $awgs.", 🥺 t-thwowabwe)
     }
   }
 
-  handle(GetIntersection) { getIntersection }
+  handwe(getintewsection) { getintewsection }
 
 }

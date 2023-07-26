@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReplaceEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wepwaceentwytimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class ReplaceEntryInstructionMarshaller @Inject() (
-  timelineEntryMarshaller: TimelineEntryMarshaller) {
+@singweton
+cwass wepwaceentwyinstwuctionmawshawwew @inject() (
+  timewineentwymawshawwew: timewineentwymawshawwew) {
 
-  def apply(instruction: ReplaceEntryTimelineInstruction): urt.ReplaceEntry = {
-    val instructionEntry = instruction.entry
-    urt.ReplaceEntry(
-      entryIdToReplace = instructionEntry.entryIdToReplace
-        .getOrElse(throw new MissingEntryToReplaceException(instructionEntry)),
-      entry = timelineEntryMarshaller(instructionEntry)
+  def appwy(instwuction: w-wepwaceentwytimewineinstwuction): uwt.wepwaceentwy = {
+    vaw instwuctionentwy = i-instwuction.entwy
+    uwt.wepwaceentwy(
+      e-entwyidtowepwace = instwuctionentwy.entwyidtowepwace
+        .getowewse(thwow nyew missingentwytowepwaceexception(instwuctionentwy)), mya
+      entwy = timewineentwymawshawwew(instwuctionentwy)
     )
   }
 }
 
-class MissingEntryToReplaceException(entry: TimelineEntry)
-    extends IllegalArgumentException(
-      s"Missing entry ID to replace ${TransportMarshaller.getSimpleName(entry.getClass)}")
+c-cwass missingentwytowepwaceexception(entwy: timewineentwy)
+    extends iwwegawawgumentexception(
+      s-s"missing e-entwy id to wepwace ${twanspowtmawshawwew.getsimpwename(entwy.getcwass)}")

@@ -1,231 +1,231 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.servo.keyvalue._
-import com.twitter.servo.util.{OptionOrdering, TryOrdering}
-import com.twitter.util.{Future, Return, Throw, Time, Try}
+impowt com.twittew.sewvo.keyvawue._
+i-impowt com.twittew.sewvo.utiw.{optionowdewing, (˘ω˘) t-twyowdewing}
+i-impowt com.twittew.utiw.{futuwe, 😳😳😳 w-wetuwn, rawr x3 thwow, t-time, twy}
 
-object SimpleReplicatingCache {
+object s-simpwewepwicatingcache {
 
   /**
-   * Builds a SimpleReplicatingCache that writes a value multiple times to the same underlying
-   * cache but under different keys.  If the underlying cache is backed by enough shards, there
-   * is a good chance that the different keys will end up on different shards, giving you similar
-   * behavior to having multiple distinct caches.
+   * b-buiwds a s-simpwewepwicatingcache that wwites a vawue muwtipwe times to the same undewwying
+   * c-cache but undew diffewent keys. (✿oωo)  if the undewwying c-cache is backed by enough s-shawds, (ˆ ﻌ ˆ)♡ thewe
+   * is a good chance that the diffewent keys w-wiww end up on diffewent shawds, :3 g-giving you simiwaw
+   * b-behaviow to having muwtipwe distinct caches. (U ᵕ U❁)
    */
-  def apply[K, K2, V](
-    underlying: LockingCache[K2, Cached[V]],
-    keyReplicator: (K, Int) => K2,
-    replicas: Int = 2
-  ) = new SimpleReplicatingCache(
-    (0 until replicas).toSeq map { replica =>
-      new KeyTransformingLockingCache(
-        underlying,
-        (key: K) => keyReplicator(key, replica)
+  def appwy[k, ^^;; k2, v](
+    u-undewwying: wockingcache[k2, mya cached[v]],
+    keywepwicatow: (k, 😳😳😳 int) => k2, OwO
+    w-wepwicas: int = 2
+  ) = new s-simpwewepwicatingcache(
+    (0 u-untiw wepwicas).toseq m-map { wepwica =>
+      new k-keytwansfowmingwockingcache(
+        undewwying, rawr
+        (key: k) => keywepwicatow(key, XD w-wepwica)
       )
     }
   )
 }
 
 /**
- * A very simple replicating cache implementation.  It writes the same key/value pair to
- * multiple underlying caches. On read, each underlying cache is queried with the key; if the
- * results are not all the same for a given key, then the most recent value is chosen and
- * replicated to all caches.
+ * a vewy simpwe wepwicating cache i-impwementation. (U ﹏ U)  it wwites the same key/vawue paiw to
+ * muwtipwe undewwying caches. (˘ω˘) on wead, each u-undewwying cache is quewied with t-the key; if t-the
+ * wesuwts awe n-nyot aww the same fow a given key, UwU then the most wecent vawue i-is chosen and
+ * w-wepwicated to aww caches. >_<
  *
- * Some cache operations are not currently supported, because their semantics are a little fuzzy
- * in the replication case.  Specifically: add and checkAndSet.
+ * s-some cache opewations a-awe nyot cuwwentwy suppowted, σωσ b-because theiw semantics awe a-a wittwe fuzzy
+ * in the wepwication case. 🥺  specificawwy: a-add and checkandset. 🥺
  */
-class SimpleReplicatingCache[K, V](underlyingCaches: Seq[LockingCache[K, Cached[V]]])
-    extends LockingCache[K, Cached[V]] {
-  private type CsValue = (Try[Cached[V]], Checksum)
+c-cwass simpwewepwicatingcache[k, ʘwʘ v](undewwyingcaches: s-seq[wockingcache[k, :3 c-cached[v]]])
+    extends wockingcache[k, (U ﹏ U) cached[v]] {
+  pwivate type csvawue = (twy[cached[v]], (U ﹏ U) checksum)
 
-  private val cachedOrdering = new Ordering[Cached[V]] {
-    // sort by ascending timestamp
-    def compare(a: Cached[V], b: Cached[V]) = a.cachedAt.compare(b.cachedAt)
+  pwivate v-vaw cachedowdewing = n-nyew owdewing[cached[v]] {
+    // sowt by a-ascending timestamp
+    d-def compawe(a: c-cached[v], ʘwʘ b: cached[v]) = a.cachedat.compawe(b.cachedat)
   }
 
-  private val csValueOrdering = new Ordering[CsValue] {
-    // order by Try[V], ignore checksum
-    val subordering = TryOrdering(cachedOrdering)
-    def compare(a: CsValue, b: CsValue) = subordering.compare(a._1, b._1)
+  pwivate v-vaw csvawueowdewing = nyew owdewing[csvawue] {
+    // owdew by twy[v], >w< ignowe checksum
+    vaw s-subowdewing = twyowdewing(cachedowdewing)
+    def compawe(a: csvawue, rawr x3 b-b: csvawue) = s-subowdewing.compawe(a._1, OwO b._1)
   }
 
-  private val tryOptionCsValueOrdering = TryOrdering(OptionOrdering(csValueOrdering))
-  private val tryOptionCachedOrdering = TryOrdering(OptionOrdering(cachedOrdering))
+  p-pwivate vaw twyoptioncsvawueowdewing = t-twyowdewing(optionowdewing(csvawueowdewing))
+  p-pwivate vaw twyoptioncachedowdewing = t-twyowdewing(optionowdewing(cachedowdewing))
 
   /**
-   * release any underlying resources
+   * w-wewease any undewwying wesouwces
    */
-  def release(): Unit = {
-    underlyingCaches foreach { _.release() }
+  def wewease(): u-unit = {
+    u-undewwyingcaches f-foweach { _.wewease() }
   }
 
   /**
-   * Fetches from all underlying caches in parallel, and if results differ, will choose a
-   * winner and push updated results back to the stale caches.
+   * f-fetches f-fwom aww undewwying caches in pawawwew, ^•ﻌ•^ and if wesuwts diffew, >_< w-wiww choose a
+   * winnew and push updated wesuwts back to the stawe caches. OwO
    */
-  def get(keys: Seq[K]): Future[KeyValueResult[K, Cached[V]]] = {
-    getWithChecksum(keys) map { csKvRes =>
-      val resBldr = new KeyValueResultBuilder[K, Cached[V]]
+  def get(keys: s-seq[k]): futuwe[keyvawuewesuwt[k, >_< cached[v]]] = {
+    getwithchecksum(keys) m-map { cskvwes =>
+      v-vaw wesbwdw = n-nyew keyvawuewesuwtbuiwdew[k, (ꈍᴗꈍ) cached[v]]
 
-      csKvRes.found foreach {
-        case (k, (Return(v), _)) => resBldr.addFound(k, v)
-        case (k, (Throw(t), _)) => resBldr.addFailed(k, t)
+      c-cskvwes.found foweach {
+        c-case (k, >w< (wetuwn(v), (U ﹏ U) _)) => w-wesbwdw.addfound(k, ^^ v)
+        case (k, (U ﹏ U) (thwow(t), :3 _)) => wesbwdw.addfaiwed(k, (✿oωo) t)
       }
 
-      resBldr.addNotFound(csKvRes.notFound)
-      resBldr.addFailed(csKvRes.failed)
-      resBldr.result()
+      wesbwdw.addnotfound(cskvwes.notfound)
+      wesbwdw.addfaiwed(cskvwes.faiwed)
+      w-wesbwdw.wesuwt()
     }
   }
 
   /**
-   * Fetches from all underlying caches in parallel, and if results differ, will choose a
-   * winner and push updated results back to the stale caches.
+   * fetches fwom aww u-undewwying caches in pawawwew, XD a-and if wesuwts d-diffew, >w< wiww choose a
+   * winnew and push updated w-wesuwts back t-to the stawe caches. òωó
    */
-  def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, Cached[V]]] = {
-    Future.collect {
-      underlyingCaches map { underlying =>
-        underlying.getWithChecksum(keys)
+  def g-getwithchecksum(keys: s-seq[k]): futuwe[cskeyvawuewesuwt[k, (ꈍᴗꈍ) cached[v]]] = {
+    futuwe.cowwect {
+      undewwyingcaches map { undewwying =>
+        u-undewwying.getwithchecksum(keys)
       }
-    } map { underlyingResults =>
-      val resBldr = new KeyValueResultBuilder[K, CsValue]
+    } m-map { undewwyingwesuwts =>
+      v-vaw wesbwdw = nyew keyvawuewesuwtbuiwdew[k, rawr x3 csvawue]
 
-      for (key <- keys) {
-        val keyResults = underlyingResults map { _(key) }
-        resBldr(key) = getAndReplicate(key, keyResults) map {
-          // treat evictions as misses
-          case Some((Return(c), _)) if c.status == CachedValueStatus.Evicted => None
+      fow (key <- k-keys) {
+        v-vaw keywesuwts = undewwyingwesuwts m-map { _(key) }
+        wesbwdw(key) = getandwepwicate(key, rawr x3 keywesuwts) map {
+          // t-tweat evictions a-as misses
+          case some((wetuwn(c), _)) i-if c.status == c-cachedvawuestatus.evicted => nyone
           case v => v
         }
       }
 
-      resBldr.result()
+      wesbwdw.wesuwt()
     }
   }
 
   /**
-   * Looks at all the returned values for a given set of replication keys, returning the most recent
-   * cached value if available, or indicate a miss if applicable, or return a failure if all
-   * keys failed.  If a cached value is returned, and some keys don't have that cached value,
-   * the cached value will be replicated to those keys, possibly overwriting stale data.
+   * w-wooks at aww the wetuwned vawues fow a given set of wepwication keys, σωσ w-wetuwning the most wecent
+   * cached vawue i-if avaiwabwe, (ꈍᴗꈍ) ow i-indicate a miss if appwicabwe, rawr ow wetuwn a faiwuwe if aww
+   * k-keys faiwed. ^^;;  if a-a cached vawue is wetuwned, rawr x3 and some keys don't have that cached v-vawue, (ˆ ﻌ ˆ)♡
+   * the cached vawue wiww b-be wepwicated to those keys, σωσ possibwy ovewwwiting stawe data. (U ﹏ U)
    */
-  private def getAndReplicate(
-    key: K,
-    keyResults: Seq[Try[Option[CsValue]]]
-  ): Try[Option[CsValue]] = {
-    val max = keyResults.max(tryOptionCsValueOrdering)
+  p-pwivate def getandwepwicate(
+    k-key: k-k, >w<
+    keywesuwts: seq[twy[option[csvawue]]]
+  ): t-twy[option[csvawue]] = {
+    vaw max = keywesuwts.max(twyoptioncsvawueowdewing)
 
-    max match {
-      // if one of the replication keys returned a cached value, then make sure all replication
-      // keys contain that cached value.
-      case Return(Some((Return(cached), cs))) =>
-        for ((underlying, keyResult) <- underlyingCaches zip keyResults) {
-          if (keyResult != max) {
-            replicate(key, cached, keyResult, underlying)
+    m-max match {
+      // i-if one o-of the wepwication keys wetuwned a-a cached vawue, σωσ t-then make suwe aww wepwication
+      // keys c-contain that cached v-vawue. nyaa~~
+      c-case wetuwn(some((wetuwn(cached), 🥺 cs))) =>
+        fow ((undewwying, rawr x3 k-keywesuwt) <- undewwyingcaches z-zip keywesuwts) {
+          i-if (keywesuwt != max) {
+            wepwicate(key, σωσ cached, keywesuwt, (///ˬ///✿) u-undewwying)
           }
         }
-      case _ =>
+      c-case _ =>
     }
 
-    max
+    m-max
   }
 
-  private def replicate(
-    key: K,
-    cached: Cached[V],
-    current: Try[Option[CsValue]],
-    underlying: LockingCache[K, Cached[V]]
-  ): Future[Unit] = {
-    current match {
-      case Throw(_) =>
-        // if we failed to read a particular value, we don't want to write to that key
-        // because that key could potentially have the real newest value
-        Future.Unit
-      case Return(None) =>
-        // add rather than set, and fail if another value is written first
-        underlying.add(key, cached).unit
-      case Return(Some((_, cs))) =>
-        underlying.checkAndSet(key, cached, cs).unit
-    }
-  }
-
-  /**
-   * Currently not supported.  Use set or lockAndSet.
-   */
-  def add(key: K, value: Cached[V]): Future[Boolean] = {
-    Future.exception(new UnsupportedOperationException("use set or lockAndSet"))
-  }
-
-  /**
-   * Currently not supported.
-   */
-  def checkAndSet(key: K, value: Cached[V], checksum: Checksum): Future[Boolean] = {
-    Future.exception(new UnsupportedOperationException("use set or lockAndSet"))
-  }
-
-  /**
-   * Calls set on all underlying caches.  If at least one set succeeds, Future.Unit is
-   * returned.  If all fail, a Future.exception will be returned.
-   */
-  def set(key: K, value: Cached[V]): Future[Unit] = {
-    liftAndCollect {
-      underlyingCaches map { _.set(key, value) }
-    } flatMap { seqTryUnits =>
-      // return Future.Unit if any underlying call succeeded, otherwise return
-      // the first failure.
-      if (seqTryUnits exists { _.isReturn })
-        Future.Unit
-      else
-        Future.const(seqTryUnits.head)
+  p-pwivate def wepwicate(
+    key: k-k, (U ﹏ U)
+    cached: cached[v], ^^;;
+    cuwwent: twy[option[csvawue]], 🥺
+    undewwying: wockingcache[k, òωó cached[v]]
+  ): futuwe[unit] = {
+    c-cuwwent match {
+      case thwow(_) =>
+        // i-if we faiwed to wead a pawticuwaw v-vawue, XD we don't want to wwite t-to that key
+        // because t-that key couwd p-potentiawwy have t-the weaw nyewest v-vawue
+        f-futuwe.unit
+      case wetuwn(none) =>
+        // add wathew than set, :3 and faiw if anothew vawue is wwitten fiwst
+        undewwying.add(key, (U ﹏ U) c-cached).unit
+      c-case wetuwn(some((_, >w< c-cs))) =>
+        undewwying.checkandset(key, /(^•ω•^) c-cached, (⑅˘꒳˘) cs).unit
     }
   }
 
   /**
-   * Calls lockAndSet on the underlying cache for all replication keys.  If at least one
-   * underlying call succeeds, a successful result will be returned.
+   * cuwwentwy nyot suppowted. ʘwʘ  use set ow w-wockandset. rawr x3
    */
-  def lockAndSet(key: K, handler: LockingCache.Handler[Cached[V]]): Future[Option[Cached[V]]] = {
-    liftAndCollect {
-      underlyingCaches map { _.lockAndSet(key, handler) }
-    } flatMap { seqTryOptionCached =>
-      Future.const(seqTryOptionCached.max(tryOptionCachedOrdering))
+  d-def add(key: k, (˘ω˘) vawue: cached[v]): f-futuwe[boowean] = {
+    futuwe.exception(new unsuppowtedopewationexception("use s-set ow w-wockandset"))
+  }
+
+  /**
+   * cuwwentwy n-not suppowted. o.O
+   */
+  def c-checkandset(key: k, 😳 vawue: cached[v], o.O checksum: checksum): futuwe[boowean] = {
+    futuwe.exception(new u-unsuppowtedopewationexception("use s-set o-ow wockandset"))
+  }
+
+  /**
+   * c-cawws set on a-aww undewwying caches. ^^;;  if at weast o-one set succeeds, ( ͡o ω ͡o ) f-futuwe.unit is
+   * wetuwned. ^^;;  i-if aww faiw, ^^;; a-a futuwe.exception wiww be wetuwned. XD
+   */
+  def s-set(key: k, 🥺 vawue: cached[v]): futuwe[unit] = {
+    w-wiftandcowwect {
+      undewwyingcaches map { _.set(key, (///ˬ///✿) v-vawue) }
+    } fwatmap { s-seqtwyunits =>
+      // wetuwn futuwe.unit i-if any undewwying caww succeeded, (U ᵕ U❁) othewwise w-wetuwn
+      // t-the fiwst faiwuwe. ^^;;
+      i-if (seqtwyunits exists { _.iswetuwn })
+        futuwe.unit
+      ewse
+        f-futuwe.const(seqtwyunits.head)
     }
   }
 
   /**
-   * Returns Future(true) if any of the underlying caches return Future(true); otherwise,
-   * returns Future(false) if any of the underlying caches return Future(false); otherwise,
-   * returns the first failure.
+   * cawws wockandset on t-the undewwying cache f-fow aww wepwication keys. ^^;;  i-if at weast one
+   * undewwying c-caww succeeds, rawr a s-successfuw wesuwt wiww be wetuwned. (˘ω˘)
    */
-  def replace(key: K, value: Cached[V]): Future[Boolean] = {
-    liftAndCollect {
-      underlyingCaches map { _.replace(key, value) }
-    } flatMap { seqTryBools =>
-      if (seqTryBools.contains(Return.True))
-        Future.value(true)
-      else if (seqTryBools.contains(Return.False))
-        Future.value(false)
-      else
-        Future.const(seqTryBools.head)
+  def w-wockandset(key: k, 🥺 handwew: wockingcache.handwew[cached[v]]): futuwe[option[cached[v]]] = {
+    wiftandcowwect {
+      u-undewwyingcaches m-map { _.wockandset(key, nyaa~~ handwew) }
+    } f-fwatmap { seqtwyoptioncached =>
+      futuwe.const(seqtwyoptioncached.max(twyoptioncachedowdewing))
     }
   }
 
   /**
-   * Performing an actual deletion on the underlying caches is not a good idea in the face
-   * of potential failure, because failing to remove all values would allow a cached value to
-   * be resurrected.  Instead, delete actually does a replace on the underlying caches with a
-   * CachedValueStatus of Evicted, which will be treated as a miss on read.
+   * w-wetuwns f-futuwe(twue) i-if any of the undewwying caches wetuwn futuwe(twue); othewwise, :3
+   * wetuwns futuwe(fawse) if any of the undewwying caches wetuwn futuwe(fawse); othewwise, /(^•ω•^)
+   * wetuwns the fiwst faiwuwe. ^•ﻌ•^
    */
-  def delete(key: K): Future[Boolean] = {
-    replace(key, Cached(None, CachedValueStatus.Evicted, Time.now))
+  def wepwace(key: k-k, UwU vawue: c-cached[v]): futuwe[boowean] = {
+    wiftandcowwect {
+      undewwyingcaches m-map { _.wepwace(key, 😳😳😳 v-vawue) }
+    } f-fwatmap { seqtwyboows =>
+      if (seqtwyboows.contains(wetuwn.twue))
+        futuwe.vawue(twue)
+      e-ewse if (seqtwyboows.contains(wetuwn.fawse))
+        futuwe.vawue(fawse)
+      e-ewse
+        f-futuwe.const(seqtwyboows.head)
+    }
   }
 
   /**
-   * Convets a Seq[Future[A]] into a Future[Seq[Try[A]]], isolating failures into Trys, instead
-   * of allowing the entire Future to failure.
+   * pewfowming a-an actuaw dewetion on the undewwying c-caches is n-nyot a good idea in the face
+   * of potentiaw f-faiwuwe, because f-faiwing to wemove a-aww vawues wouwd a-awwow a cached v-vawue to
+   * b-be wesuwwected. OwO  i-instead, dewete a-actuawwy does a-a wepwace on the undewwying caches w-with a
+   * c-cachedvawuestatus o-of evicted, ^•ﻌ•^ which wiww be tweated a-as a miss on wead. (ꈍᴗꈍ)
    */
-  private def liftAndCollect[A](seq: Seq[Future[A]]): Future[Seq[Try[A]]] = {
-    Future.collect { seq map { _ transform { Future(_) } } }
+  def dewete(key: k): f-futuwe[boowean] = {
+    wepwace(key, (⑅˘꒳˘) c-cached(none, (⑅˘꒳˘) c-cachedvawuestatus.evicted, (ˆ ﻌ ˆ)♡ t-time.now))
+  }
+
+  /**
+   * convets a-a seq[futuwe[a]] into a futuwe[seq[twy[a]]], /(^•ω•^) i-isowating faiwuwes into twys, òωó instead
+   * o-of awwowing the entiwe f-futuwe to faiwuwe. (⑅˘꒳˘)
+   */
+  pwivate def wiftandcowwect[a](seq: seq[futuwe[a]]): futuwe[seq[twy[a]]] = {
+    f-futuwe.cowwect { seq m-map { _ twansfowm { f-futuwe(_) } } }
   }
 }

@@ -1,175 +1,175 @@
-package com.twitter.search.earlybird.config;
+package com.twittew.seawch.eawwybiwd.config;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
+impowt j-java.utiw.date;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.set;
 
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.config.ConfigFile;
-import com.twitter.search.common.config.ConfigurationException;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.util.date.DateUtil;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.config.config;
+impowt com.twittew.seawch.common.config.configfiwe;
+impowt com.twittew.seawch.common.config.configuwationexception;
+impowt c-com.twittew.seawch.common.metwics.seawchwonggauge;
+impowt com.twittew.seawch.common.utiw.date.dateutiw;
 
 /**
- * This class provides APIs to access the tier configurations for a cluster.
- * Each tier has tier name, number of partitions, tier start time and end time.
+ * this cwass pwovides a-apis to access the tiew configuwations f-fow a cwustew. -.-
+ * each tiew has tiew nyame, nyumbew o-of pawtitions, mya tiew stawt time a-and end time. >w<
  */
-public final class TierConfig {
-  private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(TierConfig.class);
+p-pubwic finaw cwass tiewconfig {
+  pwivate static finaw owg.swf4j.woggew wog = o-owg.swf4j.woggewfactowy.getwoggew(tiewconfig.cwass);
 
-  private static final String DEFAULT_CONFIG_DIR = "common/config";
-  public static final String DEFAULT_TIER_FILE = "earlybird-tiers.yml";
+  pwivate static finaw stwing defauwt_config_diw = "common/config";
+  pubwic s-static finaw stwing defauwt_tiew_fiwe = "eawwybiwd-tiews.ymw";
 
-  public static final Date DEFAULT_TIER_START_DATE = DateUtil.toDate(2006, 3, 21);
-  // It's convenient for DEFAULT_TIER_END_DATE to be before ~2100, because then the output of
-  // FieldTermCounter.getHourValue(DEFAULT_TIER_END_END_DATE) can still fit into an integer.
-  public static final Date DEFAULT_TIER_END_DATE = DateUtil.toDate(2099, 1, 1);
+  p-pubwic static f-finaw date defauwt_tiew_stawt_date = d-dateutiw.todate(2006, (U ﹏ U) 3, 21);
+  // i-it's convenient fow defauwt_tiew_end_date t-to be befowe ~2100, 😳😳😳 because then the output o-of
+  // fiewdtewmcountew.gethouwvawue(defauwt_tiew_end_end_date) can stiww fit into an integew. o.O
+  pubwic static finaw date defauwt_tiew_end_date = dateutiw.todate(2099, òωó 1, 1);
 
-  public static final String DEFAULT_TIER_NAME = "all";
-  public static final boolean DEFAULT_ENABLED = true;
-  public static final TierInfo.RequestReadType DEFAULT_READ_TYPE = TierInfo.RequestReadType.LIGHT;
+  p-pubwic static finaw stwing d-defauwt_tiew_name = "aww";
+  p-pubwic s-static finaw boowean defauwt_enabwed = twue;
+  pubwic static f-finaw tiewinfo.wequestweadtype d-defauwt_wead_type = tiewinfo.wequestweadtype.wight;
 
-  private static ConfigFile tierConfigFile = null;
-  private static ConfigSource tierConfigSource = null;
+  p-pwivate static c-configfiwe tiewconfigfiwe = n-nyuww;
+  pwivate static configsouwce t-tiewconfigsouwce = nyuww;
 
-  public enum ConfigSource {
-    LOCAL,
-    ZOOKEEPER
+  pubwic enum c-configsouwce {
+    wocaw, 😳😳😳
+    zookeepew
   }
 
-  private TierConfig() { }
+  pwivate t-tiewconfig() { }
 
-  private static synchronized void init() {
-    if (tierConfigFile == null) {
-      tierConfigFile = new ConfigFile(DEFAULT_CONFIG_DIR, DEFAULT_TIER_FILE);
-      tierConfigSource = ConfigSource.LOCAL;
-      SearchLongGauge.export("tier_config_source_" + tierConfigSource.name()).set(1);
-      LOG.info("Tier config file " + DEFAULT_TIER_FILE + " is successfully loaded from bundle.");
+  pwivate s-static synchwonized v-void init() {
+    if (tiewconfigfiwe == nyuww) {
+      tiewconfigfiwe = nyew configfiwe(defauwt_config_diw, σωσ defauwt_tiew_fiwe);
+      tiewconfigsouwce = configsouwce.wocaw;
+      s-seawchwonggauge.expowt("tiew_config_souwce_" + t-tiewconfigsouwce.name()).set(1);
+      wog.info("tiew config f-fiwe " + defauwt_tiew_fiwe + " i-is successfuwwy w-woaded fwom bundwe.");
     }
   }
 
-  public static ConfigFile getConfigFile() {
+  pubwic static configfiwe g-getconfigfiwe() {
     init();
-    return tierConfigFile;
+    wetuwn tiewconfigfiwe;
   }
 
-  public static String getConfigFileName() {
-    return getConfigFile().getConfigFileName();
-  }
-
-  /**
-   * Return all the tier names specified in the config file.
-   */
-  public static Set<String> getTierNames() {
-    return Config.getConfig().getMapCopy(getConfigFileName()).keySet();
+  pubwic static stwing getconfigfiwename() {
+    w-wetuwn getconfigfiwe().getconfigfiwename();
   }
 
   /**
-   * Sets the value of the given tier config property to the given value.
+   * wetuwn a-aww the tiew n-nyames specified i-in the config fiwe. (⑅˘꒳˘)
    */
-  public static void setForTests(String property, Object value) {
-    Config.getConfig().setForTests(DEFAULT_TIER_FILE, property, value);
+  pubwic s-static set<stwing> g-gettiewnames() {
+    w-wetuwn c-config.getconfig().getmapcopy(getconfigfiwename()).keyset();
   }
 
   /**
-   * Returns the config info for the specified tier.
+   * sets the vawue of the given tiew c-config pwopewty t-to the given vawue. (///ˬ///✿)
    */
-  public static TierInfo getTierInfo(String tierName) {
-    return getTierInfo(tierName, null /* use current environment */);
+  p-pubwic s-static void s-setfowtests(stwing pwopewty, 🥺 object vawue) {
+    config.getconfig().setfowtests(defauwt_tiew_fiwe, OwO p-pwopewty, vawue);
   }
 
   /**
-   * Returns the config info for the specified tier and environment.
+   * wetuwns the config info fow the specified tiew. >w<
    */
-  public static TierInfo getTierInfo(String tierName, @Nullable String environment) {
-    String tierConfigFileType = getConfigFileName();
-    Map<String, Object> tierInfo;
-    try {
-      tierInfo = (Map<String, Object>) Config.getConfig()
-          .getFromEnvironment(environment, tierConfigFileType, tierName);
-    } catch (ConfigurationException e) {
-      throw new RuntimeException(e);
-    }
-    if (tierInfo == null) {
-      LOG.error("Cannot find tier config for "
-          + tierName + "in config file: " + tierConfigFileType);
-      throw new RuntimeException("Configuration error: " + tierConfigFileType);
-    }
-
-    Long partitions = (Long) tierInfo.get("number_of_partitions");
-    if (partitions == null) {
-      LOG.error("No number of partition is specified for tier "
-          + tierName + " in tier config file " + tierConfigFileType);
-      throw new RuntimeException("Configuration error: " + tierConfigFileType);
-    }
-
-    Long numTimeslices = (Long) tierInfo.get("serving_timeslices");
-    if (numTimeslices == null) {
-      LOG.info("No max timeslices is specified for tier "
-          + tierName + " in tier config file " + tierConfigFileType
-          + ", not setting a cap on number of serving timeslices");
-      // NOTE: we use max int32 here because it will ultimately be cast to an int, but the config
-      // map expects Longs for all integral types.  Using Long.MAX_VALUE leads to max serving
-      // timeslices being set to -1 when it is truncated to an int.
-      numTimeslices = (long) Integer.MAX_VALUE;
-    }
-
-    Date tierStartDate = (Date) tierInfo.get("data_range_start_date_inclusive");
-    if (tierStartDate == null) {
-      tierStartDate = DEFAULT_TIER_START_DATE;
-    }
-    Date tierEndDate = (Date) tierInfo.get("data_range_end_date_exclusive");
-    if (tierEndDate == null) {
-      tierEndDate = DEFAULT_TIER_END_DATE;
-    }
-
-    Boolean tierEnabled = (Boolean) tierInfo.get("tier_enabled");
-    if (tierEnabled == null) {
-      tierEnabled = DEFAULT_ENABLED;
-    }
-
-    TierInfo.RequestReadType readType =
-      getRequestReadType((String) tierInfo.get("tier_read_type"), DEFAULT_READ_TYPE);
-    TierInfo.RequestReadType readTypeOverride =
-      getRequestReadType((String) tierInfo.get("tier_read_type_override"), readType);
-
-    return new TierInfo(
-        tierName,
-        tierStartDate,
-        tierEndDate,
-        partitions.intValue(),
-        numTimeslices.intValue(),
-        tierEnabled,
-        (String) tierInfo.get("serving_range_since_id_exclusive"),
-        (String) tierInfo.get("serving_range_max_id_inclusive"),
-        (Date) tierInfo.get("serving_range_start_date_inclusive_override"),
-        (Date) tierInfo.get("serving_range_end_date_exclusive_override"),
-        readType,
-        readTypeOverride,
-        Clock.SYSTEM_CLOCK);
+  pubwic static tiewinfo g-gettiewinfo(stwing tiewname) {
+    wetuwn gettiewinfo(tiewname, 🥺 nyuww /* use c-cuwwent enviwonment */);
   }
 
-  public static synchronized void clear() {
-    tierConfigFile = null;
-    tierConfigSource = null;
-  }
-
-  protected static synchronized ConfigSource getTierConfigSource() {
-    return tierConfigSource;
-  }
-
-  private static TierInfo.RequestReadType getRequestReadType(
-      String readTypeEnumName, TierInfo.RequestReadType defaultReadType) {
-    TierInfo.RequestReadType readType = defaultReadType;
-    if (readTypeEnumName != null) {
-      readType = TierInfo.RequestReadType.valueOf(readTypeEnumName.trim().toUpperCase());
-      Preconditions.checkState(readType != null);
+  /**
+   * w-wetuwns t-the config info fow the specified t-tiew and enviwonment. nyaa~~
+   */
+  pubwic static t-tiewinfo gettiewinfo(stwing t-tiewname, ^^ @nuwwabwe stwing enviwonment) {
+    stwing tiewconfigfiwetype = getconfigfiwename();
+    map<stwing, >w< object> t-tiewinfo;
+    twy {
+      tiewinfo = (map<stwing, OwO o-object>) config.getconfig()
+          .getfwomenviwonment(enviwonment, XD tiewconfigfiwetype, ^^;; t-tiewname);
+    } c-catch (configuwationexception e) {
+      thwow nyew wuntimeexception(e);
     }
-    return readType;
+    i-if (tiewinfo == n-nyuww) {
+      wog.ewwow("cannot f-find tiew c-config fow "
+          + tiewname + "in config fiwe: " + tiewconfigfiwetype);
+      thwow nyew wuntimeexception("configuwation ewwow: " + t-tiewconfigfiwetype);
+    }
+
+    w-wong pawtitions = (wong) t-tiewinfo.get("numbew_of_pawtitions");
+    if (pawtitions == nyuww) {
+      w-wog.ewwow("no n-nyumbew of pawtition i-is specified fow tiew "
+          + tiewname + " in tiew config fiwe " + tiewconfigfiwetype);
+      t-thwow nyew w-wuntimeexception("configuwation ewwow: " + tiewconfigfiwetype);
+    }
+
+    wong n-nyumtimeswices = (wong) t-tiewinfo.get("sewving_timeswices");
+    if (numtimeswices == nyuww) {
+      wog.info("no m-max timeswices is specified fow tiew "
+          + tiewname + " in tiew config f-fiwe " + tiewconfigfiwetype
+          + ", 🥺 nyot setting a cap on n-nyumbew of sewving t-timeswices");
+      // nyote: we use max int32 hewe because i-it wiww uwtimatewy b-be cast to an int, XD but the config
+      // map expects wongs f-fow aww integwaw types. (U ᵕ U❁)  using wong.max_vawue w-weads to max sewving
+      // timeswices being set t-to -1 when it is twuncated to an i-int. :3
+      nyumtimeswices = (wong) i-integew.max_vawue;
+    }
+
+    date tiewstawtdate = (date) tiewinfo.get("data_wange_stawt_date_incwusive");
+    i-if (tiewstawtdate == nyuww) {
+      t-tiewstawtdate = d-defauwt_tiew_stawt_date;
+    }
+    d-date tiewenddate = (date) t-tiewinfo.get("data_wange_end_date_excwusive");
+    i-if (tiewenddate == nyuww) {
+      tiewenddate = d-defauwt_tiew_end_date;
+    }
+
+    b-boowean t-tiewenabwed = (boowean) tiewinfo.get("tiew_enabwed");
+    if (tiewenabwed == nyuww) {
+      t-tiewenabwed = defauwt_enabwed;
+    }
+
+    t-tiewinfo.wequestweadtype w-weadtype =
+      getwequestweadtype((stwing) tiewinfo.get("tiew_wead_type"), ( ͡o ω ͡o ) defauwt_wead_type);
+    t-tiewinfo.wequestweadtype weadtypeovewwide =
+      g-getwequestweadtype((stwing) t-tiewinfo.get("tiew_wead_type_ovewwide"), òωó w-weadtype);
+
+    wetuwn n-nyew tiewinfo(
+        tiewname, σωσ
+        tiewstawtdate, (U ᵕ U❁)
+        tiewenddate, (✿oωo)
+        pawtitions.intvawue(), ^^
+        nyumtimeswices.intvawue(), ^•ﻌ•^
+        t-tiewenabwed, XD
+        (stwing) tiewinfo.get("sewving_wange_since_id_excwusive"), :3
+        (stwing) t-tiewinfo.get("sewving_wange_max_id_incwusive"), (ꈍᴗꈍ)
+        (date) tiewinfo.get("sewving_wange_stawt_date_incwusive_ovewwide"), :3
+        (date) t-tiewinfo.get("sewving_wange_end_date_excwusive_ovewwide"), (U ﹏ U)
+        weadtype, UwU
+        w-weadtypeovewwide,
+        cwock.system_cwock);
+  }
+
+  p-pubwic static s-synchwonized void c-cweaw() {
+    t-tiewconfigfiwe = n-nyuww;
+    tiewconfigsouwce = nyuww;
+  }
+
+  pwotected static synchwonized configsouwce gettiewconfigsouwce() {
+    wetuwn tiewconfigsouwce;
+  }
+
+  pwivate static t-tiewinfo.wequestweadtype g-getwequestweadtype(
+      s-stwing weadtypeenumname, 😳😳😳 tiewinfo.wequestweadtype defauwtweadtype) {
+    tiewinfo.wequestweadtype w-weadtype = defauwtweadtype;
+    if (weadtypeenumname != nyuww) {
+      weadtype = t-tiewinfo.wequestweadtype.vawueof(weadtypeenumname.twim().touppewcase());
+      p-pweconditions.checkstate(weadtype != nyuww);
+    }
+    w-wetuwn weadtype;
   }
 }

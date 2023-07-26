@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.icon
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.icon
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.icon.BaseHorizonIconBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.icon.basehowizoniconbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.icon.howizonicon
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class HorizonIconBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  icon: HorizonIcon)
-    extends BaseHorizonIconBuilder[Query, Candidate] {
+c-case cwass h-howizoniconbuiwdew[-quewy <: pipewinequewy, (ˆ ﻌ ˆ)♡ -candidate <: univewsawnoun[any]](
+  icon: howizonicon)
+    extends basehowizoniconbuiwdew[quewy, (⑅˘꒳˘) c-candidate] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[HorizonIcon] = Some(icon)
+  ovewwide def appwy(
+    quewy: q-quewy, (U ᵕ U❁)
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): o-option[howizonicon] = some(icon)
 }

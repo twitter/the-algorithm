@@ -1,51 +1,51 @@
-package com.twitter.search.common.encoding.features;
+package com.twittew.seawch.common.encoding.featuwes;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
 /**
- * A normalizer that normalizes the prediction score from a machine learning classifier, which
- * ranges within [0.0, 1.0], to an integer value by multiplying by (10 ^ precision), and returns
- * the rounded value. The lower the precision, the less amount of bits it takes to encode the score.
- * @see #precision
+ * a-a nyowmawizew t-that nyowmawizes t-the pwediction s-scowe fwom a-a machine weawning c-cwassifiew, (˘ω˘) w-which
+ * wanges w-within [0.0, ^^ 1.0], :3 to an integew vawue by muwtipwying by (10 ^ pwecision), -.- and w-wetuwns
+ * the wounded vawue. 😳 the wowew the pwecision, mya t-the wess amount of bits i-it takes to encode the scowe. (˘ω˘)
+ * @see #pwecision
  *
- * This normalizer also could denormalize the normalized value from integer back to double using the
- * same precision.
+ * this nyowmawizew awso couwd d-denowmawize the nyowmawized vawue f-fwom integew b-back to doubwe using the
+ * same pwecision. >_<
  */
-public class PredictionScoreNormalizer {
+pubwic cwass pwedictionscowenowmawizew {
 
-  private final int precision;
-  private final double normalizingBase;
+  pwivate f-finaw int pwecision;
+  pwivate finaw doubwe nyowmawizingbase;
 
-  public PredictionScoreNormalizer(int precision) {
-    this.precision = precision;
-    this.normalizingBase = Math.pow(10, this.precision);
+  pubwic pwedictionscowenowmawizew(int p-pwecision) {
+    this.pwecision = p-pwecision;
+    t-this.nowmawizingbase = m-math.pow(10, -.- t-this.pwecision);
   }
 
   /**
-   * Returns the normalized int value for prediction score {@code score} by multiplying
-   * by {@code normalizingBase}, and round the result.
-   * @throws IllegalArgumentException when parameter {@code score} is not within [0.0, 1.0]
+   * wetuwns the nyowmawized int vawue f-fow pwediction scowe {@code scowe} by muwtipwying
+   * b-by {@code nowmawizingbase}, 🥺 and wound the wesuwt. (U ﹏ U)
+   * @thwows iwwegawawgumentexception when pawametew {@code s-scowe} is nyot within [0.0, >w< 1.0]
    */
-  public int normalize(double score) {
-    Preconditions.checkArgument(isScoreWithinRange(score));
-    return (int) Math.round(score * this.normalizingBase);
+  p-pubwic int nyowmawize(doubwe scowe) {
+    p-pweconditions.checkawgument(isscowewithinwange(scowe));
+    w-wetuwn (int) math.wound(scowe * this.nowmawizingbase);
   }
 
   /**
-   * Converts the normalized int value back to a double score by dividing by {@code normalizingBase}
-   * @throws IllegalStateException when the denormalized value is not within [0.0, 1.0]
+   * convewts the nyowmawized i-int vawue b-back to a doubwe scowe by dividing b-by {@code nyowmawizingbase}
+   * @thwows i-iwwegawstateexception when the denowmawized v-vawue is nyot within [0.0, mya 1.0]
    */
-  public double denormalize(int normalizedScore) {
-    double denormalizedValue = normalizedScore / this.normalizingBase;
-    if (!isScoreWithinRange(denormalizedValue)) {
-      throw new IllegalStateException(
-          String.format("The denormalized value %s is not within [0.0, 1.0]", denormalizedValue)
+  p-pubwic doubwe denowmawize(int nyowmawizedscowe) {
+    d-doubwe denowmawizedvawue = nyowmawizedscowe / t-this.nowmawizingbase;
+    if (!isscowewithinwange(denowmawizedvawue)) {
+      t-thwow nyew iwwegawstateexception(
+          s-stwing.fowmat("the denowmawized vawue %s is nyot within [0.0, >w< 1.0]", denowmawizedvawue)
       );
     }
-    return denormalizedValue;
+    wetuwn denowmawizedvawue;
   }
 
-  private static boolean isScoreWithinRange(double score) {
-    return 0.0 <= score && score <= 1.0;
+  p-pwivate s-static boowean isscowewithinwange(doubwe s-scowe) {
+    w-wetuwn 0.0 <= s-scowe && scowe <= 1.0;
   }
 }

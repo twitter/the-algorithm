@@ -1,66 +1,66 @@
-package com.twitter.product_mixer.component_library.feature.featurestorev1
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe.featuwestowev1
 
-import com.twitter.ml.api.transform.FeatureRenameTransform
-import com.twitter.ml.featurestore.catalog.entities
-import com.twitter.ml.featurestore.lib.EdgeEntityId
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.TweetId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.TimelinesAggregationFrameworkFeatureGroup
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import scala.reflect.ClassTag
+impowt c-com.twittew.mw.api.twansfowm.featuwewenametwansfowm
+i-impowt com.twittew.mw.featuwestowe.catawog.entities
+i-impowt c-com.twittew.mw.featuwestowe.wib.edgeentityid
+i-impowt c-com.twittew.mw.featuwestowe.wib.entityid
+i-impowt c-com.twittew.mw.featuwestowe.wib.tweetid
+impowt com.twittew.mw.featuwestowe.wib.usewid
+impowt com.twittew.mw.featuwestowe.wib.entity.entity
+i-impowt com.twittew.mw.featuwestowe.wib.entity.entitywithid
+impowt com.twittew.mw.featuwestowe.wib.featuwe.timewinesaggwegationfwamewowkfeatuwegwoup
+i-impowt com.twittew.mw.featuwestowe.wib.featuwe.{featuwe => fsv1featuwe}
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1._
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.configapi.fspawam
+i-impowt scawa.wefwect.cwasstag
 
-object FeatureStoreV1QueryUserIdTweetCandidateTweetIdFeature {
-  def apply[Query <: PipelineQuery, Candidate <: BaseTweetCandidate, Value](
-    feature: FSv1Feature[EdgeEntityId[UserId, TweetId], Value],
-    legacyName: Option[String] = None,
-    defaultValue: Option[Value] = None,
-    enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, Value] =
-    FeatureStoreV1CandidateFeature(
-      feature,
-      QueryUserIdTweetCandidateTweetIdEntity,
-      legacyName,
-      defaultValue,
-      enabledParam)
+o-object featuwestowev1quewyusewidtweetcandidatetweetidfeatuwe {
+  def appwy[quewy <: pipewinequewy, mya candidate <: basetweetcandidate, (˘ω˘) v-vawue](
+    featuwe: fsv1featuwe[edgeentityid[usewid, >_< tweetid], -.- vawue],
+    wegacyname: option[stwing] = none, 🥺
+    d-defauwtvawue: option[vawue] = n-nyone,
+    e-enabwedpawam: o-option[fspawam[boowean]] = n-nyone
+  ): featuwestowev1candidatefeatuwe[quewy, (U ﹏ U) candidate, _ <: e-entityid, vawue] =
+    featuwestowev1candidatefeatuwe(
+      f-featuwe, >w<
+      quewyusewidtweetcandidatetweetidentity, mya
+      wegacyname, >w<
+      defauwtvawue, nyaa~~
+      enabwedpawam)
 }
 
-object FeatureStoreV1QueryUserIdTweetCandidateTweetIdAggregateFeature {
-  def apply[Query <: PipelineQuery, Candidate <: BaseTweetCandidate](
-    featureGroup: TimelinesAggregationFrameworkFeatureGroup[EdgeEntityId[UserId, TweetId]],
-    enabledParam: Option[FSParam[Boolean]] = None,
-    keepLegacyNames: Boolean = false,
-    featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1CandidateFeatureGroup[Query, TweetCandidate, _ <: EntityId] =
-    FeatureStoreV1CandidateFeatureGroup(
-      featureGroup,
-      QueryUserIdTweetCandidateTweetIdEntity,
-      enabledParam,
-      keepLegacyNames,
-      featureNameTransform
-    )(implicitly[ClassTag[EdgeEntityId[UserId, TweetId]]])
+object f-featuwestowev1quewyusewidtweetcandidatetweetidaggwegatefeatuwe {
+  def appwy[quewy <: p-pipewinequewy, (✿oωo) c-candidate <: b-basetweetcandidate](
+    featuwegwoup: timewinesaggwegationfwamewowkfeatuwegwoup[edgeentityid[usewid, tweetid]], ʘwʘ
+    enabwedpawam: o-option[fspawam[boowean]] = n-nyone, (ˆ ﻌ ˆ)♡
+    keepwegacynames: boowean = fawse, 😳😳😳
+    f-featuwenametwansfowm: o-option[featuwewenametwansfowm] = nyone
+  ): f-featuwestowev1candidatefeatuwegwoup[quewy, tweetcandidate, _ <: e-entityid] =
+    featuwestowev1candidatefeatuwegwoup(
+      featuwegwoup,
+      q-quewyusewidtweetcandidatetweetidentity,
+      enabwedpawam, :3
+      k-keepwegacynames, OwO
+      featuwenametwansfowm
+    )(impwicitwy[cwasstag[edgeentityid[usewid, (U ﹏ U) tweetid]]])
 }
 
-object QueryUserIdTweetCandidateTweetIdEntity
-    extends FeatureStoreV1CandidateEntity[
-      PipelineQuery,
-      BaseTweetCandidate,
-      EdgeEntityId[UserId, TweetId]
+o-object quewyusewidtweetcandidatetweetidentity
+    e-extends featuwestowev1candidateentity[
+      pipewinequewy, >w<
+      basetweetcandidate, (U ﹏ U)
+      edgeentityid[usewid, 😳 tweetid]
     ] {
-  override val entity: Entity[EdgeEntityId[UserId, TweetId]] = entities.core.UserTweet
+  ovewwide vaw entity: entity[edgeentityid[usewid, (ˆ ﻌ ˆ)♡ t-tweetid]] = e-entities.cowe.usewtweet
 
-  override def entityWithId(
-    query: PipelineQuery,
-    tweet: BaseTweetCandidate,
-    existingFeatures: FeatureMap
-  ): EntityWithId[EdgeEntityId[UserId, TweetId]] =
-    entity.withId(EdgeEntityId(UserId(query.getUserIdLoggedOutSupport), TweetId(tweet.id)))
+  ovewwide def entitywithid(
+    quewy: p-pipewinequewy, 😳😳😳
+    t-tweet: b-basetweetcandidate, (U ﹏ U)
+    existingfeatuwes: featuwemap
+  ): entitywithid[edgeentityid[usewid, (///ˬ///✿) t-tweetid]] =
+    entity.withid(edgeentityid(usewid(quewy.getusewidwoggedoutsuppowt), 😳 tweetid(tweet.id)))
 }

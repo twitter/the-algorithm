@@ -1,73 +1,73 @@
-package com.twitter.usersignalservice.base
+package com.twittew.usewsignawsewvice.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Future
-import com.twitter.util.Timer
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.stats
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.usewsignawsewvice.thwiftscawa.signaw
+i-impowt c-com.twittew.usewsignawsewvice.thwiftscawa.signawtype
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.timew
 
 /**
- * Combine a BaseSignalFetcher with a map of negative signalFetchers. Filter out the negative
- * signals from the signals from BaseSignalFetcher.
+ * combine a basesignawfetchew with a map o-of nyegative signawfetchews. /(^•ω•^) fiwtew out the nyegative
+ * signaws f-fwom the signaws fwom basesignawfetchew.
  */
-case class FilteredSignalFetcherController(
-  backingSignalFetcher: BaseSignalFetcher,
-  originSignalType: SignalType,
-  stats: StatsReceiver,
-  timer: Timer,
-  filterSignalFetchers: Map[SignalType, BaseSignalFetcher] =
-    Map.empty[SignalType, BaseSignalFetcher])
-    extends ReadableStore[Query, Seq[Signal]] {
-  val statsReceiver: StatsReceiver = stats.scope(this.getClass.getCanonicalName)
+c-case cwass fiwtewedsignawfetchewcontwowwew(
+  backingsignawfetchew: basesignawfetchew, nyaa~~
+  owiginsignawtype: s-signawtype, nyaa~~
+  stats: s-statsweceivew, :3
+  t-timew: timew, 😳😳😳
+  fiwtewsignawfetchews: map[signawtype, (˘ω˘) basesignawfetchew] =
+    map.empty[signawtype, ^^ b-basesignawfetchew])
+    extends weadabwestowe[quewy, :3 seq[signaw]] {
+  vaw s-statsweceivew: statsweceivew = stats.scope(this.getcwass.getcanonicawname)
 
-  override def get(query: Query): Future[Option[Seq[Signal]]] = {
-    val clientStatsReceiver = statsReceiver.scope(query.signalType.name).scope(query.clientId.name)
-    Stats
-      .trackItems(clientStatsReceiver) {
-        val backingSignals =
-          backingSignalFetcher.get(Query(query.userId, originSignalType, None, query.clientId))
-        val filteredSignals = filter(query, backingSignals)
-        filteredSignals
-      }.raiseWithin(BaseSignalFetcher.Timeout)(timer).handle {
-        case e =>
-          clientStatsReceiver.scope("FetcherExceptions").counter(e.getClass.getCanonicalName).incr()
-          BaseSignalFetcher.EmptyResponse
+  ovewwide d-def get(quewy: q-quewy): futuwe[option[seq[signaw]]] = {
+    v-vaw cwientstatsweceivew = s-statsweceivew.scope(quewy.signawtype.name).scope(quewy.cwientid.name)
+    stats
+      .twackitems(cwientstatsweceivew) {
+        vaw b-backingsignaws =
+          backingsignawfetchew.get(quewy(quewy.usewid, -.- owiginsignawtype, 😳 n-nyone, quewy.cwientid))
+        vaw fiwtewedsignaws = fiwtew(quewy, mya backingsignaws)
+        fiwtewedsignaws
+      }.waisewithin(basesignawfetchew.timeout)(timew).handwe {
+        case e-e =>
+          cwientstatsweceivew.scope("fetchewexceptions").countew(e.getcwass.getcanonicawname).incw()
+          b-basesignawfetchew.emptywesponse
       }
   }
 
-  def filter(
-    query: Query,
-    rawSignals: Future[Option[Seq[Signal]]]
-  ): Future[Option[Seq[Signal]]] = {
-    Stats
-      .trackItems(statsReceiver) {
-        val originSignals = rawSignals.map(_.getOrElse(Seq.empty[Signal]))
-        val filterSignals =
-          Future
-            .collect {
-              filterSignalFetchers.map {
-                case (signalType, signalFetcher) =>
-                  signalFetcher
-                    .get(Query(query.userId, signalType, None, query.clientId))
-                    .map(_.getOrElse(Seq.empty))
-              }.toSeq
-            }.map(_.flatten.toSet)
-        val filterSignalsSet = filterSignals
-          .map(_.flatMap(_.targetInternalId))
+  d-def fiwtew(
+    q-quewy: quewy, (˘ω˘)
+    wawsignaws: futuwe[option[seq[signaw]]]
+  ): futuwe[option[seq[signaw]]] = {
+    s-stats
+      .twackitems(statsweceivew) {
+        v-vaw owiginsignaws = wawsignaws.map(_.getowewse(seq.empty[signaw]))
+        v-vaw fiwtewsignaws =
+          f-futuwe
+            .cowwect {
+              fiwtewsignawfetchews.map {
+                case (signawtype, >_< s-signawfetchew) =>
+                  signawfetchew
+                    .get(quewy(quewy.usewid, -.- s-signawtype, 🥺 nyone, quewy.cwientid))
+                    .map(_.getowewse(seq.empty))
+              }.toseq
+            }.map(_.fwatten.toset)
+        vaw fiwtewsignawsset = f-fiwtewsignaws
+          .map(_.fwatmap(_.tawgetintewnawid))
 
-        val originSignalsWithId =
-          originSignals.map(_.map(signal => (signal, signal.targetInternalId)))
-        Future.join(originSignalsWithId, filterSignalsSet).map {
-          case (originSignalsWithId, filterSignalsSet) =>
-            Some(
-              originSignalsWithId
-                .collect {
-                  case (signal, internalIdOpt)
-                      if internalIdOpt.nonEmpty && !filterSignalsSet.contains(internalIdOpt.get) =>
-                    signal
-                }.take(query.maxResults.getOrElse(Int.MaxValue)))
+        vaw o-owiginsignawswithid =
+          owiginsignaws.map(_.map(signaw => (signaw, s-signaw.tawgetintewnawid)))
+        futuwe.join(owiginsignawswithid, (U ﹏ U) f-fiwtewsignawsset).map {
+          case (owiginsignawswithid, >w< fiwtewsignawsset) =>
+            some(
+              owiginsignawswithid
+                .cowwect {
+                  case (signaw, mya intewnawidopt)
+                      i-if intewnawidopt.nonempty && !fiwtewsignawsset.contains(intewnawidopt.get) =>
+                    s-signaw
+                }.take(quewy.maxwesuwts.getowewse(int.maxvawue)))
         }
       }
   }

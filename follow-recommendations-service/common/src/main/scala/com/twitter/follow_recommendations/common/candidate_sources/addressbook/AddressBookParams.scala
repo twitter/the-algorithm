@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.candidate_sources.addressbook
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook
 
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.timewines.configapi.fspawam
 
-object AddressBookParams {
-  // Used by display locations that want only to read from the ABV2 Client and ignore Manhattan
-  // Currently the only display location that does this is the ABUploadInjection DisplayLocation
-  object ReadFromABV2Only extends FSParam[Boolean]("addressbook_read_only_from_abv2", false)
+o-object addwessbookpawams {
+  // u-used by dispway w-wocations that want o-onwy to wead f-fwom the abv2 cwient a-and ignowe m-manhattan
+  // c-cuwwentwy the onwy dispway wocation that does this is the abupwoadinjection dispwaywocation
+  o-object weadfwomabv2onwy extends fspawam[boowean]("addwessbook_wead_onwy_fwom_abv2", :3 f-fawse)
 }

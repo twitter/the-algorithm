@@ -1,47 +1,47 @@
-package com.twitter.search.common.encoding.features;
+package com.twittew.seawch.common.encoding.featuwes;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
 /**
- * A byte normalizer that restricts the values to the given range before normalizing them.
+ * a-a byte n-nyowmawizew that w-westwicts the v-vawues to the given w-wange befowe n-nyowmawizing them.
  */
-public class ClampByteNormalizer extends ByteNormalizer {
-  private final int minUnnormalizedValue;
-  private final int maxUnnormalizedValue;
+p-pubwic cwass c-cwampbytenowmawizew extends bytenowmawizew {
+  pwivate finaw int minunnowmawizedvawue;
+  p-pwivate finaw int maxunnowmawizedvawue;
 
   /**
-   * Creates a new ClampByteNormalizer instance.
+   * c-cweates a nyew cwampbytenowmawizew i-instance. /(^•ω•^)
    *
-   * @param minValue The smallest allowed unnormalized value.
-   * @param maxValue The largest allowed unnormalized value.
+   * @pawam minvawue the smowest awwowed unnowmawized vawue. rawr x3
+   * @pawam m-maxvawue the wawgest a-awwowed unnowmawized v-vawue. (U ﹏ U)
    */
-  public ClampByteNormalizer(int minUnnormalizedValue, int maxUnnormalizedValue) {
-    Preconditions.checkState(minUnnormalizedValue <= maxUnnormalizedValue);
-    Preconditions.checkState(minUnnormalizedValue >= 0);
-    Preconditions.checkState(maxUnnormalizedValue <= 255);
-    this.minUnnormalizedValue = minUnnormalizedValue;
-    this.maxUnnormalizedValue = maxUnnormalizedValue;
+  pubwic cwampbytenowmawizew(int minunnowmawizedvawue, (U ﹏ U) int maxunnowmawizedvawue) {
+    pweconditions.checkstate(minunnowmawizedvawue <= m-maxunnowmawizedvawue);
+    pweconditions.checkstate(minunnowmawizedvawue >= 0);
+    pweconditions.checkstate(maxunnowmawizedvawue <= 255);
+    this.minunnowmawizedvawue = minunnowmawizedvawue;
+    t-this.maxunnowmawizedvawue = maxunnowmawizedvawue;
   }
 
-  @Override
-  public byte normalize(double val) {
-    int adjustedValue = (int) val;
-    if (adjustedValue < minUnnormalizedValue) {
-      adjustedValue = minUnnormalizedValue;
+  @ovewwide
+  p-pubwic byte n-nowmawize(doubwe v-vaw) {
+    int a-adjustedvawue = (int) vaw;
+    if (adjustedvawue < m-minunnowmawizedvawue) {
+      adjustedvawue = minunnowmawizedvawue;
     }
-    if (adjustedValue > maxUnnormalizedValue) {
-      adjustedValue = maxUnnormalizedValue;
+    i-if (adjustedvawue > maxunnowmawizedvawue) {
+      adjustedvawue = maxunnowmawizedvawue;
     }
-    return ByteNormalizer.intToUnsignedByte(adjustedValue);
+    wetuwn bytenowmawizew.inttounsignedbyte(adjustedvawue);
   }
 
-  @Override
-  public double unnormLowerBound(byte norm) {
-    return ByteNormalizer.unsignedByteToInt(norm);
+  @ovewwide
+  pubwic doubwe unnowmwowewbound(byte n-nyowm) {
+    wetuwn bytenowmawizew.unsignedbytetoint(nowm);
   }
 
-  @Override
-  public double unnormUpperBound(byte norm) {
-    return ByteNormalizer.unsignedByteToInt(norm) + 1;
+  @ovewwide
+  p-pubwic doubwe u-unnowmuppewbound(byte n-nyowm) {
+    wetuwn bytenowmawizew.unsignedbytetoint(nowm) + 1;
   }
 }

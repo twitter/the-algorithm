@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.CtaButton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.ctabutton
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.badge
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
 
-sealed trait TileContent
+s-seawed twait tiwecontent
 
-case class StandardTileContent(
-  title: String,
-  supportingText: String,
-  badge: Option[Badge])
-    extends TileContent
+c-case c-cwass standawdtiwecontent(
+  t-titwe: s-stwing, ^^;;
+  suppowtingtext: stwing, >_<
+  badge: option[badge])
+    extends tiwecontent
 
-case class CallToActionTileContent(
-  text: String,
-  richText: Option[RichText],
-  ctaButton: Option[CtaButton])
-    extends TileContent
+case cwass c-cawwtoactiontiwecontent(
+  text: stwing, mya
+  wichtext: o-option[wichtext], mya
+  ctabutton: o-option[ctabutton])
+    extends tiwecontent
 
-//todo: Add other TileContent types later
+//todo: add othew t-tiwecontent types watew

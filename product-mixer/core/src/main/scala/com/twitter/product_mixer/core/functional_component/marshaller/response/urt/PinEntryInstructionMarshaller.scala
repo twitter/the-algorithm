@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.PinEntryTimelineInstruction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pinentwytimewineinstwuction
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class PinEntryInstructionMarshaller @Inject() (
-  timelineEntryMarshaller: TimelineEntryMarshaller) {
+@singweton
+c-cwass pinentwyinstwuctionmawshawwew @inject() (
+  t-timewineentwymawshawwew: t-timewineentwymawshawwew) {
 
-  def apply(instruction: PinEntryTimelineInstruction): urt.PinEntry = {
-    urt.PinEntry(entry = timelineEntryMarshaller(instruction.entry))
+  def appwy(instwuction: pinentwytimewineinstwuction): uwt.pinentwy = {
+    u-uwt.pinentwy(entwy = timewineentwymawshawwew(instwuction.entwy))
   }
 }

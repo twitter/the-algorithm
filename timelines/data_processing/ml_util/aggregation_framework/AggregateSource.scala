@@ -1,9 +1,9 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk
 
-import com.twitter.ml.api.Feature
-import java.lang.{Long => JLong}
+impowt c-com.twittew.mw.api.featuwe
+i-impowt j-java.wang.{wong => j-jwong}
 
-trait AggregateSource extends Serializable {
-  def name: String
-  def timestampFeature: Feature[JLong]
+t-twait aggwegatesouwce e-extends sewiawizabwe {
+  def n-nyame: stwing
+  d-def timestampfeatuwe: featuwe[jwong]
 }

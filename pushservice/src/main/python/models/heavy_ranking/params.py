@@ -1,89 +1,89 @@
-import enum
-import json
-from typing import List, Optional
+impowt enum
+impowt json
+fwom typing i-impowt wist, 😳😳😳 o-optionaw
 
-from .lib.params import BlockParams, ClemNetParams, ConvParams, DenseParams, TopLayerParams
+fwom .wib.pawams i-impowt b-bwockpawams, (˘ω˘) cwemnetpawams, ^^ c-convpawams, :3 d-densepawams, -.- t-topwayewpawams
 
-from pydantic import BaseModel, Extra, NonNegativeFloat
-import tensorflow.compat.v1 as tf
-
-
-# checkstyle: noqa
+f-fwom pydantic impowt basemodew, 😳 extwa, nyonnegativefwoat
+impowt tensowfwow.compat.v1 as tf
 
 
-class ExtendedBaseModel(BaseModel):
-  class Config:
-    extra = Extra.forbid
+# c-checkstywe: nyoqa
 
 
-class SparseFeaturesParams(ExtendedBaseModel):
+cwass extendedbasemodew(basemodew):
+  c-cwass config:
+    extwa = extwa.fowbid
+
+
+c-cwass spawsefeatuwespawams(extendedbasemodew):
   bits: int
   embedding_size: int
 
 
-class FeaturesParams(ExtendedBaseModel):
-  sparse_features: Optional[SparseFeaturesParams]
+cwass f-featuwespawams(extendedbasemodew):
+  spawse_featuwes: o-optionaw[spawsefeatuwespawams]
 
 
-class ModelTypeEnum(str, enum.Enum):
-  clemnet: str = "clemnet"
+c-cwass modewtypeenum(stw, mya enum.enum):
+  cwemnet: stw = "cwemnet"
 
 
-class ModelParams(ExtendedBaseModel):
-  name: ModelTypeEnum
-  features: FeaturesParams
-  architecture: ClemNetParams
+cwass modewpawams(extendedbasemodew):
+  n-nyame: modewtypeenum
+  featuwes: featuwespawams
+  awchitectuwe: cwemnetpawams
 
 
-class TaskNameEnum(str, enum.Enum):
-  oonc: str = "OONC"
-  engagement: str = "Engagement"
+c-cwass tasknameenum(stw, (˘ω˘) enum.enum):
+  o-oonc: stw = "oonc"
+  e-engagement: s-stw = "engagement"
 
 
-class Task(ExtendedBaseModel):
-  name: TaskNameEnum
-  label: str
-  score_weight: NonNegativeFloat
+cwass t-task(extendedbasemodew):
+  nyame: tasknameenum
+  wabew: stw
+  s-scowe_weight: nyonnegativefwoat
 
 
-DEFAULT_TASKS = [
-  Task(name=TaskNameEnum.oonc, label="label", score_weight=0.9),
-  Task(name=TaskNameEnum.engagement, label="label.engagement", score_weight=0.1),
+defauwt_tasks = [
+  t-task(name=tasknameenum.oonc, >_< wabew="wabew", -.- scowe_weight=0.9), 🥺
+  task(name=tasknameenum.engagement, (U ﹏ U) wabew="wabew.engagement", >w< scowe_weight=0.1), mya
 ]
 
 
-class GraphParams(ExtendedBaseModel):
-  tasks: List[Task] = DEFAULT_TASKS
-  model: ModelParams
-  weight: Optional[str]
+c-cwass gwaphpawams(extendedbasemodew):
+  t-tasks: wist[task] = d-defauwt_tasks
+  m-modew: modewpawams
+  weight: optionaw[stw]
 
 
-DEFAULT_ARCHITECTURE_PARAMS = ClemNetParams(
-  blocks=[
-    BlockParams(
-      activation="relu",
-      conv=ConvParams(kernel_size=3, filters=5),
-      dense=DenseParams(output_size=output_size),
-      residual=False,
+defauwt_awchitectuwe_pawams = c-cwemnetpawams(
+  b-bwocks=[
+    bwockpawams(
+      a-activation="wewu", >w<
+      conv=convpawams(kewnew_size=3, nyaa~~ f-fiwtews=5), (✿oωo)
+      dense=densepawams(output_size=output_size), ʘwʘ
+      w-wesiduaw=fawse,
     )
-    for output_size in [1024, 512, 256, 128]
-  ],
-  top=TopLayerParams(n_labels=1),
+    fow o-output_size in [1024, (ˆ ﻌ ˆ)♡ 512, 256, 128]
+  ], 😳😳😳
+  top=topwayewpawams(n_wabews=1), :3
 )
 
-DEFAULT_GRAPH_PARAMS = GraphParams(
-  model=ModelParams(
-    name=ModelTypeEnum.clemnet,
-    architecture=DEFAULT_ARCHITECTURE_PARAMS,
-    features=FeaturesParams(sparse_features=SparseFeaturesParams(bits=18, embedding_size=50)),
-  ),
+defauwt_gwaph_pawams = gwaphpawams(
+  m-modew=modewpawams(
+    nyame=modewtypeenum.cwemnet, OwO
+    a-awchitectuwe=defauwt_awchitectuwe_pawams, (U ﹏ U)
+    featuwes=featuwespawams(spawse_featuwes=spawsefeatuwespawams(bits=18, >w< e-embedding_size=50)), (U ﹏ U)
+  ), 😳
 )
 
 
-def load_graph_params(args) -> GraphParams:
-  params = DEFAULT_GRAPH_PARAMS
-  if args.param_file:
-    with tf.io.gfile.GFile(args.param_file, mode="r+") as file:
-      params = GraphParams.parse_obj(json.load(file))
+def w-woad_gwaph_pawams(awgs) -> gwaphpawams:
+  pawams = defauwt_gwaph_pawams
+  if awgs.pawam_fiwe:
+    with tf.io.gfiwe.gfiwe(awgs.pawam_fiwe, (ˆ ﻌ ˆ)♡ m-mode="w+") a-as fiwe:
+      pawams = g-gwaphpawams.pawse_obj(json.woad(fiwe))
 
-  return params
+  w-wetuwn p-pawams

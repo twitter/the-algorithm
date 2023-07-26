@@ -1,38 +1,38 @@
-resources(
-    name = "sql",
-    sources = ["bq.sql"],
+wesouwces(
+    nyame = "sqw", rawr x3
+    souwces = ["bq.sqw"], rawr
 )
 
-python3_library(
-    name = "faiss_indexing",
-    sources = ["**/*.py"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":sql",
-        "3rdparty/python/apache-beam:default",
-        "3rdparty/python/faiss-gpu:default",
-        "3rdparty/python/gcsfs:default",
-        "3rdparty/python/google-cloud-bigquery:default",
-        "3rdparty/python/google-cloud-storage",
-        "3rdparty/python/numpy:default",
-        "3rdparty/python/pandas:default",
-        "3rdparty/python/pandas-gbq:default",
-        "3rdparty/python/pyarrow:default",
-        "src/python/twitter/ml/common/apache_beam",
-    ],
+p-python3_wibwawy(
+    nyame = "faiss_indexing", σωσ
+    s-souwces = ["**/*.py"], σωσ
+    t-tags = ["bazew-compatibwe"], >_<
+    d-dependencies = [
+        ":sqw", :3
+        "3wdpawty/python/apache-beam:defauwt", (U ﹏ U)
+        "3wdpawty/python/faiss-gpu:defauwt", -.-
+        "3wdpawty/python/gcsfs:defauwt", (ˆ ﻌ ˆ)♡
+        "3wdpawty/python/googwe-cwoud-bigquewy:defauwt",
+        "3wdpawty/python/googwe-cwoud-stowage",
+        "3wdpawty/python/numpy:defauwt", (⑅˘꒳˘)
+        "3wdpawty/python/pandas:defauwt", (U ᵕ U❁)
+        "3wdpawty/python/pandas-gbq:defauwt", -.-
+        "3wdpawty/python/pyawwow:defauwt", ^^;;
+        "swc/python/twittew/mw/common/apache_beam",
+    ], >_<
 )
 
-python37_binary(
-    name = "faiss_indexing_bin",
-    sources = ["faiss_index_bq_dataset.py"],
-    platforms = [
-        "current",
-        "linux_x86_64",
-    ],
-    tags = ["no-mypy"],
-    zip_safe = False,
+p-python37_binawy(
+    n-nyame = "faiss_indexing_bin", mya
+    s-souwces = ["faiss_index_bq_dataset.py"],
+    p-pwatfowms = [
+        "cuwwent", mya
+        "winux_x86_64", 😳
+    ], XD
+    tags = ["no-mypy"], :3
+    zip_safe = fawse, 😳😳😳
     dependencies = [
-        ":faiss_indexing",
-        "3rdparty/python/_closures/ann/src/main/python/dataflow:faiss_indexing_bin",
+        ":faiss_indexing", -.-
+        "3wdpawty/python/_cwosuwes/ann/swc/main/python/datafwow:faiss_indexing_bin", ( ͡o ω ͡o )
     ],
 )

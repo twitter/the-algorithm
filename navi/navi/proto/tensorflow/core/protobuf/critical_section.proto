@@ -1,24 +1,24 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "CriticalSectionProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "cwiticawsectionpwotos";
+option j-java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Protocol buffer representing a CriticalSection.
-message CriticalSectionDef {
-  // Name of the critical section handle.
-  string critical_section_name = 1;
+// p-pwotocow buffew w-wepwesenting a-a cwiticawsection. ( ͡o ω ͡o )
+message cwiticawsectiondef {
+  // nyame of the cwiticaw section handwe. rawr x3
+  stwing c-cwiticaw_section_name = 1;
 }
 
-// Protocol buffer representing a CriticalSection execution.
-message CriticalSectionExecutionDef {
-  // Name of the critical section handle.
-  string execute_in_critical_section_name = 1;
-  // Whether this operation requires exclusive access to its resources,
-  // (i.e., no other CriticalSections may request the same resources).
-  bool exclusive_resource_access = 2;
+// pwotocow buffew wepwesenting a-a cwiticawsection execution. nyaa~~
+m-message cwiticawsectionexecutiondef {
+  // nyame of the cwiticaw section handwe. /(^•ω•^)
+  s-stwing exekawaii~_in_cwiticaw_section_name = 1;
+  // whethew t-this opewation w-wequiwes excwusive access to its wesouwces, rawr
+  // (i.e., nyo othew cwiticawsections m-may wequest the same wesouwces). OwO
+  boow excwusive_wesouwce_access = 2;
 }

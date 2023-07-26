@@ -1,90 +1,90 @@
-package com.twitter.graph_feature_service.server.modules
+package com.twittew.gwaph_featuwe_sewvice.sewvew.moduwes
 
-import com.google.inject.Provides
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graph_feature_service.common.Configs._
-import com.twitter.graph_feature_service.server.stores.GetIntersectionStore
-import com.twitter.graph_feature_service.server.stores.GetIntersectionStore.GetIntersectionQuery
-import com.twitter.graph_feature_service.thriftscala.CachedIntersectionResult
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.{ClientName, ZkEndPoint}
-import com.twitter.util.Duration
-import javax.inject.{Named, Singleton}
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.twittew.bijection.scwooge.compactscawacodec
+i-impowt com.twittew.convewsions.duwationops._
+impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.gwaph_featuwe_sewvice.common.configs._
+i-impowt com.twittew.gwaph_featuwe_sewvice.sewvew.stowes.getintewsectionstowe
+impowt com.twittew.gwaph_featuwe_sewvice.sewvew.stowes.getintewsectionstowe.getintewsectionquewy
+impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.cachedintewsectionwesuwt
+impowt com.twittew.hewmit.stowe.common.obsewvedmemcachedweadabwestowe
+i-impowt com.twittew.inject.twittewmoduwe
+impowt com.twittew.inject.annotations.fwag
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.stowehaus_intewnaw.memcache.memcachestowe
+impowt com.twittew.stowehaus_intewnaw.utiw.{cwientname, >w< zkendpoint}
+impowt c-com.twittew.utiw.duwation
+impowt j-javax.inject.{named, s-singweton}
 
 /**
- * Initialize the MemCache based GetIntersectionStore.
- * The Key of MemCache is UserId~CandidateId~FeatureTypes~IntersectionIdLimit.
+ * initiawize the memcache based getintewsectionstowe. (U ﹏ U)
+ * the key of memcache i-is usewid~candidateid~featuwetypes~intewsectionidwimit. 😳
  */
-object GetIntersectionStoreModule extends TwitterModule {
+object getintewsectionstowemoduwe extends twittewmoduwe {
 
-  private[this] val requestTimeout: Duration = 25.millis
-  private[this] val retries: Int = 0
+  pwivate[this] vaw wequesttimeout: duwation = 25.miwwis
+  p-pwivate[this] vaw wetwies: i-int = 0
 
-  @Provides
-  @Named("ReadThroughGetIntersectionStore")
-  @Singleton
-  def provideReadThroughGetIntersectionStore(
-    graphFeatureServiceWorkerClients: GraphFeatureServiceWorkerClients,
-    serviceIdentifier: ServiceIdentifier,
-    @Flag(ServerFlagNames.MemCacheClientName) memCacheName: String,
-    @Flag(ServerFlagNames.MemCachePath) memCachePath: String
+  @pwovides
+  @named("weadthwoughgetintewsectionstowe")
+  @singweton
+  d-def pwovideweadthwoughgetintewsectionstowe(
+    g-gwaphfeatuwesewvicewowkewcwients: g-gwaphfeatuwesewvicewowkewcwients, (ˆ ﻌ ˆ)♡
+    sewviceidentifiew: sewviceidentifiew, 😳😳😳
+    @fwag(sewvewfwagnames.memcachecwientname) m-memcachename: stwing, (U ﹏ U)
+    @fwag(sewvewfwagnames.memcachepath) memcachepath: s-stwing
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[GetIntersectionQuery, CachedIntersectionResult] = {
-    buildMemcacheStore(
-      graphFeatureServiceWorkerClients,
-      memCacheName,
-      memCachePath,
-      serviceIdentifier)
+    impwicit statsweceivew: statsweceivew
+  ): weadabwestowe[getintewsectionquewy, (///ˬ///✿) cachedintewsectionwesuwt] = {
+    b-buiwdmemcachestowe(
+      gwaphfeatuwesewvicewowkewcwients, 😳
+      m-memcachename, 😳
+      m-memcachepath,
+      s-sewviceidentifiew)
   }
 
-  @Provides
-  @Named("BypassCacheGetIntersectionStore")
-  @Singleton
-  def provideReadOnlyGetIntersectionStore(
-    graphFeatureServiceWorkerClients: GraphFeatureServiceWorkerClients,
+  @pwovides
+  @named("bypasscachegetintewsectionstowe")
+  @singweton
+  def pwovideweadonwygetintewsectionstowe(
+    gwaphfeatuwesewvicewowkewcwients: gwaphfeatuwesewvicewowkewcwients, σωσ
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[GetIntersectionQuery, CachedIntersectionResult] = {
-    // Bypass the Memcache.
-    GetIntersectionStore(graphFeatureServiceWorkerClients, statsReceiver)
+    i-impwicit s-statsweceivew: statsweceivew
+  ): w-weadabwestowe[getintewsectionquewy, rawr x3 c-cachedintewsectionwesuwt] = {
+    // bypass the memcache. OwO
+    g-getintewsectionstowe(gwaphfeatuwesewvicewowkewcwients, /(^•ω•^) statsweceivew)
   }
 
-  private[this] def buildMemcacheStore(
-    graphFeatureServiceWorkerClients: GraphFeatureServiceWorkerClients,
-    memCacheName: String,
-    memCachePath: String,
-    serviceIdentifier: ServiceIdentifier,
+  p-pwivate[this] def buiwdmemcachestowe(
+    gwaphfeatuwesewvicewowkewcwients: g-gwaphfeatuwesewvicewowkewcwients, 😳😳😳
+    memcachename: s-stwing, ( ͡o ω ͡o )
+    memcachepath: s-stwing, >_<
+    sewviceidentifiew: s-sewviceidentifiew, >w<
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[GetIntersectionQuery, CachedIntersectionResult] = {
-    val backingStore = GetIntersectionStore(graphFeatureServiceWorkerClients, statsReceiver)
+    impwicit statsweceivew: statsweceivew
+  ): weadabwestowe[getintewsectionquewy, rawr cachedintewsectionwesuwt] = {
+    vaw b-backingstowe = g-getintewsectionstowe(gwaphfeatuwesewvicewowkewcwients, 😳 statsweceivew)
 
-    val cacheClient = MemcacheStore.memcachedClient(
-      name = ClientName(memCacheName),
-      dest = ZkEndPoint(memCachePath),
-      timeout = requestTimeout,
-      retries = retries,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+    v-vaw cachecwient = m-memcachestowe.memcachedcwient(
+      n-nyame = cwientname(memcachename), >w<
+      dest = zkendpoint(memcachepath), (⑅˘꒳˘)
+      timeout = wequesttimeout, OwO
+      w-wetwies = wetwies, (ꈍᴗꈍ)
+      sewviceidentifiew = sewviceidentifiew, 😳
+      statsweceivew = statsweceivew
     )
 
-    ObservedMemcachedReadableStore.fromCacheClient[GetIntersectionQuery, CachedIntersectionResult](
-      backingStore = backingStore,
-      cacheClient = cacheClient,
-      ttl = MemCacheTTL
+    o-obsewvedmemcachedweadabwestowe.fwomcachecwient[getintewsectionquewy, 😳😳😳 cachedintewsectionwesuwt](
+      b-backingstowe = b-backingstowe, mya
+      c-cachecwient = cachecwient,
+      t-ttw = m-memcachettw
     )(
-      valueInjection = LZ4Injection.compose(CompactScalaCodec(CachedIntersectionResult)),
-      statsReceiver = statsReceiver.scope("mem_cache"),
-      keyToString = { key =>
-        s"L~${key.userId}~${key.candidateId}~${key.featureTypesString}~${key.intersectionIdLimit}"
+      v-vawueinjection = w-wz4injection.compose(compactscawacodec(cachedintewsectionwesuwt)), mya
+      statsweceivew = statsweceivew.scope("mem_cache"), (⑅˘꒳˘)
+      k-keytostwing = { k-key =>
+        s-s"w~${key.usewid}~${key.candidateid}~${key.featuwetypesstwing}~${key.intewsectionidwimit}"
       }
     )
   }

@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.pipeline
+package com.twittew.pwoduct_mixew.cowe.pipewine
 
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
 
-case class InvalidStepStateException(step: PipelineStepIdentifier, missingData: String)
-    extends Exception(
-      s"Invalid Step State: Step $step requires $missingData"
+c-case cwass i-invawidstepstateexception(step: p-pipewinestepidentifiew, ( ͡o ω ͡o ) m-missingdata: s-stwing)
+    e-extends exception(
+      s-s"invawid s-step state: step $step wequiwes $missingdata"
     )

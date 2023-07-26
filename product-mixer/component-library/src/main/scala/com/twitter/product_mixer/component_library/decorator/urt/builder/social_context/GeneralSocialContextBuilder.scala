@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.sociaw_context
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basestw
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.sociaw_context.basesociawcontextbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.genewawcontext
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.genewawcontexttype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class GeneralSocialContextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  textBuilder: BaseStr[Query, Candidate],
-  contextType: GeneralContextType,
-  url: Option[String] = None,
-  contextImageUrls: Option[List[String]] = None,
-  landingUrl: Option[Url] = None)
-    extends BaseSocialContextBuilder[Query, Candidate] {
+case cwass g-genewawsociawcontextbuiwdew[-quewy <: pipewinequewy, rawr x3 -candidate <: univewsawnoun[any]](
+  t-textbuiwdew: basestw[quewy, (✿oωo) c-candidate], (ˆ ﻌ ˆ)♡
+  contexttype: genewawcontexttype, (˘ω˘)
+  uww: option[stwing] = none, (⑅˘꒳˘)
+  c-contextimageuwws: option[wist[stwing]] = n-nyone, (///ˬ///✿)
+  wandinguww: o-option[uww] = nyone)
+    extends basesociawcontextbuiwdew[quewy, 😳😳😳 candidate] {
 
-  def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[GeneralContext] =
-    Some(
-      GeneralContext(
-        text = textBuilder(query, candidate, candidateFeatures),
-        contextType = contextType,
-        url = url,
-        contextImageUrls = contextImageUrls,
-        landingUrl = landingUrl))
+  def appwy(
+    q-quewy: quewy, 🥺
+    candidate: candidate, mya
+    candidatefeatuwes: featuwemap
+  ): o-option[genewawcontext] =
+    some(
+      genewawcontext(
+        t-text = textbuiwdew(quewy, 🥺 candidate, c-candidatefeatuwes), >_<
+        c-contexttype = c-contexttype, >_<
+        uww = uww, (⑅˘꒳˘)
+        contextimageuwws = contextimageuwws, /(^•ω•^)
+        w-wandinguww = wandinguww))
 }

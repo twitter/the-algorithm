@@ -1,246 +1,246 @@
-package com.twitter.search.earlybird.document;
+package com.twittew.seawch.eawwybiwd.document;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.concuwwent.timeunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.wists;
 
-import org.apache.lucene.document.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.wucene.document.document;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.schema.SchemaDocumentFactory;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.text.filter.NormalizedTokenFilter;
-import com.twitter.search.common.util.text.splitter.HashtagMentionPunctuationSplitter;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
+impowt com.twittew.common.utiw.cwock;
+impowt c-com.twittew.decidew.decidew;
+impowt com.twittew.seawch.common.decidew.decidewutiw;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+impowt c-com.twittew.seawch.common.schema.schemadocumentfactowy;
+impowt com.twittew.seawch.common.schema.base.fiewdnametoidmapping;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.common.schema.base.schema;
+impowt c-com.twittew.seawch.common.schema.base.thwiftdocumentutiw;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdthwiftdocumentutiw;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt c-com.twittew.seawch.common.utiw.text.fiwtew.nowmawizedtokenfiwtew;
+impowt com.twittew.seawch.common.utiw.text.spwittew.hashtagmentionpunctuationspwittew;
+i-impowt c-com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.seawchindexingmetwicset;
 
-public class ThriftIndexingEventDocumentFactory extends DocumentFactory<ThriftIndexingEvent> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ThriftIndexingEventDocumentFactory.class);
+p-pubwic cwass thwiftindexingeventdocumentfactowy extends d-documentfactowy<thwiftindexingevent> {
+  pwivate static finaw woggew w-wog =
+      woggewfactowy.getwoggew(thwiftindexingeventdocumentfactowy.cwass);
 
-  private static final FieldNameToIdMapping ID_MAPPING = new EarlybirdFieldConstants();
-  private static final long TIMESTAMP_ALLOWED_FUTURE_DELTA_MS = TimeUnit.SECONDS.toMillis(60);
-  private static final String FILTER_TWEETS_WITH_FUTURE_TWEET_ID_AND_CREATED_AT_DECIDER_KEY =
-      "filter_tweets_with_future_tweet_id_and_created_at";
+  pwivate static finaw fiewdnametoidmapping id_mapping = new eawwybiwdfiewdconstants();
+  p-pwivate static finaw wong timestamp_awwowed_futuwe_dewta_ms = t-timeunit.seconds.tomiwwis(60);
+  pwivate s-static finaw s-stwing fiwtew_tweets_with_futuwe_tweet_id_and_cweated_at_decidew_key =
+      "fiwtew_tweets_with_futuwe_tweet_id_and_cweated_at";
 
-  private static final SearchCounter NUM_TWEETS_WITH_FUTURE_TWEET_ID_AND_CREATED_AT_MS =
-      SearchCounter.export("num_tweets_with_future_tweet_id_and_created_at_ms");
-  private static final SearchCounter NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_FOUND =
-      SearchCounter.export("num_tweets_with_inconsistent_tweet_id_and_created_at_ms_found");
-  private static final SearchCounter
-    NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_ADJUSTED =
-      SearchCounter.export("num_tweets_with_inconsistent_tweet_id_and_created_at_ms_adjusted");
-  private static final SearchCounter NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_DROPPED
-    = SearchCounter.export("num_tweets_with_inconsistent_tweet_id_and_created_at_ms_dropped");
+  pwivate static finaw seawchcountew nyum_tweets_with_futuwe_tweet_id_and_cweated_at_ms =
+      s-seawchcountew.expowt("num_tweets_with_futuwe_tweet_id_and_cweated_at_ms");
+  p-pwivate static finaw seawchcountew n-nyum_tweets_with_inconsistent_tweet_id_and_cweated_at_ms_found =
+      s-seawchcountew.expowt("num_tweets_with_inconsistent_tweet_id_and_cweated_at_ms_found");
+  pwivate static f-finaw seawchcountew
+    nyum_tweets_with_inconsistent_tweet_id_and_cweated_at_ms_adjusted =
+      s-seawchcountew.expowt("num_tweets_with_inconsistent_tweet_id_and_cweated_at_ms_adjusted");
+  pwivate static finaw seawchcountew n-nyum_tweets_with_inconsistent_tweet_id_and_cweated_at_ms_dwopped
+    = seawchcountew.expowt("num_tweets_with_inconsistent_tweet_id_and_cweated_at_ms_dwopped");
 
-  @VisibleForTesting
-  static final String ENABLE_ADJUST_CREATED_AT_TIME_IF_MISMATCH_WITH_SNOWFLAKE =
-      "enable_adjust_created_at_time_if_mismatch_with_snowflake";
+  @visibwefowtesting
+  static f-finaw stwing enabwe_adjust_cweated_at_time_if_mismatch_with_snowfwake =
+      "enabwe_adjust_cweated_at_time_if_mismatch_with_snowfwake";
 
-  @VisibleForTesting
-  static final String ENABLE_DROP_CREATED_AT_TIME_IF_MISMATCH_WITH_SNOWFLAKE =
-      "enable_drop_created_at_time_if_mismatch_with_snowflake";
+  @visibwefowtesting
+  s-static finaw s-stwing enabwe_dwop_cweated_at_time_if_mismatch_with_snowfwake =
+      "enabwe_dwop_cweated_at_time_if_mismatch_with_snowfwake";
 
-  private final SchemaDocumentFactory schemaDocumentFactory;
-  private final EarlybirdCluster cluster;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final Decider decider;
-  private final Schema schema;
-  private final Clock clock;
+  pwivate finaw schemadocumentfactowy schemadocumentfactowy;
+  pwivate finaw eawwybiwdcwustew cwustew;
+  pwivate f-finaw seawchindexingmetwicset s-seawchindexingmetwicset;
+  pwivate finaw decidew d-decidew;
+  p-pwivate finaw schema s-schema;
+  pwivate finaw cwock cwock;
 
-  public ThriftIndexingEventDocumentFactory(
-      Schema schema,
-      EarlybirdCluster cluster,
-      Decider decider,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this(
-        schema,
-        getSchemaDocumentFactory(schema, cluster, decider),
-        cluster,
-        searchIndexingMetricSet,
-        decider,
-        Clock.SYSTEM_CLOCK,
-        criticalExceptionHandler
+  pubwic thwiftindexingeventdocumentfactowy(
+      schema s-schema, (✿oωo)
+      eawwybiwdcwustew cwustew, :3
+      decidew decidew, 😳
+      seawchindexingmetwicset s-seawchindexingmetwicset, (U ﹏ U)
+      cwiticawexceptionhandwew c-cwiticawexceptionhandwew) {
+    t-this(
+        s-schema, mya
+        getschemadocumentfactowy(schema, (U ᵕ U❁) c-cwustew, :3 d-decidew),
+        c-cwustew,
+        s-seawchindexingmetwicset, mya
+        decidew, OwO
+        cwock.system_cwock,
+        c-cwiticawexceptionhandwew
     );
   }
 
   /**
-   * Returns a document factory that knows how to convert ThriftDocuments to Documents based on the
-   * provided schema.
+   * w-wetuwns a document f-factowy that k-knows how to c-convewt thwiftdocuments to documents based on the
+   * pwovided s-schema. (ˆ ﻌ ˆ)♡
    */
-  public static SchemaDocumentFactory getSchemaDocumentFactory(
-      Schema schema,
-      EarlybirdCluster cluster,
-      Decider decider) {
-    return new SchemaDocumentFactory(schema,
-        Lists.newArrayList(
-            new TruncationTokenStreamWriter(cluster, decider),
-            (fieldInfo, stream) -> {
-              // Strip # @ $ symbols, and break up underscore connected tokens.
-              if (fieldInfo.getFieldType().useTweetSpecificNormalization()) {
-                return new HashtagMentionPunctuationSplitter(new NormalizedTokenFilter(stream));
+  pubwic static schemadocumentfactowy getschemadocumentfactowy(
+      schema schema, ʘwʘ
+      eawwybiwdcwustew cwustew, o.O
+      d-decidew decidew) {
+    wetuwn nyew schemadocumentfactowy(schema, UwU
+        wists.newawwaywist(
+            n-nyew twuncationtokenstweamwwitew(cwustew, rawr x3 d-decidew),
+            (fiewdinfo, 🥺 stweam) -> {
+              // s-stwip # @ $ symbows, :3 a-and bweak up undewscowe connected t-tokens. (ꈍᴗꈍ)
+              i-if (fiewdinfo.getfiewdtype().usetweetspecificnowmawization()) {
+                wetuwn nyew hashtagmentionpunctuationspwittew(new nyowmawizedtokenfiwtew(stweam));
               }
 
-              return stream;
+              wetuwn stweam;
             }));
   }
 
-  @VisibleForTesting
-  protected ThriftIndexingEventDocumentFactory(
-      Schema schema,
-      SchemaDocumentFactory schemaDocumentFactory,
-      EarlybirdCluster cluster,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      Decider decider,
-      Clock clock,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(criticalExceptionHandler);
-    this.schema = schema;
-    this.schemaDocumentFactory = schemaDocumentFactory;
-    this.cluster = cluster;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.decider = decider;
-    this.clock = clock;
+  @visibwefowtesting
+  p-pwotected thwiftindexingeventdocumentfactowy(
+      s-schema schema, 🥺
+      s-schemadocumentfactowy s-schemadocumentfactowy, (✿oωo)
+      eawwybiwdcwustew cwustew, (U ﹏ U)
+      s-seawchindexingmetwicset s-seawchindexingmetwicset, :3
+      decidew d-decidew, ^^;;
+      c-cwock cwock, rawr
+      cwiticawexceptionhandwew cwiticawexceptionhandwew) {
+    supew(cwiticawexceptionhandwew);
+    this.schema = s-schema;
+    this.schemadocumentfactowy = s-schemadocumentfactowy;
+    t-this.cwustew = cwustew;
+    t-this.seawchindexingmetwicset = s-seawchindexingmetwicset;
+    this.decidew = d-decidew;
+    this.cwock = cwock;
   }
 
-  @Override
-  public long getStatusId(ThriftIndexingEvent event) {
-    Preconditions.checkNotNull(event);
-    if (event.isSetDocument() && event.getDocument() != null) {
-      ThriftDocument thriftDocument = event.getDocument();
-      try {
-        // Ideally, we should not call getSchemaSnapshot() here.  But, as this is called only to
-        // retrieve status id and the ID field is static, this is fine for the purpose.
-        thriftDocument = ThriftDocumentPreprocessor.preprocess(
-            thriftDocument, cluster, schema.getSchemaSnapshot());
-      } catch (IOException e) {
-        throw new IllegalStateException("Unable to obtain tweet ID from ThriftDocument", e);
+  @ovewwide
+  pubwic wong getstatusid(thwiftindexingevent event) {
+    p-pweconditions.checknotnuww(event);
+    i-if (event.issetdocument() && event.getdocument() != nyuww) {
+      t-thwiftdocument t-thwiftdocument = event.getdocument();
+      twy {
+        // ideawwy, 😳😳😳 we shouwd n-nyot caww getschemasnapshot() hewe. (✿oωo)  but, as this is cawwed onwy to
+        // wetwieve status i-id and the id fiewd is static, OwO this is fine fow t-the puwpose. ʘwʘ
+        t-thwiftdocument = thwiftdocumentpwepwocessow.pwepwocess(
+            thwiftdocument, (ˆ ﻌ ˆ)♡ cwustew, s-schema.getschemasnapshot());
+      } c-catch (ioexception e) {
+        thwow nyew iwwegawstateexception("unabwe t-to obtain tweet id fwom thwiftdocument", (U ﹏ U) e-e);
       }
-      return ThriftDocumentUtil.getLongValue(
-          thriftDocument, EarlybirdFieldConstant.ID_FIELD.getFieldName(), ID_MAPPING);
-    } else {
-      throw new IllegalArgumentException("ThriftDocument is null inside ThriftIndexingEvent.");
+      wetuwn thwiftdocumentutiw.getwongvawue(
+          thwiftdocument, e-eawwybiwdfiewdconstant.id_fiewd.getfiewdname(), UwU id_mapping);
+    } e-ewse {
+      thwow n-nyew iwwegawawgumentexception("thwiftdocument is nyuww inside t-thwiftindexingevent.");
     }
   }
 
-  @Override
-  protected Document innerNewDocument(ThriftIndexingEvent event) throws IOException {
-    Preconditions.checkNotNull(event);
-    Preconditions.checkNotNull(event.getDocument());
+  @ovewwide
+  pwotected document i-innewnewdocument(thwiftindexingevent e-event) t-thwows ioexception {
+    pweconditions.checknotnuww(event);
+    p-pweconditions.checknotnuww(event.getdocument());
 
-    ImmutableSchemaInterface schemaSnapshot = schema.getSchemaSnapshot();
+    i-immutabweschemaintewface schemasnapshot = schema.getschemasnapshot();
 
-    // If the tweet id and create_at are in the future, do not index it.
-    if (areTweetIDAndCreateAtInTheFuture(event)
-        && DeciderUtil.isAvailableForRandomRecipient(decider,
-        FILTER_TWEETS_WITH_FUTURE_TWEET_ID_AND_CREATED_AT_DECIDER_KEY)) {
-      NUM_TWEETS_WITH_FUTURE_TWEET_ID_AND_CREATED_AT_MS.increment();
-      return null;
+    // i-if the tweet i-id and cweate_at a-awe in the futuwe, XD do nyot index it. ʘwʘ
+    if (awetweetidandcweateatinthefutuwe(event)
+        && d-decidewutiw.isavaiwabwefowwandomwecipient(decidew, rawr x3
+        fiwtew_tweets_with_futuwe_tweet_id_and_cweated_at_decidew_key)) {
+      nyum_tweets_with_futuwe_tweet_id_and_cweated_at_ms.incwement();
+      w-wetuwn n-nyuww;
     }
 
-    if (isNullcastBitAndFilterConsistent(schemaSnapshot, event)) {
-      ThriftDocument thriftDocument =
-          adjustOrDropIfTweetIDAndCreatedAtAreInconsistent(
-              ThriftDocumentPreprocessor.preprocess(event.getDocument(), cluster, schemaSnapshot));
+    if (isnuwwcastbitandfiwtewconsistent(schemasnapshot, ^^;; event)) {
+      thwiftdocument t-thwiftdocument =
+          a-adjustowdwopiftweetidandcweatedataweinconsistent(
+              t-thwiftdocumentpwepwocessow.pwepwocess(event.getdocument(), ʘwʘ c-cwustew, (U ﹏ U) schemasnapshot));
 
-      if (thriftDocument != null) {
-        return schemaDocumentFactory.newDocument(thriftDocument);
-      } else {
-        return null;
+      if (thwiftdocument != n-nyuww) {
+        wetuwn schemadocumentfactowy.newdocument(thwiftdocument);
+      } ewse {
+        wetuwn nyuww;
       }
-    } else {
-      return null;
+    } e-ewse {
+      wetuwn nyuww;
     }
   }
 
-  private ThriftDocument adjustOrDropIfTweetIDAndCreatedAtAreInconsistent(ThriftDocument document) {
-    final long tweetID = EarlybirdThriftDocumentUtil.getID(document);
-    // Thrift document is storing created at in seconds.
-    final long createdAtMs = EarlybirdThriftDocumentUtil.getCreatedAtMs(document);
+  p-pwivate thwiftdocument a-adjustowdwopiftweetidandcweatedataweinconsistent(thwiftdocument document) {
+    f-finaw wong tweetid = eawwybiwdthwiftdocumentutiw.getid(document);
+    // t-thwift d-document is s-stowing cweated a-at in seconds. (˘ω˘)
+    f-finaw wong cweatedatms = eawwybiwdthwiftdocumentutiw.getcweatedatms(document);
 
-    if (!SnowflakeIdParser.isTweetIDAndCreatedAtConsistent(tweetID, createdAtMs)) {
-      // Increment found counter.
-      NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_FOUND.increment();
-      LOG.error(
-          "Found inconsistent tweet ID and created at timestamp: [tweetID={}], [createdAtMs={}]",
-          tweetID, createdAtMs);
+    if (!snowfwakeidpawsew.istweetidandcweatedatconsistent(tweetid, (ꈍᴗꈍ) cweatedatms)) {
+      // incwement found countew. /(^•ω•^)
+      nyum_tweets_with_inconsistent_tweet_id_and_cweated_at_ms_found.incwement();
+      w-wog.ewwow(
+          "found i-inconsistent t-tweet id and cweated a-at timestamp: [tweetid={}], [cweatedatms={}]", >_<
+          tweetid, σωσ cweatedatms);
 
-      if (DeciderUtil.isAvailableForRandomRecipient(
-          decider, ENABLE_ADJUST_CREATED_AT_TIME_IF_MISMATCH_WITH_SNOWFLAKE)) {
-        // Update created at (and csf) with the time stamp in snow flake ID.
-        final long createdAtMsInID = SnowflakeIdParser.getTimestampFromTweetId(tweetID);
-        EarlybirdThriftDocumentUtil.replaceCreatedAtAndCreatedAtCSF(
-            document, (int) (createdAtMsInID / 1000));
+      if (decidewutiw.isavaiwabwefowwandomwecipient(
+          d-decidew, ^^;; enabwe_adjust_cweated_at_time_if_mismatch_with_snowfwake)) {
+        // u-update cweated at (and csf) with t-the time stamp in snow fwake id. 😳
+        finaw w-wong cweatedatmsinid = s-snowfwakeidpawsew.gettimestampfwomtweetid(tweetid);
+        eawwybiwdthwiftdocumentutiw.wepwacecweatedatandcweatedatcsf(
+            d-document, >_< (int) (cweatedatmsinid / 1000));
 
-        // Increment adjusted counter.
-        NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_ADJUSTED.increment();
-        LOG.error(
-            "Updated created at to match tweet ID: createdAtMs={}, tweetID={}, createdAtMsInID={}",
-            createdAtMs, tweetID, createdAtMsInID);
-      } else if (DeciderUtil.isAvailableForRandomRecipient(
-          decider, ENABLE_DROP_CREATED_AT_TIME_IF_MISMATCH_WITH_SNOWFLAKE)) {
-        // Drop and increment counter!
-        NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_DROPPED.increment();
-        LOG.error(
-            "Dropped tweet with inconsistent ID and timestamp: createdAtMs={}, tweetID={}",
-            createdAtMs, tweetID);
-        return null;
+        // i-incwement adjusted countew. -.-
+        nyum_tweets_with_inconsistent_tweet_id_and_cweated_at_ms_adjusted.incwement();
+        wog.ewwow(
+            "updated cweated at to match tweet id: cweatedatms={}, UwU t-tweetid={}, :3 c-cweatedatmsinid={}", σωσ
+            c-cweatedatms, >w< t-tweetid, (ˆ ﻌ ˆ)♡ c-cweatedatmsinid);
+      } ewse if (decidewutiw.isavaiwabwefowwandomwecipient(
+          d-decidew, ʘwʘ e-enabwe_dwop_cweated_at_time_if_mismatch_with_snowfwake)) {
+        // dwop and i-incwement countew! :3
+        n-nyum_tweets_with_inconsistent_tweet_id_and_cweated_at_ms_dwopped.incwement();
+        wog.ewwow(
+            "dwopped t-tweet with inconsistent id and timestamp: cweatedatms={}, (˘ω˘) t-tweetid={}",
+            cweatedatms, 😳😳😳 t-tweetid);
+        w-wetuwn nyuww;
       }
     }
 
-    return document;
+    wetuwn document;
   }
 
-  private boolean isNullcastBitAndFilterConsistent(
-      ImmutableSchemaInterface schemaSnapshot,
-      ThriftIndexingEvent event) {
-    return ThriftDocumentPreprocessor.isNullcastBitAndFilterConsistent(
-        event.getDocument(), schemaSnapshot);
+  p-pwivate boowean isnuwwcastbitandfiwtewconsistent(
+      immutabweschemaintewface s-schemasnapshot, rawr x3
+      t-thwiftindexingevent e-event) {
+    wetuwn thwiftdocumentpwepwocessow.isnuwwcastbitandfiwtewconsistent(
+        event.getdocument(), (✿oωo) schemasnapshot);
   }
 
   /**
-   * Check if the tweet ID and create_at are in the future and beyond the allowed
-   * TIMESTAMP_ALLOWED_FUTURE_DELTA_MS range from current time stamp.
+   * c-check if the tweet id and cweate_at awe in t-the futuwe and b-beyond the awwowed
+   * timestamp_awwowed_futuwe_dewta_ms w-wange fwom cuwwent time s-stamp. (ˆ ﻌ ˆ)♡
    */
-  private boolean areTweetIDAndCreateAtInTheFuture(ThriftIndexingEvent event) {
-    ThriftDocument document = event.getDocument();
+  p-pwivate boowean awetweetidandcweateatinthefutuwe(thwiftindexingevent event) {
+    t-thwiftdocument document = event.getdocument();
 
-    final long tweetID = EarlybirdThriftDocumentUtil.getID(document);
-    if (tweetID < SnowflakeIdParser.SNOWFLAKE_ID_LOWER_BOUND) {
-      return false;
+    finaw wong t-tweetid = eawwybiwdthwiftdocumentutiw.getid(document);
+    i-if (tweetid < snowfwakeidpawsew.snowfwake_id_wowew_bound) {
+      wetuwn f-fawse;
     }
 
-    final long tweetIDTimestampMs = SnowflakeIdParser.getTimestampFromTweetId(tweetID);
-    final long allowedFutureTimestampMs = clock.nowMillis() + TIMESTAMP_ALLOWED_FUTURE_DELTA_MS;
+    finaw wong t-tweetidtimestampms = s-snowfwakeidpawsew.gettimestampfwomtweetid(tweetid);
+    f-finaw wong awwowedfutuwetimestampms = cwock.nowmiwwis() + timestamp_awwowed_futuwe_dewta_ms;
 
-    final long createdAtMs = EarlybirdThriftDocumentUtil.getCreatedAtMs(document);
-    if (tweetIDTimestampMs > allowedFutureTimestampMs && createdAtMs > allowedFutureTimestampMs) {
-      LOG.error(
-          "Found future tweet ID and created at timestamp: "
-              + "[tweetID={}], [createdAtMs={}], [compareDeltaMs={}]",
-          tweetID, createdAtMs, TIMESTAMP_ALLOWED_FUTURE_DELTA_MS);
-      return true;
+    finaw wong cweatedatms = eawwybiwdthwiftdocumentutiw.getcweatedatms(document);
+    if (tweetidtimestampms > awwowedfutuwetimestampms && cweatedatms > awwowedfutuwetimestampms) {
+      wog.ewwow(
+          "found futuwe tweet id and cweated at timestamp: "
+              + "[tweetid={}], :3 [cweatedatms={}], (U ᵕ U❁) [compawedewtams={}]", ^^;;
+          t-tweetid, mya cweatedatms, 😳😳😳 t-timestamp_awwowed_futuwe_dewta_ms);
+      wetuwn twue;
     }
 
-    return false;
+    wetuwn f-fawse;
   }
 }

@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.modules
+package com.twittew.fowwow_wecommendations.moduwes
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.finagle.memcached.ZookeeperStateMonitor.DefaultTimer
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Timer
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.singweton
+i-impowt com.twittew.finagwe.memcached.zookeepewstatemonitow.defauwttimew
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.utiw.timew
 
-object TimerModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def providesTimer: Timer = DefaultTimer
+o-object timewmoduwe e-extends t-twittewmoduwe {
+  @pwovides
+  @singweton
+  d-def pwovidestimew: timew = defauwttimew
 }

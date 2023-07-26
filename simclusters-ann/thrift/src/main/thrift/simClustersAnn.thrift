@@ -1,59 +1,59 @@
-namespace java com.twitter.simclustersann.thriftjava
-#@namespace scala com.twitter.simclustersann.thriftscala
+namespace java com.twittew.simcwustewsann.thwiftjava
+#@namespace scawa com.twittew.simcwustewsann.thwiftscawa
 
-include "finatra-thrift/finatra_thrift_exceptions.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
-include "com/twitter/simclusters_v2/score.thrift"
+i-incwude "finatwa-thwift/finatwa_thwift_exceptions.thwift"
+i-incwude "com/twittew/simcwustews_v2/identifiew.thwift"
+incwude "com/twittew/simcwustews_v2/scowe.thwift"
 
-struct Query {
-    1: required identifier.SimClustersEmbeddingId sourceEmbeddingId;
-    2: required SimClustersANNConfig config;
+s-stwuct quewy {
+    1: w-wequiwed i-identifiew.simcwustewsembeddingid s-souwceembeddingid;
+    2: w-wequiwed s-simcwustewsannconfig config;
 }
 
-struct SimClustersANNTweetCandidate {
-    1: required i64 tweetId (personalDataType = 'TweetId');
-    2: required double score;
+stwuct simcwustewsanntweetcandidate {
+    1: wequiwed i64 tweetid (pewsonawdatatype = 'tweetid');
+    2: wequiwed d-doubwe scowe;
 }
 
-struct SimClustersANNConfig {
-    1: required i32 maxNumResults;
-    2: required double minScore;
-    3: required identifier.EmbeddingType candidateEmbeddingType;
-    4: required i32 maxTopTweetsPerCluster;
-    5: required i32 maxScanClusters;
-    6: required i32 maxTweetCandidateAgeHours;
-    7: required i32 minTweetCandidateAgeHours;
-    8: required ScoringAlgorithm annAlgorithm;
+stwuct simcwustewsannconfig {
+    1: w-wequiwed i32 maxnumwesuwts;
+    2: w-wequiwed doubwe minscowe;
+    3: wequiwed identifiew.embeddingtype candidateembeddingtype;
+    4: w-wequiwed i32 maxtoptweetspewcwustew;
+    5: wequiwed i-i32 maxscancwustews;
+    6: w-wequiwed i32 maxtweetcandidateagehouws;
+    7: wequiwed i32 mintweetcandidateagehouws;
+    8: wequiwed scowingawgowithm a-annawgowithm;
 }
 
 /**
-  * The algorithm type to identify the score algorithm.
+  * the awgowithm type to identify the scowe awgowithm. òωó
   **/
-enum ScoringAlgorithm {
-	DotProduct = 1,
-	CosineSimilarity = 2,
-  LogCosineSimilarity = 3,
-  CosineSimilarityNoSourceEmbeddingNormalization = 4,  // Score = (Source dot Candidate) / candidate_l2_norm
-}(hasPersonalData = 'false')
+enum scowingawgowithm {
+	d-dotpwoduct = 1, ʘwʘ
+	cosinesimiwawity = 2, /(^•ω•^)
+  w-wogcosinesimiwawity = 3, ʘwʘ
+  c-cosinesimiwawitynosouwceembeddingnowmawization = 4, σωσ  // s-scowe = (souwce d-dot candidate) / candidate_w2_nowm
+}(haspewsonawdata = 'fawse')
 
-enum InvalidResponseParameter {
-	INVALID_EMBEDDING_TYPE = 1,
-	INVALID_MODEL_VERSION = 2,
+enum invawidwesponsepawametew {
+	i-invawid_embedding_type = 1, OwO
+	invawid_modew_vewsion = 2, 😳😳😳
 }
 
-exception InvalidResponseParameterException {
-	1: required InvalidResponseParameter errorCode,
-	2: optional string message // failure reason
+exception invawidwesponsepawametewexception {
+	1: w-wequiwed invawidwesponsepawametew ewwowcode, 😳😳😳
+	2: optionaw stwing message // faiwuwe weason
 }
 
-service SimClustersANNService {
+sewvice simcwustewsannsewvice {
 
-    list<SimClustersANNTweetCandidate> getTweetCandidates(
-        1: required Query query;
-    ) throws (
-      1: InvalidResponseParameterException e;
-      2: finatra_thrift_exceptions.ServerError serverError;
-      3: finatra_thrift_exceptions.ClientError clientError;
+    w-wist<simcwustewsanntweetcandidate> gettweetcandidates(
+        1: w-wequiwed q-quewy quewy;
+    ) t-thwows (
+      1: invawidwesponsepawametewexception e;
+      2: finatwa_thwift_exceptions.sewvewewwow s-sewvewewwow;
+      3: f-finatwa_thwift_exceptions.cwientewwow cwientewwow;
     );
 
 }

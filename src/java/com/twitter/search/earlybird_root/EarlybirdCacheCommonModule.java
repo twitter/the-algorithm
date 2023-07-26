@@ -1,96 +1,96 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+impowt j-javax.inject.named;
+i-impowt javax.inject.singweton;
 
-import com.google.inject.Provides;
+i-impowt com.googwe.inject.pwovides;
 
-import com.twitter.finagle.memcached.JavaClient;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.EarlybirdCacheSerializer;
-import com.twitter.search.common.caching.SearchCacheBuilder;
-import com.twitter.search.common.caching.SearchMemcacheClientConfig;
-import com.twitter.search.common.caching.SearchMemcacheClientFactory;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.caching.CacheCommonUtil;
-import com.twitter.search.earlybird_root.caching.CacheStats;
-import com.twitter.search.earlybird_root.caching.DefaultForcedCacheMissDecider;
-import com.twitter.search.earlybird_root.filters.PostCacheRequestTypeCountFilter;
-import com.twitter.util.Duration;
+i-impowt c-com.twittew.finagwe.memcached.javacwient;
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew;
+i-impowt com.twittew.finagwe.stats.statsweceivew;
+impowt com.twittew.inject.twittewmoduwe;
+impowt com.twittew.seawch.common.caching.cache;
+i-impowt com.twittew.seawch.common.caching.eawwybiwdcachesewiawizew;
+impowt com.twittew.seawch.common.caching.seawchcachebuiwdew;
+i-impowt com.twittew.seawch.common.caching.seawchmemcachecwientconfig;
+impowt c-com.twittew.seawch.common.caching.seawchmemcachecwientfactowy;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd_woot.caching.cachecommonutiw;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.caching.cachestats;
+impowt com.twittew.seawch.eawwybiwd_woot.caching.defauwtfowcedcachemissdecidew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.postcachewequesttypecountfiwtew;
+i-impowt com.twittew.utiw.duwation;
 
 /**
- * Provides common bindings for cache related modules.
+ * pwovides common bindings fow cache wewated m-moduwes. >w<
  */
-public class EarlybirdCacheCommonModule extends TwitterModule {
-  private static final String CACHE_VERSION = "1";
+pubwic cwass eawwybiwdcachecommonmoduwe e-extends twittewmoduwe {
+  p-pwivate static f-finaw stwing cache_vewsion = "1";
 
-  @Override
-  public void configure() {
-    bind(PostCacheRequestTypeCountFilter.class).in(Singleton.class);
-    bind(DefaultForcedCacheMissDecider.class).in(Singleton.class);
+  @ovewwide
+  p-pubwic void configuwe() {
+    bind(postcachewequesttypecountfiwtew.cwass).in(singweton.cwass);
+    bind(defauwtfowcedcachemissdecidew.cwass).in(singweton.cwass);
   }
 
-  @Provides
-  @Singleton
-  @Named(CacheCommonUtil.NAMED_MAX_CACHE_RESULTS)
-  Integer provideMaxCacheResults() {
-    return 100;
+  @pwovides
+  @singweton
+  @named(cachecommonutiw.named_max_cache_wesuwts)
+  integew pwovidemaxcachewesuwts() {
+    w-wetuwn 100;
   }
 
-  @Provides
-  @Singleton
-  JavaClient provideMemCacheClient(
-      StatsReceiver statsReceiver, ServiceIdentifier serviceIdentifier) {
-    SearchMemcacheClientConfig config = new SearchMemcacheClientConfig();
-    config.connectTimeoutMs = Duration.fromMilliseconds(100);
-    config.requestTimeoutMs = Duration.fromMilliseconds(100);
-    config.failureAccrualFailuresNumber = 150;
-    config.failureAccrualFailuresDurationMillis = 30000;
-    config.failureAccrualDuration = Duration.fromMilliseconds(60000);
+  @pwovides
+  @singweton
+  javacwient pwovidememcachecwient(
+      s-statsweceivew statsweceivew, nyaa~~ sewviceidentifiew sewviceidentifiew) {
+    seawchmemcachecwientconfig config = nyew seawchmemcachecwientconfig();
+    config.connecttimeoutms = d-duwation.fwommiwwiseconds(100);
+    config.wequesttimeoutms = d-duwation.fwommiwwiseconds(100);
+    config.faiwuweaccwuawfaiwuwesnumbew = 150;
+    c-config.faiwuweaccwuawfaiwuwesduwationmiwwis = 30000;
+    c-config.faiwuweaccwuawduwation = duwation.fwommiwwiseconds(60000);
 
-    return SearchMemcacheClientFactory.createMtlsClient(
-        "",
-        "earlybird_root",
-        statsReceiver,
-        config,
-        serviceIdentifier
+    wetuwn seawchmemcachecwientfactowy.cweatemtwscwient(
+        "", (✿oωo)
+        "eawwybiwd_woot", ʘwʘ
+        s-statsweceivew, (ˆ ﻌ ˆ)♡
+        c-config, 😳😳😳
+        sewviceidentifiew
     );
   }
 
   /**
-   * Create a new Earlybird cache.
+   * c-cweate a nyew eawwybiwd c-cache. :3
    *
-   * @param client the memcache client to use.
-   * @param decider the decider to use for the cache.
-   * @param cachePrefix the common cache prefix for the cache type.
-   * @param serializedKeyPrefix the common cache prefix for the cluster.
-   * @param cacheExpiryMillis cache entry ttl in milliseconds.
+   * @pawam cwient the memcache c-cwient to use. OwO
+   * @pawam decidew the decidew t-to use fow the cache. (U ﹏ U)
+   * @pawam cachepwefix t-the common cache pwefix fow the c-cache type. >w<
+   * @pawam sewiawizedkeypwefix t-the c-common cache pwefix fow the cwustew. (U ﹏ U)
+   * @pawam cacheexpiwymiwwis cache entwy ttw in miwwiseconds. 😳
    */
-  static Cache<EarlybirdRequest, EarlybirdResponse> createCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      String cachePrefix,
-      String serializedKeyPrefix,
-      long cacheExpiryMillis,
-      int cacheKeyMaxBytes,
-      int cacheValueMaxBytes) {
-    return new SearchCacheBuilder<EarlybirdRequest, EarlybirdResponse>(
-        CACHE_VERSION,
-        client,
-        cachePrefix,
-        serializedKeyPrefix,
-        cacheExpiryMillis)
-        .withMaxKeyBytes(cacheKeyMaxBytes)
-        .withMaxValueBytes(cacheValueMaxBytes)
-        .withRequestTimeoutCounter(CacheStats.REQUEST_TIMEOUT_COUNTER)
-        .withRequestFailedCounter(CacheStats.REQUEST_FAILED_COUNTER)
-        .withCacheSerializer(new EarlybirdCacheSerializer())
-        .withForceCacheMissDecider(decider)
-        .withInProcessCache()
-        .build();
+  static cache<eawwybiwdwequest, (ˆ ﻌ ˆ)♡ e-eawwybiwdwesponse> c-cweatecache(
+      javacwient cwient, 😳😳😳
+      d-defauwtfowcedcachemissdecidew d-decidew, (U ﹏ U)
+      s-stwing cachepwefix, (///ˬ///✿)
+      stwing sewiawizedkeypwefix, 😳
+      wong cacheexpiwymiwwis, 😳
+      i-int cachekeymaxbytes, σωσ
+      int cachevawuemaxbytes) {
+    wetuwn nyew seawchcachebuiwdew<eawwybiwdwequest, rawr x3 eawwybiwdwesponse>(
+        c-cache_vewsion, OwO
+        cwient, /(^•ω•^)
+        c-cachepwefix, 😳😳😳
+        s-sewiawizedkeypwefix, ( ͡o ω ͡o )
+        c-cacheexpiwymiwwis)
+        .withmaxkeybytes(cachekeymaxbytes)
+        .withmaxvawuebytes(cachevawuemaxbytes)
+        .withwequesttimeoutcountew(cachestats.wequest_timeout_countew)
+        .withwequestfaiwedcountew(cachestats.wequest_faiwed_countew)
+        .withcachesewiawizew(new eawwybiwdcachesewiawizew())
+        .withfowcecachemissdecidew(decidew)
+        .withinpwocesscache()
+        .buiwd();
   }
 }

@@ -1,1112 +1,1112 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateSource
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateStore
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron.OnlineAggregationConfigTrait
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.CountMetric
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.SumMetric
-import com.twitter.timelines.data_processing.ml_util.transforms.BinaryUnion
-import com.twitter.timelines.data_processing.ml_util.transforms.DownsampleTransform
-import com.twitter.timelines.data_processing.ml_util.transforms.IsNewUserTransform
-import com.twitter.timelines.data_processing.ml_util.transforms.IsPositionTransform
-import com.twitter.timelines.data_processing.ml_util.transforms.LogTransform
-import com.twitter.timelines.data_processing.ml_util.transforms.PositionCase
-import com.twitter.timelines.data_processing.ml_util.transforms.RichITransform
-import com.twitter.timelines.data_processing.ml_util.transforms.RichRemoveUnverifiedUserTransform
-import com.twitter.timelines.prediction.features.client_log_event.ClientLogEventDataRecordFeatures
-import com.twitter.timelines.prediction.features.common.CombinedFeatures
-import com.twitter.timelines.prediction.features.common.CombinedFeatures._
-import com.twitter.timelines.prediction.features.common.ProfileLabelFeatures
-import com.twitter.timelines.prediction.features.common.SearchLabelFeatures
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.IS_TOP_FIVE
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.IS_TOP_ONE
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.IS_TOP_TEN
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.LOG_POSITION
-import com.twitter.timelines.prediction.features.list_features.ListFeatures
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.util.Duration
-import java.lang.{Boolean => JBoolean}
-import java.lang.{Long => JLong}
-import scala.io.Source
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.constant.shawedfeatuwes
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegategwoup
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegatesouwce
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegatestowe
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.hewon.onwineaggwegationconfigtwait
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.countmetwic
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.summetwic
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.binawyunion
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.downsampwetwansfowm
+impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.isnewusewtwansfowm
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.ispositiontwansfowm
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.wogtwansfowm
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.positioncase
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.wichitwansfowm
+impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.wichwemoveunvewifiedusewtwansfowm
+impowt com.twittew.timewines.pwediction.featuwes.cwient_wog_event.cwientwogeventdatawecowdfeatuwes
+impowt com.twittew.timewines.pwediction.featuwes.common.combinedfeatuwes
+impowt c-com.twittew.timewines.pwediction.featuwes.common.combinedfeatuwes._
+impowt com.twittew.timewines.pwediction.featuwes.common.pwofiwewabewfeatuwes
+i-impowt com.twittew.timewines.pwediction.featuwes.common.seawchwabewfeatuwes
+i-impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes
+impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes.is_top_five
+impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes.is_top_one
+impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes.is_top_ten
+i-impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes.wog_position
+impowt com.twittew.timewines.pwediction.featuwes.wist_featuwes.wistfeatuwes
+impowt com.twittew.timewines.pwediction.featuwes.wecap.wecapfeatuwes
+impowt com.twittew.utiw.duwation
+i-impowt java.wang.{boowean => jboowean}
+impowt j-java.wang.{wong => j-jwong}
+impowt s-scawa.io.souwce
 
-object TimelinesOnlineAggregationUtils {
-  val TweetLabels: Set[Feature[JBoolean]] = CombinedFeatures.EngagementsRealTime
-  val TweetCoreLabels: Set[Feature[JBoolean]] = CombinedFeatures.CoreEngagements
-  val TweetDwellLabels: Set[Feature[JBoolean]] = CombinedFeatures.DwellEngagements
-  val TweetCoreAndDwellLabels: Set[Feature[JBoolean]] = TweetCoreLabels ++ TweetDwellLabels
-  val PrivateEngagementLabelsV2: Set[Feature[JBoolean]] = CombinedFeatures.PrivateEngagementsV2
-  val ProfileCoreLabels: Set[Feature[JBoolean]] = ProfileLabelFeatures.CoreEngagements
-  val ProfileNegativeEngagementLabels: Set[Feature[JBoolean]] =
-    ProfileLabelFeatures.NegativeEngagements
-  val ProfileNegativeEngagementUnionLabels: Set[Feature[JBoolean]] = Set(
-    ProfileLabelFeatures.IS_NEGATIVE_FEEDBACK_UNION)
-  val SearchCoreLabels: Set[Feature[JBoolean]] = SearchLabelFeatures.CoreEngagements
-  val TweetNegativeEngagementLabels: Set[Feature[JBoolean]] =
-    CombinedFeatures.NegativeEngagementsRealTime
-  val TweetNegativeEngagementDontLikeLabels: Set[Feature[JBoolean]] =
-    CombinedFeatures.NegativeEngagementsRealTimeDontLike
-  val TweetNegativeEngagementSecondaryLabels: Set[Feature[JBoolean]] =
-    CombinedFeatures.NegativeEngagementsSecondary
-  val AllTweetNegativeEngagementLabels: Set[Feature[JBoolean]] =
-    TweetNegativeEngagementLabels ++ TweetNegativeEngagementDontLikeLabels ++ TweetNegativeEngagementSecondaryLabels
-  val UserAuthorEngagementLabels: Set[Feature[JBoolean]] = CombinedFeatures.UserAuthorEngagements
-  val ShareEngagementLabels: Set[Feature[JBoolean]] = CombinedFeatures.ShareEngagements
-  val BookmarkEngagementLabels: Set[Feature[JBoolean]] = CombinedFeatures.BookmarkEngagements
-  val AllBCEDwellLabels: Set[Feature[JBoolean]] =
-    CombinedFeatures.TweetDetailDwellEngagements ++ CombinedFeatures.ProfileDwellEngagements ++ CombinedFeatures.FullscreenVideoDwellEngagements
-  val AllTweetUnionLabels: Set[Feature[JBoolean]] = Set(
-    CombinedFeatures.IS_IMPLICIT_POSITIVE_FEEDBACK_UNION,
-    CombinedFeatures.IS_EXPLICIT_POSITIVE_FEEDBACK_UNION,
-    CombinedFeatures.IS_ALL_NEGATIVE_FEEDBACK_UNION
+o-object timewinesonwineaggwegationutiws {
+  vaw tweetwabews: set[featuwe[jboowean]] = c-combinedfeatuwes.engagementsweawtime
+  vaw tweetcowewabews: s-set[featuwe[jboowean]] = combinedfeatuwes.coweengagements
+  vaw tweetdwewwwabews: set[featuwe[jboowean]] = combinedfeatuwes.dwewwengagements
+  vaw tweetcoweanddwewwwabews: set[featuwe[jboowean]] = t-tweetcowewabews ++ tweetdwewwwabews
+  v-vaw p-pwivateengagementwabewsv2: s-set[featuwe[jboowean]] = combinedfeatuwes.pwivateengagementsv2
+  vaw pwofiwecowewabews: s-set[featuwe[jboowean]] = p-pwofiwewabewfeatuwes.coweengagements
+  vaw pwofiwenegativeengagementwabews: s-set[featuwe[jboowean]] =
+    p-pwofiwewabewfeatuwes.negativeengagements
+  vaw pwofiwenegativeengagementunionwabews: s-set[featuwe[jboowean]] = set(
+    pwofiwewabewfeatuwes.is_negative_feedback_union)
+  v-vaw seawchcowewabews: set[featuwe[jboowean]] = seawchwabewfeatuwes.coweengagements
+  v-vaw tweetnegativeengagementwabews: set[featuwe[jboowean]] =
+    c-combinedfeatuwes.negativeengagementsweawtime
+  vaw tweetnegativeengagementdontwikewabews: s-set[featuwe[jboowean]] =
+    c-combinedfeatuwes.negativeengagementsweawtimedontwike
+  vaw tweetnegativeengagementsecondawywabews: set[featuwe[jboowean]] =
+    combinedfeatuwes.negativeengagementssecondawy
+  vaw awwtweetnegativeengagementwabews: set[featuwe[jboowean]] =
+    t-tweetnegativeengagementwabews ++ t-tweetnegativeengagementdontwikewabews ++ tweetnegativeengagementsecondawywabews
+  v-vaw usewauthowengagementwabews: s-set[featuwe[jboowean]] = c-combinedfeatuwes.usewauthowengagements
+  vaw shaweengagementwabews: set[featuwe[jboowean]] = combinedfeatuwes.shaweengagements
+  v-vaw bookmawkengagementwabews: set[featuwe[jboowean]] = combinedfeatuwes.bookmawkengagements
+  vaw awwbcedwewwwabews: s-set[featuwe[jboowean]] =
+    combinedfeatuwes.tweetdetaiwdwewwengagements ++ combinedfeatuwes.pwofiwedwewwengagements ++ combinedfeatuwes.fuwwscweenvideodwewwengagements
+  v-vaw a-awwtweetunionwabews: s-set[featuwe[jboowean]] = set(
+    combinedfeatuwes.is_impwicit_positive_feedback_union, (✿oωo)
+    c-combinedfeatuwes.is_expwicit_positive_feedback_union, -.-
+    c-combinedfeatuwes.is_aww_negative_feedback_union
   )
-  val AllTweetLabels: Set[Feature[JBoolean]] =
-    TweetLabels ++ TweetCoreAndDwellLabels ++ AllTweetNegativeEngagementLabels ++ ProfileCoreLabels ++ ProfileNegativeEngagementLabels ++ ProfileNegativeEngagementUnionLabels ++ UserAuthorEngagementLabels ++ SearchCoreLabels ++ ShareEngagementLabels ++ BookmarkEngagementLabels ++ PrivateEngagementLabelsV2 ++ AllBCEDwellLabels ++ AllTweetUnionLabels
+  v-vaw awwtweetwabews: s-set[featuwe[jboowean]] =
+    tweetwabews ++ tweetcoweanddwewwwabews ++ a-awwtweetnegativeengagementwabews ++ p-pwofiwecowewabews ++ p-pwofiwenegativeengagementwabews ++ p-pwofiwenegativeengagementunionwabews ++ u-usewauthowengagementwabews ++ seawchcowewabews ++ shaweengagementwabews ++ bookmawkengagementwabews ++ p-pwivateengagementwabewsv2 ++ awwbcedwewwwabews ++ awwtweetunionwabews
 
-  def addFeatureFilterFromResource(
-    prodGroup: AggregateGroup,
-    aggRemovalPath: String
-  ): AggregateGroup = {
-    val resource = Some(Source.fromResource(aggRemovalPath))
-    val lines = resource.map(_.getLines.toSeq)
-    lines match {
-      case Some(value) => prodGroup.copy(aggExclusionRegex = value)
-      case _ => prodGroup
+  def addfeatuwefiwtewfwomwesouwce(
+    pwodgwoup: aggwegategwoup, :3
+    a-aggwemovawpath: stwing
+  ): aggwegategwoup = {
+    vaw wesouwce = s-some(souwce.fwomwesouwce(aggwemovawpath))
+    v-vaw wines = w-wesouwce.map(_.getwines.toseq)
+    wines match {
+      c-case some(vawue) => pwodgwoup.copy(aggexcwusionwegex = v-vawue)
+      case _ => p-pwodgwoup
     }
   }
 }
 
-trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfigTrait {
-  import TimelinesOnlineAggregationUtils._
+twait timewinesonwineaggwegationdefinitionstwait extends onwineaggwegationconfigtwait {
+  impowt timewinesonwineaggwegationutiws._
 
-  def inputSource: AggregateSource
-  def ProductionStore: AggregateStore
-  def StagingStore: AggregateStore
+  def inputsouwce: a-aggwegatesouwce
+  def pwoductionstowe: a-aggwegatestowe
+  def s-stagingstowe: a-aggwegatestowe
 
-  val TweetFeatures: Set[Feature[_]] = Set(
-    ClientLogEventDataRecordFeatures.HasConsumerVideo,
-    ClientLogEventDataRecordFeatures.PhotoCount
+  vaw tweetfeatuwes: set[featuwe[_]] = s-set(
+    c-cwientwogeventdatawecowdfeatuwes.hasconsumewvideo, (⑅˘꒳˘)
+    cwientwogeventdatawecowdfeatuwes.photocount
   )
-  val CandidateTweetSourceFeatures: Set[Feature[_]] = Set(
-    ClientLogEventDataRecordFeatures.FromRecap,
-    ClientLogEventDataRecordFeatures.FromRecycled,
-    ClientLogEventDataRecordFeatures.FromActivity,
-    ClientLogEventDataRecordFeatures.FromSimcluster,
-    ClientLogEventDataRecordFeatures.FromErg,
-    ClientLogEventDataRecordFeatures.FromCroon,
-    ClientLogEventDataRecordFeatures.FromList,
-    ClientLogEventDataRecordFeatures.FromRecTopic
+  v-vaw candidatetweetsouwcefeatuwes: s-set[featuwe[_]] = set(
+    cwientwogeventdatawecowdfeatuwes.fwomwecap,
+    cwientwogeventdatawecowdfeatuwes.fwomwecycwed, >_<
+    cwientwogeventdatawecowdfeatuwes.fwomactivity, UwU
+    c-cwientwogeventdatawecowdfeatuwes.fwomsimcwustew, rawr
+    c-cwientwogeventdatawecowdfeatuwes.fwomewg, (ꈍᴗꈍ)
+    cwientwogeventdatawecowdfeatuwes.fwomcwoon, ^•ﻌ•^
+    cwientwogeventdatawecowdfeatuwes.fwomwist, ^^
+    c-cwientwogeventdatawecowdfeatuwes.fwomwectopic
   )
 
-  def createStagingGroup(prodGroup: AggregateGroup): AggregateGroup =
-    prodGroup.copy(
-      outputStore = StagingStore
+  def cweatestaginggwoup(pwodgwoup: a-aggwegategwoup): a-aggwegategwoup =
+    pwodgwoup.copy(
+      o-outputstowe = stagingstowe
     )
 
-  // Aggregate user engagements/features by tweet Id.
-  val tweetEngagement30MinuteCountsProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v1",
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = Set.empty,
-      labels = TweetLabels ++ TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  // aggwegate usew engagements/featuwes by tweet id. XD
+  vaw tweetengagement30minutecountspwod =
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, (///ˬ///✿)
+      aggwegatepwefix = "weaw_time_tweet_aggwegates_v1", σωσ
+      k-keys = set(timewinesshawedfeatuwes.souwce_tweet_id), :3
+      f-featuwes = set.empty, >w<
+      wabews = tweetwabews ++ tweetnegativeengagementdontwikewabews, (ˆ ﻌ ˆ)♡
+      m-metwics = set(countmetwic), (U ᵕ U❁)
+      hawfwives = set(30.minutes), :3
+      outputstowe = pwoductionstowe, ^^
+      i-incwudeanywabew = fawse, ^•ﻌ•^
+      incwudetimestampfeatuwe = fawse, (///ˬ///✿)
     )
 
-  // Aggregate user engagements/features by tweet Id.
-  val tweetVerifiedDontLikeEngagementRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v6",
-      preTransforms = Seq(RichRemoveUnverifiedUserTransform),
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = Set.empty,
-      labels = TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  // a-aggwegate u-usew engagements/featuwes by tweet id. 🥺
+  vaw tweetvewifieddontwikeengagementweawtimeaggwegatespwod =
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, ʘwʘ
+      aggwegatepwefix = "weaw_time_tweet_aggwegates_v6", (✿oωo)
+      pwetwansfowms = s-seq(wichwemoveunvewifiedusewtwansfowm), rawr
+      keys = s-set(timewinesshawedfeatuwes.souwce_tweet_id), OwO
+      featuwes = set.empty, ^^
+      wabews = tweetnegativeengagementdontwikewabews, ʘwʘ
+      m-metwics = set(countmetwic), σωσ
+      h-hawfwives = s-set(30.minutes, (⑅˘꒳˘) duwation.top), (ˆ ﻌ ˆ)♡
+      o-outputstowe = pwoductionstowe, :3
+      incwudeanywabew = f-fawse, ʘwʘ
+      incwudetimestampfeatuwe = f-fawse, (///ˬ///✿)
     )
 
-  val tweetNegativeEngagement6HourCounts =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v2",
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = Set.empty,
-      labels = TweetNegativeEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw tweetnegativeengagement6houwcounts =
+    aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, (ˆ ﻌ ˆ)♡
+      aggwegatepwefix = "weaw_time_tweet_aggwegates_v2", 🥺
+      keys = set(timewinesshawedfeatuwes.souwce_tweet_id), rawr
+      f-featuwes = set.empty, (U ﹏ U)
+      w-wabews = t-tweetnegativeengagementwabews, ^^
+      metwics = set(countmetwic),
+      h-hawfwives = set(30.minutes), σωσ
+      outputstowe = p-pwoductionstowe, :3
+      i-incwudeanywabew = fawse, ^^
+      incwudetimestampfeatuwe = fawse, (✿oωo)
     )
 
-  val tweetVerifiedNegativeEngagementCounts =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v7",
-      preTransforms = Seq(RichRemoveUnverifiedUserTransform),
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = Set.empty,
-      labels = TweetNegativeEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw t-tweetvewifiednegativeengagementcounts =
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, òωó
+      a-aggwegatepwefix = "weaw_time_tweet_aggwegates_v7", (U ᵕ U❁)
+      pwetwansfowms = seq(wichwemoveunvewifiedusewtwansfowm), ʘwʘ
+      keys = set(timewinesshawedfeatuwes.souwce_tweet_id), ( ͡o ω ͡o )
+      featuwes = s-set.empty, σωσ
+      wabews = tweetnegativeengagementwabews, (ˆ ﻌ ˆ)♡
+      m-metwics = set(countmetwic), (˘ω˘)
+      hawfwives = set(30.minutes, 😳 d-duwation.top), ^•ﻌ•^
+      outputstowe = p-pwoductionstowe, σωσ
+      incwudeanywabew = f-fawse, 😳😳😳
+      i-incwudetimestampfeatuwe = f-fawse,
     )
 
-  val promotedTweetEngagementRealTimeCounts =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v3.is_promoted",
-      preTransforms = Seq(
-        DownsampleTransform(
-          negativeSamplingRate = 0.0,
-          keepLabels = Set(ClientLogEventDataRecordFeatures.IsPromoted))),
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = Set.empty,
-      labels = TweetCoreAndDwellLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(2.hours, 24.hours),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw pwomotedtweetengagementweawtimecounts =
+    a-aggwegategwoup(
+      inputsouwce = inputsouwce, rawr
+      aggwegatepwefix = "weaw_time_tweet_aggwegates_v3.is_pwomoted", >_<
+      pwetwansfowms = seq(
+        downsampwetwansfowm(
+          n-nyegativesampwingwate = 0.0, ʘwʘ
+          k-keepwabews = set(cwientwogeventdatawecowdfeatuwes.ispwomoted))), (ˆ ﻌ ˆ)♡
+      k-keys = set(timewinesshawedfeatuwes.souwce_tweet_id), ^^;;
+      featuwes = set.empty, σωσ
+      w-wabews = tweetcoweanddwewwwabews, rawr x3
+      metwics = set(countmetwic), 😳
+      h-hawfwives = s-set(2.houws, 😳😳😳 24.houws), 😳😳😳
+      outputstowe = p-pwoductionstowe, ( ͡o ω ͡o )
+      incwudeanyfeatuwe = fawse, rawr x3
+      i-incwudeanywabew = f-fawse, σωσ
+      incwudetimestampfeatuwe = f-fawse, (˘ω˘)
     )
 
   /**
-   * Aggregate total engagement counts by tweet Id for non-public
-   * engagements. Similar to EB's public engagement counts.
+   * a-aggwegate totaw engagement counts by tweet id fow nyon-pubwic
+   * engagements. >w< s-simiwaw t-to eb's pubwic e-engagement counts. UwU
    */
-  val tweetEngagementTotalCountsProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v1",
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = Set.empty,
-      labels = TweetLabels ++ TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw t-tweetengagementtotawcountspwod =
+    aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, XD
+      aggwegatepwefix = "weaw_time_tweet_aggwegates_v1", (U ﹏ U)
+      k-keys = set(timewinesshawedfeatuwes.souwce_tweet_id), (U ᵕ U❁)
+      f-featuwes = set.empty, (ˆ ﻌ ˆ)♡
+      wabews = t-tweetwabews ++ tweetnegativeengagementdontwikewabews, òωó
+      metwics = set(countmetwic), ^•ﻌ•^
+      h-hawfwives = set(duwation.top), (///ˬ///✿)
+      outputstowe = p-pwoductionstowe, -.-
+      i-incwudeanywabew = fawse, >w<
+      incwudetimestampfeatuwe = f-fawse, òωó
     )
 
-  val tweetNegativeEngagementTotalCounts =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v2",
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = Set.empty,
-      labels = TweetNegativeEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw tweetnegativeengagementtotawcounts =
+    aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, σωσ
+      a-aggwegatepwefix = "weaw_time_tweet_aggwegates_v2", mya
+      keys = set(timewinesshawedfeatuwes.souwce_tweet_id), òωó
+      featuwes = set.empty, 🥺
+      w-wabews = tweetnegativeengagementwabews, (U ﹏ U)
+      metwics = s-set(countmetwic), (ꈍᴗꈍ)
+      h-hawfwives = set(duwation.top), (˘ω˘)
+      outputstowe = p-pwoductionstowe, (✿oωo)
+      incwudeanywabew = f-fawse, -.-
+      i-incwudetimestampfeatuwe = fawse, (ˆ ﻌ ˆ)♡
     )
 
   /**
-   * Aggregate tweet features grouped by viewer's user id.
+   * aggwegate t-tweet featuwes gwouped by viewew's usew id. (✿oωo)
    */
-  val userEngagementRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_aggregates_v1",
-      keys = Set(SharedFeatures.USER_ID),
-      features = TweetFeatures,
-      labels = TweetLabels ++ TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw usewengagementweawtimeaggwegatespwod =
+    a-aggwegategwoup(
+      inputsouwce = i-inputsouwce, ʘwʘ
+      aggwegatepwefix = "weaw_time_usew_aggwegates_v1", (///ˬ///✿)
+      k-keys = set(shawedfeatuwes.usew_id),
+      f-featuwes = t-tweetfeatuwes, rawr
+      wabews = tweetwabews ++ tweetnegativeengagementdontwikewabews, 🥺
+      metwics = set(countmetwic), mya
+      hawfwives = set(30.minutes), mya
+      outputstowe = pwoductionstowe, mya
+      incwudeanywabew = fawse, (⑅˘꒳˘)
+      incwudetimestampfeatuwe = fawse, (✿oωo)
     )
 
   /**
-   * Aggregate tweet features grouped by viewer's user id.
+   * aggwegate t-tweet featuwes g-gwouped by viewew's usew id. 😳
    */
-  val userEngagementRealTimeAggregatesV2 =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_aggregates_v2",
-      keys = Set(SharedFeatures.USER_ID),
-      features = ClientLogEventDataRecordFeatures.TweetFeaturesV2,
-      labels = TweetCoreAndDwellLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw usewengagementweawtimeaggwegatesv2 =
+    a-aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, OwO
+      aggwegatepwefix = "weaw_time_usew_aggwegates_v2", (˘ω˘)
+      keys = set(shawedfeatuwes.usew_id), (✿oωo)
+      f-featuwes = cwientwogeventdatawecowdfeatuwes.tweetfeatuwesv2, /(^•ω•^)
+      wabews = tweetcoweanddwewwwabews,
+      m-metwics = s-set(countmetwic), rawr x3
+      hawfwives = s-set(30.minutes, rawr duwation.top), ( ͡o ω ͡o )
+      outputstowe = p-pwoductionstowe,
+      i-incwudeanyfeatuwe = fawse, ( ͡o ω ͡o )
+      incwudeanywabew = f-fawse, 😳😳😳
+      i-incwudetimestampfeatuwe = f-fawse, (U ﹏ U)
     )
 
   /**
-   * Aggregate author's user state features grouped by viewer's user id.
+   * a-aggwegate a-authow's usew state f-featuwes gwouped b-by viewew's u-usew id. UwU
    */
-  val userEngagementAuthorUserStateRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_aggregates_v3",
-      preTransforms = Seq.empty,
-      keys = Set(SharedFeatures.USER_ID),
-      features = AuthorFeaturesAdapter.UserStateBooleanFeatures,
-      labels = TweetCoreAndDwellLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw usewengagementauthowusewstateweawtimeaggwegates =
+    aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, (U ﹏ U)
+      a-aggwegatepwefix = "weaw_time_usew_aggwegates_v3", 🥺
+      pwetwansfowms = s-seq.empty, ʘwʘ
+      keys = set(shawedfeatuwes.usew_id), 😳
+      f-featuwes = authowfeatuwesadaptew.usewstatebooweanfeatuwes, (ˆ ﻌ ˆ)♡
+      w-wabews = t-tweetcoweanddwewwwabews, >_<
+      m-metwics = set(countmetwic), ^•ﻌ•^
+      hawfwives = set(30.minutes, (✿oωo) d-duwation.top), OwO
+      outputstowe = p-pwoductionstowe, (ˆ ﻌ ˆ)♡
+      incwudeanyfeatuwe = f-fawse, ^^;;
+      incwudeanywabew = f-fawse,
+      incwudetimestampfeatuwe = fawse, nyaa~~
     )
 
   /**
-   * Aggregate author's user state features grouped by viewer's user id.
+   * aggwegate authow's usew s-state featuwes gwouped by viewew's u-usew id. o.O
    */
-  val userNegativeEngagementAuthorUserStateRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_aggregates_v4",
-      preTransforms = Seq.empty,
-      keys = Set(SharedFeatures.USER_ID),
-      features = AuthorFeaturesAdapter.UserStateBooleanFeatures,
-      labels = TweetNegativeEngagementLabels ++ TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw usewnegativeengagementauthowusewstateweawtimeaggwegates =
+    aggwegategwoup(
+      inputsouwce = inputsouwce, >_<
+      aggwegatepwefix = "weaw_time_usew_aggwegates_v4", (U ﹏ U)
+      p-pwetwansfowms = seq.empty, ^^
+      k-keys = s-set(shawedfeatuwes.usew_id), UwU
+      f-featuwes = authowfeatuwesadaptew.usewstatebooweanfeatuwes, ^^;;
+      wabews = tweetnegativeengagementwabews ++ tweetnegativeengagementdontwikewabews, òωó
+      m-metwics = s-set(countmetwic), -.-
+      hawfwives = s-set(30.minutes, ( ͡o ω ͡o ) duwation.top), o.O
+      outputstowe = p-pwoductionstowe, rawr
+      incwudeanyfeatuwe = f-fawse, (✿oωo)
+      i-incwudeanywabew = f-fawse, σωσ
+      incwudetimestampfeatuwe = f-fawse,
     )
 
   /**
-   * Aggregate tweet features grouped by viewer's user id, with 48 hour halfLife.
+   * a-aggwegate t-tweet featuwes gwouped b-by viewew's usew id, (U ᵕ U❁) with 48 h-houw hawfwife. >_<
    */
-  val userEngagement48HourRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_aggregates_v5",
-      keys = Set(SharedFeatures.USER_ID),
-      features = TweetFeatures,
-      labels = TweetLabels ++ TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(48.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw usewengagement48houwweawtimeaggwegatespwod =
+    a-aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, ^^
+      a-aggwegatepwefix = "weaw_time_usew_aggwegates_v5", rawr
+      keys = s-set(shawedfeatuwes.usew_id), >_<
+      f-featuwes = tweetfeatuwes, (⑅˘꒳˘)
+      w-wabews = tweetwabews ++ t-tweetnegativeengagementdontwikewabews, >w<
+      metwics = s-set(countmetwic), (///ˬ///✿)
+      h-hawfwives = set(48.houws), ^•ﻌ•^
+      o-outputstowe = pwoductionstowe, (✿oωo)
+      incwudeanywabew = fawse, ʘwʘ
+      incwudetimestampfeatuwe = fawse, >w<
     )
 
   /**
-   * Aggregate author's user state features grouped by viewer's user id.
+   * a-aggwegate a-authow's usew s-state featuwes gwouped by viewew's usew id. :3
    */
-  val userNegativeEngagementAuthorUserState72HourRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_aggregates_v6",
-      preTransforms = Seq.empty,
-      keys = Set(SharedFeatures.USER_ID),
-      features = AuthorFeaturesAdapter.UserStateBooleanFeatures,
-      labels = TweetNegativeEngagementLabels ++ TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(72.hours),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw usewnegativeengagementauthowusewstate72houwweawtimeaggwegates =
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, (ˆ ﻌ ˆ)♡
+      a-aggwegatepwefix = "weaw_time_usew_aggwegates_v6", -.-
+      p-pwetwansfowms = seq.empty,
+      keys = set(shawedfeatuwes.usew_id), rawr
+      f-featuwes = a-authowfeatuwesadaptew.usewstatebooweanfeatuwes, rawr x3
+      w-wabews = t-tweetnegativeengagementwabews ++ tweetnegativeengagementdontwikewabews, (U ﹏ U)
+      metwics = s-set(countmetwic), (ˆ ﻌ ˆ)♡
+      h-hawfwives = set(72.houws), :3
+      outputstowe = pwoductionstowe, òωó
+      incwudeanyfeatuwe = f-fawse, /(^•ω•^)
+      incwudeanywabew = fawse, >w<
+      i-incwudetimestampfeatuwe = fawse, nyaa~~
     )
 
   /**
-   * Aggregate features grouped by source author id: for each author, aggregate features are created
-   * to quantify engagements (fav, reply, etc.) which tweets of the author has received.
+   * a-aggwegate f-featuwes gwouped by souwce authow i-id: fow each a-authow, mya aggwegate featuwes awe c-cweated
+   * to quantify engagements (fav, w-wepwy, mya e-etc.) which tweets o-of the authow h-has weceived. ʘwʘ
    */
-  val authorEngagementRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_author_aggregates_v1",
-      keys = Set(TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
-      features = Set.empty,
-      labels = TweetLabels ++ TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw authowengagementweawtimeaggwegatespwod =
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, rawr
+      a-aggwegatepwefix = "weaw_time_authow_aggwegates_v1", (˘ω˘)
+      keys = s-set(timewinesshawedfeatuwes.souwce_authow_id), /(^•ω•^)
+      featuwes = set.empty, (˘ω˘)
+      w-wabews = tweetwabews ++ t-tweetnegativeengagementdontwikewabews, (///ˬ///✿)
+      m-metwics = set(countmetwic), (˘ω˘)
+      hawfwives = set(30.minutes, -.- duwation.top),
+      o-outputstowe = pwoductionstowe, -.-
+      i-incwudeanywabew = f-fawse, ^^
+      incwudetimestampfeatuwe = fawse, (ˆ ﻌ ˆ)♡
     )
 
   /**
-   * Aggregate features grouped by source author id: for each author, aggregate features are created
-   * to quantify negative engagements (mute, block, etc.) which tweets of the author has received.
+   * a-aggwegate featuwes gwouped by s-souwce authow id: f-fow each authow, UwU a-aggwegate featuwes a-awe cweated
+   * t-to quantify nyegative engagements (mute, 🥺 bwock, 🥺 etc.) which tweets of the authow has weceived. 🥺
    *
-   * This aggregate group is not used in Home, but it is used in Follow Recommendation Service so need to keep it for now.
+   * t-this aggwegate gwoup is nyot used i-in home, 🥺 but it is used in fowwow wecommendation sewvice so nyeed t-to keep it fow now. :3
    *
    */
-  val authorNegativeEngagementRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_author_aggregates_v2",
-      keys = Set(TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
-      features = Set.empty,
-      labels = TweetNegativeEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw authownegativeengagementweawtimeaggwegatespwod =
+    aggwegategwoup(
+      inputsouwce = inputsouwce, (˘ω˘)
+      a-aggwegatepwefix = "weaw_time_authow_aggwegates_v2", ^^;;
+      k-keys = set(timewinesshawedfeatuwes.souwce_authow_id), (ꈍᴗꈍ)
+      featuwes = s-set.empty, ʘwʘ
+      wabews = tweetnegativeengagementwabews, :3
+      m-metwics = s-set(countmetwic), XD
+      hawfwives = s-set(30.minutes, UwU duwation.top), rawr x3
+      o-outputstowe = pwoductionstowe, ( ͡o ω ͡o )
+      incwudeanywabew = fawse, :3
+      incwudetimestampfeatuwe = f-fawse,
     )
 
   /**
-   * Aggregate features grouped by source author id: for each author, aggregate features are created
-   * to quantify negative engagements (don't like) which tweets of the author has received from
-   * verified users.
+   * aggwegate featuwes gwouped by souwce a-authow id: f-fow each authow, rawr a-aggwegate featuwes awe cweated
+   * to quantify n-nyegative engagements (don't wike) which tweets of the authow has weceived fwom
+   * v-vewified usews. ^•ﻌ•^
    */
-  val authorVerifiedNegativeEngagementRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_author_aggregates_v3",
-      preTransforms = Seq(RichRemoveUnverifiedUserTransform),
-      keys = Set(TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
-      features = Set.empty,
-      labels = TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw a-authowvewifiednegativeengagementweawtimeaggwegatespwod =
+    aggwegategwoup(
+      i-inputsouwce = inputsouwce, 🥺
+      aggwegatepwefix = "weaw_time_authow_aggwegates_v3", (⑅˘꒳˘)
+      p-pwetwansfowms = s-seq(wichwemoveunvewifiedusewtwansfowm), :3
+      keys = set(timewinesshawedfeatuwes.souwce_authow_id), (///ˬ///✿)
+      f-featuwes = set.empty, 😳😳😳
+      wabews = tweetnegativeengagementdontwikewabews, 😳😳😳
+      m-metwics = set(countmetwic), 😳😳😳
+      hawfwives = s-set(30.minutes), nyaa~~
+      o-outputstowe = pwoductionstowe, UwU
+      incwudeanywabew = f-fawse, òωó
+      i-incwudetimestampfeatuwe = fawse, òωó
     )
 
   /**
-   * Aggregate tweet features grouped by topic id.
+   * a-aggwegate tweet featuwes gwouped by topic i-id. UwU
    */
-  val topicEngagementRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_topic_aggregates_v1",
-      keys = Set(TimelinesSharedFeatures.TOPIC_ID),
-      features = Set.empty,
-      labels = TweetLabels ++ AllTweetNegativeEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw topicengagementweawtimeaggwegatespwod =
+    aggwegategwoup(
+      i-inputsouwce = inputsouwce, (///ˬ///✿)
+      aggwegatepwefix = "weaw_time_topic_aggwegates_v1",
+      keys = s-set(timewinesshawedfeatuwes.topic_id), ( ͡o ω ͡o )
+      f-featuwes = set.empty, rawr
+      w-wabews = t-tweetwabews ++ a-awwtweetnegativeengagementwabews, :3
+      metwics = s-set(countmetwic), >w<
+      hawfwives = set(30.minutes, duwation.top), σωσ
+      o-outputstowe = pwoductionstowe, σωσ
+      incwudeanywabew = f-fawse, >_<
+      incwudetimestampfeatuwe = fawse, -.-
     )
 
   /**
-   * Aggregate user engagements / user state by topic id.
+   * aggwegate u-usew engagements / u-usew state by topic id. 😳😳😳
    */
-  val topicEngagementUserStateRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_topic_aggregates_v2",
-      keys = Set(TimelinesSharedFeatures.TOPIC_ID),
-      features = UserFeaturesAdapter.UserStateBooleanFeatures,
-      labels = TweetCoreAndDwellLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw topicengagementusewstateweawtimeaggwegatespwod =
+    aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, :3
+      aggwegatepwefix = "weaw_time_topic_aggwegates_v2", mya
+      k-keys = s-set(timewinesshawedfeatuwes.topic_id), (✿oωo)
+      featuwes = usewfeatuwesadaptew.usewstatebooweanfeatuwes, 😳😳😳
+      w-wabews = tweetcoweanddwewwwabews, o.O
+      metwics = set(countmetwic), (ꈍᴗꈍ)
+      hawfwives = s-set(30.minutes, (ˆ ﻌ ˆ)♡ duwation.top),
+      o-outputstowe = pwoductionstowe, -.-
+      incwudeanyfeatuwe = f-fawse, mya
+      i-incwudeanywabew = f-fawse, :3
+      incwudetimestampfeatuwe = f-fawse, σωσ
     )
 
   /**
-   * Aggregate user negative engagements / user state by topic id.
+   * a-aggwegate usew nyegative engagements / u-usew state by topic id. 😳😳😳
    */
-  val topicNegativeEngagementUserStateRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_topic_aggregates_v3",
-      keys = Set(TimelinesSharedFeatures.TOPIC_ID),
-      features = UserFeaturesAdapter.UserStateBooleanFeatures,
-      labels = TweetNegativeEngagementLabels ++ TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw topicnegativeengagementusewstateweawtimeaggwegatespwod =
+    aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, -.-
+      aggwegatepwefix = "weaw_time_topic_aggwegates_v3", 😳😳😳
+      keys = set(timewinesshawedfeatuwes.topic_id), rawr x3
+      featuwes = usewfeatuwesadaptew.usewstatebooweanfeatuwes, (///ˬ///✿)
+      wabews = t-tweetnegativeengagementwabews ++ t-tweetnegativeengagementdontwikewabews, >w<
+      metwics = set(countmetwic), o.O
+      hawfwives = s-set(30.minutes, (˘ω˘) duwation.top), rawr
+      o-outputstowe = p-pwoductionstowe,
+      incwudeanyfeatuwe = fawse, mya
+      incwudeanywabew = fawse,
+      incwudetimestampfeatuwe = fawse, òωó
     )
 
   /**
-   * Aggregate tweet features grouped by topic id like real_time_topic_aggregates_v1 but 24hour halfLife
+   * a-aggwegate tweet featuwes gwouped by topic id wike w-weaw_time_topic_aggwegates_v1 but 24houw hawfwife
    */
-  val topicEngagement24HourRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_topic_aggregates_v4",
-      keys = Set(TimelinesSharedFeatures.TOPIC_ID),
-      features = Set.empty,
-      labels = TweetLabels ++ AllTweetNegativeEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(24.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw t-topicengagement24houwweawtimeaggwegatespwod =
+    aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, nyaa~~
+      a-aggwegatepwefix = "weaw_time_topic_aggwegates_v4", òωó
+      k-keys = set(timewinesshawedfeatuwes.topic_id), mya
+      f-featuwes = s-set.empty, ^^
+      wabews = tweetwabews ++ awwtweetnegativeengagementwabews, ^•ﻌ•^
+      metwics = set(countmetwic), -.-
+      hawfwives = set(24.houws), UwU
+      o-outputstowe = p-pwoductionstowe, (˘ω˘)
+      i-incwudeanywabew = f-fawse, UwU
+      i-incwudetimestampfeatuwe = f-fawse, rawr
     )
 
-  // Aggregate user engagements / user state by tweet Id.
-  val tweetEngagementUserStateRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v3",
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = UserFeaturesAdapter.UserStateBooleanFeatures,
-      labels = TweetCoreAndDwellLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  // aggwegate usew engagements / usew state by tweet id. :3
+  vaw t-tweetengagementusewstateweawtimeaggwegatespwod =
+    a-aggwegategwoup(
+      inputsouwce = inputsouwce, nyaa~~
+      aggwegatepwefix = "weaw_time_tweet_aggwegates_v3", rawr
+      k-keys = set(timewinesshawedfeatuwes.souwce_tweet_id), (ˆ ﻌ ˆ)♡
+      f-featuwes = usewfeatuwesadaptew.usewstatebooweanfeatuwes, (ꈍᴗꈍ)
+      w-wabews = tweetcoweanddwewwwabews, (˘ω˘)
+      metwics = set(countmetwic), (U ﹏ U)
+      h-hawfwives = set(30.minutes, >w< duwation.top), UwU
+      o-outputstowe = p-pwoductionstowe, (ˆ ﻌ ˆ)♡
+      incwudeanyfeatuwe = fawse, nyaa~~
+      i-incwudeanywabew = fawse, 🥺
+      i-incwudetimestampfeatuwe = f-fawse,
     )
 
-  // Aggregate user engagements / user gender by tweet Id.
-  val tweetEngagementGenderRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v4",
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = UserFeaturesAdapter.GenderBooleanFeatures,
-      labels =
-        TweetCoreAndDwellLabels ++ TweetNegativeEngagementLabels ++ TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  // aggwegate u-usew engagements / u-usew g-gendew by tweet i-id. >_<
+  vaw tweetengagementgendewweawtimeaggwegatespwod =
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, òωó
+      a-aggwegatepwefix = "weaw_time_tweet_aggwegates_v4", ʘwʘ
+      k-keys = set(timewinesshawedfeatuwes.souwce_tweet_id), mya
+      f-featuwes = usewfeatuwesadaptew.gendewbooweanfeatuwes, σωσ
+      wabews =
+        t-tweetcoweanddwewwwabews ++ tweetnegativeengagementwabews ++ tweetnegativeengagementdontwikewabews, OwO
+      m-metwics = set(countmetwic), (✿oωo)
+      hawfwives = s-set(30.minutes, ʘwʘ d-duwation.top), mya
+      outputstowe = pwoductionstowe, -.-
+      incwudeanyfeatuwe = f-fawse, -.-
+      incwudeanywabew = fawse, ^^;;
+      i-incwudetimestampfeatuwe = fawse, (ꈍᴗꈍ)
     )
 
-  // Aggregate user negative engagements / user state by tweet Id.
-  val tweetNegativeEngagementUserStateRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v5",
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = UserFeaturesAdapter.UserStateBooleanFeatures,
-      labels = TweetNegativeEngagementLabels ++ TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  // a-aggwegate usew nyegative engagements / usew state b-by tweet id. rawr
+  v-vaw tweetnegativeengagementusewstateweawtimeaggwegates =
+    aggwegategwoup(
+      i-inputsouwce = inputsouwce, ^^
+      aggwegatepwefix = "weaw_time_tweet_aggwegates_v5", nyaa~~
+      k-keys = set(timewinesshawedfeatuwes.souwce_tweet_id), (⑅˘꒳˘)
+      f-featuwes = usewfeatuwesadaptew.usewstatebooweanfeatuwes, (U ᵕ U❁)
+      w-wabews = t-tweetnegativeengagementwabews ++ tweetnegativeengagementdontwikewabews, (ꈍᴗꈍ)
+      metwics = set(countmetwic), (✿oωo)
+      h-hawfwives = set(30.minutes, UwU duwation.top), ^^
+      o-outputstowe = p-pwoductionstowe, :3
+      i-incwudeanyfeatuwe = fawse, ( ͡o ω ͡o )
+      incwudeanywabew = fawse, ( ͡o ω ͡o )
+      incwudetimestampfeatuwe = fawse, (U ﹏ U)
     )
 
-  // Aggregate user negative engagements / user state by tweet Id.
-  val tweetVerifiedNegativeEngagementUserStateRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v8",
-      preTransforms = Seq(RichRemoveUnverifiedUserTransform),
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = UserFeaturesAdapter.UserStateBooleanFeatures,
-      labels = TweetNegativeEngagementLabels ++ TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  // aggwegate u-usew nyegative engagements / u-usew s-state by tweet i-id. -.-
+  vaw tweetvewifiednegativeengagementusewstateweawtimeaggwegates =
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, 😳😳😳
+      a-aggwegatepwefix = "weaw_time_tweet_aggwegates_v8", UwU
+      p-pwetwansfowms = seq(wichwemoveunvewifiedusewtwansfowm), >w<
+      k-keys = s-set(timewinesshawedfeatuwes.souwce_tweet_id), mya
+      featuwes = usewfeatuwesadaptew.usewstatebooweanfeatuwes, :3
+      w-wabews = tweetnegativeengagementwabews ++ tweetnegativeengagementdontwikewabews, (ˆ ﻌ ˆ)♡
+      metwics = s-set(countmetwic), (U ﹏ U)
+      hawfwives = s-set(30.minutes, ʘwʘ d-duwation.top), rawr
+      outputstowe = p-pwoductionstowe, (ꈍᴗꈍ)
+      i-incwudeanyfeatuwe = f-fawse, ( ͡o ω ͡o )
+      incwudeanywabew = f-fawse, 😳😳😳
+      i-incwudetimestampfeatuwe = fawse, òωó
     )
 
   /**
-   * Aggregate tweet engagement labels and candidate tweet source features grouped by user id.
+   * a-aggwegate tweet engagement w-wabews and candidate t-tweet souwce f-featuwes gwouped by usew id. mya
    */
-  val userCandidateTweetSourceEngagementRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_candidate_tweet_source_aggregates_v1",
-      keys = Set(SharedFeatures.USER_ID),
-      features = CandidateTweetSourceFeatures,
-      labels = TweetCoreAndDwellLabels ++ NegativeEngagementsRealTimeDontLike,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw usewcandidatetweetsouwceengagementweawtimeaggwegatespwod =
+    aggwegategwoup(
+      inputsouwce = inputsouwce,
+      a-aggwegatepwefix = "weaw_time_usew_candidate_tweet_souwce_aggwegates_v1", rawr x3
+      keys = set(shawedfeatuwes.usew_id), XD
+      featuwes = candidatetweetsouwcefeatuwes, (ˆ ﻌ ˆ)♡
+      wabews = tweetcoweanddwewwwabews ++ nyegativeengagementsweawtimedontwike, >w<
+      m-metwics = set(countmetwic), (ꈍᴗꈍ)
+      hawfwives = set(30.minutes, duwation.top), (U ﹏ U)
+      outputstowe = pwoductionstowe, >_<
+      i-incwudeanyfeatuwe = fawse, >_<
+      incwudeanywabew = f-fawse, -.-
+      incwudetimestampfeatuwe = f-fawse, òωó
     )
 
   /**
-   * Aggregate tweet engagement labels and candidate tweet source features grouped by user id.
+   * aggwegate tweet engagement w-wabews and candidate tweet souwce f-featuwes gwouped by usew id. o.O
    */
-  val userCandidateTweetSourceEngagement48HourRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_candidate_tweet_source_aggregates_v2",
-      keys = Set(SharedFeatures.USER_ID),
-      features = CandidateTweetSourceFeatures,
-      labels = TweetCoreAndDwellLabels ++ NegativeEngagementsRealTimeDontLike,
-      metrics = Set(CountMetric),
-      halfLives = Set(48.hours),
-      outputStore = ProductionStore,
-      includeAnyFeature = false,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw usewcandidatetweetsouwceengagement48houwweawtimeaggwegatespwod =
+    a-aggwegategwoup(
+      inputsouwce = inputsouwce, σωσ
+      a-aggwegatepwefix = "weaw_time_usew_candidate_tweet_souwce_aggwegates_v2", σωσ
+      keys = set(shawedfeatuwes.usew_id), mya
+      featuwes = candidatetweetsouwcefeatuwes, o.O
+      wabews = tweetcoweanddwewwwabews ++ n-nyegativeengagementsweawtimedontwike, XD
+      metwics = set(countmetwic), XD
+      h-hawfwives = set(48.houws), (✿oωo)
+      outputstowe = p-pwoductionstowe, -.-
+      incwudeanyfeatuwe = f-fawse, (ꈍᴗꈍ)
+      i-incwudeanywabew = fawse, ( ͡o ω ͡o )
+      incwudetimestampfeatuwe = f-fawse, (///ˬ///✿)
     )
 
   /**
-   * Aggregate tweet features grouped by viewer's user id on Profile engagements
+   * aggwegate tweet featuwes g-gwouped by viewew's usew id on pwofiwe engagements
    */
-  val userProfileEngagementRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "profile_real_time_user_aggregates_v1",
-      preTransforms = Seq(IsNewUserTransform),
-      keys = Set(SharedFeatures.USER_ID),
-      features = TweetFeatures,
-      labels = ProfileCoreLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyFeature = true,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw usewpwofiweengagementweawtimeaggwegates =
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, 🥺
+      a-aggwegatepwefix = "pwofiwe_weaw_time_usew_aggwegates_v1", (ˆ ﻌ ˆ)♡
+      p-pwetwansfowms = seq(isnewusewtwansfowm), ^•ﻌ•^
+      k-keys = set(shawedfeatuwes.usew_id), rawr x3
+      featuwes = tweetfeatuwes, (U ﹏ U)
+      wabews = pwofiwecowewabews, OwO
+      metwics = set(countmetwic), (✿oωo)
+      hawfwives = s-set(30.minutes, (⑅˘꒳˘) d-duwation.top), UwU
+      outputstowe = p-pwoductionstowe, (ˆ ﻌ ˆ)♡
+      i-incwudeanyfeatuwe = twue, /(^•ω•^)
+      i-incwudeanywabew = fawse, (˘ω˘)
+      incwudetimestampfeatuwe = f-fawse, XD
     )
 
-  val NegativeEngagementsUnionTransform = RichITransform(
-    BinaryUnion(
-      featuresToUnify = ProfileNegativeEngagementLabels,
-      outputFeature = ProfileLabelFeatures.IS_NEGATIVE_FEEDBACK_UNION
+  vaw nyegativeengagementsuniontwansfowm = wichitwansfowm(
+    b-binawyunion(
+      f-featuwestounify = pwofiwenegativeengagementwabews, òωó
+      outputfeatuwe = p-pwofiwewabewfeatuwes.is_negative_feedback_union
     ))
 
   /**
-   * Aggregate tweet features grouped by viewer's user id on Profile negative engagements.
+   * aggwegate tweet featuwes gwouped by viewew's usew id on pwofiwe nyegative engagements. UwU
    */
-  val userProfileNegativeEngagementRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "profile_negative_engagement_real_time_user_aggregates_v1",
-      preTransforms = Seq(NegativeEngagementsUnionTransform),
-      keys = Set(SharedFeatures.USER_ID),
-      features = Set.empty,
-      labels = ProfileNegativeEngagementLabels ++ ProfileNegativeEngagementUnionLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 72.hours, 14.day),
-      outputStore = ProductionStore,
-      includeAnyFeature = true,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw usewpwofiwenegativeengagementweawtimeaggwegates =
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, -.-
+      aggwegatepwefix = "pwofiwe_negative_engagement_weaw_time_usew_aggwegates_v1", (ꈍᴗꈍ)
+      p-pwetwansfowms = s-seq(negativeengagementsuniontwansfowm), (⑅˘꒳˘)
+      keys = set(shawedfeatuwes.usew_id), 🥺
+      f-featuwes = set.empty, òωó
+      wabews = pwofiwenegativeengagementwabews ++ pwofiwenegativeengagementunionwabews, 😳
+      metwics = set(countmetwic), òωó
+      h-hawfwives = set(30.minutes, 🥺 72.houws, ( ͡o ω ͡o ) 14.day),
+      outputstowe = pwoductionstowe, UwU
+      incwudeanyfeatuwe = twue, 😳😳😳
+      incwudeanywabew = f-fawse, ʘwʘ
+      i-incwudetimestampfeatuwe = f-fawse, ^^
     )
 
   /**
-   * Aggregate tweet features grouped by viewer's and author's user ids and on Profile engagements
+   * aggwegate tweet featuwes gwouped by v-viewew's and authow's u-usew ids a-and on pwofiwe engagements
    */
-  val userAuthorProfileEngagementRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "user_author_profile_real_time_aggregates_v1",
-      keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
-      features = Set.empty,
-      labels = ProfileCoreLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours, 72.hours),
-      outputStore = ProductionStore,
-      includeAnyFeature = true,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw usewauthowpwofiweengagementweawtimeaggwegates =
+    a-aggwegategwoup(
+      inputsouwce = inputsouwce, >_<
+      a-aggwegatepwefix = "usew_authow_pwofiwe_weaw_time_aggwegates_v1", (ˆ ﻌ ˆ)♡
+      keys = s-set(shawedfeatuwes.usew_id, (ˆ ﻌ ˆ)♡ timewinesshawedfeatuwes.souwce_authow_id), 🥺
+      f-featuwes = set.empty, ( ͡o ω ͡o )
+      wabews = p-pwofiwecowewabews, (ꈍᴗꈍ)
+      metwics = s-set(countmetwic), :3
+      h-hawfwives = set(30.minutes, (✿oωo) 24.houws, 72.houws), (U ᵕ U❁)
+      o-outputstowe = p-pwoductionstowe, UwU
+      incwudeanyfeatuwe = t-twue, ^^
+      incwudeanywabew = f-fawse, /(^•ω•^)
+      incwudetimestampfeatuwe = f-fawse, (˘ω˘)
     )
 
   /**
-   * Aggregate tweet features grouped by viewer's and author's user ids and on negative Profile engagements
+   * a-aggwegate tweet featuwes gwouped by viewew's a-and authow's usew ids and on nyegative pwofiwe engagements
    */
-  val userAuthorProfileNegativeEngagementRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "user_author_profile_negative_engagement_real_time_aggregates_v1",
-      preTransforms = Seq(NegativeEngagementsUnionTransform),
-      keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
-      features = Set.empty,
-      labels = ProfileNegativeEngagementUnionLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 72.hours, 14.day),
-      outputStore = ProductionStore,
-      includeAnyFeature = true,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw usewauthowpwofiwenegativeengagementweawtimeaggwegates =
+    aggwegategwoup(
+      inputsouwce = inputsouwce, OwO
+      aggwegatepwefix = "usew_authow_pwofiwe_negative_engagement_weaw_time_aggwegates_v1", (U ᵕ U❁)
+      p-pwetwansfowms = seq(negativeengagementsuniontwansfowm), (U ﹏ U)
+      keys = s-set(shawedfeatuwes.usew_id, mya timewinesshawedfeatuwes.souwce_authow_id), (⑅˘꒳˘)
+      featuwes = s-set.empty, (U ᵕ U❁)
+      wabews = pwofiwenegativeengagementunionwabews, /(^•ω•^)
+      m-metwics = set(countmetwic), ^•ﻌ•^
+      hawfwives = set(30.minutes, (///ˬ///✿) 72.houws, o.O 14.day),
+      outputstowe = p-pwoductionstowe, (ˆ ﻌ ˆ)♡
+      incwudeanyfeatuwe = twue, 😳
+      incwudeanywabew = f-fawse, òωó
+      incwudetimestampfeatuwe = fawse, (⑅˘꒳˘)
     )
 
-  val newUserAuthorEngagementRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_new_user_author_aggregates_v1",
-      preTransforms = Seq(IsNewUserTransform),
-      keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
-      features = Set.empty,
-      labels = TweetCoreAndDwellLabels ++ Set(
-        IS_CLICKED,
-        IS_PROFILE_CLICKED,
-        IS_PHOTO_EXPANDED
-      ),
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyFeature = true,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw nyewusewauthowengagementweawtimeaggwegatespwod =
+    aggwegategwoup(
+      inputsouwce = i-inputsouwce, rawr
+      a-aggwegatepwefix = "weaw_time_new_usew_authow_aggwegates_v1", (ꈍᴗꈍ)
+      pwetwansfowms = seq(isnewusewtwansfowm), ^^
+      k-keys = set(shawedfeatuwes.usew_id, (ˆ ﻌ ˆ)♡ t-timewinesshawedfeatuwes.souwce_authow_id), /(^•ω•^)
+      featuwes = s-set.empty, ^^
+      w-wabews = tweetcoweanddwewwwabews ++ set(
+        i-is_cwicked, o.O
+        is_pwofiwe_cwicked, 😳😳😳
+        is_photo_expanded
+      ), XD
+      metwics = s-set(countmetwic), nyaa~~
+      hawfwives = set(30.minutes, ^•ﻌ•^ duwation.top), :3
+      o-outputstowe = p-pwoductionstowe, ^^
+      i-incwudeanyfeatuwe = twue, o.O
+      incwudeanywabew = fawse, ^^
+      i-incwudetimestampfeatuwe = fawse, (⑅˘꒳˘)
     )
 
-  val userAuthorEngagementRealTimeAggregatesProd = {
-    // Computing user-author real-time aggregates is very expensive so we
-    // take the union of all major negative feedback engagements to create
-    // a single negtive label for aggregation. We also include a number of
-    // core positive engagements.
-    val BinaryUnionNegativeEngagements =
-      BinaryUnion(
-        featuresToUnify = AllTweetNegativeEngagementLabels,
-        outputFeature = IS_NEGATIVE_FEEDBACK_UNION
+  v-vaw usewauthowengagementweawtimeaggwegatespwod = {
+    // computing usew-authow w-weaw-time a-aggwegates is vewy expensive so we
+    // take the union of aww majow nyegative feedback engagements t-to cweate
+    // a-a singwe nyegtive wabew fow aggwegation. ʘwʘ w-we awso incwude a nyumbew of
+    // cowe positive e-engagements. mya
+    v-vaw binawyunionnegativeengagements =
+      b-binawyunion(
+        f-featuwestounify = a-awwtweetnegativeengagementwabews, >w<
+        o-outputfeatuwe = is_negative_feedback_union
       )
-    val BinaryUnionNegativeEngagementsTransform = RichITransform(BinaryUnionNegativeEngagements)
+    vaw binawyunionnegativeengagementstwansfowm = w-wichitwansfowm(binawyunionnegativeengagements)
 
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_author_aggregates_v1",
-      preTransforms = Seq(BinaryUnionNegativeEngagementsTransform),
-      keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
-      features = Set.empty,
-      labels = UserAuthorEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 1.day),
-      outputStore = ProductionStore,
-      includeAnyFeature = true,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, o.O
+      a-aggwegatepwefix = "weaw_time_usew_authow_aggwegates_v1", OwO
+      p-pwetwansfowms = s-seq(binawyunionnegativeengagementstwansfowm), -.-
+      keys = set(shawedfeatuwes.usew_id, (U ﹏ U) t-timewinesshawedfeatuwes.souwce_authow_id), òωó
+      f-featuwes = s-set.empty, >w<
+      wabews = usewauthowengagementwabews,
+      metwics = set(countmetwic), ^•ﻌ•^
+      h-hawfwives = set(30.minutes, /(^•ω•^) 1.day),
+      outputstowe = pwoductionstowe, ʘwʘ
+      i-incwudeanyfeatuwe = twue, XD
+      incwudeanywabew = f-fawse, (U ᵕ U❁)
+      i-incwudetimestampfeatuwe = fawse, (ꈍᴗꈍ)
     )
   }
 
   /**
-   * Aggregate tweet features grouped by list id.
+   * aggwegate tweet featuwes g-gwouped by wist i-id. rawr x3
    */
-  val listEngagementRealTimeAggregatesProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_list_aggregates_v1",
-      keys = Set(ListFeatures.LIST_ID),
-      features = Set.empty,
-      labels =
-        TweetCoreAndDwellLabels ++ TweetNegativeEngagementLabels ++ TweetNegativeEngagementDontLikeLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw wistengagementweawtimeaggwegatespwod =
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, :3
+      aggwegatepwefix = "weaw_time_wist_aggwegates_v1", (˘ω˘)
+      keys = set(wistfeatuwes.wist_id), -.-
+      f-featuwes = set.empty,
+      w-wabews =
+        tweetcoweanddwewwwabews ++ tweetnegativeengagementwabews ++ tweetnegativeengagementdontwikewabews, (ꈍᴗꈍ)
+      m-metwics = s-set(countmetwic), UwU
+      hawfwives = set(30.minutes, σωσ d-duwation.top), ^^
+      outputstowe = pwoductionstowe, :3
+      incwudeanywabew = fawse, ʘwʘ
+      incwudetimestampfeatuwe = fawse,
     )
 
-  // Aggregate features grouped by topic of tweet and country from user's location
-  val topicCountryRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_topic_country_aggregates_v1",
-      keys = Set(TimelinesSharedFeatures.TOPIC_ID, UserFeaturesAdapter.USER_COUNTRY_ID),
-      features = Set.empty,
-      labels =
-        TweetCoreAndDwellLabels ++ AllTweetNegativeEngagementLabels ++ PrivateEngagementLabelsV2 ++ ShareEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 72.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  // a-aggwegate featuwes gwouped by topic o-of tweet and countwy f-fwom usew's w-wocation
+  vaw topiccountwyweawtimeaggwegates =
+    a-aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, 😳
+      a-aggwegatepwefix = "weaw_time_topic_countwy_aggwegates_v1", ^^
+      k-keys = set(timewinesshawedfeatuwes.topic_id, σωσ usewfeatuwesadaptew.usew_countwy_id), /(^•ω•^)
+      f-featuwes = s-set.empty, 😳😳😳
+      w-wabews =
+        tweetcoweanddwewwwabews ++ a-awwtweetnegativeengagementwabews ++ p-pwivateengagementwabewsv2 ++ shaweengagementwabews, 😳
+      m-metwics = set(countmetwic), OwO
+      h-hawfwives = s-set(30.minutes, :3 72.houws), nyaa~~
+      o-outputstowe = p-pwoductionstowe,
+      i-incwudeanywabew = fawse, OwO
+      incwudetimestampfeatuwe = f-fawse, o.O
     )
 
-  // Aggregate features grouped by TweetId_Country from user's location
-  val tweetCountryRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_country_aggregates_v1",
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID, UserFeaturesAdapter.USER_COUNTRY_ID),
-      features = Set.empty,
-      labels = TweetCoreAndDwellLabels ++ AllTweetNegativeEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyLabel = true,
-      includeTimestampFeature = false,
+  // aggwegate f-featuwes gwouped b-by tweetid_countwy fwom usew's wocation
+  vaw tweetcountwyweawtimeaggwegates =
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, (U ﹏ U)
+      aggwegatepwefix = "weaw_time_tweet_countwy_aggwegates_v1", (⑅˘꒳˘)
+      k-keys = set(timewinesshawedfeatuwes.souwce_tweet_id, OwO u-usewfeatuwesadaptew.usew_countwy_id), 😳
+      featuwes = set.empty, :3
+      wabews = t-tweetcoweanddwewwwabews ++ a-awwtweetnegativeengagementwabews, ( ͡o ω ͡o )
+      m-metwics = s-set(countmetwic), 🥺
+      h-hawfwives = s-set(30.minutes, /(^•ω•^) duwation.top), nyaa~~
+      outputstowe = p-pwoductionstowe,
+      incwudeanywabew = twue, (✿oωo)
+      incwudetimestampfeatuwe = fawse, (✿oωo)
     )
 
-  // Additional aggregate features grouped by TweetId_Country from user's location
-  val tweetCountryPrivateEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_country_aggregates_v2",
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID, UserFeaturesAdapter.USER_COUNTRY_ID),
-      features = Set.empty,
-      labels = PrivateEngagementLabelsV2 ++ ShareEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 72.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  // a-additionaw a-aggwegate featuwes gwouped by tweetid_countwy fwom usew's w-wocation
+  vaw t-tweetcountwypwivateengagementsweawtimeaggwegates =
+    aggwegategwoup(
+      inputsouwce = i-inputsouwce, (ꈍᴗꈍ)
+      aggwegatepwefix = "weaw_time_tweet_countwy_aggwegates_v2", OwO
+      keys = set(timewinesshawedfeatuwes.souwce_tweet_id, :3 u-usewfeatuwesadaptew.usew_countwy_id), mya
+      f-featuwes = set.empty, >_<
+      w-wabews = pwivateengagementwabewsv2 ++ shaweengagementwabews, (///ˬ///✿)
+      metwics = set(countmetwic), (///ˬ///✿)
+      h-hawfwives = set(30.minutes, 😳😳😳 72.houws),
+      outputstowe = p-pwoductionstowe, (U ᵕ U❁)
+      incwudeanywabew = f-fawse, (///ˬ///✿)
+      incwudetimestampfeatuwe = fawse, ( ͡o ω ͡o )
     )
 
-  // Aggregate features grouped by TweetId_Country from user's location
-  val tweetCountryVerifiedNegativeEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_country_aggregates_v3",
-      preTransforms = Seq(RichRemoveUnverifiedUserTransform),
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID, UserFeaturesAdapter.USER_COUNTRY_ID),
-      features = Set.empty,
-      labels = AllTweetNegativeEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, Duration.Top),
-      outputStore = ProductionStore,
-      includeAnyLabel = true,
-      includeTimestampFeature = false,
+  // aggwegate f-featuwes gwouped by tweetid_countwy f-fwom usew's wocation
+  vaw tweetcountwyvewifiednegativeengagementsweawtimeaggwegates =
+    a-aggwegategwoup(
+      inputsouwce = i-inputsouwce, (✿oωo)
+      aggwegatepwefix = "weaw_time_tweet_countwy_aggwegates_v3", òωó
+      pwetwansfowms = seq(wichwemoveunvewifiedusewtwansfowm), (ˆ ﻌ ˆ)♡
+      keys = set(timewinesshawedfeatuwes.souwce_tweet_id, :3 usewfeatuwesadaptew.usew_countwy_id), (ˆ ﻌ ˆ)♡
+      featuwes = s-set.empty, (U ᵕ U❁)
+      w-wabews = a-awwtweetnegativeengagementwabews, (U ᵕ U❁)
+      m-metwics = set(countmetwic), XD
+      hawfwives = s-set(30.minutes, nyaa~~ duwation.top), (ˆ ﻌ ˆ)♡
+      outputstowe = pwoductionstowe, ʘwʘ
+      i-incwudeanywabew = t-twue, ^•ﻌ•^
+      i-incwudetimestampfeatuwe = f-fawse, mya
     )
 
-  object positionTranforms extends IsPositionTransform {
-    override val isInPositionRangeFeature: Seq[PositionCase] =
-      Seq(PositionCase(1, IS_TOP_ONE), PositionCase(5, IS_TOP_FIVE), PositionCase(10, IS_TOP_TEN))
-    override val decodedPositionFeature: Feature.Discrete =
-      ClientLogEventDataRecordFeatures.InjectedPosition
+  object positiontwanfowms extends ispositiontwansfowm {
+    ovewwide vaw i-isinpositionwangefeatuwe: s-seq[positioncase] =
+      seq(positioncase(1, (ꈍᴗꈍ) is_top_one), positioncase(5, i-is_top_five), positioncase(10, (ˆ ﻌ ˆ)♡ i-is_top_ten))
+    o-ovewwide v-vaw decodedpositionfeatuwe: featuwe.discwete =
+      cwientwogeventdatawecowdfeatuwes.injectedposition
   }
 
-  val userPositionEngagementsCountsProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_position_based_user_aggregates_v1",
-      keys = Set(SharedFeatures.USER_ID),
-      features = Set(IS_TOP_ONE, IS_TOP_FIVE, IS_TOP_TEN),
-      labels = TweetCoreAndDwellLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      preTransforms = Seq(positionTranforms),
-      includeAnyLabel = false,
-      includeAnyFeature = false,
-      includeTimestampFeature = false,
+  vaw usewpositionengagementscountspwod =
+    aggwegategwoup(
+      inputsouwce = inputsouwce, (ˆ ﻌ ˆ)♡
+      a-aggwegatepwefix = "weaw_time_position_based_usew_aggwegates_v1", ( ͡o ω ͡o )
+      keys = s-set(shawedfeatuwes.usew_id), o.O
+      featuwes = set(is_top_one, 😳😳😳 is_top_five, is_top_ten), ʘwʘ
+      w-wabews = tweetcoweanddwewwwabews, :3
+      m-metwics = set(countmetwic), UwU
+      hawfwives = s-set(30.minutes, nyaa~~ 24.houws), :3
+      o-outputstowe = p-pwoductionstowe, nyaa~~
+      p-pwetwansfowms = s-seq(positiontwanfowms), ^^
+      incwudeanywabew = f-fawse, nyaa~~
+      i-incwudeanyfeatuwe = fawse, 😳😳😳
+      i-incwudetimestampfeatuwe = fawse, ^•ﻌ•^
     )
 
-  val userPositionEngagementsSumProd =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_position_based_user_sum_aggregates_v2",
-      keys = Set(SharedFeatures.USER_ID),
-      features = Set(LOG_POSITION),
-      labels = TweetCoreAndDwellLabels,
-      metrics = Set(SumMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      preTransforms =
-        Seq(new LogTransform(ClientLogEventDataRecordFeatures.InjectedPosition, LOG_POSITION)),
-      includeAnyLabel = false,
-      includeAnyFeature = false,
-      includeTimestampFeature = false,
+  vaw usewpositionengagementssumpwod =
+    a-aggwegategwoup(
+      inputsouwce = inputsouwce, (⑅˘꒳˘)
+      a-aggwegatepwefix = "weaw_time_position_based_usew_sum_aggwegates_v2", (✿oωo)
+      k-keys = set(shawedfeatuwes.usew_id), mya
+      f-featuwes = s-set(wog_position), (///ˬ///✿)
+      wabews = tweetcoweanddwewwwabews, ʘwʘ
+      metwics = set(summetwic), >w<
+      h-hawfwives = set(30.minutes, o.O 24.houws),
+      o-outputstowe = pwoductionstowe, ^^;;
+      p-pwetwansfowms =
+        s-seq(new wogtwansfowm(cwientwogeventdatawecowdfeatuwes.injectedposition, :3 wog_position)), (ꈍᴗꈍ)
+      incwudeanywabew = f-fawse,
+      incwudeanyfeatuwe = fawse, XD
+      i-incwudetimestampfeatuwe = fawse, ^^;;
     )
 
-  // Aggregates for share engagements
-  val tweetShareEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_share_aggregates_v1",
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = Set.empty,
-      labels = ShareEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  // aggwegates f-fow shawe engagements
+  vaw tweetshaweengagementsweawtimeaggwegates =
+    aggwegategwoup(
+      inputsouwce = i-inputsouwce,
+      aggwegatepwefix = "weaw_time_tweet_shawe_aggwegates_v1", (U ﹏ U)
+      k-keys = set(timewinesshawedfeatuwes.souwce_tweet_id), (ꈍᴗꈍ)
+      f-featuwes = s-set.empty, 😳
+      wabews = s-shaweengagementwabews, rawr
+      m-metwics = set(countmetwic), ( ͡o ω ͡o )
+      hawfwives = set(30.minutes, (ˆ ﻌ ˆ)♡ 24.houws), OwO
+      outputstowe = p-pwoductionstowe, >_<
+      i-incwudeanywabew = f-fawse, XD
+      i-incwudetimestampfeatuwe = fawse, (ˆ ﻌ ˆ)♡
     )
 
-  val userShareEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_share_aggregates_v1",
-      keys = Set(SharedFeatures.USER_ID),
-      features = Set.empty,
-      labels = ShareEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw u-usewshaweengagementsweawtimeaggwegates =
+    a-aggwegategwoup(
+      inputsouwce = i-inputsouwce, (ꈍᴗꈍ)
+      aggwegatepwefix = "weaw_time_usew_shawe_aggwegates_v1", (✿oωo)
+      keys = set(shawedfeatuwes.usew_id), UwU
+      featuwes = set.empty, (ꈍᴗꈍ)
+      wabews = s-shaweengagementwabews, (U ﹏ U)
+      metwics = s-set(countmetwic), >w<
+      hawfwives = set(30.minutes, ^•ﻌ•^ 24.houws), 😳
+      o-outputstowe = pwoductionstowe, XD
+      incwudeanywabew = f-fawse,
+      i-incwudetimestampfeatuwe = f-fawse, :3
     )
 
-  val userAuthorShareEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_author_share_aggregates_v1",
-      keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
-      features = Set.empty,
-      labels = ShareEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      includeAnyFeature = true,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw usewauthowshaweengagementsweawtimeaggwegates =
+    a-aggwegategwoup(
+      inputsouwce = inputsouwce,
+      a-aggwegatepwefix = "weaw_time_usew_authow_shawe_aggwegates_v1", rawr x3
+      keys = s-set(shawedfeatuwes.usew_id, (⑅˘꒳˘) timewinesshawedfeatuwes.souwce_authow_id), ^^
+      featuwes = set.empty, >w<
+      wabews = shaweengagementwabews, 😳
+      m-metwics = set(countmetwic), rawr
+      hawfwives = s-set(30.minutes, rawr x3 24.houws), (ꈍᴗꈍ)
+      outputstowe = pwoductionstowe, -.-
+      i-incwudeanyfeatuwe = twue, òωó
+      i-incwudeanywabew = fawse, (U ﹏ U)
+      incwudetimestampfeatuwe = f-fawse, ( ͡o ω ͡o )
     )
 
-  val topicShareEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_topic_share_aggregates_v1",
-      keys = Set(TimelinesSharedFeatures.TOPIC_ID),
-      features = Set.empty,
-      labels = ShareEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw topicshaweengagementsweawtimeaggwegates =
+    a-aggwegategwoup(
+      inputsouwce = i-inputsouwce, :3
+      a-aggwegatepwefix = "weaw_time_topic_shawe_aggwegates_v1", >w<
+      keys = set(timewinesshawedfeatuwes.topic_id), ^^
+      f-featuwes = set.empty, 😳😳😳
+      wabews = s-shaweengagementwabews, OwO
+      m-metwics = set(countmetwic), XD
+      h-hawfwives = set(30.minutes, (⑅˘꒳˘) 24.houws), OwO
+      outputstowe = pwoductionstowe, (⑅˘꒳˘)
+      incwudeanywabew = fawse, (U ﹏ U)
+      incwudetimestampfeatuwe = fawse, (ꈍᴗꈍ)
     )
 
-  val authorShareEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_author_share_aggregates_v1",
-      keys = Set(TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
-      features = Set.empty,
-      labels = ShareEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw authowshaweengagementsweawtimeaggwegates =
+    aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, rawr
+      aggwegatepwefix = "weaw_time_authow_shawe_aggwegates_v1", XD
+      keys = set(timewinesshawedfeatuwes.souwce_authow_id), >w<
+      f-featuwes = set.empty, UwU
+      wabews = s-shaweengagementwabews, 😳
+      metwics = set(countmetwic), (ˆ ﻌ ˆ)♡
+      hawfwives = set(30.minutes, ^•ﻌ•^ 24.houws),
+      o-outputstowe = pwoductionstowe, ^^
+      i-incwudeanywabew = fawse, 😳
+      incwudetimestampfeatuwe = f-fawse, :3
     )
 
-  // Bookmark RTAs
-  val tweetBookmarkEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_bookmark_aggregates_v1",
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = Set.empty,
-      labels = BookmarkEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  // b-bookmawk wtas
+  vaw tweetbookmawkengagementsweawtimeaggwegates =
+    a-aggwegategwoup(
+      i-inputsouwce = inputsouwce, (⑅˘꒳˘)
+      aggwegatepwefix = "weaw_time_tweet_bookmawk_aggwegates_v1", ( ͡o ω ͡o )
+      k-keys = set(timewinesshawedfeatuwes.souwce_tweet_id), :3
+      featuwes = s-set.empty, (⑅˘꒳˘)
+      w-wabews = b-bookmawkengagementwabews, >w<
+      m-metwics = set(countmetwic), OwO
+      h-hawfwives = set(30.minutes, 😳 24.houws), OwO
+      o-outputstowe = p-pwoductionstowe, 🥺
+      incwudeanywabew = fawse, (˘ω˘)
+      i-incwudetimestampfeatuwe = fawse, 😳😳😳
     )
 
-  val userBookmarkEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_bookmark_aggregates_v1",
-      keys = Set(SharedFeatures.USER_ID),
-      features = Set.empty,
-      labels = BookmarkEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw usewbookmawkengagementsweawtimeaggwegates =
+    aggwegategwoup(
+      inputsouwce = inputsouwce, mya
+      aggwegatepwefix = "weaw_time_usew_bookmawk_aggwegates_v1", OwO
+      keys = set(shawedfeatuwes.usew_id), >_<
+      f-featuwes = set.empty,
+      w-wabews = bookmawkengagementwabews, 😳
+      metwics = s-set(countmetwic), (U ᵕ U❁)
+      h-hawfwives = set(30.minutes, 🥺 24.houws),
+      o-outputstowe = pwoductionstowe, (U ﹏ U)
+      incwudeanywabew = f-fawse, (U ﹏ U)
+      incwudetimestampfeatuwe = fawse, rawr x3
     )
 
-  val userAuthorBookmarkEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_author_bookmark_aggregates_v1",
-      keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
-      features = Set.empty,
-      labels = BookmarkEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      includeAnyFeature = true,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw usewauthowbookmawkengagementsweawtimeaggwegates =
+    aggwegategwoup(
+      inputsouwce = inputsouwce, :3
+      aggwegatepwefix = "weaw_time_usew_authow_bookmawk_aggwegates_v1", rawr
+      keys = set(shawedfeatuwes.usew_id, XD timewinesshawedfeatuwes.souwce_authow_id), ^^
+      f-featuwes = set.empty, mya
+      wabews = bookmawkengagementwabews, (U ﹏ U)
+      m-metwics = set(countmetwic), 😳
+      h-hawfwives = set(30.minutes, mya 24.houws), 😳
+      outputstowe = pwoductionstowe, ^^
+      incwudeanyfeatuwe = twue, :3
+      incwudeanywabew = fawse, (U ﹏ U)
+      incwudetimestampfeatuwe = fawse, UwU
     )
 
-  val authorBookmarkEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_author_bookmark_aggregates_v1",
-      keys = Set(TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
-      features = Set.empty,
-      labels = BookmarkEngagementLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
-    )
-
-  /**
-   * Aggregate on user level dwell labels from BCE
-   */
-  val userBCEDwellEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_user_bce_dwell_aggregates",
-      keys = Set(SharedFeatures.USER_ID),
-      features = Set.empty,
-      labels = AllBCEDwellLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  vaw authowbookmawkengagementsweawtimeaggwegates =
+    a-aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, (ˆ ﻌ ˆ)♡
+      aggwegatepwefix = "weaw_time_authow_bookmawk_aggwegates_v1", (ˆ ﻌ ˆ)♡
+      k-keys = set(timewinesshawedfeatuwes.souwce_authow_id), ^^;;
+      f-featuwes = set.empty, rawr
+      wabews = b-bookmawkengagementwabews, nyaa~~
+      metwics = set(countmetwic), rawr x3
+      h-hawfwives = s-set(30.minutes, (⑅˘꒳˘) 24.houws), OwO
+      outputstowe = p-pwoductionstowe, OwO
+      i-incwudeanywabew = f-fawse, ʘwʘ
+      i-incwudetimestampfeatuwe = f-fawse, :3
     )
 
   /**
-   * Aggregate on tweet level dwell labels from BCE
+   * aggwegate o-on usew w-wevew dweww wabews f-fwom bce
    */
-  val tweetBCEDwellEngagementsRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_bce_dwell_aggregates",
-      keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
-      features = Set.empty,
-      labels = AllBCEDwellLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(30.minutes, 24.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeTimestampFeature = false,
+  v-vaw usewbcedwewwengagementsweawtimeaggwegates =
+    a-aggwegategwoup(
+      i-inputsouwce = i-inputsouwce, mya
+      aggwegatepwefix = "weaw_time_usew_bce_dweww_aggwegates", OwO
+      k-keys = s-set(shawedfeatuwes.usew_id), :3
+      f-featuwes = set.empty, >_<
+      wabews = awwbcedwewwwabews, σωσ
+      metwics = s-set(countmetwic), /(^•ω•^)
+      hawfwives = s-set(30.minutes, mya 24.houws), nyaa~~
+      outputstowe = pwoductionstowe, 😳
+      i-incwudeanywabew = f-fawse, ^^;;
+      i-incwudetimestampfeatuwe = fawse, 😳😳😳
     )
 
-  val ImplicitPositiveEngagementsUnionTransform = RichITransform(
-    BinaryUnion(
-      featuresToUnify = CombinedFeatures.ImplicitPositiveEngagements,
-      outputFeature = CombinedFeatures.IS_IMPLICIT_POSITIVE_FEEDBACK_UNION
+  /**
+   * a-aggwegate o-on tweet wevew dweww wabews fwom bce
+   */
+  vaw tweetbcedwewwengagementsweawtimeaggwegates =
+    aggwegategwoup(
+      inputsouwce = i-inputsouwce, nyaa~~
+      aggwegatepwefix = "weaw_time_tweet_bce_dweww_aggwegates", 🥺
+      keys = set(timewinesshawedfeatuwes.souwce_tweet_id), XD
+      featuwes = set.empty, (ꈍᴗꈍ)
+      w-wabews = awwbcedwewwwabews, 😳😳😳
+      m-metwics = set(countmetwic), ( ͡o ω ͡o )
+      h-hawfwives = s-set(30.minutes, nyaa~~ 24.houws),
+      o-outputstowe = p-pwoductionstowe, XD
+      i-incwudeanywabew = f-fawse, (ˆ ﻌ ˆ)♡
+      i-incwudetimestampfeatuwe = fawse, rawr x3
+    )
+
+  vaw impwicitpositiveengagementsuniontwansfowm = w-wichitwansfowm(
+    binawyunion(
+      f-featuwestounify = combinedfeatuwes.impwicitpositiveengagements, OwO
+      o-outputfeatuwe = c-combinedfeatuwes.is_impwicit_positive_feedback_union
     )
   )
 
-  val ExplicitPositiveEngagementsUnionTransform = RichITransform(
-    BinaryUnion(
-      featuresToUnify = CombinedFeatures.ExplicitPositiveEngagements,
-      outputFeature = CombinedFeatures.IS_EXPLICIT_POSITIVE_FEEDBACK_UNION
+  vaw expwicitpositiveengagementsuniontwansfowm = w-wichitwansfowm(
+    binawyunion(
+      featuwestounify = c-combinedfeatuwes.expwicitpositiveengagements, UwU
+      o-outputfeatuwe = c-combinedfeatuwes.is_expwicit_positive_feedback_union
     )
   )
 
-  val AllNegativeEngagementsUnionTransform = RichITransform(
-    BinaryUnion(
-      featuresToUnify = CombinedFeatures.AllNegativeEngagements,
-      outputFeature = CombinedFeatures.IS_ALL_NEGATIVE_FEEDBACK_UNION
+  v-vaw awwnegativeengagementsuniontwansfowm = wichitwansfowm(
+    b-binawyunion(
+      f-featuwestounify = c-combinedfeatuwes.awwnegativeengagements, ^^
+      outputfeatuwe = c-combinedfeatuwes.is_aww_negative_feedback_union
     )
   )
 
   /**
-   * Aggregate features for author content preference
+   * aggwegate featuwes fow authow content pwefewence
    */
-  val authorContentPreferenceRealTimeAggregates =
-    AggregateGroup(
-      inputSource = inputSource,
-      aggregatePrefix = "real_time_author_content_preference_aggregates",
-      preTransforms = Seq(
-        ImplicitPositiveEngagementsUnionTransform,
-        ExplicitPositiveEngagementsUnionTransform,
-        AllNegativeEngagementsUnionTransform),
-      keys = Set(TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
-      features =
-        ClientLogEventDataRecordFeatures.AuthorContentPreferenceTweetTypeFeatures ++ AuthorFeaturesAdapter.UserStateBooleanFeatures,
-      labels = AllTweetUnionLabels,
-      metrics = Set(CountMetric),
-      halfLives = Set(24.hours),
-      outputStore = ProductionStore,
-      includeAnyLabel = false,
-      includeAnyFeature = false,
+  vaw authowcontentpwefewenceweawtimeaggwegates =
+    aggwegategwoup(
+      inputsouwce = inputsouwce, (✿oωo)
+      aggwegatepwefix = "weaw_time_authow_content_pwefewence_aggwegates", 😳😳😳
+      p-pwetwansfowms = s-seq(
+        impwicitpositiveengagementsuniontwansfowm, 🥺
+        expwicitpositiveengagementsuniontwansfowm, ʘwʘ
+        awwnegativeengagementsuniontwansfowm), 😳
+      keys = s-set(timewinesshawedfeatuwes.souwce_authow_id), ^^;;
+      f-featuwes =
+        cwientwogeventdatawecowdfeatuwes.authowcontentpwefewencetweettypefeatuwes ++ authowfeatuwesadaptew.usewstatebooweanfeatuwes, (///ˬ///✿)
+      wabews = a-awwtweetunionwabews, OwO
+      m-metwics = set(countmetwic), -.-
+      hawfwives = set(24.houws), ^^
+      o-outputstowe = p-pwoductionstowe, (ꈍᴗꈍ)
+      incwudeanywabew = f-fawse, ^^;;
+      incwudeanyfeatuwe = f-fawse, (˘ω˘)
     )
 
-  val FeaturesGeneratedByPreTransforms = Set(LOG_POSITION, IS_TOP_TEN, IS_TOP_FIVE, IS_TOP_ONE)
+  v-vaw featuwesgenewatedbypwetwansfowms = set(wog_position, 🥺 is_top_ten, ʘwʘ is_top_five, (///ˬ///✿) is_top_one)
 
-  val ProdAggregateGroups = Set(
-    tweetEngagement30MinuteCountsProd,
-    tweetEngagementTotalCountsProd,
-    tweetNegativeEngagement6HourCounts,
-    tweetNegativeEngagementTotalCounts,
-    userEngagementRealTimeAggregatesProd,
-    userEngagement48HourRealTimeAggregatesProd,
-    userNegativeEngagementAuthorUserStateRealTimeAggregates,
-    userNegativeEngagementAuthorUserState72HourRealTimeAggregates,
-    authorEngagementRealTimeAggregatesProd,
-    topicEngagementRealTimeAggregatesProd,
-    topicEngagement24HourRealTimeAggregatesProd,
-    tweetEngagementUserStateRealTimeAggregatesProd,
-    tweetNegativeEngagementUserStateRealTimeAggregates,
-    userProfileEngagementRealTimeAggregates,
-    newUserAuthorEngagementRealTimeAggregatesProd,
-    userAuthorEngagementRealTimeAggregatesProd,
-    listEngagementRealTimeAggregatesProd,
-    tweetCountryRealTimeAggregates,
-    tweetShareEngagementsRealTimeAggregates,
-    userShareEngagementsRealTimeAggregates,
-    userAuthorShareEngagementsRealTimeAggregates,
-    topicShareEngagementsRealTimeAggregates,
-    authorShareEngagementsRealTimeAggregates,
-    tweetBookmarkEngagementsRealTimeAggregates,
-    userBookmarkEngagementsRealTimeAggregates,
-    userAuthorBookmarkEngagementsRealTimeAggregates,
-    authorBookmarkEngagementsRealTimeAggregates,
-    topicCountryRealTimeAggregates,
-    tweetCountryPrivateEngagementsRealTimeAggregates,
-    userBCEDwellEngagementsRealTimeAggregates,
-    tweetBCEDwellEngagementsRealTimeAggregates,
-    authorContentPreferenceRealTimeAggregates,
-    authorVerifiedNegativeEngagementRealTimeAggregatesProd,
-    tweetVerifiedDontLikeEngagementRealTimeAggregatesProd,
-    tweetVerifiedNegativeEngagementCounts,
-    tweetVerifiedNegativeEngagementUserStateRealTimeAggregates,
-    tweetCountryVerifiedNegativeEngagementsRealTimeAggregates
+  v-vaw p-pwodaggwegategwoups = s-set(
+    tweetengagement30minutecountspwod, ^^;;
+    t-tweetengagementtotawcountspwod, XD
+    tweetnegativeengagement6houwcounts, (ˆ ﻌ ˆ)♡
+    t-tweetnegativeengagementtotawcounts, (˘ω˘)
+    u-usewengagementweawtimeaggwegatespwod, σωσ
+    u-usewengagement48houwweawtimeaggwegatespwod, 😳😳😳
+    u-usewnegativeengagementauthowusewstateweawtimeaggwegates, ^•ﻌ•^
+    usewnegativeengagementauthowusewstate72houwweawtimeaggwegates, σωσ
+    authowengagementweawtimeaggwegatespwod, (///ˬ///✿)
+    t-topicengagementweawtimeaggwegatespwod, XD
+    t-topicengagement24houwweawtimeaggwegatespwod, >_<
+    tweetengagementusewstateweawtimeaggwegatespwod, òωó
+    tweetnegativeengagementusewstateweawtimeaggwegates, (U ᵕ U❁)
+    usewpwofiweengagementweawtimeaggwegates, (˘ω˘)
+    nyewusewauthowengagementweawtimeaggwegatespwod, 🥺
+    u-usewauthowengagementweawtimeaggwegatespwod, (✿oωo)
+    w-wistengagementweawtimeaggwegatespwod, (˘ω˘)
+    tweetcountwyweawtimeaggwegates, (ꈍᴗꈍ)
+    t-tweetshaweengagementsweawtimeaggwegates,
+    usewshaweengagementsweawtimeaggwegates, ( ͡o ω ͡o )
+    usewauthowshaweengagementsweawtimeaggwegates, (U ᵕ U❁)
+    topicshaweengagementsweawtimeaggwegates, ʘwʘ
+    authowshaweengagementsweawtimeaggwegates, (ˆ ﻌ ˆ)♡
+    t-tweetbookmawkengagementsweawtimeaggwegates, /(^•ω•^)
+    u-usewbookmawkengagementsweawtimeaggwegates, (ˆ ﻌ ˆ)♡
+    u-usewauthowbookmawkengagementsweawtimeaggwegates, (✿oωo)
+    authowbookmawkengagementsweawtimeaggwegates, ^•ﻌ•^
+    t-topiccountwyweawtimeaggwegates, (ˆ ﻌ ˆ)♡
+    t-tweetcountwypwivateengagementsweawtimeaggwegates, XD
+    usewbcedwewwengagementsweawtimeaggwegates, :3
+    tweetbcedwewwengagementsweawtimeaggwegates, -.-
+    a-authowcontentpwefewenceweawtimeaggwegates, ^^;;
+    a-authowvewifiednegativeengagementweawtimeaggwegatespwod,
+    t-tweetvewifieddontwikeengagementweawtimeaggwegatespwod, OwO
+    t-tweetvewifiednegativeengagementcounts, ^^;;
+    t-tweetvewifiednegativeengagementusewstateweawtimeaggwegates, 🥺
+    t-tweetcountwyvewifiednegativeengagementsweawtimeaggwegates
   ).map(
-    addFeatureFilterFromResource(
+    addfeatuwefiwtewfwomwesouwce(
       _,
-      "com/twitter/timelines/prediction/common/aggregates/real_time/aggregates_to_drop.txt"))
+      "com/twittew/timewines/pwediction/common/aggwegates/weaw_time/aggwegates_to_dwop.txt"))
 
-  val StagingAggregateGroups = ProdAggregateGroups.map(createStagingGroup)
-
-  /**
-   * Contains the fully typed aggregate groups from which important
-   * values can be derived e.g. the features to be computed, halflives etc.
-   */
-  override val ProdAggregates = ProdAggregateGroups.flatMap(_.buildTypedAggregateGroups())
-
-  override val StagingAggregates = StagingAggregateGroups.flatMap(_.buildTypedAggregateGroups())
-
-
-  override val ProdCommonAggregates = ProdAggregates
-    .filter(_.keysToAggregate == Set(SharedFeatures.USER_ID))
+  vaw stagingaggwegategwoups = pwodaggwegategwoups.map(cweatestaginggwoup)
 
   /**
-   * This defines the set of selected features from a candidate
-   * that we'd like to send to the served features cache by TLM.
-   * These should include  interesting and necessary features that
-   * cannot be extracted from LogEvents only by the real-time aggregates
-   * job. If you are adding new AggregateGroups requiring TLM-side
-   * candidate features, make sure to add them here.
+   * contains the fuwwy typed aggwegate g-gwoups fwom which impowtant
+   * v-vawues can be d-dewived e.g. ^^ the featuwes to be computed, o.O hawfwives etc. ( ͡o ω ͡o )
    */
-  val candidateFeaturesToCache: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.SOURCE_AUTHOR_ID,
-    RecapFeatures.HASHTAGS,
-    RecapFeatures.MENTIONED_SCREEN_NAMES,
-    RecapFeatures.URL_DOMAINS
+  o-ovewwide vaw p-pwodaggwegates = pwodaggwegategwoups.fwatmap(_.buiwdtypedaggwegategwoups())
+
+  ovewwide v-vaw stagingaggwegates = stagingaggwegategwoups.fwatmap(_.buiwdtypedaggwegategwoups())
+
+
+  o-ovewwide vaw pwodcommonaggwegates = pwodaggwegates
+    .fiwtew(_.keystoaggwegate == set(shawedfeatuwes.usew_id))
+
+  /**
+   * this defines the s-set of sewected featuwes fwom a candidate
+   * that we'd wike to send to the sewved f-featuwes cache b-by twm. nyaa~~
+   * t-these shouwd incwude  i-intewesting and nyecessawy featuwes that
+   * c-cannot be extwacted fwom wogevents o-onwy by the weaw-time aggwegates
+   * job. (///ˬ///✿) i-if you awe adding n-nyew aggwegategwoups w-wequiwing twm-side
+   * candidate featuwes, (ˆ ﻌ ˆ)♡ m-make suwe to add them hewe. XD
+   */
+  vaw candidatefeatuwestocache: set[featuwe[_]] = set(
+    timewinesshawedfeatuwes.souwce_authow_id, >_<
+    wecapfeatuwes.hashtags, (U ﹏ U)
+    w-wecapfeatuwes.mentioned_scween_names, òωó
+    w-wecapfeatuwes.uww_domains
   )
 }
 
 /**
- * This config should only be used to access the aggregate features constructed by the
- * aggregation config, and not for implementing an online real-time aggregates job.
+ * this config shouwd onwy be used to access the aggwegate featuwes constwucted b-by the
+ * aggwegation config, >w< and nyot f-fow impwementing a-an onwine weaw-time a-aggwegates j-job. ^•ﻌ•^
  */
-object TimelinesOnlineAggregationFeaturesOnlyConfig
-    extends TimelinesOnlineAggregationDefinitionsTrait {
+object timewinesonwineaggwegationfeatuwesonwyconfig
+    extends timewinesonwineaggwegationdefinitionstwait {
 
-  private[real_time] case class DummyAggregateSource(name: String, timestampFeature: Feature[JLong])
-      extends AggregateSource
+  pwivate[weaw_time] case cwass dummyaggwegatesouwce(name: s-stwing, 🥺 timestampfeatuwe: f-featuwe[jwong])
+      e-extends aggwegatesouwce
 
-  private[real_time] case class DummyAggregateStore(name: String) extends AggregateStore
+  pwivate[weaw_time] c-case cwass dummyaggwegatestowe(name: stwing) extends a-aggwegatestowe
 
-  override lazy val inputSource = DummyAggregateSource(
-    name = "timelines_rta",
-    timestampFeature = SharedFeatures.TIMESTAMP
+  ovewwide w-wazy vaw inputsouwce = dummyaggwegatesouwce(
+    nyame = "timewines_wta",
+    timestampfeatuwe = s-shawedfeatuwes.timestamp
   )
-  override lazy val ProductionStore = DummyAggregateStore("timelines_rta")
-  override lazy val StagingStore = DummyAggregateStore("timelines_rta")
+  o-ovewwide wazy v-vaw pwoductionstowe = d-dummyaggwegatestowe("timewines_wta")
+  ovewwide w-wazy vaw stagingstowe = d-dummyaggwegatestowe("timewines_wta")
 
-  override lazy val AggregatesToCompute = ProdAggregates ++ StagingAggregates
+  ovewwide wazy vaw aggwegatestocompute = pwodaggwegates ++ s-stagingaggwegates
 }

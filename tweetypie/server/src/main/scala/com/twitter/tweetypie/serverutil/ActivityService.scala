@@ -1,25 +1,25 @@
-package com.twitter.tweetypie.serverutil
+package com.twittew.tweetypie.sewvewutiw
 
-import com.twitter.finagle.Service
-import com.twitter.util.Activity
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.sewvice
+i-impowt c-com.twittew.utiw.activity
+i-impowt c-com.twittew.utiw.futuwe
 
 /**
- * Transforms an `Activity` that contains a `Service` into a `Service`.
- * The implementation guarantees that the service is rebuilt only when the
- * activity changes, not on every request.
+ * t-twansfowms an `activity` t-that c-contains a `sewvice` into a `sewvice`. :3
+ * the impwementation guawantees that the s-sewvice is webuiwt onwy when the
+ * activity c-changes, 😳😳😳 nyot on evewy wequest. -.-
  */
-object ActivityService {
+o-object activitysewvice {
 
-  def apply[Req, Rep](activity: Activity[Service[Req, Rep]]): Service[Req, Rep] = {
+  def appwy[weq, ( ͡o ω ͡o ) wep](activity: activity[sewvice[weq, rawr x3 wep]]): sewvice[weq, nyaa~~ w-wep] = {
 
-    val serviceEvent =
-      ActivityUtil.strict(activity).values.map(_.get)
+    vaw sewviceevent =
+      a-activityutiw.stwict(activity).vawues.map(_.get)
 
-    new Service[Req, Rep] {
+    n-nyew sewvice[weq, /(^•ω•^) wep] {
 
-      def apply(req: Req): Future[Rep] =
-        serviceEvent.toFuture.flatMap(_.apply(req))
+      def appwy(weq: weq): futuwe[wep] =
+        sewviceevent.tofutuwe.fwatmap(_.appwy(weq))
     }
   }
 }

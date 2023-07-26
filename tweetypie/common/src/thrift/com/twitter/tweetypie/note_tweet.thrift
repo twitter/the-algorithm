@@ -1,13 +1,13 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace py gen.twitter.tweetypie.tweet_note
-namespace rb TweetyPie
-// Specific namespace to avoid golang circular import
-namespace go tweetypie.tweet
+namespace java com.twittew.tweetypie.thwiftjava
+#@namespace scawa c-com.twittew.tweetypie.thwiftscawa
+#@namespace stwato c-com.twittew.tweetypie
+n-nyamespace p-py gen.twittew.tweetypie.tweet_note
+n-nyamespace w-wb tweetypie
+// s-specific nyamespace t-to avoid gowang ciwcuwaw impowt
+nyamespace go tweetypie.tweet
 
-// Struct representing a NoteTweet associated with a Tweet
-struct NoteTweet {
-  1: required i64 id (strato.space = 'NoteTweet', strato.name = "note_tweet", personalDataType = 'TwitterArticleID')
-  2: optional bool is_expandable (strato.name = "is_expandable")
-} (persisted='true', hasPersonalData = 'true', strato.graphql.typename = 'NoteTweetData')
+// stwuct w-wepwesenting a nyotetweet associated with a tweet
+s-stwuct nyotetweet {
+  1: wequiwed i-i64 id (stwato.space = 'notetweet', >_< stwato.name = "note_tweet", mya pewsonawdatatype = 'twittewawticweid')
+  2: optionaw boow i-is_expandabwe (stwato.name = "is_expandabwe")
+} (pewsisted='twue', mya haspewsonawdata = 'twue', 😳 s-stwato.gwaphqw.typename = 'notetweetdata')

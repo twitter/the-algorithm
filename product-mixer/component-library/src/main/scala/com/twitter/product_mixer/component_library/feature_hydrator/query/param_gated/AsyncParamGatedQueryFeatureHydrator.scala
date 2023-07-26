@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.param_gated
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.pawam_gated
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.asynchydwatow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.pawam
 
 /**
- * A [[QueryFeatureHydrator]] with [[Conditionally]] based on a [[Param]] that hydrates asynchronously for features
- * to be before the step identified in [[hydrateBefore]]
+ * a-a [[quewyfeatuwehydwatow]] with [[conditionawwy]] b-based on a [[pawam]] that hydwates asynchwonouswy f-fow featuwes
+ * to be befowe the s-step identified i-in [[hydwatebefowe]]
  *
- * @param enabledParam the param to turn this [[QueryFeatureHydrator]] on and off
- * @param hydrateBefore the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
- * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
- * @tparam Result The type of the candidates
+ * @pawam enabwedpawam the pawam to tuwn this [[quewyfeatuwehydwatow]] on and off
+ * @pawam h-hydwatebefowe the [[pipewinestepidentifiew]] step to make suwe this featuwe is hydwated befowe. 😳
+ * @pawam quewyfeatuwehydwatow t-the undewwying [[quewyfeatuwehydwatow]] to wun w-when `enabwedpawam` i-is twue
+ * @tpawam q-quewy t-the domain modew fow the quewy ow wequest
+ * @tpawam w-wesuwt the type of the candidates
  */
-case class AsyncParamGatedQueryFeatureHydrator[
-  -Query <: PipelineQuery,
-  Result <: UniversalNoun[Any]
+case c-cwass asyncpawamgatedquewyfeatuwehydwatow[
+  -quewy <: pipewinequewy, -.-
+  wesuwt <: univewsawnoun[any]
 ](
-  enabledParam: Param[Boolean],
-  override val hydrateBefore: PipelineStepIdentifier,
-  queryFeatureHydrator: QueryFeatureHydrator[Query])
-    extends QueryFeatureHydrator[Query]
-    with Conditionally[Query]
-    with AsyncHydrator {
+  enabwedpawam: pawam[boowean], 🥺
+  o-ovewwide vaw hydwatebefowe: p-pipewinestepidentifiew, o.O
+  q-quewyfeatuwehydwatow: q-quewyfeatuwehydwatow[quewy])
+    extends quewyfeatuwehydwatow[quewy]
+    with conditionawwy[quewy]
+    with a-asynchydwatow {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "AsyncParamGated" + queryFeatureHydrator.identifier.name)
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew = f-featuwehydwatowidentifiew(
+    "asyncpawamgated" + q-quewyfeatuwehydwatow.identifiew.name)
 
-  override val alerts: Seq[Alert] = queryFeatureHydrator.alerts
+  ovewwide vaw a-awewts: seq[awewt] = quewyfeatuwehydwatow.awewts
 
-  override val features: Set[Feature[_, _]] = queryFeatureHydrator.features
+  o-ovewwide vaw featuwes: set[featuwe[_, /(^•ω•^) _]] = quewyfeatuwehydwatow.featuwes
 
-  override def onlyIf(query: Query): Boolean =
-    Conditionally.and(query, queryFeatureHydrator, query.params(enabledParam))
+  o-ovewwide def onwyif(quewy: quewy): b-boowean =
+    conditionawwy.and(quewy, nyaa~~ q-quewyfeatuwehydwatow, nyaa~~ q-quewy.pawams(enabwedpawam))
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = queryFeatureHydrator.hydrate(query)
+  ovewwide def hydwate(quewy: quewy): stitch[featuwemap] = quewyfeatuwehydwatow.hydwate(quewy)
 }

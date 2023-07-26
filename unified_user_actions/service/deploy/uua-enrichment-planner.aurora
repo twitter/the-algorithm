@@ -1,156 +1,156 @@
-import os
-import itertools
-import subprocess
-import math
+impowt os
+impowt itewtoows
+impowt s-subpwocess
+impowt m-math
 
-SERVICE_NAME = 'uua-enrichment-planner'
+sewvice_name = 'uua-enwichment-pwannew'
 
-CPU_NUM = 3
-HEAP_SIZE = 3 * GB
-RAM_SIZE = HEAP_SIZE + 1 * GB
-DISK_SIZE = HEAP_SIZE + 2 * GB
+c-cpu_num = 3
+heap_size = 3 * g-gb
+w-wam_size = heap_size + 1 * g-gb
+disk_size = h-heap_size + 2 * g-gb
 
-class Profile(Struct):
-  package = Default(String, SERVICE_NAME)
-  cmdline_flags = Default(String, '')
-  log_level = Default(String, 'INFO')
-  instances = Default(Integer, 50)
-  kafka_bootstrap_servers = Default(String, '/s/kafka/bluebird-1:kafka-tls')
-  kafka_output_server = Default(String, '/s/kafka/bluebird-1:kafka-tls')
-  decider_overlay = Default(String, '')
+cwass pwofiwe(stwuct):
+  package = defauwt(stwing, (⑅˘꒳˘) sewvice_name)
+  c-cmdwine_fwags = defauwt(stwing, OwO '')
+  wog_wevew = d-defauwt(stwing, (ꈍᴗꈍ) 'info')
+  instances = d-defauwt(integew, 😳 50)
+  kafka_bootstwap_sewvews = defauwt(stwing, 😳😳😳 '/s/kafka/bwuebiwd-1:kafka-tws')
+  kafka_output_sewvew = d-defauwt(stwing, mya '/s/kafka/bwuebiwd-1:kafka-tws')
+  decidew_ovewway = d-defauwt(stwing, mya '')
 
-resources = Resources(
-  cpu = CPU_NUM,
-  ram = RAM_SIZE,
-  disk = DISK_SIZE
+w-wesouwces = wesouwces(
+  cpu = cpu_num, (⑅˘꒳˘)
+  wam = wam_size, (U ﹏ U)
+  disk = d-disk_size
 )
 
-install = Packer.install(
-  name = '{{profile.package}}',
-  version = Workflows.package_version(default_version='live')
+instaww = packew.instaww(
+  nyame = '{{pwofiwe.package}}', mya
+  vewsion = wowkfwows.package_vewsion(defauwt_vewsion='wive')
 )
 
-async_profiler_install = Packer.install(
-  name = 'async-profiler',
-  role = 'csl-perf',
-  version = 'latest'
+a-async_pwofiwew_instaww = packew.instaww(
+  n-nyame = 'async-pwofiwew', ʘwʘ
+  w-wowe = 'csw-pewf', (˘ω˘)
+  v-vewsion = 'watest'
 )
 
-setup_jaas_config = Process(
-    name           = 'setup_jaas_config',
-    cmdline        = '''
-    mkdir -p jaas_config
-    echo "KafkaClient {
-      com.sun.security.auth.module.Krb5LoginModule required
-      principal=\\"discode@TWITTER.BIZ\\"
-      useKeyTab=true
-      storeKey=true
-      keyTab=\\"/var/lib/tss/keys/fluffy/keytabs/client/discode.keytab\\"
-      doNotPrompt=true;
+s-setup_jaas_config = pwocess(
+    nyame           = 'setup_jaas_config', (U ﹏ U)
+    cmdwine        = '''
+    m-mkdiw -p jaas_config
+    echo "kafkacwient {
+      com.sun.secuwity.auth.moduwe.kwb5woginmoduwe w-wequiwed
+      pwincipaw=\\"discode@twittew.biz\\"
+      usekeytab=twue
+      stowekey=twue
+      keytab=\\"/vaw/wib/tss/keys/fwoofy/keytabs/cwient/discode.keytab\\"
+      donotpwompt=twue;
   };" >> jaas_config/jaas.conf
   '''
 )
 
-main = JVMProcess(
-  name = SERVICE_NAME,
-  jvm = Java11(
-   heap                     = HEAP_SIZE,
-   extra_jvm_flags =
-      '-Djava.net.preferIPv4Stack=true'
+m-main = jvmpwocess(
+  nyame = s-sewvice_name, ^•ﻌ•^
+  j-jvm = java11(
+   h-heap                     = heap_size, (˘ω˘)
+   extwa_jvm_fwags =
+      '-djava.net.pwefewipv4stack=twue'
 
-      ' -XX:+UseNUMA'
-      ' -XX:+AggressiveOpts'
-      ' -XX:+PerfDisableSharedMem'
+      ' -xx:+usenuma'
+      ' -xx:+aggwessiveopts'
+      ' -xx:+pewfdisabweshawedmem'
 
-      ' -Dlog_level={{profile.log_level}}'
-      ' -Dlog.access.output=access.log'
-      ' -Dlog.service.output={{name}}.log'
-      ' -Djava.security.auth.login.config=jaas_config/jaas.conf'
-  ),
-  arguments =
-    '-jar {{name}}-bin.jar'
-    ' -admin.port=:{{thermos.ports[health]}}'
-    ' -kafka.bootstrap.servers={{profile.kafka_bootstrap_servers}}'
-    ' -kafka.output.server={{profile.kafka_output_server}}'
-    ' -kafka.application.id=uua-enrichment-planner'
-    ' -com.twitter.finatra.kafkastreams.config.principal={{role}}'
-    ' -decider.base=decider.yml'
-    ' -decider.overlay={{profile.decider_overlay}}'
-    ' {{profile.cmdline_flags}}',
-  resources = resources
+      ' -dwog_wevew={{pwofiwe.wog_wevew}}'
+      ' -dwog.access.output=access.wog'
+      ' -dwog.sewvice.output={{name}}.wog'
+      ' -djava.secuwity.auth.wogin.config=jaas_config/jaas.conf'
+  ), :3
+  awguments =
+    '-jaw {{name}}-bin.jaw'
+    ' -admin.powt=:{{thewmos.powts[heawth]}}'
+    ' -kafka.bootstwap.sewvews={{pwofiwe.kafka_bootstwap_sewvews}}'
+    ' -kafka.output.sewvew={{pwofiwe.kafka_output_sewvew}}'
+    ' -kafka.appwication.id=uua-enwichment-pwannew'
+    ' -com.twittew.finatwa.kafkastweams.config.pwincipaw={{wowe}}'
+    ' -decidew.base=decidew.ymw'
+    ' -decidew.ovewway={{pwofiwe.decidew_ovewway}}'
+    ' {{pwofiwe.cmdwine_fwags}}', ^^;;
+  wesouwces = w-wesouwces
 )
 
-stats = Stats(
-  library = 'metrics',
-  port = 'admin'
+s-stats = stats(
+  wibwawy = 'metwics', 🥺
+  p-powt = 'admin'
 )
 
-job_template = Service(
-  name = SERVICE_NAME,
-  role = 'discode',
-  instances = '{{profile.instances}}',
-  contact = 'disco-data-eng@twitter.com',
-  constraints = {'rack': 'limit:1', 'host': 'limit:1'},
-  announce = Announcer(
-    primary_port = 'health',
-    portmap = {'aurora': 'health', 'admin': 'health'}
+job_tempwate = s-sewvice(
+  nyame = s-sewvice_name, (⑅˘꒳˘)
+  wowe = 'discode', nyaa~~
+  i-instances = '{{pwofiwe.instances}}', :3
+  contact = 'disco-data-eng@twittew.com', ( ͡o ω ͡o )
+  constwaints = {'wack': 'wimit:1', mya 'host': 'wimit:1'}, (///ˬ///✿)
+  a-announce = announcew(
+    p-pwimawy_powt = 'heawth', (˘ω˘)
+    powtmap = {'auwowa': 'heawth', ^^;; 'admin': 'heawth'}
   ),
-  task = Task(
-    resources = resources,
-    name = SERVICE_NAME,
-    processes = [async_profiler_install, install, setup_jaas_config, main, stats],
-    constraints = order(async_profiler_install, install, setup_jaas_config, main)
-  ),
-  health_check_config         = HealthCheckConfig(
-    initial_interval_secs     = 100,
-    interval_secs             = 60,
-    timeout_secs              = 60,
-    max_consecutive_failures  = 4
-  ),
-  update_config               = UpdateConfig(
-    batch_size                = 50,
-    watch_secs                = 90,
-    max_per_shard_failures    = 3,
-    max_total_failures        = 0,
-    rollback_on_failure       = False
+  t-task = t-task(
+    wesouwces = wesouwces, (✿oωo)
+    nyame = sewvice_name, (U ﹏ U)
+    pwocesses = [async_pwofiwew_instaww, -.- instaww, setup_jaas_config, ^•ﻌ•^ m-main, rawr stats],
+    c-constwaints = owdew(async_pwofiwew_instaww, (˘ω˘) i-instaww, nyaa~~ setup_jaas_config, UwU main)
+  ), :3
+  h-heawth_check_config         = h-heawthcheckconfig(
+    initiaw_intewvaw_secs     = 100, (⑅˘꒳˘)
+    intewvaw_secs             = 60, (///ˬ///✿)
+    timeout_secs              = 60, ^^;;
+    m-max_consecutive_faiwuwes  = 4
+  ), >_<
+  update_config               = updateconfig(
+    batch_size                = 50, rawr x3
+    watch_secs                = 90, /(^•ω•^)
+    m-max_pew_shawd_faiwuwes    = 3,
+    max_totaw_faiwuwes        = 0, :3
+    w-wowwback_on_faiwuwe       = f-fawse
   )
 )
 
-PRODUCTION = Profile(
-  # go/uua-decider
-  decider_overlay = '/usr/local/config/overlays/discode-default/UnifiedUserActions/prod/{{cluster}}/decider_overlay.yml'
+p-pwoduction = pwofiwe(
+  # g-go/uua-decidew
+  d-decidew_ovewway = '/usw/wocaw/config/ovewways/discode-defauwt/unifiedusewactions/pwod/{{cwustew}}/decidew_ovewway.ymw'
 )
 
-STAGING = Profile(
-  package = SERVICE_NAME+'-staging',
-  cmdline_flags = '',
-  kafka_output_server = '/s/kafka/custdevel:kafka-tls',
-  decider_overlay = '/usr/local/config/overlays/discode-default/UnifiedUserActions/staging/{{cluster}}/decider_overlay.yml' # go/uua-decider
+staging = p-pwofiwe(
+  p-package = sewvice_name+'-staging', (ꈍᴗꈍ)
+  cmdwine_fwags = '', /(^•ω•^)
+  kafka_output_sewvew = '/s/kafka/custdevew:kafka-tws', (⑅˘꒳˘)
+  decidew_ovewway = '/usw/wocaw/config/ovewways/discode-defauwt/unifiedusewactions/staging/{{cwustew}}/decidew_ovewway.ymw' # g-go/uua-decidew
 )
 
-DEVEL = STAGING(
-  log_level = 'DEBUG',
-  instances = 2,
-  kafka_output_server = '/s/kafka/custdevel:kafka-tls',
-  decider_overlay = '/usr/local/config/overlays/discode-default/UnifiedUserActions/staging/{{cluster}}/decider_overlay.yml' # go/uua-decider
+d-devew = staging(
+  w-wog_wevew = 'debug', ( ͡o ω ͡o )
+  instances = 2, òωó
+  k-kafka_output_sewvew = '/s/kafka/custdevew:kafka-tws', (⑅˘꒳˘)
+  d-decidew_ovewway = '/usw/wocaw/config/ovewways/discode-defauwt/unifiedusewactions/staging/{{cwustew}}/decidew_ovewway.ymw' # go/uua-decidew
 )
 
 
-prod_job = job_template(
-  tier = 'preferred',
-  environment = 'prod',
-).bind(profile = PRODUCTION)
+pwod_job = job_tempwate(
+  t-tiew = 'pwefewwed', XD
+  enviwonment = 'pwod', -.-
+).bind(pwofiwe = pwoduction)
 
-staging_job = job_template(
-  environment = 'staging'
-).bind(profile = STAGING)
+staging_job = job_tempwate(
+  enviwonment = 'staging'
+).bind(pwofiwe = staging)
 
-devel_job = job_template(
-  environment = 'devel'
-).bind(profile = DEVEL)
+devew_job = j-job_tempwate(
+  enviwonment = 'devew'
+).bind(pwofiwe = devew)
 
 jobs = []
-for cluster in ['atla', 'pdxa']:
-  jobs.append(prod_job(cluster = cluster))
-  jobs.append(staging_job(cluster = cluster))
-  jobs.append(devel_job(cluster = cluster))
+fow cwustew in ['atwa', :3 'pdxa']:
+  j-jobs.append(pwod_job(cwustew = c-cwustew))
+  j-jobs.append(staging_job(cwustew = cwustew))
+  jobs.append(devew_job(cwustew = c-cwustew))

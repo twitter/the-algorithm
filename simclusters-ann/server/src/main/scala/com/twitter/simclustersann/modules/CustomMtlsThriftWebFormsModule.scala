@@ -1,98 +1,98 @@
-package com.twitter.simclustersann.modules
+package com.twittew.simcwustewsann.moduwes
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.thriftwebforms.MethodOptions
-import com.twitter.thriftwebforms.view.ServiceResponseView
-import com.twitter.util.Future
-import com.twitter.simclustersann.thriftscala.SimClustersANNTweetCandidate
-import com.twitter.simclustersann.thriftscala.Query
-import com.twitter.simclustersann.thriftscala.SimClustersANNConfig
-import com.twitter.simclustersann.thriftscala.ScoringAlgorithm
-import com.twitter.thriftwebforms.MethodOptions.Access
-import scala.reflect.ClassTag
-import com.twitter.simclustersann.thriftscala.SimClustersANNService
-import scala.collection.mutable
+impowt c-com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwsthwiftwebfowmsmoduwe
+i-impowt com.twittew.finatwa.thwift.thwiftsewvew
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+i-impowt com.twittew.thwiftwebfowms.methodoptions
+impowt com.twittew.thwiftwebfowms.view.sewvicewesponseview
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.simcwustewsann.thwiftscawa.simcwustewsanntweetcandidate
+impowt com.twittew.simcwustewsann.thwiftscawa.quewy
+impowt com.twittew.simcwustewsann.thwiftscawa.simcwustewsannconfig
+i-impowt com.twittew.simcwustewsann.thwiftscawa.scowingawgowithm
+impowt com.twittew.thwiftwebfowms.methodoptions.access
+i-impowt scawa.wefwect.cwasstag
+impowt com.twittew.simcwustewsann.thwiftscawa.simcwustewsannsewvice
+i-impowt scawa.cowwection.mutabwe
 
-class CustomMtlsThriftWebFormsModule[T: ClassTag](server: ThriftServer)
-    extends MtlsThriftWebFormsModule[T](server: ThriftServer) {
+cwass c-custommtwsthwiftwebfowmsmoduwe[t: c-cwasstag](sewvew: thwiftsewvew)
+    extends mtwsthwiftwebfowmsmoduwe[t](sewvew: thwiftsewvew) {
 
-  private val Nbsp = "&nbsp;"
-  private val LdapGroups = Seq("recosplat-sensitive-data-medium", "simclusters-ann-admins")
+  p-pwivate vaw nybsp = "&nbsp;"
+  pwivate vaw wdapgwoups = seq("wecospwat-sensitive-data-medium", (///ˬ///✿) "simcwustews-ann-admins")
 
-  override protected def methodOptions: Map[String, MethodOptions] = {
-    val tweetId = 1568796529690902529L
-    val sannDefaultQuery = SimClustersANNService.GetTweetCandidates.Args(
-      query = Query(
-        sourceEmbeddingId = SimClustersEmbeddingId(
-          embeddingType = EmbeddingType.LogFavLongestL2EmbeddingTweet,
-          modelVersion = ModelVersion.Model20m145k2020,
-          internalId = InternalId.TweetId(tweetId)
-        ),
-        config = SimClustersANNConfig(
-          maxNumResults = 10,
-          minScore = 0.0,
-          candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-          maxTopTweetsPerCluster = 400,
-          maxScanClusters = 50,
-          maxTweetCandidateAgeHours = 24,
-          minTweetCandidateAgeHours = 0,
-          annAlgorithm = ScoringAlgorithm.CosineSimilarity
+  o-ovewwide pwotected def methodoptions: m-map[stwing, 😳 m-methodoptions] = {
+    vaw t-tweetid = 1568796529690902529w
+    v-vaw sanndefauwtquewy = simcwustewsannsewvice.gettweetcandidates.awgs(
+      quewy = quewy(
+        s-souwceembeddingid = simcwustewsembeddingid(
+          embeddingtype = embeddingtype.wogfavwongestw2embeddingtweet, 😳
+          modewvewsion = m-modewvewsion.modew20m145k2020,
+          intewnawid = intewnawid.tweetid(tweetid)
+        ), σωσ
+        config = simcwustewsannconfig(
+          maxnumwesuwts = 10, rawr x3
+          m-minscowe = 0.0, OwO
+          candidateembeddingtype = e-embeddingtype.wogfavbasedtweet, /(^•ω•^)
+          m-maxtoptweetspewcwustew = 400, 😳😳😳
+          m-maxscancwustews = 50,
+          maxtweetcandidateagehouws = 24, ( ͡o ω ͡o )
+          mintweetcandidateagehouws = 0, >_<
+          annawgowithm = s-scowingawgowithm.cosinesimiwawity
         )
       ))
 
-    Seq("getTweetCandidates")
+    s-seq("gettweetcandidates")
       .map(
-        _ -> MethodOptions(
-          defaultRequestValue = Some(sannDefaultQuery),
-          responseRenderers = Seq(renderTimeline),
-          allowedAccessOverride = Some(Access.ByLdapGroup(LdapGroups))
-        )).toMap
+        _ -> methodoptions(
+          d-defauwtwequestvawue = s-some(sanndefauwtquewy), >w<
+          wesponsewendewews = s-seq(wendewtimewine), rawr
+          awwowedaccessovewwide = s-some(access.bywdapgwoup(wdapgwoups))
+        )).tomap
   }
 
-  val FullAccessLdapGroups: Seq[String] =
-    Seq(
-      "recosplat-sensitive-data-medium",
-      "simclusters-ann-admins",
-      "recos-platform-admins"
+  vaw fuwwaccesswdapgwoups: s-seq[stwing] =
+    seq(
+      "wecospwat-sensitive-data-medium", 😳
+      "simcwustews-ann-admins", >w<
+      "wecos-pwatfowm-admins"
     )
 
-  override protected def defaultMethodAccess: MethodOptions.Access = {
-    MethodOptions.Access.ByLdapGroup(FullAccessLdapGroups)
+  ovewwide p-pwotected def defauwtmethodaccess: m-methodoptions.access = {
+    m-methodoptions.access.bywdapgwoup(fuwwaccesswdapgwoups)
   }
 
-  def renderTimeline(r: AnyRef): Future[ServiceResponseView] = {
-    val simClustersANNTweetCandidates = r match {
-      case response: Iterable[_] =>
-        response.map(x => x.asInstanceOf[SimClustersANNTweetCandidate]).toSeq
-      case _ => Seq()
+  def wendewtimewine(w: anywef): futuwe[sewvicewesponseview] = {
+    vaw simcwustewsanntweetcandidates = w match {
+      case w-wesponse: itewabwe[_] =>
+        w-wesponse.map(x => x.asinstanceof[simcwustewsanntweetcandidate]).toseq
+      case _ => s-seq()
     }
-    renderTweets(simClustersANNTweetCandidates)
+    w-wendewtweets(simcwustewsanntweetcandidates)
   }
 
-  private def renderTweets(
-    simClustersANNTweetCandidates: Seq[SimClustersANNTweetCandidate]
-  ): Future[ServiceResponseView] = {
-    val htmlSb = new mutable.StringBuilder()
-    val headerHtml = s"""<h3>Tweet Candidates</h3>"""
-    val tweetsHtml = simClustersANNTweetCandidates.map { simClustersANNTweetCandidate =>
-      val tweetId = simClustersANNTweetCandidate.tweetId
-      val score = simClustersANNTweetCandidate.score
-      s"""<blockquote class="twitter-tweet"><a href="https://twitter.com/tweet/statuses/$tweetId"></a></blockquote> <b>score:</b> $score <br><br>"""
-    }.mkString
+  p-pwivate def wendewtweets(
+    simcwustewsanntweetcandidates: seq[simcwustewsanntweetcandidate]
+  ): f-futuwe[sewvicewesponseview] = {
+    vaw htmwsb = nyew mutabwe.stwingbuiwdew()
+    vaw headewhtmw = s"""<h3>tweet c-candidates</h3>"""
+    vaw tweetshtmw = s-simcwustewsanntweetcandidates.map { s-simcwustewsanntweetcandidate =>
+      v-vaw tweetid = simcwustewsanntweetcandidate.tweetid
+      v-vaw s-scowe = simcwustewsanntweetcandidate.scowe
+      s-s"""<bwockquote c-cwass="twittew-tweet"><a hwef="https://twittew.com/tweet/statuses/$tweetid"></a></bwockquote> <b>scowe:</b> $scowe <bw><bw>"""
+    }.mkstwing
 
-    htmlSb ++= headerHtml
-    htmlSb ++= Nbsp
-    htmlSb ++= tweetsHtml
-    Future.value(
-      ServiceResponseView(
-        "SimClusters ANN Tweet Candidates",
-        htmlSb.toString(),
-        Seq("//platform.twitter.com/widgets.js")
+    htmwsb ++= headewhtmw
+    h-htmwsb ++= n-nybsp
+    h-htmwsb ++= tweetshtmw
+    f-futuwe.vawue(
+      s-sewvicewesponseview(
+        "simcwustews ann tweet candidates",
+        htmwsb.tostwing(), (⑅˘꒳˘)
+        s-seq("//pwatfowm.twittew.com/widgets.js")
       )
     )
   }

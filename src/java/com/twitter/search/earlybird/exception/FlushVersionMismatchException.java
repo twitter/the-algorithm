@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-public class FlushVersionMismatchException extends IOException {
-  public FlushVersionMismatchException(Throwable cause) {
-    super(cause);
+p-pubwic c-cwass fwushvewsionmismatchexception e-extends i-ioexception {
+  p-pubwic fwushvewsionmismatchexception(thwowabwe cause) {
+    s-supew(cause);
   }
 
-  public FlushVersionMismatchException(String message) {
-    super(message);
+  p-pubwic fwushvewsionmismatchexception(stwing m-message) {
+    supew(message);
   }
 
-  public FlushVersionMismatchException(String message, Throwable cause) {
-    super(message, cause);
+  pubwic fwushvewsionmismatchexception(stwing message, σωσ thwowabwe cause) {
+    supew(message, σωσ c-cause);
   }
 }

@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait IncludeInstruction[-Query <: PipelineQuery] { self =>
-  def apply(query: Query, entries: Seq[TimelineEntry]): Boolean
+t-twait incwudeinstwuction[-quewy <: p-pipewinequewy] { s-sewf =>
+  def a-appwy(quewy: quewy, (⑅˘꒳˘) e-entwies: seq[timewineentwy]): boowean
 
-  def inverse(): IncludeInstruction[Query] = new IncludeInstruction[Query] {
-    def apply(query: Query, entries: Seq[TimelineEntry]): Boolean = !self.apply(query, entries)
+  def invewse(): incwudeinstwuction[quewy] = nyew incwudeinstwuction[quewy] {
+    def appwy(quewy: q-quewy, (///ˬ///✿) entwies: seq[timewineentwy]): boowean = !sewf.appwy(quewy, 😳😳😳 e-entwies)
   }
 }
 
-object AlwaysInclude extends IncludeInstruction[PipelineQuery] {
-  override def apply(query: PipelineQuery, entries: Seq[TimelineEntry]): Boolean = true
+object awwaysincwude e-extends incwudeinstwuction[pipewinequewy] {
+  ovewwide def appwy(quewy: pipewinequewy, 🥺 entwies: s-seq[timewineentwy]): boowean = t-twue
 }
 
-object IncludeOnFirstPage extends IncludeInstruction[PipelineQuery with HasPipelineCursor[_]] {
-  override def apply(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
-  ): Boolean = query.isFirstPage
+object i-incwudeonfiwstpage extends incwudeinstwuction[pipewinequewy with haspipewinecuwsow[_]] {
+  ovewwide def appwy(
+    q-quewy: pipewinequewy with haspipewinecuwsow[_], mya
+    entwies: seq[timewineentwy]
+  ): b-boowean = quewy.isfiwstpage
 }
 
-object IncludeAfterFirstPage extends IncludeInstruction[PipelineQuery with HasPipelineCursor[_]] {
-  override def apply(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
-  ): Boolean = !query.isFirstPage
+o-object i-incwudeaftewfiwstpage e-extends i-incwudeinstwuction[pipewinequewy with haspipewinecuwsow[_]] {
+  ovewwide def appwy(
+    q-quewy: pipewinequewy with haspipewinecuwsow[_], 🥺
+    e-entwies: seq[timewineentwy]
+  ): boowean = !quewy.isfiwstpage
 }

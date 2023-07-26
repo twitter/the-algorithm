@@ -1,96 +1,96 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.SupportsConditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-
-/**
- * Hydrate features for a specific candidate
- * e.g. if the candidate is a Tweet then a feature could be whether it's is marked as sensitive
- *
- * @note if you want to conditionally run a [[BaseCandidateFeatureHydrator]] you can use the mixin [[com.twitter.product_mixer.core.model.common.Conditionally]]
- *       or to gate on a [[com.twitter.timelines.configapi.Param]] you can use
- *       [[com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.ParamGatedCandidateFeatureHydrator]] or
- *       [[com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.ParamGatedBulkCandidateFeatureHydrator]]
- */
-sealed trait BaseCandidateFeatureHydrator[
-  -Query <: PipelineQuery,
-  -Result <: UniversalNoun[Any],
-  FeatureType <: Feature[_, _]]
-    extends FeatureHydrator[FeatureType]
-    with SupportsConditionally[Query]
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.suppowtsconditionawwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
 /**
- * A candidate feature hydrator that provides an implementation for hydrating a single candidate
- * at the time. Product Mixer core takes care of hydrating all your candidates for you by
- * calling this for each candidate. This is useful for Stitch-powered downstream APIs (such
- * as Strato, Gizmoduck, etc) where the API takes a single candidate/key and Stitch handles
- * batching for you.
+ * hydwate featuwes fow a specific c-candidate
+ * e.g. :3 if the candidate is a t-tweet then a featuwe couwd be whethew i-it's is mawked as sensitive
  *
- * @note Any exceptions that are thrown or returned as [[Stitch.exception]] will be added to the
- *       [[FeatureMap]] for *all* [[Feature]]s intended to be hydrated.
- *       Accessing a failed Feature will throw if using [[FeatureMap.get]] for Features that aren't
- *       [[com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure]]
- *
- * @tparam Query The query type
- * @tparam Result The Candidate type
+ * @note if you want to conditionawwy w-wun a [[basecandidatefeatuwehydwatow]] you can use the m-mixin [[com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy]]
+ *       ow t-to gate on a [[com.twittew.timewines.configapi.pawam]] you can use
+ *       [[com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.pawam_gated.pawamgatedcandidatefeatuwehydwatow]] ow
+ *       [[com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.pawam_gated.pawamgatedbuwkcandidatefeatuwehydwatow]]
  */
-trait CandidateFeatureHydrator[-Query <: PipelineQuery, -Result <: UniversalNoun[Any]]
-    extends BaseCandidateFeatureHydrator[Query, Result, Feature[_, _]] {
+seawed twait b-basecandidatefeatuwehydwatow[
+  -quewy <: pipewinequewy, ( ͡o ω ͡o )
+  -wesuwt <: univewsawnoun[any], σωσ
+  featuwetype <: featuwe[_, >w< _]]
+    extends featuwehydwatow[featuwetype]
+    w-with suppowtsconditionawwy[quewy]
 
-  override val identifier: FeatureHydratorIdentifier
+/**
+ * a candidate f-featuwe hydwatow t-that pwovides an i-impwementation f-fow hydwating a singwe candidate
+ * at the time. 😳😳😳 p-pwoduct mixew cowe takes cawe of hydwating aww y-youw candidates fow you by
+ * cawwing this fow each candidate. OwO this is usefuw fow stitch-powewed d-downstweam apis (such
+ * as stwato, 😳 g-gizmoduck, 😳😳😳 e-etc) whewe the a-api takes a singwe candidate/key and stitch handwes
+ * batching f-fow you. (˘ω˘)
+ *
+ * @note a-any exceptions that awe thwown o-ow wetuwned a-as [[stitch.exception]] wiww be a-added to the
+ *       [[featuwemap]] fow *aww* [[featuwe]]s i-intended to be hydwated. ʘwʘ
+ *       accessing a-a faiwed featuwe wiww thwow i-if using [[featuwemap.get]] fow featuwes that a-awen't
+ *       [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe]]
+ *
+ * @tpawam q-quewy the quewy type
+ * @tpawam wesuwt the candidate type
+ */
+twait candidatefeatuwehydwatow[-quewy <: pipewinequewy, ( ͡o ω ͡o ) -wesuwt <: univewsawnoun[any]]
+    e-extends basecandidatefeatuwehydwatow[quewy, o.O w-wesuwt, featuwe[_, >w< _]] {
 
-  /** Hydrates a [[FeatureMap]] for a single candidate */
-  def apply(query: Query, candidate: Result, existingFeatures: FeatureMap): Stitch[FeatureMap]
+  o-ovewwide v-vaw identifiew: f-featuwehydwatowidentifiew
+
+  /** hydwates a [[featuwemap]] fow a singwe candidate */
+  d-def appwy(quewy: quewy, 😳 candidate: wesuwt, 🥺 existingfeatuwes: featuwemap): s-stitch[featuwemap]
 }
 
 /**
- * Hydrate features for a list of candidates
- * e.g. for a list of Tweet candidates, a feature could be the visibility reason whether to show or not show each Tweet
+ * hydwate featuwes f-fow a wist of candidates
+ * e-e.g. rawr x3 f-fow a wist of tweet candidates, o.O a-a featuwe couwd b-be the visibiwity w-weason whethew t-to show ow nyot show each tweet
  */
-trait BaseBulkCandidateFeatureHydrator[
-  -Query <: PipelineQuery,
-  -Result <: UniversalNoun[Any],
-  FeatureType <: Feature[_, _]]
-    extends BaseCandidateFeatureHydrator[Query, Result, FeatureType] {
+twait basebuwkcandidatefeatuwehydwatow[
+  -quewy <: p-pipewinequewy, rawr
+  -wesuwt <: u-univewsawnoun[any], ʘwʘ
+  f-featuwetype <: f-featuwe[_, 😳😳😳 _]]
+    e-extends basecandidatefeatuwehydwatow[quewy, ^^;; wesuwt, featuwetype] {
 
   /**
-   * Hydrates a set of [[FeatureMap]]s for the bulk list of candidates. Every input candidate must
-   * have corresponding entry in the returned seq with a feature map.
+   * h-hydwates a set of [[featuwemap]]s fow the buwk wist of candidates. evewy input candidate must
+   * h-have cowwesponding entwy in the wetuwned seq with a featuwe map. o.O
    */
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Result]]
-  ): Stitch[Seq[FeatureMap]]
+  d-def appwy(
+    q-quewy: quewy, (///ˬ///✿)
+    c-candidates: seq[candidatewithfeatuwes[wesuwt]]
+  ): s-stitch[seq[featuwemap]]
 }
 
 /**
- * A candidate feature hydrator that allows a user to bulk hydrate features for all candidates
- * at once. This is useful for downstream APIs that take a list of candidates in one go such
- * as feature store or scorers.
+ * a candidate featuwe h-hydwatow that a-awwows a usew to buwk hydwate featuwes fow aww candidates
+ * at once. σωσ this is usefuw fow downstweam a-apis that take a wist of candidates i-in one go such
+ * as featuwe s-stowe ow s-scowews. nyaa~~
  *
- * @note Any exceptions that are thrown or returned as [[Stitch.exception]] will be added to the
- *       [[FeatureMap]] for *all* [[Feature]]s of *all* candidates intended to be hydrated.
- *       An alternative to throwing an exception is per-candidate failure handling (e.g. adding
- *       a failed [[Feature]] with `addFailure`, a Try with `add`, or an optional value with `add`
- *       using [[FeatureMapBuilder]]).
- *       Accessing a failed Feature will throw if using [[FeatureMap.get]] for Features that aren't
- *       [[com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure]].
+ * @note any exceptions that awe thwown o-ow wetuwned a-as [[stitch.exception]] wiww be a-added to the
+ *       [[featuwemap]] f-fow *aww* [[featuwe]]s of *aww* candidates intended to be hydwated. ^^;;
+ *       an awtewnative t-to thwowing an e-exception is pew-candidate f-faiwuwe handwing (e.g. ^•ﻌ•^ a-adding
+ *       a-a faiwed [[featuwe]] with `addfaiwuwe`, σωσ a-a twy with `add`, -.- ow an optionaw vawue with `add`
+ *       using [[featuwemapbuiwdew]]). ^^;;
+ *       a-accessing a-a faiwed featuwe wiww thwow if using [[featuwemap.get]] f-fow f-featuwes that awen't
+ *       [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe]]. XD
  *
- * @tparam Query The query type
- * @tparam Result The Candidate type
+ * @tpawam quewy the quewy type
+ * @tpawam w-wesuwt the candidate type
  */
-trait BulkCandidateFeatureHydrator[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-    extends BaseBulkCandidateFeatureHydrator[Query, Candidate, Feature[_, _]] {
-  override val identifier: FeatureHydratorIdentifier
+twait buwkcandidatefeatuwehydwatow[-quewy <: pipewinequewy, 🥺 candidate <: univewsawnoun[any]]
+    e-extends basebuwkcandidatefeatuwehydwatow[quewy, òωó candidate, (ˆ ﻌ ˆ)♡ featuwe[_, -.- _]] {
+  o-ovewwide vaw i-identifiew: featuwehydwatowidentifiew
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]]
+  ovewwide def appwy(
+    quewy: quewy, :3
+    c-candidates: seq[candidatewithfeatuwes[candidate]]
+  ): s-stitch[seq[featuwemap]]
 }

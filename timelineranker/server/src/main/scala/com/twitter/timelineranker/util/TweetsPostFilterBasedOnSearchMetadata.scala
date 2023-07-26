@@ -1,169 +1,169 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Level
-import com.twitter.logging.Logger
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.util.stats.RequestStats
-import scala.collection.mutable
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wogging.wevew
+i-impowt com.twittew.wogging.woggew
+i-impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+i-impowt c-com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewines.modew.usewid
+i-impowt com.twittew.timewines.utiw.stats.wequeststats
+impowt scawa.cowwection.mutabwe
 
-object TweetFiltersBasedOnSearchMetadata extends Enumeration {
-  val DuplicateRetweets: Value = Value
-  val DuplicateTweets: Value = Value
+object tweetfiwtewsbasedonseawchmetadata extends enumewation {
+  vaw dupwicatewetweets: v-vawue = vawue
+  vaw dupwicatetweets: vawue = vawue
 
-  val None: TweetFiltersBasedOnSearchMetadata.ValueSet = ValueSet.empty
+  v-vaw nyone: tweetfiwtewsbasedonseawchmetadata.vawueset = v-vawueset.empty
 
-  private[util] type FilterBasedOnSearchMetadataMethod =
-    (ThriftSearchResult, TweetsPostFilterBasedOnSearchMetadataParams, MutableState) => Boolean
+  pwivate[utiw] type fiwtewbasedonseawchmetadatamethod =
+    (thwiftseawchwesuwt, 🥺 tweetspostfiwtewbasedonseawchmetadatapawams, òωó m-mutabwestate) => boowean
 
-  case class MutableState(
-    seenTweetIds: mutable.Map[TweetId, Int] = mutable.Map.empty[TweetId, Int].withDefaultValue(0)) {
-    def isSeen(tweetId: TweetId): Boolean = {
-      val seen = seenTweetIds(tweetId) >= 1
-      incrementIf0(tweetId)
+  c-case cwass m-mutabwestate(
+    seentweetids: mutabwe.map[tweetid, (ˆ ﻌ ˆ)♡ int] = mutabwe.map.empty[tweetid, -.- i-int].withdefauwtvawue(0)) {
+    def isseen(tweetid: tweetid): boowean = {
+      vaw seen = seentweetids(tweetid) >= 1
+      i-incwementif0(tweetid)
       seen
     }
 
-    def incrementIf0(key: TweetId): Unit = {
-      if (seenTweetIds(key) == 0) {
-        seenTweetIds(key) = 1
+    d-def incwementif0(key: t-tweetid): u-unit = {
+      i-if (seentweetids(key) == 0) {
+        seentweetids(key) = 1
       }
     }
 
-    def incrementThenGetCount(key: TweetId): Int = {
-      seenTweetIds(key) += 1
-      seenTweetIds(key)
+    def incwementthengetcount(key: t-tweetid): int = {
+      seentweetids(key) += 1
+      seentweetids(key)
     }
   }
 }
 
-case class TweetsPostFilterBasedOnSearchMetadataParams(
-  userId: UserId,
-  inNetworkUserIds: Seq[UserId],
-  numRetweetsAllowed: Int,
-  loggingPrefix: String = "")
+c-case cwass tweetspostfiwtewbasedonseawchmetadatapawams(
+  usewid: usewid, :3
+  innetwowkusewids: seq[usewid], ʘwʘ
+  nyumwetweetsawwowed: i-int, 🥺
+  woggingpwefix: stwing = "")
 
 /**
- * Performs post-filtering on tweets obtained from search using metadata returned from search.
+ * p-pewfowms post-fiwtewing o-on tweets o-obtained fwom seawch using metadata wetuwned fwom seawch. >_<
  *
- * Search currently does not perform certain steps while searching, so this class addresses those
- * shortcomings by post-processing search results using the returned metadata.
+ * s-seawch cuwwentwy d-does nyot pewfowm cewtain steps w-whiwe seawching, ʘwʘ s-so this cwass addwesses those
+ * s-showtcomings by post-pwocessing s-seawch wesuwts using the wetuwned metadata. (˘ω˘)
  */
-class TweetsPostFilterBasedOnSearchMetadata(
-  filters: TweetFiltersBasedOnSearchMetadata.ValueSet,
-  logger: Logger,
-  statsReceiver: StatsReceiver)
-    extends RequestStats {
-  import TweetFiltersBasedOnSearchMetadata.FilterBasedOnSearchMetadataMethod
-  import TweetFiltersBasedOnSearchMetadata.MutableState
+c-cwass tweetspostfiwtewbasedonseawchmetadata(
+  fiwtews: tweetfiwtewsbasedonseawchmetadata.vawueset, (✿oωo)
+  w-woggew: woggew,
+  statsweceivew: s-statsweceivew)
+    e-extends wequeststats {
+  impowt tweetfiwtewsbasedonseawchmetadata.fiwtewbasedonseawchmetadatamethod
+  impowt tweetfiwtewsbasedonseawchmetadata.mutabwestate
 
-  private[this] val baseScope = statsReceiver.scope("filter_based_on_search_metadata")
-  private[this] val dupRetweetCounter = baseScope.counter("dupRetweet")
-  private[this] val dupTweetCounter = baseScope.counter("dupTweet")
+  pwivate[this] vaw basescope = statsweceivew.scope("fiwtew_based_on_seawch_metadata")
+  pwivate[this] v-vaw dupwetweetcountew = b-basescope.countew("dupwetweet")
+  pwivate[this] v-vaw d-duptweetcountew = b-basescope.countew("duptweet")
 
-  private[this] val totalCounter = baseScope.counter(Total)
-  private[this] val resultCounter = baseScope.counter("result")
+  pwivate[this] vaw totawcountew = basescope.countew(totaw)
+  pwivate[this] v-vaw wesuwtcountew = basescope.countew("wesuwt")
 
-  // Used for debugging. Its values should remain false for prod use.
-  private[this] val alwaysLog = false
+  // used fow debugging. (///ˬ///✿) its vawues s-shouwd wemain fawse fow pwod use. rawr x3
+  p-pwivate[this] v-vaw awwayswog = f-fawse
 
-  val applicableFilters: Seq[FilterBasedOnSearchMetadataMethod] =
-    FiltersBasedOnSearchMetadata.getApplicableFilters(filters)
+  vaw appwicabwefiwtews: s-seq[fiwtewbasedonseawchmetadatamethod] =
+    f-fiwtewsbasedonseawchmetadata.getappwicabwefiwtews(fiwtews)
 
-  def apply(
-    userId: UserId,
-    inNetworkUserIds: Seq[UserId],
-    tweets: Seq[ThriftSearchResult],
-    numRetweetsAllowed: Int = 1
-  ): Seq[ThriftSearchResult] = {
-    val loggingPrefix = s"userId: $userId"
-    val params = TweetsPostFilterBasedOnSearchMetadataParams(
-      userId = userId,
-      inNetworkUserIds = inNetworkUserIds,
-      numRetweetsAllowed = numRetweetsAllowed,
-      loggingPrefix = loggingPrefix,
+  def a-appwy(
+    usewid: u-usewid, -.-
+    innetwowkusewids: seq[usewid], ^^
+    t-tweets: seq[thwiftseawchwesuwt], (⑅˘꒳˘)
+    n-nyumwetweetsawwowed: int = 1
+  ): s-seq[thwiftseawchwesuwt] = {
+    v-vaw w-woggingpwefix = s"usewid: $usewid"
+    vaw pawams = tweetspostfiwtewbasedonseawchmetadatapawams(
+      u-usewid = usewid, nyaa~~
+      innetwowkusewids = innetwowkusewids, /(^•ω•^)
+      nyumwetweetsawwowed = nyumwetweetsawwowed, (U ﹏ U)
+      woggingpwefix = woggingpwefix, 😳😳😳
     )
-    filter(tweets, params)
+    f-fiwtew(tweets, >w< pawams)
   }
 
-  protected def filter(
-    tweets: Seq[ThriftSearchResult],
-    params: TweetsPostFilterBasedOnSearchMetadataParams
-  ): Seq[ThriftSearchResult] = {
-    val invocationState = MutableState()
-    val result = tweets.reverseIterator
-      .filterNot { tweet => applicableFilters.exists(_(tweet, params, invocationState)) }
-      .toSeq
-      .reverse
-    totalCounter.incr(tweets.size)
-    resultCounter.incr(result.size)
-    result
+  pwotected def fiwtew(
+    tweets: s-seq[thwiftseawchwesuwt],
+    p-pawams: tweetspostfiwtewbasedonseawchmetadatapawams
+  ): s-seq[thwiftseawchwesuwt] = {
+    vaw invocationstate = mutabwestate()
+    v-vaw wesuwt = tweets.wevewseitewatow
+      .fiwtewnot { tweet => a-appwicabwefiwtews.exists(_(tweet, p-pawams, XD invocationstate)) }
+      .toseq
+      .wevewse
+    totawcountew.incw(tweets.size)
+    wesuwtcountew.incw(wesuwt.size)
+    wesuwt
   }
 
-  object FiltersBasedOnSearchMetadata {
-    case class FilterData(
-      kind: TweetFiltersBasedOnSearchMetadata.Value,
-      method: FilterBasedOnSearchMetadataMethod)
-    private val allFilters = Seq[FilterData](
-      FilterData(TweetFiltersBasedOnSearchMetadata.DuplicateTweets, isDuplicateTweet),
-      FilterData(TweetFiltersBasedOnSearchMetadata.DuplicateRetweets, isDuplicateRetweet)
+  object fiwtewsbasedonseawchmetadata {
+    case cwass fiwtewdata(
+      k-kind: tweetfiwtewsbasedonseawchmetadata.vawue, o.O
+      m-method: fiwtewbasedonseawchmetadatamethod)
+    pwivate vaw awwfiwtews = s-seq[fiwtewdata](
+      f-fiwtewdata(tweetfiwtewsbasedonseawchmetadata.dupwicatetweets, mya isdupwicatetweet), 🥺
+      fiwtewdata(tweetfiwtewsbasedonseawchmetadata.dupwicatewetweets, ^^;; i-isdupwicatewetweet)
     )
 
-    def getApplicableFilters(
-      filters: TweetFiltersBasedOnSearchMetadata.ValueSet
-    ): Seq[FilterBasedOnSearchMetadataMethod] = {
-      require(allFilters.map(_.kind).toSet == TweetFiltersBasedOnSearchMetadata.values)
-      allFilters.filter(data => filters.contains(data.kind)).map(_.method)
+    d-def getappwicabwefiwtews(
+      fiwtews: tweetfiwtewsbasedonseawchmetadata.vawueset
+    ): s-seq[fiwtewbasedonseawchmetadatamethod] = {
+      w-wequiwe(awwfiwtews.map(_.kind).toset == tweetfiwtewsbasedonseawchmetadata.vawues)
+      awwfiwtews.fiwtew(data => fiwtews.contains(data.kind)).map(_.method)
     }
 
     /**
-     * Determines whether the given tweet has already been seen.
+     * detewmines w-whethew the given t-tweet has awweady b-been seen. :3
      */
-    private def isDuplicateTweet(
-      tweet: ThriftSearchResult,
-      params: TweetsPostFilterBasedOnSearchMetadataParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = invocationState.isSeen(tweet.id)
-      if (shouldFilterOut) {
-        dupTweetCounter.incr()
-        log(Level.ERROR, () => s"${params.loggingPrefix}:: Duplicate tweet found: ${tweet.id}")
+    pwivate d-def isdupwicatetweet(
+      tweet: t-thwiftseawchwesuwt, (U ﹏ U)
+      pawams: tweetspostfiwtewbasedonseawchmetadatapawams, OwO
+      i-invocationstate: mutabwestate
+    ): boowean = {
+      vaw shouwdfiwtewout = invocationstate.isseen(tweet.id)
+      if (shouwdfiwtewout) {
+        d-duptweetcountew.incw()
+        w-wog(wevew.ewwow, 😳😳😳 () => s"${pawams.woggingpwefix}:: dupwicate tweet f-found: ${tweet.id}")
       }
-      shouldFilterOut
+      s-shouwdfiwtewout
     }
 
     /**
-     * If the given tweet is a retweet, determines whether the source tweet
-     * of that retweet has already been seen.
+     * if the given tweet is a wetweet, (ˆ ﻌ ˆ)♡ detewmines w-whethew the souwce tweet
+     * of that wetweet has awweady been seen.
      */
-    private def isDuplicateRetweet(
-      tweet: ThriftSearchResult,
-      params: TweetsPostFilterBasedOnSearchMetadataParams,
-      invocationState: MutableState
-    ): Boolean = {
-      invocationState.incrementIf0(tweet.id)
-      SearchResultUtil.getRetweetSourceTweetId(tweet).exists { sourceTweetId =>
-        val seenCount = invocationState.incrementThenGetCount(sourceTweetId)
-        val shouldFilterOut = seenCount > params.numRetweetsAllowed
-        if (shouldFilterOut) {
-          // We do not log here because search is known to not handle this case.
-          dupRetweetCounter.incr()
-          log(
-            Level.OFF,
+    p-pwivate def isdupwicatewetweet(
+      tweet: t-thwiftseawchwesuwt, XD
+      pawams: t-tweetspostfiwtewbasedonseawchmetadatapawams, (ˆ ﻌ ˆ)♡
+      invocationstate: mutabwestate
+    ): boowean = {
+      invocationstate.incwementif0(tweet.id)
+      s-seawchwesuwtutiw.getwetweetsouwcetweetid(tweet).exists { s-souwcetweetid =>
+        vaw seencount = invocationstate.incwementthengetcount(souwcetweetid)
+        vaw s-shouwdfiwtewout = seencount > pawams.numwetweetsawwowed
+        i-if (shouwdfiwtewout) {
+          // we do nyot wog hewe because seawch is known t-to nyot handwe this case. ( ͡o ω ͡o )
+          d-dupwetweetcountew.incw()
+          w-wog(
+            wevew.off, rawr x3
             () =>
-              s"${params.loggingPrefix}:: Found dup retweet: ${tweet.id} (source tweet: $sourceTweetId), count: $seenCount"
+              s-s"${pawams.woggingpwefix}:: found dup wetweet: ${tweet.id} (souwce t-tweet: $souwcetweetid), nyaa~~ count: $seencount"
           )
         }
-        shouldFilterOut
+        s-shouwdfiwtewout
       }
     }
 
-    private def log(level: Level, message: () => String): Unit = {
-      if (alwaysLog || ((level != Level.OFF) && logger.isLoggable(level))) {
-        val updatedLevel = if (alwaysLog) Level.INFO else level
-        logger.log(updatedLevel, message())
+    p-pwivate def wog(wevew: wevew, >_< m-message: () => s-stwing): unit = {
+      if (awwayswog || ((wevew != wevew.off) && w-woggew.iswoggabwe(wevew))) {
+        v-vaw updatedwevew = i-if (awwayswog) wevew.info ewse wevew
+        w-woggew.wog(updatedwevew, ^^;; message())
       }
     }
   }

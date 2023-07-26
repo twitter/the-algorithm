@@ -1,263 +1,263 @@
-package com.twitter.interaction_graph.scio.common
+package com.twittew.intewaction_gwaph.scio.common
 
-import com.spotify.scio.ScioMetrics
-import com.spotify.scio.values.SCollection
-import com.twitter.interaction_graph.scio.common.FeatureGroups.DWELL_TIME_FEATURE_LIST
-import com.twitter.interaction_graph.scio.common.FeatureGroups.STATUS_FEATURE_LIST
-import com.twitter.interaction_graph.scio.common.UserUtil.DUMMY_USER_ID
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.EdgeFeature
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.interaction_graph.thriftscala.VertexFeature
+impowt com.spotify.scio.sciometwics
+i-impowt com.spotify.scio.vawues.scowwection
+i-impowt com.twittew.intewaction_gwaph.scio.common.featuwegwoups.dweww_time_featuwe_wist
+i-impowt com.twittew.intewaction_gwaph.scio.common.featuwegwoups.status_featuwe_wist
+i-impowt c-com.twittew.intewaction_gwaph.scio.common.usewutiw.dummy_usew_id
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.edge
+i-impowt c-com.twittew.intewaction_gwaph.thwiftscawa.edgefeatuwe
+impowt com.twittew.intewaction_gwaph.thwiftscawa.featuwename
+impowt com.twittew.intewaction_gwaph.thwiftscawa.timesewiesstatistics
+impowt com.twittew.intewaction_gwaph.thwiftscawa.vewtex
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.vewtexfeatuwe
 
-object FeatureGeneratorUtil {
+object featuwegenewatowutiw {
 
-  // Initialize a TimeSeriesStatistics object by (value, age) pair
-  def initializeTSS(featureValue: Double, age: Int = 1): TimeSeriesStatistics =
-    TimeSeriesStatistics(
-      mean = featureValue,
-      m2ForVariance = 0.0,
-      ewma = featureValue,
-      numElapsedDays = age,
-      numNonZeroDays = age,
-      numDaysSinceLast = Some(age)
+  // initiawize a-a timesewiesstatistics object by (vawue, 😳😳😳 a-age) paiw
+  def initiawizetss(featuwevawue: doubwe, 😳 age: int = 1): timesewiesstatistics =
+    t-timesewiesstatistics(
+      mean = featuwevawue,
+      m-m2fowvawiance = 0.0, XD
+      e-ewma = featuwevawue, mya
+      nyumewapseddays = age, ^•ﻌ•^
+      nyumnonzewodays = a-age, ʘwʘ
+      nyumdayssincewast = some(age)
     )
 
   /**
-   * Create vertex feature from InteractionGraphRawInput graph (src, dst, feature name, age, featureValue)
-   * We will represent non-directional features (eg num_create_tweets) as "outgoing" values.
-   * @return
+   * cweate vewtex featuwe fwom intewactiongwaphwawinput g-gwaph (swc, ( ͡o ω ͡o ) dst, mya featuwe nyame, o.O a-age, featuwevawue)
+   * w-we wiww w-wepwesent nyon-diwectionaw f-featuwes (eg nyum_cweate_tweets) as "outgoing" v-vawues. (✿oωo)
+   * @wetuwn
    */
-  def getVertexFeature(
-    input: SCollection[InteractionGraphRawInput]
-  ): SCollection[Vertex] = {
-    // For vertex features we need to calculate both in and out featureValue
-    val vertexAggregatedFeatureValues = input
-      .flatMap { input =>
-        if (input.dst != DUMMY_USER_ID) {
-          Seq(
-            ((input.src, input.name.value), (input.featureValue, 0.0)),
-            ((input.dst, input.name.value), (0.0, input.featureValue))
+  def getvewtexfeatuwe(
+    input: scowwection[intewactiongwaphwawinput]
+  ): s-scowwection[vewtex] = {
+    // fow vewtex featuwes we nyeed to cawcuwate both in and out featuwevawue
+    vaw vewtexaggwegatedfeatuwevawues = i-input
+      .fwatmap { input =>
+        i-if (input.dst != d-dummy_usew_id) {
+          s-seq(
+            ((input.swc, :3 input.name.vawue), 😳 (input.featuwevawue, (U ﹏ U) 0.0)),
+            ((input.dst, mya input.name.vawue), (U ᵕ U❁) (0.0, input.featuwevawue))
           )
-        } else {
-          // we put the non-directional features as "outgoing" values
-          Seq(((input.src, input.name.value), (input.featureValue, 0.0)))
+        } e-ewse {
+          // w-we put the nyon-diwectionaw f-featuwes as "outgoing" v-vawues
+          seq(((input.swc, :3 i-input.name.vawue), mya (input.featuwevawue, 0.0)))
         }
       }
-      .sumByKey
+      .sumbykey
       .map {
-        case ((userId, nameId), (outEdges, inEdges)) =>
-          (userId, (FeatureName(nameId), outEdges, inEdges))
-      }.groupByKey
+        case ((usewid, OwO nyameid), (ˆ ﻌ ˆ)♡ (outedges, ʘwʘ i-inedges)) =>
+          (usewid, o.O (featuwename(nameid), UwU outedges, rawr x3 inedges))
+      }.gwoupbykey
 
-    vertexAggregatedFeatureValues.map {
-      case (userId, records) =>
-        // sort features by FeatureName for deterministic order (esp during testing)
-        val features = records.toSeq.sortBy(_._1.value).flatMap {
-          case (name, outEdges, inEdges) =>
-            // create out vertex features
-            val outFeatures = if (outEdges > 0) {
-              val outTss = initializeTSS(outEdges)
-              List(
-                VertexFeature(
-                  name = name,
-                  outgoing = true,
-                  tss = outTss
+    v-vewtexaggwegatedfeatuwevawues.map {
+      case (usewid, wecowds) =>
+        // s-sowt featuwes by featuwename f-fow detewministic o-owdew (esp duwing testing)
+        vaw featuwes = wecowds.toseq.sowtby(_._1.vawue).fwatmap {
+          case (name, 🥺 outedges, :3 inedges) =>
+            // c-cweate o-out vewtex featuwes
+            vaw outfeatuwes = i-if (outedges > 0) {
+              v-vaw outtss = i-initiawizetss(outedges)
+              wist(
+                vewtexfeatuwe(
+                  nyame = name, (ꈍᴗꈍ)
+                  o-outgoing = twue, 🥺
+                  tss = outtss
                 ))
-            } else Nil
+            } ewse nyiw
 
-            // create in vertex features
-            val inFeatures = if (inEdges > 0) {
-              val inTss = initializeTSS(inEdges)
-              List(
-                VertexFeature(
-                  name = name,
-                  outgoing = false,
-                  tss = inTss
+            // cweate in vewtex featuwes
+            v-vaw infeatuwes = if (inedges > 0) {
+              v-vaw intss = i-initiawizetss(inedges)
+              w-wist(
+                vewtexfeatuwe(
+                  n-nyame = n-nyame, (✿oωo)
+                  o-outgoing = f-fawse, (U ﹏ U)
+                  tss = intss
                 ))
-            } else Nil
+            } ewse n-nyiw
 
-            outFeatures ++ inFeatures
+            o-outfeatuwes ++ i-infeatuwes
         }
-        Vertex(userId = userId, features = features)
+        v-vewtex(usewid = u-usewid, :3 featuwes = featuwes)
     }
   }
 
   /**
-   * Create edge feature from InteractionGraphRawInput graph (src, dst, feature name, age, featureValue)
-   * We will exclude all non-directional features (eg num_create_tweets) from all edge aggregates
+   * cweate edge featuwe fwom intewactiongwaphwawinput g-gwaph (swc, ^^;; dst, featuwe nyame, rawr age, featuwevawue)
+   * we wiww excwude aww nyon-diwectionaw f-featuwes (eg nyum_cweate_tweets) fwom aww edge aggwegates
    */
-  def getEdgeFeature(
-    input: SCollection[InteractionGraphRawInput]
-  ): SCollection[Edge] = {
+  d-def getedgefeatuwe(
+    i-input: s-scowwection[intewactiongwaphwawinput]
+  ): scowwection[edge] = {
     input
-      .withName("filter non-directional features")
-      .flatMap { input =>
-        if (input.dst != DUMMY_USER_ID) {
-          ScioMetrics.counter("getEdgeFeature", s"directional feature ${input.name.name}").inc()
-          Some(((input.src, input.dst), (input.name, input.age, input.featureValue)))
-        } else {
-          ScioMetrics.counter("getEdgeFeature", s"non-directional feature ${input.name.name}").inc()
-          None
+      .withname("fiwtew n-nyon-diwectionaw featuwes")
+      .fwatmap { i-input =>
+        i-if (input.dst != dummy_usew_id) {
+          sciometwics.countew("getedgefeatuwe", 😳😳😳 s"diwectionaw featuwe ${input.name.name}").inc()
+          some(((input.swc, (✿oωo) i-input.dst), (input.name, OwO input.age, ʘwʘ i-input.featuwevawue)))
+        } ewse {
+          s-sciometwics.countew("getedgefeatuwe", (ˆ ﻌ ˆ)♡ s"non-diwectionaw f-featuwe ${input.name.name}").inc()
+          nyone
         }
       }
-      .withName("group features by pairs")
-      .groupByKey
+      .withname("gwoup featuwes b-by paiws")
+      .gwoupbykey
       .map {
-        case ((src, dst), records) =>
-          // sort features by FeatureName for deterministic order (esp during testing)
-          val features = records.toSeq.sortBy(_._1.value).map {
-            case (name, age, featureValue) =>
-              val tss = initializeTSS(featureValue, age)
-              EdgeFeature(
-                name = name,
-                tss = tss
+        c-case ((swc, (U ﹏ U) dst), UwU wecowds) =>
+          // s-sowt featuwes b-by featuwename fow detewministic owdew (esp duwing testing)
+          vaw featuwes = w-wecowds.toseq.sowtby(_._1.vawue).map {
+            c-case (name, XD a-age, featuwevawue) =>
+              vaw tss = i-initiawizetss(featuwevawue, ʘwʘ age)
+              e-edgefeatuwe(
+                nyame = nyame, rawr x3
+                t-tss = tss
               )
           }
-          Edge(
-            sourceId = src,
-            destinationId = dst,
-            weight = Some(0.0),
-            features = features.toSeq
+          edge(
+            souwceid = swc, ^^;;
+            destinationid = d-dst, ʘwʘ
+            w-weight = some(0.0), (U ﹏ U)
+            featuwes = f-featuwes.toseq
           )
       }
   }
 
-  // For same user id, combine different vertex feature records into one record
-  // The input will assume for each (userId, featureName, direction), there will be only one record
-  def combineVertexFeatures(
-    vertex: SCollection[Vertex],
-  ): SCollection[Vertex] = {
-    vertex
-      .groupBy { v: Vertex =>
-        v.userId
+  // f-fow same usew id, (˘ω˘) combine diffewent vewtex featuwe wecowds i-into one wecowd
+  // the input wiww assume fow each (usewid, (ꈍᴗꈍ) featuwename, diwection), /(^•ω•^) t-thewe wiww be onwy one wecowd
+  def combinevewtexfeatuwes(
+    v-vewtex: scowwection[vewtex], >_<
+  ): s-scowwection[vewtex] = {
+    vewtex
+      .gwoupby { v: vewtex =>
+        v.usewid
       }
       .map {
-        case (userId, vertexes) =>
-          val combiner = vertexes.foldLeft(VertexFeatureCombiner(userId)) {
-            case (combiner, vertex) =>
-              combiner.addFeature(vertex)
+        c-case (usewid, v-vewtexes) =>
+          vaw combinew = vewtexes.fowdweft(vewtexfeatuwecombinew(usewid)) {
+            case (combinew, σωσ v-vewtex) =>
+              combinew.addfeatuwe(vewtex)
           }
-          combiner.getCombinedVertex(0)
+          c-combinew.getcombinedvewtex(0)
       }
 
   }
 
-  def combineEdgeFeatures(
-    edge: SCollection[Edge]
-  ): SCollection[Edge] = {
-    edge
-      .groupBy { e =>
-        (e.sourceId, e.destinationId)
+  def combineedgefeatuwes(
+    edge: scowwection[edge]
+  ): scowwection[edge] = {
+    e-edge
+      .gwoupby { e =>
+        (e.souwceid, ^^;; e-e.destinationid)
       }
-      .withName("combining edge features for each (src, dst)")
+      .withname("combining e-edge featuwes fow each (swc, 😳 d-dst)")
       .map {
-        case ((src, dst), edges) =>
-          val combiner = edges.foldLeft(EdgeFeatureCombiner(src, dst)) {
-            case (combiner, edge) =>
-              combiner.addFeature(edge)
+        case ((swc, >_< dst), e-edges) =>
+          v-vaw combinew = e-edges.fowdweft(edgefeatuwecombinew(swc, dst)) {
+            c-case (combinew, -.- e-edge) =>
+              combinew.addfeatuwe(edge)
           }
-          combiner.getCombinedEdge(0)
+          combinew.getcombinededge(0)
       }
   }
 
-  def combineVertexFeaturesWithDecay(
-    history: SCollection[Vertex],
-    daily: SCollection[Vertex],
-    historyWeight: Double,
-    dailyWeight: Double
-  ): SCollection[Vertex] = {
+  d-def combinevewtexfeatuweswithdecay(
+    h-histowy: s-scowwection[vewtex], UwU
+    daiwy: scowwection[vewtex], :3
+    histowyweight: doubwe, σωσ
+    d-daiwyweight: doubwe
+  ): s-scowwection[vewtex] = {
 
-    history
-      .keyBy(_.userId)
-      .cogroup(daily.keyBy(_.userId)).map {
-        case (userId, (h, d)) =>
-          // Adding history iterators
-          val historyCombiner = h.toList.foldLeft(VertexFeatureCombiner(userId)) {
-            case (combiner, vertex) =>
-              combiner.addFeature(vertex, historyWeight, 0)
+    h-histowy
+      .keyby(_.usewid)
+      .cogwoup(daiwy.keyby(_.usewid)).map {
+        case (usewid, >w< (h, d)) =>
+          // adding h-histowy itewatows
+          v-vaw h-histowycombinew = h-h.towist.fowdweft(vewtexfeatuwecombinew(usewid)) {
+            case (combinew, (ˆ ﻌ ˆ)♡ v-vewtex) =>
+              combinew.addfeatuwe(vewtex, ʘwʘ histowyweight, 0)
           }
-          // Adding daily iterators
-          val finalCombiner = d.toList.foldLeft(historyCombiner) {
-            case (combiner, vertex) =>
-              combiner.addFeature(vertex, dailyWeight, 1)
+          // adding daiwy itewatows
+          vaw finawcombinew = d.towist.fowdweft(histowycombinew) {
+            c-case (combinew, :3 vewtex) =>
+              c-combinew.addfeatuwe(vewtex, (˘ω˘) daiwyweight, 😳😳😳 1)
           }
 
-          finalCombiner.getCombinedVertex(
+          f-finawcombinew.getcombinedvewtex(
             2
-          ) // 2 means totally we have 2 days(yesterday and today) data to combine together
+          ) // 2 means totawwy w-we have 2 days(yestewday and today) d-data to combine t-togethew
       }
   }
 
-  def combineEdgeFeaturesWithDecay(
-    history: SCollection[Edge],
-    daily: SCollection[Edge],
-    historyWeight: Double,
-    dailyWeight: Double
-  ): SCollection[Edge] = {
+  d-def c-combineedgefeatuweswithdecay(
+    h-histowy: scowwection[edge], rawr x3
+    daiwy: scowwection[edge], (✿oωo)
+    histowyweight: doubwe, (ˆ ﻌ ˆ)♡
+    daiwyweight: doubwe
+  ): scowwection[edge] = {
 
-    history
-      .keyBy { e =>
-        (e.sourceId, e.destinationId)
+    histowy
+      .keyby { e-e =>
+        (e.souwceid, e-e.destinationid)
       }
-      .withName("combine history and daily edges with decay")
-      .cogroup(daily.keyBy { e =>
-        (e.sourceId, e.destinationId)
+      .withname("combine h-histowy and daiwy edges with d-decay")
+      .cogwoup(daiwy.keyby { e =>
+        (e.souwceid, :3 e.destinationid)
       }).map {
-        case ((src, dst), (h, d)) =>
-          //val combiner = EdgeFeatureCombiner(src, dst)
-          // Adding history iterators
+        case ((swc, (U ᵕ U❁) d-dst), (h, ^^;; d)) =>
+          //vaw c-combinew = edgefeatuwecombinew(swc, mya d-dst)
+          // adding histowy itewatows
 
-          val historyCombiner = h.toList.foldLeft(EdgeFeatureCombiner(src, dst)) {
-            case (combiner, edge) =>
-              combiner.addFeature(edge, historyWeight, 0)
+          vaw h-histowycombinew = h-h.towist.fowdweft(edgefeatuwecombinew(swc, 😳😳😳 dst)) {
+            c-case (combinew, OwO e-edge) =>
+              combinew.addfeatuwe(edge, rawr histowyweight, XD 0)
           }
 
-          val finalCombiner = d.toList.foldLeft(historyCombiner) {
-            case (combiner, edge) =>
-              combiner.addFeature(edge, dailyWeight, 1)
+          vaw finawcombinew = d-d.towist.fowdweft(histowycombinew) {
+            c-case (combinew, (U ﹏ U) e-edge) =>
+              c-combinew.addfeatuwe(edge, (˘ω˘) d-daiwyweight, UwU 1)
           }
 
-          finalCombiner.getCombinedEdge(
+          finawcombinew.getcombinededge(
             2
-          ) // 2 means totally we have 2 days(yesterday and today) data to combine together
+          ) // 2 m-means totawwy w-we have 2 days(yestewday a-and today) data t-to combine togethew
 
       }
   }
 
   /**
-   * Create features from following graph (src, dst, age, featureValue)
-   * Note that we will filter out vertex features represented as edges from the edge output.
+   * cweate f-featuwes fwom fowwowing gwaph (swc, >_< dst, σωσ age, f-featuwevawue)
+   * nyote that w-we wiww fiwtew out v-vewtex featuwes wepwesented as e-edges fwom the edge output. 🥺
    */
-  def getFeatures(
-    input: SCollection[InteractionGraphRawInput]
-  ): (SCollection[Vertex], SCollection[Edge]) = {
-    (getVertexFeature(input), getEdgeFeature(input))
+  def getfeatuwes(
+    i-input: s-scowwection[intewactiongwaphwawinput]
+  ): (scowwection[vewtex], 🥺 s-scowwection[edge]) = {
+    (getvewtexfeatuwe(input), ʘwʘ getedgefeatuwe(input))
   }
 
-  // remove the edge features that from flock, address book or sms as we will refresh them on a daily basis
-  def removeStatusFeatures(e: Edge): Seq[Edge] = {
-    val updatedFeatureList = e.features.filter { e =>
-      !STATUS_FEATURE_LIST.contains(e.name)
+  // wemove the edge featuwes t-that fwom fwock, :3 addwess book ow sms as we wiww w-wefwesh them on a-a daiwy basis
+  def wemovestatusfeatuwes(e: e-edge): seq[edge] = {
+    v-vaw updatedfeatuwewist = e-e.featuwes.fiwtew { e =>
+      !status_featuwe_wist.contains(e.name)
     }
-    if (updatedFeatureList.size > 0) {
-      val edge = Edge(
-        sourceId = e.sourceId,
-        destinationId = e.destinationId,
-        weight = e.weight,
-        features = updatedFeatureList
+    if (updatedfeatuwewist.size > 0) {
+      vaw edge = e-edge(
+        souwceid = e.souwceid, (U ﹏ U)
+        destinationid = e-e.destinationid, (U ﹏ U)
+        w-weight = e.weight, ʘwʘ
+        f-featuwes = updatedfeatuwewist
       )
-      Seq(edge)
-    } else
-      Nil
+      seq(edge)
+    } e-ewse
+      nyiw
   }
 
-  // check if the edge feature has features other than dwell time feature
-  def edgeWithFeatureOtherThanDwellTime(e: Edge): Boolean = {
-    e.features.exists { f =>
-      !DWELL_TIME_FEATURE_LIST.contains(f.name)
+  // c-check i-if the edge featuwe has featuwes othew than dweww time featuwe
+  def edgewithfeatuweothewthandwewwtime(e: edge): boowean = {
+    e.featuwes.exists { f =>
+      !dweww_time_featuwe_wist.contains(f.name)
     }
   }
 }

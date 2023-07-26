@@ -1,51 +1,51 @@
-package com.twitter.cr_mixer.filter
+package com.twittew.cw_mixew.fiwtew
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.UtegTweetGlobalParams
-import com.twitter.util.Future
+impowt com.twittew.cw_mixew.modew.candidategenewatowquewy
+i-impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.cw_mixew.pawam.utegtweetgwobawpawams
+i-impowt c-com.twittew.utiw.futuwe
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * Remove unhealthy candidates
- * Currently Timeline Ranker applies a check on the following three scores:
- *  - toxicityScore
- *  - pBlockScore
- *  - pReportedTweetScore
+ * wemove unheawthy candidates
+ * cuwwentwy timewine wankew a-appwies a check on the fowwowing thwee scowes:
+ *  - t-toxicityscowe
+ *  - pbwockscowe
+ *  - p-pwepowtedtweetscowe
  *
- * Where isPassTweetHealthFilterStrict checks two additions scores with the same threshold:
- *  - pSpammyTweetScore
- *  - spammyTweetContentScore
+ * whewe ispasstweetheawthfiwtewstwict checks two additions s-scowes with the same thweshowd:
+ *  - p-pspammytweetscowe
+ *  - spammytweetcontentscowe
  *
- * We've verified that both filters behave very similarly.
+ * w-we've vewified that both fiwtews behave vewy simiwawwy. /(^•ω•^)
  */
-@Singleton
-case class UtegHealthFilter @Inject() () extends FilterBase {
-  override def name: String = this.getClass.getCanonicalName
-  override type ConfigType = Boolean
+@singweton
+case cwass utegheawthfiwtew @inject() () e-extends fiwtewbase {
+  ovewwide def nyame: stwing = this.getcwass.getcanonicawname
+  o-ovewwide type configtype = boowean
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: ConfigType
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    if (config) {
-      Future.value(
-        candidates.map { candidateSeq =>
-          candidateSeq.filter { candidate =>
-            candidate.tweetInfo.isPassTweetHealthFilterStrict.getOrElse(false)
+  o-ovewwide d-def fiwtew(
+    c-candidates: seq[seq[initiawcandidate]], rawr x3
+    c-config: configtype
+  ): futuwe[seq[seq[initiawcandidate]]] = {
+    i-if (config) {
+      futuwe.vawue(
+        candidates.map { c-candidateseq =>
+          candidateseq.fiwtew { candidate =>
+            candidate.tweetinfo.ispasstweetheawthfiwtewstwict.getowewse(fawse)
           }
         }
       )
-    } else {
-      Future.value(candidates)
+    } ewse {
+      futuwe.vawue(candidates)
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
-    query: CGQueryType
-  ): ConfigType = {
-    query.params(UtegTweetGlobalParams.EnableTLRHealthFilterParam)
+  o-ovewwide def wequesttoconfig[cgquewytype <: c-candidategenewatowquewy](
+    q-quewy: cgquewytype
+  ): c-configtype = {
+    quewy.pawams(utegtweetgwobawpawams.enabwetwwheawthfiwtewpawam)
   }
 }

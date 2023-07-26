@@ -1,202 +1,202 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+package com.twittew.pwoduct_mixew.cowe.pipewine.scowing
 
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.functional_component.scorer.ScoredCandidateResult
-import com.twitter.product_mixer.core.gate.ParamGate
-import com.twitter.product_mixer.core.gate.ParamGate._
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.NewPipelineBuilder
-import com.twitter.product_mixer.core.pipeline.NewPipelineArrowBuilder
-import com.twitter.product_mixer.core.pipeline.NewPipelineResult
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ClosedGate
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.state.HasResult
-import com.twitter.product_mixer.core.pipeline.step.candidate_feature_hydrator.CandidateFeatureHydratorStep
-import com.twitter.product_mixer.core.pipeline.step.gate.GateStep
-import com.twitter.product_mixer.core.pipeline.step.scorer.ScorerStep
-import com.twitter.product_mixer.core.pipeline.step.selector.SelectorStep
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.StoppedGateException
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
-import scala.collection.immutable.ListMap
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.decowation
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowedcandidatewesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.gate.pawamgate
+i-impowt com.twittew.pwoduct_mixew.cowe.gate.pawamgate._
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiewstack
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowingpipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.newpipewinebuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.newpipewineawwowbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.newpipewinewesuwt
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.cwosedgate
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecwassifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hascandidateswithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hascandidateswithfeatuwes
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.hasexecutowwesuwts
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.haswesuwt
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.candidate_featuwe_hydwatow.candidatefeatuwehydwatowstep
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.step.gate.gatestep
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.scowew.scowewstep
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.sewectow.sewectowstep
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.stoppedgateexception
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.sewectow_executow.sewectowexecutowwesuwt
+impowt com.twittew.stitch.awwow
+impowt javax.inject.inject
+impowt scawa.cowwection.immutabwe.wistmap
 
 /**
- * NewScoringPipelineBuilder builds [[ScoringPipeline]]s from [[ScoringPipelineConfig]]s.
- * New because it's meant to eventually replace [[ScoringPipelineBuilder]]
- * You should inject a [[ScoringPipelineBuilderFactory]] and call `.get` to build these.
+ * nyewscowingpipewinebuiwdew b-buiwds [[scowingpipewine]]s fwom [[scowingpipewineconfig]]s. :3
+ * n-nyew b-because it's meant t-to eventuawwy wepwace [[scowingpipewinebuiwdew]]
+ * you shouwd inject a [[scowingpipewinebuiwdewfactowy]] a-and c-caww `.get` to buiwd these. ( ͡o ω ͡o )
  *
- * @see [[ScoringPipelineConfig]] for the description of the type parameters
- * @tparam Query the type of query these accept.
- * @tparam Candidate the domain model for the candidate being scored
+ * @see [[scowingpipewineconfig]] f-fow the descwiption o-of the type pawametews
+ * @tpawam q-quewy the type of quewy t-these accept. òωó
+ * @tpawam candidate the domain modew f-fow the candidate being scowed
  */
-class NewScoringPipelineBuilder[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]] @Inject() (
-  selectionStep: SelectorStep[Query, ScoringPipelineState[Query, Candidate]],
-  gateStep: GateStep[Query, ScoringPipelineState[Query, Candidate]],
-  candidateFeatureHydrationStep: CandidateFeatureHydratorStep[
-    Query,
-    Candidate,
-    ScoringPipelineState[Query, Candidate]
-  ],
-  scorerStep: ScorerStep[Query, Candidate, ScoringPipelineState[Query, Candidate]])
-    extends NewPipelineBuilder[ScoringPipelineConfig[Query, Candidate], Seq[
-      CandidateWithFeatures[Candidate]
-    ], ScoringPipelineState[Query, Candidate], ScoringPipeline[Query, Candidate]] {
+c-cwass nyewscowingpipewinebuiwdew[quewy <: pipewinequewy, σωσ c-candidate <: univewsawnoun[any]] @inject() (
+  sewectionstep: s-sewectowstep[quewy, (U ᵕ U❁) scowingpipewinestate[quewy, (✿oωo) candidate]], ^^
+  gatestep: gatestep[quewy, ^•ﻌ•^ scowingpipewinestate[quewy, XD candidate]], :3
+  c-candidatefeatuwehydwationstep: c-candidatefeatuwehydwatowstep[
+    quewy, (ꈍᴗꈍ)
+    candidate, :3
+    s-scowingpipewinestate[quewy, (U ﹏ U) c-candidate]
+  ], UwU
+  s-scowewstep: scowewstep[quewy, 😳😳😳 candidate, XD scowingpipewinestate[quewy, o.O c-candidate]])
+    extends nyewpipewinebuiwdew[scowingpipewineconfig[quewy, (⑅˘꒳˘) candidate], 😳😳😳 seq[
+      candidatewithfeatuwes[candidate]
+    ], nyaa~~ s-scowingpipewinestate[quewy, rawr candidate], -.- s-scowingpipewine[quewy, c-candidate]] {
 
-  override def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    arrowBuilder: NewPipelineArrowBuilder[ArrowResult, ArrowState],
-    scoringPipelineConfig: ScoringPipelineConfig[Query, Candidate]
-  ): ScoringPipeline[Query, Candidate] = {
-    val pipelineIdentifier = scoringPipelineConfig.identifier
+  o-ovewwide def buiwd(
+    p-pawentcomponentidentifiewstack: c-componentidentifiewstack, (✿oωo)
+    awwowbuiwdew: n-nyewpipewineawwowbuiwdew[awwowwesuwt, /(^•ω•^) a-awwowstate], 🥺
+    scowingpipewineconfig: scowingpipewineconfig[quewy, ʘwʘ c-candidate]
+  ): s-scowingpipewine[quewy, UwU candidate] = {
+    v-vaw pipewineidentifiew = s-scowingpipewineconfig.identifiew
 
-    val context = Executor.Context(
-      PipelineFailureClassifier(
-        scoringPipelineConfig.failureClassifier.orElse(
-          StoppedGateException.classifier(ClosedGate))),
-      parentComponentIdentifierStack.push(pipelineIdentifier)
+    v-vaw context = executow.context(
+      pipewinefaiwuwecwassifiew(
+        scowingpipewineconfig.faiwuwecwassifiew.owewse(
+          stoppedgateexception.cwassifiew(cwosedgate))), XD
+      p-pawentcomponentidentifiewstack.push(pipewineidentifiew)
     )
 
-    val enabledGateOpt = scoringPipelineConfig.enabledDeciderParam.map { deciderParam =>
-      ParamGate(pipelineIdentifier + EnabledGateSuffix, deciderParam)
+    vaw enabwedgateopt = scowingpipewineconfig.enabweddecidewpawam.map { decidewpawam =>
+      pawamgate(pipewineidentifiew + e-enabwedgatesuffix, (✿oωo) decidewpawam)
     }
-    val supportedClientGateOpt = scoringPipelineConfig.supportedClientParam.map { param =>
-      ParamGate(pipelineIdentifier + SupportedClientGateSuffix, param)
+    vaw suppowtedcwientgateopt = scowingpipewineconfig.suppowtedcwientpawam.map { pawam =>
+      p-pawamgate(pipewineidentifiew + s-suppowtedcwientgatesuffix, :3 p-pawam)
     }
 
     /**
-     * Evaluate enabled decider gate first since if it's off, there is no reason to proceed
-     * Next evaluate supported client feature switch gate, followed by customer configured gates
+     * evawuate enabwed d-decidew gate fiwst since if i-it's off, (///ˬ///✿) thewe i-is nyo weason to pwoceed
+     * nyext evawuate suppowted cwient featuwe switch gate, nyaa~~ fowwowed b-by customew configuwed gates
      */
-    val allGates =
-      enabledGateOpt.toSeq ++ supportedClientGateOpt.toSeq ++ scoringPipelineConfig.gates
+    v-vaw awwgates =
+      enabwedgateopt.toseq ++ s-suppowtedcwientgateopt.toseq ++ s-scowingpipewineconfig.gates
 
-    val underlyingArrow = arrowBuilder
-      .add(ScoringPipelineConfig.gatesStep, gateStep, allGates)
-      .add(ScoringPipelineConfig.selectorsStep, selectionStep, scoringPipelineConfig.selectors)
+    vaw undewwyingawwow = awwowbuiwdew
+      .add(scowingpipewineconfig.gatesstep, >w< g-gatestep, -.- a-awwgates)
+      .add(scowingpipewineconfig.sewectowsstep, (✿oωo) sewectionstep, (˘ω˘) s-scowingpipewineconfig.sewectows)
       .add(
-        ScoringPipelineConfig.preScoringFeatureHydrationPhase1Step,
-        candidateFeatureHydrationStep,
-        scoringPipelineConfig.preScoringFeatureHydrationPhase1)
+        s-scowingpipewineconfig.pwescowingfeatuwehydwationphase1step, rawr
+        candidatefeatuwehydwationstep, OwO
+        scowingpipewineconfig.pwescowingfeatuwehydwationphase1)
       .add(
-        ScoringPipelineConfig.preScoringFeatureHydrationPhase2Step,
-        candidateFeatureHydrationStep,
-        scoringPipelineConfig.preScoringFeatureHydrationPhase2)
-      .add(ScoringPipelineConfig.scorersStep, scorerStep, scoringPipelineConfig.scorers).buildArrow(
+        scowingpipewineconfig.pwescowingfeatuwehydwationphase2step, ^•ﻌ•^
+        candidatefeatuwehydwationstep, UwU
+        s-scowingpipewineconfig.pwescowingfeatuwehydwationphase2)
+      .add(scowingpipewineconfig.scowewsstep, (˘ω˘) s-scowewstep, (///ˬ///✿) s-scowingpipewineconfig.scowews).buiwdawwow(
         context)
 
-    val finalArrow = Arrow
-      .map { inputs: ScoringPipeline.Inputs[Query] =>
-        ScoringPipelineState[Query, Candidate](inputs.query, inputs.candidates, ListMap.empty)
-      }.andThen(underlyingArrow).map { pipelineResult =>
-        ScoringPipelineResult(
-          gateResults = pipelineResult.executorResultsByPipelineStep
-            .get(ScoringPipelineConfig.gatesStep)
-            .map(_.asInstanceOf[GateExecutorResult]),
-          selectorResults = pipelineResult.executorResultsByPipelineStep
-            .get(ScoringPipelineConfig.selectorsStep)
-            .map(_.asInstanceOf[SelectorExecutorResult]),
-          preScoringHydrationPhase1Result = pipelineResult.executorResultsByPipelineStep
-            .get(ScoringPipelineConfig.preScoringFeatureHydrationPhase1Step)
-            .map(_.asInstanceOf[CandidateFeatureHydratorExecutorResult[Candidate]]),
-          preScoringHydrationPhase2Result = pipelineResult.executorResultsByPipelineStep
-            .get(ScoringPipelineConfig.preScoringFeatureHydrationPhase2Step)
-            .map(_.asInstanceOf[CandidateFeatureHydratorExecutorResult[Candidate]]),
-          scorerResults = pipelineResult.executorResultsByPipelineStep
-            .get(ScoringPipelineConfig.scorersStep)
-            .map(_.asInstanceOf[CandidateFeatureHydratorExecutorResult[Candidate]]),
-          failure = pipelineResult match {
-            case failure: NewPipelineResult.Failure =>
-              Some(failure.failure)
-            case _ => None
-          },
-          result = pipelineResult match {
-            case result: NewPipelineResult.Success[Seq[CandidateWithFeatures[Candidate]]] =>
-              Some(result.result.map { candidateWithFeatures =>
-                ScoredCandidateResult(
-                  candidateWithFeatures.candidate,
-                  candidateWithFeatures.features)
+    v-vaw finawawwow = a-awwow
+      .map { inputs: scowingpipewine.inputs[quewy] =>
+        s-scowingpipewinestate[quewy, σωσ candidate](inputs.quewy, /(^•ω•^) inputs.candidates, 😳 wistmap.empty)
+      }.andthen(undewwyingawwow).map { pipewinewesuwt =>
+        s-scowingpipewinewesuwt(
+          g-gatewesuwts = pipewinewesuwt.executowwesuwtsbypipewinestep
+            .get(scowingpipewineconfig.gatesstep)
+            .map(_.asinstanceof[gateexecutowwesuwt]), 😳
+          sewectowwesuwts = pipewinewesuwt.executowwesuwtsbypipewinestep
+            .get(scowingpipewineconfig.sewectowsstep)
+            .map(_.asinstanceof[sewectowexecutowwesuwt]), (⑅˘꒳˘)
+          p-pwescowinghydwationphase1wesuwt = p-pipewinewesuwt.executowwesuwtsbypipewinestep
+            .get(scowingpipewineconfig.pwescowingfeatuwehydwationphase1step)
+            .map(_.asinstanceof[candidatefeatuwehydwatowexecutowwesuwt[candidate]]), 😳😳😳
+          pwescowinghydwationphase2wesuwt = pipewinewesuwt.executowwesuwtsbypipewinestep
+            .get(scowingpipewineconfig.pwescowingfeatuwehydwationphase2step)
+            .map(_.asinstanceof[candidatefeatuwehydwatowexecutowwesuwt[candidate]]), 😳
+          scowewwesuwts = p-pipewinewesuwt.executowwesuwtsbypipewinestep
+            .get(scowingpipewineconfig.scowewsstep)
+            .map(_.asinstanceof[candidatefeatuwehydwatowexecutowwesuwt[candidate]]), XD
+          faiwuwe = pipewinewesuwt match {
+            case faiwuwe: n-nyewpipewinewesuwt.faiwuwe =>
+              some(faiwuwe.faiwuwe)
+            case _ => n-nyone
+          }, mya
+          w-wesuwt = pipewinewesuwt match {
+            case wesuwt: n-nyewpipewinewesuwt.success[seq[candidatewithfeatuwes[candidate]]] =>
+              s-some(wesuwt.wesuwt.map { candidatewithfeatuwes =>
+                scowedcandidatewesuwt(
+                  candidatewithfeatuwes.candidate, ^•ﻌ•^
+                  c-candidatewithfeatuwes.featuwes)
               })
-            case _ => None
+            case _ => nyone
           }
         )
       }
 
-    new ScoringPipeline[Query, Candidate] {
-      override val arrow: Arrow[ScoringPipeline.Inputs[Query], ScoringPipelineResult[Candidate]] =
-        finalArrow
+    n-nyew scowingpipewine[quewy, ʘwʘ candidate] {
+      ovewwide vaw awwow: awwow[scowingpipewine.inputs[quewy], ( ͡o ω ͡o ) scowingpipewinewesuwt[candidate]] =
+        f-finawawwow
 
-      override val identifier: ScoringPipelineIdentifier = scoringPipelineConfig.identifier
+      ovewwide v-vaw identifiew: s-scowingpipewineidentifiew = scowingpipewineconfig.identifiew
 
-      override val alerts: Seq[Alert] = scoringPipelineConfig.alerts
+      o-ovewwide vaw awewts: seq[awewt] = s-scowingpipewineconfig.awewts
 
-      override val children: Seq[Component] =
-        allGates ++ scoringPipelineConfig.preScoringFeatureHydrationPhase1 ++ scoringPipelineConfig.preScoringFeatureHydrationPhase2 ++ scoringPipelineConfig.scorers
+      o-ovewwide vaw chiwdwen: s-seq[component] =
+        awwgates ++ scowingpipewineconfig.pwescowingfeatuwehydwationphase1 ++ s-scowingpipewineconfig.pwescowingfeatuwehydwationphase2 ++ s-scowingpipewineconfig.scowews
 
-      override private[core] val config = scoringPipelineConfig
+      ovewwide pwivate[cowe] vaw c-config = scowingpipewineconfig
     }
   }
 }
 
-case class ScoringPipelineState[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  override val query: Query,
-  candidates: Seq[ItemCandidateWithDetails],
-  override val executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult])
-    extends HasQuery[Query, ScoringPipelineState[Query, Candidate]]
-    with HasCandidatesWithDetails[ScoringPipelineState[Query, Candidate]]
-    with HasCandidatesWithFeatures[Candidate, ScoringPipelineState[Query, Candidate]]
-    with HasExecutorResults[ScoringPipelineState[Query, Candidate]]
-    with HasResult[Seq[CandidateWithFeatures[Candidate]]] {
+c-case c-cwass scowingpipewinestate[quewy <: pipewinequewy, mya candidate <: u-univewsawnoun[any]](
+  ovewwide v-vaw quewy: quewy, o.O
+  c-candidates: seq[itemcandidatewithdetaiws],
+  ovewwide vaw executowwesuwtsbypipewinestep: wistmap[pipewinestepidentifiew, (✿oωo) e-executowwesuwt])
+    e-extends hasquewy[quewy, :3 s-scowingpipewinestate[quewy, 😳 c-candidate]]
+    with hascandidateswithdetaiws[scowingpipewinestate[quewy, (U ﹏ U) c-candidate]]
+    with hascandidateswithfeatuwes[candidate, mya scowingpipewinestate[quewy, (U ᵕ U❁) candidate]]
+    with hasexecutowwesuwts[scowingpipewinestate[quewy, :3 candidate]]
+    w-with haswesuwt[seq[candidatewithfeatuwes[candidate]]] {
 
-  override val candidatesWithDetails: Seq[CandidateWithDetails] = candidates
+  o-ovewwide vaw candidateswithdetaiws: s-seq[candidatewithdetaiws] = candidates
 
-  override val candidatesWithFeatures: Seq[CandidateWithFeatures[Candidate]] =
-    candidates.asInstanceOf[Seq[CandidateWithFeatures[Candidate]]]
+  o-ovewwide vaw candidateswithfeatuwes: s-seq[candidatewithfeatuwes[candidate]] =
+    c-candidates.asinstanceof[seq[candidatewithfeatuwes[candidate]]]
 
-  override val buildResult: Seq[CandidateWithFeatures[Candidate]] = candidatesWithFeatures
+  o-ovewwide v-vaw buiwdwesuwt: s-seq[candidatewithfeatuwes[candidate]] = candidateswithfeatuwes
 
-  override def updateCandidatesWithDetails(
-    newCandidates: Seq[CandidateWithDetails]
-  ): ScoringPipelineState[Query, Candidate] = {
-    this.copy(candidates = newCandidates.asInstanceOf[Seq[ItemCandidateWithDetails]])
+  ovewwide def updatecandidateswithdetaiws(
+    nyewcandidates: seq[candidatewithdetaiws]
+  ): scowingpipewinestate[quewy, mya c-candidate] = {
+    this.copy(candidates = n-nyewcandidates.asinstanceof[seq[itemcandidatewithdetaiws]])
   }
 
-  override def updateQuery(newQuery: Query): ScoringPipelineState[Query, Candidate] =
-    this.copy(query = newQuery)
+  o-ovewwide def updatequewy(newquewy: q-quewy): scowingpipewinestate[quewy, OwO candidate] =
+    this.copy(quewy = n-nyewquewy)
 
-  override def updateDecorations(
-    decoration: Seq[Decoration]
-  ): ScoringPipelineState[Query, Candidate] = ???
+  o-ovewwide def updatedecowations(
+    decowation: s-seq[decowation]
+  ): scowingpipewinestate[quewy, (ˆ ﻌ ˆ)♡ candidate] = ???
 
-  override def updateCandidatesWithFeatures(
-    newCandidates: Seq[CandidateWithFeatures[Candidate]]
-  ): ScoringPipelineState[Query, Candidate] = {
-    val updatedCandidates = candidates.zip(newCandidates).map {
-      case (itemCandidateWithDetails, newCandidate) =>
-        itemCandidateWithDetails.copy(features =
-          itemCandidateWithDetails.features ++ newCandidate.features)
+  o-ovewwide def u-updatecandidateswithfeatuwes(
+    nyewcandidates: s-seq[candidatewithfeatuwes[candidate]]
+  ): s-scowingpipewinestate[quewy, ʘwʘ candidate] = {
+    vaw updatedcandidates = candidates.zip(newcandidates).map {
+      case (itemcandidatewithdetaiws, o.O n-nyewcandidate) =>
+        i-itemcandidatewithdetaiws.copy(featuwes =
+          i-itemcandidatewithdetaiws.featuwes ++ n-nyewcandidate.featuwes)
     }
-    this.copy(query, updatedCandidates)
+    t-this.copy(quewy, UwU updatedcandidates)
   }
 
-  override private[pipeline] def setExecutorResults(
-    newMap: ListMap[PipelineStepIdentifier, ExecutorResult]
-  ) = this.copy(executorResultsByPipelineStep = newMap)
+  o-ovewwide pwivate[pipewine] d-def setexecutowwesuwts(
+    nyewmap: w-wistmap[pipewinestepidentifiew, rawr x3 e-executowwesuwt]
+  ) = this.copy(executowwesuwtsbypipewinestep = n-nyewmap)
 }

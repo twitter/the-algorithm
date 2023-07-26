@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.topic
 
-import com.twitter.product_mixer.component_library.model.candidate.TopicCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.BasicTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PillTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.NoIconTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PillWithoutActionIconDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicDisplayType
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic.BaseTopicDisplayTypeBuilder
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.topiccandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.timewines.configapi.fsenumpawam
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.basictopicdispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.piwwtopicdispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.noicontopicdispwaytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.piwwwithoutactionicondispwaytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicdispwaytype
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.topic.basetopicdispwaytypebuiwdew
 
-object TopicCandidateDisplayType extends Enumeration {
-  type TopicDisplayType = Value
+object topiccandidatedispwaytype extends e-enumewation {
+  type topicdispwaytype = v-vawue
 
-  val Basic = Value
-  val Pill = Value
-  val NoIcon = Value
-  val PillWithoutActionIcon = Value
+  vaw basic = vawue
+  vaw piww = vawue
+  vaw nyoicon = v-vawue
+  vaw piwwwithoutactionicon = v-vawue
 }
 
-case class ParamTopicDisplayTypeBuilder(
-  displayTypeParam: FSEnumParam[TopicCandidateDisplayType.type])
-    extends BaseTopicDisplayTypeBuilder[PipelineQuery, TopicCandidate] {
+c-case cwass pawamtopicdispwaytypebuiwdew(
+  dispwaytypepawam: fsenumpawam[topiccandidatedispwaytype.type])
+    extends basetopicdispwaytypebuiwdew[pipewinequewy, (˘ω˘) topiccandidate] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TopicCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[TopicDisplayType] = {
-    val displayType = query.params(displayTypeParam)
-    displayType match {
-      case TopicCandidateDisplayType.Basic => Some(BasicTopicDisplayType)
-      case TopicCandidateDisplayType.Pill => Some(PillTopicDisplayType)
-      case TopicCandidateDisplayType.NoIcon =>
-        Some(NoIconTopicDisplayType)
-      case TopicCandidateDisplayType.PillWithoutActionIcon => Some(PillWithoutActionIconDisplayType)
+  ovewwide d-def appwy(
+    quewy: pipewinequewy, (⑅˘꒳˘)
+    candidate: topiccandidate, (///ˬ///✿)
+    candidatefeatuwes: f-featuwemap
+  ): option[topicdispwaytype] = {
+    vaw d-dispwaytype = q-quewy.pawams(dispwaytypepawam)
+    d-dispwaytype m-match {
+      case topiccandidatedispwaytype.basic => some(basictopicdispwaytype)
+      c-case topiccandidatedispwaytype.piww => some(piwwtopicdispwaytype)
+      case topiccandidatedispwaytype.noicon =>
+        some(noicontopicdispwaytype)
+      c-case topiccandidatedispwaytype.piwwwithoutactionicon => some(piwwwithoutactionicondispwaytype)
     }
   }
 }

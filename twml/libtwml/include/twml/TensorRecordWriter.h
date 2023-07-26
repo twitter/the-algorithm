@@ -1,34 +1,34 @@
-#pragma once
-#ifdef __cplusplus
+#pwagma once
+#ifdef __cpwuspwus
 
-#include <twml/defines.h>
-#include <twml/TensorRecord.h>
+#incwude <twmw/defines.h>
+#incwude <twmw/tensowwecowd.h>
 
-namespace twml {
+nyamespace t-twmw {
 
-// Encodes tensors as DataRecord/TensorRecord-compatible Thrift.
-// DataRecordWriter relies on this class to encode the tensor fields.
-class TWMLAPI TensorRecordWriter {
+// e-encodes tensows a-as datawecowd/tensowwecowd-compatibwe t-thwift. nyaa~~
+// d-datawecowdwwitew w-wewies on this c-cwass to encode t-the tensow fiewds. /(^•ω•^)
+cwass twmwapi tensowwecowdwwitew {
 
-private:
-  uint32_t m_records_written;
-  twml::ThriftWriter &m_thrift_writer;
+pwivate:
+  uint32_t m_wecowds_wwitten;
+  t-twmw::thwiftwwitew &m_thwift_wwitew;
 
-  void writeTensor(const RawTensor &tensor);
-  void writeRawTensor(const RawTensor &tensor);
+  void wwitetensow(const wawtensow &tensow);
+  v-void wwitewawtensow(const wawtensow &tensow);
 
-public:
-  TensorRecordWriter(twml::ThriftWriter &thrift_writer):
-      m_records_written(0),
-      m_thrift_writer(thrift_writer) { }
+p-pubwic:
+  tensowwecowdwwitew(twmw::thwiftwwitew &thwift_wwitew):
+      m_wecowds_wwitten(0), rawr
+      m_thwift_wwitew(thwift_wwitew) { }
 
-  uint32_t getRecordsWritten();
+  uint32_t g-getwecowdswwitten();
 
-  // Caller (usually DataRecordWriter) must precede with struct header field
-  // like thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_GENERAL_TENSOR)
+  // cawwew (usuawwy d-datawecowdwwitew) m-must pwecede with stwuct headew fiewd
+  // wike thwift_wwitew.wwitestwuctfiewdheadew(ttype_map, dw_genewaw_tensow)
   //
-  // All tensors written as RawTensors except for StringTensors
-  uint64_t write(twml::TensorRecord &record);
+  // a-aww tensows wwitten as wawtensows except fow stwingtensows
+  uint64_t wwite(twmw::tensowwecowd &wecowd);
 };
 
 }

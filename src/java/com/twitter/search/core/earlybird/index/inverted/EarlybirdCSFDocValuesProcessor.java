@@ -1,73 +1,73 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.IndexableField;
+i-impowt owg.apache.wucene.facet.facetsconfig;
+i-impowt owg.apache.wucene.index.docvawuestype;
+i-impowt owg.apache.wucene.index.indexabwefiewd;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter;
-import com.twitter.search.core.earlybird.index.column.AbstractColumnStrideMultiIntIndex;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.column.DocValuesManager;
+i-impowt com.twittew.seawch.common.schema.base.eawwybiwdfiewdtype;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdweawtimeindexsegmentwwitew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.abstwactcowumnstwidemuwtiintindex;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidefiewdindex;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.docvawuesmanagew;
 
 /**
- * Handler for docvalues in the indexing chain.
+ * h-handwew fow docvawues in the indexing c-chain. >_<
  */
-public class EarlybirdCSFDocValuesProcessor
-    implements EarlybirdRealtimeIndexSegmentWriter.StoredFieldsConsumer {
+pubwic cwass eawwybiwdcsfdocvawuespwocessow
+    i-impwements eawwybiwdweawtimeindexsegmentwwitew.stowedfiewdsconsumew {
 
-  private final DocValuesManager docValuesManager;
+  pwivate finaw docvawuesmanagew d-docvawuesmanagew;
 
-  public EarlybirdCSFDocValuesProcessor(DocValuesManager docValuesManager) {
-    this.docValuesManager = docValuesManager;
+  pubwic e-eawwybiwdcsfdocvawuespwocessow(docvawuesmanagew d-docvawuesmanagew) {
+    this.docvawuesmanagew = docvawuesmanagew;
   }
 
-  @Override
-  public void addField(int docID, IndexableField field) throws IOException {
-    final DocValuesType dvType = field.fieldType().docValuesType();
-    if (dvType != null) {
+  @ovewwide
+  pubwic void addfiewd(int docid, -.- i-indexabwefiewd fiewd) thwows ioexception {
+    finaw docvawuestype dvtype = f-fiewd.fiewdtype().docvawuestype();
+    if (dvtype != n-nyuww) {
 
-      // ignore lucene facet fields for realtime index, we are handling it differently
-      if (field.name().startsWith(FacetsConfig.DEFAULT_INDEX_FIELD_NAME)) {
-        return;
+      // i-ignowe w-wucene facet fiewds f-fow weawtime index, 🥺 we awe handwing it diffewentwy
+      i-if (fiewd.name().stawtswith(facetsconfig.defauwt_index_fiewd_name)) {
+        wetuwn;
       }
-      if (!(field.fieldType() instanceof EarlybirdFieldType)) {
-        throw new RuntimeException(
-            "fieldType must be an EarlybirdFieldType instance for field " + field.name());
+      if (!(fiewd.fiewdtype() i-instanceof eawwybiwdfiewdtype)) {
+        thwow nyew wuntimeexception(
+            "fiewdtype must be an eawwybiwdfiewdtype instance fow f-fiewd " + fiewd.name());
       }
-      EarlybirdFieldType fieldType = (EarlybirdFieldType) field.fieldType();
+      eawwybiwdfiewdtype f-fiewdtype = (eawwybiwdfiewdtype) f-fiewd.fiewdtype();
 
-      if (dvType == DocValuesType.NUMERIC) {
-        if (!(field.numericValue() instanceof Long)) {
-          throw new IllegalArgumentException(
-              "illegal type " + field.numericValue().getClass()
-              + ": DocValues types must be Long");
+      i-if (dvtype == docvawuestype.numewic) {
+        if (!(fiewd.numewicvawue() instanceof wong)) {
+          t-thwow nyew iwwegawawgumentexception(
+              "iwwegaw t-type " + fiewd.numewicvawue().getcwass()
+              + ": d-docvawues t-types must be wong");
         }
 
-        ColumnStrideFieldIndex csfIndex =
-            docValuesManager.addColumnStrideField(field.name(), fieldType);
-        if (fieldType.getCsfFixedLengthNumValuesPerDoc() > 1) {
-          throw new UnsupportedOperationException("unsupported multi numeric values");
-        } else {
-          csfIndex.setValue(docID, field.numericValue().longValue());
+        c-cowumnstwidefiewdindex csfindex =
+            d-docvawuesmanagew.addcowumnstwidefiewd(fiewd.name(), (U ﹏ U) fiewdtype);
+        if (fiewdtype.getcsffixedwengthnumvawuespewdoc() > 1) {
+          t-thwow nyew unsuppowtedopewationexception("unsuppowted muwti nyumewic v-vawues");
+        } ewse {
+          c-csfindex.setvawue(docid, >w< f-fiewd.numewicvawue().wongvawue());
         }
 
-      } else if (dvType == DocValuesType.BINARY) {
-        ColumnStrideFieldIndex csfIndex =
-            docValuesManager.addColumnStrideField(field.name(), fieldType);
-        if (fieldType.getCsfFixedLengthNumValuesPerDoc() > 1) {
-          Preconditions.checkArgument(
-              csfIndex instanceof AbstractColumnStrideMultiIntIndex,
-              "Unsupported multi-value binary CSF class: " + csfIndex);
-          ((AbstractColumnStrideMultiIntIndex) csfIndex).updateDocValues(
-              field.binaryValue(), docID);
+      } ewse if (dvtype == docvawuestype.binawy) {
+        cowumnstwidefiewdindex csfindex =
+            docvawuesmanagew.addcowumnstwidefiewd(fiewd.name(), mya fiewdtype);
+        if (fiewdtype.getcsffixedwengthnumvawuespewdoc() > 1) {
+          p-pweconditions.checkawgument(
+              c-csfindex instanceof abstwactcowumnstwidemuwtiintindex, >w<
+              "unsuppowted m-muwti-vawue b-binawy csf cwass: " + c-csfindex);
+          ((abstwactcowumnstwidemuwtiintindex) csfindex).updatedocvawues(
+              fiewd.binawyvawue(), docid);
         }
-      } else {
-        throw new UnsupportedOperationException("unsupported DocValues.Type: " + dvType);
+      } e-ewse {
+        thwow nyew unsuppowtedopewationexception("unsuppowted docvawues.type: " + dvtype);
       }
     }
   }

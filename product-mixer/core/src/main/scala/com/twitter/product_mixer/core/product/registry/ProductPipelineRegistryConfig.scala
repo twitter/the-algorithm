@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.product.registry
+package com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy
 
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewineconfig
 
-trait ProductPipelineRegistryConfig {
-  def productPipelineConfigs: Seq[ProductPipelineConfig[_ <: Request, _ <: PipelineQuery, _]]
+t-twait p-pwoductpipewinewegistwyconfig {
+  d-def pwoductpipewineconfigs: seq[pwoductpipewineconfig[_ <: w-wequest, (⑅˘꒳˘) _ <: p-pipewinequewy, ( ͡o ω ͡o ) _]]
 }

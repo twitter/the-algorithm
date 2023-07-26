@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
-public final class EarlybirdMain {
-  private EarlybirdMain() {
+pubwic finaw c-cwass eawwybiwdmain {
+  p-pwivate e-eawwybiwdmain() {
   }
 
-  public static void main(String[] args) {
-    new Earlybird().main(args);
+  p-pubwic s-static void main(stwing[] a-awgs) {
+    n-nyew eawwybiwd().main(awgs);
   }
 }

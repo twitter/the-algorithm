@@ -1,134 +1,134 @@
-package com.twitter.cr_mixer.module
+package com.twittew.cw_mixew.moduwe
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.ads.entities.db.thriftscala.LineItemObjective
-import com.twitter.bijection.Injection
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.thriftscala.LineItemInfo
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.GeneralTensor
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.relevance_platform.common.injection.SeqObjectInjection
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.manhattan.Revenue
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.util.Future
-import javax.inject.Named
-import scala.collection.JavaConverters._
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.bijection.thwift.compactthwiftcodec
+i-impowt com.twittew.ads.entities.db.thwiftscawa.wineitemobjective
+i-impowt com.twittew.bijection.injection
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.cw_mixew.modew.moduwenames
+i-impowt com.twittew.cw_mixew.thwiftscawa.wineiteminfo
+impowt com.twittew.finagwe.memcached.{cwient => memcachedcwient}
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.hewmit.stowe.common.obsewvedcachedweadabwestowe
+impowt com.twittew.hewmit.stowe.common.obsewvedmemcachedweadabwestowe
+i-impowt com.twittew.inject.twittewmoduwe
+impowt c-com.twittew.mw.api.datawecowd
+impowt com.twittew.mw.api.datatype
+impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.genewawtensow
+impowt c-com.twittew.mw.api.wichdatawecowd
+i-impowt com.twittew.wewevance_pwatfowm.common.injection.wz4injection
+impowt com.twittew.wewevance_pwatfowm.common.injection.seqobjectinjection
+impowt com.twittew.simcwustews_v2.common.tweetid
+impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+impowt c-com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.stowehaus_intewnaw.manhattan.manhattanwo
+impowt com.twittew.stowehaus_intewnaw.manhattan.manhattanwoconfig
+impowt com.twittew.stowehaus_intewnaw.manhattan.wevenue
+impowt c-com.twittew.stowehaus_intewnaw.utiw.appwicationid
+impowt com.twittew.stowehaus_intewnaw.utiw.datasetname
+impowt c-com.twittew.stowehaus_intewnaw.utiw.hdfspath
+i-impowt com.twittew.utiw.futuwe
+i-impowt javax.inject.named
+i-impowt scawa.cowwection.javaconvewtews._
 
-object ActivePromotedTweetStoreModule extends TwitterModule {
+object activepwomotedtweetstowemoduwe e-extends twittewmoduwe {
 
-  case class ActivePromotedTweetStore(
-    activePromotedTweetMHStore: ReadableStore[String, DataRecord],
-    statsReceiver: StatsReceiver)
-      extends ReadableStore[TweetId, Seq[LineItemInfo]] {
-    override def get(tweetId: TweetId): Future[Option[Seq[LineItemInfo]]] = {
-      activePromotedTweetMHStore.get(tweetId.toString).map {
-        _.map { dataRecord =>
-          val richDataRecord = new RichDataRecord(dataRecord)
-          val lineItemIdsFeature: Feature[GeneralTensor] =
-            new Feature.Tensor("active_promoted_tweets.line_item_ids", DataType.INT64)
+  case cwass a-activepwomotedtweetstowe(
+    activepwomotedtweetmhstowe: weadabwestowe[stwing, (˘ω˘) datawecowd], nyaa~~
+    statsweceivew: statsweceivew)
+      e-extends weadabwestowe[tweetid, UwU seq[wineiteminfo]] {
+    ovewwide d-def get(tweetid: t-tweetid): f-futuwe[option[seq[wineiteminfo]]] = {
+      activepwomotedtweetmhstowe.get(tweetid.tostwing).map {
+        _.map { datawecowd =>
+          vaw wichdatawecowd = n-nyew wichdatawecowd(datawecowd)
+          v-vaw wineitemidsfeatuwe: f-featuwe[genewawtensow] =
+            n-nyew featuwe.tensow("active_pwomoted_tweets.wine_item_ids", :3 datatype.int64)
 
-          val lineItemObjectivesFeature: Feature[GeneralTensor] =
-            new Feature.Tensor("active_promoted_tweets.line_item_objectives", DataType.INT64)
+          v-vaw wineitemobjectivesfeatuwe: featuwe[genewawtensow] =
+            n-nyew featuwe.tensow("active_pwomoted_tweets.wine_item_objectives", (⑅˘꒳˘) datatype.int64)
 
-          val lineItemIdsTensor: GeneralTensor = richDataRecord.getFeatureValue(lineItemIdsFeature)
-          val lineItemObjectivesTensor: GeneralTensor =
-            richDataRecord.getFeatureValue(lineItemObjectivesFeature)
+          vaw wineitemidstensow: g-genewawtensow = wichdatawecowd.getfeatuwevawue(wineitemidsfeatuwe)
+          v-vaw wineitemobjectivestensow: genewawtensow =
+            w-wichdatawecowd.getfeatuwevawue(wineitemobjectivesfeatuwe)
 
-          val lineItemIds: Seq[Long] =
-            if (lineItemIdsTensor.getSetField == GeneralTensor._Fields.INT64_TENSOR && lineItemIdsTensor.getInt64Tensor.isSetLongs) {
-              lineItemIdsTensor.getInt64Tensor.getLongs.asScala.map(_.toLong)
-            } else Seq.empty
+          v-vaw wineitemids: seq[wong] =
+            if (wineitemidstensow.getsetfiewd == genewawtensow._fiewds.int64_tensow && wineitemidstensow.getint64tensow.issetwongs) {
+              wineitemidstensow.getint64tensow.getwongs.asscawa.map(_.towong)
+            } ewse seq.empty
 
-          val lineItemObjectives: Seq[LineItemObjective] =
-            if (lineItemObjectivesTensor.getSetField == GeneralTensor._Fields.INT64_TENSOR && lineItemObjectivesTensor.getInt64Tensor.isSetLongs) {
-              lineItemObjectivesTensor.getInt64Tensor.getLongs.asScala.map(objective =>
-                LineItemObjective(objective.toInt))
-            } else Seq.empty
+          vaw wineitemobjectives: s-seq[wineitemobjective] =
+            i-if (wineitemobjectivestensow.getsetfiewd == genewawtensow._fiewds.int64_tensow && w-wineitemobjectivestensow.getint64tensow.issetwongs) {
+              w-wineitemobjectivestensow.getint64tensow.getwongs.asscawa.map(objective =>
+                w-wineitemobjective(objective.toint))
+            } ewse seq.empty
 
-          val lineItemInfo =
-            if (lineItemIds.size == lineItemObjectives.size) {
-              lineItemIds.zipWithIndex.map {
-                case (lineItemId, index) =>
-                  LineItemInfo(
-                    lineItemId = lineItemId,
-                    lineItemObjective = lineItemObjectives(index)
+          vaw wineiteminfo =
+            i-if (wineitemids.size == wineitemobjectives.size) {
+              wineitemids.zipwithindex.map {
+                case (wineitemid, (///ˬ///✿) index) =>
+                  wineiteminfo(
+                    w-wineitemid = wineitemid, ^^;;
+                    w-wineitemobjective = w-wineitemobjectives(index)
                   )
               }
-            } else Seq.empty
+            } e-ewse seq.empty
 
-          lineItemInfo
+          wineiteminfo
         }
       }
     }
   }
 
-  @Provides
-  @Singleton
-  def providesActivePromotedTweetStore(
-    manhattanKVClientMtlsParams: ManhattanKVClientMtlsParams,
-    @Named(ModuleNames.UnifiedCache) crMixerUnifiedCacheClient: MemcachedClient,
-    crMixerStatsReceiver: StatsReceiver
-  ): ReadableStore[TweetId, Seq[LineItemInfo]] = {
+  @pwovides
+  @singweton
+  d-def pwovidesactivepwomotedtweetstowe(
+    m-manhattankvcwientmtwspawams: m-manhattankvcwientmtwspawams, >_<
+    @named(moduwenames.unifiedcache) c-cwmixewunifiedcachecwient: memcachedcwient, rawr x3
+    cwmixewstatsweceivew: s-statsweceivew
+  ): w-weadabwestowe[tweetid, /(^•ω•^) s-seq[wineiteminfo]] = {
 
-    val mhConfig = new ManhattanROConfig {
-      val hdfsPath = HDFSPath("")
-      val applicationID = ApplicationID("ads_bigquery_features")
-      val datasetName = DatasetName("active_promoted_tweets")
-      val cluster = Revenue
+    v-vaw mhconfig = n-nyew manhattanwoconfig {
+      vaw hdfspath = hdfspath("")
+      vaw appwicationid = a-appwicationid("ads_bigquewy_featuwes")
+      vaw datasetname = datasetname("active_pwomoted_tweets")
+      vaw cwustew = wevenue
 
-      override def statsReceiver: StatsReceiver =
-        crMixerStatsReceiver.scope("active_promoted_tweets_mh")
+      ovewwide def s-statsweceivew: statsweceivew =
+        cwmixewstatsweceivew.scope("active_pwomoted_tweets_mh")
     }
-    val mhStore: ReadableStore[String, DataRecord] =
-      ManhattanRO
-        .getReadableStoreWithMtls[String, DataRecord](
-          mhConfig,
-          manhattanKVClientMtlsParams
+    vaw mhstowe: w-weadabwestowe[stwing, :3 d-datawecowd] =
+      m-manhattanwo
+        .getweadabwestowewithmtws[stwing, (ꈍᴗꈍ) datawecowd](
+          m-mhconfig, /(^•ω•^)
+          manhattankvcwientmtwspawams
         )(
-          implicitly[Injection[String, Array[Byte]]],
-          CompactThriftCodec[DataRecord]
+          i-impwicitwy[injection[stwing, (⑅˘꒳˘) a-awway[byte]]], ( ͡o ω ͡o )
+          compactthwiftcodec[datawecowd]
         )
 
-    val underlyingStore =
-      ActivePromotedTweetStore(mhStore, crMixerStatsReceiver.scope("ActivePromotedTweetStore"))
-    val memcachedStore = ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = underlyingStore,
-      cacheClient = crMixerUnifiedCacheClient,
-      ttl = 60.minutes,
-      asyncUpdate = false
+    vaw undewwyingstowe =
+      activepwomotedtweetstowe(mhstowe, òωó cwmixewstatsweceivew.scope("activepwomotedtweetstowe"))
+    vaw memcachedstowe = o-obsewvedmemcachedweadabwestowe.fwomcachecwient(
+      backingstowe = u-undewwyingstowe, (⑅˘꒳˘)
+      cachecwient = c-cwmixewunifiedcachecwient, XD
+      t-ttw = 60.minutes, -.-
+      asyncupdate = fawse
     )(
-      valueInjection = LZ4Injection.compose(SeqObjectInjection[LineItemInfo]()),
-      statsReceiver = crMixerStatsReceiver.scope("memCachedActivePromotedTweetStore"),
-      keyToString = { k: TweetId => s"apt/$k" }
+      v-vawueinjection = w-wz4injection.compose(seqobjectinjection[wineiteminfo]()), :3
+      statsweceivew = c-cwmixewstatsweceivew.scope("memcachedactivepwomotedtweetstowe"), nyaa~~
+      k-keytostwing = { k: tweetid => s"apt/$k" }
     )
 
-    ObservedCachedReadableStore.from(
-      memcachedStore,
-      ttl = 30.minutes,
-      maxKeys = 250000, // size of promoted tweet is around 200,000
-      windowSize = 10000L,
-      cacheName = "active_promoted_tweet_cache",
-      maxMultiGetSize = 20
-    )(crMixerStatsReceiver.scope("inMemoryCachedActivePromotedTweetStore"))
+    obsewvedcachedweadabwestowe.fwom(
+      memcachedstowe, 😳
+      ttw = 30.minutes, (⑅˘꒳˘)
+      m-maxkeys = 250000, nyaa~~ // s-size of pwomoted t-tweet is awound 200,000
+      windowsize = 10000w, OwO
+      c-cachename = "active_pwomoted_tweet_cache", rawr x3
+      m-maxmuwtigetsize = 20
+    )(cwmixewstatsweceivew.scope("inmemowycachedactivepwomotedtweetstowe"))
 
   }
 

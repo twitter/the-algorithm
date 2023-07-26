@@ -1,95 +1,95 @@
-package com.twitter.simclusters_v2.common
+package com.twittew.simcwustews_v2.common
 
-import com.twitter.simclusters_v2.thriftscala.{
-  EmbeddingType,
-  InternalId,
-  MultiEmbeddingType,
-  TopicId,
-  TopicSubId,
-  SimClustersEmbeddingId => ThriftEmbeddingId,
-  SimClustersMultiEmbeddingId => ThriftMultiEmbeddingId
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.{
+  e-embeddingtype, :3
+  i-intewnawid, OwO
+  m-muwtiembeddingtype, (U ﹏ U)
+  t-topicid, >w<
+  topicsubid, (U ﹏ U)
+  s-simcwustewsembeddingid => t-thwiftembeddingid, 😳
+  s-simcwustewsmuwtiembeddingid => thwiftmuwtiembeddingid
 }
 
 /**
- * Helper methods for SimClustersMultiEmbeddingId
+ * hewpew methods fow simcwustewsmuwtiembeddingid
  */
-object SimClustersMultiEmbeddingId {
+object s-simcwustewsmuwtiembeddingid {
 
-  private val MultiEmbeddingTypeToEmbeddingType: Map[MultiEmbeddingType, EmbeddingType] =
-    Map(
-      MultiEmbeddingType.LogFavApeBasedMuseTopic -> EmbeddingType.LogFavApeBasedMuseTopic,
-      MultiEmbeddingType.TwiceUserInterestedIn -> EmbeddingType.TwiceUserInterestedIn,
+  pwivate vaw muwtiembeddingtypetoembeddingtype: m-map[muwtiembeddingtype, (ˆ ﻌ ˆ)♡ embeddingtype] =
+    m-map(
+      muwtiembeddingtype.wogfavapebasedmusetopic -> embeddingtype.wogfavapebasedmusetopic, 😳😳😳
+      muwtiembeddingtype.twiceusewintewestedin -> embeddingtype.twiceusewintewestedin, (U ﹏ U)
     )
 
-  private val EmbeddingTypeToMultiEmbeddingType: Map[EmbeddingType, MultiEmbeddingType] =
-    MultiEmbeddingTypeToEmbeddingType.map(_.swap)
+  p-pwivate vaw embeddingtypetomuwtiembeddingtype: map[embeddingtype, (///ˬ///✿) muwtiembeddingtype] =
+    m-muwtiembeddingtypetoembeddingtype.map(_.swap)
 
-  def toEmbeddingType(multiEmbeddingType: MultiEmbeddingType): EmbeddingType = {
-    MultiEmbeddingTypeToEmbeddingType.getOrElse(
-      multiEmbeddingType,
-      throw new IllegalArgumentException(s"Invalid type: $multiEmbeddingType"))
+  d-def toembeddingtype(muwtiembeddingtype: muwtiembeddingtype): embeddingtype = {
+    muwtiembeddingtypetoembeddingtype.getowewse(
+      m-muwtiembeddingtype, 😳
+      thwow nyew iwwegawawgumentexception(s"invawid type: $muwtiembeddingtype"))
   }
 
-  def toMultiEmbeddingType(embeddingType: EmbeddingType): MultiEmbeddingType = {
-    EmbeddingTypeToMultiEmbeddingType.getOrElse(
-      embeddingType,
-      throw new IllegalArgumentException(s"Invalid type: $embeddingType")
+  def tomuwtiembeddingtype(embeddingtype: e-embeddingtype): muwtiembeddingtype = {
+    e-embeddingtypetomuwtiembeddingtype.getowewse(
+      e-embeddingtype, 😳
+      t-thwow n-new iwwegawawgumentexception(s"invawid type: $embeddingtype")
     )
   }
 
   /**
-   * Convert a SimClusters Multi-Embedding Id and SubId to SimClusters Embedding Id.
+   * convewt a simcwustews m-muwti-embedding id and subid to simcwustews e-embedding id.
    */
-  def toEmbeddingId(
-    simClustersMultiEmbeddingId: ThriftMultiEmbeddingId,
-    subId: Int
-  ): ThriftEmbeddingId = {
-    val internalId = simClustersMultiEmbeddingId.internalId match {
-      case InternalId.TopicId(topicId) =>
-        InternalId.TopicSubId(
-          TopicSubId(topicId.entityId, topicId.language, topicId.country, subId))
-      case _ =>
-        throw new IllegalArgumentException(
-          s"Invalid simClusters InternalId ${simClustersMultiEmbeddingId.internalId}")
+  def toembeddingid(
+    simcwustewsmuwtiembeddingid: thwiftmuwtiembeddingid, σωσ
+    subid: i-int
+  ): thwiftembeddingid = {
+    vaw intewnawid = s-simcwustewsmuwtiembeddingid.intewnawid m-match {
+      c-case intewnawid.topicid(topicid) =>
+        intewnawid.topicsubid(
+          topicsubid(topicid.entityid, rawr x3 t-topicid.wanguage, OwO t-topicid.countwy, /(^•ω•^) subid))
+      c-case _ =>
+        t-thwow nyew iwwegawawgumentexception(
+          s-s"invawid simcwustews intewnawid ${simcwustewsmuwtiembeddingid.intewnawid}")
     }
-    ThriftEmbeddingId(
-      toEmbeddingType(simClustersMultiEmbeddingId.embeddingType),
-      simClustersMultiEmbeddingId.modelVersion,
-      internalId
+    thwiftembeddingid(
+      t-toembeddingtype(simcwustewsmuwtiembeddingid.embeddingtype), 😳😳😳
+      simcwustewsmuwtiembeddingid.modewvewsion, ( ͡o ω ͡o )
+      intewnawid
     )
   }
 
   /**
-   * Fetch a subId from a SimClusters EmbeddingId.
+   * f-fetch a subid fwom a s-simcwustews embeddingid. >_<
    */
-  def toSubId(simClustersEmbeddingId: ThriftEmbeddingId): Int = {
-    simClustersEmbeddingId.internalId match {
-      case InternalId.TopicSubId(topicSubId) =>
-        topicSubId.subId
+  def tosubid(simcwustewsembeddingid: t-thwiftembeddingid): i-int = {
+    simcwustewsembeddingid.intewnawid match {
+      case intewnawid.topicsubid(topicsubid) =>
+        topicsubid.subid
       case _ =>
-        throw new IllegalArgumentException(
-          s"Invalid SimClustersEmbeddingId InternalId type, $simClustersEmbeddingId")
+        thwow nyew iwwegawawgumentexception(
+          s"invawid s-simcwustewsembeddingid i-intewnawid type, >w< $simcwustewsembeddingid")
     }
   }
 
   /**
-   * Convert a SimClustersEmbeddingId to SimClustersMultiEmbeddingId.
-   * Only support the Multi embedding based EmbeddingTypes.
+   * convewt a simcwustewsembeddingid t-to simcwustewsmuwtiembeddingid.
+   * o-onwy suppowt t-the muwti embedding based embeddingtypes.
    */
-  def toMultiEmbeddingId(
-    simClustersEmbeddingId: ThriftEmbeddingId
-  ): ThriftMultiEmbeddingId = {
-    simClustersEmbeddingId.internalId match {
-      case InternalId.TopicSubId(topicSubId) =>
-        ThriftMultiEmbeddingId(
-          toMultiEmbeddingType(simClustersEmbeddingId.embeddingType),
-          simClustersEmbeddingId.modelVersion,
-          InternalId.TopicId(TopicId(topicSubId.entityId, topicSubId.language, topicSubId.country))
+  def tomuwtiembeddingid(
+    simcwustewsembeddingid: t-thwiftembeddingid
+  ): thwiftmuwtiembeddingid = {
+    simcwustewsembeddingid.intewnawid match {
+      case intewnawid.topicsubid(topicsubid) =>
+        t-thwiftmuwtiembeddingid(
+          tomuwtiembeddingtype(simcwustewsembeddingid.embeddingtype), rawr
+          s-simcwustewsembeddingid.modewvewsion, 😳
+          i-intewnawid.topicid(topicid(topicsubid.entityid, >w< t-topicsubid.wanguage, (⑅˘꒳˘) topicsubid.countwy))
         )
 
-      case _ =>
-        throw new IllegalArgumentException(
-          s"Invalid SimClustersEmbeddingId InternalId type, $simClustersEmbeddingId")
+      c-case _ =>
+        t-thwow nyew i-iwwegawawgumentexception(
+          s-s"invawid simcwustewsembeddingid intewnawid type, OwO $simcwustewsembeddingid")
     }
   }
 

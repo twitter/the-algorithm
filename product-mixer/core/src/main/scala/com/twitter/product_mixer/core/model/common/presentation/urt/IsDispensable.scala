@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.model.common.presentation.urt
+package com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.uwt
 
 /**
- * Whether an item is considered dispensable within a module.
- * Dispensable module items should never be left as the final remaining
- * items within a module. Whenever a module would be left with only
- * dispensable contents (through removal or dismissal of other items) the
- * entire module should be discarded as if contained 0 items.
+ * whethew a-an item is considewed d-dispensabwe w-within a moduwe. mya
+ * d-dispensabwe m-moduwe items s-shouwd nyevew b-be weft as the f-finaw wemaining
+ * items within a moduwe. 😳 whenevew a moduwe wouwd be weft with onwy
+ * d-dispensabwe contents (thwough wemovaw ow d-dismissaw of othew items) the
+ * e-entiwe moduwe shouwd be discawded as if contained 0 items. XD
  *
- * @see http://go/urtDispensableModuleItems
+ * @see h-http://go/uwtdispensabwemoduweitems
  */
-trait IsDispensable { self: BaseUrtItemPresentation =>
-  def dispensable: Boolean
+twait isdispensabwe { s-sewf: baseuwtitempwesentation =>
+  d-def dispensabwe: boowean
 }

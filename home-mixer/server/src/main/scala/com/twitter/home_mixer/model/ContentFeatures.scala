@@ -1,144 +1,144 @@
-package com.twitter.home_mixer.model
+package com.twittew.home_mixew.modew
 
-import com.twitter.escherbird.{thriftscala => esb}
-import com.twitter.search.common.features.{thriftscala => sc}
-import com.twitter.tweetypie.{thriftscala => tp}
+impowt com.twittew.eschewbiwd.{thwiftscawa => e-esb}
+impowt com.twittew.seawch.common.featuwes.{thwiftscawa => s-sc}
+impowt com.twittew.tweetypie.{thwiftscawa => t-tp}
 
-object ContentFeatures {
-  val Empty: ContentFeatures = ContentFeatures(
-    0.toShort,
-    false,
-    0.toShort,
-    0.toShort,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None
+object contentfeatuwes {
+  v-vaw empty: contentfeatuwes = c-contentfeatuwes(
+    0.toshowt, XD
+    f-fawse, σωσ
+    0.toshowt, (U ᵕ U❁)
+    0.toshowt, (U ﹏ U)
+    n-nyone, :3
+    n-nyone,
+    nyone, ( ͡o ω ͡o )
+    nyone, σωσ
+    nyone,
+    none, >w<
+    nyone, 😳😳😳
+    nyone,
+    n-nyone, OwO
+    nyone, 😳
+    nyone, 😳😳😳
+    nyone,
+    n-nyone, (˘ω˘)
+    none, ʘwʘ
+    nyone,
+    n-nyone, ( ͡o ω ͡o )
+    nyone, o.O
+    nyone, >w<
+    nyone,
+    nyone, 😳
+    nyone, 🥺
+    n-none,
+    nyone, rawr x3
+    nyone, o.O
+    n-nyone, rawr
+    nyone,
+    n-nyone, ʘwʘ
+    nyone, 😳😳😳
+    nyone, ^^;;
+    none,
+    nyone, o.O
+    nyone, (///ˬ///✿)
+    nyone,
+    n-nyone, σωσ
+    nyone, nyaa~~
+    nyone,
+    nyone, ^^;;
+    none
   )
 
-  def fromThrift(ebFeatures: sc.ThriftTweetFeatures): ContentFeatures =
-    ContentFeatures(
-      length = ebFeatures.tweetLength.getOrElse(0).toShort,
-      hasQuestion = ebFeatures.hasQuestion.getOrElse(false),
-      numCaps = ebFeatures.numCaps.getOrElse(0).toShort,
-      numWhiteSpaces = ebFeatures.numWhitespaces.getOrElse(0).toShort,
-      numNewlines = ebFeatures.numNewlines,
-      videoDurationMs = ebFeatures.videoDurationMs,
-      bitRate = ebFeatures.bitRate,
-      aspectRatioNum = ebFeatures.aspectRatioNum,
-      aspectRatioDen = ebFeatures.aspectRatioDen,
-      widths = ebFeatures.widths.map(_.map(_.toShort)),
-      heights = ebFeatures.heights.map(_.map(_.toShort)),
-      resizeMethods = ebFeatures.resizeMethods.map(_.map(_.toShort)),
-      numMediaTags = ebFeatures.numMediaTags.map(_.toShort),
-      mediaTagScreenNames = ebFeatures.mediaTagScreenNames,
-      emojiTokens = ebFeatures.emojiTokens.map(_.toSet),
-      emoticonTokens = ebFeatures.emoticonTokens.map(_.toSet),
-      faceAreas = ebFeatures.faceAreas,
-      dominantColorRed = ebFeatures.dominantColorRed,
-      dominantColorBlue = ebFeatures.dominantColorBlue,
-      dominantColorGreen = ebFeatures.dominantColorGreen,
-      numColors = ebFeatures.numColors.map(_.toShort),
-      stickerIds = ebFeatures.stickerIds,
-      mediaOriginProviders = ebFeatures.mediaOriginProviders,
-      isManaged = ebFeatures.isManaged,
-      is360 = ebFeatures.is360,
-      viewCount = ebFeatures.viewCount,
-      isMonetizable = ebFeatures.isMonetizable,
-      isEmbeddable = ebFeatures.isEmbeddable,
-      hasSelectedPreviewImage = ebFeatures.hasSelectedPreviewImage,
-      hasTitle = ebFeatures.hasTitle,
-      hasDescription = ebFeatures.hasDescription,
-      hasVisitSiteCallToAction = ebFeatures.hasVisitSiteCallToAction,
-      hasAppInstallCallToAction = ebFeatures.hasAppInstallCallToAction,
-      hasWatchNowCallToAction = ebFeatures.hasWatchNowCallToAction,
-      dominantColorPercentage = ebFeatures.dominantColorPercentage,
-      posUnigrams = ebFeatures.posUnigrams.map(_.toSet),
-      posBigrams = ebFeatures.posBigrams.map(_.toSet),
-      semanticCoreAnnotations = ebFeatures.semanticCoreAnnotations,
-      tokens = ebFeatures.textTokens.map(_.toSeq),
-      conversationControl = ebFeatures.conversationControl,
-      // media and selfThreadMetadata not carried by ThriftTweetFeatures
-      media = None,
-      selfThreadMetadata = None
+  def fwomthwift(ebfeatuwes: s-sc.thwifttweetfeatuwes): contentfeatuwes =
+    c-contentfeatuwes(
+      w-wength = e-ebfeatuwes.tweetwength.getowewse(0).toshowt, ^•ﻌ•^
+      h-hasquestion = ebfeatuwes.hasquestion.getowewse(fawse), σωσ
+      nyumcaps = e-ebfeatuwes.numcaps.getowewse(0).toshowt, -.-
+      nyumwhitespaces = ebfeatuwes.numwhitespaces.getowewse(0).toshowt, ^^;;
+      n-nyumnewwines = ebfeatuwes.numnewwines, XD
+      videoduwationms = ebfeatuwes.videoduwationms, 🥺
+      bitwate = ebfeatuwes.bitwate, òωó
+      a-aspectwationum = ebfeatuwes.aspectwationum, (ˆ ﻌ ˆ)♡
+      aspectwatioden = e-ebfeatuwes.aspectwatioden, -.-
+      w-widths = ebfeatuwes.widths.map(_.map(_.toshowt)), :3
+      h-heights = ebfeatuwes.heights.map(_.map(_.toshowt)), ʘwʘ
+      wesizemethods = ebfeatuwes.wesizemethods.map(_.map(_.toshowt)), 🥺
+      n-nyummediatags = e-ebfeatuwes.nummediatags.map(_.toshowt), >_<
+      mediatagscweennames = e-ebfeatuwes.mediatagscweennames, ʘwʘ
+      e-emojitokens = ebfeatuwes.emojitokens.map(_.toset), (˘ω˘)
+      e-emoticontokens = ebfeatuwes.emoticontokens.map(_.toset), (✿oωo)
+      f-faceaweas = ebfeatuwes.faceaweas, (///ˬ///✿)
+      dominantcowowwed = e-ebfeatuwes.dominantcowowwed, rawr x3
+      dominantcowowbwue = e-ebfeatuwes.dominantcowowbwue, -.-
+      dominantcowowgween = e-ebfeatuwes.dominantcowowgween, ^^
+      n-nyumcowows = ebfeatuwes.numcowows.map(_.toshowt), (⑅˘꒳˘)
+      stickewids = ebfeatuwes.stickewids, nyaa~~
+      mediaowiginpwovidews = ebfeatuwes.mediaowiginpwovidews, /(^•ω•^)
+      ismanaged = e-ebfeatuwes.ismanaged, (U ﹏ U)
+      i-is360 = ebfeatuwes.is360, 😳😳😳
+      viewcount = ebfeatuwes.viewcount, >w<
+      i-ismonetizabwe = e-ebfeatuwes.ismonetizabwe, XD
+      i-isembeddabwe = ebfeatuwes.isembeddabwe, o.O
+      hassewectedpweviewimage = ebfeatuwes.hassewectedpweviewimage, mya
+      h-hastitwe = ebfeatuwes.hastitwe, 🥺
+      hasdescwiption = ebfeatuwes.hasdescwiption, ^^;;
+      hasvisitsitecawwtoaction = e-ebfeatuwes.hasvisitsitecawwtoaction, :3
+      hasappinstawwcawwtoaction = e-ebfeatuwes.hasappinstawwcawwtoaction, (U ﹏ U)
+      h-haswatchnowcawwtoaction = e-ebfeatuwes.haswatchnowcawwtoaction, OwO
+      dominantcowowpewcentage = e-ebfeatuwes.dominantcowowpewcentage, 😳😳😳
+      p-posunigwams = e-ebfeatuwes.posunigwams.map(_.toset),
+      p-posbigwams = ebfeatuwes.posbigwams.map(_.toset), (ˆ ﻌ ˆ)♡
+      semanticcoweannotations = e-ebfeatuwes.semanticcoweannotations, XD
+      tokens = e-ebfeatuwes.texttokens.map(_.toseq), (ˆ ﻌ ˆ)♡
+      c-convewsationcontwow = e-ebfeatuwes.convewsationcontwow, ( ͡o ω ͡o )
+      // m-media and sewfthweadmetadata nyot cawwied by thwifttweetfeatuwes
+      media = n-nyone, rawr x3
+      sewfthweadmetadata = nyone
     )
 }
 
-case class ContentFeatures(
-  length: Short,
-  hasQuestion: Boolean,
-  numCaps: Short,
-  numWhiteSpaces: Short,
-  numNewlines: Option[Short],
-  videoDurationMs: Option[Int],
-  bitRate: Option[Int],
-  aspectRatioNum: Option[Short],
-  aspectRatioDen: Option[Short],
-  widths: Option[Seq[Short]],
-  heights: Option[Seq[Short]],
-  resizeMethods: Option[Seq[Short]],
-  numMediaTags: Option[Short],
-  mediaTagScreenNames: Option[Seq[String]],
-  emojiTokens: Option[Set[String]],
-  emoticonTokens: Option[Set[String]],
-  faceAreas: Option[Seq[Int]],
-  dominantColorRed: Option[Short],
-  dominantColorBlue: Option[Short],
-  dominantColorGreen: Option[Short],
-  numColors: Option[Short],
-  stickerIds: Option[Seq[Long]],
-  mediaOriginProviders: Option[Seq[String]],
-  isManaged: Option[Boolean],
-  is360: Option[Boolean],
-  viewCount: Option[Long],
-  isMonetizable: Option[Boolean],
-  isEmbeddable: Option[Boolean],
-  hasSelectedPreviewImage: Option[Boolean],
-  hasTitle: Option[Boolean],
-  hasDescription: Option[Boolean],
-  hasVisitSiteCallToAction: Option[Boolean],
-  hasAppInstallCallToAction: Option[Boolean],
-  hasWatchNowCallToAction: Option[Boolean],
-  media: Option[Seq[tp.MediaEntity]],
-  dominantColorPercentage: Option[Double],
-  posUnigrams: Option[Set[String]],
-  posBigrams: Option[Set[String]],
-  semanticCoreAnnotations: Option[Seq[esb.TweetEntityAnnotation]],
-  selfThreadMetadata: Option[tp.SelfThreadMetadata],
-  tokens: Option[Seq[String]],
-  conversationControl: Option[tp.ConversationControl],
+case cwass contentfeatuwes(
+  wength: showt, nyaa~~
+  hasquestion: boowean, >_<
+  numcaps: s-showt, ^^;;
+  nyumwhitespaces: showt, (ˆ ﻌ ˆ)♡
+  nyumnewwines: option[showt], ^^;;
+  v-videoduwationms: o-option[int], (⑅˘꒳˘)
+  b-bitwate: option[int], rawr x3
+  aspectwationum: o-option[showt], (///ˬ///✿)
+  aspectwatioden: o-option[showt], 🥺
+  w-widths: option[seq[showt]], >_<
+  heights: option[seq[showt]], UwU
+  wesizemethods: option[seq[showt]], >_<
+  nyummediatags: o-option[showt], -.-
+  mediatagscweennames: option[seq[stwing]], mya
+  e-emojitokens: option[set[stwing]], >w<
+  emoticontokens: option[set[stwing]], (U ﹏ U)
+  f-faceaweas: o-option[seq[int]], 😳😳😳
+  dominantcowowwed: option[showt], o.O
+  d-dominantcowowbwue: o-option[showt], òωó
+  dominantcowowgween: o-option[showt], 😳😳😳
+  n-nyumcowows: option[showt], σωσ
+  stickewids: option[seq[wong]], (⑅˘꒳˘)
+  mediaowiginpwovidews: option[seq[stwing]], (///ˬ///✿)
+  ismanaged: o-option[boowean], 🥺
+  i-is360: o-option[boowean], OwO
+  viewcount: option[wong], >w<
+  ismonetizabwe: o-option[boowean], 🥺
+  i-isembeddabwe: option[boowean], nyaa~~
+  hassewectedpweviewimage: o-option[boowean], ^^
+  hastitwe: option[boowean], >w<
+  hasdescwiption: option[boowean], OwO
+  h-hasvisitsitecawwtoaction: o-option[boowean], XD
+  hasappinstawwcawwtoaction: option[boowean], ^^;;
+  h-haswatchnowcawwtoaction: o-option[boowean], 🥺
+  media: option[seq[tp.mediaentity]], XD
+  dominantcowowpewcentage: option[doubwe], (U ᵕ U❁)
+  p-posunigwams: option[set[stwing]], :3
+  posbigwams: option[set[stwing]], ( ͡o ω ͡o )
+  semanticcoweannotations: o-option[seq[esb.tweetentityannotation]], òωó
+  sewfthweadmetadata: option[tp.sewfthweadmetadata], σωσ
+  t-tokens: option[seq[stwing]], (U ᵕ U❁)
+  c-convewsationcontwow: option[tp.convewsationcontwow], (✿oωo)
 )

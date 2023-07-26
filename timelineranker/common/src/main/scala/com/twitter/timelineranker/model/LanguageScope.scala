@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
 
 /**
- * Represents what this language is associated with.
- * For example, "user" is one of the scopes and "event"
- * could be another scope.
+ * w-wepwesents n-nyani this w-wanguage is associated w-with. (U ﹏ U)
+ * f-fow exampwe, (U ﹏ U) "usew" i-is one of the scopes and "event"
+ * couwd be anothew scope. (⑅˘꒳˘)
  */
-object LanguageScope extends Enumeration {
+object wanguagescope e-extends enumewation {
 
-  // User scope means that the language is the user's language.
-  val User: Value = Value(thrift.LanguageScope.User.value)
+  // usew scope m-means that the wanguage is the u-usew's wanguage. òωó
+  vaw usew: vawue = vawue(thwift.wanguagescope.usew.vawue)
 
-  // Event scope means that the language is the event's language.
-  val Event: Value = Value(thrift.LanguageScope.Event.value)
+  // event scope means t-that the wanguage is the event's w-wanguage. ʘwʘ
+  v-vaw event: vawue = vawue(thwift.wanguagescope.event.vawue)
 
-  // list of all LanguageScope values
-  val All: ValueSet = LanguageScope.ValueSet(User, Event)
+  // wist of aww wanguagescope vawues
+  vaw aww: vawueset = w-wanguagescope.vawueset(usew, /(^•ω•^) event)
 
-  def apply(scope: thrift.LanguageScope): LanguageScope.Value = {
-    scope match {
-      case thrift.LanguageScope.User =>
-        User
-      case thrift.LanguageScope.Event =>
-        Event
-      case _ =>
-        throw new IllegalArgumentException(s"Unsupported language scope: $scope")
+  def appwy(scope: thwift.wanguagescope): wanguagescope.vawue = {
+    s-scope match {
+      case thwift.wanguagescope.usew =>
+        u-usew
+      case t-thwift.wanguagescope.event =>
+        e-event
+      c-case _ =>
+        thwow nyew iwwegawawgumentexception(s"unsuppowted w-wanguage scope: $scope")
     }
   }
 
-  def fromThrift(scope: thrift.LanguageScope): LanguageScope.Value = {
-    apply(scope)
+  def f-fwomthwift(scope: thwift.wanguagescope): wanguagescope.vawue = {
+    appwy(scope)
   }
 
-  def toThrift(scope: LanguageScope.Value): thrift.LanguageScope = {
-    scope match {
-      case LanguageScope.User =>
-        thrift.LanguageScope.User
-      case LanguageScope.Event =>
-        thrift.LanguageScope.Event
+  def tothwift(scope: wanguagescope.vawue): thwift.wanguagescope = {
+    s-scope match {
+      case wanguagescope.usew =>
+        t-thwift.wanguagescope.usew
+      c-case wanguagescope.event =>
+        t-thwift.wanguagescope.event
       case _ =>
-        throw new IllegalArgumentException(s"Unsupported language scope: $scope")
+        thwow nyew iwwegawawgumentexception(s"unsuppowted wanguage scope: $scope")
     }
   }
 }

@@ -1,9 +1,9 @@
-package com.twitter.frigate.pushservice.module
+package com.twittew.fwigate.pushsewvice.moduwe
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.frigate.pushservice.thriftscala.PushService
+impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwsthwiftwebfowmsmoduwe
+i-impowt c-com.twittew.finatwa.thwift.thwiftsewvew
+i-impowt c-com.twittew.fwigate.pushsewvice.thwiftscawa.pushsewvice
 
-class ThriftWebFormsModule(server: ThriftServer)
-    extends MtlsThriftWebFormsModule[PushService.MethodPerEndpoint](server) {
+c-cwass thwiftwebfowmsmoduwe(sewvew: t-thwiftsewvew)
+    e-extends m-mtwsthwiftwebfowmsmoduwe[pushsewvice.methodpewendpoint](sewvew) {
 }

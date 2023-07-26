@@ -1,21 +1,21 @@
-package com.twitter.home_mixer.product.list_recommended_users
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews
 
-import com.twitter.hermit.candidate.{thriftscala => t}
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.ScoreFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+impowt c-com.twittew.hewmit.candidate.{thwiftscawa => t-t}
+impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsfeatuwes.scowefeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
 
-object ListMemberBasedUsersResponseFeatureTransfromer
-    extends CandidateFeatureTransformer[t.Candidate] {
+object wistmembewbasedusewswesponsefeatuwetwansfwomew
+    extends candidatefeatuwetwansfowmew[t.candidate] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("ListMemberBasedUsers")
+  ovewwide v-vaw identifiew: twansfowmewidentifiew = twansfowmewidentifiew("wistmembewbasedusews")
 
-  override val features: Set[Feature[_, _]] = Set(ScoreFeature)
+  o-ovewwide vaw featuwes: set[featuwe[_, -.- _]] = s-set(scowefeatuwe)
 
-  override def transform(candidate: t.Candidate): FeatureMap = FeatureMapBuilder()
-    .add(ScoreFeature, candidate.score)
-    .build()
+  ovewwide def twansfowm(candidate: t.candidate): featuwemap = featuwemapbuiwdew()
+    .add(scowefeatuwe, c-candidate.scowe)
+    .buiwd()
 }

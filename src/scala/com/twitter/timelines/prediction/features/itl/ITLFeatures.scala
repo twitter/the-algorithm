@@ -1,575 +1,575 @@
-package com.twitter.timelines.prediction.features.itl
+package com.twittew.timewines.pwediction.featuwes.itw
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.ml.api.Feature.Binary
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.Feature.Discrete
-import com.twitter.ml.api.Feature.SparseBinary
-import scala.collection.JavaConverters._
+impowt com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+i-impowt c-com.twittew.mw.api.featuwe.binawy
+i-impowt com.twittew.mw.api.featuwe.continuous
+impowt c-com.twittew.mw.api.featuwe.discwete
+i-impowt c-com.twittew.mw.api.featuwe.spawsebinawy
+i-impowt s-scawa.cowwection.javaconvewtews._
 
-object ITLFeatures {
+object itwfeatuwes {
   // engagement
-  val IS_RETWEETED =
-    new Binary("itl.engagement.is_retweeted", Set(PublicRetweets, PrivateRetweets).asJava)
-  val IS_FAVORITED =
-    new Binary("itl.engagement.is_favorited", Set(PublicLikes, PrivateLikes).asJava)
-  val IS_REPLIED =
-    new Binary("itl.engagement.is_replied", Set(PublicReplies, PrivateReplies).asJava)
-  // v1: post click engagements: fav, reply
-  val IS_GOOD_CLICKED_CONVO_DESC_V1 = new Binary(
-    "itl.engagement.is_good_clicked_convo_desc_favorited_or_replied",
-    Set(
-      PublicLikes,
-      PrivateLikes,
-      PublicReplies,
-      PrivateReplies,
-      EngagementsPrivate,
-      EngagementsPublic).asJava)
-  // v2: post click engagements: click
-  val IS_GOOD_CLICKED_CONVO_DESC_V2 = new Binary(
-    "itl.engagement.is_good_clicked_convo_desc_v2",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
+  vaw is_wetweeted =
+    nyew binawy("itw.engagement.is_wetweeted", ^^ s-set(pubwicwetweets, òωó pwivatewetweets).asjava)
+  vaw is_favowited =
+    n-nyew binawy("itw.engagement.is_favowited", /(^•ω•^) set(pubwicwikes, 😳😳😳 p-pwivatewikes).asjava)
+  vaw is_wepwied =
+    nyew binawy("itw.engagement.is_wepwied", :3 s-set(pubwicwepwies, (///ˬ///✿) pwivatewepwies).asjava)
+  // v-v1: post cwick e-engagements: fav, rawr x3 wepwy
+  vaw is_good_cwicked_convo_desc_v1 = nyew binawy(
+    "itw.engagement.is_good_cwicked_convo_desc_favowited_ow_wepwied",
+    set(
+      p-pubwicwikes, (U ᵕ U❁)
+      pwivatewikes, (⑅˘꒳˘)
+      pubwicwepwies, (˘ω˘)
+      pwivatewepwies, :3
+      engagementspwivate, XD
+      engagementspubwic).asjava)
+  // v2: post cwick engagements: c-cwick
+  vaw is_good_cwicked_convo_desc_v2 = n-nyew binawy(
+    "itw.engagement.is_good_cwicked_convo_desc_v2", >_<
+    s-set(tweetscwicked, (✿oωo) engagementspwivate).asjava)
 
-  val IS_GOOD_CLICKED_CONVO_DESC_FAVORITED = new Binary(
-    "itl.engagement.is_good_clicked_convo_desc_favorited",
-    Set(PublicLikes, PrivateLikes).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_REPLIED = new Binary(
-    "itl.engagement.is_good_clicked_convo_desc_replied",
-    Set(PublicReplies, PrivateReplies).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_RETWEETED = new Binary(
-    "itl.engagement.is_good_clicked_convo_desc_retweeted",
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_CLICKED = new Binary(
-    "itl.engagement.is_good_clicked_convo_desc_clicked",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_FOLLOWED =
-    new Binary("itl.engagement.is_good_clicked_convo_desc_followed", Set(EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_SHARE_DM_CLICKED = new Binary(
-    "itl.engagement.is_good_clicked_convo_desc_share_dm_clicked",
-    Set(EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_PROFILE_CLICKED = new Binary(
-    "itl.engagement.is_good_clicked_convo_desc_profile_clicked",
-    Set(EngagementsPrivate).asJava)
+  v-vaw i-is_good_cwicked_convo_desc_favowited = nyew binawy(
+    "itw.engagement.is_good_cwicked_convo_desc_favowited", (ꈍᴗꈍ)
+    set(pubwicwikes, XD p-pwivatewikes).asjava)
+  vaw is_good_cwicked_convo_desc_wepwied = n-nyew binawy(
+    "itw.engagement.is_good_cwicked_convo_desc_wepwied", :3
+    set(pubwicwepwies, pwivatewepwies).asjava)
+  vaw is_good_cwicked_convo_desc_wetweeted = nyew binawy(
+    "itw.engagement.is_good_cwicked_convo_desc_wetweeted", mya
+    s-set(pubwicwetweets, òωó pwivatewetweets, nyaa~~ e-engagementspwivate, 🥺 e-engagementspubwic).asjava)
+  v-vaw is_good_cwicked_convo_desc_cwicked = nyew binawy(
+    "itw.engagement.is_good_cwicked_convo_desc_cwicked", -.-
+    set(tweetscwicked, 🥺 engagementspwivate).asjava)
+  vaw i-is_good_cwicked_convo_desc_fowwowed =
+    n-nyew binawy("itw.engagement.is_good_cwicked_convo_desc_fowwowed", (˘ω˘) set(engagementspwivate).asjava)
+  v-vaw is_good_cwicked_convo_desc_shawe_dm_cwicked = n-nyew binawy(
+    "itw.engagement.is_good_cwicked_convo_desc_shawe_dm_cwicked", òωó
+    set(engagementspwivate).asjava)
+  v-vaw is_good_cwicked_convo_desc_pwofiwe_cwicked = nyew binawy(
+    "itw.engagement.is_good_cwicked_convo_desc_pwofiwe_cwicked", UwU
+    s-set(engagementspwivate).asjava)
 
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_0 = new Binary(
-    "itl.engagement.is_good_clicked_convo_desc_uam_gt_0",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_1 = new Binary(
-    "itl.engagement.is_good_clicked_convo_desc_uam_gt_1",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_2 = new Binary(
-    "itl.engagement.is_good_clicked_convo_desc_uam_gt_2",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_3 = new Binary(
-    "itl.engagement.is_good_clicked_convo_desc_uam_gt_3",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
+  vaw is_good_cwicked_convo_desc_uam_gt_0 = n-nyew binawy(
+    "itw.engagement.is_good_cwicked_convo_desc_uam_gt_0", ^•ﻌ•^
+    set(engagementspwivate, mya e-engagementspubwic).asjava)
+  vaw is_good_cwicked_convo_desc_uam_gt_1 = n-nyew binawy(
+    "itw.engagement.is_good_cwicked_convo_desc_uam_gt_1", (✿oωo)
+    s-set(engagementspwivate, XD engagementspubwic).asjava)
+  vaw is_good_cwicked_convo_desc_uam_gt_2 = nyew binawy(
+    "itw.engagement.is_good_cwicked_convo_desc_uam_gt_2", :3
+    set(engagementspwivate, (U ﹏ U) engagementspubwic).asjava)
+  vaw i-is_good_cwicked_convo_desc_uam_gt_3 = n-nyew binawy(
+    "itw.engagement.is_good_cwicked_convo_desc_uam_gt_3", UwU
+    set(engagementspwivate, ʘwʘ e-engagementspubwic).asjava)
 
-  val IS_TWEET_DETAIL_DWELLED = new Binary(
-    "itl.engagement.is_tweet_detail_dwelled",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
+  v-vaw is_tweet_detaiw_dwewwed = n-nyew binawy(
+    "itw.engagement.is_tweet_detaiw_dwewwed", >w<
+    set(tweetscwicked, 😳😳😳 engagementspwivate).asjava)
 
-  val IS_TWEET_DETAIL_DWELLED_8_SEC = new Binary(
-    "itl.engagement.is_tweet_detail_dwelled_8_sec",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_15_SEC = new Binary(
-    "itl.engagement.is_tweet_detail_dwelled_15_sec",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_25_SEC = new Binary(
-    "itl.engagement.is_tweet_detail_dwelled_25_sec",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_30_SEC = new Binary(
-    "itl.engagement.is_tweet_detail_dwelled_30_sec",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
+  vaw is_tweet_detaiw_dwewwed_8_sec = n-nyew binawy(
+    "itw.engagement.is_tweet_detaiw_dwewwed_8_sec", rawr
+    set(tweetscwicked, ^•ﻌ•^ engagementspwivate).asjava)
+  vaw is_tweet_detaiw_dwewwed_15_sec = nyew binawy(
+    "itw.engagement.is_tweet_detaiw_dwewwed_15_sec", σωσ
+    set(tweetscwicked, :3 e-engagementspwivate).asjava)
+  vaw i-is_tweet_detaiw_dwewwed_25_sec = n-nyew binawy(
+    "itw.engagement.is_tweet_detaiw_dwewwed_25_sec", rawr x3
+    s-set(tweetscwicked, nyaa~~ engagementspwivate).asjava)
+  v-vaw is_tweet_detaiw_dwewwed_30_sec = n-nyew b-binawy(
+    "itw.engagement.is_tweet_detaiw_dwewwed_30_sec", :3
+    s-set(tweetscwicked, >w< engagementspwivate).asjava)
 
-  val IS_PROFILE_DWELLED = new Binary(
-    "itl.engagement.is_profile_dwelled",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_DWELLED_10_SEC = new Binary(
-    "itl.engagement.is_profile_dwelled_10_sec",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_DWELLED_20_SEC = new Binary(
-    "itl.engagement.is_profile_dwelled_20_sec",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_DWELLED_30_SEC = new Binary(
-    "itl.engagement.is_profile_dwelled_30_sec",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
+  vaw is_pwofiwe_dwewwed = n-nyew b-binawy(
+    "itw.engagement.is_pwofiwe_dwewwed", rawr
+    s-set(pwofiwesviewed, 😳 p-pwofiwescwicked, 😳 e-engagementspwivate).asjava)
+  vaw is_pwofiwe_dwewwed_10_sec = nyew binawy(
+    "itw.engagement.is_pwofiwe_dwewwed_10_sec", 🥺
+    s-set(pwofiwesviewed, pwofiwescwicked, rawr x3 engagementspwivate).asjava)
+  vaw is_pwofiwe_dwewwed_20_sec = nyew binawy(
+    "itw.engagement.is_pwofiwe_dwewwed_20_sec", ^^
+    set(pwofiwesviewed, ( ͡o ω ͡o ) p-pwofiwescwicked, XD engagementspwivate).asjava)
+  vaw is_pwofiwe_dwewwed_30_sec = nyew binawy(
+    "itw.engagement.is_pwofiwe_dwewwed_30_sec", ^^
+    s-set(pwofiwesviewed, (⑅˘꒳˘) p-pwofiwescwicked, (⑅˘꒳˘) e-engagementspwivate).asjava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED = new Binary(
-    "itl.engagement.is_fullscreen_video_dwelled",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  vaw is_fuwwscween_video_dwewwed = n-nyew binawy(
+    "itw.engagement.is_fuwwscween_video_dwewwed", ^•ﻌ•^
+    set(mediaengagementactivities, ( ͡o ω ͡o ) e-engagementtypepwivate, ( ͡o ω ͡o ) e-engagementspwivate).asjava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_5_SEC = new Binary(
-    "itl.engagement.is_fullscreen_video_dwelled_5_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  vaw is_fuwwscween_video_dwewwed_5_sec = nyew binawy(
+    "itw.engagement.is_fuwwscween_video_dwewwed_5_sec", (✿oωo)
+    set(mediaengagementactivities, engagementtypepwivate, 😳😳😳 engagementspwivate).asjava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_10_SEC = new Binary(
-    "itl.engagement.is_fullscreen_video_dwelled_10_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  v-vaw is_fuwwscween_video_dwewwed_10_sec = nyew binawy(
+    "itw.engagement.is_fuwwscween_video_dwewwed_10_sec", OwO
+    s-set(mediaengagementactivities, ^^ engagementtypepwivate, rawr x3 e-engagementspwivate).asjava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_20_SEC = new Binary(
-    "itl.engagement.is_fullscreen_video_dwelled_20_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  v-vaw is_fuwwscween_video_dwewwed_20_sec = nyew binawy(
+    "itw.engagement.is_fuwwscween_video_dwewwed_20_sec", 🥺
+    set(mediaengagementactivities, (ˆ ﻌ ˆ)♡ e-engagementtypepwivate, ( ͡o ω ͡o ) e-engagementspwivate).asjava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_30_SEC = new Binary(
-    "itl.engagement.is_fullscreen_video_dwelled_30_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  vaw is_fuwwscween_video_dwewwed_30_sec = n-nyew binawy(
+    "itw.engagement.is_fuwwscween_video_dwewwed_30_sec", >w<
+    s-set(mediaengagementactivities, /(^•ω•^) engagementtypepwivate, 😳😳😳 engagementspwivate).asjava)
 
-  val IS_LINK_DWELLED_15_SEC = new Binary(
-    "itl.engagement.is_link_dwelled_15_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  vaw is_wink_dwewwed_15_sec = new b-binawy(
+    "itw.engagement.is_wink_dwewwed_15_sec", (U ᵕ U❁)
+    s-set(mediaengagementactivities, (˘ω˘) e-engagementtypepwivate, 😳 engagementspwivate).asjava)
 
-  val IS_LINK_DWELLED_30_SEC = new Binary(
-    "itl.engagement.is_link_dwelled_30_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  vaw i-is_wink_dwewwed_30_sec = n-nyew binawy(
+    "itw.engagement.is_wink_dwewwed_30_sec", (ꈍᴗꈍ)
+    s-set(mediaengagementactivities, :3 engagementtypepwivate, /(^•ω•^) engagementspwivate).asjava)
 
-  val IS_LINK_DWELLED_60_SEC = new Binary(
-    "itl.engagement.is_link_dwelled_60_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  vaw is_wink_dwewwed_60_sec = nyew b-binawy(
+    "itw.engagement.is_wink_dwewwed_60_sec", ^^;;
+    s-set(mediaengagementactivities, o.O engagementtypepwivate, 😳 engagementspwivate).asjava)
 
-  val IS_QUOTED =
-    new Binary("itl.engagement.is_quoted", Set(PublicRetweets, PrivateRetweets).asJava)
-  val IS_RETWEETED_WITHOUT_QUOTE = new Binary(
-    "itl.engagement.is_retweeted_without_quote",
-    Set(PublicRetweets, PrivateRetweets).asJava)
-  val IS_CLICKED = new Binary(
-    "itl.engagement.is_clicked",
-    Set(EngagementsPrivate, TweetsClicked, LinksClickedOn).asJava)
-  val IS_PROFILE_CLICKED = new Binary(
-    "itl.engagement.is_profile_clicked",
-    Set(EngagementsPrivate, TweetsClicked, ProfilesViewed, ProfilesClicked).asJava)
-  val IS_DWELLED = new Binary("itl.engagement.is_dwelled", Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_IN_BOUNDS_V1 =
-    new Binary("itl.engagement.is_dwelled_in_bounds_v1", Set(EngagementsPrivate).asJava)
-  val DWELL_NORMALIZED_OVERALL =
-    new Continuous("itl.engagement.dwell_normalized_overall", Set(EngagementsPrivate).asJava)
-  val DWELL_CDF_OVERALL =
-    new Continuous("itl.engagement.dwell_cdf_overall", Set(EngagementsPrivate).asJava)
-  val DWELL_CDF = new Continuous("itl.engagement.dwell_cdf", Set(EngagementsPrivate).asJava)
+  vaw i-is_quoted =
+    n-nyew binawy("itw.engagement.is_quoted", UwU set(pubwicwetweets, >w< pwivatewetweets).asjava)
+  vaw is_wetweeted_without_quote = nyew b-binawy(
+    "itw.engagement.is_wetweeted_without_quote", o.O
+    set(pubwicwetweets, (˘ω˘) pwivatewetweets).asjava)
+  vaw is_cwicked = nyew b-binawy(
+    "itw.engagement.is_cwicked", òωó
+    set(engagementspwivate, nyaa~~ tweetscwicked, ( ͡o ω ͡o ) winkscwickedon).asjava)
+  v-vaw is_pwofiwe_cwicked = n-nyew binawy(
+    "itw.engagement.is_pwofiwe_cwicked", 😳😳😳
+    set(engagementspwivate, ^•ﻌ•^ tweetscwicked, (˘ω˘) pwofiwesviewed, (˘ω˘) p-pwofiwescwicked).asjava)
+  v-vaw is_dwewwed = nyew binawy("itw.engagement.is_dwewwed", -.- set(engagementspwivate).asjava)
+  vaw is_dwewwed_in_bounds_v1 =
+    nyew binawy("itw.engagement.is_dwewwed_in_bounds_v1", ^•ﻌ•^ s-set(engagementspwivate).asjava)
+  vaw dweww_nowmawized_ovewaww =
+    n-nyew continuous("itw.engagement.dweww_nowmawized_ovewaww", /(^•ω•^) set(engagementspwivate).asjava)
+  vaw dweww_cdf_ovewaww =
+    n-nyew continuous("itw.engagement.dweww_cdf_ovewaww", (///ˬ///✿) set(engagementspwivate).asjava)
+  v-vaw d-dweww_cdf = nyew continuous("itw.engagement.dweww_cdf", mya s-set(engagementspwivate).asjava)
 
-  val IS_DWELLED_1S = new Binary("itl.engagement.is_dwelled_1s", Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_2S = new Binary("itl.engagement.is_dwelled_2s", Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_3S = new Binary("itl.engagement.is_dwelled_3s", Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_4S = new Binary("itl.engagement.is_dwelled_4s", Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_5S = new Binary("itl.engagement.is_dwelled_5s", Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_6S = new Binary("itl.engagement.is_dwelled_6s", Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_7S = new Binary("itl.engagement.is_dwelled_7s", Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_8S = new Binary("itl.engagement.is_dwelled_8s", Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_9S = new Binary("itl.engagement.is_dwelled_9s", Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_10S = new Binary("itl.engagement.is_dwelled_10s", Set(EngagementsPrivate).asJava)
+  vaw i-is_dwewwed_1s = n-nyew binawy("itw.engagement.is_dwewwed_1s", o.O s-set(engagementspwivate).asjava)
+  vaw i-is_dwewwed_2s = n-nyew binawy("itw.engagement.is_dwewwed_2s", ^•ﻌ•^ set(engagementspwivate).asjava)
+  vaw is_dwewwed_3s = n-nyew binawy("itw.engagement.is_dwewwed_3s", (U ᵕ U❁) s-set(engagementspwivate).asjava)
+  v-vaw is_dwewwed_4s = nyew binawy("itw.engagement.is_dwewwed_4s", :3 set(engagementspwivate).asjava)
+  v-vaw is_dwewwed_5s = nyew binawy("itw.engagement.is_dwewwed_5s", s-set(engagementspwivate).asjava)
+  v-vaw is_dwewwed_6s = nyew binawy("itw.engagement.is_dwewwed_6s", (///ˬ///✿) set(engagementspwivate).asjava)
+  vaw is_dwewwed_7s = n-nyew b-binawy("itw.engagement.is_dwewwed_7s", (///ˬ///✿) s-set(engagementspwivate).asjava)
+  v-vaw is_dwewwed_8s = nyew b-binawy("itw.engagement.is_dwewwed_8s", 🥺 set(engagementspwivate).asjava)
+  vaw is_dwewwed_9s = new binawy("itw.engagement.is_dwewwed_9s", -.- set(engagementspwivate).asjava)
+  v-vaw is_dwewwed_10s = n-nyew binawy("itw.engagement.is_dwewwed_10s", nyaa~~ set(engagementspwivate).asjava)
 
-  val IS_SKIPPED_1S = new Binary("itl.engagement.is_skipped_1s", Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_2S = new Binary("itl.engagement.is_skipped_2s", Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_3S = new Binary("itl.engagement.is_skipped_3s", Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_4S = new Binary("itl.engagement.is_skipped_4s", Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_5S = new Binary("itl.engagement.is_skipped_5s", Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_6S = new Binary("itl.engagement.is_skipped_6s", Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_7S = new Binary("itl.engagement.is_skipped_7s", Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_8S = new Binary("itl.engagement.is_skipped_8s", Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_9S = new Binary("itl.engagement.is_skipped_9s", Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_10S = new Binary("itl.engagement.is_skipped_10s", Set(EngagementsPrivate).asJava)
+  vaw is_skipped_1s = n-nyew binawy("itw.engagement.is_skipped_1s", (///ˬ///✿) set(engagementspwivate).asjava)
+  v-vaw is_skipped_2s = nyew binawy("itw.engagement.is_skipped_2s", 🥺 s-set(engagementspwivate).asjava)
+  v-vaw is_skipped_3s = n-nyew binawy("itw.engagement.is_skipped_3s", >w< s-set(engagementspwivate).asjava)
+  v-vaw is_skipped_4s = nyew binawy("itw.engagement.is_skipped_4s", rawr x3 set(engagementspwivate).asjava)
+  vaw is_skipped_5s = nyew binawy("itw.engagement.is_skipped_5s", (⑅˘꒳˘) s-set(engagementspwivate).asjava)
+  v-vaw i-is_skipped_6s = nyew binawy("itw.engagement.is_skipped_6s", σωσ s-set(engagementspwivate).asjava)
+  vaw is_skipped_7s = nyew binawy("itw.engagement.is_skipped_7s", XD s-set(engagementspwivate).asjava)
+  v-vaw is_skipped_8s = nyew binawy("itw.engagement.is_skipped_8s", -.- s-set(engagementspwivate).asjava)
+  vaw is_skipped_9s = nyew binawy("itw.engagement.is_skipped_9s", >_< s-set(engagementspwivate).asjava)
+  v-vaw is_skipped_10s = nyew binawy("itw.engagement.is_skipped_10s", rawr s-set(engagementspwivate).asjava)
 
-  val IS_FOLLOWED =
-    new Binary("itl.engagement.is_followed", Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_IMPRESSED = new Binary("itl.engagement.is_impressed", Set(EngagementsPrivate).asJava)
-  val IS_OPEN_LINKED =
-    new Binary("itl.engagement.is_open_linked", Set(EngagementsPrivate, LinksClickedOn).asJava)
-  val IS_PHOTO_EXPANDED = new Binary(
-    "itl.engagement.is_photo_expanded",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_VIDEO_VIEWED =
-    new Binary("itl.engagement.is_video_viewed", Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_VIDEO_PLAYBACK_50 = new Binary(
-    "itl.engagement.is_video_playback_50",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_VIDEO_QUALITY_VIEWED = new Binary(
-    "itl.engagement.is_video_quality_viewed",
-    Set(EngagementsPrivate, EngagementsPublic).asJava
+  v-vaw is_fowwowed =
+    nyew binawy("itw.engagement.is_fowwowed", 😳😳😳 set(engagementspwivate, UwU engagementspubwic).asjava)
+  vaw i-is_impwessed = n-nyew binawy("itw.engagement.is_impwessed", (U ﹏ U) s-set(engagementspwivate).asjava)
+  v-vaw i-is_open_winked =
+    nyew binawy("itw.engagement.is_open_winked", s-set(engagementspwivate, (˘ω˘) w-winkscwickedon).asjava)
+  vaw is_photo_expanded = n-new b-binawy(
+    "itw.engagement.is_photo_expanded", /(^•ω•^)
+    set(engagementspwivate, (U ﹏ U) e-engagementspubwic).asjava)
+  vaw is_video_viewed =
+    nyew binawy("itw.engagement.is_video_viewed", ^•ﻌ•^ s-set(engagementspwivate, >w< engagementspubwic).asjava)
+  v-vaw is_video_pwayback_50 = n-nyew binawy(
+    "itw.engagement.is_video_pwayback_50", ʘwʘ
+    set(engagementspwivate, òωó engagementspubwic).asjava)
+  v-vaw is_video_quawity_viewed = nyew binawy(
+    "itw.engagement.is_video_quawity_viewed", o.O
+    set(engagementspwivate, ( ͡o ω ͡o ) e-engagementspubwic).asjava
   ) 
-  val IS_BOOKMARKED =
-    new Binary("itl.engagement.is_bookmarked", Set(EngagementsPrivate).asJava)
-  val IS_SHARED =
-    new Binary("itl.engagement.is_shared", Set(EngagementsPrivate).asJava)
-  val IS_SHARE_MENU_CLICKED =
-    new Binary("itl.engagement.is_share_menu_clicked", Set(EngagementsPrivate).asJava)
+  v-vaw is_bookmawked =
+    n-nyew binawy("itw.engagement.is_bookmawked", mya set(engagementspwivate).asjava)
+  vaw is_shawed =
+    nyew binawy("itw.engagement.is_shawed", s-set(engagementspwivate).asjava)
+  vaw is_shawe_menu_cwicked =
+    n-nyew b-binawy("itw.engagement.is_shawe_menu_cwicked", >_< set(engagementspwivate).asjava)
 
-  // Negative engagements
-  val IS_DONT_LIKE =
-    new Binary("itl.engagement.is_dont_like", Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_BLOCK_CLICKED = new Binary(
-    "itl.engagement.is_block_clicked",
-    Set(TweetsClicked, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_BLOCK_DIALOG_BLOCKED = new Binary(
-    "itl.engagement.is_block_dialog_blocked",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_MUTE_CLICKED =
-    new Binary("itl.engagement.is_mute_clicked", Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_MUTE_DIALOG_MUTED =
-    new Binary("itl.engagement.is_mute_dialog_muted", Set(EngagementsPrivate).asJava)
-  val IS_REPORT_TWEET_CLICKED = new Binary(
-    "itl.engagement.is_report_tweet_clicked",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_CARET_CLICKED =
-    new Binary("itl.engagement.is_caret_clicked", Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_NOT_ABOUT_TOPIC =
-    new Binary("itl.engagement.is_not_about_topic", Set(EngagementsPrivate).asJava)
-  val IS_NOT_RECENT =
-    new Binary("itl.engagement.is_not_recent", Set(EngagementsPrivate).asJava)
-  val IS_NOT_RELEVANT =
-    new Binary("itl.engagement.is_not_relevant", Set(EngagementsPrivate).asJava)
-  val IS_SEE_FEWER =
-    new Binary("itl.engagement.is_see_fewer", Set(EngagementsPrivate).asJava)
-  val IS_UNFOLLOW_TOPIC =
-    new Binary("itl.engagement.is_unfollow_topic", Set(EngagementsPrivate).asJava)
-  val IS_FOLLOW_TOPIC =
-    new Binary("itl.engagement.is_follow_topic", Set(EngagementsPrivate).asJava)
-  val IS_NOT_INTERESTED_IN_TOPIC =
-    new Binary("itl.engagement.is_not_interested_in_topic", Set(EngagementsPrivate).asJava)
-  val IS_HOME_LATEST_VISITED =
-    new Binary("itl.engagement.is_home_latest_visited", Set(EngagementsPrivate).asJava)
+  // n-nyegative engagements
+  v-vaw is_dont_wike =
+    n-nyew binawy("itw.engagement.is_dont_wike", rawr set(engagementspwivate, >_< engagementspubwic).asjava)
+  v-vaw is_bwock_cwicked = nyew binawy(
+    "itw.engagement.is_bwock_cwicked", (U ﹏ U)
+    s-set(tweetscwicked, rawr e-engagementspwivate, (U ᵕ U❁) engagementspubwic).asjava)
+  v-vaw is_bwock_diawog_bwocked = nyew binawy(
+    "itw.engagement.is_bwock_diawog_bwocked", (ˆ ﻌ ˆ)♡
+    s-set(engagementspwivate, >_< engagementspubwic).asjava)
+  v-vaw i-is_mute_cwicked =
+    nyew binawy("itw.engagement.is_mute_cwicked", ^^;; set(tweetscwicked, ʘwʘ engagementspwivate).asjava)
+  vaw is_mute_diawog_muted =
+    nyew binawy("itw.engagement.is_mute_diawog_muted", 😳😳😳 set(engagementspwivate).asjava)
+  vaw is_wepowt_tweet_cwicked = nyew binawy(
+    "itw.engagement.is_wepowt_tweet_cwicked",
+    set(tweetscwicked, UwU engagementspwivate).asjava)
+  vaw is_cawet_cwicked =
+    nyew binawy("itw.engagement.is_cawet_cwicked", OwO s-set(tweetscwicked, :3 e-engagementspwivate).asjava)
+  vaw is_not_about_topic =
+    nyew binawy("itw.engagement.is_not_about_topic", -.- s-set(engagementspwivate).asjava)
+  v-vaw is_not_wecent =
+    n-nyew binawy("itw.engagement.is_not_wecent", 🥺 set(engagementspwivate).asjava)
+  v-vaw is_not_wewevant =
+    nyew binawy("itw.engagement.is_not_wewevant", -.- s-set(engagementspwivate).asjava)
+  v-vaw is_see_fewew =
+    nyew binawy("itw.engagement.is_see_fewew", -.- s-set(engagementspwivate).asjava)
+  vaw is_unfowwow_topic =
+    n-nyew binawy("itw.engagement.is_unfowwow_topic", (U ﹏ U) s-set(engagementspwivate).asjava)
+  vaw is_fowwow_topic =
+    nyew b-binawy("itw.engagement.is_fowwow_topic", rawr s-set(engagementspwivate).asjava)
+  v-vaw i-is_not_intewested_in_topic =
+    n-nyew binawy("itw.engagement.is_not_intewested_in_topic", mya s-set(engagementspwivate).asjava)
+  v-vaw i-is_home_watest_visited =
+    nyew b-binawy("itw.engagement.is_home_watest_visited", ( ͡o ω ͡o ) set(engagementspwivate).asjava)
 
-  // This derived label is the logical OR of IS_DONT_LIKE, IS_BLOCK_CLICKED, IS_MUTE_CLICKED and IS_REPORT_TWEET_CLICKED
-  val IS_NEGATIVE_FEEDBACK =
-    new Binary("itl.engagement.is_negative_feedback", Set(EngagementsPrivate).asJava)
+  // t-this dewived w-wabew is t-the wogicaw ow of is_dont_wike, /(^•ω•^) i-is_bwock_cwicked, is_mute_cwicked and is_wepowt_tweet_cwicked
+  v-vaw is_negative_feedback =
+    nyew binawy("itw.engagement.is_negative_feedback", >_< s-set(engagementspwivate).asjava)
 
-  // Reciprocal engagements for reply forward engagement
-  val IS_REPLIED_REPLY_IMPRESSED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_replied_reply_impressed_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_FAVORITED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_replied_reply_favorited_by_author",
-    Set(PublicLikes, PrivateLikes, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_QUOTED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_replied_reply_quoted_by_author",
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_REPLIED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_replied_reply_replied_by_author",
-    Set(PublicReplies, PrivateReplies, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_RETWEETED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_replied_reply_retweeted_by_author",
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_BLOCKED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_replied_reply_blocked_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_FOLLOWED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_replied_reply_followed_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_UNFOLLOWED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_replied_reply_unfollowed_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_MUTED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_replied_reply_muted_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_REPORTED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_replied_reply_reported_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
+  // w-wecipwocaw e-engagements fow wepwy fowwawd e-engagement
+  vaw is_wepwied_wepwy_impwessed_by_authow = n-nyew binawy(
+    "itw.engagement.is_wepwied_wepwy_impwessed_by_authow", (✿oωo)
+    set(engagementspwivate, 😳😳😳 e-engagementspubwic).asjava)
+  vaw is_wepwied_wepwy_favowited_by_authow = n-nyew binawy(
+    "itw.engagement.is_wepwied_wepwy_favowited_by_authow", (ꈍᴗꈍ)
+    set(pubwicwikes, pwivatewikes, 🥺 engagementspwivate, mya engagementspubwic).asjava)
+  v-vaw is_wepwied_wepwy_quoted_by_authow = nyew binawy(
+    "itw.engagement.is_wepwied_wepwy_quoted_by_authow", (ˆ ﻌ ˆ)♡
+    s-set(pubwicwetweets, (⑅˘꒳˘) p-pwivatewetweets, òωó engagementspwivate, o.O engagementspubwic).asjava)
+  vaw is_wepwied_wepwy_wepwied_by_authow = n-nyew binawy(
+    "itw.engagement.is_wepwied_wepwy_wepwied_by_authow", XD
+    set(pubwicwepwies, (˘ω˘) p-pwivatewepwies, (ꈍᴗꈍ) e-engagementspwivate, >w< e-engagementspubwic).asjava)
+  vaw is_wepwied_wepwy_wetweeted_by_authow = nyew binawy(
+    "itw.engagement.is_wepwied_wepwy_wetweeted_by_authow", XD
+    s-set(pubwicwetweets, -.- p-pwivatewetweets, ^^;; engagementspwivate, XD engagementspubwic).asjava)
+  v-vaw is_wepwied_wepwy_bwocked_by_authow = nyew binawy(
+    "itw.engagement.is_wepwied_wepwy_bwocked_by_authow", :3
+    set(engagementspwivate, σωσ e-engagementspubwic).asjava)
+  vaw is_wepwied_wepwy_fowwowed_by_authow = n-nyew b-binawy(
+    "itw.engagement.is_wepwied_wepwy_fowwowed_by_authow", XD
+    s-set(engagementspwivate, :3 engagementspubwic).asjava)
+  v-vaw i-is_wepwied_wepwy_unfowwowed_by_authow = n-nyew binawy(
+    "itw.engagement.is_wepwied_wepwy_unfowwowed_by_authow", rawr
+    s-set(engagementspwivate, 😳 engagementspubwic).asjava)
+  vaw i-is_wepwied_wepwy_muted_by_authow = n-nyew binawy(
+    "itw.engagement.is_wepwied_wepwy_muted_by_authow", 😳😳😳
+    s-set(engagementspwivate, (ꈍᴗꈍ) e-engagementspubwic).asjava)
+  v-vaw is_wepwied_wepwy_wepowted_by_authow = n-nyew binawy(
+    "itw.engagement.is_wepwied_wepwy_wepowted_by_authow", 🥺
+    s-set(engagementspwivate, ^•ﻌ•^ e-engagementspubwic).asjava)
 
-  // This derived label is the logical OR of REPLY_REPLIED, REPLY_FAVORITED, REPLY_RETWEETED
-  val IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_replied_reply_engaged_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
+  // this d-dewived wabew is the wogicaw o-ow of wepwy_wepwied, XD wepwy_favowited, ^•ﻌ•^ w-wepwy_wetweeted
+  v-vaw is_wepwied_wepwy_engaged_by_authow = n-nyew binawy(
+    "itw.engagement.is_wepwied_wepwy_engaged_by_authow", ^^;;
+    set(engagementspwivate, ʘwʘ engagementspubwic).asjava)
 
-  // Reciprocal engagements for fav forward engagement
-  val IS_FAVORITED_FAV_FAVORITED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_favorited_fav_favorited_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateLikes, PublicLikes).asJava
+  // wecipwocaw engagements f-fow fav f-fowwawd engagement
+  v-vaw is_favowited_fav_favowited_by_authow = nyew binawy(
+    "itw.engagement.is_favowited_fav_favowited_by_authow", OwO
+    set(engagementspwivate, 🥺 engagementspubwic, (⑅˘꒳˘) pwivatewikes, (///ˬ///✿) p-pubwicwikes).asjava
   )
-  val IS_FAVORITED_FAV_REPLIED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_favorited_fav_replied_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateReplies, PublicReplies).asJava
+  v-vaw is_favowited_fav_wepwied_by_authow = nyew b-binawy(
+    "itw.engagement.is_favowited_fav_wepwied_by_authow", (✿oωo)
+    s-set(engagementspwivate, nyaa~~ engagementspubwic, >w< pwivatewepwies, (///ˬ///✿) pubwicwepwies).asjava
   )
-  val IS_FAVORITED_FAV_RETWEETED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_favorited_fav_retweeted_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateRetweets, PublicRetweets).asJava
+  v-vaw i-is_favowited_fav_wetweeted_by_authow = n-nyew binawy(
+    "itw.engagement.is_favowited_fav_wetweeted_by_authow", rawr
+    s-set(engagementspwivate, (U ﹏ U) engagementspubwic, pwivatewetweets, ^•ﻌ•^ pubwicwetweets).asjava
   )
-  val IS_FAVORITED_FAV_FOLLOWED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_favorited_fav_followed_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava
+  v-vaw i-is_favowited_fav_fowwowed_by_authow = nyew binawy(
+    "itw.engagement.is_favowited_fav_fowwowed_by_authow", (///ˬ///✿)
+    set(engagementspwivate, o.O e-engagementspubwic).asjava
   )
-  // This derived label is the logical OR of FAV_REPLIED, FAV_FAVORITED, FAV_RETWEETED, FAV_FOLLOWED
-  val IS_FAVORITED_FAV_ENGAGED_BY_AUTHOR = new Binary(
-    "itl.engagement.is_favorited_fav_engaged_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava
-  )
-
-  // define good profile click by considering following engagements (follow, fav, reply, retweet, etc.) at profile page
-  val IS_PROFILE_CLICKED_AND_PROFILE_FOLLOW = new Binary(
-    "itl.engagement.is_profile_clicked_and_profile_follow",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, Follow).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_FAV = new Binary(
-    "itl.engagement.is_profile_clicked_and_profile_fav",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, PrivateLikes, PublicLikes).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_REPLY = new Binary(
-    "itl.engagement.is_profile_clicked_and_profile_reply",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, PrivateReplies, PublicReplies).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_RETWEET = new Binary(
-    "itl.engagement.is_profile_clicked_and_profile_retweet",
-    Set(
-      ProfilesViewed,
-      ProfilesClicked,
-      EngagementsPrivate,
-      PrivateRetweets,
-      PublicRetweets).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_TWEET_CLICK = new Binary(
-    "itl.engagement.is_profile_clicked_and_profile_tweet_click",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, TweetsClicked).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_SHARE_DM_CLICK = new Binary(
-    "itl.engagement.is_profile_clicked_and_profile_share_dm_click",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // This derived label is the union of all binary features above
-  val IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED = new Binary(
-    "itl.engagement.is_profile_clicked_and_profile_engaged",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, EngagementsPublic).asJava)
-
-  // define bad profile click by considering following engagements (user report, tweet report, mute, block, etc) at profile page
-  val IS_PROFILE_CLICKED_AND_PROFILE_USER_REPORT_CLICK = new Binary(
-    "itl.engagement.is_profile_clicked_and_profile_user_report_click",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_TWEET_REPORT_CLICK = new Binary(
-    "itl.engagement.is_profile_clicked_and_profile_tweet_report_click",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_MUTE = new Binary(
-    "itl.engagement.is_profile_clicked_and_profile_mute",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_BLOCK = new Binary(
-    "itl.engagement.is_profile_clicked_and_profile_block",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // This derived label is the union of bad profile click engagements and existing negative feedback
-  val IS_NEGATIVE_FEEDBACK_V2 = new Binary(
-    "itl.engagement.is_negative_feedback_v2",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // engagement for following user from any surface area
-  val IS_FOLLOWED_FROM_ANY_SURFACE_AREA = new Binary(
-    "itl.engagement.is_followed_from_any_surface_area",
-    Set(EngagementsPublic, EngagementsPrivate).asJava)
-
-  // Relevance prompt tweet engagements
-  val IS_RELEVANCE_PROMPT_YES_CLICKED =
-    new Binary("itl.engagement.is_relevance_prompt_yes_clicked", Set(EngagementsPrivate).asJava)
-
-  // Reply downvote engagements
-  val IS_REPLY_DOWNVOTED =
-    new Binary("itl.engagement.is_reply_downvoted", Set(EngagementsPrivate).asJava)
-  val IS_REPLY_DOWNVOTE_REMOVED =
-    new Binary("itl.engagement.is_reply_downvote_removed", Set(EngagementsPrivate).asJava)
-
-  // features from RecommendedTweet
-  val RECTWEET_SCORE = new Continuous("itl.recommended_tweet_features.rectweet_score")
-  val NUM_FAVORITING_USERS = new Continuous("itl.recommended_tweet_features.num_favoriting_users")
-  val NUM_FOLLOWING_USERS = new Continuous("itl.recommended_tweet_features.num_following_users")
-  val CONTENT_SOURCE_TYPE = new Discrete("itl.recommended_tweet_features.content_source_type")
-
-  val RECOS_SCORE = new Continuous(
-    "itl.recommended_tweet_features.recos_score",
-    Set(EngagementScore, UsersRealGraphScore, UsersSalsaScore).asJava)
-  val AUTHOR_REALGRAPH_SCORE = new Continuous(
-    "itl.recommended_tweet_features.realgraph_score",
-    Set(UsersRealGraphScore).asJava)
-  val AUTHOR_SARUS_SCORE = new Continuous(
-    "itl.recommended_tweet_features.sarus_score",
-    Set(EngagementScore, UsersSalsaScore).asJava)
-
-  val NUM_INTERACTING_USERS = new Continuous(
-    "itl.recommended_tweet_features.num_interacting_users",
-    Set(EngagementScore).asJava
-  )
-  val MAX_REALGRAPH_SCORE_OF_INTERACTING_USERS = new Continuous(
-    "itl.recommended_tweet_features.max_realgraph_score_of_interacting_users",
-    Set(UsersRealGraphScore, EngagementScore).asJava
-  )
-  val SUM_REALGRAPH_SCORE_OF_INTERACTING_USERS = new Continuous(
-    "itl.recommended_tweet_features.sum_realgraph_score_of_interacting_users",
-    Set(UsersRealGraphScore, EngagementScore).asJava
-  )
-  val AVG_REALGRAPH_SCORE_OF_INTERACTING_USERS = new Continuous(
-    "itl.recommended_tweet_features.avg_realgraph_score_of_interacting_users",
-    Set(UsersRealGraphScore, EngagementScore).asJava
-  )
-  val MAX_SARUS_SCORE_OF_INTERACTING_USERS = new Continuous(
-    "itl.recommended_tweet_features.max_sarus_score_of_interacting_users",
-    Set(EngagementScore, UsersSalsaScore).asJava
-  )
-  val SUM_SARUS_SCORE_OF_INTERACTING_USERS = new Continuous(
-    "itl.recommended_tweet_features.sum_sarus_score_of_interacting_users",
-    Set(EngagementScore, UsersSalsaScore).asJava
-  )
-  val AVG_SARUS_SCORE_OF_INTERACTING_USERS = new Continuous(
-    "itl.recommended_tweet_features.avg_sarus_score_of_interacting_users",
-    Set(EngagementScore, UsersSalsaScore).asJava
+  // this dewived wabew is t-the wogicaw ow of fav_wepwied, >w< f-fav_favowited, nyaa~~ f-fav_wetweeted, òωó fav_fowwowed
+  vaw i-is_favowited_fav_engaged_by_authow = n-nyew binawy(
+    "itw.engagement.is_favowited_fav_engaged_by_authow", (U ᵕ U❁)
+    set(engagementspwivate, (///ˬ///✿) e-engagementspubwic).asjava
   )
 
-  val NUM_INTERACTING_FOLLOWINGS = new Continuous(
-    "itl.recommended_tweet_features.num_interacting_followings",
-    Set(EngagementScore).asJava
+  // define g-good pwofiwe c-cwick by considewing f-fowwowing e-engagements (fowwow, (✿oωo) fav, wepwy, w-wetweet, 😳😳😳 etc.) a-at pwofiwe page
+  v-vaw is_pwofiwe_cwicked_and_pwofiwe_fowwow = nyew b-binawy(
+    "itw.engagement.is_pwofiwe_cwicked_and_pwofiwe_fowwow", (✿oωo)
+    set(pwofiwesviewed, (U ﹏ U) pwofiwescwicked, (˘ω˘) engagementspwivate, 😳😳😳 f-fowwow).asjava)
+  v-vaw is_pwofiwe_cwicked_and_pwofiwe_fav = nyew b-binawy(
+    "itw.engagement.is_pwofiwe_cwicked_and_pwofiwe_fav", (///ˬ///✿)
+    set(pwofiwesviewed, (U ᵕ U❁) pwofiwescwicked, >_< engagementspwivate, (///ˬ///✿) pwivatewikes, (U ᵕ U❁) p-pubwicwikes).asjava)
+  vaw is_pwofiwe_cwicked_and_pwofiwe_wepwy = n-nyew binawy(
+    "itw.engagement.is_pwofiwe_cwicked_and_pwofiwe_wepwy", >w<
+    s-set(pwofiwesviewed, 😳😳😳 pwofiwescwicked, (ˆ ﻌ ˆ)♡ engagementspwivate, (ꈍᴗꈍ) p-pwivatewepwies, 🥺 pubwicwepwies).asjava)
+  v-vaw is_pwofiwe_cwicked_and_pwofiwe_wetweet = n-nyew b-binawy(
+    "itw.engagement.is_pwofiwe_cwicked_and_pwofiwe_wetweet", >_<
+    s-set(
+      p-pwofiwesviewed, OwO
+      pwofiwescwicked, ^^;;
+      engagementspwivate, (✿oωo)
+      pwivatewetweets, UwU
+      pubwicwetweets).asjava)
+  v-vaw is_pwofiwe_cwicked_and_pwofiwe_tweet_cwick = nyew b-binawy(
+    "itw.engagement.is_pwofiwe_cwicked_and_pwofiwe_tweet_cwick", ( ͡o ω ͡o )
+    set(pwofiwesviewed, (✿oωo) pwofiwescwicked, mya engagementspwivate, ( ͡o ω ͡o ) t-tweetscwicked).asjava)
+  vaw is_pwofiwe_cwicked_and_pwofiwe_shawe_dm_cwick = nyew binawy(
+    "itw.engagement.is_pwofiwe_cwicked_and_pwofiwe_shawe_dm_cwick", :3
+    set(pwofiwesviewed, 😳 pwofiwescwicked, (U ﹏ U) e-engagementspwivate).asjava)
+  // t-this dewived wabew is the union o-of aww binawy featuwes above
+  vaw is_pwofiwe_cwicked_and_pwofiwe_engaged = n-nyew b-binawy(
+    "itw.engagement.is_pwofiwe_cwicked_and_pwofiwe_engaged", >w<
+    set(pwofiwesviewed, UwU p-pwofiwescwicked, 😳 engagementspwivate, XD e-engagementspubwic).asjava)
+
+  // define bad pwofiwe cwick by considewing fowwowing e-engagements (usew wepowt, (✿oωo) tweet wepowt, ^•ﻌ•^ m-mute, bwock, mya etc) a-at pwofiwe page
+  v-vaw is_pwofiwe_cwicked_and_pwofiwe_usew_wepowt_cwick = nyew binawy(
+    "itw.engagement.is_pwofiwe_cwicked_and_pwofiwe_usew_wepowt_cwick", (˘ω˘)
+    s-set(pwofiwesviewed, nyaa~~ pwofiwescwicked, :3 engagementspwivate).asjava)
+  vaw is_pwofiwe_cwicked_and_pwofiwe_tweet_wepowt_cwick = nyew b-binawy(
+    "itw.engagement.is_pwofiwe_cwicked_and_pwofiwe_tweet_wepowt_cwick", (✿oωo)
+    s-set(pwofiwesviewed, (U ﹏ U) p-pwofiwescwicked, (ꈍᴗꈍ) e-engagementspwivate).asjava)
+  vaw is_pwofiwe_cwicked_and_pwofiwe_mute = nyew binawy(
+    "itw.engagement.is_pwofiwe_cwicked_and_pwofiwe_mute", (˘ω˘)
+    set(pwofiwesviewed, ^^ p-pwofiwescwicked, (⑅˘꒳˘) e-engagementspwivate).asjava)
+  vaw is_pwofiwe_cwicked_and_pwofiwe_bwock = nyew b-binawy(
+    "itw.engagement.is_pwofiwe_cwicked_and_pwofiwe_bwock", rawr
+    set(pwofiwesviewed, :3 pwofiwescwicked, OwO e-engagementspwivate).asjava)
+  // this dewived wabew is the union of b-bad pwofiwe cwick e-engagements and existing nyegative f-feedback
+  v-vaw is_negative_feedback_v2 = n-nyew binawy(
+    "itw.engagement.is_negative_feedback_v2", (ˆ ﻌ ˆ)♡
+    set(pwofiwesviewed, :3 pwofiwescwicked, -.- engagementspwivate).asjava)
+  // e-engagement fow fowwowing usew fwom any suwface a-awea
+  vaw is_fowwowed_fwom_any_suwface_awea = nyew binawy(
+    "itw.engagement.is_fowwowed_fwom_any_suwface_awea",
+    set(engagementspubwic, -.- engagementspwivate).asjava)
+
+  // w-wewevance pwompt t-tweet engagements
+  v-vaw is_wewevance_pwompt_yes_cwicked =
+    n-nyew binawy("itw.engagement.is_wewevance_pwompt_yes_cwicked", òωó s-set(engagementspwivate).asjava)
+
+  // wepwy downvote e-engagements
+  vaw is_wepwy_downvoted =
+    nyew binawy("itw.engagement.is_wepwy_downvoted", 😳 s-set(engagementspwivate).asjava)
+  vaw is_wepwy_downvote_wemoved =
+    n-nyew binawy("itw.engagement.is_wepwy_downvote_wemoved", nyaa~~ set(engagementspwivate).asjava)
+
+  // featuwes f-fwom wecommendedtweet
+  v-vaw wectweet_scowe = nyew c-continuous("itw.wecommended_tweet_featuwes.wectweet_scowe")
+  vaw nyum_favowiting_usews = n-nyew c-continuous("itw.wecommended_tweet_featuwes.num_favowiting_usews")
+  vaw num_fowwowing_usews = nyew c-continuous("itw.wecommended_tweet_featuwes.num_fowwowing_usews")
+  v-vaw content_souwce_type = nyew discwete("itw.wecommended_tweet_featuwes.content_souwce_type")
+
+  v-vaw wecos_scowe = nyew continuous(
+    "itw.wecommended_tweet_featuwes.wecos_scowe", (⑅˘꒳˘)
+    set(engagementscowe, 😳 usewsweawgwaphscowe, (U ﹏ U) u-usewssawsascowe).asjava)
+  vaw authow_weawgwaph_scowe = n-nyew continuous(
+    "itw.wecommended_tweet_featuwes.weawgwaph_scowe", /(^•ω•^)
+    set(usewsweawgwaphscowe).asjava)
+  vaw authow_sawus_scowe = n-nyew continuous(
+    "itw.wecommended_tweet_featuwes.sawus_scowe", OwO
+    s-set(engagementscowe, ( ͡o ω ͡o ) u-usewssawsascowe).asjava)
+
+  vaw nyum_intewacting_usews = new c-continuous(
+    "itw.wecommended_tweet_featuwes.num_intewacting_usews", XD
+    set(engagementscowe).asjava
+  )
+  v-vaw max_weawgwaph_scowe_of_intewacting_usews = nyew continuous(
+    "itw.wecommended_tweet_featuwes.max_weawgwaph_scowe_of_intewacting_usews", /(^•ω•^)
+    s-set(usewsweawgwaphscowe, /(^•ω•^) engagementscowe).asjava
+  )
+  v-vaw sum_weawgwaph_scowe_of_intewacting_usews = nyew continuous(
+    "itw.wecommended_tweet_featuwes.sum_weawgwaph_scowe_of_intewacting_usews", 😳😳😳
+    s-set(usewsweawgwaphscowe, (ˆ ﻌ ˆ)♡ e-engagementscowe).asjava
+  )
+  vaw avg_weawgwaph_scowe_of_intewacting_usews = nyew continuous(
+    "itw.wecommended_tweet_featuwes.avg_weawgwaph_scowe_of_intewacting_usews", :3
+    set(usewsweawgwaphscowe, òωó engagementscowe).asjava
+  )
+  vaw m-max_sawus_scowe_of_intewacting_usews = n-nyew continuous(
+    "itw.wecommended_tweet_featuwes.max_sawus_scowe_of_intewacting_usews", 🥺
+    set(engagementscowe, (U ﹏ U) usewssawsascowe).asjava
+  )
+  vaw sum_sawus_scowe_of_intewacting_usews = n-nyew continuous(
+    "itw.wecommended_tweet_featuwes.sum_sawus_scowe_of_intewacting_usews", XD
+    set(engagementscowe, ^^ u-usewssawsascowe).asjava
+  )
+  v-vaw avg_sawus_scowe_of_intewacting_usews = nyew continuous(
+    "itw.wecommended_tweet_featuwes.avg_sawus_scowe_of_intewacting_usews", o.O
+    set(engagementscowe, 😳😳😳 usewssawsascowe).asjava
   )
 
-  // features from HydratedTweetFeatures
-  val REAL_GRAPH_WEIGHT =
-    new Continuous("itl.hydrated_tweet_features.real_graph_weight", Set(UsersRealGraphScore).asJava)
-  val SARUS_GRAPH_WEIGHT = new Continuous("itl.hydrated_tweet_features.sarus_graph_weight")
-  val FROM_TOP_ENGAGED_USER = new Binary("itl.hydrated_tweet_features.from_top_engaged_user")
-  val FROM_TOP_INFLUENCER = new Binary("itl.hydrated_tweet_features.from_top_influencer")
-  val TOPIC_SIM_SEARCHER_INTERSTED_IN_AUTHOR_KNOWN_FOR = new Continuous(
-    "itl.hydrated_tweet_features.topic_sim_searcher_interested_in_author_known_for"
+  vaw nyum_intewacting_fowwowings = n-nyew continuous(
+    "itw.wecommended_tweet_featuwes.num_intewacting_fowwowings", /(^•ω•^)
+    set(engagementscowe).asjava
   )
-  val TOPIC_SIM_SEARCHER_AUTHOR_BOTH_INTERESTED_IN = new Continuous(
-    "itl.hydrated_tweet_features.topic_sim_searcher_author_both_interested_in"
+
+  // f-featuwes fwom hydwatedtweetfeatuwes
+  v-vaw w-weaw_gwaph_weight =
+    nyew continuous("itw.hydwated_tweet_featuwes.weaw_gwaph_weight", 😳😳😳 s-set(usewsweawgwaphscowe).asjava)
+  v-vaw s-sawus_gwaph_weight = n-nyew continuous("itw.hydwated_tweet_featuwes.sawus_gwaph_weight")
+  v-vaw fwom_top_engaged_usew = n-nyew binawy("itw.hydwated_tweet_featuwes.fwom_top_engaged_usew")
+  vaw fwom_top_infwuencew = nyew binawy("itw.hydwated_tweet_featuwes.fwom_top_infwuencew")
+  vaw topic_sim_seawchew_intewsted_in_authow_known_fow = nyew continuous(
+    "itw.hydwated_tweet_featuwes.topic_sim_seawchew_intewested_in_authow_known_fow"
   )
-  val TOPIC_SIM_SEARCHER_AUTHOR_BOTH_KNOWN_FOR = new Continuous(
-    "itl.hydrated_tweet_features.topic_sim_searcher_author_both_known_for"
+  v-vaw topic_sim_seawchew_authow_both_intewested_in = n-nyew continuous(
+    "itw.hydwated_tweet_featuwes.topic_sim_seawchew_authow_both_intewested_in"
   )
-  val USER_REP = new Continuous("itl.hydrated_tweet_features.user_rep")
-  val NORMALIZED_PARUS_SCORE = new Continuous("itl.hydrated_tweet_features.normalized_parus_score")
-  val CONTAINS_MEDIA = new Binary("itl.hydrated_tweet_features.contains_media")
-  val FROM_NEARBY = new Binary("itl.hydrated_tweet_features.from_nearby")
-  val TOPIC_SIM_SEARCHER_INTERESTED_IN_TWEET = new Continuous(
-    "itl.hydrated_tweet_features.topic_sim_searcher_interested_in_tweet"
+  v-vaw topic_sim_seawchew_authow_both_known_fow = nyew c-continuous(
+    "itw.hydwated_tweet_featuwes.topic_sim_seawchew_authow_both_known_fow"
   )
-  val MATCHES_UI_LANG = new Binary(
-    "itl.hydrated_tweet_features.matches_ui_lang",
-    Set(ProvidedLanguage, InferredLanguage).asJava)
-  val MATCHES_SEARCHER_MAIN_LANG = new Binary(
-    "itl.hydrated_tweet_features.matches_searcher_main_lang",
-    Set(ProvidedLanguage, InferredLanguage).asJava
+  v-vaw usew_wep = n-nyew continuous("itw.hydwated_tweet_featuwes.usew_wep")
+  vaw nyowmawized_pawus_scowe = nyew continuous("itw.hydwated_tweet_featuwes.nowmawized_pawus_scowe")
+  vaw contains_media = nyew binawy("itw.hydwated_tweet_featuwes.contains_media")
+  v-vaw fwom_neawby = n-nyew binawy("itw.hydwated_tweet_featuwes.fwom_neawby")
+  vaw topic_sim_seawchew_intewested_in_tweet = nyew continuous(
+    "itw.hydwated_tweet_featuwes.topic_sim_seawchew_intewested_in_tweet"
   )
-  val MATCHES_SEARCHER_LANGS = new Binary(
-    "itl.hydrated_tweet_features.matches_searcher_langs",
-    Set(ProvidedLanguage, InferredLanguage).asJava)
-  val HAS_CARD = new Binary(
-    "itl.hydrated_tweet_features.has_card",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_IMAGE = new Binary(
-    "itl.hydrated_tweet_features.has_image",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_NATIVE_IMAGE = new Binary(
-    "itl.hydrated_tweet_features.has_native_image",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_VIDEO = new Binary("itl.hydrated_tweet_features.has_video")
-  val HAS_CONSUMER_VIDEO = new Binary(
-    "itl.hydrated_tweet_features.has_consumer_video",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_PRO_VIDEO = new Binary(
-    "itl.hydrated_tweet_features.has_pro_video",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_PERISCOPE = new Binary(
-    "itl.hydrated_tweet_features.has_periscope",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_VINE = new Binary(
-    "itl.hydrated_tweet_features.has_vine",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_NATIVE_VIDEO = new Binary(
-    "itl.hydrated_tweet_features.has_native_video",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_LINK = new Binary(
-    "itl.hydrated_tweet_features.has_link",
-    Set(UrlFoundFlag, PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val LINK_COUNT = new Continuous(
-    "itl.hydrated_tweet_features.link_count",
-    Set(CountOfPrivateTweetEntitiesAndMetadata, CountOfPublicTweetEntitiesAndMetadata).asJava)
-  val URL_DOMAINS = new SparseBinary(
-    "itl.hydrated_tweet_features.url_domains",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_VISIBLE_LINK = new Binary(
-    "itl.hydrated_tweet_features.has_visible_link",
-    Set(UrlFoundFlag, PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_NEWS = new Binary(
-    "itl.hydrated_tweet_features.has_news",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_TREND = new Binary(
-    "itl.hydrated_tweet_features.has_trend",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val BLENDER_SCORE =
-    new Continuous("itl.hydrated_tweet_features.blender_score", Set(EngagementScore).asJava)
-  val PARUS_SCORE =
-    new Continuous("itl.hydrated_tweet_features.parus_score", Set(EngagementScore).asJava)
-  val TEXT_SCORE =
-    new Continuous("itl.hydrated_tweet_features.text_score", Set(EngagementScore).asJava)
-  val BIDIRECTIONAL_REPLY_COUNT = new Continuous(
-    "itl.hydrated_tweet_features.bidirectional_reply_count",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  v-vaw matches_ui_wang = nyew b-binawy(
+    "itw.hydwated_tweet_featuwes.matches_ui_wang", ^•ﻌ•^
+    s-set(pwovidedwanguage, 🥺 infewwedwanguage).asjava)
+  vaw matches_seawchew_main_wang = n-nyew binawy(
+    "itw.hydwated_tweet_featuwes.matches_seawchew_main_wang", o.O
+    set(pwovidedwanguage, (U ᵕ U❁) infewwedwanguage).asjava
   )
-  val UNIDIRECTIONAL_REPLY_COUNT = new Continuous(
-    "itl.hydrated_tweet_features.unidirectional_reply_count",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  v-vaw matches_seawchew_wangs = n-nyew binawy(
+    "itw.hydwated_tweet_featuwes.matches_seawchew_wangs", ^^
+    set(pwovidedwanguage, infewwedwanguage).asjava)
+  v-vaw has_cawd = nyew binawy(
+    "itw.hydwated_tweet_featuwes.has_cawd", (⑅˘꒳˘)
+    s-set(pubwictweetentitiesandmetadata, p-pwivatetweetentitiesandmetadata).asjava)
+  vaw has_image = nyew b-binawy(
+    "itw.hydwated_tweet_featuwes.has_image", :3
+    s-set(pubwictweetentitiesandmetadata, (///ˬ///✿) p-pwivatetweetentitiesandmetadata).asjava)
+  v-vaw h-has_native_image = n-nyew binawy(
+    "itw.hydwated_tweet_featuwes.has_native_image", :3
+    set(pubwictweetentitiesandmetadata, 🥺 p-pwivatetweetentitiesandmetadata).asjava)
+  v-vaw has_video = nyew binawy("itw.hydwated_tweet_featuwes.has_video")
+  v-vaw has_consumew_video = nyew binawy(
+    "itw.hydwated_tweet_featuwes.has_consumew_video", mya
+    s-set(pubwictweetentitiesandmetadata, XD pwivatetweetentitiesandmetadata).asjava)
+  v-vaw has_pwo_video = n-nyew binawy(
+    "itw.hydwated_tweet_featuwes.has_pwo_video", -.-
+    s-set(pubwictweetentitiesandmetadata, o.O pwivatetweetentitiesandmetadata).asjava)
+  vaw has_pewiscope = n-nyew binawy(
+    "itw.hydwated_tweet_featuwes.has_pewiscope", (˘ω˘)
+    set(pubwictweetentitiesandmetadata, (U ᵕ U❁) pwivatetweetentitiesandmetadata).asjava)
+  v-vaw has_vine = n-nyew binawy(
+    "itw.hydwated_tweet_featuwes.has_vine", rawr
+    set(pubwictweetentitiesandmetadata, 🥺 pwivatetweetentitiesandmetadata).asjava)
+  v-vaw has_native_video = n-nyew binawy(
+    "itw.hydwated_tweet_featuwes.has_native_video", rawr x3
+    set(pubwictweetentitiesandmetadata, ( ͡o ω ͡o ) p-pwivatetweetentitiesandmetadata).asjava)
+  vaw has_wink = nyew b-binawy(
+    "itw.hydwated_tweet_featuwes.has_wink", σωσ
+    s-set(uwwfoundfwag, rawr x3 pubwictweetentitiesandmetadata, (ˆ ﻌ ˆ)♡ p-pwivatetweetentitiesandmetadata).asjava)
+  v-vaw wink_count = nyew continuous(
+    "itw.hydwated_tweet_featuwes.wink_count", rawr
+    set(countofpwivatetweetentitiesandmetadata, :3 c-countofpubwictweetentitiesandmetadata).asjava)
+  v-vaw uww_domains = n-nyew spawsebinawy(
+    "itw.hydwated_tweet_featuwes.uww_domains", rawr
+    set(pubwictweetentitiesandmetadata, (˘ω˘) p-pwivatetweetentitiesandmetadata).asjava)
+  vaw has_visibwe_wink = nyew binawy(
+    "itw.hydwated_tweet_featuwes.has_visibwe_wink", (ˆ ﻌ ˆ)♡
+    set(uwwfoundfwag, pubwictweetentitiesandmetadata, pwivatetweetentitiesandmetadata).asjava)
+  v-vaw has_news = n-nyew binawy(
+    "itw.hydwated_tweet_featuwes.has_news", mya
+    s-set(pubwictweetentitiesandmetadata, (U ᵕ U❁) p-pwivatetweetentitiesandmetadata).asjava)
+  v-vaw has_twend = n-nyew binawy(
+    "itw.hydwated_tweet_featuwes.has_twend", mya
+    set(pubwictweetentitiesandmetadata, ʘwʘ p-pwivatetweetentitiesandmetadata).asjava)
+  vaw b-bwendew_scowe =
+    nyew continuous("itw.hydwated_tweet_featuwes.bwendew_scowe", (˘ω˘) s-set(engagementscowe).asjava)
+  v-vaw pawus_scowe =
+    nyew continuous("itw.hydwated_tweet_featuwes.pawus_scowe", 😳 set(engagementscowe).asjava)
+  v-vaw text_scowe =
+    new continuous("itw.hydwated_tweet_featuwes.text_scowe", òωó set(engagementscowe).asjava)
+  v-vaw bidiwectionaw_wepwy_count = nyew continuous(
+    "itw.hydwated_tweet_featuwes.bidiwectionaw_wepwy_count", nyaa~~
+    s-set(countofpwivatewepwies, o.O c-countofpubwicwepwies).asjava
   )
-  val BIDIRECTIONAL_RETWEET_COUNT = new Continuous(
-    "itl.hydrated_tweet_features.bidirectional_retweet_count",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
+  vaw unidiwectionaw_wepwy_count = n-nyew continuous(
+    "itw.hydwated_tweet_featuwes.unidiwectionaw_wepwy_count", nyaa~~
+    s-set(countofpwivatewepwies, (U ᵕ U❁) countofpubwicwepwies).asjava
   )
-  val UNIDIRECTIONAL_RETWEET_COUNT = new Continuous(
-    "itl.hydrated_tweet_features.unidirectional_retweet_count",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
+  v-vaw bidiwectionaw_wetweet_count = nyew continuous(
+    "itw.hydwated_tweet_featuwes.bidiwectionaw_wetweet_count", 😳😳😳
+    s-set(countofpwivatewetweets, (U ﹏ U) c-countofpubwicwetweets).asjava
   )
-  val BIDIRECTIONAL_FAV_COUNT = new Continuous(
-    "itl.hydrated_tweet_features.bidirectional_fav_count",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
+  vaw unidiwectionaw_wetweet_count = n-new continuous(
+    "itw.hydwated_tweet_featuwes.unidiwectionaw_wetweet_count", ^•ﻌ•^
+    set(countofpwivatewetweets, (⑅˘꒳˘) countofpubwicwetweets).asjava
   )
-  val UNIDIRECTIONAL_FAV_COUNT = new Continuous(
-    "itl.hydrated_tweet_features.unidirectional_fav_count",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
+  vaw b-bidiwectionaw_fav_count = n-nyew c-continuous(
+    "itw.hydwated_tweet_featuwes.bidiwectionaw_fav_count", >_<
+    set(countofpwivatewikes, (⑅˘꒳˘) c-countofpubwicwikes).asjava
   )
-  val CONVERSATION_COUNT = new Continuous("itl.hydrated_tweet_features.conversation_count")
-  val FAV_COUNT = new Continuous(
-    "itl.hydrated_tweet_features.fav_count",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava)
-  val REPLY_COUNT = new Continuous(
-    "itl.hydrated_tweet_features.reply_count",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava)
-  val RETWEET_COUNT = new Continuous(
-    "itl.hydrated_tweet_features.retweet_count",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val PREV_USER_TWEET_ENGAGEMENT = new Continuous(
-    "itl.hydrated_tweet_features.prev_user_tweet_enagagement",
-    Set(EngagementScore, EngagementsPrivate, EngagementsPublic).asJava
+  vaw unidiwectionaw_fav_count = nyew continuous(
+    "itw.hydwated_tweet_featuwes.unidiwectionaw_fav_count", σωσ
+    s-set(countofpwivatewikes, 🥺 countofpubwicwikes).asjava
   )
-  val IS_SENSITIVE = new Binary("itl.hydrated_tweet_features.is_sensitive")
-  val HAS_MULTIPLE_MEDIA = new Binary(
-    "itl.hydrated_tweet_features.has_multiple_media",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_MULTIPLE_HASHTAGS_OR_TRENDS = new Binary(
-    "itl.hydrated_tweet_features.has_multiple_hashtag_or_trend",
-    Set(
-      UserVisibleFlag,
-      CountOfPrivateTweetEntitiesAndMetadata,
-      CountOfPublicTweetEntitiesAndMetadata).asJava)
-  val IS_AUTHOR_PROFILE_EGG =
-    new Binary("itl.hydrated_tweet_features.is_author_profile_egg", Set(ProfileImage).asJava)
-  val IS_AUTHOR_NEW =
-    new Binary("itl.hydrated_tweet_features.is_author_new", Set(UserType, UserState).asJava)
-  val NUM_MENTIONS = new Continuous(
-    "itl.hydrated_tweet_features.num_mentions",
-    Set(
-      UserVisibleFlag,
-      CountOfPrivateTweetEntitiesAndMetadata,
-      CountOfPublicTweetEntitiesAndMetadata).asJava)
-  val NUM_HASHTAGS = new Continuous(
-    "itl.hydrated_tweet_features.num_hashtags",
-    Set(CountOfPrivateTweetEntitiesAndMetadata, CountOfPublicTweetEntitiesAndMetadata).asJava)
-  val LANGUAGE = new Discrete(
-    "itl.hydrated_tweet_features.language",
-    Set(ProvidedLanguage, InferredLanguage).asJava)
-  val LINK_LANGUAGE = new Continuous(
-    "itl.hydrated_tweet_features.link_language",
-    Set(ProvidedLanguage, InferredLanguage).asJava)
-  val IS_AUTHOR_NSFW =
-    new Binary("itl.hydrated_tweet_features.is_author_nsfw", Set(UserType).asJava)
-  val IS_AUTHOR_SPAM =
-    new Binary("itl.hydrated_tweet_features.is_author_spam", Set(UserType).asJava)
-  val IS_AUTHOR_BOT = new Binary("itl.hydrated_tweet_features.is_author_bot", Set(UserType).asJava)
-  val IS_OFFENSIVE = new Binary("itl.hydrated_tweet_features.is_offensive")
-  val FROM_VERIFIED_ACCOUNT =
-    new Binary("itl.hydrated_tweet_features.from_verified_account", Set(UserVerifiedFlag).asJava)
-  val EMBEDS_IMPRESSION_COUNT = new Continuous(
-    "itl.hydrated_tweet_features.embeds_impression_count",
-    Set(CountOfImpression).asJava)
-  val EMBEDS_URL_COUNT =
-    new Continuous("itl.hydrated_tweet_features.embeds_url_count", Set(UrlFoundFlag).asJava)
-  val FAV_COUNT_V2 = new Continuous(
-    "recap.earlybird.fav_count_v2",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava)
-  val RETWEET_COUNT_V2 = new Continuous(
-    "recap.earlybird.retweet_count_v2",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val REPLY_COUNT_V2 = new Continuous(
-    "recap.earlybird.reply_count_v2",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava)
+  vaw convewsation_count = nyew continuous("itw.hydwated_tweet_featuwes.convewsation_count")
+  vaw fav_count = new continuous(
+    "itw.hydwated_tweet_featuwes.fav_count", :3
+    set(countofpwivatewikes, (ꈍᴗꈍ) c-countofpubwicwikes).asjava)
+  vaw wepwy_count = nyew continuous(
+    "itw.hydwated_tweet_featuwes.wepwy_count",
+    set(countofpwivatewepwies, ^•ﻌ•^ countofpubwicwepwies).asjava)
+  vaw wetweet_count = nyew c-continuous(
+    "itw.hydwated_tweet_featuwes.wetweet_count", (˘ω˘)
+    set(countofpwivatewetweets, 🥺 countofpubwicwetweets).asjava)
+  v-vaw pwev_usew_tweet_engagement = nyew c-continuous(
+    "itw.hydwated_tweet_featuwes.pwev_usew_tweet_enagagement", (✿oωo)
+    set(engagementscowe, XD engagementspwivate, (///ˬ///✿) e-engagementspubwic).asjava
+  )
+  vaw i-is_sensitive = nyew binawy("itw.hydwated_tweet_featuwes.is_sensitive")
+  v-vaw has_muwtipwe_media = n-new binawy(
+    "itw.hydwated_tweet_featuwes.has_muwtipwe_media", ( ͡o ω ͡o )
+    set(pubwictweetentitiesandmetadata, ʘwʘ pwivatetweetentitiesandmetadata).asjava)
+  v-vaw has_muwtipwe_hashtags_ow_twends = nyew binawy(
+    "itw.hydwated_tweet_featuwes.has_muwtipwe_hashtag_ow_twend", rawr
+    set(
+      usewvisibwefwag, o.O
+      c-countofpwivatetweetentitiesandmetadata, ^•ﻌ•^
+      countofpubwictweetentitiesandmetadata).asjava)
+  vaw is_authow_pwofiwe_egg =
+    n-nyew binawy("itw.hydwated_tweet_featuwes.is_authow_pwofiwe_egg", (///ˬ///✿) set(pwofiweimage).asjava)
+  v-vaw is_authow_new =
+    n-nyew binawy("itw.hydwated_tweet_featuwes.is_authow_new", (ˆ ﻌ ˆ)♡ s-set(usewtype, XD usewstate).asjava)
+  vaw num_mentions = n-nyew continuous(
+    "itw.hydwated_tweet_featuwes.num_mentions", (✿oωo)
+    set(
+      usewvisibwefwag, -.-
+      c-countofpwivatetweetentitiesandmetadata, XD
+      countofpubwictweetentitiesandmetadata).asjava)
+  vaw nyum_hashtags = nyew continuous(
+    "itw.hydwated_tweet_featuwes.num_hashtags", (✿oωo)
+    s-set(countofpwivatetweetentitiesandmetadata, (˘ω˘) countofpubwictweetentitiesandmetadata).asjava)
+  v-vaw wanguage = nyew discwete(
+    "itw.hydwated_tweet_featuwes.wanguage", (ˆ ﻌ ˆ)♡
+    s-set(pwovidedwanguage, i-infewwedwanguage).asjava)
+  vaw wink_wanguage = n-nyew continuous(
+    "itw.hydwated_tweet_featuwes.wink_wanguage", >_<
+    set(pwovidedwanguage, infewwedwanguage).asjava)
+  vaw is_authow_nsfw =
+    n-nyew binawy("itw.hydwated_tweet_featuwes.is_authow_nsfw", -.- set(usewtype).asjava)
+  v-vaw is_authow_spam =
+    nyew binawy("itw.hydwated_tweet_featuwes.is_authow_spam", (///ˬ///✿) s-set(usewtype).asjava)
+  v-vaw is_authow_bot = nyew binawy("itw.hydwated_tweet_featuwes.is_authow_bot", XD set(usewtype).asjava)
+  v-vaw is_offensive = nyew binawy("itw.hydwated_tweet_featuwes.is_offensive")
+  vaw fwom_vewified_account =
+    n-nyew binawy("itw.hydwated_tweet_featuwes.fwom_vewified_account", ^^;; set(usewvewifiedfwag).asjava)
+  vaw embeds_impwession_count = n-nyew continuous(
+    "itw.hydwated_tweet_featuwes.embeds_impwession_count", rawr x3
+    s-set(countofimpwession).asjava)
+  vaw embeds_uww_count =
+    nyew continuous("itw.hydwated_tweet_featuwes.embeds_uww_count", OwO set(uwwfoundfwag).asjava)
+  v-vaw fav_count_v2 = nyew continuous(
+    "wecap.eawwybiwd.fav_count_v2", ʘwʘ
+    set(countofpwivatewikes, rawr countofpubwicwikes).asjava)
+  vaw wetweet_count_v2 = nyew continuous(
+    "wecap.eawwybiwd.wetweet_count_v2",
+    s-set(countofpwivatewetweets, UwU c-countofpubwicwetweets).asjava)
+  vaw wepwy_count_v2 = n-nyew continuous(
+    "wecap.eawwybiwd.wepwy_count_v2", (ꈍᴗꈍ)
+    set(countofpwivatewepwies, (✿oωo) c-countofpubwicwepwies).asjava)
 }

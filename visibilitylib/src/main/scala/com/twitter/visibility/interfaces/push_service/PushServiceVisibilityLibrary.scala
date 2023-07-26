@@ -1,177 +1,177 @@
-package com.twitter.visibility.interfaces.push_service
+package com.twittew.visibiwity.intewfaces.push_sewvice
 
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.servo.util.Gate
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.tweets.TweetFeatures
-import com.twitter.visibility.builder.tweets.StratoTweetLabelMaps
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common._
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.features.TweetIsInnerQuotedTweet
-import com.twitter.visibility.features.TweetIsRetweet
-import com.twitter.visibility.features.TweetIsSourceTweet
-import com.twitter.visibility.interfaces.push_service.PushServiceVisibilityLibraryUtil._
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.ViewerContext
+impowt com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.stwato.cwient.{cwient => s-stwatocwient}
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
+impowt com.twittew.visibiwity.visibiwitywibwawy
+impowt c-com.twittew.visibiwity.buiwdew.tweets.tweetfeatuwes
+impowt com.twittew.visibiwity.buiwdew.tweets.stwatotweetwabewmaps
+impowt com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+i-impowt com.twittew.visibiwity.buiwdew.usews.wewationshipfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.viewewfeatuwes
+i-impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+impowt com.twittew.visibiwity.common._
+impowt c-com.twittew.visibiwity.common.usewwewationshipsouwce
+impowt com.twittew.visibiwity.common.usewsouwce
+i-impowt com.twittew.visibiwity.featuwes.featuwemap
+i-impowt com.twittew.visibiwity.featuwes.tweetisinnewquotedtweet
+impowt com.twittew.visibiwity.featuwes.tweetiswetweet
+impowt com.twittew.visibiwity.featuwes.tweetissouwcetweet
+i-impowt com.twittew.visibiwity.intewfaces.push_sewvice.pushsewvicevisibiwitywibwawyutiw._
+impowt com.twittew.visibiwity.modews.contentid
+impowt com.twittew.visibiwity.modews.viewewcontext
 
-object TweetType extends Enumeration {
-  type TweetType = Value
-  val ORIGINAL, SOURCE, QUOTED = Value
+object tweettype e-extends enumewation {
+  type t-tweettype = vawue
+  v-vaw owiginaw, (U ﹏ U) s-souwce, 😳😳😳 quoted = v-vawue
 }
-import com.twitter.visibility.interfaces.push_service.TweetType._
+impowt com.twittew.visibiwity.intewfaces.push_sewvice.tweettype._
 
-object PushServiceVisibilityLibrary {
-  type Type = PushServiceVisibilityRequest => Stitch[PushServiceVisibilityResponse]
+object pushsewvicevisibiwitywibwawy {
+  t-type type = pushsewvicevisibiwitywequest => stitch[pushsewvicevisibiwitywesponse]
 
-  def apply(
-    visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    stratoClient: StratoClient,
-    enableParityTest: Gate[Unit] = Gate.False,
-    cachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult] = ReadableStore.empty,
-    safeCachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult] = ReadableStore.empty,
+  d-def appwy(
+    visibiwitywibwawy: visibiwitywibwawy, >w<
+    usewsouwce: usewsouwce, XD
+    usewwewationshipsouwce: u-usewwewationshipsouwce, o.O
+    stwatocwient: s-stwatocwient, mya
+    e-enabwepawitytest: g-gate[unit] = gate.fawse, 🥺
+    cachedtweetypiestowev2: weadabwestowe[wong, ^^;; t-tweetypiewesuwt] = w-weadabwestowe.empty, :3
+    safecachedtweetypiestowev2: w-weadabwestowe[wong, (U ﹏ U) t-tweetypiewesuwt] = weadabwestowe.empty, OwO
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Type = {
-    val stats = statsReceiver.scope("push_service_vf")
-    val candidateTweetCounter = stats.counter("request_cnt")
-    val allowedTweetCounter = stats.counter("allow_cnt")
-    val droppedTweetCounter = stats.counter("drop_cnt")
-    val failedTweetCounter = stats.counter("fail_cnt")
-    val authorLabelsEmptyCount = stats.counter("author_labels_empty_cnt")
-    val authorLabelsCount = stats.counter("author_labels_cnt")
+    impwicit s-statsweceivew: statsweceivew
+  ): t-type = {
+    vaw stats = statsweceivew.scope("push_sewvice_vf")
+    v-vaw candidatetweetcountew = s-stats.countew("wequest_cnt")
+    vaw awwowedtweetcountew = s-stats.countew("awwow_cnt")
+    v-vaw dwoppedtweetcountew = stats.countew("dwop_cnt")
+    vaw faiwedtweetcountew = stats.countew("faiw_cnt")
+    vaw authowwabewsemptycount = stats.countew("authow_wabews_empty_cnt")
+    v-vaw a-authowwabewscount = stats.countew("authow_wabews_cnt")
 
-    val tweetLabelMaps = new StratoTweetLabelMaps(
-      SafetyLabelMapSource.fromSafetyLabelMapFetcher(
-        PushServiceSafetyLabelMapFetcher(stratoClient, stats)))
+    v-vaw t-tweetwabewmaps = n-nyew stwatotweetwabewmaps(
+      safetywabewmapsouwce.fwomsafetywabewmapfetchew(
+        pushsewvicesafetywabewmapfetchew(stwatocwient, 😳😳😳 stats)))
 
-    val viewerFeatures = new ViewerFeatures(UserSource.empty, stats)
-    val tweetFeatures = new TweetFeatures(tweetLabelMaps, stats)
-    val authorFeatures = new AuthorFeatures(userSource, stats)
-    val relationshipFeatures = new RelationshipFeatures(UserRelationshipSource.empty, stats)
+    v-vaw viewewfeatuwes = nyew viewewfeatuwes(usewsouwce.empty, (ˆ ﻌ ˆ)♡ stats)
+    vaw tweetfeatuwes = n-nyew tweetfeatuwes(tweetwabewmaps, XD stats)
+    v-vaw authowfeatuwes = n-nyew authowfeatuwes(usewsouwce, (ˆ ﻌ ˆ)♡ s-stats)
+    vaw wewationshipfeatuwes = n-nyew w-wewationshipfeatuwes(usewwewationshipsouwce.empty, ( ͡o ω ͡o ) s-stats)
 
-    val parityTester = new PushServiceVisibilityLibraryParity(
-      cachedTweetyPieStoreV2,
-      safeCachedTweetyPieStoreV2
-    )(statsReceiver)
+    vaw p-pawitytestew = nyew pushsewvicevisibiwitywibwawypawity(
+      cachedtweetypiestowev2, rawr x3
+      safecachedtweetypiestowev2
+    )(statsweceivew)
 
-    def buildFeatureMap(
-      request: PushServiceVisibilityRequest,
-      tweet: Tweet,
-      tweetType: TweetType,
-      author: Option[User] = None,
-    ): FeatureMap = {
-      val authorId = author.map(_.id) orElse getAuthorId(tweet)
-      (author.map(authorFeatures.forAuthor(_)) orElse
-        getAuthorId(tweet).map(authorFeatures.forAuthorId(_))) match {
-        case Some(authorVisibilityFeatures) =>
-          visibilityLibrary.featureMapBuilder(
-            Seq(
-              viewerFeatures.forViewerContext(ViewerContext.fromContextWithViewerIdFallback(None)),
-              tweetFeatures.forTweet(tweet),
-              authorVisibilityFeatures,
-              relationshipFeatures.forAuthorId(authorId.get, None),
-              _.withConstantFeature(TweetIsInnerQuotedTweet, tweetType == QUOTED),
-              _.withConstantFeature(TweetIsRetweet, request.isRetweet),
-              _.withConstantFeature(TweetIsSourceTweet, tweetType == SOURCE)
+    d-def buiwdfeatuwemap(
+      wequest: p-pushsewvicevisibiwitywequest, nyaa~~
+      t-tweet: t-tweet, >_<
+      t-tweettype: tweettype, ^^;;
+      authow: option[usew] = nyone, (ˆ ﻌ ˆ)♡
+    ): f-featuwemap = {
+      vaw authowid = authow.map(_.id) owewse getauthowid(tweet)
+      (authow.map(authowfeatuwes.fowauthow(_)) owewse
+        getauthowid(tweet).map(authowfeatuwes.fowauthowid(_))) match {
+        c-case some(authowvisibiwityfeatuwes) =>
+          visibiwitywibwawy.featuwemapbuiwdew(
+            seq(
+              viewewfeatuwes.fowviewewcontext(viewewcontext.fwomcontextwithviewewidfawwback(none)), ^^;;
+              t-tweetfeatuwes.fowtweet(tweet), (⑅˘꒳˘)
+              a-authowvisibiwityfeatuwes, rawr x3
+              w-wewationshipfeatuwes.fowauthowid(authowid.get, (///ˬ///✿) nyone), 🥺
+              _.withconstantfeatuwe(tweetisinnewquotedtweet, >_< t-tweettype == quoted), UwU
+              _.withconstantfeatuwe(tweetiswetweet, >_< w-wequest.iswetweet), -.-
+              _.withconstantfeatuwe(tweetissouwcetweet, mya t-tweettype == souwce)
             )
           )
         case _ =>
-          visibilityLibrary.featureMapBuilder(
-            Seq(
-              viewerFeatures.forViewerContext(ViewerContext.fromContextWithViewerIdFallback(None)),
-              tweetFeatures.forTweet(tweet),
-              _.withConstantFeature(TweetIsInnerQuotedTweet, tweetType == QUOTED),
-              _.withConstantFeature(TweetIsRetweet, request.isRetweet),
-              _.withConstantFeature(TweetIsSourceTweet, tweetType == SOURCE)
+          visibiwitywibwawy.featuwemapbuiwdew(
+            seq(
+              viewewfeatuwes.fowviewewcontext(viewewcontext.fwomcontextwithviewewidfawwback(none)),
+              t-tweetfeatuwes.fowtweet(tweet), >w<
+              _.withconstantfeatuwe(tweetisinnewquotedtweet, (U ﹏ U) tweettype == q-quoted), 😳😳😳
+              _.withconstantfeatuwe(tweetiswetweet, o.O wequest.iswetweet), òωó
+              _.withconstantfeatuwe(tweetissouwcetweet, 😳😳😳 t-tweettype == souwce)
             )
           )
       }
     }
 
-    def runRuleEngineForTweet(
-      request: PushServiceVisibilityRequest,
-      tweet: Tweet,
-      tweetType: TweetType,
-      author: Option[User] = None,
-    ): Stitch[VisibilityResult] = {
-      val featureMap = buildFeatureMap(request, tweet, tweetType, author)
-      val contentId = ContentId.TweetId(tweet.id)
-      visibilityLibrary.runRuleEngine(
-        contentId,
-        featureMap,
-        request.viewerContext,
-        request.safetyLevel)
+    d-def wunwuweenginefowtweet(
+      wequest: pushsewvicevisibiwitywequest, σωσ
+      tweet: tweet, (⑅˘꒳˘)
+      t-tweettype: t-tweettype, (///ˬ///✿)
+      authow: option[usew] = n-nyone, 🥺
+    ): s-stitch[visibiwitywesuwt] = {
+      vaw featuwemap = buiwdfeatuwemap(wequest, OwO tweet, tweettype, >w< authow)
+      v-vaw contentid = c-contentid.tweetid(tweet.id)
+      v-visibiwitywibwawy.wunwuweengine(
+        contentid, 🥺
+        featuwemap, nyaa~~
+        w-wequest.viewewcontext, ^^
+        w-wequest.safetywevew)
     }
 
-    def runRuleEngineForAuthor(
-      request: PushServiceVisibilityRequest,
-      tweet: Tweet,
-      tweetType: TweetType,
-      author: Option[User] = None,
-    ): Stitch[VisibilityResult] = {
-      val featureMap = buildFeatureMap(request, tweet, tweetType, author)
-      val authorId = author.map(_.id).getOrElse(getAuthorId(tweet).get)
-      val contentId = ContentId.UserId(authorId)
-      visibilityLibrary.runRuleEngine(
-        contentId,
-        featureMap,
-        request.viewerContext,
-        request.safetyLevel)
+    def wunwuweenginefowauthow(
+      w-wequest: pushsewvicevisibiwitywequest, >w<
+      tweet: tweet, OwO
+      tweettype: tweettype, XD
+      a-authow: option[usew] = n-nyone,
+    ): stitch[visibiwitywesuwt] = {
+      vaw f-featuwemap = buiwdfeatuwemap(wequest, ^^;; t-tweet, tweettype, 🥺 authow)
+      vaw authowid = authow.map(_.id).getowewse(getauthowid(tweet).get)
+      v-vaw contentid = contentid.usewid(authowid)
+      visibiwitywibwawy.wunwuweengine(
+        contentid, XD
+        featuwemap, (U ᵕ U❁)
+        wequest.viewewcontext, :3
+        wequest.safetywevew)
     }
 
-    def getAllVisibilityFilters(
-      request: PushServiceVisibilityRequest
-    ): Stitch[PushServiceVisibilityResponse] = {
-      val tweetResult =
-        runRuleEngineForTweet(request, request.tweet, ORIGINAL, Some(request.author))
-      val authorResult =
-        runRuleEngineForAuthor(request, request.tweet, ORIGINAL, Some(request.author))
-      val sourceTweetResult = request.sourceTweet
-        .map(runRuleEngineForTweet(request, _, SOURCE).map(Some(_))).getOrElse(Stitch.None)
-      val quotedTweetResult = request.quotedTweet
-        .map(runRuleEngineForTweet(request, _, QUOTED).map(Some(_))).getOrElse(Stitch.None)
+    d-def getawwvisibiwityfiwtews(
+      wequest: pushsewvicevisibiwitywequest
+    ): s-stitch[pushsewvicevisibiwitywesponse] = {
+      v-vaw tweetwesuwt =
+        wunwuweenginefowtweet(wequest, ( ͡o ω ͡o ) wequest.tweet, o-owiginaw, òωó s-some(wequest.authow))
+      vaw authowwesuwt =
+        wunwuweenginefowauthow(wequest, σωσ w-wequest.tweet, (U ᵕ U❁) owiginaw, s-some(wequest.authow))
+      vaw souwcetweetwesuwt = wequest.souwcetweet
+        .map(wunwuweenginefowtweet(wequest, (✿oωo) _, s-souwce).map(some(_))).getowewse(stitch.none)
+      vaw quotedtweetwesuwt = w-wequest.quotedtweet
+        .map(wunwuweenginefowtweet(wequest, ^^ _, q-quoted).map(some(_))).getowewse(stitch.none)
 
-      Stitch.join(tweetResult, authorResult, sourceTweetResult, quotedTweetResult).map {
-        case (tweetResult, authorResult, sourceTweetResult, quotedTweetResult) =>
-          PushServiceVisibilityResponse(
-            tweetResult,
-            authorResult,
-            sourceTweetResult,
-            quotedTweetResult)
+      stitch.join(tweetwesuwt, ^•ﻌ•^ a-authowwesuwt, XD souwcetweetwesuwt, :3 q-quotedtweetwesuwt).map {
+        c-case (tweetwesuwt, (ꈍᴗꈍ) a-authowwesuwt, :3 souwcetweetwesuwt, (U ﹏ U) q-quotedtweetwesuwt) =>
+          p-pushsewvicevisibiwitywesponse(
+            tweetwesuwt, UwU
+            authowwesuwt, 😳😳😳
+            s-souwcetweetwesuwt, XD
+            q-quotedtweetwesuwt)
       }
     }
 
-    { request: PushServiceVisibilityRequest =>
-      candidateTweetCounter.incr()
+    { w-wequest: pushsewvicevisibiwitywequest =>
+      candidatetweetcountew.incw()
 
-      request.author.labels match {
-        case Some(labels) if (!labels._1.isEmpty) => authorLabelsCount.incr()
-        case _ => authorLabelsEmptyCount.incr()
+      w-wequest.authow.wabews match {
+        c-case some(wabews) i-if (!wabews._1.isempty) => authowwabewscount.incw()
+        case _ => authowwabewsemptycount.incw()
       }
 
-      val response = getAllVisibilityFilters(request)
-        .onSuccess { response =>
-          if (response.shouldAllow) allowedTweetCounter.incr() else droppedTweetCounter.incr()
-        }.onFailure { _ => failedTweetCounter.incr() }
+      vaw wesponse = g-getawwvisibiwityfiwtews(wequest)
+        .onsuccess { w-wesponse =>
+          i-if (wesponse.shouwdawwow) a-awwowedtweetcountew.incw() ewse d-dwoppedtweetcountew.incw()
+        }.onfaiwuwe { _ => faiwedtweetcountew.incw() }
 
-      if (enableParityTest()) {
-        response.applyEffect { resp => Stitch.async(parityTester.runParityTest(request, resp)) }
-      } else {
-        response
+      if (enabwepawitytest()) {
+        wesponse.appwyeffect { wesp => stitch.async(pawitytestew.wunpawitytest(wequest, o.O wesp)) }
+      } e-ewse {
+        wesponse
       }
 
     }

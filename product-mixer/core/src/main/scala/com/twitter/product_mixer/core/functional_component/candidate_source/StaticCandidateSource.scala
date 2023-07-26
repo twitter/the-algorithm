@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stitch.stitch
 
 /**
- * A [[CandidateSource]] that always returns [[result]] regardless of the input
+ * a-a [[candidatesouwce]] t-that awways w-wetuwns [[wesuwt]] w-wegawdwess of t-the input
  */
-case class StaticCandidateSource[Candidate](
-  override val identifier: CandidateSourceIdentifier,
-  result: Seq[Candidate])
-    extends CandidateSource[Any, Candidate] {
+case c-cwass staticcandidatesouwce[candidate](
+  ovewwide vaw identifiew: candidatesouwceidentifiew, (U ﹏ U)
+  wesuwt: seq[candidate])
+    e-extends candidatesouwce[any, -.- candidate] {
 
-  def apply(request: Any): Stitch[Seq[Candidate]] = Stitch.value(result)
+  def a-appwy(wequest: any): stitch[seq[candidate]] = stitch.vawue(wesuwt)
 }

@@ -1,213 +1,213 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing;
 
-import java.io.IOException;
-import java.util.List;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.wist;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.Explanation;
+i-impowt owg.apache.wucene.index.indexweadew;
+i-impowt o-owg.apache.wucene.seawch.expwanation;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.relevance.features.EarlybirdDocumentFeatures;
-import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
-import com.twitter.search.queryparser.query.Query;
+i-impowt c-com.twittew.common.cowwections.paiw;
+impowt com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
+impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchwesuwtfeatuwes;
+impowt c-com.twittew.seawch.common.quewy.hitattwibutehewpew;
+impowt com.twittew.seawch.common.wewevance.featuwes.eawwybiwddocumentfeatuwes;
+impowt com.twittew.seawch.common.wesuwts.thwiftjava.fiewdhitattwibution;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.timemappew;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.wineawscowingdata;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadataoptions;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwttype;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtswewevancestats;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
 
 /**
- * Defines a ranking function which computes the score of a document that matches a query.
+ * d-defines a wanking function which c-computes the s-scowe of a document t-that matches a-a quewy. rawr
  */
-public abstract class ScoringFunction {
+pubwic abstwact cwass scowingfunction {
   /**
-   * Returned by a {@link #score(int, float)} to indicate that a hit should be scored below all.
+   * w-wetuwned by a {@wink #scowe(int, 😳😳😳 fwoat)} to indicate that a hit s-shouwd be scowed bewow aww. (✿oωo)
    *
-   * We have some equality tests like:
-   *   "if (score == ScoringFunction.SKIP_HIT) {...}" (DefaultScoringFunction#updateRelevanceStats)
-   * We might also have double to float casts.
+   * we have some equawity tests wike:
+   *   "if (scowe == scowingfunction.skip_hit) {...}" (defauwtscowingfunction#updatewewevancestats)
+   * w-we might awso have doubwe to f-fwoat casts. OwO
    *
-   * Such castings seem to work with the equality test, but there might corner cases when casting
-   * this float value to a double (and back) might not work properly.
+   * s-such castings s-seem to wowk with the equawity test, ʘwʘ but thewe might cownew c-cases when casting
+   * t-this fwoat vawue to a d-doubwe (and back) m-might nyot wowk pwopewwy. (ˆ ﻌ ˆ)♡
    *
-   * If possible, we should choose a constant that is not in the valid score range. Then we can
-   * turn the float equality tests into Math.abs(...) < EPSILON tests.
+   * i-if possibwe, (U ﹏ U) we shouwd choose a-a constant that is nyot in the vawid scowe wange. UwU t-then we can
+   * tuwn the f-fwoat equawity tests into math.abs(...) < e-epsiwon t-tests. XD
    */
-  public static final float SKIP_HIT = -Float.MAX_VALUE;
+  pubwic static finaw fwoat skip_hit = -fwoat.max_vawue;
 
-  private final ImmutableSchemaInterface schema;
+  pwivate finaw immutabweschemaintewface schema;
 
-  // The current doc ID and the reader for the current segment should be private, because we don't
-  // want sub-classes to incorrectly update them. The doc ID should only be updated by the score()
-  // and explain() methods, and the reader should only be updated by the setNextReader() method.
-  private int currentDocID = -1;
+  // the cuwwent doc i-id and the weadew f-fow the cuwwent segment shouwd b-be pwivate, ʘwʘ because w-we don't
+  // w-want sub-cwasses to incowwectwy update them. rawr x3 the doc id shouwd o-onwy be updated by the scowe()
+  // and expwain() methods, ^^;; and the weadew shouwd o-onwy be updated by the setnextweadew() m-method. ʘwʘ
+  p-pwivate int c-cuwwentdocid = -1;
 
-  protected DocIDToTweetIDMapper tweetIDMapper = null;
-  protected TimeMapper timeMapper = null;
-  protected EarlybirdDocumentFeatures documentFeatures;
+  pwotected d-docidtotweetidmappew t-tweetidmappew = n-nyuww;
+  pwotected t-timemappew timemappew = nyuww;
+  pwotected e-eawwybiwddocumentfeatuwes d-documentfeatuwes;
 
-  protected int debugMode = 0;
-  protected HitAttributeHelper hitAttributeHelper;
-  protected Query query;
+  p-pwotected int d-debugmode = 0;
+  p-pwotected hitattwibutehewpew hitattwibutehewpew;
+  pwotected quewy quewy;
 
-  protected FieldHitAttribution fieldHitAttribution;
+  pwotected f-fiewdhitattwibution fiewdhitattwibution;
 
-  public ScoringFunction(ImmutableSchemaInterface schema) {
-    this.schema = Preconditions.checkNotNull(schema);
+  pubwic scowingfunction(immutabweschemaintewface schema) {
+    this.schema = pweconditions.checknotnuww(schema);
   }
 
-  protected ImmutableSchemaInterface getSchema() {
-    return schema;
+  p-pwotected immutabweschemaintewface getschema() {
+    wetuwn schema;
   }
 
   /**
-   * Updates the reader that will be used to retrieve the tweet IDs and creation times associated
-   * with scored doc IDs, as well as the values for various CSFs. Should be called every time the
-   * searcher starts searching in a new segment.
+   * updates t-the weadew t-that wiww be used t-to wetwieve the tweet ids and c-cweation times associated
+   * w-with scowed doc i-ids, (U ﹏ U) as weww as the vawues fow vawious csfs. (˘ω˘) shouwd be cawwed evewy time the
+   * seawchew stawts s-seawching in a nyew segment.
    */
-  public void setNextReader(EarlybirdIndexSegmentAtomicReader reader) throws IOException {
-    tweetIDMapper = reader.getSegmentData().getDocIDToTweetIDMapper();
-    timeMapper = reader.getSegmentData().getTimeMapper();
-    documentFeatures = new EarlybirdDocumentFeatures(reader);
-    initializeNextSegment(reader);
+  p-pubwic void setnextweadew(eawwybiwdindexsegmentatomicweadew w-weadew) thwows i-ioexception {
+    tweetidmappew = weadew.getsegmentdata().getdocidtotweetidmappew();
+    t-timemappew = w-weadew.getsegmentdata().gettimemappew();
+    documentfeatuwes = n-nyew eawwybiwddocumentfeatuwes(weadew);
+    i-initiawizenextsegment(weadew);
   }
 
-  public void setHitAttributeHelperAndQuery(HitAttributeHelper newHitAttributeHelper,
-                                            Query parsedQuery) {
-    this.hitAttributeHelper = newHitAttributeHelper;
-    this.query = parsedQuery;
+  pubwic void sethitattwibutehewpewandquewy(hitattwibutehewpew nyewhitattwibutehewpew, (ꈍᴗꈍ)
+                                            quewy p-pawsedquewy) {
+    t-this.hitattwibutehewpew = nyewhitattwibutehewpew;
+    t-this.quewy = pawsedquewy;
   }
 
-  public void setFieldHitAttribution(FieldHitAttribution fieldHitAttribution) {
-    this.fieldHitAttribution = fieldHitAttribution;
+  p-pubwic v-void setfiewdhitattwibution(fiewdhitattwibution fiewdhitattwibution) {
+    t-this.fiewdhitattwibution = fiewdhitattwibution;
   }
 
-  public void setDebugMode(int debugMode) {
-    this.debugMode = debugMode;
+  pubwic void setdebugmode(int debugmode) {
+    t-this.debugmode = d-debugmode;
   }
 
   /**
-   * Allow scoring functions to perform more per-segment-specific setup.
+   * awwow scowing functions to pewfowm m-mowe pew-segment-specific s-setup. /(^•ω•^)
    */
-  protected void initializeNextSegment(EarlybirdIndexSegmentAtomicReader reader)
-      throws IOException {
-    // Noop by default
+  pwotected void initiawizenextsegment(eawwybiwdindexsegmentatomicweadew weadew)
+      t-thwows ioexception {
+    // nyoop by defauwt
   }
 
-  // Updates the current document ID and advances all NumericDocValues to this doc ID.
-  private void setCurrentDocID(int currentDocID) throws IOException {
-    this.currentDocID = currentDocID;
-    documentFeatures.advance(currentDocID);
+  // updates the cuwwent document i-id and advances aww numewicdocvawues to this d-doc id. >_<
+  pwivate v-void setcuwwentdocid(int cuwwentdocid) thwows ioexception {
+    t-this.cuwwentdocid = c-cuwwentdocid;
+    documentfeatuwes.advance(cuwwentdocid);
   }
 
   /**
-   * Returns the current doc ID stored in this scoring function.
+   * wetuwns the cuwwent doc id stowed i-in this scowing function. σωσ
    */
-  public int getCurrentDocID() {
-    return currentDocID;
+  p-pubwic int getcuwwentdocid() {
+    wetuwn cuwwentdocid;
   }
 
   /**
-   * Compute the score for the current hit.  This is not expected to be thread safe.
+   * compute t-the scowe fow the cuwwent hit. ^^;;  t-this is nyot e-expected to be thwead safe. 😳
    *
-   * @param internalDocID    internal id of the matching hit
-   * @param luceneQueryScore the score that lucene's text query computed for this hit
+   * @pawam intewnawdocid    i-intewnaw id of the matching hit
+   * @pawam w-wucenequewyscowe t-the s-scowe that wucene's text quewy c-computed fow this h-hit
    */
-  public float score(int internalDocID, float luceneQueryScore) throws IOException {
-    setCurrentDocID(internalDocID);
-    return score(luceneQueryScore);
+  pubwic fwoat scowe(int intewnawdocid, >_< f-fwoat wucenequewyscowe) t-thwows i-ioexception {
+    setcuwwentdocid(intewnawdocid);
+    wetuwn s-scowe(wucenequewyscowe);
   }
 
   /**
-   * Compute the score for the current hit.  This is not expected to be thread safe.
+   * compute t-the scowe fow the c-cuwwent hit.  this is not expected to be thwead safe. -.-
    *
-   * @param luceneQueryScore the score that lucene's text query computed for this hit
+   * @pawam w-wucenequewyscowe t-the scowe t-that wucene's t-text quewy computed fow this h-hit
    */
-  protected abstract float score(float luceneQueryScore) throws IOException;
+  pwotected abstwact fwoat scowe(fwoat wucenequewyscowe) thwows ioexception;
 
-  /** Returns an explanation for the given hit. */
-  public final Explanation explain(IndexReader reader, int internalDocID, float luceneScore)
-      throws IOException {
-    setNextReader((EarlybirdIndexSegmentAtomicReader) reader);
-    setCurrentDocID(internalDocID);
-    return doExplain(luceneScore);
+  /** wetuwns a-an expwanation fow the given h-hit. UwU */
+  pubwic finaw expwanation e-expwain(indexweadew weadew, :3 i-int intewnawdocid, σωσ fwoat wucenescowe)
+      t-thwows i-ioexception {
+    s-setnextweadew((eawwybiwdindexsegmentatomicweadew) w-weadew);
+    s-setcuwwentdocid(intewnawdocid);
+    wetuwn doexpwain(wucenescowe);
   }
 
-  /** Returns an explanation for the current document. */
-  protected abstract Explanation doExplain(float luceneScore) throws IOException;
+  /** wetuwns an expwanation fow the cuwwent document. >w< */
+  pwotected a-abstwact expwanation d-doexpwain(fwoat w-wucenescowe) thwows ioexception;
 
   /**
-   * Returns the scoring metadata for the current doc ID.
+   * w-wetuwns the scowing metadata fow the cuwwent doc id. (ˆ ﻌ ˆ)♡
    */
-  public ThriftSearchResultMetadata getResultMetadata(ThriftSearchResultMetadataOptions options)
-      throws IOException {
-    ThriftSearchResultMetadata metadata = new ThriftSearchResultMetadata();
-    metadata.setResultType(ThriftSearchResultType.RELEVANCE);
-    metadata.setPenguinVersion(EarlybirdConfig.getPenguinVersionByte());
-    metadata.setLanguage(ThriftLanguage.findByValue(
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LANGUAGE)));
-    metadata.setSignature(
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.TWEET_SIGNATURE));
-    metadata.setIsNullcast(documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_NULLCAST_FLAG));
-    return metadata;
-  }
-
-  /**
-   * Updates the given ThriftSearchResultsRelevanceStats instance based on the scoring metadata for
-   * the current doc ID.
-   */
-  public abstract void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats);
-
-  /**
-   * Score a list of hits. Not thread safe.
-   */
-  public float[] batchScore(List<BatchHit> hits) throws IOException {
-    throw new UnsupportedOperationException("This operation (batchScore) is not implemented!");
+  p-pubwic thwiftseawchwesuwtmetadata g-getwesuwtmetadata(thwiftseawchwesuwtmetadataoptions options)
+      t-thwows ioexception {
+    thwiftseawchwesuwtmetadata metadata = n-nyew thwiftseawchwesuwtmetadata();
+    m-metadata.setwesuwttype(thwiftseawchwesuwttype.wewevance);
+    metadata.setpenguinvewsion(eawwybiwdconfig.getpenguinvewsionbyte());
+    m-metadata.setwanguage(thwiftwanguage.findbyvawue(
+        (int) d-documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.wanguage)));
+    metadata.setsignatuwe(
+        (int) documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.tweet_signatuwe));
+    metadata.setisnuwwcast(documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_nuwwcast_fwag));
+    wetuwn metadata;
   }
 
   /**
-   * Collect the features and CSFs for the current document. Used for scoring and generating the
-   * returned metadata.
+   * u-updates the given t-thwiftseawchwesuwtswewevancestats i-instance b-based on the scowing m-metadata fow
+   * the cuwwent d-doc id. ʘwʘ
    */
-  public Pair<LinearScoringData, ThriftSearchResultFeatures> collectFeatures(
-      float luceneQueryScore) throws IOException {
-    throw new UnsupportedOperationException("This operation (collectFeatures) is not implemented!");
+  p-pubwic abstwact void updatewewevancestats(thwiftseawchwesuwtswewevancestats wewevancestats);
+
+  /**
+   * s-scowe a-a wist of hits. :3 nyot thwead safe. (˘ω˘)
+   */
+  p-pubwic fwoat[] batchscowe(wist<batchhit> hits) thwows i-ioexception {
+    thwow nyew unsuppowtedopewationexception("this o-opewation (batchscowe) i-is nyot impwemented!");
   }
 
   /**
-   * Implement this function to populate the result metadata based on the given scoring data.
-   * Otherwise, this is a no-op.
+   * c-cowwect the featuwes and csfs fow the cuwwent d-document. 😳😳😳 used fow s-scowing and genewating t-the
+   * wetuwned metadata. rawr x3
+   */
+  pubwic paiw<wineawscowingdata, (✿oωo) t-thwiftseawchwesuwtfeatuwes> cowwectfeatuwes(
+      fwoat wucenequewyscowe) t-thwows ioexception {
+    t-thwow nyew unsuppowtedopewationexception("this opewation (cowwectfeatuwes) i-is nyot impwemented!");
+  }
+
+  /**
+   * i-impwement this f-function to popuwate the wesuwt metadata based o-on the given scowing data. (ˆ ﻌ ˆ)♡
+   * othewwise, :3 this i-is a nyo-op. (U ᵕ U❁)
    *
-   * Scoring functions that implement this should also implement getScoringData().
+   * s-scowing functions that i-impwement this shouwd awso impwement g-getscowingdata(). ^^;;
    */
-  public void populateResultMetadataBasedOnScoringData(
-      ThriftSearchResultMetadataOptions options,
-      ThriftSearchResultMetadata metadata,
-      LinearScoringData data) throws IOException {
-    // Make sure that the scoring data passed in is null because getScoringDataForCurrentDocument()
-    // returns null by default and if a subclass overrides one of these two methods, it should
-    // override both.
-    Preconditions.checkState(data == null, "LinearScoringData should be null");
+  pubwic v-void popuwatewesuwtmetadatabasedonscowingdata(
+      t-thwiftseawchwesuwtmetadataoptions options, mya
+      thwiftseawchwesuwtmetadata metadata, 😳😳😳
+      wineawscowingdata data) thwows ioexception {
+    // make suwe that the scowing data passed in is nyuww because getscowingdatafowcuwwentdocument()
+    // wetuwns nyuww by d-defauwt and if a-a subcwass ovewwides one of these two methods, OwO it s-shouwd
+    // o-ovewwide both. rawr
+    p-pweconditions.checkstate(data == nyuww, XD "wineawscowingdata s-shouwd be nyuww");
   }
 
   /**
-   * This should only be called at hit collection time because it relies on the internal doc id.
+   * t-this shouwd onwy b-be cawwed at hit cowwection time b-because it wewies on the intewnaw d-doc id. (U ﹏ U)
    *
-   * Scoring functions that implement this should also implement the function
-   * populateResultMetadataBasedOnScoringData().
+   * s-scowing functions that impwement this shouwd a-awso impwement t-the function
+   * p-popuwatewesuwtmetadatabasedonscowingdata(). (˘ω˘)
    */
-  public LinearScoringData getScoringDataForCurrentDocument() {
-    return null;
+  p-pubwic w-wineawscowingdata g-getscowingdatafowcuwwentdocument() {
+    w-wetuwn n-nyuww;
   }
 }

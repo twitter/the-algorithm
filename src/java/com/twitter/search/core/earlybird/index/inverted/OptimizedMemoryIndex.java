@@ -1,434 +1,434 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.Map;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.compawatow;
+i-impowt java.utiw.map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.packed.PackedInts;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.wucene.index.postingsenum;
+i-impowt owg.apache.wucene.index.tewms;
+impowt owg.apache.wucene.index.tewmsenum;
+impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt o-owg.apache.wucene.utiw.byteswef;
+impowt owg.apache.wucene.utiw.packed.packedints;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.util.hash.BDZAlgorithm;
-import com.twitter.search.common.util.hash.BDZAlgorithm.MPHFNotFoundException;
-import com.twitter.search.common.util.hash.KeysSource;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.schema.base.eawwybiwdfiewdtype;
+impowt com.twittew.seawch.common.utiw.hash.bdzawgowithm;
+i-impowt com.twittew.seawch.common.utiw.hash.bdzawgowithm.mphfnotfoundexception;
+impowt com.twittew.seawch.common.utiw.hash.keyssouwce;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.facets.facetidmap.facetfiewd;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
-public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
-  private static final Logger LOG = LoggerFactory.getLogger(OptimizedMemoryIndex.class);
-  private static final Comparator<BytesRef> BYTES_REF_COMPARATOR = Comparator.naturalOrder();
+pubwic c-cwass optimizedmemowyindex extends invewtedindex i-impwements f-fwushabwe {
+  pwivate s-static finaw w-woggew wog = woggewfactowy.getwoggew(optimizedmemowyindex.cwass);
+  pwivate static f-finaw compawatow<byteswef> bytes_wef_compawatow = compawatow.natuwawowdew();
 
-  private static final SearchCounter MPH_NOT_FOUND_COUNT =
-      SearchCounter.export("twitter_optimized_index_mph_not_found_count");
+  p-pwivate static finaw seawchcountew mph_not_found_count =
+      seawchcountew.expowt("twittew_optimized_index_mph_not_found_count");
 
-  private final PackedInts.Reader numPostings;
-  private final PackedInts.Reader postingListPointers;
-  private final PackedInts.Reader offensiveCounters;
-  private final MultiPostingLists postingLists;
+  pwivate finaw packedints.weadew n-nyumpostings;
+  pwivate f-finaw packedints.weadew p-postingwistpointews;
+  p-pwivate finaw packedints.weadew offensivecountews;
+  pwivate f-finaw muwtipostingwists p-postingwists;
 
-  private final TermDictionary dictionary;
+  pwivate f-finaw tewmdictionawy d-dictionawy;
 
-  private final int numDocs;
-  private final int sumTotalTermFreq;
-  private final int sumTermDocFreq;
+  pwivate finaw i-int nyumdocs;
+  pwivate finaw i-int sumtotawtewmfweq;
+  pwivate finaw int sumtewmdocfweq;
 
-  private OptimizedMemoryIndex(EarlybirdFieldType fieldType,
-                               int numDocs,
-                               int sumTermDocFreq,
-                               int sumTotalTermFreq,
-                               PackedInts.Reader numPostings,
-                               PackedInts.Reader postingListPointers,
-                               PackedInts.Reader offensiveCounters,
-                               MultiPostingLists postingLists,
-                               TermDictionary dictionary) {
-    super(fieldType);
-    this.numDocs = numDocs;
-    this.sumTermDocFreq = sumTermDocFreq;
-    this.sumTotalTermFreq = sumTotalTermFreq;
-    this.numPostings = numPostings;
-    this.postingListPointers = postingListPointers;
-    this.offensiveCounters = offensiveCounters;
-    this.postingLists = postingLists;
-    this.dictionary = dictionary;
+  pwivate o-optimizedmemowyindex(eawwybiwdfiewdtype fiewdtype, :3
+                               int nyumdocs, UwU
+                               i-int sumtewmdocfweq, o.O
+                               int sumtotawtewmfweq, (ˆ ﻌ ˆ)♡
+                               p-packedints.weadew n-nyumpostings, ^^;;
+                               packedints.weadew postingwistpointews, ʘwʘ
+                               packedints.weadew offensivecountews,
+                               muwtipostingwists postingwists, σωσ
+                               tewmdictionawy d-dictionawy) {
+    s-supew(fiewdtype);
+    this.numdocs = n-nyumdocs;
+    t-this.sumtewmdocfweq = s-sumtewmdocfweq;
+    this.sumtotawtewmfweq = sumtotawtewmfweq;
+    this.numpostings = n-nyumpostings;
+    this.postingwistpointews = postingwistpointews;
+    this.offensivecountews = offensivecountews;
+    t-this.postingwists = postingwists;
+    this.dictionawy = d-dictionawy;
   }
 
-  public OptimizedMemoryIndex(
-      EarlybirdFieldType fieldType,
-      String field,
-      InvertedRealtimeIndex source,
-      Map<Integer, int[]> termIDMapper,
-      FacetField facetField,
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    super(fieldType);
+  p-pubwic optimizedmemowyindex(
+      e-eawwybiwdfiewdtype fiewdtype, ^^;;
+      s-stwing f-fiewd, ʘwʘ
+      i-invewtedweawtimeindex s-souwce, ^^
+      map<integew, nyaa~~ int[]> tewmidmappew, (///ˬ///✿)
+      f-facetfiewd f-facetfiewd, XD
+      d-docidtotweetidmappew owiginawtweetidmappew,
+      d-docidtotweetidmappew o-optimizedtweetidmappew) thwows ioexception {
+    supew(fiewdtype);
 
-    numDocs = source.getNumDocs();
-    sumTermDocFreq = source.getSumTermDocFreq();
-    sumTotalTermFreq = source.getSumTotalTermFreq();
+    n-nyumdocs = souwce.getnumdocs();
+    sumtewmdocfweq = souwce.getsumtewmdocfweq();
+    sumtotawtewmfweq = souwce.getsumtotawtewmfweq();
 
-    Preconditions.checkNotNull(originalTweetIdMapper, "The segment must have a tweet ID mapper.");
-    Preconditions.checkNotNull(optimizedTweetIdMapper,
-                               "The optimized tweet ID mapper cannot be null.");
+    p-pweconditions.checknotnuww(owiginawtweetidmappew, :3 "the segment must have a tweet id mappew.");
+    p-pweconditions.checknotnuww(optimizedtweetidmappew, òωó
+                               "the o-optimized t-tweet id mappew cannot be n-nyuww.");
 
-    // We rely on the fact that new terms always have a greater term ID. We ignore all terms that
-    // are equal to or greater than numTerms, as they may be incompletely applied. If new terms are
-    // added while optimizing, they will be re-added when we re-apply updates.
-    final KeysSource termsIterator = source.getKeysSource();
-    int numTerms = termsIterator.getNumberOfKeys();
-    int maxPublishedPointer = source.getMaxPublishedPointer();
+    // we wewy on the f-fact that nyew t-tewms awways have a gweatew tewm id. ^^ we ignowe aww tewms that
+    // awe equaw to ow gweatew than n-nyumtewms, ^•ﻌ•^ as they may be incompwetewy a-appwied. σωσ if nyew tewms a-awe
+    // added w-whiwe optimizing, (ˆ ﻌ ˆ)♡ they wiww be we-added when w-we we-appwy updates. nyaa~~
+    f-finaw keyssouwce tewmsitewatow = s-souwce.getkeyssouwce();
+    i-int numtewms = tewmsitewatow.getnumbewofkeys();
+    int maxpubwishedpointew = souwce.getmaxpubwishedpointew();
 
-    int[] tempPostingListPointers = new int[numTerms];
+    int[] t-temppostingwistpointews = n-new int[numtewms];
 
-    BDZAlgorithm termsHashFunction = null;
+    b-bdzawgowithm tewmshashfunction = nyuww;
 
-    final boolean supportTermTextLookup = facetField != null || fieldType.isSupportTermTextLookup();
-    if (supportTermTextLookup) {
-      try {
-        termsHashFunction = new BDZAlgorithm(termsIterator);
-      } catch (MPHFNotFoundException e) {
-        // we couldn't find a mphf for this field
-        // no problem, this can happen for very small fields
+    finaw b-boowean suppowttewmtextwookup = f-facetfiewd != nyuww || fiewdtype.issuppowttewmtextwookup();
+    i-if (suppowttewmtextwookup) {
+      twy {
+        tewmshashfunction = nyew bdzawgowithm(tewmsitewatow);
+      } catch (mphfnotfoundexception e-e) {
+        // w-we couwdn't find a mphf fow this fiewd
+        // n-nyo pwobwem, t-this can happen fow vewy smow fiewds
         // - just use the fst in that case
-        LOG.warn("Unable to build MPH for field: {}", field);
-        MPH_NOT_FOUND_COUNT.increment();
+        w-wog.wawn("unabwe to buiwd mph fow fiewd: {}", ʘwʘ fiewd);
+        mph_not_found_count.incwement();
       }
     }
 
-    // Make sure to only call the expensive computeNumPostings() once.
-    int[] numPostingsSource = computeNumPostings(source, numTerms, maxPublishedPointer);
+    // m-make suwe to onwy caww the expensive c-computenumpostings() o-once. ^•ﻌ•^
+    int[] nyumpostingssouwce = computenumpostings(souwce, rawr x3 nyumtewms, m-maxpubwishedpointew);
 
-    // The BDZ Algorithm returns a function from bytesref to term ID. However, these term IDs are
-    // different than the original term IDs (it's a hash function, not a hash _table_), so we have
-    // to remap the term IDs to match the ones generated by BDZ. We track that using the termIDMap.
-    int[] termIDMap = null;
+    // t-the bdz awgowithm wetuwns a function fwom byteswef to tewm id. 🥺 howevew, ʘwʘ t-these tewm ids awe
+    // d-diffewent than the owiginaw tewm ids (it's a hash function, nyot a-a hash _tabwe_), (˘ω˘) so we have
+    // t-to wemap the t-tewm ids to match the ones genewated b-by bdz. o.O we twack that using t-the tewmidmap. σωσ
+    i-int[] tewmidmap = n-nyuww;
 
-    if (termsHashFunction != null) {
-      termsIterator.rewind();
-      termIDMap = BDZAlgorithm.createIdMap(termsHashFunction, termsIterator);
-      if (facetField != null) {
-        termIDMapper.put(facetField.getFacetId(), termIDMap);
+    if (tewmshashfunction != n-nyuww) {
+      t-tewmsitewatow.wewind();
+      tewmidmap = bdzawgowithm.cweateidmap(tewmshashfunction, (ꈍᴗꈍ) t-tewmsitewatow);
+      i-if (facetfiewd != n-nyuww) {
+        tewmidmappew.put(facetfiewd.getfacetid(), tewmidmap);
       }
 
-      PackedInts.Reader termPointers = getPackedInts(source.getTermPointers(), termIDMap);
-      this.numPostings = getPackedInts(numPostingsSource, termIDMap);
-      this.offensiveCounters = source.getOffensiveCounters() == null ? null
-              : getPackedInts(source.getOffensiveCounters(), termIDMap);
+      p-packedints.weadew tewmpointews = g-getpackedints(souwce.gettewmpointews(), (ˆ ﻌ ˆ)♡ t-tewmidmap);
+      this.numpostings = getpackedints(numpostingssouwce, tewmidmap);
+      this.offensivecountews = s-souwce.getoffensivecountews() == n-nyuww ? n-nyuww
+              : g-getpackedints(souwce.getoffensivecountews(), o.O tewmidmap);
 
-      this.dictionary = new MPHTermDictionary(
-          numTerms,
-          termsHashFunction,
-          termPointers,
-          source.getTermPool(),
-          TermPointerEncoding.DEFAULT_ENCODING);
-    } else {
-      this.dictionary = FSTTermDictionary.buildFST(
-          source.getTermPool(),
-          source.getTermPointers(),
-          numTerms,
-          BYTES_REF_COMPARATOR,
-          supportTermTextLookup,
-          TermPointerEncoding.DEFAULT_ENCODING);
+      t-this.dictionawy = nyew mphtewmdictionawy(
+          nyumtewms, :3
+          tewmshashfunction,
+          tewmpointews, -.-
+          s-souwce.gettewmpoow(), ( ͡o ω ͡o )
+          tewmpointewencoding.defauwt_encoding);
+    } e-ewse {
+      this.dictionawy = f-fsttewmdictionawy.buiwdfst(
+          souwce.gettewmpoow(),
+          s-souwce.gettewmpointews(), /(^•ω•^)
+          nyumtewms, (⑅˘꒳˘)
+          b-bytes_wef_compawatow, òωó
+          s-suppowttewmtextwookup,
+          t-tewmpointewencoding.defauwt_encoding);
 
-      this.numPostings = getPackedInts(numPostingsSource);
-      this.offensiveCounters = source.getOffensiveCounters() == null ? null
-              : getPackedInts(source.getOffensiveCounters());
+      t-this.numpostings = g-getpackedints(numpostingssouwce);
+      this.offensivecountews = souwce.getoffensivecountews() == nyuww ? nyuww
+              : getpackedints(souwce.getoffensivecountews());
     }
 
-    TermsEnum allTerms = source.createTermsEnum(maxPublishedPointer);
+    tewmsenum awwtewms = s-souwce.cweatetewmsenum(maxpubwishedpointew);
 
-    this.postingLists = new MultiPostingLists(
-        !fieldType.hasPositions(),
-        numPostingsSource,
-        source.getMaxPosition());
+    t-this.postingwists = n-nyew muwtipostingwists(
+        !fiewdtype.haspositions(), 🥺
+        numpostingssouwce, (ˆ ﻌ ˆ)♡
+        s-souwce.getmaxposition());
 
-    for (int termID = 0; termID < numTerms; termID++) {
-      allTerms.seekExact(termID);
-      PostingsEnum postingsEnum = new OptimizingPostingsEnumWrapper(
-          allTerms.postings(null), originalTweetIdMapper, optimizedTweetIdMapper);
-      int mappedTermID = termIDMap != null ? termIDMap[termID] : termID;
-      tempPostingListPointers[mappedTermID] =
-          postingLists.copyPostingList(postingsEnum, numPostingsSource[termID]);
+    fow (int tewmid = 0; tewmid < nyumtewms; tewmid++) {
+      a-awwtewms.seekexact(tewmid);
+      p-postingsenum postingsenum = nyew o-optimizingpostingsenumwwappew(
+          awwtewms.postings(nuww), owiginawtweetidmappew, -.- o-optimizedtweetidmappew);
+      i-int mappedtewmid = tewmidmap != n-nyuww ? t-tewmidmap[tewmid] : tewmid;
+      temppostingwistpointews[mappedtewmid] =
+          postingwists.copypostingwist(postingsenum, σωσ nyumpostingssouwce[tewmid]);
     }
 
-    this.postingListPointers = getPackedInts(tempPostingListPointers);
+    t-this.postingwistpointews = g-getpackedints(temppostingwistpointews);
   }
 
-  private static int[] map(int[] source, int[] map) {
-    int[] target = new int[map.length];
-    for (int i = 0; i < map.length; i++) {
-      target[map[i]] = source[i];
+  p-pwivate static i-int[] map(int[] s-souwce, >_< int[] map) {
+    int[] t-tawget = nyew i-int[map.wength];
+    fow (int i = 0; i-i < map.wength; i-i++) {
+      tawget[map[i]] = s-souwce[i];
     }
-    return target;
+    wetuwn tawget;
   }
 
-  static PackedInts.Reader getPackedInts(int[] values) {
-    return getPackedInts(values, null);
+  static p-packedints.weadew getpackedints(int[] v-vawues) {
+    w-wetuwn getpackedints(vawues, :3 n-nyuww);
   }
 
-  private static PackedInts.Reader getPackedInts(int[] values, int[] map) {
-    int[] mappedValues = values;
-    if (map != null) {
-      mappedValues = map(mappedValues, map);
+  pwivate static packedints.weadew g-getpackedints(int[] v-vawues, OwO i-int[] map) {
+    int[] mappedvawues = vawues;
+    if (map != n-nyuww) {
+      mappedvawues = map(mappedvawues, rawr map);
     }
 
-    // first determine max value
-    long maxValue = Long.MIN_VALUE;
-    for (int value : mappedValues) {
-      if (value > maxValue) {
-        maxValue = value;
+    // f-fiwst detewmine m-max vawue
+    wong maxvawue = w-wong.min_vawue;
+    fow (int vawue : m-mappedvawues) {
+      i-if (vawue > maxvawue) {
+        maxvawue = v-vawue;
       }
     }
 
-    PackedInts.Mutable packed =
-            PackedInts.getMutable(mappedValues.length, PackedInts.bitsRequired(maxValue),
-                    PackedInts.DEFAULT);
-    for (int i = 0; i < mappedValues.length; i++) {
-      packed.set(i, mappedValues[i]);
+    packedints.mutabwe packed =
+            p-packedints.getmutabwe(mappedvawues.wength, (///ˬ///✿) p-packedints.bitswequiwed(maxvawue), ^^
+                    packedints.defauwt);
+    f-fow (int i = 0; i < mappedvawues.wength; i-i++) {
+      p-packed.set(i, XD m-mappedvawues[i]);
     }
 
-    return packed;
+    wetuwn packed;
   }
 
   /**
-   * Returns per-term array containing the number of posting in this index for each term.
-   * This call is extremely slow.
+   * wetuwns pew-tewm awway containing the nyumbew of posting in this index fow each tewm. UwU
+   * this caww is extwemewy swow. o.O
    */
-  private static int[] computeNumPostings(
-      InvertedRealtimeIndex source,
-      int numTerms,
-      int maxPublishedPointer
-  ) throws IOException {
-    int[] numPostings = new int[numTerms];
-    TermsEnum allTerms = source.createTermsEnum(maxPublishedPointer);
+  pwivate static int[] computenumpostings(
+      invewtedweawtimeindex s-souwce, 😳
+      i-int nyumtewms, (˘ω˘)
+      int maxpubwishedpointew
+  ) t-thwows i-ioexception {
+    i-int[] nyumpostings = nyew int[numtewms];
+    tewmsenum a-awwtewms = souwce.cweatetewmsenum(maxpubwishedpointew);
 
-    for (int termID = 0; termID < numTerms; termID++) {
-      allTerms.seekExact(termID);
-      PostingsEnum docsEnum = allTerms.postings(null);
-      while (docsEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
-        numPostings[termID] += docsEnum.freq();
+    f-fow (int tewmid = 0; t-tewmid < nyumtewms; tewmid++) {
+      a-awwtewms.seekexact(tewmid);
+      postingsenum d-docsenum = awwtewms.postings(nuww);
+      w-whiwe (docsenum.nextdoc() != docidsetitewatow.no_mowe_docs) {
+        nyumpostings[tewmid] += d-docsenum.fweq();
       }
     }
 
-    return numPostings;
+    w-wetuwn n-nyumpostings;
   }
 
-  @Override
-  public int getNumDocs() {
-    return numDocs;
+  @ovewwide
+  p-pubwic int getnumdocs() {
+    w-wetuwn nyumdocs;
   }
 
-  @Override
-  public int getSumTotalTermFreq() {
-    return sumTotalTermFreq;
+  @ovewwide
+  p-pubwic int g-getsumtotawtewmfweq() {
+    w-wetuwn s-sumtotawtewmfweq;
   }
 
-  @Override
-  public int getSumTermDocFreq() {
-    return sumTermDocFreq;
+  @ovewwide
+  pubwic i-int getsumtewmdocfweq() {
+    w-wetuwn s-sumtewmdocfweq;
   }
 
-  public OptimizedPostingLists getPostingLists() {
-    Preconditions.checkState(hasPostingLists());
-    return postingLists;
+  pubwic o-optimizedpostingwists getpostingwists() {
+    pweconditions.checkstate(haspostingwists());
+    w-wetuwn postingwists;
   }
 
-  int getPostingListPointer(int termID) {
-    Preconditions.checkState(hasPostingLists());
-    return (int) postingListPointers.get(termID);
+  int g-getpostingwistpointew(int t-tewmid) {
+    p-pweconditions.checkstate(haspostingwists());
+    wetuwn (int) p-postingwistpointews.get(tewmid);
   }
 
-  int getNumPostings(int termID) {
-    Preconditions.checkState(hasPostingLists());
-    return (int) numPostings.get(termID);
+  int getnumpostings(int t-tewmid) {
+    pweconditions.checkstate(haspostingwists());
+    w-wetuwn (int) nyumpostings.get(tewmid);
   }
 
-  public boolean getTerm(int termID, BytesRef text, BytesRef termPayload) {
-    return dictionary.getTerm(termID, text, termPayload);
+  p-pubwic boowean gettewm(int tewmid, 🥺 byteswef text, ^^ byteswef tewmpaywoad) {
+    wetuwn dictionawy.gettewm(tewmid, >w< t-text, tewmpaywoad);
   }
 
-  @Override
-  public FacetLabelAccessor getLabelAccessor() {
-    return new FacetLabelAccessor() {
-      @Override
-      protected boolean seek(long termID) {
-        if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-          hasTermPayload = getTerm((int) termID, termRef, termPayload);
-          offensiveCount = offensiveCounters != null
-                  ? (int) offensiveCounters.get((int) termID) : 0;
-          return true;
-        } else {
-          return false;
+  @ovewwide
+  pubwic f-facetwabewaccessow g-getwabewaccessow() {
+    wetuwn nyew facetwabewaccessow() {
+      @ovewwide
+      pwotected b-boowean seek(wong tewmid) {
+        i-if (tewmid != e-eawwybiwdindexsegmentatomicweadew.tewm_not_found) {
+          h-hastewmpaywoad = gettewm((int) tewmid, ^^;; tewmwef, t-tewmpaywoad);
+          o-offensivecount = offensivecountews != nyuww
+                  ? (int) offensivecountews.get((int) t-tewmid) : 0;
+          wetuwn twue;
+        } ewse {
+          w-wetuwn fawse;
         }
       }
     };
   }
 
-  @Override
-  public Terms createTerms(int maxPublishedPointer) {
-    return new OptimizedIndexTerms(this);
+  @ovewwide
+  p-pubwic tewms c-cweatetewms(int m-maxpubwishedpointew) {
+    wetuwn n-nyew optimizedindextewms(this);
   }
 
-  @Override
-  public TermsEnum createTermsEnum(int maxPublishedPointer) {
-    return dictionary.createTermsEnum(this);
+  @ovewwide
+  p-pubwic tewmsenum c-cweatetewmsenum(int m-maxpubwishedpointew) {
+    wetuwn dictionawy.cweatetewmsenum(this);
   }
 
-  @Override
-  public int lookupTerm(BytesRef term) throws IOException {
-    return dictionary.lookupTerm(term);
+  @ovewwide
+  p-pubwic int wookuptewm(byteswef t-tewm) thwows ioexception {
+    w-wetuwn dictionawy.wookuptewm(tewm);
   }
 
-  @Override
-  public int getLargestDocIDForTerm(int termID) throws IOException {
-    Preconditions.checkState(hasPostingLists());
-    if (termID == EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
-    } else {
-      return postingLists.getLargestDocID((int) postingListPointers.get(termID),
-              (int) numPostings.get(termID));
+  @ovewwide
+  p-pubwic int g-getwawgestdocidfowtewm(int t-tewmid) t-thwows ioexception {
+    p-pweconditions.checkstate(haspostingwists());
+    if (tewmid == eawwybiwdindexsegmentatomicweadew.tewm_not_found) {
+      w-wetuwn eawwybiwdindexsegmentatomicweadew.tewm_not_found;
+    } ewse {
+      w-wetuwn postingwists.getwawgestdocid((int) postingwistpointews.get(tewmid), (˘ω˘)
+              (int) n-nyumpostings.get(tewmid));
     }
   }
 
-  @Override
-  public int getDF(int termID) {
-    return (int) numPostings.get(termID);
+  @ovewwide
+  p-pubwic int g-getdf(int tewmid) {
+    wetuwn (int) nyumpostings.get(tewmid);
   }
 
-  @Override
-  public int getNumTerms() {
-    return dictionary.getNumTerms();
+  @ovewwide
+  pubwic int getnumtewms() {
+    w-wetuwn dictionawy.getnumtewms();
   }
 
-  @Override
-  public void getTerm(int termID, BytesRef text) {
-    dictionary.getTerm(termID, text, null);
+  @ovewwide
+  p-pubwic void g-gettewm(int tewmid, OwO byteswef text) {
+    dictionawy.gettewm(tewmid, (ꈍᴗꈍ) text, nyuww);
   }
 
-  @VisibleForTesting TermDictionary getTermDictionary() {
-    return dictionary;
+  @visibwefowtesting t-tewmdictionawy g-gettewmdictionawy() {
+    wetuwn dictionawy;
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @ovewwide
+  p-pubwic f-fwushhandwew getfwushhandwew() {
+    wetuwn nyew fwushhandwew(this);
   }
 
-  public boolean hasPostingLists() {
-    return postingListPointers != null
-        && postingLists != null
-        && numPostings != null;
+  p-pubwic boowean haspostingwists() {
+    w-wetuwn postingwistpointews != n-nyuww
+        && p-postingwists != nyuww
+        && nyumpostings != n-nyuww;
   }
 
-  @VisibleForTesting
-  OptimizedPostingLists getOptimizedPostingLists() {
-    return postingLists;
+  @visibwefowtesting
+  o-optimizedpostingwists getoptimizedpostingwists() {
+    wetuwn postingwists;
   }
 
-  public static class FlushHandler extends Flushable.Handler<OptimizedMemoryIndex> {
-    private static final String NUM_DOCS_PROP_NAME = "numDocs";
-    private static final String SUM_TOTAL_TERM_FREQ_PROP_NAME = "sumTotalTermFreq";
-    private static final String SUM_TERM_DOC_FREQ_PROP_NAME = "sumTermDocFreq";
-    private static final String USE_MIN_PERFECT_HASH_PROP_NAME = "useMinimumPerfectHashFunction";
-    private static final String SKIP_POSTING_LIST_PROP_NAME = "skipPostingLists";
-    private static final String HAS_OFFENSIVE_COUNTERS_PROP_NAME = "hasOffensiveCounters";
-    public static final String IS_OPTIMIZED_PROP_NAME = "isOptimized";
+  p-pubwic static cwass fwushhandwew extends f-fwushabwe.handwew<optimizedmemowyindex> {
+    pwivate static f-finaw stwing n-nyum_docs_pwop_name = "numdocs";
+    pwivate static f-finaw stwing s-sum_totaw_tewm_fweq_pwop_name = "sumtotawtewmfweq";
+    pwivate s-static finaw stwing sum_tewm_doc_fweq_pwop_name = "sumtewmdocfweq";
+    p-pwivate s-static finaw stwing u-use_min_pewfect_hash_pwop_name = "useminimumpewfecthashfunction";
+    p-pwivate static finaw s-stwing skip_posting_wist_pwop_name = "skippostingwists";
+    p-pwivate s-static finaw stwing has_offensive_countews_pwop_name = "hasoffensivecountews";
+    p-pubwic static finaw stwing is_optimized_pwop_name = "isoptimized";
 
-    private final EarlybirdFieldType fieldType;
+    p-pwivate finaw eawwybiwdfiewdtype f-fiewdtype;
 
-    public FlushHandler(EarlybirdFieldType fieldType) {
-      super();
-      this.fieldType = fieldType;
+    p-pubwic fwushhandwew(eawwybiwdfiewdtype fiewdtype) {
+      supew();
+      this.fiewdtype = fiewdtype;
     }
 
-    public FlushHandler(OptimizedMemoryIndex objectToFlush) {
-      super(objectToFlush);
-      fieldType = objectToFlush.fieldType;
+    p-pubwic fwushhandwew(optimizedmemowyindex objecttofwush) {
+      s-supew(objecttofwush);
+      f-fiewdtype = objecttofwush.fiewdtype;
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      long startTime = getClock().nowMillis();
-      OptimizedMemoryIndex objectToFlush = getObjectToFlush();
-      boolean useHashFunction = objectToFlush.dictionary instanceof MPHTermDictionary;
-      boolean skipPostingLists = !objectToFlush.hasPostingLists();
+    @ovewwide
+    pwotected v-void dofwush(fwushinfo fwushinfo, òωó d-datasewiawizew o-out) thwows i-ioexception {
+      w-wong stawttime = g-getcwock().nowmiwwis();
+      optimizedmemowyindex objecttofwush = getobjecttofwush();
+      boowean usehashfunction = o-objecttofwush.dictionawy instanceof m-mphtewmdictionawy;
+      boowean skippostingwists = !objecttofwush.haspostingwists();
 
-      flushInfo.addIntProperty(NUM_DOCS_PROP_NAME, objectToFlush.numDocs);
-      flushInfo.addIntProperty(SUM_TERM_DOC_FREQ_PROP_NAME, objectToFlush.sumTermDocFreq);
-      flushInfo.addIntProperty(SUM_TOTAL_TERM_FREQ_PROP_NAME, objectToFlush.sumTotalTermFreq);
-      flushInfo.addBooleanProperty(USE_MIN_PERFECT_HASH_PROP_NAME, useHashFunction);
-      flushInfo.addBooleanProperty(SKIP_POSTING_LIST_PROP_NAME, skipPostingLists);
-      flushInfo.addBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME,
-          objectToFlush.offensiveCounters != null);
-      flushInfo.addBooleanProperty(IS_OPTIMIZED_PROP_NAME, true);
+      fwushinfo.addintpwopewty(num_docs_pwop_name, ʘwʘ objecttofwush.numdocs);
+      f-fwushinfo.addintpwopewty(sum_tewm_doc_fweq_pwop_name, ʘwʘ objecttofwush.sumtewmdocfweq);
+      fwushinfo.addintpwopewty(sum_totaw_tewm_fweq_pwop_name, nyaa~~ objecttofwush.sumtotawtewmfweq);
+      fwushinfo.addbooweanpwopewty(use_min_pewfect_hash_pwop_name, UwU u-usehashfunction);
+      f-fwushinfo.addbooweanpwopewty(skip_posting_wist_pwop_name, (⑅˘꒳˘) skippostingwists);
+      f-fwushinfo.addbooweanpwopewty(has_offensive_countews_pwop_name, (˘ω˘)
+          objecttofwush.offensivecountews != nuww);
+      f-fwushinfo.addbooweanpwopewty(is_optimized_pwop_name, :3 t-twue);
 
-      if (!skipPostingLists) {
-        out.writePackedInts(objectToFlush.postingListPointers);
-        out.writePackedInts(objectToFlush.numPostings);
+      if (!skippostingwists) {
+        o-out.wwitepackedints(objecttofwush.postingwistpointews);
+        out.wwitepackedints(objecttofwush.numpostings);
       }
-      if (objectToFlush.offensiveCounters != null) {
-        out.writePackedInts(objectToFlush.offensiveCounters);
+      i-if (objecttofwush.offensivecountews != nyuww) {
+        out.wwitepackedints(objecttofwush.offensivecountews);
       }
 
-      if (!skipPostingLists) {
-        objectToFlush.postingLists.getFlushHandler().flush(
-            flushInfo.newSubProperties("postingLists"), out);
+      if (!skippostingwists) {
+        objecttofwush.postingwists.getfwushhandwew().fwush(
+            f-fwushinfo.newsubpwopewties("postingwists"), (˘ω˘) out);
       }
-      objectToFlush.dictionary.getFlushHandler().flush(flushInfo.newSubProperties("dictionary"),
-              out);
-      getFlushTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+      objecttofwush.dictionawy.getfwushhandwew().fwush(fwushinfo.newsubpwopewties("dictionawy"), nyaa~~
+              o-out);
+      g-getfwushtimewstats().timewincwement(getcwock().nowmiwwis() - s-stawttime);
     }
 
-    @Override
-    protected OptimizedMemoryIndex doLoad(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      long startTime = getClock().nowMillis();
-      boolean useHashFunction = flushInfo.getBooleanProperty(USE_MIN_PERFECT_HASH_PROP_NAME);
-      boolean skipPostingLists = flushInfo.getBooleanProperty(SKIP_POSTING_LIST_PROP_NAME);
+    @ovewwide
+    pwotected optimizedmemowyindex d-dowoad(
+        fwushinfo fwushinfo, (U ﹏ U) datadesewiawizew in) thwows ioexception {
+      w-wong stawttime = g-getcwock().nowmiwwis();
+      boowean u-usehashfunction = f-fwushinfo.getbooweanpwopewty(use_min_pewfect_hash_pwop_name);
+      boowean skippostingwists = f-fwushinfo.getbooweanpwopewty(skip_posting_wist_pwop_name);
 
-      PackedInts.Reader postingListPointers = skipPostingLists ? null : in.readPackedInts();
-      PackedInts.Reader numPostings = skipPostingLists ? null : in.readPackedInts();
-      PackedInts.Reader offensiveCounters =
-              flushInfo.getBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME)
-                  ? in.readPackedInts() : null;
+      p-packedints.weadew postingwistpointews = skippostingwists ? n-nyuww : in.weadpackedints();
+      packedints.weadew numpostings = s-skippostingwists ? nyuww : in.weadpackedints();
+      p-packedints.weadew o-offensivecountews =
+              fwushinfo.getbooweanpwopewty(has_offensive_countews_pwop_name)
+                  ? i-in.weadpackedints() : n-nuww;
 
-      MultiPostingLists postingLists =  skipPostingLists ? null
-              : (new MultiPostingLists.FlushHandler())
-                      .load(flushInfo.getSubProperties("postingLists"), in);
+      m-muwtipostingwists postingwists =  skippostingwists ? n-nyuww
+              : (new muwtipostingwists.fwushhandwew())
+                      .woad(fwushinfo.getsubpwopewties("postingwists"), nyaa~~ in);
 
-      TermDictionary dictionary;
-      if (useHashFunction) {
-        dictionary = (new MPHTermDictionary.FlushHandler(TermPointerEncoding.DEFAULT_ENCODING))
-            .load(flushInfo.getSubProperties("dictionary"), in);
-      } else {
-        dictionary = (new FSTTermDictionary.FlushHandler(TermPointerEncoding.DEFAULT_ENCODING))
-            .load(flushInfo.getSubProperties("dictionary"), in);
+      tewmdictionawy d-dictionawy;
+      if (usehashfunction) {
+        dictionawy = (new mphtewmdictionawy.fwushhandwew(tewmpointewencoding.defauwt_encoding))
+            .woad(fwushinfo.getsubpwopewties("dictionawy"), ^^;; in);
+      } ewse {
+        d-dictionawy = (new f-fsttewmdictionawy.fwushhandwew(tewmpointewencoding.defauwt_encoding))
+            .woad(fwushinfo.getsubpwopewties("dictionawy"), OwO i-in);
       }
-      getLoadTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+      g-getwoadtimewstats().timewincwement(getcwock().nowmiwwis() - s-stawttime);
 
-      return new OptimizedMemoryIndex(fieldType,
-                                      flushInfo.getIntProperty(NUM_DOCS_PROP_NAME),
-                                      flushInfo.getIntProperty(SUM_TERM_DOC_FREQ_PROP_NAME),
-                                      flushInfo.getIntProperty(SUM_TOTAL_TERM_FREQ_PROP_NAME),
-                                      numPostings,
-                                      postingListPointers,
-                                      offensiveCounters,
-                                      postingLists,
-                                      dictionary);
+      wetuwn nyew o-optimizedmemowyindex(fiewdtype, nyaa~~
+                                      fwushinfo.getintpwopewty(num_docs_pwop_name), UwU
+                                      fwushinfo.getintpwopewty(sum_tewm_doc_fweq_pwop_name), 😳
+                                      f-fwushinfo.getintpwopewty(sum_totaw_tewm_fweq_pwop_name), 😳
+                                      nyumpostings, (ˆ ﻌ ˆ)♡
+                                      p-postingwistpointews, (✿oωo)
+                                      offensivecountews,
+                                      postingwists, nyaa~~
+                                      d-dictionawy);
     }
   }
 }

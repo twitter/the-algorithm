@@ -1,97 +1,97 @@
-package com.twitter.product_mixer.shared_library.http_client
+package com.twittew.pwoduct_mixew.shawed_wibwawy.http_cwient
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.Service
-import com.twitter.finagle.client.Transporter
-import com.twitter.finagle.http.ProxyCredentials
-import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Response
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientBuilder.buildFinagleHttpClient
-import com.twitter.util.Duration
+impowt c-com.twittew.finagwe.http
+i-impowt c-com.twittew.finagwe.sewvice
+i-impowt com.twittew.finagwe.cwient.twanspowtew
+i-impowt c-com.twittew.finagwe.http.pwoxycwedentiaws
+impowt c-com.twittew.finagwe.http.wequest
+i-impowt com.twittew.finagwe.http.wesponse
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.pwoduct_mixew.shawed_wibwawy.http_cwient.finagwehttpcwientbuiwdew.buiwdfinagwehttpcwient
+impowt com.twittew.utiw.duwation
 
-object FinagleHttpClientWithProxyBuilder {
+o-object finagwehttpcwientwithpwoxybuiwdew {
 
   /**
-   * Build a Finagle HTTP client with Egress Proxy support using Credentials
+   * buiwd a finagwe h-http cwient with egwess pwoxy s-suppowt using cwedentiaws
    *
-   * @param twitterProxyHostPort    Twitter egress proxy host port
-   * @param remoteProxyHostPort     Remote proxy host port
-   * @param requestTimeout          HTTP client request timeout
-   * @param connectTimeout          HTTP client transport connect timeout
-   * @param acquisitionTimeout      HTTP client session acquisition timeout
-   * @param proxyCredentials        Proxy credentials
-   * @param statsReceiver           Stats
+   * @pawam twittewpwoxyhostpowt    twittew egwess p-pwoxy host powt
+   * @pawam wemotepwoxyhostpowt     w-wemote pwoxy h-host powt
+   * @pawam wequesttimeout          http cwient wequest timeout
+   * @pawam connecttimeout          h-http cwient twanspowt connect timeout
+   * @pawam acquisitiontimeout      http c-cwient session acquisition timeout
+   * @pawam p-pwoxycwedentiaws        p-pwoxy cwedentiaws
+   * @pawam s-statsweceivew           stats
    *
-   * @return Finagle HTTP client with Egress Proxy support using Credentials
+   * @wetuwn f-finagwe http cwient with egwess pwoxy suppowt u-using cwedentiaws
    */
-  def buildFinagleHttpClientWithCredentialProxy(
-    twitterProxyHostPort: HttpHostPort,
-    remoteProxyHostPort: HttpHostPort,
-    requestTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    proxyCredentials: ProxyCredentials,
-    statsReceiver: StatsReceiver,
-  ): Http.Client = {
-    val httpClient = buildFinagleHttpClient(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      statsReceiver = statsReceiver
+  def buiwdfinagwehttpcwientwithcwedentiawpwoxy(
+    twittewpwoxyhostpowt: h-httphostpowt, (U ﹏ U)
+    wemotepwoxyhostpowt: httphostpowt, ^•ﻌ•^
+    wequesttimeout: duwation, (˘ω˘)
+    connecttimeout: duwation, :3
+    acquisitiontimeout: duwation, ^^;;
+    pwoxycwedentiaws: p-pwoxycwedentiaws, 🥺
+    statsweceivew: s-statsweceivew, (⑅˘꒳˘)
+  ): h-http.cwient = {
+    v-vaw httpcwient = buiwdfinagwehttpcwient(
+      wequesttimeout = wequesttimeout, nyaa~~
+      c-connecttimeout = c-connecttimeout, :3
+      acquisitiontimeout = a-acquisitiontimeout, ( ͡o ω ͡o )
+      s-statsweceivew = statsweceivew
     )
 
-    httpClient.withTransport
-      .httpProxyTo(
-        host = remoteProxyHostPort.toString,
-        credentials = Transporter.Credentials(proxyCredentials.username, proxyCredentials.password))
-      .withTls(remoteProxyHostPort.host)
+    h-httpcwient.withtwanspowt
+      .httppwoxyto(
+        host = wemotepwoxyhostpowt.tostwing, mya
+        c-cwedentiaws = twanspowtew.cwedentiaws(pwoxycwedentiaws.usewname, (///ˬ///✿) pwoxycwedentiaws.passwowd))
+      .withtws(wemotepwoxyhostpowt.host)
   }
 
   /**
-   * Build a Finagle HTTP client with Egress Proxy support
+   * b-buiwd a finagwe http c-cwient with egwess pwoxy suppowt
    *
-   * @param twitterProxyHostPort   Twitter egress proxy host port
-   * @param remoteProxyHostPort    Remote proxy host port
-   * @param requestTimeout         HTTP client request timeout
-   * @param connectTimeout         HTTP client transport connect timeout
-   * @param acquisitionTimeout     HTTP client session acquisition timeout
-   * @param statsReceiver          Stats
+   * @pawam t-twittewpwoxyhostpowt   t-twittew egwess pwoxy host powt
+   * @pawam wemotepwoxyhostpowt    wemote pwoxy host powt
+   * @pawam wequesttimeout         h-http cwient w-wequest timeout
+   * @pawam connecttimeout         h-http cwient t-twanspowt connect t-timeout
+   * @pawam acquisitiontimeout     http cwient session a-acquisition timeout
+   * @pawam statsweceivew          stats
    *
-   * @return Finagle HTTP client with Egress Proxy support
+   * @wetuwn finagwe http cwient with egwess p-pwoxy suppowt
    */
-  def buildFinagleHttpClientWithProxy(
-    twitterProxyHostPort: HttpHostPort,
-    remoteProxyHostPort: HttpHostPort,
-    requestTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    statsReceiver: StatsReceiver,
-  ): Http.Client = {
-    val httpClient = buildFinagleHttpClient(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      statsReceiver = statsReceiver
+  def buiwdfinagwehttpcwientwithpwoxy(
+    twittewpwoxyhostpowt: h-httphostpowt, (˘ω˘)
+    w-wemotepwoxyhostpowt: h-httphostpowt, ^^;;
+    wequesttimeout: d-duwation, (✿oωo)
+    c-connecttimeout: d-duwation, (U ﹏ U)
+    a-acquisitiontimeout: duwation, -.-
+    statsweceivew: s-statsweceivew,
+  ): http.cwient = {
+    v-vaw httpcwient = b-buiwdfinagwehttpcwient(
+      w-wequesttimeout = w-wequesttimeout, ^•ﻌ•^
+      connecttimeout = connecttimeout, rawr
+      acquisitiontimeout = a-acquisitiontimeout, (˘ω˘)
+      statsweceivew = statsweceivew
     )
 
-    httpClient.withTransport
-      .httpProxyTo(remoteProxyHostPort.toString)
-      .withTls(remoteProxyHostPort.host)
+    httpcwient.withtwanspowt
+      .httppwoxyto(wemotepwoxyhostpowt.tostwing)
+      .withtws(wemotepwoxyhostpowt.host)
   }
 
   /**
-   * Build a Finagle HTTP service with Egress Proxy support
+   * buiwd a finagwe http sewvice with egwess pwoxy suppowt
    *
-   * @param finagleHttpClientWithProxy Finagle HTTP client from which to build the service
-   * @param twitterProxyHostPort       Twitter egress proxy host port
+   * @pawam f-finagwehttpcwientwithpwoxy finagwe http cwient fwom which to b-buiwd the sewvice
+   * @pawam t-twittewpwoxyhostpowt       t-twittew egwess pwoxy host p-powt
    *
-   * @return Finagle HTTP service with Egress Proxy support
+   * @wetuwn finagwe h-http sewvice with e-egwess pwoxy suppowt
    */
-  def buildFinagleHttpServiceWithProxy(
-    finagleHttpClientWithProxy: Http.Client,
-    twitterProxyHostPort: HttpHostPort
-  ): Service[Request, Response] = {
-    finagleHttpClientWithProxy.newService(twitterProxyHostPort.toString)
+  def buiwdfinagwehttpsewvicewithpwoxy(
+    finagwehttpcwientwithpwoxy: http.cwient, nyaa~~
+    twittewpwoxyhostpowt: h-httphostpowt
+  ): sewvice[wequest, UwU w-wesponse] = {
+    finagwehttpcwientwithpwoxy.newsewvice(twittewpwoxyhostpowt.tostwing)
   }
 }

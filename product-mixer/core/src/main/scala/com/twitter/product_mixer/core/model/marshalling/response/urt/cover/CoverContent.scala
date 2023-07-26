@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DismissInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cawwback
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.dismissinfo
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagedispwaytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagevawiant
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
 
-sealed trait CoverContent
+seawed t-twait covewcontent
 
-case class FullCoverContent(
-  displayType: FullCoverDisplayType,
-  primaryText: RichText,
-  primaryCoverCta: CoverCta,
-  secondaryCoverCta: Option[CoverCta],
-  secondaryText: Option[RichText],
-  imageVariant: Option[ImageVariant],
-  details: Option[RichText],
-  dismissInfo: Option[DismissInfo],
-  imageDisplayType: Option[ImageDisplayType],
-  impressionCallbacks: Option[List[Callback]])
-    extends CoverContent
+case cwass fuwwcovewcontent(
+  dispwaytype: fuwwcovewdispwaytype, (///ˬ///✿)
+  p-pwimawytext: wichtext, 😳😳😳
+  pwimawycovewcta: c-covewcta, 🥺
+  secondawycovewcta: o-option[covewcta], mya
+  secondawytext: option[wichtext], 🥺
+  imagevawiant: o-option[imagevawiant], >_<
+  detaiws: option[wichtext], >_<
+  d-dismissinfo: option[dismissinfo], (⑅˘꒳˘)
+  i-imagedispwaytype: option[imagedispwaytype], /(^•ω•^)
+  impwessioncawwbacks: option[wist[cawwback]])
+    extends covewcontent
 
-case class HalfCoverContent(
-  displayType: HalfCoverDisplayType,
-  primaryText: RichText,
-  primaryCoverCta: CoverCta,
-  secondaryCoverCta: Option[CoverCta],
-  secondaryText: Option[RichText],
-  impressionCallbacks: Option[List[Callback]],
-  dismissible: Option[Boolean],
-  coverImage: Option[CoverImage],
-  dismissInfo: Option[DismissInfo])
-    extends CoverContent
+c-case cwass hawfcovewcontent(
+  dispwaytype: hawfcovewdispwaytype, rawr x3
+  pwimawytext: w-wichtext, (U ﹏ U)
+  pwimawycovewcta: c-covewcta, (U ﹏ U)
+  s-secondawycovewcta: o-option[covewcta], (⑅˘꒳˘)
+  s-secondawytext: option[wichtext], òωó
+  impwessioncawwbacks: o-option[wist[cawwback]], ʘwʘ
+  dismissibwe: option[boowean], /(^•ω•^)
+  c-covewimage: option[covewimage], ʘwʘ
+  dismissinfo: option[dismissinfo])
+    extends covewcontent

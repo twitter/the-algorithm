@@ -1,23 +1,23 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.pushservice.model.SubscribedSearchTweetPushCandidate
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.subscwibedseawchtweetpushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.take.notificationsewvicesendew
+i-impowt c-com.twittew.notificationsewvice.thwiftscawa.dispwaytext
+i-impowt com.twittew.notificationsewvice.thwiftscawa.dispwaytextentity
+i-impowt c-com.twittew.notificationsewvice.thwiftscawa.textvawue
+i-impowt c-com.twittew.utiw.futuwe
 
-trait SubscribedSearchTweetNtabRequestHydrator extends TweetNTabRequestHydrator {
-  self: SubscribedSearchTweetPushCandidate =>
-  override def displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = NotificationServiceSender
-    .getDisplayTextEntityFromUser(tweetAuthor, "tweetAuthor", isBold = true).map(_.toSeq)
+twait subscwibedseawchtweetntabwequesthydwatow extends tweetntabwequesthydwatow {
+  s-sewf: subscwibedseawchtweetpushcandidate =>
+  ovewwide d-def dispwaytextentitiesfut: futuwe[seq[dispwaytextentity]] = n-nyotificationsewvicesendew
+    .getdispwaytextentityfwomusew(tweetauthow, rawr x3 "tweetauthow", nyaa~~ isbowd = twue).map(_.toseq)
 
-  override def socialProofDisplayText: Option[DisplayText] = {
-    Some(DisplayText(values = Seq(DisplayTextEntity("search_query", TextValue.Text(searchTerm)))))
+  ovewwide d-def sociawpwoofdispwaytext: option[dispwaytext] = {
+    some(dispwaytext(vawues = s-seq(dispwaytextentity("seawch_quewy", /(^•ω•^) t-textvawue.text(seawchtewm)))))
   }
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = senderIdFut.map(Seq(_))
+  ovewwide wazy vaw facepiweusewsfut: futuwe[seq[wong]] = sendewidfut.map(seq(_))
 
-  override lazy val tapThroughFut: Future[String] =
-    Future.value(self.ntabLandingUrl)
+  o-ovewwide wazy vaw tapthwoughfut: futuwe[stwing] =
+    futuwe.vawue(sewf.ntabwandinguww)
 }

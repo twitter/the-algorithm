@@ -1,150 +1,150 @@
-package com.twitter.timelines.prediction.features.simcluster
+package com.twittew.timewines.pwediction.featuwes.simcwustew
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.{Feature, FeatureContext}
-import com.twitter.ml.api.Feature.{Continuous, SparseBinary, SparseContinuous}
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.timelines.suggests.common.record.thriftscala.SuggestionRecord
-import scala.collection.JavaConverters._
+impowt c-com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.mw.api.{featuwe, 😳😳😳 f-featuwecontext}
+i-impowt com.twittew.mw.api.featuwe.{continuous, ^^;; s-spawsebinawy, o.O s-spawsecontinuous}
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.convewsion._
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup
+impowt com.twittew.timewines.suggests.common.wecowd.thwiftscawa.suggestionwecowd
+i-impowt scawa.cowwection.javaconvewtews._
 
-class SimclusterTweetFeatures(statsReceiver: StatsReceiver) extends CombineCountsBase {
-  import SimclusterTweetFeatures._
+cwass simcwustewtweetfeatuwes(statsweceivew: s-statsweceivew) extends combinecountsbase {
+  i-impowt simcwustewtweetfeatuwes._
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private[this] val invalidSimclusterModelVersion = scopedStatsReceiver
-    .counter("invalidSimclusterModelVersion")
-  private[this] val getFeaturesFromOverlappingSimclusterIdsCount = scopedStatsReceiver
-    .counter("getFeaturesFromOverlappingSimclusterIdsCount")
-  private[this] val emptySimclusterMaps = scopedStatsReceiver
-    .counter("emptySimclusterMaps")
-  private[this] val nonOverlappingSimclusterMaps = scopedStatsReceiver
-    .counter("nonOverlappingSimclusterMaps")
+  pwivate[this] vaw scopedstatsweceivew = s-statsweceivew.scope(getcwass.getsimpwename)
+  pwivate[this] v-vaw invawidsimcwustewmodewvewsion = s-scopedstatsweceivew
+    .countew("invawidsimcwustewmodewvewsion")
+  pwivate[this] vaw getfeatuwesfwomovewwappingsimcwustewidscount = scopedstatsweceivew
+    .countew("getfeatuwesfwomovewwappingsimcwustewidscount")
+  pwivate[this] v-vaw emptysimcwustewmaps = scopedstatsweceivew
+    .countew("emptysimcwustewmaps")
+  pwivate[this] vaw nyonovewwappingsimcwustewmaps = scopedstatsweceivew
+    .countew("nonovewwappingsimcwustewmaps")
 
-  // Parameters required by CombineCountsBase
-  override val topK: Int = 5
-  override val hardLimit: Option[Int] = None
-  override val precomputedCountFeatures: Seq[Feature[_]] = Seq(
-    SIMCLUSTER_TWEET_TOPK_SORT_BY_TWEET_SCORE,
-    SIMCLUSTER_TWEET_TOPK_SORT_BY_COMBINED_SCORE
+  // p-pawametews wequiwed b-by combinecountsbase
+  o-ovewwide v-vaw topk: int = 5
+  o-ovewwide vaw hawdwimit: option[int] = nyone
+  o-ovewwide vaw pwecomputedcountfeatuwes: seq[featuwe[_]] = s-seq(
+    simcwustew_tweet_topk_sowt_by_tweet_scowe, (///ˬ///✿)
+    simcwustew_tweet_topk_sowt_by_combined_scowe
   )
 
-  private def getFeaturesFromOverlappingSimclusterIds(
-    userSimclustersInterestedInMap: Map[String, Double],
-    tweetSimclustersTopKMap: Map[String, Double]
-  ): Map[Feature[_], List[Double]] = {
-    getFeaturesFromOverlappingSimclusterIdsCount.incr
-    if (userSimclustersInterestedInMap.isEmpty || tweetSimclustersTopKMap.isEmpty) {
-      emptySimclusterMaps.incr
-      Map.empty
-    } else {
-      val overlappingSimclusterIds =
-        userSimclustersInterestedInMap.keySet intersect tweetSimclustersTopKMap.keySet
-      if (overlappingSimclusterIds.isEmpty) {
-        nonOverlappingSimclusterMaps.incr
-        Map.empty
-      } else {
-        val (combinedScores, tweetScores) = overlappingSimclusterIds.map { id =>
-          val tweetScore = tweetSimclustersTopKMap.getOrElse(id, 0.0)
-          val combinedScore = userSimclustersInterestedInMap.getOrElse(id, 0.0) * tweetScore
-          (combinedScore, tweetScore)
+  pwivate def getfeatuwesfwomovewwappingsimcwustewids(
+    usewsimcwustewsintewestedinmap: m-map[stwing, σωσ doubwe], nyaa~~
+    tweetsimcwustewstopkmap: m-map[stwing, ^^;; doubwe]
+  ): m-map[featuwe[_], ^•ﻌ•^ w-wist[doubwe]] = {
+    getfeatuwesfwomovewwappingsimcwustewidscount.incw
+    if (usewsimcwustewsintewestedinmap.isempty || tweetsimcwustewstopkmap.isempty) {
+      emptysimcwustewmaps.incw
+      m-map.empty
+    } e-ewse {
+      vaw ovewwappingsimcwustewids =
+        u-usewsimcwustewsintewestedinmap.keyset i-intewsect tweetsimcwustewstopkmap.keyset
+      i-if (ovewwappingsimcwustewids.isempty) {
+        nyonovewwappingsimcwustewmaps.incw
+        m-map.empty
+      } ewse {
+        vaw (combinedscowes, σωσ t-tweetscowes) = ovewwappingsimcwustewids.map { i-id =>
+          vaw tweetscowe = t-tweetsimcwustewstopkmap.getowewse(id, -.- 0.0)
+          v-vaw combinedscowe = usewsimcwustewsintewestedinmap.getowewse(id, ^^;; 0.0) * tweetscowe
+          (combinedscowe, XD tweetscowe)
         }.unzip
-        Map(
-          SIMCLUSTER_TWEET_TOPK_SORT_BY_COMBINED_SCORE -> combinedScores.toList,
-          SIMCLUSTER_TWEET_TOPK_SORT_BY_TWEET_SCORE -> tweetScores.toList
+        map(
+          simcwustew_tweet_topk_sowt_by_combined_scowe -> c-combinedscowes.towist, 🥺
+          s-simcwustew_tweet_topk_sowt_by_tweet_scowe -> tweetscowes.towist
         )
       }
     }
   }
 
-  def getCountFeaturesValuesMap(
-    suggestionRecord: SuggestionRecord,
-    simclustersTweetTopKMap: Map[String, Double]
-  ): Map[Feature[_], List[Double]] = {
-    val userSimclustersInterestedInMap = formatUserSimclustersInterestedIn(suggestionRecord)
+  d-def g-getcountfeatuwesvawuesmap(
+    suggestionwecowd: s-suggestionwecowd, òωó
+    simcwustewstweettopkmap: map[stwing, (ˆ ﻌ ˆ)♡ doubwe]
+  ): map[featuwe[_], -.- w-wist[doubwe]] = {
+    vaw usewsimcwustewsintewestedinmap = fowmatusewsimcwustewsintewestedin(suggestionwecowd)
 
-    val tweetSimclustersTopKMap = formatTweetSimclustersTopK(simclustersTweetTopKMap)
+    vaw tweetsimcwustewstopkmap = f-fowmattweetsimcwustewstopk(simcwustewstweettopkmap)
 
-    getFeaturesFromOverlappingSimclusterIds(userSimclustersInterestedInMap, tweetSimclustersTopKMap)
+    getfeatuwesfwomovewwappingsimcwustewids(usewsimcwustewsintewestedinmap, :3 t-tweetsimcwustewstopkmap)
   }
 
-  def filterByModelVersion(
-    simclustersMapOpt: Option[Map[String, Double]]
-  ): Option[Map[String, Double]] = {
-    simclustersMapOpt.flatMap { simclustersMap =>
-      val filteredSimclustersMap = simclustersMap.filter {
-        case (clusterId, score) =>
-          // The clusterId format is ModelVersion.IntegerClusterId.ScoreType as specified at
-          // com.twitter.ml.featurestore.catalog.features.recommendations.SimClustersV2TweetTopClusters
-          clusterId.contains(SimclusterFeatures.SIMCLUSTER_MODEL_VERSION)
+  d-def f-fiwtewbymodewvewsion(
+    simcwustewsmapopt: o-option[map[stwing, ʘwʘ d-doubwe]]
+  ): option[map[stwing, 🥺 d-doubwe]] = {
+    s-simcwustewsmapopt.fwatmap { simcwustewsmap =>
+      vaw fiwtewedsimcwustewsmap = s-simcwustewsmap.fiwtew {
+        c-case (cwustewid, >_< s-scowe) =>
+          // t-the cwustewid f-fowmat is modewvewsion.integewcwustewid.scowetype as specified at
+          // c-com.twittew.mw.featuwestowe.catawog.featuwes.wecommendations.simcwustewsv2tweettopcwustews
+          cwustewid.contains(simcwustewfeatuwes.simcwustew_modew_vewsion)
       }
 
-      // The assumption is that the simclustersMap will contain clusterIds with the same modelVersion.
-      // We maintain this counter to make sure that the hardcoded modelVersion we are using is correct.
-      if (simclustersMap.size > filteredSimclustersMap.size) {
-        invalidSimclusterModelVersion.incr
+      // the assumption is that the simcwustewsmap wiww contain cwustewids w-with the same modewvewsion. ʘwʘ
+      // we maintain this countew to make suwe that t-the hawdcoded modewvewsion w-we awe u-using is cowwect. (˘ω˘)
+      if (simcwustewsmap.size > f-fiwtewedsimcwustewsmap.size) {
+        invawidsimcwustewmodewvewsion.incw
       }
 
-      if (filteredSimclustersMap.nonEmpty) Some(filteredSimclustersMap) else None
+      i-if (fiwtewedsimcwustewsmap.nonempty) s-some(fiwtewedsimcwustewsmap) ewse nyone
     }
   }
 
-  val allFeatures: Seq[Feature[_]] = outputFeaturesPostMerge.toSeq ++ Seq(
-    SIMCLUSTER_TWEET_TOPK_CLUSTER_IDS,
-    SIMCLUSTER_TWEET_TOPK_CLUSTER_SCORES)
-  val featureContext = new FeatureContext(allFeatures: _*)
+  vaw awwfeatuwes: seq[featuwe[_]] = outputfeatuwespostmewge.toseq ++ seq(
+    s-simcwustew_tweet_topk_cwustew_ids, (✿oωo)
+    simcwustew_tweet_topk_cwustew_scowes)
+  v-vaw featuwecontext = nyew featuwecontext(awwfeatuwes: _*)
 }
 
-object SimclusterTweetFeatures {
-  val SIMCLUSTER_TWEET_TOPK_CLUSTER_IDS = new SparseBinary(
-    s"${SimclusterFeatures.prefix}.tweet_topk_cluster_ids",
-    Set(InferredInterests).asJava
+o-object simcwustewtweetfeatuwes {
+  v-vaw simcwustew_tweet_topk_cwustew_ids = nyew spawsebinawy(
+    s-s"${simcwustewfeatuwes.pwefix}.tweet_topk_cwustew_ids", (///ˬ///✿)
+    set(infewwedintewests).asjava
   )
-  val SIMCLUSTER_TWEET_TOPK_CLUSTER_SCORES = new SparseContinuous(
-    s"${SimclusterFeatures.prefix}.tweet_topk_cluster_scores",
-    Set(EngagementScore, InferredInterests).asJava
-  )
-
-  val SIMCLUSTER_TWEET_TOPK_CLUSTER_ID =
-    TypedAggregateGroup.sparseFeature(SIMCLUSTER_TWEET_TOPK_CLUSTER_IDS)
-
-  val SIMCLUSTER_TWEET_TOPK_SORT_BY_TWEET_SCORE = new Continuous(
-    s"${SimclusterFeatures.prefix}.tweet_topk_sort_by_tweet_score",
-    Set(EngagementScore, InferredInterests).asJava
+  v-vaw simcwustew_tweet_topk_cwustew_scowes = nyew s-spawsecontinuous(
+    s-s"${simcwustewfeatuwes.pwefix}.tweet_topk_cwustew_scowes", rawr x3
+    set(engagementscowe, -.- infewwedintewests).asjava
   )
 
-  val SIMCLUSTER_TWEET_TOPK_SORT_BY_COMBINED_SCORE = new Continuous(
-    s"${SimclusterFeatures.prefix}.tweet_topk_sort_by_combined_score",
-    Set(EngagementScore, InferredInterests).asJava
+  vaw simcwustew_tweet_topk_cwustew_id =
+    t-typedaggwegategwoup.spawsefeatuwe(simcwustew_tweet_topk_cwustew_ids)
+
+  v-vaw simcwustew_tweet_topk_sowt_by_tweet_scowe = n-nyew continuous(
+    s"${simcwustewfeatuwes.pwefix}.tweet_topk_sowt_by_tweet_scowe", ^^
+    s-set(engagementscowe, (⑅˘꒳˘) infewwedintewests).asjava
   )
 
-  def formatUserSimclustersInterestedIn(suggestionRecord: SuggestionRecord): Map[String, Double] = {
-    suggestionRecord.userSimclustersInterestedIn
-      .map { clustersUserIsInterestedIn =>
-        if (clustersUserIsInterestedIn.knownForModelVersion == SimclusterFeatures.SIMCLUSTER_MODEL_VERSION) {
-          clustersUserIsInterestedIn.clusterIdToScores.collect {
-            case (clusterId, scores) if scores.favScore.isDefined =>
-              (clusterId.toString, scores.favScore.get)
+  v-vaw simcwustew_tweet_topk_sowt_by_combined_scowe = nyew continuous(
+    s-s"${simcwustewfeatuwes.pwefix}.tweet_topk_sowt_by_combined_scowe", nyaa~~
+    set(engagementscowe, /(^•ω•^) infewwedintewests).asjava
+  )
+
+  def fowmatusewsimcwustewsintewestedin(suggestionwecowd: suggestionwecowd): map[stwing, (U ﹏ U) doubwe] = {
+    s-suggestionwecowd.usewsimcwustewsintewestedin
+      .map { c-cwustewsusewisintewestedin =>
+        if (cwustewsusewisintewestedin.knownfowmodewvewsion == simcwustewfeatuwes.simcwustew_modew_vewsion) {
+          c-cwustewsusewisintewestedin.cwustewidtoscowes.cowwect {
+            case (cwustewid, s-scowes) if scowes.favscowe.isdefined =>
+              (cwustewid.tostwing, 😳😳😳 scowes.favscowe.get)
           }
-        } else Map.empty[String, Double]
-      }.getOrElse(Map.empty[String, Double])
-      .toMap
+        } ewse map.empty[stwing, >w< doubwe]
+      }.getowewse(map.empty[stwing, XD d-doubwe])
+      .tomap
   }
 
-  def formatTweetSimclustersTopK(
-    simclustersTweetTopKMap: Map[String, Double]
-  ): Map[String, Double] = {
-    simclustersTweetTopKMap.collect {
-      case (clusterId, score) =>
-        // The clusterId format is <ModelVersion.IntegerClusterId.ScoreType> as specified at
-        // com.twitter.ml.featurestore.catalog.features.recommendations.SimClustersV2TweetTopClusters
-        // and we want to extract the IntegerClusterId.
-        // The split function takes a regex; therefore, we need to escape . and we also need to escape
-        // \ since they are both special characters. Hence, the double \\.
-        val clusterIdSplit = clusterId.split("\\.")
-        val integerClusterId = clusterIdSplit(1) // The IntegerClusterId is at position 1.
-        (integerClusterId, score)
+  def fowmattweetsimcwustewstopk(
+    simcwustewstweettopkmap: map[stwing, o.O doubwe]
+  ): map[stwing, mya d-doubwe] = {
+    simcwustewstweettopkmap.cowwect {
+      case (cwustewid, 🥺 s-scowe) =>
+        // t-the cwustewid fowmat is <modewvewsion.integewcwustewid.scowetype> as specified at
+        // c-com.twittew.mw.featuwestowe.catawog.featuwes.wecommendations.simcwustewsv2tweettopcwustews
+        // a-and we want to extwact the integewcwustewid. ^^;;
+        // the spwit function t-takes a wegex; thewefowe, :3 we n-nyeed to escape . (U ﹏ U) and we awso nyeed to escape
+        // \ since t-they awe both speciaw chawactews. OwO h-hence, 😳😳😳 the doubwe \\.
+        v-vaw cwustewidspwit = cwustewid.spwit("\\.")
+        v-vaw integewcwustewid = cwustewidspwit(1) // t-the integewcwustewid i-is at position 1. (ˆ ﻌ ˆ)♡
+        (integewcwustewid, XD s-scowe)
     }
   }
 }

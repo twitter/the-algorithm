@@ -1,41 +1,41 @@
-package com.twitter.search.feature_update_service.util;
+package com.twittew.seawch.featuwe_update_sewvice.utiw;
 
 
-import javax.annotation.Nullable;
+impowt j-javax.annotation.nuwwabwe;
 
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateRequest;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponse;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
+i-impowt c-com.twittew.seawch.common.schema.base.thwiftdocumentutiw;
+i-impowt c-com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatewequest;
+impowt c-com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatewesponse;
+i-impowt com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatewesponsecode;
 
-public final class FeatureUpdateValidator {
+p-pubwic finaw cwass featuweupdatevawidatow {
 
-  private FeatureUpdateValidator() { }
+  pwivate featuweupdatevawidatow() { }
 
   /**
-   * Validates FeatureUpdateRequest
-   * @param featureUpdate instance of FeatureUpdateRequest with ThriftIndexingEvent
-   * @return null if valid, instance of FeatureUpdateResponse if not.
-   * Response will have appropriate error code and message set.
+   * vawidates f-featuweupdatewequest
+   * @pawam featuweupdate instance of featuweupdatewequest w-with thwiftindexingevent
+   * @wetuwn nyuww i-if vawid, instance of featuweupdatewesponse if nyot. mya
+   * wesponse w-wiww have appwopwiate ewwow code a-and message s-set. 🥺
    */
-  @Nullable
-  public static FeatureUpdateResponse validate(FeatureUpdateRequest featureUpdate) {
+  @nuwwabwe
+  pubwic static featuweupdatewesponse vawidate(featuweupdatewequest featuweupdate) {
 
-    if (ThriftDocumentUtil.hasDuplicateFields(featureUpdate.getEvent().getDocument())) {
-      return createResponse(
-          String.format("duplicate document fields: %s", featureUpdate.toString()));
+    i-if (thwiftdocumentutiw.hasdupwicatefiewds(featuweupdate.getevent().getdocument())) {
+      wetuwn cweatewesponse(
+          stwing.fowmat("dupwicate document fiewds: %s", >_< f-featuweupdate.tostwing()));
     }
-    if (!featureUpdate.getEvent().isSetUid()) {
-      return createResponse(String.format("unset uid: %s", featureUpdate.toString()));
+    if (!featuweupdate.getevent().issetuid()) {
+      w-wetuwn cweatewesponse(stwing.fowmat("unset uid: %s", >_< f-featuweupdate.tostwing()));
     }
 
-    return null;
+    w-wetuwn nyuww;
   }
 
-  private static FeatureUpdateResponse createResponse(String errorMsg) {
-    FeatureUpdateResponseCode responseCode = FeatureUpdateResponseCode.CLIENT_ERROR;
-    FeatureUpdateResponse response = new FeatureUpdateResponse(responseCode);
-    response.setDetailMessage(errorMsg);
-    return response;
+  p-pwivate static featuweupdatewesponse cweatewesponse(stwing e-ewwowmsg) {
+    featuweupdatewesponsecode wesponsecode = f-featuweupdatewesponsecode.cwient_ewwow;
+    featuweupdatewesponse wesponse = nyew featuweupdatewesponse(wesponsecode);
+    wesponse.setdetaiwmessage(ewwowmsg);
+    wetuwn w-wesponse;
   }
 }

@@ -1,56 +1,56 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.util.SourceTweetsUtil
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt com.twittew.timewinewankew.utiw.souwcetweetsutiw
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * trims elements of the envelope other than the searchResults
- * (i.e. sourceSearchResults, hydratedTweets, sourceHydratedTweets) to match with searchResults.
+ * twims ewements of the envewope othew than the seawchwesuwts
+ * (i.e. mya s-souwceseawchwesuwts, 😳 hydwatedtweets, -.- souwcehydwatedtweets) t-to match with seawchwesuwts. 🥺
  */
-class TrimToMatchSearchResultsTransform(
-  hydrateReplyRootTweetProvider: DependencyProvider[Boolean],
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+cwass twimtomatchseawchwesuwtstwansfowm(
+  h-hydwatewepwywoottweetpwovidew: dependencypwovidew[boowean], o.O
+  statsweceivew: statsweceivew)
+    e-extends futuweawwow[candidateenvewope, /(^•ω•^) c-candidateenvewope] {
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
+  p-pwivate vaw scopedstatsweceivew = statsweceivew.scope(getcwass.getsimpwename)
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val searchResults = envelope.searchResults
-    val searchResultsIds = searchResults.map(_.id).toSet
+  ovewwide def appwy(envewope: c-candidateenvewope): futuwe[candidateenvewope] = {
+    vaw seawchwesuwts = envewope.seawchwesuwts
+    vaw seawchwesuwtsids = s-seawchwesuwts.map(_.id).toset
 
-    // Trim rest of the seqs to match top search results.
-    val hydratedTweets = envelope.hydratedTweets.outerTweets
-    val topHydratedTweets = hydratedTweets.filter(ht => searchResultsIds.contains(ht.tweetId))
+    // twim w-west of the seqs t-to match top seawch w-wesuwts. nyaa~~
+    v-vaw hydwatedtweets = envewope.hydwatedtweets.outewtweets
+    vaw tophydwatedtweets = h-hydwatedtweets.fiwtew(ht => seawchwesuwtsids.contains(ht.tweetid))
 
-    envelope.followGraphData.followedUserIdsFuture.map { followedUserIds =>
-      val sourceTweetIdsOfTopResults =
-        SourceTweetsUtil
-          .getSourceTweetIds(
-            searchResults = searchResults,
-            searchResultsTweetIds = searchResultsIds,
-            followedUserIds = followedUserIds,
-            shouldIncludeReplyRootTweets = hydrateReplyRootTweetProvider(envelope.query),
-            statsReceiver = scopedStatsReceiver
-          ).toSet
-      val sourceTweetSearchResultsForTopN =
-        envelope.sourceSearchResults.filter(r => sourceTweetIdsOfTopResults.contains(r.id))
-      val hydratedSourceTweetsForTopN =
-        envelope.sourceHydratedTweets.outerTweets.filter(ht =>
-          sourceTweetIdsOfTopResults.contains(ht.tweetId))
+    envewope.fowwowgwaphdata.fowwowedusewidsfutuwe.map { f-fowwowedusewids =>
+      vaw souwcetweetidsoftopwesuwts =
+        souwcetweetsutiw
+          .getsouwcetweetids(
+            seawchwesuwts = seawchwesuwts, nyaa~~
+            s-seawchwesuwtstweetids = seawchwesuwtsids, :3
+            f-fowwowedusewids = f-fowwowedusewids, 😳😳😳
+            s-shouwdincwudewepwywoottweets = hydwatewepwywoottweetpwovidew(envewope.quewy), (˘ω˘)
+            statsweceivew = scopedstatsweceivew
+          ).toset
+      v-vaw souwcetweetseawchwesuwtsfowtopn =
+        e-envewope.souwceseawchwesuwts.fiwtew(w => souwcetweetidsoftopwesuwts.contains(w.id))
+      vaw hydwatedsouwcetweetsfowtopn =
+        e-envewope.souwcehydwatedtweets.outewtweets.fiwtew(ht =>
+          s-souwcetweetidsoftopwesuwts.contains(ht.tweetid))
 
-      val hydratedTweetsForEnvelope = envelope.hydratedTweets.copy(outerTweets = topHydratedTweets)
-      val hydratedSourceTweetsForEnvelope =
-        envelope.sourceHydratedTweets.copy(outerTweets = hydratedSourceTweetsForTopN)
+      vaw hydwatedtweetsfowenvewope = e-envewope.hydwatedtweets.copy(outewtweets = tophydwatedtweets)
+      v-vaw hydwatedsouwcetweetsfowenvewope =
+        envewope.souwcehydwatedtweets.copy(outewtweets = hydwatedsouwcetweetsfowtopn)
 
-      envelope.copy(
-        hydratedTweets = hydratedTweetsForEnvelope,
-        searchResults = searchResults,
-        sourceHydratedTweets = hydratedSourceTweetsForEnvelope,
-        sourceSearchResults = sourceTweetSearchResultsForTopN
+      e-envewope.copy(
+        hydwatedtweets = h-hydwatedtweetsfowenvewope, ^^
+        seawchwesuwts = s-seawchwesuwts, :3
+        s-souwcehydwatedtweets = hydwatedsouwcetweetsfowenvewope, -.-
+        souwceseawchwesuwts = souwcetweetseawchwesuwtsfowtopn
       )
     }
   }

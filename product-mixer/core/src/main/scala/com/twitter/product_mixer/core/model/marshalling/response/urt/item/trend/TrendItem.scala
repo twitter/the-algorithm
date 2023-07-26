@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twend
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.pwomotedmetadata
 
-object TrendItem {
-  val TrendItemEntryNamespace = EntryNamespace("trend")
+object twenditem {
+  vaw twenditementwynamespace = entwynamespace("twend")
 }
 
-case class GroupedTrend(trendName: String, url: Url)
+c-case cwass gwoupedtwend(twendname: stwing, mya u-uww: uww)
 
-case class TrendItem(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  normalizedTrendName: String,
-  trendName: String,
-  url: Url,
-  description: Option[String],
-  metaDescription: Option[String],
-  tweetCount: Option[Int],
-  domainContext: Option[String],
-  promotedMetadata: Option[PromotedMetadata],
-  groupedTrends: Option[Seq[GroupedTrend]])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = TrendItem.TrendItemEntryNamespace
+case cwass twenditem(
+  o-ovewwide vaw id: stwing, 🥺
+  ovewwide vaw sowtindex: option[wong], >_<
+  o-ovewwide vaw cwienteventinfo: o-option[cwienteventinfo], >_<
+  o-ovewwide vaw feedbackactioninfo: option[feedbackactioninfo], (⑅˘꒳˘)
+  nyowmawizedtwendname: stwing, /(^•ω•^)
+  t-twendname: stwing, rawr x3
+  uww: uww,
+  descwiption: option[stwing], (U ﹏ U)
+  metadescwiption: o-option[stwing], (U ﹏ U)
+  tweetcount: o-option[int],
+  d-domaincontext: option[stwing], (⑅˘꒳˘)
+  p-pwomotedmetadata: o-option[pwomotedmetadata], òωó
+  gwoupedtwends: option[seq[gwoupedtwend]])
+    extends t-timewineitem {
+  ovewwide vaw entwynamespace: e-entwynamespace = twenditem.twenditementwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovewwide def withsowtindex(sowtindex: wong): timewineentwy = copy(sowtindex = s-some(sowtindex))
 }

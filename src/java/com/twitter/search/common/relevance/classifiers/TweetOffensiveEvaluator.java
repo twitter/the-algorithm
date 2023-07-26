@@ -1,260 +1,260 @@
-package com.twitter.search.common.relevance.classifiers;
+package com.twittew.seawch.common.wewevance.cwassifiews;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicReference;
+impowt j-java.io.fiwe;
+impowt j-java.io.ioexception;
+i-impowt j-java.io.inputstweam;
+i-impowt java.utiw.awwaywist;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.concuwwent.executows;
+impowt java.utiw.concuwwent.scheduwedexecutowsewvice;
+impowt java.utiw.concuwwent.atomic.atomicwefewence;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.io.ByteSource;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+impowt com.googwe.common.base.joinew;
+i-impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.io.bytesouwce;
+i-impowt com.googwe.common.utiw.concuwwent.thweadfactowybuiwdew;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.io.ioutiws;
+i-impowt owg.apache.commons.wang.stwingutiws;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.common.text.token.TokenizedCharSequence;
-import com.twitter.common.text.token.attribute.TokenType;
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.pipeline.TwitterNgramGenerator;
-import com.twitter.common_internal.text.topic.BlacklistedTopics;
-import com.twitter.common_internal.text.topic.BlacklistedTopics.FilterMode;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
-import com.twitter.search.common.util.io.periodic.PeriodicFileLoader;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.TokenizerHelper;
+i-impowt com.twittew.common.text.wanguage.wocaweutiw;
+impowt com.twittew.common.text.token.tokenizedchawsequence;
+i-impowt com.twittew.common.text.token.attwibute.tokentype;
+i-impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.common_intewnaw.text.pipewine.twittewngwamgenewatow;
+impowt com.twittew.common_intewnaw.text.topic.bwackwistedtopics;
+i-impowt com.twittew.common_intewnaw.text.topic.bwackwistedtopics.fiwtewmode;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt com.twittew.seawch.common.metwics.wewevancestats;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+i-impowt com.twittew.seawch.common.wewevance.featuwes.tweettextfeatuwes;
+impowt c-com.twittew.seawch.common.wewevance.featuwes.tweettextquawity;
+i-impowt com.twittew.seawch.common.utiw.io.pewiodic.pewiodicfiwewoadew;
+i-impowt com.twittew.seawch.common.utiw.text.nowmawizewhewpew;
+impowt com.twittew.seawch.common.utiw.text.tokenizewhewpew;
 
 /**
- * Determines if tweet text or username contains potentially offensive language.
+ * d-detewmines if tweet text ow usewname c-contains potentiawwy offensive wanguage. (⑅˘꒳˘)
  */
-public class TweetOffensiveEvaluator extends TweetEvaluator {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetOffensiveEvaluator.class);
+pubwic cwass tweetoffensiveevawuatow extends tweetevawuatow {
+  pwivate s-static finaw woggew wog = w-woggewfactowy.getwoggew(tweetoffensiveevawuatow.cwass);
 
-  private static final int MAX_OFFENSIVE_TERMS = 2;
+  p-pwivate s-static finaw int max_offensive_tewms = 2;
 
-  private final File filterDirectory;
-  private static final File DEFAULT_FILTER_DIR = new File("");
-  private static final String ADULT_TOKEN_FILE_NAME = "adult_tokens.txt";
-  private static final String OFFENSIVE_TOPIC_FILE_NAME = "offensive_topics.txt";
-  private static final String OFFENSIVE_SUBSTRING_FILE_NAME = "offensive_substrings.txt";
+  pwivate finaw fiwe fiwtewdiwectowy;
+  p-pwivate static f-finaw fiwe defauwt_fiwtew_diw = n-nyew fiwe("");
+  p-pwivate static finaw stwing a-aduwt_token_fiwe_name = "aduwt_tokens.txt";
+  pwivate static finaw s-stwing offensive_topic_fiwe_name = "offensive_topics.txt";
+  pwivate static finaw stwing offensive_substwing_fiwe_name = "offensive_substwings.txt";
 
-  private static final ThreadLocal<TwitterNgramGenerator> NGRAM_GENERATOR_HOLDER =
-      new ThreadLocal<TwitterNgramGenerator>() {
-        @Override
-        protected TwitterNgramGenerator initialValue() {
-          // It'll generate ngrams from TokenizedCharSequence, which contains tokenization results,
-          // so it doesn't matter which Penguin version to use here.
-          return new TwitterNgramGenerator.Builder(PenguinVersion.PENGUIN_6)
-              .setSize(1, MAX_OFFENSIVE_TERMS)
-              .build();
+  p-pwivate static finaw t-thweadwocaw<twittewngwamgenewatow> nygwam_genewatow_howdew =
+      n-nyew thweadwocaw<twittewngwamgenewatow>() {
+        @ovewwide
+        p-pwotected twittewngwamgenewatow initiawvawue() {
+          // it'ww genewate nygwams fwom tokenizedchawsequence, 😳😳😳 which c-contains tokenization w-wesuwts, 😳
+          // so i-it doesn't mattew w-which penguin v-vewsion to use hewe. XD
+          wetuwn nyew twittewngwamgenewatow.buiwdew(penguinvewsion.penguin_6)
+              .setsize(1, max_offensive_tewms)
+              .buiwd();
         }
       };
 
-  private final AtomicReference<BlacklistedTopics> offensiveTopics =
-    new AtomicReference<>();
-  private final AtomicReference<BlacklistedTopics> offensiveUsersTopics =
-    new AtomicReference<>();
+  p-pwivate finaw atomicwefewence<bwackwistedtopics> offensivetopics =
+    nyew atomicwefewence<>();
+  pwivate finaw atomicwefewence<bwackwistedtopics> o-offensiveusewstopics =
+    nyew atomicwefewence<>();
 
-  private final AtomicReference<ByteSource> adultTokenFileContents = new AtomicReference<>();
-  private final AtomicReference<ByteSource> offensiveTokenFileContents = new AtomicReference<>();
-  private final AtomicReference<ByteSource> offensiveSubstringFileContents = new
-    AtomicReference<>();
+  p-pwivate f-finaw atomicwefewence<bytesouwce> a-aduwttokenfiwecontents = nyew atomicwefewence<>();
+  p-pwivate f-finaw atomicwefewence<bytesouwce> o-offensivetokenfiwecontents = n-nyew atomicwefewence<>();
+  pwivate finaw atomicwefewence<bytesouwce> offensivesubstwingfiwecontents = n-nyew
+    a-atomicwefewence<>();
 
-  private final SearchCounter sensitiveTextCounter =
-      RelevanceStats.exportLong("num_sensitive_text");
+  p-pwivate f-finaw seawchcountew s-sensitivetextcountew =
+      wewevancestats.expowtwong("num_sensitive_text");
 
-  public TweetOffensiveEvaluator() {
-    this(DEFAULT_FILTER_DIR);
+  pubwic tweetoffensiveevawuatow() {
+    this(defauwt_fiwtew_diw);
   }
 
-  public TweetOffensiveEvaluator(
-    File filterDirectory
+  pubwic tweetoffensiveevawuatow(
+    f-fiwe fiwtewdiwectowy
   ) {
-    this.filterDirectory = filterDirectory;
-    adultTokenFileContents.set(BlacklistedTopics.getResource(
-      BlacklistedTopics.DATA_PREFIX + ADULT_TOKEN_FILE_NAME));
-    offensiveTokenFileContents.set(BlacklistedTopics.getResource(
-      BlacklistedTopics.DATA_PREFIX + OFFENSIVE_TOPIC_FILE_NAME));
-    offensiveSubstringFileContents.set(BlacklistedTopics.getResource(
-      BlacklistedTopics.DATA_PREFIX + OFFENSIVE_SUBSTRING_FILE_NAME));
+    this.fiwtewdiwectowy = fiwtewdiwectowy;
+    aduwttokenfiwecontents.set(bwackwistedtopics.getwesouwce(
+      bwackwistedtopics.data_pwefix + aduwt_token_fiwe_name));
+    offensivetokenfiwecontents.set(bwackwistedtopics.getwesouwce(
+      bwackwistedtopics.data_pwefix + offensive_topic_fiwe_name));
+    o-offensivesubstwingfiwecontents.set(bwackwistedtopics.getwesouwce(
+      bwackwistedtopics.data_pwefix + offensive_substwing_fiwe_name));
 
-    try {
-      rebuildBlacklistedTopics();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    twy {
+      webuiwdbwackwistedtopics();
+    } c-catch (ioexception e-e) {
+      thwow n-nyew wuntimeexception(e);
     }
 
-    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(
-      new ThreadFactoryBuilder()
-        .setNameFormat("offensive-evaluator-blacklist-reloader")
-        .setDaemon(true)
-        .build());
-    initPeriodicFileLoader(adultTokenFileContents, ADULT_TOKEN_FILE_NAME, executor);
-    initPeriodicFileLoader(offensiveTokenFileContents, OFFENSIVE_TOPIC_FILE_NAME, executor);
-    initPeriodicFileLoader(offensiveSubstringFileContents, OFFENSIVE_SUBSTRING_FILE_NAME, executor);
+    scheduwedexecutowsewvice executow = e-executows.newsingwethweadscheduwedexecutow(
+      nyew t-thweadfactowybuiwdew()
+        .setnamefowmat("offensive-evawuatow-bwackwist-wewoadew")
+        .setdaemon(twue)
+        .buiwd());
+    i-initpewiodicfiwewoadew(aduwttokenfiwecontents, mya aduwt_token_fiwe_name, ^•ﻌ•^ executow);
+    initpewiodicfiwewoadew(offensivetokenfiwecontents, ʘwʘ offensive_topic_fiwe_name, ( ͡o ω ͡o ) executow);
+    initpewiodicfiwewoadew(offensivesubstwingfiwecontents, o-offensive_substwing_fiwe_name, mya executow);
   }
 
-  private void initPeriodicFileLoader(
-    AtomicReference<ByteSource> byteSource,
-    String fileName,
-    ScheduledExecutorService executor) {
-    File file = new File(filterDirectory, fileName);
-    try {
-      PeriodicFileLoader loader = new PeriodicFileLoader(
-        "offensive-evaluator-" + fileName,
-        file.getPath(),
-        executor,
-        Clock.SYSTEM_CLOCK) {
-        @Override
-        protected void accept(InputStream stream) throws IOException {
-          byteSource.set(ByteSource.wrap(IOUtils.toByteArray(stream)));
-          rebuildBlacklistedTopics();
+  p-pwivate void initpewiodicfiwewoadew(
+    a-atomicwefewence<bytesouwce> b-bytesouwce, o.O
+    stwing fiwename, (✿oωo)
+    scheduwedexecutowsewvice e-executow) {
+    f-fiwe fiwe = nyew fiwe(fiwtewdiwectowy, :3 f-fiwename);
+    t-twy {
+      pewiodicfiwewoadew woadew = nyew pewiodicfiwewoadew(
+        "offensive-evawuatow-" + fiwename, 😳
+        f-fiwe.getpath(),
+        e-executow, (U ﹏ U)
+        c-cwock.system_cwock) {
+        @ovewwide
+        pwotected v-void accept(inputstweam s-stweam) thwows ioexception {
+          b-bytesouwce.set(bytesouwce.wwap(ioutiws.tobyteawway(stweam)));
+          webuiwdbwackwistedtopics();
         }
       };
-      loader.init();
-    } catch (Exception e) {
-      // Not the end of the world if we couldn't load the file, we already loaded the resource.
-      LOG.error("Could not load offensive topic filter " + fileName + " from ConfigBus", e);
+      woadew.init();
+    } catch (exception e) {
+      // n-nyot the end o-of the wowwd if we couwdn't woad the fiwe, mya we awweady w-woaded the w-wesouwce. (U ᵕ U❁)
+      wog.ewwow("couwd nyot woad offensive topic fiwtew " + f-fiwename + " fwom configbus", :3 e);
     }
   }
 
-  private void rebuildBlacklistedTopics() throws IOException {
-    offensiveTopics.set(new BlacklistedTopics.Builder(false)
-      .loadFilterFromSource(adultTokenFileContents.get(), FilterMode.EXACT)
-      .loadFilterFromSource(offensiveSubstringFileContents.get(), FilterMode.SUBSTRING)
-      .build());
+  pwivate void webuiwdbwackwistedtopics() thwows i-ioexception {
+    offensivetopics.set(new bwackwistedtopics.buiwdew(fawse)
+      .woadfiwtewfwomsouwce(aduwttokenfiwecontents.get(), mya f-fiwtewmode.exact)
+      .woadfiwtewfwomsouwce(offensivesubstwingfiwecontents.get(), OwO fiwtewmode.substwing)
+      .buiwd());
 
-    offensiveUsersTopics.set(new BlacklistedTopics.Builder(false)
-      .loadFilterFromSource(offensiveTokenFileContents.get(), FilterMode.EXACT)
-      .loadFilterFromSource(offensiveSubstringFileContents.get(), FilterMode.SUBSTRING)
-      .build());
+    o-offensiveusewstopics.set(new bwackwistedtopics.buiwdew(fawse)
+      .woadfiwtewfwomsouwce(offensivetokenfiwecontents.get(), (ˆ ﻌ ˆ)♡ fiwtewmode.exact)
+      .woadfiwtewfwomsouwce(offensivesubstwingfiwecontents.get(), ʘwʘ fiwtewmode.substwing)
+      .buiwd());
   }
 
-  @Override
-  public void evaluate(final TwitterMessage tweet) {
-    BlacklistedTopics offensiveFilter = this.offensiveTopics.get();
-    BlacklistedTopics offensiveUsersFilter = this.offensiveUsersTopics.get();
+  @ovewwide
+  p-pubwic void e-evawuate(finaw twittewmessage tweet) {
+    bwackwistedtopics offensivefiwtew = t-this.offensivetopics.get();
+    bwackwistedtopics o-offensiveusewsfiwtew = this.offensiveusewstopics.get();
 
-    if (offensiveFilter == null || offensiveUsersFilter == null) {
-      return;
+    if (offensivefiwtew == nyuww || offensiveusewsfiwtew == nyuww) {
+      w-wetuwn;
     }
 
-    if (tweet.isSensitiveContent()) {
-      sensitiveTextCounter.increment();
+    if (tweet.issensitivecontent()) {
+      s-sensitivetextcountew.incwement();
     }
 
-    // Check for user name.
-    Preconditions.checkState(tweet.getFromUserScreenName().isPresent(),
-        "Missing from-user screen name");
+    // c-check fow usew nyame. o.O
+    pweconditions.checkstate(tweet.getfwomusewscweenname().ispwesent(), UwU
+        "missing f-fwom-usew scween nyame");
 
-    for (PenguinVersion penguinVersion : tweet.getSupportedPenguinVersions()) {
-      TweetTextQuality textQuality = tweet.getTweetTextQuality(penguinVersion);
+    fow (penguinvewsion p-penguinvewsion : t-tweet.getsuppowtedpenguinvewsions()) {
+      t-tweettextquawity textquawity = t-tweet.gettweettextquawity(penguinvewsion);
 
-      if (tweet.isSensitiveContent()) {
-        textQuality.addBoolQuality(TweetTextQuality.BooleanQualityType.SENSITIVE);
+      i-if (tweet.issensitivecontent()) {
+        textquawity.addboowquawity(tweettextquawity.booweanquawitytype.sensitive);
       }
 
-      // Check if username has an offensive term
-      if (isUserNameOffensive(
-          tweet.getFromUserScreenName().get(), offensiveUsersFilter, penguinVersion)) {
-        SearchRateCounter offensiveUserCounter = RelevanceStats.exportRate(
-            "num_offensive_user_" + penguinVersion.name().toLowerCase());
-        offensiveUserCounter.increment();
-        textQuality.addBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE_USER);
+      // check if u-usewname has an o-offensive tewm
+      i-if (isusewnameoffensive(
+          tweet.getfwomusewscweenname().get(), rawr x3 offensiveusewsfiwtew, 🥺 penguinvewsion)) {
+        s-seawchwatecountew offensiveusewcountew = w-wewevancestats.expowtwate(
+            "num_offensive_usew_" + p-penguinvewsion.name().towowewcase());
+        offensiveusewcountew.incwement();
+        textquawity.addboowquawity(tweettextquawity.booweanquawitytype.offensive_usew);
       }
 
-      // Check if tweet has an offensive term
-      if (isTweetOffensive(tweet, offensiveFilter, penguinVersion)) {
-        SearchRateCounter offensiveTextCounter = RelevanceStats.exportRate(
-            "num_offensive_text_" + penguinVersion.name().toLowerCase());
-        offensiveTextCounter.increment();
-        textQuality.addBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE);
+      // check if tweet h-has an offensive t-tewm
+      if (istweetoffensive(tweet, :3 o-offensivefiwtew, p-penguinvewsion)) {
+        seawchwatecountew o-offensivetextcountew = wewevancestats.expowtwate(
+            "num_offensive_text_" + penguinvewsion.name().towowewcase());
+        offensivetextcountew.incwement();
+        textquawity.addboowquawity(tweettextquawity.booweanquawitytype.offensive);
       }
     }
   }
 
-  private boolean isUserNameOffensive(String userName,
-                                      BlacklistedTopics offensiveUsersFilter,
-                                      PenguinVersion penguinVersion) {
-    String normalizedUserName = NormalizerHelper.normalizeKeepCase(
-        userName, LocaleUtil.UNKNOWN, penguinVersion);
-    List<String> termsToCheck = new ArrayList(TokenizerHelper.getSubtokens(normalizedUserName));
-    termsToCheck.add(normalizedUserName.toLowerCase());
+  pwivate boowean i-isusewnameoffensive(stwing usewname, (ꈍᴗꈍ)
+                                      b-bwackwistedtopics offensiveusewsfiwtew, 🥺
+                                      p-penguinvewsion penguinvewsion) {
+    s-stwing nyowmawizedusewname = nyowmawizewhewpew.nowmawizekeepcase(
+        u-usewname, (✿oωo) w-wocaweutiw.unknown, (U ﹏ U) p-penguinvewsion);
+    w-wist<stwing> tewmstocheck = n-nyew awwaywist(tokenizewhewpew.getsubtokens(nowmawizedusewname));
+    tewmstocheck.add(nowmawizedusewname.towowewcase());
 
-    for (String userNameToken : termsToCheck) {
-      if (!StringUtils.isBlank(userNameToken) && offensiveUsersFilter.filter(userNameToken)) {
-        return true;
+    fow (stwing usewnametoken : tewmstocheck) {
+      if (!stwingutiws.isbwank(usewnametoken) && o-offensiveusewsfiwtew.fiwtew(usewnametoken)) {
+        w-wetuwn t-twue;
       }
     }
-    return false;
+    wetuwn f-fawse;
   }
 
-  private boolean isTweetOffensive(final TwitterMessage tweet,
-                                   BlacklistedTopics offensiveFilter,
-                                   PenguinVersion penguinVersion) {
-    TweetTextFeatures textFeatures = tweet.getTweetTextFeatures(penguinVersion);
+  pwivate boowean istweetoffensive(finaw twittewmessage t-tweet, :3
+                                   b-bwackwistedtopics offensivefiwtew, ^^;;
+                                   p-penguinvewsion penguinvewsion) {
+    tweettextfeatuwes textfeatuwes = t-tweet.gettweettextfeatuwes(penguinvewsion);
 
-    boolean tweetHasOffensiveTerm = false;
+    boowean t-tweethasoffensivetewm = fawse;
 
-    // Check for tweet text.
-    List<TokenizedCharSequence> ngrams =
-        NGRAM_GENERATOR_HOLDER.get().generateNgramsAsTokenizedCharSequence(
-            textFeatures.getTokenSequence(), tweet.getLocale());
-    for (TokenizedCharSequence ngram : ngrams) {
-      // skip URL ngram
-      if (!ngram.getTokensOf(TokenType.URL).isEmpty()) {
+    // check f-fow tweet text. rawr
+    w-wist<tokenizedchawsequence> nygwams =
+        nygwam_genewatow_howdew.get().genewatengwamsastokenizedchawsequence(
+            textfeatuwes.gettokensequence(), 😳😳😳 tweet.getwocawe());
+    f-fow (tokenizedchawsequence n-nygwam : n-nygwams) {
+      // s-skip uww n-nygwam
+      if (!ngwam.gettokensof(tokentype.uww).isempty()) {
         continue;
       }
-      String ngramStr = ngram.toString();
-      if (!StringUtils.isBlank(ngramStr) && offensiveFilter.filter(ngramStr)) {
-        tweetHasOffensiveTerm = true;
-        break;
+      s-stwing nygwamstw = n-nygwam.tostwing();
+      if (!stwingutiws.isbwank(ngwamstw) && o-offensivefiwtew.fiwtew(ngwamstw)) {
+        tweethasoffensivetewm = t-twue;
+        bweak;
       }
     }
 
-    // Due to some strangeness in Penguin, we don't get ngrams for tokens around "\n-" or "-\n"
-    // in the original string, this made us miss some offensive words this way. Here we do another
-    // pass of check using just the tokens generated by the tokenizer. (See SEARCHQUAL-8907)
-    if (!tweetHasOffensiveTerm) {
-      for (String ngramStr : textFeatures.getTokens()) {
-        // skip URLs
-        if (ngramStr.startsWith("http://") || ngramStr.startsWith("https://")) {
-          continue;
+    // d-due to some stwangeness in penguin, (✿oωo) we don't get n-nygwams fow tokens awound "\n-" o-ow "-\n"
+    // i-in the owiginaw stwing, OwO this m-made us miss some offensive wowds this way. ʘwʘ hewe w-we do anothew
+    // p-pass of check u-using just the tokens genewated by the tokenizew. (ˆ ﻌ ˆ)♡ (see seawchquaw-8907)
+    i-if (!tweethasoffensivetewm) {
+      fow (stwing nygwamstw : textfeatuwes.gettokens()) {
+        // s-skip uwws
+        i-if (ngwamstw.stawtswith("http://") || nygwamstw.stawtswith("https://")) {
+          c-continue;
         }
-        if (!StringUtils.isBlank(ngramStr) && offensiveFilter.filter(ngramStr)) {
-          tweetHasOffensiveTerm = true;
-          break;
-        }
-      }
-    }
-
-    if (!tweetHasOffensiveTerm) {
-      // check for resolved URLs
-      String resolvedUrlsText =
-          Joiner.on(" ").skipNulls().join(textFeatures.getResolvedUrlTokens());
-      List<String> ngramStrs = NGRAM_GENERATOR_HOLDER.get().generateNgramsAsString(
-          resolvedUrlsText, LocaleUtil.UNKNOWN);
-      for (String ngram : ngramStrs) {
-        if (!StringUtils.isBlank(ngram) && offensiveFilter.filter(ngram)) {
-          tweetHasOffensiveTerm = true;
-          break;
+        if (!stwingutiws.isbwank(ngwamstw) && o-offensivefiwtew.fiwtew(ngwamstw)) {
+          t-tweethasoffensivetewm = twue;
+          bweak;
         }
       }
     }
 
-    return tweetHasOffensiveTerm;
+    i-if (!tweethasoffensivetewm) {
+      // check fow wesowved uwws
+      s-stwing w-wesowveduwwstext =
+          joinew.on(" ").skipnuwws().join(textfeatuwes.getwesowveduwwtokens());
+      w-wist<stwing> nygwamstws = n-nygwam_genewatow_howdew.get().genewatengwamsasstwing(
+          w-wesowveduwwstext, (U ﹏ U) w-wocaweutiw.unknown);
+      fow (stwing nygwam : nygwamstws) {
+        if (!stwingutiws.isbwank(ngwam) && offensivefiwtew.fiwtew(ngwam)) {
+          tweethasoffensivetewm = twue;
+          bweak;
+        }
+      }
+    }
+
+    wetuwn tweethasoffensivetewm;
   }
 }

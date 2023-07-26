@@ -1,91 +1,91 @@
-package com.twitter.recos.user_user_graph
+package com.twittew.wecos.usew_usew_gwaph
 
-import com.twitter.graphjet.bipartite.api.EdgeTypeMask
-import com.twitter.recos.recos_common.thriftscala.UserSocialProofType
+impowt c-com.twittew.gwaphjet.bipawtite.api.edgetypemask
+i-impowt com.twittew.wecos.wecos_common.thwiftscawa.usewsociawpwooftype
 
 /**
- * The bit mask is used to encode edge types in the top bits of an integer,
- * e.g. Follow, Mention, and Mediatag. Under current segment configuration, each segment
- * stores up to 128M edges. Assuming that each node on one side is unique, each segment
- * stores up to 128M unique nodes on one side, which occupies the lower 27 bits of an integer.
- * This leaves five bits to encode the edge types, which at max can store 32 edge types.
- * The following implementation utilizes the top four bits and leaves one free bit out.
+ * the b-bit mask is used t-to encode edge t-types in the t-top bits of an integew, rawr x3
+ * e-e.g. f-fowwow, OwO mention, /(^•ω•^) and mediatag. undew cuwwent segment configuwation, 😳😳😳 each segment
+ * s-stowes up to 128m edges. ( ͡o ω ͡o ) assuming that each n-nyode on one side is unique, >_< each s-segment
+ * stowes up to 128m unique nyodes on one side, which o-occupies the wowew 27 bits of an i-integew. >w<
+ * this w-weaves five bits to encode the edge types, rawr which at max can stowe 32 edge types. 😳
+ * t-the fowwowing impwementation utiwizes the top fouw bits and weaves one fwee b-bit out. >w<
  */
-class UserEdgeTypeMask extends EdgeTypeMask {
-  import UserEdgeTypeMask._
-  override def encode(node: Int, edgeType: Byte): Int = {
-    require(
-      edgeType == FOLLOW || edgeType == MENTION || edgeType == MEDIATAG,
-      s"encode: Illegal edge type argument $edgeType")
-    node | EDGEARRAY(edgeType)
+cwass usewedgetypemask e-extends edgetypemask {
+  impowt u-usewedgetypemask._
+  o-ovewwide d-def encode(node: int, (⑅˘꒳˘) edgetype: byte): int = {
+    w-wequiwe(
+      edgetype == fowwow || edgetype == m-mention || edgetype == mediatag, OwO
+      s"encode: iwwegaw edge type awgument $edgetype")
+    nyode | edgeawway(edgetype)
   }
 
-  override def edgeType(node: Int): Byte = {
-    (node >> 28).toByte
+  ovewwide d-def edgetype(node: int): byte = {
+    (node >> 28).tobyte
   }
 
-  override def restore(node: Int): Int = {
-    node & MASK
+  o-ovewwide def westowe(node: i-int): i-int = {
+    nyode & mask
   }
 }
 
-object UserEdgeTypeMask {
+object usewedgetypemask {
 
   /**
-   * Reserve the top four bits of each integer to encode the edge type information.
+   * wesewve t-the top fouw bits o-of each integew to encode the e-edge type infowmation. (ꈍᴗꈍ)
    */
-  val MASK: Int =
-    Integer.parseInt("00001111111111111111111111111111", 2)
-  val FOLLOW: Byte = 0
-  val MENTION: Byte = 1
-  val MEDIATAG: Byte = 2
-  val SIZE: Byte = 3
-  val UNUSED3: Byte = 3
-  val UNUSED4: Byte = 4
-  val UNUSED5: Byte = 5
-  val UNUSED6: Byte = 6
-  val UNUSED7: Byte = 7
-  val UNUSED8: Byte = 8
-  val UNUSED9: Byte = 9
-  val UNUSED10: Byte = 10
-  val UNUSED11: Byte = 11
-  val UNUSED12: Byte = 12
-  val UNUSED13: Byte = 13
-  val UNUSED14: Byte = 14
-  val UNUSED15: Byte = 15
-  val EDGEARRAY: Array[Int] = Array(
-    0,
-    1 << 28,
-    2 << 28,
-    3 << 28,
+  vaw m-mask: int =
+    integew.pawseint("00001111111111111111111111111111", 😳 2)
+  v-vaw fowwow: byte = 0
+  v-vaw mention: byte = 1
+  vaw mediatag: byte = 2
+  v-vaw size: byte = 3
+  vaw unused3: b-byte = 3
+  vaw unused4: byte = 4
+  v-vaw unused5: b-byte = 5
+  vaw unused6: byte = 6
+  vaw unused7: byte = 7
+  vaw unused8: byte = 8
+  vaw unused9: byte = 9
+  v-vaw unused10: b-byte = 10
+  vaw unused11: byte = 11
+  v-vaw unused12: b-byte = 12
+  v-vaw unused13: byte = 13
+  vaw unused14: byte = 14
+  vaw unused15: b-byte = 15
+  vaw edgeawway: awway[int] = awway(
+    0, 😳😳😳
+    1 << 28, mya
+    2 << 28, mya
+    3 << 28, (⑅˘꒳˘)
     4 << 28,
-    5 << 28,
-    6 << 28,
-    7 << 28,
-    8 << 28,
-    9 << 28,
+    5 << 28, (U ﹏ U)
+    6 << 28, mya
+    7 << 28, ʘwʘ
+    8 << 28, (˘ω˘)
+    9 << 28, (U ﹏ U)
     10 << 28,
-    11 << 28,
-    12 << 28,
-    13 << 28,
-    14 << 28,
+    11 << 28, ^•ﻌ•^
+    12 << 28, (˘ω˘)
+    13 << 28, :3
+    14 << 28, ^^;;
     15 << 28
   )
 
   /**
-   * Map valid social proof types specified by clients to an array of bytes. If clients do not
-   * specify any social proof types in thrift, it will return all available social types by
-   * default.
+   * map vawid sociaw pwoof types specified b-by cwients to an awway of b-bytes. if cwients d-do nyot
+   * s-specify any sociaw pwoof types in t-thwift, 🥺 it wiww w-wetuwn aww avaiwabwe s-sociaw types b-by
+   * defauwt. (⑅˘꒳˘)
    *
-   * @param socialProofTypes are the valid socialProofTypes specified by clients
-   * @return an array of bytes representing valid social proof types
+   * @pawam sociawpwooftypes awe the vawid s-sociawpwooftypes s-specified b-by cwients
+   * @wetuwn a-an awway o-of bytes wepwesenting vawid sociaw pwoof types
    */
-  def getUserUserGraphSocialProofTypes(
-    socialProofTypes: Option[Seq[UserSocialProofType]]
-  ): Array[Byte] = {
-    socialProofTypes
-      .map { _.map { _.getValue }.toArray }
-      .getOrElse((0 until SIZE).toArray)
-      .map { _.toByte }
+  def getusewusewgwaphsociawpwooftypes(
+    s-sociawpwooftypes: option[seq[usewsociawpwooftype]]
+  ): awway[byte] = {
+    sociawpwooftypes
+      .map { _.map { _.getvawue }.toawway }
+      .getowewse((0 untiw size).toawway)
+      .map { _.tobyte }
   }
 }

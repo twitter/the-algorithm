@@ -1,21 +1,21 @@
-package com.twitter.interaction_graph.scio.common
+package com.twittew.intewaction_gwaph.scio.common
 
-import com.twitter.interaction_graph.thriftscala.FeatureName
+impowt com.twittew.intewaction_gwaph.thwiftscawa.featuwename
 
-/** Interaction Graph Raw Input type defines a common type for edge / vertex feature calculation
- * It has fields: (source Id, destination Id, Feature Name, age of this relationship (in days),
- * and value to be aggregated)
+/** i-intewaction g-gwaph waw input t-type defines a common t-type fow edge / v-vewtex featuwe c-cawcuwation
+ * i-it has fiewds: (souwce i-id, 😳😳😳 destination id, -.- featuwe nyame, ( ͡o ω ͡o ) age of this wewationship (in days), rawr x3
+ * a-and vawue to be aggwegated)
  */
-case class InteractionGraphRawInput(
-  src: Long,
-  dst: Long,
-  name: FeatureName,
-  age: Int,
-  featureValue: Double)
+case cwass i-intewactiongwaphwawinput(
+  swc: w-wong, nyaa~~
+  dst: wong, /(^•ω•^)
+  nyame: featuwename,
+  age: int, rawr
+  featuwevawue: d-doubwe)
 
-case class FeatureKey(
-  src: Long,
-  dest: Long,
-  name: FeatureName)
+case cwass featuwekey(
+  s-swc: wong, OwO
+  d-dest: wong, (U ﹏ U)
+  nyame: featuwename)
 
-case class Tweepcred(userId: Long, tweepcred: Short)
+case cwass tweepcwed(usewid: wong, >_< tweepcwed: s-showt)

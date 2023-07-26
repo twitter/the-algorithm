@@ -1,11 +1,11 @@
-package com.twitter.tweetypie.thriftscala.entities
+package com.twittew.tweetypie.thwiftscawa.entities
 
-import com.twitter.tweetypie.thriftscala.UrlEntity
-import com.twitter.tweetypie.tweettext.TextEntity
+impowt com.twittew.tweetypie.thwiftscawa.uwwentity
+i-impowt com.twittew.tweetypie.tweettext.textentity
 
-object UrlTextEntity extends TextEntity[UrlEntity] {
-  override def fromIndex(entity: UrlEntity): Short = entity.fromIndex
-  override def toIndex(entity: UrlEntity): Short = entity.toIndex
-  override def move(entity: UrlEntity, fromIndex: Short, toIndex: Short): UrlEntity =
-    entity.copy(fromIndex = fromIndex, toIndex = toIndex)
+o-object u-uwwtextentity extends t-textentity[uwwentity] {
+  o-ovewwide def fwomindex(entity: uwwentity): s-showt = e-entity.fwomindex
+  o-ovewwide def toindex(entity: uwwentity): showt = entity.toindex
+  ovewwide d-def move(entity: uwwentity, (⑅˘꒳˘) fwomindex: showt, (U ᵕ U❁) toindex: s-showt): uwwentity =
+    e-entity.copy(fwomindex = fwomindex, -.- toindex = toindex)
 }

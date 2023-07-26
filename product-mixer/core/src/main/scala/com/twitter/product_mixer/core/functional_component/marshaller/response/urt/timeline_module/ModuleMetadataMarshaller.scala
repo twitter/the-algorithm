@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.timewine_moduwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduwemetadata
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class ModuleMetadataMarshaller @Inject() (
-  adsMetadataMarshaller: AdsMetadataMarshaller,
-  moduleConversationMetadataMarshaller: ModuleConversationMetadataMarshaller,
-  gridCarouselMetadataMarshaller: GridCarouselMetadataMarshaller) {
+@singweton
+c-cwass moduwemetadatamawshawwew @inject() (
+  a-adsmetadatamawshawwew: a-adsmetadatamawshawwew, -.-
+  moduweconvewsationmetadatamawshawwew: moduweconvewsationmetadatamawshawwew, ^^;;
+  gwidcawousewmetadatamawshawwew: gwidcawousewmetadatamawshawwew) {
 
-  def apply(moduleMetadata: ModuleMetadata): urt.ModuleMetadata = urt.ModuleMetadata(
-    adsMetadata = moduleMetadata.adsMetadata.map(adsMetadataMarshaller(_)),
-    conversationMetadata =
-      moduleMetadata.conversationMetadata.map(moduleConversationMetadataMarshaller(_)),
-    gridCarouselMetadata =
-      moduleMetadata.gridCarouselMetadata.map(gridCarouselMetadataMarshaller(_))
+  d-def appwy(moduwemetadata: moduwemetadata): uwt.moduwemetadata = u-uwt.moduwemetadata(
+    adsmetadata = m-moduwemetadata.adsmetadata.map(adsmetadatamawshawwew(_)), >_<
+    convewsationmetadata =
+      moduwemetadata.convewsationmetadata.map(moduweconvewsationmetadatamawshawwew(_)), mya
+    gwidcawousewmetadata =
+      m-moduwemetadata.gwidcawousewmetadata.map(gwidcawousewmetadatamawshawwew(_))
   )
 }

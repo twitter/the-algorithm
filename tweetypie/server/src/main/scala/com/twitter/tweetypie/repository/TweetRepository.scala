@@ -1,31 +1,31 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
+i-impowt com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe._
 
-object TweetRepository {
-  type Type = (TweetId, TweetQuery.Options) => Stitch[Tweet]
-  type Optional = (TweetId, TweetQuery.Options) => Stitch[Option[Tweet]]
+o-object t-tweetwepositowy {
+  t-type type = (tweetid, 🥺 t-tweetquewy.options) => stitch[tweet]
+  type optionaw = (tweetid, >_< tweetquewy.options) => stitch[option[tweet]]
 
-  def tweetGetter(repo: Optional, opts: TweetQuery.Options): FutureArrow[TweetId, Option[Tweet]] =
-    FutureArrow(tweetId => Stitch.run(repo(tweetId, opts)))
+  d-def tweetgettew(wepo: optionaw, >_< opts: t-tweetquewy.options): futuweawwow[tweetid, o-option[tweet]] =
+    futuweawwow(tweetid => stitch.wun(wepo(tweetid, (⑅˘꒳˘) opts)))
 
-  def tweetGetter(repo: Optional): FutureArrow[(TweetId, TweetQuery.Options), Option[Tweet]] =
-    FutureArrow { case (tweetId, opts) => Stitch.run(repo(tweetId, opts)) }
-
-  /**
-   * Converts a `TweetResultRepository.Type`-typed repo to an `TweetRepository.Type`-typed repo.
-   */
-  def fromTweetResult(repo: TweetResultRepository.Type): Type =
-    (tweetId, options) => repo(tweetId, options).map(_.value.tweet)
+  def t-tweetgettew(wepo: optionaw): futuweawwow[(tweetid, /(^•ω•^) t-tweetquewy.options), rawr x3 o-option[tweet]] =
+    futuweawwow { case (tweetid, (U ﹏ U) opts) => stitch.wun(wepo(tweetid, (U ﹏ U) o-opts)) }
 
   /**
-   * Converts a `Type`-typed repo to an `Optional`-typed
-   * repo, where NotFound or filtered tweets are returned as `None`.
+   * convewts a `tweetwesuwtwepositowy.type`-typed wepo to an `tweetwepositowy.type`-typed wepo. (⑅˘꒳˘)
    */
-  def optional(repo: Type): Optional =
-    (tweetId, options) =>
-      repo(tweetId, options).liftToOption { case NotFound | (_: FilteredState) => true }
+  def fwomtweetwesuwt(wepo: tweetwesuwtwepositowy.type): t-type =
+    (tweetid, òωó options) => wepo(tweetid, ʘwʘ o-options).map(_.vawue.tweet)
+
+  /**
+   * c-convewts a `type`-typed w-wepo t-to an `optionaw`-typed
+   * wepo, /(^•ω•^) whewe nyotfound o-ow fiwtewed tweets awe wetuwned as `none`. ʘwʘ
+   */
+  d-def optionaw(wepo: type): optionaw =
+    (tweetid, σωσ options) =>
+      wepo(tweetid, OwO options).wifttooption { case nyotfound | (_: f-fiwtewedstate) => twue }
 }

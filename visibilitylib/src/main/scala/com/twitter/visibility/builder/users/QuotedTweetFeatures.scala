@@ -1,52 +1,52 @@
-package com.twitter.visibility.builder.users
+package com.twittew.visibiwity.buiwdew.usews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.AuthorBlocksOuterAuthor
-import com.twitter.visibility.features.OuterAuthorFollowsAuthor
-import com.twitter.visibility.features.OuterAuthorId
-import com.twitter.visibility.features.OuterAuthorIsInnerAuthor
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.featuwes.authowbwocksoutewauthow
+i-impowt com.twittew.visibiwity.featuwes.outewauthowfowwowsauthow
+i-impowt com.twittew.visibiwity.featuwes.outewauthowid
+i-impowt com.twittew.visibiwity.featuwes.outewauthowisinnewauthow
 
-class QuotedTweetFeatures(
-  relationshipFeatures: RelationshipFeatures,
-  statsReceiver: StatsReceiver) {
+c-cwass quotedtweetfeatuwes(
+  wewationshipfeatuwes: wewationshipfeatuwes, 😳😳😳
+  statsweceivew: statsweceivew) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("quoted_tweet_features")
+  p-pwivate[this] vaw scopedstatsweceivew = statsweceivew.scope("quoted_tweet_featuwes")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pwivate[this] vaw w-wequests = scopedstatsweceivew.countew("wequests")
 
-  private[this] val outerAuthorIdStat =
-    scopedStatsReceiver.scope(OuterAuthorId.name).counter("requests")
-  private[this] val authorBlocksOuterAuthor =
-    scopedStatsReceiver.scope(AuthorBlocksOuterAuthor.name).counter("requests")
-  private[this] val outerAuthorFollowsAuthor =
-    scopedStatsReceiver.scope(OuterAuthorFollowsAuthor.name).counter("requests")
-  private[this] val outerAuthorIsInnerAuthor =
-    scopedStatsReceiver.scope(OuterAuthorIsInnerAuthor.name).counter("requests")
+  pwivate[this] v-vaw outewauthowidstat =
+    scopedstatsweceivew.scope(outewauthowid.name).countew("wequests")
+  pwivate[this] vaw authowbwocksoutewauthow =
+    s-scopedstatsweceivew.scope(authowbwocksoutewauthow.name).countew("wequests")
+  pwivate[this] v-vaw outewauthowfowwowsauthow =
+    s-scopedstatsweceivew.scope(outewauthowfowwowsauthow.name).countew("wequests")
+  pwivate[this] vaw outewauthowisinnewauthow =
+    scopedstatsweceivew.scope(outewauthowisinnewauthow.name).countew("wequests")
 
-  def forOuterAuthor(
-    outerAuthorId: Long,
-    innerAuthorId: Long
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def fowoutewauthow(
+    o-outewauthowid: wong, 🥺
+    innewauthowid: wong
+  ): featuwemapbuiwdew => featuwemapbuiwdew = {
+    w-wequests.incw()
 
-    outerAuthorIdStat.incr()
-    authorBlocksOuterAuthor.incr()
-    outerAuthorFollowsAuthor.incr()
-    outerAuthorIsInnerAuthor.incr()
+    outewauthowidstat.incw()
+    authowbwocksoutewauthow.incw()
+    o-outewauthowfowwowsauthow.incw()
+    o-outewauthowisinnewauthow.incw()
 
-    val viewer = Some(outerAuthorId)
+    v-vaw viewew = s-some(outewauthowid)
 
-    _.withConstantFeature(OuterAuthorId, outerAuthorId)
-      .withFeature(
-        AuthorBlocksOuterAuthor,
-        relationshipFeatures.authorBlocksViewer(innerAuthorId, viewer))
-      .withFeature(
-        OuterAuthorFollowsAuthor,
-        relationshipFeatures.viewerFollowsAuthor(innerAuthorId, viewer))
-      .withConstantFeature(
-        OuterAuthorIsInnerAuthor,
-        innerAuthorId == outerAuthorId
+    _.withconstantfeatuwe(outewauthowid, mya outewauthowid)
+      .withfeatuwe(
+        authowbwocksoutewauthow, 🥺
+        w-wewationshipfeatuwes.authowbwocksviewew(innewauthowid, >_< viewew))
+      .withfeatuwe(
+        outewauthowfowwowsauthow, >_<
+        w-wewationshipfeatuwes.viewewfowwowsauthow(innewauthowid, (⑅˘꒳˘) viewew))
+      .withconstantfeatuwe(
+        outewauthowisinnewauthow, /(^•ω•^)
+        innewauthowid == outewauthowid
       )
   }
 }

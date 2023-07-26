@@ -1,263 +1,263 @@
-package com.twitter.frigate.pushservice.refresh_handler.cross
+package com.twittew.fwigate.pushsewvice.wefwesh_handwew.cwoss
 
-import com.twitter.frigate.common.util.MrNtabCopyObjects
-import com.twitter.frigate.common.util.MrPushCopyObjects
-import com.twitter.frigate.common.util._
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.CommonRecommendationType._
+impowt c-com.twittew.fwigate.common.utiw.mwntabcopyobjects
+i-impowt com.twittew.fwigate.common.utiw.mwpushcopyobjects
+i-impowt com.twittew.fwigate.common.utiw._
+i-impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+i-impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype._
 
-object CandidateToCopy {
+o-object candidatetocopy {
 
-  // Static map from a CommonRecommendationType to set of eligible push notification copies
-  private[cross] val rectypeToPushCopy: Map[CommonRecommendationType, Set[
-    MRPushCopy
+  // static map fwom a commonwecommendationtype to set of e-ewigibwe push nyotification copies
+  pwivate[cwoss] v-vaw wectypetopushcopy: map[commonwecommendationtype, nyaa~~ s-set[
+    mwpushcopy
   ]] =
-    Map[CommonRecommendationType, Set[MRPushCopy]](
-      F1FirstdegreeTweet -> Set(
-        MrPushCopyObjects.FirstDegreeJustTweetedBoldTitle
+    map[commonwecommendationtype, >w< set[mwpushcopy]](
+      f-f1fiwstdegweetweet -> set(
+        m-mwpushcopyobjects.fiwstdegweejusttweetedbowdtitwe
+      ), -.-
+      f-f1fiwstdegweephoto -> set(
+        mwpushcopyobjects.fiwstdegweephotojusttweetedbowdtitwe
+      ), (✿oωo)
+      f1fiwstdegweevideo -> set(
+        mwpushcopyobjects.fiwstdegweevideojusttweetedbowdtitwe
+      ), (˘ω˘)
+      t-tweetwetweet -> set(
+        mwpushcopyobjects.tweetwetweetwithonedispwaysociawcontextswithtext, rawr
+        mwpushcopyobjects.tweetwetweetwithtwodispwaysociawcontextswithtext, OwO
+        mwpushcopyobjects.tweetwetweetwithonedispwayandkothewsociawcontextswithtext
+      ), ^•ﻌ•^
+      t-tweetwetweetphoto -> set(
+        m-mwpushcopyobjects.tweetwetweetphotowithonedispwaysociawcontextwithtext,
+        m-mwpushcopyobjects.tweetwetweetphotowithtwodispwaysociawcontextswithtext, UwU
+        m-mwpushcopyobjects.tweetwetweetphotowithonedispwayandkothewsociawcontextswithtext
+      ), (˘ω˘)
+      t-tweetwetweetvideo -> set(
+        mwpushcopyobjects.tweetwetweetvideowithonedispwaysociawcontextwithtext, (///ˬ///✿)
+        m-mwpushcopyobjects.tweetwetweetvideowithtwodispwaysociawcontextswithtext, σωσ
+        mwpushcopyobjects.tweetwetweetvideowithonedispwayandkothewsociawcontextswithtext
+      ), /(^•ω•^)
+      tweetfavowite -> s-set(
+        mwpushcopyobjects.tweetwikeonesociawcontextwithtext, 😳
+        mwpushcopyobjects.tweetwiketwosociawcontextwithtext, 😳
+        mwpushcopyobjects.tweetwikemuwtipwesociawcontextwithtext
       ),
-      F1FirstdegreePhoto -> Set(
-        MrPushCopyObjects.FirstDegreePhotoJustTweetedBoldTitle
+      tweetfavowitephoto -> set(
+        mwpushcopyobjects.tweetwikephotoonesociawcontextwithtext, (⑅˘꒳˘)
+        mwpushcopyobjects.tweetwikephototwosociawcontextwithtext, 😳😳😳
+        m-mwpushcopyobjects.tweetwikephotomuwtipwesociawcontextwithtext
+      ), 😳
+      tweetfavowitevideo -> s-set(
+        m-mwpushcopyobjects.tweetwikevideoonesociawcontextwithtext, XD
+        m-mwpushcopyobjects.tweetwikevideotwosociawcontextwithtext, mya
+        mwpushcopyobjects.tweetwikevideomuwtipwesociawcontextwithtext
       ),
-      F1FirstdegreeVideo -> Set(
-        MrPushCopyObjects.FirstDegreeVideoJustTweetedBoldTitle
-      ),
-      TweetRetweet -> Set(
-        MrPushCopyObjects.TweetRetweetWithOneDisplaySocialContextsWithText,
-        MrPushCopyObjects.TweetRetweetWithTwoDisplaySocialContextsWithText,
-        MrPushCopyObjects.TweetRetweetWithOneDisplayAndKOtherSocialContextsWithText
-      ),
-      TweetRetweetPhoto -> Set(
-        MrPushCopyObjects.TweetRetweetPhotoWithOneDisplaySocialContextWithText,
-        MrPushCopyObjects.TweetRetweetPhotoWithTwoDisplaySocialContextsWithText,
-        MrPushCopyObjects.TweetRetweetPhotoWithOneDisplayAndKOtherSocialContextsWithText
-      ),
-      TweetRetweetVideo -> Set(
-        MrPushCopyObjects.TweetRetweetVideoWithOneDisplaySocialContextWithText,
-        MrPushCopyObjects.TweetRetweetVideoWithTwoDisplaySocialContextsWithText,
-        MrPushCopyObjects.TweetRetweetVideoWithOneDisplayAndKOtherSocialContextsWithText
-      ),
-      TweetFavorite -> Set(
-        MrPushCopyObjects.TweetLikeOneSocialContextWithText,
-        MrPushCopyObjects.TweetLikeTwoSocialContextWithText,
-        MrPushCopyObjects.TweetLikeMultipleSocialContextWithText
-      ),
-      TweetFavoritePhoto -> Set(
-        MrPushCopyObjects.TweetLikePhotoOneSocialContextWithText,
-        MrPushCopyObjects.TweetLikePhotoTwoSocialContextWithText,
-        MrPushCopyObjects.TweetLikePhotoMultipleSocialContextWithText
-      ),
-      TweetFavoriteVideo -> Set(
-        MrPushCopyObjects.TweetLikeVideoOneSocialContextWithText,
-        MrPushCopyObjects.TweetLikeVideoTwoSocialContextWithText,
-        MrPushCopyObjects.TweetLikeVideoMultipleSocialContextWithText
-      ),
-      UnreadBadgeCount -> Set(MrPushCopyObjects.UnreadBadgeCount),
-      InterestBasedTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      InterestBasedPhoto -> Set(MrPushCopyObjects.RecommendedForYouPhoto),
-      InterestBasedVideo -> Set(MrPushCopyObjects.RecommendedForYouVideo),
-      UserFollow -> Set(
-        MrPushCopyObjects.UserFollowWithOneSocialContext,
-        MrPushCopyObjects.UserFollowWithTwoSocialContext,
-        MrPushCopyObjects.UserFollowOneDisplayAndKOtherSocialContext
-      ),
-      HermitUser -> Set(
-        MrPushCopyObjects.HermitUserWithOneSocialContext,
-        MrPushCopyObjects.HermitUserWithTwoSocialContext,
-        MrPushCopyObjects.HermitUserWithOneDisplayAndKOtherSocialContexts
-      ),
-      TriangularLoopUser -> Set(
-        MrPushCopyObjects.TriangularLoopUserWithOneSocialContext,
-        MrPushCopyObjects.TriangularLoopUserWithTwoSocialContexts,
-        MrPushCopyObjects.TriangularLoopUserOneDisplayAndKotherSocialContext
-      ),
-      ForwardAddressbookUserFollow -> Set(MrPushCopyObjects.ForwardAddressBookUserFollow),
-      NewsArticleNewsLanding -> Set(MrPushCopyObjects.NewsArticleNewsLandingCopy),
-      TopicProofTweet -> Set(MrPushCopyObjects.TopicProofTweet),
-      UserInterestinTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      UserInterestinPhoto -> Set(MrPushCopyObjects.RecommendedForYouPhoto),
-      UserInterestinVideo -> Set(MrPushCopyObjects.RecommendedForYouVideo),
-      TwistlyTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      TwistlyPhoto -> Set(MrPushCopyObjects.RecommendedForYouPhoto),
-      TwistlyVideo -> Set(MrPushCopyObjects.RecommendedForYouVideo),
-      ElasticTimelineTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      ElasticTimelinePhoto -> Set(MrPushCopyObjects.RecommendedForYouPhoto),
-      ElasticTimelineVideo -> Set(MrPushCopyObjects.RecommendedForYouVideo),
-      ExploreVideoTweet -> Set(MrPushCopyObjects.ExploreVideoTweet),
-      List -> Set(MrPushCopyObjects.ListRecommendation),
-      InterestBasedUserFollow -> Set(MrPushCopyObjects.UserFollowInterestBasedCopy),
-      PastEmailEngagementTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      PastEmailEngagementPhoto -> Set(MrPushCopyObjects.RecommendedForYouPhoto),
-      PastEmailEngagementVideo -> Set(MrPushCopyObjects.RecommendedForYouVideo),
-      ExplorePush -> Set(MrPushCopyObjects.ExplorePush),
-      ConnectTabPush -> Set(MrPushCopyObjects.ConnectTabPush),
-      ConnectTabWithUserPush -> Set(MrPushCopyObjects.ConnectTabWithUserPush),
-      AddressBookUploadPush -> Set(MrPushCopyObjects.AddressBookPush),
-      InterestPickerPush -> Set(MrPushCopyObjects.InterestPickerPush),
-      CompleteOnboardingPush -> Set(MrPushCopyObjects.CompleteOnboardingPush),
-      GeoPopTweet -> Set(MrPushCopyObjects.GeoPopPushCopy),
-      TagSpaceTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      FrsTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      TwhinTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      MrModelingBasedTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      DetopicTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      TweetImpressions -> Set(MrPushCopyObjects.TopTweetImpressions),
-      TrendTweet -> Set(MrPushCopyObjects.TrendTweet),
-      ReverseAddressbookTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      ForwardAddressbookTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      SpaceInNetwork -> Set(MrPushCopyObjects.SpaceHost),
-      SpaceOutOfNetwork -> Set(MrPushCopyObjects.SpaceHost),
-      SubscribedSearch -> Set(MrPushCopyObjects.SubscribedSearchTweet),
-      TripGeoTweet -> Set(MrPushCopyObjects.TripGeoTweetPushCopy),
-      CrowdSearchTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
-      Digest -> Set(MrPushCopyObjects.Digest),
-      TripHqTweet -> Set(MrPushCopyObjects.TripHqTweetPushCopy)
+      unweadbadgecount -> set(mwpushcopyobjects.unweadbadgecount), ^•ﻌ•^
+      i-intewestbasedtweet -> s-set(mwpushcopyobjects.wecommendedfowyoutweet), ʘwʘ
+      intewestbasedphoto -> s-set(mwpushcopyobjects.wecommendedfowyouphoto), ( ͡o ω ͡o )
+      i-intewestbasedvideo -> set(mwpushcopyobjects.wecommendedfowyouvideo), mya
+      u-usewfowwow -> set(
+        m-mwpushcopyobjects.usewfowwowwithonesociawcontext, o.O
+        mwpushcopyobjects.usewfowwowwithtwosociawcontext, (✿oωo)
+        mwpushcopyobjects.usewfowwowonedispwayandkothewsociawcontext
+      ), :3
+      h-hewmitusew -> set(
+        mwpushcopyobjects.hewmitusewwithonesociawcontext,
+        m-mwpushcopyobjects.hewmitusewwithtwosociawcontext, 😳
+        mwpushcopyobjects.hewmitusewwithonedispwayandkothewsociawcontexts
+      ), (U ﹏ U)
+      t-twianguwawwoopusew -> s-set(
+        mwpushcopyobjects.twianguwawwoopusewwithonesociawcontext, mya
+        mwpushcopyobjects.twianguwawwoopusewwithtwosociawcontexts, (U ᵕ U❁)
+        mwpushcopyobjects.twianguwawwoopusewonedispwayandkothewsociawcontext
+      ), :3
+      fowwawdaddwessbookusewfowwow -> set(mwpushcopyobjects.fowwawdaddwessbookusewfowwow), mya
+      nyewsawticwenewswanding -> s-set(mwpushcopyobjects.newsawticwenewswandingcopy),
+      t-topicpwooftweet -> set(mwpushcopyobjects.topicpwooftweet), OwO
+      usewintewestintweet -> s-set(mwpushcopyobjects.wecommendedfowyoutweet), (ˆ ﻌ ˆ)♡
+      u-usewintewestinphoto -> s-set(mwpushcopyobjects.wecommendedfowyouphoto), ʘwʘ
+      usewintewestinvideo -> set(mwpushcopyobjects.wecommendedfowyouvideo), o.O
+      twistwytweet -> s-set(mwpushcopyobjects.wecommendedfowyoutweet), UwU
+      twistwyphoto -> set(mwpushcopyobjects.wecommendedfowyouphoto), rawr x3
+      twistwyvideo -> set(mwpushcopyobjects.wecommendedfowyouvideo), 🥺
+      e-ewastictimewinetweet -> set(mwpushcopyobjects.wecommendedfowyoutweet), :3
+      e-ewastictimewinephoto -> s-set(mwpushcopyobjects.wecommendedfowyouphoto), (ꈍᴗꈍ)
+      e-ewastictimewinevideo -> set(mwpushcopyobjects.wecommendedfowyouvideo), 🥺
+      e-expwowevideotweet -> s-set(mwpushcopyobjects.expwowevideotweet), (✿oωo)
+      w-wist -> s-set(mwpushcopyobjects.wistwecommendation), (U ﹏ U)
+      intewestbasedusewfowwow -> set(mwpushcopyobjects.usewfowwowintewestbasedcopy), :3
+      p-pastemaiwengagementtweet -> s-set(mwpushcopyobjects.wecommendedfowyoutweet), ^^;;
+      p-pastemaiwengagementphoto -> s-set(mwpushcopyobjects.wecommendedfowyouphoto), rawr
+      p-pastemaiwengagementvideo -> set(mwpushcopyobjects.wecommendedfowyouvideo), 😳😳😳
+      expwowepush -> set(mwpushcopyobjects.expwowepush), (✿oωo)
+      c-connecttabpush -> set(mwpushcopyobjects.connecttabpush), OwO
+      connecttabwithusewpush -> set(mwpushcopyobjects.connecttabwithusewpush), ʘwʘ
+      addwessbookupwoadpush -> set(mwpushcopyobjects.addwessbookpush), (ˆ ﻌ ˆ)♡
+      intewestpickewpush -> s-set(mwpushcopyobjects.intewestpickewpush), (U ﹏ U)
+      compweteonboawdingpush -> set(mwpushcopyobjects.compweteonboawdingpush), UwU
+      geopoptweet -> s-set(mwpushcopyobjects.geopoppushcopy), XD
+      t-tagspacetweet -> s-set(mwpushcopyobjects.wecommendedfowyoutweet), ʘwʘ
+      fwstweet -> set(mwpushcopyobjects.wecommendedfowyoutweet), rawr x3
+      t-twhintweet -> set(mwpushcopyobjects.wecommendedfowyoutweet), ^^;;
+      m-mwmodewingbasedtweet -> set(mwpushcopyobjects.wecommendedfowyoutweet), ʘwʘ
+      d-detopictweet -> set(mwpushcopyobjects.wecommendedfowyoutweet), (U ﹏ U)
+      tweetimpwessions -> set(mwpushcopyobjects.toptweetimpwessions), (˘ω˘)
+      twendtweet -> set(mwpushcopyobjects.twendtweet), (ꈍᴗꈍ)
+      wevewseaddwessbooktweet -> s-set(mwpushcopyobjects.wecommendedfowyoutweet),
+      fowwawdaddwessbooktweet -> s-set(mwpushcopyobjects.wecommendedfowyoutweet), /(^•ω•^)
+      spaceinnetwowk -> s-set(mwpushcopyobjects.spacehost), >_<
+      s-spaceoutofnetwowk -> set(mwpushcopyobjects.spacehost), σωσ
+      subscwibedseawch -> s-set(mwpushcopyobjects.subscwibedseawchtweet), ^^;;
+      t-twipgeotweet -> set(mwpushcopyobjects.twipgeotweetpushcopy), 😳
+      c-cwowdseawchtweet -> s-set(mwpushcopyobjects.wecommendedfowyoutweet), >_<
+      digest -> set(mwpushcopyobjects.digest), -.-
+      twiphqtweet -> set(mwpushcopyobjects.twiphqtweetpushcopy)
     )
 
-  // Static map from a push copy to set of eligible ntab copies
-  private[cross] val pushcopyToNtabcopy: Map[MRPushCopy, Set[MRNtabCopy]] =
-    Map[MRPushCopy, Set[MRNtabCopy]](
-      MrPushCopyObjects.FirstDegreeJustTweetedBoldTitle -> Set(
-        MrNtabCopyObjects.FirstDegreeTweetRecent),
-      MrPushCopyObjects.FirstDegreePhotoJustTweetedBoldTitle -> Set(
-        MrNtabCopyObjects.FirstDegreeTweetRecent
+  // static map fwom a push copy t-to set of ewigibwe n-nytab copies
+  p-pwivate[cwoss] vaw pushcopytontabcopy: m-map[mwpushcopy, UwU s-set[mwntabcopy]] =
+    map[mwpushcopy, :3 s-set[mwntabcopy]](
+      mwpushcopyobjects.fiwstdegweejusttweetedbowdtitwe -> set(
+        mwntabcopyobjects.fiwstdegweetweetwecent), σωσ
+      mwpushcopyobjects.fiwstdegweephotojusttweetedbowdtitwe -> set(
+        m-mwntabcopyobjects.fiwstdegweetweetwecent
+      ), >w<
+      m-mwpushcopyobjects.fiwstdegweevideojusttweetedbowdtitwe -> set(
+        mwntabcopyobjects.fiwstdegweetweetwecent
+      ), (ˆ ﻌ ˆ)♡
+      m-mwpushcopyobjects.tweetwetweetwithonedispwaysociawcontextswithtext -> s-set(
+        mwntabcopyobjects.tweetwetweetwithonedispwaysociawcontext
+      ), ʘwʘ
+      mwpushcopyobjects.tweetwetweetwithtwodispwaysociawcontextswithtext -> set(
+        mwntabcopyobjects.tweetwetweetwithtwodispwaysociawcontexts
       ),
-      MrPushCopyObjects.FirstDegreeVideoJustTweetedBoldTitle -> Set(
-        MrNtabCopyObjects.FirstDegreeTweetRecent
+      m-mwpushcopyobjects.tweetwetweetwithonedispwayandkothewsociawcontextswithtext -> set(
+        mwntabcopyobjects.tweetwetweetwithonedispwayandkothewsociawcontexts
+      ), :3
+      mwpushcopyobjects.tweetwetweetphotowithonedispwaysociawcontextwithtext -> set(
+        m-mwntabcopyobjects.tweetwetweetphotowithonedispwaysociawcontext
+      ), (˘ω˘)
+      mwpushcopyobjects.tweetwetweetphotowithtwodispwaysociawcontextswithtext -> set(
+        m-mwntabcopyobjects.tweetwetweetphotowithtwodispwaysociawcontexts
+      ), 😳😳😳
+      mwpushcopyobjects.tweetwetweetphotowithonedispwayandkothewsociawcontextswithtext -> s-set(
+        mwntabcopyobjects.tweetwetweetphotowithonedispwayandkothewsociawcontexts
+      ), rawr x3
+      mwpushcopyobjects.tweetwetweetvideowithonedispwaysociawcontextwithtext -> set(
+        mwntabcopyobjects.tweetwetweetvideowithonedispwaysociawcontext
+      ), (✿oωo)
+      m-mwpushcopyobjects.tweetwetweetvideowithtwodispwaysociawcontextswithtext -> s-set(
+        mwntabcopyobjects.tweetwetweetvideowithtwodispwaysociawcontexts
+      ), (ˆ ﻌ ˆ)♡
+      mwpushcopyobjects.tweetwetweetvideowithonedispwayandkothewsociawcontextswithtext -> set(
+        m-mwntabcopyobjects.tweetwetweetvideowithonedispwayandkothewsociawcontexts
+      ), :3
+      mwpushcopyobjects.tweetwikeonesociawcontextwithtext -> s-set(
+        mwntabcopyobjects.tweetwikewithonedispwaysociawcontext
+      ), (U ᵕ U❁)
+      mwpushcopyobjects.tweetwiketwosociawcontextwithtext -> set(
+        m-mwntabcopyobjects.tweetwikewithtwodispwaysociawcontexts
       ),
-      MrPushCopyObjects.TweetRetweetWithOneDisplaySocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetWithOneDisplaySocialContext
+      mwpushcopyobjects.tweetwikemuwtipwesociawcontextwithtext -> s-set(
+        m-mwntabcopyobjects.tweetwikewithonedispwayandkothewsociawcontexts
+      ), ^^;;
+      mwpushcopyobjects.tweetwikephotoonesociawcontextwithtext -> s-set(
+        mwntabcopyobjects.tweetwikephotowithonedispwaysociawcontext
+      ), mya
+      mwpushcopyobjects.tweetwikephototwosociawcontextwithtext -> s-set(
+        m-mwntabcopyobjects.tweetwikephotowithtwodispwaysociawcontexts
+      ), 😳😳😳
+      m-mwpushcopyobjects.tweetwikephotomuwtipwesociawcontextwithtext -> set(
+        m-mwntabcopyobjects.tweetwikephotowithonedispwayandkothewsociawcontexts
+      ), OwO
+      m-mwpushcopyobjects.tweetwikevideoonesociawcontextwithtext -> set(
+        mwntabcopyobjects.tweetwikevideowithonedispwaysociawcontext
+      ), rawr
+      m-mwpushcopyobjects.tweetwikevideotwosociawcontextwithtext -> s-set(
+        m-mwntabcopyobjects.tweetwikevideowithtwodispwaysociawcontexts
+      ), XD
+      mwpushcopyobjects.tweetwikevideomuwtipwesociawcontextwithtext -> set(
+        mwntabcopyobjects.tweetwikevideowithonedispwayandkothewsociawcontexts
+      ), (U ﹏ U)
+      m-mwpushcopyobjects.unweadbadgecount -> set.empty[mwntabcopy], (˘ω˘)
+      m-mwpushcopyobjects.wecommendedfowyoutweet -> s-set(mwntabcopyobjects.wecommendedfowyoucopy),
+      mwpushcopyobjects.wecommendedfowyouphoto -> set(mwntabcopyobjects.wecommendedfowyoucopy),
+      mwpushcopyobjects.wecommendedfowyouvideo -> s-set(mwntabcopyobjects.wecommendedfowyoucopy), UwU
+      m-mwpushcopyobjects.geopoppushcopy -> s-set(mwntabcopyobjects.wecommendedfowyoucopy), >_<
+      m-mwpushcopyobjects.usewfowwowwithonesociawcontext -> set(
+        mwntabcopyobjects.usewfowwowwithonedispwaysociawcontext
+      ), σωσ
+      m-mwpushcopyobjects.usewfowwowwithtwosociawcontext -> set(
+        mwntabcopyobjects.usewfowwowwithtwodispwaysociawcontexts
+      ), 🥺
+      mwpushcopyobjects.usewfowwowonedispwayandkothewsociawcontext -> set(
+        mwntabcopyobjects.usewfowwowwithonedispwayandkothewsociawcontexts
+      ), 🥺
+      mwpushcopyobjects.hewmitusewwithonesociawcontext -> set(
+        mwntabcopyobjects.usewfowwowwithonedispwaysociawcontext
+      ), ʘwʘ
+      m-mwpushcopyobjects.hewmitusewwithtwosociawcontext -> set(
+        m-mwntabcopyobjects.usewfowwowwithtwodispwaysociawcontexts
+      ), :3
+      mwpushcopyobjects.hewmitusewwithonedispwayandkothewsociawcontexts -> s-set(
+        mwntabcopyobjects.usewfowwowwithonedispwayandkothewsociawcontexts
+      ), (U ﹏ U)
+      m-mwpushcopyobjects.twianguwawwoopusewwithonesociawcontext -> set(
+        m-mwntabcopyobjects.twianguwawwoopusewwithonesociawcontext
       ),
-      MrPushCopyObjects.TweetRetweetWithTwoDisplaySocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetWithTwoDisplaySocialContexts
-      ),
-      MrPushCopyObjects.TweetRetweetWithOneDisplayAndKOtherSocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetWithOneDisplayAndKOtherSocialContexts
-      ),
-      MrPushCopyObjects.TweetRetweetPhotoWithOneDisplaySocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetPhotoWithOneDisplaySocialContext
-      ),
-      MrPushCopyObjects.TweetRetweetPhotoWithTwoDisplaySocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetPhotoWithTwoDisplaySocialContexts
-      ),
-      MrPushCopyObjects.TweetRetweetPhotoWithOneDisplayAndKOtherSocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetPhotoWithOneDisplayAndKOtherSocialContexts
-      ),
-      MrPushCopyObjects.TweetRetweetVideoWithOneDisplaySocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetVideoWithOneDisplaySocialContext
-      ),
-      MrPushCopyObjects.TweetRetweetVideoWithTwoDisplaySocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetVideoWithTwoDisplaySocialContexts
-      ),
-      MrPushCopyObjects.TweetRetweetVideoWithOneDisplayAndKOtherSocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetVideoWithOneDisplayAndKOtherSocialContexts
-      ),
-      MrPushCopyObjects.TweetLikeOneSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikeWithOneDisplaySocialContext
-      ),
-      MrPushCopyObjects.TweetLikeTwoSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikeWithTwoDisplaySocialContexts
-      ),
-      MrPushCopyObjects.TweetLikeMultipleSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikeWithOneDisplayAndKOtherSocialContexts
-      ),
-      MrPushCopyObjects.TweetLikePhotoOneSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikePhotoWithOneDisplaySocialContext
-      ),
-      MrPushCopyObjects.TweetLikePhotoTwoSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikePhotoWithTwoDisplaySocialContexts
-      ),
-      MrPushCopyObjects.TweetLikePhotoMultipleSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikePhotoWithOneDisplayAndKOtherSocialContexts
-      ),
-      MrPushCopyObjects.TweetLikeVideoOneSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikeVideoWithOneDisplaySocialContext
-      ),
-      MrPushCopyObjects.TweetLikeVideoTwoSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikeVideoWithTwoDisplaySocialContexts
-      ),
-      MrPushCopyObjects.TweetLikeVideoMultipleSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikeVideoWithOneDisplayAndKOtherSocialContexts
-      ),
-      MrPushCopyObjects.UnreadBadgeCount -> Set.empty[MRNtabCopy],
-      MrPushCopyObjects.RecommendedForYouTweet -> Set(MrNtabCopyObjects.RecommendedForYouCopy),
-      MrPushCopyObjects.RecommendedForYouPhoto -> Set(MrNtabCopyObjects.RecommendedForYouCopy),
-      MrPushCopyObjects.RecommendedForYouVideo -> Set(MrNtabCopyObjects.RecommendedForYouCopy),
-      MrPushCopyObjects.GeoPopPushCopy -> Set(MrNtabCopyObjects.RecommendedForYouCopy),
-      MrPushCopyObjects.UserFollowWithOneSocialContext -> Set(
-        MrNtabCopyObjects.UserFollowWithOneDisplaySocialContext
-      ),
-      MrPushCopyObjects.UserFollowWithTwoSocialContext -> Set(
-        MrNtabCopyObjects.UserFollowWithTwoDisplaySocialContexts
-      ),
-      MrPushCopyObjects.UserFollowOneDisplayAndKOtherSocialContext -> Set(
-        MrNtabCopyObjects.UserFollowWithOneDisplayAndKOtherSocialContexts
-      ),
-      MrPushCopyObjects.HermitUserWithOneSocialContext -> Set(
-        MrNtabCopyObjects.UserFollowWithOneDisplaySocialContext
-      ),
-      MrPushCopyObjects.HermitUserWithTwoSocialContext -> Set(
-        MrNtabCopyObjects.UserFollowWithTwoDisplaySocialContexts
-      ),
-      MrPushCopyObjects.HermitUserWithOneDisplayAndKOtherSocialContexts -> Set(
-        MrNtabCopyObjects.UserFollowWithOneDisplayAndKOtherSocialContexts
-      ),
-      MrPushCopyObjects.TriangularLoopUserWithOneSocialContext -> Set(
-        MrNtabCopyObjects.TriangularLoopUserWithOneSocialContext
-      ),
-      MrPushCopyObjects.TriangularLoopUserWithTwoSocialContexts -> Set(
-        MrNtabCopyObjects.TriangularLoopUserWithTwoSocialContexts
-      ),
-      MrPushCopyObjects.TriangularLoopUserOneDisplayAndKotherSocialContext -> Set(
-        MrNtabCopyObjects.TriangularLoopUserOneDisplayAndKOtherSocialContext
-      ),
-      MrPushCopyObjects.NewsArticleNewsLandingCopy -> Set(
-        MrNtabCopyObjects.NewsArticleNewsLandingCopy
-      ),
-      MrPushCopyObjects.UserFollowInterestBasedCopy -> Set(
-        MrNtabCopyObjects.UserFollowInterestBasedCopy
-      ),
-      MrPushCopyObjects.ForwardAddressBookUserFollow -> Set(
-        MrNtabCopyObjects.ForwardAddressBookUserFollow),
-      MrPushCopyObjects.ConnectTabPush -> Set(
-        MrNtabCopyObjects.ConnectTabPush
-      ),
-      MrPushCopyObjects.ExplorePush -> Set.empty[MRNtabCopy],
-      MrPushCopyObjects.ConnectTabWithUserPush -> Set(
-        MrNtabCopyObjects.UserFollowInterestBasedCopy),
-      MrPushCopyObjects.AddressBookPush -> Set(MrNtabCopyObjects.AddressBook),
-      MrPushCopyObjects.InterestPickerPush -> Set(MrNtabCopyObjects.InterestPicker),
-      MrPushCopyObjects.CompleteOnboardingPush -> Set(MrNtabCopyObjects.CompleteOnboarding),
-      MrPushCopyObjects.TopicProofTweet -> Set(MrNtabCopyObjects.TopicProofTweet),
-      MrPushCopyObjects.TopTweetImpressions -> Set(MrNtabCopyObjects.TopTweetImpressions),
-      MrPushCopyObjects.TrendTweet -> Set(MrNtabCopyObjects.TrendTweet),
-      MrPushCopyObjects.SpaceHost -> Set(MrNtabCopyObjects.SpaceHost),
-      MrPushCopyObjects.SubscribedSearchTweet -> Set(MrNtabCopyObjects.SubscribedSearchTweet),
-      MrPushCopyObjects.TripGeoTweetPushCopy -> Set(MrNtabCopyObjects.RecommendedForYouCopy),
-      MrPushCopyObjects.Digest -> Set(MrNtabCopyObjects.Digest),
-      MrPushCopyObjects.TripHqTweetPushCopy -> Set(MrNtabCopyObjects.HighQualityTweet),
-      MrPushCopyObjects.ExploreVideoTweet -> Set(MrNtabCopyObjects.ExploreVideoTweet),
-      MrPushCopyObjects.ListRecommendation -> Set(MrNtabCopyObjects.ListRecommendation),
-      MrPushCopyObjects.MagicFanoutCreatorSubscription -> Set(
-        MrNtabCopyObjects.MagicFanoutCreatorSubscription),
-      MrPushCopyObjects.MagicFanoutNewCreator -> Set(MrNtabCopyObjects.MagicFanoutNewCreator)
+      m-mwpushcopyobjects.twianguwawwoopusewwithtwosociawcontexts -> set(
+        m-mwntabcopyobjects.twianguwawwoopusewwithtwosociawcontexts
+      ), (U ﹏ U)
+      m-mwpushcopyobjects.twianguwawwoopusewonedispwayandkothewsociawcontext -> s-set(
+        mwntabcopyobjects.twianguwawwoopusewonedispwayandkothewsociawcontext
+      ), ʘwʘ
+      mwpushcopyobjects.newsawticwenewswandingcopy -> set(
+        mwntabcopyobjects.newsawticwenewswandingcopy
+      ), >w<
+      mwpushcopyobjects.usewfowwowintewestbasedcopy -> set(
+        m-mwntabcopyobjects.usewfowwowintewestbasedcopy
+      ), rawr x3
+      m-mwpushcopyobjects.fowwawdaddwessbookusewfowwow -> s-set(
+        mwntabcopyobjects.fowwawdaddwessbookusewfowwow), OwO
+      m-mwpushcopyobjects.connecttabpush -> set(
+        mwntabcopyobjects.connecttabpush
+      ), ^•ﻌ•^
+      mwpushcopyobjects.expwowepush -> s-set.empty[mwntabcopy], >_<
+      m-mwpushcopyobjects.connecttabwithusewpush -> set(
+        m-mwntabcopyobjects.usewfowwowintewestbasedcopy), OwO
+      mwpushcopyobjects.addwessbookpush -> set(mwntabcopyobjects.addwessbook), >_<
+      m-mwpushcopyobjects.intewestpickewpush -> s-set(mwntabcopyobjects.intewestpickew), (ꈍᴗꈍ)
+      mwpushcopyobjects.compweteonboawdingpush -> s-set(mwntabcopyobjects.compweteonboawding), >w<
+      m-mwpushcopyobjects.topicpwooftweet -> set(mwntabcopyobjects.topicpwooftweet), (U ﹏ U)
+      mwpushcopyobjects.toptweetimpwessions -> set(mwntabcopyobjects.toptweetimpwessions), ^^
+      mwpushcopyobjects.twendtweet -> s-set(mwntabcopyobjects.twendtweet), (U ﹏ U)
+      m-mwpushcopyobjects.spacehost -> s-set(mwntabcopyobjects.spacehost), :3
+      m-mwpushcopyobjects.subscwibedseawchtweet -> s-set(mwntabcopyobjects.subscwibedseawchtweet), (✿oωo)
+      mwpushcopyobjects.twipgeotweetpushcopy -> s-set(mwntabcopyobjects.wecommendedfowyoucopy), XD
+      m-mwpushcopyobjects.digest -> set(mwntabcopyobjects.digest), >w<
+      m-mwpushcopyobjects.twiphqtweetpushcopy -> s-set(mwntabcopyobjects.highquawitytweet), òωó
+      mwpushcopyobjects.expwowevideotweet -> s-set(mwntabcopyobjects.expwowevideotweet), (ꈍᴗꈍ)
+      mwpushcopyobjects.wistwecommendation -> set(mwntabcopyobjects.wistwecommendation), rawr x3
+      m-mwpushcopyobjects.magicfanoutcweatowsubscwiption -> set(
+        mwntabcopyobjects.magicfanoutcweatowsubscwiption), rawr x3
+      m-mwpushcopyobjects.magicfanoutnewcweatow -> s-set(mwntabcopyobjects.magicfanoutnewcweatow)
     )
 
   /**
    *
-   * @param crt - [[CommonRecommendationType]] used for a frigate push notification
+   * @pawam cwt - [[commonwecommendationtype]] u-used fow a fwigate push nyotification
    *
-   * @return - Set of [[MRPushCopy]] objects representing push copies eligibile for a
-   *         [[CommonRecommendationType]]
+   * @wetuwn - s-set of [[mwpushcopy]] o-objects w-wepwesenting push copies ewigibiwe fow a
+   *         [[commonwecommendationtype]]
    */
-  def getPushCopiesFromRectype(crt: CommonRecommendationType): Option[Set[MRPushCopy]] =
-    rectypeToPushCopy.get(crt)
+  def getpushcopiesfwomwectype(cwt: c-commonwecommendationtype): option[set[mwpushcopy]] =
+    wectypetopushcopy.get(cwt)
 
   /**
    *
-   * @param pushcopy - [[MRPushCopy]] object representing a push notification copy
-   * @return - Set of [[MRNtabCopy]] objects that can be paired with a given [[MRPushCopy]]
+   * @pawam pushcopy - [[mwpushcopy]] o-object w-wepwesenting a push nyotification c-copy
+   * @wetuwn - set of [[mwntabcopy]] o-objects t-that can be paiwed with a given [[mwpushcopy]]
    */
-  def getNtabcopiesFromPushcopy(pushcopy: MRPushCopy): Option[Set[MRNtabCopy]] =
-    pushcopyToNtabcopy.get(pushcopy)
+  def getntabcopiesfwompushcopy(pushcopy: m-mwpushcopy): option[set[mwntabcopy]] =
+    pushcopytontabcopy.get(pushcopy)
 }

@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "servo/repo/src/main/scala",
-        "src/thrift/com/twitter/wtf/candidate:wtf-candidate-scala",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/core",
-        "timelines:visibility",
-        "timelines/src/main/scala/com/twitter/timelines/clients/socialgraph",
-        "timelines/src/main/scala/com/twitter/timelines/util",
-        "timelines/src/main/scala/com/twitter/timelines/util/stats",
-        "util/util-core:util-core-util",
-        "util/util-logging/src/main/scala",
-        "util/util-stats/src/main/scala",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "sewvo/wepo/swc/main/scawa", òωó
+        "swc/thwift/com/twittew/wtf/candidate:wtf-candidate-scawa", o.O
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/cowe", (U ᵕ U❁)
+        "timewines:visibiwity", (⑅˘꒳˘)
+        "timewines/swc/main/scawa/com/twittew/timewines/cwients/sociawgwaph", ( ͡o ω ͡o )
+        "timewines/swc/main/scawa/com/twittew/timewines/utiw", UwU
+        "timewines/swc/main/scawa/com/twittew/timewines/utiw/stats", rawr x3
+        "utiw/utiw-cowe:utiw-cowe-utiw", rawr
+        "utiw/utiw-wogging/swc/main/scawa", σωσ
+        "utiw/utiw-stats/swc/main/scawa", σωσ
+    ], >_<
 )

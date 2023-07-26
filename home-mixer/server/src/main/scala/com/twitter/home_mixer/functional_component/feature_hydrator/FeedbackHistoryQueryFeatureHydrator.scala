@@ -1,32 +1,32 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.twittew.home_mixew.functionaw_component.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.feedback.FeedbackHistoryManhattanClient
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.homefeatuwes.feedbackhistowyfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewinemixew.cwients.feedback.feedbackhistowymanhattancwient
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class FeedbackHistoryQueryFeatureHydrator @Inject() (
-  feedbackHistoryClient: FeedbackHistoryManhattanClient)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@singweton
+case cwass feedbackhistowyquewyfeatuwehydwatow @inject() (
+  f-feedbackhistowycwient: feedbackhistowymanhattancwient)
+    e-extends quewyfeatuwehydwatow[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("FeedbackHistory")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew = f-featuwehydwatowidentifiew("feedbackhistowy")
 
-  override val features: Set[Feature[_, _]] = Set(FeedbackHistoryFeature)
+  ovewwide v-vaw featuwes: s-set[featuwe[_, rawr x3 _]] = set(feedbackhistowyfeatuwe)
 
-  override def hydrate(
-    query: PipelineQuery
-  ): Stitch[FeatureMap] =
-    Stitch
-      .callFuture(feedbackHistoryClient.get(query.getRequiredUserId))
-      .map { feedbackHistory =>
-        FeatureMapBuilder().add(FeedbackHistoryFeature, feedbackHistory).build()
+  ovewwide def hydwate(
+    quewy: pipewinequewy
+  ): s-stitch[featuwemap] =
+    stitch
+      .cawwfutuwe(feedbackhistowycwient.get(quewy.getwequiwedusewid))
+      .map { feedbackhistowy =>
+        featuwemapbuiwdew().add(feedbackhistowyfeatuwe, nyaa~~ feedbackhistowy).buiwd()
       }
 }

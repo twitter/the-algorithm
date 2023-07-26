@@ -1,26 +1,26 @@
-namespace java com.twitter.tsp.thriftjava
-namespace py gen.twitter.tsp
-#@namespace scala com.twitter.tsp.thriftscala
-#@namespace strato com.twitter.tsp.strato
+namespace java com.twittew.tsp.thwiftjava
+nyamespace p-py gen.twittew.tsp
+#@namespace s-scawa com.twittew.tsp.thwiftscawa
+#@namespace s-stwato com.twittew.tsp.stwato
 
-struct TspTweetInfo {
-  1: required i64 authorId
-  2: required i64 favCount
-  3: optional string language
-  6: optional bool hasImage
-  7: optional bool hasVideo
-  8: optional bool hasGif
-  9: optional bool isNsfwAuthor
-  10: optional bool isKGODenylist
-  11: optional bool isNullcast
-  // available if the tweet contains video
-  12: optional i32 videoDurationSeconds
-  13: optional bool isHighMediaResolution
-  14: optional bool isVerticalAspectRatio
-  // health signal scores
-  15: optional bool isPassAgathaHealthFilterStrictest
-  16: optional bool isPassTweetHealthFilterStrictest
-  17: optional bool isReply
-  18: optional bool hasMultipleMedia
-  23: optional bool hasUrl
-}(persisted='false', hasPersonalData='true')
+s-stwuct tsptweetinfo {
+  1: w-wequiwed i-i64 authowid
+  2: w-wequiwed i64 f-favcount
+  3: optionaw stwing wanguage
+  6: optionaw boow hasimage
+  7: optionaw b-boow hasvideo
+  8: optionaw boow hasgif
+  9: o-optionaw boow isnsfwauthow
+  10: optionaw boow i-iskgodenywist
+  11: optionaw boow isnuwwcast
+  // avaiwabwe if the t-tweet contains video
+  12: optionaw i-i32 videoduwationseconds
+  13: o-optionaw boow ishighmediawesowution
+  14: optionaw boow isvewticawaspectwatio
+  // heawth signaw scowes
+  15: o-optionaw boow ispassagathaheawthfiwtewstwictest
+  16: optionaw boow ispasstweetheawthfiwtewstwictest
+  17: optionaw boow iswepwy
+  18: o-optionaw boow hasmuwtipwemedia
+  23: o-optionaw boow hasuww
+}(pewsisted='fawse', (U ﹏ U) h-haspewsonawdata='twue')

@@ -1,59 +1,59 @@
-from reader import EventBusPipedBinaryRecordReader
-import tensorflow.compat.v1 as tf
-import twml
+fwom weadew impowt eventbuspipedbinawywecowdweadew
+i-impowt tensowfwow.compat.v1 a-as t-tf
+impowt twmw
 
 
 """
-This module provides input function for DeepBird v2 training.
-The training data records are loaded from an EventBus reader.
+t-this moduwe p-pwovides input f-function fow deepbiwd v-v2 twaining. 😳😳😳
+t-the twaining data wecowds awe woaded fwom an eventbus weadew. mya
 """
 
 
-def get_eventbus_data_record_generator(eventbus_reader):
+def get_eventbus_data_wecowd_genewatow(eventbus_weadew):
   """
-  This module provides a data record generater from EventBus reader.
+  t-this moduwe pwovides a data wecowd genewatew f-fwom eventbus weadew.
 
-  Args:
-    eventbus_reader: EventBus reader
+  awgs:
+    e-eventbus_weadew: eventbus weadew
 
-  Returns:
-    gen: Data record generater
+  wetuwns:
+    gen: data w-wecowd genewatew
   """
-  eventbus_reader.initialize()
-  counter = [0]
+  eventbus_weadew.initiawize()
+  c-countew = [0]
 
-  def gen():
-    while True:
-      record = eventbus_reader.read()
-      if eventbus_reader.debug:
-        tf.logging.warn("counter: {}".format(counter[0]))
-        with open('tmp_record_{}.bin'.format(counter[0]), 'wb') as f:
-          f.write(record)
-        counter[0] = counter[0] + 1
-      yield record
-  return gen
+  d-def gen():
+    whiwe twue:
+      wecowd = eventbus_weadew.wead()
+      if eventbus_weadew.debug:
+        t-tf.wogging.wawn("countew: {}".fowmat(countew[0]))
+        with open('tmp_wecowd_{}.bin'.fowmat(countew[0]), 'wb') as f:
+          f.wwite(wecowd)
+        countew[0] = countew[0] + 1
+      y-yiewd wecowd
+  wetuwn gen
 
 
-def get_eventbus_data_record_dataset(eventbus_reader, parse_fn, batch_size):
+def g-get_eventbus_data_wecowd_dataset(eventbus_weadew, 😳 p-pawse_fn, -.- batch_size):
   """
-  This module generates batch data for training from a data record generator.
+  t-this moduwe genewates b-batch data fow twaining fwom a data wecowd g-genewatow. 🥺
   """
-  dataset = tf.data.Dataset.from_generator(
-    get_eventbus_data_record_generator(eventbus_reader), tf.string, tf.TensorShape([]))
-  return dataset.batch(batch_size).map(parse_fn, num_parallel_calls=4).prefetch(buffer_size=10)
+  dataset = tf.data.dataset.fwom_genewatow(
+    g-get_eventbus_data_wecowd_genewatow(eventbus_weadew), o.O tf.stwing, /(^•ω•^) tf.tensowshape([]))
+  wetuwn dataset.batch(batch_size).map(pawse_fn, nyaa~~ nyum_pawawwew_cawws=4).pwefetch(buffew_size=10)
 
 
-def get_train_input_fn(feature_config, params, parse_fn=None):
+d-def get_twain_input_fn(featuwe_config, nyaa~~ p-pawams, pawse_fn=none):
   """
-  This module provides input function for DeepBird v2 training.
-  It gets batched training data from data record generator.
+  t-this moduwe pwovides i-input function fow deepbiwd v2 twaining. :3
+  it gets batched t-twaining data f-fwom data wecowd genewatow. 😳😳😳
   """
-  eventbus_reader = EventBusPipedBinaryRecordReader(
-    params.jar_file, params.num_eb_threads, params.subscriber_id,
-    filter_str=params.filter_str, debug=params.debug)
+  e-eventbus_weadew = e-eventbuspipedbinawywecowdweadew(
+    pawams.jaw_fiwe, (˘ω˘) p-pawams.num_eb_thweads, ^^ pawams.subscwibew_id, :3
+    f-fiwtew_stw=pawams.fiwtew_stw, -.- debug=pawams.debug)
 
-  train_parse_fn = parse_fn or twml.parsers.get_sparse_parse_fn(
-    feature_config, ["ids", "keys", "values", "batch_size", "weights"])
+  twain_pawse_fn = p-pawse_fn ow twmw.pawsews.get_spawse_pawse_fn(
+    f-featuwe_config, 😳 ["ids", mya "keys", "vawues", (˘ω˘) "batch_size", >_< "weights"])
 
-  return lambda: get_eventbus_data_record_dataset(
-    eventbus_reader, train_parse_fn, params.train_batch_size)
+  wetuwn w-wambda: get_eventbus_data_wecowd_dataset(
+    e-eventbus_weadew, -.- twain_pawse_fn, 🥺 pawams.twain_batch_size)

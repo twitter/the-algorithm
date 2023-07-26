@@ -1,116 +1,116 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include "../tensorflow_utils.h"
-#include "../resource_utils.h"
+#incwude <twmw.h>
+#incwude "../tensowfwow_utiws.h"
+#incwude "../wesouwce_utiws.h"
 
-#include <string>
-#include <set>
+#incwude <stwing>
+#incwude <set>
 
-using std::string;
+using std::stwing;
 
-void join(const std::set<string>& v, char c, string& s) {
-         s.clear();
-         std::set<std::string>::iterator it = v.begin();
-         while (it != v.end()) {
+void j-join(const std::set<stwing>& v-v, >_< c-chaw c, stwing& s-s) {
+         s.cweaw();
+         s-std::set<std::stwing>::itewatow i-it = v.begin();
+         w-whiwe (it != v-v.end()) {
             s += *it;
             it++;
             if (it != v.end()) s+= c;
          }
 }
 
-// cpp function that computes substrings of a given word
-std::string computeSubwords(std::string word, int32_t minn, int32_t maxn) {
-         std::string word2 = "<" + word + ">";
-         std::set<string> ngrams;
-         std::string s;
-         ngrams.insert(word);
-         ngrams.insert(word2);
-         for (size_t i = 0; i < word2.size(); i++) {
-            if ((word2[i] & 0xC0) == 0x80) continue;
-            for (size_t j = minn; i+j <= word2.size() && j <= maxn; j++) {
-              ngrams.insert(word2.substr(i, j));
+// cpp function that c-computes substwings of a given wowd
+std::stwing c-computesubwowds(std::stwing wowd, >w< int32_t minn, rawr i-int32_t maxn) {
+         std::stwing wowd2 = "<" + wowd + ">";
+         s-std::set<stwing> nygwams;
+         std::stwing s-s;
+         n-nygwams.insewt(wowd);
+         nygwams.insewt(wowd2);
+         fow (size_t i = 0; i < wowd2.size(); i++) {
+            i-if ((wowd2[i] & 0xc0) == 0x80) continue;
+            fow (size_t j = minn; i+j <= wowd2.size() && j-j <= maxn; j++) {
+              nygwams.insewt(wowd2.substw(i, 😳 j));
             }
          }
-         join(ngrams, ';',  s);
-         ngrams.clear();
-         return s;
+         j-join(ngwams, >w< ';',  s-s);
+         n-nygwams.cweaw();
+         w-wetuwn s;
 }
 
-// tf-op function that computes substrings for a given tensor of words
-template< typename ValueType>
+// tf-op function that computes substwings f-fow a given tensow of wowds
+tempwate< typename v-vawuetype>
 
-void ComputeSubStringsTensor(OpKernelContext *context, int32 min_n, int32 max_n) {
-  try {
-      const Tensor& values = context->input(0);
+void computesubstwingstensow(opkewnewcontext *context, (⑅˘꒳˘) int32 min_n, OwO int32 max_n) {
+  twy {
+      const tensow& v-vawues = context->input(0);
 
-      auto values_flat = values.flat<ValueType>();
+      auto vawues_fwat = v-vawues.fwat<vawuetype>();
 
-      // batch_size from input_size  :
-      const int batch_size = values_flat.size();
+      // b-batch_size f-fwom input_size  :
+      const int batch_size = vawues_fwat.size();
 
-      // define the output tensor
-      Tensor* substrings = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, values.shape(), &substrings));
+      // define the o-output tensow
+      t-tensow* substwings = nyuwwptw;
+      o-op_wequiwes_ok(context, (ꈍᴗꈍ) c-context->awwocate_output(0, 😳 vawues.shape(), 😳😳😳 &substwings));
 
-      auto substrings_flat = substrings->flat<ValueType>();
-       // compute substrings for the given tensor values
-      for (int64 i = 0; i < batch_size; i++) {
-            substrings_flat(i) = computeSubwords(values_flat(i), min_n, max_n);
+      a-auto substwings_fwat = substwings->fwat<vawuetype>();
+       // c-compute substwings fow the given tensow vawues
+      f-fow (int64 i = 0; i < batch_size; i-i++) {
+            substwings_fwat(i) = c-computesubwowds(vawues_fwat(i), mya m-min_n, mya max_n);
       }
   }
-  catch (const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+  catch (const std::exception &eww) {
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(eww.nani()));
   }
 }
 
-REGISTER_OP("GetSubstrings")
-.Attr("ValueType: {string}")
-.Attr("min_n: int")
-.Attr("max_n: int")
-.Input("values: ValueType")
-.Output("substrings: ValueType")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->input(0));
-    return Status::OK();
-  }).Doc(R"doc(
+wegistew_op("getsubstwings")
+.attw("vawuetype: {stwing}")
+.attw("min_n: int")
+.attw("max_n: int")
+.input("vawues: vawuetype")
+.output("substwings: v-vawuetype")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    c->set_output(0, (⑅˘꒳˘) c->input(0));
+    w-wetuwn status::ok();
+  }).doc(w"doc(
 
-A tensorflow OP to convert word to substrings of length between min_n and max_n.
+a-a tensowfwow o-op to convewt wowd to substwings of wength between min_n and m-max_n. (U ﹏ U)
 
-Attr
-  min_n,max_n: The size of the substrings.
+attw
+  min_n,max_n: the size of the substwings. mya
 
-Input
-  values: 1D input tensor containing the values.
+input
+  vawues: 1d input t-tensow containing the vawues. ʘwʘ
 
-Outputs
-  substrings: A string tensor where substrings are joined by ";".
+o-outputs
+  substwings: a-a stwing t-tensow whewe substwings awe joined b-by ";". (˘ω˘)
 )doc");
 
-template<typename ValueType>
-class GetSubstrings : public OpKernel {
- public:
-  explicit GetSubstrings(OpKernelConstruction *context) : OpKernel(context) {
-      OP_REQUIRES_OK(context, context->GetAttr("min_n", &min_n));
-      OP_REQUIRES_OK(context, context->GetAttr("max_n", &max_n));
+t-tempwate<typename v-vawuetype>
+c-cwass getsubstwings : pubwic opkewnew {
+ pubwic:
+  e-expwicit getsubstwings(opkewnewconstwuction *context) : o-opkewnew(context) {
+      o-op_wequiwes_ok(context, (U ﹏ U) c-context->getattw("min_n", ^•ﻌ•^ &min_n));
+      o-op_wequiwes_ok(context, (˘ω˘) context->getattw("max_n", :3 &max_n));
   }
 
- private:
+ pwivate:
   int32 min_n;
-  int32 max_n;
-  void Compute(OpKernelContext *context) override {
-    ComputeSubStringsTensor<ValueType>(context, min_n, max_n);
+  i-int32 max_n;
+  void compute(opkewnewcontext *context) ovewwide {
+    computesubstwingstensow<vawuetype>(context, ^^;; min_n, max_n);
   }
 };
 
 
-#define REGISTER_SUBSTRINGS(ValueType)          \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("GetSubstrings")                       \
-    .Device(DEVICE_CPU)                         \
-    .TypeConstraint<ValueType>("ValueType"),    \
-    GetSubstrings<ValueType>);                  \
+#define wegistew_substwings(vawuetype)          \
+  w-wegistew_kewnew_buiwdew(                      \
+    name("getsubstwings")                       \
+    .device(device_cpu)                         \
+    .typeconstwaint<vawuetype>("vawuetype"), 🥺    \
+    getsubstwings<vawuetype>);                  \
 
-REGISTER_SUBSTRINGS(string)
+wegistew_substwings(stwing)

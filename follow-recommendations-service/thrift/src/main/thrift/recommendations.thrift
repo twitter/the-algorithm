@@ -1,40 +1,40 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namespace java com.twittew.fowwow_wecommendations.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations
 
-include "com/twitter/ads/adserver/adserver_common.thrift"
-include "debug.thrift"
-include "reasons.thrift"
-include "scoring.thrift"
+i-incwude "com/twittew/ads/adsewvew/adsewvew_common.thwift"
+i-incwude "debug.thwift"
+i-incwude "weasons.thwift"
+i-incwude "scowing.thwift"
 
-struct UserRecommendation {
-    1: required i64 userId(personalDataType='UserId')
-    // reason for this suggestions, eg: social context
-    2: optional reasons.Reason reason
-    // present if it is a promoted account
-    3: optional adserver_common.AdImpression adImpression
-    // tracking token for attribution
-    4: optional string trackingInfo
-    // scoring details
-    5: optional scoring.ScoringDetails scoringDetails
-    6: optional string recommendationFlowIdentifier
-    // FeatureSwitch overrides for candidates:
-    7: optional map<string, debug.FeatureValue> featureOverrides
-}(hasPersonalData='true')
+s-stwuct usewwecommendation {
+    1: w-wequiwed i64 usewid(pewsonawdatatype='usewid')
+    // weason fow this suggestions, (U ﹏ U) eg: sociaw context
+    2: o-optionaw weasons.weason weason
+    // pwesent i-if it is a pwomoted account
+    3: o-optionaw adsewvew_common.adimpwession adimpwession
+    // twacking token fow attwibution
+    4: o-optionaw stwing twackinginfo
+    // s-scowing d-detaiws
+    5: optionaw scowing.scowingdetaiws scowingdetaiws
+    6: optionaw stwing wecommendationfwowidentifiew
+    // f-featuweswitch ovewwides fow candidates:
+    7: optionaw map<stwing, d-debug.featuwevawue> featuweovewwides
+}(haspewsonawdata='twue')
 
-union Recommendation {
-    1: UserRecommendation user
-}(hasPersonalData='true')
+u-union wecommendation {
+    1: u-usewwecommendation u-usew
+}(haspewsonawdata='twue')
 
-struct HydratedUserRecommendation {
-  1: required i64 userId(personalDataType='UserId')
-  2: optional string socialProof
-  // present if it is a promoted account, used by clients for determining ad impression
-  3: optional adserver_common.AdImpression adImpression
-  // tracking token for attribution
-  4: optional string trackingInfo
-}(hasPersonalData='true')
+s-stwuct hydwatedusewwecommendation {
+  1: wequiwed i64 usewid(pewsonawdatatype='usewid')
+  2: o-optionaw stwing sociawpwoof
+  // pwesent if it is a-a pwomoted account, (U ﹏ U) used by cwients fow detewmining ad impwession
+  3: optionaw adsewvew_common.adimpwession adimpwession
+  // t-twacking token fow attwibution
+  4: o-optionaw stwing t-twackinginfo
+}(haspewsonawdata='twue')
 
-union HydratedRecommendation {
-  1: HydratedUserRecommendation hydratedUserRecommendation
+u-union hydwatedwecommendation {
+  1: hydwatedusewwecommendation hydwatedusewwecommendation
 }

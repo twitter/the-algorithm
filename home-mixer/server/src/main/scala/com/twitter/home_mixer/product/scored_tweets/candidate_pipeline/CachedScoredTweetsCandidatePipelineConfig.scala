@@ -1,53 +1,53 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+package com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine
 
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig._
-import com.twitter.home_mixer.product.scored_tweets.candidate_source.CachedScoredTweetsCandidateSource
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.CachedScoredTweetsResponseFeatureTransformer
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.cachedscowedtweetscandidatepipewineconfig._
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_souwce.cachedscowedtweetscandidatesouwce
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew.cachedscowedtweetswesponsefeatuwetwansfowmew
+i-impowt com.twittew.home_mixew.{thwiftscawa => h-hmt}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * Candidate Pipeline Config that fetches tweets from Scored Tweets Cache.
+ * candidate p-pipewine config that fetches t-tweets fwom scowed t-tweets cache.
  */
-@Singleton
-class CachedScoredTweetsCandidatePipelineConfig @Inject() (
-  cachedScoredTweetsCandidateSource: CachedScoredTweetsCandidateSource)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
-      ScoredTweetsQuery,
-      hmt.ScoredTweet,
-      TweetCandidate
+@singweton
+cwass cachedscowedtweetscandidatepipewineconfig @inject() (
+  cachedscowedtweetscandidatesouwce: cachedscowedtweetscandidatesouwce)
+    extends c-candidatepipewineconfig[
+      scowedtweetsquewy, ʘwʘ
+      scowedtweetsquewy, /(^•ω•^)
+      hmt.scowedtweet, ʘwʘ
+      tweetcandidate
     ] {
 
-  override val identifier: CandidatePipelineIdentifier = Identifier
+  o-ovewwide vaw identifiew: candidatepipewineidentifiew = i-identifiew
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
-    ScoredTweetsQuery
+  o-ovewwide v-vaw quewytwansfowmew: c-candidatepipewinequewytwansfowmew[
+    scowedtweetsquewy, σωσ
+    scowedtweetsquewy
   ] = identity
 
-  override val candidateSource: BaseCandidateSource[ScoredTweetsQuery, hmt.ScoredTweet] =
-    cachedScoredTweetsCandidateSource
+  o-ovewwide vaw candidatesouwce: basecandidatesouwce[scowedtweetsquewy, OwO h-hmt.scowedtweet] =
+    cachedscowedtweetscandidatesouwce
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[hmt.ScoredTweet]
-  ] = Seq(CachedScoredTweetsResponseFeatureTransformer)
+  ovewwide vaw featuwesfwomcandidatesouwcetwansfowmews: seq[
+    candidatefeatuwetwansfowmew[hmt.scowedtweet]
+  ] = seq(cachedscowedtweetswesponsefeatuwetwansfowmew)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    hmt.ScoredTweet,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.tweetId) }
+  o-ovewwide vaw wesuwttwansfowmew: c-candidatepipewinewesuwtstwansfowmew[
+    h-hmt.scowedtweet, 😳😳😳
+    t-tweetcandidate
+  ] = { souwcewesuwt => tweetcandidate(id = souwcewesuwt.tweetid) }
 }
 
-object CachedScoredTweetsCandidatePipelineConfig {
-  val Identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("CachedScoredTweets")
+o-object cachedscowedtweetscandidatepipewineconfig {
+  v-vaw identifiew: candidatepipewineidentifiew = c-candidatepipewineidentifiew("cachedscowedtweets")
 }

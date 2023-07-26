@@ -1,128 +1,128 @@
 """
-Different type of convolution layers to be used in the ClemNet.
+diffewent type of convowution w-wayews to be used i-in the cwemnet. (˘ω˘)
 """
-from typing import Any
+f-fwom typing i-impowt any
 
-import tensorflow as tf
+impowt t-tensowfwow a-as tf
 
 
-class KerasConv1D(tf.keras.layers.Layer):
+cwass kewasconv1d(tf.kewas.wayews.wayew):
   """
-  Basic Conv1D layer in a wrapper to be compatible with ClemNet.
-  """
-
-  def __init__(
-    self,
-    kernel_size: int,
-    filters: int,
-    strides: int,
-    padding: str,
-    use_bias: bool = True,
-    kernel_initializer: str = "glorot_uniform",
-    bias_initializer: str = "zeros",
-    **kwargs: Any,
-  ):
-    super(KerasConv1D, self).__init__(**kwargs)
-    self.kernel_size = kernel_size
-    self.filters = filters
-    self.use_bias = use_bias
-    self.kernel_initializer = kernel_initializer
-    self.bias_initializer = bias_initializer
-    self.strides = strides
-    self.padding = padding
-
-  def build(self, input_shape: tf.TensorShape) -> None:
-    assert (
-      len(input_shape) == 3
-    ), f"Tensor shape must be of length 3. Passed tensor of shape {input_shape}."
-
-    self.features = input_shape[1]
-
-    self.w = tf.keras.layers.Conv1D(
-      kernel_size=self.kernel_size,
-      filters=self.filters,
-      strides=self.strides,
-      padding=self.padding,
-      use_bias=self.use_bias,
-      kernel_initializer=self.kernel_initializer,
-      bias_initializer=self.bias_initializer,
-      name=self.name,
-    )
-
-  def call(self, inputs: tf.Tensor, **kwargs: Any) -> tf.Tensor:
-    return self.w(inputs)
-
-
-class ChannelWiseDense(tf.keras.layers.Layer):
-  """
-  Dense layer is applied to each channel separately. This is more memory and computationally
-  efficient than flattening the channels and performing single dense layers over it which is the
-  default behavior in tf1.
+  b-basic c-conv1d wayew in a wwappew to be compatibwe with cwemnet. nyaa~~
   """
 
   def __init__(
-    self,
-    output_size: int,
-    use_bias: bool,
-    kernel_initializer: str = "uniform_glorot",
-    bias_initializer: str = "zeros",
-    **kwargs: Any,
+    s-sewf, UwU
+    kewnew_size: int, :3
+    fiwtews: int, (⑅˘꒳˘)
+    s-stwides: int, (///ˬ///✿)
+    padding: s-stw, ^^;;
+    use_bias: boow = twue, >_<
+    kewnew_initiawizew: stw = "gwowot_unifowm", rawr x3
+    b-bias_initiawizew: stw = "zewos", /(^•ω•^)
+    **kwawgs: a-any, :3
   ):
-    super(ChannelWiseDense, self).__init__(**kwargs)
-    self.output_size = output_size
-    self.use_bias = use_bias
-    self.kernel_initializer = kernel_initializer
-    self.bias_initializer = bias_initializer
+    s-supew(kewasconv1d, (ꈍᴗꈍ) sewf).__init__(**kwawgs)
+    sewf.kewnew_size = kewnew_size
+    sewf.fiwtews = f-fiwtews
+    sewf.use_bias = use_bias
+    sewf.kewnew_initiawizew = kewnew_initiawizew
+    sewf.bias_initiawizew = bias_initiawizew
+    s-sewf.stwides = stwides
+    s-sewf.padding = p-padding
 
-  def build(self, input_shape: tf.TensorShape) -> None:
-    assert (
-      len(input_shape) == 3
-    ), f"Tensor shape must be of length 3. Passed tensor of shape {input_shape}."
+  d-def buiwd(sewf, /(^•ω•^) i-input_shape: tf.tensowshape) -> nyone:
+    assewt (
+      wen(input_shape) == 3
+    ), f-f"tensow shape must be of wength 3. (⑅˘꒳˘) passed t-tensow of shape {input_shape}."
 
-    input_size = input_shape[1]
-    channels = input_shape[2]
+    sewf.featuwes = input_shape[1]
 
-    self.kernel = self.add_weight(
-      name="kernel",
-      shape=(channels, input_size, self.output_size),
-      initializer=self.kernel_initializer,
-      trainable=True,
+    sewf.w = tf.kewas.wayews.conv1d(
+      kewnew_size=sewf.kewnew_size, ( ͡o ω ͡o )
+      f-fiwtews=sewf.fiwtews, òωó
+      stwides=sewf.stwides, (⑅˘꒳˘)
+      padding=sewf.padding, XD
+      u-use_bias=sewf.use_bias, -.-
+      k-kewnew_initiawizew=sewf.kewnew_initiawizew, :3
+      b-bias_initiawizew=sewf.bias_initiawizew, nyaa~~
+      nyame=sewf.name, 😳
     )
 
-    self.bias = self.add_weight(
-      name="bias",
-      shape=(channels, self.output_size),
-      initializer=self.bias_initializer,
-      trainable=self.use_bias,
-    )
-
-  def call(self, inputs: tf.Tensor, **kwargs: Any) -> tf.Tensor:
-    x = inputs
-
-    transposed_x = tf.transpose(x, perm=[2, 0, 1])
-    transposed_residual = (
-      tf.transpose(tf.matmul(transposed_x, self.kernel), perm=[1, 0, 2]) + self.bias
-    )
-    output = tf.transpose(transposed_residual, perm=[0, 2, 1])
-
-    return output
+  def caww(sewf, (⑅˘꒳˘) inputs: tf.tensow, nyaa~~ **kwawgs: any) -> t-tf.tensow:
+    w-wetuwn sewf.w(inputs)
 
 
-class ResidualLayer(tf.keras.layers.Layer):
+cwass c-channewwisedense(tf.kewas.wayews.wayew):
   """
-  Layer implementing a 3D-residual connection.
+  d-dense wayew is appwied to each c-channew sepawatewy. OwO this is m-mowe memowy and computationawwy
+  efficient than f-fwattening the channews and pewfowming s-singwe dense wayews ovew i-it which is the
+  d-defauwt behaviow in tf1. rawr x3
   """
 
-  def build(self, input_shape: tf.TensorShape) -> None:
-    assert (
-      len(input_shape) == 3
-    ), f"Tensor shape must be of length 3. Passed tensor of shape {input_shape}."
+  def __init__(
+    sewf, XD
+    output_size: int, σωσ
+    use_bias: boow, (U ᵕ U❁)
+    kewnew_initiawizew: stw = "unifowm_gwowot", (U ﹏ U)
+    b-bias_initiawizew: s-stw = "zewos", :3
+    **kwawgs: any, ( ͡o ω ͡o )
+  ):
+    s-supew(channewwisedense, σωσ s-sewf).__init__(**kwawgs)
+    s-sewf.output_size = output_size
+    sewf.use_bias = use_bias
+    sewf.kewnew_initiawizew = k-kewnew_initiawizew
+    sewf.bias_initiawizew = bias_initiawizew
 
-  def call(self, inputs: tf.Tensor, residual: tf.Tensor, **kwargs: Any) -> tf.Tensor:
-    shortcut = tf.keras.layers.Conv1D(
-      filters=int(residual.shape[2]), strides=1, kernel_size=1, padding="SAME", use_bias=False
+  def buiwd(sewf, >w< input_shape: t-tf.tensowshape) -> nyone:
+    a-assewt (
+      w-wen(input_shape) == 3
+    ), 😳😳😳 f-f"tensow shape must be of wength 3. OwO p-passed tensow o-of shape {input_shape}."
+
+    i-input_size = input_shape[1]
+    c-channews = input_shape[2]
+
+    sewf.kewnew = sewf.add_weight(
+      nyame="kewnew", 😳
+      s-shape=(channews, 😳😳😳 i-input_size, s-sewf.output_size), (˘ω˘)
+      i-initiawizew=sewf.kewnew_initiawizew, ʘwʘ
+      t-twainabwe=twue, ( ͡o ω ͡o )
+    )
+
+    sewf.bias = sewf.add_weight(
+      nyame="bias", o.O
+      s-shape=(channews, >w< sewf.output_size), 😳
+      initiawizew=sewf.bias_initiawizew, 🥺
+      twainabwe=sewf.use_bias, rawr x3
+    )
+
+  def caww(sewf, o.O inputs: tf.tensow, rawr **kwawgs: any) -> tf.tensow:
+    x-x = inputs
+
+    twansposed_x = tf.twanspose(x, ʘwʘ pewm=[2, 0, 😳😳😳 1])
+    t-twansposed_wesiduaw = (
+      t-tf.twanspose(tf.matmuw(twansposed_x, ^^;; s-sewf.kewnew), o.O pewm=[1, 0, 2]) + s-sewf.bias
+    )
+    output = tf.twanspose(twansposed_wesiduaw, (///ˬ///✿) p-pewm=[0, 2, σωσ 1])
+
+    w-wetuwn output
+
+
+cwass wesiduawwayew(tf.kewas.wayews.wayew):
+  """
+  wayew impwementing a 3d-wesiduaw connection. nyaa~~
+  """
+
+  def buiwd(sewf, ^^;; i-input_shape: tf.tensowshape) -> n-nyone:
+    assewt (
+      w-wen(input_shape) == 3
+    ), ^•ﻌ•^ f-f"tensow shape must be of wength 3. σωσ passed tensow o-of shape {input_shape}."
+
+  def c-caww(sewf, -.- inputs: tf.tensow, ^^;; w-wesiduaw: tf.tensow, XD **kwawgs: a-any) -> tf.tensow:
+    showtcut = tf.kewas.wayews.conv1d(
+      fiwtews=int(wesiduaw.shape[2]), 🥺 stwides=1, òωó kewnew_size=1, (ˆ ﻌ ˆ)♡ p-padding="same", -.- u-use_bias=fawse
     )(inputs)
 
-    output = tf.add(shortcut, residual)
+    o-output = tf.add(showtcut, :3 w-wesiduaw)
 
-    return output
+    w-wetuwn output

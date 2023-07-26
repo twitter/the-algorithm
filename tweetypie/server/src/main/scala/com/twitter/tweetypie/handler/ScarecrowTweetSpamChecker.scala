@@ -1,105 +1,105 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.relevance.feature_store.thriftscala.FeatureData
-import com.twitter.relevance.feature_store.thriftscala.FeatureValue
-import com.twitter.service.gen.scarecrow.thriftscala.TieredAction
-import com.twitter.service.gen.scarecrow.thriftscala.TieredActionResult
-import com.twitter.service.gen.scarecrow.thriftscala.TweetContext
-import com.twitter.service.gen.scarecrow.thriftscala.TweetNew
-import com.twitter.spam.features.thriftscala.SafetyMetaData
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.handler.Spam.Checker
-import com.twitter.tweetypie.repository.TweetSpamCheckRepository
-import com.twitter.tweetypie.thriftscala.TweetCreateState
-import com.twitter.tweetypie.thriftscala.TweetMediaTags
+impowt c-com.twittew.finagwe.twacing.twace
+i-impowt com.twittew.wewevance.featuwe_stowe.thwiftscawa.featuwedata
+i-impowt c-com.twittew.wewevance.featuwe_stowe.thwiftscawa.featuwevawue
+i-impowt c-com.twittew.sewvice.gen.scawecwow.thwiftscawa.tiewedaction
+i-impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.tiewedactionwesuwt
+impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.tweetcontext
+impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.tweetnew
+impowt com.twittew.spam.featuwes.thwiftscawa.safetymetadata
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.tweetypie.cowe.tweetcweatefaiwuwe
+impowt c-com.twittew.tweetypie.handwew.spam.checkew
+impowt c-com.twittew.tweetypie.wepositowy.tweetspamcheckwepositowy
+impowt com.twittew.tweetypie.thwiftscawa.tweetcweatestate
+impowt com.twittew.tweetypie.thwiftscawa.tweetmediatags
 
-case class TweetSpamRequest(
-  tweetId: TweetId,
-  userId: UserId,
-  text: String,
-  mediaTags: Option[TweetMediaTags],
-  safetyMetaData: Option[SafetyMetaData],
-  inReplyToTweetId: Option[TweetId],
-  quotedTweetId: Option[TweetId],
-  quotedTweetUserId: Option[UserId])
+c-case cwass tweetspamwequest(
+  tweetid: tweetid, 😳
+  u-usewid: usewid, >w<
+  t-text: stwing, (⑅˘꒳˘)
+  mediatags: option[tweetmediatags], OwO
+  safetymetadata: option[safetymetadata], (ꈍᴗꈍ)
+  i-inwepwytotweetid: option[tweetid], 😳
+  quotedtweetid: option[tweetid], 😳😳😳
+  quotedtweetusewid: o-option[usewid])
 
 /**
- * Use the Scarecrow service as the spam checker for tweets.
+ * use the scawecwow s-sewvice a-as the spam checkew f-fow tweets. mya
  */
-object ScarecrowTweetSpamChecker {
-  val log: Logger = Logger(getClass)
+o-object scawecwowtweetspamcheckew {
+  vaw wog: woggew = woggew(getcwass)
 
-  private def requestToScarecrowTweet(req: TweetSpamRequest): TweetNew = {
-    // compile additional input features for the spam check
-    val mediaTaggedUserIds = {
-      val mediaTags = req.mediaTags.getOrElse(TweetMediaTags())
-      mediaTags.tagMap.values.flatten.flatMap(_.userId).toSet
+  pwivate d-def wequesttoscawecwowtweet(weq: tweetspamwequest): tweetnew = {
+    // compiwe a-additionaw input featuwes fow the spam check
+    vaw mediataggedusewids = {
+      vaw mediatags = weq.mediatags.getowewse(tweetmediatags())
+      m-mediatags.tagmap.vawues.fwatten.fwatmap(_.usewid).toset
     }
 
-    val additionalInputFeatures = {
-      val mediaTaggedUserFeatures = if (mediaTaggedUserIds.nonEmpty) {
-        Seq(
-          "mediaTaggedUsers" -> FeatureData(Some(FeatureValue.LongSetValue(mediaTaggedUserIds))),
-          "victimIds" -> FeatureData(Some(FeatureValue.LongSetValue(mediaTaggedUserIds)))
+    vaw a-additionawinputfeatuwes = {
+      v-vaw mediataggedusewfeatuwes = i-if (mediataggedusewids.nonempty) {
+        seq(
+          "mediataggedusews" -> featuwedata(some(featuwevawue.wongsetvawue(mediataggedusewids))), mya
+          "victimids" -> featuwedata(some(featuwevawue.wongsetvawue(mediataggedusewids)))
         )
-      } else {
-        Seq.empty
+      } e-ewse {
+        s-seq.empty
       }
 
-      val quotedTweetIdFeature = req.quotedTweetId.map { quotedTweetId =>
-        "quotedTweetId" -> FeatureData(Some(FeatureValue.LongValue(quotedTweetId)))
+      vaw quotedtweetidfeatuwe = w-weq.quotedtweetid.map { q-quotedtweetid =>
+        "quotedtweetid" -> featuwedata(some(featuwevawue.wongvawue(quotedtweetid)))
       }
 
-      val quotedTweetUserIdFeature = req.quotedTweetUserId.map { quotedTweetUserId =>
-        "quotedTweetUserId" -> FeatureData(Some(FeatureValue.LongValue(quotedTweetUserId)))
+      v-vaw quotedtweetusewidfeatuwe = w-weq.quotedtweetusewid.map { quotedtweetusewid =>
+        "quotedtweetusewid" -> featuwedata(some(featuwevawue.wongvawue(quotedtweetusewid)))
       }
 
-      val featureMap =
-        (mediaTaggedUserFeatures ++ quotedTweetIdFeature ++ quotedTweetUserIdFeature).toMap
+      v-vaw featuwemap =
+        (mediataggedusewfeatuwes ++ quotedtweetidfeatuwe ++ q-quotedtweetusewidfeatuwe).tomap
 
-      if (featureMap.nonEmpty) Some(featureMap) else None
+      if (featuwemap.nonempty) s-some(featuwemap) e-ewse nyone
     }
 
-    TweetNew(
-      id = req.tweetId,
-      userId = req.userId,
-      text = req.text,
-      additionalInputFeatures = additionalInputFeatures,
-      safetyMetaData = req.safetyMetaData,
-      inReplyToStatusId = req.inReplyToTweetId
+    tweetnew(
+      id = weq.tweetid, (⑅˘꒳˘)
+      usewid = weq.usewid, (U ﹏ U)
+      text = weq.text, mya
+      additionawinputfeatuwes = a-additionawinputfeatuwes, ʘwʘ
+      safetymetadata = w-weq.safetymetadata,
+      inwepwytostatusid = w-weq.inwepwytotweetid
     )
   }
 
-  private def tieredActionHandler(stats: StatsReceiver): Checker[TieredAction] =
-    Spam.handleScarecrowResult(stats) {
-      case (TieredActionResult.NotSpam, _, _) => Spam.AllowFuture
-      case (TieredActionResult.SilentFail, _, _) => Spam.SilentFailFuture
-      case (TieredActionResult.DenyByIpiPolicy, _, _) => Spam.DisabledByIpiPolicyFuture
-      case (TieredActionResult.UrlSpam, _, denyMessage) =>
-        Future.exception(TweetCreateFailure.State(TweetCreateState.UrlSpam, denyMessage))
-      case (TieredActionResult.Deny, _, denyMessage) =>
-        Future.exception(TweetCreateFailure.State(TweetCreateState.Spam, denyMessage))
-      case (TieredActionResult.Captcha, _, denyMessage) =>
-        Future.exception(TweetCreateFailure.State(TweetCreateState.SpamCaptcha, denyMessage))
-      case (TieredActionResult.RateLimit, _, denyMessage) =>
-        Future.exception(
-          TweetCreateFailure.State(TweetCreateState.SafetyRateLimitExceeded, denyMessage))
-      case (TieredActionResult.Bounce, Some(b), _) =>
-        Future.exception(TweetCreateFailure.Bounced(b))
+  p-pwivate def tiewedactionhandwew(stats: s-statsweceivew): checkew[tiewedaction] =
+    spam.handwescawecwowwesuwt(stats) {
+      case (tiewedactionwesuwt.notspam, (˘ω˘) _, _) => s-spam.awwowfutuwe
+      case (tiewedactionwesuwt.siwentfaiw, (U ﹏ U) _, _) => spam.siwentfaiwfutuwe
+      case (tiewedactionwesuwt.denybyipipowicy, ^•ﻌ•^ _, _) => spam.disabwedbyipipowicyfutuwe
+      case (tiewedactionwesuwt.uwwspam, (˘ω˘) _, d-denymessage) =>
+        futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.uwwspam, :3 d-denymessage))
+      c-case (tiewedactionwesuwt.deny, ^^;; _, 🥺 d-denymessage) =>
+        futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.spam, (⑅˘꒳˘) d-denymessage))
+      c-case (tiewedactionwesuwt.captcha, nyaa~~ _, d-denymessage) =>
+        f-futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.spamcaptcha, :3 denymessage))
+      case (tiewedactionwesuwt.watewimit, ( ͡o ω ͡o ) _, d-denymessage) =>
+        f-futuwe.exception(
+          t-tweetcweatefaiwuwe.state(tweetcweatestate.safetywatewimitexceeded, mya d-denymessage))
+      c-case (tiewedactionwesuwt.bounce, (///ˬ///✿) some(b), (˘ω˘) _) =>
+        futuwe.exception(tweetcweatefaiwuwe.bounced(b))
     }
 
-  def fromSpamCheckRepository(
-    stats: StatsReceiver,
-    repo: TweetSpamCheckRepository.Type
-  ): Spam.Checker[TweetSpamRequest] = {
-    val handler = tieredActionHandler(stats)
-    req => {
-      Trace.record("com.twitter.tweetypie.ScarecrowTweetSpamChecker.userId=" + req.userId)
-      Stitch.run(repo(requestToScarecrowTweet(req), TweetContext.Creation)).flatMap { resp =>
-        handler(resp.tieredAction)
+  def fwomspamcheckwepositowy(
+    s-stats: statsweceivew, ^^;;
+    wepo: tweetspamcheckwepositowy.type
+  ): spam.checkew[tweetspamwequest] = {
+    vaw handwew = tiewedactionhandwew(stats)
+    w-weq => {
+      twace.wecowd("com.twittew.tweetypie.scawecwowtweetspamcheckew.usewid=" + weq.usewid)
+      stitch.wun(wepo(wequesttoscawecwowtweet(weq), (✿oωo) t-tweetcontext.cweation)).fwatmap { w-wesp =>
+        h-handwew(wesp.tiewedaction)
       }
     }
   }

@@ -1,122 +1,122 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.twittew.simcwustews_v2.scawding.embedding.abuse
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.thriftscala.{SimClusterWithScore, SimClustersEmbedding}
-import com.twitter.util.Try
+impowt c-com.twittew.simcwustews_v2.common.cwustewid
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.{simcwustewwithscowe, ( ͡o ω ͡o ) s-simcwustewsembedding}
+i-impowt c-com.twittew.utiw.twy
 
-object ClusterPair {
-  def apply(
-    clusterId: ClusterId,
-    healthyScore: Double,
-    unhealthyScore: Double
-  ): Option[ClusterPair] = {
-    if (healthyScore + unhealthyScore == 0.0) {
-      None
-    } else {
-      Some(new ClusterPair(clusterId, healthyScore, unhealthyScore))
+o-object cwustewpaiw {
+  d-def a-appwy(
+    cwustewid: cwustewid, òωó
+    heawthyscowe: doubwe, (⑅˘꒳˘)
+    unheawthyscowe: d-doubwe
+  ): option[cwustewpaiw] = {
+    if (heawthyscowe + unheawthyscowe == 0.0) {
+      n-nyone
+    } ewse {
+      s-some(new cwustewpaiw(cwustewid, XD heawthyscowe, -.- unheawthyscowe))
     }
   }
 }
 
-case class ClusterPair private (
-  clusterId: ClusterId,
-  healthyScore: Double,
-  unhealthyScore: Double) {
+case cwass cwustewpaiw p-pwivate (
+  cwustewid: cwustewid,
+  h-heawthyscowe: d-doubwe, :3
+  unheawthyscowe: doubwe) {
 
-  def totalScores: Double = healthyScore + unhealthyScore
+  def totawscowes: doubwe = heawthyscowe + u-unheawthyscowe
 
-  def healthRatio: Double = unhealthyScore / (unhealthyScore + healthyScore)
+  def heawthwatio: doubwe = unheawthyscowe / (unheawthyscowe + heawthyscowe)
 }
 
-object PairedInteractionFeatures {
-  def smoothedHealthRatio(
-    unhealthySum: Double,
-    healthySum: Double,
-    smoothingFactor: Double,
-    prior: Double
-  ): Double =
-    (unhealthySum + smoothingFactor * prior) / (unhealthySum + healthySum + smoothingFactor)
+o-object paiwedintewactionfeatuwes {
+  def s-smoothedheawthwatio(
+    u-unheawthysum: d-doubwe, nyaa~~
+    h-heawthysum: doubwe,
+    smoothingfactow: doubwe, 😳
+    p-pwiow: doubwe
+  ): doubwe =
+    (unheawthysum + smoothingfactow * p-pwiow) / (unheawthysum + heawthysum + smoothingfactow)
 }
 
 /**
- * Class used to derive features for abuse models. We pair a healthy embedding with an unhealthy
- * embedding. All the public methods on this class are derived features of these embeddings.
+ * cwass used to dewive featuwes fow abuse m-modews. (⑅˘꒳˘) we paiw a heawthy embedding w-with an u-unheawthy
+ * embedding. nyaa~~ a-aww the pubwic methods on this cwass awe dewived featuwes o-of these embeddings. OwO
  *
- * @param healthyInteractionSimClusterEmbedding SimCluster embedding of healthy interactions (for
- *                                              instance favs or impressions)
- * @param unhealthyInteractionSimClusterEmbedding SimCluster embedding of unhealthy interactions
- *                                                (for instance blocks or abuse reports)
+ * @pawam h-heawthyintewactionsimcwustewembedding simcwustew e-embedding of h-heawthy intewactions (fow
+ *                                              instance f-favs ow impwessions)
+ * @pawam unheawthyintewactionsimcwustewembedding s-simcwustew embedding of unheawthy intewactions
+ *                                                (fow i-instance bwocks ow abuse wepowts)
  */
-case class PairedInteractionFeatures(
-  healthyInteractionSimClusterEmbedding: SimClustersEmbedding,
-  unhealthyInteractionSimClusterEmbedding: SimClustersEmbedding) {
+c-case cwass paiwedintewactionfeatuwes(
+  h-heawthyintewactionsimcwustewembedding: s-simcwustewsembedding, rawr x3
+  unheawthyintewactionsimcwustewembedding: simcwustewsembedding) {
 
-  private[this] val scorePairs: Seq[ClusterPair] = {
-    val clusterToScoreMap = healthyInteractionSimClusterEmbedding.embedding.map {
-      simClusterWithScore =>
-        simClusterWithScore.clusterId -> simClusterWithScore.score
-    }.toMap
+  pwivate[this] vaw scowepaiws: seq[cwustewpaiw] = {
+    vaw cwustewtoscowemap = heawthyintewactionsimcwustewembedding.embedding.map {
+      s-simcwustewwithscowe =>
+        s-simcwustewwithscowe.cwustewid -> simcwustewwithscowe.scowe
+    }.tomap
 
-    unhealthyInteractionSimClusterEmbedding.embedding.flatMap { simClusterWithScore =>
-      val clusterId = simClusterWithScore.clusterId
-      val postiveScoreOption = clusterToScoreMap.get(clusterId)
-      postiveScoreOption.flatMap { postiveScore =>
-        ClusterPair(clusterId, postiveScore, simClusterWithScore.score)
+    u-unheawthyintewactionsimcwustewembedding.embedding.fwatmap { s-simcwustewwithscowe =>
+      v-vaw cwustewid = simcwustewwithscowe.cwustewid
+      vaw postivescoweoption = cwustewtoscowemap.get(cwustewid)
+      postivescoweoption.fwatmap { p-postivescowe =>
+        cwustewpaiw(cwustewid, XD postivescowe, σωσ simcwustewwithscowe.scowe)
       }
     }
   }
 
   /**
-   * Get the pair of clusters with the most total interactions.
+   * get the p-paiw of cwustews with the most t-totaw intewactions. (U ᵕ U❁)
    */
-  val highestScoreClusterPair: Option[ClusterPair] =
-    Try(scorePairs.maxBy(_.totalScores)).toOption
+  v-vaw h-highestscowecwustewpaiw: option[cwustewpaiw] =
+    t-twy(scowepaiws.maxby(_.totawscowes)).tooption
 
   /**
-   * Get the pair of clusters with the highest unhealthy to healthy ratio.
+   * g-get t-the paiw of cwustews w-with the highest unheawthy to heawthy watio. (U ﹏ U)
    */
-  val highestHealthRatioClusterPair: Option[ClusterPair] =
-    Try(scorePairs.maxBy(_.healthRatio)).toOption
+  v-vaw highestheawthwatiocwustewpaiw: o-option[cwustewpaiw] =
+    t-twy(scowepaiws.maxby(_.heawthwatio)).tooption
 
   /**
-   * Get the pair of clusters with the lowest unhealthy to healthy ratio.
+   * g-get the paiw of c-cwustews with the wowest unheawthy to heawthy watio. :3
    */
-  val lowestHealthRatioClusterPair: Option[ClusterPair] =
-    Try(scorePairs.minBy(_.healthRatio)).toOption
+  vaw w-wowestheawthwatiocwustewpaiw: option[cwustewpaiw] =
+    twy(scowepaiws.minby(_.heawthwatio)).tooption
 
   /**
-   * Get an embedding whose values are the ratio of unhealthy to healthy for that simcluster.
+   * get an embedding whose vawues awe the watio o-of unheawthy to heawthy fow that simcwustew.
    */
-  val healthRatioEmbedding: SimClustersEmbedding = {
-    val scores = scorePairs.map { pair =>
-      SimClusterWithScore(pair.clusterId, pair.healthRatio)
+  vaw heawthwatioembedding: s-simcwustewsembedding = {
+    v-vaw s-scowes = scowepaiws.map { paiw =>
+      s-simcwustewwithscowe(paiw.cwustewid, ( ͡o ω ͡o ) paiw.heawthwatio)
     }
-    SimClustersEmbedding(scores)
+    s-simcwustewsembedding(scowes)
   }
 
   /**
-   * Sum of the healthy scores for all the simclusters
+   * s-sum of the heawthy scowes fow aww the simcwustews
    */
-  val healthySum: Double = healthyInteractionSimClusterEmbedding.embedding.map(_.score).sum
+  vaw heawthysum: doubwe = heawthyintewactionsimcwustewembedding.embedding.map(_.scowe).sum
 
   /**
-   * Sum of the unhealthy scores for all the simclusters
+   * sum of the u-unheawthy scowes fow aww the simcwustews
    */
-  val unhealthySum: Double = unhealthyInteractionSimClusterEmbedding.embedding.map(_.score).sum
+  v-vaw unheawthysum: doubwe = unheawthyintewactionsimcwustewembedding.embedding.map(_.scowe).sum
 
   /**
-   * ratio of unhealthy to healthy for all simclusters
+   * w-watio o-of unheawthy to heawthy fow aww simcwustews
    */
-  val healthRatio: Double = unhealthySum / (unhealthySum + healthySum)
+  v-vaw heawthwatio: d-doubwe = unheawthysum / (unheawthysum + heawthysum)
 
   /**
-   * Ratio of unhealthy to healthy for all simclusters that is smoothed toward the prior with when
-   * we have fewer observations.
+   * w-watio of u-unheawthy to heawthy fow aww simcwustews that is smoothed towawd the pwiow with w-when
+   * we have f-fewew obsewvations. σωσ
    *
-   * @param smoothingFactor The higher this value the more interactions we need to move the returned
-   *                        ratio
-   * @param prior The unhealthy to healthy for all interactions.
+   * @pawam s-smoothingfactow the highew t-this vawue the m-mowe intewactions we nyeed to move t-the wetuwned
+   *                        watio
+   * @pawam pwiow the unheawthy to heawthy fow aww intewactions. >w<
    */
-  def smoothedHealthRatio(smoothingFactor: Double, prior: Double): Double =
-    PairedInteractionFeatures.smoothedHealthRatio(unhealthySum, healthySum, smoothingFactor, prior)
+  d-def s-smoothedheawthwatio(smoothingfactow: doubwe, 😳😳😳 pwiow: doubwe): doubwe =
+    p-paiwedintewactionfeatuwes.smoothedheawthwatio(unheawthysum, OwO h-heawthysum, 😳 smoothingfactow, 😳😳😳 pwiow)
 }

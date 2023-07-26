@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleDisplayTypeMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItemTreeDisplay
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.timewine_moduwe.moduwedispwaytypemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.moduweitemtweedispway
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ModuleItemTreeDisplayMarshaller @Inject() (
-  moduleDisplayTypeMarshaller: ModuleDisplayTypeMarshaller) {
+@singweton
+c-cwass m-moduweitemtweedispwaymawshawwew @inject() (
+  m-moduwedispwaytypemawshawwew: moduwedispwaytypemawshawwew) {
 
-  def apply(moduleItemTreeDisplay: ModuleItemTreeDisplay): urt.ModuleItemTreeDisplay =
-    urt.ModuleItemTreeDisplay(
-      parentModuleItemEntryId = moduleItemTreeDisplay.parentModuleEntryItemId,
-      indentFromParent = moduleItemTreeDisplay.indentFromParent,
-      displayType = moduleItemTreeDisplay.displayType.map(moduleDisplayTypeMarshaller(_)),
-      isAnchorChild = moduleItemTreeDisplay.isAnchorChild
+  def appwy(moduweitemtweedispway: moduweitemtweedispway): uwt.moduweitemtweedispway =
+    u-uwt.moduweitemtweedispway(
+      pawentmoduweitementwyid = moduweitemtweedispway.pawentmoduweentwyitemid, (U ᵕ U❁)
+      i-indentfwompawent = moduweitemtweedispway.indentfwompawent, -.-
+      d-dispwaytype = moduweitemtweedispway.dispwaytype.map(moduwedispwaytypemawshawwew(_)), ^^;;
+      isanchowchiwd = moduweitemtweedispway.isanchowchiwd
     )
 }

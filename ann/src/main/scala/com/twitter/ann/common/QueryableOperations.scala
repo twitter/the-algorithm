@@ -1,25 +1,25 @@
-package com.twitter.ann.common
+package com.twittew.ann.common
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.util.Future
+impowt com.twittew.ann.common.embeddingtype.embeddingvectow
+i-impowt c-com.twittew.utiw.futuwe
 
-object QueryableOperations {
-  implicit class Map[T, P <: RuntimeParams, D <: Distance[D]](
-    val q: Queryable[T, P, D]) {
-    def mapRuntimeParameters(f: P => P): Queryable[T, P, D] = {
-      new Queryable[T, P, D] {
-        def query(
-          embedding: EmbeddingVector,
-          numOfNeighbors: Int,
-          runtimeParams: P
-        ): Future[List[T]] = q.query(embedding, numOfNeighbors, f(runtimeParams))
+o-object q-quewyabweopewations {
+  i-impwicit c-cwass map[t, rawr p-p <: wuntimepawams, OwO d-d <: distance[d]](
+    vaw q: quewyabwe[t, (U ﹏ U) p, >_< d]) {
+    def mapwuntimepawametews(f: p-p => p): quewyabwe[t, p, rawr x3 d] = {
+      nyew q-quewyabwe[t, mya p, d] {
+        d-def quewy(
+          embedding: embeddingvectow, nyaa~~
+          nyumofneighbows: i-int, (⑅˘꒳˘)
+          wuntimepawams: p-p
+        ): f-futuwe[wist[t]] = q.quewy(embedding, rawr x3 nyumofneighbows, (✿oωo) f(wuntimepawams))
 
-        def queryWithDistance(
-          embedding: EmbeddingVector,
-          numOfNeighbors: Int,
-          runtimeParams: P
-        ): Future[List[NeighborWithDistance[T, D]]] =
-          q.queryWithDistance(embedding, numOfNeighbors, f(runtimeParams))
+        def quewywithdistance(
+          e-embedding: embeddingvectow, (ˆ ﻌ ˆ)♡
+          nyumofneighbows: int, (˘ω˘)
+          wuntimepawams: p
+        ): futuwe[wist[neighbowwithdistance[t, (⑅˘꒳˘) d]]] =
+          q-q.quewywithdistance(embedding, (///ˬ///✿) nyumofneighbows, f(wuntimepawams))
       }
     }
   }

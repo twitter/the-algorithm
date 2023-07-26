@@ -1,172 +1,172 @@
-package com.twitter.simclusters_v2.scalding.embedding.tfg
+package com.twittew.simcwustews_v2.scawding.embedding.tfg
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources.EntityEmbeddingsSources
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TfgTopicEmbeddings
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+impowt c-com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt com.twittew.daw.cwient.dataset.snapshotdawdatasetbase
+i-impowt c-com.twittew.scawding._
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.dawwwite.d
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.wwiteextension
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwosscwustewsamedc
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.entityembeddingssouwces
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+impowt com.twittew.simcwustews_v2.thwiftscawa.tfgtopicembeddings
+impowt com.twittew.simcwustews_v2.thwiftscawa.usewtointewestedincwustewscowes
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{simcwustewsembedding => thwiftsimcwustewsembedding}
+i-impowt c-com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt java.utiw.timezone
 
 /**
- * Jobs to generate Fav-based Topic-Follow-Graph (TFG) topic embeddings
- * A topic's fav-based TFG embedding is the sum of its followers' fav-based InterestedIn
+ * jobs t-to genewate fav-based topic-fowwow-gwaph (tfg) topic embeddings
+ * a topic's fav-based tfg embedding i-is the sum of its fowwowews' f-fav-based intewestedin
  */
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings-adhoc
- scalding remote run \
-  --user cassowary \
-  --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
-  --principal service_acoount@TWITTER.BIZ \
-  --cluster bluebird-qus1 \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.tfg.FavTfgTopicEmbeddingsAdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings-adhoc \
-  --hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
+./bazew b-bundwe s-swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/tfg:fav_tfg_topic_embeddings-adhoc
+ s-scawding wemote wun \
+  --usew cassowawy \
+  --keytab /vaw/wib/tss/keys/fwoofy/keytabs/cwient/cassowawy.keytab \
+  --pwincipaw s-sewvice_acoount@twittew.biz \
+  --cwustew bwuebiwd-qus1 \
+  --main-cwass com.twittew.simcwustews_v2.scawding.embedding.tfg.favtfgtopicembeddingsadhocapp \
+  --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/tfg:fav_tfg_topic_embeddings-adhoc \
+  --hadoop-pwopewties "scawding.with.weducews.set.expwicitwy=twue mapweduce.job.weduces=4000" \
   -- --date 2020-12-08
  */
-object FavTfgTopicEmbeddingsAdhocApp extends TfgBasedTopicEmbeddingsBaseApp with AdhocExecutionApp {
-  override val isAdhoc: Boolean = true
-  override val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
-  override val embeddingSource: KeyValDALDataset[
-    KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
-  ] = EntityEmbeddingsSources.FavTfgTopicEmbeddingsDataset
-  override val pathSuffix: String = "fav_tfg_topic_embedding"
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
-  override val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings] =
-    EntityEmbeddingsSources.FavTfgTopicEmbeddingsParquetDataset
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
-    scores.favScore.getOrElse(0.0)
+object favtfgtopicembeddingsadhocapp extends tfgbasedtopicembeddingsbaseapp with adhocexecutionapp {
+  o-ovewwide vaw isadhoc: boowean = t-twue
+  ovewwide v-vaw embeddingtype: e-embeddingtype = embeddingtype.favtfgtopic
+  ovewwide vaw embeddingsouwce: keyvawdawdataset[
+    keyvaw[simcwustewsembeddingid, (///ˬ///✿) t-thwiftsimcwustewsembedding]
+  ] = e-entityembeddingssouwces.favtfgtopicembeddingsdataset
+  ovewwide v-vaw pathsuffix: s-stwing = "fav_tfg_topic_embedding"
+  ovewwide v-vaw modewvewsion: modewvewsion = m-modewvewsion.modew20m145kupdated
+  ovewwide vaw pawquetdatasouwce: s-snapshotdawdatasetbase[tfgtopicembeddings] =
+    entityembeddingssouwces.favtfgtopicembeddingspawquetdataset
+  o-ovewwide def scoweextwactow: u-usewtointewestedincwustewscowes => d-doubwe = scowes =>
+    scowes.favscowe.getowewse(0.0)
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings
-capesospy-v2 update --build_locally --start_cron fav_tfg_topic_embeddings src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/tfg:fav_tfg_topic_embeddings
+capesospy-v2 update --buiwd_wocawwy --stawt_cwon fav_tfg_topic_embeddings s-swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object FavTfgTopicEmbeddingsScheduledApp
-    extends TfgBasedTopicEmbeddingsBaseApp
-    with ScheduledExecutionApp {
-  override val isAdhoc: Boolean = false
-  override val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
-  override val embeddingSource: KeyValDALDataset[
-    KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
-  ] = EntityEmbeddingsSources.FavTfgTopicEmbeddingsDataset
-  override val pathSuffix: String = "fav_tfg_topic_embedding"
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
-  override val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings] =
-    EntityEmbeddingsSources.FavTfgTopicEmbeddingsParquetDataset
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
-    scores.favScore.getOrElse(0.0)
+o-object favtfgtopicembeddingsscheduwedapp
+    e-extends tfgbasedtopicembeddingsbaseapp
+    w-with scheduwedexecutionapp {
+  o-ovewwide vaw isadhoc: boowean = fawse
+  ovewwide vaw embeddingtype: e-embeddingtype = embeddingtype.favtfgtopic
+  ovewwide vaw embeddingsouwce: keyvawdawdataset[
+    keyvaw[simcwustewsembeddingid, 🥺 thwiftsimcwustewsembedding]
+  ] = e-entityembeddingssouwces.favtfgtopicembeddingsdataset
+  ovewwide v-vaw pathsuffix: s-stwing = "fav_tfg_topic_embedding"
+  o-ovewwide vaw modewvewsion: m-modewvewsion = m-modewvewsion.modew20m145kupdated
+  o-ovewwide v-vaw pawquetdatasouwce: snapshotdawdatasetbase[tfgtopicembeddings] =
+    entityembeddingssouwces.favtfgtopicembeddingspawquetdataset
+  o-ovewwide d-def scoweextwactow: u-usewtointewestedincwustewscowes => d-doubwe = s-scowes =>
+    scowes.favscowe.getowewse(0.0)
 
-  override val firstTime: RichDate = RichDate("2020-05-25")
-  override val batchIncrement: Duration = Days(1)
+  ovewwide vaw fiwsttime: wichdate = wichdate("2020-05-25")
+  o-ovewwide vaw batchincwement: duwation = days(1)
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings_2020-adhoc
- scalding remote run \
-  --user cassowary \
-  --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
-  --principal service_acoount@TWITTER.BIZ \
-  --cluster bluebird-qus1 \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.tfg.FavTfgTopicEmbeddings2020AdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings_2020-adhoc \
-  --hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
+./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/tfg:fav_tfg_topic_embeddings_2020-adhoc
+ s-scawding wemote wun \
+  --usew cassowawy \
+  --keytab /vaw/wib/tss/keys/fwoofy/keytabs/cwient/cassowawy.keytab \
+  --pwincipaw sewvice_acoount@twittew.biz \
+  --cwustew b-bwuebiwd-qus1 \
+  --main-cwass c-com.twittew.simcwustews_v2.scawding.embedding.tfg.favtfgtopicembeddings2020adhocapp \
+  --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/tfg:fav_tfg_topic_embeddings_2020-adhoc \
+  --hadoop-pwopewties "scawding.with.weducews.set.expwicitwy=twue mapweduce.job.weduces=4000" \
   -- --date 2020-12-08
  */
-object FavTfgTopicEmbeddings2020AdhocApp
-    extends TfgBasedTopicEmbeddingsBaseApp
-    with AdhocExecutionApp {
-  override val isAdhoc: Boolean = true
-  override val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
-  override val embeddingSource: KeyValDALDataset[
-    KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
-  ] = EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset
-  override val pathSuffix: String = "fav_tfg_topic_embedding"
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-  override val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings] =
-    EntityEmbeddingsSources.FavTfgTopicEmbeddings2020ParquetDataset
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
-    scores.favScore.getOrElse(0.0)
+o-object favtfgtopicembeddings2020adhocapp
+    e-extends tfgbasedtopicembeddingsbaseapp
+    w-with adhocexecutionapp {
+  ovewwide vaw isadhoc: boowean = twue
+  ovewwide vaw embeddingtype: embeddingtype = embeddingtype.favtfgtopic
+  o-ovewwide vaw embeddingsouwce: k-keyvawdawdataset[
+    keyvaw[simcwustewsembeddingid, thwiftsimcwustewsembedding]
+  ] = e-entityembeddingssouwces.favtfgtopicembeddings2020dataset
+  o-ovewwide vaw pathsuffix: stwing = "fav_tfg_topic_embedding"
+  o-ovewwide v-vaw modewvewsion: modewvewsion = m-modewvewsion.modew20m145k2020
+  o-ovewwide vaw pawquetdatasouwce: snapshotdawdatasetbase[tfgtopicembeddings] =
+    entityembeddingssouwces.favtfgtopicembeddings2020pawquetdataset
+  ovewwide def s-scoweextwactow: u-usewtointewestedincwustewscowes => d-doubwe = scowes =>
+    scowes.favscowe.getowewse(0.0)
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings_2020
-capesospy-v2 update --build_locally --start_cron fav_tfg_topic_embeddings_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+./bazew b-bundwe s-swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/tfg:fav_tfg_topic_embeddings_2020
+capesospy-v2 u-update --buiwd_wocawwy --stawt_cwon fav_tfg_topic_embeddings_2020 swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object FavTfgTopicEmbeddings2020ScheduledApp
-    extends TfgBasedTopicEmbeddingsBaseApp
-    with ScheduledExecutionApp {
-  override val isAdhoc: Boolean = false
-  override val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
-  override val embeddingSource: KeyValDALDataset[
-    KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
-  ] = EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset
-  override val pathSuffix: String = "fav_tfg_topic_embedding"
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-  override val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings] =
-    EntityEmbeddingsSources.FavTfgTopicEmbeddings2020ParquetDataset
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
-    scores.favScore.getOrElse(0.0)
+object favtfgtopicembeddings2020scheduwedapp
+    extends tfgbasedtopicembeddingsbaseapp
+    with s-scheduwedexecutionapp {
+  o-ovewwide vaw isadhoc: boowean = fawse
+  o-ovewwide vaw e-embeddingtype: embeddingtype = embeddingtype.favtfgtopic
+  ovewwide v-vaw embeddingsouwce: keyvawdawdataset[
+    keyvaw[simcwustewsembeddingid, OwO thwiftsimcwustewsembedding]
+  ] = entityembeddingssouwces.favtfgtopicembeddings2020dataset
+  o-ovewwide vaw pathsuffix: stwing = "fav_tfg_topic_embedding"
+  o-ovewwide v-vaw modewvewsion: modewvewsion = modewvewsion.modew20m145k2020
+  ovewwide vaw p-pawquetdatasouwce: s-snapshotdawdatasetbase[tfgtopicembeddings] =
+    entityembeddingssouwces.favtfgtopicembeddings2020pawquetdataset
+  ovewwide def scoweextwactow: u-usewtointewestedincwustewscowes => doubwe = s-scowes =>
+    scowes.favscowe.getowewse(0.0)
 
-  override val firstTime: RichDate = RichDate("2021-03-10")
-  override val batchIncrement: Duration = Days(1)
+  ovewwide vaw fiwsttime: wichdate = w-wichdate("2021-03-10")
+  ovewwide v-vaw batchincwement: d-duwation = days(1)
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings_2020_copy
-scalding scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings_2020_copy
+./bazew b-bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/tfg:fav_tfg_topic_embeddings_2020_copy
+s-scawding scawding w-wemote wun --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/tfg:fav_tfg_topic_embeddings_2020_copy
  */
 
 /**
- * This is a copy job where we copy the previous version of TFG and write to a new one.
- * The dependent dataset for TFG has been deleted.
- * Instead of restarting the entire job, we create this temp hacky solution to keep TFG dataset alive until we deprecate topics.
- * Having a table TFG doesn't lead to a big quality concern b/c TFG is built from topic follows, which is relative stable
- * and we don't have new topics anymore.
+ * this is a copy j-job whewe we c-copy the pwevious vewsion of tfg and wwite to a n-nyew one.
+ * the d-dependent dataset f-fow tfg has been deweted. >w<
+ * instead of westawting t-the entiwe job, 🥺 we cweate t-this temp hacky s-sowution to keep tfg dataset awive untiw we depwecate topics. nyaa~~
+ * h-having a tabwe t-tfg doesn't wead t-to a big quawity c-concewn b/c tfg is buiwt fwom t-topic fowwows, ^^ which is wewative stabwe
+ * and we don't have nyew topics anymowe. >w<
  */
-object FavTfgTopicEmbeddings2020CopyScheduledApp extends ScheduledExecutionApp {
-  val isAdhoc: Boolean = false
-  val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
-  val embeddingSource: KeyValDALDataset[
-    KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
-  ] = EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset
-  val pathSuffix: String = "fav_tfg_topic_embedding"
-  val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+object favtfgtopicembeddings2020copyscheduwedapp e-extends scheduwedexecutionapp {
+  vaw isadhoc: b-boowean = fawse
+  vaw embeddingtype: e-embeddingtype = embeddingtype.favtfgtopic
+  v-vaw embeddingsouwce: keyvawdawdataset[
+    k-keyvaw[simcwustewsembeddingid, OwO t-thwiftsimcwustewsembedding]
+  ] = e-entityembeddingssouwces.favtfgtopicembeddings2020dataset
+  v-vaw p-pathsuffix: stwing = "fav_tfg_topic_embedding"
+  vaw modewvewsion: modewvewsion = modewvewsion.modew20m145k2020
 
-  override val firstTime: RichDate = RichDate("2023-01-20")
-  override val batchIncrement: Duration = Days(3)
+  ovewwide vaw fiwsttime: wichdate = wichdate("2023-01-20")
+  o-ovewwide vaw batchincwement: d-duwation = d-days(3)
 
-  def runOnDateRange(
-    args: Args
+  def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    DAL
-      .readMostRecentSnapshotNoOlderThan(
-        EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset,
-        Days(21))
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .writeDALVersionedKeyValExecution(
-        EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset,
-        D.Suffix(
-          EmbeddingUtil
-            .getHdfsPath(isAdhoc = isAdhoc, isManhattanKeyVal = true, modelVersion, pathSuffix))
+    impwicit datewange: datewange, XD
+    t-timezone: timezone, ^^;;
+    u-uniqueid: uniqueid
+  ): e-execution[unit] = {
+    daw
+      .weadmostwecentsnapshotnoowdewthan(
+        entityembeddingssouwces.favtfgtopicembeddings2020dataset, 🥺
+        d-days(21))
+      .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+      .totypedpipe
+      .wwitedawvewsionedkeyvawexecution(
+        e-entityembeddingssouwces.favtfgtopicembeddings2020dataset, XD
+        d.suffix(
+          e-embeddingutiw
+            .gethdfspath(isadhoc = i-isadhoc, (U ᵕ U❁) ismanhattankeyvaw = twue, :3 modewvewsion, pathsuffix))
       )
   }
 }

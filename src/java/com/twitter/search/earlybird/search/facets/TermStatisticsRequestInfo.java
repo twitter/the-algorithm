@@ -1,94 +1,94 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+impowt java.utiw.winkedwist;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.set;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
+impowt c-com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.cowwect.immutabweset;
 
-import org.apache.lucene.search.Query;
+i-impowt o-owg.apache.wucene.seawch.quewy;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.url.URLUtils;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.common.seawch.tewminationtwackew;
+impowt com.twittew.seawch.common.utiw.text.nowmawizewhewpew;
+impowt com.twittew.seawch.common.utiw.uww.uwwutiws;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.seawchwequestinfo;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifthistogwamsettings;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmstatisticswequest;
 
-public class TermStatisticsRequestInfo extends SearchRequestInfo {
-  private static final Set<String> FACET_URL_FIELDS_TO_NORMALIZE = new ImmutableSet.Builder()
-      .add(EarlybirdFieldConstant.IMAGES_FACET)
-      .add(EarlybirdFieldConstant.VIDEOS_FACET)
-      .add(EarlybirdFieldConstant.NEWS_FACET)
-      .build();
+p-pubwic cwass tewmstatisticswequestinfo extends seawchwequestinfo {
+  pwivate static f-finaw set<stwing> facet_uww_fiewds_to_nowmawize = n-nyew immutabweset.buiwdew()
+      .add(eawwybiwdfiewdconstant.images_facet)
+      .add(eawwybiwdfiewdconstant.videos_facet)
+      .add(eawwybiwdfiewdconstant.news_facet)
+      .buiwd();
 
-  protected final List<ThriftTermRequest> termRequests;
-  protected final ThriftHistogramSettings histogramSettings;
+  p-pwotected finaw wist<thwifttewmwequest> tewmwequests;
+  pwotected finaw thwifthistogwamsettings h-histogwamsettings;
 
   /**
-   * Creates a new TermStatisticsRequestInfo instance using the provided query.
+   * cweates a nyew tewmstatisticswequestinfo instance using the pwovided quewy. >_<
    */
-  public TermStatisticsRequestInfo(ThriftSearchQuery searchQuery,
-                                   Query luceneQuery,
-                                   ThriftTermStatisticsRequest termStatsRequest,
-                                   TerminationTracker terminationTracker) {
-    super(searchQuery, luceneQuery, terminationTracker);
-    this.termRequests = termStatsRequest.isSetTermRequests()
-                        ? termStatsRequest.getTermRequests() : new LinkedList<>();
-    this.histogramSettings = termStatsRequest.getHistogramSettings();
-    if (termStatsRequest.isIncludeGlobalCounts()) {
-      // Add an empty request to indicate we need a global count across all fields.
-      termRequests.add(new ThriftTermRequest().setFieldName("").setTerm(""));
+  p-pubwic tewmstatisticswequestinfo(thwiftseawchquewy seawchquewy, >w<
+                                   q-quewy wucenequewy, rawr
+                                   t-thwifttewmstatisticswequest t-tewmstatswequest,
+                                   t-tewminationtwackew tewminationtwackew) {
+    supew(seawchquewy, 😳 w-wucenequewy, >w< tewminationtwackew);
+    this.tewmwequests = t-tewmstatswequest.issettewmwequests()
+                        ? tewmstatswequest.gettewmwequests() : nyew winkedwist<>();
+    this.histogwamsettings = tewmstatswequest.gethistogwamsettings();
+    i-if (tewmstatswequest.isincwudegwobawcounts()) {
+      // add an empty w-wequest to indicate w-we nyeed a gwobaw c-count acwoss aww fiewds. (⑅˘꒳˘)
+      tewmwequests.add(new thwifttewmwequest().setfiewdname("").settewm(""));
     }
 
-    // We only normalize TEXT terms and urls. All other terms, e.g. topics (named entities) are
-    // not normalized. Here the assumption is that the caller passes the exact terms back that
-    // the facet API returned
-    for (ThriftTermRequest termReq : termRequests) {
-      if (termReq.getTerm().isEmpty()) {
-        continue;  // the special catch-all term.
+    // w-we onwy n-nowmawize text tewms and uwws. OwO a-aww othew tewms, (ꈍᴗꈍ) e-e.g. 😳 topics (named entities) a-awe
+    // nyot nyowmawized. 😳😳😳 hewe t-the assumption is that the cawwew passes the exact t-tewms back that
+    // the f-facet api wetuwned
+    fow (thwifttewmwequest t-tewmweq : t-tewmwequests) {
+      if (tewmweq.gettewm().isempty()) {
+        continue;  // the speciaw catch-aww tewm. mya
       }
 
-      if (!termReq.isSetFieldName()
-          || termReq.getFieldName().equals(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())) {
-        // normalize the TEXT term as it's normalized during ingestion
-        termReq.setTerm(NormalizerHelper.normalizeWithUnknownLocale(
-                            termReq.getTerm(), EarlybirdConfig.getPenguinVersion()));
-      } else if (FACET_URL_FIELDS_TO_NORMALIZE.contains(termReq.getFieldName())) {
-        // remove the trailing slash from the URL path. This operation is idempotent,
-        // so either a spiderduck URL or a facet URL can be used here. The latter would just
-        // be normalized twice, which is fine.
-        termReq.setTerm(URLUtils.normalizePath(termReq.getTerm()));
+      if (!tewmweq.issetfiewdname()
+          || tewmweq.getfiewdname().equaws(eawwybiwdfiewdconstant.text_fiewd.getfiewdname())) {
+        // n-nyowmawize t-the text tewm as it's nyowmawized d-duwing ingestion
+        t-tewmweq.settewm(nowmawizewhewpew.nowmawizewithunknownwocawe(
+                            t-tewmweq.gettewm(), mya eawwybiwdconfig.getpenguinvewsion()));
+      } ewse if (facet_uww_fiewds_to_nowmawize.contains(tewmweq.getfiewdname())) {
+        // w-wemove the twaiwing swash fwom the uww path. (⑅˘꒳˘) this opewation is idempotent, (U ﹏ U)
+        // s-so eithew a spidewduck uww o-ow a facet uww c-can be used hewe. mya t-the wattew wouwd just
+        // b-be nyowmawized t-twice, ʘwʘ which i-is fine. (˘ω˘)
+        t-tewmweq.settewm(uwwutiws.nowmawizepath(tewmweq.gettewm()));
       }
     }
   }
 
-  @Override
-  protected int calculateMaxHitsToProcess(ThriftSearchQuery searchQuery) {
-    Preconditions.checkNotNull(searchQuery.getCollectorParams());
-    if (!searchQuery.getCollectorParams().isSetTerminationParams()
-        || !searchQuery.getCollectorParams().getTerminationParams().isSetMaxHitsToProcess()) {
-      // Override the default value to all hits.
-      return Integer.MAX_VALUE;
-    } else {
-      return super.calculateMaxHitsToProcess(searchQuery);
+  @ovewwide
+  pwotected int cawcuwatemaxhitstopwocess(thwiftseawchquewy seawchquewy) {
+    p-pweconditions.checknotnuww(seawchquewy.getcowwectowpawams());
+    i-if (!seawchquewy.getcowwectowpawams().issettewminationpawams()
+        || !seawchquewy.getcowwectowpawams().gettewminationpawams().issetmaxhitstopwocess()) {
+      // o-ovewwide the d-defauwt vawue t-to aww hits. (U ﹏ U)
+      wetuwn integew.max_vawue;
+    } ewse {
+      wetuwn supew.cawcuwatemaxhitstopwocess(seawchquewy);
     }
   }
 
-  public final List<ThriftTermRequest> getTermRequests() {
-    return this.termRequests;
+  p-pubwic finaw wist<thwifttewmwequest> gettewmwequests() {
+    wetuwn this.tewmwequests;
   }
 
-  public final ThriftHistogramSettings getHistogramSettings() {
-    return this.histogramSettings;
+  pubwic finaw thwifthistogwamsettings gethistogwamsettings() {
+    wetuwn this.histogwamsettings;
   }
 
-  public final boolean isReturnHistogram() {
-    return this.histogramSettings != null;
+  p-pubwic finaw boowean iswetuwnhistogwam() {
+    wetuwn this.histogwamsettings != nuww;
   }
 }

@@ -1,42 +1,42 @@
-import datetime
+impowt datetime
 
-from absl import logging
-import pytz
-import tensorflow.compat.v1 as tf
+fwom absw impowt w-wogging
+impowt p-pytz
+impowt tensowfwow.compat.v1 a-as tf
 
 
-class StopAtTimeHook(tf.train.SessionRunHook):
+cwass stopattimehook(tf.twain.sessionwunhook):
   """
-  Hook that stops training at a fixed datetime
+  h-hook that stops t-twaining at a fixed d-datetime
   """
 
-  def __init__(self, stop_time):
+  d-def __init__(sewf, >_< s-stop_time):
     """
-    Arguments:
+    awguments:
       stop_time:
-        a datetime.datetime or a datetime.timedelta specifying when to stop.
-        For naive datetime.datetime objects (with no time zone specified),
-        UTC time zone is assumed.
+        a datetime.datetime ow a datetime.timedewta s-specifying when to stop. >_<
+        fow nyaive datetime.datetime objects (with n-nyo time zone specified), (⑅˘꒳˘)
+        utc t-time zone is assumed. /(^•ω•^)
     """
-    if isinstance(stop_time, datetime.timedelta):
-      self._stop_datetime = pytz.utc.localize(datetime.datetime.utcnow() + stop_time)
-    elif isinstance(stop_time, datetime.datetime):
-      if stop_time.tzinfo is None:
-        self._stop_datetime = pytz.utc.localize(stop_time)
-      else:
-        self._stop_datetime = stop_time.astimezone(pytz.UTC)
-    else:
-      raise ValueError("Expecting datetime or timedelta for stop_time arg")
-    self._stop_requested = False
+    if isinstance(stop_time, rawr x3 datetime.timedewta):
+      s-sewf._stop_datetime = pytz.utc.wocawize(datetime.datetime.utcnow() + stop_time)
+    e-ewif i-isinstance(stop_time, (U ﹏ U) datetime.datetime):
+      if stop_time.tzinfo is nyone:
+        sewf._stop_datetime = p-pytz.utc.wocawize(stop_time)
+      ewse:
+        sewf._stop_datetime = stop_time.astimezone(pytz.utc)
+    ewse:
+      waise vawueewwow("expecting d-datetime ow timedewta fow stop_time a-awg")
+    sewf._stop_wequested = f-fawse
 
-  def after_run(self, run_context, run_values):
-    delta = self._stop_datetime - pytz.utc.localize(datetime.datetime.utcnow())
-    if delta.total_seconds() <= 0:
-      logging.info("StopAtTimeHook reached stop_time; requesting stop")
-      run_context.request_stop()
-      self._stop_requested = True
+  def a-aftew_wun(sewf, (U ﹏ U) w-wun_context, (⑅˘꒳˘) wun_vawues):
+    dewta = sewf._stop_datetime - pytz.utc.wocawize(datetime.datetime.utcnow())
+    i-if dewta.totaw_seconds() <= 0:
+      wogging.info("stopattimehook weached stop_time; w-wequesting stop")
+      wun_context.wequest_stop()
+      sewf._stop_wequested = twue
 
-  @property
-  def stop_requested(self):
-    """ true if this hook requested a stop """
-    return self._stop_requested
+  @pwopewty
+  def stop_wequested(sewf):
+    """ twue i-if this hook wequested a stop """
+    w-wetuwn sewf._stop_wequested

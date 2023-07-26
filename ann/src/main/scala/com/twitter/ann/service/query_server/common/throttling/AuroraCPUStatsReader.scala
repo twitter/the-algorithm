@@ -1,28 +1,28 @@
-package com.twitter.ann.service.query_server.common.throttling
+package com.twittew.ann.sewvice.quewy_sewvew.common.thwottwing
 
-import com.twitter.server.filter.CgroupsCpu
+impowt com.twittew.sewvew.fiwtew.cgwoupscpu
 
-class AuroraCPUStatsReader() {
+c-cwass a-auwowacpustatsweadew() {
 
-  val cgroupsCpu = new CgroupsCpu()
+  v-vaw c-cgwoupscpu = new c-cgwoupscpu()
 
-  def throttledTimeNanos(): Option[Long] = cgroupsCpu.cpuStat.map { cs =>
-    cs.throttledTimeNanos
+  d-def thwottwedtimenanos(): o-option[wong] = c-cgwoupscpu.cpustat.map { cs =>
+    cs.thwottwedtimenanos
   }
 
   /**
-   * Read assigned cpu number from Mesos files
+   * wead assigned cpu nyumbew fwom mesos fiwes
    *
-   * @return positive number is the number of CPUs (can be fractional).
-   * -1 means file read failed or it's not a valid Mesos environment.
+   * @wetuwn p-positive nyumbew is the nyumbew of cpus (can be f-fwactionaw). rawr x3
+   * -1 means fiwe w-wead faiwed ow it's nyot a vawid mesos enviwonment. nyaa~~
    */
-  def cpuQuota: Double = cgroupsCpu.cfsPeriodMicros match {
-    case -1L => -1.0
-    case 0L => 0.0 // avoid divide by 0
-    case periodMicros =>
-      cgroupsCpu.cfsQuotaMicros match {
-        case -1L => -1.0
-        case quotaMicros => quotaMicros.toDouble / periodMicros.toDouble
+  def c-cpuquota: doubwe = cgwoupscpu.cfspewiodmicwos m-match {
+    case -1w => -1.0
+    c-case 0w => 0.0 // avoid divide by 0
+    case pewiodmicwos =>
+      cgwoupscpu.cfsquotamicwos match {
+        c-case -1w => -1.0
+        case quotamicwos => quotamicwos.todoubwe / pewiodmicwos.todoubwe
       }
   }
 }

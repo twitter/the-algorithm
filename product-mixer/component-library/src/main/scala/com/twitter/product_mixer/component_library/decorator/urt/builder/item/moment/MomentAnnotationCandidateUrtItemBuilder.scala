@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.moment
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.moment
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.moment.MomentAnnotationCandidateUrtItemBuilder.MomentAnnotationItemClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.MomentAnnotationCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.moment.MomentAnnotationItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.moment.momentannotationcandidateuwtitembuiwdew.momentannotationitemcwienteventinfoewement
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.momentannotationcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.wichtext.basewichtextbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.moment.momentannotationitem
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object MomentAnnotationCandidateUrtItemBuilder {
-  val MomentAnnotationItemClientEventInfoElement = "metadata"
+object momentannotationcandidateuwtitembuiwdew {
+  vaw momentannotationitemcwienteventinfoewement = "metadata"
 }
 
-case class MomentAnnotationCandidateUrtItemBuilder[Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, MomentAnnotationCandidate],
-  annotationTextRichTextBuilder: BaseRichTextBuilder[Query, MomentAnnotationCandidate],
-  annotationHeaderRichTextBuilder: BaseRichTextBuilder[Query, MomentAnnotationCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, MomentAnnotationCandidate]
-  ] = None,
-) extends CandidateUrtEntryBuilder[Query, MomentAnnotationCandidate, MomentAnnotationItem] {
+c-case cwass momentannotationcandidateuwtitembuiwdew[quewy <: p-pipewinequewy](
+  cwienteventinfobuiwdew: basecwienteventinfobuiwdew[quewy, OwO momentannotationcandidate], 😳😳😳
+  a-annotationtextwichtextbuiwdew: basewichtextbuiwdew[quewy, 😳😳😳 momentannotationcandidate], o.O
+  a-annotationheadewwichtextbuiwdew: b-basewichtextbuiwdew[quewy, momentannotationcandidate], ( ͡o ω ͡o )
+  feedbackactioninfobuiwdew: option[
+    basefeedbackactioninfobuiwdew[quewy, (U ﹏ U) m-momentannotationcandidate]
+  ] = none, (///ˬ///✿)
+) extends candidateuwtentwybuiwdew[quewy, >w< momentannotationcandidate, rawr momentannotationitem] {
 
-  override def apply(
-    query: Query,
-    candidate: MomentAnnotationCandidate,
-    candidateFeatures: FeatureMap
-  ): MomentAnnotationItem = MomentAnnotationItem(
-    id = candidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      candidate,
-      candidateFeatures,
-      Some(MomentAnnotationItemClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-    isPinned = None,
-    text =
-      candidate.text.map(_ => annotationTextRichTextBuilder(query, candidate, candidateFeatures)),
-    header = candidate.header.map(_ =>
-      annotationHeaderRichTextBuilder(query, candidate, candidateFeatures)),
+  ovewwide def appwy(
+    quewy: q-quewy, mya
+    candidate: momentannotationcandidate, ^^
+    c-candidatefeatuwes: f-featuwemap
+  ): m-momentannotationitem = m-momentannotationitem(
+    id = candidate.id, 😳😳😳
+    s-sowtindex = nyone, mya // sowt indexes awe automaticawwy s-set in the domain mawshawwew phase
+    cwienteventinfo = cwienteventinfobuiwdew(
+      quewy, 😳
+      candidate, -.-
+      c-candidatefeatuwes, 🥺
+      some(momentannotationitemcwienteventinfoewement)), o.O
+    f-feedbackactioninfo =
+      f-feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, /(^•ω•^) c-candidate, nyaa~~ candidatefeatuwes)), nyaa~~
+    ispinned = nyone, :3
+    t-text =
+      c-candidate.text.map(_ => annotationtextwichtextbuiwdew(quewy, 😳😳😳 c-candidate, (˘ω˘) c-candidatefeatuwes)), ^^
+    headew = candidate.headew.map(_ =>
+      a-annotationheadewwichtextbuiwdew(quewy, candidate, :3 candidatefeatuwes)),
   )
 }

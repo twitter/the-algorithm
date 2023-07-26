@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.common.alert.predicate
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate
 
 /**
- * Used for building [[Predicate]]s
+ * used fow b-buiwding [[pwedicate]]s
  *
- * @see [[https://docbird.twitter.biz/mon/reference.html#predicate OPERATOR]]
+ * @see [[https://docbiwd.twittew.biz/mon/wefewence.htmw#pwedicate o-opewatow]]
  */
-private[alert] sealed trait Operator
-private[alert] case object `>` extends Operator
-private[alert] case object `>=` extends Operator
-private[alert] case object `<` extends Operator
-private[alert] case object `<=` extends Operator
-private[alert] case object `!=` extends Operator
-private[alert] case object `=` extends Operator
+p-pwivate[awewt] seawed t-twait opewatow
+p-pwivate[awewt] c-case object `>` e-extends opewatow
+p-pwivate[awewt] case object `>=` extends opewatow
+pwivate[awewt] case object `<` e-extends opewatow
+pwivate[awewt] case object `<=` e-extends opewatow
+pwivate[awewt] c-case object `!=` extends opewatow
+pwivate[awewt] case object `=` e-extends opewatow

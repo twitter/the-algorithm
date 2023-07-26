@@ -1,20 +1,20 @@
-package com.twitter.home_mixer.product.for_you.side_effect
+package com.twittew.home_mixew.pwoduct.fow_you.side_effect
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-case class ServedCandidateKeysKafkaSideEffectBuilder @Inject() (
-  injectedServiceIdentifier: ServiceIdentifier) {
-  def build(
-    sourceIdentifiers: Set[CandidatePipelineIdentifier]
-  ): ServedCandidateKeysKafkaSideEffect = {
-    val topic = injectedServiceIdentifier.environment.toLowerCase match {
-      case "prod" => "tq_ct_served_candidate_keys"
-      case _ => "tq_ct_served_candidate_keys_staging"
+@singweton
+c-case c-cwass sewvedcandidatekeyskafkasideeffectbuiwdew @inject() (
+  i-injectedsewviceidentifiew: sewviceidentifiew) {
+  def buiwd(
+    souwceidentifiews: set[candidatepipewineidentifiew]
+  ): sewvedcandidatekeyskafkasideeffect = {
+    v-vaw topic = injectedsewviceidentifiew.enviwonment.towowewcase match {
+      case "pwod" => "tq_ct_sewved_candidate_keys"
+      case _ => "tq_ct_sewved_candidate_keys_staging"
     }
-    new ServedCandidateKeysKafkaSideEffect(topic, sourceIdentifiers)
+    n-nyew sewvedcandidatekeyskafkasideeffect(topic, -.- s-souwceidentifiews)
   }
 }

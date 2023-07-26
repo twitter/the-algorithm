@@ -1,18 +1,18 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+impowt j-javax.inject.inject;
+i-impowt javax.inject.singweton;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.SearchRootServer;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt c-com.twittew.seawch.common.woot.seawchwootsewvew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
 
-@Singleton
-public class RealtimeCgRootServer extends SearchRootServer<EarlybirdService.ServiceIface> {
+@singweton
+p-pubwic c-cwass weawtimecgwootsewvew extends seawchwootsewvew<eawwybiwdsewvice.sewviceiface> {
 
-  @Inject
-  public RealtimeCgRootServer(RealtimeCgRootService svc, Service<byte[], byte[]> byteSvc) {
-    super(svc, byteSvc);
+  @inject
+  pubwic weawtimecgwootsewvew(weawtimecgwootsewvice svc, >_< sewvice<byte[], :3 b-byte[]> bytesvc) {
+    supew(svc, bytesvc);
   }
 
 }

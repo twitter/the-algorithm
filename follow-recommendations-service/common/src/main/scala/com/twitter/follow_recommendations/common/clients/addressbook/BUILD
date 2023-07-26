@@ -1,21 +1,21 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "addressbook/thrift/src/thrift/com/twitter/addressbook:thrift-scala",
-        "addressbook/thrift/src/thrift/com/twitter/addressbook/datatypes:thrift-scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-thrift-client",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/addressbook/models",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/utils",
-        "src/scala/com/twitter/wtf/scalding/jobs/address_book:ab_util",
-        "src/thrift/com/twitter/hermit/usercontacts:hermit-usercontacts-scala",
-        "src/thrift/com/twitter/wtf/addressbook:addressbook-scala",
-        "stitch/stitch-core",
-        "strato/src/main/scala/com/twitter/strato/client",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    p-pwatfowm = "java8", òωó
+    t-tags = ["bazew-compatibwe"], o.O
+    d-dependencies = [
+        "addwessbook/thwift/swc/thwift/com/twittew/addwessbook:thwift-scawa", (U ᵕ U❁)
+        "addwessbook/thwift/swc/thwift/com/twittew/addwessbook/datatypes:thwift-scawa", (⑅˘꒳˘)
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", ( ͡o ω ͡o )
+        "finatwa/inject/inject-thwift-cwient", UwU
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/cwients/addwessbook/modews",
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/cwients/common", rawr x3
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/modews", rawr
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/utiws", σωσ
+        "swc/scawa/com/twittew/wtf/scawding/jobs/addwess_book:ab_utiw", σωσ
+        "swc/thwift/com/twittew/hewmit/usewcontacts:hewmit-usewcontacts-scawa", >_<
+        "swc/thwift/com/twittew/wtf/addwessbook:addwessbook-scawa", :3
+        "stitch/stitch-cowe", (U ﹏ U)
+        "stwato/swc/main/scawa/com/twittew/stwato/cwient", -.-
+    ], (ˆ ﻌ ˆ)♡
 )

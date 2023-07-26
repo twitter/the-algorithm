@@ -1,28 +1,28 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.NotFound
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object PlaceHydrator {
-  type Type = ValueHydrator[Option[Place], TweetCtx]
+o-object p-pwacehydwatow {
+  t-type type = vawuehydwatow[option[pwace], nyaa~~ tweetctx]
 
-  val HydratedField: FieldByPath = fieldByPath(Tweet.PlaceField)
+  vaw hydwatedfiewd: fiewdbypath = f-fiewdbypath(tweet.pwacefiewd)
 
-  def apply(repo: PlaceRepository.Type): Type =
-    ValueHydrator[Option[Place], TweetCtx] { (_, ctx) =>
-      val key = PlaceKey(ctx.placeId.get, ctx.opts.languageTag)
-      repo(key).liftToTry.map {
-        case Return(place) => ValueState.modified(Some(place))
-        case Throw(NotFound) => ValueState.UnmodifiedNone
-        case Throw(_) => ValueState.partial(None, HydratedField)
+  def appwy(wepo: pwacewepositowy.type): t-type =
+    vawuehydwatow[option[pwace], tweetctx] { (_, c-ctx) =>
+      vaw key = pwacekey(ctx.pwaceid.get, /(^•ω•^) ctx.opts.wanguagetag)
+      w-wepo(key).wifttotwy.map {
+        case w-wetuwn(pwace) => v-vawuestate.modified(some(pwace))
+        case thwow(notfound) => vawuestate.unmodifiednone
+        case thwow(_) => v-vawuestate.pawtiaw(none, rawr hydwatedfiewd)
       }
-    }.onlyIf { (curr, ctx) =>
-      curr.isEmpty &&
-      ctx.tweetFieldRequested(Tweet.PlaceField) &&
-      !ctx.isRetweet &&
-      ctx.placeId.nonEmpty
+    }.onwyif { (cuww, OwO ctx) =>
+      cuww.isempty &&
+      ctx.tweetfiewdwequested(tweet.pwacefiewd) &&
+      !ctx.iswetweet &&
+      ctx.pwaceid.nonempty
     }
 }

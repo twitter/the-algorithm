@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinescwibeconfig
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TimelineScribeConfigMarshaller @Inject() () {
+@singweton
+c-cwass t-timewinescwibeconfigmawshawwew @inject() () {
 
-  def apply(timelineScribeConfig: TimelineScribeConfig): urt.TimelineScribeConfig =
-    urt.TimelineScribeConfig(
-      page = timelineScribeConfig.page,
-      section = timelineScribeConfig.section,
-      entityToken = timelineScribeConfig.entityToken
+  d-def appwy(timewinescwibeconfig: t-timewinescwibeconfig): uwt.timewinescwibeconfig =
+    uwt.timewinescwibeconfig(
+      page = timewinescwibeconfig.page, σωσ
+      s-section = timewinescwibeconfig.section, >_<
+      entitytoken = timewinescwibeconfig.entitytoken
     )
 }

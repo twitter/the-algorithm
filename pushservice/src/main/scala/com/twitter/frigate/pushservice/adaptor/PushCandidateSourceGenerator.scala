@@ -1,161 +1,161 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.twittew.fwigate.pushsewvice.adaptow
 
-import com.twitter.content_mixer.thriftscala.ContentMixerRequest
-import com.twitter.content_mixer.thriftscala.ContentMixerResponse
-import com.twitter.explore_ranker.thriftscala.ExploreRankerRequest
-import com.twitter.explore_ranker.thriftscala.ExploreRankerResponse
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate._
-import com.twitter.frigate.common.store.RecentTweetsQuery
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.store._
-import com.twitter.geoduck.common.thriftscala.Location
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.hermit.pop_geo.thriftscala.PopTweetsInPlace
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.hermit.store.tweetypie.UserTweet
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.interests_discovery.thriftscala.NonPersonalizedRecommendedLists
-import com.twitter.interests_discovery.thriftscala.RecommendedListsRequest
-import com.twitter.interests_discovery.thriftscala.RecommendedListsResponse
-import com.twitter.recommendation.interests.discovery.core.model.InterestDomain
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofResponse
+impowt com.twittew.content_mixew.thwiftscawa.contentmixewwequest
+i-impowt com.twittew.content_mixew.thwiftscawa.contentmixewwesponse
+i-impowt com.twittew.expwowe_wankew.thwiftscawa.expwowewankewwequest
+i-impowt com.twittew.expwowe_wankew.thwiftscawa.expwowewankewwesponse
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base._
+i-impowt com.twittew.fwigate.common.candidate._
+impowt com.twittew.fwigate.common.stowe.wecenttweetsquewy
+impowt com.twittew.fwigate.common.stowe.intewests.intewestswookupwequestwithcontext
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.stowe._
+impowt com.twittew.geoduck.common.thwiftscawa.wocation
+i-impowt com.twittew.geoduck.sewvice.thwiftscawa.wocationwesponse
+impowt com.twittew.hewmit.pop_geo.thwiftscawa.poptweetsinpwace
+i-impowt com.twittew.hewmit.pwedicate.sociawgwaph.wewationedge
+i-impowt com.twittew.hewmit.stowe.tweetypie.usewtweet
+i-impowt com.twittew.intewests.thwiftscawa.usewintewests
+impowt com.twittew.intewests_discovewy.thwiftscawa.nonpewsonawizedwecommendedwists
+impowt com.twittew.intewests_discovewy.thwiftscawa.wecommendedwistswequest
+impowt com.twittew.intewests_discovewy.thwiftscawa.wecommendedwistswesponse
+i-impowt com.twittew.wecommendation.intewests.discovewy.cowe.modew.intewestdomain
+impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+impowt c-com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twipdomain
+i-impowt c-com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twiptweets
+i-impowt com.twittew.tsp.thwiftscawa.topicsociawpwoofwequest
+i-impowt com.twittew.tsp.thwiftscawa.topicsociawpwoofwesponse
 
 /**
- * PushCandidateSourceGenerator generates candidate source list for a given Target user
+ * pushcandidatesouwcegenewatow genewates c-candidate souwce wist fow a given tawget usew
  */
-class PushCandidateSourceGenerator(
-  earlybirdCandidates: CandidateSource[EarlybirdCandidateSource.Query, EarlybirdCandidate],
-  userTweetEntityGraphCandidates: CandidateSource[UserTweetEntityGraphCandidates.Target, Candidate],
-  cachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult],
-  safeCachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult],
-  userTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult],
-  safeUserTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult],
-  cachedTweetyPieStoreV2NoVF: ReadableStore[Long, TweetyPieResult],
-  edgeStore: ReadableStore[RelationEdge, Boolean],
-  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
-  uttEntityHydrationStore: UttEntityHydrationStore,
-  geoDuckV2Store: ReadableStore[Long, LocationResponse],
-  topTweetsByGeoStore: ReadableStore[InterestDomain[String], Map[String, List[(Long, Double)]]],
-  topTweetsByGeoV2VersionedStore: ReadableStore[String, PopTweetsInPlace],
-  tweetImpressionsStore: TweetImpressionsStore,
-  recommendedTrendsCandidateSource: RecommendedTrendsCandidateSource,
-  recentTweetsByAuthorStore: ReadableStore[RecentTweetsQuery, Seq[Seq[Long]]],
-  topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse],
-  crMixerStore: CrMixerTweetStore,
-  contentMixerStore: ReadableStore[ContentMixerRequest, ContentMixerResponse],
-  exploreRankerStore: ReadableStore[ExploreRankerRequest, ExploreRankerResponse],
-  softUserLocationStore: ReadableStore[Long, Location],
-  tripTweetCandidateStore: ReadableStore[TripDomain, TripTweets],
-  listRecsStore: ReadableStore[String, NonPersonalizedRecommendedLists],
-  idsStore: ReadableStore[RecommendedListsRequest, RecommendedListsResponse]
+c-cwass pushcandidatesouwcegenewatow(
+  eawwybiwdcandidates: candidatesouwce[eawwybiwdcandidatesouwce.quewy, 😳😳😳 eawwybiwdcandidate], (˘ω˘)
+  usewtweetentitygwaphcandidates: candidatesouwce[usewtweetentitygwaphcandidates.tawget, ʘwʘ c-candidate], ( ͡o ω ͡o )
+  cachedtweetypiestowev2: weadabwestowe[wong, o.O t-tweetypiewesuwt], >w<
+  safecachedtweetypiestowev2: w-weadabwestowe[wong, 😳 tweetypiewesuwt], 🥺
+  u-usewtweettweetypiestowe: weadabwestowe[usewtweet, rawr x3 tweetypiewesuwt], o.O
+  safeusewtweettweetypiestowe: w-weadabwestowe[usewtweet, rawr tweetypiewesuwt], ʘwʘ
+  c-cachedtweetypiestowev2novf: weadabwestowe[wong, 😳😳😳 tweetypiewesuwt], ^^;;
+  e-edgestowe: w-weadabwestowe[wewationedge, o.O boowean], (///ˬ///✿)
+  i-intewestswookupstowe: weadabwestowe[intewestswookupwequestwithcontext, σωσ u-usewintewests], nyaa~~
+  uttentityhydwationstowe: uttentityhydwationstowe, ^^;;
+  g-geoduckv2stowe: weadabwestowe[wong, ^•ﻌ•^ w-wocationwesponse], σωσ
+  toptweetsbygeostowe: w-weadabwestowe[intewestdomain[stwing], -.- m-map[stwing, wist[(wong, ^^;; doubwe)]]], XD
+  toptweetsbygeov2vewsionedstowe: weadabwestowe[stwing, 🥺 poptweetsinpwace], òωó
+  tweetimpwessionsstowe: t-tweetimpwessionsstowe, (ˆ ﻌ ˆ)♡
+  w-wecommendedtwendscandidatesouwce: wecommendedtwendscandidatesouwce, -.-
+  w-wecenttweetsbyauthowstowe: w-weadabwestowe[wecenttweetsquewy, :3 s-seq[seq[wong]]], ʘwʘ
+  topicsociawpwoofsewvicestowe: weadabwestowe[topicsociawpwoofwequest, 🥺 topicsociawpwoofwesponse], >_<
+  cwmixewstowe: c-cwmixewtweetstowe, ʘwʘ
+  contentmixewstowe: weadabwestowe[contentmixewwequest, contentmixewwesponse], (˘ω˘)
+  expwowewankewstowe: w-weadabwestowe[expwowewankewwequest, (✿oωo) expwowewankewwesponse], (///ˬ///✿)
+  s-softusewwocationstowe: w-weadabwestowe[wong, rawr x3 w-wocation], -.-
+  twiptweetcandidatestowe: weadabwestowe[twipdomain, ^^ t-twiptweets], (⑅˘꒳˘)
+  w-wistwecsstowe: w-weadabwestowe[stwing, nyaa~~ n-nyonpewsonawizedwecommendedwists], /(^•ω•^)
+  idsstowe: weadabwestowe[wecommendedwistswequest, w-wecommendedwistswesponse]
 )(
-  implicit val globalStats: StatsReceiver) {
+  i-impwicit v-vaw gwobawstats: s-statsweceivew) {
 
-  private val earlyBirdFirstDegreeCandidateAdaptor = EarlyBirdFirstDegreeCandidateAdaptor(
-    earlybirdCandidates,
-    cachedTweetyPieStoreV2,
-    cachedTweetyPieStoreV2NoVF,
-    userTweetTweetyPieStore,
-    PushFeatureSwitchParams.NumberOfMaxEarlybirdInNetworkCandidatesParam,
-    globalStats
+  p-pwivate vaw eawwybiwdfiwstdegweecandidateadaptow = eawwybiwdfiwstdegweecandidateadaptow(
+    eawwybiwdcandidates, (U ﹏ U)
+    cachedtweetypiestowev2, 😳😳😳
+    c-cachedtweetypiestowev2novf, >w<
+    usewtweettweetypiestowe, XD
+    pushfeatuweswitchpawams.numbewofmaxeawwybiwdinnetwowkcandidatespawam, o.O
+    gwobawstats
   )
 
-  private val frsTweetCandidateAdaptor = FRSTweetCandidateAdaptor(
-    crMixerStore,
-    cachedTweetyPieStoreV2,
-    cachedTweetyPieStoreV2NoVF,
-    userTweetTweetyPieStore,
-    uttEntityHydrationStore,
-    topicSocialProofServiceStore,
-    globalStats
+  pwivate vaw fwstweetcandidateadaptow = f-fwstweetcandidateadaptow(
+    cwmixewstowe, mya
+    cachedtweetypiestowev2, 🥺
+    cachedtweetypiestowev2novf, ^^;;
+    u-usewtweettweetypiestowe, :3
+    u-uttentityhydwationstowe, (U ﹏ U)
+    t-topicsociawpwoofsewvicestowe, OwO
+    gwobawstats
   )
 
-  private val contentRecommenderMixerAdaptor = ContentRecommenderMixerAdaptor(
-    crMixerStore,
-    safeCachedTweetyPieStoreV2,
-    edgeStore,
-    topicSocialProofServiceStore,
-    uttEntityHydrationStore,
-    globalStats
+  p-pwivate vaw contentwecommendewmixewadaptow = c-contentwecommendewmixewadaptow(
+    c-cwmixewstowe, 😳😳😳
+    safecachedtweetypiestowev2, (ˆ ﻌ ˆ)♡
+    edgestowe, XD
+    topicsociawpwoofsewvicestowe, (ˆ ﻌ ˆ)♡
+    uttentityhydwationstowe, ( ͡o ω ͡o )
+    gwobawstats
   )
 
-  private val tripGeoCandidatesAdaptor = TripGeoCandidatesAdaptor(
-    tripTweetCandidateStore,
-    contentMixerStore,
-    safeCachedTweetyPieStoreV2,
-    cachedTweetyPieStoreV2NoVF,
-    globalStats
+  p-pwivate vaw twipgeocandidatesadaptow = t-twipgeocandidatesadaptow(
+    twiptweetcandidatestowe, rawr x3
+    c-contentmixewstowe, nyaa~~
+    s-safecachedtweetypiestowev2, >_<
+    cachedtweetypiestowev2novf, ^^;;
+    gwobawstats
   )
 
-  val sources: Seq[
-    CandidateSource[Target, RawCandidate] with CandidateSourceEligible[
-      Target,
-      RawCandidate
+  v-vaw souwces: s-seq[
+    candidatesouwce[tawget, (ˆ ﻌ ˆ)♡ wawcandidate] w-with candidatesouwceewigibwe[
+      t-tawget, ^^;;
+      wawcandidate
     ]
   ] = {
-    Seq(
-      earlyBirdFirstDegreeCandidateAdaptor,
-      GenericCandidateAdaptor(
-        userTweetEntityGraphCandidates,
-        cachedTweetyPieStoreV2,
-        cachedTweetyPieStoreV2NoVF,
-        globalStats.scope("UserTweetEntityGraphCandidates")
-      ),
-      new OnboardingPushCandidateAdaptor(globalStats),
-      TopTweetsByGeoAdaptor(
-        geoDuckV2Store,
-        softUserLocationStore,
-        topTweetsByGeoStore,
-        topTweetsByGeoV2VersionedStore,
-        cachedTweetyPieStoreV2,
-        cachedTweetyPieStoreV2NoVF,
-        globalStats
-      ),
-      frsTweetCandidateAdaptor,
-      TopTweetImpressionsCandidateAdaptor(
-        recentTweetsByAuthorStore,
-        cachedTweetyPieStoreV2,
-        cachedTweetyPieStoreV2NoVF,
-        tweetImpressionsStore,
-        globalStats
-      ),
-      TrendsCandidatesAdaptor(
-        softUserLocationStore,
-        recommendedTrendsCandidateSource,
-        safeCachedTweetyPieStoreV2,
-        cachedTweetyPieStoreV2NoVF,
-        safeUserTweetTweetyPieStore,
-        globalStats
-      ),
-      contentRecommenderMixerAdaptor,
-      tripGeoCandidatesAdaptor,
-      HighQualityTweetsAdaptor(
-        tripTweetCandidateStore,
-        interestsLookupStore,
-        cachedTweetyPieStoreV2,
-        cachedTweetyPieStoreV2NoVF,
-        globalStats
-      ),
-      ExploreVideoTweetCandidateAdaptor(
-        exploreRankerStore,
-        cachedTweetyPieStoreV2,
-        globalStats
-      ),
-      ListsToRecommendCandidateAdaptor(
-        listRecsStore,
-        geoDuckV2Store,
-        idsStore,
-        globalStats
+    seq(
+      eawwybiwdfiwstdegweecandidateadaptow, (⑅˘꒳˘)
+      genewiccandidateadaptow(
+        usewtweetentitygwaphcandidates, rawr x3
+        c-cachedtweetypiestowev2, (///ˬ///✿)
+        c-cachedtweetypiestowev2novf, 🥺
+        g-gwobawstats.scope("usewtweetentitygwaphcandidates")
+      ), >_<
+      nyew o-onboawdingpushcandidateadaptow(gwobawstats), UwU
+      t-toptweetsbygeoadaptow(
+        geoduckv2stowe, >_<
+        s-softusewwocationstowe, -.-
+        toptweetsbygeostowe, mya
+        toptweetsbygeov2vewsionedstowe,
+        cachedtweetypiestowev2,
+        cachedtweetypiestowev2novf, >w<
+        g-gwobawstats
+      ), (U ﹏ U)
+      f-fwstweetcandidateadaptow, 😳😳😳
+      toptweetimpwessionscandidateadaptow(
+        wecenttweetsbyauthowstowe, o.O
+        c-cachedtweetypiestowev2, òωó
+        c-cachedtweetypiestowev2novf, 😳😳😳
+        tweetimpwessionsstowe, σωσ
+        gwobawstats
+      ), (⑅˘꒳˘)
+      twendscandidatesadaptow(
+        s-softusewwocationstowe, (///ˬ///✿)
+        wecommendedtwendscandidatesouwce, 🥺
+        safecachedtweetypiestowev2, OwO
+        cachedtweetypiestowev2novf, >w<
+        safeusewtweettweetypiestowe, 🥺
+        g-gwobawstats
+      ), nyaa~~
+      contentwecommendewmixewadaptow, ^^
+      twipgeocandidatesadaptow, >w<
+      h-highquawitytweetsadaptow(
+        t-twiptweetcandidatestowe, OwO
+        intewestswookupstowe, XD
+        cachedtweetypiestowev2, ^^;;
+        cachedtweetypiestowev2novf, 🥺
+        g-gwobawstats
+      ), XD
+      e-expwowevideotweetcandidateadaptow(
+        expwowewankewstowe,
+        cachedtweetypiestowev2,
+        gwobawstats
+      ), (U ᵕ U❁)
+      w-wiststowecommendcandidateadaptow(
+        wistwecsstowe, :3
+        geoduckv2stowe, ( ͡o ω ͡o )
+        i-idsstowe, òωó
+        gwobawstats
       )
     )
   }

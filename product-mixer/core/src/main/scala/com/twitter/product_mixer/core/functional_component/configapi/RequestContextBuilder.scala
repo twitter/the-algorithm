@@ -1,72 +1,72 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi
 
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.UserAgent
-import com.twitter.featureswitches.{Recipient => FeatureSwitchRecipient}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.ForcedFeatureContext
-import com.twitter.timelines.configapi.OrElseFeatureContext
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.featuweswitches.v2.featuweswitches
+i-impowt c-com.twittew.featuweswitches.usewagent
+i-impowt c-com.twittew.featuweswitches.{wecipient => f-featuweswitchwecipient}
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.cwientcontext
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
+i-impowt com.twittew.timewines.configapi.featuweswitches.v2.featuweswitchwesuwtsfeatuwecontext
+impowt com.twittew.timewines.configapi.featuwecontext
+impowt com.twittew.timewines.configapi.featuwevawue
+impowt com.twittew.timewines.configapi.fowcedfeatuwecontext
+i-impowt com.twittew.timewines.configapi.owewsefeatuwecontext
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * Request Context Factory is used to build RequestContext objects which are used
- * by the config api to determine the param overrides to apply to the request.
- * The param overrides are determined per request by configs which specify which
- * FS/Deciders/AB translate to what param overrides.
+ * wequest c-context factowy is used to buiwd wequestcontext objects which awe u-used
+ * by the config api to detewmine t-the pawam o-ovewwides to appwy to the wequest. (ˆ ﻌ ˆ)♡
+ * the pawam ovewwides awe detewmined pew w-wequest by configs which specify which
+ * fs/decidews/ab twanswate to nyani pawam o-ovewwides. 😳😳😳
  */
-@Singleton
-class RequestContextBuilder @Inject() (featureSwitches: FeatureSwitches) {
+@singweton
+cwass w-wequestcontextbuiwdew @inject() (featuweswitches: f-featuweswitches) {
 
   /**
-   * @param `fsCustomMapInput` allows you to set custom fields on your feature switches.
-   * This feature isn't directly supported by product mixer yet, so using this argument
-   * will likely result in future cleanup work.
+   * @pawam `fscustommapinput` a-awwows y-you to set custom fiewds on youw featuwe switches. (U ﹏ U)
+   * t-this featuwe isn't diwectwy suppowted b-by pwoduct mixew yet, (///ˬ///✿) so using this awgument
+   * wiww wikewy wesuwt in futuwe cweanup wowk. 😳
    *
    */
-  def build(
-    clientContext: ClientContext,
-    product: Product,
-    featureOverrides: Map[String, FeatureValue],
-    fsCustomMapInput: Map[String, Any]
-  ): RequestContext = {
-    val featureContext =
-      getFeatureContext(clientContext, product, featureOverrides, fsCustomMapInput)
+  d-def buiwd(
+    cwientcontext: c-cwientcontext, 😳
+    p-pwoduct: p-pwoduct, σωσ
+    featuweovewwides: map[stwing, rawr x3 featuwevawue], OwO
+    f-fscustommapinput: m-map[stwing, /(^•ω•^) any]
+  ): wequestcontext = {
+    v-vaw featuwecontext =
+      g-getfeatuwecontext(cwientcontext, 😳😳😳 pwoduct, ( ͡o ω ͡o ) featuweovewwides, >_< f-fscustommapinput)
 
-    RequestContext(clientContext.userId, clientContext.guestId, featureContext)
+    wequestcontext(cwientcontext.usewid, >w< c-cwientcontext.guestid, rawr featuwecontext)
   }
 
-  private[configapi] def getFeatureContext(
-    clientContext: ClientContext,
-    product: Product,
-    featureOverrides: Map[String, FeatureValue],
-    fsCustomMapInput: Map[String, Any]
-  ): FeatureContext = {
-    val recipient = getFeatureSwitchRecipient(clientContext)
-      .withCustomFields("product" -> product.identifier.toString, fsCustomMapInput.toSeq: _*)
+  pwivate[configapi] d-def getfeatuwecontext(
+    cwientcontext: c-cwientcontext, 😳
+    pwoduct: pwoduct, >w<
+    f-featuweovewwides: m-map[stwing, featuwevawue], (⑅˘꒳˘)
+    fscustommapinput: map[stwing, OwO any]
+  ): featuwecontext = {
+    vaw wecipient = g-getfeatuweswitchwecipient(cwientcontext)
+      .withcustomfiewds("pwoduct" -> p-pwoduct.identifiew.tostwing, (ꈍᴗꈍ) fscustommapinput.toseq: _*)
 
-    val results = featureSwitches.matchRecipient(recipient)
-    OrElseFeatureContext(
-      ForcedFeatureContext(featureOverrides),
-      new FeatureSwitchResultsFeatureContext(results))
+    v-vaw wesuwts = f-featuweswitches.matchwecipient(wecipient)
+    o-owewsefeatuwecontext(
+      fowcedfeatuwecontext(featuweovewwides), 😳
+      nyew featuweswitchwesuwtsfeatuwecontext(wesuwts))
   }
 
-  private[configapi] def getFeatureSwitchRecipient(
-    clientContext: ClientContext
-  ): FeatureSwitchRecipient = FeatureSwitchRecipient(
-    userId = clientContext.userId,
-    userRoles = clientContext.userRoles,
-    deviceId = clientContext.deviceId,
-    guestId = clientContext.guestId,
-    languageCode = clientContext.languageCode,
-    countryCode = clientContext.countryCode,
-    userAgent = clientContext.userAgent.flatMap(UserAgent.apply),
-    isVerified = None,
-    clientApplicationId = clientContext.appId,
-    isTwoffice = clientContext.isTwoffice
+  p-pwivate[configapi] def getfeatuweswitchwecipient(
+    cwientcontext: cwientcontext
+  ): featuweswitchwecipient = f-featuweswitchwecipient(
+    usewid = cwientcontext.usewid, 😳😳😳
+    u-usewwowes = c-cwientcontext.usewwowes, mya
+    d-deviceid = cwientcontext.deviceid, mya
+    g-guestid = cwientcontext.guestid, (⑅˘꒳˘)
+    w-wanguagecode = c-cwientcontext.wanguagecode, (U ﹏ U)
+    c-countwycode = cwientcontext.countwycode, mya
+    usewagent = c-cwientcontext.usewagent.fwatmap(usewagent.appwy), ʘwʘ
+    i-isvewified = n-nyone, (˘ω˘)
+    c-cwientappwicationid = c-cwientcontext.appid, (U ﹏ U)
+    istwoffice = cwientcontext.istwoffice
   )
 }

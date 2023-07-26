@@ -1,118 +1,118 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+impowt j-java.utiw.awways;
+i-impowt java.utiw.hashmap;
+i-impowt j-java.utiw.map;
+i-impowt javax.annotation.nuwwabwe;
+i-impowt javax.inject.named;
+i-impowt javax.inject.singweton;
 
-import com.google.inject.Provides;
+i-impowt com.googwe.inject.pwovides;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.root.PartitionConfig;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.common.root.RequestSuccessStats;
-import com.twitter.search.common.root.RootClientServiceBuilder;
-import com.twitter.search.common.root.ScatterGatherService;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.thrift.ExperimentCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
-import com.twitter.search.earlybird_root.filters.ScatterGatherWithExperimentRedirectsService;
+impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.stats.statsweceivew;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt c-com.twittew.seawch.common.woot.pawtitionconfig;
+impowt com.twittew.seawch.common.woot.pawtitionwoggingsuppowt;
+i-impowt com.twittew.seawch.common.woot.wequestsuccessstats;
+impowt com.twittew.seawch.common.woot.wootcwientsewvicebuiwdew;
+impowt c-com.twittew.seawch.common.woot.scattewgathewsewvice;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
+impowt com.twittew.seawch.eawwybiwd.thwift.expewimentcwustew;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.wequestcontexttoeawwybiwdwequestfiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.scattewgathewwithexpewimentwediwectssewvice;
 
-public class RealtimeScatterGatherModule extends ScatterGatherModule {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(RealtimeScatterGatherModule.class);
+pubwic cwass weawtimescattewgathewmoduwe extends s-scattewgathewmoduwe {
+  pwivate static finaw w-woggew wog =
+      w-woggewfactowy.getwoggew(weawtimescattewgathewmoduwe.cwass);
 
   /**
-   * Provides a scatter gather service for the realtime cluster that redirects to experimental
-   * clusters when the experiment cluster parameter is set on the EarlybirdRequest.
+   * pwovides a-a scattew g-gathew sewvice fow the weawtime cwustew that wediwects t-to expewimentaw
+   * cwustews when the e-expewiment cwustew pawametew is set on the eawwybiwdwequest. :3
    *
-   * Note: if an alternate client is specified via altPartitionConfig or
-   * altRootClientServiceBuilder, it will be built and used for the "control" cluster, but the
-   * experiment cluster takes precedence (if the experiment cluster is set on the request, the
-   * alternate client will never be used.
+   * nyote: if an awtewnate cwient is specified v-via awtpawtitionconfig ow
+   * a-awtwootcwientsewvicebuiwdew, ( ͡o ω ͡o ) i-it w-wiww be buiwt and used fow the "contwow" cwustew, mya but the
+   * e-expewiment cwustew t-takes pwecedence (if the expewiment c-cwustew is s-set on the wequest, (///ˬ///✿) the
+   * awtewnate c-cwient wiww nyevew be used. (˘ω˘)
    */
-  @Provides
-  @Singleton
-  @Named(NAMED_SCATTER_GATHER_SERVICE)
-  @Override
-  public Service<EarlybirdRequestContext, EarlybirdResponse> provideScatterGatherService(
-      EarlybirdServiceScatterGatherSupport scatterGatherSupport,
-      RequestSuccessStats requestSuccessStats,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      PartitionAccessController partitionAccessController,
-      PartitionConfig partitionConfig,
-      RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_EXP_CLUSTER_CLIENT)
-          RootClientServiceBuilder<EarlybirdService.ServiceIface>
-          expClusterRootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable PartitionConfig altPartitionConfig,
-      @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable
-          RootClientServiceBuilder<EarlybirdService.ServiceIface> altRootClientServiceBuilder,
-      StatsReceiver statsReceiver,
-      EarlybirdCluster cluster,
-      SearchDecider decider) {
+  @pwovides
+  @singweton
+  @named(named_scattew_gathew_sewvice)
+  @ovewwide
+  p-pubwic sewvice<eawwybiwdwequestcontext, ^^;; eawwybiwdwesponse> p-pwovidescattewgathewsewvice(
+      eawwybiwdsewvicescattewgathewsuppowt s-scattewgathewsuppowt, (✿oωo)
+      wequestsuccessstats w-wequestsuccessstats, (U ﹏ U)
+      p-pawtitionwoggingsuppowt<eawwybiwdwequestcontext> pawtitionwoggingsuppowt, -.-
+      wequestcontexttoeawwybiwdwequestfiwtew wequestcontexttoeawwybiwdwequestfiwtew, ^•ﻌ•^
+      pawtitionaccesscontwowwew pawtitionaccesscontwowwew, rawr
+      pawtitionconfig p-pawtitionconfig, (˘ω˘)
+      w-wootcwientsewvicebuiwdew<eawwybiwdsewvice.sewviceiface> wootcwientsewvicebuiwdew, nyaa~~
+      @named(eawwybiwdcommonmoduwe.named_exp_cwustew_cwient)
+          w-wootcwientsewvicebuiwdew<eawwybiwdsewvice.sewviceiface>
+          e-expcwustewwootcwientsewvicebuiwdew, UwU
+      @named(eawwybiwdcommonmoduwe.named_awt_cwient) @nuwwabwe p-pawtitionconfig awtpawtitionconfig, :3
+      @named(eawwybiwdcommonmoduwe.named_awt_cwient) @nuwwabwe
+          wootcwientsewvicebuiwdew<eawwybiwdsewvice.sewviceiface> awtwootcwientsewvicebuiwdew,
+      s-statsweceivew statsweceivew, (⑅˘꒳˘)
+      eawwybiwdcwustew cwustew, (///ˬ///✿)
+      seawchdecidew d-decidew) {
 
 
-    Service<EarlybirdRequestContext, EarlybirdResponse> controlService =
-        buildScatterOrSplitterService(
-          scatterGatherSupport,
-          requestSuccessStats,
-          partitionLoggingSupport,
-          requestContextToEarlybirdRequestFilter,
-          partitionAccessController,
-          partitionConfig,
-          rootClientServiceBuilder,
-          altPartitionConfig,
-          altRootClientServiceBuilder,
-          statsReceiver,
-          cluster,
-          decider
+    sewvice<eawwybiwdwequestcontext, ^^;; e-eawwybiwdwesponse> c-contwowsewvice =
+        b-buiwdscattewowspwittewsewvice(
+          scattewgathewsuppowt, >_<
+          w-wequestsuccessstats, rawr x3
+          p-pawtitionwoggingsuppowt, /(^•ω•^)
+          w-wequestcontexttoeawwybiwdwequestfiwtew, :3
+          p-pawtitionaccesscontwowwew, (ꈍᴗꈍ)
+          pawtitionconfig, /(^•ω•^)
+          wootcwientsewvicebuiwdew, (⑅˘꒳˘)
+          a-awtpawtitionconfig, ( ͡o ω ͡o )
+          a-awtwootcwientsewvicebuiwdew, òωó
+          s-statsweceivew, (⑅˘꒳˘)
+          c-cwustew, XD
+          d-decidew
     );
 
-    Map<ExperimentCluster, ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse>>
-        experimentScatterGatherServices = new HashMap<>();
+    map<expewimentcwustew, -.- scattewgathewsewvice<eawwybiwdwequestcontext, :3 eawwybiwdwesponse>>
+        e-expewimentscattewgathewsewvices = nyew hashmap<>();
 
-    LOG.info("Using ScatterGatherWithExperimentRedirectsService");
-    LOG.info("Control Partition Path: {}", partitionConfig.getPartitionPath());
+    wog.info("using scattewgathewwithexpewimentwediwectssewvice");
+    wog.info("contwow p-pawtition path: {}", nyaa~~ pawtitionconfig.getpawtitionpath());
 
-    Arrays.stream(ExperimentCluster.values())
-        .filter(v -> v.name().toLowerCase().startsWith("exp"))
-        .forEach(experimentCluster -> {
-          String expPartitionPath = partitionConfig.getPartitionPath()
-              + "-" + experimentCluster.name().toLowerCase();
+    awways.stweam(expewimentcwustew.vawues())
+        .fiwtew(v -> v.name().towowewcase().stawtswith("exp"))
+        .foweach(expewimentcwustew -> {
+          s-stwing exppawtitionpath = p-pawtitionconfig.getpawtitionpath()
+              + "-" + e-expewimentcwustew.name().towowewcase();
 
-          LOG.info("Experiment Partition Path: {}", expPartitionPath);
+          wog.info("expewiment p-pawtition path: {}", 😳 e-exppawtitionpath);
 
-          experimentScatterGatherServices.put(experimentCluster,
-              createScatterGatherService(
-                  "",
-                  scatterGatherSupport,
-                  requestSuccessStats,
-                  partitionLoggingSupport,
-                  requestContextToEarlybirdRequestFilter,
-                  partitionAccessController,
-                  partitionConfig.getNumPartitions(),
-                  expPartitionPath,
-                  expClusterRootClientServiceBuilder,
-                  statsReceiver,
-                  cluster,
-                  decider,
-                  experimentCluster.name().toLowerCase()));
+          e-expewimentscattewgathewsewvices.put(expewimentcwustew, (⑅˘꒳˘)
+              cweatescattewgathewsewvice(
+                  "", nyaa~~
+                  scattewgathewsuppowt, OwO
+                  wequestsuccessstats, rawr x3
+                  pawtitionwoggingsuppowt, XD
+                  wequestcontexttoeawwybiwdwequestfiwtew, σωσ
+                  p-pawtitionaccesscontwowwew, (U ᵕ U❁)
+                  pawtitionconfig.getnumpawtitions(), (U ﹏ U)
+                  e-exppawtitionpath, :3
+                  expcwustewwootcwientsewvicebuiwdew, ( ͡o ω ͡o )
+                  s-statsweceivew, σωσ
+                  c-cwustew, >w<
+                  decidew, 😳😳😳
+                  expewimentcwustew.name().towowewcase()));
         });
 
-    return new ScatterGatherWithExperimentRedirectsService(
-        controlService,
-        experimentScatterGatherServices);
+    w-wetuwn n-nyew scattewgathewwithexpewimentwediwectssewvice(
+        contwowsewvice, OwO
+        e-expewimentscattewgathewsewvices);
   }
 }

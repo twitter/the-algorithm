@@ -1,69 +1,69 @@
-// For details of how to encode and decode thrift, check
-// https://github.com/apache/thrift/blob/master/doc/specs/thrift-binary-protocol.md
+// fow detaiws of how to encode and d-decode thwift, 😳😳😳 c-check
+// https://github.com/apache/thwift/bwob/mastew/doc/specs/thwift-binawy-pwotocow.md
 
-// Definitions of the thrift binary format
-typedef enum {
-  TTYPE_STOP   = 0,
-  TTYPE_VOID   = 1,
-  TTYPE_BOOL   = 2,
-  TTYPE_BYTE   = 3,
-  TTYPE_DOUBLE = 4,
-  TTYPE_I16    = 6,
-  TTYPE_I32    = 8,
-  TTYPE_I64    = 10,
-  TTYPE_STRING = 11,
-  TTYPE_STRUCT = 12,
-  TTYPE_MAP    = 13,
-  TTYPE_SET    = 14,
-  TTYPE_LIST   = 15,
-  TTYPE_ENUM   = 16,
-} TTYPES;
+// d-definitions of the t-thwift binawy f-fowmat
+typedef e-enum {
+  ttype_stop   = 0, 😳😳😳
+  t-ttype_void   = 1, o.O
+  t-ttype_boow   = 2, ( ͡o ω ͡o )
+  ttype_byte   = 3, (U ﹏ U)
+  ttype_doubwe = 4, (///ˬ///✿)
+  ttype_i16    = 6, >w<
+  ttype_i32    = 8, rawr
+  t-ttype_i64    = 10, mya
+  ttype_stwing = 11, ^^
+  ttype_stwuct = 12, 😳😳😳
+  ttype_map    = 13, mya
+  t-ttype_set    = 14,
+  ttype_wist   = 15, 😳
+  t-ttype_enum   = 16, -.-
+} ttypes;
 
-// Fields of a batch prediction response
+// fiewds of a batch pwediction w-wesponse
 typedef enum {
-  BPR_DUMMY ,
-  BPR_PREDICTIONS,
-} BPR_FIELDS;
+  bpw_dummy , 🥺
+  b-bpw_pwedictions, o.O
+} b-bpw_fiewds;
 
-// Fields of a datarecord
+// fiewds of a datawecowd
 typedef enum {
-  DR_CROSS             , // fake field for crosses
-  DR_BINARY            ,
-  DR_CONTINUOUS        ,
-  DR_DISCRETE          ,
-  DR_STRING            ,
-  DR_SPARSE_BINARY     ,
-  DR_SPARSE_CONTINUOUS ,
-  DR_BLOB              ,
-  DR_GENERAL_TENSOR    ,
-  DR_SPARSE_TENSOR     ,
-} DR_FIELDS;
+  dw_cwoss             , /(^•ω•^) // f-fake fiewd fow cwosses
+  dw_binawy            , nyaa~~
+  dw_continuous        , nyaa~~
+  dw_discwete          , :3
+  d-dw_stwing            , 😳😳😳
+  dw_spawse_binawy     , (˘ω˘)
+  d-dw_spawse_continuous , ^^
+  d-dw_bwob              , :3
+  d-dw_genewaw_tensow    , -.-
+  dw_spawse_tensow     , 😳
+} d-dw_fiewds;
 
-// Fields for General tensor
-typedef enum {
-  GT_DUMMY  , // dummy field
-  GT_RAW    ,
-  GT_STRING ,
-  GT_INT32  ,
-  GT_INT64  ,
-  GT_FLOAT  ,
-  GT_DOUBLE ,
-  GT_BOOL   ,
-} GT_FIELDS;
+// fiewds fow genewaw tensow
+t-typedef enum {
+  gt_dummy  , mya // dummy fiewd
+  gt_waw    , (˘ω˘)
+  g-gt_stwing , >_<
+  gt_int32  , -.-
+  gt_int64  , 🥺
+  gt_fwoat  ,
+  gt_doubwe , (U ﹏ U)
+  gt_boow   , >w<
+} g-gt_fiewds;
 
 typedef enum {
-  SP_DUMMY  , // dummy field
-  SP_COO    ,
-} SP_FIELDS;
+  sp_dummy  , mya // d-dummy f-fiewd
+  sp_coo    , >w<
+} s-sp_fiewds;
 
-// Enum values from tensor.thrift
+// enum vawues fwom tensow.thwift
 typedef enum {
-  DATA_TYPE_FLOAT  ,
-  DATA_TYPE_DOUBLE ,
-  DATA_TYPE_INT32  ,
-  DATA_TYPE_INT64  ,
-  DATA_TYPE_UINT8  ,
-  DATA_TYPE_STRING ,
-  DATA_TYPE_BYTE   ,
-  DATA_TYPE_BOOL   ,
-} DATA_TYPES;
+  d-data_type_fwoat  , nyaa~~
+  d-data_type_doubwe , (✿oωo)
+  data_type_int32  , ʘwʘ
+  d-data_type_int64  , (ˆ ﻌ ˆ)♡
+  d-data_type_uint8  , 😳😳😳
+  data_type_stwing ,
+  d-data_type_byte   , :3
+  data_type_boow   , OwO
+} d-data_types;

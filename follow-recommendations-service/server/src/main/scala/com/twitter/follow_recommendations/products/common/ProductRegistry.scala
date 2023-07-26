@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.products.common
+package com.twittew.fowwow_wecommendations.pwoducts.common
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
+impowt c-com.twittew.fowwow_wecommendations.common.modews.dispwaywocation
 
-trait ProductRegistry {
-  def products: Seq[Product]
-  def displayLocationProductMap: Map[DisplayLocation, Product]
-  def getProductByDisplayLocation(displayLocation: DisplayLocation): Product
+t-twait pwoductwegistwy {
+  d-def p-pwoducts: seq[pwoduct]
+  d-def dispwaywocationpwoductmap: m-map[dispwaywocation, ( ͡o ω ͡o ) pwoduct]
+  d-def getpwoductbydispwaywocation(dispwaywocation: d-dispwaywocation): pwoduct
 }

@@ -1,213 +1,213 @@
-package com.twitter.visibility.configapi.params
+package com.twittew.visibiwity.configapi.pawams
 
-import com.twitter.timelines.configapi.Bounded
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FeatureName
-import com.twitter.timelines.configapi.HasTimeConversion
-import com.twitter.timelines.configapi.TimeConversion
-import com.twitter.util.Time
-import com.twitter.visibility.common.ModelScoreThresholds
+impowt com.twittew.timewines.configapi.bounded
+impowt c-com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.featuwename
+i-impowt com.twittew.timewines.configapi.hastimeconvewsion
+impowt c-com.twittew.timewines.configapi.timeconvewsion
+i-impowt com.twittew.utiw.time
+i-impowt com.twittew.visibiwity.common.modewscowethweshowds
 
-private[visibility] object FeatureSwitchKey extends Enumeration {
-  type FeatureSwitchKey = String
+p-pwivate[visibiwity] object featuweswitchkey extends enumewation {
+  type featuweswitchkey = s-stwing
 
-  final val HighSpammyTweetContentScoreSearchTopProdTweetLabelDropFuleThreshold =
-    "high_spammy_tweet_content_score_search_top_prod_tweet_label_drop_rule_threshold"
-  final val HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThreshold =
-    "high_spammy_tweet_content_score_search_latest_prod_tweet_label_drop_rule_threshold"
-  final val HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThreshold =
-    "high_spammy_tweet_content_score_trend_top_tweet_label_drop_rule_threshold"
-  final val HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThreshold =
-    "high_spammy_tweet_content_score_trend_latest_tweet_label_drop_rule_threshold"
-  final val HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThreshold =
-    "high_spammy_tweet_content_score_convos_downranking_abusive_quality_threshold"
+  finaw vaw highspammytweetcontentscoweseawchtoppwodtweetwabewdwopfuwethweshowd =
+    "high_spammy_tweet_content_scowe_seawch_top_pwod_tweet_wabew_dwop_wuwe_thweshowd"
+  finaw v-vaw highspammytweetcontentscoweseawchwatestpwodtweetwabewdwopwuwethweshowd =
+    "high_spammy_tweet_content_scowe_seawch_watest_pwod_tweet_wabew_dwop_wuwe_thweshowd"
+  finaw vaw h-highspammytweetcontentscowetwendtoptweetwabewdwopwuwethweshowd =
+    "high_spammy_tweet_content_scowe_twend_top_tweet_wabew_dwop_wuwe_thweshowd"
+  finaw vaw highspammytweetcontentscowetwendwatesttweetwabewdwopwuwethweshowd =
+    "high_spammy_tweet_content_scowe_twend_watest_tweet_wabew_dwop_wuwe_thweshowd"
+  finaw vaw h-highspammytweetcontentscoweconvodownwankabusivequawitythweshowd =
+    "high_spammy_tweet_content_scowe_convos_downwanking_abusive_quawity_thweshowd"
 
-  final val NsfwAgeBasedDropRulesHoldbackParam =
-    "nsfw_age_based_drop_rules_holdback"
+  finaw v-vaw nysfwagebaseddwopwuweshowdbackpawam =
+    "nsfw_age_based_dwop_wuwes_howdback"
 
-  final val CommunityTweetDropRuleEnabled =
-    "community_tweet_drop_rule_enabled"
-  final val CommunityTweetDropProtectedRuleEnabled =
-    "community_tweet_drop_protected_rule_enabled"
-  final val CommunityTweetLimitedActionsRulesEnabled =
-    "community_tweet_limited_actions_rules_enabled"
-  final val CommunityTweetMemberRemovedLimitedActionsRulesEnabled =
-    "community_tweet_member_removed_limited_actions_rules_enabled"
-  final val CommunityTweetCommunityUnavailableLimitedActionsRulesEnabled =
-    "community_tweet_community_unavailable_limited_actions_rules_enabled"
-  final val CommunityTweetNonMemberLimitedActionsRuleEnabled =
-    "community_tweet_non_member_limited_actions_rule_enabled"
+  f-finaw vaw communitytweetdwopwuweenabwed =
+    "community_tweet_dwop_wuwe_enabwed"
+  finaw vaw communitytweetdwoppwotectedwuweenabwed =
+    "community_tweet_dwop_pwotected_wuwe_enabwed"
+  finaw vaw communitytweetwimitedactionswuwesenabwed =
+    "community_tweet_wimited_actions_wuwes_enabwed"
+  f-finaw vaw communitytweetmembewwemovedwimitedactionswuwesenabwed =
+    "community_tweet_membew_wemoved_wimited_actions_wuwes_enabwed"
+  finaw vaw communitytweetcommunityunavaiwabwewimitedactionswuwesenabwed =
+    "community_tweet_community_unavaiwabwe_wimited_actions_wuwes_enabwed"
+  finaw vaw communitytweetnonmembewwimitedactionswuweenabwed =
+    "community_tweet_non_membew_wimited_actions_wuwe_enabwed"
 
-  final val TrustedFriendsTweetLimitedEngagementsRuleEnabled =
-    "trusted_friends_tweet_limited_engagements_rule_enabled"
+  f-finaw vaw twustedfwiendstweetwimitedengagementswuweenabwed =
+    "twusted_fwiends_tweet_wimited_engagements_wuwe_enabwed"
 
-  final val CountrySpecificNsfwContentGatingCountries =
-    "country_specific_nsfw_content_gating_countries"
+  f-finaw vaw countwyspecificnsfwcontentgatingcountwies =
+    "countwy_specific_nsfw_content_gating_countwies"
 
-  final val AgeGatingAdultContentExperimentCountries =
-    "age_gating_adult_content_experiment_countries"
-  final val AgeGatingAdultContentExperimentEnabled =
-    "age_gating_adult_content_experiment_enabled"
+  f-finaw vaw agegatingaduwtcontentexpewimentcountwies =
+    "age_gating_aduwt_content_expewiment_countwies"
+  f-finaw v-vaw agegatingaduwtcontentexpewimentenabwed =
+    "age_gating_aduwt_content_expewiment_enabwed"
 
-  final val HighToxicityModelScoreSpaceThreshold =
-    "high_toxicity_model_score_space_threshold"
+  finaw vaw hightoxicitymodewscowespacethweshowd =
+    "high_toxicity_modew_scowe_space_thweshowd"
 
-  final val CardUriRootDomainDenyList = "card_uri_root_domain_deny_list"
+  finaw vaw c-cawduwiwootdomaindenywist = "cawd_uwi_woot_domain_deny_wist"
 
-  final val SkipTweetDetailLimitedEngagementsRuleEnabled =
-    "skip_tweet_detail_limited_engagements_rule_enabled"
+  finaw vaw skiptweetdetaiwwimitedengagementswuweenabwed =
+    "skip_tweet_detaiw_wimited_engagements_wuwe_enabwed"
 
-  final val AdAvoidanceHighToxicityModelScoreThreshold =
-    "ad_avoidance_model_thresholds_high_toxicity_model"
-  final val AdAvoidanceReportedTweetModelScoreThreshold =
-    "ad_avoidance_model_thresholds_reported_tweet_model"
+  finaw vaw a-adavoidancehightoxicitymodewscowethweshowd =
+    "ad_avoidance_modew_thweshowds_high_toxicity_modew"
+  finaw vaw adavoidancewepowtedtweetmodewscowethweshowd =
+    "ad_avoidance_modew_thweshowds_wepowted_tweet_modew"
 
-  final val StaleTweetLimitedActionsRulesEnabled =
-    "stale_tweet_limited_actions_rules_enabled"
+  finaw vaw stawetweetwimitedactionswuwesenabwed =
+    "stawe_tweet_wimited_actions_wuwes_enabwed"
 
-  final val FosnrFallbackDropRulesEnabled =
-    "freedom_of_speech_not_reach_fallback_drop_rules_enabled"
-  final val FosnrRulesEnabled =
-    "freedom_of_speech_not_reach_rules_enabled"
+  finaw vaw fosnwfawwbackdwopwuwesenabwed =
+    "fweedom_of_speech_not_weach_fawwback_dwop_wuwes_enabwed"
+  f-finaw vaw fosnwwuwesenabwed =
+    "fweedom_of_speech_not_weach_wuwes_enabwed"
 }
 
-abstract class FSRuleParam[T](override val name: FeatureName, override val default: T)
-    extends RuleParam(default)
-    with FSName
+a-abstwact c-cwass fswuwepawam[t](ovewwide v-vaw nyame: featuwename, ^^;; ovewwide vaw defauwt: t)
+    extends w-wuwepawam(defauwt)
+    w-with fsname
 
-abstract class FSBoundedRuleParam[T](
-  override val name: FeatureName,
-  override val default: T,
-  override val min: T,
-  override val max: T
+abstwact cwass f-fsboundedwuwepawam[t](
+  o-ovewwide vaw nyame: f-featuwename, ^•ﻌ•^
+  ovewwide vaw defauwt: t-t, σωσ
+  ovewwide vaw min: t, -.-
+  ovewwide vaw max: t-t
 )(
-  implicit override val ordering: Ordering[T])
-    extends RuleParam(default)
-    with Bounded[T]
-    with FSName
+  impwicit ovewwide vaw o-owdewing: owdewing[t])
+    extends w-wuwepawam(defauwt)
+    w-with bounded[t]
+    with fsname
 
-abstract class FSTimeRuleParam[T](
-  override val name: FeatureName,
-  override val default: Time,
-  override val timeConversion: TimeConversion[T])
-    extends RuleParam(default)
-    with HasTimeConversion[T]
-    with FSName
+abstwact cwass fstimewuwepawam[t](
+  ovewwide vaw nyame: featuwename, ^^;;
+  ovewwide vaw d-defauwt: time, XD
+  o-ovewwide vaw timeconvewsion: timeconvewsion[t])
+    e-extends wuwepawam(defauwt)
+    w-with hastimeconvewsion[t]
+    w-with fsname
 
-abstract class FSEnumRuleParam[T <: Enumeration](
-  override val name: FeatureName,
-  override val default: T#Value,
-  override val enum: T)
-    extends EnumRuleParam(default, enum)
-    with FSName
+abstwact cwass fsenumwuwepawam[t <: enumewation](
+  ovewwide vaw n-nyame: featuwename, 🥺
+  ovewwide vaw defauwt: t#vawue, òωó
+  ovewwide vaw enum: t)
+    e-extends enumwuwepawam(defauwt, (ˆ ﻌ ˆ)♡ enum)
+    with fsname
 
-private[visibility] object FSRuleParams {
-  object HighSpammyTweetContentScoreSearchTopProdTweetLabelDropRuleThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreSearchTopProdTweetLabelDropFuleThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
-        min = 0,
+p-pwivate[visibiwity] o-object f-fswuwepawams {
+  object highspammytweetcontentscoweseawchtoppwodtweetwabewdwopwuwethweshowdpawam
+      e-extends f-fsboundedpawam(
+        f-featuweswitchkey.highspammytweetcontentscoweseawchtoppwodtweetwabewdwopfuwethweshowd, -.-
+        d-defauwt = modewscowethweshowds.highspammytweetcontentscowedefauwtthweshowd, :3
+        min = 0, ʘwʘ
+        m-max = 1)
+  o-object highspammytweetcontentscoweseawchwatestpwodtweetwabewdwopwuwethweshowdpawam
+      e-extends fsboundedpawam(
+        f-featuweswitchkey.highspammytweetcontentscoweseawchwatestpwodtweetwabewdwopwuwethweshowd, 🥺
+        d-defauwt = modewscowethweshowds.highspammytweetcontentscowedefauwtthweshowd, >_<
+        min = 0, ʘwʘ
         max = 1)
-  object HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
-        min = 0,
+  object highspammytweetcontentscowetwendtoptweetwabewdwopwuwethweshowdpawam
+      e-extends fsboundedpawam(
+        featuweswitchkey.highspammytweetcontentscowetwendtoptweetwabewdwopwuwethweshowd, (˘ω˘)
+        defauwt = modewscowethweshowds.highspammytweetcontentscowedefauwtthweshowd, (✿oωo)
+        min = 0, (///ˬ///✿)
         max = 1)
-  object HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
-        min = 0,
+  object highspammytweetcontentscowetwendwatesttweetwabewdwopwuwethweshowdpawam
+      extends f-fsboundedpawam(
+        featuweswitchkey.highspammytweetcontentscowetwendwatesttweetwabewdwopwuwethweshowd, rawr x3
+        defauwt = modewscowethweshowds.highspammytweetcontentscowedefauwtthweshowd, -.-
+        min = 0, ^^
         max = 1)
-  object HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
-        min = 0,
-        max = 1)
-  object HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
-        min = 0,
-        max = 1)
+  object h-highspammytweetcontentscoweconvodownwankabusivequawitythweshowdpawam
+      e-extends f-fsboundedpawam(
+        featuweswitchkey.highspammytweetcontentscoweconvodownwankabusivequawitythweshowd, (⑅˘꒳˘)
+        d-defauwt = modewscowethweshowds.highspammytweetcontentscowedefauwtthweshowd, nyaa~~
+        m-min = 0,
+        m-max = 1)
 
-  object CommunityTweetDropRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.CommunityTweetDropRuleEnabled, true)
+  object communitytweetdwopwuweenabwedpawam
+      extends fswuwepawam(featuweswitchkey.communitytweetdwopwuweenabwed, /(^•ω•^) twue)
 
-  object CommunityTweetDropProtectedRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.CommunityTweetDropProtectedRuleEnabled, true)
+  object communitytweetdwoppwotectedwuweenabwedpawam
+      e-extends fswuwepawam(featuweswitchkey.communitytweetdwoppwotectedwuweenabwed, (U ﹏ U) t-twue)
 
-  object CommunityTweetLimitedActionsRulesEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.CommunityTweetLimitedActionsRulesEnabled, false)
+  object communitytweetwimitedactionswuwesenabwedpawam
+      extends f-fswuwepawam(featuweswitchkey.communitytweetwimitedactionswuwesenabwed, 😳😳😳 f-fawse)
 
-  object CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam
-      extends FSRuleParam(
-        FeatureSwitchKey.CommunityTweetMemberRemovedLimitedActionsRulesEnabled,
-        false)
+  object communitytweetmembewwemovedwimitedactionswuwesenabwedpawam
+      extends fswuwepawam(
+        f-featuweswitchkey.communitytweetmembewwemovedwimitedactionswuwesenabwed, >w<
+        f-fawse)
 
-  object CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam
-      extends FSRuleParam(
-        FeatureSwitchKey.CommunityTweetCommunityUnavailableLimitedActionsRulesEnabled,
-        false)
+  object communitytweetcommunityunavaiwabwewimitedactionswuwesenabwedpawam
+      e-extends fswuwepawam(
+        f-featuweswitchkey.communitytweetcommunityunavaiwabwewimitedactionswuwesenabwed,
+        fawse)
 
-  object CommunityTweetNonMemberLimitedActionsRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.CommunityTweetNonMemberLimitedActionsRuleEnabled, false)
+  object communitytweetnonmembewwimitedactionswuweenabwedpawam
+      extends fswuwepawam(featuweswitchkey.communitytweetnonmembewwimitedactionswuweenabwed, XD fawse)
 
-  object TrustedFriendsTweetLimitedEngagementsRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.TrustedFriendsTweetLimitedEngagementsRuleEnabled, false)
+  o-object twustedfwiendstweetwimitedengagementswuweenabwedpawam
+      e-extends f-fswuwepawam(featuweswitchkey.twustedfwiendstweetwimitedengagementswuweenabwed, o.O fawse)
 
-  object SkipTweetDetailLimitedEngagementRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.SkipTweetDetailLimitedEngagementsRuleEnabled, false)
+  object s-skiptweetdetaiwwimitedengagementwuweenabwedpawam
+      e-extends fswuwepawam(featuweswitchkey.skiptweetdetaiwwimitedengagementswuweenabwed, mya f-fawse)
 
 
-  object NsfwAgeBasedDropRulesHoldbackParam
-      extends FSRuleParam(FeatureSwitchKey.NsfwAgeBasedDropRulesHoldbackParam, true)
+  object nysfwagebaseddwopwuweshowdbackpawam
+      extends fswuwepawam(featuweswitchkey.nsfwagebaseddwopwuweshowdbackpawam, 🥺 twue)
 
-  object CountrySpecificNsfwContentGatingCountriesParam
-      extends FSRuleParam[Seq[String]](
-        FeatureSwitchKey.CountrySpecificNsfwContentGatingCountries,
-        default = Seq("au"))
+  object c-countwyspecificnsfwcontentgatingcountwiespawam
+      e-extends fswuwepawam[seq[stwing]](
+        featuweswitchkey.countwyspecificnsfwcontentgatingcountwies, ^^;;
+        defauwt = seq("au"))
 
-  object AgeGatingAdultContentExperimentCountriesParam
-      extends FSRuleParam[Seq[String]](
-        FeatureSwitchKey.AgeGatingAdultContentExperimentCountries,
-        default = Seq.empty)
-  object AgeGatingAdultContentExperimentRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.AgeGatingAdultContentExperimentEnabled, default = false)
+  o-object a-agegatingaduwtcontentexpewimentcountwiespawam
+      extends fswuwepawam[seq[stwing]](
+        featuweswitchkey.agegatingaduwtcontentexpewimentcountwies, :3
+        d-defauwt = seq.empty)
+  object agegatingaduwtcontentexpewimentwuweenabwedpawam
+      extends fswuwepawam(featuweswitchkey.agegatingaduwtcontentexpewimentenabwed, (U ﹏ U) d-defauwt = fawse)
 
-  object HighToxicityModelScoreSpaceThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.HighToxicityModelScoreSpaceThreshold,
-        default = ModelScoreThresholds.HighToxicityModelScoreSpaceDefaultThreshold,
-        min = 0,
-        max = 1)
-
-  object CardUriRootDomainDenyListParam
-      extends FSRuleParam[Seq[String]](
-        FeatureSwitchKey.CardUriRootDomainDenyList,
-        default = Seq.empty)
-
-  object AdAvoidanceHighToxicityModelScoreThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.AdAvoidanceHighToxicityModelScoreThreshold,
-        default = ModelScoreThresholds.AdAvoidanceHighToxicityModelScoreDefaultThreshold,
-        min = 0,
+  object hightoxicitymodewscowespacethweshowdpawam
+      e-extends fsboundedpawam(
+        f-featuweswitchkey.hightoxicitymodewscowespacethweshowd, OwO
+        defauwt = modewscowethweshowds.hightoxicitymodewscowespacedefauwtthweshowd, 😳😳😳
+        min = 0, (ˆ ﻌ ˆ)♡
         max = 1)
 
-  object AdAvoidanceReportedTweetModelScoreThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.AdAvoidanceReportedTweetModelScoreThreshold,
-        default = ModelScoreThresholds.AdAvoidanceReportedTweetModelScoreDefaultThreshold,
-        min = 0,
+  o-object cawduwiwootdomaindenywistpawam
+      e-extends fswuwepawam[seq[stwing]](
+        featuweswitchkey.cawduwiwootdomaindenywist, XD
+        defauwt = s-seq.empty)
+
+  object adavoidancehightoxicitymodewscowethweshowdpawam
+      e-extends fsboundedpawam(
+        featuweswitchkey.adavoidancehightoxicitymodewscowethweshowd, (ˆ ﻌ ˆ)♡
+        defauwt = modewscowethweshowds.adavoidancehightoxicitymodewscowedefauwtthweshowd, ( ͡o ω ͡o )
+        min = 0, rawr x3
         max = 1)
 
-  object StaleTweetLimitedActionsRulesEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.StaleTweetLimitedActionsRulesEnabled, false)
+  object a-adavoidancewepowtedtweetmodewscowethweshowdpawam
+      extends f-fsboundedpawam(
+        f-featuweswitchkey.adavoidancewepowtedtweetmodewscowethweshowd,
+        defauwt = modewscowethweshowds.adavoidancewepowtedtweetmodewscowedefauwtthweshowd, nyaa~~
+        m-min = 0, >_<
+        max = 1)
 
-  object FosnrFallbackDropRulesEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.FosnrFallbackDropRulesEnabled, false)
-  object FosnrRulesEnabledParam extends FSRuleParam(FeatureSwitchKey.FosnrRulesEnabled, true)
+  o-object stawetweetwimitedactionswuwesenabwedpawam
+      extends f-fswuwepawam(featuweswitchkey.stawetweetwimitedactionswuwesenabwed, ^^;; f-fawse)
+
+  object fosnwfawwbackdwopwuwesenabwedpawam
+      e-extends fswuwepawam(featuweswitchkey.fosnwfawwbackdwopwuwesenabwed, (ˆ ﻌ ˆ)♡ f-fawse)
+  object fosnwwuwesenabwedpawam extends fswuwepawam(featuweswitchkey.fosnwwuwesenabwed, ^^;; t-twue)
 }

@@ -1,151 +1,151 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.tensowbuiwdew
 
-import com.google.protobuf.ByteString
-import com.twitter.product_mixer.core.feature.Feature
-import inference.GrpcService.InferTensorContents
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+impowt c-com.googwe.pwotobuf.bytestwing
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt infewence.gwpcsewvice.infewtensowcontents
+i-impowt infewence.gwpcsewvice.modewinfewwequest.infewinputtensow
 
-// This class contains most of common versions at Twitter, but in the future we can add more:
-// https://github.com/kserve/kserve/blob/master/docs/predict-api/v2/required_api.md#tensor-data-1
+// t-this cwass c-contains most o-of common vewsions a-at twittew, (U ﹏ U) but in the futuwe we can add mowe:
+// https://github.com/ksewve/ksewve/bwob/mastew/docs/pwedict-api/v2/wequiwed_api.md#tensow-data-1
 
-trait InferInputTensorBuilder[Value] {
+twait infewinputtensowbuiwdew[vawue] {
 
-  def apply(
-    featureName: String,
-    featureValues: Seq[Value]
-  ): Seq[InferInputTensor]
+  d-def appwy(
+    featuwename: stwing, -.-
+    featuwevawues: s-seq[vawue]
+  ): seq[infewinputtensow]
 
 }
 
-object InferInputTensorBuilder {
+o-object infewinputtensowbuiwdew {
 
-  def checkTensorShapeMatchesValueLength(
-    featureName: String,
-    featureValues: Seq[Any],
-    tensorShape: Seq[Int]
-  ): Unit = {
-    val featureValuesSize = featureValues.size
-    val tensorShapeSize = tensorShape.product
-    if (featureValuesSize != tensorShapeSize) {
-      throw new FeatureValuesAndShapeMismatchException(
-        featureName,
-        featureValuesSize,
-        tensorShapeSize)
+  def checktensowshapematchesvawuewength(
+    featuwename: stwing, ^•ﻌ•^
+    featuwevawues: s-seq[any], rawr
+    tensowshape: s-seq[int]
+  ): u-unit = {
+    vaw featuwevawuessize = featuwevawues.size
+    vaw tensowshapesize = tensowshape.pwoduct
+    i-if (featuwevawuessize != tensowshapesize) {
+      thwow nyew featuwevawuesandshapemismatchexception(
+        featuwename, (˘ω˘)
+        featuwevawuessize, nyaa~~
+        t-tensowshapesize)
     }
   }
 
-  def buildBoolInferInputTensor(
-    featureName: String,
-    featureValues: Seq[Boolean],
-    tensorShape: Seq[Int]
-  ): Seq[InferInputTensor] = {
+  def buiwdboowinfewinputtensow(
+    f-featuwename: s-stwing, UwU
+    f-featuwevawues: s-seq[boowean], :3
+    tensowshape: seq[int]
+  ): s-seq[infewinputtensow] = {
 
-    checkTensorShapeMatchesValueLength(featureName, featureValues, tensorShape)
+    checktensowshapematchesvawuewength(featuwename, (⑅˘꒳˘) featuwevawues, (///ˬ///✿) tensowshape)
 
-    val inputTensorBuilder = InferInputTensor.newBuilder().setName(featureName)
-    tensorShape.foreach { shape =>
-      inputTensorBuilder.addShape(shape)
+    v-vaw inputtensowbuiwdew = infewinputtensow.newbuiwdew().setname(featuwename)
+    tensowshape.foweach { shape =>
+      inputtensowbuiwdew.addshape(shape)
     }
-    val inputTensor = inputTensorBuilder
-      .setDatatype("BOOL")
-      .setContents {
-        val contents = InferTensorContents.newBuilder()
-        featureValues.foreach { featureValue =>
-          contents.addBoolContents(featureValue)
+    vaw inputtensow = i-inputtensowbuiwdew
+      .setdatatype("boow")
+      .setcontents {
+        vaw contents = infewtensowcontents.newbuiwdew()
+        f-featuwevawues.foweach { f-featuwevawue =>
+          c-contents.addboowcontents(featuwevawue)
         }
         contents
       }
-      .build()
-    Seq(inputTensor)
+      .buiwd()
+    seq(inputtensow)
   }
 
-  def buildBytesInferInputTensor(
-    featureName: String,
-    featureValues: Seq[String],
-    tensorShape: Seq[Int]
-  ): Seq[InferInputTensor] = {
+  def buiwdbytesinfewinputtensow(
+    f-featuwename: s-stwing,
+    featuwevawues: seq[stwing],
+    t-tensowshape: s-seq[int]
+  ): seq[infewinputtensow] = {
 
-    checkTensorShapeMatchesValueLength(featureName, featureValues, tensorShape)
+    c-checktensowshapematchesvawuewength(featuwename, ^^;; featuwevawues, >_< t-tensowshape)
 
-    val inputTensorBuilder = InferInputTensor.newBuilder().setName(featureName)
-    tensorShape.foreach { shape =>
-      inputTensorBuilder.addShape(shape)
+    vaw inputtensowbuiwdew = infewinputtensow.newbuiwdew().setname(featuwename)
+    t-tensowshape.foweach { shape =>
+      i-inputtensowbuiwdew.addshape(shape)
     }
-    val inputTensor = inputTensorBuilder
-      .setDatatype("BYTES")
-      .setContents {
-        val contents = InferTensorContents.newBuilder()
-        featureValues.foreach { featureValue =>
-          val featureValueBytes = ByteString.copyFromUtf8(featureValue)
-          contents.addByteContents(featureValueBytes)
+    vaw inputtensow = i-inputtensowbuiwdew
+      .setdatatype("bytes")
+      .setcontents {
+        v-vaw contents = infewtensowcontents.newbuiwdew()
+        featuwevawues.foweach { featuwevawue =>
+          vaw featuwevawuebytes = bytestwing.copyfwomutf8(featuwevawue)
+          contents.addbytecontents(featuwevawuebytes)
         }
         contents
       }
-      .build()
-    Seq(inputTensor)
+      .buiwd()
+    s-seq(inputtensow)
   }
 
-  def buildFloat32InferInputTensor(
-    featureName: String,
-    featureValues: Seq[Float],
-    tensorShape: Seq[Int]
-  ): Seq[InferInputTensor] = {
+  d-def buiwdfwoat32infewinputtensow(
+    featuwename: s-stwing, rawr x3
+    f-featuwevawues: s-seq[fwoat], /(^•ω•^)
+    tensowshape: seq[int]
+  ): seq[infewinputtensow] = {
 
-    checkTensorShapeMatchesValueLength(featureName, featureValues, tensorShape)
+    checktensowshapematchesvawuewength(featuwename, :3 f-featuwevawues, (ꈍᴗꈍ) tensowshape)
 
-    val inputTensorBuilder = InferInputTensor.newBuilder().setName(featureName)
-    tensorShape.foreach { shape =>
-      inputTensorBuilder.addShape(shape)
+    vaw inputtensowbuiwdew = infewinputtensow.newbuiwdew().setname(featuwename)
+    t-tensowshape.foweach { shape =>
+      i-inputtensowbuiwdew.addshape(shape)
     }
-    val inputTensor = inputTensorBuilder
-      .setDatatype("FP32")
-      .setContents {
-        val contents = InferTensorContents.newBuilder()
-        featureValues.foreach { featureValue =>
-          contents.addFp32Contents(featureValue.floatValue)
+    v-vaw i-inputtensow = inputtensowbuiwdew
+      .setdatatype("fp32")
+      .setcontents {
+        v-vaw contents = i-infewtensowcontents.newbuiwdew()
+        f-featuwevawues.foweach { f-featuwevawue =>
+          contents.addfp32contents(featuwevawue.fwoatvawue)
         }
         contents
       }
-      .build()
-    Seq(inputTensor)
+      .buiwd()
+    s-seq(inputtensow)
   }
 
-  def buildInt64InferInputTensor(
-    featureName: String,
-    featureValues: Seq[Long],
-    tensorShape: Seq[Int]
-  ): Seq[InferInputTensor] = {
+  d-def buiwdint64infewinputtensow(
+    f-featuwename: s-stwing, /(^•ω•^)
+    f-featuwevawues: seq[wong], (⑅˘꒳˘)
+    tensowshape: seq[int]
+  ): seq[infewinputtensow] = {
 
-    checkTensorShapeMatchesValueLength(featureName, featureValues, tensorShape)
+    c-checktensowshapematchesvawuewength(featuwename, ( ͡o ω ͡o ) featuwevawues, òωó tensowshape)
 
-    val inputTensorBuilder = InferInputTensor.newBuilder().setName(featureName)
-    tensorShape.foreach { shape =>
-      inputTensorBuilder.addShape(shape)
+    vaw inputtensowbuiwdew = infewinputtensow.newbuiwdew().setname(featuwename)
+    tensowshape.foweach { s-shape =>
+      inputtensowbuiwdew.addshape(shape)
     }
-    val inputTensor = inputTensorBuilder
-      .setDatatype("INT64")
-      .setContents {
-        val contents = InferTensorContents.newBuilder()
-        featureValues.foreach { featureValue =>
-          contents.addInt64Contents(featureValue)
+    vaw inputtensow = inputtensowbuiwdew
+      .setdatatype("int64")
+      .setcontents {
+        v-vaw contents = i-infewtensowcontents.newbuiwdew()
+        f-featuwevawues.foweach { featuwevawue =>
+          c-contents.addint64contents(featuwevawue)
         }
         contents
       }
-      .build()
-    Seq(inputTensor)
+      .buiwd()
+    seq(inputtensow)
   }
 }
 
-class UnexpectedFeatureTypeException(feature: Feature[_, _])
-    extends UnsupportedOperationException(s"Unsupported Feature type passed in $feature")
+c-cwass u-unexpectedfeatuwetypeexception(featuwe: featuwe[_, (⑅˘꒳˘) _])
+    extends unsuppowtedopewationexception(s"unsuppowted featuwe type passed in $featuwe")
 
-class FeatureValuesAndShapeMismatchException(
-  featureName: String,
-  featureValuesSize: Int,
-  tensorShapeSize: Int)
-    extends UnsupportedOperationException(
-      s"Feature $featureName has mismatching FeatureValues (size: $featureValuesSize) and TensorShape (size: $tensorShapeSize)!")
+c-cwass featuwevawuesandshapemismatchexception(
+  featuwename: s-stwing, XD
+  featuwevawuessize: int, -.-
+  t-tensowshapesize: i-int)
+    extends unsuppowtedopewationexception(
+      s"featuwe $featuwename h-has mismatching f-featuwevawues (size: $featuwevawuessize) and tensowshape (size: $tensowshapesize)!")
 
-class UnexpectedDataTypeException[T](value: T, builder: InferInputTensorBuilder[_])
-    extends UnsupportedOperationException(
-      s"Unsupported data type ${value} passed in at ${builder.getClass.toString}")
+c-cwass unexpecteddatatypeexception[t](vawue: t-t, :3 buiwdew: infewinputtensowbuiwdew[_])
+    extends unsuppowtedopewationexception(
+      s"unsuppowted data t-type ${vawue} passed i-in at ${buiwdew.getcwass.tostwing}")

@@ -1,113 +1,113 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.concuwwent.awwaybwockingqueue;
+i-impowt java.utiw.concuwwent.executowsewvice;
+i-impowt java.utiw.concuwwent.executows;
+i-impowt j-java.utiw.concuwwent.wejectedexecutionexception;
+i-impowt java.utiw.concuwwent.thweadfactowy;
+i-impowt j-java.utiw.concuwwent.thweadpoowexecutow;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import scala.Function0;
+impowt scawa.function0;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.utiw.concuwwent.thweadfactowybuiwdew;
 
-import com.twitter.search.common.concurrent.ThreadPoolExecutorStats;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.util.ExecutorServiceFuturePool;
-import com.twitter.util.Future;
-import com.twitter.util.FuturePool;
+impowt com.twittew.seawch.common.concuwwent.thweadpoowexecutowstats;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
+i-impowt com.twittew.utiw.executowsewvicefutuwepoow;
+impowt com.twittew.utiw.futuwe;
+impowt c-com.twittew.utiw.futuwepoow;
 
 /**
- * A future pool that delegates all calls to an underlying futurePool, which can be recreated.
+ * a futuwe p-poow that dewegates a-aww cawws to an undewwying futuwepoow, (///ˬ///✿) which can be wecweated. 😳
  */
-public class EarlybirdFuturePoolManager implements FuturePool {
-  private volatile ExecutorServiceFuturePool pool = null;
+pubwic cwass e-eawwybiwdfutuwepoowmanagew impwements futuwepoow {
+  pwivate vowatiwe executowsewvicefutuwepoow poow = nyuww;
 
-  private final String threadName;
-  private final ThreadPoolExecutorStats threadPoolExecutorStats;
+  p-pwivate finaw stwing thweadname;
+  p-pwivate f-finaw thweadpoowexecutowstats t-thweadpoowexecutowstats;
 
-  public EarlybirdFuturePoolManager(String threadName) {
-    this.threadName = threadName;
-    this.threadPoolExecutorStats = new ThreadPoolExecutorStats(threadName);
+  p-pubwic eawwybiwdfutuwepoowmanagew(stwing thweadname) {
+    t-this.thweadname = thweadname;
+    this.thweadpoowexecutowstats = n-nyew thweadpoowexecutowstats(thweadname);
   }
 
-  final synchronized void createUnderlyingFuturePool(int threadCount) {
-    Preconditions.checkState(pool == null, "Cannot create a new pool before stopping the old one");
+  finaw synchwonized void cweateundewwyingfutuwepoow(int thweadcount) {
+    pweconditions.checkstate(poow == nyuww, 😳 "cannot c-cweate a nyew poow befowe stopping t-the owd one");
 
-    ExecutorService executorService =
-        createExecutorService(threadCount, getMaxQueueSize());
-    if (executorService instanceof ThreadPoolExecutor) {
-      threadPoolExecutorStats.setUnderlyingExecutorForStats((ThreadPoolExecutor) executorService);
+    e-executowsewvice e-executowsewvice =
+        cweateexecutowsewvice(thweadcount, σωσ getmaxqueuesize());
+    if (executowsewvice i-instanceof thweadpoowexecutow) {
+      t-thweadpoowexecutowstats.setundewwyingexecutowfowstats((thweadpoowexecutow) executowsewvice);
     }
 
-    pool = new ExecutorServiceFuturePool(executorService);
+    p-poow = nyew executowsewvicefutuwepoow(executowsewvice);
   }
 
-  final synchronized void stopUnderlyingFuturePool(long timeout, TimeUnit timeunit)
-      throws InterruptedException {
-    Preconditions.checkNotNull(pool);
-    pool.executor().shutdown();
-    pool.executor().awaitTermination(timeout, timeunit);
-    pool = null;
+  finaw s-synchwonized void stopundewwyingfutuwepoow(wong t-timeout, rawr x3 timeunit timeunit)
+      t-thwows intewwuptedexception {
+    pweconditions.checknotnuww(poow);
+    poow.executow().shutdown();
+    poow.executow().awaittewmination(timeout, OwO timeunit);
+    p-poow = nyuww;
   }
 
-  boolean isPoolReady() {
-    return pool != null;
+  boowean i-ispoowweady() {
+    wetuwn p-poow != nyuww;
   }
 
-  @Override
-  public final <T> Future<T> apply(Function0<T> f) {
-    return Preconditions.checkNotNull(pool).apply(f);
+  @ovewwide
+  p-pubwic finaw <t> futuwe<t> appwy(function0<t> f) {
+    wetuwn pweconditions.checknotnuww(poow).appwy(f);
   }
 
-  @VisibleForTesting
-  protected ExecutorService createExecutorService(int threadCount, int maxQueueSize) {
-    if (maxQueueSize <= 0) {
-      return Executors.newFixedThreadPool(threadCount, createThreadFactory(threadName));
+  @visibwefowtesting
+  pwotected executowsewvice cweateexecutowsewvice(int t-thweadcount, /(^•ω•^) i-int maxqueuesize) {
+    if (maxqueuesize <= 0) {
+      wetuwn e-executows.newfixedthweadpoow(thweadcount, 😳😳😳 c-cweatethweadfactowy(thweadname));
     }
 
-    SearchRateCounter rejectedTaskCounter =
-        SearchRateCounter.export(threadName + "_rejected_task_count");
-    return new ThreadPoolExecutor(
-        threadCount, threadCount, 0, TimeUnit.MILLISECONDS,
-        new ArrayBlockingQueue<>(maxQueueSize),
-        createThreadFactory(threadName),
-        (runnable, executor) -> {
-          rejectedTaskCounter.increment();
-          throw new RejectedExecutionException(threadName + " queue is full");
+    s-seawchwatecountew wejectedtaskcountew =
+        seawchwatecountew.expowt(thweadname + "_wejected_task_count");
+    wetuwn nyew thweadpoowexecutow(
+        thweadcount, ( ͡o ω ͡o ) t-thweadcount, >_< 0, timeunit.miwwiseconds,
+        nyew awwaybwockingqueue<>(maxqueuesize), >w<
+        cweatethweadfactowy(thweadname), rawr
+        (wunnabwe, 😳 executow) -> {
+          w-wejectedtaskcountew.incwement();
+          thwow n-nyew wejectedexecutionexception(thweadname + " q-queue is fuww");
         });
   }
 
-  @VisibleForTesting
-  protected int getMaxQueueSize() {
-    return EarlybirdProperty.MAX_QUEUE_SIZE.get(0);
+  @visibwefowtesting
+  p-pwotected int getmaxqueuesize() {
+    w-wetuwn eawwybiwdpwopewty.max_queue_size.get(0);
   }
 
-  @VisibleForTesting
-  static ThreadFactory createThreadFactory(String threadName) {
-    return new ThreadFactoryBuilder()
-        .setNameFormat(threadName + "-%d")
-        .setDaemon(true)
-        .build();
+  @visibwefowtesting
+  s-static t-thweadfactowy c-cweatethweadfactowy(stwing thweadname) {
+    wetuwn nyew thweadfactowybuiwdew()
+        .setnamefowmat(thweadname + "-%d")
+        .setdaemon(twue)
+        .buiwd();
   }
 
-  @Override
-  public int poolSize() {
-    return Preconditions.checkNotNull(pool).poolSize();
+  @ovewwide
+  p-pubwic i-int poowsize() {
+    w-wetuwn pweconditions.checknotnuww(poow).poowsize();
   }
 
-  @Override
-  public int numActiveTasks() {
-    return Preconditions.checkNotNull(pool).numActiveTasks();
+  @ovewwide
+  p-pubwic i-int nyumactivetasks() {
+    wetuwn pweconditions.checknotnuww(poow).numactivetasks();
   }
 
-  @Override
-  public long numCompletedTasks() {
-    return Preconditions.checkNotNull(pool).numCompletedTasks();
+  @ovewwide
+  pubwic wong nyumcompwetedtasks() {
+    w-wetuwn pweconditions.checknotnuww(poow).numcompwetedtasks();
   }
 
 

@@ -1,77 +1,77 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_fowwow_moduwe
 
-import com.twitter.peoplediscovery.api.{thriftscala => t}
-import com.twitter.product_mixer.component_library.candidate_source.people_discovery.PeopleDiscoveryCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.decider.DeciderParam
+impowt c-com.twittew.peopwediscovewy.api.{thwiftscawa => t-t}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.peopwe_discovewy.peopwediscovewycandidatesouwce
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.timewine_moduwe.basemoduwedispwaytypebuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+i-impowt com.twittew.timewines.configapi.fspawam
+impowt com.twittew.timewines.configapi.pawam
+impowt com.twittew.timewines.configapi.decidew.decidewpawam
 
-object WhoToFollowCandidatePipelineConfig {
-  val MinCandidatesSize = 3
-  val MaxCandidatesSize = 20
+o-object whotofowwowcandidatepipewineconfig {
+  vaw mincandidatessize = 3
+  vaw maxcandidatessize = 20
 
-  val identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("WhoToFollow")
+  vaw identifiew: c-candidatepipewineidentifiew = candidatepipewineidentifiew("whotofowwow")
 }
 
-class WhoToFollowCandidatePipelineConfig[Query <: PipelineQuery](
-  override val identifier: CandidatePipelineIdentifier,
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]],
-  override val supportedClientParam: Option[FSParam[Boolean]],
-  override val alerts: Seq[Alert],
-  override val gates: Seq[Gate[Query]],
-  whoToFollowCandidateSource: PeopleDiscoveryCandidateSource,
-  override val filters: Seq[Filter[Query, UserCandidate]],
-  moduleDisplayTypeBuilder: BaseModuleDisplayTypeBuilder[Query, UserCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[PipelineQuery, UserCandidate]
-  ],
-  displayLocationParam: Param[String],
-  supportedLayoutsParam: Param[Seq[String]],
-  layoutVersionParam: Param[Int],
-  excludedUserIdsFeature: Option[Feature[PipelineQuery, Seq[Long]]],
-) extends CandidatePipelineConfig[
-      Query,
-      t.GetModuleRequest,
-      t.RecommendedUser,
-      UserCandidate
+c-cwass whotofowwowcandidatepipewineconfig[quewy <: p-pipewinequewy](
+  o-ovewwide v-vaw identifiew: candidatepipewineidentifiew, :3
+  ovewwide vaw e-enabweddecidewpawam: option[decidewpawam[boowean]], OwO
+  ovewwide vaw s-suppowtedcwientpawam: option[fspawam[boowean]], (U ﹏ U)
+  ovewwide vaw awewts: seq[awewt], >w<
+  ovewwide vaw gates: seq[gate[quewy]], (U ﹏ U)
+  w-whotofowwowcandidatesouwce: peopwediscovewycandidatesouwce, 😳
+  o-ovewwide v-vaw fiwtews: s-seq[fiwtew[quewy, (ˆ ﻌ ˆ)♡ usewcandidate]], 😳😳😳
+  moduwedispwaytypebuiwdew: basemoduwedispwaytypebuiwdew[quewy, (U ﹏ U) u-usewcandidate], (///ˬ///✿)
+  f-feedbackactioninfobuiwdew: option[
+    b-basefeedbackactioninfobuiwdew[pipewinequewy, 😳 u-usewcandidate]
+  ], 😳
+  dispwaywocationpawam: p-pawam[stwing], σωσ
+  suppowtedwayoutspawam: p-pawam[seq[stwing]], rawr x3
+  wayoutvewsionpawam: pawam[int], OwO
+  e-excwudedusewidsfeatuwe: option[featuwe[pipewinequewy, /(^•ω•^) seq[wong]]],
+) e-extends candidatepipewineconfig[
+      q-quewy, 😳😳😳
+      t-t.getmoduwewequest, ( ͡o ω ͡o )
+      t.wecommendedusew, >_<
+      usewcandidate
     ] {
 
-  override val candidateSource: BaseCandidateSource[t.GetModuleRequest, t.RecommendedUser] =
-    whoToFollowCandidateSource
+  ovewwide vaw candidatesouwce: basecandidatesouwce[t.getmoduwewequest, >w< t.wecommendedusew] =
+    w-whotofowwowcandidatesouwce
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    PipelineQuery,
-    t.GetModuleRequest
-  ] = WhoToFollowCandidatePipelineQueryTransformer(
-    displayLocationParam,
-    supportedLayoutsParam,
-    layoutVersionParam,
-    excludedUserIdsFeature)
+  o-ovewwide vaw quewytwansfowmew: c-candidatepipewinequewytwansfowmew[
+    p-pipewinequewy,
+    t-t.getmoduwewequest
+  ] = whotofowwowcandidatepipewinequewytwansfowmew(
+    dispwaywocationpawam, rawr
+    suppowtedwayoutspawam, 😳
+    wayoutvewsionpawam, >w<
+    e-excwudedusewidsfeatuwe)
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.RecommendedUser]
-  ] = Seq(WhoToFollowResponseFeatureTransformer)
+  ovewwide vaw featuwesfwomcandidatesouwcetwansfowmews: seq[
+    candidatefeatuwetwansfowmew[t.wecommendedusew]
+  ] = s-seq(whotofowwowwesponsefeatuwetwansfowmew)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    t.RecommendedUser,
-    UserCandidate
-  ] = { user => UserCandidate(user.userId) }
+  ovewwide v-vaw wesuwttwansfowmew: c-candidatepipewinewesuwtstwansfowmew[
+    t-t.wecommendedusew, (⑅˘꒳˘)
+    usewcandidate
+  ] = { usew => u-usewcandidate(usew.usewid) }
 
-  override val decorator: Option[CandidateDecorator[Query, UserCandidate]] =
-    Some(WhoToFollowCandidateDecorator(moduleDisplayTypeBuilder, feedbackActionInfoBuilder))
+  o-ovewwide v-vaw decowatow: option[candidatedecowatow[quewy, OwO u-usewcandidate]] =
+    some(whotofowwowcandidatedecowatow(moduwedispwaytypebuiwdew, (ꈍᴗꈍ) feedbackactioninfobuiwdew))
 }

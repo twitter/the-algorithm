@@ -1,64 +1,64 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.twittew.seawch.common.utiw.mw.pwediction_engine;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.ml.api.Feature;
+i-impowt c-com.twittew.mw.api.featuwe;
 
 /**
- * Score accumulator for legacy (non-schema-based) features. It provides methods to add features
- * using Feature objects.
+ * s-scowe accumuwatow f-fow wegacy (non-schema-based) f-featuwes. >_< i-it pwovides methods t-to add featuwes
+ * using featuwe objects. -.-
  *
- * @deprecated This class is retired and we suggest to switch to schema-based features.
+ * @depwecated this cwass is wetiwed and we suggest t-to switch to schema-based featuwes. 🥺
  */
-@Deprecated
-public abstract class BaseLegacyScoreAccumulator<D> extends BaseScoreAccumulator<D> {
+@depwecated
+pubwic a-abstwact cwass basewegacyscoweaccumuwatow<d> extends b-basescoweaccumuwatow<d> {
 
-  public BaseLegacyScoreAccumulator(LightweightLinearModel model) {
-    super(model);
-    Preconditions.checkState(!model.isSchemaBased(),
-        "Cannot create LegacyScoreAccumulator with a schema-based model: %s", model.getName());
+  pubwic basewegacyscoweaccumuwatow(wightweightwineawmodew modew) {
+    supew(modew);
+    p-pweconditions.checkstate(!modew.isschemabased(), (U ﹏ U)
+        "cannot cweate w-wegacyscoweaccumuwatow w-with a schema-based modew: %s", >w< modew.getname());
   }
 
   /**
-   * Add to the score the weight of a binary feature (if it's present).
+   * add to the scowe the w-weight of a binawy featuwe (if it's pwesent). mya
    *
-   * @deprecated This function is retired and we suggest to switch to addSchemaBooleanFeatures in
-   * SchemaBasedScoreAccumulator.
+   * @depwecated this function is wetiwed and w-we suggest to switch to addschemabooweanfeatuwes i-in
+   * schemabasedscoweaccumuwatow. >w<
    */
-  @Deprecated
-  protected BaseLegacyScoreAccumulator addBinaryFeature(Feature<Boolean> feature,
-                                                        boolean value) {
-    if (value) {
-      Double weight = model.binaryFeatures.get(feature);
-      if (weight != null) {
-        score += weight;
+  @depwecated
+  p-pwotected b-basewegacyscoweaccumuwatow a-addbinawyfeatuwe(featuwe<boowean> featuwe, nyaa~~
+                                                        boowean vawue) {
+    i-if (vawue) {
+      doubwe weight = modew.binawyfeatuwes.get(featuwe);
+      i-if (weight != nyuww) {
+        scowe += weight;
       }
     }
-    return this;
+    wetuwn this;
   }
 
   /**
-   * Add to the score the weight of a continuous feature.
+   * add to the scowe the weight o-of a continuous featuwe. (✿oωo)
    * <p>
-   * If the model uses real valued features, it multiplies its weight by the provided value.
-   * Otherwise, it tries to find the discretized feature and adds its weight to the score.
+   * i-if the modew u-uses weaw vawued f-featuwes, ʘwʘ it muwtipwies its weight by the pwovided vawue. (ˆ ﻌ ˆ)♡
+   * o-othewwise, 😳😳😳 i-it twies to find the discwetized f-featuwe and adds i-its weight to the scowe. :3
    *
-   * @deprecated This function is retired and we suggest to switch to addSchemaContinuousFeatures in
-   * SchemaBasedScoreAccumulator.
+   * @depwecated t-this function is wetiwed and we s-suggest to switch to addschemacontinuousfeatuwes in
+   * schemabasedscoweaccumuwatow. OwO
    */
-  @Deprecated
-  protected BaseLegacyScoreAccumulator addContinuousFeature(Feature<Double> feature,
-                                                            double value) {
-    Double weightFromContinuous = model.continuousFeatures.get(feature);
-    if (weightFromContinuous != null) {
-      score += weightFromContinuous * value;
-    } else {
-      DiscretizedFeature discretizedFeature = model.discretizedFeatures.get(feature);
-      if (discretizedFeature != null) {
-        // Use only the weight of the discretized feature (there's no need to multiply it)
-        score += discretizedFeature.getWeight(value);
+  @depwecated
+  p-pwotected basewegacyscoweaccumuwatow a-addcontinuousfeatuwe(featuwe<doubwe> featuwe, (U ﹏ U)
+                                                            d-doubwe v-vawue) {
+    doubwe weightfwomcontinuous = modew.continuousfeatuwes.get(featuwe);
+    if (weightfwomcontinuous != nyuww) {
+      scowe += weightfwomcontinuous * vawue;
+    } e-ewse {
+      discwetizedfeatuwe d-discwetizedfeatuwe = modew.discwetizedfeatuwes.get(featuwe);
+      i-if (discwetizedfeatuwe != n-nyuww) {
+        // u-use onwy the weight of the discwetized featuwe (thewe's nyo nyeed t-to muwtipwy it)
+        scowe += discwetizedfeatuwe.getweight(vawue);
       }
     }
-    return this;
+    wetuwn this;
   }
 }

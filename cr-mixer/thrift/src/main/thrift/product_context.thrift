@@ -1,21 +1,21 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.twittew.cw_mixew.thwiftjava
+#@namespace scawa c-com.twittew.cw_mixew.thwiftscawa
+#@namespace s-stwato c-com.twittew.cw_mixew
 
-struct HomeContext {
-	2: optional i32 maxResults // enabled for QuaityFactor related DDGs only
-} (persisted='true', hasPersonalData='false')
+s-stwuct h-homecontext {
+	2: o-optionaw i32 m-maxwesuwts // enabwed f-fow quaityfactow wewated ddgs onwy
+} (pewsisted='twue', 😳😳😳 haspewsonawdata='fawse')
 
-struct NotificationsContext {
-	1: optional i32 devNull // not being used. it's a placeholder
-} (persisted='true', hasPersonalData='false')
+stwuct notificationscontext {
+	1: o-optionaw i32 devnuww // nyot being used. -.- i-it's a pwacehowdew
+} (pewsisted='twue', ( ͡o ω ͡o ) haspewsonawdata='fawse')
 
-struct ExploreContext {
-  1: required bool isVideoOnly
-} (persisted='true', hasPersonalData='false')
+s-stwuct expwowecontext {
+  1: wequiwed boow isvideoonwy
+} (pewsisted='twue', rawr x3 haspewsonawdata='fawse')
 
-union ProductContext {
-	1: HomeContext homeContext
-	2: NotificationsContext notificationsContext
-	3: ExploreContext exploreContext
-} (persisted='true', hasPersonalData='false')
+u-union pwoductcontext {
+	1: h-homecontext h-homecontext
+	2: nyotificationscontext nyotificationscontext
+	3: expwowecontext expwowecontext
+} (pewsisted='twue', nyaa~~ h-haspewsonawdata='fawse')

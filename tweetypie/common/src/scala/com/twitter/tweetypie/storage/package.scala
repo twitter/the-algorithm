@@ -1,11 +1,11 @@
-package com.twitter.tweetypie
+package com.twittew.tweetypie
 
-import com.twitter.storage.client.manhattan.kv.ManhattanValue
-import java.nio.ByteBuffer
+impowt c-com.twittew.stowage.cwient.manhattan.kv.manhattanvawue
+i-impowt j-java.nio.bytebuffew
 
-package object storage {
-  type TweetId = Long
-  type FieldId = Short
+p-package o-object stowage {
+  t-type tweetid = w-wong
+  type fiewdid = s-showt
 
-  type TweetManhattanValue = ManhattanValue[ByteBuffer]
+  type tweetmanhattanvawue = manhattanvawue[bytebuffew]
 }

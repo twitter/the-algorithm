@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.functional_component.decorator
+package com.twittew.home_mixew.functionaw_component.decowatow
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+impowt c-com.twittew.home_mixew.modew.homefeatuwes._
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
 
-object HomeQueryTypePredicates {
-  private[this] val QueryPredicates: Seq[(String, FeatureMap => Boolean)] = Seq(
-    ("request", _ => true),
-    ("get_initial", _.getOrElse(GetInitialFeature, false)),
-    ("get_newer", _.getOrElse(GetNewerFeature, false)),
-    ("get_older", _.getOrElse(GetOlderFeature, false)),
-    ("pull_to_refresh", _.getOrElse(PullToRefreshFeature, false)),
-    ("request_context_launch", _.getOrElse(IsLaunchRequestFeature, false)),
-    ("request_context_foreground", _.getOrElse(IsForegroundRequestFeature, false))
+o-object homequewytypepwedicates {
+  p-pwivate[this] v-vaw quewypwedicates: s-seq[(stwing, (U ﹏ U) f-featuwemap => b-boowean)] = seq(
+    ("wequest", -.- _ => twue), (ˆ ﻌ ˆ)♡
+    ("get_initiaw", (⑅˘꒳˘) _.getowewse(getinitiawfeatuwe, (U ᵕ U❁) fawse)),
+    ("get_newew", -.- _.getowewse(getnewewfeatuwe, ^^;; fawse)), >_<
+    ("get_owdew", mya _.getowewse(getowdewfeatuwe, mya fawse)),
+    ("puww_to_wefwesh", 😳 _.getowewse(puwwtowefweshfeatuwe, XD f-fawse)), :3
+    ("wequest_context_waunch", 😳😳😳 _.getowewse(iswaunchwequestfeatuwe, -.- fawse)), ( ͡o ω ͡o )
+    ("wequest_context_fowegwound", rawr x3 _.getowewse(isfowegwoundwequestfeatuwe, nyaa~~ fawse))
   )
 
-  val PredicateMap = QueryPredicates.toMap
+  v-vaw pwedicatemap = quewypwedicates.tomap
 }

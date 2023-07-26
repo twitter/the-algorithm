@@ -1,62 +1,62 @@
-# Common thrift types
+# common thwift types
 
-GFS uses several thrift datastructures which are common to multiple queries. They are listed below.
+gfs uses sevewaw t-thwift datastwuctuwes w-which a-awe common to m-muwtipwe quewies. nyaa~~ t-they awe wisted b-bewow. :3
 
-## EdgeType
+## edgetype
 
-`EdgeType` is a thrift enum which specifies which edge types to query for the graph.
+`edgetype` i-is a thwift enum w-which specifies which edge types to quewy fow the gwaph. 😳😳😳
 
-```thrift
-enum EdgeType {
-  FOLLOWING,
-  FOLLOWED_BY,
-  FAVORITE,
-  FAVORITED_BY,
-  RETWEET,
-  RETWEETED_BY,
-  REPLY,
-  REPLYED_BY,
-  MENTION,
-  MENTIONED_BY,
-  MUTUAL_FOLLOW,
-  SIMILAR_TO, // more edge types (like block, report, etc.) can be supported later.
-  RESERVED_12,
-  RESERVED_13,
-  RESERVED_14,
-  RESERVED_15,
-  RESERVED_16,
-  RESERVED_17,
-  RESERVED_18,
-  RESERVED_19,
-  RESERVED_20
+```thwift
+enum edgetype {
+  f-fowwowing, (˘ω˘)
+  fowwowed_by, ^^
+  favowite, :3
+  f-favowited_by, -.-
+  wetweet,
+  wetweeted_by, 😳
+  w-wepwy, mya
+  wepwyed_by, (˘ω˘)
+  mention, >_<
+  mentioned_by, -.-
+  mutuaw_fowwow, 🥺
+  simiwaw_to, (U ﹏ U) // mowe e-edge types (wike bwock, >w< wepowt, e-etc.) can be s-suppowted watew. mya
+  wesewved_12, >w<
+  wesewved_13, nyaa~~
+  wesewved_14, (✿oωo)
+  wesewved_15, ʘwʘ
+  w-wesewved_16, (ˆ ﻌ ˆ)♡
+  wesewved_17, 😳😳😳
+  wesewved_18, :3
+  wesewved_19, OwO
+  wesewved_20
 }
 ```
 
-For an example of how this is used, consider the `GetNeighbors` query. If we set the `edgeType` field
-of the `GfsNeighborsRequest`, the response will contain all the users that the specified user follows.
-If, on the other hand, we set `edgeType` to be `FollowedBy` it will return all the users who are
-followed by the specified user.
+fow an exampwe of h-how this is used, (U ﹏ U) considew the `getneighbows` quewy. >w< i-if we set t-the `edgetype` fiewd
+o-of the `gfsneighbowswequest`, (U ﹏ U) t-the wesponse wiww contain aww the usews that t-the specified usew fowwows. 😳
+if, on the othew hand, (ˆ ﻌ ˆ)♡ w-we set `edgetype` to be `fowwowedby` it wiww wetuwn aww the usews who awe
+fowwowed by the specified u-usew. 😳😳😳
 
-## FeatureType
+## featuwetype
 
-`FeatureType` is a thrift struct which is used in queries which require two edge types.
+`featuwetype` i-is a t-thwift stwuct which i-is used in quewies which wequiwe two edge types. (U ﹏ U)
 
-```thrift
-struct FeatureType {
-  1: required EdgeType leftEdgeType // edge type from source user
-  2: required EdgeType rightEdgeType // edge type from candidate user
-}(persisted="true")
+```thwift
+stwuct featuwetype {
+  1: w-wequiwed e-edgetype weftedgetype // edge t-type fwom souwce u-usew
+  2: wequiwed edgetype wightedgetype // e-edge type fwom candidate usew
+}(pewsisted="twue")
 ```
 
-## UserWithScore
+## u-usewwithscowe
 
-The candidate generation queries return lists of candidates together with a computed score for the
-relevant feature. `UserWithScore` is a thrift struct which bundles together a candidate's ID with
-the score.
+the candidate genewation q-quewies wetuwn wists of candidates t-togethew with a computed scowe f-fow the
+wewevant f-featuwe. (///ˬ///✿) `usewwithscowe` is a thwift stwuct which bundwes togethew a candidate's id with
+the scowe. 😳
 
-```thrift
-struct UserWithScore {
-  1: required i64 userId
-  2: required double score
+```thwift
+s-stwuct usewwithscowe {
+  1: w-wequiwed i64 usewid
+  2: wequiwed d-doubwe scowe
 }
 ```

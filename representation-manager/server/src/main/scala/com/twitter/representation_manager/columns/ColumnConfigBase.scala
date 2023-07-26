@@ -1,26 +1,26 @@
-package com.twitter.representation_manager.columns
+package com.twittew.wepwesentation_managew.cowumns
 
-import com.twitter.strato.access.Access.LdapGroup
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.FromColumns
-import com.twitter.strato.config.Has
-import com.twitter.strato.config.Prefix
-import com.twitter.strato.config.ServiceIdentifierPattern
+impowt com.twittew.stwato.access.access.wdapgwoup
+i-impowt com.twittew.stwato.config.contactinfo
+i-impowt com.twittew.stwato.config.fwomcowumns
+impowt c-com.twittew.stwato.config.has
+i-impowt com.twittew.stwato.config.pwefix
+i-impowt c-com.twittew.stwato.config.sewviceidentifiewpattewn
 
-object ColumnConfigBase {
+o-object cowumnconfigbase {
 
-  /****************** Internal permissions *******************/
-  val recosPermissions: Seq[com.twitter.strato.config.Policy] = Seq()
+  /****************** i-intewnaw pewmissions *******************/
+  vaw wecospewmissions: seq[com.twittew.stwato.config.powicy] = seq()
 
-  /****************** External permissions *******************/
-  // This is used to grant limited access to members outside of RP team.
-  val externalPermissions: Seq[com.twitter.strato.config.Policy] = Seq()
+  /****************** extewnaw p-pewmissions *******************/
+  // this is used to gwant w-wimited access to membews outside o-of wp team. -.-
+  vaw extewnawpewmissions: seq[com.twittew.stwato.config.powicy] = seq()
 
-  val contactInfo: ContactInfo = ContactInfo(
-    description = "Please contact Relevance Platform for more details",
-    contactEmail = "no-reply@twitter.com",
-    ldapGroup = "ldap",
-    jiraProject = "JIRA",
-    links = Seq("http://go/rms-runbook")
+  vaw c-contactinfo: contactinfo = contactinfo(
+    d-descwiption = "pwease c-contact wewevance pwatfowm fow mowe detaiws", ( ͡o ω ͡o )
+    contactemaiw = "no-wepwy@twittew.com", rawr x3
+    wdapgwoup = "wdap", nyaa~~
+    j-jiwapwoject = "jiwa", /(^•ω•^)
+    winks = seq("http://go/wms-wunbook")
   )
 }

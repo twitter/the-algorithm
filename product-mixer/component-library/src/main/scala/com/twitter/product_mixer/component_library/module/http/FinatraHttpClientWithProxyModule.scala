@@ -1,89 +1,89 @@
-package com.twitter.product_mixer.component_library.module.http
+package com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http
 
-import com.google.inject.Provides
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.httpclient.HttpClient
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientAcquisitionTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientConnectTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientRequestTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemoteHost
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemotePort
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterHost
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterPort
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpClientWithProxy
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpServiceWithProxy
-import com.twitter.product_mixer.shared_library.http_client.HttpHostPort
-import com.twitter.util.Duration
-import com.twitter.util.jackson.ScalaObjectMapper
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finatwa.httpcwient.httpcwient
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.inject.annotations.fwag
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientmoduwe.httpcwientacquisitiontimeout
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientmoduwe.httpcwientconnecttimeout
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientmoduwe.httpcwientwequesttimeout
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientwithpwoxymoduwe.httpcwientwithpwoxywemotehost
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientwithpwoxymoduwe.httpcwientwithpwoxywemotepowt
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientwithpwoxymoduwe.httpcwientwithpwoxytwittewhost
+impowt com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http.finagwehttpcwientwithpwoxymoduwe.httpcwientwithpwoxytwittewpowt
+i-impowt com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags.pwoductmixewfwagmoduwe.sewvicewocaw
+impowt com.twittew.pwoduct_mixew.shawed_wibwawy.http_cwient.finagwehttpcwientwithpwoxybuiwdew.buiwdfinagwehttpcwientwithpwoxy
+i-impowt com.twittew.pwoduct_mixew.shawed_wibwawy.http_cwient.finagwehttpcwientwithpwoxybuiwdew.buiwdfinagwehttpsewvicewithpwoxy
+impowt com.twittew.pwoduct_mixew.shawed_wibwawy.http_cwient.httphostpowt
+impowt com.twittew.utiw.duwation
+impowt c-com.twittew.utiw.jackson.scawaobjectmappew
+impowt javax.inject.named
+i-impowt j-javax.inject.singweton
 
-object FinatraHttpClientWithProxyModule extends TwitterModule {
+object finatwahttpcwientwithpwoxymoduwe extends twittewmoduwe {
 
-  final val FinatraHttpClientWithProxy = "FinagleHttpClientWithProxy"
+  finaw v-vaw finatwahttpcwientwithpwoxy = "finagwehttpcwientwithpwoxy"
 
   /**
-   * Build a Finatra HTTP client with Egress Proxy support for a host. The Finatra HTTP client can
-   * be helpful (as opposed to the base Finagle HTTP Client), as it provides built-in JSON response
-   * parsing and other convenience methods
+   * buiwd a finatwa http cwient with egwess pwoxy suppowt f-fow a host. (˘ω˘) the finatwa http c-cwient can
+   * b-be hewpfuw (as opposed t-to the base f-finagwe http cwient), (U ﹏ U) as it pwovides buiwt-in j-json wesponse
+   * pawsing and othew convenience m-methods
    *
-   * Note that the timeouts configured in this module are meant to be a reasonable starting point
-   * only. To further tuning the settings, either override the flags or create local copy of the module.
+   * nyote that the timeouts configuwed in this moduwe awe meant to be a weasonabwe s-stawting point
+   * onwy. ^•ﻌ•^ to f-fuwthew tuning the s-settings, (˘ω˘) eithew o-ovewwide the fwags ow cweate wocaw copy of the moduwe. :3
    *
-   * @param proxyTwitterHost       Twitter egress proxy host
-   * @param proxyTwitterPort       Twitter egress proxy port
-   * @param proxyRemoteHost        Remote proxy host
-   * @param proxyRemotePort        Remote proxy port
-   * @param requestTimeout         HTTP client request timeout
-   * @param connectTimeout         HTTP client transport connect timeout
-   * @param acquisitionTimeout     HTTP client session acquisition timeout
-   * @param isServiceLocal         Local deployment for testing
-   * @param scalaObjectMapper      Object mapper used by the built-in JSON response parsing
-   * @param statsReceiver          Stats
+   * @pawam p-pwoxytwittewhost       t-twittew egwess pwoxy host
+   * @pawam p-pwoxytwittewpowt       t-twittew egwess pwoxy powt
+   * @pawam p-pwoxywemotehost        wemote p-pwoxy host
+   * @pawam pwoxywemotepowt        wemote pwoxy powt
+   * @pawam w-wequesttimeout         http cwient w-wequest timeout
+   * @pawam connecttimeout         http cwient t-twanspowt connect t-timeout
+   * @pawam acquisitiontimeout     http cwient session acquisition timeout
+   * @pawam issewvicewocaw         wocaw depwoyment fow testing
+   * @pawam s-scawaobjectmappew      o-object mappew used by t-the buiwt-in json w-wesponse pawsing
+   * @pawam statsweceivew          s-stats
    *
-   * @return Finatra HTTP client with Egress Proxy support for a host
+   * @wetuwn finatwa http cwient with egwess pwoxy s-suppowt fow a host
    */
-  @Provides
-  @Singleton
-  @Named(FinatraHttpClientWithProxy)
-  def providesFinatraHttpClientWithProxy(
-    @Flag(HttpClientWithProxyTwitterHost) proxyTwitterHost: String,
-    @Flag(HttpClientWithProxyTwitterPort) proxyTwitterPort: Int,
-    @Flag(HttpClientWithProxyRemoteHost) proxyRemoteHost: String,
-    @Flag(HttpClientWithProxyRemotePort) proxyRemotePort: Int,
-    @Flag(HttpClientRequestTimeout) requestTimeout: Duration,
-    @Flag(HttpClientConnectTimeout) connectTimeout: Duration,
-    @Flag(HttpClientAcquisitionTimeout) acquisitionTimeout: Duration,
-    @Flag(ServiceLocal) isServiceLocal: Boolean,
-    scalaObjectMapper: ScalaObjectMapper,
-    statsReceiver: StatsReceiver
-  ): HttpClient = {
-    val twitterProxyHostPort = HttpHostPort(proxyTwitterHost, proxyTwitterPort)
-    val proxyRemoteHostPort = HttpHostPort(proxyRemoteHost, proxyRemotePort)
+  @pwovides
+  @singweton
+  @named(finatwahttpcwientwithpwoxy)
+  def pwovidesfinatwahttpcwientwithpwoxy(
+    @fwag(httpcwientwithpwoxytwittewhost) pwoxytwittewhost: stwing, ^^;;
+    @fwag(httpcwientwithpwoxytwittewpowt) p-pwoxytwittewpowt: int,
+    @fwag(httpcwientwithpwoxywemotehost) p-pwoxywemotehost: s-stwing, 🥺
+    @fwag(httpcwientwithpwoxywemotepowt) p-pwoxywemotepowt: int, (⑅˘꒳˘)
+    @fwag(httpcwientwequesttimeout) wequesttimeout: duwation, nyaa~~
+    @fwag(httpcwientconnecttimeout) c-connecttimeout: d-duwation, :3
+    @fwag(httpcwientacquisitiontimeout) acquisitiontimeout: d-duwation, ( ͡o ω ͡o )
+    @fwag(sewvicewocaw) i-issewvicewocaw: boowean, mya
+    scawaobjectmappew: s-scawaobjectmappew, (///ˬ///✿)
+    s-statsweceivew: s-statsweceivew
+  ): h-httpcwient = {
+    v-vaw twittewpwoxyhostpowt = httphostpowt(pwoxytwittewhost, (˘ω˘) pwoxytwittewpowt)
+    vaw pwoxywemotehostpowt = h-httphostpowt(pwoxywemotehost, ^^;; pwoxywemotepowt)
 
-    val finagleHttpClientWithProxy =
-      buildFinagleHttpClientWithProxy(
-        twitterProxyHostPort = twitterProxyHostPort,
-        remoteProxyHostPort = proxyRemoteHostPort,
-        requestTimeout = requestTimeout,
-        connectTimeout = connectTimeout,
-        acquisitionTimeout = acquisitionTimeout,
-        statsReceiver = statsReceiver
+    vaw finagwehttpcwientwithpwoxy =
+      buiwdfinagwehttpcwientwithpwoxy(
+        twittewpwoxyhostpowt = twittewpwoxyhostpowt, (✿oωo)
+        wemotepwoxyhostpowt = p-pwoxywemotehostpowt, (U ﹏ U)
+        wequesttimeout = wequesttimeout, -.-
+        connecttimeout = c-connecttimeout, ^•ﻌ•^
+        a-acquisitiontimeout = a-acquisitiontimeout, rawr
+        statsweceivew = s-statsweceivew
       )
 
-    val finagleHttpServiceWithProxy =
-      buildFinagleHttpServiceWithProxy(
-        finagleHttpClientWithProxy = finagleHttpClientWithProxy,
-        twitterProxyHostPort = twitterProxyHostPort
+    vaw finagwehttpsewvicewithpwoxy =
+      b-buiwdfinagwehttpsewvicewithpwoxy(
+        f-finagwehttpcwientwithpwoxy = finagwehttpcwientwithpwoxy, (˘ω˘)
+        twittewpwoxyhostpowt = twittewpwoxyhostpowt
       )
 
-    new HttpClient(
-      hostname = twitterProxyHostPort.host,
-      httpService = finagleHttpServiceWithProxy,
-      mapper = scalaObjectMapper
+    nyew httpcwient(
+      hostname = twittewpwoxyhostpowt.host, nyaa~~
+      h-httpsewvice = finagwehttpsewvicewithpwoxy, UwU
+      m-mappew = scawaobjectmappew
     )
   }
 }

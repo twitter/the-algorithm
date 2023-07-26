@@ -1,81 +1,81 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+impowt j-java.utiw.cowwections;
+i-impowt java.utiw.identityhashmap;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt java.utiw.function.function;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.visitors.MultiTermDisjunctionRankVisitor;
-import com.twitter.search.queryparser.visitors.NodeRankAnnotator;
-import com.twitter.search.queryparser.visitors.QueryTreeIndex;
+i-impowt c-com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+impowt com.twittew.seawch.quewypawsew.visitows.muwtitewmdisjunctionwankvisitow;
+impowt com.twittew.seawch.quewypawsew.visitows.nodewankannotatow;
+i-impowt com.twittew.seawch.quewypawsew.visitows.quewytweeindex;
 
 /**
- * A helper class to collect field and query node hit attributions.
+ * a hewpew cwass to c-cowwect fiewd and quewy nyode hit a-attwibutions. 😳
  */
-public class QueryHitAttributeHelper extends HitAttributeHelper {
-  private final Query annotatedQuery;
+pubwic cwass quewyhitattwibutehewpew extends h-hitattwibutehewpew {
+  pwivate f-finaw quewy annotatedquewy;
 
-  protected QueryHitAttributeHelper(HitAttributeCollector collector,
-                                    Function<Integer, String> fieldIdsToFieldNames,
-                                    IdentityHashMap<Query, Integer> nodeToRankMap,
-                                    Query annotatedQuery,
-                                    Map<Query, List<Integer>> expandedRanksMap) {
-    super(collector, fieldIdsToFieldNames, nodeToRankMap, expandedRanksMap);
-    this.annotatedQuery = annotatedQuery;
+  pwotected q-quewyhitattwibutehewpew(hitattwibutecowwectow cowwectow, 😳😳😳
+                                    function<integew, mya stwing> fiewdidstofiewdnames, mya
+                                    i-identityhashmap<quewy, (⑅˘꒳˘) integew> nyodetowankmap, (U ﹏ U)
+                                    quewy annotatedquewy, mya
+                                    map<quewy, ʘwʘ w-wist<integew>> expandedwanksmap) {
+    s-supew(cowwectow, (˘ω˘) f-fiewdidstofiewdnames, (U ﹏ U) n-nodetowankmap, ^•ﻌ•^ e-expandedwanksmap);
+    this.annotatedquewy = annotatedquewy;
   }
 
   /**
-   * Constructor specific for com.twitter.search.queryParser.query.Query
+   * c-constwuctow specific fow com.twittew.seawch.quewypawsew.quewy.quewy
    *
-   * This helper visits a parsed query to construct a node-to-rank mapping,
-   * and uses a schema to determine all of the possible fields to be tracked.
-   * A collector is then created.
+   * t-this hewpew visits a pawsed quewy to constwuct a nyode-to-wank mapping, (˘ω˘)
+   * and uses a-a schema to detewmine aww of the p-possibwe fiewds t-to be twacked. :3
+   * a-a cowwectow is then cweated. ^^;;
    *
-   * @param query the query for which we will collect hit attribution.
-   * @param schema the indexing schema.
+   * @pawam quewy the quewy fow which we w-wiww cowwect hit a-attwibution. 🥺
+   * @pawam schema t-the indexing schema. (⑅˘꒳˘)
    */
-  public static QueryHitAttributeHelper from(Query query, final Schema schema)
-      throws QueryParserException {
-    IdentityHashMap<Query, Integer> nodeToRankMap;
-    Query annotatedQuery;
+  pubwic s-static quewyhitattwibutehewpew fwom(quewy q-quewy, nyaa~~ finaw schema schema)
+      t-thwows quewypawsewexception {
+    identityhashmap<quewy, :3 integew> n-nyodetowankmap;
+    quewy annotatedquewy;
 
-    // First see if the query already has node rank annotations on it. If so, we'll just use those
-    // to identify query nodes.
-    // We enforce that all provided ranks are in the range of [0, N-1] so not to blow up the size
-    // of the collection array.
-    QueryRankVisitor rankVisitor = new QueryRankVisitor();
-    if (query.accept(rankVisitor)) {
-      nodeToRankMap = rankVisitor.getNodeToRankMap();
-      annotatedQuery = query;
-    } else {
-      // Otherwise, we will assign all nodes in-order ranks, and use those to track per-node hit
-      // attribution
-      QueryTreeIndex queryTreeIndex = QueryTreeIndex.buildFor(query);
-      NodeRankAnnotator annotator = new NodeRankAnnotator(queryTreeIndex.getNodeToIndexMap());
-      annotatedQuery = query.accept(annotator);
-      nodeToRankMap = annotator.getUpdatedNodeToRankMap();
+    // f-fiwst see if the quewy awweady h-has nyode wank a-annotations on it. ( ͡o ω ͡o ) if so, mya we'ww just use those
+    // to identify quewy nyodes. (///ˬ///✿)
+    // we enfowce that aww pwovided w-wanks awe i-in the wange of [0, (˘ω˘) ny-1] so nyot t-to bwow up the s-size
+    // of t-the cowwection awway. ^^;;
+    quewywankvisitow wankvisitow = nyew q-quewywankvisitow();
+    if (quewy.accept(wankvisitow)) {
+      nyodetowankmap = wankvisitow.getnodetowankmap();
+      annotatedquewy = quewy;
+    } e-ewse {
+      // othewwise, (✿oωo) we w-wiww assign aww n-nyodes in-owdew w-wanks, (U ﹏ U) and use those to twack p-pew-node hit
+      // a-attwibution
+      q-quewytweeindex q-quewytweeindex = quewytweeindex.buiwdfow(quewy);
+      nyodewankannotatow a-annotatow = nyew n-nyodewankannotatow(quewytweeindex.getnodetoindexmap());
+      a-annotatedquewy = q-quewy.accept(annotatow);
+      n-nyodetowankmap = annotatow.getupdatednodetowankmap();
     }
 
-    // Extract ranks for multi_term_disjunction operators
-    MultiTermDisjunctionRankVisitor multiTermDisjunctionRankVisitor =
-        new MultiTermDisjunctionRankVisitor(Collections.max(nodeToRankMap.values()));
-    annotatedQuery.accept(multiTermDisjunctionRankVisitor);
-    Map<Query, List<Integer>> expandedRanksMap =
-        multiTermDisjunctionRankVisitor.getMultiTermDisjunctionRankExpansionsMap();
+    // extwact wanks fow muwti_tewm_disjunction o-opewatows
+    muwtitewmdisjunctionwankvisitow muwtitewmdisjunctionwankvisitow =
+        nyew muwtitewmdisjunctionwankvisitow(cowwections.max(nodetowankmap.vawues()));
+    annotatedquewy.accept(muwtitewmdisjunctionwankvisitow);
+    map<quewy, -.- wist<integew>> e-expandedwanksmap =
+        muwtitewmdisjunctionwankvisitow.getmuwtitewmdisjunctionwankexpansionsmap();
 
-    return new QueryHitAttributeHelper(
-        new HitAttributeCollector(),
-        (fieldId) -> schema.getFieldName(fieldId),
-        nodeToRankMap,
-        annotatedQuery,
-        expandedRanksMap);
+    wetuwn nyew quewyhitattwibutehewpew(
+        n-nyew hitattwibutecowwectow(), ^•ﻌ•^
+        (fiewdid) -> s-schema.getfiewdname(fiewdid), rawr
+        n-nyodetowankmap, (˘ω˘)
+        annotatedquewy,
+        e-expandedwanksmap);
   }
 
-  public Query getAnnotatedQuery() {
-    return annotatedQuery;
+  pubwic q-quewy getannotatedquewy() {
+    w-wetuwn annotatedquewy;
   }
 }

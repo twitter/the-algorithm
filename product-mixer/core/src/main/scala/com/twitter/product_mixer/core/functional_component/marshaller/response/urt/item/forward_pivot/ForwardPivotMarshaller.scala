@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.fowwawd_pivot
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.BadgeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.ForwardPivot
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.cowow.wosettacowowmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.badgemawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.imagevawiantmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot.fowwawdpivot
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ForwardPivotMarshaller @Inject() (
-  urlMarshaller: UrlMarshaller,
-  richTextMarshaller: RichTextMarshaller,
-  forwardPivotDisplayTypeMarshaller: ForwardPivotDisplayTypeMarshaller,
-  softInterventionDisplayTypeMarshaller: SoftInterventionDisplayTypeMarshaller,
-  imageVariantMarshaller: ImageVariantMarshaller,
-  badgeMarshaller: BadgeMarshaller,
-  rosettaColorMarshaller: RosettaColorMarshaller) {
+@singweton
+cwass fowwawdpivotmawshawwew @inject() (
+  uwwmawshawwew: uwwmawshawwew, rawr x3
+  w-wichtextmawshawwew: wichtextmawshawwew, (✿oωo)
+  fowwawdpivotdispwaytypemawshawwew: f-fowwawdpivotdispwaytypemawshawwew, (ˆ ﻌ ˆ)♡
+  softintewventiondispwaytypemawshawwew: softintewventiondispwaytypemawshawwew, (˘ω˘)
+  imagevawiantmawshawwew: i-imagevawiantmawshawwew, (⑅˘꒳˘)
+  badgemawshawwew: badgemawshawwew, (///ˬ///✿)
+  wosettacowowmawshawwew: w-wosettacowowmawshawwew) {
 
-  def apply(forwardPivot: ForwardPivot): urt.ForwardPivot = urt.ForwardPivot(
-    text = richTextMarshaller(forwardPivot.text),
-    landingUrl = urlMarshaller(forwardPivot.landingUrl),
-    displayType = forwardPivotDisplayTypeMarshaller(forwardPivot.displayType),
-    iconImageVariant = forwardPivot.iconImageVariant.map(imageVariantMarshaller(_)),
-    stateBadge = forwardPivot.stateBadge.map(badgeMarshaller(_)),
-    subtext = forwardPivot.subtext.map(richTextMarshaller(_)),
-    backgroundColorName = forwardPivot.backgroundColorName.map(rosettaColorMarshaller(_)),
-    engagementNudge = forwardPivot.engagementNudge,
-    softInterventionDisplayType =
-      forwardPivot.softInterventionDisplayType.map(softInterventionDisplayTypeMarshaller(_)),
+  def appwy(fowwawdpivot: f-fowwawdpivot): u-uwt.fowwawdpivot = uwt.fowwawdpivot(
+    text = wichtextmawshawwew(fowwawdpivot.text), 😳😳😳
+    wandinguww = u-uwwmawshawwew(fowwawdpivot.wandinguww), 🥺
+    dispwaytype = fowwawdpivotdispwaytypemawshawwew(fowwawdpivot.dispwaytype), mya
+    iconimagevawiant = fowwawdpivot.iconimagevawiant.map(imagevawiantmawshawwew(_)), 🥺
+    s-statebadge = fowwawdpivot.statebadge.map(badgemawshawwew(_)), >_<
+    s-subtext = f-fowwawdpivot.subtext.map(wichtextmawshawwew(_)), >_<
+    b-backgwoundcowowname = f-fowwawdpivot.backgwoundcowowname.map(wosettacowowmawshawwew(_)), (⑅˘꒳˘)
+    engagementnudge = fowwawdpivot.engagementnudge, /(^•ω•^)
+    s-softintewventiondispwaytype =
+      fowwawdpivot.softintewventiondispwaytype.map(softintewventiondispwaytypemawshawwew(_)), rawr x3
   )
 }

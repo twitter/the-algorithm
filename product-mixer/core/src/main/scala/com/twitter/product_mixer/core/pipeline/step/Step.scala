@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.core.pipeline.step
+package com.twittew.pwoduct_mixew.cowe.pipewine.step
 
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
+i-impowt c-com.twittew.stitch.awwow
 
 /**
- * A Step within a Pipeline, a Step is a unitary phase within an entire chain that makes up a pipeline.
- * @tparam State The request domain model.
- * @tparam ExecutorConfig The configs that should be passed into the executor at build time.
- * @tparam ExecutorInput The input type that an executor takes at request time.
- * @tparam ExResult The result that a step's executor will return.
- * @tparam OutputState The final/updated state a step would output, this is typically taking the ExResult
- *                     and mutating/transforming the State.
+ * a-a step within a p-pipewine, (///ˬ///✿) a step i-is a unitawy phase w-within an entiwe chain that makes up a pipewine. 😳
+ * @tpawam state the wequest domain modew. 😳
+ * @tpawam e-executowconfig the configs that shouwd b-be passed into the executow at b-buiwd time. σωσ
+ * @tpawam executowinput the input type that an executow t-takes at wequest time. rawr x3
+ * @tpawam e-exwesuwt t-the wesuwt that a step's executow wiww wetuwn. OwO
+ * @tpawam outputstate the finaw/updated s-state a step wouwd output, /(^•ω•^) this is typicawwy taking the exwesuwt
+ *                     a-and mutating/twansfowming the s-state. 😳😳😳
  */
-trait Step[State, -Config, ExecutorInput, ExResult <: ExecutorResult] {
+twait s-step[state, ( ͡o ω ͡o ) -config, e-executowinput, >_< e-exwesuwt <: executowwesuwt] {
 
   /**
-   * Adapt the state into the expected input for the Step's Arrow.
+   * adapt the state into t-the expected input fow the step's awwow. >w<
    *
-   * @param state State object passed into the Step.
-   * @param config The config object used to build the executor arrow or input.
-   * @return ExecutorInput that is used in the arrow of the underlying executor.
+   * @pawam s-state state object passed into the step. rawr
+   * @pawam config the config object used t-to buiwd the executow awwow ow i-input. 😳
+   * @wetuwn e-executowinput t-that is used in the awwow of the undewwying executow. >w<
    */
-  def adaptInput(state: State, config: Config): ExecutorInput
+  def adaptinput(state: s-state, (⑅˘꒳˘) config: c-config): executowinput
 
   /**
-   * The actual arrow to be executed for the step, taking in the adapted input from [[adaptInput]]
-   * and returning the expected result.
-   * @param config Runtime configurations to configure the arrow with.
-   * @param context Context of Executor.
+   * the actuaw a-awwow to be exekawaii~d f-fow the step, OwO taking i-in the adapted input fwom [[adaptinput]]
+   * a-and wetuwning the expected wesuwt. (ꈍᴗꈍ)
+   * @pawam c-config wuntime configuwations t-to configuwe the awwow w-with. 😳
+   * @pawam c-context context of executow. 😳😳😳
    */
-  def arrow(
-    config: Config,
-    context: Executor.Context
-  ): Arrow[ExecutorInput, ExResult]
+  def awwow(
+    config: config,
+    context: executow.context
+  ): awwow[executowinput, mya e-exwesuwt]
 
   /**
-   * Whether the step is considered a noop/empty based off of input being passed in. Empty
-   * steps are skipped when being executed.
+   * w-whethew the step is considewed a-a nyoop/empty b-based off of i-input being passed in. mya empty
+   * steps awe skipped when being exekawaii~d. (⑅˘꒳˘)
    */
-  def isEmpty(config: Config): Boolean
+  d-def isempty(config: config): boowean
 
   /**
-   * Update the passed in state based off of the result from [[arrow]]
-   * @param state State object passed into the Step.
-   * @param executorResult Executor result returned from [[arrow]]
-   * @param config The config object used to build the executor arrow or input.
-   * @return Updated state object passed.
+   * update the passed in state b-based off of the wesuwt fwom [[awwow]]
+   * @pawam s-state state object p-passed into t-the step. (U ﹏ U)
+   * @pawam executowwesuwt e-executow w-wesuwt wetuwned f-fwom [[awwow]]
+   * @pawam c-config the config object used to buiwd t-the executow awwow o-ow input. mya
+   * @wetuwn u-updated s-state object p-passed. ʘwʘ
    */
-  def updateState(state: State, executorResult: ExResult, config: Config): State
+  def updatestate(state: state, (˘ω˘) executowwesuwt: exwesuwt, (U ﹏ U) config: c-config): state
 }

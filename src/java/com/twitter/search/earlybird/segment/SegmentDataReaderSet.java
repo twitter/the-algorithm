@@ -1,79 +1,79 @@
-package com.twitter.search.earlybird.segment;
+package com.twittew.seawch.eawwybiwd.segment;
 
-import java.io.IOException;
-import java.util.Optional;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.optionaw;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.SegmentInfo;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+i-impowt com.twittew.seawch.common.utiw.io.wecowdweadew.wecowdweadew;
+i-impowt com.twittew.seawch.eawwybiwd.document.tweetdocument;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
 
 /**
- * SegmentDataReaderSet provides an interface to create and manage the various
- * RecordReaders used to index Earlybird segments.
+ * s-segmentdataweadewset pwovides an intewface to cweate and manage the vawious
+ * w-wecowdweadews used to index eawwybiwd segments. 😳
  */
-public interface SegmentDataReaderSet {
+p-pubwic intewface segmentdataweadewset {
   /**
-   * Instruct the document RecordReaders (i.e. document, geo, ... as appropriate) to read from this
-   * segment.
+   * i-instwuct the document wecowdweadews (i.e. 😳😳😳 document, mya geo, ... a-as appwopwiate) to wead f-fwom this
+   * segment. mya
    */
-  void attachDocumentReaders(SegmentInfo segmentInfo) throws IOException;
+  v-void attachdocumentweadews(segmentinfo segmentinfo) thwows ioexception;
 
   /**
-   * Instruct the reader set to add segment to non-document RecordReaders (deletes, features, etc.)
+   * instwuct the weadew set to add s-segment to nyon-document wecowdweadews (dewetes, (⑅˘꒳˘) featuwes, etc.)
    */
-  void attachUpdateReaders(SegmentInfo segmentInfo) throws IOException;
+  void attachupdateweadews(segmentinfo s-segmentinfo) thwows ioexception;
 
   /**
-   * Mark a segment as "complete", denoting that we are done reading document records from it.
+   * m-mawk a-a segment as "compwete", d-denoting t-that we awe done weading document wecowds fwom i-it. (U ﹏ U)
    *
-   * This instructs the reader set to stop reading documents from the segment (if it hasn't
-   * already), although for now geo-document  records can still be read.  Updates RecordReaders
-   * (deletes, etc.) may continue to read entries for the segment.
+   * this instwucts the weadew set t-to stop weading documents fwom the segment (if it hasn't
+   * awweady), mya awthough fow nyow geo-document  w-wecowds can stiww be wead. ʘwʘ  u-updates wecowdweadews
+   * (dewetes, (˘ω˘) e-etc.) may c-continue to wead entwies fow the segment. (U ﹏ U)
    */
-  void completeSegmentDocs(SegmentInfo segmentInfo);
+  void compwetesegmentdocs(segmentinfo s-segmentinfo);
 
   /**
-   * This instructs the reader set to stop reading updates for the Segment.  It
-   * should remove the segment from all non-document RecordReaders (deletes, etc.)
+   * t-this instwucts the weadew set t-to stop weading u-updates fow the segment. ^•ﻌ•^  it
+   * s-shouwd wemove the segment fwom a-aww nyon-document wecowdweadews (dewetes, (˘ω˘) etc.)
    */
-  void stopSegmentUpdates(SegmentInfo segmentInfo);
+  v-void stopsegmentupdates(segmentinfo segmentinfo);
 
   /**
-   * Stops all RecordReaders and closes all resources.
+   * s-stops aww wecowdweadews a-and cwoses aww w-wesouwces. :3
    */
-  void stopAll();
+  void stopaww();
 
   /**
-   * Returns true if all RecordReaders are 'caught up' with the data sources they
-   * are reading from.  This might mean that the end of a file has been reached,
-   * or that we are waiting/polling for new records from an append-only database.
+   * wetuwns twue if aww wecowdweadews awe 'caught up' with the data souwces they
+   * a-awe weading fwom. ^^;;  t-this might mean that the end o-of a fiwe has been w-weached, 🥺
+   * o-ow that we awe waiting/powwing fow nyew wecowds fwom an append-onwy d-database. (⑅˘꒳˘)
    */
-  boolean allCaughtUp();
+  boowean awwcaughtup();
 
   /**
-   * Create a new DocumentReader for the given segment that is not managed by this set.
+   * cweate a nyew documentweadew f-fow the given segment that i-is nyot managed b-by this set. nyaa~~
    */
-  RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo) throws Exception;
+  w-wecowdweadew<tweetdocument> nyewdocumentweadew(segmentinfo s-segmentinfo) t-thwows exception;
 
   /**
-   * Returns the document reader for the current segment.
+   * w-wetuwns t-the document weadew fow the cuwwent segment. :3
    */
-  RecordReader<TweetDocument> getDocumentReader();
+  w-wecowdweadew<tweetdocument> g-getdocumentweadew();
 
   /**
-   * Returns a combined update events reader for all segments.
+   * w-wetuwns a-a combined update e-events weadew fow aww segments.
    */
-  RecordReader<ThriftVersionedEvents> getUpdateEventsReader();
+  wecowdweadew<thwiftvewsionedevents> getupdateeventsweadew();
 
   /**
-   * Returns the update events reader for the given segment.
+   * w-wetuwns the update events weadew fow the given segment. ( ͡o ω ͡o )
    */
-  RecordReader<ThriftVersionedEvents> getUpdateEventsReaderForSegment(SegmentInfo segmentInfo);
+  wecowdweadew<thwiftvewsionedevents> getupdateeventsweadewfowsegment(segmentinfo s-segmentinfo);
 
   /**
-   * Returns the offset in the update events stream for the given segment that this earlybird should
-   * start indexing from.
+   * wetuwns the offset in the update events s-stweam fow t-the given segment t-that this eawwybiwd shouwd
+   * s-stawt indexing fwom. mya
    */
-  Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo);
+  optionaw<wong> g-getupdateeventsstweamoffsetfowsegment(segmentinfo s-segmentinfo);
 }

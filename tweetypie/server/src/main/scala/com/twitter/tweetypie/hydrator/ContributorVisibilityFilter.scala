@@ -1,42 +1,42 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
 /**
- * Remove contributor data from tweet if it should not be available to the
- * caller. The contributor field is populated in the cached
- * [[ContributorHydrator]].
+ * w-wemove contwibutow d-data fwom t-tweet if it shouwd n-nyot be avaiwabwe t-to the
+ * cawwew. 😳😳😳 the contwibutow fiewd is popuwated in the cached
+ * [[contwibutowhydwatow]]. 😳😳😳
  *
- * Contributor data is always available on the write path. It is available on
- * the read path for the tweet author (or user authenticated as the tweet
- * author in the case of contributors/teams), or if the caller has disabled
- * visibility filtering.
+ * c-contwibutow data is awways avaiwabwe o-on the wwite path. o.O it is avaiwabwe o-on
+ * the wead path fow the tweet authow (ow usew authenticated a-as the tweet
+ * authow in the c-case of contwibutows/teams), ( ͡o ω ͡o ) o-ow if the cawwew has disabwed
+ * visibiwity fiwtewing. (U ﹏ U)
  *
- * The condition for running this filtering hydrator (onlyIf) has been a
- * source of confusion. Keep in mind that the condition expresses when to
- * *remove* data, not when to return it.
+ * the condition fow wunning t-this fiwtewing hydwatow (onwyif) has been a
+ * souwce of confusion. (///ˬ///✿) keep i-in mind that the condition expwesses w-when to
+ * *wemove* d-data, >w< nyot w-when to wetuwn i-it. rawr
  *
- * In short, keep data when:
- *   !reading || requested by author || !(enforce visibility filtering)
+ * in showt, mya keep data when:
+ *   !weading || w-wequested by authow || !(enfowce visibiwity f-fiwtewing)
  *
- * Remove data when none of these conditions apply:
- *   reading && !(requested by author) && enforce visibility filtering
+ * wemove data when nyone of these conditions appwy:
+ *   weading && !(wequested by authow) && e-enfowce visibiwity fiwtewing
  *
  */
-object ContributorVisibilityFilter {
-  type Type = ValueHydrator[Option[Contributor], TweetCtx]
+o-object contwibutowvisibiwityfiwtew {
+  t-type t-type = vawuehydwatow[option[contwibutow], ^^ tweetctx]
 
-  def apply(): Type =
-    ValueHydrator
-      .map[Option[Contributor], TweetCtx] {
-        case (Some(_), _) => ValueState.modified(None)
-        case (None, _) => ValueState.unmodified(None)
+  def appwy(): type =
+    v-vawuehydwatow
+      .map[option[contwibutow], 😳😳😳 t-tweetctx] {
+        case (some(_), mya _) => v-vawuestate.modified(none)
+        c-case (none, 😳 _) => vawuestate.unmodified(none)
       }
-      .onlyIf { (_, ctx) =>
-        ctx.opts.cause.reading(ctx.tweetId) &&
-        !ctx.opts.forUserId.contains(ctx.userId) &&
-        ctx.opts.enforceVisibilityFiltering
+      .onwyif { (_, -.- c-ctx) =>
+        ctx.opts.cause.weading(ctx.tweetid) &&
+        !ctx.opts.fowusewid.contains(ctx.usewid) &&
+        c-ctx.opts.enfowcevisibiwityfiwtewing
       }
 }

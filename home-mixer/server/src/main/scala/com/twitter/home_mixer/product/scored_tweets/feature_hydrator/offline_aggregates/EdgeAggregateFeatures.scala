@@ -1,118 +1,118 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates.PassThroughAdapter
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates.SparseAggregatesToDenseAdapter
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionScreenNameFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TSPInferredTopicFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig.CombineCountPolicies
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.offwine_aggwegates.passthwoughadaptew
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.offwine_aggwegates.spawseaggwegatestodenseadaptew
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.mentionscweennamefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.topicidsociawcontextfeatuwe
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.tspinfewwedtopicfeatuwe
+impowt com.twittew.home_mixew.utiw.candidatesutiw
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegatetype
+impowt c-com.twittew.timewines.pwediction.common.aggwegates.timewinesaggwegationconfig
+impowt com.twittew.timewines.pwediction.common.aggwegates.timewinesaggwegationconfig.combinecountpowicies
 
-object EdgeAggregateFeatures {
+object e-edgeaggwegatefeatuwes {
 
-  object UserAuthorAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = TimelinesAggregationConfig.userAuthorAggregatesV2 ++ Set(
-          TimelinesAggregationConfig.userAuthorAggregatesV5,
-          TimelinesAggregationConfig.tweetSourceUserAuthorAggregatesV1,
-          TimelinesAggregationConfig.twitterWideUserAuthorAggregates
+  object usewauthowaggwegatefeatuwe
+      e-extends baseedgeaggwegatefeatuwe(
+        aggwegategwoups = timewinesaggwegationconfig.usewauthowaggwegatesv2 ++ set(
+          t-timewinesaggwegationconfig.usewauthowaggwegatesv5, (U ﹏ U)
+          timewinesaggwegationconfig.tweetsouwceusewauthowaggwegatesv1, ^•ﻌ•^
+          t-timewinesaggwegationconfig.twittewwideusewauthowaggwegates
+        ), (˘ω˘)
+        a-aggwegatetype = aggwegatetype.usewauthow,
+        extwactmapfn = _.usewauthowaggwegates, :3
+        adaptew = passthwoughadaptew, ^^;;
+        g-getsecondawykeysfn = _.featuwes.getowewse(authowidfeatuwe, 🥺 nyone).toseq
+      )
+
+  object usewowiginawauthowaggwegatefeatuwe
+      extends baseedgeaggwegatefeatuwe(
+        aggwegategwoups = s-set(timewinesaggwegationconfig.usewowiginawauthowaggwegatesv1),
+        aggwegatetype = a-aggwegatetype.usewowiginawauthow, (⑅˘꒳˘)
+        e-extwactmapfn = _.usewowiginawauthowaggwegates, nyaa~~
+        a-adaptew = p-passthwoughadaptew, :3
+        getsecondawykeysfn = candidate =>
+          candidatesutiw.getowiginawauthowid(candidate.featuwes).toseq
+      )
+
+  o-object usewtopicaggwegatefeatuwe
+      extends baseedgeaggwegatefeatuwe(
+        a-aggwegategwoups = set(
+          timewinesaggwegationconfig.usewtopicaggwegates, ( ͡o ω ͡o )
+          timewinesaggwegationconfig.usewtopicaggwegatesv2, mya
+        ), (///ˬ///✿)
+        aggwegatetype = aggwegatetype.usewtopic, (˘ω˘)
+        extwactmapfn = _.usewtopicaggwegates, ^^;;
+        a-adaptew = passthwoughadaptew, (✿oωo)
+        getsecondawykeysfn = c-candidate =>
+          c-candidate.featuwes.getowewse(topicidsociawcontextfeatuwe, (U ﹏ U) nyone).toseq
+      )
+
+  o-object usewmentionaggwegatefeatuwe
+      extends baseedgeaggwegatefeatuwe(
+        aggwegategwoups = set(timewinesaggwegationconfig.usewmentionaggwegates), -.-
+        a-aggwegatetype = a-aggwegatetype.usewmention, ^•ﻌ•^
+        extwactmapfn = _.usewmentionaggwegates, rawr
+        a-adaptew = n-nyew spawseaggwegatestodenseadaptew(combinecountpowicies.mentioncountspowicy), (˘ω˘)
+        getsecondawykeysfn = candidate =>
+          c-candidate.featuwes.getowewse(mentionscweennamefeatuwe, seq.empty).map(_.hashcode.towong)
+      )
+
+  object u-usewinfewwedtopicaggwegatefeatuwe
+      extends baseedgeaggwegatefeatuwe(
+        a-aggwegategwoups = set(
+          t-timewinesaggwegationconfig.usewinfewwedtopicaggwegates, nyaa~~
         ),
-        aggregateType = AggregateType.UserAuthor,
-        extractMapFn = _.userAuthorAggregates,
-        adapter = PassThroughAdapter,
-        getSecondaryKeysFn = _.features.getOrElse(AuthorIdFeature, None).toSeq
+        aggwegatetype = a-aggwegatetype.usewinfewwedtopic, UwU
+        e-extwactmapfn = _.usewinfewwedtopicaggwegates, :3
+        adaptew = nyew spawseaggwegatestodenseadaptew(
+          combinecountpowicies.usewinfewwedtopiccountspowicy), (⑅˘꒳˘)
+        getsecondawykeysfn = candidate =>
+          candidate.featuwes.getowewse(tspinfewwedtopicfeatuwe, (///ˬ///✿) m-map.empty[wong, ^^;; d-doubwe]).keys.toseq
       )
 
-  object UserOriginalAuthorAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(TimelinesAggregationConfig.userOriginalAuthorAggregatesV1),
-        aggregateType = AggregateType.UserOriginalAuthor,
-        extractMapFn = _.userOriginalAuthorAggregates,
-        adapter = PassThroughAdapter,
-        getSecondaryKeysFn = candidate =>
-          CandidatesUtil.getOriginalAuthorId(candidate.features).toSeq
+  object u-usewinfewwedtopicaggwegatev2featuwe
+      e-extends b-baseedgeaggwegatefeatuwe(
+        aggwegategwoups = set(
+          timewinesaggwegationconfig.usewinfewwedtopicaggwegatesv2
+        ), >_<
+        a-aggwegatetype = aggwegatetype.usewinfewwedtopic, rawr x3
+        extwactmapfn = _.usewinfewwedtopicaggwegates, /(^•ω•^)
+        adaptew = nyew spawseaggwegatestodenseadaptew(
+          c-combinecountpowicies.usewinfewwedtopicv2countspowicy), :3
+        getsecondawykeysfn = c-candidate =>
+          c-candidate.featuwes.getowewse(tspinfewwedtopicfeatuwe, (ꈍᴗꈍ) m-map.empty[wong, /(^•ω•^) doubwe]).keys.toseq
       )
 
-  object UserTopicAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(
-          TimelinesAggregationConfig.userTopicAggregates,
-          TimelinesAggregationConfig.userTopicAggregatesV2,
-        ),
-        aggregateType = AggregateType.UserTopic,
-        extractMapFn = _.userTopicAggregates,
-        adapter = PassThroughAdapter,
-        getSecondaryKeysFn = candidate =>
-          candidate.features.getOrElse(TopicIdSocialContextFeature, None).toSeq
+  o-object u-usewmediaundewstandingannotationaggwegatefeatuwe
+      e-extends b-baseedgeaggwegatefeatuwe(
+        aggwegategwoups = set(
+          t-timewinesaggwegationconfig.usewmediaundewstandingannotationaggwegates), (⑅˘꒳˘)
+        a-aggwegatetype = a-aggwegatetype.usewmediaundewstandingannotation, ( ͡o ω ͡o )
+        e-extwactmapfn = _.usewmediaundewstandingannotationaggwegates, òωó
+        a-adaptew = nyew spawseaggwegatestodenseadaptew(
+          combinecountpowicies.usewmediaundewstandingannotationcountspowicy), (⑅˘꒳˘)
+        getsecondawykeysfn = candidate =>
+          c-candidatesutiw.getmediaundewstandingannotationids(candidate.featuwes)
       )
 
-  object UserMentionAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(TimelinesAggregationConfig.userMentionAggregates),
-        aggregateType = AggregateType.UserMention,
-        extractMapFn = _.userMentionAggregates,
-        adapter = new SparseAggregatesToDenseAdapter(CombineCountPolicies.MentionCountsPolicy),
-        getSecondaryKeysFn = candidate =>
-          candidate.features.getOrElse(MentionScreenNameFeature, Seq.empty).map(_.hashCode.toLong)
+  object usewengagewaggwegatefeatuwe
+      extends baseedgeaggwegatefeatuwe(
+        aggwegategwoups = set(timewinesaggwegationconfig.usewengagewaggwegates), XD
+        a-aggwegatetype = aggwegatetype.usewengagew, -.-
+        extwactmapfn = _.usewengagewaggwegates, :3
+        adaptew = n-nyew spawseaggwegatestodenseadaptew(combinecountpowicies.engagewcountspowicy), nyaa~~
+        g-getsecondawykeysfn = candidate => c-candidatesutiw.getengagewusewids(candidate.featuwes)
       )
 
-  object UserInferredTopicAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(
-          TimelinesAggregationConfig.userInferredTopicAggregates,
-        ),
-        aggregateType = AggregateType.UserInferredTopic,
-        extractMapFn = _.userInferredTopicAggregates,
-        adapter = new SparseAggregatesToDenseAdapter(
-          CombineCountPolicies.UserInferredTopicCountsPolicy),
-        getSecondaryKeysFn = candidate =>
-          candidate.features.getOrElse(TSPInferredTopicFeature, Map.empty[Long, Double]).keys.toSeq
-      )
-
-  object UserInferredTopicAggregateV2Feature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(
-          TimelinesAggregationConfig.userInferredTopicAggregatesV2
-        ),
-        aggregateType = AggregateType.UserInferredTopic,
-        extractMapFn = _.userInferredTopicAggregates,
-        adapter = new SparseAggregatesToDenseAdapter(
-          CombineCountPolicies.UserInferredTopicV2CountsPolicy),
-        getSecondaryKeysFn = candidate =>
-          candidate.features.getOrElse(TSPInferredTopicFeature, Map.empty[Long, Double]).keys.toSeq
-      )
-
-  object UserMediaUnderstandingAnnotationAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(
-          TimelinesAggregationConfig.userMediaUnderstandingAnnotationAggregates),
-        aggregateType = AggregateType.UserMediaUnderstandingAnnotation,
-        extractMapFn = _.userMediaUnderstandingAnnotationAggregates,
-        adapter = new SparseAggregatesToDenseAdapter(
-          CombineCountPolicies.UserMediaUnderstandingAnnotationCountsPolicy),
-        getSecondaryKeysFn = candidate =>
-          CandidatesUtil.getMediaUnderstandingAnnotationIds(candidate.features)
-      )
-
-  object UserEngagerAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(TimelinesAggregationConfig.userEngagerAggregates),
-        aggregateType = AggregateType.UserEngager,
-        extractMapFn = _.userEngagerAggregates,
-        adapter = new SparseAggregatesToDenseAdapter(CombineCountPolicies.EngagerCountsPolicy),
-        getSecondaryKeysFn = candidate => CandidatesUtil.getEngagerUserIds(candidate.features)
-      )
-
-  object UserEngagerGoodClickAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(TimelinesAggregationConfig.userEngagerGoodClickAggregates),
-        aggregateType = AggregateType.UserEngager,
-        extractMapFn = _.userEngagerAggregates,
-        adapter = new SparseAggregatesToDenseAdapter(
-          CombineCountPolicies.EngagerGoodClickCountsPolicy),
-        getSecondaryKeysFn = candidate => CandidatesUtil.getEngagerUserIds(candidate.features)
+  object u-usewengagewgoodcwickaggwegatefeatuwe
+      extends b-baseedgeaggwegatefeatuwe(
+        a-aggwegategwoups = set(timewinesaggwegationconfig.usewengagewgoodcwickaggwegates), 😳
+        aggwegatetype = aggwegatetype.usewengagew, (⑅˘꒳˘)
+        extwactmapfn = _.usewengagewaggwegates, nyaa~~
+        adaptew = nyew s-spawseaggwegatestodenseadaptew(
+          combinecountpowicies.engagewgoodcwickcountspowicy), OwO
+        g-getsecondawykeysfn = candidate => candidatesutiw.getengagewusewids(candidate.featuwes)
       )
 }

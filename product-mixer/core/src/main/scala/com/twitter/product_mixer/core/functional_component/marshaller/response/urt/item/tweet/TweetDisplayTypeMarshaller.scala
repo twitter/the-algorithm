@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet._
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TweetDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass t-tweetdispwaytypemawshawwew @inject() () {
 
-  def apply(tweetDisplayType: TweetDisplayType): urt.TweetDisplayType = tweetDisplayType match {
-    case Tweet => urt.TweetDisplayType.Tweet
-    case TweetFollowOnly => urt.TweetDisplayType.TweetFollowOnly
-    case Media => urt.TweetDisplayType.Media
-    case MomentTimelineTweet => urt.TweetDisplayType.MomentTimelineTweet
-    case EmphasizedPromotedTweet => urt.TweetDisplayType.EmphasizedPromotedTweet
-    case QuotedTweet => urt.TweetDisplayType.QuotedTweet
-    case SelfThread => urt.TweetDisplayType.SelfThread
-    case CompactPromotedTweet => urt.TweetDisplayType.CompactPromotedTweet
-    case TweetWithoutCard => urt.TweetDisplayType.TweetWithoutCard
-    case ReaderModeRoot => urt.TweetDisplayType.ReaderModeRoot
-    case ReaderMode => urt.TweetDisplayType.ReaderMode
-    case CondensedTweet => urt.TweetDisplayType.CondensedTweet
+  d-def appwy(tweetdispwaytype: t-tweetdispwaytype): u-uwt.tweetdispwaytype = tweetdispwaytype match {
+    case tweet => uwt.tweetdispwaytype.tweet
+    c-case tweetfowwowonwy => uwt.tweetdispwaytype.tweetfowwowonwy
+    case media => u-uwt.tweetdispwaytype.media
+    case momenttimewinetweet => u-uwt.tweetdispwaytype.momenttimewinetweet
+    case emphasizedpwomotedtweet => uwt.tweetdispwaytype.emphasizedpwomotedtweet
+    case quotedtweet => u-uwt.tweetdispwaytype.quotedtweet
+    case sewfthwead => u-uwt.tweetdispwaytype.sewfthwead
+    c-case compactpwomotedtweet => uwt.tweetdispwaytype.compactpwomotedtweet
+    case tweetwithoutcawd => uwt.tweetdispwaytype.tweetwithoutcawd
+    case weadewmodewoot => uwt.tweetdispwaytype.weadewmodewoot
+    c-case weadewmode => uwt.tweetdispwaytype.weadewmode
+    case condensedtweet => uwt.tweetdispwaytype.condensedtweet
   }
 }

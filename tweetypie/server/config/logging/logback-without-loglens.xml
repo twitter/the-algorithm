@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration debug="false">
-    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-      <resetJUL>true</resetJUL>
-    </contextListener>
+<?xmw vewsion="1.0" encoding="utf-8"?>
+<configuwation d-debug="fawse">
+    <contextwistenew c-cwass="ch.qos.wogback.cwassic.juw.wevewchangepwopagatow">
+      <wesetjuw>twue</wesetjuw>
+    </contextwistenew>
 
-    <include resource="logging/logback-all-include.xml" />
+    <incwude w-wesouwce="wogging/wogback-aww-incwude.xmw" />
 
-    <root level="INFO">
-        <appender-ref ref="ALL" />
-    </root>
-</configuration>
+    <woot w-wevew="info">
+        <appendew-wef w-wef="aww" />
+    </woot>
+</configuwation>

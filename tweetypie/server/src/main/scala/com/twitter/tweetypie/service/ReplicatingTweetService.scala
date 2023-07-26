@@ -1,47 +1,47 @@
-package com.twitter.tweetypie
-package service
+package com.twittew.tweetypie
+package s-sewvice
 
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.servo.forked.Forked
-import com.twitter.tweetypie.service.ReplicatingTweetService.GatedReplicationClient
+impowt c-com.twittew.tweetypie.thwiftscawa._
+i-impowt c-com.twittew.sewvo.fowked.fowked
+i-impowt com.twittew.tweetypie.sewvice.wepwicatingtweetsewvice.gatedwepwicationcwient
 
 /**
- * Wraps an underlying ThriftTweetService, transforming external requests to replicated requests.
+ * w-wwaps a-an undewwying t-thwifttweetsewvice, ʘwʘ twansfowming extewnaw wequests to wepwicated wequests. /(^•ω•^)
  */
-object ReplicatingTweetService {
-  // Can be used to associate replication client with a gate that determines
-  // if a replication request should be performed.
-  case class GatedReplicationClient(client: ThriftTweetService, gate: Gate[Unit]) {
-    def execute(executor: Forked.Executor, action: ThriftTweetService => Unit): Unit = {
-      if (gate()) executor { () => action(client) }
+object w-wepwicatingtweetsewvice {
+  // can be used to associate wepwication c-cwient with a gate that d-detewmines
+  // if a wepwication wequest shouwd be pewfowmed. ʘwʘ
+  c-case cwass gatedwepwicationcwient(cwient: thwifttweetsewvice, σωσ g-gate: gate[unit]) {
+    d-def exekawaii~(executow: fowked.executow, OwO action: thwifttweetsewvice => unit): unit = {
+      if (gate()) e-executow { () => action(cwient) }
     }
   }
 }
 
-class ReplicatingTweetService(
-  protected val underlying: ThriftTweetService,
-  replicationTargets: Seq[GatedReplicationClient],
-  executor: Forked.Executor,
-) extends TweetServiceProxy {
-  private[this] def replicateRead(action: ThriftTweetService => Unit): Unit =
-    replicationTargets.foreach(_.execute(executor, action))
+cwass wepwicatingtweetsewvice(
+  pwotected vaw undewwying: thwifttweetsewvice, 😳😳😳
+  w-wepwicationtawgets: seq[gatedwepwicationcwient], 😳😳😳
+  e-executow: fowked.executow, o.O
+) e-extends tweetsewvicepwoxy {
+  p-pwivate[this] def w-wepwicatewead(action: thwifttweetsewvice => unit): u-unit =
+    wepwicationtawgets.foweach(_.exekawaii~(executow, ( ͡o ω ͡o ) action))
 
-  override def getTweetCounts(request: GetTweetCountsRequest): Future[Seq[GetTweetCountsResult]] = {
-    replicateRead(_.replicatedGetTweetCounts(request))
-    underlying.getTweetCounts(request)
+  ovewwide d-def gettweetcounts(wequest: gettweetcountswequest): futuwe[seq[gettweetcountswesuwt]] = {
+    wepwicatewead(_.wepwicatedgettweetcounts(wequest))
+    undewwying.gettweetcounts(wequest)
   }
 
-  override def getTweetFields(request: GetTweetFieldsRequest): Future[Seq[GetTweetFieldsResult]] = {
-    if (!request.options.doNotCache) {
-      replicateRead(_.replicatedGetTweetFields(request))
+  ovewwide def g-gettweetfiewds(wequest: gettweetfiewdswequest): f-futuwe[seq[gettweetfiewdswesuwt]] = {
+    i-if (!wequest.options.donotcache) {
+      w-wepwicatewead(_.wepwicatedgettweetfiewds(wequest))
     }
-    underlying.getTweetFields(request)
+    undewwying.gettweetfiewds(wequest)
   }
 
-  override def getTweets(request: GetTweetsRequest): Future[Seq[GetTweetResult]] = {
-    if (!request.options.exists(_.doNotCache)) {
-      replicateRead(_.replicatedGetTweets(request))
+  ovewwide def gettweets(wequest: g-gettweetswequest): f-futuwe[seq[gettweetwesuwt]] = {
+    if (!wequest.options.exists(_.donotcache)) {
+      w-wepwicatewead(_.wepwicatedgettweets(wequest))
     }
-    underlying.getTweets(request)
+    undewwying.gettweets(wequest)
   }
 }

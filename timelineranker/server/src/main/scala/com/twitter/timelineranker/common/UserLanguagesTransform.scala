@@ -1,30 +1,30 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.search.common.constants.thriftscala.ThriftLanguage
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.clients.manhattan.LanguageUtils
-import com.twitter.timelines.clients.manhattan.UserMetadataClient
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
-import com.twitter.service.metastore.gen.thriftscala.UserLanguages
+impowt c-com.twittew.seawch.common.constants.thwiftscawa.thwiftwanguage
+i-impowt com.twittew.sewvo.utiw.futuweawwow
+i-impowt c-com.twittew.timewinewankew.modew.wecapquewy
+i-impowt c-com.twittew.timewines.cwients.manhattan.wanguageutiws
+i-impowt c-com.twittew.timewines.cwients.manhattan.usewmetadatacwient
+impowt com.twittew.timewines.utiw.faiwopenhandwew
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.sewvice.metastowe.gen.thwiftscawa.usewwanguages
 
-object UserLanguagesTransform {
-  val EmptyUserLanguagesFuture: Future[UserLanguages] =
-    Future.value(UserMetadataClient.EmptyUserLanguages)
+object usewwanguagestwansfowm {
+  v-vaw emptyusewwanguagesfutuwe: futuwe[usewwanguages] =
+    f-futuwe.vawue(usewmetadatacwient.emptyusewwanguages)
 }
 
 /**
- * FutureArrow which fetches user languages
- * It should be run in parallel with the main pipeline which fetches and hydrates CandidateTweets
+ * futuweawwow which fetches usew wanguages
+ * i-it shouwd be wun in pawawwew w-with the main p-pipewine which fetches and hydwates candidatetweets
  */
-class UserLanguagesTransform(handler: FailOpenHandler, userMetadataClient: UserMetadataClient)
-    extends FutureArrow[RecapQuery, Seq[ThriftLanguage]] {
-  override def apply(request: RecapQuery): Future[Seq[ThriftLanguage]] = {
-    import UserLanguagesTransform._
+cwass usewwanguagestwansfowm(handwew: f-faiwopenhandwew, (⑅˘꒳˘) usewmetadatacwient: usewmetadatacwient)
+    extends futuweawwow[wecapquewy, rawr x3 s-seq[thwiftwanguage]] {
+  ovewwide def a-appwy(wequest: w-wecapquewy): futuwe[seq[thwiftwanguage]] = {
+    i-impowt usewwanguagestwansfowm._
 
-    handler {
-      userMetadataClient.getUserLanguages(request.userId)
-    } { _: Throwable => EmptyUserLanguagesFuture }
-  }.map(LanguageUtils.computeLanguages(_))
+    h-handwew {
+      usewmetadatacwient.getusewwanguages(wequest.usewid)
+    } { _: thwowabwe => e-emptyusewwanguagesfutuwe }
+  }.map(wanguageutiws.computewanguages(_))
 }

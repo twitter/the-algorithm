@@ -1,50 +1,50 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddToModuleTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ClearCacheTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.MarkEntriesUnreadInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.PinEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReplaceEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlertInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowCoverInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TerminateTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.addentwiestimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.addtomoduwetimewineinstwuction
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cweawcachetimewineinstwuction
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.mawkentwiesunweadinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pinentwytimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wepwaceentwytimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.showawewtinstwuction
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.showcovewinstwuction
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.tewminatetimewineinstwuction
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineinstwuction
+impowt com.twittew.timewines.wendew.{thwiftscawa => uwt}
+impowt j-javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class TimelineInstructionMarshaller @Inject() (
-  addEntriesInstructionMarshaller: AddEntriesInstructionMarshaller,
-  addToModuleInstructionMarshaller: AddToModuleInstructionMarshaller,
-  markEntriesUnreadInstructionMarshaller: MarkEntriesUnreadInstructionMarshaller,
-  pinEntryInstructionMarshaller: PinEntryInstructionMarshaller,
-  replaceEntryInstructionMarshaller: ReplaceEntryInstructionMarshaller,
-  showAlertInstructionMarshaller: ShowAlertInstructionMarshaller,
-  terminateTimelineInstructionMarshaller: TerminateTimelineInstructionMarshaller,
-  coverMarshaller: CoverMarshaller) {
+@singweton
+cwass timewineinstwuctionmawshawwew @inject() (
+  addentwiesinstwuctionmawshawwew: addentwiesinstwuctionmawshawwew, OwO
+  a-addtomoduweinstwuctionmawshawwew: addtomoduweinstwuctionmawshawwew, 😳😳😳
+  mawkentwiesunweadinstwuctionmawshawwew: m-mawkentwiesunweadinstwuctionmawshawwew, 😳😳😳
+  p-pinentwyinstwuctionmawshawwew: pinentwyinstwuctionmawshawwew, o.O
+  wepwaceentwyinstwuctionmawshawwew: wepwaceentwyinstwuctionmawshawwew, ( ͡o ω ͡o )
+  showawewtinstwuctionmawshawwew: s-showawewtinstwuctionmawshawwew, (U ﹏ U)
+  tewminatetimewineinstwuctionmawshawwew: tewminatetimewineinstwuctionmawshawwew, (///ˬ///✿)
+  covewmawshawwew: covewmawshawwew) {
 
-  def apply(instruction: TimelineInstruction): urt.TimelineInstruction = instruction match {
-    case instruction: AddEntriesTimelineInstruction =>
-      urt.TimelineInstruction.AddEntries(addEntriesInstructionMarshaller(instruction))
-    case instruction: AddToModuleTimelineInstruction =>
-      urt.TimelineInstruction.AddToModule(addToModuleInstructionMarshaller(instruction))
-    case _: ClearCacheTimelineInstruction =>
-      urt.TimelineInstruction.ClearCache(urt.ClearCache())
-    case instruction: MarkEntriesUnreadInstruction =>
-      urt.TimelineInstruction.MarkEntriesUnread(
-        markEntriesUnreadInstructionMarshaller(instruction)
+  d-def appwy(instwuction: timewineinstwuction): u-uwt.timewineinstwuction = i-instwuction m-match {
+    c-case instwuction: addentwiestimewineinstwuction =>
+      uwt.timewineinstwuction.addentwies(addentwiesinstwuctionmawshawwew(instwuction))
+    c-case instwuction: addtomoduwetimewineinstwuction =>
+      uwt.timewineinstwuction.addtomoduwe(addtomoduweinstwuctionmawshawwew(instwuction))
+    c-case _: cweawcachetimewineinstwuction =>
+      uwt.timewineinstwuction.cweawcache(uwt.cweawcache())
+    case instwuction: mawkentwiesunweadinstwuction =>
+      uwt.timewineinstwuction.mawkentwiesunwead(
+        mawkentwiesunweadinstwuctionmawshawwew(instwuction)
       )
-    case instruction: PinEntryTimelineInstruction =>
-      urt.TimelineInstruction.PinEntry(pinEntryInstructionMarshaller(instruction))
-    case instruction: ReplaceEntryTimelineInstruction =>
-      urt.TimelineInstruction.ReplaceEntry(replaceEntryInstructionMarshaller(instruction))
-    case instruction: ShowCoverInstruction =>
-      urt.TimelineInstruction.ShowCover(coverMarshaller(instruction.cover))
-    case instruction: ShowAlertInstruction =>
-      urt.TimelineInstruction.ShowAlert(showAlertInstructionMarshaller(instruction))
-    case instruction: TerminateTimelineInstruction =>
-      urt.TimelineInstruction.TerminateTimeline(terminateTimelineInstructionMarshaller(instruction))
+    c-case instwuction: pinentwytimewineinstwuction =>
+      u-uwt.timewineinstwuction.pinentwy(pinentwyinstwuctionmawshawwew(instwuction))
+    c-case i-instwuction: wepwaceentwytimewineinstwuction =>
+      uwt.timewineinstwuction.wepwaceentwy(wepwaceentwyinstwuctionmawshawwew(instwuction))
+    case instwuction: showcovewinstwuction =>
+      u-uwt.timewineinstwuction.showcovew(covewmawshawwew(instwuction.covew))
+    c-case instwuction: showawewtinstwuction =>
+      u-uwt.timewineinstwuction.showawewt(showawewtinstwuctionmawshawwew(instwuction))
+    c-case instwuction: t-tewminatetimewineinstwuction =>
+      uwt.timewineinstwuction.tewminatetimewine(tewminatetimewineinstwuctionmawshawwew(instwuction))
   }
 }

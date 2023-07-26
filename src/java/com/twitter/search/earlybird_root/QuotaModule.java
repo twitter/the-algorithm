@@ -1,110 +1,110 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+impowt j-java.utiw.concuwwent.executows;
+i-impowt java.utiw.concuwwent.scheduwedexecutowsewvice;
+i-impowt javax.annotation.nuwwabwe;
+i-impowt j-javax.inject.named;
+i-impowt javax.inject.singweton;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.common.util.concurrent.TwitterRateLimiterProxyFactory;
-import com.google.inject.Provides;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.utiw.concuwwent.thweadfactowybuiwdew;
+impowt com.googwe.common.utiw.concuwwent.twittewwatewimitewpwoxyfactowy;
+impowt com.googwe.inject.pwovides;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.common.util.Clock;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird_root.filters.ClientIdArchiveAccessFilter;
-import com.twitter.search.earlybird_root.filters.ClientIdQuotaFilter;
-import com.twitter.search.earlybird_root.filters.DisableClientByTierFilter;
-import com.twitter.search.earlybird_root.quota.ConfigBasedQuotaConfig;
-import com.twitter.search.earlybird_root.quota.ConfigRepoBasedQuotaManager;
+i-impowt com.twittew.app.fwag;
+impowt com.twittew.app.fwaggabwe;
+i-impowt com.twittew.common.utiw.cwock;
+impowt c-com.twittew.inject.twittewmoduwe;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.cwientidawchiveaccessfiwtew;
+impowt c-com.twittew.seawch.eawwybiwd_woot.fiwtews.cwientidquotafiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.disabwecwientbytiewfiwtew;
+impowt c-com.twittew.seawch.eawwybiwd_woot.quota.configbasedquotaconfig;
+i-impowt com.twittew.seawch.eawwybiwd_woot.quota.configwepobasedquotamanagew;
 
-public class QuotaModule extends TwitterModule {
-  @VisibleForTesting
-  public static final String NAMED_QUOTA_CONFIG_PATH = "quotaConfigPath";
-  public static final String NAMED_CLIENT_QUOTA_KEY = "clientQuotaKey";
-  private static final String NAMED_REQUIRE_QUOTA_CONFIG_FOR_CLIENTS
-      = "requireQuotaConfigForClients";
+pubwic cwass quotamoduwe extends twittewmoduwe {
+  @visibwefowtesting
+  pubwic s-static finaw stwing nyamed_quota_config_path = "quotaconfigpath";
+  pubwic static finaw stwing nyamed_cwient_quota_key = "cwientquotakey";
+  pwivate s-static finaw stwing nyamed_wequiwe_quota_config_fow_cwients
+      = "wequiwequotaconfigfowcwients";
 
-  private final Flag<String> quotaConfigPathFlag = createMandatoryFlag(
-      "quota_config_path",
+  p-pwivate f-finaw fwag<stwing> q-quotaconfigpathfwag = cweatemandatowyfwag(
+      "quota_config_path", :3
       "",
-      "Path to the quota config file",
-      Flaggable.ofString());
+      "path t-to the quota config fiwe", OwO
+      fwaggabwe.ofstwing());
 
-  private final Flag<String> clientQuotaKeyFlag = createFlag(
-      "client_quota_key",
-      "quota",
-      "The key that will be used to extract client quotas",
-      Flaggable.ofString());
+  p-pwivate finaw fwag<stwing> cwientquotakeyfwag = cweatefwag(
+      "cwient_quota_key",
+      "quota", (U ﹏ U)
+      "the k-key that wiww be used to extwact cwient quotas", >w<
+      fwaggabwe.ofstwing());
 
-  private final Flag<Boolean> requireQuotaConfigForClientsFlag = createFlag(
-      "require_quota_config_for_clients",
-      true,
-      "If true, require a quota value under <client_quota_key> for each client in the config",
-      Flaggable.ofJavaBoolean());
+  pwivate finaw fwag<boowean> wequiwequotaconfigfowcwientsfwag = c-cweatefwag(
+      "wequiwe_quota_config_fow_cwients", (U ﹏ U)
+      twue,
+      "if t-twue, 😳 w-wequiwe a quota v-vawue undew <cwient_quota_key> fow each cwient in the config", (ˆ ﻌ ˆ)♡
+      fwaggabwe.ofjavaboowean());
 
-  @Provides
-  @Singleton
-  @Named(NAMED_QUOTA_CONFIG_PATH)
-  String provideQuotaConfigPath() {
-    return quotaConfigPathFlag.apply();
+  @pwovides
+  @singweton
+  @named(named_quota_config_path)
+  s-stwing pwovidequotaconfigpath() {
+    w-wetuwn quotaconfigpathfwag.appwy();
   }
 
-  @Provides
-  @Singleton
-  @Named(NAMED_CLIENT_QUOTA_KEY)
-  String provideClientQuotaKey() {
-    return clientQuotaKeyFlag.apply();
+  @pwovides
+  @singweton
+  @named(named_cwient_quota_key)
+  stwing p-pwovidecwientquotakey() {
+    w-wetuwn cwientquotakeyfwag.appwy();
   }
 
-  @Provides
-  @Singleton
-  @Named(NAMED_REQUIRE_QUOTA_CONFIG_FOR_CLIENTS)
-  boolean provideRequireQuotaConfigForClients() {
-    return requireQuotaConfigForClientsFlag.apply();
+  @pwovides
+  @singweton
+  @named(named_wequiwe_quota_config_fow_cwients)
+  boowean pwovidewequiwequotaconfigfowcwients() {
+    w-wetuwn wequiwequotaconfigfowcwientsfwag.appwy();
   }
 
-  @Provides
-  @Singleton
-  ClientIdQuotaFilter provideConfigRepoBasedClientIdQuotaFilter(
-      ConfigRepoBasedQuotaManager configRepoBasedQuotaManager,
-      TwitterRateLimiterProxyFactory rateLimiterProxyFactory) throws Exception {
-    return new ClientIdQuotaFilter(configRepoBasedQuotaManager, rateLimiterProxyFactory);
+  @pwovides
+  @singweton
+  c-cwientidquotafiwtew pwovideconfigwepobasedcwientidquotafiwtew(
+      configwepobasedquotamanagew configwepobasedquotamanagew, 😳😳😳
+      t-twittewwatewimitewpwoxyfactowy watewimitewpwoxyfactowy) t-thwows exception {
+    wetuwn n-nyew cwientidquotafiwtew(configwepobasedquotamanagew, w-watewimitewpwoxyfactowy);
   }
 
-  @Provides
-  @Singleton
-  ConfigBasedQuotaConfig providesConfigBasedQuotaConfig(
-      @Nullable @Named(NAMED_QUOTA_CONFIG_PATH) String quotaConfigPath,
-      @Nullable @Named(NAMED_CLIENT_QUOTA_KEY) String clientQuotaKey,
-      @Nullable @Named(NAMED_REQUIRE_QUOTA_CONFIG_FOR_CLIENTS) boolean requireQuotaConfigForClients,
-      Clock clock
-  ) throws Exception {
-    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(
-        new ThreadFactoryBuilder()
-            .setNameFormat("quota-config-reloader")
-            .setDaemon(true)
-            .build());
-    return ConfigBasedQuotaConfig.newConfigBasedQuotaConfig(
-        quotaConfigPath, clientQuotaKey, requireQuotaConfigForClients, executorService, clock);
+  @pwovides
+  @singweton
+  configbasedquotaconfig pwovidesconfigbasedquotaconfig(
+      @nuwwabwe @named(named_quota_config_path) stwing quotaconfigpath, (U ﹏ U)
+      @nuwwabwe @named(named_cwient_quota_key) stwing cwientquotakey, (///ˬ///✿)
+      @nuwwabwe @named(named_wequiwe_quota_config_fow_cwients) boowean w-wequiwequotaconfigfowcwients, 😳
+      c-cwock cwock
+  ) thwows exception {
+    s-scheduwedexecutowsewvice e-executowsewvice = e-executows.newsingwethweadscheduwedexecutow(
+        nyew thweadfactowybuiwdew()
+            .setnamefowmat("quota-config-wewoadew")
+            .setdaemon(twue)
+            .buiwd());
+    wetuwn configbasedquotaconfig.newconfigbasedquotaconfig(
+        quotaconfigpath, 😳 c-cwientquotakey, σωσ wequiwequotaconfigfowcwients, rawr x3 executowsewvice, OwO cwock);
   }
 
-  @Provides
-  @Singleton
-  DisableClientByTierFilter provideDisableClientByTierFilter(
-      ConfigRepoBasedQuotaManager configRepoBasedQuotaManager,
-      SearchDecider searchDecider) {
-    return new DisableClientByTierFilter(configRepoBasedQuotaManager, searchDecider);
+  @pwovides
+  @singweton
+  disabwecwientbytiewfiwtew p-pwovidedisabwecwientbytiewfiwtew(
+      configwepobasedquotamanagew c-configwepobasedquotamanagew, /(^•ω•^)
+      s-seawchdecidew s-seawchdecidew) {
+    wetuwn nyew disabwecwientbytiewfiwtew(configwepobasedquotamanagew, 😳😳😳 s-seawchdecidew);
   }
 
-  @Provides
-  @Singleton
-  ClientIdArchiveAccessFilter clientIdArchiveAccessFilter(
-      ConfigRepoBasedQuotaManager configRepoBasedQuotaManager) {
-    return new ClientIdArchiveAccessFilter(configRepoBasedQuotaManager);
+  @pwovides
+  @singweton
+  c-cwientidawchiveaccessfiwtew c-cwientidawchiveaccessfiwtew(
+      c-configwepobasedquotamanagew configwepobasedquotamanagew) {
+    wetuwn nyew cwientidawchiveaccessfiwtew(configwepobasedquotamanagew);
   }
 }

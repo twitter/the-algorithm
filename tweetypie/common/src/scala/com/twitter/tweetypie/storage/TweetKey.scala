@@ -1,163 +1,163 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
 /**
- * Responsible for encoding/decoding Tweet records to/from Manhattan keys
+ * wesponsibwe f-fow encoding/decoding tweet w-wecowds to/fwom m-manhattan keys
  *
- * K/V Scheme:
+ * k-k/v scheme:
  * -----------
- *      [TweetId]
+ *      [tweetid]
  *           /metadata
- *               /delete_state (a.k.a. hard delete)
- *               /soft_delete_state
- *               /bounce_delete_state
- *               /undelete_state
- *               /force_added_state
- *               /scrubbed_fields/
- *                    /[ScrubbedFieldId_1]
+ *               /dewete_state (a.k.a. (U ᵕ U❁) h-hawd dewete)
+ *               /soft_dewete_state
+ *               /bounce_dewete_state
+ *               /undewete_state
+ *               /fowce_added_state
+ *               /scwubbed_fiewds/
+ *                    /[scwubbedfiewdid_1]
  *                     ..
- *                   /[ScrubbedFieldId_M]
- *          /fields
- *             /internal
+ *                   /[scwubbedfiewdid_m]
+ *          /fiewds
+ *             /intewnaw
  *                 /1
  *                 /9
  *                 ..
  *                 /99
- *             /external
+ *             /extewnaw
  *                 /100
  *                 ..
  *
- * IMPORTANT NOTE:
- * 1) Field Ids 2 to 8 in Tweet thrift struct are considered "core fields" are 'packed' together
- *    into a TFieldBlob and stored under field id 1 (i.e [DatasetName]/[TweetId]/fields/internal/1).
- *    This is why we do not see keys from [DatasetName]/[TweetId]/fields/internal/2 to [DatasetName]/
- *    [TweetId]/fields/internal/8)
+ * i-impowtant n-nyote:
+ * 1) fiewd i-ids 2 to 8 in tweet thwift stwuct awe considewed "cowe fiewds" awe 'packed' togethew
+ *    i-into a tfiewdbwob and stowed undew f-fiewd id 1 (i.e [datasetname]/[tweetid]/fiewds/intewnaw/1). (✿oωo)
+ *    this is why we d-do nyot see keys fwom [datasetname]/[tweetid]/fiewds/intewnaw/2 to [datasetname]/
+ *    [tweetid]/fiewds/intewnaw/8)
  *
- * 2) Also, the tweet id (which is the field id 1 in Tweet thrift structure) is not explicitly stored
- *    in Manhattan. There is no need to explicitly store it since it is a part of the Pkey
+ * 2) awso, ^^ the tweet i-id (which is the fiewd id 1 in tweet t-thwift stwuctuwe) i-is nyot expwicitwy stowed
+ *    in manhattan. ^•ﻌ•^ thewe is nyo nyeed to expwicitwy s-stowe it since it is a pawt of the pkey
  */
-case class TweetKey(tweetId: TweetId, lKey: TweetKey.LKey) {
-  override def toString: String =
-    s"/${ManhattanOperations.PkeyInjection(tweetId)}/${ManhattanOperations.LkeyInjection(lKey)}"
+case cwass tweetkey(tweetid: tweetid, XD wkey: tweetkey.wkey) {
+  o-ovewwide def tostwing: stwing =
+    s-s"/${manhattanopewations.pkeyinjection(tweetid)}/${manhattanopewations.wkeyinjection(wkey)}"
 }
 
-object TweetKey {
-  // Manhattan uses lexicographical order for keys. To make sure lexicographical order matches the
-  // numerical order, we should pad both tweet id and field ids with leading zeros.
-  // Since tweet id is long and field id is a short, the max width of each can be obtained by doing
-  // Long.MaxValue.toString.length and Short.MaxValue.toString.length respectively
-  private val TweetIdFormatStr = s"%0${Long.MaxValue.toString.length}d"
-  private val FieldIdFormatStr = s"%0${Short.MaxValue.toString.length}d"
-  private[storage] def padTweetIdStr(tweetId: Long): String = TweetIdFormatStr.format(tweetId)
-  private[storage] def padFieldIdStr(fieldId: Short): String = FieldIdFormatStr.format(fieldId)
+o-object tweetkey {
+  // m-manhattan u-uses wexicogwaphicaw owdew fow keys. :3 to make s-suwe wexicogwaphicaw owdew matches the
+  // nyumewicaw o-owdew, (ꈍᴗꈍ) we shouwd pad both tweet id and fiewd ids with weading zewos. :3
+  // since tweet i-id is wong and fiewd id is a showt, (U ﹏ U) t-the max width o-of each can be o-obtained by doing
+  // wong.maxvawue.tostwing.wength and showt.maxvawue.tostwing.wength wespectivewy
+  p-pwivate v-vaw tweetidfowmatstw = s"%0${wong.maxvawue.tostwing.wength}d"
+  p-pwivate vaw fiewdidfowmatstw = s"%0${showt.maxvawue.tostwing.wength}d"
+  p-pwivate[stowage] def padtweetidstw(tweetid: w-wong): stwing = tweetidfowmatstw.fowmat(tweetid)
+  p-pwivate[stowage] def padfiewdidstw(fiewdid: showt): stwing = f-fiewdidfowmatstw.fowmat(fiewdid)
 
-  def coreFieldsKey(tweetId: TweetId): TweetKey = TweetKey(tweetId, LKey.CoreFieldsKey)
-  def hardDeletionStateKey(tweetId: TweetId): TweetKey =
-    TweetKey(tweetId, LKey.HardDeletionStateKey)
-  def softDeletionStateKey(tweetId: TweetId): TweetKey =
-    TweetKey(tweetId, LKey.SoftDeletionStateKey)
-  def bounceDeletionStateKey(tweetId: TweetId): TweetKey =
-    TweetKey(tweetId, LKey.BounceDeletionStateKey)
-  def unDeletionStateKey(tweetId: TweetId): TweetKey = TweetKey(tweetId, LKey.UnDeletionStateKey)
-  def forceAddedStateKey(tweetId: TweetId): TweetKey = TweetKey(tweetId, LKey.ForceAddedStateKey)
-  def scrubbedGeoFieldKey(tweetId: TweetId): TweetKey = TweetKey(tweetId, LKey.ScrubbedGeoFieldKey)
-  def fieldKey(tweetId: TweetId, fieldId: FieldId): TweetKey =
-    TweetKey(tweetId, LKey.FieldKey(fieldId))
-  def internalFieldsKey(tweetId: TweetId, fieldId: FieldId): TweetKey =
-    TweetKey(tweetId, LKey.InternalFieldsKey(fieldId))
-  def additionalFieldsKey(tweetId: TweetId, fieldId: FieldId): TweetKey =
-    TweetKey(tweetId, LKey.AdditionalFieldsKey(fieldId))
-  def scrubbedFieldKey(tweetId: TweetId, fieldId: FieldId): TweetKey =
-    TweetKey(tweetId, LKey.ScrubbedFieldKey(fieldId))
+  def cowefiewdskey(tweetid: t-tweetid): tweetkey = tweetkey(tweetid, UwU w-wkey.cowefiewdskey)
+  d-def hawddewetionstatekey(tweetid: tweetid): tweetkey =
+    tweetkey(tweetid, 😳😳😳 wkey.hawddewetionstatekey)
+  def softdewetionstatekey(tweetid: tweetid): tweetkey =
+    t-tweetkey(tweetid, XD w-wkey.softdewetionstatekey)
+  def bouncedewetionstatekey(tweetid: t-tweetid): t-tweetkey =
+    t-tweetkey(tweetid, o.O wkey.bouncedewetionstatekey)
+  def undewetionstatekey(tweetid: tweetid): tweetkey = t-tweetkey(tweetid, (⑅˘꒳˘) wkey.undewetionstatekey)
+  def fowceaddedstatekey(tweetid: tweetid): tweetkey = tweetkey(tweetid, w-wkey.fowceaddedstatekey)
+  def scwubbedgeofiewdkey(tweetid: t-tweetid): t-tweetkey = tweetkey(tweetid, 😳😳😳 wkey.scwubbedgeofiewdkey)
+  d-def fiewdkey(tweetid: tweetid, nyaa~~ fiewdid: f-fiewdid): tweetkey =
+    t-tweetkey(tweetid, rawr w-wkey.fiewdkey(fiewdid))
+  d-def intewnawfiewdskey(tweetid: tweetid, -.- fiewdid: fiewdid): t-tweetkey =
+    t-tweetkey(tweetid, (✿oωo) w-wkey.intewnawfiewdskey(fiewdid))
+  d-def additionawfiewdskey(tweetid: t-tweetid, /(^•ω•^) fiewdid: fiewdid): tweetkey =
+    tweetkey(tweetid, 🥺 w-wkey.additionawfiewdskey(fiewdid))
+  def scwubbedfiewdkey(tweetid: tweetid, ʘwʘ fiewdid: fiewdid): tweetkey =
+    tweetkey(tweetid, UwU w-wkey.scwubbedfiewdkey(fiewdid))
 
-  // AllFieldsKeyPrefix:       fields
-  // CoreFieldsKey:            fields/internal/1  (Stores subset of StoredTweet fields which are
-  //                             "packed" into a single CoreFields record)
-  // HardDeletionStateKey:     metadata/delete_state
-  // SoftDeletionStateKey:     metadata/soft_delete_state
-  // BounceDeletionStateKey:   metadata/bounce_delete_state
-  // UnDeletionStateKey:       metadata/undelete_state
-  // ForceAddedStateKey:       metadata/force_added_state
-  // FieldKey:                 fields/<group_name>/<padded_field_id> (where <group_name>
-  //                             is 'internal' for field ids < 100 and 'external' for all other
-  //                             fields ids)
-  // InternalFieldsKeyPrefix:  fields/internal
-  // PKey:                     <empty string>
-  // ScrubbedFieldKey:         metadata/scrubbed_fields/<padded_field_id>
-  // ScrubbedFieldKeyPrefix:   metadata/scrubbed_fields
-  sealed abstract class LKey(override val toString: String)
-  object LKey {
-    private val HardDeletionRecordLiteral = "delete_state"
-    private val SoftDeletionRecordLiteral = "soft_delete_state"
-    private val BounceDeletionRecordLiteral = "bounce_delete_state"
-    private val UnDeletionRecordLiteral = "undelete_state"
-    private val ForceAddRecordLiteral = "force_added_state"
-    private val ScrubbedFieldsGroup = "scrubbed_fields"
-    private val InternalFieldsGroup = "internal"
-    private val ExternalFieldsGroup = "external"
-    private val MetadataCategory = "metadata"
-    private val FieldsCategory = "fields"
-    private val InternalFieldsKeyPrefix = s"$FieldsCategory/$InternalFieldsGroup/"
-    private val ExternalFieldsKeyPrefix = s"$FieldsCategory/$ExternalFieldsGroup/"
-    private val ScrubbedFieldsKeyPrefix = s"$MetadataCategory/$ScrubbedFieldsGroup/"
+  // awwfiewdskeypwefix:       fiewds
+  // cowefiewdskey:            f-fiewds/intewnaw/1  (stowes s-subset of s-stowedtweet fiewds which awe
+  //                             "packed" i-into a singwe cowefiewds w-wecowd)
+  // hawddewetionstatekey:     m-metadata/dewete_state
+  // softdewetionstatekey:     metadata/soft_dewete_state
+  // bouncedewetionstatekey:   metadata/bounce_dewete_state
+  // undewetionstatekey:       m-metadata/undewete_state
+  // fowceaddedstatekey:       metadata/fowce_added_state
+  // f-fiewdkey:                 fiewds/<gwoup_name>/<padded_fiewd_id> (whewe <gwoup_name>
+  //                             i-is 'intewnaw' f-fow fiewd ids < 100 and 'extewnaw' fow a-aww othew
+  //                             f-fiewds ids)
+  // intewnawfiewdskeypwefix:  f-fiewds/intewnaw
+  // p-pkey:                     <empty stwing>
+  // scwubbedfiewdkey:         metadata/scwubbed_fiewds/<padded_fiewd_id>
+  // scwubbedfiewdkeypwefix:   metadata/scwubbed_fiewds
+  s-seawed a-abstwact cwass w-wkey(ovewwide vaw tostwing: stwing)
+  o-object wkey {
+    p-pwivate vaw hawddewetionwecowdwitewaw = "dewete_state"
+    p-pwivate vaw softdewetionwecowdwitewaw = "soft_dewete_state"
+    pwivate vaw bouncedewetionwecowdwitewaw = "bounce_dewete_state"
+    pwivate v-vaw undewetionwecowdwitewaw = "undewete_state"
+    p-pwivate vaw fowceaddwecowdwitewaw = "fowce_added_state"
+    pwivate vaw scwubbedfiewdsgwoup = "scwubbed_fiewds"
+    pwivate vaw i-intewnawfiewdsgwoup = "intewnaw"
+    p-pwivate vaw extewnawfiewdsgwoup = "extewnaw"
+    pwivate vaw metadatacategowy = "metadata"
+    p-pwivate vaw fiewdscategowy = "fiewds"
+    pwivate vaw intewnawfiewdskeypwefix = s"$fiewdscategowy/$intewnawfiewdsgwoup/"
+    pwivate vaw e-extewnawfiewdskeypwefix = s"$fiewdscategowy/$extewnawfiewdsgwoup/"
+    pwivate vaw s-scwubbedfiewdskeypwefix = s-s"$metadatacategowy/$scwubbedfiewdsgwoup/"
 
-    sealed abstract class MetadataKey(metadataType: String)
-        extends LKey(s"$MetadataCategory/$metadataType")
-    sealed abstract class StateKey(stateType: String) extends MetadataKey(stateType)
-    case object HardDeletionStateKey extends StateKey(s"$HardDeletionRecordLiteral")
-    case object SoftDeletionStateKey extends StateKey(s"$SoftDeletionRecordLiteral")
-    case object BounceDeletionStateKey extends StateKey(s"$BounceDeletionRecordLiteral")
-    case object UnDeletionStateKey extends StateKey(s"$UnDeletionRecordLiteral")
-    case object ForceAddedStateKey extends StateKey(s"$ForceAddRecordLiteral")
+    seawed abstwact cwass metadatakey(metadatatype: s-stwing)
+        e-extends wkey(s"$metadatacategowy/$metadatatype")
+    seawed abstwact cwass statekey(statetype: s-stwing) extends metadatakey(statetype)
+    c-case object hawddewetionstatekey extends statekey(s"$hawddewetionwecowdwitewaw")
+    c-case object softdewetionstatekey e-extends s-statekey(s"$softdewetionwecowdwitewaw")
+    case object bouncedewetionstatekey e-extends statekey(s"$bouncedewetionwecowdwitewaw")
+    case object u-undewetionstatekey e-extends s-statekey(s"$undewetionwecowdwitewaw")
+    case o-object fowceaddedstatekey e-extends statekey(s"$fowceaddwecowdwitewaw")
 
-    case class ScrubbedFieldKey(fieldId: FieldId)
-        extends MetadataKey(s"$ScrubbedFieldsGroup/${padFieldIdStr(fieldId)}")
-    val ScrubbedGeoFieldKey: LKey.ScrubbedFieldKey = ScrubbedFieldKey(TweetFields.geoFieldId)
+    case c-cwass scwubbedfiewdkey(fiewdid: f-fiewdid)
+        e-extends metadatakey(s"$scwubbedfiewdsgwoup/${padfiewdidstw(fiewdid)}")
+    vaw scwubbedgeofiewdkey: w-wkey.scwubbedfiewdkey = scwubbedfiewdkey(tweetfiewds.geofiewdid)
 
     /**
-     * LKey that has one of many possible fields id. This generalize over
-     * internal and additional fields key.
+     * w-wkey that h-has one of many possibwe fiewds id. XD this genewawize ovew
+     * i-intewnaw and additionaw f-fiewds key. (✿oωo)
      */
-    sealed abstract class FieldKey(prefix: String) extends LKey(toString) {
-      def fieldId: FieldId
-      override val toString: String = prefix + padFieldIdStr(fieldId)
+    s-seawed abstwact c-cwass fiewdkey(pwefix: stwing) extends w-wkey(tostwing) {
+      def fiewdid: fiewdid
+      ovewwide vaw tostwing: stwing = pwefix + p-padfiewdidstw(fiewdid)
     }
-    object FieldKey {
-      def apply(fieldId: FieldId): FieldKey =
-        fieldId match {
-          case id if id < TweetFields.firstAdditionalFieldId => InternalFieldsKey(fieldId)
-          case _ => AdditionalFieldsKey(fieldId)
+    object fiewdkey {
+      d-def appwy(fiewdid: fiewdid): f-fiewdkey =
+        fiewdid m-match {
+          case id if i-id < tweetfiewds.fiwstadditionawfiewdid => i-intewnawfiewdskey(fiewdid)
+          c-case _ => additionawfiewdskey(fiewdid)
         }
     }
 
-    case class InternalFieldsKey(fieldId: FieldId) extends FieldKey(InternalFieldsKeyPrefix) {
-      assert(fieldId < TweetFields.firstAdditionalFieldId)
+    c-case c-cwass intewnawfiewdskey(fiewdid: fiewdid) extends fiewdkey(intewnawfiewdskeypwefix) {
+      assewt(fiewdid < tweetfiewds.fiwstadditionawfiewdid)
     }
-    case class AdditionalFieldsKey(fieldId: FieldId) extends FieldKey(ExternalFieldsKeyPrefix) {
-      assert(fieldId >= TweetFields.firstAdditionalFieldId)
+    case cwass additionawfiewdskey(fiewdid: f-fiewdid) extends f-fiewdkey(extewnawfiewdskeypwefix) {
+      assewt(fiewdid >= t-tweetfiewds.fiwstadditionawfiewdid)
     }
-    val CoreFieldsKey: LKey.InternalFieldsKey = InternalFieldsKey(TweetFields.rootCoreFieldId)
+    vaw cowefiewdskey: w-wkey.intewnawfiewdskey = intewnawfiewdskey(tweetfiewds.wootcowefiewdid)
 
-    case class Unknown private (str: String) extends LKey(str)
+    case cwass unknown pwivate (stw: s-stwing) extends w-wkey(stw)
 
-    def fromString(str: String): LKey = {
-      def extractFieldId(prefix: String): FieldId =
-        str.slice(prefix.length, str.length).toShort
+    def fwomstwing(stw: s-stwing): wkey = {
+      def extwactfiewdid(pwefix: stwing): fiewdid =
+        s-stw.swice(pwefix.wength, :3 s-stw.wength).toshowt
 
-      str match {
-        case CoreFieldsKey.toString => CoreFieldsKey
-        case HardDeletionStateKey.toString => HardDeletionStateKey
-        case SoftDeletionStateKey.toString => SoftDeletionStateKey
-        case BounceDeletionStateKey.toString => BounceDeletionStateKey
-        case UnDeletionStateKey.toString => UnDeletionStateKey
-        case ForceAddedStateKey.toString => ForceAddedStateKey
-        case ScrubbedGeoFieldKey.toString => ScrubbedGeoFieldKey
-        case _ if str.startsWith(InternalFieldsKeyPrefix) =>
-          InternalFieldsKey(extractFieldId(InternalFieldsKeyPrefix))
-        case _ if str.startsWith(ExternalFieldsKeyPrefix) =>
-          AdditionalFieldsKey(extractFieldId(ExternalFieldsKeyPrefix))
-        case _ if str.startsWith(ScrubbedFieldsKeyPrefix) =>
-          ScrubbedFieldKey(extractFieldId(ScrubbedFieldsKeyPrefix))
-        case _ => Unknown(str)
+      stw match {
+        c-case cowefiewdskey.tostwing => c-cowefiewdskey
+        case hawddewetionstatekey.tostwing => hawddewetionstatekey
+        case softdewetionstatekey.tostwing => s-softdewetionstatekey
+        c-case bouncedewetionstatekey.tostwing => b-bouncedewetionstatekey
+        c-case u-undewetionstatekey.tostwing => undewetionstatekey
+        case fowceaddedstatekey.tostwing => f-fowceaddedstatekey
+        c-case scwubbedgeofiewdkey.tostwing => scwubbedgeofiewdkey
+        c-case _ i-if stw.stawtswith(intewnawfiewdskeypwefix) =>
+          intewnawfiewdskey(extwactfiewdid(intewnawfiewdskeypwefix))
+        c-case _ if stw.stawtswith(extewnawfiewdskeypwefix) =>
+          additionawfiewdskey(extwactfiewdid(extewnawfiewdskeypwefix))
+        c-case _ if stw.stawtswith(scwubbedfiewdskeypwefix) =>
+          scwubbedfiewdkey(extwactfiewdid(scwubbedfiewdskeypwefix))
+        case _ => unknown(stw)
       }
     }
   }

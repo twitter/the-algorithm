@@ -1,13 +1,13 @@
-package com.twitter.search.ingester.model;
+package com.twittew.seawch.ingestew.modew;
 
-import com.twitter.search.common.debug.DebugEventAccumulator;
+impowt c-com.twittew.seawch.common.debug.debugeventaccumuwatow;
 
 /**
- * Interface used for stages that process both TwitterMessages and ThriftVersionedEvents.
+ * i-intewface used f-fow stages that p-pwocess both twittewmessages a-and t-thwiftvewsionedevents. σωσ
  */
-public interface IndexerStatus extends DebugEventAccumulator {
+p-pubwic i-intewface indexewstatus extends debugeventaccumuwatow {
   /**
-   * Needed by the SortStage.
+   * nyeeded by the sowtstage.
    */
-  long getId();
+  w-wong getid();
 }

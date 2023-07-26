@@ -1,60 +1,60 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import com.google.common.collect.ImmutableList;
+impowt c-com.googwe.common.cowwect.immutabwewist;
 
-import org.apache.lucene.util.BytesRef;
+i-impowt o-owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
 /**
- * A term dictionary that's backed by multiple underlying segments/indexes. For a given term, will
- * be able to return the termId for each of the underlying indexes.
+ * a-a t-tewm dictionawy t-that's backed by m-muwtipwe undewwying segments/indexes. (ˆ ﻌ ˆ)♡ fow a given tewm, 😳😳😳 wiww
+ * be abwe to wetuwn t-the tewmid fow each of the undewwying indexes. :3
  */
-public interface MultiSegmentTermDictionary {
+p-pubwic intewface muwtisegmenttewmdictionawy {
 
   /**
-   * Lookup a term in this multi segment term dictionary, and return the term ids for that term on
-   * all of the managed segments.
+   * w-wookup a tewm in this muwti segment tewm dictionawy, OwO and wetuwn t-the tewm ids fow that tewm on
+   * a-aww of the managed s-segments. (U ﹏ U)
    *
-   * @return An array containing a termId for each segment that this term dictionary is backed by.
-   * The order of segments will match the order returned by {@link #getSegmentIndexes()}.
+   * @wetuwn an awway containing a tewmid fow each segment that this tewm dictionawy i-is backed by. >w<
+   * the owdew of segments wiww match the owdew wetuwned b-by {@wink #getsegmentindexes()}. (U ﹏ U)
    *
-   * For each segment, the term id will be returned, or
-   * {@link EarlybirdIndexSegmentAtomicReader#TERM_NOT_FOUND} if that segment does not have the
-   * given term.
+   * fow e-each segment, the t-tewm id wiww be w-wetuwned, 😳 ow
+   * {@wink e-eawwybiwdindexsegmentatomicweadew#tewm_not_found} if that segment does n-nyot have the
+   * given tewm. (ˆ ﻌ ˆ)♡
    */
-  int[] lookupTermIds(BytesRef term);
+  int[] wookuptewmids(byteswef t-tewm);
 
   /**
-   * A convenience method for checking whether a specific index/segment is backed by this term
-   * dictionary. Returning true here is equivalent to returning:
-   * <pre>
-   * getSegmentIndexes().contains(invertedIndex);
-   * </pre>
+   * a convenience method fow checking whethew a specific index/segment is backed b-by this tewm
+   * dictionawy. 😳😳😳 w-wetuwning twue h-hewe is equivawent t-to wetuwning:
+   * <pwe>
+   * getsegmentindexes().contains(invewtedindex);
+   * </pwe>
    */
-  default boolean supportSegmentIndex(InvertedIndex invertedIndex) {
-    return getSegmentIndexes().contains(invertedIndex);
+  defauwt boowean suppowtsegmentindex(invewtedindex i-invewtedindex) {
+    w-wetuwn getsegmentindexes().contains(invewtedindex);
   }
 
   /**
-   * The list of indexes that this term dictionary is backed by. The order of indexes here will
-   * be consistent with the order of termIds returned by {@link #lookupTermIds(BytesRef)}.
+   * t-the wist of indexes t-that this tewm dictionawy is b-backed by. (U ﹏ U) the owdew of indexes h-hewe wiww
+   * be consistent with the owdew of t-tewmids wetuwned by {@wink #wookuptewmids(byteswef)}. (///ˬ///✿)
    */
-  ImmutableList<? extends InvertedIndex> getSegmentIndexes();
+  i-immutabwewist<? extends i-invewtedindex> g-getsegmentindexes();
 
   /**
-   * Returns the number of terms in this term dictionary.
+   * wetuwns the nyumbew of tewms in this tewm dictionawy. 😳
    *
-   * If the term "foo" appears in segment A and in segment B, it will be counted once. To get the
-   * total number of terms across all managed segments, see {@link #getNumTermEntries()}.
+   * if the tewm "foo" appeaws i-in segment a and i-in segment b, 😳 it wiww be counted o-once. σωσ to get the
+   * t-totaw nyumbew o-of tewms acwoss aww managed segments, rawr x3 see {@wink #getnumtewmentwies()}.
    */
-  int getNumTerms();
+  int getnumtewms();
 
   /**
-   * Returns the total number of terms in this term dictionary across all managed segments.
+   * w-wetuwns the totaw nyumbew of tewms in this tewm dictionawy acwoss aww managed s-segments. OwO
    *
-   * If the term "foo" appears in segment A and in segment B, it will have 2 entries in this term
-   * dictionary.
+   * if the tewm "foo" a-appeaws i-in segment a and i-in segment b, /(^•ω•^) it wiww have 2 entwies i-in this tewm
+   * d-dictionawy. 😳😳😳
    */
-  int getNumTermEntries();
+  i-int g-getnumtewmentwies();
 }

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.topic
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.component_library.model.candidate.BaseTopicCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic.BaseTopicDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicDisplayType
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetopiccandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.topic.basetopicdispwaytypebuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicdispwaytype
 
-case class StaticTopicDisplayTypeBuilder(
-  displayType: TopicDisplayType)
-    extends BaseTopicDisplayTypeBuilder[PipelineQuery, BaseTopicCandidate] {
+c-case cwass s-statictopicdispwaytypebuiwdew(
+  dispwaytype: topicdispwaytype)
+    extends basetopicdispwaytypebuiwdew[pipewinequewy, (ˆ ﻌ ˆ)♡ basetopiccandidate] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: BaseTopicCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[TopicDisplayType] = Some(displayType)
+  ovewwide def appwy(
+    q-quewy: pipewinequewy, (⑅˘꒳˘)
+    candidate: basetopiccandidate, (U ᵕ U❁)
+    c-candidatefeatuwes: featuwemap
+  ): o-option[topicdispwaytype] = some(dispwaytype)
 }

@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait BaseStr[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+t-twait b-basestw[-quewy <: p-pipewinequewy, σωσ -candidate <: u-univewsawnoun[any]] {
 
-  def apply(query: Query, candidate: Candidate, candidateFeatures: FeatureMap): String
+  d-def appwy(quewy: quewy, σωσ candidate: candidate, >_< candidatefeatuwes: featuwemap): s-stwing
 }

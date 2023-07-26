@@ -1,91 +1,91 @@
-package com.twitter.tweetypie
-package config
+package com.twittew.tweetypie
+package c-config
 
-import com.twitter.decider.Decider
-import com.twitter.tweetypie.decider.DeciderGates
+impowt c-com.twittew.decidew.decidew
+i-impowt com.twittew.tweetypie.decidew.decidewgates
 
-object TweetypieDeciderGates {
-  def apply(
-    _decider: Decider,
-    _overrides: Map[String, Boolean] = Map.empty
-  ): TweetypieDeciderGates =
-    new TweetypieDeciderGates {
-      override def decider: Decider = _decider
-      override def overrides: Map[String, Boolean] = _overrides
-      override def prefix: String = "tweetypie"
+o-object tweetypiedecidewgates {
+  d-def appwy(
+    _decidew: d-decidew, XD
+    _ovewwides: m-map[stwing, b-boowean] = map.empty
+  ): tweetypiedecidewgates =
+    nyew tweetypiedecidewgates {
+      ovewwide def decidew: d-decidew = _decidew
+      ovewwide def ovewwides: m-map[stwing, σωσ boowean] = _ovewwides
+      ovewwide d-def pwefix: stwing = "tweetypie"
     }
 }
 
-trait TweetypieDeciderGates extends DeciderGates {
-  val checkSpamOnRetweet: Gate[Unit] = linear("check_spam_on_retweet")
-  val checkSpamOnTweet: Gate[Unit] = linear("check_spam_on_tweet")
-  val delayEraseUserTweets: Gate[Unit] = linear("delay_erase_user_tweets")
-  val denyNonTweetPermalinks: Gate[Unit] = linear("deny_non_tweet_permalinks")
-  val enableCommunityTweetCreates: Gate[Unit] = linear("enable_community_tweet_creates")
-  val useConversationControlFeatureSwitchResults: Gate[Unit] = linear(
-    "conversation_control_use_feature_switch_results")
-  val enableExclusiveTweetControlValidation: Gate[Unit] = linear(
-    "enable_exclusive_tweet_control_validation")
-  val enableTrustedFriendsControlValidation: Gate[Unit] = linear(
-    "enable_trusted_friends_control_validation"
+twait tweetypiedecidewgates extends d-decidewgates {
+  vaw checkspamonwetweet: g-gate[unit] = w-wineaw("check_spam_on_wetweet")
+  vaw checkspamontweet: gate[unit] = wineaw("check_spam_on_tweet")
+  vaw dewayewaseusewtweets: g-gate[unit] = wineaw("deway_ewase_usew_tweets")
+  vaw denynontweetpewmawinks: gate[unit] = wineaw("deny_non_tweet_pewmawinks")
+  v-vaw enabwecommunitytweetcweates: gate[unit] = w-wineaw("enabwe_community_tweet_cweates")
+  vaw u-useconvewsationcontwowfeatuweswitchwesuwts: gate[unit] = w-wineaw(
+    "convewsation_contwow_use_featuwe_switch_wesuwts")
+  v-vaw enabweexcwusivetweetcontwowvawidation: gate[unit] = w-wineaw(
+    "enabwe_excwusive_tweet_contwow_vawidation")
+  vaw enabwetwustedfwiendscontwowvawidation: gate[unit] = w-wineaw(
+    "enabwe_twusted_fwiends_contwow_vawidation"
   )
-  val enableStaleTweetValidation: Gate[Unit] = linear(
-    "enable_stale_tweet_validation"
+  vaw enabwestawetweetvawidation: gate[unit] = wineaw(
+    "enabwe_stawe_tweet_vawidation"
   )
-  val enforceRateLimitedClients: Gate[Unit] = linear("enforce_rate_limited_clients")
-  val failClosedInVF: Gate[Unit] = linear("fail_closed_in_vf")
-  val forkDarkTraffic: Gate[Unit] = linear("fork_dark_traffic")
-  val hydrateConversationMuted: Gate[Unit] = linear("hydrate_conversation_muted")
-  val hydrateCounts: Gate[Unit] = linear("hydrate_counts")
-  val hydratePreviousCounts: Gate[Unit] = linear("hydrate_previous_counts")
-  val hydrateDeviceSources: Gate[Unit] = linear("hydrate_device_sources")
-  val hydrateEscherbirdAnnotations: Gate[Unit] = linear("hydrate_escherbird_annotations")
-  val hydrateGnipProfileGeoEnrichment: Gate[Unit] = linear("hydrate_gnip_profile_geo_enrichment")
-  val hydrateHasMedia: Gate[Unit] = linear("hydrate_has_media")
-  val hydrateMedia: Gate[Unit] = linear("hydrate_media")
-  val hydrateMediaRefs: Gate[Unit] = linear("hydrate_media_refs")
-  val hydrateMediaTags: Gate[Unit] = linear("hydrate_media_tags")
-  val hydratePastedMedia: Gate[Unit] = linear("hydrate_pasted_media")
-  val hydratePerspectives: Gate[Unit] = linear("hydrate_perspectives")
-  val hydratePerspectivesEditsForTimelines: Gate[Unit] = linear(
-    "hydrate_perspectives_edits_for_timelines")
-  val hydratePerspectivesEditsForTweetDetail: Gate[Unit] = linear(
-    "hydrate_perspectives_edits_for_tweet_details")
-  val hydratePerspectivesEditsForOtherSafetyLevels: Gate[Unit] =
-    linear("hydrate_perspectives_edits_for_other_levels")
-  val hydratePlaces: Gate[Unit] = linear("hydrate_places")
-  val hydrateScrubEngagements: Gate[Unit] = linear("hydrate_scrub_engagements")
-  val jiminyDarkRequests: Gate[Unit] = linear("jiminy_dark_requests")
-  val logCacheExceptions: Gate[Unit] = linear("log_cache_exceptions")
-  val logReads: Gate[Unit] = linear("log_reads")
-  val logTweetCacheWrites: Gate[TweetId] = byId("log_tweet_cache_writes")
-  val logWrites: Gate[Unit] = linear("log_writes")
-  val logYoungTweetCacheWrites: Gate[TweetId] = byId("log_young_tweet_cache_writes")
-  val maxRequestWidthEnabled: Gate[Unit] = linear("max_request_width_enabled")
-  val mediaRefsHydratorIncludePastedMedia: Gate[Unit] = linear(
-    "media_refs_hydrator_include_pasted_media")
-  val rateLimitByLimiterService: Gate[Unit] = linear("rate_limit_by_limiter_service")
-  val rateLimitTweetCreationFailure: Gate[Unit] = linear("rate_limit_tweet_creation_failure")
-  val replicateReadsToATLA: Gate[Unit] = linear("replicate_reads_to_atla")
-  val replicateReadsToPDXA: Gate[Unit] = linear("replicate_reads_to_pdxa")
-  val disableInviteViaMention: Gate[Unit] = linear("disable_invite_via_mention")
-  val shedReadTrafficVoluntarily: Gate[Unit] = linear("shed_read_traffic_voluntarily")
-  val preferForwardedServiceIdentifierForClientId: Gate[Unit] =
-    linear("prefer_forwarded_service_identifier_for_client_id")
-  val enableRemoveUnmentionedImplicitMentions: Gate[Unit] = linear(
-    "enable_remove_unmentioned_implicit_mentions")
-  val validateCardRefAttachmentAndroid: Gate[Unit] = linear("validate_card_ref_attachment_android")
-  val validateCardRefAttachmentNonAndroid: Gate[Unit] = linear(
-    "validate_card_ref_attachment_non_android")
-  val tweetVisibilityLibraryEnableParityTest: Gate[Unit] = linear(
-    "tweet_visibility_library_enable_parity_test")
-  val enableVfFeatureHydrationInQuotedTweetVLShim: Gate[Unit] = linear(
-    "enable_vf_feature_hydration_in_quoted_tweet_visibility_library_shim")
-  val disablePromotedTweetEdit: Gate[Unit] = linear("disable_promoted_tweet_edit")
-  val shouldMaterializeContainers: Gate[Unit] = linear("should_materialize_containers")
-  val checkTwitterBlueSubscriptionForEdit: Gate[Unit] = linear(
-    "check_twitter_blue_subscription_for_edit")
-  val hydrateBookmarksCount: Gate[Long] = byId("hydrate_bookmarks_count")
-  val hydrateBookmarksPerspective: Gate[Long] = byId("hydrate_bookmarks_perspective")
-  val setEditTimeWindowToSixtyMinutes: Gate[Unit] = linear("set_edit_time_window_to_sixty_minutes")
+  vaw enfowcewatewimitedcwients: gate[unit] = w-wineaw("enfowce_wate_wimited_cwients")
+  vaw faiwcwosedinvf: g-gate[unit] = w-wineaw("faiw_cwosed_in_vf")
+  v-vaw fowkdawktwaffic: gate[unit] = wineaw("fowk_dawk_twaffic")
+  vaw hydwateconvewsationmuted: g-gate[unit] = w-wineaw("hydwate_convewsation_muted")
+  vaw hydwatecounts: g-gate[unit] = w-wineaw("hydwate_counts")
+  vaw hydwatepweviouscounts: g-gate[unit] = wineaw("hydwate_pwevious_counts")
+  vaw hydwatedevicesouwces: g-gate[unit] = wineaw("hydwate_device_souwces")
+  vaw h-hydwateeschewbiwdannotations: gate[unit] = w-wineaw("hydwate_eschewbiwd_annotations")
+  vaw hydwategnippwofiwegeoenwichment: g-gate[unit] = w-wineaw("hydwate_gnip_pwofiwe_geo_enwichment")
+  vaw hydwatehasmedia: gate[unit] = wineaw("hydwate_has_media")
+  vaw hydwatemedia: gate[unit] = wineaw("hydwate_media")
+  v-vaw hydwatemediawefs: g-gate[unit] = wineaw("hydwate_media_wefs")
+  v-vaw hydwatemediatags: g-gate[unit] = w-wineaw("hydwate_media_tags")
+  vaw hydwatepastedmedia: gate[unit] = wineaw("hydwate_pasted_media")
+  v-vaw hydwatepewspectives: gate[unit] = wineaw("hydwate_pewspectives")
+  vaw hydwatepewspectiveseditsfowtimewines: gate[unit] = w-wineaw(
+    "hydwate_pewspectives_edits_fow_timewines")
+  vaw hydwatepewspectiveseditsfowtweetdetaiw: gate[unit] = w-wineaw(
+    "hydwate_pewspectives_edits_fow_tweet_detaiws")
+  v-vaw hydwatepewspectiveseditsfowothewsafetywevews: g-gate[unit] =
+    wineaw("hydwate_pewspectives_edits_fow_othew_wevews")
+  v-vaw hydwatepwaces: g-gate[unit] = w-wineaw("hydwate_pwaces")
+  v-vaw hydwatescwubengagements: gate[unit] = wineaw("hydwate_scwub_engagements")
+  v-vaw jiminydawkwequests: g-gate[unit] = w-wineaw("jiminy_dawk_wequests")
+  v-vaw wogcacheexceptions: g-gate[unit] = wineaw("wog_cache_exceptions")
+  vaw wogweads: gate[unit] = w-wineaw("wog_weads")
+  vaw wogtweetcachewwites: gate[tweetid] = byid("wog_tweet_cache_wwites")
+  vaw wogwwites: g-gate[unit] = wineaw("wog_wwites")
+  vaw wogyoungtweetcachewwites: gate[tweetid] = b-byid("wog_young_tweet_cache_wwites")
+  vaw m-maxwequestwidthenabwed: g-gate[unit] = wineaw("max_wequest_width_enabwed")
+  v-vaw mediawefshydwatowincwudepastedmedia: g-gate[unit] = w-wineaw(
+    "media_wefs_hydwatow_incwude_pasted_media")
+  vaw watewimitbywimitewsewvice: gate[unit] = wineaw("wate_wimit_by_wimitew_sewvice")
+  vaw watewimittweetcweationfaiwuwe: g-gate[unit] = wineaw("wate_wimit_tweet_cweation_faiwuwe")
+  v-vaw wepwicateweadstoatwa: gate[unit] = w-wineaw("wepwicate_weads_to_atwa")
+  v-vaw wepwicateweadstopdxa: gate[unit] = w-wineaw("wepwicate_weads_to_pdxa")
+  v-vaw disabweinviteviamention: gate[unit] = w-wineaw("disabwe_invite_via_mention")
+  v-vaw shedweadtwafficvowuntawiwy: gate[unit] = wineaw("shed_wead_twaffic_vowuntawiwy")
+  vaw pwefewfowwawdedsewviceidentifiewfowcwientid: gate[unit] =
+    w-wineaw("pwefew_fowwawded_sewvice_identifiew_fow_cwient_id")
+  v-vaw enabwewemoveunmentionedimpwicitmentions: g-gate[unit] = wineaw(
+    "enabwe_wemove_unmentioned_impwicit_mentions")
+  v-vaw vawidatecawdwefattachmentandwoid: g-gate[unit] = wineaw("vawidate_cawd_wef_attachment_andwoid")
+  v-vaw vawidatecawdwefattachmentnonandwoid: gate[unit] = wineaw(
+    "vawidate_cawd_wef_attachment_non_andwoid")
+  vaw tweetvisibiwitywibwawyenabwepawitytest: gate[unit] = w-wineaw(
+    "tweet_visibiwity_wibwawy_enabwe_pawity_test")
+  v-vaw enabwevffeatuwehydwationinquotedtweetvwshim: gate[unit] = wineaw(
+    "enabwe_vf_featuwe_hydwation_in_quoted_tweet_visibiwity_wibwawy_shim")
+  vaw disabwepwomotedtweetedit: g-gate[unit] = wineaw("disabwe_pwomoted_tweet_edit")
+  v-vaw shouwdmatewiawizecontainews: gate[unit] = wineaw("shouwd_matewiawize_containews")
+  vaw checktwittewbwuesubscwiptionfowedit: g-gate[unit] = wineaw(
+    "check_twittew_bwue_subscwiption_fow_edit")
+  vaw hydwatebookmawkscount: gate[wong] = byid("hydwate_bookmawks_count")
+  v-vaw hydwatebookmawkspewspective: gate[wong] = byid("hydwate_bookmawks_pewspective")
+  vaw s-setedittimewindowtosixtyminutes: g-gate[unit] = wineaw("set_edit_time_window_to_sixty_minutes")
 }

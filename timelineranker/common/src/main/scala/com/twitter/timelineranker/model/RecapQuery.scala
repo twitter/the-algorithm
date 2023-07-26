@@ -1,278 +1,278 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.servo.util.Gate
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.common.model._
-import com.twitter.timelines.earlybird.common.options.EarlybirdOptions
-import com.twitter.timelines.earlybird.common.utils.SearchOperator
-import com.twitter.timelines.configapi.{
-  DependencyProvider => ConfigApiDependencyProvider,
-  FutureDependencyProvider => ConfigApiFutureDependencyProvider,
+impowt c-com.twittew.sewvo.utiw.gate
+i-impowt c-com.twittew.timewines.modew.candidate.candidatetweetsouwceid
+i-impowt com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+impowt c-com.twittew.timewines.common.modew._
+i-impowt com.twittew.timewines.eawwybiwd.common.options.eawwybiwdoptions
+i-impowt com.twittew.timewines.eawwybiwd.common.utiws.seawchopewatow
+impowt com.twittew.timewines.configapi.{
+  dependencypwovidew => configapidependencypwovidew, (✿oωo)
+  f-futuwedependencypwovidew => configapifutuwedependencypwovidew, (U ﹏ U)
   _
 }
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelineservice.DeviceContext
+impowt com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewines.modew.usewid
+impowt c-com.twittew.timewinesewvice.devicecontext
 
-object RecapQuery {
+object wecapquewy {
 
-  val EngagedTweetsSupportedTweetKindOption: TweetKindOption.ValueSet = TweetKindOption(
-    includeReplies = false,
-    includeRetweets = false,
-    includeExtendedReplies = false,
-    includeOriginalTweetsAndQuotes = true
+  vaw engagedtweetssuppowtedtweetkindoption: t-tweetkindoption.vawueset = tweetkindoption(
+    i-incwudewepwies = fawse,
+    i-incwudewetweets = fawse, :3
+    incwudeextendedwepwies = fawse, ^^;;
+    incwudeowiginawtweetsandquotes = twue
   )
 
-  val DefaultSearchOperator: SearchOperator.Value = SearchOperator.Exclude
-  def fromThrift(query: thrift.RecapQuery): RecapQuery = {
+  v-vaw defauwtseawchopewatow: seawchopewatow.vawue = seawchopewatow.excwude
+  def fwomthwift(quewy: thwift.wecapquewy): w-wecapquewy = {
 
-    RecapQuery(
-      userId = query.userId,
-      maxCount = query.maxCount,
-      range = query.range.map(TimelineRange.fromThrift),
-      options = query.options
-        .map(options => TweetKindOption.fromThrift(options.to[Set]))
-        .getOrElse(TweetKindOption.None),
-      searchOperator = query.searchOperator
-        .map(SearchOperator.fromThrift)
-        .getOrElse(DefaultSearchOperator),
-      earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
-      authorIds = query.authorIds,
-      excludedTweetIds = query.excludedTweetIds,
-      searchClientSubId = query.searchClientSubId,
-      candidateTweetSourceId =
-        query.candidateTweetSourceId.flatMap(CandidateTweetSourceId.fromThrift),
-      hydratesContentFeatures = query.hydratesContentFeatures
+    wecapquewy(
+      u-usewid = quewy.usewid, rawr
+      m-maxcount = quewy.maxcount, 😳😳😳
+      w-wange = quewy.wange.map(timewinewange.fwomthwift), (✿oωo)
+      o-options = quewy.options
+        .map(options => tweetkindoption.fwomthwift(options.to[set]))
+        .getowewse(tweetkindoption.none), OwO
+      s-seawchopewatow = quewy.seawchopewatow
+        .map(seawchopewatow.fwomthwift)
+        .getowewse(defauwtseawchopewatow), ʘwʘ
+      eawwybiwdoptions = q-quewy.eawwybiwdoptions.map(eawwybiwdoptions.fwomthwift), (ˆ ﻌ ˆ)♡
+      devicecontext = quewy.devicecontext.map(devicecontext.fwomthwift), (U ﹏ U)
+      authowids = quewy.authowids, UwU
+      excwudedtweetids = quewy.excwudedtweetids, XD
+      s-seawchcwientsubid = quewy.seawchcwientsubid,
+      c-candidatetweetsouwceid =
+        q-quewy.candidatetweetsouwceid.fwatmap(candidatetweetsouwceid.fwomthwift), ʘwʘ
+      h-hydwatescontentfeatuwes = quewy.hydwatescontentfeatuwes
     )
   }
 
-  def fromThrift(query: thrift.RecapHydrationQuery): RecapQuery = {
-    require(query.tweetIds.nonEmpty, "tweetIds must be non-empty")
+  def fwomthwift(quewy: t-thwift.wecaphydwationquewy): w-wecapquewy = {
+    wequiwe(quewy.tweetids.nonempty, rawr x3 "tweetids m-must b-be nyon-empty")
 
-    RecapQuery(
-      userId = query.userId,
-      tweetIds = Some(query.tweetIds),
-      searchOperator = DefaultSearchOperator,
-      earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
-      candidateTweetSourceId =
-        query.candidateTweetSourceId.flatMap(CandidateTweetSourceId.fromThrift),
-      hydratesContentFeatures = query.hydratesContentFeatures
+    wecapquewy(
+      u-usewid = quewy.usewid, ^^;;
+      t-tweetids = some(quewy.tweetids), ʘwʘ
+      seawchopewatow = defauwtseawchopewatow, (U ﹏ U)
+      e-eawwybiwdoptions = quewy.eawwybiwdoptions.map(eawwybiwdoptions.fwomthwift), (˘ω˘)
+      devicecontext = q-quewy.devicecontext.map(devicecontext.fwomthwift), (ꈍᴗꈍ)
+      candidatetweetsouwceid =
+        q-quewy.candidatetweetsouwceid.fwatmap(candidatetweetsouwceid.fwomthwift), /(^•ω•^)
+      h-hydwatescontentfeatuwes = quewy.hydwatescontentfeatuwes
     )
   }
 
-  def fromThrift(query: thrift.EngagedTweetsQuery): RecapQuery = {
-    val options = query.tweetKindOptions
-      .map(tweetKindOptions => TweetKindOption.fromThrift(tweetKindOptions.to[Set]))
-      .getOrElse(TweetKindOption.None)
+  def fwomthwift(quewy: thwift.engagedtweetsquewy): wecapquewy = {
+    vaw options = quewy.tweetkindoptions
+      .map(tweetkindoptions => t-tweetkindoption.fwomthwift(tweetkindoptions.to[set]))
+      .getowewse(tweetkindoption.none)
 
-    if (!(options.isEmpty ||
-        (options == EngagedTweetsSupportedTweetKindOption))) {
-      throw new IllegalArgumentException(s"Unsupported TweetKindOption value: $options")
+    i-if (!(options.isempty ||
+        (options == engagedtweetssuppowtedtweetkindoption))) {
+      t-thwow nyew i-iwwegawawgumentexception(s"unsuppowted t-tweetkindoption vawue: $options")
     }
 
-    RecapQuery(
-      userId = query.userId,
-      maxCount = query.maxCount,
-      range = query.range.map(TimelineRange.fromThrift),
-      options = options,
-      searchOperator = DefaultSearchOperator,
-      earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
-      authorIds = query.userIds,
-      excludedTweetIds = query.excludedTweetIds,
+    wecapquewy(
+      usewid = quewy.usewid, >_<
+      m-maxcount = quewy.maxcount, σωσ
+      wange = quewy.wange.map(timewinewange.fwomthwift), ^^;;
+      options = options, 😳
+      seawchopewatow = d-defauwtseawchopewatow, >_<
+      eawwybiwdoptions = q-quewy.eawwybiwdoptions.map(eawwybiwdoptions.fwomthwift), -.-
+      d-devicecontext = q-quewy.devicecontext.map(devicecontext.fwomthwift), UwU
+      authowids = quewy.usewids, :3
+      e-excwudedtweetids = q-quewy.excwudedtweetids, σωσ
     )
   }
 
-  def fromThrift(query: thrift.EntityTweetsQuery): RecapQuery = {
-    require(
-      query.semanticCoreIds.isDefined,
-      "entities(semanticCoreIds) can't be None"
+  d-def fwomthwift(quewy: t-thwift.entitytweetsquewy): wecapquewy = {
+    wequiwe(
+      q-quewy.semanticcoweids.isdefined, >w<
+      "entities(semanticcoweids) c-can't b-be nyone"
     )
-    val options = query.tweetKindOptions
-      .map(tweetKindOptions => TweetKindOption.fromThrift(tweetKindOptions.to[Set]))
-      .getOrElse(TweetKindOption.None)
+    v-vaw options = q-quewy.tweetkindoptions
+      .map(tweetkindoptions => tweetkindoption.fwomthwift(tweetkindoptions.to[set]))
+      .getowewse(tweetkindoption.none)
 
-    RecapQuery(
-      userId = query.userId,
-      maxCount = query.maxCount,
-      range = query.range.map(TimelineRange.fromThrift),
-      options = options,
-      searchOperator = DefaultSearchOperator,
-      earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
-      excludedTweetIds = query.excludedTweetIds,
-      semanticCoreIds = query.semanticCoreIds.map(_.map(SemanticCoreAnnotation.fromThrift).toSet),
-      hashtags = query.hashtags.map(_.toSet),
-      languages = query.languages.map(_.map(Language.fromThrift).toSet),
-      candidateTweetSourceId =
-        query.candidateTweetSourceId.flatMap(CandidateTweetSourceId.fromThrift),
-      includeNullcastTweets = query.includeNullcastTweets,
-      includeTweetsFromArchiveIndex = query.includeTweetsFromArchiveIndex,
-      authorIds = query.authorIds,
-      hydratesContentFeatures = query.hydratesContentFeatures
+    wecapquewy(
+      usewid = quewy.usewid, (ˆ ﻌ ˆ)♡
+      m-maxcount = quewy.maxcount, ʘwʘ
+      wange = quewy.wange.map(timewinewange.fwomthwift),
+      options = options, :3
+      seawchopewatow = d-defauwtseawchopewatow, (˘ω˘)
+      eawwybiwdoptions = quewy.eawwybiwdoptions.map(eawwybiwdoptions.fwomthwift), 😳😳😳
+      devicecontext = quewy.devicecontext.map(devicecontext.fwomthwift), rawr x3
+      excwudedtweetids = q-quewy.excwudedtweetids, (✿oωo)
+      s-semanticcoweids = q-quewy.semanticcoweids.map(_.map(semanticcoweannotation.fwomthwift).toset), (ˆ ﻌ ˆ)♡
+      hashtags = q-quewy.hashtags.map(_.toset), :3
+      wanguages = q-quewy.wanguages.map(_.map(wanguage.fwomthwift).toset), (U ᵕ U❁)
+      c-candidatetweetsouwceid =
+        quewy.candidatetweetsouwceid.fwatmap(candidatetweetsouwceid.fwomthwift), ^^;;
+      incwudenuwwcasttweets = quewy.incwudenuwwcasttweets, mya
+      incwudetweetsfwomawchiveindex = quewy.incwudetweetsfwomawchiveindex, 😳😳😳
+      a-authowids = quewy.authowids, OwO
+      h-hydwatescontentfeatuwes = quewy.hydwatescontentfeatuwes
     )
   }
 
-  def fromThrift(query: thrift.UtegLikedByTweetsQuery): RecapQuery = {
-    val options = query.tweetKindOptions
-      .map(tweetKindOptions => TweetKindOption.fromThrift(tweetKindOptions.to[Set]))
-      .getOrElse(TweetKindOption.None)
+  d-def fwomthwift(quewy: t-thwift.utegwikedbytweetsquewy): wecapquewy = {
+    vaw options = q-quewy.tweetkindoptions
+      .map(tweetkindoptions => t-tweetkindoption.fwomthwift(tweetkindoptions.to[set]))
+      .getowewse(tweetkindoption.none)
 
-    RecapQuery(
-      userId = query.userId,
-      maxCount = query.maxCount,
-      range = query.range.map(TimelineRange.fromThrift),
-      options = options,
-      earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
-      excludedTweetIds = query.excludedTweetIds,
-      utegLikedByTweetsOptions = for {
-        utegCount <- query.utegCount
-        weightedFollowings <- query.weightedFollowings.map(_.toMap)
-      } yield {
-        UtegLikedByTweetsOptions(
-          utegCount = utegCount,
-          isInNetwork = query.isInNetwork,
-          weightedFollowings = weightedFollowings
+    wecapquewy(
+      u-usewid = quewy.usewid, rawr
+      maxcount = q-quewy.maxcount, XD
+      wange = quewy.wange.map(timewinewange.fwomthwift), (U ﹏ U)
+      options = options, (˘ω˘)
+      eawwybiwdoptions = q-quewy.eawwybiwdoptions.map(eawwybiwdoptions.fwomthwift), UwU
+      d-devicecontext = q-quewy.devicecontext.map(devicecontext.fwomthwift), >_<
+      excwudedtweetids = q-quewy.excwudedtweetids, σωσ
+      u-utegwikedbytweetsoptions = fow {
+        u-utegcount <- quewy.utegcount
+        weightedfowwowings <- quewy.weightedfowwowings.map(_.tomap)
+      } yiewd {
+        u-utegwikedbytweetsoptions(
+          u-utegcount = utegcount, 🥺
+          isinnetwowk = q-quewy.isinnetwowk, 🥺
+          w-weightedfowwowings = weightedfowwowings
         )
-      },
-      candidateTweetSourceId =
-        query.candidateTweetSourceId.flatMap(CandidateTweetSourceId.fromThrift),
-      hydratesContentFeatures = query.hydratesContentFeatures
+      }, ʘwʘ
+      candidatetweetsouwceid =
+        quewy.candidatetweetsouwceid.fwatmap(candidatetweetsouwceid.fwomthwift), :3
+      h-hydwatescontentfeatuwes = quewy.hydwatescontentfeatuwes
     )
   }
 
-  val paramGate: (Param[Boolean] => Gate[RecapQuery]) = HasParams.paramGate
+  vaw pawamgate: (pawam[boowean] => gate[wecapquewy]) = haspawams.pawamgate
 
-  type DependencyProvider[+T] = ConfigApiDependencyProvider[RecapQuery, T]
-  object DependencyProvider extends DependencyProviderFunctions[RecapQuery]
+  t-type dependencypwovidew[+t] = configapidependencypwovidew[wecapquewy, (U ﹏ U) t]
+  object d-dependencypwovidew e-extends dependencypwovidewfunctions[wecapquewy]
 
-  type FutureDependencyProvider[+T] = ConfigApiFutureDependencyProvider[RecapQuery, T]
-  object FutureDependencyProvider extends FutureDependencyProviderFunctions[RecapQuery]
+  type futuwedependencypwovidew[+t] = configapifutuwedependencypwovidew[wecapquewy, (U ﹏ U) t-t]
+  o-object futuwedependencypwovidew extends futuwedependencypwovidewfunctions[wecapquewy]
 }
 
 /**
- * Model object corresponding to RecapQuery thrift struct.
+ * modew object cowwesponding to w-wecapquewy thwift stwuct. ʘwʘ
  */
-case class RecapQuery(
-  userId: UserId,
-  maxCount: Option[Int] = None,
-  range: Option[TimelineRange] = None,
-  options: TweetKindOption.ValueSet = TweetKindOption.None,
-  searchOperator: SearchOperator.Value = RecapQuery.DefaultSearchOperator,
-  earlybirdOptions: Option[EarlybirdOptions] = None,
-  deviceContext: Option[DeviceContext] = None,
-  authorIds: Option[Seq[UserId]] = None,
-  tweetIds: Option[Seq[TweetId]] = None,
-  semanticCoreIds: Option[Set[SemanticCoreAnnotation]] = None,
-  hashtags: Option[Set[String]] = None,
-  languages: Option[Set[Language]] = None,
-  excludedTweetIds: Option[Seq[TweetId]] = None,
-  // options used only for yml tweets
-  utegLikedByTweetsOptions: Option[UtegLikedByTweetsOptions] = None,
-  searchClientSubId: Option[String] = None,
-  override val params: Params = Params.Empty,
-  candidateTweetSourceId: Option[CandidateTweetSourceId.Value] = None,
-  includeNullcastTweets: Option[Boolean] = None,
-  includeTweetsFromArchiveIndex: Option[Boolean] = None,
-  hydratesContentFeatures: Option[Boolean] = None)
-    extends HasParams {
+case c-cwass wecapquewy(
+  usewid: usewid, >w<
+  maxcount: option[int] = n-nyone, rawr x3
+  wange: option[timewinewange] = n-nyone, OwO
+  o-options: tweetkindoption.vawueset = tweetkindoption.none, ^•ﻌ•^
+  s-seawchopewatow: seawchopewatow.vawue = w-wecapquewy.defauwtseawchopewatow, >_<
+  e-eawwybiwdoptions: o-option[eawwybiwdoptions] = nyone, OwO
+  devicecontext: o-option[devicecontext] = n-nyone, >_<
+  authowids: option[seq[usewid]] = nyone, (ꈍᴗꈍ)
+  tweetids: o-option[seq[tweetid]] = n-nyone, >w<
+  s-semanticcoweids: option[set[semanticcoweannotation]] = nyone, (U ﹏ U)
+  h-hashtags: option[set[stwing]] = nyone, ^^
+  wanguages: o-option[set[wanguage]] = nyone, (U ﹏ U)
+  e-excwudedtweetids: option[seq[tweetid]] = nyone, :3
+  // options used onwy fow y-ymw tweets
+  u-utegwikedbytweetsoptions: o-option[utegwikedbytweetsoptions] = n-nyone, (✿oωo)
+  seawchcwientsubid: o-option[stwing] = nyone, XD
+  ovewwide vaw pawams: pawams = pawams.empty, >w<
+  candidatetweetsouwceid: o-option[candidatetweetsouwceid.vawue] = nyone, òωó
+  incwudenuwwcasttweets: o-option[boowean] = nyone, (ꈍᴗꈍ)
+  incwudetweetsfwomawchiveindex: o-option[boowean] = nyone, rawr x3
+  h-hydwatescontentfeatuwes: option[boowean] = n-nyone)
+    extends h-haspawams {
 
-  override def toString: String = {
-    s"RecapQuery(userId: $userId, maxCount: $maxCount, range: $range, options: $options, searchOperator: $searchOperator, " +
-      s"earlybirdOptions: $earlybirdOptions, deviceContext: $deviceContext, authorIds: $authorIds, " +
-      s"tweetIds: $tweetIds, semanticCoreIds: $semanticCoreIds, hashtags: $hashtags, languages: $languages, excludedTweetIds: $excludedTweetIds, " +
-      s"utegLikedByTweetsOptions: $utegLikedByTweetsOptions, searchClientSubId: $searchClientSubId, " +
-      s"params: $params, candidateTweetSourceId: $candidateTweetSourceId, includeNullcastTweets: $includeNullcastTweets, " +
-      s"includeTweetsFromArchiveIndex: $includeTweetsFromArchiveIndex), hydratesContentFeatures: $hydratesContentFeatures"
+  o-ovewwide def tostwing: s-stwing = {
+    s-s"wecapquewy(usewid: $usewid, rawr x3 maxcount: $maxcount, σωσ wange: $wange, (ꈍᴗꈍ) options: $options, rawr seawchopewatow: $seawchopewatow, ^^;; " +
+      s"eawwybiwdoptions: $eawwybiwdoptions, rawr x3 devicecontext: $devicecontext, (ˆ ﻌ ˆ)♡ authowids: $authowids, σωσ " +
+      s"tweetids: $tweetids, (U ﹏ U) s-semanticcoweids: $semanticcoweids, >w< h-hashtags: $hashtags, σωσ w-wanguages: $wanguages, nyaa~~ excwudedtweetids: $excwudedtweetids, 🥺 " +
+      s-s"utegwikedbytweetsoptions: $utegwikedbytweetsoptions, rawr x3 seawchcwientsubid: $seawchcwientsubid, σωσ " +
+      s"pawams: $pawams, (///ˬ///✿) candidatetweetsouwceid: $candidatetweetsouwceid, (U ﹏ U) incwudenuwwcasttweets: $incwudenuwwcasttweets, ^^;; " +
+      s-s"incwudetweetsfwomawchiveindex: $incwudetweetsfwomawchiveindex), 🥺 h-hydwatescontentfeatuwes: $hydwatescontentfeatuwes"
   }
 
-  def throwIfInvalid(): Unit = {
-    def noDuplicates[T <: Traversable[_]](elements: T) = {
-      elements.toSet.size == elements.size
+  def thwowifinvawid(): u-unit = {
+    def nyodupwicates[t <: twavewsabwe[_]](ewements: t) = {
+      e-ewements.toset.size == e-ewements.size
     }
 
-    maxCount.foreach { max => require(max > 0, "maxCount must be a positive integer") }
-    range.foreach(_.throwIfInvalid())
-    earlybirdOptions.foreach(_.throwIfInvalid())
-    tweetIds.foreach { ids => require(ids.nonEmpty, "tweetIds must be nonEmpty if present") }
-    semanticCoreIds.foreach(_.foreach(_.throwIfInvalid()))
-    languages.foreach(_.foreach(_.throwIfInvalid()))
-    languages.foreach { langs =>
-      require(langs.nonEmpty, "languages must be nonEmpty if present")
-      require(noDuplicates(langs.map(_.language)), "languages must be unique")
+    maxcount.foweach { m-max => w-wequiwe(max > 0, òωó "maxcount must be a positive integew") }
+    wange.foweach(_.thwowifinvawid())
+    eawwybiwdoptions.foweach(_.thwowifinvawid())
+    t-tweetids.foweach { i-ids => wequiwe(ids.nonempty, XD "tweetids must b-be nyonempty i-if pwesent") }
+    s-semanticcoweids.foweach(_.foweach(_.thwowifinvawid()))
+    wanguages.foweach(_.foweach(_.thwowifinvawid()))
+    wanguages.foweach { w-wangs =>
+      w-wequiwe(wangs.nonempty, :3 "wanguages must be n-nyonempty if pwesent")
+      wequiwe(nodupwicates(wangs.map(_.wanguage)), (U ﹏ U) "wanguages m-must be unique")
     }
   }
 
-  throwIfInvalid()
+  thwowifinvawid()
 
-  def toThriftRecapQuery: thrift.RecapQuery = {
-    val thriftOptions = Some(TweetKindOption.toThrift(options))
-    thrift.RecapQuery(
-      userId,
-      maxCount,
-      range.map(_.toTimelineRangeThrift),
-      deprecatedMinCount = None,
-      thriftOptions,
-      earlybirdOptions.map(_.toThrift),
-      deviceContext.map(_.toThrift),
-      authorIds,
-      excludedTweetIds,
-      Some(SearchOperator.toThrift(searchOperator)),
-      searchClientSubId,
-      candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift)
+  d-def tothwiftwecapquewy: thwift.wecapquewy = {
+    vaw thwiftoptions = some(tweetkindoption.tothwift(options))
+    t-thwift.wecapquewy(
+      usewid, >w<
+      m-maxcount, /(^•ω•^)
+      w-wange.map(_.totimewinewangethwift), (⑅˘꒳˘)
+      depwecatedmincount = n-nyone, ʘwʘ
+      thwiftoptions, rawr x3
+      eawwybiwdoptions.map(_.tothwift), (˘ω˘)
+      devicecontext.map(_.tothwift), o.O
+      a-authowids, 😳
+      e-excwudedtweetids, o.O
+      s-some(seawchopewatow.tothwift(seawchopewatow)), ^^;;
+      seawchcwientsubid, ( ͡o ω ͡o )
+      candidatetweetsouwceid.fwatmap(candidatetweetsouwceid.tothwift)
     )
   }
 
-  def toThriftRecapHydrationQuery: thrift.RecapHydrationQuery = {
-    require(tweetIds.isDefined && tweetIds.get.nonEmpty, "tweetIds must be present")
-    thrift.RecapHydrationQuery(
-      userId,
-      tweetIds.get,
-      earlybirdOptions.map(_.toThrift),
-      deviceContext.map(_.toThrift),
-      candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift)
+  def tothwiftwecaphydwationquewy: t-thwift.wecaphydwationquewy = {
+    wequiwe(tweetids.isdefined && tweetids.get.nonempty, ^^;; "tweetids m-must be pwesent")
+    t-thwift.wecaphydwationquewy(
+      usewid, ^^;;
+      tweetids.get, XD
+      e-eawwybiwdoptions.map(_.tothwift), 🥺
+      devicecontext.map(_.tothwift), (///ˬ///✿)
+      c-candidatetweetsouwceid.fwatmap(candidatetweetsouwceid.tothwift)
     )
   }
 
-  def toThriftEntityTweetsQuery: thrift.EntityTweetsQuery = {
-    val thriftTweetKindOptions = Some(TweetKindOption.toThrift(options))
-    thrift.EntityTweetsQuery(
-      userId = userId,
-      maxCount = maxCount,
-      range = range.map(_.toTimelineRangeThrift),
-      tweetKindOptions = thriftTweetKindOptions,
-      earlybirdOptions = earlybirdOptions.map(_.toThrift),
-      deviceContext = deviceContext.map(_.toThrift),
-      excludedTweetIds = excludedTweetIds,
-      semanticCoreIds = semanticCoreIds.map(_.map(_.toThrift)),
-      hashtags = hashtags,
-      languages = languages.map(_.map(_.toThrift)),
-      candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift),
-      includeNullcastTweets = includeNullcastTweets,
-      includeTweetsFromArchiveIndex = includeTweetsFromArchiveIndex,
-      authorIds = authorIds
+  d-def tothwiftentitytweetsquewy: thwift.entitytweetsquewy = {
+    vaw thwifttweetkindoptions = s-some(tweetkindoption.tothwift(options))
+    thwift.entitytweetsquewy(
+      usewid = usewid, (U ᵕ U❁)
+      m-maxcount = m-maxcount, ^^;;
+      wange = wange.map(_.totimewinewangethwift), ^^;;
+      t-tweetkindoptions = thwifttweetkindoptions, rawr
+      e-eawwybiwdoptions = e-eawwybiwdoptions.map(_.tothwift), (˘ω˘)
+      d-devicecontext = devicecontext.map(_.tothwift), 🥺
+      excwudedtweetids = excwudedtweetids, nyaa~~
+      semanticcoweids = semanticcoweids.map(_.map(_.tothwift)), :3
+      hashtags = hashtags, /(^•ω•^)
+      wanguages = wanguages.map(_.map(_.tothwift)), ^•ﻌ•^
+      candidatetweetsouwceid.fwatmap(candidatetweetsouwceid.tothwift), UwU
+      incwudenuwwcasttweets = incwudenuwwcasttweets, 😳😳😳
+      incwudetweetsfwomawchiveindex = incwudetweetsfwomawchiveindex, OwO
+      authowids = authowids
     )
   }
 
-  def toThriftUtegLikedByTweetsQuery: thrift.UtegLikedByTweetsQuery = {
+  d-def tothwiftutegwikedbytweetsquewy: t-thwift.utegwikedbytweetsquewy = {
 
-    val thriftTweetKindOptions = Some(TweetKindOption.toThrift(options))
-    thrift.UtegLikedByTweetsQuery(
-      userId = userId,
-      maxCount = maxCount,
-      utegCount = utegLikedByTweetsOptions.map(_.utegCount),
-      range = range.map(_.toTimelineRangeThrift),
-      tweetKindOptions = thriftTweetKindOptions,
-      earlybirdOptions = earlybirdOptions.map(_.toThrift),
-      deviceContext = deviceContext.map(_.toThrift),
-      excludedTweetIds = excludedTweetIds,
-      isInNetwork = utegLikedByTweetsOptions.map(_.isInNetwork).get,
-      weightedFollowings = utegLikedByTweetsOptions.map(_.weightedFollowings),
-      candidateTweetSourceId = candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift)
+    vaw thwifttweetkindoptions = some(tweetkindoption.tothwift(options))
+    thwift.utegwikedbytweetsquewy(
+      u-usewid = usewid, ^•ﻌ•^
+      m-maxcount = m-maxcount, (ꈍᴗꈍ)
+      utegcount = utegwikedbytweetsoptions.map(_.utegcount), (⑅˘꒳˘)
+      wange = w-wange.map(_.totimewinewangethwift), (⑅˘꒳˘)
+      tweetkindoptions = t-thwifttweetkindoptions, (ˆ ﻌ ˆ)♡
+      e-eawwybiwdoptions = eawwybiwdoptions.map(_.tothwift), /(^•ω•^)
+      d-devicecontext = devicecontext.map(_.tothwift), òωó
+      e-excwudedtweetids = e-excwudedtweetids, (⑅˘꒳˘)
+      isinnetwowk = utegwikedbytweetsoptions.map(_.isinnetwowk).get,
+      w-weightedfowwowings = u-utegwikedbytweetsoptions.map(_.weightedfowwowings), (U ᵕ U❁)
+      c-candidatetweetsouwceid = c-candidatetweetsouwceid.fwatmap(candidatetweetsouwceid.tothwift)
     )
   }
 }

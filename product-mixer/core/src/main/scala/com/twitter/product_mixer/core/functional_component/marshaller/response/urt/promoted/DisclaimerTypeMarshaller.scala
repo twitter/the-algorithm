@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerIssue
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerPolitical
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.discwaimewissue
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.discwaimewpowiticaw
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.discwaimewtype
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class DisclaimerTypeMarshaller @Inject() () {
+@singweton
+cwass discwaimewtypemawshawwew @inject() () {
 
-  def apply(disclaimerType: DisclaimerType): urt.DisclaimerType = disclaimerType match {
-    case DisclaimerPolitical => urt.DisclaimerType.Political
-    case DisclaimerIssue => urt.DisclaimerType.Issue
+  d-def appwy(discwaimewtype: discwaimewtype): uwt.discwaimewtype = d-discwaimewtype match {
+    c-case discwaimewpowiticaw => uwt.discwaimewtype.powiticaw
+    case discwaimewissue => uwt.discwaimewtype.issue
   }
 }

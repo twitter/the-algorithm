@@ -1,188 +1,188 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
+impowt java.utiw.concuwwent.timeunit;
+i-impowt j-javax.inject.inject;
 
-import scala.Option;
+i-impowt scawa.option;
 
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.cache.cachebuiwdew;
+i-impowt com.googwe.common.cache.cachewoadew;
+impowt com.googwe.common.cache.woadingcache;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.context.Contexts$;
-import com.twitter.finagle.context.Deadline;
-import com.twitter.finagle.context.Deadline$;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.finagwe.sewvice;
+impowt c-com.twittew.finagwe.simpwefiwtew;
+impowt com.twittew.finagwe.context.contexts$;
+impowt com.twittew.finagwe.context.deadwine;
+i-impowt com.twittew.finagwe.context.deadwine$;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+impowt com.twittew.seawch.eawwybiwd.common.cwientidutiw;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.utiw.futuwe;
 
 /**
- * A filter for comparing the request deadline (set in the finagle request context) with the request
- * timeout, as set in the EarlybirdRequest.
+ * a fiwtew fow compawing the wequest deadwine (set i-in the finagwe wequest context) with the wequest
+ * timeout, as set in the e-eawwybiwdwequest. ( ͡o ω ͡o )
  *
- * Tracks stats per client, for (1) requests where the request deadline is set to expire before the
- * EarlybirdRequest timeout, and also (2) requests where the deadline allows enough time for the
- * EarlybirdRequest timeout to kick in.
+ * twacks stats p-pew cwient, rawr x3 f-fow (1) wequests w-whewe the wequest d-deadwine is set to expiwe befowe the
+ * eawwybiwdwequest t-timeout, and awso (2) wequests whewe t-the deadwine awwows enough time fow the
+ * eawwybiwdwequest timeout to kick in. nyaa~~
  */
-public class DeadlineTimeoutStatsFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+pubwic cwass d-deadwinetimeoutstatsfiwtew
+    extends simpwefiwtew<eawwybiwdwequestcontext, >_< e-eawwybiwdwesponse> {
 
-  // All stats maps below are per client id, keyed by the client id.
-  private final LoadingCache<String, SearchCounter> requestTimeoutNotSetStats;
-  private final LoadingCache<String, SearchCounter> finagleDeadlineNotSetStats;
-  private final LoadingCache<String, SearchCounter> finagleDeadlineAndRequestTimeoutNotSetStats;
-  private final LoadingCache<String, SearchTimerStats> requestTimeoutStats;
-  private final LoadingCache<String, SearchTimerStats> finagleDeadlineStats;
-  private final LoadingCache<String, SearchTimerStats> deadlineLargerStats;
-  private final LoadingCache<String, SearchTimerStats> deadlineSmallerStats;
+  // a-aww stats m-maps bewow awe pew cwient id, ^^;; keyed by the cwient id. (ˆ ﻌ ˆ)♡
+  pwivate f-finaw woadingcache<stwing, ^^;; s-seawchcountew> wequesttimeoutnotsetstats;
+  pwivate f-finaw woadingcache<stwing, (⑅˘꒳˘) seawchcountew> f-finagwedeadwinenotsetstats;
+  pwivate f-finaw woadingcache<stwing, rawr x3 seawchcountew> finagwedeadwineandwequesttimeoutnotsetstats;
+  p-pwivate finaw woadingcache<stwing, seawchtimewstats> w-wequesttimeoutstats;
+  pwivate f-finaw woadingcache<stwing, seawchtimewstats> f-finagwedeadwinestats;
+  p-pwivate finaw woadingcache<stwing, (///ˬ///✿) seawchtimewstats> deadwinewawgewstats;
+  pwivate finaw woadingcache<stwing, 🥺 seawchtimewstats> d-deadwinesmowewstats;
 
-  @Inject
-  public DeadlineTimeoutStatsFilter(Clock clock) {
-    this.requestTimeoutNotSetStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchCounter>() {
-          public SearchCounter load(String clientId) {
-            return SearchCounter.export(
-                "deadline_for_client_id_" + clientId + "_request_timeout_not_set");
+  @inject
+  p-pubwic deadwinetimeoutstatsfiwtew(cwock c-cwock) {
+    this.wequesttimeoutnotsetstats = cachebuiwdew.newbuiwdew().buiwd(
+        n-nyew cachewoadew<stwing, >_< s-seawchcountew>() {
+          pubwic seawchcountew woad(stwing cwientid) {
+            w-wetuwn seawchcountew.expowt(
+                "deadwine_fow_cwient_id_" + cwientid + "_wequest_timeout_not_set");
           }
         });
-    this.finagleDeadlineNotSetStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchCounter>() {
-          public SearchCounter load(String clientId) {
-            return SearchCounter.export(
-                "deadline_for_client_id_" + clientId + "_finagle_deadline_not_set");
+    this.finagwedeadwinenotsetstats = cachebuiwdew.newbuiwdew().buiwd(
+        nyew cachewoadew<stwing, UwU s-seawchcountew>() {
+          pubwic seawchcountew w-woad(stwing c-cwientid) {
+            w-wetuwn seawchcountew.expowt(
+                "deadwine_fow_cwient_id_" + c-cwientid + "_finagwe_deadwine_not_set");
           }
         });
-    this.finagleDeadlineAndRequestTimeoutNotSetStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchCounter>() {
-          public SearchCounter load(String clientId) {
-            return SearchCounter.export(
-                "deadline_for_client_id_" + clientId
-                    + "_finagle_deadline_and_request_timeout_not_set");
+    t-this.finagwedeadwineandwequesttimeoutnotsetstats = cachebuiwdew.newbuiwdew().buiwd(
+        n-nyew cachewoadew<stwing, >_< s-seawchcountew>() {
+          pubwic seawchcountew w-woad(stwing cwientid) {
+            w-wetuwn seawchcountew.expowt(
+                "deadwine_fow_cwient_id_" + c-cwientid
+                    + "_finagwe_deadwine_and_wequest_timeout_not_set");
           }
         });
-    this.requestTimeoutStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchTimerStats>() {
-          public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
-                "deadline_for_client_id_" + clientId + "_request_timeout",
-                TimeUnit.MILLISECONDS,
-                false,
-                true,
-                clock);
+    t-this.wequesttimeoutstats = c-cachebuiwdew.newbuiwdew().buiwd(
+        nyew cachewoadew<stwing, -.- seawchtimewstats>() {
+          pubwic s-seawchtimewstats woad(stwing cwientid) {
+            wetuwn seawchtimewstats.expowt(
+                "deadwine_fow_cwient_id_" + cwientid + "_wequest_timeout", mya
+                timeunit.miwwiseconds, >w<
+                fawse, (U ﹏ U)
+                twue, 😳😳😳
+                c-cwock);
           }
         });
-    this.finagleDeadlineStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchTimerStats>() {
-          public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
-                "deadline_for_client_id_" + clientId + "_finagle_deadline",
-                TimeUnit.MILLISECONDS,
-                false,
-                true,
-                clock);
+    this.finagwedeadwinestats = cachebuiwdew.newbuiwdew().buiwd(
+        nyew c-cachewoadew<stwing, o.O s-seawchtimewstats>() {
+          p-pubwic seawchtimewstats woad(stwing cwientid) {
+            w-wetuwn seawchtimewstats.expowt(
+                "deadwine_fow_cwient_id_" + cwientid + "_finagwe_deadwine", òωó
+                timeunit.miwwiseconds,
+                fawse, 😳😳😳
+                t-twue, σωσ
+                c-cwock);
           }
         });
-    this.deadlineLargerStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchTimerStats>() {
-          public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
-                "deadline_for_client_id_" + clientId
-                    + "_finagle_deadline_larger_than_request_timeout",
-                TimeUnit.MILLISECONDS,
-                false,
-                true,
-                clock
+    this.deadwinewawgewstats = cachebuiwdew.newbuiwdew().buiwd(
+        nyew cachewoadew<stwing, (⑅˘꒳˘) seawchtimewstats>() {
+          p-pubwic seawchtimewstats woad(stwing c-cwientid) {
+            wetuwn seawchtimewstats.expowt(
+                "deadwine_fow_cwient_id_" + c-cwientid
+                    + "_finagwe_deadwine_wawgew_than_wequest_timeout",
+                t-timeunit.miwwiseconds, (///ˬ///✿)
+                fawse,
+                twue, 🥺
+                c-cwock
             );
           }
         });
-    this.deadlineSmallerStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchTimerStats>() {
-          public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
-                "deadline_for_client_id_" + clientId
-                    + "_finagle_deadline_smaller_than_request_timeout",
-                TimeUnit.MILLISECONDS,
-                false,
-                true,
-                clock
+    t-this.deadwinesmowewstats = cachebuiwdew.newbuiwdew().buiwd(
+        n-new cachewoadew<stwing, OwO s-seawchtimewstats>() {
+          pubwic seawchtimewstats woad(stwing cwientid) {
+            w-wetuwn s-seawchtimewstats.expowt(
+                "deadwine_fow_cwient_id_" + c-cwientid
+                    + "_finagwe_deadwine_smowew_than_wequest_timeout", >w<
+                timeunit.miwwiseconds,
+                f-fawse, 🥺
+                t-twue, nyaa~~
+                cwock
             );
           }
         });
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> appwy(
+      eawwybiwdwequestcontext wequestcontext, ^^
+      sewvice<eawwybiwdwequestcontext, e-eawwybiwdwesponse> s-sewvice) {
 
-    EarlybirdRequest request = requestContext.getRequest();
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    long requestTimeoutMillis = getRequestTimeout(request);
-    Option<Deadline> deadline = Contexts$.MODULE$.broadcast().get(Deadline$.MODULE$);
+    eawwybiwdwequest wequest = w-wequestcontext.getwequest();
+    s-stwing cwientid = cwientidutiw.getcwientidfwomwequest(wequest);
+    wong wequesttimeoutmiwwis = getwequesttimeout(wequest);
+    o-option<deadwine> deadwine = contexts$.moduwe$.bwoadcast().get(deadwine$.moduwe$);
 
-    // Tracking per-client timeouts specified in the EarlybirdRequest.
-    if (requestTimeoutMillis > 0) {
-      requestTimeoutStats.getUnchecked(clientId).timerIncrement(requestTimeoutMillis);
-    } else {
-      requestTimeoutNotSetStats.getUnchecked(clientId).increment();
+    // twacking pew-cwient timeouts specified i-in the eawwybiwdwequest. >w<
+    if (wequesttimeoutmiwwis > 0) {
+      wequesttimeoutstats.getunchecked(cwientid).timewincwement(wequesttimeoutmiwwis);
+    } e-ewse {
+      wequesttimeoutnotsetstats.getunchecked(cwientid).incwement();
     }
 
-    // How much time does this request have, from its deadline start, to the effective deadline.
-    if (deadline.isDefined()) {
-      long deadlineEndTimeMillis = deadline.get().deadline().inMillis();
-      long deadlineStartTimeMillis = deadline.get().timestamp().inMillis();
-      long finagleDeadlineTimeMillis = deadlineEndTimeMillis - deadlineStartTimeMillis;
-      finagleDeadlineStats.getUnchecked(clientId).timerIncrement(finagleDeadlineTimeMillis);
-    } else {
-      finagleDeadlineNotSetStats.getUnchecked(clientId).increment();
+    // h-how much time does this wequest have, OwO fwom its deadwine s-stawt, XD to the effective d-deadwine. ^^;;
+    if (deadwine.isdefined()) {
+      wong deadwineendtimemiwwis = deadwine.get().deadwine().inmiwwis();
+      w-wong deadwinestawttimemiwwis = deadwine.get().timestamp().inmiwwis();
+      w-wong finagwedeadwinetimemiwwis = deadwineendtimemiwwis - deadwinestawttimemiwwis;
+      finagwedeadwinestats.getunchecked(cwientid).timewincwement(finagwedeadwinetimemiwwis);
+    } e-ewse {
+      finagwedeadwinenotsetstats.getunchecked(cwientid).incwement();
     }
 
-    // Explicitly track when both are not set.
-    if (requestTimeoutMillis <= 0 && deadline.isEmpty()) {
-      finagleDeadlineAndRequestTimeoutNotSetStats.getUnchecked(clientId).increment();
+    // e-expwicitwy t-twack when both awe nyot s-set.
+    if (wequesttimeoutmiwwis <= 0 && deadwine.isempty()) {
+      f-finagwedeadwineandwequesttimeoutnotsetstats.getunchecked(cwientid).incwement();
     }
 
-    // If both timeout and the deadline are set, track how much over / under we are, when
-    // comparing the deadline, and the EarlybirdRequest timeout.
-    if (requestTimeoutMillis > 0 && deadline.isDefined()) {
-      long deadlineEndTimeMillis = deadline.get().deadline().inMillis();
-      Preconditions.checkState(request.isSetClientRequestTimeMs(),
-          "Expect ClientRequestTimeFilter to always set the clientRequestTimeMs field. Request: %s",
-          request);
-      long requestStartTimeMillis = request.getClientRequestTimeMs();
-      long requestEndTimeMillis = requestStartTimeMillis + requestTimeoutMillis;
+    // i-if both timeout a-and the deadwine awe set, 🥺 twack h-how much ovew / u-undew we awe, XD when
+    // compawing the deadwine, (U ᵕ U❁) a-and the eawwybiwdwequest t-timeout. :3
+    if (wequesttimeoutmiwwis > 0 && d-deadwine.isdefined()) {
+      wong deadwineendtimemiwwis = d-deadwine.get().deadwine().inmiwwis();
+      pweconditions.checkstate(wequest.issetcwientwequesttimems(), ( ͡o ω ͡o )
+          "expect c-cwientwequesttimefiwtew t-to awways set the cwientwequesttimems fiewd. òωó wequest: %s", σωσ
+          wequest);
+      w-wong wequeststawttimemiwwis = w-wequest.getcwientwequesttimems();
+      w-wong wequestendtimemiwwis = w-wequeststawttimemiwwis + wequesttimeoutmiwwis;
 
-      long deadlineDiffMillis = deadlineEndTimeMillis - requestEndTimeMillis;
-      if (deadlineDiffMillis >= 0) {
-        deadlineLargerStats.getUnchecked(clientId).timerIncrement(deadlineDiffMillis);
-      } else {
-        // Track "deadline is smaller" as positive values.
-        deadlineSmallerStats.getUnchecked(clientId).timerIncrement(-deadlineDiffMillis);
+      w-wong deadwinediffmiwwis = deadwineendtimemiwwis - wequestendtimemiwwis;
+      if (deadwinediffmiwwis >= 0) {
+        deadwinewawgewstats.getunchecked(cwientid).timewincwement(deadwinediffmiwwis);
+      } ewse {
+        // t-twack "deadwine is smowew" a-as positive vawues. (U ᵕ U❁)
+        deadwinesmowewstats.getunchecked(cwientid).timewincwement(-deadwinediffmiwwis);
       }
     }
 
-    return service.apply(requestContext);
+    w-wetuwn sewvice.appwy(wequestcontext);
   }
 
-  private long getRequestTimeout(EarlybirdRequest request) {
-    if (request.isSetSearchQuery()
-        && request.getSearchQuery().isSetCollectorParams()
-        && request.getSearchQuery().getCollectorParams().isSetTerminationParams()
-        && request.getSearchQuery().getCollectorParams().getTerminationParams().isSetTimeoutMs()) {
+  pwivate w-wong getwequesttimeout(eawwybiwdwequest wequest) {
+    i-if (wequest.issetseawchquewy()
+        && w-wequest.getseawchquewy().issetcowwectowpawams()
+        && w-wequest.getseawchquewy().getcowwectowpawams().issettewminationpawams()
+        && w-wequest.getseawchquewy().getcowwectowpawams().gettewminationpawams().issettimeoutms()) {
 
-      return request.getSearchQuery().getCollectorParams().getTerminationParams().getTimeoutMs();
-    } else if (request.isSetTimeoutMs()) {
-      return request.getTimeoutMs();
-    } else {
-      return -1;
+      w-wetuwn wequest.getseawchquewy().getcowwectowpawams().gettewminationpawams().gettimeoutms();
+    } ewse if (wequest.issettimeoutms()) {
+      wetuwn wequest.gettimeoutms();
+    } ewse {
+      wetuwn -1;
     }
   }
 }

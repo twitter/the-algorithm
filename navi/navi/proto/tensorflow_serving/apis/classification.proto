@@ -1,48 +1,48 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-option cc_enable_arenas = true;
+option cc_enabwe_awenas = twue;
 
-import "tensorflow_serving/apis/input.proto";
-import "tensorflow_serving/apis/model.proto";
+i-impowt "tensowfwow_sewving/apis/input.pwoto";
+i-impowt "tensowfwow_sewving/apis/modew.pwoto";
 
-package tensorflow.serving;
+p-package tensowfwow.sewving;
 
-// A single class.
-message Class {
-  // Label or name of the class.
-  string label = 1;
-  // Score for this class (e.g., the probability the item belongs to this
-  // class). As per the proto3 default-value semantics, if the score is missing,
-  // it should be treated as 0.
-  float score = 2;
+// a-a singwe cwass. /(^•ω•^)
+m-message cwass {
+  // w-wabew ow name o-of the cwass.
+  s-stwing wabew = 1;
+  // scowe fow this cwass (e.g., the pwobabiwity the item b-bewongs to this
+  // cwass). rawr x3 as pew the pwoto3 defauwt-vawue s-semantics, (U ﹏ U) if the scowe i-is missing, (U ﹏ U)
+  // it shouwd be tweated as 0. (⑅˘꒳˘)
+  fwoat scowe = 2;
 }
 
-// List of classes for a single item (tensorflow.Example).
-message Classifications {
-  repeated Class classes = 1;
+// w-wist of cwasses fow a s-singwe item (tensowfwow.exampwe). òωó
+m-message cwassifications {
+  wepeated cwass cwasses = 1;
 }
 
-// Contains one result per input example, in the same order as the input in
-// ClassificationRequest.
-message ClassificationResult {
-  repeated Classifications classifications = 1;
+// contains one wesuwt pew input exampwe, ʘwʘ i-in the same owdew as the input in
+// cwassificationwequest. /(^•ω•^)
+message cwassificationwesuwt {
+  wepeated cwassifications c-cwassifications = 1;
 }
 
-// RPC Interfaces
+// wpc intewfaces
 
-message ClassificationRequest {
-  // Model Specification. If version is not specified, will use the latest
-  // (numerical) version.
-  ModelSpec model_spec = 1;
+m-message c-cwassificationwequest {
+  // m-modew s-specification. ʘwʘ if vewsion is nyot specified, σωσ w-wiww use the watest
+  // (numewicaw) vewsion. OwO
+  modewspec modew_spec = 1;
 
-  // Input data.
-  tensorflow.serving.Input input = 2;
+  // i-input data. 😳😳😳
+  tensowfwow.sewving.input input = 2;
 }
 
-message ClassificationResponse {
-  // Effective Model Specification used for classification.
-  ModelSpec model_spec = 2;
+message cwassificationwesponse {
+  // effective modew specification used fow c-cwassification.
+  modewspec modew_spec = 2;
 
-  // Result of the classification.
-  ClassificationResult result = 1;
+  // w-wesuwt of the c-cwassification. 😳😳😳
+  c-cwassificationwesuwt wesuwt = 1;
 }

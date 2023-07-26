@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-user-modification-prod",
-  "config-files": [
-    "uua-user-modification.aurora"
-  ],
-  "build": {
-    "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
-    },
+  "wowe": "discode", XD
+  "name": "uua-usew-modification-pwod", >_<
+  "config-fiwes": [
+    "uua-usew-modification.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
+    "twiggew": {
+      "cwon-scheduwe": "0 17 * * 2"
+    }, OwO
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", 🥺
+        "name": "packew-cwient-no-pex", òωó
+        "vewsion": "watest"
       }
     ],
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-user-modification"
+        "type": "bazew-bundwe", o.O
+        "name": "bundwe", (U ᵕ U❁)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-usew-modification"
       },
       {
-        "type": "packer",
-        "name": "uua-user-modification",
-        "artifact": "./dist/uua-user-modification.zip"
+        "type": "packew", (⑅˘꒳˘)
+        "name": "uua-usew-modification", ( ͡o ω ͡o )
+        "awtifact": "./dist/uua-usew-modification.zip"
       }
     ]
-  },
-  "targets": [
+  }, UwU
+  "tawgets": [
     {
-      "type": "group",
-      "name": "prod",
-      "targets": [
+      "type": "gwoup", rawr x3
+      "name": "pwod", rawr
+      "tawgets": [
         {
-          "name": "uua-user-modification-prod-atla",
-          "key": "atla/discode/prod/uua-user-modification"
-        },
+          "name": "uua-usew-modification-pwod-atwa", σωσ
+          "key": "atwa/discode/pwod/uua-usew-modification"
+        }, σωσ
         {
-          "name": "uua-user-modification-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-user-modification"
+          "name": "uua-usew-modification-pwod-pdxa", >_<
+          "key": "pdxa/discode/pwod/uua-usew-modification"
         }
       ]
     }
-  ],
-  "subscriptions": [
+  ], :3
+  "subscwiptions": [
    {
-     "type": "SLACK",
-     "recipients": [
+     "type": "swack", (U ﹏ U)
+     "wecipients": [
        {
-         "to": "discode-oncall"
+         "to": "discode-oncaww"
        }
-     ],
-     "events": ["WORKFLOW_SUCCESS"]
-   },
+     ], -.-
+     "events": ["wowkfwow_success"]
+   }, (ˆ ﻌ ˆ)♡
    {
-     "type": "SLACK",
-     "recipients": [{
-       "to": "discode-oncall"
-     }],
-     "events": ["*FAILED"]
+     "type": "swack", (⑅˘꒳˘)
+     "wecipients": [{
+       "to": "discode-oncaww"
+     }], (U ᵕ U❁)
+     "events": ["*faiwed"]
    }
   ]
 }

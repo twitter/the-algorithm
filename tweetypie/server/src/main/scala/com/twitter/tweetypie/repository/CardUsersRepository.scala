@@ -1,43 +1,43 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.expandodo.thriftscala._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.Expandodo
+i-impowt com.twittew.expandodo.thwiftscawa._
+i-impowt c-com.twittew.stitch.seqgwoup
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.compat.wegacyseqgwoup
+i-impowt com.twittew.tweetypie.backends.expandodo
 
-object CardUsersRepository {
-  type CardUri = String
-  type Type = (CardUri, Context) => Stitch[Option[Set[UserId]]]
+o-object cawdusewswepositowy {
+  type cawduwi = stwing
+  type type = (cawduwi, 😳😳😳 context) => stitch[option[set[usewid]]]
 
-  case class Context(perspectiveUserId: UserId) extends AnyVal
+  c-case cwass context(pewspectiveusewid: usewid) extends anyvaw
 
-  case class GetUsersGroup(perspectiveId: UserId, getCardUsers: Expandodo.GetCardUsers)
-      extends SeqGroup[CardUri, GetCardUsersResponse] {
-    protected override def run(keys: Seq[CardUri]): Future[Seq[Try[GetCardUsersResponse]]] =
-      LegacySeqGroup.liftToSeqTry(
-        getCardUsers(
-          GetCardUsersRequests(
-            requests = keys.map(k => GetCardUsersRequest(k)),
-            perspectiveUserId = Some(perspectiveId)
+  c-case cwass getusewsgwoup(pewspectiveid: u-usewid, 🥺 getcawdusews: expandodo.getcawdusews)
+      extends seqgwoup[cawduwi, mya getcawdusewswesponse] {
+    pwotected o-ovewwide def wun(keys: seq[cawduwi]): f-futuwe[seq[twy[getcawdusewswesponse]]] =
+      w-wegacyseqgwoup.wifttoseqtwy(
+        getcawdusews(
+          getcawdusewswequests(
+            wequests = keys.map(k => getcawdusewswequest(k)), 🥺
+            p-pewspectiveusewid = some(pewspectiveid)
           )
-        ).map(_.responses)
+        ).map(_.wesponses)
       )
   }
 
-  def apply(getCardUsers: Expandodo.GetCardUsers): Type =
-    (cardUri, ctx) =>
-      Stitch.call(cardUri, GetUsersGroup(ctx.perspectiveUserId, getCardUsers)).map { resp =>
-        val authorUserIds = resp.authorUserIds.map(_.toSet)
-        val siteUserIds = resp.siteUserIds.map(_.toSet)
+  def appwy(getcawdusews: expandodo.getcawdusews): type =
+    (cawduwi, >_< c-ctx) =>
+      stitch.caww(cawduwi, >_< g-getusewsgwoup(ctx.pewspectiveusewid, (⑅˘꒳˘) g-getcawdusews)).map { w-wesp =>
+        v-vaw authowusewids = wesp.authowusewids.map(_.toset)
+        vaw siteusewids = w-wesp.siteusewids.map(_.toset)
 
-        if (authorUserIds.isEmpty) {
-          siteUserIds
-        } else if (siteUserIds.isEmpty) {
-          authorUserIds
-        } else {
-          Some(authorUserIds.get ++ siteUserIds.get)
+        if (authowusewids.isempty) {
+          siteusewids
+        } e-ewse if (siteusewids.isempty) {
+          authowusewids
+        } ewse {
+          some(authowusewids.get ++ siteusewids.get)
         }
       }
 }

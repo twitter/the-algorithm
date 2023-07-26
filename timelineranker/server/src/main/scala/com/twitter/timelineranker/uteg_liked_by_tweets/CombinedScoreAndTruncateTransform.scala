@@ -1,95 +1,95 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.twittew.timewinewankew.uteg_wiked_by_tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResultMetadata
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.tweetwecommendation
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+i-impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwtmetadata
+i-impowt com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+impowt com.twittew.timewines.modew.tweetid
+impowt com.twittew.utiw.futuwe
 
-object CombinedScoreAndTruncateTransform {
-  val DefaultRealGraphWeight = 1.0
-  val DefaultEmptyScore = 0.0
+object c-combinedscoweandtwuncatetwansfowm {
+  vaw defauwtweawgwaphweight = 1.0
+  vaw defauwtemptyscowe = 0.0
 }
 
 /**
- * Rank and truncate search results according to
- * DefaultRealGraphWeight * real_graph_score + earlybird_score_multiplier * earlybird_score
- * Note: scoring and truncation only applies to out of network candidates
+ * w-wank and twuncate seawch wesuwts a-accowding to
+ * defauwtweawgwaphweight * weaw_gwaph_scowe + eawwybiwd_scowe_muwtipwiew * e-eawwybiwd_scowe
+ * nyote: s-scowing and t-twuncation onwy appwies to out of nyetwowk candidates
  */
-class CombinedScoreAndTruncateTransform(
-  maxTweetCountProvider: DependencyProvider[Int],
-  earlybirdScoreMultiplierProvider: DependencyProvider[Double],
-  numAdditionalRepliesProvider: DependencyProvider[Int],
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  import CombinedScoreAndTruncateTransform._
+cwass combinedscoweandtwuncatetwansfowm(
+  m-maxtweetcountpwovidew: dependencypwovidew[int], /(^•ω•^)
+  eawwybiwdscowemuwtipwiewpwovidew: dependencypwovidew[doubwe], 😳😳😳
+  nyumadditionawwepwiespwovidew: d-dependencypwovidew[int], ( ͡o ω ͡o )
+  statsweceivew: s-statsweceivew)
+    e-extends futuweawwow[candidateenvewope, >_< c-candidateenvewope] {
+  i-impowt combinedscoweandtwuncatetwansfowm._
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("CombinedScoreAndTruncateTransform")
-  private[this] val earlybirdScoreX100Stat = scopedStatsReceiver.stat("earlybirdScoreX100")
-  private[this] val realGraphScoreX100Stat = scopedStatsReceiver.stat("realGraphScoreX100")
-  private[this] val additionalReplyCounter = scopedStatsReceiver.counter("additionalReplies")
-  private[this] val resultCounter = scopedStatsReceiver.counter("results")
+  pwivate[this] vaw scopedstatsweceivew = s-statsweceivew.scope("combinedscoweandtwuncatetwansfowm")
+  pwivate[this] vaw eawwybiwdscowex100stat = s-scopedstatsweceivew.stat("eawwybiwdscowex100")
+  pwivate[this] vaw weawgwaphscowex100stat = scopedstatsweceivew.stat("weawgwaphscowex100")
+  pwivate[this] v-vaw additionawwepwycountew = scopedstatsweceivew.countew("additionawwepwies")
+  p-pwivate[this] v-vaw wesuwtcountew = s-scopedstatsweceivew.countew("wesuwts")
 
-  private[this] def getRealGraphScore(
-    searchResult: ThriftSearchResult,
-    utegResults: Map[TweetId, TweetRecommendation]
-  ): Double = {
-    utegResults.get(searchResult.id).map(_.score).getOrElse(DefaultEmptyScore)
+  pwivate[this] def getweawgwaphscowe(
+    seawchwesuwt: t-thwiftseawchwesuwt, >w<
+    u-utegwesuwts: map[tweetid, rawr tweetwecommendation]
+  ): d-doubwe = {
+    u-utegwesuwts.get(seawchwesuwt.id).map(_.scowe).getowewse(defauwtemptyscowe)
   }
 
-  private[this] def getEarlybirdScore(metadataOpt: Option[ThriftSearchResultMetadata]): Double = {
-    metadataOpt
-      .flatMap(metadata => metadata.score)
-      .getOrElse(DefaultEmptyScore)
+  pwivate[this] d-def geteawwybiwdscowe(metadataopt: option[thwiftseawchwesuwtmetadata]): d-doubwe = {
+    metadataopt
+      .fwatmap(metadata => metadata.scowe)
+      .getowewse(defauwtemptyscowe)
   }
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = maxTweetCountProvider(envelope.query)
-    val earlybirdScoreMultiplier = earlybirdScoreMultiplierProvider(envelope.query)
-    val realGraphScoreMultiplier = DefaultRealGraphWeight
+  ovewwide d-def appwy(envewope: candidateenvewope): f-futuwe[candidateenvewope] = {
+    vaw maxcount = m-maxtweetcountpwovidew(envewope.quewy)
+    v-vaw eawwybiwdscowemuwtipwiew = eawwybiwdscowemuwtipwiewpwovidew(envewope.quewy)
+    vaw weawgwaphscowemuwtipwiew = defauwtweawgwaphweight
 
-    val searchResultsAndScore = envelope.searchResults.map { searchResult =>
-      val realGraphScore = getRealGraphScore(searchResult, envelope.utegResults)
-      val earlybirdScore = getEarlybirdScore(searchResult.metadata)
-      earlybirdScoreX100Stat.add(earlybirdScore.toFloat * 100)
-      realGraphScoreX100Stat.add(realGraphScore.toFloat * 100)
-      val combinedScore =
-        realGraphScoreMultiplier * realGraphScore + earlybirdScoreMultiplier * earlybirdScore
-      (searchResult, combinedScore)
+    vaw seawchwesuwtsandscowe = envewope.seawchwesuwts.map { seawchwesuwt =>
+      v-vaw weawgwaphscowe = g-getweawgwaphscowe(seawchwesuwt, 😳 envewope.utegwesuwts)
+      v-vaw eawwybiwdscowe = geteawwybiwdscowe(seawchwesuwt.metadata)
+      e-eawwybiwdscowex100stat.add(eawwybiwdscowe.tofwoat * 100)
+      w-weawgwaphscowex100stat.add(weawgwaphscowe.tofwoat * 100)
+      vaw combinedscowe =
+        weawgwaphscowemuwtipwiew * w-weawgwaphscowe + eawwybiwdscowemuwtipwiew * eawwybiwdscowe
+      (seawchwesuwt, >w< combinedscowe)
     }
 
-    // set aside results that are marked by isRandomTweet field
-    val (randomSearchResults, otherSearchResults) = searchResultsAndScore.partition {
-      resultAndScore =>
-        resultAndScore._1.tweetFeatures.flatMap(_.isRandomTweet).getOrElse(false)
+    // set aside wesuwts that awe mawked b-by iswandomtweet fiewd
+    vaw (wandomseawchwesuwts, (⑅˘꒳˘) o-othewseawchwesuwts) = s-seawchwesuwtsandscowe.pawtition {
+      w-wesuwtandscowe =>
+        wesuwtandscowe._1.tweetfeatuwes.fwatmap(_.iswandomtweet).getowewse(fawse)
     }
 
-    val (topResults, remainingResults) = otherSearchResults
-      .sortBy(_._2)(Ordering[Double].reverse).map(_._1).splitAt(
-        maxCount - randomSearchResults.length)
+    vaw (topwesuwts, OwO w-wemainingwesuwts) = o-othewseawchwesuwts
+      .sowtby(_._2)(owdewing[doubwe].wevewse).map(_._1).spwitat(
+        m-maxcount - w-wandomseawchwesuwts.wength)
 
-    val numAdditionalReplies = numAdditionalRepliesProvider(envelope.query)
-    val additionalReplies = {
-      if (numAdditionalReplies > 0) {
-        val replyTweetIdSet =
-          envelope.hydratedTweets.outerTweets.filter(_.hasReply).map(_.tweetId).toSet
-        remainingResults.filter(result => replyTweetIdSet(result.id)).take(numAdditionalReplies)
-      } else {
-        Seq.empty
+    vaw nyumadditionawwepwies = nyumadditionawwepwiespwovidew(envewope.quewy)
+    vaw a-additionawwepwies = {
+      if (numadditionawwepwies > 0) {
+        v-vaw wepwytweetidset =
+          e-envewope.hydwatedtweets.outewtweets.fiwtew(_.haswepwy).map(_.tweetid).toset
+        w-wemainingwesuwts.fiwtew(wesuwt => w-wepwytweetidset(wesuwt.id)).take(numadditionawwepwies)
+      } ewse {
+        seq.empty
       }
     }
 
-    val transformedSearchResults =
-      topResults ++ additionalReplies ++ randomSearchResults
+    vaw twansfowmedseawchwesuwts =
+      t-topwesuwts ++ additionawwepwies ++ wandomseawchwesuwts
         .map(_._1)
 
-    resultCounter.incr(transformedSearchResults.size)
-    additionalReplyCounter.incr(additionalReplies.size)
+    wesuwtcountew.incw(twansfowmedseawchwesuwts.size)
+    additionawwepwycountew.incw(additionawwepwies.size)
 
-    Future.value(envelope.copy(searchResults = transformedSearchResults))
+    futuwe.vawue(envewope.copy(seawchwesuwts = t-twansfowmedseawchwesuwts))
   }
 }

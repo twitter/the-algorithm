@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.addentwiestimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Build the AddEntries instruction with special handling for replaceable entries.
+ * b-buiwd the a-addentwies instwuction w-with speciaw h-handwing f-fow wepwaceabwe entwies. mya
  *
- * Entries (though almost always a single entry) with a non-empty entryIdToReplace field should be
- * collected and transformed into ReplaceEntry instructions. These should be filtered out of the
- * AddEntries instruction. We avoid doing this as part of the regular AddEntriesInstructionBuilder
- * because replacement is rare and detecting replaceable entries takes linear time.
+ * entwies (though awmost awways a singwe entwy) with a nyon-empty entwyidtowepwace f-fiewd shouwd be
+ * cowwected and twansfowmed into w-wepwaceentwy instwuctions. 🥺 these s-shouwd be fiwtewed out of the
+ * addentwies instwuction. >_< we avoid d-doing this as pawt of the weguwaw a-addentwiesinstwuctionbuiwdew
+ * b-because wepwacement is wawe and detecting wepwaceabwe entwies takes wineaw t-time. >_<
  */
-case class AddEntriesWithReplaceInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
+case cwass addentwieswithwepwaceinstwuctionbuiwdew[quewy <: pipewinequewy](
+  ovewwide vaw incwudeinstwuction: i-incwudeinstwuction[quewy] = awwaysincwude)
+    e-extends u-uwtinstwuctionbuiwdew[quewy, (⑅˘꒳˘) addentwiestimewineinstwuction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val entriesToAdd = entries.filter(_.entryIdToReplace.isEmpty)
-      if (entriesToAdd.nonEmpty) Seq(AddEntriesTimelineInstruction(entriesToAdd))
-      else Seq.empty
-    } else {
-      Seq.empty
+  o-ovewwide def b-buiwd(
+    quewy: quewy, /(^•ω•^)
+    entwies: seq[timewineentwy]
+  ): s-seq[addentwiestimewineinstwuction] = {
+    if (incwudeinstwuction(quewy, rawr x3 entwies)) {
+      v-vaw entwiestoadd = entwies.fiwtew(_.entwyidtowepwace.isempty)
+      if (entwiestoadd.nonempty) seq(addentwiestimewineinstwuction(entwiestoadd))
+      ewse seq.empty
+    } ewse {
+      s-seq.empty
     }
   }
 }

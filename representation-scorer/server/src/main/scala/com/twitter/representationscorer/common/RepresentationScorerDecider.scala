@@ -1,27 +1,27 @@
-package com.twitter.representationscorer.common
+package com.twittew.wepwesentationscowew.common
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.decider.Recipient
-import com.twitter.simclusters_v2.common.DeciderGateBuilderWithIdHashing
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.decidew.decidew
+i-impowt com.twittew.decidew.wandomwecipient
+i-impowt c-com.twittew.decidew.wecipient
+i-impowt com.twittew.simcwustews_v2.common.decidewgatebuiwdewwithidhashing
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-case class RepresentationScorerDecider @Inject() (decider: Decider) {
+@singweton
+c-case cwass wepwesentationscowewdecidew @inject() (decidew: decidew) {
 
-  val deciderGateBuilder = new DeciderGateBuilderWithIdHashing(decider)
+  vaw decidewgatebuiwdew = nyew decidewgatebuiwdewwithidhashing(decidew)
 
-  def isAvailable(feature: String, recipient: Option[Recipient]): Boolean = {
-    decider.isAvailable(feature, recipient)
+  def isavaiwabwe(featuwe: s-stwing, >_< wecipient: option[wecipient]): b-boowean = {
+    decidew.isavaiwabwe(featuwe, rawr x3 w-wecipient)
   }
 
   /**
-   * When useRandomRecipient is set to false, the decider is either completely on or off.
-   * When useRandomRecipient is set to true, the decider is on for the specified % of traffic.
+   * when usewandomwecipient is set to fawse, mya t-the decidew is eithew compwetewy o-on ow off. nyaa~~
+   * w-when usewandomwecipient is set to twue, (⑅˘꒳˘) the decidew is on fow the specified % o-of twaffic. rawr x3
    */
-  def isAvailable(feature: String, useRandomRecipient: Boolean = true): Boolean = {
-    if (useRandomRecipient) isAvailable(feature, Some(RandomRecipient))
-    else isAvailable(feature, None)
+  def isavaiwabwe(featuwe: stwing, (✿oωo) usewandomwecipient: boowean = twue): boowean = {
+    i-if (usewandomwecipient) isavaiwabwe(featuwe, (ˆ ﻌ ˆ)♡ s-some(wandomwecipient))
+    e-ewse isavaiwabwe(featuwe, (˘ω˘) n-none)
   }
 }

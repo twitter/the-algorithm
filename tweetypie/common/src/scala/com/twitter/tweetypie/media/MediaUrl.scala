@@ -1,108 +1,108 @@
-package com.twitter.tweetypie
-package media
+package com.twittew.tweetypie
+package m-media
 
-import com.twitter.logging.Logger
-import com.twitter.tweetypie.thriftscala.MediaEntity
-import com.twitter.tweetypie.thriftscala.UrlEntity
+impowt c-com.twittew.wogging.woggew
+i-impowt c-com.twittew.tweetypie.thwiftscawa.mediaentity
+i-impowt com.twittew.tweetypie.thwiftscawa.uwwentity
 
 /**
- * Creating and parsing tweet media entity URLs.
+ * c-cweating a-and pawsing t-tweet media entity uwws. (˘ω˘)
  *
- * There are four kinds of URL in a media entity:
+ * thewe awe fouw kinds of uww in a media entity:
  *
- *   - Display URLs: pic.twitter.com aliases for the short URL, for
- *     embedding in the tweet text.
+ *   - d-dispway uwws: pic.twittew.com awiases f-fow the showt uww, nyaa~~ fow
+ *     embedding i-in the tweet text. UwU
  *
- *   - Short URLs: regular t.co URLs that expand to the permalink URL.
+ *   - showt uwws: weguwaw t.co uwws t-that expand to the pewmawink u-uww.
  *
- *   - Permalink URLs: link to a page that displays the media after
- *     doing authorization
+ *   - p-pewmawink uwws: wink to a page that dispways the media aftew
+ *     doing authowization
  *
- *   - Asset URLs: links to the actual media asset.
+ *   - a-asset uwws: winks to the actuaw media asset. :3
  *
  */
-object MediaUrl {
-  private[this] val log = Logger(getClass)
+object mediauww {
+  pwivate[this] v-vaw wog = woggew(getcwass)
 
   /**
-   * The URL that should be filled in to the displayUrl field of the
-   * media entity. This URL behaves exactly the same as a t.co link
-   * (only the domain is different.)
+   * the u-uww that shouwd b-be fiwwed in t-to the dispwayuww f-fiewd of the
+   * media entity. (⑅˘꒳˘) this uww behaves e-exactwy the same as a t.co wink
+   * (onwy the d-domain is diffewent.)
    */
-  object Display {
-    val Root = "pic.twitter.com/"
+  object dispway {
+    vaw woot = "pic.twittew.com/"
 
-    def fromTcoSlug(tcoSlug: String): String = Root + tcoSlug
+    def fwomtcoswug(tcoswug: stwing): stwing = woot + tcoswug
   }
 
   /**
-   * The link target for the link in the tweet text (the expanded URL
-   * for the media, copied from the URL entity.) For native photos,
-   * this is the tweet permalink page.
+   * t-the wink tawget fow the wink in t-the tweet text (the e-expanded uww
+   * f-fow the media, (///ˬ///✿) copied fwom the uww entity.) fow nyative p-photos, ^^;;
+   * this i-is the tweet pewmawink page. >_<
    *
-   * For users without a screen name ("handleless" or NoScreenName users)
-   * a permalink to /i/status/:tweet_id is used.
+   * f-fow usews w-without a scween nyame ("handwewess" o-ow nyoscweenname usews)
+   * a-a pewmawink to /i/status/:tweet_id is used. rawr x3
    */
-  object Permalink {
-    val Root = "https://twitter.com/"
-    val Internal = "i"
-    val PhotoSuffix = "/photo/1"
-    val VideoSuffix = "/video/1"
+  o-object pewmawink {
+    v-vaw woot = "https://twittew.com/"
+    vaw intewnaw = "i"
+    v-vaw p-photosuffix = "/photo/1"
+    vaw videosuffix = "/video/1"
 
-    def apply(screenName: String, tweetId: TweetId, isVideo: Boolean): String =
-      Root +
-        (if (screenName.isEmpty) Internal else screenName) +
+    def appwy(scweenname: stwing, /(^•ω•^) tweetid: tweetid, :3 isvideo: boowean): s-stwing =
+      w-woot +
+        (if (scweenname.isempty) intewnaw e-ewse scweenname) +
         "/status/" +
-        tweetId +
-        (if (isVideo) VideoSuffix else PhotoSuffix)
+        t-tweetid +
+        (if (isvideo) v-videosuffix ewse photosuffix)
 
-    private[this] val PermalinkRegex =
-      """https?://twitter.com/(?:#!/)?\w+/status/(\d+)/(?:photo|video)/\d+""".r
+    pwivate[this] vaw pewmawinkwegex =
+      """https?://twittew.com/(?:#!/)?\w+/status/(\d+)/(?:photo|video)/\d+""".w
 
-    private[this] def getTweetId(permalink: String): Option[TweetId] =
-      permalink match {
-        case PermalinkRegex(tweetIdStr) =>
-          try {
-            Some(tweetIdStr.toLong)
-          } catch {
-            // Digits too big to fit in a Long
-            case _: NumberFormatException => None
+    p-pwivate[this] def gettweetid(pewmawink: stwing): option[tweetid] =
+      pewmawink m-match {
+        case pewmawinkwegex(tweetidstw) =>
+          t-twy {
+            s-some(tweetidstw.towong)
+          } c-catch {
+            // digits t-too big to fit i-in a wong
+            c-case _: nyumbewfowmatexception => n-nyone
           }
-        case _ => None
+        case _ => nyone
       }
 
-    def getTweetId(urlEntity: UrlEntity): Option[TweetId] =
-      urlEntity.expanded.flatMap(getTweetId)
+    def gettweetid(uwwentity: u-uwwentity): o-option[tweetid] =
+      u-uwwentity.expanded.fwatmap(gettweetid)
 
-    def hasTweetId(permalink: String, tweetId: TweetId): Boolean =
-      getTweetId(permalink).contains(tweetId)
+    d-def hastweetid(pewmawink: s-stwing, (ꈍᴗꈍ) tweetid: tweetid): boowean =
+      gettweetid(pewmawink).contains(tweetid)
 
-    def hasTweetId(mediaEntity: MediaEntity, tweetId: TweetId): Boolean =
-      hasTweetId(mediaEntity.expandedUrl, tweetId)
+    def hastweetid(mediaentity: m-mediaentity, /(^•ω•^) tweetid: tweetid): boowean =
+      hastweetid(mediaentity.expandeduww, (⑅˘꒳˘) tweetid)
 
-    def hasTweetId(urlEntity: UrlEntity, tweetId: TweetId): Boolean =
-      getTweetId(urlEntity).contains(tweetId)
+    def hastweetid(uwwentity: u-uwwentity, ( ͡o ω ͡o ) tweetid: tweetid): boowean =
+      gettweetid(uwwentity).contains(tweetid)
   }
 
   /**
-   * Converts a url that starts with "https://" to one that starts with "http://".
+   * c-convewts a-a uww that stawts w-with "https://" to one that s-stawts with "http://". òωó
    */
-  def httpsToHttp(url: String): String =
-    url.replace("https://", "http://")
+  def httpstohttp(uww: s-stwing): stwing =
+    u-uww.wepwace("https://", (⑅˘꒳˘) "http://")
 
   /**
-   * Gets the last path element from an asset url.  This exists temporarily to support
-   * the now deprecated mediaPath element in MediaEntity.
+   * gets the wast path ewement fwom an asset uww. XD  this exists tempowawiwy t-to suppowt
+   * the now depwecated m-mediapath ewement in mediaentity. -.-
    */
-  def mediaPathFromUrl(url: String): String =
-    url.lastIndexOf('/') match {
-      case -1 =>
-        log.error("Invalid media path. Could not find last element: " + url)
-        // Better to return a broken preview URL to the client
-        // than to fail the whole request.
+  d-def m-mediapathfwomuww(uww: stwing): stwing =
+    uww.wastindexof('/') m-match {
+      c-case -1 =>
+        wog.ewwow("invawid m-media path. :3 c-couwd nyot find wast ewement: " + uww)
+        // bettew to wetuwn a bwoken pweview u-uww to the c-cwient
+        // t-than to faiw the whowe wequest. nyaa~~
         ""
 
-      case idx =>
-        url.substring(idx + 1)
+      c-case idx =>
+        u-uww.substwing(idx + 1)
     }
 }

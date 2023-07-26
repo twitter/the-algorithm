@@ -1,53 +1,53 @@
-package com.twitter.search.common.encoding.features;
+package com.twittew.seawch.common.encoding.featuwes;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
 /**
- * Normalizes values as follows:
- *   Positive numbers normalize to (1 + round(log_baseN(value))).
- *   Negative numbers throw.
- *   0 will normalize to 0.
- * The log base is 2 by default.
+ * n-nyowmawizes v-vawues as f-fowwows:
+ *   positive n-nyumbews n-nyowmawize to (1 + w-wound(wog_basen(vawue))). ʘwʘ
+ *   n-negative nyumbews t-thwow. /(^•ω•^)
+ *   0 wiww nyowmawize to 0. ʘwʘ
+ * the wog base is 2 by defauwt. σωσ
  */
-public class LogByteNormalizer extends ByteNormalizer {
+pubwic c-cwass wogbytenowmawizew extends bytenowmawizew {
 
-  private static final double DEFAULT_BASE = 2;
-  private final double base;
-  private final double logBase;
+  p-pwivate static finaw doubwe d-defauwt_base = 2;
+  pwivate finaw doubwe base;
+  pwivate finaw d-doubwe wogbase;
 
-  public LogByteNormalizer(double base) {
-    Preconditions.checkArgument(base > 0);
+  pubwic wogbytenowmawizew(doubwe b-base) {
+    p-pweconditions.checkawgument(base > 0);
     this.base = base;
-    logBase = Math.log(base);
+    wogbase = math.wog(base);
   }
 
-  public LogByteNormalizer() {
-    this(DEFAULT_BASE);
+  pubwic wogbytenowmawizew() {
+    t-this(defauwt_base);
   }
 
-  @Override
-  public byte normalize(double val) {
-    if (val < 0) {
-      throw new IllegalArgumentException("Can't log-normalize negative value " + val);
-    } else if (val == 0) {
-      return 0;
-    } else {
-      long logVal = 1 + (long) Math.floor(Math.log(val) / logBase);
-      return logVal > Byte.MAX_VALUE ? Byte.MAX_VALUE : (byte) logVal;
+  @ovewwide
+  pubwic byte nyowmawize(doubwe vaw) {
+    if (vaw < 0) {
+      t-thwow nyew iwwegawawgumentexception("can't w-wog-nowmawize n-nyegative vawue " + v-vaw);
+    } e-ewse if (vaw == 0) {
+      wetuwn 0;
+    } ewse {
+      w-wong wogvaw = 1 + (wong) math.fwoow(math.wog(vaw) / wogbase);
+      wetuwn w-wogvaw > byte.max_vawue ? byte.max_vawue : (byte) wogvaw;
     }
   }
 
-  @Override
-  public double unnormLowerBound(byte norm) {
-    return norm < 0
-        ? Double.NEGATIVE_INFINITY
-        : Math.floor(Math.pow(base, norm - 1));
+  @ovewwide
+  pubwic doubwe unnowmwowewbound(byte nyowm) {
+    w-wetuwn nyowm < 0
+        ? d-doubwe.negative_infinity
+        : m-math.fwoow(math.pow(base, OwO n-nyowm - 1));
   }
 
-  @Override
-  public double unnormUpperBound(byte norm) {
-    return norm == Byte.MAX_VALUE
-        ? Double.POSITIVE_INFINITY
-        : Math.floor(Math.pow(base, norm));
+  @ovewwide
+  pubwic doubwe unnowmuppewbound(byte nyowm) {
+    w-wetuwn nyowm == b-byte.max_vawue
+        ? doubwe.positive_infinity
+        : math.fwoow(math.pow(base, 😳😳😳 n-nyowm));
   }
 }

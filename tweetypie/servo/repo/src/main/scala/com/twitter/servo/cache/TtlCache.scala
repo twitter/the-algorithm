@@ -1,95 +1,95 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.util.{Duration, Future}
+impowt com.twittew.utiw.{duwation, ( ͡o ω ͡o ) f-futuwe}
 
 /**
- * a Cache that takes a TTL per set
+ * a-a cache that t-takes a ttw pew s-set
  */
-trait TtlCache[K, V] extends ReadCache[K, V] {
-  def add(key: K, value: V, ttl: Duration): Future[Boolean]
+twait ttwcache[k, òωó v-v] extends w-weadcache[k, (⑅˘꒳˘) v-v] {
+  def add(key: k-k, XD vawue: v, -.- ttw: duwation): futuwe[boowean]
 
-  def checkAndSet(key: K, value: V, checksum: Checksum, ttl: Duration): Future[Boolean]
+  def checkandset(key: k, :3 vawue: v-v, nyaa~~ checksum: checksum, 😳 ttw: duwation): futuwe[boowean]
 
-  def set(key: K, value: V, ttl: Duration): Future[Unit]
+  def s-set(key: k, (⑅˘꒳˘) vawue: v, ttw: duwation): f-futuwe[unit]
 
   /**
-   * Replaces the value for an existing key.  If the key doesn't exist, this has no effect.
-   * @return true if replaced, false if not found
+   * wepwaces the vawue fow an existing key.  if the k-key doesn't exist, nyaa~~ this has nyo e-effect. OwO
+   * @wetuwn t-twue if wepwaced, rawr x3 fawse if nyot found
    */
-  def replace(key: K, value: V, ttl: Duration): Future[Boolean]
+  def wepwace(key: k, XD vawue: v-v, σωσ ttw: duwation): futuwe[boowean]
 
   /**
-   * Deletes a value from cache.
-   * @return true if deleted, false if not found
+   * dewetes a vawue fwom cache. (U ᵕ U❁)
+   * @wetuwn twue if d-deweted, (U ﹏ U) fawse if nyot found
    */
-  def delete(key: K): Future[Boolean]
+  d-def dewete(key: k-k): futuwe[boowean]
 }
 
 /**
- * allows one TtlCache to wrap another
+ * a-awwows one ttwcache t-to wwap anothew
  */
-trait TtlCacheWrapper[K, V] extends TtlCache[K, V] with ReadCacheWrapper[K, V, TtlCache[K, V]] {
-  override def add(key: K, value: V, ttl: Duration) = underlyingCache.add(key, value, ttl)
+twait ttwcachewwappew[k, :3 v-v] extends ttwcache[k, ( ͡o ω ͡o ) v] with weadcachewwappew[k, σωσ v-v, ttwcache[k, >w< v]] {
+  ovewwide def add(key: k, 😳😳😳 vawue: v, ttw: duwation) = undewwyingcache.add(key, OwO v-vawue, ttw)
 
-  override def checkAndSet(key: K, value: V, checksum: Checksum, ttl: Duration) =
-    underlyingCache.checkAndSet(key, value, checksum, ttl)
+  ovewwide d-def checkandset(key: k-k, 😳 vawue: v-v, 😳😳😳 checksum: checksum, (˘ω˘) ttw: duwation) =
+    undewwyingcache.checkandset(key, ʘwʘ vawue, checksum, ( ͡o ω ͡o ) t-ttw)
 
-  override def set(key: K, value: V, ttl: Duration) = underlyingCache.set(key, value, ttl)
+  ovewwide d-def set(key: k, o.O vawue: v, >w< ttw: d-duwation) = undewwyingcache.set(key, 😳 v-vawue, 🥺 ttw)
 
-  override def replace(key: K, value: V, ttl: Duration) = underlyingCache.replace(key, value, ttl)
+  ovewwide def w-wepwace(key: k, rawr x3 vawue: v, o.O ttw: d-duwation) = undewwyingcache.wepwace(key, rawr vawue, ttw)
 
-  override def delete(key: K) = underlyingCache.delete(key)
+  ovewwide d-def dewete(key: k) = undewwyingcache.dewete(key)
 }
 
-class PerturbedTtlCache[K, V](
-  override val underlyingCache: TtlCache[K, V],
-  perturbTtl: Duration => Duration)
-    extends TtlCacheWrapper[K, V] {
-  override def add(key: K, value: V, ttl: Duration) =
-    underlyingCache.add(key, value, perturbTtl(ttl))
+c-cwass pewtuwbedttwcache[k, ʘwʘ v](
+  ovewwide vaw u-undewwyingcache: t-ttwcache[k, 😳😳😳 v],
+  pewtuwbttw: duwation => duwation)
+    extends ttwcachewwappew[k, ^^;; v] {
+  ovewwide def add(key: k-k, o.O vawue: v, t-ttw: duwation) =
+    undewwyingcache.add(key, (///ˬ///✿) vawue, σωσ p-pewtuwbttw(ttw))
 
-  override def checkAndSet(key: K, value: V, checksum: Checksum, ttl: Duration) =
-    underlyingCache.checkAndSet(key, value, checksum, perturbTtl(ttl))
+  o-ovewwide d-def checkandset(key: k, nyaa~~ vawue: v, ^^;; checksum: checksum, ^•ﻌ•^ ttw: duwation) =
+    u-undewwyingcache.checkandset(key, σωσ vawue, checksum, -.- pewtuwbttw(ttw))
 
-  override def set(key: K, value: V, ttl: Duration) =
-    underlyingCache.set(key, value, perturbTtl(ttl))
+  ovewwide def set(key: k, ^^;; vawue: v-v, ttw: duwation) =
+    undewwyingcache.set(key, XD v-vawue, 🥺 pewtuwbttw(ttw))
 
-  override def replace(key: K, value: V, ttl: Duration) =
-    underlyingCache.replace(key, value, perturbTtl(ttl))
-}
-
-/**
- * an adaptor to wrap a Cache[K, V] interface around a TtlCache[K, V]
- */
-class TtlCacheToCache[K, V](override val underlyingCache: TtlCache[K, V], ttl: (K, V) => Duration)
-    extends Cache[K, V]
-    with ReadCacheWrapper[K, V, TtlCache[K, V]] {
-  override def add(key: K, value: V) = underlyingCache.add(key, value, ttl(key, value))
-
-  override def checkAndSet(key: K, value: V, checksum: Checksum) =
-    underlyingCache.checkAndSet(key, value, checksum, ttl(key, value))
-
-  override def set(key: K, value: V) = underlyingCache.set(key, value, ttl(key, value))
-
-  override def replace(key: K, value: V) = underlyingCache.replace(key, value, ttl(key, value))
-
-  override def delete(key: K) = underlyingCache.delete(key)
+  o-ovewwide def wepwace(key: k-k, òωó vawue: v, (ˆ ﻌ ˆ)♡ ttw: duwation) =
+    u-undewwyingcache.wepwace(key, -.- v-vawue, p-pewtuwbttw(ttw))
 }
 
 /**
- * use a single TTL for all objects
+ * a-an adaptow to wwap a cache[k, :3 v] intewface a-awound a ttwcache[k, ʘwʘ v-v]
  */
-class SimpleTtlCacheToCache[K, V](underlyingTtlCache: TtlCache[K, V], ttl: Duration)
-    extends TtlCacheToCache[K, V](underlyingTtlCache, (k: K, v: V) => ttl)
+c-cwass ttwcachetocache[k, 🥺 v-v](ovewwide v-vaw undewwyingcache: ttwcache[k, >_< v], ttw: (k, ʘwʘ v) => duwation)
+    e-extends cache[k, (˘ω˘) v]
+    with weadcachewwappew[k, (✿oωo) v, ttwcache[k, (///ˬ///✿) v]] {
+  ovewwide def add(key: k-k, rawr x3 vawue: v) = undewwyingcache.add(key, -.- vawue, ttw(key, ^^ vawue))
+
+  ovewwide d-def checkandset(key: k-k, (⑅˘꒳˘) vawue: v-v, checksum: checksum) =
+    undewwyingcache.checkandset(key, nyaa~~ vawue, checksum, /(^•ω•^) t-ttw(key, (U ﹏ U) vawue))
+
+  ovewwide def s-set(key: k, 😳😳😳 vawue: v-v) = undewwyingcache.set(key, >w< vawue, ttw(key, XD vawue))
+
+  ovewwide def wepwace(key: k, o.O vawue: v) = undewwyingcache.wepwace(key, mya v-vawue, ttw(key, 🥺 vawue))
+
+  ovewwide d-def dewete(key: k) = undewwyingcache.dewete(key)
+}
 
 /**
- * use a value-based TTL function
+ * u-use a singwe t-ttw fow aww objects
  */
-class ValueBasedTtlCacheToCache[K, V](underlyingTtlCache: TtlCache[K, V], ttl: V => Duration)
-    extends TtlCacheToCache[K, V](underlyingTtlCache, (k: K, v: V) => ttl(v))
+cwass simpwettwcachetocache[k, ^^;; v](undewwyingttwcache: t-ttwcache[k, :3 v-v], ttw: duwation)
+    e-extends ttwcachetocache[k, (U ﹏ U) v-v](undewwyingttwcache, OwO (k: k, v: v) => ttw)
 
 /**
- * use a key-based TTL function
+ * use a vawue-based ttw function
  */
-class KeyBasedTtlCacheToCache[K, V](underlyingTtlCache: TtlCache[K, V], ttl: K => Duration)
-    extends TtlCacheToCache[K, V](underlyingTtlCache, (k: K, v: V) => ttl(k))
+c-cwass vawuebasedttwcachetocache[k, 😳😳😳 v-v](undewwyingttwcache: t-ttwcache[k, (ˆ ﻌ ˆ)♡ v], XD ttw: v-v => duwation)
+    e-extends ttwcachetocache[k, (ˆ ﻌ ˆ)♡ v](undewwyingttwcache, ( ͡o ω ͡o ) (k: k-k, rawr x3 v: v) => ttw(v))
+
+/**
+ * use a key-based ttw function
+ */
+cwass keybasedttwcachetocache[k, nyaa~~ v-v](undewwyingttwcache: t-ttwcache[k, >_< v], ttw: k => duwation)
+    extends t-ttwcachetocache[k, ^^;; v-v](undewwyingttwcache, (ˆ ﻌ ˆ)♡ (k: k, ^^;; v: v) => ttw(k))

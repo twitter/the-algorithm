@@ -1,23 +1,23 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-import com.twitter.search.common.encoding.features.ByteNormalizer;
-import com.twitter.search.common.encoding.features.SingleBytePositiveFloatNormalizer;
-import com.twitter.search.common.encoding.features.SmartIntegerNormalizer;
+impowt com.twittew.seawch.common.encoding.featuwes.bytenowmawizew;
+i-impowt c-com.twittew.seawch.common.encoding.featuwes.singwebytepositivefwoatnowmawizew;
+impowt c-com.twittew.seawch.common.encoding.featuwes.smawtintegewnowmawizew;
 
 /**
- * Byte value normalizers used to push feature values into earlybird db.
+ * b-byte vawue nyowmawizews u-used to p-push featuwe vawues i-into eawwybiwd d-db. rawr x3
  */
-public abstract class MutableFeatureNormalizers {
-  // The max value we support in SMART_INTEGER_NORMALIZER below, this should be enough for all kinds
-  // of engagements we see on Twitter, anything larger than this would be represented as the same
-  // value (255, if using a byte).
-  private static final int MAX_COUNTER_VALUE_SUPPORTED = 50000000;
+pubwic abstwact cwass mutabwefeatuwenowmawizews {
+  // the max vawue we suppowt in s-smawt_integew_nowmawizew bewow, mya this shouwd be enough f-fow aww kinds
+  // of engagements w-we see on twittew, nyaa~~ anything wawgew than this wouwd be wepwesented a-as the same
+  // vawue (255, (⑅˘꒳˘) i-if using a-a byte). rawr x3
+  pwivate static finaw int max_countew_vawue_suppowted = 50000000;
 
-  // Avoid using this normalizer for procesing any new data, always use SmartIntegerNormalizer
-  // below.
-  public static final SingleBytePositiveFloatNormalizer BYTE_NORMALIZER =
-      new SingleBytePositiveFloatNormalizer();
+  // avoid using this nyowmawizew fow p-pwocesing any new data, (✿oωo) awways use smawtintegewnowmawizew
+  // bewow. (ˆ ﻌ ˆ)♡
+  pubwic static finaw singwebytepositivefwoatnowmawizew b-byte_nowmawizew =
+      nyew singwebytepositivefwoatnowmawizew();
 
-  public static final ByteNormalizer SMART_INTEGER_NORMALIZER =
-      new SmartIntegerNormalizer(MAX_COUNTER_VALUE_SUPPORTED, 8);
+  p-pubwic static f-finaw bytenowmawizew s-smawt_integew_nowmawizew =
+      n-nyew smawtintegewnowmawizew(max_countew_vawue_suppowted, (˘ω˘) 8);
 }

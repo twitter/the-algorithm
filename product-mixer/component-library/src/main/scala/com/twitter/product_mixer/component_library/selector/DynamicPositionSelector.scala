@@ -1,124 +1,124 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-private[selector] object DynamicPositionSelector {
+pwivate[sewectow] object d-dynamicpositionsewectow {
 
-  sealed trait IndexType
-  case object RelativeIndices extends IndexType
-  case object AbsoluteIndices extends IndexType
+  s-seawed twait i-indextype
+  case o-object wewativeindices e-extends i-indextype
+  case o-object absowuteindices e-extends indextype
 
   /**
-   * Given an existing `result` seq, inserts candidates from `candidatesToInsertByIndex` into the `result` 1-by-1 with
-   * the provided index being the index relative to the `result` if given [[RelativeIndices]] or
-   * absolute index if given [[AbsoluteIndices]] (excluding duplicate insertions at an index, see below).
+   * given an existing `wesuwt` seq, òωó insewts candidates fwom `candidatestoinsewtbyindex` i-into the `wesuwt` 1-by-1 with
+   * the pwovided index b-being the index wewative to the `wesuwt` i-if given [[wewativeindices]] ow
+   * absowute index if given [[absowuteindices]] (excwuding d-dupwicate insewtions at an i-index, (⑅˘꒳˘) see bewow).
    *
-   * Indices below 0 are added to the front and indices > the length are added to the end
+   * i-indices bewow 0 awe added to the fwont and indices > the wength awe a-added to the end
    *
-   * @note if multiple candidates exist with the same index, they are inserted in the order which they appear and only count
-   *       as a single element with regards to the absolute index values, see the example below
+   * @note if muwtipwe candidates exist with the same index, XD they awe insewted i-in the owdew which they appeaw a-and onwy count
+   *       as a-a singwe ewement w-with wegawds t-to the absowute index vawues, -.- see the exampwe bewow
    *
-   * @example when using [[RelativeIndices]] {{{
-   *          mergeByIndexIntoResult(
-   *          Seq(
-   *            0 -> "a",
-   *            0 -> "b",
-   *            0 -> "c",
-   *            1 -> "e",
-   *            2 -> "g",
-   *            2 -> "h"),
-   *          Seq(
-   *            "D",
-   *            "F"
-   *          ),
-   *          RelativeIndices) == Seq(
-   *            "a",
-   *            "b",
-   *            "c",
-   *            "D",
-   *            "e",
-   *            "F",
-   *            "g",
+   * @exampwe w-when using [[wewativeindices]] {{{
+   *          mewgebyindexintowesuwt(
+   *          seq(
+   *            0 -> "a", :3
+   *            0 -> "b", nyaa~~
+   *            0 -> "c", 😳
+   *            1 -> "e", (⑅˘꒳˘)
+   *            2 -> "g", nyaa~~
+   *            2 -> "h"), OwO
+   *          s-seq(
+   *            "d", rawr x3
+   *            "f"
+   *          ), XD
+   *          wewativeindices) == seq(
+   *            "a", σωσ
+   *            "b", (U ᵕ U❁)
+   *            "c", (U ﹏ U)
+   *            "d", :3
+   *            "e", ( ͡o ω ͡o )
+   *            "f", σωσ
+   *            "g", >w<
    *            "h"
    *          )
    * }}}
    *
-   * @example when using [[AbsoluteIndices]] {{{
-   *          mergeByIndexIntoResult(
-   *          Seq(
-   *            0 -> "a",
-   *            0 -> "b",
-   *            1 -> "c",
-   *            3 -> "e",
-   *            5 -> "g",
-   *            6 -> "h"),
-   *          Seq(
-   *            "D",
-   *            "F"
-   *          ),
-   *          AbsoluteIndices) == Seq(
-   *            "a", // index 0, "a" and "b" together only count as 1 element with regards to indexes because they have duplicate insertion points
-   *            "b", // index 0
-   *            "c", // index 1
-   *            "D", // index 2
-   *            "e", // index 3
-   *            "F", // index 4
-   *            "g", // index 5
+   * @exampwe when using [[absowuteindices]] {{{
+   *          mewgebyindexintowesuwt(
+   *          seq(
+   *            0 -> "a", 😳😳😳
+   *            0 -> "b", OwO
+   *            1 -> "c", 😳
+   *            3 -> "e", 😳😳😳
+   *            5 -> "g", (˘ω˘)
+   *            6 -> "h"), ʘwʘ
+   *          seq(
+   *            "d", ( ͡o ω ͡o )
+   *            "f"
+   *          ), o.O
+   *          a-absowuteindices) == seq(
+   *            "a", >w< // index 0, 😳 "a" a-and "b" t-togethew onwy count a-as 1 ewement with wegawds to indexes because they have dupwicate i-insewtion p-points
+   *            "b", 🥺 // index 0
+   *            "c", rawr x3 // index 1
+   *            "d", o.O // index 2
+   *            "e", rawr // index 3
+   *            "f", ʘwʘ // index 4
+   *            "g", 😳😳😳 // index 5
    *            "h" // index 6
    *          )
    * }}}
    */
-  def mergeByIndexIntoResult[T]( // generic on `T` to simplify unit testing
-    candidatesToInsertByIndex: Seq[(Int, T)],
-    result: Seq[T],
-    indexType: IndexType
-  ): Seq[T] = {
-    val positionAndCandidateList = candidatesToInsertByIndex.sortWith {
-      case ((indexLeft: Int, _), (indexRight: Int, _)) =>
-        indexLeft < indexRight // order by desired absolute index ascending
+  d-def mewgebyindexintowesuwt[t]( // g-genewic on `t` to simpwify u-unit testing
+    candidatestoinsewtbyindex: s-seq[(int, ^^;; t)],
+    wesuwt: seq[t], o.O
+    indextype: i-indextype
+  ): seq[t] = {
+    v-vaw positionandcandidatewist = candidatestoinsewtbyindex.sowtwith {
+      case ((indexweft: i-int, (///ˬ///✿) _), (indexwight: i-int, σωσ _)) =>
+        indexweft < indexwight // owdew by desiwed absowute index ascending
     }
 
-    // Merge result and positionAndCandidateList into resultUpdated while making sure that the entries
-    // from the positionAndCandidateList are inserted at the right index.
-    val resultUpdated = Seq.newBuilder[T]
-    resultUpdated.sizeHint(result.size + positionAndCandidateList.size)
+    // mewge wesuwt a-and positionandcandidatewist i-into wesuwtupdated whiwe making s-suwe that the e-entwies
+    // fwom t-the positionandcandidatewist awe insewted at the wight index. nyaa~~
+    vaw wesuwtupdated = s-seq.newbuiwdew[t]
+    wesuwtupdated.sizehint(wesuwt.size + positionandcandidatewist.size)
 
-    var currentResultIndex = 0
-    val inputResultIterator = result.iterator
-    val positionAndCandidateIterator = positionAndCandidateList.iterator.buffered
-    var previousInsertPosition: Option[Int] = None
+    vaw cuwwentwesuwtindex = 0
+    vaw inputwesuwtitewatow = w-wesuwt.itewatow
+    vaw positionandcandidateitewatow = p-positionandcandidatewist.itewatow.buffewed
+    v-vaw pweviousinsewtposition: o-option[int] = nyone
 
-    while (inputResultIterator.nonEmpty && positionAndCandidateIterator.nonEmpty) {
-      positionAndCandidateIterator.head match {
-        case (nextInsertionPosition, nextCandidateToInsert)
-            if previousInsertPosition.contains(nextInsertionPosition) =>
-          // inserting multiple candidates at the same index
-          resultUpdated += nextCandidateToInsert
-          // do not increment any indices, but insert the candidate and advance to the next candidate
-          positionAndCandidateIterator.next()
+    whiwe (inputwesuwtitewatow.nonempty && p-positionandcandidateitewatow.nonempty) {
+      p-positionandcandidateitewatow.head m-match {
+        c-case (nextinsewtionposition, ^^;; nyextcandidatetoinsewt)
+            if pweviousinsewtposition.contains(nextinsewtionposition) =>
+          // i-insewting muwtipwe c-candidates at t-the same index
+          w-wesuwtupdated += n-nyextcandidatetoinsewt
+          // do not incwement any indices, ^•ﻌ•^ but insewt the candidate a-and advance to the nyext candidate
+          positionandcandidateitewatow.next()
 
-        case (nextInsertionPosition, nextCandidateToInsert)
-            if currentResultIndex >= nextInsertionPosition =>
-          // inserting a candidate at a new index
-          // add candidate to the results
-          resultUpdated += nextCandidateToInsert
-          // save the position of the inserted element to handle duplicate index insertions
-          previousInsertPosition = Some(nextInsertionPosition)
-          // advance to next candidate
-          positionAndCandidateIterator.next()
-          if (indexType == AbsoluteIndices) {
-            // if the indices are absolute, instead of relative to the original `result` we need to
-            // count the insertions of candidates into the results towards the `currentResultIndex`
-            currentResultIndex += 1
+        case (nextinsewtionposition, σωσ nyextcandidatetoinsewt)
+            if cuwwentwesuwtindex >= n-nyextinsewtionposition =>
+          // insewting a candidate at a nyew index
+          // a-add candidate t-to the wesuwts
+          w-wesuwtupdated += nyextcandidatetoinsewt
+          // s-save the position of the insewted e-ewement to handwe d-dupwicate index insewtions
+          pweviousinsewtposition = some(nextinsewtionposition)
+          // advance to nyext candidate
+          p-positionandcandidateitewatow.next()
+          if (indextype == absowuteindices) {
+            // i-if the indices awe absowute, instead o-of wewative t-to the owiginaw `wesuwt` we nyeed to
+            // c-count the i-insewtions of candidates into the w-wesuwts towawds t-the `cuwwentwesuwtindex`
+            cuwwentwesuwtindex += 1
           }
         case _ =>
-          // no candidate to insert by index so use the candidates from the result and increment the index
-          resultUpdated += inputResultIterator.next()
-          currentResultIndex += 1
+          // nyo candidate to insewt b-by index so use t-the candidates f-fwom the wesuwt and incwement the i-index
+          w-wesuwtupdated += inputwesuwtitewatow.next()
+          c-cuwwentwesuwtindex += 1
       }
     }
-    // one of the iterators is empty, so append the remaining candidates in order to the end
-    resultUpdated ++= positionAndCandidateIterator.map { case (_, candidate) => candidate }
-    resultUpdated ++= inputResultIterator
+    // one of the itewatows is empty, -.- so append the wemaining candidates i-in owdew t-to the end
+    wesuwtupdated ++= positionandcandidateitewatow.map { c-case (_, ^^;; candidate) => c-candidate }
+    wesuwtupdated ++= inputwesuwtitewatow
 
-    resultUpdated.result()
+    wesuwtupdated.wesuwt()
   }
 }

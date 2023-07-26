@@ -1,30 +1,30 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.seawch.eawwybiwd.common.cwientidutiw;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.utiw.futuwe;
 
 /**
- * A filter that will set the clientId of the request to the strato HttpEndpoint Attribution.
+ * a-a fiwtew t-that wiww set the cwientid of the wequest to the stwato httpendpoint attwibution. >_<
  * <p>
- * If the clientId is already set to something non-null then that value is used.
- * If the clientId is null but Attribution.httpEndpoint() contains a value it will be set as
- * the clientId.
+ * i-if the cwientid is awweady set to something nyon-nuww t-then that vawue is used. rawr x3
+ * i-if the cwientid is nyuww but attwibution.httpendpoint() contains a-a vawue it wiww be set as
+ * t-the cwientid. mya
  */
-public class StratoAttributionClientIdFilter extends
-    SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request, Service<EarlybirdRequest, EarlybirdResponse> service
+p-pubwic cwass stwatoattwibutioncwientidfiwtew extends
+    simpwefiwtew<eawwybiwdwequest, nyaa~~ eawwybiwdwesponse> {
+  @ovewwide
+  pubwic f-futuwe<eawwybiwdwesponse> appwy(
+      eawwybiwdwequest wequest, (⑅˘꒳˘) sewvice<eawwybiwdwequest, rawr x3 eawwybiwdwesponse> s-sewvice
   ) {
-    if (request.getClientId() == null) {
-      ClientIdUtil.getClientIdFromHttpEndpointAttribution().ifPresent(request::setClientId);
+    if (wequest.getcwientid() == n-nyuww) {
+      c-cwientidutiw.getcwientidfwomhttpendpointattwibution().ifpwesent(wequest::setcwientid);
     }
 
-    return service.apply(request);
+    w-wetuwn sewvice.appwy(wequest);
   }
 }
 

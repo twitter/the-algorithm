@@ -1,123 +1,123 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.RealGraphViewerAuthorFeatureHydrator.getCombinedRealGraphFeatures
-import com.twitter.home_mixer.util.MissingKeyException
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.adapters.real_graph.RealGraphEdgeFeaturesCombineAdapter
-import com.twitter.timelines.prediction.adapters.real_graph.RealGraphFeaturesAdapter
-import com.twitter.timelines.real_graph.v1.{thriftscala => v1}
-import com.twitter.timelines.real_graph.{thriftscala => rg}
-import com.twitter.util.Throw
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.inwepwytousewidfeatuwe
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.weawgwaphviewewauthowfeatuwehydwatow.getcombinedweawgwaphfeatuwes
+i-impowt com.twittew.home_mixew.utiw.missingkeyexception
+i-impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.timewines.pwediction.adaptews.weaw_gwaph.weawgwaphedgefeatuwescombineadaptew
+impowt c-com.twittew.timewines.pwediction.adaptews.weaw_gwaph.weawgwaphfeatuwesadaptew
+impowt c-com.twittew.timewines.weaw_gwaph.v1.{thwiftscawa => v1}
+impowt com.twittew.timewines.weaw_gwaph.{thwiftscawa => wg}
+impowt com.twittew.utiw.thwow
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
+impowt scawa.cowwection.javaconvewtews._
 
-object RealGraphViewerAuthorDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object weawgwaphviewewauthowdatawecowdfeatuwe
+    e-extends datawecowdinafeatuwe[tweetcandidate]
+    w-with f-featuwewithdefauwtonfaiwuwe[tweetcandidate, 🥺 datawecowd] {
+  ovewwide d-def defauwtvawue: d-datawecowd = nyew datawecowd()
 }
 
-object RealGraphViewerAuthorsDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object w-weawgwaphviewewauthowsdatawecowdfeatuwe
+    extends datawecowdinafeatuwe[tweetcandidate]
+    with featuwewithdefauwtonfaiwuwe[tweetcandidate, (⑅˘꒳˘) d-datawecowd] {
+  ovewwide def defauwtvawue: datawecowd = nyew datawecowd()
 }
 
-@Singleton
-class RealGraphViewerAuthorFeatureHydrator @Inject() ()
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@singweton
+cwass weawgwaphviewewauthowfeatuwehydwatow @inject() ()
+    extends candidatefeatuwehydwatow[pipewinequewy, nyaa~~ t-tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RealGraphViewerAuthor")
+  ovewwide v-vaw identifiew: f-featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("weawgwaphviewewauthow")
 
-  override val features: Set[Feature[_, _]] =
-    Set(RealGraphViewerAuthorDataRecordFeature, RealGraphViewerAuthorsDataRecordFeature)
+  ovewwide vaw featuwes: set[featuwe[_, :3 _]] =
+    s-set(weawgwaphviewewauthowdatawecowdfeatuwe, ( ͡o ω ͡o ) w-weawgwaphviewewauthowsdatawecowdfeatuwe)
 
-  private val realGraphEdgeFeaturesAdapter = new RealGraphFeaturesAdapter
-  private val realGraphEdgeFeaturesCombineAdapter =
-    new RealGraphEdgeFeaturesCombineAdapter(prefix = "authors.realgraph")
+  pwivate vaw weawgwaphedgefeatuwesadaptew = n-nyew w-weawgwaphfeatuwesadaptew
+  pwivate v-vaw weawgwaphedgefeatuwescombineadaptew =
+    new weawgwaphedgefeatuwescombineadaptew(pwefix = "authows.weawgwaph")
 
-  private val MissingKeyFeatureMap = FeatureMapBuilder()
-    .add(RealGraphViewerAuthorDataRecordFeature, Throw(MissingKeyException))
-    .add(RealGraphViewerAuthorsDataRecordFeature, Throw(MissingKeyException))
-    .build()
+  p-pwivate vaw missingkeyfeatuwemap = featuwemapbuiwdew()
+    .add(weawgwaphviewewauthowdatawecowdfeatuwe, mya t-thwow(missingkeyexception))
+    .add(weawgwaphviewewauthowsdatawecowdfeatuwe, (///ˬ///✿) thwow(missingkeyexception))
+    .buiwd()
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = OffloadFuturePools.offload {
-    val viewerId = query.getRequiredUserId
-    val realGraphFeatures = query.features
-      .flatMap(_.getOrElse(RealGraphFeatures, None))
-      .getOrElse(Map.empty[Long, v1.RealGraphEdgeFeatures])
+  o-ovewwide def appwy(
+    q-quewy: pipewinequewy, (˘ω˘)
+    candidate: t-tweetcandidate, ^^;;
+    existingfeatuwes: featuwemap
+  ): stitch[featuwemap] = offwoadfutuwepoows.offwoad {
+    vaw viewewid = quewy.getwequiwedusewid
+    v-vaw weawgwaphfeatuwes = q-quewy.featuwes
+      .fwatmap(_.getowewse(weawgwaphfeatuwes, (✿oωo) nyone))
+      .getowewse(map.empty[wong, (U ﹏ U) v1.weawgwaphedgefeatuwes])
 
-    existingFeatures.getOrElse(AuthorIdFeature, None) match {
-      case Some(authorId) =>
-        val realGraphAuthorFeatures =
-          getRealGraphViewerAuthorFeatures(viewerId, authorId, realGraphFeatures)
-        val realGraphAuthorDataRecord = realGraphEdgeFeaturesAdapter
-          .adaptToDataRecords(realGraphAuthorFeatures).asScala.headOption.getOrElse(new DataRecord)
+    existingfeatuwes.getowewse(authowidfeatuwe, -.- n-nyone) m-match {
+      c-case some(authowid) =>
+        vaw weawgwaphauthowfeatuwes =
+          getweawgwaphviewewauthowfeatuwes(viewewid, ^•ﻌ•^ authowid, weawgwaphfeatuwes)
+        v-vaw weawgwaphauthowdatawecowd = weawgwaphedgefeatuwesadaptew
+          .adapttodatawecowds(weawgwaphauthowfeatuwes).asscawa.headoption.getowewse(new datawecowd)
 
-        val combinedRealGraphFeaturesDataRecord = for {
-          inReplyToAuthorId <- existingFeatures.getOrElse(InReplyToUserIdFeature, None)
-        } yield {
-          val combinedRealGraphFeatures =
-            getCombinedRealGraphFeatures(Seq(authorId, inReplyToAuthorId), realGraphFeatures)
-          realGraphEdgeFeaturesCombineAdapter
-            .adaptToDataRecords(Some(combinedRealGraphFeatures)).asScala.headOption
-            .getOrElse(new DataRecord)
+        vaw combinedweawgwaphfeatuwesdatawecowd = fow {
+          i-inwepwytoauthowid <- existingfeatuwes.getowewse(inwepwytousewidfeatuwe, rawr n-nyone)
+        } y-yiewd {
+          v-vaw combinedweawgwaphfeatuwes =
+            getcombinedweawgwaphfeatuwes(seq(authowid, (˘ω˘) i-inwepwytoauthowid), nyaa~~ w-weawgwaphfeatuwes)
+          w-weawgwaphedgefeatuwescombineadaptew
+            .adapttodatawecowds(some(combinedweawgwaphfeatuwes)).asscawa.headoption
+            .getowewse(new d-datawecowd)
         }
 
-        FeatureMapBuilder()
-          .add(RealGraphViewerAuthorDataRecordFeature, realGraphAuthorDataRecord)
+        featuwemapbuiwdew()
+          .add(weawgwaphviewewauthowdatawecowdfeatuwe, UwU weawgwaphauthowdatawecowd)
           .add(
-            RealGraphViewerAuthorsDataRecordFeature,
-            combinedRealGraphFeaturesDataRecord.getOrElse(new DataRecord))
-          .build()
-      case _ => MissingKeyFeatureMap
+            w-weawgwaphviewewauthowsdatawecowdfeatuwe, :3
+            c-combinedweawgwaphfeatuwesdatawecowd.getowewse(new d-datawecowd))
+          .buiwd()
+      case _ => m-missingkeyfeatuwemap
     }
   }
 
-  private def getRealGraphViewerAuthorFeatures(
-    viewerId: Long,
-    authorId: Long,
-    realGraphEdgeFeaturesMap: Map[Long, v1.RealGraphEdgeFeatures]
-  ): rg.UserRealGraphFeatures = {
-    realGraphEdgeFeaturesMap.get(authorId) match {
-      case Some(realGraphEdgeFeatures) =>
-        rg.UserRealGraphFeatures(
-          srcId = viewerId,
-          features = rg.RealGraphFeatures.V1(
-            v1.RealGraphFeatures(edgeFeatures = Seq(realGraphEdgeFeatures))))
-      case _ =>
-        rg.UserRealGraphFeatures(
-          srcId = viewerId,
-          features = rg.RealGraphFeatures.V1(v1.RealGraphFeatures(edgeFeatures = Seq.empty)))
+  p-pwivate def getweawgwaphviewewauthowfeatuwes(
+    viewewid: wong, (⑅˘꒳˘)
+    a-authowid: wong, (///ˬ///✿)
+    weawgwaphedgefeatuwesmap: map[wong, ^^;; v1.weawgwaphedgefeatuwes]
+  ): wg.usewweawgwaphfeatuwes = {
+    weawgwaphedgefeatuwesmap.get(authowid) match {
+      case s-some(weawgwaphedgefeatuwes) =>
+        wg.usewweawgwaphfeatuwes(
+          swcid = viewewid, >_<
+          f-featuwes = w-wg.weawgwaphfeatuwes.v1(
+            v-v1.weawgwaphfeatuwes(edgefeatuwes = seq(weawgwaphedgefeatuwes))))
+      c-case _ =>
+        wg.usewweawgwaphfeatuwes(
+          s-swcid = v-viewewid, rawr x3
+          featuwes = wg.weawgwaphfeatuwes.v1(v1.weawgwaphfeatuwes(edgefeatuwes = seq.empty)))
     }
   }
 }
 
-object RealGraphViewerAuthorFeatureHydrator {
-  def getCombinedRealGraphFeatures(
-    userIds: Seq[Long],
-    realGraphEdgeFeaturesMap: Map[Long, v1.RealGraphEdgeFeatures]
-  ): rg.RealGraphFeatures = {
-    val edgeFeatures = userIds.flatMap(realGraphEdgeFeaturesMap.get)
-    rg.RealGraphFeatures.V1(v1.RealGraphFeatures(edgeFeatures = edgeFeatures))
+object weawgwaphviewewauthowfeatuwehydwatow {
+  def getcombinedweawgwaphfeatuwes(
+    usewids: s-seq[wong], /(^•ω•^)
+    weawgwaphedgefeatuwesmap: m-map[wong, :3 v1.weawgwaphedgefeatuwes]
+  ): w-wg.weawgwaphfeatuwes = {
+    v-vaw edgefeatuwes = usewids.fwatmap(weawgwaphedgefeatuwesmap.get)
+    wg.weawgwaphfeatuwes.v1(v1.weawgwaphfeatuwes(edgefeatuwes = e-edgefeatuwes))
   }
 }

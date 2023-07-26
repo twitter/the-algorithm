@@ -1,109 +1,109 @@
-package com.twitter.product_mixer.core.service.debug_query
+package com.twittew.pwoduct_mixew.cowe.sewvice.debug_quewy
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.twitter.finagle.Service
-import com.twitter.finagle.context.Contexts
-import com.twitter.finagle.tracing.Trace.traceLocal
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.transport.Transport
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.product.ProductPipeline
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.product_mixer.core.{thriftscala => t}
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.{Request => ScroogeRequest}
-import com.twitter.scrooge.{Response => ScroogeResponse}
-import com.twitter.stitch.Stitch
-import com.twitter.turntable.context.TurntableRequestContextKey
-import com.twitter.util.jackson.ScalaObjectMapper
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.reflect.runtime.universe.TypeTag
+impowt c-com.fastewxmw.jackson.databind.sewiawizationfeatuwe
+i-impowt com.twittew.finagwe.sewvice
+i-impowt c-com.twittew.finagwe.context.contexts
+i-impowt com.twittew.finagwe.twacing.twace.twacewocaw
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.twanspowt.twanspowt
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.pawamsbuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiewstack
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewinewequest
+impowt com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy.pwoductpipewinewegistwy
+impowt com.twittew.pwoduct_mixew.cowe.{thwiftscawa => t-t}
+impowt com.twittew.scwooge.thwiftstwuct
+i-impowt com.twittew.scwooge.{wequest => scwoogewequest}
+impowt c-com.twittew.scwooge.{wesponse => scwoogewesponse}
+impowt com.twittew.stitch.stitch
+impowt com.twittew.tuwntabwe.context.tuwntabwewequestcontextkey
+i-impowt com.twittew.utiw.jackson.scawaobjectmappew
+impowt javax.inject.inject
+impowt javax.inject.singweton
+i-impowt scawa.wefwect.wuntime.univewse.typetag
 
 /**
- * Returns the complete execution log for a pipeline query. These endpoints are intended for
- * debugging (primarily through Turntable).
+ * wetuwns t-the compwete execution w-wog fow a-a pipewine quewy. ^^;; t-these endpoints awe intended fow
+ * debugging (pwimawiwy t-thwough tuwntabwe). (✿oωo)
  */
-@Singleton
-class DebugQueryService @Inject() (
-  productPipelineRegistry: ProductPipelineRegistry,
-  paramsBuilder: ParamsBuilder,
-  authorizationService: AuthorizationService) {
+@singweton
+cwass debugquewysewvice @inject() (
+  p-pwoductpipewinewegistwy: pwoductpipewinewegistwy, (U ﹏ U)
+  pawamsbuiwdew: pawamsbuiwdew, -.-
+  authowizationsewvice: authowizationsewvice) {
 
-  private val mapper =
-    ScalaObjectMapper.builder
-      .withAdditionalJacksonModules(Seq(ParamsSerializerModule))
-      .withSerializationConfig(
-        Map(
-          // These are copied from the default serialization config.
-          SerializationFeature.WRITE_DATES_AS_TIMESTAMPS -> false,
-          SerializationFeature.WRITE_ENUMS_USING_TO_STRING -> true,
-          // Generally we want to be defensive when serializing since we don't control everything that's
-          // serialized. This issue also came up when trying to serialize Unit as part of sync side effects.
-          SerializationFeature.FAIL_ON_EMPTY_BEANS -> false,
+  pwivate v-vaw mappew =
+    scawaobjectmappew.buiwdew
+      .withadditionawjacksonmoduwes(seq(pawamssewiawizewmoduwe))
+      .withsewiawizationconfig(
+        m-map(
+          // t-these awe c-copied fwom the defauwt sewiawization config. ^•ﻌ•^
+          sewiawizationfeatuwe.wwite_dates_as_timestamps -> f-fawse, rawr
+          s-sewiawizationfeatuwe.wwite_enums_using_to_stwing -> twue, (˘ω˘)
+          // g-genewawwy we w-want to be defensive when sewiawizing s-since we don't contwow evewything t-that's
+          // sewiawized. nyaa~~ this issue a-awso came up when twying to s-sewiawize unit as pawt of sync side e-effects. UwU
+          s-sewiawizationfeatuwe.faiw_on_empty_beans -> fawse, :3
         ))
-      // The default implementation represents numbers as JSON Numbers (i.e. Double with 53 bit precision
-      // which leads to Snowflake IDs being cropped in the case of tweets.
-      .withNumbersAsStrings(true)
-      .objectMapper
+      // the defauwt impwementation wepwesents nyumbews as json nyumbews (i.e. (⑅˘꒳˘) d-doubwe with 53 b-bit pwecision
+      // which w-weads to snowfwake i-ids being cwopped i-in the case of tweets. (///ˬ///✿)
+      .withnumbewsasstwings(twue)
+      .objectmappew
 
-  def apply[
-    ThriftRequest <: ThriftStruct with Product1[MixerServiceRequest],
-    MixerServiceRequest <: ThriftStruct,
-    MixerRequest <: Request
+  def appwy[
+    thwiftwequest <: t-thwiftstwuct with pwoduct1[mixewsewvicewequest], ^^;;
+    mixewsewvicewequest <: thwiftstwuct, >_<
+    mixewwequest <: w-wequest
   ](
-    unmarshaller: MixerServiceRequest => MixerRequest
+    unmawshawwew: m-mixewsewvicewequest => m-mixewwequest
   )(
-    implicit requestTypeTag: TypeTag[MixerRequest]
-  ): Service[ScroogeRequest[ThriftRequest], ScroogeResponse[t.PipelineExecutionResult]] = {
-    (thriftRequest: ScroogeRequest[ThriftRequest]) =>
+    impwicit w-wequesttypetag: typetag[mixewwequest]
+  ): s-sewvice[scwoogewequest[thwiftwequest], rawr x3 s-scwoogewesponse[t.pipewineexecutionwesuwt]] = {
+    (thwiftwequest: s-scwoogewequest[thwiftwequest]) =>
       {
 
-        val request = unmarshaller(thriftRequest.args._1)
-        val params = paramsBuilder.build(
-          clientContext = request.clientContext,
-          product = request.product,
-          featureOverrides = request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty)
+        v-vaw wequest = unmawshawwew(thwiftwequest.awgs._1)
+        vaw pawams = pawamsbuiwdew.buiwd(
+          c-cwientcontext = w-wequest.cwientcontext, /(^•ω•^)
+          p-pwoduct = w-wequest.pwoduct, :3
+          f-featuweovewwides = wequest.debugpawams.fwatmap(_.featuweovewwides).getowewse(map.empty)
         )
 
-        val productPipeline = productPipelineRegistry
-          .getProductPipeline[MixerRequest, Any](request.product)
-        verifyRequestAuthorization(request.product, productPipeline)
-        Contexts.broadcast.letClear(TurntableRequestContextKey) {
-          Stitch
-            .run(productPipeline
-              .arrow(ProductPipelineRequest(request, params)).map { detailedResult =>
-                // Serialization can be slow so a trace is useful both for optimization by the Promix
-                // team and to give visibility to customers.
-                val serializedJSON =
-                  traceLocal("serialize_debug_response")(mapper.writeValueAsString(detailedResult))
-                t.PipelineExecutionResult(serializedJSON)
+        vaw pwoductpipewine = pwoductpipewinewegistwy
+          .getpwoductpipewine[mixewwequest, a-any](wequest.pwoduct)
+        vewifywequestauthowization(wequest.pwoduct, (ꈍᴗꈍ) pwoductpipewine)
+        contexts.bwoadcast.wetcweaw(tuwntabwewequestcontextkey) {
+          stitch
+            .wun(pwoductpipewine
+              .awwow(pwoductpipewinewequest(wequest, /(^•ω•^) pawams)).map { d-detaiwedwesuwt =>
+                // sewiawization can be swow so a twace is u-usefuw both fow o-optimization by t-the pwomix
+                // team and to give v-visibiwity to customews. (⑅˘꒳˘)
+                vaw sewiawizedjson =
+                  t-twacewocaw("sewiawize_debug_wesponse")(mappew.wwitevawueasstwing(detaiwedwesuwt))
+                t-t.pipewineexecutionwesuwt(sewiawizedjson)
               })
-            .map(ScroogeResponse(_))
+            .map(scwoogewesponse(_))
         }
       }
   }
 
-  private def verifyRequestAuthorization(
-    product: Product,
-    productPipeline: ProductPipeline[_, _]
-  ): Unit = {
-    val serviceIdentifier = ServiceIdentifier.fromCertificate(Transport.peerCertificate)
-    val requestContext = Contexts.broadcast
-      .get(TurntableRequestContextKey).getOrElse(throw MissingTurntableRequestContextException)
+  pwivate def vewifywequestauthowization(
+    pwoduct: pwoduct, ( ͡o ω ͡o )
+    pwoductpipewine: pwoductpipewine[_, _]
+  ): unit = {
+    v-vaw sewviceidentifiew = sewviceidentifiew.fwomcewtificate(twanspowt.peewcewtificate)
+    vaw wequestcontext = c-contexts.bwoadcast
+      .get(tuwntabwewequestcontextkey).getowewse(thwow missingtuwntabwewequestcontextexception)
 
-    val componentStack = ComponentIdentifierStack(productPipeline.identifier, product.identifier)
-    authorizationService.verifyRequestAuthorization(
-      componentStack,
-      serviceIdentifier,
-      productPipeline.debugAccessPolicies,
-      requestContext)
+    vaw c-componentstack = c-componentidentifiewstack(pwoductpipewine.identifiew, òωó pwoduct.identifiew)
+    authowizationsewvice.vewifywequestauthowization(
+      componentstack, (⑅˘꒳˘)
+      s-sewviceidentifiew, XD
+      p-pwoductpipewine.debugaccesspowicies, -.-
+      wequestcontext)
   }
 }
 
-object MissingTurntableRequestContextException
-    extends Exception("Request is missing turntable request context")
+o-object missingtuwntabwewequestcontextexception
+    e-extends exception("wequest is missing tuwntabwe wequest context")

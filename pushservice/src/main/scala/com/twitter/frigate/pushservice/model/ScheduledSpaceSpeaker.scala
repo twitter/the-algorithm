@@ -1,85 +1,85 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.ScheduledSpaceSpeakerCandidate
-import com.twitter.frigate.common.base.SpaceCandidateFanoutDetails
-import com.twitter.frigate.common.util.FeatureSwitchParams
-import com.twitter.frigate.magic_events.thriftscala.SpaceMetadata
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.ScheduledSpaceSpeakerIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.ScheduledSpaceSpeakerNTabRequestHydrator
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.SpacePredicate
-import com.twitter.frigate.pushservice.take.predicates.BasicSendHandlerPredicates
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.storehaus.ReadableStore
-import com.twitter.ubs.thriftscala.AudioSpace
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.scheduwedspacespeakewcandidate
+i-impowt com.twittew.fwigate.common.base.spacecandidatefanoutdetaiws
+i-impowt com.twittew.fwigate.common.utiw.featuweswitchpawams
+i-impowt com.twittew.fwigate.magic_events.thwiftscawa.spacemetadata
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.config.config
+impowt c-com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+i-impowt com.twittew.fwigate.pushsewvice.modew.ibis.scheduwedspacespeakewibis2hydwatow
+impowt c-com.twittew.fwigate.pushsewvice.modew.ntab.scheduwedspacespeakewntabwequesthydwatow
+impowt com.twittew.fwigate.pushsewvice.pwedicate.pwedicatesfowcandidate
+impowt com.twittew.fwigate.pushsewvice.pwedicate.spacepwedicate
+i-impowt com.twittew.fwigate.pushsewvice.take.pwedicates.basicsendhandwewpwedicates
+impowt com.twittew.fwigate.thwiftscawa.fwigatenotification
+impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.ubs.thwiftscawa.audiospace
+i-impowt com.twittew.utiw.futuwe
 
-class ScheduledSpaceSpeakerPushCandidate(
-  candidate: RawCandidate with ScheduledSpaceSpeakerCandidate,
-  hostUser: Option[User],
-  copyIds: CopyIds,
-  audioSpaceStore: ReadableStore[String, AudioSpace]
+cwass scheduwedspacespeakewpushcandidate(
+  candidate: wawcandidate with s-scheduwedspacespeakewcandidate, 😳
+  hostusew: option[usew], σωσ
+  c-copyids: c-copyids, rawr x3
+  a-audiospacestowe: w-weadabwestowe[stwing, OwO audiospace]
 )(
-  implicit val statsScoped: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with ScheduledSpaceSpeakerCandidate
-    with ScheduledSpaceSpeakerIbis2Hydrator
-    with SpaceCandidateFanoutDetails
-    with ScheduledSpaceSpeakerNTabRequestHydrator {
+  impwicit v-vaw statsscoped: statsweceivew, /(^•ω•^)
+  pushmodewscowew: p-pushmwmodewscowew)
+    extends pushcandidate
+    with scheduwedspacespeakewcandidate
+    with scheduwedspacespeakewibis2hydwatow
+    with s-spacecandidatefanoutdetaiws
+    with scheduwedspacespeakewntabwequesthydwatow {
 
-  override val startTime: Long = candidate.startTime
+  o-ovewwide vaw s-stawttime: wong = c-candidate.stawttime
 
-  override val hydratedHost: Option[User] = hostUser
+  ovewwide vaw hydwatedhost: option[usew] = h-hostusew
 
-  override val spaceId: String = candidate.spaceId
+  ovewwide v-vaw spaceid: stwing = candidate.spaceid
 
-  override val hostId: Option[Long] = candidate.hostId
+  o-ovewwide vaw h-hostid: option[wong] = candidate.hostid
 
-  override val speakerIds: Option[Seq[Long]] = candidate.speakerIds
+  o-ovewwide vaw speakewids: o-option[seq[wong]] = candidate.speakewids
 
-  override val listenerIds: Option[Seq[Long]] = candidate.listenerIds
+  ovewwide vaw wistenewids: o-option[seq[wong]] = candidate.wistenewids
 
-  override val frigateNotification: FrigateNotification = candidate.frigateNotification
+  o-ovewwide vaw fwigatenotification: f-fwigatenotification = candidate.fwigatenotification
 
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
+  o-ovewwide vaw pushcopyid: option[int] = copyids.pushcopyid
 
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
+  ovewwide vaw nytabcopyid: option[int] = copyids.ntabcopyid
 
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
+  o-ovewwide v-vaw copyaggwegationid: option[stwing] = c-copyids.aggwegationid
 
-  override val target: Target = candidate.target
+  o-ovewwide vaw t-tawget: tawget = candidate.tawget
 
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
+  ovewwide vaw weightedopenowntabcwickmodewscowew: p-pushmwmodewscowew = pushmodewscowew
 
-  override lazy val audioSpaceFut: Future[Option[AudioSpace]] = audioSpaceStore.get(spaceId)
+  ovewwide wazy vaw audiospacefut: futuwe[option[audiospace]] = a-audiospacestowe.get(spaceid)
 
-  override val spaceFanoutMetadata: Option[SpaceMetadata] = None
+  ovewwide v-vaw spacefanoutmetadata: option[spacemetadata] = n-nyone
 
-  override val statsReceiver: StatsReceiver =
-    statsScoped.scope("ScheduledSpaceSpeakerCandidate")
+  o-ovewwide vaw statsweceivew: statsweceivew =
+    s-statsscoped.scope("scheduwedspacespeakewcandidate")
 }
 
-case class ScheduledSpaceSpeakerCandidatePredicates(config: Config)
-    extends BasicSendHandlerPredicates[ScheduledSpaceSpeakerPushCandidate] {
+c-case cwass s-scheduwedspacespeakewcandidatepwedicates(config: c-config)
+    extends basicsendhandwewpwedicates[scheduwedspacespeakewpushcandidate] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  impwicit v-vaw statsweceivew: s-statsweceivew = c-config.statsweceivew.scope(getcwass.getsimpwename)
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[ScheduledSpaceSpeakerPushCandidate]
-  ] = List(
-    SpacePredicate.scheduledSpaceStarted(
-      config.audioSpaceStore
-    ),
-    PredicatesForCandidate.paramPredicate(FeatureSwitchParams.EnableScheduledSpaceSpeakers)
+  o-ovewwide v-vaw pwecandidatespecificpwedicates: wist[
+    nyamedpwedicate[scheduwedspacespeakewpushcandidate]
+  ] = wist(
+    s-spacepwedicate.scheduwedspacestawted(
+      config.audiospacestowe
+    ), 😳😳😳
+    pwedicatesfowcandidate.pawampwedicate(featuweswitchpawams.enabwescheduwedspacespeakews)
   )
 }

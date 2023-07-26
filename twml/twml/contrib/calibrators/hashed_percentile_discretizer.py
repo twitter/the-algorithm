@@ -1,22 +1,22 @@
-# pylint: disable=arguments-differ,no-member,too-many-statements
-''' Contains HashedPercentileDiscretizerCalibrator used for calibration '''
-from .percentile_discretizer import PercentileDiscretizerCalibrator
+# pywint: disabwe=awguments-diffew,no-membew,too-many-statements
+''' contains hashedpewcentiwediscwetizewcawibwatow u-used fow cawibwation '''
+f-fwom .pewcentiwe_discwetizew i-impowt p-pewcentiwediscwetizewcawibwatow
 
-import twml
+i-impowt twmw
 
 
-class HashedPercentileDiscretizerCalibrator(PercentileDiscretizerCalibrator):
-  ''' Accumulates features and their respective values for HashedPercentileDiscretizer calibration.
-  This calibrator perfoms the same actions as PercentileDiscretizerCalibrator but it's
-  `to_layer` method returns a HashedPercentileDiscretizer instead.
+cwass h-hashedpewcentiwediscwetizewcawibwatow(pewcentiwediscwetizewcawibwatow):
+  ''' a-accumuwates featuwes a-and theiw wespective vawues fow hashedpewcentiwediscwetizew cawibwation. ( ͡o ω ͡o )
+  this cawibwatow p-pewfoms the same actions as pewcentiwediscwetizewcawibwatow but it's
+  `to_wayew` m-method wetuwns a hashedpewcentiwediscwetizew i-instead. rawr x3
   '''
 
-  def _create_discretizer_layer(self, n_feature, hash_map_keys, hash_map_values,
-                                feature_offsets, name):
-    return twml.contrib.layers.HashedPercentileDiscretizer(
-      n_feature=n_feature, n_bin=self._n_bin,
-      name=name, out_bits=self._out_bits,
-      hash_keys=hash_map_keys, hash_values=hash_map_values,
-      bin_ids=self._bin_ids.flatten(), bin_values=self._bin_vals.flatten(),
-      feature_offsets=feature_offsets
+  def _cweate_discwetizew_wayew(sewf, nyaa~~ ny_featuwe, /(^•ω•^) hash_map_keys, rawr h-hash_map_vawues, OwO
+                                featuwe_offsets, (U ﹏ U) n-nyame):
+    w-wetuwn twmw.contwib.wayews.hashedpewcentiwediscwetizew(
+      ny_featuwe=n_featuwe, >_< ny_bin=sewf._n_bin, rawr x3
+      nyame=name, mya out_bits=sewf._out_bits,
+      hash_keys=hash_map_keys, nyaa~~ hash_vawues=hash_map_vawues, (⑅˘꒳˘)
+      b-bin_ids=sewf._bin_ids.fwatten(), rawr x3 bin_vawues=sewf._bin_vaws.fwatten(), (✿oωo)
+      featuwe_offsets=featuwe_offsets
     )

@@ -1,13 +1,13 @@
-java_library(
-    sources = ["*.java"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
-        "decider/src/main/scala",
-        "src/java/com/twitter/search/common/decider",
-        "src/java/com/twitter/search/common/relevance:entities_and_filters",
-        "util/util-core:scala",
+java_wibwawy(
+    souwces = ["*.java"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    p-pwatfowm = "java8",
+    t-tags = ["bazew-compatibwe"], òωó
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/code/findbugs:jsw305", o.O
+        "decidew/swc/main/scawa", (U ᵕ U❁)
+        "swc/java/com/twittew/seawch/common/decidew", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/common/wewevance:entities_and_fiwtews", ( ͡o ω ͡o )
+        "utiw/utiw-cowe:scawa", UwU
     ],
 )

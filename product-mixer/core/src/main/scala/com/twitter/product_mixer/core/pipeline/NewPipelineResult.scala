@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.pipeline
+package com.twittew.pwoduct_mixew.cowe.pipewine
 
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.ExecutorResult
-import scala.collection.immutable.ListMap
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
+i-impowt scawa.cowwection.immutabwe.wistmap
 
-sealed trait NewPipelineResult[-Result] {
-  def executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult]
+s-seawed t-twait nyewpipewinewesuwt[-wesuwt] {
+  d-def executowwesuwtsbypipewinestep: w-wistmap[pipewinestepidentifiew, mya e-executowwesuwt]
 }
 
-object NewPipelineResult {
-  case class Failure(
-    failure: PipelineFailure,
-    override val executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult])
-      extends NewPipelineResult[Any]
+object nyewpipewinewesuwt {
+  case cwass faiwuwe(
+    faiwuwe: pipewinefaiwuwe,
+    o-ovewwide vaw executowwesuwtsbypipewinestep: wistmap[pipewinestepidentifiew, mya e-executowwesuwt])
+      extends nyewpipewinewesuwt[any]
 
-  case class Success[Result](
-    result: Result,
-    override val executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult])
-      extends NewPipelineResult[Result]
+  c-case cwass success[wesuwt](
+    wesuwt: wesuwt,
+    ovewwide v-vaw executowwesuwtsbypipewinestep: wistmap[pipewinestepidentifiew, 😳 e-executowwesuwt])
+      e-extends nyewpipewinewesuwt[wesuwt]
 }

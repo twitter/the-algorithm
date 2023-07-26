@@ -1,327 +1,327 @@
-.. _real_time:
+.. _weaw_time:
 
-Real-Time aggregate features
+weaw-time aggwegate featuwes
 ============================
 
-In addition to computing batch aggregate features, the aggregation framework supports real-time aggregates as well. The framework concepts used here are identical to the batch use case, however, the underlying implementation differs and is provided by summingbird-storm jobs.
+i-in addition t-to computing b-batch aggwegate f-featuwes, rawr the a-aggwegation fwamewowk s-suppowts w-weaw-time aggwegates a-as weww. 😳😳😳 the fwamewowk concepts used hewe awe identicaw to the batch use case, UwU h-howevew, the undewwying impwementation diffews a-and is pwovided by summingbiwd-stowm j-jobs. (U ﹏ U)
 
-RTA Runbook
+wta wunbook
 -----------
 
-For operational details, please visit http://go/tqrealtimeaggregates.
+fow opewationaw detaiws, (˘ω˘) p-pwease visit http://go/tqweawtimeaggwegates. /(^•ω•^)
 
-Prerequisites
+pwewequisites
 -------------
 
-In order to start computing real-time aggregate features, the framework requires the following to be provided:
+in owdew t-to stawt computing w-weaw-time aggwegate featuwes, (U ﹏ U) the fwamewowk wequiwes the fowwowing to be p-pwovided:
 
-* A backing memcached store that will hold the computed aggregate features. This is conceptually equivalent to the output HDFS store in the batch compute case.
-* Implementation of `StormAggregateSource <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/heron/StormAggregateSource.scala#n15>`_ that creates `DataRecords` with the necessary input features. This serves as the input to the aggregation operations.
-* Definition of aggregate features by defining `AggregateGroup` in an implementation of `OnlineAggregationConfigTrait`. This is identical to the batch case.
-* Job config file defining the backing memcached for feature storage and retrieval, and job-related parameters.
+* a backing memcached stowe that wiww howd the computed aggwegate featuwes. ^•ﻌ•^ t-this is conceptuawwy equivawent t-to the output h-hdfs stowe i-in the batch compute c-case. >w<
+* impwementation of `stowmaggwegatesouwce <https://cgit.twittew.biz/souwce/twee/timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk/hewon/stowmaggwegatesouwce.scawa#n15>`_ that c-cweates `datawecowds` with the nyecessawy input f-featuwes. ʘwʘ this sewves as the input to the aggwegation opewations. òωó
+* definition of aggwegate featuwes b-by defining `aggwegategwoup` in an impwementation o-of `onwineaggwegationconfigtwait`. o.O t-this i-is identicaw to the batch case. ( ͡o ω ͡o )
+* job config fiwe defining the backing m-memcached f-fow featuwe stowage and wetwievaw, mya a-and job-wewated p-pawametews. >_<
 
-We will now go through the details in setting up each required component.
+we wiww nyow go t-thwough the detaiws in setting u-up each wequiwed component. rawr
 
-Memcached store
+memcached stowe
 ---------------
 
-Real-time aggregates use Memcache as the backing cache to store and update aggregate features keys. Caches can be provisioned on `go/cacheboard <https://cacheboardv2--prod--cache.service.atla.twitter.biz/>`_.
+w-weaw-time aggwegates u-use memcache as the backing cache t-to stowe and u-update aggwegate featuwes keys. >_< caches can be pwovisioned on `go/cacheboawd <https://cacheboawdv2--pwod--cache.sewvice.atwa.twittew.biz/>`_. (U ﹏ U)
 
-.. admonition:: Test and prod caches
+.. admonition:: test and pwod caches
 
-  For development, it is sufficient to setup a test cache that your new job can query and write to. At the same time, a production cache request should also be submitted as these generally have significant lead times for provisioning.
+  fow devewopment, rawr i-it is sufficient t-to setup a test cache t-that youw nyew job c-can quewy and w-wwite to. (U ᵕ U❁) at the same time, (ˆ ﻌ ˆ)♡ a pwoduction cache wequest shouwd awso b-be submitted as these genewawwy have significant wead times fow pwovisioning. >_<
 
-StormAggregateSource
+s-stowmaggwegatesouwce
 --------------------
 
-To enable aggregation of your features, we need to start with defining a `StormAggregateSource` that builds a `Producer[Storm, DataRecord]`. This summingbird producer generates `DataRecords` that contain the input features and labels that the real-time aggregate job will compute aggregate features on. Conceptually, this is equivalent to the input data set in the offline batch use case.
+to e-enabwe aggwegation o-of youw featuwes, w-we nyeed to stawt with defining a-a `stowmaggwegatesouwce` that b-buiwds a `pwoducew[stowm, ^^;; d-datawecowd]`. ʘwʘ t-this summingbiwd pwoducew genewates `datawecowds` t-that c-contain the input f-featuwes and w-wabews that the w-weaw-time aggwegate job wiww compute aggwegate featuwes on. 😳😳😳 conceptuawwy, UwU t-this is equivawent to the input data set in the offwine batch use case. OwO
 
-.. admonition:: Example
+.. admonition:: e-exampwe
 
-  If you are planning to aggregate on client engagements, you would need to subscribe to the `ClientEvent` kafka stream and then convert each event to a `DataRecord` that contains the key and the engagement on which to aggregate.
+  if you awe pwanning to aggwegate on cwient engagements, :3 y-you wouwd n-nyeed to subscwibe t-to the `cwientevent` kafka s-stweam and then convewt each event t-to a `datawecowd` t-that contains the key and the engagement on which to aggwegate. -.-
 
-Typically, we would setup a julep filter for the relevant client events that we would like to aggregate on. This gives us a `Producer[Storm, LogEvent]` object which we then convert to `Producer[Storm, DataRecord]` with adapters that we wrote:
+typicawwy, we wouwd setup a-a juwep fiwtew fow the wewevant c-cwient events that we wouwd wike t-to aggwegate on. 🥺 t-this gives us a `pwoducew[stowm, -.- wogevent]` object w-which we then c-convewt to `pwoducew[stowm, -.- datawecowd]` with a-adaptews that we w-wwote:
 
-.. code-block:: scala
+.. code-bwock:: scawa
 
-  lazy val clientEventProducer: Producer[Storm, LogEvent] =
-    ClientEventSourceScrooge(
-      appId = AppId(jobConfig.appId),
-      topic = "julep_client_event_suggests",
-      resumeAtLastReadOffset = false
-    ).source.name("timelines_events")
+  wazy vaw cwienteventpwoducew: pwoducew[stowm, (U ﹏ U) wogevent] =
+    c-cwienteventsouwcescwooge(
+      a-appid = appid(jobconfig.appid), rawr
+      t-topic = "juwep_cwient_event_suggests", mya
+      wesumeatwastweadoffset = f-fawse
+    ).souwce.name("timewines_events")
 
-  lazy val clientEventWithCachedFeaturesProducer: Producer[Storm, DataRecord] = clientEventProducer
-    .flatMap(mkDataRecords)
+  w-wazy vaw cwienteventwithcachedfeatuwespwoducew: p-pwoducew[stowm, ( ͡o ω ͡o ) datawecowd] = cwienteventpwoducew
+    .fwatmap(mkdatawecowds)
 
-Note that this way of composing the storm graph gives us flexiblity in how we can hydrate input features. If you would like to join more complex features to `DataRecord`, you can do so here with additional storm components which can implement cache queries.
+nyote that this way of c-composing the s-stowm gwaph gives us fwexibwity in how we can hydwate i-input featuwes. /(^•ω•^) i-if you wouwd wike to join mowe compwex featuwes to `datawecowd`, >_< y-you can do so hewe with additionaw stowm components which can impwement cache q-quewies. (✿oωo)
 
-.. admonition:: Timelines Quality use case
+.. admonition:: timewines quawity u-use case
 
-  In Timelines Quality, we aggregate client engagements on `userId` or `tweetId` and implement
-  `TimelinesStormAggregateSource <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/timelines/prediction/common/aggregates/real_time/TimelinesStormAggregateSource.scala>`_. We create
-  `Producer[Storm,LogEvent]` of Timelines engagements to which we apply `ClientLogEventAdapter <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/timelines/prediction/adapters/client_log_event/ClientLogEventAdapter.scala>`_ which converts the event to `DataRecord` containing `userId`, `tweetId`, `timestampFeature` of the engagement and the engagement label itself.
+  in t-timewines quawity, 😳😳😳 we aggwegate cwient engagements on `usewid` ow `tweetid` a-and i-impwement
+  `timewinesstowmaggwegatesouwce <https://cgit.twittew.biz/souwce/twee/swc/scawa/com/twittew/timewines/pwediction/common/aggwegates/weaw_time/timewinesstowmaggwegatesouwce.scawa>`_. (ꈍᴗꈍ) we cweate
+  `pwoducew[stowm,wogevent]` of timewines engagements t-to which we appwy `cwientwogeventadaptew <https://cgit.twittew.biz/souwce/twee/swc/scawa/com/twittew/timewines/pwediction/adaptews/cwient_wog_event/cwientwogeventadaptew.scawa>`_ which convewts t-the event to `datawecowd` containing `usewid`, 🥺 `tweetid`, `timestampfeatuwe` of the engagement and the engagement w-wabew itsewf. mya
 
-.. admonition:: MagicRecs use case
+.. admonition:: m-magicwecs use c-case
 
-  MagicRecs has a very similar setup for real-time aggregate features. In addition, they also implement a more complex cache query to fetch the user's history in the `StormAggregateSource` for each observed client engagement to hydrate a richer set of input `DataRecords`:
+  magicwecs has a vewy simiwaw s-setup fow weaw-time aggwegate f-featuwes. (ˆ ﻌ ˆ)♡ in a-addition, (⑅˘꒳˘) they a-awso impwement a mowe compwex cache q-quewy to fetch t-the usew's histowy in the `stowmaggwegatesouwce` fow each obsewved c-cwient engagement t-to hydwate a-a wichew set of input `datawecowds`:
 
-  .. code-block:: scala
+  .. code-bwock:: s-scawa
 
-    val userHistoryStoreService: Storm#Service[Long, History] =
-      Storm.service(UserHistoryReadableStore)
+    vaw usewhistowystowesewvice: s-stowm#sewvice[wong, òωó h-histowy] =
+      stowm.sewvice(usewhistowyweadabwestowe)
 
-    val clientEventDataRecordProducer: Producer[Storm, DataRecord] =
-      magicRecsClientEventProducer
-        .flatMap { ...
-          (userId, logEvent)
-        }.leftJoin(userHistoryStoreService)
-        .flatMap {
-          case (_, (logEvent, history)) =>
-            mkDataRecords(LogEventHistoryPair(logEvent, history))
+    vaw cwienteventdatawecowdpwoducew: pwoducew[stowm, o.O d-datawecowd] =
+      m-magicwecscwienteventpwoducew
+        .fwatmap { ...
+          (usewid, XD w-wogevent)
+        }.weftjoin(usewhistowystowesewvice)
+        .fwatmap {
+          c-case (_, (˘ω˘) (wogevent, (ꈍᴗꈍ) histowy)) =>
+            m-mkdatawecowds(wogeventhistowypaiw(wogevent, >w< histowy))
         }
 
-.. admonition:: EmailRecs use case
+.. XD admonition:: emaiwwecs use case
 
-  EmailRecs shares the same cache as MagicRecs. They combine notification scribe data with email history data to identify the particular item a user engaged with in an email:
+  emaiwwecs shawes the same cache as magicwecs. -.- t-they combine notification s-scwibe data with emaiw histowy d-data to identify the pawticuwaw i-item a usew engaged with in an e-emaiw:
 
-  .. code-block:: scala
+  .. ^^;; code-bwock:: s-scawa
 
-    val emailHistoryStoreService: Storm#Service[Long, History] =
-      Storm.service(EmailHistoryReadableStore)
+    v-vaw emaiwhistowystowesewvice: s-stowm#sewvice[wong, XD h-histowy] =
+      stowm.sewvice(emaiwhistowyweadabwestowe)
 
-    val emailEventDataRecordProducer: Producer[Storm, DataRecord] =
-      emailEventProducer
-        .flatMap { ...
-          (userId, logEvent)
-        }.leftJoin(emailHistoryStoreService)
-        .flatMap {
-          case (_, (scribe, history)) =>
-            mkDataRecords(ScribeHistoryPair(scribe, history))
+    vaw emaiweventdatawecowdpwoducew: pwoducew[stowm, :3 datawecowd] =
+      emaiweventpwoducew
+        .fwatmap { ...
+          (usewid, σωσ wogevent)
+        }.weftjoin(emaiwhistowystowesewvice)
+        .fwatmap {
+          c-case (_, XD (scwibe, histowy)) =>
+            m-mkdatawecowds(scwibehistowypaiw(scwibe, h-histowy))
         }
 
 
-Aggregation config
+aggwegation c-config
 ------------------
 
-The real-time aggregation config is extended from `OnlineAggregationConfigTrait <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/heron/OnlineAggregationConfigTrait.scala>`_ and defines the features to aggregate and the backing memcached store to which they will be written.
+the weaw-time aggwegation config is e-extended fwom `onwineaggwegationconfigtwait <https://cgit.twittew.biz/souwce/twee/timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk/hewon/onwineaggwegationconfigtwait.scawa>`_ a-and defines the featuwes t-to aggwegate and the backing memcached stowe to w-which they wiww b-be wwitten. :3
 
-Setting up real-time aggregates follows the same rules as in the offline batch use case. The major difference here is that `inputSource` should point to the `StormAggregateSource` implementation that provides the `DataRecord` containing the engagements and core features on which to aggregate. In the offline case, this would have been an `OfflineAggregateSource` pointing to an offline source of daily records.
+setting up weaw-time a-aggwegates fowwows t-the same wuwes as in the offwine batch use case. rawr the majow diffewence hewe i-is that `inputsouwce` s-shouwd point t-to the `stowmaggwegatesouwce` i-impwementation t-that pwovides the `datawecowd` containing the engagements a-and cowe f-featuwes on which to aggwegate. 😳 i-in the offwine c-case, 😳😳😳 this wouwd have been an `offwineaggwegatesouwce` p-pointing to an offwine souwce of daiwy w-wecowds. (ꈍᴗꈍ)
 
-Finally, `RealTimeAggregateStore` defines the backing memcache to be used and should be provided here as the `outputStore`.
+finawwy, `weawtimeaggwegatestowe` defines t-the backing m-memcache to be used and shouwd be p-pwovided hewe as the `outputstowe`. 🥺
 
-.. NOTE::
+.. nyote::
 
-  Please make sure to provide an `AggregateGroup` for both staging and production. The main difference should be the `outputStore` where features in either environment are read from and written to. You want to make sure that a staged real-time aggregates summingbird job is reading/writing only to the test memcache store and does not mutate the production store.
+  p-pwease make s-suwe to pwovide a-an `aggwegategwoup` fow both staging and pwoduction. ^•ﻌ•^ the main diffewence s-shouwd be the `outputstowe` whewe featuwes i-in eithew enviwonment a-awe wead fwom and wwitten t-to. XD you want to make suwe that a-a staged weaw-time a-aggwegates summingbiwd job is weading/wwiting o-onwy to the test memcache stowe and does nyot m-mutate the pwoduction s-stowe. ^•ﻌ•^
 
-Job config
+job config
 ----------
 
-In addition to the aggregation config that defines the features to aggregate, the final piece we need to provide is a `RealTimeAggregatesJobConfig` that specificies job values such as `appId`, `teamName` and counts for the various topology components that define the capacity of the job (`Timelines example <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/timelines/prediction/common/aggregates/real_time/TimelinesRealTimeAggregatesJob.scala#n22>`_).
+i-in addition to the aggwegation c-config that d-defines the featuwes t-to aggwegate, ^^;; the finaw piece we nyeed to pwovide is a `weawtimeaggwegatesjobconfig` that specificies job vawues such as `appid`, ʘwʘ `teamname` and counts fow the vawious topowogy components that define the capacity of the job (`timewines e-exampwe <https://cgit.twittew.biz/souwce/twee/swc/scawa/com/twittew/timewines/pwediction/common/aggwegates/weaw_time/timewinesweawtimeaggwegatesjob.scawa#n22>`_). OwO
 
-Once you have the job config, implementing the storm job itself is easy and almost as concise as in the batch use case:
+o-once you have the job config, 🥺 impwementing t-the stowm job i-itsewf is easy a-and awmost as concise as in the b-batch use case:
 
-.. code-block:: scala
+.. code-bwock:: s-scawa
 
-  object TimelinesRealTimeAggregatesJob extends RealTimeAggregatesJobBase {
-    override lazy val statsReceiver = DefaultStatsReceiver.scope("timelines_real_time_aggregates")
-    override lazy val jobConfigs = TimelinesRealTimeAggregatesJobConfigs
-    override lazy val aggregatesToCompute = TimelinesOnlineAggregationConfig.AggregatesToCompute
+  object t-timewinesweawtimeaggwegatesjob extends weawtimeaggwegatesjobbase {
+    o-ovewwide wazy vaw statsweceivew = d-defauwtstatsweceivew.scope("timewines_weaw_time_aggwegates")
+    o-ovewwide wazy vaw jobconfigs = timewinesweawtimeaggwegatesjobconfigs
+    o-ovewwide wazy v-vaw aggwegatestocompute = t-timewinesonwineaggwegationconfig.aggwegatestocompute
   }
 
-.. NOTE::
-  There are some topology settings that are currently hard-coded. In particular, we enable `Config.TOPOLOGY_DROPTUPLES_UPON_BACKPRESSURE` to be true for added robustness. This may be made user-definable in the future.
+.. n-nyote::
+  t-thewe awe some t-topowogy settings t-that awe cuwwentwy h-hawd-coded. (⑅˘꒳˘) i-in pawticuwaw, (///ˬ///✿) we enabwe `config.topowogy_dwoptupwes_upon_backpwessuwe` t-to be t-twue fow added w-wobustness. (✿oωo) this may be made usew-definabwe i-in the futuwe. nyaa~~
 
-Steps to hydrate RTAs
+steps to hydwate wtas
 --------------------
-1. Make the changes to RTAs and follow the steps for `Running the topology`.
-2. Register the new RTAs to feature store. Sample phab: https://phabricator.twitter.biz/D718120
-3. Wire the features from feature store to TLX. This is usually done with the feature switch set to False. So it's just a code change and will not yet start hydrating the features yet. Merge the phab. Sample phab: https://phabricator.twitter.biz/D718424
-4. Now we hydrate the features to TLX gradually by doing it shard wise. For this, first create a PCM and then enable the hydration. Sample PCM: https://jira.twitter.biz/browse/PCM-147814
+1. >w< m-make the changes to wtas a-and fowwow the s-steps fow `wunning t-the topowogy`. (///ˬ///✿)
+2. wegistew t-the nyew wtas to featuwe stowe. rawr s-sampwe phab: https://phabwicatow.twittew.biz/d718120
+3. (U ﹏ U) wiwe the f-featuwes fwom featuwe stowe to t-twx. ^•ﻌ•^ this is usuawwy done with the featuwe switch set to fawse. (///ˬ///✿) so it's just a code c-change and wiww nyot yet stawt h-hydwating the f-featuwes yet. o.O mewge the phab. >w< sampwe phab: https://phabwicatow.twittew.biz/d718424
+4. nyaa~~ nyow we hydwate t-the featuwes to twx gwaduawwy b-by doing it s-shawd wise. òωó fow t-this, (U ᵕ U❁) fiwst cweate a pcm and then enabwe the hydwation. (///ˬ///✿) s-sampwe p-pcm: https://jiwa.twittew.biz/bwowse/pcm-147814
 
-Running the topology
+wunning the topowogy
 --------------------
-0. For phab that makes change to the topology (such as adding new ML features), before landing the phab, please create a PCM (`example <https://jira.twitter.biz/browse/PCM-131614>`_) and deploy the change to devel topology first and then prod (atla and pdxa). Once it is confirmed that the prod topology can handle the change, the phab can be landed. 
-1. Go to https://ci.twitter.biz/job/tq-ci/build
-2. In `commands` input
+0. (✿oωo) f-fow phab that makes change to the t-topowogy (such as adding nyew mw f-featuwes), 😳😳😳 befowe w-wanding the phab, (✿oωo) p-pwease cweate a pcm (`exampwe <https://jiwa.twittew.biz/bwowse/pcm-131614>`_) a-and depwoy the c-change to devew t-topowogy fiwst a-and then pwod (atwa and pdxa). (U ﹏ U) o-once it is confiwmed t-that the pwod t-topowogy can h-handwe the change, (˘ω˘) t-the phab can b-be wanded. 😳😳😳 
+1. go t-to https://ci.twittew.biz/job/tq-ci/buiwd
+2. (///ˬ///✿) in `commands` i-input
 
-.. code-block:: bash
+.. code-bwock:: b-bash
 
-  . src/scala/com/twitter/timelines/prediction/common/aggregates/real_time/deploy_local.sh [devel|atla|pdxa]
+  . (U ᵕ U❁) swc/scawa/com/twittew/timewines/pwediction/common/aggwegates/weaw_time/depwoy_wocaw.sh [devew|atwa|pdxa]
 
-One can only deploy either `devel`, `atla` (prod atla), `pdxa` (prod pdxa) at a time.
-For example, to deploy both pdxa and atla prod topologies, one needs to build/run the above steps twice, one with `pdxa` and the other with `atla`.
+one can o-onwy depwoy eithew `devew`, >_< `atwa` (pwod atwa), (///ˬ///✿) `pdxa` (pwod p-pdxa) a-at a time. (U ᵕ U❁)
+fow e-exampwe, >w< to depwoy both pdxa and atwa pwod topowogies, 😳😳😳 one needs t-to buiwd/wun t-the above steps t-twice, (ˆ ﻌ ˆ)♡ one with `pdxa` and the othew with `atwa`. (ꈍᴗꈍ)
 
-The status and performance stats of the topology are found at `go/heron-ui <http://heron-ui-new--prod--heron.service.pdxa.twitter.biz/topologies>`_. Here you can view whether the job is processing tuples, whether it is under any memory or backpressure and provides general observability.
+the status and p-pewfowmance stats o-of the topowogy awe found at `go/hewon-ui <http://hewon-ui-new--pwod--hewon.sewvice.pdxa.twittew.biz/topowogies>`_. 🥺 h-hewe you c-can view whethew the job is pwocessing tupwes, >_< whethew it is undew a-any memowy ow b-backpwessuwe and p-pwovides genewaw o-obsewvabiwity. OwO
 
-Finally, since we enable `Config.TOPOLOGY_DROPTUPLES_UPON_BACKPRESSURE` by default in the topology, we also need to monitor and alert on the number of dropped tuples. Since this is a job generating features a small fraction of dropped tuples is tolerable if that enables us to avoid backpressure that would hold up global computation in the entire graph.
+finawwy, since we enabwe `config.topowogy_dwoptupwes_upon_backpwessuwe` b-by defauwt i-in the topowogy, ^^;; we awso nyeed to monitow a-and awewt on the nyumbew of dwopped tupwes. (✿oωo) since t-this is a job genewating featuwes a-a smow fwaction o-of dwopped tupwes is towewabwe i-if that enabwes u-us to avoid backpwessuwe that w-wouwd howd up gwobaw computation i-in the entiwe g-gwaph.
 
-Hydrating Real-Time Aggregate Features
+hydwating w-weaw-time aggwegate f-featuwes
 --------------------------------------
 
-Once the job is up and running, the aggregate features will be accessible in the backing memcached store. To access these features and hydrate to your online pipeline, we need to build a Memcache client with the right query key.
+once the j-job is up and wunning, UwU t-the aggwegate f-featuwes wiww be accessibwe i-in the backing memcached stowe. ( ͡o ω ͡o ) to access these f-featuwes and hydwate t-to youw onwine p-pipewine, (✿oωo) we nyeed to buiwd a memcache cwient with the wight quewy key. mya
 
-.. admonition:: Example
+.. a-admonition:: exampwe
 
-  Some care needs to be taken to define the key injection and codec correctly for the memcached store. These types do not change and you can use the Timelines `memcache client builder <https://cgit.twitter.biz/source/tree/timelinemixer/common/src/main/scala/com/twitter/timelinemixer/clients/real_time_aggregates_cache/RealTimeAggregatesMemcacheBuilder.scala>`_ as an example.
+  some cawe n-nyeeds to be t-taken to define the key injection and codec cowwectwy f-fow the memcached stowe. ( ͡o ω ͡o ) t-these types do nyot c-change and you c-can use the timewines `memcache c-cwient buiwdew <https://cgit.twittew.biz/souwce/twee/timewinemixew/common/swc/main/scawa/com/twittew/timewinemixew/cwients/weaw_time_aggwegates_cache/weawtimeaggwegatesmemcachebuiwdew.scawa>`_ a-as an exampwe. :3
 
-Aggregate features are written to store with a `(AggregationKey, BatchID)` key.
+aggwegate featuwes awe wwitten to stowe with a `(aggwegationkey, 😳 b-batchid)` key. (U ﹏ U)
 
-`AggregationKey <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/AggregationKey.scala#n31>`_ is an instant of the keys that you previously defined in `AggregateGroup`. If your aggregation key is `USER_ID`, you would need to instantiate `AggregationKey` with the `USER_ID` featureId and the userId value.
+`aggwegationkey <https://cgit.twittew.biz/souwce/twee/timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk/aggwegationkey.scawa#n31>`_ is an instant of t-the keys that you pweviouswy defined in `aggwegategwoup`. >w< if youw a-aggwegation key is `usew_id`, UwU you wouwd nyeed to instantiate `aggwegationkey` with the `usew_id` f-featuweid and t-the usewid vawue. 😳
 
-.. admonition:: Returned features
+.. admonition:: w-wetuwned featuwes
 
-  The `DataRecord` that is returned by the cache now contains all real-time aggregate features for the query `AggregationKey` (similar to the batch use case). If your online hydration flow produces data records, the real-time aggregate features can be joined with your existing records in a straightforward way.
+  the `datawecowd` that is w-wetuwned by the c-cache nyow contains aww weaw-time a-aggwegate featuwes fow the quewy `aggwegationkey` (simiwaw to t-the batch use case). XD if youw onwine hydwation fwow pwoduces data w-wecowds, (✿oωo) the weaw-time aggwegate featuwes can b-be joined with y-youw existing wecowds i-in a stwaightfowwawd way. ^•ﻌ•^
 
-Adding features from Feature Store to RTA
+adding featuwes f-fwom featuwe stowe to wta
 --------------------------------------------
-To add features from Feature Store to RTA and create real time aggregated features based on them, one needs to follow these steps:
+to add featuwes fwom featuwe stowe to wta a-and cweate weaw t-time aggwegated f-featuwes based o-on them, mya one nyeeds to fowwow these steps:
 
-**Step 1**
+**step 1**
 
-Copy Strato column for features that one wants to explore and add a cache if needed. See details at `Customize any Columns for your Team as Needed <https://docbird.twitter.biz/ml_feature_store/productionisation-checklist.html?highlight=manhattan#customize-any-columns-for-your-team-as-needed>`_. As an `example <https://phabricator.twitter.biz/D441050>`_, we copy Strato column of recommendationsUserFeaturesProd.User.strato and add a cache for timelines team's usage. 
+c-copy stwato c-cowumn fow featuwes that one wants to expwowe a-and add a cache if nyeeded. (˘ω˘) see detaiws at `customize a-any cowumns fow youw team as needed <https://docbiwd.twittew.biz/mw_featuwe_stowe/pwoductionisation-checkwist.htmw?highwight=manhattan#customize-any-cowumns-fow-youw-team-as-needed>`_. nyaa~~ a-as an `exampwe <https://phabwicatow.twittew.biz/d441050>`_, :3 w-we copy stwato cowumn o-of wecommendationsusewfeatuwespwod.usew.stwato a-and add a cache f-fow timewines team's usage. (✿oωo) 
 
-**Step 2**
+**step 2**
 
-Create a new ReadableStore which uses Feature Store Client to request features from Feature Store. Implement FeaturesAdapter which extends TimelinesAdapterBase and derive new features based on raw features from Feature Store. As an `example <https://phabricator.twitter.biz/D458168>`_, we create UserFeaturesReadableStore which reads discrete feature user state, and convert it to a list of boolean user state features. 
+cweate a-a new weadabwestowe which uses featuwe stowe c-cwient to wequest featuwes fwom featuwe stowe. (U ﹏ U) impwement featuwesadaptew w-which e-extends timewinesadaptewbase a-and d-dewive nyew featuwes b-based on waw featuwes fwom f-featuwe stowe. (ꈍᴗꈍ) as an `exampwe <https://phabwicatow.twittew.biz/d458168>`_, we cweate u-usewfeatuwesweadabwestowe which weads discwete f-featuwe usew state, (˘ω˘) and convewt it to a wist o-of boowean usew s-state featuwes. ^^ 
 
-**Step 3**
+**step 3**
 
-Join these derived features from Feature Store to timelines storm aggregate source. Depends on the characteristic of these derived features, joined key could be tweet id, user id or others. As an `example <https://phabricator.twitter.biz/D454408>`_, because user state is per user, the joined key is user id. 
+join these dewived f-featuwes fwom featuwe stowe to t-timewines stowm a-aggwegate souwce. (⑅˘꒳˘) depends on the c-chawactewistic o-of these dewived featuwes, rawr joined k-key couwd be tweet id, :3 usew id ow othews. OwO as an `exampwe <https://phabwicatow.twittew.biz/d454408>`_, (ˆ ﻌ ˆ)♡ b-because usew state is p-pew usew, :3 the joined key is usew id. -.- 
 
-**Step 4**
+**step 4**
 
-Define `AggregateGroup` based on derived features in RTA
+d-define `aggwegategwoup` b-based o-on dewived featuwes in wta
 
-Adding New Aggregate Features from an Existing Dataset
+adding n-nyew aggwegate f-featuwes fwom an existing dataset
 --------------------------------
-To add a new aggregate feature group from an existing dataset for use in home models, use the following steps:
+t-to add a nyew aggwegate featuwe g-gwoup fwom an existing dataset f-fow use in h-home modews, -.- use the fowwowing steps:
 
-1. Identify the hypothesis being tested by the addition of the features, in accordance with `go/tpfeatureguide <http://go/tpfeatureguide>`_. 
-2. Modify or add a new AggregateGroup to `TimelinesOnlineAggregationConfigBase.scala <https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/scala/com/twitter/timelines/prediction/common/aggregates/real_time/TimelinesOnlineAggregationConfigBase.scala>`_ to define the aggregation key, set of features, labels and metrics. An example phab to add more halflives can be found at `D204415 <https://phabricator.twitter.biz/D204415>`_.
-3. If the change is expected to be very large, it may be recommended to perform capacity estimation. See :ref:`Capacity Estimation` for more details.
-4. Create feature catalog items for the new RTAs. An example phab is `D706348 <https://phabricator.twitter.biz/D706438>`_. For approval from a featurestore owner ping #help-ml-features on slack.
-5. Add new features to the featurestore. An example phab is `D706112 <https://phabricator.twitter.biz/D706112>`_. This change can be rolled out with feature switches or by canarying TLX, depending on the risk. An example PCM for feature switches is: `PCM-148654 <https://jira.twitter.biz/browse/PCM-148654>`_. An example PCM for canarying is: `PCM-145753 <https://jira.twitter.biz/browse/PCM-145753>`_.
-6. Wait for redeploy and confirm the new features are available. One way is querying in BigQuery from a table like `twitter-bq-timelines-prod.continuous_training_recap_fav`. Another way is to inspect individual records using pcat. The command to be used is like: 
+1. òωó identify the hypothesis being tested by t-the addition of t-the featuwes, 😳 in accowdance with `go/tpfeatuweguide <http://go/tpfeatuweguide>`_. nyaa~~ 
+2. modify ow add a nyew aggwegategwoup t-to `timewinesonwineaggwegationconfigbase.scawa <https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/swc/scawa/com/twittew/timewines/pwediction/common/aggwegates/weaw_time/timewinesonwineaggwegationconfigbase.scawa>`_ to define the aggwegation k-key, (⑅˘꒳˘) set o-of featuwes, 😳 wabews and metwics. (U ﹏ U) an exampwe phab to add mowe hawfwives can be f-found at `d204415 <https://phabwicatow.twittew.biz/d204415>`_. /(^•ω•^)
+3. if the change is expected to be v-vewy wawge, OwO it may be wecommended t-to pewfowm capacity e-estimation. ( ͡o ω ͡o ) see :wef:`capacity e-estimation` f-fow mowe detaiws. XD
+4. c-cweate featuwe c-catawog items f-fow the nyew w-wtas. /(^•ω•^) an exampwe phab is `d706348 <https://phabwicatow.twittew.biz/d706438>`_. /(^•ω•^) fow appwovaw fwom a featuwestowe ownew ping #hewp-mw-featuwes on swack. 😳😳😳
+5. add n-nyew featuwes to t-the featuwestowe. (ˆ ﻌ ˆ)♡ a-an exampwe phab i-is `d706112 <https://phabwicatow.twittew.biz/d706112>`_. t-this c-change can be wowwed out with featuwe switches ow by canawying twx, :3 depending on t-the wisk. òωó an exampwe p-pcm fow featuwe switches is: `pcm-148654 <https://jiwa.twittew.biz/bwowse/pcm-148654>`_. 🥺 an exampwe pcm fow c-canawying is: `pcm-145753 <https://jiwa.twittew.biz/bwowse/pcm-145753>`_. (U ﹏ U)
+6. w-wait fow wedepwoy a-and confiwm the nyew featuwes awe avaiwabwe. XD one w-way is quewying in bigquewy fwom a tabwe wike `twittew-bq-timewines-pwod.continuous_twaining_wecap_fav`. a-anothew w-way is to inspect individuaw wecowds using pcat. ^^ t-the command to be used is wike: 
 
-.. code-block:: bash
+.. c-code-bwock:: b-bash
 
-  java -cp pcat-deploy.jar:$(hadoop classpath) com.twitter.ml.tool.pcat.PredictionCatTool 
-  -path /atla/proc2/user/timelines/processed/suggests/recap/continuous_training_data_records/fav/data/YYYY/MM/DD/01/part-00000.lzo 
-  -fc /atla/proc2/user/timelines/processed/suggests/recap/continuous_training_data_records/fav/data_spec.json 
-  -dates YYYY-MM-DDT01 -record_limit 100 | grep [feature_group]
+  java -cp pcat-depwoy.jaw:$(hadoop c-cwasspath) com.twittew.mw.toow.pcat.pwedictioncattoow 
+  -path /atwa/pwoc2/usew/timewines/pwocessed/suggests/wecap/continuous_twaining_data_wecowds/fav/data/yyyy/mm/dd/01/pawt-00000.wzo 
+  -fc /atwa/pwoc2/usew/timewines/pwocessed/suggests/wecap/continuous_twaining_data_wecowds/fav/data_spec.json 
+  -dates y-yyyy-mm-ddt01 -wecowd_wimit 100 | g-gwep [featuwe_gwoup]
 
 
-7. Create a phab with the new features and test the performance of a model with them compared to a control model without them. Test offline using `Deepbird for training <https://docbird.twitter.biz/tq_gcp_guide/deepbird.html to train>`_ and `RCE Hypothesis Testing <https://docbird.twitter.biz/Timelines_Deepbird_v2/training.html#model-evaluation-rce-hypothesis-testing>`_ to test. Test online using a DDG. Some helpful instructions are available in `Serving Timelines Models <https://docbird.twitter.biz/timelines_deepbird_v2/serving.html>`_ and the `Experiment Cookbook <https://docs.google.com/document/d/1FTaqd_XOzdTppzePeipLhAgYA9hercN5a_SyQXbuGws/edit#>`_
+7. o.O c-cweate a phab with t-the nyew featuwes a-and test the pewfowmance of a-a modew with them c-compawed to a contwow modew without t-them. 😳😳😳 test offwine using `deepbiwd fow twaining <https://docbiwd.twittew.biz/tq_gcp_guide/deepbiwd.htmw to t-twain>`_ and `wce hypothesis testing <https://docbiwd.twittew.biz/timewines_deepbiwd_v2/twaining.htmw#modew-evawuation-wce-hypothesis-testing>`_ t-to test. test onwine using a d-ddg. /(^•ω•^) some hewpfuw i-instwuctions awe avaiwabwe in `sewving timewines m-modews <https://docbiwd.twittew.biz/timewines_deepbiwd_v2/sewving.htmw>`_ and the `expewiment c-cookbook <https://docs.googwe.com/document/d/1ftaqd_xozdtppzepeipwhagya9hewcn5a_syqxbugws/edit#>`_
 
-Capacity Estimation
+c-capacity estimation
 --------------------------------
-This section describes how to approximate the capacity required for a new aggregate group. It is not expected to be exact, but should give a rough estimate.
+this section descwibes h-how to appwoximate t-the capacity wequiwed fow a n-nyew aggwegate gwoup. 😳😳😳 it is nyot expected to be e-exact, ^•ﻌ•^ but shouwd g-give a wough estimate. 🥺
 
-There are two main components that must be stored for each aggregate group.
+thewe a-awe two main components t-that must be stowed fow each aggwegate gwoup. o.O
 
-Key space: Each AggregationKey struct consists of two maps, one of which is populated with tuples [Long, Long] representing <featureId, value> of discrete features. This takes up 4 x 8 bytes or 32 bytes. The cache team estimates an additional 40 bytes of overhead.
+k-key space: e-each aggwegationkey s-stwuct consists o-of two maps, (U ᵕ U❁) one of which is popuwated with tupwes [wong, ^^ wong] wepwesenting <featuweid, (⑅˘꒳˘) vawue> of discwete featuwes. this t-takes up 4 x 8 b-bytes ow 32 bytes. :3 t-the cache team e-estimates an additionaw 40 b-bytes o-of ovewhead.
 
-Features: An aggregate feature is represented as a <Long, Double> pair (16 bytes) and is produced for each feature x label x metric x halflife combination.
+featuwes: an aggwegate f-featuwe i-is wepwesented as a <wong, (///ˬ///✿) doubwe> p-paiw (16 bytes) a-and is pwoduced fow each featuwe x wabew x metwic x-x hawfwife combination. :3
 
-1. Use bigquery to estimate how many unique values exist for the selected key (key_count). Also collect the number of features, labels, metrics, and half-lives being used.
-2. Compute the number of entries to be created, which is num_entires = feature_count * label_count * metric_count * halflife_count
-3. Compute the number of bytes per entry, which is num_entry_bytes = 16*num_entries + 32 bytes (key storage) + 40 bytes (overhead)
-4. Compute total space required = num_entry_bytes * key_count
+1. use bigquewy to e-estimate how many unique vawues e-exist fow the sewected k-key (key_count). 🥺 awso cowwect t-the nyumbew o-of featuwes, mya wabews, m-metwics, XD and hawf-wives being u-used. -.-
+2. compute t-the nyumbew of entwies to b-be cweated, o.O which is nyum_entiwes = f-featuwe_count * w-wabew_count * m-metwic_count * hawfwife_count
+3. (˘ω˘) c-compute the nyumbew of bytes pew entwy, (U ᵕ U❁) which i-is num_entwy_bytes = 16*num_entwies + 32 bytes (key stowage) + 40 bytes (ovewhead)
+4. rawr compute totaw space wequiwed = nyum_entwy_bytes * k-key_count
 
-Debugging New Aggregate Features
+debugging nyew aggwegate featuwes
 --------------------------------
 
-To debug problems in the setup of your job, there are several steps you can take.
+to debug pwobwems in the setup of youw job, 🥺 thewe awe sevewaw s-steps you can take. rawr x3
 
-First, ensure that data is being received from the input stream and passed through to create data records. This can be achieved by logging results at various places in your code, and especially at the point of data record creation.
+fiwst, ensuwe that data i-is being weceived fwom the input s-stweam and passed thwough to cweate data wecowds. ( ͡o ω ͡o ) t-this can be achieved by wogging w-wesuwts at vawious pwaces i-in youw code, σωσ and e-especiawwy at the point of data wecowd cweation. rawr x3
 
-For example, suppose you want to ensure that a data record is being created with
-the features you expect. With push and email features, we find that data records
-are created in the adaptor, using logic like the following:
+f-fow exampwe, (ˆ ﻌ ˆ)♡ suppose you want to ensuwe that a data wecowd is b-being cweated with
+the featuwes y-you expect. rawr with push and emaiw f-featuwes, :3 we find that data wecowds
+a-awe cweated i-in the adaptow, rawr using wogic wike the fowwowing:
 
-.. code-block:: scala
+.. c-code-bwock:: scawa
 
-  val record = new SRichDataRecord(new DataRecord)
+  vaw wecowd = nyew swichdatawecowd(new d-datawecowd)
   ...
-  record.setFeatureValue(feature, value)
+  wecowd.setfeatuwevawue(featuwe, (˘ω˘) vawue)
 
-To see what these feature values look like, we can have our adaptor class extend
-Twitter's `Logging` trait, and write each created record to a log file.
+to see nyani these featuwe vawues w-wook wike, (ˆ ﻌ ˆ)♡ we can h-have ouw adaptow cwass extend
+t-twittew's `wogging` t-twait, mya and wwite each cweated w-wecowd to a wog fiwe. (U ᵕ U❁)
 
-.. code-block:: scala
+.. code-bwock:: scawa
 
-  class MyEventAdaptor extends TimelinesAdapterBase[MyObject] with Logging {
+  cwass myeventadaptow extends timewinesadaptewbase[myobject] w-with w-wogging {
     ...
-    ...
-      def mkDataRecord(myFeatures: MyFeatures): DataRecord = {
-        val record = new SRichDataRecord(new DataRecord)
+    ... mya
+      def mkdatawecowd(myfeatuwes: m-myfeatuwes): datawecowd = {
+        v-vaw wecowd = nyew swichdatawecowd(new d-datawecowd)
         ...
-        record.setFeatureValue(feature, value)
-        logger.info("data record xyz: " + record.getRecord.toString)
+        wecowd.setfeatuwevawue(featuwe, ʘwʘ vawue)
+        w-woggew.info("data wecowd xyz: " + wecowd.getwecowd.tostwing)
       }
 
-This way, every time a data record is sent to the aggregator, it will also be
-logged. To inspect these logs, you can push these changes to a staging instance,
-ssh into that aurora instance, and grep the `log-files` directory for `xyz`. The
-data record objects you find should resemble a map from feature ids to their
-values.
+this w-way, (˘ω˘) evewy time a-a data wecowd is sent to the aggwegatow, 😳 it w-wiww awso be
+wogged. òωó to inspect these wogs, nyaa~~ you can push these changes to a staging instance,
+ssh into that auwowa instance, o.O and g-gwep the `wog-fiwes` d-diwectowy fow `xyz`. nyaa~~ the
+data w-wecowd objects y-you find shouwd wesembwe a map f-fwom featuwe ids to theiw
+vawues.
 
-To check that steps in the aggregation are being performed, you can also inspect the job's topology on go/heronui.
+to check that steps in the aggwegation awe being pewfowmed, (U ᵕ U❁) y-you can awso inspect the job's topowogy on go/hewonui. 😳😳😳
 
-Lastly, to verify that values are being written to your cache you can check the `set` chart in your cache's viz.
+wastwy, to vewify that v-vawues awe being w-wwitten to youw c-cache you can check the `set` chawt in youw cache's viz. (U ﹏ U)
 
-To check particular feature values for a given key, you can spin up a Scala REPL like so:
+to check p-pawticuwaw featuwe v-vawues fow a-a given key, ^•ﻌ•^ you can spin up a s-scawa wepw wike so:
 
-.. code-block:: bash
+.. code-bwock:: b-bash
 
-  $ ssh -fN -L*:2181:sdzookeeper-read.atla.twitter.com:2181 -D *:50001 nest.atlc.twitter.com
+  $ ssh -fn -w*:2181:sdzookeepew-wead.atwa.twittew.com:2181 -d *:50001 n-nyest.atwc.twittew.com
 
-  $ ./pants repl --jvm-repl-scala-options='-DsocksProxyHost=localhost -DsocksProxyPort=50001 -Dcom.twitter.server.resolverZkHosts=localhost:2181' timelinemixer/common/src/main/scala/com/twitter/timelinemixer/clients/real_time_aggregates_cache
+  $ ./pants wepw --jvm-wepw-scawa-options='-dsockspwoxyhost=wocawhost -dsockspwoxypowt=50001 -dcom.twittew.sewvew.wesowvewzkhosts=wocawhost:2181' t-timewinemixew/common/swc/main/scawa/com/twittew/timewinemixew/cwients/weaw_time_aggwegates_cache
 
-You will then need to create a connection to the cache, and a key with which to query it.
+you wiww then nyeed to cweate a connection t-to the cache, (⑅˘꒳˘) and a key w-with which to q-quewy it. >_<
 
-.. code-block:: scala
+.. code-bwock:: scawa
 
-  import com.twitter.conversions.DurationOps._
-  import com.twitter.finagle.stats.{DefaultStatsReceiver, StatsReceiver}
-  import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-  import com.twitter.summingbird.batch.Batcher
-  import com.twitter.timelinemixer.clients.real_time_aggregates_cache.RealTimeAggregatesMemcacheBuilder
-  import com.twitter.timelines.clients.memcache_common.StorehausMemcacheConfig
+  i-impowt com.twittew.convewsions.duwationops._
+  i-impowt com.twittew.finagwe.stats.{defauwtstatsweceivew, (⑅˘꒳˘) statsweceivew}
+  i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegationkey
+  i-impowt com.twittew.summingbiwd.batch.batchew
+  impowt com.twittew.timewinemixew.cwients.weaw_time_aggwegates_cache.weawtimeaggwegatesmemcachebuiwdew
+  impowt c-com.twittew.timewines.cwients.memcache_common.stowehausmemcacheconfig
 
-  val userFeature = -1887718638306251279L // feature id corresponding to User feature
-  val userId = 12L // replace with a user id logged when creating your data record
-  val key = (AggregationKey(Map(userFeature -> userId), Map.empty), Batcher.unit.currentBatch)
+  vaw u-usewfeatuwe = -1887718638306251279w // featuwe id cowwesponding t-to usew featuwe
+  vaw usewid = 12w // wepwace with a usew id wogged when cweating youw data wecowd
+  vaw key = (aggwegationkey(map(usewfeatuwe -> usewid), σωσ map.empty), b-batchew.unit.cuwwentbatch)
 
-  val dataset = "twemcache_magicrecs_real_time_aggregates_cache_staging" // replace with the appropriate cache name
-  val dest = s"/srv#/test/local/cache/twemcache_/$dataset"
+  vaw dataset = "twemcache_magicwecs_weaw_time_aggwegates_cache_staging" // wepwace with the a-appwopwiate cache nyame
+  vaw d-dest = s"/swv#/test/wocaw/cache/twemcache_/$dataset"
 
-  val statsReceiver: StatsReceiver = DefaultStatsReceiver
-  val cache = new RealTimeAggregatesMemcacheBuilder(
-        config = StorehausMemcacheConfig(
-          destName = dest,
-          keyPrefix = "",
-          requestTimeout = 10.seconds,
-          numTries = 1,
-          globalTimeout = 10.seconds,
-          tcpConnectTimeout = 10.seconds,
-          connectionAcquisitionTimeout = 10.seconds,
-          numPendingRequests = 250,
-          isReadOnly = true
-        ),
-        statsReceiver.scope(dataset)
-      ).build
+  vaw statsweceivew: statsweceivew = d-defauwtstatsweceivew
+  vaw cache = nyew weawtimeaggwegatesmemcachebuiwdew(
+        config = s-stowehausmemcacheconfig(
+          destname = dest, 🥺
+          k-keypwefix = "", :3
+          wequesttimeout = 10.seconds, (ꈍᴗꈍ)
+          nyumtwies = 1, ^•ﻌ•^
+          g-gwobawtimeout = 10.seconds,
+          tcpconnecttimeout = 10.seconds, (˘ω˘)
+          connectionacquisitiontimeout = 10.seconds, 🥺
+          n-nyumpendingwequests = 250, (✿oωo)
+          i-isweadonwy = twue
+        ), XD
+        statsweceivew.scope(dataset)
+      ).buiwd
 
-  val result = cache.get(key)
+  vaw w-wesuwt = cache.get(key)
 
-Another option is to create a debugger which points to the staging cache and creates a cache connection and key similar to the logic above.
+a-anothew option is to cweate a-a debuggew w-which points to the staging cache and cweates a c-cache connection and key simiwaw to the wogic above. (///ˬ///✿)
 
-Run CQL query to find metrics/counters
+wun cqw quewy t-to find metwics/countews
 --------------------------------
-We can also visualize the counters from our job to verify new features. Run CQL query on terminal to find the right path of metrics/counters. For example, in order to check counter mergeNumFeatures, run:
+we can awso visuawize the countews fwom ouw job to v-vewify nyew featuwes. ( ͡o ω ͡o ) w-wun cqw q-quewy on tewminaw to find the wight path of metwics/countews. ʘwʘ fow e-exampwe, rawr in owdew to check countew m-mewgenumfeatuwes, o.O wun:
 
-cql -z atla keys heron/summingbird_timelines_real_time_aggregates Tail-FlatMap | grep mergeNumFeatures
+cqw -z a-atwa keys hewon/summingbiwd_timewines_weaw_time_aggwegates taiw-fwatmap | g-gwep mewgenumfeatuwes
    
    
-Then use the right path to create the viz, example: https://monitoring.twitter.biz/tiny/2552105   
+then use the wight path to cweate the viz, ^•ﻌ•^ exampwe: h-https://monitowing.twittew.biz/tiny/2552105   

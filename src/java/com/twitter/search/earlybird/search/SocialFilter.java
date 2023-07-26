@@ -1,98 +1,98 @@
-package com.twitter.search.earlybird.search;
+package com.twittew.seawch.eawwybiwd.seawch;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.google.common.base.Preconditions;
-import com.google.common.primitives.Longs;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.pwimitives.wongs;
 
-import org.apache.lucene.index.NumericDocValues;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
 
-import com.twitter.common_internal.bloomfilter.BloomFilter;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
+i-impowt com.twittew.common_intewnaw.bwoomfiwtew.bwoomfiwtew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftsociawfiwtewtype;
 
 /**
- * Filter class used by the SearchResultsCollector to filter social tweets
- * from the hits.
+ * fiwtew cwass used by the seawchwesuwtscowwectow to fiwtew sociaw t-tweets
+ * fwom the hits. 😳
  */
-public class SocialFilter {
-  private interface Acceptor {
-    boolean accept(long fromUserLong, byte[] userIDInBytes);
+pubwic cwass sociawfiwtew {
+  p-pwivate intewface acceptow {
+    b-boowean accept(wong fwomusewwong, σωσ byte[] usewidinbytes);
   }
 
-  private NumericDocValues fromUserID;
-  private final Acceptor acceptor;
-  private final long searcherId;
-  private final BloomFilter trustedFilter;
-  private final BloomFilter followFilter;
+  p-pwivate nyumewicdocvawues f-fwomusewid;
+  p-pwivate finaw acceptow acceptow;
+  pwivate finaw wong seawchewid;
+  pwivate f-finaw bwoomfiwtew twustedfiwtew;
+  pwivate finaw bwoomfiwtew fowwowfiwtew;
 
-  private class FollowsAcceptor implements Acceptor {
-    @Override
-    public boolean accept(long fromUserLong, byte[] userIdInBytes) {
-      return followFilter.contains(userIdInBytes);
+  pwivate cwass fowwowsacceptow i-impwements acceptow {
+    @ovewwide
+    p-pubwic boowean a-accept(wong f-fwomusewwong, rawr x3 byte[] u-usewidinbytes) {
+      wetuwn fowwowfiwtew.contains(usewidinbytes);
     }
   }
 
-  private class TrustedAcceptor implements Acceptor {
-    @Override
-    public boolean accept(long fromUserLong, byte[] userIdInBytes) {
-      return trustedFilter.contains(userIdInBytes);
+  p-pwivate cwass twustedacceptow impwements acceptow {
+    @ovewwide
+    p-pubwic boowean accept(wong fwomusewwong, OwO byte[] usewidinbytes) {
+      wetuwn twustedfiwtew.contains(usewidinbytes);
     }
   }
 
-  private class AllAcceptor implements Acceptor {
-    @Override
-    public boolean accept(long fromUserLong, byte[] userIdInBytes) {
-      return trustedFilter.contains(userIdInBytes)
-          || followFilter.contains(userIdInBytes)
-          || fromUserLong == searcherId;
+  pwivate c-cwass awwacceptow impwements a-acceptow {
+    @ovewwide
+    p-pubwic boowean accept(wong f-fwomusewwong, /(^•ω•^) byte[] usewidinbytes) {
+      wetuwn twustedfiwtew.contains(usewidinbytes)
+          || f-fowwowfiwtew.contains(usewidinbytes)
+          || f-fwomusewwong == seawchewid;
     }
   }
 
-  public SocialFilter(
-      ThriftSocialFilterType socialFilterType,
-      final long searcherId,
-      final byte[] trustedFilter,
-      final byte[] followFilter) throws IOException {
-    Preconditions.checkNotNull(socialFilterType);
-    Preconditions.checkNotNull(trustedFilter);
-    Preconditions.checkNotNull(followFilter);
-    this.searcherId = searcherId;
-    this.trustedFilter = new BloomFilter(trustedFilter);
-    this.followFilter = new BloomFilter(followFilter);
+  p-pubwic s-sociawfiwtew(
+      thwiftsociawfiwtewtype s-sociawfiwtewtype, 😳😳😳
+      finaw wong s-seawchewid, ( ͡o ω ͡o )
+      finaw byte[] twustedfiwtew, >_<
+      f-finaw byte[] fowwowfiwtew) t-thwows ioexception {
+    pweconditions.checknotnuww(sociawfiwtewtype);
+    p-pweconditions.checknotnuww(twustedfiwtew);
+    p-pweconditions.checknotnuww(fowwowfiwtew);
+    this.seawchewid = seawchewid;
+    this.twustedfiwtew = nyew bwoomfiwtew(twustedfiwtew);
+    this.fowwowfiwtew = nyew bwoomfiwtew(fowwowfiwtew);
 
 
-    switch (socialFilterType) {
-      case FOLLOWS:
-        this.acceptor = new FollowsAcceptor();
-        break;
-      case TRUSTED:
-        this.acceptor = new TrustedAcceptor();
-        break;
-      case ALL:
-        this.acceptor = new AllAcceptor();
-        break;
-      default:
-        throw new UnsupportedOperationException("Invalid social filter type passed");
+    s-switch (sociawfiwtewtype) {
+      c-case fowwows:
+        this.acceptow = n-nyew fowwowsacceptow();
+        b-bweak;
+      c-case twusted:
+        this.acceptow = nyew twustedacceptow();
+        bweak;
+      c-case aww:
+        this.acceptow = nyew awwacceptow();
+        bweak;
+      defauwt:
+        t-thwow nyew unsuppowtedopewationexception("invawid sociaw fiwtew t-type passed");
     }
   }
 
-  public void startSegment(EarlybirdIndexSegmentAtomicReader indexReader) throws IOException {
-    fromUserID =
-        indexReader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
+  p-pubwic v-void stawtsegment(eawwybiwdindexsegmentatomicweadew indexweadew) t-thwows ioexception {
+    fwomusewid =
+        i-indexweadew.getnumewicdocvawues(eawwybiwdfiewdconstant.fwom_usew_id_csf.getfiewdname());
   }
 
   /**
-   * Determines if the given doc ID should be accepted.
+   * d-detewmines i-if the given doc id shouwd be accepted. >w<
    */
-  public boolean accept(int internalDocID) throws IOException {
-    if (!fromUserID.advanceExact(internalDocID)) {
-      return false;
+  p-pubwic boowean a-accept(int i-intewnawdocid) t-thwows ioexception {
+    i-if (!fwomusewid.advanceexact(intewnawdocid)) {
+      wetuwn fawse;
     }
 
-    long fromUserLong = fromUserID.longValue();
-    byte[] userIDInBytes = Longs.toByteArray(fromUserLong);
-    return acceptor.accept(fromUserLong, userIDInBytes);
+    wong fwomusewwong = fwomusewid.wongvawue();
+    b-byte[] usewidinbytes = wongs.tobyteawway(fwomusewwong);
+    wetuwn acceptow.accept(fwomusewwong, rawr usewidinbytes);
   }
 }

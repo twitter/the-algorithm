@@ -1,91 +1,91 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.adaptews
 
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.util.Time
+impowt c-com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.haspwefetchedfeatuwe
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.mw.api.featuwe.continuous
+impowt c-com.twittew.mw.api.utiw.fdsw._
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.featuwecontext
+impowt com.twittew.mw.api.iwecowdonetooneadaptew
+impowt com.twittew.utiw.time
 
 /**
- * This adapter mimics UserRecentWTFImpressionsAndFollowsAdapter (for user) and
- * RecentWTFImpressionsFeatureAdapter (for candidate) for extracting recent impression
- * and follow features. This adapter extracts user, candidate, and pair-wise features.
+ * this adaptew mimics usewwecentwtfimpwessionsandfowwowsadaptew (fow u-usew) and
+ * wecentwtfimpwessionsfeatuweadaptew (fow candidate) fow e-extwacting wecent impwession
+ * a-and fowwow featuwes. 😳 this adaptew extwacts usew, (ˆ ﻌ ˆ)♡ candidate, 😳😳😳 and p-paiw-wise featuwes. (U ﹏ U)
  */
-object PreFetchedFeatureAdapter
-    extends IRecordOneToOneAdapter[
-      (HasPreFetchedFeature, CandidateUser)
+object pwefetchedfeatuweadaptew
+    e-extends i-iwecowdonetooneadaptew[
+      (haspwefetchedfeatuwe, (///ˬ///✿) candidateusew)
     ] {
 
-  // impression features
-  val USER_NUM_RECENT_IMPRESSIONS: Continuous = new Continuous(
-    "user.prefetch.num_recent_impressions"
+  // impwession featuwes
+  vaw usew_num_wecent_impwessions: c-continuous = nyew continuous(
+    "usew.pwefetch.num_wecent_impwessions"
   )
-  val USER_LAST_IMPRESSION_DURATION: Continuous = new Continuous(
-    "user.prefetch.last_impression_duration"
+  vaw usew_wast_impwession_duwation: continuous = nyew c-continuous(
+    "usew.pwefetch.wast_impwession_duwation"
   )
-  val CANDIDATE_NUM_RECENT_IMPRESSIONS: Continuous = new Continuous(
-    "user-candidate.prefetch.num_recent_impressions"
+  vaw candidate_num_wecent_impwessions: c-continuous = n-nyew continuous(
+    "usew-candidate.pwefetch.num_wecent_impwessions"
   )
-  val CANDIDATE_LAST_IMPRESSION_DURATION: Continuous = new Continuous(
-    "user-candidate.prefetch.last_impression_duration"
+  vaw c-candidate_wast_impwession_duwation: c-continuous = nyew continuous(
+    "usew-candidate.pwefetch.wast_impwession_duwation"
   )
-  // follow features
-  val USER_NUM_RECENT_FOLLOWERS: Continuous = new Continuous(
-    "user.prefetch.num_recent_followers"
+  // fowwow featuwes
+  v-vaw usew_num_wecent_fowwowews: continuous = new continuous(
+    "usew.pwefetch.num_wecent_fowwowews"
   )
-  val USER_NUM_RECENT_FOLLOWED_BY: Continuous = new Continuous(
-    "user.prefetch.num_recent_followed_by"
+  v-vaw usew_num_wecent_fowwowed_by: continuous = nyew continuous(
+    "usew.pwefetch.num_wecent_fowwowed_by"
   )
-  val USER_NUM_RECENT_MUTUAL_FOLLOWS: Continuous = new Continuous(
-    "user.prefetch.num_recent_mutual_follows"
+  vaw usew_num_wecent_mutuaw_fowwows: continuous = nyew continuous(
+    "usew.pwefetch.num_wecent_mutuaw_fowwows"
   )
-  // impression + follow features
-  val USER_NUM_RECENT_FOLLOWED_IMPRESSIONS: Continuous = new Continuous(
-    "user.prefetch.num_recent_followed_impression"
+  // i-impwession + fowwow featuwes
+  v-vaw usew_num_wecent_fowwowed_impwessions: c-continuous = n-nyew continuous(
+    "usew.pwefetch.num_wecent_fowwowed_impwession"
   )
-  val USER_LAST_FOLLOWED_IMPRESSION_DURATION: Continuous = new Continuous(
-    "user.prefetch.last_followed_impression_duration"
+  vaw usew_wast_fowwowed_impwession_duwation: continuous = nyew continuous(
+    "usew.pwefetch.wast_fowwowed_impwession_duwation"
   )
 
-  override def adaptToDataRecord(
-    record: (HasPreFetchedFeature, CandidateUser)
-  ): DataRecord = {
-    val (target, candidate) = record
-    val dr = new DataRecord()
-    val t = Time.now
-    // set impression features for user, optionally for candidate
-    dr.setFeatureValue(USER_NUM_RECENT_IMPRESSIONS, target.numWtfImpressions.toDouble)
-    dr.setFeatureValue(
-      USER_LAST_IMPRESSION_DURATION,
-      (t - target.latestImpressionTime).inMillis.toDouble)
-    target.getCandidateImpressionCounts(candidate.id).foreach { counts =>
-      dr.setFeatureValue(CANDIDATE_NUM_RECENT_IMPRESSIONS, counts.toDouble)
+  o-ovewwide def adapttodatawecowd(
+    w-wecowd: (haspwefetchedfeatuwe, 😳 candidateusew)
+  ): d-datawecowd = {
+    v-vaw (tawget, 😳 candidate) = w-wecowd
+    vaw dw = nyew datawecowd()
+    v-vaw t = time.now
+    // set impwession featuwes f-fow usew, σωσ optionawwy fow candidate
+    d-dw.setfeatuwevawue(usew_num_wecent_impwessions, rawr x3 tawget.numwtfimpwessions.todoubwe)
+    d-dw.setfeatuwevawue(
+      u-usew_wast_impwession_duwation, OwO
+      (t - tawget.watestimpwessiontime).inmiwwis.todoubwe)
+    tawget.getcandidateimpwessioncounts(candidate.id).foweach { counts =>
+      dw.setfeatuwevawue(candidate_num_wecent_impwessions, /(^•ω•^) counts.todoubwe)
     }
-    target.getCandidateLatestTime(candidate.id).foreach { latestTime: Time =>
-      dr.setFeatureValue(CANDIDATE_LAST_IMPRESSION_DURATION, (t - latestTime).inMillis.toDouble)
+    tawget.getcandidatewatesttime(candidate.id).foweach { w-watesttime: t-time =>
+      dw.setfeatuwevawue(candidate_wast_impwession_duwation, 😳😳😳 (t - w-watesttime).inmiwwis.todoubwe)
     }
-    // set recent follow features for user
-    dr.setFeatureValue(USER_NUM_RECENT_FOLLOWERS, target.numRecentFollowedUserIds.toDouble)
-    dr.setFeatureValue(USER_NUM_RECENT_FOLLOWED_BY, target.numRecentFollowedByUserIds.toDouble)
-    dr.setFeatureValue(USER_NUM_RECENT_MUTUAL_FOLLOWS, target.numRecentMutualFollows.toDouble)
-    dr.setFeatureValue(USER_NUM_RECENT_FOLLOWED_IMPRESSIONS, target.numFollowedImpressions.toDouble)
-    dr.setFeatureValue(
-      USER_LAST_FOLLOWED_IMPRESSION_DURATION,
-      target.lastFollowedImpressionDurationMs.getOrElse(Long.MaxValue).toDouble)
-    dr
+    // s-set wecent f-fowwow featuwes fow usew
+    dw.setfeatuwevawue(usew_num_wecent_fowwowews, ( ͡o ω ͡o ) tawget.numwecentfowwowedusewids.todoubwe)
+    d-dw.setfeatuwevawue(usew_num_wecent_fowwowed_by, >_< tawget.numwecentfowwowedbyusewids.todoubwe)
+    dw.setfeatuwevawue(usew_num_wecent_mutuaw_fowwows, >w< tawget.numwecentmutuawfowwows.todoubwe)
+    dw.setfeatuwevawue(usew_num_wecent_fowwowed_impwessions, rawr t-tawget.numfowwowedimpwessions.todoubwe)
+    dw.setfeatuwevawue(
+      u-usew_wast_fowwowed_impwession_duwation, 😳
+      t-tawget.wastfowwowedimpwessionduwationms.getowewse(wong.maxvawue).todoubwe)
+    d-dw
   }
-  override def getFeatureContext: FeatureContext = new FeatureContext(
-    USER_NUM_RECENT_IMPRESSIONS,
-    USER_LAST_IMPRESSION_DURATION,
-    CANDIDATE_NUM_RECENT_IMPRESSIONS,
-    CANDIDATE_LAST_IMPRESSION_DURATION,
-    USER_NUM_RECENT_FOLLOWERS,
-    USER_NUM_RECENT_FOLLOWED_BY,
-    USER_NUM_RECENT_MUTUAL_FOLLOWS,
-    USER_NUM_RECENT_FOLLOWED_IMPRESSIONS,
-    USER_LAST_FOLLOWED_IMPRESSION_DURATION,
+  ovewwide def getfeatuwecontext: f-featuwecontext = n-nyew featuwecontext(
+    u-usew_num_wecent_impwessions, >w<
+    u-usew_wast_impwession_duwation,
+    candidate_num_wecent_impwessions, (⑅˘꒳˘)
+    candidate_wast_impwession_duwation, OwO
+    u-usew_num_wecent_fowwowews, (ꈍᴗꈍ)
+    u-usew_num_wecent_fowwowed_by, 😳
+    u-usew_num_wecent_mutuaw_fowwows, 😳😳😳
+    u-usew_num_wecent_fowwowed_impwessions, mya
+    u-usew_wast_fowwowed_impwession_duwation, mya
   )
 }

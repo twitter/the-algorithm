@@ -1,35 +1,35 @@
-package com.twitter.search.earlybird_root.routers;
+package com.twittew.seawch.eawwybiwd_woot.woutews;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+impowt javax.inject.inject;
+impowt j-javax.inject.named;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.InjectionNames;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.util.Future;
+i-impowt c-com.twittew.finagwe.sewvice;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.injectionnames;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.eawwybiwdtimewangefiwtew;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * For TopTweets traffic SuperRoot forwards all traffic to the realtime cluster.
+ * fow toptweets twaffic supewwoot fowwawds a-aww twaffic to the weawtime cwustew. (U ﹏ U)
  */
-public class TopTweetsRequestRouter extends RequestRouter {
+pubwic c-cwass toptweetswequestwoutew extends wequestwoutew {
 
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> realtime;
+  p-pwivate finaw sewvice<eawwybiwdwequestcontext, >_< eawwybiwdwesponse> weawtime;
 
-  /** Creates a new TopTweetsRequestRouter instance to be used by the SuperRoot. */
-  @Inject
-  public TopTweetsRequestRouter(
-      @Named(InjectionNames.REALTIME)
-      Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
-      @Named(TopTweetsRequestRouterModule.TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter timeRangeFilter) {
+  /** c-cweates a nyew toptweetswequestwoutew i-instance to be u-used by the supewwoot. rawr x3 */
+  @inject
+  pubwic toptweetswequestwoutew(
+      @named(injectionnames.weawtime)
+      sewvice<eawwybiwdwequestcontext, eawwybiwdwesponse> weawtime, mya
+      @named(toptweetswequestwoutewmoduwe.time_wange_fiwtew)
+      e-eawwybiwdtimewangefiwtew timewangefiwtew) {
 
-    this.realtime = timeRangeFilter.andThen(realtime);
+    this.weawtime = timewangefiwtew.andthen(weawtime);
   }
 
-  @Override
-  public Future<EarlybirdResponse> route(EarlybirdRequestContext requestContext) {
-    return realtime.apply(requestContext);
+  @ovewwide
+  pubwic f-futuwe<eawwybiwdwesponse> woute(eawwybiwdwequestcontext w-wequestcontext) {
+    w-wetuwn weawtime.appwy(wequestcontext);
   }
 }

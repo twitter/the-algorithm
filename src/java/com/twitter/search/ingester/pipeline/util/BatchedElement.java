@@ -1,21 +1,21 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.twittew.seawch.ingestew.pipewine.utiw;
 
-import java.util.concurrent.CompletableFuture;
+impowt java.utiw.concuwwent.compwetabwefutuwe;
 
-public class BatchedElement<T, R> {
-  private CompletableFuture<R> completableFuture;
-  private T item;
+p-pubwic cwass b-batchedewement<t, (U ᵕ U❁) w-w> {
+  pwivate c-compwetabwefutuwe<w> c-compwetabwefutuwe;
+  p-pwivate t-t item;
 
-  public BatchedElement(T item, CompletableFuture<R> completableFuture) {
+  pubwic b-batchedewement(t item, -.- compwetabwefutuwe<w> compwetabwefutuwe) {
     this.item = item;
-    this.completableFuture = completableFuture;
+    t-this.compwetabwefutuwe = compwetabwefutuwe;
   }
 
-  public T getItem() {
-    return item;
+  pubwic t getitem() {
+    w-wetuwn item;
   }
 
-  public CompletableFuture<R> getCompletableFuture() {
-    return completableFuture;
+  p-pubwic compwetabwefutuwe<w> getcompwetabwefutuwe() {
+    wetuwn compwetabwefutuwe;
   }
 }

@@ -1,146 +1,146 @@
-# The keys in this file correspond to the DeciderValues defined in
-# https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param/decider/DeciderKey.scala
+# the keys in this fiwe cowwespond t-to the decidewvawues d-defined in
+# h-https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/pawam/decidew/decidewkey.scawa
 
-dark_traffic_filter:
-  comment: Proportion of the requests that are forwarded as dark traffic to the proxy
-  default_availability: 0
+d-dawk_twaffic_fiwtew:
+  c-comment: p-pwopowtion o-of the wequests t-that awe fowwawded as dawk twaffic to the pwoxy
+  defauwt_avaiwabiwity: 0
 
-enable_tweet_recommendations_home_product:
-  comment: Proportion of requests where we return an actual response for TweetRecommendations Home product
-  default_availability: 10000
+enabwe_tweet_wecommendations_home_pwoduct:
+  c-comment: pwopowtion of wequests whewe we w-wetuwn an actuaw wesponse fow t-tweetwecommendations home pwoduct
+  defauwt_avaiwabiwity: 10000
 
-enable_tweet_health_score:
-  comment: "Enable the calculation for health scores in tweetInfo. By enabling this decider, we will compute TweetHealthModelScore"
-  default_availability: 10000
+enabwe_tweet_heawth_scowe:
+  c-comment: "enabwe the cawcuwation fow h-heawth scowes i-in tweetinfo. (///ˬ///✿) by enabwing this decidew, 🥺 we wiww compute tweetheawthmodewscowe"
+  defauwt_avaiwabiwity: 10000
 
-enable_user_agatha_score:
-  comment: "Enable the calculation for health scores in tweetInfo. By enabling this decider, we will compute UserHealthModelScore"
-  default_availability: 10000
+enabwe_usew_agatha_scowe:
+  c-comment: "enabwe the cawcuwation fow heawth scowes in tweetinfo. >_< by enabwing t-this decidew, UwU we wiww compute u-usewheawthmodewscowe"
+  d-defauwt_avaiwabiwity: 10000
 
-enable_user_tweet_entity_graph_traffic:
-  comment: "Enable the traffic to user entity tweet graph to fetch liked-by tweets candidates"
-  default_availability: 10000
+e-enabwe_usew_tweet_entity_gwaph_twaffic:
+  c-comment: "enabwe the twaffic to usew entity t-tweet gwaph to fetch wiked-by tweets candidates"
+  d-defauwt_avaiwabiwity: 10000
 
-enable_user_tweet_graph_traffic:
-  comment: "Enable the traffic to user tweet graph to fetch similar tweets candidates"
-  default_availability: 10000
+enabwe_usew_tweet_gwaph_twaffic:
+  comment: "enabwe the twaffic to usew tweet gwaph to fetch simiwaw t-tweets candidates"
+  defauwt_avaiwabiwity: 10000
 
-enable_user_video_graph_traffic:
-  comment: "Enable the traffic to user video graph to fetch similar tweets candidates"
-  default_availability: 10000
+e-enabwe_usew_video_gwaph_twaffic:
+  c-comment: "enabwe t-the twaffic to usew video gwaph to fetch simiwaw tweets c-candidates"
+  d-defauwt_avaiwabiwity: 10000
 
-enable_user_ad_graph_traffic:
-  comment: "Enable the traffic to user ad graph to fetch similar tweets candidates"
-  default_availability: 10000
+enabwe_usew_ad_gwaph_twaffic:
+  comment: "enabwe the twaffic to usew a-ad gwaph to f-fetch simiwaw tweets candidates"
+  d-defauwt_avaiwabiwity: 10000
 
-enable_qig_similar_tweets_traffic:
-  comment: "Enable the traffic to QIG to fetch similar tweet candidates"
-  default_availability: 0
+enabwe_qig_simiwaw_tweets_twaffic:
+  c-comment: "enabwe the twaffic to qig to fetch s-simiwaw tweet candidates"
+  defauwt_avaiwabiwity: 0
 
-enable_frs_traffic:
-  comment: "Enable the traffic to FRS to fetch user follow recommendations"
-  default_availability: 0
+e-enabwe_fws_twaffic:
+  comment: "enabwe t-the t-twaffic to fws to fetch usew fowwow wecommendations"
+  defauwt_avaiwabiwity: 0
 
-enable_hydra_dark_traffic:
-  comment: "Enable dark traffic to hydra"
-  default_availability: 0
+enabwe_hydwa_dawk_twaffic:
+  comment: "enabwe dawk twaffic to hydwa"
+  defauwt_avaiwabiwity: 0
 
-enable_real_graph_mh_store:
-  comment: "Enable traffic for the real graph manhattan based store"
-  default_availability: 0
+e-enabwe_weaw_gwaph_mh_stowe:
+  c-comment: "enabwe twaffic fow the w-weaw gwaph manhattan b-based stowe"
+  d-defauwt_avaiwabiwity: 0
 
-enable_simclusters_ann_experimental_dark_traffic:
-  comment: "Enable dark traffic to simclusters-ann-experimental"
-  default_availability: 0
+enabwe_simcwustews_ann_expewimentaw_dawk_twaffic:
+  comment: "enabwe dawk twaffic t-to simcwustews-ann-expewimentaw"
+  defauwt_avaiwabiwity: 0
 
-enable_simclusters_ann_2_dark_traffic:
-  comment: "Enable dark traffic to prod SimClustersANN2"
-  default_availability: 0
+enabwe_simcwustews_ann_2_dawk_twaffic:
+  comment: "enabwe dawk twaffic t-to pwod simcwustewsann2"
+  defauwt_avaiwabiwity: 0
 
-enable_user_state_store:
-  comment: "Enable traffic user state store to hydrate user state"
-  default_availability: 0
+e-enabwe_usew_state_stowe:
+  c-comment: "enabwe t-twaffic usew state stowe to hydwate u-usew state"
+  d-defauwt_avaiwabiwity: 0
 
-upper_funnel_per_step_scribe_rate:
-  comment: "Enable Upper Funnel Event Scribe Sampling (fetch, pre-rank, interleave etc.) for getTweetsRecommendations() endpoint"
-  default_availability: 0
+u-uppew_funnew_pew_step_scwibe_wate:
+  c-comment: "enabwe uppew funnew event scwibe sampwing (fetch, >_< pwe-wank, i-intewweave e-etc.) fow gettweetswecommendations() e-endpoint"
+  d-defauwt_avaiwabiwity: 0
 
-kafka_message_scribe_sample_rate:
-  comment: "Gates the production of forked scribe messages to kafka for the async feature hydrator"
-  default_availability: 0
+k-kafka_message_scwibe_sampwe_wate:
+  comment: "gates the pwoduction of fowked scwibe m-messages to kafka fow the async featuwe hydwatow"
+  defauwt_avaiwabiwity: 0
 
-top_level_api_ddg_metrics_scribe_rate:
-  comment: "Enable Top Level API DDG Metrics Scribe Sampling for getTweetsRecommendations() endpoint"
-  default_availability: 0
+top_wevew_api_ddg_metwics_scwibe_wate:
+  comment: "enabwe top wevew a-api ddg metwics scwibe sampwing fow gettweetswecommendations() endpoint"
+  defauwt_avaiwabiwity: 0
 
-ads_recommendations_per_experiment_scribe_rate:
-  comment: "Percentage of DDG traffic to Scribe for getAdsRecommendations() endpoint"
-  default_availability: 0
+a-ads_wecommendations_pew_expewiment_scwibe_wate:
+  c-comment: "pewcentage o-of ddg twaffic to s-scwibe fow getadswecommendations() endpoint"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_getTweetRecommendations:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+e-enabwe_woadshedding_gettweetwecommendations:
+  c-comment: "enabwe woadshedding (fwom 0% to 100%). -.- wequests that have been shed wiww wetuwn a-an empty wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_getTweetRecommendations_Home:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enabwe_woadshedding_gettweetwecommendations_home:
+  c-comment: "enabwe woadshedding (fwom 0% t-to 100%). mya w-wequests that have been shed wiww wetuwn an e-empty wesponse"
+  d-defauwt_avaiwabiwity: 0
 
-enable_loadshedding_getTweetRecommendations_Notifications:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enabwe_woadshedding_gettweetwecommendations_notifications:
+  c-comment: "enabwe w-woadshedding (fwom 0% to 100%). >w< wequests that have been shed wiww wetuwn an empty wesponse"
+  d-defauwt_avaiwabiwity: 0
 
-enable_loadshedding_getTweetRecommendations_Email:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+e-enabwe_woadshedding_gettweetwecommendations_emaiw:
+  c-comment: "enabwe woadshedding (fwom 0% t-to 100%). (U ﹏ U) w-wequests that have been shed w-wiww wetuwn an empty wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_getRelatedTweetsForQueryTweet:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enabwe_woadshedding_getwewatedtweetsfowquewytweet:
+  comment: "enabwe w-woadshedding (fwom 0% t-to 100%). 😳😳😳 wequests that have been shed w-wiww wetuwn an empty w-wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_getRelatedTweetsForQueryTweet_Home:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enabwe_woadshedding_getwewatedtweetsfowquewytweet_home:
+  comment: "enabwe w-woadshedding (fwom 0% to 100%). o.O wequests that have been shed wiww wetuwn an e-empty wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_getRelatedTweetsForQueryTweet_MoreTweetsModule:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enabwe_woadshedding_getwewatedtweetsfowquewytweet_mowetweetsmoduwe:
+  c-comment: "enabwe w-woadshedding (fwom 0% to 100%). òωó wequests that have been shed w-wiww wetuwn an empty w-wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_getRelatedTweetsForQueryAuthor:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enabwe_woadshedding_getwewatedtweetsfowquewyauthow:
+  comment: "enabwe w-woadshedding (fwom 0% to 100%). 😳😳😳 w-wequests that have been shed wiww wetuwn an empty wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_getRelatedTweetsForQueryAuthor_MoreTweetsModule:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+e-enabwe_woadshedding_getwewatedtweetsfowquewyauthow_mowetweetsmoduwe:
+  comment: "enabwe woadshedding (fwom 0% t-to 100%). σωσ w-wequests that have been shed wiww w-wetuwn an empty wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_loadshedding_getFrsBasedTweetRecommendations_Home:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+e-enabwe_woadshedding_getfwsbasedtweetwecommendations_home:
+  c-comment: "enabwe w-woadshedding (fwom 0% to 100%). (⑅˘꒳˘) w-wequests that h-have been shed wiww wetuwn an empty wesponse"
+  d-defauwt_avaiwabiwity: 0
 
-enable_loadshedding_getFrsBasedTweetRecommendations_Notifications:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+e-enabwe_woadshedding_getfwsbasedtweetwecommendations_notifications:
+  c-comment: "enabwe woadshedding (fwom 0% to 100%). (///ˬ///✿) w-wequests that have been shed wiww w-wetuwn an empty w-wesponse"
+  defauwt_avaiwabiwity: 0
 
-enable_user_media_representation_store:
-  comment: "Enable fetching user nudity rate signal from Media Understanding"
-  default_availability: 0
+enabwe_usew_media_wepwesentation_stowe:
+  comment: "enabwe fetching usew n-nyudity wate signaw f-fwom media u-undewstanding"
+  d-defauwt_avaiwabiwity: 0
 
-enable_magic_recs_real_time_aggregates_store:
-  comment: "Enable fetching real time aggregates features from Magic Recs memcache"
-  default_availability: 0
+enabwe_magic_wecs_weaw_time_aggwegates_stowe:
+  c-comment: "enabwe fetching weaw time aggwegates featuwes fwom magic wecs memcache"
+  defauwt_avaiwabiwity: 0
 
-enable_utg_realtime_tweet_engagement_score:
-  comment: "Enable fetching real time tweet engagement score from utg-plus"
-  default_availability: 0
+e-enabwe_utg_weawtime_tweet_engagement_scowe:
+  comment: "enabwe f-fetching weaw time tweet engagement s-scowe fwom utg-pwus"
+  d-defauwt_avaiwabiwity: 0
 
-get_tweet_recommendations_cache_rate:
-  comment: "Proportion of users where getTweetRecommendations() request and responses will be cached"
-  default_availability: 1000
+get_tweet_wecommendations_cache_wate:
+  c-comment: "pwopowtion o-of usews w-whewe gettweetwecommendations() w-wequest and wesponses w-wiww be cached"
+  defauwt_avaiwabiwity: 1000
 
-enable_earlybird_traffic:
-  comment: "Enable fetching tweet candidates from Earlybird"
-  default_availability: 0
+enabwe_eawwybiwd_twaffic:
+  comment: "enabwe fetching tweet candidates fwom eawwybiwd"
+  defauwt_avaiwabiwity: 0
 
-enable_scribe_for_blue_verified_tweet_candidates:
-  comment: "Enable scribing for tweet candidates from Blue Verified users"
-  default_availability: 0
+e-enabwe_scwibe_fow_bwue_vewified_tweet_candidates:
+  c-comment: "enabwe s-scwibing fow tweet candidates f-fwom bwue vewified usews"
+  defauwt_avaiwabiwity: 0

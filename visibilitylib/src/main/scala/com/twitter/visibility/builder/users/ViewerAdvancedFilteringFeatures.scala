@@ -1,92 +1,92 @@
-package com.twitter.visibility.builder.users
+package com.twittew.visibiwity.buiwdew.usews
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.AdvancedFilters
-import com.twitter.gizmoduck.thriftscala.MentionFilter
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.ViewerFiltersDefaultProfileImage
-import com.twitter.visibility.features.ViewerFiltersNewUsers
-import com.twitter.visibility.features.ViewerFiltersNoConfirmedEmail
-import com.twitter.visibility.features.ViewerFiltersNoConfirmedPhone
-import com.twitter.visibility.features.ViewerFiltersNotFollowedBy
-import com.twitter.visibility.features.ViewerMentionFilter
+impowt c-com.twittew.finagwe.stats.countew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.gizmoduck.thwiftscawa.advancedfiwtews
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.mentionfiwtew
+i-impowt com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+impowt com.twittew.visibiwity.common.usewsouwce
+impowt com.twittew.visibiwity.featuwes.viewewfiwtewsdefauwtpwofiweimage
+impowt c-com.twittew.visibiwity.featuwes.viewewfiwtewsnewusews
+impowt com.twittew.visibiwity.featuwes.viewewfiwtewsnoconfiwmedemaiw
+impowt c-com.twittew.visibiwity.featuwes.viewewfiwtewsnoconfiwmedphone
+impowt com.twittew.visibiwity.featuwes.viewewfiwtewsnotfowwowedby
+i-impowt com.twittew.visibiwity.featuwes.viewewmentionfiwtew
 
-class ViewerAdvancedFilteringFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("viewer_advanced_filtering_features")
+cwass viewewadvancedfiwtewingfeatuwes(usewsouwce: usewsouwce, 😳 statsweceivew: s-statsweceivew) {
+  pwivate[this] v-vaw s-scopedstatsweceivew = statsweceivew.scope("viewew_advanced_fiwtewing_featuwes")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pwivate[this] vaw wequests = scopedstatsweceivew.countew("wequests")
 
-  private[this] val viewerFiltersNoConfirmedEmail =
-    scopedStatsReceiver.scope(ViewerFiltersNoConfirmedEmail.name).counter("requests")
-  private[this] val viewerFiltersNoConfirmedPhone =
-    scopedStatsReceiver.scope(ViewerFiltersNoConfirmedPhone.name).counter("requests")
-  private[this] val viewerFiltersDefaultProfileImage =
-    scopedStatsReceiver.scope(ViewerFiltersDefaultProfileImage.name).counter("requests")
-  private[this] val viewerFiltersNewUsers =
-    scopedStatsReceiver.scope(ViewerFiltersNewUsers.name).counter("requests")
-  private[this] val viewerFiltersNotFollowedBy =
-    scopedStatsReceiver.scope(ViewerFiltersNotFollowedBy.name).counter("requests")
-  private[this] val viewerMentionFilter =
-    scopedStatsReceiver.scope(ViewerMentionFilter.name).counter("requests")
+  p-pwivate[this] vaw viewewfiwtewsnoconfiwmedemaiw =
+    scopedstatsweceivew.scope(viewewfiwtewsnoconfiwmedemaiw.name).countew("wequests")
+  pwivate[this] vaw viewewfiwtewsnoconfiwmedphone =
+    s-scopedstatsweceivew.scope(viewewfiwtewsnoconfiwmedphone.name).countew("wequests")
+  pwivate[this] vaw v-viewewfiwtewsdefauwtpwofiweimage =
+    s-scopedstatsweceivew.scope(viewewfiwtewsdefauwtpwofiweimage.name).countew("wequests")
+  pwivate[this] v-vaw v-viewewfiwtewsnewusews =
+    scopedstatsweceivew.scope(viewewfiwtewsnewusews.name).countew("wequests")
+  pwivate[this] v-vaw viewewfiwtewsnotfowwowedby =
+    scopedstatsweceivew.scope(viewewfiwtewsnotfowwowedby.name).countew("wequests")
+  pwivate[this] v-vaw viewewmentionfiwtew =
+    scopedstatsweceivew.scope(viewewmentionfiwtew.name).countew("wequests")
 
-  def forViewerId(viewerId: Option[Long]): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def fowviewewid(viewewid: option[wong]): featuwemapbuiwdew => featuwemapbuiwdew = {
+    w-wequests.incw()
 
-    _.withFeature(ViewerFiltersNoConfirmedEmail, viewerFiltersNoConfirmedEmail(viewerId))
-      .withFeature(ViewerFiltersNoConfirmedPhone, viewerFiltersNoConfirmedPhone(viewerId))
-      .withFeature(ViewerFiltersDefaultProfileImage, viewerFiltersDefaultProfileImage(viewerId))
-      .withFeature(ViewerFiltersNewUsers, viewerFiltersNewUsers(viewerId))
-      .withFeature(ViewerFiltersNotFollowedBy, viewerFiltersNotFollowedBy(viewerId))
-      .withFeature(ViewerMentionFilter, viewerMentionFilter(viewerId))
+    _.withfeatuwe(viewewfiwtewsnoconfiwmedemaiw, σωσ viewewfiwtewsnoconfiwmedemaiw(viewewid))
+      .withfeatuwe(viewewfiwtewsnoconfiwmedphone, rawr x3 v-viewewfiwtewsnoconfiwmedphone(viewewid))
+      .withfeatuwe(viewewfiwtewsdefauwtpwofiweimage, OwO v-viewewfiwtewsdefauwtpwofiweimage(viewewid))
+      .withfeatuwe(viewewfiwtewsnewusews, /(^•ω•^) v-viewewfiwtewsnewusews(viewewid))
+      .withfeatuwe(viewewfiwtewsnotfowwowedby, 😳😳😳 viewewfiwtewsnotfowwowedby(viewewid))
+      .withfeatuwe(viewewmentionfiwtew, ( ͡o ω ͡o ) viewewmentionfiwtew(viewewid))
   }
 
-  def viewerFiltersNoConfirmedEmail(viewerId: Option[Long]): Stitch[Boolean] =
-    viewerAdvancedFilters(viewerId, af => af.filterNoConfirmedEmail, viewerFiltersNoConfirmedEmail)
+  def viewewfiwtewsnoconfiwmedemaiw(viewewid: o-option[wong]): s-stitch[boowean] =
+    viewewadvancedfiwtews(viewewid, >_< a-af => af.fiwtewnoconfiwmedemaiw, >w< v-viewewfiwtewsnoconfiwmedemaiw)
 
-  def viewerFiltersNoConfirmedPhone(viewerId: Option[Long]): Stitch[Boolean] =
-    viewerAdvancedFilters(viewerId, af => af.filterNoConfirmedPhone, viewerFiltersNoConfirmedPhone)
+  def viewewfiwtewsnoconfiwmedphone(viewewid: o-option[wong]): stitch[boowean] =
+    v-viewewadvancedfiwtews(viewewid, rawr af => af.fiwtewnoconfiwmedphone, 😳 viewewfiwtewsnoconfiwmedphone)
 
-  def viewerFiltersDefaultProfileImage(viewerId: Option[Long]): Stitch[Boolean] =
-    viewerAdvancedFilters(
-      viewerId,
-      af => af.filterDefaultProfileImage,
-      viewerFiltersDefaultProfileImage
+  d-def viewewfiwtewsdefauwtpwofiweimage(viewewid: option[wong]): s-stitch[boowean] =
+    viewewadvancedfiwtews(
+      v-viewewid, >w<
+      a-af => af.fiwtewdefauwtpwofiweimage, (⑅˘꒳˘)
+      viewewfiwtewsdefauwtpwofiweimage
     )
 
-  def viewerFiltersNewUsers(viewerId: Option[Long]): Stitch[Boolean] =
-    viewerAdvancedFilters(viewerId, af => af.filterNewUsers, viewerFiltersNewUsers)
+  def viewewfiwtewsnewusews(viewewid: option[wong]): stitch[boowean] =
+    v-viewewadvancedfiwtews(viewewid, OwO a-af => af.fiwtewnewusews, (ꈍᴗꈍ) viewewfiwtewsnewusews)
 
-  def viewerFiltersNotFollowedBy(viewerId: Option[Long]): Stitch[Boolean] =
-    viewerAdvancedFilters(viewerId, af => af.filterNotFollowedBy, viewerFiltersNotFollowedBy)
+  d-def viewewfiwtewsnotfowwowedby(viewewid: o-option[wong]): s-stitch[boowean] =
+    viewewadvancedfiwtews(viewewid, 😳 af => af.fiwtewnotfowwowedby, 😳😳😳 viewewfiwtewsnotfowwowedby)
 
-  def viewerMentionFilter(viewerId: Option[Long]): Stitch[MentionFilter] = {
-    viewerMentionFilter.incr()
-    viewerId match {
-      case Some(id) =>
-        userSource.getMentionFilter(id).handle {
-          case NotFound =>
-            MentionFilter.Unfiltered
+  d-def viewewmentionfiwtew(viewewid: option[wong]): stitch[mentionfiwtew] = {
+    viewewmentionfiwtew.incw()
+    viewewid match {
+      c-case some(id) =>
+        usewsouwce.getmentionfiwtew(id).handwe {
+          c-case nyotfound =>
+            m-mentionfiwtew.unfiwtewed
         }
-      case _ => Stitch.value(MentionFilter.Unfiltered)
+      c-case _ => stitch.vawue(mentionfiwtew.unfiwtewed)
     }
   }
 
-  private[this] def viewerAdvancedFilters(
-    viewerId: Option[Long],
-    advancedFilterCheck: AdvancedFilters => Boolean,
-    featureCounter: Counter
-  ): Stitch[Boolean] = {
-    featureCounter.incr()
+  p-pwivate[this] d-def viewewadvancedfiwtews(
+    v-viewewid: o-option[wong], mya
+    advancedfiwtewcheck: advancedfiwtews => b-boowean, mya
+    f-featuwecountew: c-countew
+  ): s-stitch[boowean] = {
+    f-featuwecountew.incw()
 
-    val advancedFilters = viewerId match {
-      case Some(id) => userSource.getAdvancedFilters(id)
-      case _ => Stitch.value(AdvancedFilters())
+    vaw advancedfiwtews = viewewid match {
+      case some(id) => u-usewsouwce.getadvancedfiwtews(id)
+      case _ => stitch.vawue(advancedfiwtews())
     }
 
-    advancedFilters.map(advancedFilterCheck)
+    advancedfiwtews.map(advancedfiwtewcheck)
   }
 }

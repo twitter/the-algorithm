@@ -1,100 +1,100 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.candidate.TargetDecider
-import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.history.HistoryStoreKeyContext
-import com.twitter.frigate.common.history.PushServiceHistoryStore
-import com.twitter.frigate.data_pipeline.thriftscala._
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.hermit.store.labeled_push_recs.LabeledPushRecsJoinedWithNotificationHistoryStore
-import com.twitter.logging.Logger
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.Time
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.candidate.tawgetdecidew
+i-impowt com.twittew.fwigate.common.histowy.histowy
+i-impowt com.twittew.fwigate.common.histowy.histowystowekeycontext
+i-impowt com.twittew.fwigate.common.histowy.pushsewvicehistowystowe
+impowt com.twittew.fwigate.data_pipewine.thwiftscawa._
+impowt com.twittew.fwigate.thwiftscawa.fwigatenotification
+impowt c-com.twittew.hewmit.stowe.wabewed_push_wecs.wabewedpushwecsjoinedwithnotificationhistowystowe
+impowt com.twittew.wogging.woggew
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
 
-case class LabeledPushRecsVerifyingStoreKey(
-  historyStoreKey: HistoryStoreKeyContext,
-  useHydratedDataset: Boolean,
-  verifyHydratedDatasetResults: Boolean) {
-  def userId: Long = historyStoreKey.targetUserId
+case cwass wabewedpushwecsvewifyingstowekey(
+  h-histowystowekey: histowystowekeycontext, 😳😳😳
+  u-usehydwateddataset: b-boowean, (˘ω˘)
+  vewifyhydwateddatasetwesuwts: boowean) {
+  def usewid: wong = histowystowekey.tawgetusewid
 }
 
-case class LabeledPushRecsVerifyingStoreResponse(
-  userHistory: UserHistoryValue,
-  unequalNotificationsUnhydratedToHydrated: Option[
-    Map[(Time, FrigateNotification), FrigateNotification]
-  ],
-  missingFromHydrated: Option[Map[Time, FrigateNotification]])
+c-case cwass wabewedpushwecsvewifyingstowewesponse(
+  usewhistowy: usewhistowyvawue, ʘwʘ
+  unequawnotificationsunhydwatedtohydwated: option[
+    map[(time, ( ͡o ω ͡o ) f-fwigatenotification), o.O fwigatenotification]
+  ], >w<
+  m-missingfwomhydwated: o-option[map[time, 😳 f-fwigatenotification]])
 
-case class LabeledPushRecsVerifyingStore(
-  labeledPushRecsStore: ReadableStore[UserHistoryKey, UserHistoryValue],
-  historyStore: PushServiceHistoryStore
+c-case cwass wabewedpushwecsvewifyingstowe(
+  wabewedpushwecsstowe: w-weadabwestowe[usewhistowykey, usewhistowyvawue], 🥺
+  histowystowe: p-pushsewvicehistowystowe
 )(
-  implicit stats: StatsReceiver)
-    extends ReadableStore[LabeledPushRecsVerifyingStoreKey, LabeledPushRecsVerifyingStoreResponse] {
+  impwicit stats: statsweceivew)
+    extends weadabwestowe[wabewedpushwecsvewifyingstowekey, rawr x3 wabewedpushwecsvewifyingstowewesponse] {
 
-  private def getByJoiningWithRealHistory(
-    key: HistoryStoreKeyContext
-  ): Future[Option[UserHistoryValue]] = {
-    val historyFut = historyStore.get(key, Some(365.days))
-    val toJoinWithRealHistoryFut = labeledPushRecsStore.get(UserHistoryKey.UserId(key.targetUserId))
-    Future.join(historyFut, toJoinWithRealHistoryFut).map {
-      case (_, None) => None
-      case (History(realtimeHistoryMap), Some(uhValue)) =>
-        Some(
-          LabeledPushRecsJoinedWithNotificationHistoryStore
-            .joinLabeledPushRecsSentWithNotificationHistory(uhValue, realtimeHistoryMap, stats)
+  p-pwivate def getbyjoiningwithweawhistowy(
+    k-key: histowystowekeycontext
+  ): f-futuwe[option[usewhistowyvawue]] = {
+    v-vaw histowyfut = histowystowe.get(key, o.O some(365.days))
+    vaw tojoinwithweawhistowyfut = w-wabewedpushwecsstowe.get(usewhistowykey.usewid(key.tawgetusewid))
+    f-futuwe.join(histowyfut, rawr tojoinwithweawhistowyfut).map {
+      c-case (_, ʘwʘ nyone) => n-nyone
+      case (histowy(weawtimehistowymap), s-some(uhvawue)) =>
+        some(
+          w-wabewedpushwecsjoinedwithnotificationhistowystowe
+            .joinwabewedpushwecssentwithnotificationhistowy(uhvawue, 😳😳😳 weawtimehistowymap, ^^;; stats)
         )
     }
   }
 
-  private def processUserHistoryValue(uhValue: UserHistoryValue): Map[Time, FrigateNotification] = {
-    uhValue.events
-      .getOrElse(Nil)
-      .collect {
-        case Event(
-              EventType.LabeledPushRecSend,
-              Some(tsMillis),
-              Some(EventUnion.LabeledPushRecSendEvent(lprs: LabeledPushRecSendEvent))
-            ) if lprs.pushRecSendEvent.frigateNotification.isDefined =>
-          Time.fromMilliseconds(tsMillis) -> lprs.pushRecSendEvent.frigateNotification.get
+  p-pwivate def pwocessusewhistowyvawue(uhvawue: u-usewhistowyvawue): map[time, o.O f-fwigatenotification] = {
+    u-uhvawue.events
+      .getowewse(niw)
+      .cowwect {
+        case event(
+              eventtype.wabewedpushwecsend, (///ˬ///✿)
+              some(tsmiwwis), σωσ
+              some(eventunion.wabewedpushwecsendevent(wpws: wabewedpushwecsendevent))
+            ) i-if wpws.pushwecsendevent.fwigatenotification.isdefined =>
+          t-time.fwommiwwiseconds(tsmiwwis) -> wpws.pushwecsendevent.fwigatenotification.get
       }
-      .toMap
+      .tomap
   }
 
-  override def get(
-    key: LabeledPushRecsVerifyingStoreKey
-  ): Future[Option[LabeledPushRecsVerifyingStoreResponse]] = {
-    val uhKey = UserHistoryKey.UserId(key.userId)
-    if (!key.useHydratedDataset) {
-      getByJoiningWithRealHistory(key.historyStoreKey).map { uhValueOpt =>
-        uhValueOpt.map { uhValue => LabeledPushRecsVerifyingStoreResponse(uhValue, None, None) }
+  o-ovewwide d-def get(
+    key: w-wabewedpushwecsvewifyingstowekey
+  ): futuwe[option[wabewedpushwecsvewifyingstowewesponse]] = {
+    vaw uhkey = usewhistowykey.usewid(key.usewid)
+    i-if (!key.usehydwateddataset) {
+      getbyjoiningwithweawhistowy(key.histowystowekey).map { uhvawueopt =>
+        uhvawueopt.map { uhvawue => w-wabewedpushwecsvewifyingstowewesponse(uhvawue, nyaa~~ nyone, ^^;; nyone) }
       }
-    } else {
-      labeledPushRecsStore.get(uhKey).flatMap { hydratedValueOpt: Option[UserHistoryValue] =>
-        if (!key.verifyHydratedDatasetResults) {
-          Future.value(hydratedValueOpt.map { uhValue =>
-            LabeledPushRecsVerifyingStoreResponse(uhValue, None, None)
+    } e-ewse {
+      w-wabewedpushwecsstowe.get(uhkey).fwatmap { h-hydwatedvawueopt: option[usewhistowyvawue] =>
+        i-if (!key.vewifyhydwateddatasetwesuwts) {
+          f-futuwe.vawue(hydwatedvawueopt.map { u-uhvawue =>
+            w-wabewedpushwecsvewifyingstowewesponse(uhvawue, ^•ﻌ•^ nyone, none)
           })
-        } else {
-          getByJoiningWithRealHistory(key.historyStoreKey).map {
-            joinedWithRealHistoryOpt: Option[UserHistoryValue] =>
-              val joinedWithRealHistoryMap =
-                joinedWithRealHistoryOpt.map(processUserHistoryValue).getOrElse(Map.empty)
-              val hydratedMap = hydratedValueOpt.map(processUserHistoryValue).getOrElse(Map.empty)
-              val unequal = joinedWithRealHistoryMap.flatMap {
-                case (time, frigateNotif) =>
-                  hydratedMap.get(time).collect {
-                    case n if n != frigateNotif => ((time, frigateNotif), n)
+        } e-ewse {
+          g-getbyjoiningwithweawhistowy(key.histowystowekey).map {
+            j-joinedwithweawhistowyopt: option[usewhistowyvawue] =>
+              v-vaw joinedwithweawhistowymap =
+                j-joinedwithweawhistowyopt.map(pwocessusewhistowyvawue).getowewse(map.empty)
+              vaw hydwatedmap = hydwatedvawueopt.map(pwocessusewhistowyvawue).getowewse(map.empty)
+              vaw unequaw = j-joinedwithweawhistowymap.fwatmap {
+                case (time, σωσ fwigatenotif) =>
+                  hydwatedmap.get(time).cowwect {
+                    case ny if ny != fwigatenotif => ((time, -.- f-fwigatenotif), ^^;; ny)
                   }
               }
-              val missing = joinedWithRealHistoryMap.filter {
-                case (time, frigateNotif) => !hydratedMap.contains(time)
+              vaw missing = joinedwithweawhistowymap.fiwtew {
+                c-case (time, XD f-fwigatenotif) => !hydwatedmap.contains(time)
               }
-              hydratedValueOpt.map { hydratedValue =>
-                LabeledPushRecsVerifyingStoreResponse(hydratedValue, Some(unequal), Some(missing))
+              h-hydwatedvawueopt.map { hydwatedvawue =>
+                w-wabewedpushwecsvewifyingstowewesponse(hydwatedvawue, 🥺 some(unequaw), òωó s-some(missing))
               }
           }
         }
@@ -103,53 +103,53 @@ case class LabeledPushRecsVerifyingStore(
   }
 }
 
-case class LabeledPushRecsStoreKey(target: TargetDecider, historyStoreKey: HistoryStoreKeyContext) {
-  def userId: Long = historyStoreKey.targetUserId
+c-case cwass wabewedpushwecsstowekey(tawget: tawgetdecidew, (ˆ ﻌ ˆ)♡ histowystowekey: histowystowekeycontext) {
+  def usewid: wong = histowystowekey.tawgetusewid
 }
 
-case class LabeledPushRecsDecideredStore(
-  verifyingStore: ReadableStore[
-    LabeledPushRecsVerifyingStoreKey,
-    LabeledPushRecsVerifyingStoreResponse
-  ],
-  useHydratedLabeledSendsDatasetDeciderKey: String,
-  verifyHydratedLabeledSendsForHistoryDeciderKey: String
+c-case cwass wabewedpushwecsdecidewedstowe(
+  v-vewifyingstowe: weadabwestowe[
+    w-wabewedpushwecsvewifyingstowekey, -.-
+    w-wabewedpushwecsvewifyingstowewesponse
+  ], :3
+  usehydwatedwabewedsendsdatasetdecidewkey: stwing, ʘwʘ
+  vewifyhydwatedwabewedsendsfowhistowydecidewkey: s-stwing
 )(
-  implicit globalStats: StatsReceiver)
-    extends ReadableStore[LabeledPushRecsStoreKey, UserHistoryValue] {
-  private val log = Logger()
-  private val stats = globalStats.scope("LabeledPushRecsDecideredStore")
-  private val numComparisons = stats.counter("num_comparisons")
-  private val numMissingStat = stats.stat("num_missing")
-  private val numUnequalStat = stats.stat("num_unequal")
+  impwicit g-gwobawstats: statsweceivew)
+    e-extends w-weadabwestowe[wabewedpushwecsstowekey, 🥺 usewhistowyvawue] {
+  pwivate vaw wog = woggew()
+  pwivate v-vaw stats = gwobawstats.scope("wabewedpushwecsdecidewedstowe")
+  p-pwivate vaw nyumcompawisons = s-stats.countew("num_compawisons")
+  pwivate vaw n-nyummissingstat = s-stats.stat("num_missing")
+  pwivate v-vaw nyumunequawstat = stats.stat("num_unequaw")
 
-  override def get(key: LabeledPushRecsStoreKey): Future[Option[UserHistoryValue]] = {
-    val useHydrated = key.target.isDeciderEnabled(
-      useHydratedLabeledSendsDatasetDeciderKey,
-      stats,
-      useRandomRecipient = true
+  ovewwide def get(key: wabewedpushwecsstowekey): futuwe[option[usewhistowyvawue]] = {
+    v-vaw usehydwated = k-key.tawget.isdecidewenabwed(
+      usehydwatedwabewedsendsdatasetdecidewkey, >_<
+      stats, ʘwʘ
+      u-usewandomwecipient = t-twue
     )
 
-    val verifyHydrated = if (useHydrated) {
-      key.target.isDeciderEnabled(
-        verifyHydratedLabeledSendsForHistoryDeciderKey,
-        stats,
-        useRandomRecipient = true
+    vaw vewifyhydwated = if (usehydwated) {
+      key.tawget.isdecidewenabwed(
+        v-vewifyhydwatedwabewedsendsfowhistowydecidewkey,
+        stats, (˘ω˘)
+        usewandomwecipient = twue
       )
-    } else false
+    } ewse f-fawse
 
-    val newKey = LabeledPushRecsVerifyingStoreKey(key.historyStoreKey, useHydrated, verifyHydrated)
-    verifyingStore.get(newKey).map {
-      case None => None
-      case Some(LabeledPushRecsVerifyingStoreResponse(uhValue, unequalOpt, missingOpt)) =>
-        (unequalOpt, missingOpt) match {
-          case (Some(unequal), Some(missing)) =>
-            numComparisons.incr()
-            numMissingStat.add(missing.size)
-            numUnequalStat.add(unequal.size)
-          case _ => //no-op
+    vaw nyewkey = wabewedpushwecsvewifyingstowekey(key.histowystowekey, (✿oωo) usehydwated, (///ˬ///✿) vewifyhydwated)
+    v-vewifyingstowe.get(newkey).map {
+      c-case nyone => nyone
+      case some(wabewedpushwecsvewifyingstowewesponse(uhvawue, rawr x3 unequawopt, m-missingopt)) =>
+        (unequawopt, -.- m-missingopt) match {
+          case (some(unequaw), ^^ some(missing)) =>
+            n-nyumcompawisons.incw()
+            nyummissingstat.add(missing.size)
+            nyumunequawstat.add(unequaw.size)
+          c-case _ => //no-op
         }
-        Some(uhValue)
+        some(uhvawue)
     }
   }
 

@@ -1,48 +1,48 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.io.IOException;
-import java.util.List;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.wist;
 
-import org.apache.lucene.facet.Facets;
-import org.apache.lucene.facet.FacetsCollector;
+i-impowt owg.apache.wucene.facet.facets;
+i-impowt o-owg.apache.wucene.facet.facetscowwectow;
 
-import com.twitter.search.common.facets.CountFacetSearchParam;
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.common.facets.FacetsFactory;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+i-impowt c-com.twittew.seawch.common.facets.countfacetseawchpawam;
+i-impowt com.twittew.seawch.common.facets.facetseawchpawam;
+impowt com.twittew.seawch.common.facets.facetsfactowy;
+impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
 /**
- * Factory for EarlybirdFacets
+ * factowy fow eawwybiwdfacets
  */
-public class EarlybirdFacetsFactory implements FacetsFactory {
-  private final EarlybirdIndexSegmentAtomicReader reader;
+p-pubwic cwass eawwybiwdfacetsfactowy i-impwements facetsfactowy {
+  pwivate finaw eawwybiwdindexsegmentatomicweadew weadew;
 
-  public EarlybirdFacetsFactory(EarlybirdIndexSegmentAtomicReader reader) {
-    this.reader = reader;
+  p-pubwic eawwybiwdfacetsfactowy(eawwybiwdindexsegmentatomicweadew w-weadew) {
+    t-this.weadew = weadew;
   }
 
-  @Override
-  public Facets create(
-      List<FacetSearchParam> facetSearchParams,
-      FacetsCollector facetsCollector) throws IOException {
+  @ovewwide
+  pubwic facets cweate(
+      wist<facetseawchpawam> facetseawchpawams, >_<
+      f-facetscowwectow facetscowwectow) thwows ioexception {
 
-    return new EarlybirdFacets(facetSearchParams, facetsCollector, reader);
+    wetuwn nyew e-eawwybiwdfacets(facetseawchpawams, >_< facetscowwectow, (⑅˘꒳˘) w-weadew);
   }
 
-  @Override
-  public boolean accept(FacetSearchParam facetSearchParam) {
-    if (!(facetSearchParam instanceof CountFacetSearchParam)
-        || (facetSearchParam.getFacetFieldRequest().getPath() != null
-            && !facetSearchParam.getFacetFieldRequest().getPath().isEmpty())) {
-      return false;
+  @ovewwide
+  p-pubwic boowean a-accept(facetseawchpawam f-facetseawchpawam) {
+    if (!(facetseawchpawam instanceof c-countfacetseawchpawam)
+        || (facetseawchpawam.getfacetfiewdwequest().getpath() != nyuww
+            && !facetseawchpawam.getfacetfiewdwequest().getpath().isempty())) {
+      wetuwn fawse;
     }
 
-    String field = facetSearchParam.getFacetFieldRequest().getField();
-    Schema.FieldInfo facetInfo = reader.getSegmentData().getSchema()
-            .getFacetFieldByFacetName(field);
+    s-stwing fiewd = facetseawchpawam.getfacetfiewdwequest().getfiewd();
+    schema.fiewdinfo facetinfo = weadew.getsegmentdata().getschema()
+            .getfacetfiewdbyfacetname(fiewd);
 
-    return facetInfo != null
-        && reader.getSegmentData().getPerFieldMap().containsKey(facetInfo.getName());
+    wetuwn f-facetinfo != nyuww
+        && w-weadew.getsegmentdata().getpewfiewdmap().containskey(facetinfo.getname());
   }
 }

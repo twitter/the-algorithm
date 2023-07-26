@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.Arrays;
-import java.util.Collection;
+impowt j-java.utiw.awways;
+i-impowt java.utiw.cowwection;
 
-import com.google.inject.Module;
+i-impowt com.googwe.inject.moduwe;
 
-import com.twitter.search.common.root.SearchRootAppMain;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+i-impowt com.twittew.seawch.common.woot.seawchwootappmain;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
 
-public class RealtimeRootAppMain extends SearchRootAppMain<RealtimeRootServer> {
+p-pubwic c-cwass weawtimewootappmain extends seawchwootappmain<weawtimewootsewvew> {
   /**
-   * Boilerplate for the Java-friendly AbstractTwitterServer
+   * boiwewpwate fow the java-fwiendwy a-abstwacttwittewsewvew
    */
-  public static class Main {
-    public static void main(String[] args) {
-      new RealtimeRootAppMain().main(args);
+  pubwic static cwass main {
+    p-pubwic static void main(stwing[] a-awgs) {
+      nyew weawtimewootappmain().main(awgs);
     }
   }
 
-  @Override
-  protected Collection<? extends Module> getAdditionalModules() {
-    return Arrays.asList(
-        new EarlybirdCommonModule(),
-        new EarlybirdCacheCommonModule(),
-        new RealtimeRootAppModule(),
-        new RealtimeScatterGatherModule());
+  @ovewwide
+  pwotected cowwection<? extends m-moduwe> getadditionawmoduwes() {
+    wetuwn a-awways.aswist(
+        n-nyew eawwybiwdcommonmoduwe(), (U ﹏ U)
+        nyew eawwybiwdcachecommonmoduwe(), >_<
+        nyew weawtimewootappmoduwe(), rawr x3
+        nyew w-weawtimescattewgathewmoduwe());
   }
 
-  @Override
-  protected Class<RealtimeRootServer> getSearchRootServerClass() {
-    return RealtimeRootServer.class;
+  @ovewwide
+  pwotected cwass<weawtimewootsewvew> getseawchwootsewvewcwass() {
+    wetuwn w-weawtimewootsewvew.cwass;
   }
 
-  @Override
-  protected Class<?> getServiceIfaceClass() {
-    return EarlybirdService.ServiceIface.class;
+  @ovewwide
+  pwotected cwass<?> g-getsewviceifacecwass() {
+    wetuwn e-eawwybiwdsewvice.sewviceiface.cwass;
   }
 }

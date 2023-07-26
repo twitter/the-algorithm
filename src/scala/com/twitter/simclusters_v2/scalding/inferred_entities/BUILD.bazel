@@ -1,74 +1,74 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-only",
+scawa_wibwawy(
+    souwces = ["*.scawa"], XD
+    pwatfowm = "java8", :3
+    t-tags = [
+        "bazew-compatibwe", 😳😳😳
+        "bazew-onwy", -.-
     ],
-    dependencies = [
-        "src/scala/com/twitter/onboarding/relevance/source:utt_account_recommendations-scala",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/wtf/entity_real_graph/common",
+    d-dependencies = [
+        "swc/scawa/com/twittew/onboawding/wewevance/souwce:utt_account_wecommendations-scawa", ( ͡o ω ͡o )
+        "swc/scawa/com/twittew/scawding_intewnaw/dawv2", rawr x3
+        "swc/scawa/com/twittew/simcwustews_v2/scawding", nyaa~~
+        "swc/scawa/com/twittew/wtf/entity_weaw_gwaph/common", /(^•ω•^)
+    ], rawr
+)
+
+h-hadoop_binawy(
+    n-nyame = "infewwed_entities_fwom_known_fow-adhoc", OwO
+    m-main = "com.twittew.simcwustews_v2.scawding.infewwed_entities.infewwedknownfowsemanticcoweentitiesadhocapp", (U ﹏ U)
+    pwatfowm = "java8", >_<
+    w-wuntime_pwatfowm = "java8", rawr x3
+    t-tags = [
+        "bazew-compatibwe", mya
+        "bazew-compatibwe:migwated", nyaa~~
+        "bazew-onwy", (⑅˘꒳˘)
+    ],
+    d-dependencies = [
+        ":infewwed_entities", rawr x3
     ],
 )
 
-hadoop_binary(
-    name = "inferred_entities_from_known_for-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredKnownForSemanticCoreEntitiesAdhocApp",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+hadoop_binawy(
+    nyame = "infewwed_entities_fwom_known_fow", (✿oωo)
+    main = "com.twittew.simcwustews_v2.scawding.infewwed_entities.infewwedknownfowsemanticcoweentitiesbatchapp", (ˆ ﻌ ˆ)♡
+    pwatfowm = "java8", (˘ω˘)
+    wuntime_pwatfowm = "java8", (⑅˘꒳˘)
+    t-tags = [
+        "bazew-compatibwe", (///ˬ///✿)
+        "bazew-compatibwe:migwated", 😳😳😳
+        "bazew-onwy", 🥺
     ],
     dependencies = [
-        ":inferred_entities",
+        ":infewwed_entities", mya
     ],
 )
 
-hadoop_binary(
-    name = "inferred_entities_from_known_for",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredKnownForSemanticCoreEntitiesBatchApp",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    n-nyame = "infewwed_entities_fwom_intewested_in-adhoc", 🥺
+    main = "com.twittew.simcwustews_v2.scawding.infewwed_entities.infewwedintewestedinsemanticcoweentitiesadhocapp", >_<
+    p-pwatfowm = "java8", >_<
+    wuntime_pwatfowm = "java8", (⑅˘꒳˘)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+        "bazew-compatibwe",
+        "bazew-compatibwe:migwated", /(^•ω•^)
+        "bazew-onwy", rawr x3
+    ], (U ﹏ U)
     dependencies = [
-        ":inferred_entities",
+        ":infewwed_entities", (U ﹏ U)
     ],
 )
 
-hadoop_binary(
-    name = "inferred_entities_from_interested_in-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesAdhocApp",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    nyame = "infewwed_entities_fwom_intewested_in", (⑅˘꒳˘)
+    m-main = "com.twittew.simcwustews_v2.scawding.infewwed_entities.infewwedintewestedinsemanticcoweentitiesbatchapp", òωó
+    p-pwatfowm = "java8", ʘwʘ
+    wuntime_pwatfowm = "java8", /(^•ω•^)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", ʘwʘ
+        "bazew-compatibwe:migwated", σωσ
+        "bazew-onwy", OwO
     ],
     dependencies = [
-        ":inferred_entities",
-    ],
-)
-
-hadoop_binary(
-    name = "inferred_entities_from_interested_in",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesBatchApp",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":inferred_entities",
+        ":infewwed_entities", 😳😳😳
     ],
 )

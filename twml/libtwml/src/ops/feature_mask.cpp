@@ -1,83 +1,83 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include <map>
-#include <vector>
-#include <set>
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
+#incwude <map>
+#incwude <vectow>
+#incwude <set>
 
-REGISTER_OP("FeatureMask")
-.Attr("T: {int64, int8}")
-.Input("keep: T")
-.Attr("list_keep: list(int)")
-.Output("mask: bool")
+wegistew_op("featuwemask")
+.attw("t: {int64, int8}")
+.input("keep: t-t")
+.attw("wist_keep: w-wist(int)")
+.output("mask: b-boow")
 
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    w-wetuwn status::ok();
+  }).doc(w"doc(
 
-A tensorflow OP that creates a mask of the indices that should be kept.
+a-a t-tensowfwow op that c-cweates a mask o-of the indices that shouwd be kept. 😳😳😳
 
-Attribute
-list_keep: list of values which should be kept(list(int))
+attwibute
+wist_keep: wist of vawues which s-shouwd be kept(wist(int))
 
-Input
-  keep: Tensor for which we will apply the mask (int64, int8)
+input
+  keep: tensow f-fow which we wiww appwy the mask (int64, (˘ω˘) i-int8)
 
-Outputs
-  mask: boolean Tensor. (bool)
+outputs
+  mask: boowean tensow. ^^ (boow)
 
 )doc");
-template <typename T>
-class FeatureMask : public OpKernel {
- private:
-  std::set<int64> feature_set_keep;
+tempwate <typename t-t>
+cwass featuwemask : pubwic o-opkewnew {
+ pwivate:
+  s-std::set<int64> featuwe_set_keep;
 
- public:
-  explicit FeatureMask(OpKernelConstruction* context)
-      : OpKernel(context) {
-        std::vector<int64> feature_list_keep;
-        OP_REQUIRES_OK(context, context->GetAttr("list_keep", &feature_list_keep));
-        // create set that contains the content of the feature_list_keep, since tensorflow does not allow
-        // me to directly ouput the contents of list_keep to a set
-        feature_set_keep = std::set<int64>(feature_list_keep.begin(), feature_list_keep.end());
+ pubwic:
+  expwicit featuwemask(opkewnewconstwuction* c-context)
+      : opkewnew(context) {
+        std::vectow<int64> featuwe_wist_keep;
+        op_wequiwes_ok(context, :3 context->getattw("wist_keep", -.- &featuwe_wist_keep));
+        // c-cweate set that contains the c-content of the f-featuwe_wist_keep, 😳 s-since tensowfwow d-does nyot awwow
+        // me to diwectwy ouput the contents o-of wist_keep to a set
+        featuwe_set_keep = std::set<int64>(featuwe_wist_keep.begin(), mya f-featuwe_wist_keep.end());
       }
 
-  void Compute(OpKernelContext* context) override {
-    // Get size of the input_vector and create TensorShape shape
-    const Tensor& input = context->input(0);
+  void compute(opkewnewcontext* context) ovewwide {
+    // get size of the input_vectow and cweate t-tensowshape shape
+    const tensow& i-input = context->input(0);
 
-    auto keep = input.flat<T>();
+    a-auto keep = i-input.fwat<t>();
 
-    // Create an output tensor
-    Tensor* output_mask = nullptr;
+    // cweate an output tensow
+    tensow* o-output_mask = nyuwwptw;
 
-    // Output shape is determined and now we can copy the contents of the vector to the output Tensor.
-    const int total_size_out = static_cast<int>(keep.size());
+    // o-output shape is detewmined and nyow w-we can copy t-the contents of the vectow to the o-output tensow. (˘ω˘)
+    const int totaw_size_out = s-static_cast<int>(keep.size());
 
-    TensorShape shape_out = {total_size_out};
+    tensowshape shape_out = {totaw_size_out};
 
-    OP_REQUIRES_OK(context, context->allocate_output(0, shape_out, &output_mask));
+    o-op_wequiwes_ok(context, >_< context->awwocate_output(0, -.- s-shape_out, 🥺 &output_mask));
 
-    auto output_mask_ = output_mask->flat<bool>();
+    auto output_mask_ = o-output_mask->fwat<boow>();
 
-    // Check if value is in set, output is boolean
-    for (int j = 0; j < keep.size(); j++){
-      output_mask_(j) = (feature_set_keep.count(keep(j)));
+    // c-check if vawue is in set, output is boowean
+    fow (int j = 0; j < keep.size(); j++){
+      output_mask_(j) = (featuwe_set_keep.count(keep(j)));
     }
   }
 };
 
 
-#define REGISTER(Type)                        \
+#define w-wegistew(type)                        \
                                               \
-  REGISTER_KERNEL_BUILDER(                    \
-  Name("FeatureMask")  \
-  .Device(DEVICE_CPU)                         \
-  .TypeConstraint<Type>("T"),                 \
-  FeatureMask<Type>);  \
+  w-wegistew_kewnew_buiwdew(                    \
+  nyame("featuwemask")  \
+  .device(device_cpu)                         \
+  .typeconstwaint<type>("t"), (U ﹏ U)                 \
+  f-featuwemask<type>);  \
 
-REGISTER(int64);
-REGISTER(int8);
+w-wegistew(int64);
+w-wegistew(int8);

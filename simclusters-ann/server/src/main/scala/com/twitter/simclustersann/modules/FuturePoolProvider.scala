@@ -1,27 +1,27 @@
-package com.twitter.simclustersann.modules
+package com.twittew.simcwustewsann.moduwes
 
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.simclustersann.common.FlagNames.NumberOfThreads
-import com.twitter.util.ExecutorServiceFuturePool
-import java.util.concurrent.Executors
-import javax.inject.Singleton
-object FuturePoolProvider extends TwitterModule {
-  flag[Int](
-    name = NumberOfThreads,
-    default = 20,
-    help = "The number of threads in the future pool."
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.inject.annotations.fwag
+i-impowt com.twittew.simcwustewsann.common.fwagnames.numbewofthweads
+i-impowt com.twittew.utiw.executowsewvicefutuwepoow
+i-impowt java.utiw.concuwwent.executows
+i-impowt javax.inject.singweton
+object futuwepoowpwovidew extends twittewmoduwe {
+  f-fwag[int](
+    nyame = nyumbewofthweads, :3
+    d-defauwt = 20, 😳😳😳
+    hewp = "the n-nyumbew of thweads in the futuwe poow."
   )
 
-  @Singleton
-  @Provides
-  def providesFuturePool(
-    @Flag(NumberOfThreads) numberOfThreads: Int
-  ): ExecutorServiceFuturePool = {
-    val threadPool = Executors.newFixedThreadPool(numberOfThreads)
-    new ExecutorServiceFuturePool(threadPool) {
-      override def toString: String = s"warmup-future-pool-$executor)"
+  @singweton
+  @pwovides
+  def pwovidesfutuwepoow(
+    @fwag(numbewofthweads) n-nyumbewofthweads: int
+  ): executowsewvicefutuwepoow = {
+    v-vaw thweadpoow = e-executows.newfixedthweadpoow(numbewofthweads)
+    new executowsewvicefutuwepoow(thweadpoow) {
+      ovewwide def tostwing: stwing = s"wawmup-futuwe-poow-$executow)"
     }
   }
 }

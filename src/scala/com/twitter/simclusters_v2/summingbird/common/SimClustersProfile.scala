@@ -1,211 +1,211 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.summingbird.common.ClientConfigs._
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environment.Environment
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.JobType.JobType
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.JobType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions._
+i-impowt com.twittew.simcwustews_v2.summingbiwd.common.cwientconfigs._
+i-impowt com.twittew.simcwustews_v2.summingbiwd.common.simcwustewspwofiwe.awtsetting.awtsetting
+i-impowt com.twittew.simcwustews_v2.summingbiwd.common.simcwustewspwofiwe.enviwonment.enviwonment
+i-impowt com.twittew.simcwustews_v2.summingbiwd.common.simcwustewspwofiwe.jobtype.jobtype
+i-impowt c-com.twittew.simcwustews_v2.summingbiwd.common.simcwustewspwofiwe.awtsetting
+i-impowt com.twittew.simcwustews_v2.summingbiwd.common.simcwustewspwofiwe.jobtype
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
 
-sealed trait SimClustersProfile {
-  val env: Environment
-  val alt: AltSetting
-  val modelVersionStr: String
+seawed twait simcwustewspwofiwe {
+  v-vaw env: enviwonment
+  v-vaw awt: awtsetting
+  vaw modewvewsionstw: stwing
 
-  lazy val modelVersion: ModelVersion = modelVersionStr
+  wazy vaw modewvewsion: m-modewvewsion = modewvewsionstw
 }
 
-sealed trait SimClustersJobProfile extends SimClustersProfile {
+seawed t-twait simcwustewsjobpwofiwe e-extends simcwustewspwofiwe {
 
-  val jobType: JobType
+  vaw jobtype: jobtype
 
-  final lazy val jobName: String = {
-    alt match {
-      case AltSetting.Alt =>
-        s"simclusters_v2_${jobType}_alt_job_$env"
-      case AltSetting.Esc =>
-        s"simclusters_v2_${jobType}_esc_job_$env"
-      case _ =>
-        s"simclusters_v2_${jobType}_job_$env"
+  finaw wazy vaw jobname: stwing = {
+    a-awt match {
+      case awtsetting.awt =>
+        s"simcwustews_v2_${jobtype}_awt_job_$env"
+      case awtsetting.esc =>
+        s"simcwustews_v2_${jobtype}_esc_job_$env"
+      c-case _ =>
+        s"simcwustews_v2_${jobtype}_job_$env"
     }
   }
 
-  // Build the serviceIdentifier by jobType, env and zone(dc)
-  final lazy val serviceIdentifier: String => ServiceIdentifier = { zone =>
-    ServiceIdentifier(Configs.role, s"summingbird_$jobName", env.toString, zone)
+  // b-buiwd the s-sewviceidentifiew b-by jobtype, OwO e-env and zone(dc)
+  finaw wazy vaw sewviceidentifiew: s-stwing => sewviceidentifiew = { zone =>
+    s-sewviceidentifiew(configs.wowe, >w< s"summingbiwd_$jobname", 🥺 env.tostwing, nyaa~~ zone)
   }
 
-  final lazy val favScoreThresholdForUserInterest: Double =
-    Configs.favScoreThresholdForUserInterest(modelVersionStr)
+  finaw wazy vaw favscowethweshowdfowusewintewest: d-doubwe =
+    configs.favscowethweshowdfowusewintewest(modewvewsionstw)
 
-  lazy val timelineEventSourceSubscriberId: String = {
-    val jobTypeStr = jobType match {
-      case JobType.MultiModelTweet => "multi_model_tweet_"
-      case JobType.PersistentTweet => "persistent_tweet_"
-      case JobType.Tweet => ""
+  w-wazy vaw timewineeventsouwcesubscwibewid: s-stwing = {
+    v-vaw jobtypestw = jobtype match {
+      case jobtype.muwtimodewtweet => "muwti_modew_tweet_"
+      c-case j-jobtype.pewsistenttweet => "pewsistent_tweet_"
+      case jobtype.tweet => ""
     }
 
-    val prefix = alt match {
-      case AltSetting.Alt =>
-        "alt_"
-      case AltSetting.Esc =>
+    v-vaw pwefix = a-awt match {
+      case awtsetting.awt =>
+        "awt_"
+      c-case awtsetting.esc =>
         "esc_"
       case _ =>
         ""
     }
 
-    s"simclusters_v2_${jobTypeStr}summingbird_$prefix$env"
+    s-s"simcwustews_v2_${jobtypestw}summingbiwd_$pwefix$env"
   }
 
 }
 
-object SimClustersProfile {
+object simcwustewspwofiwe {
 
-  object JobType extends Enumeration {
-    type JobType = Value
-    val Tweet: JobType = Value("tweet")
-    val PersistentTweet: JobType = Value("persistent_tweet")
-    val MultiModelTweet: JobType = Value("multimodel_tweet")
+  object jobtype extends e-enumewation {
+    type jobtype = v-vawue
+    vaw tweet: jobtype = v-vawue("tweet")
+    v-vaw pewsistenttweet: jobtype = vawue("pewsistent_tweet")
+    vaw muwtimodewtweet: jobtype = vawue("muwtimodew_tweet")
   }
 
-  object Environment extends Enumeration {
-    type Environment = Value
-    val Prod: Environment = Value("prod")
-    val Devel: Environment = Value("devel")
+  object enviwonment e-extends e-enumewation {
+    type enviwonment = v-vawue
+    v-vaw pwod: enviwonment = v-vawue("pwod")
+    vaw devew: enviwonment = vawue("devew")
 
-    def apply(setting: String): Environment = {
-      if (setting == Prod.toString) {
-        Prod
-      } else {
-        Devel
+    d-def appwy(setting: stwing): enviwonment = {
+      if (setting == pwod.tostwing) {
+        p-pwod
+      } ewse {
+        devew
       }
     }
   }
 
-  object AltSetting extends Enumeration {
-    type AltSetting = Value
-    val Normal: AltSetting = Value("normal")
-    val Alt: AltSetting = Value("alt")
-    val Esc: AltSetting = Value("esc")
+  o-object awtsetting e-extends e-enumewation {
+    type awtsetting = v-vawue
+    v-vaw nyowmaw: awtsetting = v-vawue("nowmaw")
+    v-vaw awt: awtsetting = vawue("awt")
+    v-vaw esc: awtsetting = v-vawue("esc")
 
-    def apply(setting: String): AltSetting = {
+    d-def a-appwy(setting: s-stwing): awtsetting = {
 
       setting match {
-        case "alt" => Alt
-        case "esc" => Esc
-        case _ => Normal
+        case "awt" => awt
+        c-case "esc" => esc
+        case _ => nyowmaw
       }
     }
   }
 
-  case class SimClustersTweetProfile(
-    env: Environment,
-    alt: AltSetting,
-    modelVersionStr: String,
-    entityClusterScorePath: String,
-    tweetTopKClustersPath: String,
-    clusterTopKTweetsPath: String,
-    coreEmbeddingType: EmbeddingType,
-    clusterTopKTweetsLightPath: Option[String] = None)
-      extends SimClustersJobProfile {
+  case cwass simcwustewstweetpwofiwe(
+    env: enviwonment, ^^
+    awt: awtsetting, >w<
+    m-modewvewsionstw: stwing,
+    entitycwustewscowepath: stwing, OwO
+    t-tweettopkcwustewspath: s-stwing, XD
+    c-cwustewtopktweetspath: stwing,
+    coweembeddingtype: embeddingtype, ^^;;
+    c-cwustewtopktweetswightpath: option[stwing] = nyone)
+      e-extends s-simcwustewsjobpwofiwe {
 
-    final val jobType: JobType = JobType.Tweet
+    finaw vaw jobtype: jobtype = jobtype.tweet
   }
 
-  case class PersistentTweetProfile(
-    env: Environment,
-    alt: AltSetting,
-    modelVersionStr: String,
-    persistentTweetStratoPath: String,
-    coreEmbeddingType: EmbeddingType)
-      extends SimClustersJobProfile {
-    final val jobType: JobType = JobType.PersistentTweet
+  case cwass pewsistenttweetpwofiwe(
+    env: enviwonment, 🥺
+    awt: awtsetting, XD
+    m-modewvewsionstw: stwing, (U ᵕ U❁)
+    p-pewsistenttweetstwatopath: stwing, :3
+    c-coweembeddingtype: e-embeddingtype)
+      extends simcwustewsjobpwofiwe {
+    finaw vaw jobtype: j-jobtype = j-jobtype.pewsistenttweet
   }
 
-  final val AltProdTweetJobProfile = SimClustersTweetProfile(
-    env = Environment.Prod,
-    alt = AltSetting.Alt,
-    modelVersionStr = Model20M145K2020,
-    entityClusterScorePath = simClustersCoreAltCachePath,
-    tweetTopKClustersPath = simClustersCoreAltCachePath,
-    clusterTopKTweetsPath = simClustersCoreAltCachePath,
-    clusterTopKTweetsLightPath = Some(simClustersCoreAltLightCachePath),
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet
+  finaw vaw awtpwodtweetjobpwofiwe = s-simcwustewstweetpwofiwe(
+    e-env = enviwonment.pwod, ( ͡o ω ͡o )
+    awt = awtsetting.awt, òωó
+    modewvewsionstw = modew20m145k2020, σωσ
+    entitycwustewscowepath = s-simcwustewscoweawtcachepath, (U ᵕ U❁)
+    t-tweettopkcwustewspath = s-simcwustewscoweawtcachepath, (✿oωo)
+    cwustewtopktweetspath = s-simcwustewscoweawtcachepath, ^^
+    c-cwustewtopktweetswightpath = some(simcwustewscoweawtwightcachepath), ^•ﻌ•^
+    c-coweembeddingtype = embeddingtype.wogfavbasedtweet
   )
 
-  final val AltDevelTweetJobProfile = SimClustersTweetProfile(
-    env = Environment.Devel,
-    alt = AltSetting.Alt,
-    modelVersionStr = Model20M145K2020,
-    // using the same devel cache with job
-    entityClusterScorePath = develSimClustersCoreCachePath,
-    tweetTopKClustersPath = develSimClustersCoreCachePath,
-    clusterTopKTweetsPath = develSimClustersCoreCachePath,
-    clusterTopKTweetsLightPath = Some(develSimClustersCoreLightCachePath),
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet,
+  finaw vaw awtdevewtweetjobpwofiwe = simcwustewstweetpwofiwe(
+    env = e-enviwonment.devew, XD
+    a-awt = awtsetting.awt,
+    modewvewsionstw = m-modew20m145k2020, :3
+    // u-using the same devew cache with job
+    entitycwustewscowepath = devewsimcwustewscowecachepath, (ꈍᴗꈍ)
+    t-tweettopkcwustewspath = devewsimcwustewscowecachepath,
+    cwustewtopktweetspath = devewsimcwustewscowecachepath, :3
+    cwustewtopktweetswightpath = s-some(devewsimcwustewscowewightcachepath), (U ﹏ U)
+    coweembeddingtype = embeddingtype.wogfavbasedtweet,
   )
 
-  final val ProdPersistentTweetProfile = PersistentTweetProfile(
-    env = Environment.Prod,
-    alt = AltSetting.Normal,
-    modelVersionStr = Model20M145K2020,
-    // This profile is used by the persistent tweet embedding job to update the embedding. We
-    // use the uncached column to avoid reading stale data
-    persistentTweetStratoPath = logFavBasedTweet20M145K2020UncachedStratoPath,
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet
+  f-finaw vaw pwodpewsistenttweetpwofiwe = p-pewsistenttweetpwofiwe(
+    env = enviwonment.pwod, UwU
+    awt = awtsetting.nowmaw, 😳😳😳
+    modewvewsionstw = modew20m145k2020, XD
+    // t-this pwofiwe i-is used by the pewsistent tweet embedding job to update the e-embedding. o.O we
+    // use the uncached c-cowumn to avoid weading stawe data
+    pewsistenttweetstwatopath = wogfavbasedtweet20m145k2020uncachedstwatopath, (⑅˘꒳˘)
+    c-coweembeddingtype = embeddingtype.wogfavbasedtweet
   )
 
-  final val DevelPersistentTweetProfile = PersistentTweetProfile(
-    env = Environment.Devel,
-    alt = AltSetting.Normal,
-    modelVersionStr = Model20M145K2020,
-    persistentTweetStratoPath = develLogFavBasedTweet20M145K2020StratoPath,
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet
+  f-finaw vaw d-devewpewsistenttweetpwofiwe = pewsistenttweetpwofiwe(
+    env = e-enviwonment.devew, 😳😳😳
+    awt = awtsetting.nowmaw, nyaa~~
+    m-modewvewsionstw = m-modew20m145k2020, rawr
+    p-pewsistenttweetstwatopath = devewwogfavbasedtweet20m145k2020stwatopath, -.-
+    c-coweembeddingtype = e-embeddingtype.wogfavbasedtweet
   )
 
-  def fetchTweetJobProfile(
-    env: Environment,
-    alt: AltSetting = AltSetting.Normal
-  ): SimClustersTweetProfile = {
-    (env, alt) match {
-      case (Environment.Prod, AltSetting.Alt) => AltProdTweetJobProfile
-      case (Environment.Devel, AltSetting.Alt) => AltDevelTweetJobProfile
-      case _ => throw new IllegalArgumentException("Invalid env or alt setting")
+  def fetchtweetjobpwofiwe(
+    env: enviwonment, (✿oωo)
+    a-awt: awtsetting = a-awtsetting.nowmaw
+  ): s-simcwustewstweetpwofiwe = {
+    (env, awt) match {
+      case (enviwonment.pwod, /(^•ω•^) a-awtsetting.awt) => awtpwodtweetjobpwofiwe
+      c-case (enviwonment.devew, 🥺 a-awtsetting.awt) => awtdevewtweetjobpwofiwe
+      case _ => thwow nyew i-iwwegawawgumentexception("invawid e-env ow awt setting")
     }
   }
 
-  def fetchPersistentJobProfile(
-    env: Environment,
-    alt: AltSetting = AltSetting.Normal
-  ): PersistentTweetProfile = {
-    (env, alt) match {
-      case (Environment.Prod, AltSetting.Normal) => ProdPersistentTweetProfile
-      case (Environment.Devel, AltSetting.Normal) => DevelPersistentTweetProfile
-      case _ => throw new IllegalArgumentException("Invalid env or alt setting")
+  d-def fetchpewsistentjobpwofiwe(
+    e-env: enviwonment, ʘwʘ
+    awt: a-awtsetting = awtsetting.nowmaw
+  ): pewsistenttweetpwofiwe = {
+    (env, UwU awt) match {
+      case (enviwonment.pwod, awtsetting.nowmaw) => pwodpewsistenttweetpwofiwe
+      c-case (enviwonment.devew, XD awtsetting.nowmaw) => d-devewpewsistenttweetpwofiwe
+      case _ => t-thwow nyew iwwegawawgumentexception("invawid e-env ow awt setting")
     }
   }
 
   /**
-   * For short term, fav based tweet embedding and log fav based tweets embedding exists at the
-   * same time. We want to move to log fav based tweet embedding eventually.
-   * Follow based tweet embeddings exists in both environment.
-   * A uniform tweet embedding API is the future to replace the existing use case.
+   * f-fow showt tewm, (✿oωo) f-fav based tweet e-embedding and wog f-fav based tweets e-embedding exists at the
+   * same time. :3 we want to move to wog fav based tweet embedding eventuawwy. (///ˬ///✿)
+   * fowwow b-based tweet e-embeddings exists i-in both enviwonment. nyaa~~
+   * a unifowm t-tweet embedding api is the futuwe to wepwace the existing u-use case.
    */
-  final lazy val tweetJobProfileMap: Environment => Map[
-    (EmbeddingType, String),
-    SimClustersTweetProfile
+  f-finaw wazy vaw tweetjobpwofiwemap: e-enviwonment => map[
+    (embeddingtype, >w< stwing),
+    s-simcwustewstweetpwofiwe
   ] = {
-    case Environment.Prod =>
-      Map(
-        (EmbeddingType.LogFavBasedTweet, Model20M145K2020) -> AltProdTweetJobProfile
+    c-case enviwonment.pwod =>
+      m-map(
+        (embeddingtype.wogfavbasedtweet, -.- m-modew20m145k2020) -> awtpwodtweetjobpwofiwe
       )
-    case Environment.Devel =>
-      Map(
-        (EmbeddingType.LogFavBasedTweet, Model20M145K2020) -> AltDevelTweetJobProfile
+    case enviwonment.devew =>
+      map(
+        (embeddingtype.wogfavbasedtweet, (✿oωo) modew20m145k2020) -> a-awtdevewtweetjobpwofiwe
       )
   }
 

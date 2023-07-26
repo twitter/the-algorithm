@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-sealed trait SocialContext
+seawed twait sociawcontext
 
-trait HasSocialContext {
-  def socialContext: Option[SocialContext]
+t-twait h-hassociawcontext {
+  d-def sociawcontext: o-option[sociawcontext]
 }
 
-sealed trait GeneralContextType
-case object LikeGeneralContextType extends GeneralContextType
-case object FollowGeneralContextType extends GeneralContextType
-case object MomentGeneralContextType extends GeneralContextType
-case object ReplyGeneralContextType extends GeneralContextType
-case object ConversationGeneralContextType extends GeneralContextType
-case object PinGeneralContextType extends GeneralContextType
-case object TextOnlyGeneralContextType extends GeneralContextType
-case object FacePileGeneralContextType extends GeneralContextType
-case object MegaPhoneGeneralContextType extends GeneralContextType
-case object BirdGeneralContextType extends GeneralContextType
-case object FeedbackGeneralContextType extends GeneralContextType
-case object TopicGeneralContextType extends GeneralContextType
-case object ListGeneralContextType extends GeneralContextType
-case object RetweetGeneralContextType extends GeneralContextType
-case object LocationGeneralContextType extends GeneralContextType
-case object CommunityGeneralContextType extends GeneralContextType
-case object NewUserGeneralContextType extends GeneralContextType
-case object SmartblockExpirationGeneralContextType extends GeneralContextType
-case object TrendingGeneralContextType extends GeneralContextType
-case object SparkleGeneralContextType extends GeneralContextType
-case object SpacesGeneralContextType extends GeneralContextType
-case object ReplyPinGeneralContextType extends GeneralContextType
+s-seawed twait genewawcontexttype
+c-case object wikegenewawcontexttype e-extends genewawcontexttype
+c-case object fowwowgenewawcontexttype extends genewawcontexttype
+case object momentgenewawcontexttype extends genewawcontexttype
+case object wepwygenewawcontexttype e-extends genewawcontexttype
+case object convewsationgenewawcontexttype extends g-genewawcontexttype
+case object p-pingenewawcontexttype extends genewawcontexttype
+case object textonwygenewawcontexttype extends g-genewawcontexttype
+case object f-facepiwegenewawcontexttype e-extends genewawcontexttype
+case object megaphonegenewawcontexttype extends g-genewawcontexttype
+case object biwdgenewawcontexttype extends genewawcontexttype
+c-case object feedbackgenewawcontexttype e-extends g-genewawcontexttype
+c-case object t-topicgenewawcontexttype extends genewawcontexttype
+c-case object wistgenewawcontexttype extends g-genewawcontexttype
+case object wetweetgenewawcontexttype extends genewawcontexttype
+case object w-wocationgenewawcontexttype extends g-genewawcontexttype
+c-case object c-communitygenewawcontexttype extends genewawcontexttype
+case object nyewusewgenewawcontexttype e-extends genewawcontexttype
+c-case object smawtbwockexpiwationgenewawcontexttype e-extends genewawcontexttype
+c-case object twendinggenewawcontexttype e-extends genewawcontexttype
+case o-object spawkwegenewawcontexttype extends genewawcontexttype
+case object spacesgenewawcontexttype e-extends genewawcontexttype
+case object wepwypingenewawcontexttype e-extends genewawcontexttype
 
-case class GeneralContext(
-  contextType: GeneralContextType,
-  text: String,
-  url: Option[String],
-  contextImageUrls: Option[List[String]],
-  landingUrl: Option[Url])
-    extends SocialContext
+case cwass genewawcontext(
+  contexttype: g-genewawcontexttype, -.-
+  t-text: stwing, 🥺
+  uww: option[stwing], (U ﹏ U)
+  contextimageuwws: option[wist[stwing]], >w<
+  wandinguww: option[uww])
+    extends sociawcontext
 
-sealed trait TopicContextFunctionalityType
-case object BasicTopicContextFunctionalityType extends TopicContextFunctionalityType
-case object RecommendationTopicContextFunctionalityType extends TopicContextFunctionalityType
-case object RecWithEducationTopicContextFunctionalityType extends TopicContextFunctionalityType
+seawed twait t-topiccontextfunctionawitytype
+c-case object basictopiccontextfunctionawitytype extends topiccontextfunctionawitytype
+c-case object w-wecommendationtopiccontextfunctionawitytype extends t-topiccontextfunctionawitytype
+case object wecwitheducationtopiccontextfunctionawitytype extends topiccontextfunctionawitytype
 
-case class TopicContext(
-  topicId: String,
-  functionalityType: Option[TopicContextFunctionalityType])
-    extends SocialContext
+c-case cwass topiccontext(
+  topicid: stwing, mya
+  functionawitytype: option[topiccontextfunctionawitytype])
+    e-extends sociawcontext

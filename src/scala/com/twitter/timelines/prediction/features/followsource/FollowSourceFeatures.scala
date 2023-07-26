@@ -1,53 +1,53 @@
-package com.twitter.timelines.prediction.features.followsource
+package com.twittew.timewines.pwediction.featuwes.fowwowsouwce
 
-import com.twitter.ml.api.Feature
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import scala.collection.JavaConverters._
+impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+i-impowt scawa.cowwection.javaconvewtews._
 
-object FollowSourceFeatures {
+o-object f-fowwowsouwcefeatuwes {
 
-  // Corresponds to an algorithm constant from com.twitter.hermit.profile.HermitProfileConstants
-  val FollowSourceAlgorithm = new Feature.Text("follow_source.algorithm")
+  // c-cowwesponds to a-an awgowithm constant f-fwom com.twittew.hewmit.pwofiwe.hewmitpwofiweconstants
+  v-vaw fowwowsouwceawgowithm = nyew featuwe.text("fowwow_souwce.awgowithm")
 
-  // Type of follow action: one of "unfollow", "follow", "follow_back", "follow_many", "follow_all"
-  val FollowAction = new Feature.Text(
-    "follow_source.action",
-    Set(Follow, PrivateAccountsFollowedBy, PublicAccountsFollowedBy).asJava)
+  // type of fowwow action: one of "unfowwow", 😳😳😳 "fowwow", (U ﹏ U) "fowwow_back", (///ˬ///✿) "fowwow_many", 😳 "fowwow_aww"
+  v-vaw fowwowaction = nyew featuwe.text(
+    "fowwow_souwce.action", 😳
+    set(fowwow, σωσ p-pwivateaccountsfowwowedby, rawr x3 pubwicaccountsfowwowedby).asjava)
 
-  // Millisecond timestamp when follow occurred
-  val FollowTimestamp =
-    new Feature.Discrete("follow_source.follow_timestamp", Set(Follow, PrivateTimestamp).asJava)
+  // m-miwwisecond timestamp when fowwow occuwwed
+  vaw fowwowtimestamp =
+    n-nyew featuwe.discwete("fowwow_souwce.fowwow_timestamp", OwO s-set(fowwow, /(^•ω•^) p-pwivatetimestamp).asjava)
 
-  // Age of follow (in minutes)
-  val FollowAgeMinutes =
-    new Feature.Continuous("follow_source.follow_age_minutes", Set(Follow).asJava)
+  // age of fowwow (in minutes)
+  vaw fowwowageminutes =
+    nyew featuwe.continuous("fowwow_souwce.fowwow_age_minutes", s-set(fowwow).asjava)
 
-  // Tweet ID of tweet details page from where follow happened (if applicable)
-  val FollowCauseTweetId = new Feature.Discrete("follow_source.cause_tweet_id", Set(TweetId).asJava)
+  // tweet id of tweet detaiws page fwom whewe fowwow happened (if a-appwicabwe)
+  vaw fowwowcausetweetid = n-new featuwe.discwete("fowwow_souwce.cause_tweet_id", 😳😳😳 s-set(tweetid).asjava)
 
-  // String representation of follow client (android, web, iphone, etc). Derived from "client"
-  // portion of client event namespace.
-  val FollowClientId = new Feature.Text("follow_source.client_id", Set(ClientType).asJava)
+  // s-stwing wepwesentation o-of fowwow cwient (andwoid, ( ͡o ω ͡o ) web, >_< iphone, e-etc). >w< dewived fwom "cwient"
+  // powtion of cwient event nyamespace.
+  v-vaw fowwowcwientid = nyew featuwe.text("fowwow_souwce.cwient_id", rawr set(cwienttype).asjava)
 
-  // If the follow happens via a profile's Following or Followers,
-  // the id of the profile owner is recorded here.
-  val FollowAssociationId =
-    new Feature.Discrete("follow_source.association_id", Set(Follow, UserId).asJava)
+  // if the fowwow happens via a-a pwofiwe's fowwowing ow fowwowews, 😳
+  // t-the id o-of the pwofiwe o-ownew is wecowded hewe. >w<
+  vaw fowwowassociationid =
+    nyew featuwe.discwete("fowwow_souwce.association_id", (⑅˘꒳˘) set(fowwow, usewid).asjava)
 
-  // The "friendly name" here is computed using FollowSourceUtil.getSource. It represents
-  // a grouping on a few client events that reflect where the event occurred. For example,
-  // events on the tweet details page are grouped using "tweetDetails":
-  //   case (Some("web"), Some("permalink"), _, _, _) => "tweetDetails"
-  //   case (Some("iphone"), Some("tweet"), _, _, _) => "tweetDetails"
-  //   case (Some("android"), Some("tweet"), _, _, _) => "tweetDetails"
-  val FollowSourceFriendlyName = new Feature.Text("follow_source.friendly_name", Set(Follow).asJava)
+  // t-the "fwiendwy nyame" h-hewe is computed using fowwowsouwceutiw.getsouwce. OwO i-it wepwesents
+  // a-a gwouping on a few c-cwient events that wefwect whewe t-the event occuwwed. (ꈍᴗꈍ) fow exampwe, 😳
+  // events on t-the tweet detaiws page awe gwouped u-using "tweetdetaiws":
+  //   case (some("web"), 😳😳😳 s-some("pewmawink"), mya _, _, mya _) => "tweetdetaiws"
+  //   c-case (some("iphone"), (⑅˘꒳˘) some("tweet"), (U ﹏ U) _, _, _) => "tweetdetaiws"
+  //   case (some("andwoid"), mya some("tweet"), ʘwʘ _, (˘ω˘) _, _) => "tweetdetaiws"
+  vaw fowwowsouwcefwiendwyname = nyew featuwe.text("fowwow_souwce.fwiendwy_name", (U ﹏ U) set(fowwow).asjava)
 
-  // Up to two sources and actions that preceded the follow (for example, a profile visit
-  // through a mention click, which itself was on a tweet detail page reached through a tweet
-  // click in the Home tab). See go/followsource for more details and examples.
-  // The "source" here is computed using FollowSourceUtil.getSource
-  val PreFollowAction1 = new Feature.Text("follow_source.pre_follow_action_1", Set(Follow).asJava)
-  val PreFollowAction2 = new Feature.Text("follow_source.pre_follow_action_2", Set(Follow).asJava)
-  val PreFollowSource1 = new Feature.Text("follow_source.pre_follow_source_1", Set(Follow).asJava)
-  val PreFollowSource2 = new Feature.Text("follow_source.pre_follow_source_2", Set(Follow).asJava)
+  // up t-to two souwces and a-actions that pweceded the fowwow (fow e-exampwe, a-a pwofiwe visit
+  // t-thwough a mention cwick, ^•ﻌ•^ which itsewf was on a tweet detaiw p-page weached thwough a tweet
+  // cwick in the home tab). (˘ω˘) see go/fowwowsouwce f-fow mowe detaiws and exampwes. :3
+  // t-the "souwce" h-hewe is computed u-using fowwowsouwceutiw.getsouwce
+  vaw pwefowwowaction1 = n-nyew f-featuwe.text("fowwow_souwce.pwe_fowwow_action_1", ^^;; s-set(fowwow).asjava)
+  v-vaw pwefowwowaction2 = nyew featuwe.text("fowwow_souwce.pwe_fowwow_action_2", 🥺 set(fowwow).asjava)
+  v-vaw p-pwefowwowsouwce1 = n-nyew featuwe.text("fowwow_souwce.pwe_fowwow_souwce_1", (⑅˘꒳˘) s-set(fowwow).asjava)
+  v-vaw pwefowwowsouwce2 = nyew featuwe.text("fowwow_souwce.pwe_fowwow_souwce_2", nyaa~~ set(fowwow).asjava)
 }

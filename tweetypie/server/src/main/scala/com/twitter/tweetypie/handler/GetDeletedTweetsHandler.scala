@@ -1,117 +1,117 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.InternalServerError
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.storage.Response.TweetResponseCode
-import com.twitter.tweetypie.storage.TweetStorageClient.GetTweet
-import com.twitter.tweetypie.storage.DeleteState
-import com.twitter.tweetypie.storage.DeletedTweetResponse
-import com.twitter.tweetypie.storage.RateLimited
-import com.twitter.tweetypie.storage.TweetStorageClient
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.tweetypie.cowe.intewnawsewvewewwow
+i-impowt com.twittew.tweetypie.cowe.ovewcapacity
+i-impowt com.twittew.tweetypie.stowage.wesponse.tweetwesponsecode
+i-impowt com.twittew.tweetypie.stowage.tweetstowagecwient.gettweet
+i-impowt com.twittew.tweetypie.stowage.dewetestate
+i-impowt com.twittew.tweetypie.stowage.dewetedtweetwesponse
+impowt com.twittew.tweetypie.stowage.watewimited
+impowt com.twittew.tweetypie.stowage.tweetstowagecwient
+impowt com.twittew.tweetypie.thwiftscawa._
 
 /**
- * Allow access to raw, unhydrated deleted tweet fields from storage backends (currently Manhattan)
+ * a-awwow access to waw, /(^•ω•^) unhydwated deweted t-tweet fiewds fwom stowage backends (cuwwentwy m-manhattan)
  */
-object GetDeletedTweetsHandler {
+object getdewetedtweetshandwew {
 
-  type Type = FutureArrow[GetDeletedTweetsRequest, Seq[GetDeletedTweetResult]]
-  type TweetsExist = Seq[TweetId] => Stitch[Set[TweetId]]
+  type type = futuweawwow[getdewetedtweetswequest, :3 s-seq[getdewetedtweetwesuwt]]
+  type tweetsexist = s-seq[tweetid] => s-stitch[set[tweetid]]
 
-  def processTweetResponse(response: Try[GetTweet.Response]): Stitch[Option[Tweet]] = {
-    import GetTweet.Response._
+  def pwocesstweetwesponse(wesponse: twy[gettweet.wesponse]): stitch[option[tweet]] = {
+    impowt g-gettweet.wesponse._
 
-    response match {
-      case Return(Found(tweet)) => Stitch.value(Some(tweet))
-      case Return(Deleted | NotFound | BounceDeleted(_)) => Stitch.None
-      case Throw(_: RateLimited) => Stitch.exception(OverCapacity("manhattan"))
-      case Throw(exception) => Stitch.exception(exception)
+    wesponse match {
+      case wetuwn(found(tweet)) => stitch.vawue(some(tweet))
+      c-case wetuwn(deweted | n-nyotfound | bouncedeweted(_)) => s-stitch.none
+      c-case thwow(_: w-watewimited) => stitch.exception(ovewcapacity("manhattan"))
+      case thwow(exception) => stitch.exception(exception)
     }
   }
 
-  def convertDeletedTweetResponse(
-    r: DeletedTweetResponse,
-    extantIds: Set[TweetId]
-  ): GetDeletedTweetResult = {
-    val id = r.tweetId
-    if (extantIds.contains(id) || r.deleteState == DeleteState.NotDeleted) {
-      GetDeletedTweetResult(id, DeletedTweetState.NotDeleted)
-    } else {
-      r.overallResponse match {
-        case TweetResponseCode.Success =>
-          GetDeletedTweetResult(id, convertState(r.deleteState), r.tweet)
-        case TweetResponseCode.OverCapacity => throw OverCapacity("manhattan")
+  d-def convewtdewetedtweetwesponse(
+    w: dewetedtweetwesponse,
+    e-extantids: set[tweetid]
+  ): getdewetedtweetwesuwt = {
+    vaw id = w.tweetid
+    if (extantids.contains(id) || w.dewetestate == d-dewetestate.notdeweted) {
+      getdewetedtweetwesuwt(id, (ꈍᴗꈍ) d-dewetedtweetstate.notdeweted)
+    } e-ewse {
+      w-w.ovewawwwesponse match {
+        case tweetwesponsecode.success =>
+          getdewetedtweetwesuwt(id, /(^•ω•^) c-convewtstate(w.dewetestate), (⑅˘꒳˘) w-w.tweet)
+        case t-tweetwesponsecode.ovewcapacity => t-thwow ovewcapacity("manhattan")
         case _ =>
-          throw InternalServerError(
-            s"Unhandled response ${r.overallResponse} from getDeletedTweets for tweet $id"
+          thwow i-intewnawsewvewewwow(
+            s"unhandwed w-wesponse ${w.ovewawwwesponse} fwom getdewetedtweets fow tweet $id"
           )
       }
     }
   }
 
-  def convertState(d: DeleteState): DeletedTweetState = d match {
-    case DeleteState.NotFound => DeletedTweetState.NotFound
-    case DeleteState.NotDeleted => DeletedTweetState.NotDeleted
-    case DeleteState.SoftDeleted => DeletedTweetState.SoftDeleted
-    // Callers of this endpoint treat BounceDeleted tweets the same as SoftDeleted
-    case DeleteState.BounceDeleted => DeletedTweetState.SoftDeleted
-    case DeleteState.HardDeleted => DeletedTweetState.HardDeleted
+  d-def convewtstate(d: dewetestate): d-dewetedtweetstate = d match {
+    c-case dewetestate.notfound => d-dewetedtweetstate.notfound
+    case dewetestate.notdeweted => dewetedtweetstate.notdeweted
+    case dewetestate.softdeweted => dewetedtweetstate.softdeweted
+    // cawwews of this endpoint t-tweat bouncedeweted t-tweets the same as softdeweted
+    c-case d-dewetestate.bouncedeweted => d-dewetedtweetstate.softdeweted
+    case dewetestate.hawddeweted => dewetedtweetstate.hawddeweted
   }
 
   /**
-   * Converts [[TweetStorageClient.GetTweet]] into a FutureArrow that returns extant tweet ids from
-   * the original list. This method is used to check underlying storage againt cache, preferring
-   * cache if a tweet exists there.
+   * convewts [[tweetstowagecwient.gettweet]] into a futuweawwow t-that wetuwns extant tweet ids fwom
+   * the owiginaw wist. ( ͡o ω ͡o ) this method i-is used to check undewwying stowage a-againt cache, òωó p-pwefewwing
+   * c-cache if a tweet exists thewe. (⑅˘꒳˘)
    */
-  def tweetsExist(getTweet: TweetStorageClient.GetTweet): TweetsExist =
-    (tweetIds: Seq[TweetId]) =>
-      for {
-        response <- Stitch.traverse(tweetIds) { tweetId => getTweet(tweetId).liftToTry }
-        tweets <- Stitch.collect(response.map(processTweetResponse))
-      } yield tweets.flatten.map(_.id).toSet.filter(tweetIds.contains)
+  d-def tweetsexist(gettweet: t-tweetstowagecwient.gettweet): t-tweetsexist =
+    (tweetids: s-seq[tweetid]) =>
+      fow {
+        wesponse <- stitch.twavewse(tweetids) { t-tweetid => g-gettweet(tweetid).wifttotwy }
+        t-tweets <- s-stitch.cowwect(wesponse.map(pwocesstweetwesponse))
+      } y-yiewd tweets.fwatten.map(_.id).toset.fiwtew(tweetids.contains)
 
-  def apply(
-    getDeletedTweets: TweetStorageClient.GetDeletedTweets,
-    tweetsExist: TweetsExist,
-    stats: StatsReceiver
-  ): Type = {
+  def appwy(
+    getdewetedtweets: tweetstowagecwient.getdewetedtweets, XD
+    t-tweetsexist: tweetsexist, -.-
+    stats: statsweceivew
+  ): type = {
 
-    val notFound = stats.counter("not_found")
-    val notDeleted = stats.counter("not_deleted")
-    val softDeleted = stats.counter("soft_deleted")
-    val hardDeleted = stats.counter("hard_deleted")
-    val unknown = stats.counter("unknown")
+    vaw nyotfound = s-stats.countew("not_found")
+    vaw nyotdeweted = stats.countew("not_deweted")
+    vaw softdeweted = s-stats.countew("soft_deweted")
+    v-vaw hawddeweted = s-stats.countew("hawd_deweted")
+    vaw u-unknown = stats.countew("unknown")
 
-    def trackState(results: Seq[GetDeletedTweetResult]): Unit =
-      results.foreach { r =>
-        r.state match {
-          case DeletedTweetState.NotFound => notFound.incr()
-          case DeletedTweetState.NotDeleted => notDeleted.incr()
-          case DeletedTweetState.SoftDeleted => softDeleted.incr()
-          case DeletedTweetState.HardDeleted => hardDeleted.incr()
-          case _ => unknown.incr()
+    def twackstate(wesuwts: s-seq[getdewetedtweetwesuwt]): u-unit =
+      wesuwts.foweach { w =>
+        w.state match {
+          case dewetedtweetstate.notfound => n-nyotfound.incw()
+          case dewetedtweetstate.notdeweted => n-nyotdeweted.incw()
+          case dewetedtweetstate.softdeweted => s-softdeweted.incw()
+          c-case dewetedtweetstate.hawddeweted => hawddeweted.incw()
+          case _ => u-unknown.incw()
         }
       }
 
-    FutureArrow { request =>
-      Stitch.run {
-        Stitch
+    f-futuweawwow { wequest =>
+      s-stitch.wun {
+        s-stitch
           .join(
-            getDeletedTweets(request.tweetIds),
-            tweetsExist(request.tweetIds)
+            getdewetedtweets(wequest.tweetids), :3
+            tweetsexist(wequest.tweetids)
           )
           .map {
-            case (deletedTweetResponses, extantIds) =>
-              val responseIds = deletedTweetResponses.map(_.tweetId)
-              assert(
-                responseIds == request.tweetIds,
-                s"getDeletedTweets response does not match order of request: Request ids " +
-                  s"(${request.tweetIds.mkString(", ")}) != response ids (${responseIds
-                    .mkString(", ")})"
+            case (dewetedtweetwesponses, nyaa~~ extantids) =>
+              v-vaw wesponseids = d-dewetedtweetwesponses.map(_.tweetid)
+              a-assewt(
+                wesponseids == wequest.tweetids, 😳
+                s-s"getdewetedtweets w-wesponse does nyot match owdew o-of wequest: wequest ids " +
+                  s"(${wequest.tweetids.mkstwing(", (⑅˘꒳˘) ")}) != wesponse ids (${wesponseids
+                    .mkstwing(", nyaa~~ ")})"
               )
-              deletedTweetResponses.map { r => convertDeletedTweetResponse(r, extantIds) }
+              d-dewetedtweetwesponses.map { w-w => convewtdewetedtweetwesponse(w, OwO extantids) }
           }
       }
     }

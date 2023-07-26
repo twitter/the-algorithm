@@ -1,32 +1,32 @@
-scala_library(
-    sources = [
-        "*.scala",
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", òωó
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala/com/twitter/inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/side_effect",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline:query",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/domain_marshaller_executor",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/pipeline_result_side_effect_executor",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/selector_executor",
-        "stitch/stitch-core",
-    ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/side_effect",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline:query",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/pipeline_result_side_effect_executor",
-        "stitch/stitch-core",
-    ],
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    p-pwatfowm = "java8", (U ᵕ U❁)
+    s-stwict_deps = t-twue, (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [
+        "3wdpawty/jvm/javax/inject:javax.inject", UwU
+        "finatwa/inject/inject-cowe/swc/main/scawa", rawr x3
+        "finatwa/inject/inject-cowe/swc/main/scawa/com/twittew/inject", rawr
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/side_effect", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine:quewy", >_<
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine/step", :3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice", (U ﹏ U)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice/domain_mawshawwew_executow", -.-
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice/pipewine_wesuwt_side_effect_executow", (ˆ ﻌ ˆ)♡
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice/sewectow_executow", (⑅˘꒳˘)
+        "stitch/stitch-cowe", (U ᵕ U❁)
+    ], -.-
+    e-expowts = [
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/side_effect", ^^;;
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common", >_<
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine:quewy", mya
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine/step", mya
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice", 😳
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice/pipewine_wesuwt_side_effect_executow",
+        "stitch/stitch-cowe", XD
+    ], :3
 )

@@ -1,44 +1,44 @@
-package com.twitter.cr_mixer.param
+package com.twittew.cw_mixew.pawam
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.baseconfig
+i-impowt com.twittew.timewines.configapi.baseconfigbuiwdew
+i-impowt c-com.twittew.timewines.configapi.fsname
+i-impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt c-com.twittew.timewines.configapi.featuweswitchovewwideutiw
+i-impowt com.twittew.timewines.configapi.pawam
 
 /**
- * ConsumersBasedUserTweetGraph Params, there are multiple ways (e.g. FRS, RealGraphOon) to generate consumersSeedSet for ConsumersBasedUserTweetGraph
- * for now we allow flexibility in tuning UTG params for different consumersSeedSet generation algo by giving the param name {consumerSeedSetAlgo}{ParamName}
+ * consumewsbasedusewtweetgwaph pawams, (⑅˘꒳˘) thewe awe m-muwtipwe ways (e.g. (///ˬ///✿) fws, weawgwaphoon) to genewate c-consumewsseedset fow consumewsbasedusewtweetgwaph
+ * f-fow nyow we awwow fwexibiwity in tuning utg pawams fow diffewent c-consumewsseedset genewation a-awgo by giving t-the pawam nyame {consumewseedsetawgo}{pawamname}
  */
 
-object ConsumersBasedUserTweetGraphParams {
+object consumewsbasedusewtweetgwaphpawams {
 
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "consumers_based_user_tweet_graph_enable_source",
-        default = false
+  object enabwesouwcepawam
+      e-extends fspawam[boowean](
+        nyame = "consumews_based_usew_tweet_gwaph_enabwe_souwce", 😳😳😳
+        defauwt = fawse
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
+  v-vaw awwpawams: seq[pawam[_] w-with fsname] = s-seq(
+    enabwesouwcepawam, 🥺
   )
 
-  lazy val config: BaseConfig = {
+  w-wazy vaw config: b-baseconfig = {
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides()
+    vaw intovewwides = featuweswitchovewwideutiw.getboundedintfsovewwides()
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides()
+    v-vaw doubweovewwides =
+      featuweswitchovewwideutiw.getboundeddoubwefsovewwides()
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam
+    vaw booweanovewwides = f-featuweswitchovewwideutiw.getbooweanfsovewwides(
+      enabwesouwcepawam
     )
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .build()
+    baseconfigbuiwdew()
+      .set(intovewwides: _*)
+      .set(booweanovewwides: _*)
+      .set(doubweovewwides: _*)
+      .buiwd()
   }
 }

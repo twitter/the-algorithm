@@ -1,21 +1,21 @@
 junit_tests(
-    name = "tests",
-    sources = ["*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "decider/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka-streams/kafka-streams/src/test/scala:test-deps",
-        "kafka/finagle-kafka/finatra-kafka/src/test/scala:test-deps",
-        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
-        "unified_user_actions/enricher/src/test/scala/com/twitter/unified_user_actions/enricher:fixture",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:client-event",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:enrichment-planner",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:rekey-uua-iesource",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:tls-favs",
-        "unified_user_actions/service/src/test/resources",
-        "util/util-mock/src/main/scala/com/twitter/util/mock",
-    ],
+    nyame = "tests", ^•ﻌ•^
+    souwces = ["*.scawa"], OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/ch/qos/wogback:wogback-cwassic", òωó
+        "3wdpawty/jvm/com/googwe/inject:guice", o.O
+        "3wdpawty/jvm/javax/inject:javax.inject", (U ᵕ U❁)
+        "decidew/swc/main/scawa", (⑅˘꒳˘)
+        "kafka/finagwe-kafka/finatwa-kafka-stweams/kafka-stweams/swc/test/scawa:test-deps", ( ͡o ω ͡o )
+        "kafka/finagwe-kafka/finatwa-kafka/swc/test/scawa:test-deps", UwU
+        "unified_usew_actions/enwichew/swc/main/thwift/com/twittew/unified_usew_actions/enwichew/intewnaw:intewnaw-scawa", rawr x3
+        "unified_usew_actions/enwichew/swc/test/scawa/com/twittew/unified_usew_actions/enwichew:fixtuwe", rawr
+        "unified_usew_actions/sewvice/swc/main/scawa/com/twittew/unified_usew_actions/sewvice:cwient-event", σωσ
+        "unified_usew_actions/sewvice/swc/main/scawa/com/twittew/unified_usew_actions/sewvice:enwichment-pwannew", σωσ
+        "unified_usew_actions/sewvice/swc/main/scawa/com/twittew/unified_usew_actions/sewvice:wekey-uua-iesouwce", >_<
+        "unified_usew_actions/sewvice/swc/main/scawa/com/twittew/unified_usew_actions/sewvice:tws-favs", :3
+        "unified_usew_actions/sewvice/swc/test/wesouwces", (U ﹏ U)
+        "utiw/utiw-mock/swc/main/scawa/com/twittew/utiw/mock", -.-
+    ], (ˆ ﻌ ˆ)♡
 )

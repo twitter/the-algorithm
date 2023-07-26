@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageNavBar
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageNavBar
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TitleNavBar
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pages.wendew.{thwiftscawa => u-uwp}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.pagenavbaw
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.topicpagenavbaw
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.titwenavbaw
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class PageNavBarMarshaller @Inject() (
-  topicPageNavBarMarshaller: TopicPageNavBarMarshaller,
-  titleNavBarMarshaller: TitleNavBarMarshaller) {
+@singweton
+cwass pagenavbawmawshawwew @inject() (
+  topicpagenavbawmawshawwew: topicpagenavbawmawshawwew, mya
+  t-titwenavbawmawshawwew: titwenavbawmawshawwew) {
 
-  def apply(pageNavBar: PageNavBar): urp.PageNavBar = pageNavBar match {
-    case pageNavBar: TopicPageNavBar =>
-      urp.PageNavBar.TopicPageNavBar(topicPageNavBarMarshaller(pageNavBar))
-    case pageNavBar: TitleNavBar =>
-      urp.PageNavBar.TitleNavBar(titleNavBarMarshaller(pageNavBar))
+  def appwy(pagenavbaw: p-pagenavbaw): uwp.pagenavbaw = p-pagenavbaw match {
+    case pagenavbaw: topicpagenavbaw =>
+      u-uwp.pagenavbaw.topicpagenavbaw(topicpagenavbawmawshawwew(pagenavbaw))
+    case pagenavbaw: t-titwenavbaw =>
+      u-uwp.pagenavbaw.titwenavbaw(titwenavbawmawshawwew(pagenavbaw))
   }
 }

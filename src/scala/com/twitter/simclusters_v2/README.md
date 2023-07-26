@@ -1,112 +1,112 @@
-# SimClusters: Community-based Representations for Heterogeneous Recommendations at Twitter
+# simcwustews: community-based wepwesentations f-fow h-hetewogeneous w-wecommendations a-at twittew
 
-## Overview
-SimClusters is as a general-purpose representation layer based on overlapping communities into which users as well as heterogeneous content can be captured as sparse, interpretable vectors to support a multitude of recommendation tasks.
+## ovewview
+s-simcwustews i-is as a genewaw-puwpose w-wepwesentation w-wayew based on ovewwapping communities into which usews as weww as hetewogeneous c-content can be captuwed as spawse, rawr x3 intewpwetabwe v-vectows to suppowt a-a muwtitude of wecommendation tasks. ( ͡o ω ͡o )
 
-We build our user and tweet SimClusters embeddings based on the inferred communities, and the representations power our personalized tweet recommendation via our online serving service SimClusters ANN.
-
-
-For more details, please read our paper that was published in KDD'2020 Applied Data Science Track: https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio
-
-## Brief introduction to Simclusters Algorithm
-
-### Follow relationships as a bipartite graph
-Follow relationships on Twitter are perhaps most naturally thought of as directed graph, where each node is a user and each edge represents a Follow. Edges are directed in that User 1 can follow User 2, User 2 can follow User 1 or both User 1 and User 2 can follow each other.
-
-This directed graph can be also viewed as a bipartite graph, where nodes are grouped into two sets, Producers and Consumers. In this bipartite graph, Producers are the users who are Followed and Consumers are the Followees. Below is a toy example of a follow graph for four users:
-
-<img src="images/bipartite_graph.png" width = "400px">
-
-> Figure 1 - Left panel: A directed follow graph; Right panel: A bipartite graph representation of the directed graph
-
-### Community Detection - Known For 
-The bipartite follow graph can be used to identify groups of Producers who have similar followers, or who are "Known For" a topic. Specifically, the bipartite follow graph can also be represented as an *m x n* matrix (*A*), where consumers are presented as *u* and producers are represented as *v*.
-
-Producer-producer similarity is computed as the cosine similarity between users who follow each producer. The resulting cosine similarity values can be used to construct a producer-producer similarity graph, where the nodes are producers and edges are weighted by the corresponding cosine similarity value. Noise removal is performed, such that edges with weights below a specified threshold are deleted from the graph.
-
-After noise removal has been completed, Metropolis-Hastings sampling-based community detection is then run on the Producer-Producer similarity graph to identify a community affiliation for each producer. This algorithm takes in a parameter *k* for the number of communities to be detected.
-
-<img src="images/producer_producer_similarity.png">
-
-> Figure 2 -  Left panel: Matrix representation of the follow graph depicted in Figure 1; Middle panel: Producer-Producer similarity is estimated by calculating the cosine similarity between the users who follow each producer; Right panel: Cosine similarity scores are used to create the Producer-Producer similarity graph. A clustering algorithm is run on the graph to identify groups of Producers with similar followers.
-
-Community affiliation scores are then used to construct an *n x k* "Known For" matrix (*V*). This matrix is maximally sparse, and each Producer is affiliated with at most one community. In production, the Known For dataset covers the top 20M producers and k ~= 145000. In other words, we discover around 145k communities based on Twitter's user follow graph.
-
-<img src="images/knownfor.png">
-
-> Figure 3 -  The clustering algorithm returns community affiliation scores for each producer. These scores are represented in matrix V.
-
-In the example above, Producer 1 is "Known For" community 2, Producer 2 is "Known For" community 1, and so forth.
-
-### Consumer Embeddings - User InterestedIn
-An Interested In matrix (*U*) can be computed by multiplying the matrix representation of the follow graph (*A*) by the Known For matrix (*V*): 
-
-<img src="images/interestedin.png">
-
-In this toy example, consumer 1 is interested in community 1 only, whereas consumer 3 is interested in all three communities. There is also a noise removal step applied to the Interested In matrix.
-
-We use the InterestedIn embeddings to capture consumer's long-term interest. The InterestedIn embeddings is one of our major source for consumer-based tweet recommendations.
-
-### Producer Embeddings
-When computing the Known For matrix, each producer can only be Known For a single community. Although this maximally sparse matrix is useful from a computational perspective, we know that our users tweet about many different topics and may be "Known" in many different communities. Producer embeddings ( *Ṽ* )  are used to capture this richer structure of the graph.
-
-To calculate producer embeddings, the cosine similarity is calculated between each Producer’s follow graph and the Interested In vector for each community.
-
-<img src="images/producer_embeddings.png">
-
-Producer embeddings are used for producer-based tweet recommendations. For example, we can recommend similar tweets based on an account you just followed.
-
-### Entity Embeddings
-SimClusters can also be used to generate embeddings for different kind of contents, such as
-- Tweets (used for Tweet recommendations)
-- Topics (used for TopicFollow)
-
-#### Tweet embeddings
-When a tweet is created, its tweet embedding is initialized as an empty vector.
-Tweet embeddings are updated each time the tweet is favorited. Specifically, the InterestedIn vector of each user who Fav-ed the tweet is added to the tweet vector.
-Since tweet embeddings are updated each time a tweet is favorited, they change over time.
-
-Tweet embeddings are critical for our tweet recommendation tasks. We can calculate tweet similarity and recommend similar tweets to users based on their tweet engagement history.
-
-We have a online Heron job that updates the tweet embeddings in realtime, check out [here](summingbird/README.md) for more. 
-
-#### Topic embeddings
-Topic embeddings (**R**) are determined by taking the cosine similarity between consumers who are interested in a community and the number of aggregated favorites each consumer has taken on a tweet that has a topic annotation (with some time decay).
-
-<img src="images/topic_embeddings.png">
+we buiwd ouw usew and tweet s-simcwustews embeddings based on t-the infewwed communities, (˘ω˘) a-and the wepwesentations powew ouw pewsonawized tweet wecommendation v-via ouw onwine sewving sewvice simcwustews ann. 😳
 
 
-## Project Directory Overview
-The whole SimClusters project can be understood as 2 main components
-- SimClusters Offline Jobs (Scalding / GCP)
-- SimClusters Real-time Streaming Jobs 
+fow mowe detaiws, OwO pwease wead o-ouw papew that was pubwished in k-kdd'2020 appwied d-data science twack: h-https://www.kdd.owg/kdd2020/accepted-papews/view/simcwustews-community-based-wepwesentations-fow-hetewogeneous-wecommendatio
 
-### SimClusters Offline Jobs
+## b-bwief intwoduction to simcwustews awgowithm
 
-**SimClusters Scalding Jobs**
+### f-fowwow wewationships as a bipawtite gwaph
+f-fowwow wewationships on twittew awe pewhaps most nyatuwawwy thought of as diwected gwaph, (˘ω˘) whewe e-each nyode is a usew and each edge w-wepwesents a f-fowwow. òωó edges awe d-diwected in that usew 1 can fowwow usew 2, ( ͡o ω ͡o ) usew 2 can fowwow u-usew 1 ow both usew 1 a-and usew 2 can fowwow each o-othew. UwU
 
-| Jobs   | Code  | Description  |
+this diwected g-gwaph can be awso viewed a-as a bipawtite gwaph, /(^•ω•^) whewe nyodes a-awe gwouped into two sets, (ꈍᴗꈍ) pwoducews and consumews. 😳 i-in this bipawtite gwaph, mya p-pwoducews awe the usews who awe f-fowwowed and consumews a-awe the fowwowees. mya bewow is a toy exampwe of a fowwow gwaph fow fouw usews:
+
+<img swc="images/bipawtite_gwaph.png" width = "400px">
+
+> f-figuwe 1 - w-weft panew: a diwected f-fowwow gwaph; wight p-panew: a bipawtite g-gwaph wepwesentation of the diwected gwaph
+
+### community d-detection - known fow 
+the bipawtite fowwow gwaph can be used to identify gwoups o-of pwoducews who have simiwaw f-fowwowews, /(^•ω•^) ow who a-awe "known fow" a-a topic. ^^;; specificawwy, 🥺 the bipawtite f-fowwow gwaph c-can awso be w-wepwesented as an *m x-x ny* matwix (*a*), ^^ whewe consumews awe pwesented a-as *u* and p-pwoducews awe w-wepwesented as *v*. ^•ﻌ•^
+
+p-pwoducew-pwoducew s-simiwawity is computed as the cosine simiwawity between usews w-who fowwow each pwoducew. /(^•ω•^) the wesuwting cosine simiwawity vawues can be used to constwuct a p-pwoducew-pwoducew simiwawity gwaph, ^^ whewe the nyodes awe pwoducews a-and edges awe w-weighted by the c-cowwesponding cosine simiwawity v-vawue. 🥺 nyoise wemovaw is pewfowmed, s-such that e-edges with weights bewow a specified thweshowd awe deweted fwom the gwaph. (U ᵕ U❁)
+
+aftew nyoise wemovaw h-has been compweted, 😳😳😳 metwopowis-hastings s-sampwing-based community d-detection is then w-wun on the pwoducew-pwoducew simiwawity gwaph to identify a c-community affiwiation f-fow each pwoducew. nyaa~~ this awgowithm t-takes in a-a pawametew *k* fow the nyumbew of communities to be detected. (˘ω˘)
+
+<img swc="images/pwoducew_pwoducew_simiwawity.png">
+
+> f-figuwe 2 -  w-weft panew: m-matwix wepwesentation of the fowwow g-gwaph depicted i-in figuwe 1; middwe panew: pwoducew-pwoducew s-simiwawity is estimated by cawcuwating the cosine simiwawity between the usews who f-fowwow each pwoducew; w-wight panew: cosine simiwawity scowes awe u-used to cweate t-the pwoducew-pwoducew simiwawity gwaph. >_< a cwustewing awgowithm i-is wun on the gwaph to identify gwoups of pwoducews with simiwaw fowwowews. XD
+
+community a-affiwiation scowes awe then used to constwuct a-an *n x k* "known f-fow" matwix (*v*). rawr x3 this matwix is maximawwy spawse, ( ͡o ω ͡o ) and e-each pwoducew is a-affiwiated with at most one community. :3 in pwoduction, mya the known f-fow dataset covews the top 20m p-pwoducews and k ~= 145000. σωσ in othew wowds, (ꈍᴗꈍ) we discovew awound 145k c-communities based on twittew's u-usew fowwow gwaph. OwO
+
+<img s-swc="images/knownfow.png">
+
+> figuwe 3 -  t-the cwustewing awgowithm wetuwns c-community a-affiwiation scowes f-fow each pwoducew. o.O these scowes a-awe wepwesented i-in matwix v. 😳😳😳
+
+in the exampwe above, /(^•ω•^) pwoducew 1 i-is "known fow" c-community 2, OwO pwoducew 2 i-is "known fow" community 1, ^^ and so fowth. (///ˬ///✿)
+
+### c-consumew embeddings - usew i-intewestedin
+a-an intewested in matwix (*u*) can be computed by muwtipwying the m-matwix wepwesentation o-of the fowwow g-gwaph (*a*) b-by the known fow matwix (*v*): 
+
+<img s-swc="images/intewestedin.png">
+
+in this toy exampwe, (///ˬ///✿) consumew 1 is intewested in community 1 onwy, (///ˬ///✿) wheweas c-consumew 3 is intewested in aww t-thwee communities. ʘwʘ thewe is awso a-a nyoise wemovaw step appwied t-to the intewested in matwix.
+
+we u-use the intewestedin e-embeddings t-to captuwe consumew's w-wong-tewm i-intewest. ^•ﻌ•^ the intewestedin embeddings is one of ouw majow souwce fow consumew-based tweet wecommendations. OwO
+
+### pwoducew embeddings
+w-when computing t-the known fow m-matwix, (U ﹏ U) each pwoducew can onwy b-be known fow a singwe community. (ˆ ﻌ ˆ)♡ awthough this maximawwy spawse m-matwix is usefuw f-fwom a computationaw pewspective, (⑅˘꒳˘) w-we know that ouw usews tweet about many diffewent t-topics and m-may be "known" in many diffewent c-communities. p-pwoducew embeddings ( *Ṽ* )  awe used to captuwe this wichew stwuctuwe of the gwaph. (U ﹏ U)
+
+to cawcuwate p-pwoducew embeddings, o.O t-the cosine s-simiwawity i-is cawcuwated between e-each pwoducew’s fowwow gwaph a-and the intewested i-in vectow fow each community. mya
+
+<img s-swc="images/pwoducew_embeddings.png">
+
+p-pwoducew embeddings awe used f-fow pwoducew-based tweet wecommendations. fow exampwe, XD w-we can wecommend simiwaw t-tweets based on a-an account you just fowwowed. òωó
+
+### e-entity embeddings
+simcwustews can awso be used t-to genewate embeddings f-fow diffewent k-kind of contents, (˘ω˘) such as
+- tweets (used fow tweet wecommendations)
+- t-topics (used fow topicfowwow)
+
+#### tweet embeddings
+w-when a tweet is c-cweated, :3 its tweet embedding is i-initiawized as an empty vectow. OwO
+t-tweet embeddings a-awe updated each time the tweet is favowited. mya s-specificawwy, (˘ω˘) the intewestedin vectow of each usew w-who fav-ed the t-tweet is added to the tweet vectow. o.O
+s-since tweet embeddings awe u-updated each time a-a tweet is favowited, (✿oωo) t-they change ovew time. (ˆ ﻌ ˆ)♡
+
+tweet embeddings awe cwiticaw fow ouw tweet wecommendation tasks. ^^;; we can cawcuwate tweet simiwawity and wecommend simiwaw tweets to usews based on theiw tweet engagement histowy. OwO
+
+w-we have a o-onwine hewon job that updates the tweet embeddings i-in weawtime, 🥺 c-check out [hewe](summingbiwd/weadme.md) f-fow mowe. mya 
+
+#### topic embeddings
+t-topic embeddings (**w**) a-awe detewmined b-by taking the cosine simiwawity b-between consumews who awe intewested i-in a community a-and the nyumbew of aggwegated favowites each c-consumew has t-taken on a tweet t-that has a topic a-annotation (with s-some time decay). 😳
+
+<img s-swc="images/topic_embeddings.png">
+
+
+## p-pwoject diwectowy o-ovewview
+the w-whowe simcwustews pwoject can b-be undewstood as 2 m-main components
+- s-simcwustews offwine jobs (scawding / g-gcp)
+- simcwustews weaw-time stweaming j-jobs 
+
+### simcwustews offwine j-jobs
+
+**simcwustews s-scawding jobs**
+
+| j-jobs   | code  | descwiption  |
 |---|---|---|
-| KnownFor  |  [simclusters_v2/scalding/update_known_for/UpdateKnownFor20M145K2020.scala](scalding/update_known_for/UpdateKnownFor20M145K2020.scala) | The job outputs the KnownFor dataset which stores the relationships between  clusterId and producerUserId. </n> KnownFor dataset covers the top 20M followed producers. We use this KnownFor dataset (or so-called clusters) to build all other entity embeddings. |
-| InterestedIn Embeddings|  [simclusters_v2/scalding/InterestedInFromKnownFor.scala](scalding/InterestedInFromKnownFor.scala) |  This code implements the job for computing users' interestedIn embedding from the  KnownFor dataset. </n> We use this dataset for consumer-based tweet recommendations.|
-| Producer Embeddings  | [simclusters_v2/scalding/embedding/ProducerEmbeddingsFromInterestedIn.scala](scalding/embedding/ProducerEmbeddingsFromInterestedIn.scala)  |  The code implements the job for computer producer embeddings, which represents the content user produces. </n> We use this dataset for producer-based tweet recommendations.|
-| Semantic Core Entity Embeddings  | [simclusters_v2/scalding/embedding/EntityToSimClustersEmbeddingsJob.scala](scalding/embedding/EntityToSimClustersEmbeddingsJob.scala)   | The job computes the semantic core entity embeddings. It outputs datasets that stores the  "SemanticCore entityId -> List(clusterId)" and "clusterId -> List(SemanticCore entityId))" relationships.|
-| Topic Embeddings | [simclusters_v2/scalding/embedding/tfg/FavTfgBasedTopicEmbeddings.scala](scalding/embedding/tfg/FavTfgBasedTopicEmbeddings.scala)  | Jobs to generate Fav-based Topic-Follow-Graph (TFG) topic embeddings </n> A topic's fav-based TFG embedding is the sum of its followers' fav-based InterestedIn. We use this embedding for topic related recommendations.|
+| k-knownfow  |  [simcwustews_v2/scawding/update_known_fow/updateknownfow20m145k2020.scawa](scawding/update_known_fow/updateknownfow20m145k2020.scawa) | the j-job outputs the knownfow dataset w-which stowes the wewationships b-between  cwustewid and pwoducewusewid. òωó </n> knownfow dataset covews the top 20m f-fowwowed pwoducews. /(^•ω•^) we use this k-knownfow dataset (ow s-so-cawwed cwustews) to buiwd aww othew entity embeddings. -.- |
+| i-intewestedin embeddings|  [simcwustews_v2/scawding/intewestedinfwomknownfow.scawa](scawding/intewestedinfwomknownfow.scawa) |  t-this code impwements t-the job fow c-computing usews' intewestedin embedding fwom t-the  knownfow dataset. òωó </n> w-we use this dataset f-fow consumew-based tweet wecommendations.|
+| pwoducew e-embeddings  | [simcwustews_v2/scawding/embedding/pwoducewembeddingsfwomintewestedin.scawa](scawding/embedding/pwoducewembeddingsfwomintewestedin.scawa)  |  the code impwements t-the job fow c-computew pwoducew e-embeddings, /(^•ω•^) which wepwesents t-the content usew p-pwoduces. /(^•ω•^) </n> w-we use this dataset f-fow pwoducew-based tweet wecommendations.|
+| s-semantic cowe e-entity embeddings  | [simcwustews_v2/scawding/embedding/entitytosimcwustewsembeddingsjob.scawa](scawding/embedding/entitytosimcwustewsembeddingsjob.scawa)   | the j-job computes t-the semantic cowe e-entity embeddings. 😳 i-it outputs d-datasets that stowes t-the  "semanticcowe entityid -> w-wist(cwustewid)" and "cwustewid -> w-wist(semanticcowe entityid))" w-wewationships.|
+| t-topic embeddings | [simcwustews_v2/scawding/embedding/tfg/favtfgbasedtopicembeddings.scawa](scawding/embedding/tfg/favtfgbasedtopicembeddings.scawa)  | jobs t-to genewate fav-based topic-fowwow-gwaph (tfg) topic embeddings </n> a topic's f-fav-based tfg e-embedding is the s-sum of its fowwowews' fav-based intewestedin. :3 we use this embedding f-fow topic w-wewated wecommendations.|
 
-**SimClusters GCP Jobs**
+**simcwustews gcp jobs**
 
-We have a GCP pipeline where we build our SimClusters ANN index via BigQuery. This allows us to do fast iterations and build new embeddings more efficiently compared to Scalding.
+w-we have a gcp p-pipewine whewe we buiwd ouw simcwustews ann index via bigquewy. (U ᵕ U❁) t-this awwows us t-to do fast itewations a-and buiwd n-nyew embeddings mowe efficientwy compawed to scawding. ʘwʘ
 
-All SimClusters related GCP jobs are under [src/scala/com/twitter/simclusters_v2/scio/bq_generation](scio/bq_generation).
+a-aww simcwustews w-wewated gcp jobs awe undew [swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation](scio/bq_genewation). o.O
 
-| Jobs   | Code  | Description  |
+| jobs   | c-code  | descwiption  |
 |---|---|---|
-| PushOpenBased SimClusters ANN Index  |  [EngagementEventBasedClusterToTweetIndexGenerationJob.scala](scio/bq_generation/simclusters_index_generation/EngagementEventBasedClusterToTweetIndexGenerationJob.scala) | The job builds a clusterId -> TopTweet index based on user-open engagement history. </n> This SANN source is used for candidate generation for Notifications. |
-| VideoViewBased SimClusters Index|  [EngagementEventBasedClusterToTweetIndexGenerationJob.scala](scio/bq_generation/simclusters_index_generation/EngagementEventBasedClusterToTweetIndexGenerationJob.scala) |  The job builds a clusterId -> TopTweet index based on the user's video view history. </n> This SANN source is used for video recommendation on Home.|
+| pushopenbased simcwustews a-ann index  |  [engagementeventbasedcwustewtotweetindexgenewationjob.scawa](scio/bq_genewation/simcwustews_index_genewation/engagementeventbasedcwustewtotweetindexgenewationjob.scawa) | the job b-buiwds a cwustewid -> t-toptweet index based on u-usew-open engagement h-histowy. </n> this sann souwce i-is used fow candidate genewation f-fow nyotifications. ʘwʘ |
+| v-videoviewbased s-simcwustews i-index|  [engagementeventbasedcwustewtotweetindexgenewationjob.scawa](scio/bq_genewation/simcwustews_index_genewation/engagementeventbasedcwustewtotweetindexgenewationjob.scawa) |  the j-job buiwds a cwustewid -> t-toptweet i-index based on the usew's video v-view histowy. ^^ </n> this sann souwce is used fow v-video wecommendation o-on home.|
 
-### SimClusters Real-Time Streaming Tweets Jobs
+### s-simcwustews weaw-time stweaming tweets jobs
 
-| Jobs   | Code  | Description  |
+| jobs   | code  | descwiption  |
 |---|---|---|
-| Tweet Embedding Job |  [simclusters_v2/summingbird/storm/TweetJob.scala](summingbird/storm/TweetJob.scala) | Generate the Tweet embedding and index of tweets for the SimClusters |
-| Persistent Tweet Embedding Job|  [simclusters_v2/summingbird/storm/PersistentTweetJob.scala](summingbird/storm/PersistentTweetJob.scala) |  Persistent the tweet embeddings from MemCache into Manhattan.|
+| t-tweet embedding job |  [simcwustews_v2/summingbiwd/stowm/tweetjob.scawa](summingbiwd/stowm/tweetjob.scawa) | g-genewate the t-tweet embedding and index of tweets fow the simcwustews |
+| p-pewsistent tweet embedding j-job|  [simcwustews_v2/summingbiwd/stowm/pewsistenttweetjob.scawa](summingbiwd/stowm/pewsistenttweetjob.scawa) |  p-pewsistent t-the tweet embeddings f-fwom memcache i-into manhattan.|

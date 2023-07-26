@@ -1,44 +1,44 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.BottomTermination
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TerminateTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineTerminationDirection
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TopAndBottomTermination
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TopTermination
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.bottomtewmination
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.tewminatetimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinetewminationdiwection
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.topandbottomtewmination
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.toptewmination
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-sealed trait TerminateInstructionBuilder[Query <: PipelineQuery]
-    extends UrtInstructionBuilder[Query, TerminateTimelineInstruction] {
+seawed t-twait tewminateinstwuctionbuiwdew[quewy <: pipewinequewy]
+    extends uwtinstwuctionbuiwdew[quewy, (⑅˘꒳˘) t-tewminatetimewineinstwuction] {
 
-  def direction: TimelineTerminationDirection
+  def diwection: t-timewinetewminationdiwection
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[TerminateTimelineInstruction] =
-    if (includeInstruction(query, entries))
-      Seq(TerminateTimelineInstruction(terminateTimelineDirection = direction))
-    else Seq.empty
+  ovewwide def buiwd(
+    quewy: quewy, òωó
+    e-entwies: seq[timewineentwy]
+  ): seq[tewminatetimewineinstwuction] =
+    i-if (incwudeinstwuction(quewy, ʘwʘ e-entwies))
+      seq(tewminatetimewineinstwuction(tewminatetimewinediwection = diwection))
+    ewse seq.empty
 }
 
-case class TerminateTopInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends TerminateInstructionBuilder[Query] {
+case cwass t-tewminatetopinstwuctionbuiwdew[quewy <: pipewinequewy](
+  ovewwide vaw incwudeinstwuction: incwudeinstwuction[quewy] = a-awwaysincwude)
+    extends t-tewminateinstwuctionbuiwdew[quewy] {
 
-  override val direction = TopTermination
+  o-ovewwide v-vaw diwection = t-toptewmination
 }
 
-case class TerminateBottomInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends TerminateInstructionBuilder[Query] {
+case cwass tewminatebottominstwuctionbuiwdew[quewy <: p-pipewinequewy](
+  ovewwide vaw incwudeinstwuction: incwudeinstwuction[quewy] = a-awwaysincwude)
+    extends tewminateinstwuctionbuiwdew[quewy] {
 
-  override val direction = BottomTermination
+  ovewwide vaw diwection = bottomtewmination
 }
 
-case class TerminateTopAndBottomInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends TerminateInstructionBuilder[Query] {
+case cwass tewminatetopandbottominstwuctionbuiwdew[quewy <: p-pipewinequewy](
+  ovewwide v-vaw incwudeinstwuction: i-incwudeinstwuction[quewy] = a-awwaysincwude)
+    extends tewminateinstwuctionbuiwdew[quewy] {
 
-  override val direction = TopAndBottomTermination
+  ovewwide v-vaw diwection = t-topandbottomtewmination
 }

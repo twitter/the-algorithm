@@ -1,24 +1,24 @@
-package com.twitter.visibility.configapi.configs.overrides
+package com.twittew.visibiwity.configapi.configs.ovewwides
 
-import com.twitter.decider.LocalOverrides
+impowt c-com.twittew.decidew.wocawuvwwides
 
-object VisibilityLibraryDeciderOverrides
-    extends LocalOverrides.Namespace("visibility-library", "") {
+o-object visibiwitywibwawydecidewovewwides
+    e-extends wocawuvwwides.namespace("visibiwity-wibwawy", (⑅˘꒳˘) "") {
 
-  val EnableLocalizedTombstoneOnVisibilityResults = feature(
-    "visibility_library_enable_localized_tombstones_on_visibility_results")
+  v-vaw enabwewocawizedtombstoneonvisibiwitywesuwts = f-featuwe(
+    "visibiwity_wibwawy_enabwe_wocawized_tombstones_on_visibiwity_wesuwts")
 
-  val EnableLocalizedInterstitialGenerator: LocalOverrides.Override =
-    feature("visibility_library_enable_localized_interstitial_generator")
+  v-vaw enabwewocawizedintewstitiawgenewatow: w-wocawuvwwides.ovewwide =
+    f-featuwe("visibiwity_wibwawy_enabwe_wocawized_intewstitiaw_genewatow")
 
-  val EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRule: LocalOverrides.Override =
-    feature("visibility_library_enable_inner_quoted_tweet_viewer_blocks_author_interstitial_rule")
-  val EnableInnerQuotedTweetViewerMutesAuthorInterstitialRule: LocalOverrides.Override =
-    feature("visibility_library_enable_inner_quoted_tweet_viewer_mutes_author_interstitial_rule")
+  vaw enabweinnewquotedtweetviewewbwocksauthowintewstitiawwuwe: wocawuvwwides.ovewwide =
+    featuwe("visibiwity_wibwawy_enabwe_innew_quoted_tweet_viewew_bwocks_authow_intewstitiaw_wuwe")
+  vaw enabweinnewquotedtweetviewewmutesauthowintewstitiawwuwe: w-wocawuvwwides.ovewwide =
+    featuwe("visibiwity_wibwawy_enabwe_innew_quoted_tweet_viewew_mutes_authow_intewstitiaw_wuwe")
 
-  val EnableBackendLimitedActions: LocalOverrides.Override =
-    feature("visibility_library_enable_backend_limited_actions")
+  vaw enabwebackendwimitedactions: w-wocawuvwwides.ovewwide =
+    featuwe("visibiwity_wibwawy_enabwe_backend_wimited_actions")
 
-  val disableLegacyInterstitialFilteredReason: LocalOverrides.Override = feature(
-    "visibility_library_disable_legacy_interstitial_filtered_reason")
+  v-vaw disabwewegacyintewstitiawfiwtewedweason: wocawuvwwides.ovewwide = featuwe(
+    "visibiwity_wibwawy_disabwe_wegacy_intewstitiaw_fiwtewed_weason")
 }

@@ -1,30 +1,30 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.online_store_internal
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twittew.simcwustews_v2.thwiftjava
+nyamespace py g-gen.twittew.simcwustews_v2.onwine_stowe_intewnaw
+#@namespace scawa c-com.twittew.simcwustews_v2.thwiftscawa
+#@namespace s-stwato com.twittew.simcwustews_v2
 
-include "online_store.thrift"
-
-/**
- * Contains a hash bucket of the clusterId along with the Model Version.
- * All fields are required as this is used as a memcache key.
- **/
-struct FullClusterIdBucket {
-  1: required online_store.ModelVersion modelVersion
-  // (hash(clusterId) mod NUM_BUCKETS_XXXXXX)
-  2: required i32 bucket
-}(hasPersonalData = 'false')
+i-incwude "onwine_stowe.thwift"
 
 /**
- * Contains scores per clusters. The model is not stored here as it's encoded into the memcache key.
+ * c-contains a hash b-bucket of the cwustewid a-awong with t-the modew vewsion. OwO
+ * aww fiewds awe wequiwed as this is used as a memcache k-key. (U ﹏ U)
  **/
-struct ClustersWithScores {
- 1: optional map<i32, online_store.Scores> clustersToScore(personalDataTypeKey = 'InferredInterests')
-}(hasPersonalData = 'true')
+stwuct fuwwcwustewidbucket {
+  1: wequiwed o-onwine_stowe.modewvewsion modewvewsion
+  // (hash(cwustewid) mod nyum_buckets_xxxxxx)
+  2: w-wequiwed i32 bucket
+}(haspewsonawdata = 'fawse')
 
 /**
- * Contains a map of model version to scores per clusters.
+ * contains scowes pew cwustews. >_< the modew i-is nyot stowed hewe as it's encoded i-into the memcache k-key. rawr x3
  **/
-struct MultiModelClustersWithScores {
- 1: optional map<online_store.ModelVersion,ClustersWithScores> multiModelClustersWithScores
-}(hasPersonalData = 'true')
+stwuct cwustewswithscowes {
+ 1: optionaw map<i32, mya onwine_stowe.scowes> cwustewstoscowe(pewsonawdatatypekey = 'infewwedintewests')
+}(haspewsonawdata = 'twue')
+
+/**
+ * c-contains a map of modew vewsion to scowes pew cwustews. nyaa~~
+ **/
+stwuct muwtimodewcwustewswithscowes {
+ 1: o-optionaw map<onwine_stowe.modewvewsion,cwustewswithscowes> m-muwtimodewcwustewswithscowes
+}(haspewsonawdata = 'twue')

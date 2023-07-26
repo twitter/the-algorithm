@@ -1,179 +1,179 @@
-package com.twitter.visibility.engine
+package com.twittew.visibiwity.engine
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.stats.Verbosity
-import com.twitter.servo.util.Gate
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.NotEvaluated
-import com.twitter.visibility.rules.RuleResult
-import com.twitter.visibility.rules.State
-import com.twitter.visibility.rules.State.Disabled
-import com.twitter.visibility.rules.State.FeatureFailed
-import com.twitter.visibility.rules.State.MissingFeature
-import com.twitter.visibility.rules.State.RuleFailed
-import com.twitter.visibility.rules.Action
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.stats.vewbosity
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.sewvo.utiw.memoizingstatsweceivew
+i-impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt com.twittew.visibiwity.featuwes.featuwe
+impowt com.twittew.visibiwity.modews.safetywevew
+impowt com.twittew.visibiwity.wuwes.notevawuated
+impowt com.twittew.visibiwity.wuwes.wuwewesuwt
+impowt com.twittew.visibiwity.wuwes.state
+i-impowt com.twittew.visibiwity.wuwes.state.disabwed
+impowt com.twittew.visibiwity.wuwes.state.featuwefaiwed
+i-impowt com.twittew.visibiwity.wuwes.state.missingfeatuwe
+impowt com.twittew.visibiwity.wuwes.state.wuwefaiwed
+i-impowt com.twittew.visibiwity.wuwes.action
 
 
-case class VisibilityResultsMetricRecorder(
-  statsReceiver: StatsReceiver,
-  captureDebugStats: Gate[Unit]) {
+case cwass visibiwitywesuwtsmetwicwecowdew(
+  statsweceivew: statsweceivew, (⑅˘꒳˘)
+  captuwedebugstats: g-gate[unit]) {
 
-  private val scopedStatsReceiver = new MemoizingStatsReceiver(
-    statsReceiver.scope("visibility_rule_engine")
+  pwivate vaw s-scopedstatsweceivew = n-nyew memoizingstatsweceivew(
+    statsweceivew.scope("visibiwity_wuwe_engine")
   )
-  private val actionStats: StatsReceiver = scopedStatsReceiver.scope("by_action")
-  private val featureFailureReceiver: StatsReceiver =
-    scopedStatsReceiver.scope("feature_failed")
-  private val safetyLevelStatsReceiver: StatsReceiver =
-    scopedStatsReceiver.scope("from_safety_level")
-  private val ruleStatsReceiver: StatsReceiver = scopedStatsReceiver.scope("for_rule")
-  private val ruleFailureReceiver: StatsReceiver =
-    scopedStatsReceiver.scope("rule_failures")
-  private val failClosedReceiver: StatsReceiver =
-    scopedStatsReceiver.scope("fail_closed")
-  private val ruleStatsBySafetyLevelReceiver: StatsReceiver =
-    scopedStatsReceiver.scope("for_rule_by_safety_level")
+  pwivate vaw actionstats: statsweceivew = s-scopedstatsweceivew.scope("by_action")
+  pwivate vaw featuwefaiwuweweceivew: statsweceivew =
+    scopedstatsweceivew.scope("featuwe_faiwed")
+  p-pwivate vaw safetywevewstatsweceivew: statsweceivew =
+    s-scopedstatsweceivew.scope("fwom_safety_wevew")
+  p-pwivate v-vaw wuwestatsweceivew: s-statsweceivew = scopedstatsweceivew.scope("fow_wuwe")
+  pwivate vaw w-wuwefaiwuweweceivew: statsweceivew =
+    scopedstatsweceivew.scope("wuwe_faiwuwes")
+  p-pwivate vaw faiwcwosedweceivew: statsweceivew =
+    scopedstatsweceivew.scope("faiw_cwosed")
+  pwivate vaw wuwestatsbysafetywevewweceivew: s-statsweceivew =
+    scopedstatsweceivew.scope("fow_wuwe_by_safety_wevew")
 
-  def recordSuccess(
-    safetyLevel: SafetyLevel,
-    result: VisibilityResult
-  ): Unit = {
-    recordAction(safetyLevel, result.verdict.fullName)
+  def w-wecowdsuccess(
+    s-safetywevew: s-safetywevew, ( ͡o ω ͡o )
+    wesuwt: visibiwitywesuwt
+  ): unit = {
+    wecowdaction(safetywevew, òωó wesuwt.vewdict.fuwwname)
 
-    val isFeatureFailure = result.ruleResultMap.values
-      .collectFirst {
-        case RuleResult(_, FeatureFailed(_)) =>
-          ruleFailureReceiver.counter("feature_failed").incr()
-          true
-      }.getOrElse(false)
+    v-vaw isfeatuwefaiwuwe = w-wesuwt.wuwewesuwtmap.vawues
+      .cowwectfiwst {
+        case wuwewesuwt(_, (⑅˘꒳˘) f-featuwefaiwed(_)) =>
+          w-wuwefaiwuweweceivew.countew("featuwe_faiwed").incw()
+          twue
+      }.getowewse(fawse)
 
-    val isMissingFeature = result.ruleResultMap.values
-      .collectFirst {
-        case RuleResult(_, MissingFeature(_)) =>
-          ruleFailureReceiver.counter("missing_feature").incr()
-          true
-      }.getOrElse(false)
+    v-vaw ismissingfeatuwe = w-wesuwt.wuwewesuwtmap.vawues
+      .cowwectfiwst {
+        case wuwewesuwt(_, m-missingfeatuwe(_)) =>
+          wuwefaiwuweweceivew.countew("missing_featuwe").incw()
+          t-twue
+      }.getowewse(fawse)
 
-    val isRuleFailed = result.ruleResultMap.values
-      .collectFirst {
-        case RuleResult(_, RuleFailed(_)) =>
-          ruleFailureReceiver.counter("rule_failed").incr()
-          true
-      }.getOrElse(false)
+    vaw iswuwefaiwed = w-wesuwt.wuwewesuwtmap.vawues
+      .cowwectfiwst {
+        c-case wuwewesuwt(_, XD wuwefaiwed(_)) =>
+          wuwefaiwuweweceivew.countew("wuwe_faiwed").incw()
+          twue
+      }.getowewse(fawse)
 
-    if (isFeatureFailure || isMissingFeature || isRuleFailed) {
-      ruleFailureReceiver.counter().incr()
+    if (isfeatuwefaiwuwe || ismissingfeatuwe || iswuwefaiwed) {
+      wuwefaiwuweweceivew.countew().incw()
     }
 
-    if (captureDebugStats()) {
-      val ruleBySafetyLevelStat =
-        ruleStatsBySafetyLevelReceiver.scope(safetyLevel.name)
-      result.ruleResultMap.foreach {
-        case (rule, ruleResult) => {
-          ruleBySafetyLevelStat
-            .scope(rule.name)
+    i-if (captuwedebugstats()) {
+      v-vaw wuwebysafetywevewstat =
+        wuwestatsbysafetywevewweceivew.scope(safetywevew.name)
+      w-wesuwt.wuwewesuwtmap.foweach {
+        c-case (wuwe, -.- w-wuwewesuwt) => {
+          wuwebysafetywevewstat
+            .scope(wuwe.name)
             .scope("action")
-            .counter(Verbosity.Debug, ruleResult.action.fullName).incr()
-          ruleBySafetyLevelStat
-            .scope(rule.name)
+            .countew(vewbosity.debug, :3 wuwewesuwt.action.fuwwname).incw()
+          wuwebysafetywevewstat
+            .scope(wuwe.name)
             .scope("state")
-            .counter(Verbosity.Debug, ruleResult.state.name).incr()
+            .countew(vewbosity.debug, nyaa~~ w-wuwewesuwt.state.name).incw()
         }
       }
     }
   }
 
-  def recordFailedFeature(
-    failedFeature: Feature[_],
-    exception: Throwable
-  ): Unit = {
-    featureFailureReceiver.counter().incr()
+  def wecowdfaiwedfeatuwe(
+    faiwedfeatuwe: featuwe[_], 😳
+    exception: thwowabwe
+  ): u-unit = {
+    featuwefaiwuweweceivew.countew().incw()
 
-    val featureStat = featureFailureReceiver.scope(failedFeature.name)
-    featureStat.counter().incr()
-    featureStat.counter(exception.getClass.getName).incr()
+    v-vaw featuwestat = f-featuwefaiwuweweceivew.scope(faiwedfeatuwe.name)
+    f-featuwestat.countew().incw()
+    featuwestat.countew(exception.getcwass.getname).incw()
   }
 
-  def recordAction(
-    safetyLevel: SafetyLevel,
-    action: String
-  ): Unit = {
-    safetyLevelStatsReceiver.scope(safetyLevel.name).counter(action).incr()
-    actionStats.counter(action).incr()
+  def w-wecowdaction(
+    s-safetywevew: s-safetywevew, (⑅˘꒳˘)
+    a-action: stwing
+  ): unit = {
+    safetywevewstatsweceivew.scope(safetywevew.name).countew(action).incw()
+    a-actionstats.countew(action).incw()
   }
 
-  def recordUnknownSafetyLevel(
-    safetyLevel: SafetyLevel
-  ): Unit = {
-    safetyLevelStatsReceiver
-      .scope("unknown_safety_level")
-      .counter(safetyLevel.name.toLowerCase).incr()
+  d-def wecowdunknownsafetywevew(
+    s-safetywevew: s-safetywevew
+  ): u-unit = {
+    safetywevewstatsweceivew
+      .scope("unknown_safety_wevew")
+      .countew(safetywevew.name.towowewcase).incw()
   }
 
-  def recordRuleMissingFeatures(
-    ruleName: String,
-    missingFeatures: Set[Feature[_]]
-  ): Unit = {
-    val ruleStat = ruleStatsReceiver.scope(ruleName)
-    missingFeatures.foreach { featureId =>
-      ruleStat.scope("missing_feature").counter(featureId.name).incr()
+  def wecowdwuwemissingfeatuwes(
+    w-wuwename: stwing, nyaa~~
+    missingfeatuwes: set[featuwe[_]]
+  ): unit = {
+    vaw wuwestat = wuwestatsweceivew.scope(wuwename)
+    missingfeatuwes.foweach { f-featuweid =>
+      wuwestat.scope("missing_featuwe").countew(featuweid.name).incw()
     }
-    ruleStat.scope("action").counter(NotEvaluated.fullName).incr()
-    ruleStat.scope("state").counter(MissingFeature(missingFeatures).name).incr()
+    wuwestat.scope("action").countew(notevawuated.fuwwname).incw()
+    wuwestat.scope("state").countew(missingfeatuwe(missingfeatuwes).name).incw()
   }
 
-  def recordRuleFailedFeatures(
-    ruleName: String,
-    failedFeatures: Map[Feature[_], Throwable]
-  ): Unit = {
-    val ruleStat = ruleStatsReceiver.scope(ruleName)
+  d-def w-wecowdwuwefaiwedfeatuwes(
+    w-wuwename: stwing, OwO
+    faiwedfeatuwes: m-map[featuwe[_], thwowabwe]
+  ): u-unit = {
+    v-vaw wuwestat = wuwestatsweceivew.scope(wuwename)
 
-    ruleStat.scope("action").counter(NotEvaluated.fullName).incr()
-    ruleStat.scope("state").counter(FeatureFailed(failedFeatures).name).incr()
+    wuwestat.scope("action").countew(notevawuated.fuwwname).incw()
+    wuwestat.scope("state").countew(featuwefaiwed(faiwedfeatuwes).name).incw()
   }
 
-  def recordFailClosed(rule: String, state: State) {
-    failClosedReceiver.scope(state.name).counter(rule).incr();
+  def wecowdfaiwcwosed(wuwe: s-stwing, rawr x3 state: state) {
+    f-faiwcwosedweceivew.scope(state.name).countew(wuwe).incw();
   }
 
-  def recordRuleEvaluation(
-    ruleName: String,
-    action: Action,
-    state: State
-  ): Unit = {
-    val ruleStat = ruleStatsReceiver.scope(ruleName)
-    ruleStat.scope("action").counter(action.fullName).incr()
-    ruleStat.scope("state").counter(state.name).incr()
+  def wecowdwuweevawuation(
+    w-wuwename: stwing, XD
+    a-action: action, σωσ
+    state: state
+  ): u-unit = {
+    vaw w-wuwestat = wuwestatsweceivew.scope(wuwename)
+    wuwestat.scope("action").countew(action.fuwwname).incw()
+    w-wuwestat.scope("state").countew(state.name).incw()
   }
 
 
-  def recordRuleFallbackAction(
-    ruleName: String
-  ): Unit = {
-    val ruleStat = ruleStatsReceiver.scope(ruleName)
-    ruleStat.counter("fallback_action").incr()
+  d-def wecowdwuwefawwbackaction(
+    wuwename: stwing
+  ): unit = {
+    vaw wuwestat = wuwestatsweceivew.scope(wuwename)
+    w-wuwestat.countew("fawwback_action").incw()
   }
 
-  def recordRuleHoldBack(
-    ruleName: String
-  ): Unit = {
-    ruleStatsReceiver.scope(ruleName).counter("heldback").incr()
+  d-def wecowdwuwehowdback(
+    w-wuwename: stwing
+  ): unit = {
+    w-wuwestatsweceivew.scope(wuwename).countew("hewdback").incw()
   }
 
-  def recordRuleFailed(
-    ruleName: String
-  ): Unit = {
-    ruleStatsReceiver.scope(ruleName).counter("failed").incr()
+  d-def wecowdwuwefaiwed(
+    wuwename: stwing
+  ): u-unit = {
+    wuwestatsweceivew.scope(wuwename).countew("faiwed").incw()
   }
 
-  def recordDisabledRule(
-    ruleName: String
-  ): Unit = recordRuleEvaluation(ruleName, NotEvaluated, Disabled)
+  def wecowddisabwedwuwe(
+    wuwename: stwing
+  ): unit = w-wecowdwuweevawuation(wuwename, (U ᵕ U❁) n-nyotevawuated, (U ﹏ U) disabwed)
 }
 
-object NullVisibilityResultsMetricsRecorder
-    extends VisibilityResultsMetricRecorder(NullStatsReceiver, Gate.False)
+object nyuwwvisibiwitywesuwtsmetwicswecowdew
+    e-extends v-visibiwitywesuwtsmetwicwecowdew(nuwwstatsweceivew, :3 gate.fawse)

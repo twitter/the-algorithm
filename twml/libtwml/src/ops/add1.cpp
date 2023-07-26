@@ -1,92 +1,92 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-using namespace tensorflow;
+using nyamespace tensowfwow;
 
-REGISTER_OP("Add1")
-.Attr("T: {float, double, int32}")
-.Input("input1: T")
-.Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->input(0));
-    return Status::OK();
+w-wegistew_op("add1")
+.attw("t: {fwoat, >_< d-doubwe, -.- int32}")
+.input("input1: t-t")
+.output("output: t-t")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    c->set_output(0, 🥺 c-c->input(0));
+    w-wetuwn s-status::ok();
   });
 
 
-template<typename T>
-class Add1 : public OpKernel {
- public:
-  explicit Add1(OpKernelConstruction* context) : OpKernel(context) {}
+tempwate<typename t>
+cwass add1 : pubwic opkewnew {
+ pubwic:
+  e-expwicit add1(opkewnewconstwuction* context) : o-opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
-    auto input = input_tensor.flat<T>();
+  void compute(opkewnewcontext* c-context) ovewwide {
+    // gwab the input tensow
+    c-const tensow& input_tensow = context->input(0);
+    a-auto input = i-input_tensow.fwat<t>();
 
-    // Create an output tensor
-    Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, input_tensor.shape(),
-                             &output_tensor));
-    auto output_flat = output_tensor->flat<T>();
+    // cweate an output tensow
+    tensow* output_tensow = nyuwwptw;
+    o-op_wequiwes_ok(context, (U ﹏ U) context->awwocate_output(0, >w< input_tensow.shape(), mya
+                             &output_tensow));
+    auto output_fwat = output_tensow->fwat<t>();
 
-    // Add 1 to input and assign to output
-    const int N = input.size();
-    for (int i = 0; i < N; i++) {
-      output_flat(i) = input(i) + 1;
+    // a-add 1 to input and assign t-to output
+    const i-int ny = input.size();
+    f-fow (int i = 0; i-i < ny; i++) {
+      output_fwat(i) = input(i) + 1;
     }
   }
 };
 
 
-REGISTER_OP("Add1Grad")
-.Attr("T: {float, double, int32}")
-.Input("grad_output: T")
-.Output("grad_input: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->input(0));
-    return Status::OK();
+w-wegistew_op("add1gwad")
+.attw("t: {fwoat, >w< doubwe, int32}")
+.input("gwad_output: t-t")
+.output("gwad_input: t")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    c->set_output(0, nyaa~~ c->input(0));
+    wetuwn status::ok();
   });
 
-template<typename T>
-class Add1Grad : public OpKernel {
- public:
-  explicit Add1Grad(OpKernelConstruction* context) : OpKernel(context) {}
+t-tempwate<typename t>
+cwass a-add1gwad : pubwic o-opkewnew {
+ p-pubwic:
+  expwicit add1gwad(opkewnewconstwuction* context) : opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& grad_output_tensor = context->input(0);
-    auto grad_output = grad_output_tensor.flat<T>();
+  void compute(opkewnewcontext* c-context) ovewwide {
+    // gwab t-the input tensow
+    const tensow& g-gwad_output_tensow = c-context->input(0);
+    auto gwad_output = g-gwad_output_tensow.fwat<t>();
 
-    // Create an grad_input tensor
-    Tensor* grad_input_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, grad_output_tensor.shape(),
-                             &grad_input_tensor));
+    // cweate a-an gwad_input tensow
+    tensow* gwad_input_tensow = n-nyuwwptw;
+    op_wequiwes_ok(context, c-context->awwocate_output(0, (✿oωo) gwad_output_tensow.shape(), ʘwʘ
+                             &gwad_input_tensow));
 
-    auto grad_input_flat = grad_input_tensor->flat<T>();
+    a-auto g-gwad_input_fwat = gwad_input_tensow->fwat<t>();
 
-    // Copy from grad_output to grad_input
-    const int N = grad_output.size();
-    for (int i = 0; i < N; i++) {
-      grad_input_flat(i) = grad_output(i);
+    // copy fwom gwad_output to gwad_input
+    const int ny = gwad_output.size();
+    f-fow (int i-i = 0; i < ny; i++) {
+      gwad_input_fwat(i) = g-gwad_output(i);
     }
   }
 };
 
-#define REGISTER(Type)              \
+#define w-wegistew(type)              \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("Add1")                    \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    Add1<Type>);                    \
+  w-wegistew_kewnew_buiwdew(          \
+    nyame("add1")                    \
+    .device(device_cpu)             \
+    .typeconstwaint<type>("t"), (ˆ ﻌ ˆ)♡     \
+    add1<type>);                    \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("Add1Grad")                \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    Add1Grad<Type>);                \
+  wegistew_kewnew_buiwdew(          \
+    n-nyame("add1gwad")                \
+    .device(device_cpu)             \
+    .typeconstwaint<type>("t"), 😳😳😳     \
+    add1gwad<type>);                \
 
-REGISTER(float);
-REGISTER(double);
-REGISTER(int32);
+wegistew(fwoat);
+wegistew(doubwe);
+wegistew(int32);

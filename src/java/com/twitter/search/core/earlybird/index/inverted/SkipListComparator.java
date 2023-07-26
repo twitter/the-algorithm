@@ -1,43 +1,43 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
 /**
- * Comparator interface for {@link SkipListContainer},
- * see sample implementation {@link SkipListIntegerComparator}.
+ * compawatow intewface f-fow {@wink s-skipwistcontainew}, ^^
+ * s-see sampwe i-impwementation {@wink s-skipwistintegewcompawatow}. :3
  *
- * Notice: less/equal/greater here refer to the order precedence, instead of numerical value.
+ * n-nyotice: w-wess/equaw/gweatew h-hewe wefew to the owdew pwecedence, -.- instead of nyumewicaw vawue. 😳
  */
-public interface SkipListComparator<K> {
+pubwic i-intewface skipwistcompawatow<k> {
 
   /**
-   * Determine the order between the given key and the key of the given targetValue.
-   * Notice, usually key of a value could be derived from the value along.
+   * detewmine the owdew between the g-given key and the key of the given t-tawgetvawue. mya
+   * nyotice, (˘ω˘) usuawwy key of a vawue couwd be dewived f-fwom the vawue awong. >_<
    *
-   * Implementation of this method should consider sentinel value, see {@link #getSentinelValue()}.
+   * i-impwementation o-of this method shouwd considew sentinew vawue, -.- see {@wink #getsentinewvawue()}. 🥺
    *
-   * Can include position data (primarily for text posting lists). Position should be ignored if
-   * the skip list was constructed without positions enabled.
+   * can incwude position d-data (pwimawiwy fow text posting wists). (U ﹏ U) position shouwd be ignowed if
+   * t-the skip wist was constwucted without p-positions e-enabwed. >w<
    *
-   * @return negative, zero, or positive to indicate if first value is
-   *         less than, equal to, or greater than the second value, respectively.
+   * @wetuwn n-nyegative, mya z-zewo, >w< ow positive to indicate if fiwst vawue i-is
+   *         wess than, nyaa~~ equaw to, (✿oωo) ow gweatew t-than the second vawue, ʘwʘ wespectivewy. (ˆ ﻌ ˆ)♡
    */
-  int compareKeyWithValue(K key, int targetValue, int targetPosition);
+  int compawekeywithvawue(k key, 😳😳😳 int tawgetvawue, :3 int tawgetposition);
 
   /**
-   * Determine the order of two given values based on their keys.
-   * Notice, usually key of a value could be derived from the value along.
+   * d-detewmine the owdew of two given v-vawues based o-on theiw keys. OwO
+   * n-nyotice, (U ﹏ U) usuawwy key of a vawue couwd be dewived fwom the vawue a-awong. >w<
    *
-   * Implementation of this method should consider sentinel value, see {@link #getSentinelValue()}.
+   * i-impwementation of this method s-shouwd considew s-sentinew vawue, (U ﹏ U) see {@wink #getsentinewvawue()}.
    *
-   * @return negative, zero, or positive to indicate if first value is
-   *         less than, equal to, or greater than the second value, respectively.
+   * @wetuwn n-nyegative, 😳 zewo, (ˆ ﻌ ˆ)♡ ow positive t-to indicate if fiwst vawue is
+   *         wess t-than, 😳😳😳 equaw to, (U ﹏ U) ow gweatew than t-the second vawue, (///ˬ///✿) wespectivewy. 😳
    */
-  int compareValues(int v1, int v2);
+  i-int compawevawues(int v-v1, 😳 int v2);
 
   /**
-   * Return a sentinel value, sentinel value should be considered by this comparator
-   * as an ADVISORY GREATEST value, which should NOT be actually inserted into the skip list.
+   * wetuwn a sentinew vawue, σωσ sentinew vawue shouwd be considewed by this compawatow
+   * as an advisowy gweatest v-vawue, rawr x3 which s-shouwd nyot be actuawwy insewted i-into the skip w-wist. OwO
    *
-   * @return the sentinel value.
+   * @wetuwn t-the sentinew vawue. /(^•ω•^)
    */
-  int getSentinelValue();
+  int getsentinewvawue();
 }

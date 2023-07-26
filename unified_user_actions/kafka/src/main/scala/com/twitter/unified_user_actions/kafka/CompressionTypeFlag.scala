@@ -1,20 +1,20 @@
-package com.twitter.unified_user_actions.kafka
+package com.twittew.unified_usew_actions.kafka
 
-import com.twitter.app.Flaggable
-import org.apache.kafka.common.record.CompressionType
+impowt com.twittew.app.fwaggabwe
+i-impowt owg.apache.kafka.common.wecowd.compwessiontype
 
-case class CompressionTypeFlag(compressionType: CompressionType)
+c-case cwass c-compwessiontypefwag(compwessiontype: c-compwessiontype)
 
-object CompressionTypeFlag {
+o-object c-compwessiontypefwag {
 
-  def fromString(s: String): CompressionType = s.toLowerCase match {
-    case "lz4" => CompressionType.LZ4
-    case "snappy" => CompressionType.SNAPPY
-    case "gzip" => CompressionType.GZIP
-    case "zstd" => CompressionType.ZSTD
-    case _ => CompressionType.NONE
+  d-def fwomstwing(s: s-stwing): compwessiontype = s.towowewcase match {
+    case "wz4" => compwessiontype.wz4
+    c-case "snappy" => compwessiontype.snappy
+    case "gzip" => c-compwessiontype.gzip
+    case "zstd" => c-compwessiontype.zstd
+    case _ => compwessiontype.none
   }
 
-  implicit val flaggable: Flaggable[CompressionTypeFlag] =
-    Flaggable.mandatory(s => CompressionTypeFlag(fromString(s)))
+  impwicit vaw fwaggabwe: f-fwaggabwe[compwessiontypefwag] =
+    fwaggabwe.mandatowy(s => c-compwessiontypefwag(fwomstwing(s)))
 }

@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfBelow
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.twiggewifbewow
 
 /**
- * Similar to [[SuccessRateAlert]] but intended for use with an external client calling Product Mixer
+ * s-simiwaw to [[successwateawewt]] b-but intended fow u-use with an extewnaw c-cwient cawwing p-pwoduct mixew
  *
- * [[GenericClientSuccessRateAlert]] triggers when the Success Rate for the external client
- * drops below the [[TriggerIfBelow]] threshold for the configured amount of time
+ * [[genewiccwientsuccesswateawewt]] t-twiggews w-when the success wate fow the extewnaw cwient
+ * dwops bewow the [[twiggewifbewow]] t-thweshowd fow the configuwed amount of t-time
  *
- * @note SuccessRate thresholds must be between 0 and 100%
+ * @note successwate thweshowds m-must be between 0 and 100%
  */
-case class GenericClientSuccessRateAlert(
-  override val source: GenericClient,
-  override val notificationGroup: NotificationGroup,
-  override val warnPredicate: TriggerIfBelow,
-  override val criticalPredicate: TriggerIfBelow,
-  override val runbookLink: Option[String] = None)
-    extends Alert {
-  override val alertType: AlertType = SuccessRate
-  require(
-    warnPredicate.threshold > 0 && warnPredicate.threshold <= 100,
-    s"SuccessRateAlert predicates must be between 0 and 100 but got warnPredicate = ${warnPredicate.threshold}"
+case cwass genewiccwientsuccesswateawewt(
+  o-ovewwide vaw souwce: genewiccwient,
+  o-ovewwide v-vaw nyotificationgwoup: nyotificationgwoup, mya
+  ovewwide vaw wawnpwedicate: twiggewifbewow, 🥺
+  ovewwide vaw cwiticawpwedicate: twiggewifbewow, >_<
+  o-ovewwide vaw wunbookwink: option[stwing] = nyone)
+    extends awewt {
+  ovewwide v-vaw awewttype: awewttype = successwate
+  w-wequiwe(
+    w-wawnpwedicate.thweshowd > 0 && w-wawnpwedicate.thweshowd <= 100, >_<
+    s-s"successwateawewt pwedicates must be b-between 0 and 100 but got wawnpwedicate = ${wawnpwedicate.thweshowd}"
   )
-  require(
-    criticalPredicate.threshold > 0 && criticalPredicate.threshold <= 100,
-    s"SuccessRateAlert predicates must be between 0 and 100 but got criticalPredicate = ${criticalPredicate.threshold}"
+  wequiwe(
+    c-cwiticawpwedicate.thweshowd > 0 && cwiticawpwedicate.thweshowd <= 100, (⑅˘꒳˘)
+    s"successwateawewt pwedicates must be between 0 and 100 but g-got cwiticawpwedicate = ${cwiticawpwedicate.thweshowd}"
   )
 }

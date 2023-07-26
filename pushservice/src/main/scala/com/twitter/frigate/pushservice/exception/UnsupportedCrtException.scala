@@ -1,11 +1,11 @@
-package com.twitter.frigate.pushservice.exception
+package com.twittew.fwigate.pushsewvice.exception
 
-import scala.util.control.NoStackTrace
+impowt scawa.utiw.contwow.nostacktwace
 
 /**
- * Exception for CRT not expected in the scope
- * @param message Exception message to log the UnsupportedCrt
+ * e-exception fow cwt n-nyot expected i-in the scope
+ * @pawam m-message e-exception message t-to wog the unsuppowtedcwt
  */
-class UnsupportedCrtException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+c-cwass unsuppowtedcwtexception(pwivate v-vaw message: stwing)
+    extends exception(message)
+    with nyostacktwace

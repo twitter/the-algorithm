@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.twittew.seawch.eawwybiwd.awchive.segmentbuiwdew;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
 /**
- * Used if exceptions are thrown during creating new SegmentInfo during the indexing loop
+ * u-used if exceptions a-awe thwown duwing c-cweating new s-segmentinfo duwing t-the indexing w-woop
  */
-class SegmentInfoConstructionException extends Exception {
-  SegmentInfoConstructionException(String msg, IOException e) {
-    super(msg, e);
+cwass s-segmentinfoconstwuctionexception extends exception {
+  segmentinfoconstwuctionexception(stwing msg, σωσ ioexception e) {
+    supew(msg, σωσ e-e);
   }
 }

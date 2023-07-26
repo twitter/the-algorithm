@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import scala.util.Random
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.iwecowdonetooneadaptew
+i-impowt scawa.utiw.wandom
 
 /**
- * Helper functions for FeatureStoreSource operations in FRS are available here.
+ * h-hewpew functions f-fow featuwestowesouwce o-opewations in fws awe avaiwabwe hewe.
  */
-object Utils {
+object utiws {
 
-  private val EarlyExpiration = 0.2
+  pwivate vaw e-eawwyexpiwation = 0.2
 
-  private[common] def adaptAdditionalFeaturesToDataRecord(
-    record: DataRecord,
-    adapterStats: StatsReceiver,
-    featureAdapters: Seq[IRecordOneToOneAdapter[DataRecord]]
-  ): DataRecord = {
-    featureAdapters.foldRight(record) { (adapter, record) =>
-      adapterStats.counter(adapter.getClass.getSimpleName).incr()
-      adapter.adaptToDataRecord(record)
+  pwivate[common] def adaptadditionawfeatuwestodatawecowd(
+    w-wecowd: datawecowd,
+    a-adaptewstats: statsweceivew, rawr x3
+    featuweadaptews: seq[iwecowdonetooneadaptew[datawecowd]]
+  ): datawecowd = {
+    featuweadaptews.fowdwight(wecowd) { (adaptew, nyaa~~ w-wecowd) =>
+      adaptewstats.countew(adaptew.getcwass.getsimpwename).incw()
+      a-adaptew.adapttodatawecowd(wecowd)
     }
   }
 
-  // To avoid a cache stampede. See https://en.wikipedia.org/wiki/Cache_stampede
-  private[common] def randomizedTTL(ttl: Long): Long = {
-    (ttl - ttl * EarlyExpiration * Random.nextDouble()).toLong
+  // t-to avoid a cache stampede. /(^•ω•^) see https://en.wikipedia.owg/wiki/cache_stampede
+  pwivate[common] def wandomizedttw(ttw: w-wong): wong = {
+    (ttw - ttw * eawwyexpiwation * wandom.nextdoubwe()).towong
   }
 }

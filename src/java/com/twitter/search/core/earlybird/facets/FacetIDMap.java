@@ -1,161 +1,161 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.awways;
+i-impowt java.utiw.cowwection;
+i-impowt java.utiw.map;
 
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+i-impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
 
 /**
- * Currently a facet is configured by:
- *   - Index field name: The Lucene field name which stores the indexed terms of this facet
- *   - Facet name:       The name of the facet that the search API specifies to request facet counts.
- *   - Facet id:         An internal id which is used to store the facet forward mapping in the facet counting
- *                       data structures.
+ * cuwwentwy a facet is configuwed b-by:
+ *   - index fiewd nyame: t-the wucene fiewd nyame which stowes the indexed tewms of this f-facet
+ *   - facet nyame:       t-the nyame of the f-facet that the seawch api specifies to wequest facet counts. -.-
+ *   - facet id:         a-an intewnaw id which is used to stowe the facet fowwawd mapping in the facet c-counting
+ *                       data stwuctuwes. ^^;;
  *
- * This is a multi-map with two different mappings:
- *   Facet name       -> Facet id
- *   Facet id         -> FieldInfo
+ * t-this i-is a muwti-map w-with two diffewent m-mappings:
+ *   facet nyame       -> facet id
+ *   f-facet id         -> fiewdinfo
  */
-public final class FacetIDMap implements Flushable {
-  private final FacetField[] facetIDToFieldMap;
-  private final Map<String, Integer> facetNameToIDMap;
+pubwic finaw c-cwass facetidmap impwements fwushabwe {
+  pwivate finaw facetfiewd[] facetidtofiewdmap;
+  pwivate finaw map<stwing, XD i-integew> facetnametoidmap;
 
-  private FacetIDMap(FacetField[] facetIDToFieldMap) {
-    this.facetIDToFieldMap = facetIDToFieldMap;
+  p-pwivate facetidmap(facetfiewd[] f-facetidtofiewdmap) {
+    t-this.facetidtofiewdmap = facetidtofiewdmap;
 
-    facetNameToIDMap = Maps.newHashMapWithExpectedSize(facetIDToFieldMap.length);
-    for (int i = 0; i < facetIDToFieldMap.length; i++) {
-      facetNameToIDMap.put(facetIDToFieldMap[i].getFacetName(), i);
+    facetnametoidmap = maps.newhashmapwithexpectedsize(facetidtofiewdmap.wength);
+    f-fow (int i = 0; i-i < facetidtofiewdmap.wength; i++) {
+      facetnametoidmap.put(facetidtofiewdmap[i].getfacetname(), i-i);
     }
   }
 
-  public FacetField getFacetField(Schema.FieldInfo fieldInfo) {
-    return fieldInfo != null && fieldInfo.getFieldType().isFacetField()
-            ? getFacetFieldByFacetName(fieldInfo.getFieldType().getFacetName()) : null;
+  p-pubwic facetfiewd getfacetfiewd(schema.fiewdinfo f-fiewdinfo) {
+    wetuwn f-fiewdinfo != nyuww && fiewdinfo.getfiewdtype().isfacetfiewd()
+            ? getfacetfiewdbyfacetname(fiewdinfo.getfiewdtype().getfacetname()) : n-nyuww;
   }
 
-  public FacetField getFacetFieldByFacetName(String facetName) {
-    Integer facetID = facetNameToIDMap.get(facetName);
-    return facetID != null ? facetIDToFieldMap[facetID] : null;
+  pubwic facetfiewd g-getfacetfiewdbyfacetname(stwing facetname) {
+    i-integew facetid = f-facetnametoidmap.get(facetname);
+    wetuwn facetid != nyuww ? facetidtofiewdmap[facetid] : nyuww;
   }
 
-  public FacetField getFacetFieldByFacetID(int facetID) {
-    return facetIDToFieldMap[facetID];
+  pubwic facetfiewd getfacetfiewdbyfacetid(int f-facetid) {
+    w-wetuwn facetidtofiewdmap[facetid];
   }
 
-  public Collection<FacetField> getFacetFields() {
-    return Arrays.asList(facetIDToFieldMap);
+  p-pubwic cowwection<facetfiewd> g-getfacetfiewds() {
+    w-wetuwn awways.aswist(facetidtofiewdmap);
   }
 
-  public int getNumberOfFacetFields() {
-    return facetIDToFieldMap.length;
+  pubwic int getnumbewoffacetfiewds() {
+    w-wetuwn facetidtofiewdmap.wength;
   }
 
   /**
-   * Builds a new FacetIDMap from the given schema.
+   * buiwds a nyew facetidmap fwom the given schema. 🥺
    */
-  public static FacetIDMap build(Schema schema) {
-    FacetField[] facetIDToFieldMap = new FacetField[schema.getNumFacetFields()];
+  pubwic s-static facetidmap buiwd(schema s-schema) {
+    f-facetfiewd[] facetidtofiewdmap = n-nyew facetfiewd[schema.getnumfacetfiewds()];
 
-    int facetId = 0;
+    int facetid = 0;
 
-    for (Schema.FieldInfo fieldInfo : schema.getFieldInfos()) {
-      if (fieldInfo.getFieldType().isFacetField()) {
-        facetIDToFieldMap[facetId] = new FacetField(facetId, fieldInfo);
-        facetId++;
+    f-fow (schema.fiewdinfo f-fiewdinfo : schema.getfiewdinfos()) {
+      i-if (fiewdinfo.getfiewdtype().isfacetfiewd()) {
+        f-facetidtofiewdmap[facetid] = nyew facetfiewd(facetid, òωó fiewdinfo);
+        f-facetid++;
       }
     }
 
-    return new FacetIDMap(facetIDToFieldMap);
+    w-wetuwn n-nyew facetidmap(facetidtofiewdmap);
   }
 
-  public static final class FacetField {
-    private final int facetId;
-    private final Schema.FieldInfo fieldInfo;
+  p-pubwic s-static finaw cwass facetfiewd {
+    pwivate finaw int facetid;
+    p-pwivate finaw schema.fiewdinfo fiewdinfo;
 
-    private FacetField(int facetId, Schema.FieldInfo fieldInfo) {
-      this.facetId = facetId;
-      this.fieldInfo = fieldInfo;
+    pwivate facetfiewd(int facetid, (ˆ ﻌ ˆ)♡ schema.fiewdinfo f-fiewdinfo) {
+      this.facetid = facetid;
+      this.fiewdinfo = f-fiewdinfo;
     }
 
-    public int getFacetId() {
-      return facetId;
+    pubwic i-int getfacetid() {
+      wetuwn f-facetid;
     }
 
-    public Schema.FieldInfo getFieldInfo() {
-      return fieldInfo;
+    pubwic s-schema.fiewdinfo getfiewdinfo() {
+      w-wetuwn f-fiewdinfo;
     }
 
-    public String getFacetName() {
-      return fieldInfo.getFieldType().getFacetName();
+    pubwic stwing getfacetname() {
+      wetuwn fiewdinfo.getfiewdtype().getfacetname();
     }
 
-    public String getDescription() {
-      return String.format(
-          "(FacetField [facetId: %d, fieldInfo: %s])",
-          getFacetId(), fieldInfo.getDescription());
+    pubwic stwing g-getdescwiption() {
+      wetuwn s-stwing.fowmat(
+          "(facetfiewd [facetid: %d, -.- fiewdinfo: %s])", :3
+          g-getfacetid(), ʘwʘ f-fiewdinfo.getdescwiption());
     }
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FacetIDMap.FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @suppwesswawnings("unchecked")
+  @ovewwide
+  pubwic facetidmap.fwushhandwew g-getfwushhandwew() {
+    w-wetuwn nyew fwushhandwew(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<FacetIDMap> {
-    private static final String NUM_FACET_FIELDS_PROP_NAME = "numFacetFields";
+  pubwic static f-finaw cwass f-fwushhandwew extends fwushabwe.handwew<facetidmap> {
+    pwivate static finaw stwing nyum_facet_fiewds_pwop_name = "numfacetfiewds";
 
-    private final Schema schema;
+    p-pwivate f-finaw schema s-schema;
 
-    public FlushHandler(Schema schema) {
-      this.schema = schema;
+    pubwic fwushhandwew(schema s-schema) {
+      t-this.schema = schema;
     }
 
-    public FlushHandler(FacetIDMap objectToFlush) {
-      super(objectToFlush);
-      // schema only needed here for loading, not for flushing
-      this.schema = null;
+    p-pubwic fwushhandwew(facetidmap objecttofwush) {
+      supew(objecttofwush);
+      // schema onwy nyeeded h-hewe fow woading, n-nyot fow fwushing
+      this.schema = nyuww;
     }
 
-    @Override
-    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      FacetIDMap toFlush = getObjectToFlush();
-      int[] idMap = new int[toFlush.facetIDToFieldMap.length];
-      for (int i = 0; i < toFlush.facetIDToFieldMap.length; i++) {
-        idMap[i] = toFlush.facetIDToFieldMap[i].getFieldInfo().getFieldId();
+    @ovewwide
+    p-pubwic v-void dofwush(fwushinfo fwushinfo, 🥺 datasewiawizew out) thwows ioexception {
+      f-facetidmap tofwush = getobjecttofwush();
+      int[] idmap = nyew int[tofwush.facetidtofiewdmap.wength];
+      fow (int i = 0; i-i < tofwush.facetidtofiewdmap.wength; i++) {
+        idmap[i] = t-tofwush.facetidtofiewdmap[i].getfiewdinfo().getfiewdid();
       }
-      out.writeIntArray(idMap);
+      o-out.wwiteintawway(idmap);
 
-      flushInfo.addIntProperty(NUM_FACET_FIELDS_PROP_NAME, idMap.length);
+      fwushinfo.addintpwopewty(num_facet_fiewds_pwop_name, >_< idmap.wength);
     }
 
 
-    @Override
-    public FacetIDMap doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      int[] idMap = in.readIntArray();
-      if (idMap.length != schema.getNumFacetFields()) {
-        throw new IOException("Wrong number of facet fields. Expected by schema: "
-                + schema.getNumFacetFields()
-                + ", but found in serialized segment: " + idMap.length);
+    @ovewwide
+    pubwic facetidmap dowoad(fwushinfo f-fwushinfo, ʘwʘ d-datadesewiawizew in) thwows ioexception {
+      int[] idmap = i-in.weadintawway();
+      if (idmap.wength != s-schema.getnumfacetfiewds()) {
+        thwow nyew ioexception("wwong nyumbew of f-facet fiewds. (˘ω˘) expected by schema: "
+                + s-schema.getnumfacetfiewds()
+                + ", (✿oωo) b-but found in sewiawized segment: " + i-idmap.wength);
       }
 
-      FacetField[] facetIDToFieldMap = new FacetField[schema.getNumFacetFields()];
+      facetfiewd[] f-facetidtofiewdmap = n-nyew facetfiewd[schema.getnumfacetfiewds()];
 
-      for (int i = 0; i < idMap.length; i++) {
-        int fieldConfigId = idMap[i];
-        facetIDToFieldMap[i] = new FacetField(i, schema.getFieldInfo(fieldConfigId));
+      f-fow (int i = 0; i < i-idmap.wength; i-i++) {
+        int fiewdconfigid = idmap[i];
+        f-facetidtofiewdmap[i] = n-nyew f-facetfiewd(i, (///ˬ///✿) schema.getfiewdinfo(fiewdconfigid));
       }
 
-      return new FacetIDMap(facetIDToFieldMap);
+      wetuwn nyew facetidmap(facetidtofiewdmap);
     }
   }
 }

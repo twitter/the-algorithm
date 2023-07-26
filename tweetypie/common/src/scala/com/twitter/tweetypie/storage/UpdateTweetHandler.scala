@@ -1,64 +1,64 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
-import com.twitter.storage.client.manhattan.kv.ManhattanValue
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Throw
-import com.twitter.util.Time
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stowage.cwient.manhattan.kv.deniedmanhattanexception
+i-impowt c-com.twittew.stowage.cwient.manhattan.kv.manhattanvawue
+i-impowt c-com.twittew.tweetypie.stowage.tweetutiws._
+i-impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+impowt com.twittew.utiw.thwow
+impowt com.twittew.utiw.time
 
-object UpdateTweetHandler {
-  def apply(
-    insert: ManhattanOperations.Insert,
-    stats: StatsReceiver
-  ): TweetStorageClient.UpdateTweet = { (tpTweet: Tweet, fields: Seq[Field]) =>
-    require(
-      fields.forall(!TweetFields.coreFieldIds.contains(_)),
-      "Core fields cannot be modified by calling updateTweet; use addTweet instead."
+o-object updatetweethandwew {
+  def appwy(
+    i-insewt: manhattanopewations.insewt, -.-
+    stats: s-statsweceivew
+  ): tweetstowagecwient.updatetweet = { (tptweet: tweet, 😳 fiewds: seq[fiewd]) =>
+    w-wequiwe(
+      fiewds.fowaww(!tweetfiewds.cowefiewdids.contains(_)), mya
+      "cowe f-fiewds cannot b-be modified by cawwing updatetweet; use addtweet instead."
     )
-    require(
-      areAllFieldsDefined(tpTweet, fields),
-      s"Input tweet $tpTweet does not have specified fields $fields set"
+    wequiwe(
+      a-aweawwfiewdsdefined(tptweet, (˘ω˘) fiewds),
+      s"input tweet $tptweet does nyot have specified f-fiewds $fiewds set"
     )
 
-    val now = Time.now
-    val storedTweet = StorageConversions.toStoredTweetForFields(tpTweet, fields.toSet)
-    val tweetId = storedTweet.id
-    Stats.updatePerFieldQpsCounters("updateTweet", fields.map(_.id), 1, stats)
+    v-vaw nyow = t-time.now
+    vaw s-stowedtweet = stowageconvewsions.tostowedtweetfowfiewds(tptweet, >_< f-fiewds.toset)
+    vaw tweetid = stowedtweet.id
+    s-stats.updatepewfiewdqpscountews("updatetweet", -.- fiewds.map(_.id), 1, 🥺 stats)
 
-    val (fieldIds, stitchesPerTweet) =
-      fields.map { field =>
-        val fieldId = field.id
-        val tweetKey = TweetKey.fieldKey(tweetId, fieldId)
-        val blob = storedTweet.getFieldBlob(fieldId).get
-        val value = ManhattanValue(TFieldBlobCodec.toByteBuffer(blob), Some(now))
-        val record = TweetManhattanRecord(tweetKey, value)
+    v-vaw (fiewdids, stitchespewtweet) =
+      fiewds.map { fiewd =>
+        vaw fiewdid = fiewd.id
+        v-vaw tweetkey = tweetkey.fiewdkey(tweetid, (U ﹏ U) f-fiewdid)
+        v-vaw bwob = s-stowedtweet.getfiewdbwob(fiewdid).get
+        vaw vawue = manhattanvawue(tfiewdbwobcodec.tobytebuffew(bwob), >w< some(now))
+        vaw wecowd = tweetmanhattanwecowd(tweetkey, mya v-vawue)
 
-        (fieldId, insert(record).liftToTry)
+        (fiewdid, >w< i-insewt(wecowd).wifttotwy)
       }.unzip
 
-    Stitch.collect(stitchesPerTweet).map { seqOfTries =>
-      val fieldkeyAndMhResults = fieldIds.zip(seqOfTries).toMap
-      // If even a single field was rate limited, we will send an overall OverCapacity TweetResponse
-      val wasRateLimited = fieldkeyAndMhResults.exists { keyAndResult =>
-        keyAndResult._2 match {
-          case Throw(e: DeniedManhattanException) => true
-          case _ => false
+    stitch.cowwect(stitchespewtweet).map { s-seqoftwies =>
+      vaw f-fiewdkeyandmhwesuwts = fiewdids.zip(seqoftwies).tomap
+      // i-if even a singwe fiewd was wate w-wimited, nyaa~~ we wiww send an ovewaww ovewcapacity t-tweetwesponse
+      vaw waswatewimited = f-fiewdkeyandmhwesuwts.exists { keyandwesuwt =>
+        keyandwesuwt._2 match {
+          c-case thwow(e: deniedmanhattanexception) => t-twue
+          case _ => fawse
         }
       }
 
-      if (wasRateLimited) {
-        buildTweetOverCapacityResponse("updateTweets", tweetId, fieldkeyAndMhResults)
-      } else {
-        buildTweetResponse("updateTweets", tweetId, fieldkeyAndMhResults)
+      if (waswatewimited) {
+        buiwdtweetovewcapacitywesponse("updatetweets", (✿oωo) tweetid, ʘwʘ fiewdkeyandmhwesuwts)
+      } ewse {
+        b-buiwdtweetwesponse("updatetweets", (ˆ ﻌ ˆ)♡ t-tweetid, fiewdkeyandmhwesuwts)
       }
     }
   }
 
-  private def areAllFieldsDefined(tpTweet: Tweet, fields: Seq[Field]) = {
-    val storedTweet = StorageConversions.toStoredTweetForFields(tpTweet, fields.toSet)
-    fields.map(_.id).forall(storedTweet.getFieldBlob(_).isDefined)
+  p-pwivate d-def aweawwfiewdsdefined(tptweet: t-tweet, fiewds: seq[fiewd]) = {
+    vaw stowedtweet = stowageconvewsions.tostowedtweetfowfiewds(tptweet, 😳😳😳 fiewds.toset)
+    f-fiewds.map(_.id).fowaww(stowedtweet.getfiewdbwob(_).isdefined)
   }
 }

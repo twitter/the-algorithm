@@ -1,292 +1,292 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.stats.Stat
-import com.twitter.servo.util.RetryHandler
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Timer
+impowt c-com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt c-com.twittew.finagwe.stats.stat
+i-impowt com.twittew.sewvo.utiw.wetwyhandwew
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
+i-impowt com.twittew.utiw.timew
 
-object TweetStore {
-  // Using the old-school c.t.logging.Logger here as this log is only used by
-  // servo.FutureEffect's trackOutcome method, which needs that kind of logger.
-  val log: com.twitter.logging.Logger = com.twitter.logging.Logger(getClass)
-
-  /**
-   * Adapts a tweet store on a specific TweetStoreEvent type to one that handles
-   * TweetStoreRetryEvents of that type that match the given AsyncWriteAction.
-   */
-  def retry[T <: AsyncTweetStoreEvent](
-    action: AsyncWriteAction,
-    store: FutureEffect[T]
-  ): FutureEffect[TweetStoreRetryEvent[T]] =
-    store.contramap[TweetStoreRetryEvent[T]](_.event).onlyIf(_.action == action)
+object tweetstowe {
+  // using the owd-schoow c.t.wogging.woggew hewe as this w-wog is onwy used by
+  // sewvo.futuweeffect's twackoutcome method, ʘwʘ w-which nyeeds that kind of w-woggew. >w<
+  vaw wog: com.twittew.wogging.woggew = com.twittew.wogging.woggew(getcwass)
 
   /**
-   * Defines an abstract polymorphic operation to be applied to FutureEffects over any
-   * TweetStoreEvent type.  The Wrap operation is defined over all possible
-   * FutureEffect[E <: TweetStoreEvent] types.
+   * adapts a tweet s-stowe on a specific tweetstoweevent t-type to one t-that handwes
+   * tweetstowewetwyevents of that type that match the given asyncwwiteaction. rawr x3
    */
-  trait Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E]
+  d-def wetwy[t <: asynctweetstoweevent](
+    action: asyncwwiteaction, OwO
+    stowe: futuweeffect[t]
+  ): f-futuweeffect[tweetstowewetwyevent[t]] =
+    stowe.contwamap[tweetstowewetwyevent[t]](_.event).onwyif(_.action == a-action)
+
+  /**
+   * d-defines a-an abstwact p-powymowphic opewation to be appwied to futuweeffects o-ovew any
+   * tweetstoweevent type. ^•ﻌ•^  the w-wwap opewation is defined ovew aww possibwe
+   * futuweeffect[e <: tweetstoweevent] types. >_<
+   */
+  t-twait wwap {
+    def appwy[e <: t-tweetstoweevent](handwew: f-futuweeffect[e]): futuweeffect[e]
   }
 
   /**
-   * A Wrap operation that applies standardized metrics collection to the FutureEffect.
+   * a w-wwap opewation that appwies standawdized metwics cowwection to t-the futuweeffect. OwO
    */
-  case class Tracked(stats: StatsReceiver) extends Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
-      FutureEffect[E] { event =>
-        Stat.timeFuture(stats.scope(event.name).stat("latency_ms")) {
-          handler(event)
+  c-case cwass twacked(stats: s-statsweceivew) e-extends wwap {
+    def appwy[e <: t-tweetstoweevent](handwew: futuweeffect[e]): futuweeffect[e] =
+      f-futuweeffect[e] { event =>
+        stat.timefutuwe(stats.scope(event.name).stat("watency_ms")) {
+          h-handwew(event)
         }
-      }.trackOutcome(stats, _.name, log)
+      }.twackoutcome(stats, >_< _.name, (ꈍᴗꈍ) wog)
   }
 
   /**
-   * A Wrap operation that makes the FutureEffect enabled according to the given gate.
+   * a-a wwap opewation that makes t-the futuweeffect e-enabwed accowding to the given gate.
    */
-  case class Gated(gate: Gate[Unit]) extends Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
-      handler.enabledBy(gate)
+  case cwass gated(gate: gate[unit]) extends wwap {
+    def appwy[e <: t-tweetstoweevent](handwew: futuweeffect[e]): f-futuweeffect[e] =
+      handwew.enabwedby(gate)
   }
 
   /**
-   * A Wrap operation that updates the FutureEffect to ignore failures.
+   * a-a wwap opewation t-that updates the f-futuweeffect to ignowe faiwuwes. >w<
    */
-  object IgnoreFailures extends Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
-      handler.ignoreFailures
+  object ignowefaiwuwes e-extends wwap {
+    def appwy[e <: tweetstoweevent](handwew: futuweeffect[e]): futuweeffect[e] =
+      h-handwew.ignowefaiwuwes
   }
 
   /**
-   * A Wrap operation that updates the FutureEffect to ignore failures upon completion.
+   * a wwap opewation t-that updates the f-futuweeffect to i-ignowe faiwuwes upon compwetion. (U ﹏ U)
    */
-  object IgnoreFailuresUponCompletion extends Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
-      handler.ignoreFailuresUponCompletion
+  o-object i-ignowefaiwuwesuponcompwetion e-extends w-wwap {
+    def appwy[e <: tweetstoweevent](handwew: f-futuweeffect[e]): f-futuweeffect[e] =
+      h-handwew.ignowefaiwuwesuponcompwetion
   }
 
   /**
-   * A Wrap operation that applies a RetryHandler to FutureEffects.
+   * a-a wwap o-opewation that appwies a wetwyhandwew to futuweeffects. ^^
    */
-  case class Retry(retryHandler: RetryHandler[Unit]) extends Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
-      handler.retry(retryHandler)
+  case cwass wetwy(wetwyhandwew: wetwyhandwew[unit]) e-extends wwap {
+    def appwy[e <: tweetstoweevent](handwew: futuweeffect[e]): futuweeffect[e] =
+      handwew.wetwy(wetwyhandwew)
   }
 
   /**
-   * A Wrap operation that applies a RetryHandler to FutureEffects.
+   * a wwap opewation t-that appwies a wetwyhandwew to futuweeffects. (U ﹏ U)
    */
-  case class ReplicatedEventRetry(retryHandler: RetryHandler[Unit]) extends Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
-      FutureEffect[E] { event =>
-        event.retryStrategy match {
-          case TweetStoreEvent.ReplicatedEventLocalRetry => handler.retry(retryHandler)(event)
-          case _ => handler(event)
+  case c-cwass wepwicatedeventwetwy(wetwyhandwew: w-wetwyhandwew[unit]) e-extends wwap {
+    d-def appwy[e <: tweetstoweevent](handwew: f-futuweeffect[e]): f-futuweeffect[e] =
+      futuweeffect[e] { event =>
+        event.wetwystwategy match {
+          case t-tweetstoweevent.wepwicatedeventwocawwetwy => handwew.wetwy(wetwyhandwew)(event)
+          case _ => h-handwew(event)
         }
       }
   }
 
   /**
-   * A Wrap operation that configures async-retry behavior to async-write events.
+   * a wwap opewation t-that configuwes a-async-wetwy behaviow to async-wwite events. :3
    */
-  class AsyncRetry(
-    localRetryPolicy: RetryPolicy[Try[Nothing]],
-    enqueueRetryPolicy: RetryPolicy[Try[Nothing]],
-    timer: Timer,
-    tweetService: ThriftTweetService,
-    scribe: FutureEffect[FailedAsyncWrite]
+  c-cwass a-asyncwetwy(
+    wocawwetwypowicy: w-wetwypowicy[twy[nothing]], (✿oωo)
+    e-enqueuewetwypowicy: wetwypowicy[twy[nothing]],
+    timew: timew, XD
+    tweetsewvice: thwifttweetsewvice, >w<
+    s-scwibe: f-futuweeffect[faiwedasyncwwite]
   )(
-    stats: StatsReceiver,
-    action: AsyncWriteAction)
-      extends Wrap {
+    s-stats: statsweceivew, òωó
+    a-action: a-asyncwwiteaction)
+      extends w-wwap {
 
-    override def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
-      FutureEffect[E] { event =>
-        event.retryStrategy match {
-          case TweetStoreEvent.EnqueueAsyncRetry(enqueueRetry) =>
-            enqueueAsyncRetry(handler, enqueueRetry)(event)
+    ovewwide def appwy[e <: tweetstoweevent](handwew: futuweeffect[e]): futuweeffect[e] =
+      f-futuweeffect[e] { e-event =>
+        event.wetwystwategy match {
+          case tweetstoweevent.enqueueasyncwetwy(enqueuewetwy) =>
+            e-enqueueasyncwetwy(handwew, e-enqueuewetwy)(event)
 
-          case TweetStoreEvent.LocalRetryThenScribeFailure(toFailedAsyncWrite) =>
-            localRetryThenScribeFailure(handler, toFailedAsyncWrite)(event)
+          case tweetstoweevent.wocawwetwythenscwibefaiwuwe(tofaiwedasyncwwite) =>
+            wocawwetwythenscwibefaiwuwe(handwew, (ꈍᴗꈍ) tofaiwedasyncwwite)(event)
 
           case _ =>
-            handler(event)
+            h-handwew(event)
         }
       }
 
-    private def enqueueAsyncRetry[E <: TweetStoreEvent](
-      handler: FutureEffect[E],
-      enqueueRetry: (ThriftTweetService, AsyncWriteAction) => Future[Unit]
-    ): FutureEffect[E] = {
-      val retryInitCounter = stats.counter("retries_initiated")
+    pwivate def enqueueasyncwetwy[e <: tweetstoweevent](
+      handwew: futuweeffect[e], rawr x3
+      e-enqueuewetwy: (thwifttweetsewvice, rawr x3 asyncwwiteaction) => futuwe[unit]
+    ): f-futuweeffect[e] = {
+      v-vaw wetwyinitcountew = stats.countew("wetwies_initiated")
 
-      // enqueues failed TweetStoreEvents to the deferredrpc-backed tweetService
-      // to be retried.  this store uses the enqueueRetryPolicy to retry the enqueue
-      // attempts in the case of deferredrpc application failures.
-      val enqueueRetryHandler =
-        FutureEffect[E](_ => enqueueRetry(tweetService, action))
-          .retry(RetryHandler.failuresOnly(enqueueRetryPolicy, timer, stats.scope("enqueue_retry")))
+      // enqueues faiwed t-tweetstoweevents t-to the defewwedwpc-backed tweetsewvice
+      // to be wetwied. σωσ  this stowe uses t-the enqueuewetwypowicy to wetwy t-the enqueue
+      // attempts in the case of defewwedwpc appwication f-faiwuwes. (ꈍᴗꈍ)
+      vaw enqueuewetwyhandwew =
+        f-futuweeffect[e](_ => e-enqueuewetwy(tweetsewvice, action))
+          .wetwy(wetwyhandwew.faiwuwesonwy(enqueuewetwypowicy, rawr t-timew, ^^;; stats.scope("enqueue_wetwy")))
 
-      handler.rescue {
-        case ex =>
-          TweetStore.log.warning(ex, s"will retry $action")
-          retryInitCounter.incr()
-          enqueueRetryHandler
+      handwew.wescue {
+        c-case ex =>
+          t-tweetstowe.wog.wawning(ex, rawr x3 s-s"wiww wetwy $action")
+          wetwyinitcountew.incw()
+          e-enqueuewetwyhandwew
       }
     }
 
-    private def localRetryThenScribeFailure[E <: TweetStoreEvent](
-      handler: FutureEffect[E],
-      toFailedAsyncWrite: AsyncWriteAction => FailedAsyncWrite
-    ): FutureEffect[E] = {
-      val exhaustedCounter = stats.counter("retries_exhausted")
+    p-pwivate def wocawwetwythenscwibefaiwuwe[e <: tweetstoweevent](
+      handwew: futuweeffect[e], (ˆ ﻌ ˆ)♡
+      t-tofaiwedasyncwwite: a-asyncwwiteaction => f-faiwedasyncwwite
+    ): futuweeffect[e] = {
+      vaw exhaustedcountew = s-stats.countew("wetwies_exhausted")
 
-      // scribe events that failed after exhausting all retries
-      val scribeEventHandler =
-        FutureEffect[E](_ => scribe(toFailedAsyncWrite(action)))
+      // scwibe events t-that faiwed aftew e-exhausting aww wetwies
+      vaw scwibeeventhandwew =
+        futuweeffect[e](_ => s-scwibe(tofaiwedasyncwwite(action)))
 
-      // wraps `handle` with a retry policy to retry failures with a backoff. if we exhaust
-      // all retries, then we pass the event to `scribeEventStore` to scribe the failure.
-      handler
-        .retry(RetryHandler.failuresOnly(localRetryPolicy, timer, stats))
-        .rescue {
+      // w-wwaps `handwe` w-with a wetwy p-powicy to wetwy faiwuwes with a b-backoff. σωσ if we exhaust
+      // aww wetwies, (U ﹏ U) then we pass the event to `scwibeeventstowe` to scwibe the faiwuwe. >w<
+      h-handwew
+        .wetwy(wetwyhandwew.faiwuwesonwy(wocawwetwypowicy, σωσ timew, s-stats))
+        .wescue {
           case ex =>
-            TweetStore.log.warning(ex, s"exhausted retries on $action")
-            exhaustedCounter.incr()
-            scribeEventHandler
+            t-tweetstowe.wog.wawning(ex, nyaa~~ s"exhausted w-wetwies on $action")
+            exhaustedcountew.incw()
+            s-scwibeeventhandwew
         }
     }
   }
 
   /**
-   * Parent trait for defining a "module" that defines a TweetStoreEvent type and corresponding
-   * TweetStore and TweetStoreWrapper types.
+   * p-pawent t-twait fow defining a-a "moduwe" t-that defines a tweetstoweevent type and cowwesponding
+   * tweetstowe and tweetstowewwappew types. 🥺
    */
-  sealed trait Module {
-    type Store
-    type StoreWrapper <: Store
+  seawed twait moduwe {
+    t-type stowe
+    t-type stowewwappew <: s-stowe
   }
 
   /**
-   * Parent trait for defining a "module" that defines a sync TweetStoreEvent.
+   * pawent twait fow d-defining a "moduwe" that defines a sync tweetstoweevent. rawr x3
    */
-  trait SyncModule extends Module {
-    type Event <: SyncTweetStoreEvent
+  twait syncmoduwe e-extends moduwe {
+    t-type event <: synctweetstoweevent
   }
 
   /**
-   * Parent trait for defining a "module" that defines an async TweetStoreEvent and a
-   * TweetStoreRetryEvent.
+   * p-pawent twait fow defining a "moduwe" that d-defines an async t-tweetstoweevent and a
+   * tweetstowewetwyevent. σωσ
    */
-  trait AsyncModule extends Module {
-    type Event <: AsyncTweetStoreEvent
-    type RetryEvent <: TweetStoreRetryEvent[Event]
+  t-twait a-asyncmoduwe extends moduwe {
+    type event <: asynctweetstoweevent
+    type w-wetwyevent <: tweetstowewetwyevent[event]
   }
 
   /**
-   * Parent trait for defining a "module" that defines a replicated TweetStoreEvent.
+   * p-pawent t-twait fow defining a-a "moduwe" that d-defines a wepwicated tweetstoweevent. (///ˬ///✿)
    */
-  trait ReplicatedModule extends Module {
-    type Event <: ReplicatedTweetStoreEvent
+  t-twait wepwicatedmoduwe e-extends moduwe {
+    type e-event <: wepwicatedtweetstoweevent
   }
 }
 
 /**
- * Trait for TweetStore implementations that support handler wrapping.
+ * t-twait fow tweetstowe impwementations t-that suppowt handwew wwapping. (U ﹏ U)
  */
-trait TweetStoreBase[Self] {
-  import TweetStore._
+twait t-tweetstowebase[sewf] {
+  impowt t-tweetstowe._
 
   /**
-   * Returns a new store of type Self with Wrap applied to each event handler in this instance.
+   * w-wetuwns a nyew stowe o-of type sewf with wwap appwied to each event handwew i-in this instance. ^^;;
    */
-  def wrap(w: Wrap): Self
+  def w-wwap(w: wwap): s-sewf
 
   /**
-   * Applies the Tracked Wrap operation to the store.
+   * appwies the twacked wwap opewation to the stowe. 🥺
    */
-  def tracked(stats: StatsReceiver): Self = wrap(Tracked(stats))
+  d-def twacked(stats: statsweceivew): sewf = wwap(twacked(stats))
 
   /**
-   * Applies the Gated Wrap operation to the store.
+   * a-appwies the g-gated wwap opewation to the stowe.
    */
-  def enabledBy(gate: Gate[Unit]): Self = wrap(Gated(gate))
+  d-def enabwedby(gate: g-gate[unit]): sewf = w-wwap(gated(gate))
 
   /**
-   * Applies the IgnoreFailures Wrap operation to the store.
+   * appwies the ignowefaiwuwes wwap o-opewation to the stowe. òωó
    */
-  def ignoreFailures: Self = wrap(IgnoreFailures)
+  def ignowefaiwuwes: s-sewf = wwap(ignowefaiwuwes)
 
   /**
-   * Applies the IgnoreFailuresUponCompletion Wrap operation to the store.
+   * a-appwies the ignowefaiwuwesuponcompwetion wwap opewation t-to the stowe. XD
    */
-  def ignoreFailuresUponCompletion: Self = wrap(IgnoreFailuresUponCompletion)
+  def i-ignowefaiwuwesuponcompwetion: s-sewf = wwap(ignowefaiwuwesuponcompwetion)
 
   /**
-   * Applies a RetryHandler to each event handler.
+   * a-appwies a wetwyhandwew to each event handwew. :3
    */
-  def retry(retryHandler: RetryHandler[Unit]): Self = wrap(Retry(retryHandler))
+  def wetwy(wetwyhandwew: wetwyhandwew[unit]): sewf = wwap(wetwy(wetwyhandwew))
 
   /**
-   * Applies a RetryHandler to replicated event handlers.
+   * appwies a wetwyhandwew to wepwicated event handwews. (U ﹏ U)
    */
-  def replicatedRetry(retryHandler: RetryHandler[Unit]): Self =
-    wrap(ReplicatedEventRetry(retryHandler))
+  def wepwicatedwetwy(wetwyhandwew: w-wetwyhandwew[unit]): s-sewf =
+    wwap(wepwicatedeventwetwy(wetwyhandwew))
 
   /**
-   * Applies the AsyncRetryConfig Wrap operation to the store.
+   * appwies t-the asyncwetwyconfig w-wwap opewation t-to the stowe. >w<
    */
-  def asyncRetry(cfg: AsyncRetry): Self = wrap(cfg)
+  def a-asyncwetwy(cfg: asyncwetwy): sewf = w-wwap(cfg)
 }
 
 /**
- * An abstract base class for tweet store instances that wrap another tweet store instance.
- * You can mix event-specific store wrapper traits into this class to automatically
- * have the event-specific handlers wrapped.
+ * a-an abstwact base cwass fow t-tweet stowe instances that wwap a-anothew tweet s-stowe instance. /(^•ω•^)
+ * you can mix event-specific stowe w-wwappew twaits i-into this cwass t-to automaticawwy
+ * h-have the e-event-specific h-handwews wwapped. (⑅˘꒳˘)
  */
-abstract class TweetStoreWrapper[+T](
-  protected val wrap: TweetStore.Wrap,
-  protected val underlying: T)
+a-abstwact cwass t-tweetstowewwappew[+t](
+  p-pwotected vaw wwap: t-tweetstowe.wwap, ʘwʘ
+  p-pwotected vaw u-undewwying: t)
 
 /**
- * A TweetStore that has a handler for all possible TweetStoreEvents.
+ * a tweetstowe t-that has a handwew fow aww possibwe tweetstoweevents. rawr x3
  */
-trait TotalTweetStore
-    extends AsyncDeleteAdditionalFields.Store
-    with AsyncDeleteTweet.Store
-    with AsyncIncrBookmarkCount.Store
-    with AsyncIncrFavCount.Store
-    with AsyncInsertTweet.Store
-    with AsyncSetAdditionalFields.Store
-    with AsyncSetRetweetVisibility.Store
-    with AsyncTakedown.Store
-    with AsyncUndeleteTweet.Store
-    with AsyncUpdatePossiblySensitiveTweet.Store
-    with DeleteAdditionalFields.Store
-    with DeleteTweet.Store
-    with Flush.Store
-    with IncrBookmarkCount.Store
-    with IncrFavCount.Store
-    with InsertTweet.Store
-    with QuotedTweetDelete.Store
-    with QuotedTweetTakedown.Store
-    with ReplicatedDeleteAdditionalFields.Store
-    with ReplicatedDeleteTweet.Store
-    with ReplicatedIncrBookmarkCount.Store
-    with ReplicatedIncrFavCount.Store
-    with ReplicatedInsertTweet.Store
-    with ReplicatedScrubGeo.Store
-    with ReplicatedSetAdditionalFields.Store
-    with ReplicatedSetRetweetVisibility.Store
-    with ReplicatedTakedown.Store
-    with ReplicatedUndeleteTweet.Store
-    with ReplicatedUpdatePossiblySensitiveTweet.Store
-    with ScrubGeo.Store
-    with ScrubGeoUpdateUserTimestamp.Store
-    with SetAdditionalFields.Store
-    with SetRetweetVisibility.Store
-    with Takedown.Store
-    with UndeleteTweet.Store
-    with UpdatePossiblySensitiveTweet.Store
+t-twait totawtweetstowe
+    extends a-asyncdeweteadditionawfiewds.stowe
+    w-with asyncdewetetweet.stowe
+    w-with asyncincwbookmawkcount.stowe
+    with asyncincwfavcount.stowe
+    w-with asyncinsewttweet.stowe
+    with asyncsetadditionawfiewds.stowe
+    w-with asyncsetwetweetvisibiwity.stowe
+    with asynctakedown.stowe
+    w-with asyncundewetetweet.stowe
+    w-with asyncupdatepossibwysensitivetweet.stowe
+    with deweteadditionawfiewds.stowe
+    with dewetetweet.stowe
+    with fwush.stowe
+    with incwbookmawkcount.stowe
+    w-with incwfavcount.stowe
+    with insewttweet.stowe
+    with q-quotedtweetdewete.stowe
+    w-with quotedtweettakedown.stowe
+    with wepwicateddeweteadditionawfiewds.stowe
+    with wepwicateddewetetweet.stowe
+    with wepwicatedincwbookmawkcount.stowe
+    w-with wepwicatedincwfavcount.stowe
+    with wepwicatedinsewttweet.stowe
+    w-with w-wepwicatedscwubgeo.stowe
+    w-with wepwicatedsetadditionawfiewds.stowe
+    with wepwicatedsetwetweetvisibiwity.stowe
+    w-with w-wepwicatedtakedown.stowe
+    with w-wepwicatedundewetetweet.stowe
+    with wepwicatedupdatepossibwysensitivetweet.stowe
+    with scwubgeo.stowe
+    w-with scwubgeoupdateusewtimestamp.stowe
+    with s-setadditionawfiewds.stowe
+    w-with setwetweetvisibiwity.stowe
+    w-with takedown.stowe
+    with u-undewetetweet.stowe
+    w-with updatepossibwysensitivetweet.stowe

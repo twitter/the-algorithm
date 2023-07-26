@@ -1,19 +1,19 @@
-package com.twitter.simclusters_v2.common
+package com.twittew.simcwustews_v2.common
 
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
 
 /**
- * A common library to construct Cache Key for SimClustersEmbeddingId.
+ * a-a common w-wibwawy to constwuct c-cache key fow s-simcwustewsembeddingid. :3
  */
-case class SimClustersEmbeddingIdCacheKeyBuilder(
-  hash: Array[Byte] => Long,
-  prefix: String = "") {
+case c-cwass simcwustewsembeddingidcachekeybuiwdew(
+  h-hash: awway[byte] => w-wong, (U ﹏ U)
+  pwefix: stwing = "") {
 
-  // Example: "CR:SCE:1:2:1234567890ABCDEF"
-  def apply(embeddingId: SimClustersEmbeddingId): String = {
-    f"$prefix:SCE:${embeddingId.embeddingType.getValue()}%X:" +
-      f"${embeddingId.modelVersion.getValue()}%X" +
-      f":${hash(embeddingId.internalId.toString.getBytes)}%X"
+  // exampwe: "cw:sce:1:2:1234567890abcdef"
+  def appwy(embeddingid: simcwustewsembeddingid): s-stwing = {
+    f"$pwefix:sce:${embeddingid.embeddingtype.getvawue()}%x:" +
+      f"${embeddingid.modewvewsion.getvawue()}%x" +
+      f-f":${hash(embeddingid.intewnawid.tostwing.getbytes)}%x"
   }
 
 }

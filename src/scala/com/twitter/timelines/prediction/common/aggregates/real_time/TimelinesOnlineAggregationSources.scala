@@ -1,5 +1,5 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-object TimelinesOnlineAggregationSources {
-  val timelinesOnlineAggregateSource = new TimelinesStormAggregateSource
+object timewinesonwineaggwegationsouwces {
+  v-vaw timewinesonwineaggwegatesouwce = n-nyew timewinesstowmaggwegatesouwce
 }

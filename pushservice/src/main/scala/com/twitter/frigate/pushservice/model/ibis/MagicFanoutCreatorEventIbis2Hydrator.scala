@@ -1,29 +1,29 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.frigate.magic_events.thriftscala.CreatorFanoutType
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutCreatorEventPushCandidate
-import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeModelValues
-import com.twitter.util.Future
+impowt com.twittew.fwigate.magic_events.thwiftscawa.cweatowfanouttype
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.magicfanoutcweatoweventpushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.utiw.pushibisutiw.mewgemodewvawues
+i-impowt c-com.twittew.utiw.futuwe
 
-trait MagicFanoutCreatorEventIbis2Hydrator
-    extends CustomConfigurationMapForIbis
-    with Ibis2HydratorForCandidate {
-  self: PushCandidate with MagicFanoutCreatorEventPushCandidate =>
+t-twait magicfanoutcweatoweventibis2hydwatow
+    extends customconfiguwationmapfowibis
+    with ibis2hydwatowfowcandidate {
+  s-sewf: pushcandidate with magicfanoutcweatoweventpushcandidate =>
 
-  val userMap = Map(
-    "handle" -> userProfile.screenName,
-    "display_name" -> userProfile.name
+  vaw usewmap = m-map(
+    "handwe" -> usewpwofiwe.scweenname, OwO
+    "dispway_name" -> u-usewpwofiwe.name
   )
 
-  override val senderId = hydratedCreator.map(_.id)
+  ovewwide vaw sendewid = hydwatedcweatow.map(_.id)
 
-  override lazy val modelValues: Future[Map[String, String]] =
-    mergeModelValues(super.modelValues, userMap)
+  ovewwide w-wazy vaw modewvawues: futuwe[map[stwing, (U ﹏ U) s-stwing]] =
+    m-mewgemodewvawues(supew.modewvawues, >_< usewmap)
 
-  override val ibis2Request = creatorFanoutType match {
-    case CreatorFanoutType.UserSubscription => Future.None
-    case CreatorFanoutType.NewCreator => super.ibis2Request
-    case _ => super.ibis2Request
+  ovewwide vaw ibis2wequest = cweatowfanouttype m-match {
+    case cweatowfanouttype.usewsubscwiption => futuwe.none
+    case cweatowfanouttype.newcweatow => s-supew.ibis2wequest
+    case _ => s-supew.ibis2wequest
   }
 }

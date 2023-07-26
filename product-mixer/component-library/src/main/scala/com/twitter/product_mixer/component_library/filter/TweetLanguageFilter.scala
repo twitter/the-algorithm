@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.filter
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
-case class TweetLanguageFilter[Candidate <: BaseTweetCandidate](
-  languageCodeFeature: Feature[Candidate, Option[String]])
-    extends Filter[PipelineQuery, Candidate] {
+case cwass tweetwanguagefiwtew[candidate <: basetweetcandidate](
+  wanguagecodefeatuwe: f-featuwe[candidate, nyaa~~ option[stwing]])
+    extends fiwtew[pipewinequewy, (⑅˘꒳˘) c-candidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetLanguage")
+  ovewwide vaw i-identifiew: fiwtewidentifiew = fiwtewidentifiew("tweetwanguage")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  ovewwide def appwy(
+    quewy: p-pipewinequewy, rawr x3
+    candidates: s-seq[candidatewithfeatuwes[candidate]]
+  ): s-stitch[fiwtewwesuwt[candidate]] = {
 
-    val userAppLanguage = query.getLanguageCode
+    vaw usewappwanguage = quewy.getwanguagecode
 
-    val (keptCandidates, removedCandidates) = candidates.partition { filterCandidate =>
-      val tweetLanguage = filterCandidate.features.get(languageCodeFeature)
+    vaw (keptcandidates, (✿oωo) wemovedcandidates) = c-candidates.pawtition { fiwtewcandidate =>
+      vaw tweetwanguage = fiwtewcandidate.featuwes.get(wanguagecodefeatuwe)
 
-      (tweetLanguage, userAppLanguage) match {
-        case (Some(tweetLanguageCode), Some(userAppLanguageCode)) =>
-          tweetLanguageCode.equalsIgnoreCase(userAppLanguageCode)
-        case _ => true
+      (tweetwanguage, (ˆ ﻌ ˆ)♡ usewappwanguage) match {
+        c-case (some(tweetwanguagecode), (˘ω˘) some(usewappwanguagecode)) =>
+          tweetwanguagecode.equawsignowecase(usewappwanguagecode)
+        c-case _ => t-twue
       }
     }
 
-    Stitch.value(
-      FilterResult(
-        kept = keptCandidates.map(_.candidate),
-        removed = removedCandidates.map(_.candidate)))
+    s-stitch.vawue(
+      f-fiwtewwesuwt(
+        kept = keptcandidates.map(_.candidate), (⑅˘꒳˘)
+        wemoved = wemovedcandidates.map(_.candidate)))
   }
 }

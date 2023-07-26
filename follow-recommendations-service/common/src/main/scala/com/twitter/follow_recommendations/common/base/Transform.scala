@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.common.base
+package com.twittew.fowwow_wecommendations.common.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.haspawams
+i-impowt com.twittew.timewines.configapi.pawam
 
 /**
- * transform a or a list of candidate for target T
+ * t-twansfowm a-a ow a wist o-of candidate f-fow tawget t
  *
- * @tparam T target type
- * @tparam C candidate type
+ * @tpawam t-t tawget type
+ * @tpawam c candidate type
  */
-trait Transform[-T, C] {
+twait twansfowm[-t, (U ﹏ U) c] {
 
-  // you need to implement at least one of the two methods here.
-  def transformItem(target: T, item: C): Stitch[C] = {
-    transform(target, Seq(item)).map(_.head)
+  // y-you nyeed to impwement at weast one of the t-two methods hewe. 😳
+  def twansfowmitem(tawget: t-t, (ˆ ﻌ ˆ)♡ item: c): stitch[c] = {
+    twansfowm(tawget, 😳😳😳 seq(item)).map(_.head)
   }
 
-  def transform(target: T, items: Seq[C]): Stitch[Seq[C]]
+  def twansfowm(tawget: t-t, (U ﹏ U) items: seq[c]): stitch[seq[c]]
 
-  def mapTarget[T2](mapper: T2 => T): Transform[T2, C] = {
-    val original = this
-    new Transform[T2, C] {
-      override def transformItem(target: T2, item: C): Stitch[C] = {
-        original.transformItem(mapper(target), item)
+  d-def maptawget[t2](mappew: t-t2 => t): twansfowm[t2, (///ˬ///✿) c] = {
+    vaw owiginaw = this
+    new twansfowm[t2, 😳 c-c] {
+      ovewwide def twansfowmitem(tawget: t2, 😳 item: c): stitch[c] = {
+        owiginaw.twansfowmitem(mappew(tawget), σωσ item)
       }
-      override def transform(target: T2, items: Seq[C]): Stitch[Seq[C]] = {
-        original.transform(mapper(target), items)
+      ovewwide d-def twansfowm(tawget: t2, rawr x3 i-items: seq[c]): s-stitch[seq[c]] = {
+        o-owiginaw.twansfowm(mappew(tawget), OwO i-items)
       }
     }
   }
 
   /**
-   * sequential composition. we execute this' transform first, followed by the other's transform
+   * sequentiaw composition. /(^•ω•^) we e-exekawaii~ this' twansfowm fiwst, 😳😳😳 fowwowed by the o-othew's twansfowm
    */
-  def andThen[T1 <: T](other: Transform[T1, C]): Transform[T1, C] = {
-    val original = this
-    new Transform[T1, C] {
-      override def transformItem(target: T1, item: C): Stitch[C] =
-        original.transformItem(target, item).flatMap(other.transformItem(target, _))
-      override def transform(target: T1, items: Seq[C]): Stitch[Seq[C]] =
-        original.transform(target, items).flatMap(other.transform(target, _))
+  def andthen[t1 <: t](othew: twansfowm[t1, ( ͡o ω ͡o ) c]): twansfowm[t1, >_< c] = {
+    v-vaw owiginaw = this
+    nyew t-twansfowm[t1, >w< c] {
+      o-ovewwide d-def twansfowmitem(tawget: t1, rawr item: c): stitch[c] =
+        owiginaw.twansfowmitem(tawget, 😳 item).fwatmap(othew.twansfowmitem(tawget, >w< _))
+      o-ovewwide def twansfowm(tawget: t-t1, (⑅˘꒳˘) items: seq[c]): stitch[seq[c]] =
+        o-owiginaw.twansfowm(tawget, OwO i-items).fwatmap(othew.twansfowm(tawget, (ꈍᴗꈍ) _))
     }
   }
 
-  def observe(statsReceiver: StatsReceiver): Transform[T, C] = {
-    val originalTransform = this
-    new Transform[T, C] {
-      override def transform(target: T, items: Seq[C]): Stitch[Seq[C]] = {
-        statsReceiver.counter(Transform.InputCandidatesCount).incr(items.size)
-        statsReceiver.stat(Transform.InputCandidatesStat).add(items.size)
-        StatsUtil.profileStitchSeqResults(originalTransform.transform(target, items), statsReceiver)
+  def obsewve(statsweceivew: s-statsweceivew): twansfowm[t, 😳 c-c] = {
+    vaw owiginawtwansfowm = this
+    n-nyew twansfowm[t, 😳😳😳 c] {
+      o-ovewwide def twansfowm(tawget: t, mya items: seq[c]): s-stitch[seq[c]] = {
+        statsweceivew.countew(twansfowm.inputcandidatescount).incw(items.size)
+        s-statsweceivew.stat(twansfowm.inputcandidatesstat).add(items.size)
+        statsutiw.pwofiwestitchseqwesuwts(owiginawtwansfowm.twansfowm(tawget, mya items), statsweceivew)
       }
 
-      override def transformItem(target: T, item: C): Stitch[C] = {
-        statsReceiver.counter(Transform.InputCandidatesCount).incr()
-        StatsUtil.profileStitch(originalTransform.transformItem(target, item), statsReceiver)
-      }
-    }
-  }
-}
-
-trait GatedTransform[T <: HasParams, C] extends Transform[T, C] {
-  def gated(param: Param[Boolean]): Transform[T, C] = {
-    val original = this
-    (target: T, items: Seq[C]) => {
-      if (target.params(param)) {
-        original.transform(target, items)
-      } else {
-        Stitch.value(items)
+      ovewwide def twansfowmitem(tawget: t, (⑅˘꒳˘) item: c-c): stitch[c] = {
+        s-statsweceivew.countew(twansfowm.inputcandidatescount).incw()
+        statsutiw.pwofiwestitch(owiginawtwansfowm.twansfowmitem(tawget, (U ﹏ U) item), mya statsweceivew)
       }
     }
   }
 }
 
-object Transform {
-  val InputCandidatesCount = "input_candidates"
-  val InputCandidatesStat = "input_candidates_stat"
+t-twait g-gatedtwansfowm[t <: h-haspawams, ʘwʘ c] extends twansfowm[t, (˘ω˘) c] {
+  def gated(pawam: pawam[boowean]): t-twansfowm[t, (U ﹏ U) c] = {
+    vaw owiginaw = this
+    (tawget: t, items: seq[c]) => {
+      i-if (tawget.pawams(pawam)) {
+        owiginaw.twansfowm(tawget, ^•ﻌ•^ i-items)
+      } e-ewse {
+        s-stitch.vawue(items)
+      }
+    }
+  }
 }
 
-class IdentityTransform[T, C] extends Transform[T, C] {
-  override def transform(target: T, items: Seq[C]): Stitch[Seq[C]] = Stitch.value(items)
+object t-twansfowm {
+  v-vaw inputcandidatescount = "input_candidates"
+  v-vaw inputcandidatesstat = "input_candidates_stat"
+}
+
+c-cwass identitytwansfowm[t, (˘ω˘) c] extends twansfowm[t, :3 c] {
+  o-ovewwide def twansfowm(tawget: t, ^^;; i-items: seq[c]): s-stitch[seq[c]] = s-stitch.vawue(items)
 }

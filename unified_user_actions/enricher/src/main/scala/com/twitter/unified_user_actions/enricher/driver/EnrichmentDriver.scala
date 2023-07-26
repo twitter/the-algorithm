@@ -1,97 +1,97 @@
-package com.twitter.unified_user_actions.enricher.driver
+package com.twittew.unified_usew_actions.enwichew.dwivew
 
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageType.Hydration
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageType.Repartition
-import com.twitter.util.Future
-import EnrichmentPlanUtils._
-import com.twitter.unified_user_actions.enricher.Exceptions
-import com.twitter.unified_user_actions.enricher.ImplementationException
-import com.twitter.unified_user_actions.enricher.hydrator.Hydrator
-import com.twitter.unified_user_actions.enricher.partitioner.Partitioner
+impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentenvewop
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentkey
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentstagetype.hydwation
+i-impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentstagetype.wepawtition
+impowt c-com.twittew.utiw.futuwe
+i-impowt e-enwichmentpwanutiws._
+impowt com.twittew.unified_usew_actions.enwichew.exceptions
+impowt com.twittew.unified_usew_actions.enwichew.impwementationexception
+impowt com.twittew.unified_usew_actions.enwichew.hydwatow.hydwatow
+i-impowt com.twittew.unified_usew_actions.enwichew.pawtitionew.pawtitionew
 
 /**
- * A driver that will execute on a key, value tuple and produce an output to a Kafka topic.
+ * a dwivew that wiww exekawaii~ o-on a key, vawue tupwe and pwoduce a-an output to a kafka topic. 😳😳😳
  *
- * The output Kafka topic will depend on the current enrichment plan. In one scenario, the driver
- * will output to a partitioned Kafka topic if the output needs to be repartitioned (after it has
- * been hydrated 0 or more times as necessary). In another scenario, the driver will output to
- * the final topic if there's no more work to be done.
+ * the output kafka topic wiww d-depend on the cuwwent enwichment p-pwan. OwO in one s-scenawio, 😳 the dwivew
+ * wiww output to a pawtitioned kafka topic if the output needs t-to be wepawtitioned (aftew it has
+ * been hydwated 0 ow mowe times as nyecessawy). 😳😳😳 in anothew s-scenawio, (˘ω˘) the dwivew wiww output t-to
+ * the finaw t-topic if thewe's n-nyo mowe wowk t-to be done. ʘwʘ
  *
- * @param finalOutputTopic The final output Kafka topic
- * @param partitionedTopic The intermediate Kafka topic used for repartitioning based on [[EnrichmentKey]]
- * @param hydrator A hydrator that knows how to populate the metadata based on the current plan / instruction.
- * @param partitioner A partitioner that knows how to transform the current uua event into an [[EnrichmentKey]].
+ * @pawam finawoutputtopic the f-finaw output kafka topic
+ * @pawam pawtitionedtopic t-the intewmediate kafka topic used fow wepawtitioning based on [[enwichmentkey]]
+ * @pawam hydwatow a hydwatow t-that knows how to popuwate the m-metadata based o-on the cuwwent p-pwan / instwuction. ( ͡o ω ͡o )
+ * @pawam pawtitionew a pawtitionew that knows h-how to twansfowm t-the cuwwent uua event into an [[enwichmentkey]]. o.O
  */
-class EnrichmentDriver(
-  finalOutputTopic: Option[String],
-  partitionedTopic: String,
-  hydrator: Hydrator,
-  partitioner: Partitioner) {
+c-cwass enwichmentdwivew(
+  f-finawoutputtopic: option[stwing], >w<
+  p-pawtitionedtopic: stwing, 😳
+  h-hydwatow: hydwatow, 🥺
+  pawtitionew: pawtitionew) {
 
   /**
-   * A driver that does the following when being executed.
-   *  It checks if we are done with enrichment plan, if not:
-   *  - is the current stage repartitioning?
-   *    -> remap the output key, update plan accordingly then return with the new partition key
-   *  - is the current stage hydration?
-   *    -> use the hydrator to hydrate the envelop, update the plan accordingly, then proceed
-   *    recursively unless the next stage is repartitioning or this is the last stage.
+   * a-a dwivew that does the fowwowing w-when being exekawaii~d. rawr x3
+   *  it checks if we a-awe done with enwichment p-pwan, o.O if nyot:
+   *  - is the cuwwent stage wepawtitioning?
+   *    -> wemap the output key, rawr update pwan accowdingwy then w-wetuwn with the n-nyew pawtition key
+   *  - is t-the cuwwent stage h-hydwation?
+   *    -> u-use the hydwatow to hydwate the envewop, ʘwʘ update the pwan a-accowdingwy, 😳😳😳 then pwoceed
+   *    wecuwsivewy unwess the nyext stage is wepawtitioning o-ow this is the wast stage. ^^;;
    */
-  def execute(
-    key: Option[EnrichmentKey],
-    envelop: Future[EnrichmentEnvelop]
-  ): Future[(Option[EnrichmentKey], EnrichmentEnvelop)] = {
-    envelop.flatMap { envelop =>
-      val plan = envelop.plan
-      if (plan.isEnrichmentComplete) {
-        val topic = finalOutputTopic.getOrElse(
-          throw new ImplementationException(
-            "A final output Kafka topic is supposed to be used but " +
-              "no final output topic was provided."))
-        Future.value((key, envelop.copy(plan = plan.markLastStageCompletedWithOutputTopic(topic))))
-      } else {
-        val currentStage = plan.getCurrentStage
+  d-def e-exekawaii~(
+    k-key: option[enwichmentkey], o.O
+    envewop: futuwe[enwichmentenvewop]
+  ): f-futuwe[(option[enwichmentkey], (///ˬ///✿) e-enwichmentenvewop)] = {
+    e-envewop.fwatmap { e-envewop =>
+      vaw pwan = envewop.pwan
+      i-if (pwan.isenwichmentcompwete) {
+        v-vaw t-topic = finawoutputtopic.getowewse(
+          thwow n-nyew impwementationexception(
+            "a f-finaw output kafka topic is supposed to be used but " +
+              "no f-finaw output topic was pwovided."))
+        futuwe.vawue((key, σωσ envewop.copy(pwan = pwan.mawkwaststagecompwetedwithoutputtopic(topic))))
+      } ewse {
+        v-vaw cuwwentstage = pwan.getcuwwentstage
 
-        currentStage.stageType match {
-          case Repartition =>
-            Exceptions.require(
-              currentStage.instructions.size == 1,
-              s"re-partitioning needs exactly 1 instruction but ${currentStage.instructions.size} was provided")
+        cuwwentstage.stagetype match {
+          c-case wepawtition =>
+            e-exceptions.wequiwe(
+              c-cuwwentstage.instwuctions.size == 1, nyaa~~
+              s"we-pawtitioning n-nyeeds exactwy 1 instwuction b-but ${cuwwentstage.instwuctions.size} was p-pwovided")
 
-            val instruction = currentStage.instructions.head
-            val outputKey = partitioner.repartition(instruction, envelop)
-            val outputValue = envelop.copy(
-              plan = plan.markStageCompletedWithOutputTopic(
-                stage = currentStage,
-                outputTopic = partitionedTopic)
+            vaw instwuction = cuwwentstage.instwuctions.head
+            vaw outputkey = pawtitionew.wepawtition(instwuction, ^^;; envewop)
+            v-vaw outputvawue = envewop.copy(
+              p-pwan = pwan.mawkstagecompwetedwithoutputtopic(
+                stage = cuwwentstage, ^•ﻌ•^
+                o-outputtopic = p-pawtitionedtopic)
             )
-            Future.value((outputKey, outputValue))
-          case Hydration =>
-            Exceptions.require(
-              currentStage.instructions.nonEmpty,
-              "hydration needs at least one instruction")
+            futuwe.vawue((outputkey, σωσ outputvawue))
+          case hydwation =>
+            e-exceptions.wequiwe(
+              c-cuwwentstage.instwuctions.nonempty, -.-
+              "hydwation nyeeds a-at weast one i-instwuction")
 
-            // Hydration is either initialized or completed after this, failure state
-            // will have to be handled upstream. Any unhandled exception will abort the entire
-            // stage.
-            // This is so that if the error in unrecoverable, the hydrator can choose to return an
-            // un-hydrated envelop to tolerate the error.
-            val finalEnvelop = currentStage.instructions.foldLeft(Future.value(envelop)) {
-              (curEnvelop, instruction) =>
-                curEnvelop.flatMap(e => hydrator.hydrate(instruction, key, e))
+            // hydwation is eithew initiawized ow compweted aftew this, ^^;; faiwuwe s-state
+            // w-wiww have to b-be handwed upstweam. XD any unhandwed e-exception wiww a-abowt the entiwe
+            // stage. 🥺
+            // t-this is so that if the ewwow in unwecovewabwe, òωó the hydwatow can choose t-to wetuwn an
+            // u-un-hydwated envewop to towewate the e-ewwow. (ˆ ﻌ ˆ)♡
+            v-vaw finawenvewop = cuwwentstage.instwuctions.fowdweft(futuwe.vawue(envewop)) {
+              (cuwenvewop, instwuction) =>
+                cuwenvewop.fwatmap(e => h-hydwatow.hydwate(instwuction, -.- key, e))
             }
 
-            val outputValue = finalEnvelop.map(e =>
+            vaw outputvawue = finawenvewop.map(e =>
               e.copy(
-                plan = plan.markStageCompleted(stage = currentStage)
+                p-pwan = pwan.mawkstagecompweted(stage = cuwwentstage)
               ))
 
-            // continue executing other stages if it can (locally) until a terminal state
-            execute(key, outputValue)
+            // continue e-executing othew s-stages if it can (wocawwy) untiw a tewminaw state
+            e-exekawaii~(key, :3 o-outputvawue)
           case _ =>
-            throw new ImplementationException(s"Invalid / unsupported stage type $currentStage")
+            thwow nyew impwementationexception(s"invawid / unsuppowted stage t-type $cuwwentstage")
         }
       }
     }

@@ -1,46 +1,46 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.stats._
+impowt com.twittew.finagwe.stats._
 
 /**
- * Stores scoped StatsReceivers in a map to avoid unnecessary object creation.
+ * s-stowes s-scoped statsweceivews i-in a map t-to avoid unnecessawy o-object cweation.
  */
-class MemoizingStatsReceiver(val self: StatsReceiver)
-    extends StatsReceiver
-    with DelegatingStatsReceiver
-    with Proxy {
-  def underlying: Seq[StatsReceiver] = Seq(self)
+c-cwass m-memoizingstatsweceivew(vaw s-sewf: statsweceivew)
+    extends statsweceivew
+    with dewegatingstatsweceivew
+    with p-pwoxy {
+  def undewwying: seq[statsweceivew] = seq(sewf)
 
-  val repr = self.repr
+  v-vaw wepw = sewf.wepw
 
-  private[this] lazy val scopeMemo =
-    Memoize[String, StatsReceiver] { name =>
-      new MemoizingStatsReceiver(self.scope(name))
+  pwivate[this] w-wazy vaw scopememo =
+    memoize[stwing, rawr x3 statsweceivew] { nyame =>
+      nyew memoizingstatsweceivew(sewf.scope(name))
     }
 
-  private[this] lazy val counterMemo =
-    Memoize[(Seq[String], Verbosity), Counter] {
-      case (names, verbosity) =>
-        self.counter(verbosity, names: _*)
+  pwivate[this] w-wazy vaw countewmemo =
+    memoize[(seq[stwing], (U ﹏ U) vewbosity), (U ﹏ U) c-countew] {
+      c-case (names, (⑅˘꒳˘) vewbosity) =>
+        sewf.countew(vewbosity, òωó nyames: _*)
     }
 
-  private[this] lazy val statMemo =
-    Memoize[(Seq[String], Verbosity), Stat] {
-      case (names, verbosity) =>
-        self.stat(verbosity, names: _*)
+  pwivate[this] wazy vaw statmemo =
+    m-memoize[(seq[stwing], ʘwʘ vewbosity), /(^•ω•^) stat] {
+      case (names, ʘwʘ vewbosity) =>
+        s-sewf.stat(vewbosity, nyames: _*)
     }
 
-  def counter(metricBuilder: MetricBuilder): Counter =
-    counterMemo(metricBuilder.name -> metricBuilder.verbosity)
+  d-def countew(metwicbuiwdew: m-metwicbuiwdew): c-countew =
+    countewmemo(metwicbuiwdew.name -> m-metwicbuiwdew.vewbosity)
 
-  def stat(metricBuilder: MetricBuilder): Stat = statMemo(
-    metricBuilder.name -> metricBuilder.verbosity)
+  def stat(metwicbuiwdew: m-metwicbuiwdew): stat = statmemo(
+    metwicbuiwdew.name -> metwicbuiwdew.vewbosity)
 
-  def addGauge(metricBuilder: MetricBuilder)(f: => Float): Gauge = {
-    // scalafix:off StoreGaugesAsMemberVariables
-    self.addGauge(metricBuilder)(f)
-    // scalafix:on StoreGaugesAsMemberVariables
+  d-def addgauge(metwicbuiwdew: metwicbuiwdew)(f: => fwoat): gauge = {
+    // scawafix:off stowegaugesasmembewvawiabwes
+    s-sewf.addgauge(metwicbuiwdew)(f)
+    // scawafix:on s-stowegaugesasmembewvawiabwes
   }
 
-  override def scope(name: String): StatsReceiver = scopeMemo(name)
+  o-ovewwide d-def scope(name: stwing): statsweceivew = scopememo(name)
 }

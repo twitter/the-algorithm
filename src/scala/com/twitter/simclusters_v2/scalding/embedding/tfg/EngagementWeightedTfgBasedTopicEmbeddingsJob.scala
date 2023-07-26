@@ -1,309 +1,309 @@
-package com.twitter.simclusters_v2.scalding.embedding.tfg
+package com.twittew.simcwustews_v2.scawding.embedding.tfg
 
-import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.Execution
-import com.twitter.scalding._
-import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources.FavTfgTopicEmbeddings2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserTopicWeightedEmbeddingScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserTopicWeightedEmbeddingParquetScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion._
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+impowt c-com.twittew.daw.cwient.dataset.snapshotdawdatasetbase
+i-impowt com.twittew.mw.api.datasetpipe
+i-impowt c-com.twittew.mw.api.featuwe.continuous
+i-impowt c-com.twittew.mw.api.constant.shawedfeatuwes
+i-impowt c-com.twittew.mw.api.utiw.swichdatawecowd
+impowt com.twittew.scawding.execution
+impowt com.twittew.scawding._
+impowt com.twittew.scawding.typed.unsowtedgwouped
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.d
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.wwiteextension
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwosscwustewsamedc
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.countwy
+impowt com.twittew.simcwustews_v2.common.wanguage
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.favtfgtopicembeddings2020scawadataset
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.usewtopicweightedembeddingscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.usewtopicweightedembeddingpawquetscawadataset
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces
+i-impowt com.twittew.simcwustews_v2.thwiftscawa._
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.convewsion._
+impowt com.twittew.timewines.pwediction.common.aggwegates.timewinesaggwegationconfig
+i-impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes
+i-impowt c-com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+i-impowt com.twittew.wtf.scawding.jobs.common.datewangeexecutionapp
+i-impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt j-java.utiw.timezone
 
 /**
- * Jobs to generate Fav-based engagement weighted Topic-Follow-Graph (TFG) topic embeddings
- * The job uses fav based TFG embeddings and fav based engagement to produce a new embedding
+ * jobs to genewate fav-based e-engagement weighted topic-fowwow-gwaph (tfg) topic embeddings
+ * the job uses fav based tfg embeddings and f-fav based engagement to pwoduce a-a nyew embedding
  */
 
 /**
- * ./bazel bundle ...
- * scalding workflow upload --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_weighted_user_topic_tfg_embeddings_adhoc_job --autoplay
+ * ./bazew b-bundwe ...
+ * s-scawding wowkfwow upwoad --jobs swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/tfg:fav_weighted_usew_topic_tfg_embeddings_adhoc_job --autopway
  */
-object EngagementWeightedTfgBasedTopicEmbeddingsAdhocJob
-    extends AdhocExecutionApp
-    with EngagementWeightedTfgBasedTopicEmbeddingsBaseJob {
-  override val outputByFav =
-    "/user/cassowary/adhoc/manhattan_sequence_files/simclusters_v2_embedding/user_tfgembedding/by_fav"
-  override val parquetOutputByFav =
-    "/user/cassowary/adhoc/processed/simclusters_v2_embedding/user_tfgembedding/by_fav/snapshot"
+object engagementweightedtfgbasedtopicembeddingsadhocjob
+    extends a-adhocexecutionapp
+    w-with engagementweightedtfgbasedtopicembeddingsbasejob {
+  o-ovewwide v-vaw outputbyfav =
+    "/usew/cassowawy/adhoc/manhattan_sequence_fiwes/simcwustews_v2_embedding/usew_tfgembedding/by_fav"
+  ovewwide v-vaw pawquetoutputbyfav =
+    "/usew/cassowawy/adhoc/pwocessed/simcwustews_v2_embedding/usew_tfgembedding/by_fav/snapshot"
 }
 
 /**
- * ./bazel bundle ...
- * scalding workflow upload --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_weighted_user_topic_tfg_embeddings_batch_job --autoplay
+ * ./bazew bundwe ...
+ * scawding w-wowkfwow upwoad --jobs swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/tfg:fav_weighted_usew_topic_tfg_embeddings_batch_job --autopway
  */
-object EngagementWeightedTfgBasedTopicEmbeddingsScheduleJob
-    extends ScheduledExecutionApp
-    with EngagementWeightedTfgBasedTopicEmbeddingsBaseJob {
-  override val firstTime: RichDate = RichDate("2021-10-03")
-  override val batchIncrement: Duration = Days(1)
-  override val outputByFav =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_embedding/user_tfgembedding/by_fav"
-  override val parquetOutputByFav =
-    "/user/cassowary/processed/simclusters_v2_embedding/user_tfgembedding/by_fav/snapshot"
+object e-engagementweightedtfgbasedtopicembeddingsscheduwejob
+    extends s-scheduwedexecutionapp
+    with e-engagementweightedtfgbasedtopicembeddingsbasejob {
+  o-ovewwide vaw fiwsttime: wichdate = wichdate("2021-10-03")
+  ovewwide vaw batchincwement: duwation = days(1)
+  ovewwide vaw outputbyfav =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simcwustews_v2_embedding/usew_tfgembedding/by_fav"
+  o-ovewwide vaw pawquetoutputbyfav =
+    "/usew/cassowawy/pwocessed/simcwustews_v2_embedding/usew_tfgembedding/by_fav/snapshot"
 }
 
-trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutionApp {
+t-twait engagementweightedtfgbasedtopicembeddingsbasejob extends d-datewangeexecutionapp {
 
-  val outputByFav: String
-  val parquetOutputByFav: String
+  v-vaw o-outputbyfav: stwing
+  vaw pawquetoutputbyfav: stwing
 
-  //root path to read aggregate data
-  private val aggregateFeatureRootPath =
-    "/atla/proc2/user/timelines/processed/aggregates_v2"
+  //woot path to wead aggwegate d-data
+  pwivate vaw aggwegatefeatuwewootpath =
+    "/atwa/pwoc2/usew/timewines/pwocessed/aggwegates_v2"
 
-  private val topKTopicsToKeep = 100
+  pwivate vaw topktopicstokeep = 100
 
-  private val favContinuousFeature = new Continuous(
-    "user_topic_aggregate.pair.recap.engagement.is_favorited.any_feature.50.days.count")
+  pwivate vaw favcontinuousfeatuwe = n-nyew continuous(
+    "usew_topic_aggwegate.paiw.wecap.engagement.is_favowited.any_featuwe.50.days.count")
 
-  private val parquetDataSource: SnapshotDALDatasetBase[UserTopicWeightedEmbedding] =
-    UserTopicWeightedEmbeddingParquetScalaDataset
+  pwivate vaw p-pawquetdatasouwce: s-snapshotdawdatasetbase[usewtopicweightedembedding] =
+    u-usewtopicweightedembeddingpawquetscawadataset
 
-  def sortedTake[K](m: Map[K, Double], keysToKeep: Int): Map[K, Double] = {
-    m.toSeq.sortBy { case (k, v) => -v }.take(keysToKeep).toMap
+  def sowtedtake[k](m: m-map[k, (✿oωo) doubwe], XD k-keystokeep: i-int): map[k, >w< doubwe] = {
+    m-m.toseq.sowtby { case (k, òωó v) => -v }.take(keystokeep).tomap
   }
 
-  case class UserTopicEngagement(
-    userId: Long,
-    topicId: Long,
-    language: String,
-    country: String, //field is not used
-    favCount: Double) {
-    val userLanguageGroup: (Long, String) = (userId, language)
+  c-case cwass usewtopicengagement(
+    u-usewid: wong, (ꈍᴗꈍ)
+    t-topicid: wong, rawr x3
+    w-wanguage: s-stwing, rawr x3
+    countwy: stwing, σωσ //fiewd is nyot used
+    favcount: d-doubwe) {
+    vaw usewwanguagegwoup: (wong, (ꈍᴗꈍ) stwing) = (usewid, rawr wanguage)
   }
 
-  def prepareUserToTopicEmbedding(
-    favTfgTopicEmbeddings: TypedPipe[(Long, String, SimClustersEmbedding)],
-    userTopicEngagementCount: TypedPipe[UserTopicEngagement]
+  def pwepaweusewtotopicembedding(
+    favtfgtopicembeddings: typedpipe[(wong, stwing, ^^;; simcwustewsembedding)],
+    u-usewtopicengagementcount: typedpipe[usewtopicengagement]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[((Long, String), Map[Int, Double])] = {
-    val userTfgEmbeddingsStat = Stat("User Tfg Embeddings Count")
-    val userTopicTopKEngagementStat = Stat("User Topic Top K engagement count")
-    val userEngagementStat = Stat("User engagement count")
-    val tfgEmbeddingsStat = Stat("TFG Embedding Map count")
+    impwicit uniqueid: uniqueid
+  ): t-typedpipe[((wong, rawr x3 s-stwing), (ˆ ﻌ ˆ)♡ m-map[int, σωσ doubwe])] = {
+    vaw u-usewtfgembeddingsstat = stat("usew t-tfg embeddings c-count")
+    vaw usewtopictopkengagementstat = stat("usew topic top k engagement count")
+    vaw usewengagementstat = s-stat("usew engagement count")
+    v-vaw tfgembeddingsstat = stat("tfg embedding m-map count")
 
-    //get only top K topics
-    val userTopKTopicEngagementCount: TypedPipe[UserTopicEngagement] = userTopicEngagementCount
-      .groupBy(_.userLanguageGroup)
-      .withReducers(499)
-      .withDescription("select topK topics")
-      .sortedReverseTake(topKTopicsToKeep)(Ordering.by(_.favCount))
-      .values
-      .flatten
+    //get o-onwy top k topics
+    vaw usewtopktopicengagementcount: t-typedpipe[usewtopicengagement] = u-usewtopicengagementcount
+      .gwoupby(_.usewwanguagegwoup)
+      .withweducews(499)
+      .withdescwiption("sewect topk t-topics")
+      .sowtedwevewsetake(topktopicstokeep)(owdewing.by(_.favcount))
+      .vawues
+      .fwatten
 
-    //(userId, language), totalCount
-    val userLanguageEngagementCount: UnsortedGrouped[(Long, String), Double] =
-      userTopKTopicEngagementCount
-        .collect {
-          case UserTopicEngagement(userId, topicId, language, country, favCount) =>
-            userTopicTopKEngagementStat.inc()
-            ((userId, language), favCount)
-        }.sumByKey
-        .withReducers(499)
-        .withDescription("fav count by user")
+    //(usewid, (U ﹏ U) w-wanguage), >w< totawcount
+    vaw usewwanguageengagementcount: unsowtedgwouped[(wong, σωσ stwing), nyaa~~ d-doubwe] =
+      u-usewtopktopicengagementcount
+        .cowwect {
+          case u-usewtopicengagement(usewid, 🥺 topicid, wanguage, rawr x3 c-countwy, σωσ favcount) =>
+            u-usewtopictopkengagementstat.inc()
+            ((usewid, (///ˬ///✿) wanguage), f-favcount)
+        }.sumbykey
+        .withweducews(499)
+        .withdescwiption("fav count by usew")
 
-    //(topicId, language), (userId, favWeight)
-    val topicUserWithNormalizedWeights: TypedPipe[((Long, String), (Long, Double))] =
-      userTopKTopicEngagementCount
-        .groupBy(_.userLanguageGroup)
-        .join(userLanguageEngagementCount)
-        .withReducers(499)
-        .withDescription("join userTopic and user EngagementCount")
-        .collect {
-          case ((userId, language), (engagementData, totalCount)) =>
-            userEngagementStat.inc()
+    //(topicid, (U ﹏ U) wanguage), ^^;; (usewid, favweight)
+    vaw topicusewwithnowmawizedweights: t-typedpipe[((wong, 🥺 s-stwing), (wong, òωó doubwe))] =
+      usewtopktopicengagementcount
+        .gwoupby(_.usewwanguagegwoup)
+        .join(usewwanguageengagementcount)
+        .withweducews(499)
+        .withdescwiption("join u-usewtopic and u-usew engagementcount")
+        .cowwect {
+          case ((usewid, XD wanguage), (engagementdata, :3 totawcount)) =>
+            usewengagementstat.inc()
             (
-              (engagementData.topicId, engagementData.language),
-              (userId, engagementData.favCount / totalCount)
+              (engagementdata.topicid, (U ﹏ U) e-engagementdata.wanguage), >w<
+              (usewid, /(^•ω•^) engagementdata.favcount / totawcount)
             )
         }
 
-    // (topicId, language), embeddingMap
-    val tfgEmbeddingsMap: TypedPipe[((Long, String), Map[Int, Double])] = favTfgTopicEmbeddings
+    // (topicid, (⑅˘꒳˘) wanguage), ʘwʘ embeddingmap
+    v-vaw tfgembeddingsmap: typedpipe[((wong, rawr x3 stwing), m-map[int, (˘ω˘) d-doubwe])] = favtfgtopicembeddings
       .map {
-        case (topicId, language, embedding) =>
-          tfgEmbeddingsStat.inc()
-          ((topicId, language), embedding.embedding.map(a => a.clusterId -> a.score).toMap)
+        case (topicid, wanguage, o.O embedding) =>
+          t-tfgembeddingsstat.inc()
+          ((topicid, 😳 w-wanguage), embedding.embedding.map(a => a.cwustewid -> a.scowe).tomap)
       }
-      .withDescription("covert sim cluster embedding to map")
+      .withdescwiption("covewt s-sim cwustew embedding to map")
 
-    // (userId, language), clusters
-    val newUserTfgEmbedding = topicUserWithNormalizedWeights
-      .join(tfgEmbeddingsMap)
-      .withReducers(799)
-      .withDescription("join user | topic | favWeight * embedding")
-      .collect {
-        case ((topicId, language), ((userId, favWeight), embeddingMap)) =>
-          userTfgEmbeddingsStat.inc()
-          ((userId, language), embeddingMap.mapValues(_ * favWeight))
+    // (usewid, o.O w-wanguage), cwustews
+    vaw nyewusewtfgembedding = topicusewwithnowmawizedweights
+      .join(tfgembeddingsmap)
+      .withweducews(799)
+      .withdescwiption("join usew | t-topic | favweight * embedding")
+      .cowwect {
+        c-case ((topicid, ^^;; w-wanguage), ( ͡o ω ͡o ) ((usewid, ^^;; favweight), ^^;; e-embeddingmap)) =>
+          usewtfgembeddingsstat.inc()
+          ((usewid, w-wanguage), XD e-embeddingmap.mapvawues(_ * f-favweight))
       }
-      .sumByKey
-      .withReducers(799)
-      .withDescription("aggregate embedding by user")
+      .sumbykey
+      .withweducews(799)
+      .withdescwiption("aggwegate embedding b-by usew")
 
-    newUserTfgEmbedding.toTypedPipe
+    n-nyewusewtfgembedding.totypedpipe
   }
 
-  def writeOutput(
-    newUserTfgEmbedding: TypedPipe[((Long, String), Map[Int, Double])],
-    outputPath: String,
-    parquetOutputPath: String,
-    modelVersion: String
+  def wwiteoutput(
+    n-nyewusewtfgembedding: t-typedpipe[((wong, 🥺 s-stwing), map[int, (///ˬ///✿) doubwe])],
+    outputpath: s-stwing, (U ᵕ U❁)
+    pawquetoutputpath: s-stwing, ^^;;
+    m-modewvewsion: stwing
   )(
-    implicit uniqueID: UniqueID,
-    dateRange: DateRange
-  ): Execution[Unit] = {
-    val outputRecordStat = Stat("output record count")
-    val output = newUserTfgEmbedding
+    impwicit uniqueid: uniqueid, ^^;;
+    datewange: datewange
+  ): e-execution[unit] = {
+    v-vaw outputwecowdstat = s-stat("output w-wecowd count")
+    vaw output = n-nyewusewtfgembedding
       .map {
-        //language has been purposely ignored because the entire logic is based on the fact that
-        //user is mapped to a language. In future if a user is mapped to multiple languages then
-        //the final output needs to be keyed on (userId, language)
-        case ((userId, language), embeddingMap) =>
-          outputRecordStat.inc()
-          val clusterScores = embeddingMap.map {
-            case (clusterId, score) =>
-              clusterId -> UserToInterestedInClusterScores(favScore = Some(score))
+        //wanguage has been puwposewy ignowed because the entiwe wogic is based on the fact t-that
+        //usew is mapped t-to a wanguage. rawr in futuwe if a u-usew is mapped to muwtipwe wanguages t-then
+        //the finaw output n-nyeeds to be k-keyed on (usewid, (˘ω˘) w-wanguage)
+        c-case ((usewid, 🥺 w-wanguage), nyaa~~ embeddingmap) =>
+          outputwecowdstat.inc()
+          vaw cwustewscowes = embeddingmap.map {
+            case (cwustewid, :3 scowe) =>
+              c-cwustewid -> u-usewtointewestedincwustewscowes(favscowe = s-some(scowe))
           }
-          KeyVal(userId, ClustersUserIsInterestedIn(modelVersion, clusterScores))
+          keyvaw(usewid, /(^•ω•^) c-cwustewsusewisintewestedin(modewvewsion, ^•ﻌ•^ cwustewscowes))
       }
 
-    val keyValExec = output
-      .withDescription("write output keyval dataset")
-      .writeDALVersionedKeyValExecution(
-        UserTopicWeightedEmbeddingScalaDataset,
-        D.Suffix(outputPath))
+    vaw keyvawexec = output
+      .withdescwiption("wwite o-output k-keyvaw dataset")
+      .wwitedawvewsionedkeyvawexecution(
+        usewtopicweightedembeddingscawadataset, UwU
+        d-d.suffix(outputpath))
 
-    val parquetExec = newUserTfgEmbedding
+    vaw pawquetexec = nyewusewtfgembedding
       .map {
-        case ((userId, language), embeddingMap) =>
-          val clusterScores = embeddingMap.map {
-            case (clusterId, score) => ClustersScore(clusterId, score)
+        c-case ((usewid, 😳😳😳 w-wanguage), OwO embeddingmap) =>
+          v-vaw cwustewscowes = e-embeddingmap.map {
+            case (cwustewid, ^•ﻌ•^ scowe) => cwustewsscowe(cwustewid, (ꈍᴗꈍ) scowe)
           }
-          UserTopicWeightedEmbedding(userId, clusterScores.toSeq)
+          u-usewtopicweightedembedding(usewid, (⑅˘꒳˘) c-cwustewscowes.toseq)
       }
-      .withDescription("write output parquet dataset")
-      .writeDALSnapshotExecution(
-        parquetDataSource,
-        D.Daily,
-        D.Suffix(parquetOutputPath),
-        D.Parquet,
-        dateRange.end
+      .withdescwiption("wwite o-output pawquet d-dataset")
+      .wwitedawsnapshotexecution(
+        p-pawquetdatasouwce, (⑅˘꒳˘)
+        d.daiwy, (ˆ ﻌ ˆ)♡
+        d-d.suffix(pawquetoutputpath), /(^•ω•^)
+        d-d.pawquet, òωó
+        datewange.end
       )
-    Execution.zip(keyValExec, parquetExec).unit
+    e-execution.zip(keyvawexec, (⑅˘꒳˘) p-pawquetexec).unit
   }
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide d-def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit d-datewange: datewange, (U ᵕ U❁)
+    t-timezone: timezone, >w<
+    u-uniqueid: uniqueid
+  ): e-execution[unit] = {
 
-    val end = dateRange.start
-    val start = end - Days(21)
-    val featureDateRange = DateRange(start, end - Millisecs(1))
-    val outputPath = args.getOrElse("output_path", outputByFav)
-    val parquetOutputPath = args.getOrElse("parquet_output_path", parquetOutputByFav)
-    val modelVersion = ModelVersions.Model20M145K2020
+    vaw end = datewange.stawt
+    v-vaw stawt = e-end - days(21)
+    v-vaw featuwedatewange = datewange(stawt, σωσ end - miwwisecs(1))
+    vaw outputpath = a-awgs.getowewse("output_path", -.- outputbyfav)
+    vaw pawquetoutputpath = awgs.getowewse("pawquet_output_path", o.O p-pawquetoutputbyfav)
+    v-vaw modewvewsion = m-modewvewsions.modew20m145k2020
 
-    //define stats counter
-    val favTfgTopicEmbeddingsStat = Stat("FavTfgTopicEmbeddings")
-    val userTopicEngagementStat = Stat("UserTopicEngagement")
-    val userTopicsStat = Stat("UserTopics")
-    val userLangStat = Stat("UserLanguage")
+    //define stats c-countew
+    vaw f-favtfgtopicembeddingsstat = stat("favtfgtopicembeddings")
+    vaw usewtopicengagementstat = stat("usewtopicengagement")
+    vaw usewtopicsstat = s-stat("usewtopics")
+    vaw usewwangstat = stat("usewwanguage")
 
-    //get fav based tfg embeddings
-    //topic can have different languages and the clusters will be different
-    //current logic is to filter based on user language
-    // topicId, lang, embedding
-    val favTfgTopicEmbeddings: TypedPipe[(Long, String, SimClustersEmbedding)] = DAL
-      .readMostRecentSnapshot(FavTfgTopicEmbeddings2020ScalaDataset, featureDateRange)
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .collect {
-        case KeyVal(
-              SimClustersEmbeddingId(
-                embedType,
-                modelVersion,
-                InternalId.LocaleEntityId(LocaleEntityId(entityId, language))),
+    //get f-fav b-based tfg embeddings
+    //topic can have diffewent w-wanguages and the cwustews w-wiww be diffewent
+    //cuwwent w-wogic is to fiwtew b-based on usew wanguage
+    // topicid, ^^ wang, embedding
+    vaw favtfgtopicembeddings: typedpipe[(wong, >_< stwing, >w< simcwustewsembedding)] = daw
+      .weadmostwecentsnapshot(favtfgtopicembeddings2020scawadataset, >_< featuwedatewange)
+      .withwemoteweadpowicy(awwowcwosscwustewsamedc)
+      .totypedpipe
+      .cowwect {
+        case keyvaw(
+              simcwustewsembeddingid(
+                embedtype, >w<
+                m-modewvewsion, rawr
+                i-intewnawid.wocaweentityid(wocaweentityid(entityid, rawr x3 wanguage))), ( ͡o ω ͡o )
               embedding) =>
-          favTfgTopicEmbeddingsStat.inc()
-          (entityId, language, embedding)
+          f-favtfgtopicembeddingsstat.inc()
+          (entityid, (˘ω˘) wanguage, e-embedding)
       }
 
     /*
-    Ideally, if the timeline aggregate framework provided data with breakdown by language,
-    it could have been joined with (topic, language) embedding. Since, it is not possible
-    we fetch the language of the user from other sources.
-    This returns language for the user so that it could be joined with (topic, language) embedding.
-    `userSource` returns 1 language per user
-    `inferredUserConsumedLanguageSource` returns multiple languages with confidence values
+    i-ideawwy, 😳 if the timewine a-aggwegate fwamewowk pwovided data w-with bweakdown b-by wanguage, OwO
+    it couwd have b-been joined with (topic, (˘ω˘) wanguage) e-embedding. òωó since, i-it is nyot possibwe
+    we fetch the wanguage o-of the usew f-fwom othew souwces. ( ͡o ω ͡o )
+    t-this wetuwns w-wanguage fow t-the usew so that i-it couwd be joined w-with (topic, UwU w-wanguage) embedding. /(^•ω•^)
+    `usewsouwce` w-wetuwns 1 wanguage pew u-usew
+    `infewwedusewconsumedwanguagesouwce` w-wetuwns m-muwtipwe wanguages with confidence v-vawues
      */
-    val userLangSource = ExternalDataSources.userSource
+    vaw usewwangsouwce = e-extewnawdatasouwces.usewsouwce
       .map {
-        case (userId, (country, language)) =>
-          userLangStat.inc()
-          (userId, (language, country))
+        case (usewid, (ꈍᴗꈍ) (countwy, w-wanguage)) =>
+          u-usewwangstat.inc()
+          (usewid, 😳 (wanguage, mya c-countwy))
       }
 
-    //get userid, topicid, favcount as aggregated dataset
-    //currently there is no way to get language breakdown from the timeline aggregate framework.
-    val userTopicEngagementPipe: DataSetPipe = AggregatesV2MostRecentFeatureSource(
-      rootPath = aggregateFeatureRootPath,
-      storeName = "user_topic_aggregates",
-      aggregates =
-        Set(TimelinesAggregationConfig.userTopicAggregates).flatMap(_.buildTypedAggregateGroups()),
-    ).read
+    //get usewid, mya topicid, f-favcount as aggwegated dataset
+    //cuwwentwy t-thewe is nyo way to get wanguage b-bweakdown fwom the timewine a-aggwegate fwamewowk. /(^•ω•^)
+    vaw usewtopicengagementpipe: datasetpipe = aggwegatesv2mostwecentfeatuwesouwce(
+      wootpath = aggwegatefeatuwewootpath, ^^;;
+      s-stowename = "usew_topic_aggwegates", 🥺
+      aggwegates =
+        s-set(timewinesaggwegationconfig.usewtopicaggwegates).fwatmap(_.buiwdtypedaggwegategwoups()), ^^
+    ).wead
 
-    val userTopicEngagementCount = userTopicEngagementPipe.records
-      .flatMap { record =>
-        val sRichDataRecord = SRichDataRecord(record)
-        val userId: Long = sRichDataRecord.getFeatureValue(SharedFeatures.USER_ID)
-        val topicId: Long = sRichDataRecord.getFeatureValue(TimelinesSharedFeatures.TOPIC_ID)
-        val favCount: Double = sRichDataRecord
-          .getFeatureValueOpt(favContinuousFeature).map(_.toDouble).getOrElse(0.0)
-        userTopicEngagementStat.inc()
-        if (favCount > 0) {
-          List((userId, (topicId, favCount)))
-        } else None
-      }.join(userLangSource)
-      .collect {
-        case (userId, ((topicId, favCount), (language, country))) =>
-          userTopicsStat.inc()
-          UserTopicEngagement(userId, topicId, language, country, favCount)
+    v-vaw usewtopicengagementcount = usewtopicengagementpipe.wecowds
+      .fwatmap { wecowd =>
+        vaw swichdatawecowd = s-swichdatawecowd(wecowd)
+        vaw u-usewid: wong = s-swichdatawecowd.getfeatuwevawue(shawedfeatuwes.usew_id)
+        v-vaw topicid: wong = swichdatawecowd.getfeatuwevawue(timewinesshawedfeatuwes.topic_id)
+        vaw favcount: doubwe = s-swichdatawecowd
+          .getfeatuwevawueopt(favcontinuousfeatuwe).map(_.todoubwe).getowewse(0.0)
+        u-usewtopicengagementstat.inc()
+        if (favcount > 0) {
+          w-wist((usewid, ^•ﻌ•^ (topicid, favcount)))
+        } ewse nyone
+      }.join(usewwangsouwce)
+      .cowwect {
+        c-case (usewid, /(^•ω•^) ((topicid, ^^ favcount), (wanguage, 🥺 c-countwy))) =>
+          u-usewtopicsstat.inc()
+          u-usewtopicengagement(usewid, topicid, (U ᵕ U❁) wanguage, 😳😳😳 c-countwy, f-favcount)
       }
-      .withDescription("User Topic aggregated favcount")
+      .withdescwiption("usew t-topic aggwegated f-favcount")
 
-    // combine user, topics, topic_embeddings
-    // and take weighted aggregate of the tfg embedding
-    val newUserTfgEmbedding =
-      prepareUserToTopicEmbedding(favTfgTopicEmbeddings, userTopicEngagementCount)
+    // combine usew, nyaa~~ t-topics, topic_embeddings
+    // a-and take weighted a-aggwegate of t-the tfg embedding
+    v-vaw nyewusewtfgembedding =
+      p-pwepaweusewtotopicembedding(favtfgtopicembeddings, (˘ω˘) u-usewtopicengagementcount)
 
-    writeOutput(newUserTfgEmbedding, outputPath, parquetOutputPath, modelVersion)
+    w-wwiteoutput(newusewtfgembedding, >_< outputpath, XD p-pawquetoutputpath, rawr x3 modewvewsion)
 
   }
 

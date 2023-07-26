@@ -1,223 +1,223 @@
-package com.twitter.tweetypie
-package config
+package com.twittew.tweetypie
+package c-config
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.handler.TweetBuilder
-import com.twitter.tweetypie.handler.WritePathQueryOptions
-import com.twitter.tweetypie.hydrator.EscherbirdAnnotationHydrator
-import com.twitter.tweetypie.hydrator.LanguageHydrator
-import com.twitter.tweetypie.hydrator.PlaceHydrator
-import com.twitter.tweetypie.hydrator.ProfileGeoHydrator
-import com.twitter.tweetypie.hydrator.TweetDataValueHydrator
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.store.InsertTweet
-import com.twitter.tweetypie.store.UndeleteTweet
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.util.EditControlUtil
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt c-com.twittew.tweetypie.handwew.tweetbuiwdew
+i-impowt c-com.twittew.tweetypie.handwew.wwitepathquewyoptions
+impowt com.twittew.tweetypie.hydwatow.eschewbiwdannotationhydwatow
+impowt com.twittew.tweetypie.hydwatow.wanguagehydwatow
+i-impowt com.twittew.tweetypie.hydwatow.pwacehydwatow
+impowt com.twittew.tweetypie.hydwatow.pwofiwegeohydwatow
+impowt com.twittew.tweetypie.hydwatow.tweetdatavawuehydwatow
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.stowe.insewttweet
+impowt com.twittew.tweetypie.stowe.undewetetweet
+impowt com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.tweetypie.utiw.editcontwowutiw
 
-object WritePathHydration {
-  type HydrateQuotedTweet =
-    FutureArrow[(User, QuotedTweet, WritePathHydrationOptions), Option[QuoteTweetMetadata]]
+o-object wwitepathhydwation {
+  type hydwatequotedtweet =
+    f-futuweawwow[(usew, ʘwʘ q-quotedtweet, ( ͡o ω ͡o ) wwitepathhydwationoptions), mya option[quotetweetmetadata]]
 
-  case class QuoteTweetMetadata(
-    quotedTweet: Tweet,
-    quotedUser: User,
-    quoterHasAlreadyQuotedTweet: Boolean)
+  case cwass quotetweetmetadata(
+    quotedtweet: t-tweet, o.O
+    quotedusew: usew, (✿oωo)
+    quotewhasawweadyquotedtweet: boowean)
 
-  private val log = Logger(getClass)
+  pwivate vaw w-wog = woggew(getcwass)
 
-  val UserFieldsForInsert: Set[UserField] =
-    TweetBuilder.userFields
+  vaw u-usewfiewdsfowinsewt: s-set[usewfiewd] =
+    t-tweetbuiwdew.usewfiewds
 
-  val AllowedMissingFieldsOnWrite: Set[FieldByPath] =
-    Set(
-      EscherbirdAnnotationHydrator.hydratedField,
-      LanguageHydrator.hydratedField,
-      PlaceHydrator.HydratedField,
-      ProfileGeoHydrator.hydratedField
+  v-vaw awwowedmissingfiewdsonwwite: set[fiewdbypath] =
+    set(
+      e-eschewbiwdannotationhydwatow.hydwatedfiewd, :3
+      wanguagehydwatow.hydwatedfiewd, 😳
+      pwacehydwatow.hydwatedfiewd, (U ﹏ U)
+      p-pwofiwegeohydwatow.hydwatedfiewd
     )
 
   /**
-   * Builds a FutureArrow that performs the necessary hydration in the write-path for a
-   * a InsertTweet.Event.  There are two separate hydration steps, pre-cache and post-cache.
-   * The pre-cache hydration step performs the hydration which is safe to cache, while the
-   * post-cache hydration step performs the hydration whose results we don't want to cache
+   * buiwds a futuweawwow that pewfowms the nyecessawy hydwation in the wwite-path f-fow a
+   * a insewttweet.event. mya  t-thewe awe two s-sepawate hydwation s-steps, (U ᵕ U❁) pwe-cache and post-cache. :3
+   * the pwe-cache hydwation s-step pewfowms t-the hydwation which is safe to c-cache, mya whiwe the
+   * p-post-cache hydwation step p-pewfowms the hydwation whose wesuwts w-we don't want to cache
    * on the tweet.
    *
-   * TweetInsertEvent contains two tweet fields, `tweet` and `internalTweet`.  `tweet` is
-   * the input value used for hydration, and in the updated InsertTweet.Event returned by the
-   * FutureArrow, `tweet` contains the post-cache hydrated tweet while `internalTweet` contains
-   * the pre-cache hydrated tweet.
+   * t-tweetinsewtevent contains t-two tweet fiewds, OwO `tweet` and `intewnawtweet`. (ˆ ﻌ ˆ)♡  `tweet` i-is
+   * t-the input vawue used fow hydwation, and in the updated insewttweet.event wetuwned by the
+   * futuweawwow, ʘwʘ `tweet` c-contains t-the post-cache hydwated tweet whiwe `intewnawtweet` c-contains
+   * t-the pwe-cache h-hydwated tweet. o.O
    */
-  def hydrateInsertTweetEvent(
-    hydrateTweet: FutureArrow[(TweetData, TweetQuery.Options), TweetData],
-    hydrateQuotedTweet: HydrateQuotedTweet
-  ): FutureArrow[InsertTweet.Event, InsertTweet.Event] =
-    FutureArrow { event =>
-      val cause = TweetQuery.Cause.Insert(event.tweet.id)
-      val hydrationOpts = event.hydrateOptions
-      val isEditControlEdit = event.tweet.editControl.exists(EditControlUtil.isEditControlEdit)
-      val queryOpts: TweetQuery.Options =
-        WritePathQueryOptions.insert(cause, event.user, hydrationOpts, isEditControlEdit)
+  def hydwateinsewttweetevent(
+    hydwatetweet: futuweawwow[(tweetdata, UwU tweetquewy.options), rawr x3 t-tweetdata], 🥺
+    hydwatequotedtweet: hydwatequotedtweet
+  ): futuweawwow[insewttweet.event, :3 insewttweet.event] =
+    futuweawwow { e-event =>
+      vaw cause = t-tweetquewy.cause.insewt(event.tweet.id)
+      vaw h-hydwationopts = e-event.hydwateoptions
+      vaw i-iseditcontwowedit = e-event.tweet.editcontwow.exists(editcontwowutiw.iseditcontwowedit)
+      v-vaw q-quewyopts: tweetquewy.options =
+        wwitepathquewyoptions.insewt(cause, (ꈍᴗꈍ) event.usew, h-hydwationopts, 🥺 i-iseditcontwowedit)
 
-      val initTweetData =
-        TweetData(
-          tweet = event.tweet,
-          sourceTweetResult = event.sourceTweet.map(TweetResult(_))
+      v-vaw inittweetdata =
+        tweetdata(
+          t-tweet = event.tweet, (✿oωo)
+          s-souwcetweetwesuwt = event.souwcetweet.map(tweetwesuwt(_))
         )
 
-      for {
-        tweetData <- hydrateTweet((initTweetData, queryOpts))
-        hydratedTweet = tweetData.tweet
-        internalTweet =
-          tweetData.cacheableTweetResult
-            .map(_.value.toCachedTweet)
-            .getOrElse(
-              throw new IllegalStateException(s"expected cacheableTweetResult, e=${event}"))
+      fow {
+        tweetdata <- h-hydwatetweet((inittweetdata, (U ﹏ U) quewyopts))
+        hydwatedtweet = tweetdata.tweet
+        intewnawtweet =
+          tweetdata.cacheabwetweetwesuwt
+            .map(_.vawue.tocachedtweet)
+            .getowewse(
+              t-thwow nyew iwwegawstateexception(s"expected cacheabwetweetwesuwt, :3 e=${event}"))
 
-        optQt = getQuotedTweet(hydratedTweet)
-          .orElse(event.sourceTweet.flatMap(getQuotedTweet))
+        o-optqt = getquotedtweet(hydwatedtweet)
+          .owewse(event.souwcetweet.fwatmap(getquotedtweet))
 
-        hydratedQT <- optQt match {
-          case None => Future.value(None)
-          case Some(qt) => hydrateQuotedTweet((event.user, qt, hydrationOpts))
+        h-hydwatedqt <- o-optqt match {
+          c-case nyone => futuwe.vawue(none)
+          case s-some(qt) => h-hydwatequotedtweet((event.usew, ^^;; qt, rawr hydwationopts))
         }
-      } yield {
+      } yiewd {
         event.copy(
-          tweet = hydratedTweet,
-          _internalTweet = Some(internalTweet),
-          quotedTweet = hydratedQT.map { case QuoteTweetMetadata(t, _, _) => t },
-          quotedUser = hydratedQT.map { case QuoteTweetMetadata(_, u, _) => u },
-          quoterHasAlreadyQuotedTweet = hydratedQT.exists { case QuoteTweetMetadata(_, _, b) => b }
+          tweet = hydwatedtweet, 😳😳😳
+          _intewnawtweet = s-some(intewnawtweet), (✿oωo)
+          quotedtweet = h-hydwatedqt.map { case q-quotetweetmetadata(t, OwO _, _) => t-t }, ʘwʘ
+          quotedusew = hydwatedqt.map { case q-quotetweetmetadata(_, u-u, (ˆ ﻌ ˆ)♡ _) => u },
+          q-quotewhasawweadyquotedtweet = h-hydwatedqt.exists { case quotetweetmetadata(_, (U ﹏ U) _, b) => b }
         )
       }
     }
 
   /**
-   * Builds a FutureArrow for retrieving a quoted tweet metadata
-   * QuotedTweet struct.  If either the quoted tweet or the quoted user
-   * isn't visible to the tweeting user, the FutureArrow will return None.
+   * buiwds a futuweawwow f-fow wetwieving a-a quoted tweet m-metadata
+   * quotedtweet stwuct. UwU  i-if eithew the q-quoted tweet ow the quoted usew
+   * i-isn't visibwe to the tweeting usew, XD the futuweawwow wiww wetuwn nyone. ʘwʘ
    */
-  def hydrateQuotedTweet(
-    tweetRepo: TweetRepository.Optional,
-    userRepo: UserRepository.Optional,
-    quoterHasAlreadyQuotedRepo: QuoterHasAlreadyQuotedRepository.Type
-  ): HydrateQuotedTweet = {
-    FutureArrow {
-      case (tweetingUser, qt, hydrateOptions) =>
-        val tweetQueryOpts = WritePathQueryOptions.quotedTweet(tweetingUser, hydrateOptions)
-        val userQueryOpts =
-          UserQueryOptions(
-            UserFieldsForInsert,
-            UserVisibility.Visible,
-            forUserId = Some(tweetingUser.id)
+  d-def hydwatequotedtweet(
+    t-tweetwepo: tweetwepositowy.optionaw, rawr x3
+    usewwepo: usewwepositowy.optionaw, ^^;;
+    q-quotewhasawweadyquotedwepo: q-quotewhasawweadyquotedwepositowy.type
+  ): hydwatequotedtweet = {
+    futuweawwow {
+      case (tweetingusew, ʘwʘ q-qt, (U ﹏ U) hydwateoptions) =>
+        vaw tweetquewyopts = wwitepathquewyoptions.quotedtweet(tweetingusew, (˘ω˘) hydwateoptions)
+        v-vaw usewquewyopts =
+          usewquewyoptions(
+            usewfiewdsfowinsewt, (ꈍᴗꈍ)
+            u-usewvisibiwity.visibwe, /(^•ω•^)
+            f-fowusewid = some(tweetingusew.id)
           )
 
-        Stitch.run(
-          Stitch
+        stitch.wun(
+          stitch
             .join(
-              tweetRepo(qt.tweetId, tweetQueryOpts),
-              userRepo(UserKey.byId(qt.userId), userQueryOpts),
-              // We're failing open here on tflock exceptions since this should not
-              // affect the ability to quote tweet if tflock goes down. (although if
-              // this call doesn't succeed, quote counts may be inaccurate for a brief
-              // period of time)
-              quoterHasAlreadyQuotedRepo(qt.tweetId, tweetingUser.id).liftToTry
+              t-tweetwepo(qt.tweetid, t-tweetquewyopts), >_<
+              usewwepo(usewkey.byid(qt.usewid), σωσ usewquewyopts), ^^;;
+              // we'we faiwing o-open hewe on tfwock exceptions s-since this shouwd nyot
+              // affect the abiwity to q-quote tweet if tfwock goes down. 😳 (awthough i-if
+              // t-this caww doesn't succeed, >_< quote c-counts may be inaccuwate fow a b-bwief
+              // p-pewiod of t-time)
+              quotewhasawweadyquotedwepo(qt.tweetid, -.- t-tweetingusew.id).wifttotwy
             )
             .map {
-              case (Some(tweet), Some(user), isAlreadyQuoted) =>
-                Some(QuoteTweetMetadata(tweet, user, isAlreadyQuoted.getOrElse(false)))
-              case _ => None
+              c-case (some(tweet), UwU some(usew), :3 isawweadyquoted) =>
+                s-some(quotetweetmetadata(tweet, σωσ u-usew, >w< isawweadyquoted.getowewse(fawse)))
+              case _ => n-nyone
             }
         )
     }
   }
 
   /**
-   * Builds a FutureArrow that performs any additional hydration on an UndeleteTweet.Event before
-   * being passed to a TweetStore.
+   * buiwds a futuweawwow t-that pewfowms any additionaw hydwation o-on an undewetetweet.event b-befowe
+   * being passed to a tweetstowe. (ˆ ﻌ ˆ)♡
    */
-  def hydrateUndeleteTweetEvent(
-    hydrateTweet: FutureArrow[(TweetData, TweetQuery.Options), TweetData],
-    hydrateQuotedTweet: HydrateQuotedTweet
-  ): FutureArrow[UndeleteTweet.Event, UndeleteTweet.Event] =
-    FutureArrow { event =>
-      val cause = TweetQuery.Cause.Undelete(event.tweet.id)
-      val hydrationOpts = event.hydrateOptions
-      val isEditControlEdit = event.tweet.editControl.exists(EditControlUtil.isEditControlEdit)
-      val queryOpts = WritePathQueryOptions.insert(cause, event.user, hydrationOpts, isEditControlEdit)
+  def hydwateundewetetweetevent(
+    h-hydwatetweet: f-futuweawwow[(tweetdata, ʘwʘ t-tweetquewy.options), :3 t-tweetdata], (˘ω˘)
+    hydwatequotedtweet: h-hydwatequotedtweet
+  ): futuweawwow[undewetetweet.event, 😳😳😳 undewetetweet.event] =
+    futuweawwow { event =>
+      vaw cause = tweetquewy.cause.undewete(event.tweet.id)
+      v-vaw hydwationopts = event.hydwateoptions
+      v-vaw iseditcontwowedit = event.tweet.editcontwow.exists(editcontwowutiw.iseditcontwowedit)
+      v-vaw quewyopts = wwitepathquewyoptions.insewt(cause, rawr x3 e-event.usew, (✿oωo) hydwationopts, (ˆ ﻌ ˆ)♡ i-iseditcontwowedit)
 
-      // when undeleting a retweet, don't set sourceTweetResult to enable SourceTweetHydrator to
-      // hydrate it
-      val initTweetData = TweetData(tweet = event.tweet)
+      // when u-undeweting a w-wetweet, :3 don't s-set souwcetweetwesuwt t-to enabwe souwcetweethydwatow to
+      // hydwate it
+      vaw inittweetdata = tweetdata(tweet = event.tweet)
 
-      for {
-        tweetData <- hydrateTweet((initTweetData, queryOpts))
-        hydratedTweet = tweetData.tweet
-        internalTweet =
-          tweetData.cacheableTweetResult
-            .map(_.value.toCachedTweet)
-            .getOrElse(
-              throw new IllegalStateException(s"expected cacheableTweetResult, e=${event}"))
+      f-fow {
+        t-tweetdata <- h-hydwatetweet((inittweetdata, (U ᵕ U❁) quewyopts))
+        h-hydwatedtweet = tweetdata.tweet
+        intewnawtweet =
+          tweetdata.cacheabwetweetwesuwt
+            .map(_.vawue.tocachedtweet)
+            .getowewse(
+              thwow nyew i-iwwegawstateexception(s"expected c-cacheabwetweetwesuwt, e=${event}"))
 
-        optQt = getQuotedTweet(hydratedTweet)
-          .orElse(tweetData.sourceTweetResult.map(_.value.tweet).flatMap(getQuotedTweet))
+        optqt = g-getquotedtweet(hydwatedtweet)
+          .owewse(tweetdata.souwcetweetwesuwt.map(_.vawue.tweet).fwatmap(getquotedtweet))
 
-        hydratedQt <- optQt match {
-          case None => Future.value(None)
-          case Some(qt) => hydrateQuotedTweet((event.user, qt, hydrationOpts))
+        hydwatedqt <- optqt match {
+          c-case n-nyone => futuwe.vawue(none)
+          case some(qt) => h-hydwatequotedtweet((event.usew, ^^;; q-qt, hydwationopts))
         }
-      } yield {
+      } yiewd {
         event.copy(
-          tweet = hydratedTweet,
-          _internalTweet = Some(internalTweet),
-          sourceTweet = tweetData.sourceTweetResult.map(_.value.tweet),
-          quotedTweet = hydratedQt.map { case QuoteTweetMetadata(t, _, _) => t },
-          quotedUser = hydratedQt.map { case QuoteTweetMetadata(_, u, _) => u },
-          quoterHasAlreadyQuotedTweet = hydratedQt.exists { case QuoteTweetMetadata(_, _, b) => b }
+          tweet = hydwatedtweet, mya
+          _intewnawtweet = some(intewnawtweet), 😳😳😳
+          s-souwcetweet = t-tweetdata.souwcetweetwesuwt.map(_.vawue.tweet), OwO
+          quotedtweet = h-hydwatedqt.map { c-case q-quotetweetmetadata(t, rawr _, _) => t }, XD
+          q-quotedusew = hydwatedqt.map { case q-quotetweetmetadata(_, (U ﹏ U) u, _) => u-u }, (˘ω˘)
+          q-quotewhasawweadyquotedtweet = hydwatedqt.exists { c-case quotetweetmetadata(_, UwU _, b) => b }
         )
       }
     }
 
   /**
-   * Converts a TweetDataValueHydrator into a FutureArrow that hydrates a tweet for the write-path.
+   * convewts a tweetdatavawuehydwatow i-into a futuweawwow that hydwates a-a tweet fow the w-wwite-path. >_<
    */
-  def hydrateTweet(
-    hydrator: TweetDataValueHydrator,
-    stats: StatsReceiver,
-    allowedMissingFields: Set[FieldByPath] = AllowedMissingFieldsOnWrite
-  ): FutureArrow[(TweetData, TweetQuery.Options), TweetData] = {
-    val hydrationStats = stats.scope("hydration")
-    val missingFieldsStats = hydrationStats.scope("missing_fields")
+  def hydwatetweet(
+    h-hydwatow: tweetdatavawuehydwatow, σωσ
+    stats: statsweceivew, 🥺
+    a-awwowedmissingfiewds: s-set[fiewdbypath] = a-awwowedmissingfiewdsonwwite
+  ): futuweawwow[(tweetdata, 🥺 tweetquewy.options), ʘwʘ tweetdata] = {
+    vaw hydwationstats = s-stats.scope("hydwation")
+    vaw missingfiewdsstats = hydwationstats.scope("missing_fiewds")
 
-    FutureArrow[(TweetData, TweetQuery.Options), TweetData] {
-      case (td, opts) =>
-        Stitch
-          .run(hydrator(td, opts))
-          .rescue {
+    f-futuweawwow[(tweetdata, :3 t-tweetquewy.options), (U ﹏ U) tweetdata] {
+      c-case (td, (U ﹏ U) opts) =>
+        s-stitch
+          .wun(hydwatow(td, ʘwʘ o-opts))
+          .wescue {
             case ex =>
-              log.warn("Hydration failed with exception", ex)
-              Future.exception(
-                TweetHydrationError("Hydration failed with exception: " + ex, Some(ex))
+              wog.wawn("hydwation f-faiwed with exception", >w< ex)
+              futuwe.exception(
+                t-tweethydwationewwow("hydwation f-faiwed with exception: " + e-ex, rawr x3 some(ex))
               )
           }
-          .flatMap { r =>
-            // Record missing fields even if the request succeeds)
-            for (missingField <- r.state.failedFields)
-              missingFieldsStats.counter(missingField.fieldIdPath.mkString(".")).incr()
+          .fwatmap { w =>
+            // w-wecowd m-missing fiewds even i-if the wequest succeeds)
+            fow (missingfiewd <- w.state.faiwedfiewds)
+              missingfiewdsstats.countew(missingfiewd.fiewdidpath.mkstwing(".")).incw()
 
-            if ((r.state.failedFields -- allowedMissingFields).nonEmpty) {
-              Future.exception(
-                TweetHydrationError(
-                  "Failed to hydrate. Missing Fields: " + r.state.failedFields.mkString(",")
+            if ((w.state.faiwedfiewds -- awwowedmissingfiewds).nonempty) {
+              futuwe.exception(
+                tweethydwationewwow(
+                  "faiwed to hydwate. OwO missing fiewds: " + w.state.faiwedfiewds.mkstwing(",")
                 )
               )
-            } else {
-              Future.value(r.value)
+            } ewse {
+              futuwe.vawue(w.vawue)
             }
           }
     }
-  }.trackOutcome(stats, (_: Any) => "hydration")
+  }.twackoutcome(stats, ^•ﻌ•^ (_: a-any) => "hydwation")
 }

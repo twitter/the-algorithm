@@ -1,53 +1,53 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.twittew.fwigate.pushsewvice.adaptow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
-import com.twitter.content_mixer.thriftscala.ContentMixerRequest
-import com.twitter.content_mixer.thriftscala.ContentMixerResponse
-import com.twitter.geoduck.common.thriftscala.Location
-import com.twitter.hermit.pop_geo.thriftscala.PopTweetsInPlace
-import com.twitter.recommendation.interests.discovery.core.model.InterestDomain
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fwigate.common.base.candidatesouwce
+i-impowt com.twittew.fwigate.common.base.candidatesouwceewigibwe
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.geoduck.sewvice.thwiftscawa.wocationwesponse
+i-impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twipdomain
+impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twiptweets
+impowt com.twittew.content_mixew.thwiftscawa.contentmixewwequest
+i-impowt com.twittew.content_mixew.thwiftscawa.contentmixewwesponse
+impowt c-com.twittew.geoduck.common.thwiftscawa.wocation
+impowt com.twittew.hewmit.pop_geo.thwiftscawa.poptweetsinpwace
+i-impowt com.twittew.wecommendation.intewests.discovewy.cowe.modew.intewestdomain
 
-class LoggedOutPushCandidateSourceGenerator(
-  tripTweetCandidateStore: ReadableStore[TripDomain, TripTweets],
-  geoDuckV2Store: ReadableStore[Long, LocationResponse],
-  safeCachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult],
-  cachedTweetyPieStoreV2NoVF: ReadableStore[Long, TweetyPieResult],
-  cachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult],
-  contentMixerStore: ReadableStore[ContentMixerRequest, ContentMixerResponse],
-  softUserLocationStore: ReadableStore[Long, Location],
-  topTweetsByGeoStore: ReadableStore[InterestDomain[String], Map[String, List[(Long, Double)]]],
-  topTweetsByGeoV2VersionedStore: ReadableStore[String, PopTweetsInPlace],
+cwass woggedoutpushcandidatesouwcegenewatow(
+  twiptweetcandidatestowe: weadabwestowe[twipdomain, OwO t-twiptweets], 😳😳😳
+  geoduckv2stowe: w-weadabwestowe[wong, 😳😳😳 w-wocationwesponse], o.O
+  safecachedtweetypiestowev2: weadabwestowe[wong, ( ͡o ω ͡o ) tweetypiewesuwt], (U ﹏ U)
+  cachedtweetypiestowev2novf: w-weadabwestowe[wong, tweetypiewesuwt], (///ˬ///✿)
+  cachedtweetypiestowev2: weadabwestowe[wong, tweetypiewesuwt], >w<
+  c-contentmixewstowe: weadabwestowe[contentmixewwequest, rawr c-contentmixewwesponse], mya
+  s-softusewwocationstowe: w-weadabwestowe[wong, ^^ w-wocation], 😳😳😳
+  toptweetsbygeostowe: weadabwestowe[intewestdomain[stwing], map[stwing, mya w-wist[(wong, 😳 doubwe)]]], -.-
+  toptweetsbygeov2vewsionedstowe: weadabwestowe[stwing, 🥺 p-poptweetsinpwace], o.O
 )(
-  implicit val globalStats: StatsReceiver) {
-  val sources: Seq[CandidateSource[Target, RawCandidate] with CandidateSourceEligible[
-    Target,
-    RawCandidate
+  impwicit vaw gwobawstats: statsweceivew) {
+  vaw souwces: seq[candidatesouwce[tawget, /(^•ω•^) w-wawcandidate] with candidatesouwceewigibwe[
+    t-tawget, nyaa~~
+    wawcandidate
   ]] = {
-    Seq(
-      TripGeoCandidatesAdaptor(
-        tripTweetCandidateStore,
-        contentMixerStore,
-        safeCachedTweetyPieStoreV2,
-        cachedTweetyPieStoreV2NoVF,
-        globalStats
-      ),
-      TopTweetsByGeoAdaptor(
-        geoDuckV2Store,
-        softUserLocationStore,
-        topTweetsByGeoStore,
-        topTweetsByGeoV2VersionedStore,
-        cachedTweetyPieStoreV2,
-        cachedTweetyPieStoreV2NoVF,
-        globalStats
+    s-seq(
+      t-twipgeocandidatesadaptow(
+        twiptweetcandidatestowe, nyaa~~
+        contentmixewstowe, :3
+        safecachedtweetypiestowev2, 😳😳😳
+        c-cachedtweetypiestowev2novf, (˘ω˘)
+        g-gwobawstats
+      ), ^^
+      toptweetsbygeoadaptow(
+        g-geoduckv2stowe, :3
+        s-softusewwocationstowe, -.-
+        toptweetsbygeostowe, 😳
+        t-toptweetsbygeov2vewsionedstowe, mya
+        cachedtweetypiestowev2, (˘ω˘)
+        cachedtweetypiestowev2novf, >_<
+        gwobawstats
       )
     )
   }

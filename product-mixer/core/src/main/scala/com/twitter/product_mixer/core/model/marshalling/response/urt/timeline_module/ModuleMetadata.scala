@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe
 
-object ModuleMetadata {
-  def isConversationModule(moduleMetadata: Option[ModuleMetadata]): Boolean =
-    moduleMetadata.map(_.conversationMetadata).isDefined
+object moduwemetadata {
+  d-def isconvewsationmoduwe(moduwemetadata: o-option[moduwemetadata]): b-boowean =
+    m-moduwemetadata.map(_.convewsationmetadata).isdefined
 }
 
-case class ModuleMetadata(
-  adsMetadata: Option[AdsMetadata],
-  conversationMetadata: Option[ModuleConversationMetadata],
-  gridCarouselMetadata: Option[GridCarouselMetadata])
+c-case cwass m-moduwemetadata(
+  a-adsmetadata: o-option[adsmetadata], rawr x3
+  convewsationmetadata: option[moduweconvewsationmetadata], rawr
+  gwidcawousewmetadata: option[gwidcawousewmetadata])

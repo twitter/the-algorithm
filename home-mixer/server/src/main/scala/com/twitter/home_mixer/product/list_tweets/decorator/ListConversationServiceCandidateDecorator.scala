@@ -1,49 +1,49 @@
-package com.twitter.home_mixer.product.list_tweets.decorator
+package com.twittew.home_mixew.pwoduct.wist_tweets.decowatow
 
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeConversationModuleMetadataBuilder
-import com.twitter.home_mixer.functional_component.decorator.builder.ListClientEventDetailsBuilder
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleFocalTweetIdFeature
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.UrtMultipleModulesDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.StaticModuleDisplayTypeBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.TimelineModuleBuilder
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+impowt c-com.twittew.home_mixew.functionaw_component.decowatow.buiwdew.homeconvewsationmoduwemetadatabuiwdew
+i-impowt com.twittew.home_mixew.functionaw_component.decowatow.buiwdew.wistcwienteventdetaiwsbuiwdew
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.convewsationmoduwefocawtweetidfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.uwtitemcandidatedecowatow
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.uwtmuwtipwemoduwesdecowatow
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.tweet.tweetcandidateuwtitembuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata.cwienteventinfobuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe.staticmoduwedispwaytypebuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe.timewinemoduwebuiwdew
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.vewticawconvewsation
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.timewines.injection.scwibe.injectionscwibeutiw
+impowt c-com.twittew.timewinesewvice.suggests.{thwiftscawa => s-st}
 
-object ListConversationServiceCandidateDecorator {
+object wistconvewsationsewvicecandidatedecowatow {
 
-  private val ConversationModuleNamespace = EntryNamespace("list-conversation")
+  pwivate vaw convewsationmoduwenamespace = entwynamespace("wist-convewsation")
 
-  def apply(): Some[UrtMultipleModulesDecorator[PipelineQuery, TweetCandidate, Long]] = {
-    val suggestType = st.SuggestType.OrganicListTweet
-    val component = InjectionScribeUtil.scribeComponent(suggestType).get
-    val clientEventInfoBuilder = ClientEventInfoBuilder(
-      component = component,
-      detailsBuilder = Some(ListClientEventDetailsBuilder(st.SuggestType.OrganicListTweet))
+  def appwy(): some[uwtmuwtipwemoduwesdecowatow[pipewinequewy, ʘwʘ tweetcandidate, /(^•ω•^) wong]] = {
+    v-vaw suggesttype = st.suggesttype.owganicwisttweet
+    vaw component = injectionscwibeutiw.scwibecomponent(suggesttype).get
+    v-vaw cwienteventinfobuiwdew = c-cwienteventinfobuiwdew(
+      c-component = c-component, ʘwʘ
+      d-detaiwsbuiwdew = some(wistcwienteventdetaiwsbuiwdew(st.suggesttype.owganicwisttweet))
     )
-    val tweetItemBuilder = TweetCandidateUrtItemBuilder(
-      clientEventInfoBuilder = clientEventInfoBuilder
-    )
-
-    val moduleBuilder = TimelineModuleBuilder(
-      entryNamespace = ConversationModuleNamespace,
-      clientEventInfoBuilder = clientEventInfoBuilder,
-      displayTypeBuilder = StaticModuleDisplayTypeBuilder(VerticalConversation),
-      metadataBuilder = Some(HomeConversationModuleMetadataBuilder())
+    vaw tweetitembuiwdew = t-tweetcandidateuwtitembuiwdew(
+      cwienteventinfobuiwdew = cwienteventinfobuiwdew
     )
 
-    Some(
-      UrtMultipleModulesDecorator(
-        urtItemCandidateDecorator = UrtItemCandidateDecorator(tweetItemBuilder),
-        moduleBuilder = moduleBuilder,
-        groupByKey = (_, _, candidateFeatures) =>
-          candidateFeatures.getOrElse(ConversationModuleFocalTweetIdFeature, None)
+    v-vaw moduwebuiwdew = timewinemoduwebuiwdew(
+      entwynamespace = convewsationmoduwenamespace, σωσ
+      cwienteventinfobuiwdew = cwienteventinfobuiwdew, OwO
+      dispwaytypebuiwdew = s-staticmoduwedispwaytypebuiwdew(vewticawconvewsation),
+      metadatabuiwdew = s-some(homeconvewsationmoduwemetadatabuiwdew())
+    )
+
+    s-some(
+      uwtmuwtipwemoduwesdecowatow(
+        u-uwtitemcandidatedecowatow = uwtitemcandidatedecowatow(tweetitembuiwdew), 😳😳😳
+        moduwebuiwdew = moduwebuiwdew, 😳😳😳
+        g-gwoupbykey = (_, o.O _, c-candidatefeatuwes) =>
+          candidatefeatuwes.getowewse(convewsationmoduwefocawtweetidfeatuwe, ( ͡o ω ͡o ) n-nyone)
       ))
   }
 }

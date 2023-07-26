@@ -1,21 +1,21 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.twittew.cw_mixew.thwiftjava
+#@namespace scawa c-com.twittew.cw_mixew.thwiftscawa
+#@namespace s-stwato c-com.twittew.cw_mixew
 
-include "source_type.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+i-incwude "souwce_type.thwift"
+i-incwude "com/twittew/simcwustews_v2/identifiew.thwift"
 
-struct SimilarityEngine {
- 1: required source_type.SimilarityEngineType similarityEngineType
- 2: optional string modelId
- 3: optional double score
-} (persisted='true')
+stwuct s-simiwawityengine {
+ 1: w-wequiwed s-souwce_type.simiwawityenginetype simiwawityenginetype
+ 2: optionaw stwing modewid
+ 3: optionaw doubwe scowe
+} (pewsisted='twue')
 
-struct CandidateGenerationKey {
-  1: required source_type.SourceType sourceType
-  2: required i64 sourceEventTime (personalDataType = 'PrivateTimestamp')
-  3: required identifier.InternalId id
-  4: required string modelId
-  5: optional source_type.SimilarityEngineType similarityEngineType
-  6: optional list<SimilarityEngine> contributingSimilarityEngine
-} (persisted='true')
+s-stwuct candidategenewationkey {
+  1: wequiwed souwce_type.souwcetype s-souwcetype
+  2: wequiwed i-i64 souwceeventtime (pewsonawdatatype = 'pwivatetimestamp')
+  3: wequiwed identifiew.intewnawid id
+  4: wequiwed s-stwing modewid
+  5: optionaw s-souwce_type.simiwawityenginetype s-simiwawityenginetype
+  6: optionaw wist<simiwawityengine> contwibutingsimiwawityengine
+} (pewsisted='twue')

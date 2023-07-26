@@ -1,275 +1,275 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.google.common.cache.CacheBuilder
-import com.twitter.finagle.memcached.util.NotFound
-import com.twitter.servo.util.ThreadLocalStringBuilder
-import com.twitter.util.{Duration, Future, Return}
-import java.util.concurrent.TimeUnit
-import scala.collection.mutable
-import scala.collection.JavaConverters._
+impowt com.googwe.common.cache.cachebuiwdew
+i-impowt c-com.twittew.finagwe.memcached.utiw.notfound
+impowt c-com.twittew.sewvo.utiw.thweadwocawstwingbuiwdew
+i-impowt com.twittew.utiw.{duwation, OwO f-futuwe, w-wetuwn}
+impowt j-java.utiw.concuwwent.timeunit
+i-impowt scawa.cowwection.mutabwe
+impowt scawa.cowwection.javaconvewtews._
 
 /**
- * opaque trait used for getWithChecksum calls.
- * the implementation should be private to the cache,
- * to inhibit peeking
+ * opaque twait used f-fow getwithchecksum cawws. ʘwʘ
+ * the impwementation s-shouwd be pwivate to the cache, (ˆ ﻌ ˆ)♡
+ * t-to inhibit peeking
  */
-trait Checksum extends Any
+twait checksum extends any
 
-object ScopedCacheKey {
-  private[ScopedCacheKey] val builder = new ThreadLocalStringBuilder(64)
+object scopedcachekey {
+  p-pwivate[scopedcachekey] vaw buiwdew = n-nyew thweadwocawstwingbuiwdew(64)
 }
 
 /**
- * base class for cache keys needing scoping
+ * b-base cwass fow cache keys nyeeding scoping
  *
- * @param globalNamespace
- *  the project-level namespace
- * @param cacheNamespace
- *  the cache-level namespace
- * @param version
- *  the version of serialization for values
- * @param scopes
- *  additional key scopes
+ * @pawam gwobawnamespace
+ *  the pwoject-wevew n-nyamespace
+ * @pawam cachenamespace
+ *  the cache-wevew nyamespace
+ * @pawam vewsion
+ *  the vewsion o-of sewiawization fow vawues
+ * @pawam s-scopes
+ *  a-additionaw k-key scopes
  */
-abstract class ScopedCacheKey(
-  globalNamespace: String,
-  cacheNamespace: String,
-  version: Int,
-  scopes: String*) {
-  import constants._
+a-abstwact cwass scopedcachekey(
+  gwobawnamespace: s-stwing, (U ﹏ U)
+  cachenamespace: stwing,
+  vewsion: i-int, UwU
+  scopes: stwing*) {
+  impowt constants._
 
-  override lazy val toString = {
-    val builder = ScopedCacheKey
-      .builder()
-      .append(globalNamespace)
-      .append(Colon)
-      .append(cacheNamespace)
-      .append(Colon)
-      .append(version)
+  ovewwide wazy vaw tostwing = {
+    vaw buiwdew = s-scopedcachekey
+      .buiwdew()
+      .append(gwobawnamespace)
+      .append(cowon)
+      .append(cachenamespace)
+      .append(cowon)
+      .append(vewsion)
 
-    scopes foreach {
-      builder.append(Colon).append(_)
+    scopes foweach {
+      b-buiwdew.append(cowon).append(_)
     }
 
-    builder.toString
+    b-buiwdew.tostwing
   }
 }
 
 /**
- * Shared trait for reading from a cache
+ * s-shawed twait fow weading fwom a cache
  */
-trait ReadCache[K, V] {
-  def get(keys: Seq[K]): Future[KeyValueResult[K, V]]
+twait weadcache[k, XD v-v] {
+  def g-get(keys: seq[k]): futuwe[keyvawuewesuwt[k, ʘwʘ v-v]]
 
   /**
-   * get the value with an opaque checksum that can be passed in
-   * a checkAndSet operation. If there is a deserialization error,
-   * the checksum is still returned
+   * g-get the vawue with an o-opaque checksum that can be passed i-in
+   * a checkandset opewation. rawr x3 if thewe is a-a desewiawization ewwow, ^^;;
+   * t-the checksum is stiww wetuwned
    */
-  def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, V]]
+  d-def getwithchecksum(keys: s-seq[k]): futuwe[cskeyvawuewesuwt[k, ʘwʘ v]]
 
   /**
-   * release any underlying resources
+   * wewease any undewwying wesouwces
    */
-  def release(): Unit
+  def wewease(): unit
 }
 
 /**
- * allows one ReadCache to wrap another
+ * awwows o-one weadcache t-to wwap anothew
  */
-trait ReadCacheWrapper[K, V, This <: ReadCache[K, V]] extends ReadCache[K, V] {
-  def underlyingCache: This
+twait weadcachewwappew[k, (U ﹏ U) v, t-this <: weadcache[k, (˘ω˘) v-v]] extends w-weadcache[k, (ꈍᴗꈍ) v] {
+  def undewwyingcache: this
 
-  override def get(keys: Seq[K]) = underlyingCache.get(keys)
+  ovewwide def g-get(keys: seq[k]) = undewwyingcache.get(keys)
 
-  override def getWithChecksum(keys: Seq[K]) = underlyingCache.getWithChecksum(keys)
+  ovewwide def getwithchecksum(keys: seq[k]) = undewwyingcache.getwithchecksum(keys)
 
-  override def release() = underlyingCache.release()
+  ovewwide d-def wewease() = undewwyingcache.wewease()
 }
 
 /**
- * Simple trait for a cache supporting multi-get and single set
+ * s-simpwe twait f-fow a cache suppowting m-muwti-get and singwe set
  */
-trait Cache[K, V] extends ReadCache[K, V] {
-  def add(key: K, value: V): Future[Boolean]
+t-twait cache[k, /(^•ω•^) v-v] extends w-weadcache[k, >_< v] {
+  d-def add(key: k, σωσ vawue: v): futuwe[boowean]
 
-  def checkAndSet(key: K, value: V, checksum: Checksum): Future[Boolean]
+  def checkandset(key: k-k, vawue: v-v, ^^;; checksum: checksum): f-futuwe[boowean]
 
-  def set(key: K, value: V): Future[Unit]
+  d-def s-set(key: k, 😳 vawue: v): futuwe[unit]
 
-  def set(pairs: Seq[(K, V)]): Future[Unit] = {
-    Future.join {
-      pairs map {
-        case (key, value) => set(key, value)
+  def set(paiws: seq[(k, >_< v)]): f-futuwe[unit] = {
+    futuwe.join {
+      paiws map {
+        case (key, -.- vawue) => set(key, UwU vawue)
       }
     }
   }
 
   /**
-   * Replaces the value for an existing key.  If the key doesn't exist, this has no effect.
-   * @return true if replaced, false if not found
+   * w-wepwaces the vawue fow an existing key. :3  if the key doesn't e-exist, σωσ this has n-nyo effect. >w<
+   * @wetuwn t-twue if wepwaced, (ˆ ﻌ ˆ)♡ fawse i-if not found
    */
-  def replace(key: K, value: V): Future[Boolean]
+  def wepwace(key: k-k, ʘwʘ vawue: v-v): futuwe[boowean]
 
   /**
-   * Deletes a value from cache.
-   * @return true if deleted, false if not found
+   * dewetes a vawue fwom cache. :3
+   * @wetuwn twue if deweted, (˘ω˘) fawse if not found
    */
-  def delete(key: K): Future[Boolean]
+  d-def dewete(key: k): futuwe[boowean]
 }
 
 /**
- * allows one cache to wrap another
+ * a-awwows one cache to wwap anothew
  */
-trait CacheWrapper[K, V] extends Cache[K, V] with ReadCacheWrapper[K, V, Cache[K, V]] {
-  override def add(key: K, value: V) = underlyingCache.add(key, value)
+t-twait cachewwappew[k, 😳😳😳 v] e-extends cache[k, rawr x3 v] with weadcachewwappew[k, (✿oωo) v, cache[k, (ˆ ﻌ ˆ)♡ v]] {
+  o-ovewwide def a-add(key: k, :3 vawue: v) = undewwyingcache.add(key, (U ᵕ U❁) v-vawue)
 
-  override def checkAndSet(key: K, value: V, checksum: Checksum) =
-    underlyingCache.checkAndSet(key, value, checksum)
+  ovewwide d-def checkandset(key: k, ^^;; vawue: v, mya checksum: checksum) =
+    undewwyingcache.checkandset(key, 😳😳😳 v-vawue, OwO checksum)
 
-  override def set(key: K, value: V) = underlyingCache.set(key, value)
+  o-ovewwide def s-set(key: k, rawr vawue: v) = undewwyingcache.set(key, XD v-vawue)
 
-  override def replace(key: K, value: V) = underlyingCache.replace(key, value)
+  ovewwide d-def wepwace(key: k, (U ﹏ U) vawue: v-v) = undewwyingcache.wepwace(key, (˘ω˘) vawue)
 
-  override def delete(key: K) = underlyingCache.delete(key)
+  ovewwide def dewete(key: k) = undewwyingcache.dewete(key)
 }
 
 /**
- * Switch between two caches with a decider value
+ * switch between t-two caches with a-a decidew vawue
  */
-class DeciderableCache[K, V](primary: Cache[K, V], secondary: Cache[K, V], isAvailable: => Boolean)
-    extends CacheWrapper[K, V] {
-  override def underlyingCache = if (isAvailable) primary else secondary
+cwass decidewabwecache[k, UwU v](pwimawy: c-cache[k, >_< v-v], secondawy: cache[k, σωσ v], 🥺 isavaiwabwe: => boowean)
+    extends cachewwappew[k, 🥺 v-v] {
+  ovewwide def undewwyingcache = if (isavaiwabwe) pwimawy ewse secondawy
 }
 
-private object MutableMapCache {
-  case class IntChecksum(i: Int) extends AnyVal with Checksum
+p-pwivate object mutabwemapcache {
+  case cwass i-intchecksum(i: i-int) extends anyvaw with checksum
 }
 
 /**
- * implementation of a Cache with a mutable.Map
+ * impwementation of a-a cache with a mutabwe.map
  */
-class MutableMapCache[K, V](underlying: mutable.Map[K, V]) extends Cache[K, V] {
-  import MutableMapCache.IntChecksum
+cwass m-mutabwemapcache[k, ʘwʘ v](undewwying: mutabwe.map[k, :3 v]) extends c-cache[k, (U ﹏ U) v] {
+  impowt mutabwemapcache.intchecksum
 
-  protected[this] def checksum(value: V): Checksum = IntChecksum(value.hashCode)
+  p-pwotected[this] def checksum(vawue: v): checksum = intchecksum(vawue.hashcode)
 
-  override def get(keys: Seq[K]): Future[KeyValueResult[K, V]] = Future {
-    val founds = Map.newBuilder[K, V]
-    val iter = keys.iterator
-    while (iter.hasNext) {
-      val key = iter.next()
-      synchronized {
-        underlying.get(key)
+  o-ovewwide def get(keys: s-seq[k]): futuwe[keyvawuewesuwt[k, (U ﹏ U) v-v]] = futuwe {
+    vaw founds = m-map.newbuiwdew[k, ʘwʘ v]
+    vaw i-itew = keys.itewatow
+    w-whiwe (itew.hasnext) {
+      v-vaw key = itew.next()
+      s-synchwonized {
+        u-undewwying.get(key)
       } match {
-        case Some(v) => founds += key -> v
-        case None =>
+        case some(v) => f-founds += key -> v-v
+        c-case nyone =>
       }
     }
-    val found = founds.result()
-    val notFound = NotFound(keys, found.keySet)
-    KeyValueResult(found, notFound)
+    vaw found = founds.wesuwt()
+    vaw nyotfound = n-nyotfound(keys, >w< found.keyset)
+    k-keyvawuewesuwt(found, rawr x3 n-nyotfound)
   }
 
-  override def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, V]] = Future {
-    val founds = Map.newBuilder[K, (Return[V], Checksum)]
-    val iter = keys.iterator
-    while (iter.hasNext) {
-      val key = iter.next()
-      synchronized {
-        underlying.get(key)
-      } match {
-        case Some(value) => founds += key -> (Return(value), checksum(value))
-        case None =>
+  ovewwide def getwithchecksum(keys: seq[k]): f-futuwe[cskeyvawuewesuwt[k, OwO v-v]] = futuwe {
+    v-vaw founds = m-map.newbuiwdew[k, ^•ﻌ•^ (wetuwn[v], >_< checksum)]
+    vaw i-itew = keys.itewatow
+    whiwe (itew.hasnext) {
+      vaw key = itew.next()
+      synchwonized {
+        undewwying.get(key)
+      } m-match {
+        case some(vawue) => f-founds += key -> (wetuwn(vawue), OwO c-checksum(vawue))
+        case nyone =>
       }
     }
-    val found = founds.result()
-    val notFound = NotFound(keys, found.keySet)
-    KeyValueResult(found, notFound)
+    v-vaw found = founds.wesuwt()
+    v-vaw notfound = n-nyotfound(keys, >_< f-found.keyset)
+    k-keyvawuewesuwt(found, (ꈍᴗꈍ) n-nyotfound)
   }
 
-  override def add(key: K, value: V): Future[Boolean] =
-    synchronized {
-      underlying.get(key) match {
-        case Some(_) =>
-          Future.False
-        case None =>
-          underlying += key -> value
-          Future.True
+  ovewwide def add(key: k, >w< vawue: v): futuwe[boowean] =
+    synchwonized {
+      undewwying.get(key) m-match {
+        c-case some(_) =>
+          f-futuwe.fawse
+        case nyone =>
+          u-undewwying += key -> vawue
+          futuwe.twue
       }
     }
 
-  override def checkAndSet(key: K, value: V, cs: Checksum): Future[Boolean] =
-    synchronized {
-      underlying.get(key) match {
-        case Some(current) =>
-          if (checksum(current) == cs) {
-            // checksums match, set value
-            underlying += key -> value
-            Future.True
-          } else {
-            // checksums didn't match, so no set
-            Future.False
+  ovewwide d-def checkandset(key: k-k, (U ﹏ U) vawue: v, cs: checksum): f-futuwe[boowean] =
+    synchwonized {
+      undewwying.get(key) match {
+        c-case some(cuwwent) =>
+          i-if (checksum(cuwwent) == cs) {
+            // c-checksums match, ^^ s-set vawue
+            undewwying += key -> vawue
+            futuwe.twue
+          } ewse {
+            // checksums d-didn't match, (U ﹏ U) s-so nyo set
+            f-futuwe.fawse
           }
-        case None =>
-          // if nothing there, the checksums can't be compared
-          Future.False
+        c-case n-nyone =>
+          // if nyothing t-thewe, :3 the checksums c-can't be compawed
+          f-futuwe.fawse
       }
     }
 
-  override def set(key: K, value: V): Future[Unit] = {
-    synchronized {
-      underlying += key -> value
+  o-ovewwide def set(key: k, vawue: v-v): futuwe[unit] = {
+    synchwonized {
+      undewwying += key -> v-vawue
     }
-    Future.Done
+    futuwe.done
   }
 
-  override def replace(key: K, value: V): Future[Boolean] = synchronized {
-    if (underlying.contains(key)) {
-      underlying(key) = value
-      Future.True
-    } else {
-      Future.False
+  o-ovewwide d-def wepwace(key: k, (✿oωo) vawue: v): f-futuwe[boowean] = synchwonized {
+    if (undewwying.contains(key)) {
+      u-undewwying(key) = v-vawue
+      f-futuwe.twue
+    } ewse {
+      futuwe.fawse
     }
   }
 
-  override def delete(key: K): Future[Boolean] = synchronized {
-    if (underlying.remove(key).nonEmpty) Future.True else Future.False
+  ovewwide def d-dewete(key: k): futuwe[boowean] = synchwonized {
+    i-if (undewwying.wemove(key).nonempty) f-futuwe.twue ewse futuwe.fawse
   }
 
-  override def release(): Unit = synchronized {
-    underlying.clear()
+  ovewwide d-def wewease(): unit = synchwonized {
+    u-undewwying.cweaw()
   }
 }
 
 /**
- * In-memory implementation of a cache with LRU semantics and a TTL.
+ * i-in-memowy impwementation of a cache with wwu semantics a-and a ttw. XD
  */
-class ExpiringLruCache[K, V](ttl: Duration, maximumSize: Int)
-    extends MutableMapCache[K, V](
-      // TODO: consider wiring the Cache interface directly to the
-      // Guava Cache, instead of introducing two layers of indirection
-      CacheBuilder.newBuilder
-        .asInstanceOf[CacheBuilder[K, V]]
-        .expireAfterWrite(ttl.inMilliseconds, TimeUnit.MILLISECONDS)
-        .initialCapacity(maximumSize)
-        .maximumSize(maximumSize)
-        .build[K, V]()
-        .asMap
-        .asScala
+cwass expiwingwwucache[k, >w< v](ttw: duwation, òωó m-maximumsize: i-int)
+    extends mutabwemapcache[k, (ꈍᴗꈍ) v-v](
+      // todo: considew w-wiwing the cache i-intewface diwectwy t-to the
+      // guava cache, instead of intwoducing two wayews of indiwection
+      cachebuiwdew.newbuiwdew
+        .asinstanceof[cachebuiwdew[k, rawr x3 v]]
+        .expiweaftewwwite(ttw.inmiwwiseconds, rawr x3 timeunit.miwwiseconds)
+        .initiawcapacity(maximumsize)
+        .maximumsize(maximumsize)
+        .buiwd[k, σωσ v]()
+        .asmap
+        .asscawa
     )
 
 /**
- * An empty cache that stays empty
+ * an empty cache that stays empty
  */
-class NullCache[K, V] extends Cache[K, V] {
-  lazy val futureTrue = Future.value(true)
-  override def get(keys: Seq[K]) = Future.value(KeyValueResult(notFound = keys.toSet))
-  override def getWithChecksum(keys: Seq[K]) = Future.value(KeyValueResult(notFound = keys.toSet))
-  override def add(key: K, value: V) = futureTrue
-  override def checkAndSet(key: K, value: V, checksum: Checksum) = Future.value(true)
-  override def set(key: K, value: V) = Future.Done
-  override def replace(key: K, value: V) = futureTrue
-  override def delete(key: K) = futureTrue
-  override def release() = ()
+cwass nyuwwcache[k, (ꈍᴗꈍ) v-v] extends c-cache[k, rawr v] {
+  wazy vaw futuwetwue = futuwe.vawue(twue)
+  o-ovewwide d-def get(keys: s-seq[k]) = futuwe.vawue(keyvawuewesuwt(notfound = keys.toset))
+  o-ovewwide def getwithchecksum(keys: seq[k]) = futuwe.vawue(keyvawuewesuwt(notfound = k-keys.toset))
+  o-ovewwide def add(key: k, ^^;; vawue: v-v) = futuwetwue
+  ovewwide d-def checkandset(key: k-k, rawr x3 vawue: v, (ˆ ﻌ ˆ)♡ checksum: checksum) = futuwe.vawue(twue)
+  o-ovewwide d-def set(key: k-k, vawue: v) = f-futuwe.done
+  o-ovewwide def wepwace(key: k-k, σωσ vawue: v-v) = futuwetwue
+  o-ovewwide def d-dewete(key: k) = futuwetwue
+  o-ovewwide def wewease() = ()
 }

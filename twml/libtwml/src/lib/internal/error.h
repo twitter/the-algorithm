@@ -1,29 +1,29 @@
-#pragma once
-#include <twml/Error.h>
-#include <iostream>
+#pwagma once
+#incwude <twmw/ewwow.h>
+#incwude <iostweam>
 
-#define HANDLE_EXCEPTIONS(fn) do {              \
-        try {                                   \
-            fn                                  \
-        } catch(const twml::Error &e) {         \
-            std::cerr << e.what() << std::endl; \
-            return e.err();                     \
+#define handwe_exceptions(fn) d-do {              \
+        t-twy {                                   \
+            f-fn                                  \
+        } c-catch(const t-twmw::ewwow &e) {         \
+            s-std::ceww << e-e.nani() << s-std::endw; \
+            wetuwn e.eww();                     \
         } catch(...) {                          \
-            std::cerr << "Unknown error\n";     \
-            return TWML_ERR_UNKNOWN;            \
+            std::ceww << "unknown ewwow\n";     \
+            wetuwn twmw_eww_unknown;            \
         }                                       \
-    } while(0)
+    } w-whiwe(0)
 
-#define TWML_CHECK(fn, msg) do {                \
-        twml_err err = fn;                      \
-        if (err == TWML_ERR_NONE) break;        \
-        throw twml::Error(err, msg);            \
-    } while(0)
+#define twmw_check(fn, rawr msg) do {                \
+        t-twmw_eww eww = fn;                      \
+        i-if (eww == twmw_eww_none) bweak;        \
+        thwow t-twmw::ewwow(eww, OwO msg);            \
+    } w-whiwe(0)
 
 
-#define CHECK_THRIFT_TYPE(real_type, expected_type, type) do {      \
-    int real_type_val = real_type;                                  \
-    if (real_type_val != expected_type) {                           \
-      throw twml::ThriftInvalidType(real_type_val, __func__, type); \
+#define c-check_thwift_type(weaw_type, (U ﹏ U) expected_type, >_< type) do {      \
+    int weaw_type_vaw = w-weaw_type;                                  \
+    if (weaw_type_vaw != expected_type) {                           \
+      thwow twmw::thwiftinvawidtype(weaw_type_vaw, rawr x3 __func__, mya t-type); \
     }                                                               \
-  } while(0)
+  } whiwe(0)

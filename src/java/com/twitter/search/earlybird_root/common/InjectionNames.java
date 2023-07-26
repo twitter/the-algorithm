@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird_root.common;
+package com.twittew.seawch.eawwybiwd_woot.common;
 
-public final class InjectionNames {
+pubwic finaw cwass i-injectionnames {
 
-  public static final String FULL_ARCHIVE = "full_archive";
-  public static final String REALTIME = "realtime";
-  public static final String PROTECTED = "protected";
+  p-pubwic s-static finaw stwing f-fuww_awchive = "fuww_awchive";
+  p-pubwic static f-finaw stwing w-weawtime = "weawtime";
+  p-pubwic static finaw stwing pwotected = "pwotected";
 
-  private InjectionNames() { }
+  pwivate injectionnames() { }
 }

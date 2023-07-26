@@ -1,92 +1,92 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.buiwdew
 
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.{Injection => Serializer}
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.PositionFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.joinkey.context.RequestJoinKeyContext
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.suggests.controller_data.Home
-import com.twitter.suggests.controller_data.TweetTypeGenerator
-import com.twitter.suggests.controller_data.home_tweets.v1.{thriftscala => v1ht}
-import com.twitter.suggests.controller_data.home_tweets.{thriftscala => ht}
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
+impowt com.twittew.bijection.base64stwing
+i-impowt com.twittew.bijection.scwooge.binawyscawacodec
+i-impowt com.twittew.bijection.{injection => s-sewiawizew}
+impowt c-com.twittew.finagwe.twacing.twace
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.candidatesouwceidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.positionfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt com.twittew.joinkey.context.wequestjoinkeycontext
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventdetaiwsbuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.timewinesdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.suggests.contwowwew_data.home
+impowt c-com.twittew.suggests.contwowwew_data.tweettypegenewatow
+impowt com.twittew.suggests.contwowwew_data.home_tweets.v1.{thwiftscawa => v-v1ht}
+impowt c-com.twittew.suggests.contwowwew_data.home_tweets.{thwiftscawa => ht}
+impowt com.twittew.suggests.contwowwew_data.thwiftscawa.contwowwewdata
+impowt com.twittew.suggests.contwowwew_data.v2.thwiftscawa.{contwowwewdata => contwowwewdatav2}
 
-object HomeClientEventDetailsBuilder {
-  implicit val ByteSerializer: Serializer[ControllerData, Array[Byte]] =
-    BinaryScalaCodec(ControllerData)
+o-object homecwienteventdetaiwsbuiwdew {
+  impwicit vaw bytesewiawizew: sewiawizew[contwowwewdata, rawr x3 a-awway[byte]] =
+    binawyscawacodec(contwowwewdata)
 
-  val ControllerDataSerializer: Serializer[ControllerData, String] =
-    Serializer.connect[ControllerData, Array[Byte], Base64String, String]
+  v-vaw contwowwewdatasewiawizew: s-sewiawizew[contwowwewdata, OwO s-stwing] =
+    s-sewiawizew.connect[contwowwewdata, /(^•ω•^) awway[byte], 😳😳😳 base64stwing, ( ͡o ω ͡o ) stwing]
 
   /**
-   * define getRequestJoinId as a method(def) rather than a val because each new request
-   * needs to call the context to update the id.
+   * d-define getwequestjoinid as a method(def) w-wathew than a vaw because each nyew wequest
+   * nyeeds to caww the context to update the i-id. >_<
    */
-  private def getRequestJoinId(): Option[Long] =
-    RequestJoinKeyContext.current.flatMap(_.requestJoinId)
+  pwivate def getwequestjoinid(): o-option[wong] =
+    w-wequestjoinkeycontext.cuwwent.fwatmap(_.wequestjoinid)
 }
 
-case class HomeClientEventDetailsBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-) extends BaseClientEventDetailsBuilder[Query, Candidate]
-    with TweetTypeGenerator[FeatureMap] {
+c-case cwass homecwienteventdetaiwsbuiwdew[-quewy <: pipewinequewy, -candidate <: univewsawnoun[any]](
+) e-extends basecwienteventdetaiwsbuiwdew[quewy, >w< c-candidate]
+    with t-tweettypegenewatow[featuwemap] {
 
-  import HomeClientEventDetailsBuilder._
+  i-impowt homecwienteventdetaiwsbuiwdew._
 
-  override def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails] = {
+  ovewwide def appwy(
+    q-quewy: quewy, rawr
+    candidate: c-candidate,
+    candidatefeatuwes: featuwemap
+  ): o-option[cwienteventdetaiws] = {
 
-    val tweetTypesBitmaps = mkTweetTypesBitmaps(
-      Home.TweetTypeIdxMap,
-      HomeTweetTypePredicates.PredicateMap,
-      candidateFeatures)
+    vaw tweettypesbitmaps = m-mktweettypesbitmaps(
+      home.tweettypeidxmap, 😳
+      h-hometweettypepwedicates.pwedicatemap, >w<
+      c-candidatefeatuwes)
 
-    val tweetTypesListBytes = mkItemTypesBitmapsV2(
-      Home.TweetTypeIdxMap,
-      HomeTweetTypePredicates.PredicateMap,
-      candidateFeatures)
+    vaw tweettypeswistbytes = mkitemtypesbitmapsv2(
+      home.tweettypeidxmap, (⑅˘꒳˘)
+      hometweettypepwedicates.pwedicatemap, OwO
+      candidatefeatuwes)
 
-    val candidateSourceId =
-      candidateFeatures.getOrElse(CandidateSourceIdFeature, None).map(_.value.toByte)
+    v-vaw candidatesouwceid =
+      c-candidatefeatuwes.getowewse(candidatesouwceidfeatuwe, (ꈍᴗꈍ) nyone).map(_.vawue.tobyte)
 
-    val homeTweetsControllerDataV1 = v1ht.HomeTweetsControllerData(
-      tweetTypesBitmap = tweetTypesBitmaps.getOrElse(0, 0L),
-      tweetTypesBitmapContinued1 = tweetTypesBitmaps.get(1),
-      candidateTweetSourceId = candidateSourceId,
-      traceId = Some(Trace.id.traceId.toLong),
-      injectedPosition = candidateFeatures.getOrElse(PositionFeature, None),
-      tweetTypesListBytes = Some(tweetTypesListBytes),
-      requestJoinId = getRequestJoinId(),
+    v-vaw hometweetscontwowwewdatav1 = v-v1ht.hometweetscontwowwewdata(
+      t-tweettypesbitmap = tweettypesbitmaps.getowewse(0, 😳 0w),
+      tweettypesbitmapcontinued1 = tweettypesbitmaps.get(1), 😳😳😳
+      c-candidatetweetsouwceid = candidatesouwceid, mya
+      twaceid = some(twace.id.twaceid.towong), mya
+      injectedposition = c-candidatefeatuwes.getowewse(positionfeatuwe, (⑅˘꒳˘) nyone), (U ﹏ U)
+      t-tweettypeswistbytes = s-some(tweettypeswistbytes), mya
+      w-wequestjoinid = getwequestjoinid(), ʘwʘ
     )
 
-    val serializedControllerData = ControllerDataSerializer(
-      ControllerData.V2(
-        ControllerDataV2.HomeTweets(ht.HomeTweetsControllerData.V1(homeTweetsControllerDataV1))))
+    v-vaw s-sewiawizedcontwowwewdata = c-contwowwewdatasewiawizew(
+      c-contwowwewdata.v2(
+        contwowwewdatav2.hometweets(ht.hometweetscontwowwewdata.v1(hometweetscontwowwewdatav1))))
 
-    val clientEventDetails = ClientEventDetails(
-      conversationDetails = None,
-      timelinesDetails = Some(
-        TimelinesDetails(
-          injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None).map(_.name),
-          controllerData = Some(serializedControllerData),
-          sourceData = None)),
-      articleDetails = None,
-      liveEventDetails = None,
-      commerceDetails = None
+    vaw cwienteventdetaiws = cwienteventdetaiws(
+      c-convewsationdetaiws = nyone, (˘ω˘)
+      t-timewinesdetaiws = some(
+        t-timewinesdetaiws(
+          i-injectiontype = c-candidatefeatuwes.getowewse(suggesttypefeatuwe, (U ﹏ U) nyone).map(_.name), ^•ﻌ•^
+          contwowwewdata = some(sewiawizedcontwowwewdata), (˘ω˘)
+          s-souwcedata = nyone)), :3
+      awticwedetaiws = nyone, ^^;;
+      wiveeventdetaiws = nyone, 🥺
+      commewcedetaiws = nyone
     )
 
-    Some(clientEventDetails)
+    some(cwienteventdetaiws)
   }
 }

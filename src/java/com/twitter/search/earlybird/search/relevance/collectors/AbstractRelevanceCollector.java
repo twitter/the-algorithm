@@ -1,147 +1,147 @@
-package com.twitter.search.earlybird.search.relevance.collectors;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance.cowwectows;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.LanguageHistogram;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.AbstractResultsCollector;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+i-impowt c-com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.wanguagehistogwam;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+impowt com.twittew.seawch.eawwybiwd.seawch.abstwactwesuwtscowwectow;
+impowt c-com.twittew.seawch.eawwybiwd.seawch.wewevance.wewevanceseawchwequestinfo;
+impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.wewevanceseawchwesuwts;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing.scowingfunction;
+impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadataoptions;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtswewevancestats;
 
 /**
- * AbstractRelevanceCollector is a results collector that collects RelevanceHit results
- * which include more detailed information than a normal Hit.
+ * a-abstwactwewevancecowwectow is a-a wesuwts cowwectow t-that cowwects wewevancehit wesuwts
+ * which incwude mowe detaiwed infowmation t-than a nyowmaw hit. ʘwʘ
  */
-public abstract class AbstractRelevanceCollector
-    extends AbstractResultsCollector<RelevanceSearchRequestInfo, RelevanceSearchResults> {
-  protected final ScoringFunction scoringFunction;
-  private final ThriftSearchResultsRelevanceStats relevanceStats;
-  private final EarlybirdCluster cluster;
-  private final UserTable userTable;
+pubwic abstwact cwass abstwactwewevancecowwectow
+    extends abstwactwesuwtscowwectow<wewevanceseawchwequestinfo, 😳😳😳 w-wewevanceseawchwesuwts> {
+  pwotected f-finaw scowingfunction s-scowingfunction;
+  p-pwivate f-finaw thwiftseawchwesuwtswewevancestats wewevancestats;
+  pwivate f-finaw eawwybiwdcwustew cwustew;
+  pwivate f-finaw usewtabwe usewtabwe;
 
-  // Per-language result counts.
-  private final LanguageHistogram languageHistogram = new LanguageHistogram();
+  // pew-wanguage wesuwt counts. ^^;;
+  pwivate finaw wanguagehistogwam wanguagehistogwam = nyew wanguagehistogwam();
 
-  // Accumulated time spend on relevance scoring across all collected hits, including batch scoring.
-  private long scoringTimeNanos = 0;
+  // a-accumuwated time spend on wewevance s-scowing acwoss a-aww cowwected h-hits, o.O incwuding batch scowing. (///ˬ///✿)
+  pwivate wong scowingtimenanos = 0;
 
-  public AbstractRelevanceCollector(
-      ImmutableSchemaInterface schema,
-      RelevanceSearchRequestInfo searchRequestInfo,
-      ScoringFunction scoringFunction,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
-      UserTable userTable,
-      Clock clock,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, clock, searcherStats, requestDebugMode);
-    this.scoringFunction = scoringFunction;
-    this.relevanceStats = new ThriftSearchResultsRelevanceStats();
-    this.cluster = cluster;
-    this.userTable = userTable;
+  p-pubwic a-abstwactwewevancecowwectow(
+      immutabweschemaintewface s-schema, σωσ
+      w-wewevanceseawchwequestinfo seawchwequestinfo, nyaa~~
+      scowingfunction scowingfunction, ^^;;
+      e-eawwybiwdseawchewstats seawchewstats, ^•ﻌ•^
+      e-eawwybiwdcwustew cwustew, σωσ
+      usewtabwe usewtabwe, -.-
+      c-cwock cwock, ^^;;
+      i-int wequestdebugmode) {
+    supew(schema, XD s-seawchwequestinfo, 🥺 c-cwock, seawchewstats, òωó wequestdebugmode);
+    this.scowingfunction = scowingfunction;
+    this.wewevancestats = nyew t-thwiftseawchwesuwtswewevancestats();
+    t-this.cwustew = cwustew;
+    t-this.usewtabwe = u-usewtabwe;
   }
 
   /**
-   * Subclasses must implement this method to actually collect a scored relevance hit.
+   * s-subcwasses must impwement this method to actuawwy cowwect a scowed w-wewevance hit. (ˆ ﻌ ˆ)♡
    */
-  protected abstract void doCollectWithScore(long tweetID, float score) throws IOException;
+  pwotected abstwact void docowwectwithscowe(wong tweetid, -.- f-fwoat scowe) thwows ioexception;
 
-  @Override
-  public final void startSegment() throws IOException {
-    scoringFunction.setNextReader(currTwitterReader);
+  @ovewwide
+  p-pubwic finaw v-void stawtsegment() t-thwows ioexception {
+    scowingfunction.setnextweadew(cuwwtwittewweadew);
 
-    ThriftSearchResultMetadataOptions options =
-        searchRequestInfo.getSearchQuery().getResultMetadataOptions();
-    featuresRequested = options != null && options.isReturnSearchResultFeatures();
+    thwiftseawchwesuwtmetadataoptions o-options =
+        s-seawchwequestinfo.getseawchquewy().getwesuwtmetadataoptions();
+    f-featuweswequested = o-options != nyuww && options.iswetuwnseawchwesuwtfeatuwes();
   }
 
-  @Override
-  protected final void doCollect(long tweetID) throws IOException {
-    final long scoringStartNanos = getClock().nowNanos();
-    float luceneSore = scorer.score();
-    final float score = scoringFunction.score(curDocId, luceneSore);
-    final long scoringEndNanos = getClock().nowNanos();
-    addToOverallScoringTimeNanos(scoringStartNanos, scoringEndNanos);
+  @ovewwide
+  pwotected finaw v-void docowwect(wong t-tweetid) thwows i-ioexception {
+    f-finaw wong s-scowingstawtnanos = getcwock().nownanos();
+    fwoat wucenesowe = scowew.scowe();
+    f-finaw fwoat scowe = scowingfunction.scowe(cuwdocid, :3 wucenesowe);
+    finaw wong scowingendnanos = getcwock().nownanos();
+    a-addtoovewawwscowingtimenanos(scowingstawtnanos, ʘwʘ scowingendnanos);
 
-    scoringFunction.updateRelevanceStats(relevanceStats);
+    scowingfunction.updatewewevancestats(wewevancestats);
 
-    updateHitCounts(tweetID);
+    updatehitcounts(tweetid);
 
-    doCollectWithScore(tweetID, score);
+    d-docowwectwithscowe(tweetid, 🥺 s-scowe);
   }
 
-  protected final void addToOverallScoringTimeNanos(long scoringStartNanos, long scoringEndNanos) {
-    scoringTimeNanos += scoringEndNanos - scoringStartNanos;
+  p-pwotected finaw void addtoovewawwscowingtimenanos(wong s-scowingstawtnanos, >_< wong scowingendnanos) {
+    s-scowingtimenanos += s-scowingendnanos - scowingstawtnanos;
   }
 
-  protected final ThriftSearchResultMetadata collectMetadata() throws IOException {
-    ThriftSearchResultMetadataOptions options =
-        searchRequestInfo.getSearchQuery().getResultMetadataOptions();
-    Preconditions.checkNotNull(options);
-    ThriftSearchResultMetadata metadata =
-        Preconditions.checkNotNull(scoringFunction.getResultMetadata(options));
-    if (metadata.isSetLanguage()) {
-      languageHistogram.increment(metadata.getLanguage().getValue());
+  pwotected finaw thwiftseawchwesuwtmetadata cowwectmetadata() thwows ioexception {
+    t-thwiftseawchwesuwtmetadataoptions options =
+        s-seawchwequestinfo.getseawchquewy().getwesuwtmetadataoptions();
+    pweconditions.checknotnuww(options);
+    t-thwiftseawchwesuwtmetadata m-metadata =
+        pweconditions.checknotnuww(scowingfunction.getwesuwtmetadata(options));
+    if (metadata.issetwanguage()) {
+      w-wanguagehistogwam.incwement(metadata.getwanguage().getvawue());
     }
 
-    // Some additional metadata which is not provided by the scoring function, but
-    // by accessing the reader directly.
-    if (currTwitterReader != null) {
-      fillResultGeoLocation(metadata);
-      if (searchRequestInfo.isCollectConversationId()) {
-        long conversationId =
-            documentFeatures.getFeatureValue(EarlybirdFieldConstant.CONVERSATION_ID_CSF);
-        if (conversationId != 0) {
-          ensureExtraMetadataIsSet(metadata);
-          metadata.getExtraMetadata().setConversationId(conversationId);
+    // s-some additionaw metadata w-which is nyot p-pwovided by the scowing function, ʘwʘ but
+    // by accessing the weadew diwectwy. (˘ω˘)
+    i-if (cuwwtwittewweadew != n-nyuww) {
+      f-fiwwwesuwtgeowocation(metadata);
+      if (seawchwequestinfo.iscowwectconvewsationid()) {
+        w-wong c-convewsationid =
+            documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.convewsation_id_csf);
+        i-if (convewsationid != 0) {
+          ensuweextwametadataisset(metadata);
+          metadata.getextwametadata().setconvewsationid(convewsationid);
         }
       }
     }
 
-    // Check and collect hit attribution data, if it's available.
-    fillHitAttributionMetadata(metadata);
+    // check and cowwect hit attwibution d-data, (✿oωo) i-if it's avaiwabwe. (///ˬ///✿)
+    fiwwhitattwibutionmetadata(metadata);
 
-    long fromUserId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
-    if (searchRequestInfo.isGetFromUserId()) {
-      metadata.setFromUserId(fromUserId);
+    wong fwomusewid = d-documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.fwom_usew_id_csf);
+    i-if (seawchwequestinfo.isgetfwomusewid()) {
+      metadata.setfwomusewid(fwomusewid);
     }
 
-    collectExclusiveConversationAuthorId(metadata);
-    collectFacets(metadata);
-    collectFeatures(metadata);
-    collectIsProtected(metadata, cluster, userTable);
+    cowwectexcwusiveconvewsationauthowid(metadata);
+    cowwectfacets(metadata);
+    c-cowwectfeatuwes(metadata);
+    cowwectispwotected(metadata, rawr x3 cwustew, usewtabwe);
 
-    return metadata;
+    wetuwn metadata;
   }
 
-  protected final ThriftSearchResultsRelevanceStats getRelevanceStats() {
-    return relevanceStats;
+  p-pwotected finaw thwiftseawchwesuwtswewevancestats getwewevancestats() {
+    w-wetuwn w-wewevancestats;
   }
 
-  public final LanguageHistogram getLanguageHistogram() {
-    return languageHistogram;
+  pubwic finaw wanguagehistogwam getwanguagehistogwam() {
+    w-wetuwn wanguagehistogwam;
   }
 
-  @Override
-  protected final RelevanceSearchResults doGetResults() throws IOException {
-    final RelevanceSearchResults results = doGetRelevanceResults();
-    results.setScoringTimeNanos(scoringTimeNanos);
-    return results;
+  @ovewwide
+  p-pwotected finaw wewevanceseawchwesuwts dogetwesuwts() thwows i-ioexception {
+    finaw wewevanceseawchwesuwts w-wesuwts = dogetwewevancewesuwts();
+    wesuwts.setscowingtimenanos(scowingtimenanos);
+    wetuwn wesuwts;
   }
 
   /**
-   * For subclasses to process and aggregate collected hits.
+   * f-fow subcwasses to pwocess a-and aggwegate c-cowwected hits. -.-
    */
-  protected abstract RelevanceSearchResults doGetRelevanceResults() throws IOException;
+  pwotected a-abstwact wewevanceseawchwesuwts dogetwewevancewesuwts() t-thwows i-ioexception;
 }

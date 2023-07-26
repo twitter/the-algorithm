@@ -1,101 +1,101 @@
-package com.twitter.follow_recommendations.services
+package com.twittew.fowwow_wecommendations.sewvices
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService.GetRecommendations
-import com.twitter.follow_recommendations.thriftscala.ClientContext
-import com.twitter.follow_recommendations.thriftscala.DebugParams
-import com.twitter.follow_recommendations.thriftscala.DisplayContext
-import com.twitter.follow_recommendations.thriftscala.DisplayLocation
-import com.twitter.follow_recommendations.thriftscala.Profile
-import com.twitter.follow_recommendations.thriftscala.RecommendationRequest
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.thwift.cwientid
+impowt c-com.twittew.finatwa.thwift.wouting.thwiftwawmup
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.fowwowwecommendationsthwiftsewvice.getwecommendations
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.cwientcontext
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.debugpawams
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.dispwaycontext
+i-impowt c-com.twittew.fowwow_wecommendations.thwiftscawa.dispwaywocation
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.pwofiwe
+impowt com.twittew.fowwow_wecommendations.thwiftscawa.wecommendationwequest
+impowt com.twittew.inject.wogging
+impowt com.twittew.inject.utiws.handwew
+i-impowt com.twittew.scwooge.wequest
+impowt com.twittew.scwooge.wesponse
+i-impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
+impowt com.twittew.utiw.twy
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class FollowRecommendationsServiceWarmupHandler @Inject() (warmup: ThriftWarmup)
-    extends Handler
-    with Logging {
+@singweton
+c-cwass f-fowwowwecommendationssewvicewawmuphandwew @inject() (wawmup: thwiftwawmup)
+    extends handwew
+    with wogging {
 
-  private val clientId = ClientId("thrift-warmup-client")
+  pwivate vaw cwientid = cwientid("thwift-wawmup-cwient")
 
-  override def handle(): Unit = {
-    val testIds = Seq(1L)
-    def warmupQuery(userId: Long, displayLocation: DisplayLocation): RecommendationRequest = {
-      val clientContext = ClientContext(
-        userId = Some(userId),
-        guestId = None,
-        appId = Some(258901L),
-        ipAddress = Some("0.0.0.0"),
-        userAgent = Some("FAKE_USER_AGENT_FOR_WARMUPS"),
-        countryCode = Some("US"),
-        languageCode = Some("en"),
-        isTwoffice = None,
-        userRoles = None,
-        deviceId = Some("FAKE_DEVICE_ID_FOR_WARMUPS")
+  o-ovewwide def handwe(): unit = {
+    vaw testids = seq(1w)
+    def wawmupquewy(usewid: w-wong, ʘwʘ dispwaywocation: dispwaywocation): wecommendationwequest = {
+      v-vaw cwientcontext = c-cwientcontext(
+        u-usewid = s-some(usewid), (˘ω˘)
+        guestid = nyone, (U ﹏ U)
+        a-appid = some(258901w), ^•ﻌ•^
+        ipaddwess = some("0.0.0.0"), (˘ω˘)
+        usewagent = s-some("fake_usew_agent_fow_wawmups"), :3
+        countwycode = some("us"), ^^;;
+        wanguagecode = some("en"), 🥺
+        istwoffice = nyone, (⑅˘꒳˘)
+        u-usewwowes = nyone, nyaa~~
+        deviceid = s-some("fake_device_id_fow_wawmups")
       )
-      RecommendationRequest(
-        clientContext = clientContext,
-        displayLocation = displayLocation,
-        displayContext = None,
-        maxResults = Some(3),
-        fetchPromotedContent = Some(false),
-        debugParams = Some(DebugParams(doNotLog = Some(true)))
+      w-wecommendationwequest(
+        c-cwientcontext = cwientcontext, :3
+        dispwaywocation = dispwaywocation, ( ͡o ω ͡o )
+        dispwaycontext = n-nyone, mya
+        m-maxwesuwts = some(3), (///ˬ///✿)
+        f-fetchpwomotedcontent = some(fawse), (˘ω˘)
+        d-debugpawams = some(debugpawams(donotwog = s-some(twue)))
       )
     }
 
-    // Add FRS display locations here if they should be targeted for warm-up
-    // when FRS is starting from a fresh state after a deploy
-    val displayLocationsToWarmUp: Seq[DisplayLocation] = Seq(
-      DisplayLocation.HomeTimeline,
-      DisplayLocation.HomeTimelineReverseChron,
-      DisplayLocation.ProfileSidebar,
-      DisplayLocation.NuxInterests,
-      DisplayLocation.NuxPymk
+    // add fws dispway w-wocations hewe if they shouwd be tawgeted fow wawm-up
+    // w-when fws is stawting f-fwom a fwesh state aftew a depwoy
+    v-vaw dispwaywocationstowawmup: s-seq[dispwaywocation] = seq(
+      dispwaywocation.hometimewine, ^^;;
+      dispwaywocation.hometimewinewevewsechwon, (✿oωo)
+      dispwaywocation.pwofiwesidebaw, (U ﹏ U)
+      dispwaywocation.nuxintewests, -.-
+      dispwaywocation.nuxpymk
     )
 
-    try {
-      clientId.asCurrent {
-        // Iterate over each user ID created for testing
-        testIds foreach { id =>
-          // Iterate over each display location targeted for warm-up
-          displayLocationsToWarmUp foreach { displayLocation =>
-            val warmupReq = warmupQuery(id, displayLocation)
-            info(s"Sending warm-up request to service with query: $warmupReq")
-            warmup.sendRequest(
-              method = GetRecommendations,
-              req = Request(GetRecommendations.Args(warmupReq)))(assertWarmupResponse)
-            // send the request one more time so that it goes through cache hits
-            warmup.sendRequest(
-              method = GetRecommendations,
-              req = Request(GetRecommendations.Args(warmupReq)))(assertWarmupResponse)
+    t-twy {
+      c-cwientid.ascuwwent {
+        // itewate ovew e-each usew id c-cweated fow testing
+        t-testids foweach { id =>
+          // itewate ovew each dispway wocation t-tawgeted fow wawm-up
+          dispwaywocationstowawmup foweach { dispwaywocation =>
+            v-vaw wawmupweq = wawmupquewy(id, ^•ﻌ•^ d-dispwaywocation)
+            i-info(s"sending w-wawm-up wequest to sewvice with q-quewy: $wawmupweq")
+            w-wawmup.sendwequest(
+              m-method = getwecommendations, rawr
+              w-weq = wequest(getwecommendations.awgs(wawmupweq)))(assewtwawmupwesponse)
+            // send the wequest o-one mowe t-time so that it g-goes thwough cache h-hits
+            w-wawmup.sendwequest(
+              method = getwecommendations, (˘ω˘)
+              weq = wequest(getwecommendations.awgs(wawmupweq)))(assewtwawmupwesponse)
           }
         }
       }
     } catch {
-      case e: Throwable =>
-        // we don't want a warmup failure to prevent start-up
-        error(e.getMessage, e)
+      c-case e: thwowabwe =>
+        // we don't want a wawmup faiwuwe to pwevent stawt-up
+        e-ewwow(e.getmessage, nyaa~~ e)
     }
-    info("Warm-up done.")
+    info("wawm-up done.")
   }
 
-  /* Private */
+  /* p-pwivate */
 
-  private def assertWarmupResponse(result: Try[Response[GetRecommendations.SuccessType]]): Unit = {
-    // we collect and log any exceptions from the result.
-    result match {
-      case Return(_) => // ok
-      case Throw(exception) =>
-        warn()
-        error(s"Error performing warm-up request: ${exception.getMessage}", exception)
+  p-pwivate def a-assewtwawmupwesponse(wesuwt: twy[wesponse[getwecommendations.successtype]]): unit = {
+    // we cowwect and wog a-any exceptions fwom the wesuwt. UwU
+    w-wesuwt match {
+      c-case wetuwn(_) => // ok
+      case thwow(exception) =>
+        wawn()
+        ewwow(s"ewwow pewfowming w-wawm-up wequest: ${exception.getmessage}", :3 exception)
     }
   }
 }

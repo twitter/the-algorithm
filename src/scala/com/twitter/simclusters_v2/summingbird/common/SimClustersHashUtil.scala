@@ -1,14 +1,14 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
 /**
- * Provides int to int hash function. Used to batch clusterIds together.
+ * pwovides i-int to int h-hash function. σωσ u-used to batch cwustewids t-togethew. σωσ
  */
-object SimClustersHashUtil {
-  def clusterIdToBucket(clusterId: Int): Int = {
-    clusterId % numBuckets
+o-object simcwustewshashutiw {
+  d-def cwustewidtobucket(cwustewid: i-int): int = {
+    c-cwustewid % nyumbuckets
   }
 
-  val numBuckets: Int = 200
+  vaw nyumbuckets: int = 200
 
-  val getAllBuckets: Seq[Int] = 0.until(numBuckets)
+  vaw getawwbuckets: s-seq[int] = 0.untiw(numbuckets)
 }

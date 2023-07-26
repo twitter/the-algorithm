@@ -1,226 +1,226 @@
-package com.twitter.search.ingester.pipeline.wire;
+package com.twittew.seawch.ingestew.pipewine.wiwe;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import javax.annotation.Nullable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.concuwwent.executowsewvice;
+i-impowt javax.annotation.nuwwabwe;
+i-impowt j-javax.naming.context;
+i-impowt javax.naming.initiawcontext;
+i-impowt j-javax.naming.namingexception;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.Partitioner;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.Serializer;
-import org.apache.thrift.TBase;
+impowt owg.apache.kafka.cwients.consumew.kafkaconsumew;
+impowt owg.apache.kafka.cwients.pwoducew.pawtitionew;
+impowt owg.apache.kafka.common.sewiawization.desewiawizew;
+i-impowt owg.apache.kafka.common.sewiawization.sewiawizew;
+impowt owg.apache.thwift.tbase;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
-import com.twitter.eventbus.client.EventBusSubscriber;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
-import com.twitter.gizmoduck.thriftjava.UserService;
-import com.twitter.metastore.client_v2.MetastoreClient;
-import com.twitter.pink_floyd.thrift.Storer;
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.relevance.classifiers.TweetOffensiveEvaluator;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceCoreFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceParticipantsFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.NamedEntityFetcher;
-import com.twitter.search.ingester.pipeline.util.PipelineExceptionHandler;
-import com.twitter.storage.client.manhattan.kv.JavaManhattanKVEndpoint;
-import com.twitter.tweetypie.thriftjava.TweetService;
-import com.twitter.util.Duration;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+i-impowt com.twittew.common.utiw.cwock;
+impowt c-com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt com.twittew.decidew.decidew;
+impowt c-com.twittew.eventbus.cwient.eventbussubscwibew;
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew;
+i-impowt com.twittew.finatwa.kafka.pwoducews.bwockingfinagwekafkapwoducew;
+impowt c-com.twittew.gizmoduck.thwiftjava.usewsewvice;
+impowt com.twittew.metastowe.cwient_v2.metastowecwient;
+impowt com.twittew.pink_fwoyd.thwift.stowew;
+impowt c-com.twittew.seawch.common.pawtitioning.base.pawtitionmappingmanagew;
+impowt com.twittew.seawch.common.wewevance.cwassifiews.tweetoffensiveevawuatow;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.ingestew.pipewine.stwato_fetchews.audiospacecowefetchew;
+i-impowt com.twittew.seawch.ingestew.pipewine.stwato_fetchews.audiospacepawticipantsfetchew;
+i-impowt com.twittew.seawch.ingestew.pipewine.stwato_fetchews.namedentityfetchew;
+i-impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewineexceptionhandwew;
+i-impowt com.twittew.stowage.cwient.manhattan.kv.javamanhattankvendpoint;
+i-impowt com.twittew.tweetypie.thwiftjava.tweetsewvice;
+impowt com.twittew.utiw.duwation;
+i-impowt com.twittew.utiw.function;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * An "injection module" that provides bindings for all ingester endpoints that we want to mock out
- * in tests.
+ * an "injection m-moduwe" that pwovides bindings fow aww ingestew endpoints that we want to mock out
+ * i-in tests. (///ˬ///✿)
  */
-public abstract class WireModule {
-  /** The JNDI property to which this module will be bound. */
-  private static final String WIRE_MODULE_NAME = "";
+pubwic abstwact cwass w-wiwemoduwe {
+  /** t-the jndi p-pwopewty to which this moduwe wiww be bound. σωσ */
+  pwivate static f-finaw stwing wiwe_moduwe_name = "";
 
-  /** The root name of all properties specified in the twitter-naming-production.*.xml files. */
-  public static final String JNDI_PIPELINE_ROOT = "";
+  /** t-the woot nyame of aww p-pwopewties specified i-in the twittew-naming-pwoduction.*.xmw fiwes. /(^•ω•^) */
+  p-pubwic static finaw stwing j-jndi_pipewine_woot = "";
 
   /**
-   * (Re)binds the given wire module in JNDI.
+   * (we)binds the given wiwe moduwe in jndi. 😳
    *
-   * @param wireModule The wire module to bind in JNDI.
-   * @throws NamingException If the wire module cannot be bound in JNDI for some reason.
+   * @pawam w-wiwemoduwe the wiwe moduwe to b-bind in jndi. 😳
+   * @thwows nyamingexception i-if t-the wiwe moduwe cannot be bound in jndi fow some weason. (⑅˘꒳˘)
    */
-  public static void bindWireModule(WireModule wireModule) throws NamingException {
-    Context jndiContext = new InitialContext();
-    jndiContext.rebind(WIRE_MODULE_NAME, wireModule);
+  pubwic static void bindwiwemoduwe(wiwemoduwe wiwemoduwe) thwows n-nyamingexception {
+    c-context jndicontext = nyew i-initiawcontext();
+    j-jndicontext.webind(wiwe_moduwe_name, 😳😳😳 wiwemoduwe);
   }
 
   /**
-   * Returns the wire module bound in JNDI.
+   * w-wetuwns the wiwe moduwe bound in jndi. 😳
    *
-   * @return The wire module bound in JNDI.
-   * @throws NamingException If there's no wire module bound in JNDI.
+   * @wetuwn the wiwe moduwe b-bound in jndi. XD
+   * @thwows nyamingexception if thewe's nyo wiwe moduwe bound in jndi.
    */
-  public static WireModule getWireModule() throws NamingException {
-    Context jndiContext = new InitialContext();
-    return (WireModule) jndiContext.lookup(WIRE_MODULE_NAME);
+  p-pubwic static wiwemoduwe getwiwemoduwe() t-thwows n-nyamingexception {
+    c-context jndicontext = n-nyew initiawcontext();
+    w-wetuwn (wiwemoduwe) j-jndicontext.wookup(wiwe_moduwe_name);
   }
 
   /**
-   * Retrieves the service identifier needed for making mtls requests.
-   * @return The service identifier for the current running service.
+   * w-wetwieves the sewvice identifiew needed fow m-making mtws wequests. mya
+   * @wetuwn t-the sewvice i-identifiew fow t-the cuwwent wunning s-sewvice. ^•ﻌ•^
    */
-  public abstract ServiceIdentifier getServiceIdentifier();
+  pubwic abstwact sewviceidentifiew getsewviceidentifiew();
 
   /**
-   * Creates a new {@code FinagleKafkaConsumer} with a specified consumer group ID.
+   * c-cweates a nyew {@code finagwekafkaconsumew} with a specified consumew gwoup id. ʘwʘ
    */
-  public abstract <T> KafkaConsumer<Long, T> newKafkaConsumer(
-      String kafkaClusterPath, Deserializer<T> deserializer, String clientId, String groupId,
-      int maxPollRecords);
+  p-pubwic abstwact <t> kafkaconsumew<wong, ( ͡o ω ͡o ) t> nyewkafkaconsumew(
+      stwing kafkacwustewpath, mya d-desewiawizew<t> d-desewiawizew, o.O stwing c-cwientid, (✿oωo) stwing gwoupid, :3
+      i-int maxpowwwecowds);
 
   /**
-   * Creates a new {@code FinagleKafkaConsumer} with a specified consumer group ID.
+   * cweates a n-nyew {@code finagwekafkaconsumew} w-with a specified consumew gwoup id. 😳
    */
-  public abstract <T> BlockingFinagleKafkaProducer<Long, T> newFinagleKafkaProducer(
-      String kafkaClusterPath, Serializer<T> serializer, String clientId,
-      @Nullable Class<? extends Partitioner> partitionerClass);
+  pubwic abstwact <t> bwockingfinagwekafkapwoducew<wong, (U ﹏ U) t> nyewfinagwekafkapwoducew(
+      s-stwing kafkacwustewpath, mya sewiawizew<t> sewiawizew, (U ᵕ U❁) s-stwing cwientid, :3
+      @nuwwabwe c-cwass<? e-extends pawtitionew> pawtitionewcwass);
 
   /**
-   * Gets a TweetyPie client.
+   * gets a tweetypie c-cwient. mya
    *
-   * @param tweetypieClientId Use this string as the client id.
-   * @return A TweetyPie client
-   * @throws NamingException
+   * @pawam t-tweetypiecwientid use this stwing a-as the cwient i-id. OwO
+   * @wetuwn a tweetypie cwient
+   * @thwows nyamingexception
    */
-  public abstract TweetService.ServiceToClient getTweetyPieClient(String tweetypieClientId)
-      throws NamingException;
+  pubwic abstwact tweetsewvice.sewvicetocwient g-gettweetypiecwient(stwing t-tweetypiecwientid)
+      t-thwows nyamingexception;
 
   /**
-   * Gets a Gizmoduck client.
+   * g-gets a gizmoduck c-cwient. (ˆ ﻌ ˆ)♡
    *
-   * @param clientId
-   * @throws NamingException
+   * @pawam cwientid
+   * @thwows n-nyamingexception
    */
-  public abstract UserService.ServiceToClient getGizmoduckClient(String clientId)
-      throws NamingException;
+  pubwic abstwact usewsewvice.sewvicetocwient getgizmoduckcwient(stwing cwientid)
+      t-thwows nyamingexception;
 
   /**
-   * Gets the ManhattanKVEndpoint that should be used for the ManhattanCodedLocationProvider
+   * g-gets the manhattankvendpoint that shouwd be used fow the manhattancodedwocationpwovidew
    *
-   * @return the JavaManhattanKVEndpoint that we need for the ManhattanCodedLocationProvider
-   * @throws NamingException
+   * @wetuwn the j-javamanhattankvendpoint t-that we nyeed fow the manhattancodedwocationpwovidew
+   * @thwows nyamingexception
    */
-  public abstract JavaManhattanKVEndpoint getJavaManhattanKVEndpoint()
-      throws NamingException;
+  p-pubwic abstwact javamanhattankvendpoint getjavamanhattankvendpoint()
+      thwows nyamingexception;
 
   /**
-   * Returns the decider to be used by all stages.
+   * wetuwns the d-decidew to be used by aww stages. ʘwʘ
    *
-   * @return The decider to be used by all stages.
+   * @wetuwn the decidew t-to be used by a-aww stages. o.O
    */
-  public abstract Decider getDecider();
+  pubwic abstwact decidew getdecidew();
 
   /**
-   * Returns the partition ID to be used by all stages.
+   * wetuwns the p-pawtition id to b-be used by aww stages. UwU
    *
-   * @return The partition ID to be used by all stages.
+   * @wetuwn the pawtition id to be u-used by aww stages. rawr x3
    */
-  public abstract int getPartition();
+  pubwic a-abstwact int getpawtition();
 
 
   /**
-   * Returns the PipelineExceptionHandler instance to be used by all stages.
+   * wetuwns the pipewineexceptionhandwew instance to b-be used by aww stages. 🥺
    *
-   * @return The PipelineExceptionHandler instance to be used by all stages.
-   * @throws NamingException If building the PipelineExceptionHandler instance requires some
-   *                         parameters, and those parameters were not bound in JNDI.
+   * @wetuwn the pipewineexceptionhandwew i-instance to b-be used by aww stages. :3
+   * @thwows n-nyamingexception if buiwding t-the pipewineexceptionhandwew i-instance wequiwes s-some
+   *                         pawametews, a-and those pawametews w-wewe nyot bound in jndi. (ꈍᴗꈍ)
    */
-  public abstract PipelineExceptionHandler getPipelineExceptionHandler();
+  pubwic abstwact p-pipewineexceptionhandwew getpipewineexceptionhandwew();
 
   /**
-   * Gets the PartitionMappingManager for the Kafka writer.
+   * g-gets the p-pawtitionmappingmanagew fow the kafka wwitew. 🥺
    *
-   * @return a PartitionMappingManager
+   * @wetuwn a-a pawtitionmappingmanagew
    */
-  public abstract PartitionMappingManager getPartitionMappingManager();
+  pubwic abstwact p-pawtitionmappingmanagew g-getpawtitionmappingmanagew();
 
   /**
-   * Returns the Metastore client used by the UserPropertiesManager.
+   * wetuwns the metastowe cwient used by the u-usewpwopewtiesmanagew. (✿oωo)
    *
-   * @return A Metastore client.
-   * @throws NamingException
+   * @wetuwn a-a metastowe c-cwient. (U ﹏ U)
+   * @thwows n-nyamingexception
    */
-  public abstract MetastoreClient getMetastoreClient() throws NamingException;
+  pubwic abstwact m-metastowecwient getmetastowecwient() thwows nyamingexception;
 
   /**
-   * Returns an ExecutorService potentially backed by the specified number of threads.
+   * wetuwns an executowsewvice potentiawwy b-backed by the specified nyumbew o-of thweads. :3
    *
-   * @param numThreads An advisory value with a suggestion for how large the threadpool should be.
-   * @return an ExecutorService that might be backed by some threads.
-   * @throws NamingException
+   * @pawam nyumthweads an a-advisowy vawue with a suggestion f-fow how wawge the thweadpoow shouwd b-be. ^^;;
+   * @wetuwn a-an executowsewvice t-that might b-be backed by s-some thweads. rawr
+   * @thwows nyamingexception
    */
-  public abstract ExecutorService getThreadPool(int numThreads) throws NamingException;
+  pubwic abstwact executowsewvice getthweadpoow(int nyumthweads) thwows nyamingexception;
 
   /**
-   * Returns the Storer interface to connect to Pink.
+   * w-wetuwns t-the stowew intewface t-to connect to pink. 😳😳😳
    *
-   * @param requestTimeout The request timeout for the Pink client.
-   * @param retries The number of Finagle retries.
-   * @return a Storer.ServiceIface to connect to pink.
+   * @pawam w-wequesttimeout the wequest timeout fow the pink cwient. (✿oωo)
+   * @pawam wetwies t-the numbew o-of finagwe wetwies. OwO
+   * @wetuwn a stowew.sewviceiface t-to connect to pink. ʘwʘ
    *
    */
-  public abstract Storer.ServiceIface getStorer(Duration requestTimeout, int retries)
-      throws NamingException;
+  pubwic a-abstwact stowew.sewviceiface g-getstowew(duwation wequesttimeout, (ˆ ﻌ ˆ)♡ i-int wetwies)
+      t-thwows namingexception;
 
   /**
-   * Returns an EventBusSubscriber
+   * wetuwns an eventbussubscwibew
    */
-  public abstract <T extends TBase<?, ?>> EventBusSubscriber<T> createEventBusSubscriber(
-      Function<T, Future<?>> process,
-      Class<T> thriftStructClass,
-      String eventBusSubscriberId,
-      int maxConcurrentEvents);
+  pubwic abstwact <t e-extends tbase<?, (U ﹏ U) ?>> e-eventbussubscwibew<t> c-cweateeventbussubscwibew(
+      f-function<t, UwU f-futuwe<?>> pwocess, XD
+      c-cwass<t> thwiftstwuctcwass, ʘwʘ
+      s-stwing eventbussubscwibewid, rawr x3
+      int maxconcuwwentevents);
 
   /**
-   * Returns a Clock.
+   * w-wetuwns a-a cwock. ^^;;
    */
-  public abstract Clock getClock();
+  pubwic abstwact c-cwock getcwock();
 
   /**
-   * Returns a TweetOffensiveEvaluator.
+   * wetuwns a tweetoffensiveevawuatow. ʘwʘ
    */
-  public abstract TweetOffensiveEvaluator getTweetOffensiveEvaluator();
+  pubwic abstwact tweetoffensiveevawuatow g-gettweetoffensiveevawuatow();
 
   /**
-   * Returns the cluster.
+   * wetuwns the cwustew. (U ﹏ U)
    */
-  public abstract EarlybirdCluster getEarlybirdCluster() throws NamingException;
+  p-pubwic a-abstwact eawwybiwdcwustew geteawwybiwdcwustew() thwows nyamingexception;
 
   /**
-   * Returns the current penguin version(s).
+   * w-wetuwns the cuwwent penguin vewsion(s).
    */
-  public abstract List<PenguinVersion> getPenguinVersions() throws NamingException;
+  p-pubwic a-abstwact wist<penguinvewsion> getpenguinvewsions() t-thwows nyamingexception;
 
   /**
-   * Returns updated penguin version(s) depending on decider availability.
+   * wetuwns updated penguin vewsion(s) depending o-on decidew avaiwabiwity. (˘ω˘)
    */
-  public abstract List<PenguinVersion> getCurrentlyEnabledPenguinVersions();
+  pubwic abstwact w-wist<penguinvewsion> g-getcuwwentwyenabwedpenguinvewsions();
 
   /**
-   * Returns a named entities strato column fetcher.
+   * wetuwns a-a nyamed entities stwato cowumn f-fetchew. (ꈍᴗꈍ)
    */
-  public abstract NamedEntityFetcher getNamedEntityFetcher();
+  p-pubwic abstwact nyamedentityfetchew getnamedentityfetchew();
 
   /**
-   * Returns audio space participants strato column fetcher.
+   * w-wetuwns audio space pawticipants stwato cowumn fetchew. /(^•ω•^)
    */
-  public abstract AudioSpaceParticipantsFetcher getAudioSpaceParticipantsFetcher();
+  p-pubwic abstwact a-audiospacepawticipantsfetchew getaudiospacepawticipantsfetchew();
 
   /**
-   * Returns audio space core strato column fetcher.
+   * w-wetuwns audio space c-cowe stwato cowumn f-fetchew. >_<
    */
-  public abstract AudioSpaceCoreFetcher getAudioSpaceCoreFetcher();
+  p-pubwic abstwact audiospacecowefetchew getaudiospacecowefetchew();
 }

@@ -1,26 +1,26 @@
-package com.twitter.tsp.modules
+package com.twittew.tsp.moduwes
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.Score
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.tsp.stores.TopicTweetsCosineSimilarityAggregateStore
-import com.twitter.tsp.stores.TopicTweetsCosineSimilarityAggregateStore.ScoreKey
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.singweton
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.simcwustews_v2.common.tweetid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.scowe
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scoweid
+impowt com.twittew.simcwustews_v2.thwiftscawa.topicid
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.tsp.stowes.topictweetscosinesimiwawityaggwegatestowe
+i-impowt com.twittew.tsp.stowes.topictweetscosinesimiwawityaggwegatestowe.scowekey
 
-object TopicTweetCosineSimilarityAggregateStoreModule extends TwitterModule {
+object topictweetcosinesimiwawityaggwegatestowemoduwe extends t-twittewmoduwe {
 
-  @Provides
-  @Singleton
-  def providesTopicTweetCosineSimilarityAggregateStore(
-    representationScorerStore: ReadableStore[ScoreId, Score],
-    statsReceiver: StatsReceiver,
-  ): ReadableStore[(TopicId, TweetId, Seq[ScoreKey]), Map[ScoreKey, Double]] = {
-    TopicTweetsCosineSimilarityAggregateStore(representationScorerStore)(
-      statsReceiver.scope("topicTweetsCosineSimilarityAggregateStore"))
+  @pwovides
+  @singweton
+  def p-pwovidestopictweetcosinesimiwawityaggwegatestowe(
+    wepwesentationscowewstowe: weadabwestowe[scoweid, :3 scowe], 😳😳😳
+    s-statsweceivew: statsweceivew, -.-
+  ): w-weadabwestowe[(topicid, ( ͡o ω ͡o ) tweetid, rawr x3 s-seq[scowekey]), nyaa~~ map[scowekey, /(^•ω•^) doubwe]] = {
+    topictweetscosinesimiwawityaggwegatestowe(wepwesentationscowewstowe)(
+      statsweceivew.scope("topictweetscosinesimiwawityaggwegatestowe"))
   }
 }

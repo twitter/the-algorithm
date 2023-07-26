@@ -1,100 +1,100 @@
-package com.twitter.search.earlybird.common.userupdates;
+package com.twittew.seawch.eawwybiwd.common.usewupdates;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+impowt j-java.utiw.concuwwent.concuwwenthashmap;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.tweetypie.thriftjava.UserScrubGeoEvent;
+impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchcustomgauge;
+i-impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+i-impowt c-com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+impowt c-com.twittew.tweetypie.thwiftjava.usewscwubgeoevent;
 
 /**
- * Map of users who have actioned to delete location data from their tweets. UserID's are mapped
- * to the maxTweetId that will eventually be scrubbed from the index (userId -> maxTweetId).
+ * map of usews who have actioned to dewete wocation data fwom theiw t-tweets. /(^•ω•^) usewid's awe mapped
+ * to the maxtweetid t-that wiww eventuawwy be scwubbed f-fwom the index (usewid -> maxtweetid). (⑅˘꒳˘)
  *
- * ConcurrentHashMap is thread safe without synchronizing the whole map. Reads can happen very fast
- * while writes are done with a lock. This is ideal since many Earlybird Searcher threads could
- * be reading from the map at once, whereas we will only be adding to the map via kafka.
+ * concuwwenthashmap is thwead safe w-without synchwonizing the whowe m-map. ( ͡o ω ͡o ) weads can h-happen vewy fast
+ * whiwe wwites awe done with a wock. òωó this is ideaw since many e-eawwybiwd seawchew thweads couwd
+ * be weading fwom the map at once, (⑅˘꒳˘) wheweas w-we wiww onwy be adding to the map v-via kafka. XD
  *
- * This map is checked against to filter out tweets that should not be returned to geo queries.
- * See: go/realtime-geo-filtering
+ * t-this map is checked a-against to f-fiwtew out tweets that shouwd nyot be wetuwned t-to geo quewies. -.-
+ * see: go/weawtime-geo-fiwtewing
  */
-public class UserScrubGeoMap {
-  // The number of geo events that contain a user ID already present in the map. This count is used
-  // to verify the number of users in the map against the number of events consumed from kafka.
-  private static final SearchCounter USER_SCRUB_GEO_EVENT_EXISTING_USER_COUNT =
-      SearchCounter.export("user_scrub_geo_event_existing_user_count");
-  public static final SearchTimerStats USER_SCRUB_GEO_EVENT_LAG_STAT =
-      SearchTimerStats.export("user_scrub_geo_event_lag",
-          TimeUnit.MILLISECONDS,
-          false,
-          true);
-  private ConcurrentHashMap<Long, Long> map;
+pubwic cwass u-usewscwubgeomap {
+  // the nyumbew of geo events that contain a usew id awweady pwesent in the m-map. :3 this count is used
+  // t-to vewify the nyumbew o-of usews in t-the map against the nyumbew of events consumed fwom kafka. nyaa~~
+  pwivate s-static finaw s-seawchcountew usew_scwub_geo_event_existing_usew_count =
+      s-seawchcountew.expowt("usew_scwub_geo_event_existing_usew_count");
+  p-pubwic static finaw seawchtimewstats u-usew_scwub_geo_event_wag_stat =
+      seawchtimewstats.expowt("usew_scwub_geo_event_wag", 😳
+          t-timeunit.miwwiseconds, (⑅˘꒳˘)
+          fawse, nyaa~~
+          twue);
+  pwivate c-concuwwenthashmap<wong, OwO wong> m-map;
 
-  public UserScrubGeoMap() {
-    map = new ConcurrentHashMap<>();
-    SearchCustomGauge.export("num_users_in_geo_map", this::getNumUsersInMap);
+  pubwic usewscwubgeomap() {
+    m-map = nyew c-concuwwenthashmap<>();
+    seawchcustomgauge.expowt("num_usews_in_geo_map", rawr x3 this::getnumusewsinmap);
   }
 
   /**
-   * Ensure that the max_tweet_id in the userScrubGeoEvent is greater than the one already stored
-   * in the map for the given user id (if any) before updating the entry for this user.
-   * This will protect Earlybirds from potential issues where out of date UserScrubGeoEvents
-   * appear in the incoming Kafka stream.
+   * ensuwe that the max_tweet_id in the usewscwubgeoevent is gweatew than the o-one awweady stowed
+   * i-in the map fow the given u-usew id (if any) b-befowe updating t-the entwy fow this usew. XD
+   * this wiww pwotect eawwybiwds fwom p-potentiaw issues whewe out of date usewscwubgeoevents
+   * appeaw in the incoming kafka stweam. σωσ
    *
-   * @param userScrubGeoEvent
+   * @pawam u-usewscwubgeoevent
    */
-  public void indexUserScrubGeoEvent(UserScrubGeoEvent userScrubGeoEvent) {
-    long userId = userScrubGeoEvent.getUser_id();
-    long newMaxTweetId = userScrubGeoEvent.getMax_tweet_id();
-    long oldMaxTweetId = map.getOrDefault(userId, 0L);
-    if (map.containsKey(userId)) {
-      USER_SCRUB_GEO_EVENT_EXISTING_USER_COUNT.increment();
+  pubwic void indexusewscwubgeoevent(usewscwubgeoevent u-usewscwubgeoevent) {
+    w-wong u-usewid = usewscwubgeoevent.getusew_id();
+    wong newmaxtweetid = u-usewscwubgeoevent.getmax_tweet_id();
+    w-wong o-owdmaxtweetid = m-map.getowdefauwt(usewid, (U ᵕ U❁) 0w);
+    if (map.containskey(usewid)) {
+      usew_scwub_geo_event_existing_usew_count.incwement();
     }
-    map.put(userId, Math.max(oldMaxTweetId, newMaxTweetId));
-    USER_SCRUB_GEO_EVENT_LAG_STAT.timerIncrement(computeEventLag(newMaxTweetId));
+    m-map.put(usewid, (U ﹏ U) m-math.max(owdmaxtweetid, :3 n-nyewmaxtweetid));
+    u-usew_scwub_geo_event_wag_stat.timewincwement(computeeventwag(newmaxtweetid));
   }
 
   /**
-   * A tweet is geo scrubbed if it is older than the max tweet id that is scrubbed for the tweet's
-   * author.
-   * If there is no entry for the tweet's author in the map, then the tweet is not geo scrubbed.
+   * a-a tweet is geo scwubbed if it is owdew than the max tweet id t-that is scwubbed fow the tweet's
+   * authow.
+   * if thewe is nyo entwy fow the tweet's authow i-in the map, then the tweet is nyot geo scwubbed. ( ͡o ω ͡o )
    *
-   * @param tweetId
-   * @param fromUserId
-   * @return
+   * @pawam tweetid
+   * @pawam f-fwomusewid
+   * @wetuwn
    */
-  public boolean isTweetGeoScrubbed(long tweetId, long fromUserId) {
-    return tweetId <= map.getOrDefault(fromUserId, 0L);
+  p-pubwic boowean i-istweetgeoscwubbed(wong tweetid, wong fwomusewid) {
+    wetuwn t-tweetid <= map.getowdefauwt(fwomusewid, σωσ 0w);
   }
 
   /**
-   * The lag (in milliseconds) from when a UserScrubGeoEvent is created, until it is applied to the
-   * UserScrubGeoMap. Take the maxTweetId found in the current event and convert it to a timestamp.
-   * The maxTweetId will give us a timestamp closest to when Tweetypie processes macaw-geo requests.
+   * t-the wag (in miwwiseconds) f-fwom when a usewscwubgeoevent is cweated, >w< untiw it is appwied to the
+   * usewscwubgeomap. 😳😳😳 t-take the maxtweetid found i-in the cuwwent event and convewt i-it to a timestamp. OwO
+   * t-the maxtweetid wiww give us a timestamp c-cwosest to when t-tweetypie pwocesses macaw-geo w-wequests. 😳
    *
-   * @param maxTweetId
-   * @return
+   * @pawam m-maxtweetid
+   * @wetuwn
    */
-  private long computeEventLag(long maxTweetId) {
-    long eventCreatedAtTime = SnowflakeIdParser.getTimestampFromTweetId(maxTweetId);
-    return System.currentTimeMillis() - eventCreatedAtTime;
+  pwivate wong computeeventwag(wong maxtweetid) {
+    wong eventcweatedattime = s-snowfwakeidpawsew.gettimestampfwomtweetid(maxtweetid);
+    w-wetuwn system.cuwwenttimemiwwis() - e-eventcweatedattime;
   }
 
-  public long getNumUsersInMap() {
-    return map.size();
+  pubwic wong g-getnumusewsinmap() {
+    w-wetuwn map.size();
   }
 
-  public ConcurrentHashMap<Long, Long> getMap() {
-    return map;
+  p-pubwic concuwwenthashmap<wong, 😳😳😳 wong> getmap() {
+    wetuwn map;
   }
 
-  public boolean isEmpty() {
-    return map.isEmpty();
+  pubwic boowean isempty() {
+    w-wetuwn m-map.isempty();
   }
 
-  public boolean isSet(long userId) {
-    return map.containsKey(userId);
+  pubwic boowean isset(wong u-usewid) {
+    wetuwn m-map.containskey(usewid);
   }
 }

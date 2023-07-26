@@ -1,228 +1,228 @@
-package com.twitter.search.common.schema;
+package com.twittew.seawch.common.schema;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.wogging.wevew;
+i-impowt j-java.utiw.wogging.woggew;
 
-import javax.annotation.Nullable;
+impowt j-javax.annotation.nuwwabwe;
 
-import com.twitter.common.text.util.PositionIncrementAttributeSerializer;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.schema.thriftjava.ThriftGeoCoordinate;
-import com.twitter.search.common.util.analysis.CharTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.LongTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.LongTermsTokenStream;
-import com.twitter.search.common.util.analysis.PayloadAttributeSerializer;
-import com.twitter.search.common.util.analysis.PayloadWeightedTokenizer;
-import com.twitter.search.common.util.spatial.GeoUtil;
+i-impowt com.twittew.common.text.utiw.positionincwementattwibutesewiawizew;
+impowt com.twittew.common.text.utiw.tokenstweamsewiawizew;
+impowt com.twittew.seawch.common.schema.base.fiewdnametoidmapping;
+impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewd;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewddata;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftgeocoowdinate;
+impowt com.twittew.seawch.common.utiw.anawysis.chawtewmattwibutesewiawizew;
+impowt com.twittew.seawch.common.utiw.anawysis.wongtewmattwibutesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.anawysis.wongtewmstokenstweam;
+impowt com.twittew.seawch.common.utiw.anawysis.paywoadattwibutesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.anawysis.paywoadweightedtokenizew;
+i-impowt com.twittew.seawch.common.utiw.spatiaw.geoutiw;
 
 /**
- * Builder class for building ThriftDocuments.
+ * buiwdew cwass fow buiwding thwiftdocuments. (⑅˘꒳˘)
  */
-public class ThriftDocumentBuilder {
-  private static final Logger LOG = Logger.getLogger(ThriftDocumentBuilder.class.getName());
+p-pubwic cwass thwiftdocumentbuiwdew {
+  pwivate static finaw woggew wog = woggew.getwoggew(thwiftdocumentbuiwdew.cwass.getname());
 
-  protected final ThriftDocument doc = new ThriftDocument();
-  protected final FieldNameToIdMapping idMapping;
+  p-pwotected finaw thwiftdocument d-doc = n-nyew thwiftdocument();
+  p-pwotected f-finaw fiewdnametoidmapping idmapping;
 
-  private static final ThreadLocal<TokenStreamSerializer> PAYLOAD_WEIGHTED_SERIALIZER_PER_THREAD =
-      new ThreadLocal<TokenStreamSerializer>() {
-        @Override
-        protected TokenStreamSerializer initialValue() {
-          return TokenStreamSerializer.builder()
-              .add(new CharTermAttributeSerializer())
-              .add(new PositionIncrementAttributeSerializer())
-              .add(new PayloadAttributeSerializer())
-              .build();
+  pwivate static finaw t-thweadwocaw<tokenstweamsewiawizew> paywoad_weighted_sewiawizew_pew_thwead =
+      nyew thweadwocaw<tokenstweamsewiawizew>() {
+        @ovewwide
+        p-pwotected tokenstweamsewiawizew initiawvawue() {
+          wetuwn tokenstweamsewiawizew.buiwdew()
+              .add(new chawtewmattwibutesewiawizew())
+              .add(new positionincwementattwibutesewiawizew())
+              .add(new p-paywoadattwibutesewiawizew())
+              .buiwd();
         }
       };
 
-  private static final ThreadLocal<TokenStreamSerializer> LONG_TERM_SERIALIZER_PER_THREAD =
-          new ThreadLocal<TokenStreamSerializer>() {
-            @Override
-            protected TokenStreamSerializer initialValue() {
-              return TokenStreamSerializer.builder()
-                  .add(new LongTermAttributeSerializer())
-                  .build();
+  pwivate static f-finaw thweadwocaw<tokenstweamsewiawizew> w-wong_tewm_sewiawizew_pew_thwead =
+          n-nyew thweadwocaw<tokenstweamsewiawizew>() {
+            @ovewwide
+            pwotected tokenstweamsewiawizew initiawvawue() {
+              w-wetuwn tokenstweamsewiawizew.buiwdew()
+                  .add(new w-wongtewmattwibutesewiawizew())
+                  .buiwd();
             }
           };
 
-  public ThriftDocumentBuilder(FieldNameToIdMapping idMapping) {
-    this.idMapping = idMapping;
+  pubwic thwiftdocumentbuiwdew(fiewdnametoidmapping i-idmapping) {
+    t-this.idmapping = idmapping;
   }
 
-  protected void prepareToBuild() {
-    // left empty, subclass can override this.
+  p-pwotected void pwepawetobuiwd() {
+    // w-weft empty, 😳😳😳 subcwass can ovewwide this. nyaa~~
   }
 
-  public ThriftDocument build() {
-    prepareToBuild();
-    return doc;
-  }
-
-  /**
-   * Add a long field. This is indexed as a
-   * {@link com.twitter.search.common.util.analysis.LongTermAttribute}
-   */
-  public final ThriftDocumentBuilder withLongField(String fieldName, long value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setLongValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  p-pubwic thwiftdocument buiwd() {
+    p-pwepawetobuiwd();
+    wetuwn d-doc;
   }
 
   /**
-   * Add an int field. This is indexed as a
-   * {@link com.twitter.search.common.util.analysis.IntTermAttribute}
+   * a-add a wong fiewd. this is indexed as a
+   * {@wink com.twittew.seawch.common.utiw.anawysis.wongtewmattwibute}
    */
-  public final ThriftDocumentBuilder withIntField(String fieldName, int value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setIntValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  pubwic finaw thwiftdocumentbuiwdew withwongfiewd(stwing fiewdname, rawr wong v-vawue) {
+    t-thwiftfiewddata fiewddata = nyew t-thwiftfiewddata().setwongvawue(vawue);
+    t-thwiftfiewd f-fiewd = nyew thwiftfiewd()
+        .setfiewdconfigid(idmapping.getfiewdid(fiewdname)).setfiewddata(fiewddata);
+    doc.addtofiewds(fiewd);
+    wetuwn this;
   }
 
   /**
-   * Add a field whose value is a single byte.
+   * a-add an int fiewd. -.- this is indexed as a
+   * {@wink com.twittew.seawch.common.utiw.anawysis.inttewmattwibute}
    */
-  public final ThriftDocumentBuilder withByteField(String fieldName, byte value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setByteValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  pubwic f-finaw thwiftdocumentbuiwdew withintfiewd(stwing f-fiewdname, (✿oωo) int v-vawue) {
+    thwiftfiewddata f-fiewddata = nyew thwiftfiewddata().setintvawue(vawue);
+    t-thwiftfiewd f-fiewd = nyew t-thwiftfiewd()
+        .setfiewdconfigid(idmapping.getfiewdid(fiewdname)).setfiewddata(fiewddata);
+    d-doc.addtofiewds(fiewd);
+    wetuwn this;
   }
 
   /**
-   * Add a field whose value is a byte array.
+   * add a fiewd whose v-vawue is a singwe b-byte. /(^•ω•^)
    */
-  public final ThriftDocumentBuilder withBytesField(String fieldName, byte[] value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setBytesValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  p-pubwic finaw thwiftdocumentbuiwdew w-withbytefiewd(stwing f-fiewdname, 🥺 byte vawue) {
+    thwiftfiewddata fiewddata = n-nyew thwiftfiewddata().setbytevawue(vawue);
+    thwiftfiewd fiewd = new thwiftfiewd()
+        .setfiewdconfigid(idmapping.getfiewdid(fiewdname)).setfiewddata(fiewddata);
+    doc.addtofiewds(fiewd);
+    wetuwn this;
   }
 
   /**
-   * Add a field whose value is a float.
+   * a-add a fiewd whose vawue is a byte awway. ʘwʘ
    */
-  public final ThriftDocumentBuilder withFloatField(String fieldName, float value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setFloatValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  pubwic f-finaw thwiftdocumentbuiwdew w-withbytesfiewd(stwing f-fiewdname, UwU byte[] vawue) {
+    t-thwiftfiewddata fiewddata = nyew t-thwiftfiewddata().setbytesvawue(vawue);
+    t-thwiftfiewd fiewd = nyew thwiftfiewd()
+        .setfiewdconfigid(idmapping.getfiewdid(fiewdname)).setfiewddata(fiewddata);
+    doc.addtofiewds(fiewd);
+    wetuwn this;
   }
 
   /**
-   * Added a field whose value is a Lucene TokenStream.
-   * The Lucene TokenStream is serialized using Twitter's
-   * {@link com.twitter.common.text.util.TokenStreamSerializer}
+   * add a fiewd whose vawue i-is a fwoat. XD
    */
-  public final ThriftDocumentBuilder withTokenStreamField(String fieldName,
-                                                          @Nullable String tokenStreamText,
-                                                          byte[] tokenStream) {
-    if (tokenStream == null) {
-      return this;
+  pubwic finaw t-thwiftdocumentbuiwdew withfwoatfiewd(stwing f-fiewdname, (✿oωo) f-fwoat vawue) {
+    thwiftfiewddata fiewddata = n-nyew thwiftfiewddata().setfwoatvawue(vawue);
+    t-thwiftfiewd fiewd = nyew t-thwiftfiewd()
+        .setfiewdconfigid(idmapping.getfiewdid(fiewdname)).setfiewddata(fiewddata);
+    d-doc.addtofiewds(fiewd);
+    wetuwn this;
+  }
+
+  /**
+   * added a fiewd whose vawue is a wucene tokenstweam. :3
+   * t-the wucene t-tokenstweam is s-sewiawized using twittew's
+   * {@wink c-com.twittew.common.text.utiw.tokenstweamsewiawizew}
+   */
+  p-pubwic finaw thwiftdocumentbuiwdew w-withtokenstweamfiewd(stwing fiewdname, (///ˬ///✿)
+                                                          @nuwwabwe stwing tokenstweamtext, nyaa~~
+                                                          byte[] tokenstweam) {
+    if (tokenstweam == nyuww) {
+      w-wetuwn this;
     }
-    ThriftFieldData fieldData = new ThriftFieldData()
-        .setStringValue(tokenStreamText).setTokenStreamValue(tokenStream);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+    t-thwiftfiewddata fiewddata = nyew thwiftfiewddata()
+        .setstwingvawue(tokenstweamtext).settokenstweamvawue(tokenstweam);
+    t-thwiftfiewd f-fiewd = nyew thwiftfiewd()
+        .setfiewdconfigid(idmapping.getfiewdid(fiewdname)).setfiewddata(fiewddata);
+    doc.addtofiewds(fiewd);
+    wetuwn this;
   }
 
   /**
-   * Add a field whose value is a String.
-   * @param fieldName Name of the field where the string will be added.
-   * @param text This string is indexed as is (not analyzed).
+   * a-add a fiewd whose vawue is a stwing. >w<
+   * @pawam fiewdname nyame of the fiewd whewe the stwing w-wiww be added. -.-
+   * @pawam text this stwing is i-indexed as is (not a-anawyzed). (✿oωo)
    */
-  public final ThriftDocumentBuilder withStringField(String fieldName, String text) {
-    if (text == null || text.isEmpty()) {
-      return this;
+  pubwic finaw thwiftdocumentbuiwdew withstwingfiewd(stwing f-fiewdname, (˘ω˘) stwing t-text) {
+    if (text == nyuww || text.isempty()) {
+      wetuwn t-this;
     }
 
-    ThriftFieldData fieldData = new ThriftFieldData().setStringValue(text);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+    thwiftfiewddata f-fiewddata = nyew thwiftfiewddata().setstwingvawue(text);
+    thwiftfiewd fiewd = nyew thwiftfiewd()
+        .setfiewdconfigid(idmapping.getfiewdid(fiewdname)).setfiewddata(fiewddata);
+    doc.addtofiewds(fiewd);
+    w-wetuwn this;
   }
 
   /**
-   * Add a field whose value is a geo coordinate.
-   * Earlybird will process the coordinates into geo hashes before indexing.
+   * a-add a fiewd w-whose vawue is a geo coowdinate. rawr
+   * e-eawwybiwd wiww pwocess t-the coowdinates i-into geo hashes b-befowe indexing. OwO
    */
-  public final ThriftDocumentBuilder withGeoField(String fieldName,
-                                                  double lat, double lon, int acc) {
-    if (!GeoUtil.validateGeoCoordinates(lat, lon)) {
-      // If the geo coordinates are invalid, don't add any field.
-      return this;
+  pubwic f-finaw thwiftdocumentbuiwdew w-withgeofiewd(stwing fiewdname,
+                                                  doubwe w-wat, doubwe w-won, ^•ﻌ•^ int acc) {
+    i-if (!geoutiw.vawidategeocoowdinates(wat, UwU won)) {
+      // if the geo coowdinates a-awe invawid, (˘ω˘) don't add any f-fiewd. (///ˬ///✿)
+      wetuwn t-this;
     }
-    ThriftGeoCoordinate coord = new ThriftGeoCoordinate();
-    coord.setLat(lat);
-    coord.setLon(lon);
-    coord.setAccuracy(acc);
+    thwiftgeocoowdinate coowd = nyew thwiftgeocoowdinate();
+    c-coowd.setwat(wat);
+    c-coowd.setwon(won);
+    coowd.setaccuwacy(acc);
 
-    ThriftFieldData fieldData = new ThriftFieldData().setGeoCoordinate(coord);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+    t-thwiftfiewddata f-fiewddata = nyew thwiftfiewddata().setgeocoowdinate(coowd);
+    t-thwiftfiewd fiewd = nyew thwiftfiewd()
+        .setfiewdconfigid(idmapping.getfiewdid(fiewdname)).setfiewddata(fiewddata);
+    doc.addtofiewds(fiewd);
+    wetuwn this;
   }
 
   /**
-   * Added a list of tokens that are weighted. The weights are stored inside payload.
-   * See {@link com.twitter.search.common.util.analysis.PayloadWeightedTokenizer} for more details.
+   * added a wist o-of tokens that awe weighted. σωσ the w-weights awe stowed inside paywoad. /(^•ω•^)
+   * s-see {@wink com.twittew.seawch.common.utiw.anawysis.paywoadweightedtokenizew} f-fow mowe detaiws. 😳
    */
-  public final ThriftDocumentBuilder withPayloadWeightTokenStreamField(String fieldName,
-                                                                       String tokens) {
-    byte[] serialized;
-    try {
-      PayloadWeightedTokenizer tokenizer = new PayloadWeightedTokenizer(tokens);
-      serialized = PAYLOAD_WEIGHTED_SERIALIZER_PER_THREAD.get().serialize(tokenizer);
-      tokenizer.close();
-    } catch (IOException e) {
-      LOG.log(Level.WARNING,
-          "Failed to add PayloadWeightedTokenizer field. Bad token weight list: " + tokens, e);
-      return this;
-    } catch (NumberFormatException e) {
-      LOG.log(Level.WARNING,
-          "Failed to add PayloadWeightedTokenizer field. Cannot parse token weight: " + tokens, e);
-      return this;
+  p-pubwic finaw thwiftdocumentbuiwdew w-withpaywoadweighttokenstweamfiewd(stwing f-fiewdname,
+                                                                       stwing t-tokens) {
+    b-byte[] sewiawized;
+    twy {
+      paywoadweightedtokenizew tokenizew = nyew paywoadweightedtokenizew(tokens);
+      sewiawized = paywoad_weighted_sewiawizew_pew_thwead.get().sewiawize(tokenizew);
+      tokenizew.cwose();
+    } c-catch (ioexception e-e) {
+      w-wog.wog(wevew.wawning, 😳
+          "faiwed to add paywoadweightedtokenizew fiewd. (⑅˘꒳˘) b-bad token weight wist: " + tokens, 😳😳😳 e);
+      wetuwn this;
+    } c-catch (numbewfowmatexception e-e) {
+      wog.wog(wevew.wawning, 😳
+          "faiwed to add paywoadweightedtokenizew f-fiewd. XD cannot pawse token weight: " + tokens, mya e-e);
+      wetuwn t-this;
     }
-    withTokenStreamField(fieldName, tokens, serialized);
-    return this;
+    withtokenstweamfiewd(fiewdname, ^•ﻌ•^ t-tokens, sewiawized);
+    wetuwn t-this;
   }
 
   /**
-   * Add a field whose value is a list of longs.
-   * Each long is encoded into a LongTermAttribute.
-   * The field will contain a LongTermTokenStream.
+   * add a fiewd whose vawue is a wist of wongs. ʘwʘ
+   * each w-wong is encoded i-into a wongtewmattwibute. ( ͡o ω ͡o )
+   * t-the fiewd wiww c-contain a wongtewmtokenstweam. mya
    */
-  public final ThriftDocumentBuilder withLongIDsField(String fieldName,
-      List<Long> longList)  throws IOException {
+  p-pubwic finaw thwiftdocumentbuiwdew w-withwongidsfiewd(stwing f-fiewdname, o.O
+      wist<wong> wongwist)  t-thwows i-ioexception {
 
-    if (longList == null || longList.isEmpty()) {
-        return this;
+    if (wongwist == n-nyuww || wongwist.isempty()) {
+        wetuwn this;
     }
-    LongTermsTokenStream stream = new LongTermsTokenStream(longList);
-    stream.reset();
-    byte[] serializedStream = LONG_TERM_SERIALIZER_PER_THREAD.get().serialize(stream);
+    w-wongtewmstokenstweam stweam = nyew w-wongtewmstokenstweam(wongwist);
+    s-stweam.weset();
+    byte[] s-sewiawizedstweam = wong_tewm_sewiawizew_pew_thwead.get().sewiawize(stweam);
 
-    ThriftFieldData fieldData = new ThriftFieldData().setTokenStreamValue(serializedStream);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+    thwiftfiewddata f-fiewddata = n-nyew thwiftfiewddata().settokenstweamvawue(sewiawizedstweam);
+    t-thwiftfiewd fiewd = nyew thwiftfiewd()
+        .setfiewdconfigid(idmapping.getfiewdid(fiewdname)).setfiewddata(fiewddata);
+    doc.addtofiewds(fiewd);
+    wetuwn t-this;
   }
 }

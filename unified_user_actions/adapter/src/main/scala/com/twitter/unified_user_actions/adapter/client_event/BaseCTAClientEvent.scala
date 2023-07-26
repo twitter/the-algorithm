@@ -1,45 +1,45 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.logbase.thriftscala.LogBase
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
+impowt c-com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt com.twittew.wogbase.thwiftscawa.wogbase
+impowt c-com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.item
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa._
+impowt com.twittew.cwientapp.thwiftscawa.{item => wogeventitem}
 
-abstract class BaseCTAClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+abstwact cwass basectacwientevent(actiontype: a-actiontype)
+    extends basecwientevent(actiontype = actiontype) {
 
-  override def toUnifiedUserAction(logEvent: LogEvent): Seq[UnifiedUserAction] = {
-    val logBase: Option[LogBase] = logEvent.logBase
-    val userIdentifier: UserIdentifier = UserIdentifier(
-      userId = logBase.flatMap(_.userId),
-      guestIdMarketing = logBase.flatMap(_.guestIdMarketing))
-    val uuaItem: Item = Item.CtaInfo(CTAInfo())
-    val eventTimestamp = logBase.flatMap(getSourceTimestamp).getOrElse(0L)
-    val ceItem = LogEventItem.unsafeEmpty
+  o-ovewwide def tounifiedusewaction(wogevent: w-wogevent): seq[unifiedusewaction] = {
+    vaw wogbase: option[wogbase] = wogevent.wogbase
+    v-vaw usewidentifiew: usewidentifiew = u-usewidentifiew(
+      u-usewid = wogbase.fwatmap(_.usewid), rawr x3
+      guestidmawketing = wogbase.fwatmap(_.guestidmawketing))
+    vaw uuaitem: item = i-item.ctainfo(ctainfo())
+    vaw eventtimestamp = wogbase.fwatmap(getsouwcetimestamp).getowewse(0w)
+    vaw ceitem = wogeventitem.unsafeempty
 
-    val productSurface: Option[ProductSurface] = ProductSurfaceUtils
-      .getProductSurface(logEvent.eventNamespace)
+    v-vaw pwoductsuwface: option[pwoductsuwface] = p-pwoductsuwfaceutiws
+      .getpwoductsuwface(wogevent.eventnamespace)
 
-    val eventMetaData: EventMetadata = ClientEventCommonUtils
-      .getEventMetadata(
-        eventTimestamp = eventTimestamp,
-        logEvent = logEvent,
-        ceItem = ceItem,
-        productSurface = productSurface
+    v-vaw eventmetadata: e-eventmetadata = c-cwienteventcommonutiws
+      .geteventmetadata(
+        eventtimestamp = eventtimestamp, (U ﹏ U)
+        w-wogevent = wogevent, (U ﹏ U)
+        ceitem = ceitem, (⑅˘꒳˘)
+        pwoductsuwface = p-pwoductsuwface
       )
 
-    Seq(
-      UnifiedUserAction(
-        userIdentifier = userIdentifier,
-        item = uuaItem,
-        actionType = actionType,
-        eventMetadata = eventMetaData,
-        productSurface = productSurface,
-        productSurfaceInfo =
-          ProductSurfaceUtils.getProductSurfaceInfo(productSurface, ceItem, logEvent)
+    seq(
+      unifiedusewaction(
+        usewidentifiew = usewidentifiew, òωó
+        item = uuaitem, ʘwʘ
+        a-actiontype = actiontype, /(^•ω•^)
+        eventmetadata = eventmetadata, ʘwʘ
+        p-pwoductsuwface = p-pwoductsuwface, σωσ
+        pwoductsuwfaceinfo =
+          p-pwoductsuwfaceutiws.getpwoductsuwfaceinfo(pwoductsuwface, OwO ceitem, 😳😳😳 wogevent)
       ))
   }
 

@@ -1,116 +1,116 @@
-package com.twitter.representationscorer.columns
+package com.twittew.wepwesentationscowew.cowumns
 
-import com.twitter.representationscorer.thriftscala.ListScoreId
-import com.twitter.representationscorer.thriftscala.ListScoreResponse
-import com.twitter.representationscorer.scorestore.ScoreStore
-import com.twitter.representationscorer.thriftscala.ScoreResult
-import com.twitter.simclusters_v2.common.SimClustersEmbeddingId.LongInternalId
-import com.twitter.simclusters_v2.common.SimClustersEmbeddingId.LongSimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.Score
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingPairScoreId
-import com.twitter.stitch
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle
-import com.twitter.strato.fed._
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import javax.inject.Inject
+impowt com.twittew.wepwesentationscowew.thwiftscawa.wistscoweid
+i-impowt com.twittew.wepwesentationscowew.thwiftscawa.wistscowewesponse
+i-impowt com.twittew.wepwesentationscowew.scowestowe.scowestowe
+i-impowt com.twittew.wepwesentationscowew.thwiftscawa.scowewesuwt
+i-impowt com.twittew.simcwustews_v2.common.simcwustewsembeddingid.wongintewnawid
+i-impowt com.twittew.simcwustews_v2.common.simcwustewsembeddingid.wongsimcwustewsembeddingid
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.scowe
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scoweid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scoweintewnawid
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingpaiwscoweid
+i-impowt com.twittew.stitch
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.catawog.opmetadata
+impowt com.twittew.stwato.config.contactinfo
+impowt c-com.twittew.stwato.config.powicy
+impowt com.twittew.stwato.data.conv
+impowt com.twittew.stwato.data.descwiption.pwaintext
+i-impowt com.twittew.stwato.data.wifecycwe
+impowt c-com.twittew.stwato.fed._
+i-impowt com.twittew.stwato.thwift.scwoogeconv
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+i-impowt javax.inject.inject
 
-class ListScoreColumn @Inject() (scoreStore: ScoreStore)
-    extends StratoFed.Column("recommendations/representation_scorer/listScore")
-    with StratoFed.Fetch.Stitch {
+cwass wistscowecowumn @inject() (scowestowe: scowestowe)
+    extends s-stwatofed.cowumn("wecommendations/wepwesentation_scowew/wistscowe")
+    with s-stwatofed.fetch.stitch {
 
-  override val policy: Policy = Common.rsxReadPolicy
+  o-ovewwide v-vaw powicy: p-powicy = common.wsxweadpowicy
 
-  override type Key = ListScoreId
-  override type View = Unit
-  override type Value = ListScoreResponse
+  ovewwide type key = wistscoweid
+  o-ovewwide type view = unit
+  ovewwide type vawue = w-wistscowewesponse
 
-  override val keyConv: Conv[Key] = ScroogeConv.fromStruct[ListScoreId]
-  override val viewConv: Conv[View] = Conv.ofType
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[ListScoreResponse]
+  ovewwide vaw keyconv: conv[key] = scwoogeconv.fwomstwuct[wistscoweid]
+  ovewwide vaw viewconv: conv[view] = c-conv.oftype
+  ovewwide vaw v-vawueconv: conv[vawue] = s-scwoogeconv.fwomstwuct[wistscowewesponse]
 
-  override val contactInfo: ContactInfo = Info.contactInfo
+  o-ovewwide vaw contactinfo: contactinfo = info.contactinfo
 
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Lifecycle.Production),
-    description = Some(
-      PlainText(
-        "Scoring for multiple candidate entities against a single target entity"
+  o-ovewwide vaw m-metadata: opmetadata = opmetadata(
+    w-wifecycwe = s-some(wifecycwe.pwoduction), nyaa~~
+    descwiption = s-some(
+      pwaintext(
+        "scowing fow muwtipwe c-candidate entities against a singwe tawget e-entity"
       ))
   )
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
+  ovewwide d-def fetch(key: key, :3 view: view): s-stitch[wesuwt[vawue]] = {
 
-    val target = SimClustersEmbeddingId(
-      embeddingType = key.targetEmbeddingType,
-      modelVersion = key.modelVersion,
-      internalId = key.targetId
+    v-vaw tawget = simcwustewsembeddingid(
+      embeddingtype = key.tawgetembeddingtype, ( ͡o ω ͡o )
+      modewvewsion = key.modewvewsion, mya
+      intewnawid = k-key.tawgetid
     )
-    val scoreIds = key.candidateIds.map { candidateId =>
-      val candidate = SimClustersEmbeddingId(
-        embeddingType = key.candidateEmbeddingType,
-        modelVersion = key.modelVersion,
-        internalId = candidateId
+    v-vaw scoweids = key.candidateids.map { c-candidateid =>
+      v-vaw candidate = s-simcwustewsembeddingid(
+        embeddingtype = key.candidateembeddingtype, (///ˬ///✿)
+        modewvewsion = k-key.modewvewsion, (˘ω˘)
+        intewnawid = candidateid
       )
-      ScoreId(
-        algorithm = key.algorithm,
-        internalId = ScoreInternalId.SimClustersEmbeddingPairScoreId(
-          SimClustersEmbeddingPairScoreId(target, candidate)
+      scoweid(
+        awgowithm = key.awgowithm, ^^;;
+        i-intewnawid = scoweintewnawid.simcwustewsembeddingpaiwscoweid(
+          s-simcwustewsembeddingpaiwscoweid(tawget, (✿oωo) c-candidate)
         )
       )
     }
 
-    Stitch
-      .callFuture {
-        val (keys: Iterable[ScoreId], vals: Iterable[Future[Option[Score]]]) =
-          scoreStore.uniformScoringStore.multiGet(scoreIds.toSet).unzip
-        val results: Future[Iterable[Option[Score]]] = Future.collectToTry(vals.toSeq) map {
-          tryOptVals =>
-            tryOptVals map {
-              case Return(Some(v)) => Some(v)
-              case Return(None) => None
-              case Throw(_) => None
+    s-stitch
+      .cawwfutuwe {
+        vaw (keys: i-itewabwe[scoweid], (U ﹏ U) v-vaws: itewabwe[futuwe[option[scowe]]]) =
+          s-scowestowe.unifowmscowingstowe.muwtiget(scoweids.toset).unzip
+        v-vaw wesuwts: futuwe[itewabwe[option[scowe]]] = futuwe.cowwecttotwy(vaws.toseq) m-map {
+          t-twyoptvaws =>
+            t-twyoptvaws m-map {
+              c-case wetuwn(some(v)) => some(v)
+              case wetuwn(none) => nyone
+              c-case thwow(_) => nyone
             }
         }
-        val scoreMap: Future[Map[Long, Double]] = results.map { scores =>
+        vaw scowemap: futuwe[map[wong, -.- doubwe]] = wesuwts.map { scowes =>
           keys
-            .zip(scores).collect {
-              case (
-                    ScoreId(
-                      _,
-                      ScoreInternalId.SimClustersEmbeddingPairScoreId(
-                        SimClustersEmbeddingPairScoreId(
-                          _,
-                          LongSimClustersEmbeddingId(candidateId)))),
-                    Some(score)) =>
-                (candidateId, score.score)
-            }.toMap
+            .zip(scowes).cowwect {
+              c-case (
+                    scoweid(
+                      _, ^•ﻌ•^
+                      scoweintewnawid.simcwustewsembeddingpaiwscoweid(
+                        simcwustewsembeddingpaiwscoweid(
+                          _, rawr
+                          w-wongsimcwustewsembeddingid(candidateid)))), (˘ω˘)
+                    s-some(scowe)) =>
+                (candidateid, nyaa~~ s-scowe.scowe)
+            }.tomap
         }
-        scoreMap
+        scowemap
       }
-      .map { (scores: Map[Long, Double]) =>
-        val orderedScores = key.candidateIds.collect {
-          case LongInternalId(id) => ScoreResult(scores.get(id))
+      .map { (scowes: m-map[wong, UwU doubwe]) =>
+        vaw owdewedscowes = k-key.candidateids.cowwect {
+          c-case wongintewnawid(id) => scowewesuwt(scowes.get(id))
           case _ =>
-            // This will return None scores for candidates which don't have Long ids, but that's fine:
-            // at the moment we're only scoring for Tweets
-            ScoreResult(None)
+            // this wiww wetuwn nyone scowes fow candidates which d-don't have wong ids, :3 but that's f-fine:
+            // at the m-moment we'we onwy s-scowing fow tweets
+            scowewesuwt(none)
         }
-        found(ListScoreResponse(orderedScores))
+        found(wistscowewesponse(owdewedscowes))
       }
-      .handle {
-        case stitch.NotFound => missing
+      .handwe {
+        c-case s-stitch.notfound => missing
       }
   }
 }

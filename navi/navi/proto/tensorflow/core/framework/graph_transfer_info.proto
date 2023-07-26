@@ -1,71 +1,71 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/types.proto";
+impowt "tensowfwow/cowe/fwamewowk/types.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "GraphTransferInfoProto";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/graph_transfer_info_go_proto";
+o-option c-cc_enabwe_awenas = t-twue;
+option j-java_outew_cwassname = "gwaphtwansfewinfopwoto";
+o-option java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/gwaph_twansfew_info_go_pwoto";
 
-message GraphTransferNodeInput {
-  int32 node_id = 1;
-  int32 output_port = 2;
+message gwaphtwansfewnodeinput {
+  int32 nyode_id = 1;
+  i-int32 output_powt = 2;
 }
-message GraphTransferNodeInfo {
-  string name = 1;
-  int32 node_id = 2;
-  string type_name = 3;
+message gwaphtwansfewnodeinfo {
+  s-stwing nyame = 1;
+  i-int32 nyode_id = 2;
+  stwing type_name = 3;
   int32 soc_op_id = 4;
   int32 padding_id = 5;
-  int32 input_count = 6;
-  int32 output_count = 7;
+  i-int32 input_count = 6;
+  i-int32 output_count = 7;
 }
-message GraphTransferConstNodeInfo {
-  string name = 1;
-  int32 node_id = 2;
-  repeated int64 shape = 3;
+m-message gwaphtwansfewconstnodeinfo {
+  stwing nyame = 1;
+  int32 nyode_id = 2;
+  wepeated int64 s-shape = 3;
   bytes data = 4;
-  DataType dtype = 5;
+  datatype dtype = 5;
 }
-message GraphTransferNodeInputInfo {
-  int32 node_id = 1;
-  repeated GraphTransferNodeInput node_input = 2;
+message gwaphtwansfewnodeinputinfo {
+  int32 n-nyode_id = 1;
+  wepeated gwaphtwansfewnodeinput n-nyode_input = 2;
 }
-message GraphTransferNodeOutputInfo {
-  int32 node_id = 1;
-  repeated int32 max_byte_size = 2;
+m-message gwaphtwansfewnodeoutputinfo {
+  i-int32 n-nyode_id = 1;
+  wepeated int32 max_byte_size = 2;
 }
-message GraphTransferGraphInputNodeInfo {
-  string name = 1;
-  repeated int64 shape = 2;
-  DataType dtype = 3;
-}
-
-message GraphTransferGraphOutputNodeInfo {
-  string name = 1;
-  repeated int64 shape = 2;
-  DataType dtype = 3;
+m-message gwaphtwansfewgwaphinputnodeinfo {
+  stwing nyame = 1;
+  w-wepeated int64 shape = 2;
+  datatype dtype = 3;
 }
 
-// Protocol buffer representing a handle to a tensorflow resource. Handles are
-// not valid across executions, but can be serialized back and forth from within
-// a single run.
-message GraphTransferInfo {
-  enum Destination {
-    NOP = 0;
-    HEXAGON = 1;
+message gwaphtwansfewgwaphoutputnodeinfo {
+  stwing nyame = 1;
+  w-wepeated int64 shape = 2;
+  d-datatype d-dtype = 3;
+}
+
+// p-pwotocow buffew wepwesenting a handwe to a tensowfwow wesouwce. (˘ω˘) h-handwes awe
+// n-nyot vawid acwoss executions, ^^ but c-can be sewiawized b-back and fowth fwom within
+// a-a singwe wun. :3
+message gwaphtwansfewinfo {
+  enum d-destination {
+    nyop = 0;
+    hexagon = 1;
   }
 
-  repeated GraphTransferNodeInfo node_info = 1;
-  repeated GraphTransferConstNodeInfo const_node_info = 2;
-  repeated GraphTransferNodeInputInfo node_input_info = 3;
-  repeated GraphTransferNodeOutputInfo node_output_info = 4;
-  // Input Node parameters of transferred graph
-  repeated GraphTransferGraphInputNodeInfo graph_input_node_info = 5;
-  repeated GraphTransferGraphOutputNodeInfo graph_output_node_info = 6;
-  // Destination of graph transfer
-  Destination destination = 7;
+  w-wepeated gwaphtwansfewnodeinfo n-nyode_info = 1;
+  wepeated g-gwaphtwansfewconstnodeinfo c-const_node_info = 2;
+  wepeated gwaphtwansfewnodeinputinfo nyode_input_info = 3;
+  wepeated gwaphtwansfewnodeoutputinfo nyode_output_info = 4;
+  // input nyode pawametews of twansfewwed g-gwaph
+  wepeated g-gwaphtwansfewgwaphinputnodeinfo gwaph_input_node_info = 5;
+  w-wepeated gwaphtwansfewgwaphoutputnodeinfo gwaph_output_node_info = 6;
+  // d-destination of gwaph t-twansfew
+  destination destination = 7;
 }

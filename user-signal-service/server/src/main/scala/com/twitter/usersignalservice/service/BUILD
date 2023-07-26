@@ -1,13 +1,13 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "stitch/stitch-storehaus",
-        "strato/src/main/scala/com/twitter/strato/fed",
-        "strato/src/main/scala/com/twitter/strato/fed/server",
-        "user-signal-service/server/src/main/scala/com/twitter/usersignalservice/config",
-        "user-signal-service/server/src/main/scala/com/twitter/usersignalservice/handler",
-        "user-signal-service/server/src/main/scala/com/twitter/usersignalservice/module",
-        "user-signal-service/thrift/src/main/thrift:thrift-scala",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [
+        "stitch/stitch-stowehaus", OwO
+        "stwato/swc/main/scawa/com/twittew/stwato/fed",
+        "stwato/swc/main/scawa/com/twittew/stwato/fed/sewvew", 🥺
+        "usew-signaw-sewvice/sewvew/swc/main/scawa/com/twittew/usewsignawsewvice/config", òωó
+        "usew-signaw-sewvice/sewvew/swc/main/scawa/com/twittew/usewsignawsewvice/handwew", o.O
+        "usew-signaw-sewvice/sewvew/swc/main/scawa/com/twittew/usewsignawsewvice/moduwe", (U ᵕ U❁)
+        "usew-signaw-sewvice/thwift/swc/main/thwift:thwift-scawa", (⑅˘꒳˘)
     ],
 )

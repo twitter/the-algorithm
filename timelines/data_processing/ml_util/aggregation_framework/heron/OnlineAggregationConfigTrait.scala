@@ -1,28 +1,28 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.hewon
 
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.ml.api.Feature
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup
+i-impowt com.twittew.mw.api.featuwe
 
-trait OnlineAggregationConfigTrait {
-  def ProdAggregates: Set[TypedAggregateGroup[_]]
-  def StagingAggregates: Set[TypedAggregateGroup[_]]
-  def ProdCommonAggregates: Set[TypedAggregateGroup[_]]
-
-  /**
-   * AggregateToCompute: This defines the complete set of aggregates to be
-   *    computed by the aggregation job and to be stored in memcache.
-   */
-  def AggregatesToCompute: Set[TypedAggregateGroup[_]]
+t-twait onwineaggwegationconfigtwait {
+  d-def pwodaggwegates: set[typedaggwegategwoup[_]]
+  d-def s-stagingaggwegates: s-set[typedaggwegategwoup[_]]
+  d-def pwodcommonaggwegates: s-set[typedaggwegategwoup[_]]
 
   /**
-   * ProdFeatures: This defines the subset of aggregates to be extracted
-   *    and hydrated (or adapted) by callers to the aggregates features cache.
-   *    This should only contain production aggregates and aggregates on
-   *    product specific engagements.
-   * ProdCommonFeatures: Similar to ProdFeatures but containing user-level
-   *    aggregate features. This is provided to PredictionService just
-   *    once per user.
+   * aggwegatetocompute: this defines the compwete set of aggwegates t-to be
+   *    computed by the aggwegation job a-and to be stowed in memcache. mya
    */
-  lazy val ProdFeatures: Set[Feature[_]] = ProdAggregates.flatMap(_.allOutputFeatures)
-  lazy val ProdCommonFeatures: Set[Feature[_]] = ProdCommonAggregates.flatMap(_.allOutputFeatures)
+  d-def aggwegatestocompute: set[typedaggwegategwoup[_]]
+
+  /**
+   * pwodfeatuwes: this defines t-the subset of aggwegates to b-be extwacted
+   *    a-and hydwated (ow adapted) by cawwews to the aggwegates featuwes cache. 🥺
+   *    t-this shouwd onwy contain pwoduction aggwegates and aggwegates on
+   *    pwoduct s-specific engagements. >_<
+   * pwodcommonfeatuwes: s-simiwaw to pwodfeatuwes b-but c-containing usew-wevew
+   *    a-aggwegate featuwes. >_< this is pwovided t-to pwedictionsewvice just
+   *    once pew usew. (⑅˘꒳˘)
+   */
+  w-wazy vaw pwodfeatuwes: set[featuwe[_]] = pwodaggwegates.fwatmap(_.awwoutputfeatuwes)
+  wazy vaw pwodcommonfeatuwes: set[featuwe[_]] = p-pwodcommonaggwegates.fwatmap(_.awwoutputfeatuwes)
 }

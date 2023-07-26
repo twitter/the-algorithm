@@ -1,32 +1,32 @@
-package com.twitter.search.common.util.ml;
+package com.twittew.seawch.common.utiw.mw;
 
-import java.util.Map;
+impowt j-java.utiw.map;
 
 /**
- * An interface for linear models that are backed by some sort of map
+ * a-an intewface f-fow wineaw m-modews that awe b-backed by some s-sowt of map
  */
-public interface MapBasedLinearModel<K> {
+p-pubwic intewface m-mapbasedwineawmodew<k> {
   /**
-   * Evaluate using this model given a feature vector.
-   * @param instance The feature vector in format of a hashmap.
-   * @return
+   * evawuate using this modew given a featuwe vectow. 🥺
+   * @pawam instance the f-featuwe vectow in fowmat of a hashmap. >_<
+   * @wetuwn
    */
-  boolean classify(Map<K, Float> instance);
+  boowean c-cwassify(map<k, >_< fwoat> instance);
 
   /**
-   * Evaluate using this model given a classification threshold and a feature vector.
-   * @param threshold Score threshold used for classification.
-   * @param instance The feature vector in format of a hashmap.
-   * @return
+   * e-evawuate using this modew given a cwassification thweshowd and a-a featuwe vectow. (⑅˘꒳˘)
+   * @pawam thweshowd scowe thweshowd u-used fow c-cwassification. /(^•ω•^)
+   * @pawam instance the featuwe vectow in fowmat of a hashmap. rawr x3
+   * @wetuwn
    */
-  boolean classify(float threshold, Map<K, Float> instance);
+  b-boowean cwassify(fwoat thweshowd, (U ﹏ U) map<k, fwoat> instance);
 
   /**
-   * Computes the score of an instance as a linear combination of the features and the model
-   * weights. 0 is used as default value for features or weights that are not present.
+   * computes t-the scowe of an instance a-as a wineaw combination o-of the featuwes a-and the m-modew
+   * weights. (U ﹏ U) 0 is used as defauwt vawue fow f-featuwes ow weights that awe nyot pwesent. (⑅˘꒳˘)
    *
-   * @param instance The feature vector in format of a hashmap.
-   * @return The instance score according to the model.
+   * @pawam instance t-the featuwe vectow in fowmat of a hashmap. òωó
+   * @wetuwn the instance scowe accowding to the modew. ʘwʘ
    */
-  float score(Map<K, Float> instance);
+  f-fwoat scowe(map<k, /(^•ω•^) fwoat> instance);
 }

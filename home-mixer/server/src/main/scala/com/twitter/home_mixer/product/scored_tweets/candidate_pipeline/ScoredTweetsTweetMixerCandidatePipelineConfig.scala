@@ -1,100 +1,100 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+package com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine
 
-import com.twitter.tweet_mixer.{thriftscala => t}
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TweetypieStaticEntitiesFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CandidatePipeline
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.ScoredTweetsTweetMixerResponseFeatureTransformer
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.product_mixer.component_library.candidate_source.tweet_mixer.TweetMixerCandidateSource
-import com.twitter.product_mixer.component_library.filter.PredicateFeatureFilter
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.marshaller.request.ClientContextMarshaller
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelines.configapi.decider.DeciderParam
+impowt com.twittew.tweet_mixew.{thwiftscawa => t-t}
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.tweetypiestaticentitiesfeatuwehydwatow
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.gate.mincachedtweetsgate
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.cachedscowedtweets
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.candidatepipewine
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew.scowedtweetstweetmixewwesponsefeatuwetwansfowmew
+impowt com.twittew.home_mixew.utiw.cachedscowedtweetshewpew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.tweet_mixew.tweetmixewcandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.fiwtew.pwedicatefeatuwefiwtew
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basecandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wequest.cwientcontextmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+impowt com.twittew.timewines.configapi.decidew.decidewpawam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * Candidate Pipeline Config that fetches tweets from TweetMixer.
+ * c-candidate p-pipewine config t-that fetches tweets fwom tweetmixew. (ˆ ﻌ ˆ)♡
  */
-@Singleton
-class ScoredTweetsTweetMixerCandidatePipelineConfig @Inject() (
-  tweetMixerCandidateSource: TweetMixerCandidateSource,
-  tweetypieStaticEntitiesFeatureHydrator: TweetypieStaticEntitiesFeatureHydrator)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
-      t.TweetMixerRequest,
-      t.TweetResult,
-      TweetCandidate
+@singweton
+cwass s-scowedtweetstweetmixewcandidatepipewineconfig @inject() (
+  tweetmixewcandidatesouwce: tweetmixewcandidatesouwce, 😳😳😳
+  t-tweetypiestaticentitiesfeatuwehydwatow: tweetypiestaticentitiesfeatuwehydwatow)
+    extends candidatepipewineconfig[
+      scowedtweetsquewy, (U ﹏ U)
+      t.tweetmixewwequest, (///ˬ///✿)
+      t.tweetwesuwt, 😳
+      t-tweetcandidate
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ScoredTweetsTweetMixer")
+  ovewwide vaw identifiew: c-candidatepipewineidentifiew =
+    c-candidatepipewineidentifiew("scowedtweetstweetmixew")
 
-  val HasAuthorFilterId = "HasAuthor"
+  v-vaw hasauthowfiwtewid = "hasauthow"
 
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]] =
-    Some(CandidatePipeline.EnableTweetMixerParam)
+  ovewwide vaw enabweddecidewpawam: option[decidewpawam[boowean]] =
+    some(candidatepipewine.enabwetweetmixewpawam)
 
-  override val gates: Seq[Gate[ScoredTweetsQuery]] = Seq(
-    MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam),
+  o-ovewwide vaw g-gates: seq[gate[scowedtweetsquewy]] = seq(
+    m-mincachedtweetsgate(identifiew, 😳 c-cachedscowedtweets.mincachedtweetspawam), σωσ
   )
 
-  override val candidateSource: BaseCandidateSource[t.TweetMixerRequest, t.TweetResult] =
-    tweetMixerCandidateSource
+  ovewwide vaw candidatesouwce: basecandidatesouwce[t.tweetmixewwequest, rawr x3 t-t.tweetwesuwt] =
+    tweetmixewcandidatesouwce
 
-  private val MaxTweetsToFetch = 400
+  p-pwivate vaw maxtweetstofetch = 400
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
-    t.TweetMixerRequest
-  ] = { query =>
-    val maxCount = (query.getQualityFactorCurrentValue(identifier) * MaxTweetsToFetch).toInt
+  ovewwide vaw quewytwansfowmew: candidatepipewinequewytwansfowmew[
+    s-scowedtweetsquewy, OwO
+    t.tweetmixewwequest
+  ] = { q-quewy =>
+    vaw maxcount = (quewy.getquawityfactowcuwwentvawue(identifiew) * m-maxtweetstofetch).toint
 
-    val excludedTweetIds = query.features.map(
-      CachedScoredTweetsHelper.tweetImpressionsAndCachedScoredTweets(_, identifier))
+    v-vaw excwudedtweetids = quewy.featuwes.map(
+      cachedscowedtweetshewpew.tweetimpwessionsandcachedscowedtweets(_, /(^•ω•^) identifiew))
 
-    t.TweetMixerRequest(
-      clientContext = ClientContextMarshaller(query.clientContext),
-      product = t.Product.HomeRecommendedTweets,
-      productContext = Some(
-        t.ProductContext.HomeRecommendedTweetsProductContext(
-          t.HomeRecommendedTweetsProductContext(excludedTweetIds = excludedTweetIds.map(_.toSet)))),
-      maxResults = Some(maxCount)
+    t.tweetmixewwequest(
+      cwientcontext = cwientcontextmawshawwew(quewy.cwientcontext), 😳😳😳
+      p-pwoduct = t-t.pwoduct.homewecommendedtweets, ( ͡o ω ͡o )
+      pwoductcontext = s-some(
+        t-t.pwoductcontext.homewecommendedtweetspwoductcontext(
+          t-t.homewecommendedtweetspwoductcontext(excwudedtweetids = excwudedtweetids.map(_.toset)))), >_<
+      maxwesuwts = some(maxcount)
     )
   }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ScoredTweetsQuery, TweetCandidate, _]
-  ] = Seq(tweetypieStaticEntitiesFeatureHydrator)
+  o-ovewwide vaw pwefiwtewfeatuwehydwationphase1: seq[
+    basecandidatefeatuwehydwatow[scowedtweetsquewy, >w< tweetcandidate, rawr _]
+  ] = seq(tweetypiestaticentitiesfeatuwehydwatow)
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.TweetResult]
-  ] = Seq(ScoredTweetsTweetMixerResponseFeatureTransformer)
+  ovewwide vaw featuwesfwomcandidatesouwcetwansfowmews: s-seq[
+    candidatefeatuwetwansfowmew[t.tweetwesuwt]
+  ] = s-seq(scowedtweetstweetmixewwesponsefeatuwetwansfowmew)
 
-  override val filters: Seq[Filter[ScoredTweetsQuery, TweetCandidate]] = Seq(
-    PredicateFeatureFilter.fromPredicate(
-      FilterIdentifier(HasAuthorFilterId),
-      shouldKeepCandidate = _.getOrElse(AuthorIdFeature, None).isDefined
+  o-ovewwide v-vaw fiwtews: seq[fiwtew[scowedtweetsquewy, 😳 t-tweetcandidate]] = s-seq(
+    pwedicatefeatuwefiwtew.fwompwedicate(
+      f-fiwtewidentifiew(hasauthowfiwtewid), >w<
+      s-shouwdkeepcandidate = _.getowewse(authowidfeatuwe, (⑅˘꒳˘) nyone).isdefined
     )
   )
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    t.TweetResult,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.tweetId) }
+  ovewwide vaw wesuwttwansfowmew: c-candidatepipewinewesuwtstwansfowmew[
+    t-t.tweetwesuwt, OwO
+    t-tweetcandidate
+  ] = { s-souwcewesuwt => t-tweetcandidate(id = souwcewesuwt.tweetid) }
 }

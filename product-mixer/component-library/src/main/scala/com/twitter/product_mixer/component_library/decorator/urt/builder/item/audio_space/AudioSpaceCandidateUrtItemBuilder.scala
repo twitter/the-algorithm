@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.audio_space
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.audio_space
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.audio_space.AudioSpaceCandidateUrtItemBuilder.AudioSpaceClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.AudioSpaceCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space.AudioSpaceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.audio_space.audiospacecandidateuwtitembuiwdew.audiospacecwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.audiospacecandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.audio_space.audiospaceitem
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object AudioSpaceCandidateUrtItemBuilder {
-  val AudioSpaceClientEventInfoElement: String = "audiospace"
+o-object audiospacecandidateuwtitembuiwdew {
+  vaw audiospacecwienteventinfoewement: s-stwing = "audiospace"
 }
 
-case class AudioSpaceCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, UniversalNoun[Any]],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, UniversalNoun[Any]]
-  ] = None)
-    extends CandidateUrtEntryBuilder[Query, AudioSpaceCandidate, AudioSpaceItem] {
+case cwass a-audiospacecandidateuwtitembuiwdew[-quewy <: pipewinequewy](
+  cwienteventinfobuiwdew: basecwienteventinfobuiwdew[quewy, >_< u-univewsawnoun[any]], >_<
+  feedbackactioninfobuiwdew: option[
+    b-basefeedbackactioninfobuiwdew[quewy, (⑅˘꒳˘) u-univewsawnoun[any]]
+  ] = nyone)
+    extends candidateuwtentwybuiwdew[quewy, /(^•ω•^) audiospacecandidate, rawr x3 audiospaceitem] {
 
-  override def apply(
-    query: Query,
-    audioSpaceCandidate: AudioSpaceCandidate,
-    candidateFeatures: FeatureMap
-  ): AudioSpaceItem = AudioSpaceItem(
-    id = audioSpaceCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      audioSpaceCandidate,
-      candidateFeatures,
-      Some(AudioSpaceClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, audioSpaceCandidate, candidateFeatures))
+  o-ovewwide def appwy(
+    quewy: quewy, (U ﹏ U)
+    audiospacecandidate: audiospacecandidate, (U ﹏ U)
+    candidatefeatuwes: f-featuwemap
+  ): audiospaceitem = a-audiospaceitem(
+    i-id = audiospacecandidate.id, (⑅˘꒳˘)
+    s-sowtindex = n-nyone, òωó // sowt indexes awe automaticawwy set i-in the domain mawshawwew phase
+    cwienteventinfo = c-cwienteventinfobuiwdew(
+      quewy, ʘwʘ
+      audiospacecandidate, /(^•ω•^)
+      candidatefeatuwes, ʘwʘ
+      some(audiospacecwienteventinfoewement)), σωσ
+    feedbackactioninfo =
+      f-feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, OwO audiospacecandidate, 😳😳😳 c-candidatefeatuwes))
   )
 }

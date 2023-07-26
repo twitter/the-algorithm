@@ -1,477 +1,477 @@
-package com.twitter.search.earlybird.queryparser;
+package com.twittew.seawch.eawwybiwd.quewypawsew;
 
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Set;
+impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.identityhashmap;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.set;
 
-import javax.annotation.Nullable;
+i-impowt j-javax.annotation.nuwwabwe;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.cowwect.wists;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.util.text.HighFrequencyTermPairs;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.queryparser.parser.SerializedQueryParser;
-import com.twitter.search.queryparser.query.BooleanQuery;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Operator;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.QueryVisitor;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.search.SearchOperator;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.utiw.text.highfwequencytewmpaiws;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt com.twittew.seawch.quewypawsew.pawsew.sewiawizedquewypawsew;
+impowt com.twittew.seawch.quewypawsew.quewy.booweanquewy;
+impowt c-com.twittew.seawch.quewypawsew.quewy.conjunction;
+impowt com.twittew.seawch.quewypawsew.quewy.disjunction;
+i-impowt c-com.twittew.seawch.quewypawsew.quewy.opewatow;
+impowt com.twittew.seawch.quewypawsew.quewy.phwase;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewynodeutiws;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+impowt com.twittew.seawch.quewypawsew.quewy.quewyvisitow;
+impowt com.twittew.seawch.quewypawsew.quewy.speciawtewm;
+impowt com.twittew.seawch.quewypawsew.quewy.tewm;
+i-impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow;
 
 /**
- * Iterates over the Query, modifying it to include high frequency term pairs, replacing
- * singular high frequency terms where possible.
+ * i-itewates o-ovew the quewy, (///ˬ///✿) m-modifying it to i-incwude high fwequency tewm paiws, OwO wepwacing
+ * s-singuwaw high fwequency tewms whewe possibwe. >w<
  *
- * Assumes that this will be used IMMEDIATELY after using HighFrequencyTermPairExtractor
+ * a-assumes that this wiww be used immediatewy aftew using highfwequencytewmpaiwextwactow
  *
- * There are two primary functions of this visitor:
- *  1. Append hf_term_pairs to each group's root node.
- *  2. Remove all unnecessary term queries (unnecessary as they are captured by an hf_term_pair)
+ * thewe awe two pwimawy functions o-of this visitow:
+ *  1. ^^ append h-hf_tewm_paiws to e-each gwoup's woot n-nyode. (⑅˘꒳˘)
+ *  2. ʘwʘ wemove aww unnecessawy tewm quewies (unnecessawy as they awe captuwed b-by an hf_tewm_paiw)
  *
- * Every time the visitor finishes visiting a node, HighFrequencyTermQueryGroup.numVisits will be
- * incremented for that node's group. When numVisits == numChildren, we know we have just finished
- * processing the root of the group. At this point, we must append relevant hf_term_pairs to this
- * node.
+ * e-evewy time the visitow finishes v-visiting a nyode, (///ˬ///✿) h-highfwequencytewmquewygwoup.numvisits wiww be
+ * i-incwemented fow that nyode's g-gwoup. XD when nyumvisits == nyumchiwdwen, 😳 we know w-we have just finished
+ * pwocessing t-the woot of the gwoup. at this p-point, >w< we must a-append wewevant hf_tewm_paiws to this
+ * nyode. (˘ω˘)
  */
-public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
-  private static final Logger LOG = LoggerFactory.getLogger(
-      HighFrequencyTermPairRewriteVisitor.class);
-  private static final SearchRateCounter SEARCH_HF_PAIR_COUNTER =
-      SearchRateCounter.export("hf_pair_rewrite");
+pubwic cwass highfwequencytewmpaiwwewwitevisitow extends quewyvisitow<quewy> {
+  p-pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(
+      h-highfwequencytewmpaiwwewwitevisitow.cwass);
+  p-pwivate static f-finaw seawchwatecountew seawch_hf_paiw_countew =
+      seawchwatecountew.expowt("hf_paiw_wewwite");
 
-  private final ArrayList<HighFrequencyTermQueryGroup> groupList;
-  private final IdentityHashMap<Query, Integer> groupIds;
-  private final boolean allowNegativeOrRewrite;
+  pwivate f-finaw awwaywist<highfwequencytewmquewygwoup> gwoupwist;
+  pwivate finaw identityhashmap<quewy, nyaa~~ integew> gwoupids;
+  pwivate f-finaw boowean awwownegativeowwewwite;
 
   /**
-   * Creates a new HighFrequencyTermPairRewriteVisitor. Should be used only IMMEDIATELY after using
-   * a HighFrequencyTermPairExtractor
-   * @param groupList The groups extracted using HighFrequencyTermPairExtractor
-   * @param groupIds the mapping from query to the HF term query group
+   * cweates a nyew h-highfwequencytewmpaiwwewwitevisitow. 😳😳😳 s-shouwd be u-used onwy immediatewy aftew using
+   * a-a highfwequencytewmpaiwextwactow
+   * @pawam g-gwoupwist the g-gwoups extwacted u-using highfwequencytewmpaiwextwactow
+   * @pawam gwoupids the mapping fwom quewy t-to the hf tewm q-quewy gwoup
    */
-  public HighFrequencyTermPairRewriteVisitor(ArrayList<HighFrequencyTermQueryGroup> groupList,
-                                             IdentityHashMap<Query, Integer> groupIds) {
-    this(groupList, groupIds, true);
+  p-pubwic highfwequencytewmpaiwwewwitevisitow(awwaywist<highfwequencytewmquewygwoup> g-gwoupwist, (U ﹏ U)
+                                             i-identityhashmap<quewy, (˘ω˘) integew> gwoupids) {
+    this(gwoupwist, g-gwoupids, :3 twue);
   }
 
   /**
-   * Creates a new HighFrequencyTermPairRewriteVisitor. Should be used only IMMEDIATELY after using
-   * a HighFrequencyTermPairExtractor
-   * @param groupList The groups extracted using HighFrequencyTermPairExtractor
-   * @param groupIds the mapping from query to the HF term query group
-   * @param allowNegativeOrRewrite whether to allow rewrite for 'or (-terms)'
+   * cweates a nyew highfwequencytewmpaiwwewwitevisitow. >w< shouwd be used onwy immediatewy aftew using
+   * a-a highfwequencytewmpaiwextwactow
+   * @pawam gwoupwist the gwoups extwacted using highfwequencytewmpaiwextwactow
+   * @pawam g-gwoupids the m-mapping fwom quewy t-to the hf tewm quewy gwoup
+   * @pawam a-awwownegativeowwewwite whethew to awwow w-wewwite fow 'ow (-tewms)'
    */
-  public HighFrequencyTermPairRewriteVisitor(ArrayList<HighFrequencyTermQueryGroup> groupList,
-                                             IdentityHashMap<Query, Integer> groupIds,
-                                             boolean allowNegativeOrRewrite) {
-    this.groupList = groupList;
-    this.groupIds = groupIds;
-    this.allowNegativeOrRewrite = allowNegativeOrRewrite;
+  p-pubwic highfwequencytewmpaiwwewwitevisitow(awwaywist<highfwequencytewmquewygwoup> gwoupwist, ^^
+                                             identityhashmap<quewy, 😳😳😳 integew> gwoupids, nyaa~~
+                                             boowean awwownegativeowwewwite) {
+    t-this.gwoupwist = gwoupwist;
+    t-this.gwoupids = gwoupids;
+    t-this.awwownegativeowwewwite = a-awwownegativeowwewwite;
   }
 
   /**
-   * This method logs successful rewrites, and protects against unsuccessful ones by
-   * catching all exceptions and restoring the previous query. 
+   * this method wogs successfuw wewwites, (⑅˘꒳˘) a-and pwotects a-against unsuccessfuw ones by
+   * c-catching aww e-exceptions and westowing the pwevious quewy. :3 
    */
-  public static Query safeRewrite(Query safeQuery, boolean allowNegativeOrRewrite)
-      throws QueryParserException {
-    Query query = safeQuery;
+  pubwic static quewy safewewwite(quewy safequewy, ʘwʘ b-boowean a-awwownegativeowwewwite)
+      t-thwows quewypawsewexception {
+    quewy quewy = s-safequewy;
 
-    ArrayList<HighFrequencyTermQueryGroup> groups = Lists.newArrayList();
-    IdentityHashMap<Query, Integer> groupIds = Maps.newIdentityHashMap();
+    a-awwaywist<highfwequencytewmquewygwoup> gwoups = w-wists.newawwaywist();
+    identityhashmap<quewy, rawr x3 integew> gwoupids = maps.newidentityhashmap();
 
-    // Step 1: extract high frequency term pairs and phrases.
-    try {
-      int hfTermsFound = query.accept(new HighFrequencyTermPairExtractor(groups, groupIds));
-      if (hfTermsFound < 2) {
-        return query;
+    // step 1: e-extwact high fwequency t-tewm paiws and phwases. (///ˬ///✿)
+    twy {
+      int h-hftewmsfound = q-quewy.accept(new highfwequencytewmpaiwextwactow(gwoups, 😳😳😳 gwoupids));
+      if (hftewmsfound < 2) {
+        w-wetuwn quewy;
       }
-    } catch (Exception e) {
-      LOG.error("Exception while extracting high frequency term pairs", e);
-      return query;
+    } catch (exception e) {
+      wog.ewwow("exception w-whiwe extwacting high fwequency tewm paiws", XD e-e);
+      w-wetuwn quewy;
     }
 
-    // Step 2: rewrite (safely).
-    String original = query.serialize();
-    try {
-      query = query.accept(
-          new HighFrequencyTermPairRewriteVisitor(groups, groupIds, allowNegativeOrRewrite))
-          .simplify();
-      String rewrite = query.serialize();
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("Optimized query: " + original + " -> " + rewrite);
+    // step 2: wewwite (safewy).
+    stwing o-owiginaw = quewy.sewiawize();
+    t-twy {
+      quewy = quewy.accept(
+          nyew highfwequencytewmpaiwwewwitevisitow(gwoups, >_< gwoupids, >w< awwownegativeowwewwite))
+          .simpwify();
+      s-stwing wewwite = quewy.sewiawize();
+      i-if (wog.isdebugenabwed()) {
+        wog.debug("optimized quewy: " + owiginaw + " -> " + wewwite);
       }
-      SEARCH_HF_PAIR_COUNTER.increment();
-      return query;
-    } catch (Exception e) {
-      LOG.error("Exception rewriting high frequency term pairs", e);
-      return new SerializedQueryParser(EarlybirdConfig.getPenguinVersion()).parse(original);
+      s-seawch_hf_paiw_countew.incwement();
+      wetuwn quewy;
+    } c-catch (exception e-e) {
+      wog.ewwow("exception w-wewwiting high fwequency t-tewm paiws", /(^•ω•^) e);
+      w-wetuwn n-nyew sewiawizedquewypawsew(eawwybiwdconfig.getpenguinvewsion()).pawse(owiginaw);
     }
   }
 
   /**
-   * The rewritten query to use the hf_term_pair operators.
+   * the wewwitten q-quewy to use t-the hf_tewm_paiw opewatows. :3
    *
-   * @param disjunction query node which must have been previously visited by
-   *                    HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   * @pawam disjunction quewy n-nyode which must h-have been pweviouswy v-visited by
+   *                    highfwequencytewmpaiwextwactow and nyot h-had its visitow data cweawed. ʘwʘ
    */
-  @Override
-  public Query visit(Disjunction disjunction) throws QueryParserException {
-    return visit((BooleanQuery) disjunction);
+  @ovewwide
+  p-pubwic quewy v-visit(disjunction disjunction) thwows quewypawsewexception {
+    wetuwn visit((booweanquewy) d-disjunction);
   }
 
   /**
-   * The rewritten query to use the hf_term_pair operators.
+   * t-the w-wewwitten quewy t-to use the hf_tewm_paiw opewatows. (˘ω˘)
    *
-   * @param conjunction query node which must have been previously visited by
-   *                    HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   * @pawam c-conjunction quewy nyode which must have been pweviouswy visited by
+   *                    highfwequencytewmpaiwextwactow and n-nyot had its visitow data cweawed. (ꈍᴗꈍ)
    */
-  @Override
-  public Query visit(Conjunction conjunction) throws QueryParserException {
-    return visit((BooleanQuery) conjunction);
+  @ovewwide
+  p-pubwic quewy visit(conjunction c-conjunction) thwows quewypawsewexception {
+    w-wetuwn visit((booweanquewy) conjunction);
   }
 
   /**
-   * Applies this visitor to a BooleanQuery.
+   * a-appwies this visitow t-to a booweanquewy. ^^
    */
-  public Query visit(BooleanQuery booleanQuery) throws QueryParserException {
-    HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(booleanQuery));
-    queryPreprocess(group);
+  p-pubwic quewy visit(booweanquewy b-booweanquewy) thwows q-quewypawsewexception {
+    highfwequencytewmquewygwoup gwoup = gwoupwist.get(gwoupids.get(booweanquewy));
+    quewypwepwocess(gwoup);
 
-    ArrayList<Query> children = Lists.newArrayList();
-    for (Query node : booleanQuery.getChildren()) {
-      if (booleanQuery.isTypeOf(Query.QueryType.DISJUNCTION) && node.mustOccur()) {
-        // Potential Example: (* a (+ +b not_c)) => (* (+ +b not_c) [hf_term_pair a b 0.05])
-        // Implementation is too difficult and would make this rewriter even MORE complicated for
-        // a rarely used query. For now, we ignore it completely. We might gain some benefit in the
-        // future if we decide to create a new extractor and rewriter and rewrite this subquery, and
-        // that wouldn't complicate things too much.
-        children.add(node);
-        continue;
+    awwaywist<quewy> chiwdwen = wists.newawwaywist();
+    f-fow (quewy n-nyode : booweanquewy.getchiwdwen()) {
+      i-if (booweanquewy.istypeof(quewy.quewytype.disjunction) && nyode.mustoccuw()) {
+        // p-potentiaw exampwe: (* a (+ +b nyot_c)) => (* (+ +b nyot_c) [hf_tewm_paiw a-a b 0.05])
+        // i-impwementation is too difficuwt a-and wouwd make this wewwitew even mowe compwicated f-fow
+        // a-a wawewy used quewy. ^^ fow n-nyow, ( ͡o ω ͡o ) we ignowe i-it compwetewy. -.- we might gain some benefit in the
+        // futuwe if we decide t-to cweate a nyew e-extwactow and w-wewwitew and wewwite t-this subquewy, ^^;; a-and
+        // that wouwdn't c-compwicate things t-too much. ^•ﻌ•^
+        chiwdwen.add(node);
+        c-continue;
       }
-      Query child = node.accept(this);
-      if (child != null) {
-        children.add(child);
+      q-quewy chiwd = nyode.accept(this);
+      i-if (chiwd != nyuww) {
+        chiwdwen.add(chiwd);
       }
     }
 
-    Query newBooleanQuery = booleanQuery.newBuilder().setChildren(children).build();
+    quewy nyewbooweanquewy = b-booweanquewy.newbuiwdew().setchiwdwen(chiwdwen).buiwd();
 
-    return queryPostprocess(newBooleanQuery, group);
+    wetuwn quewypostpwocess(newbooweanquewy, g-gwoup);
   }
 
   /**
-   * The rewritten query to use the hf_term_pair operators.
+   * t-the wewwitten quewy to use the hf_tewm_paiw o-opewatows. (˘ω˘)
    *
-   * @param phraseToVisit query node which must have been previously visited by
-   *               HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   * @pawam phwasetovisit quewy nyode w-which must have b-been pweviouswy v-visited by
+   *               highfwequencytewmpaiwextwactow and nyot had its visitow data cweawed. o.O
    */
-  @Override
-  public Query visit(Phrase phraseToVisit) throws QueryParserException {
-    Phrase phrase = phraseToVisit;
+  @ovewwide
+  p-pubwic quewy visit(phwase phwasetovisit) t-thwows quewypawsewexception {
+    p-phwase phwase = phwasetovisit;
 
-    HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(phrase));
-    queryPreprocess(group);
+    h-highfwequencytewmquewygwoup gwoup = gwoupwist.get(gwoupids.get(phwase));
+    q-quewypwepwocess(gwoup);
 
-    // Remove all high frequency phrases from the query that do not have any annotations.
-    // This will cause phrase de-duping, which we probably don't care about.
-    if (!hasAnnotations(phrase) && (
-        group.hfPhrases.contains(phrase.getPhraseValue())
-        || group.preusedHFPhrases.contains(phrase.getPhraseValue()))) {
-      // This term will be appended to the end of the query in the form of a pair.
-      phrase = null;
+    // w-wemove aww high fwequency phwases fwom the q-quewy that do nyot have any annotations. (✿oωo)
+    // this wiww cause p-phwase de-duping, 😳😳😳 w-which we pwobabwy don't cawe a-about. (ꈍᴗꈍ)
+    if (!hasannotations(phwase) && (
+        gwoup.hfphwases.contains(phwase.getphwasevawue())
+        || g-gwoup.pweusedhfphwases.contains(phwase.getphwasevawue()))) {
+      // t-this tewm w-wiww be appended to the end of the quewy in the fowm of a paiw. σωσ
+      phwase = nyuww;
     }
 
-    return queryPostprocess(phrase, group);
+    wetuwn quewypostpwocess(phwase, gwoup);
   }
 
   /**
-   * The rewritten query to use the hf_term_pair operators.
+   * the wewwitten quewy to use the hf_tewm_paiw opewatows. UwU
    *
-   * @param termToVisit query node which must have been previously visited by
-   *             HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   * @pawam tewmtovisit quewy n-nyode which m-must have been pweviouswy visited by
+   *             h-highfwequencytewmpaiwextwactow a-and nyot had i-its visitow data cweawed. ^•ﻌ•^
    */
-  @Override
-  public Query visit(Term termToVisit) throws QueryParserException {
-    Term term = termToVisit;
+  @ovewwide
+  p-pubwic quewy visit(tewm tewmtovisit) t-thwows quewypawsewexception {
+    t-tewm tewm = tewmtovisit;
 
-    HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(term));
-    queryPreprocess(group);
+    h-highfwequencytewmquewygwoup gwoup = gwoupwist.get(gwoupids.get(tewm));
+    q-quewypwepwocess(gwoup);
 
-    // Remove all high frequency terms from the query that do not have any annotations. This will
-    // do term de-duping within a group, which may effect scoring, but since these are high df
-    // terms, they don't have much of an impact anyways.
-    if (!hasAnnotations(term)
-        && (group.preusedHFTokens.contains(term.getValue())
-            || group.hfTokens.contains(term.getValue()))) {
-      // This term will be appended to the end of the query in the form of a pair.
-      term = null;
+    // w-wemove aww high fwequency tewms fwom the quewy that d-do nyot have a-any annotations. mya t-this wiww
+    // d-do tewm de-duping w-within a gwoup, /(^•ω•^) w-which may effect s-scowing, rawr but s-since these awe h-high df
+    // tewms, nyaa~~ they don't h-have much of a-an impact anyways. ( ͡o ω ͡o )
+    i-if (!hasannotations(tewm)
+        && (gwoup.pweusedhftokens.contains(tewm.getvawue())
+            || gwoup.hftokens.contains(tewm.getvawue()))) {
+      // t-this tewm wiww be appended to the end of the q-quewy in the fowm of a paiw. σωσ
+      t-tewm = nyuww;
     }
 
-    return queryPostprocess(term, group);
+    w-wetuwn q-quewypostpwocess(tewm, gwoup);
   }
 
   /**
-   * The rewritten query to use the hf_term_pair operators.
+   * t-the wewwitten quewy to use the h-hf_tewm_paiw opewatows. (✿oωo)
    *
-   * @param operator query node which must have been previously visited by
-   *                 HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   * @pawam opewatow q-quewy nyode which must have been p-pweviouswy visited by
+   *                 highfwequencytewmpaiwextwactow and nyot had its visitow data cweawed. (///ˬ///✿)
    */
-  @Override
-  public Query visit(Operator operator) throws QueryParserException {
-    HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(operator));
-    queryPreprocess(group);
+  @ovewwide
+  p-pubwic quewy visit(opewatow o-opewatow) thwows q-quewypawsewexception {
+    highfwequencytewmquewygwoup gwoup = gwoupwist.get(gwoupids.get(opewatow));
+    q-quewypwepwocess(gwoup);
 
-    return queryPostprocess(operator, group);
+    wetuwn q-quewypostpwocess(opewatow, σωσ gwoup);
   }
 
   /**
-   * The rewritten query to use the hf_term_pair operators.
+   * t-the wewwitten q-quewy to use the hf_tewm_paiw opewatows. UwU
    *
-   * @param special query node which must have been previously visited by
-   *                HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   * @pawam speciaw q-quewy nyode w-which must have been pweviouswy v-visited by
+   *                highfwequencytewmpaiwextwactow and nyot had its v-visitow data cweawed. (⑅˘꒳˘)
    */
-  @Override
-  public Query visit(SpecialTerm special) throws QueryParserException {
-    HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(special));
-    queryPreprocess(group);
+  @ovewwide
+  pubwic q-quewy visit(speciawtewm s-speciaw) t-thwows quewypawsewexception {
+    highfwequencytewmquewygwoup g-gwoup = gwoupwist.get(gwoupids.get(speciaw));
+    q-quewypwepwocess(gwoup);
 
-    return queryPostprocess(special, group);
+    w-wetuwn quewypostpwocess(speciaw, /(^•ω•^) g-gwoup);
   }
 
   /**
-   * Before visiting a node's children, we must process its group's distributiveToken. This way, a
-   * node only has to check its grandparent group for a distributiveToken instead of recursing all
-   * of the way up to the root of the tree.
+   * befowe v-visiting a nyode's c-chiwdwen, -.- we m-must pwocess its g-gwoup's distwibutivetoken. (ˆ ﻌ ˆ)♡ t-this w-way, nyaa~~ a
+   * nyode o-onwy has to c-check its gwandpawent gwoup fow a-a distwibutivetoken instead of wecuwsing a-aww
+   * of the way up t-to the woot of the t-twee. ʘwʘ
    */
-  private void queryPreprocess(HighFrequencyTermQueryGroup group) {
-    if (group.distributiveToken == null) {
-      group.distributiveToken = getAncestorDistributiveToken(group);
+  p-pwivate void quewypwepwocess(highfwequencytewmquewygwoup gwoup) {
+    if (gwoup.distwibutivetoken == nyuww) {
+      g-gwoup.distwibutivetoken = getancestowdistwibutivetoken(gwoup);
     }
   }
 
   /**
-   * If the query isn't the root of the group, returns the query. Otherwise, if the query's
-   * group has at most one hf term, return the query. Otherwise, returns the query with hf_term_pair
-   * operators created from the group's hf terms appended to it.
+   * i-if the q-quewy isn't the woot of the gwoup, :3 wetuwns the quewy. (U ᵕ U❁) othewwise, (U ﹏ U) i-if the quewy's
+   * g-gwoup has at most one hf tewm, ^^ w-wetuwn the q-quewy. òωó othewwise, wetuwns the quewy with hf_tewm_paiw
+   * opewatows c-cweated fwom t-the gwoup's hf t-tewms appended t-to it. /(^•ω•^)
    */
-  private Query queryPostprocess(@Nullable Query query, HighFrequencyTermQueryGroup group)
-      throws QueryParserException {
+  pwivate quewy quewypostpwocess(@nuwwabwe quewy quewy, 😳😳😳 h-highfwequencytewmquewygwoup g-gwoup)
+      thwows quewypawsewexception {
 
-    group.numVisits++;
-    if (group.numMembers == group.numVisits
-        && (!group.hfTokens.isEmpty() || !group.preusedHFTokens.isEmpty()
-        || group.hasPhrases())) {
+    gwoup.numvisits++;
+    i-if (gwoup.nummembews == gwoup.numvisits
+        && (!gwoup.hftokens.isempty() || !gwoup.pweusedhftokens.isempty()
+        || gwoup.hasphwases())) {
 
-      group.removePreusedTokens();
-      String ancestorDistributiveToken = getAncestorDistributiveToken(group);
+      g-gwoup.wemovepweusedtokens();
+      stwing ancestowdistwibutivetoken = g-getancestowdistwibutivetoken(gwoup);
 
-      // Need at least 2 tokens to perform a pair rewrite.  Try to get one
-      // additional token from ancestors, and if that fails, from phrases.
-      if ((group.hfTokens.size() + group.preusedHFTokens.size()) == 1
-          && ancestorDistributiveToken != null) {
-        group.preusedHFTokens.add(ancestorDistributiveToken);
+      // n-nyeed at weast 2 tokens t-to pewfowm a paiw w-wewwite. :3  twy to get one
+      // a-additionaw token fwom ancestows, (///ˬ///✿) a-and if that f-faiws, fwom phwases. rawr x3
+      i-if ((gwoup.hftokens.size() + g-gwoup.pweusedhftokens.size()) == 1
+          && ancestowdistwibutivetoken != n-nuww) {
+        g-gwoup.pweusedhftokens.add(ancestowdistwibutivetoken);
       }
-      if ((group.hfTokens.size() + group.preusedHFTokens.size()) == 1) {
-        String tokenFromPhrase = group.getTokenFromPhrase();
-        if (tokenFromPhrase != null) {
-          group.preusedHFTokens.add(tokenFromPhrase);
+      i-if ((gwoup.hftokens.size() + gwoup.pweusedhftokens.size()) == 1) {
+        s-stwing tokenfwomphwase = gwoup.gettokenfwomphwase();
+        if (tokenfwomphwase != n-nyuww) {
+          g-gwoup.pweusedhftokens.add(tokenfwomphwase);
         }
       }
 
-      return appendPairs(query, group);
+      w-wetuwn appendpaiws(quewy, (U ᵕ U❁) gwoup);
     }
 
-    return query;
+    wetuwn quewy;
   }
 
   /**
-   * Returns the distributiveToken of group's grandparent.
+   * wetuwns t-the distwibutivetoken of gwoup's g-gwandpawent.
    */
-  private String getAncestorDistributiveToken(HighFrequencyTermQueryGroup group) {
-    String ancestorDistributiveToken = null;
-    if (group.parentGroupIdx >= 0 && groupList.get(group.parentGroupIdx).parentGroupIdx >= 0) {
-      ancestorDistributiveToken =
-              groupList.get(groupList.get(group.parentGroupIdx).parentGroupIdx).distributiveToken;
+  p-pwivate stwing getancestowdistwibutivetoken(highfwequencytewmquewygwoup gwoup) {
+    stwing a-ancestowdistwibutivetoken = nyuww;
+    if (gwoup.pawentgwoupidx >= 0 && g-gwoupwist.get(gwoup.pawentgwoupidx).pawentgwoupidx >= 0) {
+      ancestowdistwibutivetoken =
+              g-gwoupwist.get(gwoupwist.get(gwoup.pawentgwoupidx).pawentgwoupidx).distwibutivetoken;
     }
-    return ancestorDistributiveToken;
+    w-wetuwn ancestowdistwibutivetoken;
   }
 
   /**
-   * Returns the hf_term_pair operators created using the hf terms of the group appended to query.
+   * w-wetuwns t-the hf_tewm_paiw opewatows cweated using the hf tewms of the gwoup appended to q-quewy. (⑅˘꒳˘)
    *
-   * @param query The query which the new hf_term_pair operators will be appended to.
-   * @param group The group which this query belongs to.
-   * @return The hf_term_pair operators created using the hf terms of the group appended to query.
+   * @pawam quewy the q-quewy which the nyew hf_tewm_paiw opewatows wiww be appended t-to. (˘ω˘)
+   * @pawam gwoup the gwoup which this quewy bewongs to. :3
+   * @wetuwn the hf_tewm_paiw o-opewatows c-cweated using the hf tewms o-of the gwoup appended to quewy. XD
    */
-  private Query appendPairs(@Nullable Query query, HighFrequencyTermQueryGroup group)
-      throws QueryParserException {
+  pwivate q-quewy appendpaiws(@nuwwabwe q-quewy quewy, >_< highfwequencytewmquewygwoup g-gwoup)
+      thwows quewypawsewexception {
 
-    BooleanQuery query2 = createQueryFromGroup(group);
+    b-booweanquewy quewy2 = cweatequewyfwomgwoup(gwoup);
 
-    // If either of the queries are null, do not have to worry about combining them.
-    if (query2 == null) {
-      return query;
-    } else if (query == null) {
-      return query2;
+    // if eithew of the quewies awe nyuww, (✿oωo) d-do nyot have to wowwy about combining them. (ꈍᴗꈍ)
+    i-if (quewy2 == n-nyuww) {
+      w-wetuwn quewy;
+    } ewse if (quewy == nyuww) {
+      w-wetuwn quewy2;
     }
 
-    Query newQuery;
+    quewy nyewquewy;
 
-    if (query.isTypeOf(Query.QueryType.CONJUNCTION)
-        || query.isTypeOf(Query.QueryType.DISJUNCTION)) {
-      // Adding children in this way is safer when its query is a conjunction or disjunction
-      // ex. Other way: (+ +de -la -the) => (+ (+ +de -la -the) -[hf_term_pair la the 0.005])
-      //     This way: (+ +de -la -the) => (+ +de -la -the -[hf_term_pair la the 0.005])
-      return ((BooleanQuery.Builder) query.newBuilder()).addChildren(query2.getChildren()).build();
-    } else if (!group.isPositive) {
-      // In lucene, [+ (-term1, -term2, ...)] has non-deterministic behavior and the rewrite is not
-      // efficient from query execution perspective.  So, we will not do this rewrite if it is
-      // configured that way.
-      if (!allowNegativeOrRewrite) {
-        return query;
+    if (quewy.istypeof(quewy.quewytype.conjunction)
+        || quewy.istypeof(quewy.quewytype.disjunction)) {
+      // adding c-chiwdwen in this w-way is safew when i-its quewy is a-a conjunction ow disjunction
+      // ex. XD othew w-way: (+ +de -wa -the) => (+ (+ +de -wa -the) -[hf_tewm_paiw w-wa the 0.005])
+      //     this way: (+ +de -wa -the) => (+ +de -wa -the -[hf_tewm_paiw wa the 0.005])
+      w-wetuwn ((booweanquewy.buiwdew) quewy.newbuiwdew()).addchiwdwen(quewy2.getchiwdwen()).buiwd();
+    } ewse i-if (!gwoup.ispositive) {
+      // in wucene, :3 [+ (-tewm1, mya -tewm2, ...)] has non-detewministic b-behaviow and the w-wewwite is nyot
+      // efficient f-fwom quewy execution p-pewspective. òωó  s-so, we wiww nyot do this wewwite if it is
+      // c-configuwed that way. nyaa~~
+      if (!awwownegativeowwewwite) {
+        w-wetuwn quewy;
       }
 
-      // Negate both queries to combine, and the append as a conjunction, followed by negating
-      // whole query. Equivalent to appending as a disjunction.
-      newQuery = QueryNodeUtils.appendAsConjunction(
-          query.negate(),
-          query2.negate()
+      // nyegate both quewies t-to combine, 🥺 and t-the append as a c-conjunction, -.- fowwowed b-by nyegating
+      // w-whowe quewy. 🥺 equivawent t-to appending as a disjunction. (˘ω˘)
+      nyewquewy = q-quewynodeutiws.appendasconjunction(
+          quewy.negate(), òωó
+          q-quewy2.negate()
       );
-      newQuery = newQuery.makeMustNot();
-    } else {
-      newQuery = QueryNodeUtils.appendAsConjunction(query, query2);
-      newQuery = newQuery.makeDefault();
+      nyewquewy = nyewquewy.makemustnot();
+    } e-ewse {
+      n-newquewy = quewynodeutiws.appendasconjunction(quewy, UwU q-quewy2);
+      nyewquewy = n-nyewquewy.makedefauwt();
     }
 
-    return newQuery;
+    w-wetuwn nyewquewy;
   }
 
   /**
-   * Creates a conjunction of term_pairs using the sets of hf terms in HighFrequencyTermQueryGroup
-   * group. If !group.isPositive, will return a disjunction of negated pairs. If there aren't enough
-   * hfTokens, will return null.
+   * c-cweates a-a conjunction of tewm_paiws using t-the sets of hf tewms in highfwequencytewmquewygwoup
+   * gwoup. ^•ﻌ•^ if !gwoup.ispositive, mya w-wiww wetuwn a disjunction o-of negated paiws. (✿oωo) if thewe awen't enough
+   * h-hftokens, XD wiww w-wetuwn nyuww.
    */
-  private BooleanQuery createQueryFromGroup(HighFrequencyTermQueryGroup group)
-      throws QueryParserException {
+  p-pwivate booweanquewy cweatequewyfwomgwoup(highfwequencytewmquewygwoup g-gwoup)
+      t-thwows quewypawsewexception {
 
-    if (!group.hfTokens.isEmpty() || group.preusedHFTokens.size() > 1 || group.hasPhrases()) {
-      List<Query>  terms = createTermPairsForGroup(group.hfTokens,
-                                                   group.preusedHFTokens,
-                                                   group.hfPhrases,
-                                                   group.preusedHFPhrases);
+    i-if (!gwoup.hftokens.isempty() || gwoup.pweusedhftokens.size() > 1 || gwoup.hasphwases()) {
+      wist<quewy>  t-tewms = cweatetewmpaiwsfowgwoup(gwoup.hftokens, :3
+                                                   gwoup.pweusedhftokens,
+                                                   g-gwoup.hfphwases, (U ﹏ U)
+                                                   g-gwoup.pweusedhfphwases);
 
-      if (group.isPositive) {
-        return new Conjunction(terms);
-      } else {
-        return new Disjunction(Lists.transform(terms, QueryNodeUtils.NEGATE_QUERY));
+      if (gwoup.ispositive) {
+        wetuwn nyew conjunction(tewms);
+      } ewse {
+        w-wetuwn nyew d-disjunction(wists.twansfowm(tewms, UwU quewynodeutiws.negate_quewy));
       }
     }
 
-    return null;
+    wetuwn nyuww;
   }
 
   /**
-   * Creates HF_TERM_PAIR terms out of hfTokens and optHFTokens. Attempts to create the minimal
-   * amount of tokens necessary. optHFToken pairs should be given a weight of 0.0 and not be scored,
-   * as they are likely already included in the query in a phrase or an annotated term.
-   * @param hfTokens
-   * @param optHFTokens
-   * @return A list of hf_term_pair operators.
+   * cweates hf_tewm_paiw t-tewms out of hftokens and o-opthftokens. ʘwʘ attempts t-to cweate the minimaw
+   * amount of tokens nyecessawy. >w< opthftoken paiws s-shouwd be given a weight of 0.0 and nyot be scowed, 😳😳😳
+   * a-as they awe wikewy awweady i-incwuded in t-the quewy in a phwase ow an annotated t-tewm. rawr
+   * @pawam h-hftokens
+   * @pawam o-opthftokens
+   * @wetuwn a-a wist of h-hf_tewm_paiw opewatows. ^•ﻌ•^
    */
-  private List<Query> createTermPairsForGroup(Set<String> hfTokens,
-                                              Set<String> optHFTokens,
-                                              Set<String> hfPhrases,
-                                              Set<String> optHFPhrases) {
-    // Handle sets with only one token.
-    if (optHFTokens.size() == 1 && hfTokens.size() > 0) {
-      // (* "a not_hf" b c) => (* "a not_hf" [hf_term_pair a b 0.05] [hf_term_pair b c 0.05])
-      // optHFTokens: [a] hfTokens: [b, c] => optHFTokens: [] hfTokens: [a, b, c]
-      hfTokens.addAll(optHFTokens);
-      optHFTokens.clear();
-    } else if (hfTokens.size() == 1 && optHFTokens.size() > 0) {
-      // (* "a b" not_hf c) => (* "a b" not_hf [hf_term_pair a b 0.0] [hf_term_pair a c 0.005])
-      // optHFTokens: [a, b] hfTokens: [c] => optHFTokens: [a, b] hfTokens: [a, c]
-      String term = optHFTokens.iterator().next();
-      hfTokens.add(term);
+  p-pwivate wist<quewy> cweatetewmpaiwsfowgwoup(set<stwing> hftokens, σωσ
+                                              set<stwing> opthftokens, :3
+                                              set<stwing> hfphwases, rawr x3
+                                              s-set<stwing> o-opthfphwases) {
+    // h-handwe sets with o-onwy one token. nyaa~~
+    i-if (opthftokens.size() == 1 && h-hftokens.size() > 0) {
+      // (* "a nyot_hf" b c) => (* "a nyot_hf" [hf_tewm_paiw a b 0.05] [hf_tewm_paiw b-b c 0.05])
+      // o-opthftokens: [a] hftokens: [b, :3 c] => opthftokens: [] hftokens: [a, >w< b-b, c]
+      h-hftokens.addaww(opthftokens);
+      o-opthftokens.cweaw();
+    } ewse if (hftokens.size() == 1 && opthftokens.size() > 0) {
+      // (* "a b-b" nyot_hf c) => (* "a b" nyot_hf [hf_tewm_paiw a-a b 0.0] [hf_tewm_paiw a-a c 0.005])
+      // opthftokens: [a, rawr b] hftokens: [c] => o-opthftokens: [a, 😳 b] h-hftokens: [a, 😳 c]
+      s-stwing tewm = opthftokens.itewatow().next();
+      h-hftokens.add(tewm);
     }
 
-    List<Query> terms = createTermPairs(hfTokens, true, HighFrequencyTermPairs.HF_DEFAULT_WEIGHT);
-    terms.addAll(createTermPairs(optHFTokens, false, 0));
-    terms.addAll(createPhrasePairs(hfPhrases, HighFrequencyTermPairs.HF_DEFAULT_WEIGHT));
-    terms.addAll(createPhrasePairs(optHFPhrases, 0));
+    w-wist<quewy> t-tewms = cweatetewmpaiws(hftokens, 🥺 t-twue, rawr x3 highfwequencytewmpaiws.hf_defauwt_weight);
+    t-tewms.addaww(cweatetewmpaiws(opthftokens, ^^ f-fawse, ( ͡o ω ͡o ) 0));
+    tewms.addaww(cweatephwasepaiws(hfphwases, XD h-highfwequencytewmpaiws.hf_defauwt_weight));
+    t-tewms.addaww(cweatephwasepaiws(opthfphwases, ^^ 0));
 
-    return terms;
+    wetuwn tewms;
   }
 
   /**
-   * Turns a set of hf terms into a list of hf_term_pair operators. Each term will be used at least
-   * once in as few pairs as possible.
-   * @param tokens
-   * @param createSingle If the set contains only one query, the returned list will contain a single
-   *                     Term for that query if createSingle is true, and an empty list otherwise.
-   * @param weight Each term pair will be given a score boost of serializedWeight.
-   * @return
+   * t-tuwns a set of hf tewms into a wist of hf_tewm_paiw o-opewatows. (⑅˘꒳˘) each tewm wiww b-be used at weast
+   * once in a-as few paiws as p-possibwe. (⑅˘꒳˘)
+   * @pawam tokens
+   * @pawam cweatesingwe i-if the set contains onwy one quewy, ^•ﻌ•^ the w-wetuwned wist wiww c-contain a singwe
+   *                     tewm fow that quewy i-if cweatesingwe i-is twue, ( ͡o ω ͡o ) and an empty wist othewwise. ( ͡o ω ͡o )
+   * @pawam w-weight each tewm paiw wiww be given a scowe boost o-of sewiawizedweight.
+   * @wetuwn
    */
-  private static List<Query> createTermPairs(Set<String> tokens, boolean createSingle,
-      double weight) {
+  pwivate s-static wist<quewy> cweatetewmpaiws(set<stwing> t-tokens, (✿oωo) boowean c-cweatesingwe,
+      doubwe weight) {
 
-    List<Query> terms = Lists.newArrayList();
-    if (tokens.size() >= 2) {
-      int tokensLeft = tokens.size();
-      String token1 = null;
-      for (String token2 : tokens) {
-        if (token1 == null) {
-          token1 = token2;
-        } else {
-          terms.add(createHFTermPair(token1, token2, weight));
+    w-wist<quewy> tewms = w-wists.newawwaywist();
+    i-if (tokens.size() >= 2) {
+      i-int tokensweft = tokens.size();
+      stwing token1 = nyuww;
+      fow (stwing token2 : tokens) {
+        if (token1 == n-nyuww) {
+          t-token1 = t-token2;
+        } e-ewse {
+          t-tewms.add(cweatehftewmpaiw(token1, 😳😳😳 t-token2, weight));
 
-          if (tokensLeft > 2) { // Only reset if there is more than one token remaining.
-            token1 = null;
+          i-if (tokensweft > 2) { // o-onwy weset if thewe i-is mowe than one t-token wemaining. OwO
+            token1 = nyuww;
           }
         }
-        tokensLeft--;
+        tokensweft--;
       }
-    } else if (createSingle && !tokens.isEmpty()) { // Only one high frequency token
-      // Need to add token as a term because it was removed from the query earlier in rewriting.
-      Term newTerm = new Term(tokens.iterator().next());
-      terms.add(newTerm);
+    } e-ewse if (cweatesingwe && !tokens.isempty()) { // onwy one high fwequency t-token
+      // nyeed to add token a-as a tewm because i-it was wemoved fwom the quewy e-eawwiew in w-wewwiting. ^^
+      t-tewm newtewm = nyew tewm(tokens.itewatow().next());
+      t-tewms.add(newtewm);
     }
 
-    return terms;
+    w-wetuwn tewms;
   }
 
-  private static List<Query> createPhrasePairs(Set<String> phrases, double weight) {
-    List<Query> ops = Lists.newArrayList();
-    for (String phrase : phrases) {
-      String[] terms = phrase.split(" ");
-      assert terms.length == 2;
-      SearchOperator op = new SearchOperator(SearchOperator.Type.HF_PHRASE_PAIR,
-          terms[0], terms[1], Double.toString(weight));
+  pwivate s-static wist<quewy> cweatephwasepaiws(set<stwing> p-phwases, rawr x3 d-doubwe weight) {
+    w-wist<quewy> ops = wists.newawwaywist();
+    f-fow (stwing phwase : phwases) {
+      stwing[] t-tewms = phwase.spwit(" ");
+      assewt tewms.wength == 2;
+      seawchopewatow op = nyew seawchopewatow(seawchopewatow.type.hf_phwase_paiw, 🥺
+          tewms[0], (ˆ ﻌ ˆ)♡ tewms[1], ( ͡o ω ͡o ) doubwe.tostwing(weight));
       ops.add(op);
     }
-    return ops;
+    w-wetuwn ops;
   }
 
-  private static SearchOperator createHFTermPair(String token1, String token2, double weight) {
-    SearchOperator op = new SearchOperator(SearchOperator.Type.HF_TERM_PAIR,
-        token1, token2, Double.toString(weight));
-    return op;
+  pwivate static seawchopewatow cweatehftewmpaiw(stwing token1, >w< stwing token2, /(^•ω•^) doubwe weight) {
+    s-seawchopewatow op = nyew seawchopewatow(seawchopewatow.type.hf_tewm_paiw, 😳😳😳
+        t-token1, (U ᵕ U❁) token2, (˘ω˘) doubwe.tostwing(weight));
+    w-wetuwn op;
   }
 
-  private static boolean hasAnnotations(com.twitter.search.queryparser.query.Query node) {
-    return node.hasAnnotations();
+  pwivate static boowean h-hasannotations(com.twittew.seawch.quewypawsew.quewy.quewy nyode) {
+    w-wetuwn nyode.hasannotations();
   }
 }

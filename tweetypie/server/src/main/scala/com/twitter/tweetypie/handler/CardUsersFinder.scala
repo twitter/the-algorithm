@@ -1,52 +1,52 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.CardReferenceUriExtractor
-import com.twitter.tweetypie.core.NonTombstone
-import com.twitter.tweetypie.core.Tombstone
-import com.twitter.tweetypie.repository.CardUsersRepository
-import com.twitter.tweetypie.repository.CardUsersRepository.Context
-import com.twitter.tweetypie.thriftscala.CardReference
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.tweetypie.cowe.cawdwefewenceuwiextwactow
+i-impowt c-com.twittew.tweetypie.cowe.nontombstone
+i-impowt c-com.twittew.tweetypie.cowe.tombstone
+i-impowt com.twittew.tweetypie.wepositowy.cawdusewswepositowy
+impowt com.twittew.tweetypie.wepositowy.cawdusewswepositowy.context
+impowt com.twittew.tweetypie.thwiftscawa.cawdwefewence
 
 /**
- * Finds a set of UserId that may be mentioned when replying to a tweet that has a card.
+ * finds a set of usewid that m-may be mentioned when wepwying to a tweet that has a-a cawd. nyaa~~
  *
- * Replies created without 'auto_populate_reply_metadata' include both 'site' and 'author' users to
- * have a more exhaustive list of mentions to match against.  This is needed because iOS and Android
- * have had different implementations client-side for years.
+ * wepwies cweated w-without 'auto_popuwate_wepwy_metadata' incwude both 'site' and 'authow' usews to
+ * h-have a mowe exhaustive wist o-of mentions to m-match against. :3  this is nyeeded because ios and andwoid
+ * have had diffewent impwementations c-cwient-side fow yeaws. 😳😳😳
  */
-object CardUsersFinder {
+object cawdusewsfindew {
 
-  case class Request(
-    cardReference: Option[CardReference],
-    urls: Seq[String],
-    perspectiveUserId: UserId) {
-    val uris: Seq[String] = cardReference match {
-      case Some(CardReferenceUriExtractor(cardUri)) =>
-        cardUri match {
-          case NonTombstone(uri) => Seq(uri)
-          case Tombstone => Nil
+  case cwass w-wequest(
+    cawdwefewence: option[cawdwefewence], (˘ω˘)
+    u-uwws: seq[stwing], ^^
+    p-pewspectiveusewid: u-usewid) {
+    vaw u-uwis: seq[stwing] = cawdwefewence match {
+      c-case some(cawdwefewenceuwiextwactow(cawduwi)) =>
+        cawduwi match {
+          c-case nyontombstone(uwi) => seq(uwi)
+          case tombstone => nyiw
         }
-      case _ => urls
+      case _ => uwws
     }
 
-    val context: CardUsersRepository.Context = Context(perspectiveUserId)
+    v-vaw context: cawdusewswepositowy.context = c-context(pewspectiveusewid)
   }
 
-  type Type = Request => Stitch[Set[UserId]]
+  t-type type = wequest => s-stitch[set[usewid]]
 
   /**
-   * From a card-related arguments in [[Request]] select the set of user ids associated with the
-   * card.
+   * fwom a cawd-wewated awguments in [[wequest]] s-sewect the s-set of usew ids associated with t-the
+   * cawd. :3
    *
-   * Note that this uses the same "which card do I use?" logic from Card2Hydrator which
-   * prioritizes CardReferenceUri and then falls back to the last resolvable (non-None) url entity.
+   * n-nyote that this uses the s-same "which cawd do i use?" wogic f-fwom cawd2hydwatow which
+   * pwiowitizes cawdwefewenceuwi a-and then fawws back to the wast w-wesowvabwe (non-none) uww entity. -.-
    */
-  def apply(cardUserRepo: CardUsersRepository.Type): Type =
-    request =>
-      Stitch
-        .traverse(request.uris) { uri => cardUserRepo(uri, request.context) }
-        // select the last, non-None Set of users ids
-        .map(r => r.flatten.reverse.headOption.getOrElse(Set.empty))
+  d-def appwy(cawdusewwepo: c-cawdusewswepositowy.type): type =
+    wequest =>
+      stitch
+        .twavewse(wequest.uwis) { uwi => cawdusewwepo(uwi, 😳 wequest.context) }
+        // sewect t-the wast, mya nyon-none s-set of usews ids
+        .map(w => w-w.fwatten.wevewse.headoption.getowewse(set.empty))
 }

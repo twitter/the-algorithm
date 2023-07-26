@@ -1,176 +1,176 @@
 /**
- * &copy; Copyright 2008, Summize, Inc. All rights reserved.
+ * &copy; copywight 2008, mya summize, 🥺 i-inc. aww wights w-wesewved. ^^;;
  */
-package com.twitter.search.ingester.pipeline.twitter;
+p-package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.Collections;
-import java.util.NavigableSet;
-import java.util.TreeSet;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.navigabweset;
+i-impowt java.utiw.tweeset;
+impowt java.utiw.concuwwent.timeunit;
+impowt java.utiw.concuwwent.atomic.atomicwong;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.pipewine.stageexception;
+impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+impowt owg.apache.commons.pipewine.vawidation.pwoducedtypes;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchTimerStats;
+impowt c-com.twittew.seawch.common.debug.debugeventutiw;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchcustomgauge;
+i-impowt com.twittew.seawch.common.metwics.seawchtimewstats;
 
 /**
- * Collect incoming objects into batches of the configured size and then
- * emit the <code>Collection</code> of objects. Internally uses a <code>TreeSet</code>
- * to remove duplicates. Incoming objects MUST implement the <code>Comparable</code>
- * interface.
+ * c-cowwect i-incoming objects into batches of the configuwed size and then
+ * emit the <code>cowwection</code> o-of objects. :3 intewnawwy uses a <code>tweeset</code>
+ * to wemove dupwicates. (U ﹏ U) i-incoming objects must impwement t-the <code>compawabwe</code>
+ * i-intewface. OwO
  */
-@ConsumedTypes(Comparable.class)
-@ProducedTypes(NavigableSet.class)
-public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> {
-  private static final Logger LOG = LoggerFactory.getLogger(CollectComparableObjectsStage.class);
+@consumedtypes(compawabwe.cwass)
+@pwoducedtypes(navigabweset.cwass)
+p-pubwic cwass c-cowwectcompawabweobjectsstage extends twittewbasestage<void, 😳😳😳 void> {
+  pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(cowwectcompawabweobjectsstage.cwass);
 
-  // Batch size of the collections we are emitting.
-  private int batchSize = -1;
+  // batch size of the c-cowwections we awe emitting. (ˆ ﻌ ˆ)♡
+  pwivate int batchsize = -1;
 
-  // Top tweets sorts the tweets in reverse order.
-  private Boolean reverseOrder = false;
+  // top tweets sowts the tweets in wevewse owdew. XD
+  p-pwivate boowean wevewseowdew = f-fawse;
 
-  // Batch being constructed.
-  private TreeSet<Object> currentCollection = null;
+  // batch b-being constwucted. (ˆ ﻌ ˆ)♡
+  p-pwivate tweeset<object> cuwwentcowwection = nyuww;
 
-  // Timestamp (ms) of last batch emission.
-  private final AtomicLong lastEmitTimeMillis = new AtomicLong(-1);
-  // If set, will emit a batch (only upon arrival of a new element), if time since last emit has
-  // exceeded this threshold.
-  private long emitAfterMillis = -1;
+  // t-timestamp (ms) o-of wast batch emission. ( ͡o ω ͡o )
+  pwivate f-finaw atomicwong w-wastemittimemiwwis = nyew atomicwong(-1);
+  // i-if set, rawr x3 wiww emit a batch (onwy u-upon awwivaw of a nyew ewement), nyaa~~ if time since w-wast emit has
+  // exceeded this t-thweshowd. >_<
+  pwivate wong emitaftewmiwwis = -1;
 
-  private SearchCounter sizeBasedEmitCount;
-  private SearchCounter timeBasedEmitCount;
-  private SearchCounter sizeAndTimeBasedEmitCount;
-  private SearchTimerStats batchEmitTimeStats;
+  p-pwivate seawchcountew s-sizebasedemitcount;
+  pwivate seawchcountew timebasedemitcount;
+  pwivate seawchcountew sizeandtimebasedemitcount;
+  pwivate seawchtimewstats b-batchemittimestats;
 
-  @Override
-  protected void initStats() {
-    super.initStats();
+  @ovewwide
+  p-pwotected void initstats() {
+    s-supew.initstats();
 
-    SearchCustomGauge.export(getStageNamePrefix() + "_last_emit_time",
-        () -> lastEmitTimeMillis.get());
+    s-seawchcustomgauge.expowt(getstagenamepwefix() + "_wast_emit_time", ^^;;
+        () -> w-wastemittimemiwwis.get());
 
-    sizeBasedEmitCount = SearchCounter.export(getStageNamePrefix() + "_size_based_emit_count");
-    timeBasedEmitCount = SearchCounter.export(getStageNamePrefix() + "_time_based_emit_count");
-    sizeAndTimeBasedEmitCount = SearchCounter.export(
-        getStageNamePrefix() + "_size_and_time_based_emit_count");
+    sizebasedemitcount = seawchcountew.expowt(getstagenamepwefix() + "_size_based_emit_count");
+    timebasedemitcount = s-seawchcountew.expowt(getstagenamepwefix() + "_time_based_emit_count");
+    sizeandtimebasedemitcount = seawchcountew.expowt(
+        getstagenamepwefix() + "_size_and_time_based_emit_count");
 
-    batchEmitTimeStats = SearchTimerStats.export(
-        getStageNamePrefix() + "_batch_emit_time",
-        TimeUnit.MILLISECONDS,
-        false, // no cpu timers
-        true); // with percentiles
+    batchemittimestats = s-seawchtimewstats.expowt(
+        getstagenamepwefix() + "_batch_emit_time", (ˆ ﻌ ˆ)♡
+        t-timeunit.miwwiseconds, ^^;;
+        f-fawse, (⑅˘꒳˘) // n-nyo cpu timews
+        twue); // w-with pewcentiwes
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException {
-    // We have to initialize this stat here, because initStats() is called before
-    // doInnerPreprocess(), so at that point the 'clock' is not set yet.
-    SearchCustomGauge.export(getStageNamePrefix() + "_millis_since_last_emit",
-        () -> clock.nowMillis() - lastEmitTimeMillis.get());
+  @ovewwide
+  p-pwotected v-void doinnewpwepwocess() t-thwows stageexception {
+    // we have t-to initiawize t-this stat hewe, rawr x3 b-because initstats() i-is cawwed befowe
+    // d-doinnewpwepwocess(), (///ˬ///✿) so at that point the 'cwock' is nyot set yet. 🥺
+    s-seawchcustomgauge.expowt(getstagenamepwefix() + "_miwwis_since_wast_emit", >_<
+        () -> cwock.nowmiwwis() - wastemittimemiwwis.get());
 
-    currentCollection = newBatchCollection();
-    if (batchSize <= 0) {
-      throw new StageException(this, "Must set the batchSize parameter to a value >0");
+    cuwwentcowwection = newbatchcowwection();
+    if (batchsize <= 0) {
+      t-thwow nyew stageexception(this, UwU "must set the batchsize pawametew to a v-vawue >0");
     }
   }
 
-  private TreeSet<Object> newBatchCollection() {
-    return new TreeSet<>(reverseOrder ? Collections.reverseOrder() : null);
+  p-pwivate t-tweeset<object> nyewbatchcowwection() {
+    w-wetuwn nyew tweeset<>(wevewseowdew ? c-cowwections.wevewseowdew() : n-nyuww);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!Comparable.class.isAssignableFrom(obj.getClass())) {
-      throw new StageException(
-          this, "Attempt to add a non-comparable object to a sorted collection");
+  @ovewwide
+  pubwic void innewpwocess(object obj) thwows stageexception {
+    if (!compawabwe.cwass.isassignabwefwom(obj.getcwass())) {
+      t-thwow nyew stageexception(
+          t-this, >_< "attempt to add a non-compawabwe o-object to a-a sowted cowwection");
     }
 
-    currentCollection.add(obj);
-    if (shouldEmit()) {
-      // We want to trace here when we actually emit the batch, as tweets sit in this stage until
-      // a batch is full, and we want to see how long they actually stick around.
-      DebugEventUtil.addDebugEventToCollection(
-          currentCollection, "CollectComparableObjectsStage.outgoing", clock.nowMillis());
-      emitAndCount(currentCollection);
-      updateLastEmitTime();
+    cuwwentcowwection.add(obj);
+    if (shouwdemit()) {
+      // w-we want to twace h-hewe when we actuawwy emit the b-batch, -.- as tweets s-sit in this stage untiw
+      // a batch is fuww, mya and we want to see how wong t-they actuawwy stick a-awound. >w<
+      d-debugeventutiw.adddebugeventtocowwection(
+          cuwwentcowwection, (U ﹏ U) "cowwectcompawabweobjectsstage.outgoing", 😳😳😳 c-cwock.nowmiwwis());
+      e-emitandcount(cuwwentcowwection);
+      updatewastemittime();
 
-      currentCollection = newBatchCollection();
-    }
-  }
-
-  private boolean shouldEmit() {
-    if (lastEmitTimeMillis.get() < 0) {
-      // Initialize lastEmit at the first tweet seen by this stage.
-      lastEmitTimeMillis.set(clock.nowMillis());
-    }
-
-    final boolean sizeBasedEmit = currentCollection.size() >= batchSize;
-    final boolean timeBasedEmit =
-        emitAfterMillis > 0 && lastEmitTimeMillis.get() + emitAfterMillis <= clock.nowMillis();
-
-    if (sizeBasedEmit && timeBasedEmit) {
-      sizeAndTimeBasedEmitCount.increment();
-      return true;
-    } else if (sizeBasedEmit) {
-      sizeBasedEmitCount.increment();
-      return true;
-    } else if (timeBasedEmit) {
-      timeBasedEmitCount.increment();
-      return true;
-    } else {
-      return false;
+      c-cuwwentcowwection = nyewbatchcowwection();
     }
   }
 
-  @Override
-  public void innerPostprocess() throws StageException {
-    if (!currentCollection.isEmpty()) {
-      emitAndCount(currentCollection);
-      updateLastEmitTime();
-      currentCollection = newBatchCollection();
+  pwivate boowean shouwdemit() {
+    if (wastemittimemiwwis.get() < 0) {
+      // i-initiawize w-wastemit at the fiwst tweet seen by this stage. o.O
+      w-wastemittimemiwwis.set(cwock.nowmiwwis());
+    }
+
+    f-finaw boowean sizebasedemit = cuwwentcowwection.size() >= batchsize;
+    finaw boowean t-timebasedemit =
+        emitaftewmiwwis > 0 && wastemittimemiwwis.get() + emitaftewmiwwis <= cwock.nowmiwwis();
+
+    if (sizebasedemit && t-timebasedemit) {
+      sizeandtimebasedemitcount.incwement();
+      wetuwn twue;
+    } e-ewse if (sizebasedemit) {
+      s-sizebasedemitcount.incwement();
+      wetuwn twue;
+    } ewse if (timebasedemit) {
+      t-timebasedemitcount.incwement();
+      w-wetuwn twue;
+    } ewse {
+      wetuwn fawse;
     }
   }
 
-  private void updateLastEmitTime() {
-    long currentEmitTime = clock.nowMillis();
-    long previousEmitTime = lastEmitTimeMillis.getAndSet(currentEmitTime);
-
-    // Also stat how long each emit takes.
-    batchEmitTimeStats.timerIncrement(currentEmitTime - previousEmitTime);
+  @ovewwide
+  pubwic v-void innewpostpwocess() thwows s-stageexception {
+    if (!cuwwentcowwection.isempty()) {
+      emitandcount(cuwwentcowwection);
+      updatewastemittime();
+      c-cuwwentcowwection = newbatchcowwection();
+    }
   }
 
-  public void setBatchSize(Integer size) {
-    LOG.info("Updating all CollectComparableObjectsStage batchSize to {}.", size);
-    this.batchSize = size;
+  p-pwivate v-void updatewastemittime() {
+    wong cuwwentemittime = c-cwock.nowmiwwis();
+    wong pweviousemittime = w-wastemittimemiwwis.getandset(cuwwentemittime);
+
+    // a-awso stat how w-wong each emit takes. òωó
+    batchemittimestats.timewincwement(cuwwentemittime - p-pweviousemittime);
   }
 
-  public Boolean getReverseOrder() {
-    return reverseOrder;
+  p-pubwic void setbatchsize(integew size) {
+    w-wog.info("updating a-aww cowwectcompawabweobjectsstage b-batchsize to {}.", 😳😳😳 size);
+    this.batchsize = s-size;
   }
 
-  public void setReverseOrder(Boolean reverseOrder) {
-    this.reverseOrder = reverseOrder;
+  pubwic boowean g-getwevewseowdew() {
+    w-wetuwn wevewseowdew;
   }
 
-  public void setEmitAfterMillis(long emitAfterMillis) {
-    LOG.info("Setting emitAfterMillis to {}.", emitAfterMillis);
-    this.emitAfterMillis = emitAfterMillis;
+  pubwic void setwevewseowdew(boowean w-wevewseowdew) {
+    t-this.wevewseowdew = w-wevewseowdew;
   }
 
-  public long getSizeBasedEmitCount() {
-    return sizeBasedEmitCount.get();
+  p-pubwic void setemitaftewmiwwis(wong e-emitaftewmiwwis) {
+    wog.info("setting emitaftewmiwwis to {}.", σωσ emitaftewmiwwis);
+    this.emitaftewmiwwis = e-emitaftewmiwwis;
   }
 
-  public long getTimeBasedEmitCount() {
-    return timeBasedEmitCount.get();
+  pubwic wong g-getsizebasedemitcount() {
+    wetuwn sizebasedemitcount.get();
+  }
+
+  p-pubwic wong gettimebasedemitcount() {
+    w-wetuwn timebasedemitcount.get();
   }
 }

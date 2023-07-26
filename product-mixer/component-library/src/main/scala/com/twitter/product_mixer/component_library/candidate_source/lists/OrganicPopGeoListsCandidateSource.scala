@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.candidate_source.lists
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.wists
 
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.recommendations.interests_discovery.recommendations_mh.OrganicPopgeoListsClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twittewwistcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato.stwatokeyfetchewsouwce
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stwato.cwient.fetchew
+i-impowt c-com.twittew.stwato.genewated.cwient.wecommendations.intewests_discovewy.wecommendations_mh.owganicpopgeowistscwientcowumn
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class OrganicPopGeoListsCandidateSource @Inject() (
-  organicPopgeoListsClientColumn: OrganicPopgeoListsClientColumn)
-    extends StratoKeyFetcherSource[
-      OrganicPopgeoListsClientColumn.Key,
-      OrganicPopgeoListsClientColumn.Value,
-      TwitterListCandidate
+@singweton
+cwass owganicpopgeowistscandidatesouwce @inject() (
+  owganicpopgeowistscwientcowumn: o-owganicpopgeowistscwientcowumn)
+    extends stwatokeyfetchewsouwce[
+      o-owganicpopgeowistscwientcowumn.key, /(^•ω•^)
+      owganicpopgeowistscwientcowumn.vawue, rawr
+      t-twittewwistcandidate
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "OrganicPopGeoLists")
+  ovewwide vaw identifiew: candidatesouwceidentifiew = candidatesouwceidentifiew(
+    "owganicpopgeowists")
 
-  override val fetcher: Fetcher[
-    OrganicPopgeoListsClientColumn.Key,
-    Unit,
-    OrganicPopgeoListsClientColumn.Value
+  o-ovewwide vaw fetchew: fetchew[
+    o-owganicpopgeowistscwientcowumn.key, OwO
+    u-unit, (U ﹏ U)
+    owganicpopgeowistscwientcowumn.vawue
   ] =
-    organicPopgeoListsClientColumn.fetcher
+    owganicpopgeowistscwientcowumn.fetchew
 
-  override def stratoResultTransformer(
-    stratoResult: OrganicPopgeoListsClientColumn.Value
-  ): Seq[TwitterListCandidate] = {
-    stratoResult.recommendedListsByAlgo.flatMap { topLists =>
-      topLists.lists.map { list =>
-        TwitterListCandidate(list.listId)
+  ovewwide def stwatowesuwttwansfowmew(
+    stwatowesuwt: owganicpopgeowistscwientcowumn.vawue
+  ): s-seq[twittewwistcandidate] = {
+    stwatowesuwt.wecommendedwistsbyawgo.fwatmap { topwists =>
+      topwists.wists.map { wist =>
+        t-twittewwistcandidate(wist.wistid)
       }
     }
   }

@@ -1,111 +1,111 @@
-package com.twitter.follow_recommendations.common.candidate_sources.promoted_accounts
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.pwomoted_accounts
 
-import com.twitter.adserver.thriftscala.AdServerException
-import com.twitter.adserver.{thriftscala => adthrift}
-import com.twitter.finagle.TimeoutException
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.adserver.AdRequest
-import com.twitter.follow_recommendations.common.clients.adserver.AdserverClient
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.hermit.model.Algorithm
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.adsewvew.thwiftscawa.adsewvewexception
+i-impowt com.twittew.adsewvew.{thwiftscawa => a-adthwift}
+i-impowt com.twittew.finagwe.timeoutexception
+i-impowt com.twittew.finagwe.stats.countew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.cwients.adsewvew.adwequest
+impowt com.twittew.fowwow_wecommendations.common.cwients.adsewvew.adsewvewcwient
+impowt com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph.sociawgwaphcwient
+impowt com.twittew.fowwow_wecommendations.common.modews.fowwowpwoof
+i-impowt com.twittew.hewmit.modew.awgowithm
+impowt com.twittew.inject.wogging
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.stitch.stitch
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-case class PromotedCandidateUser(
-  id: Long,
-  position: Int,
-  adImpression: adthrift.AdImpression,
-  followProof: FollowProof,
-  primaryCandidateSource: Option[CandidateSourceIdentifier])
+c-case c-cwass pwomotedcandidateusew(
+  id: wong, >_<
+  position: int, >w<
+  adimpwession: adthwift.adimpwession, rawr
+  fowwowpwoof: f-fowwowpwoof, 😳
+  pwimawycandidatesouwce: option[candidatesouwceidentifiew])
 
-@Singleton
-class PromotedAccountsCandidateSource @Inject() (
-  adserverClient: AdserverClient,
-  sgsClient: SocialGraphClient,
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[AdRequest, PromotedCandidateUser]
-    with Logging {
+@singweton
+cwass pwomotedaccountscandidatesouwce @inject() (
+  adsewvewcwient: a-adsewvewcwient, >w<
+  sgscwient: s-sociawgwaphcwient, (⑅˘꒳˘)
+  s-statsweceivew: s-statsweceivew)
+    e-extends candidatesouwce[adwequest, OwO pwomotedcandidateusew]
+    with w-wogging {
 
-  override val identifier: CandidateSourceIdentifier =
-    PromotedAccountsCandidateSource.Identifier
+  ovewwide vaw identifiew: candidatesouwceidentifiew =
+    p-pwomotedaccountscandidatesouwce.identifiew
 
-  val stats: StatsReceiver = statsReceiver.scope(identifier.name)
-  val failureStat: StatsReceiver = stats.scope("failures")
-  val adServerExceptionsCounter: Counter = failureStat.counter("AdServerException")
-  val timeoutCounter: Counter = failureStat.counter("TimeoutException")
+  vaw stats: statsweceivew = statsweceivew.scope(identifiew.name)
+  vaw faiwuwestat: statsweceivew = s-stats.scope("faiwuwes")
+  vaw adsewvewexceptionscountew: c-countew = faiwuwestat.countew("adsewvewexception")
+  v-vaw timeoutcountew: c-countew = faiwuwestat.countew("timeoutexception")
 
-  def apply(request: AdRequest): Stitch[Seq[PromotedCandidateUser]] = {
-    adserverClient
-      .getAdImpressions(request)
-      .rescue {
-        case e: TimeoutException =>
-          timeoutCounter.incr()
-          logger.warn("Timeout on Adserver", e)
-          Stitch.Nil
-        case e: AdServerException =>
-          adServerExceptionsCounter.incr()
-          logger.warn("Failed to fetch ads", e)
-          Stitch.Nil
+  def appwy(wequest: adwequest): s-stitch[seq[pwomotedcandidateusew]] = {
+    a-adsewvewcwient
+      .getadimpwessions(wequest)
+      .wescue {
+        case e: timeoutexception =>
+          t-timeoutcountew.incw()
+          w-woggew.wawn("timeout on a-adsewvew", (ꈍᴗꈍ) e)
+          stitch.niw
+        c-case e: adsewvewexception =>
+          adsewvewexceptionscountew.incw()
+          w-woggew.wawn("faiwed to fetch ads", 😳 e-e)
+          stitch.niw
       }
-      .flatMap { adImpressions: Seq[adthrift.AdImpression] =>
-        profileNumResults(adImpressions.size, "results_from_ad_server")
-        val idToImpMap = (for {
-          imp <- adImpressions
-          promotedAccountId <- imp.promotedAccountId
-        } yield promotedAccountId -> imp).toMap
-        request.clientContext.userId
-          .map { userId =>
-            sgsClient
-              .getIntersections(
-                userId,
-                adImpressions.filter(shouldShowSocialContext).flatMap(_.promotedAccountId),
-                PromotedAccountsCandidateSource.NumIntersections
-              ).map { promotedAccountWithIntersections =>
-                idToImpMap.map {
-                  case (promotedAccountId, imp) =>
-                    PromotedCandidateUser(
-                      promotedAccountId,
-                      imp.insertionPosition
-                        .map(_.toInt).getOrElse(
-                          getInsertionPositionDefaultValue(request.isTest.getOrElse(false))
-                        ),
-                      imp,
-                      promotedAccountWithIntersections
-                        .getOrElse(promotedAccountId, FollowProof(Nil, 0)),
-                      Some(identifier)
+      .fwatmap { adimpwessions: s-seq[adthwift.adimpwession] =>
+        p-pwofiwenumwesuwts(adimpwessions.size, 😳😳😳 "wesuwts_fwom_ad_sewvew")
+        vaw idtoimpmap = (fow {
+          imp <- adimpwessions
+          pwomotedaccountid <- imp.pwomotedaccountid
+        } yiewd pwomotedaccountid -> imp).tomap
+        w-wequest.cwientcontext.usewid
+          .map { u-usewid =>
+            sgscwient
+              .getintewsections(
+                u-usewid, mya
+                a-adimpwessions.fiwtew(shouwdshowsociawcontext).fwatmap(_.pwomotedaccountid), mya
+                p-pwomotedaccountscandidatesouwce.numintewsections
+              ).map { pwomotedaccountwithintewsections =>
+                idtoimpmap.map {
+                  case (pwomotedaccountid, (⑅˘꒳˘) i-imp) =>
+                    pwomotedcandidateusew(
+                      pwomotedaccountid, (U ﹏ U)
+                      imp.insewtionposition
+                        .map(_.toint).getowewse(
+                          getinsewtionpositiondefauwtvawue(wequest.istest.getowewse(fawse))
+                        ), mya
+                      imp, ʘwʘ
+                      p-pwomotedaccountwithintewsections
+                        .getowewse(pwomotedaccountid, (˘ω˘) fowwowpwoof(niw, (U ﹏ U) 0)), ^•ﻌ•^
+                      s-some(identifiew)
                     )
-                }.toSeq
-              }.onSuccess(result => profileNumResults(result.size, "final_results"))
-          }.getOrElse(Stitch.Nil)
+                }.toseq
+              }.onsuccess(wesuwt => p-pwofiwenumwesuwts(wesuwt.size, (˘ω˘) "finaw_wesuwts"))
+          }.getowewse(stitch.niw)
       }
   }
 
-  private def shouldShowSocialContext(imp: adthrift.AdImpression): Boolean =
-    imp.experimentValues.exists { expValues =>
-      expValues.get("display.display_style").contains("show_social_context")
+  p-pwivate def shouwdshowsociawcontext(imp: adthwift.adimpwession): b-boowean =
+    i-imp.expewimentvawues.exists { e-expvawues =>
+      e-expvawues.get("dispway.dispway_stywe").contains("show_sociaw_context")
     }
 
-  private def getInsertionPositionDefaultValue(isTest: Boolean): Int = {
-    if (isTest) 0 else -1
+  pwivate def getinsewtionpositiondefauwtvawue(istest: b-boowean): i-int = {
+    i-if (istest) 0 ewse -1
   }
 
-  private def profileNumResults(resultsSize: Int, statName: String): Unit = {
-    if (resultsSize <= 5) {
-      stats.scope(statName).counter(resultsSize.toString).incr()
-    } else {
-      stats.scope(statName).counter("more_than_5").incr()
+  p-pwivate d-def pwofiwenumwesuwts(wesuwtssize: int, :3 statname: stwing): unit = {
+    if (wesuwtssize <= 5) {
+      s-stats.scope(statname).countew(wesuwtssize.tostwing).incw()
+    } ewse {
+      stats.scope(statname).countew("mowe_than_5").incw()
     }
   }
 }
 
-object PromotedAccountsCandidateSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.PromotedAccount.toString)
-  val NumIntersections = 3
+object pwomotedaccountscandidatesouwce {
+  vaw identifiew: c-candidatesouwceidentifiew = candidatesouwceidentifiew(
+    awgowithm.pwomotedaccount.tostwing)
+  vaw nyumintewsections = 3
 }

@@ -1,34 +1,34 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron.{
-  OnlineAggregationStoresTrait,
-  RealTimeAggregateStore
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.hewon.{
+  o-onwineaggwegationstowestwait, (U ﹏ U)
+  w-weawtimeaggwegatestowe
 }
 
-object TimelinesOnlineAggregationConfig
-    extends TimelinesOnlineAggregationDefinitionsTrait
-    with OnlineAggregationStoresTrait {
+o-object timewinesonwineaggwegationconfig
+    e-extends t-timewinesonwineaggwegationdefinitionstwait
+    w-with onwineaggwegationstowestwait {
 
-  import TimelinesOnlineAggregationSources._
+  i-impowt timewinesonwineaggwegationsouwces._
 
-  override lazy val ProductionStore = RealTimeAggregateStore(
-    memcacheDataSet = "timelines_real_time_aggregates",
-    isProd = true,
-    cacheTTL = 5.days
+  ovewwide wazy vaw pwoductionstowe = weawtimeaggwegatestowe(
+    m-memcachedataset = "timewines_weaw_time_aggwegates", >_<
+    ispwod = twue, rawr x3
+    cachettw = 5.days
   )
 
-  override lazy val StagingStore = RealTimeAggregateStore(
-    memcacheDataSet = "twemcache_timelines_real_time_aggregates",
-    isProd = false,
-    cacheTTL = 5.days
+  o-ovewwide wazy vaw stagingstowe = w-weawtimeaggwegatestowe(
+    memcachedataset = "twemcache_timewines_weaw_time_aggwegates", mya
+    ispwod = fawse, nyaa~~
+    c-cachettw = 5.days
   )
 
-  override lazy val inputSource = timelinesOnlineAggregateSource
+  ovewwide w-wazy vaw inputsouwce = t-timewinesonwineaggwegatesouwce
 
   /**
-   * AggregateToCompute: This defines the complete set of aggregates to be
-   *    computed by the aggregation job and to be stored in memcache.
+   * aggwegatetocompute: this defines the compwete set of aggwegates t-to be
+   *    computed by the aggwegation job and to be stowed in memcache. (⑅˘꒳˘)
    */
-  override lazy val AggregatesToCompute = ProdAggregates ++ StagingAggregates
+  o-ovewwide wazy vaw aggwegatestocompute = p-pwodaggwegates ++ s-stagingaggwegates
 }

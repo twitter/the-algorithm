@@ -1,74 +1,74 @@
-package com.twitter.home_mixer.product.scored_tweets
+package com.twittew.home_mixew.pwoduct.scowed_tweets
 
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParamConfig
-import com.twitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.homefeatuwes.sewvedtweetidsfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.timewinesewvicetweetsfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.wequest.homemixewwequest
+i-impowt com.twittew.home_mixew.modew.wequest.scowedtweetspwoduct
+i-impowt com.twittew.home_mixew.modew.wequest.scowedtweetspwoductcontext
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.sewvewmaxwesuwtspawam
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawamconfig
+i-impowt com.twittew.home_mixew.sewvice.homemixewaccesspowicy.defauwthomemixewaccesspowicy
+impowt com.twittew.home_mixew.{thwiftscawa => t-t}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.cuwsow.uwtcuwsowsewiawizew
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy.accesspowicy
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductpipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewineconfig
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.badwequest
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewineconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.pwoduct.pwoductpawamconfig
+impowt com.twittew.timewines.configapi.pawams
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ScoredTweetsProductPipelineConfig @Inject() (
-  scoredTweetsRecommendationPipelineConfig: ScoredTweetsRecommendationPipelineConfig,
-  scoredTweetsParamConfig: ScoredTweetsParamConfig)
-    extends ProductPipelineConfig[HomeMixerRequest, ScoredTweetsQuery, t.ScoredTweets] {
+@singweton
+c-cwass scowedtweetspwoductpipewineconfig @inject() (
+  scowedtweetswecommendationpipewineconfig: s-scowedtweetswecommendationpipewineconfig, nyaa~~
+  s-scowedtweetspawamconfig: s-scowedtweetspawamconfig)
+    e-extends pwoductpipewineconfig[homemixewwequest, (✿oωo) scowedtweetsquewy, ʘwʘ t-t.scowedtweets] {
 
-  override val identifier: ProductPipelineIdentifier = ProductPipelineIdentifier("ScoredTweets")
+  ovewwide vaw identifiew: pwoductpipewineidentifiew = p-pwoductpipewineidentifiew("scowedtweets")
 
-  override val product: Product = ScoredTweetsProduct
+  ovewwide vaw pwoduct: pwoduct = scowedtweetspwoduct
 
-  override val paramConfig: ProductParamConfig = scoredTweetsParamConfig
+  ovewwide vaw pawamconfig: p-pwoductpawamconfig = scowedtweetspawamconfig
 
-  override def pipelineQueryTransformer(
-    request: HomeMixerRequest,
-    params: Params
-  ): ScoredTweetsQuery = {
-    val context = request.productContext match {
-      case Some(context: ScoredTweetsProductContext) => context
-      case _ => throw PipelineFailure(BadRequest, "ScoredTweetsProductContext not found")
+  o-ovewwide def p-pipewinequewytwansfowmew(
+    w-wequest: homemixewwequest, (ˆ ﻌ ˆ)♡
+    pawams: pawams
+  ): scowedtweetsquewy = {
+    vaw c-context = wequest.pwoductcontext m-match {
+      case some(context: s-scowedtweetspwoductcontext) => c-context
+      case _ => thwow p-pipewinefaiwuwe(badwequest, 😳😳😳 "scowedtweetspwoductcontext nyot found")
     }
 
-    val featureMap = FeatureMapBuilder()
-      .add(ServedTweetIdsFeature, context.servedTweetIds.getOrElse(Seq.empty))
-      .add(TimelineServiceTweetsFeature, context.backfillTweetIds.getOrElse(Seq.empty))
-      .build()
+    v-vaw featuwemap = featuwemapbuiwdew()
+      .add(sewvedtweetidsfeatuwe, :3 context.sewvedtweetids.getowewse(seq.empty))
+      .add(timewinesewvicetweetsfeatuwe, OwO c-context.backfiwwtweetids.getowewse(seq.empty))
+      .buiwd()
 
-    ScoredTweetsQuery(
-      params = params,
-      clientContext = request.clientContext,
-      pipelineCursor =
-        request.serializedRequestCursor.flatMap(UrtCursorSerializer.deserializeOrderedCursor),
-      requestedMaxResults = Some(params(ServerMaxResultsParam)),
-      debugOptions = request.debugParams.flatMap(_.debugOptions),
-      features = Some(featureMap),
-      deviceContext = context.deviceContext,
-      seenTweetIds = context.seenTweetIds,
-      qualityFactorStatus = None
+    scowedtweetsquewy(
+      p-pawams = pawams, (U ﹏ U)
+      c-cwientcontext = w-wequest.cwientcontext, >w<
+      pipewinecuwsow =
+        wequest.sewiawizedwequestcuwsow.fwatmap(uwtcuwsowsewiawizew.desewiawizeowdewedcuwsow), (U ﹏ U)
+      wequestedmaxwesuwts = some(pawams(sewvewmaxwesuwtspawam)), 😳
+      debugoptions = wequest.debugpawams.fwatmap(_.debugoptions), (ˆ ﻌ ˆ)♡
+      f-featuwes = s-some(featuwemap), 😳😳😳
+      devicecontext = c-context.devicecontext, (U ﹏ U)
+      s-seentweetids = c-context.seentweetids, (///ˬ///✿)
+      quawityfactowstatus = nyone
     )
   }
 
-  override val pipelines: Seq[PipelineConfig] = Seq(scoredTweetsRecommendationPipelineConfig)
+  ovewwide v-vaw pipewines: seq[pipewineconfig] = seq(scowedtweetswecommendationpipewineconfig)
 
-  override def pipelineSelector(query: ScoredTweetsQuery): ComponentIdentifier =
-    scoredTweetsRecommendationPipelineConfig.identifier
+  ovewwide def pipewinesewectow(quewy: s-scowedtweetsquewy): componentidentifiew =
+    s-scowedtweetswecommendationpipewineconfig.identifiew
 
-  override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+  o-ovewwide vaw d-debugaccesspowicies: set[accesspowicy] = d-defauwthomemixewaccesspowicy
 }

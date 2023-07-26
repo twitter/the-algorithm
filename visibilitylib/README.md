@@ -1,51 +1,51 @@
-Overview
+ovewview
 ========
 
-Visibility Filtering is a centralized rule engine that instructs clients how to alter the display of certain Twitter content on read time. The Visibility Filtering library is responsible for filtering Twitter content to support legal compliance, improve product quality, increase user trust, protect revenue through the use of hard-filtering, visible product treatments, and coarse-grained downranking.
+visibiwity fiwtewing is a centwawized w-wuwe engine t-that instwucts c-cwients how to a-awtew the dispway o-of cewtain twittew c-content on w-wead time. ʘwʘ the v-visibiwity fiwtewing wibwawy is wesponsibwe fow fiwtewing twittew content to suppowt w-wegaw compwiance, (˘ω˘) impwove pwoduct quawity, (U ﹏ U) i-incwease usew twust, ^•ﻌ•^ pwotect wevenue t-thwough the use of hawd-fiwtewing, (˘ω˘) visibwe pwoduct tweatments, :3 a-and coawse-gwained downwanking. ^^;;
 
-Notice
+n-nyotice
 ======
 
-Visibility Filtering library is currently being reviewed and rebuilt, and part of the code has been removed and is not ready to be shared yet. The remaining part of the code needs further review and will be shared once it’s ready. Also code comments have been sanitized.
+v-visibiwity fiwtewing wibwawy is cuwwentwy being weviewed and webuiwt, 🥺 and p-pawt of the code has been wemoved and is nyot weady to be shawed yet. (⑅˘꒳˘) the wemaining p-pawt of the code nyeeds fuwthew w-weview and wiww b-be shawed once i-it’s weady. nyaa~~ a-awso code comments have been sanitized. :3
 
-SafetyLevel
+safetywevew
 ===========
 
-Represents the product context in which the Viewer is requesting to view the Content (e.g. Timeline, Profile).
+w-wepwesents the pwoduct context in which the viewew i-is wequesting to view the content (e.g. ( ͡o ω ͡o ) timewine, mya pwofiwe).
 
-Features
+featuwes
 ========
 
-Include safety labels and other metadata of a Tweet, flags set on a User (including the Viewer), relationships between Users (e.g. block, follow), User settings, relationships between Users and Content (e.g. reported for spam).
+incwude safety w-wabews and othew metadata of a-a tweet, (///ˬ///✿) fwags s-set on a usew (incwuding t-the viewew), (˘ω˘) wewationships between usews (e.g. ^^;; bwock, (✿oωo) f-fowwow), usew settings, (U ﹏ U) w-wewationships between usews a-and content (e.g. w-wepowted fow spam). -.-
 
-Action
+action
 ======
 
-The way the Visibility Framework instructs the client to respond to the Viewer’s request for Content, and can include hard filtering (e.g. Drop), soft filtering (e.g. Labels and Interstitials), ranking clues, etc.
+t-the way the visibiwity f-fwamewowk instwucts the cwient to wespond to the v-viewew’s wequest fow content, ^•ﻌ•^ a-and can incwude hawd fiwtewing (e.g. rawr d-dwop), (˘ω˘) soft f-fiwtewing (e.g. nyaa~~ wabews and intewstitiaws), UwU wanking cwues, :3 etc.
 
-Condition
+condition
 =========
 
-Returns a boolean when given map of Features. Conditions can be combined to determine if a Rule should return an Action or the default (Allow).
+wetuwns a boowean when given m-map of featuwes. c-conditions can be combined t-to detewmine if a-a wuwe shouwd wetuwn a-an action ow the defauwt (awwow). (⑅˘꒳˘)
 
-Policy
+powicy
 ======
 
-Rules are expressed as a sequence in priority order to create a Visibility Policy. The library has one policy
-per SafetyLevel.
+wuwes awe e-expwessed as a sequence in pwiowity owdew to cweate a visibiwity powicy. (///ˬ///✿) the wibwawy h-has one powicy
+pew safetywevew. ^^;;
 
-RuleEngine
+w-wuweengine
 ===========
 
-Evaluates the Action for a Request.
+e-evawuates the action f-fow a wequest.
 
-SafetyLabel
+safetywabew
 ===========
 
-A primary labeling mechanism for Safety. A labeled entity associates with tweet, user, Direct Message, media, space etc. Safety labels power different ways of remediations (e.g. applying a SafetyLabel that results in tweet interstitial or notice).
+a-a p-pwimawy wabewing m-mechanism fow safety. >_< a-a wabewed entity associates with tweet, rawr x3 usew, d-diwect message, /(^•ω•^) m-media, :3 space e-etc. (ꈍᴗꈍ) safety wabews p-powew diffewent w-ways of wemediations (e.g. /(^•ω•^) appwying a safetywabew that wesuwts in tweet intewstitiaw o-ow nyotice). (⑅˘꒳˘)
 
-SafetyLabelType
+safetywabewtype
 ===============
 
-Describes a particular policy violation for a given noun instance, and usually leads to reduced visibility of the
-labeled entity in product surfaces. There are many deprecated, and experimental safety label types. Labels with these safety label types have no effect on VF. Additionally, some safety label types are not used, and not designed for VF.
+descwibes a pawticuwaw powicy viowation fow a given nyoun i-instance, ( ͡o ω ͡o ) and usuawwy weads to weduced visibiwity of the
+wabewed e-entity in pwoduct s-suwfaces. òωó t-thewe awe many depwecated, (⑅˘꒳˘) and expewimentaw s-safety wabew types. XD w-wabews with these s-safety wabew types have nyo effect on vf. -.- additionawwy, :3 some safety wabew types awe nyot used, nyaa~~ a-and nyot designed fow vf. 😳

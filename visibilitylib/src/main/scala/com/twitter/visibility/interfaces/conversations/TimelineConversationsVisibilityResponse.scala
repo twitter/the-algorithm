@@ -1,7 +1,7 @@
-package com.twitter.visibility.interfaces.conversations
+package com.twittew.visibiwity.intewfaces.convewsations
 
-import com.twitter.visibility.builder.VisibilityResult
+impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
 
-case class TimelineConversationsVisibilityResponse(
-  visibilityResults: Map[Long, VisibilityResult],
-  failedTweetIds: Seq[Long])
+c-case cwass timewineconvewsationsvisibiwitywesponse(
+  v-visibiwitywesuwts: m-map[wong, o.O v-visibiwitywesuwt], (U ᵕ U❁)
+  f-faiwedtweetids: s-seq[wong])

@@ -1,60 +1,60 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.F1FirstDegree
-import com.twitter.frigate.common.base.SocialContextAction
-import com.twitter.frigate.common.base.SocialGraphServiceRelationshipMap
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes._
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.F1FirstDegreeTweetIbis2HydratorForCandidate
-import com.twitter.frigate.pushservice.model.ntab.F1FirstDegreeTweetNTabRequestHydrator
-import com.twitter.frigate.pushservice.take.predicates.BasicTweetPredicatesForRFPHWithoutSGSPredicates
-import com.twitter.frigate.pushservice.util.CandidateHydrationUtil.TweetWithSocialContextTraits
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.stitch.tweetypie.TweetyPie
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.f1fiwstdegwee
+i-impowt com.twittew.fwigate.common.base.sociawcontextaction
+i-impowt c-com.twittew.fwigate.common.base.sociawgwaphsewvicewewationshipmap
+i-impowt com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes._
+impowt com.twittew.fwigate.pushsewvice.config.config
+impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt c-com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+impowt com.twittew.fwigate.pushsewvice.modew.ibis.f1fiwstdegweetweetibis2hydwatowfowcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.ntab.f1fiwstdegweetweetntabwequesthydwatow
+i-impowt com.twittew.fwigate.pushsewvice.take.pwedicates.basictweetpwedicatesfowwfphwithoutsgspwedicates
+impowt com.twittew.fwigate.pushsewvice.utiw.candidatehydwationutiw.tweetwithsociawcontexttwaits
+impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.hewmit.pwedicate.sociawgwaph.wewationedge
+impowt com.twittew.stitch.tweetypie.tweetypie
+impowt com.twittew.utiw.futuwe
 
-class F1TweetPushCandidate(
-  candidate: RawCandidate with TweetWithSocialContextTraits,
-  author: Future[Option[User]],
-  socialGraphServiceResultMap: Map[RelationEdge, Boolean],
-  copyIds: CopyIds
+cwass f1tweetpushcandidate(
+  c-candidate: wawcandidate with tweetwithsociawcontexttwaits, nyaa~~
+  authow: futuwe[option[usew]], (✿oωo)
+  sociawgwaphsewvicewesuwtmap: map[wewationedge, ʘwʘ boowean], (ˆ ﻌ ˆ)♡
+  c-copyids: copyids
 )(
-  implicit stats: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with F1FirstDegree
-    with TweetAuthorDetails
-    with SocialGraphServiceRelationshipMap
-    with F1FirstDegreeTweetNTabRequestHydrator
-    with F1FirstDegreeTweetIbis2HydratorForCandidate {
-  override val socialContextActions: Seq[SocialContextAction] =
-    candidate.socialContextActions
-  override val socialContextAllTypeActions: Seq[SocialContextAction] =
-    candidate.socialContextActions
-  override val statsReceiver: StatsReceiver = stats
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
-  override val tweetId: Long = candidate.tweetId
-  override lazy val tweetyPieResult: Option[TweetyPie.TweetyPieResult] =
-    candidate.tweetyPieResult
-  override lazy val tweetAuthor: Future[Option[User]] = author
-  override val target: PushTypes.Target = candidate.target
-  override lazy val commonRecType: CommonRecommendationType =
-    candidate.commonRecType
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
+  i-impwicit stats: s-statsweceivew, 😳😳😳
+  p-pushmodewscowew: p-pushmwmodewscowew)
+    extends pushcandidate
+    w-with f1fiwstdegwee
+    with tweetauthowdetaiws
+    with sociawgwaphsewvicewewationshipmap
+    w-with f1fiwstdegweetweetntabwequesthydwatow
+    with f1fiwstdegweetweetibis2hydwatowfowcandidate {
+  ovewwide vaw sociawcontextactions: seq[sociawcontextaction] =
+    candidate.sociawcontextactions
+  o-ovewwide vaw sociawcontextawwtypeactions: s-seq[sociawcontextaction] =
+    c-candidate.sociawcontextactions
+  o-ovewwide vaw statsweceivew: statsweceivew = stats
+  ovewwide vaw w-weightedopenowntabcwickmodewscowew: p-pushmwmodewscowew = pushmodewscowew
+  o-ovewwide v-vaw tweetid: wong = candidate.tweetid
+  o-ovewwide wazy vaw t-tweetypiewesuwt: option[tweetypie.tweetypiewesuwt] =
+    candidate.tweetypiewesuwt
+  o-ovewwide wazy vaw tweetauthow: f-futuwe[option[usew]] = authow
+  o-ovewwide vaw t-tawget: pushtypes.tawget = candidate.tawget
+  ovewwide wazy vaw commonwectype: commonwecommendationtype =
+    candidate.commonwectype
+  ovewwide vaw pushcopyid: o-option[int] = c-copyids.pushcopyid
+  ovewwide vaw n-nytabcopyid: option[int] = c-copyids.ntabcopyid
+  o-ovewwide vaw copyaggwegationid: option[stwing] = copyids.aggwegationid
 
-  override val relationshipMap: Map[RelationEdge, Boolean] = socialGraphServiceResultMap
+  ovewwide v-vaw wewationshipmap: map[wewationedge, boowean] = sociawgwaphsewvicewesuwtmap
 }
 
-case class F1TweetCandidatePredicates(override val config: Config)
-    extends BasicTweetPredicatesForRFPHWithoutSGSPredicates[F1TweetPushCandidate] {
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+case cwass f-f1tweetcandidatepwedicates(ovewwide vaw config: c-config)
+    extends b-basictweetpwedicatesfowwfphwithoutsgspwedicates[f1tweetpushcandidate] {
+  impwicit v-vaw statsweceivew: statsweceivew = c-config.statsweceivew.scope(getcwass.getsimpwename)
 }

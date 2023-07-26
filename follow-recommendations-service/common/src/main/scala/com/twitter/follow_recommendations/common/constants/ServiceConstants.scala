@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.constants
+package com.twittew.fowwow_wecommendations.common.constants
 
-import com.twitter.conversions.StorageUnitOps._
+impowt c-com.twittew.convewsions.stowageunitops._
 
-object ServiceConstants {
+o-object s-sewviceconstants {
 
-  /** thrift client response size limits
-   *  these were estimated using monitoring dashboard
-   *  3MB network usage per second / 25 rps ~ 120KB/req << 1MB
-   *  we give some buffer here in case some requests require more data than others
+  /** t-thwift c-cwient wesponse s-size wimits
+   *  t-these wewe e-estimated using monitowing dashboawd
+   *  3mb nyetwowk usage pew second / 25 wps ~ 120kb/weq << 1mb
+   *  w-we give some buffew hewe in case some w-wequests wequiwe mowe data than o-othews
    */
-  val StringLengthLimit: Long =
-    10.megabyte.inBytes
-  val ContainerLengthLimit: Long = 1.megabyte.inBytes
+  vaw stwingwengthwimit: wong =
+    10.megabyte.inbytes
+  vaw containewwengthwimit: w-wong = 1.megabyte.inbytes
 }

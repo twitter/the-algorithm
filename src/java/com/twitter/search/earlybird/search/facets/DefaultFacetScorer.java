@@ -1,236 +1,236 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetEarlybirdSortingMode;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetRankingOptions;
-import com.twitter.search.common.relevance.features.EarlybirdDocumentFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.core.earlybird.facets.FacetAccumulator;
-import com.twitter.search.core.earlybird.facets.FacetCountIterator;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.facets.FacetResultsCollector.Accumulator;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+i-impowt c-com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
+i-impowt com.twittew.seawch.common.wanking.thwiftjava.thwiftfaceteawwybiwdsowtingmode;
+i-impowt com.twittew.seawch.common.wanking.thwiftjava.thwiftfacetwankingoptions;
+i-impowt com.twittew.seawch.common.wewevance.featuwes.eawwybiwddocumentfeatuwes;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.common.utiw.wang.thwiftwanguageutiw;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetaccumuwatow;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetcountitewatow;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.antigamingfiwtew;
+impowt c-com.twittew.seawch.eawwybiwd.seawch.facets.facetwesuwtscowwectow.accumuwatow;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
 
-public class DefaultFacetScorer extends FacetScorer {
-  private static final Logger LOG = LoggerFactory.getLogger(FacetScorer.class.getName());
-  private static final double DEFAULT_FEATURE_WEIGHT = 0.0;
-  private static final byte DEFAULT_PENALTY = 1;
+pubwic cwass defauwtfacetscowew extends facetscowew {
+  p-pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(facetscowew.cwass.getname());
+  p-pwivate static finaw doubwe defauwt_featuwe_weight = 0.0;
+  pwivate static finaw byte defauwt_penawty = 1;
 
-  private static final byte DEFAULT_REPUTATION_MIN = 45;
+  p-pwivate static finaw byte defauwt_weputation_min = 45;
 
-  private final AntiGamingFilter antiGamingFilter;
+  pwivate finaw antigamingfiwtew antigamingfiwtew;
 
-  // tweepcreds below this value will not be counted at all
-  private final byte reputationMinFilterThresholdVal;
+  // t-tweepcweds bewow this vawue wiww n-nyot be counted a-at aww
+  pwivate f-finaw byte w-weputationminfiwtewthweshowdvaw;
 
-  // tweepcreds between reputationMinFilterThresholdVal and this value will be counted
-  // with a score of 1
-  private final byte reputationMinScoreVal;
+  // tweepcweds between weputationminfiwtewthweshowdvaw a-and this vawue wiww be counted
+  // with a-a scowe of 1
+  pwivate finaw byte weputationminscowevaw;
 
-  private final double userRepWeight;
-  private final double favoritesWeight;
-  private final double parusWeight;
-  private final double parusBase;
-  private final double queryIndependentPenaltyWeight;
+  pwivate finaw doubwe usewwepweight;
+  pwivate finaw d-doubwe favowitesweight;
+  pwivate f-finaw doubwe p-pawusweight;
+  p-pwivate finaw doubwe pawusbase;
+  pwivate finaw doubwe quewyindependentpenawtyweight;
 
-  private final ThriftLanguage uiLang;
-  private final double langEnglishUIBoost;
-  private final double langEnglishFacetBoost;
-  private final double langDefaultBoost;
+  p-pwivate f-finaw thwiftwanguage uiwang;
+  p-pwivate finaw doubwe w-wangengwishuiboost;
+  pwivate f-finaw doubwe wangengwishfacetboost;
+  p-pwivate finaw doubwe wangdefauwtboost;
 
-  private final int antigamingPenalty;
-  private final int offensiveTweetPenalty;
-  private final int multipleHashtagsOrTrendsPenalty;
+  pwivate finaw i-int antigamingpenawty;
+  pwivate f-finaw int offensivetweetpenawty;
+  pwivate finaw i-int muwtipwehashtagsowtwendspenawty;
 
-  private final int maxScorePerTweet;
-  private final ThriftFacetEarlybirdSortingMode sortingMode;
+  p-pwivate finaw int maxscowepewtweet;
+  pwivate finaw thwiftfaceteawwybiwdsowtingmode sowtingmode;
 
-  private EarlybirdIndexSegmentAtomicReader reader;
-  private EarlybirdDocumentFeatures features;
+  pwivate eawwybiwdindexsegmentatomicweadew weadew;
+  p-pwivate eawwybiwddocumentfeatuwes f-featuwes;
 
   /**
-   * Creates a new facet scorer.
+   * cweates a-a nyew facet s-scowew. 🥺
    */
-  public DefaultFacetScorer(ThriftSearchQuery searchQuery,
-                            ThriftFacetRankingOptions rankingOptions,
-                            AntiGamingFilter antiGamingFilter,
-                            ThriftFacetEarlybirdSortingMode sortingMode) {
-    this.sortingMode = sortingMode;
-    this.antiGamingFilter = antiGamingFilter;
+  p-pubwic defauwtfacetscowew(thwiftseawchquewy seawchquewy, nyaa~~
+                            thwiftfacetwankingoptions wankingoptions, ^^
+                            a-antigamingfiwtew antigamingfiwtew, >w<
+                            thwiftfaceteawwybiwdsowtingmode sowtingmode) {
+    this.sowtingmode = s-sowtingmode;
+    this.antigamingfiwtew = a-antigamingfiwtew;
 
-    maxScorePerTweet =
-        rankingOptions.isSetMaxScorePerTweet()
-        ? rankingOptions.getMaxScorePerTweet()
-        : Integer.MAX_VALUE;
+    m-maxscowepewtweet =
+        w-wankingoptions.issetmaxscowepewtweet()
+        ? wankingoptions.getmaxscowepewtweet()
+        : i-integew.max_vawue;
 
-    // filters
-    reputationMinFilterThresholdVal =
-        rankingOptions.isSetMinTweepcredFilterThreshold()
-        ? (byte) (rankingOptions.getMinTweepcredFilterThreshold() & 0xFF)
-        : DEFAULT_REPUTATION_MIN;
+    // f-fiwtews
+    w-weputationminfiwtewthweshowdvaw =
+        w-wankingoptions.issetmintweepcwedfiwtewthweshowd()
+        ? (byte) (wankingoptions.getmintweepcwedfiwtewthweshowd() & 0xff)
+        : defauwt_weputation_min;
 
     // weights
-    // reputationMinScoreVal must be >= reputationMinFilterThresholdVal
-    reputationMinScoreVal =
-        (byte) Math.max(rankingOptions.isSetReputationParams()
-        ? (byte) rankingOptions.getReputationParams().getMin()
-        : DEFAULT_REPUTATION_MIN, reputationMinFilterThresholdVal);
+    // w-weputationminscowevaw m-must be >= w-weputationminfiwtewthweshowdvaw
+    w-weputationminscowevaw =
+        (byte) m-math.max(wankingoptions.issetweputationpawams()
+        ? (byte) wankingoptions.getweputationpawams().getmin()
+        : defauwt_weputation_min, OwO weputationminfiwtewthweshowdvaw);
 
-    parusWeight =
-        rankingOptions.isSetParusScoreParams() && rankingOptions.getParusScoreParams().isSetWeight()
-        ? rankingOptions.getParusScoreParams().getWeight()
-        : DEFAULT_FEATURE_WEIGHT;
-    // compute this once so that base ** parusScore is backwards-compatible
-    parusBase = Math.sqrt(1 + parusWeight);
+    pawusweight =
+        wankingoptions.issetpawusscowepawams() && w-wankingoptions.getpawusscowepawams().issetweight()
+        ? wankingoptions.getpawusscowepawams().getweight()
+        : defauwt_featuwe_weight;
+    // compute this once so that base ** pawusscowe i-is backwawds-compatibwe
+    pawusbase = math.sqwt(1 + pawusweight);
 
-    userRepWeight =
-        rankingOptions.isSetReputationParams() && rankingOptions.getReputationParams().isSetWeight()
-        ? rankingOptions.getReputationParams().getWeight()
-        : DEFAULT_FEATURE_WEIGHT;
+    u-usewwepweight =
+        w-wankingoptions.issetweputationpawams() && w-wankingoptions.getweputationpawams().issetweight()
+        ? wankingoptions.getweputationpawams().getweight()
+        : d-defauwt_featuwe_weight;
 
-    favoritesWeight =
-        rankingOptions.isSetFavoritesParams() && rankingOptions.getFavoritesParams().isSetWeight()
-        ? rankingOptions.getFavoritesParams().getWeight()
-        : DEFAULT_FEATURE_WEIGHT;
+    favowitesweight =
+        w-wankingoptions.issetfavowitespawams() && w-wankingoptions.getfavowitespawams().issetweight()
+        ? wankingoptions.getfavowitespawams().getweight()
+        : defauwt_featuwe_weight;
 
-    queryIndependentPenaltyWeight =
-        rankingOptions.isSetQueryIndependentPenaltyWeight()
-        ? rankingOptions.getQueryIndependentPenaltyWeight()
-        : DEFAULT_FEATURE_WEIGHT;
+    quewyindependentpenawtyweight =
+        wankingoptions.issetquewyindependentpenawtyweight()
+        ? wankingoptions.getquewyindependentpenawtyweight()
+        : d-defauwt_featuwe_weight;
 
-    // penalty increment
-    antigamingPenalty =
-        rankingOptions.isSetAntigamingPenalty()
-        ? rankingOptions.getAntigamingPenalty()
-        : DEFAULT_PENALTY;
+    // penawty incwement
+    a-antigamingpenawty =
+        wankingoptions.issetantigamingpenawty()
+        ? w-wankingoptions.getantigamingpenawty()
+        : d-defauwt_penawty;
 
-    offensiveTweetPenalty =
-        rankingOptions.isSetOffensiveTweetPenalty()
-        ? rankingOptions.getOffensiveTweetPenalty()
-        : DEFAULT_PENALTY;
+    offensivetweetpenawty =
+        wankingoptions.issetoffensivetweetpenawty()
+        ? w-wankingoptions.getoffensivetweetpenawty()
+        : d-defauwt_penawty;
 
-    multipleHashtagsOrTrendsPenalty =
-        rankingOptions.isSetMultipleHashtagsOrTrendsPenalty()
-        ? rankingOptions.getMultipleHashtagsOrTrendsPenalty()
-        : DEFAULT_PENALTY;
+    muwtipwehashtagsowtwendspenawty =
+        w-wankingoptions.issetmuwtipwehashtagsowtwendspenawty()
+        ? w-wankingoptions.getmuwtipwehashtagsowtwendspenawty()
+        : defauwt_penawty;
 
-    // query information
-    if (!searchQuery.isSetUiLang() || searchQuery.getUiLang().isEmpty()) {
-      uiLang = ThriftLanguage.UNKNOWN;
-    } else {
-      uiLang = ThriftLanguageUtil.getThriftLanguageOf(searchQuery.getUiLang());
+    // quewy infowmation
+    if (!seawchquewy.issetuiwang() || s-seawchquewy.getuiwang().isempty()) {
+      u-uiwang = thwiftwanguage.unknown;
+    } e-ewse {
+      uiwang = thwiftwanguageutiw.getthwiftwanguageof(seawchquewy.getuiwang());
     }
-    langEnglishUIBoost = rankingOptions.getLangEnglishUIBoost();
-    langEnglishFacetBoost = rankingOptions.getLangEnglishFacetBoost();
-    langDefaultBoost = rankingOptions.getLangDefaultBoost();
+    w-wangengwishuiboost = w-wankingoptions.getwangengwishuiboost();
+    wangengwishfacetboost = w-wankingoptions.getwangengwishfacetboost();
+    wangdefauwtboost = wankingoptions.getwangdefauwtboost();
   }
 
-  @Override
-  protected void startSegment(EarlybirdIndexSegmentAtomicReader segmentReader) throws IOException {
-    reader = segmentReader;
-    features = new EarlybirdDocumentFeatures(reader);
-    if (antiGamingFilter != null) {
-      antiGamingFilter.startSegment(reader);
+  @ovewwide
+  pwotected void stawtsegment(eawwybiwdindexsegmentatomicweadew s-segmentweadew) t-thwows ioexception {
+    weadew = segmentweadew;
+    f-featuwes = n-nyew eawwybiwddocumentfeatuwes(weadew);
+    if (antigamingfiwtew != nyuww) {
+      antigamingfiwtew.stawtsegment(weadew);
     }
   }
 
-  @Override
-  public void incrementCounts(Accumulator accumulator, int internalDocID) throws IOException {
-    FacetCountIterator.IncrementData data = accumulator.accessor.incrementData;
-    data.accumulators = accumulator.accumulators;
-    features.advance(internalDocID);
+  @ovewwide
+  p-pubwic void incwementcounts(accumuwatow accumuwatow, XD int intewnawdocid) thwows ioexception {
+    f-facetcountitewatow.incwementdata data = accumuwatow.accessow.incwementdata;
+    d-data.accumuwatows = a-accumuwatow.accumuwatows;
+    featuwes.advance(intewnawdocid);
 
-    // Also keep track of the tweet language of tweet themselves.
-    data.languageId = (int) features.getFeatureValue(EarlybirdFieldConstant.LANGUAGE);
+    // awso keep twack of the tweet wanguage of t-tweet themsewves. ^^;;
+    d-data.wanguageid = (int) featuwes.getfeatuwevawue(eawwybiwdfiewdconstant.wanguage);
 
-    if (antigamingPenalty > 0
-        && antiGamingFilter != null
-        && !antiGamingFilter.accept(internalDocID)) {
-      data.weightedCountIncrement = 0;
-      data.penaltyIncrement = antigamingPenalty;
-      data.tweepCred = 0;
-      accumulator.accessor.collect(internalDocID);
-      return;
+    if (antigamingpenawty > 0
+        && antigamingfiwtew != nyuww
+        && !antigamingfiwtew.accept(intewnawdocid)) {
+      data.weightedcountincwement = 0;
+      d-data.penawtyincwement = antigamingpenawty;
+      d-data.tweepcwed = 0;
+      accumuwatow.accessow.cowwect(intewnawdocid);
+      wetuwn;
     }
 
-    if (offensiveTweetPenalty > 0 && features.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG)) {
-      data.weightedCountIncrement = 0;
-      data.penaltyIncrement = offensiveTweetPenalty;
-      data.tweepCred = 0;
-      accumulator.accessor.collect(internalDocID);
-      return;
+    if (offensivetweetpenawty > 0 && featuwes.isfwagset(eawwybiwdfiewdconstant.is_offensive_fwag)) {
+      d-data.weightedcountincwement = 0;
+      data.penawtyincwement = o-offensivetweetpenawty;
+      d-data.tweepcwed = 0;
+      accumuwatow.accessow.cowwect(intewnawdocid);
+      wetuwn;
     }
 
-    byte userRep = (byte) features.getFeatureValue(EarlybirdFieldConstant.USER_REPUTATION);
+    b-byte usewwep = (byte) featuwes.getfeatuwevawue(eawwybiwdfiewdconstant.usew_weputation);
 
-    if (userRep < reputationMinFilterThresholdVal) {
-      // don't penalize
-      data.weightedCountIncrement = 0;
-      data.penaltyIncrement = 0;
-      data.tweepCred = 0;
-      accumulator.accessor.collect(internalDocID);
-      return;
+    i-if (usewwep < w-weputationminfiwtewthweshowdvaw) {
+      // d-don't penawize
+      d-data.weightedcountincwement = 0;
+      d-data.penawtyincwement = 0;
+      data.tweepcwed = 0;
+      accumuwatow.accessow.cowwect(intewnawdocid);
+      w-wetuwn;
     }
 
-    // Other non-terminating penalties
-    int penalty = 0;
-    if (multipleHashtagsOrTrendsPenalty > 0
-        && features.isFlagSet(EarlybirdFieldConstant.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG)) {
-      penalty += multipleHashtagsOrTrendsPenalty;
+    // o-othew n-nyon-tewminating penawties
+    int penawty = 0;
+    i-if (muwtipwehashtagsowtwendspenawty > 0
+        && featuwes.isfwagset(eawwybiwdfiewdconstant.has_muwtipwe_hashtags_ow_twends_fwag)) {
+      p-penawty += muwtipwehashtagsowtwendspenawty;
     }
 
-    double parus = 0xFF & (byte) features.getFeatureValue(EarlybirdFieldConstant.PARUS_SCORE);
+    d-doubwe pawus = 0xff & (byte) featuwes.getfeatuwevawue(eawwybiwdfiewdconstant.pawus_scowe);
 
-    double score = Math.pow(1 + userRepWeight, Math.max(0, userRep - reputationMinScoreVal));
+    doubwe s-scowe = math.pow(1 + u-usewwepweight, 🥺 m-math.max(0, XD u-usewwep - weputationminscowevaw));
 
-    if (parus > 0) {
-      score += Math.pow(parusBase, parus);
+    if (pawus > 0) {
+      scowe += m-math.pow(pawusbase, (U ᵕ U❁) pawus);
     }
 
-    int favoriteCount =
-        (int) features.getUnnormalizedFeatureValue(EarlybirdFieldConstant.FAVORITE_COUNT);
-    if (favoriteCount > 0) {
-      score += favoriteCount * favoritesWeight;
+    int favowitecount =
+        (int) featuwes.getunnowmawizedfeatuwevawue(eawwybiwdfiewdconstant.favowite_count);
+    if (favowitecount > 0) {
+      scowe += favowitecount * f-favowitesweight;
     }
 
-    // Language preferences
-    int tweetLinkLangId = (int) features.getFeatureValue(EarlybirdFieldConstant.LINK_LANGUAGE);
-    if (tweetLinkLangId == ThriftLanguage.UNKNOWN.getValue()) {
-      // fall back to use the tweet language itself.
-      tweetLinkLangId = (int) features.getFeatureValue(EarlybirdFieldConstant.LANGUAGE);
+    // wanguage p-pwefewences
+    int tweetwinkwangid = (int) f-featuwes.getfeatuwevawue(eawwybiwdfiewdconstant.wink_wanguage);
+    if (tweetwinkwangid == t-thwiftwanguage.unknown.getvawue()) {
+      // faww back t-to use the tweet w-wanguage itsewf. :3
+      t-tweetwinkwangid = (int) f-featuwes.getfeatuwevawue(eawwybiwdfiewdconstant.wanguage);
     }
-    if (uiLang != ThriftLanguage.UNKNOWN && uiLang.getValue() != tweetLinkLangId) {
-      if (uiLang == ThriftLanguage.ENGLISH) {
-        score *= langEnglishUIBoost;
-      } else if (tweetLinkLangId == ThriftLanguage.ENGLISH.getValue()) {
-        score *= langEnglishFacetBoost;
-      } else {
-        score *= langDefaultBoost;
+    i-if (uiwang != thwiftwanguage.unknown && uiwang.getvawue() != tweetwinkwangid) {
+      if (uiwang == thwiftwanguage.engwish) {
+        scowe *= w-wangengwishuiboost;
+      } e-ewse if (tweetwinkwangid == t-thwiftwanguage.engwish.getvawue()) {
+        scowe *= w-wangengwishfacetboost;
+      } ewse {
+        scowe *= wangdefauwtboost;
       }
     }
 
-    // make sure a single tweet can't contribute too high a score
-    if (score > maxScorePerTweet) {
-      score = maxScorePerTweet;
+    // make suwe a singwe t-tweet can't c-contwibute too high a scowe
+    i-if (scowe > maxscowepewtweet) {
+      scowe = maxscowepewtweet;
     }
 
-    data.weightedCountIncrement = (int) score;
-    data.penaltyIncrement = penalty;
-    data.tweepCred = userRep & 0xFF;
-    accumulator.accessor.collect(internalDocID);
+    data.weightedcountincwement = (int) s-scowe;
+    data.penawtyincwement = p-penawty;
+    data.tweepcwed = u-usewwep & 0xff;
+    a-accumuwatow.accessow.cowwect(intewnawdocid);
   }
 
-  @Override
-  public FacetAccumulator getFacetAccumulator(FacetLabelProvider labelProvider) {
-    return new HashingAndPruningFacetAccumulator(labelProvider, queryIndependentPenaltyWeight,
-            HashingAndPruningFacetAccumulator.getComparator(sortingMode));
+  @ovewwide
+  pubwic facetaccumuwatow getfacetaccumuwatow(facetwabewpwovidew wabewpwovidew) {
+    wetuwn n-nyew hashingandpwuningfacetaccumuwatow(wabewpwovidew, ( ͡o ω ͡o ) q-quewyindependentpenawtyweight, òωó
+            h-hashingandpwuningfacetaccumuwatow.getcompawatow(sowtingmode));
   }
 }

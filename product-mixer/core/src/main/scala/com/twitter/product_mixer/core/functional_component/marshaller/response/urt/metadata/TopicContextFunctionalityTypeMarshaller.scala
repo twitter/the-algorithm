@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContextFunctionalityType
-import com.twitter.timelines.render.{thriftscala => urt}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.basictopiccontextfunctionawitytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wecwitheducationtopiccontextfunctionawitytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wecommendationtopiccontextfunctionawitytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.topiccontextfunctionawitytype
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
 
-object TopicContextFunctionalityTypeMarshaller {
+object topiccontextfunctionawitytypemawshawwew {
 
-  def apply(
-    topicContextFunctionalityType: TopicContextFunctionalityType
-  ): urt.TopicContextFunctionalityType = topicContextFunctionalityType match {
-    case BasicTopicContextFunctionalityType => urt.TopicContextFunctionalityType.Basic
-    case RecommendationTopicContextFunctionalityType =>
-      urt.TopicContextFunctionalityType.Recommendation
-    case RecWithEducationTopicContextFunctionalityType =>
-      urt.TopicContextFunctionalityType.RecWithEducation
+  def appwy(
+    topiccontextfunctionawitytype: topiccontextfunctionawitytype
+  ): uwt.topiccontextfunctionawitytype = t-topiccontextfunctionawitytype match {
+    case basictopiccontextfunctionawitytype => u-uwt.topiccontextfunctionawitytype.basic
+    case wecommendationtopiccontextfunctionawitytype =>
+      u-uwt.topiccontextfunctionawitytype.wecommendation
+    case wecwitheducationtopiccontextfunctionawitytype =>
+      uwt.topiccontextfunctionawitytype.wecwitheducation
   }
 }

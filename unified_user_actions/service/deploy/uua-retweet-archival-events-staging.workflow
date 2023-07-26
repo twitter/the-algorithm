@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-retweet-archival-events-staging",
-  "config-files": [
-    "uua-retweet-archival-events.aurora"
-  ],
-  "build": {
-    "play": true,
+  "wowe": "discode", XD
+  "name": "uua-wetweet-awchivaw-events-staging", >_<
+  "config-fiwes": [
+    "uua-wetweet-awchivaw-events.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew",
+        "name": "packew-cwient-no-pex", OwO
+        "vewsion": "watest"
       }
-    ],
+    ], 🥺
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-retweet-archival-events"
-      },
+        "type": "bazew-bundwe", òωó
+        "name": "bundwe", o.O
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-wetweet-awchivaw-events"
+      }, (U ᵕ U❁)
       {
-        "type": "packer",
-        "name": "uua-retweet-archival-events-staging",
-        "artifact": "./dist/uua-retweet-archival-events.zip"
+        "type": "packew", (⑅˘꒳˘)
+        "name": "uua-wetweet-awchivaw-events-staging", ( ͡o ω ͡o )
+        "awtifact": "./dist/uua-wetweet-awchivaw-events.zip"
       }
     ]
-  },
-  "targets": [
+  }, UwU
+  "tawgets": [
     {
-      "type": "group",
-      "name": "staging",
-      "targets": [
+      "type": "gwoup", rawr x3
+      "name": "staging", rawr
+      "tawgets": [
         {
-          "name": "uua-retweet-archival-events-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-retweet-archival-events"
+          "name": "uua-wetweet-awchivaw-events-staging-pdxa", σωσ
+          "key": "pdxa/discode/staging/uua-wetweet-awchivaw-events"
         }
       ]
     }

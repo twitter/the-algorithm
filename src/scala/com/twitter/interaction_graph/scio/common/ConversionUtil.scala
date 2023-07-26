@@ -1,110 +1,110 @@
-package com.twitter.interaction_graph.scio.common
+package com.twittew.intewaction_gwaph.scio.common
 
-import com.spotify.scio.ScioMetrics
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
-import com.twitter.timelines.real_graph.v1.thriftscala.RealGraphEdgeFeatures
-import com.twitter.timelines.real_graph.v1.thriftscala.{
-  RealGraphEdgeFeature => RealGraphEdgeFeatureV1
+impowt com.spotify.scio.sciometwics
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.edge
+i-impowt c-com.twittew.intewaction_gwaph.thwiftscawa.featuwename
+i-impowt c-com.twittew.intewaction_gwaph.thwiftscawa.timesewiesstatistics
+impowt c-com.twittew.timewines.weaw_gwaph.v1.thwiftscawa.weawgwaphedgefeatuwes
+i-impowt c-com.twittew.timewines.weaw_gwaph.v1.thwiftscawa.{
+  weawgwaphedgefeatuwe => weawgwaphedgefeatuwev1
 }
 
-object ConversionUtil {
-  def toRealGraphEdgeFeatureV1(tss: TimeSeriesStatistics): RealGraphEdgeFeatureV1 = {
-    RealGraphEdgeFeatureV1(
-      mean = Some(tss.mean),
-      ewma = Some(tss.ewma),
-      m2ForVariance = Some(tss.m2ForVariance),
-      daysSinceLast = tss.numDaysSinceLast.map(_.toShort),
-      nonZeroDays = Some(tss.numNonZeroDays.toShort),
-      elapsedDays = Some(tss.numElapsedDays.toShort),
-      isMissing = Some(false)
+object convewsionutiw {
+  def toweawgwaphedgefeatuwev1(tss: t-timesewiesstatistics): weawgwaphedgefeatuwev1 = {
+    weawgwaphedgefeatuwev1(
+      m-mean = some(tss.mean), rawr x3
+      e-ewma = some(tss.ewma), XD
+      m2fowvawiance = some(tss.m2fowvawiance), σωσ
+      dayssincewast = t-tss.numdayssincewast.map(_.toshowt), (U ᵕ U❁)
+      nyonzewodays = s-some(tss.numnonzewodays.toshowt), (U ﹏ U)
+      e-ewapseddays = some(tss.numewapseddays.toshowt),
+      ismissing = some(fawse)
     )
   }
 
   /**
-   * Checks if the converted `RealGraphEdgeFeatures` has negative edges features.
-   * Our pipeline includes other negative interactions that aren't in the UserSession thrift
-   * so we'll just filter them away for now (for parity).
+   * checks if t-the convewted `weawgwaphedgefeatuwes` has nyegative edges featuwes. :3
+   * ouw pipewine incwudes o-othew nyegative intewactions that a-awen't in the u-usewsession thwift
+   * s-so we'ww j-just fiwtew them away fow nyow (fow pawity). ( ͡o ω ͡o )
    */
-  def hasNegativeFeatures(rgef: RealGraphEdgeFeatures): Boolean = {
-    rgef.numMutes.nonEmpty ||
-    rgef.numBlocks.nonEmpty ||
-    rgef.numReportAsAbuses.nonEmpty ||
-    rgef.numReportAsSpams.nonEmpty
+  d-def hasnegativefeatuwes(wgef: weawgwaphedgefeatuwes): boowean = {
+    w-wgef.nummutes.nonempty ||
+    wgef.numbwocks.nonempty ||
+    wgef.numwepowtasabuses.nonempty ||
+    wgef.numwepowtasspams.nonempty
   }
 
   /**
-   * Checks if the converted `RealGraphEdgeFeatures` has some of the key interaction features present.
-   * This is adapted from timeline's code here:
+   * checks if the convewted `weawgwaphedgefeatuwes` has some of the k-key intewaction featuwes pwesent.
+   * t-this is adapted f-fwom timewine's c-code hewe:
    */
-  def hasTimelinesRequiredFeatures(rgef: RealGraphEdgeFeatures): Boolean = {
-    rgef.retweetsFeature.nonEmpty ||
-    rgef.favsFeature.nonEmpty ||
-    rgef.mentionsFeature.nonEmpty ||
-    rgef.tweetClicksFeature.nonEmpty ||
-    rgef.linkClicksFeature.nonEmpty ||
-    rgef.profileViewsFeature.nonEmpty ||
-    rgef.dwellTimeFeature.nonEmpty ||
-    rgef.inspectedStatusesFeature.nonEmpty ||
-    rgef.photoTagsFeature.nonEmpty ||
-    rgef.numTweetQuotes.nonEmpty ||
-    rgef.followFeature.nonEmpty ||
-    rgef.mutualFollowFeature.nonEmpty ||
-    rgef.addressBookEmailFeature.nonEmpty ||
-    rgef.addressBookPhoneFeature.nonEmpty
+  def hastimewineswequiwedfeatuwes(wgef: weawgwaphedgefeatuwes): boowean = {
+    w-wgef.wetweetsfeatuwe.nonempty ||
+    w-wgef.favsfeatuwe.nonempty ||
+    wgef.mentionsfeatuwe.nonempty ||
+    wgef.tweetcwicksfeatuwe.nonempty ||
+    w-wgef.winkcwicksfeatuwe.nonempty ||
+    w-wgef.pwofiweviewsfeatuwe.nonempty ||
+    wgef.dwewwtimefeatuwe.nonempty ||
+    w-wgef.inspectedstatusesfeatuwe.nonempty ||
+    wgef.phototagsfeatuwe.nonempty ||
+    w-wgef.numtweetquotes.nonempty ||
+    wgef.fowwowfeatuwe.nonempty ||
+    wgef.mutuawfowwowfeatuwe.nonempty ||
+    w-wgef.addwessbookemaiwfeatuwe.nonempty ||
+    wgef.addwessbookphonefeatuwe.nonempty
   }
 
   /**
-   * Convert an Edge into a RealGraphEdgeFeature.
-   * We return the converted RealGraphEdgeFeature when filterFn is true.
-   * This is to allow us to filter early on during the conversion if required, rather than map over the whole
-   * collection of records again to filter.
+   * c-convewt an edge into a w-weawgwaphedgefeatuwe. σωσ
+   * w-we wetuwn the convewted weawgwaphedgefeatuwe when fiwtewfn is twue. >w<
+   * this is to awwow us to fiwtew e-eawwy on duwing t-the convewsion if wequiwed, 😳😳😳 wathew t-than map ovew t-the whowe
+   * c-cowwection of wecowds again to fiwtew. OwO
    *
-   * @param filterFn true if and only if we want to keep the converted feature
+   * @pawam fiwtewfn t-twue if and onwy if we want to keep the convewted featuwe
    */
-  def toRealGraphEdgeFeatures(
-    filterFn: RealGraphEdgeFeatures => Boolean
+  def toweawgwaphedgefeatuwes(
+    f-fiwtewfn: weawgwaphedgefeatuwes => b-boowean
   )(
-    e: Edge
-  ): Option[RealGraphEdgeFeatures] = {
-    val baseFeature = RealGraphEdgeFeatures(destId = e.destinationId)
-    val aggregatedFeature = e.features.foldLeft(baseFeature) {
-      case (aggregatedFeature, edgeFeature) =>
-        val f = Some(toRealGraphEdgeFeatureV1(edgeFeature.tss))
-        ScioMetrics.counter("toRealGraphEdgeFeatures", edgeFeature.name.name).inc()
-        edgeFeature.name match {
-          case FeatureName.NumRetweets => aggregatedFeature.copy(retweetsFeature = f)
-          case FeatureName.NumFavorites => aggregatedFeature.copy(favsFeature = f)
-          case FeatureName.NumMentions => aggregatedFeature.copy(mentionsFeature = f)
-          case FeatureName.NumTweetClicks => aggregatedFeature.copy(tweetClicksFeature = f)
-          case FeatureName.NumLinkClicks => aggregatedFeature.copy(linkClicksFeature = f)
-          case FeatureName.NumProfileViews => aggregatedFeature.copy(profileViewsFeature = f)
-          case FeatureName.TotalDwellTime => aggregatedFeature.copy(dwellTimeFeature = f)
-          case FeatureName.NumInspectedStatuses =>
-            aggregatedFeature.copy(inspectedStatusesFeature = f)
-          case FeatureName.NumPhotoTags => aggregatedFeature.copy(photoTagsFeature = f)
-          case FeatureName.NumFollows => aggregatedFeature.copy(followFeature = f)
-          case FeatureName.NumMutualFollows => aggregatedFeature.copy(mutualFollowFeature = f)
-          case FeatureName.AddressBookEmail => aggregatedFeature.copy(addressBookEmailFeature = f)
-          case FeatureName.AddressBookPhone => aggregatedFeature.copy(addressBookPhoneFeature = f)
-          case FeatureName.AddressBookInBoth => aggregatedFeature.copy(addressBookInBothFeature = f)
-          case FeatureName.AddressBookMutualEdgeEmail =>
-            aggregatedFeature.copy(addressBookMutualEdgeEmailFeature = f)
-          case FeatureName.AddressBookMutualEdgePhone =>
-            aggregatedFeature.copy(addressBookMutualEdgePhoneFeature = f)
-          case FeatureName.AddressBookMutualEdgeInBoth =>
-            aggregatedFeature.copy(addressBookMutualEdgeInBothFeature = f)
-          case FeatureName.NumTweetQuotes => aggregatedFeature.copy(numTweetQuotes = f)
-          case FeatureName.NumBlocks => aggregatedFeature.copy(numBlocks = f)
-          case FeatureName.NumMutes => aggregatedFeature.copy(numMutes = f)
-          case FeatureName.NumReportAsSpams => aggregatedFeature.copy(numReportAsSpams = f)
-          case FeatureName.NumReportAsAbuses => aggregatedFeature.copy(numReportAsAbuses = f)
-          case _ => aggregatedFeature
+    e-e: edge
+  ): o-option[weawgwaphedgefeatuwes] = {
+    vaw b-basefeatuwe = weawgwaphedgefeatuwes(destid = e-e.destinationid)
+    v-vaw aggwegatedfeatuwe = e-e.featuwes.fowdweft(basefeatuwe) {
+      case (aggwegatedfeatuwe, 😳 edgefeatuwe) =>
+        v-vaw f = some(toweawgwaphedgefeatuwev1(edgefeatuwe.tss))
+        s-sciometwics.countew("toweawgwaphedgefeatuwes", 😳😳😳 e-edgefeatuwe.name.name).inc()
+        e-edgefeatuwe.name m-match {
+          case featuwename.numwetweets => aggwegatedfeatuwe.copy(wetweetsfeatuwe = f-f)
+          case featuwename.numfavowites => aggwegatedfeatuwe.copy(favsfeatuwe = f)
+          case featuwename.nummentions => aggwegatedfeatuwe.copy(mentionsfeatuwe = f-f)
+          case featuwename.numtweetcwicks => aggwegatedfeatuwe.copy(tweetcwicksfeatuwe = f-f)
+          c-case featuwename.numwinkcwicks => a-aggwegatedfeatuwe.copy(winkcwicksfeatuwe = f)
+          c-case featuwename.numpwofiweviews => aggwegatedfeatuwe.copy(pwofiweviewsfeatuwe = f-f)
+          case f-featuwename.totawdwewwtime => aggwegatedfeatuwe.copy(dwewwtimefeatuwe = f)
+          case featuwename.numinspectedstatuses =>
+            aggwegatedfeatuwe.copy(inspectedstatusesfeatuwe = f)
+          case f-featuwename.numphototags => aggwegatedfeatuwe.copy(phototagsfeatuwe = f-f)
+          case featuwename.numfowwows => a-aggwegatedfeatuwe.copy(fowwowfeatuwe = f-f)
+          case featuwename.nummutuawfowwows => aggwegatedfeatuwe.copy(mutuawfowwowfeatuwe = f-f)
+          c-case featuwename.addwessbookemaiw => aggwegatedfeatuwe.copy(addwessbookemaiwfeatuwe = f-f)
+          c-case featuwename.addwessbookphone => aggwegatedfeatuwe.copy(addwessbookphonefeatuwe = f)
+          case featuwename.addwessbookinboth => aggwegatedfeatuwe.copy(addwessbookinbothfeatuwe = f)
+          c-case featuwename.addwessbookmutuawedgeemaiw =>
+            a-aggwegatedfeatuwe.copy(addwessbookmutuawedgeemaiwfeatuwe = f-f)
+          case featuwename.addwessbookmutuawedgephone =>
+            a-aggwegatedfeatuwe.copy(addwessbookmutuawedgephonefeatuwe = f-f)
+          case featuwename.addwessbookmutuawedgeinboth =>
+            a-aggwegatedfeatuwe.copy(addwessbookmutuawedgeinbothfeatuwe = f)
+          case featuwename.numtweetquotes => aggwegatedfeatuwe.copy(numtweetquotes = f)
+          c-case featuwename.numbwocks => a-aggwegatedfeatuwe.copy(numbwocks = f)
+          case featuwename.nummutes => a-aggwegatedfeatuwe.copy(nummutes = f-f)
+          case featuwename.numwepowtasspams => aggwegatedfeatuwe.copy(numwepowtasspams = f)
+          c-case featuwename.numwepowtasabuses => aggwegatedfeatuwe.copy(numwepowtasabuses = f)
+          case _ => a-aggwegatedfeatuwe
         }
     }
-    if (filterFn(aggregatedFeature))
-      Some(aggregatedFeature.copy(weight = e.weight.orElse(Some(0.0))))
-    else None
+    if (fiwtewfn(aggwegatedfeatuwe))
+      some(aggwegatedfeatuwe.copy(weight = e-e.weight.owewse(some(0.0))))
+    e-ewse nyone
   }
 }

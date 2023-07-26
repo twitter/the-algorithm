@@ -1,109 +1,109 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.IOException;
-import java.util.Arrays;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.awways;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.timemappew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.intbwockpoow;
 
 /**
- * A TimeMapper implementation that stores the timestamps associated with the doc IDs in an array.
+ * a timemappew impwementation t-that stowes the timestamps associated w-with the doc ids in an awway. (˘ω˘)
  */
-public class OptimizedTimeMapper extends AbstractInMemoryTimeMapper implements Flushable {
-  // Doc id to timestamp map. Timestamps that are negative are out-of-order.
-  protected final int[] timeMap;
+p-pubwic cwass optimizedtimemappew extends abstwactinmemowytimemappew impwements f-fwushabwe {
+  // doc id to t-timestamp map. :3 timestamps t-that awe nyegative awe out-of-owdew. ^^;;
+  pwotected finaw int[] timemap;
 
-  // Size must be greater than the max doc ID stored in the optimized tweet ID mapper.
-  public OptimizedTimeMapper(RealtimeTimeMapper realtimeTimeMapper,
-                             DocIDToTweetIDMapper originalTweetIdMapper,
-                             DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    super();
-    int maxDocId = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
-    timeMap = new int[maxDocId + 1];
-    Arrays.fill(timeMap, ILLEGAL_TIME);
+  // s-size must be gweatew than the max doc id stowed in the optimized tweet id m-mappew. 🥺
+  pubwic optimizedtimemappew(weawtimetimemappew w-weawtimetimemappew, (⑅˘꒳˘)
+                             d-docidtotweetidmappew o-owiginawtweetidmappew, nyaa~~
+                             d-docidtotweetidmappew optimizedtweetidmappew) thwows ioexception {
+    s-supew();
+    int maxdocid = optimizedtweetidmappew.getpweviousdocid(integew.max_vawue);
+    t-timemap = nyew int[maxdocid + 1];
+    awways.fiww(timemap, :3 iwwegaw_time);
 
-    int docId = maxDocId;
-    while (docId != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      int originalDocId = originalTweetIdMapper.getDocID(optimizedTweetIdMapper.getTweetID(docId));
-      Preconditions.checkState(originalDocId != DocIDToTweetIDMapper.ID_NOT_FOUND);
+    int docid = maxdocid;
+    whiwe (docid != docidtotweetidmappew.id_not_found) {
+      i-int owiginawdocid = owiginawtweetidmappew.getdocid(optimizedtweetidmappew.gettweetid(docid));
+      p-pweconditions.checkstate(owiginawdocid != d-docidtotweetidmappew.id_not_found);
 
-      int docIdTimestamp = realtimeTimeMapper.getTime(originalDocId);
-      Preconditions.checkState(docIdTimestamp != TimeMapper.ILLEGAL_TIME);
+      i-int docidtimestamp = weawtimetimemappew.gettime(owiginawdocid);
+      pweconditions.checkstate(docidtimestamp != timemappew.iwwegaw_time);
 
-      doAddMapping(docId, docIdTimestamp);
+      d-doaddmapping(docid, ( ͡o ω ͡o ) d-docidtimestamp);
 
-      docId = optimizedTweetIdMapper.getPreviousDocID(docId);
+      docid = optimizedtweetidmappew.getpweviousdocid(docid);
     }
   }
 
-  private OptimizedTimeMapper(int[] timeMap,
-                              int reverseMapLastIndex,
-                              IntBlockPool reverseMapTimes,
-                              IntBlockPool reverseMapIds) {
-    super(reverseMapLastIndex, reverseMapTimes, reverseMapIds);
-    this.timeMap = timeMap;
+  p-pwivate optimizedtimemappew(int[] t-timemap, mya
+                              int w-wevewsemapwastindex, (///ˬ///✿)
+                              intbwockpoow w-wevewsemaptimes, (˘ω˘)
+                              intbwockpoow wevewsemapids) {
+    supew(wevewsemapwastindex, ^^;; w-wevewsemaptimes, wevewsemapids);
+    t-this.timemap = timemap;
   }
 
-  @Override
-  public int getTime(int docID) {
-    return timeMap[docID];
+  @ovewwide
+  p-pubwic i-int gettime(int docid) {
+    wetuwn timemap[docid];
   }
 
-  @Override
-  protected void setTime(int docID, int timeSeconds) {
-    timeMap[docID] = timeSeconds;
+  @ovewwide
+  pwotected void settime(int docid, (✿oωo) int timeseconds) {
+    t-timemap[docid] = t-timeseconds;
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @ovewwide
+  pubwic fwushhandwew g-getfwushhandwew() {
+    w-wetuwn nyew fwushhandwew(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<OptimizedTimeMapper> {
-    private static final String REVERSE_MAP_LAST_INDEX_PROP = "reverseMapLastIndex";
-    private static final String TIMES_SUB_PROP = "times";
-    private static final String IDS_SUB_PROP = "ids";
+  p-pubwic static finaw cwass fwushhandwew extends fwushabwe.handwew<optimizedtimemappew> {
+    p-pwivate static finaw stwing wevewse_map_wast_index_pwop = "wevewsemapwastindex";
+    pwivate static finaw stwing t-times_sub_pwop = "times";
+    pwivate static f-finaw stwing ids_sub_pwop = "ids";
 
-    public FlushHandler() {
-      super();
+    p-pubwic f-fwushhandwew() {
+      supew();
     }
 
-    public FlushHandler(OptimizedTimeMapper objectToFlush) {
-      super(objectToFlush);
+    p-pubwic f-fwushhandwew(optimizedtimemappew o-objecttofwush) {
+      s-supew(objecttofwush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      OptimizedTimeMapper mapper = getObjectToFlush();
-      out.writeIntArray(mapper.timeMap);
-      flushInfo.addIntProperty(REVERSE_MAP_LAST_INDEX_PROP, mapper.reverseMapLastIndex);
-      mapper.reverseMapTimes.getFlushHandler().flush(
-          flushInfo.newSubProperties(TIMES_SUB_PROP), out);
-      mapper.reverseMapIds.getFlushHandler().flush(
-          flushInfo.newSubProperties(IDS_SUB_PROP), out);
+    @ovewwide
+    pwotected void dofwush(fwushinfo f-fwushinfo, (U ﹏ U) d-datasewiawizew o-out) thwows i-ioexception {
+      o-optimizedtimemappew mappew = getobjecttofwush();
+      out.wwiteintawway(mappew.timemap);
+      f-fwushinfo.addintpwopewty(wevewse_map_wast_index_pwop, -.- mappew.wevewsemapwastindex);
+      mappew.wevewsemaptimes.getfwushhandwew().fwush(
+          fwushinfo.newsubpwopewties(times_sub_pwop), ^•ﻌ•^ out);
+      mappew.wevewsemapids.getfwushhandwew().fwush(
+          f-fwushinfo.newsubpwopewties(ids_sub_pwop), rawr out);
     }
 
-    @Override
-    protected OptimizedTimeMapper doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      return new OptimizedTimeMapper(
-          in.readIntArray(),
-          flushInfo.getIntProperty(REVERSE_MAP_LAST_INDEX_PROP),
-          new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(TIMES_SUB_PROP), in),
-          new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(IDS_SUB_PROP), in));
+    @ovewwide
+    pwotected optimizedtimemappew dowoad(fwushinfo fwushinfo, (˘ω˘) datadesewiawizew i-in)
+        t-thwows ioexception {
+      w-wetuwn nyew optimizedtimemappew(
+          in.weadintawway(), nyaa~~
+          f-fwushinfo.getintpwopewty(wevewse_map_wast_index_pwop), UwU
+          nyew i-intbwockpoow.fwushhandwew().woad(fwushinfo.getsubpwopewties(times_sub_pwop), :3 i-in), (⑅˘꒳˘)
+          nyew intbwockpoow.fwushhandwew().woad(fwushinfo.getsubpwopewties(ids_sub_pwop), (///ˬ///✿) in));
     }
   }
 
-  @Override
-  public TimeMapper optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                             DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    throw new UnsupportedOperationException("OptimizedTimeMapper instances are already optimized.");
+  @ovewwide
+  pubwic timemappew optimize(docidtotweetidmappew o-owiginawtweetidmappew, ^^;;
+                             docidtotweetidmappew o-optimizedtweetidmappew) {
+    thwow nyew unsuppowtedopewationexception("optimizedtimemappew i-instances awe awweady o-optimized.");
   }
 }

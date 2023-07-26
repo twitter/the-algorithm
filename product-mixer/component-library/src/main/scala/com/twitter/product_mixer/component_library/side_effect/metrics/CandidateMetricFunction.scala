@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.side_effect.metrics
+package com.twittew.pwoduct_mixew.component_wibwawy.side_effect.metwics
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.component_library.side_effect.metrics.CandidateMetricFunction.getCountForType
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.baseusewcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.side_effect.metwics.candidatemetwicfunction.getcountfowtype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
 
 /**
- * Function to extract numerical metric value from [[CandidateWithDetails]].
- * This CandidateMetricFunction will be applied on all [[CandidateWithDetails]] instances in the
- * candidateSelection from the RecommendationPipeline.
+ * f-function t-to extwact nyumewicaw m-metwic vawue fwom [[candidatewithdetaiws]]. 😳😳😳
+ * this candidatemetwicfunction wiww be appwied on aww [[candidatewithdetaiws]] i-instances in the
+ * candidatesewection fwom the w-wecommendationpipewine. o.O
  */
-trait CandidateMetricFunction {
-  def apply(candidateWithDetails: CandidateWithDetails): Long
+twait candidatemetwicfunction {
+  d-def appwy(candidatewithdetaiws: candidatewithdetaiws): wong
 }
 
-object CandidateMetricFunction {
+object candidatemetwicfunction {
 
-  private val defaultCountOnePf: PartialFunction[CandidateWithDetails, Long] = {
-    case _ => 0L
+  p-pwivate vaw defauwtcountonepf: p-pawtiawfunction[candidatewithdetaiws, ( ͡o ω ͡o ) w-wong] = {
+    case _ => 0w
   }
 
   /**
-   * Count the occurrences of a certain candidate type from [[CandidateWithDetails]].
+   * count the occuwwences of a cewtain candidate t-type fwom [[candidatewithdetaiws]]. (U ﹏ U)
    */
-  def getCountForType(
-    candidateWithDetails: CandidateWithDetails,
-    countOnePf: PartialFunction[CandidateWithDetails, Long]
-  ): Long = {
-    (countOnePf orElse defaultCountOnePf)(candidateWithDetails)
+  def getcountfowtype(
+    candidatewithdetaiws: candidatewithdetaiws,
+    c-countonepf: pawtiawfunction[candidatewithdetaiws, (///ˬ///✿) w-wong]
+  ): w-wong = {
+    (countonepf o-owewse d-defauwtcountonepf)(candidatewithdetaiws)
   }
 }
 
-object DefaultServedTweetsSumFunction extends CandidateMetricFunction {
-  override def apply(candidateWithDetails: CandidateWithDetails): Long =
-    getCountForType(
-      candidateWithDetails,
+object defauwtsewvedtweetssumfunction extends c-candidatemetwicfunction {
+  ovewwide def appwy(candidatewithdetaiws: c-candidatewithdetaiws): wong =
+    getcountfowtype(
+      candidatewithdetaiws, >w<
       {
-        case item: ItemCandidateWithDetails =>
-          item.candidate match {
-            case _: BaseTweetCandidate => 1L
-            case _ => 0L
+        case item: itemcandidatewithdetaiws =>
+          item.candidate m-match {
+            case _: b-basetweetcandidate => 1w
+            c-case _ => 0w
           }
       })
 }
 
-object DefaultServedUsersSumFunction extends CandidateMetricFunction {
-  override def apply(candidateWithDetails: CandidateWithDetails): Long =
-    getCountForType(
-      candidateWithDetails,
+o-object defauwtsewvedusewssumfunction extends candidatemetwicfunction {
+  ovewwide def a-appwy(candidatewithdetaiws: c-candidatewithdetaiws): wong =
+    getcountfowtype(
+      c-candidatewithdetaiws, rawr
       {
-        case item: ItemCandidateWithDetails =>
-          item.candidate match {
-            case _: BaseUserCandidate => 1L
-            case _ => 0L
+        c-case item: itemcandidatewithdetaiws =>
+          i-item.candidate match {
+            c-case _: baseusewcandidate => 1w
+            case _ => 0w
           }
       })
 }

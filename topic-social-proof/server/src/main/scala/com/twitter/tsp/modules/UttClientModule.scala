@@ -1,41 +1,41 @@
-package com.twitter.tsp.modules
+package com.twittew.tsp.moduwes
 
-import com.google.inject.Provides
-import com.twitter.escherbird.util.uttclient.CacheConfigV2
-import com.twitter.escherbird.util.uttclient.CachedUttClientV2
-import com.twitter.escherbird.util.uttclient.UttClientCacheConfigsV2
-import com.twitter.escherbird.utt.strato.thriftscala.Environment
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.strato.client.Client
-import com.twitter.topiclisting.clients.utt.UttClient
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.eschewbiwd.utiw.uttcwient.cacheconfigv2
+i-impowt c-com.twittew.eschewbiwd.utiw.uttcwient.cacheduttcwientv2
+i-impowt c-com.twittew.eschewbiwd.utiw.uttcwient.uttcwientcacheconfigsv2
+i-impowt com.twittew.eschewbiwd.utt.stwato.thwiftscawa.enviwonment
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.inject.twittewmoduwe
+impowt com.twittew.stwato.cwient.cwient
+impowt com.twittew.topicwisting.cwients.utt.uttcwient
+impowt javax.inject.singweton
 
-object UttClientModule extends TwitterModule {
+o-object uttcwientmoduwe extends twittewmoduwe {
 
-  @Provides
-  @Singleton
-  def providesUttClient(
-    stratoClient: Client,
-    statsReceiver: StatsReceiver
-  ): UttClient = {
+  @pwovides
+  @singweton
+  d-def pwovidesuttcwient(
+    stwatocwient: c-cwient, /(^•ω•^)
+    statsweceivew: statsweceivew
+  ): uttcwient = {
 
-    // Save 2 ^ 18 UTTs. Promising 100% cache rate
-    lazy val defaultCacheConfigV2: CacheConfigV2 = CacheConfigV2(262143)
-    lazy val uttClientCacheConfigsV2: UttClientCacheConfigsV2 = UttClientCacheConfigsV2(
-      getTaxonomyConfig = defaultCacheConfigV2,
-      getUttTaxonomyConfig = defaultCacheConfigV2,
-      getLeafIds = defaultCacheConfigV2,
-      getLeafUttEntities = defaultCacheConfigV2
+    // s-save 2 ^ 18 utts. rawr x3 p-pwomising 100% cache w-wate
+    wazy vaw defauwtcacheconfigv2: cacheconfigv2 = cacheconfigv2(262143)
+    wazy vaw u-uttcwientcacheconfigsv2: uttcwientcacheconfigsv2 = uttcwientcacheconfigsv2(
+      gettaxonomyconfig = defauwtcacheconfigv2, (U ﹏ U)
+      g-getutttaxonomyconfig = defauwtcacheconfigv2, (U ﹏ U)
+      g-getweafids = d-defauwtcacheconfigv2, (⑅˘꒳˘)
+      g-getweafuttentities = d-defauwtcacheconfigv2
     )
 
-    // CachedUttClient to use StratoClient
-    lazy val cachedUttClientV2: CachedUttClientV2 = new CachedUttClientV2(
-      stratoClient = stratoClient,
-      env = Environment.Prod,
-      cacheConfigs = uttClientCacheConfigsV2,
-      statsReceiver = statsReceiver.scope("CachedUttClient")
+    // cacheduttcwient to use stwatocwient
+    w-wazy vaw cacheduttcwientv2: cacheduttcwientv2 = n-nyew cacheduttcwientv2(
+      stwatocwient = stwatocwient, òωó
+      env = enviwonment.pwod, ʘwʘ
+      cacheconfigs = u-uttcwientcacheconfigsv2, /(^•ω•^)
+      statsweceivew = s-statsweceivew.scope("cacheduttcwient")
     )
-    new UttClient(cachedUttClientV2, statsReceiver)
+    n-nyew u-uttcwient(cacheduttcwientv2, ʘwʘ statsweceivew)
   }
 }

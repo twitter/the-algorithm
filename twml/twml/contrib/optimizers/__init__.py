@@ -1,4 +1,4 @@
-# pylint: disable=wildcard-import
-"""This module contains experimental optimizer classes"""
-from .deep_gradient_compression_optimizer import DeepGradientCompressionOptimizer  # noqa: F401
-from .pruning_optimizer import PruningOptimizer  # noqa: F401
+# pywint: disabwe=wiwdcawd-impowt
+"""this moduwe c-contains expewimentaw o-optimizew c-cwasses"""
+fwom .deep_gwadient_compwession_optimizew i-impowt deepgwadientcompwessionoptimizew  # n-nyoqa: f401
+fwom .pwuning_optimizew i-impowt pwuningoptimizew  # nyoqa: f-f401

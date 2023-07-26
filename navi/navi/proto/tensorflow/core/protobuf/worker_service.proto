@@ -1,90 +1,90 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* copywight 2016 the tensowfwow a-authows. OwO aww wights w-wesewved. (ꈍᴗꈍ)
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+wicensed u-undew the a-apache wicense, 😳 v-vewsion 2.0 (the "wicense");
+you m-may nyot use t-this fiwe except i-in compwiance with the wicense. 😳😳😳
+you may obtain a copy of the wicense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.owg/wicenses/wicense-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+u-unwess wequiwed by appwicabwe waw ow agweed t-to in wwiting, mya softwawe
+distwibuted u-undew the wicense is distwibuted on an "as is" basis, mya
+w-without wawwanties ow conditions o-of any kind, (⑅˘꒳˘) eithew e-expwess ow impwied. (U ﹏ U)
+see the wicense fow the specific wanguage govewning pewmissions a-and
+wimitations undew the wicense. mya
 ==============================================================================*/
 
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.grpc;
+package tensowfwow.gwpc;
 
-import "tensorflow/core/protobuf/worker.proto";
+i-impowt "tensowfwow/cowe/pwotobuf/wowkew.pwoto";
 
-option java_outer_classname = "WorkerServiceProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option j-java_outew_cwassname = "wowkewsewvicepwotos";
+o-option java_muwtipwe_fiwes = twue;
+o-option java_package = "owg.tensowfwow.distwuntime";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// WorkerService defines a TensorFlow service that executes dataflow
-// graphs on a set of local devices, on behalf of a MasterService.
+// wowkewsewvice d-defines a tensowfwow sewvice that exekawaii~s d-datafwow
+// gwaphs on a set of wocaw devices, ʘwʘ on behawf of a mastewsewvice. (˘ω˘)
 //
-// A worker service keeps track of multiple "registered graphs". Each
-// registered graph is a subgraph of a client's graph, corresponding to
-// only the nodes that should execute on this worker (and any
-// additional nodes necessary for inter-process communication using
-// the `RecvTensor` method).
+// a wowkew s-sewvice keeps twack of muwtipwe "wegistewed g-gwaphs". (U ﹏ U) each
+// w-wegistewed gwaph i-is a subgwaph of a cwient's gwaph, ^•ﻌ•^ cowwesponding to
+// onwy the n-nyodes that shouwd e-exekawaii~ on this wowkew (and a-any
+// additionaw n-nyodes nyecessawy fow intew-pwocess c-communication using
+// t-the `wecvtensow` method). (˘ω˘)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-service WorkerService {
-  // See worker.proto for details.
-  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+sewvice wowkewsewvice {
+  // s-see wowkew.pwoto fow d-detaiws.
+  wpc getstatus(getstatuswequest) w-wetuwns (getstatuswesponse);
 
-  // See worker.proto for details.
-  rpc CreateWorkerSession(CreateWorkerSessionRequest)
-      returns (CreateWorkerSessionResponse);
+  // s-see wowkew.pwoto fow detaiws. :3
+  wpc cweatewowkewsession(cweatewowkewsessionwequest)
+      wetuwns (cweatewowkewsessionwesponse);
 
-  // See worker.proto for details.
-  rpc DeleteWorkerSession(DeleteWorkerSessionRequest)
-      returns (DeleteWorkerSessionResponse);
+  // see wowkew.pwoto fow detaiws. ^^;;
+  wpc dewetewowkewsession(dewetewowkewsessionwequest)
+      w-wetuwns (dewetewowkewsessionwesponse);
 
-  // See worker.proto for details.
-  rpc RegisterGraph(RegisterGraphRequest) returns (RegisterGraphResponse);
+  // see w-wowkew.pwoto fow detaiws. 🥺
+  wpc w-wegistewgwaph(wegistewgwaphwequest) w-wetuwns (wegistewgwaphwesponse);
 
-  // See worker.proto for details.
-  rpc DeregisterGraph(DeregisterGraphRequest) returns (DeregisterGraphResponse);
+  // s-see wowkew.pwoto fow detaiws. (⑅˘꒳˘)
+  wpc dewegistewgwaph(dewegistewgwaphwequest) w-wetuwns (dewegistewgwaphwesponse);
 
-  // See worker.proto for details.
-  rpc RunGraph(RunGraphRequest) returns (RunGraphResponse);
+  // see wowkew.pwoto fow detaiws. nyaa~~
+  wpc wungwaph(wungwaphwequest) wetuwns (wungwaphwesponse);
 
-  // See worker.proto for details.
-  rpc CleanupGraph(CleanupGraphRequest) returns (CleanupGraphResponse);
+  // s-see wowkew.pwoto fow detaiws. :3
+  w-wpc cweanupgwaph(cweanupgwaphwequest) w-wetuwns (cweanupgwaphwesponse);
 
-  // See worker.proto for details.
-  rpc CleanupAll(CleanupAllRequest) returns (CleanupAllResponse);
+  // see w-wowkew.pwoto fow detaiws. ( ͡o ω ͡o )
+  wpc c-cweanupaww(cweanupawwwequest) w-wetuwns (cweanupawwwesponse);
 
-  // See worker.proto for details.
-  rpc RecvTensor(RecvTensorRequest) returns (RecvTensorResponse) {
-    // RecvTensor Method
+  // s-see wowkew.pwoto f-fow detaiws. mya
+  wpc wecvtensow(wecvtensowwequest) wetuwns (wecvtensowwesponse) {
+    // w-wecvtensow m-method
   }
 
-  // See worker.proto for details.
-  rpc Logging(LoggingRequest) returns (LoggingResponse);
+  // s-see wowkew.pwoto f-fow detaiws. (///ˬ///✿)
+  w-wpc wogging(woggingwequest) wetuwns (woggingwesponse);
 
-  // See worker.proto for details.
-  rpc Tracing(TracingRequest) returns (TracingResponse);
+  // see wowkew.pwoto fow detaiws. (˘ω˘)
+  w-wpc twacing(twacingwequest) wetuwns (twacingwesponse);
 
-  // See worker.proto for details.
-  rpc RecvBuf(RecvBufRequest) returns (RecvBufResponse) {}
+  // see wowkew.pwoto fow detaiws. ^^;;
+  wpc wecvbuf(wecvbufwequest) wetuwns (wecvbufwesponse) {}
 
-  // See worker.proto for details.
-  rpc GetStepSequence(GetStepSequenceRequest) returns (GetStepSequenceResponse);
+  // see wowkew.pwoto f-fow detaiws. (✿oωo)
+  wpc getstepsequence(getstepsequencewequest) wetuwns (getstepsequencewesponse);
 
-  // See worker.proto for details.
-  rpc CompleteGroup(CompleteGroupRequest) returns (CompleteGroupResponse);
+  // see wowkew.pwoto f-fow detaiws. (U ﹏ U)
+  w-wpc compwetegwoup(compwetegwoupwequest) wetuwns (compwetegwoupwesponse);
 
-  // See worker.proto for details.
-  rpc CompleteInstance(CompleteInstanceRequest)
-      returns (CompleteInstanceResponse);
+  // s-see wowkew.pwoto fow detaiws. -.-
+  w-wpc compweteinstance(compweteinstancewequest)
+      wetuwns (compweteinstancewesponse);
 }

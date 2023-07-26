@@ -1,10 +1,10 @@
-package com.twitter.home_mixer.param
+package com.twittew.home_mixew.pawam
 
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.functional_component.configapi.registry.GlobalParamConfig
+impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.wegistwy.gwobawpawamconfig
 
-object GlobalParamConfigModule extends TwitterModule {
-  override def configure(): Unit = {
-    bind[GlobalParamConfig].to[HomeGlobalParamConfig]
+o-object g-gwobawpawamconfigmoduwe e-extends t-twittewmoduwe {
+  o-ovewwide d-def configuwe(): unit = {
+    bind[gwobawpawamconfig].to[homegwobawpawamconfig]
   }
 }

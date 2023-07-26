@@ -1,41 +1,41 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer.earlybird
+package com.twittew.home_mixew.pwoduct.scowed_tweets.quewy_twansfowmew.eawwybiwd
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.FrsSeedUserIdsFeature
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.earlybird.EarlybirdFrsQueryTransformer._
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.timelines.common.model.TweetKindOption
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.home_mixew.modew.wequest.hasdevicecontext
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.fwsseedusewidsfeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.quewy_twansfowmew.eawwybiwd.eawwybiwdfwsquewytwansfowmew._
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.hasquawityfactowstatus
+impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => eb}
+impowt c-com.twittew.timewines.common.modew.tweetkindoption
 
-object EarlybirdFrsQueryTransformer {
-  private val SinceDuration = 24.hours
-  private val MaxTweetsToFetch = 100
-  private val TensorflowModel = Some("timelines_rectweet_replica")
+object eawwybiwdfwsquewytwansfowmew {
+  pwivate v-vaw sinceduwation = 24.houws
+  pwivate vaw maxtweetstofetch = 100
+  p-pwivate vaw tensowfwowmodew = some("timewines_wectweet_wepwica")
 
-  private val TweetKindOptions: TweetKindOption.ValueSet =
-    TweetKindOption(includeOriginalTweetsAndQuotes = true)
+  pwivate v-vaw tweetkindoptions: tweetkindoption.vawueset =
+    t-tweetkindoption(incwudeowiginawtweetsandquotes = t-twue)
 }
 
-case class EarlybirdFrsQueryTransformer[
-  Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext
+case cwass eawwybiwdfwsquewytwansfowmew[
+  quewy <: pipewinequewy with hasquawityfactowstatus w-with hasdevicecontext
 ](
-  candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  override val clientId: Option[String])
-    extends CandidatePipelineQueryTransformer[Query, eb.EarlybirdRequest]
-    with EarlybirdQueryTransformer[Query] {
+  candidatepipewineidentifiew: candidatepipewineidentifiew, rawr x3
+  ovewwide vaw cwientid: option[stwing])
+    e-extends candidatepipewinequewytwansfowmew[quewy, (U ﹏ U) eb.eawwybiwdwequest]
+    w-with e-eawwybiwdquewytwansfowmew[quewy] {
 
-  override val tweetKindOptions: TweetKindOption.ValueSet = TweetKindOptions
-  override val maxTweetsToFetch: Int = MaxTweetsToFetch
-  override val tensorflowModel: Option[String] = TensorflowModel
+  o-ovewwide v-vaw tweetkindoptions: tweetkindoption.vawueset = tweetkindoptions
+  o-ovewwide vaw maxtweetstofetch: int = maxtweetstofetch
+  o-ovewwide vaw tensowfwowmodew: option[stwing] = tensowfwowmodew
 
-  override def transform(query: Query): eb.EarlybirdRequest = {
-    val seedUserIds = query.features
-      .flatMap(_.getOrElse(FrsSeedUserIdsFeature, None))
-      .getOrElse(Seq.empty).toSet
-    buildEarlybirdQuery(query, SinceDuration, seedUserIds)
+  ovewwide def twansfowm(quewy: quewy): e-eb.eawwybiwdwequest = {
+    vaw seedusewids = q-quewy.featuwes
+      .fwatmap(_.getowewse(fwsseedusewidsfeatuwe, (U ﹏ U) n-nyone))
+      .getowewse(seq.empty).toset
+    b-buiwdeawwybiwdquewy(quewy, (⑅˘꒳˘) sinceduwation, seedusewids)
   }
 }

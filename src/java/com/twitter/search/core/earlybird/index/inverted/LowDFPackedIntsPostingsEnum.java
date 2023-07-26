@@ -1,112 +1,112 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nuwwabwe;
 
-import org.apache.lucene.util.packed.PackedInts;
+i-impowt o-owg.apache.wucene.utiw.packed.packedints;
 
 /**
- * A PostingsEnum for iterating over LowDFPackedIntsPostingLists.
+ * a-a postingsenum f-fow itewating o-ovew wowdfpackedintspostingwists.
  *
- * Can be used with positions and without positions.
+ * c-can be used with positions and without positions. 🥺
  */
-public class LowDFPackedIntsPostingsEnum extends EarlybirdOptimizedPostingsEnum {
-  private static final int SKIP_INTERVAL = 128;
+pubwic cwass wowdfpackedintspostingsenum e-extends eawwybiwdoptimizedpostingsenum {
+  pwivate static finaw int skip_intewvaw = 128;
 
-  private final PackedInts.Reader packedDocIds;
-  @Nullable
-  private final PackedInts.Reader packedPositions;
-  private final int lastPostingPointer;
-  private final int largestDocID;
-  private int currentPositionPointer;
+  p-pwivate finaw packedints.weadew p-packeddocids;
+  @nuwwabwe
+  pwivate finaw packedints.weadew packedpositions;
+  pwivate finaw int wastpostingpointew;
+  p-pwivate finaw int wawgestdocid;
+  p-pwivate i-int cuwwentpositionpointew;
 
-  /** Pointer to the next posting that will be loaded. */
-  private int nextPostingPointer;
+  /** pointew to the nyext posting that wiww be woaded. (⑅˘꒳˘) */
+  pwivate i-int nyextpostingpointew;
 
   /**
-   * Creates a new PostingsEnum for all postings in a given term.
+   * cweates a nyew postingsenum fow aww postings in a given t-tewm. nyaa~~
    */
-  public LowDFPackedIntsPostingsEnum(
-      PackedInts.Reader packedDocIds,
-      @Nullable
-      PackedInts.Reader packedPositions,
-      int postingListPointer,
-      int numPostings) {
-    super(postingListPointer, numPostings);
+  pubwic wowdfpackedintspostingsenum(
+      p-packedints.weadew p-packeddocids, :3
+      @nuwwabwe
+      p-packedints.weadew p-packedpositions, ( ͡o ω ͡o )
+      int postingwistpointew, mya
+      int nyumpostings) {
+    s-supew(postingwistpointew, (///ˬ///✿) nyumpostings);
 
-    this.packedDocIds = packedDocIds;
-    this.packedPositions = packedPositions;
-    this.nextPostingPointer = postingListPointer;
+    this.packeddocids = p-packeddocids;
+    this.packedpositions = packedpositions;
+    this.nextpostingpointew = postingwistpointew;
 
-    this.lastPostingPointer = postingListPointer + numPostings - 1;
-    this.largestDocID = (int) packedDocIds.get(lastPostingPointer);
+    this.wastpostingpointew = p-postingwistpointew + nyumpostings - 1;
+    t-this.wawgestdocid = (int) p-packeddocids.get(wastpostingpointew);
 
-    loadNextPosting();
+    w-woadnextposting();
 
-    // Treat each term as a single block load.
-    queryCostTracker.track(QueryCostTracker.CostType.LOAD_OPTIMIZED_POSTING_BLOCK);
+    // tweat each tewm as a singwe bwock woad. (˘ω˘)
+    q-quewycosttwackew.twack(quewycosttwackew.costtype.woad_optimized_posting_bwock);
   }
 
-  @Override
-  protected void loadNextPosting() {
-    if (nextPostingPointer <= lastPostingPointer) {
-      nextDocID = (int) packedDocIds.get(nextPostingPointer);
-      nextFreq = 1;
-    } else {
-      // all postings fully processed
-      nextDocID = NO_MORE_DOCS;
-      nextFreq = 0;
+  @ovewwide
+  p-pwotected void woadnextposting() {
+    i-if (nextpostingpointew <= w-wastpostingpointew) {
+      nyextdocid = (int) p-packeddocids.get(nextpostingpointew);
+      nyextfweq = 1;
+    } e-ewse {
+      // aww postings fuwwy pwocessed
+      n-nyextdocid = no_mowe_docs;
+      n-nyextfweq = 0;
     }
-    nextPostingPointer++;
+    nyextpostingpointew++;
   }
 
-  @Override
-  protected void startCurrentDoc() {
-    if (packedPositions != null) {
+  @ovewwide
+  pwotected v-void stawtcuwwentdoc() {
+    i-if (packedpositions != nyuww) {
       /**
-       * Remember where we were at the beginning of this doc, so that we can iterate over the
-       * positions for this doc if needed.
-       * Adjust by `- 1 - getCurrentFreq()` because we already advanced beyond the last posting in
-       * the previous loadNextPosting() calls.
-       * @see #nextDocNoDel()
+       * wemembew whewe we wewe at the beginning of this doc, ^^;; so that we can itewate o-ovew the
+       * p-positions fow this doc if n-nyeeded. (✿oωo)
+       * a-adjust by `- 1 - g-getcuwwentfweq()` because we awweady advanced beyond the wast p-posting in
+       * the pwevious woadnextposting() cawws.
+       * @see #nextdocnodew()
        */
-      currentPositionPointer = nextPostingPointer - 1 - getCurrentFreq();
+      cuwwentpositionpointew = n-nyextpostingpointew - 1 - getcuwwentfweq();
     }
   }
 
-  @Override
-  protected void skipTo(int target) {
-    assert target != NO_MORE_DOCS : "Should be handled in parent class advance method";
+  @ovewwide
+  p-pwotected v-void skipto(int t-tawget) {
+    assewt tawget != n-nyo_mowe_docs : "shouwd b-be handwed i-in pawent cwass a-advance method";
 
-    // now we know there must be a doc in this block that we can return
-    int skipIndex = nextPostingPointer + SKIP_INTERVAL;
-    while (skipIndex <= lastPostingPointer && target > packedDocIds.get(skipIndex)) {
-      nextPostingPointer = skipIndex;
-      skipIndex += SKIP_INTERVAL;
+    // nyow we know thewe m-must be a doc in t-this bwock that w-we can wetuwn
+    i-int skipindex = n-nyextpostingpointew + skip_intewvaw;
+    whiwe (skipindex <= wastpostingpointew && t-tawget > packeddocids.get(skipindex)) {
+      nyextpostingpointew = skipindex;
+      skipindex += skip_intewvaw;
     }
   }
 
-  @Override
-  public int nextPosition() throws IOException {
-    if (packedPositions == null) {
-      return -1;
-    } else if (currentPositionPointer < packedPositions.size()) {
-      return (int) packedPositions.get(currentPositionPointer++);
-    } else {
-      return -1;
+  @ovewwide
+  pubwic int nyextposition() t-thwows ioexception {
+    if (packedpositions == nyuww) {
+      w-wetuwn -1;
+    } e-ewse i-if (cuwwentpositionpointew < packedpositions.size()) {
+      w-wetuwn (int) packedpositions.get(cuwwentpositionpointew++);
+    } ewse {
+      w-wetuwn -1;
     }
   }
 
-  @Override
-  public int getLargestDocID() throws IOException {
-    return largestDocID;
+  @ovewwide
+  p-pubwic int getwawgestdocid() thwows ioexception {
+    wetuwn wawgestdocid;
   }
 
-  @Override
-  public long cost() {
-    // cost would be -1 if this enum is exhausted.
-    final int cost = lastPostingPointer - nextPostingPointer + 1;
-    return cost < 0 ? 0 : cost;
+  @ovewwide
+  pubwic wong cost() {
+    // c-cost wouwd be -1 if this e-enum is exhausted. (U ﹏ U)
+    finaw i-int cost = wastpostingpointew - n-nyextpostingpointew + 1;
+    wetuwn cost < 0 ? 0 : c-cost;
   }
 }

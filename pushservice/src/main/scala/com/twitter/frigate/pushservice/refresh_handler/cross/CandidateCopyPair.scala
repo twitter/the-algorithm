@@ -1,11 +1,11 @@
-package com.twitter.frigate.pushservice.refresh_handler.cross
+package com.twittew.fwigate.pushsewvice.wefwesh_handwew.cwoss
 
-import com.twitter.frigate.common.util.MRPushCopy
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
+impowt c-com.twittew.fwigate.common.utiw.mwpushcopy
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
 
 /**
  *
- * @param candidate: [[RawCandidate]] is a recommendation candidate
- * @param pushCopy: [[MRPushCopy]] eligible for candidate
+ * @pawam c-candidate: [[wawcandidate]] i-is a wecommendation c-candidate
+ * @pawam p-pushcopy: [[mwpushcopy]] e-ewigibwe fow c-candidate
  */
-case class CandidateCopyPair(candidate: RawCandidate, pushCopy: MRPushCopy)
+case cwass candidatecopypaiw(candidate: wawcandidate, rawr x3 pushcopy: mwpushcopy)

@@ -1,64 +1,64 @@
-package com.twitter.simclusters_v2.scio
-package multi_type_graph.multi_type_graph_sims
+package com.twittew.simcwustews_v2.scio
+package muwti_type_gwaph.muwti_type_gwaph_sims
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.DiskFormat
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.scio.multi_type_graph.common.MultiTypeGraphUtil
-import com.twitter.simclusters_v2.thriftscala.RightNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeSimHashSketch
-import com.twitter.util.Duration
-import com.twitter.wtf.dataflow.cosine_similarity.SimHashJob
-import java.time.Instant
+i-impowt com.spotify.scio.sciocontext
+i-impowt c-com.spotify.scio.codews.codew
+i-impowt com.spotify.scio.vawues.scowwection
+i-impowt c-com.twittew.beam.io.daw.daw
+i-impowt c-com.twittew.beam.io.fs.muwtifowmat.diskfowmat
+impowt com.twittew.beam.io.fs.muwtifowmat.pathwayout
+impowt com.twittew.beam.job.datewangeoptions
+impowt com.twittew.daw.cwient.dataset.snapshotdawdataset
+impowt c-com.twittew.scio_intewnaw.codews.thwiftstwuctwazybinawyscwoogecodew
+impowt com.twittew.scio_intewnaw.job.sciobeamjob
+i-impowt com.twittew.scwooge.thwiftstwuct
+i-impowt com.twittew.simcwustews_v2.scio.muwti_type_gwaph.common.muwtitypegwaphutiw
+impowt com.twittew.simcwustews_v2.thwiftscawa.wightnode
+impowt com.twittew.simcwustews_v2.thwiftscawa.wightnodesimhashsketch
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.wtf.datafwow.cosine_simiwawity.simhashjob
+impowt j-java.time.instant
 
-trait RightNodeSimHashScioBaseApp extends ScioBeamJob[DateRangeOptions] with SimHashJob[RightNode] {
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
-  override val ordering: Ordering[RightNode] = MultiTypeGraphUtil.rightNodeOrdering
+t-twait wightnodesimhashsciobaseapp extends sciobeamjob[datewangeoptions] with simhashjob[wightnode] {
+  ovewwide impwicit d-def scwoogecodew[t <: thwiftstwuct: manifest]: codew[t] =
+    thwiftstwuctwazybinawyscwoogecodew.scwoogecodew
+  o-ovewwide vaw owdewing: owdewing[wightnode] = muwtitypegwaphutiw.wightnodeowdewing
 
-  val isAdhoc: Boolean
-  val rightNodeSimHashSnapshotDataset: SnapshotDALDataset[RightNodeSimHashSketch]
-  val simsHashJobOutputDirectory: String = Config.simsHashJobOutputDirectory
+  v-vaw isadhoc: b-boowean
+  vaw w-wightnodesimhashsnapshotdataset: s-snapshotdawdataset[wightnodesimhashsketch]
+  vaw simshashjoboutputdiwectowy: stwing = config.simshashjoboutputdiwectowy
 
-  override def graph(
-    implicit sc: ScioContext,
-  ): SCollection[(Long, RightNode, Double)] =
-    MultiTypeGraphUtil.getTruncatedMultiTypeGraph(noOlderThan = Duration.fromDays(14))
+  o-ovewwide def gwaph(
+    impwicit sc: s-sciocontext, /(^•ω•^)
+  ): scowwection[(wong, nyaa~~ wightnode, doubwe)] =
+    muwtitypegwaphutiw.gettwuncatedmuwtitypegwaph(noowdewthan = duwation.fwomdays(14))
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    implicit def scioContext: ScioContext = sc
+  o-ovewwide def configuwepipewine(sc: s-sciocontext, nyaa~~ o-opts: datewangeoptions): u-unit = {
+    impwicit def sciocontext: sciocontext = sc
 
-    // DAL.Environment variable for WriteExecs
-    val dalEnv = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+    // d-daw.enviwonment v-vawiabwe fow wwiteexecs
+    vaw d-dawenv = if (isadhoc) d-daw.enviwonment.dev ewse d-daw.enviwonment.pwod
 
-    val sketches = computeSimHashSketchesForWeightedGraph(graph)
+    vaw sketches = c-computesimhashsketchesfowweightedgwaph(gwaph)
       .map {
-        case (rightNode, sketch, norm) => RightNodeSimHashSketch(rightNode, sketch, norm)
+        case (wightnode, :3 sketch, 😳😳😳 n-nyowm) => wightnodesimhashsketch(wightnode, (˘ω˘) sketch, nyowm)
       }
 
-    // Write SimHashSketches to DAL
-    sketches
-      .saveAsCustomOutput(
-        name = "WriteSimHashSketches",
-        DAL.writeSnapshot(
-          rightNodeSimHashSnapshotDataset,
-          PathLayout.FixedPath(
-            ((if (!isAdhoc)
-                MultiTypeGraphUtil.RootThriftPath
-              else
-                MultiTypeGraphUtil.AdhocRootPath)
-              + simsHashJobOutputDirectory)),
-          Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          DiskFormat.Thrift(),
-          environmentOverride = dalEnv
+    // w-wwite simhashsketches to daw
+    s-sketches
+      .saveascustomoutput(
+        n-nyame = "wwitesimhashsketches", ^^
+        daw.wwitesnapshot(
+          wightnodesimhashsnapshotdataset, :3
+          pathwayout.fixedpath(
+            ((if (!isadhoc)
+                muwtitypegwaphutiw.wootthwiftpath
+              ewse
+                muwtitypegwaphutiw.adhocwootpath)
+              + simshashjoboutputdiwectowy)), -.-
+          instant.ofepochmiwwi(opts.intewvaw.getendmiwwis - 1w), 😳
+          diskfowmat.thwift(), mya
+          e-enviwonmentovewwide = d-dawenv
         )
       )
   }

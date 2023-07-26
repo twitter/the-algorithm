@@ -1,93 +1,93 @@
-import random
+impowt wandom
 
-import twml
+impowt twmw
 
-get_time_based_dataset_files = twml.util.list_files_by_datetime
+get_time_based_dataset_fiwes = t-twmw.utiw.wist_fiwes_by_datetime
 
 
-def resolve_train_and_eval_files_overlap(
-  train_files, eval_files, fraction_kept_for_eval, seed=None
+d-def w-wesowve_twain_and_evaw_fiwes_ovewwap(
+  t-twain_fiwes, (ˆ ﻌ ˆ)♡ e-evaw_fiwes, 😳😳😳 f-fwaction_kept_fow_evaw, (U ﹏ U) s-seed=none
 ):
-  """Resolve any overlap between train and eval files.
+  """wesowve a-any ovewwap between twain and evaw fiwes. (///ˬ///✿)
 
-  Specifically, if there's an overlap between `train_files` and `eval_files`, then a fraction of
-  the overlap (i.e. `fraction_kept_for_eval`) will be randomly assigned (exclusively) to the
-  `eval_files`.
+  specificawwy, 😳 if thewe's an ovewwap b-between `twain_fiwes` and `evaw_fiwes`, 😳 then a-a fwaction of
+  the ovewwap (i.e. σωσ `fwaction_kept_fow_evaw`) w-wiww be wandomwy assigned (excwusivewy) to the
+  `evaw_fiwes`. rawr x3
 
-  The following example demonstrates its usage:
+  the fowwowing exampwe d-demonstwates its usage:
 
-  >>> orig_train_files = ['f1', 'f2', 'f3', 'f4']
-  >>> orig_eval_files = ['f1', 'f2', 'f3']
-  >>> resolved_train_files, resolved_eval_files = resolve_train_and_eval_files_overlap(
-  ...     orig_train_files, orig_eval_files, 0.5
+  >>> o-owig_twain_fiwes = ['f1', OwO 'f2', 'f3', /(^•ω•^) 'f4']
+  >>> o-owig_evaw_fiwes = ['f1', 😳😳😳 'f2', ( ͡o ω ͡o ) 'f3']
+  >>> wesowved_twain_fiwes, >_< wesowved_evaw_fiwes = wesowve_twain_and_evaw_fiwes_ovewwap(
+  ...     owig_twain_fiwes, >w< o-owig_evaw_fiwes, rawr 0.5
   ... )
-  >>> set(resolved_train_files) & set(resolved_eval_files) == set()
-  True
-  >>> len(resolved_train_files) == 3
-  True
-  >>> len(resolved_eval_files) == 2
-  True
+  >>> set(wesowved_twain_fiwes) & set(wesowved_evaw_fiwes) == set()
+  twue
+  >>> wen(wesowved_twain_fiwes) == 3
+  twue
+  >>> wen(wesowved_evaw_fiwes) == 2
+  t-twue
 
-  Args:
-    train_files: A list of the files used for training.
-    eval_files: A list of the files used for validation.
-    fraction_kept_for_eval: A fraction of files in the intersection between `train_files` and
-      `eval_files` exclusively kept for evaluation.
-    seed: A seed for generating random numbers.
+  awgs:
+    twain_fiwes: a-a wist o-of the fiwes used f-fow twaining. 😳
+    e-evaw_fiwes: a wist of the fiwes used fow vawidation. >w<
+    f-fwaction_kept_fow_evaw: a fwaction of fiwes in the i-intewsection between `twain_fiwes` and
+      `evaw_fiwes` excwusivewy kept fow evawuation. (⑅˘꒳˘)
+    seed: a seed fow genewating wandom n-nyumbews. OwO
 
-  Returns:
-    A tuple `(new_train_files, new_eval_files)` with the overlapping resolved.
+  wetuwns:
+    a tupwe `(new_twain_fiwes, (ꈍᴗꈍ) n-nyew_evaw_fiwes)` w-with the o-ovewwapping wesowved. 😳
   """
 
-  rng = random.Random(seed)
+  wng = wandom.wandom(seed)
 
-  train_files = set(train_files)
-  eval_files = set(eval_files)
-  overlapping_files = train_files & eval_files
-  train_files_selected_for_eval = set(rng.sample(
-    overlapping_files,
-    int(len(overlapping_files) * fraction_kept_for_eval)
+  twain_fiwes = set(twain_fiwes)
+  evaw_fiwes = s-set(evaw_fiwes)
+  o-ovewwapping_fiwes = twain_fiwes & e-evaw_fiwes
+  twain_fiwes_sewected_fow_evaw = s-set(wng.sampwe(
+    ovewwapping_fiwes,
+    i-int(wen(ovewwapping_fiwes) * fwaction_kept_fow_evaw)
   ))
-  train_files = train_files - train_files_selected_for_eval
-  eval_files = (eval_files - overlapping_files) | train_files_selected_for_eval
-  return list(train_files), list(eval_files)
+  t-twain_fiwes = twain_fiwes - twain_fiwes_sewected_fow_evaw
+  e-evaw_fiwes = (evaw_fiwes - ovewwapping_fiwes) | t-twain_fiwes_sewected_fow_evaw
+  wetuwn wist(twain_fiwes), 😳😳😳 w-wist(evaw_fiwes)
 
 
-def get_time_based_dataset_files_for_train_and_eval(
-  base_path,
-  train_start_datetime,
-  train_end_datetime,
-  eval_start_datetime,
-  eval_end_datetime,
-  fraction_kept_for_eval,
-  datetime_prefix_format='%Y/%m/%d/%H',
-  extension='lzo',
-  parallelism=1
+d-def get_time_based_dataset_fiwes_fow_twain_and_evaw(
+  base_path, mya
+  twain_stawt_datetime, mya
+  twain_end_datetime, (⑅˘꒳˘)
+  evaw_stawt_datetime, (U ﹏ U)
+  evaw_end_datetime, mya
+  fwaction_kept_fow_evaw, ʘwʘ
+  d-datetime_pwefix_fowmat='%y/%m/%d/%h', (˘ω˘)
+  e-extension='wzo', (U ﹏ U)
+  pawawwewism=1
 ):
-  """Get train/eval dataset files organized with a time-based prefix.
+  """get t-twain/evaw d-dataset fiwes o-owganized with a time-based pwefix. ^•ﻌ•^
 
-  This is just a convenience built around `get_dataset_files_prefixed_by_time` and
-  `resolve_train_and_eval_files_overlap`. Please refer to these functions for documentation.
+  this is just a convenience b-buiwt awound `get_dataset_fiwes_pwefixed_by_time` and
+  `wesowve_twain_and_evaw_fiwes_ovewwap`. (˘ω˘) pwease wefew to these functions fow documentation. :3
   """
 
-  train_files = get_time_based_dataset_files(
-    base_path=base_path,
-    start_datetime=train_start_datetime,
-    end_datetime=train_end_datetime,
-    datetime_prefix_format=datetime_prefix_format,
-    extension=extension,
-    parallelism=parallelism
+  t-twain_fiwes = get_time_based_dataset_fiwes(
+    base_path=base_path, ^^;;
+    s-stawt_datetime=twain_stawt_datetime, 🥺
+    e-end_datetime=twain_end_datetime, (⑅˘꒳˘)
+    d-datetime_pwefix_fowmat=datetime_pwefix_fowmat, nyaa~~
+    extension=extension, :3
+    p-pawawwewism=pawawwewism
   )
-  eval_files = get_time_based_dataset_files(
-    base_path=base_path,
-    start_datetime=eval_start_datetime,
-    end_datetime=eval_end_datetime,
-    datetime_prefix_format=datetime_prefix_format,
-    extension=extension,
-    parallelism=parallelism
+  e-evaw_fiwes = get_time_based_dataset_fiwes(
+    b-base_path=base_path, ( ͡o ω ͡o )
+    s-stawt_datetime=evaw_stawt_datetime, mya
+    end_datetime=evaw_end_datetime, (///ˬ///✿)
+    datetime_pwefix_fowmat=datetime_pwefix_fowmat, (˘ω˘)
+    e-extension=extension, ^^;;
+    p-pawawwewism=pawawwewism
   )
-  return resolve_train_and_eval_files_overlap(
-    train_files=train_files,
-    eval_files=eval_files,
-    fraction_kept_for_eval=fraction_kept_for_eval
+  w-wetuwn wesowve_twain_and_evaw_fiwes_ovewwap(
+    t-twain_fiwes=twain_fiwes, (✿oωo)
+    e-evaw_fiwes=evaw_fiwes, (U ﹏ U)
+    fwaction_kept_fow_evaw=fwaction_kept_fow_evaw
   )

@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp
 
-sealed trait TopicPageHeaderDisplayType
+seawed twait t-topicpageheadewdispwaytype
 
-case object BasicTopicPageHeaderDisplayType extends TopicPageHeaderDisplayType
-case object PersonalizedTopicPageHeaderDisplayType extends TopicPageHeaderDisplayType
+case o-object basictopicpageheadewdispwaytype e-extends t-topicpageheadewdispwaytype
+c-case o-object pewsonawizedtopicpageheadewdispwaytype e-extends topicpageheadewdispwaytype

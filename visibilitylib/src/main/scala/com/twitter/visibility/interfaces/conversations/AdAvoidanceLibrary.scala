@@ -1,158 +1,158 @@
-package com.twitter.visibility.interfaces.conversations
+package com.twittew.visibiwity.intewfaces.convewsations
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.GetTweetFieldsResult
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultFound
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultState
-import com.twitter.util.Stopwatch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.common.filtered_reason.FilteredReasonHelper
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Interstitial
-import com.twitter.visibility.rules.Tombstone
+impowt com.googwe.common.annotations.visibwefowtesting
+impowt c-com.twittew.decidew.decidew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.gizmoduck.thwiftscawa.usew
+impowt c-com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.thwiftscawa.gettweetfiewdswesuwt
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetfiewdswesuwtfound
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetfiewdswesuwtstate
+impowt com.twittew.utiw.stopwatch
+impowt com.twittew.visibiwity.visibiwitywibwawy
+impowt com.twittew.visibiwity.common.fiwtewed_weason.fiwtewedweasonhewpew
+impowt c-com.twittew.visibiwity.modews.viewewcontext
+impowt com.twittew.visibiwity.wuwes.intewstitiaw
+impowt com.twittew.visibiwity.wuwes.tombstone
 
-case class AdAvoidanceRequest(
-  conversationId: Long,
-  focalTweetId: Long,
-  tweets: Seq[(GetTweetFieldsResult, Option[SafetyLevel])],
-  authorMap: Map[
-    Long,
-    User
-  ],
-  moderatedTweetIds: Seq[Long],
-  viewerContext: ViewerContext,
-  useRichText: Boolean = true)
+c-case cwass adavoidancewequest(
+  convewsationid: w-wong, XD
+  focawtweetid: wong, -.-
+  tweets: seq[(gettweetfiewdswesuwt, :3 option[safetywevew])],
+  a-authowmap: map[
+    w-wong,
+    usew
+  ], nyaa~~
+  m-modewatedtweetids: seq[wong],
+  viewewcontext: viewewcontext,
+  usewichtext: b-boowean = twue)
 
-case class AdAvoidanceResponse(dropAd: Map[Long, Boolean])
+case cwass adavoidancewesponse(dwopad: map[wong, 😳 boowean])
 
-object AdAvoidanceLibrary {
-  type Type =
-    AdAvoidanceRequest => Stitch[AdAvoidanceResponse]
+object adavoidancewibwawy {
+  t-type type =
+    adavoidancewequest => s-stitch[adavoidancewesponse]
 
-  private def shouldAvoid(
-    result: TweetFieldsResultState,
-    tombstoneOpt: Option[VfTombstone],
-    statsReceiver: StatsReceiver
-  ): Boolean = {
-    shouldAvoid(result, statsReceiver) || shouldAvoid(tombstoneOpt, statsReceiver)
+  p-pwivate def shouwdavoid(
+    w-wesuwt: tweetfiewdswesuwtstate, (⑅˘꒳˘)
+    t-tombstoneopt: option[vftombstone], nyaa~~
+    statsweceivew: s-statsweceivew
+  ): boowean = {
+    shouwdavoid(wesuwt, OwO s-statsweceivew) || shouwdavoid(tombstoneopt, rawr x3 statsweceivew)
   }
 
-  private def shouldAvoid(
-    result: TweetFieldsResultState,
-    statsReceiver: StatsReceiver
-  ): Boolean = {
-    result match {
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if FilteredReasonHelper.isAvoid(filteredReason) =>
-        statsReceiver.counter("avoid").incr()
-        true
-      case _ => false
+  pwivate def shouwdavoid(
+    wesuwt: tweetfiewdswesuwtstate, XD
+    statsweceivew: s-statsweceivew
+  ): boowean = {
+    w-wesuwt match {
+      c-case t-tweetfiewdswesuwtstate.found(tweetfiewdswesuwtfound(_, σωσ _, some(fiwtewedweason)))
+          if fiwtewedweasonhewpew.isavoid(fiwtewedweason) =>
+        statsweceivew.countew("avoid").incw()
+        t-twue
+      case _ => f-fawse
     }
   }
 
-  private def shouldAvoid(
-    tombstoneOpt: Option[VfTombstone],
-    statsReceiver: StatsReceiver,
-  ): Boolean = {
-    tombstoneOpt
-      .map(_.action).collect {
-        case Tombstone(epitaph, _) =>
-          statsReceiver.scope("tombstone").counter(epitaph.name).incr()
-          true
-        case interstitial: Interstitial =>
-          statsReceiver.scope("interstitial").counter(interstitial.reason.name).incr()
-          true
-        case _ => false
-      }.getOrElse(false)
+  pwivate d-def shouwdavoid(
+    t-tombstoneopt: option[vftombstone], (U ᵕ U❁)
+    s-statsweceivew: statsweceivew, (U ﹏ U)
+  ): boowean = {
+    t-tombstoneopt
+      .map(_.action).cowwect {
+        case tombstone(epitaph, :3 _) =>
+          statsweceivew.scope("tombstone").countew(epitaph.name).incw()
+          twue
+        c-case intewstitiaw: intewstitiaw =>
+          s-statsweceivew.scope("intewstitiaw").countew(intewstitiaw.weason.name).incw()
+          twue
+        c-case _ => fawse
+      }.getowewse(fawse)
   }
 
-  private def runTombstoneVisLib(
-    request: AdAvoidanceRequest,
-    tombstoneVisibilityLibrary: TombstoneVisibilityLibrary,
-  ): Stitch[TombstoneVisibilityResponse] = {
-    val tombstoneRequest = TombstoneVisibilityRequest(
-      conversationId = request.conversationId,
-      focalTweetId = request.focalTweetId,
-      tweets = request.tweets,
-      authorMap = request.authorMap,
-      moderatedTweetIds = request.moderatedTweetIds,
-      viewerContext = request.viewerContext,
-      useRichText = request.useRichText
+  p-pwivate def wuntombstoneviswib(
+    wequest: adavoidancewequest, ( ͡o ω ͡o )
+    tombstonevisibiwitywibwawy: tombstonevisibiwitywibwawy, σωσ
+  ): stitch[tombstonevisibiwitywesponse] = {
+    v-vaw tombstonewequest = t-tombstonevisibiwitywequest(
+      convewsationid = w-wequest.convewsationid, >w<
+      f-focawtweetid = w-wequest.focawtweetid, 😳😳😳
+      tweets = wequest.tweets, OwO
+      authowmap = wequest.authowmap, 😳
+      m-modewatedtweetids = wequest.modewatedtweetids, 😳😳😳
+      viewewcontext = wequest.viewewcontext, (˘ω˘)
+      usewichtext = wequest.usewichtext
     )
 
-    tombstoneVisibilityLibrary(tombstoneRequest)
+    tombstonevisibiwitywibwawy(tombstonewequest)
   }
 
-  def buildTweetAdAvoidanceMap(tweets: Seq[GetTweetFieldsResult]): Map[Long, Boolean] = tweets
+  d-def buiwdtweetadavoidancemap(tweets: s-seq[gettweetfiewdswesuwt]): m-map[wong, ʘwʘ b-boowean] = tweets
     .map(tweet => {
-      val shouldAvoid = tweet.tweetResult match {
-        case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason))) =>
-          FilteredReasonHelper.isAvoid(filteredReason)
-        case _ => false
+      v-vaw shouwdavoid = t-tweet.tweetwesuwt m-match {
+        c-case tweetfiewdswesuwtstate.found(tweetfiewdswesuwtfound(_, ( ͡o ω ͡o ) _, some(fiwtewedweason))) =>
+          fiwtewedweasonhewpew.isavoid(fiwtewedweason)
+        c-case _ => fawse
       }
 
-      tweet.tweetId -> shouldAvoid
-    }).toMap
+      tweet.tweetid -> s-shouwdavoid
+    }).tomap
 
-  def apply(visibilityLibrary: VisibilityLibrary, decider: Decider): Type = {
-    val tvl =
-      TombstoneVisibilityLibrary(visibilityLibrary, visibilityLibrary.statsReceiver, decider)
-    buildLibrary(tvl, visibilityLibrary.statsReceiver)
+  d-def a-appwy(visibiwitywibwawy: v-visibiwitywibwawy, o.O decidew: decidew): type = {
+    vaw t-tvw =
+      tombstonevisibiwitywibwawy(visibiwitywibwawy, >w< visibiwitywibwawy.statsweceivew, 😳 decidew)
+    buiwdwibwawy(tvw, 🥺 visibiwitywibwawy.statsweceivew)
   }
 
-  @VisibleForTesting
-  def buildLibrary(
-    tvl: TombstoneVisibilityLibrary,
-    libraryStatsReceiver: StatsReceiver
-  ): AdAvoidanceLibrary.Type = {
+  @visibwefowtesting
+  def buiwdwibwawy(
+    t-tvw: tombstonevisibiwitywibwawy,
+    wibwawystatsweceivew: statsweceivew
+  ): a-adavoidancewibwawy.type = {
 
-    val statsReceiver = libraryStatsReceiver.scope("AdAvoidanceLibrary")
-    val reasonsStatsReceiver = statsReceiver.scope("reasons")
-    val latencyStatsReceiver = statsReceiver.scope("latency")
-    val vfLatencyOverallStat = latencyStatsReceiver.stat("vf_latency_overall")
-    val vfLatencyStitchBuildStat = latencyStatsReceiver.stat("vf_latency_stitch_build")
-    val vfLatencyStitchRunStat = latencyStatsReceiver.stat("vf_latency_stitch_run")
+    v-vaw s-statsweceivew = wibwawystatsweceivew.scope("adavoidancewibwawy")
+    v-vaw weasonsstatsweceivew = statsweceivew.scope("weasons")
+    v-vaw watencystatsweceivew = s-statsweceivew.scope("watency")
+    vaw vfwatencyovewawwstat = watencystatsweceivew.stat("vf_watency_ovewaww")
+    vaw vfwatencystitchbuiwdstat = watencystatsweceivew.stat("vf_watency_stitch_buiwd")
+    vaw vfwatencystitchwunstat = watencystatsweceivew.stat("vf_watency_stitch_wun")
 
-    request: AdAvoidanceRequest => {
-      val elapsed = Stopwatch.start()
+    w-wequest: adavoidancewequest => {
+      v-vaw ewapsed = stopwatch.stawt()
 
-      var runStitchStartMs = 0L
+      v-vaw wunstitchstawtms = 0w
 
-      val tombstoneResponse: Stitch[TombstoneVisibilityResponse] =
-        runTombstoneVisLib(request, tvl)
+      v-vaw tombstonewesponse: stitch[tombstonevisibiwitywesponse] =
+        w-wuntombstoneviswib(wequest, rawr x3 t-tvw)
 
-      val response = tombstoneResponse
-        .map({ response: TombstoneVisibilityResponse =>
-          statsReceiver.counter("requests").incr(request.tweets.size)
+      vaw wesponse = t-tombstonewesponse
+        .map({ w-wesponse: tombstonevisibiwitywesponse =>
+          statsweceivew.countew("wequests").incw(wequest.tweets.size)
 
-          val dropResults: Seq[(Long, Boolean)] = request.tweets.map(tweetAndSafetyLevel => {
-            val tweet = tweetAndSafetyLevel._1
-            tweet.tweetId ->
-              shouldAvoid(
-                tweet.tweetResult,
-                response.tweetVerdicts.get(tweet.tweetId),
-                reasonsStatsReceiver)
+          vaw dwopwesuwts: seq[(wong, o.O boowean)] = w-wequest.tweets.map(tweetandsafetywevew => {
+            v-vaw tweet = tweetandsafetywevew._1
+            t-tweet.tweetid ->
+              shouwdavoid(
+                t-tweet.tweetwesuwt, rawr
+                w-wesponse.tweetvewdicts.get(tweet.tweetid), ʘwʘ
+                weasonsstatsweceivew)
           })
 
-          AdAvoidanceResponse(dropAd = dropResults.toMap)
+          a-adavoidancewesponse(dwopad = dwopwesuwts.tomap)
         })
-        .onSuccess(_ => {
-          val overallStatMs = elapsed().inMilliseconds
-          vfLatencyOverallStat.add(overallStatMs)
-          val runStitchEndMs = elapsed().inMilliseconds
-          vfLatencyStitchRunStat.add(runStitchEndMs - runStitchStartMs)
+        .onsuccess(_ => {
+          vaw ovewawwstatms = ewapsed().inmiwwiseconds
+          vfwatencyovewawwstat.add(ovewawwstatms)
+          v-vaw wunstitchendms = e-ewapsed().inmiwwiseconds
+          vfwatencystitchwunstat.add(wunstitchendms - wunstitchstawtms)
         })
 
-      runStitchStartMs = elapsed().inMilliseconds
-      val buildStitchStatMs = elapsed().inMilliseconds
-      vfLatencyStitchBuildStat.add(buildStitchStatMs)
+      w-wunstitchstawtms = e-ewapsed().inmiwwiseconds
+      vaw buiwdstitchstatms = ewapsed().inmiwwiseconds
+      v-vfwatencystitchbuiwdstat.add(buiwdstitchstatms)
 
-      response
+      wesponse
     }
   }
 }

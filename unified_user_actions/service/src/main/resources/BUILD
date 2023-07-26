@@ -1,13 +1,13 @@
-resources(
-    sources = ["*.*"],
-    tags = ["bazel-compatible"],
+wesouwces(
+    souwces = ["*.*"], 🥺
+    tags = ["bazew-compatibwe"], òωó
 )
 
-files(
-    name = "files",
-    sources = [
-        "!BUILD",
-        "**/*",
+f-fiwes(
+    n-nyame = "fiwes", o.O
+    s-souwces = [
+        "!buiwd", (U ᵕ U❁)
+        "**/*", (⑅˘꒳˘)
     ],
-    tags = ["bazel-compatible"],
+    t-tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
 )

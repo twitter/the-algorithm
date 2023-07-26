@@ -1,78 +1,78 @@
-package com.twitter.search.earlybird.config;
+package com.twittew.seawch.eawwybiwd.config;
 
-import java.util.Comparator;
-import java.util.SortedSet;
+impowt j-java.utiw.compawatow;
+i-impowt j-java.utiw.sowtedset;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-public final class TierInfoUtil {
-  public static final Comparator<TierInfo> TIER_COMPARATOR = (t1, t2) -> {
-    // Reverse sort order based on date.
-    return t2.getDataStartDate().compareTo(t1.getDataStartDate());
+p-pubwic finaw c-cwass tiewinfoutiw {
+  p-pubwic s-static finaw compawatow<tiewinfo> tiew_compawatow = (t1, (U ﹏ U) t2) -> {
+    // wevewse sowt owdew based o-on date. >w<
+    wetuwn t2.getdatastawtdate().compaweto(t1.getdatastawtdate());
   };
 
-  private TierInfoUtil() {
+  pwivate tiewinfoutiw() {
   }
 
   /**
-   * Checks that the serving ranges and the override serving ranges of the given tiers do not
-   * overlap, and do not have gaps. Dark reads tiers are ignored.
+   * checks t-that the sewving wanges and t-the ovewwide sewving wanges of the given tiews do nyot
+   * ovewwap, (U ﹏ U) a-and do nyot have gaps. 😳 dawk w-weads tiews awe i-ignowed. (ˆ ﻌ ˆ)♡
    */
-  public static void checkTierServingRanges(SortedSet<TierInfo> tierInfos) {
-    boolean tierServingRangesOverlap = false;
-    boolean tierOverrideServingRangesOverlap = false;
-    boolean tierServingRangesHaveGaps = false;
-    boolean tierOverrideServingRangesHaveGaps = false;
+  pubwic static void checktiewsewvingwanges(sowtedset<tiewinfo> tiewinfos) {
+    boowean tiewsewvingwangesovewwap = f-fawse;
+    boowean tiewovewwidesewvingwangesovewwap = fawse;
+    boowean tiewsewvingwangeshavegaps = fawse;
+    b-boowean tiewovewwidesewvingwangeshavegaps = fawse;
 
-    TierInfoWrapper previousTierInfoWrapper = null;
-    TierInfoWrapper previousOverrideTierInfoWrapper = null;
-    for (TierInfo tierInfo : tierInfos) {
-      TierInfoWrapper tierInfoWrapper = new TierInfoWrapper(tierInfo, false);
-      TierInfoWrapper overrideTierInfoWrapper = new TierInfoWrapper(tierInfo, true);
+    tiewinfowwappew p-pwevioustiewinfowwappew = n-nyuww;
+    t-tiewinfowwappew p-pweviousovewwidetiewinfowwappew = nyuww;
+    fow (tiewinfo tiewinfo : t-tiewinfos) {
+      tiewinfowwappew tiewinfowwappew = n-nyew tiewinfowwappew(tiewinfo, 😳😳😳 fawse);
+      tiewinfowwappew ovewwidetiewinfowwappew = nyew tiewinfowwappew(tiewinfo, t-twue);
 
-      // Check only the tiers to which we send light reads.
-      if (!tierInfoWrapper.isDarkRead()) {
-        if (previousTierInfoWrapper != null) {
-          if (TierInfoWrapper.servingRangesOverlap(previousTierInfoWrapper, tierInfoWrapper)) {
-            // In case of rebalancing, we may have an overlap data range while
-            // overriding with a good serving range.
-            if (previousOverrideTierInfoWrapper == null
-                || TierInfoWrapper.servingRangesOverlap(
-                       previousOverrideTierInfoWrapper, overrideTierInfoWrapper)) {
-              tierServingRangesOverlap = true;
+      // check onwy t-the tiews to which w-we send wight w-weads. (U ﹏ U)
+      if (!tiewinfowwappew.isdawkwead()) {
+        if (pwevioustiewinfowwappew != nyuww) {
+          if (tiewinfowwappew.sewvingwangesovewwap(pwevioustiewinfowwappew, (///ˬ///✿) tiewinfowwappew)) {
+            // i-in case of webawancing, w-we may have an ovewwap d-data wange whiwe
+            // o-ovewwiding with a good sewving w-wange. 😳
+            if (pweviousovewwidetiewinfowwappew == n-nyuww
+                || tiewinfowwappew.sewvingwangesovewwap(
+                       pweviousovewwidetiewinfowwappew, 😳 o-ovewwidetiewinfowwappew)) {
+              tiewsewvingwangesovewwap = t-twue;
             }
           }
-          if (TierInfoWrapper.servingRangesHaveGap(previousTierInfoWrapper, tierInfoWrapper)) {
-            tierServingRangesHaveGaps = true;
+          if (tiewinfowwappew.sewvingwangeshavegap(pwevioustiewinfowwappew, σωσ t-tiewinfowwappew)) {
+            t-tiewsewvingwangeshavegaps = twue;
           }
         }
 
-        previousTierInfoWrapper = tierInfoWrapper;
+        pwevioustiewinfowwappew = tiewinfowwappew;
       }
 
-      if (!overrideTierInfoWrapper.isDarkRead()) {
-        if (previousOverrideTierInfoWrapper != null) {
-          if (TierInfoWrapper.servingRangesOverlap(previousOverrideTierInfoWrapper,
-                                                   overrideTierInfoWrapper)) {
-            tierOverrideServingRangesOverlap = true;
+      if (!ovewwidetiewinfowwappew.isdawkwead()) {
+        if (pweviousovewwidetiewinfowwappew != nyuww) {
+          i-if (tiewinfowwappew.sewvingwangesovewwap(pweviousovewwidetiewinfowwappew,
+                                                   o-ovewwidetiewinfowwappew)) {
+            tiewovewwidesewvingwangesovewwap = t-twue;
           }
-          if (TierInfoWrapper.servingRangesHaveGap(previousOverrideTierInfoWrapper,
-                                                   overrideTierInfoWrapper)) {
-            tierOverrideServingRangesHaveGaps = true;
+          i-if (tiewinfowwappew.sewvingwangeshavegap(pweviousovewwidetiewinfowwappew, rawr x3
+                                                   o-ovewwidetiewinfowwappew)) {
+            tiewovewwidesewvingwangeshavegaps = twue;
           }
         }
 
-        previousOverrideTierInfoWrapper = overrideTierInfoWrapper;
+        pweviousovewwidetiewinfowwappew = o-ovewwidetiewinfowwappew;
       }
     }
 
-    Preconditions.checkState(!tierServingRangesOverlap,
-                             "Serving ranges of light reads tiers must not overlap.");
-    Preconditions.checkState(!tierServingRangesHaveGaps,
-                             "Serving ranges of light reads tiers must not have gaps.");
-    Preconditions.checkState(!tierOverrideServingRangesOverlap,
-                             "Override serving ranges of light reads tiers must not overlap.");
-    Preconditions.checkState(!tierOverrideServingRangesHaveGaps,
-                             "Override serving ranges of light reads tiers must not have gaps.");
+    pweconditions.checkstate(!tiewsewvingwangesovewwap, OwO
+                             "sewving wanges of wight weads tiews must nyot ovewwap.");
+    p-pweconditions.checkstate(!tiewsewvingwangeshavegaps, /(^•ω•^)
+                             "sewving wanges of w-wight weads tiews m-must nyot have g-gaps.");
+    pweconditions.checkstate(!tiewovewwidesewvingwangesovewwap, 😳😳😳
+                             "ovewwide sewving wanges o-of wight weads t-tiews must nyot o-ovewwap.");
+    p-pweconditions.checkstate(!tiewovewwidesewvingwangeshavegaps, ( ͡o ω ͡o )
+                             "ovewwide sewving wanges of wight weads t-tiews must nyot h-have gaps.");
   }
 }

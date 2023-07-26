@@ -1,105 +1,105 @@
-package com.twitter.graph_feature_service.worker.handlers
+package com.twittew.gwaph_featuwe_sewvice.wowkew.handwews
 
-import com.twitter.finagle.stats.{Stat, StatsReceiver}
-import com.twitter.graph_feature_service.thriftscala.{
-  WorkerIntersectionRequest,
-  WorkerIntersectionResponse,
-  WorkerIntersectionValue
+impowt c-com.twittew.finagwe.stats.{stat, (///ˬ///✿) s-statsweceivew}
+i-impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.{
+  w-wowkewintewsectionwequest, 😳
+  w-wowkewintewsectionwesponse, 😳
+  w-wowkewintewsectionvawue
 }
-import com.twitter.graph_feature_service.util.{FeatureTypesCalculator, IntersectionValueCalculator}
-import com.twitter.graph_feature_service.util.IntersectionValueCalculator._
-import com.twitter.graph_feature_service.worker.util.GraphContainer
-import com.twitter.servo.request.RequestHandler
-import com.twitter.util.Future
-import java.nio.ByteBuffer
-import javax.inject.{Inject, Singleton}
+impowt c-com.twittew.gwaph_featuwe_sewvice.utiw.{featuwetypescawcuwatow, σωσ i-intewsectionvawuecawcuwatow}
+impowt com.twittew.gwaph_featuwe_sewvice.utiw.intewsectionvawuecawcuwatow._
+impowt com.twittew.gwaph_featuwe_sewvice.wowkew.utiw.gwaphcontainew
+impowt com.twittew.sewvo.wequest.wequesthandwew
+impowt com.twittew.utiw.futuwe
+i-impowt java.nio.bytebuffew
+impowt javax.inject.{inject, rawr x3 s-singweton}
 
-@Singleton
-class WorkerGetIntersectionHandler @Inject() (
-  graphContainer: GraphContainer,
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[WorkerIntersectionRequest, WorkerIntersectionResponse] {
+@singweton
+cwass wowkewgetintewsectionhandwew @inject() (
+  g-gwaphcontainew: gwaphcontainew, OwO
+  statsweceivew: statsweceivew)
+    e-extends wequesthandwew[wowkewintewsectionwequest, wowkewintewsectionwesponse] {
 
-  import WorkerGetIntersectionHandler._
+  i-impowt w-wowkewgetintewsectionhandwew._
 
-  private val stats: StatsReceiver = statsReceiver.scope("srv/get_intersection")
-  private val numCandidatesCount = stats.counter("total_num_candidates")
-  private val toPartialGraphQueryStat = stats.stat("to_partial_graph_query_latency")
-  private val fromPartialGraphQueryStat = stats.stat("from_partial_graph_query_latency")
-  private val intersectionCalculationStat = stats.stat("computation_latency")
+  pwivate vaw stats: statsweceivew = statsweceivew.scope("swv/get_intewsection")
+  pwivate vaw numcandidatescount = s-stats.countew("totaw_num_candidates")
+  pwivate vaw topawtiawgwaphquewystat = stats.stat("to_pawtiaw_gwaph_quewy_watency")
+  pwivate vaw fwompawtiawgwaphquewystat = s-stats.stat("fwom_pawtiaw_gwaph_quewy_watency")
+  pwivate v-vaw intewsectioncawcuwationstat = s-stats.stat("computation_watency")
 
-  override def apply(request: WorkerIntersectionRequest): Future[WorkerIntersectionResponse] = {
+  o-ovewwide d-def appwy(wequest: wowkewintewsectionwequest): futuwe[wowkewintewsectionwesponse] = {
 
-    numCandidatesCount.incr(request.candidateUserIds.length)
+    n-nyumcandidatescount.incw(wequest.candidateusewids.wength)
 
-    val userId = request.userId
+    vaw usewid = wequest.usewid
 
-    // NOTE: do not change the order of candidates
-    val candidateIds = request.candidateUserIds
+    // n-note: do nyot change the owdew of candidates
+    vaw candidateids = wequest.candidateusewids
 
-    // NOTE: do not change the order of features
-    val featureTypes =
-      FeatureTypesCalculator.getFeatureTypes(request.presetFeatureTypes, request.featureTypes)
+    // nyote: do nyot c-change the owdew of featuwes
+    v-vaw featuwetypes =
+      f-featuwetypescawcuwatow.getfeatuwetypes(wequest.pwesetfeatuwetypes, /(^•ω•^) w-wequest.featuwetypes)
 
-    val leftEdges = featureTypes.map(_.leftEdgeType).distinct
-    val rightEdges = featureTypes.map(_.rightEdgeType).distinct
+    vaw weftedges = featuwetypes.map(_.weftedgetype).distinct
+    vaw wightedges = f-featuwetypes.map(_.wightedgetype).distinct
 
-    val rightEdgeMap = Stat.time(toPartialGraphQueryStat) {
-      rightEdges.map { rightEdge =>
-        val map = graphContainer.toPartialMap.get(rightEdge) match {
-          case Some(graph) =>
-            candidateIds.flatMap { candidateId =>
-              graph.apply(candidateId).map(candidateId -> _)
-            }.toMap
-          case None =>
-            Map.empty[Long, ByteBuffer]
+    v-vaw wightedgemap = stat.time(topawtiawgwaphquewystat) {
+      w-wightedges.map { w-wightedge =>
+        vaw map = gwaphcontainew.topawtiawmap.get(wightedge) m-match {
+          case some(gwaph) =>
+            c-candidateids.fwatmap { candidateid =>
+              gwaph.appwy(candidateid).map(candidateid -> _)
+            }.tomap
+          c-case nyone =>
+            map.empty[wong, 😳😳😳 b-bytebuffew]
         }
-        rightEdge -> map
-      }.toMap
+        wightedge -> map
+      }.tomap
     }
 
-    val leftEdgeMap = Stat.time(fromPartialGraphQueryStat) {
-      leftEdges.flatMap { leftEdge =>
-        graphContainer.toPartialMap.get(leftEdge).flatMap(_.apply(userId)).map(leftEdge -> _)
-      }.toMap
+    v-vaw weftedgemap = s-stat.time(fwompawtiawgwaphquewystat) {
+      weftedges.fwatmap { weftedge =>
+        gwaphcontainew.topawtiawmap.get(weftedge).fwatmap(_.appwy(usewid)).map(weftedge -> _)
+      }.tomap
     }
 
-    val res = Stat.time(intersectionCalculationStat) {
-      WorkerIntersectionResponse(
-        // NOTE that candidate ordering is important
-        candidateIds.map { candidateId =>
-          // NOTE that the featureTypes ordering is important
-          featureTypes.map {
-            featureType =>
-              val leftNeighborsOpt = leftEdgeMap.get(featureType.leftEdgeType)
-              val rightNeighborsOpt =
-                rightEdgeMap.get(featureType.rightEdgeType).flatMap(_.get(candidateId))
+    vaw wes = stat.time(intewsectioncawcuwationstat) {
+      wowkewintewsectionwesponse(
+        // nyote that candidate o-owdewing is i-impowtant
+        candidateids.map { c-candidateid =>
+          // n-nyote that the f-featuwetypes owdewing is impowtant
+          featuwetypes.map {
+            featuwetype =>
+              v-vaw weftneighbowsopt = weftedgemap.get(featuwetype.weftedgetype)
+              vaw wightneighbowsopt =
+                wightedgemap.get(featuwetype.wightedgetype).fwatmap(_.get(candidateid))
 
-              if (leftNeighborsOpt.isEmpty && rightNeighborsOpt.isEmpty) {
-                EmptyWorkerIntersectionValue
-              } else if (rightNeighborsOpt.isEmpty) {
-                EmptyWorkerIntersectionValue.copy(
-                  leftNodeDegree = computeArraySize(leftNeighborsOpt.get)
+              if (weftneighbowsopt.isempty && w-wightneighbowsopt.isempty) {
+                emptywowkewintewsectionvawue
+              } e-ewse if (wightneighbowsopt.isempty) {
+                e-emptywowkewintewsectionvawue.copy(
+                  w-weftnodedegwee = computeawwaysize(weftneighbowsopt.get)
                 )
-              } else if (leftNeighborsOpt.isEmpty) {
-                EmptyWorkerIntersectionValue.copy(
-                  rightNodeDegree = computeArraySize(rightNeighborsOpt.get)
+              } e-ewse if (weftneighbowsopt.isempty) {
+                e-emptywowkewintewsectionvawue.copy(
+                  w-wightnodedegwee = c-computeawwaysize(wightneighbowsopt.get)
                 )
-              } else {
-                IntersectionValueCalculator(
-                  leftNeighborsOpt.get,
-                  rightNeighborsOpt.get,
-                  request.intersectionIdLimit)
+              } ewse {
+                intewsectionvawuecawcuwatow(
+                  w-weftneighbowsopt.get, ( ͡o ω ͡o )
+                  w-wightneighbowsopt.get, >_<
+                  w-wequest.intewsectionidwimit)
               }
           }
         }
       )
     }
 
-    Future.value(res)
+    f-futuwe.vawue(wes)
   }
 }
 
-object WorkerGetIntersectionHandler {
-  val EmptyWorkerIntersectionValue: WorkerIntersectionValue = WorkerIntersectionValue(0, 0, 0, Nil)
+o-object wowkewgetintewsectionhandwew {
+  vaw emptywowkewintewsectionvawue: wowkewintewsectionvawue = wowkewintewsectionvawue(0, >w< 0, rawr 0, n-nyiw)
 }

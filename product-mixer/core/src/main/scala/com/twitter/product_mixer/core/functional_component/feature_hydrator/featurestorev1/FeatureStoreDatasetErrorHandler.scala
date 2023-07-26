@@ -1,74 +1,74 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwestowev1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.data.DatasetErrorsById
-import com.twitter.ml.featurestore.lib.data.HydrationError
-import com.twitter.ml.featurestore.lib.dataset.DatasetId
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1Feature
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.mw.featuwestowe.wib.entityid
+i-impowt c-com.twittew.mw.featuwestowe.wib.data.datasetewwowsbyid
+i-impowt c-com.twittew.mw.featuwestowe.wib.data.hydwationewwow
+i-impowt com.twittew.mw.featuwestowe.wib.dataset.datasetid
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.basefeatuwestowev1featuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object FeatureStoreDatasetErrorHandler {
+object featuwestowedatasetewwowhandwew {
 
   /**
-   * This function takes a set of feature store features and constructs a mapping from the underlying
-   * feature store dataset back to the features. This is useful for looking up what ProMix features
-   * failed based off of a failed feature store dataset at request time. A ProMix feature can be
-   * powered by multiple feature store datasets, and conversely, a dataset can be used by many features.
+   * this function takes a set o-of featuwe stowe featuwes and constwucts a mapping f-fwom the undewwying
+   * featuwe s-stowe dataset back to the featuwes. this is usefuw fow wooking u-up nyani pwomix featuwes
+   * f-faiwed based o-off of a faiwed featuwe stowe dataset at wequest time. (U ﹏ U) a pwomix featuwe can be
+   * p-powewed by muwtipwe featuwe stowe datasets, 😳 and convewsewy, (ˆ ﻌ ˆ)♡ a dataset can be u-used by many featuwes. 😳😳😳
    */
-  def datasetToFeaturesMapping[
-    Query <: PipelineQuery,
-    Input,
-    FeatureType <: BaseFeatureStoreV1Feature[Query, Input, _ <: EntityId, _]
+  def datasettofeatuwesmapping[
+    q-quewy <: pipewinequewy, (U ﹏ U)
+    i-input, (///ˬ///✿)
+    f-featuwetype <: b-basefeatuwestowev1featuwe[quewy, 😳 input, _ <: entityid, 😳 _]
   ](
-    features: Set[FeatureType]
-  ): Map[DatasetId, Set[FeatureType]] = {
-    val datasetsAndFeatures: Set[(DatasetId, FeatureType)] = features
-      .flatMap { feature: FeatureType =>
-        feature.boundFeatureSet.sourceDatasets.map(_.id).map { datasetId: DatasetId =>
-          datasetId -> feature
+    f-featuwes: set[featuwetype]
+  ): map[datasetid, σωσ s-set[featuwetype]] = {
+    vaw datasetsandfeatuwes: set[(datasetid, rawr x3 featuwetype)] = featuwes
+      .fwatmap { featuwe: f-featuwetype =>
+        featuwe.boundfeatuweset.souwcedatasets.map(_.id).map { d-datasetid: d-datasetid =>
+          d-datasetid -> featuwe
         }
       }
 
-    datasetsAndFeatures
-      .groupBy { case (datasetId, _) => datasetId }.mapValues(_.map {
-        case (_, feature) => feature
+    datasetsandfeatuwes
+      .gwoupby { case (datasetid, OwO _) => datasetid }.mapvawues(_.map {
+        c-case (_, /(^•ω•^) f-featuwe) => featuwe
       })
   }
 
   /**
-   * This takes a mapping of Feature Store Dataset => ProMix Features, as well as the dataset errors
-   * from PredictionRecord and computing a final, deduped mapping from ProMix Feature to Exceptions.
+   * t-this takes a m-mapping of featuwe stowe dataset => p-pwomix featuwes, 😳😳😳 as weww as t-the dataset ewwows
+   * fwom pwedictionwecowd and computing a finaw, ( ͡o ω ͡o ) d-deduped mapping fwom pwomix f-featuwe to exceptions. >_<
    */
-  def featureToHydrationErrors[
-    Query <: PipelineQuery,
-    Input,
-    FeatureType <: BaseFeatureStoreV1Feature[Query, Input, _ <: EntityId, _]
+  def featuwetohydwationewwows[
+    q-quewy <: pipewinequewy, >w<
+    input,
+    f-featuwetype <: basefeatuwestowev1featuwe[quewy, rawr input, _ <: entityid, 😳 _]
   ](
-    datasetToFeatures: Map[DatasetId, Set[
-      FeatureType
-    ]],
-    errorsByDatasetId: DatasetErrorsById
-  ): Map[FeatureType, Set[HydrationError]] = {
-    val hasError = errorsByDatasetId.datasets.nonEmpty
-    if (hasError) {
-      val featuresAndErrors: Set[(FeatureType, Set[HydrationError])] = errorsByDatasetId.datasets
-        .flatMap { id: DatasetId =>
-          val errors: Set[HydrationError] = errorsByDatasetId.get(id).values.toSet
-          if (errors.nonEmpty) {
-            val datasetFeatures: Set[FeatureType] = datasetToFeatures.getOrElse(id, Set.empty)
-            datasetFeatures.map { feature =>
-              feature -> errors
-            }.toSeq
-          } else {
-            Seq.empty
+    datasettofeatuwes: map[datasetid, >w< set[
+      featuwetype
+    ]], (⑅˘꒳˘)
+    e-ewwowsbydatasetid: d-datasetewwowsbyid
+  ): map[featuwetype, OwO s-set[hydwationewwow]] = {
+    v-vaw hasewwow = e-ewwowsbydatasetid.datasets.nonempty
+    if (hasewwow) {
+      vaw featuwesandewwows: set[(featuwetype, (ꈍᴗꈍ) set[hydwationewwow])] = e-ewwowsbydatasetid.datasets
+        .fwatmap { id: datasetid =>
+          vaw ewwows: set[hydwationewwow] = ewwowsbydatasetid.get(id).vawues.toset
+          if (ewwows.nonempty) {
+            v-vaw datasetfeatuwes: set[featuwetype] = d-datasettofeatuwes.getowewse(id, 😳 s-set.empty)
+            d-datasetfeatuwes.map { featuwe =>
+              f-featuwe -> ewwows
+            }.toseq
+          } e-ewse {
+            s-seq.empty
           }
         }
-      featuresAndErrors
-        .groupBy { case (feature, _) => feature }.mapValues(_.flatMap {
-          case (_, errors: Set[HydrationError]) => errors
+      featuwesandewwows
+        .gwoupby { c-case (featuwe, 😳😳😳 _) => featuwe }.mapvawues(_.fwatmap {
+          case (_, ewwows: s-set[hydwationewwow]) => e-ewwows
         })
-    } else {
-      Map.empty
+    } e-ewse {
+      m-map.empty
     }
   }
 }

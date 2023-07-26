@@ -1,131 +1,131 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
+impowt java.io.ioexception;
+i-impowt java.utiw.awways;
+i-impowt j-java.utiw.cowwection;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.seawch.booweancwause;
+i-impowt owg.apache.wucene.seawch.booweanquewy;
+impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowemode;
+i-impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.search.IntArrayDocIdSetIterator;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.earlybird.index.TweetIDMapper;
+impowt com.twittew.seawch.common.quewy.defauwtfiwtewweight;
+i-impowt com.twittew.seawch.common.seawch.intawwaydocidsetitewatow;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.awwdocsitewatow;
+impowt com.twittew.seawch.eawwybiwd.index.tweetidmappew;
 
-public final class RequiredStatusIDsFilter extends Query {
-  private final Collection<Long> statusIDs;
+p-pubwic finaw cwass wequiwedstatusidsfiwtew e-extends quewy {
+  p-pwivate finaw cowwection<wong> statusids;
 
-  public static Query getRequiredStatusIDsQuery(Collection<Long> statusIDs) {
-    return new BooleanQuery.Builder()
-        .add(new RequiredStatusIDsFilter(statusIDs), BooleanClause.Occur.FILTER)
-        .build();
+  pubwic static quewy getwequiwedstatusidsquewy(cowwection<wong> s-statusids) {
+    wetuwn nyew booweanquewy.buiwdew()
+        .add(new wequiwedstatusidsfiwtew(statusids), /(^•ω•^) booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  private RequiredStatusIDsFilter(Collection<Long> statusIDs) {
-    this.statusIDs = Preconditions.checkNotNull(statusIDs);
+  p-pwivate wequiwedstatusidsfiwtew(cowwection<wong> statusids) {
+    t-this.statusids = p-pweconditions.checknotnuww(statusids);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader leafReader = context.reader();
-        if (!(leafReader instanceof EarlybirdIndexSegmentAtomicReader)) {
-          return DocIdSetIterator.empty();
+  @ovewwide
+  pubwic w-weight cweateweight(indexseawchew s-seawchew, :3 scowemode scowemode, (ꈍᴗꈍ) fwoat boost) {
+    w-wetuwn nyew defauwtfiwtewweight(this) {
+      @ovewwide
+      pwotected d-docidsetitewatow getdocidsetitewatow(weafweadewcontext context) thwows ioexception {
+        weafweadew weafweadew = context.weadew();
+        i-if (!(weafweadew instanceof eawwybiwdindexsegmentatomicweadew)) {
+          w-wetuwn d-docidsetitewatow.empty();
         }
 
-        EarlybirdIndexSegmentAtomicReader reader = (EarlybirdIndexSegmentAtomicReader) leafReader;
-        TweetIDMapper idMapper = (TweetIDMapper) reader.getSegmentData().getDocIDToTweetIDMapper();
+        e-eawwybiwdindexsegmentatomicweadew weadew = (eawwybiwdindexsegmentatomicweadew) weafweadew;
+        tweetidmappew i-idmappew = (tweetidmappew) w-weadew.getsegmentdata().getdocidtotweetidmappew();
 
-        int docIdsSize = 0;
-        int[] docIds = new int[statusIDs.size()];
-        for (long statusID : statusIDs) {
-          int docId = idMapper.getDocID(statusID);
-          if (docId >= 0) {
-            docIds[docIdsSize++] = docId;
+        int docidssize = 0;
+        i-int[] docids = n-nyew int[statusids.size()];
+        fow (wong s-statusid : statusids) {
+          int docid = i-idmappew.getdocid(statusid);
+          if (docid >= 0) {
+            docids[docidssize++] = d-docid;
           }
         }
 
-        Arrays.sort(docIds, 0, docIdsSize);
-        DocIdSetIterator statusesDISI =
-            new IntArrayDocIdSetIterator(Arrays.copyOf(docIds, docIdsSize));
-        DocIdSetIterator allDocsDISI = new AllDocsIterator(reader);
+        awways.sowt(docids, /(^•ω•^) 0, d-docidssize);
+        docidsetitewatow statusesdisi =
+            n-nyew intawwaydocidsetitewatow(awways.copyof(docids, (⑅˘꒳˘) d-docidssize));
+        docidsetitewatow awwdocsdisi = new awwdocsitewatow(weadew);
 
-        // We only want to return IDs for fully indexed documents. So we need to make sure that
-        // every doc ID we return exists in allDocsDISI. However, allDocsDISI has all documents in
-        // this segment, so driving by allDocsDISI would be very slow. So we want to drive by
-        // statusesDISI, and use allDocsDISI as a post-filter. What this comes down to is that we do
-        // not want to call allDocsDISI.nextDoc(); we only want to call allDocsDISI.advance(), and
-        // only on the doc IDs returned by statusesDISI.
-        return new DocIdSetIterator() {
-          @Override
-          public int docID() {
-            return statusesDISI.docID();
+        // we onwy want to wetuwn ids fow fuwwy i-indexed documents. ( ͡o ω ͡o ) s-so we nyeed to make suwe that
+        // e-evewy d-doc id we wetuwn e-exists in awwdocsdisi. òωó howevew, (⑅˘꒳˘) awwdocsdisi has aww documents i-in
+        // this segment, XD so dwiving by awwdocsdisi wouwd be vewy swow. so we w-want to dwive by
+        // statusesdisi, -.- a-and u-use awwdocsdisi a-as a post-fiwtew. :3 nyani this comes d-down to is that w-we do
+        // n-nyot want to c-caww awwdocsdisi.nextdoc(); we onwy want to caww a-awwdocsdisi.advance(), nyaa~~ a-and
+        // o-onwy on t-the doc ids wetuwned b-by statusesdisi. 😳
+        wetuwn nyew docidsetitewatow() {
+          @ovewwide
+          pubwic i-int docid() {
+            wetuwn statusesdisi.docid();
           }
 
-          @Override
-          public int nextDoc() throws IOException {
-            statusesDISI.nextDoc();
-            return advanceToNextFullyIndexedDoc();
+          @ovewwide
+          pubwic int nyextdoc() thwows ioexception {
+            s-statusesdisi.nextdoc();
+            wetuwn advancetonextfuwwyindexeddoc();
           }
 
-          @Override
-          public int advance(int target) throws IOException {
-            statusesDISI.advance(target);
-            return advanceToNextFullyIndexedDoc();
+          @ovewwide
+          pubwic int advance(int tawget) t-thwows ioexception {
+            s-statusesdisi.advance(tawget);
+            w-wetuwn advancetonextfuwwyindexeddoc();
           }
 
-          private int advanceToNextFullyIndexedDoc() throws IOException {
-            while (docID() != DocIdSetIterator.NO_MORE_DOCS) {
-              // Check if the current doc is fully indexed.
-              // If it is, then we can return it. If it's not, then we need to keep searching.
-              int allDocsDocId = allDocsDISI.advance(docID());
-              if (allDocsDocId == docID()) {
-                break;
+          p-pwivate int advancetonextfuwwyindexeddoc() t-thwows ioexception {
+            w-whiwe (docid() != docidsetitewatow.no_mowe_docs) {
+              // check if the cuwwent doc is fuwwy indexed. (⑅˘꒳˘)
+              // if it is, nyaa~~ t-then we can wetuwn it. OwO if it's n-nyot, rawr x3 then we nyeed to keep seawching. XD
+              i-int awwdocsdocid = a-awwdocsdisi.advance(docid());
+              if (awwdocsdocid == docid()) {
+                b-bweak;
               }
 
-              statusesDISI.advance(allDocsDocId);
+              s-statusesdisi.advance(awwdocsdocid);
             }
-            return docID();
+            wetuwn docid();
           }
 
-          @Override
-          public long cost() {
-            return statusesDISI.cost();
+          @ovewwide
+          p-pubwic wong cost() {
+            w-wetuwn statusesdisi.cost();
           }
         };
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return statusIDs.hashCode();
+  @ovewwide
+  pubwic int hashcode() {
+    wetuwn statusids.hashcode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof RequiredStatusIDsFilter)) {
-      return false;
+  @ovewwide
+  pubwic boowean e-equaws(object o-obj) {
+    if (!(obj i-instanceof wequiwedstatusidsfiwtew)) {
+      w-wetuwn fawse;
     }
 
-    RequiredStatusIDsFilter filter = RequiredStatusIDsFilter.class.cast(obj);
-    return statusIDs.equals(filter.statusIDs);
+    w-wequiwedstatusidsfiwtew fiwtew = wequiwedstatusidsfiwtew.cwass.cast(obj);
+    w-wetuwn statusids.equaws(fiwtew.statusids);
   }
 
-  @Override
-  public final String toString(String field) {
-    return String.format("RequiredStatusIDs[%s]", statusIDs);
+  @ovewwide
+  pubwic finaw stwing tostwing(stwing fiewd) {
+    w-wetuwn s-stwing.fowmat("wequiwedstatusids[%s]", σωσ statusids);
   }
 }

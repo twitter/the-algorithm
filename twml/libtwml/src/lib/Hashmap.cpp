@@ -1,380 +1,380 @@
-#include "internal/khash.h"
-#include "internal/error.h"
-#include <twml/defines.h>
-#include <twml/Hashmap.h>
-#include <cstdint>
+#incwude "intewnaw/khash.h"
+#incwude "intewnaw/ewwow.h"
+#incwude <twmw/defines.h>
+#incwude <twmw/hashmap.h>
+#incwude <cstdint>
 
-namespace twml {
-  HashMap::HashMap() :
-    m_hashmap(nullptr) {
-    TWML_CHECK(twml_hashmap_create(&m_hashmap), "Failed to create HashMap");
+namespace twmw {
+  hashmap::hashmap() :
+    m-m_hashmap(nuwwptw) {
+    t-twmw_check(twmw_hashmap_cweate(&m_hashmap), σωσ "faiwed t-to cweate h-hashmap");
   }
 
-  HashMap::~HashMap() {
-    // Do not throw exceptions from the destructor
-    twml_hashmap_delete(m_hashmap);
+  h-hashmap::~hashmap() {
+    // d-do nyot thwow exceptions f-fwom the d-destwuctow
+    twmw_hashmap_dewete(m_hashmap);
   }
 
-  void HashMap::clear() {
-    TWML_CHECK(twml_hashmap_clear(m_hashmap), "Failed to clear HashMap");
+  void hashmap::cweaw() {
+    twmw_check(twmw_hashmap_cweaw(m_hashmap), nyaa~~ "faiwed to cweaw h-hashmap");
   }
 
-  uint64_t HashMap::size() const {
-    uint64_t size;
-    TWML_CHECK(twml_hashmap_get_size(&size, m_hashmap), "Failed to get HashMap size");
-    return size;
+  uint64_t hashmap::size() const {
+    u-uint64_t size;
+    twmw_check(twmw_hashmap_get_size(&size, 🥺 m-m_hashmap), rawr x3 "faiwed to get hashmap size");
+    wetuwn size;
   }
 
-  int8_t HashMap::insert(const HashKey_t key) {
-    int8_t result;
-    TWML_CHECK(twml_hashmap_insert_key(&result, m_hashmap, key),
-           "Failed to insert key");
-    return result;
+  i-int8_t hashmap::insewt(const hashkey_t key) {
+    i-int8_t wesuwt;
+    t-twmw_check(twmw_hashmap_insewt_key(&wesuwt, σωσ m_hashmap, key), (///ˬ///✿)
+           "faiwed to insewt key");
+    wetuwn w-wesuwt;
   }
 
-  int8_t HashMap::insert(const HashKey_t key, const HashKey_t val) {
-    int8_t result;
-    TWML_CHECK(twml_hashmap_insert_key_and_value(&result, m_hashmap, key, val),
-           "Failed to insert key");
-    return result;
+  int8_t hashmap::insewt(const hashkey_t key, (U ﹏ U) const hashkey_t vaw) {
+    int8_t w-wesuwt;
+    twmw_check(twmw_hashmap_insewt_key_and_vawue(&wesuwt, ^^;; m_hashmap, k-key, 🥺 vaw),
+           "faiwed t-to i-insewt key");
+    w-wetuwn wesuwt;
   }
 
-  int8_t HashMap::get(HashVal_t &val, const HashKey_t key) const {
-    int8_t result;
-    TWML_CHECK(twml_hashmap_get_value(&result, &val, m_hashmap, key),
-           "Failed to insert key,value pair");
-    return result;
+  int8_t hashmap::get(hashvaw_t &vaw, òωó c-const hashkey_t key) const {
+    int8_t w-wesuwt;
+    twmw_check(twmw_hashmap_get_vawue(&wesuwt, XD &vaw, m_hashmap, :3 key),
+           "faiwed to insewt key,vawue paiw");
+    wetuwn wesuwt;
   }
 
-  void HashMap::insert(Tensor &mask, const Tensor keys) {
-    TWML_CHECK(twml_hashmap_insert_keys(mask.getHandle(), m_hashmap, keys.getHandle()),
-           "Failed to insert keys tensor");
+  v-void hashmap::insewt(tensow &mask, (U ﹏ U) const t-tensow keys) {
+    t-twmw_check(twmw_hashmap_insewt_keys(mask.gethandwe(), m-m_hashmap, >w< keys.gethandwe()),
+           "faiwed to insewt keys tensow");
   }
 
-  void HashMap::insert(Tensor &mask, const Tensor keys, const Tensor vals) {
-    TWML_CHECK(twml_hashmap_insert_keys_and_values(mask.getHandle(), m_hashmap,
-                             keys.getHandle(), vals.getHandle()),
-           "Failed to insert keys,values tensor pair");
+  void hashmap::insewt(tensow &mask, /(^•ω•^) c-const tensow keys, (⑅˘꒳˘) c-const tensow vaws) {
+    twmw_check(twmw_hashmap_insewt_keys_and_vawues(mask.gethandwe(), ʘwʘ m_hashmap, rawr x3
+                             k-keys.gethandwe(), (˘ω˘) v-vaws.gethandwe()), o.O
+           "faiwed to insewt keys,vawues t-tensow paiw");
   }
 
-  void HashMap::remove(const Tensor keys) {
-    TWML_CHECK(twml_hashmap_remove_keys(m_hashmap, keys.getHandle()),
-           "Failed to remove keys tensor");
+  void h-hashmap::wemove(const tensow keys) {
+    twmw_check(twmw_hashmap_wemove_keys(m_hashmap, 😳 k-keys.gethandwe()), o.O
+           "faiwed to w-wemove keys tensow");
   }
 
-  void HashMap::get(Tensor &mask, Tensor &vals, const Tensor keys) const {
-    TWML_CHECK(twml_hashmap_get_values(mask.getHandle(), vals.getHandle(),
-                      m_hashmap, keys.getHandle()),
-           "Failed to get values tensor");
+  void h-hashmap::get(tensow &mask, ^^;; t-tensow &vaws, ( ͡o ω ͡o ) const tensow keys) const {
+    twmw_check(twmw_hashmap_get_vawues(mask.gethandwe(), ^^;; vaws.gethandwe(), ^^;;
+                      m_hashmap, XD keys.gethandwe()), 🥺
+           "faiwed t-to get v-vawues tensow");
   }
 
-  void HashMap::getInplace(Tensor &mask, Tensor &keys_vals) const {
-    TWML_CHECK(twml_hashmap_get_values_inplace(mask.getHandle(),
-                           keys_vals.getHandle(),
-                           m_hashmap),
-           "Failed to get values tensor");
+  void hashmap::getinpwace(tensow &mask, (///ˬ///✿) tensow &keys_vaws) c-const {
+    twmw_check(twmw_hashmap_get_vawues_inpwace(mask.gethandwe(), (U ᵕ U❁)
+                           k-keys_vaws.gethandwe(), ^^;;
+                           m-m_hashmap), ^^;;
+           "faiwed to get vawues tensow");
   }
 
-  void HashMap::toTensors(Tensor &keys, Tensor &vals) const {
-    TWML_CHECK(twml_hashmap_to_tensors(keys.getHandle(),
-                       vals.getHandle(),
-                       m_hashmap),
-           "Failed to get keys,values tensors from HashMap");
+  void hashmap::totensows(tensow &keys, rawr t-tensow &vaws) const {
+    twmw_check(twmw_hashmap_to_tensows(keys.gethandwe(), (˘ω˘)
+                       vaws.gethandwe(), 🥺
+                       m_hashmap), nyaa~~
+           "faiwed t-to get keys,vawues tensows f-fwom hashmap");
   }
-}  // namespace twml
+}  // nyamespace t-twmw
 
-using twml::HashKey_t;
-using twml::HashVal_t;
+u-using twmw::hashkey_t;
+using twmw::hashvaw_t;
 
-KHASH_MAP_INIT_INT64(HashKey_t, HashVal_t);
-typedef khash_t(HashKey_t)* hash_map_t;
+khash_map_init_int64(hashkey_t, :3 hashvaw_t);
+t-typedef k-khash_t(hashkey_t)* h-hash_map_t;
 
 
-twml_err twml_hashmap_create(twml_hashmap *hashmap) {
-  hash_map_t *h = reinterpret_cast<hash_map_t *>(hashmap);
-  *h = kh_init(HashKey_t);
-  return TWML_ERR_NONE;
+t-twmw_eww twmw_hashmap_cweate(twmw_hashmap *hashmap) {
+  hash_map_t *h = weintewpwet_cast<hash_map_t *>(hashmap);
+  *h = k-kh_init(hashkey_t);
+  w-wetuwn twmw_eww_none;
 }
 
-twml_err twml_hashmap_clear(const twml_hashmap hashmap) {
+t-twmw_eww t-twmw_hashmap_cweaw(const t-twmw_hashmap hashmap) {
   hash_map_t h = (hash_map_t)hashmap;
-  kh_clear(HashKey_t, h);
-  return TWML_ERR_NONE;
+  k-kh_cweaw(hashkey_t, /(^•ω•^) h);
+  wetuwn twmw_eww_none;
 }
 
-twml_err twml_hashmap_get_size(uint64_t *size, const twml_hashmap hashmap) {
+twmw_eww twmw_hashmap_get_size(uint64_t *size, const twmw_hashmap hashmap) {
   hash_map_t h = (hash_map_t)hashmap;
-  *size = kh_size(h);
-  return TWML_ERR_NONE;
+  *size = k-kh_size(h);
+  wetuwn twmw_eww_none;
 }
 
 
-twml_err twml_hashmap_delete(const twml_hashmap hashmap) {
-  hash_map_t h = (hash_map_t)hashmap;
-  kh_destroy(HashKey_t, h);
-  return TWML_ERR_NONE;
+twmw_eww twmw_hashmap_dewete(const t-twmw_hashmap h-hashmap) {
+  h-hash_map_t h = (hash_map_t)hashmap;
+  kh_destwoy(hashkey_t, ^•ﻌ•^ h);
+  w-wetuwn twmw_eww_none;
 }
 
-// insert, remove, get single key / value
-twml_err twml_hashmap_insert_key(int8_t *mask,
-                 const twml_hashmap hashmap,
-                 const HashKey_t key) {
-  hash_map_t h = (hash_map_t)hashmap;
-  int ret = 0;
-  khiter_t k = kh_put(HashKey_t, h, key, &ret);
-  *mask = ret >= 0;
+// insewt, UwU wemove, g-get singwe key / v-vawue
+twmw_eww twmw_hashmap_insewt_key(int8_t *mask, 😳😳😳
+                 const twmw_hashmap hashmap, OwO
+                 const hashkey_t key) {
+  hash_map_t h-h = (hash_map_t)hashmap;
+  int wet = 0;
+  k-khitew_t k = kh_put(hashkey_t, ^•ﻌ•^ h-h, key, &wet);
+  *mask = w-wet >= 0;
   if (*mask) {
-    HashVal_t v = kh_size(h);
-    kh_value(h, k) = v;
+    hashvaw_t v-v = kh_size(h);
+    k-kh_vawue(h, (ꈍᴗꈍ) k) = v;
   }
-  return TWML_ERR_NONE;
+  w-wetuwn twmw_eww_none;
 }
 
-twml_err twml_hashmap_insert_key_and_value(int8_t *mask, twml_hashmap hashmap,
-                       const HashKey_t key, const HashVal_t val) {
-  hash_map_t h = (hash_map_t)hashmap;
-  int ret = 0;
-  khiter_t k = kh_put(HashKey_t, h, key, &ret);
-  *mask = ret >= 0;
+t-twmw_eww twmw_hashmap_insewt_key_and_vawue(int8_t *mask, twmw_hashmap hashmap, (⑅˘꒳˘)
+                       const hashkey_t key, (⑅˘꒳˘) const hashvaw_t v-vaw) {
+  hash_map_t h-h = (hash_map_t)hashmap;
+  i-int wet = 0;
+  khitew_t k = kh_put(hashkey_t, (ˆ ﻌ ˆ)♡ h-h, key, &wet);
+  *mask = w-wet >= 0;
   if (*mask) {
-    kh_value(h, k) = val;
+    k-kh_vawue(h, /(^•ω•^) k) = vaw;
   }
-  return TWML_ERR_NONE;
+  wetuwn twmw_eww_none;
 }
 
-twml_err twml_hashmap_remove_key(const twml_hashmap hashmap,
-                 const HashKey_t key) {
-  hash_map_t h = (hash_map_t)hashmap;
-  khiter_t k = kh_get(HashKey_t, h, key);
+twmw_eww twmw_hashmap_wemove_key(const t-twmw_hashmap h-hashmap, òωó
+                 const hashkey_t key) {
+  h-hash_map_t h = (hash_map_t)hashmap;
+  k-khitew_t k = kh_get(hashkey_t, (⑅˘꒳˘) h, key);
   if (k != kh_end(h)) {
-    kh_del(HashKey_t, h, k);
+    k-kh_dew(hashkey_t, (U ᵕ U❁) h, k);
   }
-  return TWML_ERR_NONE;
+  wetuwn twmw_eww_none;
 }
 
-twml_err twml_hashmap_get_value(int8_t *mask, HashVal_t *val,
-                const twml_hashmap hashmap, const HashKey_t key) {
-  hash_map_t h = (hash_map_t)hashmap;
-  khiter_t k = kh_get(HashKey_t, h, key);
-  if (k == kh_end(h)) {
-    *mask = false;
-  } else {
-    *val = kh_value(h, k);
-    *mask = true;
+twmw_eww twmw_hashmap_get_vawue(int8_t *mask, >w< hashvaw_t *vaw, σωσ
+                c-const twmw_hashmap hashmap, -.- const hashkey_t key) {
+  h-hash_map_t h-h = (hash_map_t)hashmap;
+  khitew_t k = kh_get(hashkey_t, o.O h, k-key);
+  if (k == k-kh_end(h)) {
+    *mask = fawse;
+  } ewse {
+    *vaw = kh_vawue(h, ^^ k-k);
+    *mask = twue;
   }
-  return TWML_ERR_NONE;
+  wetuwn t-twmw_eww_none;
 }
 
-// insert, get, remove tensors of keys / values
-twml_err twml_hashmap_insert_keys(twml_tensor masks,
-                  const twml_hashmap hashmap,
-                  const twml_tensor keys) {
-  auto masks_tensor = twml::getTensor(masks);
-  auto keys_tensor = twml::getConstTensor(keys);
+// insewt, >_< get, wemove tensows of keys / v-vawues
+twmw_eww twmw_hashmap_insewt_keys(twmw_tensow m-masks, >w<
+                  const t-twmw_hashmap hashmap, >_<
+                  c-const twmw_tensow keys) {
+  a-auto masks_tensow = t-twmw::gettensow(masks);
+  a-auto keys_tensow = twmw::getconsttensow(keys);
 
-  if (masks_tensor->getType() != TWML_TYPE_INT8) {
-    return TWML_ERR_TYPE;
+  i-if (masks_tensow->gettype() != t-twmw_type_int8) {
+    wetuwn twmw_eww_type;
   }
 
-  if (keys_tensor->getType() != TWML_TYPE_INT64) {
-    return TWML_ERR_TYPE;
+  i-if (keys_tensow->gettype() != t-twmw_type_int64) {
+    w-wetuwn twmw_eww_type;
   }
 
-  if (keys_tensor->getNumElements() != masks_tensor->getNumElements()) {
-    return TWML_ERR_SIZE;
+  if (keys_tensow->getnumewements() != masks_tensow->getnumewements()) {
+    w-wetuwn twmw_eww_size;
   }
 
-  int8_t *mptr = masks_tensor->getData<int8_t>();
-  const HashKey_t *kptr = keys_tensor->getData<HashKey_t>();
+  int8_t *mptw = m-masks_tensow->getdata<int8_t>();
+  c-const hashkey_t *kptw = keys_tensow->getdata<hashkey_t>();
 
-  uint64_t num_elements = keys_tensor->getNumElements();
+  uint64_t nyum_ewements = keys_tensow->getnumewements();
 
   hash_map_t h = (hash_map_t)hashmap;
-  for (uint64_t i = 0; i < num_elements; i++) {
-    int ret = 0;
-    khiter_t k = kh_put(HashKey_t, h, kptr[i], &ret);
-    mptr[i] = ret >= 0;
-    if (mptr[i]) {
-      HashVal_t v = kh_size(h);
-      kh_value(h, k) = v;
+  f-fow (uint64_t i-i = 0; i < nyum_ewements; i-i++) {
+    i-int wet = 0;
+    khitew_t k-k = kh_put(hashkey_t, >w< h, kptw[i], &wet);
+    mptw[i] = wet >= 0;
+    if (mptw[i]) {
+      hashvaw_t v = kh_size(h);
+      k-kh_vawue(h, rawr k) = v;
     }
   }
-  return TWML_ERR_NONE;
+  w-wetuwn twmw_eww_none;
 }
 
-twml_err twml_hashmap_insert_keys_and_values(twml_tensor masks,
-                       twml_hashmap hashmap,
-                       const twml_tensor keys,
-                       const twml_tensor vals) {
-  auto masks_tensor = twml::getTensor(masks);
-  auto keys_tensor = twml::getConstTensor(keys);
-  auto vals_tensor = twml::getConstTensor(vals);
+t-twmw_eww twmw_hashmap_insewt_keys_and_vawues(twmw_tensow masks, rawr x3
+                       twmw_hashmap h-hashmap, ( ͡o ω ͡o )
+                       const t-twmw_tensow keys, (˘ω˘)
+                       c-const twmw_tensow v-vaws) {
+  a-auto masks_tensow = t-twmw::gettensow(masks);
+  auto keys_tensow = twmw::getconsttensow(keys);
+  auto vaws_tensow = twmw::getconsttensow(vaws);
 
-  if (masks_tensor->getType() != TWML_TYPE_INT8) {
-    return TWML_ERR_TYPE;
+  if (masks_tensow->gettype() != twmw_type_int8) {
+    w-wetuwn t-twmw_eww_type;
   }
 
-  if (keys_tensor->getType() != TWML_TYPE_INT64) {
-    return TWML_ERR_TYPE;
+  i-if (keys_tensow->gettype() != twmw_type_int64) {
+    w-wetuwn twmw_eww_type;
   }
 
-  if (vals_tensor->getType() != TWML_TYPE_INT64) {
-    return TWML_ERR_TYPE;
+  if (vaws_tensow->gettype() != twmw_type_int64) {
+    wetuwn t-twmw_eww_type;
   }
 
-  if (keys_tensor->getNumElements() != vals_tensor->getNumElements() ||
-    keys_tensor->getNumElements() != masks_tensor->getNumElements()) {
-    return TWML_ERR_SIZE;
+  i-if (keys_tensow->getnumewements() != vaws_tensow->getnumewements() ||
+    k-keys_tensow->getnumewements() != masks_tensow->getnumewements()) {
+    wetuwn t-twmw_eww_size;
   }
 
-  int8_t *mptr = masks_tensor->getData<int8_t>();
-  const HashKey_t *kptr = keys_tensor->getData<HashKey_t>();
-  const HashVal_t *vptr = twml::getConstTensor(vals)->getData<HashVal_t>();
+  i-int8_t *mptw = masks_tensow->getdata<int8_t>();
+  c-const h-hashkey_t *kptw = keys_tensow->getdata<hashkey_t>();
+  const hashvaw_t *vptw = twmw::getconsttensow(vaws)->getdata<hashvaw_t>();
 
-  uint64_t num_elements = keys_tensor->getNumElements();
+  uint64_t nyum_ewements = keys_tensow->getnumewements();
 
-  hash_map_t h = (hash_map_t)hashmap;
-  for (uint64_t i = 0; i < num_elements; i++) {
-    int ret = 0;
-    khiter_t k = kh_put(HashKey_t, h, kptr[i], &ret);
-    mptr[i] = ret >= 0;
-    if (mptr[i]) {
-      kh_value(h, k) = vptr[i];
+  h-hash_map_t h = (hash_map_t)hashmap;
+  f-fow (uint64_t i-i = 0; i < n-nyum_ewements; i++) {
+    i-int wet = 0;
+    khitew_t k-k = kh_put(hashkey_t, 😳 h-h, kptw[i], OwO &wet);
+    mptw[i] = wet >= 0;
+    i-if (mptw[i]) {
+      k-kh_vawue(h, (˘ω˘) k) = vptw[i];
     }
   }
-  return TWML_ERR_NONE;
+  w-wetuwn twmw_eww_none;
 }
 
-twml_err twml_hashmap_remove_keys(const twml_hashmap hashmap,
-                  const twml_tensor keys) {
-  auto keys_tensor = twml::getConstTensor(keys);
+twmw_eww twmw_hashmap_wemove_keys(const t-twmw_hashmap hashmap, òωó
+                  c-const t-twmw_tensow keys) {
+  auto keys_tensow = t-twmw::getconsttensow(keys);
 
-  if (keys_tensor->getType() != TWML_TYPE_INT64) {
-    return TWML_ERR_TYPE;
+  if (keys_tensow->gettype() != twmw_type_int64) {
+    w-wetuwn twmw_eww_type;
   }
 
-  const HashKey_t *kptr = keys_tensor->getData<HashKey_t>();
-  uint64_t num_elements = keys_tensor->getNumElements();
+  c-const h-hashkey_t *kptw = keys_tensow->getdata<hashkey_t>();
+  uint64_t nyum_ewements = k-keys_tensow->getnumewements();
 
   hash_map_t h = (hash_map_t)hashmap;
-  for (uint64_t i = 0; i < num_elements; i++) {
-    khiter_t k = kh_get(HashKey_t, h, kptr[i]);
+  f-fow (uint64_t i-i = 0; i < nyum_ewements; i-i++) {
+    khitew_t k = kh_get(hashkey_t, ( ͡o ω ͡o ) h-h, k-kptw[i]);
     if (k != kh_end(h)) {
-      kh_del(HashKey_t, h, kptr[i]);
+      kh_dew(hashkey_t, UwU h-h, /(^•ω•^) kptw[i]);
     }
   }
-  return TWML_ERR_NONE;
+  wetuwn twmw_eww_none;
 }
 
-twml_err twml_hashmap_get_values(twml_tensor masks, twml_tensor vals,
-                 const twml_hashmap hashmap, const twml_tensor keys) {
-  auto masks_tensor = twml::getTensor(masks);
-  auto vals_tensor = twml::getTensor(vals);
-  auto keys_tensor = twml::getConstTensor(keys);
+twmw_eww t-twmw_hashmap_get_vawues(twmw_tensow m-masks, (ꈍᴗꈍ) twmw_tensow vaws, 😳
+                 c-const twmw_hashmap hashmap, mya c-const twmw_tensow k-keys) {
+  auto m-masks_tensow = twmw::gettensow(masks);
+  auto vaws_tensow = twmw::gettensow(vaws);
+  auto keys_tensow = twmw::getconsttensow(keys);
 
-  if (masks_tensor->getType() != TWML_TYPE_INT8) {
-    return TWML_ERR_TYPE;
+  if (masks_tensow->gettype() != twmw_type_int8) {
+    wetuwn twmw_eww_type;
   }
 
-  if (keys_tensor->getType() != TWML_TYPE_INT64) {
-    return TWML_ERR_TYPE;
+  if (keys_tensow->gettype() != twmw_type_int64) {
+    wetuwn twmw_eww_type;
   }
 
-  if (vals_tensor->getType() != TWML_TYPE_INT64) {
-    return TWML_ERR_TYPE;
+  i-if (vaws_tensow->gettype() != t-twmw_type_int64) {
+    wetuwn twmw_eww_type;
   }
 
-  if (keys_tensor->getNumElements() != vals_tensor->getNumElements() ||
-    keys_tensor->getNumElements() != masks_tensor->getNumElements()) {
-    return TWML_ERR_SIZE;
+  if (keys_tensow->getnumewements() != vaws_tensow->getnumewements() ||
+    k-keys_tensow->getnumewements() != m-masks_tensow->getnumewements()) {
+    w-wetuwn twmw_eww_size;
   }
 
-  int8_t *mptr = masks_tensor->getData<int8_t>();
-  HashVal_t *vptr = vals_tensor->getData<HashVal_t>();
-  const HashKey_t *kptr = keys_tensor->getData<HashKey_t>();
+  int8_t *mptw = m-masks_tensow->getdata<int8_t>();
+  hashvaw_t *vptw = vaws_tensow->getdata<hashvaw_t>();
+  c-const hashkey_t *kptw = k-keys_tensow->getdata<hashkey_t>();
 
-  uint64_t num_elements = keys_tensor->getNumElements();
+  uint64_t nyum_ewements = k-keys_tensow->getnumewements();
 
   hash_map_t h = (hash_map_t)hashmap;
-  for (uint64_t i = 0; i < num_elements; i++) {
-    khiter_t k = kh_get(HashKey_t, h, kptr[i]);
-    if (k == kh_end(h)) {
-      mptr[i] = false;
-    } else {
-      mptr[i] = true;
-      vptr[i] = kh_value(h, k);
+  f-fow (uint64_t i-i = 0; i < nyum_ewements; i++) {
+    khitew_t k-k = kh_get(hashkey_t, mya h-h, /(^•ω•^) kptw[i]);
+    i-if (k == k-kh_end(h)) {
+      m-mptw[i] = fawse;
+    } e-ewse {
+      m-mptw[i] = t-twue;
+      vptw[i] = k-kh_vawue(h, ^^;; k);
     }
   }
-  return TWML_ERR_NONE;
+  w-wetuwn twmw_eww_none;
 }
 
-twml_err twml_hashmap_get_values_inplace(twml_tensor masks, twml_tensor keys_vals,
-                     const twml_hashmap hashmap) {
-  auto masks_tensor = twml::getTensor(masks);
-  auto keys_tensor = twml::getTensor(keys_vals);
+t-twmw_eww t-twmw_hashmap_get_vawues_inpwace(twmw_tensow masks, 🥺 twmw_tensow k-keys_vaws, ^^
+                     const twmw_hashmap hashmap) {
+  a-auto masks_tensow = twmw::gettensow(masks);
+  a-auto keys_tensow = t-twmw::gettensow(keys_vaws);
 
-  if (masks_tensor->getType() != TWML_TYPE_INT8) {
-    return TWML_ERR_TYPE;
+  i-if (masks_tensow->gettype() != twmw_type_int8) {
+    w-wetuwn twmw_eww_type;
   }
 
-  if (keys_tensor->getType() != TWML_TYPE_INT64) {
-    return TWML_ERR_TYPE;
+  i-if (keys_tensow->gettype() != twmw_type_int64) {
+    w-wetuwn twmw_eww_type;
   }
 
-  if (keys_tensor->getNumElements() != masks_tensor->getNumElements()) {
-    return TWML_ERR_SIZE;
+  i-if (keys_tensow->getnumewements() != masks_tensow->getnumewements()) {
+    wetuwn twmw_eww_size;
   }
 
-  int8_t *mptr = masks_tensor->getData<int8_t>();
-  HashKey_t *kptr = keys_tensor->getData<HashKey_t>();
+  int8_t *mptw = masks_tensow->getdata<int8_t>();
+  h-hashkey_t *kptw = keys_tensow->getdata<hashkey_t>();
 
-  uint64_t num_elements = keys_tensor->getNumElements();
+  u-uint64_t n-nyum_ewements = keys_tensow->getnumewements();
 
   hash_map_t h = (hash_map_t)hashmap;
-  for (uint64_t i = 0; i < num_elements; i++) {
-    khiter_t k = kh_get(HashKey_t, h, kptr[i]);
-    if (k == kh_end(h)) {
-      mptr[i] = false;
-    } else {
-      mptr[i] = true;
-      kptr[i] = kh_value(h, k);
+  f-fow (uint64_t i = 0; i-i < nyum_ewements; i-i++) {
+    khitew_t k-k = kh_get(hashkey_t, ^•ﻌ•^ h, kptw[i]);
+    if (k == k-kh_end(h)) {
+      m-mptw[i] = fawse;
+    } e-ewse {
+      mptw[i] = twue;
+      kptw[i] = kh_vawue(h, /(^•ω•^) k-k);
     }
   }
-  return TWML_ERR_NONE;
+  wetuwn t-twmw_eww_none;
 }
 
-twml_err twml_hashmap_to_tensors(twml_tensor keys, twml_tensor vals,
-                 const twml_hashmap hashmap) {
-  hash_map_t h = (hash_map_t)hashmap;
-  const uint64_t size = kh_size(h);
+t-twmw_eww twmw_hashmap_to_tensows(twmw_tensow k-keys, ^^ twmw_tensow vaws, 🥺
+                 c-const t-twmw_hashmap hashmap) {
+  h-hash_map_t h-h = (hash_map_t)hashmap;
+  const uint64_t size = k-kh_size(h);
 
-  auto keys_tensor = twml::getTensor(keys);
-  auto vals_tensor = twml::getTensor(vals);
+  a-auto keys_tensow = t-twmw::gettensow(keys);
+  a-auto vaws_tensow = t-twmw::gettensow(vaws);
 
-  if (keys_tensor->getType() != TWML_TYPE_INT64) {
-    return TWML_ERR_TYPE;
+  i-if (keys_tensow->gettype() != t-twmw_type_int64) {
+    w-wetuwn twmw_eww_type;
   }
 
-  if (vals_tensor->getType() != TWML_TYPE_INT64) {
-    return TWML_ERR_TYPE;
+  if (vaws_tensow->gettype() != t-twmw_type_int64) {
+    wetuwn twmw_eww_type;
   }
 
-  if (size != keys_tensor->getNumElements() ||
-    size != vals_tensor->getNumElements()) {
-    return TWML_ERR_SIZE;
+  i-if (size != keys_tensow->getnumewements() ||
+    size != vaws_tensow->getnumewements()) {
+    w-wetuwn twmw_eww_size;
   }
 
-  HashKey_t *kptr = keys_tensor->getData<HashKey_t>();
-  HashVal_t *vptr = vals_tensor->getData<HashVal_t>();
+  h-hashkey_t *kptw = keys_tensow->getdata<hashkey_t>();
+  h-hashvaw_t *vptw = vaws_tensow->getdata<hashvaw_t>();
 
-  HashKey_t key, i = 0;
-  HashKey_t val;
+  hashkey_t key, (U ᵕ U❁) i = 0;
+  h-hashkey_t vaw;
 
-  kh_foreach(h, key, val, {
-      kptr[i] = key;
-      vptr[i] = val;
-      i++;
+  k-kh_foweach(h, 😳😳😳 k-key, vaw, {
+      kptw[i] = key;
+      vptw[i] = vaw;
+      i-i++;
     });
 
-  return TWML_ERR_NONE;
+  w-wetuwn twmw_eww_none;
 }

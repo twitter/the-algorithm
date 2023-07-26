@@ -1,5 +1,5 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.twitter.inject.TwitterModule
+impowt com.twittew.inject.twittewmoduwe
 
-object HomeMixerResourcesModule extends TwitterModule {}
+object h-homemixewwesouwcesmoduwe extends t-twittewmoduwe {}

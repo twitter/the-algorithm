@@ -1,28 +1,28 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures.UserEngagerAggregateFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures.UserEngagerGoodClickAggregateFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures.UserInferredTopicAggregateFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures.UserInferredTopicAggregateV2Feature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures.UserMediaUnderstandingAnnotationAggregateFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures.UserTopicAggregateFeature
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates.edgeaggwegatefeatuwes.usewengagewaggwegatefeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates.edgeaggwegatefeatuwes.usewengagewgoodcwickaggwegatefeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates.edgeaggwegatefeatuwes.usewinfewwedtopicaggwegatefeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates.edgeaggwegatefeatuwes.usewinfewwedtopicaggwegatev2featuwe
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates.edgeaggwegatefeatuwes.usewmediaundewstandingannotationaggwegatefeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates.edgeaggwegatefeatuwes.usewtopicaggwegatefeatuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class Phase2EdgeAggregateFeatureHydrator @Inject() extends BaseEdgeAggregateFeatureHydrator {
+@singweton
+cwass phase2edgeaggwegatefeatuwehydwatow @inject() extends baseedgeaggwegatefeatuwehydwatow {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("Phase2EdgeAggregate")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("phase2edgeaggwegate")
 
-  override val aggregateFeatures: Set[BaseEdgeAggregateFeature] =
-    Set(
-      UserEngagerAggregateFeature,
-      UserEngagerGoodClickAggregateFeature,
-      UserInferredTopicAggregateFeature,
-      UserInferredTopicAggregateV2Feature,
-      UserTopicAggregateFeature,
-      UserMediaUnderstandingAnnotationAggregateFeature
+  ovewwide v-vaw aggwegatefeatuwes: set[baseedgeaggwegatefeatuwe] =
+    set(
+      usewengagewaggwegatefeatuwe, mya
+      u-usewengagewgoodcwickaggwegatefeatuwe, 😳
+      usewinfewwedtopicaggwegatefeatuwe, XD
+      u-usewinfewwedtopicaggwegatev2featuwe,
+      u-usewtopicaggwegatefeatuwe, :3
+      usewmediaundewstandingannotationaggwegatefeatuwe
     )
 }

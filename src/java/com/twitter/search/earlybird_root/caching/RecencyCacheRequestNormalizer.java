@@ -1,16 +1,16 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.google.common.base.Optional;
+impowt com.googwe.common.base.optionaw;
 
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.common.caching.filter.CacheRequestNormalizer;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+i-impowt c-com.twittew.seawch.common.caching.cacheutiw;
+i-impowt com.twittew.seawch.common.caching.fiwtew.cachewequestnowmawizew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-public class RecencyCacheRequestNormalizer extends
-    CacheRequestNormalizer<EarlybirdRequestContext, EarlybirdRequest> {
-  @Override
-  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContext requestContext) {
-    return Optional.fromNullable(CacheUtil.normalizeRequestForCache(requestContext.getRequest()));
+pubwic c-cwass wecencycachewequestnowmawizew e-extends
+    c-cachewequestnowmawizew<eawwybiwdwequestcontext, σωσ eawwybiwdwequest> {
+  @ovewwide
+  pubwic optionaw<eawwybiwdwequest> nyowmawizewequest(eawwybiwdwequestcontext wequestcontext) {
+    w-wetuwn optionaw.fwomnuwwabwe(cacheutiw.nowmawizewequestfowcache(wequestcontext.getwequest()));
   }
 }

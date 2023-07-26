@@ -1,113 +1,113 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
-import java.util.Set;
+impowt java.io.ioexception;
+i-impowt java.utiw.set;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
+i-impowt owg.apache.wucene.seawch.booweancwause;
+i-impowt owg.apache.wucene.seawch.booweanquewy;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowemode;
+i-impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+impowt com.twittew.seawch.common.quewy.defauwtfiwtewweight;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.wangefiwtewdisi;
 
-public final class FeatureValueInAcceptListOrUnsetFilter extends Query {
+pubwic f-finaw cwass featuwevawueinacceptwistowunsetfiwtew extends quewy {
 
-  private final String featureName;
-  private final Set<Long> idsAcceptList;
+  pwivate f-finaw stwing featuwename;
+  pwivate f-finaw set<wong> i-idsacceptwist;
 
   /**
-   * Creates a query that filters for hits that have the given feature unset, or that have the
-   * given feature set to a value in the given list of IDs.
+   * cweates a quewy that fiwtews fow hits that have the given featuwe u-unset, /(^•ω•^) ow that have the
+   * given featuwe set to a vawue in the given wist o-of ids. :3
    *
-   * @param featureName The feature.
-   * @param ids A list of id values this filter will accept for the given feature.
-   * @return A query that filters out all hits that have the given feature set.
+   * @pawam featuwename t-the featuwe. (ꈍᴗꈍ)
+   * @pawam i-ids a-a wist of id vawues t-this fiwtew wiww accept fow the given featuwe. /(^•ω•^)
+   * @wetuwn a-a quewy that fiwtews out aww hits that have the g-given featuwe set. (⑅˘꒳˘)
    */
-  public static Query getFeatureValueInAcceptListOrUnsetFilter(String featureName, Set<Long> ids) {
-    return new BooleanQuery.Builder()
-        .add(new FeatureValueInAcceptListOrUnsetFilter(featureName, ids),
-            BooleanClause.Occur.FILTER)
-        .build();
+  pubwic static quewy getfeatuwevawueinacceptwistowunsetfiwtew(stwing featuwename, ( ͡o ω ͡o ) set<wong> ids) {
+    w-wetuwn nyew booweanquewy.buiwdew()
+        .add(new featuwevawueinacceptwistowunsetfiwtew(featuwename, òωó i-ids),
+            b-booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  @Override
-  public String toString(String s) {
-    return String.format("FeatureValueInAcceptListOrUnsetFilter(%s, AcceptList = (%s))",
-        featureName,
-        idsAcceptList);
+  @ovewwide
+  p-pubwic stwing tostwing(stwing s) {
+    wetuwn stwing.fowmat("featuwevawueinacceptwistowunsetfiwtew(%s, (⑅˘꒳˘) a-acceptwist = (%s))", XD
+        f-featuwename, -.-
+        idsacceptwist);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof FeatureValueInAcceptListOrUnsetFilter)) {
-      return false;
+  @ovewwide
+  p-pubwic b-boowean equaws(object obj) {
+    i-if (!(obj instanceof featuwevawueinacceptwistowunsetfiwtew)) {
+      w-wetuwn fawse;
     }
 
-    FeatureValueInAcceptListOrUnsetFilter filter =
-        FeatureValueInAcceptListOrUnsetFilter.class.cast(obj);
-    return featureName.equals(filter.featureName) && idsAcceptList.equals(filter.idsAcceptList);
+    featuwevawueinacceptwistowunsetfiwtew fiwtew =
+        featuwevawueinacceptwistowunsetfiwtew.cwass.cast(obj);
+    w-wetuwn featuwename.equaws(fiwtew.featuwename) && idsacceptwist.equaws(fiwtew.idsacceptwist);
   }
 
-  @Override
-  public int hashCode() {
-    return featureName.hashCode() * 7 + idsAcceptList.hashCode();
+  @ovewwide
+  p-pubwic int hashcode() {
+    wetuwn f-featuwename.hashcode() * 7 + i-idsacceptwist.hashcode();
   }
 
-  private FeatureValueInAcceptListOrUnsetFilter(String featureName, Set<Long> ids) {
-    this.featureName = Preconditions.checkNotNull(featureName);
-    this.idsAcceptList = Preconditions.checkNotNull(ids);
+  pwivate featuwevawueinacceptwistowunsetfiwtew(stwing featuwename, :3 set<wong> ids) {
+    this.featuwename = pweconditions.checknotnuww(featuwename);
+    this.idsacceptwist = p-pweconditions.checknotnuww(ids);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        return new FeatureValueInAcceptListOrUnsetDocIdSetIterator(
-            context.reader(), featureName, idsAcceptList);
+  @ovewwide
+  p-pubwic weight cweateweight(indexseawchew s-seawchew, nyaa~~ s-scowemode scowemode, 😳 f-fwoat boost) {
+    wetuwn nyew defauwtfiwtewweight(this) {
+      @ovewwide
+      pwotected d-docidsetitewatow getdocidsetitewatow(weafweadewcontext context) thwows ioexception {
+        wetuwn nyew featuwevawueinacceptwistowunsetdocidsetitewatow(
+            c-context.weadew(), (⑅˘꒳˘) featuwename, i-idsacceptwist);
       }
     };
   }
 
-  private static final class FeatureValueInAcceptListOrUnsetDocIdSetIterator
-      extends RangeFilterDISI {
-    private final NumericDocValues featureDocValues;
-    private final Set<Long> idsAcceptList;
+  p-pwivate static finaw c-cwass featuwevawueinacceptwistowunsetdocidsetitewatow
+      extends wangefiwtewdisi {
+    pwivate f-finaw nyumewicdocvawues featuwedocvawues;
+    p-pwivate finaw s-set<wong> idsacceptwist;
 
-    FeatureValueInAcceptListOrUnsetDocIdSetIterator(
-        LeafReader indexReader, String featureName, Set<Long> ids) throws IOException {
-      super(indexReader);
-      this.featureDocValues = indexReader.getNumericDocValues(featureName);
-      this.idsAcceptList = ids;
+    f-featuwevawueinacceptwistowunsetdocidsetitewatow(
+        weafweadew indexweadew, nyaa~~ s-stwing featuwename, OwO s-set<wong> i-ids) thwows ioexception {
+      s-supew(indexweadew);
+      t-this.featuwedocvawues = indexweadew.getnumewicdocvawues(featuwename);
+      this.idsacceptwist = ids;
     }
 
-    @Override
-    public boolean shouldReturnDoc() throws IOException {
-      // If featureDocValues is null, that means there were no documents indexed with the given
-      // field in the current segment.
+    @ovewwide
+    p-pubwic boowean shouwdwetuwndoc() thwows ioexception {
+      // if featuwedocvawues is nyuww, rawr x3 t-that means thewe wewe nyo documents indexed with the given
+      // f-fiewd i-in the cuwwent segment. XD
       //
-      // The advanceExact() method returns false if it cannot find the given docId in the
-      // NumericDocValues instance. So if advanceExact() returns false then we know the feature is
-      // unset.
-      // However, for realtime Earlybirds we have a custom implementation of NumericDocValues,
-      // ColumnStrideFieldDocValues, which will contain an entry for every indexed docId and use a
-      // value of 0 to indicate that a feature is unset.
+      // t-the advanceexact() method w-wetuwns fawse if it cannot find t-the given docid i-in the
+      // nyumewicdocvawues instance. σωσ so if advanceexact() wetuwns fawse then we know t-the featuwe is
+      // unset. (U ᵕ U❁)
+      // h-howevew, (U ﹏ U) fow weawtime eawwybiwds w-we have a-a custom impwementation of nyumewicdocvawues, :3
+      // cowumnstwidefiewddocvawues, ( ͡o ω ͡o ) w-which wiww contain a-an entwy fow evewy indexed d-docid and use a-a
+      // vawue of 0 to indicate that a featuwe is unset. σωσ
       //
-      // So to check if a feature is unset for a given docId, we first need to check if we can find
-      // the docId, and then we additionally need to check if the feature value is 0.
-      return featureDocValues == null
-          || !featureDocValues.advanceExact(docID())
-          || featureDocValues.longValue() == 0
-          || idsAcceptList.contains(featureDocValues.longValue());
+      // so t-to check if a featuwe i-is unset fow a-a given docid, >w< we fiwst nyeed t-to check if we c-can find
+      // the docid, 😳😳😳 and t-then we additionawwy nyeed to check if the featuwe vawue is 0. OwO
+      wetuwn featuwedocvawues == n-nyuww
+          || !featuwedocvawues.advanceexact(docid())
+          || f-featuwedocvawues.wongvawue() == 0
+          || idsacceptwist.contains(featuwedocvawues.wongvawue());
     }
   }
 }

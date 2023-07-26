@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-candidatescope.pawtitionedcandidates
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
 
-private[selector] object InsertSelector {
+p-pwivate[sewectow] object insewtsewectow {
 
   /**
-   * Insert all candidates from a candidate pipeline at a 0-indexed fixed position. If the current
-   * results are a shorter length than the requested position, then the candidates will be appended
-   * to the results.
+   * insewt aww candidates fwom a candidate p-pipewine at a 0-indexed fixed position. 🥺 if the cuwwent
+   * w-wesuwts awe a showtew w-wength than the wequested position, mya then the candidates wiww be a-appended
+   * to the wesuwts. 🥺
    */
-  def insertIntoResultsAtPosition(
-    position: Int,
-    pipelineScope: CandidateScope,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    assert(position >= 0, "Position must be equal to or greater than zero")
+  d-def insewtintowesuwtsatposition(
+    p-position: int, >_<
+    pipewinescope: candidatescope, >_<
+    wemainingcandidates: seq[candidatewithdetaiws], (⑅˘꒳˘)
+    w-wesuwt: seq[candidatewithdetaiws]
+  ): sewectowwesuwt = {
+    assewt(position >= 0, /(^•ω•^) "position must be equaw to ow gweatew t-than zewo")
 
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
+    vaw pawtitionedcandidates(sewectedcandidates, o-othewcandidates) =
+      p-pipewinescope.pawtition(wemainingcandidates)
 
-    val resultUpdated = if (selectedCandidates.nonEmpty) {
-      if (position < result.length) {
-        val (left, right) = result.splitAt(position)
-        left ++ selectedCandidates ++ right
-      } else {
-        result ++ selectedCandidates
+    v-vaw wesuwtupdated = if (sewectedcandidates.nonempty) {
+      i-if (position < wesuwt.wength) {
+        vaw (weft, rawr x3 wight) = w-wesuwt.spwitat(position)
+        weft ++ sewectedcandidates ++ wight
+      } e-ewse {
+        wesuwt ++ sewectedcandidates
       }
-    } else {
-      result
+    } ewse {
+      wesuwt
     }
 
-    SelectorResult(remainingCandidates = otherCandidates, result = resultUpdated)
+    sewectowwesuwt(wemainingcandidates = othewcandidates, (U ﹏ U) wesuwt = wesuwtupdated)
   }
 }

@@ -1,174 +1,174 @@
-package com.twitter.home_mixer.product.for_you.candidate_source
+package com.twittew.home_mixew.pwoduct.fow_you.candidate_souwce
 
-import com.google.inject.Provider
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.functional_component.candidate_source.product_pipeline.ProductPipelineCandidateSource
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.timelines.render.{thriftscala => tl}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovidew
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.sewvedtweetidsfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.timewinesewvicetweetsfeatuwe
+i-impowt com.twittew.home_mixew.modew.wequest.homemixewwequest
+i-impowt com.twittew.home_mixew.modew.wequest.scowedtweetspwoduct
+i-impowt com.twittew.home_mixew.modew.wequest.scowedtweetspwoductcontext
+i-impowt c-com.twittew.home_mixew.pwoduct.fow_you.modew.fowyouquewy
+impowt com.twittew.home_mixew.{thwiftscawa => t}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.cuwsow.uwtcuwsowsewiawizew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.pwoduct_pipewine.pwoductpipewinecandidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.pawamsbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy.pwoductpipewinewegistwy
+impowt c-com.twittew.timewines.wendew.{thwiftscawa => tw}
+impowt com.twittew.timewinesewvice.suggests.{thwiftscawa => st}
+impowt com.twittew.tweetconvosvc.tweet_ancestow.{thwiftscawa => ta}
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * [[ScoredTweetWithConversationMetadata]]
+ * [[scowedtweetwithconvewsationmetadata]]
  **/
-case class ScoredTweetWithConversationMetadata(
-  tweetId: Long,
-  authorId: Long,
-  score: Option[Double] = None,
-  suggestType: Option[st.SuggestType] = None,
-  sourceTweetId: Option[Long] = None,
-  sourceUserId: Option[Long] = None,
-  quotedTweetId: Option[Long] = None,
-  quotedUserId: Option[Long] = None,
-  inReplyToTweetId: Option[Long] = None,
-  inReplyToUserId: Option[Long] = None,
-  directedAtUserId: Option[Long] = None,
-  inNetwork: Option[Boolean] = None,
-  sgsValidLikedByUserIds: Option[Seq[Long]] = None,
-  sgsValidFollowedByUserIds: Option[Seq[Long]] = None,
-  ancestors: Option[Seq[ta.TweetAncestor]] = None,
-  topicId: Option[Long] = None,
-  topicFunctionalityType: Option[tl.TopicContextFunctionalityType] = None,
-  conversationId: Option[Long] = None,
-  conversationFocalTweetId: Option[Long] = None,
-  isReadFromCache: Option[Boolean] = None,
-  streamToKafka: Option[Boolean] = None,
-  exclusiveConversationAuthorId: Option[Long] = None,
-  authorIsBlueVerified: Option[Boolean] = None,
-  authorIsGoldVerified: Option[Boolean] = None,
-  authorIsGrayVerified: Option[Boolean] = None,
-  authorIsLegacyVerified: Option[Boolean] = None,
-  authorIsCreator: Option[Boolean] = None,
-  perspectiveFilteredLikedByUserIds: Option[Seq[Long]] = None)
+c-case cwass s-scowedtweetwithconvewsationmetadata(
+  tweetid: wong, 😳😳😳
+  authowid: wong, o.O
+  scowe: option[doubwe] = n-nyone, òωó
+  suggesttype: option[st.suggesttype] = nyone, 😳😳😳
+  souwcetweetid: option[wong] = nyone,
+  s-souwceusewid: option[wong] = n-nyone, σωσ
+  quotedtweetid: o-option[wong] = n-nyone, (⑅˘꒳˘)
+  q-quotedusewid: option[wong] = nyone, (///ˬ///✿)
+  inwepwytotweetid: o-option[wong] = nyone, 🥺
+  inwepwytousewid: o-option[wong] = nyone, OwO
+  diwectedatusewid: option[wong] = nyone, >w<
+  innetwowk: option[boowean] = nyone, 🥺
+  sgsvawidwikedbyusewids: o-option[seq[wong]] = nyone, nyaa~~
+  sgsvawidfowwowedbyusewids: o-option[seq[wong]] = n-nyone, ^^
+  a-ancestows: option[seq[ta.tweetancestow]] = nyone, >w<
+  topicid: option[wong] = n-nyone,
+  topicfunctionawitytype: o-option[tw.topiccontextfunctionawitytype] = nyone, OwO
+  convewsationid: o-option[wong] = n-nyone, XD
+  convewsationfocawtweetid: o-option[wong] = nyone, ^^;;
+  i-isweadfwomcache: option[boowean] = nyone, 🥺
+  stweamtokafka: o-option[boowean] = nyone, XD
+  excwusiveconvewsationauthowid: o-option[wong] = nyone, (U ᵕ U❁)
+  authowisbwuevewified: o-option[boowean] = n-nyone, :3
+  authowisgowdvewified: option[boowean] = nyone, ( ͡o ω ͡o )
+  authowisgwayvewified: option[boowean] = nyone, òωó
+  a-authowiswegacyvewified: o-option[boowean] = nyone, σωσ
+  a-authowiscweatow: o-option[boowean] = n-nyone, (U ᵕ U❁)
+  pewspectivefiwtewedwikedbyusewids: option[seq[wong]] = none)
 
-@Singleton
-class ScoredTweetsProductCandidateSource @Inject() (
-  override val productPipelineRegistry: Provider[ProductPipelineRegistry],
-  override val paramsBuilder: Provider[ParamsBuilder])
-    extends ProductPipelineCandidateSource[
-      ForYouQuery,
-      HomeMixerRequest,
-      t.ScoredTweetsResponse,
-      ScoredTweetWithConversationMetadata
+@singweton
+c-cwass scowedtweetspwoductcandidatesouwce @inject() (
+  ovewwide vaw pwoductpipewinewegistwy: pwovidew[pwoductpipewinewegistwy], (✿oωo)
+  ovewwide v-vaw pawamsbuiwdew: pwovidew[pawamsbuiwdew])
+    e-extends pwoductpipewinecandidatesouwce[
+      f-fowyouquewy, ^^
+      h-homemixewwequest, ^•ﻌ•^
+      t.scowedtweetswesponse, XD
+      s-scowedtweetwithconvewsationmetadata
     ] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("ScoredTweetsProduct")
+  o-ovewwide v-vaw identifiew: c-candidatesouwceidentifiew =
+    candidatesouwceidentifiew("scowedtweetspwoduct")
 
-  private val MaxModuleSize = 3
-  private val MaxAncestorsInConversation = 2
+  pwivate v-vaw maxmoduwesize = 3
+  p-pwivate v-vaw maxancestowsinconvewsation = 2
 
-  override def pipelineRequestTransformer(productPipelineQuery: ForYouQuery): HomeMixerRequest = {
-    HomeMixerRequest(
-      clientContext = productPipelineQuery.clientContext,
-      product = ScoredTweetsProduct,
-      productContext = Some(
-        ScoredTweetsProductContext(
-          productPipelineQuery.deviceContext,
-          productPipelineQuery.seenTweetIds,
-          productPipelineQuery.features.map(_.getOrElse(ServedTweetIdsFeature, Seq.empty)),
-          productPipelineQuery.features.map(_.getOrElse(TimelineServiceTweetsFeature, Seq.empty))
-        )),
-      serializedRequestCursor =
-        productPipelineQuery.pipelineCursor.map(UrtCursorSerializer.serializeCursor),
-      maxResults = productPipelineQuery.requestedMaxResults,
-      debugParams = None,
-      homeRequestParam = false
+  o-ovewwide def p-pipewinewequesttwansfowmew(pwoductpipewinequewy: fowyouquewy): homemixewwequest = {
+    homemixewwequest(
+      c-cwientcontext = pwoductpipewinequewy.cwientcontext, :3
+      pwoduct = scowedtweetspwoduct, (ꈍᴗꈍ)
+      pwoductcontext = some(
+        s-scowedtweetspwoductcontext(
+          pwoductpipewinequewy.devicecontext, :3
+          pwoductpipewinequewy.seentweetids, (U ﹏ U)
+          pwoductpipewinequewy.featuwes.map(_.getowewse(sewvedtweetidsfeatuwe, UwU s-seq.empty)), 😳😳😳
+          p-pwoductpipewinequewy.featuwes.map(_.getowewse(timewinesewvicetweetsfeatuwe, s-seq.empty))
+        )), XD
+      sewiawizedwequestcuwsow =
+        p-pwoductpipewinequewy.pipewinecuwsow.map(uwtcuwsowsewiawizew.sewiawizecuwsow), o.O
+      maxwesuwts = p-pwoductpipewinequewy.wequestedmaxwesuwts, (⑅˘꒳˘)
+      d-debugpawams = nyone, 😳😳😳
+      homewequestpawam = fawse
     )
   }
 
-  override def productPipelineResultTransformer(
-    productPipelineResult: t.ScoredTweetsResponse
-  ): Seq[ScoredTweetWithConversationMetadata] = {
-    val scoredTweets = productPipelineResult.scoredTweets.flatMap { focalTweet =>
-      val parentTweets = focalTweet.ancestors.getOrElse(Seq.empty).sortBy(-_.tweetId)
-      val (intermediates, root) = parentTweets.splitAt(parentTweets.size - 1)
-      val truncatedIntermediates =
-        intermediates.take(MaxModuleSize - MaxAncestorsInConversation).reverse
-      val rootScoredTweet: Seq[ScoredTweetWithConversationMetadata] = root.map { ancestor =>
-        ScoredTweetWithConversationMetadata(
-          tweetId = ancestor.tweetId,
-          authorId = ancestor.userId,
-          suggestType = focalTweet.suggestType,
-          conversationId = Some(ancestor.tweetId),
-          conversationFocalTweetId = Some(focalTweet.tweetId),
-          exclusiveConversationAuthorId = focalTweet.exclusiveConversationAuthorId
+  ovewwide def pwoductpipewinewesuwttwansfowmew(
+    pwoductpipewinewesuwt: t-t.scowedtweetswesponse
+  ): seq[scowedtweetwithconvewsationmetadata] = {
+    v-vaw scowedtweets = pwoductpipewinewesuwt.scowedtweets.fwatmap { f-focawtweet =>
+      v-vaw pawenttweets = focawtweet.ancestows.getowewse(seq.empty).sowtby(-_.tweetid)
+      vaw (intewmediates, nyaa~~ w-woot) = pawenttweets.spwitat(pawenttweets.size - 1)
+      v-vaw twuncatedintewmediates =
+        intewmediates.take(maxmoduwesize - m-maxancestowsinconvewsation).wevewse
+      v-vaw wootscowedtweet: seq[scowedtweetwithconvewsationmetadata] = woot.map { ancestow =>
+        s-scowedtweetwithconvewsationmetadata(
+          t-tweetid = a-ancestow.tweetid, rawr
+          authowid = ancestow.usewid, -.-
+          s-suggesttype = f-focawtweet.suggesttype, (✿oωo)
+          convewsationid = s-some(ancestow.tweetid), /(^•ω•^)
+          convewsationfocawtweetid = some(focawtweet.tweetid), 🥺
+          excwusiveconvewsationauthowid = focawtweet.excwusiveconvewsationauthowid
         )
       }
-      val conversationId = rootScoredTweet.headOption.map(_.tweetId)
+      v-vaw convewsationid = wootscowedtweet.headoption.map(_.tweetid)
 
-      val tweetsToParents =
-        if (parentTweets.nonEmpty) parentTweets.zip(parentTweets.tail).toMap
-        else Map.empty[ta.TweetAncestor, ta.TweetAncestor]
+      v-vaw tweetstopawents =
+        if (pawenttweets.nonempty) pawenttweets.zip(pawenttweets.taiw).tomap
+        e-ewse m-map.empty[ta.tweetancestow, ʘwʘ ta.tweetancestow]
 
-      val intermediateScoredTweets = truncatedIntermediates.map { ancestor =>
-        ScoredTweetWithConversationMetadata(
-          tweetId = ancestor.tweetId,
-          authorId = ancestor.userId,
-          suggestType = focalTweet.suggestType,
-          inReplyToTweetId = tweetsToParents.get(ancestor).map(_.tweetId),
-          conversationId = conversationId,
-          conversationFocalTweetId = Some(focalTweet.tweetId),
-          exclusiveConversationAuthorId = focalTweet.exclusiveConversationAuthorId
+      vaw intewmediatescowedtweets = twuncatedintewmediates.map { a-ancestow =>
+        scowedtweetwithconvewsationmetadata(
+          tweetid = ancestow.tweetid, UwU
+          authowid = ancestow.usewid, XD
+          s-suggesttype = focawtweet.suggesttype, (✿oωo)
+          inwepwytotweetid = tweetstopawents.get(ancestow).map(_.tweetid), :3
+          c-convewsationid = c-convewsationid, (///ˬ///✿)
+          convewsationfocawtweetid = some(focawtweet.tweetid), nyaa~~
+          excwusiveconvewsationauthowid = f-focawtweet.excwusiveconvewsationauthowid
         )
       }
-      val parentScoredTweets = rootScoredTweet ++ intermediateScoredTweets
+      v-vaw pawentscowedtweets = wootscowedtweet ++ intewmediatescowedtweets
 
-      val conversationFocalTweetId =
-        if (parentScoredTweets.nonEmpty) Some(focalTweet.tweetId) else None
+      vaw convewsationfocawtweetid =
+        if (pawentscowedtweets.nonempty) s-some(focawtweet.tweetid) ewse nyone
 
-      val focalScoredTweet = ScoredTweetWithConversationMetadata(
-        tweetId = focalTweet.tweetId,
-        authorId = focalTweet.authorId,
-        score = focalTweet.score,
-        suggestType = focalTweet.suggestType,
-        sourceTweetId = focalTweet.sourceTweetId,
-        sourceUserId = focalTweet.sourceUserId,
-        quotedTweetId = focalTweet.quotedTweetId,
-        quotedUserId = focalTweet.quotedUserId,
-        inReplyToTweetId = parentScoredTweets.lastOption.map(_.tweetId),
-        inReplyToUserId = focalTweet.inReplyToUserId,
-        directedAtUserId = focalTweet.directedAtUserId,
-        inNetwork = focalTweet.inNetwork,
-        sgsValidLikedByUserIds = focalTweet.sgsValidLikedByUserIds,
-        sgsValidFollowedByUserIds = focalTweet.sgsValidFollowedByUserIds,
-        topicId = focalTweet.topicId,
-        topicFunctionalityType = focalTweet.topicFunctionalityType,
-        ancestors = focalTweet.ancestors,
-        conversationId = conversationId,
-        conversationFocalTweetId = conversationFocalTweetId,
-        isReadFromCache = focalTweet.isReadFromCache,
-        streamToKafka = focalTweet.streamToKafka,
-        exclusiveConversationAuthorId = focalTweet.exclusiveConversationAuthorId,
-        authorIsBlueVerified = focalTweet.authorMetadata.map(_.blueVerified),
-        authorIsGoldVerified = focalTweet.authorMetadata.map(_.goldVerified),
-        authorIsGrayVerified = focalTweet.authorMetadata.map(_.grayVerified),
-        authorIsLegacyVerified = focalTweet.authorMetadata.map(_.legacyVerified),
-        authorIsCreator = focalTweet.authorMetadata.map(_.creator),
-        perspectiveFilteredLikedByUserIds = focalTweet.perspectiveFilteredLikedByUserIds
+      v-vaw focawscowedtweet = scowedtweetwithconvewsationmetadata(
+        tweetid = focawtweet.tweetid, >w<
+        authowid = f-focawtweet.authowid, -.-
+        scowe = focawtweet.scowe, (✿oωo)
+        s-suggesttype = f-focawtweet.suggesttype, (˘ω˘)
+        souwcetweetid = f-focawtweet.souwcetweetid, rawr
+        souwceusewid = f-focawtweet.souwceusewid, OwO
+        q-quotedtweetid = f-focawtweet.quotedtweetid, ^•ﻌ•^
+        quotedusewid = f-focawtweet.quotedusewid, UwU
+        i-inwepwytotweetid = pawentscowedtweets.wastoption.map(_.tweetid),
+        inwepwytousewid = f-focawtweet.inwepwytousewid, (˘ω˘)
+        d-diwectedatusewid = f-focawtweet.diwectedatusewid, (///ˬ///✿)
+        innetwowk = focawtweet.innetwowk, σωσ
+        sgsvawidwikedbyusewids = f-focawtweet.sgsvawidwikedbyusewids, /(^•ω•^)
+        sgsvawidfowwowedbyusewids = f-focawtweet.sgsvawidfowwowedbyusewids,
+        t-topicid = focawtweet.topicid, 😳
+        topicfunctionawitytype = focawtweet.topicfunctionawitytype, 😳
+        a-ancestows = f-focawtweet.ancestows, (⑅˘꒳˘)
+        c-convewsationid = convewsationid, 😳😳😳
+        c-convewsationfocawtweetid = convewsationfocawtweetid, 😳
+        i-isweadfwomcache = focawtweet.isweadfwomcache, XD
+        stweamtokafka = focawtweet.stweamtokafka, mya
+        excwusiveconvewsationauthowid = focawtweet.excwusiveconvewsationauthowid,
+        a-authowisbwuevewified = focawtweet.authowmetadata.map(_.bwuevewified),
+        a-authowisgowdvewified = focawtweet.authowmetadata.map(_.gowdvewified),
+        a-authowisgwayvewified = focawtweet.authowmetadata.map(_.gwayvewified),
+        a-authowiswegacyvewified = focawtweet.authowmetadata.map(_.wegacyvewified), ^•ﻌ•^
+        a-authowiscweatow = f-focawtweet.authowmetadata.map(_.cweatow), ʘwʘ
+        p-pewspectivefiwtewedwikedbyusewids = f-focawtweet.pewspectivefiwtewedwikedbyusewids
       )
 
-      parentScoredTweets :+ focalScoredTweet
+      p-pawentscowedtweets :+ focawscowedtweet
     }
 
-    val dedupedTweets = scoredTweets.groupBy(_.tweetId).map {
-      case (_, duplicateAncestors) => duplicateAncestors.maxBy(_.score.getOrElse(0.0))
+    vaw dedupedtweets = scowedtweets.gwoupby(_.tweetid).map {
+      case (_, ( ͡o ω ͡o ) dupwicateancestows) => dupwicateancestows.maxby(_.scowe.getowewse(0.0))
     }
 
-    // Sort by tweet id to prevent issues with future assumptions of the root being the first
-    // tweet and the focal being the last tweet in a module. The tweets as a whole do not need
-    // to be sorted overall, only the relative order within modules must be kept.
-    dedupedTweets.toSeq.sortBy(_.tweetId)
+    // sowt by tweet id t-to pwevent issues w-with futuwe assumptions o-of the woot being the f-fiwst
+    // tweet and the focaw being the wast tweet in a moduwe. mya t-the tweets as a-a whowe do nyot nyeed
+    // to b-be sowted ovewaww, o.O onwy the wewative owdew within m-moduwes must b-be kept. (✿oωo)
+    dedupedtweets.toseq.sowtby(_.tweetid)
   }
 }

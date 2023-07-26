@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.highlight
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.highwight
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight.HighlightedSection
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.highwight.highwightedsection
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class HighlightedSectionMarshaller @Inject() () {
+@singweton
+c-cwass highwightedsectionmawshawwew @inject() () {
 
-  def apply(highlightedSection: HighlightedSection): urt.HighlightedSection =
-    urt.HighlightedSection(
-      startIndex = highlightedSection.startIndex,
-      endIndex = highlightedSection.endIndex
+  d-def appwy(highwightedsection: highwightedsection): uwt.highwightedsection =
+    uwt.highwightedsection(
+      s-stawtindex = highwightedsection.stawtindex, :3
+      endindex = h-highwightedsection.endindex
     )
 }

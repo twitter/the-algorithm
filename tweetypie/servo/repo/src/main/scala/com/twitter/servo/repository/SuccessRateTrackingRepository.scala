@@ -1,81 +1,81 @@
-package com.twitter.servo.repository
+package com.twittew.sewvo.wepositowy
 
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.{CancelledConnectionException, CancelledRequestException}
-import com.twitter.servo.util.{Gate, SuccessRateTracker}
-import com.twitter.util.Throwables.RootCause
-import java.util.concurrent.CancellationException
+impowt com.twittew.finagwe.mux.cwientdiscawdedwequestexception
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.{cancewwedconnectionexception, nyaa~~ c-cancewwedwequestexception}
+i-impowt com.twittew.sewvo.utiw.{gate, :3 s-successwatetwackew}
+i-impowt com.twittew.utiw.thwowabwes.wootcause
+i-impowt j-java.utiw.concuwwent.cancewwationexception
 
-object SuccessRateTrackingRepository {
+object successwatetwackingwepositowy {
 
   /**
-   * (successes, failures)
+   * (successes, faiwuwes)
    */
-  type SuccessRateObserver = (Int, Int) => Unit
+  type successwateobsewvew = (int, ( ͡o ω ͡o ) int) => unit
 
   /**
-   * Identifies [[Throwable]]s that should not be counted as failures.
+   * i-identifies [[thwowabwe]]s that shouwd nyot be counted a-as faiwuwes. mya
    *
-   * This is a total function instead of a partial function so it can reliably recurse on itself
-   * to find a root cause.
+   * this is a-a totaw function instead of a pawtiaw function so it can wewiabwy w-wecuwse on itsewf
+   * to find a-a woot cause. (///ˬ///✿)
    */
-  def isCancellation(t: Throwable): Boolean =
+  d-def iscancewwation(t: thwowabwe): boowean =
     t match {
-      // We don't consider CancelledRequestExceptions or CancelledConnectionExceptions to be
-      // failures in order not to tarnish our success rate on upstream request cancellations.
-      case _: CancelledRequestException => true
-      case _: CancelledConnectionException => true
-      // non-finagle backends can throw CancellationExceptions when their futures are cancelled.
-      case _: CancellationException => true
-      // Mux servers can return ClientDiscardedRequestException.
-      case _: ClientDiscardedRequestException => true
-      // Most of these exceptions can be wrapped in com.twitter.finagle.Failure
-      case RootCause(t) => isCancellation(t)
-      case _ => false
+      // we don't c-considew cancewwedwequestexceptions ow cancewwedconnectionexceptions to be
+      // faiwuwes in owdew nyot to t-tawnish ouw success wate on upstweam w-wequest cancewwations.
+      c-case _: cancewwedwequestexception => t-twue
+      c-case _: cancewwedconnectionexception => twue
+      // nyon-finagwe b-backends can thwow cancewwationexceptions when theiw futuwes a-awe cancewwed. (˘ω˘)
+      case _: cancewwationexception => twue
+      // mux sewvews can wetuwn cwientdiscawdedwequestexception. ^^;;
+      c-case _: cwientdiscawdedwequestexception => twue
+      // most o-of these exceptions c-can be wwapped i-in com.twittew.finagwe.faiwuwe
+      case wootcause(t) => iscancewwation(t)
+      c-case _ => f-fawse
     }
 
   /**
-   * Return a Success Rate (SR) tracking repository along with the gate controlling it.
+   * wetuwn a-a success wate (sw) t-twacking wepositowy awong w-with the gate contwowwing it. (✿oωo)
    *
-   * @param stats Provides availability gauge
-   * @param availabilityFromSuccessRate function to calculate availability given SR
-   * @param tracker strategy for tracking (usually recent) SR
-   * @param shouldIgnore don't count certain exceptions as failures, e.g. cancellations
-   * @return tuple of (SR tracking repo, gate closing if SR drops too far)
+   * @pawam stats p-pwovides avaiwabiwity gauge
+   * @pawam avaiwabiwityfwomsuccesswate f-function to cawcuwate avaiwabiwity g-given sw
+   * @pawam t-twackew stwategy f-fow twacking (usuawwy wecent) sw
+   * @pawam shouwdignowe don't count cewtain exceptions as faiwuwes, e.g. (U ﹏ U) cancewwations
+   * @wetuwn t-tupwe of (sw t-twacking wepo, gate cwosing i-if sw dwops too f-faw)
    */
-  def withGate[Q <: Seq[K], K, V](
-    stats: StatsReceiver,
-    availabilityFromSuccessRate: Double => Double,
-    tracker: SuccessRateTracker,
-    shouldIgnore: Throwable => Boolean = isCancellation
-  ): (KeyValueRepository[Q, K, V] => KeyValueRepository[Q, K, V], Gate[Unit]) = {
-    val successRateGate = tracker.observedAvailabilityGate(availabilityFromSuccessRate, stats)
+  def w-withgate[q <: seq[k], -.- k, v](
+    stats: statsweceivew, ^•ﻌ•^
+    avaiwabiwityfwomsuccesswate: d-doubwe => doubwe,
+    twackew: successwatetwackew, rawr
+    shouwdignowe: thwowabwe => boowean = i-iscancewwation
+  ): (keyvawuewepositowy[q, (˘ω˘) k, v] => keyvawuewepositowy[q, nyaa~~ k-k, v], gate[unit]) = {
+    v-vaw successwategate = t-twackew.obsewvedavaiwabiwitygate(avaiwabiwityfwomsuccesswate, UwU stats)
 
-    (new SuccessRateTrackingRepository[Q, K, V](_, tracker.record, shouldIgnore), successRateGate)
+    (new successwatetwackingwepositowy[q, :3 k-k, (⑅˘꒳˘) v](_, twackew.wecowd, (///ˬ///✿) s-shouwdignowe), ^^;; s-successwategate)
   }
 }
 
 /**
- * A KeyValueRepository that provides feedback on query success rate to
- * a SuccessRateObserver.  Both found and not found are considered successful
- * responses, while failures are not. Cancellations are ignored by default.
+ * a-a keyvawuewepositowy that pwovides feedback o-on quewy success w-wate to
+ * a-a successwateobsewvew. >_<  b-both found a-and nyot found awe considewed successfuw
+ * wesponses, rawr x3 whiwe f-faiwuwes awe nyot. /(^•ω•^) cancewwations awe ignowed by defauwt. :3
  */
-class SuccessRateTrackingRepository[Q <: Seq[K], K, V](
-  underlying: KeyValueRepository[Q, K, V],
-  observer: SuccessRateTrackingRepository.SuccessRateObserver,
-  shouldIgnore: Throwable => Boolean = SuccessRateTrackingRepository.isCancellation)
-    extends KeyValueRepository[Q, K, V] {
-  def apply(query: Q) =
-    underlying(query) onSuccess { kvr =>
-      val nonIgnoredFailures = kvr.failed.values.foldLeft(0) {
-        case (count, t) if shouldIgnore(t) => count
-        case (count, _) => count + 1
+cwass successwatetwackingwepositowy[q <: seq[k], (ꈍᴗꈍ) k, /(^•ω•^) v-v](
+  undewwying: keyvawuewepositowy[q, (⑅˘꒳˘) k, v], ( ͡o ω ͡o )
+  obsewvew: successwatetwackingwepositowy.successwateobsewvew, òωó
+  s-shouwdignowe: thwowabwe => b-boowean = s-successwatetwackingwepositowy.iscancewwation)
+    extends k-keyvawuewepositowy[q, k, (⑅˘꒳˘) v] {
+  d-def appwy(quewy: q-q) =
+    undewwying(quewy) onsuccess { kvw =>
+      vaw nyonignowedfaiwuwes = kvw.faiwed.vawues.fowdweft(0) {
+        case (count, XD t) if shouwdignowe(t) => c-count
+        case (count, -.- _) => c-count + 1
       }
-      observer(kvr.found.size + kvr.notFound.size, nonIgnoredFailures)
-    } onFailure { t =>
-      if (!shouldIgnore(t)) {
-        observer(0, query.size)
+      obsewvew(kvw.found.size + k-kvw.notfound.size, :3 n-nyonignowedfaiwuwes)
+    } onfaiwuwe { t =>
+      i-if (!shouwdignowe(t)) {
+        o-obsewvew(0, nyaa~~ quewy.size)
       }
     }
 }

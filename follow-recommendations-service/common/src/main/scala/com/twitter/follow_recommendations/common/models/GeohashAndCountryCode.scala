@@ -1,3 +1,3 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-case class GeohashAndCountryCode(geohash: Option[String], countryCode: Option[String])
+case cwass g-geohashandcountwycode(geohash: o-option[stwing], 🥺 c-countwycode: o-option[stwing])

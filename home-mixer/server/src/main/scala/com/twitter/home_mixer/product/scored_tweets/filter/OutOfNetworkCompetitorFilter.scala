@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.product.scored_tweets.filter
+package com.twittew.home_mixew.pwoduct.scowed_tweets.fiwtew
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CompetitorSetParam
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.innetwowkfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.competitowsetpawam
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-object OutOfNetworkCompetitorFilter extends Filter[PipelineQuery, TweetCandidate] {
+object outofnetwowkcompetitowfiwtew e-extends fiwtew[pipewinequewy, (⑅˘꒳˘) tweetcandidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("OutOfNetworkCompetitor")
+  o-ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("outofnetwowkcompetitow")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val competitorAuthors = query.params(CompetitorSetParam)
-    val (removed, kept) =
-      candidates.partition(isOutOfNetworkTweetFromCompetitor(_, competitorAuthors))
+  o-ovewwide def appwy(
+    quewy: p-pipewinequewy, (///ˬ///✿)
+    c-candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[fiwtewwesuwt[tweetcandidate]] = {
+    vaw competitowauthows = q-quewy.pawams(competitowsetpawam)
+    vaw (wemoved, 😳😳😳 kept) =
+      candidates.pawtition(isoutofnetwowktweetfwomcompetitow(_, 🥺 competitowauthows))
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    s-stitch.vawue(fiwtewwesuwt(kept = kept.map(_.candidate), mya w-wemoved = wemoved.map(_.candidate)))
   }
 
-  def isOutOfNetworkTweetFromCompetitor(
-    candidate: CandidateWithFeatures[TweetCandidate],
-    competitorAuthors: Set[Long]
-  ): Boolean = {
-    !candidate.features.getOrElse(InNetworkFeature, true) &&
-    !candidate.features.getOrElse(IsRetweetFeature, false) &&
-    candidate.features.getOrElse(AuthorIdFeature, None).exists(competitorAuthors.contains)
+  d-def i-isoutofnetwowktweetfwomcompetitow(
+    c-candidate: candidatewithfeatuwes[tweetcandidate], 🥺
+    competitowauthows: s-set[wong]
+  ): boowean = {
+    !candidate.featuwes.getowewse(innetwowkfeatuwe, >_< twue) &&
+    !candidate.featuwes.getowewse(iswetweetfeatuwe, >_< f-fawse) &&
+    candidate.featuwes.getowewse(authowidfeatuwe, (⑅˘꒳˘) nyone).exists(competitowauthows.contains)
   }
 }

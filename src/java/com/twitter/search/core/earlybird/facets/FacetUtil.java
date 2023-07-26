@@ -1,106 +1,106 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.util.HashMap;
-import java.util.Map;
+impowt java.utiw.hashmap;
+i-impowt j-java.utiw.map;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+i-impowt c-com.twittew.seawch.common.schema.base.eawwybiwdfiewdtype;
+impowt com.twittew.seawch.common.schema.base.indexednumewicfiewdsettings;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftnumewictype;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedindex;
 
 /**
- * A utility class for selecting iterators and label providers
- * for facets.
+ * a utiwity cwass f-fow sewecting itewatows and wabew p-pwovidews
+ * fow facets. UwU
  *
  */
-public abstract class FacetUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(FacetUtil.class);
+pubwic abstwact cwass facetutiw {
+  p-pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(facetutiw.cwass);
 
-  private FacetUtil() {
+  p-pwivate facetutiw() {
     // unused
   }
 
   /**
-   * A utility method for choosing the right facet label provider based on the EarlybirdFieldType.
-   * Takes in a InvertedIndex since some facet label providers are or depend on the inverted
-   * index.
-   * Should never return null.
+   * a utiwity method fow choosing the wight f-facet wabew pwovidew based on the eawwybiwdfiewdtype. :3
+   * takes in a invewtedindex s-since some facet wabew pwovidews a-awe ow depend o-on the invewted
+   * i-index. (⑅˘꒳˘)
+   * s-shouwd nyevew wetuwn nyuww. (///ˬ///✿)
    *
-   * @param fieldType A FieldType for the facet
-   * @param invertedField The inverted index associated with the facet. May be null.
-   * @return A non-null FacetLabelProvider
+   * @pawam fiewdtype a fiewdtype f-fow the facet
+   * @pawam invewtedfiewd t-the invewted index associated with the facet. ^^;; may be nyuww. >_<
+   * @wetuwn a nyon-nuww facetwabewpwovidew
    */
-  public static FacetLabelProvider chooseFacetLabelProvider(
-      EarlybirdFieldType fieldType,
-      InvertedIndex invertedField) {
-    Preconditions.checkNotNull(fieldType);
+  p-pubwic static facetwabewpwovidew choosefacetwabewpwovidew(
+      e-eawwybiwdfiewdtype f-fiewdtype, rawr x3
+      i-invewtedindex invewtedfiewd) {
+    pweconditions.checknotnuww(fiewdtype);
 
-    // In the case neither inverted index existing nor using CSF,
-    // return FacetLabelProvider.InaccessibleFacetLabelProvider to throw exception
-    // more meaningfully and explicitly.
-    if (invertedField == null && !fieldType.isUseCSFForFacetCounting()) {
-      return new FacetLabelProvider.InaccessibleFacetLabelProvider(fieldType.getFacetName());
+    // in the case n-neithew invewted i-index existing now using csf, /(^•ω•^)
+    // w-wetuwn f-facetwabewpwovidew.inaccessibwefacetwabewpwovidew to thwow exception
+    // m-mowe meaningfuwwy and e-expwicitwy. :3
+    if (invewtedfiewd == nyuww && !fiewdtype.isusecsffowfacetcounting()) {
+      wetuwn n-nyew facetwabewpwovidew.inaccessibwefacetwabewpwovidew(fiewdtype.getfacetname());
     }
 
-    if (fieldType.isUseCSFForFacetCounting()) {
-      return new FacetLabelProvider.IdentityFacetLabelProvider();
+    if (fiewdtype.isusecsffowfacetcounting()) {
+      w-wetuwn nyew facetwabewpwovidew.identityfacetwabewpwovidew();
     }
-    IndexedNumericFieldSettings numericSettings = fieldType.getNumericFieldSettings();
-    if (numericSettings != null && numericSettings.isUseTwitterFormat()) {
-      if (numericSettings.getNumericType() == ThriftNumericType.INT) {
-        return new FacetLabelProvider.IntTermFacetLabelProvider(invertedField);
-      } else if (numericSettings.getNumericType() == ThriftNumericType.LONG) {
-        return numericSettings.isUseSortableEncoding()
-            ? new FacetLabelProvider.SortedLongTermFacetLabelProvider(invertedField)
-            : new FacetLabelProvider.LongTermFacetLabelProvider(invertedField);
-      } else {
-        Preconditions.checkState(false,
-            "Should never be reached, indicates incomplete handling of different kinds of facets");
-        return null;
+    i-indexednumewicfiewdsettings n-nyumewicsettings = fiewdtype.getnumewicfiewdsettings();
+    if (numewicsettings != nyuww && nyumewicsettings.isusetwittewfowmat()) {
+      if (numewicsettings.getnumewictype() == thwiftnumewictype.int) {
+        w-wetuwn n-nyew facetwabewpwovidew.inttewmfacetwabewpwovidew(invewtedfiewd);
+      } ewse i-if (numewicsettings.getnumewictype() == t-thwiftnumewictype.wong) {
+        w-wetuwn nyumewicsettings.isusesowtabweencoding()
+            ? nyew facetwabewpwovidew.sowtedwongtewmfacetwabewpwovidew(invewtedfiewd)
+            : nyew facetwabewpwovidew.wongtewmfacetwabewpwovidew(invewtedfiewd);
+      } e-ewse {
+        pweconditions.checkstate(fawse, (ꈍᴗꈍ)
+            "shouwd nyevew be weached, /(^•ω•^) indicates incompwete h-handwing of diffewent kinds o-of facets");
+        w-wetuwn nuww;
       }
-    } else {
-      return invertedField;
+    } e-ewse {
+      wetuwn invewtedfiewd;
     }
   }
 
   /**
-   * Get segment-specific facet label providers based on the schema
-   * and on the fieldToInvertedIndexMapping for the segment.
-   * These will be used by facet accumulators to get the text of the termIDs
+   * g-get segment-specific f-facet wabew pwovidews b-based on the s-schema
+   * and on the fiewdtoinvewtedindexmapping fow the segment. (⑅˘꒳˘)
+   * t-these w-wiww be used by f-facet accumuwatows t-to get the t-text of the tewmids
    *
-   * @param schema the schema, for info on fields and facets
-   * @param fieldToInvertedIndexMapping map of fields to their inverted indices
-   * @return facet label provider map
+   * @pawam schema the schema, ( ͡o ω ͡o ) fow info on fiewds and facets
+   * @pawam f-fiewdtoinvewtedindexmapping map of fiewds to theiw invewted indices
+   * @wetuwn facet wabew pwovidew map
    */
-  public static Map<String, FacetLabelProvider> getFacetLabelProviders(
-      Schema schema,
-      Map<String, InvertedIndex> fieldToInvertedIndexMapping) {
+  p-pubwic static map<stwing, facetwabewpwovidew> getfacetwabewpwovidews(
+      schema schema, òωó
+      m-map<stwing, (⑅˘꒳˘) i-invewtedindex> f-fiewdtoinvewtedindexmapping) {
 
-    HashMap<String, FacetLabelProvider> facetLabelProviderBuilder
-        = new HashMap<>();
+    hashmap<stwing, XD f-facetwabewpwovidew> facetwabewpwovidewbuiwdew
+        = n-nyew h-hashmap<>();
 
-    for (Schema.FieldInfo fieldInfo : schema.getFacetFields()) {
-      EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-      Preconditions.checkNotNull(fieldType);
-      String fieldName = fieldInfo.getName();
-      String facetName = fieldType.getFacetName();
-      InvertedIndex invertedIndex = fieldToInvertedIndexMapping.get(fieldName);
-      if (invertedIndex == null && !fieldType.isUseCSFForFacetCounting()) {
-        LOG.warn("No docs in segment had field " + fieldName
-                + " indexed for facet " + facetName
-                + " so InaccessibleFacetLabelProvider will be provided."
+    fow (schema.fiewdinfo fiewdinfo : schema.getfacetfiewds()) {
+      eawwybiwdfiewdtype fiewdtype = f-fiewdinfo.getfiewdtype();
+      pweconditions.checknotnuww(fiewdtype);
+      s-stwing fiewdname = fiewdinfo.getname();
+      s-stwing facetname = f-fiewdtype.getfacetname();
+      invewtedindex invewtedindex = f-fiewdtoinvewtedindexmapping.get(fiewdname);
+      i-if (invewtedindex == nyuww && !fiewdtype.isusecsffowfacetcounting()) {
+        w-wog.wawn("no docs i-in segment had fiewd " + fiewdname
+                + " indexed fow facet " + facetname
+                + " so i-inaccessibwefacetwabewpwovidew w-wiww be pwovided."
         );
       }
-      facetLabelProviderBuilder.put(facetName, Preconditions.checkNotNull(
-          chooseFacetLabelProvider(fieldType, invertedIndex)));
+      f-facetwabewpwovidewbuiwdew.put(facetname, -.- pweconditions.checknotnuww(
+          c-choosefacetwabewpwovidew(fiewdtype, :3 i-invewtedindex)));
     }
 
-    return facetLabelProviderBuilder;
+    wetuwn f-facetwabewpwovidewbuiwdew;
   }
 }

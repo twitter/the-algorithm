@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.service
+package com.twittew.pwoduct_mixew.cowe.sewvice
 
-trait ExecutorResult
+twait executowwesuwt

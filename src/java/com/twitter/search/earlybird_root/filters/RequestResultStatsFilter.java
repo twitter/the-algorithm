@@ -1,184 +1,184 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.inject.Inject;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.concuwwent.concuwwenthashmap;
+impowt j-javax.inject.inject;
 
-import scala.runtime.BoxedUnit;
+i-impowt s-scawa.wuntime.boxedunit;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.snowflake.id.SnowflakeId;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+i-impowt c-com.twittew.common.utiw.cwock;
+impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.simpwefiwtew;
+impowt com.twittew.seawch.common.metwics.pewcentiwe;
+impowt com.twittew.seawch.common.metwics.pewcentiweutiw;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.quewy.thwiftjava.cowwectowpawams;
+i-impowt com.twittew.seawch.common.quewy.thwiftjava.cowwectowtewminationpawams;
+i-impowt com.twittew.seawch.eawwybiwd.common.cwientidutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.snowfwake.id.snowfwakeid;
+impowt com.twittew.utiw.function;
+impowt com.twittew.utiw.futuwe;
 
-public class RequestResultStatsFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private final Clock clock;
-  private final RequestResultStats stats;
+p-pubwic cwass wequestwesuwtstatsfiwtew
+    extends simpwefiwtew<eawwybiwdwequest, o.O eawwybiwdwesponse> {
+  pwivate finaw cwock c-cwock;
+  pwivate finaw wequestwesuwtstats s-stats;
 
-  static class RequestResultStats {
-    private static final String PREFIX = "request_result_properties_";
+  s-static cwass w-wequestwesuwtstats {
+    p-pwivate static finaw stwing pwefix = "wequest_wesuwt_pwopewties_";
 
-    private final SearchCounter resultsRequestedCount;
-    private final SearchCounter resultsReturnedCount;
-    private final SearchCounter maxHitsToProcessCount;
-    private final SearchCounter hitsProcessedCount;
-    private final SearchCounter docsProcessedCount;
-    private final SearchCounter timeoutMsCount;
-    private Map<String, Percentile<Integer>> requestedNumResultsPercentileByClientId;
-    private Map<String, Percentile<Integer>> returnedNumResultsPercentileByClientId;
-    private Map<String, Percentile<Long>> oldestResultPercentileByClientId;
+    p-pwivate finaw seawchcountew wesuwtswequestedcount;
+    p-pwivate finaw seawchcountew wesuwtswetuwnedcount;
+    pwivate finaw seawchcountew maxhitstopwocesscount;
+    pwivate f-finaw seawchcountew hitspwocessedcount;
+    p-pwivate f-finaw seawchcountew d-docspwocessedcount;
+    pwivate finaw seawchcountew timeoutmscount;
+    pwivate map<stwing, (///ˬ///✿) p-pewcentiwe<integew>> w-wequestednumwesuwtspewcentiwebycwientid;
+    pwivate m-map<stwing, σωσ pewcentiwe<integew>> w-wetuwnednumwesuwtspewcentiwebycwientid;
+    pwivate m-map<stwing, nyaa~~ pewcentiwe<wong>> o-owdestwesuwtpewcentiwebycwientid;
 
-    RequestResultStats() {
-      // Request properties
-      resultsRequestedCount = SearchCounter.export(PREFIX + "results_requested_cnt");
-      maxHitsToProcessCount = SearchCounter.export(PREFIX + "max_hits_to_process_cnt");
-      timeoutMsCount = SearchCounter.export(PREFIX + "timeout_ms_cnt");
-      requestedNumResultsPercentileByClientId = new ConcurrentHashMap<>();
+    wequestwesuwtstats() {
+      // wequest p-pwopewties
+      wesuwtswequestedcount = s-seawchcountew.expowt(pwefix + "wesuwts_wequested_cnt");
+      maxhitstopwocesscount = s-seawchcountew.expowt(pwefix + "max_hits_to_pwocess_cnt");
+      t-timeoutmscount = seawchcountew.expowt(pwefix + "timeout_ms_cnt");
+      wequestednumwesuwtspewcentiwebycwientid = nyew concuwwenthashmap<>();
 
-      // Result properties
-      resultsReturnedCount = SearchCounter.export(PREFIX + "results_returned_cnt");
-      hitsProcessedCount = SearchCounter.export(PREFIX + "hits_processed_cnt");
-      docsProcessedCount = SearchCounter.export(PREFIX + "docs_processed_cnt");
-      returnedNumResultsPercentileByClientId = new ConcurrentHashMap<>();
-      oldestResultPercentileByClientId = new ConcurrentHashMap<>();
+      // wesuwt pwopewties
+      wesuwtswetuwnedcount = s-seawchcountew.expowt(pwefix + "wesuwts_wetuwned_cnt");
+      h-hitspwocessedcount = seawchcountew.expowt(pwefix + "hits_pwocessed_cnt");
+      d-docspwocessedcount = s-seawchcountew.expowt(pwefix + "docs_pwocessed_cnt");
+      w-wetuwnednumwesuwtspewcentiwebycwientid = nyew concuwwenthashmap<>();
+      owdestwesuwtpewcentiwebycwientid = n-nyew concuwwenthashmap<>();
     }
 
-    SearchCounter getResultsRequestedCount() {
-      return resultsRequestedCount;
+    seawchcountew getwesuwtswequestedcount() {
+      wetuwn wesuwtswequestedcount;
     }
 
-    SearchCounter getResultsReturnedCount() {
-      return resultsReturnedCount;
+    s-seawchcountew getwesuwtswetuwnedcount() {
+      w-wetuwn wesuwtswetuwnedcount;
     }
 
-    SearchCounter getMaxHitsToProcessCount() {
-      return maxHitsToProcessCount;
+    s-seawchcountew g-getmaxhitstopwocesscount() {
+      wetuwn m-maxhitstopwocesscount;
     }
 
-    SearchCounter getHitsProcessedCount() {
-      return hitsProcessedCount;
+    s-seawchcountew g-gethitspwocessedcount() {
+      w-wetuwn hitspwocessedcount;
     }
 
-    SearchCounter getDocsProcessedCount() {
-      return docsProcessedCount;
+    seawchcountew getdocspwocessedcount() {
+      w-wetuwn docspwocessedcount;
     }
 
-    SearchCounter getTimeoutMsCount() {
-      return timeoutMsCount;
+    s-seawchcountew g-gettimeoutmscount() {
+      w-wetuwn timeoutmscount;
     }
 
-    Percentile<Long> getOldestResultPercentile(String clientId) {
-      return oldestResultPercentileByClientId.computeIfAbsent(clientId,
-          key -> PercentileUtil.createPercentile(statName(clientId, "oldest_result_age_seconds")));
+    p-pewcentiwe<wong> getowdestwesuwtpewcentiwe(stwing cwientid) {
+      wetuwn o-owdestwesuwtpewcentiwebycwientid.computeifabsent(cwientid,
+          key -> pewcentiweutiw.cweatepewcentiwe(statname(cwientid, ^^;; "owdest_wesuwt_age_seconds")));
     }
 
-    Percentile<Integer> getRequestedNumResultsPercentile(String clientId) {
-      return requestedNumResultsPercentileByClientId.computeIfAbsent(clientId,
-          key -> PercentileUtil.createPercentile(statName(clientId, "requested_num_results")));
+    pewcentiwe<integew> getwequestednumwesuwtspewcentiwe(stwing cwientid) {
+      wetuwn w-wequestednumwesuwtspewcentiwebycwientid.computeifabsent(cwientid, ^•ﻌ•^
+          key -> pewcentiweutiw.cweatepewcentiwe(statname(cwientid, σωσ "wequested_num_wesuwts")));
     }
 
-    Percentile<Integer> getReturnedNumResultsPercentile(String clientId) {
-      return returnedNumResultsPercentileByClientId.computeIfAbsent(clientId,
-          key -> PercentileUtil.createPercentile(statName(clientId, "returned_num_results")));
+    pewcentiwe<integew> getwetuwnednumwesuwtspewcentiwe(stwing c-cwientid) {
+      w-wetuwn w-wetuwnednumwesuwtspewcentiwebycwientid.computeifabsent(cwientid, -.-
+          key -> pewcentiweutiw.cweatepewcentiwe(statname(cwientid, ^^;; "wetuwned_num_wesuwts")));
     }
 
-    private String statName(String clientId, String suffix) {
-      return String.format("%s%s_%s", PREFIX, ClientIdUtil.formatClientId(clientId), suffix);
+    p-pwivate stwing statname(stwing cwientid, XD stwing s-suffix) {
+      w-wetuwn stwing.fowmat("%s%s_%s", 🥺 pwefix, òωó cwientidutiw.fowmatcwientid(cwientid), (ˆ ﻌ ˆ)♡ suffix);
     }
   }
 
-  @Inject
-  RequestResultStatsFilter(Clock clock, RequestResultStats stats) {
-    this.clock = clock;
+  @inject
+  wequestwesuwtstatsfiwtew(cwock cwock, -.- wequestwesuwtstats stats) {
+    this.cwock = c-cwock;
     this.stats = stats;
   }
 
-  private void updateRequestStats(EarlybirdRequest request) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    CollectorParams collectorParams = searchQuery.getCollectorParams();
+  p-pwivate void updatewequeststats(eawwybiwdwequest w-wequest) {
+    t-thwiftseawchquewy seawchquewy = wequest.getseawchquewy();
+    c-cowwectowpawams c-cowwectowpawams = seawchquewy.getcowwectowpawams();
 
-    if (collectorParams != null) {
-      stats.getResultsRequestedCount().add(collectorParams.numResultsToReturn);
-      if (request.isSetClientId()) {
-        stats.getRequestedNumResultsPercentile(request.getClientId())
-            .record(collectorParams.numResultsToReturn);
+    if (cowwectowpawams != n-nyuww) {
+      s-stats.getwesuwtswequestedcount().add(cowwectowpawams.numwesuwtstowetuwn);
+      if (wequest.issetcwientid()) {
+        stats.getwequestednumwesuwtspewcentiwe(wequest.getcwientid())
+            .wecowd(cowwectowpawams.numwesuwtstowetuwn);
       }
-      CollectorTerminationParams terminationParams = collectorParams.getTerminationParams();
-      if (terminationParams != null) {
-        if (terminationParams.isSetMaxHitsToProcess()) {
-          stats.getMaxHitsToProcessCount().add(terminationParams.maxHitsToProcess);
+      cowwectowtewminationpawams tewminationpawams = c-cowwectowpawams.gettewminationpawams();
+      i-if (tewminationpawams != n-nyuww) {
+        if (tewminationpawams.issetmaxhitstopwocess()) {
+          s-stats.getmaxhitstopwocesscount().add(tewminationpawams.maxhitstopwocess);
         }
-        if (terminationParams.isSetTimeoutMs()) {
-          stats.getTimeoutMsCount().add(terminationParams.timeoutMs);
-        }
-      }
-    } else {
-      if (searchQuery.isSetNumResults()) {
-        stats.getResultsRequestedCount().add(searchQuery.numResults);
-        if (request.isSetClientId()) {
-          stats.getRequestedNumResultsPercentile(request.getClientId())
-              .record(searchQuery.numResults);
+        if (tewminationpawams.issettimeoutms()) {
+          s-stats.gettimeoutmscount().add(tewminationpawams.timeoutms);
         }
       }
-      if (searchQuery.isSetMaxHitsToProcess()) {
-        stats.getMaxHitsToProcessCount().add(searchQuery.maxHitsToProcess);
+    } ewse {
+      i-if (seawchquewy.issetnumwesuwts()) {
+        stats.getwesuwtswequestedcount().add(seawchquewy.numwesuwts);
+        if (wequest.issetcwientid()) {
+          stats.getwequestednumwesuwtspewcentiwe(wequest.getcwientid())
+              .wecowd(seawchquewy.numwesuwts);
+        }
       }
-      if (request.isSetTimeoutMs()) {
-        stats.getTimeoutMsCount().add(request.timeoutMs);
+      if (seawchquewy.issetmaxhitstopwocess()) {
+        s-stats.getmaxhitstopwocesscount().add(seawchquewy.maxhitstopwocess);
+      }
+      i-if (wequest.issettimeoutms()) {
+        stats.gettimeoutmscount().add(wequest.timeoutms);
       }
     }
   }
 
-  private void updateResultsStats(String clientId, ThriftSearchResults results) {
-    stats.getResultsReturnedCount().add(results.getResultsSize());
-    if (results.isSetNumHitsProcessed()) {
-      stats.getHitsProcessedCount().add(results.numHitsProcessed);
+  pwivate v-void updatewesuwtsstats(stwing c-cwientid, :3 thwiftseawchwesuwts wesuwts) {
+    stats.getwesuwtswetuwnedcount().add(wesuwts.getwesuwtssize());
+    if (wesuwts.issetnumhitspwocessed()) {
+      s-stats.gethitspwocessedcount().add(wesuwts.numhitspwocessed);
     }
 
-    if (clientId != null) {
-      if (results.getResultsSize() > 0) {
-        List<ThriftSearchResult> resultsList = results.getResults();
+    if (cwientid != nyuww) {
+      if (wesuwts.getwesuwtssize() > 0) {
+        wist<thwiftseawchwesuwt> w-wesuwtswist = wesuwts.getwesuwts();
 
-        long lastId = resultsList.get(resultsList.size() - 1).getId();
-        long tweetTime = SnowflakeId.timeFromId(lastId).inLongSeconds();
-        long tweetAge = (clock.nowMillis() / 1000) - tweetTime;
-        stats.getOldestResultPercentile(clientId).record(tweetAge);
+        wong wastid = w-wesuwtswist.get(wesuwtswist.size() - 1).getid();
+        w-wong tweettime = snowfwakeid.timefwomid(wastid).inwongseconds();
+        wong tweetage = (cwock.nowmiwwis() / 1000) - tweettime;
+        s-stats.getowdestwesuwtpewcentiwe(cwientid).wecowd(tweetage);
       }
 
-      stats.getReturnedNumResultsPercentile(clientId).record(results.getResultsSize());
+      s-stats.getwetuwnednumwesuwtspewcentiwe(cwientid).wecowd(wesuwts.getwesuwtssize());
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request,
-      Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> appwy(
+      e-eawwybiwdwequest wequest, ʘwʘ
+      s-sewvice<eawwybiwdwequest, 🥺 eawwybiwdwesponse> sewvice) {
 
-    updateRequestStats(request);
+    updatewequeststats(wequest);
 
-    return service.apply(request).onSuccess(
-        new Function<EarlybirdResponse, BoxedUnit>() {
-          @Override
-          public BoxedUnit apply(EarlybirdResponse response) {
-            if (response.isSetSearchResults()) {
-              updateResultsStats(request.getClientId(), response.searchResults);
+    w-wetuwn sewvice.appwy(wequest).onsuccess(
+        n-nyew function<eawwybiwdwesponse, >_< b-boxedunit>() {
+          @ovewwide
+          pubwic boxedunit a-appwy(eawwybiwdwesponse wesponse) {
+            i-if (wesponse.issetseawchwesuwts()) {
+              u-updatewesuwtsstats(wequest.getcwientid(), ʘwʘ w-wesponse.seawchwesuwts);
             }
-            return BoxedUnit.UNIT;
+            wetuwn b-boxedunit.unit;
           }
         });
   }

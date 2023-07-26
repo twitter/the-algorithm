@@ -1,300 +1,300 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.hewon
 
-import com.twitter.algebird.Monoid
-import com.twitter.bijection.Injection
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.heron.util.CommonMetric
-import com.twitter.ml.api.DataRecord
-import com.twitter.scalding.Args
-import com.twitter.storehaus.algebra.MergeableStore
-import com.twitter.storehaus.algebra.StoreAlgebra._
-import com.twitter.storehaus_internal.memcache.Memcache
-import com.twitter.storehaus_internal.store.CombinedStore
-import com.twitter.storehaus_internal.store.ReplicatingWritableStore
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird.online.MergeableStoreFactory
-import com.twitter.summingbird.online.option._
-import com.twitter.summingbird.option.CacheSize
-import com.twitter.summingbird.option.JobId
-import com.twitter.summingbird.storm.option.FlatMapStormMetrics
-import com.twitter.summingbird.storm.option.SummerStormMetrics
-import com.twitter.summingbird.storm.Storm
-import com.twitter.summingbird.storm.StormMetric
-import com.twitter.summingbird.Options
-import com.twitter.summingbird._
-import com.twitter.summingbird_internal.runner.common.CapTicket
-import com.twitter.summingbird_internal.runner.common.JobName
-import com.twitter.summingbird_internal.runner.common.TeamEmail
-import com.twitter.summingbird_internal.runner.common.TeamName
-import com.twitter.summingbird_internal.runner.storm.ProductionStormConfig
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.job.AggregatesV2Job
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.job.AggregatesV2Job
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.job.DataRecordFeatureCounter
-import org.apache.heron.api.{Config => HeronConfig}
-import org.apache.heron.common.basics.ByteAmount
-import org.apache.storm.Config
-import scala.collection.JavaConverters._
+impowt com.twittew.awgebiwd.monoid
+i-impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.bijection.thwift.compactthwiftcodec
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.mtws.authentication.emptysewviceidentifiew
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.hewon.utiw.commonmetwic
+impowt com.twittew.mw.api.datawecowd
+impowt com.twittew.scawding.awgs
+impowt com.twittew.stowehaus.awgebwa.mewgeabwestowe
+impowt c-com.twittew.stowehaus.awgebwa.stoweawgebwa._
+impowt com.twittew.stowehaus_intewnaw.memcache.memcache
+impowt com.twittew.stowehaus_intewnaw.stowe.combinedstowe
+i-impowt com.twittew.stowehaus_intewnaw.stowe.wepwicatingwwitabwestowe
+impowt com.twittew.summingbiwd.batch.batchid
+i-impowt com.twittew.summingbiwd.batch.batchew
+impowt com.twittew.summingbiwd.onwine.mewgeabwestowefactowy
+impowt com.twittew.summingbiwd.onwine.option._
+i-impowt com.twittew.summingbiwd.option.cachesize
+i-impowt c-com.twittew.summingbiwd.option.jobid
+impowt com.twittew.summingbiwd.stowm.option.fwatmapstowmmetwics
+impowt com.twittew.summingbiwd.stowm.option.summewstowmmetwics
+impowt com.twittew.summingbiwd.stowm.stowm
+impowt com.twittew.summingbiwd.stowm.stowmmetwic
+i-impowt com.twittew.summingbiwd.options
+impowt com.twittew.summingbiwd._
+impowt com.twittew.summingbiwd_intewnaw.wunnew.common.capticket
+i-impowt com.twittew.summingbiwd_intewnaw.wunnew.common.jobname
+i-impowt com.twittew.summingbiwd_intewnaw.wunnew.common.teamemaiw
+i-impowt com.twittew.summingbiwd_intewnaw.wunnew.common.teamname
+i-impowt com.twittew.summingbiwd_intewnaw.wunnew.stowm.pwoductionstowmconfig
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk._
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.job.aggwegatesv2job
+impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.job.aggwegatesv2job
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.job.datawecowdfeatuwecountew
+i-impowt owg.apache.hewon.api.{config => hewonconfig}
+impowt owg.apache.hewon.common.basics.byteamount
+impowt owg.apache.stowm.config
+i-impowt scawa.cowwection.javaconvewtews._
 
-object RealTimeAggregatesJobBase {
-  lazy val commonMetric: StormMetric[CommonMetric] =
-    StormMetric(new CommonMetric(), CommonMetric.NAME, CommonMetric.POLL_INTERVAL)
-  lazy val flatMapMetrics: FlatMapStormMetrics = FlatMapStormMetrics(Iterable(commonMetric))
-  lazy val summerMetrics: SummerStormMetrics = SummerStormMetrics(Iterable(commonMetric))
+o-object weawtimeaggwegatesjobbase {
+  w-wazy vaw c-commonmetwic: stowmmetwic[commonmetwic] =
+    stowmmetwic(new commonmetwic(), (ˆ ﻌ ˆ)♡ commonmetwic.name, :3 commonmetwic.poww_intewvaw)
+  wazy vaw fwatmapmetwics: fwatmapstowmmetwics = fwatmapstowmmetwics(itewabwe(commonmetwic))
+  w-wazy v-vaw summewmetwics: summewstowmmetwics = s-summewstowmmetwics(itewabwe(commonmetwic))
 }
 
-trait RealTimeAggregatesJobBase extends Serializable {
-  import RealTimeAggregatesJobBase._
-  import com.twitter.summingbird_internal.bijection.BatchPairImplicits._
+t-twait weawtimeaggwegatesjobbase extends s-sewiawizabwe {
+  impowt weawtimeaggwegatesjobbase._
+  i-impowt com.twittew.summingbiwd_intewnaw.bijection.batchpaiwimpwicits._
 
-  def statsReceiver: StatsReceiver
+  def statsweceivew: statsweceivew
 
-  def aggregatesToCompute: Set[TypedAggregateGroup[_]]
+  d-def aggwegatestocompute: set[typedaggwegategwoup[_]]
 
-  def jobConfigs: RealTimeAggregatesJobConfigs
+  d-def jobconfigs: weawtimeaggwegatesjobconfigs
 
-  implicit lazy val dataRecordCodec: Injection[DataRecord, Array[Byte]] =
-    CompactThriftCodec[DataRecord]
-  implicit lazy val monoid: Monoid[DataRecord] = DataRecordAggregationMonoid(aggregatesToCompute)
-  implicit lazy val aggregationKeyInjection: Injection[AggregationKey, Array[Byte]] =
-    AggregationKeyInjection
+  i-impwicit w-wazy vaw datawecowdcodec: injection[datawecowd, (U ᵕ U❁) awway[byte]] =
+    compactthwiftcodec[datawecowd]
+  impwicit wazy vaw monoid: monoid[datawecowd] = datawecowdaggwegationmonoid(aggwegatestocompute)
+  i-impwicit w-wazy vaw aggwegationkeyinjection: injection[aggwegationkey, ^^;; a-awway[byte]] =
+    a-aggwegationkeyinjection
 
-  val clusters: Set[String] = Set("atla", "pdxa")
+  v-vaw cwustews: set[stwing] = set("atwa", mya "pdxa")
 
-  def buildAggregateStoreToStorm(
-    isProd: Boolean,
-    serviceIdentifier: ServiceIdentifier,
-    jobConfig: RealTimeAggregatesJobConfig
-  ): (AggregateStore => Option[Storm#Store[AggregationKey, DataRecord]]) = {
-    (store: AggregateStore) =>
-      store match {
-        case rtaStore: RealTimeAggregateStore if rtaStore.isProd == isProd => {
-          lazy val primaryStore: MergeableStore[(AggregationKey, BatchID), DataRecord] =
-            Memcache.getMemcacheStore[(AggregationKey, BatchID), DataRecord](
-              rtaStore.online(serviceIdentifier))
+  def buiwdaggwegatestowetostowm(
+    i-ispwod: boowean, 😳😳😳
+    sewviceidentifiew: sewviceidentifiew, OwO
+    jobconfig: weawtimeaggwegatesjobconfig
+  ): (aggwegatestowe => option[stowm#stowe[aggwegationkey, rawr d-datawecowd]]) = {
+    (stowe: aggwegatestowe) =>
+      s-stowe m-match {
+        c-case wtastowe: weawtimeaggwegatestowe i-if wtastowe.ispwod == ispwod => {
+          w-wazy vaw pwimawystowe: m-mewgeabwestowe[(aggwegationkey, XD b-batchid), (U ﹏ U) datawecowd] =
+            memcache.getmemcachestowe[(aggwegationkey, (˘ω˘) b-batchid), UwU d-datawecowd](
+              w-wtastowe.onwine(sewviceidentifiew))
 
-          lazy val mergeableStore: MergeableStore[(AggregationKey, BatchID), DataRecord] =
-            if (jobConfig.enableUserReindexingNighthawkBtreeStore
-              || jobConfig.enableUserReindexingNighthawkHashStore) {
-              val reindexingNighthawkBtreeWritableDataRecordStoreList =
-                if (jobConfig.enableUserReindexingNighthawkBtreeStore) {
-                  lazy val cacheClientNighthawkConfig =
-                    jobConfig.userReindexingNighthawkBtreeStoreConfig.online(serviceIdentifier)
-                  List(
-                    UserReindexingNighthawkWritableDataRecordStore.getBtreeStore(
-                      nighthawkCacheConfig = cacheClientNighthawkConfig,
-                      // Choose a reasonably large target size as this will be equivalent to the number of unique (user, timestamp)
-                      // keys that are returned on read on the pKey, and we may have duplicate authors and associated records.
-                      targetSize = 512,
-                      statsReceiver = statsReceiver,
-                      // Assuming trims are relatively expensive, choose a trimRate that's not as aggressive. In this case we trim on
-                      // 10% of all writes.
-                      trimRate = 0.1
+          wazy v-vaw mewgeabwestowe: m-mewgeabwestowe[(aggwegationkey, >_< batchid), datawecowd] =
+            if (jobconfig.enabweusewweindexingnighthawkbtweestowe
+              || j-jobconfig.enabweusewweindexingnighthawkhashstowe) {
+              vaw weindexingnighthawkbtweewwitabwedatawecowdstowewist =
+                if (jobconfig.enabweusewweindexingnighthawkbtweestowe) {
+                  wazy vaw cachecwientnighthawkconfig =
+                    jobconfig.usewweindexingnighthawkbtweestoweconfig.onwine(sewviceidentifiew)
+                  wist(
+                    u-usewweindexingnighthawkwwitabwedatawecowdstowe.getbtweestowe(
+                      nyighthawkcacheconfig = cachecwientnighthawkconfig, σωσ
+                      // choose a-a weasonabwy w-wawge tawget size a-as this wiww be equivawent to t-the nyumbew of unique (usew, 🥺 timestamp)
+                      // k-keys that awe w-wetuwned on wead on the pkey, 🥺 and we may have dupwicate authows and associated wecowds. ʘwʘ
+                      tawgetsize = 512, :3
+                      s-statsweceivew = statsweceivew, (U ﹏ U)
+                      // a-assuming twims awe w-wewativewy expensive, (U ﹏ U) c-choose a twimwate that's nyot as aggwessive. ʘwʘ i-in this case w-we twim on
+                      // 10% of aww w-wwites. >w<
+                      t-twimwate = 0.1
                     ))
-                } else { Nil }
-              val reindexingNighthawkHashWritableDataRecordStoreList =
-                if (jobConfig.enableUserReindexingNighthawkHashStore) {
-                  lazy val cacheClientNighthawkConfig =
-                    jobConfig.userReindexingNighthawkHashStoreConfig.online(serviceIdentifier)
-                  List(
-                    UserReindexingNighthawkWritableDataRecordStore.getHashStore(
-                      nighthawkCacheConfig = cacheClientNighthawkConfig,
-                      // Choose a reasonably large target size as this will be equivalent to the number of unique (user, timestamp)
-                      // keys that are returned on read on the pKey, and we may have duplicate authors and associated records.
-                      targetSize = 512,
-                      statsReceiver = statsReceiver,
-                      // Assuming trims are relatively expensive, choose a trimRate that's not as aggressive. In this case we trim on
-                      // 10% of all writes.
-                      trimRate = 0.1
+                } ewse { nyiw }
+              vaw weindexingnighthawkhashwwitabwedatawecowdstowewist =
+                if (jobconfig.enabweusewweindexingnighthawkhashstowe) {
+                  wazy vaw cachecwientnighthawkconfig =
+                    jobconfig.usewweindexingnighthawkhashstoweconfig.onwine(sewviceidentifiew)
+                  w-wist(
+                    u-usewweindexingnighthawkwwitabwedatawecowdstowe.gethashstowe(
+                      n-nyighthawkcacheconfig = cachecwientnighthawkconfig, rawr x3
+                      // c-choose a weasonabwy w-wawge tawget size as this w-wiww be equivawent to the nyumbew of unique (usew, OwO timestamp)
+                      // keys t-that awe wetuwned o-on wead on the pkey, ^•ﻌ•^ and we may have dupwicate a-authows and associated w-wecowds. >_<
+                      tawgetsize = 512, OwO
+                      statsweceivew = statsweceivew,
+                      // assuming twims awe wewativewy e-expensive, >_< choose a twimwate that's nyot as aggwessive. (ꈍᴗꈍ) in this case we twim o-on
+                      // 10% of aww wwites. >w<
+                      twimwate = 0.1
                     ))
-                } else { Nil }
+                } ewse { n-niw }
 
-              lazy val replicatingWritableStore = new ReplicatingWritableStore(
-                stores = List(primaryStore) ++ reindexingNighthawkBtreeWritableDataRecordStoreList
-                  ++ reindexingNighthawkHashWritableDataRecordStoreList
+              w-wazy vaw wepwicatingwwitabwestowe = nyew wepwicatingwwitabwestowe(
+                stowes = w-wist(pwimawystowe) ++ w-weindexingnighthawkbtweewwitabwedatawecowdstowewist
+                  ++ weindexingnighthawkhashwwitabwedatawecowdstowewist
               )
 
-              lazy val combinedStoreWithReindexing = new CombinedStore(
-                read = primaryStore,
-                write = replicatingWritableStore
+              wazy vaw combinedstowewithweindexing = nyew c-combinedstowe(
+                wead = pwimawystowe, (U ﹏ U)
+                w-wwite = wepwicatingwwitabwestowe
               )
 
-              combinedStoreWithReindexing.toMergeable
-            } else {
-              primaryStore
+              combinedstowewithweindexing.tomewgeabwe
+            } ewse {
+              p-pwimawystowe
             }
 
-          lazy val storeFactory: MergeableStoreFactory[(AggregationKey, BatchID), DataRecord] =
-            Storm.store(mergeableStore)(Batcher.unit)
-          Some(storeFactory)
+          wazy vaw s-stowefactowy: m-mewgeabwestowefactowy[(aggwegationkey, ^^ batchid), (U ﹏ U) d-datawecowd] =
+            stowm.stowe(mewgeabwestowe)(batchew.unit)
+          some(stowefactowy)
         }
-        case _ => None
+        c-case _ => nyone
       }
   }
 
-  def buildDataRecordSourceToStorm(
-    jobConfig: RealTimeAggregatesJobConfig
-  ): (AggregateSource => Option[Producer[Storm, DataRecord]]) = { (source: AggregateSource) =>
+  d-def buiwddatawecowdsouwcetostowm(
+    j-jobconfig: weawtimeaggwegatesjobconfig
+  ): (aggwegatesouwce => o-option[pwoducew[stowm, :3 d-datawecowd]]) = { (souwce: aggwegatesouwce) =>
     {
-      source match {
-        case stormAggregateSource: StormAggregateSource =>
-          Some(stormAggregateSource.build(statsReceiver, jobConfig))
-        case _ => None
+      souwce m-match {
+        c-case stowmaggwegatesouwce: s-stowmaggwegatesouwce =>
+          some(stowmaggwegatesouwce.buiwd(statsweceivew, (✿oωo) jobconfig))
+        case _ => nyone
       }
     }
   }
 
-  def apply(args: Args): ProductionStormConfig = {
-    lazy val isProd = args.boolean("production")
-    lazy val cluster = args.getOrElse("cluster", "")
-    lazy val isDebug = args.boolean("debug")
-    lazy val role = args.getOrElse("role", "")
-    lazy val service =
-      args.getOrElse(
-        "service_name",
+  d-def appwy(awgs: awgs): pwoductionstowmconfig = {
+    w-wazy v-vaw ispwod = awgs.boowean("pwoduction")
+    wazy vaw cwustew = awgs.getowewse("cwustew", XD "")
+    w-wazy vaw isdebug = a-awgs.boowean("debug")
+    wazy v-vaw wowe = awgs.getowewse("wowe", >w< "")
+    w-wazy vaw sewvice =
+      a-awgs.getowewse(
+        "sewvice_name", òωó
         ""
-      ) // don't use the argument service, which is a reserved heron argument
-    lazy val environment = if (isProd) "prod" else "devel"
-    lazy val s2sEnabled = args.boolean("s2s")
-    lazy val keyedByUserEnabled = args.boolean("keyed_by_user")
-    lazy val keyedByAuthorEnabled = args.boolean("keyed_by_author")
+      ) // don't use the awgument sewvice, (ꈍᴗꈍ) which is a wesewved hewon awgument
+    wazy v-vaw enviwonment = if (ispwod) "pwod" e-ewse "devew"
+    wazy vaw s-s2senabwed = awgs.boowean("s2s")
+    wazy vaw keyedbyusewenabwed = a-awgs.boowean("keyed_by_usew")
+    wazy vaw keyedbyauthowenabwed = a-awgs.boowean("keyed_by_authow")
 
-    require(clusters.contains(cluster))
-    if (s2sEnabled) {
-      require(role.length() > 0)
-      require(service.length() > 0)
+    w-wequiwe(cwustews.contains(cwustew))
+    i-if (s2senabwed) {
+      w-wequiwe(wowe.wength() > 0)
+      w-wequiwe(sewvice.wength() > 0)
     }
 
-    lazy val serviceIdentifier = if (s2sEnabled) {
-      ServiceIdentifier(
-        role = role,
-        service = service,
-        environment = environment,
-        zone = cluster
+    wazy vaw sewviceidentifiew = if (s2senabwed) {
+      sewviceidentifiew(
+        wowe = wowe, rawr x3
+        sewvice = sewvice, rawr x3
+        e-enviwonment = e-enviwonment, σωσ
+        z-zone = cwustew
       )
-    } else EmptyServiceIdentifier
+    } ewse emptysewviceidentifiew
 
-    lazy val jobConfig = {
-      val jobConfig = if (isProd) jobConfigs.Prod else jobConfigs.Devel
-      jobConfig.copy(
-        serviceIdentifier = serviceIdentifier,
-        keyedByUserEnabled = keyedByUserEnabled,
-        keyedByAuthorEnabled = keyedByAuthorEnabled)
+    w-wazy vaw jobconfig = {
+      vaw jobconfig = if (ispwod) jobconfigs.pwod ewse j-jobconfigs.devew
+      j-jobconfig.copy(
+        sewviceidentifiew = s-sewviceidentifiew, (ꈍᴗꈍ)
+        keyedbyusewenabwed = keyedbyusewenabwed, rawr
+        k-keyedbyauthowenabwed = k-keyedbyauthowenabwed)
     }
 
-    lazy val dataRecordSourceToStorm = buildDataRecordSourceToStorm(jobConfig)
-    lazy val aggregateStoreToStorm =
-      buildAggregateStoreToStorm(isProd, serviceIdentifier, jobConfig)
+    wazy vaw d-datawecowdsouwcetostowm = b-buiwddatawecowdsouwcetostowm(jobconfig)
+    wazy vaw aggwegatestowetostowm =
+      buiwdaggwegatestowetostowm(ispwod, ^^;; sewviceidentifiew, rawr x3 j-jobconfig)
 
-    lazy val JaasConfigFlag = "-Djava.security.auth.login.config=resources/jaas.conf"
-    lazy val JaasDebugFlag = "-Dsun.security.krb5.debug=true"
-    lazy val JaasConfigString =
-      if (isDebug) { "%s %s".format(JaasConfigFlag, JaasDebugFlag) }
-      else JaasConfigFlag
+    w-wazy vaw jaasconfigfwag = "-djava.secuwity.auth.wogin.config=wesouwces/jaas.conf"
+    w-wazy v-vaw jaasdebugfwag = "-dsun.secuwity.kwb5.debug=twue"
+    w-wazy vaw jaasconfigstwing =
+      i-if (isdebug) { "%s %s".fowmat(jaasconfigfwag, (ˆ ﻌ ˆ)♡ j-jaasdebugfwag) }
+      ewse jaasconfigfwag
 
-    new ProductionStormConfig {
-      implicit val jobId: JobId = JobId(jobConfig.name)
-      override val jobName = JobName(jobConfig.name)
-      override val teamName = TeamName(jobConfig.teamName)
-      override val teamEmail = TeamEmail(jobConfig.teamEmail)
-      override val capTicket = CapTicket("n/a")
+    n-new pwoductionstowmconfig {
+      i-impwicit vaw jobid: j-jobid = jobid(jobconfig.name)
+      ovewwide vaw jobname = jobname(jobconfig.name)
+      o-ovewwide vaw teamname = t-teamname(jobconfig.teamname)
+      o-ovewwide vaw teamemaiw = teamemaiw(jobconfig.teamemaiw)
+      o-ovewwide vaw capticket = capticket("n/a")
 
-      val configureHeronJvmSettings = {
-        val heronJvmOptions = new java.util.HashMap[String, AnyRef]()
-        jobConfig.componentToRamGigaBytesMap.foreach {
-          case (component, gigabytes) =>
-            HeronConfig.setComponentRam(
-              heronJvmOptions,
-              component,
-              ByteAmount.fromGigabytes(gigabytes))
+      vaw configuwehewonjvmsettings = {
+        v-vaw h-hewonjvmoptions = n-nyew java.utiw.hashmap[stwing, σωσ anywef]()
+        jobconfig.componenttowamgigabytesmap.foweach {
+          case (component, (U ﹏ U) g-gigabytes) =>
+            hewonconfig.setcomponentwam(
+              hewonjvmoptions, >w<
+              c-component, σωσ
+              b-byteamount.fwomgigabytes(gigabytes))
         }
 
-        HeronConfig.setContainerRamRequested(
-          heronJvmOptions,
-          ByteAmount.fromGigabytes(jobConfig.containerRamGigaBytes)
+        hewonconfig.setcontainewwamwequested(
+          h-hewonjvmoptions,
+          byteamount.fwomgigabytes(jobconfig.containewwamgigabytes)
         )
 
-        jobConfig.componentsToKerberize.foreach { component =>
-          HeronConfig.setComponentJvmOptions(
-            heronJvmOptions,
-            component,
-            JaasConfigString
+        j-jobconfig.componentstokewbewize.foweach { c-component =>
+          hewonconfig.setcomponentjvmoptions(
+            hewonjvmoptions, nyaa~~
+            c-component, 🥺
+            jaasconfigstwing
           )
         }
 
-        jobConfig.componentToMetaSpaceSizeMap.foreach {
-          case (component, metaspaceSize) =>
-            HeronConfig.setComponentJvmOptions(
-              heronJvmOptions,
-              component,
-              metaspaceSize
+        jobconfig.componenttometaspacesizemap.foweach {
+          c-case (component, rawr x3 m-metaspacesize) =>
+            hewonconfig.setcomponentjvmoptions(
+              h-hewonjvmoptions, σωσ
+              component, (///ˬ///✿)
+              m-metaspacesize
             )
         }
 
-        heronJvmOptions.asScala.toMap ++ AggregatesV2Job
-          .aggregateNames(aggregatesToCompute).map {
-            case (prefix, aggNames) => (s"extras.aggregateNames.${prefix}", aggNames)
+        h-hewonjvmoptions.asscawa.tomap ++ a-aggwegatesv2job
+          .aggwegatenames(aggwegatestocompute).map {
+            case (pwefix, aggnames) => (s"extwas.aggwegatenames.${pwefix}", (U ﹏ U) aggnames)
           }
       }
 
-      override def transformConfig(m: Map[String, AnyRef]): Map[String, AnyRef] = {
-        super.transformConfig(m) ++ List(
+      ovewwide def twansfowmconfig(m: map[stwing, ^^;; anywef]): map[stwing, 🥺 anywef] = {
+        supew.twansfowmconfig(m) ++ wist(
           /**
-           * Disable acking by setting acker executors to 0. Tuples that come off the
-           * spout will be immediately acked which effectively disables retries on tuple
-           * failures. This should help topology throughput/availability by relaxing consistency.
+           * disabwe acking by setting ackew executows t-to 0. òωó tupwes t-that come off the
+           * spout wiww be i-immediatewy acked w-which effectivewy d-disabwes wetwies on tupwe
+           * f-faiwuwes. XD this shouwd h-hewp topowogy thwoughput/avaiwabiwity b-by wewaxing consistency. :3
            */
-          Config.TOPOLOGY_ACKER_EXECUTORS -> int2Integer(0),
-          Config.TOPOLOGY_WORKERS -> int2Integer(jobConfig.topologyWorkers),
-          HeronConfig.TOPOLOGY_CONTAINER_CPU_REQUESTED -> int2Integer(8),
-          HeronConfig.TOPOLOGY_DROPTUPLES_UPON_BACKPRESSURE -> java.lang.Boolean.valueOf(true),
-          HeronConfig.TOPOLOGY_WORKER_CHILDOPTS -> List(
-            JaasConfigString,
-            s"-Dcom.twitter.eventbus.client.zoneName=${cluster}",
-            "-Dcom.twitter.eventbus.client.EnableKafkaSaslTls=true"
-          ).mkString(" "),
-          "storm.job.uniqueId" -> jobId.get
-        ) ++ configureHeronJvmSettings
+          c-config.topowogy_ackew_executows -> int2integew(0), (U ﹏ U)
+          c-config.topowogy_wowkews -> i-int2integew(jobconfig.topowogywowkews), >w<
+          hewonconfig.topowogy_containew_cpu_wequested -> int2integew(8), /(^•ω•^)
+          h-hewonconfig.topowogy_dwoptupwes_upon_backpwessuwe -> j-java.wang.boowean.vawueof(twue), (⑅˘꒳˘)
+          h-hewonconfig.topowogy_wowkew_chiwdopts -> w-wist(
+            j-jaasconfigstwing, ʘwʘ
+            s-s"-dcom.twittew.eventbus.cwient.zonename=${cwustew}", rawr x3
+            "-dcom.twittew.eventbus.cwient.enabwekafkasaswtws=twue"
+          ).mkstwing(" "), (˘ω˘)
+          "stowm.job.uniqueid" -> j-jobid.get
+        ) ++ c-configuwehewonjvmsettings
 
       }
 
-      override lazy val getNamedOptions: Map[String, Options] = jobConfig.topologyNamedOptions ++
-        Map(
-          "DEFAULT" -> Options()
-            .set(flatMapMetrics)
-            .set(summerMetrics)
-            .set(MaxWaitingFutures(1000))
-            .set(FlushFrequency(30.seconds))
-            .set(UseAsyncCache(true))
-            .set(AsyncPoolSize(4))
-            .set(SourceParallelism(jobConfig.sourceCount))
-            .set(SummerBatchMultiplier(1000)),
-          "FLATMAP" -> Options()
-            .set(FlatMapParallelism(jobConfig.flatMapCount))
-            .set(CacheSize(0)),
-          "SUMMER" -> Options()
-            .set(SummerParallelism(jobConfig.summerCount))
+      o-ovewwide wazy vaw getnamedoptions: m-map[stwing, o.O options] = j-jobconfig.topowogynamedoptions ++
+        m-map(
+          "defauwt" -> options()
+            .set(fwatmapmetwics)
+            .set(summewmetwics)
+            .set(maxwaitingfutuwes(1000))
+            .set(fwushfwequency(30.seconds))
+            .set(useasynccache(twue))
+            .set(asyncpoowsize(4))
+            .set(souwcepawawwewism(jobconfig.souwcecount))
+            .set(summewbatchmuwtipwiew(1000)), 😳
+          "fwatmap" -> o-options()
+            .set(fwatmappawawwewism(jobconfig.fwatmapcount))
+            .set(cachesize(0)), o.O
+          "summew" -> options()
+            .set(summewpawawwewism(jobconfig.summewcount))
             /**
-             * Sets number of tuples a Summer awaits before aggregation. Set higher
-             * if you need to lower qps to memcache at the expense of introducing
-             * some (stable) latency.
+             * sets nyumbew o-of tupwes a summew awaits b-befowe aggwegation. ^^;; s-set highew
+             * if y-you nyeed to wowew qps to memcache a-at the expense of intwoducing
+             * s-some (stabwe) watency. ( ͡o ω ͡o )
              */
-            .set(CacheSize(jobConfig.cacheSize))
+            .set(cachesize(jobconfig.cachesize))
         )
 
-      val featureCounters: Seq[DataRecordFeatureCounter] =
-        Seq(DataRecordFeatureCounter.any(Counter(Group("feature_counter"), Name("num_records"))))
+      v-vaw featuwecountews: seq[datawecowdfeatuwecountew] =
+        s-seq(datawecowdfeatuwecountew.any(countew(gwoup("featuwe_countew"), ^^;; nyame("num_wecowds"))))
 
-      override def graph: TailProducer[Storm, Any] = AggregatesV2Job.generateJobGraph[Storm](
-        aggregateSet = aggregatesToCompute,
-        aggregateSourceToSummingbird = dataRecordSourceToStorm,
-        aggregateStoreToSummingbird = aggregateStoreToStorm,
-        featureCounters = featureCounters
+      ovewwide def gwaph: taiwpwoducew[stowm, any] = aggwegatesv2job.genewatejobgwaph[stowm](
+        a-aggwegateset = aggwegatestocompute, ^^;;
+        a-aggwegatesouwcetosummingbiwd = d-datawecowdsouwcetostowm, XD
+        aggwegatestowetosummingbiwd = aggwegatestowetostowm, 🥺
+        featuwecountews = f-featuwecountews
       )
     }
   }

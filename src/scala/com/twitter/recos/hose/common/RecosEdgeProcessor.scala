@@ -1,40 +1,40 @@
-package com.twitter.recos.hose.common
+package com.twittew.wecos.hose.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.util.Future
-import org.apache.kafka.clients.consumer.ConsumerRecord
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wecos.intewnaw.thwiftscawa.wecoshosemessage
+i-impowt com.twittew.utiw.futuwe
+i-impowt owg.apache.kafka.cwients.consumew.consumewwecowd
 
 /**
- * The class processes RecosHoseMessage and inserts the message as an edge into a recos graph.
+ * t-the cwass pwocesses w-wecoshosemessage a-and insewts t-the message a-as an edge into a wecos gwaph. (✿oωo)
  */
-case class RecosEdgeProcessor(
-  edgeCollector: EdgeCollector
+case cwass wecosedgepwocessow(
+  edgecowwectow: edgecowwectow
 )(
-  implicit statsReceiver: StatsReceiver) {
+  i-impwicit statsweceivew: statsweceivew) {
 
-  private val scopedStats = statsReceiver.scope("RecosEdgeProcessor")
+  pwivate vaw scopedstats = s-statsweceivew.scope("wecosedgepwocessow")
 
-  private val processEventsCounter = scopedStats.counter("process_events")
-  private val nullPointerEventCounter = scopedStats.counter("null_pointer_num")
-  private val errorCounter = scopedStats.counter("process_errors")
+  pwivate v-vaw pwocesseventscountew = scopedstats.countew("pwocess_events")
+  pwivate vaw nyuwwpointeweventcountew = s-scopedstats.countew("nuww_pointew_num")
+  pwivate vaw e-ewwowcountew = s-scopedstats.countew("pwocess_ewwows")
 
-  def process(record: ConsumerRecord[String, RecosHoseMessage]): Future[Unit] = {
-    processEventsCounter.incr()
-    val message = record.value()
-    try {
-      // the message is nullable
-      if (message != null) {
-        edgeCollector.addEdge(message)
-      } else {
-        nullPointerEventCounter.incr()
+  def pwocess(wecowd: consumewwecowd[stwing, wecoshosemessage]): futuwe[unit] = {
+    p-pwocesseventscountew.incw()
+    vaw message = wecowd.vawue()
+    twy {
+      // the m-message is nyuwwabwe
+      if (message != n-nyuww) {
+        e-edgecowwectow.addedge(message)
+      } e-ewse {
+        n-nuwwpointeweventcountew.incw()
       }
-      Future.Unit
+      futuwe.unit
     } catch {
-      case e: Throwable =>
-        errorCounter.incr()
-        e.printStackTrace()
-        Future.Unit
+      case e: thwowabwe =>
+        e-ewwowcountew.incw()
+        e.pwintstacktwace()
+        futuwe.unit
     }
   }
 

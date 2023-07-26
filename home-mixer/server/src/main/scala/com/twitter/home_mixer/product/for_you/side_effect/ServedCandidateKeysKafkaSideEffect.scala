@@ -1,111 +1,111 @@
-package com.twitter.home_mixer.product.for_you.side_effect
+package com.twittew.home_mixew.pwoduct.fow_you.side_effect
 
-import com.twitter.home_mixer.model.HomeFeatures.IsReadFromCacheFeature
-import com.twitter.home_mixer.model.HomeFeatures.PredictionRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.EnableServedCandidateKafkaPublishingParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.product_mixer.component_library.side_effect.KafkaPublishingSideEffect
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.ml.cont_train.common.domain.non_scalding.DataRecordLoggingRelatedFeatures.tlmServedKeysFeatureContext
-import com.twitter.timelines.ml.kafka.serde.ServedCandidateKeySerde
-import com.twitter.timelines.ml.kafka.serde.TBaseSerde
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.served_candidates_logging.{thriftscala => sc}
-import com.twitter.timelines.suggests.common.poly_data_record.{thriftjava => pldr}
-import com.twitter.util.Time
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.Serializer
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.isweadfwomcachefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.pwedictionwequestidfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.sewvedidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.sewvedwequestidfeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.fow_you.pawam.fowyoupawam.enabwesewvedcandidatekafkapubwishingpawam
+i-impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig
+i-impowt c-com.twittew.mw.api.datawecowd
+impowt com.twittew.mw.api.utiw.swichdatawecowd
+impowt com.twittew.pwoduct_mixew.component_wibwawy.side_effect.kafkapubwishingsideeffect
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.sideeffectidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.timewines.mw.cont_twain.common.domain.non_scawding.datawecowdwoggingwewatedfeatuwes.twmsewvedkeysfeatuwecontext
+i-impowt com.twittew.timewines.mw.kafka.sewde.sewvedcandidatekeysewde
+impowt com.twittew.timewines.mw.kafka.sewde.tbasesewde
+impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes
+i-impowt com.twittew.timewines.sewved_candidates_wogging.{thwiftscawa => sc}
+impowt com.twittew.timewines.suggests.common.powy_data_wecowd.{thwiftjava => pwdw}
+impowt com.twittew.utiw.time
+impowt owg.apache.kafka.cwients.pwoducew.pwoducewwecowd
+i-impowt owg.apache.kafka.common.sewiawization.sewiawizew
 
 /**
- * Pipeline side-effect that publishes candidate keys to a Kafka topic.
+ * p-pipewine s-side-effect t-that pubwishes c-candidate keys to a kafka topic. (˘ω˘)
  */
-class ServedCandidateKeysKafkaSideEffect(
-  topic: String,
-  sourceIdentifiers: Set[CandidatePipelineIdentifier])
-    extends KafkaPublishingSideEffect[
-      sc.ServedCandidateKey,
-      pldr.PolyDataRecord,
-      PipelineQuery,
-      Timeline
+cwass sewvedcandidatekeyskafkasideeffect(
+  t-topic: stwing, (U ﹏ U)
+  souwceidentifiews: set[candidatepipewineidentifiew])
+    e-extends kafkapubwishingsideeffect[
+      sc.sewvedcandidatekey, ^•ﻌ•^
+      pwdw.powydatawecowd, (˘ω˘)
+      pipewinequewy, :3
+      timewine
     ]
-    with PipelineResultSideEffect.Conditionally[PipelineQuery, Timeline] {
+    w-with pipewinewesuwtsideeffect.conditionawwy[pipewinequewy, ^^;; timewine] {
 
-  import ServedCandidateKafkaSideEffect._
+  impowt s-sewvedcandidatekafkasideeffect._
 
-  override val identifier: SideEffectIdentifier = SideEffectIdentifier("ServedCandidateKeys")
+  o-ovewwide v-vaw identifiew: sideeffectidentifiew = sideeffectidentifiew("sewvedcandidatekeys")
 
-  override def onlyIf(
-    query: PipelineQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: Timeline
-  ): Boolean = query.params.getBoolean(EnableServedCandidateKafkaPublishingParam)
+  ovewwide d-def onwyif(
+    q-quewy: pipewinequewy, 🥺
+    sewectedcandidates: seq[candidatewithdetaiws], (⑅˘꒳˘)
+    w-wemainingcandidates: s-seq[candidatewithdetaiws], nyaa~~
+    dwoppedcandidates: s-seq[candidatewithdetaiws], :3
+    wesponse: timewine
+  ): b-boowean = quewy.pawams.getboowean(enabwesewvedcandidatekafkapubwishingpawam)
 
-  override val bootstrapServer: String = "/s/kafka/timeline:kafka-tls"
+  ovewwide v-vaw bootstwapsewvew: stwing = "/s/kafka/timewine:kafka-tws"
 
-  override val keySerde: Serializer[sc.ServedCandidateKey] = ServedCandidateKeySerde.serializer()
+  o-ovewwide vaw keysewde: sewiawizew[sc.sewvedcandidatekey] = sewvedcandidatekeysewde.sewiawizew()
 
-  override val valueSerde: Serializer[pldr.PolyDataRecord] =
-    TBaseSerde.Thrift[pldr.PolyDataRecord]().serializer
+  o-ovewwide v-vaw vawuesewde: sewiawizew[pwdw.powydatawecowd] =
+    tbasesewde.thwift[pwdw.powydatawecowd]().sewiawizew
 
-  override val clientId: String = "home_mixer_served_candidate_keys_producer"
+  ovewwide vaw cwientid: stwing = "home_mixew_sewved_candidate_keys_pwoducew"
 
-  override def buildRecords(
-    query: PipelineQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: Timeline
-  ): Seq[ProducerRecord[sc.ServedCandidateKey, pldr.PolyDataRecord]] = {
-    val servedTimestamp = Time.now.inMilliseconds
-    val servedRequestIdOpt =
-      query.features.getOrElse(FeatureMap.empty).getOrElse(ServedRequestIdFeature, None)
+  ovewwide d-def buiwdwecowds(
+    q-quewy: pipewinequewy, ( ͡o ω ͡o )
+    s-sewectedcandidates: s-seq[candidatewithdetaiws], mya
+    w-wemainingcandidates: seq[candidatewithdetaiws], (///ˬ///✿)
+    dwoppedcandidates: seq[candidatewithdetaiws], (˘ω˘)
+    wesponse: t-timewine
+  ): seq[pwoducewwecowd[sc.sewvedcandidatekey, ^^;; pwdw.powydatawecowd]] = {
+    vaw sewvedtimestamp = t-time.now.inmiwwiseconds
+    vaw sewvedwequestidopt =
+      quewy.featuwes.getowewse(featuwemap.empty).getowewse(sewvedwequestidfeatuwe, (✿oωo) n-nyone)
 
-    extractCandidates(query, selectedCandidates, sourceIdentifiers).collect {
-      // Only publish non-cached tweets to the ServedCandidateKey topic
-      case candidate if !candidate.features.getOrElse(IsReadFromCacheFeature, false) =>
-        val key = sc.ServedCandidateKey(
-          tweetId = candidate.candidateIdLong,
-          viewerId = query.getRequiredUserId,
-          servedId = -1L
+    e-extwactcandidates(quewy, (U ﹏ U) s-sewectedcandidates, -.- souwceidentifiews).cowwect {
+      // o-onwy p-pubwish nyon-cached t-tweets to the s-sewvedcandidatekey topic
+      case candidate i-if !candidate.featuwes.getowewse(isweadfwomcachefeatuwe, ^•ﻌ•^ f-fawse) =>
+        v-vaw key = s-sc.sewvedcandidatekey(
+          t-tweetid = candidate.candidateidwong, rawr
+          viewewid = quewy.getwequiwedusewid, (˘ω˘)
+          s-sewvedid = -1w
         )
 
-        val record = SRichDataRecord(new DataRecord, tlmServedKeysFeatureContext)
-        record.setFeatureValueFromOption(
-          TimelinesSharedFeatures.PREDICTION_REQUEST_ID,
-          candidate.features.getOrElse(PredictionRequestIdFeature, None)
+        vaw wecowd = swichdatawecowd(new datawecowd, nyaa~~ twmsewvedkeysfeatuwecontext)
+        wecowd.setfeatuwevawuefwomoption(
+          t-timewinesshawedfeatuwes.pwediction_wequest_id, UwU
+          candidate.featuwes.getowewse(pwedictionwequestidfeatuwe, :3 nyone)
         )
-        record
-          .setFeatureValueFromOption(TimelinesSharedFeatures.SERVED_REQUEST_ID, servedRequestIdOpt)
-        record.setFeatureValueFromOption(
-          TimelinesSharedFeatures.SERVED_ID,
-          candidate.features.getOrElse(ServedIdFeature, None)
+        wecowd
+          .setfeatuwevawuefwomoption(timewinesshawedfeatuwes.sewved_wequest_id, (⑅˘꒳˘) s-sewvedwequestidopt)
+        w-wecowd.setfeatuwevawuefwomoption(
+          t-timewinesshawedfeatuwes.sewved_id, (///ˬ///✿)
+          candidate.featuwes.getowewse(sewvedidfeatuwe, n-nyone)
         )
-        record.setFeatureValueFromOption(
-          TimelinesSharedFeatures.INJECTION_TYPE,
-          record.getFeatureValueOpt(TimelinesSharedFeatures.INJECTION_TYPE))
-        record.setFeatureValue(
-          TimelinesSharedFeatures.SERVED_TIMESTAMP,
-          servedTimestamp
+        wecowd.setfeatuwevawuefwomoption(
+          t-timewinesshawedfeatuwes.injection_type, ^^;;
+          wecowd.getfeatuwevawueopt(timewinesshawedfeatuwes.injection_type))
+        w-wecowd.setfeatuwevawue(
+          timewinesshawedfeatuwes.sewved_timestamp, >_<
+          sewvedtimestamp
         )
-        record.record.dropUnknownFeatures()
+        wecowd.wecowd.dwopunknownfeatuwes()
 
-        new ProducerRecord(topic, key, pldr.PolyDataRecord.dataRecord(record.getRecord))
+        nyew pwoducewwecowd(topic, rawr x3 key, pwdw.powydatawecowd.datawecowd(wecowd.getwecowd))
     }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(98.5)
+  o-ovewwide vaw awewts = s-seq(
+    homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(98.5)
   )
 }

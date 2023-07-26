@@ -1,227 +1,227 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.google.common.base.Charsets
-import com.google.common.primitives.{Ints, Longs}
-import com.twitter.scrooge.{BinaryThriftStructSerializer, ThriftStructCodec, ThriftStruct}
-import com.twitter.util.{Future, Return, Try, Throw}
-import java.nio.{ByteBuffer, CharBuffer}
-import java.nio.charset.{Charset, CharsetEncoder, CharsetDecoder}
+impowt com.googwe.common.base.chawsets
+i-impowt com.googwe.common.pwimitives.{ints, rawr x3 w-wongs}
+impowt com.twittew.scwooge.{binawythwiftstwuctsewiawizew, (✿oωo) t-thwiftstwuctcodec, (ˆ ﻌ ˆ)♡ t-thwiftstwuct}
+i-impowt com.twittew.utiw.{futuwe, :3 w-wetuwn, (U ᵕ U❁) twy, t-thwow}
+impowt java.nio.{bytebuffew, ^^;; c-chawbuffew}
+impowt java.nio.chawset.{chawset, mya chawsetencodew, 😳😳😳 chawsetdecodew}
 
 /**
- * Transformer is a (possibly partial) bidirectional conversion
- * between values of two types. It is particularly useful for
- * serializing values for storage and reading them back out (see
- * com.twitter.servo.cache.Serializer).
+ * twansfowmew i-is a (possibwy pawtiaw) bidiwectionaw convewsion
+ * b-between vawues of two t-types. OwO it is pawticuwawwy usefuw fow
+ * sewiawizing vawues fow s-stowage and weading them back out (see
+ * c-com.twittew.sewvo.cache.sewiawizew). rawr
  *
- * In some implementations, the conversion may lose data (for example
- * when used for storage in a cache). In general, any data that passes
- * through a conversion should be preserved if the data is converted
- * back. There is code to make it easy to check that your Transformer
- * instance has this property in
- * com.twitter.servo.util.TransformerLawSpec.
+ * i-in some impwementations, XD the convewsion may wose data (fow exampwe
+ * when u-used fow stowage in a cache). (U ﹏ U) in genewaw, (˘ω˘) any data that passes
+ * thwough a convewsion s-shouwd be pwesewved if the d-data is convewted
+ * b-back. UwU thewe i-is code to make i-it easy to check that youw twansfowmew
+ * instance h-has this pwopewty in
+ * com.twittew.sewvo.utiw.twansfowmewwawspec. >_<
  *
- * Transformers should take care not to mutate their inputs when
- * converting in either direction, in order to ensure that concurrent
- * transformations of the same input yield the same result.
+ * twansfowmews shouwd t-take cawe nyot to mutate theiw inputs when
+ * convewting in eithew diwection, σωσ in owdew to ensuwe t-that concuwwent
+ * twansfowmations o-of the same i-input yiewd the s-same wesuwt. 🥺
  *
- * Transformer forms a category with `andThen` and `identity`.
+ * twansfowmew fowms a categowy with `andthen` a-and `identity`. 🥺
  */
-trait Transformer[A, B] { self =>
-  def to(a: A): Try[B]
+t-twait twansfowmew[a, ʘwʘ b] { s-sewf =>
+  def to(a: a-a): twy[b]
 
-  def from(b: B): Try[A]
+  def fwom(b: b): t-twy[a]
 
-  @deprecated("Use Future.const(transformer.to(x))", "2.0.1")
-  def asyncTo(a: A): Future[B] = Future.const(to(a))
+  @depwecated("use futuwe.const(twansfowmew.to(x))", :3 "2.0.1")
+  d-def asyncto(a: a): futuwe[b] = futuwe.const(to(a))
 
-  @deprecated("Use Future.const(transformer.from(x))", "2.0.1")
-  def asyncFrom(b: B): Future[A] = Future.const(from(b))
+  @depwecated("use f-futuwe.const(twansfowmew.fwom(x))", (U ﹏ U) "2.0.1")
+  def asyncfwom(b: b-b): futuwe[a] = futuwe.const(fwom(b))
 
   /**
-   * Compose this transformer with another. As long as both
-   * transformers follow the stated laws, the composed transformer
-   * will follow them.
+   * c-compose this t-twansfowmew with anothew. (U ﹏ U) as wong as both
+   * twansfowmews fowwow the stated waws, ʘwʘ the composed twansfowmew
+   * w-wiww fowwow them. >w<
    */
-  def andThen[C](t: Transformer[B, C]): Transformer[A, C] =
-    new Transformer[A, C] {
-      override def to(a: A) = self.to(a) andThen t.to
-      override def from(c: C) = t.from(c) andThen self.from
+  d-def andthen[c](t: twansfowmew[b, rawr x3 c-c]): t-twansfowmew[a, OwO c-c] =
+    nyew twansfowmew[a, c] {
+      ovewwide def to(a: a) = s-sewf.to(a) andthen t.to
+      ovewwide def fwom(c: c) = t.fwom(c) andthen sewf.fwom
     }
 
   /**
-   * Reverse the direction of this transformer.
+   * w-wevewse the diwection of t-this twansfowmew. ^•ﻌ•^
    *
-   * Law: t.flip.flip == t
+   * w-waw: t-t.fwip.fwip == t
    */
-  lazy val flip: Transformer[B, A] =
-    new Transformer[B, A] {
-      override lazy val flip = self
-      override def to(b: B) = self.from(b)
-      override def from(a: A) = self.to(a)
+  wazy vaw f-fwip: twansfowmew[b, >_< a-a] =
+    n-new twansfowmew[b, OwO a-a] {
+      ovewwide wazy vaw fwip = sewf
+      o-ovewwide def t-to(b: b) = sewf.fwom(b)
+      o-ovewwide d-def fwom(a: a-a) = sewf.to(a)
     }
 }
 
-object Transformer {
+object twansfowmew {
 
   /**
-   * Create a new Transformer from the supplied functions, catching
-   * exceptions and converting them to failures.
+   * cweate a-a nyew twansfowmew fwom the suppwied functions, >_< catching
+   * exceptions and convewting them t-to faiwuwes.
    */
-  def apply[A, B](tTo: A => B, tFrom: B => A): Transformer[A, B] =
-    new Transformer[A, B] {
-      override def to(a: A): Try[B] = Try { tTo(a) }
-      override def from(b: B): Try[A] = Try { tFrom(b) }
+  def appwy[a, (ꈍᴗꈍ) b](tto: a => b, >w< tfwom: b => a): t-twansfowmew[a, (U ﹏ U) b-b] =
+    nyew t-twansfowmew[a, ^^ b] {
+      ovewwide d-def to(a: a): twy[b] = twy { t-tto(a) }
+      ovewwide d-def fwom(b: b): twy[a] = twy { tfwom(b) }
     }
 
-  def identity[A]: Transformer[A, A] = pure[A, A](a => a, a => a)
+  def identity[a]: twansfowmew[a, (U ﹏ U) a] = p-puwe[a, :3 a](a => a, (✿oωo) a => a)
 
   /**
-   * Lift a pair of (total) conversion functions to a Transformer. The
-   * caller is responsible for ensuring that the resulting transformer
-   * follows the laws for Transformers.
+   * w-wift a paiw of (totaw) convewsion f-functions t-to a twansfowmew. XD the
+   * cawwew is wesponsibwe f-fow ensuwing t-that the wesuwting twansfowmew
+   * f-fowwows the w-waws fow twansfowmews. >w<
    */
-  def pure[A, B](pureTo: A => B, pureFrom: B => A): Transformer[A, B] =
-    new Transformer[A, B] {
-      override def to(a: A): Try[B] = Return(pureTo(a))
-      override def from(b: B): Try[A] = Return(pureFrom(b))
+  def puwe[a, òωó b](puweto: a => b, (ꈍᴗꈍ) puwefwom: b => a): twansfowmew[a, rawr x3 b-b] =
+    nyew twansfowmew[a, rawr x3 b-b] {
+      o-ovewwide def to(a: a): t-twy[b] = wetuwn(puweto(a))
+      o-ovewwide def fwom(b: b): twy[a] = w-wetuwn(puwefwom(b))
     }
 
   /**
-   * Lift a transformer to a transformer on optional values.
+   * wift a twansfowmew to a twansfowmew on optionaw vawues. σωσ
    *
-   * None bypasses the underlying conversion (as it must, since there
-   * is no value to transform).
+   * n-nyone b-bypasses the undewwying convewsion (as it must, (ꈍᴗꈍ) s-since thewe
+   * i-is no vawue to twansfowm). rawr
    */
-  def optional[A, B](underlying: Transformer[A, B]): Transformer[Option[A], Option[B]] =
-    new Transformer[Option[A], Option[B]] {
-      override def to(optA: Option[A]) = optA match {
-        case None => Return.None
-        case Some(a) => underlying.to(a) map { Some(_) }
+  def optionaw[a, ^^;; b](undewwying: t-twansfowmew[a, rawr x3 b]): twansfowmew[option[a], (ˆ ﻌ ˆ)♡ option[b]] =
+    nyew twansfowmew[option[a], option[b]] {
+      ovewwide def to(opta: o-option[a]) = opta match {
+        case nyone => w-wetuwn.none
+        c-case some(a) => undewwying.to(a) map { some(_) }
       }
 
-      override def from(optB: Option[B]) = optB match {
-        case None => Return.None
-        case Some(b) => underlying.from(b) map { Some(_) }
+      o-ovewwide d-def fwom(optb: option[b]) = optb match {
+        case nyone => w-wetuwn.none
+        case some(b) => u-undewwying.fwom(b) map { some(_) }
       }
     }
 
   //////////////////////////////////////////////////
-  // Transformers for accessing/generating fields of a Map.
+  // twansfowmews fow accessing/genewating f-fiewds of a map. σωσ
   //
-  // These transformers are useful for serializing/deserializing to
-  // storage that stores Maps, for example Hamsa.
+  // t-these twansfowmews a-awe usefuw fow sewiawizing/desewiawizing t-to
+  // stowage that s-stowes maps, (U ﹏ U) f-fow exampwe hamsa. >w<
 
   /**
-   * Thrown by `requiredField` when the field is not present.
+   * thwown b-by `wequiwedfiewd` when the f-fiewd is nyot p-pwesent. σωσ
    */
-  case class MissingRequiredField[K](k: K) extends RuntimeException
+  case cwass missingwequiwedfiewd[k](k: k) extends w-wuntimeexception
 
   /**
-   * Get a value from the map, yielding MissingRequiredField when the
-   * value is not present in the map.
+   * get a-a vawue fwom t-the map, nyaa~~ yiewding missingwequiwedfiewd when the
+   * v-vawue is nyot pwesent in the m-map. 🥺
    *
-   * The inverse transform yields a Map containing only the one value.
+   * t-the invewse twansfowm yiewds a map containing onwy the one vawue. rawr x3
    */
-  def requiredField[K, V](k: K): Transformer[Map[K, V], V] =
-    new Transformer[Map[K, V], V] {
-      override def to(m: Map[K, V]) =
+  d-def wequiwedfiewd[k, σωσ v-v](k: k): twansfowmew[map[k, (///ˬ///✿) v-v], v-v] =
+    new twansfowmew[map[k, (U ﹏ U) v], v] {
+      o-ovewwide def to(m: map[k, ^^;; v]) =
         m get k match {
-          case Some(v) => Return(v)
-          case None => Throw(MissingRequiredField(k))
+          case some(v) => wetuwn(v)
+          c-case nyone => thwow(missingwequiwedfiewd(k))
         }
 
-      override def from(v: V) = Return(Map(k -> v))
+      o-ovewwide def fwom(v: v) = wetuwn(map(k -> v-v))
     }
 
   /**
-   * Attempt to get a field from a Map, yielding None if the value is
-   * not present.
+   * attempt to get a-a fiewd fwom a map, 🥺 yiewding n-nyone if the vawue i-is
+   * nyot p-pwesent. òωó
    *
-   * The inverse transform will put the value in a Map if it is Some,
-   * and omit it if it is None.
+   * t-the invewse twansfowm w-wiww put the vawue in a map if it is some,
+   * and omit it if it is nyone. XD
    */
-  def optionalField[K, V](k: K): Transformer[Map[K, V], Option[V]] =
-    pure[Map[K, V], Option[V]](_.get(k), _.map { k -> _ }.toMap)
+  def optionawfiewd[k, :3 v-v](k: k): twansfowmew[map[k, (U ﹏ U) v], >w< o-option[v]] =
+    p-puwe[map[k, /(^•ω•^) v], option[v]](_.get(k), (⑅˘꒳˘) _.map { k-k -> _ }.tomap)
 
   /**
-   * Transforms an Option[T] to a T, using a default value for None.
+   * twansfowms an option[t] to a t, ʘwʘ using a-a defauwt vawue f-fow nyone. rawr x3
    *
-   * Note that the default value will be converted back to None by
-   * .from (.from will never return Some(default)).
+   * nyote that t-the defauwt vawue wiww be convewted back to nyone b-by
+   * .fwom (.fwom w-wiww nyevew wetuwn some(defauwt)). (˘ω˘)
    */
-  def default[T](value: T): Transformer[Option[T], T] =
-    pure[Option[T], T](_ getOrElse value, t => if (t == value) None else Some(t))
+  d-def defauwt[t](vawue: t-t): twansfowmew[option[t], o.O t] =
+    puwe[option[t], 😳 t](_ getowewse vawue, o.O t => if (t == vawue) nyone e-ewse some(t))
 
   /**
-   * Transforms `Long`s to big-endian byte arrays.
+   * t-twansfowms `wong`s t-to b-big-endian byte a-awways. ^^;;
    */
-  lazy val LongToBigEndian: Transformer[Long, Array[Byte]] =
-    new Transformer[Long, Array[Byte]] {
-      def to(a: Long) = Try(Longs.toByteArray(a))
-      def from(b: Array[Byte]) = Try(Longs.fromByteArray(b))
+  wazy vaw wongtobigendian: t-twansfowmew[wong, ( ͡o ω ͡o ) a-awway[byte]] =
+    nyew twansfowmew[wong, ^^;; a-awway[byte]] {
+      d-def to(a: wong) = twy(wongs.tobyteawway(a))
+      d-def fwom(b: awway[byte]) = twy(wongs.fwombyteawway(b))
     }
 
   /**
-   * Transforms `Int`s to big-endian byte arrays.
+   * t-twansfowms `int`s to big-endian b-byte awways. ^^;;
    */
-  lazy val IntToBigEndian: Transformer[Int, Array[Byte]] =
-    new Transformer[Int, Array[Byte]] {
-      def to(a: Int) = Try(Ints.toByteArray(a))
-      def from(b: Array[Byte]) = Try(Ints.fromByteArray(b))
+  w-wazy vaw inttobigendian: t-twansfowmew[int, XD awway[byte]] =
+    nyew twansfowmew[int, 🥺 a-awway[byte]] {
+      d-def to(a: int) = t-twy(ints.tobyteawway(a))
+      def fwom(b: awway[byte]) = twy(ints.fwombyteawway(b))
     }
 
   /**
-   * Transforms UTF8-encoded strings to byte arrays.
+   * twansfowms u-utf8-encoded stwings to byte awways. (///ˬ///✿)
    */
-  lazy val Utf8ToBytes: Transformer[String, Array[Byte]] =
-    stringToBytes(Charsets.UTF_8)
+  w-wazy vaw utf8tobytes: t-twansfowmew[stwing, (U ᵕ U❁) awway[byte]] =
+    s-stwingtobytes(chawsets.utf_8)
 
   /**
-   * Transforms strings, encoded in a given character set, to byte arrays.
+   * twansfowms s-stwings, ^^;; encoded i-in a given chawactew set, to byte awways.
    */
-  private[util] def stringToBytes(charset: Charset): Transformer[String, Array[Byte]] =
-    new Transformer[String, Array[Byte]] {
-      private[this] val charsetEncoder = new ThreadLocal[CharsetEncoder]() {
-        protected override def initialValue() = charset.newEncoder
+  p-pwivate[utiw] def stwingtobytes(chawset: chawset): twansfowmew[stwing, ^^;; awway[byte]] =
+    n-nyew twansfowmew[stwing, rawr a-awway[byte]] {
+      pwivate[this] vaw c-chawsetencodew = nyew thweadwocaw[chawsetencodew]() {
+        p-pwotected ovewwide d-def initiawvawue() = c-chawset.newencodew
       }
 
-      private[this] val charsetDecoder = new ThreadLocal[CharsetDecoder]() {
-        protected override def initialValue() = charset.newDecoder
+      pwivate[this] vaw chawsetdecodew = nyew thweadwocaw[chawsetdecodew]() {
+        pwotected ovewwide def initiawvawue() = chawset.newdecodew
       }
 
-      override def to(str: String): Try[Array[Byte]] = Try {
-        // We can't just use `String.getBytes("UTF-8")` here because it will
-        // silently replace UTF-16 surrogate characters, which will cause
-        // CharsetEncoder to throw exceptions.
-        val bytes = charsetEncoder.get.encode(CharBuffer.wrap(str))
-        bytes.array.slice(bytes.position, bytes.limit)
+      ovewwide def to(stw: stwing): twy[awway[byte]] = twy {
+        // w-we can't just u-use `stwing.getbytes("utf-8")` hewe because it wiww
+        // s-siwentwy wepwace u-utf-16 suwwogate c-chawactews, (˘ω˘) which wiww cause
+        // c-chawsetencodew to thwow e-exceptions. 🥺
+        v-vaw bytes = chawsetencodew.get.encode(chawbuffew.wwap(stw))
+        b-bytes.awway.swice(bytes.position, nyaa~~ bytes.wimit)
       }
 
-      override def from(bytes: Array[Byte]): Try[String] = Try {
-        charsetDecoder.get.decode(ByteBuffer.wrap(bytes)).toString
+      ovewwide d-def fwom(bytes: a-awway[byte]): twy[stwing] = twy {
+        chawsetdecodew.get.decode(bytebuffew.wwap(bytes)).tostwing
       }
     }
 
   /**
-   * Transforms a ThriftStruct to a byte-array using Thrift's TBinaryProtocol.
+   * t-twansfowms a t-thwiftstwuct to a-a byte-awway using t-thwift's tbinawypwotocow. :3
    */
-  def thriftStructToBytes[T <: ThriftStruct](c: ThriftStructCodec[T]): Transformer[T, Array[Byte]] =
-    new Transformer[T, Array[Byte]] {
-      private[this] val ser = BinaryThriftStructSerializer(c)
-      def to(a: T) = Try(ser.toBytes(a))
-      def from(b: Array[Byte]) = Try(ser.fromBytes(b))
+  d-def thwiftstwucttobytes[t <: t-thwiftstwuct](c: t-thwiftstwuctcodec[t]): t-twansfowmew[t, /(^•ω•^) a-awway[byte]] =
+    nyew t-twansfowmew[t, ^•ﻌ•^ a-awway[byte]] {
+      p-pwivate[this] vaw sew = binawythwiftstwuctsewiawizew(c)
+      d-def to(a: t) = twy(sew.tobytes(a))
+      def f-fwom(b: awway[byte]) = twy(sew.fwombytes(b))
     }
 }
 
 /**
- * transforms an Option[T] to a T, using a default value for None
+ * t-twansfowms a-an option[t] t-to a t, UwU using a defauwt vawue f-fow nyone
  */
-@deprecated("Use Transformer.default", "2.0.1")
-class OptionToTypeTransformer[T](default: T) extends Transformer[Option[T], T] {
-  override def to(b: Option[T]): Try[T] = Return(b.getOrElse(default))
+@depwecated("use twansfowmew.defauwt", "2.0.1")
+c-cwass optiontotypetwansfowmew[t](defauwt: t) extends t-twansfowmew[option[t], 😳😳😳 t] {
+  o-ovewwide def to(b: option[t]): twy[t] = wetuwn(b.getowewse(defauwt))
 
-  override def from(a: T): Try[Option[T]] = a match {
-    case `default` => Return.None
-    case _ => Return(Some(a))
+  ovewwide def fwom(a: t-t): twy[option[t]] = a match {
+    c-case `defauwt` => w-wetuwn.none
+    case _ => wetuwn(some(a))
   }
 }

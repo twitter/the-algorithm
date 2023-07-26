@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tombstone
 
-sealed trait TombstoneDisplayType
+seawed twait t-tombstonedispwaytype
 
-case object TweetUnavailable extends TombstoneDisplayType
-case object DisconnectedRepliesAncestor extends TombstoneDisplayType
-case object DisconnectedRepliesDescendant extends TombstoneDisplayType
-case object Inline extends TombstoneDisplayType
-case object NonCompliant extends TombstoneDisplayType
+c-case object t-tweetunavaiwabwe e-extends tombstonedispwaytype
+c-case object disconnectedwepwiesancestow e-extends t-tombstonedispwaytype
+c-case object disconnectedwepwiesdescendant extends tombstonedispwaytype
+case object inwine e-extends tombstonedispwaytype
+case object nyoncompwiant e-extends tombstonedispwaytype

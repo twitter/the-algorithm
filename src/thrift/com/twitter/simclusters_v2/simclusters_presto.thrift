@@ -1,59 +1,59 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.simclusters_presto
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twittew.simcwustews_v2.thwiftjava
+nyamespace py g-gen.twittew.simcwustews_v2.simcwustews_pwesto
+#@namespace s-scawa c-com.twittew.simcwustews_v2.thwiftscawa
+#@namespace s-stwato com.twittew.simcwustews_v2
 
-include "embedding.thrift"
-include "identifier.thrift"
-include "interests.thrift"
-include "online_store.thrift"
+i-incwude "embedding.thwift"
+i-incwude "identifiew.thwift"
+incwude "intewests.thwift"
+i-incwude "onwine_stowe.thwift"
 
 /**
-  * This struct is the presto-compatible "lite" version of the ClusterDetails thrift
+  * t-this stwuct is the pwesto-compatibwe "wite" vewsion of the cwustewdetaiws thwift
   */
-struct ClusterDetailsLite {
-  1: required online_store.FullClusterId fullClusterId
-  2: required i32 numUsersWithAnyNonZeroScore
-  3: required i32 numUsersWithNonZeroFollowScore
-  4: required i32 numUsersWithNonZeroFavScore
-  5: required list<interests.UserWithScore> knownForUsersAndScores
-}(persisted="true", hasPersonalData = 'true')
+s-stwuct cwustewdetaiwswite {
+  1: wequiwed onwine_stowe.fuwwcwustewid f-fuwwcwustewid
+  2: wequiwed i32 nyumusewswithanynonzewoscowe
+  3: w-wequiwed i32 nyumusewswithnonzewofowwowscowe
+  4: wequiwed i32 nyumusewswithnonzewofavscowe
+  5: wequiwed wist<intewests.usewwithscowe> k-knownfowusewsandscowes
+}(pewsisted="twue", mya haspewsonawdata = 'twue')
 
-struct EmbeddingsLite {
-  1: required i64 entityId
-  2: required i32 clusterId
-  3: required double score
-}(persisted="true", hasPersonalData = 'true')
+s-stwuct e-embeddingswite {
+  1: wequiwed i64 entityid
+  2: wequiwed i32 cwustewid
+  3: w-wequiwed doubwe scowe
+}(pewsisted="twue", ^^ haspewsonawdata = 'twue')
 
-struct SimClustersEmbeddingWithId {
-  1: required identifier.SimClustersEmbeddingId embeddingId
-  2: required embedding.SimClustersEmbedding embedding
-}(persisted="true", hasPersonalData = 'true')
+stwuct simcwustewsembeddingwithid {
+  1: wequiwed i-identifiew.simcwustewsembeddingid embeddingid
+  2: w-wequiwed e-embedding.simcwustewsembedding e-embedding
+}(pewsisted="twue", 😳😳😳 h-haspewsonawdata = 'twue')
 
-struct InternalIdEmbeddingWithId {
-  1: required identifier.SimClustersEmbeddingId embeddingId
-  2: required embedding.InternalIdEmbedding embedding
-}(persisted="true", hasPersonalData = 'true')
+stwuct intewnawidembeddingwithid {
+  1: w-wequiwed identifiew.simcwustewsembeddingid embeddingid
+  2: wequiwed embedding.intewnawidembedding e-embedding
+}(pewsisted="twue", haspewsonawdata = 'twue')
 
 /**
-* This struct is the presto-compatible version of the fav_tfg_topic_embeddings
+* this stwuct is the pwesto-compatibwe vewsion of the fav_tfg_topic_embeddings
 */
-struct ClustersScore {
-  1: required i64 clusterId(personalDataType = 'SemanticcoreClassification')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted="true", hasPersonalData = 'true')
+s-stwuct cwustewsscowe {
+  1: wequiwed i64 cwustewid(pewsonawdatatype = 'semanticcowecwassification')
+  2: w-wequiwed d-doubwe scowe(pewsonawdatatype = 'engagementscowe')
+}(pewsisted="twue", h-haspewsonawdata = 'twue')
 
-struct FavTfgTopicEmbeddings {
-  1: required identifier.TopicId topicId
-  2: required list<ClustersScore> clusterScore
-}(persisted="true", hasPersonalData = 'true')
+stwuct favtfgtopicembeddings {
+  1: wequiwed i-identifiew.topicid t-topicid
+  2: wequiwed wist<cwustewsscowe> c-cwustewscowe
+}(pewsisted="twue", mya h-haspewsonawdata = 'twue')
 
-struct TfgTopicEmbeddings {
-  1: required identifier.TopicId topicId
-  2: required list<ClustersScore> clusterScore
-}(persisted="true", hasPersonalData = 'true')
+stwuct tfgtopicembeddings {
+  1: w-wequiwed identifiew.topicid topicid
+  2: w-wequiwed wist<cwustewsscowe> cwustewscowe
+}(pewsisted="twue", 😳 h-haspewsonawdata = 'twue')
 
-struct UserTopicWeightedEmbedding {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required list<ClustersScore> clusterScore
-}(persisted="true", hasPersonalData = 'true')
+stwuct usewtopicweightedembedding {
+  1: w-wequiwed i64 usewid(pewsonawdatatype = 'usewid')
+  2: w-wequiwed wist<cwustewsscowe> c-cwustewscowe
+}(pewsisted="twue", -.- haspewsonawdata = 'twue')

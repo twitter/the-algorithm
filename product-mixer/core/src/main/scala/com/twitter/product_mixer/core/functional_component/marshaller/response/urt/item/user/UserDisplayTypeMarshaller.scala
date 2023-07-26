@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.usew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.PendingFollowUser
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.User
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserDetailed
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.pendingfowwowusew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usewdetaiwed
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usewdispwaytype
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class UserDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass usewdispwaytypemawshawwew @inject() () {
 
-  def apply(userDisplayType: UserDisplayType): urt.UserDisplayType =
-    userDisplayType match {
-      case User => urt.UserDisplayType.User
-      case UserDetailed => urt.UserDisplayType.UserDetailed
-      case PendingFollowUser => urt.UserDisplayType.PendingFollowUser
+  def appwy(usewdispwaytype: u-usewdispwaytype): uwt.usewdispwaytype =
+    usewdispwaytype m-match {
+      case usew => u-uwt.usewdispwaytype.usew
+      case usewdetaiwed => uwt.usewdispwaytype.usewdetaiwed
+      case p-pendingfowwowusew => uwt.usewdispwaytype.pendingfowwowusew
     }
 }

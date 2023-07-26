@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.timewine_moduwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarouselMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.gwidcawousewmetadata
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class GridCarouselMetadataMarshaller @Inject() () {
+@singweton
+c-cwass g-gwidcawousewmetadatamawshawwew @inject() () {
 
-  def apply(gridCarouselMetadata: GridCarouselMetadata): urt.GridCarouselMetadata =
-    urt.GridCarouselMetadata(numRows = gridCarouselMetadata.numRows)
+  d-def appwy(gwidcawousewmetadata: g-gwidcawousewmetadata): uwt.gwidcawousewmetadata =
+    uwt.gwidcawousewmetadata(numwows = gwidcawousewmetadata.numwows)
 }

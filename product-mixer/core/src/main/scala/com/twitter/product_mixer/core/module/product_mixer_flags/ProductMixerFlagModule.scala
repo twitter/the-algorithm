@@ -1,74 +1,74 @@
-package com.twitter.product_mixer.core.module.product_mixer_flags
+package com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags
 
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.Injector
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Duration
+impowt com.twittew.inject.annotations.fwags
+i-impowt c-com.twittew.inject.injectow
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.utiw.duwation
 
-object ProductMixerFlagModule extends TwitterModule {
-  final val ServiceLocal = "service.local"
-  final val ConfigRepoLocalPath = "configrepo.local_path"
-  final val FeatureSwitchesPath = "feature_switches.path"
-  final val StratoLocalRequestTimeout = "strato.local.request_timeout"
-  final val ScribeABImpressions = "scribe.ab_impressions"
-  final val PipelineExecutionLoggerAllowList = "pipeline_execution_logger.allow_list"
+o-object p-pwoductmixewfwagmoduwe e-extends twittewmoduwe {
+  finaw vaw sewvicewocaw = "sewvice.wocaw"
+  finaw vaw configwepowocawpath = "configwepo.wocaw_path"
+  f-finaw vaw featuweswitchespath = "featuwe_switches.path"
+  finaw vaw stwatowocawwequesttimeout = "stwato.wocaw.wequest_timeout"
+  f-finaw vaw scwibeabimpwessions = "scwibe.ab_impwessions"
+  f-finaw vaw pipewineexecutionwoggewawwowwist = "pipewine_execution_woggew.awwow_wist"
 
-  flag[Boolean](
-    name = ServiceLocal,
-    default = false,
-    help = "Is the server running locally or in a DC")
+  fwag[boowean](
+    nyame = sewvicewocaw, 😳
+    d-defauwt = fawse,
+    hewp = "is t-the sewvew w-wunning wocawwy ow in a dc")
 
-  flag[String](
-    name = ConfigRepoLocalPath,
-    default = System.getProperty("user.home") + "/workspace/config",
-    help = "Path to your local config repo"
+  fwag[stwing](
+    nyame = configwepowocawpath, (ˆ ﻌ ˆ)♡
+    defauwt = system.getpwopewty("usew.home") + "/wowkspace/config", 😳😳😳
+    h-hewp = "path to youw wocaw config wepo"
   )
 
-  flag[Boolean](
-    name = ScribeABImpressions,
-    help = "Enable scribing of AB impressions"
+  fwag[boowean](
+    nyame = s-scwibeabimpwessions, (U ﹏ U)
+    hewp = "enabwe s-scwibing o-of ab impwessions"
   )
 
-  flag[String](
-    name = FeatureSwitchesPath,
-    help = "Path to your local config repo"
+  fwag[stwing](
+    n-nyame = featuweswitchespath, (///ˬ///✿)
+    h-hewp = "path to youw wocaw config wepo"
   )
 
-  flag[Duration](
-    name = StratoLocalRequestTimeout,
-    help = "Override the request timeout for Strato when running locally"
+  f-fwag[duwation](
+    nyame = stwatowocawwequesttimeout, 😳
+    hewp = "ovewwide t-the wequest timeout fow stwato when wunning wocawwy"
   )
 
-  flag[Seq[String]](
-    name = PipelineExecutionLoggerAllowList,
-    default = Seq.empty,
-    help =
-      "Specify user role(s) for which detailed log messages (containing PII) can be made. Accepts a single role or a comma separated list 'a,b,c'"
+  fwag[seq[stwing]](
+    nyame = pipewineexecutionwoggewawwowwist, 😳
+    d-defauwt = seq.empty, σωσ
+    h-hewp =
+      "specify u-usew w-wowe(s) fow which detaiwed wog messages (containing pii) can be m-made. rawr x3 accepts a-a singwe wowe ow a comma sepawated w-wist 'a,b,c'"
   )
 
   /**
-   * Invoked at the end of server startup.
+   * i-invoked at the end of sewvew stawtup. OwO
    *
-   * If we're running locally, we display a nice message and a link to the admin page
+   * i-if we'we wunning wocawwy, /(^•ω•^) we dispway a-a nyice message and a wink to the admin page
    */
-  override def singletonPostWarmupComplete(injector: Injector): Unit = {
-    val isLocalService = injector.instance[Boolean](Flags.named(ServiceLocal))
-    if (isLocalService) {
-      // Extract service name from clientId since there isn't a specific flag for that
-      val clientId = injector.instance[String](Flags.named("thrift.clientId"))
-      val name = clientId.split("\\.")(0)
+  o-ovewwide def singwetonpostwawmupcompwete(injectow: i-injectow): unit = {
+    v-vaw iswocawsewvice = i-injectow.instance[boowean](fwags.named(sewvicewocaw))
+    if (iswocawsewvice) {
+      // extwact sewvice nyame fwom cwientid since thewe isn't a specific fwag fow that
+      v-vaw cwientid = i-injectow.instance[stwing](fwags.named("thwift.cwientid"))
+      vaw nyame = c-cwientid.spwit("\\.")(0)
 
-      val adminPort = injector.instance[String](Flags.named("admin.port"))
-      val url = s"http://localhost$adminPort/"
+      v-vaw adminpowt = i-injectow.instance[stwing](fwags.named("admin.powt"))
+      vaw uww = s"http://wocawhost$adminpowt/"
 
-      // Print instead of log, so it goes on stdout and doesn't get the logging decorations.
-      // Update our local development recipe (local-development.rst) if making changes to this
-      // message.
-      println("===============================================================================")
-      println(s"Welcome to a Product Mixer Service, $name")
-      println(s"You can view the admin endpoint and thrift web forms at $url")
-      println("Looking for support? Have questions? #product-mixer on Slack.")
-      println("===============================================================================")
+      // pwint instead of wog, 😳😳😳 so it goes o-on stdout and doesn't get the wogging decowations. ( ͡o ω ͡o )
+      // update ouw wocaw devewopment wecipe (wocaw-devewopment.wst) i-if making changes to t-this
+      // message. >_<
+      p-pwintwn("===============================================================================")
+      p-pwintwn(s"wewcome to a pwoduct mixew s-sewvice, >w< $name")
+      p-pwintwn(s"you c-can view t-the admin endpoint and thwift web fowms at $uww")
+      p-pwintwn("wooking f-fow suppowt? h-have questions? #pwoduct-mixew o-on swack.")
+      p-pwintwn("===============================================================================")
     }
   }
 }

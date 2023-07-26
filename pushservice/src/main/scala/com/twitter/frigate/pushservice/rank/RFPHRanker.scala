@@ -1,297 +1,297 @@
-package com.twitter.frigate.pushservice.rank
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.Ranker
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.ml.HealthFeatureGetter
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.params.MrQualityUprankingPartialTypeEnum
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushMLModel
-import com.twitter.frigate.pushservice.params.PushModelName
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.util.MediaAnnotationsUtil.updateMediaCategoryStats
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.util.Future
-import com.twitter.frigate.pushservice.params.MrQualityUprankingTransformTypeEnum
-import com.twitter.storehaus.ReadableStore
-import com.twitter.frigate.thriftscala.UserMediaRepresentation
-import com.twitter.hss.api.thriftscala.UserHealthSignalResponse
+package com.twittew.fwigate.pushsewvice.wank
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.candidatedetaiws
+i-impowt com.twittew.fwigate.common.base.wankew
+i-impowt com.twittew.fwigate.common.wec_types.wectypes
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.mw.heawthfeatuwegettew
+impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.pawams.mwquawityupwankingpawtiawtypeenum
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt com.twittew.fwigate.pushsewvice.pawams.pushmwmodew
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushmodewname
+impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+i-impowt com.twittew.fwigate.pushsewvice.utiw.mediaannotationsutiw.updatemediacategowystats
+impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.fwigate.pushsewvice.pawams.mwquawityupwankingtwansfowmtypeenum
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt c-com.twittew.fwigate.thwiftscawa.usewmediawepwesentation
+i-impowt com.twittew.hss.api.thwiftscawa.usewheawthsignawwesponse
 
-class RFPHRanker(
-  randomRanker: Ranker[Target, PushCandidate],
-  weightedOpenOrNtabClickModelScorer: PushMLModelScorer,
-  subscriptionCreatorRanker: SubscriptionCreatorRanker,
-  userHealthSignalStore: ReadableStore[Long, UserHealthSignalResponse],
-  producerMediaRepresentationStore: ReadableStore[Long, UserMediaRepresentation],
-  stats: StatsReceiver)
-    extends PushserviceRanker[Target, PushCandidate] {
+cwass wfphwankew(
+  wandomwankew: w-wankew[tawget, (˘ω˘) pushcandidate], (///ˬ///✿)
+  weightedopenowntabcwickmodewscowew: pushmwmodewscowew, σωσ
+  subscwiptioncweatowwankew: subscwiptioncweatowwankew, /(^•ω•^)
+  u-usewheawthsignawstowe: weadabwestowe[wong, 😳 u-usewheawthsignawwesponse], 😳
+  p-pwoducewmediawepwesentationstowe: w-weadabwestowe[wong, (⑅˘꒳˘) u-usewmediawepwesentation], 😳😳😳
+  stats: statsweceivew)
+    e-extends pushsewvicewankew[tawget, 😳 pushcandidate] {
 
-  private val statsReceiver = stats.scope(this.getClass.getSimpleName)
+  pwivate v-vaw statsweceivew = stats.scope(this.getcwass.getsimpwename)
 
-  private val boostCRTsRanker = CRTBoostRanker(statsReceiver.scope("boost_desired_crts"))
-  private val crtDownRanker = CRTDownRanker(statsReceiver.scope("down_rank_desired_crts"))
+  pwivate vaw boostcwtswankew = cwtboostwankew(statsweceivew.scope("boost_desiwed_cwts"))
+  pwivate v-vaw cwtdownwankew = cwtdownwankew(statsweceivew.scope("down_wank_desiwed_cwts"))
 
-  private val crtsToDownRank = statsReceiver.stat("crts_to_downrank")
-  private val crtsToUprank = statsReceiver.stat("crts_to_uprank")
+  p-pwivate v-vaw cwtstodownwank = s-statsweceivew.stat("cwts_to_downwank")
+  pwivate vaw cwtstoupwank = statsweceivew.stat("cwts_to_upwank")
 
-  private val randomRankingCounter = stats.counter("randomRanking")
-  private val mlRankingCounter = stats.counter("mlRanking")
-  private val disableAllRelevanceCounter = stats.counter("disableAllRelevance")
-  private val disableHeavyRankingCounter = stats.counter("disableHeavyRanking")
+  pwivate vaw wandomwankingcountew = s-stats.countew("wandomwanking")
+  p-pwivate vaw mwwankingcountew = s-stats.countew("mwwanking")
+  p-pwivate vaw disabweawwwewevancecountew = stats.countew("disabweawwwewevance")
+  p-pwivate vaw disabweheavywankingcountew = stats.countew("disabweheavywanking")
 
-  private val heavyRankerCandidateCounter = stats.counter("heavy_ranker_candidate_count")
-  private val heavyRankerScoreStats = statsReceiver.scope("heavy_ranker_prediction_scores")
+  p-pwivate vaw heavywankewcandidatecountew = stats.countew("heavy_wankew_candidate_count")
+  p-pwivate vaw heavywankewscowestats = s-statsweceivew.scope("heavy_wankew_pwediction_scowes")
 
-  private val producerUprankingCounter = statsReceiver.counter("producer_quality_upranking")
-  private val producerBoostedCounter = statsReceiver.counter("producer_boosted_candidates")
-  private val producerDownboostedCounter = statsReceiver.counter("producer_downboosted_candidates")
+  pwivate v-vaw pwoducewupwankingcountew = s-statsweceivew.countew("pwoducew_quawity_upwanking")
+  pwivate vaw pwoducewboostedcountew = statsweceivew.countew("pwoducew_boosted_candidates")
+  pwivate vaw pwoducewdownboostedcountew = statsweceivew.countew("pwoducew_downboosted_candidates")
 
-  override def initialRank(
-    target: Target,
-    candidates: Seq[CandidateDetails[PushCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
+  o-ovewwide d-def initiawwank(
+    tawget: tawget, XD
+    c-candidates: s-seq[candidatedetaiws[pushcandidate]]
+  ): f-futuwe[seq[candidatedetaiws[pushcandidate]]] = {
 
-    heavyRankerCandidateCounter.incr(candidates.size)
+    heavywankewcandidatecountew.incw(candidates.size)
 
-    updateMediaCategoryStats(candidates)(stats)
-    target.targetUserState
-      .flatMap { targetUserState =>
-        val useRandomRanking = target.skipMlRanker || target.params(
-          PushParams.UseRandomRankingParam
+    updatemediacategowystats(candidates)(stats)
+    tawget.tawgetusewstate
+      .fwatmap { t-tawgetusewstate =>
+        vaw usewandomwanking = tawget.skipmwwankew || tawget.pawams(
+          pushpawams.usewandomwankingpawam
         )
 
-        if (useRandomRanking) {
-          randomRankingCounter.incr()
-          randomRanker.rank(target, candidates)
-        } else if (target.params(PushParams.DisableAllRelevanceParam)) {
-          disableAllRelevanceCounter.incr()
-          Future.value(candidates)
-        } else if (target.params(PushParams.DisableHeavyRankingParam) || target.params(
-            PushFeatureSwitchParams.DisableHeavyRankingModelFSParam)) {
-          disableHeavyRankingCounter.incr()
-          Future.value(candidates)
-        } else {
-          mlRankingCounter.incr()
+        if (usewandomwanking) {
+          w-wandomwankingcountew.incw()
+          wandomwankew.wank(tawget, mya c-candidates)
+        } e-ewse if (tawget.pawams(pushpawams.disabweawwwewevancepawam)) {
+          d-disabweawwwewevancecountew.incw()
+          futuwe.vawue(candidates)
+        } e-ewse i-if (tawget.pawams(pushpawams.disabweheavywankingpawam) || t-tawget.pawams(
+            p-pushfeatuweswitchpawams.disabweheavywankingmodewfspawam)) {
+          disabweheavywankingcountew.incw()
+          futuwe.vawue(candidates)
+        } e-ewse {
+          m-mwwankingcountew.incw()
 
-          val scoredCandidatesFut = scoring(target, candidates)
+          vaw s-scowedcandidatesfut = s-scowing(tawget, ^•ﻌ•^ c-candidates)
 
-          target.rankingModelParam.map { rankingModelParam =>
-            val modelName = PushModelName(
-              PushMLModel.WeightedOpenOrNtabClickProbability,
-              target.params(rankingModelParam)).toString
-            ModelBasedRanker.populateMrWeightedOpenOrNtabClickScoreStats(
-              candidates,
-              heavyRankerScoreStats.scope(modelName)
+          tawget.wankingmodewpawam.map { wankingmodewpawam =>
+            vaw modewname = pushmodewname(
+              p-pushmwmodew.weightedopenowntabcwickpwobabiwity, ʘwʘ
+              tawget.pawams(wankingmodewpawam)).tostwing
+            modewbasedwankew.popuwatemwweightedopenowntabcwickscowestats(
+              candidates, ( ͡o ω ͡o )
+              heavywankewscowestats.scope(modewname)
             )
           }
 
-          if (target.params(
-              PushFeatureSwitchParams.EnableQualityUprankingCrtScoreStatsForHeavyRankingParam)) {
-            val modelName = PushModelName(
-              PushMLModel.FilteringProbability,
-              target.params(PushFeatureSwitchParams.QualityUprankingModelTypeParam)
-            ).toString
-            ModelBasedRanker.populateMrQualityUprankingScoreStats(
-              candidates,
-              heavyRankerScoreStats.scope(modelName)
+          if (tawget.pawams(
+              p-pushfeatuweswitchpawams.enabwequawityupwankingcwtscowestatsfowheavywankingpawam)) {
+            vaw modewname = pushmodewname(
+              pushmwmodew.fiwtewingpwobabiwity, mya
+              t-tawget.pawams(pushfeatuweswitchpawams.quawityupwankingmodewtypepawam)
+            ).tostwing
+            m-modewbasedwankew.popuwatemwquawityupwankingscowestats(
+              c-candidates, o.O
+              heavywankewscowestats.scope(modewname)
             )
           }
 
-          val ooncRankedCandidatesFut =
-            scoredCandidatesFut.flatMap(ModelBasedRanker.rankByMrWeightedOpenOrNtabClickScore)
+          v-vaw ooncwankedcandidatesfut =
+            scowedcandidatesfut.fwatmap(modewbasedwankew.wankbymwweightedopenowntabcwickscowe)
 
-          val qualityUprankedCandidatesFut =
-            if (target.params(PushFeatureSwitchParams.EnableQualityUprankingForHeavyRankingParam)) {
-              ooncRankedCandidatesFut.flatMap { ooncRankedCandidates =>
-                val transformFunc: Double => Double =
-                  target.params(PushFeatureSwitchParams.QualityUprankingTransformTypeParam) match {
-                    case MrQualityUprankingTransformTypeEnum.Linear =>
-                      ModelBasedRanker.transformLinear(
-                        _,
-                        bar = target.params(
-                          PushFeatureSwitchParams.QualityUprankingLinearBarForHeavyRankingParam))
-                    case MrQualityUprankingTransformTypeEnum.Sigmoid =>
-                      ModelBasedRanker.transformSigmoid(
-                        _,
-                        weight = target.params(
-                          PushFeatureSwitchParams.QualityUprankingSigmoidWeightForHeavyRankingParam),
-                        bias = target.params(
-                          PushFeatureSwitchParams.QualityUprankingSigmoidBiasForHeavyRankingParam)
+          v-vaw q-quawityupwankedcandidatesfut =
+            if (tawget.pawams(pushfeatuweswitchpawams.enabwequawityupwankingfowheavywankingpawam)) {
+              ooncwankedcandidatesfut.fwatmap { ooncwankedcandidates =>
+                vaw twansfowmfunc: d-doubwe => doubwe =
+                  tawget.pawams(pushfeatuweswitchpawams.quawityupwankingtwansfowmtypepawam) m-match {
+                    case m-mwquawityupwankingtwansfowmtypeenum.wineaw =>
+                      m-modewbasedwankew.twansfowmwineaw(
+                        _, (✿oωo)
+                        baw = tawget.pawams(
+                          p-pushfeatuweswitchpawams.quawityupwankingwineawbawfowheavywankingpawam))
+                    c-case mwquawityupwankingtwansfowmtypeenum.sigmoid =>
+                      modewbasedwankew.twansfowmsigmoid(
+                        _, :3
+                        weight = tawget.pawams(
+                          p-pushfeatuweswitchpawams.quawityupwankingsigmoidweightfowheavywankingpawam), 😳
+                        b-bias = tawget.pawams(
+                          pushfeatuweswitchpawams.quawityupwankingsigmoidbiasfowheavywankingpawam)
                       )
-                    case _ => ModelBasedRanker.transformIdentity
+                    case _ => modewbasedwankew.twansfowmidentity
                   }
 
-                ModelBasedRanker.rankByQualityOoncCombinedScore(
-                  ooncRankedCandidates,
-                  transformFunc,
-                  target.params(PushFeatureSwitchParams.QualityUprankingBoostForHeavyRankingParam)
+                modewbasedwankew.wankbyquawityoonccombinedscowe(
+                  o-ooncwankedcandidates, (U ﹏ U)
+                  t-twansfowmfunc, mya
+                  t-tawget.pawams(pushfeatuweswitchpawams.quawityupwankingboostfowheavywankingpawam)
                 )
               }
-            } else ooncRankedCandidatesFut
+            } ewse ooncwankedcandidatesfut
 
-          if (target.params(
-              PushFeatureSwitchParams.EnableProducersQualityBoostingForHeavyRankingParam)) {
-            producerUprankingCounter.incr()
-            qualityUprankedCandidatesFut.flatMap(cands =>
-              ModelBasedRanker.rerankByProducerQualityOoncCombinedScore(cands)(statsReceiver))
-          } else qualityUprankedCandidatesFut
+          i-if (tawget.pawams(
+              p-pushfeatuweswitchpawams.enabwepwoducewsquawityboostingfowheavywankingpawam)) {
+            pwoducewupwankingcountew.incw()
+            quawityupwankedcandidatesfut.fwatmap(cands =>
+              m-modewbasedwankew.wewankbypwoducewquawityoonccombinedscowe(cands)(statsweceivew))
+          } ewse quawityupwankedcandidatesfut
         }
       }
   }
 
-  private def scoring(
-    target: Target,
-    candidates: Seq[CandidateDetails[PushCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
+  pwivate def scowing(
+    tawget: tawget, (U ᵕ U❁)
+    c-candidates: seq[candidatedetaiws[pushcandidate]]
+  ): f-futuwe[seq[candidatedetaiws[pushcandidate]]] = {
 
-    val ooncScoredCandidatesFut = target.rankingModelParam.map { rankingModelParam =>
-      weightedOpenOrNtabClickModelScorer.scoreByBatchPredictionForModelVersion(
-        target,
-        candidates,
-        rankingModelParam
+    vaw ooncscowedcandidatesfut = t-tawget.wankingmodewpawam.map { w-wankingmodewpawam =>
+      weightedopenowntabcwickmodewscowew.scowebybatchpwedictionfowmodewvewsion(
+        tawget,
+        candidates, :3
+        w-wankingmodewpawam
       )
     }
 
-    val scoredCandidatesFut = {
-      if (target.params(PushFeatureSwitchParams.EnableQualityUprankingForHeavyRankingParam)) {
-        ooncScoredCandidatesFut.map { candidates =>
-          weightedOpenOrNtabClickModelScorer.scoreByBatchPredictionForModelVersion(
-            target = target,
-            candidatesDetails = candidates,
-            modelVersionParam = PushFeatureSwitchParams.QualityUprankingModelTypeParam,
-            overridePushMLModelOpt = Some(PushMLModel.FilteringProbability)
+    vaw scowedcandidatesfut = {
+      if (tawget.pawams(pushfeatuweswitchpawams.enabwequawityupwankingfowheavywankingpawam)) {
+        ooncscowedcandidatesfut.map { candidates =>
+          w-weightedopenowntabcwickmodewscowew.scowebybatchpwedictionfowmodewvewsion(
+            tawget = tawget, mya
+            c-candidatesdetaiws = candidates, OwO
+            m-modewvewsionpawam = pushfeatuweswitchpawams.quawityupwankingmodewtypepawam, (ˆ ﻌ ˆ)♡
+            ovewwidepushmwmodewopt = some(pushmwmodew.fiwtewingpwobabiwity)
           )
         }
-      } else ooncScoredCandidatesFut
+      } ewse o-ooncscowedcandidatesfut
     }
 
-    scoredCandidatesFut.foreach { candidates =>
-      val oonCandidates = candidates.filter {
-        case CandidateDetails(pushCandidate: PushCandidate, _) =>
-          ModelBasedRanker.tweetCandidateSelector(
-            pushCandidate,
-            MrQualityUprankingPartialTypeEnum.Oon)
+    s-scowedcandidatesfut.foweach { candidates =>
+      vaw ooncandidates = candidates.fiwtew {
+        c-case candidatedetaiws(pushcandidate: pushcandidate, ʘwʘ _) =>
+          m-modewbasedwankew.tweetcandidatesewectow(
+            pushcandidate, o.O
+            mwquawityupwankingpawtiawtypeenum.oon)
       }
-      setProducerQuality(
-        target,
-        oonCandidates,
-        userHealthSignalStore,
-        producerMediaRepresentationStore)
+      setpwoducewquawity(
+        t-tawget, UwU
+        ooncandidates, rawr x3
+        u-usewheawthsignawstowe,
+        p-pwoducewmediawepwesentationstowe)
     }
   }
 
-  private def setProducerQuality(
-    target: Target,
-    candidates: Seq[CandidateDetails[PushCandidate]],
-    userHealthSignalStore: ReadableStore[Long, UserHealthSignalResponse],
-    producerMediaRepresentationStore: ReadableStore[Long, UserMediaRepresentation]
-  ): Unit = {
-    lazy val boostRatio =
-      target.params(PushFeatureSwitchParams.QualityUprankingBoostForHighQualityProducersParam)
-    lazy val downboostRatio =
-      target.params(PushFeatureSwitchParams.QualityUprankingDownboostForLowQualityProducersParam)
-    candidates.foreach {
-      case CandidateDetails(pushCandidate, _) =>
-        HealthFeatureGetter
-          .getFeatures(pushCandidate, producerMediaRepresentationStore, userHealthSignalStore).map {
-            featureMap =>
-              val agathaNsfwScore = featureMap.numericFeatures.getOrElse("agathaNsfwScore", 0.5)
-              val textNsfwScore = featureMap.numericFeatures.getOrElse("textNsfwScore", 0.15)
-              val nudityRate = featureMap.numericFeatures.getOrElse("nudityRate", 0.0)
-              val activeFollowers = featureMap.numericFeatures.getOrElse("activeFollowers", 0.0)
-              val favorsRcvd28Days = featureMap.numericFeatures.getOrElse("favorsRcvd28Days", 0.0)
-              val tweets28Days = featureMap.numericFeatures.getOrElse("tweets28Days", 0.0)
-              val authorDislikeCount = featureMap.numericFeatures
-                .getOrElse("authorDislikeCount", 0.0)
-              val authorDislikeRate = featureMap.numericFeatures.getOrElse("authorDislikeRate", 0.0)
-              val authorReportRate = featureMap.numericFeatures.getOrElse("authorReportRate", 0.0)
-              val abuseStrikeTop2Percent =
-                featureMap.booleanFeatures.getOrElse("abuseStrikeTop2Percent", false)
-              val abuseStrikeTop1Percent =
-                featureMap.booleanFeatures.getOrElse("abuseStrikeTop1Percent", false)
-              val hasNsfwToken = featureMap.booleanFeatures.getOrElse("hasNsfwToken", false)
+  pwivate def setpwoducewquawity(
+    t-tawget: tawget, 🥺
+    candidates: s-seq[candidatedetaiws[pushcandidate]], :3
+    usewheawthsignawstowe: w-weadabwestowe[wong, (ꈍᴗꈍ) u-usewheawthsignawwesponse], 🥺
+    pwoducewmediawepwesentationstowe: w-weadabwestowe[wong, (✿oωo) usewmediawepwesentation]
+  ): u-unit = {
+    wazy vaw boostwatio =
+      t-tawget.pawams(pushfeatuweswitchpawams.quawityupwankingboostfowhighquawitypwoducewspawam)
+    w-wazy vaw downboostwatio =
+      t-tawget.pawams(pushfeatuweswitchpawams.quawityupwankingdownboostfowwowquawitypwoducewspawam)
+    candidates.foweach {
+      case c-candidatedetaiws(pushcandidate, (U ﹏ U) _) =>
+        heawthfeatuwegettew
+          .getfeatuwes(pushcandidate, :3 p-pwoducewmediawepwesentationstowe, ^^;; u-usewheawthsignawstowe).map {
+            featuwemap =>
+              vaw agathansfwscowe = featuwemap.numewicfeatuwes.getowewse("agathansfwscowe", 0.5)
+              v-vaw textnsfwscowe = f-featuwemap.numewicfeatuwes.getowewse("textnsfwscowe", rawr 0.15)
+              v-vaw nyuditywate = f-featuwemap.numewicfeatuwes.getowewse("nuditywate", 😳😳😳 0.0)
+              vaw activefowwowews = featuwemap.numewicfeatuwes.getowewse("activefowwowews", (✿oωo) 0.0)
+              v-vaw favowswcvd28days = featuwemap.numewicfeatuwes.getowewse("favowswcvd28days", OwO 0.0)
+              vaw tweets28days = featuwemap.numewicfeatuwes.getowewse("tweets28days", ʘwʘ 0.0)
+              vaw authowdiswikecount = f-featuwemap.numewicfeatuwes
+                .getowewse("authowdiswikecount", (ˆ ﻌ ˆ)♡ 0.0)
+              vaw authowdiswikewate = f-featuwemap.numewicfeatuwes.getowewse("authowdiswikewate", 0.0)
+              vaw authowwepowtwate = f-featuwemap.numewicfeatuwes.getowewse("authowwepowtwate", (U ﹏ U) 0.0)
+              vaw abusestwiketop2pewcent =
+                f-featuwemap.booweanfeatuwes.getowewse("abusestwiketop2pewcent", UwU fawse)
+              v-vaw abusestwiketop1pewcent =
+                f-featuwemap.booweanfeatuwes.getowewse("abusestwiketop1pewcent", XD f-fawse)
+              v-vaw hasnsfwtoken = f-featuwemap.booweanfeatuwes.getowewse("hasnsfwtoken", ʘwʘ fawse)
 
-              if ((activeFollowers > 3000000) ||
-                (activeFollowers > 1000000 && agathaNsfwScore < 0.7 && nudityRate < 0.01 && !hasNsfwToken && !abuseStrikeTop2Percent) ||
-                (activeFollowers > 100000 && agathaNsfwScore < 0.7 && nudityRate < 0.01 && !hasNsfwToken && !abuseStrikeTop2Percent &&
-                tweets28Days > 0 && favorsRcvd28Days / tweets28Days > 3000 && authorReportRate < 0.000001 && authorDislikeRate < 0.0005)) {
-                producerBoostedCounter.incr()
-                pushCandidate.setProducerQualityUprankingBoost(boostRatio)
-              } else if (activeFollowers < 5 || agathaNsfwScore > 0.9 || nudityRate > 0.03 || hasNsfwToken || abuseStrikeTop1Percent ||
-                textNsfwScore > 0.4 || (authorDislikeRate > 0.005 && authorDislikeCount > 5) ||
-                (tweets28Days > 56 && favorsRcvd28Days / tweets28Days < 100)) {
-                producerDownboostedCounter.incr()
-                pushCandidate.setProducerQualityUprankingBoost(downboostRatio)
-              } else pushCandidate.setProducerQualityUprankingBoost(1.0)
+              if ((activefowwowews > 3000000) ||
+                (activefowwowews > 1000000 && agathansfwscowe < 0.7 && nyuditywate < 0.01 && !hasnsfwtoken && !abusestwiketop2pewcent) ||
+                (activefowwowews > 100000 && agathansfwscowe < 0.7 && nyuditywate < 0.01 && !hasnsfwtoken && !abusestwiketop2pewcent &&
+                t-tweets28days > 0 && f-favowswcvd28days / t-tweets28days > 3000 && authowwepowtwate < 0.000001 && a-authowdiswikewate < 0.0005)) {
+                pwoducewboostedcountew.incw()
+                pushcandidate.setpwoducewquawityupwankingboost(boostwatio)
+              } ewse if (activefowwowews < 5 || a-agathansfwscowe > 0.9 || n-nyuditywate > 0.03 || hasnsfwtoken || a-abusestwiketop1pewcent ||
+                textnsfwscowe > 0.4 || (authowdiswikewate > 0.005 && authowdiswikecount > 5) ||
+                (tweets28days > 56 && f-favowswcvd28days / t-tweets28days < 100)) {
+                pwoducewdownboostedcountew.incw()
+                p-pushcandidate.setpwoducewquawityupwankingboost(downboostwatio)
+              } e-ewse pushcandidate.setpwoducewquawityupwankingboost(1.0)
           }
     }
   }
 
-  private def rerankBySubscriptionCreatorRanker(
-    target: Target,
-    rankedCandidates: Future[Seq[CandidateDetails[PushCandidate]]],
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    if (target.params(PushFeatureSwitchParams.SoftRankCandidatesFromSubscriptionCreators)) {
-      val factor = target.params(PushFeatureSwitchParams.SoftRankFactorForSubscriptionCreators)
-      subscriptionCreatorRanker.boostByScoreFactor(rankedCandidates, factor)
-    } else
-      subscriptionCreatorRanker.boostSubscriptionCreator(rankedCandidates)
+  pwivate def wewankbysubscwiptioncweatowwankew(
+    tawget: tawget, rawr x3
+    w-wankedcandidates: f-futuwe[seq[candidatedetaiws[pushcandidate]]], ^^;;
+  ): f-futuwe[seq[candidatedetaiws[pushcandidate]]] = {
+    if (tawget.pawams(pushfeatuweswitchpawams.softwankcandidatesfwomsubscwiptioncweatows)) {
+      v-vaw f-factow = tawget.pawams(pushfeatuweswitchpawams.softwankfactowfowsubscwiptioncweatows)
+      subscwiptioncweatowwankew.boostbyscowefactow(wankedcandidates, ʘwʘ f-factow)
+    } e-ewse
+      subscwiptioncweatowwankew.boostsubscwiptioncweatow(wankedcandidates)
   }
 
-  override def reRank(
-    target: Target,
-    rankedCandidates: Seq[CandidateDetails[PushCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    val numberOfF1Candidates =
-      rankedCandidates.count(candidateDetails =>
-        RecTypes.isF1Type(candidateDetails.candidate.commonRecType))
-    lazy val threshold =
-      target.params(PushFeatureSwitchParams.NumberOfF1CandidatesThresholdForOONBackfill)
-    lazy val enableOONBackfillBasedOnF1 =
-      target.params(PushFeatureSwitchParams.EnableOONBackfillBasedOnF1Candidates)
+  o-ovewwide def wewank(
+    t-tawget: tawget, (U ﹏ U)
+    wankedcandidates: s-seq[candidatedetaiws[pushcandidate]]
+  ): futuwe[seq[candidatedetaiws[pushcandidate]]] = {
+    vaw nyumbewoff1candidates =
+      w-wankedcandidates.count(candidatedetaiws =>
+        wectypes.isf1type(candidatedetaiws.candidate.commonwectype))
+    w-wazy vaw thweshowd =
+      t-tawget.pawams(pushfeatuweswitchpawams.numbewoff1candidatesthweshowdfowoonbackfiww)
+    wazy vaw e-enabweoonbackfiwwbasedonf1 =
+      tawget.pawams(pushfeatuweswitchpawams.enabweoonbackfiwwbasedonf1candidates)
 
-    val f1BoostedCandidates =
-      if (enableOONBackfillBasedOnF1 && numberOfF1Candidates > threshold) {
-        boostCRTsRanker.boostCrtsToTopStableOrder(
-          rankedCandidates,
-          RecTypes.f1FirstDegreeTypes.toSeq)
-      } else rankedCandidates
+    vaw f1boostedcandidates =
+      i-if (enabweoonbackfiwwbasedonf1 && n-nyumbewoff1candidates > thweshowd) {
+        b-boostcwtswankew.boostcwtstotopstabweowdew(
+          wankedcandidates, (˘ω˘)
+          wectypes.f1fiwstdegweetypes.toseq)
+      } ewse wankedcandidates
 
-    val topTweetsByGeoDownRankedCandidates =
-      if (target.params(PushFeatureSwitchParams.BackfillRankTopTweetsByGeoCandidates)) {
-        crtDownRanker.downRank(
-          f1BoostedCandidates,
-          Seq(CommonRecommendationType.GeoPopTweet)
+    v-vaw toptweetsbygeodownwankedcandidates =
+      if (tawget.pawams(pushfeatuweswitchpawams.backfiwwwanktoptweetsbygeocandidates)) {
+        cwtdownwankew.downwank(
+          f-f1boostedcandidates, (ꈍᴗꈍ)
+          s-seq(commonwecommendationtype.geopoptweet)
         )
-      } else f1BoostedCandidates
+      } ewse f1boostedcandidates
 
-    val reRankedCandidatesWithBoostedCrts = {
-      val listOfCrtsToUpRank = target
-        .params(PushFeatureSwitchParams.ListOfCrtsToUpRank)
-        .flatMap(CommonRecommendationType.valueOf)
-      crtsToUprank.add(listOfCrtsToUpRank.size)
-      boostCRTsRanker.boostCrtsToTop(topTweetsByGeoDownRankedCandidates, listOfCrtsToUpRank)
+    v-vaw wewankedcandidateswithboostedcwts = {
+      vaw wistofcwtstoupwank = t-tawget
+        .pawams(pushfeatuweswitchpawams.wistofcwtstoupwank)
+        .fwatmap(commonwecommendationtype.vawueof)
+      c-cwtstoupwank.add(wistofcwtstoupwank.size)
+      boostcwtswankew.boostcwtstotop(toptweetsbygeodownwankedcandidates, /(^•ω•^) wistofcwtstoupwank)
     }
 
-    val reRankedCandidatesWithDownRankedCrts = {
-      val listOfCrtsToDownRank = target
-        .params(PushFeatureSwitchParams.ListOfCrtsToDownRank)
-        .flatMap(CommonRecommendationType.valueOf)
-      crtsToDownRank.add(listOfCrtsToDownRank.size)
-      crtDownRanker.downRank(reRankedCandidatesWithBoostedCrts, listOfCrtsToDownRank)
+    v-vaw wewankedcandidateswithdownwankedcwts = {
+      vaw wistofcwtstodownwank = tawget
+        .pawams(pushfeatuweswitchpawams.wistofcwtstodownwank)
+        .fwatmap(commonwecommendationtype.vawueof)
+      c-cwtstodownwank.add(wistofcwtstodownwank.size)
+      c-cwtdownwankew.downwank(wewankedcandidateswithboostedcwts, >_< wistofcwtstodownwank)
     }
 
-    val rerankBySubscriptionCreatorFut = {
-      if (target.params(PushFeatureSwitchParams.BoostCandidatesFromSubscriptionCreators)) {
-        rerankBySubscriptionCreatorRanker(
-          target,
-          Future.value(reRankedCandidatesWithDownRankedCrts))
-      } else Future.value(reRankedCandidatesWithDownRankedCrts)
+    v-vaw wewankbysubscwiptioncweatowfut = {
+      if (tawget.pawams(pushfeatuweswitchpawams.boostcandidatesfwomsubscwiptioncweatows)) {
+        wewankbysubscwiptioncweatowwankew(
+          t-tawget, σωσ
+          f-futuwe.vawue(wewankedcandidateswithdownwankedcwts))
+      } e-ewse futuwe.vawue(wewankedcandidateswithdownwankedcwts)
     }
 
-    rerankBySubscriptionCreatorFut
+    wewankbysubscwiptioncweatowfut
   }
 }

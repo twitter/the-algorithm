@@ -1,26 +1,26 @@
-namespace java com.twitter.unified_user_actions.enricher.internal.thriftjava
-#@namespace scala com.twitter.unified_user_actions.enricher.internal.thriftscala
-#@namespace strato com.twitter.unified_user_actions.enricher.internal
+namespace java com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftjava
+#@namespace scawa com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa
+#@namespace s-stwato c-com.twittew.unified_usew_actions.enwichew.intewnaw
 
-include "com/twitter/unified_user_actions/unified_user_actions.thrift"
-include "enrichment_plan.thrift"
+i-incwude "com/twittew/unified_usew_actions/unified_usew_actions.thwift"
+i-incwude "enwichment_pwan.thwift"
 
-struct EnrichmentEnvelop {
+s-stwuct e-enwichmentenvewop {
   /**
-  * An internal ID that uniquely identifies this event created during the early stages of enrichment.
-  * It is useful for detecting debugging, tracing & profiling the events throughout the process.
+  * a-an intewnaw id t-that uniquewy identifies this event cweated duwing the eawwy stages of enwichment. nyaa~~
+  * i-it is usefuw fow detecting debugging, twacing & p-pwofiwing the events thwoughout t-the pwocess. (⑅˘꒳˘)
   **/
-  1: required i64 envelopId
-
-  /**
-  * The UUA event to be enriched / currently being enriched / has been enriched depending on the
-  * stages of the enrichment process.
-  **/
-  2: unified_user_actions.UnifiedUserAction uua
+  1: wequiwed i64 envewopid
 
   /**
-  * The current enrichment plan. It keeps track of what is currently being enriched, what still
-  * needs to be done so that we can bring the enrichment process to completion.
+  * the uua event to be enwiched / c-cuwwentwy being enwiched / has b-been enwiched depending o-on the
+  * stages of the enwichment pwocess. rawr x3
   **/
-  3: enrichment_plan.EnrichmentPlan plan
-}(persisted='true', hasPersonalData='true')
+  2: unified_usew_actions.unifiedusewaction uua
+
+  /**
+  * t-the cuwwent enwichment pwan. (✿oωo) it keeps twack of nyani is cuwwentwy being enwiched, (ˆ ﻌ ˆ)♡ n-nyani stiww
+  * nyeeds to b-be done so that w-we can bwing the e-enwichment pwocess t-to compwetion. (˘ω˘)
+  **/
+  3: enwichment_pwan.enwichmentpwan pwan
+}(pewsisted='twue', haspewsonawdata='twue')

@@ -1,81 +1,81 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-only",
+scawa_wibwawy(
+    souwces = ["*.scawa"], :3
+    pwatfowm = "java8", 😳😳😳
+    t-tags = [
+        "bazew-compatibwe", -.-
+        "bazew-onwy", ( ͡o ω ͡o )
+    ],
+    d-dependencies = [
+        "swc/scawa/com/twittew/octain/p13n/batch:p13n_pwefewences-scawa", rawr x3
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces", nyaa~~
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces:data_souwces", /(^•ω•^)
+        "swc/scawa/com/twittew/simcwustews_v2/scawding", rawr
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/common", OwO
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/infewwed_entities", (U ﹏ U)
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:cassowawy_job", >_<
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:execution_app", rawr x3
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:souwces", mya
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:stats_utiw", nyaa~~
+    ], (⑅˘꒳˘)
+)
+
+h-hadoop_binawy(
+    n-nyame = "known_fow_optout-adhoc", rawr x3
+    m-main = "com.twittew.simcwustews_v2.scawding.optout.knownfowoptoutadhocjob", (✿oωo)
+    p-pwatfowm = "java8", (ˆ ﻌ ˆ)♡
+    w-wuntime_pwatfowm = "java8", (˘ω˘)
+    t-tags = [
+        "bazew-compatibwe", (⑅˘꒳˘)
+        "bazew-compatibwe:migwated", (///ˬ///✿)
+        "bazew-onwy", 😳😳😳
     ],
     dependencies = [
-        "src/scala/com/twitter/octain/p13n/batch:p13n_preferences-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:data_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/inferred_entities",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:cassowary_job",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
+        ":optout", 🥺
     ],
 )
 
-hadoop_binary(
-    name = "known_for_optout-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.optout.KnownForOptOutAdhocJob",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    nyame = "known_fow_optout_daiwy", mya
+    main = "com.twittew.simcwustews_v2.scawding.optout.knownfowoptoutdaiwybatchjob", 🥺
+    pwatfowm = "java8", >_<
+    w-wuntime_pwatfowm = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", >_<
+        "bazew-compatibwe:migwated", (⑅˘꒳˘)
+        "bazew-onwy", /(^•ω•^)
     ],
     dependencies = [
-        ":optout",
+        ":optout", rawr x3
     ],
 )
 
-hadoop_binary(
-    name = "known_for_optout_daily",
-    main = "com.twitter.simclusters_v2.scalding.optout.KnownForOptOutDailyBatchJob",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    nyame = "intewested_in_optout-adhoc", (U ﹏ U)
+    m-main = "com.twittew.simcwustews_v2.scawding.optout.intewestedinoptoutadhocjob", (U ﹏ U)
+    pwatfowm = "java8", (⑅˘꒳˘)
+    wuntime_pwatfowm = "java8", òωó
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", ʘwʘ
+        "bazew-compatibwe:migwated", /(^•ω•^)
+        "bazew-onwy", ʘwʘ
+        "known-to-faiw-jiwa:sd-14439", σωσ
     ],
-    dependencies = [
-        ":optout",
+    d-dependencies = [
+        ":optout", OwO
     ],
 )
 
-hadoop_binary(
-    name = "interested_in_optout-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.optout.InterestedInOptOutAdhocJob",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    n-nyame = "intewested_in_optout_daiwy", 😳😳😳
+    m-main = "com.twittew.simcwustews_v2.scawding.optout.intewestedinoptoutdaiwybatchjob", 😳😳😳
+    pwatfowm = "java8", o.O
+    wuntime_pwatfowm = "java8", ( ͡o ω ͡o )
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-        "known-to-fail-jira:SD-14439",
-    ],
+        "bazew-compatibwe", (U ﹏ U)
+        "bazew-compatibwe:migwated", (///ˬ///✿)
+        "bazew-onwy", >w<
+    ], rawr
     dependencies = [
-        ":optout",
-    ],
-)
-
-hadoop_binary(
-    name = "interested_in_optout_daily",
-    main = "com.twitter.simclusters_v2.scalding.optout.InterestedInOptOutDailyBatchJob",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":optout",
-    ],
+        ":optout", mya
+    ], ^^
 )

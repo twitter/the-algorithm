@@ -1,55 +1,55 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namespace java com.twittew.fowwow_wecommendations.wogging.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.wogging.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations.wogging
 
 /**
- * Make sure you add the new DL to the following files and redeploy our attribution jobs
- *  - follow-recommendations-service/thrift/src/main/thrift/display_location.thrift
- *  - follow-recommendations-service/thrift/src/main/thrift/logging/display_location.thrift
- *  - follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models/DisplayLocation.scala
+ * m-make suwe you a-add the nyew dw t-to the fowwowing f-fiwes and wedepwoy o-ouw attwibution j-jobs
+ *  - fowwow-wecommendations-sewvice/thwift/swc/main/thwift/dispway_wocation.thwift
+ *  - fowwow-wecommendations-sewvice/thwift/swc/main/thwift/wogging/dispway_wocation.thwift
+ *  - fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/modews/dispwaywocation.scawa
  */
 
-// Offline equal of DisplayLocation
-enum OfflineDisplayLocation {
-    SIDEBAR = 0
-    PROFILE_SIDEBAR = 2
-    CLUSTER_FOLLOW = 7
-    NEW_USER_SARUS_BACKFILL = 12
-    PROFILE_DEVICE_FOLLOW = 23
-    RECOS_BACKFILL = 32
-    HOME_TIMELINE = 39
-    PROFILE_TOP_FOLLOWING = 42
-    PROFILE_TOP_FOLLOWERS = 43
-    PEOPLE_PLUS_PLUS = 47
-    EXPLORE_TAB = 57
-    MagicRecs = 59
-  AB_UPLOAD_INJECTION = 60
-    CAMPAIGN_FORM = 61
-    RUX_LANDING_PAGE = 62
-    PROFILE_BONUS_FOLLOW = 63
-    ELECTION_EXPLORE_WTF = 64
-    HTL_BONUS_FOLLOW = 65
-    TOPIC_LANDING_PAGE_HEADER = 66
-    NUX_PYMK = 67
-    NUX_INTERESTS = 68
-    REACTIVE_FOLLOW = 69
-    RUX_PYMK = 70
-    INDIA_COVID19_CURATED_ACCOUNTS_WTF=71
-    NUX_TOPIC_BONUS_FOLLOW = 72
-    TWEET_NOTIFICATION_RECS = 73
-    HTL_SPACE_HOSTS = 74
-    POST_NUX_FOLLOW_TASK = 75
-    TOPIC_LANDING_PAGE = 76
-    USER_TYPEAHEAD_PREFETCH = 77
-    HOME_TIMELINE_RELATABLE_ACCOUNTS = 78
-    NUX_GEO_CATEGORY = 79
-    NUX_INTERESTS_CATEGORY = 80
-    NUX_PYMK_CATEGORY = 81
-    TOP_ARTICLES = 82
-    HOME_TIMELINE_TWEET_RECS = 83
-    HTL_BULK_FRIEND_FOLLOWS = 84
-    NUX_AUTO_FOLLOW = 85
-    SEARCH_BONUS_FOLLOW = 86
-    CONTENT_RECOMMENDER = 87
-    HOME_TIMELINE_REVERSE_CHRON = 88
-}(persisted='true')
+// offwine equaw o-of dispwaywocation
+enum offwinedispwaywocation {
+    sidebaw = 0
+    p-pwofiwe_sidebaw = 2
+    cwustew_fowwow = 7
+    nyew_usew_sawus_backfiww = 12
+    p-pwofiwe_device_fowwow = 23
+    wecos_backfiww = 32
+    home_timewine = 39
+    pwofiwe_top_fowwowing = 42
+    pwofiwe_top_fowwowews = 43
+    p-peopwe_pwus_pwus = 47
+    expwowe_tab = 57
+    m-magicwecs = 59
+  a-ab_upwoad_injection = 60
+    campaign_fowm = 61
+    wux_wanding_page = 62
+    pwofiwe_bonus_fowwow = 63
+    ewection_expwowe_wtf = 64
+    h-htw_bonus_fowwow = 65
+    topic_wanding_page_headew = 66
+    nyux_pymk = 67
+    nyux_intewests = 68
+    weactive_fowwow = 69
+    wux_pymk = 70
+    i-india_covid19_cuwated_accounts_wtf=71
+    nyux_topic_bonus_fowwow = 72
+    t-tweet_notification_wecs = 73
+    h-htw_space_hosts = 74
+    p-post_nux_fowwow_task = 75
+    t-topic_wanding_page = 76
+    usew_typeahead_pwefetch = 77
+    home_timewine_wewatabwe_accounts = 78
+    n-nyux_geo_categowy = 79
+    nyux_intewests_categowy = 80
+    nyux_pymk_categowy = 81
+    t-top_awticwes = 82
+    home_timewine_tweet_wecs = 83
+    htw_buwk_fwiend_fowwows = 84
+    nyux_auto_fowwow = 85
+    seawch_bonus_fowwow = 86
+    content_wecommendew = 87
+    h-home_timewine_wevewse_chwon = 88
+}(pewsisted='twue')

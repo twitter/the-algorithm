@@ -1,52 +1,52 @@
-package com.twitter.follow_recommendations.configapi
+package com.twittew.fowwow_wecommendations.configapi
 
-import com.twitter.decider.Recipient
-import com.twitter.decider.SimpleRecipient
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.follow_recommendations.configapi.deciders.DeciderParams
-import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.configapi.HomeTimelineTweetRecsParams
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi._
-import com.twitter.timelines.configapi.decider.DeciderSwitchOverrideValue
-import com.twitter.timelines.configapi.decider.GuestRecipient
-import com.twitter.timelines.configapi.decider.RecipientBuilder
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.decidew.wecipient
+i-impowt c-com.twittew.decidew.simpwewecipient
+i-impowt com.twittew.fowwow_wecommendations.configapi.decidews.decidewkey
+i-impowt c-com.twittew.fowwow_wecommendations.configapi.decidews.decidewpawams
+i-impowt com.twittew.fowwow_wecommendations.pwoducts.home_timewine_tweet_wecs.configapi.hometimewinetweetwecspawams
+i-impowt c-com.twittew.sewvo.decidew.decidewgatebuiwdew
+impowt com.twittew.timewines.configapi._
+impowt com.twittew.timewines.configapi.decidew.decidewswitchovewwidevawue
+impowt com.twittew.timewines.configapi.decidew.guestwecipient
+impowt c-com.twittew.timewines.configapi.decidew.wecipientbuiwdew
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class DeciderConfigs @Inject() (deciderGateBuilder: DeciderGateBuilder) {
-  val overrides: Seq[OptionalOverride[_]] = DeciderConfigs.ParamsToDeciderMap.map {
-    case (params, deciderKey) =>
-      params.optionalOverrideValue(
-        DeciderSwitchOverrideValue(
-          feature = deciderGateBuilder.keyToFeature(deciderKey),
-          enabledValue = true,
-          recipientBuilder = DeciderConfigs.UserOrGuestOrRequest
+@singweton
+cwass decidewconfigs @inject() (decidewgatebuiwdew: d-decidewgatebuiwdew) {
+  vaw ovewwides: seq[optionawuvwwide[_]] = decidewconfigs.pawamstodecidewmap.map {
+    case (pawams, (U ﹏ U) d-decidewkey) =>
+      pawams.optionawuvwwidevawue(
+        d-decidewswitchovewwidevawue(
+          f-featuwe = decidewgatebuiwdew.keytofeatuwe(decidewkey), (U ﹏ U)
+          enabwedvawue = twue, (⑅˘꒳˘)
+          wecipientbuiwdew = decidewconfigs.usewowguestowwequest
         )
       )
-  }.toSeq
+  }.toseq
 
-  val config: BaseConfig = BaseConfigBuilder(overrides).build("FollowRecommendationServiceDeciders")
+  v-vaw config: baseconfig = baseconfigbuiwdew(ovewwides).buiwd("fowwowwecommendationsewvicedecidews")
 }
 
-object DeciderConfigs {
-  val ParamsToDeciderMap = Map(
-    DeciderParams.EnableRecommendations -> DeciderKey.EnableRecommendations,
-    DeciderParams.EnableScoreUserCandidates -> DeciderKey.EnableScoreUserCandidates,
-    HomeTimelineTweetRecsParams.EnableProduct -> DeciderKey.EnableHomeTimelineTweetRecsProduct,
+object decidewconfigs {
+  vaw pawamstodecidewmap = m-map(
+    decidewpawams.enabwewecommendations -> decidewkey.enabwewecommendations, òωó
+    d-decidewpawams.enabwescoweusewcandidates -> d-decidewkey.enabwescoweusewcandidates, ʘwʘ
+    h-hometimewinetweetwecspawams.enabwepwoduct -> d-decidewkey.enabwehometimewinetweetwecspwoduct, /(^•ω•^)
   )
 
-  object UserOrGuestOrRequest extends RecipientBuilder {
+  object usewowguestowwequest extends w-wecipientbuiwdew {
 
-    def apply(requestContext: BaseRequestContext): Option[Recipient] = requestContext match {
-      case c: WithUserId if c.userId.isDefined =>
-        c.userId.map(SimpleRecipient)
-      case c: WithGuestId if c.guestId.isDefined =>
-        c.guestId.map(GuestRecipient)
-      case c: WithGuestId =>
-        RecipientBuilder.Request(c)
+    def appwy(wequestcontext: b-basewequestcontext): option[wecipient] = wequestcontext match {
+      case c: withusewid if c.usewid.isdefined =>
+        c-c.usewid.map(simpwewecipient)
+      case c: withguestid i-if c.guestid.isdefined =>
+        c-c.guestid.map(guestwecipient)
+      c-case c: withguestid =>
+        wecipientbuiwdew.wequest(c)
       case _ =>
-        throw new UndefinedUserIdNorGuestIDException(requestContext)
+        thwow nyew undefinedusewidnowguestidexception(wequestcontext)
     }
   }
 }

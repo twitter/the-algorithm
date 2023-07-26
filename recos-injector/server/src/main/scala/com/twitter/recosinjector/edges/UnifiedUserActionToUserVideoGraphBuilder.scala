@@ -1,56 +1,56 @@
-package com.twitter.recosinjector.edges
+package com.twittew.wecosinjectow.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.UuaEngagementEventDetails
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wecos.utiw.action
+i-impowt c-com.twittew.wecosinjectow.utiw.uuaengagementeventdetaiws
+i-impowt c-com.twittew.utiw.futuwe
 
-class UnifiedUserActionToUserVideoGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
+c-cwass u-unifiedusewactiontousewvideogwaphbuiwdew(
+  u-usewtweetentityedgebuiwdew: usewtweetentityedgebuiwdew
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[UuaEngagementEventDetails, UserTweetEntityEdge] {
+  ovewwide impwicit vaw statsweceivew: statsweceivew)
+    e-extends eventtomessagebuiwdew[uuaengagementeventdetaiws, ʘwʘ usewtweetentityedge] {
 
-  private val numVideoPlayback50EdgeCounter = statsReceiver.counter("num_video_playback50_edge")
-  private val numUnVideoPlayback50Counter = statsReceiver.counter("num_non_video_playback50_edge")
+  pwivate vaw n-nyumvideopwayback50edgecountew = statsweceivew.countew("num_video_pwayback50_edge")
+  p-pwivate vaw nyumunvideopwayback50countew = statsweceivew.countew("num_non_video_pwayback50_edge")
 
-  override def shouldProcessEvent(event: UuaEngagementEventDetails): Future[Boolean] = {
-    event.userTweetEngagement.action match {
-      case Action.VideoPlayback50 => Future(true)
-      case _ => Future(false)
+  ovewwide d-def shouwdpwocessevent(event: uuaengagementeventdetaiws): futuwe[boowean] = {
+    e-event.usewtweetengagement.action m-match {
+      case action.videopwayback50 => futuwe(twue)
+      case _ => futuwe(fawse)
     }
   }
 
-  override def buildEdges(details: UuaEngagementEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val engagement = details.userTweetEngagement
-    val tweetDetails = engagement.tweetDetails
+  o-ovewwide def buiwdedges(detaiws: uuaengagementeventdetaiws): futuwe[seq[usewtweetentityedge]] = {
+    vaw engagement = d-detaiws.usewtweetengagement
+    vaw tweetdetaiws = e-engagement.tweetdetaiws
 
-    Future
-      .value(
-        UserTweetEntityEdge(
-          sourceUser = engagement.engageUserId,
-          targetTweet = engagement.tweetId,
-          action = engagement.action,
-          metadata = engagement.engagementTimeMillis,
-          cardInfo = engagement.tweetDetails.map(_.cardInfo.toByte),
-          entitiesMap = None,
-          tweetDetails = tweetDetails
+    f-futuwe
+      .vawue(
+        u-usewtweetentityedge(
+          s-souwceusew = engagement.engageusewid, /(^•ω•^)
+          tawgettweet = engagement.tweetid, ʘwʘ
+          action = e-engagement.action, σωσ
+          metadata = engagement.engagementtimemiwwis, OwO
+          cawdinfo = e-engagement.tweetdetaiws.map(_.cawdinfo.tobyte), 😳😳😳
+          entitiesmap = nyone, 😳😳😳
+          tweetdetaiws = tweetdetaiws
         )
       ).map { edge =>
-        edge match {
-          case videoPlayback50 if videoPlayback50.action == Action.VideoPlayback50 =>
-            numVideoPlayback50EdgeCounter.incr()
+        e-edge match {
+          case videopwayback50 i-if videopwayback50.action == a-action.videopwayback50 =>
+            nyumvideopwayback50edgecountew.incw()
           case _ =>
-            numUnVideoPlayback50Counter.incr()
+            n-nyumunvideopwayback50countew.incw()
         }
-        Seq(edge)
+        seq(edge)
       }
   }
 
-  override def filterEdges(
-    event: UuaEngagementEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
-    Future(edges)
+  ovewwide def fiwtewedges(
+    e-event: uuaengagementeventdetaiws, o.O
+    e-edges: seq[usewtweetentityedge]
+  ): futuwe[seq[usewtweetentityedge]] = {
+    f-futuwe(edges)
   }
 }

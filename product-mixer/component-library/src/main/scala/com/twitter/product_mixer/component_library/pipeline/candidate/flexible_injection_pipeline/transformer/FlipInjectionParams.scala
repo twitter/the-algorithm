@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew
 
-import com.twitter.onboarding.task.service.{thriftscala => flip}
+impowt com.twittew.onboawding.task.sewvice.{thwiftscawa => f-fwip}
 
-trait HasFlipInjectionParams {
-  def displayLocation: flip.DisplayLocation
-  def rankingDisablerWithLatestControlsAvailable: Option[Boolean]
-  def isEmptyState: Option[Boolean]
-  def isFirstRequestAfterSignup: Option[Boolean]
-  def isEndOfTimeline: Option[Boolean]
+t-twait hasfwipinjectionpawams {
+  d-def dispwaywocation: f-fwip.dispwaywocation
+  d-def w-wankingdisabwewwithwatestcontwowsavaiwabwe: o-option[boowean]
+  d-def isemptystate: option[boowean]
+  def isfiwstwequestaftewsignup: option[boowean]
+  def isendoftimewine: o-option[boowean]
 }

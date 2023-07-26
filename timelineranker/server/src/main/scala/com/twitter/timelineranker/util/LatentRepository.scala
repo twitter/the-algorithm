@@ -1,31 +1,31 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.servo.repository.Repository
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import scala.util.Random
+impowt com.twittew.finagwe.utiw.defauwttimew
+i-impowt com.twittew.sewvo.wepositowy.wepositowy
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.timew
+i-impowt scawa.utiw.wandom
 
-// Inject an artificial delay into an underlying repository's response to match the provided p50
-// and max latencies.
-class LatentRepository[Q, R](
-  underlying: Repository[Q, R],
-  p50: Duration,
-  max: Duration,
-  random: Random = new Random,
-  timer: Timer = DefaultTimer)
-    extends Repository[Q, R] {
-  import scala.math.ceil
-  import scala.math.pow
+// inject a-an awtificiaw d-deway into an u-undewwying wepositowy's wesponse to match the pwovided p50
+// and max watencies. rawr x3
+c-cwass watentwepositowy[q, (✿oωo) w](
+  undewwying: wepositowy[q, (ˆ ﻌ ˆ)♡ w-w], (˘ω˘)
+  p50: duwation, (⑅˘꒳˘)
+  m-max: duwation, (///ˬ///✿)
+  wandom: wandom = nyew wandom, 😳😳😳
+  timew: timew = d-defauwttimew)
+    extends wepositowy[q, 🥺 w-w] {
+  i-impowt scawa.math.ceiw
+  impowt scawa.math.pow
 
-  val p50Millis: Long = p50.inMilliseconds
-  val maxMillis: Long = max.inMilliseconds
-  require(p50Millis > 0 && maxMillis > 0 && maxMillis > p50Millis)
+  vaw p50miwwis: wong = p50.inmiwwiseconds
+  v-vaw maxmiwwis: wong = max.inmiwwiseconds
+  wequiwe(p50miwwis > 0 && maxmiwwis > 0 && maxmiwwis > p-p50miwwis)
 
-  override def apply(query: Q): Future[R] = {
-    val x = random.nextDouble()
-    val sleepTime = ceil(pow(p50Millis, 2 * (1 - x)) / pow(maxMillis, 1 - 2 * x)).toInt
-    Future.sleep(Duration.fromMilliseconds(sleepTime))(timer).flatMap { _ => underlying(query) }
+  ovewwide def appwy(quewy: q-q): futuwe[w] = {
+    vaw x-x = wandom.nextdoubwe()
+    vaw s-sweeptime = ceiw(pow(p50miwwis, mya 2 * (1 - x-x)) / pow(maxmiwwis, 🥺 1 - 2 * x)).toint
+    f-futuwe.sweep(duwation.fwommiwwiseconds(sweeptime))(timew).fwatmap { _ => undewwying(quewy) }
   }
 }

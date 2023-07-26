@@ -1,52 +1,52 @@
-package com.twitter.representationscorer.columns
+package com.twittew.wepwesentationscowew.cowumns
 
-import com.twitter.representationscorer.common.TweetId
-import com.twitter.representationscorer.common.UserId
-import com.twitter.representationscorer.thriftscala.SimClustersRecentEngagementSimilarities
-import com.twitter.representationscorer.twistlyfeatures.Scorer
-import com.twitter.stitch
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle
-import com.twitter.strato.fed._
-import com.twitter.strato.thrift.ScroogeConv
-import javax.inject.Inject
+impowt com.twittew.wepwesentationscowew.common.tweetid
+i-impowt com.twittew.wepwesentationscowew.common.usewid
+i-impowt c-com.twittew.wepwesentationscowew.thwiftscawa.simcwustewswecentengagementsimiwawities
+i-impowt c-com.twittew.wepwesentationscowew.twistwyfeatuwes.scowew
+i-impowt c-com.twittew.stitch
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.catawog.opmetadata
+impowt com.twittew.stwato.config.contactinfo
+impowt com.twittew.stwato.config.powicy
+i-impowt com.twittew.stwato.data.conv
+impowt com.twittew.stwato.data.descwiption.pwaintext
+impowt c-com.twittew.stwato.data.wifecycwe
+impowt com.twittew.stwato.fed._
+i-impowt com.twittew.stwato.thwift.scwoogeconv
+impowt javax.inject.inject
 
-class SimClustersRecentEngagementSimilarityUserTweetEdgeColumn @Inject() (scorer: Scorer)
-    extends StratoFed.Column(
-      "recommendations/representation_scorer/simClustersRecentEngagementSimilarity.UserTweetEdge")
-    with StratoFed.Fetch.Stitch {
+cwass simcwustewswecentengagementsimiwawityusewtweetedgecowumn @inject() (scowew: scowew)
+    extends s-stwatofed.cowumn(
+      "wecommendations/wepwesentation_scowew/simcwustewswecentengagementsimiwawity.usewtweetedge")
+    with stwatofed.fetch.stitch {
 
-  override val policy: Policy = Common.rsxReadPolicy
+  o-ovewwide vaw powicy: p-powicy = common.wsxweadpowicy
 
-  override type Key = (UserId, TweetId)
-  override type View = Unit
-  override type Value = SimClustersRecentEngagementSimilarities
+  ovewwide type key = (usewid, tweetid)
+  ovewwide type view = u-unit
+  ovewwide type vawue = simcwustewswecentengagementsimiwawities
 
-  override val keyConv: Conv[Key] = Conv.ofType[(Long, Long)]
-  override val viewConv: Conv[View] = Conv.ofType
-  override val valueConv: Conv[Value] =
-    ScroogeConv.fromStruct[SimClustersRecentEngagementSimilarities]
+  ovewwide vaw keyconv: c-conv[key] = conv.oftype[(wong, ʘwʘ wong)]
+  ovewwide v-vaw viewconv: c-conv[view] = conv.oftype
+  o-ovewwide v-vaw vawueconv: conv[vawue] =
+    scwoogeconv.fwomstwuct[simcwustewswecentengagementsimiwawities]
 
-  override val contactInfo: ContactInfo = Info.contactInfo
+  o-ovewwide vaw contactinfo: contactinfo = i-info.contactinfo
 
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Lifecycle.Production),
-    description = Some(
-      PlainText(
-        "User-Tweet scores based on the user's recent engagements"
+  ovewwide vaw metadata: opmetadata = opmetadata(
+    wifecycwe = some(wifecycwe.pwoduction), σωσ
+    d-descwiption = some(
+      pwaintext(
+        "usew-tweet s-scowes b-based on the u-usew's wecent engagements"
       ))
   )
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] =
-    scorer
-      .get(key._1, key._2)
+  ovewwide def fetch(key: k-key, view: v-view): stitch[wesuwt[vawue]] =
+    scowew
+      .get(key._1, OwO k-key._2)
       .map(found(_))
-      .handle {
-        case stitch.NotFound => missing
+      .handwe {
+        c-case stitch.notfound => missing
       }
 }

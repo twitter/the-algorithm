@@ -1,219 +1,219 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.google.common.io.BaseEncoding
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.InlineActionsEnum
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.ibis2.lib.util.JsonMarshal
-import com.twitter.notifications.platform.thriftscala._
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationResponse
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.util.Future
+impowt c-com.googwe.common.io.baseencoding
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.fwigate.pushsewvice.pawams.inwineactionsenum
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt com.twittew.ibis2.wib.utiw.jsonmawshaw
+impowt com.twittew.notifications.pwatfowm.thwiftscawa._
+impowt com.twittew.notificationsewvice.thwiftscawa.cweategenewicnotificationwesponse
+i-impowt com.twittew.scwooge.binawythwiftstwuctsewiawizew
+impowt com.twittew.utiw.futuwe
 
 /**
- * This class provides utility functions for inline action for push
+ * t-this cwass pwovides utiwity functions f-fow inwine action fow push
  */
-object InlineActionUtil {
+object inwineactionutiw {
 
-  def scopedStats(statsReceiver: StatsReceiver): StatsReceiver =
-    statsReceiver.scope(getClass.getSimpleName)
+  def scopedstats(statsweceivew: s-statsweceivew): statsweceivew =
+    s-statsweceivew.scope(getcwass.getsimpwename)
 
   /**
-   * Util function to build web inline actions for Ibis
-   * @param actions list of inline actions to be hydrated depending on the CRT
-   * @param enableForDesktopWeb if web inline actions should be shown on desktop RWeb, for experimentation purpose
-   * @param enableForMobileWeb if web inline actions should be shwon on mobile RWeb, for experimentation purpose
-   * @return Params for web inline actions to be consumed by `smart.inline.actions.web.mustache` in Ibis
+   * u-utiw function to buiwd web inwine actions fow ibis
+   * @pawam actions w-wist of inwine actions to be hydwated depending on the cwt
+   * @pawam enabwefowdesktopweb i-if web inwine actions shouwd be s-shown on desktop w-wweb, òωó fow expewimentation p-puwpose
+   * @pawam enabwefowmobiweweb i-if web inwine actions shouwd be shwon on mobiwe w-wweb, 😳😳😳 fow expewimentation puwpose
+   * @wetuwn pawams fow web i-inwine actions to be consumed by `smawt.inwine.actions.web.mustache` in ibis
    */
-  def getGeneratedTweetInlineActionsForWeb(
-    actions: Seq[InlineActionsEnum.Value],
-    enableForDesktopWeb: Boolean,
-    enableForMobileWeb: Boolean
-  ): Map[String, String] = {
-    if (!enableForDesktopWeb && !enableForMobileWeb) {
-      Map.empty
-    } else {
-      val inlineActions = buildEnrichedInlineActionsMap(actions) ++ Map(
-        "enable_for_desktop_web" -> enableForDesktopWeb.toString,
-        "enable_for_mobile_web" -> enableForMobileWeb.toString
+  def getgenewatedtweetinwineactionsfowweb(
+    actions: seq[inwineactionsenum.vawue], σωσ
+    enabwefowdesktopweb: b-boowean, (⑅˘꒳˘)
+    enabwefowmobiweweb: b-boowean
+  ): m-map[stwing, (///ˬ///✿) stwing] = {
+    i-if (!enabwefowdesktopweb && !enabwefowmobiweweb) {
+      map.empty
+    } ewse {
+      vaw inwineactions = b-buiwdenwichedinwineactionsmap(actions) ++ m-map(
+        "enabwe_fow_desktop_web" -> enabwefowdesktopweb.tostwing,
+        "enabwe_fow_mobiwe_web" -> e-enabwefowmobiweweb.tostwing
       )
-      Map(
-        "inline_action_details_web" -> JsonMarshal.toJson(inlineActions),
+      m-map(
+        "inwine_action_detaiws_web" -> jsonmawshaw.tojson(inwineactions),
       )
     }
   }
 
-  def getGeneratedTweetInlineActionsV1(
-    actions: Seq[InlineActionsEnum.Value]
-  ): Map[String, String] = {
-    val inlineActions = buildEnrichedInlineActionsMap(actions)
-    Map(
-      "inline_action_details" -> JsonMarshal.toJson(inlineActions)
+  d-def getgenewatedtweetinwineactionsv1(
+    actions: seq[inwineactionsenum.vawue]
+  ): m-map[stwing, 🥺 stwing] = {
+    vaw inwineactions = b-buiwdenwichedinwineactionsmap(actions)
+    map(
+      "inwine_action_detaiws" -> jsonmawshaw.tojson(inwineactions)
     )
   }
 
-  private def buildEnrichedInlineActionsMap(
-    actions: Seq[InlineActionsEnum.Value]
-  ): Map[String, Seq[Map[String, Any]]] = {
-    Map(
+  p-pwivate def buiwdenwichedinwineactionsmap(
+    a-actions: s-seq[inwineactionsenum.vawue]
+  ): map[stwing, OwO seq[map[stwing, >w< any]]] = {
+    map(
       "actions" -> actions
-        .map(_.toString.toLowerCase)
-        .zipWithIndex
+        .map(_.tostwing.towowewcase)
+        .zipwithindex
         .map {
-          case (a: String, i: Int) =>
-            Map("action" -> a) ++ Map(
-              s"use_${a}_stringcenter_key" -> true,
-              "last" -> (i == (actions.length - 1))
+          case (a: s-stwing, 🥺 i: int) =>
+            map("action" -> a) ++ m-map(
+              s"use_${a}_stwingcentew_key" -> t-twue, nyaa~~
+              "wast" -> (i == (actions.wength - 1))
             )
         }.seq
     )
   }
 
-  def getGeneratedTweetInlineActionsV2(
-    actions: Seq[InlineActionsEnum.Value]
-  ): Map[String, String] = {
-    val v2CustomActions = actions
+  d-def getgenewatedtweetinwineactionsv2(
+    a-actions: seq[inwineactionsenum.vawue]
+  ): map[stwing, ^^ stwing] = {
+    vaw v2customactions = a-actions
       .map {
-        case InlineActionsEnum.Favorite =>
-          NotificationCustomAction(
-            Some("mr_inline_favorite_title"),
-            CustomActionData.LegacyAction(LegacyAction(ActionIdentifier.Favorite))
+        case inwineactionsenum.favowite =>
+          nyotificationcustomaction(
+            some("mw_inwine_favowite_titwe"), >w<
+            customactiondata.wegacyaction(wegacyaction(actionidentifiew.favowite))
           )
-        case InlineActionsEnum.Follow =>
-          NotificationCustomAction(
-            Some("mr_inline_follow_title"),
-            CustomActionData.LegacyAction(LegacyAction(ActionIdentifier.Follow)))
-        case InlineActionsEnum.Reply =>
-          NotificationCustomAction(
-            Some("mr_inline_reply_title"),
-            CustomActionData.LegacyAction(LegacyAction(ActionIdentifier.Reply)))
-        case InlineActionsEnum.Retweet =>
-          NotificationCustomAction(
-            Some("mr_inline_retweet_title"),
-            CustomActionData.LegacyAction(LegacyAction(ActionIdentifier.Retweet)))
-        case _ =>
-          NotificationCustomAction(
-            Some("mr_inline_favorite_title"),
-            CustomActionData.LegacyAction(LegacyAction(ActionIdentifier.Favorite))
+        c-case inwineactionsenum.fowwow =>
+          n-nyotificationcustomaction(
+            s-some("mw_inwine_fowwow_titwe"), OwO
+            c-customactiondata.wegacyaction(wegacyaction(actionidentifiew.fowwow)))
+        case inwineactionsenum.wepwy =>
+          n-nyotificationcustomaction(
+            s-some("mw_inwine_wepwy_titwe"), XD
+            c-customactiondata.wegacyaction(wegacyaction(actionidentifiew.wepwy)))
+        c-case inwineactionsenum.wetweet =>
+          nyotificationcustomaction(
+            some("mw_inwine_wetweet_titwe"), ^^;;
+            c-customactiondata.wegacyaction(wegacyaction(actionidentifiew.wetweet)))
+        c-case _ =>
+          n-nyotificationcustomaction(
+            s-some("mw_inwine_favowite_titwe"), 🥺
+            c-customactiondata.wegacyaction(wegacyaction(actionidentifiew.favowite))
           )
       }
-    val notifications = NotificationCustomActions(v2CustomActions)
-    Map("serialized_inline_actions_v2" -> serializeActionsToBase64(notifications))
+    vaw nyotifications = nyotificationcustomactions(v2customactions)
+    map("sewiawized_inwine_actions_v2" -> s-sewiawizeactionstobase64(notifications))
   }
 
-  def getDislikeInlineAction(
-    candidate: PushCandidate,
-    ntabResponse: CreateGenericNotificationResponse
-  ): Option[NotificationCustomAction] = {
-    ntabResponse.successKey.map(successKey => {
-      val urlParams = Map[String, String](
-        "answer" -> "dislike",
-        "notification_hash" -> successKey.hashKey.toString,
-        "upstream_uid" -> candidate.impressionId,
-        "notification_timestamp" -> successKey.timestampMillis.toString
+  def getdiswikeinwineaction(
+    candidate: pushcandidate, XD
+    nytabwesponse: cweategenewicnotificationwesponse
+  ): option[notificationcustomaction] = {
+    n-nytabwesponse.successkey.map(successkey => {
+      vaw uwwpawams = map[stwing, (U ᵕ U❁) stwing](
+        "answew" -> "diswike", :3
+        "notification_hash" -> successkey.hashkey.tostwing, ( ͡o ω ͡o )
+        "upstweam_uid" -> c-candidate.impwessionid, òωó
+        "notification_timestamp" -> s-successkey.timestampmiwwis.tostwing
       )
-      val urlParamsString = urlParams.map(kvp => f"${kvp._1}=${kvp._2}").mkString("&")
+      v-vaw uwwpawamsstwing = uwwpawams.map(kvp => f-f"${kvp._1}=${kvp._2}").mkstwing("&")
 
-      val httpPostRequest = HttpRequest.PostRequest(
-        PostRequest(url = f"/2/notifications/feedback.json?$urlParamsString", bodyParams = None))
-      val httpRequestAction = HttpRequestAction(
-        httpRequest = httpPostRequest,
-        scribeAction = Option("dislike_scribe_action"),
-        isAuthorizationRequired = Option(true),
-        isDestructive = Option(false),
-        undoable = None
+      vaw httppostwequest = h-httpwequest.postwequest(
+        p-postwequest(uww = f"/2/notifications/feedback.json?$uwwpawamsstwing", σωσ bodypawams = nyone))
+      vaw httpwequestaction = httpwequestaction(
+        httpwequest = h-httppostwequest, (U ᵕ U❁)
+        scwibeaction = o-option("diswike_scwibe_action"), (✿oωo)
+        isauthowizationwequiwed = o-option(twue), ^^
+        i-isdestwuctive = option(fawse), ^•ﻌ•^
+        undoabwe = nyone
       )
-      val dislikeAction = CustomActionData.HttpRequestAction(httpRequestAction)
-      NotificationCustomAction(title = Option("mr_inline_dislike_title"), action = dislikeAction)
+      v-vaw diswikeaction = c-customactiondata.httpwequestaction(httpwequestaction)
+      nyotificationcustomaction(titwe = o-option("mw_inwine_diswike_titwe"), XD a-action = diswikeaction)
     })
   }
 
   /**
-   * Given a serialized inline action v2, update the action at index to the given new action.
-   * If given index is bigger than current action length, append the given inline action at the end.
-   * @param serialized_inline_actions_v2 the original action in serialized version
-   * @param actionOption an Option of the new action to replace the old one
-   * @param index the position where the old action will be replaced
-   * @return a new serialized inline action v2
+   * given a sewiawized inwine action v2, :3 update t-the action at i-index to the given n-nyew action. (ꈍᴗꈍ)
+   * if given index i-is biggew than c-cuwwent action wength, :3 append t-the given inwine action at the end.
+   * @pawam sewiawized_inwine_actions_v2 the owiginaw action i-in sewiawized v-vewsion
+   * @pawam actionoption an option of the n-nyew action to w-wepwace the owd one
+   * @pawam index the position whewe the owd a-action wiww be wepwaced
+   * @wetuwn a nyew sewiawized inwine action v2
    */
-  def patchInlineActionAtPosition(
-    serialized_inline_actions_v2: String,
-    actionOption: Option[NotificationCustomAction],
-    index: Int
-  ): String = {
-    val originalActions: Seq[NotificationCustomAction] = deserializeActionsFromString(
-      serialized_inline_actions_v2).actions
-    val newActions = actionOption match {
-      case Some(action) if index >= originalActions.size => originalActions ++ Seq(action)
-      case Some(action) => originalActions.updated(index, action)
-      case _ => originalActions
+  d-def patchinwineactionatposition(
+    sewiawized_inwine_actions_v2: stwing, (U ﹏ U)
+    a-actionoption: o-option[notificationcustomaction], UwU
+    index: int
+  ): stwing = {
+    vaw owiginawactions: s-seq[notificationcustomaction] = d-desewiawizeactionsfwomstwing(
+      sewiawized_inwine_actions_v2).actions
+    vaw nyewactions = actionoption m-match {
+      case some(action) i-if index >= owiginawactions.size => owiginawactions ++ seq(action)
+      c-case some(action) => owiginawactions.updated(index, 😳😳😳 a-action)
+      c-case _ => owiginawactions
     }
-    serializeActionsToBase64(NotificationCustomActions(newActions))
+    sewiawizeactionstobase64(notificationcustomactions(newactions))
   }
 
   /**
-   * Return list of available inline actions for ibis2 model
+   * w-wetuwn wist of avaiwabwe inwine a-actions fow i-ibis2 modew
    */
-  def getGeneratedTweetInlineActions(
-    target: Target,
-    statsReceiver: StatsReceiver,
-    actions: Seq[InlineActionsEnum.Value],
-  ): Map[String, String] = {
-    val scopedStatsReceiver = scopedStats(statsReceiver)
-    val useV1 = target.params(PushFeatureSwitchParams.UseInlineActionsV1)
-    val useV2 = target.params(PushFeatureSwitchParams.UseInlineActionsV2)
-    if (useV1 && useV2) {
-      scopedStatsReceiver.counter("use_v1_and_use_v2").incr()
-      getGeneratedTweetInlineActionsV1(actions) ++ getGeneratedTweetInlineActionsV2(actions)
-    } else if (useV1 && !useV2) {
-      scopedStatsReceiver.counter("only_use_v1").incr()
-      getGeneratedTweetInlineActionsV1(actions)
-    } else if (!useV1 && useV2) {
-      scopedStatsReceiver.counter("only_use_v2").incr()
-      getGeneratedTweetInlineActionsV2(actions)
-    } else {
-      scopedStatsReceiver.counter("use_neither_v1_nor_v2").incr()
-      Map.empty[String, String]
+  d-def getgenewatedtweetinwineactions(
+    tawget: t-tawget,
+    s-statsweceivew: statsweceivew, XD
+    actions: seq[inwineactionsenum.vawue], o.O
+  ): m-map[stwing, (⑅˘꒳˘) stwing] = {
+    v-vaw s-scopedstatsweceivew = scopedstats(statsweceivew)
+    vaw usev1 = t-tawget.pawams(pushfeatuweswitchpawams.useinwineactionsv1)
+    vaw usev2 = tawget.pawams(pushfeatuweswitchpawams.useinwineactionsv2)
+    i-if (usev1 && u-usev2) {
+      scopedstatsweceivew.countew("use_v1_and_use_v2").incw()
+      getgenewatedtweetinwineactionsv1(actions) ++ getgenewatedtweetinwineactionsv2(actions)
+    } e-ewse if (usev1 && !usev2) {
+      s-scopedstatsweceivew.countew("onwy_use_v1").incw()
+      g-getgenewatedtweetinwineactionsv1(actions)
+    } e-ewse if (!usev1 && usev2) {
+      s-scopedstatsweceivew.countew("onwy_use_v2").incw()
+      getgenewatedtweetinwineactionsv2(actions)
+    } ewse {
+      scopedstatsweceivew.countew("use_neithew_v1_now_v2").incw()
+      map.empty[stwing, 😳😳😳 stwing]
     }
   }
 
   /**
-   * Return Tweet inline action ibis2 model values after applying experiment logic
+   * w-wetuwn tweet inwine action ibis2 m-modew vawues aftew appwying e-expewiment wogic
    */
-  def getTweetInlineActionValue(target: Target): Future[Map[String, String]] = {
-    if (target.isLoggedOutUser) {
-      Future(
-        Map(
-          "show_inline_action" -> "false"
+  def gettweetinwineactionvawue(tawget: tawget): f-futuwe[map[stwing, nyaa~~ stwing]] = {
+    i-if (tawget.iswoggedoutusew) {
+      f-futuwe(
+        m-map(
+          "show_inwine_action" -> "fawse"
         )
       )
-    } else {
-      val showInlineAction: Boolean = target.params(PushParams.MRAndroidInlineActionOnPushCopyParam)
-      Future(
-        Map(
-          "show_inline_action" -> s"$showInlineAction"
+    } e-ewse {
+      v-vaw showinwineaction: boowean = tawget.pawams(pushpawams.mwandwoidinwineactiononpushcopypawam)
+      futuwe(
+        map(
+          "show_inwine_action" -> s"$showinwineaction"
         )
       )
     }
   }
 
-  private val binaryThriftStructSerializer: BinaryThriftStructSerializer[
-    NotificationCustomActions
-  ] = BinaryThriftStructSerializer.apply(NotificationCustomActions)
-  private val base64Encoding = BaseEncoding.base64()
+  pwivate vaw b-binawythwiftstwuctsewiawizew: b-binawythwiftstwuctsewiawizew[
+    n-nyotificationcustomactions
+  ] = binawythwiftstwuctsewiawizew.appwy(notificationcustomactions)
+  p-pwivate vaw base64encoding = baseencoding.base64()
 
-  def serializeActionsToBase64(notificationCustomActions: NotificationCustomActions): String = {
-    val actionsAsByteArray: Array[Byte] =
-      binaryThriftStructSerializer.toBytes(notificationCustomActions)
-    base64Encoding.encode(actionsAsByteArray)
+  def sewiawizeactionstobase64(notificationcustomactions: nyotificationcustomactions): stwing = {
+    v-vaw actionsasbyteawway: a-awway[byte] =
+      binawythwiftstwuctsewiawizew.tobytes(notificationcustomactions)
+    b-base64encoding.encode(actionsasbyteawway)
   }
 
-  def deserializeActionsFromString(serializedInlineActionV2: String): NotificationCustomActions = {
-    val actionAsByteArray = base64Encoding.decode(serializedInlineActionV2)
-    binaryThriftStructSerializer.fromBytes(actionAsByteArray)
+  def desewiawizeactionsfwomstwing(sewiawizedinwineactionv2: s-stwing): n-nyotificationcustomactions = {
+    vaw actionasbyteawway = b-base64encoding.decode(sewiawizedinwineactionv2)
+    binawythwiftstwuctsewiawizew.fwombytes(actionasbyteawway)
   }
 
 }

@@ -1,34 +1,34 @@
-# Library for schema builder and related analysis utilities.
-java_library(
-    sources = ["*.java"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/jvm/org/apache/lucene:lucene-analyzers-common",
-        "3rdparty/jvm/org/apache/lucene:lucene-analyzers-smartcn",
-        "3rdparty/jvm/org/apache/lucene:lucene-core",
-        "3rdparty/jvm/org/apache/lucene:lucene-facet",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/jvm/org/apache/zookeeper:zookeeper-client",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common/collections",
-        "src/java/com/twitter/common/text/token",
-        "src/java/com/twitter/common/text/util:token-util",
-        "src/java/com/twitter/search/common/encoding/docvalues",
-        "src/java/com/twitter/search/common/features",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/java/com/twitter/search/common/util/analysis",
-        "src/java/com/twitter/search/common/util/io",
-        "src/java/com/twitter/search/common/util/io:record-reader-api",
-        "src/java/com/twitter/search/common/util/spatial",
-        "src/java/com/twitter/search/common/util/text",
-        "src/java/com/twitter/search/common/util/thrift:thrift-utils",
-        "src/thrift/com/twitter/search/common:features-java",
-        "src/thrift/com/twitter/search/common:schema-java",
-    ],
+# wibwawy fow schema buiwdew and w-wewated anawysis u-utiwities.
+java_wibwawy(
+    s-souwces = ["*.java"], o.O
+    p-pwatfowm = "java8", (U ᵕ U❁)
+    t-tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/guava", ( ͡o ω ͡o )
+        "3wdpawty/jvm/com/googwe/inject:guice", UwU
+        "3wdpawty/jvm/owg/apache/hadoop:hadoop-cwient-defauwt", rawr x3
+        "3wdpawty/jvm/owg/apache/wucene:wucene-anawyzews-common", rawr
+        "3wdpawty/jvm/owg/apache/wucene:wucene-anawyzews-smawtcn", σωσ
+        "3wdpawty/jvm/owg/apache/wucene:wucene-cowe", σωσ
+        "3wdpawty/jvm/owg/apache/wucene:wucene-facet", >_<
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", :3
+        "3wdpawty/jvm/owg/apache/zookeepew:zookeepew-cwient", (U ﹏ U)
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", -.-
+        "swc/java/com/twittew/common/base", (ˆ ﻌ ˆ)♡
+        "swc/java/com/twittew/common/cowwections", (⑅˘꒳˘)
+        "swc/java/com/twittew/common/text/token", (U ᵕ U❁)
+        "swc/java/com/twittew/common/text/utiw:token-utiw", -.-
+        "swc/java/com/twittew/seawch/common/encoding/docvawues", ^^;;
+        "swc/java/com/twittew/seawch/common/featuwes", >_<
+        "swc/java/com/twittew/seawch/common/metwics", mya
+        "swc/java/com/twittew/seawch/common/schema/base", mya
+        "swc/java/com/twittew/seawch/common/utiw/anawysis", 😳
+        "swc/java/com/twittew/seawch/common/utiw/io", XD
+        "swc/java/com/twittew/seawch/common/utiw/io:wecowd-weadew-api", :3
+        "swc/java/com/twittew/seawch/common/utiw/spatiaw", 😳😳😳
+        "swc/java/com/twittew/seawch/common/utiw/text", -.-
+        "swc/java/com/twittew/seawch/common/utiw/thwift:thwift-utiws",
+        "swc/thwift/com/twittew/seawch/common:featuwes-java", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/seawch/common:schema-java", rawr x3
+    ], nyaa~~
 )

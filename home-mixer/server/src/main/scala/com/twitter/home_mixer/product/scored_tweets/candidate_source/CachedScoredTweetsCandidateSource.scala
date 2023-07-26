@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_source
+package com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_souwce
 
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt com.twittew.home_mixew.utiw.cachedscowedtweetshewpew
+i-impowt com.twittew.home_mixew.{thwiftscawa => h-hmt}
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class CachedScoredTweetsCandidateSource @Inject() ()
-    extends CandidateSource[PipelineQuery, hmt.ScoredTweet] {
+@singweton
+cwass cachedscowedtweetscandidatesouwce @inject() ()
+    extends candidatesouwce[pipewinequewy, (⑅˘꒳˘) hmt.scowedtweet] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("CachedScoredTweets")
+  o-ovewwide vaw identifiew: candidatesouwceidentifiew =
+    candidatesouwceidentifiew("cachedscowedtweets")
 
-  override def apply(request: PipelineQuery): Stitch[Seq[hmt.ScoredTweet]] = {
-    Stitch.value(
-      request.features.map(CachedScoredTweetsHelper.unseenCachedScoredTweets).getOrElse(Seq.empty))
+  ovewwide d-def appwy(wequest: pipewinequewy): s-stitch[seq[hmt.scowedtweet]] = {
+    stitch.vawue(
+      wequest.featuwes.map(cachedscowedtweetshewpew.unseencachedscowedtweets).getowewse(seq.empty))
   }
 }

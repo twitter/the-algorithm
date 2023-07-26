@@ -1,23 +1,23 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.twittew.seawch.eawwybiwd.pawtition.fweshstawtup;
 
-class KafkaOffsetPair {
-  private final long beginOffset;
-  private final long endOffset;
+cwass k-kafkaoffsetpaiw {
+  p-pwivate finaw w-wong beginoffset;
+  p-pwivate f-finaw wong endoffset;
 
-  public KafkaOffsetPair(long beginOffset, long endOffset) {
-    this.beginOffset = beginOffset;
-    this.endOffset = endOffset;
+  p-pubwic k-kafkaoffsetpaiw(wong b-beginoffset, mya wong endoffset) {
+    this.beginoffset = beginoffset;
+    this.endoffset = e-endoffset;
   }
 
-  public boolean includes(long offset) {
-    return beginOffset <= offset && offset <= endOffset;
+  pubwic boowean incwudes(wong offset) {
+    w-wetuwn beginoffset <= o-offset && offset <= endoffset;
   }
 
-  public long getBeginOffset() {
-    return beginOffset;
+  pubwic wong getbeginoffset() {
+    w-wetuwn beginoffset;
   }
 
-  public long getEndOffset() {
-    return endOffset;
+  p-pubwic wong g-getendoffset() {
+    wetuwn endoffset;
   }
 }

@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.opewation
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowopewation
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class CursorOperationMarshaller @Inject() (
-  cursorTypeMarshaller: CursorTypeMarshaller,
-  cursorDisplayTreatmentMarshaller: CursorDisplayTreatmentMarshaller) {
+@singweton
+c-cwass c-cuwsowopewationmawshawwew @inject() (
+  c-cuwsowtypemawshawwew: cuwsowtypemawshawwew, (⑅˘꒳˘)
+  cuwsowdispwaytweatmentmawshawwew: cuwsowdispwaytweatmentmawshawwew) {
 
-  def apply(cursorOperation: CursorOperation): urt.TimelineOperation.Cursor =
-    urt.TimelineOperation.Cursor(
-      urt.TimelineCursor(
-        value = cursorOperation.value,
-        cursorType = cursorTypeMarshaller(cursorOperation.cursorType),
-        displayTreatment = cursorOperation.displayTreatment.map(cursorDisplayTreatmentMarshaller(_))
+  def appwy(cuwsowopewation: cuwsowopewation): u-uwt.timewineopewation.cuwsow =
+    uwt.timewineopewation.cuwsow(
+      uwt.timewinecuwsow(
+        v-vawue = cuwsowopewation.vawue, (U ᵕ U❁)
+        cuwsowtype = c-cuwsowtypemawshawwew(cuwsowopewation.cuwsowtype), -.-
+        dispwaytweatment = cuwsowopewation.dispwaytweatment.map(cuwsowdispwaytweatmentmawshawwew(_))
       )
     )
 }

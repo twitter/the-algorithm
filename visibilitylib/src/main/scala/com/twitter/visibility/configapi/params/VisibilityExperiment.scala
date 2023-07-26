@@ -1,19 +1,19 @@
-package com.twitter.visibility.configapi.params
+package com.twittew.visibiwity.configapi.pawams
 
-import com.twitter.timelines.configapi.BucketName
-import com.twitter.timelines.configapi.Experiment
-import com.twitter.timelines.configapi.UseFeatureContext
+impowt com.twittew.timewines.configapi.bucketname
+i-impowt com.twittew.timewines.configapi.expewiment
+i-impowt com.twittew.timewines.configapi.usefeatuwecontext
 
-object VisibilityExperiment {
-  val Control = "control"
-  val Treatment = "treatment"
+o-object v-visibiwityexpewiment {
+  v-vaw c-contwow = "contwow"
+  v-vaw tweatment = "tweatment"
 }
 
-abstract class VisibilityExperiment(experimentKey: String)
-    extends Experiment(experimentKey)
-    with UseFeatureContext {
-  val TreatmentBucket: String = VisibilityExperiment.Treatment
-  override def experimentBuckets: Set[BucketName] = Set(TreatmentBucket)
-  val ControlBucket: String = VisibilityExperiment.Control
-  override def controlBuckets: Set[BucketName] = Set(ControlBucket)
+a-abstwact cwass visibiwityexpewiment(expewimentkey: stwing)
+    extends expewiment(expewimentkey)
+    with u-usefeatuwecontext {
+  vaw tweatmentbucket: stwing = v-visibiwityexpewiment.tweatment
+  ovewwide def e-expewimentbuckets: set[bucketname] = set(tweatmentbucket)
+  vaw contwowbucket: s-stwing = visibiwityexpewiment.contwow
+  ovewwide d-def contwowbuckets: s-set[bucketname] = set(contwowbucket)
 }

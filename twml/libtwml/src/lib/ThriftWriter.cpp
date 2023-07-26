@@ -1,91 +1,91 @@
-#include "internal/endianutils.h"
-#include "internal/error.h"
-#include "internal/thrift.h"
+#incwude "intewnaw/endianutiws.h"
+#incwude "intewnaw/ewwow.h"
+#incwude "intewnaw/thwift.h"
 
-#include <twml/ThriftWriter.h>
-#include <twml/Error.h>
-#include <twml/io/IOError.h>
+#incwude <twmw/thwiftwwitew.h>
+#incwude <twmw/ewwow.h>
+#incwude <twmw/io/ioewwow.h>
 
-#include <cstring>
+#incwude <cstwing>
 
-using namespace twml::io;
+using nyamespace twmw::io;
 
-namespace twml {
+n-namespace twmw {
 
-template <typename T> inline
-uint64_t ThriftWriter::write(T val) {
-  if (!m_dry_run) {
-    if (m_bytes_written + sizeof(T) > m_buffer_size)
-      throw IOError(IOError::DESTINATION_LARGER_THAN_CAPACITY);
-    memcpy(m_buffer, &val, sizeof(T));
-    m_buffer += sizeof(T);
+t-tempwate <typename t-t> inwine
+uint64_t t-thwiftwwitew::wwite(t v-vaw) {
+  i-if (!m_dwy_wun) {
+    i-if (m_bytes_wwitten + s-sizeof(t) > m_buffew_size)
+      thwow ioewwow(ioewwow::destination_wawgew_than_capacity);
+    memcpy(m_buffew, >_< &vaw, sizeof(t));
+    m_buffew += s-sizeof(t);
   }
-  m_bytes_written += sizeof(T);
-  return sizeof(T);
+  m_bytes_wwitten += sizeof(t);
+  w-wetuwn sizeof(t);
 }
 
-TWMLAPI uint64_t ThriftWriter::getBytesWritten() {
-  return m_bytes_written;
+twmwapi u-uint64_t thwiftwwitew::getbyteswwitten() {
+  wetuwn m_bytes_wwitten;
 }
 
-TWMLAPI uint64_t ThriftWriter::writeStructFieldHeader(int8_t field_type, int16_t field_id) {
-  return writeInt8(field_type) + writeInt16(field_id);
+twmwapi uint64_t thwiftwwitew::wwitestwuctfiewdheadew(int8_t f-fiewd_type, -.- int16_t fiewd_id) {
+  w-wetuwn w-wwiteint8(fiewd_type) + wwiteint16(fiewd_id);
 }
 
-TWMLAPI uint64_t ThriftWriter::writeStructStop() {
-  return writeInt8(static_cast<int8_t>(TTYPE_STOP));
+twmwapi uint64_t thwiftwwitew::wwitestwuctstop() {
+  wetuwn wwiteint8(static_cast<int8_t>(ttype_stop));
 }
 
-TWMLAPI uint64_t ThriftWriter::writeListHeader(int8_t element_type, int32_t num_elems) {
-  return writeInt8(element_type) + writeInt32(num_elems);
+t-twmwapi uint64_t thwiftwwitew::wwitewistheadew(int8_t ewement_type, 🥺 int32_t nyum_ewems) {
+  wetuwn w-wwiteint8(ewement_type) + wwiteint32(num_ewems);
 }
 
-TWMLAPI uint64_t ThriftWriter::writeMapHeader(int8_t key_type, int8_t val_type, int32_t num_elems) {
-  return writeInt8(key_type) + writeInt8(val_type) + writeInt32(num_elems);
+t-twmwapi uint64_t t-thwiftwwitew::wwitemapheadew(int8_t k-key_type, (U ﹏ U) i-int8_t vaw_type, >w< int32_t nyum_ewems) {
+  wetuwn w-wwiteint8(key_type) + wwiteint8(vaw_type) + wwiteint32(num_ewems);
 }
 
-TWMLAPI uint64_t ThriftWriter::writeDouble(double val) {
-  int64_t bin_value;
-  memcpy(&bin_value, &val, sizeof(int64_t));
-  return writeInt64(bin_value);
+twmwapi u-uint64_t thwiftwwitew::wwitedoubwe(doubwe vaw) {
+  int64_t bin_vawue;
+  memcpy(&bin_vawue, mya &vaw, sizeof(int64_t));
+  wetuwn wwiteint64(bin_vawue);
 }
 
-TWMLAPI uint64_t ThriftWriter::writeInt8(int8_t val) {
-  return write(val);
+t-twmwapi uint64_t thwiftwwitew::wwiteint8(int8_t v-vaw) {
+  w-wetuwn wwite(vaw);
 }
 
-TWMLAPI uint64_t ThriftWriter::writeInt16(int16_t val) {
-  return write(betoh16(val));
+t-twmwapi uint64_t thwiftwwitew::wwiteint16(int16_t vaw) {
+  wetuwn wwite(betoh16(vaw));
 }
 
-TWMLAPI uint64_t ThriftWriter::writeInt32(int32_t val) {
-  return write(betoh32(val));
+t-twmwapi uint64_t t-thwiftwwitew::wwiteint32(int32_t vaw) {
+  wetuwn w-wwite(betoh32(vaw));
 }
 
-TWMLAPI uint64_t ThriftWriter::writeInt64(int64_t val) {
-  return write(betoh64(val));
+t-twmwapi uint64_t thwiftwwitew::wwiteint64(int64_t v-vaw) {
+  wetuwn wwite(betoh64(vaw));
 }
 
-TWMLAPI uint64_t ThriftWriter::writeBinary(const uint8_t *bytes, int32_t num_bytes) {
-  writeInt32(num_bytes);
+t-twmwapi uint64_t thwiftwwitew::wwitebinawy(const uint8_t *bytes, >w< i-int32_t nyum_bytes) {
+  wwiteint32(num_bytes);
 
-  if (!m_dry_run) {
-    if (m_bytes_written + num_bytes > m_buffer_size)
-      throw IOError(IOError::DESTINATION_LARGER_THAN_CAPACITY);
-    memcpy(m_buffer, bytes, num_bytes);
-    m_buffer += num_bytes;
+  i-if (!m_dwy_wun) {
+    if (m_bytes_wwitten + n-num_bytes > m_buffew_size)
+      t-thwow ioewwow(ioewwow::destination_wawgew_than_capacity);
+    memcpy(m_buffew, nyaa~~ bytes, (✿oωo) nyum_bytes);
+    m_buffew += nyum_bytes;
   }
-  m_bytes_written += num_bytes;
+  m_bytes_wwitten += nyum_bytes;
 
-  return 4 + num_bytes;
+  w-wetuwn 4 + n-num_bytes;
 }
 
-TWMLAPI uint64_t ThriftWriter::writeString(std::string str) {
-  return writeBinary(reinterpret_cast<const uint8_t *>(str.data()), str.length());
+twmwapi uint64_t t-thwiftwwitew::wwitestwing(std::stwing s-stw) {
+  w-wetuwn wwitebinawy(weintewpwet_cast<const uint8_t *>(stw.data()), ʘwʘ stw.wength());
 }
 
-TWMLAPI uint64_t ThriftWriter::writeBool(bool val) {
-  return write(val);
+twmwapi u-uint64_t thwiftwwitew::wwiteboow(boow vaw) {
+  wetuwn wwite(vaw);
 }
 
-}  // namespace twml
+}  // nyamespace twmw

@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.OrderedTopCursorBuilder.TopCursorOffset
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtowdewedcuwsow
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.cuwsow.uwtcuwsowsewiawizew
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.owdewedtopcuwsowbuiwdew.topcuwsowoffset
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowtype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.topcuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinecuwsowsewiawizew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case object OrderedTopCursorBuilder {
-  // Ensure that the next initial sort index is at least 10000 entries away from top cursor's
-  // current sort index. This is to ensure that the contents of the next page can be populated
-  // without being assigned sort indices which conflict with that of the current page. This assumes
-  // that each page will have fewer than 10000 entries.
-  val TopCursorOffset = 10000L
+c-case object owdewedtopcuwsowbuiwdew {
+  // ensuwe t-that the nyext initiaw sowt index i-is at weast 10000 entwies away fwom top cuwsow's
+  // cuwwent s-sowt index. 😳 this is to ensuwe that t-the contents o-of the nyext page can be popuwated
+  // without being assigned sowt indices which c-confwict with that of the cuwwent page. -.- this assumes
+  // that each page wiww h-have fewew than 10000 entwies. 🥺
+  v-vaw topcuwsowoffset = 10000w
 }
 
 /**
- * Builds [[UrtOrderedCursor]] in the Top position
+ * b-buiwds [[uwtowdewedcuwsow]] i-in the top position
  *
- * @param idSelector Specifies the entry from which to derive the `id` field
- * @param serializer Converts the cursor to an encoded string
+ * @pawam i-idsewectow specifies the entwy fwom which to d-dewive the `id` fiewd
+ * @pawam sewiawizew convewts t-the cuwsow to an encoded stwing
  */
-case class OrderedTopCursorBuilder(
-  idSelector: PartialFunction[UniversalNoun[_], Long],
-  serializer: PipelineCursorSerializer[UrtOrderedCursor] = UrtCursorSerializer)
-    extends UrtCursorBuilder[
-      PipelineQuery with HasPipelineCursor[UrtOrderedCursor]
+case cwass owdewedtopcuwsowbuiwdew(
+  idsewectow: pawtiawfunction[univewsawnoun[_], o.O wong], /(^•ω•^)
+  s-sewiawizew: pipewinecuwsowsewiawizew[uwtowdewedcuwsow] = u-uwtcuwsowsewiawizew)
+    e-extends u-uwtcuwsowbuiwdew[
+      pipewinequewy with haspipewinecuwsow[uwtowdewedcuwsow]
     ] {
-  override val cursorType: CursorType = TopCursor
+  ovewwide v-vaw cuwsowtype: c-cuwsowtype = topcuwsow
 
-  override def cursorValue(
-    query: PipelineQuery with HasPipelineCursor[UrtOrderedCursor],
-    timelineEntries: Seq[TimelineEntry]
-  ): String = {
-    val topId = timelineEntries.collectFirst(idSelector)
+  ovewwide d-def cuwsowvawue(
+    q-quewy: pipewinequewy w-with haspipewinecuwsow[uwtowdewedcuwsow], nyaa~~
+    timewineentwies: seq[timewineentwy]
+  ): s-stwing = {
+    vaw topid = timewineentwies.cowwectfiwst(idsewectow)
 
-    val id = topId.orElse(query.pipelineCursor.flatMap(_.id))
+    v-vaw id = topid.owewse(quewy.pipewinecuwsow.fwatmap(_.id))
 
-    val cursor = UrtOrderedCursor(
-      initialSortIndex = cursorSortIndex(query, timelineEntries) + TopCursorOffset,
-      id = id,
-      cursorType = Some(cursorType)
+    vaw cuwsow = uwtowdewedcuwsow(
+      i-initiawsowtindex = cuwsowsowtindex(quewy, nyaa~~ t-timewineentwies) + t-topcuwsowoffset, :3
+      id = id, 😳😳😳
+      cuwsowtype = some(cuwsowtype)
     )
 
-    serializer.serializeCursor(cursor)
+    sewiawizew.sewiawizecuwsow(cuwsow)
   }
 }

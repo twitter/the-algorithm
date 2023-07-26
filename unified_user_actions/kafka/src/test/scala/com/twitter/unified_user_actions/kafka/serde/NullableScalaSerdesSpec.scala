@@ -1,32 +1,32 @@
-package com.twitter.unified_user_actions.kafka.serde
+package com.twittew.unified_usew_actions.kafka.sewde
 
-import com.twitter.finagle.stats.InMemoryStatsReceiver
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.thriftscala._
+impowt com.twittew.finagwe.stats.inmemowystatsweceivew
+i-impowt c-com.twittew.inject.test
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa._
 
-class NullableScalaSerdesSpec extends Test {
-  val counter = (new InMemoryStatsReceiver).counter("nullCounts")
-  val nullableDeserializer = NullableScalaSerdes.Thrift[UnifiedUserActionSpec](counter).deserializer
-  val serializer = NullableScalaSerdes.Thrift[UnifiedUserActionSpec]().serializer
-  val uua = UnifiedUserActionSpec(
-    userId = 1L,
-    payload = Some("test"),
+c-cwass nyuwwabwescawasewdesspec e-extends test {
+  v-vaw countew = (new i-inmemowystatsweceivew).countew("nuwwcounts")
+  vaw nyuwwabwedesewiawizew = nyuwwabwescawasewdes.thwift[unifiedusewactionspec](countew).desewiawizew
+  vaw sewiawizew = nyuwwabwescawasewdes.thwift[unifiedusewactionspec]().sewiawizew
+  v-vaw uua = unifiedusewactionspec(
+    usewid = 1w, >_<
+    p-paywoad = some("test"),
   )
 
-  test("serde") {
-    nullableDeserializer.deserialize("", serializer.serialize("", uua)) should be(uua)
-    nullableDeserializer.deserialize("", "Whatever".getBytes) should be(
-      null.asInstanceOf[UnifiedUserActionSpec])
-    counter.apply() should equal(1)
+  test("sewde") {
+    n-nyuwwabwedesewiawizew.desewiawize("", rawr x3 sewiawizew.sewiawize("", mya uua)) shouwd be(uua)
+    nyuwwabwedesewiawizew.desewiawize("", nyaa~~ "nanievew".getbytes) s-shouwd be(
+      nyuww.asinstanceof[unifiedusewactionspec])
+    c-countew.appwy() s-shouwd equaw(1)
   }
 
-  test("rate limited logger when there's an exception") {
-    for (_ <- 1 to 10) {
-      nullableDeserializer.deserialize("", "Whatever".getBytes) should be(
-        null.asInstanceOf[UnifiedUserActionSpec])
+  test("wate wimited woggew when thewe's an exception") {
+    f-fow (_ <- 1 to 10) {
+      nyuwwabwedesewiawizew.desewiawize("", (⑅˘꒳˘) "nanievew".getbytes) shouwd be(
+        nyuww.asinstanceof[unifiedusewactionspec])
     }
 
-    TestLogAppender.events.size should (be(1) or be(2))
-    counter.apply() should equal(11)
+    t-testwogappendew.events.size shouwd (be(1) o-ow be(2))
+    c-countew.appwy() s-shouwd equaw(11)
   }
 }

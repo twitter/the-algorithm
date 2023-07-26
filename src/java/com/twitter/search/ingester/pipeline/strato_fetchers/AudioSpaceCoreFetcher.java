@@ -1,54 +1,54 @@
-package com.twitter.search.ingester.pipeline.strato_fetchers;
+package com.twittew.seawch.ingestew.pipewine.stwato_fetchews;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.set;
+i-impowt j-java.utiw.stweam.cowwectows;
 
-import com.twitter.periscope.api.thriftjava.AudioSpacesLookupContext;
-import com.twitter.stitch.Stitch;
-import com.twitter.strato.catalog.Fetch;
-import com.twitter.strato.client.Client;
-import com.twitter.strato.client.Fetcher;
-import com.twitter.strato.data.Conv;
-import com.twitter.strato.thrift.TBaseConv;
-import com.twitter.ubs.thriftjava.AudioSpace;
-import com.twitter.util.Future;
-import com.twitter.util.Try;
+i-impowt com.twittew.pewiscope.api.thwiftjava.audiospaceswookupcontext;
+i-impowt com.twittew.stitch.stitch;
+i-impowt com.twittew.stwato.catawog.fetch;
+i-impowt com.twittew.stwato.cwient.cwient;
+impowt com.twittew.stwato.cwient.fetchew;
+impowt com.twittew.stwato.data.conv;
+impowt c-com.twittew.stwato.thwift.tbaseconv;
+impowt com.twittew.ubs.thwiftjava.audiospace;
+impowt com.twittew.utiw.futuwe;
+i-impowt com.twittew.utiw.twy;
 
 /**
- * Fetches from the audio space core strato column.
+ * fetches f-fwom the audio space cowe stwato cowumn. ʘwʘ
  */
-public class AudioSpaceCoreFetcher {
-  private static final String CORE_STRATO_COLUMN = "";
+pubwic cwass audiospacecowefetchew {
+  p-pwivate static finaw stwing c-cowe_stwato_cowumn = "";
 
-  private static final AudioSpacesLookupContext
-      EMPTY_AUDIO_LOOKUP_CONTEXT = new AudioSpacesLookupContext();
+  p-pwivate static finaw audiospaceswookupcontext
+      empty_audio_wookup_context = nyew a-audiospaceswookupcontext();
 
-  private final Fetcher<String, AudioSpacesLookupContext, AudioSpace> fetcher;
+  pwivate finaw fetchew<stwing, /(^•ω•^) audiospaceswookupcontext, ʘwʘ audiospace> fetchew;
 
-  public AudioSpaceCoreFetcher(Client stratoClient) {
-    fetcher = stratoClient.fetcher(
-        CORE_STRATO_COLUMN,
-        true, // enables checking types against catalog
-        Conv.stringConv(),
-        TBaseConv.forClass(AudioSpacesLookupContext.class),
-        TBaseConv.forClass(AudioSpace.class));
+  pubwic audiospacecowefetchew(cwient s-stwatocwient) {
+    fetchew = s-stwatocwient.fetchew(
+        c-cowe_stwato_cowumn, σωσ
+        t-twue, OwO // e-enabwes checking types against catawog
+        c-conv.stwingconv(), 😳😳😳
+        tbaseconv.fowcwass(audiospaceswookupcontext.cwass), 😳😳😳
+        tbaseconv.fowcwass(audiospace.cwass));
   }
 
-  public Future<Fetch.Result<AudioSpace>> fetch(String spaceId) {
-    return Stitch.run(fetcher.fetch(spaceId, EMPTY_AUDIO_LOOKUP_CONTEXT));
+  p-pubwic futuwe<fetch.wesuwt<audiospace>> fetch(stwing spaceid) {
+    wetuwn stitch.wun(fetchew.fetch(spaceid, o.O empty_audio_wookup_context));
   }
 
   /**
-   * Use stitch to fetch mulitiple AudioSpace Objects at once
+   * u-use stitch to fetch muwitipwe a-audiospace objects a-at once
    */
-  public Future<List<Try<Fetch.Result<AudioSpace>>>> fetchBulkSpaces(Set<String> spaceIds) {
-    return Stitch.run(
-        Stitch.collectToTry(
-            spaceIds
-                .stream()
-                .map(spaceId -> fetcher.fetch(spaceId, EMPTY_AUDIO_LOOKUP_CONTEXT))
-                .collect(Collectors.toList())
+  p-pubwic futuwe<wist<twy<fetch.wesuwt<audiospace>>>> fetchbuwkspaces(set<stwing> spaceids) {
+    wetuwn stitch.wun(
+        s-stitch.cowwecttotwy(
+            s-spaceids
+                .stweam()
+                .map(spaceid -> fetchew.fetch(spaceid, ( ͡o ω ͡o ) e-empty_audio_wookup_context))
+                .cowwect(cowwectows.towist())
         )
     );
   }

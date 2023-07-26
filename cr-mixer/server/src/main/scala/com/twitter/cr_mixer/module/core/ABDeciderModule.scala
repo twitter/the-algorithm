@@ -1,33 +1,33 @@
-package com.twitter.cr_mixer.module.core
+package com.twittew.cw_mixew.moduwe.cowe
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.logging.Logger
-import javax.inject.Singleton
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.googwe.inject.name.named
+impowt c-com.twittew.abdecidew.abdecidewfactowy
+i-impowt c-com.twittew.abdecidew.woggingabdecidew
+i-impowt c-com.twittew.cw_mixew.modew.moduwenames
+impowt com.twittew.inject.twittewmoduwe
+impowt com.twittew.inject.annotations.fwag
+impowt c-com.twittew.wogging.woggew
+impowt javax.inject.singweton
 
-object ABDeciderModule extends TwitterModule {
+o-object abdecidewmoduwe e-extends twittewmoduwe {
 
-  flag(
-    name = "abdecider.path",
-    default = "/usr/local/config/abdecider/abdecider.yml",
-    help = "path to the abdecider Yml file location"
+  fwag(
+    nyame = "abdecidew.path", rawr
+    defauwt = "/usw/wocaw/config/abdecidew/abdecidew.ymw", OwO
+    hewp = "path to t-the abdecidew ymw fiwe wocation"
   )
 
-  @Provides
-  @Singleton
-  def provideABDecider(
-    @Flag("abdecider.path") abDeciderYmlPath: String,
-    @Named(ModuleNames.AbDeciderLogger) scribeLogger: Logger
-  ): LoggingABDecider = {
-    ABDeciderFactory(
-      abDeciderYmlPath = abDeciderYmlPath,
-      scribeLogger = Some(scribeLogger),
-      environment = Some("production")
-    ).buildWithLogging()
+  @pwovides
+  @singweton
+  d-def pwovideabdecidew(
+    @fwag("abdecidew.path") a-abdecidewymwpath: stwing, (U ﹏ U)
+    @named(moduwenames.abdecidewwoggew) scwibewoggew: woggew
+  ): woggingabdecidew = {
+    a-abdecidewfactowy(
+      abdecidewymwpath = abdecidewymwpath, >_<
+      scwibewoggew = some(scwibewoggew), rawr x3
+      e-enviwonment = some("pwoduction")
+    ).buiwdwithwogging()
   }
 }

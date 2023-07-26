@@ -1,46 +1,46 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.cowwection;
+i-impowt j-java.utiw.wist;
 
-import com.twitter.common.collections.Pair;
+i-impowt com.twittew.common.cowwections.paiw;
 
 /**
- * Calls multiple FacetCountIterators. Currently this is used for calling the
- * default FacetCountingArray iterator and the CSF and retweet iterators
+ * c-cawws muwtipwe f-facetcountitewatows. >_< c-cuwwentwy this is used fow cawwing the
+ * defauwt facetcountingawway itewatow and the c-csf and wetweet itewatows
  */
-public class CompositeFacetCountIterator extends FacetCountIterator {
-  private final Collection<FacetCountIterator> iterators;
+pubwic cwass compositefacetcountitewatow e-extends facetcountitewatow {
+  p-pwivate finaw cowwection<facetcountitewatow> itewatows;
 
   /**
-   * Creates a new composite iterator on the provided collection of iterators.
+   * cweates a-a nyew composite itewatow on t-the pwovided cowwection o-of itewatows. >_<
    */
-  public CompositeFacetCountIterator(Collection<FacetCountIterator> iterators) {
-    this.iterators = iterators;
-    for (FacetCountIterator iterator : iterators) {
-      iterator.setIncrementData(this.incrementData);
+  pubwic compositefacetcountitewatow(cowwection<facetcountitewatow> itewatows) {
+    this.itewatows = i-itewatows;
+    fow (facetcountitewatow itewatow : itewatows) {
+      itewatow.setincwementdata(this.incwementdata);
     }
   }
 
-  @Override
-  public void collect(int docID) throws IOException {
-    for (FacetCountIterator iterator : iterators) {
-      iterator.collect(docID);
+  @ovewwide
+  pubwic v-void cowwect(int docid) thwows i-ioexception {
+    f-fow (facetcountitewatow itewatow : i-itewatows) {
+      i-itewatow.cowwect(docid);
     }
   }
 
-  @Override
-  protected void addProof(int docID, long termID, int fieldID) {
-    for (FacetCountIterator iterator : iterators) {
-      iterator.addProof(docID, termID, fieldID);
+  @ovewwide
+  pwotected void addpwoof(int docid, (⑅˘꒳˘) w-wong tewmid, /(^•ω•^) int fiewdid) {
+    fow (facetcountitewatow i-itewatow : itewatows) {
+      itewatow.addpwoof(docid, rawr x3 tewmid, (U ﹏ U) fiewdid);
     }
   }
 
-  @Override
-  public void setProofs(List<Pair<Integer, Long>> proof) {
-    for (FacetCountIterator iterator : iterators) {
-      iterator.setProofs(proof);
+  @ovewwide
+  pubwic void setpwoofs(wist<paiw<integew, (U ﹏ U) w-wong>> pwoof) {
+    fow (facetcountitewatow i-itewatow : itewatows) {
+      itewatow.setpwoofs(pwoof);
     }
   }
 }

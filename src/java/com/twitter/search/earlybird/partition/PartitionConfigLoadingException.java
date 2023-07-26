@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
 /**
- * An exception thrown when the earlybird layout could not be loaded, or when a host cannot find
- * itself in the layout, and the layout has errors (which might be the reason why the host could not
- * find itself in the layout).
+ * an exception t-thwown when t-the eawwybiwd wayout c-couwd nyot b-be woaded, (ˆ ﻌ ˆ)♡ ow when a-a host cannot f-find
+ * itsewf i-in the wayout, (⑅˘꒳˘) and t-the wayout has ewwows (which might be the weason why the host couwd nyot
+ * find i-itsewf in the wayout). (U ᵕ U❁)
  */
-public class PartitionConfigLoadingException extends Exception {
-  public PartitionConfigLoadingException(String message) {
-    super(message);
+pubwic cwass pawtitionconfigwoadingexception e-extends exception {
+  p-pubwic pawtitionconfigwoadingexception(stwing message) {
+    supew(message);
   }
 }

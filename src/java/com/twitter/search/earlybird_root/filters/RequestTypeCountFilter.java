@@ -1,105 +1,105 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
+impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cache.cachebuiwdew;
+i-impowt c-com.googwe.common.cache.cachewoadew;
+i-impowt c-com.googwe.common.cache.woadingcache;
+i-impowt com.googwe.common.cowwect.immutabwemap;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.clientstats.RequestCounters;
-import com.twitter.search.common.clientstats.RequestCountersEventListener;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Future;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.simpwefiwtew;
+impowt com.twittew.seawch.common.cwientstats.wequestcountews;
+i-impowt com.twittew.seawch.common.cwientstats.wequestcountewseventwistenew;
+impowt com.twittew.seawch.common.utiw.finagweutiw;
+impowt com.twittew.seawch.eawwybiwd.common.cwientidutiw;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
+impowt c-com.twittew.utiw.futuwe;
 
-public class RequestTypeCountFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private final ImmutableMap<EarlybirdRequestType, RequestCounters> typeCounters;
-  private final RequestCounters allRequestTypesCounter;
-  private final ImmutableMap<EarlybirdRequestType, LoadingCache<String, RequestCounters>>
-    perTypePerClientCounters;
+pubwic c-cwass wequesttypecountfiwtew
+    e-extends simpwefiwtew<eawwybiwdwequestcontext, (˘ω˘) eawwybiwdwesponse> {
+  pwivate finaw immutabwemap<eawwybiwdwequesttype, ^^;; wequestcountews> t-typecountews;
+  pwivate finaw wequestcountews awwwequesttypescountew;
+  pwivate finaw i-immutabwemap<eawwybiwdwequesttype, (✿oωo) woadingcache<stwing, (U ﹏ U) w-wequestcountews>>
+    pewtypepewcwientcountews;
 
   /**
-   * Constructs the filter.
+   * c-constwucts t-the fiwtew. -.-
    */
-  public RequestTypeCountFilter(final String statSuffix) {
-    ImmutableMap.Builder<EarlybirdRequestType, RequestCounters> perTypeBuilder =
-      ImmutableMap.builder();
-    for (EarlybirdRequestType type : EarlybirdRequestType.values()) {
-      perTypeBuilder.put(type, new RequestCounters(
-          "request_type_count_filter_" + type.getNormalizedName() + "_" + statSuffix));
+  p-pubwic wequesttypecountfiwtew(finaw stwing statsuffix) {
+    immutabwemap.buiwdew<eawwybiwdwequesttype, ^•ﻌ•^ w-wequestcountews> pewtypebuiwdew =
+      immutabwemap.buiwdew();
+    f-fow (eawwybiwdwequesttype type : eawwybiwdwequesttype.vawues()) {
+      pewtypebuiwdew.put(type, rawr nyew wequestcountews(
+          "wequest_type_count_fiwtew_" + type.getnowmawizedname() + "_" + s-statsuffix));
     }
-    typeCounters = perTypeBuilder.build();
+    typecountews = p-pewtypebuiwdew.buiwd();
 
-    allRequestTypesCounter =
-        new RequestCounters("request_type_count_filter_all_" + statSuffix, true);
+    a-awwwequesttypescountew =
+        n-nyew wequestcountews("wequest_type_count_fiwtew_aww_" + statsuffix, (˘ω˘) twue);
 
-    ImmutableMap.Builder<EarlybirdRequestType, LoadingCache<String, RequestCounters>>
-      perTypePerClientBuilder = ImmutableMap.builder();
+    immutabwemap.buiwdew<eawwybiwdwequesttype, nyaa~~ w-woadingcache<stwing, UwU w-wequestcountews>>
+      pewtypepewcwientbuiwdew = i-immutabwemap.buiwdew();
 
-    // No point in setting any kind of expiration policy for the cache, since the stats will
-    // continue to be exported, so the objects will not be GCed anyway.
-    CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();
-    for (final EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      CacheLoader<String, RequestCounters> cacheLoader =
-        new CacheLoader<String, RequestCounters>() {
-          @Override
-          public RequestCounters load(String clientId) {
-            return new RequestCounters("request_type_count_filter_for_" + clientId + "_"
-                                       + requestType.getNormalizedName() + "_" + statSuffix);
+    // n-nyo point in setting any k-kind of expiwation powicy fow the c-cache, :3 since the stats wiww
+    // continue to b-be expowted, (⑅˘꒳˘) so the objects wiww n-nyot be gced anyway. (///ˬ///✿)
+    cachebuiwdew<object, ^^;; o-object> cachebuiwdew = c-cachebuiwdew.newbuiwdew();
+    fow (finaw eawwybiwdwequesttype wequesttype : eawwybiwdwequesttype.vawues()) {
+      cachewoadew<stwing, >_< wequestcountews> c-cachewoadew =
+        n-nyew cachewoadew<stwing, rawr x3 wequestcountews>() {
+          @ovewwide
+          p-pubwic wequestcountews w-woad(stwing c-cwientid) {
+            wetuwn nyew wequestcountews("wequest_type_count_fiwtew_fow_" + cwientid + "_"
+                                       + w-wequesttype.getnowmawizedname() + "_" + statsuffix);
           }
         };
-      perTypePerClientBuilder.put(requestType, cacheBuilder.build(cacheLoader));
+      pewtypepewcwientbuiwdew.put(wequesttype, /(^•ω•^) cachebuiwdew.buiwd(cachewoadew));
     }
-    perTypePerClientCounters = perTypePerClientBuilder.build();
+    pewtypepewcwientcountews = p-pewtypepewcwientbuiwdew.buiwd();
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
-    RequestCounters requestCounters = typeCounters.get(requestType);
-    Preconditions.checkNotNull(requestCounters);
+  @ovewwide
+  pubwic f-futuwe<eawwybiwdwesponse> a-appwy(
+      e-eawwybiwdwequestcontext wequestcontext, :3
+      s-sewvice<eawwybiwdwequestcontext, (ꈍᴗꈍ) e-eawwybiwdwesponse> s-sewvice) {
+    e-eawwybiwdwequesttype wequesttype = wequestcontext.geteawwybiwdwequesttype();
+    wequestcountews w-wequestcountews = t-typecountews.get(wequesttype);
+    p-pweconditions.checknotnuww(wequestcountews);
 
-    // Update the per-type and "all" counters.
-    RequestCountersEventListener<EarlybirdResponse> requestCountersEventListener =
-        new RequestCountersEventListener<>(
-            requestCounters, Clock.SYSTEM_CLOCK, EarlybirdSuccessfulResponseHandler.INSTANCE);
-    RequestCountersEventListener<EarlybirdResponse> allRequestTypesEventListener =
-        new RequestCountersEventListener<>(
-            allRequestTypesCounter, Clock.SYSTEM_CLOCK,
-            EarlybirdSuccessfulResponseHandler.INSTANCE);
+    // u-update the p-pew-type and "aww" countews. /(^•ω•^)
+    wequestcountewseventwistenew<eawwybiwdwesponse> wequestcountewseventwistenew =
+        n-nyew wequestcountewseventwistenew<>(
+            wequestcountews, (⑅˘꒳˘) cwock.system_cwock, ( ͡o ω ͡o ) eawwybiwdsuccessfuwwesponsehandwew.instance);
+    wequestcountewseventwistenew<eawwybiwdwesponse> awwwequesttypeseventwistenew =
+        n-nyew wequestcountewseventwistenew<>(
+            awwwequesttypescountew, òωó cwock.system_cwock, (⑅˘꒳˘)
+            eawwybiwdsuccessfuwwesponsehandwew.instance);
 
-    RequestCountersEventListener<EarlybirdResponse> perTypePerClientEventListener =
-      updatePerTypePerClientCountersListener(requestContext);
+    w-wequestcountewseventwistenew<eawwybiwdwesponse> p-pewtypepewcwienteventwistenew =
+      u-updatepewtypepewcwientcountewswistenew(wequestcontext);
 
-    return service.apply(requestContext)
-      .addEventListener(requestCountersEventListener)
-      .addEventListener(allRequestTypesEventListener)
-      .addEventListener(perTypePerClientEventListener);
+    wetuwn sewvice.appwy(wequestcontext)
+      .addeventwistenew(wequestcountewseventwistenew)
+      .addeventwistenew(awwwequesttypeseventwistenew)
+      .addeventwistenew(pewtypepewcwienteventwistenew);
   }
 
-  private RequestCountersEventListener<EarlybirdResponse> updatePerTypePerClientCountersListener(
-      EarlybirdRequestContext earlybirdRequestContext) {
-    EarlybirdRequestType requestType = earlybirdRequestContext.getEarlybirdRequestType();
-    LoadingCache<String, RequestCounters> perClientCounters =
-      perTypePerClientCounters.get(requestType);
-    Preconditions.checkNotNull(perClientCounters);
+  p-pwivate wequestcountewseventwistenew<eawwybiwdwesponse> updatepewtypepewcwientcountewswistenew(
+      e-eawwybiwdwequestcontext e-eawwybiwdwequestcontext) {
+    eawwybiwdwequesttype wequesttype = eawwybiwdwequestcontext.geteawwybiwdwequesttype();
+    woadingcache<stwing, wequestcountews> p-pewcwientcountews =
+      pewtypepewcwientcountews.get(wequesttype);
+    p-pweconditions.checknotnuww(pewcwientcountews);
 
-    String clientId = ClientIdUtil.formatFinagleClientIdAndClientId(
-        FinagleUtil.getFinagleClientName(),
-        ClientIdUtil.getClientIdFromRequest(earlybirdRequestContext.getRequest()));
-    RequestCounters clientCounters = perClientCounters.getUnchecked(clientId);
-    Preconditions.checkNotNull(clientCounters);
+    stwing cwientid = c-cwientidutiw.fowmatfinagwecwientidandcwientid(
+        f-finagweutiw.getfinagwecwientname(), XD
+        cwientidutiw.getcwientidfwomwequest(eawwybiwdwequestcontext.getwequest()));
+    wequestcountews c-cwientcountews = p-pewcwientcountews.getunchecked(cwientid);
+    pweconditions.checknotnuww(cwientcountews);
 
-    return new RequestCountersEventListener<>(
-        clientCounters, Clock.SYSTEM_CLOCK, EarlybirdSuccessfulResponseHandler.INSTANCE);
+    w-wetuwn nyew w-wequestcountewseventwistenew<>(
+        cwientcountews, -.- cwock.system_cwock, :3 eawwybiwdsuccessfuwwesponsehandwew.instance);
   }
 }

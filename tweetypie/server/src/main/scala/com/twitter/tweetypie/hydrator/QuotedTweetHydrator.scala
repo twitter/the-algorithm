@@ -1,51 +1,51 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
 
 /**
- * Loads the tweet referenced by `Tweet.quotedTweet`.
+ * w-woads the t-tweet wefewenced b-by `tweet.quotedtweet`. 😳😳😳
  */
-object QuotedTweetHydrator {
-  type Type = ValueHydrator[Option[QuotedTweetResult], Ctx]
+o-object quotedtweethydwatow {
+  type type = vawuehydwatow[option[quotedtweetwesuwt], 😳😳😳 ctx]
 
-  case class Ctx(
-    quotedTweetFilteredState: Option[FilteredState.Unavailable],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case cwass c-ctx(
+    quotedtweetfiwtewedstate: option[fiwtewedstate.unavaiwabwe], o.O
+    undewwyingtweetctx: t-tweetctx)
+      extends tweetctx.pwoxy
 
-  def apply(repo: TweetResultRepository.Type): Type = {
-    ValueHydrator[Option[QuotedTweetResult], Ctx] { (_, ctx) =>
-      (ctx.quotedTweetFilteredState, ctx.quotedTweet) match {
+  d-def appwy(wepo: tweetwesuwtwepositowy.type): type = {
+    vawuehydwatow[option[quotedtweetwesuwt], ( ͡o ω ͡o ) ctx] { (_, c-ctx) =>
+      (ctx.quotedtweetfiwtewedstate, (U ﹏ U) ctx.quotedtweet) m-match {
 
-        case (_, None) =>
-          // If there is no quoted tweet ref, leave the value as None,
+        c-case (_, (///ˬ///✿) nyone) =>
+          // if thewe is nyo quoted tweet wef, >w< weave t-the vawue as nyone, rawr
           // indicating undefined
-          ValueState.StitchUnmodifiedNone
+          vawuestate.stitchunmodifiednone
 
-        case (Some(fs), _) =>
-          Stitch.value(ValueState.modified(Some(QuotedTweetResult.Filtered(fs))))
+        case (some(fs), mya _) =>
+          stitch.vawue(vawuestate.modified(some(quotedtweetwesuwt.fiwtewed(fs))))
 
-        case (None, Some(qtRef)) =>
-          val qtQueryOptions =
-            ctx.opts.copy(
-              // we don't want to recursively load quoted tweets
-              include = ctx.opts.include.copy(quotedTweet = false),
-              // be sure to get a clean version of the tweet
-              scrubUnrequestedFields = true,
-              // TweetVisibilityLibrary filters quoted tweets slightly differently from other tweets.
-              // Specifically, most Interstitial verdicts are converted to Drops.
-              isInnerQuotedTweet = true
+        c-case (none, ^^ some(qtwef)) =>
+          v-vaw qtquewyoptions =
+            c-ctx.opts.copy(
+              // w-we don't want t-to wecuwsivewy woad quoted tweets
+              incwude = ctx.opts.incwude.copy(quotedtweet = f-fawse),
+              // be suwe to get a cwean vewsion o-of the tweet
+              scwubunwequestedfiewds = twue, 😳😳😳
+              // tweetvisibiwitywibwawy fiwtews quoted tweets swightwy d-diffewentwy fwom othew tweets. mya
+              // s-specificawwy, 😳 m-most intewstitiaw v-vewdicts awe convewted to dwops. -.-
+              isinnewquotedtweet = t-twue
             )
 
-          repo(qtRef.tweetId, qtQueryOptions).transform { t =>
-            Stitch.const {
-              QuotedTweetResult.fromTry(t).map(r => ValueState.modified(Some(r)))
+          w-wepo(qtwef.tweetid, 🥺 qtquewyoptions).twansfowm { t-t =>
+            s-stitch.const {
+              quotedtweetwesuwt.fwomtwy(t).map(w => v-vawuestate.modified(some(w)))
             }
           }
       }
-    }.onlyIf((curr, ctx) => curr.isEmpty && ctx.opts.include.quotedTweet)
+    }.onwyif((cuww, o.O ctx) => cuww.isempty && c-ctx.opts.incwude.quotedtweet)
   }
 }

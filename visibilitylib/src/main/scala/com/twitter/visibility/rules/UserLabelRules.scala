@@ -1,361 +1,361 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.configapi.configs.DeciderKey
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.RuleParams._
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.models.UserLabelValue._
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules.RuleActionSourceBuilder.UserSafetyLabelSourceBuilder
+impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.visibiwity.configapi.configs.decidewkey
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawam
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams
+impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams._
+i-impowt c-com.twittew.visibiwity.featuwes.featuwe
+impowt com.twittew.visibiwity.modews.usewwabewvawue
+impowt com.twittew.visibiwity.modews.usewwabewvawue._
+i-impowt com.twittew.visibiwity.wuwes.condition._
+impowt com.twittew.visibiwity.wuwes.weason._
+impowt com.twittew.visibiwity.wuwes.wuweactionsouwcebuiwdew.usewsafetywabewsouwcebuiwdew
 
-object AbusiveRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      Abusive
+o-object abusivewuwe
+    e-extends whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified), (///ˬ///✿)
+      abusive
     )
 
-object DoNotAmplifyUserRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      DoNotAmplify
+object donotampwifyusewwuwe
+    e-extends whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), nyaa~~
+      donotampwify
     )
 
-object AbusiveHighRecallRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      AbusiveHighRecall
+o-object abusivehighwecawwwuwe
+    extends authowwabewandnonfowwowewviewewwuwe(
+      dwop(unspecified), >w<
+      abusivehighwecaww
     )
 
-object CompromisedRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      Compromised
+object c-compwomisedwuwe
+    extends whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified), -.-
+      compwomised
     )
 
-object DuplicateContentRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      DuplicateContent
+object d-dupwicatecontentwuwe
+    extends w-whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), (✿oωo)
+      d-dupwicatecontent
     )
 
-object EngagementSpammerRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      EngagementSpammer
+o-object engagementspammewwuwe
+    extends w-whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified), (˘ω˘)
+      engagementspammew
     )
 
-object EngagementSpammerHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      EngagementSpammerHighRecall
+o-object engagementspammewhighwecawwwuwe
+    extends whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified), rawr
+      engagementspammewhighwecaww
     )
 
-object LiveLowQualityRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      LiveLowQuality
+o-object wivewowquawitywuwe
+    extends whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified),
+      w-wivewowquawity
     )
 
-object LowQualityRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      LowQuality
+o-object w-wowquawitywuwe
+    extends whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified), OwO
+      wowquawity
     )
 
-object LowQualityHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      LowQualityHighRecall
+o-object wowquawityhighwecawwwuwe
+    e-extends whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified), ^•ﻌ•^
+      w-wowquawityhighwecaww
     )
 
-object NotGraduatedRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NotGraduated
+o-object notgwaduatedwuwe
+    extends whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), UwU
+      nyotgwaduated
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNotGraduatedDropRuleParam)
-  override def holdbacks: Seq[RuleParam[Boolean]] = Seq(
-    NotGraduatedUserLabelRuleHoldbackExperimentParam)
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(enabwenotgwaduateddwopwuwepawam)
+  o-ovewwide def howdbacks: s-seq[wuwepawam[boowean]] = seq(
+    n-nyotgwaduatedusewwabewwuwehowdbackexpewimentpawam)
 
 }
 
-abstract class BaseNsfwHighPrecisionRule()
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      UserLabelValue.NsfwHighPrecision
+a-abstwact cwass basensfwhighpwecisionwuwe()
+    extends whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified), (˘ω˘)
+      usewwabewvawue.nsfwhighpwecision
     )
-object NsfwHighPrecisionRule
-    extends BaseNsfwHighPrecisionRule()
+object n-nysfwhighpwecisionwuwe
+    e-extends basensfwhighpwecisionwuwe()
 
-object NsfwHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwHighRecall
-    )
-
-abstract class BaseNsfwNearPerfectAuthorRule()
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwNearPerfect
-    )
-object NsfwNearPerfectAuthorRule extends BaseNsfwNearPerfectAuthorRule()
-
-object NsfwAvatarImageRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwAvatarImage
+o-object nysfwhighwecawwwuwe
+    extends w-whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), (///ˬ///✿)
+      nysfwhighwecaww
     )
 
-object NsfwBannerImageRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwBannerImage
+abstwact cwass basensfwneawpewfectauthowwuwe()
+    e-extends whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified), σωσ
+      nysfwneawpewfect
+    )
+object nsfwneawpewfectauthowwuwe extends b-basensfwneawpewfectauthowwuwe()
+
+object nysfwavatawimagewuwe
+    e-extends w-whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), /(^•ω•^)
+      nysfwavatawimage
     )
 
-object NsfwSensitiveRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwSensitive
+object nysfwbannewimagewuwe
+    e-extends whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), 😳
+      n-nysfwbannewimage
     )
 
-object ReadOnlyRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      ReadOnly
+o-object nysfwsensitivewuwe
+    extends whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified), 😳
+      n-nysfwsensitive
     )
 
-object RecommendationsBlacklistRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      RecommendationsBlacklist
+o-object weadonwywuwe
+    e-extends w-whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), (⑅˘꒳˘)
+      weadonwy
     )
 
-sealed abstract class BaseSpamHighRecallRule(val holdback: RuleParam[Boolean])
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      SpamHighRecall
+object wecommendationsbwackwistwuwe
+    extends w-whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified), 😳😳😳
+      wecommendationsbwackwist
+    )
+
+seawed abstwact cwass basespamhighwecawwwuwe(vaw howdback: wuwepawam[boowean])
+    extends whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), 😳
+      spamhighwecaww
     ) {
-  override val holdbacks: Seq[RuleParam[Boolean]] = Seq(holdback)
+  ovewwide vaw howdbacks: seq[wuwepawam[boowean]] = s-seq(howdback)
 }
 
-object SpamHighRecallRule extends BaseSpamHighRecallRule(RuleParams.False)
+o-object spamhighwecawwwuwe extends b-basespamhighwecawwwuwe(wuwepawams.fawse)
 
-object DeciderableSpamHighRecallRule extends BaseSpamHighRecallRule(RuleParams.False)
+object decidewabwespamhighwecawwwuwe e-extends basespamhighwecawwwuwe(wuwepawams.fawse)
 
-object SearchBlacklistRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      SearchBlacklist
+object seawchbwackwistwuwe
+    e-extends whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), XD
+      seawchbwackwist
     )
 
-object SearchNsfwTextRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwText
+object seawchnsfwtextwuwe
+    extends whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified), mya
+      nysfwtext
     ) {
 
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
+  ovewwide d-def enabwed: seq[wuwepawam[boowean]] =
+    s-seq(enabwensfwtextsectioningwuwepawam)
 }
 
-object SpammyFollowerRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Unspecified),
-      And(
-        Or(
-          AuthorHasLabel(Compromised),
-          AuthorHasLabel(EngagementSpammer),
-          AuthorHasLabel(EngagementSpammerHighRecall),
-          AuthorHasLabel(LowQuality),
-          AuthorHasLabel(ReadOnly),
-          AuthorHasLabel(SpamHighRecall)
-        ),
-        Or(
-          LoggedOutViewer,
-          And(
-            NonAuthorViewer,
-            ViewerHasUqfEnabled,
-            Or(
-              And(
-                ProtectedViewer,
-                LoggedOutOrViewerNotFollowingAuthor,
-                Not(AuthorDoesFollowViewer)
-              ),
-              And(Not(ProtectedViewer), LoggedOutOrViewerNotFollowingAuthor)
+object s-spammyfowwowewwuwe
+    e-extends onwywhennotauthowviewewwuwe(
+      dwop(unspecified), ^•ﻌ•^
+      and(
+        o-ow(
+          a-authowhaswabew(compwomised), ʘwʘ
+          authowhaswabew(engagementspammew), ( ͡o ω ͡o )
+          a-authowhaswabew(engagementspammewhighwecaww), mya
+          a-authowhaswabew(wowquawity), o.O
+          authowhaswabew(weadonwy), (✿oωo)
+          authowhaswabew(spamhighwecaww)
+        ), :3
+        ow(
+          woggedoutviewew, 😳
+          and(
+            nyonauthowviewew, (U ﹏ U)
+            v-viewewhasuqfenabwed, mya
+            o-ow(
+              a-and(
+                pwotectedviewew, (U ᵕ U❁)
+                w-woggedoutowviewewnotfowwowingauthow, :3
+                n-nyot(authowdoesfowwowviewew)
+              ), mya
+              and(not(pwotectedviewew), OwO w-woggedoutowviewewnotfowwowingauthow)
             )
           )
         )
       )
     )
 
-abstract class NonFollowerWithUqfUserLabelDropRule(labelValue: UserLabelValue)
-    extends ConditionWithUserLabelRule(
-      Drop(Unspecified),
-      And(
-        Or(
-          LoggedOutViewer,
-          And(Not(ViewerDoesFollowAuthor), ViewerHasUqfEnabled)
+abstwact cwass nyonfowwowewwithuqfusewwabewdwopwuwe(wabewvawue: usewwabewvawue)
+    extends c-conditionwithusewwabewwuwe(
+      d-dwop(unspecified), (ˆ ﻌ ˆ)♡
+      and(
+        ow(
+          w-woggedoutviewew, ʘwʘ
+          a-and(not(viewewdoesfowwowauthow), o.O viewewhasuqfenabwed)
         )
-      ),
-      labelValue
+      ), UwU
+      wabewvawue
     )
 
-object EngagementSpammerNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      EngagementSpammer
+object engagementspammewnonfowwowewwithuqfwuwe
+    e-extends nyonfowwowewwithuqfusewwabewdwopwuwe(
+      engagementspammew
     )
 
-object EngagementSpammerHighRecallNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      EngagementSpammerHighRecall
+object engagementspammewhighwecawwnonfowwowewwithuqfwuwe
+    extends nyonfowwowewwithuqfusewwabewdwopwuwe(
+      engagementspammewhighwecaww
     )
 
-object SpamHighRecallNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      SpamHighRecall
+o-object spamhighwecawwnonfowwowewwithuqfwuwe
+    extends nyonfowwowewwithuqfusewwabewdwopwuwe(
+      spamhighwecaww
     )
 
-object CompromisedNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      Compromised
+o-object compwomisednonfowwowewwithuqfwuwe
+    e-extends nyonfowwowewwithuqfusewwabewdwopwuwe(
+      compwomised
     )
 
-object ReadOnlyNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      ReadOnly
+object weadonwynonfowwowewwithuqfwuwe
+    extends n-nyonfowwowewwithuqfusewwabewdwopwuwe(
+      w-weadonwy
     )
 
-object LowQualityNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      LowQuality
+object wowquawitynonfowwowewwithuqfwuwe
+    extends nyonfowwowewwithuqfusewwabewdwopwuwe(
+      wowquawity
     )
 
-object TsViolationRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      TsViolation
+o-object tsviowationwuwe
+    extends whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), rawr x3
+      tsviowation
     )
 
-object DownrankSpamReplyAllViewersRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      DownrankSpamReply
+object downwankspamwepwyawwviewewswuwe
+    e-extends whenauthowusewwabewpwesentwuwe(
+      dwop(unspecified), 🥺
+      d-downwankspamwepwy
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] =
+    s-seq(enabwedownwankspamwepwysectioningwuwepawam)
 }
 
-object DownrankSpamReplyNonAuthorRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      DownrankSpamReply
+object downwankspamwepwynonauthowwuwe
+    e-extends w-whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), :3
+      downwankspamwepwy
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  o-ovewwide d-def enabwed: seq[wuwepawam[boowean]] =
+    seq(enabwedownwankspamwepwysectioningwuwepawam)
 }
 
-object DownrankSpamReplyNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(DownrankSpamReply) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+o-object downwankspamwepwynonfowwowewwithuqfwuwe
+    e-extends nyonfowwowewwithuqfusewwabewdwopwuwe(downwankspamwepwy) {
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] =
+    s-seq(enabwedownwankspamwepwysectioningwuwepawam)
 }
 
-object NsfwTextAllUsersDropRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwText
+object nysfwtextawwusewsdwopwuwe
+    e-extends whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), (ꈍᴗꈍ)
+      nysfwtext
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] =
+    s-seq(enabwensfwtextsectioningwuwepawam)
 }
 
-object NsfwTextNonAuthorDropRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      DownrankSpamReply
+object n-nysfwtextnonauthowdwopwuwe
+    e-extends whenauthowusewwabewpwesentwuwe(
+      d-dwop(unspecified), 🥺
+      downwankspamwepwy
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] =
+    seq(enabwensfwtextsectioningwuwepawam)
 }
 
-abstract class DeciderableSpamHighRecallAuthorLabelRule(action: Action)
-    extends RuleWithConstantAction(
-      action,
-      And(
-        NonAuthorViewer,
-        SelfReply,
-        AuthorHasLabel(SpamHighRecall, shortCircuitable = false)
+abstwact cwass decidewabwespamhighwecawwauthowwabewwuwe(action: action)
+    e-extends wuwewithconstantaction(
+      action, (✿oωo)
+      a-and(
+        nyonauthowviewew, (U ﹏ U)
+        s-sewfwepwy, :3
+        authowhaswabew(spamhighwecaww, ^^;; showtciwcuitabwe = f-fawse)
       )
     ) {
-  override def preFilter(
-    evaluationContext: EvaluationContext,
-    featureMap: Map[Feature[_], Any],
-    abDecider: LoggingABDecider
-  ): PreFilterResult = {
-    Filtered
+  ovewwide d-def pwefiwtew(
+    e-evawuationcontext: e-evawuationcontext, rawr
+    f-featuwemap: map[featuwe[_], 😳😳😳 a-any],
+    abdecidew: woggingabdecidew
+  ): pwefiwtewwesuwt = {
+    fiwtewed
   }
 }
 
-object DeciderableSpamHighRecallAuthorLabelDropRule
-    extends DeciderableSpamHighRecallAuthorLabelRule(Drop(Unspecified))
+object decidewabwespamhighwecawwauthowwabewdwopwuwe
+    extends d-decidewabwespamhighwecawwauthowwabewwuwe(dwop(unspecified))
 
-object DeciderableSpamHighRecallAuthorLabelTombstoneRule
-    extends DeciderableSpamHighRecallAuthorLabelRule(Tombstone(Epitaph.Unavailable))
+o-object d-decidewabwespamhighwecawwauthowwabewtombstonewuwe
+    extends d-decidewabwespamhighwecawwauthowwabewwuwe(tombstone(epitaph.unavaiwabwe))
 
-object DoNotAmplifyNonFollowerRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      DoNotAmplify
+object donotampwifynonfowwowewwuwe
+    extends authowwabewandnonfowwowewviewewwuwe(
+      d-dwop(unspecified), (✿oωo)
+      donotampwify
     )
 
-object NotGraduatedNonFollowerRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      NotGraduated
+o-object notgwaduatednonfowwowewwuwe
+    extends a-authowwabewandnonfowwowewviewewwuwe(
+      dwop(unspecified), OwO
+      nyotgwaduated
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNotGraduatedDropRuleParam)
-  override def holdbacks: Seq[RuleParam[Boolean]] = Seq(
-    NotGraduatedUserLabelRuleHoldbackExperimentParam)
+  o-ovewwide d-def enabwed: seq[wuwepawam[boowean]] = s-seq(enabwenotgwaduateddwopwuwepawam)
+  o-ovewwide def howdbacks: seq[wuwepawam[boowean]] = seq(
+    nyotgwaduatedusewwabewwuwehowdbackexpewimentpawam)
 
 }
 
-object DoNotAmplifySectionUserRule
-    extends AuthorLabelWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      DoNotAmplify)
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(DoNotAmplify))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+object donotampwifysectionusewwuwe
+    e-extends a-authowwabewwithnotinnewciwcweoffwiendswuwe(
+      c-convewsationsectionabusivequawity, ʘwʘ
+      d-donotampwify)
+    w-with doeswogvewdictdecidewed {
+  ovewwide def a-actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = some(
+    u-usewsafetywabewsouwcebuiwdew(donotampwify))
+  o-ovewwide def vewdictwogdecidewkey = decidewkey.enabwedownwevewwuwevewdictwogging
 }
 
 
-object SpammyUserModelHighPrecisionDropTweetRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      SpammyUserModelHighPrecision,
+o-object spammyusewmodewhighpwecisiondwoptweetwuwe
+    extends authowwabewandnonfowwowewviewewwuwe(
+      d-dwop(unspecified), (ˆ ﻌ ˆ)♡
+      spammyusewmodewhighpwecision, (U ﹏ U)
     )
-    with DoesLogVerdictDecidered {
-  override def isEnabled(params: Params): Boolean =
-    params(EnableSpammyUserModelTweetDropRuleParam)
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    w-with d-doeswogvewdictdecidewed {
+  ovewwide def isenabwed(pawams: p-pawams): boowean =
+    pawams(enabwespammyusewmodewtweetdwopwuwepawam)
+  o-ovewwide d-def vewdictwogdecidewkey: d-decidewkey.vawue =
+    decidewkey.enabwespammytweetwuwevewdictwogging
 }
 
-object LikelyIvsLabelNonFollowerDropUserRule extends LikelyIvsLabelNonFollowerDropRule
+object wikewyivswabewnonfowwowewdwopusewwuwe extends wikewyivswabewnonfowwowewdwopwuwe
 
-object SearchLikelyIvsLabelNonFollowerDropUserRule extends LikelyIvsLabelNonFollowerDropRule
+o-object seawchwikewyivswabewnonfowwowewdwopusewwuwe extends w-wikewyivswabewnonfowwowewdwopwuwe
 
-object NsfwHighPrecisionUserLabelAvoidTweetRule
-    extends UserHasLabelRule(
-      Avoid(),
-      UserLabelValue.NsfwHighPrecision
+o-object nysfwhighpwecisionusewwabewavoidtweetwuwe
+    e-extends usewhaswabewwuwe(
+      a-avoid(), UwU
+      u-usewwabewvawue.nsfwhighpwecision
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = s-seq(
+    nysfwhighpwecisionusewwabewavoidtweetwuweenabwedpawam)
 }

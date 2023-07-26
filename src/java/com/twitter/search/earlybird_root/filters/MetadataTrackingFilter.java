@@ -1,119 +1,119 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.List;
+impowt java.utiw.wist;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.cache.cachebuiwdew;
+i-impowt com.googwe.common.cache.cachewoadew;
+i-impowt c-com.googwe.common.cache.woadingcache;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchMovingAverage;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+i-impowt c-com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.simpwefiwtew;
+impowt com.twittew.seawch.common.metwics.seawchmovingavewage;
+impowt com.twittew.seawch.eawwybiwd.common.cwientidutiw;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
+i-impowt com.twittew.utiw.futuwe;
+i-impowt com.twittew.utiw.futuweeventwistenew;
 
 /**
- * Filter that is tracking the engagement stats returned from Earlybirds.
+ * fiwtew that is twacking the engagement stats wetuwned f-fwom eawwybiwds. (˘ω˘)
  */
-public class MetadataTrackingFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+pubwic cwass metadatatwackingfiwtew extends simpwefiwtew<eawwybiwdwequest, e-eawwybiwdwesponse> {
 
-  private static final String SCORING_SIGNAL_STAT_PREFIX = "scoring_signal_";
-  private static final String SCORE_STAT_PATTERN = "client_id_score_tracker_for_%s_x100";
+  pwivate s-static finaw stwing s-scowing_signaw_stat_pwefix = "scowing_signaw_";
+  p-pwivate s-static finaw stwing scowe_stat_pattewn = "cwient_id_scowe_twackew_fow_%s_x100";
 
-  @VisibleForTesting
-  static final SearchMovingAverage SCORING_SIGNAL_FAV_COUNT =
-      SearchMovingAverage.export(SCORING_SIGNAL_STAT_PREFIX + "fav_count");
+  @visibwefowtesting
+  static finaw s-seawchmovingavewage scowing_signaw_fav_count =
+      seawchmovingavewage.expowt(scowing_signaw_stat_pwefix + "fav_count");
 
-  @VisibleForTesting
-  static final SearchMovingAverage SCORING_SIGNAL_REPLY_COUNT =
-      SearchMovingAverage.export(SCORING_SIGNAL_STAT_PREFIX + "reply_count");
+  @visibwefowtesting
+  s-static finaw seawchmovingavewage scowing_signaw_wepwy_count =
+      seawchmovingavewage.expowt(scowing_signaw_stat_pwefix + "wepwy_count");
 
-  @VisibleForTesting
-  static final SearchMovingAverage SCORING_SIGNAL_RETWEET_COUNT =
-      SearchMovingAverage.export(SCORING_SIGNAL_STAT_PREFIX + "retweet_count");
+  @visibwefowtesting
+  static finaw seawchmovingavewage s-scowing_signaw_wetweet_count =
+      seawchmovingavewage.expowt(scowing_signaw_stat_pwefix + "wetweet_count");
 
-  @VisibleForTesting
-  static final LoadingCache<String, SearchMovingAverage> CLIENT_SCORE_METRICS_LOADING_CACHE =
-      CacheBuilder.newBuilder().build(new CacheLoader<String, SearchMovingAverage>() {
-        public SearchMovingAverage load(String clientId) {
-          return SearchMovingAverage.export(String.format(SCORE_STAT_PATTERN, clientId));
+  @visibwefowtesting
+  s-static finaw w-woadingcache<stwing, :3 s-seawchmovingavewage> cwient_scowe_metwics_woading_cache =
+      cachebuiwdew.newbuiwdew().buiwd(new cachewoadew<stwing, ^^;; s-seawchmovingavewage>() {
+        pubwic s-seawchmovingavewage woad(stwing c-cwientid) {
+          w-wetuwn seawchmovingavewage.expowt(stwing.fowmat(scowe_stat_pattewn, 🥺 c-cwientid));
         }
       });
 
-  @Override
-  public Future<EarlybirdResponse> apply(final EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> a-appwy(finaw eawwybiwdwequest wequest, (⑅˘꒳˘)
+                                         sewvice<eawwybiwdwequest, nyaa~~ eawwybiwdwesponse> s-sewvice) {
 
-    Future<EarlybirdResponse> response = service.apply(request);
+    futuwe<eawwybiwdwesponse> w-wesponse = sewvice.appwy(wequest);
 
-    response.addEventListener(new FutureEventListener<EarlybirdResponse>() {
-      @Override
-      public void onSuccess(EarlybirdResponse earlybirdResponse) {
-        EarlybirdRequestType type = EarlybirdRequestType.of(request);
+    w-wesponse.addeventwistenew(new f-futuweeventwistenew<eawwybiwdwesponse>() {
+      @ovewwide
+      pubwic void onsuccess(eawwybiwdwesponse eawwybiwdwesponse) {
+        eawwybiwdwequesttype type = eawwybiwdwequesttype.of(wequest);
 
-        if (earlybirdResponse.responseCode == EarlybirdResponseCode.SUCCESS
-            && type == EarlybirdRequestType.RELEVANCE
-            && earlybirdResponse.isSetSearchResults()
-            && earlybirdResponse.getSearchResults().isSetResults()) {
+        if (eawwybiwdwesponse.wesponsecode == eawwybiwdwesponsecode.success
+            && t-type == e-eawwybiwdwequesttype.wewevance
+            && eawwybiwdwesponse.issetseawchwesuwts()
+            && e-eawwybiwdwesponse.getseawchwesuwts().issetwesuwts()) {
 
-          List<ThriftSearchResult> searchResults = earlybirdResponse.getSearchResults()
-              .getResults();
+          w-wist<thwiftseawchwesuwt> s-seawchwesuwts = eawwybiwdwesponse.getseawchwesuwts()
+              .getwesuwts();
 
-          long totalFavoriteAmount = 0;
-          long totalReplyAmount = 0;
-          long totalRetweetAmount = 0;
-          double totalScoreX100 = 0;
+          wong totawfavowiteamount = 0;
+          wong totawwepwyamount = 0;
+          w-wong totawwetweetamount = 0;
+          doubwe totawscowex100 = 0;
 
-          for (ThriftSearchResult result : searchResults) {
-            if (!result.isSetMetadata()) {
+          fow (thwiftseawchwesuwt wesuwt : seawchwesuwts) {
+            i-if (!wesuwt.issetmetadata()) {
               continue;
             }
 
-            ThriftSearchResultMetadata metadata = result.getMetadata();
+            t-thwiftseawchwesuwtmetadata m-metadata = w-wesuwt.getmetadata();
 
-            if (metadata.isSetFavCount()) {
-              totalFavoriteAmount += metadata.getFavCount();
+            if (metadata.issetfavcount()) {
+              t-totawfavowiteamount += m-metadata.getfavcount();
             }
 
-            if (metadata.isSetReplyCount()) {
-              totalReplyAmount += metadata.getReplyCount();
+            i-if (metadata.issetwepwycount()) {
+              t-totawwepwyamount += metadata.getwepwycount();
             }
 
-            if (metadata.isSetRetweetCount()) {
-              totalRetweetAmount += metadata.getRetweetCount();
+            if (metadata.issetwetweetcount()) {
+              totawwetweetamount += m-metadata.getwetweetcount();
             }
 
-            if (metadata.isSetScore()) {
-              // Scale up the score by 100 so that scores are at least 1 and visible on viz graph
-              totalScoreX100 += metadata.getScore() * 100;
+            i-if (metadata.issetscowe()) {
+              // s-scawe up the scowe b-by 100 so that s-scowes awe at weast 1 and visibwe on viz gwaph
+              totawscowex100 += m-metadata.getscowe() * 100;
             }
           }
 
-          // We only count present engagement counts but report the full size of the search results.
-          // This means that we consider the missing counts as being 0.
-          SCORING_SIGNAL_FAV_COUNT.addSamples(totalFavoriteAmount, searchResults.size());
-          SCORING_SIGNAL_REPLY_COUNT.addSamples(totalReplyAmount, searchResults.size());
-          SCORING_SIGNAL_RETWEET_COUNT.addSamples(totalRetweetAmount, searchResults.size());
-          // Export per client id average scores.
-          String requestClientId = ClientIdUtil.getClientIdFromRequest(request);
-          String quotaClientId = ClientIdUtil.getQuotaClientId(requestClientId);
-          CLIENT_SCORE_METRICS_LOADING_CACHE.getUnchecked(quotaClientId)
-              .addSamples((long) totalScoreX100, searchResults.size());
+          // we onwy count pwesent engagement counts but wepowt the fuww size of the seawch w-wesuwts. :3
+          // this means that we considew the missing c-counts as being 0. ( ͡o ω ͡o )
+          scowing_signaw_fav_count.addsampwes(totawfavowiteamount, mya s-seawchwesuwts.size());
+          s-scowing_signaw_wepwy_count.addsampwes(totawwepwyamount, (///ˬ///✿) seawchwesuwts.size());
+          s-scowing_signaw_wetweet_count.addsampwes(totawwetweetamount, (˘ω˘) seawchwesuwts.size());
+          // e-expowt pew cwient i-id avewage scowes. ^^;;
+          stwing wequestcwientid = cwientidutiw.getcwientidfwomwequest(wequest);
+          stwing quotacwientid = cwientidutiw.getquotacwientid(wequestcwientid);
+          cwient_scowe_metwics_woading_cache.getunchecked(quotacwientid)
+              .addsampwes((wong) t-totawscowex100, (✿oωo) seawchwesuwts.size());
         }
       }
 
-      @Override
-      public void onFailure(Throwable cause) { }
+      @ovewwide
+      p-pubwic void onfaiwuwe(thwowabwe cause) { }
     });
 
-    return response;
+    w-wetuwn w-wesponse;
   }
 }

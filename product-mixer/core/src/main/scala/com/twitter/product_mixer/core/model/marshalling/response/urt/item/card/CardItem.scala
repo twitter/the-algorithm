@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.card
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.cawd
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
 
-object CardItem {
-  val CardEntryNamespace = EntryNamespace("card")
+o-object c-cawditem {
+  vaw cawdentwynamespace = entwynamespace("cawd")
 }
 
-case class CardItem(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  cardUrl: String,
-  text: Option[String],
-  subtext: Option[String],
-  url: Option[Url],
-  displayType: Option[CardDisplayType])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = CardItem.CardEntryNamespace
+case cwass cawditem(
+  ovewwide v-vaw id: stwing, rawr
+  ovewwide vaw sowtindex: option[wong], OwO
+  o-ovewwide vaw cwienteventinfo: o-option[cwienteventinfo], (U ﹏ U)
+  ovewwide vaw feedbackactioninfo: option[feedbackactioninfo], >_<
+  c-cawduww: stwing, rawr x3
+  text: option[stwing], mya
+  subtext: o-option[stwing], nyaa~~
+  u-uww: option[uww], (⑅˘꒳˘)
+  dispwaytype: option[cawddispwaytype])
+    extends timewineitem {
+  o-ovewwide vaw entwynamespace: entwynamespace = cawditem.cawdentwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovewwide def withsowtindex(sowtindex: wong): timewineentwy = c-copy(sowtindex = some(sowtindex))
 }

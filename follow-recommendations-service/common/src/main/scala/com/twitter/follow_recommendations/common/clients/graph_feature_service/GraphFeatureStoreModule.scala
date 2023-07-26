@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.graph_feature_service
+package com.twittew.fowwow_wecommendations.common.cwients.gwaph_featuwe_sewvice
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.graph_feature_service.thriftscala.{Server => GraphFeatureService}
+impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt c-com.twittew.fowwow_wecommendations.common.cwients.common.basecwientmoduwe
+i-impowt c-com.twittew.gwaph_featuwe_sewvice.thwiftscawa.{sewvew => g-gwaphfeatuwesewvice}
 
-object GraphFeatureStoreModule
-    extends BaseClientModule[GraphFeatureService.MethodPerEndpoint]
-    with MtlsClient {
-  override val label = "graph_feature_service"
-  override val dest = "/s/cassowary/graph_feature_service-server"
+o-object gwaphfeatuwestowemoduwe
+    e-extends basecwientmoduwe[gwaphfeatuwesewvice.methodpewendpoint]
+    w-with mtwscwient {
+  ovewwide vaw wabew = "gwaph_featuwe_sewvice"
+  ovewwide vaw dest = "/s/cassowawy/gwaph_featuwe_sewvice-sewvew"
 }

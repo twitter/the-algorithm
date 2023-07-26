@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.message
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.cawwbackmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messagepwomptitem
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class MessagePromptItemMarshaller @Inject() (
-  messageContentMarshaller: MessageContentMarshaller,
-  callbackMarshaller: CallbackMarshaller) {
+@singweton
+c-cwass messagepwomptitemmawshawwew @inject() (
+  m-messagecontentmawshawwew: m-messagecontentmawshawwew, (⑅˘꒳˘)
+  cawwbackmawshawwew: cawwbackmawshawwew) {
 
-  def apply(messagePromptItem: MessagePromptItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.Message(
-      urt.MessagePrompt(
-        content = messageContentMarshaller(messagePromptItem.content),
-        impressionCallbacks = messagePromptItem.impressionCallbacks.map { callbackList =>
-          callbackList.map(callbackMarshaller(_))
+  def appwy(messagepwomptitem: messagepwomptitem): u-uwt.timewineitemcontent =
+    uwt.timewineitemcontent.message(
+      uwt.messagepwompt(
+        c-content = messagecontentmawshawwew(messagepwomptitem.content), (U ᵕ U❁)
+        i-impwessioncawwbacks = messagepwomptitem.impwessioncawwbacks.map { cawwbackwist =>
+          cawwbackwist.map(cawwbackmawshawwew(_))
         }
       )
     )

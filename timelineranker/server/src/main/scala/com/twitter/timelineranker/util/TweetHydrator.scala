@@ -1,75 +1,75 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.timelineranker.core.HydratedTweets
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
-import com.twitter.timelines.model._
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.timelines.model.tweet.HydratedTweetUtils
-import com.twitter.timelines.util.stats.RequestStats
-import com.twitter.tweetypie.thriftscala.TweetInclude
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wogging.woggew
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt c-com.twittew.timewinewankew.cowe.hydwatedtweets
+i-impowt com.twittew.timewines.cwients.tweetypie.tweetypiecwient
+i-impowt com.twittew.timewines.modew._
+i-impowt com.twittew.timewines.modew.tweet.hydwatedtweet
+impowt com.twittew.timewines.modew.tweet.hydwatedtweetutiws
+impowt com.twittew.timewines.utiw.stats.wequeststats
+impowt c-com.twittew.tweetypie.thwiftscawa.tweetincwude
+impowt com.twittew.utiw.futuwe
 
-object TweetHydrator {
-  val FieldsToHydrate: Set[TweetInclude] = TweetyPieClient.CoreTweetFields
-  val EmptyHydratedTweets: HydratedTweets =
-    HydratedTweets(Seq.empty[HydratedTweet], Seq.empty[HydratedTweet])
-  val EmptyHydratedTweetsFuture: Future[HydratedTweets] = Future.value(EmptyHydratedTweets)
+object tweethydwatow {
+  v-vaw fiewdstohydwate: s-set[tweetincwude] = tweetypiecwient.cowetweetfiewds
+  vaw emptyhydwatedtweets: hydwatedtweets =
+    h-hydwatedtweets(seq.empty[hydwatedtweet], (///ˬ///✿) seq.empty[hydwatedtweet])
+  v-vaw e-emptyhydwatedtweetsfutuwe: futuwe[hydwatedtweets] = futuwe.vawue(emptyhydwatedtweets)
 }
 
-class TweetHydrator(tweetyPieClient: TweetyPieClient, statsReceiver: StatsReceiver)
-    extends RequestStats {
+cwass tweethydwatow(tweetypiecwient: tweetypiecwient, 😳 statsweceivew: s-statsweceivew)
+    extends wequeststats {
 
-  private[this] val hydrateScope = statsReceiver.scope("tweetHydrator")
-  private[this] val outerTweetsScope = hydrateScope.scope("outerTweets")
-  private[this] val innerTweetsScope = hydrateScope.scope("innerTweets")
+  pwivate[this] vaw hydwatescope = statsweceivew.scope("tweethydwatow")
+  p-pwivate[this] vaw outewtweetsscope = h-hydwatescope.scope("outewtweets")
+  p-pwivate[this] v-vaw innewtweetsscope = h-hydwatescope.scope("innewtweets")
 
-  private[this] val totalCounter = outerTweetsScope.counter(Total)
-  private[this] val totalInnerCounter = innerTweetsScope.counter(Total)
+  pwivate[this] vaw totawcountew = o-outewtweetsscope.countew(totaw)
+  pwivate[this] vaw totawinnewcountew = innewtweetsscope.countew(totaw)
 
   /**
-   * Hydrates zero or more tweets from the given seq of tweet IDs. Returns requested tweets ordered
-   * by tweetIds and out of order inner tweet ids.
+   * h-hydwates zewo ow mowe tweets fwom the given seq of tweet ids. 😳 wetuwns wequested tweets o-owdewed
+   * by tweetids and out o-of owdew innew t-tweet ids. σωσ
    *
-   * Inner tweets that were also requested as outer tweets are returned as outer tweets.
+   * i-innew tweets that wewe awso wequested as outew tweets awe w-wetuwned as outew t-tweets. rawr x3
    *
-   * Note that some tweet may not be hydrated due to hydration errors or because they are deleted.
-   * Consequently, the size of output is <= size of input. That is the intended usage pattern.
+   * nyote that s-some tweet may nyot b-be hydwated due to hydwation e-ewwows ow because they awe deweted. OwO
+   * c-consequentwy, /(^•ω•^) the size of output is <= s-size of input. 😳😳😳 that is the intended u-usage pattewn. ( ͡o ω ͡o )
    */
-  def hydrate(
-    viewerId: Option[UserId],
-    tweetIds: Seq[TweetId],
-    fieldsToHydrate: Set[TweetInclude] = TweetyPieClient.CoreTweetFields,
-    includeQuotedTweets: Boolean = false
-  ): Future[HydratedTweets] = {
-    if (tweetIds.isEmpty) {
-      TweetHydrator.EmptyHydratedTweetsFuture
-    } else {
-      val tweetStateMapFuture = tweetyPieClient.getHydratedTweetFields(
-        tweetIds,
-        viewerId,
-        fieldsToHydrate,
-        safetyLevel = Some(SafetyLevel.FilterNone),
-        bypassVisibilityFiltering = true,
-        includeSourceTweets = false,
-        includeQuotedTweets = includeQuotedTweets,
-        ignoreTweetSuppression = true
+  def h-hydwate(
+    viewewid: o-option[usewid], >_<
+    tweetids: seq[tweetid], >w<
+    fiewdstohydwate: set[tweetincwude] = tweetypiecwient.cowetweetfiewds, rawr
+    incwudequotedtweets: b-boowean = f-fawse
+  ): futuwe[hydwatedtweets] = {
+    if (tweetids.isempty) {
+      t-tweethydwatow.emptyhydwatedtweetsfutuwe
+    } e-ewse {
+      v-vaw tweetstatemapfutuwe = tweetypiecwient.gethydwatedtweetfiewds(
+        tweetids, 😳
+        viewewid, >w<
+        fiewdstohydwate, (⑅˘꒳˘)
+        s-safetywevew = some(safetywevew.fiwtewnone), OwO
+        bypassvisibiwityfiwtewing = twue, (ꈍᴗꈍ)
+        incwudesouwcetweets = f-fawse, 😳
+        incwudequotedtweets = i-incwudequotedtweets,
+        i-ignowetweetsuppwession = t-twue
       )
 
-      tweetStateMapFuture.map { tweetStateMap =>
-        val innerTweetIdSet = tweetStateMap.keySet -- tweetIds.toSet
+      tweetstatemapfutuwe.map { t-tweetstatemap =>
+        v-vaw innewtweetidset = t-tweetstatemap.keyset -- t-tweetids.toset
 
-        val hydratedTweets =
-          HydratedTweetUtils.extractAndOrder(tweetIds ++ innerTweetIdSet.toSeq, tweetStateMap)
-        val (outer, inner) = hydratedTweets.partition { tweet =>
-          !innerTweetIdSet.contains(tweet.tweetId)
+        vaw hydwatedtweets =
+          hydwatedtweetutiws.extwactandowdew(tweetids ++ i-innewtweetidset.toseq, 😳😳😳 t-tweetstatemap)
+        v-vaw (outew, mya innew) = h-hydwatedtweets.pawtition { t-tweet =>
+          !innewtweetidset.contains(tweet.tweetid)
         }
 
-        totalCounter.incr(outer.size)
-        totalInnerCounter.incr(inner.size)
-        HydratedTweets(outer, inner)
+        totawcountew.incw(outew.size)
+        totawinnewcountew.incw(innew.size)
+        hydwatedtweets(outew, mya i-innew)
       }
     }
   }

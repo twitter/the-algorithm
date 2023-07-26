@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.model.request
+package com.twittew.home_mixew.modew.wequest
 
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.DebugParams
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
-import com.twitter.product_mixer.core.model.marshalling.request.Request
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.cwientcontext
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.debugpawams
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoductcontext
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
 
-case class HomeMixerRequest(
-  override val clientContext: ClientContext,
-  override val product: Product,
-  // Product-specific parameters should be placed in the Product Context
-  override val productContext: Option[ProductContext],
-  override val serializedRequestCursor: Option[String],
-  override val maxResults: Option[Int],
-  override val debugParams: Option[DebugParams],
-  // Parameters that apply to all products can be promoted to the request-level
-  homeRequestParam: Boolean)
-    extends Request
+c-case cwass homemixewwequest(
+  ovewwide vaw cwientcontext: cwientcontext, OwO
+  o-ovewwide vaw pwoduct: pwoduct, (U ﹏ U)
+  // pwoduct-specific p-pawametews shouwd be pwaced i-in the pwoduct context
+  ovewwide vaw pwoductcontext: option[pwoductcontext], >_<
+  o-ovewwide vaw sewiawizedwequestcuwsow: o-option[stwing], rawr x3
+  o-ovewwide vaw maxwesuwts: option[int], mya
+  ovewwide vaw debugpawams: option[debugpawams], nyaa~~
+  // p-pawametews that appwy to aww pwoducts can be pwomoted to the wequest-wevew
+  h-homewequestpawam: boowean)
+    e-extends wequest

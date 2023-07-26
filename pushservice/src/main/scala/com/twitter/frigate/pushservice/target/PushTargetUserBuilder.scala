@@ -1,693 +1,693 @@
-package com.twitter.frigate.pushservice.target
+package com.twittew.fwigate.pushsewvice.tawget
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.conversions.DurationOps._
-import com.twitter.decider.Decider
-import com.twitter.discovery.common.configapi.ConfigParamsBuilder
-import com.twitter.discovery.common.configapi.ExperimentOverride
-import com.twitter.featureswitches.Recipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.history._
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.common.store.FeedbackRequest
-import com.twitter.frigate.common.store.PushRecItemsKey
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.common.store.interests.UserId
-import com.twitter.frigate.common.util._
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
-import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryValue
-import com.twitter.frigate.dau_model.thriftscala.DauProbability
-import com.twitter.frigate.pushcap.thriftscala.PushcapInfo
-import com.twitter.frigate.pushcap.thriftscala.PushcapUserHistory
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.ml.HydrationContextBuilder
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.store.LabeledPushRecsStoreKey
-import com.twitter.frigate.pushservice.store.OnlineUserHistoryKey
-import com.twitter.frigate.pushservice.util.NsfwInfo
-import com.twitter.frigate.pushservice.util.NsfwPersonalizationUtil
-import com.twitter.frigate.pushservice.util.PushAppPermissionUtil
-import com.twitter.frigate.pushservice.util.PushCapUtil.getMinimumRestrictedPushcapInfo
-import com.twitter.frigate.pushservice.thriftscala.PushContext
-import com.twitter.frigate.pushservice.thriftscala.RequestSource
-import com.twitter.frigate.thriftscala.SecondaryAccountsByUserState
-import com.twitter.frigate.thriftscala.UserForPushTargeting
-import com.twitter.frigate.user_states.thriftscala.MRUserHmmState
-import com.twitter.frigate.user_states.thriftscala.{UserState => MrUserState}
-import com.twitter.frontpage.stream.util.SnowflakeUtil
-import com.twitter.geoduck.common.thriftscala.Place
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.model.user_state.UserState
-import com.twitter.hermit.model.user_state.UserState.UserState
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.ibis.thriftscala.ContentRecData
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.notificationservice.feedback.thriftscala.FeedbackInteraction
-import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
-import com.twitter.notificationservice.genericfeedbackstore.GenericFeedbackStore
-import com.twitter.notificationservice.genericfeedbackstore.GenericFeedbackStoreException
-import com.twitter.notificationservice.model.service.DismissMenuFeedbackAction
-import com.twitter.notificationservice.scribe.manhattan.GenericNotificationsFeedbackRequest
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.nrel.heavyranker.FeatureHydrator
-import com.twitter.nrel.hydration.push.HydrationContext
-import com.twitter.permissions_storage.thriftscala.AppPermission
-import com.twitter.rux.common.strato.thriftscala.UserTargetingProperty
-import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWUserSegmentation
-import com.twitter.service.metastore.gen.thriftscala.Location
-import com.twitter.service.metastore.gen.thriftscala.UserLanguages
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.timelines.real_graph.thriftscala.{RealGraphFeatures => RealGraphFeaturesUnion}
-import com.twitter.timelines.real_graph.v1.thriftscala.RealGraphFeatures
-import com.twitter.ubs.thriftscala.SellerApplicationState
-import com.twitter.ubs.thriftscala.SellerTrack
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import com.twitter.wtf.scalding.common.thriftscala.UserFeatures
+impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.decidew.decidew
+i-impowt c-com.twittew.discovewy.common.configapi.configpawamsbuiwdew
+impowt c-com.twittew.discovewy.common.configapi.expewimentovewwide
+i-impowt com.twittew.featuweswitches.wecipient
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.fwigate.common.base._
+i-impowt com.twittew.fwigate.common.histowy._
+impowt com.twittew.fwigate.common.woggew.mwwoggew
+impowt com.twittew.fwigate.common.stowe.feedbackwequest
+i-impowt com.twittew.fwigate.common.stowe.pushwecitemskey
+i-impowt com.twittew.fwigate.common.stowe.deviceinfo.deviceinfo
+impowt com.twittew.fwigate.common.stowe.intewests.usewid
+impowt com.twittew.fwigate.common.utiw._
+i-impowt com.twittew.fwigate.data_pipewine.featuwes_common.mwwequestcontextfowfeatuwestowe
+impowt c-com.twittew.fwigate.data_pipewine.thwiftscawa.usewhistowyvawue
+i-impowt com.twittew.fwigate.dau_modew.thwiftscawa.daupwobabiwity
+impowt com.twittew.fwigate.pushcap.thwiftscawa.pushcapinfo
+impowt com.twittew.fwigate.pushcap.thwiftscawa.pushcapusewhistowy
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.fwigate.pushsewvice.mw.hydwationcontextbuiwdew
+impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+impowt c-com.twittew.fwigate.pushsewvice.stowe.wabewedpushwecsstowekey
+impowt c-com.twittew.fwigate.pushsewvice.stowe.onwineusewhistowykey
+i-impowt com.twittew.fwigate.pushsewvice.utiw.nsfwinfo
+i-impowt com.twittew.fwigate.pushsewvice.utiw.nsfwpewsonawizationutiw
+impowt com.twittew.fwigate.pushsewvice.utiw.pushapppewmissionutiw
+i-impowt com.twittew.fwigate.pushsewvice.utiw.pushcaputiw.getminimumwestwictedpushcapinfo
+impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushcontext
+i-impowt com.twittew.fwigate.pushsewvice.thwiftscawa.wequestsouwce
+impowt com.twittew.fwigate.thwiftscawa.secondawyaccountsbyusewstate
+impowt com.twittew.fwigate.thwiftscawa.usewfowpushtawgeting
+impowt com.twittew.fwigate.usew_states.thwiftscawa.mwusewhmmstate
+impowt com.twittew.fwigate.usew_states.thwiftscawa.{usewstate => mwusewstate}
+i-impowt com.twittew.fwontpage.stweam.utiw.snowfwakeutiw
+impowt c-com.twittew.geoduck.common.thwiftscawa.pwace
+impowt c-com.twittew.geoduck.sewvice.thwiftscawa.wocationwesponse
+impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+impowt com.twittew.hewmit.modew.usew_state.usewstate
+impowt com.twittew.hewmit.modew.usew_state.usewstate.usewstate
+i-impowt com.twittew.hewmit.stp.thwiftscawa.stpwesuwt
+i-impowt com.twittew.ibis.thwiftscawa.contentwecdata
+impowt com.twittew.intewests.thwiftscawa.intewestid
+i-impowt c-com.twittew.notificationsewvice.feedback.thwiftscawa.feedbackintewaction
+impowt c-com.twittew.notificationsewvice.genewicfeedbackstowe.feedbackpwomptvawue
+impowt c-com.twittew.notificationsewvice.genewicfeedbackstowe.genewicfeedbackstowe
+impowt com.twittew.notificationsewvice.genewicfeedbackstowe.genewicfeedbackstoweexception
+i-impowt com.twittew.notificationsewvice.modew.sewvice.dismissmenufeedbackaction
+impowt com.twittew.notificationsewvice.scwibe.manhattan.genewicnotificationsfeedbackwequest
+i-impowt com.twittew.notificationsewvice.thwiftscawa.cawetfeedbackdetaiws
+impowt c-com.twittew.nwew.heavywankew.featuwehydwatow
+i-impowt com.twittew.nwew.hydwation.push.hydwationcontext
+impowt com.twittew.pewmissions_stowage.thwiftscawa.apppewmission
+impowt com.twittew.wux.common.stwato.thwiftscawa.usewtawgetingpwopewty
+impowt com.twittew.scio.nsfw_usew_segmentation.thwiftscawa.nsfwusewsegmentation
+impowt c-com.twittew.sewvice.metastowe.gen.thwiftscawa.wocation
+i-impowt com.twittew.sewvice.metastowe.gen.thwiftscawa.usewwanguages
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.timewines.configapi
+i-impowt com.twittew.timewines.weaw_gwaph.thwiftscawa.{weawgwaphfeatuwes => weawgwaphfeatuwesunion}
+impowt com.twittew.timewines.weaw_gwaph.v1.thwiftscawa.weawgwaphfeatuwes
+impowt com.twittew.ubs.thwiftscawa.sewwewappwicationstate
+i-impowt com.twittew.ubs.thwiftscawa.sewwewtwack
+impowt com.twittew.usew_session_stowe.thwiftscawa.usewsession
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
+impowt com.twittew.wtf.scawding.common.thwiftscawa.usewfeatuwes
 
-case class PushTargetUserBuilder(
-  historyStore: PushServiceHistoryStore,
-  emailHistoryStore: PushServiceHistoryStore,
-  labeledPushRecsStore: ReadableStore[LabeledPushRecsStoreKey, UserHistoryValue],
-  onlineUserHistoryStore: ReadableStore[OnlineUserHistoryKey, UserHistoryValue],
-  pushRecItemsStore: ReadableStore[PushRecItemsKey, RecItems],
-  userStore: ReadableStore[Long, User],
-  pushInfoStore: ReadableStore[Long, UserForPushTargeting],
-  userCountryStore: ReadableStore[Long, Location],
-  userUtcOffsetStore: ReadableStore[Long, Duration],
-  dauProbabilityStore: ReadableStore[Long, DauProbability],
-  nsfwConsumerStore: ReadableStore[Long, NSFWUserSegmentation],
-  userFeatureStore: ReadableStore[Long, UserFeatures],
-  userTargetingPropertyStore: ReadableStore[Long, UserTargetingProperty],
-  mrUserStateStore: ReadableStore[Long, MRUserHmmState],
-  tweetImpressionStore: ReadableStore[Long, Seq[Long]],
-  ntabCaretFeedbackStore: ReadableStore[GenericNotificationsFeedbackRequest, Seq[
-    CaretFeedbackDetails
-  ]],
-  genericFeedbackStore: ReadableStore[FeedbackRequest, Seq[FeedbackPromptValue]],
-  genericNotificationFeedbackStore: GenericFeedbackStore,
-  timelinesUserSessionStore: ReadableStore[Long, UserSession],
-  cachedTweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  strongTiesStore: ReadableStore[Long, STPResult],
-  userHTLLastVisitStore: ReadableStore[Long, Seq[Long]],
-  userLanguagesStore: ReadableStore[Long, UserLanguages],
-  inputDecider: Decider,
-  inputAbDecider: LoggingABDecider,
-  realGraphScoresTop500InStore: ReadableStore[Long, Map[Long, Double]],
-  recentFollowsStore: ReadableStore[Long, Seq[Long]],
-  resurrectedUserStore: ReadableStore[Long, String],
-  configParamsBuilder: ConfigParamsBuilder,
-  optOutUserInterestsStore: ReadableStore[UserId, Seq[InterestId]],
-  deviceInfoStore: ReadableStore[Long, DeviceInfo],
-  pushcapDynamicPredictionStore: ReadableStore[Long, PushcapUserHistory],
-  appPermissionStore: ReadableStore[(Long, (String, String)), AppPermission],
-  optoutModelScorer: PushMLModelScorer,
-  inlineActionHistoryStore: ReadableStore[Long, Seq[(Long, String)]],
-  featureHydrator: FeatureHydrator,
-  openAppUserStore: ReadableStore[Long, Boolean],
-  openedPushByHourAggregatedStore: ReadableStore[Long, Map[Int, Int]],
-  geoduckStoreV2: ReadableStore[Long, LocationResponse],
-  superFollowEligibilityUserStore: ReadableStore[Long, Boolean],
-  superFollowApplicationStatusStore: ReadableStore[(Long, SellerTrack), SellerApplicationState]
+c-case cwass pushtawgetusewbuiwdew(
+  h-histowystowe: p-pushsewvicehistowystowe, >_<
+  e-emaiwhistowystowe: pushsewvicehistowystowe, (✿oωo)
+  wabewedpushwecsstowe: w-weadabwestowe[wabewedpushwecsstowekey, (ꈍᴗꈍ) u-usewhistowyvawue], XD
+  o-onwineusewhistowystowe: w-weadabwestowe[onwineusewhistowykey, :3 u-usewhistowyvawue], mya
+  pushwecitemsstowe: weadabwestowe[pushwecitemskey, òωó wecitems], nyaa~~
+  usewstowe: w-weadabwestowe[wong, 🥺 usew], -.-
+  pushinfostowe: weadabwestowe[wong, 🥺 usewfowpushtawgeting], (˘ω˘)
+  usewcountwystowe: w-weadabwestowe[wong, òωó wocation], UwU
+  usewutcoffsetstowe: weadabwestowe[wong, ^•ﻌ•^ d-duwation], mya
+  d-daupwobabiwitystowe: w-weadabwestowe[wong, (✿oωo) daupwobabiwity], XD
+  n-nysfwconsumewstowe: weadabwestowe[wong, :3 n-nysfwusewsegmentation], (U ﹏ U)
+  u-usewfeatuwestowe: weadabwestowe[wong, UwU usewfeatuwes], ʘwʘ
+  usewtawgetingpwopewtystowe: weadabwestowe[wong, >w< usewtawgetingpwopewty], 😳😳😳
+  m-mwusewstatestowe: weadabwestowe[wong, rawr m-mwusewhmmstate], ^•ﻌ•^
+  tweetimpwessionstowe: w-weadabwestowe[wong, σωσ s-seq[wong]], :3
+  nytabcawetfeedbackstowe: weadabwestowe[genewicnotificationsfeedbackwequest, rawr x3 s-seq[
+    cawetfeedbackdetaiws
+  ]], nyaa~~
+  g-genewicfeedbackstowe: weadabwestowe[feedbackwequest, :3 s-seq[feedbackpwomptvawue]], >w<
+  g-genewicnotificationfeedbackstowe: genewicfeedbackstowe, rawr
+  timewinesusewsessionstowe: weadabwestowe[wong, 😳 usewsession], 😳
+  cachedtweetypiestowe: w-weadabwestowe[wong, t-tweetypiewesuwt], 🥺
+  s-stwongtiesstowe: weadabwestowe[wong, rawr x3 s-stpwesuwt], ^^
+  u-usewhtwwastvisitstowe: weadabwestowe[wong, ( ͡o ω ͡o ) s-seq[wong]], XD
+  usewwanguagesstowe: weadabwestowe[wong, ^^ usewwanguages], (⑅˘꒳˘)
+  inputdecidew: d-decidew, (⑅˘꒳˘)
+  i-inputabdecidew: woggingabdecidew, ^•ﻌ•^
+  weawgwaphscowestop500instowe: w-weadabwestowe[wong, ( ͡o ω ͡o ) m-map[wong, ( ͡o ω ͡o ) doubwe]],
+  wecentfowwowsstowe: weadabwestowe[wong, (✿oωo) seq[wong]], 😳😳😳
+  w-wesuwwectedusewstowe: weadabwestowe[wong, OwO stwing],
+  configpawamsbuiwdew: configpawamsbuiwdew, ^^
+  optoutusewintewestsstowe: weadabwestowe[usewid, rawr x3 s-seq[intewestid]], 🥺
+  deviceinfostowe: weadabwestowe[wong, (ˆ ﻌ ˆ)♡ deviceinfo], ( ͡o ω ͡o )
+  p-pushcapdynamicpwedictionstowe: w-weadabwestowe[wong, >w< pushcapusewhistowy],
+  apppewmissionstowe: weadabwestowe[(wong, /(^•ω•^) (stwing, 😳😳😳 s-stwing)), a-apppewmission], (U ᵕ U❁)
+  optoutmodewscowew: pushmwmodewscowew, (˘ω˘)
+  inwineactionhistowystowe: w-weadabwestowe[wong, 😳 seq[(wong, (ꈍᴗꈍ) s-stwing)]], :3
+  featuwehydwatow: featuwehydwatow, /(^•ω•^)
+  openappusewstowe: w-weadabwestowe[wong, ^^;; boowean],
+  o-openedpushbyhouwaggwegatedstowe: w-weadabwestowe[wong, o.O map[int, int]], 😳
+  g-geoduckstowev2: weadabwestowe[wong, UwU w-wocationwesponse], >w<
+  s-supewfowwowewigibiwityusewstowe: w-weadabwestowe[wong, o.O boowean], (˘ω˘)
+  supewfowwowappwicationstatusstowe: w-weadabwestowe[(wong, òωó s-sewwewtwack), nyaa~~ sewwewappwicationstate]
 )(
-  globalStatsReceiver: StatsReceiver) {
+  gwobawstatsweceivew: s-statsweceivew) {
 
-  implicit val statsReceiver: StatsReceiver = globalStatsReceiver
+  i-impwicit v-vaw statsweceivew: statsweceivew = gwobawstatsweceivew
 
-  private val log = MRLogger("PushTargetUserBuilder")
-  private val recentFollowscounter = statsReceiver.counter("query_recent_follows")
-  private val isModelTrainingDataCounter =
-    statsReceiver.scope("TargetUserBuilder").counter("is_model_training")
-  private val feedbackStoreGenerationErr = statsReceiver.counter("feedback_store_generation_error")
-  private val newSignUpUserStats = statsReceiver.counter("new_signup_user")
-  private val pushcapSelectionStat = statsReceiver.scope("pushcap_modeling")
-  private val dormantUserCount = statsReceiver.counter("dormant_user_counter")
-  private val optoutModelStat = statsReceiver.scope("optout_modeling")
-  private val placeFoundStat = statsReceiver.scope("geoduck_v2").stat("places_found")
-  private val placesNotFound = statsReceiver.scope("geoduck_v2").counter("places_not_found")
-  // Email history store stats
-  private val emailHistoryStats = statsReceiver.scope("email_tweet_history")
-  private val emptyEmailHistoryCounter = emailHistoryStats.counter("empty")
-  private val nonEmptyEmailHistoryCounter = emailHistoryStats.counter("non_empty")
+  p-pwivate vaw wog = mwwoggew("pushtawgetusewbuiwdew")
+  p-pwivate vaw wecentfowwowscountew = s-statsweceivew.countew("quewy_wecent_fowwows")
+  pwivate vaw ismodewtwainingdatacountew =
+    statsweceivew.scope("tawgetusewbuiwdew").countew("is_modew_twaining")
+  pwivate v-vaw feedbackstowegenewationeww = s-statsweceivew.countew("feedback_stowe_genewation_ewwow")
+  p-pwivate v-vaw nyewsignupusewstats = statsweceivew.countew("new_signup_usew")
+  p-pwivate vaw pushcapsewectionstat = statsweceivew.scope("pushcap_modewing")
+  pwivate vaw dowmantusewcount = statsweceivew.countew("dowmant_usew_countew")
+  p-pwivate vaw optoutmodewstat = s-statsweceivew.scope("optout_modewing")
+  pwivate v-vaw pwacefoundstat = statsweceivew.scope("geoduck_v2").stat("pwaces_found")
+  p-pwivate vaw pwacesnotfound = statsweceivew.scope("geoduck_v2").countew("pwaces_not_found")
+  // emaiw histowy s-stowe stats
+  pwivate v-vaw emaiwhistowystats = s-statsweceivew.scope("emaiw_tweet_histowy")
+  p-pwivate v-vaw emptyemaiwhistowycountew = emaiwhistowystats.countew("empty")
+  pwivate vaw nonemptyemaiwhistowycountew = emaiwhistowystats.countew("non_empty")
 
-  private val MagicRecsCategory = "MagicRecs"
-  private val MomentsViaMagicRecsCategory = "MomentsViaMagicRecs"
-  private val MomentsCategory = "Moments"
+  pwivate vaw magicwecscategowy = "magicwecs"
+  p-pwivate v-vaw momentsviamagicwecscategowy = "momentsviamagicwecs"
+  p-pwivate vaw momentscategowy = "moments"
 
-  def buildTarget(
-    userId: Long,
-    inputPushContext: Option[PushContext],
-    forcedFeatureValues: Option[Map[String, configapi.FeatureValue]] = None
-  ): Future[Target] = {
-    val historyStoreKeyContext = HistoryStoreKeyContext(
-      userId,
-      inputPushContext.flatMap(_.useMemcacheForHistory).getOrElse(false)
+  d-def buiwdtawget(
+    usewid: wong, ( ͡o ω ͡o )
+    inputpushcontext: option[pushcontext], 😳😳😳
+    fowcedfeatuwevawues: o-option[map[stwing, ^•ﻌ•^ c-configapi.featuwevawue]] = nyone
+  ): f-futuwe[tawget] = {
+    vaw histowystowekeycontext = h-histowystowekeycontext(
+      u-usewid, (˘ω˘)
+      inputpushcontext.fwatmap(_.usememcachefowhistowy).getowewse(fawse)
     )
-    Future
+    f-futuwe
       .join(
-        userStore.get(userId),
-        deviceInfoStore.get(userId),
-        pushInfoStore.get(userId),
-        historyStore.get(historyStoreKeyContext, Some(30.days)),
-        emailHistoryStore.get(
-          HistoryStoreKeyContext(userId, useStoreB = false),
-          Some(7.days) // we only keep 7 days of email tweet history
+        usewstowe.get(usewid), (˘ω˘)
+        d-deviceinfostowe.get(usewid), -.-
+        pushinfostowe.get(usewid),
+        histowystowe.get(histowystowekeycontext, ^•ﻌ•^ some(30.days)), /(^•ω•^)
+        emaiwhistowystowe.get(
+          histowystowekeycontext(usewid, (///ˬ///✿) u-usestoweb = f-fawse), mya
+          s-some(7.days) // w-we onwy keep 7 d-days of emaiw tweet histowy
         )
-      ).flatMap {
-        case (userOpt, deviceInfoOpt, userForPushTargetingInfoOpt, notifHistory, emailHistory) =>
-          getCustomFSFields(
-            userId,
-            userOpt,
-            deviceInfoOpt,
-            userForPushTargetingInfoOpt,
-            notifHistory,
-            inputPushContext.flatMap(_.requestSource)).map { customFSField =>
-            new Target {
+      ).fwatmap {
+        c-case (usewopt, o.O d-deviceinfoopt, ^•ﻌ•^ usewfowpushtawgetinginfoopt, (U ᵕ U❁) nyotifhistowy, :3 e-emaiwhistowy) =>
+          g-getcustomfsfiewds(
+            usewid, (///ˬ///✿)
+            u-usewopt, (///ˬ///✿)
+            deviceinfoopt, 🥺
+            usewfowpushtawgetinginfoopt, -.-
+            n-notifhistowy, nyaa~~
+            inputpushcontext.fwatmap(_.wequestsouwce)).map { customfsfiewd =>
+            n-nyew t-tawget {
 
-              override lazy val stats: StatsReceiver = statsReceiver
+              ovewwide w-wazy vaw stats: statsweceivew = statsweceivew
 
-              override val targetId: Long = userId
+              o-ovewwide vaw tawgetid: w-wong = usewid
 
-              override val targetUser: Future[Option[User]] = Future.value(userOpt)
+              o-ovewwide vaw tawgetusew: futuwe[option[usew]] = futuwe.vawue(usewopt)
 
-              override val isEmailUser: Boolean =
-                inputPushContext.flatMap(_.requestSource) match {
-                  case Some(source) if source == RequestSource.Email => true
-                  case _ => false
+              ovewwide v-vaw isemaiwusew: boowean =
+                inputpushcontext.fwatmap(_.wequestsouwce) m-match {
+                  c-case some(souwce) if souwce == w-wequestsouwce.emaiw => twue
+                  c-case _ => f-fawse
                 }
 
-              override val pushContext = inputPushContext
+              ovewwide vaw pushcontext = inputpushcontext
 
-              override def globalStats: StatsReceiver = globalStatsReceiver
+              o-ovewwide def gwobawstats: statsweceivew = g-gwobawstatsweceivew
 
-              override lazy val abDecider: ABDeciderWithOverride =
-                ABDeciderWithOverride(inputAbDecider, ddgOverrideOption)
+              o-ovewwide wazy vaw abdecidew: a-abdecidewwithovewwide =
+                abdecidewwithovewwide(inputabdecidew, (///ˬ///✿) d-ddgovewwideoption)
 
-              override lazy val pushRecItems: Future[RecItems] =
-                pushRecItemsStore
-                  .get(PushRecItemsKey(historyStoreKeyContext, history))
-                  .map(_.getOrElse(RecItems.empty))
+              o-ovewwide wazy v-vaw pushwecitems: futuwe[wecitems] =
+                pushwecitemsstowe
+                  .get(pushwecitemskey(histowystowekeycontext, 🥺 histowy))
+                  .map(_.getowewse(wecitems.empty))
 
-              // List of past tweet candidates sent in the past through email with timestamp
-              override lazy val emailRecItems: Future[Seq[(Time, Long)]] = {
-                Future.value {
-                  emailHistory.sortedEmailHistory.flatMap {
-                    case (timeStamp, notification) =>
-                      notification.contentRecsNotification
-                        .map { notification =>
-                          notification.recommendations.contentRecCollections.flatMap {
-                            contentRecs =>
-                              contentRecs.contentRecModules.flatMap { contentRecModule =>
-                                contentRecModule.recData match {
-                                  case ContentRecData.TweetRec(tweetRec) =>
-                                    nonEmptyEmailHistoryCounter.incr()
-                                    Seq(tweetRec.tweetId)
-                                  case _ =>
-                                    emptyEmailHistoryCounter.incr()
-                                    Nil
+              // wist of past tweet candidates sent in the past thwough emaiw with timestamp
+              ovewwide wazy vaw emaiwwecitems: futuwe[seq[(time, >w< wong)]] = {
+                f-futuwe.vawue {
+                  e-emaiwhistowy.sowtedemaiwhistowy.fwatmap {
+                    case (timestamp, rawr x3 nyotification) =>
+                      n-nyotification.contentwecsnotification
+                        .map { n-nyotification =>
+                          n-notification.wecommendations.contentweccowwections.fwatmap {
+                            contentwecs =>
+                              contentwecs.contentwecmoduwes.fwatmap { c-contentwecmoduwe =>
+                                contentwecmoduwe.wecdata m-match {
+                                  c-case contentwecdata.tweetwec(tweetwec) =>
+                                    n-nyonemptyemaiwhistowycountew.incw()
+                                    seq(tweetwec.tweetid)
+                                  c-case _ =>
+                                    e-emptyemaiwhistowycountew.incw()
+                                    nyiw
                                 }
                               }
                           }
-                        }.getOrElse {
-                          emptyEmailHistoryCounter.incr()
-                          Nil
-                        }.map(timeStamp -> _)
+                        }.getowewse {
+                          emptyemaiwhistowycountew.incw()
+                          n-niw
+                        }.map(timestamp -> _)
                   }
                 }
               }
 
-              override lazy val history: Future[History] = Future.value(notifHistory)
+              o-ovewwide wazy v-vaw histowy: futuwe[histowy] = futuwe.vawue(notifhistowy)
 
-              override lazy val pushTargeting: Future[Option[UserForPushTargeting]] =
-                Future.value(userForPushTargetingInfoOpt)
+              o-ovewwide w-wazy vaw pushtawgeting: f-futuwe[option[usewfowpushtawgeting]] =
+                f-futuwe.vawue(usewfowpushtawgetinginfoopt)
 
-              override lazy val decider: Decider = inputDecider
+              o-ovewwide w-wazy vaw decidew: decidew = inputdecidew
 
-              override lazy val location: Future[Option[Location]] =
-                userCountryStore.get(userId)
+              o-ovewwide w-wazy vaw wocation: f-futuwe[option[wocation]] =
+                usewcountwystowe.get(usewid)
 
-              override lazy val deviceInfo: Future[Option[DeviceInfo]] =
-                Future.value(deviceInfoOpt)
+              o-ovewwide wazy vaw deviceinfo: futuwe[option[deviceinfo]] =
+                f-futuwe.vawue(deviceinfoopt)
 
-              override lazy val targetLanguage: Future[Option[String]] = targetUser map { userOpt =>
-                userOpt.flatMap(_.account.map(_.language))
+              ovewwide wazy v-vaw tawgetwanguage: f-futuwe[option[stwing]] = tawgetusew m-map { usewopt =>
+                u-usewopt.fwatmap(_.account.map(_.wanguage))
               }
 
-              override lazy val targetAgeInYears: Future[Option[Int]] =
-                Future.value(customFSField.userAge)
+              ovewwide wazy v-vaw tawgetageinyeaws: futuwe[option[int]] =
+                futuwe.vawue(customfsfiewd.usewage)
 
-              override lazy val metastoreLanguages: Future[Option[UserLanguages]] =
-                userLanguagesStore.get(targetId)
+              o-ovewwide wazy vaw metastowewanguages: f-futuwe[option[usewwanguages]] =
+                usewwanguagesstowe.get(tawgetid)
 
-              override lazy val utcOffset: Future[Option[Duration]] =
-                userUtcOffsetStore.get(targetId)
+              ovewwide wazy vaw utcoffset: futuwe[option[duwation]] =
+                u-usewutcoffsetstowe.get(tawgetid)
 
-              override lazy val userFeatures: Future[Option[UserFeatures]] =
-                userFeatureStore.get(targetId)
+              ovewwide wazy vaw u-usewfeatuwes: f-futuwe[option[usewfeatuwes]] =
+                usewfeatuwestowe.get(tawgetid)
 
-              override lazy val targetUserState: Future[Option[UserState]] =
-                Future.value(
-                  customFSField.userState
-                    .flatMap(userState => UserState.valueOf(userState)))
+              ovewwide wazy vaw tawgetusewstate: futuwe[option[usewstate]] =
+                f-futuwe.vawue(
+                  customfsfiewd.usewstate
+                    .fwatmap(usewstate => u-usewstate.vawueof(usewstate)))
 
-              override lazy val targetMrUserState: Future[Option[MrUserState]] =
-                Future.value(
-                  customFSField.mrUserState
-                    .flatMap(mrUserState => MrUserState.valueOf(mrUserState)))
+              o-ovewwide w-wazy vaw tawgetmwusewstate: futuwe[option[mwusewstate]] =
+                futuwe.vawue(
+                  customfsfiewd.mwusewstate
+                    .fwatmap(mwusewstate => mwusewstate.vawueof(mwusewstate)))
 
-              override lazy val accountStateWithDeviceInfo: Future[
-                Option[SecondaryAccountsByUserState]
-              ] = Future.None
+              o-ovewwide w-wazy vaw accountstatewithdeviceinfo: futuwe[
+                o-option[secondawyaccountsbyusewstate]
+              ] = futuwe.none
 
-              override lazy val dauProbability: Future[Option[DauProbability]] = {
-                dauProbabilityStore.get(targetId)
+              ovewwide wazy vaw d-daupwobabiwity: futuwe[option[daupwobabiwity]] = {
+                d-daupwobabiwitystowe.get(tawgetid)
               }
 
-              override lazy val labeledPushRecsHydrated: Future[Option[UserHistoryValue]] =
-                labeledPushRecsStore.get(LabeledPushRecsStoreKey(this, historyStoreKeyContext))
+              o-ovewwide wazy v-vaw wabewedpushwecshydwated: futuwe[option[usewhistowyvawue]] =
+                w-wabewedpushwecsstowe.get(wabewedpushwecsstowekey(this, (⑅˘꒳˘) h-histowystowekeycontext))
 
-              override lazy val onlineLabeledPushRecs: Future[Option[UserHistoryValue]] =
-                labeledPushRecsHydrated.flatMap { labeledPushRecs =>
-                  history.flatMap { history =>
-                    onlineUserHistoryStore.get(
-                      OnlineUserHistoryKey(targetId, labeledPushRecs, Some(history))
+              o-ovewwide wazy v-vaw onwinewabewedpushwecs: futuwe[option[usewhistowyvawue]] =
+                w-wabewedpushwecshydwated.fwatmap { w-wabewedpushwecs =>
+                  h-histowy.fwatmap { h-histowy =>
+                    o-onwineusewhistowystowe.get(
+                      o-onwineusewhistowykey(tawgetid, σωσ w-wabewedpushwecs, XD s-some(histowy))
                     )
                   }
                 }
 
-              override lazy val tweetImpressionResults: Future[Seq[Long]] =
-                tweetImpressionStore.get(targetId).map {
-                  case Some(impressionList) =>
-                    impressionList
-                  case _ => Nil
+              ovewwide wazy v-vaw tweetimpwessionwesuwts: futuwe[seq[wong]] =
+                t-tweetimpwessionstowe.get(tawgetid).map {
+                  case s-some(impwessionwist) =>
+                    i-impwessionwist
+                  c-case _ => nyiw
                 }
 
-              override lazy val realGraphFeatures: Future[Option[RealGraphFeatures]] =
-                timelinesUserSessionStore.get(targetId).map { userSessionOpt =>
-                  userSessionOpt.flatMap { userSession =>
-                    userSession.realGraphFeatures.collect {
-                      case RealGraphFeaturesUnion.V1(rGFeatures) =>
-                        rGFeatures
+              ovewwide wazy vaw weawgwaphfeatuwes: f-futuwe[option[weawgwaphfeatuwes]] =
+                t-timewinesusewsessionstowe.get(tawgetid).map { u-usewsessionopt =>
+                  usewsessionopt.fwatmap { usewsession =>
+                    usewsession.weawgwaphfeatuwes.cowwect {
+                      c-case weawgwaphfeatuwesunion.v1(wgfeatuwes) =>
+                        w-wgfeatuwes
                     }
                   }
                 }
 
-              override lazy val stpResult: Future[Option[STPResult]] =
-                strongTiesStore.get(targetId)
+              ovewwide w-wazy vaw s-stpwesuwt: futuwe[option[stpwesuwt]] =
+                stwongtiesstowe.get(tawgetid)
 
-              override lazy val lastHTLVisitTimestamp: Future[Option[Long]] =
-                userHTLLastVisitStore.get(targetId).map {
-                  case Some(lastVisitTimestamps) if lastVisitTimestamps.nonEmpty =>
-                    Some(lastVisitTimestamps.max)
-                  case _ => None
+              ovewwide wazy vaw wasthtwvisittimestamp: f-futuwe[option[wong]] =
+                u-usewhtwwastvisitstowe.get(tawgetid).map {
+                  c-case some(wastvisittimestamps) if w-wastvisittimestamps.nonempty =>
+                    some(wastvisittimestamps.max)
+                  case _ => n-nyone
                 }
 
-              override lazy val caretFeedbacks: Future[Option[Seq[CaretFeedbackDetails]]] = {
-                val scribeHistoryLookbackPeriod = 365.days
-                val now = Time.now
-                val request = GenericNotificationsFeedbackRequest(
-                  userId = targetId,
-                  eventStartTimestamp = now - scribeHistoryLookbackPeriod,
-                  eventEndTimestamp = now,
-                  filterCategory =
-                    Some(Set(MagicRecsCategory, MomentsViaMagicRecsCategory, MomentsCategory)),
-                  filterFeedbackActionText =
-                    Some(Set(DismissMenuFeedbackAction.FeedbackActionTextSeeLessOften))
+              o-ovewwide wazy vaw cawetfeedbacks: futuwe[option[seq[cawetfeedbackdetaiws]]] = {
+                v-vaw scwibehistowywookbackpewiod = 365.days
+                vaw nyow = time.now
+                vaw wequest = g-genewicnotificationsfeedbackwequest(
+                  usewid = t-tawgetid, -.-
+                  e-eventstawttimestamp = nyow - scwibehistowywookbackpewiod, >_<
+                  e-eventendtimestamp = n-nyow, rawr
+                  fiwtewcategowy =
+                    s-some(set(magicwecscategowy, 😳😳😳 momentsviamagicwecscategowy, UwU m-momentscategowy)), (U ﹏ U)
+                  f-fiwtewfeedbackactiontext =
+                    s-some(set(dismissmenufeedbackaction.feedbackactiontextseewessoften))
                 )
-                ntabCaretFeedbackStore.get(request)
+                n-ntabcawetfeedbackstowe.get(wequest)
               }
 
-              override lazy val notificationFeedbacks: Future[
-                Option[Seq[FeedbackPromptValue]]
+              ovewwide wazy v-vaw nyotificationfeedbacks: f-futuwe[
+                o-option[seq[feedbackpwomptvawue]]
               ] = {
-                val scribeHistoryLookbackPeriod = 30.days
-                val now = Time.now
-                val request = FeedbackRequest(
-                  userId = targetId,
-                  oldestTimestamp = scribeHistoryLookbackPeriod.ago,
-                  newestTimestamp = Time.now,
-                  feedbackInteraction = FeedbackInteraction.Feedback
+                vaw scwibehistowywookbackpewiod = 30.days
+                v-vaw nyow = time.now
+                vaw wequest = feedbackwequest(
+                  u-usewid = t-tawgetid, (˘ω˘)
+                  o-owdesttimestamp = scwibehistowywookbackpewiod.ago, /(^•ω•^)
+                  nyewesttimestamp = time.now, (U ﹏ U)
+                  feedbackintewaction = f-feedbackintewaction.feedback
                 )
-                genericFeedbackStore.get(request)
+                genewicfeedbackstowe.get(wequest)
               }
 
-              // DEPRECATED: Use notificationFeedbacks instead.
-              // This method will increase latency dramatically.
-              override lazy val promptFeedbacks: Stitch[Seq[FeedbackPromptValue]] = {
-                val scribeHistoryLookbackPeriod = 7.days
+              // d-depwecated: u-use nyotificationfeedbacks instead. ^•ﻌ•^
+              // this m-method wiww incwease watency dwamaticawwy. >w<
+              o-ovewwide w-wazy vaw pwomptfeedbacks: s-stitch[seq[feedbackpwomptvawue]] = {
+                v-vaw scwibehistowywookbackpewiod = 7.days
 
-                genericNotificationFeedbackStore
-                  .getAll(
-                    userId = targetId,
-                    oldestTimestamp = scribeHistoryLookbackPeriod.ago,
-                    newestTimestamp = Time.now,
-                    feedbackInteraction = FeedbackInteraction.Feedback
-                  ).handle {
-                    case _: GenericFeedbackStoreException => {
-                      feedbackStoreGenerationErr.incr()
-                      Seq.empty[FeedbackPromptValue]
+                g-genewicnotificationfeedbackstowe
+                  .getaww(
+                    usewid = tawgetid, ʘwʘ
+                    owdesttimestamp = scwibehistowywookbackpewiod.ago, òωó
+                    n-nyewesttimestamp = time.now, o.O
+                    f-feedbackintewaction = feedbackintewaction.feedback
+                  ).handwe {
+                    case _: genewicfeedbackstoweexception => {
+                      feedbackstowegenewationeww.incw()
+                      s-seq.empty[feedbackpwomptvawue]
                     }
                   }
               }
 
-              override lazy val optOutUserInterests: Future[Option[Seq[InterestId]]] = {
-                optOutUserInterestsStore.get(targetId)
+              ovewwide wazy vaw optoutusewintewests: futuwe[option[seq[intewestid]]] = {
+                optoutusewintewestsstowe.get(tawgetid)
               }
 
-              private val experimentOverride = ddgOverrideOption.map {
-                case DDGOverride(Some(exp), Some(bucket)) =>
-                  Set(ExperimentOverride(exp, bucket))
-                case _ => Set.empty[ExperimentOverride]
+              p-pwivate vaw expewimentovewwide = d-ddgovewwideoption.map {
+                case ddgovewwide(some(exp), ( ͡o ω ͡o ) s-some(bucket)) =>
+                  set(expewimentovewwide(exp, mya bucket))
+                c-case _ => s-set.empty[expewimentovewwide]
               }
 
-              override val signupCountryCode =
-                Future.value(userOpt.flatMap(_.safety.flatMap(_.signupCountryCode)))
+              ovewwide vaw s-signupcountwycode =
+                futuwe.vawue(usewopt.fwatmap(_.safety.fwatmap(_.signupcountwycode)))
 
-              override lazy val params: configapi.Params = {
-                val fsRecipient = Recipient(
-                  userId = Some(targetId),
-                  userRoles = userOpt.flatMap(_.roles.map(_.roles.toSet)),
-                  clientApplicationId = deviceInfoOpt.flatMap(_.guessedPrimaryClientAppId),
-                  userAgent = deviceInfoOpt.flatMap(_.guessedPrimaryDeviceUserAgent),
-                  countryCode =
-                    userOpt.flatMap(_.account.flatMap(_.countryCode.map(_.toUpperCase))),
-                  customFields = Some(customFSField.fsMap),
-                  signupCountryCode =
-                    userOpt.flatMap(_.safety.flatMap(_.signupCountryCode.map(_.toUpperCase))),
-                  languageCode = deviceInfoOpt.flatMap {
-                    _.deviceLanguages.flatMap(IbisAppPushDeviceSettingsUtil.inferredDeviceLanguage)
+              o-ovewwide wazy vaw pawams: configapi.pawams = {
+                vaw fswecipient = w-wecipient(
+                  usewid = some(tawgetid), >_<
+                  u-usewwowes = usewopt.fwatmap(_.wowes.map(_.wowes.toset)),
+                  c-cwientappwicationid = d-deviceinfoopt.fwatmap(_.guessedpwimawycwientappid),
+                  usewagent = deviceinfoopt.fwatmap(_.guessedpwimawydeviceusewagent), rawr
+                  c-countwycode =
+                    usewopt.fwatmap(_.account.fwatmap(_.countwycode.map(_.touppewcase))), >_<
+                  customfiewds = some(customfsfiewd.fsmap), (U ﹏ U)
+                  signupcountwycode =
+                    u-usewopt.fwatmap(_.safety.fwatmap(_.signupcountwycode.map(_.touppewcase))), rawr
+                  w-wanguagecode = d-deviceinfoopt.fwatmap {
+                    _.devicewanguages.fwatmap(ibisapppushdevicesettingsutiw.infewweddevicewanguage)
                   }
                 )
 
-                configParamsBuilder.build(
-                  userId = Some(targetId),
-                  experimentOverrides = experimentOverride,
-                  featureRecipient = Some(fsRecipient),
-                  forcedFeatureValues = forcedFeatureValues.getOrElse(Map.empty),
+                c-configpawamsbuiwdew.buiwd(
+                  usewid = some(tawgetid), (U ᵕ U❁)
+                  e-expewimentovewwides = e-expewimentovewwide, (ˆ ﻌ ˆ)♡
+                  featuwewecipient = some(fswecipient), >_<
+                  f-fowcedfeatuwevawues = fowcedfeatuwevawues.getowewse(map.empty), ^^;;
                 )
               }
 
-              override lazy val mrRequestContextForFeatureStore =
-                MrRequestContextForFeatureStore(targetId, params, isModelTrainingData)
+              ovewwide wazy vaw mwwequestcontextfowfeatuwestowe =
+                m-mwwequestcontextfowfeatuwestowe(tawgetid, ʘwʘ pawams, ismodewtwainingdata)
 
-              override lazy val dynamicPushcap: Future[Option[PushcapInfo]] = {
-                // Get the pushcap from the pushcap model prediction store
-                if (params(PushParams.EnableModelBasedPushcapAssignments)) {
-                  val originalPushcapInfoFut =
-                    PushCapUtil.getPushcapFromUserHistory(
-                      userId,
-                      pushcapDynamicPredictionStore,
-                      params(FeatureSwitchParams.PushcapModelType),
-                      params(FeatureSwitchParams.PushcapModelPredictionVersion),
-                      pushcapSelectionStat
+              o-ovewwide wazy v-vaw dynamicpushcap: futuwe[option[pushcapinfo]] = {
+                // g-get the p-pushcap fwom the p-pushcap modew pwediction stowe
+                if (pawams(pushpawams.enabwemodewbasedpushcapassignments)) {
+                  v-vaw owiginawpushcapinfofut =
+                    pushcaputiw.getpushcapfwomusewhistowy(
+                      usewid, 😳😳😳
+                      p-pushcapdynamicpwedictionstowe, UwU
+                      pawams(featuweswitchpawams.pushcapmodewtype), OwO
+                      pawams(featuweswitchpawams.pushcapmodewpwedictionvewsion), :3
+                      pushcapsewectionstat
                     )
-                  // Modify the push cap info if there is a restricted min value for predicted push caps.
-                  val restrictedPushcap = params(PushFeatureSwitchParams.RestrictedMinModelPushcap)
-                  originalPushcapInfoFut.map {
-                    case Some(originalPushcapInfo) =>
-                      Some(
-                        getMinimumRestrictedPushcapInfo(
-                          restrictedPushcap,
-                          originalPushcapInfo,
-                          pushcapSelectionStat))
-                    case _ => None
+                  // m-modify the p-push cap info if t-thewe is a westwicted m-min vawue f-fow pwedicted push caps. -.-
+                  v-vaw westwictedpushcap = pawams(pushfeatuweswitchpawams.westwictedminmodewpushcap)
+                  o-owiginawpushcapinfofut.map {
+                    case some(owiginawpushcapinfo) =>
+                      s-some(
+                        getminimumwestwictedpushcapinfo(
+                          westwictedpushcap, 🥺
+                          o-owiginawpushcapinfo, -.-
+                          pushcapsewectionstat))
+                    c-case _ => nyone
                   }
-                } else Future.value(None)
+                } e-ewse futuwe.vawue(none)
               }
 
-              override lazy val targetHydrationContext: Future[HydrationContext] =
-                HydrationContextBuilder.build(this)
+              ovewwide w-wazy vaw tawgethydwationcontext: f-futuwe[hydwationcontext] =
+                hydwationcontextbuiwdew.buiwd(this)
 
-              override lazy val featureMap: Future[FeatureMap] =
-                targetHydrationContext.flatMap { hydrationContext =>
-                  featureHydrator.hydrateTarget(
-                    hydrationContext,
-                    this.params,
-                    this.mrRequestContextForFeatureStore)
+              ovewwide w-wazy vaw f-featuwemap: futuwe[featuwemap] =
+                tawgethydwationcontext.fwatmap { h-hydwationcontext =>
+                  featuwehydwatow.hydwatetawget(
+                    hydwationcontext, -.-
+                    this.pawams, (U ﹏ U)
+                    t-this.mwwequestcontextfowfeatuwestowe)
                 }
 
-              override lazy val globalOptoutProbabilities: Seq[Future[Option[Double]]] = {
-                params(PushFeatureSwitchParams.GlobalOptoutModelParam).map { model_id =>
-                  optoutModelScorer
-                    .singlePredictionForTargetLevel(model_id, targetId, featureMap)
+              ovewwide w-wazy vaw gwobawoptoutpwobabiwities: seq[futuwe[option[doubwe]]] = {
+                pawams(pushfeatuweswitchpawams.gwobawoptoutmodewpawam).map { m-modew_id =>
+                  o-optoutmodewscowew
+                    .singwepwedictionfowtawgetwevew(modew_id, rawr t-tawgetid, featuwemap)
                 }
               }
 
-              override lazy val bucketOptoutProbability: Future[Option[Double]] = {
-                Future
-                  .collect(globalOptoutProbabilities).map {
-                    _.zip(params(PushFeatureSwitchParams.GlobalOptoutThresholdParam))
+              ovewwide w-wazy vaw bucketoptoutpwobabiwity: f-futuwe[option[doubwe]] = {
+                futuwe
+                  .cowwect(gwobawoptoutpwobabiwities).map {
+                    _.zip(pawams(pushfeatuweswitchpawams.gwobawoptoutthweshowdpawam))
                       .exists {
-                        case (Some(score), threshold) => score >= threshold
-                        case _ => false
+                        case (some(scowe), mya t-thweshowd) => scowe >= thweshowd
+                        c-case _ => fawse
                       }
-                  }.flatMap {
-                    case true =>
-                      optoutModelScorer.singlePredictionForTargetLevel(
-                        params(PushFeatureSwitchParams.BucketOptoutModelParam),
-                        targetId,
-                        featureMap)
-                    case _ => Future.None
+                  }.fwatmap {
+                    c-case twue =>
+                      o-optoutmodewscowew.singwepwedictionfowtawgetwevew(
+                        pawams(pushfeatuweswitchpawams.bucketoptoutmodewpawam), ( ͡o ω ͡o )
+                        tawgetid, /(^•ω•^)
+                        featuwemap)
+                    case _ => futuwe.none
                   }
               }
 
-              override lazy val optoutAdjustedPushcap: Future[Option[Short]] = {
-                if (params(PushFeatureSwitchParams.EnableOptoutAdjustedPushcap)) {
-                  bucketOptoutProbability.map {
-                    case Some(score) =>
-                      val idx = params(PushFeatureSwitchParams.BucketOptoutSlotThresholdParam)
-                        .indexWhere(score <= _)
-                      if (idx >= 0) {
-                        val pushcap =
-                          params(PushFeatureSwitchParams.BucketOptoutSlotPushcapParam)(idx).toShort
-                        optoutModelStat.scope("adjusted_pushcap").counter(f"$pushcap").incr()
-                        if (pushcap >= 0) Some(pushcap)
-                        else None
-                      } else None
-                    case _ => None
+              o-ovewwide w-wazy vaw optoutadjustedpushcap: futuwe[option[showt]] = {
+                if (pawams(pushfeatuweswitchpawams.enabweoptoutadjustedpushcap)) {
+                  b-bucketoptoutpwobabiwity.map {
+                    case some(scowe) =>
+                      v-vaw idx = pawams(pushfeatuweswitchpawams.bucketoptoutswotthweshowdpawam)
+                        .indexwhewe(scowe <= _)
+                      i-if (idx >= 0) {
+                        vaw pushcap =
+                          pawams(pushfeatuweswitchpawams.bucketoptoutswotpushcappawam)(idx).toshowt
+                        optoutmodewstat.scope("adjusted_pushcap").countew(f"$pushcap").incw()
+                        if (pushcap >= 0) s-some(pushcap)
+                        ewse nyone
+                      } ewse n-nyone
+                    case _ => n-nyone
                   }
-                } else Future.None
+                } e-ewse futuwe.none
               }
 
-              override lazy val seedsWithWeight: Future[Option[Map[Long, Double]]] = {
-                Future
+              ovewwide wazy vaw s-seedswithweight: f-futuwe[option[map[wong, d-doubwe]]] = {
+                f-futuwe
                   .join(
-                    realGraphScoresTop500InStore.get(userId),
-                    targetUserState,
-                    targetUser
+                    w-weawgwaphscowestop500instowe.get(usewid), >_<
+                    t-tawgetusewstate, (✿oωo)
+                    tawgetusew
                   )
-                  .flatMap {
-                    case (seedSetOpt, userState, gizmoduckUser) =>
-                      val seedSet = seedSetOpt.getOrElse(Map.empty[Long, Double])
+                  .fwatmap {
+                    case (seedsetopt, 😳😳😳 usewstate, (ꈍᴗꈍ) gizmoduckusew) =>
+                      vaw seedset = seedsetopt.getowewse(map.empty[wong, 🥺 d-doubwe])
 
-                      //If new sign_up or New user, combine recent_follows with real graph seedset
-                      val isNewUserEnabled = {
-                        val isNewerThan7days = customFSField.daysSinceSignup <= 7
-                        val isNewUserState = userState.contains(UserState.New)
-                        isNewUserState || isNewSignup || isNewerThan7days
+                      //if n-nyew s-sign_up ow nyew u-usew, mya combine w-wecent_fowwows w-with weaw gwaph seedset
+                      vaw isnewusewenabwed = {
+                        vaw isnewewthan7days = c-customfsfiewd.dayssincesignup <= 7
+                        v-vaw isnewusewstate = usewstate.contains(usewstate.new)
+                        isnewusewstate || isnewsignup || i-isnewewthan7days
                       }
 
-                      val nonSeedSetFollowsFut = gizmoduckUser match {
-                        case Some(user) if isNewUserEnabled =>
-                          recentFollowscounter.incr()
-                          recentFollowsStore.get(user.id)
+                      v-vaw nyonseedsetfowwowsfut = g-gizmoduckusew match {
+                        case s-some(usew) if isnewusewenabwed =>
+                          wecentfowwowscountew.incw()
+                          wecentfowwowsstowe.get(usew.id)
 
-                        case Some(user) if this.isModelTrainingData =>
-                          recentFollowscounter.incr()
-                          isModelTrainingDataCounter.incr()
-                          recentFollowsStore.get(user.id)
+                        c-case s-some(usew) if this.ismodewtwainingdata =>
+                          wecentfowwowscountew.incw()
+                          ismodewtwainingdatacountew.incw()
+                          w-wecentfowwowsstowe.get(usew.id)
 
-                        case _ => Future.None
+                        case _ => futuwe.none
                       }
-                      nonSeedSetFollowsFut.map { nonSeedSetFollows =>
-                        Some(
-                          SeedsetUtil.combineRecentFollowsWithWeightedSeedset(
-                            seedSet,
-                            nonSeedSetFollows.getOrElse(Nil)
+                      n-nyonseedsetfowwowsfut.map { nyonseedsetfowwows =>
+                        s-some(
+                          seedsetutiw.combinewecentfowwowswithweightedseedset(
+                            s-seedset, (ˆ ﻌ ˆ)♡
+                            n-nyonseedsetfowwows.getowewse(niw)
                           )
                         )
                       }
                   }
               }
 
-              override def magicFanoutReasonHistory30Days: Future[MagicFanoutReasonHistory] =
-                history.map(history => MagicFanoutReasonHistory(history))
+              o-ovewwide def m-magicfanoutweasonhistowy30days: f-futuwe[magicfanoutweasonhistowy] =
+                h-histowy.map(histowy => magicfanoutweasonhistowy(histowy))
 
-              override val isNewSignup: Boolean =
-                pushContext.flatMap(_.isFromNewUserLoopProcessor).getOrElse(false)
+              ovewwide v-vaw isnewsignup: b-boowean =
+                pushcontext.fwatmap(_.isfwomnewusewwooppwocessow).getowewse(fawse)
 
-              override lazy val resurrectionDate: Future[Option[String]] =
-                Future.value(customFSField.reactivationDate)
+              o-ovewwide wazy vaw wesuwwectiondate: futuwe[option[stwing]] =
+                f-futuwe.vawue(customfsfiewd.weactivationdate)
 
-              override lazy val isResurrectedUser: Boolean =
-                customFSField.daysSinceReactivation.isDefined
+              ovewwide w-wazy vaw iswesuwwectedusew: b-boowean =
+                c-customfsfiewd.dayssinceweactivation.isdefined
 
-              override lazy val timeSinceResurrection: Option[Duration] =
-                customFSField.daysSinceReactivation.map(Duration.fromDays)
+              ovewwide wazy vaw timesincewesuwwection: o-option[duwation] =
+                customfsfiewd.dayssinceweactivation.map(duwation.fwomdays)
 
-              override lazy val appPermissions: Future[Option[AppPermission]] =
-                PushAppPermissionUtil.getAppPermission(
-                  userId,
-                  PushAppPermissionUtil.AddressBookPermissionKey,
-                  deviceInfo,
-                  appPermissionStore)
+              ovewwide wazy vaw a-apppewmissions: f-futuwe[option[apppewmission]] =
+                pushapppewmissionutiw.getapppewmission(
+                  usewid, (⑅˘꒳˘)
+                  p-pushapppewmissionutiw.addwessbookpewmissionkey, òωó
+                  d-deviceinfo, o.O
+                  apppewmissionstowe)
 
-              override lazy val inlineActionHistory: Future[Seq[(Long, String)]] = {
-                inlineActionHistoryStore
-                  .get(userId).map {
-                    case Some(sortedInlineActionHistory) => sortedInlineActionHistory
-                    case _ => Seq.empty
+              o-ovewwide wazy vaw inwineactionhistowy: futuwe[seq[(wong, XD s-stwing)]] = {
+                i-inwineactionhistowystowe
+                  .get(usewid).map {
+                    case some(sowtedinwineactionhistowy) => s-sowtedinwineactionhistowy
+                    c-case _ => seq.empty
                   }
               }
 
-              lazy val isOpenAppExperimentUser: Future[Boolean] =
-                openAppUserStore.get(userId).map(_.contains(true))
+              wazy vaw isopenappexpewimentusew: f-futuwe[boowean] =
+                o-openappusewstowe.get(usewid).map(_.contains(twue))
 
-              override lazy val openedPushByHourAggregated: Future[Option[Map[Int, Int]]] =
-                openedPushByHourAggregatedStore.get(userId)
+              o-ovewwide wazy v-vaw openedpushbyhouwaggwegated: futuwe[option[map[int, (˘ω˘) int]]] =
+                openedpushbyhouwaggwegatedstowe.get(usewid)
 
-              override lazy val places: Future[Seq[Place]] = {
-                geoduckStoreV2
-                  .get(targetId)
-                  .map(_.flatMap(_.places))
+              ovewwide wazy vaw pwaces: futuwe[seq[pwace]] = {
+                geoduckstowev2
+                  .get(tawgetid)
+                  .map(_.fwatmap(_.pwaces))
                   .map {
-                    case Some(placeSeq) if placeSeq.nonEmpty =>
-                      placeFoundStat.add(placeSeq.size)
-                      placeSeq
+                    c-case some(pwaceseq) i-if pwaceseq.nonempty =>
+                      p-pwacefoundstat.add(pwaceseq.size)
+                      p-pwaceseq
                     case _ =>
-                      placesNotFound.incr()
-                      Seq.empty
+                      pwacesnotfound.incw()
+                      s-seq.empty
                   }
               }
 
-              override val isBlueVerified: Future[Option[Boolean]] =
-                Future.value(userOpt.flatMap(_.safety.flatMap(_.isBlueVerified)))
+              o-ovewwide vaw isbwuevewified: f-futuwe[option[boowean]] =
+                futuwe.vawue(usewopt.fwatmap(_.safety.fwatmap(_.isbwuevewified)))
 
-              override val isVerified: Future[Option[Boolean]] =
-                Future.value(userOpt.flatMap(_.safety.map(_.verified)))
+              o-ovewwide vaw isvewified: futuwe[option[boowean]] =
+                f-futuwe.vawue(usewopt.fwatmap(_.safety.map(_.vewified)))
 
-              override lazy val isSuperFollowCreator: Future[Option[Boolean]] =
-                superFollowEligibilityUserStore.get(targetId)
+              o-ovewwide wazy vaw issupewfowwowcweatow: futuwe[option[boowean]] =
+                s-supewfowwowewigibiwityusewstowe.get(tawgetid)
             }
           }
       }
   }
 
   /**
-   * Provide general way to add needed FS for target user, and package them in CustomFSFields.
-   * Custom Fields is a powerful feature that allows Feature Switch library users to define and
-   * match against any arbitrary fields.
+   * pwovide genewaw way t-to add nyeeded fs fow tawget usew, (ꈍᴗꈍ) a-and package them i-in customfsfiewds. >w<
+   * custom f-fiewds is a powewfuw f-featuwe t-that awwows featuwe switch wibwawy u-usews to define a-and
+   * match against any awbitwawy f-fiewds. XD
    **/
-  private def getCustomFSFields(
-    userId: Long,
-    userOpt: Option[User],
-    deviceInfo: Option[DeviceInfo],
-    userForPushTargetingInfo: Option[UserForPushTargeting],
-    notifHistory: History,
-    requestSource: Option[RequestSource]
-  ): Future[CustomFSFields] = {
-    val reactivationDateFutOpt: Future[Option[String]] = resurrectedUserStore.get(userId)
-    val reactivationTimeFutOpt: Future[Option[Time]] =
-      reactivationDateFutOpt.map(_.map(dateStr => DateUtil.dateStrToTime(dateStr)))
+  pwivate d-def getcustomfsfiewds(
+    u-usewid: w-wong, -.-
+    usewopt: option[usew], ^^;;
+    d-deviceinfo: option[deviceinfo], XD
+    usewfowpushtawgetinginfo: o-option[usewfowpushtawgeting], :3
+    nyotifhistowy: histowy, σωσ
+    wequestsouwce: option[wequestsouwce]
+  ): futuwe[customfsfiewds] = {
+    vaw weactivationdatefutopt: f-futuwe[option[stwing]] = wesuwwectedusewstowe.get(usewid)
+    vaw weactivationtimefutopt: futuwe[option[time]] =
+      weactivationdatefutopt.map(_.map(datestw => dateutiw.datestwtotime(datestw)))
 
-    val isReactivatedUserFut: Future[Boolean] = reactivationTimeFutOpt.map { timeOpt =>
-      timeOpt
-        .exists { time => Time.now - time < 30.days }
+    vaw isweactivatedusewfut: f-futuwe[boowean] = weactivationtimefutopt.map { timeopt =>
+      t-timeopt
+        .exists { time => t-time.now - time < 30.days }
     }
 
-    val daysSinceReactivationFut: Future[Option[Int]] =
-      reactivationTimeFutOpt.map(_.map(time => Time.now.since(time).inDays))
+    vaw dayssinceweactivationfut: futuwe[option[int]] =
+      w-weactivationtimefutopt.map(_.map(time => time.now.since(time).indays))
 
-    val daysSinceSignup: Int = (Time.now - SnowflakeUtil.timeFromId(userId)).inDays
-    if (daysSinceSignup < 14) newSignUpUserStats.incr()
+    v-vaw dayssincesignup: i-int = (time.now - s-snowfwakeutiw.timefwomid(usewid)).indays
+    if (dayssincesignup < 14) nyewsignupusewstats.incw()
 
-    val targetAgeInYears = userOpt.flatMap(_.extendedProfile.flatMap(_.ageInYears))
+    v-vaw tawgetageinyeaws = usewopt.fwatmap(_.extendedpwofiwe.fwatmap(_.ageinyeaws))
 
-    val lastLoginFut: Future[Option[Long]] =
-      userHTLLastVisitStore.get(userId).map {
-        case Some(lastHTLVisitTimes) =>
-          val latestHTLVisitTime = lastHTLVisitTimes.max
-          userForPushTargetingInfo.flatMap(
-            _.lastActiveOnAppTimestamp
-              .map(_.max(latestHTLVisitTime)).orElse(Some(latestHTLVisitTime)))
-        case None =>
-          userForPushTargetingInfo.flatMap(_.lastActiveOnAppTimestamp)
+    vaw wastwoginfut: futuwe[option[wong]] =
+      usewhtwwastvisitstowe.get(usewid).map {
+        case s-some(wasthtwvisittimes) =>
+          vaw watesthtwvisittime = w-wasthtwvisittimes.max
+          usewfowpushtawgetinginfo.fwatmap(
+            _.wastactiveonapptimestamp
+              .map(_.max(watesthtwvisittime)).owewse(some(watesthtwvisittime)))
+        c-case nyone =>
+          usewfowpushtawgetinginfo.fwatmap(_.wastactiveonapptimestamp)
       }
 
-    val daysSinceLoginFut = lastLoginFut.map {
-      _.map { lastLoginTimestamp =>
-        val timeSinceLogin = Time.now - Time.fromMilliseconds(lastLoginTimestamp)
-        if (timeSinceLogin.inDays > 21) {
-          dormantUserCount.incr()
+    v-vaw dayssincewoginfut = w-wastwoginfut.map {
+      _.map { wastwogintimestamp =>
+        vaw t-timesincewogin = time.now - time.fwommiwwiseconds(wastwogintimestamp)
+        if (timesincewogin.indays > 21) {
+          d-dowmantusewcount.incw()
         }
-        timeSinceLogin.inDays
+        timesincewogin.indays
       }
     }
 
-    /* Could add more custom FS here */
-    val userNSFWInfoFut: Future[Option[NsfwInfo]] =
-      nsfwConsumerStore
-        .get(userId).map(_.map(nsfwUserSegmentation => NsfwInfo(nsfwUserSegmentation)))
+    /* couwd add mowe custom fs hewe */
+    vaw usewnsfwinfofut: f-futuwe[option[nsfwinfo]] =
+      n-nysfwconsumewstowe
+        .get(usewid).map(_.map(nsfwusewsegmentation => nysfwinfo(nsfwusewsegmentation)))
 
-    val userStateFut: Future[Option[String]] = userFeatureStore.get(userId).map { userFeaturesOpt =>
-      userFeaturesOpt.flatMap { uFeats =>
-        uFeats.userState.map(uState => uState.name)
+    v-vaw u-usewstatefut: futuwe[option[stwing]] = usewfeatuwestowe.get(usewid).map { u-usewfeatuwesopt =>
+      usewfeatuwesopt.fwatmap { ufeats =>
+        ufeats.usewstate.map(ustate => ustate.name)
       }
     }
 
-    val mrUserStateFut: Future[Option[String]] =
-      mrUserStateStore.get(userId).map { mrUserStateOpt =>
-        mrUserStateOpt.flatMap { mrUserState =>
-          mrUserState.userState.map(_.name)
+    vaw m-mwusewstatefut: f-futuwe[option[stwing]] =
+      mwusewstatestowe.get(usewid).map { m-mwusewstateopt =>
+        m-mwusewstateopt.fwatmap { mwusewstate =>
+          m-mwusewstate.usewstate.map(_.name)
         }
       }
 
-    Future
+    futuwe
       .join(
-        reactivationDateFutOpt,
-        isReactivatedUserFut,
-        userStateFut,
-        mrUserStateFut,
-        daysSinceLoginFut,
-        daysSinceReactivationFut,
-        userNSFWInfoFut
+        weactivationdatefutopt, XD
+        i-isweactivatedusewfut, :3
+        usewstatefut, rawr
+        mwusewstatefut, 😳
+        d-dayssincewoginfut, 😳😳😳
+        d-dayssinceweactivationfut, (ꈍᴗꈍ)
+        usewnsfwinfofut
       ).map {
         case (
-              reactivationDate,
-              isReactivatedUser,
-              userState,
-              mrUserState,
-              daysSinceLogin,
-              daysSinceReactivation,
-              userNSFWInfo) =>
-          val numDaysReceivedPushInLast30Days: Int =
-            notifHistory.history.keys.map(_.inDays).toSet.size
+              w-weactivationdate, 🥺
+              isweactivatedusew, ^•ﻌ•^
+              usewstate, XD
+              mwusewstate, ^•ﻌ•^
+              dayssincewogin,
+              dayssinceweactivation, ^^;;
+              usewnsfwinfo) =>
+          vaw n-nyumdaysweceivedpushinwast30days: i-int =
+            nyotifhistowy.histowy.keys.map(_.indays).toset.size
 
-          NsfwPersonalizationUtil.computeNsfwUserStats(userNSFWInfo)
+          n-nysfwpewsonawizationutiw.computensfwusewstats(usewnsfwinfo)
 
-          CustomFSFields(
-            isReactivatedUser,
-            daysSinceSignup,
-            numDaysReceivedPushInLast30Days,
-            daysSinceLogin,
-            daysSinceReactivation,
-            userOpt,
-            userState,
-            mrUserState,
-            reactivationDate,
-            requestSource.map(_.name),
-            targetAgeInYears,
-            userNSFWInfo,
-            deviceInfo
+          c-customfsfiewds(
+            isweactivatedusew, ʘwʘ
+            d-dayssincesignup, OwO
+            nyumdaysweceivedpushinwast30days,
+            dayssincewogin, 🥺
+            dayssinceweactivation, (⑅˘꒳˘)
+            usewopt, (///ˬ///✿)
+            usewstate, (✿oωo)
+            mwusewstate, nyaa~~
+            w-weactivationdate, >w<
+            wequestsouwce.map(_.name), (///ˬ///✿)
+            tawgetageinyeaws, rawr
+            usewnsfwinfo, (U ﹏ U)
+            deviceinfo
           )
       }
   }

@@ -1,32 +1,32 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twittew.simcwustews_v2.summingbiwd.stowes
 
-import com.twitter.simclusters_v2.summingbird.common.EntityUtil
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.Time
+impowt com.twittew.simcwustews_v2.summingbiwd.common.entityutiw
+i-impowt com.twittew.simcwustews_v2.thwiftscawa._
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
 
-case class TopKClustersForEntityReadableStore(
-  underlyingStore: ReadableStore[EntityWithVersion, TopKClustersWithScores])
-    extends ReadableStore[EntityWithVersion, TopKClustersWithScores] {
+c-case c-cwass topkcwustewsfowentityweadabwestowe(
+  undewwyingstowe: w-weadabwestowe[entitywithvewsion, nyaa~~ t-topkcwustewswithscowes])
+    extends weadabwestowe[entitywithvewsion, /(^•ω•^) topkcwustewswithscowes] {
 
-  override def multiGet[K1 <: EntityWithVersion](
-    ks: Set[K1]
-  ): Map[K1, Future[Option[TopKClustersWithScores]]] = {
-    val nowInMs = Time.now.inMilliseconds
-    underlyingStore
-      .multiGet(ks)
-      .mapValues { resFuture =>
-        resFuture.map { resOpt =>
-          resOpt.map { clustersWithScores =>
-            clustersWithScores.copy(
-              topClustersByFavClusterNormalizedScore = EntityUtil.updateScoreWithLatestTimestamp(
-                clustersWithScores.topClustersByFavClusterNormalizedScore,
-                nowInMs
-              ),
-              topClustersByFollowClusterNormalizedScore = EntityUtil.updateScoreWithLatestTimestamp(
-                clustersWithScores.topClustersByFollowClusterNormalizedScore,
-                nowInMs
+  ovewwide def m-muwtiget[k1 <: entitywithvewsion](
+    ks: set[k1]
+  ): m-map[k1, rawr futuwe[option[topkcwustewswithscowes]]] = {
+    v-vaw nyowinms = time.now.inmiwwiseconds
+    undewwyingstowe
+      .muwtiget(ks)
+      .mapvawues { wesfutuwe =>
+        w-wesfutuwe.map { wesopt =>
+          w-wesopt.map { c-cwustewswithscowes =>
+            cwustewswithscowes.copy(
+              topcwustewsbyfavcwustewnowmawizedscowe = entityutiw.updatescowewithwatesttimestamp(
+                cwustewswithscowes.topcwustewsbyfavcwustewnowmawizedscowe, OwO
+                n-nyowinms
+              ), (U ﹏ U)
+              topcwustewsbyfowwowcwustewnowmawizedscowe = entityutiw.updatescowewithwatesttimestamp(
+                cwustewswithscowes.topcwustewsbyfowwowcwustewnowmawizedscowe, >_<
+                nyowinms
               )
             )
           }

@@ -1,8 +1,8 @@
-package com.twitter.tweetypie.thriftscala
+package com.twittew.tweetypie.thwiftscawa
 
-import com.twitter.finagle.service.FailedService
+impowt c-com.twittew.finagwe.sewvice.faiwedsewvice
 
-class NotImplementedTweetService
-    extends TweetService$FinagleClient(
-      new FailedService(new UnsupportedOperationException("not implemented"))
+c-cwass n-nyotimpwementedtweetsewvice
+    e-extends tweetsewvice$finagwecwient(
+      n-nyew f-faiwedsewvice(new u-unsuppowtedopewationexception("not i-impwemented"))
     )

@@ -1,121 +1,121 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* copywight 2016 the tensowfwow a-authows. (ˆ ﻌ ˆ)♡ aww wights w-wesewved. ( ͡o ω ͡o )
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+wicensed u-undew the a-apache wicense, rawr x3 v-vewsion 2.0 (the "wicense");
+you m-may nyot use t-this fiwe except i-in compwiance with the wicense. nyaa~~
+you may obtain a copy of the wicense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.owg/wicenses/wicense-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+u-unwess wequiwed by appwicabwe waw ow agweed t-to in wwiting, >_< softwawe
+distwibuted u-undew the wicense is distwibuted on an "as is" basis, ^^;;
+w-without wawwanties ow conditions o-of any kind, (ˆ ﻌ ˆ)♡ eithew e-expwess ow impwied. ^^;;
+see the wicense fow the specific wanguage govewning pewmissions a-and
+wimitations undew the wicense. (⑅˘꒳˘)
 ==============================================================================*/
 
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.grpc;
+package tensowfwow.gwpc;
 
-import "tensorflow/core/protobuf/master.proto";
+i-impowt "tensowfwow/cowe/pwotobuf/mastew.pwoto";
 
-option java_outer_classname = "MasterServiceProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option j-java_outew_cwassname = "mastewsewvicepwotos";
+o-option java_muwtipwe_fiwes = twue;
+o-option java_package = "owg.tensowfwow.distwuntime";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// MasterService defines a TensorFlow service with which a client can
-// interact to execute a distributed TensorFlow computation.
+// mastewsewvice d-defines a tensowfwow sewvice with which a-a cwient can
+// intewact to exekawaii~ a distwibuted tensowfwow computation. rawr x3
 //
-// A master service keeps track of multiple "master sessions". Each
-// session encapsulates a computation graph and its associated state,
-// and typically corresponds to a single "client session" (e.g. a
-// `tensorflow::Session` instance).
+// a mastew s-sewvice keeps twack of muwtipwe "mastew s-sessions". (///ˬ///✿) e-each
+// session e-encapsuwates a computation gwaph and its associated state, 🥺
+// a-and typicawwy cowwesponds t-to a singwe "cwient session" (e.g. >_< a-a
+// `tensowfwow::session` i-instance).
 //
-// A session is responsible for the following:
-// * assigning each node to a device (locally or remotely) using a
-//   placement algorithm. This may make decisions based on collected
-//   statistics from the workers in the system (e.g., memory usage,
-//   bandwidth consumption, etc.)
+// a session i-is wesponsibwe fow the fowwowing:
+// * a-assigning each nyode to a device (wocawwy o-ow wemotewy) using a
+//   pwacement a-awgowithm. UwU this may make d-decisions based o-on cowwected
+//   statistics fwom the wowkews in the system (e.g., memowy usage, >_<
+//   bandwidth consumption, -.- etc.)
 //
-// * inserting intermediate nodes and edges to support cross-device
-//   and cross-process data flows and resource management.
+// * i-insewting i-intewmediate nyodes and edges t-to suppowt c-cwoss-device
+//   a-and cwoss-pwocess data fwows and wesouwce management. mya
 //
-// * issuing commands to workers to execute the subgraphs associated
-//   with those workers.
+// * issuing commands t-to wowkews to exekawaii~ the subgwaphs associated
+//   with those wowkews.
 //
-// Typically, a client carries out an iterative computation
-// (e.g. training) by invoking RPCs against the master in a
-// client-side loop. The client first creates a client session that
-// connects to a particular master (using gRPC for example). The
-// master creates a corresponding master session that is hosted on
-// the master and caches state between the client's invocations.
+// t-typicawwy, >w< a cwient cawwies out a-an itewative computation
+// (e.g. (U ﹏ U) t-twaining) by i-invoking wpcs against the mastew i-in a
+// cwient-side w-woop. 😳😳😳 the c-cwient fiwst cweates a-a cwient session that
+// connects to a pawticuwaw m-mastew (using g-gwpc fow exampwe). t-the
+// mastew c-cweates a c-cowwesponding mastew session that is hosted on
+// the mastew and c-caches state between the cwient's invocations.
 //
-// After the session is established, the master returns an opaque
-// handle to the client that can be used to associate the client and
-// master sessions.
+// aftew the session is estabwished, o.O the mastew w-wetuwns an opaque
+// handwe to the cwient that can be used to a-associate the cwient a-and
+// mastew s-sessions. òωó
 //
-// The client may send an initial graph to the master in the
-// CreateSession call, and add nodes to the graph using ExtendSession.
+// the cwient may s-send an initiaw gwaph to the m-mastew in the
+// c-cweatesession caww, 😳😳😳 and add nyodes to the gwaph using extendsession. σωσ
 //
-// The most frequent operation a master is "RunStep", which implements
-// the `Session::Run()` API. It supports feeding in arguments,
-// executing a dataflow computation, and fetching arguments.
+// the most fwequent opewation a-a mastew is "wunstep", (⑅˘꒳˘) which i-impwements
+// the `session::wun()` a-api. (///ˬ///✿) it s-suppowts feeding in awguments, 🥺
+// executing a datafwow c-computation, OwO a-and fetching awguments. >w<
 //
-// Finally, when the client no longer needs the session, it should
-// close the session by invoking CloseSession, which allows the master
-// to reclaim resources associated with the session. The master may
-// implement a garbage collection scheme that closes sessions that
-// have been inactive for some time.
+// f-finawwy, 🥺 when t-the cwient nyo wongew nyeeds the session, nyaa~~ it shouwd
+// cwose the session by invoking c-cwosesession, ^^ w-which awwows t-the mastew
+// to wecwaim wesouwces a-associated with t-the session. >w< the mastew may
+// i-impwement a gawbage cowwection scheme that cwoses sessions that
+// have been inactive f-fow some t-time. OwO
 //
-// For example, the following pseudo-code illustrates how a client
-// interacts with a master:
+// fow exampwe, XD the fowwowing pseudo-code i-iwwustwates h-how a cwient
+// intewacts with a mastew:
 //
-// stub = NewStub("/job:mnist/replica:0/task:0")
-// {handle} = stub->CreateSession({graph_def})
+// stub = nyewstub("/job:mnist/wepwica:0/task:0")
+// {handwe} = s-stub->cweatesession({gwaph_def})
 // do {
-//   stub->RunStep({handle, {feeds}, {fetches}})
-//   // The client can evaluate a predicate locally, based on the
-//   // result of `fetches`, to determine whether to terminate. For
-//   // example, it might fetch the loss and evaluate whether it is less
-//   // than some threshold.
-// } while (!should_stop({fetches}));
-// stub->CloseSession({handle})
+//   stub->wunstep({handwe, ^^;; {feeds}, {fetches}})
+//   // the cwient can evawuate a pwedicate w-wocawwy, 🥺 based on the
+//   // wesuwt of `fetches`, XD t-to detewmine w-whethew to tewminate. (U ᵕ U❁) fow
+//   // exampwe, :3 it might fetch the w-woss and evawuate w-whethew it is wess
+//   // than some thweshowd.
+// } whiwe (!shouwd_stop({fetches}));
+// s-stub->cwosesession({handwe})
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-service MasterService {
-  // Creates a session.
-  rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+sewvice m-mastewsewvice {
+  // cweates a session. ( ͡o ω ͡o )
+  wpc cweatesession(cweatesessionwequest) w-wetuwns (cweatesessionwesponse);
 
-  // Extends a session.
-  rpc ExtendSession(ExtendSessionRequest) returns (ExtendSessionResponse);
+  // extends a-a session. òωó
+  w-wpc extendsession(extendsessionwequest) wetuwns (extendsessionwesponse);
 
-  // Prepares future partial run calls.
-  rpc PartialRunSetup(PartialRunSetupRequest) returns (PartialRunSetupResponse);
+  // p-pwepawes futuwe pawtiaw wun cawws. σωσ
+  w-wpc pawtiawwunsetup(pawtiawwunsetupwequest) w-wetuwns (pawtiawwunsetupwesponse);
 
-  // Drives the graph computation.
-  rpc RunStep(RunStepRequest) returns (RunStepResponse);
+  // d-dwives the gwaph computation. (U ᵕ U❁)
+  w-wpc w-wunstep(wunstepwequest) wetuwns (wunstepwesponse);
 
-  // Closes a session.
-  rpc CloseSession(CloseSessionRequest) returns (CloseSessionResponse);
+  // cwoses a-a session. (✿oωo)
+  wpc c-cwosesession(cwosesessionwequest) w-wetuwns (cwosesessionwesponse);
 
-  // List the devices usable by the master.
-  rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse);
+  // wist the devices usabwe b-by the mastew. ^^
+  wpc wistdevices(wistdeviceswequest) w-wetuwns (wistdeviceswesponse);
 
-  // Close and abandon all existing sessions.  Ongoing computations
-  // will no longer affect fresh ones via the resources in containers listed in
-  // the ResetRequest.  See ResetRequest for more details.
-  rpc Reset(ResetRequest) returns (ResetResponse);
+  // c-cwose and abandon aww existing sessions. ^•ﻌ•^  ongoing computations
+  // wiww n-nyo wongew affect f-fwesh ones v-via the wesouwces i-in containews wisted in
+  // t-the wesetwequest. XD  see wesetwequest fow mowe detaiws.
+  wpc weset(wesetwequest) wetuwns (wesetwesponse);
 
-  // Registers a callable for execution with RunCallable.
-  rpc MakeCallable(MakeCallableRequest) returns (MakeCallableResponse);
+  // wegistews a cawwabwe f-fow execution with wuncawwabwe.
+  w-wpc makecawwabwe(makecawwabwewequest) wetuwns (makecawwabwewesponse);
 
-  // Executes a callable registered with MakeCallable.
-  rpc RunCallable(RunCallableRequest) returns (RunCallableResponse);
+  // e-exekawaii~s a cawwabwe wegistewed w-with makecawwabwe. :3
+  wpc wuncawwabwe(wuncawwabwewequest) w-wetuwns (wuncawwabwewesponse);
 
-  // Frees resources associated with a callable registered with MakeCallable.
-  rpc ReleaseCallable(ReleaseCallableRequest) returns (ReleaseCallableResponse);
+  // f-fwees wesouwces a-associated with a-a cawwabwe wegistewed w-with makecawwabwe. (ꈍᴗꈍ)
+  wpc weweasecawwabwe(weweasecawwabwewequest) wetuwns (weweasecawwabwewesponse);
 }

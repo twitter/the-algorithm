@@ -1,14 +1,14 @@
-scala_library(
-    sources = [
-        "*.scala",
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", ^•ﻌ•^
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter:base",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/common",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-    ],
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", òωó
+        "swc/thwift/com/twittew/timewinesewvice/sewvew/intewnaw:thwift-scawa", o.O
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew:base", (U ᵕ U❁)
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/common", (⑅˘꒳˘)
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", ( ͡o ω ͡o )
+    ], UwU
 )

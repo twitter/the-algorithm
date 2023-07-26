@@ -1,31 +1,31 @@
-package com.twitter.tsp.stores
+package com.twittew.tsp.stowes
 
-import com.twitter.contentrecommender.thriftscala.ScoringResponse
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.simclusters_v2.thriftscala.Score
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.tsp.utils.ReadableStoreWithMapOptionValues
+impowt com.twittew.contentwecommendew.thwiftscawa.scowingwesponse
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.stowe.stwato.stwatofetchabwestowe
+i-impowt com.twittew.hewmit.stowe.common.obsewvedweadabwestowe
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scowe
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scoweid
+i-impowt c-com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.stwato.cwient.cwient
+impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
+impowt com.twittew.tsp.utiws.weadabwestowewithmapoptionvawues
 
-object RepresentationScorerStore {
+object wepwesentationscowewstowe {
 
-  def apply(
-    stratoClient: Client,
-    scoringColumnPath: String,
-    stats: StatsReceiver
-  ): ReadableStore[ScoreId, Score] = {
-    val stratoFetchableStore = StratoFetchableStore
-      .withUnitView[ScoreId, ScoringResponse](stratoClient, scoringColumnPath)
+  d-def appwy(
+    stwatocwient: cwient, -.-
+    s-scowingcowumnpath: stwing, ( ͡o ω ͡o )
+    s-stats: statsweceivew
+  ): weadabwestowe[scoweid, rawr x3 scowe] = {
+    vaw stwatofetchabwestowe = s-stwatofetchabwestowe
+      .withunitview[scoweid, nyaa~~ scowingwesponse](stwatocwient, /(^•ω•^) scowingcowumnpath)
 
-    val enrichedStore = new ReadableStoreWithMapOptionValues[ScoreId, ScoringResponse, Score](
-      stratoFetchableStore).mapOptionValues(_.score)
+    v-vaw enwichedstowe = n-nyew weadabwestowewithmapoptionvawues[scoweid, rawr scowingwesponse, OwO scowe](
+      stwatofetchabwestowe).mapoptionvawues(_.scowe)
 
-    ObservedReadableStore(
-      enrichedStore
-    )(stats.scope("representation_scorer_store"))
+    o-obsewvedweadabwestowe(
+      enwichedstowe
+    )(stats.scope("wepwesentation_scowew_stowe"))
   }
 }

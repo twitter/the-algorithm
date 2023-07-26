@@ -1,76 +1,76 @@
-package com.twitter.unified_user_actions.adapter.tweetypie_event
+package com.twittew.unified_usew_actions.adaptew.tweetypie_event
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.tweetypie.thriftscala.TweetEvent
-import com.twitter.tweetypie.thriftscala.TweetEventData
-import com.twitter.tweetypie.thriftscala.TweetCreateEvent
-import com.twitter.tweetypie.thriftscala.TweetDeleteEvent
-import com.twitter.tweetypie.thriftscala.TweetEventFlags
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt com.twittew.unified_usew_actions.adaptew.abstwactadaptew
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetevent
+i-impowt com.twittew.tweetypie.thwiftscawa.tweeteventdata
+i-impowt c-com.twittew.tweetypie.thwiftscawa.tweetcweateevent
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetdeweteevent
+impowt com.twittew.tweetypie.thwiftscawa.tweeteventfwags
+impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
 
-class TweetypieEventAdapter extends AbstractAdapter[TweetEvent, UnKeyed, UnifiedUserAction] {
-  import TweetypieEventAdapter._
-  override def adaptOneToKeyedMany(
-    tweetEvent: TweetEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(tweetEvent).map(e => (UnKeyed, e))
+cwass tweetypieeventadaptew e-extends abstwactadaptew[tweetevent, mya unkeyed, unifiedusewaction] {
+  i-impowt tweetypieeventadaptew._
+  ovewwide def a-adaptonetokeyedmany(
+    tweetevent: tweetevent, (˘ω˘)
+    statsweceivew: s-statsweceivew = nyuwwstatsweceivew
+  ): s-seq[(unkeyed, >_< u-unifiedusewaction)] =
+    adaptevent(tweetevent).map(e => (unkeyed, -.- e))
 }
 
-object TweetypieEventAdapter {
-  def adaptEvent(tweetEvent: TweetEvent): Seq[UnifiedUserAction] = {
-    Option(tweetEvent).flatMap { e =>
+object tweetypieeventadaptew {
+  def adaptevent(tweetevent: t-tweetevent): seq[unifiedusewaction] = {
+    option(tweetevent).fwatmap { e =>
       e.data match {
-        case TweetEventData.TweetCreateEvent(tweetCreateEvent: TweetCreateEvent) =>
-          getUUAFromTweetCreateEvent(tweetCreateEvent, e.flags)
-        case TweetEventData.TweetDeleteEvent(tweetDeleteEvent: TweetDeleteEvent) =>
-          getUUAFromTweetDeleteEvent(tweetDeleteEvent, e.flags)
-        case _ => None
+        case t-tweeteventdata.tweetcweateevent(tweetcweateevent: tweetcweateevent) =>
+          g-getuuafwomtweetcweateevent(tweetcweateevent, 🥺 e.fwags)
+        c-case tweeteventdata.tweetdeweteevent(tweetdeweteevent: t-tweetdeweteevent) =>
+          g-getuuafwomtweetdeweteevent(tweetdeweteevent, (U ﹏ U) e.fwags)
+        case _ => nyone
       }
-    }.toSeq
+    }.toseq
   }
 
-  def getUUAFromTweetCreateEvent(
-    tweetCreateEvent: TweetCreateEvent,
-    tweetEventFlags: TweetEventFlags
-  ): Option[UnifiedUserAction] = {
-    val tweetTypeOpt = TweetypieEventUtils.tweetTypeFromTweet(tweetCreateEvent.tweet)
+  def g-getuuafwomtweetcweateevent(
+    tweetcweateevent: tweetcweateevent, >w<
+    t-tweeteventfwags: tweeteventfwags
+  ): option[unifiedusewaction] = {
+    vaw tweettypeopt = tweetypieeventutiws.tweettypefwomtweet(tweetcweateevent.tweet)
 
-    tweetTypeOpt.flatMap { tweetType =>
-      tweetType match {
-        case TweetTypeReply =>
-          TweetypieReplyEvent.getUnifiedUserAction(tweetCreateEvent, tweetEventFlags)
-        case TweetTypeRetweet =>
-          TweetypieRetweetEvent.getUnifiedUserAction(tweetCreateEvent, tweetEventFlags)
-        case TweetTypeQuote =>
-          TweetypieQuoteEvent.getUnifiedUserAction(tweetCreateEvent, tweetEventFlags)
-        case TweetTypeDefault =>
-          TweetypieCreateEvent.getUnifiedUserAction(tweetCreateEvent, tweetEventFlags)
-        case TweetTypeEdit =>
-          TweetypieEditEvent.getUnifiedUserAction(tweetCreateEvent, tweetEventFlags)
+    tweettypeopt.fwatmap { t-tweettype =>
+      tweettype match {
+        c-case t-tweettypewepwy =>
+          tweetypiewepwyevent.getunifiedusewaction(tweetcweateevent, mya t-tweeteventfwags)
+        case tweettypewetweet =>
+          tweetypiewetweetevent.getunifiedusewaction(tweetcweateevent, >w< tweeteventfwags)
+        c-case t-tweettypequote =>
+          tweetypiequoteevent.getunifiedusewaction(tweetcweateevent, t-tweeteventfwags)
+        c-case tweettypedefauwt =>
+          tweetypiecweateevent.getunifiedusewaction(tweetcweateevent, nyaa~~ t-tweeteventfwags)
+        case tweettypeedit =>
+          t-tweetypieeditevent.getunifiedusewaction(tweetcweateevent, (✿oωo) tweeteventfwags)
       }
     }
   }
 
-  def getUUAFromTweetDeleteEvent(
-    tweetDeleteEvent: TweetDeleteEvent,
-    tweetEventFlags: TweetEventFlags
-  ): Option[UnifiedUserAction] = {
-    val tweetTypeOpt = TweetypieEventUtils.tweetTypeFromTweet(tweetDeleteEvent.tweet)
+  def getuuafwomtweetdeweteevent(
+    t-tweetdeweteevent: tweetdeweteevent, ʘwʘ
+    tweeteventfwags: t-tweeteventfwags
+  ): option[unifiedusewaction] = {
+    v-vaw t-tweettypeopt = tweetypieeventutiws.tweettypefwomtweet(tweetdeweteevent.tweet)
 
-    tweetTypeOpt.flatMap { tweetType =>
-      tweetType match {
-        case TweetTypeRetweet =>
-          TweetypieUnretweetEvent.getUnifiedUserAction(tweetDeleteEvent, tweetEventFlags)
-        case TweetTypeReply =>
-          TweetypieUnreplyEvent.getUnifiedUserAction(tweetDeleteEvent, tweetEventFlags)
-        case TweetTypeQuote =>
-          TweetypieUnquoteEvent.getUnifiedUserAction(tweetDeleteEvent, tweetEventFlags)
-        case TweetTypeDefault | TweetTypeEdit =>
-          TweetypieDeleteEvent.getUnifiedUserAction(tweetDeleteEvent, tweetEventFlags)
+    tweettypeopt.fwatmap { tweettype =>
+      tweettype match {
+        case tweettypewetweet =>
+          t-tweetypieunwetweetevent.getunifiedusewaction(tweetdeweteevent, (ˆ ﻌ ˆ)♡ t-tweeteventfwags)
+        case tweettypewepwy =>
+          t-tweetypieunwepwyevent.getunifiedusewaction(tweetdeweteevent, 😳😳😳 t-tweeteventfwags)
+        c-case tweettypequote =>
+          tweetypieunquoteevent.getunifiedusewaction(tweetdeweteevent, :3 tweeteventfwags)
+        case tweettypedefauwt | t-tweettypeedit =>
+          tweetypiedeweteevent.getunifiedusewaction(tweetdeweteevent, OwO tweeteventfwags)
       }
     }
   }

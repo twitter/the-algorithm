@@ -1,48 +1,48 @@
-package com.twitter.timelineranker.clients
+package com.twittew.timewinewankew.cwients
 
-import com.twitter.finagle.memcached.{Client => FinagleMemcacheClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.servo.cache.FinagleMemcache
-import com.twitter.servo.cache.MemcacheCache
-import com.twitter.servo.cache.ObservableMemcache
-import com.twitter.servo.cache.Serializer
-import com.twitter.servo.cache.StatsReceiverCacheObserver
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.timelines.util.stats.ScopedFactory
-import com.twitter.util.Duration
+impowt c-com.twittew.finagwe.memcached.{cwient => f-finagwememcachecwient}
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.sewvo.cache.finagwememcache
+i-impowt com.twittew.sewvo.cache.memcachecache
+impowt c-com.twittew.sewvo.cache.obsewvabwememcache
+i-impowt com.twittew.sewvo.cache.sewiawizew
+impowt com.twittew.sewvo.cache.statsweceivewcacheobsewvew
+impowt com.twittew.timewines.utiw.stats.wequestscope
+impowt c-com.twittew.timewines.utiw.stats.scopedfactowy
+impowt com.twittew.utiw.duwation
 
 /**
- * Factory to create a servo Memcache-backed Cache object. Clients are required to provide a
- * serializer/deserializer for keys and values.
+ * factowy t-to cweate a sewvo memcache-backed c-cache object. (⑅˘꒳˘) cwients awe wequiwed to pwovide a
+ * sewiawizew/desewiawizew f-fow keys and vawues. òωó
  */
-class MemcacheFactory(memcacheClient: FinagleMemcacheClient, statsReceiver: StatsReceiver) {
-  private[this] val logger = Logger.get(getClass.getSimpleName)
+c-cwass memcachefactowy(memcachecwient: f-finagwememcachecwient, statsweceivew: statsweceivew) {
+  pwivate[this] vaw woggew = w-woggew.get(getcwass.getsimpwename)
 
-  def apply[K, V](
-    keySerializer: K => String,
-    valueSerializer: Serializer[V],
-    ttl: Duration
-  ): MemcacheCache[K, V] = {
-    new MemcacheCache[K, V](
-      memcache = new ObservableMemcache(
-        new FinagleMemcache(memcacheClient),
-        new StatsReceiverCacheObserver(statsReceiver, 1000, logger)
-      ),
-      ttl = ttl,
-      serializer = valueSerializer,
-      transformKey = keySerializer
+  def appwy[k, ʘwʘ v](
+    keysewiawizew: k => stwing, /(^•ω•^)
+    vawuesewiawizew: s-sewiawizew[v], ʘwʘ
+    ttw: duwation
+  ): m-memcachecache[k, σωσ v-v] = {
+    new m-memcachecache[k, OwO v-v](
+      memcache = nyew obsewvabwememcache(
+        nyew finagwememcache(memcachecwient), 😳😳😳
+        n-nyew statsweceivewcacheobsewvew(statsweceivew, 😳😳😳 1000, woggew)
+      ), o.O
+      ttw = ttw, ( ͡o ω ͡o )
+      s-sewiawizew = vawuesewiawizew, (U ﹏ U)
+      twansfowmkey = keysewiawizew
     )
   }
 }
 
-class ScopedMemcacheFactory(memcacheClient: FinagleMemcacheClient, statsReceiver: StatsReceiver)
-    extends ScopedFactory[MemcacheFactory] {
+cwass scopedmemcachefactowy(memcachecwient: finagwememcachecwient, (///ˬ///✿) statsweceivew: s-statsweceivew)
+    extends s-scopedfactowy[memcachefactowy] {
 
-  override def scope(scope: RequestScope): MemcacheFactory = {
-    new MemcacheFactory(
-      memcacheClient,
-      statsReceiver.scope("memcache", scope.scope)
+  o-ovewwide def s-scope(scope: wequestscope): memcachefactowy = {
+    nyew memcachefactowy(
+      memcachecwient, >w<
+      s-statsweceivew.scope("memcache", rawr s-scope.scope)
     )
   }
 }

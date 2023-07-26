@@ -1,74 +1,74 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
+package com.twittew.simcwustews_v2.scawding.topic_wecommendations.modew_based_topic_wecommendations
 
-import com.twitter.scalding.{DateRange, Days, Stat, TypedPipe, UniqueID}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, Proc3Atla}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{Language, TopicId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources.FavTfgTopicEmbeddingsScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.summingbird.stores.UserInterestedInReadableStore
-import com.twitter.simclusters_v2.thriftscala.{
-  EmbeddingType,
-  InternalId,
-  LocaleEntityId,
-  ModelVersion,
-  SimClustersEmbeddingId
+impowt com.twittew.scawding.{datewange, mya d-days, (˘ω˘) s-stat, typedpipe, >_< u-uniqueid}
+impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.wemote_access.{expwicitwocation, -.- p-pwoc3atwa}
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.{wanguage, 🥺 topicid, (U ﹏ U) usewid}
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.favtfgtopicembeddingsscawadataset
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces
+impowt com.twittew.simcwustews_v2.summingbiwd.stowes.usewintewestedinweadabwestowe
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  embeddingtype, >w<
+  i-intewnawid, mya
+  wocaweentityid, >w<
+  modewvewsion, nyaa~~
+  simcwustewsembeddingid
 }
-import java.util.TimeZone
+i-impowt java.utiw.timezone
 
 /**
- * DataSources object to read datasets for the model based topic recommendations
+ * d-datasouwces object t-to wead datasets fow the modew based topic wecommendations
  */
-object DataSources {
+object datasouwces {
 
-  private val topicEmbeddingDataset = FavTfgTopicEmbeddingsScalaDataset
-  private val topicEmbeddingType = EmbeddingType.FavTfgTopic
+  pwivate v-vaw topicembeddingdataset = favtfgtopicembeddingsscawadataset
+  pwivate vaw topicembeddingtype = embeddingtype.favtfgtopic
 
   /**
-   * Get user InterestedIn data, filter popular clusters and return fav-scores interestedIn embedding for user
+   * get usew i-intewestedin data, (✿oωo) fiwtew popuwaw c-cwustews and w-wetuwn fav-scowes i-intewestedin e-embedding fow usew
    */
-  def getUserInterestedInData(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(UserId, Map[Int, Double])] = {
-    val numUserInterestedInInput = Stat("num_user_interested_in")
-    ExternalDataSources.simClustersInterestInSource
+  def getusewintewestedindata(
+    impwicit d-datewange: datewange, ʘwʘ
+    timezone: timezone, (ˆ ﻌ ˆ)♡
+    u-uniqueid: uniqueid
+  ): typedpipe[(usewid, 😳😳😳 map[int, :3 doubwe])] = {
+    vaw nyumusewintewestedininput = stat("num_usew_intewested_in")
+    e-extewnawdatasouwces.simcwustewsintewestinsouwce
       .map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          val clustersPostFiltering = clustersUserIsInterestedIn.clusterIdToScores.filter {
-            case (clusterId, clusterScores) =>
-              // filter out popular clusters (i.e clusters with > 5M users interested in it) from the user embedding
-              clusterScores.numUsersInterestedInThisClusterUpperBound.exists(
-                _ < UserInterestedInReadableStore.MaxClusterSizeForUserInterestedInDataset)
+        case keyvaw(usewid, OwO c-cwustewsusewisintewestedin) =>
+          v-vaw cwustewspostfiwtewing = c-cwustewsusewisintewestedin.cwustewidtoscowes.fiwtew {
+            case (cwustewid, (U ﹏ U) cwustewscowes) =>
+              // fiwtew out popuwaw c-cwustews (i.e c-cwustews with > 5m usews intewested i-in it) f-fwom the usew embedding
+              cwustewscowes.numusewsintewestedinthiscwustewuppewbound.exists(
+                _ < u-usewintewestedinweadabwestowe.maxcwustewsizefowusewintewestedindataset)
           }
-          numUserInterestedInInput.inc()
-          (userId, clustersPostFiltering.mapValues(_.favScore.getOrElse(0.0)).toMap)
+          nyumusewintewestedininput.inc()
+          (usewid, >w< c-cwustewspostfiwtewing.mapvawues(_.favscowe.getowewse(0.0)).tomap)
       }
   }
 
-  def getPerLanguageTopicEmbeddings(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[((TopicId, Language), Map[Int, Double])] = {
-    val numTFGPerLanguageEmbeddings = Stat("num_per_language_tfg_embeddings")
-    DAL
-      .readMostRecentSnapshotNoOlderThan(topicEmbeddingDataset, Days(30))
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
-      .toTypedPipe
+  def getpewwanguagetopicembeddings(
+    i-impwicit datewange: datewange, (U ﹏ U)
+    t-timezone: timezone, 😳
+    uniqueid: u-uniqueid
+  ): t-typedpipe[((topicid, (ˆ ﻌ ˆ)♡ wanguage), map[int, 😳😳😳 doubwe])] = {
+    vaw nyumtfgpewwanguageembeddings = stat("num_pew_wanguage_tfg_embeddings")
+    daw
+      .weadmostwecentsnapshotnoowdewthan(topicembeddingdataset, (U ﹏ U) days(30))
+      .withwemoteweadpowicy(expwicitwocation(pwoc3atwa))
+      .totypedpipe
       .map {
-        case KeyVal(k, v) => (k, v)
-      }.collect {
+        case k-keyvaw(k, (///ˬ///✿) v) => (k, 😳 v-v)
+      }.cowwect {
         case (
-              SimClustersEmbeddingId(
-                embedType,
-                ModelVersion.Model20m145kUpdated,
-                InternalId.LocaleEntityId(LocaleEntityId(entityId, lang))),
-              embedding) if (embedType == topicEmbeddingType) =>
-          numTFGPerLanguageEmbeddings.inc()
-          ((entityId, lang), embedding.embedding.map(_.toTuple).toMap)
-      }.forceToDisk
+              s-simcwustewsembeddingid(
+                e-embedtype, 😳
+                m-modewvewsion.modew20m145kupdated, σωσ
+                intewnawid.wocaweentityid(wocaweentityid(entityid, rawr x3 wang))),
+              embedding) if (embedtype == t-topicembeddingtype) =>
+          nyumtfgpewwanguageembeddings.inc()
+          ((entityid, OwO wang), embedding.embedding.map(_.totupwe).tomap)
+      }.fowcetodisk
   }
 }

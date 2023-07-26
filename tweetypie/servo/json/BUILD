@@ -1,5 +1,5 @@
-target(
+tawget(
     dependencies = [
-        "tweetypie/servo/json/src/main/scala/com/twitter/servo/json",
+        "tweetypie/sewvo/json/swc/main/scawa/com/twittew/sewvo/json", XD
     ],
 )

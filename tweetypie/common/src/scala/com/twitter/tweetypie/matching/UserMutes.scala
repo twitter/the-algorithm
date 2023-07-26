@@ -1,128 +1,128 @@
-package com.twitter.tweetypie.matching
+package com.twittew.tweetypie.matching
 
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier
-import com.twitter.common_internal.text.version.PenguinVersion
-import java.util.Locale
-import scala.collection.JavaConversions.asScalaBuffer
+impowt com.twittew.common.text.pipewine.twittewwanguageidentifiew
+i-impowt c-com.twittew.common_intewnaw.text.vewsion.penguinvewsion
+i-impowt java.utiw.wocawe
+i-impowt scawa.cowwection.javaconvewsions.asscawabuffew
 
-object UserMutesBuilder {
-  private[matching] val Default =
-    new UserMutesBuilder(Tokenizer.DefaultPenguinVersion, None)
+o-object usewmutesbuiwdew {
+  p-pwivate[matching] v-vaw defauwt =
+    n-nyew usewmutesbuiwdew(tokenizew.defauwtpenguinvewsion, ( ͡o ω ͡o ) nyone)
 
-  private val queryLangIdentifier =
-    (new TwitterLanguageIdentifier.Builder).buildForQuery()
+  pwivate vaw quewywangidentifiew =
+    (new twittewwanguageidentifiew.buiwdew).buiwdfowquewy()
 }
 
-class UserMutesBuilder private (penguinVersion: PenguinVersion, localeOpt: Option[Locale]) {
+c-cwass usewmutesbuiwdew pwivate (penguinvewsion: penguinvewsion, o.O w-wocaweopt: option[wocawe]) {
 
   /**
-   * Use the specified Penguin version when tokenizing a keyword mute
-   * string. In general, use the default version, unless you need to
-   * specify a particular version for compatibility with another system
-   * that is using that version.
+   * u-use the specified penguin vewsion when tokenizing a keywowd mute
+   * s-stwing. >w< in genewaw, 😳 use t-the defauwt vewsion, 🥺 u-unwess you nyeed to
+   * specify a pawticuwaw vewsion fow compatibiwity with a-anothew system
+   * that is using that vewsion.
    */
-  def withPenguinVersion(ver: PenguinVersion): UserMutesBuilder =
-    if (ver == penguinVersion) this
-    else new UserMutesBuilder(ver, localeOpt)
+  def withpenguinvewsion(vew: penguinvewsion): u-usewmutesbuiwdew =
+    if (vew == p-penguinvewsion) t-this
+    e-ewse nyew usewmutesbuiwdew(vew, rawr x3 w-wocaweopt)
 
   /**
-   * Use the specified locale when tokenizing a keyword mute string.
+   * use the specified wocawe w-when tokenizing a keywowd mute stwing. o.O
    */
-  def withLocale(locale: Locale): UserMutesBuilder =
-    if (localeOpt.contains(locale)) this
-    else new UserMutesBuilder(penguinVersion, Some(locale))
+  d-def withwocawe(wocawe: wocawe): usewmutesbuiwdew =
+    if (wocaweopt.contains(wocawe)) this
+    ewse nyew usewmutesbuiwdew(penguinvewsion, rawr s-some(wocawe))
 
   /**
-   * When tokenizing a user mute list, detect the language of the
-   * text. This is significantly more expensive than using a predefined
-   * locale, but is appropriate when the locale is not yet known.
+   * when tokenizing a-a usew mute w-wist, ʘwʘ detect the w-wanguage of the
+   * text. 😳😳😳 this is significantwy mowe expensive t-than using a p-pwedefined
+   * wocawe, but is appwopwiate w-when t-the wocawe is nyot yet known. ^^;;
    */
-  def detectLocale(): UserMutesBuilder =
-    if (localeOpt.isEmpty) this
-    else new UserMutesBuilder(penguinVersion, localeOpt)
+  d-def detectwocawe(): usewmutesbuiwdew =
+    i-if (wocaweopt.isempty) this
+    ewse nyew usewmutesbuiwdew(penguinvewsion, o.O w-wocaweopt)
 
-  private[this] lazy val tokenizer =
-    localeOpt match {
-      case None =>
-        // No locale was specified, so use a Tokenizer that performs
-        // language detection before tokenizing.
-        new Tokenizer {
-          override def tokenize(text: String): TokenSequence = {
-            val locale = UserMutesBuilder.queryLangIdentifier.identify(text).getLocale
-            Tokenizer.get(locale, penguinVersion).tokenize(text)
+  pwivate[this] w-wazy vaw tokenizew =
+    w-wocaweopt match {
+      c-case nyone =>
+        // nyo wocawe was specified, (///ˬ///✿) so use a tokenizew that pewfowms
+        // wanguage detection befowe t-tokenizing. σωσ
+        n-nyew tokenizew {
+          ovewwide def tokenize(text: s-stwing): t-tokensequence = {
+            v-vaw wocawe = usewmutesbuiwdew.quewywangidentifiew.identify(text).getwocawe
+            tokenizew.get(wocawe, nyaa~~ penguinvewsion).tokenize(text)
           }
         }
 
-      case Some(locale) =>
-        Tokenizer.get(locale, penguinVersion)
+      c-case some(wocawe) =>
+        tokenizew.get(wocawe, ^^;; penguinvewsion)
     }
 
   /**
-   * Given a list of the user's raw keyword mutes, return a preprocessed
-   * set of mutes suitable for matching against tweet text. If the input
-   * contains any phrases that fail validation, then they will be
-   * dropped.
+   * given a wist of t-the usew's waw keywowd mutes, ^•ﻌ•^ w-wetuwn a pwepwocessed
+   * s-set of m-mutes suitabwe fow matching against t-tweet text. i-if the input
+   * c-contains any p-phwases that faiw vawidation, σωσ then they wiww be
+   * d-dwopped. -.-
    */
-  def build(rawInput: Seq[String]): UserMutes =
-    UserMutes(rawInput.flatMap(validate(_).right.toOption))
+  d-def buiwd(wawinput: s-seq[stwing]): u-usewmutes =
+    u-usewmutes(wawinput.fwatmap(vawidate(_).wight.tooption))
 
   /**
-   * Java-friendly API for processing a user's list of raw keyword mutes
-   * into a preprocessed form suitable for matching against text.
+   * java-fwiendwy api fow pwocessing a u-usew's wist of waw keywowd mutes
+   * into a pwepwocessed fowm suitabwe fow matching against text. ^^;;
    */
-  def fromJavaList(rawInput: java.util.List[String]): UserMutes =
-    build(asScalaBuffer(rawInput).toSeq)
+  d-def fwomjavawist(wawinput: java.utiw.wist[stwing]): usewmutes =
+    buiwd(asscawabuffew(wawinput).toseq)
 
   /**
-   * Validate the raw user input muted phrase. Currently, the only
-   * inputs that are not valid for keyword muting are those inputs that
-   * do not contain any keywords, because those inputs would match all
-   * tweets.
+   * vawidate the waw usew input muted p-phwase. XD cuwwentwy, 🥺 t-the onwy
+   * i-inputs that awe nyot vawid fow k-keywowd muting awe those inputs t-that
+   * do nyot c-contain any keywowds, òωó because those inputs wouwd match aww
+   * tweets. (ˆ ﻌ ˆ)♡
    */
-  def validate(mutedPhrase: String): Either[UserMutes.ValidationError, TokenSequence] = {
-    val keywords = tokenizer.tokenize(mutedPhrase)
-    if (keywords.isEmpty) UserMutes.EmptyPhraseError else Right(keywords)
+  def vawidate(mutedphwase: s-stwing): eithew[usewmutes.vawidationewwow, -.- t-tokensequence] = {
+    vaw keywowds = tokenizew.tokenize(mutedphwase)
+    i-if (keywowds.isempty) u-usewmutes.emptyphwaseewwow ewse wight(keywowds)
   }
 }
 
-object UserMutes {
-  sealed trait ValidationError
+object usewmutes {
+  s-seawed twait v-vawidationewwow
 
   /**
-   * The phrase's tokenization did not produce any tokens
+   * the p-phwase's tokenization d-did nyot pwoduce any tokens
    */
-  case object EmptyPhrase extends ValidationError
+  case object emptyphwase extends vawidationewwow
 
-  private[matching] val EmptyPhraseError = Left(EmptyPhrase)
+  pwivate[matching] v-vaw emptyphwaseewwow = w-weft(emptyphwase)
 
   /**
-   * Get a [[UserMutesBuilder]] that uses the default Penguin version and
-   * performs language identification to choose a locale.
+   * g-get a [[usewmutesbuiwdew]] that uses the defauwt p-penguin vewsion a-and
+   * pewfowms wanguage i-identification to choose a wocawe. :3
    */
-  def builder(): UserMutesBuilder = UserMutesBuilder.Default
+  def buiwdew(): usewmutesbuiwdew = usewmutesbuiwdew.defauwt
 }
 
 /**
- * A user's muted keyword list, preprocessed into token sequences.
+ * a usew's muted k-keywowd wist, ʘwʘ pwepwocessed i-into token sequences.
  */
-case class UserMutes private[matching] (toSeq: Seq[TokenSequence]) {
+case cwass u-usewmutes pwivate[matching] (toseq: s-seq[tokensequence]) {
 
   /**
-   * Do any of the users' muted keyword sequences occur within the
-   * supplied text?
+   * do any of the usews' muted keywowd sequences o-occuw within the
+   * suppwied text?
    */
-  def matches(text: TokenSequence): Boolean =
-    toSeq.exists(text.containsKeywordSequence)
+  def matches(text: tokensequence): b-boowean =
+    toseq.exists(text.containskeywowdsequence)
 
   /**
-   * Find all positions of matching muted keyword from the user's
-   * muted keyword list
+   * find aww p-positions of matching m-muted keywowd fwom the usew's
+   * muted keywowd wist
    */
-  def find(text: TokenSequence): Seq[Int] =
-    toSeq.zipWithIndex.collect {
-      case (token, index) if text.containsKeywordSequence(token) => index
+  d-def find(text: t-tokensequence): seq[int] =
+    toseq.zipwithindex.cowwect {
+      case (token, 🥺 i-index) if text.containskeywowdsequence(token) => index
     }
 
-  def isEmpty: Boolean = toSeq.isEmpty
-  def nonEmpty: Boolean = toSeq.nonEmpty
+  d-def isempty: boowean = toseq.isempty
+  def nyonempty: boowean = t-toseq.nonempty
 }

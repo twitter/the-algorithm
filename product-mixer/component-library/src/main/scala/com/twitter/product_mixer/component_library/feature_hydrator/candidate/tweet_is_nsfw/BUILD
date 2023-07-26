@@ -1,37 +1,37 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    scalac_plugins = ["no-roomba"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/src/jvm/com/twitter/storehaus:core",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/module",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/feature_hydrator",
-        "src/thrift/com/twitter/spam/rtf:safety-result-scala",
-        "src/thrift/com/twitter/timelinescorer:thrift-scala",
-        "src/thrift/com/twitter/timelinescorer/server/internal:thrift-scala",
-        "src/thrift/com/twitter/tweetypie:service-scala",
-        "src/thrift/com/twitter/tweetypie:tweet-scala",
-        "stitch/stitch-core",
-        "stitch/stitch-tweetypie",
+scawa_wibwawy(
+    souwces = ["*.scawa"], (U ᵕ U❁)
+    compiwew_option_sets = ["fataw_wawnings"], (⑅˘꒳˘)
+    p-pwatfowm = "java8", ( ͡o ω ͡o )
+    s-scawac_pwugins = ["no-woomba"], UwU
+    s-stwict_deps = t-twue, rawr x3
+    t-tags = ["bazew-compatibwe"], rawr
+    d-dependencies = [
+        "3wdpawty/jvm/javax/inject:javax.inject",
+        "3wdpawty/swc/jvm/com/twittew/stowehaus:cowe", σωσ
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", σωσ
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/moduwe", >_<
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe", :3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/configapi", (U ﹏ U)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/featuwe_hydwatow", -.-
+        "swc/thwift/com/twittew/spam/wtf:safety-wesuwt-scawa", (ˆ ﻌ ˆ)♡
+        "swc/thwift/com/twittew/timewinescowew:thwift-scawa", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/timewinescowew/sewvew/intewnaw:thwift-scawa", (U ᵕ U❁)
+        "swc/thwift/com/twittew/tweetypie:sewvice-scawa",
+        "swc/thwift/com/twittew/tweetypie:tweet-scawa", -.-
+        "stitch/stitch-cowe", ^^;;
+        "stitch/stitch-tweetypie", >_<
     ],
-    exports = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/src/jvm/com/twitter/storehaus:core",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/module",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/feature_hydrator",
-        "src/thrift/com/twitter/timelinescorer:thrift-scala",
-        "src/thrift/com/twitter/timelinescorer/server/internal:thrift-scala",
-        "stitch/stitch-core",
-        "stitch/stitch-tweetypie",
-    ],
+    e-expowts = [
+        "3wdpawty/jvm/javax/inject:javax.inject", mya
+        "3wdpawty/swc/jvm/com/twittew/stowehaus:cowe", mya
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", 😳
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/moduwe", XD
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe", :3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/configapi", 😳😳😳
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/featuwe_hydwatow", -.-
+        "swc/thwift/com/twittew/timewinescowew:thwift-scawa", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/timewinescowew/sewvew/intewnaw:thwift-scawa", rawr x3
+        "stitch/stitch-cowe", nyaa~~
+        "stitch/stitch-tweetypie", /(^•ω•^)
+    ], rawr
 )

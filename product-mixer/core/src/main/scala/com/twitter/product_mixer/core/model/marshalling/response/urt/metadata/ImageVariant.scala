@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.ColorPalette
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.cowowpawette
 
-case class ImageVariant(
-  url: String,
-  width: Int,
-  height: Int,
-  palette: Option[List[ColorPalette]])
+c-case cwass i-imagevawiant(
+  u-uww: stwing, o.O
+  w-width: int, (U ᵕ U❁)
+  h-height: int, (⑅˘꒳˘)
+  pawette: o-option[wist[cowowpawette]])

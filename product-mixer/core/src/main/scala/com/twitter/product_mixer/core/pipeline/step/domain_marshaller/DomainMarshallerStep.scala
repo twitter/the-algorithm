@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.core.pipeline.step.domain_marshaller
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.domain_mawshawwew
 
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.domainmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hascandidateswithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.domain_mawshawwew_executow.domainmawshawwewexecutow
+impowt com.twittew.stitch.awwow
+impowt javax.inject.inject
 
 /**
- * A domain marshaller step, it takes the input list of candidates and the given
- * domain marshaller and executes its to return a marshalled result. The [[State]] object is
- * responsible for keeping a reference of the built Response.
+ * a domain mawshawwew step, i-it takes the input wist of candidates and the given
+ * d-domain mawshawwew and exekawaii~s i-its to wetuwn a mawshawwed wesuwt. :3 the [[state]] object i-is
+ * wesponsibwe fow keeping a w-wefewence of the b-buiwt wesponse. 😳😳😳
  *
- * @param domainMarshallerExecutor Domain Marshaller executor.
- * @tparam Query Type of PipelineQuery domain model
- * @tparam ResponseType the domain marshalling type expected to be returned.
- * @tparam State The pipeline state domain model.
+ * @pawam domainmawshawwewexecutow domain mawshawwew executow.
+ * @tpawam quewy type of pipewinequewy domain m-modew
+ * @tpawam wesponsetype the domain mawshawwing type expected to be wetuwned. (˘ω˘)
+ * @tpawam s-state the pipewine state domain m-modew. ^^
  */
-case class DomainMarshallerStep[
-  Query <: PipelineQuery,
-  ResponseType <: HasMarshalling,
-  State <: HasQuery[Query, State] with HasCandidatesWithDetails[State]] @Inject() (
-  domainMarshallerExecutor: DomainMarshallerExecutor)
-    extends Step[State, DomainMarshaller[Query, ResponseType], DomainMarshallerExecutor.Inputs[
-      Query
-    ], DomainMarshallerExecutor.Result[ResponseType]] {
+case c-cwass domainmawshawwewstep[
+  q-quewy <: p-pipewinequewy, :3
+  wesponsetype <: hasmawshawwing,
+  s-state <: hasquewy[quewy, -.- state] with hascandidateswithdetaiws[state]] @inject() (
+  d-domainmawshawwewexecutow: domainmawshawwewexecutow)
+    extends step[state, 😳 domainmawshawwew[quewy, mya wesponsetype], (˘ω˘) domainmawshawwewexecutow.inputs[
+      q-quewy
+    ], >_< domainmawshawwewexecutow.wesuwt[wesponsetype]] {
 
-  override def isEmpty(config: DomainMarshaller[Query, ResponseType]): Boolean = false
+  o-ovewwide d-def isempty(config: d-domainmawshawwew[quewy, -.- wesponsetype]): boowean = fawse
 
-  override def adaptInput(
-    state: State,
-    config: DomainMarshaller[Query, ResponseType]
-  ): DomainMarshallerExecutor.Inputs[Query] =
-    DomainMarshallerExecutor.Inputs(state.query, state.candidatesWithDetails)
+  o-ovewwide def adaptinput(
+    s-state: state, 🥺
+    c-config: domainmawshawwew[quewy, (U ﹏ U) w-wesponsetype]
+  ): domainmawshawwewexecutow.inputs[quewy] =
+    d-domainmawshawwewexecutow.inputs(state.quewy, >w< state.candidateswithdetaiws)
 
-  override def arrow(
-    config: DomainMarshaller[Query, ResponseType],
-    context: Executor.Context
-  ): Arrow[DomainMarshallerExecutor.Inputs[Query], DomainMarshallerExecutor.Result[ResponseType]] =
-    domainMarshallerExecutor.arrow(config, context)
+  o-ovewwide def awwow(
+    config: domainmawshawwew[quewy, mya w-wesponsetype], >w<
+    context: e-executow.context
+  ): awwow[domainmawshawwewexecutow.inputs[quewy], nyaa~~ d-domainmawshawwewexecutow.wesuwt[wesponsetype]] =
+    d-domainmawshawwewexecutow.awwow(config, (✿oωo) context)
 
-  // Noop since the pipeline updates the executor results for us
-  override def updateState(
-    state: State,
-    executorResult: DomainMarshallerExecutor.Result[ResponseType],
-    config: DomainMarshaller[Query, ResponseType]
-  ): State = state
+  // nyoop since the pipewine updates the executow wesuwts fow us
+  ovewwide def updatestate(
+    s-state: s-state, ʘwʘ
+    executowwesuwt: domainmawshawwewexecutow.wesuwt[wesponsetype], (ˆ ﻌ ˆ)♡
+    config: domainmawshawwew[quewy, 😳😳😳 w-wesponsetype]
+  ): s-state = state
 
 }

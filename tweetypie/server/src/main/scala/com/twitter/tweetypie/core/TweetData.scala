@@ -1,86 +1,86 @@
-package com.twitter.tweetypie
-package core
+package com.twittew.tweetypie
+package c-cowe
 
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.featuweswitches.v2.featuweswitchwesuwts
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object TweetData {
-  object Lenses {
-    val tweet: Lens[TweetData, Tweet] = Lens[TweetData, Tweet](_.tweet, _.copy(_))
+o-object tweetdata {
+  o-object wenses {
+    v-vaw tweet: w-wens[tweetdata, mya t-tweet] = wens[tweetdata, ʘwʘ tweet](_.tweet, (˘ω˘) _.copy(_))
 
-    val suppress: Lens[TweetData, Option[FilteredState.Suppress]] =
-      Lens[TweetData, Option[FilteredState.Suppress]](
-        _.suppress,
-        (td, suppress) => td.copy(suppress = suppress)
+    vaw suppwess: wens[tweetdata, (U ﹏ U) option[fiwtewedstate.suppwess]] =
+      wens[tweetdata, ^•ﻌ•^ option[fiwtewedstate.suppwess]](
+        _.suppwess, (˘ω˘)
+        (td, :3 s-suppwess) => td.copy(suppwess = suppwess)
       )
 
-    val sourceTweetResult: Lens[TweetData, Option[TweetResult]] =
-      Lens[TweetData, Option[TweetResult]](
-        _.sourceTweetResult,
-        (td, sourceTweetResult) => td.copy(sourceTweetResult = sourceTweetResult)
+    v-vaw souwcetweetwesuwt: w-wens[tweetdata, ^^;; option[tweetwesuwt]] =
+      wens[tweetdata, 🥺 option[tweetwesuwt]](
+        _.souwcetweetwesuwt, (⑅˘꒳˘)
+        (td, nyaa~~ s-souwcetweetwesuwt) => td.copy(souwcetweetwesuwt = s-souwcetweetwesuwt)
       )
 
-    val quotedTweetResult: Lens[TweetData, Option[QuotedTweetResult]] =
-      Lens[TweetData, Option[QuotedTweetResult]](
-        _.quotedTweetResult,
-        (td, quotedTweetResult) => td.copy(quotedTweetResult = quotedTweetResult)
+    v-vaw quotedtweetwesuwt: wens[tweetdata, :3 option[quotedtweetwesuwt]] =
+      wens[tweetdata, ( ͡o ω ͡o ) option[quotedtweetwesuwt]](
+        _.quotedtweetwesuwt, mya
+        (td, q-quotedtweetwesuwt) => td.copy(quotedtweetwesuwt = quotedtweetwesuwt)
       )
 
-    val cacheableTweetResult: Lens[TweetData, Option[TweetResult]] =
-      Lens[TweetData, Option[TweetResult]](
-        _.cacheableTweetResult,
-        (td, cacheableTweetResult) => td.copy(cacheableTweetResult = cacheableTweetResult)
+    vaw cacheabwetweetwesuwt: wens[tweetdata, (///ˬ///✿) o-option[tweetwesuwt]] =
+      wens[tweetdata, (˘ω˘) o-option[tweetwesuwt]](
+        _.cacheabwetweetwesuwt, ^^;;
+        (td, (✿oωo) c-cacheabwetweetwesuwt) => t-td.copy(cacheabwetweetwesuwt = c-cacheabwetweetwesuwt)
       )
 
-    val tweetCounts: Lens[TweetData, Option[StatusCounts]] =
-      Lens[TweetData, Option[StatusCounts]](
-        _.tweet.counts,
-        (td, tweetCounts) => td.copy(tweet = td.tweet.copy(counts = tweetCounts))
+    vaw tweetcounts: wens[tweetdata, (U ﹏ U) o-option[statuscounts]] =
+      wens[tweetdata, -.- option[statuscounts]](
+        _.tweet.counts, ^•ﻌ•^
+        (td, t-tweetcounts) => td.copy(tweet = td.tweet.copy(counts = tweetcounts))
       )
   }
 
-  def fromCachedTweet(cachedTweet: CachedTweet, cachedAt: Time): TweetData =
-    TweetData(
-      tweet = cachedTweet.tweet,
-      completedHydrations = cachedTweet.completedHydrations.toSet,
-      cachedAt = Some(cachedAt),
-      isBounceDeleted = cachedTweet.isBounceDeleted.contains(true)
+  def fwomcachedtweet(cachedtweet: cachedtweet, rawr c-cachedat: time): tweetdata =
+    t-tweetdata(
+      t-tweet = c-cachedtweet.tweet, (˘ω˘)
+      compwetedhydwations = cachedtweet.compwetedhydwations.toset, nyaa~~
+      cachedat = s-some(cachedat), UwU
+      isbouncedeweted = c-cachedtweet.isbouncedeweted.contains(twue)
     )
 }
 
 /**
- * Encapsulates a tweet and some hydration metadata in the hydration pipeline.
+ * encapsuwates a-a tweet a-and some hydwation metadata in t-the hydwation pipewine. :3
  *
- * @param cachedAt if the tweet was read from cache, `cachedAt` contains the time at which
- * the tweet was written to cache.
+ * @pawam cachedat if t-the tweet was wead fwom cache, `cachedat` contains t-the time at which
+ * the tweet w-was wwitten to cache. (⑅˘꒳˘)
  */
-case class TweetData(
-  tweet: Tweet,
-  suppress: Option[FilteredState.Suppress] = None,
-  completedHydrations: Set[HydrationType] = Set.empty,
-  cachedAt: Option[Time] = None,
-  sourceTweetResult: Option[TweetResult] = None,
-  quotedTweetResult: Option[QuotedTweetResult] = None,
-  cacheableTweetResult: Option[TweetResult] = None,
-  storedTweetResult: Option[StoredTweetResult] = None,
-  featureSwitchResults: Option[FeatureSwitchResults] = None,
-  // The isBounceDeleted flag is only used when reading from an underlying
-  // tweet repo and caching records for not-found tweets. It only exists
-  // as a flag on TweetData to marshal bounce-deleted through the layered
-  // transforming caches injected into CachingTweetRepository, ultimately
-  // storing this flag in thrift on CachedTweet.
+case c-cwass tweetdata(
+  t-tweet: tweet, (///ˬ///✿)
+  suppwess: option[fiwtewedstate.suppwess] = nyone, ^^;;
+  compwetedhydwations: set[hydwationtype] = set.empty, >_<
+  cachedat: option[time] = nyone, rawr x3
+  s-souwcetweetwesuwt: o-option[tweetwesuwt] = nyone, /(^•ω•^)
+  q-quotedtweetwesuwt: o-option[quotedtweetwesuwt] = n-nyone, :3
+  cacheabwetweetwesuwt: option[tweetwesuwt] = nyone, (ꈍᴗꈍ)
+  stowedtweetwesuwt: o-option[stowedtweetwesuwt] = nyone, /(^•ω•^)
+  featuweswitchwesuwts: option[featuweswitchwesuwts] = nyone, (⑅˘꒳˘)
+  // the isbouncedeweted fwag i-is onwy used when weading fwom a-an undewwying
+  // t-tweet wepo a-and caching wecowds fow nyot-found t-tweets. ( ͡o ω ͡o ) it onwy e-exists
+  // as a-a fwag on tweetdata t-to mawshaw bounce-deweted thwough the wayewed
+  // t-twansfowming c-caches injected i-into cachingtweetwepositowy, òωó u-uwtimatewy
+  // s-stowing this fwag in thwift on cachedtweet. (⑅˘꒳˘)
   //
-  // During tweet hydration, TweetData.isBounceDeleted is unused and
-  // should always be false.
-  isBounceDeleted: Boolean = false) {
+  // duwing t-tweet hydwation, XD tweetdata.isbouncedeweted is unused and
+  // shouwd awways be fawse. -.-
+  isbouncedeweted: b-boowean = fawse) {
 
-  def addHydrated(fieldIds: Set[HydrationType]): TweetData =
-    copy(completedHydrations = completedHydrations ++ fieldIds)
+  def addhydwated(fiewdids: set[hydwationtype]): t-tweetdata =
+    c-copy(compwetedhydwations = c-compwetedhydwations ++ fiewdids)
 
-  def toCachedTweet: CachedTweet =
-    CachedTweet(
-      tweet = tweet,
-      completedHydrations = completedHydrations,
-      isBounceDeleted = if (isBounceDeleted) Some(true) else None
+  def t-tocachedtweet: cachedtweet =
+    c-cachedtweet(
+      t-tweet = tweet, :3
+      compwetedhydwations = compwetedhydwations, nyaa~~
+      isbouncedeweted = if (isbouncedeweted) some(twue) ewse n-nyone
     )
 }

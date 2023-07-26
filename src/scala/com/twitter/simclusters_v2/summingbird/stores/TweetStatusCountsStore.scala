@@ -1,29 +1,29 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twittew.simcwustews_v2.summingbiwd.stowes
 
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.tweetypie.thriftscala.{GetTweetOptions, StatusCounts, Tweet}
+impowt com.twittew.fwigate.common.stowe.stwato.stwatofetchabwestowe
+i-impowt c-com.twittew.simcwustews_v2.common.tweetid
+i-impowt c-com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.stwato.cwient.cwient
+i-impowt c-com.twittew.stwato.thwift.scwoogeconvimpwicits._
+i-impowt com.twittew.tweetypie.thwiftscawa.{gettweetoptions, XD statuscounts, tweet}
 
-object TweetStatusCountsStore {
+object tweetstatuscountsstowe {
 
-  def tweetStatusCountsStore(
-    stratoClient: Client,
-    column: String
-  ): ReadableStore[TweetId, StatusCounts] = {
-    StratoFetchableStore
-      .withView[TweetId, GetTweetOptions, Tweet](stratoClient, column, getTweetOptions)
-      .mapValues(_.counts.getOrElse(emptyStatusCount))
+  def tweetstatuscountsstowe(
+    stwatocwient: c-cwient, :3
+    cowumn: stwing
+  ): weadabwestowe[tweetid, 😳😳😳 statuscounts] = {
+    s-stwatofetchabwestowe
+      .withview[tweetid, -.- gettweetoptions, ( ͡o ω ͡o ) t-tweet](stwatocwient, rawr x3 cowumn, nyaa~~ gettweetoptions)
+      .mapvawues(_.counts.getowewse(emptystatuscount))
   }
 
-  private val emptyStatusCount = StatusCounts()
+  pwivate vaw emptystatuscount = statuscounts()
 
-  private val getTweetOptions =
-    GetTweetOptions(
-      includeRetweetCount = true,
-      includeReplyCount = true,
-      includeFavoriteCount = true,
-      includeQuoteCount = true)
+  p-pwivate vaw gettweetoptions =
+    gettweetoptions(
+      i-incwudewetweetcount = t-twue, /(^•ω•^)
+      incwudewepwycount = twue, rawr
+      incwudefavowitecount = twue, OwO
+      incwudequotecount = twue)
 }

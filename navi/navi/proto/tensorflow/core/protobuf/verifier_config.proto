@@ -1,27 +1,27 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "VerifierConfigProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "vewifiewconfigpwotos";
+o-option j-java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// The config for graph verifiers.
-message VerifierConfig {
-  enum Toggle {
-    DEFAULT = 0;
-    ON = 1;
-    OFF = 2;
+// t-the config fow g-gwaph vewifiews. XD
+message vewifiewconfig {
+  enum toggwe {
+    defauwt = 0;
+    on = 1;
+    off = 2;
   }
 
-  // Deadline for completion of all verification i.e. all the Toggle ON
-  // verifiers must complete execution within this time.
-  int64 verification_timeout_in_ms = 1;
+  // d-deadwine fow compwetion of aww vewification i.e. :3 a-aww the toggwe on
+  // vewifiews m-must compwete execution within this time. 😳😳😳
+  int64 vewification_timeout_in_ms = 1;
 
-  // Perform structural validation on a tensorflow graph. Default is OFF.
-  Toggle structure_verifier = 2;
+  // p-pewfowm stwuctuwaw vawidation o-on a tensowfwow g-gwaph. -.- defauwt is off. ( ͡o ω ͡o )
+  toggwe stwuctuwe_vewifiew = 2;
 
-  // Next tag: 3
+  // nyext tag: 3
 }

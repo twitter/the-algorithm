@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.filter
+package com.twittew.cw_mixew.fiwtew
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
+impowt com.twittew.cw_mixew.modew.candidategenewatowquewy
+i-impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.cw_mixew.pawam.gwobawpawams
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+i-impowt c-com.twittew.utiw.duwation
+i-impowt c-com.twittew.utiw.futuwe
+impowt com.twittew.utiw.time
+impowt javax.inject.singweton
+i-impowt com.twittew.convewsions.duwationops._
 
-@Singleton
-case class TweetAgeFilter() extends FilterBase {
-  override val name: String = this.getClass.getCanonicalName
+@singweton
+case cwass tweetagefiwtew() extends f-fiwtewbase {
+  ovewwide vaw n-nyame: stwing = this.getcwass.getcanonicawname
 
-  override type ConfigType = Duration
+  ovewwide type configtype = duwation
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    maxTweetAge: Duration
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    if (maxTweetAge >= 720.hours) {
-      Future.value(candidates)
-    } else {
-      // Tweet IDs are approximately chronological (see http://go/snowflake),
-      // so we are building the earliest tweet id once,
-      // and pass that as the value to filter candidates for each CandidateGenerationModel.
-      val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetAge)
-      Future.value(candidates.map(_.filter(_.tweetId >= earliestTweetId)))
+  o-ovewwide def fiwtew(
+    c-candidates: seq[seq[initiawcandidate]], 🥺
+    m-maxtweetage: duwation
+  ): futuwe[seq[seq[initiawcandidate]]] = {
+    if (maxtweetage >= 720.houws) {
+      futuwe.vawue(candidates)
+    } e-ewse {
+      // tweet ids awe appwoximatewy chwonowogicaw (see http://go/snowfwake), >_<
+      // s-so we awe buiwding the eawwiest t-tweet id o-once, >_<
+      // and p-pass that as t-the vawue to fiwtew candidates fow each candidategenewationmodew. (⑅˘꒳˘)
+      v-vaw eawwiesttweetid = snowfwakeid.fiwstidfow(time.now - maxtweetage)
+      f-futuwe.vawue(candidates.map(_.fiwtew(_.tweetid >= eawwiesttweetid)))
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
-    query: CGQueryType
-  ): Duration = {
-    query.params(GlobalParams.MaxTweetAgeHoursParam)
+  ovewwide def wequesttoconfig[cgquewytype <: candidategenewatowquewy](
+    quewy: cgquewytype
+  ): d-duwation = {
+    quewy.pawams(gwobawpawams.maxtweetagehouwspawam)
   }
 }

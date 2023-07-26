@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.candidate_sources.socialgraph
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sociawgwaph
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+impowt c-com.twittew.timewines.configapi.fsname
+i-impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class RecentFollowingRecentFollowingExpansionSourceFSConfig @Inject() ()
-    extends FeatureSwitchConfig {
+@singweton
+c-cwass wecentfowwowingwecentfowwowingexpansionsouwcefsconfig @inject() ()
+    e-extends featuweswitchconfig {
 
-  override val booleanFSParams: Seq[FSParam[Boolean] with FSName] = Seq(
-    RecentFollowingRecentFollowingExpansionSourceParams.CallSgsCachedColumn,
+  ovewwide vaw booweanfspawams: seq[fspawam[boowean] with fsname] = s-seq(
+    wecentfowwowingwecentfowwowingexpansionsouwcepawams.cawwsgscachedcowumn, σωσ
   )
 }

@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTopicCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorMarkNotInterestedTopic
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetopiccandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackaction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichbehaviow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowmawknotintewestedtopic
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class TopicNotInterestedFeedbackActionInfoBuilder[-Query <: PipelineQuery]()
-    extends BaseFeedbackActionInfoBuilder[Query, BaseTopicCandidate] {
+case cwass topicnotintewestedfeedbackactioninfobuiwdew[-quewy <: pipewinequewy]()
+    e-extends basefeedbackactioninfobuiwdew[quewy, >_< basetopiccandidate] {
 
-  override def apply(
-    query: Query,
-    topicCandidate: BaseTopicCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo] = {
-    Some(
-      FeedbackActionInfo(
-        feedbackActions = Seq(
-          FeedbackAction(
-            feedbackType = RichBehavior,
-            richBehavior = Some(
-              RichFeedbackBehaviorMarkNotInterestedTopic(topicCandidate.id.toString)
-            ),
-            hasUndoAction = Some(true),
-            prompt = None,
-            confirmation = None,
-            feedbackUrl = None,
-            clientEventInfo = None,
-            childFeedbackActions = None,
-            confirmationDisplayType = None,
-            icon = None,
-            subprompt = None,
-            encodedFeedbackRequest = None
+  o-ovewwide def appwy(
+    quewy: q-quewy, >_<
+    topiccandidate: basetopiccandidate, (⑅˘꒳˘)
+    candidatefeatuwes: featuwemap
+  ): o-option[feedbackactioninfo] = {
+    some(
+      f-feedbackactioninfo(
+        f-feedbackactions = seq(
+          feedbackaction(
+            feedbacktype = wichbehaviow, /(^•ω•^)
+            w-wichbehaviow = some(
+              wichfeedbackbehaviowmawknotintewestedtopic(topiccandidate.id.tostwing)
+            ), rawr x3
+            hasundoaction = some(twue), (U ﹏ U)
+            p-pwompt = nyone, (U ﹏ U)
+            confiwmation = nyone, (⑅˘꒳˘)
+            f-feedbackuww = n-nyone, òωó
+            c-cwienteventinfo = n-nyone, ʘwʘ
+            chiwdfeedbackactions = nyone, /(^•ω•^)
+            confiwmationdispwaytype = n-nyone, ʘwʘ
+            icon = nyone, σωσ
+            subpwompt = n-nyone, OwO
+            encodedfeedbackwequest = nyone
           )
-        ),
-        feedbackMetadata = None,
-        displayContext = None,
-        clientEventInfo = None
+        ), 😳😳😳
+        feedbackmetadata = nyone, 😳😳😳
+        dispwaycontext = n-none, o.O
+        cwienteventinfo = n-none
       ))
   }
 }

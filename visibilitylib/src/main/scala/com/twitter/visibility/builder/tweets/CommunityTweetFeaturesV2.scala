@@ -1,129 +1,129 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.communities.moderation.thriftscala.CommunityTweetModerationState
-import com.twitter.communities.moderation.thriftscala.CommunityUserModerationState
-import com.twitter.communities.visibility.thriftscala.CommunityVisibilityFeatures
-import com.twitter.communities.visibility.thriftscala.CommunityVisibilityFeaturesV1
-import com.twitter.communities.visibility.thriftscala.CommunityVisibilityResult
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.CommunitiesSource
-import com.twitter.visibility.features.CommunityTweetAuthorIsRemoved
-import com.twitter.visibility.features.CommunityTweetCommunityNotFound
-import com.twitter.visibility.features.CommunityTweetCommunityDeleted
-import com.twitter.visibility.features.CommunityTweetCommunitySuspended
-import com.twitter.visibility.features.CommunityTweetCommunityVisible
-import com.twitter.visibility.features.CommunityTweetIsHidden
-import com.twitter.visibility.features.TweetIsCommunityTweet
-import com.twitter.visibility.features.ViewerIsCommunityAdmin
-import com.twitter.visibility.features.ViewerIsCommunityMember
-import com.twitter.visibility.features.ViewerIsCommunityModerator
-import com.twitter.visibility.features.ViewerIsInternalCommunitiesAdmin
-import com.twitter.visibility.models.CommunityTweet
-import com.twitter.visibility.models.ViewerContext
+impowt c-com.twittew.communities.modewation.thwiftscawa.communitytweetmodewationstate
+i-impowt com.twittew.communities.modewation.thwiftscawa.communityusewmodewationstate
+i-impowt com.twittew.communities.visibiwity.thwiftscawa.communityvisibiwityfeatuwes
+i-impowt com.twittew.communities.visibiwity.thwiftscawa.communityvisibiwityfeatuwesv1
+i-impowt c-com.twittew.communities.visibiwity.thwiftscawa.communityvisibiwitywesuwt
+i-impowt c-com.twittew.stitch.stitch
+impowt com.twittew.tweetypie.thwiftscawa.tweet
+impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.common.communitiessouwce
+impowt com.twittew.visibiwity.featuwes.communitytweetauthowiswemoved
+impowt c-com.twittew.visibiwity.featuwes.communitytweetcommunitynotfound
+impowt com.twittew.visibiwity.featuwes.communitytweetcommunitydeweted
+i-impowt com.twittew.visibiwity.featuwes.communitytweetcommunitysuspended
+impowt com.twittew.visibiwity.featuwes.communitytweetcommunityvisibwe
+impowt c-com.twittew.visibiwity.featuwes.communitytweetishidden
+impowt com.twittew.visibiwity.featuwes.tweetiscommunitytweet
+i-impowt com.twittew.visibiwity.featuwes.viewewiscommunityadmin
+i-impowt com.twittew.visibiwity.featuwes.viewewiscommunitymembew
+impowt com.twittew.visibiwity.featuwes.viewewiscommunitymodewatow
+impowt com.twittew.visibiwity.featuwes.viewewisintewnawcommunitiesadmin
+impowt com.twittew.visibiwity.modews.communitytweet
+i-impowt com.twittew.visibiwity.modews.viewewcontext
 
-class CommunityTweetFeaturesV2(communitiesSource: CommunitiesSource)
-    extends CommunityTweetFeatures {
-  private[this] def forCommunityTweet(
-    communityTweet: CommunityTweet
-  ): FeatureMapBuilder => FeatureMapBuilder = { builder: FeatureMapBuilder =>
+cwass communitytweetfeatuwesv2(communitiessouwce: communitiessouwce)
+    extends communitytweetfeatuwes {
+  p-pwivate[this] def fowcommunitytweet(
+    c-communitytweet: c-communitytweet
+  ): f-featuwemapbuiwdew => f-featuwemapbuiwdew = { buiwdew: featuwemapbuiwdew =>
     {
-      val communityVisibilityFeaturesStitch =
-        communitiesSource.getCommunityVisibilityFeatures(communityTweet.communityId)
-      val communityTweetModerationStateStitch =
-        communitiesSource.getTweetModerationState(communityTweet.tweet.id)
-      val communityTweetAuthorModerationStateStitch =
-        communitiesSource.getUserModerationState(
-          communityTweet.authorId,
-          communityTweet.communityId
+      v-vaw communityvisibiwityfeatuwesstitch =
+        communitiessouwce.getcommunityvisibiwityfeatuwes(communitytweet.communityid)
+      vaw communitytweetmodewationstatestitch =
+        c-communitiessouwce.gettweetmodewationstate(communitytweet.tweet.id)
+      vaw communitytweetauthowmodewationstatestitch =
+        communitiessouwce.getusewmodewationstate(
+          communitytweet.authowid, 😳
+          communitytweet.communityid
         )
 
-      def getFlagFromFeatures(f: CommunityVisibilityFeaturesV1 => Boolean): Stitch[Boolean] =
-        communityVisibilityFeaturesStitch.map {
-          case Some(CommunityVisibilityFeatures.V1(v1)) => f(v1)
-          case _ => false
+      def getfwagfwomfeatuwes(f: communityvisibiwityfeatuwesv1 => b-boowean): stitch[boowean] =
+        c-communityvisibiwityfeatuwesstitch.map {
+          c-case s-some(communityvisibiwityfeatuwes.v1(v1)) => f(v1)
+          case _ => fawse
         }
 
-      def getFlagFromCommunityVisibilityResult(
-        f: CommunityVisibilityResult => Boolean
-      ): Stitch[Boolean] = getFlagFromFeatures { v =>
-        f(v.communityVisibilityResult)
+      def g-getfwagfwomcommunityvisibiwitywesuwt(
+        f-f: communityvisibiwitywesuwt => boowean
+      ): s-stitch[boowean] = g-getfwagfwomfeatuwes { v =>
+        f-f(v.communityvisibiwitywesuwt)
       }
 
-      builder
-        .withConstantFeature(
-          TweetIsCommunityTweet,
-          true
+      buiwdew
+        .withconstantfeatuwe(
+          t-tweetiscommunitytweet, σωσ
+          twue
         )
-        .withFeature(
-          CommunityTweetCommunityNotFound,
-          getFlagFromCommunityVisibilityResult {
-            case CommunityVisibilityResult.NotFound => true
-            case _ => false
+        .withfeatuwe(
+          communitytweetcommunitynotfound, rawr x3
+          g-getfwagfwomcommunityvisibiwitywesuwt {
+            case communityvisibiwitywesuwt.notfound => t-twue
+            case _ => fawse
           }
         )
-        .withFeature(
-          CommunityTweetCommunitySuspended,
-          getFlagFromCommunityVisibilityResult {
-            case CommunityVisibilityResult.Suspended => true
-            case _ => false
+        .withfeatuwe(
+          c-communitytweetcommunitysuspended, OwO
+          g-getfwagfwomcommunityvisibiwitywesuwt {
+            case communityvisibiwitywesuwt.suspended => twue
+            case _ => fawse
           }
         )
-        .withFeature(
-          CommunityTweetCommunityDeleted,
-          getFlagFromCommunityVisibilityResult {
-            case CommunityVisibilityResult.Deleted => true
-            case _ => false
+        .withfeatuwe(
+          communitytweetcommunitydeweted, /(^•ω•^)
+          getfwagfwomcommunityvisibiwitywesuwt {
+            case communityvisibiwitywesuwt.deweted => t-twue
+            case _ => f-fawse
           }
         )
-        .withFeature(
-          CommunityTweetCommunityVisible,
-          getFlagFromCommunityVisibilityResult {
-            case CommunityVisibilityResult.Visible => true
-            case _ => false
+        .withfeatuwe(
+          communitytweetcommunityvisibwe, 😳😳😳
+          getfwagfwomcommunityvisibiwitywesuwt {
+            c-case communityvisibiwitywesuwt.visibwe => t-twue
+            c-case _ => fawse
           }
         )
-        .withFeature(
-          ViewerIsInternalCommunitiesAdmin,
-          getFlagFromFeatures { _.viewerIsInternalAdmin }
+        .withfeatuwe(
+          viewewisintewnawcommunitiesadmin, ( ͡o ω ͡o )
+          getfwagfwomfeatuwes { _.viewewisintewnawadmin }
         )
-        .withFeature(
-          ViewerIsCommunityAdmin,
-          getFlagFromFeatures { _.viewerIsCommunityAdmin }
+        .withfeatuwe(
+          viewewiscommunityadmin, >_<
+          g-getfwagfwomfeatuwes { _.viewewiscommunityadmin }
         )
-        .withFeature(
-          ViewerIsCommunityModerator,
-          getFlagFromFeatures { _.viewerIsCommunityModerator }
+        .withfeatuwe(
+          viewewiscommunitymodewatow, >w<
+          getfwagfwomfeatuwes { _.viewewiscommunitymodewatow }
         )
-        .withFeature(
-          ViewerIsCommunityMember,
-          getFlagFromFeatures { _.viewerIsCommunityMember }
+        .withfeatuwe(
+          viewewiscommunitymembew, rawr
+          getfwagfwomfeatuwes { _.viewewiscommunitymembew }
         )
-        .withFeature(
-          CommunityTweetIsHidden,
-          communityTweetModerationStateStitch.map {
-            case Some(CommunityTweetModerationState.Hidden(_)) => true
-            case _ => false
+        .withfeatuwe(
+          c-communitytweetishidden, 😳
+          communitytweetmodewationstatestitch.map {
+            c-case some(communitytweetmodewationstate.hidden(_)) => t-twue
+            c-case _ => fawse
           }
         )
-        .withFeature(
-          CommunityTweetAuthorIsRemoved,
-          communityTweetAuthorModerationStateStitch.map {
-            case Some(CommunityUserModerationState.Removed(_)) => true
-            case _ => false
+        .withfeatuwe(
+          communitytweetauthowiswemoved, >w<
+          c-communitytweetauthowmodewationstatestitch.map {
+            c-case some(communityusewmodewationstate.wemoved(_)) => t-twue
+            c-case _ => fawse
           }
         )
     }
   }
 
-  def forTweet(
-    tweet: Tweet,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    CommunityTweet(tweet) match {
-      case None => forNonCommunityTweet()
-      case Some(communityTweet) => forCommunityTweet(communityTweet)
+  def f-fowtweet(
+    t-tweet: tweet, (⑅˘꒳˘)
+    v-viewewcontext: v-viewewcontext
+  ): f-featuwemapbuiwdew => featuwemapbuiwdew = {
+    communitytweet(tweet) match {
+      c-case nyone => fownoncommunitytweet()
+      case some(communitytweet) => fowcommunitytweet(communitytweet)
     }
   }
 }

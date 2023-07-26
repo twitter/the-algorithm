@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.products.sidebar.configapi
+package com.twittew.fowwow_wecommendations.pwoducts.sidebaw.configapi
 
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.pawam
 
-object SidebarParams {
-  object EnableProduct extends Param[Boolean](false)
+o-object sidebawpawams {
+  o-object e-enabwepwoduct e-extends pawam[boowean](fawse)
 
-  object DefaultMaxResults extends Param[Int](20)
+  o-object defauwtmaxwesuwts e-extends p-pawam[int](20)
 }

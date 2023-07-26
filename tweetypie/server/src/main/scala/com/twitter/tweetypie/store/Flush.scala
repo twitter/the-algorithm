@@ -1,33 +1,33 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-object Flush extends TweetStore.SyncModule {
+object f-fwush extends t-tweetstowe.syncmoduwe {
 
-  case class Event(
-    tweetIds: Seq[TweetId],
-    flushTweets: Boolean = true,
-    flushCounts: Boolean = true,
-    logExisting: Boolean = true)
-      extends SyncTweetStoreEvent("flush")
+  c-case c-cwass event(
+    t-tweetids: seq[tweetid], rawr
+    f-fwushtweets: b-boowean = twue, OwO
+    fwushcounts: boowean = twue, (U ﹏ U)
+    wogexisting: boowean = t-twue)
+      extends synctweetstoweevent("fwush")
 
-  trait Store {
-    val flush: FutureEffect[Event]
+  twait s-stowe {
+    vaw fwush: futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val flush: FutureEffect[Event] = wrap(underlying.flush)
+  t-twait stowewwappew extends stowe { sewf: tweetstowewwappew[stowe] =>
+    ovewwide v-vaw fwush: futuweeffect[event] = w-wwap(undewwying.fwush)
   }
 
-  object Store {
-    def apply(
-      cachingTweetStore: CachingTweetStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore
-    ): Store =
-      new Store {
-        override val flush: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            cachingTweetStore.flush,
-            tweetCountsUpdatingStore.flush
+  o-object stowe {
+    def appwy(
+      cachingtweetstowe: cachingtweetstowe, >_<
+      tweetcountsupdatingstowe: t-tweetcountscacheupdatingstowe
+    ): stowe =
+      nyew stowe {
+        ovewwide vaw fwush: futuweeffect[event] =
+          f-futuweeffect.inpawawwew(
+            cachingtweetstowe.fwush, rawr x3
+            tweetcountsupdatingstowe.fwush
           )
       }
   }

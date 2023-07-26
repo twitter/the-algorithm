@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
 
 /**
- * [[FeatureTransformer]] allow you to populate a [[com.twitter.product_mixer.core.feature.Feature]]s
- * value which is already available or can be derived without making an RPC.
+ * [[featuwetwansfowmew]] a-awwow you to p-popuwate a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]s
+ * v-vawue which i-is awweady avaiwabwe o-ow can be dewived without making an wpc. 🥺
  *
- * A [[FeatureTransformer]] transforms a given [[Inputs]] into a [[FeatureMap]].
- * The transformer must specify which [[com.twitter.product_mixer.core.feature.Feature]]s it will populate using the `features` field
- * and the returned [[FeatureMap]] must always have the specified [[com.twitter.product_mixer.core.feature.Feature]]s populated.
+ * a [[featuwetwansfowmew]] twansfowms a-a given [[inputs]] into a [[featuwemap]]. mya
+ * t-the twansfowmew must specify w-which [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]s it wiww popuwate using the `featuwes` f-fiewd
+ * and the wetuwned [[featuwemap]] m-must a-awways have the specified [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]s popuwated. 🥺
  *
- * @note Unlike [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator]] implementations,
- *       an exception thrown in a [[FeatureTransformer]] will not be added to the [[FeatureMap]] and will instead be
- *       bubble up to the calling pipeline's [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier]].
+ * @note unwike [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwehydwatow]] impwementations, >_<
+ *       an e-exception thwown in a [[featuwetwansfowmew]] wiww nyot be added to the [[featuwemap]] and wiww i-instead be
+ *       bubbwe up to t-the cawwing pipewine's [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecwassifiew]]. >_<
  */
-trait FeatureTransformer[-Inputs] extends Transformer[Inputs, FeatureMap] {
+t-twait featuwetwansfowmew[-inputs] e-extends twansfowmew[inputs, (⑅˘꒳˘) f-featuwemap] {
 
-  def features: Set[Feature[_, _]]
+  def featuwes: set[featuwe[_, /(^•ω•^) _]]
 
-  override val identifier: TransformerIdentifier
+  o-ovewwide vaw identifiew: twansfowmewidentifiew
 
-  /** Hydrates a [[FeatureMap]] for a given [[Inputs]] */
-  override def transform(input: Inputs): FeatureMap
+  /** h-hydwates a [[featuwemap]] fow a given [[inputs]] */
+  ovewwide def twansfowm(input: inputs): featuwemap
 }

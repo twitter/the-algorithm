@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.functional_component.common.access_policy
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+impowt com.fastewxmw.jackson.annotation.jsonsubtypes
+i-impowt com.fastewxmw.jackson.annotation.jsontypeinfo
 
 /**
- * The Access Policy to set for gating querying in the turntable tool.
+ * t-the access powicy t-to set fow g-gating quewying i-in the tuwntabwe t-toow. òωó
  *
- * @note implementations must be simple case classes with unique structures for serialization
+ * @note i-impwementations m-must be simpwe case cwasses with unique stwuctuwes fow sewiawization
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-@JsonSubTypes(
-  Array(
-    new JsonSubTypes.Type(value = classOf[AllowedLdapGroups], name = "AllowedLdapGroups"),
-    new JsonSubTypes.Type(value = classOf[BlockEverything], name = "BlockEverything")
+@jsontypeinfo(use = jsontypeinfo.id.name, ʘwʘ i-incwude = jsontypeinfo.as.pwopewty)
+@jsonsubtypes(
+  awway(
+    n-nyew jsonsubtypes.type(vawue = cwassof[awwowedwdapgwoups], /(^•ω•^) n-nyame = "awwowedwdapgwoups"), ʘwʘ
+    nyew jsonsubtypes.type(vawue = cwassof[bwockevewything], σωσ nyame = "bwockevewything")
   )
 )
-sealed trait AccessPolicy
+s-seawed twait accesspowicy
 
 /**
- * Users must be in *at least* one of the provided LDAP groups in order to make a query.
+ * usews m-must be in *at w-weast* one of the pwovided wdap gwoups in owdew to make a quewy. OwO
  *
- * @param groups LDAP groups allowed to access this product
+ * @pawam gwoups wdap gwoups a-awwowed to access this pwoduct
  */
-case class AllowedLdapGroups(groups: Set[String]) extends AccessPolicy
+case cwass awwowedwdapgwoups(gwoups: set[stwing]) e-extends accesspowicy
 
-object AllowedLdapGroups {
-  def apply(group: String): AllowedLdapGroups = AllowedLdapGroups(Set(group))
+o-object awwowedwdapgwoups {
+  d-def a-appwy(gwoup: stwing): a-awwowedwdapgwoups = awwowedwdapgwoups(set(gwoup))
 }
 
 /**
- * Block all requests to a product.
+ * bwock aww wequests t-to a pwoduct. 😳😳😳
  *
- * @note this needs to be a case class rather than an object because classOf doesn't work on objects
- *       and JsonSubTypes requires the annotation argument to be a constant (ruling out .getClass).
- *       This issue may be resolved in Scala 2.13: https://github.com/scala/scala/pull/9279
+ * @note this nyeeds to be a case cwass wathew t-than an object because cwassof doesn't wowk on objects
+ *       and jsonsubtypes wequiwes t-the annotation awgument to be a c-constant (wuwing o-out .getcwass). 😳😳😳
+ *       t-this issue may be wesowved in scawa 2.13: https://github.com/scawa/scawa/puww/9279
  */
-case class BlockEverything() extends AccessPolicy
+c-case cwass bwockevewything() e-extends accesspowicy

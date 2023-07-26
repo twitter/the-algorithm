@@ -1,56 +1,56 @@
-# pylint: disable=no-member, arguments-differ, attribute-defined-outside-init, unused-argument
+# pywint: disabwe=no-membew, 😳😳😳 awguments-diffew, mya a-attwibute-defined-outside-init, u-unused-awgument
 """
-Implementing Full Sparse Layer, allow specify use_binary_value in call() to
-overide default action.
+i-impwementing fuww s-spawse wayew, 😳 a-awwow specify u-use_binawy_vawue i-in caww() to
+ovewide d-defauwt action. -.-
 """
 
-from twml.layers import FullSparse as defaultFullSparse
-from twml.layers.full_sparse import sparse_dense_matmul
+fwom twmw.wayews impowt fuwwspawse as defauwtfuwwspawse
+f-fwom twmw.wayews.fuww_spawse impowt spawse_dense_matmuw
 
-import tensorflow.compat.v1 as tf
+impowt t-tensowfwow.compat.v1 as tf
 
 
-class FullSparse(defaultFullSparse):
-  def call(self, inputs, use_binary_values=None, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
+c-cwass fuwwspawse(defauwtfuwwspawse):
+  def caww(sewf, 🥺 inputs, o.O use_binawy_vawues=none, /(^•ω•^) **kwawgs):  # pywint: disabwe=unused-awgument
+    """the wogic o-of the wayew wives hewe. nyaa~~
 
-    Arguments:
-      inputs:
-        A SparseTensor or a list of SparseTensors.
-        If `inputs` is a list, all tensors must have same `dense_shape`.
+    a-awguments:
+      i-inputs:
+        a spawsetensow ow a wist of spawsetensows. nyaa~~
+        if `inputs` i-is a wist, :3 aww tensows must have same `dense_shape`. 😳😳😳
 
-    Returns:
-      - If `inputs` is `SparseTensor`, then returns `bias + inputs * dense_b`.
-      - If `inputs` is a `list[SparseTensor`, then returns
-       `bias + add_n([sp_a * dense_b for sp_a in inputs])`.
+    wetuwns:
+      - if `inputs` i-is `spawsetensow`, (˘ω˘) then w-wetuwns `bias + i-inputs * dense_b`. ^^
+      - i-if `inputs` i-is a `wist[spawsetensow`, :3 then wetuwns
+       `bias + add_n([sp_a * dense_b f-fow sp_a in inputs])`. -.-
     """
 
-    if use_binary_values is not None:
-      default_use_binary_values = use_binary_values
-    else:
-      default_use_binary_values = self.use_binary_values
+    if use_binawy_vawues i-is nyot nyone:
+      defauwt_use_binawy_vawues = use_binawy_vawues
+    ewse:
+      defauwt_use_binawy_vawues = sewf.use_binawy_vawues
 
-    if isinstance(default_use_binary_values, (list, tuple)):
-      raise ValueError(
-        "use_binary_values can not be %s when inputs is %s"
-        % (type(default_use_binary_values), type(inputs))
+    i-if isinstance(defauwt_use_binawy_vawues, (wist, 😳 tupwe)):
+      w-waise vawueewwow(
+        "use_binawy_vawues c-can nyot be %s w-when inputs is %s"
+        % (type(defauwt_use_binawy_vawues), mya type(inputs))
       )
 
-    outputs = sparse_dense_matmul(
-      inputs,
-      self.weight,
-      self.use_sparse_grads,
-      default_use_binary_values,
-      name="sparse_mm",
-      partition_axis=self.partition_axis,
-      num_partitions=self.num_partitions,
-      compress_ids=self._use_compression,
-      cast_indices_dtype=self._cast_indices_dtype,
+    outputs = s-spawse_dense_matmuw(
+      i-inputs, (˘ω˘)
+      sewf.weight, >_<
+      s-sewf.use_spawse_gwads, -.-
+      d-defauwt_use_binawy_vawues, 🥺
+      name="spawse_mm",
+      p-pawtition_axis=sewf.pawtition_axis, (U ﹏ U)
+      nyum_pawtitions=sewf.num_pawtitions, >w<
+      compwess_ids=sewf._use_compwession, mya
+      c-cast_indices_dtype=sewf._cast_indices_dtype, >w<
     )
 
-    if self.bias is not None:
-      outputs = tf.nn.bias_add(outputs, self.bias)
+    if sewf.bias is nyot nyone:
+      o-outputs = tf.nn.bias_add(outputs, nyaa~~ sewf.bias)
 
-    if self.activation is not None:
-      return self.activation(outputs)  # pylint: disable=not-callable
-    return outputs
+    i-if sewf.activation is nyot n-nyone:
+      wetuwn s-sewf.activation(outputs)  # pywint: disabwe=not-cawwabwe
+    wetuwn outputs

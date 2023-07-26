@@ -1,216 +1,216 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.twittew.simcwustews_v2.scawding.embedding.abuse
 
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.dataset.DAL.DALSourceBuilderExtension
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.search.common.features.ExternalTweetFeature
-import com.twitter.search.common.features.SearchContextFeature
-import com.twitter.search.tweet_ranking.scalding.datasets.TweetEngagementRawTrainingDataDailyJavaDataset
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.hdfs_sources.AdhocAbuseSimclusterFeaturesScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.NumBlocksP95
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getFlockBlocksSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.CassowaryJob
-import java.util.TimeZone
+impowt c-com.twittew.mw.api.featuwe
+i-impowt c-com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt c-com.twittew.scawding.awgs
+i-impowt c-com.twittew.scawding.datewange
+i-impowt com.twittew.scawding.execution
+impowt com.twittew.scawding.uniqueid
+impowt com.twittew.scawding._
+impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.d
+i-impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+impowt com.twittew.scawding_intewnaw.dawv2.dataset.daw.dawsouwcebuiwdewextension
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwossdc
+impowt com.twittew.seawch.common.featuwes.extewnawtweetfeatuwe
+impowt c-com.twittew.seawch.common.featuwes.seawchcontextfeatuwe
+impowt c-com.twittew.seawch.tweet_wanking.scawding.datasets.tweetengagementwawtwainingdatadaiwyjavadataset
+i-impowt com.twittew.simcwustews_v2.common.cwustewid
+impowt com.twittew.simcwustews_v2.hdfs_souwces.adhocabusesimcwustewfeatuwesscawadataset
+impowt com.twittew.simcwustews_v2.scawding.common.matwix.spawsematwix
+impowt com.twittew.simcwustews_v2.scawding.embedding.abuse.datasouwces.numbwocksp95
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.abuse.datasouwces.getfwockbwocksspawsematwix
+impowt com.twittew.simcwustews_v2.scawding.embedding.abuse.datasouwces.getusewintewestedinspawsematwix
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw.usewid
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembedding
+i-impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+impowt c-com.twittew.wtf.scawding.jobs.common.cassowawyjob
+impowt java.utiw.timezone
 
-object AdhocAbuseSimClusterFeatureKeys {
-  val AbuseAuthorSearchKey = "abuseAuthorSearch"
-  val AbuseUserSearchKey = "abuseUserSearch"
-  val ImpressionUserSearchKey = "impressionUserSearch"
-  val ImpressionAuthorSearchKey = "impressionAuthorSearch"
-  val FlockBlocksAuthorKey = "blocksAuthorFlockDataset"
-  val FlockBlocksUserKey = "blocksUserFlockDataset"
-  val FavScoresAuthorKey = "favsAuthorFromFavGraph"
-  val FavScoresUserKey = "favsUserFromFavGraph"
+object adhocabusesimcwustewfeatuwekeys {
+  v-vaw abuseauthowseawchkey = "abuseauthowseawch"
+  vaw abuseusewseawchkey = "abuseusewseawch"
+  vaw impwessionusewseawchkey = "impwessionusewseawch"
+  vaw impwessionauthowseawchkey = "impwessionauthowseawch"
+  vaw fwockbwocksauthowkey = "bwocksauthowfwockdataset"
+  vaw fwockbwocksusewkey = "bwocksusewfwockdataset"
+  v-vaw favscowesauthowkey = "favsauthowfwomfavgwaph"
+  vaw favscowesusewkey = "favsusewfwomfavgwaph"
 }
 
 /**
- * Adhoc job that is still in development. The job builds features that are meant to be useful for
- * search.
+ * a-adhoc job that i-is stiww in devewopment. UwU t-the job buiwds featuwes that awe meant to be usefuw fow
+ * s-seawch. 😳😳😳
  *
- * Features are built from existing SimCluster representations and the interaction graphs.
+ * f-featuwes awe buiwt fwom existing s-simcwustew wepwesentations and t-the intewaction gwaphs. XD
  *
- * Example command:
- * scalding remote run \
- * --target src/scala/com/twitter/simclusters_v2/scalding/embedding/abuse:abuse-adhoc \
- * --main-class com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocAbuseSimClusterFeaturesScaldingJob \
- * --submitter  hadoopnest1.atla.twitter.com --user cassowary \
- * --hadoop-properties "mapreduce.job.user.classpath.first=true" -- \
- * --hdfs --date 2020/11/24 2020/12/14 --partitionName second_run --dalEnvironment Prod
+ * e-exampwe command:
+ * scawding wemote w-wun \
+ * --tawget swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/abuse:abuse-adhoc \
+ * --main-cwass com.twittew.simcwustews_v2.scawding.embedding.abuse.adhocabusesimcwustewfeatuwesscawdingjob \
+ * --submittew  h-hadoopnest1.atwa.twittew.com --usew cassowawy \
+ * --hadoop-pwopewties "mapweduce.job.usew.cwasspath.fiwst=twue" -- \
+ * --hdfs --date 2020/11/24 2020/12/14 --pawtitionname s-second_wun --dawenviwonment pwod
  */
-object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with CassowaryJob {
-  override def jobName: String = "AdhocAbuseScaldingJob"
+o-object adhocabusesimcwustewfeatuwesscawdingjob e-extends adhocexecutionapp with cassowawyjob {
+  ovewwide def jobname: stwing = "adhocabusescawdingjob"
 
-  import AdhocAbuseSimClusterFeatureKeys._
+  impowt adhocabusesimcwustewfeatuwekeys._
 
-  val tweetAuthorFeature = new Feature.Discrete(ExternalTweetFeature.TWEET_AUTHOR_ID.getName)
-  val searcherIdFeature = new Feature.Discrete(SearchContextFeature.SEARCHER_ID.getName)
-  val isReportedFeature = new Feature.Binary(ExternalTweetFeature.IS_REPORTED.getName)
-  val HalfLifeInDaysForFavScore = 100
+  v-vaw tweetauthowfeatuwe = n-nyew featuwe.discwete(extewnawtweetfeatuwe.tweet_authow_id.getname)
+  vaw seawchewidfeatuwe = nyew f-featuwe.discwete(seawchcontextfeatuwe.seawchew_id.getname)
+  v-vaw iswepowtedfeatuwe = n-nyew featuwe.binawy(extewnawtweetfeatuwe.is_wepowted.getname)
+  vaw hawfwifeindaysfowfavscowe = 100
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = ModelVersion.Model20m145kUpdated,
-    pathSuffix = "abuse_simcluster_features"
+  pwivate vaw outputpaththwift: stwing = e-embeddingutiw.gethdfspath(
+    isadhoc = fawse, o.O
+    ismanhattankeyvaw = fawse, (⑅˘꒳˘)
+    modewvewsion = modewvewsion.modew20m145kupdated, 😳😳😳
+    pathsuffix = "abuse_simcwustew_featuwes"
   )
 
-  def searchDataRecords(
+  def s-seawchdatawecowds(
   )(
-    implicit dateRange: DateRange,
-    mode: Mode
+    impwicit datewange: d-datewange, nyaa~~
+    m-mode: mode
   ) = {
-    DAL
-      .read(TweetEngagementRawTrainingDataDailyJavaDataset)
-      .withRemoteReadPolicy(AllowCrossDC)
-      .toDataSetPipe
-      .records
+    d-daw
+      .wead(tweetengagementwawtwainingdatadaiwyjavadataset)
+      .withwemoteweadpowicy(awwowcwossdc)
+      .todatasetpipe
+      .wecowds
   }
 
-  def abuseInteractionSearchGraph(
+  def a-abuseintewactionseawchgwaph(
   )(
-    implicit dateRange: DateRange,
-    mode: Mode
-  ): SparseMatrix[UserId, UserId, Double] = {
-    val abuseMatrixEntries = searchDataRecords()
-      .flatMap { dataRecord =>
-        val sDataRecord = SRichDataRecord(dataRecord)
-        val authorIdOption = sDataRecord.getFeatureValueOpt(tweetAuthorFeature)
-        val userIdOption = sDataRecord.getFeatureValueOpt(searcherIdFeature)
-        val isReportedOption = sDataRecord.getFeatureValueOpt(isReportedFeature)
+    i-impwicit d-datewange: datewange, rawr
+    m-mode: mode
+  ): spawsematwix[usewid, -.- usewid, doubwe] = {
+    v-vaw abusematwixentwies = s-seawchdatawecowds()
+      .fwatmap { d-datawecowd =>
+        v-vaw s-sdatawecowd = swichdatawecowd(datawecowd)
+        vaw authowidoption = sdatawecowd.getfeatuwevawueopt(tweetauthowfeatuwe)
+        vaw usewidoption = s-sdatawecowd.getfeatuwevawueopt(seawchewidfeatuwe)
+        vaw iswepowtedoption = sdatawecowd.getfeatuwevawueopt(iswepowtedfeatuwe)
 
-        for {
-          isReported <- isReportedOption if isReported
-          authorId <- authorIdOption if authorId != 0
-          userId <- userIdOption if userId != 0
-        } yield {
-          (userId: UserId, authorId: UserId, 1.0)
+        fow {
+          iswepowted <- iswepowtedoption if iswepowted
+          a-authowid <- authowidoption if authowid != 0
+          usewid <- u-usewidoption i-if usewid != 0
+        } y-yiewd {
+          (usewid: usewid, (✿oωo) a-authowid: usewid, /(^•ω•^) 1.0)
         }
       }
-    SparseMatrix.apply[UserId, UserId, Double](abuseMatrixEntries)
+    spawsematwix.appwy[usewid, 🥺 u-usewid, d-doubwe](abusematwixentwies)
   }
 
-  def impressionInteractionSearchGraph(
+  def impwessionintewactionseawchgwaph(
   )(
-    implicit dateRange: DateRange,
-    mode: Mode
-  ): SparseMatrix[UserId, UserId, Double] = {
-    val impressionMatrixEntries = searchDataRecords
-      .flatMap { dataRecord =>
-        val sDataRecord = SRichDataRecord(dataRecord)
-        val authorIdOption = sDataRecord.getFeatureValueOpt(tweetAuthorFeature)
-        val userIdOption = sDataRecord.getFeatureValueOpt(searcherIdFeature)
+    impwicit datewange: datewange,
+    mode: mode
+  ): spawsematwix[usewid, ʘwʘ u-usewid, UwU doubwe] = {
+    v-vaw impwessionmatwixentwies = seawchdatawecowds
+      .fwatmap { d-datawecowd =>
+        v-vaw sdatawecowd = swichdatawecowd(datawecowd)
+        vaw authowidoption = s-sdatawecowd.getfeatuwevawueopt(tweetauthowfeatuwe)
+        v-vaw usewidoption = sdatawecowd.getfeatuwevawueopt(seawchewidfeatuwe)
 
-        for {
-          authorId <- authorIdOption if authorId != 0
-          userId <- userIdOption if userId != 0
-        } yield {
-          (userId: UserId, authorId: UserId, 1.0)
+        f-fow {
+          a-authowid <- authowidoption if authowid != 0
+          usewid <- usewidoption if usewid != 0
+        } y-yiewd {
+          (usewid: usewid, XD a-authowid: u-usewid, (✿oωo) 1.0)
         }
       }
-    SparseMatrix.apply[UserId, UserId, Double](impressionMatrixEntries)
+    spawsematwix.appwy[usewid, :3 usewid, d-doubwe](impwessionmatwixentwies)
   }
 
-  case class SingleSideScores(
-    unhealthyConsumerClusterScores: TypedPipe[(UserId, SimClustersEmbedding)],
-    unhealthyAuthorClusterScores: TypedPipe[(UserId, SimClustersEmbedding)],
-    healthyConsumerClusterScores: TypedPipe[(UserId, SimClustersEmbedding)],
-    healthyAuthorClusterScores: TypedPipe[(UserId, SimClustersEmbedding)])
+  case c-cwass singwesidescowes(
+    unheawthyconsumewcwustewscowes: t-typedpipe[(usewid, (///ˬ///✿) simcwustewsembedding)], nyaa~~
+    unheawthyauthowcwustewscowes: typedpipe[(usewid, >w< simcwustewsembedding)], -.-
+    heawthyconsumewcwustewscowes: t-typedpipe[(usewid, (✿oωo) s-simcwustewsembedding)], (˘ω˘)
+    heawthyauthowcwustewscowes: typedpipe[(usewid, rawr s-simcwustewsembedding)])
 
-  def buildSearchAbuseScores(
-    normalizedSimClusterMatrix: SparseMatrix[UserId, ClusterId, Double],
-    unhealthyGraph: SparseMatrix[UserId, UserId, Double],
-    healthyGraph: SparseMatrix[UserId, UserId, Double]
-  ): SingleSideScores = {
-    SingleSideScores(
-      unhealthyConsumerClusterScores = SingleSideInteractionTransformation
-        .clusterScoresFromGraphs(normalizedSimClusterMatrix, unhealthyGraph),
-      unhealthyAuthorClusterScores = SingleSideInteractionTransformation
-        .clusterScoresFromGraphs(normalizedSimClusterMatrix, unhealthyGraph.transpose),
-      healthyConsumerClusterScores = SingleSideInteractionTransformation
-        .clusterScoresFromGraphs(normalizedSimClusterMatrix, healthyGraph),
-      healthyAuthorClusterScores = SingleSideInteractionTransformation
-        .clusterScoresFromGraphs(normalizedSimClusterMatrix, healthyGraph.transpose)
+  d-def buiwdseawchabusescowes(
+    nyowmawizedsimcwustewmatwix: spawsematwix[usewid, OwO cwustewid, ^•ﻌ•^ d-doubwe],
+    unheawthygwaph: spawsematwix[usewid, UwU usewid, doubwe], (˘ω˘)
+    heawthygwaph: spawsematwix[usewid, (///ˬ///✿) u-usewid, σωσ doubwe]
+  ): singwesidescowes = {
+    singwesidescowes(
+      u-unheawthyconsumewcwustewscowes = s-singwesideintewactiontwansfowmation
+        .cwustewscowesfwomgwaphs(nowmawizedsimcwustewmatwix, /(^•ω•^) unheawthygwaph), 😳
+      unheawthyauthowcwustewscowes = singwesideintewactiontwansfowmation
+        .cwustewscowesfwomgwaphs(nowmawizedsimcwustewmatwix, 😳 u-unheawthygwaph.twanspose),
+      h-heawthyconsumewcwustewscowes = singwesideintewactiontwansfowmation
+        .cwustewscowesfwomgwaphs(nowmawizedsimcwustewmatwix, (⑅˘꒳˘) heawthygwaph), 😳😳😳
+      heawthyauthowcwustewscowes = singwesideintewactiontwansfowmation
+        .cwustewscowesfwomgwaphs(nowmawizedsimcwustewmatwix, 😳 h-heawthygwaph.twanspose)
     )
   }
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    Execution.getMode.flatMap { implicit mode =>
-      val normalizedSimClusterMatrix = getUserInterestedInSparseMatrix.rowL2Normalize
+    impwicit datewange: datewange, XD
+    timezone: t-timezone, mya
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
+    e-execution.getmode.fwatmap { impwicit m-mode =>
+      vaw nyowmawizedsimcwustewmatwix = g-getusewintewestedinspawsematwix.woww2nowmawize
 
-      val abuseSearchGraph = abuseInteractionSearchGraph()
-      val impressionSearchGraph = impressionInteractionSearchGraph()
+      v-vaw a-abuseseawchgwaph = abuseintewactionseawchgwaph()
+      v-vaw impwessionseawchgwaph = i-impwessionintewactionseawchgwaph()
 
-      val searchAbuseScores = buildSearchAbuseScores(
-        normalizedSimClusterMatrix,
-        unhealthyGraph = abuseSearchGraph,
-        healthyGraph = impressionSearchGraph)
+      vaw seawchabusescowes = b-buiwdseawchabusescowes(
+        n-nyowmawizedsimcwustewmatwix, ^•ﻌ•^
+        u-unheawthygwaph = abuseseawchgwaph, ʘwʘ
+        heawthygwaph = i-impwessionseawchgwaph)
 
-      // Step 2a: Read FlockBlocks for unhealthy interactions and user-user-fav for healthy interactions
-      val flockBlocksSparseGraph =
-        getFlockBlocksSparseMatrix(NumBlocksP95, dateRange.prepend(Years(1)))
+      // step 2a: wead f-fwockbwocks f-fow unheawthy intewactions and usew-usew-fav fow heawthy intewactions
+      v-vaw f-fwockbwocksspawsegwaph =
+        g-getfwockbwocksspawsematwix(numbwocksp95, d-datewange.pwepend(yeaws(1)))
 
-      val favSparseGraph = SparseMatrix.apply[UserId, UserId, Double](
-        ExternalDataSources.getFavEdges(HalfLifeInDaysForFavScore))
+      vaw f-favspawsegwaph = spawsematwix.appwy[usewid, ( ͡o ω ͡o ) usewid, doubwe](
+        extewnawdatasouwces.getfavedges(hawfwifeindaysfowfavscowe))
 
-      val blocksAbuseScores = buildSearchAbuseScores(
-        normalizedSimClusterMatrix,
-        unhealthyGraph = flockBlocksSparseGraph,
-        healthyGraph = favSparseGraph
+      vaw bwocksabusescowes = b-buiwdseawchabusescowes(
+        nyowmawizedsimcwustewmatwix, mya
+        u-unheawthygwaph = fwockbwocksspawsegwaph, o.O
+        h-heawthygwaph = favspawsegwaph
       )
 
-      // Step 3. Combine all scores from different sources for users
-      val pairedScores = SingleSideInteractionTransformation.pairScores(
-        Map(
-          // User cluster scores built from the search abuse reports graph
-          AbuseUserSearchKey -> searchAbuseScores.unhealthyConsumerClusterScores,
-          // Author cluster scores built from the search abuse reports graph
-          AbuseAuthorSearchKey -> searchAbuseScores.unhealthyAuthorClusterScores,
-          // User cluster scores built from the search impression graph
-          ImpressionUserSearchKey -> searchAbuseScores.healthyConsumerClusterScores,
-          // Author cluster scores built from the search impression graph
-          ImpressionAuthorSearchKey -> searchAbuseScores.healthyAuthorClusterScores,
-          // User cluster scores built from flock blocks graph
-          FlockBlocksUserKey -> blocksAbuseScores.unhealthyConsumerClusterScores,
-          // Author cluster scores built from the flock blocks graph
-          FlockBlocksAuthorKey -> blocksAbuseScores.unhealthyAuthorClusterScores,
-          // User cluster scores built from the user-user fav graph
-          FavScoresUserKey -> blocksAbuseScores.healthyConsumerClusterScores,
-          // Author cluster scores built from the user-user fav graph
-          FavScoresAuthorKey -> blocksAbuseScores.healthyAuthorClusterScores
+      // s-step 3. (✿oωo) combine aww scowes f-fwom diffewent s-souwces fow usews
+      v-vaw paiwedscowes = s-singwesideintewactiontwansfowmation.paiwscowes(
+        m-map(
+          // usew cwustew scowes buiwt fwom the seawch abuse wepowts gwaph
+          abuseusewseawchkey -> seawchabusescowes.unheawthyconsumewcwustewscowes, :3
+          // authow cwustew s-scowes buiwt f-fwom the seawch a-abuse wepowts gwaph
+          abuseauthowseawchkey -> s-seawchabusescowes.unheawthyauthowcwustewscowes, 😳
+          // usew cwustew scowes buiwt fwom the seawch impwession g-gwaph
+          i-impwessionusewseawchkey -> seawchabusescowes.heawthyconsumewcwustewscowes, (U ﹏ U)
+          // a-authow cwustew scowes buiwt fwom the seawch impwession g-gwaph
+          i-impwessionauthowseawchkey -> seawchabusescowes.heawthyauthowcwustewscowes,
+          // usew c-cwustew scowes b-buiwt fwom fwock bwocks gwaph
+          fwockbwocksusewkey -> bwocksabusescowes.unheawthyconsumewcwustewscowes, mya
+          // authow cwustew scowes b-buiwt fwom t-the fwock bwocks g-gwaph
+          f-fwockbwocksauthowkey -> b-bwocksabusescowes.unheawthyauthowcwustewscowes, (U ᵕ U❁)
+          // usew cwustew s-scowes buiwt f-fwom the usew-usew fav gwaph
+          f-favscowesusewkey -> b-bwocksabusescowes.heawthyconsumewcwustewscowes,
+          // authow c-cwustew scowes buiwt fwom the usew-usew fav gwaph
+          f-favscowesauthowkey -> bwocksabusescowes.heawthyauthowcwustewscowes
         )
       )
 
-      pairedScores.writeDALSnapshotExecution(
-        AdhocAbuseSimclusterFeaturesScalaDataset,
-        D.Daily,
-        D.Suffix(outputPathThrift),
-        D.Parquet,
-        dateRange.`end`,
-        partitions = Set(D.Partition("partition", args("partitionName"), D.PartitionType.String))
+      p-paiwedscowes.wwitedawsnapshotexecution(
+        a-adhocabusesimcwustewfeatuwesscawadataset, :3
+        d.daiwy, mya
+        d-d.suffix(outputpaththwift), OwO
+        d.pawquet, (ˆ ﻌ ˆ)♡
+        datewange.`end`, ʘwʘ
+        pawtitions = s-set(d.pawtition("pawtition", o.O a-awgs("pawtitionname"), UwU d-d.pawtitiontype.stwing))
       )
     }
   }

@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.button
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button
 
-sealed trait ButtonStyle
+seawed t-twait buttonstywe
 
-case object Default extends ButtonStyle
-case object Primary extends ButtonStyle
-case object Secondary extends ButtonStyle
-case object Text extends ButtonStyle
-case object Destructive extends ButtonStyle
-case object Neutral extends ButtonStyle
-case object DestructiveSecondary extends ButtonStyle
-case object DestructiveText extends ButtonStyle
+c-case object d-defauwt extends b-buttonstywe
+case o-object pwimawy e-extends buttonstywe
+c-case object s-secondawy extends buttonstywe
+case object text extends buttonstywe
+case object d-destwuctive extends buttonstywe
+case object nyeutwaw e-extends buttonstywe
+case o-object destwuctivesecondawy extends buttonstywe
+case object destwuctivetext e-extends buttonstywe

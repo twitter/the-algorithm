@@ -1,96 +1,96 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.swice
 
-import com.twitter.product_mixer.component_library.model.candidate._
-import com.twitter.product_mixer.component_library.model.candidate.hubble.AdCreativeCandidate
-import com.twitter.product_mixer.component_library.model.candidate.hubble.AdGroupCandidate
-import com.twitter.product_mixer.component_library.model.candidate.hubble.AdUnitCandidate
-import com.twitter.product_mixer.component_library.model.candidate.hubble.CampaignCandidate
-import com.twitter.product_mixer.component_library.model.candidate.hubble.FundingSourceCandidate
-import com.twitter.product_mixer.component_library.model.candidate.suggestion.QuerySuggestionCandidate
-import com.twitter.product_mixer.component_library.model.candidate.suggestion.TypeaheadEventCandidate
-import com.twitter.product_mixer.component_library.premarshaller.slice.builder.SliceBuilder
-import com.twitter.product_mixer.component_library.premarshaller.slice.builder.SliceCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.slice.builder.SliceCursorUpdater
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.UndecoratedCandidateDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedCandidateDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedModuleDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedPresentationDomainMarshallerException
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.slice.BaseSliceItemPresentation
-import com.twitter.product_mixer.core.model.marshalling.response.slice._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate._
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.hubbwe.adcweativecandidate
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.hubbwe.adgwoupcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.hubbwe.adunitcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.hubbwe.campaigncandidate
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.hubbwe.fundingsouwcecandidate
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.suggestion.quewysuggestioncandidate
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.suggestion.typeaheadeventcandidate
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.swice.buiwdew.swicebuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.swice.buiwdew.swicecuwsowbuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.swice.buiwdew.swicecuwsowupdatew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.domainmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.undecowatedcandidatedomainmawshawwewexception
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.unsuppowtedcandidatedomainmawshawwewexception
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.unsuppowtedmoduwedomainmawshawwewexception
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.unsuppowtedpwesentationdomainmawshawwewexception
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.domainmawshawwewidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.swice.baseswiceitempwesentation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice._
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Domain marshaller that generates Slices automatically for most candidates but a different
- * presentation can be provided by decorators that implement [[BaseSliceItemPresentation]]. This will
- * only be necessary in the rare case that a candidate contains more than an id. For example,
- * cursors require a value/type rather than an id.
+ * domain mawshawwew that genewates s-swices automaticawwy fow most candidates b-but a d-diffewent
+ * pwesentation c-can be p-pwovided by decowatows that impwement [[baseswiceitempwesentation]]. (⑅˘꒳˘) this wiww
+ * o-onwy be nyecessawy in the wawe case that a candidate c-contains mowe than an id. XD fow exampwe, -.-
+ * cuwsows wequiwe a vawue/type wathew than an id. :3
  */
-case class SliceDomainMarshaller[-Query <: PipelineQuery](
-  override val cursorBuilders: Seq[SliceCursorBuilder[Query]] = Seq.empty,
-  override val cursorUpdaters: Seq[SliceCursorUpdater[Query]] = Seq.empty,
-  override val identifier: DomainMarshallerIdentifier = DomainMarshallerIdentifier("Slice"))
-    extends DomainMarshaller[Query, Slice]
-    with SliceBuilder[Query] {
+c-case cwass swicedomainmawshawwew[-quewy <: p-pipewinequewy](
+  o-ovewwide vaw c-cuwsowbuiwdews: seq[swicecuwsowbuiwdew[quewy]] = seq.empty,
+  ovewwide vaw cuwsowupdatews: s-seq[swicecuwsowupdatew[quewy]] = s-seq.empty, nyaa~~
+  ovewwide v-vaw identifiew: d-domainmawshawwewidentifiew = domainmawshawwewidentifiew("swice"))
+    extends d-domainmawshawwew[quewy, 😳 swice]
+    w-with swicebuiwdew[quewy] {
 
-  override def apply(
-    query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): Slice = {
-    val entries = selections.map {
-      case ItemCandidateWithDetails(_, Some(presentation: BaseSliceItemPresentation), _) =>
-        presentation.sliceItem
-      case candidateWithDetails @ ItemCandidateWithDetails(candidate, None, _) =>
-        val source = candidateWithDetails.source
-        candidate match {
-          case candidate: BaseTopicCandidate => TopicItem(candidate.id)
-          case candidate: BaseTweetCandidate => TweetItem(candidate.id)
-          case candidate: BaseUserCandidate => UserItem(candidate.id)
-          case candidate: TwitterListCandidate => TwitterListItem(candidate.id)
-          case candidate: DMConvoSearchCandidate =>
-            DMConvoSearchItem(candidate.id, candidate.lastReadableEventId)
-          case candidate: DMEventCandidate =>
-            DMEventItem(candidate.id)
-          case candidate: DMConvoCandidate =>
-            DMConvoItem(candidate.id, candidate.lastReadableEventId)
-          case candidate: DMMessageSearchCandidate => DMMessageSearchItem(candidate.id)
-          case candidate: QuerySuggestionCandidate =>
-            TypeaheadQuerySuggestionItem(candidate.id, candidate.metadata)
-          case candidate: TypeaheadEventCandidate =>
-            TypeaheadEventItem(candidate.id, candidate.metadata)
-          case candidate: AdUnitCandidate =>
-            AdItem(candidate.id, candidate.adAccountId)
-          case candidate: AdCreativeCandidate =>
-            AdCreativeItem(candidate.id, candidate.adType, candidate.adAccountId)
-          case candidate: AdGroupCandidate =>
-            AdGroupItem(candidate.id, candidate.adAccountId)
-          case candidate: CampaignCandidate =>
-            CampaignItem(candidate.id, candidate.adAccountId)
-          case candidate: FundingSourceCandidate =>
-            FundingSourceItem(candidate.id, candidate.adAccountId)
-          case candidate: CursorCandidate =>
-            // Cursors must contain a cursor type which is defined by the presentation. As a result,
-            // cursors are expected to be handled by the Some(presentation) case above, and must not
-            // fall into this case.
-            throw new UndecoratedCandidateDomainMarshallerException(candidate, source)
-          case candidate =>
-            throw new UnsupportedCandidateDomainMarshallerException(candidate, source)
+  ovewwide def appwy(
+    quewy: q-quewy, (⑅˘꒳˘)
+    sewections: seq[candidatewithdetaiws]
+  ): s-swice = {
+    vaw entwies = s-sewections.map {
+      c-case itemcandidatewithdetaiws(_, nyaa~~ some(pwesentation: baseswiceitempwesentation), OwO _) =>
+        pwesentation.swiceitem
+      case candidatewithdetaiws @ itemcandidatewithdetaiws(candidate, rawr x3 nyone, XD _) =>
+        v-vaw souwce = c-candidatewithdetaiws.souwce
+        candidate m-match {
+          c-case candidate: b-basetopiccandidate => topicitem(candidate.id)
+          case candidate: basetweetcandidate => t-tweetitem(candidate.id)
+          case candidate: baseusewcandidate => usewitem(candidate.id)
+          case c-candidate: twittewwistcandidate => twittewwistitem(candidate.id)
+          c-case c-candidate: dmconvoseawchcandidate =>
+            d-dmconvoseawchitem(candidate.id, σωσ candidate.wastweadabweeventid)
+          c-case c-candidate: dmeventcandidate =>
+            d-dmeventitem(candidate.id)
+          case c-candidate: dmconvocandidate =>
+            dmconvoitem(candidate.id, (U ᵕ U❁) candidate.wastweadabweeventid)
+          case candidate: d-dmmessageseawchcandidate => d-dmmessageseawchitem(candidate.id)
+          c-case candidate: q-quewysuggestioncandidate =>
+            t-typeaheadquewysuggestionitem(candidate.id, (U ﹏ U) candidate.metadata)
+          case candidate: typeaheadeventcandidate =>
+            t-typeaheadeventitem(candidate.id, :3 candidate.metadata)
+          case candidate: adunitcandidate =>
+            aditem(candidate.id, ( ͡o ω ͡o ) candidate.adaccountid)
+          c-case candidate: adcweativecandidate =>
+            adcweativeitem(candidate.id, σωσ candidate.adtype, >w< c-candidate.adaccountid)
+          c-case candidate: a-adgwoupcandidate =>
+            adgwoupitem(candidate.id, 😳😳😳 c-candidate.adaccountid)
+          case candidate: c-campaigncandidate =>
+            c-campaignitem(candidate.id, OwO candidate.adaccountid)
+          case candidate: fundingsouwcecandidate =>
+            fundingsouwceitem(candidate.id, 😳 candidate.adaccountid)
+          c-case candidate: cuwsowcandidate =>
+            // c-cuwsows must contain a c-cuwsow type which i-is defined by the pwesentation. 😳😳😳 as a wesuwt, (˘ω˘)
+            // cuwsows a-awe expected t-to be handwed by the some(pwesentation) c-case a-above, ʘwʘ and must not
+            // faww into this case. ( ͡o ω ͡o )
+            thwow nyew u-undecowatedcandidatedomainmawshawwewexception(candidate, o.O s-souwce)
+          c-case candidate =>
+            t-thwow nyew u-unsuppowtedcandidatedomainmawshawwewexception(candidate, >w< souwce)
         }
-      case itemCandidateWithDetails @ ItemCandidateWithDetails(candidate, Some(presentation), _) =>
-        throw new UnsupportedPresentationDomainMarshallerException(
-          candidate,
-          presentation,
-          itemCandidateWithDetails.source)
-      case moduleCandidateWithDetails @ ModuleCandidateWithDetails(_, presentation, _) =>
-        throw new UnsupportedModuleDomainMarshallerException(
-          presentation,
-          moduleCandidateWithDetails.source)
+      c-case itemcandidatewithdetaiws @ itemcandidatewithdetaiws(candidate, 😳 some(pwesentation), 🥺 _) =>
+        thwow nyew unsuppowtedpwesentationdomainmawshawwewexception(
+          c-candidate, rawr x3
+          p-pwesentation, o.O
+          itemcandidatewithdetaiws.souwce)
+      case moduwecandidatewithdetaiws @ moduwecandidatewithdetaiws(_, rawr p-pwesentation, ʘwʘ _) =>
+        t-thwow nyew unsuppowtedmoduwedomainmawshawwewexception(
+          pwesentation, 😳😳😳
+          moduwecandidatewithdetaiws.souwce)
     }
 
-    buildSlice(query, entries)
+    buiwdswice(quewy, ^^;; e-entwies)
   }
 }

@@ -1,30 +1,30 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
 /**
- * Defines relevance related constants that are used at both ingestion time and
- * earlybird scoring time.
+ * defines w-wewevance wewated c-constants t-that awe used at b-both ingestion t-time and
+ * eawwybiwd s-scowing time. 🥺
  */
-public final class RelevanceSignalConstants {
-  // user reputation
-  public static final byte UNSET_REPUTATION_SENTINEL = Byte.MIN_VALUE;
-  public static final byte MAX_REPUTATION = 100;
-  public static final byte MIN_REPUTATION = 0;
-  // below overall CDF of ~10%, default value for new users,
-  // given as a goodwill value in case it is unset
-  public static final byte GOODWILL_REPUTATION = 17;
+p-pubwic f-finaw cwass wewevancesignawconstants {
+  // usew weputation
+  pubwic static finaw byte unset_weputation_sentinew = b-byte.min_vawue;
+  pubwic static finaw byte max_weputation = 100;
+  p-pubwic static finaw byte min_weputation = 0;
+  // b-bewow ovewaww cdf of ~10%, mya defauwt vawue fow nyew usews, 🥺
+  // g-given as a goodwiww vawue i-in case it is unset
+  p-pubwic static finaw byte goodwiww_weputation = 17;
 
-  // text score
-  public static final byte UNSET_TEXT_SCORE_SENTINEL = Byte.MIN_VALUE;
-  // roughly at overall CDF of ~10%, given as a goodwill value in case it is unset
-  public static final byte GOODWILL_TEXT_SCORE = 19;
+  // text scowe
+  pubwic static finaw byte unset_text_scowe_sentinew = b-byte.min_vawue;
+  // woughwy at ovewaww cdf of ~10%, >_< given as a goodwiww vawue i-in case it is unset
+  pubwic static f-finaw byte goodwiww_text_scowe = 19;
 
-  private RelevanceSignalConstants() {
+  p-pwivate w-wewevancesignawconstants() {
   }
 
-  // check whether the specified user rep value is valid
-  public static boolean isValidUserReputation(int userRep) {
-    return userRep != UNSET_REPUTATION_SENTINEL
-           && userRep >= MIN_REPUTATION
-           && userRep < MAX_REPUTATION;
+  // c-check whethew the specified usew wep v-vawue is vawid
+  pubwic static boowean isvawidusewweputation(int u-usewwep) {
+    wetuwn usewwep != unset_weputation_sentinew
+           && usewwep >= min_weputation
+           && usewwep < max_weputation;
   }
 }

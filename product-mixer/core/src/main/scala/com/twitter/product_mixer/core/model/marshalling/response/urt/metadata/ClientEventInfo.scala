@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-trait HasClientEventInfo {
-  def clientEventInfo: Option[ClientEventInfo]
+twait hascwienteventinfo {
+  d-def c-cwienteventinfo: o-option[cwienteventinfo]
 }
 
 /**
- * Information used to build Client Events
- * @see [[http://go/client-events]]
+ * i-infowmation used t-to buiwd cwient e-events
+ * @see [[http://go/cwient-events]]
  */
-case class ClientEventInfo(
-  component: Option[String],
-  element: Option[String],
-  details: Option[ClientEventDetails],
-  action: Option[String],
-  entityToken: Option[String])
+c-case cwass cwienteventinfo(
+  c-component: option[stwing], rawr
+  ewement: option[stwing], OwO
+  detaiws: option[cwienteventdetaiws], (U ﹏ U)
+  a-action: option[stwing], >_<
+  entitytoken: option[stwing])
 
 /**
- * Additional client events fields
+ * additionaw c-cwient events fiewds
  *
- * @note if a field from [[http://go/client_app.thrift]] is needed but is not here
- *       contact the `#product-mixer` team to have it added.
+ * @note i-if a fiewd fwom [[http://go/cwient_app.thwift]] is nyeeded but is nyot h-hewe
+ *       contact the `#pwoduct-mixew` t-team t-to have it added.
  */
-case class ClientEventDetails(
-  conversationDetails: Option[ConversationDetails],
-  timelinesDetails: Option[TimelinesDetails],
-  articleDetails: Option[ArticleDetails],
-  liveEventDetails: Option[LiveEventDetails],
-  commerceDetails: Option[CommerceDetails])
+case cwass cwienteventdetaiws(
+  convewsationdetaiws: option[convewsationdetaiws], rawr x3
+  t-timewinesdetaiws: option[timewinesdetaiws], mya
+  awticwedetaiws: option[awticwedetaiws], nyaa~~
+  wiveeventdetaiws: option[wiveeventdetaiws], (⑅˘꒳˘)
+  c-commewcedetaiws: option[commewcedetaiws])

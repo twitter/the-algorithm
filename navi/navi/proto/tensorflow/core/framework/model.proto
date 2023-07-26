@@ -1,134 +1,134 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.data.model;
+package tensowfwow.data.modew;
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/model_go_proto";
+option cc_enabwe_awenas = t-twue;
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/modew_go_pwoto";
 
-// Class of a node in the performance model.
-enum NodeClass {
-  UNKNOWN = 0;
-  INTERLEAVE_MANY = 1;
-  ASYNC_INTERLEAVE_MANY = 2;
-  KNOWN_RATIO = 3;
-  ASYNC_KNOWN_RATIO = 4;
-  UNKNOWN_RATIO = 5;
+// c-cwass o-of a nyode in the p-pewfowmance modew.
+e-enum nyodecwass {
+  u-unknown = 0;
+  i-intewweave_many = 1;
+  async_intewweave_many = 2;
+  known_watio = 3;
+  async_known_watio = 4;
+  unknown_watio = 5;
 }
 
-// Algorithm used for model autotuning optimization.
-enum AutotuneAlgorithm {
-  DEFAULT = 0;
-  HILL_CLIMB = 1;
-  GRADIENT_DESCENT = 2;
-  MAX_PARALLELISM = 3;
+// a-awgowithm used fow modew autotuning optimization. rawr x3
+e-enum autotuneawgowithm {
+  defauwt = 0;
+  hiww_cwimb = 1;
+  g-gwadient_descent = 2;
+  max_pawawwewism = 3;
 }
 
-// Protocol buffer representing the data used by the autotuning modeling
-// framework.
-message ModelProto {
-  // General representation of a node in the model.
-  message Node {
-    // Unique node ID.
+// pwotocow buffew wepwesenting t-the data used by the autotuning m-modewing
+// fwamewowk. XD
+m-message modewpwoto {
+  // genewaw wepwesentation of a nyode in the modew. σωσ
+  message nyode {
+    // u-unique nyode id. (U ᵕ U❁)
     int64 id = 1;
 
-    // Human-readable name of the node.
-    string name = 2;
+    // human-weadabwe name of the n-nyode. (U ﹏ U)
+    stwing nyame = 2;
 
-    // An indication whether autotuning is enabled for this node.
-    bool autotune = 3;
+    // a-an indication w-whethew autotuning i-is enabwed f-fow this nyode. :3
+    boow autotune = 3;
 
-    // The number of bytes stored in this node's buffer.
-    int64 buffered_bytes = 4;
+    // the nyumbew of bytes s-stowed in this nyode's buffew. ( ͡o ω ͡o )
+    int64 buffewed_bytes = 4;
 
-    // The number of elements stored in this node's buffer.
-    int64 buffered_elements = 5;
+    // t-the nyumbew of ewements stowed in this nyode's buffew. σωσ
+    int64 buffewed_ewements = 5;
 
-    // The number of bytes consumed by the node.
-    int64 bytes_consumed = 6;
+    // the nyumbew o-of bytes consumed by the nyode. >w<
+    i-int64 b-bytes_consumed = 6;
 
-    // The number of bytes produced by the node.
-    int64 bytes_produced = 7;
+    // t-the nyumbew of bytes pwoduced by the nyode. 😳😳😳
+    int64 b-bytes_pwoduced = 7;
 
-    // The number of elements produced by the node.
-    int64 num_elements = 8;
+    // t-the nyumbew of ewements p-pwoduced by t-the nyode. OwO
+    int64 nyum_ewements = 8;
 
-    // The aggregate processing time spent in this node.
-    int64 processing_time = 9;
+    // t-the aggwegate pwocessing time s-spent in this nyode. 😳
+    int64 pwocessing_time = 9;
 
-    // An indication whether this node records metrics about produced and
-    // consumed elements.
-    bool record_metrics = 10;
+    // an indication w-whethew this nyode wecowds m-metwics about pwoduced and
+    // c-consumed e-ewements. 😳😳😳
+    boow wecowd_metwics = 10;
 
-    // Represents a node parameter.
-    message Parameter {
-      // Human-readable name of the parameter.
-      string name = 1;
+    // wepwesents a nyode pawametew. (˘ω˘)
+    message pawametew {
+      // human-weadabwe nyame of the pawametew. ʘwʘ
+      s-stwing n-nyame = 1;
 
-      // Identifies the model value of the parameter. This can be different from
-      // the actual value (e.g. during optimization search).
-      double value = 2;
+      // identifies t-the modew vawue o-of the pawametew. ( ͡o ω ͡o ) t-this can be diffewent fwom
+      // the actuaw vawue (e.g. o.O d-duwing optimization seawch). >w<
+      doubwe vawue = 2;
 
-      // The actual value of the parameter.
-      double state_value = 3;
+      // the actuaw vawue of the pawametew. 😳
+      d-doubwe state_vawue = 3;
 
-      // Minimum value of the parameter.
-      double min = 4;
+      // minimum v-vawue of the pawametew. 🥺
+      d-doubwe min = 4;
 
-      // Maximum value of the parameter.
-      double max = 5;
+      // m-maximum vawue of the pawametew. rawr x3
+      d-doubwe max = 5;
 
-      // Identifies whether the parameter should participate in autotuning.
-      bool tunable = 6;
+      // i-identifies w-whethew the p-pawametew shouwd pawticipate in autotuning. o.O
+      b-boow tunabwe = 6;
     }
 
-    // Parameters of this node.
-    repeated Parameter parameters = 11;
+    // p-pawametews of t-this nyode. rawr
+    w-wepeated pawametew p-pawametews = 11;
 
-    // Statistic of inputs processing time history.
-    double input_processing_time_sum = 12;
-    int64 input_processing_time_count = 13;
+    // statistic of inputs pwocessing time h-histowy. ʘwʘ
+    doubwe input_pwocessing_time_sum = 12;
+    int64 input_pwocessing_time_count = 13;
 
-    // IDs of inputs of this node.
-    repeated int64 inputs = 14;
+    // ids of inputs of this nyode. 😳😳😳
+    wepeated i-int64 inputs = 14;
 
-    // Class of this node.
-    NodeClass node_class = 15;
+    // cwass of this nyode. ^^;;
+    nyodecwass n-nyode_cwass = 15;
 
-    // Ratio of input to output elements. This is only used by KNOWN_RATIO and
-    // ASYNC_KNOWN_RATIO nodes.
-    double ratio = 16;
+    // w-watio o-of input to output ewements. o.O this i-is onwy used by known_watio a-and
+    // async_known_watio n-nyodes. (///ˬ///✿)
+    doubwe watio = 16;
 
-    // Ratio identifies how many parallelism calls are introduced by one
-    // buffered element. This is only used by ASYNC_KNOWN_RATIO nodes.
-    double memory_ratio = 17;
+    // watio identifies how many pawawwewism cawws a-awe intwoduced by one
+    // buffewed e-ewement. σωσ this is onwy used b-by async_known_watio n-nyodes. nyaa~~
+    doubwe memowy_watio = 17;
   }
 
-  // Map of node IDs to nodes of this model.
-  map<int64, Node> nodes = 1;
+  // map of nyode i-ids to nyodes o-of this modew. ^^;;
+  map<int64, ^•ﻌ•^ nyode> n-nyodes = 1;
 
-  // ID of the output node of this model.
+  // i-id of the output nyode of this modew. σωσ
   int64 output = 2;
 
-  // Counter for node IDs of this model.
-  int64 id_counter = 3;
+  // countew fow n-nyode ids of this m-modew. -.-
+  int64 i-id_countew = 3;
 
-  reserved 4;
+  wesewved 4;
 
-  // Contains parameters of the model autotuning optimization.
-  message OptimizationParams {
-    // Algorithm used for autotuning optimization.
-    AutotuneAlgorithm algorithm = 1;
+  // c-contains p-pawametews of the modew autotuning o-optimization. ^^;;
+  message optimizationpawams {
+    // awgowithm used fow autotuning optimization. XD
+    a-autotuneawgowithm a-awgowithm = 1;
 
-    // Number of available logical threads.
-    int64 cpu_budget = 2;
+    // nyumbew of avaiwabwe wogicaw thweads. 🥺
+    i-int64 c-cpu_budget = 2;
 
-    // Amount of available memory in bytes.
-    int64 ram_budget = 3;
+    // amount of avaiwabwe memowy in bytes.
+    i-int64 wam_budget = 3;
 
-    // Time between two consecutive `GetNext` calls to the iterator represented
-    // by the output node.
-    double model_input_time = 4;
+    // time between two consecutive `getnext` cawws to the itewatow wepwesented
+    // b-by the output nyode. òωó
+    doubwe modew_input_time = 4;
   }
 
-  OptimizationParams optimization_params = 5;
+  o-optimizationpawams o-optimization_pawams = 5;
 }

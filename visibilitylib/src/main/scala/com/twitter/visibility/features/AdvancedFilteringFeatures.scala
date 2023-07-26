@@ -1,24 +1,24 @@
-package com.twitter.visibility.features
+package com.twittew.visibiwity.featuwes
 
-import com.twitter.gizmoduck.thriftscala.MentionFilter
-import com.twitter.util.Duration
+impowt com.twittew.gizmoduck.thwiftscawa.mentionfiwtew
+impowt c-com.twittew.utiw.duwation
 
-case object ViewerFiltersNoConfirmedEmail extends Feature[Boolean]
+c-case object viewewfiwtewsnoconfiwmedemaiw e-extends f-featuwe[boowean]
 
-case object ViewerFiltersNoConfirmedPhone extends Feature[Boolean]
+c-case object v-viewewfiwtewsnoconfiwmedphone extends f-featuwe[boowean]
 
-case object ViewerFiltersDefaultProfileImage extends Feature[Boolean]
+c-case object viewewfiwtewsdefauwtpwofiweimage extends featuwe[boowean]
 
-case object ViewerFiltersNewUsers extends Feature[Boolean]
+case object viewewfiwtewsnewusews extends featuwe[boowean]
 
-case object ViewerFiltersNotFollowedBy extends Feature[Boolean]
+c-case object viewewfiwtewsnotfowwowedby extends featuwe[boowean]
 
-case object ViewerMentionFilter extends Feature[MentionFilter]
+c-case object viewewmentionfiwtew e-extends featuwe[mentionfiwtew]
 
-case object AuthorHasConfirmedEmail extends Feature[Boolean]
+case object authowhasconfiwmedemaiw e-extends featuwe[boowean]
 
-case object AuthorHasVerifiedPhone extends Feature[Boolean]
+case o-object authowhasvewifiedphone e-extends featuwe[boowean]
 
-case object AuthorHasDefaultProfileImage extends Feature[Boolean]
+case object authowhasdefauwtpwofiweimage extends featuwe[boowean]
 
-case object AuthorAccountAge extends Feature[Duration]
+c-case object authowaccountage extends featuwe[duwation]

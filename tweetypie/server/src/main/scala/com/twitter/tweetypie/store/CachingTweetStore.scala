@@ -1,405 +1,405 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.twitter.scrooge.TFieldBlob
-import com.twitter.servo.cache.LockingCache._
-import com.twitter.servo.cache._
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.repository.CachedBounceDeleted.isBounceDeleted
-import com.twitter.tweetypie.repository.CachedBounceDeleted.toBounceDeletedCachedTweet
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.store.TweetUpdate._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Time
-import diffshow.DiffShow
+impowt c-com.fastewxmw.jackson.databind.objectmappew
+impowt c-com.fastewxmw.jackson.moduwe.scawa.defauwtscawamoduwe
+i-impowt c-com.twittew.scwooge.tfiewdbwob
+i-impowt com.twittew.sewvo.cache.wockingcache._
+i-impowt com.twittew.sewvo.cache._
+i-impowt com.twittew.tweetypie.additionawfiewds.additionawfiewds
+impowt com.twittew.tweetypie.wepositowy.cachedbouncedeweted.isbouncedeweted
+impowt com.twittew.tweetypie.wepositowy.cachedbouncedeweted.tobouncedewetedcachedtweet
+impowt com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.stowe.tweetupdate._
+impowt c-com.twittew.tweetypie.thwiftscawa._
+impowt c-com.twittew.utiw.time
+impowt diffshow.diffshow
 
-trait CachingTweetStore
-    extends TweetStoreBase[CachingTweetStore]
-    with InsertTweet.Store
-    with ReplicatedInsertTweet.Store
-    with DeleteTweet.Store
-    with AsyncDeleteTweet.Store
-    with ReplicatedDeleteTweet.Store
-    with UndeleteTweet.Store
-    with AsyncUndeleteTweet.Store
-    with ReplicatedUndeleteTweet.Store
-    with SetAdditionalFields.Store
-    with ReplicatedSetAdditionalFields.Store
-    with DeleteAdditionalFields.Store
-    with AsyncDeleteAdditionalFields.Store
-    with ReplicatedDeleteAdditionalFields.Store
-    with ScrubGeo.Store
-    with ReplicatedScrubGeo.Store
-    with Takedown.Store
-    with ReplicatedTakedown.Store
-    with Flush.Store
-    with UpdatePossiblySensitiveTweet.Store
-    with AsyncUpdatePossiblySensitiveTweet.Store
-    with ReplicatedUpdatePossiblySensitiveTweet.Store {
-  def wrap(w: TweetStore.Wrap): CachingTweetStore =
-    new TweetStoreWrapper(w, this)
-      with CachingTweetStore
-      with InsertTweet.StoreWrapper
-      with ReplicatedInsertTweet.StoreWrapper
-      with DeleteTweet.StoreWrapper
-      with AsyncDeleteTweet.StoreWrapper
-      with ReplicatedDeleteTweet.StoreWrapper
-      with UndeleteTweet.StoreWrapper
-      with AsyncUndeleteTweet.StoreWrapper
-      with ReplicatedUndeleteTweet.StoreWrapper
-      with SetAdditionalFields.StoreWrapper
-      with ReplicatedSetAdditionalFields.StoreWrapper
-      with DeleteAdditionalFields.StoreWrapper
-      with AsyncDeleteAdditionalFields.StoreWrapper
-      with ReplicatedDeleteAdditionalFields.StoreWrapper
-      with ScrubGeo.StoreWrapper
-      with ReplicatedScrubGeo.StoreWrapper
-      with Takedown.StoreWrapper
-      with ReplicatedTakedown.StoreWrapper
-      with Flush.StoreWrapper
-      with UpdatePossiblySensitiveTweet.StoreWrapper
-      with AsyncUpdatePossiblySensitiveTweet.StoreWrapper
-      with ReplicatedUpdatePossiblySensitiveTweet.StoreWrapper
+twait cachingtweetstowe
+    extends t-tweetstowebase[cachingtweetstowe]
+    with insewttweet.stowe
+    w-with wepwicatedinsewttweet.stowe
+    w-with dewetetweet.stowe
+    with asyncdewetetweet.stowe
+    with wepwicateddewetetweet.stowe
+    with undewetetweet.stowe
+    with asyncundewetetweet.stowe
+    w-with wepwicatedundewetetweet.stowe
+    with setadditionawfiewds.stowe
+    with wepwicatedsetadditionawfiewds.stowe
+    with deweteadditionawfiewds.stowe
+    with asyncdeweteadditionawfiewds.stowe
+    w-with wepwicateddeweteadditionawfiewds.stowe
+    with scwubgeo.stowe
+    w-with wepwicatedscwubgeo.stowe
+    w-with t-takedown.stowe
+    w-with wepwicatedtakedown.stowe
+    with fwush.stowe
+    with updatepossibwysensitivetweet.stowe
+    w-with asyncupdatepossibwysensitivetweet.stowe
+    with wepwicatedupdatepossibwysensitivetweet.stowe {
+  def w-wwap(w: tweetstowe.wwap): cachingtweetstowe =
+    nyew tweetstowewwappew(w, OwO this)
+      with cachingtweetstowe
+      with insewttweet.stowewwappew
+      w-with wepwicatedinsewttweet.stowewwappew
+      with dewetetweet.stowewwappew
+      w-with a-asyncdewetetweet.stowewwappew
+      w-with wepwicateddewetetweet.stowewwappew
+      with undewetetweet.stowewwappew
+      with asyncundewetetweet.stowewwappew
+      with wepwicatedundewetetweet.stowewwappew
+      w-with setadditionawfiewds.stowewwappew
+      w-with wepwicatedsetadditionawfiewds.stowewwappew
+      with deweteadditionawfiewds.stowewwappew
+      w-with asyncdeweteadditionawfiewds.stowewwappew
+      w-with wepwicateddeweteadditionawfiewds.stowewwappew
+      with scwubgeo.stowewwappew
+      w-with wepwicatedscwubgeo.stowewwappew
+      with t-takedown.stowewwappew
+      with wepwicatedtakedown.stowewwappew
+      with fwush.stowewwappew
+      w-with updatepossibwysensitivetweet.stowewwappew
+      with a-asyncupdatepossibwysensitivetweet.stowewwappew
+      with wepwicatedupdatepossibwysensitivetweet.stowewwappew
 }
 
-object CachingTweetStore {
-  val Action: AsyncWriteAction.CacheUpdate.type = AsyncWriteAction.CacheUpdate
+o-object cachingtweetstowe {
+  v-vaw action: asyncwwiteaction.cacheupdate.type = asyncwwiteaction.cacheupdate
 
-  def apply(
-    tweetCache: LockingCache[TweetKey, Cached[CachedTweet]],
-    tweetKeyFactory: TweetKeyFactory,
-    stats: StatsReceiver
-  ): CachingTweetStore = {
-    val ops =
-      new CachingTweetStoreOps(
-        tweetCache,
-        tweetKeyFactory,
+  def appwy(
+    tweetcache: wockingcache[tweetkey, 🥺 cached[cachedtweet]],
+    tweetkeyfactowy: tweetkeyfactowy, mya
+    s-stats: statsweceivew
+  ): c-cachingtweetstowe = {
+    vaw ops =
+      n-nyew cachingtweetstoweops(
+        t-tweetcache, 😳
+        t-tweetkeyfactowy,
         stats
       )
 
-    new CachingTweetStore {
-      override val insertTweet: FutureEffect[InsertTweet.Event] = {
-        FutureEffect[InsertTweet.Event](e =>
-          ops.insertTweet(e.internalTweet, e.initialTweetUpdateRequest))
+    nyew cachingtweetstowe {
+      ovewwide v-vaw insewttweet: futuweeffect[insewttweet.event] = {
+        futuweeffect[insewttweet.event](e =>
+          ops.insewttweet(e.intewnawtweet, òωó e.initiawtweetupdatewequest))
       }
 
-      override val replicatedInsertTweet: FutureEffect[ReplicatedInsertTweet.Event] =
-        FutureEffect[ReplicatedInsertTweet.Event](e =>
-          ops.insertTweet(e.cachedTweet, e.initialTweetUpdateRequest))
+      o-ovewwide vaw wepwicatedinsewttweet: futuweeffect[wepwicatedinsewttweet.event] =
+        f-futuweeffect[wepwicatedinsewttweet.event](e =>
+          o-ops.insewttweet(e.cachedtweet, /(^•ω•^) e-e.initiawtweetupdatewequest))
 
-      override val deleteTweet: FutureEffect[DeleteTweet.Event] =
-        FutureEffect[DeleteTweet.Event](e =>
-          ops.deleteTweet(e.tweet.id, updateOnly = true, isBounceDelete = e.isBounceDelete))
+      ovewwide vaw dewetetweet: f-futuweeffect[dewetetweet.event] =
+        f-futuweeffect[dewetetweet.event](e =>
+          o-ops.dewetetweet(e.tweet.id, -.- updateonwy = t-twue, òωó isbouncedewete = e.isbouncedewete))
 
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        FutureEffect[AsyncDeleteTweet.Event](e =>
-          ops.deleteTweet(e.tweet.id, updateOnly = true, isBounceDelete = e.isBounceDelete))
+      o-ovewwide v-vaw asyncdewetetweet: f-futuweeffect[asyncdewetetweet.event] =
+        f-futuweeffect[asyncdewetetweet.event](e =>
+          ops.dewetetweet(e.tweet.id, /(^•ω•^) u-updateonwy = twue, /(^•ω•^) isbouncedewete = e.isbouncedewete))
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      ovewwide vaw wetwyasyncdewetetweet: f-futuweeffect[
+        tweetstowewetwyevent[asyncdewetetweet.event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        tweetstowe.wetwy(action, 😳 asyncdewetetweet)
 
-      override val replicatedDeleteTweet: FutureEffect[ReplicatedDeleteTweet.Event] =
-        FutureEffect[ReplicatedDeleteTweet.Event](e =>
-          ops.deleteTweet(
-            tweetId = e.tweet.id,
-            updateOnly = e.isErasure,
-            isBounceDelete = e.isBounceDelete
+      ovewwide vaw wepwicateddewetetweet: f-futuweeffect[wepwicateddewetetweet.event] =
+        futuweeffect[wepwicateddewetetweet.event](e =>
+          ops.dewetetweet(
+            tweetid = e.tweet.id, :3
+            u-updateonwy = e-e.isewasuwe, (U ᵕ U❁)
+            i-isbouncedewete = e.isbouncedewete
           ))
 
-      override val undeleteTweet: FutureEffect[UndeleteTweet.Event] =
-        FutureEffect[UndeleteTweet.Event](e => ops.undeleteTweet(e.internalTweet))
+      o-ovewwide vaw undewetetweet: futuweeffect[undewetetweet.event] =
+        f-futuweeffect[undewetetweet.event](e => ops.undewetetweet(e.intewnawtweet))
 
-      override val asyncUndeleteTweet: FutureEffect[AsyncUndeleteTweet.Event] =
-        FutureEffect[AsyncUndeleteTweet.Event](e => ops.undeleteTweet(e.cachedTweet))
+      o-ovewwide vaw asyncundewetetweet: futuweeffect[asyncundewetetweet.event] =
+        futuweeffect[asyncundewetetweet.event](e => ops.undewetetweet(e.cachedtweet))
 
-      override val retryAsyncUndeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUndeleteTweet.Event]
+      ovewwide vaw wetwyasyncundewetetweet: f-futuweeffect[
+        tweetstowewetwyevent[asyncundewetetweet.event]
       ] =
-        TweetStore.retry(Action, asyncUndeleteTweet)
+        t-tweetstowe.wetwy(action, ʘwʘ asyncundewetetweet)
 
-      override val replicatedUndeleteTweet: FutureEffect[ReplicatedUndeleteTweet.Event] =
-        FutureEffect[ReplicatedUndeleteTweet.Event](e => ops.undeleteTweet(e.cachedTweet))
+      o-ovewwide vaw wepwicatedundewetetweet: f-futuweeffect[wepwicatedundewetetweet.event] =
+        futuweeffect[wepwicatedundewetetweet.event](e => ops.undewetetweet(e.cachedtweet))
 
-      override val setAdditionalFields: FutureEffect[SetAdditionalFields.Event] =
-        FutureEffect[SetAdditionalFields.Event](e => ops.setAdditionalFields(e.additionalFields))
+      ovewwide v-vaw setadditionawfiewds: f-futuweeffect[setadditionawfiewds.event] =
+        futuweeffect[setadditionawfiewds.event](e => o-ops.setadditionawfiewds(e.additionawfiewds))
 
-      override val replicatedSetAdditionalFields: FutureEffect[
-        ReplicatedSetAdditionalFields.Event
+      o-ovewwide vaw wepwicatedsetadditionawfiewds: futuweeffect[
+        wepwicatedsetadditionawfiewds.event
       ] =
-        FutureEffect[ReplicatedSetAdditionalFields.Event](e =>
-          ops.setAdditionalFields(e.additionalFields))
+        futuweeffect[wepwicatedsetadditionawfiewds.event](e =>
+          ops.setadditionawfiewds(e.additionawfiewds))
 
-      override val deleteAdditionalFields: FutureEffect[DeleteAdditionalFields.Event] =
-        FutureEffect[DeleteAdditionalFields.Event](e =>
-          ops.deleteAdditionalFields(e.tweetId, e.fieldIds))
+      o-ovewwide v-vaw deweteadditionawfiewds: futuweeffect[deweteadditionawfiewds.event] =
+        f-futuweeffect[deweteadditionawfiewds.event](e =>
+          ops.deweteadditionawfiewds(e.tweetid, o.O e-e.fiewdids))
 
-      override val asyncDeleteAdditionalFields: FutureEffect[AsyncDeleteAdditionalFields.Event] =
-        FutureEffect[AsyncDeleteAdditionalFields.Event](e =>
-          ops.deleteAdditionalFields(e.tweetId, e.fieldIds))
+      o-ovewwide vaw asyncdeweteadditionawfiewds: f-futuweeffect[asyncdeweteadditionawfiewds.event] =
+        futuweeffect[asyncdeweteadditionawfiewds.event](e =>
+          ops.deweteadditionawfiewds(e.tweetid, ʘwʘ e.fiewdids))
 
-      override val retryAsyncDeleteAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteAdditionalFields.Event]
+      ovewwide vaw w-wetwyasyncdeweteadditionawfiewds: f-futuweeffect[
+        tweetstowewetwyevent[asyncdeweteadditionawfiewds.event]
       ] =
-        TweetStore.retry(Action, asyncDeleteAdditionalFields)
+        tweetstowe.wetwy(action, ^^ a-asyncdeweteadditionawfiewds)
 
-      override val replicatedDeleteAdditionalFields: FutureEffect[
-        ReplicatedDeleteAdditionalFields.Event
+      o-ovewwide vaw wepwicateddeweteadditionawfiewds: futuweeffect[
+        wepwicateddeweteadditionawfiewds.event
       ] =
-        FutureEffect[ReplicatedDeleteAdditionalFields.Event](e =>
-          ops.deleteAdditionalFields(e.tweetId, e.fieldIds))
+        futuweeffect[wepwicateddeweteadditionawfiewds.event](e =>
+          ops.deweteadditionawfiewds(e.tweetid, ^•ﻌ•^ e-e.fiewdids))
 
-      override val scrubGeo: FutureEffect[ScrubGeo.Event] =
-        FutureEffect[ScrubGeo.Event](e => ops.scrubGeo(e.tweetIds))
+      ovewwide vaw scwubgeo: futuweeffect[scwubgeo.event] =
+        futuweeffect[scwubgeo.event](e => o-ops.scwubgeo(e.tweetids))
 
-      override val replicatedScrubGeo: FutureEffect[ReplicatedScrubGeo.Event] =
-        FutureEffect[ReplicatedScrubGeo.Event](e => ops.scrubGeo(e.tweetIds))
+      ovewwide vaw wepwicatedscwubgeo: futuweeffect[wepwicatedscwubgeo.event] =
+        f-futuweeffect[wepwicatedscwubgeo.event](e => o-ops.scwubgeo(e.tweetids))
 
-      override val takedown: FutureEffect[Takedown.Event] =
-        FutureEffect[Takedown.Event](e => ops.takedown(e.tweet))
+      ovewwide vaw takedown: futuweeffect[takedown.event] =
+        f-futuweeffect[takedown.event](e => o-ops.takedown(e.tweet))
 
-      override val replicatedTakedown: FutureEffect[ReplicatedTakedown.Event] =
-        FutureEffect[ReplicatedTakedown.Event](e => ops.takedown(e.tweet))
+      ovewwide vaw wepwicatedtakedown: futuweeffect[wepwicatedtakedown.event] =
+        f-futuweeffect[wepwicatedtakedown.event](e => ops.takedown(e.tweet))
 
-      override val flush: FutureEffect[Flush.Event] =
-        FutureEffect[Flush.Event](e => ops.flushTweets(e.tweetIds, logExisting = e.logExisting))
-          .onlyIf(_.flushTweets)
+      o-ovewwide vaw fwush: futuweeffect[fwush.event] =
+        futuweeffect[fwush.event](e => ops.fwushtweets(e.tweetids, mya wogexisting = e-e.wogexisting))
+          .onwyif(_.fwushtweets)
 
-      override val updatePossiblySensitiveTweet: FutureEffect[UpdatePossiblySensitiveTweet.Event] =
-        FutureEffect[UpdatePossiblySensitiveTweet.Event](e => ops.updatePossiblySensitive(e.tweet))
+      ovewwide vaw updatepossibwysensitivetweet: f-futuweeffect[updatepossibwysensitivetweet.event] =
+        f-futuweeffect[updatepossibwysensitivetweet.event](e => ops.updatepossibwysensitive(e.tweet))
 
-      override val replicatedUpdatePossiblySensitiveTweet: FutureEffect[
-        ReplicatedUpdatePossiblySensitiveTweet.Event
+      o-ovewwide vaw wepwicatedupdatepossibwysensitivetweet: f-futuweeffect[
+        w-wepwicatedupdatepossibwysensitivetweet.event
       ] =
-        FutureEffect[ReplicatedUpdatePossiblySensitiveTweet.Event](e =>
-          ops.updatePossiblySensitive(e.tweet))
+        f-futuweeffect[wepwicatedupdatepossibwysensitivetweet.event](e =>
+          ops.updatepossibwysensitive(e.tweet))
 
-      override val asyncUpdatePossiblySensitiveTweet: FutureEffect[
-        AsyncUpdatePossiblySensitiveTweet.Event
+      o-ovewwide v-vaw asyncupdatepossibwysensitivetweet: futuweeffect[
+        asyncupdatepossibwysensitivetweet.event
       ] =
-        FutureEffect[AsyncUpdatePossiblySensitiveTweet.Event](e =>
-          ops.updatePossiblySensitive(e.tweet))
+        f-futuweeffect[asyncupdatepossibwysensitivetweet.event](e =>
+          ops.updatepossibwysensitive(e.tweet))
 
-      override val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUpdatePossiblySensitiveTweet.Event]
+      o-ovewwide v-vaw wetwyasyncupdatepossibwysensitivetweet: futuweeffect[
+        tweetstowewetwyevent[asyncupdatepossibwysensitivetweet.event]
       ] =
-        TweetStore.retry(Action, asyncUpdatePossiblySensitiveTweet)
+        t-tweetstowe.wetwy(action, UwU asyncupdatepossibwysensitivetweet)
     }
   }
 }
 
-private class CachingTweetStoreOps(
-  tweetCache: LockingCache[TweetKey, Cached[CachedTweet]],
-  tweetKeyFactory: TweetKeyFactory,
-  stats: StatsReceiver,
-  evictionRetries: Int = 3) {
-  type CachedTweetHandler = Handler[Cached[CachedTweet]]
+p-pwivate cwass cachingtweetstoweops(
+  t-tweetcache: wockingcache[tweetkey, >_< cached[cachedtweet]], /(^•ω•^)
+  tweetkeyfactowy: t-tweetkeyfactowy, òωó
+  s-stats: statsweceivew, σωσ
+  e-evictionwetwies: i-int = 3) {
+  type c-cachedtweethandwew = handwew[cached[cachedtweet]]
 
-  private val preferNewestPicker = new PreferNewestCached[CachedTweet]
+  pwivate vaw pwefewnewestpickew = nyew pwefewnewestcached[cachedtweet]
 
-  private val evictionFailedCounter = stats.counter("eviction_failures")
+  pwivate v-vaw evictionfaiwedcountew = stats.countew("eviction_faiwuwes")
 
-  private val cacheFlushesLog = Logger("com.twitter.tweetypie.store.CacheFlushesLog")
+  p-pwivate vaw cachefwusheswog = w-woggew("com.twittew.tweetypie.stowe.cachefwusheswog")
 
-  private[this] val mapper = new ObjectMapper().registerModule(DefaultScalaModule)
+  pwivate[this] vaw m-mappew = nyew objectmappew().wegistewmoduwe(defauwtscawamoduwe)
 
   /**
-   * Inserts a tweet into cache, recording all compiled additional fields and all
-   * included passthrough fields. Additionally if the insertion event contains
-   * a 'InitialTweetUpdateRequest` we will update the cache entry for this tweet's
-   * initialTweet.
+   * insewts a-a tweet into c-cache, ( ͡o ω ͡o ) wecowding a-aww compiwed a-additionaw fiewds a-and aww
+   * incwuded passthwough fiewds. nyaa~~ additionawwy if the insewtion event contains
+   * a 'initiawtweetupdatewequest` we wiww u-update the cache e-entwy fow this t-tweet's
+   * initiawtweet. :3
    */
-  def insertTweet(
-    ct: CachedTweet,
-    initialTweetUpdateRequest: Option[InitialTweetUpdateRequest]
-  ): Future[Unit] =
-    lockAndSet(
-      ct.tweet.id,
-      insertTweetHandler(ct)
-    ).flatMap { _ =>
-      initialTweetUpdateRequest match {
-        case Some(request) =>
-          lockAndSet(
-            request.initialTweetId,
-            updateTweetHandler(tweet => InitialTweetUpdate.updateTweet(tweet, request))
+  d-def insewttweet(
+    ct: cachedtweet, UwU
+    initiawtweetupdatewequest: o-option[initiawtweetupdatewequest]
+  ): f-futuwe[unit] =
+    wockandset(
+      c-ct.tweet.id, o.O
+      insewttweethandwew(ct)
+    ).fwatmap { _ =>
+      initiawtweetupdatewequest m-match {
+        c-case some(wequest) =>
+          wockandset(
+            wequest.initiawtweetid, (ˆ ﻌ ˆ)♡
+            u-updatetweethandwew(tweet => initiawtweetupdate.updatetweet(tweet, ^^;; w-wequest))
           )
-        case None =>
-          Future.Unit
+        case nyone =>
+          futuwe.unit
       }
     }
 
   /**
-   * Writes a `deleted` tombstone to cache.  If `updateOnly` is true, then we only
-   * write the tombstone if the tweet is already in cache. If `isBounceDelete` we
-   * write a special bounce-deleted CachedTweet record to cache.
+   * wwites a `deweted` tombstone to c-cache. ʘwʘ  if `updateonwy` i-is twue, σωσ t-then we onwy
+   * w-wwite the tombstone i-if the tweet is awweady i-in cache. ^^;; if `isbouncedewete` w-we
+   * wwite a speciaw b-bounce-deweted c-cachedtweet wecowd to cache. ʘwʘ
    */
-  def deleteTweet(tweetId: TweetId, updateOnly: Boolean, isBounceDelete: Boolean): Future[Unit] = {
-    // We only need to store a CachedTweet value the tweet is bounce-deleted to support rendering
-    // timeline tombstones for tweets that violated the Twitter Rules. see go/bounced-tweet
-    val cachedValue = if (isBounceDelete) {
-      found(toBounceDeletedCachedTweet(tweetId))
-    } else {
-      writeThroughCached[CachedTweet](None, CachedValueStatus.Deleted)
+  d-def dewetetweet(tweetid: tweetid, ^^ updateonwy: boowean, nyaa~~ i-isbouncedewete: boowean): futuwe[unit] = {
+    // w-we onwy nyeed t-to stowe a cachedtweet vawue the t-tweet is bounce-deweted to suppowt wendewing
+    // t-timewine tombstones f-fow tweets t-that viowated the twittew wuwes. (///ˬ///✿) see go/bounced-tweet
+    vaw cachedvawue = i-if (isbouncedewete) {
+      found(tobouncedewetedcachedtweet(tweetid))
+    } ewse {
+      w-wwitethwoughcached[cachedtweet](none, XD c-cachedvawuestatus.deweted)
     }
 
-    val pickerHandler =
-      if (updateOnly) {
-        deleteTweetUpdateOnlyHandler(cachedValue)
-      } else {
-        deleteTweetHandler(cachedValue)
+    vaw pickewhandwew =
+      i-if (updateonwy) {
+        dewetetweetupdateonwyhandwew(cachedvawue)
+      } e-ewse {
+        d-dewetetweethandwew(cachedvawue)
       }
 
-    lockAndSet(tweetId, pickerHandler)
+    wockandset(tweetid, :3 pickewhandwew)
   }
 
-  def undeleteTweet(ct: CachedTweet): Future[Unit] =
-    lockAndSet(
-      ct.tweet.id,
-      insertTweetHandler(ct)
+  d-def undewetetweet(ct: cachedtweet): futuwe[unit] =
+    w-wockandset(
+      c-ct.tweet.id, òωó
+      insewttweethandwew(ct)
     )
 
-  def setAdditionalFields(tweet: Tweet): Future[Unit] =
-    lockAndSet(tweet.id, setFieldsHandler(AdditionalFields.additionalFields(tweet)))
+  def setadditionawfiewds(tweet: t-tweet): futuwe[unit] =
+    w-wockandset(tweet.id, ^^ s-setfiewdshandwew(additionawfiewds.additionawfiewds(tweet)))
 
-  def deleteAdditionalFields(tweetId: TweetId, fieldIds: Seq[FieldId]): Future[Unit] =
-    lockAndSet(tweetId, deleteFieldsHandler(fieldIds))
+  d-def deweteadditionawfiewds(tweetid: tweetid, ^•ﻌ•^ fiewdids: seq[fiewdid]): futuwe[unit] =
+    wockandset(tweetid, σωσ dewetefiewdshandwew(fiewdids))
 
-  def scrubGeo(tweetIds: Seq[TweetId]): Future[Unit] =
-    Future.join {
-      tweetIds.map { id =>
-        // First, attempt to modify any tweets that are in cache to
-        // avoid having to reload the cached tweet from storage.
-        lockAndSet(id, scrubGeoHandler).unit.rescue {
-          case _: OptimisticLockingCache.LockAndSetFailure =>
-            // If the modification fails, then remove whatever is in
-            // cache. This is much more likely to succeed because it
-            // does not require multiple successful requests to cache.
-            // This will force the tweet to be loaded from storage the
-            // next time it is requested, and the stored tweet will have
-            // the geo information removed.
+  def scwubgeo(tweetids: seq[tweetid]): futuwe[unit] =
+    futuwe.join {
+      tweetids.map { i-id =>
+        // f-fiwst, (ˆ ﻌ ˆ)♡ attempt to modify any tweets that a-awe in cache to
+        // a-avoid h-having to wewoad the cached tweet f-fwom stowage. nyaa~~
+        wockandset(id, ʘwʘ s-scwubgeohandwew).unit.wescue {
+          c-case _: optimisticwockingcache.wockandsetfaiwuwe =>
+            // if the modification f-faiws, ^•ﻌ•^ then wemove nyanievew i-is in
+            // c-cache. rawr x3 this is much mowe wikewy to succeed b-because it
+            // d-does nyot wequiwe m-muwtipwe successfuw w-wequests t-to cache. 🥺
+            // t-this wiww f-fowce the tweet t-to be woaded f-fwom stowage the
+            // nyext time it is w-wequested, ʘwʘ and t-the stowed tweet w-wiww have
+            // the geo i-infowmation wemoved. (˘ω˘)
             //
-            // This eviction path was added due to frequent failures of
-            // the in-place modification code path, causing geoscrub
-            // daemon tasks to fail.
-            evictOne(tweetKeyFactory.fromId(id), evictionRetries)
+            // this eviction path was added d-due to fwequent faiwuwes of
+            // t-the i-in-pwace modification c-code path, o.O causing geoscwub
+            // d-daemon tasks to faiw.
+            e-evictone(tweetkeyfactowy.fwomid(id), σωσ evictionwetwies)
         }
       }
     }
 
-  def takedown(tweet: Tweet): Future[Unit] =
-    lockAndSet(tweet.id, updateCachedTweetHandler(copyTakedownFieldsForUpdate(tweet)))
+  d-def takedown(tweet: tweet): f-futuwe[unit] =
+    wockandset(tweet.id, (ꈍᴗꈍ) updatecachedtweethandwew(copytakedownfiewdsfowupdate(tweet)))
 
-  def updatePossiblySensitive(tweet: Tweet): Future[Unit] =
-    lockAndSet(tweet.id, updateTweetHandler(copyNsfwFieldsForUpdate(tweet)))
+  def updatepossibwysensitive(tweet: tweet): f-futuwe[unit] =
+    wockandset(tweet.id, (ˆ ﻌ ˆ)♡ u-updatetweethandwew(copynsfwfiewdsfowupdate(tweet)))
 
-  def flushTweets(tweetIds: Seq[TweetId], logExisting: Boolean = false): Future[Unit] = {
-    val tweetKeys = tweetIds.map(tweetKeyFactory.fromId)
+  d-def fwushtweets(tweetids: seq[tweetid], wogexisting: boowean = f-fawse): futuwe[unit] = {
+    vaw tweetkeys = t-tweetids.map(tweetkeyfactowy.fwomid)
 
-    Future.when(logExisting) { logExistingValues(tweetKeys) }.ensure {
-      evictAll(tweetKeys)
+    f-futuwe.when(wogexisting) { w-wogexistingvawues(tweetkeys) }.ensuwe {
+      evictaww(tweetkeys)
     }
   }
 
   /**
-   * A LockingCache.Handler that inserts a tweet into cache.
+   * a wockingcache.handwew t-that insewts a-a tweet into cache. o.O
    */
-  private def insertTweetHandler(newValue: CachedTweet): Handler[Cached[CachedTweet]] =
-    AlwaysSetHandler(Some(writeThroughCached(Some(newValue), CachedValueStatus.Found)))
+  pwivate d-def insewttweethandwew(newvawue: cachedtweet): handwew[cached[cachedtweet]] =
+    a-awwayssethandwew(some(wwitethwoughcached(some(newvawue), :3 cachedvawuestatus.found)))
 
-  private def foundAndNotBounced(c: Cached[CachedTweet]) =
-    c.status == CachedValueStatus.Found && !isBounceDeleted(c)
+  p-pwivate d-def foundandnotbounced(c: c-cached[cachedtweet]) =
+    c.status == c-cachedvawuestatus.found && !isbouncedeweted(c)
 
   /**
-   * A LockingCache.Handler that updates an existing CachedTweet in cache.
+   * a-a wockingcache.handwew t-that updates a-an existing cachedtweet in c-cache. -.-
    */
-  private def updateTweetHandler(update: Tweet => Tweet): CachedTweetHandler =
-    inCache =>
-      for {
-        cached <- inCache.filter(foundAndNotBounced)
-        cachedTweet <- cached.value
-        updatedTweet = update(cachedTweet.tweet)
-      } yield found(cachedTweet.copy(tweet = updatedTweet))
+  p-pwivate def updatetweethandwew(update: t-tweet => t-tweet): cachedtweethandwew =
+    i-incache =>
+      f-fow {
+        c-cached <- incache.fiwtew(foundandnotbounced)
+        c-cachedtweet <- cached.vawue
+        u-updatedtweet = update(cachedtweet.tweet)
+      } y-yiewd found(cachedtweet.copy(tweet = updatedtweet))
 
   /**
-   * A LockingCache.Handler that updates an existing CachedTweet in cache.
+   * a-a wockingcache.handwew t-that updates an e-existing cachedtweet in cache. ( ͡o ω ͡o )
    */
-  private def updateCachedTweetHandler(update: CachedTweet => CachedTweet): CachedTweetHandler =
-    inCache =>
-      for {
-        cached <- inCache.filter(foundAndNotBounced)
-        cachedTweet <- cached.value
-        updatedCachedTweet = update(cachedTweet)
-      } yield found(updatedCachedTweet)
+  pwivate def updatecachedtweethandwew(update: c-cachedtweet => c-cachedtweet): c-cachedtweethandwew =
+    incache =>
+      fow {
+        cached <- i-incache.fiwtew(foundandnotbounced)
+        cachedtweet <- c-cached.vawue
+        updatedcachedtweet = u-update(cachedtweet)
+      } y-yiewd found(updatedcachedtweet)
 
-  private def deleteTweetHandler(value: Cached[CachedTweet]): CachedTweetHandler =
-    PickingHandler(value, preferNewestPicker)
+  pwivate def dewetetweethandwew(vawue: cached[cachedtweet]): c-cachedtweethandwew =
+    p-pickinghandwew(vawue, p-pwefewnewestpickew)
 
-  private def deleteTweetUpdateOnlyHandler(value: Cached[CachedTweet]): CachedTweetHandler =
-    UpdateOnlyPickingHandler(value, preferNewestPicker)
+  p-pwivate def dewetetweetupdateonwyhandwew(vawue: cached[cachedtweet]): cachedtweethandwew =
+    u-updateonwypickinghandwew(vawue, /(^•ω•^) p-pwefewnewestpickew)
 
-  private def setFieldsHandler(additional: Seq[TFieldBlob]): CachedTweetHandler =
-    inCache =>
-      for {
-        cached <- inCache.filter(foundAndNotBounced)
-        cachedTweet <- cached.value
-        updatedTweet = AdditionalFields.setAdditionalFields(cachedTweet.tweet, additional)
-        updatedCachedTweet = CachedTweet(updatedTweet)
-      } yield found(updatedCachedTweet)
+  pwivate def setfiewdshandwew(additionaw: seq[tfiewdbwob]): c-cachedtweethandwew =
+    incache =>
+      fow {
+        c-cached <- incache.fiwtew(foundandnotbounced)
+        cachedtweet <- c-cached.vawue
+        u-updatedtweet = additionawfiewds.setadditionawfiewds(cachedtweet.tweet, a-additionaw)
+        u-updatedcachedtweet = cachedtweet(updatedtweet)
+      } y-yiewd found(updatedcachedtweet)
 
-  private def deleteFieldsHandler(fieldIds: Seq[FieldId]): CachedTweetHandler =
-    inCache =>
-      for {
-        cached <- inCache.filter(foundAndNotBounced)
-        cachedTweet <- cached.value
-        updatedTweet = AdditionalFields.unsetFields(cachedTweet.tweet, fieldIds)
-        scrubbedCachedTweet = cachedTweet.copy(tweet = updatedTweet)
-      } yield found(scrubbedCachedTweet)
+  p-pwivate def dewetefiewdshandwew(fiewdids: s-seq[fiewdid]): c-cachedtweethandwew =
+    i-incache =>
+      fow {
+        c-cached <- incache.fiwtew(foundandnotbounced)
+        c-cachedtweet <- c-cached.vawue
+        updatedtweet = a-additionawfiewds.unsetfiewds(cachedtweet.tweet, (⑅˘꒳˘) fiewdids)
+        scwubbedcachedtweet = c-cachedtweet.copy(tweet = u-updatedtweet)
+      } y-yiewd found(scwubbedcachedtweet)
 
-  private val scrubGeoHandler: CachedTweetHandler =
-    inCache =>
-      for {
-        cached <- inCache.filter(foundAndNotBounced)
-        cachedTweet <- cached.value
-        tweet = cachedTweet.tweet
-        coreData <- tweet.coreData if hasGeo(tweet)
-        scrubbedCoreData = coreData.copy(coordinates = None, placeId = None)
-        scrubbedTweet = tweet.copy(coreData = Some(scrubbedCoreData), place = None)
-        scrubbedCachedTweet = cachedTweet.copy(tweet = scrubbedTweet)
-      } yield found(scrubbedCachedTweet)
+  pwivate vaw scwubgeohandwew: cachedtweethandwew =
+    incache =>
+      f-fow {
+        cached <- i-incache.fiwtew(foundandnotbounced)
+        c-cachedtweet <- cached.vawue
+        tweet = cachedtweet.tweet
+        c-cowedata <- tweet.cowedata if h-hasgeo(tweet)
+        s-scwubbedcowedata = c-cowedata.copy(coowdinates = n-nyone, òωó pwaceid = n-nyone)
+        scwubbedtweet = tweet.copy(cowedata = some(scwubbedcowedata), 🥺 pwace = nyone)
+        s-scwubbedcachedtweet = cachedtweet.copy(tweet = s-scwubbedtweet)
+      } yiewd found(scwubbedcachedtweet)
 
-  private def evictOne(key: TweetKey, tries: Int): Future[Int] =
-    tweetCache.delete(key).transform {
-      case Throw(_) if tries > 1 => evictOne(key, tries - 1)
-      case Throw(_) => Future.value(1)
-      case Return(_) => Future.value(0)
+  pwivate def evictone(key: t-tweetkey, (ˆ ﻌ ˆ)♡ twies: int): futuwe[int] =
+    tweetcache.dewete(key).twansfowm {
+      case thwow(_) if twies > 1 => e-evictone(key, -.- twies - 1)
+      case t-thwow(_) => futuwe.vawue(1)
+      c-case wetuwn(_) => futuwe.vawue(0)
     }
 
-  private def evictAll(keys: Seq[TweetKey]): Future[Unit] =
-    Future
-      .collect {
-        keys.map(evictOne(_, evictionRetries))
+  pwivate def evictaww(keys: s-seq[tweetkey]): f-futuwe[unit] =
+    futuwe
+      .cowwect {
+        keys.map(evictone(_, evictionwetwies))
       }
-      .onSuccess { (failures: Seq[Int]) => evictionFailedCounter.incr(failures.sum) }
+      .onsuccess { (faiwuwes: s-seq[int]) => evictionfaiwedcountew.incw(faiwuwes.sum) }
       .unit
 
-  private def logExistingValues(keys: Seq[TweetKey]): Future[Unit] =
-    tweetCache
+  p-pwivate def wogexistingvawues(keys: seq[tweetkey]): futuwe[unit] =
+    tweetcache
       .get(keys)
-      .map { existing =>
-        for {
-          (key, cached) <- existing.found
-          cachedTweet <- cached.value
-          tweet = cachedTweet.tweet
-        } yield {
-          cacheFlushesLog.info(
-            mapper.writeValueAsString(
-              Map(
-                "key" -> key,
-                "tweet_id" -> tweet.id,
-                "tweet" -> DiffShow.show(tweet)
+      .map { e-existing =>
+        fow {
+          (key, σωσ cached) <- e-existing.found
+          c-cachedtweet <- c-cached.vawue
+          tweet = cachedtweet.tweet
+        } yiewd {
+          c-cachefwusheswog.info(
+            mappew.wwitevawueasstwing(
+              map(
+                "key" -> key, >_<
+                "tweet_id" -> tweet.id, :3
+                "tweet" -> diffshow.show(tweet)
               )
             )
           )
@@ -407,14 +407,14 @@ private class CachingTweetStoreOps(
       }
       .unit
 
-  private def found(value: CachedTweet): Cached[CachedTweet] =
-    writeThroughCached(Some(value), CachedValueStatus.Found)
+  p-pwivate d-def found(vawue: c-cachedtweet): c-cached[cachedtweet] =
+    wwitethwoughcached(some(vawue), OwO cachedvawuestatus.found)
 
-  private def writeThroughCached[V](value: Option[V], status: CachedValueStatus): Cached[V] = {
-    val now = Time.now
-    Cached(value, status, now, None, Some(now))
+  pwivate def wwitethwoughcached[v](vawue: o-option[v], rawr status: c-cachedvawuestatus): cached[v] = {
+    vaw n-nyow = time.now
+    cached(vawue, (///ˬ///✿) status, ^^ nyow, n-nyone, XD some(now))
   }
 
-  private def lockAndSet(tweetId: TweetId, handler: LockingCache.Handler[Cached[CachedTweet]]) =
-    tweetCache.lockAndSet(tweetKeyFactory.fromId(tweetId), handler).unit
+  pwivate def wockandset(tweetid: t-tweetid, UwU h-handwew: wockingcache.handwew[cached[cachedtweet]]) =
+    tweetcache.wockandset(tweetkeyfactowy.fwomid(tweetid), o.O h-handwew).unit
 }

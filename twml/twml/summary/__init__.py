@@ -1,6 +1,6 @@
-from tensorflow.python.ops.summary_ops_v2 import flush  # noqa: F401
+fwom tensowfwow.python.ops.summawy_ops_v2 impowt f-fwush  # nyoqa: f-f401
 
 """
-NOTE: Using `from tensorflow.python.ops.summary_ops_v2 import flush` in the code works.
-This stub exists because it was easier to refactor code because twml is widely used.
+nyote: u-using `fwom tensowfwow.python.ops.summawy_ops_v2 i-impowt fwush` i-in the code wowks. rawr x3
+t-this stub exists b-because it was e-easiew to wefactow code because twmw is widewy used. rawr
 """

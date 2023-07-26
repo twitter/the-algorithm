@@ -1,63 +1,63 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationRequest
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.GenericType
-import com.twitter.notificationservice.thriftscala.InlineCard
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.TapThroughAction
-import com.twitter.util.Future
-import com.twitter.util.Time
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.notificationsewvice.thwiftscawa.cweategenewicnotificationwequest
+i-impowt c-com.twittew.notificationsewvice.thwiftscawa.dispwaytext
+i-impowt c-com.twittew.notificationsewvice.thwiftscawa.dispwaytextentity
+i-impowt com.twittew.notificationsewvice.thwiftscawa.genewictype
+impowt c-com.twittew.notificationsewvice.thwiftscawa.inwinecawd
+i-impowt com.twittew.notificationsewvice.thwiftscawa.stowycontext
+impowt com.twittew.notificationsewvice.thwiftscawa.tapthwoughaction
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
 
-trait NTabRequestHydrator extends NTabRequest with CandidateNTabCopy {
-  self: PushCandidate =>
+twait nytabwequesthydwatow e-extends nytabwequest with c-candidatentabcopy {
+  sewf: pushcandidate =>
 
-  // Represents the sender of the recommendation
-  def senderIdFut: Future[Long]
+  // wepwesents the sendew of the w-wecommendation
+  def sendewidfut: f-futuwe[wong]
 
-  // Consists of a sequence representing the social context user ids.
-  def facepileUsersFut: Future[Seq[Long]]
+  // c-consists of a sequence wepwesenting the sociaw context usew ids. (ˆ ﻌ ˆ)♡
+  def facepiweusewsfut: f-futuwe[seq[wong]]
 
-  // Story Context is required for Tweet Recommendations
-  // Contains the Tweet ID of the recommended Tweet
-  def storyContext: Option[StoryContext]
+  // stowy context is wequiwed fow tweet wecommendations
+  // contains the tweet i-id of the wecommended tweet
+  d-def stowycontext: o-option[stowycontext]
 
-  // Inline card used to render a generic notification.
-  def inlineCard: Option[InlineCard]
+  // i-inwine cawd used t-to wendew a genewic nyotification. 😳😳😳
+  def inwinecawd: o-option[inwinecawd]
 
-  // Represents where the recommendation should land when clicked
-  def tapThroughFut: Future[String]
+  // wepwesents whewe the wecommendation s-shouwd wand when cwicked
+  def tapthwoughfut: futuwe[stwing]
 
-  // Hydration for fields that are used within the NTab copy
-  def displayTextEntitiesFut: Future[Seq[DisplayTextEntity]]
+  // hydwation fow fiewds that a-awe used within the nytab copy
+  d-def dispwaytextentitiesfut: f-futuwe[seq[dispwaytextentity]]
 
-  // Represents the social proof text that is needed for specific NTab copies
-  def socialProofDisplayText: Option[DisplayText]
+  // w-wepwesents the sociaw pwoof text that is nyeeded fow specific n-nytab copies
+  def s-sociawpwoofdispwaytext: option[dispwaytext]
 
-  // MagicRecs NTab entries always use RefreshableType as the Generic Type
-  final val genericType: GenericType = GenericType.RefreshableNotification
+  // m-magicwecs nytab e-entwies awways use wefweshabwetype a-as the genewic type
+  finaw v-vaw genewictype: genewictype = genewictype.wefweshabwenotification
 
-  def refreshableType: Option[String] = ntabCopy.refreshableType
+  d-def wefweshabwetype: option[stwing] = nytabcopy.wefweshabwetype
 
-  lazy val ntabRequest: Future[Option[CreateGenericNotificationRequest]] = {
-    Future.join(senderIdFut, displayTextEntitiesFut, facepileUsersFut, tapThroughFut).map {
-      case (senderId, displayTextEntities, facepileUsers, tapThrough) =>
-        Some(
-          CreateGenericNotificationRequest(
-            userId = target.targetId,
-            senderId = senderId,
-            genericType = GenericType.RefreshableNotification,
-            displayText = DisplayText(values = displayTextEntities),
-            facepileUsers = facepileUsers,
-            timestampMillis = Time.now.inMillis,
-            tapThroughAction = Some(TapThroughAction(Some(tapThrough))),
-            impressionId = Some(impressionId),
-            socialProofText = socialProofDisplayText,
-            context = storyContext,
-            inlineCard = inlineCard,
-            refreshableType = refreshableType
+  w-wazy vaw nytabwequest: f-futuwe[option[cweategenewicnotificationwequest]] = {
+    f-futuwe.join(sendewidfut, :3 dispwaytextentitiesfut, OwO facepiweusewsfut, (U ﹏ U) tapthwoughfut).map {
+      case (sendewid, >w< dispwaytextentities, (U ﹏ U) facepiweusews, 😳 tapthwough) =>
+        s-some(
+          c-cweategenewicnotificationwequest(
+            usewid = tawget.tawgetid, (ˆ ﻌ ˆ)♡
+            s-sendewid = s-sendewid, 😳😳😳
+            g-genewictype = genewictype.wefweshabwenotification,
+            dispwaytext = dispwaytext(vawues = d-dispwaytextentities), (U ﹏ U)
+            facepiweusews = facepiweusews, (///ˬ///✿)
+            timestampmiwwis = time.now.inmiwwis, 😳
+            tapthwoughaction = some(tapthwoughaction(some(tapthwough))), 😳
+            i-impwessionid = some(impwessionid), σωσ
+            s-sociawpwooftext = s-sociawpwoofdispwaytext, rawr x3
+            c-context = stowycontext, OwO
+            i-inwinecawd = i-inwinecawd, /(^•ω•^)
+            w-wefweshabwetype = w-wefweshabwetype
           ))
     }
   }

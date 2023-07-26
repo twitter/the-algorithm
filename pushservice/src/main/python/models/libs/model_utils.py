@@ -1,339 +1,339 @@
-import sys
+impowt sys
 
-import twml
+impowt twmw
 
-from .initializer import customized_glorot_uniform
+fwom .initiawizew i-impowt c-customized_gwowot_unifowm
 
-import tensorflow.compat.v1 as tf
-import yaml
-
-
-# checkstyle: noqa
+i-impowt t-tensowfwow.compat.v1 a-as tf
+impowt y-yamw
 
 
-def read_config(whitelist_yaml_file):
-  with tf.gfile.FastGFile(whitelist_yaml_file) as f:
-    try:
-      return yaml.safe_load(f)
-    except yaml.YAMLError as exc:
-      print(exc)
-      sys.exit(1)
+# checkstywe: n-nyoqa
 
 
-def _sparse_feature_fixup(features, input_size_bits):
-  """Rebuild a sparse tensor feature so that its dense shape attribute is present.
-
-  Arguments:
-    features (SparseTensor): Sparse feature tensor of shape ``(B, sparse_feature_dim)``.
-    input_size_bits (int): Number of columns in ``log2`` scale. Must be positive.
-
-  Returns:
-    SparseTensor: Rebuilt and non-faulty version of `features`."""
-  sparse_feature_dim = tf.constant(2**input_size_bits, dtype=tf.int64)
-  sparse_shape = tf.stack([features.dense_shape[0], sparse_feature_dim])
-  sparse_tf = tf.SparseTensor(features.indices, features.values, sparse_shape)
-  return sparse_tf
+d-def wead_config(whitewist_yamw_fiwe):
+  with tf.gfiwe.fastgfiwe(whitewist_yamw_fiwe) as f:
+    twy:
+      wetuwn yamw.safe_woad(f)
+    e-except yamw.yamwewwow as exc:
+      pwint(exc)
+      s-sys.exit(1)
 
 
-def self_atten_dense(input, out_dim, activation=None, use_bias=True, name=None):
-  def safe_concat(base, suffix):
-    """Concats variables name components if base is given."""
-    if not base:
-      return base
-    return f"{base}:{suffix}"
+def _spawse_featuwe_fixup(featuwes, (///ˬ///✿) i-input_size_bits):
+  """webuiwd a spawse tensow featuwe so that its dense shape attwibute i-is pwesent. (U ﹏ U)
 
-  input_dim = input.shape.as_list()[1]
+  awguments:
+    f-featuwes (spawsetensow): s-spawse featuwe tensow of shape ``(b, ^^;; spawse_featuwe_dim)``. 🥺
+    input_size_bits (int): nyumbew of c-cowumns in ``wog2`` scawe. òωó must be positive. XD
 
-  sigmoid_out = twml.layers.FullDense(
-    input_dim, dtype=tf.float32, activation=tf.nn.sigmoid, name=safe_concat(name, "sigmoid_out")
+  wetuwns:
+    spawsetensow: webuiwt a-and nyon-fauwty vewsion of `featuwes`."""
+  s-spawse_featuwe_dim = t-tf.constant(2**input_size_bits, :3 d-dtype=tf.int64)
+  s-spawse_shape = tf.stack([featuwes.dense_shape[0], (U ﹏ U) spawse_featuwe_dim])
+  s-spawse_tf = tf.spawsetensow(featuwes.indices, >w< featuwes.vawues, /(^•ω•^) spawse_shape)
+  wetuwn spawse_tf
+
+
+d-def sewf_atten_dense(input, (⑅˘꒳˘) out_dim, ʘwʘ activation=none, rawr x3 use_bias=twue, (˘ω˘) nyame=none):
+  def safe_concat(base, o.O suffix):
+    """concats v-vawiabwes nyame components i-if base is given."""
+    i-if nyot b-base:
+      wetuwn base
+    wetuwn f"{base}:{suffix}"
+
+  input_dim = i-input.shape.as_wist()[1]
+
+  s-sigmoid_out = twmw.wayews.fuwwdense(
+    i-input_dim, d-dtype=tf.fwoat32, 😳 activation=tf.nn.sigmoid, o.O n-nyame=safe_concat(name, ^^;; "sigmoid_out")
   )(input)
-  atten_input = sigmoid_out * input
-  mlp_out = twml.layers.FullDense(
-    out_dim,
-    dtype=tf.float32,
-    activation=activation,
-    use_bias=use_bias,
-    name=safe_concat(name, "mlp_out"),
+  atten_input = s-sigmoid_out * input
+  mwp_out = twmw.wayews.fuwwdense(
+    out_dim, ( ͡o ω ͡o )
+    d-dtype=tf.fwoat32,
+    activation=activation, ^^;;
+    u-use_bias=use_bias, ^^;;
+    nyame=safe_concat(name, "mwp_out"), XD
   )(atten_input)
-  return mlp_out
+  w-wetuwn m-mwp_out
 
 
-def get_dense_out(input, out_dim, activation, dense_type):
-  if dense_type == "full_dense":
-    out = twml.layers.FullDense(out_dim, dtype=tf.float32, activation=activation)(input)
-  elif dense_type == "self_atten_dense":
-    out = self_atten_dense(input, out_dim, activation=activation)
-  return out
+def get_dense_out(input, 🥺 out_dim, (///ˬ///✿) activation, (U ᵕ U❁) dense_type):
+  if dense_type == "fuww_dense":
+    out = twmw.wayews.fuwwdense(out_dim, ^^;; d-dtype=tf.fwoat32, ^^;; a-activation=activation)(input)
+  ewif dense_type == "sewf_atten_dense":
+    o-out = s-sewf_atten_dense(input, rawr o-out_dim, (˘ω˘) activation=activation)
+  wetuwn out
 
 
-def get_input_trans_func(bn_normalized_dense, is_training):
-  gw_normalized_dense = tf.expand_dims(bn_normalized_dense, -1)
-  group_num = bn_normalized_dense.shape.as_list()[1]
+def get_input_twans_func(bn_nowmawized_dense, 🥺 i-is_twaining):
+  gw_nowmawized_dense = tf.expand_dims(bn_nowmawized_dense, nyaa~~ -1)
+  gwoup_num = bn_nowmawized_dense.shape.as_wist()[1]
 
-  gw_normalized_dense = GroupWiseTrans(group_num, 1, 8, name="groupwise_1", activation=tf.tanh)(
-    gw_normalized_dense
+  gw_nowmawized_dense = gwoupwisetwans(gwoup_num, :3 1, 8, n-nyame="gwoupwise_1", activation=tf.tanh)(
+    g-gw_nowmawized_dense
   )
-  gw_normalized_dense = GroupWiseTrans(group_num, 8, 4, name="groupwise_2", activation=tf.tanh)(
-    gw_normalized_dense
+  g-gw_nowmawized_dense = g-gwoupwisetwans(gwoup_num, /(^•ω•^) 8, 4, nyame="gwoupwise_2", ^•ﻌ•^ a-activation=tf.tanh)(
+    g-gw_nowmawized_dense
   )
-  gw_normalized_dense = GroupWiseTrans(group_num, 4, 1, name="groupwise_3", activation=tf.tanh)(
-    gw_normalized_dense
-  )
-
-  gw_normalized_dense = tf.squeeze(gw_normalized_dense, [-1])
-
-  bn_gw_normalized_dense = tf.layers.batch_normalization(
-    gw_normalized_dense,
-    training=is_training,
-    renorm_momentum=0.9999,
-    momentum=0.9999,
-    renorm=is_training,
-    trainable=True,
+  g-gw_nowmawized_dense = g-gwoupwisetwans(gwoup_num, UwU 4, 😳😳😳 1, nyame="gwoupwise_3", OwO activation=tf.tanh)(
+    gw_nowmawized_dense
   )
 
-  return bn_gw_normalized_dense
+  g-gw_nowmawized_dense = t-tf.squeeze(gw_nowmawized_dense, ^•ﻌ•^ [-1])
+
+  b-bn_gw_nowmawized_dense = t-tf.wayews.batch_nowmawization(
+    g-gw_nowmawized_dense, (ꈍᴗꈍ)
+    twaining=is_twaining, (⑅˘꒳˘)
+    wenowm_momentum=0.9999, (⑅˘꒳˘)
+    momentum=0.9999, (ˆ ﻌ ˆ)♡
+    w-wenowm=is_twaining, /(^•ω•^)
+    twainabwe=twue, òωó
+  )
+
+  wetuwn bn_gw_nowmawized_dense
 
 
-def tensor_dropout(
-  input_tensor,
-  rate,
-  is_training,
-  sparse_tensor=None,
+def tensow_dwopout(
+  input_tensow, (⑅˘꒳˘)
+  wate, (U ᵕ U❁)
+  i-is_twaining, >w<
+  spawse_tensow=none, σωσ
 ):
   """
-  Implements dropout layer for both dense and sparse input_tensor
+  impwements dwopout wayew fow b-both dense and s-spawse input_tensow
 
-  Arguments:
-    input_tensor:
-      B x D dense tensor, or a sparse tensor
-    rate (float32):
-      dropout rate
-    is_training (bool):
-      training stage or not.
-    sparse_tensor (bool):
-      whether the input_tensor is sparse tensor or not. Default to be None, this value has to be passed explicitly.
-    rescale_sparse_dropout (bool):
-      Do we need to do rescaling or not.
-  Returns:
-    tensor dropped out"""
-  if sparse_tensor == True:
-    if is_training:
-      with tf.variable_scope("sparse_dropout"):
-        values = input_tensor.values
-        keep_mask = tf.keras.backend.random_binomial(
-          tf.shape(values), p=1 - rate, dtype=tf.float32, seed=None
+  a-awguments:
+    input_tensow:
+      b-b x d dense tensow, -.- ow a-a spawse tensow
+    w-wate (fwoat32):
+      dwopout wate
+    is_twaining (boow):
+      twaining stage ow nyot. o.O
+    spawse_tensow (boow):
+      w-whethew the input_tensow i-is spawse tensow ow not. ^^ d-defauwt to be nyone, >_< t-this vawue has to be passed expwicitwy. >w<
+    w-wescawe_spawse_dwopout (boow):
+      d-do we need to do wescawing o-ow nyot. >_<
+  wetuwns:
+    t-tensow dwopped out"""
+  if spawse_tensow == twue:
+    if is_twaining:
+      w-with tf.vawiabwe_scope("spawse_dwopout"):
+        v-vawues = i-input_tensow.vawues
+        keep_mask = t-tf.kewas.backend.wandom_binomiaw(
+          t-tf.shape(vawues), >w< p=1 - wate, rawr d-dtype=tf.fwoat32, rawr x3 seed=none
         )
-        keep_mask.set_shape([None])
-        keep_mask = tf.cast(keep_mask, tf.bool)
+        keep_mask.set_shape([none])
+        keep_mask = tf.cast(keep_mask, ( ͡o ω ͡o ) t-tf.boow)
 
-        keep_indices = tf.boolean_mask(input_tensor.indices, keep_mask, axis=0)
-        keep_values = tf.boolean_mask(values, keep_mask, axis=0)
+        k-keep_indices = tf.boowean_mask(input_tensow.indices, (˘ω˘) keep_mask, 😳 a-axis=0)
+        k-keep_vawues = tf.boowean_mask(vawues, OwO keep_mask, (˘ω˘) axis=0)
 
-        dropped_tensor = tf.SparseTensor(keep_indices, keep_values, input_tensor.dense_shape)
-        return dropped_tensor
-    else:
-      return input_tensor
-  elif sparse_tensor == False:
-    return tf.layers.dropout(input_tensor, rate=rate, training=is_training)
+        d-dwopped_tensow = tf.spawsetensow(keep_indices, òωó keep_vawues, ( ͡o ω ͡o ) input_tensow.dense_shape)
+        wetuwn dwopped_tensow
+    ewse:
+      w-wetuwn input_tensow
+  ewif spawse_tensow == f-fawse:
+    w-wetuwn tf.wayews.dwopout(input_tensow, UwU wate=wate, twaining=is_twaining)
 
 
-def adaptive_transformation(bn_normalized_dense, is_training, func_type="default"):
-  assert func_type in [
-    "default",
-    "tiny",
-  ], f"fun_type can only be one of default and tiny, but get {func_type}"
+def a-adaptive_twansfowmation(bn_nowmawized_dense, /(^•ω•^) i-is_twaining, (ꈍᴗꈍ) func_type="defauwt"):
+  assewt func_type in [
+    "defauwt", 😳
+    "tiny", mya
+  ], f-f"fun_type can onwy be one o-of defauwt and tiny, mya but get {func_type}"
 
-  gw_normalized_dense = tf.expand_dims(bn_normalized_dense, -1)
-  group_num = bn_normalized_dense.shape.as_list()[1]
+  gw_nowmawized_dense = tf.expand_dims(bn_nowmawized_dense, /(^•ω•^) -1)
+  g-gwoup_num = bn_nowmawized_dense.shape.as_wist()[1]
 
-  if func_type == "default":
-    gw_normalized_dense = FastGroupWiseTrans(
-      group_num, 1, 8, name="groupwise_1", activation=tf.tanh, init_multiplier=8
-    )(gw_normalized_dense)
+  if func_type == "defauwt":
+    g-gw_nowmawized_dense = f-fastgwoupwisetwans(
+      gwoup_num, ^^;; 1, 8, n-nyame="gwoupwise_1", 🥺 activation=tf.tanh, ^^ init_muwtipwiew=8
+    )(gw_nowmawized_dense)
 
-    gw_normalized_dense = FastGroupWiseTrans(
-      group_num, 8, 4, name="groupwise_2", activation=tf.tanh, init_multiplier=8
-    )(gw_normalized_dense)
+    g-gw_nowmawized_dense = f-fastgwoupwisetwans(
+      g-gwoup_num, ^•ﻌ•^ 8, 4, /(^•ω•^) nyame="gwoupwise_2", ^^ a-activation=tf.tanh, 🥺 i-init_muwtipwiew=8
+    )(gw_nowmawized_dense)
 
-    gw_normalized_dense = FastGroupWiseTrans(
-      group_num, 4, 1, name="groupwise_3", activation=tf.tanh, init_multiplier=8
-    )(gw_normalized_dense)
-  elif func_type == "tiny":
-    gw_normalized_dense = FastGroupWiseTrans(
-      group_num, 1, 2, name="groupwise_1", activation=tf.tanh, init_multiplier=8
-    )(gw_normalized_dense)
+    gw_nowmawized_dense = fastgwoupwisetwans(
+      g-gwoup_num, (U ᵕ U❁) 4, 😳😳😳 1, n-nyame="gwoupwise_3", nyaa~~ a-activation=tf.tanh, (˘ω˘) init_muwtipwiew=8
+    )(gw_nowmawized_dense)
+  ewif func_type == "tiny":
+    g-gw_nowmawized_dense = fastgwoupwisetwans(
+      g-gwoup_num, >_< 1, 2, XD n-nyame="gwoupwise_1", rawr x3 activation=tf.tanh, ( ͡o ω ͡o ) init_muwtipwiew=8
+    )(gw_nowmawized_dense)
 
-    gw_normalized_dense = FastGroupWiseTrans(
-      group_num, 2, 1, name="groupwise_2", activation=tf.tanh, init_multiplier=8
-    )(gw_normalized_dense)
+    gw_nowmawized_dense = f-fastgwoupwisetwans(
+      g-gwoup_num, :3 2, mya 1, n-name="gwoupwise_2", σωσ a-activation=tf.tanh, (ꈍᴗꈍ) init_muwtipwiew=8
+    )(gw_nowmawized_dense)
 
-    gw_normalized_dense = FastGroupWiseTrans(
-      group_num, 1, 1, name="groupwise_3", activation=tf.tanh, init_multiplier=8
-    )(gw_normalized_dense)
+    g-gw_nowmawized_dense = fastgwoupwisetwans(
+      gwoup_num, 1, OwO 1, nyame="gwoupwise_3", o.O activation=tf.tanh, 😳😳😳 init_muwtipwiew=8
+    )(gw_nowmawized_dense)
 
-  gw_normalized_dense = tf.squeeze(gw_normalized_dense, [-1])
-  bn_gw_normalized_dense = tf.layers.batch_normalization(
-    gw_normalized_dense,
-    training=is_training,
-    renorm_momentum=0.9999,
-    momentum=0.9999,
-    renorm=is_training,
-    trainable=True,
+  g-gw_nowmawized_dense = tf.squeeze(gw_nowmawized_dense, /(^•ω•^) [-1])
+  b-bn_gw_nowmawized_dense = tf.wayews.batch_nowmawization(
+    gw_nowmawized_dense, OwO
+    t-twaining=is_twaining, ^^
+    wenowm_momentum=0.9999, (///ˬ///✿)
+    m-momentum=0.9999, (///ˬ///✿)
+    wenowm=is_twaining, (///ˬ///✿)
+    t-twainabwe=twue, ʘwʘ
   )
 
-  return bn_gw_normalized_dense
+  w-wetuwn bn_gw_nowmawized_dense
 
 
-class FastGroupWiseTrans(object):
+c-cwass fastgwoupwisetwans(object):
   """
-  used to apply group-wise fully connected layers to the input.
-  it applies a tiny, unique MLP to each individual feature."""
+  u-used t-to appwy gwoup-wise fuwwy connected wayews to the input. ^•ﻌ•^
+  it appwies a tiny, OwO unique mwp to each individuaw featuwe."""
 
-  def __init__(self, group_num, input_dim, out_dim, name, activation=None, init_multiplier=1):
-    self.group_num = group_num
-    self.input_dim = input_dim
-    self.out_dim = out_dim
-    self.activation = activation
-    self.init_multiplier = init_multiplier
+  d-def __init__(sewf, (U ﹏ U) gwoup_num, (ˆ ﻌ ˆ)♡ i-input_dim, (⑅˘꒳˘) o-out_dim, nyame, (U ﹏ U) activation=none, o.O i-init_muwtipwiew=1):
+    sewf.gwoup_num = gwoup_num
+    sewf.input_dim = input_dim
+    s-sewf.out_dim = o-out_dim
+    sewf.activation = a-activation
+    sewf.init_muwtipwiew = init_muwtipwiew
 
-    self.w = tf.get_variable(
-      name + "_group_weight",
-      [1, group_num, input_dim, out_dim],
-      initializer=customized_glorot_uniform(
-        fan_in=input_dim * init_multiplier, fan_out=out_dim * init_multiplier
-      ),
-      trainable=True,
+    sewf.w = tf.get_vawiabwe(
+      n-nyame + "_gwoup_weight", mya
+      [1, XD g-gwoup_num, input_dim, òωó out_dim], (˘ω˘)
+      i-initiawizew=customized_gwowot_unifowm(
+        f-fan_in=input_dim * init_muwtipwiew, :3 fan_out=out_dim * init_muwtipwiew
+      ), OwO
+      twainabwe=twue, mya
     )
-    self.b = tf.get_variable(
-      name + "_group_bias",
-      [1, group_num, out_dim],
-      initializer=tf.constant_initializer(0.0),
-      trainable=True,
-    )
-
-  def __call__(self, input_tensor):
-    """
-    input_tensor: batch_size x group_num x input_dim
-    output_tensor:  batch_size x group_num x out_dim"""
-    input_tensor_expand = tf.expand_dims(input_tensor, axis=-1)
-
-    output_tensor = tf.add(
-      tf.reduce_sum(tf.multiply(input_tensor_expand, self.w), axis=-2, keepdims=False),
-      self.b,
+    sewf.b = t-tf.get_vawiabwe(
+      n-nyame + "_gwoup_bias", (˘ω˘)
+      [1, o.O g-gwoup_num, o-out_dim], (✿oωo)
+      i-initiawizew=tf.constant_initiawizew(0.0), (ˆ ﻌ ˆ)♡
+      twainabwe=twue, ^^;;
     )
 
-    if self.activation is not None:
-      output_tensor = self.activation(output_tensor)
-    return output_tensor
-
-
-class GroupWiseTrans(object):
-  """
-  Used to apply group fully connected layers to the input.
-  """
-
-  def __init__(self, group_num, input_dim, out_dim, name, activation=None):
-    self.group_num = group_num
-    self.input_dim = input_dim
-    self.out_dim = out_dim
-    self.activation = activation
-
-    w_list, b_list = [], []
-    for idx in range(out_dim):
-      this_w = tf.get_variable(
-        name + f"_group_weight_{idx}",
-        [1, group_num, input_dim],
-        initializer=tf.keras.initializers.glorot_uniform(),
-        trainable=True,
-      )
-      this_b = tf.get_variable(
-        name + f"_group_bias_{idx}",
-        [1, group_num, 1],
-        initializer=tf.constant_initializer(0.0),
-        trainable=True,
-      )
-      w_list.append(this_w)
-      b_list.append(this_b)
-    self.w_list = w_list
-    self.b_list = b_list
-
-  def __call__(self, input_tensor):
+  d-def __caww__(sewf, OwO i-input_tensow):
     """
-    input_tensor: batch_size x group_num x input_dim
-    output_tensor: batch_size x group_num x out_dim
-    """
-    out_tensor_list = []
-    for idx in range(self.out_dim):
-      this_res = (
-        tf.reduce_sum(input_tensor * self.w_list[idx], axis=-1, keepdims=True) + self.b_list[idx]
+    input_tensow: b-batch_size x-x gwoup_num x input_dim
+    o-output_tensow:  batch_size x gwoup_num x out_dim"""
+    i-input_tensow_expand = tf.expand_dims(input_tensow, 🥺 a-axis=-1)
+
+    o-output_tensow = tf.add(
+      t-tf.weduce_sum(tf.muwtipwy(input_tensow_expand, mya sewf.w), axis=-2, 😳 keepdims=fawse), òωó
+      s-sewf.b, /(^•ω•^)
+    )
+
+    i-if sewf.activation i-is nyot nyone:
+      output_tensow = sewf.activation(output_tensow)
+    wetuwn output_tensow
+
+
+c-cwass gwoupwisetwans(object):
+  """
+  used to appwy gwoup f-fuwwy connected w-wayews to the input.
+  """
+
+  def __init__(sewf, -.- gwoup_num, òωó input_dim, /(^•ω•^) o-out_dim, nyame, /(^•ω•^) activation=none):
+    s-sewf.gwoup_num = gwoup_num
+    s-sewf.input_dim = input_dim
+    sewf.out_dim = o-out_dim
+    sewf.activation = activation
+
+    w-w_wist, 😳 b-b_wist = [], :3 []
+    fow idx in w-wange(out_dim):
+      this_w = tf.get_vawiabwe(
+        n-name + f"_gwoup_weight_{idx}", (U ᵕ U❁)
+        [1, g-gwoup_num, ʘwʘ input_dim], o.O
+        i-initiawizew=tf.kewas.initiawizews.gwowot_unifowm(), ʘwʘ
+        twainabwe=twue, ^^
       )
-      out_tensor_list.append(this_res)
-    output_tensor = tf.concat(out_tensor_list, axis=-1)
+      this_b = tf.get_vawiabwe(
+        nyame + f"_gwoup_bias_{idx}", ^•ﻌ•^
+        [1, mya gwoup_num, UwU 1],
+        initiawizew=tf.constant_initiawizew(0.0), >_<
+        twainabwe=twue, /(^•ω•^)
+      )
+      w_wist.append(this_w)
+      b_wist.append(this_b)
+    sewf.w_wist = w_wist
+    sewf.b_wist = b_wist
 
-    if self.activation is not None:
-      output_tensor = self.activation(output_tensor)
-    return output_tensor
+  def __caww__(sewf, òωó i-input_tensow):
+    """
+    i-input_tensow: batch_size x gwoup_num x input_dim
+    o-output_tensow: b-batch_size x-x gwoup_num x out_dim
+    """
+    o-out_tensow_wist = []
+    fow i-idx in wange(sewf.out_dim):
+      t-this_wes = (
+        tf.weduce_sum(input_tensow * s-sewf.w_wist[idx], σωσ axis=-1, ( ͡o ω ͡o ) k-keepdims=twue) + s-sewf.b_wist[idx]
+      )
+      out_tensow_wist.append(this_wes)
+    output_tensow = t-tf.concat(out_tensow_wist, nyaa~~ a-axis=-1)
+
+    if s-sewf.activation i-is nyot none:
+      o-output_tensow = s-sewf.activation(output_tensow)
+    w-wetuwn o-output_tensow
 
 
-def add_scalar_summary(var, name, name_scope="hist_dense_feature/"):
-  with tf.name_scope("summaries/"):
+d-def add_scawaw_summawy(vaw, :3 nyame, n-nyame_scope="hist_dense_featuwe/"):
+  w-with tf.name_scope("summawies/"):
+    with t-tf.name_scope(name_scope):
+      tf.summawy.scawaw(name, UwU v-vaw)
+
+
+def add_histogwam_summawy(vaw, o.O nyame, nyame_scope="hist_dense_featuwe/"):
+  w-with tf.name_scope("summawies/"):
     with tf.name_scope(name_scope):
-      tf.summary.scalar(name, var)
+      t-tf.summawy.histogwam(name, (ˆ ﻌ ˆ)♡ t-tf.weshape(vaw, ^^;; [-1]))
 
 
-def add_histogram_summary(var, name, name_scope="hist_dense_feature/"):
-  with tf.name_scope("summaries/"):
-    with tf.name_scope(name_scope):
-      tf.summary.histogram(name, tf.reshape(var, [-1]))
+d-def spawse_cwip_by_vawue(spawse_tf, ʘwʘ min_vaw, σωσ max_vaw):
+  n-nyew_vaws = tf.cwip_by_vawue(spawse_tf.vawues, m-min_vaw, ^^;; max_vaw)
+  wetuwn t-tf.spawsetensow(spawse_tf.indices, ʘwʘ nyew_vaws, s-spawse_tf.dense_shape)
 
 
-def sparse_clip_by_value(sparse_tf, min_val, max_val):
-  new_vals = tf.clip_by_value(sparse_tf.values, min_val, max_val)
-  return tf.SparseTensor(sparse_tf.indices, new_vals, sparse_tf.dense_shape)
+def check_numewics_with_msg(tensow, ^^ message="", nyaa~~ spawse_tensow=fawse):
+  if spawse_tensow:
+    v-vawues = tf.debugging.check_numewics(tensow.vawues, (///ˬ///✿) m-message=message)
+    w-wetuwn tf.spawsetensow(tensow.indices, XD vawues, :3 tensow.dense_shape)
+  ewse:
+    w-wetuwn tf.debugging.check_numewics(tensow, òωó message=message)
 
 
-def check_numerics_with_msg(tensor, message="", sparse_tensor=False):
-  if sparse_tensor:
-    values = tf.debugging.check_numerics(tensor.values, message=message)
-    return tf.SparseTensor(tensor.indices, values, tensor.dense_shape)
-  else:
-    return tf.debugging.check_numerics(tensor, message=message)
-
-
-def pad_empty_sparse_tensor(tensor):
-  dummy_tensor = tf.SparseTensor(
-    indices=[[0, 0]],
-    values=[0.00001],
-    dense_shape=tensor.dense_shape,
+d-def p-pad_empty_spawse_tensow(tensow):
+  d-dummy_tensow = tf.spawsetensow(
+    indices=[[0, ^^ 0]],
+    vawues=[0.00001], ^•ﻌ•^
+    d-dense_shape=tensow.dense_shape, σωσ
   )
-  result = tf.cond(
-    tf.equal(tf.size(tensor.values), 0),
-    lambda: dummy_tensor,
-    lambda: tensor,
+  w-wesuwt = tf.cond(
+    t-tf.equaw(tf.size(tensow.vawues), (ˆ ﻌ ˆ)♡ 0),
+    wambda: dummy_tensow, nyaa~~
+    w-wambda: tensow, ʘwʘ
   )
-  return result
+  wetuwn w-wesuwt
 
 
-def filter_nans_and_infs(tensor, sparse_tensor=False):
-  if sparse_tensor:
-    sparse_values = tensor.values
-    filtered_val = tf.where(
-      tf.logical_or(tf.is_nan(sparse_values), tf.is_inf(sparse_values)),
-      tf.zeros_like(sparse_values),
-      sparse_values,
+def fiwtew_nans_and_infs(tensow, ^•ﻌ•^ s-spawse_tensow=fawse):
+  i-if spawse_tensow:
+    spawse_vawues = t-tensow.vawues
+    f-fiwtewed_vaw = t-tf.whewe(
+      t-tf.wogicaw_ow(tf.is_nan(spawse_vawues), rawr x3 tf.is_inf(spawse_vawues)), 🥺
+      t-tf.zewos_wike(spawse_vawues), ʘwʘ
+      s-spawse_vawues, (˘ω˘)
     )
-    return tf.SparseTensor(tensor.indices, filtered_val, tensor.dense_shape)
-  else:
-    return tf.where(
-      tf.logical_or(tf.is_nan(tensor), tf.is_inf(tensor)), tf.zeros_like(tensor), tensor
+    w-wetuwn tf.spawsetensow(tensow.indices, o.O f-fiwtewed_vaw, σωσ t-tensow.dense_shape)
+  e-ewse:
+    w-wetuwn tf.whewe(
+      t-tf.wogicaw_ow(tf.is_nan(tensow), (ꈍᴗꈍ) tf.is_inf(tensow)), (ˆ ﻌ ˆ)♡ t-tf.zewos_wike(tensow), o.O tensow
     )
 
 
-def generate_disliked_mask(labels):
-  """Generate a disliked mask where only samples with dislike labels are set to 1 otherwise set to 0.
-  Args:
-    labels: labels of training samples, which is a 2D tensor of shape batch_size x 3: [OONCs, engagements, dislikes]
-  Returns:
-    1D tensor of shape batch_size x 1: [dislikes (booleans)]
+d-def genewate_diswiked_mask(wabews):
+  """genewate a diswiked m-mask whewe onwy s-sampwes with d-diswike wabews awe set to 1 othewwise set to 0. :3
+  awgs:
+    wabews: w-wabews of twaining s-sampwes, -.- w-which is a 2d tensow of shape batch_size x 3: [ooncs, ( ͡o ω ͡o ) engagements, /(^•ω•^) d-diswikes]
+  w-wetuwns:
+    1d tensow of shape b-batch_size x 1: [diswikes (booweans)]
   """
-  return tf.equal(tf.reshape(labels[:, 2], shape=[-1, 1]), 1)
+  w-wetuwn tf.equaw(tf.weshape(wabews[:, (⑅˘꒳˘) 2], òωó shape=[-1, 1]), 🥺 1)

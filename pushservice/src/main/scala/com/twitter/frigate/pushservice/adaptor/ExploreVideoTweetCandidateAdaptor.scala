@@ -1,120 +1,120 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.twittew.fwigate.pushsewvice.adaptow
 
-import com.twitter.explore_ranker.thriftscala.ExploreRankerProductResponse
-import com.twitter.explore_ranker.thriftscala.ExploreRankerRequest
-import com.twitter.explore_ranker.thriftscala.ExploreRankerResponse
-import com.twitter.explore_ranker.thriftscala.ExploreRecommendation
-import com.twitter.explore_ranker.thriftscala.ImmersiveRecsResponse
-import com.twitter.explore_ranker.thriftscala.ImmersiveRecsResult
-import com.twitter.explore_ranker.thriftscala.NotificationsVideoRecs
-import com.twitter.explore_ranker.thriftscala.Product
-import com.twitter.explore_ranker.thriftscala.ProductContext
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.base.OutOfNetworkTweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.AdaptorUtils
-import com.twitter.frigate.pushservice.util.MediaCRT
-import com.twitter.frigate.pushservice.util.PushAdaptorUtil
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt com.twittew.expwowe_wankew.thwiftscawa.expwowewankewpwoductwesponse
+i-impowt c-com.twittew.expwowe_wankew.thwiftscawa.expwowewankewwequest
+i-impowt c-com.twittew.expwowe_wankew.thwiftscawa.expwowewankewwesponse
+i-impowt com.twittew.expwowe_wankew.thwiftscawa.expwowewecommendation
+i-impowt com.twittew.expwowe_wankew.thwiftscawa.immewsivewecswesponse
+i-impowt c-com.twittew.expwowe_wankew.thwiftscawa.immewsivewecswesuwt
+impowt com.twittew.expwowe_wankew.thwiftscawa.notificationsvideowecs
+impowt com.twittew.expwowe_wankew.thwiftscawa.pwoduct
+impowt com.twittew.expwowe_wankew.thwiftscawa.pwoductcontext
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.fwigate.common.base.candidatesouwce
+impowt c-com.twittew.fwigate.common.base.candidatesouwceewigibwe
+impowt c-com.twittew.fwigate.common.base.outofnetwowktweetcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.utiw.adaptowutiws
+i-impowt com.twittew.fwigate.pushsewvice.utiw.mediacwt
+impowt com.twittew.fwigate.pushsewvice.utiw.pushadaptowutiw
+impowt com.twittew.fwigate.pushsewvice.utiw.pushdeviceutiw
+i-impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.pwoduct_mixew.cowe.thwiftscawa.cwientcontext
+impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
 
-case class ExploreVideoTweetCandidateAdaptor(
-  exploreRankerStore: ReadableStore[ExploreRankerRequest, ExploreRankerResponse],
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+c-case cwass expwowevideotweetcandidateadaptow(
+  expwowewankewstowe: w-weadabwestowe[expwowewankewwequest, (˘ω˘) e-expwowewankewwesponse], (U ﹏ U)
+  t-tweetypiestowe: w-weadabwestowe[wong, ^•ﻌ•^ tweetypiewesuwt], (˘ω˘)
+  gwobawstats: s-statsweceivew)
+    extends candidatesouwce[tawget, :3 w-wawcandidate]
+    with candidatesouwceewigibwe[tawget, ^^;; wawcandidate] {
 
-  override def name: String = this.getClass.getSimpleName
-  private[this] val stats = globalStats.scope("ExploreVideoTweetCandidateAdaptor")
-  private[this] val totalInputRecs = stats.stat("input_recs")
-  private[this] val totalRequests = stats.counter("total_requests")
-  private[this] val totalEmptyResponse = stats.counter("total_empty_response")
+  ovewwide def nyame: stwing = t-this.getcwass.getsimpwename
+  pwivate[this] vaw s-stats = gwobawstats.scope("expwowevideotweetcandidateadaptow")
+  p-pwivate[this] v-vaw totawinputwecs = stats.stat("input_wecs")
+  pwivate[this] vaw totawwequests = s-stats.countew("totaw_wequests")
+  p-pwivate[this] vaw totawemptywesponse = s-stats.countew("totaw_empty_wesponse")
 
-  private def buildExploreRankerRequest(
-    target: Target,
-    countryCode: Option[String],
-    language: Option[String],
-  ): ExploreRankerRequest = {
-    ExploreRankerRequest(
-      clientContext = ClientContext(
-        userId = Some(target.targetId),
-        countryCode = countryCode,
-        languageCode = language,
-      ),
-      product = Product.NotificationsVideoRecs,
-      productContext = Some(ProductContext.NotificationsVideoRecs(NotificationsVideoRecs())),
-      maxResults = Some(target.params(PushFeatureSwitchParams.MaxExploreVideoTweets))
+  p-pwivate def buiwdexpwowewankewwequest(
+    t-tawget: tawget, 🥺
+    countwycode: o-option[stwing], (⑅˘꒳˘)
+    wanguage: option[stwing], nyaa~~
+  ): expwowewankewwequest = {
+    e-expwowewankewwequest(
+      cwientcontext = c-cwientcontext(
+        usewid = some(tawget.tawgetid), :3
+        c-countwycode = c-countwycode, ( ͡o ω ͡o )
+        wanguagecode = wanguage,
+      ), mya
+      pwoduct = pwoduct.notificationsvideowecs, (///ˬ///✿)
+      pwoductcontext = some(pwoductcontext.notificationsvideowecs(notificationsvideowecs())), (˘ω˘)
+      maxwesuwts = s-some(tawget.pawams(pushfeatuweswitchpawams.maxexpwowevideotweets))
     )
   }
 
-  override def get(target: Target): Future[Option[Seq[RawCandidate]]] = {
-    Future
+  o-ovewwide def get(tawget: tawget): f-futuwe[option[seq[wawcandidate]]] = {
+    f-futuwe
       .join(
-        target.countryCode,
-        target.inferredUserDeviceLanguage
-      ).flatMap {
-        case (countryCode, language) =>
-          val request = buildExploreRankerRequest(target, countryCode, language)
-          exploreRankerStore.get(request).flatMap {
-            case Some(response) =>
-              val exploreResonseTweetIds = response match {
-                case ExploreRankerResponse(ExploreRankerProductResponse
-                      .ImmersiveRecsResponse(ImmersiveRecsResponse(immersiveRecsResult))) =>
-                  immersiveRecsResult.collect {
-                    case ImmersiveRecsResult(ExploreRecommendation
-                          .ExploreTweetRecommendation(exploreTweetRecommendation)) =>
-                      exploreTweetRecommendation.tweetId
+        t-tawget.countwycode,
+        tawget.infewwedusewdevicewanguage
+      ).fwatmap {
+        case (countwycode, ^^;; wanguage) =>
+          v-vaw wequest = buiwdexpwowewankewwequest(tawget, countwycode, (✿oωo) wanguage)
+          expwowewankewstowe.get(wequest).fwatmap {
+            c-case some(wesponse) =>
+              vaw expwowewesonsetweetids = w-wesponse match {
+                c-case expwowewankewwesponse(expwowewankewpwoductwesponse
+                      .immewsivewecswesponse(immewsivewecswesponse(immewsivewecswesuwt))) =>
+                  i-immewsivewecswesuwt.cowwect {
+                    case immewsivewecswesuwt(expwowewecommendation
+                          .expwowetweetwecommendation(expwowetweetwecommendation)) =>
+                      e-expwowetweetwecommendation.tweetid
                   }
-                case _ =>
-                  Seq.empty
+                c-case _ =>
+                  s-seq.empty
               }
 
-              totalInputRecs.add(exploreResonseTweetIds.size)
-              totalRequests.incr()
-              AdaptorUtils
-                .getTweetyPieResults(exploreResonseTweetIds.toSet, tweetyPieStore).map {
-                  tweetyPieResultMap =>
-                    val candidates = tweetyPieResultMap.values.flatten
-                      .map(buildVideoRawCandidates(target, _))
-                    Some(candidates.toSeq)
+              t-totawinputwecs.add(expwowewesonsetweetids.size)
+              totawwequests.incw()
+              adaptowutiws
+                .gettweetypiewesuwts(expwowewesonsetweetids.toset, (U ﹏ U) t-tweetypiestowe).map {
+                  tweetypiewesuwtmap =>
+                    v-vaw candidates = t-tweetypiewesuwtmap.vawues.fwatten
+                      .map(buiwdvideowawcandidates(tawget, -.- _))
+                    some(candidates.toseq)
                 }
-            case _ =>
-              totalEmptyResponse.incr()
-              Future.None
+            c-case _ =>
+              t-totawemptywesponse.incw()
+              futuwe.none
           }
         case _ =>
-          Future.None
+          futuwe.none
       }
   }
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    PushDeviceUtil.isRecommendationsEligible(target).map { userRecommendationsEligible =>
-      userRecommendationsEligible && target.params(PushFeatureSwitchParams.EnableExploreVideoTweets)
+  o-ovewwide def iscandidatesouwceavaiwabwe(tawget: tawget): futuwe[boowean] = {
+    pushdeviceutiw.iswecommendationsewigibwe(tawget).map { usewwecommendationsewigibwe =>
+      usewwecommendationsewigibwe && tawget.pawams(pushfeatuweswitchpawams.enabweexpwowevideotweets)
     }
   }
-  private def buildVideoRawCandidates(
-    target: Target,
-    tweetyPieResult: TweetyPieResult
-  ): RawCandidate with OutOfNetworkTweetCandidate = {
-    PushAdaptorUtil.generateOutOfNetworkTweetCandidates(
-      inputTarget = target,
-      id = tweetyPieResult.tweet.id,
-      mediaCRT = MediaCRT(
-        CommonRecommendationType.ExploreVideoTweet,
-        CommonRecommendationType.ExploreVideoTweet,
-        CommonRecommendationType.ExploreVideoTweet
-      ),
-      result = Some(tweetyPieResult),
-      localizedEntity = None
+  p-pwivate def buiwdvideowawcandidates(
+    tawget: tawget, ^•ﻌ•^
+    tweetypiewesuwt: t-tweetypiewesuwt
+  ): w-wawcandidate w-with outofnetwowktweetcandidate = {
+    p-pushadaptowutiw.genewateoutofnetwowktweetcandidates(
+      inputtawget = t-tawget,
+      i-id = tweetypiewesuwt.tweet.id, rawr
+      mediacwt = mediacwt(
+        commonwecommendationtype.expwowevideotweet, (˘ω˘)
+        commonwecommendationtype.expwowevideotweet, nyaa~~
+        commonwecommendationtype.expwowevideotweet
+      ), UwU
+      wesuwt = s-some(tweetypiewesuwt), :3
+      wocawizedentity = n-nyone
     )
   }
 }

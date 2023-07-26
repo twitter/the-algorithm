@@ -1,32 +1,32 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.twittew.cw_mixew.simiwawity_engine
 
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt com.twittew.cw_mixew.modew.tweetwithauthow
+i-impowt com.twittew.cw_mixew.simiwawity_engine.simiwawityengine.simiwawityengineconfig
+i-impowt com.twittew.cw_mixew.thwiftscawa.simiwawityenginetype
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.utiw.futuwe
 
-class EarlybirdSimilarityEngine[
-  Query,
-  EarlybirdSimilarityEngineStore <: ReadableStore[Query, Seq[TweetWithAuthor]]
+c-cwass e-eawwybiwdsimiwawityengine[
+  quewy, rawr x3
+  eawwybiwdsimiwawityenginestowe <: weadabwestowe[quewy, nyaa~~ seq[tweetwithauthow]]
 ](
-  implementingStore: EarlybirdSimilarityEngineStore,
-  override val identifier: SimilarityEngineType,
-  globalStats: StatsReceiver,
-  engineConfig: SimilarityEngineConfig,
-) extends SimilarityEngine[EngineQuery[Query], TweetWithAuthor] {
-  private val scopedStats = globalStats.scope("similarityEngine", identifier.toString)
+  impwementingstowe: eawwybiwdsimiwawityenginestowe, /(^•ω•^)
+  o-ovewwide vaw identifiew: simiwawityenginetype, rawr
+  gwobawstats: statsweceivew,
+  e-engineconfig: simiwawityengineconfig, OwO
+) extends s-simiwawityengine[enginequewy[quewy], (U ﹏ U) tweetwithauthow] {
+  pwivate vaw scopedstats = g-gwobawstats.scope("simiwawityengine", >_< identifiew.tostwing)
 
-  def getScopedStats: StatsReceiver = scopedStats
+  d-def getscopedstats: s-statsweceivew = scopedstats
 
-  def getCandidates(query: EngineQuery[Query]): Future[Option[Seq[TweetWithAuthor]]] = {
-    SimilarityEngine.getFromFn(
-      implementingStore.get,
-      query.storeQuery,
-      engineConfig,
-      query.params,
-      scopedStats
+  def getcandidates(quewy: enginequewy[quewy]): futuwe[option[seq[tweetwithauthow]]] = {
+    s-simiwawityengine.getfwomfn(
+      impwementingstowe.get, rawr x3
+      quewy.stowequewy, mya
+      engineconfig, nyaa~~
+      quewy.pawams, (⑅˘꒳˘)
+      scopedstats
     )
   }
 }

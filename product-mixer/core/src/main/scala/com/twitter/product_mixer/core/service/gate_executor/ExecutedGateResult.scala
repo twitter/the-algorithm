@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.service.gate_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow
 
-import com.twitter.product_mixer.core.functional_component.gate.GateResult
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gatewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
 
-case class ExecutedGateResult(identifier: GateIdentifier, result: GateResult)
+c-case cwass e-exekawaii~dgatewesuwt(identifiew: g-gateidentifiew, o.O w-wesuwt: gatewesuwt)

@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing
 
-trait HasMarshalling
+twait hasmawshawwing

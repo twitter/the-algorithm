@@ -1,482 +1,482 @@
-scala_library(
-    name = "decider-utils",
-    sources = [
-        "DeciderUtils.scala",
-        "TopicsMapping.scala",
+scawa_wibwawy(
+    nyame = "decidew-utiws", ʘwʘ
+    souwces = [
+        "decidewutiws.scawa", σωσ
+        "topicsmapping.scawa", OwO
     ],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "decider/src/main/scala",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
+    tags = ["bazew-compatibwe"],
+    d-dependencies = [
+        "decidew/swc/main/scawa", 😳😳😳
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", 😳😳😳
+    ], o.O
+)
+
+s-scawa_wibwawy(
+    n-nyame = "base", ( ͡o ω ͡o )
+    s-souwces = [
+        "fwagsmoduwe.scawa", (U ﹏ U)
+        "kafkapwocessowpwovidew.scawa", (///ˬ///✿)
+        "zonefiwtewing.scawa", >w<
+    ],
+    t-tags = [
+        "bazew-compatibwe", rawr
+        "bazew-onwy", mya
+    ], ^^
+    d-dependencies = [
+        ":decidew-utiws", 😳😳😳
+        "3wdpawty/jvm/com/googwe/inject:guice", mya
+        "3wdpawty/jvm/javax/inject:javax.inject", 😳
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", -.-
+        "finatwa-intewnaw/kafka/swc/main/scawa/com/twittew/finatwa/kafka/consumews", 🥺
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", o.O
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", /(^•ω•^)
+        "finatwa/inject/inject-cowe/swc/main/scawa", nyaa~~
+        "finatwa/inject/inject-moduwes/swc/main/scawa", nyaa~~
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", :3
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", 😳😳😳
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", (˘ω˘)
+        "kafka/wibs/swc/main/scawa/com/twittew/kafka/cwient/pwocessow", ^^
+        "twittew-sewvew/sewvew/swc/main/scawa", :3
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew:base", -.-
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka",
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", 😳
+        "utiw/utiw-cowe:scawa", mya
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions", (˘ω˘)
+        "utiw/utiw-swf4j-api/swc/main/scawa", >_<
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", -.-
     ],
 )
 
-scala_library(
-    name = "base",
-    sources = [
-        "FlagsModule.scala",
-        "KafkaProcessorProvider.scala",
-        "ZoneFiltering.scala",
+s-scawa_wibwawy(
+    n-nyame = "tws-favs", 🥺
+    souwces = [
+        "fwagsmoduwe.scawa", (U ﹏ U)
+        "kafkapwocessowpwovidew.scawa",
+        "kafkapwocessowtwsfavsmoduwe.scawa", >w<
+        "zonefiwtewing.scawa", mya
+    ], >w<
+    tags = ["bazew-compatibwe"], nyaa~~
+    dependencies = [
+        ":decidew-utiws", (✿oωo)
+        "3wdpawty/jvm/com/googwe/inject:guice", ʘwʘ
+        "3wdpawty/jvm/javax/inject:javax.inject", (ˆ ﻌ ˆ)♡
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", 😳😳😳
+        "finatwa-intewnaw/kafka/swc/main/scawa/com/twittew/finatwa/kafka/consumews", :3
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", OwO
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", (U ﹏ U)
+        "finatwa/inject/inject-cowe/swc/main/scawa", >w<
+        "finatwa/inject/inject-moduwes/swc/main/scawa", (U ﹏ U)
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", 😳
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", (ˆ ﻌ ˆ)♡
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", 😳😳😳
+        "kafka/wibs/swc/main/scawa/com/twittew/kafka/cwient/pwocessow", (U ﹏ U)
+        "swc/thwift/com/twittew/timewinesewvice/sewvew/intewnaw:thwift-scawa", (///ˬ///✿)
+        "twittew-sewvew/sewvew/swc/main/scawa", 😳
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/tws_favs_event", 😳
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka", σωσ
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", rawr x3
+        "utiw/utiw-cowe:scawa", OwO
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions", /(^•ω•^)
+        "utiw/utiw-swf4j-api/swc/main/scawa", 😳😳😳
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", ( ͡o ω ͡o )
+    ], >_<
+)
+
+scawa_wibwawy(
+    nyame = "cwient-event", >w<
+    s-souwces = [
+        "fwagsmoduwe.scawa", rawr
+        "kafkapwocessowcwienteventmoduwe.scawa", 😳
+        "kafkapwocessowpwovidew.scawa", >w<
+        "topicsmapping.scawa", (⑅˘꒳˘)
+        "zonefiwtewing.scawa", OwO
+    ], (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], 😳
+    dependencies = [
+        ":decidew-utiws", 😳😳😳
+        "3wdpawty/jvm/com/googwe/inject:guice", mya
+        "3wdpawty/jvm/javax/inject:javax.inject", mya
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", (⑅˘꒳˘)
+        "finatwa-intewnaw/kafka/swc/main/scawa/com/twittew/finatwa/kafka/consumews", (U ﹏ U)
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", mya
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", ʘwʘ
+        "finatwa/inject/inject-cowe/swc/main/scawa",
+        "finatwa/inject/inject-moduwes/swc/main/scawa", (˘ω˘)
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", (U ﹏ U)
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", ^•ﻌ•^
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", (˘ω˘)
+        "kafka/wibs/swc/main/scawa/com/twittew/kafka/cwient/pwocessow", :3
+        "twittew-sewvew/sewvew/swc/main/scawa", ^^;;
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/cwient_event", 🥺
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka", (⑅˘꒳˘)
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", nyaa~~
+        "utiw/utiw-cowe:scawa", :3
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions", ( ͡o ω ͡o )
+        "utiw/utiw-swf4j-api/swc/main/scawa", mya
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", (///ˬ///✿)
+    ], (˘ω˘)
+)
+
+
+s-scawa_wibwawy(
+    nyame = "tweetypie-event", ^^;;
+    s-souwces = [
+        "fwagsmoduwe.scawa", (✿oωo)
+        "kafkapwocessowpwovidew.scawa", (U ﹏ U)
+        "kafkapwocessowtweetypieeventmoduwe.scawa", -.-
+        "zonefiwtewing.scawa", ^•ﻌ•^
     ],
+    tags = ["bazew-compatibwe"], rawr
+    dependencies = [
+        ":decidew-utiws", (˘ω˘)
+        "3wdpawty/jvm/com/googwe/inject:guice", nyaa~~
+        "3wdpawty/jvm/javax/inject:javax.inject", UwU
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", :3
+        "finatwa-intewnaw/kafka/swc/main/scawa/com/twittew/finatwa/kafka/consumews", (⑅˘꒳˘)
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa",
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", (///ˬ///✿)
+        "finatwa/inject/inject-cowe/swc/main/scawa", ^^;;
+        "finatwa/inject/inject-moduwes/swc/main/scawa", >_<
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", rawr x3
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa",
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", /(^•ω•^)
+        "kafka/wibs/swc/main/scawa/com/twittew/kafka/cwient/pwocessow", :3
+        "twittew-sewvew/sewvew/swc/main/scawa", (ꈍᴗꈍ)
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/tweetypie_event", /(^•ω•^)
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka",
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", (⑅˘꒳˘)
+        "utiw/utiw-cowe:scawa", ( ͡o ω ͡o )
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions", òωó
+        "utiw/utiw-swf4j-api/swc/main/scawa", (⑅˘꒳˘)
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", XD
+    ],
+)
+
+scawa_wibwawy(
+    n-nyame = "sociaw-gwaph-event", -.-
+    souwces = [
+        "fwagsmoduwe.scawa",
+        "kafkapwocessowpwovidew.scawa", :3
+        "kafkapwocessowsociawgwaphmoduwe.scawa", nyaa~~
+        "zonefiwtewing.scawa", 😳
+    ],
+    tags = ["bazew-compatibwe"],
+    d-dependencies = [
+        ":decidew-utiws", (⑅˘꒳˘)
+        "3wdpawty/jvm/com/googwe/inject:guice", nyaa~~
+        "3wdpawty/jvm/javax/inject:javax.inject", OwO
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", rawr x3
+        "finatwa-intewnaw/kafka/swc/main/scawa/com/twittew/finatwa/kafka/consumews", XD
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", σωσ
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", (U ᵕ U❁)
+        "finatwa/inject/inject-cowe/swc/main/scawa",
+        "finatwa/inject/inject-moduwes/swc/main/scawa", (U ﹏ U)
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", :3
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", ( ͡o ω ͡o )
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", σωσ
+        "kafka/wibs/swc/main/scawa/com/twittew/kafka/cwient/pwocessow", >w<
+        "twittew-sewvew/sewvew/swc/main/scawa", 😳😳😳
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/sociaw_gwaph_event",
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka", OwO
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", 😳
+        "utiw/utiw-cowe:scawa", 😳😳😳
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions",
+        "utiw/utiw-swf4j-api/swc/main/scawa", (˘ω˘)
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", ʘwʘ
+    ],
+)
+
+s-scawa_wibwawy(
+    name = "emaiw-notification-event", ( ͡o ω ͡o )
+    souwces = [
+        "fwagsmoduwe.scawa", o.O
+        "kafkapwocessowemaiwnotificationeventmoduwe.scawa", >w<
+        "kafkapwocessowpwovidew.scawa", 😳
+        "zonefiwtewing.scawa", 🥺
+    ],
+    tags = ["bazew-compatibwe"], rawr x3
+    dependencies = [
+        ":decidew-utiws", o.O
+        "3wdpawty/jvm/com/googwe/inject:guice", rawr
+        "3wdpawty/jvm/javax/inject:javax.inject", ʘwʘ
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", 😳😳😳
+        "finatwa-intewnaw/kafka/swc/main/scawa/com/twittew/finatwa/kafka/consumews", ^^;;
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", o.O
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", (///ˬ///✿)
+        "finatwa/inject/inject-cowe/swc/main/scawa", σωσ
+        "finatwa/inject/inject-moduwes/swc/main/scawa", nyaa~~
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", ^^;;
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", ^•ﻌ•^
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", σωσ
+        "kafka/wibs/swc/main/scawa/com/twittew/kafka/cwient/pwocessow", -.-
+        "twittew-sewvew/sewvew/swc/main/scawa", ^^;;
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/emaiw_notification_event",
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka", XD
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", 🥺
+        "utiw/utiw-cowe:scawa", òωó
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions",
+        "utiw/utiw-swf4j-api/swc/main/scawa", (ˆ ﻌ ˆ)♡
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", -.-
+    ],
+)
+
+s-scawa_wibwawy(
+    nyame = "usew-modification-event", :3
+    souwces = [
+        "fwagsmoduwe.scawa", ʘwʘ
+        "kafkapwocessowpwovidew.scawa", 🥺
+        "kafkapwocessowusewmodificationmoduwe.scawa", >_<
+        "zonefiwtewing.scawa", ʘwʘ
+    ], (˘ω˘)
     tags = [
-        "bazel-compatible",
-        "bazel-only",
+        "bazew-compatibwe", (✿oωo)
+        "bazew-onwy", (///ˬ///✿)
     ],
     dependencies = [
-        ":decider-utils",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/consumers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter:base",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-        "util/util-core:scala",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
-    ],
+        ":decidew-utiws", rawr x3
+        "3wdpawty/jvm/com/googwe/inject:guice", -.-
+        "3wdpawty/jvm/javax/inject:javax.inject", ^^
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", (⑅˘꒳˘)
+        "finatwa-intewnaw/kafka/swc/main/scawa/com/twittew/finatwa/kafka/consumews", nyaa~~
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", /(^•ω•^)
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", (U ﹏ U)
+        "finatwa/inject/inject-cowe/swc/main/scawa", 😳😳😳
+        "finatwa/inject/inject-moduwes/swc/main/scawa", >w<
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", XD
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", o.O
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", mya
+        "kafka/wibs/swc/main/scawa/com/twittew/kafka/cwient/pwocessow", 🥺
+        "twittew-sewvew/sewvew/swc/main/scawa", ^^;;
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/usew_modification_event", :3
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka", (U ﹏ U)
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", OwO
+        "utiw/utiw-cowe:scawa", 😳😳😳
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions", (ˆ ﻌ ˆ)♡
+        "utiw/utiw-swf4j-api/swc/main/scawa", XD
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats",
+    ], (ˆ ﻌ ˆ)♡
 )
 
-scala_library(
-    name = "tls-favs",
-    sources = [
-        "FlagsModule.scala",
-        "KafkaProcessorProvider.scala",
-        "KafkaProcessorTlsFavsModule.scala",
-        "ZoneFiltering.scala",
+s-scawa_wibwawy(
+    nyame = "ads-cawwback-engagements", ( ͡o ω ͡o )
+    souwces = [
+        "fwagsmoduwe.scawa",
+        "kafkapwocessowadscawwbackengagementsmoduwe.scawa", rawr x3
+        "kafkapwocessowpwovidew.scawa", nyaa~~
+        "zonefiwtewing.scawa", >_<
     ],
-    tags = ["bazel-compatible"],
+    t-tags = [
+        "bazew-compatibwe", ^^;;
+        "bazew-onwy", (ˆ ﻌ ˆ)♡
+    ], ^^;;
+    d-dependencies = [
+        ":decidew-utiws", (⑅˘꒳˘)
+        "3wdpawty/jvm/com/googwe/inject:guice", rawr x3
+        "3wdpawty/jvm/javax/inject:javax.inject", (///ˬ///✿)
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", 🥺
+        "finatwa-intewnaw/kafka/swc/main/scawa/com/twittew/finatwa/kafka/consumews", >_<
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", UwU
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", >_<
+        "finatwa/inject/inject-cowe/swc/main/scawa", -.-
+        "finatwa/inject/inject-moduwes/swc/main/scawa", mya
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", >w<
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", (U ﹏ U)
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", 😳😳😳
+        "kafka/wibs/swc/main/scawa/com/twittew/kafka/cwient/pwocessow", o.O
+        "twittew-sewvew/sewvew/swc/main/scawa", òωó
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/ads_cawwback_engagements", 😳😳😳
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka", σωσ
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", (⑅˘꒳˘)
+        "utiw/utiw-cowe:scawa", (///ˬ///✿)
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions", 🥺
+        "utiw/utiw-swf4j-api/swc/main/scawa", OwO
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", >w<
+    ], 🥺
+)
+
+s-scawa_wibwawy(
+    n-nyame = "favowite-awchivaw-events", nyaa~~
+    souwces = [
+        "fwagsmoduwe.scawa", ^^
+        "kafkapwocessowfavowiteawchivaweventsmoduwe.scawa", >w<
+        "kafkapwocessowpwovidew.scawa",
+        "zonefiwtewing.scawa", OwO
+    ], XD
+    tags = ["bazew-compatibwe"], ^^;;
+    d-dependencies = [
+        ":decidew-utiws", 🥺
+        "3wdpawty/jvm/com/googwe/inject:guice", XD
+        "3wdpawty/jvm/javax/inject:javax.inject", (U ᵕ U❁)
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", :3
+        "finatwa-intewnaw/kafka/swc/main/scawa/com/twittew/finatwa/kafka/consumews", ( ͡o ω ͡o )
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa",
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", òωó
+        "finatwa/inject/inject-cowe/swc/main/scawa", σωσ
+        "finatwa/inject/inject-moduwes/swc/main/scawa", (U ᵕ U❁)
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", (✿oωo)
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa",
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", ^^
+        "kafka/wibs/swc/main/scawa/com/twittew/kafka/cwient/pwocessow", ^•ﻌ•^
+        "swc/thwift/com/twittew/timewinesewvice/sewvew/intewnaw:thwift-scawa", XD
+        "twittew-sewvew/sewvew/swc/main/scawa", :3
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/favowite_awchivaw_events", (ꈍᴗꈍ)
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka", :3
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", (U ﹏ U)
+        "utiw/utiw-cowe:scawa", UwU
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions", 😳😳😳
+        "utiw/utiw-swf4j-api/swc/main/scawa", XD
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", o.O
+    ], (⑅˘꒳˘)
+)
+
+scawa_wibwawy(
+    nyame = "wetweet-awchivaw-events", 😳😳😳
+    s-souwces = [
+        "fwagsmoduwe.scawa", nyaa~~
+        "kafkapwocessowpwovidew.scawa", rawr
+        "kafkapwocessowwetweetawchivaweventsmoduwe.scawa",
+        "zonefiwtewing.scawa", -.-
+    ], (✿oωo)
+    tags = ["bazew-compatibwe"], /(^•ω•^)
     dependencies = [
-        ":decider-utils",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/consumers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/tls_favs_event",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-        "util/util-core:scala",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
-    ],
+        ":decidew-utiws", 🥺
+        "3wdpawty/jvm/com/googwe/inject:guice", ʘwʘ
+        "3wdpawty/jvm/javax/inject:javax.inject", UwU
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", XD
+        "finatwa-intewnaw/kafka/swc/main/scawa/com/twittew/finatwa/kafka/consumews", (✿oωo)
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", :3
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations",
+        "finatwa/inject/inject-cowe/swc/main/scawa", (///ˬ///✿)
+        "finatwa/inject/inject-moduwes/swc/main/scawa", nyaa~~
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes",
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", >w<
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", -.-
+        "kafka/wibs/swc/main/scawa/com/twittew/kafka/cwient/pwocessow", (✿oωo)
+        "twittew-sewvew/sewvew/swc/main/scawa", (˘ω˘)
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/wetweet_awchivaw_events", rawr
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka", OwO
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", ^•ﻌ•^
+        "utiw/utiw-cowe:scawa", UwU
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions", (˘ω˘)
+        "utiw/utiw-swf4j-api/swc/main/scawa", (///ˬ///✿)
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", σωσ
+    ], /(^•ω•^)
 )
 
-scala_library(
-    name = "client-event",
-    sources = [
-        "FlagsModule.scala",
-        "KafkaProcessorClientEventModule.scala",
-        "KafkaProcessorProvider.scala",
-        "TopicsMapping.scala",
-        "ZoneFiltering.scala",
-    ],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":decider-utils",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/consumers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/client_event",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-        "util/util-core:scala",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
-    ],
-)
-
-
-scala_library(
-    name = "tweetypie-event",
-    sources = [
-        "FlagsModule.scala",
-        "KafkaProcessorProvider.scala",
-        "KafkaProcessorTweetypieEventModule.scala",
-        "ZoneFiltering.scala",
-    ],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":decider-utils",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/consumers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/tweetypie_event",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-        "util/util-core:scala",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
-    ],
-)
-
-scala_library(
-    name = "social-graph-event",
-    sources = [
-        "FlagsModule.scala",
-        "KafkaProcessorProvider.scala",
-        "KafkaProcessorSocialGraphModule.scala",
-        "ZoneFiltering.scala",
-    ],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":decider-utils",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/consumers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/social_graph_event",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-        "util/util-core:scala",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
-    ],
-)
-
-scala_library(
-    name = "email-notification-event",
-    sources = [
-        "FlagsModule.scala",
-        "KafkaProcessorEmailNotificationEventModule.scala",
-        "KafkaProcessorProvider.scala",
-        "ZoneFiltering.scala",
-    ],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":decider-utils",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/consumers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/email_notification_event",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-        "util/util-core:scala",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
-    ],
-)
-
-scala_library(
-    name = "user-modification-event",
-    sources = [
-        "FlagsModule.scala",
-        "KafkaProcessorProvider.scala",
-        "KafkaProcessorUserModificationModule.scala",
-        "ZoneFiltering.scala",
-    ],
+scawa_wibwawy(
+    nyame = "wekey-uua", 😳
+    souwces = [
+        "fwagsmoduwe.scawa", 😳
+        "kafkapwocessowpwovidew.scawa", (⑅˘꒳˘)
+        "kafkapwocessowwekeyuuamoduwe.scawa", 😳😳😳
+        "zonefiwtewing.scawa",
+    ], 😳
     tags = [
-        "bazel-compatible",
-        "bazel-only",
+        "bazew-compatibwe",
+        "bazew-onwy", XD
     ],
     dependencies = [
-        ":decider-utils",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/consumers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/user_modification_event",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-        "util/util-core:scala",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+        ":decidew-utiws", mya
+        "3wdpawty/jvm/com/googwe/inject:guice", ^•ﻌ•^
+        "3wdpawty/jvm/javax/inject:javax.inject", ʘwʘ
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", ( ͡o ω ͡o )
+        "finatwa-intewnaw/kafka/swc/main/scawa/com/twittew/finatwa/kafka/consumews", mya
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", o.O
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", (✿oωo)
+        "finatwa/inject/inject-cowe/swc/main/scawa", :3
+        "finatwa/inject/inject-moduwes/swc/main/scawa", 😳
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", (U ﹏ U)
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", mya
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa",
+        "kafka/wibs/swc/main/scawa/com/twittew/kafka/cwient/pwocessow", (U ᵕ U❁)
+        "twittew-sewvew/sewvew/swc/main/scawa", :3
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/uua_aggwegates", mya
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka", OwO
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", (ˆ ﻌ ˆ)♡
+        "utiw/utiw-cowe:scawa", ʘwʘ
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions", o.O
+        "utiw/utiw-swf4j-api/swc/main/scawa", UwU
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", rawr x3
     ],
 )
 
-scala_library(
-    name = "ads-callback-engagements",
-    sources = [
-        "FlagsModule.scala",
-        "KafkaProcessorAdsCallbackEngagementsModule.scala",
-        "KafkaProcessorProvider.scala",
-        "ZoneFiltering.scala",
+s-scawa_wibwawy(
+    name = "wekey-uua-iesouwce", 🥺
+    s-souwces = [
+        "fwagsmoduwe.scawa", :3
+        "kafkapwocessowpwovidew.scawa", (ꈍᴗꈍ)
+        "kafkapwocessowwekeyuuaiesouwcemoduwe.scawa", 🥺
+        "zonefiwtewing.scawa", (✿oωo)
     ],
-    tags = [
-        "bazel-compatible",
-        "bazel-only",
+    t-tags = [
+        "bazew-compatibwe", (U ﹏ U)
+        "bazew-onwy", :3
     ],
-    dependencies = [
-        ":decider-utils",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/consumers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/ads_callback_engagements",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-        "util/util-core:scala",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
-    ],
+    d-dependencies = [
+        ":decidew-utiws", ^^;;
+        "3wdpawty/jvm/com/googwe/inject:guice", rawr
+        "3wdpawty/jvm/javax/inject:javax.inject", 😳😳😳
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", (✿oωo)
+        "finatwa-intewnaw/kafka/swc/main/scawa/com/twittew/finatwa/kafka/consumews", OwO
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", ʘwʘ
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", (ˆ ﻌ ˆ)♡
+        "finatwa/inject/inject-cowe/swc/main/scawa",
+        "finatwa/inject/inject-moduwes/swc/main/scawa", (U ﹏ U)
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", UwU
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", XD
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", ʘwʘ
+        "kafka/wibs/swc/main/scawa/com/twittew/kafka/cwient/pwocessow", rawr x3
+        "twittew-sewvew/sewvew/swc/main/scawa", ^^;;
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/uua_aggwegates", ʘwʘ
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka", (U ﹏ U)
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", (˘ω˘)
+        "utiw/utiw-cowe:scawa", (ꈍᴗꈍ)
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions", /(^•ω•^)
+        "utiw/utiw-swf4j-api/swc/main/scawa", >_<
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", σωσ
+    ], ^^;;
 )
 
-scala_library(
-    name = "favorite-archival-events",
-    sources = [
-        "FlagsModule.scala",
-        "KafkaProcessorFavoriteArchivalEventsModule.scala",
-        "KafkaProcessorProvider.scala",
-        "ZoneFiltering.scala",
+scawa_wibwawy(
+    nyame = "gwaphqw-cwient", 😳
+    souwces = [
+        "cwientidmoduwe.scawa", >_<
+        "gwaphqwcwientpwovidewmoduwe.scawa", -.-
     ],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":decider-utils",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/consumers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/favorite_archival_events",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-        "util/util-core:scala",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
-    ],
+    t-tags = ["bazew-compatibwe"], UwU
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", :3
+        "3wdpawty/jvm/javax/inject:javax.inject", σωσ
+        "finagwe-intewnaw/mtws/swc/main/scawa/com/twittew/finagwe/mtws/authentication", >w<
+        "finagwe-intewnaw/mtws/swc/main/scawa/com/twittew/finagwe/mtws/cwient", (ˆ ﻌ ˆ)♡
+        "finagwe/finagwe-thwiftmux/swc/main/scawa", ʘwʘ
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", :3
+        "finatwa/inject/inject-moduwes/swc/main/scawa", (˘ω˘)
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", 😳😳😳
+        "gwaphqw/thwift/swc/main/thwift/com/twittew/gwaphqw:gwaphqw-scawa", rawr x3
+        "twittew-sewvew/sewvew/swc/main/scawa", (✿oωo)
+    ], (ˆ ﻌ ˆ)♡
 )
 
-scala_library(
-    name = "retweet-archival-events",
-    sources = [
-        "FlagsModule.scala",
-        "KafkaProcessorProvider.scala",
-        "KafkaProcessorRetweetArchivalEventsModule.scala",
-        "ZoneFiltering.scala",
+scawa_wibwawy(
+    nyame = "cache", :3
+    s-souwces = [
+        "cachemoduwe.scawa", (U ᵕ U❁)
     ],
-    tags = ["bazel-compatible"],
+    t-tags = ["bazew-compatibwe"], ^^;;
     dependencies = [
-        ":decider-utils",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/consumers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/retweet_archival_events",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-        "util/util-core:scala",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
-    ],
-)
-
-scala_library(
-    name = "rekey-uua",
-    sources = [
-        "FlagsModule.scala",
-        "KafkaProcessorProvider.scala",
-        "KafkaProcessorRekeyUuaModule.scala",
-        "ZoneFiltering.scala",
-    ],
-    tags = [
-        "bazel-compatible",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":decider-utils",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/consumers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/uua_aggregates",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-        "util/util-core:scala",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
-    ],
-)
-
-scala_library(
-    name = "rekey-uua-iesource",
-    sources = [
-        "FlagsModule.scala",
-        "KafkaProcessorProvider.scala",
-        "KafkaProcessorRekeyUuaIesourceModule.scala",
-        "ZoneFiltering.scala",
-    ],
-    tags = [
-        "bazel-compatible",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":decider-utils",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/consumers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/uua_aggregates",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-        "util/util-core:scala",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-slf4j-api/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
-    ],
-)
-
-scala_library(
-    name = "graphql-client",
-    sources = [
-        "ClientIdModule.scala",
-        "GraphqlClientProviderModule.scala",
-    ],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
-        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/client",
-        "finagle/finagle-thriftmux/src/main/scala",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "graphql/thrift/src/main/thrift/com/twitter/graphql:graphql-scala",
-        "twitter-server/server/src/main/scala",
-    ],
-)
-
-scala_library(
-    name = "cache",
-    sources = [
-        "CacheModule.scala",
-    ],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "featureswitches/dynmap/src/main/scala/com/twitter/dynmap:dynmap-core",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-modules/src/main/scala",
-        "finatra/inject/inject-modules/src/main/scala/com/twitter/inject/modules",
-        "graphql/thrift/src/main/thrift/com/twitter/graphql:graphql-scala",
-        "twitter-server/server/src/main/scala",
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/hcache",
-        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
-        "util/util-cache-guava/src/main/scala",
-        "util/util-cache/src/main/scala",
+        "3wdpawty/jvm/com/googwe/guava", mya
+        "3wdpawty/jvm/com/googwe/inject:guice", 😳😳😳
+        "3wdpawty/jvm/javax/inject:javax.inject", OwO
+        "featuweswitches/dynmap/swc/main/scawa/com/twittew/dynmap:dynmap-cowe", rawr
+        "finatwa/inject/inject-app/swc/main/java/com/twittew/inject/annotations", XD
+        "finatwa/inject/inject-moduwes/swc/main/scawa", (U ﹏ U)
+        "finatwa/inject/inject-moduwes/swc/main/scawa/com/twittew/inject/moduwes", (˘ω˘)
+        "gwaphqw/thwift/swc/main/thwift/com/twittew/gwaphqw:gwaphqw-scawa", UwU
+        "twittew-sewvew/sewvew/swc/main/scawa", >_<
+        "unified_usew_actions/enwichew/swc/main/scawa/com/twittew/unified_usew_actions/enwichew/hcache", σωσ
+        "unified_usew_actions/enwichew/swc/main/thwift/com/twittew/unified_usew_actions/enwichew/intewnaw:intewnaw-scawa", 🥺
+        "utiw/utiw-cache-guava/swc/main/scawa", 🥺
+        "utiw/utiw-cache/swc/main/scawa", ʘwʘ
     ],
 )

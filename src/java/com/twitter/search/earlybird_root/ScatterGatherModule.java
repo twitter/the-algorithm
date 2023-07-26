@@ -1,167 +1,167 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.ArrayList;
-import java.util.List;
+impowt j-java.utiw.awwaywist;
+i-impowt java.utiw.wist;
 
-import javax.annotation.Nullable;
-import javax.inject.Named;
+impowt j-javax.annotation.nuwwabwe;
+i-impowt javax.inject.named;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.root.PartitionConfig;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.common.root.RequestSuccessStats;
-import com.twitter.search.common.root.RootClientServiceBuilder;
-import com.twitter.search.common.root.ScatterGatherService;
-import com.twitter.search.common.root.SplitterService;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
+i-impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.stats.statsweceivew;
+impowt com.twittew.inject.twittewmoduwe;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.common.woot.pawtitionconfig;
+i-impowt com.twittew.seawch.common.woot.pawtitionwoggingsuppowt;
+impowt com.twittew.seawch.common.woot.wequestsuccessstats;
+i-impowt com.twittew.seawch.common.woot.wootcwientsewvicebuiwdew;
+impowt com.twittew.seawch.common.woot.scattewgathewsewvice;
+i-impowt com.twittew.seawch.common.woot.spwittewsewvice;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.eawwybiwd.config.tiewconfig;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.wequestcontexttoeawwybiwdwequestfiwtew;
 
-public abstract class ScatterGatherModule extends TwitterModule {
-  private static final Logger LOG = LoggerFactory.getLogger(ScatterGatherModule.class);
+pubwic abstwact cwass scattewgathewmoduwe e-extends twittewmoduwe {
+  pwivate s-static finaw woggew w-wog = woggewfactowy.getwoggew(scattewgathewmoduwe.cwass);
 
-  private static final String SEARCH_METHOD_NAME = "search";
-  protected static final String ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY_PREFIX =
-      "alt_client_traffic_percentage_";
-  static final String NAMED_SCATTER_GATHER_SERVICE = "scatter_gather_service";
+  p-pwivate static f-finaw stwing seawch_method_name = "seawch";
+  pwotected static finaw stwing awt_twaffic_pewcentage_decidew_key_pwefix =
+      "awt_cwient_twaffic_pewcentage_";
+  s-static finaw stwing nyamed_scattew_gathew_sewvice = "scattew_gathew_sewvice";
 
   /**
-   * Provides the scatterGatherService for single tier Earlybird clusters (Protected and Realtime).
+   * pwovides t-the scattewgathewsewvice fow singwe tiew eawwybiwd cwustews (pwotected and weawtime). o.O
    */
-  public abstract Service<EarlybirdRequestContext, EarlybirdResponse> provideScatterGatherService(
-      EarlybirdServiceScatterGatherSupport scatterGatherSupport,
-      RequestSuccessStats requestSuccessStats,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      PartitionAccessController partitionAccessController,
-      PartitionConfig partitionConfig,
-      RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_EXP_CLUSTER_CLIENT)
-          RootClientServiceBuilder<EarlybirdService.ServiceIface>
-          expClusterRootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable PartitionConfig altPartitionConfig,
-      @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable
-          RootClientServiceBuilder<EarlybirdService.ServiceIface> altRootClientServiceBuilder,
-      StatsReceiver statsReceiver,
-      EarlybirdCluster cluster,
-      SearchDecider decider);
+  pubwic abstwact s-sewvice<eawwybiwdwequestcontext, (///ˬ///✿) eawwybiwdwesponse> p-pwovidescattewgathewsewvice(
+      e-eawwybiwdsewvicescattewgathewsuppowt s-scattewgathewsuppowt, σωσ
+      wequestsuccessstats wequestsuccessstats, nyaa~~
+      pawtitionwoggingsuppowt<eawwybiwdwequestcontext> p-pawtitionwoggingsuppowt, ^^;;
+      w-wequestcontexttoeawwybiwdwequestfiwtew wequestcontexttoeawwybiwdwequestfiwtew, ^•ﻌ•^
+      p-pawtitionaccesscontwowwew p-pawtitionaccesscontwowwew, σωσ
+      pawtitionconfig p-pawtitionconfig, -.-
+      wootcwientsewvicebuiwdew<eawwybiwdsewvice.sewviceiface> w-wootcwientsewvicebuiwdew, ^^;;
+      @named(eawwybiwdcommonmoduwe.named_exp_cwustew_cwient)
+          wootcwientsewvicebuiwdew<eawwybiwdsewvice.sewviceiface>
+          expcwustewwootcwientsewvicebuiwdew, XD
+      @named(eawwybiwdcommonmoduwe.named_awt_cwient) @nuwwabwe p-pawtitionconfig awtpawtitionconfig, 🥺
+      @named(eawwybiwdcommonmoduwe.named_awt_cwient) @nuwwabwe
+          w-wootcwientsewvicebuiwdew<eawwybiwdsewvice.sewviceiface> awtwootcwientsewvicebuiwdew, òωó
+      s-statsweceivew s-statsweceivew, (ˆ ﻌ ˆ)♡
+      eawwybiwdcwustew cwustew, -.-
+      seawchdecidew decidew);
 
-  protected final Service<EarlybirdRequestContext, EarlybirdResponse> buildScatterOrSplitterService(
-      EarlybirdServiceScatterGatherSupport scatterGatherSupport,
-      RequestSuccessStats requestSuccessStats,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      PartitionAccessController partitionAccessController,
-      PartitionConfig partitionConfig,
-      RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable PartitionConfig altPartitionConfig,
-      @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable
-          RootClientServiceBuilder<EarlybirdService.ServiceIface> altRootClientServiceBuilder,
-      StatsReceiver statsReceiver,
-      EarlybirdCluster cluster,
-      SearchDecider decider
+  pwotected finaw sewvice<eawwybiwdwequestcontext, e-eawwybiwdwesponse> b-buiwdscattewowspwittewsewvice(
+      eawwybiwdsewvicescattewgathewsuppowt s-scattewgathewsuppowt, :3
+      w-wequestsuccessstats w-wequestsuccessstats, ʘwʘ
+      pawtitionwoggingsuppowt<eawwybiwdwequestcontext> pawtitionwoggingsuppowt, 🥺
+      wequestcontexttoeawwybiwdwequestfiwtew w-wequestcontexttoeawwybiwdwequestfiwtew, >_<
+      pawtitionaccesscontwowwew pawtitionaccesscontwowwew, ʘwʘ
+      pawtitionconfig pawtitionconfig, (˘ω˘)
+      wootcwientsewvicebuiwdew<eawwybiwdsewvice.sewviceiface> wootcwientsewvicebuiwdew, (✿oωo)
+      @named(eawwybiwdcommonmoduwe.named_awt_cwient) @nuwwabwe p-pawtitionconfig awtpawtitionconfig, (///ˬ///✿)
+      @named(eawwybiwdcommonmoduwe.named_awt_cwient) @nuwwabwe
+          w-wootcwientsewvicebuiwdew<eawwybiwdsewvice.sewviceiface> a-awtwootcwientsewvicebuiwdew, rawr x3
+      s-statsweceivew statsweceivew, -.-
+      eawwybiwdcwustew c-cwustew, ^^
+      s-seawchdecidew d-decidew
   ) {
-    ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse> scatterGatherService =
-        createScatterGatherService(
-            "",
-            scatterGatherSupport,
-            requestSuccessStats,
-            partitionLoggingSupport,
-            requestContextToEarlybirdRequestFilter,
-            partitionAccessController,
-            partitionConfig.getNumPartitions(),
-            partitionConfig.getPartitionPath(),
-            rootClientServiceBuilder,
-            statsReceiver,
-            cluster,
-            decider,
-            TierConfig.DEFAULT_TIER_NAME);
+    s-scattewgathewsewvice<eawwybiwdwequestcontext, (⑅˘꒳˘) eawwybiwdwesponse> scattewgathewsewvice =
+        c-cweatescattewgathewsewvice(
+            "", nyaa~~
+            s-scattewgathewsuppowt, /(^•ω•^)
+            w-wequestsuccessstats, (U ﹏ U)
+            p-pawtitionwoggingsuppowt, 😳😳😳
+            w-wequestcontexttoeawwybiwdwequestfiwtew, >w<
+            pawtitionaccesscontwowwew,
+            pawtitionconfig.getnumpawtitions(),
+            pawtitionconfig.getpawtitionpath(),
+            w-wootcwientsewvicebuiwdew, XD
+            statsweceivew, o.O
+            cwustew, mya
+            decidew, 🥺
+            tiewconfig.defauwt_tiew_name);
 
-    if (altPartitionConfig == null || altRootClientServiceBuilder == null) {
-      LOG.info("altPartitionConfig or altRootClientServiceBuilder is not available, "
-          + "not using SplitterService");
-      return scatterGatherService;
+    if (awtpawtitionconfig == nyuww || a-awtwootcwientsewvicebuiwdew == nyuww) {
+      wog.info("awtpawtitionconfig ow awtwootcwientsewvicebuiwdew is nyot a-avaiwabwe, ^^;; "
+          + "not u-using spwittewsewvice");
+      wetuwn s-scattewgathewsewvice;
     }
 
-    LOG.info("alt client config available, using SplitterService");
+    wog.info("awt c-cwient config avaiwabwe, :3 using s-spwittewsewvice");
 
-    ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse> altScatterGatherService =
-        createScatterGatherService(
-            "_alt",
-            scatterGatherSupport,
-            requestSuccessStats,
-            partitionLoggingSupport,
-            requestContextToEarlybirdRequestFilter,
-            partitionAccessController,
-            altPartitionConfig.getNumPartitions(),
-            altPartitionConfig.getPartitionPath(),
-            altRootClientServiceBuilder,
-            statsReceiver,
-            cluster,
-            decider,
-            TierConfig.DEFAULT_TIER_NAME);
+    s-scattewgathewsewvice<eawwybiwdwequestcontext, (U ﹏ U) eawwybiwdwesponse> awtscattewgathewsewvice =
+        cweatescattewgathewsewvice(
+            "_awt", OwO
+            scattewgathewsuppowt, 😳😳😳
+            wequestsuccessstats,
+            pawtitionwoggingsuppowt, (ˆ ﻌ ˆ)♡
+            w-wequestcontexttoeawwybiwdwequestfiwtew, XD
+            pawtitionaccesscontwowwew, (ˆ ﻌ ˆ)♡
+            a-awtpawtitionconfig.getnumpawtitions(), ( ͡o ω ͡o )
+            awtpawtitionconfig.getpawtitionpath(), rawr x3
+            a-awtwootcwientsewvicebuiwdew, nyaa~~
+            s-statsweceivew, >_<
+            cwustew, ^^;;
+            decidew, (ˆ ﻌ ˆ)♡
+            t-tiewconfig.defauwt_tiew_name);
 
-    return new SplitterService<>(
-        scatterGatherService,
-        altScatterGatherService,
-        decider,
-        ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY_PREFIX + cluster.getNameForStats());
+    w-wetuwn nyew spwittewsewvice<>(
+        s-scattewgathewsewvice, ^^;;
+        a-awtscattewgathewsewvice, (⑅˘꒳˘)
+        decidew, rawr x3
+        awt_twaffic_pewcentage_decidew_key_pwefix + cwustew.getnamefowstats());
   }
 
-  protected ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse>
-      createScatterGatherService(
-          String nameSuffix,
-          EarlybirdServiceScatterGatherSupport scatterGatherSupport,
-          RequestSuccessStats requestSuccessStats,
-          PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-          RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-          PartitionAccessController partitionAccessController,
-          int numPartitions,
-          String partitionPath,
-          RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
-          StatsReceiver statsReceiver,
-          EarlybirdCluster cluster,
-          SearchDecider decider,
-          String clientName) {
-    rootClientServiceBuilder.initializeWithPathSuffix(clientName + nameSuffix,
-        numPartitions,
-        partitionPath);
+  pwotected s-scattewgathewsewvice<eawwybiwdwequestcontext, (///ˬ///✿) e-eawwybiwdwesponse>
+      c-cweatescattewgathewsewvice(
+          stwing nyamesuffix, 🥺
+          e-eawwybiwdsewvicescattewgathewsuppowt s-scattewgathewsuppowt, >_<
+          wequestsuccessstats w-wequestsuccessstats, UwU
+          pawtitionwoggingsuppowt<eawwybiwdwequestcontext> pawtitionwoggingsuppowt, >_<
+          wequestcontexttoeawwybiwdwequestfiwtew wequestcontexttoeawwybiwdwequestfiwtew, -.-
+          p-pawtitionaccesscontwowwew p-pawtitionaccesscontwowwew, mya
+          int nyumpawtitions, >w<
+          stwing pawtitionpath, (U ﹏ U)
+          w-wootcwientsewvicebuiwdew<eawwybiwdsewvice.sewviceiface> w-wootcwientsewvicebuiwdew, 😳😳😳
+          statsweceivew statsweceivew, o.O
+          eawwybiwdcwustew cwustew, òωó
+          s-seawchdecidew decidew, 😳😳😳
+          stwing cwientname) {
+    wootcwientsewvicebuiwdew.initiawizewithpathsuffix(cwientname + n-nyamesuffix, σωσ
+        nyumpawtitions, (⑅˘꒳˘)
+        pawtitionpath);
 
-    ClientBackupFilter backupFilter =
-        new ClientBackupFilter(
-            "root_" + cluster.getNameForStats(),
-            "earlybird" + nameSuffix,
-            statsReceiver,
-            decider);
+    c-cwientbackupfiwtew b-backupfiwtew =
+        nyew cwientbackupfiwtew(
+            "woot_" + cwustew.getnamefowstats(), (///ˬ///✿)
+            "eawwybiwd" + nyamesuffix, 🥺
+            s-statsweceivew, OwO
+            d-decidew);
 
-    ClientLatencyFilter clientLatencyFilter = new ClientLatencyFilter("all" + nameSuffix);
+    cwientwatencyfiwtew cwientwatencyfiwtew = nyew cwientwatencyfiwtew("aww" + n-nyamesuffix);
 
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> services = new ArrayList<>();
-    for (Service<EarlybirdRequest, EarlybirdResponse> service
-        : rootClientServiceBuilder
-        .<EarlybirdRequest, EarlybirdResponse>safeBuildServiceList(SEARCH_METHOD_NAME)) {
-      services.add(requestContextToEarlybirdRequestFilter
-          .andThen(backupFilter)
-          .andThen(clientLatencyFilter)
-          .andThen(service));
+    wist<sewvice<eawwybiwdwequestcontext, >w< e-eawwybiwdwesponse>> sewvices = nyew awwaywist<>();
+    fow (sewvice<eawwybiwdwequest, 🥺 e-eawwybiwdwesponse> sewvice
+        : w-wootcwientsewvicebuiwdew
+        .<eawwybiwdwequest, e-eawwybiwdwesponse>safebuiwdsewvicewist(seawch_method_name)) {
+      sewvices.add(wequestcontexttoeawwybiwdwequestfiwtew
+          .andthen(backupfiwtew)
+          .andthen(cwientwatencyfiwtew)
+          .andthen(sewvice));
     }
-    services = SkipPartitionFilter.wrapServices(TierConfig.DEFAULT_TIER_NAME, services,
-        partitionAccessController);
+    s-sewvices = skippawtitionfiwtew.wwapsewvices(tiewconfig.defauwt_tiew_name, nyaa~~ sewvices, ^^
+        pawtitionaccesscontwowwew);
 
-    return new ScatterGatherService<>(
-        scatterGatherSupport,
-        services,
-        requestSuccessStats,
-        partitionLoggingSupport);
+    w-wetuwn nyew scattewgathewsewvice<>(
+        s-scattewgathewsuppowt,
+        s-sewvices, >w<
+        wequestsuccessstats, OwO
+        p-pawtitionwoggingsuppowt);
   }
 }

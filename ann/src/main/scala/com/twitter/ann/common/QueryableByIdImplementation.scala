@@ -1,91 +1,91 @@
-package com.twitter.ann.common
+package com.twittew.ann.common
 
-import com.twitter.stitch.Stitch
+impowt com.twittew.stitch.stitch
 
 /**
- * Implementation of QueryableById that composes an EmbeddingProducer and a Queryable so that we
- * can get nearest neighbors given an id of type T1
- * @param embeddingProducer provides an embedding given an id.
- * @param queryable provides a list of neighbors given an embedding.
- * @tparam T1 type of the query.
- * @tparam T2 type of the result.
- * @tparam P runtime parameters supported by the index.
- * @tparam D distance function used in the index.
+ * i-impwementation o-of quewyabwebyid t-that composes a-an embeddingpwoducew a-and a q-quewyabwe so that w-we
+ * can get n-nyeawest nyeighbows given an id of type t1
+ * @pawam embeddingpwoducew pwovides a-an embedding given an id. OwO
+ * @pawam quewyabwe pwovides a-a wist of nyeighbows given a-an embedding. (U ﹏ U)
+ * @tpawam t1 type of the quewy. >w<
+ * @tpawam t2 t-type of the wesuwt. (U ﹏ U)
+ * @tpawam p wuntime pawametews s-suppowted by t-the index. 😳
+ * @tpawam d distance function used in the index. (ˆ ﻌ ˆ)♡
  */
-class QueryableByIdImplementation[T1, T2, P <: RuntimeParams, D <: Distance[D]](
-  embeddingProducer: EmbeddingProducer[T1],
-  queryable: Queryable[T2, P, D])
-    extends QueryableById[T1, T2, P, D] {
-  override def queryById(
-    id: T1,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Stitch[List[T2]] = {
-    embeddingProducer.produceEmbedding(id).flatMap { embeddingOption =>
-      embeddingOption
+cwass quewyabwebyidimpwementation[t1, 😳😳😳 t-t2, p <: wuntimepawams, (U ﹏ U) d <: distance[d]](
+  embeddingpwoducew: embeddingpwoducew[t1], (///ˬ///✿)
+  q-quewyabwe: quewyabwe[t2, 😳 p, d])
+    e-extends quewyabwebyid[t1, 😳 t2, p-p, d] {
+  ovewwide d-def quewybyid(
+    i-id: t1, σωσ
+    nyumofneighbows: int, rawr x3
+    wuntimepawams: p-p
+  ): stitch[wist[t2]] = {
+    embeddingpwoducew.pwoduceembedding(id).fwatmap { embeddingoption =>
+      e-embeddingoption
         .map { embedding =>
-          Stitch.callFuture(queryable.query(embedding, numOfNeighbors, runtimeParams))
-        }.getOrElse {
-          Stitch.value(List.empty)
+          stitch.cawwfutuwe(quewyabwe.quewy(embedding, OwO nyumofneighbows, /(^•ω•^) wuntimepawams))
+        }.getowewse {
+          stitch.vawue(wist.empty)
         }
     }
   }
 
-  override def queryByIdWithDistance(
-    id: T1,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Stitch[List[NeighborWithDistance[T2, D]]] = {
-    embeddingProducer.produceEmbedding(id).flatMap { embeddingOption =>
-      embeddingOption
-        .map { embedding =>
-          Stitch.callFuture(queryable.queryWithDistance(embedding, numOfNeighbors, runtimeParams))
-        }.getOrElse {
-          Stitch.value(List.empty)
+  o-ovewwide def quewybyidwithdistance(
+    i-id: t1, 😳😳😳
+    n-nyumofneighbows: i-int, ( ͡o ω ͡o )
+    wuntimepawams: p
+  ): stitch[wist[neighbowwithdistance[t2, >_< d]]] = {
+    e-embeddingpwoducew.pwoduceembedding(id).fwatmap { e-embeddingoption =>
+      embeddingoption
+        .map { e-embedding =>
+          s-stitch.cawwfutuwe(quewyabwe.quewywithdistance(embedding, >w< nyumofneighbows, rawr w-wuntimepawams))
+        }.getowewse {
+          stitch.vawue(wist.empty)
         }
     }
   }
 
-  override def batchQueryById(
-    ids: Seq[T1],
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Stitch[List[NeighborWithSeed[T1, T2]]] = {
-    Stitch
-      .traverse(ids) { id =>
-        embeddingProducer.produceEmbedding(id).flatMap { embeddingOption =>
-          embeddingOption
+  o-ovewwide def batchquewybyid(
+    ids: s-seq[t1], 😳
+    nyumofneighbows: int, >w<
+    wuntimepawams: p-p
+  ): stitch[wist[neighbowwithseed[t1, (⑅˘꒳˘) t2]]] = {
+    stitch
+      .twavewse(ids) { i-id =>
+        e-embeddingpwoducew.pwoduceembedding(id).fwatmap { embeddingoption =>
+          embeddingoption
             .map { embedding =>
-              Stitch
-                .callFuture(queryable.query(embedding, numOfNeighbors, runtimeParams)).map(
-                  _.map(neighbor => NeighborWithSeed(id, neighbor)))
-            }.getOrElse {
-              Stitch.value(List.empty)
-            }.handle { case _ => List.empty }
+              stitch
+                .cawwfutuwe(quewyabwe.quewy(embedding, OwO nyumofneighbows, (ꈍᴗꈍ) wuntimepawams)).map(
+                  _.map(neighbow => n-nyeighbowwithseed(id, 😳 n-nyeighbow)))
+            }.getowewse {
+              stitch.vawue(wist.empty)
+            }.handwe { c-case _ => w-wist.empty }
         }
-      }.map { _.toList.flatten }
+      }.map { _.towist.fwatten }
   }
 
-  override def batchQueryWithDistanceById(
-    ids: Seq[T1],
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Stitch[List[NeighborWithDistanceWithSeed[T1, T2, D]]] = {
-    Stitch
-      .traverse(ids) { id =>
-        embeddingProducer.produceEmbedding(id).flatMap { embeddingOption =>
-          embeddingOption
-            .map { embedding =>
-              Stitch
-                .callFuture(queryable.queryWithDistance(embedding, numOfNeighbors, runtimeParams))
-                .map(_.map(neighbor =>
-                  NeighborWithDistanceWithSeed(id, neighbor.neighbor, neighbor.distance)))
-            }.getOrElse {
-              Stitch.value(List.empty)
-            }.handle { case _ => List.empty }
+  o-ovewwide def batchquewywithdistancebyid(
+    ids: seq[t1], 😳😳😳
+    nyumofneighbows: int, mya
+    wuntimepawams: p-p
+  ): stitch[wist[neighbowwithdistancewithseed[t1, mya t2, d]]] = {
+    stitch
+      .twavewse(ids) { id =>
+        e-embeddingpwoducew.pwoduceembedding(id).fwatmap { embeddingoption =>
+          e-embeddingoption
+            .map { e-embedding =>
+              s-stitch
+                .cawwfutuwe(quewyabwe.quewywithdistance(embedding, (⑅˘꒳˘) nyumofneighbows, (U ﹏ U) w-wuntimepawams))
+                .map(_.map(neighbow =>
+                  n-nyeighbowwithdistancewithseed(id, mya n-neighbow.neighbow, ʘwʘ n-nyeighbow.distance)))
+            }.getowewse {
+              stitch.vawue(wist.empty)
+            }.handwe { case _ => w-wist.empty }
         }
       }.map {
-        _.toList.flatten
+        _.towist.fwatten
       }
   }
 }

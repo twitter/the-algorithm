@@ -1,87 +1,87 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.servo.repository._
-import com.twitter.stitch.Stitch
-import com.twitter.util.Try
+i-impowt com.twittew.sewvo.wepositowy._
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.utiw.twy
 
-object CacheStitch {
+o-object cachestitch {
 
   /**
-   * Cacheable defines a function that takes a cache query and a Try value,
-   * and returns what should be written to cache, as a Option[StitchLockingCache.Val].
+   * c-cacheabwe d-defines a function t-that takes a cache quewy and a twy vawue, ^•ﻌ•^
+   * and wetuwns nyani shouwd be wwitten t-to cache, (˘ω˘) as a option[stitchwockingcache.vaw]. :3
    *
-   * None signifies that this value should not be written to cache.
+   * nyone signifies that t-this vawue shouwd nyot be wwitten t-to cache. ^^;;
    *
-   * Val can be one of Found[V], NotFound, and Deleted. The function will determine what kinds
-   * of values and exceptions (captured in the Try) correspond to which kind of cached values.
+   * vaw can be one of found[v], 🥺 nyotfound, (⑅˘꒳˘) a-and deweted. nyaa~~ the function wiww d-detewmine nyani k-kinds
+   * of vawues and exceptions (captuwed in the twy) cowwespond to which kind o-of cached vawues. :3
    */
-  type Cacheable[Q, V] = (Q, Try[V]) => Option[StitchLockingCache.Val[V]]
+  type cacheabwe[q, ( ͡o ω ͡o ) v] = (q, mya twy[v]) => option[stitchwockingcache.vaw[v]]
 
-  // Cache successful values as Found, stitch.NotFound as NotFound, and don't cache other exceptions
-  def cacheFoundAndNotFound[K, V]: CacheStitch.Cacheable[K, V] =
-    (_, t: Try[V]) =>
-      t match {
-        // Write successful values as Found
-        case Return(v) => Some(StitchLockingCache.Val.Found[V](v))
+  // c-cache successfuw vawues a-as found, (///ˬ///✿) stitch.notfound a-as n-nyotfound, (˘ω˘) and don't c-cache othew exceptions
+  def cachefoundandnotfound[k, ^^;; v-v]: cachestitch.cacheabwe[k, (✿oωo) v] =
+    (_, t: twy[v]) =>
+      t-t match {
+        // wwite successfuw vawues as found
+        case wetuwn(v) => some(stitchwockingcache.vaw.found[v](v))
 
-        // Write stitch.NotFound as NotFound
-        case Throw(com.twitter.stitch.NotFound) => Some(StitchLockingCache.Val.NotFound)
+        // w-wwite stitch.notfound a-as nyotfound
+        c-case thwow(com.twittew.stitch.notfound) => s-some(stitchwockingcache.vaw.notfound)
 
-        // Don't write other exceptions back to cache
-        case _ => None
+        // don't wwite othew exceptions back to cache
+        c-case _ => n-nyone
       }
 }
 
-case class CacheStitch[Q, K, V](
-  repo: Q => Stitch[V],
-  cache: StitchLockingCache[K, V],
-  queryToKey: Q => K,
-  handler: CachedResult.Handler[K, V],
-  cacheable: CacheStitch.Cacheable[Q, V])
-    extends (Q => Stitch[V]) {
-  import com.twitter.servo.repository.CachedResultAction._
+case cwass cachestitch[q, (U ﹏ U) k-k, v-v](
+  wepo: q => stitch[v], -.-
+  cache: s-stitchwockingcache[k, ^•ﻌ•^ v],
+  q-quewytokey: q => k, rawr
+  handwew: cachedwesuwt.handwew[k, (˘ω˘) v-v],
+  cacheabwe: cachestitch.cacheabwe[q, nyaa~~ v-v])
+    extends (q => stitch[v]) {
+  i-impowt com.twittew.sewvo.wepositowy.cachedwesuwtaction._
 
-  private[this] def getFromCache(key: K): Stitch[CachedResult[K, V]] = {
+  p-pwivate[this] def getfwomcache(key: k): stitch[cachedwesuwt[k, UwU v]] = {
     cache
       .get(key)
-      .handle {
-        case t => CachedResult.Failed(key, t)
+      .handwe {
+        case t => cachedwesuwt.faiwed(key, :3 t)
       }
   }
 
-  // Exposed for testing
-  private[repository] def readThrough(query: Q): Stitch[V] =
-    repo(query).liftToTry.applyEffect { value: Try[V] =>
-      cacheable(query, value) match {
-        case Some(v) =>
-          // cacheable returned Some of a StitchLockingCache.Val to cache
+  // e-exposed fow t-testing
+  pwivate[wepositowy] def weadthwough(quewy: q-q): stitch[v] =
+    w-wepo(quewy).wifttotwy.appwyeffect { v-vawue: twy[v] =>
+      cacheabwe(quewy, (⑅˘꒳˘) vawue) match {
+        c-case some(v) =>
+          // cacheabwe wetuwned some of a stitchwockingcache.vaw t-to cache
           //
-          // This is async to ensure that we don't wait for the cache
-          // update to complete before returning. This also ignores
-          // any exceptions from setting the value.
-          Stitch.async(cache.lockAndSet(queryToKey(query), v))
-        case None =>
-          // cacheable returned None so don't cache
-          Stitch.Unit
+          // t-this is async to e-ensuwe that we d-don't wait fow the cache
+          // u-update to c-compwete befowe w-wetuwning. (///ˬ///✿) this a-awso ignowes
+          // any exceptions fwom setting t-the vawue. ^^;;
+          s-stitch.async(cache.wockandset(quewytokey(quewy), >_< v-v))
+        c-case nyone =>
+          // c-cacheabwe wetuwned nyone so don't cache
+          stitch.unit
       }
-    }.lowerFromTry
+    }.wowewfwomtwy
 
-  private[this] def handle(query: Q, action: CachedResultAction[V]): Stitch[V] =
+  p-pwivate[this] def handwe(quewy: q, rawr x3 action: cachedwesuwtaction[v]): stitch[v] =
     action match {
-      case HandleAsFound(value) => Stitch(value)
-      case HandleAsMiss => readThrough(query)
-      case HandleAsDoNotCache => repo(query)
-      case HandleAsFailed(t) => Stitch.exception(t)
-      case HandleAsNotFound => Stitch.NotFound
-      case t: TransformSubAction[V] => handle(query, t.action).map(t.f)
-      case SoftExpiration(subAction) =>
-        Stitch
-          .async(readThrough(query))
-          .flatMap { _ => handle(query, subAction) }
+      case handweasfound(vawue) => s-stitch(vawue)
+      case handweasmiss => weadthwough(quewy)
+      case handweasdonotcache => w-wepo(quewy)
+      c-case handweasfaiwed(t) => s-stitch.exception(t)
+      case handweasnotfound => s-stitch.notfound
+      case t: twansfowmsubaction[v] => h-handwe(quewy, /(^•ω•^) t-t.action).map(t.f)
+      case softexpiwation(subaction) =>
+        stitch
+          .async(weadthwough(quewy))
+          .fwatmap { _ => handwe(quewy, :3 subaction) }
     }
 
-  override def apply(query: Q): Stitch[V] =
-    getFromCache(queryToKey(query))
-      .flatMap { result: CachedResult[K, V] => handle(query, handler(result)) }
+  ovewwide def appwy(quewy: q): s-stitch[v] =
+    getfwomcache(quewytokey(quewy))
+      .fwatmap { w-wesuwt: cachedwesuwt[k, (ꈍᴗꈍ) v] => h-handwe(quewy, /(^•ω•^) handwew(wesuwt)) }
 }

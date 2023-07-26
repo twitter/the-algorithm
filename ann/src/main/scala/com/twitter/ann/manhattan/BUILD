@@ -1,12 +1,12 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "src/scala/com/twitter/ml/api/embedding",
-        "storage/clients/manhattan",
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/bijection:cowe", òωó
+        "3wdpawty/jvm/com/twittew/bijection:scwooge", o.O
+        "ann/swc/main/scawa/com/twittew/ann/common",
+        "swc/scawa/com/twittew/mw/api/embedding", (U ᵕ U❁)
+        "stowage/cwients/manhattan", (⑅˘꒳˘)
     ],
 )

@@ -1,90 +1,90 @@
-package com.twitter.unified_user_actions.service.module
+package com.twittew.unified_usew_actions.sewvice.moduwe
 
-import com.google.inject.Provides
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.finatra.kafka.serde.UnKeyedSerde
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.socialgraph.thriftscala.WriteEvent
-import com.twitter.unified_user_actions.adapter.social_graph_event.SocialGraphAdapter
-import com.twitter.unified_user_actions.kafka.CompressionTypeFlag
-import com.twitter.unified_user_actions.kafka.serde.NullableScalaSerdes
-import com.twitter.util.Duration
-import com.twitter.util.StorageUnit
-import com.twitter.util.logging.Logging
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt c-com.twittew.decidew.decidew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyedsewde
+impowt com.twittew.inject.twittewmoduwe
+impowt com.twittew.inject.annotations.fwag
+impowt com.twittew.kafka.cwient.pwocessow.atweastoncepwocessow
+impowt com.twittew.sociawgwaph.thwiftscawa.wwiteevent
+i-impowt com.twittew.unified_usew_actions.adaptew.sociaw_gwaph_event.sociawgwaphadaptew
+impowt com.twittew.unified_usew_actions.kafka.compwessiontypefwag
+impowt c-com.twittew.unified_usew_actions.kafka.sewde.nuwwabwescawasewdes
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.stowageunit
+impowt com.twittew.utiw.wogging.wogging
+impowt javax.inject.singweton
 
-class KafkaProcessorSocialGraphModule {}
+c-cwass kafkapwocessowsociawgwaphmoduwe {}
 
-object KafkaProcessorSocialGraphModule extends TwitterModule with Logging {
-  override def modules = Seq(FlagsModule)
+object k-kafkapwocessowsociawgwaphmoduwe e-extends twittewmoduwe with wogging {
+  ovewwide def moduwes = seq(fwagsmoduwe)
 
-  private val socialGraphAdapter = new SocialGraphAdapter
-  // NOTE: This is a shared processor name in order to simplify monviz stat computation.
-  private final val processorName = "uuaProcessor"
+  p-pwivate vaw sociawgwaphadaptew = nyew sociawgwaphadaptew
+  // nyote: this is a shawed pwocessow n-nyame in owdew to simpwify m-monviz stat computation. ʘwʘ
+  p-pwivate f-finaw vaw pwocessowname = "uuapwocessow"
 
-  @Provides
-  @Singleton
-  def providesKafkaProcessor(
-    decider: Decider,
-    @Flag(FlagsModule.cluster) cluster: String,
-    @Flag(FlagsModule.kafkaSourceCluster) kafkaSourceCluster: String,
-    @Flag(FlagsModule.kafkaDestCluster) kafkaDestCluster: String,
-    @Flag(FlagsModule.kafkaSourceTopic) kafkaSourceTopic: String,
-    @Flag(FlagsModule.kafkaSinkTopics) kafkaSinkTopics: Seq[String],
-    @Flag(FlagsModule.kafkaGroupId) kafkaGroupId: String,
-    @Flag(FlagsModule.kafkaProducerClientId) kafkaProducerClientId: String,
-    @Flag(FlagsModule.kafkaMaxPendingRequests) kafkaMaxPendingRequests: Int,
-    @Flag(FlagsModule.kafkaWorkerThreads) kafkaWorkerThreads: Int,
-    @Flag(FlagsModule.commitInterval) commitInterval: Duration,
-    @Flag(FlagsModule.maxPollRecords) maxPollRecords: Int,
-    @Flag(FlagsModule.maxPollInterval) maxPollInterval: Duration,
-    @Flag(FlagsModule.sessionTimeout) sessionTimeout: Duration,
-    @Flag(FlagsModule.fetchMax) fetchMax: StorageUnit,
-    @Flag(FlagsModule.batchSize) batchSize: StorageUnit,
-    @Flag(FlagsModule.linger) linger: Duration,
-    @Flag(FlagsModule.bufferMem) bufferMem: StorageUnit,
-    @Flag(FlagsModule.compressionType) compressionTypeFlag: CompressionTypeFlag,
-    @Flag(FlagsModule.retries) retries: Int,
-    @Flag(FlagsModule.retryBackoff) retryBackoff: Duration,
-    @Flag(FlagsModule.requestTimeout) requestTimeout: Duration,
-    @Flag(FlagsModule.enableTrustStore) enableTrustStore: Boolean,
-    @Flag(FlagsModule.trustStoreLocation) trustStoreLocation: String,
-    statsReceiver: StatsReceiver,
-  ): AtLeastOnceProcessor[UnKeyed, WriteEvent] = {
-    KafkaProcessorProvider.provideDefaultAtLeastOnceProcessor(
-      name = processorName,
-      kafkaSourceCluster = kafkaSourceCluster,
-      kafkaGroupId = kafkaGroupId,
-      kafkaSourceTopic = kafkaSourceTopic,
-      sourceKeyDeserializer = UnKeyedSerde.deserializer,
-      sourceValueDeserializer = NullableScalaSerdes
-        .Thrift[WriteEvent](statsReceiver.counter("deserializerErrors")).deserializer,
-      commitInterval = commitInterval,
-      maxPollRecords = maxPollRecords,
-      maxPollInterval = maxPollInterval,
-      sessionTimeout = sessionTimeout,
-      fetchMax = fetchMax,
-      processorMaxPendingRequests = kafkaMaxPendingRequests,
-      processorWorkerThreads = kafkaWorkerThreads,
-      adapter = socialGraphAdapter,
-      kafkaSinkTopics = kafkaSinkTopics,
-      kafkaDestCluster = kafkaDestCluster,
-      kafkaProducerClientId = kafkaProducerClientId,
-      batchSize = batchSize,
-      linger = linger,
-      bufferMem = bufferMem,
-      compressionType = compressionTypeFlag.compressionType,
-      retries = retries,
-      retryBackoff = retryBackoff,
-      requestTimeout = requestTimeout,
-      statsReceiver = statsReceiver,
-      trustStoreLocationOpt = if (enableTrustStore) Some(trustStoreLocation) else None,
-      decider = decider,
-      zone = ZoneFiltering.zoneMapping(cluster),
+  @pwovides
+  @singweton
+  d-def pwovideskafkapwocessow(
+    decidew: decidew, (˘ω˘)
+    @fwag(fwagsmoduwe.cwustew) c-cwustew: stwing, (U ﹏ U)
+    @fwag(fwagsmoduwe.kafkasouwcecwustew) kafkasouwcecwustew: s-stwing, ^•ﻌ•^
+    @fwag(fwagsmoduwe.kafkadestcwustew) kafkadestcwustew: stwing, (˘ω˘)
+    @fwag(fwagsmoduwe.kafkasouwcetopic) kafkasouwcetopic: stwing, :3
+    @fwag(fwagsmoduwe.kafkasinktopics) kafkasinktopics: s-seq[stwing], ^^;;
+    @fwag(fwagsmoduwe.kafkagwoupid) kafkagwoupid: s-stwing, 🥺
+    @fwag(fwagsmoduwe.kafkapwoducewcwientid) k-kafkapwoducewcwientid: s-stwing, (⑅˘꒳˘)
+    @fwag(fwagsmoduwe.kafkamaxpendingwequests) kafkamaxpendingwequests: int, nyaa~~
+    @fwag(fwagsmoduwe.kafkawowkewthweads) kafkawowkewthweads: int, :3
+    @fwag(fwagsmoduwe.commitintewvaw) c-commitintewvaw: d-duwation, ( ͡o ω ͡o )
+    @fwag(fwagsmoduwe.maxpowwwecowds) maxpowwwecowds: i-int, mya
+    @fwag(fwagsmoduwe.maxpowwintewvaw) m-maxpowwintewvaw: duwation, (///ˬ///✿)
+    @fwag(fwagsmoduwe.sessiontimeout) s-sessiontimeout: duwation, (˘ω˘)
+    @fwag(fwagsmoduwe.fetchmax) f-fetchmax: stowageunit, ^^;;
+    @fwag(fwagsmoduwe.batchsize) batchsize: s-stowageunit, (✿oωo)
+    @fwag(fwagsmoduwe.wingew) wingew: d-duwation, (U ﹏ U)
+    @fwag(fwagsmoduwe.buffewmem) buffewmem: s-stowageunit, -.-
+    @fwag(fwagsmoduwe.compwessiontype) c-compwessiontypefwag: compwessiontypefwag, ^•ﻌ•^
+    @fwag(fwagsmoduwe.wetwies) wetwies: int, rawr
+    @fwag(fwagsmoduwe.wetwybackoff) wetwybackoff: duwation, (˘ω˘)
+    @fwag(fwagsmoduwe.wequesttimeout) wequesttimeout: duwation, nyaa~~
+    @fwag(fwagsmoduwe.enabwetwuststowe) e-enabwetwuststowe: b-boowean, UwU
+    @fwag(fwagsmoduwe.twuststowewocation) twuststowewocation: s-stwing, :3
+    statsweceivew: s-statsweceivew, (⑅˘꒳˘)
+  ): a-atweastoncepwocessow[unkeyed, wwiteevent] = {
+    kafkapwocessowpwovidew.pwovidedefauwtatweastoncepwocessow(
+      nyame = pwocessowname, (///ˬ///✿)
+      k-kafkasouwcecwustew = kafkasouwcecwustew, ^^;;
+      kafkagwoupid = kafkagwoupid,
+      kafkasouwcetopic = kafkasouwcetopic, >_<
+      s-souwcekeydesewiawizew = unkeyedsewde.desewiawizew, rawr x3
+      s-souwcevawuedesewiawizew = n-nyuwwabwescawasewdes
+        .thwift[wwiteevent](statsweceivew.countew("desewiawizewewwows")).desewiawizew, /(^•ω•^)
+      c-commitintewvaw = commitintewvaw, :3
+      m-maxpowwwecowds = m-maxpowwwecowds, (ꈍᴗꈍ)
+      m-maxpowwintewvaw = m-maxpowwintewvaw, /(^•ω•^)
+      sessiontimeout = sessiontimeout, (⑅˘꒳˘)
+      f-fetchmax = fetchmax, ( ͡o ω ͡o )
+      p-pwocessowmaxpendingwequests = k-kafkamaxpendingwequests, òωó
+      p-pwocessowwowkewthweads = k-kafkawowkewthweads, (⑅˘꒳˘)
+      adaptew = sociawgwaphadaptew, XD
+      kafkasinktopics = kafkasinktopics,
+      k-kafkadestcwustew = kafkadestcwustew, -.-
+      kafkapwoducewcwientid = kafkapwoducewcwientid, :3
+      batchsize = batchsize, nyaa~~
+      w-wingew = wingew, 😳
+      buffewmem = buffewmem, (⑅˘꒳˘)
+      compwessiontype = c-compwessiontypefwag.compwessiontype, nyaa~~
+      w-wetwies = w-wetwies, OwO
+      wetwybackoff = wetwybackoff, rawr x3
+      w-wequesttimeout = wequesttimeout, XD
+      s-statsweceivew = s-statsweceivew, σωσ
+      twuststowewocationopt = if (enabwetwuststowe) some(twuststowewocation) ewse nyone, (U ᵕ U❁)
+      decidew = d-decidew, (U ﹏ U)
+      zone = zonefiwtewing.zonemapping(cwustew), :3
     )
   }
 }

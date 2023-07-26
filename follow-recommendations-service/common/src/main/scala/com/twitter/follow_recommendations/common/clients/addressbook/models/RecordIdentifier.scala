@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.clients.addressbook.models
+package com.twittew.fowwow_wecommendations.common.cwients.addwessbook.modews
 
-import com.twitter.addressbook.datatypes.{thriftscala => t}
+impowt c-com.twittew.addwessbook.datatypes.{thwiftscawa => t-t}
 
-case class RecordIdentifier(
-  userId: Option[Long],
-  email: Option[String],
-  phoneNumber: Option[String]) {
-  def toThrift: t.RecordIdentifier = t.RecordIdentifier(userId, email, phoneNumber)
+case cwass w-wecowdidentifiew(
+  u-usewid: o-option[wong], σωσ
+  e-emaiw: option[stwing], σωσ
+  p-phonenumbew: o-option[stwing]) {
+  def tothwift: t.wecowdidentifiew = t.wecowdidentifiew(usewid, >_< emaiw, p-phonenumbew)
 }

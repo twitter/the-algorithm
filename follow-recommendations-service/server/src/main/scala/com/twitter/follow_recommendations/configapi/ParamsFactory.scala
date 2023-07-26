@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.configapi
+package com.twittew.fowwow_wecommendations.configapi
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.dispwaywocation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.cwientcontext
+i-impowt c-com.twittew.sewvo.utiw.memoizingstatsweceivew
+impowt c-com.twittew.timewines.configapi.config
+i-impowt c-com.twittew.timewines.configapi.featuwevawue
+impowt com.twittew.timewines.configapi.pawams
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ParamsFactory @Inject() (
-  config: Config,
-  requestContextFactory: RequestContextFactory,
-  statsReceiver: StatsReceiver) {
+@singweton
+c-cwass pawamsfactowy @inject() (
+  config: config, rawr
+  wequestcontextfactowy: wequestcontextfactowy, OwO
+  s-statsweceivew: statsweceivew) {
 
-  private val stats = new MemoizingStatsReceiver(statsReceiver.scope("configapi"))
-  def apply(followRecommendationServiceRequestContext: RequestContext): Params =
-    config(followRecommendationServiceRequestContext, stats)
+  p-pwivate vaw stats = new memoizingstatsweceivew(statsweceivew.scope("configapi"))
+  def a-appwy(fowwowwecommendationsewvicewequestcontext: wequestcontext): p-pawams =
+    c-config(fowwowwecommendationsewvicewequestcontext, (U ﹏ U) stats)
 
-  def apply(
-    clientContext: ClientContext,
-    displayLocation: DisplayLocation,
-    featureOverrides: Map[String, FeatureValue]
-  ): Params =
-    apply(requestContextFactory(clientContext, displayLocation, featureOverrides))
+  def appwy(
+    cwientcontext: cwientcontext, >_<
+    dispwaywocation: dispwaywocation, rawr x3
+    f-featuweovewwides: map[stwing, featuwevawue]
+  ): pawams =
+    appwy(wequestcontextfactowy(cwientcontext, mya d-dispwaywocation, nyaa~~ featuweovewwides))
 }

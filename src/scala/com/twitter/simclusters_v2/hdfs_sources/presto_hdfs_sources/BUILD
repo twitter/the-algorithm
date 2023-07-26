@@ -1,60 +1,60 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
+scawa_wibwawy(
+    souwces = ["*.scawa"], :3
+    pwatfowm = "java8", 😳😳😳
+    t-tags = ["bazew-compatibwe"], -.-
+    d-dependencies = [
+        ":data_souwces", ( ͡o ω ͡o )
+        "3wdpawty/swc/jvm/com/twittew/scawding:cowe", rawr x3
+        "swc/scawa/com/twittew/scawding_intewnaw/dawv2", nyaa~~
+        "swc/scawa/com/twittew/scawding_intewnaw/muwtifowmat/fowmat", /(^•ω•^)
+        "swc/scawa/com/twittew/scawding_intewnaw/souwce/wzo_scwooge", rawr
+        "swc/scawa/com/twittew/simcwustews_v2/common", OwO
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", (U ﹏ U)
+        "swc/thwift/com/twittew/wtf/entity_weaw_gwaph:entity_weaw_gwaph-thwift-scawa", >_<
+    ], rawr x3
+)
+
+s-scawa_wibwawy(
+    n-nyame = "data_souwces", mya
+    souwces = [], nyaa~~
+    d-descwiption = "daw d-datasets we w-wish to expose extewnawwy", (⑅˘꒳˘)
+    p-pwatfowm = "java8", rawr x3
+    tags = ["bazew-compatibwe"], (✿oωo)
     dependencies = [
-        ":data_sources",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-        "src/thrift/com/twitter/wtf/entity_real_graph:entity_real_graph-thrift-scala",
+        ":wevewse_index_semantic_cowe_pew_wanguage_simcwustews_embeddings_pwesto-scawa", (ˆ ﻌ ˆ)♡
+        ":semantic_cowe_pew_wanguage_simcwustews_embeddings_pwesto-scawa", (˘ω˘)
+        "swc/scawa/com/twittew/simcwustews_v2/common", (⑅˘꒳˘)
     ],
 )
 
-scala_library(
-    name = "data_sources",
-    sources = [],
-    description = "DAL datasets we wish to expose externally",
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":reverse_index_semantic_core_per_language_simclusters_embeddings_presto-scala",
-        ":semantic_core_per_language_simclusters_embeddings_presto-scala",
-        "src/scala/com/twitter/simclusters_v2/common",
+cweate_datasets(
+    base_name = "wevewse_index_semantic_cowe_pew_wanguage_simcwustews_embeddings_pwesto", (///ˬ///✿)
+    java_schema = "com.twittew.simcwustews_v2.thwiftjava.intewnawidembeddingwithid", 😳😳😳
+    p-pwatfowm = "java8", 🥺
+    wowe = "cassowawy", mya
+    scawa_schema = "com.twittew.simcwustews_v2.thwiftscawa.intewnawidembeddingwithid", 🥺
+    s-segment_type = "snapshot", >_<
+    tags = ["bazew-compatibwe"], >_<
+    j-java_dependencies = [
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-java", (⑅˘꒳˘)
+    ],
+    scawa_dependencies = [
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", /(^•ω•^)
     ],
 )
 
-create_datasets(
-    base_name = "reverse_index_semantic_core_per_language_simclusters_embeddings_presto",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.InternalIdEmbeddingWithId",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.InternalIdEmbeddingWithId",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
+cweate_datasets(
+    base_name = "semantic_cowe_pew_wanguage_simcwustews_embeddings_pwesto", rawr x3
+    j-java_schema = "com.twittew.simcwustews_v2.thwiftjava.simcwustewsembeddingwithid",
+    pwatfowm = "java8", (U ﹏ U)
+    w-wowe = "cassowawy", (U ﹏ U)
+    s-scawa_schema = "com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingwithid", (⑅˘꒳˘)
+    segment_type = "snapshot", òωó
+    tags = ["bazew-compatibwe"], ʘwʘ
     java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-java", /(^•ω•^)
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-    ],
-)
-
-create_datasets(
-    base_name = "semantic_core_per_language_simclusters_embeddings_presto",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.SimClustersEmbeddingWithId",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingWithId",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
-    ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scawa_dependencies = [
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", ʘwʘ
     ],
 )

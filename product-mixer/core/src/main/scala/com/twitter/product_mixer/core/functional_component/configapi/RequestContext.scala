@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi
 
-import com.twitter.timelines.configapi.BaseRequestContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.GuestId
-import com.twitter.timelines.configapi.UserId
-import com.twitter.timelines.configapi.WithFeatureContext
-import com.twitter.timelines.configapi.WithGuestId
-import com.twitter.timelines.configapi.WithUserId
+impowt com.twittew.timewines.configapi.basewequestcontext
+i-impowt com.twittew.timewines.configapi.featuwecontext
+i-impowt com.twittew.timewines.configapi.guestid
+i-impowt com.twittew.timewines.configapi.usewid
+i-impowt com.twittew.timewines.configapi.withfeatuwecontext
+i-impowt c-com.twittew.timewines.configapi.withguestid
+i-impowt com.twittew.timewines.configapi.withusewid
 
-/** Represents [[com.twitter.timelines.configapi]]'s context information */
-case class RequestContext(
-  userId: Option[UserId],
-  guestId: Option[GuestId],
-  featureContext: FeatureContext)
-    extends BaseRequestContext
-    with WithUserId
-    with WithGuestId
-    with WithFeatureContext
+/** w-wepwesents [[com.twittew.timewines.configapi]]'s context infowmation */
+case cwass wequestcontext(
+  usewid: o-option[usewid], (U ᵕ U❁)
+  guestid: option[guestid], -.-
+  featuwecontext: f-featuwecontext)
+    extends basewequestcontext
+    w-with withusewid
+    with withguestid
+    with withfeatuwecontext

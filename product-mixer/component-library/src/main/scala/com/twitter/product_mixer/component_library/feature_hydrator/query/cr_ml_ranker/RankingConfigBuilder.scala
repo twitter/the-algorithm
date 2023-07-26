@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.cw_mw_wankew
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.cr_ml_ranker.{thriftscala => t}
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.cw_mw_wankew.{thwiftscawa => t-t}
 
 /**
- * Builder for constructing a ranking config from a query
+ * b-buiwdew fow constwucting a-a wanking c-config fwom a q-quewy
  */
-trait RankingConfigBuilder {
-  def apply(query: PipelineQuery): t.RankingConfig
+twait w-wankingconfigbuiwdew {
+  d-def appwy(quewy: pipewinequewy): t.wankingconfig
 }

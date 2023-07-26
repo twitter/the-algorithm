@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.scorer.common
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.common
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.grpc.FinagleChannelBuilder
-import com.twitter.finagle.grpc.FutureConverters
-import com.twitter.stitch.Stitch
-import inference.GRPCInferenceServiceGrpc
-import inference.GrpcService.ModelInferRequest
-import inference.GrpcService.ModelInferResponse
-import io.grpc.ManagedChannel
+impowt com.twittew.finagwe.http
+i-impowt com.twittew.finagwe.gwpc.finagwechannewbuiwdew
+i-impowt com.twittew.finagwe.gwpc.futuweconvewtews
+i-impowt c-com.twittew.stitch.stitch
+i-impowt i-infewence.gwpcinfewencesewvicegwpc
+i-impowt infewence.gwpcsewvice.modewinfewwequest
+i-impowt infewence.gwpcsewvice.modewinfewwesponse
+impowt io.gwpc.managedchannew
 
 /**
- * Client wrapper for calling a Cortex Managed Inference Service (go/cmis) ML Model using GRPC.
- * @param httpClient Finagle HTTP Client to use for connection.
- * @param modelPath Wily path to the ML Model service (e.g. /cluster/local/role/service/instance).
+ * cwient wwappew fow cawwing a cowtex managed i-infewence sewvice (go/cmis) mw modew using gwpc. >_<
+ * @pawam h-httpcwient finagwe http cwient to u-use fow connection. rawr x3
+ * @pawam modewpath wiwy path to the mw modew sewvice (e.g. mya /cwustew/wocaw/wowe/sewvice/instance). nyaa~~
  */
-case class ManagedModelClient(
-  httpClient: Http.Client,
-  modelPath: String)
-    extends MLModelInferenceClient {
+c-case cwass managedmodewcwient(
+  h-httpcwient: h-http.cwient, (⑅˘꒳˘)
+  modewpath: stwing)
+    extends mwmodewinfewencecwient {
 
-  private val channel: ManagedChannel =
-    FinagleChannelBuilder.forTarget(modelPath).httpClient(httpClient).build()
+  pwivate vaw c-channew: managedchannew =
+    finagwechannewbuiwdew.fowtawget(modewpath).httpcwient(httpcwient).buiwd()
 
-  private val inferenceServiceStub = GRPCInferenceServiceGrpc.newFutureStub(channel)
+  pwivate vaw infewencesewvicestub = gwpcinfewencesewvicegwpc.newfutuwestub(channew)
 
-  def score(request: ModelInferRequest): Stitch[ModelInferResponse] = {
-    Stitch
-      .callFuture(
-        FutureConverters
-          .RichListenableFuture(inferenceServiceStub.modelInfer(request)).toTwitter)
+  d-def scowe(wequest: modewinfewwequest): s-stitch[modewinfewwesponse] = {
+    s-stitch
+      .cawwfutuwe(
+        f-futuweconvewtews
+          .wichwistenabwefutuwe(infewencesewvicestub.modewinfew(wequest)).totwittew)
   }
 }

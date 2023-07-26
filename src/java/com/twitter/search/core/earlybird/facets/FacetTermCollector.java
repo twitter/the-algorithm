@@ -1,16 +1,16 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
 /**
- * An interface for collecting all facets in an document.
+ * an intewface f-fow cowwecting a-aww facets i-in an document. :3
  */
-public interface FacetTermCollector {
+p-pubwic intewface f-facettewmcowwectow {
   /**
-   * Collect one facet term.
-   * @param docID The docID for which the facets are being collected.
-   * @param termID The termID for this facet item.
-   * @param fieldID The fieldID for this facet item.
-   * @return True if anything has actually been collected, false if this has been skipped.
-   *         Currently, this return value is not used.
+   * c-cowwect one f-facet tewm. 😳😳😳
+   * @pawam d-docid the docid fow which the facets awe being cowwected. -.-
+   * @pawam tewmid the tewmid f-fow this facet item. ( ͡o ω ͡o )
+   * @pawam fiewdid the fiewdid f-fow this facet item. rawr x3
+   * @wetuwn t-twue if anything has actuawwy been cowwected, nyaa~~ fawse if this h-has been skipped. /(^•ω•^)
+   *         cuwwentwy, rawr this w-wetuwn vawue i-is nyot used. OwO
    */
-  boolean collect(int docID, long termID, int fieldID);
+  boowean cowwect(int docid, (U ﹏ U) wong tewmid, >_< int fiewdid);
 }

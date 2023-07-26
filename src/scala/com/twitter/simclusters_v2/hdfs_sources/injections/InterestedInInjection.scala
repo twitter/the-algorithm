@@ -1,13 +1,13 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twittew.simcwustews_v2.hdfs_souwces.injections
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.StringUtf8
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.stwingutf8
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.wong2bigendian
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.scawacompactthwift
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisintewestedin
 
-object InterestedInInjection {
-  val injection = KeyValInjection(Long2BigEndian, ScalaCompactThrift(ClustersUserIsInterestedIn))
-  val languageInjection =
-    KeyValInjection(StringUtf8, ScalaCompactThrift(ClustersUserIsInterestedIn))
+o-object i-intewestedininjection {
+  vaw injection = keyvawinjection(wong2bigendian, rawr scawacompactthwift(cwustewsusewisintewestedin))
+  vaw wanguageinjection =
+    keyvawinjection(stwingutf8, σωσ scawacompactthwift(cwustewsusewisintewestedin))
 }

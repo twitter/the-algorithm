@@ -1,33 +1,33 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+package com.twittew.fowwow_wecommendations.common.pwedicates.sgs
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.stitch.Stitch
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.base.pwedicatewesuwt
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.fiwtewweason
+i-impowt com.twittew.fowwow_wecommendations.common.modews.haswecentfowwowedusewids
+i-impowt com.twittew.stitch.stitch
+i-impowt javax.inject.singweton
 
-@Singleton
-class RecentFollowingPredicate extends Predicate[(HasRecentFollowedUserIds, CandidateUser)] {
+@singweton
+c-cwass wecentfowwowingpwedicate extends pwedicate[(haswecentfowwowedusewids, rawr x3 candidateusew)] {
 
-  override def apply(pair: (HasRecentFollowedUserIds, CandidateUser)): Stitch[PredicateResult] = {
+  ovewwide d-def appwy(paiw: (haswecentfowwowedusewids, nyaa~~ candidateusew)): stitch[pwedicatewesuwt] = {
 
-    val (targetUser, candidate) = pair
-    targetUser.recentFollowedUserIdsSet match {
-      case Some(users) =>
-        if (!users.contains(candidate.id)) {
-          RecentFollowingPredicate.ValidStitch
-        } else {
-          RecentFollowingPredicate.AlreadyFollowedStitch
+    v-vaw (tawgetusew, /(^•ω•^) candidate) = p-paiw
+    tawgetusew.wecentfowwowedusewidsset match {
+      case some(usews) =>
+        if (!usews.contains(candidate.id)) {
+          w-wecentfowwowingpwedicate.vawidstitch
+        } ewse {
+          w-wecentfowwowingpwedicate.awweadyfowwowedstitch
         }
-      case None => RecentFollowingPredicate.ValidStitch
+      c-case nyone => wecentfowwowingpwedicate.vawidstitch
     }
   }
 }
 
-object RecentFollowingPredicate {
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
-  val AlreadyFollowedStitch: Stitch[PredicateResult.Invalid] =
-    Stitch.value(PredicateResult.Invalid(Set(FilterReason.AlreadyFollowed)))
+object wecentfowwowingpwedicate {
+  vaw vawidstitch: stitch[pwedicatewesuwt.vawid.type] = s-stitch.vawue(pwedicatewesuwt.vawid)
+  vaw awweadyfowwowedstitch: stitch[pwedicatewesuwt.invawid] =
+    stitch.vawue(pwedicatewesuwt.invawid(set(fiwtewweason.awweadyfowwowed)))
 }

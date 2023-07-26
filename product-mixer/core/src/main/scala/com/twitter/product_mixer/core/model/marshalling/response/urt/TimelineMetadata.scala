@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt
 
-case class TimelineMetadata(
-  title: Option[String],
-  scribeConfig: Option[TimelineScribeConfig],
-  readerModeConfig: Option[ReaderModeConfig] = None)
+case cwass t-timewinemetadata(
+  t-titwe: option[stwing],
+  s-scwibeconfig: o-option[timewinescwibeconfig], (U ᵕ U❁)
+  w-weadewmodeconfig: o-option[weadewmodeconfig] = n-nyone)

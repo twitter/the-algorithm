@@ -1,53 +1,53 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => frs}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+impowt c-com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
+i-impowt com.twittew.fowwow_wecommendations.{thwiftscawa => f-fws}
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.cwientcontext
 
-object ClientContextConverter {
-  def toFRSOfflineClientContextThrift(
-    productMixerClientContext: ClientContext
-  ): offline.OfflineClientContext =
-    offline.OfflineClientContext(
-      productMixerClientContext.userId,
-      productMixerClientContext.guestId,
-      productMixerClientContext.appId,
-      productMixerClientContext.countryCode,
-      productMixerClientContext.languageCode,
-      productMixerClientContext.guestIdAds,
-      productMixerClientContext.guestIdMarketing
+o-object cwientcontextconvewtew {
+  d-def tofwsoffwinecwientcontextthwift(
+    p-pwoductmixewcwientcontext: cwientcontext
+  ): offwine.offwinecwientcontext =
+    offwine.offwinecwientcontext(
+      pwoductmixewcwientcontext.usewid, (U ﹏ U)
+      p-pwoductmixewcwientcontext.guestid, (///ˬ///✿)
+      pwoductmixewcwientcontext.appid, >w<
+      pwoductmixewcwientcontext.countwycode, rawr
+      p-pwoductmixewcwientcontext.wanguagecode, mya
+      pwoductmixewcwientcontext.guestidads, ^^
+      p-pwoductmixewcwientcontext.guestidmawketing
     )
 
-  def fromThrift(clientContext: frs.ClientContext): ClientContext = ClientContext(
-    userId = clientContext.userId,
-    guestId = clientContext.guestId,
-    appId = clientContext.appId,
-    ipAddress = clientContext.ipAddress,
-    userAgent = clientContext.userAgent,
-    countryCode = clientContext.countryCode,
-    languageCode = clientContext.languageCode,
-    isTwoffice = clientContext.isTwoffice,
-    userRoles = clientContext.userRoles.map(_.toSet),
-    deviceId = clientContext.deviceId,
-    guestIdAds = clientContext.guestIdAds,
-    guestIdMarketing = clientContext.guestIdMarketing,
-    mobileDeviceId = None,
-    mobileDeviceAdId = None,
-    limitAdTracking = None
+  def fwomthwift(cwientcontext: fws.cwientcontext): cwientcontext = c-cwientcontext(
+    usewid = c-cwientcontext.usewid, 😳😳😳
+    g-guestid = cwientcontext.guestid, mya
+    appid = cwientcontext.appid, 😳
+    ipaddwess = cwientcontext.ipaddwess, -.-
+    usewagent = c-cwientcontext.usewagent, 🥺
+    countwycode = cwientcontext.countwycode, o.O
+    wanguagecode = cwientcontext.wanguagecode, /(^•ω•^)
+    i-istwoffice = cwientcontext.istwoffice, nyaa~~
+    usewwowes = c-cwientcontext.usewwowes.map(_.toset),
+    d-deviceid = cwientcontext.deviceid, nyaa~~
+    g-guestidads = c-cwientcontext.guestidads, :3
+    guestidmawketing = cwientcontext.guestidmawketing, 😳😳😳
+    m-mobiwedeviceid = nyone, (˘ω˘)
+    mobiwedeviceadid = n-nyone, ^^
+    wimitadtwacking = nyone
   )
 
-  def toThrift(clientContext: ClientContext): frs.ClientContext = frs.ClientContext(
-    userId = clientContext.userId,
-    guestId = clientContext.guestIdAds,
-    appId = clientContext.appId,
-    ipAddress = clientContext.ipAddress,
-    userAgent = clientContext.userAgent,
-    countryCode = clientContext.countryCode,
-    languageCode = clientContext.languageCode,
-    isTwoffice = clientContext.isTwoffice,
-    userRoles = clientContext.userRoles,
-    deviceId = clientContext.deviceId,
-    guestIdAds = clientContext.guestIdAds,
-    guestIdMarketing = clientContext.guestIdMarketing
+  def tothwift(cwientcontext: cwientcontext): fws.cwientcontext = f-fws.cwientcontext(
+    usewid = c-cwientcontext.usewid, :3
+    g-guestid = c-cwientcontext.guestidads, -.-
+    appid = cwientcontext.appid, 😳
+    ipaddwess = cwientcontext.ipaddwess,
+    u-usewagent = cwientcontext.usewagent, mya
+    c-countwycode = cwientcontext.countwycode, (˘ω˘)
+    w-wanguagecode = c-cwientcontext.wanguagecode, >_<
+    istwoffice = c-cwientcontext.istwoffice, -.-
+    usewwowes = cwientcontext.usewwowes, 🥺
+    d-deviceid = cwientcontext.deviceid, (U ﹏ U)
+    guestidads = cwientcontext.guestidads, >w<
+    g-guestidmawketing = cwientcontext.guestidmawketing
   )
 }

@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.twittew.home_mixew.functionaw_component.fiwtew
 
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.home_mixew.utiw.candidatesutiw
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-object RejectTweetFromViewerFilter extends Filter[PipelineQuery, TweetCandidate] {
+object wejecttweetfwomviewewfiwtew e-extends fiwtew[pipewinequewy, 😳 tweetcandidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("RejectTweetFromViewer")
+  ovewwide vaw identifiew: fiwtewidentifiew = f-fiwtewidentifiew("wejecttweetfwomviewew")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val (removed, kept) = candidates.partition(candidate =>
-      CandidatesUtil.isAuthoredByViewer(query, candidate.features))
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+  ovewwide d-def appwy(
+    quewy: pipewinequewy, XD
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[fiwtewwesuwt[tweetcandidate]] = {
+    v-vaw (wemoved, :3 kept) = candidates.pawtition(candidate =>
+      c-candidatesutiw.isauthowedbyviewew(quewy, 😳😳😳 candidate.featuwes))
+    s-stitch.vawue(fiwtewwesuwt(kept = kept.map(_.candidate), -.- wemoved = wemoved.map(_.candidate)))
   }
 }

@@ -1,34 +1,34 @@
-package com.twitter.follow_recommendations.common.predicates.hss
+package com.twittew.fowwow_wecommendations.common.pwedicates.hss
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.timewines.configapi.duwationconvewsion
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt c-com.twittew.utiw.duwation
 
-object HssPredicateParams {
-  object HssCseScoreThreshold
-      extends FSBoundedParam[Double](
-        "hss_predicate_cse_score_threshold",
-        default = 0.992d,
-        min = 0.0d,
-        max = 1.0d)
+o-object hsspwedicatepawams {
+  object hsscsescowethweshowd
+      extends f-fsboundedpawam[doubwe](
+        "hss_pwedicate_cse_scowe_thweshowd", ( ͡o ω ͡o )
+        defauwt = 0.992d, rawr x3
+        min = 0.0d, nyaa~~
+        m-max = 1.0d)
 
-  object HssNsfwScoreThreshold
-      extends FSBoundedParam[Double](
-        "hss_predicate_nsfw_score_threshold",
-        default = 1.5d,
-        min = -100.0d,
+  object hssnsfwscowethweshowd
+      e-extends fsboundedpawam[doubwe](
+        "hss_pwedicate_nsfw_scowe_thweshowd", /(^•ω•^)
+        defauwt = 1.5d, rawr
+        min = -100.0d, OwO
         max = 100.0d)
 
-  object HssApiTimeout
-      extends FSBoundedParam[Duration](
-        name = "hss_predicate_timeout_in_millis",
-        default = 200.millisecond,
-        min = 1.millisecond,
-        max = 500.millisecond)
-      with HasDurationConversion {
-    override def durationConversion: DurationConversion = DurationConversion.FromMillis
+  o-object hssapitimeout
+      extends fsboundedpawam[duwation](
+        n-nyame = "hss_pwedicate_timeout_in_miwwis", (U ﹏ U)
+        d-defauwt = 200.miwwisecond, >_<
+        min = 1.miwwisecond, rawr x3
+        max = 500.miwwisecond)
+      with hasduwationconvewsion {
+    o-ovewwide def duwationconvewsion: duwationconvewsion = duwationconvewsion.fwommiwwis
   }
 
 }

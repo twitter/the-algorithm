@@ -1,15 +1,15 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
 /**
- * Retweets should never have their own media, and should never be cached with a media
- * entity.
+ * w-wetweets shouwd n-nyevew have t-theiw own media, -.- a-and shouwd nyevew b-be cached with a-a media
+ * entity. (ˆ ﻌ ˆ)♡
  */
-object RetweetMediaRepairer extends Mutation[Tweet] {
-  def apply(tweet: Tweet): Option[Tweet] = {
-    if (isRetweet(tweet) && getMedia(tweet).nonEmpty)
-      Some(TweetLenses.media.set(tweet, Nil))
-    else
-      None
+o-object wetweetmediawepaiwew extends mutation[tweet] {
+  def appwy(tweet: tweet): option[tweet] = {
+    i-if (iswetweet(tweet) && getmedia(tweet).nonempty)
+      some(tweetwenses.media.set(tweet, (⑅˘꒳˘) n-nyiw))
+    ewse
+      n-none
   }
 }

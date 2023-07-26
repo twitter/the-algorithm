@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fspawam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class RecentEngagementSimilarUsersFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] = Seq(
-    RecentEngagementSimilarUsersParams.FirstDegreeSortEnabled
+@singweton
+c-cwass wecentengagementsimiwawusewsfsconfig @inject() () extends f-featuweswitchconfig {
+  ovewwide v-vaw booweanfspawams: s-seq[fspawam[boowean]] = seq(
+    wecentengagementsimiwawusewspawams.fiwstdegweesowtenabwed
   )
 }

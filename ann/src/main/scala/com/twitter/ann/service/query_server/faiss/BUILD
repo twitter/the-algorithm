@@ -1,33 +1,33 @@
-scala_library(
-    name = "server",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ann/src/main/java/com/twitter/ann/faiss",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/faiss",
-        "ann/src/main/scala/com/twitter/ann/service/query_server/common",
-        "ann/src/main/scala/com/twitter/ann/service/query_server/common:faiss_index_path_provider",
-        "ann/src/main/scala/com/twitter/ann/service/query_server/common/throttling",
-        "ann/src/main/scala/com/twitter/ann/service/query_server/common/warmup",
-        "src/java/com/twitter/search/common/file",
-    ],
+scawa_wibwawy(
+    nyame = "sewvew", UwU
+    souwces = ["*.scawa"], rawr x3
+    c-compiwew_option_sets = ["fataw_wawnings"],
+    t-tags = ["bazew-compatibwe"], rawr
+    d-dependencies = [
+        "ann/swc/main/java/com/twittew/ann/faiss", σωσ
+        "ann/swc/main/scawa/com/twittew/ann/common", σωσ
+        "ann/swc/main/scawa/com/twittew/ann/faiss", >_<
+        "ann/swc/main/scawa/com/twittew/ann/sewvice/quewy_sewvew/common",
+        "ann/swc/main/scawa/com/twittew/ann/sewvice/quewy_sewvew/common:faiss_index_path_pwovidew", :3
+        "ann/swc/main/scawa/com/twittew/ann/sewvice/quewy_sewvew/common/thwottwing", (U ﹏ U)
+        "ann/swc/main/scawa/com/twittew/ann/sewvice/quewy_sewvew/common/wawmup", -.-
+        "swc/java/com/twittew/seawch/common/fiwe", (ˆ ﻌ ˆ)♡
+    ], (⑅˘꒳˘)
 )
 
-jvm_binary(
-    name = "faiss-query-server",
-    main = "com.twitter.ann.service.query_server.faiss.FaissQueryIndexServer",
-    compiler_option_sets = ["fatal_warnings"],
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
+j-jvm_binawy(
+    n-nyame = "faiss-quewy-sewvew", (U ᵕ U❁)
+    m-main = "com.twittew.ann.sewvice.quewy_sewvew.faiss.faissquewyindexsewvew", -.-
+    c-compiwew_option_sets = ["fataw_wawnings"], ^^;;
+    w-wuntime_pwatfowm = "java11", >_<
+    tags = ["bazew-compatibwe"], mya
     dependencies = [
-        ":server",
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "3rdparty/jvm/org/slf4j:jcl-over-slf4j",
-        "3rdparty/jvm/org/slf4j:jul-to-slf4j",
-        "3rdparty/jvm/org/slf4j:log4j-over-slf4j",
-        "ann/src/main/resources",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
+        ":sewvew", mya
+        "3wdpawty/jvm/ch/qos/wogback:wogback-cwassic", 😳
+        "3wdpawty/jvm/owg/swf4j:jcw-ovew-swf4j", XD
+        "3wdpawty/jvm/owg/swf4j:juw-to-swf4j", :3
+        "3wdpawty/jvm/owg/swf4j:wog4j-ovew-swf4j", 😳😳😳
+        "ann/swc/main/wesouwces", -.-
+        "wogwens/wogwens-wogback/swc/main/scawa/com/twittew/wogwens/wogback", ( ͡o ω ͡o )
     ],
 )

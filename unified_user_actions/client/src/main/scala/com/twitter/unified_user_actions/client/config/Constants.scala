@@ -1,10 +1,10 @@
-package com.twitter.unified_user_actions.client.config
+package com.twittew.unified_usew_actions.cwient.config
 
-object Constants {
-  val UuaKafkaTopicName = "unified_user_actions"
-  val UuaEngagementOnlyKafkaTopicName = "unified_user_actions_engagements"
-  val UuaKafkaProdClusterName = "/s/kafka/bluebird-1"
-  val UuaKafkaStagingClusterName = "/s/kafka/custdevel"
-  val UuaProdEnv = "prod"
-  val UuaStagingEnv = "staging"
+object constants {
+  v-vaw u-uuakafkatopicname = "unified_usew_actions"
+  v-vaw u-uuaengagementonwykafkatopicname = "unified_usew_actions_engagements"
+  v-vaw uuakafkapwodcwustewname = "/s/kafka/bwuebiwd-1"
+  v-vaw u-uuakafkastagingcwustewname = "/s/kafka/custdevew"
+  v-vaw uuapwodenv = "pwod"
+  vaw uuastagingenv = "staging"
 }

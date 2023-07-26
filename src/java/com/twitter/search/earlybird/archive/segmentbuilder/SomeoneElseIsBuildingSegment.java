@@ -1,69 +1,69 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.twittew.seawch.eawwybiwd.awchive.segmentbuiwdew;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+impowt j-java.utiw.concuwwent.atomic.atomicboowean;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import com.twitter.common.base.Command;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.earlybird.archive.ArchiveHDFSUtils;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+i-impowt c-com.twittew.common.base.command;
+i-impowt com.twittew.seawch.common.utiw.zktwywock.twywock;
+i-impowt c-com.twittew.seawch.eawwybiwd.awchive.awchivehdfsutiws;
+i-impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsegmentfactowy;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentsyncconfig;
 
-public class SomeoneElseIsBuildingSegment extends SegmentBuilderSegment {
-  public SomeoneElseIsBuildingSegment(
-      SegmentInfo segmentInfo,
-      SegmentConfig segmentConfig,
-      EarlybirdSegmentFactory earlybirdSegmentFactory,
-      int alreadyRetriedCount,
-      SegmentSyncConfig sync) {
+pubwic cwass s-someoneewseisbuiwdingsegment extends segmentbuiwdewsegment {
+  pubwic someoneewseisbuiwdingsegment(
+      segmentinfo s-segmentinfo, 😳
+      segmentconfig s-segmentconfig, mya
+      eawwybiwdsegmentfactowy eawwybiwdsegmentfactowy, (˘ω˘)
+      int awweadywetwiedcount, >_<
+      s-segmentsyncconfig sync) {
 
-    super(segmentInfo, segmentConfig, earlybirdSegmentFactory, alreadyRetriedCount, sync);
+    s-supew(segmentinfo, -.- s-segmentconfig, 🥺 eawwybiwdsegmentfactowy, (U ﹏ U) awweadywetwiedcount, >w< sync);
   }
 
   /**
-   * This method refreshes local state of a segment.
-   * 1. Try to grab the ZK lock
-   *   2a. if got the lock, the segment is not being built; mark segment as NOT_BUILT_YET.
-   *   2b. otherwise, the segment is being built; keep the SOMEONE_ELSE_IS_BUILDING state
+   * this m-method wefweshes wocaw state of a segment. mya
+   * 1. >w< twy to gwab the zk wock
+   *   2a. nyaa~~ i-if got the wock, (✿oωo) the segment i-is nyot being b-buiwt; mawk segment a-as nyot_buiwt_yet.
+   *   2b. ʘwʘ o-othewwise, (ˆ ﻌ ˆ)♡ the segment is being buiwt; keep t-the someone_ewse_is_buiwding state
    */
-  @Override
-  public SegmentBuilderSegment handle()
-      throws SegmentInfoConstructionException, SegmentUpdaterException {
+  @ovewwide
+  pubwic segmentbuiwdewsegment h-handwe()
+      thwows segmentinfoconstwuctionexception, 😳😳😳 segmentupdatewexception {
 
-    TryLock lock = getZooKeeperTryLock();
+    twywock wock = getzookeepewtwywock();
 
-    final AtomicBoolean alreadyBuilt = new AtomicBoolean(false);
-    boolean gotLock = lock.tryWithLock((Command) () -> {
-      // The segment might have already finished built by others
-      if (segmentExistsOnHdfs()) {
-        alreadyBuilt.set(true);
+    finaw atomicboowean a-awweadybuiwt = nyew atomicboowean(fawse);
+    b-boowean g-gotwock = wock.twywithwock((command) () -> {
+      // t-the segment might have awweady finished buiwt by othews
+      i-if (segmentexistsonhdfs()) {
+        a-awweadybuiwt.set(twue);
       }
     });
 
-    if (!gotLock) {
-      return this;
+    if (!gotwock) {
+      w-wetuwn t-this;
     }
 
-    if (alreadyBuilt.get()) {
-      return new BuiltAndFinalizedSegment(
-          segmentInfo, segmentConfig, earlybirdSegmentFactory, 0, sync);
-    } else {
-      // When a segment failed building, its state might not be clean. So, it is necessary to
-      // create a new SegmentInfo with a clean state
-      SegmentInfo newSegmentInfo = createNewSegmentInfo(segmentInfo);
-      return new NotYetBuiltSegment(
-          newSegmentInfo,
-          segmentConfig,
-          earlybirdSegmentFactory,
-          alreadyRetriedCount + 1,
+    if (awweadybuiwt.get()) {
+      w-wetuwn nyew buiwtandfinawizedsegment(
+          s-segmentinfo, :3 segmentconfig, OwO eawwybiwdsegmentfactowy, (U ﹏ U) 0, s-sync);
+    } ewse {
+      // w-when a segment faiwed b-buiwding, its state m-might nyot be cwean. >w< so, it is nyecessawy to
+      // cweate a nyew segmentinfo with a cwean state
+      segmentinfo n-nyewsegmentinfo = c-cweatenewsegmentinfo(segmentinfo);
+      wetuwn nyew n-nyotyetbuiwtsegment(
+          nyewsegmentinfo, (U ﹏ U)
+          s-segmentconfig, 😳
+          e-eawwybiwdsegmentfactowy, (ˆ ﻌ ˆ)♡
+          awweadywetwiedcount + 1, 😳😳😳
           sync);
     }
   }
 
-  @VisibleForTesting
-  boolean segmentExistsOnHdfs() {
-    return ArchiveHDFSUtils.hasSegmentIndicesOnHDFS(sync, segmentInfo);
+  @visibwefowtesting
+  boowean segmentexistsonhdfs() {
+    w-wetuwn awchivehdfsutiws.hassegmentindicesonhdfs(sync, segmentinfo);
   }
 }

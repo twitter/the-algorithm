@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.gwaphqw.contextuaw_wef
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.rtf.safety_level.SafetyLevelMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
-import com.twitter.strato.graphql.contextual_refs.{thriftscala => thrift}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.wtf.safety_wevew.safetywevewmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.contextuaw_wef.tweethydwationcontext
+i-impowt com.twittew.stwato.gwaphqw.contextuaw_wefs.{thwiftscawa => t-thwift}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class TweetHydrationContextMarshaller @Inject() (
-  safetyLevelMarshaller: SafetyLevelMarshaller,
-  outerTweetContextMarshaller: OuterTweetContextMarshaller) {
+@singweton
+c-cwass tweethydwationcontextmawshawwew @inject() (
+  safetywevewmawshawwew: safetywevewmawshawwew, (⑅˘꒳˘)
+  outewtweetcontextmawshawwew: outewtweetcontextmawshawwew) {
 
-  def apply(tweetHydrationContext: TweetHydrationContext): thrift.TweetHydrationContext =
-    thrift.TweetHydrationContext(
-      safetyLevelOverride = tweetHydrationContext.safetyLevelOverride.map(safetyLevelMarshaller(_)),
-      outerTweetContext =
-        tweetHydrationContext.outerTweetContext.map(outerTweetContextMarshaller(_))
+  d-def appwy(tweethydwationcontext: tweethydwationcontext): thwift.tweethydwationcontext =
+    t-thwift.tweethydwationcontext(
+      safetywevewuvwwide = t-tweethydwationcontext.safetywevewuvwwide.map(safetywevewmawshawwew(_)), (U ᵕ U❁)
+      outewtweetcontext =
+        tweethydwationcontext.outewtweetcontext.map(outewtweetcontextmawshawwew(_))
     )
 }

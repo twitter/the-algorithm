@@ -1,132 +1,132 @@
-package com.twitter.interaction_graph.scio.agg_notifications
+package com.twittew.intewaction_gwaph.scio.agg_notifications
 
-import com.spotify.scio.ScioMetrics
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.interaction_graph.thriftscala.FeatureName
+impowt c-com.spotify.scio.sciometwics
+i-impowt com.twittew.cwientapp.thwiftscawa.eventnamespace
+i-impowt c-com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt c-com.twittew.intewaction_gwaph.thwiftscawa.featuwename
 
-object InteractionGraphNotificationUtil {
+o-object i-intewactiongwaphnotificationutiw {
 
-  val PUSH_OPEN_ACTIONS = Set("open", "background_open")
-  val NTAB_CLICK_ACTIONS = Set("navigate", "click")
-  val STATUS_ID_REGEX = "^twitter:\\/\\/tweet\\?status_id=([0-9]+).*".r
-  val TWEET_ID_REGEX = "^twitter:\\/\\/tweet.id=([0-9]+).*".r
+  vaw push_open_actions = set("open", 😳😳😳 "backgwound_open")
+  vaw nytab_cwick_actions = set("navigate", OwO "cwick")
+  v-vaw status_id_wegex = "^twittew:\\/\\/tweet\\?status_id=([0-9]+).*".w
+  vaw tweet_id_wegex = "^twittew:\\/\\/tweet.id=([0-9]+).*".w
 
-  def extractTweetIdFromUrl(url: String): Option[Long] = url match {
-    case STATUS_ID_REGEX(statusId) =>
-      ScioMetrics.counter("regex matching", "status_id=").inc()
-      Some(statusId.toLong)
-    case TWEET_ID_REGEX(tweetId) =>
-      ScioMetrics.counter("regex matching", "tweet?id=").inc()
-      Some(tweetId.toLong)
-    case _ => None
+  d-def extwacttweetidfwomuww(uww: stwing): o-option[wong] = uww match {
+    case status_id_wegex(statusid) =>
+      sciometwics.countew("wegex m-matching", 😳 "status_id=").inc()
+      some(statusid.towong)
+    c-case tweet_id_wegex(tweetid) =>
+      s-sciometwics.countew("wegex matching", 😳😳😳 "tweet?id=").inc()
+      some(tweetid.towong)
+    case _ => nyone
   }
 
-  def getPushNtabEvents(e: LogEvent): Seq[(Long, (Long, FeatureName))] = {
-    for {
-      logBase <- e.logBase.toSeq
-      userId <- logBase.userId.toSeq
-      namespace <- e.eventNamespace.toSeq
-      (tweetId, featureName) <- namespace match {
-        case EventNamespace(_, _, _, _, _, Some(action)) if PUSH_OPEN_ACTIONS.contains(action) =>
-          (for {
-            details <- e.eventDetails
-            url <- details.url
-            tweetId <- extractTweetIdFromUrl(url)
-          } yield {
-            ScioMetrics.counter("event type", "push open").inc()
-            (tweetId, FeatureName.NumPushOpens)
-          }).toSeq
-        case EventNamespace(_, Some("ntab"), _, _, _, Some("navigate")) =>
-          val tweetIds = for {
-            details <- e.eventDetails.toSeq
-            items <- details.items.toSeq
+  def getpushntabevents(e: w-wogevent): seq[(wong, (˘ω˘) (wong, featuwename))] = {
+    fow {
+      wogbase <- e.wogbase.toseq
+      usewid <- wogbase.usewid.toseq
+      nyamespace <- e-e.eventnamespace.toseq
+      (tweetid, ʘwʘ featuwename) <- n-nyamespace m-match {
+        c-case eventnamespace(_, ( ͡o ω ͡o ) _, _, _, _, o.O s-some(action)) if push_open_actions.contains(action) =>
+          (fow {
+            detaiws <- e.eventdetaiws
+            u-uww <- detaiws.uww
+            tweetid <- extwacttweetidfwomuww(uww)
+          } yiewd {
+            s-sciometwics.countew("event type", >w< "push open").inc()
+            (tweetid, 😳 featuwename.numpushopens)
+          }).toseq
+        case eventnamespace(_, 🥺 some("ntab"), rawr x3 _, _, o.O _, s-some("navigate")) =>
+          vaw tweetids = f-fow {
+            d-detaiws <- e-e.eventdetaiws.toseq
+            items <- detaiws.items.toseq
             item <- items
-            ntabDetails <- item.notificationTabDetails.toSeq
-            clientEventMetadata <- ntabDetails.clientEventMetadata.toSeq
-            tweetIds <- clientEventMetadata.tweetIds.toSeq
-            tweetId <- tweetIds
-          } yield {
-            ScioMetrics.counter("event type", "ntab navigate").inc()
-            tweetId
+            n-nytabdetaiws <- i-item.notificationtabdetaiws.toseq
+            cwienteventmetadata <- n-nytabdetaiws.cwienteventmetadata.toseq
+            tweetids <- c-cwienteventmetadata.tweetids.toseq
+            tweetid <- t-tweetids
+          } yiewd {
+            s-sciometwics.countew("event type", "ntab nyavigate").inc()
+            t-tweetid
           }
-          tweetIds.map((_, FeatureName.NumNtabClicks))
-        case EventNamespace(_, Some("ntab"), _, _, _, Some("click")) =>
-          val tweetIds = for {
-            details <- e.eventDetails.toSeq
-            items <- details.items.toSeq
+          tweetids.map((_, rawr f-featuwename.numntabcwicks))
+        case eventnamespace(_, ʘwʘ s-some("ntab"), 😳😳😳 _, _, _, s-some("cwick")) =>
+          vaw tweetids = fow {
+            detaiws <- e.eventdetaiws.toseq
+            items <- detaiws.items.toseq
             item <- items
-            tweetId <- item.id
-          } yield {
-            ScioMetrics.counter("event type", "ntab click").inc()
-            tweetId
+            t-tweetid <- item.id
+          } y-yiewd {
+            sciometwics.countew("event type", ^^;; "ntab c-cwick").inc()
+            t-tweetid
           }
-          tweetIds.map((_, FeatureName.NumNtabClicks))
-        case _ => Nil
+          t-tweetids.map((_, o.O featuwename.numntabcwicks))
+        case _ => nyiw
       }
-    } yield (tweetId, (userId, featureName))
-  }
-
-  /**
-   * Returns events corresponding to ntab clicks. We have the tweet id from ntab clicks and can join
-   * those with public tweets.
-   */
-  def getNtabEvents(e: LogEvent): Seq[(Long, (Long, FeatureName))] = {
-    for {
-      logBase <- e.logBase.toSeq
-      userId <- logBase.userId.toSeq
-      namespace <- e.eventNamespace.toSeq
-      (tweetId, featureName) <- namespace match {
-        case EventNamespace(_, Some("ntab"), _, _, _, Some("navigate")) =>
-          val tweetIds = for {
-            details <- e.eventDetails.toSeq
-            items <- details.items.toSeq
-            item <- items
-            ntabDetails <- item.notificationTabDetails.toSeq
-            clientEventMetadata <- ntabDetails.clientEventMetadata.toSeq
-            tweetIds <- clientEventMetadata.tweetIds.toSeq
-            tweetId <- tweetIds
-          } yield {
-            ScioMetrics.counter("event type", "ntab navigate").inc()
-            tweetId
-          }
-          tweetIds.map((_, FeatureName.NumNtabClicks))
-        case EventNamespace(_, Some("ntab"), _, _, _, Some("click")) =>
-          val tweetIds = for {
-            details <- e.eventDetails.toSeq
-            items <- details.items.toSeq
-            item <- items
-            tweetId <- item.id
-          } yield {
-            ScioMetrics.counter("event type", "ntab click").inc()
-            tweetId
-          }
-          tweetIds.map((_, FeatureName.NumNtabClicks))
-        case _ => Nil
-      }
-    } yield (tweetId, (userId, featureName))
+    } y-yiewd (tweetid, (///ˬ///✿) (usewid, σωσ featuwename))
   }
 
   /**
-   * get push open events, keyed by impressionId (as the client event does not always have the tweetId nor the authorId)
+   * wetuwns events cowwesponding to nytab cwicks. nyaa~~ we have t-the tweet id fwom nytab cwicks a-and can join
+   * t-those with pubwic t-tweets. ^^;;
    */
-  def getPushOpenEvents(e: LogEvent): Seq[(String, (Long, FeatureName))] = {
-    for {
-      logBase <- e.logBase.toSeq
-      userId <- logBase.userId.toSeq
-      namespace <- e.eventNamespace.toSeq
-      (tweetId, featureName) <- namespace match {
-        case EventNamespace(_, _, _, _, _, Some(action)) if PUSH_OPEN_ACTIONS.contains(action) =>
-          val impressionIdOpt = for {
-            details <- e.notificationDetails
-            impressionId <- details.impressionId
-          } yield {
-            ScioMetrics.counter("event type", "push open").inc()
-            impressionId
+  def getntabevents(e: w-wogevent): s-seq[(wong, ^•ﻌ•^ (wong, f-featuwename))] = {
+    fow {
+      w-wogbase <- e.wogbase.toseq
+      usewid <- w-wogbase.usewid.toseq
+      n-nyamespace <- e.eventnamespace.toseq
+      (tweetid, σωσ f-featuwename) <- n-nyamespace m-match {
+        case eventnamespace(_, -.- some("ntab"), ^^;; _, _, _, some("navigate")) =>
+          vaw t-tweetids = fow {
+            detaiws <- e.eventdetaiws.toseq
+            items <- detaiws.items.toseq
+            item <- items
+            nytabdetaiws <- i-item.notificationtabdetaiws.toseq
+            cwienteventmetadata <- nytabdetaiws.cwienteventmetadata.toseq
+            tweetids <- c-cwienteventmetadata.tweetids.toseq
+            t-tweetid <- tweetids
+          } y-yiewd {
+            sciometwics.countew("event t-type", XD "ntab navigate").inc()
+            tweetid
           }
-          impressionIdOpt.map((_, FeatureName.NumPushOpens)).toSeq
-        case _ => Nil
+          t-tweetids.map((_, 🥺 f-featuwename.numntabcwicks))
+        case eventnamespace(_, òωó some("ntab"), _, (ˆ ﻌ ˆ)♡ _, _, some("cwick")) =>
+          vaw tweetids = f-fow {
+            detaiws <- e-e.eventdetaiws.toseq
+            items <- detaiws.items.toseq
+            i-item <- i-items
+            tweetid <- item.id
+          } y-yiewd {
+            s-sciometwics.countew("event type", -.- "ntab c-cwick").inc()
+            t-tweetid
+          }
+          tweetids.map((_, :3 featuwename.numntabcwicks))
+        case _ => nyiw
       }
-    } yield (tweetId, (userId, featureName))
+    } yiewd (tweetid, ʘwʘ (usewid, 🥺 f-featuwename))
+  }
+
+  /**
+   * g-get push open e-events, >_< keyed by impwessionid (as t-the cwient event d-does nyot awways have the tweetid n-nyow the authowid)
+   */
+  def getpushopenevents(e: wogevent): seq[(stwing, ʘwʘ (wong, (˘ω˘) featuwename))] = {
+    f-fow {
+      wogbase <- e-e.wogbase.toseq
+      usewid <- wogbase.usewid.toseq
+      n-nyamespace <- e-e.eventnamespace.toseq
+      (tweetid, (✿oωo) featuwename) <- nyamespace match {
+        c-case eventnamespace(_, (///ˬ///✿) _, _, rawr x3 _, _, some(action)) if push_open_actions.contains(action) =>
+          vaw impwessionidopt = fow {
+            d-detaiws <- e.notificationdetaiws
+            impwessionid <- d-detaiws.impwessionid
+          } y-yiewd {
+            sciometwics.countew("event type", -.- "push open").inc()
+            i-impwessionid
+          }
+          i-impwessionidopt.map((_, ^^ featuwename.numpushopens)).toseq
+        case _ => nyiw
+      }
+    } yiewd (tweetid, (usewid, (⑅˘꒳˘) f-featuwename))
   }
 }

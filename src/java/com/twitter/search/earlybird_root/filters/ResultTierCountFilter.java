@@ -1,114 +1,114 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NavigableMap;
+impowt java.utiw.cowwection;
+i-impowt java.utiw.cowwections;
+i-impowt j-java.utiw.compawatow;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.navigabwemap;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+i-impowt javax.inject.inject;
+i-impowt javax.inject.singweton;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableSortedMap;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.cowwect.immutabwesowtedmap;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.earlybird.config.TierInfo;
-import com.twitter.search.earlybird.config.TierInfoSource;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.snowflake.id.SnowflakeId;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+i-impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchcustomgauge;
+impowt com.twittew.seawch.eawwybiwd.config.tiewinfo;
+impowt com.twittew.seawch.eawwybiwd.config.tiewinfosouwce;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.snowfwake.id.snowfwakeid;
+impowt com.twittew.utiw.futuwe;
+i-impowt com.twittew.utiw.futuweeventwistenew;
 
 /**
- * A filter to count the tier to which the oldest tweet in the results belong.
+ * a fiwtew to count the tiew to which the owdest tweet in the w-wesuwts bewong. mya
  */
-@Singleton
-public class ResultTierCountFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+@singweton
+pubwic cwass wesuwttiewcountfiwtew
+    e-extends simpwefiwtew<eawwybiwdwequestcontext, mya e-eawwybiwdwesponse> {
 
-  private static final String COUNTER_PREFIX = "result_tier_count";
-  private final long firstTweetTimeSinceEpochSec;
-  private final NavigableMap<Long, SearchCounter> tierBuckets;
-  private final SearchCounter allCounter = SearchCounter.export(COUNTER_PREFIX + "_all");
-  private final SearchCounter noResultsCounter =
-      SearchCounter.export(COUNTER_PREFIX + "_no_results");
+  p-pwivate s-static finaw stwing countew_pwefix = "wesuwt_tiew_count";
+  pwivate finaw wong f-fiwsttweettimesinceepochsec;
+  pwivate finaw nyavigabwemap<wong, (⑅˘꒳˘) s-seawchcountew> tiewbuckets;
+  pwivate finaw seawchcountew awwcountew = seawchcountew.expowt(countew_pwefix + "_aww");
+  pwivate f-finaw seawchcountew nyowesuwtscountew =
+      s-seawchcountew.expowt(countew_pwefix + "_no_wesuwts");
 
-  @Inject
-  @SuppressWarnings("unused")
-  ResultTierCountFilter(TierInfoSource tierInfoSource) {
-    List<TierInfo> tierInfos = tierInfoSource.getTierInformation();
-    tierInfos.sort(Comparator.comparing(TierInfo::getDataStartDate));
+  @inject
+  @suppwesswawnings("unused")
+  w-wesuwttiewcountfiwtew(tiewinfosouwce t-tiewinfosouwce) {
+    wist<tiewinfo> tiewinfos = tiewinfosouwce.gettiewinfowmation();
+    tiewinfos.sowt(compawatow.compawing(tiewinfo::getdatastawtdate));
 
-    firstTweetTimeSinceEpochSec = tierInfos.get(0).getServingRangeSinceTimeSecondsFromEpoch();
+    f-fiwsttweettimesinceepochsec = t-tiewinfos.get(0).getsewvingwangesincetimesecondsfwomepoch();
 
-    ImmutableSortedMap.Builder<Long, SearchCounter> builder = ImmutableSortedMap.naturalOrder();
-    Collections.reverse(tierInfos);
+    immutabwesowtedmap.buiwdew<wong, (U ﹏ U) s-seawchcountew> b-buiwdew = immutabwesowtedmap.natuwawowdew();
+    c-cowwections.wevewse(tiewinfos);
 
-    for (TierInfo tierInfo : tierInfos) {
-      SearchCounter searchCounter = SearchCounter.export(
-          String.format("%s_%s", COUNTER_PREFIX, tierInfo.getTierName()));
-      builder.put(tierInfo.getServingRangeSinceTimeSecondsFromEpoch(), searchCounter);
+    fow (tiewinfo tiewinfo : t-tiewinfos) {
+      seawchcountew seawchcountew = s-seawchcountew.expowt(
+          stwing.fowmat("%s_%s", mya c-countew_pwefix, ʘwʘ tiewinfo.gettiewname()));
+      b-buiwdew.put(tiewinfo.getsewvingwangesincetimesecondsfwomepoch(), (˘ω˘) s-seawchcountew);
 
-      // export cumulative metrics to sum from the latest to a lower tier
-      Collection<SearchCounter> counters = builder.build().values();
-      SearchCustomGauge.export(
-          String.format("%s_down_to_%s", COUNTER_PREFIX, tierInfo.getTierName()),
-          () -> counters.stream()
-              .mapToLong(SearchCounter::get)
+      // expowt cumuwative metwics to sum fwom the watest to a wowew tiew
+      cowwection<seawchcountew> c-countews = b-buiwdew.buiwd().vawues();
+      seawchcustomgauge.expowt(
+          s-stwing.fowmat("%s_down_to_%s", (U ﹏ U) c-countew_pwefix, ^•ﻌ•^ t-tiewinfo.gettiewname()), (˘ω˘)
+          () -> countews.stweam()
+              .maptowong(seawchcountew::get)
               .sum());
     }
 
-    tierBuckets = builder.build();
+    tiewbuckets = buiwdew.buiwd();
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext context,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return service.apply(context).addEventListener(
-        new FutureEventListener<EarlybirdResponse>() {
-          @Override
-          public void onFailure(Throwable cause) {
-            // do nothing
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> appwy(
+      eawwybiwdwequestcontext context, :3
+      sewvice<eawwybiwdwequestcontext, ^^;; e-eawwybiwdwesponse> sewvice) {
+    wetuwn s-sewvice.appwy(context).addeventwistenew(
+        n-nyew futuweeventwistenew<eawwybiwdwesponse>() {
+          @ovewwide
+          p-pubwic void onfaiwuwe(thwowabwe c-cause) {
+            // d-do n-nyothing
           }
 
-          @Override
-          public void onSuccess(EarlybirdResponse response) {
-            record(response);
+          @ovewwide
+          p-pubwic void onsuccess(eawwybiwdwesponse wesponse) {
+            w-wecowd(wesponse);
           }
         });
   }
 
-  @VisibleForTesting
-  void record(EarlybirdResponse response) {
-    if (response.isSetSearchResults()) {
-      long minResultsStatusId = response.getSearchResults().getResults().stream()
-          .mapToLong(ThriftSearchResult::getId)
+  @visibwefowtesting
+  v-void wecowd(eawwybiwdwesponse w-wesponse) {
+    i-if (wesponse.issetseawchwesuwts()) {
+      w-wong minwesuwtsstatusid = wesponse.getseawchwesuwts().getwesuwts().stweam()
+          .maptowong(thwiftseawchwesuwt::getid)
           .min()
-          .orElse(-1);
-      getBucket(minResultsStatusId).increment();
+          .owewse(-1);
+      getbucket(minwesuwtsstatusid).incwement();
     }
-    allCounter.increment();
+    awwcountew.incwement();
   }
 
-  private SearchCounter getBucket(long statusId) {
-    if (statusId < 0) {
-      return noResultsCounter;
+  p-pwivate seawchcountew getbucket(wong statusid) {
+    if (statusid < 0) {
+      wetuwn nyowesuwtscountew;
     }
 
-    // If non-negative statusId is not a SnowflakeId, the tweet must have been created before
-    // Twepoch (2010-11-04T01:42:54Z) and thus belongs to full1.
-    long timeSinceEpochSec = firstTweetTimeSinceEpochSec;
-    if (SnowflakeId.isSnowflakeId(statusId)) {
-      timeSinceEpochSec = SnowflakeId.timeFromId(statusId).inSeconds();
+    // if nyon-negative s-statusid is not a snowfwakeid, 🥺 the tweet must have been c-cweated befowe
+    // t-twepoch (2010-11-04t01:42:54z) a-and thus bewongs to fuww1. (⑅˘꒳˘)
+    w-wong timesinceepochsec = fiwsttweettimesinceepochsec;
+    if (snowfwakeid.issnowfwakeid(statusid)) {
+      t-timesinceepochsec = s-snowfwakeid.timefwomid(statusid).inseconds();
     }
 
-    return tierBuckets.floorEntry(timeSinceEpochSec).getValue();
+    wetuwn tiewbuckets.fwoowentwy(timesinceepochsec).getvawue();
   }
 }

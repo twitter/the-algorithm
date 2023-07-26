@@ -1,110 +1,110 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.twittew.seawch.ingestew.pipewine.utiw;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+impowt java.utiw.awwaywist;
+impowt j-java.utiw.cowwection;
+i-impowt j-java.utiw.itewatow;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.optionaw;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoPoint;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeocodeRecord;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.relevance.entities.GeoObject;
-import com.twitter.search.common.util.geocoding.ManhattanGeocodeRecordStore;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.stitch.Stitch;
-import com.twitter.storage.client.manhattan.kv.JavaManhattanKVEndpoint;
-import com.twitter.storage.client.manhattan.kv.ManhattanValue;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftgeowocationsouwce;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftgeopoint;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftgeocodewecowd;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.wewevance.entities.geoobject;
+i-impowt com.twittew.seawch.common.utiw.geocoding.manhattangeocodewecowdstowe;
+i-impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+impowt com.twittew.stitch.stitch;
+i-impowt com.twittew.stowage.cwient.manhattan.kv.javamanhattankvendpoint;
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattanvawue;
+i-impowt com.twittew.utiw.function;
+impowt com.twittew.utiw.futuwe;
 
 
-public final class ManhattanCodedLocationProvider {
+pubwic finaw cwass manhattancodedwocationpwovidew {
 
-  private final ManhattanGeocodeRecordStore store;
-  private final SearchCounter locationsCounter;
+  pwivate f-finaw manhattangeocodewecowdstowe stowe;
+  pwivate finaw seawchcountew wocationscountew;
 
-  private static final String LOCATIONS_POPULATED_STAT_NAME = "_locations_populated_count";
+  pwivate static f-finaw stwing wocations_popuwated_stat_name = "_wocations_popuwated_count";
 
-  public static ManhattanCodedLocationProvider createWithEndpoint(
-      JavaManhattanKVEndpoint endpoint, String metricsPrefix, String datasetName) {
-    return new ManhattanCodedLocationProvider(
-        ManhattanGeocodeRecordStore.create(endpoint, datasetName), metricsPrefix);
+  pubwic static manhattancodedwocationpwovidew c-cweatewithendpoint(
+      j-javamanhattankvendpoint e-endpoint, 🥺 s-stwing metwicspwefix, (⑅˘꒳˘) stwing datasetname) {
+    w-wetuwn new manhattancodedwocationpwovidew(
+        manhattangeocodewecowdstowe.cweate(endpoint, nyaa~~ d-datasetname), :3 metwicspwefix);
   }
 
-  private ManhattanCodedLocationProvider(ManhattanGeocodeRecordStore store, String metricPrefix) {
-    this.locationsCounter = SearchCounter.export(metricPrefix + LOCATIONS_POPULATED_STAT_NAME);
-    this.store = store;
+  pwivate manhattancodedwocationpwovidew(manhattangeocodewecowdstowe stowe, ( ͡o ω ͡o ) stwing metwicpwefix) {
+    this.wocationscountew = s-seawchcountew.expowt(metwicpwefix + wocations_popuwated_stat_name);
+    t-this.stowe = stowe;
   }
 
   /**
-   * Iterates through all given messages, and for each message that has a location set, retrieves
-   * the coordinates of that location from Manhattan and sets them back on that message.
+   * i-itewates thwough a-aww given messages, mya and fow each message that has a wocation s-set, (///ˬ///✿) wetwieves
+   * t-the coowdinates of that w-wocation fwom manhattan a-and sets them back on that m-message. (˘ω˘)
    */
-  public Future<Collection<IngesterTwitterMessage>> populateCodedLatLon(
-      Collection<IngesterTwitterMessage> messages) {
-    if (messages.isEmpty()) {
-      return Future.value(messages);
+  pubwic futuwe<cowwection<ingestewtwittewmessage>> p-popuwatecodedwatwon(
+      cowwection<ingestewtwittewmessage> messages) {
+    i-if (messages.isempty()) {
+      wetuwn futuwe.vawue(messages);
     }
 
-    // Batch read requests
-    List<Stitch<Optional<ManhattanValue<ThriftGeocodeRecord>>>> readRequests =
-        new ArrayList<>(messages.size());
-    for (IngesterTwitterMessage message : messages) {
-      readRequests.add(store.asyncReadFromManhattan(message.getLocation()));
+    // b-batch wead wequests
+    wist<stitch<optionaw<manhattanvawue<thwiftgeocodewecowd>>>> w-weadwequests =
+        n-nyew awwaywist<>(messages.size());
+    fow (ingestewtwittewmessage message : messages) {
+      weadwequests.add(stowe.asyncweadfwommanhattan(message.getwocation()));
     }
-    Future<List<Optional<ManhattanValue<ThriftGeocodeRecord>>>> batchedRequest =
-        Stitch.run(Stitch.collect(readRequests));
+    futuwe<wist<optionaw<manhattanvawue<thwiftgeocodewecowd>>>> batchedwequest =
+        s-stitch.wun(stitch.cowwect(weadwequests));
 
-    return batchedRequest.map(Function.func(optGeoLocations -> {
-      // Iterate over messages and responses simultaneously
-      Preconditions.checkState(messages.size() == optGeoLocations.size());
-      Iterator<IngesterTwitterMessage> messageIterator = messages.iterator();
-      Iterator<Optional<ManhattanValue<ThriftGeocodeRecord>>> optGeoLocationIterator =
-          optGeoLocations.iterator();
-      while (messageIterator.hasNext() && optGeoLocationIterator.hasNext()) {
-        IngesterTwitterMessage message = messageIterator.next();
-        Optional<ManhattanValue<ThriftGeocodeRecord>> optGeoLocation =
-            optGeoLocationIterator.next();
-        if (setGeoLocationForMessage(message, optGeoLocation)) {
-          locationsCounter.increment();
+    w-wetuwn batchedwequest.map(function.func(optgeowocations -> {
+      // itewate ovew m-messages and w-wesponses simuwtaneouswy
+      pweconditions.checkstate(messages.size() == o-optgeowocations.size());
+      itewatow<ingestewtwittewmessage> messageitewatow = messages.itewatow();
+      i-itewatow<optionaw<manhattanvawue<thwiftgeocodewecowd>>> optgeowocationitewatow =
+          optgeowocations.itewatow();
+      whiwe (messageitewatow.hasnext() && optgeowocationitewatow.hasnext()) {
+        i-ingestewtwittewmessage message = m-messageitewatow.next();
+        o-optionaw<manhattanvawue<thwiftgeocodewecowd>> o-optgeowocation =
+            optgeowocationitewatow.next();
+        i-if (setgeowocationfowmessage(message, ^^;; o-optgeowocation)) {
+          w-wocationscountew.incwement();
         }
       }
-      return messages;
+      w-wetuwn messages;
     }));
   }
 
   /**
-   * Returns whether a valid geolocation was successfully found and saved in the message.
+   * wetuwns whethew a vawid g-geowocation was s-successfuwwy f-found and saved i-in the message. (✿oωo)
    */
-  private boolean setGeoLocationForMessage(
-      IngesterTwitterMessage message,
-      Optional<ManhattanValue<ThriftGeocodeRecord>> optGeoLocation) {
-    if (optGeoLocation.isPresent()) {
-      ThriftGeocodeRecord geoLocation = optGeoLocation.get().contents();
-      ThriftGeoPoint geoTags = geoLocation.getGeoPoint();
+  p-pwivate boowean setgeowocationfowmessage(
+      ingestewtwittewmessage message, (U ﹏ U)
+      optionaw<manhattanvawue<thwiftgeocodewecowd>> o-optgeowocation) {
+    if (optgeowocation.ispwesent()) {
+      thwiftgeocodewecowd geowocation = optgeowocation.get().contents();
+      thwiftgeopoint g-geotags = geowocation.getgeopoint();
 
-      if ((geoTags.getLatitude() == GeoObject.DOUBLE_FIELD_NOT_PRESENT)
-          && (geoTags.getLongitude() == GeoObject.DOUBLE_FIELD_NOT_PRESENT)) {
-        // This case indicates that we have "negative cache" in coded_locations table, so
-        // don't try to geocode again.
-        message.setUncodeableLocation();
-        return false;
-      } else {
-        GeoObject code = new GeoObject(
-            geoTags.getLatitude(),
-            geoTags.getLongitude(),
-            geoTags.getAccuracy(),
-            ThriftGeoLocationSource.USER_PROFILE);
-        message.setGeoLocation(code);
-        return true;
+      if ((geotags.getwatitude() == geoobject.doubwe_fiewd_not_pwesent)
+          && (geotags.getwongitude() == geoobject.doubwe_fiewd_not_pwesent)) {
+        // t-this case i-indicates that w-we have "negative cache" in coded_wocations tabwe, -.- s-so
+        // don't twy to g-geocode again. ^•ﻌ•^
+        m-message.setuncodeabwewocation();
+        wetuwn fawse;
+      } ewse {
+        geoobject code = nyew geoobject(
+            geotags.getwatitude(), rawr
+            g-geotags.getwongitude(), (˘ω˘)
+            geotags.getaccuwacy(), nyaa~~
+            t-thwiftgeowocationsouwce.usew_pwofiwe);
+        message.setgeowocation(code);
+        w-wetuwn twue;
       }
-    } else {
-      message.setGeocodeRequired();
-      return false;
+    } e-ewse {
+      message.setgeocodewequiwed();
+      wetuwn f-fawse;
     }
   }
 }

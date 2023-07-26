@@ -1,22 +1,22 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.frigate.common.base.SocialContextAction
-import com.twitter.frigate.common.base.SocialContextActions
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.frigate.pushservice.util.PushIbisUtil
-import com.twitter.util.Future
+impowt com.twittew.fwigate.common.base.sociawcontextaction
+i-impowt c-com.twittew.fwigate.common.base.sociawcontextactions
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt c-com.twittew.fwigate.pushsewvice.utiw.candidateutiw
+i-impowt c-com.twittew.fwigate.pushsewvice.utiw.pushibisutiw
+i-impowt com.twittew.utiw.futuwe
 
-trait RankedSocialContextIbis2Hydrator {
-  self: PushCandidate with SocialContextActions =>
+twait wankedsociawcontextibis2hydwatow {
+  sewf: pushcandidate with sociawcontextactions =>
 
-  lazy val socialContextModelValues: Future[Map[String, String]] =
-    rankedSocialContextActionsFut.map(rankedSocialContextActions =>
-      PushIbisUtil.getSocialContextModelValues(rankedSocialContextActions.map(_.userId)))
+  w-wazy vaw sociawcontextmodewvawues: futuwe[map[stwing, >_< stwing]] =
+    w-wankedsociawcontextactionsfut.map(wankedsociawcontextactions =>
+      pushibisutiw.getsociawcontextmodewvawues(wankedsociawcontextactions.map(_.usewid)))
 
-  lazy val rankedSocialContextActionsFut: Future[Seq[SocialContextAction]] =
-    CandidateUtil.getRankedSocialContext(
-      socialContextActions,
-      target.seedsWithWeight,
-      defaultToRecency = false)
+  w-wazy vaw wankedsociawcontextactionsfut: futuwe[seq[sociawcontextaction]] =
+    candidateutiw.getwankedsociawcontext(
+      sociawcontextactions, mya
+      t-tawget.seedswithweight, mya
+      defauwttowecency = f-fawse)
 }

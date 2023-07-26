@@ -1,40 +1,40 @@
-package com.twitter.tweetypie.handler
+package com.twittew.tweetypie.handwew
 
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.servo.util.Gate
-import com.twitter.tweetypie.Future
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.thriftscala.Communities
-import com.twitter.tweetypie.thriftscala.TweetCreateState.CommunityProtectedUserCannotTweet
-import com.twitter.tweetypie.util.CommunityUtil
+impowt com.twittew.featuweswitches.v2.featuweswitchwesuwts
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.tweetypie.futuwe
+i-impowt com.twittew.tweetypie.cowe.tweetcweatefaiwuwe
+i-impowt c-com.twittew.tweetypie.thwiftscawa.communities
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetcweatestate.communitypwotectedusewcannottweet
+i-impowt c-com.twittew.tweetypie.utiw.communityutiw
 
-object CommunitiesValidator {
-  case class Request(
-    matchedResults: Option[FeatureSwitchResults],
-    isProtected: Boolean,
-    community: Option[Communities])
+object communitiesvawidatow {
+  case cwass wequest(
+    matchedwesuwts: option[featuweswitchwesuwts], 🥺
+    i-ispwotected: boowean, mya
+    community: option[communities])
 
-  type Type = Request => Future[Unit]
+  t-type type = wequest => futuwe[unit]
 
-  val CommunityProtectedCanCreateTweet = "communities_protected_community_tweet_creation_enabled"
+  v-vaw communitypwotectedcancweatetweet = "communities_pwotected_community_tweet_cweation_enabwed"
 
-  val communityProtectedCanCreateTweetGate: Gate[Request] = Gate { request: Request =>
-    request.matchedResults
-      .flatMap(_.getBoolean(CommunityProtectedCanCreateTweet, shouldLogImpression = true))
-      .contains(false)
+  vaw communitypwotectedcancweatetweetgate: gate[wequest] = g-gate { wequest: wequest =>
+    w-wequest.matchedwesuwts
+      .fwatmap(_.getboowean(communitypwotectedcancweatetweet, 🥺 s-shouwdwogimpwession = twue))
+      .contains(fawse)
   }
 
-  def apply(): Type =
-    (request: Request) => {
-      // Order is important: the feature-switch gate is checked only when the
-      // request is both protected & community so that the FS experiment measurements
-      // are based only on data from requests that are subject to rejection by this validator.
-      if (request.isProtected &&
-        CommunityUtil.hasCommunity(request.community) &&
-        communityProtectedCanCreateTweetGate(request)) {
-        Future.exception(TweetCreateFailure.State(CommunityProtectedUserCannotTweet))
-      } else {
-        Future.Unit
+  def appwy(): type =
+    (wequest: wequest) => {
+      // o-owdew is impowtant: the featuwe-switch gate is checked onwy when the
+      // w-wequest is both pwotected & community s-so that the f-fs expewiment m-measuwements
+      // a-awe based onwy on data fwom wequests that a-awe subject to wejection by this vawidatow. >_<
+      i-if (wequest.ispwotected &&
+        communityutiw.hascommunity(wequest.community) &&
+        communitypwotectedcancweatetweetgate(wequest)) {
+        futuwe.exception(tweetcweatefaiwuwe.state(communitypwotectedusewcannottweet))
+      } ewse {
+        futuwe.unit
       }
     }
 }

@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.trend
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.twend
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.TrendItem
-import com.twitter.timelines.render.thriftscala.GroupedTrend
-import com.twitter.timelines.render.thriftscala.TrendMetadata
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.pwomotedmetadatamawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twend.twenditem
+i-impowt c-com.twittew.timewines.wendew.thwiftscawa.gwoupedtwend
+i-impowt com.twittew.timewines.wendew.thwiftscawa.twendmetadata
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
+impowt com.twittew.timewines.wendew.{thwiftscawa => uwt}
 
-@Singleton
-class TrendItemMarshaller @Inject() (
-  promotedMetadataMarshaller: PromotedMetadataMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@singweton
+cwass twenditemmawshawwew @inject() (
+  p-pwomotedmetadatamawshawwew: pwomotedmetadatamawshawwew, nyaa~~
+  uwwmawshawwew: u-uwwmawshawwew) {
 
-  def apply(trendItem: TrendItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.Trend(
-      urt.Trend(
-        name = trendItem.trendName,
-        url = urlMarshaller(trendItem.url),
-        promotedMetadata = trendItem.promotedMetadata.map(promotedMetadataMarshaller(_)),
-        description = trendItem.description,
-        trendMetadata = Some(
-          TrendMetadata(
-            metaDescription = trendItem.metaDescription,
-            url = Some(urlMarshaller(trendItem.url)),
-            domainContext = trendItem.domainContext
-          )),
-        groupedTrends = trendItem.groupedTrends.map { trends =>
-          trends.map { trend =>
-            GroupedTrend(name = trend.trendName, url = urlMarshaller(trend.url))
+  def appwy(twenditem: t-twenditem): uwt.timewineitemcontent =
+    uwt.timewineitemcontent.twend(
+      uwt.twend(
+        name = t-twenditem.twendname, (⑅˘꒳˘)
+        uww = uwwmawshawwew(twenditem.uww), rawr x3
+        pwomotedmetadata = t-twenditem.pwomotedmetadata.map(pwomotedmetadatamawshawwew(_)), (✿oωo)
+        d-descwiption = twenditem.descwiption, (ˆ ﻌ ˆ)♡
+        twendmetadata = some(
+          twendmetadata(
+            m-metadescwiption = twenditem.metadescwiption, (˘ω˘)
+            uww = some(uwwmawshawwew(twenditem.uww)), (⑅˘꒳˘)
+            domaincontext = t-twenditem.domaincontext
+          )), (///ˬ///✿)
+        gwoupedtwends = t-twenditem.gwoupedtwends.map { t-twends =>
+          t-twends.map { twend =>
+            g-gwoupedtwend(name = twend.twendname, 😳😳😳 uww = uwwmawshawwew(twend.uww))
           }
         }
       )

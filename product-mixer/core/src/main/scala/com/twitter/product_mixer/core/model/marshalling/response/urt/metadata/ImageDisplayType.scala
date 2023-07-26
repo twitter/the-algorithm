@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-sealed trait ImageDisplayType
+seawed twait imagedispwaytype
 
-case object Icon extends ImageDisplayType
-case object FullWidth extends ImageDisplayType
-case object IconSmall extends ImageDisplayType
+c-case o-object icon extends i-imagedispwaytype
+c-case object f-fuwwwidth extends i-imagedispwaytype
+c-case object i-iconsmow extends imagedispwaytype

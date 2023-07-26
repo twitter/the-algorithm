@@ -1,13 +1,13 @@
-package com.twitter.timelineranker.config
+package com.twittew.timewinewankew.config
 
-import com.twitter.timelines.util.stats.RequestScope
+impowt c-com.twittew.timewines.utiw.stats.wequestscope
 
-object RequestScopes {
-  val HomeTimelineMaterialization: RequestScope = RequestScope("homeMaterialization")
-  val InNetworkTweetSource: RequestScope = RequestScope("inNetworkTweet")
-  val RecapHydrationSource: RequestScope = RequestScope("recapHydration")
-  val RecapAuthorSource: RequestScope = RequestScope("recapAuthor")
-  val ReverseChronHomeTimelineSource: RequestScope = RequestScope("reverseChronHomeTimelineSource")
-  val EntityTweetsSource: RequestScope = RequestScope("entityTweets")
-  val UtegLikedByTweetsSource: RequestScope = RequestScope("utegLikedByTweets")
+o-object wequestscopes {
+  v-vaw hometimewinematewiawization: w-wequestscope = w-wequestscope("homematewiawization")
+  vaw i-innetwowktweetsouwce: w-wequestscope = w-wequestscope("innetwowktweet")
+  vaw wecaphydwationsouwce: wequestscope = wequestscope("wecaphydwation")
+  vaw wecapauthowsouwce: w-wequestscope = wequestscope("wecapauthow")
+  vaw wevewsechwonhometimewinesouwce: w-wequestscope = wequestscope("wevewsechwonhometimewinesouwce")
+  v-vaw entitytweetssouwce: wequestscope = wequestscope("entitytweets")
+  vaw utegwikedbytweetssouwce: w-wequestscope = wequestscope("utegwikedbytweets")
 }

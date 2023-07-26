@@ -1,137 +1,137 @@
-package com.twitter.interaction_graph.scio.agg_client_event_logs
+package com.twittew.intewaction_gwaph.scio.agg_cwient_event_wogs
 
-import com.spotify.scio.values.SCollection
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.scio.common.FeatureKey
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionDetails
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionType
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.UserInteraction
+impowt com.spotify.scio.vawues.scowwection
+i-impowt c-com.twittew.intewaction_gwaph.scio.common.featuwegenewatowutiw
+i-impowt com.twittew.intewaction_gwaph.scio.common.featuwekey
+i-impowt c-com.twittew.intewaction_gwaph.scio.common.intewactiongwaphwawinput
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.edge
+i-impowt c-com.twittew.intewaction_gwaph.thwiftscawa.featuwename
+impowt com.twittew.intewaction_gwaph.thwiftscawa.vewtex
+impowt com.twittew.wtf.scawding.cwient_event_pwocessing.thwiftscawa.intewactiondetaiws
+impowt c-com.twittew.wtf.scawding.cwient_event_pwocessing.thwiftscawa.intewactiontype
+impowt com.twittew.wtf.scawding.cwient_event_pwocessing.thwiftscawa.usewintewaction
 
-object InteractionGraphClientEventLogsUtil {
+o-object intewactiongwaphcwienteventwogsutiw {
 
-  val DefaultAge = 1
-  val DefaultFeatureValue = 1.0
+  vaw defauwtage = 1
+  v-vaw defauwtfeatuwevawue = 1.0
 
-  def process(
-    userInteractions: SCollection[UserInteraction],
-    safeUsers: SCollection[Long]
+  def pwocess(
+    usewintewactions: scowwection[usewintewaction],
+    s-safeusews: scowwection[wong]
   )(
-    implicit jobCounters: InteractionGraphClientEventLogsCountersTrait
-  ): (SCollection[Vertex], SCollection[Edge]) = {
+    i-impwicit jobcountews: i-intewactiongwaphcwienteventwogscountewstwait
+  ): (scowwection[vewtex], OwO scowwection[edge]) = {
 
-    val unfilteredFeatureInput = userInteractions
-      .flatMap {
-        case UserInteraction(
-              userId,
+    vaw unfiwtewedfeatuweinput = usewintewactions
+      .fwatmap {
+        c-case usewintewaction(
+              usewid, (ꈍᴗꈍ)
               _,
-              interactionType,
-              InteractionDetails.ProfileClickDetails(profileClick))
-            if interactionType == InteractionType.ProfileClicks && userId != profileClick.profileId =>
-          jobCounters.profileViewFeaturesInc()
-          Seq(
-            FeatureKey(
-              userId,
-              profileClick.profileId,
-              FeatureName.NumProfileViews) -> DefaultFeatureValue
+              intewactiontype, 😳
+              intewactiondetaiws.pwofiwecwickdetaiws(pwofiwecwick))
+            if intewactiontype == intewactiontype.pwofiwecwicks && u-usewid != pwofiwecwick.pwofiweid =>
+          j-jobcountews.pwofiweviewfeatuwesinc()
+          s-seq(
+            f-featuwekey(
+              u-usewid,
+              pwofiwecwick.pwofiweid, 😳😳😳
+              featuwename.numpwofiweviews) -> d-defauwtfeatuwevawue
           )
 
-        case UserInteraction(
-              userId,
-              _,
-              interactionType,
-              InteractionDetails.TweetClickDetails(tweetClick))
-            if interactionType == InteractionType.TweetClicks &&
-              Some(userId) != tweetClick.authorId =>
+        case usewintewaction(
+              usewid, mya
+              _, mya
+              i-intewactiontype, (⑅˘꒳˘)
+              intewactiondetaiws.tweetcwickdetaiws(tweetcwick))
+            if intewactiontype == intewactiontype.tweetcwicks &&
+              some(usewid) != tweetcwick.authowid =>
           (
-            for {
-              authorId <- tweetClick.authorId
-            } yield {
-              jobCounters.tweetClickFeaturesInc()
-              FeatureKey(userId, authorId, FeatureName.NumTweetClicks) -> DefaultFeatureValue
+            fow {
+              a-authowid <- tweetcwick.authowid
+            } yiewd {
+              j-jobcountews.tweetcwickfeatuwesinc()
+              f-featuwekey(usewid, (U ﹏ U) a-authowid, mya featuwename.numtweetcwicks) -> defauwtfeatuwevawue
 
             }
-          ).toSeq
+          ).toseq
 
-        case UserInteraction(
-              userId,
-              _,
-              interactionType,
-              InteractionDetails.LinkClickDetails(linkClick))
-            if interactionType == InteractionType.LinkClicks &&
-              Some(userId) != linkClick.authorId =>
+        case usewintewaction(
+              u-usewid, ʘwʘ
+              _, (˘ω˘)
+              i-intewactiontype, (U ﹏ U)
+              intewactiondetaiws.winkcwickdetaiws(winkcwick))
+            i-if intewactiontype == intewactiontype.winkcwicks &&
+              s-some(usewid) != winkcwick.authowid =>
           (
-            for {
-              authorId <- linkClick.authorId
-            } yield {
-              jobCounters.linkOpenFeaturesInc()
-              FeatureKey(userId, authorId, FeatureName.NumLinkClicks) -> DefaultFeatureValue
+            f-fow {
+              authowid <- w-winkcwick.authowid
+            } yiewd {
+              jobcountews.winkopenfeatuwesinc()
+              f-featuwekey(usewid, ^•ﻌ•^ authowid, featuwename.numwinkcwicks) -> d-defauwtfeatuwevawue
             }
-          ).toSeq
+          ).toseq
 
-        case UserInteraction(
-              userId,
-              _,
-              interactionType,
-              InteractionDetails.TweetImpressionDetails(tweetImpression))
-            if interactionType == InteractionType.TweetImpressions &&
-              Some(userId) != tweetImpression.authorId =>
+        case usewintewaction(
+              u-usewid, (˘ω˘)
+              _, :3
+              i-intewactiontype, ^^;;
+              intewactiondetaiws.tweetimpwessiondetaiws(tweetimpwession))
+            if intewactiontype == intewactiontype.tweetimpwessions &&
+              some(usewid) != tweetimpwession.authowid =>
           (
-            for {
-              authorId <- tweetImpression.authorId
-              dwellTime <- tweetImpression.dwellTimeInSec
-            } yield {
-              jobCounters.tweetImpressionFeaturesInc()
-              Seq(
-                FeatureKey(
-                  userId,
-                  authorId,
-                  FeatureName.NumInspectedStatuses) -> DefaultFeatureValue,
-                FeatureKey(userId, authorId, FeatureName.TotalDwellTime) -> dwellTime.toDouble
+            fow {
+              a-authowid <- t-tweetimpwession.authowid
+              dwewwtime <- t-tweetimpwession.dwewwtimeinsec
+            } y-yiewd {
+              j-jobcountews.tweetimpwessionfeatuwesinc()
+              seq(
+                featuwekey(
+                  usewid, 🥺
+                  a-authowid, (⑅˘꒳˘)
+                  featuwename.numinspectedstatuses) -> defauwtfeatuwevawue, nyaa~~
+                featuwekey(usewid, :3 authowid, ( ͡o ω ͡o ) f-featuwename.totawdwewwtime) -> dwewwtime.todoubwe
               )
             }
-          ).getOrElse(Nil)
+          ).getowewse(niw)
 
-        case _ =>
-          jobCounters.catchAllInc()
-          Nil
+        c-case _ =>
+          j-jobcountews.catchawwinc()
+          n-nyiw
       }
-      .sumByKey
-      .collect {
-        case (FeatureKey(srcId, destId, featureName), featureValue) =>
-          InteractionGraphRawInput(
-            src = srcId,
-            dst = destId,
-            name = featureName,
-            age = 1,
-            featureValue = featureValue
+      .sumbykey
+      .cowwect {
+        case (featuwekey(swcid, mya d-destid, (///ˬ///✿) f-featuwename), (˘ω˘) f-featuwevawue) =>
+          intewactiongwaphwawinput(
+            s-swc = swcid, ^^;;
+            dst = destid,
+            n-nyame = f-featuwename, (✿oωo)
+            a-age = 1, (U ﹏ U)
+            f-featuwevawue = f-featuwevawue
           )
       }
 
-    val filteredFeatureInput = filterForSafeUsers(unfilteredFeatureInput, safeUsers)
+    vaw fiwtewedfeatuweinput = fiwtewfowsafeusews(unfiwtewedfeatuweinput, -.- safeusews)
 
-    // Calculate the Features
-    FeatureGeneratorUtil.getFeatures(filteredFeatureInput)
+    // c-cawcuwate the featuwes
+    featuwegenewatowutiw.getfeatuwes(fiwtewedfeatuweinput)
 
   }
 
-  private def filterForSafeUsers(
-    featureInput: SCollection[InteractionGraphRawInput],
-    safeUsers: SCollection[Long]
-  ): SCollection[InteractionGraphRawInput] = {
+  pwivate def fiwtewfowsafeusews(
+    featuweinput: s-scowwection[intewactiongwaphwawinput], ^•ﻌ•^
+    safeusews: scowwection[wong]
+  ): scowwection[intewactiongwaphwawinput] = {
 
-    featureInput
-      .keyBy(_.src)
-      .withName("Filter out unsafe users")
-      .intersectByKey(safeUsers)
-      .values // Fetch only InteractionGraphRawInput
-      .keyBy(_.dst)
-      .withName("Filter out unsafe authors")
-      .intersectByKey(safeUsers)
-      .values // Fetch only InteractionGraphRawInput
+    featuweinput
+      .keyby(_.swc)
+      .withname("fiwtew o-out u-unsafe usews")
+      .intewsectbykey(safeusews)
+      .vawues // f-fetch onwy intewactiongwaphwawinput
+      .keyby(_.dst)
+      .withname("fiwtew out unsafe authows")
+      .intewsectbykey(safeusews)
+      .vawues // f-fetch onwy intewactiongwaphwawinput
   }
 
 }

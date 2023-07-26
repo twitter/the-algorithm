@@ -1,101 +1,101 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.sociaw_context
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.service.{thriftscala => t}
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.sociaw_context.basesociawcontextbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata._
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.sewvice.{thwiftscawa => t}
 
 /**
- * Use this Builder to create Product Mixer [[SocialContext]] objects when you have a
- * Timeline Service Thrift [[SocialContext]] feature that you want to convert
+ * use this b-buiwdew to cweate pwoduct mixew [[sociawcontext]] objects when y-you have a
+ * timewine sewvice t-thwift [[sociawcontext]] featuwe that you want to convewt
  */
-case class FeatureSocialContextBuilder(
-  socialContextFeature: Feature[_, Option[t.SocialContext]])
-    extends BaseSocialContextBuilder[PipelineQuery, UniversalNoun[Any]] {
+case c-cwass featuwesociawcontextbuiwdew(
+  sociawcontextfeatuwe: featuwe[_, (U ﹏ U) o-option[t.sociawcontext]])
+    e-extends basesociawcontextbuiwdew[pipewinequewy, -.- univewsawnoun[any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
-    candidateFeatures.getOrElse(socialContextFeature, None).map {
-      case t.SocialContext.GeneralContext(context) =>
-        val contextType = context.contextType match {
-          case t.ContextType.Like => LikeGeneralContextType
-          case t.ContextType.Follow => FollowGeneralContextType
-          case t.ContextType.Moment => MomentGeneralContextType
-          case t.ContextType.Reply => ReplyGeneralContextType
-          case t.ContextType.Conversation => ConversationGeneralContextType
-          case t.ContextType.Pin => PinGeneralContextType
-          case t.ContextType.TextOnly => TextOnlyGeneralContextType
-          case t.ContextType.Facepile => FacePileGeneralContextType
-          case t.ContextType.Megaphone => MegaPhoneGeneralContextType
-          case t.ContextType.Bird => BirdGeneralContextType
-          case t.ContextType.Feedback => FeedbackGeneralContextType
-          case t.ContextType.Topic => TopicGeneralContextType
-          case t.ContextType.List => ListGeneralContextType
-          case t.ContextType.Retweet => RetweetGeneralContextType
-          case t.ContextType.Location => LocationGeneralContextType
-          case t.ContextType.Community => CommunityGeneralContextType
-          case t.ContextType.SmartBlockExpiration => SmartblockExpirationGeneralContextType
-          case t.ContextType.Trending => TrendingGeneralContextType
-          case t.ContextType.Sparkle => SparkleGeneralContextType
-          case t.ContextType.Spaces => SpacesGeneralContextType
-          case t.ContextType.ReplyPin => ReplyPinGeneralContextType
-          case t.ContextType.NewUser => NewUserGeneralContextType
-          case t.ContextType.EnumUnknownContextType(field) =>
-            throw new UnsupportedOperationException(s"Unknown context type: $field")
+  ovewwide def appwy(
+    quewy: p-pipewinequewy, ^•ﻌ•^
+    candidate: univewsawnoun[any],
+    candidatefeatuwes: featuwemap
+  ): option[sociawcontext] = {
+    c-candidatefeatuwes.getowewse(sociawcontextfeatuwe, rawr nyone).map {
+      c-case t-t.sociawcontext.genewawcontext(context) =>
+        v-vaw contexttype = c-context.contexttype match {
+          case t-t.contexttype.wike => wikegenewawcontexttype
+          case t.contexttype.fowwow => f-fowwowgenewawcontexttype
+          case t.contexttype.moment => momentgenewawcontexttype
+          case t.contexttype.wepwy => wepwygenewawcontexttype
+          case t.contexttype.convewsation => c-convewsationgenewawcontexttype
+          case t.contexttype.pin => p-pingenewawcontexttype
+          c-case t-t.contexttype.textonwy => textonwygenewawcontexttype
+          case t.contexttype.facepiwe => facepiwegenewawcontexttype
+          case t.contexttype.megaphone => m-megaphonegenewawcontexttype
+          c-case t.contexttype.biwd => biwdgenewawcontexttype
+          c-case t.contexttype.feedback => f-feedbackgenewawcontexttype
+          case t.contexttype.topic => t-topicgenewawcontexttype
+          case t.contexttype.wist => w-wistgenewawcontexttype
+          case t.contexttype.wetweet => wetweetgenewawcontexttype
+          c-case t.contexttype.wocation => wocationgenewawcontexttype
+          c-case t.contexttype.community => communitygenewawcontexttype
+          c-case t.contexttype.smawtbwockexpiwation => s-smawtbwockexpiwationgenewawcontexttype
+          case t.contexttype.twending => twendinggenewawcontexttype
+          case t.contexttype.spawkwe => spawkwegenewawcontexttype
+          case t.contexttype.spaces => spacesgenewawcontexttype
+          c-case t.contexttype.wepwypin => w-wepwypingenewawcontexttype
+          case t.contexttype.newusew => n-nyewusewgenewawcontexttype
+          c-case t.contexttype.enumunknowncontexttype(fiewd) =>
+            t-thwow nyew unsuppowtedopewationexception(s"unknown context type: $fiewd")
         }
 
-        val landingUrl = context.landingUrl.map { url =>
-          val endpointOptions = url.urtEndpointOptions.map { options =>
-            UrtEndpointOptions(
-              requestParams = options.requestParams.map(_.toMap),
-              title = options.title,
-              cacheId = options.cacheId,
-              subtitle = options.subtitle
+        v-vaw wandinguww = context.wandinguww.map { uww =>
+          vaw endpointoptions = uww.uwtendpointoptions.map { o-options =>
+            uwtendpointoptions(
+              w-wequestpawams = o-options.wequestpawams.map(_.tomap), (˘ω˘)
+              titwe = o-options.titwe, nyaa~~
+              cacheid = options.cacheid, UwU
+              s-subtitwe = o-options.subtitwe
             )
           }
 
-          val urlType = url.urlType match {
-            case t.UrlType.ExternalUrl => ExternalUrl
-            case t.UrlType.DeepLink => DeepLink
-            case t.UrlType.UrtEndpoint => UrtEndpoint
-            case t.UrlType.EnumUnknownUrlType(field) =>
-              throw new UnsupportedOperationException(s"Unknown url type: $field")
+          v-vaw u-uwwtype = uww.uwwtype match {
+            case t-t.uwwtype.extewnawuww => e-extewnawuww
+            c-case t.uwwtype.deepwink => d-deepwink
+            c-case t.uwwtype.uwtendpoint => uwtendpoint
+            case t.uwwtype.enumunknownuwwtype(fiewd) =>
+              thwow nyew unsuppowtedopewationexception(s"unknown u-uww type: $fiewd")
           }
 
-          Url(urlType = urlType, url = url.url, urtEndpointOptions = endpointOptions)
+          uww(uwwtype = uwwtype, :3 uww = uww.uww, (⑅˘꒳˘) uwtendpointoptions = endpointoptions)
         }
 
-        GeneralContext(
-          text = context.text,
-          contextType = contextType,
-          url = context.url,
-          contextImageUrls = context.contextImageUrls.map(_.toList),
-          landingUrl = landingUrl
+        genewawcontext(
+          t-text = context.text, (///ˬ///✿)
+          contexttype = contexttype, ^^;;
+          uww = c-context.uww, >_<
+          c-contextimageuwws = c-context.contextimageuwws.map(_.towist), rawr x3
+          wandinguww = w-wandinguww
         )
-      case t.SocialContext.TopicContext(context) =>
-        val functionalityType = context.functionalityType match {
-          case t.TopicContextFunctionalityType.Basic =>
-            BasicTopicContextFunctionalityType
-          case t.TopicContextFunctionalityType.Recommendation =>
-            RecommendationTopicContextFunctionalityType
-          case t.TopicContextFunctionalityType.RecWithEducation =>
-            RecWithEducationTopicContextFunctionalityType
-          case t.TopicContextFunctionalityType.EnumUnknownTopicContextFunctionalityType(field) =>
-            throw new UnsupportedOperationException(s"Unknown functionality type: $field")
+      case t.sociawcontext.topiccontext(context) =>
+        v-vaw f-functionawitytype = context.functionawitytype match {
+          case t.topiccontextfunctionawitytype.basic =>
+            basictopiccontextfunctionawitytype
+          case t.topiccontextfunctionawitytype.wecommendation =>
+            w-wecommendationtopiccontextfunctionawitytype
+          case t.topiccontextfunctionawitytype.wecwitheducation =>
+            w-wecwitheducationtopiccontextfunctionawitytype
+          case t-t.topiccontextfunctionawitytype.enumunknowntopiccontextfunctionawitytype(fiewd) =>
+            t-thwow nyew unsuppowtedopewationexception(s"unknown functionawity type: $fiewd")
         }
 
-        TopicContext(
-          topicId = context.topicId,
-          functionalityType = Some(functionalityType)
+        t-topiccontext(
+          t-topicid = context.topicid, /(^•ω•^)
+          f-functionawitytype = s-some(functionawitytype)
         )
-      case t.SocialContext.UnknownUnionField(field) =>
-        throw new UnsupportedOperationException(s"Unknown social context: $field")
+      case t.sociawcontext.unknownunionfiewd(fiewd) =>
+        thwow nyew unsuppowtedopewationexception(s"unknown s-sociaw c-context: $fiewd")
     }
   }
 }

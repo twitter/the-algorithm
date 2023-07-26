@@ -1,166 +1,166 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.common.base.TweetDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.SubtextForAndroidPushHeader
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
-import com.twitter.frigate.pushservice.util.CopyUtil
-import com.twitter.frigate.pushservice.util.EmailLandingPageExperimentUtil
-import com.twitter.frigate.pushservice.util.InlineActionUtil
-import com.twitter.frigate.pushservice.util.PushToHomeUtil
-import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeFutModelValues
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt c-com.twittew.fwigate.common.base.tweetcandidate
+i-impowt com.twittew.fwigate.common.base.tweetdetaiws
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.pawams.subtextfowandwoidpushheadew
+impowt com.twittew.fwigate.pushsewvice.pawams.{pushfeatuweswitchpawams => fs}
+impowt com.twittew.fwigate.pushsewvice.utiw.copyutiw
+i-impowt com.twittew.fwigate.pushsewvice.utiw.emaiwwandingpageexpewimentutiw
+impowt c-com.twittew.fwigate.pushsewvice.utiw.inwineactionutiw
+impowt com.twittew.fwigate.pushsewvice.utiw.pushtohomeutiw
+i-impowt com.twittew.fwigate.pushsewvice.utiw.pushibisutiw.mewgefutmodewvawues
+impowt com.twittew.utiw.futuwe
 
-trait TweetCandidateIbis2Hydrator
-    extends Ibis2HydratorForCandidate
-    with InlineActionIbis2Hydrator
-    with CustomConfigurationMapForIbis {
-  self: PushCandidate with TweetCandidate with TweetDetails with TweetAuthorDetails =>
+twait t-tweetcandidateibis2hydwatow
+    extends ibis2hydwatowfowcandidate
+    w-with inwineactionibis2hydwatow
+    w-with customconfiguwationmapfowibis {
+  sewf: pushcandidate with tweetcandidate with t-tweetdetaiws with tweetauthowdetaiws =>
 
-  lazy val scopedStats: StatsReceiver = statsReceiver.scope(getClass.getSimpleName)
+  wazy vaw scopedstats: statsweceivew = s-statsweceivew.scope(getcwass.getsimpwename)
 
-  lazy val tweetIdModelValue: Map[String, String] =
-    Map(
-      "tweet" -> tweetId.toString
+  wazy vaw tweetidmodewvawue: m-map[stwing, σωσ s-stwing] =
+    m-map(
+      "tweet" -> t-tweetid.tostwing
     )
 
-  lazy val authorModelValue: Map[String, String] = {
-    assert(authorId.isDefined)
-    Map(
-      "author" -> authorId.getOrElse(0L).toString
+  wazy vaw authowmodewvawue: m-map[stwing, (U ᵕ U❁) stwing] = {
+    assewt(authowid.isdefined)
+    map(
+      "authow" -> a-authowid.getowewse(0w).tostwing
     )
   }
 
-  lazy val otherModelValues: Map[String, String] =
-    Map(
-      "show_explanatory_text" -> "true",
-      "show_negative_feedback" -> "true"
+  wazy vaw othewmodewvawues: map[stwing, (U ﹏ U) stwing] =
+    map(
+      "show_expwanatowy_text" -> "twue",
+      "show_negative_feedback" -> "twue"
     )
 
-  lazy val mediaModelValue: Map[String, String] =
-    Map(
-      "show_media" -> "true"
+  wazy vaw mediamodewvawue: m-map[stwing, :3 stwing] =
+    map(
+      "show_media" -> "twue"
     )
 
-  lazy val inlineVideoMediaMap: Map[String, String] = {
-    if (hasVideo) {
-      val isInlineVideoEnabled = target.params(FS.EnableInlineVideo)
-      val isAutoplayEnabled = target.params(FS.EnableAutoplayForInlineVideo)
-      Map(
-        "enable_inline_video_for_ios" -> isInlineVideoEnabled.toString,
-        "enable_autoplay_for_inline_video_ios" -> isAutoplayEnabled.toString
+  w-wazy vaw inwinevideomediamap: m-map[stwing, ( ͡o ω ͡o ) stwing] = {
+    if (hasvideo) {
+      v-vaw isinwinevideoenabwed = tawget.pawams(fs.enabweinwinevideo)
+      vaw isautopwayenabwed = tawget.pawams(fs.enabweautopwayfowinwinevideo)
+      m-map(
+        "enabwe_inwine_video_fow_ios" -> i-isinwinevideoenabwed.tostwing, σωσ
+        "enabwe_autopway_fow_inwine_video_ios" -> isautopwayenabwed.tostwing
       )
-    } else Map.empty
+    } ewse m-map.empty
   }
 
-  lazy val landingPageModelValues: Future[Map[String, String]] = {
-    for {
-      deviceInfoOpt <- target.deviceInfo
-    } yield {
-      PushToHomeUtil.getIbis2ModelValue(deviceInfoOpt, target, scopedStats) match {
-        case Some(pushToHomeModelValues) => pushToHomeModelValues
-        case _ =>
-          EmailLandingPageExperimentUtil.getIbis2ModelValue(
-            deviceInfoOpt,
-            target,
-            tweetId
+  w-wazy vaw wandingpagemodewvawues: futuwe[map[stwing, >w< s-stwing]] = {
+    fow {
+      d-deviceinfoopt <- tawget.deviceinfo
+    } yiewd {
+      pushtohomeutiw.getibis2modewvawue(deviceinfoopt, 😳😳😳 t-tawget, OwO scopedstats) m-match {
+        case some(pushtohomemodewvawues) => p-pushtohomemodewvawues
+        c-case _ =>
+          emaiwwandingpageexpewimentutiw.getibis2modewvawue(
+            deviceinfoopt, 😳
+            tawget, 😳😳😳
+            tweetid
           )
       }
     }
   }
 
-  lazy val tweetDynamicInlineActionsModelValues = {
-    if (target.params(PushFeatureSwitchParams.EnableTweetDynamicInlineActions)) {
-      val actions = target.params(PushFeatureSwitchParams.TweetDynamicInlineActionsList)
-      InlineActionUtil.getGeneratedTweetInlineActions(target, statsReceiver, actions)
-    } else Map.empty[String, String]
+  wazy vaw tweetdynamicinwineactionsmodewvawues = {
+    if (tawget.pawams(pushfeatuweswitchpawams.enabwetweetdynamicinwineactions)) {
+      v-vaw actions = t-tawget.pawams(pushfeatuweswitchpawams.tweetdynamicinwineactionswist)
+      inwineactionutiw.getgenewatedtweetinwineactions(tawget, (˘ω˘) s-statsweceivew, ʘwʘ a-actions)
+    } e-ewse map.empty[stwing, ( ͡o ω ͡o ) stwing]
   }
 
-  lazy val tweetDynamicInlineActionsModelValuesForWeb: Map[String, String] = {
-    if (target.isLoggedOutUser) {
-      Map.empty[String, String]
-    } else {
-      InlineActionUtil.getGeneratedTweetInlineActionsForWeb(
-        actions = target.params(PushFeatureSwitchParams.TweetDynamicInlineActionsListForWeb),
-        enableForDesktopWeb =
-          target.params(PushFeatureSwitchParams.EnableDynamicInlineActionsForDesktopWeb),
-        enableForMobileWeb =
-          target.params(PushFeatureSwitchParams.EnableDynamicInlineActionsForMobileWeb)
+  wazy vaw tweetdynamicinwineactionsmodewvawuesfowweb: map[stwing, o.O s-stwing] = {
+    if (tawget.iswoggedoutusew) {
+      map.empty[stwing, >w< stwing]
+    } ewse {
+      i-inwineactionutiw.getgenewatedtweetinwineactionsfowweb(
+        actions = tawget.pawams(pushfeatuweswitchpawams.tweetdynamicinwineactionswistfowweb), 😳
+        e-enabwefowdesktopweb =
+          t-tawget.pawams(pushfeatuweswitchpawams.enabwedynamicinwineactionsfowdesktopweb), 🥺
+        e-enabwefowmobiweweb =
+          tawget.pawams(pushfeatuweswitchpawams.enabwedynamicinwineactionsfowmobiweweb)
       )
     }
   }
 
-  lazy val copyFeaturesFut: Future[Map[String, String]] =
-    CopyUtil.getCopyFeatures(self, scopedStats)
+  w-wazy vaw c-copyfeatuwesfut: f-futuwe[map[stwing, rawr x3 s-stwing]] =
+    copyutiw.getcopyfeatuwes(sewf, o.O scopedstats)
 
-  private def getVerifiedSymbolModelValue: Future[Map[String, String]] = {
-    self.tweetAuthor.map {
-      case Some(author) =>
-        if (author.safety.exists(_.verified)) {
-          scopedStats.counter("is_verified").incr()
-          if (target.params(FS.EnablePushPresentationVerifiedSymbol)) {
-            scopedStats.counter("is_verified_and_add").incr()
-            Map("is_author_verified" -> "true")
-          } else {
-            scopedStats.counter("is_verified_and_NOT_add").incr()
-            Map.empty
+  p-pwivate def getvewifiedsymbowmodewvawue: f-futuwe[map[stwing, rawr stwing]] = {
+    s-sewf.tweetauthow.map {
+      c-case s-some(authow) =>
+        if (authow.safety.exists(_.vewified)) {
+          scopedstats.countew("is_vewified").incw()
+          if (tawget.pawams(fs.enabwepushpwesentationvewifiedsymbow)) {
+            s-scopedstats.countew("is_vewified_and_add").incw()
+            map("is_authow_vewified" -> "twue")
+          } ewse {
+            scopedstats.countew("is_vewified_and_not_add").incw()
+            map.empty
           }
-        } else {
-          scopedStats.counter("is_NOT_verified").incr()
-          Map.empty
+        } ewse {
+          s-scopedstats.countew("is_not_vewified").incw()
+          map.empty
         }
       case _ =>
-        scopedStats.counter("none_author").incr()
-        Map.empty
+        scopedstats.countew("none_authow").incw()
+        m-map.empty
     }
   }
 
-  private def subtextAndroidPushHeader: Map[String, String] = {
-    self.target.params(PushFeatureSwitchParams.SubtextInAndroidPushHeaderParam) match {
-      case SubtextForAndroidPushHeader.None =>
-        Map.empty
-      case SubtextForAndroidPushHeader.TargetHandler =>
-        Map("subtext_target_handler" -> "true")
-      case SubtextForAndroidPushHeader.TargetTagHandler =>
-        Map("subtext_target_tag_handler" -> "true")
-      case SubtextForAndroidPushHeader.TargetName =>
-        Map("subtext_target_name" -> "true")
-      case SubtextForAndroidPushHeader.AuthorTagHandler =>
-        Map("subtext_author_tag_handler" -> "true")
-      case SubtextForAndroidPushHeader.AuthorName =>
-        Map("subtext_author_name" -> "true")
-      case _ =>
-        Map.empty
+  p-pwivate d-def subtextandwoidpushheadew: map[stwing, ʘwʘ stwing] = {
+    s-sewf.tawget.pawams(pushfeatuweswitchpawams.subtextinandwoidpushheadewpawam) match {
+      c-case subtextfowandwoidpushheadew.none =>
+        m-map.empty
+      case subtextfowandwoidpushheadew.tawgethandwew =>
+        map("subtext_tawget_handwew" -> "twue")
+      case subtextfowandwoidpushheadew.tawgettaghandwew =>
+        map("subtext_tawget_tag_handwew" -> "twue")
+      case subtextfowandwoidpushheadew.tawgetname =>
+        m-map("subtext_tawget_name" -> "twue")
+      case subtextfowandwoidpushheadew.authowtaghandwew =>
+        m-map("subtext_authow_tag_handwew" -> "twue")
+      case subtextfowandwoidpushheadew.authowname =>
+        m-map("subtext_authow_name" -> "twue")
+      c-case _ =>
+        map.empty
     }
   }
 
-  lazy val bodyPushMap: Map[String, String] = {
-    if (self.target.params(PushFeatureSwitchParams.EnableEmptyBody)) {
-      Map("enable_empty_body" -> "true")
-    } else Map.empty[String, String]
+  wazy v-vaw bodypushmap: m-map[stwing, 😳😳😳 stwing] = {
+    if (sewf.tawget.pawams(pushfeatuweswitchpawams.enabweemptybody)) {
+      m-map("enabwe_empty_body" -> "twue")
+    } ewse m-map.empty[stwing, ^^;; stwing]
   }
 
-  override def customFieldsMapFut: Future[Map[String, String]] =
-    for {
-      superModelValues <- super.customFieldsMapFut
-      copyFeaturesModelValues <- copyFeaturesFut
-      verifiedSymbolModelValue <- getVerifiedSymbolModelValue
-    } yield {
-      superModelValues ++ copyFeaturesModelValues ++
-        verifiedSymbolModelValue ++ subtextAndroidPushHeader ++ bodyPushMap
+  ovewwide def customfiewdsmapfut: futuwe[map[stwing, o.O s-stwing]] =
+    f-fow {
+      s-supewmodewvawues <- supew.customfiewdsmapfut
+      c-copyfeatuwesmodewvawues <- c-copyfeatuwesfut
+      vewifiedsymbowmodewvawue <- g-getvewifiedsymbowmodewvawue
+    } yiewd {
+      supewmodewvawues ++ copyfeatuwesmodewvawues ++
+        vewifiedsymbowmodewvawue ++ s-subtextandwoidpushheadew ++ b-bodypushmap
     }
 
-  override lazy val senderId: Option[Long] = authorId
+  ovewwide wazy vaw sendewid: o-option[wong] = a-authowid
 
-  def tweetModelValues: Future[Map[String, String]] =
-    landingPageModelValues.map { landingPageModelValues =>
-      tweetIdModelValue ++ authorModelValue ++ landingPageModelValues ++ tweetDynamicInlineActionsModelValues ++ tweetDynamicInlineActionsModelValuesForWeb
+  def tweetmodewvawues: futuwe[map[stwing, (///ˬ///✿) stwing]] =
+    w-wandingpagemodewvawues.map { wandingpagemodewvawues =>
+      tweetidmodewvawue ++ authowmodewvawue ++ wandingpagemodewvawues ++ t-tweetdynamicinwineactionsmodewvawues ++ tweetdynamicinwineactionsmodewvawuesfowweb
     }
 
-  override lazy val modelValues: Future[Map[String, String]] =
-    mergeFutModelValues(super.modelValues, tweetModelValues)
+  ovewwide wazy vaw modewvawues: f-futuwe[map[stwing, σωσ s-stwing]] =
+    mewgefutmodewvawues(supew.modewvawues, nyaa~~ tweetmodewvawues)
 }

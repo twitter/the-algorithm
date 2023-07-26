@@ -1,69 +1,69 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.twittew.seawch.cowe.eawwybiwd.index.cowumn;
 
-import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
+impowt java.io.ioexception;
+i-impowt java.utiw.concuwwent.concuwwenthashmap;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+i-impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
 
-public class UnoptimizedDocValuesManager extends DocValuesManager {
-  public UnoptimizedDocValuesManager(Schema schema, int segmentSize) {
-    super(schema, segmentSize);
+pubwic c-cwass unoptimizeddocvawuesmanagew e-extends d-docvawuesmanagew {
+  p-pubwic unoptimizeddocvawuesmanagew(schema schema, 🥺 int segmentsize) {
+    supew(schema, o.O segmentsize);
   }
 
-  private UnoptimizedDocValuesManager(
-      Schema schema,
-      int segmentSize,
-      ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields) {
-    super(schema, segmentSize, columnStrideFields);
+  pwivate unoptimizeddocvawuesmanagew(
+      s-schema schema, /(^•ω•^)
+      int segmentsize, nyaa~~
+      c-concuwwenthashmap<stwing, nyaa~~ cowumnstwidefiewdindex> c-cowumnstwidefiewds) {
+    supew(schema, :3 segmentsize, 😳😳😳 cowumnstwidefiewds);
   }
 
-  @Override
-  protected ColumnStrideFieldIndex newByteCSF(String field) {
-    return new ColumnStrideByteIndex(field, segmentSize);
+  @ovewwide
+  pwotected c-cowumnstwidefiewdindex nyewbytecsf(stwing f-fiewd) {
+    w-wetuwn nyew cowumnstwidebyteindex(fiewd, (˘ω˘) segmentsize);
   }
 
-  @Override
-  protected ColumnStrideFieldIndex newIntCSF(String field) {
-    return new ColumnStrideIntIndex(field, segmentSize);
+  @ovewwide
+  pwotected cowumnstwidefiewdindex nyewintcsf(stwing f-fiewd) {
+    wetuwn nyew cowumnstwideintindex(fiewd, ^^ segmentsize);
   }
 
-  @Override
-  protected ColumnStrideFieldIndex newLongCSF(String field) {
-    return new ColumnStrideLongIndex(field, segmentSize);
+  @ovewwide
+  pwotected cowumnstwidefiewdindex n-nyewwongcsf(stwing fiewd) {
+    wetuwn n-nyew cowumnstwidewongindex(fiewd, :3 s-segmentsize);
   }
 
-  @Override
-  protected ColumnStrideFieldIndex newMultiIntCSF(String field, int numIntsPerField) {
-    return new ColumnStrideMultiIntIndex(field, segmentSize, numIntsPerField);
+  @ovewwide
+  p-pwotected c-cowumnstwidefiewdindex nyewmuwtiintcsf(stwing fiewd, -.- i-int nyumintspewfiewd) {
+    wetuwn nyew cowumnstwidemuwtiintindex(fiewd, 😳 segmentsize, mya n-nyumintspewfiewd);
   }
 
-  @Override
-  public DocValuesManager optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                                   DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    return new OptimizedDocValuesManager(this, originalTweetIdMapper, optimizedTweetIdMapper);
+  @ovewwide
+  pubwic docvawuesmanagew optimize(docidtotweetidmappew owiginawtweetidmappew, (˘ω˘)
+                                   docidtotweetidmappew optimizedtweetidmappew) t-thwows ioexception {
+    w-wetuwn nyew o-optimizeddocvawuesmanagew(this, >_< o-owiginawtweetidmappew, -.- optimizedtweetidmappew);
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new UnoptimizedFlushHandler(this);
+  @ovewwide
+  pubwic fwushhandwew getfwushhandwew() {
+    w-wetuwn nyew unoptimizedfwushhandwew(this);
   }
 
-  public static class UnoptimizedFlushHandler extends FlushHandler {
-    public UnoptimizedFlushHandler(Schema schema) {
-      super(schema);
+  p-pubwic static cwass unoptimizedfwushhandwew e-extends fwushhandwew {
+    p-pubwic unoptimizedfwushhandwew(schema s-schema) {
+      supew(schema);
     }
 
-    private UnoptimizedFlushHandler(DocValuesManager docValuesManager) {
-      super(docValuesManager);
+    p-pwivate unoptimizedfwushhandwew(docvawuesmanagew docvawuesmanagew) {
+      s-supew(docvawuesmanagew);
     }
 
-    @Override
-    protected DocValuesManager createDocValuesManager(
-        Schema schema,
-        int maxSegmentSize,
-        ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields) {
-      return new UnoptimizedDocValuesManager(schema, maxSegmentSize, columnStrideFields);
+    @ovewwide
+    pwotected d-docvawuesmanagew cweatedocvawuesmanagew(
+        s-schema schema, 🥺
+        i-int maxsegmentsize, (U ﹏ U)
+        concuwwenthashmap<stwing, >w< cowumnstwidefiewdindex> cowumnstwidefiewds) {
+      wetuwn new unoptimizeddocvawuesmanagew(schema, mya maxsegmentsize, >w< cowumnstwidefiewds);
     }
   }
 }

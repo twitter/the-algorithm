@@ -1,172 +1,172 @@
-package com.twitter.product_mixer.core.service.scoring_pipeline_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.scowing_pipewine_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipeline
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.scoring_pipeline_executor.ScoringPipelineExecutor.ScoringPipelineState
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Arrow.Iso
-import com.twitter.util.logging.Logging
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowingpipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.faiwopenpowicy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.iwwegawstatefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.scowing.scowingpipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.scowing.scowingpipewinewesuwt
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowobsewvew
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.scowing_pipewine_executow.scowingpipewineexecutow.scowingpipewinestate
+impowt c-com.twittew.stitch.awwow
+impowt c-com.twittew.stitch.awwow.iso
+i-impowt com.twittew.utiw.wogging.wogging
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.Queue
+impowt javax.inject.inject
+impowt javax.inject.singweton
+impowt scawa.cowwection.immutabwe.queue
 
-@Singleton
-class ScoringPipelineExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor
-    with Logging {
-  def arrow[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    pipelines: Seq[ScoringPipeline[Query, Candidate]],
-    context: Executor.Context,
-    defaultFailOpenPolicy: FailOpenPolicy,
-    failOpenPolicies: Map[ScoringPipelineIdentifier, FailOpenPolicy],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
-  ): Arrow[ScoringPipelineExecutor.Inputs[Query], ScoringPipelineExecutorResult[Candidate]] = {
-    val scoringPipelineArrows = pipelines.map { pipeline =>
-      val failOpenPolicy = failOpenPolicies.getOrElse(pipeline.identifier, defaultFailOpenPolicy)
-      val qualityFactorObserver = qualityFactorObserverByPipeline.get(pipeline.identifier)
+@singweton
+c-cwass scowingpipewineexecutow @inject() (ovewwide vaw statsweceivew: statsweceivew)
+    extends executow
+    w-with wogging {
+  def awwow[quewy <: p-pipewinequewy, >w< c-candidate <: u-univewsawnoun[any]](
+    p-pipewines: seq[scowingpipewine[quewy, 🥺 candidate]], nyaa~~
+    c-context: executow.context, ^^
+    defauwtfaiwopenpowicy: faiwopenpowicy, >w<
+    f-faiwopenpowicies: map[scowingpipewineidentifiew, OwO faiwopenpowicy], XD
+    quawityfactowobsewvewbypipewine: map[componentidentifiew, ^^;; quawityfactowobsewvew], 🥺
+  ): a-awwow[scowingpipewineexecutow.inputs[quewy], XD scowingpipewineexecutowwesuwt[candidate]] = {
+    v-vaw scowingpipewineawwows = p-pipewines.map { p-pipewine =>
+      vaw faiwopenpowicy = faiwopenpowicies.getowewse(pipewine.identifiew, (U ᵕ U❁) defauwtfaiwopenpowicy)
+      v-vaw quawityfactowobsewvew = q-quawityfactowobsewvewbypipewine.get(pipewine.identifiew)
 
-      getIsoArrowForScoringPipeline(
-        pipeline,
-        context,
-        failOpenPolicy,
-        qualityFactorObserver
+      getisoawwowfowscowingpipewine(
+        p-pipewine, :3
+        c-context, ( ͡o ω ͡o )
+        faiwopenpowicy, òωó
+        q-quawityfactowobsewvew
       )
     }
-    val combinedArrow = isoArrowsSequentially(scoringPipelineArrows)
-    Arrow
-      .map[ScoringPipelineExecutor.Inputs[Query], ScoringPipelineState[Query, Candidate]] {
-        case input =>
-          ScoringPipelineState(
-            input.query,
-            input.itemCandidatesWithDetails,
-            ScoringPipelineExecutorResult(input.itemCandidatesWithDetails, Queue.empty))
-      }.flatMapArrow(combinedArrow).map { state =>
-        state.executorResult.copy(individualPipelineResults =
-          // materialize the Queue into a List for faster future iterations
-          state.executorResult.individualPipelineResults.toList)
+    vaw c-combinedawwow = isoawwowssequentiawwy(scowingpipewineawwows)
+    awwow
+      .map[scowingpipewineexecutow.inputs[quewy], σωσ s-scowingpipewinestate[quewy, (U ᵕ U❁) candidate]] {
+        c-case input =>
+          s-scowingpipewinestate(
+            i-input.quewy, (✿oωo)
+            input.itemcandidateswithdetaiws, ^^
+            scowingpipewineexecutowwesuwt(input.itemcandidateswithdetaiws, ^•ﻌ•^ queue.empty))
+      }.fwatmapawwow(combinedawwow).map { state =>
+        state.executowwesuwt.copy(individuawpipewinewesuwts =
+          // matewiawize the queue into a-a wist fow fastew f-futuwe itewations
+          state.executowwesuwt.individuawpipewinewesuwts.towist)
       }
   }
 
-  private def getIsoArrowForScoringPipeline[
-    Query <: PipelineQuery,
-    Candidate <: UniversalNoun[Any]
+  p-pwivate def g-getisoawwowfowscowingpipewine[
+    q-quewy <: pipewinequewy, XD
+    candidate <: univewsawnoun[any]
   ](
-    pipeline: ScoringPipeline[Query, Candidate],
-    context: Executor.Context,
-    failOpenPolicy: FailOpenPolicy,
-    qualityFactorObserver: Option[QualityFactorObserver]
-  ): Iso[ScoringPipelineState[Query, Candidate]] = {
-    val pipelineArrow = Arrow
-      .map[ScoringPipelineState[Query, Candidate], ScoringPipeline.Inputs[Query]] { state =>
-        ScoringPipeline.Inputs(state.query, state.allCandidates)
-      }.flatMapArrow(pipeline.arrow)
+    pipewine: scowingpipewine[quewy, :3 c-candidate], (ꈍᴗꈍ)
+    context: executow.context, :3
+    faiwopenpowicy: faiwopenpowicy, (U ﹏ U)
+    q-quawityfactowobsewvew: option[quawityfactowobsewvew]
+  ): i-iso[scowingpipewinestate[quewy, c-candidate]] = {
+    v-vaw pipewineawwow = a-awwow
+      .map[scowingpipewinestate[quewy, UwU c-candidate], 😳😳😳 s-scowingpipewine.inputs[quewy]] { s-state =>
+        scowingpipewine.inputs(state.quewy, XD state.awwcandidates)
+      }.fwatmapawwow(pipewine.awwow)
 
-    val observedArrow = wrapPipelineWithExecutorBookkeeping(
-      context,
-      pipeline.identifier,
-      qualityFactorObserver,
-      failOpenPolicy)(pipelineArrow)
+    vaw o-obsewvedawwow = w-wwappipewinewithexecutowbookkeeping(
+      c-context,
+      p-pipewine.identifiew, o.O
+      q-quawityfactowobsewvew, (⑅˘꒳˘)
+      faiwopenpowicy)(pipewineawwow)
 
-    Arrow
-      .zipWithArg(
-        observedArrow
+    awwow
+      .zipwithawg(
+        obsewvedawwow
       ).map {
-        case (
-              scoringPipelinesState: ScoringPipelineState[Query, Candidate],
-              scoringPipelineResult: ScoringPipelineResult[Candidate]) =>
-          val updatedCandidates: Seq[ItemCandidateWithDetails] =
-            mkUpdatedCandidates(pipeline.identifier, scoringPipelinesState, scoringPipelineResult)
-          ScoringPipelineState(
-            scoringPipelinesState.query,
-            updatedCandidates,
-            scoringPipelinesState.executorResult
+        c-case (
+              scowingpipewinesstate: scowingpipewinestate[quewy, 😳😳😳 candidate], nyaa~~
+              scowingpipewinewesuwt: scowingpipewinewesuwt[candidate]) =>
+          vaw updatedcandidates: s-seq[itemcandidatewithdetaiws] =
+            mkupdatedcandidates(pipewine.identifiew, rawr scowingpipewinesstate, -.- scowingpipewinewesuwt)
+          s-scowingpipewinestate(
+            s-scowingpipewinesstate.quewy, (✿oωo)
+            u-updatedcandidates, /(^•ω•^)
+            scowingpipewinesstate.executowwesuwt
               .copy(
-                updatedCandidates,
-                scoringPipelinesState.executorResult.individualPipelineResults :+ scoringPipelineResult)
+                u-updatedcandidates, 🥺
+                scowingpipewinesstate.executowwesuwt.individuawpipewinewesuwts :+ s-scowingpipewinewesuwt)
           )
       }
   }
 
-  private def mkUpdatedCandidates[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    scoringPipelineIdentifier: ScoringPipelineIdentifier,
-    scoringPipelinesState: ScoringPipelineState[Query, Candidate],
-    scoringPipelineResult: ScoringPipelineResult[Candidate]
-  ): Seq[ItemCandidateWithDetails] = {
-    if (scoringPipelineResult.failure.isEmpty) {
+  p-pwivate def mkupdatedcandidates[quewy <: pipewinequewy, ʘwʘ candidate <: univewsawnoun[any]](
+    scowingpipewineidentifiew: s-scowingpipewineidentifiew, UwU
+    scowingpipewinesstate: s-scowingpipewinestate[quewy, XD candidate],
+    scowingpipewinewesuwt: scowingpipewinewesuwt[candidate]
+  ): s-seq[itemcandidatewithdetaiws] = {
+    i-if (scowingpipewinewesuwt.faiwuwe.isempty) {
 
       /**
-       * It's important that we map back from which actual item candidate was scored by looking
-       * at the selector results. This is to defend against the same candidate being selected
-       * from two different candidate pipelines. If one is selected and the other isn't, we
-       * should only score the selected one. If both are selected and each is scored differently
-       * we should get the right score for each.
+       * it's impowtant that we map back f-fwom which actuaw i-item candidate was scowed by w-wooking
+       * a-at the sewectow wesuwts. (✿oωo) this is to defend against the same candidate being sewected
+       * f-fwom two diffewent c-candidate pipewines. :3 i-if one is sewected and t-the othew isn't, (///ˬ///✿) w-we
+       * shouwd onwy scowe the s-sewected one. nyaa~~ if both awe sewected and each is scowed diffewentwy
+       * we s-shouwd get the w-wight scowe fow each. >w<
        */
-      val selectedItemCandidates: Seq[ItemCandidateWithDetails] =
-        scoringPipelineResult.selectorResults
-          .getOrElse(throw PipelineFailure(
-            IllegalStateFailure,
-            s"Missing Selector Results in Scoring Pipeline $scoringPipelineIdentifier")).selectedCandidates.collect {
-            case itemCandidateWithDetails: ItemCandidateWithDetails =>
-              itemCandidateWithDetails
+      vaw sewecteditemcandidates: s-seq[itemcandidatewithdetaiws] =
+        s-scowingpipewinewesuwt.sewectowwesuwts
+          .getowewse(thwow pipewinefaiwuwe(
+            iwwegawstatefaiwuwe, -.-
+            s"missing s-sewectow wesuwts in scowing pipewine $scowingpipewineidentifiew")).sewectedcandidates.cowwect {
+            case itemcandidatewithdetaiws: itemcandidatewithdetaiws =>
+              itemcandidatewithdetaiws
           }
-      val scoredFeatureMaps: Seq[FeatureMap] = scoringPipelineResult.result
-        .getOrElse(Seq.empty).map(_.features)
+      v-vaw scowedfeatuwemaps: seq[featuwemap] = scowingpipewinewesuwt.wesuwt
+        .getowewse(seq.empty).map(_.featuwes)
 
-      if (scoredFeatureMaps.isEmpty) {
-        // It's possible that all Scorers are [[Conditionally]] off. In this case, we return empty
-        // and don't validate the list size since this is done in the hydrator/scorer executor.
-        scoringPipelinesState.allCandidates
-      } else if (selectedItemCandidates.length != scoredFeatureMaps.length) {
-        // The length of the inputted candidates should always match the returned feature map, unless
-        throw PipelineFailure(
-          IllegalStateFailure,
-          s"Missing configured scorer result, length of scorer results does not match the length of selected candidates")
-      } else {
-        /* Zip the selected item candidate seq back to the scored feature maps, this works
-         * because the scored results will always have the same number of elements returned
-         * and it should match the same order. We then loop through all candidates because the
-         * expectation is to always keep the result since a subsequent scoring pipeline can score a
-         * candidate that the current one did not. We only update the feature map of the candidate
-         *  if it was selected and scored.
+      i-if (scowedfeatuwemaps.isempty) {
+        // i-it's possibwe that aww scowews awe [[conditionawwy]] off. (✿oωo) in this case, (˘ω˘) w-we wetuwn empty
+        // a-and don't vawidate the wist size since this is done i-in the hydwatow/scowew executow. rawr
+        s-scowingpipewinesstate.awwcandidates
+      } ewse if (sewecteditemcandidates.wength != scowedfeatuwemaps.wength) {
+        // the wength o-of the inputted candidates shouwd a-awways match t-the wetuwned featuwe map, OwO unwess
+        t-thwow pipewinefaiwuwe(
+          i-iwwegawstatefaiwuwe, ^•ﻌ•^
+          s-s"missing c-configuwed scowew wesuwt, UwU wength o-of scowew wesuwts d-does nyot match the wength of sewected candidates")
+      } e-ewse {
+        /* z-zip the sewected i-item candidate seq back to the scowed featuwe m-maps, (˘ω˘) this wowks
+         * because the scowed w-wesuwts wiww a-awways have the same nyumbew of ewements wetuwned
+         * and i-it shouwd match t-the same owdew. (///ˬ///✿) w-we then woop thwough a-aww candidates because the
+         * e-expectation is to awways keep the wesuwt since a subsequent scowing pipewine can scowe a-a
+         * candidate that the c-cuwwent one did nyot. σωσ we onwy u-update the featuwe map of the candidate
+         *  i-if it was sewected and scowed. /(^•ω•^)
          */
-        val selectedItemCandidateToScorerMap: Map[ItemCandidateWithDetails, FeatureMap] =
-          selectedItemCandidates.zip(scoredFeatureMaps).toMap
-        scoringPipelinesState.allCandidates.map { itemCandidateWithDetails =>
-          selectedItemCandidateToScorerMap.get(itemCandidateWithDetails) match {
-            case Some(scorerResult) =>
-              itemCandidateWithDetails.copy(features =
-                itemCandidateWithDetails.features ++ scorerResult)
-            case None => itemCandidateWithDetails
+        v-vaw sewecteditemcandidatetoscowewmap: m-map[itemcandidatewithdetaiws, 😳 f-featuwemap] =
+          s-sewecteditemcandidates.zip(scowedfeatuwemaps).tomap
+        s-scowingpipewinesstate.awwcandidates.map { itemcandidatewithdetaiws =>
+          sewecteditemcandidatetoscowewmap.get(itemcandidatewithdetaiws) match {
+            case some(scowewwesuwt) =>
+              itemcandidatewithdetaiws.copy(featuwes =
+                itemcandidatewithdetaiws.featuwes ++ scowewwesuwt)
+            c-case nyone => i-itemcandidatewithdetaiws
           }
         }
       }
-    } else {
-      // If the underlying scoring pipeline has failed open, just keep the existing candidates
-      scoringPipelinesState.allCandidates
+    } ewse {
+      // if t-the undewwying scowing pipewine h-has faiwed open, 😳 just keep the existing candidates
+      scowingpipewinesstate.awwcandidates
     }
   }
 }
 
-object ScoringPipelineExecutor {
-  private case class ScoringPipelineState[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    query: Query,
-    allCandidates: Seq[ItemCandidateWithDetails],
-    executorResult: ScoringPipelineExecutorResult[Candidate])
+o-object s-scowingpipewineexecutow {
+  pwivate case cwass s-scowingpipewinestate[quewy <: pipewinequewy, (⑅˘꒳˘) candidate <: univewsawnoun[any]](
+    q-quewy: quewy, 😳😳😳
+    a-awwcandidates: seq[itemcandidatewithdetaiws], 😳
+    e-executowwesuwt: s-scowingpipewineexecutowwesuwt[candidate])
 
-  case class Inputs[Query <: PipelineQuery](
-    query: Query,
-    itemCandidatesWithDetails: Seq[ItemCandidateWithDetails])
+  case cwass inputs[quewy <: pipewinequewy](
+    quewy: quewy, XD
+    i-itemcandidateswithdetaiws: s-seq[itemcandidatewithdetaiws])
 }

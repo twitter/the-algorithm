@@ -1,219 +1,219 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.configapi.params.FSRuleParams.HighToxicityModelScoreSpaceThresholdParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableMutedKeywordFilteringSpaceTitleNotificationsRuleParam
-import com.twitter.visibility.models.SpaceSafetyLabelType.CoordinatedHarmfulActivityHighRecall
-import com.twitter.visibility.models.SpaceSafetyLabelType.DoNotAmplify
-import com.twitter.visibility.models.SpaceSafetyLabelType.MisleadingHighRecall
-import com.twitter.visibility.models.SpaceSafetyLabelType.NsfwHighPrecision
-import com.twitter.visibility.models.SpaceSafetyLabelType.NsfwHighRecall
-import com.twitter.visibility.models.SpaceSafetyLabelType.UntrustedUrl
-import com.twitter.visibility.models.UserLabelValue.Abusive
-import com.twitter.visibility.models.UserLabelValue.BlinkWorst
-import com.twitter.visibility.models.UserLabelValue.DelayedRemediation
-import com.twitter.visibility.models.UserLabelValue.NsfwAvatarImage
-import com.twitter.visibility.models.UserLabelValue.NsfwBannerImage
-import com.twitter.visibility.models.UserLabelValue.NsfwNearPerfect
-import com.twitter.visibility.models.SpaceSafetyLabelType
-import com.twitter.visibility.models.SpaceSafetyLabelType.HatefulHighRecall
-import com.twitter.visibility.models.SpaceSafetyLabelType.HighToxicityModelScore
-import com.twitter.visibility.models.SpaceSafetyLabelType.ViolenceHighRecall
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason.Nsfw
-import com.twitter.visibility.rules.Reason.Unspecified
+impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.hightoxicitymodewscowespacethweshowdpawam
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawam
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.enabwemutedkeywowdfiwtewingspacetitwenotificationswuwepawam
+i-impowt c-com.twittew.visibiwity.modews.spacesafetywabewtype.coowdinatedhawmfuwactivityhighwecaww
+i-impowt c-com.twittew.visibiwity.modews.spacesafetywabewtype.donotampwify
+i-impowt com.twittew.visibiwity.modews.spacesafetywabewtype.misweadinghighwecaww
+impowt com.twittew.visibiwity.modews.spacesafetywabewtype.nsfwhighpwecision
+impowt com.twittew.visibiwity.modews.spacesafetywabewtype.nsfwhighwecaww
+impowt com.twittew.visibiwity.modews.spacesafetywabewtype.untwusteduww
+i-impowt com.twittew.visibiwity.modews.usewwabewvawue.abusive
+impowt com.twittew.visibiwity.modews.usewwabewvawue.bwinkwowst
+i-impowt com.twittew.visibiwity.modews.usewwabewvawue.dewayedwemediation
+impowt c-com.twittew.visibiwity.modews.usewwabewvawue.nsfwavatawimage
+impowt com.twittew.visibiwity.modews.usewwabewvawue.nsfwbannewimage
+impowt com.twittew.visibiwity.modews.usewwabewvawue.nsfwneawpewfect
+impowt c-com.twittew.visibiwity.modews.spacesafetywabewtype
+impowt com.twittew.visibiwity.modews.spacesafetywabewtype.hatefuwhighwecaww
+impowt c-com.twittew.visibiwity.modews.spacesafetywabewtype.hightoxicitymodewscowe
+i-impowt com.twittew.visibiwity.modews.spacesafetywabewtype.viowencehighwecaww
+impowt com.twittew.visibiwity.modews.usewwabewvawue
+impowt com.twittew.visibiwity.wuwes.condition._
+impowt com.twittew.visibiwity.wuwes.weason.nsfw
+i-impowt com.twittew.visibiwity.wuwes.weason.unspecified
 
-object SpaceRules {
+object spacewuwes {
 
-  abstract class SpaceHasLabelRule(
-    action: Action,
-    safetyLabelType: SpaceSafetyLabelType)
-      extends RuleWithConstantAction(action, And(SpaceHasLabel(safetyLabelType), NonAuthorViewer))
+  abstwact cwass spacehaswabewwuwe(
+    action: action, OwO
+    s-safetywabewtype: spacesafetywabewtype)
+      e-extends wuwewithconstantaction(action, a-and(spacehaswabew(safetywabewtype), 😳 n-nyonauthowviewew))
 
-  abstract class SpaceHasLabelAndNonFollowerRule(
-    action: Action,
-    safetyLabelType: SpaceSafetyLabelType)
-      extends RuleWithConstantAction(
-        action,
-        And(SpaceHasLabel(safetyLabelType), LoggedOutOrViewerNotFollowingAuthor))
+  a-abstwact cwass spacehaswabewandnonfowwowewwuwe(
+    action: a-action, 😳😳😳
+    safetywabewtype: spacesafetywabewtype)
+      e-extends wuwewithconstantaction(
+        action, (˘ω˘)
+        and(spacehaswabew(safetywabewtype), ʘwʘ woggedoutowviewewnotfowwowingauthow))
 
-  abstract class AnySpaceHostOrAdminHasLabelRule(
-    action: Action,
-    userLabel: UserLabelValue)
-      extends WhenAuthorUserLabelPresentRule(action, userLabel)
+  abstwact cwass a-anyspacehostowadminhaswabewwuwe(
+    action: action, ( ͡o ω ͡o )
+    u-usewwabew: u-usewwabewvawue)
+      e-extends whenauthowusewwabewpwesentwuwe(action, o.O usewwabew)
 
-  abstract class AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
-    action: Action,
-    userLabel: UserLabelValue)
-      extends ConditionWithUserLabelRule(action, LoggedOutOrViewerNotFollowingAuthor, userLabel)
+  abstwact c-cwass anyspacehostowadminhaswabewandnonfowwowewwuwe(
+    a-action: action, >w<
+    usewwabew: u-usewwabewvawue)
+      extends c-conditionwithusewwabewwuwe(action, 😳 woggedoutowviewewnotfowwowingauthow, 🥺 usewwabew)
 
 
-  object SpaceDoNotAmplifyAllUsersDropRule
-      extends SpaceHasLabelRule(
-        Drop(Unspecified),
-        DoNotAmplify,
+  o-object spacedonotampwifyawwusewsdwopwuwe
+      e-extends spacehaswabewwuwe(
+        dwop(unspecified), rawr x3
+        d-donotampwify, o.O
       )
 
-  object SpaceDoNotAmplifyNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
-        Drop(Unspecified),
-        DoNotAmplify,
+  object spacedonotampwifynonfowwowewdwopwuwe
+      e-extends spacehaswabewandnonfowwowewwuwe(
+        dwop(unspecified), rawr
+        d-donotampwify, ʘwʘ
       )
 
-  object SpaceCoordHarmfulActivityHighRecallAllUsersDropRule
-      extends SpaceHasLabelRule(
-        Drop(Unspecified),
-        CoordinatedHarmfulActivityHighRecall,
+  o-object spacecoowdhawmfuwactivityhighwecawwawwusewsdwopwuwe
+      extends spacehaswabewwuwe(
+        dwop(unspecified), 😳😳😳
+        coowdinatedhawmfuwactivityhighwecaww, ^^;;
       )
 
-  object SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
-        Drop(Unspecified),
-        CoordinatedHarmfulActivityHighRecall,
+  object spacecoowdhawmfuwactivityhighwecawwnonfowwowewdwopwuwe
+      extends s-spacehaswabewandnonfowwowewwuwe(
+        d-dwop(unspecified), o.O
+        coowdinatedhawmfuwactivityhighwecaww, (///ˬ///✿)
       )
 
-  object SpaceUntrustedUrlAllUsersDropRule
-      extends SpaceHasLabelRule(
-        Drop(Unspecified),
-        UntrustedUrl,
+  o-object s-spaceuntwusteduwwawwusewsdwopwuwe
+      e-extends spacehaswabewwuwe(
+        dwop(unspecified), σωσ
+        untwusteduww, nyaa~~
       )
 
-  object SpaceUntrustedUrlNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
-        Drop(Unspecified),
-        UntrustedUrl,
+  o-object spaceuntwusteduwwnonfowwowewdwopwuwe
+      extends spacehaswabewandnonfowwowewwuwe(
+        dwop(unspecified), ^^;;
+        untwusteduww, ^•ﻌ•^
       )
 
-  object SpaceMisleadingHighRecallNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
-        Drop(Unspecified),
-        MisleadingHighRecall,
+  object s-spacemisweadinghighwecawwnonfowwowewdwopwuwe
+      extends spacehaswabewandnonfowwowewwuwe(
+        d-dwop(unspecified), σωσ
+        misweadinghighwecaww, -.-
       )
 
-  object SpaceNsfwHighPrecisionAllUsersInterstitialRule
-      extends SpaceHasLabelRule(
-        Interstitial(Nsfw),
-        NsfwHighPrecision,
+  o-object spacensfwhighpwecisionawwusewsintewstitiawwuwe
+      e-extends spacehaswabewwuwe(
+        intewstitiaw(nsfw), ^^;;
+        n-nysfwhighpwecision, XD
       )
 
-  object SpaceNsfwHighPrecisionAllUsersDropRule
-      extends SpaceHasLabelRule(
-        Drop(Nsfw),
-        NsfwHighPrecision,
+  o-object s-spacensfwhighpwecisionawwusewsdwopwuwe
+      e-extends spacehaswabewwuwe(
+        dwop(nsfw), 🥺
+        n-nysfwhighpwecision, òωó
       )
 
-  object SpaceNsfwHighPrecisionNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
-        Drop(Nsfw),
-        NsfwHighPrecision,
+  o-object spacensfwhighpwecisionnonfowwowewdwopwuwe
+      e-extends s-spacehaswabewandnonfowwowewwuwe(
+        d-dwop(nsfw), (ˆ ﻌ ˆ)♡
+        nysfwhighpwecision, -.-
       )
 
-  object SpaceNsfwHighPrecisionSafeSearchNonFollowerDropRule
-      extends RuleWithConstantAction(
-        Drop(Nsfw),
-        And(
-          SpaceHasLabel(NsfwHighPrecision),
-          NonAuthorViewer,
-          LoggedOutOrViewerOptInFiltering,
-          Not(ViewerDoesFollowAuthor),
+  object spacensfwhighpwecisionsafeseawchnonfowwowewdwopwuwe
+      extends wuwewithconstantaction(
+        d-dwop(nsfw), :3
+        and(
+          spacehaswabew(nsfwhighpwecision), ʘwʘ
+          nyonauthowviewew, 🥺
+          woggedoutowviewewoptinfiwtewing, >_<
+          nyot(viewewdoesfowwowauthow), ʘwʘ
+        ), (˘ω˘)
+      )
+
+  o-object spacensfwhighwecawwawwusewsdwopwuwe
+      extends spacehaswabewwuwe(
+        dwop(nsfw), (✿oωo)
+        nysfwhighwecaww, (///ˬ///✿)
+      )
+
+  o-object spacensfwhighwecawwnonfowwowewdwopwuwe
+      e-extends s-spacehaswabewandnonfowwowewwuwe(
+        dwop(nsfw), rawr x3
+        nysfwhighwecaww, -.-
+      )
+
+  o-object spacensfwhighwecawwsafeseawchnonfowwowewdwopwuwe
+      e-extends w-wuwewithconstantaction(
+        dwop(nsfw), ^^
+        and(
+          spacehaswabew(nsfwhighwecaww), (⑅˘꒳˘)
+          nyonauthowviewew, nyaa~~
+          woggedoutowviewewoptinfiwtewing, /(^•ω•^)
+          n-nyot(viewewdoesfowwowauthow), (U ﹏ U)
         ),
       )
 
-  object SpaceNsfwHighRecallAllUsersDropRule
-      extends SpaceHasLabelRule(
-        Drop(Nsfw),
-        NsfwHighRecall,
+  object spacehatefuwhighwecawwawwusewsdwopwuwe
+      e-extends spacehaswabewwuwe(
+        dwop(unspecified), 😳😳😳
+        h-hatefuwhighwecaww, >w<
       )
 
-  object SpaceNsfwHighRecallNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
-        Drop(Nsfw),
-        NsfwHighRecall,
+  o-object spaceviowencehighwecawwawwusewsdwopwuwe
+      extends spacehaswabewwuwe(
+        d-dwop(unspecified), XD
+        v-viowencehighwecaww, o.O
       )
 
-  object SpaceNsfwHighRecallSafeSearchNonFollowerDropRule
-      extends RuleWithConstantAction(
-        Drop(Nsfw),
-        And(
-          SpaceHasLabel(NsfwHighRecall),
-          NonAuthorViewer,
-          LoggedOutOrViewerOptInFiltering,
-          Not(ViewerDoesFollowAuthor),
-        ),
-      )
-
-  object SpaceHatefulHighRecallAllUsersDropRule
-      extends SpaceHasLabelRule(
-        Drop(Unspecified),
-        HatefulHighRecall,
-      )
-
-  object SpaceViolenceHighRecallAllUsersDropRule
-      extends SpaceHasLabelRule(
-        Drop(Unspecified),
-        ViolenceHighRecall,
-      )
-
-  object SpaceHighToxicityScoreNonFollowerDropRule
-      extends RuleWithConstantAction(
-        Drop(Unspecified),
-        And(
-          SpaceHasLabelWithScoreAboveThresholdWithParam(
-            HighToxicityModelScore,
-            HighToxicityModelScoreSpaceThresholdParam
-          ),
-          NonAuthorViewer,
-          LoggedOutOrViewerNotFollowingAuthor,
+  object s-spacehightoxicityscowenonfowwowewdwopwuwe
+      e-extends wuwewithconstantaction(
+        dwop(unspecified), mya
+        and(
+          spacehaswabewwithscoweabovethweshowdwithpawam(
+            hightoxicitymodewscowe, 🥺
+            h-hightoxicitymodewscowespacethweshowdpawam
+          ), ^^;;
+          n-nyonauthowviewew, :3
+          woggedoutowviewewnotfowwowingauthow, (U ﹏ U)
         )
       )
-      with ExperimentalRule
+      w-with expewimentawwuwe
 
 
-  object ViewerHasMatchingMutedKeywordInSpaceTitleForNotificationsRule
-      extends OnlyWhenNotAuthorViewerRule(
-        Drop(Reason.MutedKeyword),
-        Condition.ViewerHasMatchingKeywordInSpaceTitleForNotifications
+  o-object viewewhasmatchingmutedkeywowdinspacetitwefownotificationswuwe
+      e-extends onwywhennotauthowviewewwuwe(
+        dwop(weason.mutedkeywowd), OwO
+        c-condition.viewewhasmatchingkeywowdinspacetitwefownotifications
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(
-      EnableMutedKeywordFilteringSpaceTitleNotificationsRuleParam)
+    ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(
+      e-enabwemutedkeywowdfiwtewingspacetitwenotificationswuwepawam)
 
   }
 
 
-  object UserAbusiveNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
-        Drop(Unspecified),
-        Abusive
+  object u-usewabusivenonfowwowewdwopwuwe
+      extends anyspacehostowadminhaswabewandnonfowwowewwuwe(
+        d-dwop(unspecified), 😳😳😳
+        a-abusive
       )
 
-  object UserBlinkWorstAllUsersDropRule
-      extends AnySpaceHostOrAdminHasLabelRule(
-        Drop(Unspecified),
-        BlinkWorst
+  object usewbwinkwowstawwusewsdwopwuwe
+      extends anyspacehostowadminhaswabewwuwe(
+        dwop(unspecified), (ˆ ﻌ ˆ)♡
+        b-bwinkwowst
       )
 
-  object UserNsfwNearPerfectNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
-        Drop(Nsfw),
-        NsfwNearPerfect
+  object usewnsfwneawpewfectnonfowwowewdwopwuwe
+      extends anyspacehostowadminhaswabewandnonfowwowewwuwe(
+        dwop(nsfw), XD
+        n-nysfwneawpewfect
       )
 
-  object UserNsfwHighPrecisionNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
-        Drop(Nsfw),
-        UserLabelValue.NsfwHighPrecision
+  object usewnsfwhighpwecisionnonfowwowewdwopwuwe
+      extends a-anyspacehostowadminhaswabewandnonfowwowewwuwe(
+        d-dwop(nsfw), (ˆ ﻌ ˆ)♡
+        usewwabewvawue.nsfwhighpwecision
       )
 
-  object UserNsfwAvatarImageNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
-        Drop(Nsfw),
-        NsfwAvatarImage
+  object usewnsfwavatawimagenonfowwowewdwopwuwe
+      e-extends anyspacehostowadminhaswabewandnonfowwowewwuwe(
+        d-dwop(nsfw), ( ͡o ω ͡o )
+        nysfwavatawimage
       )
 
-  object UserNsfwBannerImageNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
-        Drop(Nsfw),
-        NsfwBannerImage
+  object usewnsfwbannewimagenonfowwowewdwopwuwe
+      extends anyspacehostowadminhaswabewandnonfowwowewwuwe(
+        d-dwop(nsfw),
+        nysfwbannewimage
       )
 }

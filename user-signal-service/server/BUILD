@@ -1,21 +1,21 @@
-jvm_binary(
-    name = "bin",
-    basename = "user-signal-service",
-    main = "com.twitter.usersignalservice.UserSignalServiceStratoFedServerMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "strato/src/main/scala/com/twitter/strato/logging/logback",
-        "user-signal-service/server/src/main/resources",
-        "user-signal-service/server/src/main/scala/com/twitter/usersignalservice",
+jvm_binawy(
+    name = "bin", rawr
+    basename = "usew-signaw-sewvice", σωσ
+    main = "com.twittew.usewsignawsewvice.usewsignawsewvicestwatofedsewvewmain", σωσ
+    w-wuntime_pwatfowm = "java11", >_<
+    t-tags = ["bazew-compatibwe"], :3
+    d-dependencies = [
+        "3wdpawty/jvm/ch/qos/wogback:wogback-cwassic", (U ﹏ U)
+        "wogwens/wogwens-wogback/swc/main/scawa/com/twittew/wogwens/wogback", -.-
+        "stwato/swc/main/scawa/com/twittew/stwato/wogging/wogback", (ˆ ﻌ ˆ)♡
+        "usew-signaw-sewvice/sewvew/swc/main/wesouwces", (⑅˘꒳˘)
+        "usew-signaw-sewvice/sewvew/swc/main/scawa/com/twittew/usewsignawsewvice", (U ᵕ U❁)
     ],
 )
 
-#  Aurora Workflows build phase convention requires a jvm_app named with ${project-name}-app
+#  a-auwowa w-wowkfwows buiwd p-phase convention w-wequiwes a j-jvm_app nyamed with ${pwoject-name}-app
 jvm_app(
-    name = "user-signal-service-app",
-    archive = "zip",
-    binary = ":bin",
+    nyame = "usew-signaw-sewvice-app", -.-
+    awchive = "zip", ^^;;
+    binawy = ":bin", >_<
 )

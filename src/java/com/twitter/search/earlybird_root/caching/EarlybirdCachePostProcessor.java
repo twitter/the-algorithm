@@ -1,22 +1,22 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.google.common.base.Optional;
+impowt com.googwe.common.base.optionaw;
 
-import com.twitter.search.common.caching.filter.CachePostProcessor;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+i-impowt c-com.twittew.seawch.common.caching.fiwtew.cachepostpwocessow;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-public class EarlybirdCachePostProcessor
-    extends CachePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
+p-pubwic cwass e-eawwybiwdcachepostpwocessow
+    e-extends cachepostpwocessow<eawwybiwdwequestcontext, -.- eawwybiwdwesponse> {
 
-  @Override
-  public final void recordCacheHit(EarlybirdResponse response) {
-    response.setCacheHit(true);
+  @ovewwide
+  pubwic finaw void wecowdcachehit(eawwybiwdwesponse wesponse) {
+    w-wesponse.setcachehit(twue);
   }
 
-  @Override
-  public Optional<EarlybirdResponse> processCacheResponse(EarlybirdRequestContext originalRequest,
-                                                          EarlybirdResponse cacheResponse) {
-    return Optional.of(cacheResponse);
+  @ovewwide
+  pubwic optionaw<eawwybiwdwesponse> pwocesscachewesponse(eawwybiwdwequestcontext owiginawwequest, (ˆ ﻌ ˆ)♡
+                                                          e-eawwybiwdwesponse cachewesponse) {
+    w-wetuwn optionaw.of(cachewesponse);
   }
 }

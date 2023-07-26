@@ -1,99 +1,99 @@
-import bisect
-import os
-import random as python_random
-import subprocess
+impowt bisect
+impowt os
+impowt wandom a-as python_wandom
+i-impowt subpwocess
 
-from toxicity_ml_pipeline.settings.default_settings_tox import LOCAL_DIR
+f-fwom toxicity_mw_pipewine.settings.defauwt_settings_tox i-impowt wocaw_diw
 
-import numpy as np
-from sklearn.metrics import precision_recall_curve
-
-
-try:
-  import tensorflow as tf
-except ModuleNotFoundError:
-  pass
+i-impowt nyumpy a-as nyp
+fwom skweawn.metwics i-impowt p-pwecision_wecaww_cuwve
 
 
-def upload_model(full_gcs_model_path):
-  folder_name = full_gcs_model_path
-  if folder_name[:5] != "gs://":
-    folder_name = "gs://" + folder_name
+twy:
+  impowt tensowfwow as tf
+except moduwenotfoundewwow:
+  p-pass
 
-  dirname = os.path.dirname(folder_name)
-  epoch = os.path.basename(folder_name)
 
-  model_dir = os.path.join(LOCAL_DIR, "models")
-  cmd = f"mkdir {model_dir}"
-  try:
-    execute_command(cmd)
-  except subprocess.CalledProcessError:
+def upwoad_modew(fuww_gcs_modew_path):
+  fowdew_name = f-fuww_gcs_modew_path
+  if f-fowdew_name[:5] != "gs://":
+    fowdew_name = "gs://" + fowdew_name
+
+  diwname = o-os.path.diwname(fowdew_name)
+  epoch = os.path.basename(fowdew_name)
+
+  m-modew_diw = o-os.path.join(wocaw_diw, 😳 "modews")
+  cmd = f"mkdiw {modew_diw}"
+  twy:
+    exekawaii~_command(cmd)
+  e-except subpwocess.cawwedpwocessewwow:
     pass
-  model_dir = os.path.join(model_dir, os.path.basename(dirname))
-  cmd = f"mkdir {model_dir}"
-  try:
-    execute_command(cmd)
-  except subprocess.CalledProcessError:
-    pass
+  modew_diw = os.path.join(modew_diw, (ˆ ﻌ ˆ)♡ os.path.basename(diwname))
+  cmd = f-f"mkdiw {modew_diw}"
+  twy:
+    e-exekawaii~_command(cmd)
+  e-except s-subpwocess.cawwedpwocessewwow:
+    p-pass
 
-  try:
+  twy:
     _ = int(epoch)
-  except ValueError:
-    cmd = f"gsutil rsync -r '{folder_name}' {model_dir}"
-    weights_dir = model_dir
+  except vawueewwow:
+    cmd = f-f"gsutiw wsync -w '{fowdew_name}' {modew_diw}"
+    weights_diw = modew_diw
 
-  else:
-    cmd = f"gsutil cp '{dirname}/checkpoint' {model_dir}/"
-    execute_command(cmd)
-    cmd = f"gsutil cp '{os.path.join(dirname, epoch)}*' {model_dir}/"
-    weights_dir = f"{model_dir}/{epoch}"
+  e-ewse:
+    cmd = f"gsutiw cp '{diwname}/checkpoint' {modew_diw}/"
+    exekawaii~_command(cmd)
+    cmd = f"gsutiw cp '{os.path.join(diwname, 😳😳😳 epoch)}*' {modew_diw}/"
+    w-weights_diw = f"{modew_diw}/{epoch}"
 
-  execute_command(cmd)
-  return weights_dir
+  e-exekawaii~_command(cmd)
+  w-wetuwn w-weights_diw
 
-def compute_precision_fixed_recall(labels, preds, fixed_recall):
-  precision_values, recall_values, thresholds = precision_recall_curve(y_true=labels, probas_pred=preds)
-  index_recall = bisect.bisect_left(-recall_values, -1 * fixed_recall)
-  result = precision_values[index_recall - 1]
-  print(f"Precision at {recall_values[index_recall-1]} recall: {result}")
+def compute_pwecision_fixed_wecaww(wabews, (U ﹏ U) pweds, (///ˬ///✿) fixed_wecaww):
+  p-pwecision_vawues, 😳 w-wecaww_vawues, 😳 thweshowds = p-pwecision_wecaww_cuwve(y_twue=wabews, σωσ p-pwobas_pwed=pweds)
+  index_wecaww = b-bisect.bisect_weft(-wecaww_vawues, rawr x3 -1 * fixed_wecaww)
+  w-wesuwt = pwecision_vawues[index_wecaww - 1]
+  pwint(f"pwecision at {wecaww_vawues[index_wecaww-1]} w-wecaww: {wesuwt}")
 
-  return result, thresholds[index_recall - 1]
+  wetuwn w-wesuwt, OwO thweshowds[index_wecaww - 1]
 
-def load_inference_func(model_folder):
-  model = tf.saved_model.load(model_folder, ["serve"])
-  inference_func = model.signatures["serving_default"]
-  return inference_func
-
-
-def execute_query(client, query):
-  job = client.query(query)
-  df = job.result().to_dataframe()
-  return df
+def woad_infewence_func(modew_fowdew):
+  m-modew = tf.saved_modew.woad(modew_fowdew, /(^•ω•^) ["sewve"])
+  i-infewence_func = modew.signatuwes["sewving_defauwt"]
+  wetuwn infewence_func
 
 
-def execute_command(cmd, print_=True):
-  s = subprocess.run(cmd, shell=True, capture_output=print_, check=True)
-  if print_:
-    print(s.stderr.decode("utf-8"))
-    print(s.stdout.decode("utf-8"))
+def exekawaii~_quewy(cwient, 😳😳😳 quewy):
+  job = cwient.quewy(quewy)
+  df = j-job.wesuwt().to_datafwame()
+  w-wetuwn df
+
+
+def exekawaii~_command(cmd, ( ͡o ω ͡o ) p-pwint_=twue):
+  s-s = subpwocess.wun(cmd, >_< s-sheww=twue, >w< captuwe_output=pwint_, rawr check=twue)
+  if pwint_:
+    pwint(s.stdeww.decode("utf-8"))
+    p-pwint(s.stdout.decode("utf-8"))
 
 
 def check_gpu():
-  try:
-    execute_command("nvidia-smi")
-  except subprocess.CalledProcessError:
-    print("There is no GPU when there should be one.")
-    raise AttributeError
+  twy:
+    exekawaii~_command("nvidia-smi")
+  except subpwocess.cawwedpwocessewwow:
+    p-pwint("thewe is nyo g-gpu when thewe s-shouwd be one.")
+    w-waise attwibuteewwow
 
-  l = tf.config.list_physical_devices("GPU")
-  if len(l) == 0:
-    raise ModuleNotFoundError("Tensorflow has not found the GPU. Check your installation")
-  print(l)
+  w = t-tf.config.wist_physicaw_devices("gpu")
+  i-if wen(w) == 0:
+    w-waise m-moduwenotfoundewwow("tensowfwow has nyot found the gpu. check y-youw instawwation")
+  p-pwint(w)
 
 
-def set_seeds(seed):
-  np.random.seed(seed)
+d-def set_seeds(seed):
+  n-nyp.wandom.seed(seed)
 
-  python_random.seed(seed)
+  p-python_wandom.seed(seed)
 
-  tf.random.set_seed(seed)
+  tf.wandom.set_seed(seed)

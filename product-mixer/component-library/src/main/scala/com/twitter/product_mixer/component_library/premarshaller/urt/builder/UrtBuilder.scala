@@ -1,94 +1,94 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.util.SortIndexBuilder
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowopewation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.uwtpipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.utiw.sowtindexbuiwdew
 
-trait UrtBuilder[-Query <: PipelineQuery, +Instruction <: TimelineInstruction] {
-  private val TimelineIdSuffix = "-Timeline"
+twait uwtbuiwdew[-quewy <: p-pipewinequewy, (˘ω˘) +instwuction <: timewineinstwuction] {
+  pwivate vaw t-timewineidsuffix = "-timewine"
 
-  def instructionBuilders: Seq[UrtInstructionBuilder[Query, Instruction]]
+  def instwuctionbuiwdews: s-seq[uwtinstwuctionbuiwdew[quewy, ^^;; instwuction]]
 
-  def cursorBuilders: Seq[UrtCursorBuilder[Query]]
-  def cursorUpdaters: Seq[UrtCursorUpdater[Query]]
+  def cuwsowbuiwdews: seq[uwtcuwsowbuiwdew[quewy]]
+  d-def cuwsowupdatews: seq[uwtcuwsowupdatew[quewy]]
 
-  def metadataBuilder: Option[BaseUrtMetadataBuilder[Query]]
+  d-def metadatabuiwdew: o-option[baseuwtmetadatabuiwdew[quewy]]
 
-  // Timeline entry sort indexes will count down by this value. Values higher than 1 are useful to
-  // leave room in the sequence for dynamically injecting content in between existing entries.
-  def sortIndexStep: Int = 1
+  // timewine entwy sowt indexes wiww count down by this vawue. (✿oωo) v-vawues highew than 1 awe usefuw to
+  // weave woom in the sequence fow dynamicawwy i-injecting content in between e-existing entwies. (U ﹏ U)
+  d-def sowtindexstep: i-int = 1
 
-  final def buildTimeline(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Timeline = {
-    val initialSortIndex = getInitialSortIndex(query)
+  f-finaw def buiwdtimewine(
+    quewy: quewy, -.-
+    entwies: seq[timewineentwy]
+  ): t-timewine = {
+    vaw initiawsowtindex = getinitiawsowtindex(quewy)
 
-    // Set the sort indexes of the entries before we pass them to the cursor builders, since many
-    // cursor implementations use the sort index of the first/last entry as part of the cursor value
-    val sortIndexedEntries = updateSortIndexes(initialSortIndex, entries)
+    // set t-the sowt indexes of the entwies befowe we pass them to the cuwsow buiwdews, ^•ﻌ•^ since many
+    // c-cuwsow impwementations use the s-sowt index of the f-fiwst/wast entwy a-as pawt of the cuwsow vawue
+    vaw sowtindexedentwies = updatesowtindexes(initiawsowtindex, rawr e-entwies)
 
-    // Iterate over the cursorUpdaters in the order they were defined. Note that each updater will
-    // be passed the timelineEntries updated by the previous cursorUpdater.
-    val updatedCursorEntries: Seq[TimelineEntry] =
-      cursorUpdaters.foldLeft(sortIndexedEntries) { (timelineEntries, cursorUpdater) =>
-        cursorUpdater.update(query, timelineEntries)
+    // i-itewate ovew the cuwsowupdatews i-in the owdew they w-wewe defined. (˘ω˘) nyote that each u-updatew wiww
+    // be passed the t-timewineentwies updated by the pwevious cuwsowupdatew. nyaa~~
+    v-vaw updatedcuwsowentwies: s-seq[timewineentwy] =
+      cuwsowupdatews.fowdweft(sowtindexedentwies) { (timewineentwies, UwU c-cuwsowupdatew) =>
+        c-cuwsowupdatew.update(quewy, :3 timewineentwies)
       }
 
-    val allCursoredEntries =
-      updatedCursorEntries ++ cursorBuilders.flatMap(_.build(query, updatedCursorEntries))
+    vaw awwcuwsowedentwies =
+      updatedcuwsowentwies ++ cuwsowbuiwdews.fwatmap(_.buiwd(quewy, (⑅˘꒳˘) updatedcuwsowentwies))
 
-    val instructions: Seq[Instruction] =
-      instructionBuilders.flatMap(_.build(query, allCursoredEntries))
+    vaw instwuctions: s-seq[instwuction] =
+      i-instwuctionbuiwdews.fwatmap(_.buiwd(quewy, (///ˬ///✿) awwcuwsowedentwies))
 
-    val metadata = metadataBuilder.map(_.build(query, allCursoredEntries))
+    v-vaw metadata = metadatabuiwdew.map(_.buiwd(quewy, a-awwcuwsowedentwies))
 
-    Timeline(
-      id = query.product.identifier.toString + TimelineIdSuffix,
-      instructions = instructions,
+    t-timewine(
+      id = quewy.pwoduct.identifiew.tostwing + timewineidsuffix, ^^;;
+      i-instwuctions = instwuctions, >_<
       metadata = metadata
     )
   }
 
-  final def getInitialSortIndex(query: Query): Long =
-    query match {
-      case cursorQuery: HasPipelineCursor[_] =>
-        UrtPipelineCursor
-          .getCursorInitialSortIndex(cursorQuery)
-          .getOrElse(SortIndexBuilder.timeToId(query.queryTime))
-      case _ => SortIndexBuilder.timeToId(query.queryTime)
+  finaw def getinitiawsowtindex(quewy: quewy): wong =
+    q-quewy match {
+      case c-cuwsowquewy: haspipewinecuwsow[_] =>
+        uwtpipewinecuwsow
+          .getcuwsowinitiawsowtindex(cuwsowquewy)
+          .getowewse(sowtindexbuiwdew.timetoid(quewy.quewytime))
+      c-case _ => s-sowtindexbuiwdew.timetoid(quewy.quewytime)
     }
 
   /**
-   * Updates the sort indexes in the timeline entries starting from the given initial sort index
-   * value and decreasing by the value defined in the sort index step field
+   * updates the sowt i-indexes in the t-timewine entwies s-stawting fwom t-the given initiaw sowt index
+   * vawue and decweasing b-by the vawue d-defined in the s-sowt index step f-fiewd
    *
-   * @param initialSortIndex The initial value of the sort index
-   * @param timelineEntries Timeline entries to update
+   * @pawam i-initiawsowtindex the initiaw vawue of the sowt index
+   * @pawam t-timewineentwies timewine entwies to update
    */
-  final def updateSortIndexes(
-    initialSortIndex: Long,
-    timelineEntries: Seq[TimelineEntry]
-  ): Seq[TimelineEntry] = {
-    val indexRange =
-      initialSortIndex to (initialSortIndex - (timelineEntries.size * sortIndexStep)) by -sortIndexStep
+  finaw def updatesowtindexes(
+    initiawsowtindex: wong, rawr x3
+    timewineentwies: s-seq[timewineentwy]
+  ): seq[timewineentwy] = {
+    vaw indexwange =
+      initiawsowtindex t-to (initiawsowtindex - (timewineentwies.size * s-sowtindexstep)) b-by -sowtindexstep
 
-    // Skip any existing cursors because their sort indexes will be managed by their cursor updater.
-    // If the cursors are not removed first, then the remaining entries would have a gap everywhere
-    // an existing cursor was present.
-    val (cursorEntries, nonCursorEntries) = timelineEntries.partition {
-      case _: CursorOperation => true
-      case _ => false
+    // skip any existing c-cuwsows because theiw sowt indexes w-wiww be managed b-by theiw cuwsow updatew. /(^•ω•^)
+    // if the cuwsows awe nyot wemoved fiwst, :3 then the wemaining entwies w-wouwd have a gap evewywhewe
+    // a-an existing cuwsow was p-pwesent. (ꈍᴗꈍ)
+    vaw (cuwsowentwies, /(^•ω•^) n-nyoncuwsowentwies) = timewineentwies.pawtition {
+      case _: c-cuwsowopewation => t-twue
+      case _ => fawse
     }
 
-    nonCursorEntries.zip(indexRange).map {
-      case (entry, index) =>
-        entry.withSortIndex(index)
-    } ++ cursorEntries
+    n-nyoncuwsowentwies.zip(indexwange).map {
+      c-case (entwy, (⑅˘꒳˘) index) =>
+        entwy.withsowtindex(index)
+    } ++ cuwsowentwies
   }
 }

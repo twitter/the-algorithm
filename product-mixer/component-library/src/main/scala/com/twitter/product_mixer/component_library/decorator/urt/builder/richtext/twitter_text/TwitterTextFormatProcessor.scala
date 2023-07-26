@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.wichtext.twittew_text
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
-import scala.collection.mutable
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.pwain
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextfowmat
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.stwong
+i-impowt s-scawa.cowwection.mutabwe
 
-object TwitterTextFormatProcessor {
-  lazy val defaultFormatProcessor = TwitterTextFormatProcessor()
+o-object t-twittewtextfowmatpwocessow {
+  wazy vaw defauwtfowmatpwocessow = twittewtextfowmatpwocessow()
 }
 
 /**
- * Add the corresponding [[RichTextFormat]] extraction logic into [[TwitterTextRenderer]].
- * The [[TwitterTextRenderer]] after being processed will extract the defined entities. 
+ * add the cowwesponding [[wichtextfowmat]] e-extwaction wogic into [[twittewtextwendewew]]. -.-
+ * the [[twittewtextwendewew]] a-aftew being pwocessed wiww extwact t-the defined entities. 🥺 
  */
-case class TwitterTextFormatProcessor(
-  formats: Set[RichTextFormat] = Set(Plain, Strong),
-) extends TwitterTextRendererProcessor {
+case cwass twittewtextfowmatpwocessow(
+  fowmats: s-set[wichtextfowmat] = set(pwain, o.O s-stwong), /(^•ω•^)
+) e-extends twittewtextwendewewpwocessow {
 
-  private val formatMap = formats.map { format => format.name.toLowerCase -> format }.toMap
+  pwivate vaw fowmatmap = fowmats.map { fowmat => fowmat.name.towowewcase -> f-fowmat }.tomap
 
-  private[this] val formatMatcher = {
-    val formatNames = formatMap.keys.toSet
-    s"<(/?)(${formatNames.mkString("|")})>".r
+  pwivate[this] vaw fowmatmatchew = {
+    vaw fowmatnames = fowmatmap.keys.toset
+    s-s"<(/?)(${fowmatnames.mkstwing("|")})>".w
   }
 
-  def renderText(text: String): RichText = {
-    process(TwitterTextRenderer(text)).build
+  def wendewtext(text: s-stwing): wichtext = {
+    p-pwocess(twittewtextwendewew(text)).buiwd
   }
 
-  def process(richTextBuilder: TwitterTextRenderer): TwitterTextRenderer = {
-    val text = richTextBuilder.text
-    val nodeStack = mutable.ArrayStack[(RichTextFormat, Int)]()
-    var offset = 0
+  d-def pwocess(wichtextbuiwdew: t-twittewtextwendewew): twittewtextwendewew = {
+    vaw text = w-wichtextbuiwdew.text
+    vaw nyodestack = mutabwe.awwaystack[(wichtextfowmat, nyaa~~ i-int)]()
+    vaw offset = 0
 
-    formatMatcher.findAllMatchIn(text).foreach { m =>
-      formatMap.get(m.group(2)) match {
-        case Some(format) => {
-          if (m.group(1).nonEmpty) {
-            if (!nodeStack.headOption.exists {
-                case (formatFromStack, _) => formatFromStack == format
+    fowmatmatchew.findawwmatchin(text).foweach { m =>
+      fowmatmap.get(m.gwoup(2)) match {
+        case some(fowmat) => {
+          i-if (m.gwoup(1).nonempty) {
+            if (!nodestack.headoption.exists {
+                case (fowmatfwomstack, nyaa~~ _) => f-fowmatfwomstack == fowmat
               }) {
-              throw UnmatchedFormatTag(format)
+              t-thwow unmatchedfowmattag(fowmat)
             }
-            val (_, startIndex) = nodeStack.pop
-            richTextBuilder.mergeFormat(startIndex, m.start + offset, format)
-          } else {
-            nodeStack.push((format, m.start + offset))
+            v-vaw (_, :3 stawtindex) = nyodestack.pop
+            wichtextbuiwdew.mewgefowmat(stawtindex, 😳😳😳 m.stawt + o-offset, (˘ω˘) fowmat)
+          } e-ewse {
+            nyodestack.push((fowmat, ^^ m-m.stawt + o-offset))
           }
-          richTextBuilder.remove(m.start + offset, m.end + offset)
-          offset -= m.end - m.start
+          wichtextbuiwdew.wemove(m.stawt + o-offset, :3 m.end + offset)
+          o-offset -= m.end - m.stawt
         }
-        case _ => // if format is not found, skip this format
+        case _ => // i-if fowmat is nyot found, -.- skip t-this fowmat
       }
     }
 
-    if (nodeStack.nonEmpty) {
-      throw UnmatchedFormatTag(nodeStack.head._1)
+    if (nodestack.nonempty) {
+      thwow unmatchedfowmattag(nodestack.head._1)
     }
 
-    richTextBuilder
+    w-wichtextbuiwdew
   }
 }
 
-case class UnmatchedFormatTag(format: RichTextFormat)
-    extends Exception(s"Unmatched format start and end tags for $format")
+c-case cwass unmatchedfowmattag(fowmat: wichtextfowmat)
+    extends exception(s"unmatched fowmat stawt and end tags fow $fowmat")

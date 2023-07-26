@@ -1,33 +1,33 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer.earlybird
+package com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew.eawwybiwd
 
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => cts}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+impowt com.twittew.home_mixew.modew.homefeatuwes.candidatesouwceidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
+impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => eb}
+impowt com.twittew.timewinesewvice.suggests.wogging.candidate_tweet_souwce_id.{thwiftscawa => c-cts}
+impowt com.twittew.timewinesewvice.suggests.{thwiftscawa => st}
 
-object ScoredTweetsEarlybirdFrsResponseFeatureTransformer
-    extends CandidateFeatureTransformer[eb.ThriftSearchResult] {
+object s-scowedtweetseawwybiwdfwswesponsefeatuwetwansfowmew
+    extends c-candidatefeatuwetwansfowmew[eb.thwiftseawchwesuwt] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ScoredTweetsEarlybirdFrsResponse")
+  ovewwide vaw identifiew: twansfowmewidentifiew =
+    t-twansfowmewidentifiew("scowedtweetseawwybiwdfwswesponse")
 
-  override val features: Set[Feature[_, _]] = EarlybirdResponseTransformer.features
+  ovewwide v-vaw featuwes: s-set[featuwe[_, OwO _]] = eawwybiwdwesponsetwansfowmew.featuwes
 
-  override def transform(candidate: eb.ThriftSearchResult): FeatureMap = {
+  ovewwide def twansfowm(candidate: eb.thwiftseawchwesuwt): featuwemap = {
 
-    val baseFeatures = EarlybirdResponseTransformer.transform(candidate)
+    v-vaw basefeatuwes = eawwybiwdwesponsetwansfowmew.twansfowm(candidate)
 
-    val features = FeatureMapBuilder()
-      .add(CandidateSourceIdFeature, Some(cts.CandidateTweetSourceId.FrsTweet))
-      .add(SuggestTypeFeature, Some(st.SuggestType.FrsTweet))
-      .build()
+    vaw featuwes = featuwemapbuiwdew()
+      .add(candidatesouwceidfeatuwe, (U ﹏ U) some(cts.candidatetweetsouwceid.fwstweet))
+      .add(suggesttypefeatuwe, >_< s-some(st.suggesttype.fwstweet))
+      .buiwd()
 
-    baseFeatures ++ features
+    basefeatuwes ++ f-featuwes
   }
 }

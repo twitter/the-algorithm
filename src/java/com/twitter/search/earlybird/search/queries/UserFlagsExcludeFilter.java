@@ -1,128 +1,128 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt o-owg.apache.wucene.index.weafweadewcontext;
+impowt o-owg.apache.wucene.index.numewicdocvawues;
+i-impowt owg.apache.wucene.seawch.booweancwause;
+impowt o-owg.apache.wucene.seawch.booweanquewy;
+i-impowt o-owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowemode;
+i-impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
+impowt com.twittew.seawch.common.quewy.defauwtfiwtewweight;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.awwdocsitewatow;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.wangefiwtewdisi;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
 
-public final class UserFlagsExcludeFilter extends Query {
+pubwic finaw c-cwass usewfwagsexcwudefiwtew extends q-quewy {
   /**
-   * Returns a query that filters hits based on their author flags.
+   * w-wetuwns a quewy that fiwtews hits based on theiw authow fwags. ^^;;
    *
-   * @param excludeAntisocial Determines if the filter should exclude hits from antisocial users.
-   * @param excludeOffensive Determines if the filter should exclude hits from offensive users.
-   * @param excludeProtected Determines if the filter should exclude hits from protected users
-   * @return A query that filters hits based on their author flags.
+   * @pawam e-excwudeantisociaw detewmines if the fiwtew shouwd excwude hits fwom antisociaw u-usews. >_<
+   * @pawam excwudeoffensive d-detewmines i-if the fiwtew s-shouwd excwude h-hits fwom offensive usews. rawr x3
+   * @pawam excwudepwotected d-detewmines if the fiwtew shouwd excwude h-hits fwom pwotected usews
+   * @wetuwn a quewy that fiwtews hits based on theiw authow fwags. /(^•ω•^)
    */
-  public static Query getUserFlagsExcludeFilter(UserTable userTable,
-                                                boolean excludeAntisocial,
-                                                boolean excludeOffensive,
-                                                boolean excludeProtected) {
-    return new BooleanQuery.Builder()
-        .add(new UserFlagsExcludeFilter(
-                userTable, excludeAntisocial, excludeOffensive, excludeProtected),
-            BooleanClause.Occur.FILTER)
-        .build();
+  p-pubwic static quewy getusewfwagsexcwudefiwtew(usewtabwe u-usewtabwe, :3
+                                                b-boowean e-excwudeantisociaw, (ꈍᴗꈍ)
+                                                boowean excwudeoffensive, /(^•ω•^)
+                                                boowean excwudepwotected) {
+    w-wetuwn nyew booweanquewy.buiwdew()
+        .add(new u-usewfwagsexcwudefiwtew(
+                usewtabwe, (⑅˘꒳˘) e-excwudeantisociaw, ( ͡o ω ͡o ) e-excwudeoffensive, òωó excwudepwotected), (⑅˘꒳˘)
+            b-booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  private final UserTable userTable;
-  private final boolean excludeAntisocial;
-  private final boolean excludeOffensive;
-  private final boolean excludeProtected;
+  pwivate finaw u-usewtabwe usewtabwe;
+  pwivate finaw boowean excwudeantisociaw;
+  p-pwivate finaw boowean excwudeoffensive;
+  p-pwivate finaw boowean e-excwudepwotected;
 
-  private UserFlagsExcludeFilter(
-      UserTable userTable,
-      boolean excludeAntisocial,
-      boolean excludeOffensive,
-      boolean excludeProtected) {
-    this.userTable = userTable;
-    this.excludeAntisocial = excludeAntisocial;
-    this.excludeOffensive = excludeOffensive;
-    this.excludeProtected = excludeProtected;
+  p-pwivate usewfwagsexcwudefiwtew(
+      usewtabwe usewtabwe, XD
+      boowean excwudeantisociaw, -.-
+      boowean excwudeoffensive, :3
+      b-boowean e-excwudepwotected) {
+    this.usewtabwe = u-usewtabwe;
+    t-this.excwudeantisociaw = e-excwudeantisociaw;
+    this.excwudeoffensive = excwudeoffensive;
+    this.excwudepwotected = excwudepwotected;
   }
 
-  @Override
-  public int hashCode() {
-    return (excludeAntisocial ? 13 : 0) + (excludeOffensive ? 1 : 0) + (excludeProtected ? 2 : 0);
+  @ovewwide
+  p-pubwic int hashcode() {
+    wetuwn (excwudeantisociaw ? 13 : 0) + (excwudeoffensive ? 1 : 0) + (excwudepwotected ? 2 : 0);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof UserFlagsExcludeFilter)) {
-      return false;
+  @ovewwide
+  pubwic boowean equaws(object obj) {
+    if (!(obj i-instanceof usewfwagsexcwudefiwtew)) {
+      wetuwn fawse;
     }
 
-    UserFlagsExcludeFilter filter = UserFlagsExcludeFilter.class.cast(obj);
-    return (excludeAntisocial == filter.excludeAntisocial)
-        && (excludeOffensive == filter.excludeOffensive)
-        && (excludeProtected == filter.excludeProtected);
+    u-usewfwagsexcwudefiwtew f-fiwtew = usewfwagsexcwudefiwtew.cwass.cast(obj);
+    w-wetuwn (excwudeantisociaw == fiwtew.excwudeantisociaw)
+        && (excwudeoffensive == f-fiwtew.excwudeoffensive)
+        && (excwudepwotected == f-fiwtew.excwudepwotected);
   }
 
-  @Override
-  public String toString(String field) {
-    return "UserFlagsExcludeFilter";
+  @ovewwide
+  p-pubwic stwing t-tostwing(stwing fiewd) {
+    wetuwn "usewfwagsexcwudefiwtew";
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader reader = context.reader();
-        if (userTable == null) {
-          return new AllDocsIterator(reader);
+  @ovewwide
+  pubwic weight cweateweight(indexseawchew s-seawchew, nyaa~~ s-scowemode scowemode, 😳 f-fwoat boost) {
+    w-wetuwn n-nyew defauwtfiwtewweight(this) {
+      @ovewwide
+      pwotected docidsetitewatow getdocidsetitewatow(weafweadewcontext c-context) thwows ioexception {
+        weafweadew weadew = context.weadew();
+        if (usewtabwe == nyuww) {
+          wetuwn nyew awwdocsitewatow(weadew);
         }
 
-        final int bits =
-            (excludeAntisocial ? UserTable.ANTISOCIAL_BIT : 0)
-                | (excludeOffensive ? UserTable.OFFENSIVE_BIT | UserTable.NSFW_BIT : 0)
-                | (excludeProtected ? UserTable.IS_PROTECTED_BIT : 0);
-        if (bits != 0) {
-          return new UserFlagsExcludeDocIdSetIterator(reader, userTable) {
-            @Override
-            protected boolean checkUserFlags(UserTable table, long userID) {
-              return !table.isSet(userID, bits);
+        f-finaw int bits =
+            (excwudeantisociaw ? usewtabwe.antisociaw_bit : 0)
+                | (excwudeoffensive ? usewtabwe.offensive_bit | u-usewtabwe.nsfw_bit : 0)
+                | (excwudepwotected ? u-usewtabwe.is_pwotected_bit : 0);
+        i-if (bits != 0) {
+          wetuwn n-nyew usewfwagsexcwudedocidsetitewatow(weadew, (⑅˘꒳˘) usewtabwe) {
+            @ovewwide
+            p-pwotected boowean c-checkusewfwags(usewtabwe tabwe, nyaa~~ wong usewid) {
+              wetuwn !tabwe.isset(usewid, OwO bits);
             }
           };
         }
 
-        return new AllDocsIterator(reader);
+        wetuwn nyew awwdocsitewatow(weadew);
       }
     };
   }
 
-  private abstract static class UserFlagsExcludeDocIdSetIterator extends RangeFilterDISI {
-    private final UserTable userTable;
-    private final NumericDocValues fromUserID;
+  p-pwivate abstwact static c-cwass usewfwagsexcwudedocidsetitewatow extends w-wangefiwtewdisi {
+    p-pwivate finaw usewtabwe usewtabwe;
+    p-pwivate finaw nyumewicdocvawues f-fwomusewid;
 
-    public UserFlagsExcludeDocIdSetIterator(
-        LeafReader indexReader, UserTable table) throws IOException {
-      super(indexReader);
-      userTable = table;
-      fromUserID =
-          indexReader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
+    pubwic usewfwagsexcwudedocidsetitewatow(
+        w-weafweadew indexweadew, rawr x3 u-usewtabwe tabwe) thwows ioexception {
+      supew(indexweadew);
+      usewtabwe = tabwe;
+      f-fwomusewid =
+          i-indexweadew.getnumewicdocvawues(eawwybiwdfiewdconstant.fwom_usew_id_csf.getfiewdname());
     }
 
-    @Override
-    protected boolean shouldReturnDoc() throws IOException {
-      return fromUserID.advanceExact(docID())
-          && checkUserFlags(userTable, fromUserID.longValue());
+    @ovewwide
+    p-pwotected boowean shouwdwetuwndoc() t-thwows ioexception {
+      w-wetuwn fwomusewid.advanceexact(docid())
+          && checkusewfwags(usewtabwe, XD f-fwomusewid.wongvawue());
     }
 
-    protected abstract boolean checkUserFlags(UserTable table, long userID);
+    pwotected abstwact boowean checkusewfwags(usewtabwe tabwe, σωσ wong usewid);
   }
 }

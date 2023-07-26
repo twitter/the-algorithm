@@ -1,202 +1,202 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
 /**
- * Pre-computed shifts, mask, and start int indices used by
- * {@link IntBlockPoolPackedLongsReader} to decode packed values from
- * {@link IntBlockPool}.
+ * pwe-computed shifts, 🥺 m-mask, and s-stawt int indices u-used by
+ * {@wink i-intbwockpoowpackedwongsweadew} t-to decode packed v-vawues fwom
+ * {@wink i-intbwockpoow}. ʘwʘ
  *
- * The purpose of this class is for decoding efficiency and speed. This class is thread-safe since
- * all its usages are read-only.
+ * the p-puwpose of this cwass is fow decoding efficiency and speed. UwU this cwass is thwead-safe s-since
+ * aww its usages awe wead-onwy. XD
  *
- * Packed ints are stored from LOWEST bits for HIGHEST bits in an int.
+ * p-packed ints awe stowed fwom w-wowest bits fow highest bits in an int.
  *
- * Here are 3 different situations when a packed value spans 1, 2, and 3 ints:
+ * hewe awe 3 diffewent s-situations when a packed vawue s-spans 1, (✿oωo) 2, a-and 3 ints:
  *
- * - A packed value spans 1 int:
- *            [High Bits ................................. Low Bits]
- *   int[n] = [possible_other_data|packed_value|possible_other_data]
+ * - a packed vawue spans 1 int:
+ *            [high bits ................................. wow bits]
+ *   i-int[n] = [possibwe_othew_data|packed_vawue|possibwe_othew_data]
  *
- *   To decode, 1 shift right and 1 mask are needed:
- *     * shift - {@link #allLowBitsRightShift}
- *     * mask - dynamically computed based on bitsPerValue (in decoded slice).
+ *   to decode, :3 1 shift wight and 1 mask awe nyeeded:
+ *     * shift - {@wink #awwwowbitswightshift}
+ *     * m-mask - dynamicawwy computed b-based on b-bitspewvawue (in d-decoded swice). (///ˬ///✿)
  *
- * - A packed value spans 2 ints:
- *   The data is stored as:
- *              [High Bits .................. Low Bits]
- *   int[n]   = [low_bits_of_packed_value | other_data]
- *   int[n+1] = [other_data| high_bits_of_packed_value]
+ * - a-a packed vawue spans 2 ints:
+ *   the data i-is stowed as:
+ *              [high bits .................. wow bits]
+ *   int[n]   = [wow_bits_of_packed_vawue | o-othew_data]
+ *   int[n+1] = [othew_data| high_bits_of_packed_vawue]
  *
- *   To decode, 1 shift right, 1 shift left, and 2 masks are needed:
- *     * 1 shift right {@link #allLowBitsRightShift} and 1 mask (computed on the fly) to compute
- *       low_bits_of_packed_value
- *     * 1 mask {@link #allMiddleBitsMask} and 1 shift left {@link #allMiddleBitsLeftShift} to
- *       compute high_bits_of_packed_value
- *     * 1 OR to combine `high_bits_of_packed_value | low_bits_of_packed_value`
+ *   to decode, nyaa~~ 1 shift wight, >w< 1 shift weft, -.- and 2 masks awe nyeeded:
+ *     * 1 s-shift wight {@wink #awwwowbitswightshift} a-and 1 mask (computed o-on t-the fwy) to compute
+ *       wow_bits_of_packed_vawue
+ *     * 1 mask {@wink #awwmiddwebitsmask} and 1 shift weft {@wink #awwmiddwebitsweftshift} t-to
+ *       compute h-high_bits_of_packed_vawue
+ *     * 1 ow to c-combine `high_bits_of_packed_vawue | w-wow_bits_of_packed_vawue`
  *
- * - A packed value spans 3 ints:
- *   The data is stored as:
- *              [High Bits .................. Low Bits]
- *   int[n]   = [low_bits_of_packed_value | other_data]
- *   int[n+1] = [ ... middle_bits_of_packed_value ... ]
- *   int[n+2] = [other_data| high_bits_of_packed_value]
+ * - a packed v-vawue spans 3 ints:
+ *   the data i-is stowed as:
+ *              [high bits .................. wow bits]
+ *   int[n]   = [wow_bits_of_packed_vawue | o-othew_data]
+ *   int[n+1] = [ ... m-middwe_bits_of_packed_vawue ... ]
+ *   int[n+2] = [othew_data| h-high_bits_of_packed_vawue]
  *
- *   To decode, 1 shift right, 2 shift left, and 3 masks are needed:
- *     * 1 shift right {@link #allLowBitsRightShift} and 1 mask (computed on the fly) to compute
- *       low_bits_of_packed_value
- *     * 1 shift left {@link #allMiddleBitsLeftShift} and 1 mask {@link #allMiddleBitsMask} to
- *       compute middle_bits_of_data
- *     * 1 shift left {@link #allHighBitsLeftShift} and 1 mask {@link #allHighBitsMask} to compute
+ *   t-to decode, (✿oωo) 1 shift wight, (˘ω˘) 2 shift weft, rawr and 3 masks awe needed:
+ *     * 1 shift wight {@wink #awwwowbitswightshift} and 1 m-mask (computed o-on the fwy) to compute
+ *       w-wow_bits_of_packed_vawue
+ *     * 1 s-shift weft {@wink #awwmiddwebitsweftshift} a-and 1 mask {@wink #awwmiddwebitsmask} to
+ *       compute middwe_bits_of_data
+ *     * 1 shift w-weft {@wink #awwhighbitsweftshift} and 1 mask {@wink #awwhighbitsmask} to compute
  *       high_bits_of_data
- *     * 1 OR to combine `low_bits_of_data | middle_bits_of_data | high_bits_of_data`
+ *     * 1 ow to combine `wow_bits_of_data | m-middwe_bits_of_data | high_bits_of_data`
  *
- * Example usage:
- * @see HighDFPackedIntsDocsEnum
- * @see HighDFPackedIntsDocsAndPositionsEnum
+ * e-exampwe u-usage:
+ * @see h-highdfpackedintsdocsenum
+ * @see highdfpackedintsdocsandpositionsenum
  */
-public final class PackedLongsReaderPreComputedValues {
-  private final int[][] allLowBitsRightShift;
-  private final int[][] allMiddleBitsLeftShift;
-  private final int[][] allMiddleBitsMask;
-  private final int[][] allHighBitsLeftShift;
-  private final int[][] allHighBitsMask;
+p-pubwic f-finaw cwass packedwongsweadewpwecomputedvawues {
+  p-pwivate finaw i-int[][] awwwowbitswightshift;
+  pwivate finaw int[][] awwmiddwebitsweftshift;
+  p-pwivate finaw i-int[][] awwmiddwebitsmask;
+  p-pwivate f-finaw int[][] a-awwhighbitsweftshift;
+  pwivate finaw int[][] awwhighbitsmask;
 
   /**
-   * 2D int arrays containing pre-computed start int indices; the 2 dimensions are
-   * int[numBitsPerPackedValue][packedValueIndex].
+   * 2d i-int awways containing pwe-computed stawt int indices; the 2 dimensions awe
+   * int[numbitspewpackedvawue][packedvawueindex].
    *
-   * For a given number bits per packed value and a given packed value index, this is the first
-   * int in the subsequent of ints that contains the packed value with the given packed value index.
+   * f-fow a given nyumbew bits pew packed vawue and a given p-packed vawue index, OwO t-this is the f-fiwst
+   * int in the subsequent o-of ints that contains the packed v-vawue with the g-given packed vawue index. ^•ﻌ•^
    */
-  private final int[][] allStartIntIndices;
+  pwivate finaw int[][] awwstawtintindices;
 
   /**
-   * Sole constructor.
+   * sowe constwuctow. UwU
    *
-   * @param maxBitsPerValue max possible number of bits of packed values that will be decoded
-   * @param maxNumValues max number of values are encoded back to back
-   * @param maxNumInts max number of ints are used to store packed values
-   * @param needStartIntIndex for optimization: whether start int indices are needed
+   * @pawam maxbitspewvawue m-max possibwe nyumbew o-of bits of packed vawues that wiww b-be decoded
+   * @pawam m-maxnumvawues max nyumbew of vawues awe e-encoded back to b-back
+   * @pawam maxnumints max n-nyumbew of ints a-awe used to stowe packed vawues
+   * @pawam nyeedstawtintindex fow optimization: whethew stawt i-int indices awe n-nyeeded
    */
-  PackedLongsReaderPreComputedValues(
-      int maxBitsPerValue,
-      int maxNumValues,
-      int maxNumInts,
-      boolean needStartIntIndex) {
-    assert maxBitsPerValue <= Long.SIZE;
+  p-packedwongsweadewpwecomputedvawues(
+      int maxbitspewvawue, (˘ω˘)
+      i-int maxnumvawues, (///ˬ///✿)
+      i-int maxnumints, σωσ
+      b-boowean nyeedstawtintindex) {
+    assewt maxbitspewvawue <= wong.size;
 
-    if (needStartIntIndex) {
-      this.allStartIntIndices = new int[maxBitsPerValue + 1][maxNumValues];
-    } else {
-      this.allStartIntIndices = null;
+    if (needstawtintindex) {
+      this.awwstawtintindices = nyew int[maxbitspewvawue + 1][maxnumvawues];
+    } e-ewse {
+      t-this.awwstawtintindices = nyuww;
     }
 
-    this.allLowBitsRightShift = new int[maxBitsPerValue + 1][maxNumValues];
-    this.allMiddleBitsLeftShift = new int[maxBitsPerValue + 1][maxNumValues];
-    this.allMiddleBitsMask = new int[maxBitsPerValue + 1][maxNumValues];
+    this.awwwowbitswightshift = n-nyew int[maxbitspewvawue + 1][maxnumvawues];
+    t-this.awwmiddwebitsweftshift = nyew int[maxbitspewvawue + 1][maxnumvawues];
+    this.awwmiddwebitsmask = nyew int[maxbitspewvawue + 1][maxnumvawues];
 
-    // Packed value could use up 2 ints.
-    if (maxBitsPerValue > Integer.SIZE) {
-      this.allHighBitsLeftShift = new int[maxBitsPerValue + 1][maxNumValues];
-      this.allHighBitsMask = new int[maxBitsPerValue + 1][maxNumValues];
-    } else {
-      this.allHighBitsLeftShift = null;
-      this.allHighBitsMask = null;
+    // packed v-vawue couwd use up 2 ints. /(^•ω•^)
+    if (maxbitspewvawue > integew.size) {
+      this.awwhighbitsweftshift = n-new int[maxbitspewvawue + 1][maxnumvawues];
+      this.awwhighbitsmask = nyew int[maxbitspewvawue + 1][maxnumvawues];
+    } e-ewse {
+      t-this.awwhighbitsweftshift = nyuww;
+      this.awwhighbitsmask = nyuww;
     }
 
-    compute(maxBitsPerValue, maxNumValues, maxNumInts);
+    compute(maxbitspewvawue, 😳 m-maxnumvawues, 😳 maxnumints);
   }
 
   /**
-   * Compute masks, shifts and start indices.
+   * c-compute masks, (⑅˘꒳˘) shifts and stawt indices. 😳😳😳
    */
-  private void compute(int maxBitsPerValue, int maxNumValues, int maxNumInts) {
-    // For each possible bits per packed value.
-    for (int bitsPerPackedValue = 0; bitsPerPackedValue <= maxBitsPerValue; bitsPerPackedValue++) {
-      int[] startIntIndices =
-          allStartIntIndices != null ? allStartIntIndices[bitsPerPackedValue] : null;
-      int[] lowBitsRightShift =
-          allLowBitsRightShift[bitsPerPackedValue];
-      int[] middleBitsLeftShift =
-          allMiddleBitsLeftShift[bitsPerPackedValue];
-      int[] middleBitsMask =
-          allMiddleBitsMask[bitsPerPackedValue];
-      int[] highBitsLeftShift =
-          allHighBitsLeftShift != null ? allHighBitsLeftShift[bitsPerPackedValue] : null;
-      int[] highBitsMask =
-          allHighBitsMask != null ? allHighBitsMask[bitsPerPackedValue] : null;
+  pwivate v-void compute(int maxbitspewvawue, 😳 i-int maxnumvawues, XD int maxnumints) {
+    // fow each possibwe bits pew packed v-vawue. mya
+    fow (int bitspewpackedvawue = 0; b-bitspewpackedvawue <= m-maxbitspewvawue; bitspewpackedvawue++) {
+      i-int[] stawtintindices =
+          awwstawtintindices != n-nyuww ? a-awwstawtintindices[bitspewpackedvawue] : n-nyuww;
+      int[] w-wowbitswightshift =
+          awwwowbitswightshift[bitspewpackedvawue];
+      int[] m-middwebitsweftshift =
+          awwmiddwebitsweftshift[bitspewpackedvawue];
+      int[] middwebitsmask =
+          a-awwmiddwebitsmask[bitspewpackedvawue];
+      i-int[] highbitsweftshift =
+          a-awwhighbitsweftshift != nyuww ? awwhighbitsweftshift[bitspewpackedvawue] : nyuww;
+      i-int[] highbitsmask =
+          awwhighbitsmask != n-nyuww ? awwhighbitsmask[bitspewpackedvawue] : n-nyuww;
 
       int shift = 0;
-      int currentIntIndex = 0;
-      int bitsRead;
-      int bitsRemaining;
+      int cuwwentintindex = 0;
+      int bitswead;
+      i-int bitswemaining;
 
-      // For each packed value.
-      for (int packedValueIndex = 0; packedValueIndex < maxNumValues; packedValueIndex++) {
-        if (startIntIndices != null) {
-          startIntIndices[packedValueIndex] = currentIntIndex;
+      // f-fow each packed v-vawue. ^•ﻌ•^
+      f-fow (int packedvawueindex = 0; packedvawueindex < m-maxnumvawues; packedvawueindex++) {
+        if (stawtintindices != nuww) {
+          stawtintindices[packedvawueindex] = cuwwentintindex;
         }
-        // Packed value spans to the 1st int.
-        lowBitsRightShift[packedValueIndex] = shift;
-        bitsRead = Integer.SIZE - shift;
-        bitsRemaining = bitsPerPackedValue - bitsRead;
+        // packed vawue spans t-to the 1st int. ʘwʘ
+        wowbitswightshift[packedvawueindex] = s-shift;
+        bitswead = integew.size - s-shift;
+        bitswemaining = b-bitspewpackedvawue - bitswead;
 
-        if (bitsRemaining >= 0) {
-          // Packed value spans to the 2nd int.
-          currentIntIndex++;
-          if (currentIntIndex == maxNumInts) {
-            break;
+        i-if (bitswemaining >= 0) {
+          // p-packed v-vawue spans to t-the 2nd int. ( ͡o ω ͡o )
+          c-cuwwentintindex++;
+          if (cuwwentintindex == maxnumints) {
+            bweak;
           }
-          middleBitsLeftShift[packedValueIndex] = bitsRead;
-          middleBitsMask[packedValueIndex] =
-              bitsRemaining >= Integer.SIZE ? 0xFFFFFFFF : (1 << bitsRemaining) - 1;
+          middwebitsweftshift[packedvawueindex] = bitswead;
+          middwebitsmask[packedvawueindex] =
+              bitswemaining >= i-integew.size ? 0xffffffff : (1 << b-bitswemaining) - 1;
 
-          // Packed value spans to the 3rd int.
-          bitsRead += Integer.SIZE;
-          bitsRemaining -= Integer.SIZE;
-          if (bitsRemaining >= 0) {
-            currentIntIndex++;
-            if (currentIntIndex == maxNumInts) {
-              break;
+          // p-packed vawue spans to the 3wd i-int. mya
+          bitswead += integew.size;
+          bitswemaining -= integew.size;
+          i-if (bitswemaining >= 0) {
+            c-cuwwentintindex++;
+            if (cuwwentintindex == m-maxnumints) {
+              bweak;
             }
-            assert highBitsLeftShift != null;
-            assert highBitsMask != null;
-            highBitsLeftShift[packedValueIndex] = bitsRead;
-            highBitsMask[packedValueIndex] =
-                bitsRemaining >= Integer.SIZE ? 0xFFFFFFFF : (1 << bitsRemaining) - 1;
+            assewt highbitsweftshift != n-nyuww;
+            a-assewt highbitsmask != nyuww;
+            h-highbitsweftshift[packedvawueindex] = b-bitswead;
+            highbitsmask[packedvawueindex] =
+                bitswemaining >= integew.size ? 0xffffffff : (1 << bitswemaining) - 1;
           }
         }
 
-        shift += bitsPerPackedValue;
-        shift = shift % Integer.SIZE;
+        s-shift += bitspewpackedvawue;
+        s-shift = s-shift % integew.size;
       }
     }
   }
 
   /********************************************************************
-   * Getters of Pre-computed Values: returns should NEVER be modified *
+   * g-gettews of p-pwe-computed vawues: wetuwns shouwd n-nyevew be modified *
    ********************************************************************/
 
-  int[] getStartIntIndices(int numBitsPerValue) {
-    return allStartIntIndices == null ? null : allStartIntIndices[numBitsPerValue];
+  i-int[] getstawtintindices(int nyumbitspewvawue) {
+    w-wetuwn a-awwstawtintindices == nyuww ? n-nyuww : awwstawtintindices[numbitspewvawue];
   }
 
-  int[] getLowBitsRightShift(int numBitsPerValue) {
-    return allLowBitsRightShift[numBitsPerValue];
+  int[] getwowbitswightshift(int nyumbitspewvawue) {
+    w-wetuwn awwwowbitswightshift[numbitspewvawue];
   }
 
-  int[] getMiddleBitsLeftShift(int numBitsPerValue) {
-    return allMiddleBitsLeftShift[numBitsPerValue];
+  i-int[] getmiddwebitsweftshift(int n-nyumbitspewvawue) {
+    wetuwn a-awwmiddwebitsweftshift[numbitspewvawue];
   }
 
-  int[] getMiddleBitsMask(int numBitsPerValue) {
-    return allMiddleBitsMask[numBitsPerValue];
+  int[] getmiddwebitsmask(int nyumbitspewvawue) {
+    w-wetuwn awwmiddwebitsmask[numbitspewvawue];
   }
 
-  int[] getHighBitsLeftShift(int numBitsPerValue) {
-    return allHighBitsLeftShift == null ? null : allHighBitsLeftShift[numBitsPerValue];
+  i-int[] gethighbitsweftshift(int n-nyumbitspewvawue) {
+    wetuwn awwhighbitsweftshift == nyuww ? n-nyuww : awwhighbitsweftshift[numbitspewvawue];
   }
 
-  int[] getHighBitsMask(int numBitsPerValue) {
-    return allHighBitsMask == null ? null : allHighBitsMask[numBitsPerValue];
+  int[] gethighbitsmask(int n-nyumbitspewvawue) {
+    w-wetuwn awwhighbitsmask == n-nyuww ? nyuww : awwhighbitsmask[numbitspewvawue];
   }
 }

@@ -1,85 +1,85 @@
-package com.twitter.tweetypie.tweettext
+package com.twittew.tweetypie.tweettext
 
 /**
- * An efficient converter of indices between code points and code units.
+ * an efficient convewtew o-of indices b-between code points a-and code units. (U ﹏ U)
  */
-class IndexConverter(text: String) {
-  // Keep track of a single corresponding pair of code unit and code point
-  // offsets so that we can re-use counting work if the next requested
-  // entity is near the most recent entity.
-  private var codePointIndex = 0
-  // The code unit index should never split a surrogate pair.
-  private var charIndex = 0
+c-cwass indexconvewtew(text: s-stwing) {
+  // k-keep twack of a-a singwe cowwesponding p-paiw of code unit and code point
+  // offsets so that we can we-use counting w-wowk if the nyext wequested
+  // entity is n-neaw the most wecent entity. -.-
+  pwivate v-vaw codepointindex = 0
+  // the code unit index shouwd nyevew spwit a suwwogate p-paiw. ^•ﻌ•^
+  pwivate vaw chawindex = 0
 
   /**
-   * @param offset Index into the string measured in code units.
-   * @return The code point index that corresponds to the specified character index.
+   * @pawam o-offset i-index into the stwing measuwed in code units. rawr
+   * @wetuwn the code point index t-that cowwesponds to the specified chawactew index. (˘ω˘)
    */
-  def toCodePoints(offset: Offset.CodeUnit): Offset.CodePoint =
-    Offset.CodePoint(codeUnitsToCodePoints(offset.toInt))
+  def tocodepoints(offset: o-offset.codeunit): offset.codepoint =
+    o-offset.codepoint(codeunitstocodepoints(offset.toint))
 
   /**
-   * @param charIndex Index into the string measured in code units.
-   * @return The code point index that corresponds to the specified character index.
+   * @pawam c-chawindex i-index into the s-stwing measuwed in code units. nyaa~~
+   * @wetuwn the c-code point index that cowwesponds to the specified c-chawactew index. UwU
    */
-  def codeUnitsToCodePoints(charIndex: Int): Int = {
-    if (charIndex < this.charIndex) {
-      this.codePointIndex -= text.codePointCount(charIndex, this.charIndex)
-    } else {
-      this.codePointIndex += text.codePointCount(this.charIndex, charIndex)
+  def codeunitstocodepoints(chawindex: int): int = {
+    if (chawindex < this.chawindex) {
+      t-this.codepointindex -= text.codepointcount(chawindex, :3 t-this.chawindex)
+    } e-ewse {
+      t-this.codepointindex += text.codepointcount(this.chawindex, (⑅˘꒳˘) chawindex)
     }
-    this.charIndex = charIndex
+    this.chawindex = c-chawindex
 
-    // Make sure that charIndex never points to the second code unit of a
-    // surrogate pair.
-    if (charIndex > 0 && Character.isSupplementaryCodePoint(text.codePointAt(charIndex - 1))) {
-      this.charIndex -= 1
-      this.codePointIndex -= 1
+    // m-make suwe that chawindex n-nyevew points t-to the second code unit of a
+    // s-suwwogate paiw. (///ˬ///✿)
+    if (chawindex > 0 && c-chawactew.issuppwementawycodepoint(text.codepointat(chawindex - 1))) {
+      this.chawindex -= 1
+      this.codepointindex -= 1
     }
 
-    this.codePointIndex
+    t-this.codepointindex
   }
 
   /**
-   * @param offset Index into the string measured in code points.
-   * @return the corresponding code unit index
+   * @pawam offset index i-into the stwing measuwed in code p-points. ^^;;
+   * @wetuwn t-the cowwesponding code unit index
    */
-  def toCodeUnits(offset: Offset.CodePoint): Offset.CodeUnit = {
-    this.charIndex = text.offsetByCodePoints(charIndex, offset.toInt - this.codePointIndex)
-    this.codePointIndex = offset.toInt
-    Offset.CodeUnit(this.charIndex)
+  def tocodeunits(offset: offset.codepoint): offset.codeunit = {
+    this.chawindex = t-text.offsetbycodepoints(chawindex, >_< o-offset.toint - this.codepointindex)
+    this.codepointindex = o-offset.toint
+    o-offset.codeunit(this.chawindex)
   }
 
   /**
-   * @param codePointIndex Index into the string measured in code points.
-   * @return the corresponding code unit index
+   * @pawam c-codepointindex index into the stwing measuwed in code p-points. rawr x3
+   * @wetuwn the cowwesponding code unit index
    */
-  def codePointsToCodeUnits(codePointIndex: Int): Int =
-    toCodeUnits(Offset.CodePoint(codePointIndex)).toInt
+  def codepointstocodeunits(codepointindex: i-int): int =
+    tocodeunits(offset.codepoint(codepointindex)).toint
 
   /**
-   * Returns a substring which begins at the specified code point `from` and extends to the
-   * code point `to`. Since String.substring only works with character, the method first
-   * converts code point offset to code unit offset.
+   * w-wetuwns a-a substwing w-which begins at the specified code p-point `fwom` a-and extends to the
+   * c-code point `to`. /(^•ω•^) s-since stwing.substwing onwy wowks with chawactew, :3 the method f-fiwst
+   * c-convewts code point o-offset to code u-unit offset. (ꈍᴗꈍ)
    */
-  def substring(from: Offset.CodePoint, to: Offset.CodePoint): String =
-    text.substring(toCodeUnits(from).toInt, toCodeUnits(to).toInt)
+  d-def substwing(fwom: offset.codepoint, /(^•ω•^) to: offset.codepoint): stwing =
+    t-text.substwing(tocodeunits(fwom).toint, (⑅˘꒳˘) tocodeunits(to).toint)
 
   /**
-   * Returns a substring which begins at the specified code point `from` and extends to the
-   * code point `to`. Since String.substring only works with character, the method first
-   * converts code point offset to code unit offset.
+   * wetuwns a substwing which begins at the specified c-code point `fwom` and extends to the
+   * code point `to`. ( ͡o ω ͡o ) since s-stwing.substwing o-onwy wowks with c-chawactew, òωó the method fiwst
+   * c-convewts code point offset to c-code unit offset. (⑅˘꒳˘)
    */
-  def substringByCodePoints(from: Int, to: Int): String =
-    substring(Offset.CodePoint(from), Offset.CodePoint(to))
+  d-def substwingbycodepoints(fwom: int, XD to: int): stwing =
+    substwing(offset.codepoint(fwom), -.- offset.codepoint(to))
 
   /**
-   * Returns a substring which begins at the specified code point `from` and extends to the
-   * end of the string. Since String.substring only works with character, the method first
-   * converts code point offset to code unit offset.
+   * wetuwns a-a substwing which begins at the s-specified code point `fwom` and e-extends to the
+   * e-end of the stwing. since stwing.substwing o-onwy wowks with c-chawactew, :3 the method fiwst
+   * c-convewts code p-point offset to code unit offset.
    */
-  def substringByCodePoints(from: Int): String = {
-    val charFrom = codePointsToCodeUnits(from)
-    text.substring(charFrom)
+  def substwingbycodepoints(fwom: int): stwing = {
+    vaw c-chawfwom = codepointstocodeunits(fwom)
+    t-text.substwing(chawfwom)
   }
 }

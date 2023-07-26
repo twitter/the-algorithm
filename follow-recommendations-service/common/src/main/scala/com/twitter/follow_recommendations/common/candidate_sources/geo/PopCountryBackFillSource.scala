@@ -1,33 +1,33 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.geo
 
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
+impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.hewmit.modew.awgowithm
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
+impowt javax.inject.inject
 
-@Singleton
-class PopCountryBackFillSource @Inject() (popGeoSource: PopGeoSource)
-    extends CandidateSource[HasClientContext with HasParams, CandidateUser] {
+@singweton
+cwass popcountwybackfiwwsouwce @inject() (popgeosouwce: popgeosouwce)
+    e-extends candidatesouwce[hascwientcontext with haspawams, ( ͡o ω ͡o ) candidateusew] {
 
-  override val identifier: CandidateSourceIdentifier = PopCountryBackFillSource.Identifier
+  o-ovewwide vaw identifiew: candidatesouwceidentifiew = p-popcountwybackfiwwsouwce.identifiew
 
-  override def apply(target: HasClientContext with HasParams): Stitch[Seq[CandidateUser]] = {
-    target.getOptionalUserId
+  ovewwide def appwy(tawget: hascwientcontext w-with haspawams): stitch[seq[candidateusew]] = {
+    t-tawget.getoptionawusewid
       .map(_ =>
-        popGeoSource(PopCountryBackFillSource.DefaultKey)
-          .map(_.take(PopCountryBackFillSource.MaxResults).map(_.withCandidateSource(identifier))))
-      .getOrElse(Stitch.Nil)
+        p-popgeosouwce(popcountwybackfiwwsouwce.defauwtkey)
+          .map(_.take(popcountwybackfiwwsouwce.maxwesuwts).map(_.withcandidatesouwce(identifiew))))
+      .getowewse(stitch.niw)
   }
 }
 
-object PopCountryBackFillSource {
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.PopCountryBackFill.toString)
-  val MaxResults = 40
-  val DefaultKey = "country_US"
+object popcountwybackfiwwsouwce {
+  vaw identifiew: candidatesouwceidentifiew =
+    candidatesouwceidentifiew(awgowithm.popcountwybackfiww.tostwing)
+  v-vaw maxwesuwts = 40
+  vaw defauwtkey = "countwy_us"
 }

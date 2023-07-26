@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.component_library.premarshaller.urp.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwp.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageBody
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageHeader
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageNavBar
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.pagebody
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.pageheadew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.pagenavbaw
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinescwibeconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class StaticTimelineScribeConfigBuilder(
-  timelineScribeConfig: TimelineScribeConfig)
-    extends TimelineScribeConfigBuilder[PipelineQuery] {
+case cwass statictimewinescwibeconfigbuiwdew(
+  timewinescwibeconfig: timewinescwibeconfig)
+    extends timewinescwibeconfigbuiwdew[pipewinequewy] {
 
-  override def build(
-    query: PipelineQuery,
-    pageBody: PageBody,
-    pageHeader: Option[PageHeader],
-    pageNavBar: Option[PageNavBar]
-  ): Option[TimelineScribeConfig] = Some(timelineScribeConfig)
+  o-ovewwide def buiwd(
+    quewy: pipewinequewy, ^^;;
+    p-pagebody: pagebody, >_<
+    p-pageheadew: option[pageheadew], mya
+    pagenavbaw: option[pagenavbaw]
+  ): o-option[timewinescwibeconfig] = some(timewinescwibeconfig)
 }

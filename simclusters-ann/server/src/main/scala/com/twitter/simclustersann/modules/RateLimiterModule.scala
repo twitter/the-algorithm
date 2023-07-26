@@ -1,23 +1,23 @@
-package com.twitter.simclustersann.modules
+package com.twittew.simcwustewsann.moduwes
 
-import com.google.common.util.concurrent.RateLimiter
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.simclustersann.common.FlagNames.RateLimiterQPS
-import javax.inject.Singleton
+impowt c-com.googwe.common.utiw.concuwwent.watewimitew
+i-impowt com.googwe.inject.pwovides
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.inject.annotations.fwag
+i-impowt com.twittew.simcwustewsann.common.fwagnames.watewimitewqps
+i-impowt javax.inject.singweton
 
-object RateLimiterModule extends TwitterModule {
-  flag[Int](
-    name = RateLimiterQPS,
-    default = 1000,
-    help = "The QPS allowed by the rate limiter."
+o-object watewimitewmoduwe extends twittewmoduwe {
+  fwag[int](
+    nyame = watewimitewqps,
+    d-defauwt = 1000, (U ᵕ U❁)
+    hewp = "the qps awwowed b-by the wate wimitew."
   )
 
-  @Singleton
-  @Provides
-  def providesRateLimiter(
-    @Flag(RateLimiterQPS) rateLimiterQps: Int
-  ): RateLimiter =
-    RateLimiter.create(rateLimiterQps)
+  @singweton
+  @pwovides
+  def pwovideswatewimitew(
+    @fwag(watewimitewqps) w-watewimitewqps: int
+  ): watewimitew =
+    watewimitew.cweate(watewimitewqps)
 }

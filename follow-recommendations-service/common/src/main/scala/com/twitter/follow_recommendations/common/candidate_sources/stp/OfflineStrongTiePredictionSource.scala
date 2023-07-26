@@ -1,44 +1,44 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStpSourceParams.UseDenserPmiMatrix
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.util.logging.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
+impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.stp.offwinestpsouwcepawams.usedensewpmimatwix
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.hewmit.modew.awgowithm
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.utiw.wogging.wogging
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.haspawams
+impowt javax.inject.inject
 
-object OfflineStpScore extends Feature[UserCandidate, Option[Double]]
+o-object offwinestpscowe extends featuwe[usewcandidate, rawr x3 option[doubwe]]
 
 /**
- * Main source for strong-tie-prediction candidates generated offline.
+ * m-main souwce fow stwong-tie-pwediction c-candidates genewated o-offwine. (U ﹏ U)
  */
-@Singleton
-class OfflineStrongTiePredictionSource @Inject() (
-  offlineStpSourceWithLegacyPmiMatrix: OfflineStpSourceWithLegacyPmiMatrix,
-  offlineStpSourceWithDensePmiMatrix: OfflineStpSourceWithDensePmiMatrix)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser]
-    with Logging {
-  override val identifier: CandidateSourceIdentifier = OfflineStrongTiePredictionSource.Identifier
+@singweton
+cwass offwinestwongtiepwedictionsouwce @inject() (
+  offwinestpsouwcewithwegacypmimatwix: offwinestpsouwcewithwegacypmimatwix, (U ﹏ U)
+  offwinestpsouwcewithdensepmimatwix: o-offwinestpsouwcewithdensepmimatwix)
+    extends candidatesouwce[haspawams with hascwientcontext, (⑅˘꒳˘) c-candidateusew]
+    with wogging {
+  o-ovewwide v-vaw identifiew: c-candidatesouwceidentifiew = o-offwinestwongtiepwedictionsouwce.identifiew
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    if (request.params(UseDenserPmiMatrix)) {
-      logger.info("Using dense PMI matrix.")
-      offlineStpSourceWithDensePmiMatrix(request)
-    } else {
-      logger.info("Using legacy PMI matrix.")
-      offlineStpSourceWithLegacyPmiMatrix(request)
+  ovewwide def appwy(wequest: h-haspawams with hascwientcontext): stitch[seq[candidateusew]] = {
+    i-if (wequest.pawams(usedensewpmimatwix)) {
+      woggew.info("using dense pmi matwix.")
+      offwinestpsouwcewithdensepmimatwix(wequest)
+    } ewse {
+      woggew.info("using w-wegacy pmi matwix.")
+      o-offwinestpsouwcewithwegacypmimatwix(wequest)
     }
   }
 }
 
-object OfflineStrongTiePredictionSource {
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.StrongTiePredictionRec.toString)
+o-object offwinestwongtiepwedictionsouwce {
+  v-vaw identifiew: candidatesouwceidentifiew =
+    candidatesouwceidentifiew(awgowithm.stwongtiepwedictionwec.tostwing)
 }

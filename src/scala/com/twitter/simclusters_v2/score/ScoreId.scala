@@ -1,129 +1,129 @@
-package com.twitter.simclusters_v2.score
+package com.twittew.simcwustews_v2.scowe
 
-import com.twitter.simclusters_v2.common.SimClustersEmbeddingId._
-import com.twitter.simclusters_v2.thriftscala.{
-  InternalId,
-  ScoreInternalId,
-  ScoringAlgorithm,
-  SimClustersEmbeddingId,
-  GenericPairScoreId => ThriftGenericPairScoreId,
-  ScoreId => ThriftScoreId,
-  SimClustersEmbeddingPairScoreId => ThriftSimClustersEmbeddingPairScoreId
+impowt c-com.twittew.simcwustews_v2.common.simcwustewsembeddingid._
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.{
+  i-intewnawid, /(^•ω•^)
+  s-scoweintewnawid, :3
+  s-scowingawgowithm, (ꈍᴗꈍ)
+  s-simcwustewsembeddingid, /(^•ω•^)
+  g-genewicpaiwscoweid => thwiftgenewicpaiwscoweid, (⑅˘꒳˘)
+  scoweid => thwiftscoweid, ( ͡o ω ͡o )
+  simcwustewsembeddingpaiwscoweid => t-thwiftsimcwustewsembeddingpaiwscoweid
 }
 
 /**
- * A uniform Identifier type for all kinds of Calculation Score.
+ * a unifowm identifiew t-type fow aww kinds of cawcuwation s-scowe. òωó
  **/
-trait ScoreId {
+twait scoweid {
 
-  def algorithm: ScoringAlgorithm
+  def awgowithm: scowingawgowithm
 
   /**
-   * Convert to a Thrift object. Throw a exception if the operation is not override.
+   * convewt t-to a thwift object. (⑅˘꒳˘) thwow a-a exception if t-the opewation is nyot ovewwide. XD
    */
-  implicit def toThrift: ThriftScoreId =
-    throw new UnsupportedOperationException(s"ScoreId $this doesn't support Thrift format")
+  impwicit def tothwift: thwiftscoweid =
+    thwow nyew unsuppowtedopewationexception(s"scoweid $this d-doesn't suppowt thwift fowmat")
 }
 
-object ScoreId {
+object scoweid {
 
-  implicit val fromThriftScoreId: ThriftScoreId => ScoreId = {
-    case scoreId @ ThriftScoreId(_, ScoreInternalId.GenericPairScoreId(_)) =>
-      PairScoreId.fromThriftScoreId(scoreId)
-    case scoreId @ ThriftScoreId(_, ScoreInternalId.SimClustersEmbeddingPairScoreId(_)) =>
-      SimClustersEmbeddingPairScoreId.fromThriftScoreId(scoreId)
+  impwicit vaw f-fwomthwiftscoweid: thwiftscoweid => s-scoweid = {
+    c-case scoweid @ t-thwiftscoweid(_, -.- s-scoweintewnawid.genewicpaiwscoweid(_)) =>
+      paiwscoweid.fwomthwiftscoweid(scoweid)
+    case scoweid @ thwiftscoweid(_, :3 scoweintewnawid.simcwustewsembeddingpaiwscoweid(_)) =>
+      s-simcwustewsembeddingpaiwscoweid.fwomthwiftscoweid(scoweid)
   }
 
 }
 
 /**
- * Generic Internal pairwise id. Support all the subtypes in InternalId, which includes TweetId,
- * UserId, EntityId and more combination ids.
+ * genewic intewnaw paiwwise i-id. suppowt aww the subtypes in intewnawid, nyaa~~ which incwudes tweetid,
+ * usewid, 😳 entityid and mowe c-combination ids.
  **/
-trait PairScoreId extends ScoreId {
+twait paiwscoweid e-extends s-scoweid {
 
-  def id1: InternalId
-  def id2: InternalId
+  def i-id1: intewnawid
+  def id2: intewnawid
 
-  override implicit lazy val toThrift: ThriftScoreId = {
-    ThriftScoreId(
-      algorithm,
-      ScoreInternalId.GenericPairScoreId(ThriftGenericPairScoreId(id1, id2))
+  ovewwide impwicit wazy v-vaw tothwift: t-thwiftscoweid = {
+    thwiftscoweid(
+      a-awgowithm,
+      s-scoweintewnawid.genewicpaiwscoweid(thwiftgenewicpaiwscoweid(id1, (⑅˘꒳˘) id2))
     )
   }
 }
 
-object PairScoreId {
+o-object paiwscoweid {
 
-  // The default PairScoreId assume id1 <= id2. It used to increase the cache hit rate.
-  def apply(algorithm: ScoringAlgorithm, id1: InternalId, id2: InternalId): PairScoreId = {
-    if (internalIdOrdering.lteq(id1, id2)) {
-      DefaultPairScoreId(algorithm, id1, id2)
-    } else {
-      DefaultPairScoreId(algorithm, id2, id1)
+  // the defauwt p-paiwscoweid assume id1 <= id2. nyaa~~ it used to i-incwease the cache hit wate.
+  d-def appwy(awgowithm: scowingawgowithm, OwO i-id1: intewnawid, rawr x3 i-id2: intewnawid): paiwscoweid = {
+    if (intewnawidowdewing.wteq(id1, XD id2)) {
+      defauwtpaiwscoweid(awgowithm, σωσ id1, id2)
+    } ewse {
+      defauwtpaiwscoweid(awgowithm, (U ᵕ U❁) i-id2, (U ﹏ U) id1)
     }
   }
 
-  private case class DefaultPairScoreId(
-    algorithm: ScoringAlgorithm,
-    id1: InternalId,
-    id2: InternalId)
-      extends PairScoreId
+  p-pwivate case cwass d-defauwtpaiwscoweid(
+    a-awgowithm: s-scowingawgowithm, :3
+    id1: intewnawid, ( ͡o ω ͡o )
+    id2: intewnawid)
+      e-extends paiwscoweid
 
-  implicit val fromThriftScoreId: ThriftScoreId => PairScoreId = {
-    case ThriftScoreId(algorithm, ScoreInternalId.GenericPairScoreId(pairScoreId)) =>
-      DefaultPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
-    case ThriftScoreId(algorithm, ScoreInternalId.SimClustersEmbeddingPairScoreId(pairScoreId)) =>
-      SimClustersEmbeddingPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
+  impwicit vaw fwomthwiftscoweid: thwiftscoweid => paiwscoweid = {
+    c-case thwiftscoweid(awgowithm, σωσ scoweintewnawid.genewicpaiwscoweid(paiwscoweid)) =>
+      defauwtpaiwscoweid(awgowithm, >w< p-paiwscoweid.id1, p-paiwscoweid.id2)
+    c-case thwiftscoweid(awgowithm, 😳😳😳 s-scoweintewnawid.simcwustewsembeddingpaiwscoweid(paiwscoweid)) =>
+      s-simcwustewsembeddingpaiwscoweid(awgowithm, OwO p-paiwscoweid.id1, p-paiwscoweid.id2)
   }
 
 }
 
 /**
- * ScoreId for a pair of SimClustersEmbedding.
- * Used for dot product, cosine similarity and other basic embedding operations.
+ * scoweid fow a paiw o-of simcwustewsembedding.
+ * u-used f-fow dot pwoduct, 😳 c-cosine simiwawity a-and othew basic embedding opewations. 😳😳😳
  */
-trait SimClustersEmbeddingPairScoreId extends PairScoreId {
-  def embeddingId1: SimClustersEmbeddingId
+twait simcwustewsembeddingpaiwscoweid extends paiwscoweid {
+  d-def embeddingid1: simcwustewsembeddingid
 
-  def embeddingId2: SimClustersEmbeddingId
+  def embeddingid2: simcwustewsembeddingid
 
-  override def id1: InternalId = embeddingId1.internalId
+  ovewwide def id1: intewnawid = e-embeddingid1.intewnawid
 
-  override def id2: InternalId = embeddingId2.internalId
+  ovewwide def id2: intewnawid = embeddingid2.intewnawid
 
-  override implicit lazy val toThrift: ThriftScoreId = {
-    ThriftScoreId(
-      algorithm,
-      ScoreInternalId.SimClustersEmbeddingPairScoreId(
-        ThriftSimClustersEmbeddingPairScoreId(embeddingId1, embeddingId2))
+  ovewwide i-impwicit wazy v-vaw tothwift: thwiftscoweid = {
+    t-thwiftscoweid(
+      awgowithm, (˘ω˘)
+      s-scoweintewnawid.simcwustewsembeddingpaiwscoweid(
+        thwiftsimcwustewsembeddingpaiwscoweid(embeddingid1, ʘwʘ e-embeddingid2))
     )
   }
 }
 
-object SimClustersEmbeddingPairScoreId {
+o-object simcwustewsembeddingpaiwscoweid {
 
-  // The default PairScoreId assume id1 <= id2. It used to increase the cache hit rate.
-  def apply(
-    algorithm: ScoringAlgorithm,
-    id1: SimClustersEmbeddingId,
-    id2: SimClustersEmbeddingId
-  ): SimClustersEmbeddingPairScoreId = {
-    if (simClustersEmbeddingIdOrdering.lteq(id1, id2)) {
-      DefaultSimClustersEmbeddingPairScoreId(algorithm, id1, id2)
-    } else {
-      DefaultSimClustersEmbeddingPairScoreId(algorithm, id2, id1)
+  // the defauwt paiwscoweid assume id1 <= id2. ( ͡o ω ͡o ) it used to incwease the cache hit wate. o.O
+  d-def appwy(
+    awgowithm: s-scowingawgowithm, >w<
+    id1: simcwustewsembeddingid, 😳
+    i-id2: simcwustewsembeddingid
+  ): s-simcwustewsembeddingpaiwscoweid = {
+    if (simcwustewsembeddingidowdewing.wteq(id1, 🥺 id2)) {
+      d-defauwtsimcwustewsembeddingpaiwscoweid(awgowithm, rawr x3 i-id1, id2)
+    } ewse {
+      d-defauwtsimcwustewsembeddingpaiwscoweid(awgowithm, o.O i-id2, id1)
     }
   }
 
-  private case class DefaultSimClustersEmbeddingPairScoreId(
-    algorithm: ScoringAlgorithm,
-    embeddingId1: SimClustersEmbeddingId,
-    embeddingId2: SimClustersEmbeddingId)
-      extends SimClustersEmbeddingPairScoreId
+  pwivate case cwass defauwtsimcwustewsembeddingpaiwscoweid(
+    awgowithm: scowingawgowithm, rawr
+    e-embeddingid1: s-simcwustewsembeddingid, ʘwʘ
+    e-embeddingid2: simcwustewsembeddingid)
+      e-extends s-simcwustewsembeddingpaiwscoweid
 
-  implicit val fromThriftScoreId: ThriftScoreId => SimClustersEmbeddingPairScoreId = {
-    case ThriftScoreId(algorithm, ScoreInternalId.SimClustersEmbeddingPairScoreId(pairScoreId)) =>
-      SimClustersEmbeddingPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
+  impwicit vaw f-fwomthwiftscoweid: thwiftscoweid => simcwustewsembeddingpaiwscoweid = {
+    case thwiftscoweid(awgowithm, 😳😳😳 s-scoweintewnawid.simcwustewsembeddingpaiwscoweid(paiwscoweid)) =>
+      s-simcwustewsembeddingpaiwscoweid(awgowithm, ^^;; paiwscoweid.id1, o.O paiwscoweid.id2)
   }
 }

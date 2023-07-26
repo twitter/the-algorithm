@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot
 
-sealed trait SoftInterventionDisplayType
+seawed t-twait softintewventiondispwaytype
 
-case object GetTheLatest extends SoftInterventionDisplayType
-case object StayInformed extends SoftInterventionDisplayType
-case object Misleading extends SoftInterventionDisplayType
-case object GovernmentRequested extends SoftInterventionDisplayType
+c-case object getthewatest e-extends s-softintewventiondispwaytype
+c-case object stayinfowmed e-extends s-softintewventiondispwaytype
+c-case object misweading extends softintewventiondispwaytype
+case object govewnmentwequested e-extends softintewventiondispwaytype

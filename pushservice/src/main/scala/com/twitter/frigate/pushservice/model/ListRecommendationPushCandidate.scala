@@ -1,72 +1,72 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.channels.common.thriftscala.ApiList
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.ListPushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.ListIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.ListCandidateNTabRequestHydrator
-import com.twitter.frigate.pushservice.predicate.ListPredicates
-import com.twitter.frigate.pushservice.take.predicates.BasicRFPHPredicates
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.channews.common.thwiftscawa.apiwist
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.wistpushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt com.twittew.fwigate.pushsewvice.config.config
+i-impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+impowt com.twittew.fwigate.pushsewvice.modew.ibis.wistibis2hydwatow
+impowt c-com.twittew.fwigate.pushsewvice.modew.ntab.wistcandidatentabwequesthydwatow
+impowt com.twittew.fwigate.pushsewvice.pwedicate.wistpwedicates
+i-impowt com.twittew.fwigate.pushsewvice.take.pwedicates.basicwfphpwedicates
+i-impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
 
-class ListRecommendationPushCandidate(
-  val apiListStore: ReadableStore[Long, ApiList],
-  candidate: RawCandidate with ListPushCandidate,
-  copyIds: CopyIds
+cwass wistwecommendationpushcandidate(
+  vaw a-apiwiststowe: w-weadabwestowe[wong, (˘ω˘) apiwist],
+  candidate: wawcandidate with wistpushcandidate, >_<
+  copyids: copyids
 )(
-  implicit stats: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with ListPushCandidate
-    with ListIbis2Hydrator
-    with ListCandidateNTabRequestHydrator {
+  i-impwicit stats: statsweceivew, -.-
+  pushmodewscowew: pushmwmodewscowew)
+    extends pushcandidate
+    w-with wistpushcandidate
+    w-with wistibis2hydwatow
+    w-with wistcandidatentabwequesthydwatow {
 
-  override val commonRecType: CommonRecommendationType = candidate.commonRecType
+  o-ovewwide v-vaw commonwectype: commonwecommendationtype = candidate.commonwectype
 
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
+  ovewwide v-vaw pushcopyid: option[int] = copyids.pushcopyid
 
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
+  o-ovewwide vaw nytabcopyid: option[int] = copyids.ntabcopyid
 
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
+  ovewwide vaw copyaggwegationid: o-option[stwing] = copyids.aggwegationid
 
-  override val statsReceiver: StatsReceiver = stats
+  o-ovewwide vaw s-statsweceivew: s-statsweceivew = stats
 
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
+  ovewwide vaw weightedopenowntabcwickmodewscowew: pushmwmodewscowew = p-pushmodewscowew
 
-  override val target: PushTypes.Target = candidate.target
+  o-ovewwide vaw tawget: pushtypes.tawget = c-candidate.tawget
 
-  override val listId: Long = candidate.listId
+  o-ovewwide vaw wistid: w-wong = candidate.wistid
 
-  lazy val apiList: Future[Option[ApiList]] = apiListStore.get(listId)
+  wazy v-vaw apiwist: futuwe[option[apiwist]] = apiwiststowe.get(wistid)
 
-  lazy val listName: Future[Option[String]] = apiList.map { apiListOpt =>
-    apiListOpt.map(_.name)
+  wazy vaw wistname: f-futuwe[option[stwing]] = apiwist.map { apiwistopt =>
+    a-apiwistopt.map(_.name)
   }
 
-  lazy val listOwnerId: Future[Option[Long]] = apiList.map { apiListOpt =>
-    apiListOpt.map(_.ownerId)
+  wazy vaw wistownewid: f-futuwe[option[wong]] = a-apiwist.map { apiwistopt =>
+    apiwistopt.map(_.ownewid)
   }
 
 }
 
-case class ListRecommendationPredicates(config: Config)
-    extends BasicRFPHPredicates[ListRecommendationPushCandidate] {
+case cwass wistwecommendationpwedicates(config: config)
+    extends b-basicwfphpwedicates[wistwecommendationpushcandidate] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  i-impwicit vaw statsweceivew: s-statsweceivew = c-config.statsweceivew.scope(getcwass.getsimpwename)
 
-  override val predicates: List[NamedPredicate[ListRecommendationPushCandidate]] = List(
-    ListPredicates.listNameExistsPredicate(),
-    ListPredicates.listAuthorExistsPredicate(),
-    ListPredicates.listAuthorAcceptableToTargetUser(config.edgeStore),
-    ListPredicates.listAcceptablePredicate(),
-    ListPredicates.listSubscriberCountPredicate()
+  o-ovewwide vaw pwedicates: wist[namedpwedicate[wistwecommendationpushcandidate]] = wist(
+    wistpwedicates.wistnameexistspwedicate(), 🥺
+    w-wistpwedicates.wistauthowexistspwedicate(), (U ﹏ U)
+    wistpwedicates.wistauthowacceptabwetotawgetusew(config.edgestowe), >w<
+    wistpwedicates.wistacceptabwepwedicate(), mya
+    wistpwedicates.wistsubscwibewcountpwedicate()
   )
 }

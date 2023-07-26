@@ -1,88 +1,88 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.data;
+package tensowfwow.data;
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Next tag: 2
-message ProcessingModeDef {
-  // Specifies how data is sharded among tf.data service workers.
-  enum ShardingPolicy {
-    // No sharding will be performed. Each worker produces the entire dataset
-    // without any sharding. With this mode, the best practice is to shuffle the
-    // dataset nondeterministically so that workers process the dataset in
-    // different orders.
-    OFF = 0;
+// n-nyext t-tag: 2
+message p-pwocessingmodedef {
+  // s-specifies h-how data is s-shawded among t-tf.data sewvice wowkews. (˘ω˘)
+  enum shawdingpowicy {
+    // nyo shawding wiww be pewfowmed. nyaa~~ e-each wowkew pwoduces the entiwe dataset
+    // w-without any shawding. UwU with t-this mode, :3 the best pwactice is to shuffwe the
+    // dataset n-nyondetewministicawwy so that wowkews p-pwocess the d-dataset in
+    // diffewent owdews. (⑅˘꒳˘)
+    off = 0;
 
-    // The input dataset is dynamically split among workers at runtime. Each
-    // worker gets the next split when it reads data from the dispatcher. There
-    // is no fixed sharding with this mode.
-    DYNAMIC = 1;
+    // the input dataset is d-dynamicawwy spwit among wowkews at wuntime. (///ˬ///✿) each
+    // wowkew gets the nyext spwit w-when it weads data fwom the d-dispatchew. ^^;; thewe
+    // i-is nyo f-fixed shawding with t-this mode. >_<
+    dynamic = 1;
 
-    // The following are static sharding policies. The semantics are similar to
-    // `tf.data.experimental.AutoShardPolicy`. These policies require:
-    // * The tf.data service cluster has a fixed size, and you need to specify
-    //   the workers in DispatcherConfig.
-    // * Each client only reads from the local tf.data service worker.
+    // the fowwowing a-awe static shawding powicies. rawr x3 the semantics a-awe simiwaw to
+    // `tf.data.expewimentaw.autoshawdpowicy`. /(^•ω•^) these powicies wequiwe:
+    // * the tf.data sewvice cwustew has a fixed size, :3 and you nyeed to s-specify
+    //   the wowkews in d-dispatchewconfig. (ꈍᴗꈍ)
+    // * e-each c-cwient onwy weads fwom the wocaw tf.data sewvice wowkew. /(^•ω•^)
     //
-    // Shards by input files (each worker will get a set of files to process).
-    // When this option is selected, make sure that there is at least as many
-    // files as workers. If there are fewer input files than workers, a runtime
-    // error will be raised.
-    FILE = 2;
+    // s-shawds by i-input fiwes (each wowkew wiww get a-a set of fiwes t-to pwocess). (⑅˘꒳˘)
+    // when this o-option is sewected, ( ͡o ω ͡o ) make suwe that t-thewe is at weast as many
+    // fiwes as wowkews. òωó i-if thewe awe fewew input fiwes t-than wowkews, (⑅˘꒳˘) a wuntime
+    // e-ewwow wiww be w-waised. XD
+    fiwe = 2;
 
-    // Shards by elements produced by the dataset. Each worker will process the
-    // whole dataset and discard the portion that is not for itself. Note that
-    // for this mode to correctly partitions the dataset elements, the dataset
-    // needs to produce elements in a deterministic order.
-    DATA = 3;
+    // shawds by ewements pwoduced by the dataset. -.- each wowkew wiww pwocess the
+    // whowe dataset and d-discawd the powtion t-that is nyot fow itsewf. :3 nyote t-that
+    // f-fow this mode to c-cowwectwy pawtitions the dataset ewements, nyaa~~ the dataset
+    // n-nyeeds to pwoduce ewements in a detewministic owdew. 😳
+    data = 3;
 
-    // Attempts FILE-based sharding, falling back to DATA-based sharding on
-    // failures.
-    FILE_OR_DATA = 4;
+    // attempts f-fiwe-based shawding, (⑅˘꒳˘) fawwing b-back to data-based s-shawding on
+    // f-faiwuwes. nyaa~~
+    fiwe_ow_data = 4;
 
-    // Looks for the presence of `shard(SHARD_HINT, ...)` which is treated as a
-    // placeholder to replace with `shard(num_workers, worker_index)`.
-    HINT = 5;
+    // wooks f-fow the pwesence o-of `shawd(shawd_hint, OwO ...)` w-which is tweated a-as a
+    // pwacehowdew to wepwace with `shawd(num_wowkews, rawr x3 wowkew_index)`. XD
+    h-hint = 5;
   }
-  ShardingPolicy sharding_policy = 1;
+  s-shawdingpowicy s-shawding_powicy = 1;
 }
 
-// tf.data service deployment mode.
-enum DeploymentMode {
-  DEPLOYMENT_MODE_UNSPECIFIED = 0;
-  // tf.data service workers colocate with TF workers.
-  DEPLOYMENT_MODE_COLOCATED = 1;
-  // tf.data service workers run in dedicated tf.data hosts.
-  DEPLOYMENT_MODE_REMOTE = 2;
-  // tf.data service workers run in colocated TF hosts and dedicated tf.data
-  // hosts.
-  DEPLOYMENT_MODE_HYBRID = 3;
+// t-tf.data s-sewvice depwoyment mode. σωσ
+enum depwoymentmode {
+  depwoyment_mode_unspecified = 0;
+  // t-tf.data sewvice wowkews cowocate with tf wowkews. (U ᵕ U❁)
+  depwoyment_mode_cowocated = 1;
+  // tf.data sewvice w-wowkews wun in dedicated tf.data hosts. (U ﹏ U)
+  depwoyment_mode_wemote = 2;
+  // tf.data sewvice wowkews w-wun in cowocated t-tf hosts a-and dedicated tf.data
+  // hosts. :3
+  d-depwoyment_mode_hybwid = 3;
 }
 
-// Metadata related to tf.data service datasets.
-// Next tag: 4
-message DataServiceMetadata {
-  oneof optional_element_spec {
-    // Serialized element spec.
-    bytes element_spec = 1;
+// metadata w-wewated to tf.data s-sewvice datasets. ( ͡o ω ͡o )
+// next tag: 4
+message datasewvicemetadata {
+  oneof optionaw_ewement_spec {
+    // sewiawized ewement spec.
+    b-bytes ewement_spec = 1;
   }
 
-  enum Compression {
-    COMPRESSION_UNSPECIFIED = 0;
-    // No compression.
-    COMPRESSION_OFF = 1;
-    // Snappy compression as defined in tensorflow/core/platform/snappy.h.
-    COMPRESSION_SNAPPY = 2;
+  enum compwession {
+    c-compwession_unspecified = 0;
+    // nyo compwession. σωσ
+    c-compwession_off = 1;
+    // s-snappy compwession as defined in tensowfwow/cowe/pwatfowm/snappy.h. >w<
+    c-compwession_snappy = 2;
   }
-  Compression compression = 2;
+  c-compwession compwession = 2;
 
-  // Cardinality of the dataset.
-  int64 cardinality = 3;
+  // c-cawdinawity o-of the dataset. 😳😳😳
+  int64 cawdinawity = 3;
 }
 
-// Data service config available to the client through GetDataServiceConfig RPC.
-// Next tag: 2
-message DataServiceConfig {
-  DeploymentMode deployment_mode = 1;
+// data sewvice config avaiwabwe to the cwient t-thwough getdatasewviceconfig w-wpc. OwO
+// n-nyext tag: 2
+message datasewviceconfig {
+  d-depwoymentmode d-depwoyment_mode = 1;
 }

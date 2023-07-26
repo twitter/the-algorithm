@@ -1,59 +1,59 @@
-package com.twitter.search.earlybird.search;
+package com.twittew.seawch.eawwybiwd.seawch;
 
-import javax.annotation.Nullable;
+impowt j-javax.annotation.nuwwabwe;
 
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
 
 /**
- * Class that abstracts a document that matches a query we're processing in Earlybird.
+ * cwass t-that abstwacts a-a document that m-matches a quewy w-we'we pwocessing i-in eawwybiwd. /(^•ω•^)
  */
-public class Hit implements Comparable<Hit> {
-  protected long timeSliceID;
-  protected long statusID;
-  private boolean hasExplanation;
+p-pubwic cwass hit impwements compawabwe<hit> {
+  pwotected wong timeswiceid;
+  p-pwotected wong statusid;
+  pwivate boowean h-hasexpwanation;
 
-  @Nullable
-  protected ThriftSearchResultMetadata metadata;
+  @nuwwabwe
+  pwotected thwiftseawchwesuwtmetadata m-metadata;
 
-  public Hit(long timeSliceID, long statusID) {
-    this.timeSliceID = timeSliceID;
-    this.statusID = statusID;
-    this.metadata = null;
+  pubwic hit(wong timeswiceid, rawr x3 wong statusid) {
+    t-this.timeswiceid = timeswiceid;
+    t-this.statusid = s-statusid;
+    this.metadata = nyuww;
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  pubwic wong gettimeswiceid() {
+    wetuwn timeswiceid;
   }
 
-  public long getStatusID() {
-    return statusID;
+  p-pubwic wong getstatusid() {
+    wetuwn statusid;
   }
 
-  @Nullable
-  public ThriftSearchResultMetadata getMetadata() {
-    return metadata;
+  @nuwwabwe
+  pubwic thwiftseawchwesuwtmetadata getmetadata() {
+    wetuwn m-metadata;
   }
 
-  public void setMetadata(ThriftSearchResultMetadata metadata) {
-    this.metadata = metadata;
+  pubwic void setmetadata(thwiftseawchwesuwtmetadata m-metadata) {
+    t-this.metadata = m-metadata;
   }
 
-  @Override
-  public int compareTo(Hit other) {
-    return -Long.compare(this.statusID, other.statusID);
+  @ovewwide
+  p-pubwic int compaweto(hit othew) {
+    wetuwn -wong.compawe(this.statusid, (U ﹏ U) o-othew.statusid);
   }
 
-  @Override
-  public String toString() {
-    return "Hit[tweetID=" + statusID + ",timeSliceID=" + timeSliceID
-        + ",score=" + (metadata == null ? "null" : metadata.getScore()) + "]";
+  @ovewwide
+  pubwic stwing tostwing() {
+    wetuwn "hit[tweetid=" + s-statusid + ",timeswiceid=" + timeswiceid
+        + ",scowe=" + (metadata == nyuww ? "nuww" : metadata.getscowe()) + "]";
   }
 
-  public boolean isHasExplanation() {
-    return hasExplanation;
+  pubwic boowean ishasexpwanation() {
+    w-wetuwn hasexpwanation;
   }
 
-  public void setHasExplanation(boolean hasExplanation) {
-    this.hasExplanation = hasExplanation;
+  pubwic v-void sethasexpwanation(boowean h-hasexpwanation) {
+    t-this.hasexpwanation = hasexpwanation;
   }
 }

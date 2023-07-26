@@ -1,57 +1,57 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.contenthealth.toxicreplyfilter.thriftscala.FilterState
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.ToxicReplyFilterConversationAuthorIsViewer
-import com.twitter.visibility.features.ToxicReplyFilterState
+impowt c-com.twittew.contentheawth.toxicwepwyfiwtew.thwiftscawa.fiwtewstate
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt c-com.twittew.visibiwity.featuwes.toxicwepwyfiwtewconvewsationauthowisviewew
+i-impowt com.twittew.visibiwity.featuwes.toxicwepwyfiwtewstate
 
-class ToxicReplyFilterFeature(
-  statsReceiver: StatsReceiver) {
+c-cwass toxicwepwyfiwtewfeatuwe(
+  statsweceivew: statsweceivew) {
 
-  def forTweet(tweet: Tweet, viewerId: Option[Long]): FeatureMapBuilder => FeatureMapBuilder = {
-    builder =>
-      requests.incr()
+  def fowtweet(tweet: tweet, (U ﹏ U) viewewid: o-option[wong]): featuwemapbuiwdew => featuwemapbuiwdew = {
+    b-buiwdew =>
+      wequests.incw()
 
-      builder
-        .withConstantFeature(ToxicReplyFilterState, isTweetFilteredFromAuthor(tweet))
-        .withConstantFeature(
-          ToxicReplyFilterConversationAuthorIsViewer,
-          isRootAuthorViewer(tweet, viewerId))
+      b-buiwdew
+        .withconstantfeatuwe(toxicwepwyfiwtewstate, (⑅˘꒳˘) istweetfiwtewedfwomauthow(tweet))
+        .withconstantfeatuwe(
+          toxicwepwyfiwtewconvewsationauthowisviewew, òωó
+          iswootauthowviewew(tweet, ʘwʘ v-viewewid))
   }
 
-  private[this] def isRootAuthorViewer(tweet: Tweet, maybeViewerId: Option[Long]): Boolean = {
-    val maybeAuthorId = tweet.filteredReplyDetails.map(_.conversationAuthorId)
+  pwivate[this] d-def iswootauthowviewew(tweet: t-tweet, /(^•ω•^) maybeviewewid: option[wong]): boowean = {
+    vaw maybeauthowid = tweet.fiwtewedwepwydetaiws.map(_.convewsationauthowid)
 
-    (maybeViewerId, maybeAuthorId) match {
-      case (Some(viewerId), Some(authorId)) if viewerId == authorId => {
-        rootAuthorViewerStats.incr()
-        true
+    (maybeviewewid, ʘwʘ m-maybeauthowid) match {
+      case (some(viewewid), σωσ some(authowid)) if viewewid == a-authowid => {
+        wootauthowviewewstats.incw()
+        t-twue
       }
-      case _ => false
+      c-case _ => f-fawse
     }
   }
 
-  private[this] def isTweetFilteredFromAuthor(
-    tweet: Tweet,
-  ): FilterState = {
-    val result = tweet.filteredReplyDetails.map(_.filterState).getOrElse(FilterState.Unfiltered)
+  p-pwivate[this] def istweetfiwtewedfwomauthow(
+    tweet: tweet, OwO
+  ): f-fiwtewstate = {
+    vaw wesuwt = tweet.fiwtewedwepwydetaiws.map(_.fiwtewstate).getowewse(fiwtewstate.unfiwtewed)
 
-    if (result == FilterState.FilteredFromAuthor) {
-      filteredFromAuthorStats.incr()
+    i-if (wesuwt == fiwtewstate.fiwtewedfwomauthow) {
+      fiwtewedfwomauthowstats.incw()
     }
-    result
+    wesuwt
   }
 
-  private[this] val scopedStatsReceiver =
-    statsReceiver.scope("toxicreplyfilter")
+  pwivate[this] vaw scopedstatsweceivew =
+    s-statsweceivew.scope("toxicwepwyfiwtew")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pwivate[this] vaw w-wequests = scopedstatsweceivew.countew("wequests")
 
-  private[this] val rootAuthorViewerStats =
-    scopedStatsReceiver.scope(ToxicReplyFilterConversationAuthorIsViewer.name).counter("requests")
+  p-pwivate[this] v-vaw wootauthowviewewstats =
+    scopedstatsweceivew.scope(toxicwepwyfiwtewconvewsationauthowisviewew.name).countew("wequests")
 
-  private[this] val filteredFromAuthorStats =
-    scopedStatsReceiver.scope(ToxicReplyFilterState.name).counter("requests")
+  pwivate[this] vaw fiwtewedfwomauthowstats =
+    s-scopedstatsweceivew.scope(toxicwepwyfiwtewstate.name).countew("wequests")
 }

@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasRecentFollowedByUserIds {
-  // user ids that have recently followed the target user; target user has been "followed by" them.
-  def recentFollowedByUserIds: Option[Seq[Long]]
+twait haswecentfowwowedbyusewids {
+  // u-usew ids that have w-wecentwy fowwowed t-the tawget u-usew; tawget usew h-has been "fowwowed b-by" them. UwU
+  d-def wecentfowwowedbyusewids: option[seq[wong]]
 
-  lazy val numRecentFollowedByUserIds: Int = recentFollowedByUserIds.map(_.size).getOrElse(0)
+  w-wazy vaw nyumwecentfowwowedbyusewids: int = wecentfowwowedbyusewids.map(_.size).getowewse(0)
 }

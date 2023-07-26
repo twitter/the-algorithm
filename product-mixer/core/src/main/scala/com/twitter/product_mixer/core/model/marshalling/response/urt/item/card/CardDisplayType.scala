@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.card
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.cawd
 
-sealed trait CardDisplayType
+seawed twait cawddispwaytype
 
-case object HeroDisplayType extends CardDisplayType
-case object CellDisplayType extends CardDisplayType
-case object TweetCardDisplayType extends CardDisplayType
+c-case o-object hewodispwaytype e-extends c-cawddispwaytype
+c-case object cewwdispwaytype e-extends c-cawddispwaytype
+c-case object tweetcawddispwaytype extends cawddispwaytype

@@ -1,34 +1,34 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "abdecider/src/main/scala",
-        "content-recommender/thrift/src/main/thrift:content-recommender-common-scala",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/featureswitch",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/model",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param/decider",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/scribe",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/util",
-        "cr-mixer/thrift/src/main/thrift:thrift-scala",
-        "decider/src/main/scala",
-        "featureswitches/featureswitches-core/src/main/scala:experimentation-settings",
-        "finagle/finagle-core/src/main",
-        "frigate/frigate-common:base",
-        "frigate/frigate-common:util",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/base",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift-scala",
-        "scribelib/marshallers/src/main/scala/com/twitter/scribelib/marshallers",
-        "scribelib/validators/src/main/scala/com/twitter/scribelib/validators",
-        "scrooge/scrooge-serializer/src/main/scala",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/ml/api:data-scala",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-        "timelines/src/main/scala/com/twitter/timelines/clientevent",
-        "util-internal/scribe/src/main/scala/com/twitter/logging",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "3wdpawty/jvm/javax/inject:javax.inject",
+        "abdecidew/swc/main/scawa", (⑅˘꒳˘)
+        "content-wecommendew/thwift/swc/main/thwift:content-wecommendew-common-scawa", ( ͡o ω ͡o )
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/featuweswitch", UwU
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/modew", rawr x3
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/pawam", rawr
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/pawam/decidew", σωσ
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/scwibe", σωσ
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/utiw", >_<
+        "cw-mixew/thwift/swc/main/thwift:thwift-scawa", :3
+        "decidew/swc/main/scawa", (U ﹏ U)
+        "featuweswitches/featuweswitches-cowe/swc/main/scawa:expewimentation-settings", -.-
+        "finagwe/finagwe-cowe/swc/main", (ˆ ﻌ ˆ)♡
+        "fwigate/fwigate-common:base", (⑅˘꒳˘)
+        "fwigate/fwigate-common:utiw", (U ᵕ U❁)
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/base", -.-
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", ^^;;
+        "pwoduct-mixew/cowe/swc/main/thwift/com/twittew/pwoduct_mixew/cowe:thwift-scawa", >_<
+        "scwibewib/mawshawwews/swc/main/scawa/com/twittew/scwibewib/mawshawwews", mya
+        "scwibewib/vawidatows/swc/main/scawa/com/twittew/scwibewib/vawidatows", mya
+        "scwooge/scwooge-sewiawizew/swc/main/scawa",
+        "swc/scawa/com/twittew/simcwustews_v2/common", 😳
+        "swc/thwift/com/twittew/mw/api:data-scawa", XD
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", :3
+        "timewines/swc/main/scawa/com/twittew/timewines/cwientevent", 😳😳😳
+        "utiw-intewnaw/scwibe/swc/main/scawa/com/twittew/wogging", -.-
     ],
 )

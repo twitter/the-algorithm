@@ -1,50 +1,50 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object DropFilteredModuleItemCandidates {
-  def apply(candidatePipeline: CandidatePipelineIdentifier, filter: ShouldKeepCandidate) =
-    new DropFilteredModuleItemCandidates(SpecificPipeline(candidatePipeline), filter)
+object dwopfiwtewedmoduweitemcandidates {
+  d-def appwy(candidatepipewine: candidatepipewineidentifiew, rawr fiwtew: shouwdkeepcandidate) =
+    n-nyew dwopfiwtewedmoduweitemcandidates(specificpipewine(candidatepipewine), mya fiwtew)
 
-  def apply(candidatePipelines: Set[CandidatePipelineIdentifier], filter: ShouldKeepCandidate) =
-    new DropFilteredModuleItemCandidates(SpecificPipelines(candidatePipelines), filter)
+  def a-appwy(candidatepipewines: set[candidatepipewineidentifiew], ^^ fiwtew: shouwdkeepcandidate) =
+    nyew d-dwopfiwtewedmoduweitemcandidates(specificpipewines(candidatepipewines), 😳😳😳 fiwtew)
 }
 
 /**
- * Limit candidates in modules from certain candidates sources to those which satisfy
- * the provided predicate.
+ * w-wimit c-candidates in moduwes fwom cewtain candidates souwces to those which satisfy
+ * t-the pwovided pwedicate. mya
  *
- * This acts like a [[DropFilteredCandidates]] but for modules in `remainingCandidates`
- * from any of the provided [[candidatePipelines]].
+ * this acts wike a [[dwopfiwtewedcandidates]] but f-fow moduwes in `wemainingcandidates`
+ * fwom any o-of the pwovided [[candidatepipewines]]. 😳
  *
- * @note this updates the module in the `remainingCandidates`
+ * @note t-this updates t-the moduwe in t-the `wemainingcandidates`
  */
-case class DropFilteredModuleItemCandidates(
-  override val pipelineScope: CandidateScope,
-  filter: ShouldKeepCandidate)
-    extends Selector[PipelineQuery] {
+case cwass dwopfiwtewedmoduweitemcandidates(
+  ovewwide vaw pipewinescope: c-candidatescope, -.-
+  fiwtew: shouwdkeepcandidate)
+    e-extends sewectow[pipewinequewy] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val candidatesUpdated = remainingCandidates.map {
-      case module: ModuleCandidateWithDetails if pipelineScope.contains(module) =>
-        // this applies to all candidates in a module, even if they are from a different
-        // candidate source, which can happen if items are added to a module during selection
-        module.copy(candidates = module.candidates.filter(filter.apply))
-      case candidate => candidate
+  ovewwide def appwy(
+    quewy: pipewinequewy, 🥺
+    wemainingcandidates: s-seq[candidatewithdetaiws], o.O
+    wesuwt: s-seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    v-vaw candidatesupdated = wemainingcandidates.map {
+      case moduwe: moduwecandidatewithdetaiws if pipewinescope.contains(moduwe) =>
+        // this appwies t-to aww candidates i-in a moduwe, /(^•ω•^) even if they a-awe fwom a diffewent
+        // c-candidate souwce, nyaa~~ which can happen i-if items awe added to a moduwe d-duwing sewection
+        moduwe.copy(candidates = moduwe.candidates.fiwtew(fiwtew.appwy))
+      c-case candidate => candidate
     }
 
-    SelectorResult(remainingCandidates = candidatesUpdated, result = result)
+    s-sewectowwesuwt(wemainingcandidates = candidatesupdated, nyaa~~ w-wesuwt = wesuwt)
   }
 }

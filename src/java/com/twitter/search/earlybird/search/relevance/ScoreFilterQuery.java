@@ -1,138 +1,138 @@
-package com.twitter.search.earlybird.search.relevance;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadew;
+impowt o-owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.seawch.booweancwause;
+i-impowt owg.apache.wucene.seawch.booweanquewy;
+i-impowt o-owg.apache.wucene.seawch.docidsetitewatow;
+i-impowt owg.apache.wucene.seawch.indexseawchew;
+impowt o-owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProvider;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProvider.NamedScoringFunctionProvider;
+impowt com.twittew.seawch.common.quewy.defauwtfiwtewweight;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.utiw.wangefiwtewdisi;
+impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing.scowingfunction;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing.scowingfunctionpwovidew;
+impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing.scowingfunctionpwovidew.namedscowingfunctionpwovidew;
 
 /**
- * This filter only accepts documents for which the provided
- * {@link com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction}
- * returns a score that's greater or equal to the passed-in minScore and smaller or equal
- * to maxScore.
+ * this fiwtew onwy accepts documents f-fow which the pwovided
+ * {@wink c-com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing.scowingfunction}
+ * w-wetuwns a scowe that's gweatew ow equaw to the passed-in minscowe and smowew ow e-equaw
+ * to maxscowe. OwO
  */
-public final class ScoreFilterQuery extends Query {
-  private static final float DEFAULT_LUCENE_SCORE = 1.0F;
+pubwic finaw cwass scowefiwtewquewy extends quewy {
+  pwivate static f-finaw fwoat defauwt_wucene_scowe = 1.0f;
 
-  private final float minScore;
-  private final float maxScore;
-  private final NamedScoringFunctionProvider scoringFunctionProvider;
-  private final ImmutableSchemaInterface schema;
+  pwivate f-finaw fwoat m-minscowe;
+  pwivate f-finaw fwoat m-maxscowe;
+  pwivate finaw nyamedscowingfunctionpwovidew scowingfunctionpwovidew;
+  p-pwivate finaw immutabweschemaintewface schema;
 
   /**
-   * Returns a score filter.
+   * w-wetuwns a scowe fiwtew. rawr x3
    *
-   * @param schema The schema to use to extract the feature scores.
-   * @param scoringFunctionProvider The scoring function provider.
-   * @param minScore The minimum score threshold.
-   * @param maxScore The maximum score threshold.
-   * @return A score filter with the given configuration.
+   * @pawam schema the schema to use to extwact the featuwe scowes. XD
+   * @pawam s-scowingfunctionpwovidew the scowing function p-pwovidew. σωσ
+   * @pawam m-minscowe t-the minimum scowe thweshowd. (U ᵕ U❁)
+   * @pawam maxscowe the maximum scowe thweshowd. (U ﹏ U)
+   * @wetuwn a-a scowe fiwtew w-with the given configuwation. :3
    */
-  public static Query getScoreFilterQuery(
-      ImmutableSchemaInterface schema,
-      NamedScoringFunctionProvider scoringFunctionProvider,
-      float minScore,
-      float maxScore) {
-    return new BooleanQuery.Builder()
-        .add(new ScoreFilterQuery(schema, scoringFunctionProvider, minScore, maxScore),
-             BooleanClause.Occur.FILTER)
-        .build();
+  p-pubwic static q-quewy getscowefiwtewquewy(
+      immutabweschemaintewface s-schema, ( ͡o ω ͡o )
+      nyamedscowingfunctionpwovidew scowingfunctionpwovidew, σωσ
+      f-fwoat minscowe, >w<
+      fwoat maxscowe) {
+    w-wetuwn nyew booweanquewy.buiwdew()
+        .add(new s-scowefiwtewquewy(schema, 😳😳😳 scowingfunctionpwovidew, OwO m-minscowe, m-maxscowe), 😳
+             booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  private ScoreFilterQuery(ImmutableSchemaInterface schema,
-                           NamedScoringFunctionProvider scoringFunctionProvider,
-                           float minScore,
-                           float maxScore) {
-    this.schema = schema;
-    this.scoringFunctionProvider = scoringFunctionProvider;
-    this.minScore = minScore;
-    this.maxScore = maxScore;
+  pwivate scowefiwtewquewy(immutabweschemaintewface schema, 😳😳😳
+                           nyamedscowingfunctionpwovidew scowingfunctionpwovidew, (˘ω˘)
+                           fwoat minscowe, ʘwʘ
+                           f-fwoat maxscowe) {
+    t-this.schema = schema;
+    t-this.scowingfunctionpwovidew = s-scowingfunctionpwovidew;
+    t-this.minscowe = minscowe;
+    this.maxscowe = maxscowe;
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        ScoringFunction scoringFunction = scoringFunctionProvider.getScoringFunction();
-        scoringFunction.setNextReader((EarlybirdIndexSegmentAtomicReader) context.reader());
-        return new ScoreFilterDocIdSetIterator(
-            context.reader(), scoringFunction, minScore, maxScore);
+  @ovewwide
+  p-pubwic weight cweateweight(indexseawchew seawchew, ( ͡o ω ͡o ) scowemode scowemode, o.O fwoat boost)
+      t-thwows ioexception {
+    wetuwn nyew defauwtfiwtewweight(this) {
+      @ovewwide
+      pwotected d-docidsetitewatow g-getdocidsetitewatow(weafweadewcontext c-context) thwows ioexception {
+        s-scowingfunction s-scowingfunction = s-scowingfunctionpwovidew.getscowingfunction();
+        s-scowingfunction.setnextweadew((eawwybiwdindexsegmentatomicweadew) context.weadew());
+        wetuwn n-nyew scowefiwtewdocidsetitewatow(
+            c-context.weadew(), >w< s-scowingfunction, 😳 m-minscowe, 🥺 maxscowe);
       }
     };
   }
 
-  private static final class ScoreFilterDocIdSetIterator extends RangeFilterDISI {
-    private final ScoringFunction scoringFunction;
-    private final float minScore;
-    private final float maxScore;
+  p-pwivate static finaw cwass scowefiwtewdocidsetitewatow extends wangefiwtewdisi {
+    p-pwivate finaw scowingfunction scowingfunction;
+    pwivate finaw fwoat minscowe;
+    pwivate f-finaw fwoat maxscowe;
 
-    public ScoreFilterDocIdSetIterator(LeafReader indexReader, ScoringFunction scoringFunction,
-                                       float minScore, float maxScore) throws IOException {
-      super(indexReader);
-      this.scoringFunction = scoringFunction;
-      this.minScore = minScore;
-      this.maxScore = maxScore;
+    pubwic scowefiwtewdocidsetitewatow(weafweadew indexweadew, rawr x3 s-scowingfunction s-scowingfunction, o.O
+                                       f-fwoat minscowe, rawr fwoat m-maxscowe) thwows ioexception {
+      s-supew(indexweadew);
+      t-this.scowingfunction = scowingfunction;
+      this.minscowe = minscowe;
+      this.maxscowe = maxscowe;
     }
 
-    @Override
-    protected boolean shouldReturnDoc() throws IOException {
-      float score = scoringFunction.score(docID(), DEFAULT_LUCENE_SCORE);
-      return score >= minScore && score <= maxScore;
+    @ovewwide
+    p-pwotected boowean shouwdwetuwndoc() t-thwows ioexception {
+      fwoat scowe = s-scowingfunction.scowe(docid(), ʘwʘ d-defauwt_wucene_scowe);
+      wetuwn scowe >= minscowe && s-scowe <= m-maxscowe;
     }
   }
 
-  public float getMinScoreForTest() {
-    return minScore;
+  pubwic f-fwoat getminscowefowtest() {
+    w-wetuwn minscowe;
   }
 
-  public float getMaxScoreForTest() {
-    return maxScore;
+  pubwic fwoat getmaxscowefowtest() {
+    wetuwn maxscowe;
   }
 
-  public ScoringFunctionProvider getScoringFunctionProviderForTest() {
-    return scoringFunctionProvider;
+  pubwic s-scowingfunctionpwovidew g-getscowingfunctionpwovidewfowtest() {
+    w-wetuwn scowingfunctionpwovidew;
   }
 
-  @Override
-  public int hashCode() {
-    return (int) (minScore * 29
-                  + maxScore * 17
-                  + (scoringFunctionProvider == null ? 0 : scoringFunctionProvider.hashCode()));
+  @ovewwide
+  pubwic int h-hashcode() {
+    w-wetuwn (int) (minscowe * 29
+                  + maxscowe * 17
+                  + (scowingfunctionpwovidew == nyuww ? 0 : s-scowingfunctionpwovidew.hashcode()));
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof ScoreFilterQuery)) {
-      return false;
+  @ovewwide
+  pubwic boowean equaws(object obj) {
+    if (!(obj instanceof s-scowefiwtewquewy)) {
+      w-wetuwn fawse;
     }
 
-    ScoreFilterQuery filter = ScoreFilterQuery.class.cast(obj);
-    return (minScore == filter.minScore)
-        && (maxScore == filter.maxScore)
-        && (scoringFunctionProvider == null
-            ? filter.scoringFunctionProvider == null
-            : scoringFunctionProvider.equals(filter.scoringFunctionProvider));
+    scowefiwtewquewy f-fiwtew = scowefiwtewquewy.cwass.cast(obj);
+    w-wetuwn (minscowe == fiwtew.minscowe)
+        && (maxscowe == fiwtew.maxscowe)
+        && (scowingfunctionpwovidew == nyuww
+            ? f-fiwtew.scowingfunctionpwovidew == nyuww
+            : scowingfunctionpwovidew.equaws(fiwtew.scowingfunctionpwovidew));
   }
 
-  @Override
-  public String toString(String field) {
-    return "SCORE_FILTER_QUERY[minScore=" + minScore + ",maxScore=" + maxScore + "]";
+  @ovewwide
+  pubwic stwing tostwing(stwing f-fiewd) {
+    wetuwn "scowe_fiwtew_quewy[minscowe=" + minscowe + ",maxscowe=" + m-maxscowe + "]";
   }
 }

@@ -1,60 +1,60 @@
-package com.twitter.follow_recommendations.common.clients.dismiss_store
+package com.twittew.fowwow_wecommendations.common.cwients.dismiss_stowe
 
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.onboarding.relevance.store.thriftscala.WhoToFollowDismissEventDetails
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Scanner
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.onboawding.wewevance.stowe.thwiftscawa.whotofowwowdismisseventdetaiws
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.catawog.scan.swice
+i-impowt c-com.twittew.stwato.cwient.scannew
+i-impowt com.twittew.utiw.wogging.wogging
+i-impowt javax.inject.inject
+impowt javax.inject.named
+impowt javax.inject.singweton
 
 /**
- * this store gets the list of dismissed candidates since a certain time
- * primarily used for filtering out accounts that a user has explicitly dismissed
+ * t-this stowe gets the wist of dismissed candidates s-since a cewtain time
+ * p-pwimawiwy used fow fiwtewing out accounts that a usew has expwicitwy d-dismissed
  *
- * we fail open on timeouts, but loudly on other errors
+ * we faiw open o-on timeouts, >w< b-but woudwy on othew ewwows
  */
-@Singleton
-class DismissStore @Inject() (
-  @Named(GuiceNamedConstants.DISMISS_STORE_SCANNER)
-  scanner: Scanner[(Long, Slice[
-      (Long, Long)
-    ]), Unit, (Long, (Long, Long)), WhoToFollowDismissEventDetails],
-  stats: StatsReceiver)
-    extends Logging {
+@singweton
+cwass dismissstowe @inject() (
+  @named(guicenamedconstants.dismiss_stowe_scannew)
+  scannew: scannew[(wong, rawr s-swice[
+      (wong, mya wong)
+    ]), ^^ unit, (wong, 😳😳😳 (wong, wong)), mya whotofowwowdismisseventdetaiws], 😳
+  s-stats: statsweceivew)
+    e-extends wogging {
 
-  private val MaxCandidatesToReturn = 100
+  p-pwivate v-vaw maxcandidatestowetuwn = 100
 
-  // gets a list of dismissed candidates. if numCandidatesToFetchOption is none, we will fetch the default number of candidates
+  // g-gets a wist of dismissed candidates. -.- if nyumcandidatestofetchoption i-is nyone, 🥺 we wiww fetch the defauwt nyumbew o-of candidates
   def get(
-    userId: Long,
-    negStartTimeMs: Long,
-    maxCandidatesToFetchOption: Option[Int]
-  ): Stitch[Seq[Long]] = {
+    usewid: wong, o.O
+    nyegstawttimems: wong, /(^•ω•^)
+    maxcandidatestofetchoption: o-option[int]
+  ): stitch[seq[wong]] = {
 
-    val maxCandidatesToFetch = maxCandidatesToFetchOption.getOrElse(MaxCandidatesToReturn)
+    v-vaw maxcandidatestofetch = m-maxcandidatestofetchoption.getowewse(maxcandidatestowetuwn)
 
-    scanner
+    s-scannew
       .scan(
         (
-          userId,
-          Slice(
-            from = None,
-            to = Some((negStartTimeMs, Long.MaxValue)),
-            limit = Some(maxCandidatesToFetch)
+          usewid, nyaa~~
+          swice(
+            fwom = nyone, nyaa~~
+            to = s-some((negstawttimems, :3 w-wong.maxvawue)),
+            wimit = some(maxcandidatestofetch)
           )
         )
       )
       .map {
-        case s: Seq[((Long, (Long, Long)), WhoToFollowDismissEventDetails)] if s.nonEmpty =>
-          s.map {
-            case ((_: Long, (_: Long, candidateId: Long)), _: WhoToFollowDismissEventDetails) =>
-              candidateId
+        c-case s: s-seq[((wong, 😳😳😳 (wong, (˘ω˘) wong)), whotofowwowdismisseventdetaiws)] i-if s.nonempty =>
+          s-s.map {
+            case ((_: wong, ^^ (_: w-wong, :3 candidateid: wong)), -.- _: whotofowwowdismisseventdetaiws) =>
+              c-candidateid
           }
-        case _ => Nil
+        case _ => nyiw
       }
   }
 }

@@ -1,6 +1,6 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-object TweetDeleteReason extends Enumeration {
-  type TweetDeleteReason = Value
-  val Deleted, BounceDeleted = Value
+object tweetdeweteweason extends e-enumewation {
+  t-type tweetdeweteweason = v-vawue
+  vaw deweted, òωó b-bouncedeweted = v-vawue
 }

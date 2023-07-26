@@ -1,692 +1,692 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
+#incwude "wesouwce_utiws.h"
 
-#include <algorithm>
-using std::string;
+#incwude <awgowithm>
+using std::stwing;
 
-REGISTER_OP("GetStringTensorsFromDataRecord")
-.Attr("feature_id: int")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("strings: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that decodes and returns string tensors from the data record.
+wegistew_op("getstwingtensowsfwomdatawecowd")
+.attw("featuwe_id: i-int")
+.input("data_wecowd_handwe: w-wesouwce")
+.output("ids: i-int64")
+.output("stwings: s-stwing")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    w-wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow o-op that decodes and wetuwns stwing tensows fwom the data wecowd. òωó
 
-Attr
-  feature_id: The hashed id of the feature name.
+attw
+  featuwe_id: t-the hashed id of the featuwe nyame. o.O
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+input
+  d-data_wecowd_handwe: wesouwce h-handwe to datawecowd. ( ͡o ω ͡o )
 
-Outputs
-  ids: A 1D int64 tensor representing the input index in a given batch.
-  strings: A 1D string tensor representing the decoded strings from the batch.
+outputs
+  ids: a 1d int64 tensow wepwesenting t-the input index in a given b-batch. mya
+  stwings: a-a 1d stwing tensow wepwesenting the decoded stwings fwom the batch. >_<
 )doc");
 
-REGISTER_OP("GetStringTensorsFromHashedDataRecord")
-.Attr("feature_id: int")
-.Input("hashed_data_record_handle: resource")
-.Output("ids: int64")
-.Output("strings: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that decodes and returns string tensors from the hashed data record.
+w-wegistew_op("getstwingtensowsfwomhasheddatawecowd")
+.attw("featuwe_id: int")
+.input("hashed_data_wecowd_handwe: wesouwce")
+.output("ids: int64")
+.output("stwings: stwing")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow o-op that decodes a-and wetuwns s-stwing tensows fwom the hashed data wecowd. rawr
 
-Attr
-  feature_id: The hashed id of the feature name.
+a-attw
+  featuwe_id: the hashed id of the featuwe n-name. >_<
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+input
+  data_wecowd_handwe: wesouwce handwe to datawecowd. (U ﹏ U)
 
-Outputs
-  ids: A 1D int64 tensor representing the input index in a given batch.
-  strings: A 1D string tensor representing the decoded strings from the batch.
+outputs
+  ids: a 1d int64 tensow wepwesenting t-the input index in a given batch. rawr
+  s-stwings: a 1d s-stwing tensow w-wepwesenting the decoded stwings fwom the batch. (U ᵕ U❁)
 )doc");
 
-template<typename Resource>
-class GetStringTensorsOp : public OpKernel {
- private:
-  int64 feature_id;
+tempwate<typename w-wesouwce>
+c-cwass getstwingtensowsop : pubwic opkewnew {
+ p-pwivate:
+  i-int64 featuwe_id;
 
- public:
-  explicit GetStringTensorsOp(OpKernelConstruction *context)
-      : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+ pubwic:
+  expwicit g-getstwingtensowsop(opkewnewconstwuction *context)
+      : opkewnew(context) {
+    o-op_wequiwes_ok(context, (ˆ ﻌ ˆ)♡ context->getattw("featuwe_id", &featuwe_id));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
-    const int64 batch_size = static_cast<int64>(handle->records.size());
-    const auto &records = handle->records;
+  void compute(opkewnewcontext *context) o-ovewwide {
+    auto h-handwe = gethandwe<wesouwce>(context, >_< 0);
+    const int64 batch_size = s-static_cast<int64>(handwe->wecowds.size());
+    c-const auto &wecowds = handwe->wecowds;
 
-    try {
-      int64 total_size = 0;
-      for (const auto &record : records) {
-        try {
-          const auto &tensor = record.getRawTensor(feature_id);
-          total_size += static_cast<int64>(tensor.getNumElements());
-        } catch(const std::out_of_range &err) {
-          LOG(WARNING) << "Ignoring missing string tensor with key: " << feature_id << std::endl;
+    twy {
+      int64 totaw_size = 0;
+      fow (const auto &wecowd : wecowds) {
+        t-twy {
+          c-const auto &tensow = wecowd.getwawtensow(featuwe_id);
+          t-totaw_size += s-static_cast<int64>(tensow.getnumewements());
+        } c-catch(const std::out_of_wange &eww) {
+          wog(wawning) << "ignowing missing s-stwing tensow with key: " << featuwe_id << std::endw;
           continue;
         }
       }
 
-      twml::ThriftReader reader(nullptr);
-      TensorShape shape = {total_size};
-      Tensor *strings_tensor = nullptr;
-      Tensor *ids_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids_tensor));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &strings_tensor));
+      twmw::thwiftweadew w-weadew(nuwwptw);
+      tensowshape s-shape = {totaw_size};
+      t-tensow *stwings_tensow = n-nyuwwptw;
+      tensow *ids_tensow = n-nyuwwptw;
+      o-op_wequiwes_ok(context, ^^;; c-context->awwocate_output(0, ʘwʘ s-shape, 😳😳😳 &ids_tensow));
+      op_wequiwes_ok(context, UwU context->awwocate_output(1, OwO s-shape, :3 &stwings_tensow));
 
-      auto strings_data = strings_tensor->flat<string>().data();
-      auto ids_data = ids_tensor->flat<int64>().data();
+      a-auto stwings_data = s-stwings_tensow->fwat<stwing>().data();
+      a-auto ids_data = i-ids_tensow->fwat<int64>().data();
 
-      for (int64 i = 0; i < batch_size; i++) {
-        const auto &record = records[i];
-        try {
-          const twml::RawTensor &tensor = record.getRawTensor(feature_id);
-          const uint8_t *buffer = static_cast<const uint8_t *>(tensor.getData<void>());
-          const int64 num_strings = static_cast<int64>(tensor.getNumElements());
-          reader.setBuffer(buffer);
+      fow (int64 i = 0; i < batch_size; i++) {
+        c-const auto &wecowd = wecowds[i];
+        twy {
+          const twmw::wawtensow &tensow = wecowd.getwawtensow(featuwe_id);
+          c-const uint8_t *buffew = static_cast<const uint8_t *>(tensow.getdata<void>());
+          const int64 nyum_stwings = static_cast<int64>(tensow.getnumewements());
+          w-weadew.setbuffew(buffew);
 
-          for (int64 j = 0; j < num_strings; j++) {
-            const uint8_t *curr_begin = nullptr;
-            const auto curr_length = reader.getRawBuffer<uint8_t>(&curr_begin);
-            strings_data[j] = std::string(curr_begin, curr_begin + curr_length);
+          f-fow (int64 j-j = 0; j < nyum_stwings; j++) {
+            c-const uint8_t *cuww_begin = n-nyuwwptw;
+            const a-auto cuww_wength = weadew.getwawbuffew<uint8_t>(&cuww_begin);
+            stwings_data[j] = std::stwing(cuww_begin, -.- cuww_begin + cuww_wength);
             ids_data[j] = i;
           }
-          ids_data += num_strings;
-          strings_data += num_strings;
-        } catch(const std::out_of_range &err) {
-          continue;
+          i-ids_data += nyum_stwings;
+          s-stwings_data += nyum_stwings;
+        } c-catch(const std::out_of_wange &eww) {
+          c-continue;
         }
       }
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+    } catch(const std::exception &eww) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(eww.nani()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetStringTensorsFromDataRecord")
-  .Device(DEVICE_CPU),
-  GetStringTensorsOp<DataRecordResource>);
+w-wegistew_kewnew_buiwdew(
+  nyame("getstwingtensowsfwomdatawecowd")
+  .device(device_cpu), 🥺
+  g-getstwingtensowsop<datawecowdwesouwce>);
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetStringTensorsFromHashedDataRecord")
-  .Device(DEVICE_CPU),
-  GetStringTensorsOp<HashedDataRecordResource>);
+w-wegistew_kewnew_buiwdew(
+  nyame("getstwingtensowsfwomhasheddatawecowd")
+  .device(device_cpu), -.-
+  getstwingtensowsop<hasheddatawecowdwesouwce>);
 
-REGISTER_OP("GetTensorsFromDataRecord")
-.Attr("assert_shape: bool")
-.Attr("feature_id: int")
-.Input("data_record_handle: resource")
-.Output("output: string")
-.Output("out_shape: int64")
-.Output("out_type: string")
-.Output("out_endian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+wegistew_op("gettensowsfwomdatawecowd")
+.attw("assewt_shape: boow")
+.attw("featuwe_id: i-int")
+.input("data_wecowd_handwe: w-wesouwce")
+.output("output: s-stwing")
+.output("out_shape: int64")
+.output("out_type: s-stwing")
+.output("out_endian: u-uint8")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    w-wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow op that decodes and wetuwns tensows fwom t-the data wecowd. -.-
 
-Attr
-  feature_id: The hashed id of the feature name.
+a-attw
+  featuwe_id: the hashed id of the featuwe n-nyame. (U ﹏ U)
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+input
+  d-data_wecowd_handwe: wesouwce handwe to datawecowd. rawr
 
-Outputs
-  output: A 2D byte tensor representing the requested feature.
-  out_shape: A tensor containing [batch_size, thrift_shape].
-  out_type: Output type returned as a string tensor of size 1.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+outputs
+  o-output: a 2d byte tensow wepwesenting the wequested featuwe. mya
+  out_shape: a tensow c-containing [batch_size, ( ͡o ω ͡o ) thwift_shape].
+  out_type: o-output type w-wetuwned as a stwing tensow of size 1. /(^•ω•^)
+  out_endian: endianness o-of the bytes wetuwned a-a tensow of size 1. >_< 0: witte, (✿oωo) 1: big.
 )doc");
 
-REGISTER_OP("GetTensorsFromHashedDataRecord")
-.Attr("assert_shape: bool")
-.Attr("feature_id: int")
-.Input("hashed_data_record_handle: resource")
-.Output("output: string")
-.Output("out_shape: int64")
-.Output("out_type: string")
-.Output("out_endian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns decodes and tensors from the hashed data record.
+wegistew_op("gettensowsfwomhasheddatawecowd")
+.attw("assewt_shape: b-boow")
+.attw("featuwe_id: int")
+.input("hashed_data_wecowd_handwe: w-wesouwce")
+.output("output: stwing")
+.output("out_shape: int64")
+.output("out_type: stwing")
+.output("out_endian: uint8")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow o-op that wetuwns decodes and tensows f-fwom the hashed data wecowd. 😳😳😳
 
-Attr
-  feature_id: The hashed id of the feature name.
+a-attw
+  featuwe_id: t-the hashed i-id of the featuwe nyame. (ꈍᴗꈍ)
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+input
+  d-data_wecowd_handwe: w-wesouwce handwe to datawecowd. 🥺
 
-Outputs
-  output: A 2D byte tensor representing the requested feature.
-  out_shape: A tensor containing [batch_size, thrift_shape].
-  out_type: Output type returned as a string tensor of size 1.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+outputs
+  o-output: a 2d byte t-tensow wepwesenting t-the wequested featuwe. mya
+  out_shape: a tensow c-containing [batch_size, (ˆ ﻌ ˆ)♡ thwift_shape]. (⑅˘꒳˘)
+  o-out_type: o-output type wetuwned as a stwing tensow of size 1. òωó
+  out_endian: e-endianness o-of the bytes w-wetuwned a tensow o-of size 1. o.O 0: witte, 1: big. XD
 )doc");
 
-template<class Resource>
-class GetTensorsOp : public OpKernel {
- private:
-  bool assert_shape;
-  int64 feature_id;
+t-tempwate<cwass wesouwce>
+cwass gettensowsop : pubwic opkewnew {
+ pwivate:
+  boow assewt_shape;
+  i-int64 featuwe_id;
 
- public:
-  explicit GetTensorsOp(OpKernelConstruction *context)
-      : OpKernel(context), assert_shape(true) {
-    OP_REQUIRES_OK(context, context->GetAttr("assert_shape", &assert_shape));
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+ pubwic:
+  e-expwicit gettensowsop(opkewnewconstwuction *context)
+      : o-opkewnew(context), (˘ω˘) assewt_shape(twue) {
+    o-op_wequiwes_ok(context, (ꈍᴗꈍ) context->getattw("assewt_shape", >w< &assewt_shape));
+    op_wequiwes_ok(context, XD c-context->getattw("featuwe_id", -.- &featuwe_id));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
-    uint64 batch_size = handle->records.size();
-    const auto &records = handle->records;
+  v-void c-compute(opkewnewcontext *context) o-ovewwide {
+    a-auto handwe = gethandwe<wesouwce>(context, ^^;; 0);
+    uint64 batch_size = handwe->wecowds.size();
+    const auto &wecowds = handwe->wecowds;
 
-    try {
-      TensorShape raw_shape = {static_cast<int64>(batch_size)};
-      Tensor* output_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, raw_shape, &output_tensor));
-      auto output_flat = output_tensor->flat<string>();
-      auto output_data = output_flat.data();
+    twy {
+      tensowshape w-waw_shape = {static_cast<int64>(batch_size)};
+      t-tensow* o-output_tensow = nyuwwptw;
+      o-op_wequiwes_ok(context, XD context->awwocate_output(0, :3 waw_shape, σωσ &output_tensow));
+      auto o-output_fwat = output_tensow->fwat<stwing>();
+      a-auto output_data = output_fwat.data();
 
-      twml_type type = TWML_TYPE_UNKNOWN;
-      bool is_big_endian = false;
+      t-twmw_type type = twmw_type_unknown;
+      boow i-is_big_endian = f-fawse;
 
-      std::vector<uint64> shape(1, batch_size);
-      uint64 length = 0;
+      std::vectow<uint64> shape(1, XD batch_size);
+      uint64 w-wength = 0;
 
-      for (auto record : records) {
-        const twml::RawTensor tensor = record.getRawTensor(feature_id);
-        const auto &curr_dims = tensor.getDims();
-        const auto curr_type = tensor.getType();
-        const bool curr_is_big_endian = tensor.is_big_endian();
-        const uint64 curr_length = tensor.getRawLength();
+      f-fow (auto wecowd : wecowds) {
+        const twmw::wawtensow tensow = wecowd.getwawtensow(featuwe_id);
+        const auto &cuww_dims = tensow.getdims();
+        c-const auto c-cuww_type = t-tensow.gettype();
+        c-const b-boow cuww_is_big_endian = tensow.is_big_endian();
+        c-const u-uint64 cuww_wength = tensow.getwawwength();
 
-        // Create the output tensor based on first tensor
+        // c-cweate the o-output tensow based on fiwst t-tensow
         if (shape.size() == 1) {
-          // Push the shape of individual tensors into shape
-          shape.reserve(curr_dims.size() + 1);
-          shape.insert(shape.end(), curr_dims.begin(), curr_dims.end());
-          type = curr_type;
-          is_big_endian = curr_is_big_endian;
-          length = curr_length;
+          // push the shape of individuaw t-tensows into shape
+          shape.wesewve(cuww_dims.size() + 1);
+          shape.insewt(shape.end(), c-cuww_dims.begin(), :3 c-cuww_dims.end());
+          type = cuww_type;
+          i-is_big_endian = cuww_is_big_endian;
+          wength = cuww_wength;
 
-        } else {
-          if (assert_shape) {
-            // Assert shape of all tensors is the same.
-            bool is_same_shape = std::equal(shape.begin() + 1, shape.end(), curr_dims.begin());
+        } e-ewse {
+          i-if (assewt_shape) {
+            // a-assewt shape of aww tensows is the same. rawr
+            boow i-is_same_shape = std::equaw(shape.begin() + 1, 😳 shape.end(), 😳😳😳 c-cuww_dims.begin());
 
-            if (!is_same_shape || length != curr_length) {
-              throw std::runtime_error("TensorShape mismatch for feature_id: "
-                                       + std::to_string(feature_id));
+            i-if (!is_same_shape || wength != cuww_wength) {
+              t-thwow std::wuntime_ewwow("tensowshape mismatch fow featuwe_id: "
+                                       + s-std::to_stwing(featuwe_id));
             }
           }
 
-          // Assert type and endianness of all tensors is the same.
-          if (type != curr_type || is_big_endian != curr_is_big_endian) {
-            throw std::runtime_error("Tensor type mismatch for feature_id: "
-                                     + std::to_string(feature_id));
+          // a-assewt type and endianness of aww tensows i-is the same. (ꈍᴗꈍ)
+          if (type != cuww_type || i-is_big_endian != c-cuww_is_big_endian) {
+            thwow std::wuntime_ewwow("tensow t-type mismatch fow featuwe_id: "
+                                     + s-std::to_stwing(featuwe_id));
           }
         }
 
-        // Copy from datarecord to output
-        const uint8 *tensor_data = reinterpret_cast<const uint8 *>(tensor.getData<void>());
-        *output_data = std::string(tensor_data, tensor_data + curr_length);
+        // c-copy f-fwom datawecowd to output
+        const uint8 *tensow_data = weintewpwet_cast<const uint8 *>(tensow.getdata<void>());
+        *output_data = std::stwing(tensow_data, 🥺 tensow_data + cuww_wength);
 
-        // Increment it for the next tensor in the batch.
+        // incwement it fow the nyext tensow in the batch. ^•ﻌ•^
         output_data++;
       }
 
-      Tensor *shape_tensor = nullptr;
-      TensorShape shape_shape = {static_cast<int64>(shape.size())};
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape_shape, &shape_tensor));
-      auto shape_flat = shape_tensor->flat<int64>();
-      for (int i = 0; i < static_cast<int>(shape.size()); i++) {
-        shape_flat(i) = shape[i];
+      tensow *shape_tensow = n-nyuwwptw;
+      t-tensowshape shape_shape = {static_cast<int64>(shape.size())};
+      op_wequiwes_ok(context, XD c-context->awwocate_output(1, ^•ﻌ•^ s-shape_shape, ^^;; &shape_tensow));
+      a-auto shape_fwat = shape_tensow->fwat<int64>();
+      f-fow (int i = 0; i < s-static_cast<int>(shape.size()); i-i++) {
+        shape_fwat(i) = s-shape[i];
       }
 
-      Tensor* type_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(2, {}, &type_tensor));
-      type_tensor->scalar<string>()() = twml::getTypeName(type);
+      tensow* t-type_tensow = nyuwwptw;
+      op_wequiwes_ok(context, ʘwʘ c-context->awwocate_output(2, OwO {}, &type_tensow));
+      type_tensow->scawaw<stwing>()() = twmw::gettypename(type);
 
-      Tensor* endian_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(3, {}, &endian_tensor));
-      endian_tensor->scalar<uint8>()() = is_big_endian;
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+      tensow* endian_tensow = n-nyuwwptw;
+      o-op_wequiwes_ok(context, 🥺 context->awwocate_output(3, (⑅˘꒳˘) {}, &endian_tensow));
+      e-endian_tensow->scawaw<uint8>()() = i-is_big_endian;
+    } catch(const s-std::exception &eww) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(eww.nani()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetTensorsFromDataRecord")
-  .Device(DEVICE_CPU),
-  GetTensorsOp<DataRecordResource>);
+w-wegistew_kewnew_buiwdew(
+  n-nyame("gettensowsfwomdatawecowd")
+  .device(device_cpu), (///ˬ///✿)
+  g-gettensowsop<datawecowdwesouwce>);
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetTensorsFromHashedDataRecord")
-  .Device(DEVICE_CPU),
-  GetTensorsOp<HashedDataRecordResource>);
+wegistew_kewnew_buiwdew(
+  n-nyame("gettensowsfwomhasheddatawecowd")
+  .device(device_cpu), (✿oωo)
+  g-gettensowsop<hasheddatawecowdwesouwce>);
 
-REGISTER_OP("GetTensorsWithMissingMaskFromDataRecord")
-.Attr("assert_shape: bool")
-.Attr("feature_id: int")
-.Attr("default_shape: list(int)")
-.Attr("dtype_size: int")
-.Input("data_record_handle: resource")
-.Output("output: string")
-.Output("out_type: string")
-.Output("out_endian: uint8")
-.Output("is_found: bool")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+w-wegistew_op("gettensowswithmissingmaskfwomdatawecowd")
+.attw("assewt_shape: boow")
+.attw("featuwe_id: i-int")
+.attw("defauwt_shape: wist(int)")
+.attw("dtype_size: int")
+.input("data_wecowd_handwe: w-wesouwce")
+.output("output: stwing")
+.output("out_type: s-stwing")
+.output("out_endian: u-uint8")
+.output("is_found: boow")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow op that decodes a-and wetuwns tensows fwom the data w-wecowd. nyaa~~
 
-Attr
-  assert_shape: Specifies if the shape needs to be same across the batch.
-  feature_id: The hashed id of the feature name.
-  default_shape: Expected shape of output tensor.
-  dtype_size: expected size of each element.
+attw
+  assewt_shape: s-specifies if the shape nyeeds to be same acwoss the batch. >w<
+  featuwe_id: the hashed i-id of the featuwe nyame. (///ˬ///✿)
+  d-defauwt_shape: expected s-shape of output tensow. rawr
+  dtype_size: expected size of each e-ewement. (U ﹏ U)
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+input
+  data_wecowd_handwe: w-wesouwce h-handwe to datawecowd. ^•ﻌ•^
 
-Outputs
-  output: A 2D byte tensor representing the requested feature.
-  out_type: A string tensor represnting the type.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
-  is_missing: A boolean tensor of length batch_size represnting if the tensor was found for an input.
+o-outputs
+  output: a 2d byte tensow wepwesenting t-the wequested f-featuwe. (///ˬ///✿)
+  out_type: a stwing t-tensow wepwesnting the type. o.O
+  out_endian: e-endianness of the bytes wetuwned a-a tensow of size 1. >w< 0: w-witte, nyaa~~ 1: b-big. òωó
+  is_missing: a boowean t-tensow of wength b-batch_size wepwesnting i-if the tensow w-was found fow an input.
 )doc");
 
-REGISTER_OP("GetTensorsWithMissingMaskFromHashedDataRecord")
-.Attr("assert_shape: bool")
-.Attr("feature_id: int")
-.Attr("default_shape: list(int)")
-.Attr("dtype_size: int")
-.Input("hashed_data_record_handle: resource")
-.Output("output: string")
-.Output("out_type: string")
-.Output("out_endian: uint8")
-.Output("is_found: bool")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+w-wegistew_op("gettensowswithmissingmaskfwomhasheddatawecowd")
+.attw("assewt_shape: b-boow")
+.attw("featuwe_id: i-int")
+.attw("defauwt_shape: wist(int)")
+.attw("dtype_size: i-int")
+.input("hashed_data_wecowd_handwe: w-wesouwce")
+.output("output: s-stwing")
+.output("out_type: stwing")
+.output("out_endian: u-uint8")
+.output("is_found: b-boow")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow op that d-decodes and wetuwns tensows fwom t-the data wecowd. (U ᵕ U❁)
 
-Attr
-  assert_shape: Specifies if the shape needs to be same across the batch.
-  feature_id: The hashed id of the feature name.
-  default_shape: Expected shape of output tensor.
-  dtype_size: expected size of each element.
+a-attw
+  assewt_shape: s-specifies if the shape nyeeds to be same acwoss the batch. (///ˬ///✿)
+  f-featuwe_id: t-the hashed id o-of the featuwe nyame. (✿oωo)
+  defauwt_shape: expected shape of output t-tensow. 😳😳😳
+  dtype_size: e-expected size of each ewement. (✿oωo)
 
-Input
-  hashed_data_record_handle: Resource handle to HashedDataRecord.
+i-input
+  hashed_data_wecowd_handwe: w-wesouwce handwe to hasheddatawecowd. (U ﹏ U)
 
-Outputs
-  output: A 2D byte tensor representing the requested feature.
-  out_type: A string tensor represnting the type.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
-  is_missing: A boolean tensor of length batch_size represnting if the tensor was found for an input.
+outputs
+  output: a 2d byte tensow w-wepwesenting t-the wequested featuwe. (˘ω˘)
+  o-out_type: a-a stwing tensow wepwesnting the type. 😳😳😳
+  out_endian: e-endianness o-of the bytes wetuwned a tensow of size 1. (///ˬ///✿) 0: witte, 1: b-big. (U ᵕ U❁)
+  is_missing: a boowean tensow of w-wength batch_size wepwesnting if t-the tensow was f-found fow an input. >_<
 )doc");
 
-template<class Resource>
-class GetTensorsWithMissingMaskOp : public OpKernel {
- private:
-  bool assert_shape;
-  int64 feature_id;
-  int64 dtype_size;
-  std::vector<int64> shape;
+tempwate<cwass w-wesouwce>
+c-cwass gettensowswithmissingmaskop : pubwic o-opkewnew {
+ pwivate:
+  boow assewt_shape;
+  i-int64 f-featuwe_id;
+  i-int64 dtype_size;
+  s-std::vectow<int64> shape;
 
- public:
-  explicit GetTensorsWithMissingMaskOp(OpKernelConstruction *context)
-      : OpKernel(context), assert_shape(true) {
-    OP_REQUIRES_OK(context, context->GetAttr("assert_shape", &assert_shape));
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_shape", &shape));
-    OP_REQUIRES_OK(context, context->GetAttr("dtype_size", &dtype_size));
+ p-pubwic:
+  expwicit g-gettensowswithmissingmaskop(opkewnewconstwuction *context)
+      : o-opkewnew(context), (///ˬ///✿) assewt_shape(twue) {
+    o-op_wequiwes_ok(context, (U ᵕ U❁) context->getattw("assewt_shape", &assewt_shape));
+    op_wequiwes_ok(context, >w< c-context->getattw("featuwe_id", 😳😳😳 &featuwe_id));
+    o-op_wequiwes_ok(context, (ˆ ﻌ ˆ)♡ c-context->getattw("defauwt_shape", (ꈍᴗꈍ) &shape));
+    op_wequiwes_ok(context, 🥺 context->getattw("dtype_size", >_< &dtype_size));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
-    uint64 batch_size = handle->records.size();
-    const auto &records = handle->records;
+  void compute(opkewnewcontext *context) ovewwide {
+    a-auto handwe = gethandwe<wesouwce>(context, OwO 0);
+    u-uint64 b-batch_size = handwe->wecowds.size();
+    const auto &wecowds = handwe->wecowds;
 
-    try {
-      TensorShape raw_shape = {static_cast<int64>(batch_size)};
-      Tensor* output_tensor = nullptr;
-      Tensor* is_found_tensor = nullptr;
+    twy {
+      t-tensowshape waw_shape = {static_cast<int64>(batch_size)};
+      tensow* output_tensow = n-nyuwwptw;
+      t-tensow* i-is_found_tensow = n-nyuwwptw;
 
-      OP_REQUIRES_OK(context, context->allocate_output(0, raw_shape, &output_tensor));
-      OP_REQUIRES_OK(context, context->allocate_output(3, raw_shape, &is_found_tensor));
+      o-op_wequiwes_ok(context, ^^;; context->awwocate_output(0, (✿oωo) waw_shape, &output_tensow));
+      op_wequiwes_ok(context, UwU context->awwocate_output(3, ( ͡o ω ͡o ) waw_shape, (✿oωo) &is_found_tensow));
 
-      auto output_flat = output_tensor->flat<string>();
-      auto output_data = output_flat.data();
-      auto is_found_data = is_found_tensor->flat<bool>().data();
+      a-auto output_fwat = output_tensow->fwat<stwing>();
+      a-auto output_data = output_fwat.data();
+      auto is_found_data = is_found_tensow->fwat<boow>().data();
 
-      twml_type type = TWML_TYPE_UNKNOWN;
-      bool is_big_endian = false;
+      t-twmw_type type = twmw_type_unknown;
+      boow is_big_endian = fawse;
 
-      uint64 length = std::accumulate(shape.begin(), shape.end(), dtype_size, std::multiplies<int64>());
-      for (auto record : records) {
-        try {
-          const twml::RawTensor tensor = record.getRawTensor(feature_id);
-          const auto &curr_dims = tensor.getDims();
-          const auto curr_type = tensor.getType();
-          const bool curr_is_big_endian = tensor.is_big_endian();
-          const uint64 curr_length = tensor.getRawLength();
+      uint64 w-wength = std::accumuwate(shape.begin(), mya s-shape.end(), ( ͡o ω ͡o ) dtype_size, :3 s-std::muwtipwies<int64>());
+      fow (auto wecowd : wecowds) {
+        t-twy {
+          c-const twmw::wawtensow tensow = w-wecowd.getwawtensow(featuwe_id);
+          const auto &cuww_dims = t-tensow.getdims();
+          const auto cuww_type = tensow.gettype();
+          const boow c-cuww_is_big_endian = tensow.is_big_endian();
+          const u-uint64 cuww_wength = t-tensow.getwawwength();
 
-          if (type == TWML_TYPE_UNKNOWN) {
-            type = curr_type;
-            is_big_endian = curr_is_big_endian;
-            // FloatTensors are stored as a list of doubles.
-            // If the requested dtype_size is 4, update the length.
-            // NOTE: All the missing tensors before this have wrong length, this is fixed at the end.
-            if (type == TWML_TYPE_DOUBLE && is_big_endian && dtype_size == 4) {
-              length = length * 2;
+          i-if (type == twmw_type_unknown) {
+            type = cuww_type;
+            i-is_big_endian = cuww_is_big_endian;
+            // fwoattensows awe stowed as a wist of doubwes. 😳
+            // i-if the wequested d-dtype_size is 4, (U ﹏ U) u-update the w-wength. >w<
+            // nyote: aww the missing tensows b-befowe this h-have wwong wength, UwU this is fixed at the end. 😳
+            i-if (type == twmw_type_doubwe && is_big_endian && d-dtype_size == 4) {
+              wength = wength * 2;
             }
-          } else {
-            // Assert type and endianness of all tensors is the same.
-            if (type != curr_type || is_big_endian != curr_is_big_endian) {
-              throw std::runtime_error("Tensor type mismatch for feature_id: "
-                                       + std::to_string(feature_id));
-            }
-          }
-
-          // Assert shape of all tensors is the same.
-          if (assert_shape && type != TWML_TYPE_UNKNOWN) {
-            // Assert shape of all tensors is the same.
-            bool is_same_shape = std::equal(shape.begin(), shape.end(), curr_dims.begin());
-
-            if (!is_same_shape || length != curr_length) {
-              throw std::runtime_error("TensorShape mismatch for feature_id: "
-                                       + std::to_string(feature_id));
+          } e-ewse {
+            // a-assewt type and endianness of a-aww tensows is the s-same. XD
+            i-if (type != cuww_type || is_big_endian != cuww_is_big_endian) {
+              thwow std::wuntime_ewwow("tensow t-type mismatch fow featuwe_id: "
+                                       + std::to_stwing(featuwe_id));
             }
           }
 
-          // Copy from datarecord to output
-          const uint8 *tensor_data = reinterpret_cast<const uint8 *>(tensor.getData<void>());
-          *output_data = std::string(tensor_data, tensor_data + curr_length);
-          *is_found_data = true;
-        } catch(const std::out_of_range &err) {
-          *output_data = std::string();
-          output_data->resize(length);
-          *is_found_data = false;
+          // a-assewt shape of aww tensows is the same. (✿oωo)
+          if (assewt_shape && t-type != t-twmw_type_unknown) {
+            // a-assewt shape o-of aww tensows i-is the same.
+            boow is_same_shape = std::equaw(shape.begin(), ^•ﻌ•^ s-shape.end(), mya cuww_dims.begin());
+
+            if (!is_same_shape || w-wength != cuww_wength) {
+              t-thwow std::wuntime_ewwow("tensowshape mismatch fow featuwe_id: "
+                                       + s-std::to_stwing(featuwe_id));
+            }
+          }
+
+          // c-copy fwom datawecowd to output
+          c-const uint8 *tensow_data = w-weintewpwet_cast<const u-uint8 *>(tensow.getdata<void>());
+          *output_data = std::stwing(tensow_data, (˘ω˘) t-tensow_data + c-cuww_wength);
+          *is_found_data = twue;
+        } c-catch(const std::out_of_wange &eww) {
+          *output_data = std::stwing();
+          output_data->wesize(wength);
+          *is_found_data = f-fawse;
         }
 
-        // Increment it for the next tensor in the batch.
+        // incwement i-it fow the nyext tensow in the batch. nyaa~~
         output_data++;
-        is_found_data++;
+        i-is_found_data++;
       }
 
-      // Reset pointers to the beginning
-      output_data = output_flat.data();
-      is_found_data = is_found_tensor->flat<bool>().data();
+      // w-weset pointews t-to the beginning
+      output_data = o-output_fwat.data();
+      i-is_found_data = is_found_tensow->fwat<boow>().data();
 
-      // Resize any missing tensors before type (and hence true length) was known.
-      if (type == TWML_TYPE_DOUBLE) {
-        for (int64 i = 0; i < static_cast<int64>(records.size()); i++) {
-          if (!is_found_data[i]) {
-            output_data[i].resize(length);
+      // w-wesize any missing tensows b-befowe type (and hence twue wength) w-was known. :3
+      i-if (type == twmw_type_doubwe) {
+        fow (int64 i = 0; i < static_cast<int64>(wecowds.size()); i-i++) {
+          i-if (!is_found_data[i]) {
+            output_data[i].wesize(wength);
           }
         }
       }
 
-      Tensor* type_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(1, {}, &type_tensor));
-      type_tensor->scalar<string>()() = twml::getTypeName(type);
+      tensow* type_tensow = nyuwwptw;
+      o-op_wequiwes_ok(context, (✿oωo) context->awwocate_output(1, {}, (U ﹏ U) &type_tensow));
+      t-type_tensow->scawaw<stwing>()() = t-twmw::gettypename(type);
 
-      Tensor* endian_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(2, {}, &endian_tensor));
-      endian_tensor->scalar<uint8>()() = is_big_endian;
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+      tensow* endian_tensow = nyuwwptw;
+      op_wequiwes_ok(context, c-context->awwocate_output(2, (ꈍᴗꈍ) {}, (˘ω˘) &endian_tensow));
+      endian_tensow->scawaw<uint8>()() = is_big_endian;
+    } c-catch(const std::exception &eww) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(eww.nani()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetTensorsWithMissingMaskFromDataRecord")
-  .Device(DEVICE_CPU),
-  GetTensorsWithMissingMaskOp<DataRecordResource>);
+w-wegistew_kewnew_buiwdew(
+  nyame("gettensowswithmissingmaskfwomdatawecowd")
+  .device(device_cpu), ^^
+  gettensowswithmissingmaskop<datawecowdwesouwce>);
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetTensorsWithMissingMaskFromHashedDataRecord")
-  .Device(DEVICE_CPU),
-  GetTensorsWithMissingMaskOp<HashedDataRecordResource>);
+w-wegistew_kewnew_buiwdew(
+  n-nyame("gettensowswithmissingmaskfwomhasheddatawecowd")
+  .device(device_cpu), (⑅˘꒳˘)
+  g-gettensowswithmissingmaskop<hasheddatawecowdwesouwce>);
 
-REGISTER_OP("GetSparseTensorsFromDataRecord")
-.Attr("feature_id: int")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("indices: string")
-.Output("values: string")
-.Output("dense_shape: int64")
-.Output("values_type: string")
-.Output("valueendian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+w-wegistew_op("getspawsetensowsfwomdatawecowd")
+.attw("featuwe_id: i-int")
+.input("data_wecowd_handwe: w-wesouwce")
+.output("ids: int64")
+.output("indices: stwing")
+.output("vawues: stwing")
+.output("dense_shape: int64")
+.output("vawues_type: stwing")
+.output("vawueendian: uint8")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn s-status::ok();
+  }).doc(w"doc(
+a-a tensowfwow op t-that decodes and w-wetuwns tensows f-fwom the data wecowd. rawr
 
-Attr
-  feature_id: The hashed id of the feature name.
+attw
+  featuwe_id: the hashed id of the featuwe nyame. :3
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+i-input
+  data_wecowd_handwe: w-wesouwce handwe to datawecowd. OwO
 
-Outputs
-  ids: A 1D tensor representing which input in the batch the value belongs to.
-  indices: An string tensor containing indices of the sparse tensor as bytes.
-  values: An string tensor containing values of the sparse tensor as bytes.
-  dense_shape: A tensor containing [batch_size, thrift_shape].
-  values_type: The data type of value tensor returned as a string tensor of size 1.
-  values_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+outputs
+  ids: a 1d t-tensow wepwesenting w-which input i-in the batch the vawue bewongs to. (ˆ ﻌ ˆ)♡
+  indices: a-an stwing tensow containing indices of the spawse t-tensow as bytes. :3
+  v-vawues: an stwing tensow containing vawues o-of the spawse tensow as bytes. -.-
+  d-dense_shape: a t-tensow containing [batch_size, -.- thwift_shape]. òωó
+  vawues_type: the d-data type of vawue t-tensow wetuwned a-as a stwing t-tensow of size 1. 😳
+  v-vawues_endian: e-endianness of the bytes wetuwned a-a tensow of s-size 1. nyaa~~ 0: witte, 1: big. (⑅˘꒳˘)
 )doc");
 
-REGISTER_OP("GetSparseTensorsFromHashedDataRecord")
-.Attr("feature_id: int")
-.Input("hashed_data_record_handle: resource")
-.Output("ids: int64")
-.Output("indices: string")
-.Output("values: string")
-.Output("dense_shape: int64")
-.Output("values_type: string")
-.Output("values_endian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+w-wegistew_op("getspawsetensowsfwomhasheddatawecowd")
+.attw("featuwe_id: int")
+.input("hashed_data_wecowd_handwe: wesouwce")
+.output("ids: i-int64")
+.output("indices: stwing")
+.output("vawues: s-stwing")
+.output("dense_shape: int64")
+.output("vawues_type: stwing")
+.output("vawues_endian: u-uint8")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow o-op that decodes and wetuwns tensows fwom the data w-wecowd. 😳
 
-Attr
-  feature_id: The hashed id of the feature name.
+attw
+  f-featuwe_id: the hashed id of the featuwe nyame. (U ﹏ U)
 
-Input
-  data_record_handle: Resource handle to DataRecord.
+i-input
+  data_wecowd_handwe: w-wesouwce handwe to datawecowd. /(^•ω•^)
 
-Outputs
-  ids: A 1D tensor representing which input in the batch the value belongs to.
-  indices: An string tensor containing indices of the sparse tensor as bytes.
-  values: An string tensor containing values of the sparse tensor as bytes.
-  dense_shape: A tensor containing [batch_size, thrift_shape].
-  values_type: The data type of value tensor returned as a string tensor of size 1.
-  values_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+o-outputs
+  ids: a 1d tensow wepwesenting which input i-in the batch t-the vawue bewongs to. OwO
+  indices: a-an stwing tensow c-containing indices of the spawse tensow as bytes. ( ͡o ω ͡o )
+  v-vawues: an s-stwing tensow c-containing vawues o-of the spawse tensow as bytes. XD
+  dense_shape: a tensow containing [batch_size, /(^•ω•^) thwift_shape]. /(^•ω•^)
+  vawues_type: the data type of v-vawue tensow wetuwned a-as a stwing t-tensow of size 1. 😳😳😳
+  v-vawues_endian: e-endianness o-of the bytes wetuwned a tensow of s-size 1. (ˆ ﻌ ˆ)♡ 0: witte, :3 1: b-big.
 )doc");
 
-template<typename Resource>
-class GetSparseTensorsOp : public OpKernel {
- private:
-  int64 feature_id;
+tempwate<typename w-wesouwce>
+c-cwass getspawsetensowsop : pubwic opkewnew {
+ pwivate:
+  i-int64 featuwe_id;
 
- public:
-  explicit GetSparseTensorsOp(OpKernelConstruction *context)
-      : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+ pubwic:
+  expwicit g-getspawsetensowsop(opkewnewconstwuction *context)
+      : opkewnew(context) {
+    o-op_wequiwes_ok(context, òωó c-context->getattw("featuwe_id", 🥺 &featuwe_id));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
-    const int64 batch_size = static_cast<int64>(handle->records.size());
-    const auto &records = handle->records;
+  void compute(opkewnewcontext *context) o-ovewwide {
+    a-auto handwe = g-gethandwe<wesouwce>(context, (U ﹏ U) 0);
+    const int64 b-batch_size = s-static_cast<int64>(handwe->wecowds.size());
+    const auto &wecowds = h-handwe->wecowds;
 
-    try {
-      twml_type type = TWML_TYPE_UNKNOWN;
-      bool is_big_endian = false;
+    twy {
+      t-twmw_type t-type = twmw_type_unknown;
+      b-boow is_big_endian = fawse;
 
-      std::vector<uint64> shape(1, batch_size);
+      s-std::vectow<uint64> shape(1, XD batch_size);
 
-      int64 total_length = 0;
-      std::vector<int64> lengths;
-      lengths.reserve(batch_size);
+      i-int64 totaw_wength = 0;
+      std::vectow<int64> wengths;
+      wengths.wesewve(batch_size);
 
-      int64 total_indices_length = 0;
-      std::vector<int64> indices_raw_lengths;
-      std::vector<const uint8 *> indices_data_ptrs;
-      indices_raw_lengths.reserve(batch_size);
-      indices_data_ptrs.reserve(batch_size);
+      int64 totaw_indices_wength = 0;
+      std::vectow<int64> i-indices_waw_wengths;
+      std::vectow<const uint8 *> indices_data_ptws;
+      indices_waw_wengths.wesewve(batch_size);
+      indices_data_ptws.wesewve(batch_size);
 
-      int64 total_values_length = 0;
-      std::vector<int64> values_raw_lengths;
-      std::vector<const uint8 *> values_data_ptrs;
-      values_raw_lengths.reserve(batch_size);
-      values_data_ptrs.reserve(batch_size);
+      int64 totaw_vawues_wength = 0;
+      std::vectow<int64> v-vawues_waw_wengths;
+      std::vectow<const uint8 *> vawues_data_ptws;
+      v-vawues_waw_wengths.wesewve(batch_size);
+      vawues_data_ptws.wesewve(batch_size);
 
-      for (auto record : records) {
-        const twml::RawSparseTensor sparse_tensor = record.getRawSparseTensor(feature_id);
-        const twml::RawTensor indices = sparse_tensor.indices();
-        const twml::RawTensor values = sparse_tensor.values();
-        const auto &dense_shape = sparse_tensor.denseShape();
-        const auto indices_type = indices.getType();
-        const auto indices_is_big_endian = indices.is_big_endian();
-        const auto values_type = values.getType();
-        const bool values_is_big_endian = values.is_big_endian();
+      f-fow (auto wecowd : wecowds) {
+        const twmw::wawspawsetensow s-spawse_tensow = wecowd.getwawspawsetensow(featuwe_id);
+        c-const twmw::wawtensow indices = s-spawse_tensow.indices();
+        c-const twmw::wawtensow vawues = spawse_tensow.vawues();
+        c-const auto &dense_shape = spawse_tensow.denseshape();
+        const auto indices_type = indices.gettype();
+        c-const auto indices_is_big_endian = i-indices.is_big_endian();
+        const auto v-vawues_type = vawues.gettype();
+        c-const b-boow vawues_is_big_endian = vawues.is_big_endian();
 
-        const uint64 indices_length = indices.getDims().back();
-        const uint64 values_length = values.getDims().back();
+        const uint64 indices_wength = i-indices.getdims().back();
+        const uint64 vawues_wength = vawues.getdims().back();
 
-        auto indices_raw_length = indices.getRawLength();
-        auto values_raw_length = values.getRawLength();
+        a-auto indices_waw_wength = indices.getwawwength();
+        auto vawues_waw_wength = vawues.getwawwength();
 
-        auto indices_data_ptr = reinterpret_cast<const uint8 *>(indices.getData<void>());
-        auto values_data_ptr = reinterpret_cast<const uint8 *>(values.getData<void>());
+        a-auto indices_data_ptw = w-weintewpwet_cast<const uint8 *>(indices.getdata<void>());
+        a-auto v-vawues_data_ptw = weintewpwet_cast<const u-uint8 *>(vawues.getdata<void>());
 
-        indices_raw_lengths.push_back(indices_raw_length);
-        values_raw_lengths.push_back(values_raw_length);
+        indices_waw_wengths.push_back(indices_waw_wength);
+        vawues_waw_wengths.push_back(vawues_waw_wength);
 
-        indices_data_ptrs.push_back(indices_data_ptr);
-        values_data_ptrs.push_back(values_data_ptr);
+        indices_data_ptws.push_back(indices_data_ptw);
+        vawues_data_ptws.push_back(vawues_data_ptw);
 
-        total_indices_length += indices_raw_length;
-        total_values_length += values_raw_length;
+        totaw_indices_wength += i-indices_waw_wength;
+        t-totaw_vawues_wength += vawues_waw_wength;
 
-        if (shape.size() == 1) {
-          shape.reserve(dense_shape.size() + 1);
-          shape.insert(shape.end(), dense_shape.begin(), dense_shape.end());
-          type = values_type;
-          is_big_endian = values_is_big_endian;
+        i-if (shape.size() == 1) {
+          s-shape.wesewve(dense_shape.size() + 1);
+          shape.insewt(shape.end(), ^^ d-dense_shape.begin(), o.O dense_shape.end());
+          type = v-vawues_type;
+          is_big_endian = vawues_is_big_endian;
         }
 
-        // Assert shape of all tensors is the same.
-        if (!std::equal(shape.begin() + 1, shape.end(), dense_shape.begin())) {
-          throw std::runtime_error("dense_shape of sparse tensors doesn't match for feature_id: "
-                                   + std::to_string(feature_id));
+        // a-assewt shape o-of aww tensows is the same. 😳😳😳
+        if (!std::equaw(shape.begin() + 1, /(^•ω•^) s-shape.end(), 😳😳😳 dense_shape.begin())) {
+          thwow std::wuntime_ewwow("dense_shape of spawse tensows doesn't match fow featuwe_id: "
+                                   + std::to_stwing(featuwe_id));
         }
-        // Assert type of all values tensor is the same.
-        if (type != values_type || is_big_endian != values_is_big_endian) {
-          throw std::runtime_error("The type of values do not match for feature_id: "
-                                   + std::to_string(feature_id));
+        // a-assewt t-type of aww vawues tensow is the s-same.
+        i-if (type != vawues_type || is_big_endian != v-vawues_is_big_endian) {
+          thwow std::wuntime_ewwow("the type of vawues do nyot match fow featuwe_id: "
+                                   + s-std::to_stwing(featuwe_id));
         }
-        // Assert indices tensor is big endian and of type INT64.
-        if (indices_type != TWML_TYPE_INT64 || !indices_is_big_endian) {
-          throw std::runtime_error("Unexpected type for index tensor for feature_id: "
-                                   + std::to_string(feature_id));
-        }
-
-        if (indices_length != values_length) {
-          throw std::runtime_error("The length of values and indices does not match for : "
-                                   + std::to_string(feature_id));
+        // assewt indices tensow is big endian and of type int64. ^•ﻌ•^
+        i-if (indices_type != t-twmw_type_int64 || !indices_is_big_endian) {
+          t-thwow std::wuntime_ewwow("unexpected type fow index tensow fow featuwe_id: "
+                                   + s-std::to_stwing(featuwe_id));
         }
 
-        lengths.push_back(indices_length);
-        total_length += indices_length;
+        i-if (indices_wength != v-vawues_wength) {
+          thwow std::wuntime_ewwow("the w-wength of vawues and i-indices does nyot match fow : "
+                                   + s-std::to_stwing(featuwe_id));
+        }
+
+        wengths.push_back(indices_wength);
+        t-totaw_wength += indices_wength;
       }
 
-      Tensor* ids_tensor = nullptr;
-      TensorShape ids_shape = {static_cast<int64>(total_length)};
-      OP_REQUIRES_OK(context, context->allocate_output(0, ids_shape, &ids_tensor));
-      auto ids_tensor_flat = ids_tensor->flat<int64>();
-      auto ids_tensor_data = ids_tensor_flat.data();
+      tensow* ids_tensow = n-nyuwwptw;
+      tensowshape i-ids_shape = {static_cast<int64>(totaw_wength)};
+      o-op_wequiwes_ok(context, 🥺 context->awwocate_output(0, o.O i-ids_shape, (U ᵕ U❁) &ids_tensow));
+      a-auto ids_tensow_fwat = i-ids_tensow->fwat<int64>();
+      auto ids_tensow_data = i-ids_tensow_fwat.data();
 
-      TensorShape raw_shape = {static_cast<int64>(1)};
+      tensowshape w-waw_shape = {static_cast<int64>(1)};
 
-      Tensor* indices_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(1, raw_shape, &indices_tensor));
-      auto indices_tensor_flat = indices_tensor->flat<string>();
-      auto indices_tensor_string = indices_tensor_flat.data();
-      indices_tensor_string->resize(total_indices_length);
-      auto indices_tensor_iter = indices_tensor_string->begin();
+      t-tensow* indices_tensow = nyuwwptw;
+      op_wequiwes_ok(context, ^^ c-context->awwocate_output(1, (⑅˘꒳˘) waw_shape, &indices_tensow));
+      auto indices_tensow_fwat = indices_tensow->fwat<stwing>();
+      auto indices_tensow_stwing = indices_tensow_fwat.data();
+      indices_tensow_stwing->wesize(totaw_indices_wength);
+      auto indices_tensow_itew = i-indices_tensow_stwing->begin();
 
-      Tensor* values_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(2, raw_shape, &values_tensor));
-      auto values_tensor_flat = values_tensor->flat<string>();
-      auto values_tensor_string = values_tensor_flat.data();
-      values_tensor_string->resize(total_values_length);
-      auto values_tensor_iter = values_tensor_string->begin();
+      tensow* vawues_tensow = nyuwwptw;
+      o-op_wequiwes_ok(context, :3 context->awwocate_output(2, (///ˬ///✿) w-waw_shape, :3 &vawues_tensow));
+      auto vawues_tensow_fwat = vawues_tensow->fwat<stwing>();
+      a-auto vawues_tensow_stwing = vawues_tensow_fwat.data();
+      v-vawues_tensow_stwing->wesize(totaw_vawues_wength);
+      auto vawues_tensow_itew = vawues_tensow_stwing->begin();
 
-      for (int64 i = 0; i < batch_size; i++) {
-        // Fill in the data for id == i for all values in the current input.
-        std::fill(ids_tensor_data, ids_tensor_data + lengths[i], i);
-        ids_tensor_data += lengths[i];
+      f-fow (int64 i = 0; i < batch_size; i++) {
+        // f-fiww in the data fow id == i fow aww vawues i-in the cuwwent i-input. 🥺
+        std::fiww(ids_tensow_data, mya ids_tensow_data + wengths[i], XD i-i);
+        i-ids_tensow_data += wengths[i];
 
-        indices_tensor_iter = std::copy(indices_data_ptrs[i],
-                                        indices_data_ptrs[i] + indices_raw_lengths[i],
-                                        indices_tensor_iter);
+        indices_tensow_itew = s-std::copy(indices_data_ptws[i], -.-
+                                        i-indices_data_ptws[i] + indices_waw_wengths[i], o.O
+                                        indices_tensow_itew);
 
-        values_tensor_iter = std::copy(values_data_ptrs[i],
-                                        values_data_ptrs[i] + values_raw_lengths[i],
-                                        values_tensor_iter);
+        v-vawues_tensow_itew = std::copy(vawues_data_ptws[i], (˘ω˘)
+                                        vawues_data_ptws[i] + vawues_waw_wengths[i], (U ᵕ U❁)
+                                        vawues_tensow_itew);
       }
 
-      Tensor *shape_tensor = nullptr;
-      TensorShape shape_shape = {static_cast<int64>(shape.size())};
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape_shape, &shape_tensor));
-      auto shape_flat = shape_tensor->flat<int64>();
-      for (int i = 0; i < static_cast<int>(shape.size()); i++) {
-        shape_flat(i) = shape[i];
+      t-tensow *shape_tensow = nyuwwptw;
+      tensowshape shape_shape = {static_cast<int64>(shape.size())};
+      op_wequiwes_ok(context, rawr context->awwocate_output(3, 🥺 s-shape_shape, rawr x3 &shape_tensow));
+      a-auto s-shape_fwat = shape_tensow->fwat<int64>();
+      fow (int i = 0; i < static_cast<int>(shape.size()); i++) {
+        s-shape_fwat(i) = shape[i];
       }
 
-      Tensor* type_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(4, {}, &type_tensor));
-      type_tensor->scalar<string>()() = twml::getTypeName(type);
+      t-tensow* type_tensow = n-nyuwwptw;
+      o-op_wequiwes_ok(context, ( ͡o ω ͡o ) context->awwocate_output(4, σωσ {}, &type_tensow));
+      type_tensow->scawaw<stwing>()() = twmw::gettypename(type);
 
-      Tensor* endian_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(5, {}, &endian_tensor));
-      endian_tensor->scalar<uint8>()() = is_big_endian;
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+      tensow* endian_tensow = nyuwwptw;
+      o-op_wequiwes_ok(context, rawr x3 c-context->awwocate_output(5, (ˆ ﻌ ˆ)♡ {}, &endian_tensow));
+      endian_tensow->scawaw<uint8>()() = is_big_endian;
+    } c-catch(const std::exception &eww) {
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(eww.nani()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetSparseTensorsFromDataRecord")
-  .Device(DEVICE_CPU),
-  GetSparseTensorsOp<DataRecordResource>);
+wegistew_kewnew_buiwdew(
+  n-nyame("getspawsetensowsfwomdatawecowd")
+  .device(device_cpu), rawr
+  g-getspawsetensowsop<datawecowdwesouwce>);
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetSparseTensorsFromHashedDataRecord")
-  .Device(DEVICE_CPU),
-  GetSparseTensorsOp<HashedDataRecordResource>);
+w-wegistew_kewnew_buiwdew(
+  nyame("getspawsetensowsfwomhasheddatawecowd")
+  .device(device_cpu), :3
+  g-getspawsetensowsop<hasheddatawecowdwesouwce>);

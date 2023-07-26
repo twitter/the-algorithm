@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.pwain
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextfowmat
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.stwong
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class RichTextFormatMarshaller @Inject() () {
+@singweton
+cwass wichtextfowmatmawshawwew @inject() () {
 
-  def apply(format: RichTextFormat): urt.RichTextFormat = format match {
-    case Plain => urt.RichTextFormat.Plain
-    case Strong => urt.RichTextFormat.Strong
+  def appwy(fowmat: wichtextfowmat): uwt.wichtextfowmat = f-fowmat match {
+    case pwain => uwt.wichtextfowmat.pwain
+    c-case stwong => uwt.wichtextfowmat.stwong
   }
 }

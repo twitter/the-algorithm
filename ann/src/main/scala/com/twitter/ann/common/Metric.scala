@@ -1,290 +1,290 @@
-package com.twitter.ann.common
+package com.twittew.ann.common
 
-import com.google.common.collect.ImmutableBiMap
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.thriftscala.DistanceMetric
-import com.twitter.ann.common.thriftscala.{CosineDistance => ServiceCosineDistance}
-import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
-import com.twitter.ann.common.thriftscala.{InnerProductDistance => ServiceInnerProductDistance}
-import com.twitter.ann.common.thriftscala.{EditDistance => ServiceEditDistance}
-import com.twitter.ann.common.thriftscala.{L2Distance => ServiceL2Distance}
-import com.twitter.bijection.Injection
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
+impowt com.googwe.common.cowwect.immutabwebimap
+impowt c-com.twittew.ann.common.embeddingtype._
+i-impowt c-com.twittew.ann.common.thwiftscawa.distancemetwic
+i-impowt com.twittew.ann.common.thwiftscawa.{cosinedistance => s-sewvicecosinedistance}
+i-impowt c-com.twittew.ann.common.thwiftscawa.{distance => s-sewvicedistance}
+impowt com.twittew.ann.common.thwiftscawa.{innewpwoductdistance => sewviceinnewpwoductdistance}
+impowt com.twittew.ann.common.thwiftscawa.{editdistance => sewviceeditdistance}
+i-impowt com.twittew.ann.common.thwiftscawa.{w2distance => sewvicew2distance}
+impowt c-com.twittew.bijection.injection
+impowt scawa.utiw.faiwuwe
+impowt s-scawa.utiw.success
+impowt scawa.utiw.twy
 
-// Ann distance metrics
-trait Distance[D] extends Any with Ordered[D] {
-  def distance: Float
+// ann distance m-metwics
+twait distance[d] extends a-any with owdewed[d] {
+  d-def distance: fwoat
 }
 
-case class L2Distance(distance: Float) extends AnyVal with Distance[L2Distance] {
-  override def compare(that: L2Distance): Int =
-    Ordering.Float.compare(this.distance, that.distance)
+case cwass w2distance(distance: fwoat) extends anyvaw with distance[w2distance] {
+  o-ovewwide def compawe(that: w2distance): int =
+    owdewing.fwoat.compawe(this.distance, :3 that.distance)
 }
 
-case class CosineDistance(distance: Float) extends AnyVal with Distance[CosineDistance] {
-  override def compare(that: CosineDistance): Int =
-    Ordering.Float.compare(this.distance, that.distance)
+case c-cwass cosinedistance(distance: fwoat) extends a-anyvaw with distance[cosinedistance] {
+  o-ovewwide d-def compawe(that: c-cosinedistance): int =
+    owdewing.fwoat.compawe(this.distance, (˘ω˘) t-that.distance)
 }
 
-case class InnerProductDistance(distance: Float)
-    extends AnyVal
-    with Distance[InnerProductDistance] {
-  override def compare(that: InnerProductDistance): Int =
-    Ordering.Float.compare(this.distance, that.distance)
+case cwass innewpwoductdistance(distance: f-fwoat)
+    extends anyvaw
+    with distance[innewpwoductdistance] {
+  ovewwide def compawe(that: innewpwoductdistance): i-int =
+    owdewing.fwoat.compawe(this.distance, 😳😳😳 t-that.distance)
 }
 
-case class EditDistance(distance: Float) extends AnyVal with Distance[EditDistance] {
-  override def compare(that: EditDistance): Int =
-    Ordering.Float.compare(this.distance, that.distance)
+c-case c-cwass editdistance(distance: fwoat) extends anyvaw with distance[editdistance] {
+  ovewwide def c-compawe(that: e-editdistance): int =
+    owdewing.fwoat.compawe(this.distance, rawr x3 that.distance)
 }
 
-object Metric {
-  private[this] val thriftMetricMapping = ImmutableBiMap.of(
-    L2,
-    DistanceMetric.L2,
-    Cosine,
-    DistanceMetric.Cosine,
-    InnerProduct,
-    DistanceMetric.InnerProduct,
-    Edit,
-    DistanceMetric.EditDistance
+o-object metwic {
+  p-pwivate[this] vaw thwiftmetwicmapping = i-immutabwebimap.of(
+    w2, (✿oωo)
+    distancemetwic.w2, (ˆ ﻌ ˆ)♡
+    c-cosine, :3
+    distancemetwic.cosine, (U ᵕ U❁)
+    innewpwoduct, ^^;;
+    distancemetwic.innewpwoduct, mya
+    e-edit, 😳😳😳
+    distancemetwic.editdistance
   )
 
-  def fromThrift(metric: DistanceMetric): Metric[_ <: Distance[_]] = {
-    thriftMetricMapping.inverse().get(metric)
+  d-def fwomthwift(metwic: distancemetwic): metwic[_ <: distance[_]] = {
+    t-thwiftmetwicmapping.invewse().get(metwic)
   }
 
-  def toThrift(metric: Metric[_ <: Distance[_]]): DistanceMetric = {
-    thriftMetricMapping.get(metric)
+  d-def tothwift(metwic: metwic[_ <: distance[_]]): distancemetwic = {
+    thwiftmetwicmapping.get(metwic)
   }
 
-  def fromString(metricName: String): Metric[_ <: Distance[_]]
-    with Injection[_, ServiceDistance] = {
-    metricName match {
-      case "Cosine" => Cosine
-      case "L2" => L2
-      case "InnerProduct" => InnerProduct
-      case "EditDistance" => Edit
+  def fwomstwing(metwicname: stwing): m-metwic[_ <: d-distance[_]]
+    with injection[_, OwO s-sewvicedistance] = {
+    m-metwicname m-match {
+      case "cosine" => cosine
+      case "w2" => w-w2
+      case "innewpwoduct" => innewpwoduct
+      case "editdistance" => edit
       case _ =>
-        throw new IllegalArgumentException(s"No Metric with the name $metricName")
+        t-thwow nyew iwwegawawgumentexception(s"no m-metwic with the n-name $metwicname")
     }
   }
 }
 
-sealed trait Metric[D <: Distance[D]] {
-  def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): D
-  def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float
-  def fromAbsoluteDistance(distance: Float): D
+s-seawed twait metwic[d <: distance[d]] {
+  d-def distance(
+    e-embedding1: e-embeddingvectow, rawr
+    e-embedding2: embeddingvectow
+  ): d
+  d-def absowutedistance(
+    e-embedding1: e-embeddingvectow, XD
+    e-embedding2: e-embeddingvectow
+  ): fwoat
+  def fwomabsowutedistance(distance: fwoat): d-d
 }
 
-case object L2 extends Metric[L2Distance] with Injection[L2Distance, ServiceDistance] {
-  override def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): L2Distance = {
-    fromAbsoluteDistance(MetricUtil.l2distance(embedding1, embedding2).toFloat)
+case object w2 extends metwic[w2distance] with injection[w2distance, (U ﹏ U) sewvicedistance] {
+  ovewwide def distance(
+    embedding1: e-embeddingvectow, (˘ω˘)
+    embedding2: embeddingvectow
+  ): w2distance = {
+    f-fwomabsowutedistance(metwicutiw.w2distance(embedding1, UwU e-embedding2).tofwoat)
   }
 
-  override def fromAbsoluteDistance(distance: Float): L2Distance = {
-    L2Distance(distance)
+  o-ovewwide def fwomabsowutedistance(distance: fwoat): w-w2distance = {
+    w2distance(distance)
   }
 
-  override def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = distance(embedding1, embedding2).distance
+  o-ovewwide def a-absowutedistance(
+    embedding1: embeddingvectow, >_<
+    embedding2: embeddingvectow
+  ): fwoat = d-distance(embedding1, σωσ embedding2).distance
 
-  override def apply(scalaDistance: L2Distance): ServiceDistance = {
-    ServiceDistance.L2Distance(ServiceL2Distance(scalaDistance.distance))
+  o-ovewwide def appwy(scawadistance: w2distance): sewvicedistance = {
+    s-sewvicedistance.w2distance(sewvicew2distance(scawadistance.distance))
   }
 
-  override def invert(serviceDistance: ServiceDistance): Try[L2Distance] = {
-    serviceDistance match {
-      case ServiceDistance.L2Distance(l2Distance) =>
-        Success(L2Distance(l2Distance.distance.toFloat))
+  o-ovewwide def invewt(sewvicedistance: sewvicedistance): t-twy[w2distance] = {
+    s-sewvicedistance match {
+      c-case sewvicedistance.w2distance(w2distance) =>
+        s-success(w2distance(w2distance.distance.tofwoat))
       case distance =>
-        Failure(new IllegalArgumentException(s"Expected an l2 distance but got $distance"))
+        faiwuwe(new iwwegawawgumentexception(s"expected an w2 distance b-but got $distance"))
     }
   }
 }
 
-case object Cosine extends Metric[CosineDistance] with Injection[CosineDistance, ServiceDistance] {
-  override def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): CosineDistance = {
-    fromAbsoluteDistance(1 - MetricUtil.cosineSimilarity(embedding1, embedding2))
+c-case object c-cosine extends metwic[cosinedistance] w-with i-injection[cosinedistance, 🥺 sewvicedistance] {
+  ovewwide d-def distance(
+    embedding1: embeddingvectow, 🥺
+    embedding2: embeddingvectow
+  ): c-cosinedistance = {
+    f-fwomabsowutedistance(1 - metwicutiw.cosinesimiwawity(embedding1, ʘwʘ embedding2))
   }
 
-  override def fromAbsoluteDistance(distance: Float): CosineDistance = {
-    CosineDistance(distance)
+  o-ovewwide d-def fwomabsowutedistance(distance: fwoat): cosinedistance = {
+    cosinedistance(distance)
   }
 
-  override def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = distance(embedding1, embedding2).distance
+  ovewwide def a-absowutedistance(
+    embedding1: embeddingvectow, :3
+    embedding2: embeddingvectow
+  ): f-fwoat = distance(embedding1, (U ﹏ U) embedding2).distance
 
-  override def apply(scalaDistance: CosineDistance): ServiceDistance = {
-    ServiceDistance.CosineDistance(ServiceCosineDistance(scalaDistance.distance))
+  o-ovewwide d-def appwy(scawadistance: cosinedistance): sewvicedistance = {
+    sewvicedistance.cosinedistance(sewvicecosinedistance(scawadistance.distance))
   }
 
-  override def invert(serviceDistance: ServiceDistance): Try[CosineDistance] = {
-    serviceDistance match {
-      case ServiceDistance.CosineDistance(cosineDistance) =>
-        Success(CosineDistance(cosineDistance.distance.toFloat))
-      case distance =>
-        Failure(new IllegalArgumentException(s"Expected a cosine distance but got $distance"))
+  ovewwide d-def invewt(sewvicedistance: s-sewvicedistance): twy[cosinedistance] = {
+    sewvicedistance match {
+      case s-sewvicedistance.cosinedistance(cosinedistance) =>
+        success(cosinedistance(cosinedistance.distance.tofwoat))
+      c-case distance =>
+        faiwuwe(new iwwegawawgumentexception(s"expected a-a cosine distance but got $distance"))
     }
   }
 }
 
-case object InnerProduct
-    extends Metric[InnerProductDistance]
-    with Injection[InnerProductDistance, ServiceDistance] {
-  override def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): InnerProductDistance = {
-    fromAbsoluteDistance(1 - MetricUtil.dot(embedding1, embedding2))
+c-case object i-innewpwoduct
+    extends metwic[innewpwoductdistance]
+    with i-injection[innewpwoductdistance, (U ﹏ U) sewvicedistance] {
+  o-ovewwide d-def distance(
+    e-embedding1: embeddingvectow, ʘwʘ
+    e-embedding2: e-embeddingvectow
+  ): innewpwoductdistance = {
+    fwomabsowutedistance(1 - m-metwicutiw.dot(embedding1, >w< e-embedding2))
   }
 
-  override def fromAbsoluteDistance(distance: Float): InnerProductDistance = {
-    InnerProductDistance(distance)
+  o-ovewwide def fwomabsowutedistance(distance: fwoat): innewpwoductdistance = {
+    i-innewpwoductdistance(distance)
   }
 
-  override def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = distance(embedding1, embedding2).distance
+  ovewwide def absowutedistance(
+    e-embedding1: e-embeddingvectow, rawr x3
+    embedding2: embeddingvectow
+  ): fwoat = distance(embedding1, OwO e-embedding2).distance
 
-  override def apply(scalaDistance: InnerProductDistance): ServiceDistance = {
-    ServiceDistance.InnerProductDistance(ServiceInnerProductDistance(scalaDistance.distance))
+  o-ovewwide d-def appwy(scawadistance: i-innewpwoductdistance): sewvicedistance = {
+    s-sewvicedistance.innewpwoductdistance(sewviceinnewpwoductdistance(scawadistance.distance))
   }
 
-  override def invert(
-    serviceDistance: ServiceDistance
-  ): Try[InnerProductDistance] = {
-    serviceDistance match {
-      case ServiceDistance.InnerProductDistance(cosineDistance) =>
-        Success(InnerProductDistance(cosineDistance.distance.toFloat))
+  ovewwide def invewt(
+    sewvicedistance: sewvicedistance
+  ): twy[innewpwoductdistance] = {
+    sewvicedistance match {
+      c-case sewvicedistance.innewpwoductdistance(cosinedistance) =>
+        s-success(innewpwoductdistance(cosinedistance.distance.tofwoat))
       case distance =>
-        Failure(
-          new IllegalArgumentException(s"Expected a inner product distance but got $distance")
+        f-faiwuwe(
+          nyew iwwegawawgumentexception(s"expected a-a innew pwoduct distance b-but got $distance")
         )
     }
   }
 }
 
-case object Edit extends Metric[EditDistance] with Injection[EditDistance, ServiceDistance] {
+c-case object edit e-extends metwic[editdistance] w-with i-injection[editdistance, ^•ﻌ•^ sewvicedistance] {
 
-  private def intDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector,
-    pos1: Int,
-    pos2: Int,
-    precomputedDistances: scala.collection.mutable.Map[(Int, Int), Int]
-  ): Int = {
-    // return the remaining characters of other String
-    if (pos1 == 0) return pos2
-    if (pos2 == 0) return pos1
+  pwivate def intdistance(
+    embedding1: embeddingvectow, >_<
+    embedding2: embeddingvectow, OwO
+    pos1: int, >_<
+    pos2: i-int, (ꈍᴗꈍ)
+    pwecomputeddistances: s-scawa.cowwection.mutabwe.map[(int, >w< i-int), int]
+  ): int = {
+    // w-wetuwn the wemaining chawactews of othew stwing
+    if (pos1 == 0) w-wetuwn p-pos2
+    if (pos2 == 0) wetuwn pos1
 
-    // To check if the recursive tree
-    // for given n & m has already been executed
-    precomputedDistances.getOrElse(
-      (pos1, pos2), {
-        // We might want to change this so that capitals are considered the same.
-        // Also maybe some characters that look similar should also be the same.
-        val computed = if (embedding1(pos1 - 1) == embedding2(pos2 - 1)) {
-          intDistance(embedding1, embedding2, pos1 - 1, pos2 - 1, precomputedDistances)
-        } else { // If characters are nt equal, we need to
-          // find the minimum cost out of all 3 operations.
-          val insert = intDistance(embedding1, embedding2, pos1, pos2 - 1, precomputedDistances)
-          val del = intDistance(embedding1, embedding2, pos1 - 1, pos2, precomputedDistances)
-          val replace =
-            intDistance(embedding1, embedding2, pos1 - 1, pos2 - 1, precomputedDistances)
-          1 + Math.min(insert, Math.min(del, replace))
+    // t-to check if the wecuwsive twee
+    // f-fow given ny & m-m has awweady been exekawaii~d
+    p-pwecomputeddistances.getowewse(
+      (pos1, (U ﹏ U) p-pos2), {
+        // we might want to change this so that capitaws awe considewed t-the same.
+        // a-awso maybe s-some chawactews t-that wook simiwaw s-shouwd awso be the same. ^^
+        v-vaw computed = i-if (embedding1(pos1 - 1) == embedding2(pos2 - 1)) {
+          i-intdistance(embedding1, (U ﹏ U) e-embedding2, :3 pos1 - 1, (✿oωo) p-pos2 - 1, pwecomputeddistances)
+        } ewse { // if chawactews a-awe nyt equaw, XD we nyeed to
+          // f-find the m-minimum cost out of aww 3 opewations. >w<
+          v-vaw insewt = intdistance(embedding1, òωó embedding2, (ꈍᴗꈍ) p-pos1, pos2 - 1, rawr x3 p-pwecomputeddistances)
+          v-vaw dew = intdistance(embedding1, rawr x3 embedding2, σωσ pos1 - 1, pos2, (ꈍᴗꈍ) pwecomputeddistances)
+          v-vaw wepwace =
+            intdistance(embedding1, rawr embedding2, ^^;; p-pos1 - 1, rawr x3 pos2 - 1, p-pwecomputeddistances)
+          1 + math.min(insewt, (ˆ ﻌ ˆ)♡ m-math.min(dew, σωσ wepwace))
         }
-        precomputedDistances.put((pos1, pos2), computed)
+        p-pwecomputeddistances.put((pos1, (U ﹏ U) p-pos2), computed)
         computed
       }
     )
   }
 
-  override def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): EditDistance = {
-    val editDistance = intDistance(
-      embedding1,
-      embedding2,
-      embedding1.length,
-      embedding2.length,
-      scala.collection.mutable.Map[(Int, Int), Int]()
+  ovewwide d-def distance(
+    embedding1: embeddingvectow, >w<
+    e-embedding2: e-embeddingvectow
+  ): editdistance = {
+    v-vaw editdistance = intdistance(
+      e-embedding1, σωσ
+      e-embedding2, nyaa~~
+      e-embedding1.wength, 🥺
+      embedding2.wength,
+      scawa.cowwection.mutabwe.map[(int, rawr x3 int), int]()
     )
-    EditDistance(editDistance)
+    editdistance(editdistance)
   }
 
-  override def fromAbsoluteDistance(distance: Float): EditDistance = {
-    EditDistance(distance.toInt)
+  ovewwide def fwomabsowutedistance(distance: fwoat): editdistance = {
+    editdistance(distance.toint)
   }
 
-  override def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = distance(embedding1, embedding2).distance
+  ovewwide def absowutedistance(
+    embedding1: embeddingvectow, σωσ
+    embedding2: e-embeddingvectow
+  ): f-fwoat = distance(embedding1, (///ˬ///✿) embedding2).distance
 
-  override def apply(scalaDistance: EditDistance): ServiceDistance = {
-    ServiceDistance.EditDistance(ServiceEditDistance(scalaDistance.distance.toInt))
+  ovewwide d-def appwy(scawadistance: e-editdistance): s-sewvicedistance = {
+    sewvicedistance.editdistance(sewviceeditdistance(scawadistance.distance.toint))
   }
 
-  override def invert(
-    serviceDistance: ServiceDistance
-  ): Try[EditDistance] = {
-    serviceDistance match {
-      case ServiceDistance.EditDistance(cosineDistance) =>
-        Success(EditDistance(cosineDistance.distance.toFloat))
-      case distance =>
-        Failure(
-          new IllegalArgumentException(s"Expected a inner product distance but got $distance")
+  o-ovewwide def invewt(
+    s-sewvicedistance: s-sewvicedistance
+  ): twy[editdistance] = {
+    s-sewvicedistance match {
+      c-case sewvicedistance.editdistance(cosinedistance) =>
+        success(editdistance(cosinedistance.distance.tofwoat))
+      c-case distance =>
+        faiwuwe(
+          n-nyew iwwegawawgumentexception(s"expected a-a innew pwoduct d-distance but got $distance")
         )
     }
   }
 }
 
-object MetricUtil {
-  private[ann] def dot(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = {
-    math.dotProduct(embedding1, embedding2)
+o-object metwicutiw {
+  p-pwivate[ann] d-def dot(
+    e-embedding1: e-embeddingvectow, (U ﹏ U)
+    e-embedding2: embeddingvectow
+  ): f-fwoat = {
+    m-math.dotpwoduct(embedding1, ^^;; e-embedding2)
   }
 
-  private[ann] def l2distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Double = {
-    math.l2Distance(embedding1, embedding2)
+  pwivate[ann] d-def w2distance(
+    embedding1: embeddingvectow,
+    e-embedding2: embeddingvectow
+  ): d-doubwe = {
+    m-math.w2distance(embedding1, 🥺 e-embedding2)
   }
 
-  private[ann] def cosineSimilarity(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = {
-    math.cosineSimilarity(embedding1, embedding2).toFloat
+  pwivate[ann] d-def cosinesimiwawity(
+    embedding1: e-embeddingvectow, òωó
+    embedding2: e-embeddingvectow
+  ): fwoat = {
+    m-math.cosinesimiwawity(embedding1, XD embedding2).tofwoat
   }
 
-  private[ann] def norm(
-    embedding: EmbeddingVector
-  ): EmbeddingVector = {
-    math.normalize(embedding)
+  pwivate[ann] def nyowm(
+    embedding: e-embeddingvectow
+  ): embeddingvectow = {
+    m-math.nowmawize(embedding)
   }
 }

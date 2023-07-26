@@ -1,42 +1,42 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt c-com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fsname
+impowt c-com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt c-com.twittew.timewines.configapi.pawam
+i-impowt com.twittew.utiw.duwation
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class FeatureHydrationSourcesFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    FeatureStoreSourceParams.EnableAlgorithmAggregateFeatures,
-    FeatureStoreSourceParams.EnableAuthorTopicAggregateFeatures,
-    FeatureStoreSourceParams.EnableCandidateClientFeatures,
-    FeatureStoreSourceParams.EnableCandidatePrecomputedNotificationFeatures,
-    FeatureStoreSourceParams.EnableCandidateUserAuthorRealTimeAggregateFeatures,
-    FeatureStoreSourceParams.EnableCandidateUserFeatures,
-    FeatureStoreSourceParams.EnableCandidateUserResurrectionFeatures,
-    FeatureStoreSourceParams.EnableCandidateUserTimelinesAuthorAggregateFeatures,
-    FeatureStoreSourceParams.EnableSeparateClientForTimelinesAuthors,
-    FeatureStoreSourceParams.EnableSeparateClientForGizmoduck,
-    FeatureStoreSourceParams.EnableSeparateClientForMetricCenterUserCounting,
-    FeatureStoreSourceParams.EnableSeparateClientForNotifications,
-    FeatureStoreSourceParams.EnableSimilarToUserFeatures,
-    FeatureStoreSourceParams.EnableTargetUserFeatures,
-    FeatureStoreSourceParams.EnableTargetUserResurrectionFeatures,
-    FeatureStoreSourceParams.EnableTargetUserWtfImpressionFeatures,
-    FeatureStoreSourceParams.EnableTopicAggregateFeatures,
-    FeatureStoreSourceParams.EnableUserCandidateEdgeFeatures,
-    FeatureStoreSourceParams.EnableUserCandidateWtfImpressionCandidateFeatures,
-    FeatureStoreSourceParams.EnableUserClientFeatures,
-    FeatureStoreSourceParams.EnableUserTopicFeatures,
-    FeatureStoreSourceParams.EnableUserWtfAlgEdgeFeatures,
+@singweton
+cwass f-featuwehydwationsouwcesfsconfig @inject() () extends featuweswitchconfig {
+  ovewwide vaw booweanfspawams: s-seq[pawam[boowean] with fsname] = s-seq(
+    featuwestowesouwcepawams.enabweawgowithmaggwegatefeatuwes, (⑅˘꒳˘)
+    featuwestowesouwcepawams.enabweauthowtopicaggwegatefeatuwes, rawr x3
+    featuwestowesouwcepawams.enabwecandidatecwientfeatuwes, (✿oωo)
+    featuwestowesouwcepawams.enabwecandidatepwecomputednotificationfeatuwes, (ˆ ﻌ ˆ)♡
+    f-featuwestowesouwcepawams.enabwecandidateusewauthowweawtimeaggwegatefeatuwes, (˘ω˘)
+    featuwestowesouwcepawams.enabwecandidateusewfeatuwes, (⑅˘꒳˘)
+    featuwestowesouwcepawams.enabwecandidateusewwesuwwectionfeatuwes, (///ˬ///✿)
+    f-featuwestowesouwcepawams.enabwecandidateusewtimewinesauthowaggwegatefeatuwes, 😳😳😳
+    f-featuwestowesouwcepawams.enabwesepawatecwientfowtimewinesauthows, 🥺
+    featuwestowesouwcepawams.enabwesepawatecwientfowgizmoduck, mya
+    featuwestowesouwcepawams.enabwesepawatecwientfowmetwiccentewusewcounting, 🥺
+    featuwestowesouwcepawams.enabwesepawatecwientfownotifications, >_<
+    featuwestowesouwcepawams.enabwesimiwawtousewfeatuwes, >_<
+    f-featuwestowesouwcepawams.enabwetawgetusewfeatuwes, (⑅˘꒳˘)
+    featuwestowesouwcepawams.enabwetawgetusewwesuwwectionfeatuwes, /(^•ω•^)
+    featuwestowesouwcepawams.enabwetawgetusewwtfimpwessionfeatuwes, rawr x3
+    featuwestowesouwcepawams.enabwetopicaggwegatefeatuwes, (U ﹏ U)
+    featuwestowesouwcepawams.enabweusewcandidateedgefeatuwes, (U ﹏ U)
+    f-featuwestowesouwcepawams.enabweusewcandidatewtfimpwessioncandidatefeatuwes, (⑅˘꒳˘)
+    featuwestowesouwcepawams.enabweusewcwientfeatuwes, òωó
+    f-featuwestowesouwcepawams.enabweusewtopicfeatuwes, ʘwʘ
+    f-featuwestowesouwcepawams.enabweusewwtfawgedgefeatuwes, /(^•ω•^)
   )
 
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    FeatureStoreSourceParams.GlobalFetchTimeout
+  o-ovewwide v-vaw duwationfspawams: seq[fsboundedpawam[duwation] with hasduwationconvewsion] = s-seq(
+    featuwestowesouwcepawams.gwobawfetchtimeout
   )
 }

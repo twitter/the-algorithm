@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.common.rankers.utils
+package com.twittew.fowwow_wecommendations.common.wankews.utiws
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.scowe
+i-impowt com.twittew.fowwow_wecommendations.common.wankews.common.wankewid.wankewid
 
-object Utils {
+o-object utiws {
 
   /**
-   * Add the ranking and scoring info for a list of candidates on a given ranking stage.
-   * @param candidates A list of CandidateUser
-   * @param rankingStage Should use `Ranker.name` as the ranking stage.
-   * @return The list of CandidateUser with ranking/scoring info added.
+   * a-add the wanking a-and scowing info f-fow a wist of c-candidates on a g-given wanking stage. nyaa~~
+   * @pawam candidates a wist of candidateusew
+   * @pawam wankingstage shouwd use `wankew.name` a-as the wanking stage. (⑅˘꒳˘)
+   * @wetuwn the wist o-of candidateusew with wanking/scowing i-info added. rawr x3
    */
-  def addRankingInfo(candidates: Seq[CandidateUser], rankingStage: String): Seq[CandidateUser] = {
-    candidates.zipWithIndex.map {
-      case (candidate, rank) =>
-        // 1-based ranking for better readability
-        candidate.addInfoPerRankingStage(rankingStage, candidate.scores, rank + 1)
+  def addwankinginfo(candidates: seq[candidateusew], (✿oωo) w-wankingstage: stwing): seq[candidateusew] = {
+    c-candidates.zipwithindex.map {
+      c-case (candidate, (ˆ ﻌ ˆ)♡ wank) =>
+        // 1-based wanking fow bettew weadabiwity
+        candidate.addinfopewwankingstage(wankingstage, (˘ω˘) c-candidate.scowes, (⑅˘꒳˘) wank + 1)
     }
   }
 
-  def getCandidateScoreByRankerId(candidate: CandidateUser, rankerId: RankerId): Option[Score] =
-    candidate.scores.flatMap { ss => ss.scores.find(_.rankerId.contains(rankerId)) }
+  def getcandidatescowebywankewid(candidate: candidateusew, (///ˬ///✿) wankewid: w-wankewid): option[scowe] =
+    c-candidate.scowes.fwatmap { s-ss => ss.scowes.find(_.wankewid.contains(wankewid)) }
 
-  def getAllRankerIds(candidates: Seq[CandidateUser]): Seq[RankerId] =
-    candidates.flatMap(_.scores.map(_.scores.flatMap(_.rankerId))).flatten.distinct
+  d-def getawwwankewids(candidates: s-seq[candidateusew]): seq[wankewid] =
+    candidates.fwatmap(_.scowes.map(_.scowes.fwatmap(_.wankewid))).fwatten.distinct
 }

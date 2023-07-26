@@ -1,33 +1,33 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.concuwwent.timeunit;
 
-import com.twitter.finagle.Filter;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+i-impowt c-com.twittew.finagwe.fiwtew;
+i-impowt c-com.twittew.finagwe.sewvice;
+i-impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * A filter for transforming a RequestContext to an EarlybirdRequest.
+ * a fiwtew f-fow twansfowming a wequestcontext to an eawwybiwdwequest. >_<
  */
-public class RequestContextToEarlybirdRequestFilter extends
-    Filter<EarlybirdRequestContext, EarlybirdResponse, EarlybirdRequest, EarlybirdResponse> {
+pubwic c-cwass wequestcontexttoeawwybiwdwequestfiwtew extends
+    fiwtew<eawwybiwdwequestcontext, rawr x3 eawwybiwdwesponse, mya e-eawwybiwdwequest, nyaa~~ eawwybiwdwesponse> {
 
-  private static final SearchTimerStats REQUEST_CONTEXT_TRIP_TIME =
-      SearchTimerStats.export("request_context_trip_time", TimeUnit.MILLISECONDS, false,
-          true);
+  pwivate static finaw s-seawchtimewstats wequest_context_twip_time =
+      s-seawchtimewstats.expowt("wequest_context_twip_time", (⑅˘꒳˘) t-timeunit.miwwiseconds, rawr x3 fawse, (✿oωo)
+          twue);
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> appwy(
+      e-eawwybiwdwequestcontext wequestcontext, (ˆ ﻌ ˆ)♡
+      sewvice<eawwybiwdwequest, (˘ω˘) eawwybiwdwesponse> sewvice) {
 
-    long tripTime = System.currentTimeMillis() - requestContext.getCreatedTimeMillis();
-    REQUEST_CONTEXT_TRIP_TIME.timerIncrement(tripTime);
+    w-wong twiptime = system.cuwwenttimemiwwis() - w-wequestcontext.getcweatedtimemiwwis();
+    w-wequest_context_twip_time.timewincwement(twiptime);
 
-    return service.apply(requestContext.getRequest());
+    w-wetuwn sewvice.appwy(wequestcontext.getwequest());
   }
 }

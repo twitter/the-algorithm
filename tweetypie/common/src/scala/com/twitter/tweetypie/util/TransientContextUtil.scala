@@ -1,17 +1,17 @@
-package com.twitter.tweetypie.util
+package com.twittew.tweetypie.utiw
 
-import com.twitter.tweetypie.thriftscala.TransientCreateContext
-import com.twitter.tweetypie.thriftscala.TweetCreateContextKey
-import com.twitter.tweetypie.thriftscala.TweetCreateContextKey.PeriscopeCreatorId
-import com.twitter.tweetypie.thriftscala.TweetCreateContextKey.PeriscopeIsLive
+impowt com.twittew.tweetypie.thwiftscawa.twansientcweatecontext
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetcweatecontextkey
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetcweatecontextkey.pewiscopecweatowid
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetcweatecontextkey.pewiscopeiswive
 
-object TransientContextUtil {
+o-object twansientcontextutiw {
 
-  def toAdditionalContext(context: TransientCreateContext): Map[TweetCreateContextKey, String] =
-    Seq
+  d-def toadditionawcontext(context: t-twansientcweatecontext): map[tweetcweatecontextkey, rawr s-stwing] =
+    s-seq
       .concat(
-        context.periscopeIsLive.map(PeriscopeIsLive -> _.toString), // "true" or "false"
-        context.periscopeCreatorId.map(PeriscopeCreatorId -> _.toString) // userId
+        context.pewiscopeiswive.map(pewiscopeiswive -> _.tostwing), σωσ // "twue" ow "fawse"
+        context.pewiscopecweatowid.map(pewiscopecweatowid -> _.tostwing) // usewid
       )
-      .toMap
+      .tomap
 }

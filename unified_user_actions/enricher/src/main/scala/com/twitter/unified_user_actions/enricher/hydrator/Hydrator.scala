@@ -1,14 +1,14 @@
-package com.twitter.unified_user_actions.enricher.hydrator
+package com.twittew.unified_usew_actions.enwichew.hydwatow
 
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.util.Future
+impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentenvewop
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentinstwuction
+impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentkey
+i-impowt com.twittew.utiw.futuwe
 
-trait Hydrator {
-  def hydrate(
-    instruction: EnrichmentInstruction,
-    key: Option[EnrichmentKey],
-    envelop: EnrichmentEnvelop
-  ): Future[EnrichmentEnvelop]
+t-twait hydwatow {
+  d-def hydwate(
+    i-instwuction: e-enwichmentinstwuction, UwU
+    key: option[enwichmentkey], rawr x3
+    envewop: enwichmentenvewop
+  ): futuwe[enwichmentenvewop]
 }

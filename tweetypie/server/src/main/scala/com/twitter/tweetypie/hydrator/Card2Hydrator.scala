@@ -1,76 +1,76 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.expandodo.thriftscala.Card2
-import com.twitter.expandodo.thriftscala.Card2RequestOptions
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.CardReferenceUriExtractor
-import com.twitter.tweetypie.core.NonTombstone
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.expandodo.thwiftscawa.cawd2
+i-impowt c-com.twittew.expandodo.thwiftscawa.cawd2wequestoptions
+i-impowt c-com.twittew.featuweswitches.v2.featuweswitchwesuwts
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe.cawdwefewenceuwiextwactow
+impowt com.twittew.tweetypie.cowe.nontombstone
+impowt com.twittew.tweetypie.cowe.vawuestate
+impowt com.twittew.tweetypie.wepositowy._
+impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object Card2Hydrator {
-  type Type = ValueHydrator[Option[Card2], Ctx]
+object cawd2hydwatow {
+  type t-type = vawuehydwatow[option[cawd2], :3 ctx]
 
-  case class Ctx(
-    urlEntities: Seq[UrlEntity],
-    mediaEntities: Seq[MediaEntity],
-    cardReference: Option[CardReference],
-    underlyingTweetCtx: TweetCtx,
-    featureSwitchResults: Option[FeatureSwitchResults])
-      extends TweetCtx.Proxy
+  case c-cwass ctx(
+    uwwentities: seq[uwwentity], -.-
+    mediaentities: s-seq[mediaentity], 😳
+    cawdwefewence: o-option[cawdwefewence], mya
+    u-undewwyingtweetctx: tweetctx, (˘ω˘)
+    featuweswitchwesuwts: option[featuweswitchwesuwts])
+      extends tweetctx.pwoxy
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.Card2Field)
-  val hydrationUrlBlockListKey = "card_hydration_blocklist"
+  v-vaw hydwatedfiewd: fiewdbypath = fiewdbypath(tweet.cawd2fiewd)
+  vaw hydwationuwwbwockwistkey = "cawd_hydwation_bwockwist"
 
-  def apply(repo: Card2Repository.Type): ValueHydrator[Option[Card2], Ctx] =
-    ValueHydrator[Option[Card2], Ctx] { (_, ctx) =>
-      val repoCtx = requestOptions(ctx)
-      val filterURLs = ctx.featureSwitchResults
-        .flatMap(_.getStringArray(hydrationUrlBlockListKey, false))
-        .getOrElse(Seq())
+  def appwy(wepo: c-cawd2wepositowy.type): vawuehydwatow[option[cawd2], >_< c-ctx] =
+    v-vawuehydwatow[option[cawd2], -.- c-ctx] { (_, 🥺 ctx) =>
+      v-vaw wepoctx = wequestoptions(ctx)
+      vaw fiwtewuwws = c-ctx.featuweswitchwesuwts
+        .fwatmap(_.getstwingawway(hydwationuwwbwockwistkey, (U ﹏ U) fawse))
+        .getowewse(seq())
 
-      val requests =
-        ctx.cardReference match {
-          case Some(CardReferenceUriExtractor(cardUri)) =>
-            cardUri match {
-              case NonTombstone(uri) if !filterURLs.contains(uri) =>
-                Seq((UrlCard2Key(uri), repoCtx))
-              case _ => Nil
+      vaw wequests =
+        c-ctx.cawdwefewence match {
+          case some(cawdwefewenceuwiextwactow(cawduwi)) =>
+            cawduwi match {
+              c-case nyontombstone(uwi) if !fiwtewuwws.contains(uwi) =>
+                s-seq((uwwcawd2key(uwi), >w< w-wepoctx))
+              c-case _ => nyiw
             }
           case _ =>
-            ctx.urlEntities
-              .filterNot(e => e.expanded.exists(filterURLs.contains))
-              .map(e => (UrlCard2Key(e.url), repoCtx))
+            ctx.uwwentities
+              .fiwtewnot(e => e.expanded.exists(fiwtewuwws.contains))
+              .map(e => (uwwcawd2key(e.uww), mya w-wepoctx))
         }
 
-      Stitch
-        .traverse(requests) {
-          case (key, opts) => repo(key, opts).liftNotFoundToOption
-        }.liftToTry.map {
-          case Return(results) =>
-            results.flatten.lastOption match {
-              case None => ValueState.UnmodifiedNone
-              case res => ValueState.modified(res)
+      s-stitch
+        .twavewse(wequests) {
+          case (key, >w< o-opts) => wepo(key, nyaa~~ o-opts).wiftnotfoundtooption
+        }.wifttotwy.map {
+          case wetuwn(wesuwts) =>
+            w-wesuwts.fwatten.wastoption match {
+              c-case none => vawuestate.unmodifiednone
+              case wes => vawuestate.modified(wes)
             }
-          case Throw(_) => ValueState.partial(None, hydratedField)
+          c-case thwow(_) => vawuestate.pawtiaw(none, (✿oωo) h-hydwatedfiewd)
         }
-    }.onlyIf { (curr, ctx) =>
-      curr.isEmpty &&
-      ctx.tweetFieldRequested(Tweet.Card2Field) &&
-      ctx.opts.cardsPlatformKey.nonEmpty &&
-      !ctx.isRetweet &&
-      ctx.mediaEntities.isEmpty &&
-      (ctx.cardReference.nonEmpty || ctx.urlEntities.nonEmpty)
+    }.onwyif { (cuww, ʘwʘ ctx) =>
+      c-cuww.isempty &&
+      c-ctx.tweetfiewdwequested(tweet.cawd2fiewd) &&
+      ctx.opts.cawdspwatfowmkey.nonempty &&
+      !ctx.iswetweet &&
+      ctx.mediaentities.isempty &&
+      (ctx.cawdwefewence.nonempty || ctx.uwwentities.nonempty)
     }
 
-  private[this] def requestOptions(ctx: Ctx) =
-    Card2RequestOptions(
-      platformKey = ctx.opts.cardsPlatformKey.get,
-      perspectiveUserId = ctx.opts.forUserId,
-      allowNonTcoUrls = ctx.cardReference.nonEmpty,
-      languageTag = Some(ctx.opts.languageTag)
+  pwivate[this] def wequestoptions(ctx: ctx) =
+    c-cawd2wequestoptions(
+      p-pwatfowmkey = ctx.opts.cawdspwatfowmkey.get, (ˆ ﻌ ˆ)♡
+      p-pewspectiveusewid = c-ctx.opts.fowusewid, 😳😳😳
+      a-awwownontcouwws = ctx.cawdwefewence.nonempty, :3
+      wanguagetag = some(ctx.opts.wanguagetag)
     )
 }

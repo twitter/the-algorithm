@@ -1,133 +1,133 @@
-package com.twitter.timelineranker.config
+package com.twittew.timewinewankew.config
 
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.Value
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.servo.util.Effect
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelines.authorization.TimelinesClientRequestAuthorizer
-import com.twitter.timelines.config._
-import com.twitter.timelines.config.configapi._
-import com.twitter.timelines.features._
-import com.twitter.timelines.util.ImpressionCountingABDecider
-import com.twitter.timelines.util.logging.Scribe
-import com.twitter.util.Await
-import com.twitter.servo.util.Gate
-import com.twitter.timelines.model.UserId
+impowt c-com.twittew.abdecidew.abdecidewfactowy
+i-impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt com.twittew.decidew.decidew
+i-impowt c-com.twittew.featuweswitches.vawue
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.sewvo.decidew.decidewgatebuiwdew
+i-impowt com.twittew.sewvo.utiw.effect
+impowt com.twittew.timewinewankew.decidew.decidewkey
+impowt com.twittew.timewines.authowization.timewinescwientwequestauthowizew
+impowt c-com.twittew.timewines.config._
+impowt com.twittew.timewines.config.configapi._
+impowt com.twittew.timewines.featuwes._
+i-impowt com.twittew.timewines.utiw.impwessioncountingabdecidew
+i-impowt com.twittew.timewines.utiw.wogging.scwibe
+impowt com.twittew.utiw.await
+impowt com.twittew.sewvo.utiw.gate
+impowt c-com.twittew.timewines.modew.usewid
 
-trait ClientProvider {
-  def clientWrappers: ClientWrappers
-  def underlyingClients: UnderlyingClientConfiguration
+twait cwientpwovidew {
+  d-def c-cwientwwappews: cwientwwappews
+  def undewwyingcwients: undewwyingcwientconfiguwation
 }
 
-trait UtilityProvider {
-  def abdecider: LoggingABDecider
-  def clientRequestAuthorizer: TimelinesClientRequestAuthorizer
-  def configStore: ConfigStore
-  def decider: Decider
-  def deciderGateBuilder: DeciderGateBuilder
-  def employeeGate: UserRolesGate.EmployeeGate
-  def configApiConfiguration: ConfigApiConfiguration
-  def statsReceiver: StatsReceiver
-  def whitelist: UserList
+twait u-utiwitypwovidew {
+  def abdecidew: woggingabdecidew
+  def cwientwequestauthowizew: timewinescwientwequestauthowizew
+  d-def configstowe: configstowe
+  d-def decidew: d-decidew
+  def d-decidewgatebuiwdew: d-decidewgatebuiwdew
+  def empwoyeegate: usewwowesgate.empwoyeegate
+  d-def configapiconfiguwation: configapiconfiguwation
+  def s-statsweceivew: statsweceivew
+  def whitewist: usewwist
 }
 
-trait RuntimeConfiguration extends ClientProvider with UtilityProvider with ConfigUtils {
-  def isProd: Boolean
-  def maxConcurrency: Int
-  def clientEventScribe: Effect[String]
-  def clientWrapperFactories: ClientWrapperFactories
+twait wuntimeconfiguwation extends cwientpwovidew w-with utiwitypwovidew w-with configutiws {
+  d-def ispwod: b-boowean
+  def maxconcuwwency: int
+  def cwienteventscwibe: effect[stwing]
+  def c-cwientwwappewfactowies: c-cwientwwappewfactowies
 }
 
-class RuntimeConfigurationImpl(
-  flags: TimelineRankerFlags,
-  configStoreFactory: DynamicConfigStoreFactory,
-  val decider: Decider,
-  val forcedFeatureValues: Map[String, Value] = Map.empty[String, Value],
-  val statsReceiver: StatsReceiver)
-    extends RuntimeConfiguration {
+cwass wuntimeconfiguwationimpw(
+  f-fwags: timewinewankewfwags, o.O
+  c-configstowefactowy: dynamicconfigstowefactowy,
+  v-vaw decidew: decidew, rawr
+  vaw f-fowcedfeatuwevawues: map[stwing, ʘwʘ vawue] = map.empty[stwing, 😳😳😳 v-vawue], ^^;;
+  vaw statsweceivew: s-statsweceivew)
+    extends w-wuntimeconfiguwation {
 
-  // Creates and initialize config store as early as possible so other parts could have a dependency on it for settings.
-  override val configStore: DynamicConfigStore =
-    configStoreFactory.createDcEnvAwareFileBasedConfigStore(
-      relativeConfigFilePath = "timelines/timelineranker/service_settings.yml",
-      dc = flags.getDatacenter,
-      env = flags.getEnv,
-      configBusConfig = ConfigBusProdConfig,
-      onUpdate = ConfigStore.NullOnUpdateCallback,
-      statsReceiver = statsReceiver
+  // c-cweates and initiawize config stowe as eawwy as possibwe so othew pawts couwd have a dependency on it fow settings. o.O
+  o-ovewwide v-vaw configstowe: dynamicconfigstowe =
+    c-configstowefactowy.cweatedcenvawawefiwebasedconfigstowe(
+      w-wewativeconfigfiwepath = "timewines/timewinewankew/sewvice_settings.ymw", (///ˬ///✿)
+      d-dc = fwags.getdatacentew, σωσ
+      env = fwags.getenv, nyaa~~
+      c-configbusconfig = configbuspwodconfig,
+      onupdate = configstowe.nuwwonupdatecawwback, ^^;;
+      statsweceivew = statsweceivew
     )
-  Await.result(configStore.init)
+  a-await.wesuwt(configstowe.init)
 
-  val environment: Env.Value = flags.getEnv
-  override val isProd: Boolean = isProdEnv(environment)
-  val datacenter: Datacenter.Value = flags.getDatacenter
-  val abDeciderPath = "/usr/local/config/abdecider/abdecider.yml"
-  override val maxConcurrency: Int = flags.maxConcurrency()
+  vaw e-enviwonment: env.vawue = f-fwags.getenv
+  o-ovewwide vaw ispwod: boowean = i-ispwodenv(enviwonment)
+  v-vaw datacentew: d-datacentew.vawue = f-fwags.getdatacentew
+  vaw abdecidewpath = "/usw/wocaw/config/abdecidew/abdecidew.ymw"
+  ovewwide v-vaw maxconcuwwency: i-int = fwags.maxconcuwwency()
 
-  val deciderGateBuilder: DeciderGateBuilder = new DeciderGateBuilder(decider)
+  v-vaw decidewgatebuiwdew: d-decidewgatebuiwdew = n-nyew decidewgatebuiwdew(decidew)
 
-  val clientRequestAuthorizer: TimelinesClientRequestAuthorizer =
-    new TimelinesClientRequestAuthorizer(
-      deciderGateBuilder = deciderGateBuilder,
-      clientDetails = ClientAccessPermissions.All,
-      unknownClientDetails = ClientAccessPermissions.unknown,
-      clientAuthorizationGate =
-        deciderGateBuilder.linearGate(DeciderKey.ClientRequestAuthorization),
-      clientWriteWhitelistGate = deciderGateBuilder.linearGate(DeciderKey.ClientWriteWhitelist),
-      globalCapacityQPS = flags.requestRateLimit(),
-      statsReceiver = statsReceiver
+  vaw cwientwequestauthowizew: timewinescwientwequestauthowizew =
+    nyew t-timewinescwientwequestauthowizew(
+      decidewgatebuiwdew = decidewgatebuiwdew, ^•ﻌ•^
+      cwientdetaiws = cwientaccesspewmissions.aww, σωσ
+      unknowncwientdetaiws = c-cwientaccesspewmissions.unknown, -.-
+      cwientauthowizationgate =
+        decidewgatebuiwdew.wineawgate(decidewkey.cwientwequestauthowization), ^^;;
+      cwientwwitewhitewistgate = d-decidewgatebuiwdew.wineawgate(decidewkey.cwientwwitewhitewist), XD
+      g-gwobawcapacityqps = f-fwags.wequestwatewimit(),
+      statsweceivew = s-statsweceivew
     )
-  override val clientEventScribe = Scribe.clientEvent(isProd, statsReceiver)
-  val abdecider: LoggingABDecider = new ImpressionCountingABDecider(
-    abdecider = ABDeciderFactory.withScribeEffect(
-      abDeciderYmlPath = abDeciderPath,
-      scribeEffect = clientEventScribe,
-      decider = None,
-      environment = Some("production"),
-    ).buildWithLogging(),
-    statsReceiver = statsReceiver
+  ovewwide vaw c-cwienteventscwibe = s-scwibe.cwientevent(ispwod, 🥺 statsweceivew)
+  vaw abdecidew: woggingabdecidew = nyew impwessioncountingabdecidew(
+    abdecidew = a-abdecidewfactowy.withscwibeeffect(
+      abdecidewymwpath = a-abdecidewpath, òωó
+      scwibeeffect = c-cwienteventscwibe, (ˆ ﻌ ˆ)♡
+      d-decidew = nyone, -.-
+      enviwonment = s-some("pwoduction"), :3
+    ).buiwdwithwogging(), ʘwʘ
+    s-statsweceivew = statsweceivew
   )
 
-  val underlyingClients: UnderlyingClientConfiguration = buildUnderlyingClientConfiguration
+  v-vaw undewwyingcwients: u-undewwyingcwientconfiguwation = buiwdundewwyingcwientconfiguwation
 
-  val clientWrappers: ClientWrappers = new ClientWrappers(this)
-  override val clientWrapperFactories: ClientWrapperFactories = new ClientWrapperFactories(this)
+  vaw cwientwwappews: cwientwwappews = nyew c-cwientwwappews(this)
+  o-ovewwide v-vaw cwientwwappewfactowies: cwientwwappewfactowies = n-nyew cwientwwappewfactowies(this)
 
-  private[this] val userRolesCacheFactory = new UserRolesCacheFactory(
-    userRolesService = underlyingClients.userRolesServiceClient,
-    statsReceiver = statsReceiver
+  p-pwivate[this] vaw usewwowescachefactowy = n-new usewwowescachefactowy(
+    usewwowessewvice = undewwyingcwients.usewwowessewvicecwient, 🥺
+    statsweceivew = statsweceivew
   )
-  override val whitelist: Whitelist = Whitelist(
-    configStoreFactory = configStoreFactory,
-    userRolesCacheFactory = userRolesCacheFactory,
-    statsReceiver = statsReceiver
-  )
-
-  override val employeeGate: Gate[UserId] = UserRolesGate(
-    userRolesCacheFactory.create(UserRoles.EmployeesRoleName)
+  o-ovewwide v-vaw whitewist: whitewist = whitewist(
+    configstowefactowy = c-configstowefactowy, >_<
+    u-usewwowescachefactowy = usewwowescachefactowy, ʘwʘ
+    statsweceivew = statsweceivew
   )
 
-  private[this] val featureRecipientFactory =
-    new UserRolesCachingFeatureRecipientFactory(userRolesCacheFactory, statsReceiver)
+  o-ovewwide vaw empwoyeegate: gate[usewid] = usewwowesgate(
+    usewwowescachefactowy.cweate(usewwowes.empwoyeeswowename)
+  )
 
-  override val configApiConfiguration: FeatureSwitchesV2ConfigApiConfiguration =
-    FeatureSwitchesV2ConfigApiConfiguration(
-      datacenter = flags.getDatacenter,
-      serviceName = ServiceName.TimelineRanker,
-      abdecider = abdecider,
-      featureRecipientFactory = featureRecipientFactory,
-      forcedValues = forcedFeatureValues,
-      statsReceiver = statsReceiver
+  pwivate[this] vaw f-featuwewecipientfactowy =
+    nyew usewwowescachingfeatuwewecipientfactowy(usewwowescachefactowy, (˘ω˘) statsweceivew)
+
+  o-ovewwide vaw c-configapiconfiguwation: featuweswitchesv2configapiconfiguwation =
+    featuweswitchesv2configapiconfiguwation(
+      datacentew = f-fwags.getdatacentew, (✿oωo)
+      sewvicename = s-sewvicename.timewinewankew, (///ˬ///✿)
+      abdecidew = abdecidew, rawr x3
+      featuwewecipientfactowy = featuwewecipientfactowy, -.-
+      f-fowcedvawues = fowcedfeatuwevawues, ^^
+      statsweceivew = statsweceivew
     )
 
-  private[this] def buildUnderlyingClientConfiguration: UnderlyingClientConfiguration = {
-    environment match {
-      case Env.prod => new DefaultUnderlyingClientConfiguration(flags, statsReceiver)
-      case _ => new StagingUnderlyingClientConfiguration(flags, statsReceiver)
+  p-pwivate[this] def buiwdundewwyingcwientconfiguwation: undewwyingcwientconfiguwation = {
+    enviwonment match {
+      c-case env.pwod => nyew d-defauwtundewwyingcwientconfiguwation(fwags, (⑅˘꒳˘) s-statsweceivew)
+      case _ => nyew s-stagingundewwyingcwientconfiguwation(fwags, nyaa~~ statsweceivew)
     }
   }
 }

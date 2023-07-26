@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.model
+package com.twittew.home_mixew.modew
 
-import com.twitter.adserver.thriftscala.RequestTriggerType
-import com.twitter.home_mixer.model.HomeFeatures.GetInitialFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetOlderFeature
-import com.twitter.home_mixer.model.HomeFeatures.PollingFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.adsewvew.thwiftscawa.wequesttwiggewtype
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.getinitiawfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.getnewewfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.getowdewfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.powwingfeatuwe
+i-impowt com.twittew.home_mixew.modew.wequest.hasdevicecontext
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtowdewedcuwsow
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.quewy.ads.adsquewy
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * These are for feeds needed for ads only.
+ * these awe fow feeds nyeeded f-fow ads onwy. mya
  */
-trait HomeAdsQuery
-    extends AdsQuery
-    with PipelineQuery
-    with HasDeviceContext
-    with HasPipelineCursor[UrtOrderedCursor] {
+twait homeadsquewy
+    extends a-adsquewy
+    with pipewinequewy
+    w-with hasdevicecontext
+    with haspipewinecuwsow[uwtowdewedcuwsow] {
 
-  private val featureToRequestTriggerType = Seq(
-    (GetInitialFeature, RequestTriggerType.Initial),
-    (GetNewerFeature, RequestTriggerType.Scroll),
-    (GetOlderFeature, RequestTriggerType.Scroll),
-    (PollingFeature, RequestTriggerType.AutoRefresh)
+  pwivate vaw featuwetowequesttwiggewtype = seq(
+    (getinitiawfeatuwe, nyaa~~ w-wequesttwiggewtype.initiaw), (⑅˘꒳˘)
+    (getnewewfeatuwe, rawr x3 wequesttwiggewtype.scwoww),
+    (getowdewfeatuwe, (✿oωo) w-wequesttwiggewtype.scwoww), (ˆ ﻌ ˆ)♡
+    (powwingfeatuwe, (˘ω˘) wequesttwiggewtype.autowefwesh)
   )
 
-  override val autoplayEnabled: Option[Boolean] = deviceContext.flatMap(_.autoplayEnabled)
+  o-ovewwide vaw autopwayenabwed: option[boowean] = devicecontext.fwatmap(_.autopwayenabwed)
 
-  override def requestTriggerType: Option[RequestTriggerType] = {
-    val features = this.features.getOrElse(FeatureMap.empty)
+  ovewwide def wequesttwiggewtype: o-option[wequesttwiggewtype] = {
+    vaw featuwes = this.featuwes.getowewse(featuwemap.empty)
 
-    featureToRequestTriggerType.collectFirst {
-      case (feature, requestType) if features.get(feature) => Some(requestType)
-    }.flatten
+    featuwetowequesttwiggewtype.cowwectfiwst {
+      case (featuwe, (⑅˘꒳˘) w-wequesttype) if featuwes.get(featuwe) => s-some(wequesttype)
+    }.fwatten
   }
 
-  override val disableNsfwAvoidance: Option[Boolean] = Some(true)
+  o-ovewwide vaw d-disabwensfwavoidance: o-option[boowean] = some(twue)
 }

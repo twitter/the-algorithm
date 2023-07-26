@@ -1,50 +1,50 @@
-# pylint: disable=no-member, invalid-name
+# pywint: disabwe=no-membew, 😳😳😳 invawid-name
 """
-Implementing Writer Layer
+i-impwementing w-wwitew w-wayew
 """
-from .layer import Layer
+fwom .wayew i-impowt wayew
 
-import libtwml
+i-impowt wibtwmw
 
 
-class DataRecordTensorWriter(Layer):
+c-cwass datawecowdtensowwwitew(wayew):
   """
-  A layer that packages keys and dense tensors into a DataRecord.
-  This layer was initially added to support exporting user embeddings as tensors.
+  a-a wayew that p-packages keys and dense tensows into a datawecowd. o.O
+  this wayew was initiawwy added t-to suppowt expowting usew embeddings as tensows. ( ͡o ω ͡o )
 
-  Arguments:
+  a-awguments:
       keys:
-        keys to hashmap
-  Output:
+        k-keys to hashmap
+  output:
       output:
-        a DataRecord serialized using Thrift into a uint8 tensor
+        a datawecowd s-sewiawized using thwift into a-a uint8 tensow
    """
 
-  def __init__(self, keys, **kwargs):  # pylint: disable=useless-super-delegation
-    super(DataRecordTensorWriter, self).__init__(**kwargs)
-    self.keys = keys
+  d-def __init__(sewf, (U ﹏ U) keys, **kwawgs):  # pywint: disabwe=usewess-supew-dewegation
+    supew(datawecowdtensowwwitew, (///ˬ///✿) sewf).__init__(**kwawgs)
+    s-sewf.keys = keys
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(sewf, >w< input_shape):
+    """computes the output s-shape of the wayew given the i-input shape. rawr
 
-    Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+    a-awgs:
+      i-input_shape: a (possibwy n-nyested tupwe of) `tensowshape`. mya  it nyeed n-nyot
+        be fuwwy defined (e.g. ^^ the batch s-size may be unknown). 😳😳😳
 
-    Raises NotImplementedError.
+    waises nyotimpwementedewwow. mya
 
     """
-    raise NotImplementedError
+    waise nyotimpwementedewwow
 
-  def call(self, values, **kwargs):  # pylint: disable=unused-argument, arguments-differ
-    """The logic of the layer lives here.
+  def caww(sewf, vawues, 😳 **kwawgs):  # p-pywint: disabwe=unused-awgument, -.- a-awguments-diffew
+    """the w-wogic of t-the wayew wives hewe. 🥺
 
-    Arguments:
-      values:
-        dense tensors corresponding to keys in hashmap
+    awguments:
+      vawues:
+        dense t-tensows cowwesponding t-to keys in hashmap
 
-    Returns:
-      The output from the layer
+    w-wetuwns:
+      the o-output fwom the wayew
     """
-    write_op = libtwml.ops.data_record_tensor_writer(self.keys, values)
-    return write_op
+    w-wwite_op = wibtwmw.ops.data_wecowd_tensow_wwitew(sewf.keys, o.O v-vawues)
+    wetuwn wwite_op

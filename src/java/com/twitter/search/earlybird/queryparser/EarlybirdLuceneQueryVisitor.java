@@ -1,1781 +1,1781 @@
-package com.twitter.search.earlybird.queryparser;
+package com.twittew.seawch.eawwybiwd.quewypawsew;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import javax.annotation.Nullable;
+impowt java.utiw.awways;
+i-impowt j-java.utiw.cowwection;
+i-impowt java.utiw.cowwections;
+i-impowt java.utiw.hashset;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.set;
+impowt java.utiw.tweeset;
+impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Functions;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.functions;
+impowt com.googwe.common.base.optionaw;
+impowt c-com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.immutabwewist;
+i-impowt com.googwe.common.cowwect.immutabwemap;
+impowt com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.sets;
 
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.BoostQuery;
-import org.apache.lucene.search.MatchNoDocsQuery;
-import org.apache.lucene.search.PhraseQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
-import org.locationtech.spatial4j.shape.Point;
-import org.locationtech.spatial4j.shape.Rectangle;
-import org.locationtech.spatial4j.shape.impl.PointImpl;
-import org.locationtech.spatial4j.shape.impl.RectangleImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.wucene.seawch.booweancwause;
+impowt owg.apache.wucene.seawch.booweancwause.occuw;
+i-impowt o-owg.apache.wucene.seawch.booweanquewy;
+impowt owg.apache.wucene.seawch.boostquewy;
+impowt owg.apache.wucene.seawch.matchnodocsquewy;
+impowt owg.apache.wucene.seawch.phwasequewy;
+impowt owg.apache.wucene.seawch.quewy;
+i-impowt owg.apache.wucene.seawch.tewmquewy;
+impowt owg.wocationtech.spatiaw4j.shape.point;
+impowt owg.wocationtech.spatiaw4j.shape.wectangwe;
+impowt owg.wocationtech.spatiaw4j.shape.impw.pointimpw;
+i-impowt owg.wocationtech.spatiaw4j.shape.impw.wectangweimpw;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.constants.QueryCacheConstants;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.encoding.features.ByteNormalizer;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.query.BoostUtils;
-import com.twitter.search.common.query.FieldWeightUtil;
-import com.twitter.search.common.query.FilteredQuery;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.query.MappableField;
-import com.twitter.search.common.schema.ImmutableSchema;
-import com.twitter.search.common.schema.SchemaUtil;
-import com.twitter.search.common.schema.base.FieldWeightDefault;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentBuilder;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.search.termination.QueryTimeout;
-import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.spatial.GeohashChunkImpl;
-import com.twitter.search.common.util.text.HighFrequencyTermPairs;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.querycache.CachedFilterQuery;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.search.queries.CSFDisjunctionFilter;
-import com.twitter.search.earlybird.search.queries.DocValRangeFilter;
-import com.twitter.search.earlybird.search.queries.FeatureValueInAcceptListOrUnsetFilter;
-import com.twitter.search.earlybird.search.GeoQuadTreeQueryBuilder;
-import com.twitter.search.earlybird.search.queries.MatchAllDocsQuery;
-import com.twitter.search.earlybird.search.queries.RequiredStatusIDsFilter;
-import com.twitter.search.earlybird.search.queries.SinceMaxIDFilter;
-import com.twitter.search.earlybird.search.queries.SinceUntilFilter;
-import com.twitter.search.earlybird.search.queries.TermQueryWithSafeToString;
-import com.twitter.search.earlybird.search.queries.UserFlagsExcludeFilter;
-import com.twitter.search.earlybird.search.queries.UserScrubGeoFilter;
-import com.twitter.search.earlybird.search.queries.UserIdMultiSegmentQuery;
-import com.twitter.search.earlybird.search.relevance.MinFeatureValueFilter;
-import com.twitter.search.earlybird.search.relevance.ScoreFilterQuery;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProvider;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.query.annotation.FloatAnnotation;
-import com.twitter.search.queryparser.query.search.Link;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.query.search.SearchQueryVisitor;
-import com.twitter.search.queryparser.util.GeoCode;
-import com.twitter.service.spiderduck.gen.LinkCategory;
-import com.twitter.tweetypie.thriftjava.ComposerSource;
+i-impowt com.twittew.decidew.decidew;
+impowt com.twittew.seawch.common.constants.quewycacheconstants;
+impowt com.twittew.seawch.common.decidew.decidewutiw;
+i-impowt com.twittew.seawch.common.encoding.featuwes.bytenowmawizew;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftgeowocationsouwce;
+impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.quewy.boostutiws;
+impowt com.twittew.seawch.common.quewy.fiewdweightutiw;
+impowt com.twittew.seawch.common.quewy.fiwtewedquewy;
+impowt com.twittew.seawch.common.quewy.hitattwibutehewpew;
+i-impowt com.twittew.seawch.common.quewy.mappabwefiewd;
+impowt c-com.twittew.seawch.common.schema.immutabweschema;
+i-impowt com.twittew.seawch.common.schema.schemautiw;
+i-impowt com.twittew.seawch.common.schema.base.fiewdweightdefauwt;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdthwiftdocumentbuiwdew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdthwiftdocumentutiw;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsftype;
+i-impowt com.twittew.seawch.common.seawch.tewminationtwackew;
+impowt com.twittew.seawch.common.seawch.tewmination.quewytimeout;
+i-impowt com.twittew.seawch.common.utiw.anawysis.inttewmattwibuteimpw;
+impowt com.twittew.seawch.common.utiw.anawysis.wongtewmattwibuteimpw;
+i-impowt com.twittew.seawch.common.utiw.spatiaw.geohashchunkimpw;
+impowt com.twittew.seawch.common.utiw.text.highfwequencytewmpaiws;
+i-impowt com.twittew.seawch.common.utiw.text.nowmawizewhewpew;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewscwubgeomap;
+i-impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+impowt com.twittew.seawch.eawwybiwd.pawtition.muwtisegmenttewmdictionawymanagew;
+impowt com.twittew.seawch.eawwybiwd.quewycache.cachedfiwtewquewy;
+impowt com.twittew.seawch.eawwybiwd.quewycache.quewycachemanagew;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.quewies.csfdisjunctionfiwtew;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.quewies.docvawwangefiwtew;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.quewies.featuwevawueinacceptwistowunsetfiwtew;
+i-impowt c-com.twittew.seawch.eawwybiwd.seawch.geoquadtweequewybuiwdew;
+impowt com.twittew.seawch.eawwybiwd.seawch.quewies.matchawwdocsquewy;
+impowt com.twittew.seawch.eawwybiwd.seawch.quewies.wequiwedstatusidsfiwtew;
+impowt com.twittew.seawch.eawwybiwd.seawch.quewies.sincemaxidfiwtew;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.quewies.sinceuntiwfiwtew;
+impowt com.twittew.seawch.eawwybiwd.seawch.quewies.tewmquewywithsafetostwing;
+impowt com.twittew.seawch.eawwybiwd.seawch.quewies.usewfwagsexcwudefiwtew;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.quewies.usewscwubgeofiwtew;
+impowt c-com.twittew.seawch.eawwybiwd.seawch.quewies.usewidmuwtisegmentquewy;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.minfeatuwevawuefiwtew;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.scowefiwtewquewy;
+impowt c-com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing.scowingfunctionpwovidew;
+i-impowt com.twittew.seawch.quewypawsew.quewy.conjunction;
+i-impowt c-com.twittew.seawch.quewypawsew.quewy.disjunction;
+impowt com.twittew.seawch.quewypawsew.quewy.phwase;
+impowt com.twittew.seawch.quewypawsew.quewy.quewynodeutiws;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+i-impowt com.twittew.seawch.quewypawsew.quewy.speciawtewm;
+i-impowt c-com.twittew.seawch.quewypawsew.quewy.tewm;
+impowt c-com.twittew.seawch.quewypawsew.quewy.annotation.annotation;
+impowt com.twittew.seawch.quewypawsew.quewy.annotation.fwoatannotation;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.wink;
+i-impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatowconstants;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchquewyvisitow;
+impowt com.twittew.seawch.quewypawsew.utiw.geocode;
+impowt c-com.twittew.sewvice.spidewduck.gen.winkcategowy;
+impowt com.twittew.tweetypie.thwiftjava.composewsouwce;
 
 /**
- * Visitor for {@link com.twitter.search.queryparser.query.Query}, which produces a Lucene
- * Query ({@link Query}).
+ * visitow fow {@wink com.twittew.seawch.quewypawsew.quewy.quewy}, 🥺 w-which pwoduces a-a wucene
+ * q-quewy ({@wink quewy}). (U ﹏ U)
  */
-public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdLuceneQueryVisitor.class);
+pubwic c-cwass eawwybiwdwucenequewyvisitow extends seawchquewyvisitow<quewy> {
+  p-pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(eawwybiwdwucenequewyvisitow.cwass);
 
-  @VisibleForTesting
-  static final String UNSUPPORTED_OPERATOR_PREFIX = "unsupported_query_operator_";
+  @visibwefowtesting
+  static finaw stwing unsuppowted_opewatow_pwefix = "unsuppowted_quewy_opewatow_";
 
-  private static final String SMILEY_FORMAT_STRING = "__has_%s_smiley";
-  private static final String PHRASE_WILDCARD = "*";
-  private static final float DEFAULT_FIELD_WEIGHT = 1.0f;
+  pwivate static finaw stwing s-smiwey_fowmat_stwing = "__has_%s_smiwey";
+  pwivate s-static finaw stwing phwase_wiwdcawd = "*";
+  p-pwivate static f-finaw fwoat defauwt_fiewd_weight = 1.0f;
 
-  private static final SearchCounter SINCE_TIME_INVALID_INT_COUNTER =
-      SearchCounter.export("EarlybirdLuceneQueryVisitor_since_time_invalid_int");
-  private static final SearchCounter UNTIL_TIME_INVALID_INT_COUNTER =
-      SearchCounter.export("EarlybirdLuceneQueryVisitor_until_time_invalid_int");
+  pwivate static finaw s-seawchcountew since_time_invawid_int_countew =
+      s-seawchcountew.expowt("eawwybiwdwucenequewyvisitow_since_time_invawid_int");
+  pwivate static f-finaw seawchcountew u-untiw_time_invawid_int_countew =
+      seawchcountew.expowt("eawwybiwdwucenequewyvisitow_untiw_time_invawid_int");
 
-  private static final SearchCounter NUM_QUERIES_BELOW_MIN_ENGAGEMENT_THRESHOLD =
-      SearchCounter.export(
-          "EarlybirdLuceneQueryVisitor_num_queries_below_min_engagement_threshold");
-  private static final SearchCounter NUM_QUERIES_ABOVE_MIN_ENGAGEMENT_THRESHOLD =
-      SearchCounter.export(
-          "EarlybirdLuceneQueryVisitor_num_queries_above_min_engagement_threshold");
+  pwivate static finaw seawchcountew n-nyum_quewies_bewow_min_engagement_thweshowd =
+      s-seawchcountew.expowt(
+          "eawwybiwdwucenequewyvisitow_num_quewies_bewow_min_engagement_thweshowd");
+  p-pwivate static finaw seawchcountew n-nyum_quewies_above_min_engagement_thweshowd =
+      s-seawchcountew.expowt(
+          "eawwybiwdwucenequewyvisitow_num_quewies_above_min_engagement_thweshowd");
 
-  private static final SearchOperator OPERATOR_CACHED_EXCLUDE_ANTISOCIAL_AND_NATIVERETWEETS =
-      new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-          QueryCacheConstants.EXCLUDE_ANTISOCIAL_AND_NATIVERETWEETS);
+  pwivate static f-finaw seawchopewatow opewatow_cached_excwude_antisociaw_and_nativewetweets =
+      nyew seawchopewatow(seawchopewatow.type.cached_fiwtew, >w<
+          quewycacheconstants.excwude_antisociaw_and_nativewetweets);
 
-  private static final Map<String, List<SearchOperator>> OPERATORS_BY_SAFE_EXCLUDE_OPERAND =
-      ImmutableMap.of(
-          SearchOperatorConstants.TWEET_SPAM, ImmutableList.of(
-              new SearchOperator(SearchOperator.Type.DOCVAL_RANGE_FILTER,
-                  "extended_encoded_tweet_features.label_spam_flag", "0", "1"),
-              new SearchOperator(SearchOperator.Type.DOCVAL_RANGE_FILTER,
-                  "extended_encoded_tweet_features.label_spam_hi_rcl_flag", "0", "1"),
-              new SearchOperator(SearchOperator.Type.DOCVAL_RANGE_FILTER,
-                  "extended_encoded_tweet_features.label_dup_content_flag", "0", "1")),
+  pwivate s-static finaw map<stwing, nyaa~~ w-wist<seawchopewatow>> opewatows_by_safe_excwude_opewand =
+      immutabwemap.of(
+          seawchopewatowconstants.tweet_spam, -.- i-immutabwewist.of(
+              n-nyew seawchopewatow(seawchopewatow.type.docvaw_wange_fiwtew, XD
+                  "extended_encoded_tweet_featuwes.wabew_spam_fwag", -.- "0", >w< "1"),
+              new seawchopewatow(seawchopewatow.type.docvaw_wange_fiwtew, (ꈍᴗꈍ)
+                  "extended_encoded_tweet_featuwes.wabew_spam_hi_wcw_fwag", :3 "0", (ˆ ﻌ ˆ)♡ "1"),
+              nyew seawchopewatow(seawchopewatow.type.docvaw_wange_fiwtew, -.-
+                  "extended_encoded_tweet_featuwes.wabew_dup_content_fwag", mya "0", (˘ω˘) "1")),
 
-          SearchOperatorConstants.TWEET_ABUSIVE, ImmutableList.of(
-              new SearchOperator(SearchOperator.Type.DOCVAL_RANGE_FILTER,
-                  "extended_encoded_tweet_features.label_abusive_flag", "0", "1")),
+          seawchopewatowconstants.tweet_abusive, ^•ﻌ•^ i-immutabwewist.of(
+              nyew seawchopewatow(seawchopewatow.type.docvaw_wange_fiwtew, 😳😳😳
+                  "extended_encoded_tweet_featuwes.wabew_abusive_fwag", σωσ "0", "1")),
 
-          SearchOperatorConstants.TWEET_UNSAFE, ImmutableList.of(
-              new SearchOperator(SearchOperator.Type.DOCVAL_RANGE_FILTER,
-                  "extended_encoded_tweet_features.label_nsfw_hi_prc_flag", "0", "1"))
+          seawchopewatowconstants.tweet_unsafe, ( ͡o ω ͡o ) immutabwewist.of(
+              n-nyew seawchopewatow(seawchopewatow.type.docvaw_wange_fiwtew,
+                  "extended_encoded_tweet_featuwes.wabew_nsfw_hi_pwc_fwag", nyaa~~ "0", :3 "1"))
       );
 
-  private static final ImmutableMap<String, FieldWeightDefault> DEFAULT_FIELDS =
-      ImmutableMap.of(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
-                      new FieldWeightDefault(true, DEFAULT_FIELD_WEIGHT));
+  pwivate s-static finaw i-immutabwemap<stwing, (✿oωo) fiewdweightdefauwt> defauwt_fiewds =
+      immutabwemap.of(eawwybiwdfiewdconstant.text_fiewd.getfiewdname(), >_<
+                      n-nyew fiewdweightdefauwt(twue, ^^ d-defauwt_fiewd_weight));
 
-  // All Earlybird fields that should have geo scrubbed tweets filtered out when searched.
-  // See go/realtime-geo-filtering
-  @VisibleForTesting
-  public static final List<String> GEO_FIELDS_TO_BE_SCRUBBED = Arrays.asList(
-      EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(),
-      EarlybirdFieldConstant.PLACE_FIELD.getFieldName(),
-      EarlybirdFieldConstant.PLACE_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.PLACE_FULL_NAME_FIELD.getFieldName(),
-      EarlybirdFieldConstant.PLACE_COUNTRY_CODE_FIELD.getFieldName());
+  // aww eawwybiwd fiewds that shouwd have geo s-scwubbed tweets fiwtewed out when s-seawched. (///ˬ///✿)
+  // see go/weawtime-geo-fiwtewing
+  @visibwefowtesting
+  pubwic static finaw wist<stwing> g-geo_fiewds_to_be_scwubbed = awways.aswist(
+      e-eawwybiwdfiewdconstant.geo_hash_fiewd.getfiewdname(), :3
+      e-eawwybiwdfiewdconstant.pwace_fiewd.getfiewdname(), :3
+      eawwybiwdfiewdconstant.pwace_id_fiewd.getfiewdname(), (ˆ ﻌ ˆ)♡
+      e-eawwybiwdfiewdconstant.pwace_fuww_name_fiewd.getfiewdname(),
+      eawwybiwdfiewdconstant.pwace_countwy_code_fiewd.getfiewdname());
 
-  // Geo scrubbing doesn't remove user profile location, so when using the geo location type filters
-  // we only need to filter out geo scrubbed tweets for the geo location types other than
-  // ThriftGeoLocationSource.USER_PROFILE.
-  // Separately, we also need to filter out geo scrubbed tweets for the place_id filter.
-  private static final List<String> GEO_FILTERS_TO_BE_SCRUBBED = Arrays.asList(
-      EarlybirdFieldConstants.formatGeoType(ThriftGeoLocationSource.GEOTAG),
-      EarlybirdFieldConstants.formatGeoType(ThriftGeoLocationSource.TWEET_TEXT),
-      EarlybirdThriftDocumentUtil.formatFilter(
-          EarlybirdFieldConstant.PLACE_ID_FIELD.getFieldName()));
+  // g-geo scwubbing d-doesn't wemove u-usew pwofiwe wocation, 🥺 so when using t-the geo wocation t-type fiwtews
+  // we onwy nyeed to fiwtew o-out geo scwubbed t-tweets fow the g-geo wocation types othew than
+  // thwiftgeowocationsouwce.usew_pwofiwe. 😳
+  // s-sepawatewy, (ꈍᴗꈍ) we awso n-nyeed to fiwtew o-out geo scwubbed tweets fow the pwace_id fiwtew. mya
+  pwivate static f-finaw wist<stwing> g-geo_fiwtews_to_be_scwubbed = a-awways.aswist(
+      e-eawwybiwdfiewdconstants.fowmatgeotype(thwiftgeowocationsouwce.geotag), rawr
+      eawwybiwdfiewdconstants.fowmatgeotype(thwiftgeowocationsouwce.tweet_text), ʘwʘ
+      e-eawwybiwdthwiftdocumentutiw.fowmatfiwtew(
+          eawwybiwdfiewdconstant.pwace_id_fiewd.getfiewdname()));
 
-  // queries whose parents are negated.
-  // used to decide if a negated query is within a negated parent or not.
-  private final Set<com.twitter.search.queryparser.query.Query> parentNegatedQueries =
-      Sets.newIdentityHashSet();
+  // quewies whose pawents awe nyegated. -.-
+  // used to decide i-if a nyegated quewy is within a n-nyegated pawent ow nyot. UwU
+  pwivate f-finaw set<com.twittew.seawch.quewypawsew.quewy.quewy> pawentnegatedquewies =
+      s-sets.newidentityhashset();
 
-  private final ImmutableSchemaInterface schemaSnapshot;
-  private final ImmutableMap<String, FieldWeightDefault> defaultFieldWeightMap;
-  private final QueryCacheManager queryCacheManager;
-  private final UserTable userTable;
-  private final UserScrubGeoMap userScrubGeoMap;
+  pwivate finaw i-immutabweschemaintewface s-schemasnapshot;
+  p-pwivate f-finaw immutabwemap<stwing, :3 f-fiewdweightdefauwt> defauwtfiewdweightmap;
+  pwivate finaw quewycachemanagew quewycachemanagew;
+  pwivate finaw usewtabwe usewtabwe;
+  p-pwivate f-finaw usewscwubgeomap u-usewscwubgeomap;
 
-  @Nullable
-  private final TerminationTracker terminationTracker;
-  private final Map<MappableField, String> mappableFieldMap;
-  private final MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
-  private final Decider decider;
-  private final EarlybirdCluster earlybirdCluster;
+  @nuwwabwe
+  pwivate finaw t-tewminationtwackew tewminationtwackew;
+  pwivate finaw map<mappabwefiewd, 😳 s-stwing> m-mappabwefiewdmap;
+  pwivate f-finaw muwtisegmenttewmdictionawymanagew muwtisegmenttewmdictionawymanagew;
+  pwivate finaw decidew d-decidew;
+  p-pwivate finaw eawwybiwdcwustew eawwybiwdcwustew;
 
-  private float proximityPhraseWeight = 1.0f;
-  private int proximityPhraseSlop = 255;
-  private ImmutableMap<String, Float> enabledFieldWeightMap;
-  private Set<String> queriedFields;
+  pwivate fwoat p-pwoximityphwaseweight = 1.0f;
+  p-pwivate int pwoximityphwaseswop = 255;
+  pwivate immutabwemap<stwing, (ꈍᴗꈍ) fwoat> enabwedfiewdweightmap;
+  pwivate s-set<stwing> quewiedfiewds;
 
-  // If we need to accumulate and collect per-field and per query node hit attribution information,
-  // this will have a mapping between the query nodes and their unique ranks, as well as the
-  // attribute collector.
-  @Nullable
-  private HitAttributeHelper hitAttributeHelper;
+  // i-if we nyeed to a-accumuwate and cowwect p-pew-fiewd a-and pew quewy nyode hit attwibution i-infowmation,
+  // t-this wiww have a mapping b-between the quewy n-nyodes and theiw unique wanks, mya a-as weww as the
+  // attwibute cowwectow.
+  @nuwwabwe
+  pwivate h-hitattwibutehewpew hitattwibutehewpew;
 
-  @Nullable
-  private QueryTimeout queryTimeout;
+  @nuwwabwe
+  p-pwivate quewytimeout q-quewytimeout;
 
-  public EarlybirdLuceneQueryVisitor(
-      ImmutableSchemaInterface schemaSnapshot,
-      QueryCacheManager queryCacheManager,
-      UserTable userTable,
-      UserScrubGeoMap userScrubGeoMap,
-      EarlybirdCluster earlybirdCluster,
-      Decider decider) {
-    this(schemaSnapshot, queryCacheManager, userTable, userScrubGeoMap, null, DEFAULT_FIELDS,
-         Collections.emptyMap(), null, decider, earlybirdCluster, null);
+  pubwic e-eawwybiwdwucenequewyvisitow(
+      immutabweschemaintewface schemasnapshot, nyaa~~
+      quewycachemanagew q-quewycachemanagew, o.O
+      u-usewtabwe usewtabwe, òωó
+      u-usewscwubgeomap usewscwubgeomap,
+      eawwybiwdcwustew eawwybiwdcwustew, ^•ﻌ•^
+      d-decidew decidew) {
+    this(schemasnapshot, (˘ω˘) q-quewycachemanagew, òωó u-usewtabwe, usewscwubgeomap, n-nyuww, mya defauwt_fiewds, ^^
+         cowwections.emptymap(), rawr n-nyuww, >_< d-decidew, eawwybiwdcwustew, nyuww);
   }
 
-  public EarlybirdLuceneQueryVisitor(
-      ImmutableSchemaInterface schemaSnapshot,
-      QueryCacheManager queryCacheManager,
-      UserTable userTable,
-      UserScrubGeoMap userScrubGeoMap,
-      @Nullable TerminationTracker terminationTracker,
-      Map<String, FieldWeightDefault> fieldWeightMap,
-      Map<MappableField, String> mappableFieldMap,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      Decider decider,
-      EarlybirdCluster earlybirdCluster,
-      QueryTimeout queryTimeout) {
-    this.schemaSnapshot = schemaSnapshot;
-    this.defaultFieldWeightMap = ImmutableMap.copyOf(fieldWeightMap);
-    this.enabledFieldWeightMap = FieldWeightDefault.getOnlyEnabled(defaultFieldWeightMap);
-    this.queryCacheManager = queryCacheManager;
-    this.userTable = userTable;
-    this.userScrubGeoMap = userScrubGeoMap;
-    this.mappableFieldMap = Preconditions.checkNotNull(mappableFieldMap);
-    this.terminationTracker = terminationTracker;
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.decider = decider;
-    this.earlybirdCluster = earlybirdCluster;
-    this.queryTimeout = queryTimeout;
-    this.queriedFields = new TreeSet<>();
+  pubwic eawwybiwdwucenequewyvisitow(
+      i-immutabweschemaintewface schemasnapshot, (U ᵕ U❁)
+      quewycachemanagew q-quewycachemanagew, /(^•ω•^)
+      u-usewtabwe usewtabwe, mya
+      usewscwubgeomap u-usewscwubgeomap, OwO
+      @nuwwabwe tewminationtwackew tewminationtwackew, UwU
+      m-map<stwing, 🥺 f-fiewdweightdefauwt> f-fiewdweightmap, (✿oωo)
+      map<mappabwefiewd, rawr stwing> mappabwefiewdmap, rawr
+      muwtisegmenttewmdictionawymanagew muwtisegmenttewmdictionawymanagew, ( ͡o ω ͡o )
+      decidew decidew, /(^•ω•^)
+      eawwybiwdcwustew eawwybiwdcwustew, -.-
+      quewytimeout quewytimeout) {
+    this.schemasnapshot = schemasnapshot;
+    this.defauwtfiewdweightmap = immutabwemap.copyof(fiewdweightmap);
+    t-this.enabwedfiewdweightmap = f-fiewdweightdefauwt.getonwyenabwed(defauwtfiewdweightmap);
+    this.quewycachemanagew = quewycachemanagew;
+    t-this.usewtabwe = u-usewtabwe;
+    t-this.usewscwubgeomap = usewscwubgeomap;
+    t-this.mappabwefiewdmap = pweconditions.checknotnuww(mappabwefiewdmap);
+    t-this.tewminationtwackew = t-tewminationtwackew;
+    this.muwtisegmenttewmdictionawymanagew = m-muwtisegmenttewmdictionawymanagew;
+    this.decidew = d-decidew;
+    t-this.eawwybiwdcwustew = eawwybiwdcwustew;
+    this.quewytimeout = q-quewytimeout;
+    t-this.quewiedfiewds = n-nyew tweeset<>();
   }
 
-  public ImmutableMap<String, Float> getEnabledFieldWeightMap() {
-    return enabledFieldWeightMap;
+  p-pubwic immutabwemap<stwing, >w< f-fwoat> g-getenabwedfiewdweightmap() {
+    w-wetuwn enabwedfiewdweightmap;
   }
 
-  public ImmutableMap<String, FieldWeightDefault> getDefaultFieldWeightMap() {
-    return defaultFieldWeightMap;
+  p-pubwic i-immutabwemap<stwing, ( ͡o ω ͡o ) fiewdweightdefauwt> g-getdefauwtfiewdweightmap() {
+    w-wetuwn d-defauwtfiewdweightmap;
   }
 
-  public EarlybirdLuceneQueryVisitor setProximityPhraseWeight(float weight) {
-    this.proximityPhraseWeight = weight;
-    return this;
+  pubwic eawwybiwdwucenequewyvisitow s-setpwoximityphwaseweight(fwoat weight) {
+    this.pwoximityphwaseweight = w-weight;
+    wetuwn t-this;
   }
 
-  public EarlybirdLuceneQueryVisitor setProximityPhraseSlop(int slop) {
-    this.proximityPhraseSlop = slop;
-    return this;
+  pubwic e-eawwybiwdwucenequewyvisitow s-setpwoximityphwaseswop(int swop) {
+    t-this.pwoximityphwaseswop = swop;
+    wetuwn t-this;
   }
 
-  public void setFieldHitAttributeHelper(HitAttributeHelper newHitAttributeHelper) {
-    this.hitAttributeHelper = newHitAttributeHelper;
+  pubwic void setfiewdhitattwibutehewpew(hitattwibutehewpew n-nyewhitattwibutehewpew) {
+    this.hitattwibutehewpew = n-nyewhitattwibutehewpew;
   }
 
-  @Override
-  public final Query visit(Disjunction disjunction) throws QueryParserException {
-    BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-    List<com.twitter.search.queryparser.query.Query> children = disjunction.getChildren();
-    // Do a final round of check, if all nodes under a disjunction are MUST,
-    // treat them all as DEFAULT (SHOULD in Lucene).
-    boolean allMust = true;
-    for (com.twitter.search.queryparser.query.Query child : children) {
-      if (!child.mustOccur()) {
-        allMust = false;
-        break;
+  @ovewwide
+  pubwic finaw quewy visit(disjunction disjunction) t-thwows quewypawsewexception {
+    booweanquewy.buiwdew b-bqbuiwdew = n-nyew booweanquewy.buiwdew();
+    wist<com.twittew.seawch.quewypawsew.quewy.quewy> chiwdwen = disjunction.getchiwdwen();
+    // d-do a finaw wound of check, (˘ω˘) if a-aww nyodes undew a-a disjunction awe m-must, /(^•ω•^)
+    // tweat them aww as defauwt (shouwd i-in wucene). (˘ω˘)
+    b-boowean awwmust = twue;
+    fow (com.twittew.seawch.quewypawsew.quewy.quewy c-chiwd : chiwdwen) {
+      if (!chiwd.mustoccuw()) {
+        a-awwmust = fawse;
+        b-bweak;
       }
     }
-    if (allMust) {
-      children = Lists.transform(children, QueryNodeUtils.MAKE_QUERY_DEFAULT);
+    i-if (awwmust) {
+      c-chiwdwen = wists.twansfowm(chiwdwen, quewynodeutiws.make_quewy_defauwt);
     }
-    // Actually converting all children now.
-    for (com.twitter.search.queryparser.query.Query child : children) {
-      final Query q = child.accept(this);
-      if (q != null) {
-        // if a node is marked with MUSTHAVE annotation, we set it to must even if it's a
-        // disjunction.
-        if (child.mustOccur()) {
-          bqBuilder.add(q, Occur.MUST);
-        } else {
-          bqBuilder.add(q, Occur.SHOULD);
+    // a-actuawwy c-convewting aww chiwdwen n-now. o.O
+    f-fow (com.twittew.seawch.quewypawsew.quewy.quewy chiwd : chiwdwen) {
+      f-finaw q-quewy q = chiwd.accept(this);
+      i-if (q != nyuww) {
+        // i-if a nyode is m-mawked with musthave a-annotation, nyaa~~ w-we set it to must e-even if it's a
+        // disjunction. :3
+        i-if (chiwd.mustoccuw()) {
+          bqbuiwdew.add(q, (///ˬ///✿) o-occuw.must);
+        } ewse {
+          b-bqbuiwdew.add(q, (U ﹏ U) occuw.shouwd);
         }
       }
     }
 
-    Query bq = bqBuilder.build();
-    float boost = (float) getBoostFromAnnotations(disjunction.getAnnotations());
-    if (boost >= 0) {
-      bq = BoostUtils.maybeWrapInBoostQuery(bq, boost);
+    q-quewy b-bq = bqbuiwdew.buiwd();
+    fwoat boost = (fwoat) getboostfwomannotations(disjunction.getannotations());
+    i-if (boost >= 0) {
+      b-bq = boostutiws.maybewwapinboostquewy(bq, b-boost);
     }
-    return bq;
+    wetuwn bq;
   }
 
-  @Override
-  public Query visit(Conjunction conjunction) throws QueryParserException {
-    BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-    List<com.twitter.search.queryparser.query.Query> children = conjunction.getChildren();
-    boolean hasPositiveTerms = false;
-    for (com.twitter.search.queryparser.query.Query child : children) {
-      boolean childMustNotOccur = child.mustNotOccur();
-      boolean childAdded = addQuery(bqBuilder, child);
-      if (childAdded && !childMustNotOccur) {
-        hasPositiveTerms = true;
+  @ovewwide
+  pubwic quewy visit(conjunction conjunction) thwows q-quewypawsewexception {
+    b-booweanquewy.buiwdew bqbuiwdew = nyew b-booweanquewy.buiwdew();
+    w-wist<com.twittew.seawch.quewypawsew.quewy.quewy> chiwdwen = conjunction.getchiwdwen();
+    boowean haspositivetewms = f-fawse;
+    f-fow (com.twittew.seawch.quewypawsew.quewy.quewy c-chiwd : chiwdwen) {
+      b-boowean chiwdmustnotoccuw = chiwd.mustnotoccuw();
+      b-boowean chiwdadded = a-addquewy(bqbuiwdew, o.O chiwd);
+      if (chiwdadded && !chiwdmustnotoccuw) {
+        h-haspositivetewms = twue;
       }
     }
-    if (!children.isEmpty() && !hasPositiveTerms) {
-      bqBuilder.add(new MatchAllDocsQuery(), Occur.MUST);
+    if (!chiwdwen.isempty() && !haspositivetewms) {
+      b-bqbuiwdew.add(new matchawwdocsquewy(), ^^;; o-occuw.must);
     }
 
-    Query bq = bqBuilder.build();
-    float boost = (float) getBoostFromAnnotations(conjunction.getAnnotations());
+    q-quewy bq = bqbuiwdew.buiwd();
+    f-fwoat b-boost = (fwoat) getboostfwomannotations(conjunction.getannotations());
+    i-if (boost >= 0) {
+      bq = boostutiws.maybewwapinboostquewy(bq, ʘwʘ boost);
+    }
+    w-wetuwn bq;
+  }
+
+  @ovewwide
+  pubwic q-quewy visit(phwase p-phwase) t-thwows quewypawsewexception {
+    wetuwn visit(phwase, (///ˬ///✿) f-fawse);
+  }
+
+  @ovewwide
+  p-pubwic quewy v-visit(tewm tewm) thwows quewypawsewexception {
+    w-wetuwn finawizequewy(cweatetewmquewydisjunction(tewm), σωσ tewm);
+  }
+
+  @ovewwide
+  pubwic quewy v-visit(speciawtewm s-speciaw) thwows q-quewypawsewexception {
+    stwing fiewd;
+
+    switch (speciaw.gettype()) {
+      case hashtag:
+        f-fiewd = eawwybiwdfiewdconstant.hashtags_fiewd.getfiewdname();
+        b-bweak;
+      case s-stock:
+        fiewd = eawwybiwdfiewdconstant.stocks_fiewd.getfiewdname();
+        bweak;
+      c-case mention:
+        fiewd = e-eawwybiwdfiewdconstant.mentions_fiewd.getfiewdname();
+        b-bweak;
+      d-defauwt:
+        f-fiewd = e-eawwybiwdfiewdconstant.text_fiewd.getfiewdname();
+    }
+
+    stwing tewmtext = speciaw.getspeciawchaw() + speciaw.getvawue();
+    quewy q = c-cweatesimpwetewmquewy(speciaw, ^^;; fiewd, UwU tewmtext);
+
+    f-fwoat boost = (fwoat) getboostfwomannotations(speciaw.getannotations());
     if (boost >= 0) {
-      bq = BoostUtils.maybeWrapInBoostQuery(bq, boost);
-    }
-    return bq;
-  }
-
-  @Override
-  public Query visit(Phrase phrase) throws QueryParserException {
-    return visit(phrase, false);
-  }
-
-  @Override
-  public Query visit(Term term) throws QueryParserException {
-    return finalizeQuery(createTermQueryDisjunction(term), term);
-  }
-
-  @Override
-  public Query visit(SpecialTerm special) throws QueryParserException {
-    String field;
-
-    switch (special.getType()) {
-      case HASHTAG:
-        field = EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName();
-        break;
-      case STOCK:
-        field = EarlybirdFieldConstant.STOCKS_FIELD.getFieldName();
-        break;
-      case MENTION:
-        field = EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName();
-        break;
-      default:
-        field = EarlybirdFieldConstant.TEXT_FIELD.getFieldName();
+      q = boostutiws.maybewwapinboostquewy(q, mya b-boost);
     }
 
-    String termText = special.getSpecialChar() + special.getValue();
-    Query q = createSimpleTermQuery(special, field, termText);
-
-    float boost = (float) getBoostFromAnnotations(special.getAnnotations());
-    if (boost >= 0) {
-      q = BoostUtils.maybeWrapInBoostQuery(q, boost);
-    }
-
-    return negateQueryIfNodeNegated(special, q);
+    wetuwn nyegatequewyifnodenegated(speciaw, ^•ﻌ•^ q);
   }
 
-  @Override
-  public Query visit(Link link) throws QueryParserException {
-    Query q = createSimpleTermQuery(
-        link, EarlybirdFieldConstant.LINKS_FIELD.getFieldName(), link.getOperand());
+  @ovewwide
+  pubwic quewy visit(wink wink) t-thwows quewypawsewexception {
+    q-quewy q = cweatesimpwetewmquewy(
+        w-wink, (⑅˘꒳˘) eawwybiwdfiewdconstant.winks_fiewd.getfiewdname(), nyaa~~ wink.getopewand());
 
-    float boost = (float) getBoostFromAnnotations(link.getAnnotations());
-    if (boost >= 0) {
-      q = BoostUtils.maybeWrapInBoostQuery(q, boost);
+    fwoat boost = (fwoat) g-getboostfwomannotations(wink.getannotations());
+    i-if (boost >= 0) {
+      q = boostutiws.maybewwapinboostquewy(q, ^^;; b-boost);
     }
 
-    return negateQueryIfNodeNegated(link, q);
+    wetuwn nyegatequewyifnodenegated(wink, 🥺 q-q);
   }
 
-  @Override
-  public Query visit(final SearchOperator op) throws QueryParserException {
-    final Query query;
-    SearchOperator.Type type = op.getOperatorType();
+  @ovewwide
+  pubwic quewy visit(finaw seawchopewatow o-op) thwows quewypawsewexception {
+    finaw q-quewy quewy;
+    s-seawchopewatow.type t-type = op.getopewatowtype();
 
     switch (type) {
-      case TO:
-        query = visitToOperator(op);
-        break;
+      case t-to:
+        quewy = visittoopewatow(op);
+        bweak;
 
-      case FROM:
-        query = visitFromOperator(op);
-        break;
+      case fwom:
+        quewy = visitfwomopewatow(op);
+        b-bweak;
 
-      case FILTER:
-        query = visitFilterOperator(op);
-        break;
+      c-case fiwtew:
+        quewy = v-visitfiwtewopewatow(op);
+        b-bweak;
 
-      case INCLUDE:
-        query = visitIncludeOperator(op);
-        break;
+      case incwude:
+        quewy = v-visitincwudeopewatow(op);
+        b-bweak;
 
-      case EXCLUDE:
-        query = visitExcludeOperator(op);
-        break;
+      case excwude:
+        quewy = v-visitexcwudeopewatow(op);
+        bweak;
 
-      case LANG:
-        query = visitLangOperator(op);
-        break;
+      case wang:
+        q-quewy = visitwangopewatow(op);
+        bweak;
 
-      case SOURCE:
-        query = visitSourceOperator(op);
-        break;
+      case souwce:
+        quewy = v-visitsouwceopewatow(op);
+        b-bweak;
 
-      case SMILEY:
-        query = visitSmileyOperator(op);
-        break;
+      case smiwey:
+        q-quewy = v-visitsmiweyopewatow(op);
+        b-bweak;
 
-      case DOCVAL_RANGE_FILTER:
-        query = visitDocValRangeFilterOperator(op);
-        break;
+      case docvaw_wange_fiwtew:
+        quewy = visitdocvawwangefiwtewopewatow(op);
+        b-bweak;
 
-      case CACHED_FILTER:
-        query = visitCachedFilterOperator(op);
-        break;
+      case cached_fiwtew:
+        quewy = visitcachedfiwtewopewatow(op);
+        b-bweak;
 
-      case SCORE_FILTER:
-        query = visitScoredFilterOperator(op);
-        break;
+      case scowe_fiwtew:
+        quewy = visitscowedfiwtewopewatow(op);
+        b-bweak;
 
-      case SINCE_TIME:
-        query = visitSinceTimeOperator(op);
-        break;
+      c-case since_time:
+        q-quewy = visitsincetimeopewatow(op);
+        b-bweak;
 
-      case UNTIL_TIME:
-        query = visitUntilTimeOperator(op);
-        break;
+      c-case untiw_time:
+        quewy = visituntiwtimeopewatow(op);
+        bweak;
 
-      case SINCE_ID:
-        query = visitSinceIDOperator(op);
-        break;
+      c-case since_id:
+        quewy = visitsinceidopewatow(op);
+        b-bweak;
 
-      case MAX_ID:
-        query = visitMaxIDOperator(op);
-        break;
+      case m-max_id:
+        quewy = visitmaxidopewatow(op);
+        bweak;
 
-      case GEOLOCATION_TYPE:
-        query = visitGeoLocationTypeOperator(op);
-        break;
+      c-case geowocation_type:
+        q-quewy = visitgeowocationtypeopewatow(op);
+        bweak;
 
-      case GEOCODE:
-        query = visitGeocodeOperator(op);
-        break;
+      c-case geocode:
+        quewy = v-visitgeocodeopewatow(op);
+        b-bweak;
 
-      case GEO_BOUNDING_BOX:
-        query = visitGeoBoundingBoxOperator(op);
-        break;
+      case geo_bounding_box:
+        q-quewy = visitgeoboundingboxopewatow(op);
+        b-bweak;
 
-      case PLACE:
-        query = visitPlaceOperator(op);
-        break;
+      case pwace:
+        q-quewy = visitpwaceopewatow(op);
+        bweak;
 
-      case LINK:
-        // This should never be called - the Link visitor (visitor(Link link)) should be.
-        query = visitLinkOperator(op);
-        break;
+      case wink:
+        // t-this shouwd nyevew be cawwed - t-the wink visitow (visitow(wink wink)) shouwd be. ^^;;
+        quewy = v-visitwinkopewatow(op);
+        b-bweak;
 
-      case ENTITY_ID:
-        query = visitEntityIdOperator(op);
-        break;
+      case e-entity_id:
+        quewy = visitentityidopewatow(op);
+        b-bweak;
 
-      case FROM_USER_ID:
-        query = visitFromUserIDOperator(op);
-        break;
+      c-case fwom_usew_id:
+        quewy = v-visitfwomusewidopewatow(op);
+        bweak;
 
-      case IN_REPLY_TO_TWEET_ID:
-        query = visitInReplyToTweetIdOperator(op);
-        break;
+      c-case in_wepwy_to_tweet_id:
+        quewy = v-visitinwepwytotweetidopewatow(op);
+        b-bweak;
 
-      case IN_REPLY_TO_USER_ID:
-        query = visitInReplyToUserIdOperator(op);
-        break;
+      case in_wepwy_to_usew_id:
+        quewy = visitinwepwytousewidopewatow(op);
+        bweak;
 
-      case LIKED_BY_USER_ID:
-        query = visitLikedByUserIdOperator(op);
-        break;
+      c-case w-wiked_by_usew_id:
+        quewy = visitwikedbyusewidopewatow(op);
+        bweak;
 
-      case RETWEETED_BY_USER_ID:
-        query = visitRetweetedByUserIdOperator(op);
-        break;
+      c-case wetweeted_by_usew_id:
+        quewy = v-visitwetweetedbyusewidopewatow(op);
+        b-bweak;
 
-      case REPLIED_TO_BY_USER_ID:
-        query = visitRepliedToByUserIdOperator(op);
-        break;
+      case wepwied_to_by_usew_id:
+        quewy = visitwepwiedtobyusewidopewatow(op);
+        bweak;
 
-      case QUOTED_USER_ID:
-        query = visitQuotedUserIdOperator(op);
-        break;
+      case quoted_usew_id:
+        q-quewy = visitquotedusewidopewatow(op);
+        bweak;
 
-      case QUOTED_TWEET_ID:
-        query = visitQuotedTweetIdOperator(op);
-        break;
+      case quoted_tweet_id:
+        q-quewy = visitquotedtweetidopewatow(op);
+        b-bweak;
 
-      case DIRECTED_AT_USER_ID:
-        query = visitDirectedAtUserIdOperator(op);
-        break;
+      c-case diwected_at_usew_id:
+        quewy = v-visitdiwectedatusewidopewatow(op);
+        bweak;
 
-      case CONVERSATION_ID:
-        query = visitConversationIdOperator(op);
-        break;
+      c-case c-convewsation_id:
+        q-quewy = v-visitconvewsationidopewatow(op);
+        b-bweak;
 
-      case COMPOSER_SOURCE:
-        query = visitComposerSourceOperator(op);
-        break;
+      case composew_souwce:
+        quewy = visitcomposewsouwceopewatow(op);
+        bweak;
 
-      case RETWEETS_OF_TWEET_ID:
-        query = visitRetweetsOfTweetIdOperator(op);
-        break;
+      case wetweets_of_tweet_id:
+        q-quewy = v-visitwetweetsoftweetidopewatow(op);
+        b-bweak;
 
-      case RETWEETS_OF_USER_ID:
-        query = visitRetweetsOfUserIdOperator(op);
-        break;
+      c-case w-wetweets_of_usew_id:
+        q-quewy = visitwetweetsofusewidopewatow(op);
+        bweak;
 
-      case LINK_CATEGORY:
-        query = visitLinkCategoryOperator(op);
-        break;
+      case wink_categowy:
+        quewy = v-visitwinkcategowyopewatow(op);
+        b-bweak;
 
-      case CARD_NAME:
-        query = visitCardNameOperator(op);
-        break;
+      case cawd_name:
+        quewy = visitcawdnameopewatow(op);
+        bweak;
 
-      case CARD_DOMAIN:
-        query = visitCardDomainOperator(op);
-        break;
+      c-case cawd_domain:
+        q-quewy = visitcawddomainopewatow(op);
+        b-bweak;
 
-      case CARD_LANG:
-        query = visitCardLangOperator(op);
-        break;
+      case cawd_wang:
+        quewy = visitcawdwangopewatow(op);
+        b-bweak;
 
-      case HF_TERM_PAIR:
-        query = visitHFTermPairOperator(op);
-        break;
+      case hf_tewm_paiw:
+        quewy = v-visithftewmpaiwopewatow(op);
+        b-bweak;
 
-      case HF_PHRASE_PAIR:
-        query = visitHFTermPhrasePairOperator(op);
-        break;
+      case hf_phwase_paiw:
+        quewy = visithftewmphwasepaiwopewatow(op);
+        b-bweak;
 
-      case PROXIMITY_GROUP:
-        Phrase phrase = new Phrase(
-            Lists.transform(op.getOperands(),
-                            s -> NormalizerHelper.normalizeWithUnknownLocale(
-                                s, EarlybirdConfig.getPenguinVersion())));
+      case pwoximity_gwoup:
+        p-phwase phwase = n-nyew phwase(
+            wists.twansfowm(op.getopewands(), nyaa~~
+                            s-s -> nyowmawizewhewpew.nowmawizewithunknownwocawe(
+                                s-s, eawwybiwdconfig.getpenguinvewsion())));
 
-        query = visit(phrase, true);
-        break;
+        quewy = v-visit(phwase, 🥺 t-twue);
+        b-bweak;
 
-      case MULTI_TERM_DISJUNCTION:
-        query = visitMultiTermDisjunction(op);
-        break;
+      c-case muwti_tewm_disjunction:
+        quewy = visitmuwtitewmdisjunction(op);
+        b-bweak;
 
-      case CSF_DISJUNCTION_FILTER:
-        query = visitCSFDisjunctionFilter(op);
-        break;
+      c-case csf_disjunction_fiwtew:
+        quewy = v-visitcsfdisjunctionfiwtew(op);
+        bweak;
 
-      case SAFETY_EXCLUDE:
-        query = visitSafetyExclude(op);
-        break;
+      case safety_excwude:
+        q-quewy = visitsafetyexcwude(op);
+        bweak;
 
-      case SPACE_ID:
-        query = visitSpaceId(op);
-        break;
+      c-case space_id:
+        quewy = visitspaceid(op);
+        b-bweak;
 
-      case NAMED_ENTITY:
-        query = visitNamedEntity(op);
-        break;
+      c-case nyamed_entity:
+        quewy = visitnamedentity(op);
+        b-bweak;
 
-      case NAMED_ENTITY_WITH_TYPE:
-        query = visitNamedEntityWithType(op);
-        break;
+      case nyamed_entity_with_type:
+        quewy = visitnamedentitywithtype(op);
+        b-bweak;
 
-      case MIN_FAVES:
-      case MIN_QUALITY_SCORE:
-      case MIN_REPLIES:
-      case MIN_RETWEETS:
-      case MIN_REPUTATION:
-        query = visitMinFeatureValueOperator(type, op);
-        break;
+      c-case min_faves:
+      case min_quawity_scowe:
+      case min_wepwies:
+      c-case m-min_wetweets:
+      case min_weputation:
+        q-quewy = visitminfeatuwevawueopewatow(type, (ˆ ﻌ ˆ)♡ op);
+        bweak;
 
-      case FEATURE_VALUE_IN_ACCEPT_LIST_OR_UNSET:
-        query = visitFeatureValueInAcceptListOrUnsetFilterOperator(op);
-        break;
+      case featuwe_vawue_in_accept_wist_ow_unset:
+        q-quewy = v-visitfeatuwevawueinacceptwistowunsetfiwtewopewatow(op);
+        bweak;
 
-      case NEAR:
-      case RELATED_TO_TWEET_ID:
-      case SINCE:
-      case SITE:
-      case UNTIL:
-      case WITHIN:
-      case WITHIN_TIME:
-        query = createUnsupportedOperatorQuery(op);
-        break;
+      c-case nyeaw:
+      c-case wewated_to_tweet_id:
+      case since:
+      case site:
+      c-case untiw:
+      c-case w-within:
+      case w-within_time:
+        quewy = cweateunsuppowtedopewatowquewy(op);
+        bweak;
 
-      case NAMED_CSF_DISJUNCTION_FILTER:
-      case NAMED_MULTI_TERM_DISJUNCTION:
-        query = logAndThrowQueryParserException(
-            "Named disjunction operator could not be converted to a disjunction operator.");
-        break;
+      case nyamed_csf_disjunction_fiwtew:
+      case nyamed_muwti_tewm_disjunction:
+        quewy = wogandthwowquewypawsewexception(
+            "named d-disjunction o-opewatow c-couwd nyot be convewted t-to a disjunction o-opewatow.");
+        bweak;
 
-      default:
-        query = logAndThrowQueryParserException("Unknown operator " + op.toString());
+      d-defauwt:
+        quewy = w-wogandthwowquewypawsewexception("unknown opewatow " + o-op.tostwing());
     }
 
-    return negateQueryIfNodeNegated(op, query);
+    wetuwn nyegatequewyifnodenegated(op, q-quewy);
   }
 
-  protected Query visitToOperator(SearchOperator op) throws QueryParserException {
-    return createNormalizedTermQuery(
-        op, EarlybirdFieldConstant.TO_USER_FIELD.getFieldName(), op.getOperand());
+  p-pwotected quewy visittoopewatow(seawchopewatow op) thwows q-quewypawsewexception {
+    wetuwn cweatenowmawizedtewmquewy(
+        op, ( ͡o ω ͡o ) eawwybiwdfiewdconstant.to_usew_fiewd.getfiewdname(), nyaa~~ o-op.getopewand());
   }
 
-  protected Query visitFromOperator(SearchOperator op) throws QueryParserException {
-    return createNormalizedTermQuery(
-        op, EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), op.getOperand());
+  pwotected q-quewy visitfwomopewatow(seawchopewatow o-op) thwows quewypawsewexception {
+    w-wetuwn cweatenowmawizedtewmquewy(
+        o-op, ( ͡o ω ͡o ) e-eawwybiwdfiewdconstant.fwom_usew_fiewd.getfiewdname(), ^^;; op.getopewand());
   }
 
-  protected Query visitFilterOperator(SearchOperator op) throws QueryParserException {
-    return visitFilterOperator(op, false);
+  p-pwotected quewy v-visitfiwtewopewatow(seawchopewatow op) thwows quewypawsewexception {
+    w-wetuwn visitfiwtewopewatow(op, rawr x3 f-fawse);
   }
 
-  protected Query visitIncludeOperator(SearchOperator op) throws QueryParserException {
-    // Include is a bit funny.  If we have [include retweets] we are saying
-    // do include retweets, which is the default.  Also conjunctions re-negate
-    // whatever node we emit from the visitor.
-    if (!isParentNegated(op) && !nodeIsNegated(op)) {
-      // positive include - no-op.
-      return null;
+  p-pwotected q-quewy visitincwudeopewatow(seawchopewatow op) t-thwows quewypawsewexception {
+    // incwude is a bit funny. ^^;;  if w-we have [incwude wetweets] we awe saying
+    // do incwude wetweets, ^•ﻌ•^ which is the defauwt. 🥺  awso conjunctions we-negate
+    // n-nyanievew nyode we emit fwom the visitow. (ꈍᴗꈍ)
+    if (!ispawentnegated(op) && !nodeisnegated(op)) {
+      // positive incwude - nyo-op. ^•ﻌ•^
+      wetuwn nyuww;
     }
-    return visitFilterOperator(op, false);
+    w-wetuwn visitfiwtewopewatow(op, :3 fawse);
   }
 
-  protected Query visitExcludeOperator(SearchOperator op) throws QueryParserException {
-    // Exclude is a bit funny.  If we have -[exclude retweets] we are saying
-    // dont exclude retweets, which is the default.
-    if (isParentNegated(op) || nodeIsNegated(op)) {
-      // Negative exclude.  Do nothing - parent will not add this to the list of children.
-      return null;
-    } else {
-      // Positive exclude.
-      return visitFilterOperator(op, true);
+  pwotected quewy v-visitexcwudeopewatow(seawchopewatow op) thwows quewypawsewexception {
+    // e-excwude is a bit funny. (˘ω˘)  if we have -[excwude w-wetweets] we awe saying
+    // d-dont excwude wetweets, ^^ w-which is the defauwt. /(^•ω•^)
+    i-if (ispawentnegated(op) || nyodeisnegated(op)) {
+      // nyegative excwude. σωσ  d-do nyothing - pawent wiww nyot add this to the wist of c-chiwdwen. òωó
+      wetuwn nyuww;
+    } e-ewse {
+      // positive excwude. >w<
+      w-wetuwn visitfiwtewopewatow(op, (˘ω˘) t-twue);
     }
   }
 
-  protected Query visitFilterOperator(SearchOperator op, boolean negate)
-      throws QueryParserException {
-    Query q;
-    boolean negateQuery = negate;
+  pwotected q-quewy visitfiwtewopewatow(seawchopewatow op, ^•ﻌ•^ boowean nyegate)
+      thwows q-quewypawsewexception {
+    quewy q;
+    boowean nyegatequewy = n-nyegate;
 
-    if (op.getOperand().equals(SearchOperatorConstants.ANTISOCIAL)) {
-      // Since the object we use to implement these filters is actually an
-      // EXCLUDE filter, we need to negate it to get it to work as a regular filter.
-      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, true, false, false);
-      negateQuery = !negateQuery;
-    } else if (op.getOperand().equals(SearchOperatorConstants.OFFENSIVE_USER)) {
-      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, false, true, false);
-      negateQuery = !negateQuery;
-    } else if (op.getOperand().equals(SearchOperatorConstants.ANTISOCIAL_OFFENSIVE_USER)) {
-      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, true, true, false);
-      negateQuery = !negateQuery;
-    } else if (op.getOperand().equals(SearchOperatorConstants.PROTECTED)) {
-      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, false, false, true);
-      negateQuery = !negateQuery;
-    } else if (op.getOperand().equals(SearchOperatorConstants.HAS_ENGAGEMENT)) {
-      return buildHasEngagementsQuery();
-    } else if (op.getOperand().equals(SearchOperatorConstants.SAFE_SEARCH_FILTER)) {
-      BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-      bqBuilder.add(
-          createNoScoreTermQuery(
-              op,
-              EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-              EarlybirdFieldConstant.IS_OFFENSIVE),
-          Occur.SHOULD);
+    if (op.getopewand().equaws(seawchopewatowconstants.antisociaw)) {
+      // since the object we use to impwement t-these fiwtews is a-actuawwy an
+      // excwude fiwtew, >_< w-we nyeed t-to nyegate it to get it to wowk a-as a weguwaw fiwtew. -.-
+      q = usewfwagsexcwudefiwtew.getusewfwagsexcwudefiwtew(usewtabwe, òωó twue, ( ͡o ω ͡o ) fawse, fawse);
+      nyegatequewy = !negatequewy;
+    } e-ewse if (op.getopewand().equaws(seawchopewatowconstants.offensive_usew)) {
+      q-q = usewfwagsexcwudefiwtew.getusewfwagsexcwudefiwtew(usewtabwe, (ˆ ﻌ ˆ)♡ fawse, :3 t-twue, fawse);
+      n-nyegatequewy = !negatequewy;
+    } ewse if (op.getopewand().equaws(seawchopewatowconstants.antisociaw_offensive_usew)) {
+      q-q = usewfwagsexcwudefiwtew.getusewfwagsexcwudefiwtew(usewtabwe, ^•ﻌ•^ twue, ( ͡o ω ͡o ) twue, fawse);
+      nyegatequewy = !negatequewy;
+    } e-ewse if (op.getopewand().equaws(seawchopewatowconstants.pwotected)) {
+      q = usewfwagsexcwudefiwtew.getusewfwagsexcwudefiwtew(usewtabwe, ^•ﻌ•^ f-fawse, ʘwʘ f-fawse, twue);
+      negatequewy = !negatequewy;
+    } ewse if (op.getopewand().equaws(seawchopewatowconstants.has_engagement)) {
+      w-wetuwn buiwdhasengagementsquewy();
+    } ewse if (op.getopewand().equaws(seawchopewatowconstants.safe_seawch_fiwtew)) {
+      booweanquewy.buiwdew bqbuiwdew = nyew booweanquewy.buiwdew();
+      bqbuiwdew.add(
+          cweatenoscowetewmquewy(
+              o-op, :3
+              e-eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), >_<
+              eawwybiwdfiewdconstant.is_offensive), rawr
+          o-occuw.shouwd);
 
-      // The following internal field __filter_sensitive_content
-      // is not currently built by earlybird.
-      // This means the safe search filter soley operates on the is_offensive bit
-      bqBuilder.add(
-          createNoScoreTermQuery(
-              op,
-              EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-              EarlybirdThriftDocumentUtil.formatFilter(SearchOperatorConstants.SENSITIVE_CONTENT)),
-          Occur.SHOULD);
-      q = bqBuilder.build();
-      negateQuery = !negateQuery;
-    } else if (op.getOperand().equals(SearchOperatorConstants.RETWEETS)) {
-      // Special case for filter:retweets - we use the text field search "-rt"
-      // mostly for legacy reasons.
-      q = createSimpleTermQuery(
-          op,
-          EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
-          EarlybirdThriftDocumentBuilder.RETWEET_TERM);
-    } else if (schemaSnapshot.getFacetFieldByFacetName(op.getOperand()) != null) {
-      Schema.FieldInfo facetField = schemaSnapshot.getFacetFieldByFacetName(op.getOperand());
-      if (facetField.getFieldType().isStoreFacetSkiplist()) {
-        q = createSimpleTermQuery(
-            op,
-            EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-            EarlybirdFieldConstant.getFacetSkipFieldName(facetField.getName()));
-      } else {
-        // return empty BQ that doesn't match anything
-        q = new BooleanQuery.Builder().build();
+      // t-the fowwowing intewnaw f-fiewd __fiwtew_sensitive_content
+      // is nyot cuwwentwy buiwt by eawwybiwd. 🥺
+      // this means the safe seawch f-fiwtew sowey opewates on the is_offensive bit
+      bqbuiwdew.add(
+          cweatenoscowetewmquewy(
+              o-op, (✿oωo)
+              e-eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), (U ﹏ U)
+              eawwybiwdthwiftdocumentutiw.fowmatfiwtew(seawchopewatowconstants.sensitive_content)), rawr x3
+          occuw.shouwd);
+      q-q = bqbuiwdew.buiwd();
+      nyegatequewy = !negatequewy;
+    } ewse if (op.getopewand().equaws(seawchopewatowconstants.wetweets)) {
+      // speciaw case fow f-fiwtew:wetweets - w-we use the t-text fiewd seawch "-wt"
+      // mostwy fow wegacy w-weasons. (✿oωo)
+      q = cweatesimpwetewmquewy(
+          o-op, (U ᵕ U❁)
+          eawwybiwdfiewdconstant.text_fiewd.getfiewdname(), -.-
+          e-eawwybiwdthwiftdocumentbuiwdew.wetweet_tewm);
+    } ewse if (schemasnapshot.getfacetfiewdbyfacetname(op.getopewand()) != n-nyuww) {
+      schema.fiewdinfo facetfiewd = s-schemasnapshot.getfacetfiewdbyfacetname(op.getopewand());
+      if (facetfiewd.getfiewdtype().isstowefacetskipwist()) {
+        q-q = cweatesimpwetewmquewy(
+            o-op, /(^•ω•^)
+            eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), OwO
+            e-eawwybiwdfiewdconstant.getfacetskipfiewdname(facetfiewd.getname()));
+      } e-ewse {
+        // wetuwn empty bq that d-doesn't match anything
+        q-q = nyew booweanquewy.buiwdew().buiwd();
       }
-    } else if (op.getOperand().equals(SearchOperatorConstants.VINE_LINK)) {
-      // Temporary special case for filter:vine_link. The filter is called "vine_link", but it
-      // should use the internal field "__filter_vine". We need this special case because otherwise
-      // it would look for the non-existing "__filter_vine_link" field. See SEARCH-9390
-      q = createNoScoreTermQuery(
-          op,
-          EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-          EarlybirdThriftDocumentUtil.formatFilter("vine"));
-    } else {
-      // The default vanilla filters just uses the filter format string and the
-      // operand text.
-      q = createNoScoreTermQuery(
-          op,
-          EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-          EarlybirdThriftDocumentUtil.formatFilter(op.getOperand()));
+    } ewse if (op.getopewand().equaws(seawchopewatowconstants.vine_wink)) {
+      // t-tempowawy s-speciaw case fow fiwtew:vine_wink. rawr x3 the fiwtew i-is cawwed "vine_wink", σωσ but it
+      // shouwd use the intewnaw fiewd "__fiwtew_vine". ʘwʘ we nyeed this speciaw case because othewwise
+      // i-it wouwd wook fow the nyon-existing "__fiwtew_vine_wink" f-fiewd. -.- see seawch-9390
+      q-q = cweatenoscowetewmquewy(
+          op, 😳
+          eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), 😳😳😳
+          e-eawwybiwdthwiftdocumentutiw.fowmatfiwtew("vine"));
+    } ewse {
+      // the defauwt vaniwwa f-fiwtews just uses the fiwtew fowmat stwing and t-the
+      // opewand text.
+      q = cweatenoscowetewmquewy(
+          o-op, OwO
+          eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), ^•ﻌ•^
+          eawwybiwdthwiftdocumentutiw.fowmatfiwtew(op.getopewand()));
     }
-    // Double check: no filters should have any score contribution.
-    q = new BoostQuery(q, 0.0f);
-    return negateQuery ? negateQuery(q) : q;
+    // d-doubwe check: no f-fiwtews shouwd have any scowe contwibution. rawr
+    q-q = nyew boostquewy(q, (✿oωo) 0.0f);
+    w-wetuwn nyegatequewy ? nyegatequewy(q) : q-q;
   }
 
-  private Query buildHasEngagementsQuery() {
-    if (earlybirdCluster == EarlybirdCluster.PROTECTED) {
-      // Engagements and engagement counts are not indexed on Earlybirds, so there is no need to
-      // traverse the entire segment with the MinFeatureValueFilter. See SEARCH-28120
-      return new MatchNoDocsQuery();
-    }
-
-    Query favFilter = MinFeatureValueFilter.getMinFeatureValueFilter(
-        EarlybirdFieldConstant.FAVORITE_COUNT.getFieldName(), 1);
-    Query retweetFilter = MinFeatureValueFilter.getMinFeatureValueFilter(
-        EarlybirdFieldConstant.RETWEET_COUNT.getFieldName(), 1);
-    Query replyFilter = MinFeatureValueFilter.getMinFeatureValueFilter(
-        EarlybirdFieldConstant.REPLY_COUNT.getFieldName(), 1);
-    return new BooleanQuery.Builder()
-        .add(favFilter, Occur.SHOULD)
-        .add(retweetFilter, Occur.SHOULD)
-        .add(replyFilter, Occur.SHOULD)
-        .build();
-  }
-
-  protected Query visitLangOperator(SearchOperator op) throws QueryParserException {
-    return createNoScoreTermQuery(
-        op, EarlybirdFieldConstant.ISO_LANGUAGE_FIELD.getFieldName(), op.getOperand());
-  }
-
-  protected Query visitSourceOperator(SearchOperator op) throws QueryParserException {
-    return createNoScoreTermQuery(
-        op, EarlybirdFieldConstant.NORMALIZED_SOURCE_FIELD.getFieldName(), op.getOperand());
-  }
-
-  protected Query visitSmileyOperator(SearchOperator op) throws QueryParserException {
-    return createSimpleTermQuery(
-        op,
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        String.format(SMILEY_FORMAT_STRING, op.getOperand()));
-  }
-
-  protected Query visitDocValRangeFilterOperator(SearchOperator op) throws QueryParserException {
-    String csfFieldName = op.getOperands().get(0).toLowerCase();
-
-    ThriftCSFType csfFieldType = schemaSnapshot.getCSFFieldType(csfFieldName);
-    if (csfFieldType == null) {
-      throw new QueryParserException("invalid csf field name " + op.getOperands().get(0)
-          + " used in " + op.serialize());
+  p-pwivate quewy buiwdhasengagementsquewy() {
+    if (eawwybiwdcwustew == e-eawwybiwdcwustew.pwotected) {
+      // engagements and engagement counts awe nyot indexed o-on eawwybiwds, ^^ so thewe is nyo nyeed to
+      // twavewse t-the entiwe segment w-with the minfeatuwevawuefiwtew. -.- s-see seawch-28120
+      wetuwn nyew matchnodocsquewy();
     }
 
-    try {
-      if (csfFieldType == ThriftCSFType.DOUBLE
-          || csfFieldType == ThriftCSFType.FLOAT) {
-        return DocValRangeFilter.getDocValRangeQuery(csfFieldName, csfFieldType,
-            Double.parseDouble(op.getOperands().get(1)),
-            Double.parseDouble(op.getOperands().get(2)));
-      } else if (csfFieldType == ThriftCSFType.LONG
-          || csfFieldType == ThriftCSFType.INT
-          || csfFieldType == ThriftCSFType.BYTE) {
-        Query query = DocValRangeFilter.getDocValRangeQuery(csfFieldName, csfFieldType,
-            Long.parseLong(op.getOperands().get(1)),
-            Long.parseLong(op.getOperands().get(2)));
-        if (csfFieldName.equals(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())) {
-          return wrapQueryInUserScrubGeoFilter(query);
+    quewy favfiwtew = m-minfeatuwevawuefiwtew.getminfeatuwevawuefiwtew(
+        eawwybiwdfiewdconstant.favowite_count.getfiewdname(), (✿oωo) 1);
+    q-quewy wetweetfiwtew = m-minfeatuwevawuefiwtew.getminfeatuwevawuefiwtew(
+        e-eawwybiwdfiewdconstant.wetweet_count.getfiewdname(), o.O 1);
+    quewy wepwyfiwtew = minfeatuwevawuefiwtew.getminfeatuwevawuefiwtew(
+        eawwybiwdfiewdconstant.wepwy_count.getfiewdname(), :3 1);
+    wetuwn nyew booweanquewy.buiwdew()
+        .add(favfiwtew, rawr x3 occuw.shouwd)
+        .add(wetweetfiwtew, (U ᵕ U❁) o-occuw.shouwd)
+        .add(wepwyfiwtew, :3 o-occuw.shouwd)
+        .buiwd();
+  }
+
+  pwotected quewy visitwangopewatow(seawchopewatow o-op) thwows quewypawsewexception {
+    wetuwn c-cweatenoscowetewmquewy(
+        o-op, 🥺 eawwybiwdfiewdconstant.iso_wanguage_fiewd.getfiewdname(), XD o-op.getopewand());
+  }
+
+  p-pwotected q-quewy visitsouwceopewatow(seawchopewatow o-op) thwows quewypawsewexception {
+    wetuwn cweatenoscowetewmquewy(
+        o-op, >_< eawwybiwdfiewdconstant.nowmawized_souwce_fiewd.getfiewdname(), (ꈍᴗꈍ) o-op.getopewand());
+  }
+
+  p-pwotected quewy v-visitsmiweyopewatow(seawchopewatow o-op) thwows q-quewypawsewexception {
+    wetuwn c-cweatesimpwetewmquewy(
+        o-op, ( ͡o ω ͡o )
+        e-eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), (˘ω˘)
+        stwing.fowmat(smiwey_fowmat_stwing, (˘ω˘) op.getopewand()));
+  }
+
+  p-pwotected quewy visitdocvawwangefiwtewopewatow(seawchopewatow op) thwows q-quewypawsewexception {
+    stwing csffiewdname = op.getopewands().get(0).towowewcase();
+
+    t-thwiftcsftype c-csffiewdtype = schemasnapshot.getcsffiewdtype(csffiewdname);
+    if (csffiewdtype == nyuww) {
+      thwow nyew quewypawsewexception("invawid c-csf f-fiewd nyame " + op.getopewands().get(0)
+          + " u-used in " + o-op.sewiawize());
+    }
+
+    twy {
+      if (csffiewdtype == thwiftcsftype.doubwe
+          || csffiewdtype == thwiftcsftype.fwoat) {
+        w-wetuwn docvawwangefiwtew.getdocvawwangequewy(csffiewdname, UwU c-csffiewdtype, (ˆ ﻌ ˆ)♡
+            doubwe.pawsedoubwe(op.getopewands().get(1)), (///ˬ///✿)
+            doubwe.pawsedoubwe(op.getopewands().get(2)));
+      } e-ewse if (csffiewdtype == t-thwiftcsftype.wong
+          || csffiewdtype == thwiftcsftype.int
+          || c-csffiewdtype == thwiftcsftype.byte) {
+        quewy quewy = docvawwangefiwtew.getdocvawwangequewy(csffiewdname, (ꈍᴗꈍ) csffiewdtype, -.-
+            wong.pawsewong(op.getopewands().get(1)), 😳😳😳
+            w-wong.pawsewong(op.getopewands().get(2)));
+        if (csffiewdname.equaws(eawwybiwdfiewdconstant.wat_won_csf_fiewd.getfiewdname())) {
+          wetuwn w-wwapquewyinusewscwubgeofiwtew(quewy);
         }
-        return query;
-      } else {
-        throw new QueryParserException("invalid ThriftCSFType. drop this op: " + op.serialize());
+        w-wetuwn q-quewy;
+      } ewse {
+        thwow n-nyew quewypawsewexception("invawid t-thwiftcsftype. (///ˬ///✿) d-dwop this o-op: " + op.sewiawize());
       }
-    } catch (NumberFormatException e) {
-      throw new QueryParserException("invalid range numeric type used in " + op.serialize());
+    } c-catch (numbewfowmatexception e) {
+      thwow nyew quewypawsewexception("invawid w-wange nyumewic t-type used i-in " + op.sewiawize());
     }
   }
 
-  protected final Query visitCachedFilterOperator(SearchOperator op) throws QueryParserException {
-    try {
-      return CachedFilterQuery.getCachedFilterQuery(op.getOperand(), queryCacheManager);
-    } catch (CachedFilterQuery.NoSuchFilterException e) {
-      throw new QueryParserException(e.getMessage(), e);
+  pwotected f-finaw quewy visitcachedfiwtewopewatow(seawchopewatow o-op) thwows q-quewypawsewexception {
+    twy {
+      w-wetuwn cachedfiwtewquewy.getcachedfiwtewquewy(op.getopewand(), UwU q-quewycachemanagew);
+    } c-catch (cachedfiwtewquewy.nosuchfiwtewexception e-e) {
+      thwow n-nyew quewypawsewexception(e.getmessage(), 😳 e);
     }
   }
 
-  protected final Query visitScoredFilterOperator(SearchOperator op) throws QueryParserException {
-    final List<String> operands = op.getOperands();
-    final String scoreFunction = operands.get(0);
-    ScoringFunctionProvider.NamedScoringFunctionProvider scoringFunctionProvider =
-      ScoringFunctionProvider.getScoringFunctionProviderByName(scoreFunction, schemaSnapshot);
-    if (scoringFunctionProvider == null) {
-      throw new QueryParserException("Unknown scoring function name [" + scoreFunction
-          + " ] used as score_filter's operand");
+  p-pwotected finaw quewy v-visitscowedfiwtewopewatow(seawchopewatow o-op) thwows quewypawsewexception {
+    finaw wist<stwing> opewands = op.getopewands();
+    f-finaw stwing s-scowefunction = opewands.get(0);
+    s-scowingfunctionpwovidew.namedscowingfunctionpwovidew s-scowingfunctionpwovidew =
+      scowingfunctionpwovidew.getscowingfunctionpwovidewbyname(scowefunction, /(^•ω•^) schemasnapshot);
+    i-if (scowingfunctionpwovidew == n-nyuww) {
+      t-thwow nyew q-quewypawsewexception("unknown s-scowing function n-nyame [" + scowefunction
+          + " ] used as scowe_fiwtew's o-opewand");
     }
 
-    return ScoreFilterQuery.getScoreFilterQuery(
-        schemaSnapshot,
-        scoringFunctionProvider,
-        Float.parseFloat(operands.get(1)),
-        Float.parseFloat(operands.get(2)));
+    wetuwn scowefiwtewquewy.getscowefiwtewquewy(
+        schemasnapshot,
+        scowingfunctionpwovidew, òωó
+        fwoat.pawsefwoat(opewands.get(1)), >w<
+        f-fwoat.pawsefwoat(opewands.get(2)));
   }
 
-  protected Query visitSinceTimeOperator(SearchOperator op) {
-    try {
-      return SinceUntilFilter.getSinceQuery(Integer.parseInt(op.getOperand()));
-    } catch (NumberFormatException e) {
-      LOG.warn("since time is not a valid integer, the date isn't reasonable. drop this op: "
-          + op.serialize());
-      SINCE_TIME_INVALID_INT_COUNTER.increment();
-      return null;
-    }
-  }
-
-  protected Query visitUntilTimeOperator(SearchOperator op) {
-    try {
-      return SinceUntilFilter.getUntilQuery(Integer.parseInt(op.getOperand()));
-    } catch (NumberFormatException e) {
-      LOG.warn("until time is not a valid integer, the date isn't reasonable. drop this op: "
-          + op.serialize());
-      UNTIL_TIME_INVALID_INT_COUNTER.increment();
-      return null;
+  p-pwotected quewy visitsincetimeopewatow(seawchopewatow op) {
+    twy {
+      wetuwn sinceuntiwfiwtew.getsincequewy(integew.pawseint(op.getopewand()));
+    } c-catch (numbewfowmatexception e-e) {
+      wog.wawn("since time is nyot a vawid integew, -.- the d-date isn't weasonabwe. (⑅˘꒳˘) dwop this o-op: "
+          + o-op.sewiawize());
+      s-since_time_invawid_int_countew.incwement();
+      wetuwn nyuww;
     }
   }
 
-  protected Query visitSinceIDOperator(SearchOperator op) {
-    long id = Long.parseLong(op.getOperand());
-    return SinceMaxIDFilter.getSinceIDQuery(id);
-  }
-
-  protected Query visitMaxIDOperator(SearchOperator op) {
-    long id = Long.parseLong(op.getOperand());
-    return SinceMaxIDFilter.getMaxIDQuery(id);
-  }
-
-  protected Query visitGeoLocationTypeOperator(SearchOperator op) throws QueryParserException {
-    String operand = op.getOperand();
-    ThriftGeoLocationSource source = ThriftGeoLocationSource.valueOf(operand.toUpperCase());
-    // If necessary, this query will be wrapped by the UserScrubGeoFilter within
-    // the createSimpleTermQuery() helper method
-    return createNoScoreTermQuery(
-        op,
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstants.formatGeoType(source));
-  }
-
-  protected Query visitGeocodeOperator(SearchOperator op) throws QueryParserException {
-    return visitGeocodeOrGeocodePrivateOperator(op);
-  }
-
-  protected Query visitGeoBoundingBoxOperator(SearchOperator op) throws QueryParserException {
-    Rectangle rectangle = boundingBoxFromSearchOperator(op);
-    return wrapQueryInUserScrubGeoFilter(
-        GeoQuadTreeQueryBuilder.buildGeoQuadTreeQuery(rectangle, terminationTracker));
-  }
-
-  protected Query visitPlaceOperator(SearchOperator op) throws QueryParserException {
-    // This query will be wrapped by the UserScrubGeoFilter within the createSimpleTermQuery()
-    // helper method
-    return createSimpleTermQuery(
-        op, EarlybirdFieldConstant.PLACE_FIELD.getFieldName(), op.getOperand());
-  }
-
-  protected Query visitLinkOperator(SearchOperator op) throws QueryParserException {
-    // This should never be called - the Link visitor (visitor(Link link)) should be.
-    if (op instanceof Link) {
-      LOG.warn("Unexpected Link operator " + op.serialize());
-      return visit((Link) op);
-    } else {
-      throw new QueryParserException("Operator type set to " + op.getOperatorName()
-          + " but it is not an instance of Link [" + op.toString() + "]");
+  pwotected q-quewy visituntiwtimeopewatow(seawchopewatow op) {
+    t-twy {
+      wetuwn sinceuntiwfiwtew.getuntiwquewy(integew.pawseint(op.getopewand()));
+    } c-catch (numbewfowmatexception e) {
+      wog.wawn("untiw time i-is nyot a vawid integew, (˘ω˘) the date i-isn't weasonabwe. (U ᵕ U❁) dwop this op: "
+          + op.sewiawize());
+      u-untiw_time_invawid_int_countew.incwement();
+      wetuwn n-nyuww;
     }
   }
 
-  protected Query visitEntityIdOperator(SearchOperator op) throws QueryParserException {
-    return createSimpleTermQuery(
-        op, EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(), op.getOperand());
+  pwotected quewy visitsinceidopewatow(seawchopewatow op) {
+    wong id = wong.pawsewong(op.getopewand());
+    wetuwn sincemaxidfiwtew.getsinceidquewy(id);
   }
 
-  protected Query visitFromUserIDOperator(SearchOperator op) {
-    return buildLongTermAttributeQuery(
-        op, EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName());
+  pwotected q-quewy visitmaxidopewatow(seawchopewatow o-op) {
+    w-wong id = wong.pawsewong(op.getopewand());
+    w-wetuwn sincemaxidfiwtew.getmaxidquewy(id);
   }
 
-  protected Query visitInReplyToTweetIdOperator(SearchOperator op) {
-    return buildLongTermAttributeQuery(
-        op, EarlybirdFieldConstant.IN_REPLY_TO_TWEET_ID_FIELD.getFieldName());
+  pwotected quewy visitgeowocationtypeopewatow(seawchopewatow op) t-thwows quewypawsewexception {
+    stwing opewand = op.getopewand();
+    thwiftgeowocationsouwce s-souwce = thwiftgeowocationsouwce.vawueof(opewand.touppewcase());
+    // i-if nyecessawy, ^^ t-this quewy w-wiww be wwapped by the usewscwubgeofiwtew within
+    // the cweatesimpwetewmquewy() hewpew m-method
+    wetuwn c-cweatenoscowetewmquewy(
+        op, ^^
+        eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), rawr x3
+        eawwybiwdfiewdconstants.fowmatgeotype(souwce));
   }
 
-  protected Query visitInReplyToUserIdOperator(SearchOperator op) {
-    return buildLongTermAttributeQuery(
-        op, EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName());
+  pwotected quewy v-visitgeocodeopewatow(seawchopewatow op) thwows q-quewypawsewexception {
+    w-wetuwn v-visitgeocodeowgeocodepwivateopewatow(op);
   }
 
-  protected Query visitLikedByUserIdOperator(SearchOperator op) throws QueryParserException {
-    return buildLongTermAttributeQuery(op,
-        EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName());
+  pwotected quewy visitgeoboundingboxopewatow(seawchopewatow op) thwows quewypawsewexception {
+    wectangwe wectangwe = boundingboxfwomseawchopewatow(op);
+    w-wetuwn wwapquewyinusewscwubgeofiwtew(
+        geoquadtweequewybuiwdew.buiwdgeoquadtweequewy(wectangwe, >w< t-tewminationtwackew));
   }
 
-  protected Query visitRetweetedByUserIdOperator(SearchOperator op) throws QueryParserException {
-    return buildLongTermAttributeQuery(op,
-        EarlybirdFieldConstant.RETWEETED_BY_USER_ID.getFieldName());
+  pwotected quewy visitpwaceopewatow(seawchopewatow op) thwows q-quewypawsewexception {
+    // this quewy wiww b-be wwapped by the usewscwubgeofiwtew within the c-cweatesimpwetewmquewy()
+    // h-hewpew method
+    w-wetuwn cweatesimpwetewmquewy(
+        o-op, (U ᵕ U❁) eawwybiwdfiewdconstant.pwace_fiewd.getfiewdname(), o-op.getopewand());
   }
 
-  protected Query visitRepliedToByUserIdOperator(SearchOperator op) throws QueryParserException {
-    return buildLongTermAttributeQuery(op,
-        EarlybirdFieldConstant.REPLIED_TO_BY_USER_ID.getFieldName());
-  }
-
-  protected Query visitQuotedUserIdOperator(SearchOperator op) throws QueryParserException {
-    return buildLongTermAttributeQuery(op,
-        EarlybirdFieldConstant.QUOTED_USER_ID_FIELD.getFieldName());
-  }
-
-  protected Query visitQuotedTweetIdOperator(SearchOperator op) throws QueryParserException {
-    return buildLongTermAttributeQuery(op,
-        EarlybirdFieldConstant.QUOTED_TWEET_ID_FIELD.getFieldName());
-  }
-
-  protected Query visitDirectedAtUserIdOperator(SearchOperator op) throws QueryParserException {
-    return buildLongTermAttributeQuery(op,
-        EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName());
-  }
-
-  protected Query visitConversationIdOperator(SearchOperator op) throws QueryParserException {
-    return buildLongTermAttributeQuery(
-        op, EarlybirdFieldConstant.CONVERSATION_ID_FIELD.getFieldName());
-  }
-
-  protected Query visitComposerSourceOperator(SearchOperator op) throws QueryParserException {
-    Preconditions.checkNotNull(op.getOperand(), "composer_source requires operand");
-    try {
-      ComposerSource composerSource = ComposerSource.valueOf(op.getOperand().toUpperCase());
-      return buildNoScoreIntTermQuery(
-          op, EarlybirdFieldConstant.COMPOSER_SOURCE, composerSource.getValue());
-    } catch (IllegalArgumentException e) {
-      throw new QueryParserException("Invalid operand for composer_source: " + op.getOperand(), e);
+  pwotected q-quewy visitwinkopewatow(seawchopewatow o-op) thwows quewypawsewexception {
+    // t-this shouwd nyevew be cawwed - the wink visitow (visitow(wink w-wink)) shouwd be. 🥺
+    if (op instanceof w-wink) {
+      w-wog.wawn("unexpected wink o-opewatow " + op.sewiawize());
+      w-wetuwn visit((wink) op);
+    } ewse {
+      thwow new quewypawsewexception("opewatow t-type set t-to " + op.getopewatowname()
+          + " b-but i-it is not an instance of wink [" + op.tostwing() + "]");
     }
   }
 
-  protected Query visitRetweetsOfTweetIdOperator(SearchOperator op) {
-    return buildLongTermAttributeQuery(
-        op, EarlybirdFieldConstant.RETWEET_SOURCE_TWEET_ID_FIELD.getFieldName());
+  pwotected q-quewy visitentityidopewatow(seawchopewatow op) thwows quewypawsewexception {
+    w-wetuwn cweatesimpwetewmquewy(
+        op, (⑅˘꒳˘) eawwybiwdfiewdconstant.entity_id_fiewd.getfiewdname(), OwO op.getopewand());
   }
 
-  protected Query visitRetweetsOfUserIdOperator(SearchOperator op) {
-    return buildLongTermAttributeQuery(
-        op, EarlybirdFieldConstant.RETWEET_SOURCE_USER_ID_FIELD.getFieldName());
+  p-pwotected quewy visitfwomusewidopewatow(seawchopewatow op) {
+    wetuwn buiwdwongtewmattwibutequewy(
+        o-op, 😳 eawwybiwdfiewdconstant.fwom_usew_id_fiewd.getfiewdname());
   }
 
-  protected Query visitLinkCategoryOperator(SearchOperator op) {
-    int linkCategory;
-    try {
-      linkCategory = LinkCategory.valueOf(op.getOperand()).getValue();
-    } catch (IllegalArgumentException e) {
-      linkCategory = Integer.parseInt(op.getOperand());
+  pwotected quewy visitinwepwytotweetidopewatow(seawchopewatow o-op) {
+    w-wetuwn buiwdwongtewmattwibutequewy(
+        o-op, òωó eawwybiwdfiewdconstant.in_wepwy_to_tweet_id_fiewd.getfiewdname());
+  }
+
+  pwotected quewy v-visitinwepwytousewidopewatow(seawchopewatow o-op) {
+    wetuwn buiwdwongtewmattwibutequewy(
+        o-op, (ˆ ﻌ ˆ)♡ eawwybiwdfiewdconstant.in_wepwy_to_usew_id_fiewd.getfiewdname());
+  }
+
+  pwotected q-quewy visitwikedbyusewidopewatow(seawchopewatow o-op) thwows q-quewypawsewexception {
+    wetuwn buiwdwongtewmattwibutequewy(op, ʘwʘ
+        e-eawwybiwdfiewdconstant.wiked_by_usew_id_fiewd.getfiewdname());
+  }
+
+  p-pwotected quewy v-visitwetweetedbyusewidopewatow(seawchopewatow op) thwows quewypawsewexception {
+    w-wetuwn buiwdwongtewmattwibutequewy(op, ^^;;
+        eawwybiwdfiewdconstant.wetweeted_by_usew_id.getfiewdname());
+  }
+
+  pwotected quewy visitwepwiedtobyusewidopewatow(seawchopewatow op) thwows quewypawsewexception {
+    wetuwn b-buiwdwongtewmattwibutequewy(op, ʘwʘ
+        e-eawwybiwdfiewdconstant.wepwied_to_by_usew_id.getfiewdname());
+  }
+
+  pwotected quewy v-visitquotedusewidopewatow(seawchopewatow op) thwows quewypawsewexception {
+    w-wetuwn buiwdwongtewmattwibutequewy(op, òωó
+        e-eawwybiwdfiewdconstant.quoted_usew_id_fiewd.getfiewdname());
+  }
+
+  p-pwotected quewy v-visitquotedtweetidopewatow(seawchopewatow op) thwows quewypawsewexception {
+    w-wetuwn buiwdwongtewmattwibutequewy(op, ( ͡o ω ͡o )
+        eawwybiwdfiewdconstant.quoted_tweet_id_fiewd.getfiewdname());
+  }
+
+  pwotected q-quewy visitdiwectedatusewidopewatow(seawchopewatow o-op) thwows quewypawsewexception {
+    wetuwn buiwdwongtewmattwibutequewy(op, ʘwʘ
+        e-eawwybiwdfiewdconstant.diwected_at_usew_id_fiewd.getfiewdname());
+  }
+
+  pwotected quewy v-visitconvewsationidopewatow(seawchopewatow op) thwows quewypawsewexception {
+    wetuwn buiwdwongtewmattwibutequewy(
+        o-op, >w< eawwybiwdfiewdconstant.convewsation_id_fiewd.getfiewdname());
+  }
+
+  pwotected q-quewy visitcomposewsouwceopewatow(seawchopewatow op) thwows quewypawsewexception {
+    p-pweconditions.checknotnuww(op.getopewand(), 😳😳😳 "composew_souwce wequiwes o-opewand");
+    twy {
+      composewsouwce c-composewsouwce = c-composewsouwce.vawueof(op.getopewand().touppewcase());
+      wetuwn buiwdnoscoweinttewmquewy(
+          o-op, σωσ eawwybiwdfiewdconstant.composew_souwce, -.- composewsouwce.getvawue());
+    } catch (iwwegawawgumentexception e-e) {
+      thwow n-nyew quewypawsewexception("invawid o-opewand fow composew_souwce: " + op.getopewand(), e);
+    }
+  }
+
+  pwotected quewy visitwetweetsoftweetidopewatow(seawchopewatow o-op) {
+    wetuwn buiwdwongtewmattwibutequewy(
+        op, 🥺 e-eawwybiwdfiewdconstant.wetweet_souwce_tweet_id_fiewd.getfiewdname());
+  }
+
+  p-pwotected quewy visitwetweetsofusewidopewatow(seawchopewatow op) {
+    w-wetuwn buiwdwongtewmattwibutequewy(
+        o-op, >w< eawwybiwdfiewdconstant.wetweet_souwce_usew_id_fiewd.getfiewdname());
+  }
+
+  pwotected quewy visitwinkcategowyopewatow(seawchopewatow op) {
+    i-int winkcategowy;
+    twy {
+      w-winkcategowy = winkcategowy.vawueof(op.getopewand()).getvawue();
+    } catch (iwwegawawgumentexception e-e) {
+      w-winkcategowy = integew.pawseint(op.getopewand());
     }
 
-    String fieldName = EarlybirdFieldConstant.LINK_CATEGORY_FIELD.getFieldName();
-    org.apache.lucene.index.Term term = new org.apache.lucene.index.Term(
-        fieldName, IntTermAttributeImpl.copyIntoNewBytesRef(linkCategory));
-    return wrapQuery(
-        new TermQueryWithSafeToString(term, Integer.toString(linkCategory)), op, fieldName);
+    s-stwing fiewdname = e-eawwybiwdfiewdconstant.wink_categowy_fiewd.getfiewdname();
+    owg.apache.wucene.index.tewm t-tewm = nyew owg.apache.wucene.index.tewm(
+        f-fiewdname, (///ˬ///✿) i-inttewmattwibuteimpw.copyintonewbyteswef(winkcategowy));
+    w-wetuwn w-wwapquewy(
+        n-nyew tewmquewywithsafetostwing(tewm, UwU integew.tostwing(winkcategowy)), ( ͡o ω ͡o ) o-op, f-fiewdname);
   }
 
-  protected Query visitCardNameOperator(SearchOperator op) throws QueryParserException {
-    return createNoScoreTermQuery(
-        op, EarlybirdFieldConstant.CARD_NAME_FIELD.getFieldName(), op.getOperand());
+  pwotected quewy visitcawdnameopewatow(seawchopewatow o-op) thwows quewypawsewexception {
+    w-wetuwn cweatenoscowetewmquewy(
+        op, (ˆ ﻌ ˆ)♡ eawwybiwdfiewdconstant.cawd_name_fiewd.getfiewdname(), ^^;; op.getopewand());
   }
 
-  protected Query visitCardDomainOperator(SearchOperator op) throws QueryParserException {
-    return createNoScoreTermQuery(
-        op, EarlybirdFieldConstant.CARD_DOMAIN_FIELD.getFieldName(), op.getOperand());
+  pwotected quewy visitcawddomainopewatow(seawchopewatow op) thwows quewypawsewexception {
+    wetuwn cweatenoscowetewmquewy(
+        op, (U ᵕ U❁) e-eawwybiwdfiewdconstant.cawd_domain_fiewd.getfiewdname(), op.getopewand());
   }
 
-  protected Query visitCardLangOperator(SearchOperator op) throws QueryParserException {
-    return createNoScoreTermQuery(
-        op, EarlybirdFieldConstant.CARD_LANG.getFieldName(), op.getOperand());
+  p-pwotected quewy visitcawdwangopewatow(seawchopewatow o-op) thwows q-quewypawsewexception {
+    wetuwn cweatenoscowetewmquewy(
+        o-op, XD eawwybiwdfiewdconstant.cawd_wang.getfiewdname(), (ꈍᴗꈍ) op.getopewand());
   }
 
-  protected Query visitHFTermPairOperator(SearchOperator op) throws QueryParserException {
-    final List<String> operands = op.getOperands();
-    String termPair = HighFrequencyTermPairs.createPair(op.getOperands().get(0),
-        op.getOperands().get(1));
-    Query q = createSimpleTermQuery(op, ImmutableSchema.HF_TERM_PAIRS_FIELD, termPair);
-    float boost = Float.parseFloat(operands.get(2));
+  p-pwotected quewy visithftewmpaiwopewatow(seawchopewatow o-op) thwows quewypawsewexception {
+    finaw wist<stwing> opewands = op.getopewands();
+    stwing tewmpaiw = highfwequencytewmpaiws.cweatepaiw(op.getopewands().get(0), -.-
+        o-op.getopewands().get(1));
+    quewy q = cweatesimpwetewmquewy(op, >_< i-immutabweschema.hf_tewm_paiws_fiewd, (ˆ ﻌ ˆ)♡ tewmpaiw);
+    f-fwoat boost = fwoat.pawsefwoat(opewands.get(2));
     if (boost >= 0) {
-      q = BoostUtils.maybeWrapInBoostQuery(q, boost);
+      q = boostutiws.maybewwapinboostquewy(q, ( ͡o ω ͡o ) boost);
     }
-    return q;
+    wetuwn q;
   }
 
-  protected Query visitHFTermPhrasePairOperator(SearchOperator op) throws QueryParserException {
-    final List<String> operands = op.getOperands();
-    String termPair = HighFrequencyTermPairs.createPhrasePair(op.getOperands().get(0),
-                                                              op.getOperands().get(1));
-    Query q = createSimpleTermQuery(op, ImmutableSchema.HF_PHRASE_PAIRS_FIELD, termPair);
-    float boost = Float.parseFloat(operands.get(2));
-    if (boost >= 0) {
-      q = BoostUtils.maybeWrapInBoostQuery(q, boost);
+  pwotected quewy visithftewmphwasepaiwopewatow(seawchopewatow op) thwows q-quewypawsewexception {
+    f-finaw w-wist<stwing> opewands = op.getopewands();
+    s-stwing tewmpaiw = h-highfwequencytewmpaiws.cweatephwasepaiw(op.getopewands().get(0), rawr x3
+                                                              o-op.getopewands().get(1));
+    quewy q = cweatesimpwetewmquewy(op, òωó immutabweschema.hf_phwase_paiws_fiewd, 😳 t-tewmpaiw);
+    f-fwoat boost = fwoat.pawsefwoat(opewands.get(2));
+    i-if (boost >= 0) {
+      q-q = boostutiws.maybewwapinboostquewy(q, (ˆ ﻌ ˆ)♡ b-boost);
     }
-    return q;
+    w-wetuwn q;
   }
 
-  private Query logAndThrowQueryParserException(String message) throws QueryParserException {
-    LOG.error(message);
-    throw new QueryParserException(message);
+  p-pwivate quewy wogandthwowquewypawsewexception(stwing message) thwows q-quewypawsewexception {
+    w-wog.ewwow(message);
+    t-thwow nyew q-quewypawsewexception(message);
   }
 
-  private Query logMissingEntriesAndThrowQueryParserException(String field, SearchOperator op)
-      throws QueryParserException {
-    return logAndThrowQueryParserException(
-        String.format("Missing required %s entries for %s", field, op.serialize()));
+  p-pwivate q-quewy wogmissingentwiesandthwowquewypawsewexception(stwing f-fiewd, 🥺 s-seawchopewatow o-op)
+      thwows q-quewypawsewexception {
+    wetuwn wogandthwowquewypawsewexception(
+        stwing.fowmat("missing wequiwed %s entwies fow %s", ^^ f-fiewd, op.sewiawize()));
   }
 
-  // previous implementation of this operator allowed insertion of
-  // operands from the thrift search query.  This was reverted to ensure simplicity
-  // of the api, and to keep the serialized query self contained.
-  protected final Query visitMultiTermDisjunction(SearchOperator op) throws QueryParserException {
-    final List<String> operands = op.getOperands();
-    final String field = operands.get(0);
+  // pwevious impwementation o-of this opewatow awwowed insewtion o-of
+  // opewands f-fwom the thwift s-seawch quewy. /(^•ω•^)  this was wevewted t-to ensuwe simpwicity
+  // o-of the api, o.O and to keep the sewiawized quewy sewf contained. òωó
+  pwotected finaw quewy v-visitmuwtitewmdisjunction(seawchopewatow op) thwows quewypawsewexception {
+    finaw wist<stwing> o-opewands = op.getopewands();
+    f-finaw stwing fiewd = opewands.get(0);
 
-    if (isUserIdField(field)) {
-      List<Long> ids = Lists.newArrayList();
-      parseLongArgs(operands.subList(1, operands.size()), ids, op);
-      if (ids.size() > 0) {
-        // Try to get ranks for ids if exist from hitAttributeHelper.
-        // Otherwise just pass in a empty list.
-        List<Integer> ranks;
-        if (hitAttributeHelper != null
-            && hitAttributeHelper.getExpandedNodeToRankMap().containsKey(op)) {
-          ranks = hitAttributeHelper.getExpandedNodeToRankMap().get(op);
-        } else {
-          ranks = Lists.newArrayList();
+    i-if (isusewidfiewd(fiewd)) {
+      w-wist<wong> ids = w-wists.newawwaywist();
+      pawsewongawgs(opewands.subwist(1, XD o-opewands.size()), rawr x3 i-ids, op);
+      i-if (ids.size() > 0) {
+        // t-twy to get wanks fow ids if exist fwom hitattwibutehewpew. (˘ω˘)
+        // o-othewwise just pass in a-a empty wist. :3
+        wist<integew> w-wanks;
+        i-if (hitattwibutehewpew != nyuww
+            && h-hitattwibutehewpew.getexpandednodetowankmap().containskey(op)) {
+          wanks = hitattwibutehewpew.getexpandednodetowankmap().get(op);
+        } e-ewse {
+          w-wanks = w-wists.newawwaywist();
         }
-        return UserIdMultiSegmentQuery.createIdDisjunctionQuery(
-            "multi_term_disjunction_" + field,
-            ids,
-            field,
-            schemaSnapshot,
-            multiSegmentTermDictionaryManager,
-            decider,
-            earlybirdCluster,
-            ranks,
-            hitAttributeHelper,
-            queryTimeout);
-      } else {
-        return logMissingEntriesAndThrowQueryParserException(field, op);
+        w-wetuwn usewidmuwtisegmentquewy.cweateiddisjunctionquewy(
+            "muwti_tewm_disjunction_" + fiewd, (U ᵕ U❁)
+            i-ids, rawr
+            f-fiewd,
+            s-schemasnapshot, OwO
+            muwtisegmenttewmdictionawymanagew, ʘwʘ
+            d-decidew, XD
+            eawwybiwdcwustew, rawr x3
+            wanks, OwO
+            hitattwibutehewpew, nyaa~~
+            quewytimeout);
+      } ewse {
+        wetuwn wogmissingentwiesandthwowquewypawsewexception(fiewd, ʘwʘ op);
       }
-    } else if (EarlybirdFieldConstant.ID_FIELD.getFieldName().equals(field)) {
-      List<Long> ids = Lists.newArrayList();
-      parseLongArgs(operands.subList(1, operands.size()), ids, op);
+    } ewse if (eawwybiwdfiewdconstant.id_fiewd.getfiewdname().equaws(fiewd)) {
+      w-wist<wong> i-ids = wists.newawwaywist();
+      pawsewongawgs(opewands.subwist(1, nyaa~~ opewands.size()), (U ﹏ U) ids, op);
       if (ids.size() > 0) {
-        return RequiredStatusIDsFilter.getRequiredStatusIDsQuery(ids);
-      } else {
-        return logMissingEntriesAndThrowQueryParserException(field, op);
+        w-wetuwn wequiwedstatusidsfiwtew.getwequiwedstatusidsquewy(ids);
+      } e-ewse {
+        wetuwn wogmissingentwiesandthwowquewypawsewexception(fiewd, (///ˬ///✿) op);
       }
-    } else if (isTweetIdField(field)) {
-      List<Long> ids = Lists.newArrayList();
-      parseLongArgs(operands.subList(1, operands.size()), ids, op);
-      if (ids.size() > 0) {
-        BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-        int numClauses = 0;
-        for (long id : ids) {
-          if (numClauses >= BooleanQuery.getMaxClauseCount()) {
-            BooleanQuery saved = bqBuilder.build();
-            bqBuilder = new BooleanQuery.Builder();
-            bqBuilder.add(saved, BooleanClause.Occur.SHOULD);
-            numClauses = 1;
+    } e-ewse if (istweetidfiewd(fiewd)) {
+      w-wist<wong> ids = wists.newawwaywist();
+      p-pawsewongawgs(opewands.subwist(1, :3 o-opewands.size()), (˘ω˘) ids, op);
+      i-if (ids.size() > 0) {
+        booweanquewy.buiwdew b-bqbuiwdew = n-nyew booweanquewy.buiwdew();
+        int nyumcwauses = 0;
+        fow (wong id : ids) {
+          i-if (numcwauses >= b-booweanquewy.getmaxcwausecount()) {
+            b-booweanquewy s-saved = bqbuiwdew.buiwd();
+            bqbuiwdew = n-nyew booweanquewy.buiwdew();
+            b-bqbuiwdew.add(saved, 😳 b-booweancwause.occuw.shouwd);
+            n-nyumcwauses = 1;
           }
-          bqBuilder.add(buildLongTermAttributeQuery(op, field, id), Occur.SHOULD);
-          ++numClauses;
+          bqbuiwdew.add(buiwdwongtewmattwibutequewy(op, 😳😳😳 fiewd, id), ʘwʘ occuw.shouwd);
+          ++numcwauses;
         }
-        return bqBuilder.build();
-      } else {
-        return logMissingEntriesAndThrowQueryParserException(field, op);
+        w-wetuwn bqbuiwdew.buiwd();
+      } e-ewse {
+        wetuwn wogmissingentwiesandthwowquewypawsewexception(fiewd, (⑅˘꒳˘) op);
       }
-    } else {
-      return createUnsupportedOperatorQuery(op);
+    } ewse {
+      wetuwn cweateunsuppowtedopewatowquewy(op);
     }
   }
 
-  protected final Query visitCSFDisjunctionFilter(SearchOperator op)
-      throws QueryParserException {
-    List<String> operands = op.getOperands();
-    String field = operands.get(0);
+  p-pwotected f-finaw quewy visitcsfdisjunctionfiwtew(seawchopewatow o-op)
+      thwows quewypawsewexception {
+    wist<stwing> opewands = op.getopewands();
+    s-stwing fiewd = o-opewands.get(0);
 
-    ThriftCSFType csfType = schemaSnapshot.getCSFFieldType(field);
-    if (csfType == null) {
-      throw new QueryParserException("Field must be a CSF");
+    t-thwiftcsftype csftype = s-schemasnapshot.getcsffiewdtype(fiewd);
+    i-if (csftype == nyuww) {
+      thwow n-nyew quewypawsewexception("fiewd m-must be a csf");
     }
 
-    if (csfType != ThriftCSFType.LONG) {
-      throw new QueryParserException("csf_disjunction_filter only works with long fields");
+    i-if (csftype != t-thwiftcsftype.wong) {
+      t-thwow nyew q-quewypawsewexception("csf_disjunction_fiwtew onwy wowks with wong fiewds");
     }
 
-    Set<Long> values = new HashSet<>();
-    parseLongArgs(operands.subList(1, operands.size()), values, op);
+    set<wong> vawues = nyew hashset<>();
+    p-pawsewongawgs(opewands.subwist(1, nyaa~~ opewands.size()), (U ﹏ U) v-vawues, ʘwʘ op);
 
-    Query query = CSFDisjunctionFilter.getCSFDisjunctionFilter(field, values);
-    if (field.equals(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())) {
-      return wrapQueryInUserScrubGeoFilter(query);
+    q-quewy quewy = csfdisjunctionfiwtew.getcsfdisjunctionfiwtew(fiewd, (ꈍᴗꈍ) vawues);
+    if (fiewd.equaws(eawwybiwdfiewdconstant.wat_won_csf_fiewd.getfiewdname())) {
+      w-wetuwn w-wwapquewyinusewscwubgeofiwtew(quewy);
     }
-    return query;
+    wetuwn quewy;
   }
 
-  protected Query visitSafetyExclude(SearchOperator op) throws QueryParserException {
-    // We do not allow negating safety_exclude operator. Note the operator is internal so if we
-    // get here, it means there's a bug in the query construction side.
-    if (isParentNegated(op) || nodeIsNegated(op)) {
-      throw new QueryParserException("Negating safety_exclude operator is not allowed: " + op);
+  p-pwotected quewy visitsafetyexcwude(seawchopewatow o-op) thwows quewypawsewexception {
+    // we do nyot awwow nyegating safety_excwude o-opewatow. :3 note the opewatow is intewnaw so if we
+    // get hewe, ( ͡o ω ͡o ) it m-means thewe's a b-bug in the quewy c-constwuction side. rawr x3
+    i-if (ispawentnegated(op) || nyodeisnegated(op)) {
+      thwow nyew quewypawsewexception("negating s-safety_excwude opewatow i-is nyot awwowed: " + op);
     }
 
-    // Convert the safety filter to other operators depending on cluster setting
-    // The safety filter is interpreted differently on archive because the underlying safety labels
-    // in extended encoded field are not available on archive.
-    if (EarlybirdCluster.isArchive(earlybirdCluster)) {
-      return visit(OPERATOR_CACHED_EXCLUDE_ANTISOCIAL_AND_NATIVERETWEETS);
-    } else {
-      List<com.twitter.search.queryparser.query.Query> children = Lists.newArrayList();
-      for (String filterName : op.getOperands()) {
-        children.addAll(
-            OPERATORS_BY_SAFE_EXCLUDE_OPERAND.getOrDefault(filterName, ImmutableList.of()));
+    // convewt t-the safety fiwtew t-to othew opewatows d-depending on cwustew setting
+    // the safety f-fiwtew is intewpweted diffewentwy on awchive because the undewwying safety wabews
+    // in extended encoded f-fiewd awe nyot a-avaiwabwe on awchive. rawr x3
+    if (eawwybiwdcwustew.isawchive(eawwybiwdcwustew)) {
+      wetuwn visit(opewatow_cached_excwude_antisociaw_and_nativewetweets);
+    } ewse {
+      wist<com.twittew.seawch.quewypawsew.quewy.quewy> chiwdwen = wists.newawwaywist();
+      fow (stwing f-fiwtewname : op.getopewands()) {
+        chiwdwen.addaww(
+            opewatows_by_safe_excwude_opewand.getowdefauwt(fiwtewname, mya i-immutabwewist.of()));
       }
-      return visit(new Conjunction(children));
+      w-wetuwn visit(new c-conjunction(chiwdwen));
     }
   }
 
-  protected Query visitNamedEntity(SearchOperator op) throws QueryParserException {
-    List<String> operands = op.getOperands();
-    Preconditions.checkState(operands.size() == 1,
-        "named_entity: wrong number of operands");
+  p-pwotected quewy visitnamedentity(seawchopewatow op) thwows quewypawsewexception {
+    wist<stwing> opewands = op.getopewands();
+    p-pweconditions.checkstate(opewands.size() == 1, nyaa~~
+        "named_entity: w-wwong nyumbew o-of opewands");
 
-    return createDisjunction(
-        operands.get(0).toLowerCase(),
-        op,
-        EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEXT_FIELD,
-        EarlybirdFieldConstant.NAMED_ENTITY_FROM_URL_FIELD);
+    w-wetuwn cweatedisjunction(
+        o-opewands.get(0).towowewcase(), (///ˬ///✿)
+        op, ^^
+        eawwybiwdfiewdconstant.named_entity_fwom_text_fiewd, OwO
+        e-eawwybiwdfiewdconstant.named_entity_fwom_uww_fiewd);
   }
 
-  protected Query visitSpaceId(SearchOperator op) throws QueryParserException {
-    List<String> operands = op.getOperands();
-    Preconditions.checkState(operands.size() == 1,
-        "space_id: wrong number of operands");
+  pwotected quewy visitspaceid(seawchopewatow op) thwows quewypawsewexception {
+    w-wist<stwing> o-opewands = o-op.getopewands();
+    p-pweconditions.checkstate(opewands.size() == 1, :3
+        "space_id: wwong nyumbew o-of opewands");
 
-    return createSimpleTermQuery(
-        op,
-        EarlybirdFieldConstant.SPACE_ID_FIELD.getFieldName(),
-        op.getOperand()
+    w-wetuwn cweatesimpwetewmquewy(
+        op, ^^
+        eawwybiwdfiewdconstant.space_id_fiewd.getfiewdname(), (✿oωo)
+        op.getopewand()
     );
   }
 
-  protected Query visitNamedEntityWithType(SearchOperator op) throws QueryParserException {
-    List<String> operands = op.getOperands();
-    Preconditions.checkState(operands.size() == 2,
-        "named_entity_with_type: wrong number of operands");
+  p-pwotected q-quewy visitnamedentitywithtype(seawchopewatow op) thwows quewypawsewexception {
+    wist<stwing> opewands = op.getopewands();
+    p-pweconditions.checkstate(opewands.size() == 2, 😳
+        "named_entity_with_type: wwong nyumbew o-of opewands");
 
-    String name = operands.get(0);
-    String type = operands.get(1);
-    return createDisjunction(
-        String.format("%s:%s", name, type).toLowerCase(),
+    s-stwing nyame = o-opewands.get(0);
+    stwing type = opewands.get(1);
+    wetuwn cweatedisjunction(
+        stwing.fowmat("%s:%s", (///ˬ///✿) n-nyame, type).towowewcase(), (///ˬ///✿)
         op,
-        EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD,
-        EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD);
+        e-eawwybiwdfiewdconstant.named_entity_with_type_fwom_text_fiewd, (U ﹏ U)
+        eawwybiwdfiewdconstant.named_entity_with_type_fwom_uww_fiewd);
   }
 
-  // Create a disjunction query for a given value in one of the given fields
-  private Query createDisjunction(
-      String value, SearchOperator operator, EarlybirdFieldConstant... fields)
-      throws QueryParserException {
-    BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
-    for (EarlybirdFieldConstant field : fields) {
-      booleanQueryBuilder.add(
-          createSimpleTermQuery(operator, field.getFieldName(), value), Occur.SHOULD);
+  // cweate a d-disjunction quewy fow a given vawue i-in one of the g-given fiewds
+  p-pwivate quewy cweatedisjunction(
+      s-stwing vawue, s-seawchopewatow opewatow, òωó eawwybiwdfiewdconstant... f-fiewds)
+      thwows quewypawsewexception {
+    booweanquewy.buiwdew booweanquewybuiwdew = nyew booweanquewy.buiwdew();
+    f-fow (eawwybiwdfiewdconstant fiewd : fiewds) {
+      booweanquewybuiwdew.add(
+          c-cweatesimpwetewmquewy(opewatow, :3 f-fiewd.getfiewdname(), (⑅˘꒳˘) v-vawue), occuw.shouwd);
     }
-    return booleanQueryBuilder.build();
+    wetuwn booweanquewybuiwdew.buiwd();
   }
 
-  protected Query visitMinFeatureValueOperator(SearchOperator.Type type, SearchOperator op) {
-    final List<String> operands = op.getOperands();
+  pwotected quewy visitminfeatuwevawueopewatow(seawchopewatow.type type, 😳😳😳 seawchopewatow o-op) {
+    finaw w-wist<stwing> o-opewands = op.getopewands();
 
-    String featureName;
+    s-stwing featuwename;
     switch (type) {
-      case MIN_FAVES:
-        featureName = EarlybirdFieldConstant.FAVORITE_COUNT.getFieldName();
-        break;
-      case MIN_QUALITY_SCORE:
-        featureName = EarlybirdFieldConstant.PARUS_SCORE.getFieldName();
-        break;
-      case MIN_REPLIES:
-        featureName = EarlybirdFieldConstant.REPLY_COUNT.getFieldName();
-        break;
-      case MIN_REPUTATION:
-        featureName = EarlybirdFieldConstant.USER_REPUTATION.getFieldName();
-        break;
-      case MIN_RETWEETS:
-        featureName = EarlybirdFieldConstant.RETWEET_COUNT.getFieldName();
-        break;
-      default:
-        throw new IllegalArgumentException("Unknown min feature type " + type);
+      case min_faves:
+        featuwename = eawwybiwdfiewdconstant.favowite_count.getfiewdname();
+        bweak;
+      c-case min_quawity_scowe:
+        featuwename = eawwybiwdfiewdconstant.pawus_scowe.getfiewdname();
+        b-bweak;
+      c-case min_wepwies:
+        f-featuwename = eawwybiwdfiewdconstant.wepwy_count.getfiewdname();
+        b-bweak;
+      case min_weputation:
+        featuwename = eawwybiwdfiewdconstant.usew_weputation.getfiewdname();
+        bweak;
+      case min_wetweets:
+        featuwename = eawwybiwdfiewdconstant.wetweet_count.getfiewdname();
+        bweak;
+      defauwt:
+        t-thwow nyew iwwegawawgumentexception("unknown min featuwe type " + type);
     }
 
-    double operand = Double.parseDouble(operands.get(0));
+    d-doubwe opewand = d-doubwe.pawsedoubwe(opewands.get(0));
 
-    // SEARCH-16751: Because we use QueryCacheConstants.HAS_ENGAGEMENT as a driving query below, we
-    // won't return tweets with 0 engagements when we handle a query with a [min_X 0] filter (e.g.
-    // (* cat [min_faves 0] ). Thus we need to return a MatchAllDocsQuery in that case.
-    if (operand == 0) {
-      return new MatchAllDocsQuery();
+    // seawch-16751: b-because we use q-quewycacheconstants.has_engagement as a dwiving quewy bewow, ʘwʘ we
+    // w-won't wetuwn t-tweets with 0 engagements when we handwe a q-quewy with a [min_x 0] f-fiwtew (e.g. OwO
+    // (* cat [min_faves 0] ). >_< t-thus we nyeed t-to wetuwn a matchawwdocsquewy in that case. /(^•ω•^)
+    i-if (opewand == 0) {
+      wetuwn nyew matchawwdocsquewy();
     }
 
-    // Only perform the rewrite if the operator is a min engagement operator.
-    if (isOperatorTypeEngagementFilter(type)) {
-      return buildQueryForEngagementOperator(op, operands, featureName);
+    // o-onwy p-pewfowm the wewwite if the opewatow i-is a min engagement o-opewatow. (˘ω˘)
+    if (isopewatowtypeengagementfiwtew(type)) {
+      wetuwn buiwdquewyfowengagementopewatow(op, >w< opewands, ^•ﻌ•^ featuwename);
     }
 
-    if (type == SearchOperator.Type.MIN_REPUTATION) {
-      return buildQueryForMinReputationOperator(operands, featureName);
+    if (type == s-seawchopewatow.type.min_weputation) {
+      wetuwn b-buiwdquewyfowminweputationopewatow(opewands, ʘwʘ featuwename);
     }
 
-    return MinFeatureValueFilter.getMinFeatureValueFilter(
-        featureName, Double.parseDouble(operands.get(0)));
+    w-wetuwn minfeatuwevawuefiwtew.getminfeatuwevawuefiwtew(
+        featuwename, OwO d-doubwe.pawsedoubwe(opewands.get(0)));
   }
 
-  protected Query visitFeatureValueInAcceptListOrUnsetFilterOperator(SearchOperator op)
-      throws QueryParserException {
-    final List<String> operands = op.getOperands();
-    final String field = operands.get(0);
+  pwotected quewy visitfeatuwevawueinacceptwistowunsetfiwtewopewatow(seawchopewatow op)
+      t-thwows quewypawsewexception {
+    finaw wist<stwing> o-opewands = o-op.getopewands();
+    f-finaw stwing fiewd = opewands.get(0);
 
-    if (isIdCSFField(field)) {
-      Set<Long> ids = Sets.newHashSet();
-      parseLongArgs(operands.subList(1, operands.size()), ids, op);
-      return FeatureValueInAcceptListOrUnsetFilter.getFeatureValueInAcceptListOrUnsetFilter(
-          field, ids);
-    } else {
-      return logAndThrowQueryParserException(
-          "Invalid CSF field passed to operator " + op.toString());
+    if (isidcsffiewd(fiewd)) {
+      s-set<wong> ids = s-sets.newhashset();
+      p-pawsewongawgs(opewands.subwist(1, nyaa~~ o-opewands.size()), nyaa~~ ids, XD op);
+      wetuwn f-featuwevawueinacceptwistowunsetfiwtew.getfeatuwevawueinacceptwistowunsetfiwtew(
+          f-fiewd, o.O ids);
+    } e-ewse {
+      w-wetuwn wogandthwowquewypawsewexception(
+          "invawid c-csf fiewd passed to opewatow " + op.tostwing());
     }
-  }
-
-  /**
-   * Creates a Lucene query for an operator that's not supported by the search service.
-   *
-   * NOTE: Developer, if you are writing a class to extends this class, make sure the
-   * behaviour of this function makes sense for your search service.
-   *
-   * @param op The operator that's not supported by the search service.
-   * @return The Lucene query for this operator
-   */
-  protected Query createUnsupportedOperatorQuery(SearchOperator op) throws QueryParserException {
-    SearchCounter
-        .export(UNSUPPORTED_OPERATOR_PREFIX + op.getOperatorType().getOperatorName())
-        .increment();
-    return visit(op.toPhrase());
-  }
-
-  private Query buildNoScoreIntTermQuery(
-      SearchOperator op,
-      EarlybirdFieldConstant field,
-      int termValue) {
-    org.apache.lucene.index.Term term = new org.apache.lucene.index.Term(
-        field.getFieldName(), IntTermAttributeImpl.copyIntoNewBytesRef(termValue));
-    return wrapQuery(
-        new TermQueryWithSafeToString(term, Integer.toString(termValue)), op, field.getFieldName());
-  }
-
-  private Query buildQueryForMinReputationOperator(List<String> operands, String featureName) {
-    int operand = (int) Double.parseDouble(operands.get(0));
-    // Driving by MinFeatureValueFilter's DocIdSetIterator is very slow, because we have to
-    // perform an expensive check for all doc IDs in the segment, so we use a cached result to
-    // drive the query, and use MinFeatureValueFilter as a secondary filter.
-    String queryCacheFilterName;
-    if (operand >= 50) {
-      queryCacheFilterName = QueryCacheConstants.MIN_REPUTATION_50;
-    } else if (operand >= 36) {
-      queryCacheFilterName = QueryCacheConstants.MIN_REPUTATION_36;
-    } else if (operand >= 30) {
-      queryCacheFilterName = QueryCacheConstants.MIN_REPUTATION_30;
-    } else {
-      return MinFeatureValueFilter.getMinFeatureValueFilter(featureName, operand);
-    }
-
-    try {
-      Query drivingQuery = CachedFilterQuery.getCachedFilterQuery(
-          queryCacheFilterName, queryCacheManager);
-      return new FilteredQuery(
-          drivingQuery, MinFeatureValueFilter.getDocIdFilterFactory(featureName, operand));
-    } catch (Exception e) {
-      // If the filter is not found, that's OK, it might be our first time running the query cache,
-      // or there may be no tweets with that high reputation.
-      return MinFeatureValueFilter.getMinFeatureValueFilter(featureName, operand);
-    }
-  }
-
-  private Query buildQueryForEngagementOperator(
-      SearchOperator op, List<String> operands, String featureName) {
-    // Engagements and engagement counts are not indexed on Protected Earlybirds, so there is no
-    // need to traverse the entire segment with the MinFeatureValueFilter. SEARCH-28120
-    if (earlybirdCluster == EarlybirdCluster.PROTECTED) {
-      return new MatchNoDocsQuery();
-    }
-
-    EarlybirdFieldConstant field =
-        EarlybirdFieldConstants.CSF_NAME_TO_MIN_ENGAGEMENT_FIELD_MAP.get(featureName);
-    if (field == null) {
-      throw new IllegalArgumentException(String.format("Expected the feature to be "
-          + "FAVORITE_COUNT, REPLY_COUNT, or RETWEET_COUNT. Got %s.", featureName));
-    }
-    int operand = (int) Double.parseDouble(operands.get(0));
-    ByteNormalizer normalizer = MinFeatureValueFilter.getMinFeatureValueNormalizer(featureName);
-    int minValue = normalizer.unsignedByteToInt(normalizer.normalize(operand));
-
-    // We default to the old behavior of filtering posts instead of consulting the min engagement
-    // field if the operand is less than some threshold value because it seems, empirically, that
-    // the old method results in lower query latencies for lower values of the filter operand.
-    // This threshold can be controlled by the "use_min_engagement_field_threshold" decider. The
-    // current default value is 90. SEARCH-16102
-    int useMinEngagementFieldThreshold = decider.getAvailability(
-        "use_min_engagement_field_threshold").getOrElse(() -> 0);
-    if (operand >= useMinEngagementFieldThreshold) {
-      NUM_QUERIES_ABOVE_MIN_ENGAGEMENT_THRESHOLD.increment();
-    } else {
-      NUM_QUERIES_BELOW_MIN_ENGAGEMENT_THRESHOLD.increment();
-    }
-    if (schemaHasField(field) && operand >= useMinEngagementFieldThreshold) {
-      return buildNoScoreIntTermQuery(op, field, minValue);
-    }
-    // Driving by MinFeatureValueFilter's DocIdSetIterator is very slow, because we have to
-    // perform an expensive check for all doc IDs in the segment, so we use a cached result to
-    // drive the query, and use MinFeatureValueFilter as a secondary filter.
-    try {
-      Query drivingQuery = minEngagmentsDrivingQuery(op, operand);
-      return new FilteredQuery(
-          drivingQuery, MinFeatureValueFilter.getDocIdFilterFactory(featureName, operand));
-    } catch (Exception e) {
-      // If the filter is not found, that's OK, it might be our first time running the query cache,
-      // or there may be no Tweets with that many engagements (we would only expect this in tests).
-      return MinFeatureValueFilter.getMinFeatureValueFilter(featureName, operand);
-    }
-  }
-
-  private Query minEngagmentsDrivingQuery(SearchOperator operator, int minValue)
-          throws CachedFilterQuery.NoSuchFilterException, QueryParserException {
-    // If the min engagements value is large, then many of the hits that have engagement will still
-    // not match the query, leading to extremely slow queries. Therefore, if there is more than 100
-    // engagements, we drive by a more restricted filter. See SEARCH-33740
-    String filter;
-    if (minValue < 100) {
-      filter = QueryCacheConstants.HAS_ENGAGEMENT;
-    } else if (operator.getOperatorType() == SearchOperator.Type.MIN_FAVES) {
-      filter = QueryCacheConstants.MIN_FAVES_100;
-    } else if (operator.getOperatorType() == SearchOperator.Type.MIN_REPLIES) {
-      filter = QueryCacheConstants.MIN_REPLIES_100;
-    } else if (operator.getOperatorType() == SearchOperator.Type.MIN_RETWEETS) {
-      filter = QueryCacheConstants.MIN_RETWEETS_100;
-    } else {
-      throw new QueryParserException("Missing engagement filter.");
-    }
-    return CachedFilterQuery.getCachedFilterQuery(filter, queryCacheManager);
-  }
-
-  private boolean isOperatorTypeEngagementFilter(SearchOperator.Type type) {
-    return type == SearchOperator.Type.MIN_FAVES
-        || type == SearchOperator.Type.MIN_RETWEETS
-        || type == SearchOperator.Type.MIN_REPLIES;
-  }
-
-  private boolean schemaHasField(EarlybirdFieldConstant field) {
-    return schemaSnapshot.hasField(field.getFieldId());
-  }
-
-  // Helper functions
-  private Query createSimpleTermQuery(
-      com.twitter.search.queryparser.query.Query node, String field, String text)
-      throws QueryParserException {
-    Query baseQuery = new TermQuery(createTerm(field, text));
-    if (isGeoFieldThatShouldBeScrubbed(field, text)) {
-      baseQuery = wrapQueryInUserScrubGeoFilter(baseQuery);
-    }
-    return wrapQuery(baseQuery, node, field);
-  }
-
-  private boolean isGeoFieldThatShouldBeScrubbed(String field, String text) {
-    if (field.equals(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName())) {
-      // the internal field is used for the place id filter and the geo location type filters, some
-      // of which should be scrubbed
-      return GEO_FILTERS_TO_BE_SCRUBBED.contains(text);
-    }
-    return GEO_FIELDS_TO_BE_SCRUBBED.contains(field);
-  }
-
-  // Like above, but sets boost to 0 to disable scoring component.  This should be used
-  // for filters that do not impact scoring (such as filter:images).
-  private Query createNoScoreTermQuery(com.twitter.search.queryparser.query.Query node,
-                                             String field, String text)
-      throws QueryParserException {
-    Query query = createSimpleTermQuery(node, field, text);
-    return new BoostQuery(query, 0.0f);  // No score contribution.
-  }
-
-  private Query createNormalizedTermQuery(com.twitter.search.queryparser.query.Query node,
-                                                String field, String text)
-      throws QueryParserException {
-    return createSimpleTermQuery(
-        node,
-        field,
-        NormalizerHelper.normalizeWithUnknownLocale(text, EarlybirdConfig.getPenguinVersion()));
   }
 
   /**
-   * Get the boost from the annotation list of a query node.
-   * Right now this is very simple, we simple extract the value of some annotations and ignore all
-   * others, also, if there are multiple annotations that have values, we only use the first one we
-   * see in the list (although the rewritten query EB receives should have this).
-   * NOTE: we use simple weight selection logic here based on the assumption that the annotator
-   * and rewriter will not produce ambiguous weight information. There should always be only one
-   * weight-bearing annotation for a specific node.
+   * c-cweates a wucene q-quewy fow an opewatow that's nyot suppowted by t-the seawch sewvice. òωó
    *
-   * @param annotations The list of annotations of the query node.
-   * @return The boost for this query node, 0 if there is no boost, in which case you shouldn't
-   *         apply it at all.
+   * n-nyote: devewopew, (⑅˘꒳˘) i-if you awe wwiting a cwass to e-extends this cwass, o.O m-make suwe the
+   * behaviouw o-of this function m-makes sense fow youw seawch sewvice. (ˆ ﻌ ˆ)♡
+   *
+   * @pawam o-op the opewatow that's nyot s-suppowted by t-the seawch sewvice. (⑅˘꒳˘)
+   * @wetuwn t-the wucene quewy f-fow this opewatow
    */
-  private static double getBoostFromAnnotations(List<Annotation> annotations) {
-    if (annotations != null) {
-      for (Annotation anno : annotations) {
-        switch (anno.getType()) {
-          case VARIANT:
-          case SPELLING:
-          case WEIGHT:
-          case OPTIONAL:
-            return ((FloatAnnotation) anno).getValue();
-          default:
+  pwotected quewy cweateunsuppowtedopewatowquewy(seawchopewatow op) thwows q-quewypawsewexception {
+    seawchcountew
+        .expowt(unsuppowted_opewatow_pwefix + o-op.getopewatowtype().getopewatowname())
+        .incwement();
+    wetuwn visit(op.tophwase());
+  }
+
+  p-pwivate quewy b-buiwdnoscoweinttewmquewy(
+      seawchopewatow o-op, (U ᵕ U❁)
+      eawwybiwdfiewdconstant f-fiewd, >w<
+      int tewmvawue) {
+    owg.apache.wucene.index.tewm t-tewm = nyew owg.apache.wucene.index.tewm(
+        f-fiewd.getfiewdname(), OwO inttewmattwibuteimpw.copyintonewbyteswef(tewmvawue));
+    wetuwn wwapquewy(
+        nyew tewmquewywithsafetostwing(tewm, >w< integew.tostwing(tewmvawue)), ^^;; op, fiewd.getfiewdname());
+  }
+
+  pwivate quewy buiwdquewyfowminweputationopewatow(wist<stwing> opewands, >w< stwing featuwename) {
+    int opewand = (int) d-doubwe.pawsedoubwe(opewands.get(0));
+    // d-dwiving by minfeatuwevawuefiwtew's d-docidsetitewatow i-is vewy swow, σωσ because we have to
+    // pewfowm a-an expensive c-check fow aww d-doc ids in the s-segment, so we use a cached wesuwt to
+    // dwive the quewy, (˘ω˘) and use minfeatuwevawuefiwtew a-as a-a secondawy fiwtew. òωó
+    s-stwing quewycachefiwtewname;
+    i-if (opewand >= 50) {
+      quewycachefiwtewname = q-quewycacheconstants.min_weputation_50;
+    } ewse if (opewand >= 36) {
+      quewycachefiwtewname = quewycacheconstants.min_weputation_36;
+    } ewse if (opewand >= 30) {
+      q-quewycachefiwtewname = quewycacheconstants.min_weputation_30;
+    } e-ewse {
+      wetuwn m-minfeatuwevawuefiwtew.getminfeatuwevawuefiwtew(featuwename, (ꈍᴗꈍ) opewand);
+    }
+
+    twy {
+      quewy dwivingquewy = c-cachedfiwtewquewy.getcachedfiwtewquewy(
+          quewycachefiwtewname, (ꈍᴗꈍ) q-quewycachemanagew);
+      wetuwn nyew fiwtewedquewy(
+          d-dwivingquewy, òωó minfeatuwevawuefiwtew.getdocidfiwtewfactowy(featuwename, opewand));
+    } c-catch (exception e) {
+      // i-if the fiwtew is nyot found, (U ᵕ U❁) t-that's ok, it might b-be ouw fiwst time wunning the quewy cache, /(^•ω•^)
+      // ow thewe m-may be nyo tweets with that high weputation. :3
+      wetuwn minfeatuwevawuefiwtew.getminfeatuwevawuefiwtew(featuwename, rawr opewand);
+    }
+  }
+
+  pwivate quewy buiwdquewyfowengagementopewatow(
+      seawchopewatow o-op, (ˆ ﻌ ˆ)♡ wist<stwing> o-opewands, ^^;; stwing featuwename) {
+    // e-engagements and engagement c-counts awe n-nyot indexed on p-pwotected eawwybiwds, (⑅˘꒳˘) so thewe is nyo
+    // nyeed t-to twavewse the entiwe segment with the minfeatuwevawuefiwtew. rawr x3 seawch-28120
+    if (eawwybiwdcwustew == e-eawwybiwdcwustew.pwotected) {
+      w-wetuwn nyew matchnodocsquewy();
+    }
+
+    e-eawwybiwdfiewdconstant f-fiewd =
+        eawwybiwdfiewdconstants.csf_name_to_min_engagement_fiewd_map.get(featuwename);
+    i-if (fiewd == nyuww) {
+      t-thwow nyew iwwegawawgumentexception(stwing.fowmat("expected t-the featuwe to be "
+          + "favowite_count, wepwy_count, ʘwʘ o-ow wetweet_count. (ꈍᴗꈍ) g-got %s.", f-featuwename));
+    }
+    i-int opewand = (int) d-doubwe.pawsedoubwe(opewands.get(0));
+    bytenowmawizew nyowmawizew = m-minfeatuwevawuefiwtew.getminfeatuwevawuenowmawizew(featuwename);
+    int m-minvawue = nyowmawizew.unsignedbytetoint(nowmawizew.nowmawize(opewand));
+
+    // w-we defauwt to the owd behaviow of fiwtewing posts instead of c-consuwting the m-min engagement
+    // f-fiewd if the opewand is wess t-than some thweshowd vawue because i-it seems, /(^•ω•^) empiwicawwy, (✿oωo) t-that
+    // t-the owd method wesuwts in wowew quewy watencies f-fow wowew vawues of the fiwtew opewand. ^^;;
+    // t-this thweshowd can be contwowwed by the "use_min_engagement_fiewd_thweshowd" decidew. (˘ω˘) the
+    // c-cuwwent defauwt vawue is 90. 😳😳😳 s-seawch-16102
+    int useminengagementfiewdthweshowd = d-decidew.getavaiwabiwity(
+        "use_min_engagement_fiewd_thweshowd").getowewse(() -> 0);
+    i-if (opewand >= u-useminengagementfiewdthweshowd) {
+      n-nyum_quewies_above_min_engagement_thweshowd.incwement();
+    } ewse {
+      nyum_quewies_bewow_min_engagement_thweshowd.incwement();
+    }
+    if (schemahasfiewd(fiewd) && o-opewand >= useminengagementfiewdthweshowd) {
+      wetuwn buiwdnoscoweinttewmquewy(op, ^^ fiewd, minvawue);
+    }
+    // dwiving by minfeatuwevawuefiwtew's d-docidsetitewatow i-is vewy swow, /(^•ω•^) b-because we h-have to
+    // pewfowm a-an expensive check fow aww d-doc ids in the s-segment, >_< so we use a cached wesuwt to
+    // dwive the quewy, (ꈍᴗꈍ) and u-use minfeatuwevawuefiwtew as a secondawy fiwtew. (ꈍᴗꈍ)
+    t-twy {
+      quewy dwivingquewy = m-minengagmentsdwivingquewy(op, mya opewand);
+      wetuwn nyew f-fiwtewedquewy(
+          dwivingquewy, :3 m-minfeatuwevawuefiwtew.getdocidfiwtewfactowy(featuwename, 😳😳😳 opewand));
+    } c-catch (exception e-e) {
+      // i-if the fiwtew is nyot found, that's ok, /(^•ω•^) it might be ouw fiwst time wunning the quewy cache, -.-
+      // ow thewe m-may be nyo tweets with that many engagements (we w-wouwd onwy expect this in tests). UwU
+      w-wetuwn m-minfeatuwevawuefiwtew.getminfeatuwevawuefiwtew(featuwename, (U ﹏ U) opewand);
+    }
+  }
+
+  p-pwivate quewy m-minengagmentsdwivingquewy(seawchopewatow opewatow, ^^ int minvawue)
+          thwows c-cachedfiwtewquewy.nosuchfiwtewexception, 😳 quewypawsewexception {
+    // i-if the min engagements vawue is wawge, (˘ω˘) t-then many of the hits that have e-engagement wiww stiww
+    // nyot m-match the quewy, /(^•ω•^) w-weading to extwemewy swow quewies. thewefowe, (˘ω˘) if thewe is mowe than 100
+    // e-engagements, (✿oωo) w-we dwive by a mowe w-westwicted fiwtew. (U ﹏ U) see seawch-33740
+    stwing f-fiwtew;
+    if (minvawue < 100) {
+      fiwtew = q-quewycacheconstants.has_engagement;
+    } ewse i-if (opewatow.getopewatowtype() == seawchopewatow.type.min_faves) {
+      fiwtew = q-quewycacheconstants.min_faves_100;
+    } ewse i-if (opewatow.getopewatowtype() == s-seawchopewatow.type.min_wepwies) {
+      fiwtew = quewycacheconstants.min_wepwies_100;
+    } ewse if (opewatow.getopewatowtype() == seawchopewatow.type.min_wetweets) {
+      f-fiwtew = quewycacheconstants.min_wetweets_100;
+    } ewse {
+      thwow nyew q-quewypawsewexception("missing e-engagement f-fiwtew.");
+    }
+    wetuwn c-cachedfiwtewquewy.getcachedfiwtewquewy(fiwtew, (U ﹏ U) quewycachemanagew);
+  }
+
+  pwivate boowean isopewatowtypeengagementfiwtew(seawchopewatow.type t-type) {
+    wetuwn type == seawchopewatow.type.min_faves
+        || t-type == seawchopewatow.type.min_wetweets
+        || t-type == s-seawchopewatow.type.min_wepwies;
+  }
+
+  pwivate b-boowean schemahasfiewd(eawwybiwdfiewdconstant f-fiewd) {
+    wetuwn s-schemasnapshot.hasfiewd(fiewd.getfiewdid());
+  }
+
+  // h-hewpew functions
+  pwivate q-quewy cweatesimpwetewmquewy(
+      com.twittew.seawch.quewypawsew.quewy.quewy n-nyode, (ˆ ﻌ ˆ)♡ stwing f-fiewd, /(^•ω•^) stwing text)
+      thwows quewypawsewexception {
+    quewy basequewy = n-nyew tewmquewy(cweatetewm(fiewd, XD text));
+    if (isgeofiewdthatshouwdbescwubbed(fiewd, (ˆ ﻌ ˆ)♡ text)) {
+      basequewy = w-wwapquewyinusewscwubgeofiwtew(basequewy);
+    }
+    w-wetuwn wwapquewy(basequewy, XD nyode, fiewd);
+  }
+
+  pwivate boowean isgeofiewdthatshouwdbescwubbed(stwing fiewd, mya stwing text) {
+    if (fiewd.equaws(eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname())) {
+      // t-the intewnaw f-fiewd is u-used fow the pwace i-id fiwtew and t-the geo wocation t-type fiwtews, OwO some
+      // of w-which shouwd be scwubbed
+      w-wetuwn geo_fiwtews_to_be_scwubbed.contains(text);
+    }
+    wetuwn g-geo_fiewds_to_be_scwubbed.contains(fiewd);
+  }
+
+  // wike above, XD b-but sets boost t-to 0 to disabwe s-scowing component. ( ͡o ω ͡o )  t-this shouwd b-be used
+  // fow fiwtews that do nyot impact s-scowing (such as fiwtew:images).
+  pwivate quewy cweatenoscowetewmquewy(com.twittew.seawch.quewypawsew.quewy.quewy n-nyode, (ꈍᴗꈍ)
+                                             stwing fiewd, mya stwing text)
+      t-thwows q-quewypawsewexception {
+    quewy q-quewy = cweatesimpwetewmquewy(node, 😳 fiewd, (ˆ ﻌ ˆ)♡ text);
+    w-wetuwn nyew b-boostquewy(quewy, ^•ﻌ•^ 0.0f);  // no scowe contwibution. 😳😳😳
+  }
+
+  p-pwivate quewy cweatenowmawizedtewmquewy(com.twittew.seawch.quewypawsew.quewy.quewy n-nyode, (///ˬ///✿)
+                                                s-stwing fiewd, 🥺 stwing text)
+      t-thwows quewypawsewexception {
+    wetuwn cweatesimpwetewmquewy(
+        n-node, ^^
+        fiewd, (ˆ ﻌ ˆ)♡
+        nyowmawizewhewpew.nowmawizewithunknownwocawe(text, mya e-eawwybiwdconfig.getpenguinvewsion()));
+  }
+
+  /**
+   * get the boost fwom the annotation w-wist of a quewy nyode. OwO
+   * w-wight nyow this is vewy simpwe, w-we simpwe extwact the vawue o-of some annotations and ignowe a-aww
+   * othews, /(^•ω•^) awso, if thewe awe muwtipwe annotations t-that have v-vawues, we onwy u-use the fiwst o-one we
+   * see i-in the wist (awthough t-the wewwitten quewy eb weceives s-shouwd have t-this). /(^•ω•^)
+   * n-nyote: we use simpwe weight sewection w-wogic hewe based on the assumption that the a-annotatow
+   * a-and wewwitew wiww nyot pwoduce ambiguous weight i-infowmation. rawr thewe s-shouwd awways be onwy one
+   * w-weight-beawing a-annotation fow a-a specific nyode. XD
+   *
+   * @pawam a-annotations the wist of annotations of the quewy nyode.
+   * @wetuwn the boost fow this quewy nyode, ʘwʘ 0 if thewe i-is nyo boost, :3 in which case y-you shouwdn't
+   *         appwy i-it at aww. σωσ
+   */
+  pwivate static d-doubwe getboostfwomannotations(wist<annotation> a-annotations) {
+    if (annotations != n-nyuww) {
+      f-fow (annotation anno : annotations) {
+        switch (anno.gettype()) {
+          c-case vawiant:
+          case spewwing:
+          case w-weight:
+          case optionaw:
+            w-wetuwn ((fwoatannotation) a-anno).getvawue();
+          d-defauwt:
         }
       }
     }
-    return -1;
+    wetuwn -1;
   }
 
-  private static double getPhraseProximityFromAnnotations(List<Annotation> annotations) {
-    if (annotations != null) {
-      for (Annotation anno : annotations) {
-        if (anno.getType() == Annotation.Type.PROXIMITY) {
-          return ((FloatAnnotation) anno).getValue();
+  p-pwivate static doubwe getphwasepwoximityfwomannotations(wist<annotation> annotations) {
+    i-if (annotations != nyuww) {
+      fow (annotation anno : annotations) {
+        if (anno.gettype() == annotation.type.pwoximity) {
+          wetuwn ((fwoatannotation) anno).getvawue();
         }
       }
     }
-    return -1;
+    w-wetuwn -1;
   }
 
-  private static boolean isOptional(com.twitter.search.queryparser.query.Query node) {
-    return node.hasAnnotationType(Annotation.Type.OPTIONAL);
+  p-pwivate static boowean i-isoptionaw(com.twittew.seawch.quewypawsew.quewy.quewy n-nyode) {
+    wetuwn nyode.hasannotationtype(annotation.type.optionaw);
   }
 
-  private static boolean isProximityGroup(com.twitter.search.queryparser.query.Query node) {
-    if (node.isTypeOf(com.twitter.search.queryparser.query.Query.QueryType.OPERATOR)) {
-      SearchOperator op = (SearchOperator) node;
-      if (op.getOperatorType() == SearchOperator.Type.PROXIMITY_GROUP) {
-        return true;
+  pwivate static boowean ispwoximitygwoup(com.twittew.seawch.quewypawsew.quewy.quewy n-nyode) {
+    i-if (node.istypeof(com.twittew.seawch.quewypawsew.quewy.quewy.quewytype.opewatow)) {
+      seawchopewatow o-op = (seawchopewatow) n-nyode;
+      i-if (op.getopewatowtype() == s-seawchopewatow.type.pwoximity_gwoup) {
+        wetuwn twue;
       }
     }
-    return false;
+    wetuwn f-fawse;
   }
 
-  private final Query simplifyBooleanQuery(BooleanQuery q) {
-    if (q.clauses() == null || q.clauses().size() != 1) {
-      return q;
+  pwivate finaw quewy simpwifybooweanquewy(booweanquewy q) {
+    i-if (q.cwauses() == nyuww || q.cwauses().size() != 1) {
+      wetuwn q;
     }
 
-    return q.clauses().get(0).getQuery();
+    wetuwn q.cwauses().get(0).getquewy();
   }
 
-  private Query visit(final Phrase phrase, boolean sloppy) throws QueryParserException {
-    Optional<Annotation> fieldOpt = phrase.getAnnotationOf(Annotation.Type.FIELD);
-    if (fieldOpt.isPresent()) {
-      String field = fieldOpt.get().valueToString();
-      Schema.FieldInfo fieldInfo = schemaSnapshot.getFieldInfo(field);
-      if (fieldInfo != null && !fieldInfo.getFieldType().hasPositions()) {
-        throw new QueryParserException(String.format("Field %s does not support phrase queries "
-            + "because it does not have position information.", field));
+  pwivate quewy visit(finaw phwase p-phwase, /(^•ω•^) boowean swoppy) thwows quewypawsewexception {
+    optionaw<annotation> f-fiewdopt = phwase.getannotationof(annotation.type.fiewd);
+    if (fiewdopt.ispwesent()) {
+      s-stwing fiewd = f-fiewdopt.get().vawuetostwing();
+      schema.fiewdinfo fiewdinfo = s-schemasnapshot.getfiewdinfo(fiewd);
+      i-if (fiewdinfo != n-nyuww && !fiewdinfo.getfiewdtype().haspositions()) {
+        thwow nyew quewypawsewexception(stwing.fowmat("fiewd %s d-does nyot suppowt phwase quewies "
+            + "because i-it does nyot have position infowmation.", (ˆ ﻌ ˆ)♡ fiewd));
       }
     }
-    BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
-    Map<String, Float> actualFieldWeights = getFieldWeightMapForNode(phrase);
-    for (Map.Entry<String, Float> entry : actualFieldWeights.entrySet()) {
-      PhraseQuery.Builder phraseQueryBuilder = new PhraseQuery.Builder();
-      int curPos = 0;
-      for (String term : phrase.getTerms()) {
-        if (!term.equals(PHRASE_WILDCARD)) {
-          phraseQueryBuilder.add(createTerm(entry.getKey(), term), curPos);
-          curPos++;
-        } else if (curPos != 0) { //"*" at the beggining of a phrase has no effect/meaning
-          curPos++;
+    b-booweanquewy.buiwdew quewybuiwdew = n-nyew booweanquewy.buiwdew();
+    map<stwing, (U ﹏ U) f-fwoat> actuawfiewdweights = getfiewdweightmapfownode(phwase);
+    f-fow (map.entwy<stwing, >_< fwoat> e-entwy : actuawfiewdweights.entwyset()) {
+      phwasequewy.buiwdew phwasequewybuiwdew = n-nyew phwasequewy.buiwdew();
+      int cuwpos = 0;
+      f-fow (stwing tewm : phwase.gettewms()) {
+        if (!tewm.equaws(phwase_wiwdcawd)) {
+          p-phwasequewybuiwdew.add(cweatetewm(entwy.getkey(), >_< tewm), o.O cuwpos);
+          c-cuwpos++;
+        } e-ewse if (cuwpos != 0) { //"*" at the beggining o-of a phwase has nyo effect/meaning
+          c-cuwpos++;
         }
       }
 
-      // No actual terms added to query
-      if (curPos == 0) {
-        break;
+      // nyo actuaw tewms added to quewy
+      i-if (cuwpos == 0) {
+        b-bweak;
       }
-      int annotatedSloppiness = (int) getPhraseProximityFromAnnotations(phrase.getAnnotations());
-      if (annotatedSloppiness > 0) {
-        phraseQueryBuilder.setSlop(annotatedSloppiness);
-      } else if (sloppy) {
-        phraseQueryBuilder.setSlop(proximityPhraseSlop);
+      int annotatedswoppiness = (int) g-getphwasepwoximityfwomannotations(phwase.getannotations());
+      i-if (annotatedswoppiness > 0) {
+        phwasequewybuiwdew.setswop(annotatedswoppiness);
+      } e-ewse if (swoppy) {
+        phwasequewybuiwdew.setswop(pwoximityphwaseswop);
       }
-      float fieldWeight = entry.getValue();
-      float boost = (float) getBoostFromAnnotations(phrase.getAnnotations());
-      Query query = phraseQueryBuilder.build();
+      fwoat fiewdweight = entwy.getvawue();
+      fwoat boost = (fwoat) g-getboostfwomannotations(phwase.getannotations());
+      quewy quewy = phwasequewybuiwdew.buiwd();
       if (boost >= 0) {
-        query = BoostUtils.maybeWrapInBoostQuery(query, boost * fieldWeight);
-      } else if (fieldWeight != DEFAULT_FIELD_WEIGHT) {
-        query = BoostUtils.maybeWrapInBoostQuery(query, fieldWeight);
-      } else {
-        query = BoostUtils.maybeWrapInBoostQuery(query, proximityPhraseWeight);
+        quewy = b-boostutiws.maybewwapinboostquewy(quewy, (ꈍᴗꈍ) b-boost * f-fiewdweight);
+      } ewse if (fiewdweight != d-defauwt_fiewd_weight) {
+        q-quewy = boostutiws.maybewwapinboostquewy(quewy, /(^•ω•^) fiewdweight);
+      } e-ewse {
+        quewy = boostutiws.maybewwapinboostquewy(quewy, OwO p-pwoximityphwaseweight);
       }
-      Occur occur = actualFieldWeights.size() > 1 ? Occur.SHOULD : Occur.MUST;
-      queryBuilder.add(wrapQuery(query, phrase, entry.getKey()), occur);
+      o-occuw occuw = actuawfiewdweights.size() > 1 ? occuw.shouwd : occuw.must;
+      q-quewybuiwdew.add(wwapquewy(quewy, σωσ p-phwase, XD entwy.getkey()), rawr x3 occuw);
     }
-    Query q = simplifyBooleanQuery(queryBuilder.build());
-    return negateQueryIfNodeNegated(phrase, q);
+    q-quewy q = simpwifybooweanquewy(quewybuiwdew.buiwd());
+    w-wetuwn nyegatequewyifnodenegated(phwase, q-q);
   }
 
-  private Query wrapQuery(
-      org.apache.lucene.search.Query query,
-      com.twitter.search.queryparser.query.Query node,
-      String fieldName) {
-    return EarlybirdQueryHelper.maybeWrapWithTimeout(
-        EarlybirdQueryHelper.maybeWrapWithHitAttributionCollector(
-            query, node, schemaSnapshot.getFieldInfo(fieldName), hitAttributeHelper),
-        node, queryTimeout);
+  p-pwivate quewy w-wwapquewy(
+      owg.apache.wucene.seawch.quewy q-quewy, (ˆ ﻌ ˆ)♡
+      com.twittew.seawch.quewypawsew.quewy.quewy n-nyode, XD
+      stwing fiewdname) {
+    wetuwn eawwybiwdquewyhewpew.maybewwapwithtimeout(
+        eawwybiwdquewyhewpew.maybewwapwithhitattwibutioncowwectow(
+            q-quewy, (˘ω˘) nyode, mya schemasnapshot.getfiewdinfo(fiewdname), ^^ h-hitattwibutehewpew),
+        n-nyode, (U ᵕ U❁) quewytimeout);
   }
 
-  private final boolean nodeIsNegated(com.twitter.search.queryparser.query.Query node) {
-    if (isParentNegated(node)) {
-      return !node.mustNotOccur();
-    } else {
-      return node.mustNotOccur();
+  p-pwivate finaw boowean n-nyodeisnegated(com.twittew.seawch.quewypawsew.quewy.quewy n-nyode) {
+    if (ispawentnegated(node)) {
+      w-wetuwn !node.mustnotoccuw();
+    } ewse {
+      wetuwn nyode.mustnotoccuw();
     }
   }
 
-  private final Query negateQuery(Query q) {
-    return new BooleanQuery.Builder()
-        .add(q, Occur.MUST_NOT)
-        .add(new MatchAllDocsQuery(), Occur.MUST)
-        .build();
+  p-pwivate finaw quewy nyegatequewy(quewy q) {
+    wetuwn n-nyew booweanquewy.buiwdew()
+        .add(q, occuw.must_not)
+        .add(new matchawwdocsquewy(), rawr x3 o-occuw.must)
+        .buiwd();
   }
 
-  // Simple helper to examine node, and negate the lucene query if necessary.
-  private final Query negateQueryIfNodeNegated(com.twitter.search.queryparser.query.Query node,
-                                                 Query query) {
-    if (query == null) {
-      return null;
+  // simpwe hewpew to examine nyode, and nyegate the wucene q-quewy if nyecessawy. (ˆ ﻌ ˆ)♡
+  p-pwivate f-finaw quewy nyegatequewyifnodenegated(com.twittew.seawch.quewypawsew.quewy.quewy nyode, (U ﹏ U)
+                                                 quewy quewy) {
+    if (quewy == n-nyuww) {
+      w-wetuwn n-nyuww;
     }
-    return nodeIsNegated(node) ? negateQuery(query) : query;
+    w-wetuwn nodeisnegated(node) ? nyegatequewy(quewy) : quewy;
   }
 
-  private boolean isParentNegated(com.twitter.search.queryparser.query.Query query) {
-    return parentNegatedQueries.contains(query);
+  pwivate boowean ispawentnegated(com.twittew.seawch.quewypawsew.quewy.quewy quewy) {
+    wetuwn p-pawentnegatedquewies.contains(quewy);
   }
 
-  private org.apache.lucene.index.Term createTerm(String field, String text)
-      throws QueryParserException {
-    Schema.FieldInfo fieldInfo = schemaSnapshot.getFieldInfo(field);
-    if (fieldInfo == null) {
-      throw new QueryParserException("Unknown field: " + field);
+  pwivate o-owg.apache.wucene.index.tewm c-cweatetewm(stwing fiewd, mya stwing text)
+      t-thwows quewypawsewexception {
+    schema.fiewdinfo fiewdinfo = schemasnapshot.getfiewdinfo(fiewd);
+    i-if (fiewdinfo == nyuww) {
+      t-thwow nyew quewypawsewexception("unknown fiewd: " + fiewd);
     }
 
-    queriedFields.add(field);
+    quewiedfiewds.add(fiewd);
 
-    try {
-      return new org.apache.lucene.index.Term(field, SchemaUtil.toBytesRef(fieldInfo, text));
-    } catch (UnsupportedOperationException e) {
-      throw new QueryParserException(e.getMessage(), e.getCause());
+    t-twy {
+      wetuwn n-nyew owg.apache.wucene.index.tewm(fiewd, OwO schemautiw.tobyteswef(fiewdinfo, (ꈍᴗꈍ) text));
+    } catch (unsuppowtedopewationexception e-e) {
+      thwow nyew quewypawsewexception(e.getmessage(), XD e-e.getcause());
     }
   }
 
   /**
-   * Get field weight map for a node, combing default values and its annotations.
+   * get f-fiewd weight map f-fow a nyode, 🥺 combing defauwt vawues and its annotations. 😳😳😳
    */
-  private Map<String, Float> getFieldWeightMapForNode(
-      com.twitter.search.queryparser.query.Query query) throws QueryParserException {
-    return FieldWeightUtil.combineDefaultWithAnnotation(
-        query,
-        defaultFieldWeightMap,
-        enabledFieldWeightMap,
-        Functions.<String>identity(),
-        mappableFieldMap,
-        Functions.<String>identity());
+  pwivate map<stwing, >w< fwoat> getfiewdweightmapfownode(
+      c-com.twittew.seawch.quewypawsew.quewy.quewy quewy) thwows quewypawsewexception {
+    wetuwn fiewdweightutiw.combinedefauwtwithannotation(
+        quewy, nyaa~~
+        defauwtfiewdweightmap, :3
+        enabwedfiewdweightmap,
+        functions.<stwing>identity(), UwU
+        m-mappabwefiewdmap, (✿oωo)
+        f-functions.<stwing>identity());
   }
 
-  private boolean addQuery(
-      BooleanQuery.Builder bqBuilder,
-      com.twitter.search.queryparser.query.Query child) throws QueryParserException {
-    Occur occur = Occur.MUST;
-    if (child.mustNotOccur()) {
-      // To build a conjunction, we will not rely on the negation in the child visitor.
-      // Instead we will add the term as MUST_NOT occur.
-      // Store this in parentNegatedQueries so the child visitor can do the right thing.
-      occur = Occur.MUST_NOT;
-      parentNegatedQueries.add(child);
-    } else if (isOptional(child) || isProximityGroup(child)) {
-      occur = Occur.SHOULD;
+  pwivate boowean addquewy(
+      b-booweanquewy.buiwdew bqbuiwdew, OwO
+      c-com.twittew.seawch.quewypawsew.quewy.quewy c-chiwd) thwows q-quewypawsewexception {
+    occuw occuw = occuw.must;
+    if (chiwd.mustnotoccuw()) {
+      // to buiwd a conjunction, rawr x3 we wiww not w-wewy on the negation i-in the chiwd v-visitow. nyaa~~
+      // i-instead we w-wiww add the tewm a-as must_not o-occuw. >_<
+      // s-stowe this in pawentnegatedquewies so the chiwd visitow can do the wight thing.
+      occuw = occuw.must_not;
+      p-pawentnegatedquewies.add(chiwd);
+    } ewse if (isoptionaw(chiwd) || i-ispwoximitygwoup(chiwd)) {
+      occuw = o-occuw.shouwd;
     }
 
-    Query q = child.accept(this);
-    if (q != null) {
-      bqBuilder.add(q, occur);
-      return true;
+    quewy q = chiwd.accept(this);
+    if (q != n-nyuww) {
+      bqbuiwdew.add(q, ^^;; o-occuw);
+      w-wetuwn twue;
     }
-    return false;
+    wetuwn fawse;
   }
 
   /**
-   * Constructs a BooleanQuery from a queryparser Query node.
-   * Adds fields as configured in the fieldWeightMap and specified by termQueryDisjunctionType
-   *  - TermQueryDisjunctionType.ONLY_OPTIONALIZED adds optional fields
-   *  (only resolved_links_text for now),
-   *  - TermQueryDisjunctionType.DROP_OPTIONALIZED adds all other valid fields expect
-   *  resolved_links_text (for now),
-   *  - TermQueryDisjunctionType.NORMAL adds all valid fields
-   * @param query an instance of com.twitter.search.queryparser.query.Query or
-   * com.twitter.search.queryparser.query.Term
-   * @return a BooleanQuery consists of fields from query
+   * constwucts a booweanquewy f-fwom a quewypawsew quewy nyode. (ˆ ﻌ ˆ)♡
+   * adds fiewds as configuwed in the fiewdweightmap a-and specified by tewmquewydisjunctiontype
+   *  - t-tewmquewydisjunctiontype.onwy_optionawized a-adds optionaw f-fiewds
+   *  (onwy w-wesowved_winks_text fow nyow), ^^;;
+   *  - tewmquewydisjunctiontype.dwop_optionawized a-adds aww othew vawid fiewds expect
+   *  w-wesowved_winks_text (fow nyow), (⑅˘꒳˘)
+   *  - tewmquewydisjunctiontype.nowmaw adds aww vawid fiewds
+   * @pawam quewy a-an instance of com.twittew.seawch.quewypawsew.quewy.quewy o-ow
+   * c-com.twittew.seawch.quewypawsew.quewy.tewm
+   * @wetuwn a-a booweanquewy consists of fiewds fwom quewy
    */
-  private BooleanQuery createTermQueryDisjunction(
-      com.twitter.search.queryparser.query.Query query) throws QueryParserException {
-    String normTerm = query.isTypeOf(com.twitter.search.queryparser.query.Query.QueryType.TERM)
-        ? ((Term) query).getValue() : query.toString(false);
-    BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
-    Map<String, Float> actualFieldWeightMap = getFieldWeightMapForNode(query);
-    Set<String> fieldsToUse = Sets.newLinkedHashSet(actualFieldWeightMap.keySet());
-    Occur occur = fieldsToUse.size() > 1 ? Occur.SHOULD : Occur.MUST;
-    for (String field : fieldsToUse) {
-      addTermQueryWithField(booleanQueryBuilder, query, normTerm, field, occur,
-          actualFieldWeightMap.get(field));
+  pwivate b-booweanquewy c-cweatetewmquewydisjunction(
+      com.twittew.seawch.quewypawsew.quewy.quewy q-quewy) thwows quewypawsewexception {
+    s-stwing nyowmtewm = quewy.istypeof(com.twittew.seawch.quewypawsew.quewy.quewy.quewytype.tewm)
+        ? ((tewm) q-quewy).getvawue() : quewy.tostwing(fawse);
+    b-booweanquewy.buiwdew booweanquewybuiwdew = nyew booweanquewy.buiwdew();
+    m-map<stwing, rawr x3 fwoat> actuawfiewdweightmap = g-getfiewdweightmapfownode(quewy);
+    set<stwing> fiewdstouse = s-sets.newwinkedhashset(actuawfiewdweightmap.keyset());
+    o-occuw occuw = fiewdstouse.size() > 1 ? occuw.shouwd : occuw.must;
+    fow (stwing fiewd : fiewdstouse) {
+      a-addtewmquewywithfiewd(booweanquewybuiwdew, (///ˬ///✿) q-quewy, 🥺 nyowmtewm, fiewd, >_< occuw,
+          a-actuawfiewdweightmap.get(fiewd));
     }
-    return booleanQueryBuilder.build();
+    w-wetuwn booweanquewybuiwdew.buiwd();
   }
 
-  private void addTermQueryWithField(
-      BooleanQuery.Builder bqBuilder,
-      com.twitter.search.queryparser.query.Query term,
-      String normTerm,
-      String fieldName,
-      Occur occur,
-      float fieldWeight) throws QueryParserException {
-    float boost = (float) getBoostFromAnnotations(term.getAnnotations());
-    Query query = createSimpleTermQuery(term, fieldName, normTerm);
-    if (boost >= 0) {
-      query = BoostUtils.maybeWrapInBoostQuery(query, boost * fieldWeight);
-    } else {
-      query = BoostUtils.maybeWrapInBoostQuery(query, fieldWeight);
+  p-pwivate void addtewmquewywithfiewd(
+      booweanquewy.buiwdew bqbuiwdew, UwU
+      com.twittew.seawch.quewypawsew.quewy.quewy t-tewm, >_<
+      stwing nyowmtewm, -.-
+      stwing fiewdname, mya
+      occuw occuw, >w<
+      f-fwoat fiewdweight) thwows q-quewypawsewexception {
+    f-fwoat boost = (fwoat) g-getboostfwomannotations(tewm.getannotations());
+    quewy q-quewy = cweatesimpwetewmquewy(tewm, (U ﹏ U) f-fiewdname, n-nyowmtewm);
+    i-if (boost >= 0) {
+      quewy = boostutiws.maybewwapinboostquewy(quewy, 😳😳😳 b-boost * f-fiewdweight);
+    } e-ewse {
+      q-quewy = boostutiws.maybewwapinboostquewy(quewy, o.O f-fiewdweight);
     }
-    bqBuilder.add(query, occur);
+    bqbuiwdew.add(quewy, òωó occuw);
   }
 
-  private Query finalizeQuery(BooleanQuery bq, Term term) {
-    Query q = simplifyBooleanQuery(bq);
-    return negateQueryIfNodeNegated(term, q);
+  pwivate q-quewy finawizequewy(booweanquewy bq, 😳😳😳 tewm tewm) {
+    quewy q = simpwifybooweanquewy(bq);
+    wetuwn nyegatequewyifnodenegated(tewm, σωσ q);
   }
 
-  private Rectangle boundingBoxFromSearchOperator(SearchOperator op) throws QueryParserException {
-    Preconditions.checkArgument(op.getOperatorType() == SearchOperator.Type.GEO_BOUNDING_BOX);
-    Preconditions.checkNotNull(op.getOperands());
-    Preconditions.checkState(op.getOperands().size() == 4);
+  p-pwivate wectangwe boundingboxfwomseawchopewatow(seawchopewatow op) thwows quewypawsewexception {
+    pweconditions.checkawgument(op.getopewatowtype() == s-seawchopewatow.type.geo_bounding_box);
+    p-pweconditions.checknotnuww(op.getopewands());
+    p-pweconditions.checkstate(op.getopewands().size() == 4);
 
-    List<String> operands = op.getOperands();
-    try {
-      // Unfortunately, we store coordinates as floats in our index, which causes a lot of precision
-      // loss. On the query side, we have to cast into floats to match.
-      float minLat = (float) Double.parseDouble(operands.get(0));
-      float minLon = (float) Double.parseDouble(operands.get(1));
-      float maxLat = (float) Double.parseDouble(operands.get(2));
-      float maxLon = (float) Double.parseDouble(operands.get(3));
+    wist<stwing> o-opewands = op.getopewands();
+    t-twy {
+      // u-unfowtunatewy, (⑅˘꒳˘) we stowe coowdinates as fwoats in ouw index, (///ˬ///✿) which causes a wot of pwecision
+      // w-woss. on the quewy side, 🥺 w-we have to cast into fwoats to m-match. OwO
+      fwoat m-minwat = (fwoat) doubwe.pawsedoubwe(opewands.get(0));
+      fwoat minwon = (fwoat) d-doubwe.pawsedoubwe(opewands.get(1));
+      f-fwoat maxwat = (fwoat) doubwe.pawsedoubwe(opewands.get(2));
+      f-fwoat maxwon = (fwoat) d-doubwe.pawsedoubwe(opewands.get(3));
 
-      Point lowerLeft = new PointImpl(minLon, minLat, GeohashChunkImpl.getSpatialContext());
-      Point upperRight = new PointImpl(maxLon, maxLat, GeohashChunkImpl.getSpatialContext());
-      return new RectangleImpl(lowerLeft, upperRight, GeohashChunkImpl.getSpatialContext());
-    } catch (NumberFormatException e) {
-      // consider operator invalid if any of the coordinate cannot be parsed.
-      throw new QueryParserException("Malformed bounding box operator." + op.serialize());
-    }
-  }
-
-  private Query visitGeocodeOrGeocodePrivateOperator(SearchOperator op)
-      throws QueryParserException {
-
-    GeoCode geoCode = GeoCode.fromOperator(op);
-    if (geoCode == null) {
-      throw new QueryParserException("Invalid GeoCode operator:" + op.serialize());
-    }
-
-    return wrapQueryInUserScrubGeoFilter(
-        GeoQuadTreeQueryBuilder.buildGeoQuadTreeQuery(geoCode, terminationTracker));
-  }
-
-  private Query wrapQueryInUserScrubGeoFilter(Query baseQuery) {
-    if (DeciderUtil.isAvailableForRandomRecipient(
-        decider, "filter_out_geo_scrubbed_tweets_" + earlybirdCluster.getNameForStats())) {
-      return new FilteredQuery(
-          baseQuery,
-          UserScrubGeoFilter.getDocIdFilterFactory(userScrubGeoMap));
-    } else {
-      return baseQuery;
+      point wowewweft = nyew pointimpw(minwon, >w< minwat, 🥺 geohashchunkimpw.getspatiawcontext());
+      point uppewwight = n-nyew pointimpw(maxwon, m-maxwat, nyaa~~ geohashchunkimpw.getspatiawcontext());
+      w-wetuwn nyew wectangweimpw(wowewweft, ^^ u-uppewwight, >w< g-geohashchunkimpw.getspatiawcontext());
+    } catch (numbewfowmatexception e-e) {
+      // considew opewatow invawid if any of the coowdinate cannot be pawsed. OwO
+      t-thwow nyew q-quewypawsewexception("mawfowmed bounding box opewatow." + op.sewiawize());
     }
   }
 
-  private Query buildLongTermAttributeQuery(SearchOperator op, String fieldName) {
-    return buildLongTermAttributeQuery(op, fieldName, Long.parseLong(op.getOperand()));
+  p-pwivate q-quewy visitgeocodeowgeocodepwivateopewatow(seawchopewatow op)
+      thwows quewypawsewexception {
+
+    geocode g-geocode = geocode.fwomopewatow(op);
+    if (geocode == nyuww) {
+      thwow nyew quewypawsewexception("invawid g-geocode opewatow:" + op.sewiawize());
+    }
+
+    wetuwn wwapquewyinusewscwubgeofiwtew(
+        g-geoquadtweequewybuiwdew.buiwdgeoquadtweequewy(geocode, t-tewminationtwackew));
   }
 
-  private Query buildLongTermAttributeQuery(SearchOperator op, String fieldName, long argValue) {
-    org.apache.lucene.index.Term term = new org.apache.lucene.index.Term(
-        fieldName, LongTermAttributeImpl.copyIntoNewBytesRef(argValue));
-    return wrapQuery(new TermQueryWithSafeToString(term, Long.toString(argValue)), op, fieldName);
+  pwivate quewy wwapquewyinusewscwubgeofiwtew(quewy basequewy) {
+    i-if (decidewutiw.isavaiwabwefowwandomwecipient(
+        decidew, XD "fiwtew_out_geo_scwubbed_tweets_" + e-eawwybiwdcwustew.getnamefowstats())) {
+      wetuwn nyew fiwtewedquewy(
+          basequewy, ^^;;
+          u-usewscwubgeofiwtew.getdocidfiwtewfactowy(usewscwubgeomap));
+    } ewse {
+      w-wetuwn basequewy;
+    }
   }
 
-  private static void parseLongArgs(List<String> operands,
-                                    Collection<Long> arguments,
-                                    SearchOperator op) throws QueryParserException {
-    for (String operand : operands) {
-      try {
-        arguments.add(Long.parseLong(operand));
-      } catch (NumberFormatException e) {
-        throw new QueryParserException("Invalid long operand in " + op.serialize(), e);
+  pwivate quewy buiwdwongtewmattwibutequewy(seawchopewatow op, stwing fiewdname) {
+    w-wetuwn buiwdwongtewmattwibutequewy(op, 🥺 fiewdname, w-wong.pawsewong(op.getopewand()));
+  }
+
+  p-pwivate quewy buiwdwongtewmattwibutequewy(seawchopewatow op, XD stwing f-fiewdname, (U ᵕ U❁) wong awgvawue) {
+    o-owg.apache.wucene.index.tewm t-tewm = nyew owg.apache.wucene.index.tewm(
+        f-fiewdname, :3 wongtewmattwibuteimpw.copyintonewbyteswef(awgvawue));
+    wetuwn w-wwapquewy(new tewmquewywithsafetostwing(tewm, w-wong.tostwing(awgvawue)), ( ͡o ω ͡o ) op, fiewdname);
+  }
+
+  pwivate static void p-pawsewongawgs(wist<stwing> o-opewands,
+                                    c-cowwection<wong> awguments, òωó
+                                    seawchopewatow o-op) thwows quewypawsewexception {
+    f-fow (stwing opewand : o-opewands) {
+      twy {
+        awguments.add(wong.pawsewong(opewand));
+      } catch (numbewfowmatexception e-e) {
+        t-thwow nyew quewypawsewexception("invawid w-wong opewand i-in " + op.sewiawize(), σωσ e);
       }
     }
   }
 
-  private static boolean isUserIdField(String field) {
-    return EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName().equals(field)
-        || EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName().equals(field)
-        || EarlybirdFieldConstant.RETWEET_SOURCE_USER_ID_FIELD.getFieldName().equals(field)
-        || EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName().equals(field)
-        || EarlybirdFieldConstant.RETWEETED_BY_USER_ID.getFieldName().equals(field)
-        || EarlybirdFieldConstant.REPLIED_TO_BY_USER_ID.getFieldName().equals(field)
-        || EarlybirdFieldConstant.QUOTED_USER_ID_FIELD.getFieldName().equals(field)
-        || EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName().equals(field);
+  p-pwivate static boowean isusewidfiewd(stwing fiewd) {
+    wetuwn eawwybiwdfiewdconstant.fwom_usew_id_fiewd.getfiewdname().equaws(fiewd)
+        || eawwybiwdfiewdconstant.in_wepwy_to_usew_id_fiewd.getfiewdname().equaws(fiewd)
+        || eawwybiwdfiewdconstant.wetweet_souwce_usew_id_fiewd.getfiewdname().equaws(fiewd)
+        || e-eawwybiwdfiewdconstant.wiked_by_usew_id_fiewd.getfiewdname().equaws(fiewd)
+        || eawwybiwdfiewdconstant.wetweeted_by_usew_id.getfiewdname().equaws(fiewd)
+        || e-eawwybiwdfiewdconstant.wepwied_to_by_usew_id.getfiewdname().equaws(fiewd)
+        || eawwybiwdfiewdconstant.quoted_usew_id_fiewd.getfiewdname().equaws(fiewd)
+        || e-eawwybiwdfiewdconstant.diwected_at_usew_id_fiewd.getfiewdname().equaws(fiewd);
   }
 
-  private static boolean isTweetIdField(String field) {
-    return EarlybirdFieldConstant.IN_REPLY_TO_TWEET_ID_FIELD.getFieldName().equals(field)
-        || EarlybirdFieldConstant.RETWEET_SOURCE_TWEET_ID_FIELD.getFieldName().equals(field)
-        || EarlybirdFieldConstant.QUOTED_TWEET_ID_FIELD.getFieldName().equals(field)
-        || EarlybirdFieldConstant.CONVERSATION_ID_FIELD.getFieldName().equals(field);
+  pwivate static b-boowean istweetidfiewd(stwing fiewd) {
+    w-wetuwn eawwybiwdfiewdconstant.in_wepwy_to_tweet_id_fiewd.getfiewdname().equaws(fiewd)
+        || e-eawwybiwdfiewdconstant.wetweet_souwce_tweet_id_fiewd.getfiewdname().equaws(fiewd)
+        || eawwybiwdfiewdconstant.quoted_tweet_id_fiewd.getfiewdname().equaws(fiewd)
+        || e-eawwybiwdfiewdconstant.convewsation_id_fiewd.getfiewdname().equaws(fiewd);
   }
 
-  private static boolean isIdCSFField(String field) {
-    return EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF.getFieldName().equals(field);
+  p-pwivate static b-boowean isidcsffiewd(stwing fiewd) {
+    wetuwn eawwybiwdfiewdconstant.diwected_at_usew_id_csf.getfiewdname().equaws(fiewd);
   }
 
-  public Set<String> getQueriedFields() {
-    return queriedFields;
+  pubwic set<stwing> getquewiedfiewds() {
+    wetuwn quewiedfiewds;
   }
 }

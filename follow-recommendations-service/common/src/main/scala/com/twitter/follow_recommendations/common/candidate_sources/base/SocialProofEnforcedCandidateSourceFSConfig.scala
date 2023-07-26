@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.base
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fsname
+i-impowt c-com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt c-com.twittew.timewines.configapi.pawam
+impowt com.twittew.utiw.duwation
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class SocialProofEnforcedCandidateSourceFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
-    Seq(
-      SocialProofEnforcedCandidateSourceParams.MustCallSgs,
-      SocialProofEnforcedCandidateSourceParams.CallSgsCachedColumn,
+@singweton
+cwass s-sociawpwoofenfowcedcandidatesouwcefsconfig @inject() () extends featuweswitchconfig {
+  o-ovewwide vaw booweanfspawams: s-seq[pawam[boowean] with fsname] =
+    seq(
+      sociawpwoofenfowcedcandidatesouwcepawams.mustcawwsgs, /(^•ω•^)
+      s-sociawpwoofenfowcedcandidatesouwcepawams.cawwsgscachedcowumn, rawr
     )
-  override val intFSParams: Seq[FSBoundedParam[Int]] =
-    Seq(
-      SocialProofEnforcedCandidateSourceParams.QueryIntersectionIdsNum,
-      SocialProofEnforcedCandidateSourceParams.MaxNumCandidatesToAnnotate,
-      SocialProofEnforcedCandidateSourceParams.GfsIntersectionIdsNum,
-      SocialProofEnforcedCandidateSourceParams.SgsIntersectionIdsNum,
+  ovewwide v-vaw intfspawams: s-seq[fsboundedpawam[int]] =
+    seq(
+      sociawpwoofenfowcedcandidatesouwcepawams.quewyintewsectionidsnum, OwO
+      sociawpwoofenfowcedcandidatesouwcepawams.maxnumcandidatestoannotate, (U ﹏ U)
+      sociawpwoofenfowcedcandidatesouwcepawams.gfsintewsectionidsnum, >_<
+      sociawpwoofenfowcedcandidatesouwcepawams.sgsintewsectionidsnum, rawr x3
     )
 
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    SocialProofEnforcedCandidateSourceParams.GfsLagDurationInDays
+  o-ovewwide vaw duwationfspawams: seq[fsboundedpawam[duwation] with hasduwationconvewsion] = seq(
+    s-sociawpwoofenfowcedcandidatesouwcepawams.gfswagduwationindays
   )
 }

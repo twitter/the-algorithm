@@ -1,58 +1,58 @@
-package com.twitter.simclusters_v2.scalding.mbcg
+package com.twittew.simcwustews_v2.scawding.mbcg
 
-import com.google.common.collect.ImmutableSet
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api.Feature.Tensor
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.constant.SharedFeatures
-import java.util.{Map => JMap}
+impowt com.googwe.common.cowwect.immutabweset
+impowt c-com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+i-impowt com.twittew.mw.api.datatype
+i-impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.featuwe.spawsecontinuous
+i-impowt c-com.twittew.mw.api.featuwe.tensow
+i-impowt com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.mw.api.constant.shawedfeatuwes
+impowt java.utiw.{map => jmap}
 
 /*
-Features used for model-based candidate generation
+f-featuwes used fow modew-based candidate genewation
  */
-object TweetAllFeatures {
-  val tweetId = SharedFeatures.TWEET_ID
-  val tweetSimclusters =
-    new SparseContinuous(
-      "tweet.simcluster.log_fav_based_embedding.20m_145k_2020",
-      ImmutableSet.of(InferredInterests))
-      .asInstanceOf[Feature[JMap[String, Double]]]
-  val authorF2vProducerEmbedding =
-    new Tensor(
-      "tweet.author_follow2vec.producer_embedding_200",
-      DataType.FLOAT
+o-object tweetawwfeatuwes {
+  vaw tweetid = s-shawedfeatuwes.tweet_id
+  vaw tweetsimcwustews =
+    nyew spawsecontinuous(
+      "tweet.simcwustew.wog_fav_based_embedding.20m_145k_2020", 🥺
+      i-immutabweset.of(infewwedintewests))
+      .asinstanceof[featuwe[jmap[stwing, >_< doubwe]]]
+  vaw a-authowf2vpwoducewembedding =
+    n-nyew tensow(
+      "tweet.authow_fowwow2vec.pwoducew_embedding_200", >_<
+      datatype.fwoat
     )
 
-  private val allFeatures: Seq[Feature[_]] = Seq(
-    tweetId,
-    tweetSimclusters,
-    authorF2vProducerEmbedding
+  pwivate vaw awwfeatuwes: seq[featuwe[_]] = seq(
+    tweetid, (⑅˘꒳˘)
+    t-tweetsimcwustews, /(^•ω•^)
+    authowf2vpwoducewembedding
   )
 
-  val featureContext = new FeatureContext(allFeatures: _*)
+  vaw featuwecontext = nyew featuwecontext(awwfeatuwes: _*)
 }
 
-object UserAllFeatures {
-  val userId = SharedFeatures.USER_ID
-  val userSimclusters =
-    new SparseContinuous(
-      "user.iiape.log_fav_based_embedding.20m_145k_2020",
-      ImmutableSet.of(InferredInterests))
-      .asInstanceOf[Feature[JMap[String, Double]]]
-  val userF2vConsumerEmbedding =
-    new Tensor(
-      "user.follow2vec.consumer_avg_fol_emb_200",
-      DataType.FLOAT
+o-object usewawwfeatuwes {
+  v-vaw usewid = s-shawedfeatuwes.usew_id
+  v-vaw u-usewsimcwustews =
+    nyew spawsecontinuous(
+      "usew.iiape.wog_fav_based_embedding.20m_145k_2020", rawr x3
+      immutabweset.of(infewwedintewests))
+      .asinstanceof[featuwe[jmap[stwing, (U ﹏ U) d-doubwe]]]
+  vaw usewf2vconsumewembedding =
+    nyew tensow(
+      "usew.fowwow2vec.consumew_avg_fow_emb_200", (U ﹏ U)
+      d-datatype.fwoat
     )
 
-  private val allFeatures: Seq[Feature[_]] = Seq(
-    userId,
-    userSimclusters,
-    userF2vConsumerEmbedding
+  pwivate vaw awwfeatuwes: seq[featuwe[_]] = seq(
+    usewid, (⑅˘꒳˘)
+    usewsimcwustews, òωó
+    usewf2vconsumewembedding
   )
 
-  val featureContext = new FeatureContext(allFeatures: _*)
+  v-vaw featuwecontext = nyew featuwecontext(awwfeatuwes: _*)
 }

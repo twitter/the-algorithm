@@ -1,40 +1,40 @@
-package com.twitter.interaction_graph.scio.agg_client_event_logs
+package com.twittew.intewaction_gwaph.scio.agg_cwient_event_wogs
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import com.twitter.usersource.snapshot.combined.UsersourceScalaDataset
-import com.twitter.util.Duration
-import com.twitter.cde.scio.dal_read.SourceUtil
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.UserInteraction
-import com.twitter.wtf.scalding.jobs.client_event_processing.UserInteractionScalaDataset
-import org.joda.time.Interval
+impowt com.spotify.scio.sciocontext
+i-impowt com.spotify.scio.vawues.scowwection
+i-impowt com.twittew.beam.job.sewviceidentifiewoptions
+i-impowt com.twittew.twadoop.usew.gen.thwiftscawa.combinedusew
+i-impowt com.twittew.usewsouwce.snapshot.combined.usewsouwcescawadataset
+i-impowt c-com.twittew.utiw.duwation
+i-impowt c-com.twittew.cde.scio.daw_wead.souwceutiw
+impowt com.twittew.wtf.scawding.cwient_event_pwocessing.thwiftscawa.usewintewaction
+impowt com.twittew.wtf.scawding.jobs.cwient_event_pwocessing.usewintewactionscawadataset
+i-impowt owg.joda.time.intewvaw
 
-case class InteractionGraphClientEventLogsSource(
-  pipelineOptions: InteractionGraphClientEventLogsOption
+case cwass intewactiongwaphcwienteventwogssouwce(
+  p-pipewineoptions: intewactiongwaphcwienteventwogsoption
 )(
-  implicit sc: ScioContext) {
+  i-impwicit sc: sciocontext) {
 
-  val dalEnvironment: String = pipelineOptions
-    .as(classOf[ServiceIdentifierOptions])
-    .getEnvironment()
+  vaw dawenviwonment: stwing = p-pipewineoptions
+    .as(cwassof[sewviceidentifiewoptions])
+    .getenviwonment()
 
-  def readUserInteractions(dateInterval: Interval): SCollection[UserInteraction] = {
+  def weadusewintewactions(dateintewvaw: i-intewvaw): s-scowwection[usewintewaction] = {
 
-    SourceUtil.readDALDataset[UserInteraction](
-      dataset = UserInteractionScalaDataset,
-      interval = dateInterval,
-      dalEnvironment = dalEnvironment)
+    souwceutiw.weaddawdataset[usewintewaction](
+      dataset = usewintewactionscawadataset, rawr x3
+      intewvaw = dateintewvaw, mya
+      d-dawenviwonment = dawenviwonment)
 
   }
 
-  def readCombinedUsers(): SCollection[CombinedUser] = {
+  def weadcombinedusews(): scowwection[combinedusew] = {
 
-    SourceUtil.readMostRecentSnapshotNoOlderThanDALDataset[CombinedUser](
-      dataset = UsersourceScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment
+    souwceutiw.weadmostwecentsnapshotnoowdewthandawdataset[combinedusew](
+      d-dataset = usewsouwcescawadataset, nyaa~~
+      n-nyoowdewthan = d-duwation.fwomdays(5), (⑅˘꒳˘)
+      d-dawenviwonment = d-dawenviwonment
     )
   }
 }

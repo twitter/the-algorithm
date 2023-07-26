@@ -1,10 +1,10 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namespace java com.twittew.fowwow_wecommendations.wogging.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.wogging.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations.wogging
 
-include "engagementType.thrift"
+i-incwude "engagementtype.thwift"
 
-struct RecentlyEngagedUserId {
-  1: required i64 id(personalDataType='UserId')
-  2: required engagementType.EngagementType engagementType 
-}(persisted='true', hasPersonalData='true')
+s-stwuct w-wecentwyengagedusewid {
+  1: w-wequiwed i64 id(pewsonawdatatype='usewid')
+  2: w-wequiwed engagementtype.engagementtype e-engagementtype 
+}(pewsisted='twue', ( ͡o ω ͡o ) haspewsonawdata='twue')

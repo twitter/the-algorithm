@@ -1,77 +1,77 @@
-package com.twitter.search.feature_update_service.whitelist;
+package com.twittew.seawch.featuwe_update_sewvice.whitewist;
 
-import java.io.InputStream;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicReference;
+impowt j-java.io.inputstweam;
+i-impowt j-java.utiw.set;
+impowt j-java.utiw.concuwwent.executows;
+i-impowt java.utiw.concuwwent.scheduwedexecutowsewvice;
+i-impowt j-java.utiw.concuwwent.atomic.atomicwefewence;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+i-impowt com.googwe.common.cowwect.immutabweset;
+impowt com.googwe.common.utiw.concuwwent.thweadfactowybuiwdew;
 
-import org.yaml.snakeyaml.Yaml;
+impowt owg.yamw.snakeyamw.yamw;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.search.common.util.io.periodic.PeriodicFileLoader;
+impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.finagwe.thwift.cwientid;
+i-impowt com.twittew.seawch.common.utiw.io.pewiodic.pewiodicfiwewoadew;
 
 /**
- * ClientIdWhitelist extends PeriodicFileLoader to load client whitelist
- * from configbus and checks to see if current clientId is allowed
+ * cwientidwhitewist extends pewiodicfiwewoadew t-to woad cwient whitewist
+ * f-fwom configbus and checks to see if cuwwent cwientid is a-awwowed
  */
-public class ClientIdWhitelist extends PeriodicFileLoader {
+pubwic cwass cwientidwhitewist e-extends p-pewiodicfiwewoadew {
 
-  private final AtomicReference<ImmutableSet<ClientId>> clientIdSet = new AtomicReference<>();
+  pwivate finaw atomicwefewence<immutabweset<cwientid>> cwientidset = nyew atomicwefewence<>();
 
 
-  public ClientIdWhitelist(String clientIdWhitelistPath, ScheduledExecutorService executorService,
-                           Clock clock) {
-    super("ClientIdWhitelist", clientIdWhitelistPath, executorService, clock);
+  pubwic c-cwientidwhitewist(stwing cwientidwhitewistpath, (U ﹏ U) scheduwedexecutowsewvice executowsewvice, >w<
+                           cwock cwock) {
+    supew("cwientidwhitewist", (U ﹏ U) cwientidwhitewistpath, 😳 e-executowsewvice, (ˆ ﻌ ˆ)♡ cwock);
   }
 
   /**
-   * Creates the object that manages loads from the clientIdWhitelistpath in config.
-   * It periodically reloads the client whitelist file using the given executor service.
+   * c-cweates t-the object that m-manages woads fwom t-the cwientidwhitewistpath in config. 😳😳😳
+   * it p-pewiodicawwy wewoads the cwient whitewist fiwe u-using the given executow sewvice. (U ﹏ U)
    */
-  public static ClientIdWhitelist initWhitelist(
-      String clientIdWhitelistPath, ScheduledExecutorService executorService,
-      Clock clock) throws Exception {
-    ClientIdWhitelist clientIdWhitelist = new ClientIdWhitelist(
-        clientIdWhitelistPath, executorService, clock);
-    clientIdWhitelist.init();
-    return clientIdWhitelist;
+  pubwic static cwientidwhitewist initwhitewist(
+      stwing cwientidwhitewistpath, (///ˬ///✿) s-scheduwedexecutowsewvice executowsewvice, 😳
+      c-cwock c-cwock) thwows e-exception {
+    cwientidwhitewist cwientidwhitewist = nyew cwientidwhitewist(
+        c-cwientidwhitewistpath, 😳 e-executowsewvice, σωσ cwock);
+    cwientidwhitewist.init();
+    w-wetuwn c-cwientidwhitewist;
   }
 
   /**
-   * Creates clock and executor service needed to create a periodic file loading object
-   * then returns object that accpets file.
-   * @param clientWhitelistPath
-   * @return ClientIdWhitelist
-   * @throws Exception
+   * cweates cwock a-and executow sewvice nyeeded to c-cweate a pewiodic fiwe woading object
+   * then w-wetuwns object that accpets fiwe. rawr x3
+   * @pawam cwientwhitewistpath
+   * @wetuwn c-cwientidwhitewist
+   * @thwows exception
    */
-  public static ClientIdWhitelist initWhitelist(String clientWhitelistPath) throws Exception {
-    Clock clock = Clock.SYSTEM_CLOCK;
-    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(
-        new ThreadFactoryBuilder()
-            .setNameFormat("client-whitelist-reloader")
-            .setDaemon(true)
-            .build());
+  pubwic static cwientidwhitewist i-initwhitewist(stwing c-cwientwhitewistpath) thwows exception {
+    cwock cwock = cwock.system_cwock;
+    scheduwedexecutowsewvice executowsewvice = e-executows.newsingwethweadscheduwedexecutow(
+        n-nyew thweadfactowybuiwdew()
+            .setnamefowmat("cwient-whitewist-wewoadew")
+            .setdaemon(twue)
+            .buiwd());
 
-    return initWhitelist(clientWhitelistPath, executorService, clock);
+    wetuwn initwhitewist(cwientwhitewistpath, OwO e-executowsewvice, /(^•ω•^) cwock);
   }
-  @Override
-  protected void accept(InputStream fileStream) {
-    ImmutableSet.Builder<ClientId> clientIdBuilder = new ImmutableSet.Builder<>();
-    Yaml yaml = new Yaml();
-    Set<String> set = yaml.loadAs(fileStream, Set.class);
-    for (String id : set) {
-      clientIdBuilder.add(ClientId.apply(id));
+  @ovewwide
+  p-pwotected v-void accept(inputstweam fiwestweam) {
+    immutabweset.buiwdew<cwientid> cwientidbuiwdew = n-nyew immutabweset.buiwdew<>();
+    yamw yamw = nyew yamw();
+    set<stwing> set = y-yamw.woadas(fiwestweam, 😳😳😳 set.cwass);
+    f-fow (stwing i-id : set) {
+      c-cwientidbuiwdew.add(cwientid.appwy(id));
     }
-    clientIdSet.set(clientIdBuilder.build());
+    cwientidset.set(cwientidbuiwdew.buiwd());
   }
 
-  // checks to see if clientId is in set of whitelisted clients
-  public boolean isClientAllowed(ClientId clientId) {
-    return clientIdSet.get().contains(clientId);
+  // c-checks t-to see if cwientid i-is in set o-of whitewisted cwients
+  pubwic boowean iscwientawwowed(cwientid c-cwientid) {
+    w-wetuwn cwientidset.get().contains(cwientid);
   }
 }

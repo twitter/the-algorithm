@@ -1,6 +1,6 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.hewon
 
-trait OnlineAggregationStoresTrait {
-  def ProductionStore: RealTimeAggregateStore
-  def StagingStore: RealTimeAggregateStore
+twait onwineaggwegationstowestwait {
+  d-def pwoductionstowe: w-weawtimeaggwegatestowe
+  d-def stagingstowe: w-weawtimeaggwegatestowe
 }

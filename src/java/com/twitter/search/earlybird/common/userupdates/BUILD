@@ -1,45 +1,45 @@
-java_library(
-    sources = ["*.java"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/commons-io",
-        "3rdparty/jvm/geo/google:geoGoogle",
-        "3rdparty/jvm/org/apache/bookkeeper:bookkeeper-server",
-        "3rdparty/jvm/org/apache/bookkeeper:bookkeeper-twitter-science-provider",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/jvm/org/apache/lucene:lucene-analyzers-common",
-        "3rdparty/jvm/org/apache/lucene:lucene-analyzers-smartcn",
-        "3rdparty/jvm/org/apache/lucene:lucene-core",
-        "3rdparty/jvm/org/apache/lucene:lucene-facet",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/jvm/org/apache/zookeeper:zookeeper-client",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "3rdparty/src/jvm/com/twitter/scalding:date",
-        "3rdparty/src/jvm/com/twitter/scalding:parquet",
-        "decider/src/main/scala",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common/util:system-mocks",
-        "src/java/com/twitter/common_internal/hadoop",
-        "src/java/com/twitter/search/common/logging",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/partitioning/snowflakeparser",
-        "src/java/com/twitter/search/common/schema/earlybird",
-        "src/java/com/twitter/search/common/util/hash",
-        "src/java/com/twitter/search/common/util/io",
-        "src/java/com/twitter/search/common/util/io:dl-reader-writer",
-        "src/java/com/twitter/search/common/util/io:flushable",
-        "src/java/com/twitter/search/common/util/io:record-reader-api",
-        "src/java/com/twitter/search/earlybird/common/config",
-        "src/scala/com/twitter/scalding_internal/error_handling",
-        "src/scala/com/twitter/scalding_internal/multiformat",
-        "src/scala/com/twitter/scalding_internal/source",
-        "src/scala/com/twitter/search/user_table/sources",
-        "src/thrift/com/twitter/search/common:indexing-java",
-        "src/thrift/com/twitter/tweetypie:events-java",
-        "util/util-core:scala",
+java_wibwawy(
+    souwces = ["*.java"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/guava", òωó
+        "3wdpawty/jvm/com/googwe/inject:guice", o.O
+        "3wdpawty/jvm/commons-io", (U ᵕ U❁)
+        "3wdpawty/jvm/geo/googwe:geogoogwe", (⑅˘꒳˘)
+        "3wdpawty/jvm/owg/apache/bookkeepew:bookkeepew-sewvew", ( ͡o ω ͡o )
+        "3wdpawty/jvm/owg/apache/bookkeepew:bookkeepew-twittew-science-pwovidew", UwU
+        "3wdpawty/jvm/owg/apache/hadoop:hadoop-cwient-defauwt", rawr x3
+        "3wdpawty/jvm/owg/apache/wucene:wucene-anawyzews-common", rawr
+        "3wdpawty/jvm/owg/apache/wucene:wucene-anawyzews-smawtcn", σωσ
+        "3wdpawty/jvm/owg/apache/wucene:wucene-cowe", σωσ
+        "3wdpawty/jvm/owg/apache/wucene:wucene-facet", >_<
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", :3
+        "3wdpawty/jvm/owg/apache/zookeepew:zookeepew-cwient", (U ﹏ U)
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", -.-
+        "3wdpawty/swc/jvm/com/twittew/scawding:cowe", (ˆ ﻌ ˆ)♡
+        "3wdpawty/swc/jvm/com/twittew/scawding:date",
+        "3wdpawty/swc/jvm/com/twittew/scawding:pawquet", (⑅˘꒳˘)
+        "decidew/swc/main/scawa", (U ᵕ U❁)
+        "swc/java/com/twittew/common/base", -.-
+        "swc/java/com/twittew/common/utiw:system-mocks",
+        "swc/java/com/twittew/common_intewnaw/hadoop", ^^;;
+        "swc/java/com/twittew/seawch/common/wogging", >_<
+        "swc/java/com/twittew/seawch/common/metwics", mya
+        "swc/java/com/twittew/seawch/common/pawtitioning/snowfwakepawsew", mya
+        "swc/java/com/twittew/seawch/common/schema/eawwybiwd", 😳
+        "swc/java/com/twittew/seawch/common/utiw/hash", XD
+        "swc/java/com/twittew/seawch/common/utiw/io", :3
+        "swc/java/com/twittew/seawch/common/utiw/io:dw-weadew-wwitew", 😳😳😳
+        "swc/java/com/twittew/seawch/common/utiw/io:fwushabwe", -.-
+        "swc/java/com/twittew/seawch/common/utiw/io:wecowd-weadew-api", ( ͡o ω ͡o )
+        "swc/java/com/twittew/seawch/eawwybiwd/common/config", rawr x3
+        "swc/scawa/com/twittew/scawding_intewnaw/ewwow_handwing", nyaa~~
+        "swc/scawa/com/twittew/scawding_intewnaw/muwtifowmat", /(^•ω•^)
+        "swc/scawa/com/twittew/scawding_intewnaw/souwce", rawr
+        "swc/scawa/com/twittew/seawch/usew_tabwe/souwces", OwO
+        "swc/thwift/com/twittew/seawch/common:indexing-java", (U ﹏ U)
+        "swc/thwift/com/twittew/tweetypie:events-java", >_<
+        "utiw/utiw-cowe:scawa", rawr x3
     ],
 )

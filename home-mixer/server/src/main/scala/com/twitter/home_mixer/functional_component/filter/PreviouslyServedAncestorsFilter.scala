@@ -1,44 +1,44 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.twittew.home_mixew.functionaw_component.fiwtew
 
-import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
-import com.twitter.home_mixer.model.HomeFeatures.IsAncestorCandidateFeature
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.injection.store.persistence.TimelinePersistenceUtils
-import com.twitter.timelines.util.client_info.ClientPlatform
+impowt c-com.twittew.common_intewnaw.anawytics.twittew_cwient_usew_agent_pawsew.usewagent
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.isancestowcandidatefeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.pewsistenceentwiesfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewinemixew.injection.stowe.pewsistence.timewinepewsistenceutiws
+i-impowt com.twittew.timewines.utiw.cwient_info.cwientpwatfowm
 
-object PreviouslyServedAncestorsFilter
-    extends Filter[PipelineQuery, TweetCandidate]
-    with TimelinePersistenceUtils {
+object pweviouswysewvedancestowsfiwtew
+    extends f-fiwtew[pipewinequewy, (U ﹏ U) tweetcandidate]
+    w-with t-timewinepewsistenceutiws {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("PreviouslyServedAncestors")
+  ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("pweviouswysewvedancestows")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val clientPlatform = ClientPlatform.fromQueryOptions(
-      clientAppId = query.clientContext.appId,
-      userAgent = query.clientContext.userAgent.flatMap(UserAgent.fromString))
-    val entries =
-      query.features.map(_.getOrElse(PersistenceEntriesFeature, Seq.empty)).toSeq.flatten
-    val tweetIds = applicableResponses(clientPlatform, entries)
-      .flatMap(_.entries.flatMap(_.tweetIds(includeSourceTweets = true))).toSet
-    val ancestorIds =
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, (U ﹏ U)
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[fiwtewwesuwt[tweetcandidate]] = {
+    vaw cwientpwatfowm = c-cwientpwatfowm.fwomquewyoptions(
+      c-cwientappid = q-quewy.cwientcontext.appid, (⑅˘꒳˘)
+      u-usewagent = quewy.cwientcontext.usewagent.fwatmap(usewagent.fwomstwing))
+    vaw entwies =
+      q-quewy.featuwes.map(_.getowewse(pewsistenceentwiesfeatuwe, òωó seq.empty)).toseq.fwatten
+    vaw tweetids = a-appwicabwewesponses(cwientpwatfowm, ʘwʘ entwies)
+      .fwatmap(_.entwies.fwatmap(_.tweetids(incwudesouwcetweets = twue))).toset
+    vaw ancestowids =
       candidates
-        .filter(_.features.getOrElse(IsAncestorCandidateFeature, false)).map(_.candidate.id).toSet
+        .fiwtew(_.featuwes.getowewse(isancestowcandidatefeatuwe, /(^•ω•^) fawse)).map(_.candidate.id).toset
 
-    val (removed, kept) =
-      candidates
-        .map(_.candidate).partition(candidate =>
-          tweetIds.contains(candidate.id) && ancestorIds.contains(candidate.id))
+    v-vaw (wemoved, ʘwʘ kept) =
+      c-candidates
+        .map(_.candidate).pawtition(candidate =>
+          t-tweetids.contains(candidate.id) && a-ancestowids.contains(candidate.id))
 
-    Stitch.value(FilterResult(kept = kept, removed = removed))
+    stitch.vawue(fiwtewwesuwt(kept = kept, σωσ wemoved = wemoved))
   }
 }

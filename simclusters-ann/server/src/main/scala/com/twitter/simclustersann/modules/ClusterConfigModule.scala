@@ -1,25 +1,25 @@
-package com.twitter.simclustersann.modules
+package com.twittew.simcwustewsann.moduwes
 
-import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance_platform.simclustersann.multicluster.ClusterConfig
-import com.twitter.relevance_platform.simclustersann.multicluster.ClusterConfigMapper
-import com.twitter.simclustersann.exceptions.MissingClusterConfigForSimClustersAnnVariantException
-import javax.inject.Singleton
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.wewevance_pwatfowm.simcwustewsann.muwticwustew.cwustewconfig
+i-impowt com.twittew.wewevance_pwatfowm.simcwustewsann.muwticwustew.cwustewconfigmappew
+i-impowt com.twittew.simcwustewsann.exceptions.missingcwustewconfigfowsimcwustewsannvawiantexception
+impowt javax.inject.singweton
 
-object ClusterConfigModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesClusterConfig(
-    serviceIdentifier: ServiceIdentifier,
-    clusterConfigMapper: ClusterConfigMapper
-  ): ClusterConfig = {
-    val serviceName = serviceIdentifier.service
+object cwustewconfigmoduwe e-extends twittewmoduwe {
+  @singweton
+  @pwovides
+  def p-pwovidescwustewconfig(
+    sewviceidentifiew: s-sewviceidentifiew, :3
+    cwustewconfigmappew: cwustewconfigmappew
+  ): cwustewconfig = {
+    v-vaw sewvicename = sewviceidentifiew.sewvice
 
-    clusterConfigMapper.getClusterConfig(serviceName) match {
-      case Some(config) => config
-      case None => throw MissingClusterConfigForSimClustersAnnVariantException(serviceName)
+    c-cwustewconfigmappew.getcwustewconfig(sewvicename) m-match {
+      case some(config) => config
+      case nyone => thwow missingcwustewconfigfowsimcwustewsannvawiantexception(sewvicename)
     }
   }
 }

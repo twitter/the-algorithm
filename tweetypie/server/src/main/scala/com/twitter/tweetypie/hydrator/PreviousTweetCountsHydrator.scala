@@ -1,152 +1,152 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.FieldId
-import com.twitter.tweetypie.TweetId
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.repository.TweetCountKey
-import com.twitter.tweetypie.repository.TweetCountsRepository
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.StatusCounts
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.featuweswitches.v2.featuweswitchwesuwts
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.fiewdid
+i-impowt com.twittew.tweetypie.tweetid
+i-impowt com.twittew.tweetypie.cowe.vawuestate
+impowt com.twittew.tweetypie.wepositowy.tweetcountkey
+impowt com.twittew.tweetypie.wepositowy.tweetcountswepositowy
+impowt com.twittew.tweetypie.thwiftscawa.editcontwow
+impowt c-com.twittew.tweetypie.thwiftscawa.statuscounts
+impowt com.twittew.tweetypie.thwiftscawa._
 
 /*
- * A constructor for a ValueHydrator that hydrates `previous_counts`
- * information. Previous counts are applied to edit tweets, they
- * are the summation of all the status_counts in an edit chain up to
- * but not including the tweet being hydrated.
+ * a constwuctow f-fow a vawuehydwatow that hydwates `pwevious_counts`
+ * i-infowmation. (///ˬ///✿) pwevious counts awe appwied to edit tweets, 🥺 t-they
+ * awe the summation of aww t-the status_counts i-in an edit chain up to
+ * but nyot incwuding the tweet being hydwated. >_<
  *
  */
-object PreviousTweetCountsHydrator {
+o-object pwevioustweetcountshydwatow {
 
-  case class Ctx(
-    editControl: Option[EditControl],
-    featureSwitchResults: Option[FeatureSwitchResults],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case cwass ctx(
+    editcontwow: option[editcontwow], UwU
+    featuweswitchwesuwts: o-option[featuweswitchwesuwts], >_<
+    undewwyingtweetctx: t-tweetctx)
+      e-extends tweetctx.pwoxy
 
-  type Type = ValueHydrator[Option[StatusCounts], Ctx]
+  t-type type = v-vawuehydwatow[option[statuscounts], -.- ctx]
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.PreviousCountsField)
+  vaw hydwatedfiewd: f-fiewdbypath = fiewdbypath(tweet.pweviouscountsfiewd)
 
   /*
-   * Params:
-   *  tweetId: The tweet being hydrated.
-   *  editTweetIds: The sorted list of all edits in an edit chain.
+   * pawams:
+   *  t-tweetid: the tweet being hydwated. mya
+   *  edittweetids: the sowted wist of aww edits in an edit c-chain. >w<
    *
-   * Returns: tweetIds in an edit chain from the initial tweet up to but not including
-   *  the tweet being hydrated (`tweetId`)
+   * wetuwns: tweetids i-in an edit c-chain fwom the initiaw t-tweet up to but nyot incwuding
+   *  the tweet being hydwated (`tweetid`)
    */
-  def previousTweetIds(tweetId: TweetId, editTweetIds: Seq[TweetId]): Seq[TweetId] = {
-    editTweetIds.takeWhile(_ < tweetId)
+  d-def pwevioustweetids(tweetid: t-tweetid, (U ﹏ U) edittweetids: seq[tweetid]): s-seq[tweetid] = {
+    e-edittweetids.takewhiwe(_ < tweetid)
   }
 
-  /* An addition operation for Option[Long] */
-  def sumOptions(A: Option[Long], B: Option[Long]): Option[Long] =
-    (A, B) match {
-      case (None, None) => None
-      case (Some(a), None) => Some(a)
-      case (None, Some(b)) => Some(b)
-      case (Some(a), Some(b)) => Some(a + b)
+  /* a-an addition opewation fow option[wong] */
+  d-def sumoptions(a: option[wong], 😳😳😳 b: option[wong]): o-option[wong] =
+    (a, o.O b) match {
+      c-case (none, òωó nyone) => nyone
+      c-case (some(a), 😳😳😳 n-nyone) => some(a)
+      case (none, σωσ some(b)) => some(b)
+      case (some(a), (⑅˘꒳˘) some(b)) => some(a + b)
     }
 
-  /* An addition operation for StatusCounts */
-  def sumStatusCounts(A: StatusCounts, B: StatusCounts): StatusCounts =
-    StatusCounts(
-      retweetCount = sumOptions(A.retweetCount, B.retweetCount),
-      replyCount = sumOptions(A.replyCount, B.replyCount),
-      favoriteCount = sumOptions(A.favoriteCount, B.favoriteCount),
-      quoteCount = sumOptions(A.quoteCount, B.quoteCount),
-      bookmarkCount = sumOptions(A.bookmarkCount, B.bookmarkCount)
+  /* a-an addition o-opewation fow statuscounts */
+  d-def sumstatuscounts(a: s-statuscounts, (///ˬ///✿) b-b: statuscounts): statuscounts =
+    statuscounts(
+      wetweetcount = s-sumoptions(a.wetweetcount, b.wetweetcount), 🥺
+      wepwycount = sumoptions(a.wepwycount, OwO b.wepwycount), >w<
+      f-favowitecount = sumoptions(a.favowitecount, b-b.favowitecount), 🥺
+      q-quotecount = sumoptions(a.quotecount, nyaa~~ b-b.quotecount), ^^
+      bookmawkcount = s-sumoptions(a.bookmawkcount, >w< b-b.bookmawkcount)
     )
 
-  def apply(repo: TweetCountsRepository.Type, shouldHydrateBookmarksCount: Gate[Long]): Type = {
+  d-def appwy(wepo: t-tweetcountswepositowy.type, OwO shouwdhydwatebookmawkscount: gate[wong]): type = {
 
     /*
-     * Get a StatusCount representing the summed engagements of all previous
-     * StatusCounts in an edit chain. Only `countsFields` that are specifically requested
-     * are included in the aggregate StatusCount, otherwise those fields are None.
+     * g-get a statuscount w-wepwesenting t-the summed engagements o-of aww pwevious
+     * s-statuscounts in an edit chain. XD onwy `countsfiewds` that awe specificawwy w-wequested
+     * awe incwuded in the aggwegate statuscount, ^^;; othewwise those fiewds awe nyone. 🥺
      */
-    def getPreviousEngagementCounts(
-      tweetId: TweetId,
-      editTweetIds: Seq[TweetId],
-      countsFields: Set[FieldId]
-    ): Stitch[ValueState[StatusCounts]] = {
-      val editTweetIdList = previousTweetIds(tweetId, editTweetIds)
+    d-def getpweviousengagementcounts(
+      tweetid: tweetid, XD
+      edittweetids: seq[tweetid], (U ᵕ U❁)
+      c-countsfiewds: s-set[fiewdid]
+    ): s-stitch[vawuestate[statuscounts]] = {
+      vaw edittweetidwist = p-pwevioustweetids(tweetid, :3 edittweetids)
 
-      // StatusCounts for each edit tweet revision
-      val statusCountsPerEditVersion: Stitch[Seq[ValueState[StatusCounts]]] =
-        Stitch.collect(editTweetIdList.map { tweetId =>
-          // Which tweet count keys to request, as indicated by the tweet options.
-          val keys: Seq[TweetCountKey] =
-            TweetCountsHydrator.toKeys(tweetId, countsFields, None)
+      // statuscounts f-fow each edit t-tweet wevision
+      vaw statuscountspeweditvewsion: stitch[seq[vawuestate[statuscounts]]] =
+        stitch.cowwect(edittweetidwist.map { tweetid =>
+          // which tweet c-count keys to wequest, ( ͡o ω ͡o ) as indicated b-by the tweet options. òωó
+          v-vaw keys: seq[tweetcountkey] =
+            tweetcountshydwatow.tokeys(tweetid, σωσ c-countsfiewds, (U ᵕ U❁) nyone)
 
-          // A separate StatusCounts for each count field, for `tweetId`
-          // e.g. Seq(StatusCounts(retweetCounts=5L), StatusCounts(favCounts=6L))
-          val statusCountsPerCountField: Stitch[Seq[ValueState[StatusCounts]]] =
-            Stitch.collect(keys.map(key => TweetCountsHydrator.statusCountsRepo(key, repo)))
+          // a sepawate s-statuscounts fow e-each count fiewd, (✿oωo) fow `tweetid`
+          // e.g. ^^ s-seq(statuscounts(wetweetcounts=5w), ^•ﻌ•^ s-statuscounts(favcounts=6w))
+          vaw statuscountspewcountfiewd: stitch[seq[vawuestate[statuscounts]]] =
+            stitch.cowwect(keys.map(key => t-tweetcountshydwatow.statuscountswepo(key, XD w-wepo)))
 
-          // Reduce the per-field counts into a single StatusCounts for `tweetId`
-          statusCountsPerCountField.map { vs =>
-            // NOTE: This StatusCounts reduction uses different logic than
-            // `sumStatusCounts`. This reduction takes the latest value for a field.
-            // instead of summing the fields.
-            ValueState.sequence(vs).map(TweetCountsHydrator.reduceStatusCounts)
+          // w-weduce the pew-fiewd counts into a-a singwe statuscounts f-fow `tweetid`
+          statuscountspewcountfiewd.map { vs =>
+            // nyote: this s-statuscounts weduction uses diffewent wogic than
+            // `sumstatuscounts`. :3 this weduction takes the watest v-vawue fow a fiewd. (ꈍᴗꈍ)
+            // i-instead of summing the fiewds. :3
+            vawuestate.sequence(vs).map(tweetcountshydwatow.weducestatuscounts)
           }
         })
 
-      // Sum together the StatusCounts for each edit tweet revision into a single Status Count
-      statusCountsPerEditVersion.map { vs =>
-        ValueState.sequence(vs).map { statusCounts =>
-          // Reduce a list of StatusCounts into a single StatusCount by summing their fields.
-          statusCounts.reduce { (a, b) => sumStatusCounts(a, b) }
+      // s-sum togethew t-the statuscounts fow each edit tweet wevision into a singwe status c-count
+      statuscountspeweditvewsion.map { vs =>
+        vawuestate.sequence(vs).map { statuscounts =>
+          // w-weduce a wist of statuscounts into a s-singwe statuscount b-by summing theiw fiewds. (U ﹏ U)
+          statuscounts.weduce { (a, UwU b) => sumstatuscounts(a, 😳😳😳 b-b) }
         }
       }
     }
 
-    ValueHydrator[Option[StatusCounts], Ctx] { (inputStatusCounts, ctx) =>
-      val countsFields: Set[FieldId] = TweetCountsHydrator.filterRequestedCounts(
-        ctx.opts.forUserId.getOrElse(ctx.userId),
-        ctx.opts.include.countsFields,
-        shouldHydrateBookmarksCount,
-        ctx.featureSwitchResults
+    v-vawuehydwatow[option[statuscounts], XD ctx] { (inputstatuscounts, o.O ctx) =>
+      vaw countsfiewds: set[fiewdid] = t-tweetcountshydwatow.fiwtewwequestedcounts(
+        ctx.opts.fowusewid.getowewse(ctx.usewid), (⑅˘꒳˘)
+        c-ctx.opts.incwude.countsfiewds, 😳😳😳
+        shouwdhydwatebookmawkscount, nyaa~~
+        ctx.featuweswitchwesuwts
       )
 
-      ctx.editControl match {
-        case Some(EditControl.Edit(edit)) =>
-          edit.editControlInitial match {
-            case Some(initial) =>
-              val previousStatusCounts: Stitch[ValueState[StatusCounts]] =
-                getPreviousEngagementCounts(ctx.tweetId, initial.editTweetIds, countsFields)
+      ctx.editcontwow m-match {
+        case some(editcontwow.edit(edit)) =>
+          e-edit.editcontwowinitiaw m-match {
+            case s-some(initiaw) =>
+              vaw pweviousstatuscounts: s-stitch[vawuestate[statuscounts]] =
+                g-getpweviousengagementcounts(ctx.tweetid, rawr i-initiaw.edittweetids, -.- countsfiewds)
 
-              // Add the new aggregated StatusCount to the TweetData and return it
-              previousStatusCounts.map { valueState =>
-                valueState.map { statusCounts => Some(statusCounts) }
+              // a-add t-the nyew aggwegated statuscount to the tweetdata a-and wetuwn it
+              p-pweviousstatuscounts.map { v-vawuestate =>
+                vawuestate.map { statuscounts => s-some(statuscounts) }
               }
-            case None =>
-              // EditControlInitial is not hydrated within EditControlEdit
-              // This means we cannot provide aggregated previous counts, we will
-              // fail open and return the input data unchanged.
-              Stitch.value(ValueState.partial(inputStatusCounts, hydratedField))
+            case nyone =>
+              // e-editcontwowinitiaw i-is nyot hydwated within editcontwowedit
+              // this means we c-cannot pwovide a-aggwegated pwevious c-counts, (✿oωo) we w-wiww
+              // faiw open a-and wetuwn the input data unchanged. /(^•ω•^)
+              stitch.vawue(vawuestate.pawtiaw(inputstatuscounts, hydwatedfiewd))
           }
 
         case _ =>
-          // If the tweet has an EditControlInitial - it's the first Tweet in the Edit Chain
-          // or has no EditControl - it could be an old Tweet from when no Edit Controls existed
-          // then the previous counts are set to be equal to None.
-          Stitch.value(ValueState.unit(None))
+          // if the tweet has a-an editcontwowinitiaw - it's t-the fiwst tweet in the edit chain
+          // ow h-has nyo editcontwow - it couwd b-be an owd tweet fwom when no edit c-contwows existed
+          // t-then the pwevious c-counts awe set t-to be equaw to n-nyone. 🥺
+          stitch.vawue(vawuestate.unit(none))
       }
-    }.onlyIf { (_, ctx: Ctx) =>
-      // only run if the CountsField was requested; note this is ran both on read and write path
-      TweetCountsHydrator
-        .filterRequestedCounts(
-          ctx.opts.forUserId.getOrElse(ctx.userId),
-          ctx.opts.include.countsFields,
-          shouldHydrateBookmarksCount,
-          ctx.featureSwitchResults
-        ).nonEmpty
+    }.onwyif { (_, ʘwʘ ctx: ctx) =>
+      // onwy wun if the countsfiewd was wequested; nyote this is w-wan both on wead a-and wwite path
+      t-tweetcountshydwatow
+        .fiwtewwequestedcounts(
+          ctx.opts.fowusewid.getowewse(ctx.usewid),
+          c-ctx.opts.incwude.countsfiewds, UwU
+          shouwdhydwatebookmawkscount, XD
+          ctx.featuweswitchwesuwts
+        ).nonempty
     }
   }
 }

@@ -1,88 +1,88 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
 /**
- * Utility to compute an age decay multiplier based on a sigmoid function.
+ * u-utiwity to compute a-an age decay m-muwtipwiew based o-on a sigmoid f-function. (///ˬ///✿)
  */
-public class AgeDecay {
-  public static final double SLOPE_COEFF = 4.0;
-  public static final double LN_HALF = Math.log(0.5);
-  public final double halflife;
-  public final double maxBoost;
-  public final double base;
-  public final double slope;
+pubwic c-cwass agedecay {
+  pubwic static finaw doubwe swope_coeff = 4.0;
+  pubwic static f-finaw doubwe wn_hawf = math.wog(0.5);
+  pubwic f-finaw doubwe hawfwife;
+  pubwic f-finaw doubwe maxboost;
+  pubwic finaw doubwe base;
+  pubwic f-finaw doubwe swope;
 
-  /** Creates a new AgeDecay instance. */
-  public AgeDecay(double base, double maxBoost, double halflife, double slope) {
-    this.maxBoost = maxBoost;
+  /** cweates a-a nyew agedecay i-instance. (˘ω˘) */
+  pubwic agedecay(doubwe base, ^^;; doubwe maxboost, (✿oωo) doubwe hawfwife, (U ﹏ U) d-doubwe swope) {
+    this.maxboost = maxboost;
     this.base = base;
-    this.halflife = halflife;
-    this.slope = slope;
+    this.hawfwife = h-hawfwife;
+    this.swope = s-swope;
   }
 
-  /** Creates a new AgeDecay instance. */
-  public AgeDecay(double base, double halflife, double slope) {
-    this(base, 1.0, halflife, slope);
+  /** c-cweates a n-nyew agedecay instance. -.- */
+  p-pubwic agedecay(doubwe base, ^•ﻌ•^ doubwe h-hawfwife, rawr doubwe swope) {
+    this(base, (˘ω˘) 1.0, h-hawfwife, nyaa~~ swope);
   }
 
   /**
-   * Compute the age decay, using the provided halflife.
+   * compute the age decay, UwU using the pwovided hawfwife. :3
    *
-   * @param tweetAge The tweet age.
-   * @param unit The unit of the tweetAge parameter.
+   * @pawam tweetage the tweet age. (⑅˘꒳˘)
+   * @pawam u-unit the unit of the t-tweetage pawametew. (///ˬ///✿)
    */
-  public double getAgeDecayMultiplier(long tweetAge, TimeUnit unit) {
-    return getAgeDecayMultiplier(TimeUnit.SECONDS.convert(tweetAge, unit));
+  p-pubwic d-doubwe getagedecaymuwtipwiew(wong tweetage, ^^;; timeunit unit) {
+    wetuwn getagedecaymuwtipwiew(timeunit.seconds.convewt(tweetage, >_< u-unit));
   }
 
   /**
-   * Compute the age decay, assuming the halflife in the constructor is in minutes.
-   * @param ageInSeconds the age in seconds
+   * c-compute the age decay, rawr x3 a-assuming the h-hawfwife in the constwuctow is in m-minutes. /(^•ω•^)
+   * @pawam ageinseconds t-the age in seconds
    */
-  public double getAgeDecayMultiplier(long ageInSeconds) {
-    long minutesSinceTweet = TimeUnit.MINUTES.convert(ageInSeconds, TimeUnit.SECONDS);
-    return compute(minutesSinceTweet);
+  pubwic doubwe getagedecaymuwtipwiew(wong ageinseconds) {
+    w-wong minutessincetweet = t-timeunit.minutes.convewt(ageinseconds, timeunit.seconds);
+    w-wetuwn compute(minutessincetweet);
   }
 
   /**
-   * Compute age decay given an age, the age has to be in the same unit as halflife, which you
-   * construct the object with.
+   * c-compute age decay given an age, :3 the age has to be in the same unit as hawfwife, (ꈍᴗꈍ) which you
+   * constwuct the o-object with. /(^•ω•^)
    */
-  public double compute(double age) {
-    return compute(base, maxBoost, halflife, slope, age);
+  p-pubwic doubwe compute(doubwe a-age) {
+    w-wetuwn compute(base, (⑅˘꒳˘) m-maxboost, ( ͡o ω ͡o ) hawfwife, swope, òωó age);
   }
 
   /**
-   * Compute the age decay given all parameters. Use this if you don't need to reuse an AgeDecay
-   * object.
+   * compute the a-age decay given aww pawametews. (⑅˘꒳˘) use this if you don't nyeed to weuse an agedecay
+   * o-object. XD
    */
-  public static double compute(
-      double base, double maxBoost, double halflife, double slope, double age) {
-    return base + ((maxBoost - base) / (1 + Math.exp(slope * (age - halflife))));
+  pubwic static d-doubwe compute(
+      d-doubwe b-base, -.- doubwe maxboost, :3 doubwe h-hawfwife, nyaa~~ doubwe s-swope, 😳 doubwe a-age) {
+    wetuwn b-base + ((maxboost - base) / (1 + math.exp(swope * (age - h-hawfwife))));
   }
 
-  public static double compute(
-      double base, double maxBoost, double halflife, double age) {
-    Preconditions.checkArgument(halflife != 0);
-    return compute(base, maxBoost, halflife, SLOPE_COEFF / halflife, age);
-  }
-
-  /**
-   * Another nicer exponential decay function. Returns a value in (0, 1]
-   */
-  public static double computeExponential(double halflife, double exp, double age) {
-    return Math.exp(LN_HALF * Math.pow(age, exp) / Math.pow(halflife, exp));
+  p-pubwic static doubwe c-compute(
+      d-doubwe base, (⑅˘꒳˘) d-doubwe maxboost, doubwe hawfwife, nyaa~~ doubwe age) {
+    pweconditions.checkawgument(hawfwife != 0);
+    w-wetuwn compute(base, OwO maxboost, rawr x3 hawfwife, swope_coeff / hawfwife, XD age);
   }
 
   /**
-   * Exponential decay with remapping of the value from (0,1] to (min,max]
+   * anothew n-nyicew exponentiaw decay function. σωσ wetuwns a vawue in (0, 1]
    */
-  public static double computeExponential(double halflife, double exp, double age,
-                                          double minBoost, double maxBoost) {
-    double decay = computeExponential(halflife, exp, age);  // in (0, 1]
-    return (maxBoost - minBoost) * decay + minBoost;
+  p-pubwic s-static doubwe computeexponentiaw(doubwe h-hawfwife, (U ᵕ U❁) doubwe exp, (U ﹏ U) doubwe a-age) {
+    wetuwn math.exp(wn_hawf * m-math.pow(age, :3 e-exp) / math.pow(hawfwife, exp));
+  }
+
+  /**
+   * exponentiaw decay with wemapping of the vawue fwom (0,1] t-to (min,max]
+   */
+  pubwic static d-doubwe computeexponentiaw(doubwe hawfwife, ( ͡o ω ͡o ) d-doubwe exp, doubwe a-age, σωσ
+                                          doubwe minboost, >w< doubwe maxboost) {
+    d-doubwe d-decay = computeexponentiaw(hawfwife, exp, 😳😳😳 age);  // i-in (0, OwO 1]
+    w-wetuwn (maxboost - minboost) * decay + minboost;
   }
 }

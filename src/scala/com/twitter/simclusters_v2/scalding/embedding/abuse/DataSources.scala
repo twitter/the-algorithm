@@ -1,101 +1,101 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.twittew.simcwustews_v2.scawding.embedding.abuse
 
-import com.twitter.data.proto.Flock
-import com.twitter.scalding.{DateOps, DateRange, Days, RichDate, UniqueID}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{ClusterId, UserId}
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import graphstore.common.FlockBlocksJavaDataset
-import java.util.TimeZone
+impowt c-com.twittew.data.pwoto.fwock
+i-impowt com.twittew.scawding.{dateops, mya d-datewange, mya d-days, wichdate, (⑅˘꒳˘) u-uniqueid}
+impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt c-com.twittew.simcwustews_v2.hdfs_souwces.intewestedinsouwces
+impowt com.twittew.simcwustews_v2.scawding.common.matwix.spawsematwix
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw.{cwustewid, (U ﹏ U) usewid}
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces
+impowt gwaphstowe.common.fwockbwocksjavadataset
+impowt java.utiw.timezone
 
-object DataSources {
+o-object datasouwces {
 
-  private val ValidEdgeStateId = 0
-  val NumBlocksP95 = 49
+  p-pwivate vaw vawidedgestateid = 0
+  vaw nyumbwocksp95 = 49
 
   /**
-   * Helper function to return Sparse Matrix of user's interestedIn clusters and fav scores
-   * @param dateRange
-   * @return
+   * hewpew f-function to wetuwn spawse matwix o-of usew's intewestedin c-cwustews and fav scowes
+   * @pawam datewange
+   * @wetuwn
    */
-  def getUserInterestedInSparseMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): SparseMatrix[UserId, ClusterId, Double] = {
-    val simClusters = ExternalDataSources.simClustersInterestInSource
+  def getusewintewestedinspawsematwix(
+    i-impwicit datewange: datewange, mya
+    timezone: timezone
+  ): spawsematwix[usewid, ʘwʘ c-cwustewid, doubwe] = {
+    v-vaw simcwustews = e-extewnawdatasouwces.simcwustewsintewestinsouwce
 
-    val simClusterMatrixEntries = simClusters
-      .flatMap { keyVal =>
-        keyVal.value.clusterIdToScores.flatMap {
-          case (clusterId, score) =>
-            score.favScore.map { favScore =>
-              (keyVal.key, clusterId, favScore)
+    v-vaw simcwustewmatwixentwies = s-simcwustews
+      .fwatmap { keyvaw =>
+        keyvaw.vawue.cwustewidtoscowes.fwatmap {
+          c-case (cwustewid, (˘ω˘) scowe) =>
+            scowe.favscowe.map { f-favscowe =>
+              (keyvaw.key, (U ﹏ U) cwustewid, ^•ﻌ•^ favscowe)
             }
         }
       }
 
-    SparseMatrix.apply[UserId, ClusterId, Double](simClusterMatrixEntries)
+    spawsematwix.appwy[usewid, (˘ω˘) cwustewid, :3 doubwe](simcwustewmatwixentwies)
   }
 
-  def getUserInterestedInTruncatedKMatrix(
-    topK: Int
+  def getusewintewestedintwuncatedkmatwix(
+    topk: i-int
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[UserId, ClusterId, Double] = {
-    SparseMatrix(
-      InterestedInSources
-        .simClustersInterestedInUpdatedSource(dateRange, timeZone)
-        .flatMap {
-          case (userId, clustersUserIsInterestedIn) =>
-            val sortedAndTruncatedList = clustersUserIsInterestedIn.clusterIdToScores
-              .mapValues(_.favScore.getOrElse(0.0)).filter(_._2 > 0.0).toList.sortBy(-_._2).take(
-                topK)
-            sortedAndTruncatedList.map {
-              case (clusterId, score) =>
-                (userId, clusterId, score)
+    impwicit datewange: d-datewange, ^^;;
+    t-timezone: timezone, 🥺
+    u-uniqueid: uniqueid
+  ): spawsematwix[usewid, (⑅˘꒳˘) cwustewid, nyaa~~ d-doubwe] = {
+    s-spawsematwix(
+      intewestedinsouwces
+        .simcwustewsintewestedinupdatedsouwce(datewange, :3 t-timezone)
+        .fwatmap {
+          c-case (usewid, ( ͡o ω ͡o ) cwustewsusewisintewestedin) =>
+            v-vaw sowtedandtwuncatedwist = cwustewsusewisintewestedin.cwustewidtoscowes
+              .mapvawues(_.favscowe.getowewse(0.0)).fiwtew(_._2 > 0.0).towist.sowtby(-_._2).take(
+                t-topk)
+            sowtedandtwuncatedwist.map {
+              case (cwustewid, scowe) =>
+                (usewid, mya c-cwustewid, scowe)
             }
         }
     )
   }
 
   /**
-   * Helper function to return SparseMatrix of user block interactions from the FlockBlocks
-   * dataset. All users with greater than numBlocks are filtered out
-   * @param dateRange
-   * @return
+   * hewpew function t-to wetuwn spawsematwix of usew b-bwock intewactions f-fwom the fwockbwocks
+   * dataset. aww usews with gweatew than nyumbwocks awe fiwtewed out
+   * @pawam datewange
+   * @wetuwn
    */
-  def getFlockBlocksSparseMatrix(
-    maxNumBlocks: Int,
-    rangeForData: DateRange
+  def getfwockbwocksspawsematwix(
+    maxnumbwocks: i-int, (///ˬ///✿)
+    w-wangefowdata: datewange
   )(
-    implicit dateRange: DateRange
-  ): SparseMatrix[UserId, UserId, Double] = {
-    implicit val tz: java.util.TimeZone = DateOps.UTC
-    val userGivingBlocks = SparseMatrix.apply[UserId, UserId, Double](
-      DAL
-        .readMostRecentSnapshotNoOlderThan(FlockBlocksJavaDataset, Days(30))
-        .toTypedPipe
-        .flatMap { data: Flock.Edge =>
-          // Consider edges that are valid and have been updated in the past 1 year
-          if (data.getStateId == ValidEdgeStateId &&
-            rangeForData.contains(RichDate(data.getUpdatedAt * 1000L))) {
-            Some((data.getSourceId, data.getDestinationId, 1.0))
-          } else {
-            None
+    i-impwicit d-datewange: datewange
+  ): s-spawsematwix[usewid, (˘ω˘) usewid, doubwe] = {
+    impwicit vaw tz: java.utiw.timezone = d-dateops.utc
+    vaw usewgivingbwocks = spawsematwix.appwy[usewid, ^^;; usewid, doubwe](
+      d-daw
+        .weadmostwecentsnapshotnoowdewthan(fwockbwocksjavadataset, (✿oωo) days(30))
+        .totypedpipe
+        .fwatmap { data: f-fwock.edge =>
+          // c-considew edges that a-awe vawid and have been updated i-in the past 1 y-yeaw
+          i-if (data.getstateid == v-vawidedgestateid &&
+            wangefowdata.contains(wichdate(data.getupdatedat * 1000w))) {
+            some((data.getsouwceid, (U ﹏ U) d-data.getdestinationid, -.- 1.0))
+          } e-ewse {
+            n-nyone
           }
         })
-    // Find all users who give less than numBlocksP95 blocks.
-    // This is to remove those who might be responsible for automatically blocking users
-    // on the twitter platform.
-    val usersWithLegitBlocks = userGivingBlocks.rowL1Norms.collect {
-      case (userId, l1Norm) if l1Norm <= maxNumBlocks =>
-        userId
+    // f-find aww u-usews who give wess than nyumbwocksp95 bwocks.
+    // this is t-to wemove those who might be wesponsibwe fow automaticawwy bwocking usews
+    // on the twittew p-pwatfowm. ^•ﻌ•^
+    vaw usewswithwegitbwocks = usewgivingbwocks.woww1nowms.cowwect {
+      case (usewid, rawr w-w1nowm) if w1nowm <= m-maxnumbwocks =>
+        u-usewid
     }
-    // retain only those users who give legit blocks (i.e those users who give less than numBlocks95)
-    userGivingBlocks.filterRows(usersWithLegitBlocks)
+    // wetain onwy t-those usews who give wegit bwocks (i.e t-those usews w-who give wess than nyumbwocks95)
+    usewgivingbwocks.fiwtewwows(usewswithwegitbwocks)
   }
 }

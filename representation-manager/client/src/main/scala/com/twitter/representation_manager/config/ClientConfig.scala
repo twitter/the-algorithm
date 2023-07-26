@@ -1,25 +1,25 @@
-package com.twitter.representation_manager.config
+package com.twittew.wepwesentation_managew.config
 
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
 
 /*
- * This is RMS client config class.
- * We only support setting up in memory cache params for now, but we expect to enable other
- * customisations in the near future e.g. request timeout
+ * t-this is wms cwient c-config cwass. rawr x3
+ * w-we onwy suppowt s-setting up in m-memowy cache pawams f-fow nyow, but we expect to enabwe othew
+ * customisations in the nyeaw futuwe e-e.g. mya wequest timeout
  *
  * --------------------------------------------
- * PLEASE NOTE:
- * Having in-memory cache is not necessarily a free performance win, anyone considering it should
- * investigate rather than blindly enabling it
+ * pwease nyote:
+ * h-having in-memowy cache is nyot nyecessawiwy a-a fwee pewfowmance win, nyaa~~ anyone considewing it shouwd
+ * i-investigate wathew than bwindwy e-enabwing it
  * */
-class ClientConfig(inMemCacheParamsOverrides: Map[
-  (EmbeddingType, ModelVersion),
-  InMemoryCacheParams
-] = Map.empty) {
-  // In memory cache config per embedding
-  val inMemCacheParams = DefaultInMemoryCacheConfig.cacheParamsMap ++ inMemCacheParamsOverrides
-  val inMemoryCacheConfig = new InMemoryCacheConfig(inMemCacheParams)
+c-cwass cwientconfig(inmemcachepawamsovewwides: map[
+  (embeddingtype, (⑅˘꒳˘) modewvewsion), rawr x3
+  inmemowycachepawams
+] = map.empty) {
+  // i-in memowy cache config pew embedding
+  vaw inmemcachepawams = defauwtinmemowycacheconfig.cachepawamsmap ++ i-inmemcachepawamsovewwides
+  vaw i-inmemowycacheconfig = n-nyew inmemowycacheconfig(inmemcachepawams)
 }
 
-object DefaultClientConfig extends ClientConfig
+o-object defauwtcwientconfig e-extends cwientconfig

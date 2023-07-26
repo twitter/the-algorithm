@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.Closeable;
+impowt java.io.cwoseabwe;
 
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
+i-impowt c-com.twittew.seawch.eawwybiwd.exception.eawwybiwdstawtupexception;
 
 /**
- * Handles starting and indexing data for an Earlybird.
+ * h-handwes s-stawting and i-indexing data fow a-an eawwybiwd. (ˆ ﻌ ˆ)♡
  */
-@FunctionalInterface
-public interface EarlybirdStartup {
+@functionawintewface
+p-pubwic i-intewface eawwybiwdstawtup {
   /**
-   * Handles indexing Tweets, Tweet Updates and user updates. Blocks until current, and forks a
-   * thread to keep the index current.
+   * handwes indexing tweets, (⑅˘꒳˘) tweet updates and usew updates. (U ᵕ U❁) b-bwocks untiw cuwwent, -.- and fowks a
+   * thwead t-to keep the index cuwwent. ^^;;
    */
-  Closeable start() throws EarlybirdStartupException;
+  c-cwoseabwe stawt() thwows eawwybiwdstawtupexception;
 }

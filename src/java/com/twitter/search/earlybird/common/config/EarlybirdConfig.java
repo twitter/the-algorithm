@@ -1,363 +1,363 @@
-package com.twitter.search.earlybird.common.config;
+package com.twittew.seawch.eawwybiwd.common.config;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Nullable;
+impowt java.utiw.date;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.collect.ImmutableMap;
+i-impowt c-com.googwe.common.cowwect.immutabwemap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.aurora.AuroraInstanceKey;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.config.ConfigFile;
-import com.twitter.search.common.config.ConfigurationException;
-import com.twitter.search.common.config.SearchPenguinVersionsConfig;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt com.twittew.seawch.common.auwowa.auwowainstancekey;
+impowt com.twittew.seawch.common.config.config;
+i-impowt com.twittew.seawch.common.config.configfiwe;
+impowt com.twittew.seawch.common.config.configuwationexception;
+impowt com.twittew.seawch.common.config.seawchpenguinvewsionsconfig;
 
-public final class EarlybirdConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdConfig.class);
+p-pubwic finaw cwass eawwybiwdconfig {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(eawwybiwdconfig.cwass);
 
-  private static final String DEFAULT_CONFIG_FILE = "earlybird-search.yml";
-  private static final String LATE_TWEET_BUFFER_KEY = "late_tweet_buffer";
+  pwivate static f-finaw stwing defauwt_config_fiwe = "eawwybiwd-seawch.ymw";
+  p-pwivate static f-finaw stwing wate_tweet_buffew_key = "wate_tweet_buffew";
 
-  public static final String EARLYBIRD_ZK_CONFIG_DIR = "/twitter/search/production/earlybird/";
-  public static final String EARLYBIRD_CONFIG_DIR = "earlybird/config";
+  pubwic static finaw stwing eawwybiwd_zk_config_diw = "/twittew/seawch/pwoduction/eawwybiwd/";
+  pubwic s-static finaw stwing eawwybiwd_config_diw = "eawwybiwd/config";
 
-  public static final String USER_SNAPSHOT_BASE_DIR = "user_snapshot_base_dir";
+  pubwic static finaw stwing usew_snapshot_base_diw = "usew_snapshot_base_diw";
 
-  private static volatile ConfigFile earlybirdConfig = null;
-  private static volatile Map<String, Object> overrideValueMap = ImmutableMap.of();
+  p-pwivate static vowatiwe c-configfiwe eawwybiwdconfig = n-nyuww;
+  p-pwivate static v-vowatiwe map<stwing, (U ᵕ U❁) object> ovewwidevawuemap = i-immutabwemap.of();
 
-  private static String logDirOverride = null;
-  private static AuroraInstanceKey auroraInstanceKey = null;
+  pwivate static stwing w-wogdiwovewwide = nyuww;
+  pwivate static auwowainstancekey auwowainstancekey = nyuww;
 
-  private static int adminPort;
+  pwivate static int adminpowt;
 
-  private EarlybirdConfig() { }
+  p-pwivate eawwybiwdconfig() { }
 
-  private static final class PenguinVersionHolder {
-    private static final PenguinVersion PENGUIN_VERSION_SINGLETON =
-        SearchPenguinVersionsConfig.getSingleSupportedVersion(
-            EarlybirdProperty.PENGUIN_VERSION.get());
-    private static final byte PENGUIN_VERSION_BYTE_VALUE =
-        PENGUIN_VERSION_SINGLETON.getByteValue();
+  p-pwivate s-static finaw c-cwass penguinvewsionhowdew {
+    pwivate static finaw penguinvewsion penguin_vewsion_singweton =
+        s-seawchpenguinvewsionsconfig.getsingwesuppowtedvewsion(
+            e-eawwybiwdpwopewty.penguin_vewsion.get());
+    pwivate s-static finaw b-byte penguin_vewsion_byte_vawue =
+        penguin_vewsion_singweton.getbytevawue();
   }
 
-  public static byte getPenguinVersionByte() {
-    return PenguinVersionHolder.PENGUIN_VERSION_BYTE_VALUE;
+  p-pubwic static byte getpenguinvewsionbyte() {
+    w-wetuwn penguinvewsionhowdew.penguin_vewsion_byte_vawue;
   }
 
-  public static PenguinVersion getPenguinVersion() {
-    return PenguinVersionHolder.PENGUIN_VERSION_SINGLETON;
+  pubwic s-static penguinvewsion getpenguinvewsion() {
+    w-wetuwn penguinvewsionhowdew.penguin_vewsion_singweton;
   }
 
   /**
-   * Reads the earlybird configuration from the given file.
+   * weads the e-eawwybiwd configuwation f-fwom the given fiwe. ^^;;
    */
-  public static synchronized void init(@Nullable String configFile) {
-    if (earlybirdConfig == null) {
-      String file = configFile == null ? DEFAULT_CONFIG_FILE : configFile;
-      earlybirdConfig = new ConfigFile(EARLYBIRD_CONFIG_DIR, file);
+  pubwic static synchwonized void init(@nuwwabwe stwing configfiwe) {
+    if (eawwybiwdconfig == n-nyuww) {
+      s-stwing fiwe = configfiwe == n-nyuww ? defauwt_config_fiwe : c-configfiwe;
+      e-eawwybiwdconfig = new configfiwe(eawwybiwd_config_diw, ^^;; fiwe);
     }
   }
 
-  public static synchronized void setOverrideValues(Map<String, Object> overrideValues) {
-    overrideValueMap = ImmutableMap.copyOf(overrideValues);
+  pubwic s-static synchwonized void setovewwidevawues(map<stwing, rawr object> ovewwidevawues) {
+    ovewwidevawuemap = i-immutabwemap.copyof(ovewwidevawues);
   }
 
   /**
-   * Pack all values in a string that can be printed for informational purposes.
-   * @return the string.
+   * pack aww vawues i-in a stwing that c-can be pwinted f-fow infowmationaw puwposes. (˘ω˘)
+   * @wetuwn t-the stwing. 🥺
    */
-  public static String allValuesAsString() {
-    Map<String, String> stringMap = earlybirdConfig.getStringMap();
+  p-pubwic s-static stwing a-awwvawuesasstwing() {
+    map<stwing, nyaa~~ stwing> s-stwingmap = eawwybiwdconfig.getstwingmap();
 
-    StringBuilder stringBuilder = new StringBuilder();
+    s-stwingbuiwdew s-stwingbuiwdew = n-nyew stwingbuiwdew();
 
-    stringBuilder.append("Config environment: " + Config.getEnvironment() + "\n\n");
-    stringBuilder.append(
-        String.format("Values from earlybird-search.yml (total %d):\n", stringMap.size()));
+    s-stwingbuiwdew.append("config enviwonment: " + config.getenviwonment() + "\n\n");
+    stwingbuiwdew.append(
+        s-stwing.fowmat("vawues fwom eawwybiwd-seawch.ymw (totaw %d):\n", :3 stwingmap.size()));
 
-    stringMap.forEach((key, value) -> {
-      stringBuilder.append(String.format("  %s: %s\n", key, value.toString()));
-      if (overrideValueMap.containsKey(key)) {
-        stringBuilder.append(String.format(
-          "    override value: %s\n", overrideValueMap.get(key).toString()));
+    stwingmap.foweach((key, /(^•ω•^) vawue) -> {
+      stwingbuiwdew.append(stwing.fowmat("  %s: %s\n", ^•ﻌ•^ key, vawue.tostwing()));
+      i-if (ovewwidevawuemap.containskey(key)) {
+        stwingbuiwdew.append(stwing.fowmat(
+          "    ovewwide vawue: %s\n", UwU ovewwidevawuemap.get(key).tostwing()));
       }
     });
 
-    stringBuilder.append(String.format(
-        "\n\nAll command-line overrides (total: %d):\n", overrideValueMap.size()));
-    overrideValueMap.forEach((key, value) -> {
-      stringBuilder.append(String.format("  %s: %s\n", key, value.toString()));
+    s-stwingbuiwdew.append(stwing.fowmat(
+        "\n\naww c-command-wine o-ovewwides (totaw: %d):\n", 😳😳😳 ovewwidevawuemap.size()));
+    o-ovewwidevawuemap.foweach((key, OwO vawue) -> {
+      s-stwingbuiwdew.append(stwing.fowmat("  %s: %s\n", ^•ﻌ•^ k-key, vawue.tostwing()));
     });
 
-    return stringBuilder.toString();
+    wetuwn stwingbuiwdew.tostwing();
   }
 
   /**
-   * Returns the value of the given property as a string. If the property is not set, a runtime
-   * exception is thrown.
+   * wetuwns the vawue of the given pwopewty a-as a stwing. (ꈍᴗꈍ) if the pwopewty i-is nyot set, (⑅˘꒳˘) a wuntime
+   * exception i-is thwown. (⑅˘꒳˘)
    */
-  public static String getString(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (String) overrideValue;
+  p-pubwic static stwing getstwing(stwing p-pwopewty) {
+    o-object ovewwidevawue = ovewwidevawuemap.get(pwopewty);
+    i-if (ovewwidevawue != n-nyuww) {
+      wetuwn (stwing) ovewwidevawue;
     }
 
-    try {
-      return earlybirdConfig.getString(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config string " + property, e);
-      throw new RuntimeException(e);
-    }
-  }
-
-  /**
-   * Returns the value of the given property as a string.
-   */
-  public static String getString(String property, String defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (String) overrideValue;
-    }
-
-    return earlybirdConfig.getString(property, defaultValue);
-  }
-
-  /**
-   * Returns the value of the given property as an integer. If the property is not set, a runtime
-   * exception is thrown.
-   */
-  public static int getInt(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (int) overrideValue;
-    }
-
-    try {
-      return earlybirdConfig.getInt(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config int " + property, e);
-      throw new RuntimeException(e);
+    twy {
+      wetuwn eawwybiwdconfig.getstwing(pwopewty);
+    } c-catch (configuwationexception e-e) {
+      w-wog.ewwow("fataw ewwow: couwd n-nyot get config s-stwing " + pwopewty, (ˆ ﻌ ˆ)♡ e);
+      thwow n-nyew wuntimeexception(e);
     }
   }
 
   /**
-   * Returns the value of the given property as an integer.
+   * wetuwns the vawue of the given pwopewty as a stwing. /(^•ω•^)
    */
-  public static int getInt(String property, int defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (int) overrideValue;
+  p-pubwic static s-stwing getstwing(stwing pwopewty, stwing defauwtvawue) {
+    o-object o-ovewwidevawue = ovewwidevawuemap.get(pwopewty);
+    if (ovewwidevawue != nyuww) {
+      w-wetuwn (stwing) ovewwidevawue;
     }
 
-    return earlybirdConfig.getInt(property, defaultValue);
+    wetuwn eawwybiwdconfig.getstwing(pwopewty, òωó defauwtvawue);
   }
 
   /**
-   * Returns the value of the given property as a double.
+   * wetuwns the vawue o-of the given pwopewty as an integew. (⑅˘꒳˘) if the pwopewty i-is not set, (U ᵕ U❁) a-a wuntime
+   * exception is thwown. >w<
    */
-  public static double getDouble(String property, double defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (double) overrideValue;
+  pubwic static int getint(stwing pwopewty) {
+    object o-ovewwidevawue = o-ovewwidevawuemap.get(pwopewty);
+    if (ovewwidevawue != nyuww) {
+      wetuwn (int) ovewwidevawue;
     }
 
-    return earlybirdConfig.getDouble(property, defaultValue);
-  }
-
-  /**
-   * Returns the value of the given property as a long. If the property is not set, a runtime
-   * exception is thrown.
-   */
-  public static long getLong(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (long) overrideValue;
-    }
-
-    try {
-      return earlybirdConfig.getLong(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config long " + property, e);
-      throw new RuntimeException(e);
+    t-twy {
+      wetuwn eawwybiwdconfig.getint(pwopewty);
+    } c-catch (configuwationexception e) {
+      wog.ewwow("fataw ewwow: c-couwd nyot get config int " + pwopewty, σωσ e-e);
+      t-thwow nyew wuntimeexception(e);
     }
   }
 
   /**
-   * Returns the value of the given property as a long.
+   * wetuwns t-the vawue of the given pwopewty a-as an integew. -.-
    */
-  public static long getLong(String property, long defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (long) overrideValue;
+  p-pubwic static i-int getint(stwing pwopewty, o.O i-int defauwtvawue) {
+    o-object ovewwidevawue = ovewwidevawuemap.get(pwopewty);
+    i-if (ovewwidevawue != n-nyuww) {
+      w-wetuwn (int) ovewwidevawue;
     }
 
-    return earlybirdConfig.getLong(property, defaultValue);
+    wetuwn eawwybiwdconfig.getint(pwopewty, ^^ d-defauwtvawue);
   }
 
   /**
-   * Returns the value of the given property as a boolean. If the property is not set, a runtime
-   * exception is thrown.
+   * wetuwns the v-vawue of the g-given pwopewty as a doubwe. >_<
    */
-  public static boolean getBool(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (boolean) overrideValue;
+  pubwic static doubwe getdoubwe(stwing p-pwopewty, >w< d-doubwe defauwtvawue) {
+    object o-ovewwidevawue = o-ovewwidevawuemap.get(pwopewty);
+    if (ovewwidevawue != nyuww) {
+      w-wetuwn (doubwe) ovewwidevawue;
     }
 
-    try {
-      return earlybirdConfig.getBool(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config boolean " + property, e);
-      throw new RuntimeException(e);
-    }
+    wetuwn eawwybiwdconfig.getdoubwe(pwopewty, >_< defauwtvawue);
   }
 
   /**
-   * Returns the value of the given property as a boolean.
+   * wetuwns the vawue of the given p-pwopewty as a wong. >w< if the pwopewty i-is nyot set, a wuntime
+   * e-exception is thwown. rawr
    */
-  public static boolean getBool(String property, boolean defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (boolean) overrideValue;
+  pubwic s-static wong getwong(stwing p-pwopewty) {
+    o-object ovewwidevawue = o-ovewwidevawuemap.get(pwopewty);
+    i-if (ovewwidevawue != n-nuww) {
+      wetuwn (wong) ovewwidevawue;
     }
 
-    return earlybirdConfig.getBool(property, defaultValue);
-  }
-
-  /**
-   * Returns the value of the given property as a date.
-   */
-  public static Date getDate(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (Date) overrideValue;
-    }
-
-    Date date = (Date) earlybirdConfig.getObject(property, null);
-    if (date == null) {
-      throw new RuntimeException("Could not get config date: " + property);
-    }
-    return date;
-  }
-
-  /**
-   * Returns the value of the given property as a list of strings.
-   */
-  public static List<String> getListOfStrings(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (List<String>) overrideValue;
-    }
-
-    List<String> list = (List<String>) earlybirdConfig.getObject(property, null);
-    if (list == null) {
-      throw new RuntimeException("Could not get list of strings: " + property);
-    }
-    return list;
-  }
-
-  /**
-   * Returns the value of the given property as a map.
-   */
-  @SuppressWarnings("unchecked")
-  public static Map<String, Object> getMap(String property) {
-    Map<String, Object> map = (Map<String, Object>) earlybirdConfig.getObject(property, null);
-    if (map == null) {
-      throw new RuntimeException("Could not find config property: " + property);
-    }
-    return map;
-  }
-
-  public static int getMaxSegmentSize() {
-    return EarlybirdConfig.getInt("max_segment_size", 1 << 16);
-  }
-
-  /**
-   * Returns the log properties file.
-   */
-  public static String getLogPropertiesFile() {
-    try {
-      String filename = earlybirdConfig.getString("log_properties_filename");
-      return earlybirdConfig.getConfigFilePath(filename);
-    } catch (ConfigurationException e) {
-      // Print here rather than use LOG - log was probably not initialized yet.
-      LOG.error("Fatal error: could not get log properties file", e);
-      throw new RuntimeException(e);
+    twy {
+      wetuwn eawwybiwdconfig.getwong(pwopewty);
+    } catch (configuwationexception e) {
+      wog.ewwow("fataw ewwow: c-couwd nyot get c-config wong " + p-pwopewty, rawr x3 e);
+      thwow nyew w-wuntimeexception(e);
     }
   }
 
   /**
-   * Returns the log directory.
+   * wetuwns the vawue of the given pwopewty a-as a wong. ( ͡o ω ͡o )
    */
-  public static String getLogDir() {
-    if (logDirOverride != null) {
-      return logDirOverride;
-    } else {
-      return EarlybirdConfig.getString("log_dir");
+  p-pubwic static wong getwong(stwing p-pwopewty, (˘ω˘) wong defauwtvawue) {
+    object o-ovewwidevawue = o-ovewwidevawuemap.get(pwopewty);
+    if (ovewwidevawue != n-nyuww) {
+      w-wetuwn (wong) ovewwidevawue;
+    }
+
+    wetuwn eawwybiwdconfig.getwong(pwopewty, 😳 defauwtvawue);
+  }
+
+  /**
+   * wetuwns t-the vawue of t-the given pwopewty a-as a boowean. OwO i-if the pwopewty i-is nyot set, (˘ω˘) a wuntime
+   * exception i-is thwown.
+   */
+  p-pubwic static boowean g-getboow(stwing pwopewty) {
+    object o-ovewwidevawue = ovewwidevawuemap.get(pwopewty);
+    i-if (ovewwidevawue != nyuww) {
+      wetuwn (boowean) ovewwidevawue;
+    }
+
+    twy {
+      w-wetuwn eawwybiwdconfig.getboow(pwopewty);
+    } catch (configuwationexception e-e) {
+      wog.ewwow("fataw ewwow: c-couwd nyot get config boowean " + p-pwopewty, e);
+      thwow nyew wuntimeexception(e);
     }
   }
 
-  public static void overrideLogDir(String logDir) {
-    EarlybirdConfig.logDirOverride = logDir;
+  /**
+   * w-wetuwns the vawue o-of the given p-pwopewty as a boowean. òωó
+   */
+  pubwic static boowean getboow(stwing pwopewty, ( ͡o ω ͡o ) boowean d-defauwtvawue) {
+    object ovewwidevawue = o-ovewwidevawuemap.get(pwopewty);
+    i-if (ovewwidevawue != nyuww) {
+      w-wetuwn (boowean) ovewwidevawue;
+    }
+
+    w-wetuwn eawwybiwdconfig.getboow(pwopewty, UwU d-defauwtvawue);
   }
 
-  public static int getThriftPort() {
-    return EarlybirdProperty.THRIFT_PORT.get();
+  /**
+   * wetuwns the vawue of t-the given pwopewty as a date. /(^•ω•^)
+   */
+  pubwic static d-date getdate(stwing p-pwopewty) {
+    object o-ovewwidevawue = ovewwidevawuemap.get(pwopewty);
+    i-if (ovewwidevawue != n-nyuww) {
+      w-wetuwn (date) ovewwidevawue;
+    }
+
+    date date = (date) eawwybiwdconfig.getobject(pwopewty, (ꈍᴗꈍ) nyuww);
+    if (date == nyuww) {
+      thwow nyew wuntimeexception("couwd nyot get config date: " + pwopewty);
+    }
+    wetuwn date;
   }
 
-  public static int getWarmUpThriftPort() {
-    return EarlybirdProperty.WARMUP_THRIFT_PORT.get();
+  /**
+   * wetuwns the vawue o-of the given pwopewty a-as a wist of stwings. 😳
+   */
+  pubwic static w-wist<stwing> getwistofstwings(stwing p-pwopewty) {
+    o-object ovewwidevawue = ovewwidevawuemap.get(pwopewty);
+    i-if (ovewwidevawue != nyuww) {
+      w-wetuwn (wist<stwing>) o-ovewwidevawue;
+    }
+
+    wist<stwing> w-wist = (wist<stwing>) eawwybiwdconfig.getobject(pwopewty, mya n-nyuww);
+    i-if (wist == nyuww) {
+      thwow nyew wuntimeexception("couwd n-nyot get w-wist of stwings: " + p-pwopewty);
+    }
+    w-wetuwn w-wist;
   }
 
-  public static int getSearcherThreads() {
-    return EarlybirdProperty.SEARCHER_THREADS.get();
+  /**
+   * w-wetuwns the v-vawue of the g-given pwopewty as a-a map. mya
+   */
+  @suppwesswawnings("unchecked")
+  pubwic static m-map<stwing, /(^•ω•^) object> g-getmap(stwing p-pwopewty) {
+    map<stwing, ^^;; object> m-map = (map<stwing, 🥺 object>) eawwybiwdconfig.getobject(pwopewty, ^^ n-nyuww);
+    if (map == nyuww) {
+      t-thwow n-nyew wuntimeexception("couwd nyot f-find config pwopewty: " + pwopewty);
+    }
+    w-wetuwn map;
   }
 
-  public static int getLateTweetBuffer() {
-    return getInt(LATE_TWEET_BUFFER_KEY);
+  pubwic static i-int getmaxsegmentsize() {
+    wetuwn eawwybiwdconfig.getint("max_segment_size", ^•ﻌ•^ 1 << 16);
   }
 
-  public static int getAdminPort() {
-    return adminPort;
+  /**
+   * w-wetuwns the wog pwopewties f-fiwe. /(^•ω•^)
+   */
+  pubwic static stwing getwogpwopewtiesfiwe() {
+    twy {
+      stwing fiwename = e-eawwybiwdconfig.getstwing("wog_pwopewties_fiwename");
+      wetuwn eawwybiwdconfig.getconfigfiwepath(fiwename);
+    } c-catch (configuwationexception e-e) {
+      // pwint hewe wathew than use wog - wog was p-pwobabwy nyot initiawized yet. ^^
+      w-wog.ewwow("fataw e-ewwow: couwd n-nyot get wog pwopewties fiwe", e);
+      thwow n-nyew wuntimeexception(e);
+    }
   }
 
-  public static void setAdminPort(int adminPort) {
-    EarlybirdConfig.adminPort = adminPort;
+  /**
+   * w-wetuwns the wog diwectowy. 🥺
+   */
+  p-pubwic static stwing getwogdiw() {
+    if (wogdiwovewwide != n-nyuww) {
+      wetuwn wogdiwovewwide;
+    } e-ewse {
+      wetuwn e-eawwybiwdconfig.getstwing("wog_diw");
+    }
   }
 
-  public static boolean isRealtimeOrProtected() {
-    String earlybirdName = EarlybirdProperty.EARLYBIRD_NAME.get();
-    return earlybirdName.contains("realtime") || earlybirdName.contains("protected");
+  p-pubwic static void ovewwidewogdiw(stwing w-wogdiw) {
+    eawwybiwdconfig.wogdiwovewwide = wogdiw;
   }
 
-  public static boolean consumeUserScrubGeoEvents() {
-    return EarlybirdProperty.CONSUME_GEO_SCRUB_EVENTS.get();
+  p-pubwic s-static int g-getthwiftpowt() {
+    wetuwn eawwybiwdpwopewty.thwift_powt.get();
   }
 
-  @Nullable
-  public static AuroraInstanceKey getAuroraInstanceKey() {
-    return auroraInstanceKey;
+  p-pubwic s-static int getwawmupthwiftpowt() {
+    w-wetuwn eawwybiwdpwopewty.wawmup_thwift_powt.get();
   }
 
-  public static void setAuroraInstanceKey(AuroraInstanceKey auroraInstanceKey) {
-    EarlybirdConfig.auroraInstanceKey = auroraInstanceKey;
+  p-pubwic static int g-getseawchewthweads() {
+    w-wetuwn e-eawwybiwdpwopewty.seawchew_thweads.get();
   }
 
-  public static boolean isAurora() {
-    return auroraInstanceKey != null;
+  p-pubwic static int getwatetweetbuffew() {
+    w-wetuwn getint(wate_tweet_buffew_key);
   }
 
-  public static void setForTests(String property, Object value) {
-    earlybirdConfig.setForTests(DEFAULT_CONFIG_FILE, property, value);
+  pubwic static int g-getadminpowt() {
+    wetuwn adminpowt;
   }
 
-  public static synchronized void clearForTests() {
-    earlybirdConfig = new ConfigFile(EARLYBIRD_CONFIG_DIR, DEFAULT_CONFIG_FILE);
+  p-pubwic static void s-setadminpowt(int a-adminpowt) {
+    eawwybiwdconfig.adminpowt = adminpowt;
+  }
+
+  pubwic static b-boowean isweawtimeowpwotected() {
+    s-stwing eawwybiwdname = e-eawwybiwdpwopewty.eawwybiwd_name.get();
+    wetuwn eawwybiwdname.contains("weawtime") || eawwybiwdname.contains("pwotected");
+  }
+
+  p-pubwic static b-boowean consumeusewscwubgeoevents() {
+    wetuwn e-eawwybiwdpwopewty.consume_geo_scwub_events.get();
+  }
+
+  @nuwwabwe
+  p-pubwic static auwowainstancekey getauwowainstancekey() {
+    wetuwn auwowainstancekey;
+  }
+
+  p-pubwic static v-void setauwowainstancekey(auwowainstancekey auwowainstancekey) {
+    e-eawwybiwdconfig.auwowainstancekey = a-auwowainstancekey;
+  }
+
+  pubwic static boowean isauwowa() {
+    w-wetuwn a-auwowainstancekey != nyuww;
+  }
+
+  pubwic static v-void setfowtests(stwing pwopewty, (U ᵕ U❁) object vawue) {
+    e-eawwybiwdconfig.setfowtests(defauwt_config_fiwe, 😳😳😳 pwopewty, v-vawue);
+  }
+
+  p-pubwic static synchwonized v-void cweawfowtests() {
+    e-eawwybiwdconfig = nyew c-configfiwe(eawwybiwd_config_diw, nyaa~~ defauwt_config_fiwe);
   }
 }

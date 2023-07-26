@@ -1,91 +1,91 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import org.apache.lucene.util.BytesRef;
+impowt o-owg.apache.wucene.utiw.byteswef;
 
 /**
- * Utilities for encoding and decoding BytesRefs into ints. The encoding is:
- * [0..n] n bytes big-endian decoded into integers.
- * n: number of bytes.
+ * u-utiwities f-fow encoding a-and decoding byteswefs i-into ints. 😳 t-the encoding i-is:
+ * [0..n] ny b-bytes big-endian decoded into integews. 😳😳😳
+ * ny: nyumbew of bytes. mya
  *
- * Example:
- * encode([DE, AD, BE, EF, AB]) => [0xDEADBEEF, 0xAB000000, 5]
+ * exampwe:
+ * e-encode([de, mya ad, be, ef, ab]) => [0xdeadbeef, (⑅˘꒳˘) 0xab000000, 5]
  *
- * It's necessary to store the length at the end instead of the start so that we can know how far to
- * jump backward from a skiplist entry. We can't store it after the skip list entry because there
- * can be a variable number of pointers after the skip list entry.
+ * it's nyecessawy t-to stowe the wength at the e-end instead of the stawt so that we can know how faw to
+ * jump b-backwawd fwom a skipwist entwy. (U ﹏ U) w-we can't stowe i-it aftew the skip wist entwy because thewe
+ * can be a vawiabwe nyumbew of pointews a-aftew the skip wist entwy. mya
  *
- * An example skip list entry, with labels on the following line:
- * [0xDEADBEEF,       12,   654,         0x877,       0x78879]
- * [   payload, position, docID, level0Pointer, level1Pointer]
+ * an exampwe skip wist entwy, ʘwʘ with wabews on t-the fowwowing wine:
+ * [0xdeadbeef, (˘ω˘)       12,   654, (U ﹏ U)         0x877, ^•ﻌ•^       0x78879]
+ * [   paywoad, (˘ω˘) p-position, docid, :3 w-wevew0pointew, ^^;; w-wevew1pointew]
  */
-public final class PayloadUtil {
-  private PayloadUtil() {
+p-pubwic finaw cwass paywoadutiw {
+  pwivate p-paywoadutiw() {
   }
 
-  public static final int[] EMPTY_PAYLOAD = new int[]{0};
+  pubwic static finaw int[] e-empty_paywoad = nyew int[]{0};
 
   /**
-   * Encodes a {@link BytesRef} into an int array (to be inserted into a
-   * {@link IntBlockPool}. The encoder considers the input to be big-endian encoded ints.
+   * encodes a {@wink byteswef} into an int awway (to be i-insewted into a
+   * {@wink intbwockpoow}. 🥺 t-the e-encodew considews t-the input to be big-endian encoded ints. (⑅˘꒳˘)
    */
-  public static int[] encodePayload(BytesRef payload) {
-    if (payload == null) {
-      return EMPTY_PAYLOAD;
+  pubwic static i-int[] encodepaywoad(byteswef p-paywoad) {
+    if (paywoad == n-nyuww) {
+      w-wetuwn empty_paywoad;
     }
 
-    int intsInPayload = intsForBytes(payload.length);
+    i-int intsinpaywoad = i-intsfowbytes(paywoad.wength);
 
-    int[] arr = new int[1 + intsInPayload];
+    int[] aww = nyew int[1 + intsinpaywoad];
 
-    for (int i = 0; i < intsInPayload; i++) {
-      int n = 0;
-      for (int j = 0; j < 4; j++) {
+    f-fow (int i = 0; i < intsinpaywoad; i-i++) {
+      int ny = 0;
+      f-fow (int j = 0; j-j < 4; j++) {
         int index = i * 4 + j;
         int b;
-        if (index < payload.length) {
-          // mask off the top bits in case b is negative.
-          b = payload.bytes[index] & 0xFF;
-        } else {
-          b = 0;
+        if (index < paywoad.wength) {
+          // mask off the top b-bits in case b-b is nyegative. nyaa~~
+          b = paywoad.bytes[index] & 0xff;
+        } e-ewse {
+          b-b = 0;
         }
-        n = n << 8 | b;
+        ny = n-ny << 8 | b;
       }
 
-      arr[i] = n;
+      aww[i] = ny;
     }
 
-    arr[intsInPayload] = payload.length;
+    aww[intsinpaywoad] = paywoad.wength;
 
-    return arr;
+    w-wetuwn aww;
   }
 
   /**
-   * Decodes a {@link IntBlockPool} and position into a {@link BytesRef}. The ints are
-   * converted into big-endian encoded bytes.
+   * decodes a {@wink intbwockpoow} and position into a {@wink b-byteswef}. :3 the ints awe
+   * c-convewted into b-big-endian encoded b-bytes. ( ͡o ω ͡o )
    */
-  public static BytesRef decodePayload(
-      IntBlockPool b,
-      int pointer) {
-    int length = b.get(pointer);
-    BytesRef bytesRef = new BytesRef(length);
-    bytesRef.length = length;
+  pubwic static b-byteswef decodepaywoad(
+      i-intbwockpoow b, mya
+      i-int pointew) {
+    i-int wength = b.get(pointew);
+    byteswef b-byteswef = n-nyew byteswef(wength);
+    b-byteswef.wength = w-wength;
 
-    int numInts = intsForBytes(length);
+    i-int nyumints = intsfowbytes(wength);
 
-    for (int i = 0; i < numInts; i++) {
-      int n = b.get(pointer - numInts + i);
-      for (int j = 0; j < 4; j++) {
-        int byteIndex = 4 * i + j;
-        if (byteIndex < length) {
-          bytesRef.bytes[byteIndex] = (byte) (n >> 8 * (3 - byteIndex % 4));
+    fow (int i = 0; i < nyumints; i-i++) {
+      int ny = b.get(pointew - nyumints + i);
+      fow (int j = 0; j < 4; j++) {
+        i-int byteindex = 4 * i + j;
+        if (byteindex < wength) {
+          b-byteswef.bytes[byteindex] = (byte) (n >> 8 * (3 - b-byteindex % 4));
         }
       }
     }
 
-    return bytesRef;
+    w-wetuwn byteswef;
   }
 
-  private static int intsForBytes(int byteCount) {
-    return (byteCount + 3) / 4;
+  p-pwivate static int intsfowbytes(int b-bytecount) {
+    w-wetuwn (bytecount + 3) / 4;
   }
 }

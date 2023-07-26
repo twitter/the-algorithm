@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_ranker
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.timewine_wankew
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelineranker.{thriftscala => t}
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.timewinewankew.{thwiftscawa => t-t}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TimelineRankerRecapCandidateSource @Inject() (
-  timelineRankerClient: t.TimelineRanker.MethodPerEndpoint)
-    extends CandidateSource[t.RecapQuery, t.CandidateTweet] {
+@singweton
+cwass timewinewankewwecapcandidatesouwce @inject() (
+  timewinewankewcwient: t.timewinewankew.methodpewendpoint)
+    e-extends candidatesouwce[t.wecapquewy, mya t.candidatetweet] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("TimelineRankerRecap")
+  o-ovewwide vaw identifiew: c-candidatesouwceidentifiew =
+    candidatesouwceidentifiew("timewinewankewwecap")
 
-  override def apply(
-    request: t.RecapQuery
-  ): Stitch[Seq[t.CandidateTweet]] = {
-    Stitch
-      .callFuture(timelineRankerClient.getRecapCandidatesFromAuthors(Seq(request)))
-      .map { response: Seq[t.GetCandidateTweetsResponse] =>
-        response.headOption.flatMap(_.candidates).getOrElse(Seq.empty).filter(_.tweet.nonEmpty)
+  ovewwide def appwy(
+    wequest: t-t.wecapquewy
+  ): stitch[seq[t.candidatetweet]] = {
+    s-stitch
+      .cawwfutuwe(timewinewankewcwient.getwecapcandidatesfwomauthows(seq(wequest)))
+      .map { w-wesponse: seq[t.getcandidatetweetswesponse] =>
+        wesponse.headoption.fwatmap(_.candidates).getowewse(seq.empty).fiwtew(_.tweet.nonempty)
       }
   }
 }

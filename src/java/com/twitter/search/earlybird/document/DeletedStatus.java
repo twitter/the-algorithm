@@ -1,15 +1,15 @@
-package com.twitter.search.earlybird.document;
+package com.twittew.seawch.eawwybiwd.document;
 
 /**
- * DeletedStatus is a marker indicating that the specified tweet in the specified
- * timeslice has been deleted.
+ * dewetedstatus i-is a mawkew i-indicating that t-the specified tweet i-in the specified
+ * t-timeswice h-has been deweted.
  */
-public final class DeletedStatus {
-  public final long timeSliceID;
-  public final long statusID;
+p-pubwic finaw c-cwass dewetedstatus {
+  pubwic finaw wong timeswiceid;
+  pubwic finaw wong s-statusid;
 
-  public DeletedStatus(long timeSliceID, long statusID) {
-    this.timeSliceID = timeSliceID;
-    this.statusID = statusID;
+  pubwic dewetedstatus(wong timeswiceid, (⑅˘꒳˘) w-wong statusid) {
+    this.timeswiceid = t-timeswiceid;
+    this.statusid = statusid;
   }
 }

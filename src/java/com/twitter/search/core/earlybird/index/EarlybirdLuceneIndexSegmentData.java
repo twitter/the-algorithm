@@ -1,197 +1,197 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
-import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.concuwwent.concuwwenthashmap;
 
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.apache.wucene.index.indexwwitewconfig;
+impowt o-owg.apache.wucene.index.weafweadew;
+i-impowt o-owg.apache.wucene.stowe.diwectowy;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.facets.FacetCountingArrayWriter;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.column.DocValuesManager;
-import com.twitter.search.core.earlybird.index.column.OptimizedDocValuesManager;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.inverted.DeletedDocs;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.abstwactfacetcountingawway;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetcountingawwaywwitew;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidefiewdindex;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.cowumn.docvawuesmanagew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.optimizeddocvawuesmanagew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdindexextensionsdata;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdindexextensionsfactowy;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.deweteddocs;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedindex;
 
 /**
- * Implements {@link EarlybirdIndexSegmentData} for Lucene-based on-disk Earlybird segments.
+ * impwements {@wink eawwybiwdindexsegmentdata} fow wucene-based o-on-disk eawwybiwd segments. -.-
  */
-public final class EarlybirdLuceneIndexSegmentData extends EarlybirdIndexSegmentData {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdLuceneIndexSegmentData.class);
+p-pubwic f-finaw cwass eawwybiwdwuceneindexsegmentdata e-extends e-eawwybiwdindexsegmentdata {
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(eawwybiwdwuceneindexsegmentdata.cwass);
 
-  private final Directory directory;
-  private final EarlybirdIndexExtensionsData indexExtension;
+  pwivate finaw diwectowy diwectowy;
+  p-pwivate finaw eawwybiwdindexextensionsdata indexextension;
 
   /**
-   * Creates a new Lucene-based SegmentData instance from a lucene directory.
+   * cweates a nyew wucene-based segmentdata instance f-fwom a wucene diwectowy. mya
    */
-  public EarlybirdLuceneIndexSegmentData(
-      Directory directory,
-      int maxSegmentSize,
-      long timeSliceID,
-      Schema schema,
-      DocIDToTweetIDMapper docIdToTweetIdMapper,
-      TimeMapper timeMapper,
-      EarlybirdIndexExtensionsFactory indexExtensionsFactory) {
-    this(
-        directory,
-        maxSegmentSize,
-        timeSliceID,
-        schema,
-        false, // isOptimized
-        0, // smallestDocId
-        new ConcurrentHashMap<>(),
-        AbstractFacetCountingArray.EMPTY_ARRAY,
-        new OptimizedDocValuesManager(schema, maxSegmentSize),
-        docIdToTweetIdMapper,
-        timeMapper,
-        indexExtensionsFactory == null
-            ? null : indexExtensionsFactory.newLuceneIndexExtensionsData());
+  p-pubwic eawwybiwdwuceneindexsegmentdata(
+      d-diwectowy diwectowy, >w<
+      i-int maxsegmentsize, (U ﹏ U)
+      wong timeswiceid, 😳😳😳
+      schema schema, o.O
+      d-docidtotweetidmappew d-docidtotweetidmappew, òωó
+      timemappew t-timemappew, 😳😳😳
+      e-eawwybiwdindexextensionsfactowy indexextensionsfactowy) {
+    t-this(
+        diwectowy, σωσ
+        maxsegmentsize,
+        t-timeswiceid, (⑅˘꒳˘)
+        schema, (///ˬ///✿)
+        fawse, 🥺 // isoptimized
+        0, // smowestdocid
+        n-nyew concuwwenthashmap<>(), OwO
+        abstwactfacetcountingawway.empty_awway, >w<
+        n-nyew optimizeddocvawuesmanagew(schema, 🥺 m-maxsegmentsize), nyaa~~
+        d-docidtotweetidmappew, ^^
+        timemappew, >w<
+        indexextensionsfactowy == nyuww
+            ? nyuww : indexextensionsfactowy.newwuceneindexextensionsdata());
   }
 
-  public EarlybirdLuceneIndexSegmentData(
-      Directory directory,
-      int maxSegmentSize,
-      long timeSliceID,
-      Schema schema,
-      boolean isOptimized,
-      int smallestDocID,
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-      AbstractFacetCountingArray facetCountingArray,
-      DocValuesManager docValuesManager,
-      DocIDToTweetIDMapper docIdToTweetIdMapper,
-      TimeMapper timeMapper,
-      EarlybirdIndexExtensionsData indexExtension) {
-    super(maxSegmentSize,
-          timeSliceID,
-          schema,
-          isOptimized,
-          smallestDocID,
-          perFieldMap,
-          new ConcurrentHashMap<>(),
-          facetCountingArray,
-          docValuesManager,
-          null, // facetLabelProviders
-          null, // facetIDMap
-          DeletedDocs.NO_DELETES,
-          docIdToTweetIdMapper,
-          timeMapper);
-    this.directory = directory;
-    this.indexExtension = indexExtension;
+  pubwic eawwybiwdwuceneindexsegmentdata(
+      d-diwectowy diwectowy,
+      i-int maxsegmentsize, OwO
+      w-wong timeswiceid, XD
+      s-schema s-schema, ^^;;
+      boowean isoptimized, 🥺
+      int smowestdocid, XD
+      c-concuwwenthashmap<stwing, (U ᵕ U❁) invewtedindex> pewfiewdmap,
+      abstwactfacetcountingawway facetcountingawway, :3
+      docvawuesmanagew d-docvawuesmanagew,
+      docidtotweetidmappew d-docidtotweetidmappew, ( ͡o ω ͡o )
+      t-timemappew timemappew, òωó
+      e-eawwybiwdindexextensionsdata indexextension) {
+    s-supew(maxsegmentsize, σωσ
+          t-timeswiceid, (U ᵕ U❁)
+          s-schema, (✿oωo)
+          i-isoptimized, ^^
+          smowestdocid, ^•ﻌ•^
+          pewfiewdmap, XD
+          n-nyew concuwwenthashmap<>(), :3
+          f-facetcountingawway, (ꈍᴗꈍ)
+          d-docvawuesmanagew,
+          n-nyuww, :3 // facetwabewpwovidews
+          n-nyuww, (U ﹏ U) // facetidmap
+          deweteddocs.no_dewetes, UwU
+          docidtotweetidmappew, 😳😳😳
+          t-timemappew);
+    this.diwectowy = diwectowy;
+    this.indexextension = indexextension;
   }
 
-  public Directory getLuceneDirectory() {
-    return directory;
+  pubwic diwectowy g-getwucenediwectowy() {
+    wetuwn diwectowy;
   }
 
-  @Override
-  public EarlybirdIndexExtensionsData getIndexExtensionsData() {
-    return indexExtension;
+  @ovewwide
+  pubwic eawwybiwdindexextensionsdata getindexextensionsdata() {
+    w-wetuwn i-indexextension;
   }
 
-  @Override
-  public FacetCountingArrayWriter createFacetCountingArrayWriter() {
-    return null;
+  @ovewwide
+  p-pubwic facetcountingawwaywwitew cweatefacetcountingawwaywwitew() {
+    w-wetuwn nyuww;
   }
 
-  @Override
-  protected EarlybirdIndexSegmentAtomicReader doCreateAtomicReader() throws IOException {
-    // EarlybirdSegment creates one single EarlybirdIndexSegmentAtomicReader instance per segment
-    // and caches it, and the cached instance is recreated only when the segment's data changes.
-    // This is why this is a good place to reload all CSFs that should be loaded in RAM. Also, it's
-    // easier and less error-prone to do it here, than trying to track down all places that mutate
-    // the segment data and do it there.
-    LeafReader reader = getLeafReaderFromOptimizedDirectory(directory);
-    for (Schema.FieldInfo fieldInfo : getSchema().getFieldInfos()) {
-      // Load CSF into RAM based on configurations in the schema.
-      if (fieldInfo.getFieldType().getCsfType() != null
-          && fieldInfo.getFieldType().isCsfLoadIntoRam()) {
-        if (reader.getNumericDocValues(fieldInfo.getName()) != null) {
-          ColumnStrideFieldIndex index = getDocValuesManager().addColumnStrideField(
-              fieldInfo.getName(), fieldInfo.getFieldType());
-          index.load(reader, fieldInfo.getName());
-        } else {
-          LOG.warn("Field {} does not have NumericDocValues.", fieldInfo.getName());
+  @ovewwide
+  p-pwotected e-eawwybiwdindexsegmentatomicweadew docweateatomicweadew() thwows ioexception {
+    // eawwybiwdsegment cweates one singwe e-eawwybiwdindexsegmentatomicweadew instance pew segment
+    // a-and caches it, XD and t-the cached instance i-is wecweated onwy when the segment's data changes. o.O
+    // this i-is why this i-is a good pwace to wewoad aww csfs t-that shouwd be w-woaded in wam. (⑅˘꒳˘) awso, 😳😳😳 it's
+    // easiew and wess ewwow-pwone to do it hewe, nyaa~~ than t-twying to twack d-down aww pwaces t-that mutate
+    // the segment d-data and do it t-thewe.
+    weafweadew weadew = g-getweafweadewfwomoptimizeddiwectowy(diwectowy);
+    fow (schema.fiewdinfo fiewdinfo : getschema().getfiewdinfos()) {
+      // woad c-csf into wam b-based on configuwations in the schema. rawr
+      if (fiewdinfo.getfiewdtype().getcsftype() != n-nyuww
+          && f-fiewdinfo.getfiewdtype().iscsfwoadintowam()) {
+        if (weadew.getnumewicdocvawues(fiewdinfo.getname()) != nyuww) {
+          cowumnstwidefiewdindex i-index = getdocvawuesmanagew().addcowumnstwidefiewd(
+              fiewdinfo.getname(), fiewdinfo.getfiewdtype());
+          index.woad(weadew, -.- fiewdinfo.getname());
+        } e-ewse {
+          wog.wawn("fiewd {} does nyot h-have nyumewicdocvawues.", (✿oωo) f-fiewdinfo.getname());
         }
       }
     }
 
-    return new EarlybirdLuceneIndexSegmentAtomicReader(this, directory);
+    wetuwn nyew eawwybiwdwuceneindexsegmentatomicweadew(this, /(^•ω•^) diwectowy);
   }
 
-  @Override
-  public EarlybirdIndexSegmentWriter createEarlybirdIndexSegmentWriter(
-      IndexWriterConfig indexWriterConfig) throws IOException {
-    return new EarlybirdLuceneIndexSegmentWriter(this, indexWriterConfig);
+  @ovewwide
+  pubwic eawwybiwdindexsegmentwwitew c-cweateeawwybiwdindexsegmentwwitew(
+      i-indexwwitewconfig indexwwitewconfig) thwows ioexception {
+    w-wetuwn nyew eawwybiwdwuceneindexsegmentwwitew(this, 🥺 indexwwitewconfig);
   }
 
-  @Override
-  public EarlybirdIndexSegmentData.AbstractSegmentDataFlushHandler getFlushHandler() {
-    return new OnDiskSegmentDataFlushHandler(this);
+  @ovewwide
+  p-pubwic eawwybiwdindexsegmentdata.abstwactsegmentdatafwushhandwew getfwushhandwew() {
+    wetuwn nyew o-ondisksegmentdatafwushhandwew(this);
   }
 
-  public static class OnDiskSegmentDataFlushHandler
-      extends AbstractSegmentDataFlushHandler<EarlybirdIndexExtensionsData> {
-    private final Directory directory;
+  pubwic s-static cwass o-ondisksegmentdatafwushhandwew
+      extends abstwactsegmentdatafwushhandwew<eawwybiwdindexextensionsdata> {
+    p-pwivate finaw diwectowy diwectowy;
 
-    public OnDiskSegmentDataFlushHandler(EarlybirdLuceneIndexSegmentData objectToFlush) {
-      super(objectToFlush);
-      this.directory = objectToFlush.directory;
+    p-pubwic o-ondisksegmentdatafwushhandwew(eawwybiwdwuceneindexsegmentdata objecttofwush) {
+      s-supew(objecttofwush);
+      this.diwectowy = o-objecttofwush.diwectowy;
     }
 
-    public OnDiskSegmentDataFlushHandler(
-        Schema schema,
-        Directory directory,
-        EarlybirdIndexExtensionsFactory indexExtensionsFactory,
-        Flushable.Handler<? extends DocIDToTweetIDMapper> docIdMapperFlushHandler,
-        Flushable.Handler<? extends TimeMapper> timeMapperFlushHandler) {
-      super(schema, indexExtensionsFactory, docIdMapperFlushHandler, timeMapperFlushHandler);
-      this.directory = directory;
+    p-pubwic ondisksegmentdatafwushhandwew(
+        schema schema, ʘwʘ
+        diwectowy d-diwectowy, UwU
+        e-eawwybiwdindexextensionsfactowy i-indexextensionsfactowy, XD
+        fwushabwe.handwew<? extends d-docidtotweetidmappew> docidmappewfwushhandwew,
+        f-fwushabwe.handwew<? e-extends timemappew> timemappewfwushhandwew) {
+      supew(schema, (✿oωo) indexextensionsfactowy, :3 d-docidmappewfwushhandwew, (///ˬ///✿) t-timemappewfwushhandwew);
+      t-this.diwectowy = d-diwectowy;
     }
 
-    @Override
-    protected EarlybirdIndexExtensionsData newIndexExtension() {
-      return indexExtensionsFactory.newLuceneIndexExtensionsData();
+    @ovewwide
+    pwotected e-eawwybiwdindexextensionsdata nyewindexextension() {
+      wetuwn indexextensionsfactowy.newwuceneindexextensionsdata();
     }
 
-    @Override
-    protected void flushAdditionalDataStructures(
-        FlushInfo flushInfo, DataSerializer out, EarlybirdIndexSegmentData toFlush) {
+    @ovewwide
+    pwotected void fwushadditionawdatastwuctuwes(
+        f-fwushinfo fwushinfo, nyaa~~ datasewiawizew o-out, >w< eawwybiwdindexsegmentdata t-tofwush) {
     }
 
-    @Override
-    protected EarlybirdIndexSegmentData constructSegmentData(
-        FlushInfo flushInfo,
-        ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-        int maxSegmentSize,
-        EarlybirdIndexExtensionsData indexExtension,
-        DocIDToTweetIDMapper docIdToTweetIdMapper,
-        TimeMapper timeMapper,
-        DataDeserializer in) {
-      return new EarlybirdLuceneIndexSegmentData(
-          directory,
-          maxSegmentSize,
-          flushInfo.getLongProperty(TIME_SLICE_ID_PROP_NAME),
-          schema,
-          flushInfo.getBooleanProperty(IS_OPTIMIZED_PROP_NAME),
-          flushInfo.getIntProperty(SMALLEST_DOCID_PROP_NAME),
-          perFieldMap,
-          AbstractFacetCountingArray.EMPTY_ARRAY,
-          new OptimizedDocValuesManager(schema, maxSegmentSize),
-          docIdToTweetIdMapper,
-          timeMapper,
-          indexExtension);
+    @ovewwide
+    pwotected eawwybiwdindexsegmentdata c-constwuctsegmentdata(
+        fwushinfo fwushinfo, -.-
+        c-concuwwenthashmap<stwing, (✿oωo) i-invewtedindex> p-pewfiewdmap, (˘ω˘)
+        i-int m-maxsegmentsize, rawr
+        eawwybiwdindexextensionsdata indexextension, OwO
+        docidtotweetidmappew docidtotweetidmappew, ^•ﻌ•^
+        timemappew timemappew, UwU
+        datadesewiawizew in) {
+      wetuwn n-nyew eawwybiwdwuceneindexsegmentdata(
+          d-diwectowy, (˘ω˘)
+          m-maxsegmentsize, (///ˬ///✿)
+          fwushinfo.getwongpwopewty(time_swice_id_pwop_name), σωσ
+          s-schema, /(^•ω•^)
+          fwushinfo.getbooweanpwopewty(is_optimized_pwop_name), 😳
+          fwushinfo.getintpwopewty(smowest_docid_pwop_name), 😳
+          pewfiewdmap,
+          abstwactfacetcountingawway.empty_awway, (⑅˘꒳˘)
+          n-nyew optimizeddocvawuesmanagew(schema, 😳😳😳 maxsegmentsize), 😳
+          d-docidtotweetidmappew, XD
+          timemappew, mya
+          i-indexextension);
     }
   }
 }

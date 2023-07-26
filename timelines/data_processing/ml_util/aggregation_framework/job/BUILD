@@ -1,19 +1,19 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/algebird:core",
-        "3rdparty/jvm/com/twitter/algebird:util",
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "3rdparty/src/jvm/com/twitter/scalding:commons",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "3rdparty/src/jvm/com/twitter/summingbird:batch",
-        "3rdparty/src/jvm/com/twitter/summingbird:core",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "src/thrift/com/twitter/ml/api:interpretable-model-java",
-        "timelines/data_processing/ml_util/aggregation_framework:common_types",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/awgebiwd:cowe", òωó
+        "3wdpawty/jvm/com/twittew/awgebiwd:utiw", o.O
+        "3wdpawty/jvm/com/twittew/stowehaus:awgebwa", (U ᵕ U❁)
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", (⑅˘꒳˘)
+        "3wdpawty/swc/jvm/com/twittew/scawding:commons", ( ͡o ω ͡o )
+        "3wdpawty/swc/jvm/com/twittew/scawding:cowe", UwU
+        "3wdpawty/swc/jvm/com/twittew/summingbiwd:batch", rawr x3
+        "3wdpawty/swc/jvm/com/twittew/summingbiwd:cowe", rawr
+        "swc/java/com/twittew/mw/api:api-base", σωσ
+        "swc/thwift/com/twittew/mw/api:data-java", σωσ
+        "swc/thwift/com/twittew/mw/api:intewpwetabwe-modew-java", >_<
+        "timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk:common_types", :3
+    ], (U ﹏ U)
 )

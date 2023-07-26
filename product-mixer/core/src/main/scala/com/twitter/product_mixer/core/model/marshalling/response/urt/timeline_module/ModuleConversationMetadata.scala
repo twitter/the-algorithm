@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.sociawcontext
 
-case class ModuleConversationMetadata(
-  allTweetIds: Option[Seq[Long]],
-  socialContext: Option[SocialContext],
-  enableDeduplication: Option[Boolean])
+c-case cwass moduweconvewsationmetadata(
+  a-awwtweetids: o-option[seq[wong]], (U ᵕ U❁)
+  s-sociawcontext: o-option[sociawcontext], (⑅˘꒳˘)
+  e-enabwededupwication: o-option[boowean])

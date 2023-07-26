@@ -1,35 +1,35 @@
-package com.twitter.timelineranker.observe
+package com.twittew.timewinewankew.obsewve
 
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.model.TimelineQuery
-import com.twitter.timelines.features.Features
-import com.twitter.timelines.features.UserList
-import com.twitter.timelines.observe.DebugObserver
-import com.twitter.timelineranker.{thriftscala => thrift}
+impowt c-com.twittew.sewvo.utiw.gate
+i-impowt c-com.twittew.timewinewankew.modew.timewinequewy
+i-impowt com.twittew.timewines.featuwes.featuwes
+i-impowt com.twittew.timewines.featuwes.usewwist
+i-impowt com.twittew.timewines.obsewve.debugobsewvew
+i-impowt com.twittew.timewinewankew.{thwiftscawa => t-thwift}
 
 /**
- * Builds the DebugObserver that is attached to thrift requests.
- * This class exists to centralize the gates that determine whether or not
- * to enable debug transcripts for a particular request.
+ * buiwds the debugobsewvew that is attached to thwift wequests. (ˆ ﻌ ˆ)♡
+ * t-this cwass exists to centwawize the gates t-that detewmine whethew ow nyot
+ * t-to enabwe debug twanscwipts fow a pawticuwaw wequest.
  */
-class DebugObserverBuilder(whitelist: UserList) {
+cwass d-debugobsewvewbuiwdew(whitewist: usewwist) {
 
-  lazy val observer: DebugObserver = build()
+  w-wazy vaw obsewvew: d-debugobsewvew = buiwd()
 
-  private[this] def build(): DebugObserver = {
-    new DebugObserver(queryGate)
+  pwivate[this] def buiwd(): debugobsewvew = {
+    nyew debugobsewvew(quewygate)
   }
 
-  private[observe] def queryGate: Gate[Any] = {
-    val shouldEnableDebug = whitelist.userIdGate(Features.DebugTranscript)
+  p-pwivate[obsewve] def quewygate: gate[any] = {
+    vaw shouwdenabwedebug = whitewist.usewidgate(featuwes.debugtwanscwipt)
 
-    Gate { a: Any =>
+    g-gate { a: any =>
       a match {
-        case q: thrift.EngagedTweetsQuery => shouldEnableDebug(q.userId)
-        case q: thrift.RecapHydrationQuery => shouldEnableDebug(q.userId)
-        case q: thrift.RecapQuery => shouldEnableDebug(q.userId)
-        case q: TimelineQuery => shouldEnableDebug(q.userId)
-        case _ => false
+        c-case q-q: thwift.engagedtweetsquewy => s-shouwdenabwedebug(q.usewid)
+        c-case q: thwift.wecaphydwationquewy => shouwdenabwedebug(q.usewid)
+        case q: thwift.wecapquewy => s-shouwdenabwedebug(q.usewid)
+        case q: timewinequewy => shouwdenabwedebug(q.usewid)
+        case _ => f-fawse
       }
     }
   }

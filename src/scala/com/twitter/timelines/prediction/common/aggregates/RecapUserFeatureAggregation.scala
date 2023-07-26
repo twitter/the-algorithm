@@ -1,415 +1,415 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.twittew.timewines.pwediction.common.aggwegates
 
-import com.twitter.ml.api.Feature
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.engagement_features.EngagementDataRecordFeatures
-import com.twitter.timelines.prediction.features.real_graph.RealGraphDataRecordFeatures
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures
+impowt c-com.twittew.mw.api.featuwe
+i-impowt c-com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes
+i-impowt c-com.twittew.timewines.pwediction.featuwes.engagement_featuwes.engagementdatawecowdfeatuwes
+impowt c-com.twittew.timewines.pwediction.featuwes.weaw_gwaph.weawgwaphdatawecowdfeatuwes
+i-impowt com.twittew.timewines.pwediction.featuwes.wecap.wecapfeatuwes
+i-impowt com.twittew.timewines.pwediction.featuwes.time_featuwes.timedatawecowdfeatuwes
 
-object RecapUserFeatureAggregation {
-  val RecapFeaturesForAggregation: Set[Feature[_]] =
-    Set(
-      RecapFeatures.HAS_IMAGE,
-      RecapFeatures.HAS_VIDEO,
-      RecapFeatures.FROM_MUTUAL_FOLLOW,
-      RecapFeatures.HAS_CARD,
-      RecapFeatures.HAS_NEWS,
-      RecapFeatures.REPLY_COUNT,
-      RecapFeatures.FAV_COUNT,
-      RecapFeatures.RETWEET_COUNT,
-      RecapFeatures.BLENDER_SCORE,
-      RecapFeatures.CONVERSATIONAL_COUNT,
-      RecapFeatures.IS_BUSINESS_SCORE,
-      RecapFeatures.CONTAINS_MEDIA,
-      RecapFeatures.RETWEET_SEARCHER,
-      RecapFeatures.REPLY_SEARCHER,
-      RecapFeatures.MENTION_SEARCHER,
-      RecapFeatures.REPLY_OTHER,
-      RecapFeatures.RETWEET_OTHER,
-      RecapFeatures.MATCH_UI_LANG,
-      RecapFeatures.MATCH_SEARCHER_MAIN_LANG,
-      RecapFeatures.MATCH_SEARCHER_LANGS,
-      RecapFeatures.TWEET_COUNT_FROM_USER_IN_SNAPSHOT,
-      RecapFeatures.TEXT_SCORE,
-      RealGraphDataRecordFeatures.NUM_RETWEETS_EWMA,
-      RealGraphDataRecordFeatures.NUM_RETWEETS_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.NUM_RETWEETS_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.NUM_RETWEETS_DAYS_SINCE_LAST,
-      RealGraphDataRecordFeatures.NUM_FAVORITES_EWMA,
-      RealGraphDataRecordFeatures.NUM_FAVORITES_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.NUM_FAVORITES_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.NUM_FAVORITES_DAYS_SINCE_LAST,
-      RealGraphDataRecordFeatures.NUM_MENTIONS_EWMA,
-      RealGraphDataRecordFeatures.NUM_MENTIONS_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.NUM_MENTIONS_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.NUM_MENTIONS_DAYS_SINCE_LAST,
-      RealGraphDataRecordFeatures.NUM_TWEET_CLICKS_EWMA,
-      RealGraphDataRecordFeatures.NUM_TWEET_CLICKS_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.NUM_TWEET_CLICKS_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.NUM_TWEET_CLICKS_DAYS_SINCE_LAST,
-      RealGraphDataRecordFeatures.NUM_PROFILE_VIEWS_EWMA,
-      RealGraphDataRecordFeatures.NUM_PROFILE_VIEWS_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.NUM_PROFILE_VIEWS_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.NUM_PROFILE_VIEWS_DAYS_SINCE_LAST,
-      RealGraphDataRecordFeatures.TOTAL_DWELL_TIME_EWMA,
-      RealGraphDataRecordFeatures.TOTAL_DWELL_TIME_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.TOTAL_DWELL_TIME_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.TOTAL_DWELL_TIME_DAYS_SINCE_LAST,
-      RealGraphDataRecordFeatures.NUM_INSPECTED_TWEETS_EWMA,
-      RealGraphDataRecordFeatures.NUM_INSPECTED_TWEETS_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.NUM_INSPECTED_TWEETS_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.NUM_INSPECTED_TWEETS_DAYS_SINCE_LAST
+object wecapusewfeatuweaggwegation {
+  vaw wecapfeatuwesfowaggwegation: set[featuwe[_]] =
+    s-set(
+      wecapfeatuwes.has_image, (ˆ ﻌ ˆ)♡
+      wecapfeatuwes.has_video, (U ﹏ U)
+      wecapfeatuwes.fwom_mutuaw_fowwow, UwU
+      w-wecapfeatuwes.has_cawd, XD
+      wecapfeatuwes.has_news, ʘwʘ
+      w-wecapfeatuwes.wepwy_count, rawr x3
+      wecapfeatuwes.fav_count, ^^;;
+      wecapfeatuwes.wetweet_count, ʘwʘ
+      wecapfeatuwes.bwendew_scowe, (U ﹏ U)
+      wecapfeatuwes.convewsationaw_count, (˘ω˘)
+      w-wecapfeatuwes.is_business_scowe, (ꈍᴗꈍ)
+      wecapfeatuwes.contains_media, /(^•ω•^)
+      w-wecapfeatuwes.wetweet_seawchew, >_<
+      wecapfeatuwes.wepwy_seawchew, σωσ
+      w-wecapfeatuwes.mention_seawchew, ^^;;
+      wecapfeatuwes.wepwy_othew,
+      wecapfeatuwes.wetweet_othew, 😳
+      wecapfeatuwes.match_ui_wang, >_<
+      wecapfeatuwes.match_seawchew_main_wang, -.-
+      w-wecapfeatuwes.match_seawchew_wangs,
+      wecapfeatuwes.tweet_count_fwom_usew_in_snapshot, UwU
+      wecapfeatuwes.text_scowe, :3
+      weawgwaphdatawecowdfeatuwes.num_wetweets_ewma, σωσ
+      weawgwaphdatawecowdfeatuwes.num_wetweets_non_zewo_days, >w<
+      weawgwaphdatawecowdfeatuwes.num_wetweets_ewapsed_days, (ˆ ﻌ ˆ)♡
+      weawgwaphdatawecowdfeatuwes.num_wetweets_days_since_wast, ʘwʘ
+      weawgwaphdatawecowdfeatuwes.num_favowites_ewma, :3
+      weawgwaphdatawecowdfeatuwes.num_favowites_non_zewo_days, (˘ω˘)
+      w-weawgwaphdatawecowdfeatuwes.num_favowites_ewapsed_days, 😳😳😳
+      weawgwaphdatawecowdfeatuwes.num_favowites_days_since_wast, rawr x3
+      w-weawgwaphdatawecowdfeatuwes.num_mentions_ewma, (✿oωo)
+      w-weawgwaphdatawecowdfeatuwes.num_mentions_non_zewo_days, (ˆ ﻌ ˆ)♡
+      w-weawgwaphdatawecowdfeatuwes.num_mentions_ewapsed_days, :3
+      w-weawgwaphdatawecowdfeatuwes.num_mentions_days_since_wast, (U ᵕ U❁)
+      weawgwaphdatawecowdfeatuwes.num_tweet_cwicks_ewma, ^^;;
+      weawgwaphdatawecowdfeatuwes.num_tweet_cwicks_non_zewo_days,
+      w-weawgwaphdatawecowdfeatuwes.num_tweet_cwicks_ewapsed_days, mya
+      weawgwaphdatawecowdfeatuwes.num_tweet_cwicks_days_since_wast, 😳😳😳
+      weawgwaphdatawecowdfeatuwes.num_pwofiwe_views_ewma, OwO
+      weawgwaphdatawecowdfeatuwes.num_pwofiwe_views_non_zewo_days, rawr
+      w-weawgwaphdatawecowdfeatuwes.num_pwofiwe_views_ewapsed_days, XD
+      weawgwaphdatawecowdfeatuwes.num_pwofiwe_views_days_since_wast, (U ﹏ U)
+      weawgwaphdatawecowdfeatuwes.totaw_dweww_time_ewma, (˘ω˘)
+      weawgwaphdatawecowdfeatuwes.totaw_dweww_time_non_zewo_days, UwU
+      weawgwaphdatawecowdfeatuwes.totaw_dweww_time_ewapsed_days, >_<
+      weawgwaphdatawecowdfeatuwes.totaw_dweww_time_days_since_wast, σωσ
+      w-weawgwaphdatawecowdfeatuwes.num_inspected_tweets_ewma, 🥺
+      weawgwaphdatawecowdfeatuwes.num_inspected_tweets_non_zewo_days, 🥺
+      w-weawgwaphdatawecowdfeatuwes.num_inspected_tweets_ewapsed_days, ʘwʘ
+      weawgwaphdatawecowdfeatuwes.num_inspected_tweets_days_since_wast
     )
 
-  val RecapLabelsForAggregation: Set[Feature.Binary] =
-    Set(
-      RecapFeatures.IS_FAVORITED,
-      RecapFeatures.IS_RETWEETED,
-      RecapFeatures.IS_CLICKED,
-      RecapFeatures.IS_PROFILE_CLICKED,
-      RecapFeatures.IS_OPEN_LINKED
+  v-vaw wecapwabewsfowaggwegation: s-set[featuwe.binawy] =
+    set(
+      wecapfeatuwes.is_favowited, :3
+      wecapfeatuwes.is_wetweeted, (U ﹏ U)
+      wecapfeatuwes.is_cwicked, (U ﹏ U)
+      wecapfeatuwes.is_pwofiwe_cwicked, ʘwʘ
+      w-wecapfeatuwes.is_open_winked
     )
 
-  val DwellDuration: Set[Feature[_]] =
-    Set(
-      TimelinesSharedFeatures.DWELL_TIME_MS,
+  vaw d-dwewwduwation: set[featuwe[_]] =
+    s-set(
+      t-timewinesshawedfeatuwes.dweww_time_ms, >w<
     )
 
-  val UserFeaturesV2: Set[Feature[_]] = RecapFeaturesForAggregation ++ Set(
-    RecapFeatures.HAS_VINE,
-    RecapFeatures.HAS_PERISCOPE,
-    RecapFeatures.HAS_PRO_VIDEO,
-    RecapFeatures.HAS_VISIBLE_LINK,
-    RecapFeatures.BIDIRECTIONAL_FAV_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_FAV_COUNT,
-    RecapFeatures.BIDIRECTIONAL_REPLY_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_REPLY_COUNT,
-    RecapFeatures.BIDIRECTIONAL_RETWEET_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_RETWEET_COUNT,
-    RecapFeatures.EMBEDS_URL_COUNT,
-    RecapFeatures.EMBEDS_IMPRESSION_COUNT,
-    RecapFeatures.VIDEO_VIEW_COUNT,
-    RecapFeatures.IS_RETWEET,
-    RecapFeatures.IS_REPLY,
-    RecapFeatures.IS_EXTENDED_REPLY,
-    RecapFeatures.HAS_LINK,
-    RecapFeatures.HAS_TREND,
-    RecapFeatures.LINK_LANGUAGE,
-    RecapFeatures.NUM_HASHTAGS,
-    RecapFeatures.NUM_MENTIONS,
-    RecapFeatures.IS_SENSITIVE,
-    RecapFeatures.HAS_MULTIPLE_MEDIA,
-    RecapFeatures.USER_REP,
-    RecapFeatures.FAV_COUNT_V2,
-    RecapFeatures.RETWEET_COUNT_V2,
-    RecapFeatures.REPLY_COUNT_V2,
-    RecapFeatures.LINK_COUNT,
-    EngagementDataRecordFeatures.InNetworkFavoritesCount,
-    EngagementDataRecordFeatures.InNetworkRetweetsCount,
-    EngagementDataRecordFeatures.InNetworkRepliesCount
+  vaw usewfeatuwesv2: s-set[featuwe[_]] = wecapfeatuwesfowaggwegation ++ s-set(
+    wecapfeatuwes.has_vine, rawr x3
+    wecapfeatuwes.has_pewiscope, OwO
+    w-wecapfeatuwes.has_pwo_video, ^•ﻌ•^
+    wecapfeatuwes.has_visibwe_wink, >_<
+    wecapfeatuwes.bidiwectionaw_fav_count, OwO
+    w-wecapfeatuwes.unidiwectionaw_fav_count, >_<
+    wecapfeatuwes.bidiwectionaw_wepwy_count, (ꈍᴗꈍ)
+    w-wecapfeatuwes.unidiwectionaw_wepwy_count, >w<
+    w-wecapfeatuwes.bidiwectionaw_wetweet_count, (U ﹏ U)
+    wecapfeatuwes.unidiwectionaw_wetweet_count, ^^
+    wecapfeatuwes.embeds_uww_count, (U ﹏ U)
+    wecapfeatuwes.embeds_impwession_count, :3
+    wecapfeatuwes.video_view_count, (✿oωo)
+    wecapfeatuwes.is_wetweet, XD
+    wecapfeatuwes.is_wepwy, >w<
+    w-wecapfeatuwes.is_extended_wepwy, òωó
+    w-wecapfeatuwes.has_wink, (ꈍᴗꈍ)
+    wecapfeatuwes.has_twend, rawr x3
+    wecapfeatuwes.wink_wanguage, rawr x3
+    w-wecapfeatuwes.num_hashtags, σωσ
+    w-wecapfeatuwes.num_mentions, (ꈍᴗꈍ)
+    w-wecapfeatuwes.is_sensitive, rawr
+    wecapfeatuwes.has_muwtipwe_media, ^^;;
+    wecapfeatuwes.usew_wep,
+    wecapfeatuwes.fav_count_v2,
+    w-wecapfeatuwes.wetweet_count_v2, rawr x3
+    wecapfeatuwes.wepwy_count_v2, (ˆ ﻌ ˆ)♡
+    wecapfeatuwes.wink_count, σωσ
+    engagementdatawecowdfeatuwes.innetwowkfavowitescount,
+    engagementdatawecowdfeatuwes.innetwowkwetweetscount, (U ﹏ U)
+    e-engagementdatawecowdfeatuwes.innetwowkwepwiescount
   )
 
-  val UserAuthorFeaturesV2: Set[Feature[_]] = Set(
-    RecapFeatures.HAS_IMAGE,
-    RecapFeatures.HAS_VINE,
-    RecapFeatures.HAS_PERISCOPE,
-    RecapFeatures.HAS_PRO_VIDEO,
-    RecapFeatures.HAS_VIDEO,
-    RecapFeatures.HAS_CARD,
-    RecapFeatures.HAS_NEWS,
-    RecapFeatures.HAS_VISIBLE_LINK,
-    RecapFeatures.REPLY_COUNT,
-    RecapFeatures.FAV_COUNT,
-    RecapFeatures.RETWEET_COUNT,
-    RecapFeatures.BLENDER_SCORE,
-    RecapFeatures.CONVERSATIONAL_COUNT,
-    RecapFeatures.IS_BUSINESS_SCORE,
-    RecapFeatures.CONTAINS_MEDIA,
-    RecapFeatures.RETWEET_SEARCHER,
-    RecapFeatures.REPLY_SEARCHER,
-    RecapFeatures.MENTION_SEARCHER,
-    RecapFeatures.REPLY_OTHER,
-    RecapFeatures.RETWEET_OTHER,
-    RecapFeatures.MATCH_UI_LANG,
-    RecapFeatures.MATCH_SEARCHER_MAIN_LANG,
-    RecapFeatures.MATCH_SEARCHER_LANGS,
-    RecapFeatures.TWEET_COUNT_FROM_USER_IN_SNAPSHOT,
-    RecapFeatures.TEXT_SCORE,
-    RecapFeatures.BIDIRECTIONAL_FAV_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_FAV_COUNT,
-    RecapFeatures.BIDIRECTIONAL_REPLY_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_REPLY_COUNT,
-    RecapFeatures.BIDIRECTIONAL_RETWEET_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_RETWEET_COUNT,
-    RecapFeatures.EMBEDS_URL_COUNT,
-    RecapFeatures.EMBEDS_IMPRESSION_COUNT,
-    RecapFeatures.VIDEO_VIEW_COUNT,
-    RecapFeatures.IS_RETWEET,
-    RecapFeatures.IS_REPLY,
-    RecapFeatures.HAS_LINK,
-    RecapFeatures.HAS_TREND,
-    RecapFeatures.LINK_LANGUAGE,
-    RecapFeatures.NUM_HASHTAGS,
-    RecapFeatures.NUM_MENTIONS,
-    RecapFeatures.IS_SENSITIVE,
-    RecapFeatures.HAS_MULTIPLE_MEDIA,
-    RecapFeatures.FAV_COUNT_V2,
-    RecapFeatures.RETWEET_COUNT_V2,
-    RecapFeatures.REPLY_COUNT_V2,
-    RecapFeatures.LINK_COUNT,
-    EngagementDataRecordFeatures.InNetworkFavoritesCount,
-    EngagementDataRecordFeatures.InNetworkRetweetsCount,
-    EngagementDataRecordFeatures.InNetworkRepliesCount
+  vaw usewauthowfeatuwesv2: s-set[featuwe[_]] = set(
+    w-wecapfeatuwes.has_image, >w<
+    w-wecapfeatuwes.has_vine, σωσ
+    wecapfeatuwes.has_pewiscope, nyaa~~
+    w-wecapfeatuwes.has_pwo_video, 🥺
+    w-wecapfeatuwes.has_video, rawr x3
+    w-wecapfeatuwes.has_cawd, σωσ
+    w-wecapfeatuwes.has_news, (///ˬ///✿)
+    wecapfeatuwes.has_visibwe_wink, (U ﹏ U)
+    wecapfeatuwes.wepwy_count, ^^;;
+    w-wecapfeatuwes.fav_count, 🥺
+    w-wecapfeatuwes.wetweet_count, òωó
+    w-wecapfeatuwes.bwendew_scowe,
+    w-wecapfeatuwes.convewsationaw_count, XD
+    w-wecapfeatuwes.is_business_scowe, :3
+    wecapfeatuwes.contains_media, (U ﹏ U)
+    wecapfeatuwes.wetweet_seawchew, >w<
+    wecapfeatuwes.wepwy_seawchew, /(^•ω•^)
+    wecapfeatuwes.mention_seawchew, (⑅˘꒳˘)
+    w-wecapfeatuwes.wepwy_othew, ʘwʘ
+    wecapfeatuwes.wetweet_othew, rawr x3
+    wecapfeatuwes.match_ui_wang,
+    wecapfeatuwes.match_seawchew_main_wang, (˘ω˘)
+    wecapfeatuwes.match_seawchew_wangs, o.O
+    wecapfeatuwes.tweet_count_fwom_usew_in_snapshot, 😳
+    w-wecapfeatuwes.text_scowe, o.O
+    wecapfeatuwes.bidiwectionaw_fav_count, ^^;;
+    wecapfeatuwes.unidiwectionaw_fav_count,
+    wecapfeatuwes.bidiwectionaw_wepwy_count, ( ͡o ω ͡o )
+    wecapfeatuwes.unidiwectionaw_wepwy_count, ^^;;
+    w-wecapfeatuwes.bidiwectionaw_wetweet_count, ^^;;
+    w-wecapfeatuwes.unidiwectionaw_wetweet_count, XD
+    w-wecapfeatuwes.embeds_uww_count, 🥺
+    wecapfeatuwes.embeds_impwession_count, (///ˬ///✿)
+    w-wecapfeatuwes.video_view_count, (U ᵕ U❁)
+    wecapfeatuwes.is_wetweet, ^^;;
+    wecapfeatuwes.is_wepwy, ^^;;
+    w-wecapfeatuwes.has_wink, rawr
+    w-wecapfeatuwes.has_twend, (˘ω˘)
+    wecapfeatuwes.wink_wanguage, 🥺
+    wecapfeatuwes.num_hashtags, nyaa~~
+    wecapfeatuwes.num_mentions, :3
+    wecapfeatuwes.is_sensitive, /(^•ω•^)
+    wecapfeatuwes.has_muwtipwe_media, ^•ﻌ•^
+    w-wecapfeatuwes.fav_count_v2, UwU
+    wecapfeatuwes.wetweet_count_v2, 😳😳😳
+    w-wecapfeatuwes.wepwy_count_v2, OwO
+    wecapfeatuwes.wink_count, ^•ﻌ•^
+    engagementdatawecowdfeatuwes.innetwowkfavowitescount, (ꈍᴗꈍ)
+    e-engagementdatawecowdfeatuwes.innetwowkwetweetscount,
+    e-engagementdatawecowdfeatuwes.innetwowkwepwiescount
   )
 
-  val UserAuthorFeaturesV2Count: Set[Feature[_]] = Set(
-    RecapFeatures.HAS_IMAGE,
-    RecapFeatures.HAS_VINE,
-    RecapFeatures.HAS_PERISCOPE,
-    RecapFeatures.HAS_PRO_VIDEO,
-    RecapFeatures.HAS_VIDEO,
-    RecapFeatures.HAS_CARD,
-    RecapFeatures.HAS_NEWS,
-    RecapFeatures.HAS_VISIBLE_LINK,
-    RecapFeatures.FAV_COUNT,
-    RecapFeatures.CONTAINS_MEDIA,
-    RecapFeatures.RETWEET_SEARCHER,
-    RecapFeatures.REPLY_SEARCHER,
-    RecapFeatures.MENTION_SEARCHER,
-    RecapFeatures.REPLY_OTHER,
-    RecapFeatures.RETWEET_OTHER,
-    RecapFeatures.MATCH_UI_LANG,
-    RecapFeatures.MATCH_SEARCHER_MAIN_LANG,
-    RecapFeatures.MATCH_SEARCHER_LANGS,
-    RecapFeatures.IS_RETWEET,
-    RecapFeatures.IS_REPLY,
-    RecapFeatures.HAS_LINK,
-    RecapFeatures.HAS_TREND,
-    RecapFeatures.IS_SENSITIVE,
-    RecapFeatures.HAS_MULTIPLE_MEDIA,
-    EngagementDataRecordFeatures.InNetworkFavoritesCount
+  vaw usewauthowfeatuwesv2count: set[featuwe[_]] = s-set(
+    w-wecapfeatuwes.has_image, (⑅˘꒳˘)
+    wecapfeatuwes.has_vine, (⑅˘꒳˘)
+    w-wecapfeatuwes.has_pewiscope, (ˆ ﻌ ˆ)♡
+    w-wecapfeatuwes.has_pwo_video, /(^•ω•^)
+    wecapfeatuwes.has_video, òωó
+    wecapfeatuwes.has_cawd, (⑅˘꒳˘)
+    wecapfeatuwes.has_news, (U ᵕ U❁)
+    wecapfeatuwes.has_visibwe_wink, >w<
+    wecapfeatuwes.fav_count, σωσ
+    w-wecapfeatuwes.contains_media, -.-
+    w-wecapfeatuwes.wetweet_seawchew, o.O
+    w-wecapfeatuwes.wepwy_seawchew, ^^
+    wecapfeatuwes.mention_seawchew, >_<
+    w-wecapfeatuwes.wepwy_othew, >w<
+    w-wecapfeatuwes.wetweet_othew, >_<
+    wecapfeatuwes.match_ui_wang, >w<
+    w-wecapfeatuwes.match_seawchew_main_wang, rawr
+    wecapfeatuwes.match_seawchew_wangs, rawr x3
+    wecapfeatuwes.is_wetweet, ( ͡o ω ͡o )
+    wecapfeatuwes.is_wepwy, (˘ω˘)
+    wecapfeatuwes.has_wink, 😳
+    w-wecapfeatuwes.has_twend, OwO
+    w-wecapfeatuwes.is_sensitive, (˘ω˘)
+    wecapfeatuwes.has_muwtipwe_media, òωó
+    engagementdatawecowdfeatuwes.innetwowkfavowitescount
   )
 
-  val UserTopicFeaturesV2Count: Set[Feature[_]] = Set(
-    RecapFeatures.HAS_IMAGE,
-    RecapFeatures.HAS_VIDEO,
-    RecapFeatures.HAS_CARD,
-    RecapFeatures.HAS_NEWS,
-    RecapFeatures.FAV_COUNT,
-    RecapFeatures.CONTAINS_MEDIA,
-    RecapFeatures.RETWEET_SEARCHER,
-    RecapFeatures.REPLY_SEARCHER,
-    RecapFeatures.MENTION_SEARCHER,
-    RecapFeatures.REPLY_OTHER,
-    RecapFeatures.RETWEET_OTHER,
-    RecapFeatures.MATCH_UI_LANG,
-    RecapFeatures.MATCH_SEARCHER_MAIN_LANG,
-    RecapFeatures.MATCH_SEARCHER_LANGS,
-    RecapFeatures.IS_RETWEET,
-    RecapFeatures.IS_REPLY,
-    RecapFeatures.HAS_LINK,
-    RecapFeatures.HAS_TREND,
-    RecapFeatures.IS_SENSITIVE,
-    EngagementDataRecordFeatures.InNetworkFavoritesCount,
-    EngagementDataRecordFeatures.InNetworkRetweetsCount,
-    TimelinesSharedFeatures.NUM_CAPS,
-    TimelinesSharedFeatures.ASPECT_RATIO_DEN,
-    TimelinesSharedFeatures.NUM_NEWLINES,
-    TimelinesSharedFeatures.IS_360,
-    TimelinesSharedFeatures.IS_MANAGED,
-    TimelinesSharedFeatures.IS_MONETIZABLE,
-    TimelinesSharedFeatures.HAS_SELECTED_PREVIEW_IMAGE,
-    TimelinesSharedFeatures.HAS_TITLE,
-    TimelinesSharedFeatures.HAS_DESCRIPTION,
-    TimelinesSharedFeatures.HAS_VISIT_SITE_CALL_TO_ACTION,
-    TimelinesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACTION
+  vaw usewtopicfeatuwesv2count: s-set[featuwe[_]] = s-set(
+    wecapfeatuwes.has_image, ( ͡o ω ͡o )
+    wecapfeatuwes.has_video, UwU
+    wecapfeatuwes.has_cawd, /(^•ω•^)
+    w-wecapfeatuwes.has_news, (ꈍᴗꈍ)
+    wecapfeatuwes.fav_count, 😳
+    wecapfeatuwes.contains_media, mya
+    wecapfeatuwes.wetweet_seawchew, mya
+    wecapfeatuwes.wepwy_seawchew, /(^•ω•^)
+    w-wecapfeatuwes.mention_seawchew, ^^;;
+    wecapfeatuwes.wepwy_othew,
+    wecapfeatuwes.wetweet_othew, 🥺
+    wecapfeatuwes.match_ui_wang, ^^
+    wecapfeatuwes.match_seawchew_main_wang, ^•ﻌ•^
+    w-wecapfeatuwes.match_seawchew_wangs, /(^•ω•^)
+    w-wecapfeatuwes.is_wetweet, ^^
+    wecapfeatuwes.is_wepwy, 🥺
+    wecapfeatuwes.has_wink,
+    wecapfeatuwes.has_twend, (U ᵕ U❁)
+    w-wecapfeatuwes.is_sensitive, 😳😳😳
+    e-engagementdatawecowdfeatuwes.innetwowkfavowitescount, nyaa~~
+    engagementdatawecowdfeatuwes.innetwowkwetweetscount, (˘ω˘)
+    timewinesshawedfeatuwes.num_caps, >_<
+    timewinesshawedfeatuwes.aspect_watio_den, XD
+    t-timewinesshawedfeatuwes.num_newwines, rawr x3
+    timewinesshawedfeatuwes.is_360, ( ͡o ω ͡o )
+    t-timewinesshawedfeatuwes.is_managed, :3
+    timewinesshawedfeatuwes.is_monetizabwe, mya
+    timewinesshawedfeatuwes.has_sewected_pweview_image, σωσ
+    timewinesshawedfeatuwes.has_titwe, (ꈍᴗꈍ)
+    timewinesshawedfeatuwes.has_descwiption, OwO
+    t-timewinesshawedfeatuwes.has_visit_site_caww_to_action, o.O
+    timewinesshawedfeatuwes.has_watch_now_caww_to_action
   )
 
-  val UserFeaturesV5Continuous: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.QUOTE_COUNT,
-    TimelinesSharedFeatures.VISIBLE_TOKEN_RATIO,
-    TimelinesSharedFeatures.WEIGHTED_FAV_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_RETWEET_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_REPLY_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_QUOTE_COUNT,
-    TimelinesSharedFeatures.EMBEDS_IMPRESSION_COUNT_V2,
-    TimelinesSharedFeatures.EMBEDS_URL_COUNT_V2,
-    TimelinesSharedFeatures.DECAYED_FAVORITE_COUNT,
-    TimelinesSharedFeatures.DECAYED_RETWEET_COUNT,
-    TimelinesSharedFeatures.DECAYED_REPLY_COUNT,
-    TimelinesSharedFeatures.DECAYED_QUOTE_COUNT,
-    TimelinesSharedFeatures.FAKE_FAVORITE_COUNT,
-    TimelinesSharedFeatures.FAKE_RETWEET_COUNT,
-    TimelinesSharedFeatures.FAKE_REPLY_COUNT,
-    TimelinesSharedFeatures.FAKE_QUOTE_COUNT,
-    TimeDataRecordFeatures.LAST_FAVORITE_SINCE_CREATION_HRS,
-    TimeDataRecordFeatures.LAST_RETWEET_SINCE_CREATION_HRS,
-    TimeDataRecordFeatures.LAST_REPLY_SINCE_CREATION_HRS,
-    TimeDataRecordFeatures.LAST_QUOTE_SINCE_CREATION_HRS,
-    TimeDataRecordFeatures.TIME_SINCE_LAST_FAVORITE_HRS,
-    TimeDataRecordFeatures.TIME_SINCE_LAST_RETWEET_HRS,
-    TimeDataRecordFeatures.TIME_SINCE_LAST_REPLY_HRS,
-    TimeDataRecordFeatures.TIME_SINCE_LAST_QUOTE_HRS
+  v-vaw usewfeatuwesv5continuous: s-set[featuwe[_]] = set(
+    timewinesshawedfeatuwes.quote_count, 😳😳😳
+    t-timewinesshawedfeatuwes.visibwe_token_watio, /(^•ω•^)
+    timewinesshawedfeatuwes.weighted_fav_count, OwO
+    t-timewinesshawedfeatuwes.weighted_wetweet_count, ^^
+    t-timewinesshawedfeatuwes.weighted_wepwy_count, (///ˬ///✿)
+    t-timewinesshawedfeatuwes.weighted_quote_count, (///ˬ///✿)
+    timewinesshawedfeatuwes.embeds_impwession_count_v2, (///ˬ///✿)
+    t-timewinesshawedfeatuwes.embeds_uww_count_v2, ʘwʘ
+    t-timewinesshawedfeatuwes.decayed_favowite_count, ^•ﻌ•^
+    timewinesshawedfeatuwes.decayed_wetweet_count, OwO
+    timewinesshawedfeatuwes.decayed_wepwy_count, (U ﹏ U)
+    timewinesshawedfeatuwes.decayed_quote_count,
+    t-timewinesshawedfeatuwes.fake_favowite_count, (ˆ ﻌ ˆ)♡
+    t-timewinesshawedfeatuwes.fake_wetweet_count, (⑅˘꒳˘)
+    t-timewinesshawedfeatuwes.fake_wepwy_count, (U ﹏ U)
+    timewinesshawedfeatuwes.fake_quote_count, o.O
+    timedatawecowdfeatuwes.wast_favowite_since_cweation_hws,
+    timedatawecowdfeatuwes.wast_wetweet_since_cweation_hws, mya
+    t-timedatawecowdfeatuwes.wast_wepwy_since_cweation_hws, XD
+    timedatawecowdfeatuwes.wast_quote_since_cweation_hws, òωó
+    t-timedatawecowdfeatuwes.time_since_wast_favowite_hws, (˘ω˘)
+    t-timedatawecowdfeatuwes.time_since_wast_wetweet_hws, :3
+    timedatawecowdfeatuwes.time_since_wast_wepwy_hws, OwO
+    timedatawecowdfeatuwes.time_since_wast_quote_hws
   )
 
-  val UserFeaturesV5Boolean: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.LABEL_ABUSIVE_FLAG,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_DUP_CONTENT_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_PRC_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_HI_RCL_FLAG,
-    TimelinesSharedFeatures.PERISCOPE_EXISTS,
-    TimelinesSharedFeatures.PERISCOPE_IS_LIVE,
-    TimelinesSharedFeatures.PERISCOPE_HAS_BEEN_FEATURED,
-    TimelinesSharedFeatures.PERISCOPE_IS_CURRENTLY_FEATURED,
-    TimelinesSharedFeatures.PERISCOPE_IS_FROM_QUALITY_SOURCE,
-    TimelinesSharedFeatures.HAS_QUOTE
+  vaw usewfeatuwesv5boowean: s-set[featuwe[_]] = s-set(
+    timewinesshawedfeatuwes.wabew_abusive_fwag, mya
+    timewinesshawedfeatuwes.wabew_abusive_hi_wcw_fwag, (˘ω˘)
+    t-timewinesshawedfeatuwes.wabew_dup_content_fwag, o.O
+    t-timewinesshawedfeatuwes.wabew_nsfw_hi_pwc_fwag, (✿oωo)
+    timewinesshawedfeatuwes.wabew_nsfw_hi_wcw_fwag, (ˆ ﻌ ˆ)♡
+    t-timewinesshawedfeatuwes.wabew_spam_fwag, ^^;;
+    timewinesshawedfeatuwes.wabew_spam_hi_wcw_fwag, OwO
+    timewinesshawedfeatuwes.pewiscope_exists, 🥺
+    timewinesshawedfeatuwes.pewiscope_is_wive, mya
+    timewinesshawedfeatuwes.pewiscope_has_been_featuwed, 😳
+    timewinesshawedfeatuwes.pewiscope_is_cuwwentwy_featuwed, òωó
+    timewinesshawedfeatuwes.pewiscope_is_fwom_quawity_souwce, /(^•ω•^)
+    t-timewinesshawedfeatuwes.has_quote
   )
 
-  val UserAuthorFeaturesV5: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.HAS_QUOTE,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_FLAG,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_DUP_CONTENT_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_PRC_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_HI_RCL_FLAG
+  vaw u-usewauthowfeatuwesv5: set[featuwe[_]] = s-set(
+    timewinesshawedfeatuwes.has_quote, -.-
+    t-timewinesshawedfeatuwes.wabew_abusive_fwag, òωó
+    timewinesshawedfeatuwes.wabew_abusive_hi_wcw_fwag, /(^•ω•^)
+    t-timewinesshawedfeatuwes.wabew_dup_content_fwag, /(^•ω•^)
+    t-timewinesshawedfeatuwes.wabew_nsfw_hi_pwc_fwag, 😳
+    t-timewinesshawedfeatuwes.wabew_nsfw_hi_wcw_fwag,
+    t-timewinesshawedfeatuwes.wabew_spam_fwag, :3
+    t-timewinesshawedfeatuwes.wabew_spam_hi_wcw_fwag
   )
 
-  val UserTweetSourceFeaturesV1Continuous: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.NUM_CAPS,
-    TimelinesSharedFeatures.NUM_WHITESPACES,
-    TimelinesSharedFeatures.TWEET_LENGTH,
-    TimelinesSharedFeatures.ASPECT_RATIO_DEN,
-    TimelinesSharedFeatures.ASPECT_RATIO_NUM,
-    TimelinesSharedFeatures.BIT_RATE,
-    TimelinesSharedFeatures.HEIGHT_1,
-    TimelinesSharedFeatures.HEIGHT_2,
-    TimelinesSharedFeatures.HEIGHT_3,
-    TimelinesSharedFeatures.HEIGHT_4,
-    TimelinesSharedFeatures.VIDEO_DURATION,
-    TimelinesSharedFeatures.WIDTH_1,
-    TimelinesSharedFeatures.WIDTH_2,
-    TimelinesSharedFeatures.WIDTH_3,
-    TimelinesSharedFeatures.WIDTH_4,
-    TimelinesSharedFeatures.NUM_MEDIA_TAGS
+  vaw usewtweetsouwcefeatuwesv1continuous: set[featuwe[_]] = set(
+    timewinesshawedfeatuwes.num_caps, (U ᵕ U❁)
+    timewinesshawedfeatuwes.num_whitespaces, ʘwʘ
+    timewinesshawedfeatuwes.tweet_wength, o.O
+    t-timewinesshawedfeatuwes.aspect_watio_den, ʘwʘ
+    t-timewinesshawedfeatuwes.aspect_watio_num, ^^
+    t-timewinesshawedfeatuwes.bit_wate,
+    timewinesshawedfeatuwes.height_1, ^•ﻌ•^
+    t-timewinesshawedfeatuwes.height_2, mya
+    timewinesshawedfeatuwes.height_3, UwU
+    timewinesshawedfeatuwes.height_4, >_<
+    timewinesshawedfeatuwes.video_duwation, /(^•ω•^)
+    t-timewinesshawedfeatuwes.width_1, òωó
+    t-timewinesshawedfeatuwes.width_2, σωσ
+    timewinesshawedfeatuwes.width_3, ( ͡o ω ͡o )
+    t-timewinesshawedfeatuwes.width_4,
+    timewinesshawedfeatuwes.num_media_tags
   )
 
-  val UserTweetSourceFeaturesV1Boolean: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.HAS_QUESTION,
-    TimelinesSharedFeatures.RESIZE_METHOD_1,
-    TimelinesSharedFeatures.RESIZE_METHOD_2,
-    TimelinesSharedFeatures.RESIZE_METHOD_3,
-    TimelinesSharedFeatures.RESIZE_METHOD_4
+  vaw usewtweetsouwcefeatuwesv1boowean: s-set[featuwe[_]] = s-set(
+    timewinesshawedfeatuwes.has_question, nyaa~~
+    timewinesshawedfeatuwes.wesize_method_1, :3
+    t-timewinesshawedfeatuwes.wesize_method_2, UwU
+    t-timewinesshawedfeatuwes.wesize_method_3, o.O
+    timewinesshawedfeatuwes.wesize_method_4
   )
 
-  val UserTweetSourceFeaturesV2Continuous: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.NUM_EMOJIS,
-    TimelinesSharedFeatures.NUM_EMOTICONS,
-    TimelinesSharedFeatures.NUM_NEWLINES,
-    TimelinesSharedFeatures.NUM_STICKERS,
-    TimelinesSharedFeatures.NUM_FACES,
-    TimelinesSharedFeatures.NUM_COLOR_PALLETTE_ITEMS,
-    TimelinesSharedFeatures.VIEW_COUNT,
-    TimelinesSharedFeatures.TWEET_LENGTH_TYPE
+  vaw usewtweetsouwcefeatuwesv2continuous: set[featuwe[_]] = set(
+    timewinesshawedfeatuwes.num_emojis, (ˆ ﻌ ˆ)♡
+    t-timewinesshawedfeatuwes.num_emoticons,
+    t-timewinesshawedfeatuwes.num_newwines, ^^;;
+    t-timewinesshawedfeatuwes.num_stickews, ʘwʘ
+    t-timewinesshawedfeatuwes.num_faces, σωσ
+    t-timewinesshawedfeatuwes.num_cowow_pawwette_items, ^^;;
+    timewinesshawedfeatuwes.view_count, ʘwʘ
+    t-timewinesshawedfeatuwes.tweet_wength_type
   )
 
-  val UserTweetSourceFeaturesV2Boolean: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.IS_360,
-    TimelinesSharedFeatures.IS_MANAGED,
-    TimelinesSharedFeatures.IS_MONETIZABLE,
-    TimelinesSharedFeatures.IS_EMBEDDABLE,
-    TimelinesSharedFeatures.HAS_SELECTED_PREVIEW_IMAGE,
-    TimelinesSharedFeatures.HAS_TITLE,
-    TimelinesSharedFeatures.HAS_DESCRIPTION,
-    TimelinesSharedFeatures.HAS_VISIT_SITE_CALL_TO_ACTION,
-    TimelinesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACTION
+  v-vaw usewtweetsouwcefeatuwesv2boowean: set[featuwe[_]] = s-set(
+    timewinesshawedfeatuwes.is_360, ^^
+    timewinesshawedfeatuwes.is_managed, nyaa~~
+    t-timewinesshawedfeatuwes.is_monetizabwe, (///ˬ///✿)
+    timewinesshawedfeatuwes.is_embeddabwe, XD
+    t-timewinesshawedfeatuwes.has_sewected_pweview_image, :3
+    timewinesshawedfeatuwes.has_titwe, òωó
+    timewinesshawedfeatuwes.has_descwiption, ^^
+    t-timewinesshawedfeatuwes.has_visit_site_caww_to_action, ^•ﻌ•^
+    timewinesshawedfeatuwes.has_watch_now_caww_to_action
   )
 
-  val UserAuthorTweetSourceFeaturesV1: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.HAS_QUESTION,
-    TimelinesSharedFeatures.TWEET_LENGTH,
-    TimelinesSharedFeatures.VIDEO_DURATION,
-    TimelinesSharedFeatures.NUM_MEDIA_TAGS
+  v-vaw usewauthowtweetsouwcefeatuwesv1: s-set[featuwe[_]] = set(
+    t-timewinesshawedfeatuwes.has_question, σωσ
+    timewinesshawedfeatuwes.tweet_wength, (ˆ ﻌ ˆ)♡
+    timewinesshawedfeatuwes.video_duwation, nyaa~~
+    t-timewinesshawedfeatuwes.num_media_tags
   )
 
-  val UserAuthorTweetSourceFeaturesV2: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.NUM_CAPS,
-    TimelinesSharedFeatures.NUM_WHITESPACES,
-    TimelinesSharedFeatures.ASPECT_RATIO_DEN,
-    TimelinesSharedFeatures.ASPECT_RATIO_NUM,
-    TimelinesSharedFeatures.BIT_RATE,
-    TimelinesSharedFeatures.TWEET_LENGTH_TYPE,
-    TimelinesSharedFeatures.NUM_EMOJIS,
-    TimelinesSharedFeatures.NUM_EMOTICONS,
-    TimelinesSharedFeatures.NUM_NEWLINES,
-    TimelinesSharedFeatures.NUM_STICKERS,
-    TimelinesSharedFeatures.NUM_FACES,
-    TimelinesSharedFeatures.IS_360,
-    TimelinesSharedFeatures.IS_MANAGED,
-    TimelinesSharedFeatures.IS_MONETIZABLE,
-    TimelinesSharedFeatures.HAS_SELECTED_PREVIEW_IMAGE,
-    TimelinesSharedFeatures.HAS_TITLE,
-    TimelinesSharedFeatures.HAS_DESCRIPTION,
-    TimelinesSharedFeatures.HAS_VISIT_SITE_CALL_TO_ACTION,
-    TimelinesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACTION
+  vaw u-usewauthowtweetsouwcefeatuwesv2: s-set[featuwe[_]] = set(
+    timewinesshawedfeatuwes.num_caps, ʘwʘ
+    timewinesshawedfeatuwes.num_whitespaces, ^•ﻌ•^
+    timewinesshawedfeatuwes.aspect_watio_den,
+    t-timewinesshawedfeatuwes.aspect_watio_num,
+    timewinesshawedfeatuwes.bit_wate, rawr x3
+    timewinesshawedfeatuwes.tweet_wength_type, 🥺
+    t-timewinesshawedfeatuwes.num_emojis, ʘwʘ
+    t-timewinesshawedfeatuwes.num_emoticons, (˘ω˘)
+    timewinesshawedfeatuwes.num_newwines, o.O
+    t-timewinesshawedfeatuwes.num_stickews, σωσ
+    timewinesshawedfeatuwes.num_faces, (ꈍᴗꈍ)
+    t-timewinesshawedfeatuwes.is_360, (ˆ ﻌ ˆ)♡
+    t-timewinesshawedfeatuwes.is_managed, o.O
+    timewinesshawedfeatuwes.is_monetizabwe, :3
+    timewinesshawedfeatuwes.has_sewected_pweview_image, -.-
+    t-timewinesshawedfeatuwes.has_titwe, ( ͡o ω ͡o )
+    timewinesshawedfeatuwes.has_descwiption, /(^•ω•^)
+    timewinesshawedfeatuwes.has_visit_site_caww_to_action, (⑅˘꒳˘)
+    t-timewinesshawedfeatuwes.has_watch_now_caww_to_action
   )
 
-  val UserAuthorTweetSourceFeaturesV2Count: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.NUM_CAPS,
-    TimelinesSharedFeatures.ASPECT_RATIO_DEN,
-    TimelinesSharedFeatures.NUM_NEWLINES,
-    TimelinesSharedFeatures.IS_360,
-    TimelinesSharedFeatures.IS_MANAGED,
-    TimelinesSharedFeatures.IS_MONETIZABLE,
-    TimelinesSharedFeatures.HAS_SELECTED_PREVIEW_IMAGE,
-    TimelinesSharedFeatures.HAS_TITLE,
-    TimelinesSharedFeatures.HAS_DESCRIPTION,
-    TimelinesSharedFeatures.HAS_VISIT_SITE_CALL_TO_ACTION,
-    TimelinesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACTION
+  v-vaw usewauthowtweetsouwcefeatuwesv2count: s-set[featuwe[_]] = set(
+    t-timewinesshawedfeatuwes.num_caps, òωó
+    t-timewinesshawedfeatuwes.aspect_watio_den, 🥺
+    t-timewinesshawedfeatuwes.num_newwines, (ˆ ﻌ ˆ)♡
+    timewinesshawedfeatuwes.is_360, -.-
+    timewinesshawedfeatuwes.is_managed, σωσ
+    timewinesshawedfeatuwes.is_monetizabwe, >_<
+    timewinesshawedfeatuwes.has_sewected_pweview_image, :3
+    timewinesshawedfeatuwes.has_titwe,
+    timewinesshawedfeatuwes.has_descwiption, OwO
+    timewinesshawedfeatuwes.has_visit_site_caww_to_action, rawr
+    timewinesshawedfeatuwes.has_watch_now_caww_to_action
   )
 
-  val LabelsV2: Set[Feature.Binary] = RecapLabelsForAggregation ++ Set(
-    RecapFeatures.IS_REPLIED,
-    RecapFeatures.IS_PHOTO_EXPANDED,
-    RecapFeatures.IS_VIDEO_PLAYBACK_50
+  vaw wabewsv2: set[featuwe.binawy] = wecapwabewsfowaggwegation ++ set(
+    wecapfeatuwes.is_wepwied, (///ˬ///✿)
+    wecapfeatuwes.is_photo_expanded, ^^
+    w-wecapfeatuwes.is_video_pwayback_50
   )
 
-  val TwitterWideFeatures: Set[Feature[_]] = Set(
-    RecapFeatures.IS_REPLY,
-    TimelinesSharedFeatures.HAS_QUOTE,
-    RecapFeatures.HAS_MENTION,
-    RecapFeatures.HAS_HASHTAG,
-    RecapFeatures.HAS_LINK,
-    RecapFeatures.HAS_CARD,
-    RecapFeatures.CONTAINS_MEDIA
+  v-vaw twittewwidefeatuwes: set[featuwe[_]] = set(
+    w-wecapfeatuwes.is_wepwy, XD
+    t-timewinesshawedfeatuwes.has_quote, UwU
+    w-wecapfeatuwes.has_mention, o.O
+    wecapfeatuwes.has_hashtag, 😳
+    w-wecapfeatuwes.has_wink, (˘ω˘)
+    wecapfeatuwes.has_cawd, 🥺
+    w-wecapfeatuwes.contains_media
   )
 
-  val TwitterWideLabels: Set[Feature.Binary] = Set(
-    RecapFeatures.IS_FAVORITED,
-    RecapFeatures.IS_RETWEETED,
-    RecapFeatures.IS_REPLIED
+  v-vaw twittewwidewabews: set[featuwe.binawy] = set(
+    w-wecapfeatuwes.is_favowited, ^^
+    wecapfeatuwes.is_wetweeted, >w<
+    w-wecapfeatuwes.is_wepwied
   )
 
-  val ReciprocalLabels: Set[Feature.Binary] = Set(
-    RecapFeatures.IS_REPLIED_REPLY_IMPRESSED_BY_AUTHOR,
-    RecapFeatures.IS_REPLIED_REPLY_REPLIED_BY_AUTHOR,
-    RecapFeatures.IS_REPLIED_REPLY_FAVORITED_BY_AUTHOR
+  v-vaw wecipwocawwabews: set[featuwe.binawy] = set(
+    wecapfeatuwes.is_wepwied_wepwy_impwessed_by_authow, ^^;;
+    w-wecapfeatuwes.is_wepwied_wepwy_wepwied_by_authow, (˘ω˘)
+    w-wecapfeatuwes.is_wepwied_wepwy_favowited_by_authow
   )
 
-  val NegativeEngagementLabels: Set[Feature.Binary] = Set(
-    RecapFeatures.IS_REPORT_TWEET_CLICKED,
-    RecapFeatures.IS_BLOCK_CLICKED,
-    RecapFeatures.IS_MUTE_CLICKED,
-    RecapFeatures.IS_DONT_LIKE
+  v-vaw nyegativeengagementwabews: s-set[featuwe.binawy] = s-set(
+    w-wecapfeatuwes.is_wepowt_tweet_cwicked, OwO
+    w-wecapfeatuwes.is_bwock_cwicked,
+    w-wecapfeatuwes.is_mute_cwicked, (ꈍᴗꈍ)
+    w-wecapfeatuwes.is_dont_wike
   )
 
-  val GoodClickLabels: Set[Feature.Binary] = Set(
-    RecapFeatures.IS_GOOD_CLICKED_CONVO_DESC_V1,
-    RecapFeatures.IS_GOOD_CLICKED_CONVO_DESC_V2,
+  vaw goodcwickwabews: s-set[featuwe.binawy] = s-set(
+    wecapfeatuwes.is_good_cwicked_convo_desc_v1, òωó
+    w-wecapfeatuwes.is_good_cwicked_convo_desc_v2, ʘwʘ
   )
 }

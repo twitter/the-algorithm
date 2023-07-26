@@ -1,36 +1,36 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.twittew.timewinewankew.uteg_wiked_by_tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelineranker.common.RecapHydrationSearchResultsTransformBase
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.timewinewankew.common.wecaphydwationseawchwesuwtstwansfowmbase
+i-impowt c-com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt com.twittew.timewines.cwients.wewevance_seawch.seawchcwient
+i-impowt c-com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.utiw.futuwe
 
-class UtegLikedByTweetsSearchResultsTransform(
-  override protected val searchClient: SearchClient,
-  override protected val statsReceiver: StatsReceiver,
-  relevanceSearchProvider: DependencyProvider[Boolean])
-    extends RecapHydrationSearchResultsTransformBase {
+cwass utegwikedbytweetsseawchwesuwtstwansfowm(
+  ovewwide pwotected vaw seawchcwient: seawchcwient, (⑅˘꒳˘)
+  o-ovewwide pwotected vaw statsweceivew: s-statsweceivew, rawr x3
+  wewevanceseawchpwovidew: d-dependencypwovidew[boowean])
+    extends wecaphydwationseawchwesuwtstwansfowmbase {
 
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
+  pwivate[this] v-vaw nyumwesuwtsfwomseawchstat = statsweceivew.stat("numwesuwtsfwomseawch")
 
-  override def tweetIdsToHydrate(envelope: CandidateEnvelope): Seq[TweetId] =
-    envelope.utegResults.keys.toSeq
+  ovewwide d-def tweetidstohydwate(envewope: c-candidateenvewope): seq[tweetid] =
+    envewope.utegwesuwts.keys.toseq
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    searchClient
-      .getTweetsScoredForRecap(
-        userId = envelope.query.userId,
-        tweetIds = tweetIdsToHydrate(envelope),
-        earlybirdOptions = envelope.query.earlybirdOptions,
-        logSearchDebugInfo = false,
-        searchClientId = None,
-        relevanceSearch = relevanceSearchProvider(envelope.query)
-      ).map { results =>
-        numResultsFromSearchStat.add(results.size)
-        envelope.copy(searchResults = results)
+  ovewwide def appwy(envewope: candidateenvewope): futuwe[candidateenvewope] = {
+    seawchcwient
+      .gettweetsscowedfowwecap(
+        u-usewid = envewope.quewy.usewid, (✿oωo)
+        tweetids = tweetidstohydwate(envewope), (ˆ ﻌ ˆ)♡
+        eawwybiwdoptions = envewope.quewy.eawwybiwdoptions, (˘ω˘)
+        w-wogseawchdebuginfo = fawse, (⑅˘꒳˘)
+        s-seawchcwientid = n-nyone, (///ˬ///✿)
+        w-wewevanceseawch = w-wewevanceseawchpwovidew(envewope.quewy)
+      ).map { wesuwts =>
+        nyumwesuwtsfwomseawchstat.add(wesuwts.size)
+        e-envewope.copy(seawchwesuwts = wesuwts)
       }
   }
 }

@@ -1,39 +1,39 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.twittew.simcwustews_v2.hdfs_souwces
 
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import java.util.TimeZone
+impowt com.twittew.scawding.dateops
+i-impowt com.twittew.scawding.datewange
+i-impowt c-com.twittew.scawding.days
+i-impowt c-com.twittew.scawding.typedpipe
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.expwicitwocation
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.pwocatwa
+impowt com.twittew.simcwustews_v2.thwiftscawa.nowmsandcounts
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.usewandneighbows
+impowt java.utiw.timezone
 
-object DataSources {
+object datasouwces {
 
   /**
-   * Reads production normalized graph data from atla-proc
+   * w-weads pwoduction nyowmawized g-gwaph data fwom atwa-pwoc
    */
-  def userUserNormalizedGraphSource(implicit dateRange: DateRange): TypedPipe[UserAndNeighbors] = {
-    DAL
-      .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(14)(DateOps.UTC))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+  def usewusewnowmawizedgwaphsouwce(impwicit datewange: d-datewange): typedpipe[usewandneighbows] = {
+    d-daw
+      .weadmostwecentsnapshotnoowdewthan(usewusewnowmawizedgwaphscawadataset, OwO d-days(14)(dateops.utc))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
   }
 
   /**
-   * Reads production user norms and counts data from atla-proc
+   * weads pwoduction usew nyowms and counts data fwom atwa-pwoc
    */
-  def userNormsAndCounts(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[NormsAndCounts] = {
-    DAL
-      .readMostRecentSnapshot(ProducerNormsAndCountsScalaDataset, dateRange.prepend(Days(14)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+  d-def usewnowmsandcounts(
+    impwicit datewange: datewange, (U ﹏ U)
+    timezone: timezone
+  ): t-typedpipe[nowmsandcounts] = {
+    daw
+      .weadmostwecentsnapshot(pwoducewnowmsandcountsscawadataset, d-datewange.pwepend(days(14)))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
   }
 
 }

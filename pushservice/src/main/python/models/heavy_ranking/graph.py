@@ -1,129 +1,129 @@
 """
-Graph class defining methods to obtain key quantities such as:
-  * the logits
-  * the probabilities
-  * the final score
-  * the loss function
-  * the training operator
+gwaph cwass defining methods t-to obtain key quantities s-such as:
+  * t-the wogits
+  * t-the pwobabiwities
+  * t-the finaw s-scowe
+  * the w-woss function
+  * t-the twaining opewatow
 """
-from __future__ import annotations
+fwom __futuwe__ impowt annotations
 
-from abc import ABC, abstractmethod
-from typing import Any, Dict
+fwom abc impowt abc, òωó abstwactmethod
+f-fwom typing impowt any, (⑅˘꒳˘) dict
 
-from twitter.deepbird.hparam import HParams
-import twml
+fwom twittew.deepbiwd.hpawam i-impowt hpawams
+impowt twmw
 
-from ..libs.model_utils import generate_disliked_mask
-from .params import GraphParams
+fwom ..wibs.modew_utiws i-impowt genewate_diswiked_mask
+fwom .pawams impowt gwaphpawams
 
-import tensorflow as tf
-import tensorflow.compat.v1 as tf1
+impowt tensowfwow a-as tf
+impowt tensowfwow.compat.v1 a-as tf1
 
 
-class Graph(ABC):
-  def __init__(self, params: GraphParams):
-    self.params = params
+c-cwass gwaph(abc):
+  def __init__(sewf, XD pawams: gwaphpawams):
+    sewf.pawams = p-pawams
 
-  @abstractmethod
-  def get_logits(self, features: Dict[str, tf.Tensor], mode: tf.estimator.ModeKeys) -> tf.Tensor:
-    pass
+  @abstwactmethod
+  def get_wogits(sewf, featuwes: dict[stw, -.- tf.tensow], m-mode: tf.estimatow.modekeys) -> tf.tensow:
+    p-pass
 
-  def get_probabilities(self, logits: tf.Tensor) -> tf.Tensor:
-    return tf.math.cumprod(tf.nn.sigmoid(logits), axis=1, name="probabilities")
+  def get_pwobabiwities(sewf, :3 w-wogits: tf.tensow) -> t-tf.tensow:
+    w-wetuwn tf.math.cumpwod(tf.nn.sigmoid(wogits), axis=1, nyaa~~ n-nyame="pwobabiwities")
 
-  def get_task_weights(self, labels: tf.Tensor) -> tf.Tensor:
-    oonc_label = tf.reshape(labels[:, 0], shape=(-1, 1))
-    task_weights = tf.concat([tf.ones_like(oonc_label), oonc_label], axis=1)
+  def get_task_weights(sewf, 😳 wabews: tf.tensow) -> t-tf.tensow:
+    oonc_wabew = tf.weshape(wabews[:, (⑅˘꒳˘) 0], shape=(-1, nyaa~~ 1))
+    task_weights = tf.concat([tf.ones_wike(oonc_wabew), OwO o-oonc_wabew], rawr x3 axis=1)
 
-    n_labels = len(self.params.tasks)
-    task_weights = tf.reshape(task_weights[:, 0:n_labels], shape=(-1, n_labels))
+    n-ny_wabews = wen(sewf.pawams.tasks)
+    t-task_weights = t-tf.weshape(task_weights[:, XD 0:n_wabews], σωσ shape=(-1, ny_wabews))
 
-    return task_weights
+    wetuwn task_weights
 
-  def get_loss(self, labels: tf.Tensor, logits: tf.Tensor, **kwargs: Any) -> tf.Tensor:
-    with tf.name_scope("weights"):
-      disliked_mask = generate_disliked_mask(labels)
+  d-def get_woss(sewf, (U ᵕ U❁) w-wabews: tf.tensow, wogits: t-tf.tensow, (U ﹏ U) **kwawgs: a-any) -> tf.tensow:
+    with t-tf.name_scope("weights"):
+      diswiked_mask = g-genewate_diswiked_mask(wabews)
 
-      labels = tf.reshape(labels[:, 0:2], shape=[-1, 2])
+      wabews = tf.weshape(wabews[:, :3 0:2], s-shape=[-1, ( ͡o ω ͡o ) 2])
 
-      labels = labels * tf.cast(tf.logical_not(disliked_mask), dtype=labels.dtype)
+      wabews = wabews * t-tf.cast(tf.wogicaw_not(diswiked_mask), σωσ dtype=wabews.dtype)
 
-      with tf.name_scope("task_weight"):
-        task_weights = self.get_task_weights(labels)
+      w-with tf.name_scope("task_weight"):
+        t-task_weights = sewf.get_task_weights(wabews)
 
       with tf.name_scope("batch_size"):
-        batch_size = tf.cast(tf.shape(labels)[0], dtype=tf.float32, name="batch_size")
+        batch_size = tf.cast(tf.shape(wabews)[0], dtype=tf.fwoat32, >w< nyame="batch_size")
 
-      weights = task_weights / batch_size
+      weights = task_weights / b-batch_size
 
-    with tf.name_scope("loss"):
-      loss = tf.reduce_sum(
-        tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits) * weights,
+    w-with tf.name_scope("woss"):
+      w-woss = tf.weduce_sum(
+        t-tf.nn.sigmoid_cwoss_entwopy_with_wogits(wabews=wabews, 😳😳😳 w-wogits=wogits) * weights, OwO
       )
 
-    return loss
+    wetuwn woss
 
-  def get_score(self, probabilities: tf.Tensor) -> tf.Tensor:
-    with tf.name_scope("score_weight"):
-      score_weights = tf.constant([task.score_weight for task in self.params.tasks])
-      score_weights = score_weights / tf.reduce_sum(score_weights, axis=0)
+  def get_scowe(sewf, 😳 pwobabiwities: t-tf.tensow) -> tf.tensow:
+    with tf.name_scope("scowe_weight"):
+      scowe_weights = t-tf.constant([task.scowe_weight fow task in s-sewf.pawams.tasks])
+      s-scowe_weights = s-scowe_weights / tf.weduce_sum(scowe_weights, 😳😳😳 a-axis=0)
 
-    with tf.name_scope("score"):
-      score = tf.reshape(tf.reduce_sum(probabilities * score_weights, axis=1), shape=[-1, 1])
+    w-with tf.name_scope("scowe"):
+      s-scowe = tf.weshape(tf.weduce_sum(pwobabiwities * s-scowe_weights, (˘ω˘) axis=1), ʘwʘ shape=[-1, 1])
 
-    return score
+    w-wetuwn scowe
 
-  def get_train_op(self, loss: tf.Tensor, twml_params) -> Any:
-    with tf.name_scope("optimizer"):
-      learning_rate = twml_params.learning_rate
-      optimizer = tf1.train.GradientDescentOptimizer(learning_rate=learning_rate)
+  d-def get_twain_op(sewf, ( ͡o ω ͡o ) w-woss: t-tf.tensow, o.O twmw_pawams) -> a-any:
+    with tf.name_scope("optimizew"):
+      weawning_wate = twmw_pawams.weawning_wate
+      o-optimizew = tf1.twain.gwadientdescentoptimizew(weawning_wate=weawning_wate)
 
-    update_ops = set(tf1.get_collection(tf1.GraphKeys.UPDATE_OPS))
-    with tf.control_dependencies(update_ops):
-      train_op = twml.optimizers.optimize_loss(
-        loss=loss,
-        variables=tf1.trainable_variables(),
-        global_step=tf1.train.get_global_step(),
-        optimizer=optimizer,
-        learning_rate=None,
+    update_ops = set(tf1.get_cowwection(tf1.gwaphkeys.update_ops))
+    with tf.contwow_dependencies(update_ops):
+      twain_op = twmw.optimizews.optimize_woss(
+        w-woss=woss, >w<
+        vawiabwes=tf1.twainabwe_vawiabwes(), 😳
+        gwobaw_step=tf1.twain.get_gwobaw_step(), 🥺
+        optimizew=optimizew, rawr x3
+        w-weawning_wate=none, o.O
       )
 
-    return train_op
+    w-wetuwn twain_op
 
-  def __call__(
-    self,
-    features: Dict[str, tf.Tensor],
-    labels: tf.Tensor,
-    mode: tf.estimator.ModeKeys,
-    params: HParams,
-    config=None,
-  ) -> Dict[str, tf.Tensor]:
-    training = mode == tf.estimator.ModeKeys.TRAIN
-    logits = self.get_logits(features=features, training=training)
-    probabilities = self.get_probabilities(logits=logits)
-    score = None
-    loss = None
-    train_op = None
+  d-def __caww__(
+    sewf, rawr
+    f-featuwes: dict[stw, ʘwʘ tf.tensow], 😳😳😳
+    w-wabews: tf.tensow, ^^;;
+    m-mode: tf.estimatow.modekeys, o.O
+    pawams: hpawams, (///ˬ///✿)
+    config=none, σωσ
+  ) -> dict[stw, nyaa~~ tf.tensow]:
+    twaining = m-mode == tf.estimatow.modekeys.twain
+    w-wogits = sewf.get_wogits(featuwes=featuwes, twaining=twaining)
+    p-pwobabiwities = s-sewf.get_pwobabiwities(wogits=wogits)
+    scowe = nyone
+    woss = nyone
+    t-twain_op = nyone
 
-    if mode == tf.estimator.ModeKeys.PREDICT:
-      score = self.get_score(probabilities=probabilities)
-      output = {"loss": loss, "train_op": train_op, "prediction": score}
+    i-if mode == tf.estimatow.modekeys.pwedict:
+      s-scowe = s-sewf.get_scowe(pwobabiwities=pwobabiwities)
+      output = {"woss": woss, ^^;; "twain_op": twain_op, ^•ﻌ•^ "pwediction": scowe}
 
-    elif mode in (tf.estimator.ModeKeys.TRAIN, tf.estimator.ModeKeys.EVAL):
-      loss = self.get_loss(labels=labels, logits=logits)
+    e-ewif mode i-in (tf.estimatow.modekeys.twain, σωσ t-tf.estimatow.modekeys.evaw):
+      woss = sewf.get_woss(wabews=wabews, w-wogits=wogits)
 
-      if mode == tf.estimator.ModeKeys.TRAIN:
-        train_op = self.get_train_op(loss=loss, twml_params=params)
+      i-if mode == tf.estimatow.modekeys.twain:
+        twain_op = sewf.get_twain_op(woss=woss, -.- t-twmw_pawams=pawams)
 
-      output = {"loss": loss, "train_op": train_op, "output": probabilities}
+      output = {"woss": woss, ^^;; "twain_op": twain_op, XD "output": pwobabiwities}
 
-    else:
-      raise ValueError(
+    e-ewse:
+      waise v-vawueewwow(
         f"""
-        Invalid mode. Possible values are: {tf.estimator.ModeKeys.PREDICT}, {tf.estimator.ModeKeys.TRAIN}, and {tf.estimator.ModeKeys.EVAL}
-        . Passed: {mode}
+        invawid mode. p-possibwe vawues a-awe: {tf.estimatow.modekeys.pwedict}, 🥺 {tf.estimatow.modekeys.twain}, òωó and {tf.estimatow.modekeys.evaw}
+        . (ˆ ﻌ ˆ)♡ passed: {mode}
       """
       )
 
-    return output
+    wetuwn output

@@ -1,62 +1,62 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+impowt java.utiw.awwaywist;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.set;
 
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetTermCollector;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.thrift.ThriftFacetLabel;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetidmap;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facettewmcowwectow;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetwabew;
 
 /**
- * A collector for facet labels of given fields.
+ * a cowwectow fow facet wabews of given f-fiewds. >w<
  */
-public class FacetLabelCollector implements FacetTermCollector {
+pubwic cwass facetwabewcowwectow impwements facettewmcowwectow {
 
-  private final Set<String> requiredFields;
-  private FacetIDMap facetIDMap;
-  private Map<String, FacetLabelProvider> facetLabelProviders;
+  p-pwivate finaw set<stwing> wequiwedfiewds;
+  p-pwivate facetidmap facetidmap;
+  pwivate map<stwing, rawr facetwabewpwovidew> f-facetwabewpwovidews;
 
-  private final List<ThriftFacetLabel> labels = new ArrayList<>();
+  pwivate finaw w-wist<thwiftfacetwabew> w-wabews = nyew awwaywist<>();
 
-  public FacetLabelCollector(Set<String> requiredFields) {
-    this.requiredFields = requiredFields;
+  pubwic facetwabewcowwectow(set<stwing> wequiwedfiewds) {
+    this.wequiwedfiewds = w-wequiwedfiewds;
   }
 
-  public void resetFacetLabelProviders(Map<String, FacetLabelProvider> facetLabelProvidersToReset,
-                                       FacetIDMap facetIDMapToReset) {
-    this.facetLabelProviders = facetLabelProvidersToReset;
-    this.facetIDMap = facetIDMapToReset;
-    labels.clear();
+  pubwic void wesetfacetwabewpwovidews(map<stwing, facetwabewpwovidew> facetwabewpwovidewstoweset,
+                                       facetidmap f-facetidmaptoweset) {
+    this.facetwabewpwovidews = f-facetwabewpwovidewstoweset;
+    t-this.facetidmap = f-facetidmaptoweset;
+    w-wabews.cweaw();
   }
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
-    String facetName = facetIDMap.getFacetFieldByFacetID(fieldID).getFacetName();
-    if (facetName == null || !requiredFields.contains(facetName)) {
-      return false;
+  @ovewwide
+  pubwic boowean cowwect(int docid, mya w-wong tewmid, ^^ int fiewdid) {
+    stwing facetname = f-facetidmap.getfacetfiewdbyfacetid(fiewdid).getfacetname();
+    if (facetname == nyuww || !wequiwedfiewds.contains(facetname)) {
+      wetuwn fawse;
     }
-    if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND && fieldID >= 0) {
-      final FacetLabelProvider provider = facetLabelProviders.get(facetName);
-      if (provider != null) {
-        FacetLabelProvider.FacetLabelAccessor labelAccessor = provider.getLabelAccessor();
-        String label = labelAccessor.getTermText(termID);
-        int offensiveCount = labelAccessor.getOffensiveCount(termID);
-        labels.add(new ThriftFacetLabel()
-            .setFieldName(facetName)
-            .setLabel(label)
-            .setOffensiveCount(offensiveCount));
-        return true;
+    if (tewmid != eawwybiwdindexsegmentatomicweadew.tewm_not_found && f-fiewdid >= 0) {
+      finaw facetwabewpwovidew p-pwovidew = f-facetwabewpwovidews.get(facetname);
+      i-if (pwovidew != nyuww) {
+        facetwabewpwovidew.facetwabewaccessow wabewaccessow = p-pwovidew.getwabewaccessow();
+        s-stwing wabew = wabewaccessow.gettewmtext(tewmid);
+        i-int offensivecount = w-wabewaccessow.getoffensivecount(tewmid);
+        wabews.add(new t-thwiftfacetwabew()
+            .setfiewdname(facetname)
+            .setwabew(wabew)
+            .setoffensivecount(offensivecount));
+        wetuwn twue;
       }
     }
-    return false;
+    w-wetuwn fawse;
   }
 
-  public List<ThriftFacetLabel> getLabels() {
-    // Make a copy
-    return new ArrayList<>(labels);
+  pubwic wist<thwiftfacetwabew> g-getwabews() {
+    // make a-a copy
+    wetuwn nyew awwaywist<>(wabews);
   }
 }

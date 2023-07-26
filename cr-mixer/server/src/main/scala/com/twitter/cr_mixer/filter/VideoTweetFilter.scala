@@ -1,81 +1,81 @@
-package com.twitter.cr_mixer.filter
+package com.twittew.cw_mixew.fiwtew
 
-import com.twitter.cr_mixer.filter.VideoTweetFilter.FilterConfig
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RelatedVideoTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.param.VideoTweetFilterParams
-import com.twitter.util.Future
-import javax.inject.Singleton
+impowt com.twittew.cw_mixew.fiwtew.videotweetfiwtew.fiwtewconfig
+i-impowt com.twittew.cw_mixew.modew.candidategenewatowquewy
+impowt c-com.twittew.cw_mixew.modew.cwcandidategenewatowquewy
+i-impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt c-com.twittew.cw_mixew.modew.wewatedtweetcandidategenewatowquewy
+i-impowt com.twittew.cw_mixew.modew.wewatedvideotweetcandidategenewatowquewy
+impowt c-com.twittew.cw_mixew.pawam.videotweetfiwtewpawams
+impowt com.twittew.utiw.futuwe
+impowt javax.inject.singweton
 
-@Singleton
-case class VideoTweetFilter() extends FilterBase {
-  override val name: String = this.getClass.getCanonicalName
+@singweton
+case cwass videotweetfiwtew() extends fiwtewbase {
+  o-ovewwide vaw nyame: stwing = this.getcwass.getcanonicawname
 
-  override type ConfigType = FilterConfig
+  o-ovewwide type configtype = f-fiwtewconfig
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: ConfigType
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    Future.value(candidates.map {
-      _.flatMap {
-        candidate =>
-          if (!config.enableVideoTweetFilter) {
-            Some(candidate)
-          } else {
-            // if hasVideo is true, hasImage, hasGif should be false
-            val hasVideo = checkTweetInfoAttribute(candidate.tweetInfo.hasVideo)
-            val isHighMediaResolution =
-              checkTweetInfoAttribute(candidate.tweetInfo.isHighMediaResolution)
-            val isQuoteTweet = checkTweetInfoAttribute(candidate.tweetInfo.isQuoteTweet)
-            val isReply = checkTweetInfoAttribute(candidate.tweetInfo.isReply)
-            val hasMultipleMedia = checkTweetInfoAttribute(candidate.tweetInfo.hasMultipleMedia)
-            val hasUrl = checkTweetInfoAttribute(candidate.tweetInfo.hasUrl)
+  ovewwide def fiwtew(
+    candidates: seq[seq[initiawcandidate]], 🥺
+    c-config: configtype
+  ): futuwe[seq[seq[initiawcandidate]]] = {
+    f-futuwe.vawue(candidates.map {
+      _.fwatmap {
+        c-candidate =>
+          if (!config.enabwevideotweetfiwtew) {
+            some(candidate)
+          } ewse {
+            // if hasvideo i-is twue, (U ﹏ U) hasimage, >w< hasgif shouwd be fawse
+            vaw hasvideo = checktweetinfoattwibute(candidate.tweetinfo.hasvideo)
+            v-vaw ishighmediawesowution =
+              c-checktweetinfoattwibute(candidate.tweetinfo.ishighmediawesowution)
+            v-vaw isquotetweet = c-checktweetinfoattwibute(candidate.tweetinfo.isquotetweet)
+            v-vaw iswepwy = checktweetinfoattwibute(candidate.tweetinfo.iswepwy)
+            vaw hasmuwtipwemedia = checktweetinfoattwibute(candidate.tweetinfo.hasmuwtipwemedia)
+            v-vaw hasuww = checktweetinfoattwibute(candidate.tweetinfo.hasuww)
 
-            if (hasVideo && isHighMediaResolution && !isQuoteTweet &&
-              !isReply && !hasMultipleMedia && !hasUrl) {
-              Some(candidate)
-            } else {
-              None
+            if (hasvideo && ishighmediawesowution && !isquotetweet &&
+              !iswepwy && !hasmuwtipwemedia && !hasuww) {
+              s-some(candidate)
+            } ewse {
+              nyone
             }
           }
       }
     })
   }
 
-  def checkTweetInfoAttribute(attributeOpt: => Option[Boolean]): Boolean = {
-    if (attributeOpt.isDefined)
-      attributeOpt.get
-    else {
-      // takes Quoted Tweet (TweetInfo.isQuoteTweet) as an example,
-      // if the attributeOpt is None, we by default say it is not a quoted tweet
-      // similarly, if TweetInfo.hasVideo is a None,
-      // we say it does not have video.
-      false
+  def checktweetinfoattwibute(attwibuteopt: => option[boowean]): boowean = {
+    i-if (attwibuteopt.isdefined)
+      attwibuteopt.get
+    ewse {
+      // takes q-quoted tweet (tweetinfo.isquotetweet) a-as an e-exampwe, mya
+      // if the attwibuteopt is nyone, >w< we by defauwt say i-it is nyot a q-quoted tweet
+      // simiwawwy, nyaa~~ i-if tweetinfo.hasvideo i-is a nyone, (✿oωo)
+      // we say i-it does nyot have video. ʘwʘ
+      f-fawse
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
-    query: CGQueryType
-  ): FilterConfig = {
-    val enableVideoTweetFilter = query match {
-      case _: CrCandidateGeneratorQuery | _: RelatedTweetCandidateGeneratorQuery |
-          _: RelatedVideoTweetCandidateGeneratorQuery =>
-        query.params(VideoTweetFilterParams.EnableVideoTweetFilterParam)
-      case _ => false // e.g., GetRelatedTweets()
+  ovewwide def wequesttoconfig[cgquewytype <: c-candidategenewatowquewy](
+    quewy: cgquewytype
+  ): f-fiwtewconfig = {
+    vaw e-enabwevideotweetfiwtew = q-quewy match {
+      case _: cwcandidategenewatowquewy | _: wewatedtweetcandidategenewatowquewy |
+          _: wewatedvideotweetcandidategenewatowquewy =>
+        quewy.pawams(videotweetfiwtewpawams.enabwevideotweetfiwtewpawam)
+      case _ => fawse // e-e.g., getwewatedtweets()
     }
-    FilterConfig(
-      enableVideoTweetFilter = enableVideoTweetFilter
+    f-fiwtewconfig(
+      enabwevideotweetfiwtew = e-enabwevideotweetfiwtew
     )
   }
 }
 
-object VideoTweetFilter {
-  // extend the filterConfig to add more flags if needed.
-  // now they are hardcoded according to the prod setting
-  case class FilterConfig(
-    enableVideoTweetFilter: Boolean)
+o-object v-videotweetfiwtew {
+  // extend the fiwtewconfig to add mowe fwags i-if needed. (ˆ ﻌ ˆ)♡
+  // nyow they awe hawdcoded accowding to the pwod setting
+  case cwass f-fiwtewconfig(
+    enabwevideotweetfiwtew: boowean)
 }

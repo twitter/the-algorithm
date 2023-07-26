@@ -1,65 +1,65 @@
-package com.twitter.home_mixer.product.following
+package com.twittew.home_mixew.pwoduct.fowwowing
 
-import com.twitter.home_mixer.functional_component.decorator.urt.builder.HomeWhoToFollowFeedbackActionInfoBuilder
-import com.twitter.home_mixer.functional_component.gate.DismissFatigueGate
-import com.twitter.home_mixer.functional_component.gate.TimelinesPersistenceStoreLastInjectionGate
-import com.twitter.home_mixer.model.HomeFeatures.DismissInfoFeature
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.home_mixer.model.HomeFeatures.WhoToFollowExcludedUserIdsFeature
-import com.twitter.home_mixer.product.following.model.FollowingQuery
-import com.twitter.home_mixer.product.following.param.FollowingParam.EnableWhoToFollowCandidatePipelineParam
-import com.twitter.home_mixer.product.following.param.FollowingParam.WhoToFollowDisplayLocationParam
-import com.twitter.home_mixer.product.following.param.FollowingParam.WhoToFollowDisplayTypeIdParam
-import com.twitter.home_mixer.product.following.param.FollowingParam.WhoToFollowMinInjectionIntervalParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ParamWhoToFollowModuleDisplayTypeBuilder
-import com.twitter.product_mixer.component_library.gate.NonEmptyCandidatesGate
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowArmCandidatePipelineConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowArmDependentCandidatePipelineConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowArmDependentCandidatePipelineConfigBuilder
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew.homewhotofowwowfeedbackactioninfobuiwdew
+i-impowt com.twittew.home_mixew.functionaw_component.gate.dismissfatiguegate
+i-impowt c-com.twittew.home_mixew.functionaw_component.gate.timewinespewsistencestowewastinjectiongate
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.dismissinfofeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.pewsistenceentwiesfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.whotofowwowexcwudedusewidsfeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.fowwowing.modew.fowwowingquewy
+i-impowt com.twittew.home_mixew.pwoduct.fowwowing.pawam.fowwowingpawam.enabwewhotofowwowcandidatepipewinepawam
+impowt com.twittew.home_mixew.pwoduct.fowwowing.pawam.fowwowingpawam.whotofowwowdispwaywocationpawam
+impowt com.twittew.home_mixew.pwoduct.fowwowing.pawam.fowwowingpawam.whotofowwowdispwaytypeidpawam
+impowt c-com.twittew.home_mixew.pwoduct.fowwowing.pawam.fowwowingpawam.whotofowwowmininjectionintewvawpawam
+impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe.pawamwhotofowwowmoduwedispwaytypebuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.gate.nonemptycandidatesgate
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_fowwow_moduwe.whotofowwowawmcandidatepipewineconfig
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_fowwow_moduwe.whotofowwowawmdependentcandidatepipewineconfig
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_fowwow_moduwe.whotofowwowawmdependentcandidatepipewineconfigbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.staticpawam
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.basegate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewinesewvice.modew.wich.entityidtype
+impowt com.twittew.timewinesewvice.suggests.thwiftscawa.suggesttype
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class FollowingWhoToFollowCandidatePipelineConfigBuilder @Inject() (
-  whoToFollowArmDependentCandidatePipelineConfigBuilder: WhoToFollowArmDependentCandidatePipelineConfigBuilder,
-  homeWhoToFollowFeedbackActionInfoBuilder: HomeWhoToFollowFeedbackActionInfoBuilder) {
+@singweton
+c-cwass fowwowingwhotofowwowcandidatepipewineconfigbuiwdew @inject() (
+  whotofowwowawmdependentcandidatepipewineconfigbuiwdew: whotofowwowawmdependentcandidatepipewineconfigbuiwdew, 😳😳😳
+  homewhotofowwowfeedbackactioninfobuiwdew: h-homewhotofowwowfeedbackactioninfobuiwdew) {
 
-  def build(
-    requiredNonEmptyPipelines: CandidateScope
-  ): WhoToFollowArmDependentCandidatePipelineConfig[FollowingQuery] = {
-    val gates: Seq[BaseGate[PipelineQuery]] = Seq(
-      TimelinesPersistenceStoreLastInjectionGate(
-        WhoToFollowMinInjectionIntervalParam,
-        PersistenceEntriesFeature,
-        EntityIdType.WhoToFollow
-      ),
-      DismissFatigueGate(SuggestType.WhoToFollow, DismissInfoFeature),
-      NonEmptyCandidatesGate(requiredNonEmptyPipelines)
+  def buiwd(
+    w-wequiwednonemptypipewines: c-candidatescope
+  ): w-whotofowwowawmdependentcandidatepipewineconfig[fowwowingquewy] = {
+    v-vaw gates: seq[basegate[pipewinequewy]] = seq(
+      timewinespewsistencestowewastinjectiongate(
+        w-whotofowwowmininjectionintewvawpawam, 😳😳😳
+        pewsistenceentwiesfeatuwe, o.O
+        entityidtype.whotofowwow
+      ), ( ͡o ω ͡o )
+      d-dismissfatiguegate(suggesttype.whotofowwow, (U ﹏ U) dismissinfofeatuwe), (///ˬ///✿)
+      nyonemptycandidatesgate(wequiwednonemptypipewines)
     )
 
-    whoToFollowArmDependentCandidatePipelineConfigBuilder.build[FollowingQuery](
-      identifier = WhoToFollowArmCandidatePipelineConfig.identifier,
-      supportedClientParam = Some(EnableWhoToFollowCandidatePipelineParam),
-      alerts = alerts,
-      gates = gates,
-      moduleDisplayTypeBuilder =
-        ParamWhoToFollowModuleDisplayTypeBuilder(WhoToFollowDisplayTypeIdParam),
-      feedbackActionInfoBuilder = Some(homeWhoToFollowFeedbackActionInfoBuilder),
-      displayLocationParam = StaticParam(WhoToFollowDisplayLocationParam.default),
-      excludedUserIdsFeature = Some(WhoToFollowExcludedUserIdsFeature),
-      profileUserIdFeature = None
+    whotofowwowawmdependentcandidatepipewineconfigbuiwdew.buiwd[fowwowingquewy](
+      identifiew = whotofowwowawmcandidatepipewineconfig.identifiew, >w<
+      suppowtedcwientpawam = s-some(enabwewhotofowwowcandidatepipewinepawam), rawr
+      awewts = a-awewts, mya
+      g-gates = gates, ^^
+      m-moduwedispwaytypebuiwdew =
+        pawamwhotofowwowmoduwedispwaytypebuiwdew(whotofowwowdispwaytypeidpawam), 😳😳😳
+      feedbackactioninfobuiwdew = some(homewhotofowwowfeedbackactioninfobuiwdew), mya
+      d-dispwaywocationpawam = s-staticpawam(whotofowwowdispwaywocationpawam.defauwt),
+      excwudedusewidsfeatuwe = s-some(whotofowwowexcwudedusewidsfeatuwe), 😳
+      p-pwofiweusewidfeatuwe = nyone
     )
   }
 
-  private val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(70),
-    HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
+  p-pwivate vaw awewts = seq(
+    homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(70), -.-
+    h-homemixewawewtconfig.businesshouws.defauwtemptywesponsewateawewt()
   )
 }

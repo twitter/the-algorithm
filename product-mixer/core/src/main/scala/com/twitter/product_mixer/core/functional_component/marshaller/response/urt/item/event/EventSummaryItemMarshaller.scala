@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.event
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.imagevawiantmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.event.eventsummawyitem
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class EventSummaryItemMarshaller @Inject() (
-  eventSummaryDisplayTypeMarshaller: EventSummaryDisplayTypeMarshaller,
-  imageVariantMarshaller: ImageVariantMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@singweton
+c-cwass eventsummawyitemmawshawwew @inject() (
+  eventsummawydispwaytypemawshawwew: eventsummawydispwaytypemawshawwew,
+  imagevawiantmawshawwew: i-imagevawiantmawshawwew, :3
+  uwwmawshawwew: uwwmawshawwew) {
 
-  def apply(eventSummary: EventSummaryItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.EventSummary(
-      urt.EventSummary(
-        id = eventSummary.id,
-        title = eventSummary.title,
-        displayType = eventSummaryDisplayTypeMarshaller(eventSummary.displayType),
-        url = urlMarshaller(eventSummary.url),
-        image = eventSummary.image.map(imageVariantMarshaller(_)),
-        timeString = eventSummary.timeString
+  d-def appwy(eventsummawy: eventsummawyitem): uwt.timewineitemcontent =
+    u-uwt.timewineitemcontent.eventsummawy(
+      uwt.eventsummawy(
+        id = eventsummawy.id, 😳😳😳
+        titwe = eventsummawy.titwe, -.-
+        d-dispwaytype = eventsummawydispwaytypemawshawwew(eventsummawy.dispwaytype), ( ͡o ω ͡o )
+        u-uww = u-uwwmawshawwew(eventsummawy.uww), rawr x3
+        image = eventsummawy.image.map(imagevawiantmawshawwew(_)), nyaa~~
+        timestwing = eventsummawy.timestwing
       )
     )
 }

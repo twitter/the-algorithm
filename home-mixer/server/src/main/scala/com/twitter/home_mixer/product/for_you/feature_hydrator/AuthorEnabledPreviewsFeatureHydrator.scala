@@ -1,70 +1,70 @@
-package com.twitter.home_mixer.product.for_you.feature_hydrator
+package com.twittew.home_mixew.pwoduct.fow_you.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorEnabledPreviewsFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.audiencerewards.audienceRewardsService.GetCreatorPreferencesOnUserClientColumn
+impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.authowenabwedpweviewsfeatuwe
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.genewated.cwient.audiencewewawds.audiencewewawdssewvice.getcweatowpwefewencesonusewcwientcowumn
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * Hydrates the `AuthorEnabledPreviews` feature for tweets authored by creators by querying the
- * `GetCreatorPreferences` Strato column. This feature corresponds to the `previews_enabled` field of that column.
- * Given a tweet from a creator, this feature indicates whether that creator has enabled previews
- * on their profile.
+ * h-hydwates the `authowenabwedpweviews` featuwe fow tweets authowed by cweatows b-by quewying the
+ * `getcweatowpwefewences` s-stwato cowumn. 🥺 t-this featuwe cowwesponds to the `pweviews_enabwed` fiewd of that cowumn. o.O
+ * given a tweet fwom a-a cweatow, /(^•ω•^) this featuwe indicates whethew that cweatow has enabwed pweviews
+ * on t-theiw pwofiwe. nyaa~~
  */
-@Singleton
-class AuthorEnabledPreviewsFeatureHydrator @Inject() (
-  getCreatorPreferencesOnUserClientColumn: GetCreatorPreferencesOnUserClientColumn)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@singweton
+cwass authowenabwedpweviewsfeatuwehydwatow @inject() (
+  g-getcweatowpwefewencesonusewcwientcowumn: g-getcweatowpwefewencesonusewcwientcowumn)
+    extends b-buwkcandidatefeatuwehydwatow[pipewinequewy, nyaa~~ t-tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("AuthorEnabledPreviews")
+  ovewwide vaw identifiew: f-featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("authowenabwedpweviews")
 
-  override val features: Set[Feature[_, _]] = Set(AuthorEnabledPreviewsFeature)
+  ovewwide v-vaw featuwes: set[featuwe[_, :3 _]] = set(authowenabwedpweviewsfeatuwe)
 
-  private val fetcher = getCreatorPreferencesOnUserClientColumn.fetcher
+  pwivate vaw fetchew = getcweatowpwefewencesonusewcwientcowumn.fetchew
 
-  private val DefaultAuthorEnabledPreviewsValue = true
+  pwivate vaw defauwtauthowenabwedpweviewsvawue = twue
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val candidateAuthors = candidates
-      .map(_.features.getOrElse(AuthorIdFeature, None))
-      .toSet
-      .flatten
+  ovewwide d-def appwy(
+    quewy: pipewinequewy, 😳😳😳
+    c-candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = {
+    vaw candidateauthows = candidates
+      .map(_.featuwes.getowewse(authowidfeatuwe, (˘ω˘) nyone))
+      .toset
+      .fwatten
 
-    // Build a map of creator -> authorEnabledPreviews, then use it to populate candidate features
-    val authorIdToFeatureStitch = Stitch.collect {
-      candidateAuthors
-        .map { author =>
-          val isAuthorEnabledPreviews = fetcher.fetch(author).map {
-              _.v.map(_.previewsEnabled).getOrElse(DefaultAuthorEnabledPreviewsValue)
+    // b-buiwd a map o-of cweatow -> authowenabwedpweviews, ^^ t-then use i-it to popuwate candidate featuwes
+    v-vaw authowidtofeatuwestitch = stitch.cowwect {
+      c-candidateauthows
+        .map { authow =>
+          vaw isauthowenabwedpweviews = f-fetchew.fetch(authow).map {
+              _.v.map(_.pweviewsenabwed).getowewse(defauwtauthowenabwedpweviewsvawue)
           }
-          (author, isAuthorEnabledPreviews)
-        }.toMap
+          (authow, isauthowenabwedpweviews)
+        }.tomap
     }
 
-    authorIdToFeatureStitch.map { authorIdToFeatureMap =>
-      candidates.map {
-        _.features.getOrElse(AuthorIdFeature, None) match {
-          case Some(authorId) => FeatureMapBuilder()
-            .add(AuthorEnabledPreviewsFeature, authorIdToFeatureMap(authorId))
-            .build()
-          case _ => FeatureMapBuilder()
-            .add(AuthorEnabledPreviewsFeature, DefaultAuthorEnabledPreviewsValue)
-            .build()
+    a-authowidtofeatuwestitch.map { authowidtofeatuwemap =>
+      c-candidates.map {
+        _.featuwes.getowewse(authowidfeatuwe, :3 n-nyone) match {
+          case some(authowid) => featuwemapbuiwdew()
+            .add(authowenabwedpweviewsfeatuwe, -.- authowidtofeatuwemap(authowid))
+            .buiwd()
+          case _ => featuwemapbuiwdew()
+            .add(authowenabwedpweviewsfeatuwe, 😳 defauwtauthowenabwedpweviewsvawue)
+            .buiwd()
         }
       }
     }

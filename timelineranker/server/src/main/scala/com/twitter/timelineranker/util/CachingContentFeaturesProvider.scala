@@ -1,119 +1,119 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.contentfeatures.ContentFeaturesProvider
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.timelines.util.FutureUtils
-import com.twitter.timelines.util.stats.FutureObserver
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stowehaus.stowe
+i-impowt c-com.twittew.timewinewankew.contentfeatuwes.contentfeatuwespwovidew
+i-impowt com.twittew.timewinewankew.modew.wecapquewy
+i-impowt com.twittew.timewinewankew.wecap.modew.contentfeatuwes
+i-impowt com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewines.utiw.faiwopenhandwew
+i-impowt com.twittew.timewines.utiw.futuweutiws
+impowt com.twittew.timewines.utiw.stats.futuweobsewvew
+impowt com.twittew.utiw.futuwe
 
-object CachingContentFeaturesProvider {
-  private sealed trait CacheResult
-  private object CacheFailure extends CacheResult
-  private object CacheMiss extends CacheResult
-  private case class CacheHit(t: ContentFeatures) extends CacheResult
-  def isHit(result: CacheResult): Boolean = result != CacheMiss && result != CacheFailure
-  def isMiss(result: CacheResult): Boolean = result == CacheMiss
+object cachingcontentfeatuwespwovidew {
+  pwivate seawed t-twait cachewesuwt
+  pwivate object cachefaiwuwe e-extends cachewesuwt
+  pwivate object c-cachemiss extends cachewesuwt
+  pwivate case cwass cachehit(t: c-contentfeatuwes) extends cachewesuwt
+  d-def ishit(wesuwt: c-cachewesuwt): boowean = wesuwt != cachemiss && wesuwt != cachefaiwuwe
+  d-def ismiss(wesuwt: cachewesuwt): boowean = wesuwt == cachemiss
 }
 
-class CachingContentFeaturesProvider(
-  underlying: ContentFeaturesProvider,
-  contentFeaturesCache: Store[TweetId, ContentFeatures],
-  statsReceiver: StatsReceiver)
-    extends ContentFeaturesProvider {
-  import CachingContentFeaturesProvider._
+cwass cachingcontentfeatuwespwovidew(
+  undewwying: c-contentfeatuwespwovidew, UwU
+  contentfeatuwescache: s-stowe[tweetid, :3 c-contentfeatuwes], (⑅˘꒳˘)
+  statsweceivew: s-statsweceivew)
+    e-extends contentfeatuwespwovidew {
+  impowt cachingcontentfeatuwespwovidew._
 
-  private val scopedStatsReceiver = statsReceiver.scope("CachingContentFeaturesProvider")
-  private val cacheScope = scopedStatsReceiver.scope("cache")
-  private val cacheReadsCounter = cacheScope.counter("reads")
-  private val cacheReadFailOpenHandler = new FailOpenHandler(cacheScope.scope("reads"))
-  private val cacheHitsCounter = cacheScope.counter("hits")
-  private val cacheMissesCounter = cacheScope.counter("misses")
-  private val cacheFailuresCounter = cacheScope.counter("failures")
-  private val cacheWritesCounter = cacheScope.counter("writes")
-  private val cacheWriteObserver = FutureObserver(cacheScope.scope("writes"))
-  private val underlyingScope = scopedStatsReceiver.scope("underlying")
-  private val underlyingReadsCounter = underlyingScope.counter("reads")
+  pwivate vaw scopedstatsweceivew = s-statsweceivew.scope("cachingcontentfeatuwespwovidew")
+  pwivate vaw cachescope = s-scopedstatsweceivew.scope("cache")
+  pwivate vaw cacheweadscountew = cachescope.countew("weads")
+  pwivate vaw cacheweadfaiwopenhandwew = n-nyew faiwopenhandwew(cachescope.scope("weads"))
+  pwivate v-vaw cachehitscountew = c-cachescope.countew("hits")
+  p-pwivate vaw cachemissescountew = cachescope.countew("misses")
+  pwivate v-vaw cachefaiwuwescountew = c-cachescope.countew("faiwuwes")
+  pwivate vaw cachewwitescountew = c-cachescope.countew("wwites")
+  pwivate v-vaw cachewwiteobsewvew = futuweobsewvew(cachescope.scope("wwites"))
+  p-pwivate vaw undewwyingscope = s-scopedstatsweceivew.scope("undewwying")
+  pwivate vaw undewwyingweadscountew = u-undewwyingscope.countew("weads")
 
-  override def apply(
-    query: RecapQuery,
-    tweetIds: Seq[TweetId]
-  ): Future[Map[TweetId, ContentFeatures]] = {
-    if (tweetIds.nonEmpty) {
-      val distinctTweetIds = tweetIds.toSet
-      readFromCache(distinctTweetIds).flatMap { cacheResultsFuture =>
-        val (resultsFromCache, missedTweetIds) = partitionHitsMisses(cacheResultsFuture)
+  ovewwide d-def appwy(
+    quewy: wecapquewy, (///ˬ///✿)
+    t-tweetids: s-seq[tweetid]
+  ): futuwe[map[tweetid, ^^;; contentfeatuwes]] = {
+    if (tweetids.nonempty) {
+      vaw distincttweetids = tweetids.toset
+      weadfwomcache(distincttweetids).fwatmap { c-cachewesuwtsfutuwe =>
+        v-vaw (wesuwtsfwomcache, >_< missedtweetids) = p-pawtitionhitsmisses(cachewesuwtsfutuwe)
 
-        if (missedTweetIds.nonEmpty) {
-          underlyingReadsCounter.incr(missedTweetIds.size)
-          val resultsFromUnderlyingFu = underlying(query, missedTweetIds)
-          resultsFromUnderlyingFu.onSuccess(writeToCache)
-          resultsFromUnderlyingFu
-            .map(resultsFromUnderlying => resultsFromCache ++ resultsFromUnderlying)
-        } else {
-          Future.value(resultsFromCache)
+        i-if (missedtweetids.nonempty) {
+          u-undewwyingweadscountew.incw(missedtweetids.size)
+          vaw wesuwtsfwomundewwyingfu = undewwying(quewy, rawr x3 missedtweetids)
+          w-wesuwtsfwomundewwyingfu.onsuccess(wwitetocache)
+          wesuwtsfwomundewwyingfu
+            .map(wesuwtsfwomundewwying => wesuwtsfwomcache ++ wesuwtsfwomundewwying)
+        } ewse {
+          f-futuwe.vawue(wesuwtsfwomcache)
         }
       }
-    } else {
-      FutureUtils.EmptyMap
+    } ewse {
+      f-futuweutiws.emptymap
     }
   }
 
-  private def readFromCache(tweetIds: Set[TweetId]): Future[Seq[(TweetId, CacheResult)]] = {
-    cacheReadsCounter.incr(tweetIds.size)
-    Future.collect(
-      contentFeaturesCache
-        .multiGet(tweetIds)
-        .toSeq
+  p-pwivate d-def weadfwomcache(tweetids: set[tweetid]): f-futuwe[seq[(tweetid, c-cachewesuwt)]] = {
+    c-cacheweadscountew.incw(tweetids.size)
+    f-futuwe.cowwect(
+      contentfeatuwescache
+        .muwtiget(tweetids)
+        .toseq
         .map {
-          case (tweetId, cacheResultOptionFuture) =>
-            cacheReadFailOpenHandler(
-              cacheResultOptionFuture.map {
-                case Some(t: ContentFeatures) => tweetId -> CacheHit(t)
-                case None => tweetId -> CacheMiss
+          case (tweetid, /(^•ω•^) c-cachewesuwtoptionfutuwe) =>
+            c-cacheweadfaiwopenhandwew(
+              c-cachewesuwtoptionfutuwe.map {
+                case s-some(t: contentfeatuwes) => t-tweetid -> cachehit(t)
+                case nyone => tweetid -> cachemiss
               }
-            ) { _: Throwable => Future.value(tweetId -> CacheFailure) }
+            ) { _: t-thwowabwe => futuwe.vawue(tweetid -> cachefaiwuwe) }
         }
     )
   }
 
-  private def partitionHitsMisses(
-    cacheResults: Seq[(TweetId, CacheResult)]
-  ): (Map[TweetId, ContentFeatures], Seq[TweetId]) = {
-    val (hits, missesAndFailures) = cacheResults.partition {
-      case (_, cacheResult) => isHit(cacheResult)
+  pwivate def pawtitionhitsmisses(
+    cachewesuwts: s-seq[(tweetid, :3 cachewesuwt)]
+  ): (map[tweetid, (ꈍᴗꈍ) contentfeatuwes], /(^•ω•^) seq[tweetid]) = {
+    v-vaw (hits, (⑅˘꒳˘) missesandfaiwuwes) = c-cachewesuwts.pawtition {
+      c-case (_, ( ͡o ω ͡o ) cachewesuwt) => ishit(cachewesuwt)
     }
 
-    val (misses, cacheFailures) = missesAndFailures.partition {
-      case (_, cacheResult) => isMiss(cacheResult)
+    v-vaw (misses, cachefaiwuwes) = m-missesandfaiwuwes.pawtition {
+      c-case (_, òωó cachewesuwt) => ismiss(cachewesuwt)
     }
 
-    val cacheHits = hits.collect { case (tweetId, CacheHit(t)) => (tweetId, t) }.toMap
-    val cacheMisses = misses.collect { case (tweetId, _) => tweetId }
+    vaw cachehits = hits.cowwect { case (tweetid, (⑅˘꒳˘) c-cachehit(t)) => (tweetid, XD t) }.tomap
+    v-vaw cachemisses = misses.cowwect { c-case (tweetid, _) => t-tweetid }
 
-    cacheHitsCounter.incr(cacheHits.size)
-    cacheMissesCounter.incr(cacheMisses.size)
-    cacheFailuresCounter.incr(cacheFailures.size)
+    cachehitscountew.incw(cachehits.size)
+    cachemissescountew.incw(cachemisses.size)
+    c-cachefaiwuwescountew.incw(cachefaiwuwes.size)
 
-    (cacheHits, cacheMisses)
+    (cachehits, c-cachemisses)
   }
 
-  private def writeToCache(results: Map[TweetId, ContentFeatures]): Unit = {
-    if (results.nonEmpty) {
-      cacheWritesCounter.incr(results.size)
-      val indexedResults = results.map {
-        case (tweetId, contentFeatures) =>
-          (tweetId, Some(contentFeatures))
+  pwivate d-def wwitetocache(wesuwts: m-map[tweetid, -.- contentfeatuwes]): unit = {
+    if (wesuwts.nonempty) {
+      cachewwitescountew.incw(wesuwts.size)
+      v-vaw indexedwesuwts = w-wesuwts.map {
+        c-case (tweetid, :3 contentfeatuwes) =>
+          (tweetid, nyaa~~ some(contentfeatuwes))
       }
-      contentFeaturesCache
-        .multiPut(indexedResults)
+      c-contentfeatuwescache
+        .muwtiput(indexedwesuwts)
         .map {
-          case (_, statusFu) =>
-            cacheWriteObserver(statusFu)
+          c-case (_, 😳 statusfu) =>
+            c-cachewwiteobsewvew(statusfu)
         }
     }
   }

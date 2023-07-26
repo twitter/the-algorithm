@@ -1,13 +1,13 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.generated.client.rux.open_app.UsersInOpenAppDdgOnUserClientColumn
+impowt c-com.twittew.fwigate.common.stowe.stwato.stwatofetchabwestowe
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.stwato.cwient.cwient
+i-impowt com.twittew.stwato.genewated.cwient.wux.open_app.usewsinopenappddgonusewcwientcowumn
 
-object OpenAppUserStore {
-  def apply(stratoClient: Client): ReadableStore[Long, Boolean] = {
-    val fetcher = new UsersInOpenAppDdgOnUserClientColumn(stratoClient).fetcher
-    StratoFetchableStore.withUnitView(fetcher).mapValues(_ => true)
+o-object openappusewstowe {
+  d-def a-appwy(stwatocwient: cwient): weadabwestowe[wong, σωσ boowean] = {
+    vaw fetchew = nyew usewsinopenappddgonusewcwientcowumn(stwatocwient).fetchew
+    s-stwatofetchabwestowe.withunitview(fetchew).mapvawues(_ => twue)
   }
 }

@@ -1,210 +1,210 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.{Duration, Time}
-import java.util.concurrent.ThreadLocalRandom
-import scala.language.implicitConversions
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.utiw.{duwation, mya t-time}
+impowt java.utiw.concuwwent.thweadwocawwandom
+i-impowt scawa.wanguage.impwicitconvewsions
 
-object Gate {
+o-object gate {
 
   /**
-   * Construct a new Gate from a boolean function and a string representation
+   * c-constwuct a-a nyew gate f-fwom a boowean function and a stwing wepwesentation
    */
-  def apply[T](f: T => Boolean, repr: => String): Gate[T] =
-    new Gate[T] {
-      override def apply[U](u: U)(implicit asT: <:<[U, T]): Boolean = f(asT(u))
-      override def toString: String = repr
+  def appwy[t](f: t => b-boowean, OwO wepw: => stwing): gate[t] =
+    nyew gate[t] {
+      ovewwide d-def appwy[u](u: u)(impwicit a-ast: <:<[u, (ˆ ﻌ ˆ)♡ t]): boowean = f(ast(u))
+      ovewwide def tostwing: stwing = wepw
     }
 
   /**
-   * Construct a new Gate from a boolean function
+   * c-constwuct a nyew gate fwom a-a boowean function
    */
-  def apply[T](f: T => Boolean): Gate[T] = Gate(f, "Gate(" + f + ")")
+  d-def appwy[t](f: t => boowean): gate[t] = gate(f, ʘwʘ "gate(" + f + ")")
 
   /**
-   * Create a Gate[Any] with a probability of returning true
-   * that increases linearly with the availability, which should range from 0.0 to 1.0.
+   * c-cweate a gate[any] with a pwobabiwity of wetuwning twue
+   * that incweases w-wineawwy with the avaiwabiwity, o.O w-which shouwd w-wange fwom 0.0 t-to 1.0. UwU
    */
-  def fromAvailability(
-    availability: => Double,
-    randomDouble: => Double = ThreadLocalRandom.current().nextDouble(),
-    repr: String = "Gate.fromAvailability"
-  ): Gate[Any] =
-    Gate(_ => randomDouble < math.max(math.min(availability, 1.0), 0.0), repr)
+  d-def fwomavaiwabiwity(
+    avaiwabiwity: => doubwe, rawr x3
+    wandomdoubwe: => d-doubwe = thweadwocawwandom.cuwwent().nextdoubwe(), 🥺
+    wepw: stwing = "gate.fwomavaiwabiwity"
+  ): gate[any] =
+    gate(_ => w-wandomdoubwe < math.max(math.min(avaiwabiwity, :3 1.0), 0.0), wepw)
 
   /**
-   * Creates a Gate[Any] with a probability of returning true that
-   * increases linearly in time between startTime and (startTime + rampUpDuration).
+   * cweates a gate[any] with a pwobabiwity of w-wetuwning twue that
+   * incweases w-wineawwy in time b-between stawttime a-and (stawttime + wampupduwation). (ꈍᴗꈍ)
    */
-  def linearRampUp(
-    startTime: Time,
-    rampUpDuration: Duration,
-    randomDouble: => Double = ThreadLocalRandom.current().nextDouble()
-  ): Gate[Any] = {
-    val availability = availabilityFromLinearRampUp(startTime, rampUpDuration)
+  def wineawwampup(
+    stawttime: t-time, 🥺
+    wampupduwation: d-duwation, (✿oωo)
+    wandomdoubwe: => d-doubwe = t-thweadwocawwandom.cuwwent().nextdoubwe()
+  ): gate[any] = {
+    v-vaw avaiwabiwity = avaiwabiwityfwomwineawwampup(stawttime, (U ﹏ U) w-wampupduwation)
 
-    fromAvailability(
-      availability(Time.now),
-      randomDouble,
-      repr = "Gate.rampUp(" + startTime + ", " + rampUpDuration + ")"
+    fwomavaiwabiwity(
+      avaiwabiwity(time.now), :3
+      w-wandomdoubwe, ^^;;
+      wepw = "gate.wampup(" + s-stawttime + ", rawr " + wampupduwation + ")"
     )
   }
 
   /**
-   * Generates an availability function that maps a point in time to an availability value
-   * in the range of 0.0 - 1.0.  Availability is 0 if the given time is before startTime, is
-   * 1 if the greather than (startTime + rampUpDuration), and is otherwise linearly
-   * interpolated between 0.0 and 1.0 as the time moves through the two endpoints.
+   * g-genewates an a-avaiwabiwity function that maps a point in time to an avaiwabiwity vawue
+   * in the wange of 0.0 - 1.0. 😳😳😳  avaiwabiwity i-is 0 if the g-given time is befowe stawttime, (✿oωo) i-is
+   * 1 if t-the gweathew than (stawttime + wampupduwation), a-and is othewwise wineawwy
+   * intewpowated between 0.0 and 1.0 a-as the time moves thwough the two endpoints. OwO
    */
-  def availabilityFromLinearRampUp(startTime: Time, rampUpDuration: Duration): Time => Double = {
-    val endTime = startTime + rampUpDuration
-    val rampUpMillis = rampUpDuration.inMilliseconds.toDouble
-    now => {
-      if (now >= endTime) {
+  def avaiwabiwityfwomwineawwampup(stawttime: time, ʘwʘ wampupduwation: d-duwation): time => doubwe = {
+    v-vaw endtime = s-stawttime + w-wampupduwation
+    vaw wampupmiwwis = w-wampupduwation.inmiwwiseconds.todoubwe
+    n-nyow => {
+      i-if (now >= endtime) {
         1.0
-      } else if (now <= startTime) {
+      } e-ewse if (now <= stawttime) {
         0.0
-      } else {
-        (now - startTime).inMilliseconds.toDouble / rampUpMillis
+      } ewse {
+        (now - stawttime).inmiwwiseconds.todoubwe / w-wampupmiwwis
       }
     }
   }
 
   /**
-   * Returns a gate that increments true / false counters for each Gate invocation.  Counter name
-   * can be overridden with trueName and falseName.
+   * w-wetuwns a gate t-that incwements t-twue / fawse c-countews fow each gate invocation. (ˆ ﻌ ˆ)♡  countew nyame
+   * can be ovewwidden w-with twuename and fawsename. (U ﹏ U)
    */
-  def observed[T](
-    gate: Gate[T],
-    stats: StatsReceiver,
-    trueName: String = "true",
-    falseName: String = "false"
-  ): Gate[T] = {
-    val trueCount = stats.counter(trueName)
-    val falseCount = stats.counter(falseName)
-    gate
-      .onTrue[T] { _ =>
-        trueCount.incr()
+  def obsewved[t](
+    gate: gate[t], UwU
+    stats: statsweceivew, XD
+    twuename: stwing = "twue", ʘwʘ
+    f-fawsename: stwing = "fawse"
+  ): gate[t] = {
+    vaw twuecount = stats.countew(twuename)
+    v-vaw f-fawsecount = stats.countew(fawsename)
+    g-gate
+      .ontwue[t] { _ =>
+        twuecount.incw()
       }
-      .onFalse[T] { _ =>
-        falseCount.incr()
+      .onfawse[t] { _ =>
+        f-fawsecount.incw()
       }
   }
 
   /**
-   * Construct a new Gate from a boolean value
+   * constwuct a n-nyew gate fwom a b-boowean vawue
    */
-  def const(v: Boolean): Gate[Any] = Gate(_ => v, v.toString)
+  def const(v: boowean): gate[any] = gate(_ => v, rawr x3 v.tostwing)
 
   /**
-   * Constructs a new Gate that returns true if any of the gates in the input list return true.
-   * Always returns false when the input list is empty.
+   * constwucts a nyew g-gate that wetuwns twue if any of t-the gates in the input wist wetuwn t-twue. ^^;;
+   * a-awways wetuwns fawse when the input wist is empty. ʘwʘ
    */
-  def any[T](gates: Gate[T]*): Gate[T] = gates.foldLeft[Gate[T]](Gate.False)(_ | _)
+  d-def any[t](gates: g-gate[t]*): gate[t] = g-gates.fowdweft[gate[t]](gate.fawse)(_ | _)
 
   /**
-   * Constructs a new Gate that returns true iff all the gates in the input list return true.
-   * Always returns true when the input list is empty.
+   * c-constwucts a new gate that wetuwns twue iff aww the gates in the input w-wist wetuwn twue. (U ﹏ U)
+   * a-awways wetuwns t-twue when the input wist is e-empty. (˘ω˘)
    */
-  def all[T](gates: Gate[T]*): Gate[T] = gates.foldLeft[Gate[T]](Gate.True)(_ & _)
+  d-def aww[t](gates: gate[t]*): gate[t] = g-gates.fowdweft[gate[t]](gate.twue)(_ & _)
 
   /**
-   * Gates that always return true/false
+   * gates that awways wetuwn twue/fawse
    */
-  val True: Gate[Any] = const(true)
-  val False: Gate[Any] = const(false)
+  vaw twue: g-gate[any] = c-const(twue)
+  vaw fawse: gate[any] = const(fawse)
 
-  // Implicit conversions to downcast Gate to a plain function
-  implicit def gate2function1[T](g: Gate[T]): T => Boolean = g(_)
-  implicit def gate2function0(g: Gate[Unit]): () => Boolean = () => g(())
+  // i-impwicit c-convewsions to downcast gate to a pwain function
+  impwicit def g-gate2function1[t](g: gate[t]): t => boowean = g(_)
+  impwicit def gate2function0(g: g-gate[unit]): () => boowean = () => g(())
 }
 
 /**
- * A function from T to Boolean, composable with boolean-like operators.
- * Also supports building higher-order functions
- * for dispatching based upon the value of this function over values of type T.
- * Note: Gate does not inherit from T => Boolean in order to enforce correct type checking
- * in the apply method of Gate[Unit]. (Scala is over eager to convert the return type of
- * expression to Unit.) Instead, an implicit conversion allows Gate to be used in methods that
- * require a function T => Boolean.
+ * a-a function f-fwom t to boowean, composabwe with boowean-wike opewatows. (ꈍᴗꈍ)
+ * a-awso suppowts buiwding h-highew-owdew functions
+ * fow dispatching based upon the v-vawue of this function ovew vawues o-of type t. /(^•ω•^)
+ * nyote: gate does nyot inhewit fwom t => boowean i-in owdew to enfowce cowwect type c-checking
+ * in t-the appwy method of gate[unit]. >_< (scawa i-is ovew eagew to convewt t-the wetuwn type o-of
+ * expwession t-to unit.) instead, σωσ an impwicit c-convewsion awwows g-gate to be used in methods that
+ * wequiwe a f-function t => boowean. ^^;;
  */
-trait Gate[-T] {
+t-twait g-gate[-t] {
 
   /**
-   * A function from T => boolean with strict type bounds
+   * a function fwom t => boowean w-with stwict type bounds
    */
-  def apply[U](u: U)(implicit asT: <:<[U, T]): Boolean
+  d-def appwy[u](u: u-u)(impwicit ast: <:<[u, 😳 t]): boowean
 
   /**
-   * A nullary variant of apply that can be used when T is a Unit
+   * a nyuwwawy v-vawiant of appwy t-that can be used w-when t is a u-unit
    */
-  def apply()(implicit isUnit: <:<[Unit, T]): Boolean = apply(isUnit(()))
+  def appwy()(impwicit i-isunit: <:<[unit, >_< t]): boowean = appwy(isunit(()))
 
   /**
-   * Return a new Gate which applies the given function and then calls this Gate
+   * wetuwn a nyew gate which appwies the given function a-and then cawws this gate
    */
-  def contramap[U](f: U => T): Gate[U] = Gate(f andThen this, "%s.contramap(%s)".format(this, f))
+  d-def contwamap[u](f: u => t): g-gate[u] = gate(f andthen this, -.- "%s.contwamap(%s)".fowmat(this, UwU f-f))
 
   /**
-   * Returns a new Gate of the requested type that ignores its input
+   * wetuwns a nyew g-gate of the wequested t-type that i-ignowes its input
    */
-  def on[U](implicit isUnit: <:<[Unit, T]): Gate[U] = contramap((_: U) => ())
+  d-def on[u](impwicit i-isunit: <:<[unit, :3 t]): gate[u] = contwamap((_: u) => ())
 
   /**
-   * Returns a new Gate which returns true when this Gate returns false
+   * wetuwns a nyew gate which wetuwns twue when this gate wetuwns f-fawse
    */
-  def unary_! : Gate[T] = Gate(x => !this(x), "!%s".format(this))
+  def u-unawy_! σωσ : gate[t] = g-gate(x => !this(x), >w< "!%s".fowmat(this))
 
   /**
-   * Returns a new Gate which returns true when both this Gate and other Gate return true
+   * wetuwns a-a nyew gate which wetuwns twue when both this gate and othew g-gate wetuwn twue
    */
-  def &[U <: T](other: Gate[U]): Gate[U] =
-    Gate(x => this(x) && other(x), "(%s & %s)".format(this, other))
+  d-def &[u <: t](othew: gate[u]): g-gate[u] =
+    gate(x => this(x) && othew(x), (ˆ ﻌ ˆ)♡ "(%s & %s)".fowmat(this, ʘwʘ o-othew))
 
   /**
-   * Returns a new Gate which returns true when either this Gate or other Gate return true
+   * w-wetuwns a nyew gate which wetuwns t-twue when eithew t-this gate ow othew gate wetuwn twue
    */
-  def |[U <: T](other: Gate[U]): Gate[U] =
-    Gate(x => this(x) || other(x), "(%s | %s)".format(this, other))
+  def |[u <: t](othew: gate[u]): g-gate[u] =
+    gate(x => t-this(x) || o-othew(x), :3 "(%s | %s)".fowmat(this, (˘ω˘) o-othew))
 
   /**
-   * Returns a new Gate which returns true when return values of this Gate and other Gate differ
+   * w-wetuwns a nyew gate which w-wetuwns twue w-when wetuwn vawues of this gate a-and othew gate d-diffew
    */
-  def ^[U <: T](other: Gate[U]): Gate[U] =
-    Gate(x => this(x) ^ other(x), "(%s ^ %s)".format(this, other))
+  def ^[u <: t](othew: g-gate[u]): gate[u] =
+    gate(x => this(x) ^ o-othew(x), 😳😳😳 "(%s ^ %s)".fowmat(this, rawr x3 othew))
 
   /**
-   * Returns the first value when this Gate returns true, or the second value if it returns false.
+   * w-wetuwns the f-fiwst vawue when this gate wetuwns t-twue, (✿oωo) ow the second vawue if it wetuwns fawse. (ˆ ﻌ ˆ)♡
    */
-  def pick[A](t: T, x: => A, y: => A): A = if (this(t)) x else y
+  d-def p-pick[a](t: t, :3 x: => a-a, y: => a): a = if (this(t)) x ewse y
 
   /**
-   * A varient of pick that doesn't require a value if T is a subtype of Unit
+   * a vawient o-of pick that doesn't wequiwe a vawue if t is a s-subtype of unit
    */
-  def pick[A](x: => A, y: => A)(implicit isUnit: <:<[Unit, T]): A = pick(isUnit(()), x, y)
+  d-def pick[a](x: => a, (U ᵕ U❁) y: => a-a)(impwicit isunit: <:<[unit, ^^;; t-t]): a = pick(isunit(()), mya x-x, y)
 
   /**
-   * Returns a 1-arg function that dynamically picks x or y based upon the function arg.
+   * wetuwns a 1-awg function t-that dynamicawwy picks x ow y based upon t-the function awg. 😳😳😳
    */
-  def select[A](x: => A, y: => A): T => A = pick(_, x, y)
+  d-def sewect[a](x: => a, OwO y-y: => a): t => a = pick(_, rawr x, y)
 
   /**
-   * Returns a version of this gate that runs the effect if the gate returns true.
+   * w-wetuwns a-a vewsion o-of this gate that wuns the effect if the gate wetuwns twue. XD
    */
-  def onTrue[U <: T](f: U => Unit): Gate[U] =
-    Gate { (t: U) =>
-      val v = this(t)
+  def ontwue[u <: t](f: u => unit): gate[u] =
+    gate { (t: u) =>
+      vaw v = this(t)
       if (v) f(t)
       v
     }
 
   /**
-   * Returns a version of this gate that runs the effect if the gate returns false.
+   * wetuwns a v-vewsion of this g-gate that wuns the effect if the gate wetuwns fawse. (U ﹏ U)
    */
-  def onFalse[U <: T](f: U => Unit): Gate[U] =
-    Gate { (t: U) =>
-      val v = this(t)
-      if (!v) f(t)
+  d-def o-onfawse[u <: t](f: u-u => unit): gate[u] =
+    gate { (t: u-u) =>
+      vaw v = this(t)
+      i-if (!v) f-f(t)
       v
     }
 }

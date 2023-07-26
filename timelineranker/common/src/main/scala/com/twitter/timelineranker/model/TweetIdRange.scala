@@ -1,53 +1,53 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.TweetId
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+i-impowt com.twittew.timewines.modew.tweetid
 
-object TweetIdRange {
-  val default: TweetIdRange = TweetIdRange(None, None)
-  val empty: TweetIdRange = TweetIdRange(Some(0L), Some(0L))
+object t-tweetidwange {
+  v-vaw defauwt: t-tweetidwange = t-tweetidwange(none, /(^•ω•^) n-nyone)
+  vaw empty: tweetidwange = tweetidwange(some(0w), some(0w))
 
-  def fromThrift(range: thrift.TweetIdRange): TweetIdRange = {
-    TweetIdRange(fromId = range.fromId, toId = range.toId)
+  def fwomthwift(wange: t-thwift.tweetidwange): tweetidwange = {
+    tweetidwange(fwomid = w-wange.fwomid, ʘwʘ toid = wange.toid)
   }
 
-  def fromTimelineRange(range: TimelineRange): TweetIdRange = {
-    range match {
-      case r: TweetIdRange => r
+  d-def fwomtimewinewange(wange: timewinewange): tweetidwange = {
+    w-wange match {
+      c-case w: tweetidwange => w-w
       case _ =>
-        throw new IllegalArgumentException(s"Only Tweet ID range is supported. Found: $range")
+        thwow nyew iwwegawawgumentexception(s"onwy tweet id wange is suppowted. σωσ found: $wange")
     }
   }
 }
 
 /**
- * A range of Tweet IDs with exclusive bounds.
+ * a-a wange of tweet ids with excwusive bounds. OwO
  */
-case class TweetIdRange(fromId: Option[TweetId] = None, toId: Option[TweetId] = None)
-    extends TimelineRange {
+case cwass tweetidwange(fwomid: option[tweetid] = n-nyone, 😳😳😳 toid: option[tweetid] = nyone)
+    extends t-timewinewange {
 
-  throwIfInvalid()
+  t-thwowifinvawid()
 
-  def throwIfInvalid(): Unit = {
-    (fromId, toId) match {
-      case (Some(fromTweetId), Some(toTweetId)) =>
-        require(fromTweetId <= toTweetId, "fromId must be less than or equal to toId.")
-      case _ => // valid, do nothing.
+  d-def thwowifinvawid(): u-unit = {
+    (fwomid, 😳😳😳 toid) match {
+      case (some(fwomtweetid), o.O s-some(totweetid)) =>
+        wequiwe(fwomtweetid <= totweetid, ( ͡o ω ͡o ) "fwomid m-must be wess than ow equaw to toid.")
+      case _ => // vawid, (U ﹏ U) do nyothing. (///ˬ///✿)
     }
   }
 
-  def toThrift: thrift.TweetIdRange = {
-    thrift.TweetIdRange(fromId = fromId, toId = toId)
+  def tothwift: t-thwift.tweetidwange = {
+    thwift.tweetidwange(fwomid = f-fwomid, >w< t-toid = toid)
   }
 
-  def toTimelineRangeThrift: thrift.TimelineRange = {
-    thrift.TimelineRange.TweetIdRange(toThrift)
+  d-def totimewinewangethwift: thwift.timewinewange = {
+    thwift.timewinewange.tweetidwange(tothwift)
   }
 
-  def isEmpty: Boolean = {
-    (fromId, toId) match {
-      case (Some(fromId), Some(toId)) if fromId == toId => true
-      case _ => false
+  def isempty: boowean = {
+    (fwomid, rawr toid) match {
+      c-case (some(fwomid), mya s-some(toid)) if fwomid == toid => t-twue
+      case _ => f-fawse
     }
   }
 }

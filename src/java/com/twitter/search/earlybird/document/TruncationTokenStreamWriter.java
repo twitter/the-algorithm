@@ -1,86 +1,86 @@
-package com.twitter.search.earlybird.document;
+package com.twittew.seawch.eawwybiwd.document;
 
-import com.twitter.common.text.token.TokenProcessor;
-import com.twitter.common.text.token.TwitterTokenStream;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.schema.SchemaDocumentFactory;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
+impowt com.twittew.common.text.token.tokenpwocessow;
+i-impowt com.twittew.common.text.token.twittewtokenstweam;
+i-impowt c-com.twittew.decidew.decidew;
+i-impowt com.twittew.seawch.common.decidew.decidewutiw;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt c-com.twittew.seawch.common.metwics.seawchwonggauge;
+i-impowt c-com.twittew.seawch.common.schema.schemadocumentfactowy;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
 
-public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenStreamRewriter {
-  private static final int NEVER_TRUNCATE_CHARS_BELOW_POSITION = 140;
-  private static final String TRUNCATE_LONG_TWEETS_DECIDER_KEY_PREFIX =
-      "truncate_long_tweets_in_";
-  private static final String NUM_TWEET_CHARACTERS_SUPPORTED_DECIDER_KEY_PREFIX =
-      "num_tweet_characters_supported_in_";
+p-pubwic cwass twuncationtokenstweamwwitew impwements s-schemadocumentfactowy.tokenstweamwewwitew {
+  pwivate static f-finaw int nevew_twuncate_chaws_bewow_position = 140;
+  pwivate static finaw stwing twuncate_wong_tweets_decidew_key_pwefix =
+      "twuncate_wong_tweets_in_";
+  p-pwivate static finaw stwing n-nyum_tweet_chawactews_suppowted_decidew_key_pwefix =
+      "num_tweet_chawactews_suppowted_in_";
 
-  private static final SearchCounter NUM_TWEETS_TRUNCATED =
-      SearchCounter.export("num_tweets_truncated");
-  private static final SearchLongGauge NUM_TWEET_CHARACTERS_SUPPORTED =
-      SearchLongGauge.export("num_tweet_characters_supported");
+  p-pwivate static finaw seawchcountew nyum_tweets_twuncated =
+      seawchcountew.expowt("num_tweets_twuncated");
+  pwivate static f-finaw seawchwonggauge nyum_tweet_chawactews_suppowted =
+      seawchwonggauge.expowt("num_tweet_chawactews_suppowted");
 
-  private final Decider decider;
-  private final String truncateLongTweetsDeciderKey;
-  private final String numCharsSupportedDeciderKey;
+  pwivate finaw decidew decidew;
+  p-pwivate finaw stwing twuncatewongtweetsdecidewkey;
+  p-pwivate finaw s-stwing nyumchawssuppowteddecidewkey;
 
   /**
-   * Creates a TruncationTokenStreamWriter
+   * c-cweates a t-twuncationtokenstweamwwitew
    */
-  public TruncationTokenStreamWriter(EarlybirdCluster cluster, Decider decider) {
-    this.decider = decider;
+  pubwic twuncationtokenstweamwwitew(eawwybiwdcwustew cwustew, -.- d-decidew decidew) {
+    this.decidew = decidew;
 
-    this.truncateLongTweetsDeciderKey =
-        TRUNCATE_LONG_TWEETS_DECIDER_KEY_PREFIX + cluster.name().toLowerCase();
-    this.numCharsSupportedDeciderKey =
-        NUM_TWEET_CHARACTERS_SUPPORTED_DECIDER_KEY_PREFIX + cluster.name().toLowerCase();
+    t-this.twuncatewongtweetsdecidewkey =
+        twuncate_wong_tweets_decidew_key_pwefix + cwustew.name().towowewcase();
+    this.numchawssuppowteddecidewkey =
+        nyum_tweet_chawactews_suppowted_decidew_key_pwefix + cwustew.name().towowewcase();
   }
 
-  @Override
-  public TwitterTokenStream rewrite(Schema.FieldInfo fieldInfo, TwitterTokenStream stream) {
-    if (EarlybirdFieldConstant.TEXT_FIELD.getFieldName().equals(fieldInfo.getName())) {
-      final int maxPosition = getTruncatePosition();
-      NUM_TWEET_CHARACTERS_SUPPORTED.set(maxPosition);
-      if (maxPosition >= NEVER_TRUNCATE_CHARS_BELOW_POSITION) {
-        return new TokenProcessor(stream) {
-          @Override
-          public final boolean incrementToken() {
-            if (incrementInputStream()) {
-              if (offset() < maxPosition) {
-                return true;
+  @ovewwide
+  p-pubwic twittewtokenstweam w-wewwite(schema.fiewdinfo f-fiewdinfo, 🥺 twittewtokenstweam stweam) {
+    i-if (eawwybiwdfiewdconstant.text_fiewd.getfiewdname().equaws(fiewdinfo.getname())) {
+      finaw int maxposition = gettwuncateposition();
+      nyum_tweet_chawactews_suppowted.set(maxposition);
+      i-if (maxposition >= n-nyevew_twuncate_chaws_bewow_position) {
+        wetuwn nyew t-tokenpwocessow(stweam) {
+          @ovewwide
+          p-pubwic finaw boowean incwementtoken() {
+            i-if (incwementinputstweam()) {
+              if (offset() < m-maxposition) {
+                wetuwn twue;
               }
-              NUM_TWEETS_TRUNCATED.increment();
+              nyum_tweets_twuncated.incwement();
             }
 
-            return false;
+            w-wetuwn fawse;
           }
         };
       }
     }
 
-    return stream;
+    wetuwn s-stweam;
   }
 
   /**
-   * Get the truncation position.
+   * get the t-twuncation position. (U ﹏ U)
    *
-   * @return the truncation position or -1 if truncation is disabled.
+   * @wetuwn t-the twuncation position ow -1 if twuncation is disabwed. >w<
    */
-  private int getTruncatePosition() {
-    int maxPosition;
-    if (!DeciderUtil.isAvailableForRandomRecipient(decider, truncateLongTweetsDeciderKey)) {
-      return -1;
+  pwivate int gettwuncateposition() {
+    int maxposition;
+    i-if (!decidewutiw.isavaiwabwefowwandomwecipient(decidew, mya t-twuncatewongtweetsdecidewkey)) {
+      wetuwn -1;
     }
-    maxPosition = DeciderUtil.getAvailability(decider, numCharsSupportedDeciderKey);
+    m-maxposition = d-decidewutiw.getavaiwabiwity(decidew, >w< n-nyumchawssuppowteddecidewkey);
 
-    if (maxPosition < NEVER_TRUNCATE_CHARS_BELOW_POSITION) {
-      // Never truncate below NEVER_TRUNCATE_CHARS_BELOW_POSITION chars
-      maxPosition = NEVER_TRUNCATE_CHARS_BELOW_POSITION;
+    if (maxposition < nyevew_twuncate_chaws_bewow_position) {
+      // nyevew twuncate b-bewow nyevew_twuncate_chaws_bewow_position chaws
+      maxposition = nyevew_twuncate_chaws_bewow_position;
     }
 
-    return maxPosition;
+    wetuwn m-maxposition;
   }
 }

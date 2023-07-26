@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.pwompt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptFollowUpTextInput
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.cawwbackmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt.wewevancepwomptfowwowuptextinput
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class RelevancePromptFollowUpTextInputMarshaller @Inject() (
-  callbackMarshaller: CallbackMarshaller) {
+@singweton
+cwass w-wewevancepwomptfowwowuptextinputmawshawwew @inject() (
+  c-cawwbackmawshawwew: c-cawwbackmawshawwew) {
 
-  def apply(
-    relevancePromptFollowUpTextInput: RelevancePromptFollowUpTextInput
-  ): urt.RelevancePromptFollowUpTextInput = urt.RelevancePromptFollowUpTextInput(
-    context = relevancePromptFollowUpTextInput.context,
-    textFieldPlaceholder = relevancePromptFollowUpTextInput.textFieldPlaceholder,
-    sendTextCallback = callbackMarshaller(relevancePromptFollowUpTextInput.sendTextCallback)
+  def appwy(
+    wewevancepwomptfowwowuptextinput: wewevancepwomptfowwowuptextinput
+  ): uwt.wewevancepwomptfowwowuptextinput = u-uwt.wewevancepwomptfowwowuptextinput(
+    context = wewevancepwomptfowwowuptextinput.context, -.-
+    textfiewdpwacehowdew = w-wewevancepwomptfowwowuptextinput.textfiewdpwacehowdew, (ˆ ﻌ ˆ)♡
+    sendtextcawwback = c-cawwbackmawshawwew(wewevancepwomptfowwowuptextinput.sendtextcawwback)
   )
 }

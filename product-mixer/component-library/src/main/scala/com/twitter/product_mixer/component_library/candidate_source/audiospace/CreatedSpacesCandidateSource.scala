@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.candidate_source.audiospace
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.audiospace
 
-import com.twitter.periscope.audio_space.thriftscala.CreatedSpacesView
-import com.twitter.periscope.audio_space.thriftscala.SpaceSlice
-import com.twitter.product_mixer.component_library.model.cursor.NextCursorFeature
-import com.twitter.product_mixer.component_library.model.cursor.PreviousCursorFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherWithSourceFeaturesSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.periscope.CreatedSpacesSliceOnUserClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pewiscope.audio_space.thwiftscawa.cweatedspacesview
+i-impowt com.twittew.pewiscope.audio_space.thwiftscawa.spaceswice
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.nextcuwsowfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.pweviouscuwsowfeatuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato.stwatokeyviewfetchewwithsouwcefeatuwessouwce
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.stwato.cwient.fetchew
+impowt com.twittew.stwato.genewated.cwient.pewiscope.cweatedspacesswiceonusewcwientcowumn
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class CreatedSpacesCandidateSource @Inject() (
-  column: CreatedSpacesSliceOnUserClientColumn)
-    extends StratoKeyViewFetcherWithSourceFeaturesSource[
-      Long,
-      CreatedSpacesView,
-      SpaceSlice,
-      String
+@singweton
+c-cwass cweatedspacescandidatesouwce @inject() (
+  cowumn: c-cweatedspacesswiceonusewcwientcowumn)
+    extends stwatokeyviewfetchewwithsouwcefeatuwessouwce[
+      wong, 🥺
+      cweatedspacesview, mya
+      s-spaceswice, 🥺
+      stwing
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("CreatedSpaces")
+  o-ovewwide vaw i-identifiew: candidatesouwceidentifiew = candidatesouwceidentifiew("cweatedspaces")
 
-  override val fetcher: Fetcher[Long, CreatedSpacesView, SpaceSlice] = column.fetcher
+  ovewwide vaw fetchew: fetchew[wong, >_< cweatedspacesview, >_< s-spaceswice] = cowumn.fetchew
 
-  override def stratoResultTransformer(
-    stratoKey: Long,
-    stratoResult: SpaceSlice
-  ): Seq[String] =
-    stratoResult.items
+  ovewwide def stwatowesuwttwansfowmew(
+    stwatokey: wong, (⑅˘꒳˘)
+    stwatowesuwt: spaceswice
+  ): s-seq[stwing] =
+    stwatowesuwt.items
 
-  override protected def extractFeaturesFromStratoResult(
-    stratoKey: Long,
-    stratoResult: SpaceSlice
-  ): FeatureMap = {
-    val featureMapBuilder = FeatureMapBuilder()
-    stratoResult.sliceInfo.previousCursor.foreach { cursor =>
-      featureMapBuilder.add(PreviousCursorFeature, cursor)
+  ovewwide pwotected d-def extwactfeatuwesfwomstwatowesuwt(
+    s-stwatokey: wong, /(^•ω•^)
+    s-stwatowesuwt: s-spaceswice
+  ): featuwemap = {
+    vaw featuwemapbuiwdew = featuwemapbuiwdew()
+    s-stwatowesuwt.swiceinfo.pweviouscuwsow.foweach { cuwsow =>
+      featuwemapbuiwdew.add(pweviouscuwsowfeatuwe, rawr x3 c-cuwsow)
     }
-    stratoResult.sliceInfo.nextCursor.foreach { cursor =>
-      featureMapBuilder.add(NextCursorFeature, cursor)
+    stwatowesuwt.swiceinfo.nextcuwsow.foweach { cuwsow =>
+      featuwemapbuiwdew.add(nextcuwsowfeatuwe, (U ﹏ U) cuwsow)
     }
-    featureMapBuilder.build()
+    featuwemapbuiwdew.buiwd()
   }
 }

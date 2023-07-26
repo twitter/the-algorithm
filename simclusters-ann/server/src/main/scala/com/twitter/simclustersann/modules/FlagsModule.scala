@@ -1,44 +1,44 @@
-package com.twitter.simclustersann.modules
+package com.twittew.simcwustewsann.moduwes
 
-import com.twitter.inject.TwitterModule
-import com.twitter.simclustersann.common.FlagNames
+impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.simcwustewsann.common.fwagnames
 
-object FlagsModule extends TwitterModule {
+o-object fwagsmoduwe e-extends t-twittewmoduwe {
 
-  flag[Int](
-    name = FlagNames.ServiceTimeout,
-    default = 40,
-    help = "The threshold of Request Timeout"
+  f-fwag[int](
+    n-nyame = fwagnames.sewvicetimeout, (˘ω˘)
+    d-defauwt = 40, (⑅˘꒳˘)
+    hewp = "the thweshowd of wequest timeout"
   )
 
-  flag[String](
-    name = FlagNames.DarkTrafficFilterDeciderKey,
-    default = "dark_traffic_filter",
-    help = "Dark traffic filter decider key"
+  fwag[stwing](
+    nyame = f-fwagnames.dawktwafficfiwtewdecidewkey,
+    defauwt = "dawk_twaffic_fiwtew", (///ˬ///✿)
+    hewp = "dawk t-twaffic fiwtew decidew key"
   )
 
-  flag[String](
-    name = FlagNames.CacheDest,
-    default = "/s/cache/content_recommender_unified_v2",
-    help = "Path to memcache service. Currently using CR uniform scoring cache"
+  f-fwag[stwing](
+    nyame = fwagnames.cachedest, 😳😳😳
+    defauwt = "/s/cache/content_wecommendew_unified_v2", 🥺
+    h-hewp = "path to memcache sewvice. mya c-cuwwentwy using c-cw unifowm scowing cache"
   )
 
-  flag[Int](
-    name = FlagNames.CacheTimeout,
-    default = 15,
-    help = "The threshold of MemCache Timeout"
+  fwag[int](
+    nyame = fwagnames.cachetimeout, 🥺
+    defauwt = 15, >_<
+    h-hewp = "the thweshowd of memcache timeout"
   )
 
-  flag[Boolean](
-    name = FlagNames.CacheAsyncUpdate,
-    default = false,
-    help = "Whether to enable the async update for the MemCache"
+  fwag[boowean](
+    nyame = fwagnames.cacheasyncupdate, >_<
+    d-defauwt = fawse, (⑅˘꒳˘)
+    hewp = "whethew t-to e-enabwe the async u-update fow the m-memcache"
   )
 
-  flag[Int](
-    name = FlagNames.MaxTopTweetPerCluster,
-    default = 200,
-    help = "Maximum number of tweets to take per each simclusters"
+  fwag[int](
+    nyame = fwagnames.maxtoptweetpewcwustew, /(^•ω•^)
+    d-defauwt = 200, rawr x3
+    hewp = "maximum nyumbew of tweets t-to take pew each simcwustews"
   )
 
 }

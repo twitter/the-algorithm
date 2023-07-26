@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.common.predicates.gizmoduck
+package com.twittew.fowwow_wecommendations.common.pwedicates.gizmoduck
 
-import java.util.concurrent.TimeUnit
+impowt java.utiw.concuwwent.timeunit
 
-import com.google.common.base.Ticker
-import com.google.common.cache.CacheBuilder
-import com.google.common.cache.Cache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Time
-import com.twitter.util.Duration
+i-impowt c-com.googwe.common.base.tickew
+i-impowt com.googwe.common.cache.cachebuiwdew
+i-impowt c-com.googwe.common.cache.cache
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.utiw.time
+impowt c-com.twittew.utiw.duwation
 
 /**
- * In-memory cache used for caching GizmoduckPredicate query calls in
- * com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate.
+ * in-memowy cache used fow caching gizmoduckpwedicate quewy c-cawws in
+ * com.twittew.fowwow_wecommendations.common.pwedicates.gizmoduck.gizmoduckpwedicate. >_<
  * 
- * References the cache implementation in com.twitter.escherbird.util.stitchcache,
- * but without the underlying Stitch call.
+ * wefewences the cache impwementation i-in com.twittew.eschewbiwd.utiw.stitchcache, >_<
+ * but without t-the undewwying stitch caww. (⑅˘꒳˘)
  */
-object GizmoduckPredicateCache {
+object gizmoduckpwedicatecache {
 
-  private[GizmoduckPredicateCache] class TimeTicker extends Ticker {
-    override def read(): Long = Time.now.inNanoseconds
+  pwivate[gizmoduckpwedicatecache] c-cwass timetickew extends t-tickew {
+    o-ovewwide def wead(): wong = time.now.innanoseconds
   }
 
-  def apply[K, V](
-    maxCacheSize: Int,
-    ttl: Duration,
-    statsReceiver: StatsReceiver
-  ): Cache[K, V] = {
+  def appwy[k, /(^•ω•^) v](
+    maxcachesize: int,
+    t-ttw: duwation, rawr x3
+    statsweceivew: statsweceivew
+  ): cache[k, (U ﹏ U) v] = {
 
-    val cache: Cache[K, V] =
-      CacheBuilder
-        .newBuilder()
-        .maximumSize(maxCacheSize)
-        .asInstanceOf[CacheBuilder[K, V]]
-        .expireAfterWrite(ttl.inSeconds, TimeUnit.SECONDS)
-        .recordStats()
-        .ticker(new TimeTicker())
-        .build()
+    v-vaw cache: cache[k, (U ﹏ U) v] =
+      c-cachebuiwdew
+        .newbuiwdew()
+        .maximumsize(maxcachesize)
+        .asinstanceof[cachebuiwdew[k, (⑅˘꒳˘) v-v]]
+        .expiweaftewwwite(ttw.inseconds, òωó t-timeunit.seconds)
+        .wecowdstats()
+        .tickew(new t-timetickew())
+        .buiwd()
 
-    // metrics for tracking cache usage
-    statsReceiver.provideGauge("cache_size") { cache.size.toFloat }
-    statsReceiver.provideGauge("cache_hits") { cache.stats.hitCount.toFloat }
-    statsReceiver.provideGauge("cache_misses") { cache.stats.missCount.toFloat }
-    statsReceiver.provideGauge("cache_hit_rate") { cache.stats.hitRate.toFloat }
-    statsReceiver.provideGauge("cache_evictions") { cache.stats.evictionCount.toFloat }
+    // metwics fow twacking c-cache usage
+    statsweceivew.pwovidegauge("cache_size") { cache.size.tofwoat }
+    s-statsweceivew.pwovidegauge("cache_hits") { cache.stats.hitcount.tofwoat }
+    statsweceivew.pwovidegauge("cache_misses") { cache.stats.misscount.tofwoat }
+    statsweceivew.pwovidegauge("cache_hit_wate") { cache.stats.hitwate.tofwoat }
+    s-statsweceivew.pwovidegauge("cache_evictions") { cache.stats.evictioncount.tofwoat }
 
-    cache
+    c-cache
   }
 }

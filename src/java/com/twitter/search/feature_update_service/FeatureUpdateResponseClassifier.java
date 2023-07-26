@@ -1,43 +1,43 @@
-package com.twitter.search.feature_update_service;
+package com.twittew.seawch.featuwe_update_sewvice;
 
-import scala.runtime.AbstractPartialFunction;
+impowt scawa.wuntime.abstwactpawtiawfunction;
 
-import com.twitter.finagle.service.ReqRep;
-import com.twitter.finagle.service.ResponseClass;
-import com.twitter.finagle.service.ResponseClassifier;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponse;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
-import com.twitter.util.Try;
+i-impowt com.twittew.finagwe.sewvice.weqwep;
+i-impowt c-com.twittew.finagwe.sewvice.wesponsecwass;
+impowt c-com.twittew.finagwe.sewvice.wesponsecwassifiew;
+i-impowt com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatewesponse;
+i-impowt c-com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatewesponsecode;
+i-impowt com.twittew.utiw.twy;
 
-public class FeatureUpdateResponseClassifier
-    extends AbstractPartialFunction<ReqRep, ResponseClass> {
-  @Override
-  public boolean isDefinedAt(ReqRep tuple) {
-    return true;
+pubwic cwass featuweupdatewesponsecwassifiew
+    extends abstwactpawtiawfunction<weqwep, σωσ wesponsecwass> {
+  @ovewwide
+  p-pubwic boowean isdefinedat(weqwep tupwe) {
+    w-wetuwn twue;
   }
 
-  @Override
-  public ResponseClass apply(ReqRep reqRep) {
-    Try<Object> finagleResponse = reqRep.response();
-    if (finagleResponse.isThrow()) {
-      return ResponseClassifier.Default().apply(reqRep);
+  @ovewwide
+  pubwic wesponsecwass a-appwy(weqwep weqwep) {
+    twy<object> finagwewesponse = w-weqwep.wesponse();
+    if (finagwewesponse.isthwow()) {
+      w-wetuwn wesponsecwassifiew.defauwt().appwy(weqwep);
     }
-    FeatureUpdateResponse response = (FeatureUpdateResponse) finagleResponse.apply();
-    FeatureUpdateResponseCode responseCode = response.getResponseCode();
-    switch (responseCode) {
-      case TRANSIENT_ERROR:
-      case SERVER_TIMEOUT_ERROR:
-        return ResponseClass.RetryableFailure();
-      case PERSISTENT_ERROR:
-        return ResponseClass.NonRetryableFailure();
-      // Client cancellations don't necessarily mean failures on our end. The client decided to
-      // cancel the request (for example we timed out, so they sent a duplicate request etc.),
-      // so let's treat them as successes.
-      case CLIENT_CANCEL_ERROR:
-      default:
-        // The other response codes are client errors, and success, and in those cases the server
-        // behaved correctly, so we classify it as a success.
-        return ResponseClass.Success();
+    f-featuweupdatewesponse wesponse = (featuweupdatewesponse) finagwewesponse.appwy();
+    featuweupdatewesponsecode wesponsecode = w-wesponse.getwesponsecode();
+    switch (wesponsecode) {
+      case twansient_ewwow:
+      case sewvew_timeout_ewwow:
+        w-wetuwn wesponsecwass.wetwyabwefaiwuwe();
+      c-case pewsistent_ewwow:
+        w-wetuwn wesponsecwass.nonwetwyabwefaiwuwe();
+      // c-cwient c-cancewwations don't nyecessawiwy mean faiwuwes o-on ouw end. OwO the cwient decided to
+      // cancew t-the wequest (fow exampwe we timed out, 😳😳😳 so they sent a dupwicate wequest etc.),
+      // so w-wet's tweat them as successes. 😳😳😳
+      c-case cwient_cancew_ewwow:
+      d-defauwt:
+        // t-the othew wesponse codes awe cwient ewwows, o.O and success, ( ͡o ω ͡o ) a-and in those cases t-the sewvew
+        // behaved c-cowwectwy, (U ﹏ U) so w-we cwassify it as a success. (///ˬ///✿)
+        w-wetuwn wesponsecwass.success();
     }
   }
 }

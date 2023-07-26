@@ -1,23 +1,23 @@
-package com.twitter.tweetypie.serverutil
+package com.twittew.tweetypie.sewvewutiw
 
-import com.twitter.util.Activity
-import com.twitter.util.Closable
-import com.twitter.util.Var
-import com.twitter.util.Witness
+impowt c-com.twittew.utiw.activity
+i-impowt c-com.twittew.utiw.cwosabwe
+i-impowt c-com.twittew.utiw.vaw
+i-impowt com.twittew.utiw.witness
 
-object ActivityUtil {
+o-object activityutiw {
 
   /**
-   * Makes the composition strict up to the point where it is called.
-   * Compositions based on the returned activity will have
-   * the default lazy behavior.
+   * m-makes the composition stwict up to the point whewe it is cawwed. XD
+   * c-compositions based on the wetuwned activity wiww h-have
+   * the defauwt wazy behaviow. :3
    */
-  def strict[T](activity: Activity[T]): Activity[T] = {
-    val state = Var(Activity.Pending: Activity.State[T])
-    val event = activity.states
+  d-def stwict[t](activity: activity[t]): activity[t] = {
+    v-vaw state = vaw(activity.pending: a-activity.state[t])
+    v-vaw event = activity.states
 
-    Closable.closeOnCollect(event.register(Witness(state)), state)
+    cwosabwe.cwoseoncowwect(event.wegistew(witness(state)), 😳😳😳 state)
 
-    new Activity(state)
+    nyew activity(state)
   }
 }

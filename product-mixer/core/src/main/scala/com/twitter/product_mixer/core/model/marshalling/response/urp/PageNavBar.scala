@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HasClientEventInfo
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.hascwienteventinfo
 
-sealed trait PageNavBar
+s-seawed twait p-pagenavbaw
 
-case class TopicPageNavBar(
-  topicId: String,
-  override val clientEventInfo: Option[ClientEventInfo] = None)
-    extends PageNavBar
-    with HasClientEventInfo
+case c-cwass topicpagenavbaw(
+  t-topicid: s-stwing, -.-
+  o-ovewwide vaw cwienteventinfo: o-option[cwienteventinfo] = nyone)
+    extends pagenavbaw
+    with hascwienteventinfo
 
-case class TitleNavBar(
-  title: String,
-  subtitle: Option[String] = None,
-  override val clientEventInfo: Option[ClientEventInfo] = None)
-    extends PageNavBar
-    with HasClientEventInfo
+case cwass titwenavbaw(
+  t-titwe: stwing, ^^;;
+  subtitwe: option[stwing] = n-nyone, >_<
+  ovewwide vaw cwienteventinfo: o-option[cwienteventinfo] = nyone)
+    extends pagenavbaw
+    with h-hascwienteventinfo

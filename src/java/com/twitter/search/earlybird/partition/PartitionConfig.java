@@ -1,171 +1,171 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.util.Date;
+impowt java.utiw.date;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+i-impowt o-owg.apache.commons.wang3.buiwdew.tostwingbuiwdew;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.config.TierConfig;
+i-impowt com.twittew.seawch.common.config.config;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt c-com.twittew.seawch.eawwybiwd.config.tiewconfig;
 
-public class PartitionConfig {
-  // Which sub-cluster this host belongs to
-  private final String tierName;
+pubwic cwass pawtitionconfig {
+  // which sub-cwustew this host b-bewongs to
+  pwivate finaw stwing tiewname;
 
-  // Which cluster this host belongs to
-  private final String clusterName;
+  // w-which cwustew this host bewongs t-to
+  pwivate finaw stwing cwustewname;
 
-  public static final String DEFAULT_TIER_NAME = "all";
+  pubwic static finaw stwing defauwt_tiew_name = "aww";
 
-  // the date range of the timeslices this tier will load. The start date is inclusive, while
-  // the end date is exclusive.
-  private final Date tierStartDate;
-  private final Date tierEndDate;
+  // t-the date wange of the t-timeswices this t-tiew wiww woad. ʘwʘ the stawt date is incwusive, (˘ω˘) whiwe
+  // the end date is excwusive.
+  p-pwivate finaw date tiewstawtdate;
+  pwivate finaw date tiewenddate;
 
-  private final int indexingHashPartitionID; // Hash Partition ID assigned for this EB
-  private final int maxEnabledLocalSegments; // Number of segments to keep
-  // The position of this host in the ordered list of hosts serving this hash partition
-  private final int hostPositionWithinHashPartition;
-  private volatile int numReplicasInHashPartition;
+  pwivate f-finaw int indexinghashpawtitionid; // hash p-pawtition id assigned f-fow this eb
+  p-pwivate finaw i-int maxenabwedwocawsegments; // nyumbew of segments to keep
+  // t-the position of this host in the owdewed wist o-of hosts sewving this hash pawtition
+  pwivate finaw int hostpositionwithinhashpawtition;
+  pwivate vowatiwe int n-nyumwepwicasinhashpawtition;
 
-  private final int numPartitions; // Total number of partitions in the current cluster
+  pwivate finaw i-int nyumpawtitions; // t-totaw nyumbew o-of pawtitions in the cuwwent cwustew
 
-  public PartitionConfig(
-      int indexingHashPartitionID,
-      int maxEnabledLocalSegments,
-      int hostPositionWithinHashPartition,
-      int numReplicasInHashPartition,
-      int numPartitions) {
-    this(DEFAULT_TIER_NAME,
-        TierConfig.DEFAULT_TIER_START_DATE,
-        TierConfig.DEFAULT_TIER_END_DATE,
-        indexingHashPartitionID,
-        maxEnabledLocalSegments,
-        hostPositionWithinHashPartition,
-        numReplicasInHashPartition,
-        numPartitions);
+  pubwic pawtitionconfig(
+      i-int indexinghashpawtitionid, (✿oωo)
+      i-int maxenabwedwocawsegments, (///ˬ///✿)
+      i-int hostpositionwithinhashpawtition,
+      i-int nyumwepwicasinhashpawtition, rawr x3
+      i-int nyumpawtitions) {
+    this(defauwt_tiew_name, -.-
+        t-tiewconfig.defauwt_tiew_stawt_date, ^^
+        tiewconfig.defauwt_tiew_end_date, (⑅˘꒳˘)
+        indexinghashpawtitionid, nyaa~~
+        m-maxenabwedwocawsegments, /(^•ω•^)
+        hostpositionwithinhashpawtition, (U ﹏ U)
+        n-nyumwepwicasinhashpawtition, 😳😳😳
+        nyumpawtitions);
   }
 
-  public PartitionConfig(String tierName,
-                         Date tierStartDate,
-                         Date tierEndDate,
-                         int indexingHashPartitionID,
-                         int maxEnabledLocalSegments,
-                         int hostPositionWithinHashPartition,
-                         int numReplicasInHashPartition,
-                         int numPartitions) {
-    this(tierName, tierStartDate, tierEndDate, indexingHashPartitionID, maxEnabledLocalSegments,
-        hostPositionWithinHashPartition, numReplicasInHashPartition, Config.getEnvironment(),
-        numPartitions);
+  p-pubwic p-pawtitionconfig(stwing tiewname, >w<
+                         date tiewstawtdate, XD
+                         date tiewenddate, o.O
+                         int indexinghashpawtitionid, mya
+                         int maxenabwedwocawsegments, 🥺
+                         i-int hostpositionwithinhashpawtition, ^^;;
+                         i-int nyumwepwicasinhashpawtition, :3
+                         i-int nyumpawtitions) {
+    t-this(tiewname, (U ﹏ U) t-tiewstawtdate, OwO tiewenddate, indexinghashpawtitionid, 😳😳😳 maxenabwedwocawsegments, (ˆ ﻌ ˆ)♡
+        hostpositionwithinhashpawtition, XD n-nyumwepwicasinhashpawtition, (ˆ ﻌ ˆ)♡ config.getenviwonment(), ( ͡o ω ͡o )
+        nyumpawtitions);
   }
 
-  public PartitionConfig(String tierName,
-                         Date tierStartDate,
-                         Date tierEndDate,
-                         int indexingHashPartitionID,
-                         int maxEnabledLocalSegments,
-                         int hostPositionWithinHashPartition,
-                         int numReplicasInHashPartition,
-                         String clusterName,
-                         int numPartitions) {
-    this.tierName = Preconditions.checkNotNull(tierName);
-    this.clusterName = Preconditions.checkNotNull(clusterName);
-    this.tierStartDate = Preconditions.checkNotNull(tierStartDate);
-    this.tierEndDate = Preconditions.checkNotNull(tierEndDate);
-    this.indexingHashPartitionID = indexingHashPartitionID;
-    this.maxEnabledLocalSegments = maxEnabledLocalSegments;
-    this.hostPositionWithinHashPartition = hostPositionWithinHashPartition;
-    this.numReplicasInHashPartition = numReplicasInHashPartition;
-    this.numPartitions = numPartitions;
+  pubwic pawtitionconfig(stwing t-tiewname, rawr x3
+                         date tiewstawtdate, nyaa~~
+                         d-date t-tiewenddate, >_<
+                         i-int indexinghashpawtitionid,
+                         int m-maxenabwedwocawsegments, ^^;;
+                         i-int hostpositionwithinhashpawtition, (ˆ ﻌ ˆ)♡
+                         i-int nyumwepwicasinhashpawtition, ^^;;
+                         s-stwing cwustewname, (⑅˘꒳˘)
+                         int numpawtitions) {
+    t-this.tiewname = p-pweconditions.checknotnuww(tiewname);
+    t-this.cwustewname = p-pweconditions.checknotnuww(cwustewname);
+    t-this.tiewstawtdate = pweconditions.checknotnuww(tiewstawtdate);
+    this.tiewenddate = pweconditions.checknotnuww(tiewenddate);
+    this.indexinghashpawtitionid = indexinghashpawtitionid;
+    t-this.maxenabwedwocawsegments = maxenabwedwocawsegments;
+    this.hostpositionwithinhashpawtition = hostpositionwithinhashpawtition;
+    this.numwepwicasinhashpawtition = nyumwepwicasinhashpawtition;
+    t-this.numpawtitions = nyumpawtitions;
   }
 
-  public String getTierName() {
-    return tierName;
+  pubwic stwing gettiewname() {
+    w-wetuwn tiewname;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  p-pubwic s-stwing getcwustewname() {
+    wetuwn cwustewname;
   }
 
-  public Date getTierStartDate() {
-    return tierStartDate;
+  p-pubwic date gettiewstawtdate() {
+    w-wetuwn tiewstawtdate;
   }
 
-  public Date getTierEndDate() {
-    return tierEndDate;
+  p-pubwic date gettiewenddate() {
+    wetuwn tiewenddate;
   }
 
-  public int getIndexingHashPartitionID() {
-    return indexingHashPartitionID;
+  pubwic int getindexinghashpawtitionid() {
+    wetuwn i-indexinghashpawtitionid;
   }
 
-  public int getMaxEnabledLocalSegments() {
-    return maxEnabledLocalSegments;
+  pubwic int getmaxenabwedwocawsegments() {
+    wetuwn m-maxenabwedwocawsegments;
   }
 
-  public int getHostPositionWithinHashPartition() {
-    return hostPositionWithinHashPartition;
+  pubwic int g-gethostpositionwithinhashpawtition() {
+    w-wetuwn hostpositionwithinhashpawtition;
   }
 
-  public int getNumReplicasInHashPartition() {
-    return numReplicasInHashPartition;
+  pubwic i-int getnumwepwicasinhashpawtition() {
+    w-wetuwn nyumwepwicasinhashpawtition;
   }
 
   /**
-   * The number of ways the Tweet and/or user data is partitioned (or sharded) in this Earlybird, in
-   * this tier.
+   * t-the nyumbew of ways t-the tweet and/ow usew data is pawtitioned (ow shawded) in this eawwybiwd, rawr x3 in
+   * t-this tiew. (///ˬ///✿)
    */
-  public int getNumPartitions() {
-    return numPartitions;
+  p-pubwic i-int getnumpawtitions() {
+    wetuwn n-nyumpawtitions;
   }
 
-  public String getPartitionConfigDescription() {
-    return ToStringBuilder.reflectionToString(this);
+  p-pubwic stwing getpawtitionconfigdescwiption() {
+    wetuwn t-tostwingbuiwdew.wefwectiontostwing(this);
   }
 
-  public void setNumReplicasInHashPartition(int numReplicas) {
-    numReplicasInHashPartition = numReplicas;
+  pubwic void setnumwepwicasinhashpawtition(int nyumwepwicas) {
+    nyumwepwicasinhashpawtition = n-nyumwepwicas;
   }
 
-  public static final int DEFAULT_NUM_SERVING_TIMESLICES_FOR_TEST = 18;
-  public static PartitionConfig getPartitionConfigForTests() {
-    return getPartitionConfigForTests(
-        TierConfig.DEFAULT_TIER_START_DATE,
-        TierConfig.DEFAULT_TIER_END_DATE);
+  p-pubwic static finaw int defauwt_num_sewving_timeswices_fow_test = 18;
+  p-pubwic static p-pawtitionconfig getpawtitionconfigfowtests() {
+    wetuwn getpawtitionconfigfowtests(
+        tiewconfig.defauwt_tiew_stawt_date, 🥺
+        t-tiewconfig.defauwt_tiew_end_date);
   }
 
-  public static PartitionConfig getPartitionConfigForTests(Date tierStartDate, Date tierEndDate) {
-    return getPartitionConfigForTests(
-        DEFAULT_NUM_SERVING_TIMESLICES_FOR_TEST, tierStartDate, tierEndDate, 1);
+  pubwic static pawtitionconfig getpawtitionconfigfowtests(date tiewstawtdate, >_< d-date tiewenddate) {
+    wetuwn getpawtitionconfigfowtests(
+        d-defauwt_num_sewving_timeswices_fow_test, UwU tiewstawtdate, >_< t-tiewenddate, -.- 1);
   }
 
   /**
-   * Returns a PartitionConfig instance configured for tests.
+   * wetuwns a pawtitionconfig instance configuwed fow t-tests. mya
    *
-   * @param numServingTimeslices The number of timeslices that should be served.
-   * @param tierStartDate The tier's start date. Used only in the full archive earlybirds.
-   * @param tierEndDate The tier's end date. Used only by in the full archive earlybirds.
-   * @param numReplicasInHashPartition The number of replicas for each partition.
-   * @return A PartitionConfig instance configured for tests.
+   * @pawam n-nyumsewvingtimeswices the nyumbew of timeswices that shouwd be sewved. >w<
+   * @pawam t-tiewstawtdate the tiew's s-stawt date. (U ﹏ U) used onwy in the fuww awchive eawwybiwds. 😳😳😳
+   * @pawam tiewenddate t-the tiew's end date. o.O used onwy b-by in the fuww a-awchive eawwybiwds. òωó
+   * @pawam nyumwepwicasinhashpawtition t-the nyumbew of wepwicas f-fow each pawtition. 😳😳😳
+   * @wetuwn a-a pawtitionconfig i-instance configuwed fow t-tests. σωσ
    */
-  @VisibleForTesting
-  public static PartitionConfig getPartitionConfigForTests(
-      int numServingTimeslices,
-      Date tierStartDate,
-      Date tierEndDate,
-      int numReplicasInHashPartition) {
-    return new PartitionConfig(
-        EarlybirdConfig.getString("sub_tiers_for_tests", "test"),
-        tierStartDate,
-        tierEndDate,
-        EarlybirdConfig.getInt("hash_partition_for_tests", -1),
-        numServingTimeslices,
-        0, // hostPositionWithinHashPartition
-        numReplicasInHashPartition,
-        EarlybirdConfig.getInt("num_partitions_for_tests", -1)
+  @visibwefowtesting
+  p-pubwic static pawtitionconfig getpawtitionconfigfowtests(
+      i-int numsewvingtimeswices, (⑅˘꒳˘)
+      d-date tiewstawtdate,
+      d-date tiewenddate, (///ˬ///✿)
+      int nyumwepwicasinhashpawtition) {
+    w-wetuwn nyew pawtitionconfig(
+        e-eawwybiwdconfig.getstwing("sub_tiews_fow_tests", 🥺 "test"),
+        t-tiewstawtdate, OwO
+        tiewenddate, >w<
+        eawwybiwdconfig.getint("hash_pawtition_fow_tests", 🥺 -1),
+        nyumsewvingtimeswices, nyaa~~
+        0, ^^ // h-hostpositionwithinhashpawtition
+        n-nyumwepwicasinhashpawtition, >w<
+        e-eawwybiwdconfig.getint("num_pawtitions_fow_tests", OwO -1)
     );
   }
 }

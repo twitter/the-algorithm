@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinescwibeconfig
 
-case class SegmentedTimeline(
-  id: String,
-  labelText: String,
-  timeline: TimelineKey,
-  scribeConfig: Option[TimelineScribeConfig] = None,
-  refreshIntervalSec: Option[Long] = None)
+c-case cwass segmentedtimewine(
+  i-id: stwing, UwU
+  wabewtext: s-stwing, rawr x3
+  t-timewine: timewinekey, rawr
+  s-scwibeconfig: o-option[timewinescwibeconfig] = n-nyone, σωσ
+  w-wefweshintewvawsec: option[wong] = nyone)

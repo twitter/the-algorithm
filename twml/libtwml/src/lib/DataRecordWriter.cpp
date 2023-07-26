@@ -1,162 +1,162 @@
-#include "internal/error.h"
-#include "internal/thrift.h"
+#incwude "intewnaw/ewwow.h"
+#incwude "intewnaw/thwift.h"
 
-#include <map>
-#include <twml/ThriftWriter.h>
-#include <twml/DataRecordWriter.h>
-#include <twml/io/IOError.h>
-#include <unordered_set>
+#incwude <map>
+#incwude <twmw/thwiftwwitew.h>
+#incwude <twmw/datawecowdwwitew.h>
+#incwude <twmw/io/ioewwow.h>
+#incwude <unowdewed_set>
 
-using namespace twml::io;
+using nyamespace twmw::io;
 
-namespace twml {
+nyamespace t-twmw {
 
-void DataRecordWriter::writeBinary(twml::DataRecord &record) {
-  const DataRecord::BinaryFeatures bin_features = record.getBinary();
+v-void datawecowdwwitew::wwitebinawy(twmw::datawecowd &wecowd) {
+  c-const datawecowd::binawyfeatuwes b-bin_featuwes = w-wecowd.getbinawy();
 
-  if (bin_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_SET, DR_BINARY);
-    m_thrift_writer.writeListHeader(TTYPE_I64, bin_features.size());
+  i-if (bin_featuwes.size() > 0) {
+    m-m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_set, :3 d-dw_binawy);
+    m_thwift_wwitew.wwitewistheadew(ttype_i64, (⑅˘꒳˘) bin_featuwes.size());
 
-    for (const auto &it : bin_features) {
-      m_thrift_writer.writeInt64(it);
+    fow (const auto &it : bin_featuwes) {
+      m_thwift_wwitew.wwiteint64(it);
     }
   }
 }
 
-void DataRecordWriter::writeContinuous(twml::DataRecord &record) {
-  const DataRecord::ContinuousFeatures cont_features = record.getContinuous();
+v-void datawecowdwwitew::wwitecontinuous(twmw::datawecowd &wecowd) {
+  const datawecowd::continuousfeatuwes c-cont_featuwes = wecowd.getcontinuous();
 
-  if (cont_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_CONTINUOUS);
-    m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_DOUBLE, cont_features.size());
+  i-if (cont_featuwes.size() > 0) {
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_map, (///ˬ///✿) dw_continuous);
+    m_thwift_wwitew.wwitemapheadew(ttype_i64, ^^;; t-ttype_doubwe, >_< cont_featuwes.size());
 
-    for (const auto &it : cont_features) {
-      m_thrift_writer.writeInt64(it.first);
-      m_thrift_writer.writeDouble(it.second);
+    fow (const a-auto &it : c-cont_featuwes) {
+      m_thwift_wwitew.wwiteint64(it.fiwst);
+      m_thwift_wwitew.wwitedoubwe(it.second);
     }
   }
 }
 
-void DataRecordWriter::writeDiscrete(twml::DataRecord &record) {
-  const DataRecord::DiscreteFeatures disc_features = record.getDiscrete();
+void datawecowdwwitew::wwitediscwete(twmw::datawecowd &wecowd) {
+  c-const datawecowd::discwetefeatuwes disc_featuwes = wecowd.getdiscwete();
 
-  if (disc_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_DISCRETE);
-    m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_I64, disc_features.size());
+  if (disc_featuwes.size() > 0) {
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_map, d-dw_discwete);
+    m_thwift_wwitew.wwitemapheadew(ttype_i64, rawr x3 t-ttype_i64, /(^•ω•^) d-disc_featuwes.size());
 
-     for (const auto &it : disc_features) {
-      m_thrift_writer.writeInt64(it.first);
-      m_thrift_writer.writeInt64(it.second);
+     f-fow (const a-auto &it : disc_featuwes) {
+      m_thwift_wwitew.wwiteint64(it.fiwst);
+      m_thwift_wwitew.wwiteint64(it.second);
     }
   }
 }
 
-void DataRecordWriter::writeString(twml::DataRecord &record) {
-  const DataRecord::StringFeatures str_features = record.getString();
+void datawecowdwwitew::wwitestwing(twmw::datawecowd &wecowd) {
+  c-const datawecowd::stwingfeatuwes stw_featuwes = wecowd.getstwing();
 
-  if (str_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_STRING);
-    m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_STRING, str_features.size());
+  i-if (stw_featuwes.size() > 0) {
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_map, :3 dw_stwing);
+    m_thwift_wwitew.wwitemapheadew(ttype_i64, (ꈍᴗꈍ) ttype_stwing, /(^•ω•^) stw_featuwes.size());
 
 
-    for (const auto &it : str_features) {
-      m_thrift_writer.writeInt64(it.first);
-      m_thrift_writer.writeString(it.second);
+    f-fow (const auto &it : stw_featuwes) {
+      m-m_thwift_wwitew.wwiteint64(it.fiwst);
+      m-m_thwift_wwitew.wwitestwing(it.second);
     }
   }
 }
 
-// convert from internal representation list<(i64, string)>
-// to Thrift representation map<i64, set<string>>
-void DataRecordWriter::writeSparseBinaryFeatures(twml::DataRecord &record) {
-  const DataRecord::SparseBinaryFeatures sp_bin_features = record.getSparseBinary();
+// c-convewt fwom intewnaw wepwesentation wist<(i64, (⑅˘꒳˘) stwing)>
+// t-to thwift wepwesentation m-map<i64, ( ͡o ω ͡o ) set<stwing>>
+void d-datawecowdwwitew::wwitespawsebinawyfeatuwes(twmw::datawecowd &wecowd) {
+  c-const datawecowd::spawsebinawyfeatuwes s-sp_bin_featuwes = wecowd.getspawsebinawy();
 
-  // write map<i64, set<string>> as Thrift
-  if (sp_bin_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_SPARSE_BINARY);
-    m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_SET, sp_bin_features.size());
+  // w-wwite map<i64, òωó set<stwing>> as thwift
+  if (sp_bin_featuwes.size() > 0) {
+    m-m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_map, (⑅˘꒳˘) dw_spawse_binawy);
+    m-m_thwift_wwitew.wwitemapheadew(ttype_i64, XD ttype_set, -.- s-sp_bin_featuwes.size());
 
-    for (auto key_vals : sp_bin_features) {
-      m_thrift_writer.writeInt64(key_vals.first);
-      m_thrift_writer.writeListHeader(TTYPE_STRING, key_vals.second.size());
+    f-fow (auto key_vaws : sp_bin_featuwes) {
+      m_thwift_wwitew.wwiteint64(key_vaws.fiwst);
+      m_thwift_wwitew.wwitewistheadew(ttype_stwing, :3 key_vaws.second.size());
 
-      for (auto name : key_vals.second)
-        m_thrift_writer.writeString(name);
+      fow (auto nyame : key_vaws.second)
+        m_thwift_wwitew.wwitestwing(name);
     }
   }
 }
 
-// convert from internal representation list<(i64, string, double)>
-// to Thrift representation map<i64, map<string, double>>
-void DataRecordWriter::writeSparseContinuousFeatures(twml::DataRecord &record) {
-  const DataRecord::SparseContinuousFeatures sp_cont_features = record.getSparseContinuous();
+// convewt f-fwom intewnaw w-wepwesentation wist<(i64, nyaa~~ stwing, 😳 d-doubwe)>
+// t-to thwift wepwesentation m-map<i64, (⑅˘꒳˘) map<stwing, nyaa~~ doubwe>>
+void datawecowdwwitew::wwitespawsecontinuousfeatuwes(twmw::datawecowd &wecowd) {
+  const d-datawecowd::spawsecontinuousfeatuwes sp_cont_featuwes = wecowd.getspawsecontinuous();
 
-  // write map<i64, map<string, double>> as Thrift
-  if (sp_cont_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_SPARSE_CONTINUOUS);
-    m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_MAP, sp_cont_features.size());
+  // wwite map<i64, map<stwing, OwO d-doubwe>> as thwift
+  if (sp_cont_featuwes.size() > 0) {
+    m-m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_map, rawr x3 d-dw_spawse_continuous);
+    m-m_thwift_wwitew.wwitemapheadew(ttype_i64, XD ttype_map, σωσ s-sp_cont_featuwes.size());
 
-    for (auto key_vals : sp_cont_features) {
-      m_thrift_writer.writeInt64(key_vals.first);
+    f-fow (auto key_vaws : s-sp_cont_featuwes) {
+      m-m_thwift_wwitew.wwiteint64(key_vaws.fiwst);
 
-      if (key_vals.second.size() == 0)
-        throw IOError(IOError::MALFORMED_MEMORY_RECORD);
+      if (key_vaws.second.size() == 0)
+        thwow ioewwow(ioewwow::mawfowmed_memowy_wecowd);
 
-      m_thrift_writer.writeMapHeader(TTYPE_STRING, TTYPE_DOUBLE, key_vals.second.size());
+      m-m_thwift_wwitew.wwitemapheadew(ttype_stwing, (U ᵕ U❁) t-ttype_doubwe, (U ﹏ U) k-key_vaws.second.size());
 
-      for (auto map_str_double : key_vals.second) {
-        m_thrift_writer.writeString(map_str_double.first);
-        m_thrift_writer.writeDouble(map_str_double.second);
+      f-fow (auto map_stw_doubwe : k-key_vaws.second) {
+        m_thwift_wwitew.wwitestwing(map_stw_doubwe.fiwst);
+        m_thwift_wwitew.wwitedoubwe(map_stw_doubwe.second);
       }
     }
   }
 }
 
-void DataRecordWriter::writeBlobFeatures(twml::DataRecord &record) {
-  const DataRecord::BlobFeatures blob_features = record.getBlob();
+void d-datawecowdwwitew::wwitebwobfeatuwes(twmw::datawecowd &wecowd) {
+  const datawecowd::bwobfeatuwes bwob_featuwes = wecowd.getbwob();
 
-  if (blob_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_BLOB);
-    m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_STRING, blob_features.size());
+  if (bwob_featuwes.size() > 0) {
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_map, :3 d-dw_bwob);
+    m_thwift_wwitew.wwitemapheadew(ttype_i64, ( ͡o ω ͡o ) ttype_stwing, σωσ bwob_featuwes.size());
 
-    for (const auto &it : blob_features) {
-      m_thrift_writer.writeInt64(it.first);
-      std::vector<uint8_t> value = it.second;
-      m_thrift_writer.writeBinary(value.data(), value.size());
+    f-fow (const auto &it : b-bwob_featuwes) {
+      m-m_thwift_wwitew.wwiteint64(it.fiwst);
+      std::vectow<uint8_t> v-vawue = it.second;
+      m-m_thwift_wwitew.wwitebinawy(vawue.data(), >w< v-vawue.size());
     }
   }
 }
 
-void DataRecordWriter::writeDenseTensors(twml::DataRecord &record) {
-  TensorRecord::RawTensors raw_tensors = record.getRawTensors();
-  if (raw_tensors.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_GENERAL_TENSOR);
-    m_tensor_writer.write(record);
+void datawecowdwwitew::wwitedensetensows(twmw::datawecowd &wecowd) {
+  tensowwecowd::wawtensows waw_tensows = wecowd.getwawtensows();
+  i-if (waw_tensows.size() > 0) {
+    m_thwift_wwitew.wwitestwuctfiewdheadew(ttype_map, 😳😳😳 d-dw_genewaw_tensow);
+    m_tensow_wwitew.wwite(wecowd);
   }
 }
 
-TWMLAPI uint32_t DataRecordWriter::getRecordsWritten() {
-  return m_records_written;
+t-twmwapi uint32_t d-datawecowdwwitew::getwecowdswwitten() {
+  wetuwn m_wecowds_wwitten;
 }
 
-TWMLAPI uint64_t DataRecordWriter::write(twml::DataRecord &record) {
-  uint64_t bytes_written_before = m_thrift_writer.getBytesWritten();
+twmwapi uint64_t d-datawecowdwwitew::wwite(twmw::datawecowd &wecowd) {
+  u-uint64_t bytes_wwitten_befowe = m_thwift_wwitew.getbyteswwitten();
 
-  writeBinary(record);
-  writeContinuous(record);
-  writeDiscrete(record);
-  writeString(record);
-  writeSparseBinaryFeatures(record);
-  writeSparseContinuousFeatures(record);
-  writeBlobFeatures(record);
-  writeDenseTensors(record);
-  // TODO add sparse tensor field
+  w-wwitebinawy(wecowd);
+  w-wwitecontinuous(wecowd);
+  wwitediscwete(wecowd);
+  wwitestwing(wecowd);
+  wwitespawsebinawyfeatuwes(wecowd);
+  wwitespawsecontinuousfeatuwes(wecowd);
+  w-wwitebwobfeatuwes(wecowd);
+  w-wwitedensetensows(wecowd);
+  // t-todo add spawse tensow f-fiewd
 
-  m_thrift_writer.writeStructStop();
-  m_records_written++;
+  m_thwift_wwitew.wwitestwuctstop();
+  m-m_wecowds_wwitten++;
 
-  return m_thrift_writer.getBytesWritten() - bytes_written_before;
+  wetuwn m_thwift_wwitew.getbyteswwitten() - b-bytes_wwitten_befowe;
 }
 
-}  // namespace twml
+}  // nyamespace twmw

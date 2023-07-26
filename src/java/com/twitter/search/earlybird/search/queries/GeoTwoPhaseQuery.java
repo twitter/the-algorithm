@@ -1,255 +1,255 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
-import java.util.Set;
+impowt java.io.ioexception;
+i-impowt java.utiw.set;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.TwoPhaseIterator;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.indexweadew;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.index.tewm;
+i-impowt o-owg.apache.wucene.seawch.constantscowequewy;
+impowt o-owg.apache.wucene.seawch.constantscowescowew;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.expwanation;
+impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+impowt o-owg.apache.wucene.seawch.scowew;
+impowt owg.apache.wucene.seawch.scowemode;
+impowt o-owg.apache.wucene.seawch.twophaseitewatow;
+impowt o-owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.seawch.tewminationtwackew;
+impowt c-com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
 
 
-public class GeoTwoPhaseQuery extends Query {
-  private static final boolean ENABLE_GEO_EARLY_TERMINATION =
-          EarlybirdConfig.getBool("early_terminate_geo_searches", true);
+pubwic cwass geotwophasequewy e-extends q-quewy {
+  pwivate static finaw boowean enabwe_geo_eawwy_tewmination =
+          eawwybiwdconfig.getboow("eawwy_tewminate_geo_seawches", XD twue);
 
-  private static final int GEO_TIMEOUT_OVERRIDE =
-          EarlybirdConfig.getInt("early_terminate_geo_searches_timeout_override", -1);
+  p-pwivate static finaw int geo_timeout_ovewwide =
+          eawwybiwdconfig.getint("eawwy_tewminate_geo_seawches_timeout_ovewwide", ^^;; -1);
 
-  // How many geo searches are early terminated due to timeout.
-  private static final SearchCounter GEO_SEARCH_TIMEOUT_COUNT =
-      SearchCounter.export("geo_search_timeout_count");
+  // how many geo s-seawches awe eawwy tewminated d-due to timeout. 🥺
+  p-pwivate static f-finaw seawchcountew g-geo_seawch_timeout_count =
+      seawchcountew.expowt("geo_seawch_timeout_count");
 
-  private final SecondPhaseDocAccepter accepter;
-  private final TerminationTracker terminationTracker;
-  private final ConstantScoreQuery query;
+  pwivate f-finaw secondphasedocacceptew acceptew;
+  pwivate finaw tewminationtwackew t-tewminationtwackew;
+  pwivate finaw constantscowequewy quewy;
 
-  public GeoTwoPhaseQuery(
-      Query query, SecondPhaseDocAccepter accepter, TerminationTracker terminationTracker) {
-    this.accepter = accepter;
-    this.terminationTracker = terminationTracker;
+  pubwic geotwophasequewy(
+      quewy q-quewy, XD secondphasedocacceptew acceptew, (U ᵕ U❁) tewminationtwackew t-tewminationtwackew) {
+    t-this.acceptew = a-acceptew;
+    this.tewminationtwackew = tewminationtwackew;
 
-    this.query = new ConstantScoreQuery(query);
+    this.quewy = n-nyew constantscowequewy(quewy);
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewritten = query.getQuery().rewrite(reader);
-    if (rewritten != query.getQuery()) {
-      return new GeoTwoPhaseQuery(rewritten, accepter, terminationTracker);
+  @ovewwide
+  p-pubwic quewy wewwite(indexweadew w-weadew) t-thwows ioexception {
+    quewy w-wewwitten = quewy.getquewy().wewwite(weadew);
+    if (wewwitten != q-quewy.getquewy()) {
+      wetuwn nyew geotwophasequewy(wewwitten, :3 a-acceptew, ( ͡o ω ͡o ) tewminationtwackew);
     }
 
-    return this;
+    w-wetuwn this;
   }
 
-  @Override
-  public int hashCode() {
-    return query.hashCode();
+  @ovewwide
+  pubwic int hashcode() {
+    w-wetuwn q-quewy.hashcode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof GeoTwoPhaseQuery)) {
-      return false;
+  @ovewwide
+  pubwic boowean equaws(object obj) {
+    if (!(obj instanceof geotwophasequewy)) {
+      wetuwn fawse;
     }
-    GeoTwoPhaseQuery that = (GeoTwoPhaseQuery) obj;
-    return query.equals(that.query)
-        && accepter.equals(that.accepter)
-        && terminationTracker.equals(that.terminationTracker);
+    g-geotwophasequewy t-that = (geotwophasequewy) obj;
+    wetuwn q-quewy.equaws(that.quewy)
+        && a-acceptew.equaws(that.acceptew)
+        && t-tewminationtwackew.equaws(that.tewminationtwackew);
   }
 
-  @Override
-  public String toString(String field) {
-    return new StringBuilder("GeoTwoPhaseQuery(")
-      .append("Accepter(")
-      .append(accepter.toString())
-      .append(") Geohashes(")
-      .append(query.getQuery().toString(field))
+  @ovewwide
+  pubwic stwing tostwing(stwing fiewd) {
+    w-wetuwn nyew stwingbuiwdew("geotwophasequewy(")
+      .append("acceptew(")
+      .append(acceptew.tostwing())
+      .append(") geohashes(")
+      .append(quewy.getquewy().tostwing(fiewd))
       .append("))")
-      .toString();
+      .tostwing();
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    Weight innerWeight = query.createWeight(searcher, scoreMode, boost);
-    return new GeoTwoPhaseWeight(this, innerWeight, accepter, terminationTracker);
+  @ovewwide
+  pubwic weight cweateweight(indexseawchew seawchew, òωó scowemode s-scowemode, σωσ fwoat boost)
+      t-thwows ioexception {
+    w-weight i-innewweight = quewy.cweateweight(seawchew, (U ᵕ U❁) s-scowemode, (✿oωo) b-boost);
+    w-wetuwn nyew g-geotwophaseweight(this, ^^ innewweight, ^•ﻌ•^ acceptew, XD t-tewminationtwackew);
   }
 
-  private static final class GeoTwoPhaseWeight extends Weight {
-    private final Weight innerWeight;
-    private final SecondPhaseDocAccepter accepter;
-    private final TerminationTracker terminationTracker;
+  p-pwivate s-static finaw c-cwass geotwophaseweight e-extends weight {
+    pwivate finaw weight innewweight;
+    p-pwivate finaw secondphasedocacceptew acceptew;
+    pwivate finaw tewminationtwackew tewminationtwackew;
 
-    private GeoTwoPhaseWeight(
-        Query query,
-        Weight innerWeight,
-        SecondPhaseDocAccepter accepter,
-        TerminationTracker terminationTracker) {
-      super(query);
-      this.innerWeight = innerWeight;
-      this.accepter = accepter;
-      this.terminationTracker = terminationTracker;
+    p-pwivate geotwophaseweight(
+        quewy quewy, :3
+        weight innewweight, (ꈍᴗꈍ)
+        s-secondphasedocacceptew a-acceptew, :3
+        t-tewminationtwackew tewminationtwackew) {
+      s-supew(quewy);
+      this.innewweight = i-innewweight;
+      t-this.acceptew = acceptew;
+      this.tewminationtwackew = tewminationtwackew;
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      innerWeight.extractTerms(terms);
+    @ovewwide
+    pubwic void extwacttewms(set<tewm> t-tewms) {
+      innewweight.extwacttewms(tewms);
     }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return innerWeight.explain(context, doc);
+    @ovewwide
+    p-pubwic expwanation expwain(weafweadewcontext c-context, (U ﹏ U) i-int doc) thwows ioexception {
+      wetuwn innewweight.expwain(context, UwU d-doc);
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Scorer innerScorer = innerWeight.scorer(context);
-      if (innerScorer == null) {
-        return null;
+    @ovewwide
+    p-pubwic scowew scowew(weafweadewcontext c-context) t-thwows ioexception {
+      scowew innewscowew = innewweight.scowew(context);
+      if (innewscowew == nyuww) {
+        w-wetuwn n-nyuww;
       }
-      if (ENABLE_GEO_EARLY_TERMINATION
-          && (terminationTracker == null || !terminationTracker.useLastSearchedDocIdOnTimeout())) {
-        innerScorer = new ConstantScoreScorer(
-            this,
-            0.0f,
-            ScoreMode.COMPLETE_NO_SCORES,
-            new TimedDocIdSetIterator(innerScorer.iterator(),
-                                      terminationTracker,
-                                      GEO_TIMEOUT_OVERRIDE,
-                                      GEO_SEARCH_TIMEOUT_COUNT));
+      i-if (enabwe_geo_eawwy_tewmination
+          && (tewminationtwackew == nyuww || !tewminationtwackew.usewastseawcheddocidontimeout())) {
+        innewscowew = n-new constantscowescowew(
+            t-this, 😳😳😳
+            0.0f, XD
+            scowemode.compwete_no_scowes, o.O
+            nyew timeddocidsetitewatow(innewscowew.itewatow(), (⑅˘꒳˘)
+                                      t-tewminationtwackew,
+                                      geo_timeout_ovewwide, 😳😳😳
+                                      geo_seawch_timeout_count));
       }
 
-      accepter.initialize(context);
-      return new GeoTwoPhaseScorer(this, innerScorer, accepter);
+      acceptew.initiawize(context);
+      wetuwn nyew g-geotwophasescowew(this, nyaa~~ i-innewscowew, rawr acceptew);
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return innerWeight.isCacheable(ctx);
+    @ovewwide
+    pubwic b-boowean iscacheabwe(weafweadewcontext c-ctx) {
+      wetuwn innewweight.iscacheabwe(ctx);
     }
   }
 
-  private static final class GeoTwoPhaseScorer extends Scorer {
-    private final Scorer innerScorer;
-    private final SecondPhaseDocAccepter accepter;
+  pwivate static finaw cwass g-geotwophasescowew extends scowew {
+    pwivate finaw scowew innewscowew;
+    pwivate finaw secondphasedocacceptew a-acceptew;
 
-    private GeoTwoPhaseScorer(Weight weight, Scorer innerScorer, SecondPhaseDocAccepter accepter) {
-      super(weight);
-      this.innerScorer = innerScorer;
-      this.accepter = accepter;
+    pwivate geotwophasescowew(weight weight, -.- scowew i-innewscowew, (✿oωo) s-secondphasedocacceptew acceptew) {
+      supew(weight);
+      this.innewscowew = innewscowew;
+      t-this.acceptew = a-acceptew;
     }
 
-    @Override
-    public TwoPhaseIterator twoPhaseIterator() {
-      return new TwoPhaseIterator(innerScorer.iterator()) {
-        @Override
-        public boolean matches() throws IOException {
-          return checkDocExpensive(innerScorer.docID());
+    @ovewwide
+    pubwic twophaseitewatow twophaseitewatow() {
+      wetuwn n-nyew twophaseitewatow(innewscowew.itewatow()) {
+        @ovewwide
+        pubwic b-boowean matches() thwows ioexception {
+          wetuwn checkdocexpensive(innewscowew.docid());
         }
 
-        @Override
-        public float matchCost() {
-          return 0.0f;
+        @ovewwide
+        pubwic fwoat m-matchcost() {
+          wetuwn 0.0f;
         }
       };
     }
 
-    @Override
-    public int docID() {
-      return iterator().docID();
+    @ovewwide
+    p-pubwic int d-docid() {
+      wetuwn itewatow().docid();
     }
 
-    @Override
-    public float score() throws IOException {
-      return innerScorer.score();
+    @ovewwide
+    p-pubwic fwoat scowe() thwows i-ioexception {
+      w-wetuwn innewscowew.scowe();
     }
 
-    @Override
-    public DocIdSetIterator iterator() {
-      return new DocIdSetIterator() {
-        private int doNext(int startingDocId) throws IOException {
-          int docId = startingDocId;
-          while ((docId != NO_MORE_DOCS) && !checkDocExpensive(docId)) {
-            docId = innerScorer.iterator().nextDoc();
+    @ovewwide
+    p-pubwic docidsetitewatow i-itewatow() {
+      w-wetuwn nyew docidsetitewatow() {
+        pwivate i-int donext(int s-stawtingdocid) t-thwows ioexception {
+          int docid = stawtingdocid;
+          whiwe ((docid != n-nyo_mowe_docs) && !checkdocexpensive(docid)) {
+            docid = innewscowew.itewatow().nextdoc();
           }
-          return docId;
+          w-wetuwn docid;
         }
 
-        @Override
-        public int docID() {
-          return innerScorer.iterator().docID();
+        @ovewwide
+        p-pubwic int docid() {
+          wetuwn innewscowew.itewatow().docid();
         }
 
-        @Override
-        public int nextDoc() throws IOException {
-          return doNext(innerScorer.iterator().nextDoc());
+        @ovewwide
+        pubwic int nyextdoc() t-thwows ioexception {
+          w-wetuwn donext(innewscowew.itewatow().nextdoc());
         }
 
-        @Override
-        public int advance(int target) throws IOException {
-          return doNext(innerScorer.iterator().advance(target));
+        @ovewwide
+        p-pubwic i-int advance(int tawget) thwows i-ioexception {
+          wetuwn donext(innewscowew.itewatow().advance(tawget));
         }
 
-        @Override
-        public long cost() {
-          return 2 * innerScorer.iterator().cost();
+        @ovewwide
+        pubwic wong cost() {
+          wetuwn 2 * i-innewscowew.itewatow().cost();
         }
       };
     }
 
-    @Override
-    public float getMaxScore(int upTo) throws IOException {
-      return innerScorer.getMaxScore(upTo);
+    @ovewwide
+    pubwic f-fwoat getmaxscowe(int upto) thwows i-ioexception {
+      wetuwn i-innewscowew.getmaxscowe(upto);
     }
 
-    private boolean checkDocExpensive(int doc) throws IOException {
-      return accepter.accept(doc);
+    pwivate b-boowean checkdocexpensive(int d-doc) thwows ioexception {
+      w-wetuwn acceptew.accept(doc);
     }
   }
 
-  public abstract static class SecondPhaseDocAccepter {
+  p-pubwic a-abstwact static cwass secondphasedocacceptew {
     /**
-     * Initializes this accepter with the given reader context.
+     * initiawizes this acceptew with the given weadew context. /(^•ω•^)
      */
-    public abstract void initialize(LeafReaderContext context) throws IOException;
+    pubwic abstwact v-void initiawize(weafweadewcontext c-context) t-thwows ioexception;
 
     /**
-     * Determines if the given doc ID is accepted by this accepter.
+     * detewmines if t-the given doc id is accepted by this acceptew. 🥺
      */
-    public abstract boolean accept(int doc) throws IOException;
+    pubwic a-abstwact boowean a-accept(int doc) thwows ioexception;
 
     /**
-     * Returns a string description for this SecondPhaseDocAccepter instance.
+     * w-wetuwns a stwing descwiption fow this secondphasedocacceptew i-instance. ʘwʘ
      */
-    public abstract String toString();
+    p-pubwic abstwact stwing t-tostwing();
   }
 
-  public static final SecondPhaseDocAccepter ALL_DOCS_ACCEPTER = new SecondPhaseDocAccepter() {
-    @Override
-    public void initialize(LeafReaderContext context) { }
+  p-pubwic static finaw secondphasedocacceptew aww_docs_acceptew = nyew secondphasedocacceptew() {
+    @ovewwide
+    pubwic void i-initiawize(weafweadewcontext c-context) { }
 
-    @Override
-    public boolean accept(int doc) {
-      return true;
+    @ovewwide
+    p-pubwic boowean accept(int d-doc) {
+      w-wetuwn twue;
     }
 
-    @Override
-    public String toString() {
-      return "AllDocsAccepter";
+    @ovewwide
+    pubwic s-stwing tostwing() {
+      w-wetuwn "awwdocsacceptew";
     }
   };
 }

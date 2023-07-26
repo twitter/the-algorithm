@@ -1,25 +1,25 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.twitter.search.common.caching.filter.QueryCachePredicate;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+impowt com.twittew.seawch.common.caching.fiwtew.quewycachepwedicate;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.eawwybiwd.common.eawwybiwdwequestutiw;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
 
-public class StrictRecencyQueryCachePredicate extends QueryCachePredicate<EarlybirdRequestContext> {
-  private final SearchDecider decider;
-  private final String strictRecencyCacheEnabledDeciderKey;
+p-pubwic cwass stwictwecencyquewycachepwedicate extends q-quewycachepwedicate<eawwybiwdwequestcontext> {
+  p-pwivate finaw seawchdecidew decidew;
+  pwivate finaw stwing stwictwecencycacheenabweddecidewkey;
 
-  public StrictRecencyQueryCachePredicate(SearchDecider decider, String normalizedSearchRootName) {
-    this.decider = decider;
-    this.strictRecencyCacheEnabledDeciderKey =
-        "strict_recency_cache_enabled_" + normalizedSearchRootName;
+  p-pubwic stwictwecencyquewycachepwedicate(seawchdecidew decidew, mya stwing n-nyowmawizedseawchwootname) {
+    this.decidew = d-decidew;
+    this.stwictwecencycacheenabweddecidewkey =
+        "stwict_wecency_cache_enabwed_" + nyowmawizedseawchwootname;
   }
 
-  @Override
-  public Boolean shouldQueryCache(EarlybirdRequestContext requestContext) {
-    return EarlybirdRequestType.STRICT_RECENCY == requestContext.getEarlybirdRequestType()
-        && EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())
-        && decider.isAvailable(strictRecencyCacheEnabledDeciderKey);
+  @ovewwide
+  pubwic boowean shouwdquewycache(eawwybiwdwequestcontext w-wequestcontext) {
+    wetuwn eawwybiwdwequesttype.stwict_wecency == w-wequestcontext.geteawwybiwdwequesttype()
+        && e-eawwybiwdwequestutiw.iscachingawwowed(wequestcontext.getwequest())
+        && decidew.isavaiwabwe(stwictwecencycacheenabweddecidewkey);
   }
 }

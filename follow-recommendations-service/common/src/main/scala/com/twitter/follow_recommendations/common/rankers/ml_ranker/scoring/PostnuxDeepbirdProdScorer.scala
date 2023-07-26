@@ -1,34 +1,34 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.twittew.fowwow_wecommendations.common.wankews.mw_wankew.scowing
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.ml.api.Feature
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt c-com.twittew.cowtex.deepbiwd.thwiftjava.deepbiwdpwedictionsewvice
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants
+i-impowt com.twittew.fowwow_wecommendations.common.wankews.common.wankewid
+i-impowt c-com.twittew.mw.api.featuwe
+i-impowt j-javax.inject.inject
+impowt javax.inject.named
+impowt javax.inject.singweton
 
-// This is a standard DeepbirdV2 ML Ranker scoring config that should be extended by all ML scorers
+// this is a standawd deepbiwdv2 m-mw wankew scowing config that shouwd be extended b-by aww mw scowews
 //
-// Only modify this trait when adding new fields to DeepbirdV2 scorers which
-trait DeepbirdProdScorer extends DeepbirdScorer {
-  override val batchSize = 20
+// onwy m-modify this twait when adding nyew fiewds to deepbiwdv2 scowews w-which
+twait deepbiwdpwodscowew extends deepbiwdscowew {
+  o-ovewwide v-vaw batchsize = 20
 }
 
-// Feature.Continuous("prediction") is specific to ClemNet architecture, we can change it to be more informative in the next iteration
-trait PostNuxV1DeepbirdProdScorer extends DeepbirdProdScorer {
-  override val predictionFeature: Feature.Continuous =
-    new Feature.Continuous("prediction")
+// featuwe.continuous("pwediction") is specific to cwemnet awchitectuwe, >_< w-we can change it to be mowe infowmative in the nyext itewation
+twait postnuxv1deepbiwdpwodscowew e-extends deepbiwdpwodscowew {
+  ovewwide vaw pwedictionfeatuwe: f-featuwe.continuous =
+    n-nyew f-featuwe.continuous("pwediction")
 }
 
-// The current, primary PostNUX DeepbirdV2 scorer used in production
-@Singleton
-class PostnuxDeepbirdProdScorer @Inject() (
-  @Named(GuiceNamedConstants.WTF_PROD_DEEPBIRDV2_CLIENT)
-  override val deepbirdClient: DeepbirdPredictionService.ServiceToClient,
-  override val baseStats: StatsReceiver)
-    extends PostNuxV1DeepbirdProdScorer {
-  override val id = RankerId.PostNuxProdRanker
-  override val modelName = "PostNUX14531GafClemNetWarmStart"
+// t-the cuwwent, >_< pwimawy postnux deepbiwdv2 scowew u-used in pwoduction
+@singweton
+cwass postnuxdeepbiwdpwodscowew @inject() (
+  @named(guicenamedconstants.wtf_pwod_deepbiwdv2_cwient)
+  ovewwide v-vaw deepbiwdcwient: deepbiwdpwedictionsewvice.sewvicetocwient, (⑅˘꒳˘)
+  ovewwide vaw basestats: statsweceivew)
+    extends postnuxv1deepbiwdpwodscowew {
+  ovewwide v-vaw id = wankewid.postnuxpwodwankew
+  ovewwide v-vaw modewname = "postnux14531gafcwemnetwawmstawt"
 }

@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertDisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Top
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Bottom
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.showawewtdispwaywocation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.top
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.bottom
+impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
+impowt com.twittew.timewines.wendew.{thwiftscawa => uwt}
 
-@Singleton
-class ShowAlertDisplayLocationMarshaller @Inject() () {
+@singweton
+cwass showawewtdispwaywocationmawshawwew @inject() () {
 
-  def apply(alertDisplayLocation: ShowAlertDisplayLocation): urt.ShowAlertDisplayLocation =
-    alertDisplayLocation match {
-      case Top => urt.ShowAlertDisplayLocation.Top
-      case Bottom => urt.ShowAlertDisplayLocation.Bottom
+  d-def appwy(awewtdispwaywocation: showawewtdispwaywocation): uwt.showawewtdispwaywocation =
+    a-awewtdispwaywocation match {
+      c-case top => uwt.showawewtdispwaywocation.top
+      case bottom => uwt.showawewtdispwaywocation.bottom
     }
 
 }

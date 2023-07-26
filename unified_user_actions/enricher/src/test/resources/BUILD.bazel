@@ -1,4 +1,4 @@
-resources(
-    sources = ["*.*"],
-    tags = ["bazel-compatible"],
+wesouwces(
+    souwces = ["*.*"], >_<
+    tags = ["bazew-compatibwe"], (ꈍᴗꈍ)
 )

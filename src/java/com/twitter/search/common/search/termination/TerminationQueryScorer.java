@@ -1,91 +1,91 @@
-package com.twitter.search.common.search.termination;
+package com.twittew.seawch.common.seawch.tewmination;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+i-impowt owg.apache.wucene.seawch.scowew;
+i-impowt o-owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.query.FilteredScorer;
-import com.twitter.search.common.search.DocIdTracker;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.common.quewy.fiwtewedscowew;
+i-impowt com.twittew.seawch.common.seawch.docidtwackew;
 
 /**
- * Scorer implementation that adds termination support for an underlying query.
- * Meant to be used in conjunction with {@link TerminationQuery}.
+ * scowew impwementation that adds tewmination suppowt fow an u-undewwying quewy. 😳
+ * meant to be used in conjunction w-with {@wink tewminationquewy}. σωσ
  */
-public class TerminationQueryScorer extends FilteredScorer implements DocIdTracker {
-  private final QueryTimeout timeout;
-  private int lastSearchedDocId = -1;
+p-pubwic cwass tewminationquewyscowew extends fiwtewedscowew i-impwements docidtwackew {
+  pwivate finaw quewytimeout t-timeout;
+  p-pwivate int wastseawcheddocid = -1;
 
-  TerminationQueryScorer(Weight weight, Scorer inner, QueryTimeout timeout) {
-    super(weight, inner);
-    this.timeout = Preconditions.checkNotNull(timeout);
-    this.timeout.registerDocIdTracker(this);
-    SearchRateCounter.export(
-        timeout.getClientId() + "_num_termination_query_scorers_created").increment();
+  tewminationquewyscowew(weight weight, rawr x3 scowew innew, OwO q-quewytimeout timeout) {
+    supew(weight, /(^•ω•^) innew);
+    this.timeout = pweconditions.checknotnuww(timeout);
+    t-this.timeout.wegistewdocidtwackew(this);
+    seawchwatecountew.expowt(
+        t-timeout.getcwientid() + "_num_tewmination_quewy_scowews_cweated").incwement();
   }
 
-  @Override
-  public DocIdSetIterator iterator() {
-    final DocIdSetIterator superDISI = super.iterator();
-    return new DocIdSetIterator() {
-      // lastSearchedDocId is the ID of the last document that was traversed in the posting list.
-      // docId is the current doc ID in this iterator. In most cases, lastSearchedDocId and docId
-      // will be equal. They will be different only if the query needed to be terminated based on
-      // the timeout. In that case, docId will be set to NO_MORE_DOCS, but lastSearchedDocId will
-      // still be set to the last document that was actually traversed.
-      private int docId = -1;
+  @ovewwide
+  pubwic d-docidsetitewatow i-itewatow() {
+    f-finaw docidsetitewatow supewdisi = supew.itewatow();
+    wetuwn nyew docidsetitewatow() {
+      // w-wastseawcheddocid is the id of the wast d-document that was twavewsed in the posting wist.
+      // docid is the cuwwent doc id in this i-itewatow. 😳😳😳 in most cases, ( ͡o ω ͡o ) wastseawcheddocid a-and d-docid
+      // wiww b-be equaw. >_< they wiww be diffewent onwy if the quewy nyeeded to b-be tewminated b-based on
+      // the timeout. >w< in t-that case, rawr docid w-wiww be set to nyo_mowe_docs, 😳 b-but wastseawcheddocid wiww
+      // s-stiww be set to the wast document that was a-actuawwy twavewsed. >w<
+      pwivate i-int docid = -1;
 
-      @Override
-      public int docID() {
-        return docId;
+      @ovewwide
+      pubwic i-int docid() {
+        w-wetuwn docid;
       }
 
-      @Override
-      public int nextDoc() throws IOException {
-        if (docId == NO_MORE_DOCS) {
-          return NO_MORE_DOCS;
+      @ovewwide
+      pubwic int nyextdoc() thwows ioexception {
+        if (docid == no_mowe_docs) {
+          wetuwn n-nyo_mowe_docs;
         }
 
-        if (timeout.shouldExit()) {
-          docId = NO_MORE_DOCS;
-        } else {
-          docId = superDISI.nextDoc();
-          lastSearchedDocId = docId;
+        i-if (timeout.shouwdexit()) {
+          docid = n-no_mowe_docs;
+        } e-ewse {
+          d-docid = supewdisi.nextdoc();
+          wastseawcheddocid = docid;
         }
-        return docId;
+        w-wetuwn docid;
       }
 
-      @Override
-      public int advance(int target) throws IOException {
-        if (docId == NO_MORE_DOCS) {
-          return NO_MORE_DOCS;
+      @ovewwide
+      pubwic int advance(int tawget) thwows ioexception {
+        i-if (docid == nyo_mowe_docs) {
+          w-wetuwn nyo_mowe_docs;
         }
 
-        if (target == NO_MORE_DOCS) {
-          docId = NO_MORE_DOCS;
-          lastSearchedDocId = docId;
-        } else if (timeout.shouldExit()) {
-          docId = NO_MORE_DOCS;
-        } else {
-          docId = superDISI.advance(target);
-          lastSearchedDocId = docId;
+        i-if (tawget == n-nyo_mowe_docs) {
+          docid = nyo_mowe_docs;
+          w-wastseawcheddocid = d-docid;
+        } e-ewse if (timeout.shouwdexit()) {
+          d-docid = nyo_mowe_docs;
+        } ewse {
+          docid = supewdisi.advance(tawget);
+          w-wastseawcheddocid = d-docid;
         }
-        return docId;
+        w-wetuwn docid;
       }
 
-      @Override
-      public long cost() {
-        return superDISI.cost();
+      @ovewwide
+      p-pubwic w-wong cost() {
+        wetuwn supewdisi.cost();
       }
     };
   }
 
-  @Override
-  public int getCurrentDocId() {
-    return lastSearchedDocId;
+  @ovewwide
+  pubwic int g-getcuwwentdocid() {
+    wetuwn wastseawcheddocid;
   }
 }

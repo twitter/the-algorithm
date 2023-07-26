@@ -1,92 +1,92 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt c-com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
 /**
- * Hydrates the "directedAtUser" field on the tweet.  This hydrators uses one of two paths depending
- * if DirectedAtUserMetadata is present:
+ * hydwates the "diwectedatusew" fiewd on the tweet. mya  this hydwatows u-uses one of two paths depending
+ * if diwectedatusewmetadata i-is pwesent:
  *
- * 1. If DirectedAtUserMetadata exists, we use metadata.userId.
- * 2. If DirectedAtUserMetadata does not exist, we use the User screenName from the mention starting
- *    at index 0 if the tweet also has a reply.  Creation of a "reply to user" for
- *    leading @mentions is controlled by PostTweetRequest.enableTweetToNarrowcasting
+ * 1. mya if diwectedatusewmetadata e-exists, (⑅˘꒳˘) we use metadata.usewid. (U ﹏ U)
+ * 2. mya if diwectedatusewmetadata does nyot exist, ʘwʘ w-we use the usew scweenname f-fwom the mention s-stawting
+ *    at index 0 if the tweet awso has a wepwy. (˘ω˘)  cweation of a "wepwy t-to usew" fow
+ *    weading @mentions is contwowwed by posttweetwequest.enabwetweettonawwowcasting
  */
-object DirectedAtHydrator {
-  type Type = ValueHydrator[Option[DirectedAtUser], Ctx]
+object diwectedathydwatow {
+  t-type type = vawuehydwatow[option[diwectedatusew], (U ﹏ U) c-ctx]
 
-  case class Ctx(
-    mentions: Seq[MentionEntity],
-    metadata: Option[DirectedAtUserMetadata],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy {
-    val directedAtScreenName: Option[String] =
-      mentions.headOption.filter(_.fromIndex == 0).map(_.screenName)
+  case c-cwass ctx(
+    m-mentions: seq[mentionentity], ^•ﻌ•^
+    m-metadata: option[diwectedatusewmetadata], (˘ω˘)
+    undewwyingtweetctx: tweetctx)
+      e-extends tweetctx.pwoxy {
+    vaw diwectedatscweenname: option[stwing] =
+      m-mentions.headoption.fiwtew(_.fwomindex == 0).map(_.scweenname)
   }
 
-  val hydratedField: FieldByPath =
-    fieldByPath(Tweet.CoreDataField, TweetCoreData.DirectedAtUserField)
+  vaw hydwatedfiewd: fiewdbypath =
+    fiewdbypath(tweet.cowedatafiewd, :3 tweetcowedata.diwectedatusewfiewd)
 
-  def once(h: Type): Type =
-    TweetHydration.completeOnlyOnce(
-      hydrationType = HydrationType.DirectedAt,
-      hydrator = h
+  def once(h: t-type): type =
+    tweethydwation.compweteonwyonce(
+      h-hydwationtype = h-hydwationtype.diwectedat, ^^;;
+      h-hydwatow = h
     )
 
-  private val partial = ValueState.partial(None, hydratedField)
+  pwivate vaw pawtiaw = vawuestate.pawtiaw(none, 🥺 h-hydwatedfiewd)
 
-  def apply(repo: UserIdentityRepository.Type, stats: StatsReceiver = NullStatsReceiver): Type = {
-    val withMetadata = stats.counter("with_metadata")
-    val noScreenName = stats.counter("no_screen_name")
-    val withoutMetadata = stats.counter("without_metadata")
+  d-def appwy(wepo: usewidentitywepositowy.type, (⑅˘꒳˘) s-stats: statsweceivew = n-nyuwwstatsweceivew): type = {
+    v-vaw withmetadata = stats.countew("with_metadata")
+    vaw n-nyoscweenname = stats.countew("no_scween_name")
+    vaw withoutmetadata = s-stats.countew("without_metadata")
 
-    ValueHydrator[Option[DirectedAtUser], Ctx] { (_, ctx) =>
-      ctx.metadata match {
-        case Some(DirectedAtUserMetadata(Some(uid))) =>
-          // 1a. new approach of relying exclusively on directed-at metadata if it exists and has a user id
-          withMetadata.incr()
+    vawuehydwatow[option[diwectedatusew], nyaa~~ c-ctx] { (_, :3 ctx) =>
+      c-ctx.metadata m-match {
+        case some(diwectedatusewmetadata(some(uid))) =>
+          // 1a. ( ͡o ω ͡o ) nyew appwoach of wewying excwusivewy on diwected-at metadata if it exists and has a-a usew id
+          w-withmetadata.incw()
 
-          repo(UserKey.byId(uid)).liftToTry.map {
-            case Return(u) =>
-              ValueState.modified(Some(DirectedAtUser(u.id, u.screenName)))
-            case Throw(NotFound) =>
-              // If user is not found, fallback to directedAtScreenName
-              ctx.directedAtScreenName
-                .map { screenName => ValueState.modified(Some(DirectedAtUser(uid, screenName))) }
-                .getOrElse {
-                  // This should never happen, but let's make sure with a counter
-                  noScreenName.incr()
-                  ValueState.UnmodifiedNone
+          wepo(usewkey.byid(uid)).wifttotwy.map {
+            c-case wetuwn(u) =>
+              v-vawuestate.modified(some(diwectedatusew(u.id, mya u-u.scweenname)))
+            case thwow(notfound) =>
+              // if usew is nyot found, (///ˬ///✿) f-fawwback to diwectedatscweenname
+              ctx.diwectedatscweenname
+                .map { scweenname => vawuestate.modified(some(diwectedatusew(uid, (˘ω˘) s-scweenname))) }
+                .getowewse {
+                  // this shouwd nyevew h-happen, ^^;; but wet's m-make suwe with a-a countew
+                  nyoscweenname.incw()
+                  v-vawuestate.unmodifiednone
                 }
-            case Throw(_) => partial
+            case t-thwow(_) => p-pawtiaw
           }
 
-        case Some(DirectedAtUserMetadata(None)) =>
-          withMetadata.incr()
-          // 1b. new approach of relying exclusively on directed-at metadata if it exists and has no userId
-          ValueState.StitchUnmodifiedNone
+        c-case some(diwectedatusewmetadata(none)) =>
+          withmetadata.incw()
+          // 1b. (✿oωo) n-nyew appwoach o-of wewying e-excwusivewy on diwected-at m-metadata i-if it exists and has nyo usewid
+          vawuestate.stitchunmodifiednone
 
-        case None =>
-          // 2. when DirectedAtUserMetadata not present, look for first leading mention when has reply
-          withoutMetadata.incr()
+        case nyone =>
+          // 2. (U ﹏ U) w-when diwectedatusewmetadata nyot pwesent, -.- wook fow fiwst weading mention when has wepwy
+          withoutmetadata.incw()
 
-          val userKey = ctx.directedAtScreenName
-            .filter(_ => ctx.isReply)
-            .map(UserKey.byScreenName)
+          v-vaw usewkey = ctx.diwectedatscweenname
+            .fiwtew(_ => ctx.iswepwy)
+            .map(usewkey.byscweenname)
 
-          val results = userKey.map(repo.apply).getOrElse(Stitch.NotFound)
+          vaw wesuwts = u-usewkey.map(wepo.appwy).getowewse(stitch.notfound)
 
-          results.liftToTry.map {
-            case Return(u) => ValueState.modified(Some(DirectedAtUser(u.id, u.screenName)))
-            case Throw(NotFound) => ValueState.UnmodifiedNone
-            case Throw(_) => partial
+          w-wesuwts.wifttotwy.map {
+            c-case wetuwn(u) => vawuestate.modified(some(diwectedatusew(u.id, u-u.scweenname)))
+            case thwow(notfound) => v-vawuestate.unmodifiednone
+            c-case thwow(_) => pawtiaw
           }
       }
-    }.onlyIf((curr, _) => curr.isEmpty)
+    }.onwyif((cuww, ^•ﻌ•^ _) => cuww.isempty)
   }
 }

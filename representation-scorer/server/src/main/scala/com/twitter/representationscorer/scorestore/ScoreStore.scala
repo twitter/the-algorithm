@@ -1,168 +1,168 @@
-package com.twitter.representationscorer.scorestore
+package com.twittew.wepwesentationscowew.scowestowe
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.score.ScoreFacadeStore
-import com.twitter.simclusters_v2.score.SimClustersEmbeddingPairScoreStore
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType.FavTfgTopic
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType.LogFavBasedKgoApeTopic
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType.LogFavBasedTweet
-import com.twitter.simclusters_v2.thriftscala.ModelVersion.Model20m145kUpdated
-import com.twitter.simclusters_v2.thriftscala.Score
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.stitch.storehaus.StitchOfReadableStore
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.topic_recos.stores.CertoTweetTopicScoresStore
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.bijection.scwooge.binawyscawacodec
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.memcached.cwient
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.hashing.keyhashew
+i-impowt com.twittew.hewmit.stowe.common.obsewvedcachedweadabwestowe
+i-impowt c-com.twittew.hewmit.stowe.common.obsewvedmemcachedweadabwestowe
+impowt com.twittew.hewmit.stowe.common.obsewvedweadabwestowe
+impowt com.twittew.wewevance_pwatfowm.common.injection.wz4injection
+impowt com.twittew.simcwustews_v2.common.simcwustewsembedding
+impowt c-com.twittew.simcwustews_v2.scowe.scowefacadestowe
+impowt com.twittew.simcwustews_v2.scowe.simcwustewsembeddingpaiwscowestowe
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype.favtfgtopic
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype.wogfavbasedkgoapetopic
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype.wogfavbasedtweet
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion.modew20m145kupdated
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scowe
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.scoweid
+impowt com.twittew.simcwustews_v2.thwiftscawa.scowingawgowithm
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+impowt com.twittew.stitch.stowehaus.stitchofweadabwestowe
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.stwato.cwient.{cwient => stwatocwient}
+impowt com.twittew.topic_wecos.stowes.cewtotweettopicscowesstowe
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton()
-class ScoreStore @Inject() (
-  simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-  stratoClient: StratoClient,
-  representationScorerCacheClient: Client,
-  stats: StatsReceiver) {
+@singweton()
+cwass scowestowe @inject() (
+  s-simcwustewsembeddingstowe: w-weadabwestowe[simcwustewsembeddingid, ^^;; simcwustewsembedding], (✿oωo)
+  s-stwatocwient: s-stwatocwient, (U ﹏ U)
+  wepwesentationscowewcachecwient: cwient, -.-
+  s-stats: statsweceivew) {
 
-  private val keyHasher = KeyHasher.FNV1A_64
-  private val statsReceiver = stats.scope("score_store")
+  pwivate vaw keyhashew = k-keyhashew.fnv1a_64
+  pwivate vaw statsweceivew = stats.scope("scowe_stowe")
 
-  /** ** Score Store *****/
-  private val simClustersEmbeddingCosineSimilarityScoreStore =
-    ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildCosineSimilarityStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_cosine_similarity_score_store"))
+  /** ** scowe stowe *****/
+  pwivate v-vaw simcwustewsembeddingcosinesimiwawityscowestowe =
+    obsewvedweadabwestowe(
+      s-simcwustewsembeddingpaiwscowestowe
+        .buiwdcosinesimiwawitystowe(simcwustewsembeddingstowe)
+        .tothwiftstowe
+    )(statsweceivew.scope("simcwustews_embedding_cosine_simiwawity_scowe_stowe"))
 
-  private val simClustersEmbeddingDotProductScoreStore =
-    ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildDotProductStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_dot_product_score_store"))
+  p-pwivate v-vaw simcwustewsembeddingdotpwoductscowestowe =
+    obsewvedweadabwestowe(
+      simcwustewsembeddingpaiwscowestowe
+        .buiwddotpwoductstowe(simcwustewsembeddingstowe)
+        .tothwiftstowe
+    )(statsweceivew.scope("simcwustews_embedding_dot_pwoduct_scowe_stowe"))
 
-  private val simClustersEmbeddingJaccardSimilarityScoreStore =
-    ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildJaccardSimilarityStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_jaccard_similarity_score_store"))
+  pwivate vaw s-simcwustewsembeddingjaccawdsimiwawityscowestowe =
+    o-obsewvedweadabwestowe(
+      simcwustewsembeddingpaiwscowestowe
+        .buiwdjaccawdsimiwawitystowe(simcwustewsembeddingstowe)
+        .tothwiftstowe
+    )(statsweceivew.scope("simcwustews_embedding_jaccawd_simiwawity_scowe_stowe"))
 
-  private val simClustersEmbeddingEuclideanDistanceScoreStore =
-    ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildEuclideanDistanceStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_euclidean_distance_score_store"))
+  p-pwivate vaw s-simcwustewsembeddingeucwideandistancescowestowe =
+    obsewvedweadabwestowe(
+      s-simcwustewsembeddingpaiwscowestowe
+        .buiwdeucwideandistancestowe(simcwustewsembeddingstowe)
+        .tothwiftstowe
+    )(statsweceivew.scope("simcwustews_embedding_eucwidean_distance_scowe_stowe"))
 
-  private val simClustersEmbeddingManhattanDistanceScoreStore =
-    ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildManhattanDistanceStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_manhattan_distance_score_store"))
+  pwivate vaw simcwustewsembeddingmanhattandistancescowestowe =
+    o-obsewvedweadabwestowe(
+      simcwustewsembeddingpaiwscowestowe
+        .buiwdmanhattandistancestowe(simcwustewsembeddingstowe)
+        .tothwiftstowe
+    )(statsweceivew.scope("simcwustews_embedding_manhattan_distance_scowe_stowe"))
 
-  private val simClustersEmbeddingLogCosineSimilarityScoreStore =
-    ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildLogCosineSimilarityStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_log_cosine_similarity_score_store"))
+  pwivate vaw simcwustewsembeddingwogcosinesimiwawityscowestowe =
+    o-obsewvedweadabwestowe(
+      simcwustewsembeddingpaiwscowestowe
+        .buiwdwogcosinesimiwawitystowe(simcwustewsembeddingstowe)
+        .tothwiftstowe
+    )(statsweceivew.scope("simcwustews_embedding_wog_cosine_simiwawity_scowe_stowe"))
 
-  private val simClustersEmbeddingExpScaledCosineSimilarityScoreStore =
-    ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildExpScaledCosineSimilarityStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_exp_scaled_cosine_similarity_score_store"))
+  p-pwivate vaw simcwustewsembeddingexpscawedcosinesimiwawityscowestowe =
+    o-obsewvedweadabwestowe(
+      simcwustewsembeddingpaiwscowestowe
+        .buiwdexpscawedcosinesimiwawitystowe(simcwustewsembeddingstowe)
+        .tothwiftstowe
+    )(statsweceivew.scope("simcwustews_embedding_exp_scawed_cosine_simiwawity_scowe_stowe"))
 
-  // Use the default setting
-  private val topicTweetRankingScoreStore =
-    TopicTweetRankingScoreStore.buildTopicTweetRankingStore(
-      FavTfgTopic,
-      LogFavBasedKgoApeTopic,
-      LogFavBasedTweet,
-      Model20m145kUpdated,
-      consumerEmbeddingMultiplier = 1.0,
-      producerEmbeddingMultiplier = 1.0
+  // u-use the defauwt setting
+  pwivate vaw topictweetwankingscowestowe =
+    topictweetwankingscowestowe.buiwdtopictweetwankingstowe(
+      favtfgtopic,
+      wogfavbasedkgoapetopic, ^•ﻌ•^
+      wogfavbasedtweet, rawr
+      m-modew20m145kupdated, (˘ω˘)
+      consumewembeddingmuwtipwiew = 1.0, nyaa~~
+      p-pwoducewembeddingmuwtipwiew = 1.0
     )
 
-  private val topicTweetsCortexThresholdStore = TopicTweetsCosineSimilarityAggregateStore(
-    TopicTweetsCosineSimilarityAggregateStore.DefaultScoreKeys,
-    statsReceiver.scope("topic_tweets_cortex_threshold_store")
+  pwivate vaw topictweetscowtexthweshowdstowe = t-topictweetscosinesimiwawityaggwegatestowe(
+    t-topictweetscosinesimiwawityaggwegatestowe.defauwtscowekeys, UwU
+    s-statsweceivew.scope("topic_tweets_cowtex_thweshowd_stowe")
   )
 
-  val topicTweetCertoScoreStore: ObservedCachedReadableStore[ScoreId, Score] = {
-    val underlyingStore = ObservedReadableStore(
-      TopicTweetCertoScoreStore(CertoTweetTopicScoresStore.prodStore(stratoClient))
-    )(statsReceiver.scope("topic_tweet_certo_score_store"))
+  vaw topictweetcewtoscowestowe: obsewvedcachedweadabwestowe[scoweid, :3 scowe] = {
+    v-vaw undewwyingstowe = obsewvedweadabwestowe(
+      topictweetcewtoscowestowe(cewtotweettopicscowesstowe.pwodstowe(stwatocwient))
+    )(statsweceivew.scope("topic_tweet_cewto_scowe_stowe"))
 
-    val memcachedStore = ObservedMemcachedReadableStore
-      .fromCacheClient(
-        backingStore = underlyingStore,
-        cacheClient = representationScorerCacheClient,
-        ttl = 10.minutes
+    vaw memcachedstowe = obsewvedmemcachedweadabwestowe
+      .fwomcachecwient(
+        b-backingstowe = undewwyingstowe, (⑅˘꒳˘)
+        c-cachecwient = w-wepwesentationscowewcachecwient, (///ˬ///✿)
+        t-ttw = 10.minutes
       )(
-        valueInjection = LZ4Injection.compose(BinaryScalaCodec(Score)),
-        statsReceiver = statsReceiver.scope("topic_tweet_certo_store_memcache"),
-        keyToString = { k: ScoreId =>
-          s"certocs:${keyHasher.hashKey(k.toString.getBytes)}"
+        vawueinjection = w-wz4injection.compose(binawyscawacodec(scowe)), ^^;;
+        s-statsweceivew = s-statsweceivew.scope("topic_tweet_cewto_stowe_memcache"), >_<
+        k-keytostwing = { k: scoweid =>
+          s"cewtocs:${keyhashew.hashkey(k.tostwing.getbytes)}"
         }
       )
 
-    ObservedCachedReadableStore.from[ScoreId, Score](
-      memcachedStore,
-      ttl = 5.minutes,
-      maxKeys = 1000000,
-      cacheName = "topic_tweet_certo_store_cache",
-      windowSize = 10000L
-    )(statsReceiver.scope("topic_tweet_certo_store_cache"))
+    o-obsewvedcachedweadabwestowe.fwom[scoweid, rawr x3 s-scowe](
+      m-memcachedstowe, /(^•ω•^)
+      t-ttw = 5.minutes, :3
+      m-maxkeys = 1000000, (ꈍᴗꈍ)
+      cachename = "topic_tweet_cewto_stowe_cache", /(^•ω•^)
+      windowsize = 10000w
+    )(statsweceivew.scope("topic_tweet_cewto_stowe_cache"))
   }
 
-  val uniformScoringStore: ReadableStore[ScoreId, Score] =
-    ScoreFacadeStore.buildWithMetrics(
-      readableStores = Map(
-        ScoringAlgorithm.PairEmbeddingCosineSimilarity ->
-          simClustersEmbeddingCosineSimilarityScoreStore,
-        ScoringAlgorithm.PairEmbeddingDotProduct ->
-          simClustersEmbeddingDotProductScoreStore,
-        ScoringAlgorithm.PairEmbeddingJaccardSimilarity ->
-          simClustersEmbeddingJaccardSimilarityScoreStore,
-        ScoringAlgorithm.PairEmbeddingEuclideanDistance ->
-          simClustersEmbeddingEuclideanDistanceScoreStore,
-        ScoringAlgorithm.PairEmbeddingManhattanDistance ->
-          simClustersEmbeddingManhattanDistanceScoreStore,
-        ScoringAlgorithm.PairEmbeddingLogCosineSimilarity ->
-          simClustersEmbeddingLogCosineSimilarityScoreStore,
-        ScoringAlgorithm.PairEmbeddingExpScaledCosineSimilarity ->
-          simClustersEmbeddingExpScaledCosineSimilarityScoreStore,
-        // Certo normalized cosine score between topic-tweet pairs
-        ScoringAlgorithm.CertoNormalizedCosineScore
-          -> topicTweetCertoScoreStore,
-        // Certo normalized dot-product score between topic-tweet pairs
-        ScoringAlgorithm.CertoNormalizedDotProductScore
-          -> topicTweetCertoScoreStore
+  vaw unifowmscowingstowe: w-weadabwestowe[scoweid, (⑅˘꒳˘) scowe] =
+    scowefacadestowe.buiwdwithmetwics(
+      weadabwestowes = map(
+        scowingawgowithm.paiwembeddingcosinesimiwawity ->
+          simcwustewsembeddingcosinesimiwawityscowestowe, ( ͡o ω ͡o )
+        s-scowingawgowithm.paiwembeddingdotpwoduct ->
+          simcwustewsembeddingdotpwoductscowestowe, òωó
+        scowingawgowithm.paiwembeddingjaccawdsimiwawity ->
+          simcwustewsembeddingjaccawdsimiwawityscowestowe, (⑅˘꒳˘)
+        scowingawgowithm.paiwembeddingeucwideandistance ->
+          s-simcwustewsembeddingeucwideandistancescowestowe, XD
+        s-scowingawgowithm.paiwembeddingmanhattandistance ->
+          s-simcwustewsembeddingmanhattandistancescowestowe, -.-
+        scowingawgowithm.paiwembeddingwogcosinesimiwawity ->
+          s-simcwustewsembeddingwogcosinesimiwawityscowestowe, :3
+        scowingawgowithm.paiwembeddingexpscawedcosinesimiwawity ->
+          s-simcwustewsembeddingexpscawedcosinesimiwawityscowestowe, nyaa~~
+        // c-cewto nyowmawized cosine scowe between topic-tweet paiws
+        scowingawgowithm.cewtonowmawizedcosinescowe
+          -> topictweetcewtoscowestowe, 😳
+        // c-cewto nyowmawized dot-pwoduct s-scowe between topic-tweet paiws
+        s-scowingawgowithm.cewtonowmawizeddotpwoductscowe
+          -> t-topictweetcewtoscowestowe
+      ), (⑅˘꒳˘)
+      aggwegatedstowes = map(
+        s-scowingawgowithm.weightedsumtopictweetwanking ->
+          t-topictweetwankingscowestowe, nyaa~~
+        scowingawgowithm.cowtextopictweetwabew ->
+          t-topictweetscowtexthweshowdstowe, OwO
       ),
-      aggregatedStores = Map(
-        ScoringAlgorithm.WeightedSumTopicTweetRanking ->
-          topicTweetRankingScoreStore,
-        ScoringAlgorithm.CortexTopicTweetLabel ->
-          topicTweetsCortexThresholdStore,
-      ),
-      statsReceiver = stats
+      s-statsweceivew = stats
     )
 
-  val uniformScoringStoreStitch: ScoreId => com.twitter.stitch.Stitch[Score] =
-    StitchOfReadableStore(uniformScoringStore)
+  vaw unifowmscowingstowestitch: scoweid => com.twittew.stitch.stitch[scowe] =
+    stitchofweadabwestowe(unifowmscowingstowe)
 }

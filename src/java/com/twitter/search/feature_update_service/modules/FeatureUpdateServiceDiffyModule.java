@@ -1,34 +1,34 @@
-package com.twitter.search.feature_update_service.modules;
+package com.twittew.seawch.featuwe_update_sewvice.moduwes;
 
-import com.twitter.decider.Decider;
-import com.twitter.inject.Injector;
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsJavaDarkTrafficFilterModule;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.util.Function;
+impowt c-com.twittew.decidew.decidew;
+impowt c-com.twittew.inject.injectow;
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwsjavadawktwafficfiwtewmoduwe;
+i-impowt com.twittew.seawch.common.decidew.decidewutiw;
+i-impowt c-com.twittew.utiw.function;
 
 
 /**
- * Provide a filter that sends dark traffic to diffy, if the diffy.dest command-line parameter
- * is non-empty. If diffy.dest is empty, just provide a no-op filter.
+ * p-pwovide a f-fiwtew that sends dawk twaffic to diffy, rawr if the diffy.dest command-wine pawametew
+ * i-is nyon-empty. OwO if diffy.dest is empty, (U ﹏ U) just p-pwovide a nyo-op fiwtew. >_<
  */
-public class FeatureUpdateServiceDiffyModule extends MtlsJavaDarkTrafficFilterModule {
-  @Override
-  public String destFlagName() {
-    return "diffy.dest";
+pubwic c-cwass featuweupdatesewvicediffymoduwe extends mtwsjavadawktwafficfiwtewmoduwe {
+  @ovewwide
+  pubwic stwing d-destfwagname() {
+    wetuwn "diffy.dest";
   }
 
-  @Override
-  public String defaultClientId() {
-    return "feature_update_service.origin";
+  @ovewwide
+  pubwic s-stwing defauwtcwientid() {
+    w-wetuwn "featuwe_update_sewvice.owigin";
   }
 
-  @Override
-  public Function<byte[], Object> enableSampling(Injector injector) {
-    Decider decider = injector.instance(Decider.class);
-    return new Function<byte[], Object>() {
-      @Override
-      public Object apply(byte[] v1) {
-        return DeciderUtil.isAvailableForRandomRecipient(decider, "dark_traffic_filter");
+  @ovewwide
+  pubwic function<byte[], rawr x3 object> enabwesampwing(injectow injectow) {
+    d-decidew decidew = injectow.instance(decidew.cwass);
+    wetuwn nyew function<byte[], mya object>() {
+      @ovewwide
+      pubwic object appwy(byte[] v-v1) {
+        wetuwn decidewutiw.isavaiwabwefowwandomwecipient(decidew, nyaa~~ "dawk_twaffic_fiwtew");
       }
     };
   }

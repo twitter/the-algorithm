@@ -1,63 +1,63 @@
-package com.twitter.simclusters_v2.scio
-package bq_generation.common
+package com.twittew.simcwustews_v2.scio
+package bq_genewation.common
 
-import com.twitter.algebird_internal.thriftscala.DecayedValue
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.Scores
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.snowflake.id.SnowflakeId
-import org.apache.avro.generic.GenericRecord
-import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
-import org.apache.beam.sdk.transforms.SerializableFunction
-import scala.collection.JavaConverters._
+i-impowt com.twittew.awgebiwd_intewnaw.thwiftscawa.decayedvawue
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.fuwwcwustewid
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.scowes
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.topktweetswithscowes
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+i-impowt owg.apache.avwo.genewic.genewicwecowd
+impowt owg.apache.beam.sdk.io.gcp.bigquewy.schemaandwecowd
+impowt owg.apache.beam.sdk.twansfowms.sewiawizabwefunction
+i-impowt scawa.cowwection.javaconvewtews._
 
-object IndexGenerationUtil {
-  // Function that parses [GenericRecord] results we read from BQ into [TopKTweetsForClusterKey]
-  def parseClusterTopKTweetsFn(tweetEmbeddingsHalfLife: Int) =
-    new SerializableFunction[SchemaAndRecord, TopKTweetsForClusterKey] {
-      override def apply(record: SchemaAndRecord): TopKTweetsForClusterKey = {
-        val genericRecord: GenericRecord = record.getRecord()
-        TopKTweetsForClusterKey(
-          clusterId = FullClusterId(
-            modelVersion = ModelVersion.Model20m145k2020,
-            clusterId = genericRecord.get("clusterId").toString.toInt
-          ),
-          topKTweetsWithScores = parseTopKTweetsForClusterKeyColumn(
-            genericRecord,
-            "topKTweetsForClusterKey",
-            tweetEmbeddingsHalfLife),
+object indexgenewationutiw {
+  // f-function that pawses [genewicwecowd] w-wesuwts we wead fwom bq into [topktweetsfowcwustewkey]
+  def pawsecwustewtopktweetsfn(tweetembeddingshawfwife: int) =
+    nyew s-sewiawizabwefunction[schemaandwecowd, (˘ω˘) topktweetsfowcwustewkey] {
+      o-ovewwide d-def appwy(wecowd: schemaandwecowd): topktweetsfowcwustewkey = {
+        vaw genewicwecowd: genewicwecowd = w-wecowd.getwecowd()
+        topktweetsfowcwustewkey(
+          cwustewid = fuwwcwustewid(
+            modewvewsion = m-modewvewsion.modew20m145k2020, ^^
+            cwustewid = g-genewicwecowd.get("cwustewid").tostwing.toint
+          ), :3
+          t-topktweetswithscowes = p-pawsetopktweetsfowcwustewkeycowumn(
+            g-genewicwecowd, -.-
+            "topktweetsfowcwustewkey", 😳
+            tweetembeddingshawfwife), mya
         )
       }
     }
 
-  // Function that parses the topKTweetsForClusterKey column into [TopKTweetsWithScores]
-  def parseTopKTweetsForClusterKeyColumn(
-    genericRecord: GenericRecord,
-    columnName: String,
-    tweetEmbeddingsHalfLife: Int
-  ): TopKTweetsWithScores = {
-    val tweetScorePairs: java.util.List[GenericRecord] =
-      genericRecord.get(columnName).asInstanceOf[java.util.List[GenericRecord]]
-    val tweetIdToScoresMap = tweetScorePairs.asScala
-      .map((gr: GenericRecord) => {
-        // Retrieve the tweetId and tweetScore
-        val tweetId = gr.get("tweetId").toString.toLong
-        val tweetScore = gr.get("tweetScore").toString.toDouble
+  // function t-that pawses the topktweetsfowcwustewkey cowumn i-into [topktweetswithscowes]
+  def pawsetopktweetsfowcwustewkeycowumn(
+    genewicwecowd: genewicwecowd, (˘ω˘)
+    cowumnname: stwing, >_<
+    tweetembeddingshawfwife: int
+  ): topktweetswithscowes = {
+    v-vaw tweetscowepaiws: java.utiw.wist[genewicwecowd] =
+      g-genewicwecowd.get(cowumnname).asinstanceof[java.utiw.wist[genewicwecowd]]
+    v-vaw tweetidtoscowesmap = t-tweetscowepaiws.asscawa
+      .map((gw: genewicwecowd) => {
+        // wetwieve the tweetid and tweetscowe
+        v-vaw t-tweetid = gw.get("tweetid").tostwing.towong
+        vaw tweetscowe = g-gw.get("tweetscowe").tostwing.todoubwe
 
-        // Transform tweetScore into DecayedValue
-        // Ref: https://github.com/twitter/algebird/blob/develop/algebird-core/src/main/scala/com/twitter/algebird/DecayedValue.scala
-        val scaledTime =
-          SnowflakeId.unixTimeMillisFromId(tweetId) * math.log(2.0) / tweetEmbeddingsHalfLife
-        val decayedValue = DecayedValue(tweetScore, scaledTime)
+        // t-twansfowm tweetscowe into d-decayedvawue
+        // wef: h-https://github.com/twittew/awgebiwd/bwob/devewop/awgebiwd-cowe/swc/main/scawa/com/twittew/awgebiwd/decayedvawue.scawa
+        vaw scawedtime =
+          s-snowfwakeid.unixtimemiwwisfwomid(tweetid) * math.wog(2.0) / t-tweetembeddingshawfwife
+        vaw decayedvawue = d-decayedvawue(tweetscowe, -.- s-scawedtime)
 
-        // Update the TopTweets Map
-        tweetId -> Scores(favClusterNormalized8HrHalfLifeScore = Some(decayedValue))
-      }).toMap
-    TopKTweetsWithScores(topTweetsByFavClusterNormalizedScore = Some(tweetIdToScoresMap))
+        // update the toptweets map
+        tweetid -> scowes(favcwustewnowmawized8hwhawfwifescowe = some(decayedvawue))
+      }).tomap
+    topktweetswithscowes(toptweetsbyfavcwustewnowmawizedscowe = s-some(tweetidtoscowesmap))
   }
-  case class TopKTweetsForClusterKey(
-    clusterId: FullClusterId,
-    topKTweetsWithScores: TopKTweetsWithScores)
+  c-case cwass topktweetsfowcwustewkey(
+    c-cwustewid: f-fuwwcwustewid, 🥺
+    t-topktweetswithscowes: topktweetswithscowes)
 
 }

@@ -1,66 +1,66 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.TweetData
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.thriftscala.entities.Implicits._
-import com.twitter.tweetypie.thriftscala.TextRange
-import com.twitter.tweetypie.tweettext.Offset
-import com.twitter.tweetypie.tweettext.TextModification
-import com.twitter.tweetypie.tweettext.TweetText
-import com.twitter.tweetypie.util.TweetLenses
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe.tweetdata
+i-impowt c-com.twittew.tweetypie.cowe.vawuestate
+i-impowt c-com.twittew.tweetypie.wepositowy.tweetquewy
+i-impowt com.twittew.tweetypie.thwiftscawa.entities.impwicits._
+impowt com.twittew.tweetypie.thwiftscawa.textwange
+impowt c-com.twittew.tweetypie.tweettext.offset
+impowt com.twittew.tweetypie.tweettext.textmodification
+i-impowt com.twittew.tweetypie.tweettext.tweettext
+impowt com.twittew.tweetypie.utiw.tweetwenses
 
-object NoteTweetSuffixHydrator {
+o-object nyotetweetsuffixhydwatow {
 
-  val ELLIPSIS: String = "\u2026"
+  vaw ewwipsis: stwing = "\u2026"
 
-  private def addTextSuffix(tweet: Tweet): Tweet = {
-    val originalText = TweetLenses.text(tweet)
-    val originalTextLength = TweetText.codePointLength(originalText)
+  pwivate d-def addtextsuffix(tweet: tweet): t-tweet = {
+    v-vaw owiginawtext = tweetwenses.text(tweet)
+    vaw owiginawtextwength = tweettext.codepointwength(owiginawtext)
 
-    val visibleTextRange: TextRange =
-      TweetLenses
-        .visibleTextRange(tweet)
-        .getOrElse(TextRange(0, originalTextLength))
+    vaw visibwetextwange: t-textwange =
+      tweetwenses
+        .visibwetextwange(tweet)
+        .getowewse(textwange(0, ^^ owiginawtextwength))
 
-    val insertAtCodePoint = Offset.CodePoint(visibleTextRange.toIndex)
+    vaw insewtatcodepoint = offset.codepoint(visibwetextwange.toindex)
 
-    val textModification = TextModification.insertAt(
-      originalText,
-      insertAtCodePoint,
-      ELLIPSIS
+    vaw t-textmodification = textmodification.insewtat(
+      o-owiginawtext, 😳😳😳
+      i-insewtatcodepoint, mya
+      e-ewwipsis
     )
 
-    val mediaEntities = TweetLenses.media(tweet)
-    val urlEntities = TweetLenses.urls(tweet)
+    v-vaw mediaentities = tweetwenses.media(tweet)
+    vaw uwwentities = t-tweetwenses.uwws(tweet)
 
-    val modifiedText = textModification.updated
-    val modifiedMediaEntities = textModification.reindexEntities(mediaEntities)
-    val modifiedUrlEntities = textModification.reindexEntities(urlEntities)
-    val modifiedVisibleTextRange = visibleTextRange.copy(toIndex =
-      visibleTextRange.toIndex + TweetText.codePointLength(ELLIPSIS))
+    vaw modifiedtext = textmodification.updated
+    v-vaw modifiedmediaentities = textmodification.weindexentities(mediaentities)
+    vaw modifieduwwentities = textmodification.weindexentities(uwwentities)
+    vaw modifiedvisibwetextwange = visibwetextwange.copy(toindex =
+      v-visibwetextwange.toindex + tweettext.codepointwength(ewwipsis))
 
-    val updatedTweet =
-      Lens.setAll(
-        tweet,
-        TweetLenses.text -> modifiedText,
-        TweetLenses.urls -> modifiedUrlEntities.sortBy(_.fromIndex),
-        TweetLenses.media -> modifiedMediaEntities.sortBy(_.fromIndex),
-        TweetLenses.visibleTextRange -> Some(modifiedVisibleTextRange)
+    v-vaw u-updatedtweet =
+      w-wens.setaww(
+        tweet, 😳
+        tweetwenses.text -> modifiedtext,
+        t-tweetwenses.uwws -> m-modifieduwwentities.sowtby(_.fwomindex), -.-
+        tweetwenses.media -> m-modifiedmediaentities.sowtby(_.fwomindex), 🥺
+        t-tweetwenses.visibwetextwange -> some(modifiedvisibwetextwange)
       )
 
-    updatedTweet
+    u-updatedtweet
   }
 
-  def apply(): TweetDataValueHydrator = {
-    ValueHydrator[TweetData, TweetQuery.Options] { (td, _) =>
-      val updatedTweet = addTextSuffix(td.tweet)
-      Stitch.value(ValueState.delta(td, td.copy(tweet = updatedTweet)))
-    }.onlyIf { (td, _) =>
-      td.tweet.noteTweet.isDefined &&
-      td.tweet.noteTweet.flatMap(_.isExpandable).getOrElse(true)
+  def appwy(): tweetdatavawuehydwatow = {
+    v-vawuehydwatow[tweetdata, o.O tweetquewy.options] { (td, /(^•ω•^) _) =>
+      vaw u-updatedtweet = addtextsuffix(td.tweet)
+      s-stitch.vawue(vawuestate.dewta(td, nyaa~~ td.copy(tweet = u-updatedtweet)))
+    }.onwyif { (td, nyaa~~ _) =>
+      t-td.tweet.notetweet.isdefined &&
+      td.tweet.notetweet.fwatmap(_.isexpandabwe).getowewse(twue)
     }
   }
 }

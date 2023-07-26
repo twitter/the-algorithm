@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class FeedbackInfoMarshaller @Inject() (
-  feedbackActionMarshaller: FeedbackActionMarshaller,
-  feedbackDisplayContextMarshaller: FeedbackDisplayContextMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller) {
+@singweton
+c-cwass f-feedbackinfomawshawwew @inject() (
+  f-feedbackactionmawshawwew: feedbackactionmawshawwew, :3
+  feedbackdispwaycontextmawshawwew: feedbackdispwaycontextmawshawwew, 😳😳😳
+  cwienteventinfomawshawwew: cwienteventinfomawshawwew) {
 
-  def apply(feedbackActionInfo: FeedbackActionInfo): urt.FeedbackInfo = urt.FeedbackInfo(
-    // Generate key from the hashcode of the marshalled feedback action URT
-    feedbackKeys = feedbackActionInfo.feedbackActions
-      .map(feedbackActionMarshaller(_)).map(FeedbackActionMarshaller.generateKey),
-    feedbackMetadata = feedbackActionInfo.feedbackMetadata,
-    displayContext = feedbackActionInfo.displayContext.map(feedbackDisplayContextMarshaller(_)),
-    clientEventInfo = feedbackActionInfo.clientEventInfo.map(clientEventInfoMarshaller(_)),
+  d-def appwy(feedbackactioninfo: feedbackactioninfo): u-uwt.feedbackinfo = uwt.feedbackinfo(
+    // g-genewate key fwom the hashcode of the mawshawwed feedback a-action uwt
+    feedbackkeys = f-feedbackactioninfo.feedbackactions
+      .map(feedbackactionmawshawwew(_)).map(feedbackactionmawshawwew.genewatekey), -.-
+    feedbackmetadata = f-feedbackactioninfo.feedbackmetadata, ( ͡o ω ͡o )
+    dispwaycontext = feedbackactioninfo.dispwaycontext.map(feedbackdispwaycontextmawshawwew(_)), rawr x3
+    cwienteventinfo = feedbackactioninfo.cwienteventinfo.map(cwienteventinfomawshawwew(_)),
   )
 }

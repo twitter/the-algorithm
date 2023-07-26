@@ -1,13 +1,13 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/inject/inject-core/src/main/scala/com/twitter/inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "src/thrift/com/twitter/timelineranker:thrift-scala",
-        "src/thrift/com/twitter/timelineranker/server/model:thrift-scala",
-        "stitch/stitch-core",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "finatwa/inject/inject-cowe/swc/main/scawa/com/twittew/inject", (⑅˘꒳˘)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/candidate_souwce", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/timewinewankew:thwift-scawa", UwU
+        "swc/thwift/com/twittew/timewinewankew/sewvew/modew:thwift-scawa", rawr x3
+        "stitch/stitch-cowe", rawr
+    ], σωσ
 )

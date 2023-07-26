@@ -1,185 +1,185 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.concuwwent.timeunit;
 
-import javax.naming.NamingException;
+i-impowt j-javax.naming.namingexception;
 
-import scala.runtime.BoxedUnit;
+i-impowt scawa.wuntime.boxedunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.StageDriver;
-import org.apache.thrift.TBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.apache.commons.pipewine.pipewine;
+impowt owg.apache.commons.pipewine.stagedwivew;
+impowt owg.apache.thwift.tbase;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.eventbus.client.EventBusSubscriber;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.ingester.model.PromiseContainer;
-import com.twitter.search.ingester.pipeline.util.PipelineUtil;
-import com.twitter.util.Await;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
-import com.twitter.util.Promise;
+i-impowt com.twittew.eventbus.cwient.eventbussubscwibew;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.ingestew.modew.pwomisecontainew;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewineutiw;
+i-impowt com.twittew.utiw.await;
+impowt com.twittew.utiw.function;
+impowt com.twittew.utiw.futuwe;
+impowt com.twittew.utiw.pwomise;
 
-public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends TwitterBaseStage
-    <Void, Void> {
-  private static final Logger LOG = LoggerFactory.getLogger(EventBusReaderStage.class);
+p-pubwic abstwact cwass eventbusweadewstage<t e-extends tbase<?, (///ˬ///✿) ?>> e-extends twittewbasestage
+    <void, rawr x3 void> {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(eventbusweadewstage.cwass);
 
-  private static final int DECIDER_POLL_INTERVAL_IN_SECS = 5;
+  p-pwivate static finaw int decidew_poww_intewvaw_in_secs = 5;
 
-  private SearchCounter totalEventsCount;
+  pwivate seawchcountew t-totaweventscount;
 
-  private String environment = null;
-  private String eventBusReaderEnabledDeciderKey;
+  pwivate stwing e-enviwonment = n-nyuww;
+  pwivate s-stwing eventbusweadewenabweddecidewkey;
 
-  private StageDriver stageDriver;
+  p-pwivate stagedwivew stagedwivew;
 
-  private EventBusSubscriber<T> eventBusSubscriber = null;
+  pwivate eventbussubscwibew<t> e-eventbussubscwibew = nyuww;
 
-  // XML configuration options
-  private String eventBusSubscriberId;
-  private int maxConcurrentEvents;
-  private SearchDecider searchDecider;
+  // xmw configuwation o-options
+  pwivate stwing eventbussubscwibewid;
+  pwivate int maxconcuwwentevents;
+  pwivate seawchdecidew s-seawchdecidew;
 
-  protected EventBusReaderStage() {
+  pwotected eventbusweadewstage() {
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    totalEventsCount = SearchCounter.export(getStageNamePrefix() + "_total_events_count");
+  @ovewwide
+  p-pwotected v-void initstats() {
+    s-supew.initstats();
+    totaweventscount = seawchcountew.expowt(getstagenamepwefix() + "_totaw_events_count");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws NamingException {
-    searchDecider = new SearchDecider(decider);
+  @ovewwide
+  pwotected void doinnewpwepwocess() t-thwows n-nyamingexception {
+    seawchdecidew = n-nyew seawchdecidew(decidew);
 
-    if (stageDriver == null) {
-      stageDriver = ((Pipeline) stageContext).getStageDriver(this);
+    i-if (stagedwivew == nyuww) {
+      stagedwivew = ((pipewine) s-stagecontext).getstagedwivew(this);
     }
 
-    eventBusReaderEnabledDeciderKey = String.format(
-        getDeciderKeyTemplate(),
-        earlybirdCluster.getNameForStats(),
-        environment);
+    eventbusweadewenabweddecidewkey = s-stwing.fowmat(
+        getdecidewkeytempwate(), -.-
+        eawwybiwdcwustew.getnamefowstats(), ^^
+        e-enviwonment);
 
-    PipelineUtil.feedStartObjectToStage(this);
+    pipewineutiw.feedstawtobjecttostage(this);
   }
 
-  protected abstract PromiseContainer<BoxedUnit, T> eventAndPromiseToContainer(
-      T incomingEvent,
-      Promise<BoxedUnit> p);
+  p-pwotected abstwact pwomisecontainew<boxedunit, (⑅˘꒳˘) t-t> eventandpwomisetocontainew(
+      t-t incomingevent, nyaa~~
+      pwomise<boxedunit> p);
 
-  private Future<BoxedUnit> processEvent(T incomingEvent) {
-    Promise<BoxedUnit> p = new Promise<>();
-    PromiseContainer<BoxedUnit, T> promiseContainer = eventAndPromiseToContainer(incomingEvent, p);
-    totalEventsCount.increment();
-    emitAndCount(promiseContainer);
-    return p;
+  pwivate futuwe<boxedunit> pwocessevent(t incomingevent) {
+    pwomise<boxedunit> p = nyew p-pwomise<>();
+    p-pwomisecontainew<boxedunit, /(^•ω•^) t> p-pwomisecontainew = e-eventandpwomisetocontainew(incomingevent, (U ﹏ U) p-p);
+    totaweventscount.incwement();
+    emitandcount(pwomisecontainew);
+    wetuwn p-p;
   }
 
-  private void closeEventBusSubscriber() throws Exception {
-    if (eventBusSubscriber != null) {
-      Await.result(eventBusSubscriber.close());
-      eventBusSubscriber = null;
+  pwivate void cwoseeventbussubscwibew() thwows exception {
+    if (eventbussubscwibew != nuww) {
+      a-await.wesuwt(eventbussubscwibew.cwose());
+      eventbussubscwibew = n-nyuww;
     }
   }
 
-  protected abstract Class<T> getThriftClass();
+  p-pwotected a-abstwact cwass<t> getthwiftcwass();
 
-  protected abstract String getDeciderKeyTemplate();
+  p-pwotected a-abstwact s-stwing getdecidewkeytempwate();
 
-  private void startUpEventBusSubscriber() {
-    // Start reading from eventbus if it is null
-    if (eventBusSubscriber == null) {
-      //noinspection unchecked
-      eventBusSubscriber = wireModule.createEventBusSubscriber(
-          Function.func(this::processEvent),
-          getThriftClass(),
-          eventBusSubscriberId,
-          maxConcurrentEvents);
+  p-pwivate void stawtupeventbussubscwibew() {
+    // stawt weading f-fwom eventbus i-if it is nyuww
+    i-if (eventbussubscwibew == n-nyuww) {
+      //noinspection u-unchecked
+      eventbussubscwibew = wiwemoduwe.cweateeventbussubscwibew(
+          function.func(this::pwocessevent), 😳😳😳
+          g-getthwiftcwass(), >w<
+          eventbussubscwibewid, XD
+          maxconcuwwentevents);
 
     }
-    Preconditions.checkNotNull(eventBusSubscriber);
+    pweconditions.checknotnuww(eventbussubscwibew);
   }
 
   /**
-   * This is only kicked off once with a start object which is ignored. Then we loop
-   * checking the decider. If it turns off then we close the eventbus reader,
-   * and if it turns on, then we create a new eventbus reader.
+   * this is onwy kicked off o-once with a stawt object which is ignowed. o.O then we woop
+   * checking t-the decidew. mya i-if it tuwns o-off then we cwose the eventbus w-weadew, 🥺
+   * and if it tuwns on, ^^;; t-then we cweate a-a nyew eventbus weadew. :3
    *
-   * @param obj ignored
+   * @pawam obj ignowed
    */
-  @Override
-  public void innerProcess(Object obj) {
-    boolean interrupted = false;
+  @ovewwide
+  pubwic void innewpwocess(object obj) {
+    b-boowean intewwupted = fawse;
 
-    Preconditions.checkNotNull("The environment is not set.", environment);
+    p-pweconditions.checknotnuww("the enviwonment i-is nyot set.", (U ﹏ U) e-enviwonment);
 
-    int previousEventBusReaderEnabledAvailability = 0;
-    while (stageDriver.getState() == StageDriver.State.RUNNING) {
-      int eventBusReaderEnabledAvailability =
-          searchDecider.getAvailability(eventBusReaderEnabledDeciderKey);
-      if (previousEventBusReaderEnabledAvailability != eventBusReaderEnabledAvailability) {
-        LOG.info("EventBusReaderStage availability decider changed from {} to {}.",
-                 previousEventBusReaderEnabledAvailability, eventBusReaderEnabledAvailability);
+    int pweviouseventbusweadewenabwedavaiwabiwity = 0;
+    whiwe (stagedwivew.getstate() == s-stagedwivew.state.wunning) {
+      int e-eventbusweadewenabwedavaiwabiwity =
+          seawchdecidew.getavaiwabiwity(eventbusweadewenabweddecidewkey);
+      i-if (pweviouseventbusweadewenabwedavaiwabiwity != e-eventbusweadewenabwedavaiwabiwity) {
+        wog.info("eventbusweadewstage avaiwabiwity decidew changed fwom {} to {}.", OwO
+                 p-pweviouseventbusweadewenabwedavaiwabiwity, 😳😳😳 e-eventbusweadewenabwedavaiwabiwity);
 
-        // If the availability is 0 then disable the reader, otherwise read from EventBus.
-        if (eventBusReaderEnabledAvailability == 0) {
-          try {
-            closeEventBusSubscriber();
-          } catch (Exception e) {
-            LOG.warn("Exception while closing eventbus subscriber", e);
+        // i-if the avaiwabiwity i-is 0 then disabwe t-the weadew, (ˆ ﻌ ˆ)♡ othewwise wead fwom e-eventbus. XD
+        if (eventbusweadewenabwedavaiwabiwity == 0) {
+          twy {
+            cwoseeventbussubscwibew();
+          } catch (exception e) {
+            w-wog.wawn("exception w-whiwe cwosing eventbus subscwibew", (ˆ ﻌ ˆ)♡ e-e);
           }
-        } else {
-          startUpEventBusSubscriber();
+        } e-ewse {
+          stawtupeventbussubscwibew();
         }
       }
-      previousEventBusReaderEnabledAvailability = eventBusReaderEnabledAvailability;
+      pweviouseventbusweadewenabwedavaiwabiwity = eventbusweadewenabwedavaiwabiwity;
 
-      try {
-        clock.waitFor(TimeUnit.SECONDS.toMillis(DECIDER_POLL_INTERVAL_IN_SECS));
-      } catch (InterruptedException e) {
-        interrupted = true;
+      t-twy {
+        cwock.waitfow(timeunit.seconds.tomiwwis(decidew_poww_intewvaw_in_secs));
+      } catch (intewwuptedexception e) {
+        intewwupted = twue;
       }
     }
-    LOG.info("StageDriver is not RUNNING anymore, closing EventBus subscriber");
-    try {
-      closeEventBusSubscriber();
-    } catch (InterruptedException e) {
-      interrupted = true;
-    } catch (Exception e) {
-      LOG.warn("Exception while closing eventbus subscriber", e);
-    } finally {
-      if (interrupted) {
-        Thread.currentThread().interrupt();
+    w-wog.info("stagedwivew is nyot wunning anymowe, ( ͡o ω ͡o ) c-cwosing eventbus s-subscwibew");
+    twy {
+      cwoseeventbussubscwibew();
+    } catch (intewwuptedexception e) {
+      i-intewwupted = t-twue;
+    } catch (exception e) {
+      wog.wawn("exception w-whiwe cwosing eventbus subscwibew", rawr x3 e-e);
+    } finawwy {
+      if (intewwupted) {
+        thwead.cuwwentthwead().intewwupt();
       }
     }
   }
 
-  // This is needed to set the value from XML config.
-  public void setEventBusSubscriberId(String eventBusSubscriberId) {
-    this.eventBusSubscriberId = eventBusSubscriberId;
-    LOG.info("EventBusReaderStage with eventBusSubscriberId: {}", eventBusSubscriberId);
+  // t-this is nyeeded to set t-the vawue fwom xmw c-config. nyaa~~
+  pubwic void seteventbussubscwibewid(stwing e-eventbussubscwibewid) {
+    this.eventbussubscwibewid = e-eventbussubscwibewid;
+    w-wog.info("eventbusweadewstage w-with eventbussubscwibewid: {}", >_< eventbussubscwibewid);
   }
 
-  // This is needed to set the value from XML config.
-  public void setEnvironment(String environment) {
-    this.environment = environment;
-    LOG.info("Ingester is running in {}", environment);
+  // t-this is n-nyeeded to set the vawue fwom xmw config. ^^;;
+  pubwic v-void setenviwonment(stwing enviwonment) {
+    t-this.enviwonment = e-enviwonment;
+    wog.info("ingestew is wunning i-in {}", (ˆ ﻌ ˆ)♡ enviwonment);
   }
 
-  // This is needed to set the value from XML config.
-  public void setMaxConcurrentEvents(int maxConcurrentEvents) {
-    this.maxConcurrentEvents = maxConcurrentEvents;
+  // this is nyeeded t-to set the vawue f-fwom xmw config. ^^;;
+  pubwic void setmaxconcuwwentevents(int maxconcuwwentevents) {
+    this.maxconcuwwentevents = m-maxconcuwwentevents;
   }
 
-  @VisibleForTesting
-  public void setStageDriver(StageDriver stageDriver) {
-    this.stageDriver = stageDriver;
+  @visibwefowtesting
+  p-pubwic void s-setstagedwivew(stagedwivew s-stagedwivew) {
+    this.stagedwivew = s-stagedwivew;
   }
 }

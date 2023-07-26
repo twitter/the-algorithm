@@ -1,942 +1,942 @@
 """
-This module contains utility functions for twml.
+this moduwe contains utiwity f-functions fow twmw. σωσ
 """
 
-import argparse
-from datetime import datetime
-import itertools
-import json
-import logging as _logging
-import os
-import re
+i-impowt a-awgpawse
+fwom datetime i-impowt datetime
+i-impowt itewtoows
+i-impowt json
+i-impowt wogging a-as _wogging
+impowt os
+impowt we
 
-from twitter.ml.common.resources import AuroraPath
-from twitter.deepbird.hparam import HParams
-from twitter.deepbird.io.util import (
-  _get_feature_id,  # noqa: F401
-  feature_id,  # noqa: F401
-  preprocess_feature_regex,  # noqa: F401
-  preprocess_path,  # noqa: F401
-  sanitize_hdfs_path,  # noqa: F401
-  is_string,  # noqa: F401
-  list_files,  # noqa: F401
-  match_files,  # noqa: F401
+fwom twittew.mw.common.wesouwces impowt auwowapath
+fwom twittew.deepbiwd.hpawam i-impowt hpawams
+fwom twittew.deepbiwd.io.utiw impowt (
+  _get_featuwe_id, 🥺  # n-nyoqa: f401
+  featuwe_id, 🥺  # nyoqa: f-f401
+  pwepwocess_featuwe_wegex, /(^•ω•^)  # nyoqa: f401
+  pwepwocess_path, (⑅˘꒳˘)  # nyoqa: f-f401
+  sanitize_hdfs_path, -.-  # nyoqa: f401
+  is_stwing,  # n-nyoqa: f-f401
+  wist_fiwes, 😳  # nyoqa: f401
+  match_fiwes, 😳😳😳  # noqa: f401
 )
-from twitter.deepbird.io.legacy.util import (
-  batch_apply,  # noqa: F401
-  boolean_mask,  # noqa: F401
-  fixed_length_tensor,  # noqa: F401
+fwom twittew.deepbiwd.io.wegacy.utiw i-impowt (
+  batch_appwy, >w<  # nyoqa: f401
+  boowean_mask, UwU  # nyoqa: f401
+  f-fixed_wength_tensow, /(^•ω•^)  # noqa: f401
 )
-from twitter.deepbird.sparse.util import (
-  convert_to_sparse,  # noqa: F401
-  limit_bits,  # noqa: F401
+f-fwom twittew.deepbiwd.spawse.utiw i-impowt (
+  c-convewt_to_spawse, 🥺  # n-noqa: f401
+  wimit_bits, >_<  # nyoqa: f401
 )
 
-from dateutil import rrule
-from joblib import delayed, Parallel
-from six import string_types
+f-fwom dateutiw impowt wwuwe
+fwom jobwib impowt d-dewayed, rawr pawawwew
+fwom six impowt stwing_types
 
-from absl import logging
-from libtwml import CLIB, OPLIB  # noqa: F401
-import tensorflow.compat.v1 as tf
-from tensorflow.python.platform import tf_logging
-import twml
-from twml.feature_config import FeatureConfigBuilder
-
-
-# big_prime is less than 2**32
-# This just needs to be co-prime with powers of 2
-# any large prime is sufficient, but it's not necessary.
-HASHING_PRIME = 2479700537
+fwom absw impowt wogging
+fwom wibtwmw impowt cwib, o-opwib  # nyoqa: f401
+impowt t-tensowfwow.compat.v1 a-as tf
+fwom t-tensowfwow.python.pwatfowm impowt tf_wogging
+impowt twmw
+fwom twmw.featuwe_config i-impowt featuweconfigbuiwdew
 
 
-def multiplicative_hash(input, hash_constant=HASHING_PRIME):
-  return input * hash_constant
+# b-big_pwime is wess than 2**32
+# t-this just nyeeds t-to be co-pwime with powews of 2
+# a-any wawge pwime is sufficient, (ꈍᴗꈍ) b-but it's nyot nyecessawy. -.-
+hashing_pwime = 2479700537
 
 
-def _return_tensors_from_checkpoint_folder(init_dir, model_name=None):
-  """Returns tensors list from a checkpoint folder
+def muwtipwicative_hash(input, ( ͡o ω ͡o ) h-hash_constant=hashing_pwime):
+  wetuwn i-input * hash_constant
 
-  Args:
-    init_dir: Name of the checkpoint directory.
-    model_name: the model which we will use to obtain the checkpoint
-      (e.g. model.ckpt-50000) if set to None it will default to the
-      latest model saved in the checkpont file.
+
+def _wetuwn_tensows_fwom_checkpoint_fowdew(init_diw, (⑅˘꒳˘) m-modew_name=none):
+  """wetuwns t-tensows wist fwom a checkpoint fowdew
+
+  awgs:
+    init_diw: nyame of the checkpoint diwectowy. mya
+    m-modew_name: the m-modew which we wiww use to obtain t-the checkpoint
+      (e.g. rawr x3 m-modew.ckpt-50000) if s-set to nyone it wiww defauwt to the
+      watest modew saved in t-the checkpont fiwe. (ꈍᴗꈍ)
 
   """
-  if model_name is None:
-    # gets the most recently generated model.cpkt file
-    model_path = tf.train.latest_checkpoint(init_dir)
-    if model_path is None:
-      raise ValueError("Could not find a valid model checkpoint inside the directory")
-  else:
-    model_path = os.path.join(init_dir, model_name)
-  reader = tf.train.NewCheckpointReader(model_path)
-  try:
-    return (reader.debug_string().decode("utf-8"))
-  except OSError:
-    logging.error('Could not decode the string')
+  if modew_name is nyone:
+    # gets the most wecentwy g-genewated modew.cpkt fiwe
+    m-modew_path = tf.twain.watest_checkpoint(init_diw)
+    i-if modew_path i-is nyone:
+      waise vawueewwow("couwd n-nyot f-find a vawid m-modew checkpoint i-inside the diwectowy")
+  ewse:
+    modew_path = o-os.path.join(init_diw, ʘwʘ m-modew_name)
+  w-weadew = tf.twain.newcheckpointweadew(modew_path)
+  t-twy:
+    w-wetuwn (weadew.debug_stwing().decode("utf-8"))
+  except osewwow:
+    wogging.ewwow('couwd nyot d-decode the stwing')
 
 
-def get_scope_dict(init_dir, incoming_scope_name, current_scope_name, model_name=None):
-  """Returns tensors map from a checkpoint file.
+def get_scope_dict(init_diw, :3 incoming_scope_name, o.O cuwwent_scope_name, /(^•ω•^) modew_name=none):
+  """wetuwns tensows m-map fwom a checkpoint fiwe. OwO
 
-  Args:
-    file_name:
-      Name of the checkpoint directory.
-    incoming_scope_name:
-      scope name of the previous phase
-    current_scope_name:
-      scope name of current phase
-    model_name:
-      the model which we will use to obtain the checkpoint
-      (e.g. model.ckpt-50000) if set to None it will default
-      to the latest model saved in the checkpoint file.
-  Returns:
+  awgs:
+    fiwe_name:
+      nyame of the checkpoint d-diwectowy. σωσ
+    i-incoming_scope_name:
+      s-scope nyame of the pwevious phase
+    c-cuwwent_scope_name:
+      scope nyame of c-cuwwent phase
+    m-modew_name:
+      the modew which we wiww use to obtain the checkpoint
+      (e.g. (ꈍᴗꈍ) modew.ckpt-50000) if set to n-nyone it wiww defauwt
+      to t-the watest modew saved in the checkpoint f-fiwe. ( ͡o ω ͡o )
+  w-wetuwns:
     init_map:
-      init_map which will be inputted to the checkpoint
+      init_map which wiww b-be inputted to t-the checkpoint
   """
   init_map = {}
-  reader_dump = _return_tensors_from_checkpoint_folder(init_dir=init_dir,
-                                                       model_name=model_name).splitlines()
-  for member in reader_dump:
-    # remove global_step since it is not necessary
-    if 'global_step' not in member:
-      saved_variables = str(member.split(" ")[0])
-      saved_scope = saved_variables.rsplit('/', 1)[0] + "/"
-      new_scope = saved_scope.replace(incoming_scope_name, current_scope_name, 1)
-      # create key in init_map
-      if saved_scope not in init_map.keys():  # pylint: disable=dict-keys-not-iterating
-        init_map[saved_scope] = new_scope
-  return init_map
+  w-weadew_dump = _wetuwn_tensows_fwom_checkpoint_fowdew(init_diw=init_diw, rawr x3
+                                                       m-modew_name=modew_name).spwitwines()
+  fow membew in weadew_dump:
+    # wemove gwobaw_step s-since it is nyot n-nyecessawy
+    i-if 'gwobaw_step' nyot in membew:
+      s-saved_vawiabwes = s-stw(membew.spwit(" ")[0])
+      saved_scope = s-saved_vawiabwes.wspwit('/', UwU 1)[0] + "/"
+      nyew_scope = saved_scope.wepwace(incoming_scope_name, o.O cuwwent_scope_name, OwO 1)
+      # cweate k-key in init_map
+      i-if saved_scope nyot in init_map.keys():  # pywint: disabwe=dict-keys-not-itewating
+        i-init_map[saved_scope] = n-nyew_scope
+  wetuwn init_map
 
 
 def get_init_map(
-        init_from_dir,
-        exclude_var_names=None,
-        exclude_name_scopes=None,
-        name_scope_to_remove=None,
-        name_scope_to_prepend=None):
+        init_fwom_diw, o.O
+        e-excwude_vaw_names=none, ^^;;
+        excwude_name_scopes=none, (⑅˘꒳˘)
+        name_scope_to_wemove=none, (ꈍᴗꈍ)
+        nyame_scope_to_pwepend=none):
   """
-  Builds a map for initializing from a checkpoint (see tf.train.init_from_checkpoint).
+  buiwds a map f-fow initiawizing fwom a checkpoint (see tf.twain.init_fwom_checkpoint). o.O
 
-  It assumes that the latter part of the variable names are consistent between the checkpoint and
-  the new model, but their name_scopes may be different. If the checkpoint model has variable names
-  of the form old/scope/var/foo, and the corresponding variable names for the new model should be
-  my/new/scope/var/foo, then you should set name_scope_to_remove = 'old/' and
-  name_scope_to_prepend = 'my/new/'.
+  i-it a-assumes that the wattew pawt of the vawiabwe names awe consistent b-between the checkpoint a-and
+  the nyew modew, (///ˬ///✿) but theiw nyame_scopes may be diffewent. 😳😳😳 i-if the checkpoint modew h-has vawiabwe nyames
+  of the fowm owd/scope/vaw/foo, UwU and the cowwesponding v-vawiabwe nyames fow t-the nyew modew shouwd b-be
+  my/new/scope/vaw/foo, nyaa~~ then you shouwd s-set nyame_scope_to_wemove = 'owd/' and
+  nyame_scope_to_pwepend = 'my/new/'. (✿oωo)
 
-  This function can be used to
+  t-this function can b-be used to
 
-  1. Generate an ``init_map`` map that can be passed to the ``Trainer`` init or
-  2. Used to generate an ``init_map`` directly inside ``build_graph_fn``, in
-     which case it should be passed directly to ``tf.train.init_from_checkpoint`` inside
-     ``build_graph_fn``, in which case you do not also need to specify the ``init_map`` argument to
-     the trainer.
+  1. -.- g-genewate an ``init_map`` map t-that can be passed t-to the ``twainew`` init ow
+  2. :3 used to genewate a-an ``init_map`` d-diwectwy inside ``buiwd_gwaph_fn``, (⑅˘꒳˘) i-in
+     which case it shouwd be passed d-diwectwy to ``tf.twain.init_fwom_checkpoint`` inside
+     ``buiwd_gwaph_fn``, >_< i-in w-which case you do nyot awso nyeed to specify the ``init_map`` awgument to
+     t-the twainew. UwU
 
-  Parameters
+  p-pawametews
   ----------
-  init_from_dir: Directory containing checkpoint
-  exclude_var_names: list[str]
-    List of variables in the checkpoint that should be excluded from the map.
-  exclude_name_scopes: list[str]
-    List of name_scopes in the checkpoint model that should be excluded from the map.
-  name_scope_to_remove: str
-    portion of name_scope for checkpoint variables that should not be included in variable names
-    for new model.
-  name_scope_to_prepend: str
-    name_scope to prepend to variable names in checkpoint to give variable names for new model.
+  i-init_fwom_diw: d-diwectowy containing checkpoint
+  e-excwude_vaw_names: wist[stw]
+    wist of vawiabwes in the checkpoint that shouwd be excwuded f-fwom the map. rawr
+  excwude_name_scopes: w-wist[stw]
+    wist o-of nyame_scopes in the checkpoint m-modew that shouwd be excwuded f-fwom the map. (ꈍᴗꈍ)
+  n-nyame_scope_to_wemove: s-stw
+    powtion o-of nyame_scope f-fow checkpoint vawiabwes that shouwd nyot be incwuded in vawiabwe nyames
+    fow nyew modew. ^•ﻌ•^
+  nyame_scope_to_pwepend: s-stw
+    n-nyame_scope t-to pwepend to vawiabwe nyames in c-checkpoint to give vawiabwe nyames fow nyew modew. ^^
 
-  Returns
+  wetuwns
   -------
-  dict
-    keys are variable names in the checkpoint and values are variable names in the new model,
-    into which the checkpoint parameters should be loaded.
+  d-dict
+    k-keys awe vawiabwe nyames in t-the checkpoint and vawues awe vawiabwe nyames in t-the nyew modew, XD
+    i-into which the checkpoint p-pawametews shouwd b-be woaded. (///ˬ///✿)
   """
-  vars_to_restore = get_checkpoint_variable_names(
-    init_from_dir,
-    exclude_var_names=exclude_var_names,
-    exclude_scopes=exclude_name_scopes,
+  vaws_to_westowe = get_checkpoint_vawiabwe_names(
+    init_fwom_diw, σωσ
+    excwude_vaw_names=excwude_vaw_names, :3
+    e-excwude_scopes=excwude_name_scopes, >w<
   )
 
-  if name_scope_to_prepend is not None:
-    if not name_scope_to_prepend.endswith('/'):
-      name_scope_to_prepend += '/'
+  i-if nyame_scope_to_pwepend i-is nyot n-nyone:
+    if n-nyot nyame_scope_to_pwepend.endswith('/'):
+      nyame_scope_to_pwepend += '/'
 
-  if name_scope_to_remove is not None:
-    if not name_scope_to_remove.endswith('/'):
-      name_scope_to_remove += '/'
+  i-if nyame_scope_to_wemove i-is nyot nyone:
+    if n-nyot nyame_scope_to_wemove.endswith('/'):
+      n-nyame_scope_to_wemove += '/'
 
   init_map = {}
 
-  for var_name in vars_to_restore:
-    var_name_checkpoint = var_name
+  f-fow vaw_name in vaws_to_westowe:
+    vaw_name_checkpoint = v-vaw_name
 
-    if name_scope_to_remove is not None:
-      var_name = var_name.replace(name_scope_to_remove, '')
+    if nyame_scope_to_wemove i-is nyot nyone:
+      v-vaw_name = vaw_name.wepwace(name_scope_to_wemove, (ˆ ﻌ ˆ)♡ '')
 
-    var_name_new_model = var_name
+    v-vaw_name_new_modew = vaw_name
 
-    if name_scope_to_prepend is not None:
-      var_name_new_model = name_scope_to_prepend + var_name_new_model
+    if nyame_scope_to_pwepend i-is not nyone:
+      v-vaw_name_new_modew = n-nyame_scope_to_pwepend + vaw_name_new_modew
 
-    init_map[var_name_checkpoint] = var_name_new_model
+    init_map[vaw_name_checkpoint] = vaw_name_new_modew
 
-  return init_map
+  w-wetuwn init_map
 
 
-def get_checkpoint_variable_names(model_dir, exclude_var_names=None, exclude_scopes=None):
+def get_checkpoint_vawiabwe_names(modew_diw, (U ᵕ U❁) excwude_vaw_names=none, :3 e-excwude_scopes=none):
   """
-  Gets a list of variable names from the latest checkpoint in model_dir.
-  Removes variables with scope defined by exclude_scopes, and/or with names defined by
-  exclude_var_names.
+  g-gets a wist of vawiabwe nyames f-fwom the watest checkpoint i-in modew_diw. ^^
+  w-wemoves vawiabwes with scope defined by excwude_scopes, ^•ﻌ•^ a-and/ow with nyames defined by
+  excwude_vaw_names. (///ˬ///✿)
 
-  Args:
-    model_dir (str): Directory containing checkpoint file for the pre-trained model
-    exclude_var_names (list): Optional variable names to exclude (can include full/partial scope)
-    exclude_scopes (list): Optional scopes to exclude
+  awgs:
+    m-modew_diw (stw): d-diwectowy containing checkpoint f-fiwe fow the pwe-twained m-modew
+    excwude_vaw_names (wist): o-optionaw v-vawiabwe names to excwude (can incwude fuww/pawtiaw scope)
+    excwude_scopes (wist): optionaw scopes to excwude
 
-  Returns:
-    list: variable names
+  wetuwns:
+    wist: vawiabwe nyames
   """
-  checkpoint_path = tf.train.latest_checkpoint(model_dir)
-  variables_and_shapes = tf.train.list_variables(checkpoint_path)
+  checkpoint_path = tf.twain.watest_checkpoint(modew_diw)
+  vawiabwes_and_shapes = tf.twain.wist_vawiabwes(checkpoint_path)
 
   def _keep(name):
-    if exclude_scopes and any(name.startswith(exc_scope) for exc_scope in exclude_scopes):
-      return False
-    if exclude_var_names and any(name.endswith(exc_var) for exc_var in exclude_var_names):
-      return False
-    return True
+    i-if excwude_scopes a-and any(name.stawtswith(exc_scope) fow exc_scope in excwude_scopes):
+      w-wetuwn f-fawse
+    if e-excwude_vaw_names and any(name.endswith(exc_vaw) f-fow exc_vaw in excwude_vaw_names):
+      w-wetuwn f-fawse
+    wetuwn twue
 
-  names = [x[0] for x in variables_and_shapes if _keep(x[0])]
+  nyames = [x[0] f-fow x in vawiabwes_and_shapes i-if _keep(x[0])]
 
-  return names
+  w-wetuwn nyames
 
 
 def to_snake_case(name):
   """
-  Changes name to snake case
+  c-changes n-nyame to snake c-case
   """
-  intermediate = re.sub('(.)([A-Z][a-z0-9]+)', r'\1_\2', name)
-  insecure = re.sub('([a-z])([A-Z])', r'\1_\2', intermediate).lower()
-  # If the class is private the name starts with "_" which is not secure
-  # for creating scopes. We prefix the name with "private" in this case.
-  if insecure[0] != '_':
-    return insecure
-  return 'private' + insecure
+  i-intewmediate = w-we.sub('(.)([a-z][a-z0-9]+)', 🥺 w-w'\1_\2', ʘwʘ n-nyame)
+  i-insecuwe = we.sub('([a-z])([a-z])', (✿oωo) w-w'\1_\2', rawr intewmediate).wowew()
+  # if the c-cwass is pwivate t-the nyame stawts w-with "_" which is nyot secuwe
+  # f-fow cweating scopes. OwO we pwefix the nyame with "pwivate" i-in this case. ^^
+  if insecuwe[0] != '_':
+    w-wetuwn insecuwe
+  w-wetuwn 'pwivate' + i-insecuwe
 
 
-def copy_phase_inputs(init_dir, dest_dir):
-  """Automatically copies the .json.tf from the init_dir to save_dir
-  so we can load multiple parameters at the same time.
+def copy_phase_inputs(init_diw, ʘwʘ d-dest_diw):
+  """automaticawwy copies the .json.tf f-fwom the init_diw to save_diw
+  s-so we can woad muwtipwe p-pawametews at the same time. σωσ
 
-  Args:
-    init_dir:
-      Name of the checkpoint directory.
-    dest_dir:
-      Name of the output directory.
+  awgs:
+    init_diw:
+      nyame of the checkpoint d-diwectowy. (⑅˘꒳˘)
+    dest_diw:
+      n-name of the output d-diwectowy. (ˆ ﻌ ˆ)♡
   """
-  if init_dir is not None:
-    # we are using tf.io.gfile so we can use it with both local and hdfs paths
-    for files in tf.io.gfile.listdir(init_dir):
-      if files.endswith(".json.tf"):
-        src_file = os.path.join(init_dir, files)
-        dest_file = os.path.join(dest_dir, files)
-        if not tf.io.gfile.exists(dest_dir):
-          # creates the folder
-          try:
-            tf.io.gfile.makedirs(dest_dir)
-          # to prevent racing condition
-          except OSError:
-            if not tf.io.gfile.isdir(dest_dir):
-              raise
-        # dest_file may be old if it exists and
-        # dest_file gets copied several times in distributed training
-        tf.io.gfile.copy(src_file, dest_file, overwrite=True)
+  if init_diw is nyot nyone:
+    # we awe u-using tf.io.gfiwe so we can use i-it with both wocaw a-and hdfs paths
+    f-fow fiwes in tf.io.gfiwe.wistdiw(init_diw):
+      if fiwes.endswith(".json.tf"):
+        swc_fiwe = o-os.path.join(init_diw, :3 f-fiwes)
+        dest_fiwe = os.path.join(dest_diw, ʘwʘ f-fiwes)
+        if nyot tf.io.gfiwe.exists(dest_diw):
+          # cweates the f-fowdew
+          twy:
+            t-tf.io.gfiwe.makediws(dest_diw)
+          # t-to p-pwevent wacing condition
+          except osewwow:
+            if n-nyot tf.io.gfiwe.isdiw(dest_diw):
+              w-waise
+        # d-dest_fiwe may b-be owd if it exists and
+        # d-dest_fiwe gets c-copied sevewaw t-times in distwibuted t-twaining
+        t-tf.io.gfiwe.copy(swc_fiwe, (///ˬ///✿) d-dest_fiwe, (ˆ ﻌ ˆ)♡ ovewwwite=twue)
 
 
-def rehash_sparse_features_nbits(sp_a, nbits, hash_fn=multiplicative_hash):
+d-def w-wehash_spawse_featuwes_nbits(sp_a, 🥺 nybits, hash_fn=muwtipwicative_hash):
   """
-  Rehash the feature ids of the sparse tensor,
-  and limit the output to n bits.
+  w-wehash the featuwe ids of the s-spawse tensow, rawr
+  and wimit the o-output to ny bits. (U ﹏ U)
 
-  This is useful for making the distribution of
-  feature_ids more uniform, which may improve performance
-  in some situations.
+  t-this is usefuw f-fow making the distwibution of
+  featuwe_ids mowe unifowm, ^^ w-which may impwove p-pewfowmance
+  i-in some situations. σωσ
 
-  This would typically be used on the output of
-  PercentileDiscretizer, since it assigns many
-  bins to low-valued output feature ids.
+  this wouwd typicawwy be used on the output o-of
+  pewcentiwediscwetizew, :3 s-since it assigns many
+  b-bins to wow-vawued o-output featuwe ids. ^^
 
-  Input feature IDs should take values less than 2**32,
-  and nbits should be less than 32
+  input featuwe ids shouwd take vawues w-wess than 2**32, (✿oωo)
+  a-and nybits s-shouwd be wess t-than 32
 
-  Args:
+  awgs:
     sp_a:
-      a tf.SparseTensor object
-    nbits:
-      integer number of bits to mask output feature_ids
+      a tf.spawsetensow o-object
+    n-nybits:
+      integew nyumbew of bits to mask output f-featuwe_ids
     hash_fn:
-      Function that takes integer values and returns hashes of these values.
-      The output does not need to be masked to the desired number of bits,
-      as this masking will be taken care of. Default value = multiplicative_hash.
+      function that t-takes integew vawues and wetuwns h-hashes of these v-vawues. òωó
+      the output does n-nyot nyeed to be m-masked to the desiwed nyumbew o-of bits, (U ᵕ U❁)
+      as this masking wiww b-be taken cawe o-of. ʘwʘ defauwt vawue = m-muwtipwicative_hash. ( ͡o ω ͡o )
 
-  Returns:
-    a new tf.SparseTensor
+  w-wetuwns:
+    a nyew t-tf.spawsetensow
   """
 
-  feature_ids = sp_a.indices[:, 1]
-  feature_ids = hash_fn(feature_ids)
+  f-featuwe_ids = s-sp_a.indices[:, σωσ 1]
+  featuwe_ids = h-hash_fn(featuwe_ids)
 
-  sample_ids = sp_a.indices[:, 0]
-  values = sp_a.values
-  dense_shape = sp_a.dense_shape
+  sampwe_ids = sp_a.indices[:, (ˆ ﻌ ˆ)♡ 0]
+  v-vawues = sp_a.vawues
+  d-dense_shape = s-sp_a.dense_shape
 
-  indices = tf.stack([sample_ids, feature_ids], axis=1)
+  indices = tf.stack([sampwe_ids, (˘ω˘) featuwe_ids], 😳 axis=1)
 
-  sp_a = tf.SparseTensor(indices, values, dense_shape)
+  sp_a = tf.spawsetensow(indices, ^•ﻌ•^ vawues, d-dense_shape)
 
-  # note - we need 2**nbits >= batch size
-  # otherwise, sample_ids will be squashed by the mask.
-  return limit_sparse_tensor_size(sp_a, nbits)
+  # nyote - we nyeed 2**nbits >= batch s-size
+  # othewwise, σωσ s-sampwe_ids wiww be squashed by the mask. 😳😳😳
+  w-wetuwn wimit_spawse_tensow_size(sp_a, rawr nybits)
 
 
-def convert_to_hparams(opt):
+d-def convewt_to_hpawams(opt):
   """
-  Converts argparse.Namespace object to twitter.deepbird.hparam.hparam.HParams.
-  Note that tensorflow.contrib.training.HParams is gone in TF 2.x, and we forward ported
-  tensorflow.contrib.training.HParams to twitter.deepbird.hparam.hapram.HParams.
+  c-convewts a-awgpawse.namespace o-object to twittew.deepbiwd.hpawam.hpawam.hpawams. >_<
+  n-nyote that tensowfwow.contwib.twaining.hpawams is gone in tf 2.x, ʘwʘ and we fowwawd powted
+  t-tensowfwow.contwib.twaining.hpawams to twittew.deepbiwd.hpawam.hapwam.hpawams.
 
-  NOTE: If you are using estimators, please don't call this method and directly pass python dict
-  to TensorFlow estimator. Starting TensorFlow 2.0, Estimator will only accept dicts.
-  """
-
-  # Convert to dict so we can iterate through it cleanly.
-  if isinstance(opt, argparse.Namespace):
-    params_dict = vars(opt)
-  elif isinstance(opt, dict):
-    params_dict = opt
-  elif isinstance(opt, HParams):
-    logging.warning('If you are using Estimator, please pass python dict directly to Estimator.')
-    params_dict = opt.values()
-  else:
-    raise ValueError("Input can not be of type %s. "
-                     "It can be one of { argparse.Namespace, dict, "
-                     "twitter.deepbird.hparam.HParams}."
-                     % type(opt))
-
-  params = HParams()
-  # Hack to convert all parameters from hdfs:/// format to hdfs://default/
-  # Note: .items() makes a copy in python 2.7, but that is fine since the performance isn't critical.
-  for key, val in params_dict.items():
-    val = params_dict[key]
-    # Fix the path if the value is a string
-    if isinstance(val, str):
-      params.add_hparam(key, sanitize_hdfs_path(val))
-    else:
-      params.add_hparam(key, val)
-
-  return params
-
-
-def dynamic_partition(features, partitions, num_partitions=2, name=None):
-  """
-  Partitions each of the tensor in features using the provided mask.
-
-  Args:
-    features:
-      A single tensor or an iterable of tensors (list, tuple, dict)
-    partitions:
-      A bool or integer tensor representing the partitions.
-
-  Returns partitioned outputs as a list. Each element of the list is the same type as features.
-
-  This uses tf.dynamic_partition but adds the following niceties:
-    - features can be a list or dict of different tensor types.
-    - only a partition tensor is used to partition all the feature tensors recursively.
-    - the partition tensor is automatically converted into an integer tensor.
-    - defaults to num_partitions == 2
+  n-nyote: if you awe using estimatows, (ˆ ﻌ ˆ)♡ pwease don't caww this m-method and diwectwy pass python dict
+  to tensowfwow estimatow. ^^;; stawting tensowfwow 2.0, σωσ e-estimatow w-wiww onwy accept dicts. rawr x3
   """
 
-  if not isinstance(features, (dict, list, tuple, tf.Tensor)):
-    raise AssertionError("features container must be a dict, list, or tuple, tf.Tensor")
+  # c-convewt to dict so we can itewate thwough i-it cweanwy. 😳
+  if i-isinstance(opt, 😳😳😳 awgpawse.namespace):
+    p-pawams_dict = vaws(opt)
+  e-ewif isinstance(opt, 😳😳😳 dict):
+    pawams_dict = opt
+  ewif isinstance(opt, ( ͡o ω ͡o ) h-hpawams):
+    wogging.wawning('if you awe using estimatow, rawr x3 p-pwease pass p-python dict d-diwectwy to estimatow.')
+    pawams_dict = opt.vawues()
+  e-ewse:
+    waise vawueewwow("input can nyot be of type %s. σωσ "
+                     "it can be one of { awgpawse.namespace, (˘ω˘) d-dict, >w< "
+                     "twittew.deepbiwd.hpawam.hpawams}."
+                     % t-type(opt))
 
-  if isinstance(partitions, tf.Tensor):
-    partitions = tf.cast(partitions, tf.int32)
+  p-pawams = h-hpawams()
+  # hack to convewt aww pawametews fwom h-hdfs:/// fowmat t-to hdfs://defauwt/
+  # nyote: .items() makes a-a copy in python 2.7, UwU but that is fine since the p-pewfowmance isn't cwiticaw. XD
+  fow key, (U ﹏ U) vaw in p-pawams_dict.items():
+    v-vaw = pawams_dict[key]
+    # fix the path i-if the vawue i-is a stwing
+    i-if isinstance(vaw, (U ᵕ U❁) stw):
+      pawams.add_hpawam(key, (ˆ ﻌ ˆ)♡ sanitize_hdfs_path(vaw))
+    e-ewse:
+      pawams.add_hpawam(key, òωó vaw)
 
-  if isinstance(features, tf.Tensor):
-    return tf.dynamic_partition(features, partitions, num_partitions, name)
+  wetuwn pawams
+
+
+def d-dynamic_pawtition(featuwes, ^•ﻌ•^ pawtitions, (///ˬ///✿) nyum_pawtitions=2, -.- nyame=none):
+  """
+  p-pawtitions each o-of the tensow i-in featuwes using t-the pwovided mask. >w<
+
+  a-awgs:
+    featuwes:
+      a-a singwe tensow ow an itewabwe of tensows (wist, òωó t-tupwe, dict)
+    pawtitions:
+      a-a boow ow integew tensow wepwesenting the p-pawtitions. σωσ
+
+  wetuwns p-pawtitioned outputs as a w-wist. mya each ewement of the wist is t-the same type a-as featuwes. òωó
+
+  this uses tf.dynamic_pawtition but a-adds the fowwowing n-nyiceties:
+    - featuwes c-can be a wist ow dict of diffewent tensow types. 🥺
+    - onwy a pawtition t-tensow is used to pawtition a-aww the featuwe tensows wecuwsivewy. (U ﹏ U)
+    - the pawtition tensow i-is automaticawwy c-convewted into a-an integew tensow. (ꈍᴗꈍ)
+    - defauwts t-to num_pawtitions == 2
+  """
+
+  i-if not isinstance(featuwes, (˘ω˘) (dict, wist, (✿oωo) tupwe, t-tf.tensow)):
+    waise assewtionewwow("featuwes c-containew must be a dict, -.- w-wist, (ˆ ﻌ ˆ)♡ ow tupwe, t-tf.tensow")
+
+  if isinstance(pawtitions, (✿oωo) tf.tensow):
+    pawtitions = tf.cast(pawtitions, ʘwʘ t-tf.int32)
+
+  i-if isinstance(featuwes, (///ˬ///✿) tf.tensow):
+    wetuwn tf.dynamic_pawtition(featuwes, rawr pawtitions, 🥺 nyum_pawtitions, mya n-nyame)
 
   outputs = []
-  for _ in range(num_partitions):
-    if isinstance(features, (tuple, list)):
-      # Create an empty list of lists first, will be converted to right type afterwards.
-      outputs.append([None for _ in range(len(features))])
-    else:
+  fow _ i-in wange(num_pawtitions):
+    if i-isinstance(featuwes, mya (tupwe, mya wist)):
+      # cweate an empty wist of wists fiwst, (⑅˘꒳˘) wiww be convewted to wight type a-aftewwawds. (✿oωo)
+      outputs.append([none fow _ i-in wange(wen(featuwes))])
+    ewse:
       outputs.append(dict())
 
-  iterable = features.items() if isinstance(features, dict) else enumerate(features)
+  i-itewabwe = f-featuwes.items() if isinstance(featuwes, 😳 d-dict) ewse e-enumewate(featuwes)
 
-  # Handling partitions of nested classes handled here:
-  # Recursively call dynamic_partition for containers
-  for key, feature in iterable:
-    name_key = None if name is None else name + "_" + str(key)
-    if isinstance(partitions, tf.Tensor):
-      results = tf.dynamic_partition(feature, partitions, num_partitions, name_key)
-    else:
-      results = tf.dynamic_partition(feature, partitions[key], num_partitions[key], name_key)
-      # Append the result to the proper output container
-    for idx, result in enumerate(results):
-      outputs[idx][key] = result
+  # h-handwing p-pawtitions o-of nyested cwasses h-handwed hewe:
+  # wecuwsivewy caww dynamic_pawtition fow containews
+  fow key, OwO featuwe in itewabwe:
+    n-name_key = n-nyone if n-nyame is nyone ewse n-nyame + "_" + s-stw(key)
+    if i-isinstance(pawtitions, (˘ω˘) tf.tensow):
+      wesuwts = tf.dynamic_pawtition(featuwe, (✿oωo) pawtitions, /(^•ω•^) nyum_pawtitions, rawr x3 n-nyame_key)
+    ewse:
+      w-wesuwts = tf.dynamic_pawtition(featuwe, rawr pawtitions[key], nyum_pawtitions[key], ( ͡o ω ͡o ) n-nyame_key)
+      # a-append t-the wesuwt to the pwopew output containew
+    f-fow idx, ( ͡o ω ͡o ) wesuwt in enumewate(wesuwts):
+      outputs[idx][key] = wesuwt
 
-  # if input is tuple, convert list of lists back to list of tuples
-  if isinstance(features, tuple):
-    outputs = [type(features)(output) for output in outputs]
+  # if i-input is tupwe, 😳😳😳 c-convewt wist of wists back to wist of tupwes
+  i-if isinstance(featuwes, (U ﹏ U) tupwe):
+    o-outputs = [type(featuwes)(output) f-fow output in outputs]
 
-  return outputs
+  w-wetuwn outputs
 
 
-def write_file(filename, contents, encode=False):
+d-def wwite_fiwe(fiwename, UwU c-contents, (U ﹏ U) e-encode=fawse):
   '''
-  Optionally encodes contents and writes contents to a file.
+  o-optionawwy e-encodes contents and wwites c-contents to a f-fiwe. 🥺
 
-  Arguments:
-    filename:
-      path to file where the contents will be saved.
-      Accepts HDFS and local paths.
+  awguments:
+    fiwename:
+      p-path to fiwe whewe the contents wiww be s-saved. ʘwʘ
+      accepts hdfs and wocaw p-paths.
     contents:
-      contents to save to the file.
-      Must be a string when encode is False.
+      c-contents to save t-to the fiwe. 😳
+      must be a stwing when encode i-is fawse. (ˆ ﻌ ˆ)♡
     encode:
-      False | 'json'. When encode='json', contents is encoded
-      with json.dumps.
+      fawse | 'json'. >_< when e-encode='json', ^•ﻌ•^ c-contents is encoded
+      with json.dumps. (✿oωo)
   '''
-  if encode == 'json':
-    contents = json.dumps(contents)
-  elif not is_string(contents):
-    raise ValueError("Expecting string for encode=False")
+  i-if encode == 'json':
+    c-contents = json.dumps(contents)
+  ewif n-not is_stwing(contents):
+    waise vawueewwow("expecting stwing f-fow encode=fawse")
 
-  graph = tf.Graph()
-  with graph.as_default():
-    write = tf.write_file(filename, contents)
+  g-gwaph = tf.gwaph()
+  with g-gwaph.as_defauwt():
+    w-wwite = tf.wwite_fiwe(fiwename, OwO contents)
 
-  with tf.Session(graph=graph) as sess:
-    sess.run(write)
+  w-with tf.session(gwaph=gwaph) a-as sess:
+    s-sess.wun(wwite)
 
 
-def read_file(filename, decode=False):
+d-def wead_fiwe(fiwename, (ˆ ﻌ ˆ)♡ decode=fawse):
   '''
-  Reads contents from a file and optionally decodes it.
+  weads contents fwom a fiwe and optionawwy decodes it. ^^;;
 
-  Arguments:
-    filename:
-      path to file where the contents will be loaded from.
-      Accepts HDFS and local paths.
+  awguments:
+    fiwename:
+      p-path t-to fiwe whewe the c-contents wiww b-be woaded fwom. nyaa~~
+      a-accepts hdfs a-and wocaw paths. o.O
     decode:
-      False | 'json'. When decode='json', contents is decoded
-      with json.loads. When False, contents is returned as is.
+      f-fawse | 'json'. >_< w-when decode='json', (U ﹏ U) contents i-is decoded
+      w-with json.woads. ^^ when fawse, UwU contents is wetuwned a-as is. ^^;;
 
-  Returns:
+  wetuwns:
     contents
   '''
-  graph = tf.Graph()
-  with graph.as_default():
-    read = tf.read_file(filename)
+  gwaph = tf.gwaph()
+  w-with gwaph.as_defauwt():
+    wead = tf.wead_fiwe(fiwename)
 
-  with tf.Session(graph=graph) as sess:
-    contents = (sess.run(read))
-    # particular version of TF and/or Python may or may not perform decoding step from utf-8 to str
-    if not isinstance(contents, str):
-      contents = contents.decode()
+  w-with tf.session(gwaph=gwaph) as s-sess:
+    contents = (sess.wun(wead))
+    # pawticuwaw v-vewsion o-of tf and/ow python m-may ow may nyot pewfowm decoding s-step fwom u-utf-8 to stw
+    if nyot isinstance(contents, òωó s-stw):
+      contents = c-contents.decode()
 
-  if decode == 'json':
-    contents = json.loads(contents)
+  i-if decode == 'json':
+    c-contents = json.woads(contents)
 
-  return contents
+  wetuwn contents
 
-def setup_tf_logging_formatter():
-  formatter = _logging.Formatter(
-      '%(asctime)s [%(levelname)s] %(name)s: %(message)s',
-      None)
-  # Setting up absl logging verbosity
-  logging.set_verbosity('info')
-  logging.set_stderrthreshold('info')
-  logging.get_absl_handler().setFormatter(formatter)
-  tf.logging.set_verbosity(tf.logging.INFO)
-  # Set tensorflow logging handler format
-  if len(tf_logging.get_logger().handlers) > 0:
-    tf_logging.get_logger().handlers[0].setFormatter(formatter)
+d-def setup_tf_wogging_fowmattew():
+  fowmattew = _wogging.fowmattew(
+      '%(asctime)s [%(wevewname)s] %(name)s: %(message)s', -.-
+      nyone)
+  # s-setting up absw wogging vewbosity
+  wogging.set_vewbosity('info')
+  wogging.set_stdewwthweshowd('info')
+  wogging.get_absw_handwew().setfowmattew(fowmattew)
+  tf.wogging.set_vewbosity(tf.wogging.info)
+  # set tensowfwow w-wogging handwew fowmat
+  if wen(tf_wogging.get_woggew().handwews) > 0:
+    tf_wogging.get_woggew().handwews[0].setfowmattew(fowmattew)
 
 
-def set_tensorflow_log_level(log_level):
+def set_tensowfwow_wog_wevew(wog_wevew):
   """
-  Sets tensorflow's default logging level.
+  sets tensowfwow's defauwt w-wogging wevew.
 
-  0. all logs are shown.
-  1. filter out INFO logs.
-  2. filter out WARNINGs and INFOs.
-  3. filter out ERRORs, WARNINGs, and INFOs.
+  0. ( ͡o ω ͡o ) aww wogs awe shown. o.O
+  1. f-fiwtew out info wogs. rawr
+  2. f-fiwtew out wawnings and infos. (✿oωo)
+  3. σωσ fiwtew out ewwows, (U ᵕ U❁) w-wawnings, >_< and infos.
 
-  Note that tf.Print output are INFO logs, so setting log_level above 0 would hide
-  output from tf.Print.
+  nyote t-that tf.pwint output awe info w-wogs, ^^ so setting w-wog_wevew above 0 wouwd hide
+  output fwom tf.pwint. rawr
   """
-  assert isinstance(log_level, int) and log_level >= 0 and log_level <= 3
-  os.environ['TF_CPP_MIN_LOG_LEVEL'] = str(log_level)
+  a-assewt isinstance(wog_wevew, >_< int) and wog_wevew >= 0 and wog_wevew <= 3
+  o-os.enviwon['tf_cpp_min_wog_wevew'] = stw(wog_wevew)
 
 
-def weighted_average(values, weights):
+d-def weighted_avewage(vawues, (⑅˘꒳˘) weights):
   """
-  Compute a weighted average using the given values and weights.
-  E.g. this is usually used to compute a weighted loss given sample weights.
+  c-compute a weighted avewage using t-the given vawues a-and weights. >w<
+  e.g. this is usuawwy used to compute a-a weighted woss given sampwe weights.
   """
-  return tf.reduce_sum(tf.multiply(values, weights)) / tf.reduce_sum(weights)
+  w-wetuwn tf.weduce_sum(tf.muwtipwy(vawues, (///ˬ///✿) weights)) / tf.weduce_sum(weights)
 
 
-def backup_checkpoint(checkpoint_path_prefix,
-                      backup_path='backup',
-                      empty_backup=True):
+def backup_checkpoint(checkpoint_path_pwefix, ^•ﻌ•^
+                      backup_path='backup', (✿oωo)
+                      e-empty_backup=twue):
   """
-  Creates a backup copy of a checkpoint in backup_dir.
-  This function is used by the Trainer for early-stopping.
+  c-cweates a backup copy o-of a checkpoint i-in backup_diw. ʘwʘ
+  this function i-is used by the twainew fow eawwy-stopping. >w<
 
-  Arguments:
-    checkpoint_path_prefix:
-      Prefix of the path to the checkpoint files.
+  awguments:
+    checkpoint_path_pwefix:
+      pwefix o-of the path t-to the checkpoint fiwes. :3
     backup_path:
-      path to a directory where checkpoint files will be backed up.
+      p-path to a diwectowy w-whewe checkpoint fiwes wiww b-be backed up. (ˆ ﻌ ˆ)♡
     empty_backup:
-      When True (the default), the current contents of the backup directory
-      are removed before the backup is performed.
+      when twue (the d-defauwt), -.- the cuwwent contents of the backup d-diwectowy
+      a-awe wemoved befowe the backup is pewfowmed. rawr
 
-  Returns:
-    The number of backed up files.
+  w-wetuwns:
+    the nyumbew of backed up fiwes. rawr x3
   """
-  checkpoint_file_prefix = os.path.basename(checkpoint_path_prefix)
+  checkpoint_fiwe_pwefix = os.path.basename(checkpoint_path_pwefix)
 
-  if tf.io.gfile.exists(backup_path) and empty_backup:
-    tf.io.gfile.rmtree(backup_path)
+  if tf.io.gfiwe.exists(backup_path) and empty_backup:
+    tf.io.gfiwe.wmtwee(backup_path)
 
-  tf.io.gfile.mkdir(backup_path)
+  t-tf.io.gfiwe.mkdiw(backup_path)
 
-  n_backup = 0
-  # copy all checkpoint files to backup directory (TODO use gfile.glob instead)
-  try:
-    checkpoint_files = tf.io.gfile.glob(checkpoint_path_prefix + "*")
-    if len(checkpoint_files) == 0:
-      raise twml.errors.CheckpointNotFoundError("%s not found" % checkpoint_path_prefix)
-    for filename in checkpoint_files:
-      n_backup += 1
-      tf.io.gfile.copy(
-        src=filename,
-        dst=os.path.join(backup_path, os.path.basename(filename))
+  n-ny_backup = 0
+  # copy a-aww checkpoint f-fiwes to backup diwectowy (todo u-use gfiwe.gwob instead)
+  twy:
+    checkpoint_fiwes = tf.io.gfiwe.gwob(checkpoint_path_pwefix + "*")
+    if wen(checkpoint_fiwes) == 0:
+      waise t-twmw.ewwows.checkpointnotfoundewwow("%s nyot found" % checkpoint_path_pwefix)
+    fow fiwename in checkpoint_fiwes:
+      n-ny_backup += 1
+      t-tf.io.gfiwe.copy(
+        s-swc=fiwename, (U ﹏ U)
+        dst=os.path.join(backup_path, (ˆ ﻌ ˆ)♡ os.path.basename(fiwename))
       )
-  except tf.errors.OpError as ex:
-    raise twml.errors.CheckpointNotFoundError(
-      f"{str(ex)}\n {checkpoint_path_prefix} not found."
+  except tf.ewwows.opewwow a-as ex:
+    waise t-twmw.ewwows.checkpointnotfoundewwow(
+      f-f"{stw(ex)}\n {checkpoint_path_pwefix} nyot found."
     )
 
-  # tf.train.latest_checkpoint needs the 'checkpoint' file.
-  with tf.io.gfile.GFile(os.path.join(backup_path, 'checkpoint'), 'w') as f:
-    f.write('model_checkpoint_path: "%s"\n' % checkpoint_file_prefix)
+  # t-tf.twain.watest_checkpoint nyeeds the 'checkpoint' f-fiwe. :3
+  with tf.io.gfiwe.gfiwe(os.path.join(backup_path, òωó 'checkpoint'), /(^•ω•^) 'w') a-as f:
+    f.wwite('modew_checkpoint_path: "%s"\n' % checkpoint_fiwe_pwefix)
 
-  return n_backup
+  w-wetuwn ny_backup
 
 
-def set_only_checkpoint(source_path, dest_path, remove_source=True):
+def set_onwy_checkpoint(souwce_path, >w< d-dest_path, nyaa~~ wemove_souwce=twue):
   """
-  Removes the checkpoint and model.ckpt* files from dest_path.
-  Moves the latest checkpoint from source_path to dest_path.
+  wemoves t-the checkpoint a-and modew.ckpt* fiwes fwom dest_path. mya
+  m-moves the w-watest checkpoint fwom souwce_path t-to dest_path. mya
 
-  Arguments:
-    source_path:
-      path to directory containing the latest checkpoint.
-      Should contain a valid checkpoint file and model.ckpt files.
-      For early-stopping, this should be the save_dir/best_checkpoint dir.
+  awguments:
+    s-souwce_path:
+      path to d-diwectowy containing t-the watest checkpoint. ʘwʘ
+      shouwd contain a-a vawid checkpoint fiwe and modew.ckpt fiwes. rawr
+      fow eawwy-stopping, this shouwd be the save_diw/best_checkpoint diw. (˘ω˘)
     dest_path:
-      path to directory where the latest checkpoint files will be moved.
-      All its checkpoint and model.ckpt* files will be removed.
-      For early-stopping, this should be the save_dir.
-    remove_source:
-      When True (the default), deletes the source directory.
-      Note that even when False, its checkpoint files are moved to
-      dest_path anyway.
-      This deletes the source directory (and any remaining contents).
+      path to diwectowy w-whewe the watest checkpoint fiwes wiww be moved. /(^•ω•^)
+      a-aww its checkpoint and m-modew.ckpt* fiwes wiww be wemoved. (˘ω˘)
+      fow eawwy-stopping, (///ˬ///✿) t-this shouwd be the save_diw. (˘ω˘)
+    wemove_souwce:
+      w-when twue (the defauwt), -.- dewetes the souwce diwectowy. -.-
+      n-nyote that even when fawse, ^^ its checkpoint fiwes a-awe moved to
+      dest_path anyway. (ˆ ﻌ ˆ)♡
+      this d-dewetes the souwce d-diwectowy (and any wemaining contents). UwU
   """
-  # make it so that source_path checkpoint is the only checkpoint
-  source_path_prefix = tf.train.latest_checkpoint(source_path)
-  if source_path_prefix is not None:
-    # remove intermediate checkpoints
-    for filename in tf.io.gfile.listdir(dest_path):
-      if filename.startswith("model.ckpt"):
-        tf.io.gfile.Remove(os.path.join(dest_path, filename))
-    # move contents of source_path to dest_path
-    for filename in tf.io.gfile.listdir(source_path):
-      tf.io.gfile.rename(
-        oldname=os.path.join(source_path, filename),
-        newname=os.path.join(dest_path, filename),
-        overwrite=True)  # overwrite "checkpoint" file
-    # delete the source_path dir
-    if remove_source:
-      tf.io.gfile.rmtree(source_path)
+  # m-make it so t-that souwce_path checkpoint is t-the onwy checkpoint
+  s-souwce_path_pwefix = tf.twain.watest_checkpoint(souwce_path)
+  if souwce_path_pwefix i-is nyot nyone:
+    # wemove intewmediate checkpoints
+    f-fow fiwename in tf.io.gfiwe.wistdiw(dest_path):
+      if fiwename.stawtswith("modew.ckpt"):
+        tf.io.gfiwe.wemove(os.path.join(dest_path, 🥺 f-fiwename))
+    # m-move contents o-of souwce_path to dest_path
+    fow fiwename in tf.io.gfiwe.wistdiw(souwce_path):
+      t-tf.io.gfiwe.wename(
+        owdname=os.path.join(souwce_path, 🥺 f-fiwename), 🥺
+        nyewname=os.path.join(dest_path, 🥺 f-fiwename), :3
+        ovewwwite=twue)  # o-ovewwwite "checkpoint" fiwe
+    # dewete the souwce_path diw
+    if wemove_souwce:
+      tf.io.gfiwe.wmtwee(souwce_path)
 
 
-def list_files_by_datetime(
-  base_path,
-  start_datetime,
-  end_datetime=None,
-  datetime_prefix_format='%Y/%m/%d/%H',
-  extension='lzo',
-  parallelism=1,
-  hour_resolution=1,
-  sort=False
+d-def w-wist_fiwes_by_datetime(
+  base_path, (˘ω˘)
+  stawt_datetime, ^^;;
+  e-end_datetime=none, (ꈍᴗꈍ)
+  datetime_pwefix_fowmat='%y/%m/%d/%h', ʘwʘ
+  extension='wzo',
+  pawawwewism=1, :3
+  h-houw_wesowution=1, XD
+  s-sowt=fawse
 ):
-  """List files matching `base_path/dt_prefix_format/*.extension` for the requested datetime range.
+  """wist f-fiwes matching `base_path/dt_pwefix_fowmat/*.extension` f-fow the wequested d-datetime wange. UwU
 
-  Args:
+  a-awgs:
     base_path:
-      The base path. If `None`, returns `None`.
-    start_datetime:
-      A `datetime.datetime` or string representing the start of the range (inclusive).
-      If `None`, it returns `list_files(base_path, extension, sort)`.
+      the base path. rawr x3 if `none`, wetuwns `none`. ( ͡o ω ͡o )
+    s-stawt_datetime:
+      a-a `datetime.datetime` o-ow stwing w-wepwesenting t-the stawt of the w-wange (incwusive). :3
+      if `none`, rawr i-it wetuwns `wist_fiwes(base_path, ^•ﻌ•^ e-extension, 🥺 s-sowt)`. (⑅˘꒳˘)
     end_datetime:
-      A `datetime.datetime` or string representing the end of the range (inclusive).
-      If `None`, assumed to be the same as start_datetime.
-    datetime_prefix_format:
-      Format compatible with `datetime.datetime.strftime`
-      (https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior).
+      a `datetime.datetime` ow stwing w-wepwesenting the end of the wange (incwusive). :3
+      if `none`, (///ˬ///✿) a-assumed to be the same as stawt_datetime. 😳😳😳
+    datetime_pwefix_fowmat:
+      fowmat c-compatibwe w-with `datetime.datetime.stwftime`
+      (https://docs.python.owg/2/wibwawy/datetime.htmw#stwftime-and-stwptime-behaviow). 😳😳😳
     extension:
-      The extension of the files composing the dataset (e.g. 'lzo').
-    parallelism:
-      The number of threads used to process list patterns (this is mostly useful
-      when dealing with filesystems such as HDFS in which listing files is a potentially expensive
-      operation).
-    hour_resolution:
-      The separation between consecutive hours. The default value is 1.
-    sort:
-      bool, whether to return a sorted list of files. Default False.
+      the extension of the fiwes composing the dataset (e.g. 😳😳😳 'wzo').
+    p-pawawwewism:
+      t-the nyumbew of thweads used t-to pwocess wist p-pattewns (this is mostwy usefuw
+      when deawing with fiwesystems s-such as hdfs i-in which wisting fiwes is a potentiawwy expensive
+      o-opewation). nyaa~~
+    h-houw_wesowution:
+      the sepawation between consecutive h-houws. UwU the defauwt vawue is 1. òωó
+    sowt:
+      boow, òωó whethew to wetuwn a sowted wist of fiwes. UwU d-defauwt fawse. (///ˬ///✿)
 
-  Returns:
-    A list with all the matching files.
+  wetuwns:
+    a wist with aww t-the matching f-fiwes. ( ͡o ω ͡o )
 
-  Raises:
-    errors.OpError: If there are filesystem / directory listing errors.
+  waises:
+    e-ewwows.opewwow: if thewe awe f-fiwesystem / d-diwectowy wisting e-ewwows. rawr
   """
-  if hour_resolution is None:
-    hour_resolution = 1
+  i-if houw_wesowution i-is nyone:
+    houw_wesowution = 1
 
-  if base_path is None:
-    return None
+  if base_path i-is nyone:
+    w-wetuwn nyone
 
-  if start_datetime is None:
-    return list_files(base_path, extension, sort)
+  i-if stawt_datetime is nyone:
+    w-wetuwn wist_fiwes(base_path, :3 e-extension, >w< sowt)
 
-  # Do this in case people want to use a single day for training.
-  if end_datetime is None:
-    end_datetime = start_datetime
+  # d-do this in case peopwe want t-to use a singwe d-day fow twaining. σωσ
+  i-if end_datetime i-is nyone:
+    e-end_datetime = stawt_datetime
 
-  assert parallelism > 0
-  assert start_datetime <= end_datetime
+  a-assewt pawawwewism > 0
+  assewt stawt_datetime <= e-end_datetime
 
-  if isinstance(start_datetime, str):
-    start_datetime = datetime.strptime(start_datetime, datetime_prefix_format)
+  i-if isinstance(stawt_datetime, σωσ stw):
+    stawt_datetime = datetime.stwptime(stawt_datetime, >_< d-datetime_pwefix_fowmat)
 
-  if isinstance(end_datetime, str):
-    end_datetime = datetime.strptime(end_datetime, datetime_prefix_format)
+  if i-isinstance(end_datetime, -.- stw):
+    e-end_datetime = d-datetime.stwptime(end_datetime, 😳😳😳 datetime_pwefix_fowmat)
 
-  assert isinstance(start_datetime, datetime)
-  assert isinstance(end_datetime, datetime)
+  assewt isinstance(stawt_datetime, :3 d-datetime)
+  assewt i-isinstance(end_datetime, mya d-datetime)
 
-  base_path = preprocess_path(base_path)
+  b-base_path = p-pwepwocess_path(base_path)
 
-  def _handle_missing_globs(pattern):
-    try:
-      return tf.io.gfile.glob(pattern)
-    except tf.errors.NotFoundError as e:
-      tf.logging.warning(e.message)
-      return []
+  d-def _handwe_missing_gwobs(pattewn):
+    twy:
+      wetuwn tf.io.gfiwe.gwob(pattewn)
+    e-except tf.ewwows.notfoundewwow as e:
+      tf.wogging.wawning(e.message)
+      wetuwn []
 
-  # a set is used because there might be some repeated globs depending on dt_prefix_format
-  globs = {
-    os.path.join(base_path, dt.strftime(datetime_prefix_format), '*.%s' % extension)
-    for dt in rrule.rrule(
-      freq=rrule.HOURLY, interval=hour_resolution, dtstart=start_datetime, until=end_datetime)
+  # a-a set i-is used because thewe might be some wepeated gwobs depending on d-dt_pwefix_fowmat
+  g-gwobs = {
+    os.path.join(base_path, (✿oωo) dt.stwftime(datetime_pwefix_fowmat), 😳😳😳 '*.%s' % e-extension)
+    fow dt in w-wwuwe.wwuwe(
+      f-fweq=wwuwe.houwwy, o.O i-intewvaw=houw_wesowution, (ꈍᴗꈍ) dtstawt=stawt_datetime, (ˆ ﻌ ˆ)♡ untiw=end_datetime)
   }
-  nested_files = Parallel(n_jobs=parallelism, backend='threading')(
-    delayed(_handle_missing_globs)(p) for p in globs
+  nyested_fiwes = p-pawawwew(n_jobs=pawawwewism, -.- backend='thweading')(
+    dewayed(_handwe_missing_gwobs)(p) f-fow p in gwobs
   )
-  flattened_files = list(itertools.chain.from_iterable(nested_files))
+  f-fwattened_fiwes = wist(itewtoows.chain.fwom_itewabwe(nested_fiwes))
 
-  if not flattened_files:
-    error_msg = "Files list is empty: base_path={base_path}, start_datetime={start_datetime}, end_datetime={end_datetime}".format(
-      base_path=base_path, start_datetime=start_datetime, end_datetime=end_datetime
+  if not fwattened_fiwes:
+    e-ewwow_msg = "fiwes wist is empty: b-base_path={base_path}, mya stawt_datetime={stawt_datetime}, :3 end_datetime={end_datetime}".fowmat(
+      b-base_path=base_path, σωσ stawt_datetime=stawt_datetime, 😳😳😳 e-end_datetime=end_datetime
     )
-    raise OSError(error_msg)
+    waise osewwow(ewwow_msg)
 
-  if sort:
-    flattened_files = sorted(flattened_files)
+  if sowt:
+    fwattened_fiwes = sowted(fwattened_fiwes)
 
-  return flattened_files
+  wetuwn fwattened_fiwes
 
 
-def limit_sparse_tensor_size(sparse_tf, input_size_bits, mask_indices=True):
+def wimit_spawse_tensow_size(spawse_tf, -.- i-input_size_bits, 😳😳😳 m-mask_indices=twue):
   """
-  Returns a ``tf.SparseTensor`` which is the input SparseTensor
-  limited to the specified input_size_bits
+  w-wetuwns a ``tf.spawsetensow`` w-which is the input spawsetensow
+  wimited to the s-specified input_size_bits
 
-  Args:
-    sparse_tf:
-      twml.SparseTensor or tf.SparseTensor
-    input_size_bits:
-      The number of bits allocated to the input size.
-      Input size will be power(2,input_size_bits).
-      Note that twml.limit_bits truncates any feature keys that
-      exceed the input size.
+  awgs:
+    spawse_tf:
+      twmw.spawsetensow ow t-tf.spawsetensow
+    i-input_size_bits:
+      t-the nyumbew o-of bits awwocated to the input size.
+      input size wiww be powew(2,input_size_bits). rawr x3
+      n-nyote that t-twmw.wimit_bits twuncates any featuwe keys that
+      exceed the i-input size. (///ˬ///✿)
     mask_indices:
-      If mask indices is False; only the shape is changed. Defaults to True.
+      i-if mask indices i-is fawse; onwy t-the shape is changed. >w< defauwts to twue. o.O
   """
-  if isinstance(sparse_tf, twml.SparseTensor):
-    sparse_tf = sparse_tf.to_tf()
-  if not isinstance(sparse_tf, tf.SparseTensor):
-    raise TypeError('Input argument `sparse_tf` should either be of type'
-                    'twml.SparseTensor of tf.SparseTensor. Found type: {}'.
-                    format(type(sparse_tf)))
+  if isinstance(spawse_tf, (˘ω˘) twmw.spawsetensow):
+    spawse_tf = s-spawse_tf.to_tf()
+  if nyot isinstance(spawse_tf, rawr t-tf.spawsetensow):
+    waise typeewwow('input awgument `spawse_tf` shouwd eithew b-be of type'
+                    'twmw.spawsetensow of tf.spawsetensow. f-found type: {}'. mya
+                    fowmat(type(spawse_tf)))
   if mask_indices:
-    indices = twml.limit_bits(sparse_tf.indices, input_size_bits)
-  else:
-    indices = sparse_tf.indices
-  dense_shape = tf.stack([sparse_tf.dense_shape[0], 1 << input_size_bits])
-  return tf.SparseTensor(indices=indices, values=sparse_tf.values,
-                         dense_shape=dense_shape)
+    indices = t-twmw.wimit_bits(spawse_tf.indices, òωó i-input_size_bits)
+  ewse:
+    i-indices = s-spawse_tf.indices
+  d-dense_shape = tf.stack([spawse_tf.dense_shape[0], nyaa~~ 1 << i-input_size_bits])
+  w-wetuwn tf.spawsetensow(indices=indices, vawues=spawse_tf.vawues, òωó
+                         d-dense_shape=dense_shape)
 
 
-def create_module_spec(mlp_fn, mode, params, drop_collections=None):
+def cweate_moduwe_spec(mwp_fn, mya mode, ^^ pawams, d-dwop_cowwections=none):
   """
-  Creates a standard tags_and_args which should be passed to the create_module_spec
-  spec = hub.create_module_spec(mlp_fn, tags_and_args=tags_and_args).
+  cweates a standawd t-tags_and_awgs w-which shouwd be passed to the c-cweate_moduwe_spec
+  s-spec = hub.cweate_moduwe_spec(mwp_fn, tags_and_awgs=tags_and_awgs). ^•ﻌ•^
 
-  Args:
-    module_fn:
-      a function to build a graph for the Module.
-    mode:
-      mode in which the Estimator is run
-    params:
-      parameters passed to the Estimator
+  awgs:
+    moduwe_fn:
+      a function t-to buiwd a g-gwaph fow the moduwe. -.-
+    m-mode:
+      m-mode in which the estimatow is wun
+    pawams:
+      pawametews p-passed to the estimatow
   """
-  import tensorflow_hub as hub # noqa: F402
-  tags_and_args = [(set(), {"params": params, "mode": mode}),  # serving graph
-                   ({"train"}, {"params": params, "mode": mode})  # training graph
+  impowt tensowfwow_hub a-as hub # nyoqa: f402
+  tags_and_awgs = [(set(), UwU {"pawams": p-pawams, (˘ω˘) "mode": mode}), UwU  # sewving gwaph
+                   ({"twain"}, rawr {"pawams": pawams, :3 "mode": m-mode})  # twaining gwaph
                    ]
-  spec = hub.create_module_spec(mlp_fn, tags_and_args=tags_and_args, drop_collections=drop_collections)
-  return spec
+  s-spec = h-hub.cweate_moduwe_spec(mwp_fn, nyaa~~ t-tags_and_awgs=tags_and_awgs, rawr dwop_cowwections=dwop_cowwections)
+  w-wetuwn spec
 
 
-def change_name_scope_from_dir(init_scope_name, final_scope_name, save_dir):
+d-def change_name_scope_fwom_diw(init_scope_name, (ˆ ﻌ ˆ)♡ finaw_scope_name, (ꈍᴗꈍ) s-save_diw):
   """
-  Changes the name of the saved scope to the desired name and saves it
-  to the same save_dir.
+  c-changes the n-nyame of the saved s-scope to the desiwed nyame and s-saves it
+  to t-the same save_diw. (˘ω˘)
 
-  Args:
+  a-awgs:
     init_scope_name:
-      initial scope name
-    final_scope_name:
-      desired (final) scope name
-    save_dir:
-      directory which the scopes are saved
+      i-initiaw scope nyame
+    finaw_scope_name:
+      desiwed (finaw) scope nyame
+    save_diw:
+      d-diwectowy w-which the scopes awe saved
 
-  In the follwing section we:
-    - Read all the variables from the latest checkpoint.
-    - Make a copy of the variables with new name scope.
-    - Store both sets of variables into the latest checkpoint.
-  This essentially doubles up the size of the checkpoint.
-  But when a job is restarted after this part is done, the checkpoint size doubles again.
-  To avoid doing this, we create a copy in backup if a backup isn't found.
-  This allows us always read (from backup) and write same sized checkpoint files.
+  i-in the fowwwing section we:
+    - wead aww the vawiabwes f-fwom the w-watest checkpoint. (U ﹏ U)
+    - m-make a-a copy of the vawiabwes with nyew n-nyame scope. >w<
+    - stowe both sets of vawiabwes i-into the watest c-checkpoint. UwU
+  this essentiawwy doubwes up the size of the checkpoint. (ˆ ﻌ ˆ)♡
+  b-but when a job is westawted a-aftew this pawt is done, nyaa~~ the checkpoint size d-doubwes again. 🥺
+  to avoid doing t-this, >_< we cweate a copy in backup if a backup i-isn't found. òωó
+  this awwows us awways w-wead (fwom backup) and wwite s-same sized checkpoint f-fiwes. ʘwʘ
   """
 
-  # Create a backup_checkpoints dir
-  backup_dir = os.path.join(save_dir, "change_name_scope_backups")
-  tf.io.gfile.makedirs(backup_dir)
+  # cweate a backup_checkpoints d-diw
+  backup_diw = os.path.join(save_diw, mya "change_name_scope_backups")
+  tf.io.gfiwe.makediws(backup_diw)
 
-  latest_checkpoint = tf.train.latest_checkpoint(save_dir)
+  watest_checkpoint = t-tf.twain.watest_checkpoint(save_diw)
 
-  if latest_checkpoint is None:
-    raise OSError("No checkpoints found in save_dir: %s" % save_dir)
+  if w-watest_checkpoint i-is nyone:
+    waise osewwow("no checkpoints found in save_diw: %s" % save_diw)
 
-  latest_backup_checkpoint = tf.train.latest_checkpoint(backup_dir)
+  watest_backup_checkpoint = t-tf.twain.watest_checkpoint(backup_diw)
 
-  if (latest_backup_checkpoint is None or
-      (os.path.basename(latest_checkpoint) !=
-       os.path.basename(latest_backup_checkpoint))):
-    backup_checkpoint(latest_checkpoint, backup_dir, empty_backup=False)
+  if (watest_backup_checkpoint is nyone o-ow
+      (os.path.basename(watest_checkpoint) !=
+       o-os.path.basename(watest_backup_checkpoint))):
+    backup_checkpoint(watest_checkpoint, σωσ backup_diw, OwO empty_backup=fawse)
 
-  variables = tf.train.list_variables(backup_dir)
-  with tf.Graph().as_default(), tf.Session().as_default() as sess:
-    new_variables = []
-    for name, _ in variables:
-      var = tf.train.load_variable(backup_dir, name)
-      # Append both the rename and the original variable
-      new_variables.append(
-        tf.Variable(var, name=name.replace(init_scope_name, final_scope_name)))
-      new_variables.append(tf.Variable(var, name=name))
-    # Save this to the checkpoint in the save_dir
-    saver = tf.train.Saver(new_variables)
-    sess.run(tf.global_variables_initializer())
-    saver.save(sess, latest_checkpoint)  # pylint: disable=no-member
+  v-vawiabwes = tf.twain.wist_vawiabwes(backup_diw)
+  w-with tf.gwaph().as_defauwt(), (✿oωo) tf.session().as_defauwt() as sess:
+    nyew_vawiabwes = []
+    f-fow nyame, ʘwʘ _ in vawiabwes:
+      v-vaw = tf.twain.woad_vawiabwe(backup_diw, mya nyame)
+      # append b-both the wename a-and the owiginaw vawiabwe
+      n-nyew_vawiabwes.append(
+        t-tf.vawiabwe(vaw, nyame=name.wepwace(init_scope_name, -.- f-finaw_scope_name)))
+      nyew_vawiabwes.append(tf.vawiabwe(vaw, -.- n-nyame=name))
+    # s-save this t-to the checkpoint i-in the save_diw
+    s-savew = tf.twain.savew(new_vawiabwes)
+    s-sess.wun(tf.gwobaw_vawiabwes_initiawizew())
+    s-savew.save(sess, ^^;; watest_checkpoint)  # pywint: d-disabwe=no-membew
 
 
-def hub_import(input, module, module_name, trainable=False):
+def hub_impowt(input, (ꈍᴗꈍ) m-moduwe, rawr moduwe_name, ^^ twainabwe=fawse):
   """
-  Loads exported hub module.
+  woads expowted hub moduwe. nyaa~~
 
-  Args:
+  awgs:
     input:
-      input to hub module
-    module:
-      module path
-    module_name:
-      signature of the exported hub module
+      i-input to hub moduwe
+    moduwe:
+      m-moduwe path
+    moduwe_name:
+      s-signatuwe o-of the expowted hub moduwe
   """
-  import tensorflow_hub as hub # noqa: F402
-  hub_module = hub.Module(module, trainable=trainable)
-  output = hub_module(input, signature=module_name)
-  return output
+  i-impowt tensowfwow_hub as h-hub # nyoqa: f402
+  hub_moduwe = h-hub.moduwe(moduwe, (⑅˘꒳˘) twainabwe=twainabwe)
+  output = hub_moduwe(input, (U ᵕ U❁) signatuwe=moduwe_name)
+  wetuwn output
 
 
-def _extract_hash_space_bits(feature_config):
+def _extwact_hash_space_bits(featuwe_config):
   """
-  Extract Sparse Shapes for contrib.FeatureConfig.
-  Arguments:
-    feature_config:
-      Feature Configuration of the type contrib.FeatureConfig
-  Returns:
-    Dictionary of tensor names and hash space bits.
+  extwact spawse s-shapes fow contwib.featuweconfig. (ꈍᴗꈍ)
+  awguments:
+    featuwe_config:
+      f-featuwe configuwation o-of the type contwib.featuweconfig
+  wetuwns:
+    dictionawy of tensow nyames and hash space bits. (✿oωo)
   """
-  if not isinstance(feature_config, twml.contrib.feature_config.FeatureConfig):
-    fc_type = type(feature_config)
-    raise TypeError(f"Feature config must be of type contrib.FeatureConfig: {fc_type}")
-  sparse_shapes_dict = {}
-  for config in feature_config.sparse_extraction_configs:
-    sparse_shapes_dict[config.output_name] = config.hash_space_bits
-  return sparse_shapes_dict
+  if nyot isinstance(featuwe_config, UwU twmw.contwib.featuwe_config.featuweconfig):
+    fc_type = type(featuwe_config)
+    w-waise typeewwow(f"featuwe c-config m-must be of type contwib.featuweconfig: {fc_type}")
+  s-spawse_shapes_dict = {}
+  f-fow config in f-featuwe_config.spawse_extwaction_configs:
+    spawse_shapes_dict[config.output_name] = config.hash_space_bits
+  wetuwn spawse_shapes_dict
 
 
-def fix_shape_sparse(features, feature_config):
+d-def f-fix_shape_spawse(featuwes, ^^ featuwe_config):
   """
-  Modifies the shape of features which are extracted using the hashing trick.
-  Features itself is changed by this function.
-  Arguments:
-    features:
-      Feature dictionary extracted by the feature config
-    feature_config:
-      Feature Configuration of the type contrib.FeatureConfig
+  m-modifies the s-shape of featuwes w-which awe extwacted u-using the h-hashing twick. :3
+  featuwes itsewf i-is changed by t-this function. ( ͡o ω ͡o )
+  a-awguments:
+    f-featuwes:
+      f-featuwe dictionawy e-extwacted by t-the featuwe config
+    f-featuwe_config:
+      f-featuwe c-configuwation of the type contwib.featuweconfig
   """
-  if not isinstance(feature_config, twml.contrib.feature_config.FeatureConfig):
-    raise TypeError(f"Feature config must be of type contrib.FeatureConfig, currently of {type(feature_config)}")
-  sparse_shape = _extract_hash_space_bits(feature_config)
-  if not isinstance(features, dict):
-    raise TypeError(f"features must be of dictionary type, it is of {type(features)} type")
-  for key in set(features) & set(sparse_shape):
-    features[key] = limit_sparse_tensor_size(features[key], sparse_shape[key], mask_indices=False)
+  if n-nyot isinstance(featuwe_config, ( ͡o ω ͡o ) twmw.contwib.featuwe_config.featuweconfig):
+    w-waise typeewwow(f"featuwe config must be of type c-contwib.featuweconfig, (U ﹏ U) c-cuwwentwy o-of {type(featuwe_config)}")
+  spawse_shape = _extwact_hash_space_bits(featuwe_config)
+  i-if nyot i-isinstance(featuwes, -.- dict):
+    waise typeewwow(f"featuwes must be of dictionawy type, 😳😳😳 it is o-of {type(featuwes)} type")
+  fow key in set(featuwes) & set(spawse_shape):
+    featuwes[key] = wimit_spawse_tensow_size(featuwes[key], UwU s-spawse_shape[key], m-mask_indices=fawse)
 
 
-def touch_file_in_dir(directory, filename):
+def touch_fiwe_in_diw(diwectowy, >w< f-fiwename):
   """
-  Creates a file named filename in directory.
+  c-cweates a fiwe n-nyamed fiwename i-in diwectowy. mya
 
-  Arguments:
-    filename: (str)
-    directory: (str)
+  a-awguments:
+    f-fiwename: (stw)
+    d-diwectowy: (stw)
   """
-  file_path = os.path.join(directory, filename)
-  with tf.io.gfile.GFile(file_path, "w") as f:
-    f.write("")
+  fiwe_path = os.path.join(diwectowy, :3 fiwename)
+  w-with tf.io.gfiwe.gfiwe(fiwe_path, (ˆ ﻌ ˆ)♡ "w") as f:
+    f-f.wwite("")
 
 
-def file_exist_in_dir(directory: str, filename: str) -> bool:
-  file_path = os.path.join(directory, filename)
-  return tf.io.gfile.exists(file_path)
+def fiwe_exist_in_diw(diwectowy: s-stw, (U ﹏ U) fiwename: stw) -> b-boow:
+  fiwe_path = os.path.join(diwectowy, ʘwʘ f-fiwename)
+  wetuwn tf.io.gfiwe.exists(fiwe_path)
 
 
-def copy_to_local(remote, local, filename, overwrite=False):
-  """Function to file from remote directory to local directory."""
-  assert "hdfs://" not in local
-  tf.io.gfile.makedirs(local)
-  return tf.io.gfile.copy(
-    os.path.join(remote, filename),
-    os.path.join(local, filename),
-    overwrite=overwrite,
+def copy_to_wocaw(wemote, w-wocaw, rawr fiwename, (ꈍᴗꈍ) o-ovewwwite=fawse):
+  """function t-to fiwe fwom wemote d-diwectowy to wocaw diwectowy."""
+  a-assewt "hdfs://" n-nyot in w-wocaw
+  tf.io.gfiwe.makediws(wocaw)
+  wetuwn tf.io.gfiwe.copy(
+    o-os.path.join(wemote, ( ͡o ω ͡o ) fiwename), 😳😳😳
+    os.path.join(wocaw, òωó fiwename), mya
+    ovewwwite=ovewwwite,
   )
 
 
-def copy_recursive(src, dst, overwrite=False):
+def copy_wecuwsive(swc, rawr x3 dst, XD ovewwwite=fawse):
   """
-  Function to copy a directory recursively.
+  function t-to copy a d-diwectowy wecuwsivewy. (ˆ ﻌ ˆ)♡
 
-  Arguments:
-    src: Source directory.
-    dst: Destination directory.
-    overwrite: Specifies if files are to be overwritten if they exist.
+  awguments:
+    swc: souwce diwectowy. >w<
+    dst: destination d-diwectowy. (ꈍᴗꈍ)
+    o-ovewwwite: specifies if fiwes awe to be ovewwwitten if they e-exist. (U ﹏ U)
   """
 
-  src = src.rstrip("/")
-  dst = dst.rstrip("/")
+  s-swc = swc.wstwip("/")
+  dst = dst.wstwip("/")
 
-  for dirname, subdirs, files in tf.io.gfile.walk(src):
-    dst_dirname = dirname.replace(src, dst)
-    tf.io.gfile.makedirs(dst_dirname)
+  f-fow diwname, >_< subdiws, >_< f-fiwes in tf.io.gfiwe.wawk(swc):
+    d-dst_diwname = diwname.wepwace(swc, d-dst)
+    t-tf.io.gfiwe.makediws(dst_diwname)
 
-    for f in files:
-      src_f = os.path.join(dirname, f)
-      dst_f = os.path.join(dst_dirname, f)
+    fow f in fiwes:
+      swc_f = os.path.join(diwname, -.- f-f)
+      dst_f = o-os.path.join(dst_diwname, òωó f-f)
 
-      tf.logging.info(f"Copying {src_f} to {dst_f}")
-      tf.io.gfile.copy(src_f, dst_f, overwrite=overwrite)
+      t-tf.wogging.info(f"copying {swc_f} to {dst_f}")
+      t-tf.io.gfiwe.copy(swc_f, o.O d-dst_f, ovewwwite=ovewwwite)
 
 
-def delete_file_or_dir(path):
+d-def dewete_fiwe_ow_diw(path):
   """
-  Delete the file or directory given by `path`
-  Arguments:
-    path:
-      string indicating path of file or directory to remove
+  d-dewete the fiwe ow diwectowy given by `path`
+  a-awguments:
+    p-path:
+      stwing indicating path of fiwe ow diwectowy to wemove
   """
-  if tf.io.gfile.isdir(path):
-    tf.io.gfile.rmtree(path)
-  else:
-    tf.io.gfile.remove(path)
+  i-if tf.io.gfiwe.isdiw(path):
+    t-tf.io.gfiwe.wmtwee(path)
+  ewse:
+    t-tf.io.gfiwe.wemove(path)
 
 
-def get_distributed_training_job_path():
+def get_distwibuted_twaining_job_path():
   """
-  Function to get distributed training job path.
-  Note: distributed training has three jobs, one parameter server job,
-  one worker job and one evaluator job. All of these three jobs' name
-  share a common base job name.
+  function to get distwibuted twaining j-job path. σωσ
+  n-nyote: distwibuted t-twaining has thwee jobs, σωσ one p-pawametew sewvew j-job, mya
+  one wowkew job and one evawuatow job. o.O a-aww of these thwee j-jobs' nyame
+  s-shawe a common b-base job nyame. XD
   """
-  job_path = AuroraPath(dc=os.environ.get("TWML_JOB_CLUSTER"),
-    role=os.environ.get("TWML_JOB_ROLE"),
-    env=os.environ.get("TWML_JOB_ENV"),
-    job_name=os.environ.get("TWML_DISTRIBUTED_BASE_JOBNAME"))
-  return job_path
+  j-job_path = a-auwowapath(dc=os.enviwon.get("twmw_job_cwustew"), XD
+    wowe=os.enviwon.get("twmw_job_wowe"), (✿oωo)
+    env=os.enviwon.get("twmw_job_env"), -.-
+    job_name=os.enviwon.get("twmw_distwibuted_base_jobname"))
+  wetuwn job_path
 
-def do_every_n_steps(action, num_steps):
+def do_evewy_n_steps(action, (ꈍᴗꈍ) n-nyum_steps):
   """
-  Execute a sequence of TensorFlow operations only once in a while.
-  Specifically, `action` is performed if `global_step` is a
-    multiple of `num_steps`
+  exekawaii~ a-a sequence o-of tensowfwow opewations onwy once in a whiwe. ( ͡o ω ͡o )
+  specificawwy, (///ˬ///✿) `action` i-is pewfowmed i-if `gwobaw_step` is a
+    muwtipwe o-of `num_steps`
 
-  Args:
-    action: callable to be performed at regular intervals. This callable
-      must return a TF op with no output tensors.
-    num_steps: period of performing the action, as measured
-      in number of training steps
+  awgs:
+    a-action: cawwabwe to be pewfowmed at weguwaw intewvaws. 🥺 this c-cawwabwe
+      must wetuwn a tf op with no output tensows. (ˆ ﻌ ˆ)♡
+    nyum_steps: pewiod o-of pewfowming t-the action, ^•ﻌ•^ as measuwed
+      i-in n-nyumbew of twaining steps
 
-  Returns:
-    A TensorFlow op with no output tensors, like a tf.print() or tf.no_op().
-    You must use tf.control_dependencies() to execute the op.
+  wetuwns:
+    a tensowfwow o-op with nyo output tensows, rawr x3 w-wike a tf.pwint() ow tf.no_op(). (U ﹏ U)
+    you must u-use tf.contwow_dependencies() t-to exekawaii~ the o-op. OwO
 
   """
-  global_step = tf.train.get_or_create_global_step()
-  condition = tf.math.equal(tf.math.floormod(global_step, num_steps), 0)
-  return tf.cond(condition, action, lambda: tf.no_op())
+  gwobaw_step = tf.twain.get_ow_cweate_gwobaw_step()
+  condition = t-tf.math.equaw(tf.math.fwoowmod(gwobaw_step, (✿oωo) nyum_steps), (⑅˘꒳˘) 0)
+  wetuwn tf.cond(condition, UwU action, wambda: tf.no_op())

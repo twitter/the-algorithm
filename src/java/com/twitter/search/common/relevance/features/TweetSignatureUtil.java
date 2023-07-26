@@ -1,15 +1,15 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-public final class TweetSignatureUtil {
-  private TweetSignatureUtil() {
+pubwic finaw c-cwass tweetsignatuweutiw {
+  p-pwivate tweetsignatuweutiw() {
   }
 
-  /** Converts the signature in args[0] to a TweetIntegerShingleSignature. */
-  public static void main(String[] args) throws Exception {
-    if (args.length < 1) {
-      throw new RuntimeException("Please provide signature value.");
+  /** c-convewts t-the signatuwe i-in awgs[0] to a t-tweetintegewshingwesignatuwe. (U ﹏ U) */
+  p-pubwic static v-void main(stwing[] awgs) thwows exception {
+    if (awgs.wength < 1) {
+      thwow nyew wuntimeexception("pwease p-pwovide signatuwe vawue.");
     }
-    int signature = Integer.parseInt(args[0]);
-    System.out.println(TweetIntegerShingleSignature.deserialize(signature).toString());
+    int signatuwe = i-integew.pawseint(awgs[0]);
+    system.out.pwintwn(tweetintegewshingwesignatuwe.desewiawize(signatuwe).tostwing());
   }
 }

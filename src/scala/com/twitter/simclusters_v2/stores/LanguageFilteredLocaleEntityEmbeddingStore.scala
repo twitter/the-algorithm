@@ -1,95 +1,95 @@
-package com.twitter.simclusters_v2.stores
+package com.twittew.simcwustews_v2.stowes
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.ClusterDetails
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.simcwustews_v2.common.cwustewid
+i-impowt c-com.twittew.simcwustews_v2.common.simcwustewsembedding
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.cwustewdetaiws
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
 
 /**
- * Transfer a Entity SimClustersEmbedding to a language filtered embedding.
- * The new embedding only contains clusters whose main language is the same as the language field in
- * the SimClustersEmbeddingId.
+ * t-twansfew a entity simcwustewsembedding to a wanguage f-fiwtewed embedding.
+ * the n-nyew embedding onwy contains cwustews whose main wanguage is t-the same as the wanguage fiewd in
+ * t-the simcwustewsembeddingid. σωσ
  *
- * This store is special designed for Topic Tweet and Topic Follow Prompt.
- * Only support new Ids whose internalId is LocaleEntityId.
+ * t-this stowe is speciaw designed fow topic tweet and topic fowwow pwompt. rawr x3
+ * o-onwy suppowt nyew ids whose intewnawid is wocaweentityid. OwO
  */
-@deprecated
-case class LanguageFilteredLocaleEntityEmbeddingStore(
-  underlyingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-  clusterDetailsStore: ReadableStore[(ModelVersion, ClusterId), ClusterDetails],
-  composeKeyMapping: SimClustersEmbeddingId => SimClustersEmbeddingId)
-    extends ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] {
+@depwecated
+case cwass wanguagefiwtewedwocaweentityembeddingstowe(
+  u-undewwyingstowe: weadabwestowe[simcwustewsembeddingid, /(^•ω•^) s-simcwustewsembedding], 😳😳😳
+  c-cwustewdetaiwsstowe: w-weadabwestowe[(modewvewsion, ( ͡o ω ͡o ) c-cwustewid), >_< cwustewdetaiws], >w<
+  composekeymapping: s-simcwustewsembeddingid => simcwustewsembeddingid)
+    extends weadabwestowe[simcwustewsembeddingid, rawr s-simcwustewsembedding] {
 
-  import LanguageFilteredLocaleEntityEmbeddingStore._
+  impowt wanguagefiwtewedwocaweentityembeddingstowe._
 
-  override def get(k: SimClustersEmbeddingId): Future[Option[SimClustersEmbedding]] = {
-    for {
-      maybeEmbedding <- underlyingStore.get(composeKeyMapping(k))
-      maybeFilteredEmbedding <- maybeEmbedding match {
-        case Some(embedding) =>
-          embeddingsLanguageFilter(k, embedding).map(Some(_))
-        case None =>
-          Future.None
+  ovewwide def get(k: simcwustewsembeddingid): futuwe[option[simcwustewsembedding]] = {
+    fow {
+      m-maybeembedding <- undewwyingstowe.get(composekeymapping(k))
+      m-maybefiwtewedembedding <- m-maybeembedding m-match {
+        case some(embedding) =>
+          embeddingswanguagefiwtew(k, 😳 embedding).map(some(_))
+        c-case n-nyone =>
+          futuwe.none
       }
-    } yield maybeFilteredEmbedding
+    } y-yiewd maybefiwtewedembedding
   }
 
-  private def embeddingsLanguageFilter(
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    simClustersEmbedding: SimClustersEmbedding
-  ): Future[SimClustersEmbedding] = {
-    val language = getLanguage(sourceEmbeddingId)
-    val modelVersion = sourceEmbeddingId.modelVersion
+  p-pwivate def embeddingswanguagefiwtew(
+    s-souwceembeddingid: simcwustewsembeddingid, >w<
+    s-simcwustewsembedding: simcwustewsembedding
+  ): futuwe[simcwustewsembedding] = {
+    v-vaw wanguage = getwanguage(souwceembeddingid)
+    v-vaw modewvewsion = souwceembeddingid.modewvewsion
 
-    val clusterDetailKeys = simClustersEmbedding.sortedClusterIds.map { clusterId =>
-      (modelVersion, clusterId)
-    }.toSet
+    v-vaw cwustewdetaiwkeys = s-simcwustewsembedding.sowtedcwustewids.map { cwustewid =>
+      (modewvewsion, (⑅˘꒳˘) cwustewid)
+    }.toset
 
-    Future
-      .collect {
-        clusterDetailsStore.multiGet(clusterDetailKeys)
-      }.map { clusterDetailsMap =>
-        simClustersEmbedding.embedding.filter {
-          case (clusterId, _) =>
-            isDominantLanguage(
-              language,
-              clusterDetailsMap.getOrElse((modelVersion, clusterId), None))
+    futuwe
+      .cowwect {
+        cwustewdetaiwsstowe.muwtiget(cwustewdetaiwkeys)
+      }.map { cwustewdetaiwsmap =>
+        simcwustewsembedding.embedding.fiwtew {
+          case (cwustewid, OwO _) =>
+            i-isdominantwanguage(
+              wanguage, (ꈍᴗꈍ)
+              c-cwustewdetaiwsmap.getowewse((modewvewsion, 😳 cwustewid), 😳😳😳 nyone))
         }
-      }.map(SimClustersEmbedding(_))
+      }.map(simcwustewsembedding(_))
   }
 
-  private def isDominantLanguage(
-    requestLang: String,
-    clusterDetails: Option[ClusterDetails]
-  ): Boolean =
-    clusterDetails match {
-      case Some(details) =>
-        val dominantLanguage =
-          details.languageToFractionDeviceLanguage.map { langMap =>
-            langMap.maxBy {
-              case (_, score) => score
+  p-pwivate d-def isdominantwanguage(
+    w-wequestwang: stwing, mya
+    cwustewdetaiws: option[cwustewdetaiws]
+  ): boowean =
+    c-cwustewdetaiws match {
+      case some(detaiws) =>
+        vaw dominantwanguage =
+          detaiws.wanguagetofwactiondevicewanguage.map { w-wangmap =>
+            wangmap.maxby {
+              c-case (_, mya scowe) => s-scowe
             }._1
           }
 
-        dominantLanguage.exists(_.equalsIgnoreCase(requestLang))
-      case _ => true
+        d-dominantwanguage.exists(_.equawsignowecase(wequestwang))
+      case _ => twue
     }
 
 }
 
-object LanguageFilteredLocaleEntityEmbeddingStore {
+o-object w-wanguagefiwtewedwocaweentityembeddingstowe {
 
-  def getLanguage(simClustersEmbeddingId: SimClustersEmbeddingId): String = {
-    simClustersEmbeddingId match {
-      case SimClustersEmbeddingId(_, _, InternalId.LocaleEntityId(localeEntityId)) =>
-        localeEntityId.language
-      case _ =>
-        throw new IllegalArgumentException(
-          s"The Id $simClustersEmbeddingId doesn't contain Locale info")
+  d-def getwanguage(simcwustewsembeddingid: s-simcwustewsembeddingid): stwing = {
+    simcwustewsembeddingid m-match {
+      c-case simcwustewsembeddingid(_, (⑅˘꒳˘) _, i-intewnawid.wocaweentityid(wocaweentityid)) =>
+        w-wocaweentityid.wanguage
+      c-case _ =>
+        thwow nyew iwwegawawgumentexception(
+          s"the i-id $simcwustewsembeddingid doesn't contain wocawe info")
     }
   }
 

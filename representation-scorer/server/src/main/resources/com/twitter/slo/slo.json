@@ -1,55 +1,55 @@
 {
-  "servers": [
+  "sewvews": [
     {
-      "name": "strato",
-      "indicators": [
+      "name": "stwato", rawr x3
+      "indicatows": [
         {
-          "id": "success_rate_3m",
-          "indicator_type": "SuccessRateIndicator",
-          "duration": 3,
-          "duration_unit": "MINUTES"
-        }, {
-          "id": "latency_3m_p99",
-          "indicator_type": "LatencyIndicator",
-          "duration": 3,
-          "duration_unit": "MINUTES",
-          "percentile": 0.99
+          "id": "success_wate_3m", XD
+          "indicatow_type": "successwateindicatow", >_<
+          "duwation": 3, (ꈍᴗꈍ)
+          "duwation_unit": "minutes"
+        }, ^•ﻌ•^ {
+          "id": "watency_3m_p99", OwO
+          "indicatow_type": "watencyindicatow", 🥺
+          "duwation": 3, òωó
+          "duwation_unit": "minutes", o.O
+          "pewcentiwe": 0.99
         }
-      ],
+      ], (U ᵕ U❁)
       "objectives": [
         {
-          "indicator": "success_rate_3m",
-          "objective_type": "SuccessRateObjective",
-          "operator": ">=",
-          "threshold": 0.995
-        },
+          "indicatow": "success_wate_3m", (⑅˘꒳˘)
+          "objective_type": "successwateobjective", ( ͡o ω ͡o )
+          "opewatow": ">=", UwU
+          "thweshowd": 0.995
+        }, rawr x3
         {
-          "indicator": "latency_3m_p99",
-          "objective_type": "LatencyObjective",
-          "operator": "<=",
-          "threshold": 50
+          "indicatow": "watency_3m_p99", rawr
+          "objective_type": "watencyobjective", σωσ
+          "opewatow": "<=", σωσ
+          "thweshowd": 50
         }
-      ],
-      "long_term_objectives": [
+      ], >_<
+      "wong_tewm_objectives": [
         {
-          "id": "success_rate_28_days",
-          "objective_type": "SuccessRateObjective",
-          "operator": ">=",
-          "threshold": 0.993,
-          "duration": 28,
-          "duration_unit": "DAYS"
-        },
+          "id": "success_wate_28_days", :3
+          "objective_type": "successwateobjective", (U ﹏ U)
+          "opewatow": ">=", -.-
+          "thweshowd": 0.993, (ˆ ﻌ ˆ)♡
+          "duwation": 28, (⑅˘꒳˘)
+          "duwation_unit": "days"
+        }, (U ᵕ U❁)
         {
-          "id": "latency_p99_28_days",
-          "objective_type": "LatencyObjective",
-          "operator": "<=",
-          "threshold": 60,
-          "duration": 28,
-          "duration_unit": "DAYS",
-          "percentile": 0.99
+          "id": "watency_p99_28_days", -.-
+          "objective_type": "watencyobjective", ^^;;
+          "opewatow": "<=", >_<
+          "thweshowd": 60, mya
+          "duwation": 28, mya
+          "duwation_unit": "days", 😳
+          "pewcentiwe": 0.99
         }
       ]
     }
-  ],
-  "@version": 1
+  ], XD
+  "@vewsion": 1
 }

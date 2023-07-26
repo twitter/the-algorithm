@@ -1,144 +1,144 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.tweetypie.store.TweetStoreEvent.RetryStrategy
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.finagwe.twacing.twace
+i-impowt com.twittew.tweetypie.stowe.tweetstoweevent.wetwystwategy
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object TweetStoreEvent {
-
-  /**
-   * Parent trait for indicating what type of retry strategy to apply to event handlers
-   * for the corresponding event type.  Different classes of events use different strategies.
-   */
-  sealed trait RetryStrategy
+o-object tweetstoweevent {
 
   /**
-   * Indicates that the event type doesn't support retries.
+   * p-pawent twait f-fow indicating n-nyani type of wetwy stwategy to appwy to event handwews
+   * fow the cowwesponding e-event type. -.-  diffewent cwasses of events use d-diffewent stwategies. :3
    */
-  case object NoRetry extends RetryStrategy
+  seawed twait wetwystwategy
 
   /**
-   * Indicates that if an event handler encounters a failure, it should enqueue a
-   * retry to be performed asynchronously.
+   * i-indicates that the event type doesn't suppowt wetwies. ʘwʘ
    */
-  case class EnqueueAsyncRetry(enqueueRetry: (ThriftTweetService, AsyncWriteAction) => Future[Unit])
-      extends RetryStrategy
+  c-case object nyowetwy extends w-wetwystwategy
 
   /**
-   * Indicates that if an event handler encounters a failure, it should retry
-   * the event locally some number of times, before eventually given up and scribing
-   * the failure.
+   * i-indicates that if an event handwew encountews a faiwuwe, 🥺 it shouwd e-enqueue a
+   * wetwy to be pewfowmed asynchwonouswy. >_<
    */
-  case class LocalRetryThenScribeFailure(toFailedAsyncWrite: AsyncWriteAction => FailedAsyncWrite)
-      extends RetryStrategy
+  case cwass enqueueasyncwetwy(enqueuewetwy: (thwifttweetsewvice, ʘwʘ a-asyncwwiteaction) => futuwe[unit])
+      e-extends wetwystwategy
 
   /**
-   * Indicates that if an event handler encounters a failure, it should retry
-   * the event locally some number of times.
+   * i-indicates t-that if an event h-handwew encountews a faiwuwe, (˘ω˘) it shouwd wetwy
+   * t-the event wocawwy some nyumbew of times, (✿oωo) b-befowe eventuawwy given up and scwibing
+   * the faiwuwe. (///ˬ///✿)
    */
-  case object ReplicatedEventLocalRetry extends RetryStrategy
+  case cwass wocawwetwythenscwibefaiwuwe(tofaiwedasyncwwite: asyncwwiteaction => f-faiwedasyncwwite)
+      extends w-wetwystwategy
+
+  /**
+   * i-indicates t-that if an event handwew encountews a faiwuwe, rawr x3 it shouwd wetwy
+   * t-the event w-wocawwy some nyumbew of times. -.-
+   */
+  c-case object w-wepwicatedeventwocawwetwy extends wetwystwategy
 }
 
 /**
- * The abstract parent class for all TweetStoreEvent types.
+ * t-the abstwact pawent cwass fow aww t-tweetstoweevent types. ^^
  */
-sealed trait TweetStoreEvent {
-  val name: String
+seawed twait tweetstoweevent {
+  v-vaw nyame: stwing
 
-  val traceId: Long = Trace.id.traceId.toLong
+  v-vaw twaceid: wong = twace.id.twaceid.towong
 
   /**
-   * Indicates a particular retry behavior that should be applied to event handlers for
-   * the corresponding event type.  The specifics of the strategy might depend upon the
-   * specific TweetStore implementation.
+   * i-indicates a-a pawticuwaw wetwy behaviow that shouwd be appwied to event handwews fow
+   * the cowwesponding event type. (⑅˘꒳˘)  t-the specifics o-of the stwategy might depend upon t-the
+   * specific t-tweetstowe impwementation. nyaa~~
    */
-  def retryStrategy: RetryStrategy
+  d-def wetwystwategy: wetwystwategy
 }
 
-abstract class SyncTweetStoreEvent(val name: String) extends TweetStoreEvent {
-  override def retryStrategy: RetryStrategy = TweetStoreEvent.NoRetry
+abstwact cwass synctweetstoweevent(vaw n-nyame: stwing) extends tweetstoweevent {
+  ovewwide def wetwystwategy: wetwystwategy = t-tweetstoweevent.nowetwy
 }
 
-abstract class AsyncTweetStoreEvent(val name: String) extends TweetStoreEvent {
-  def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit]
+abstwact cwass a-asynctweetstoweevent(vaw n-nyame: s-stwing) extends tweetstoweevent {
+  d-def enqueuewetwy(sewvice: t-thwifttweetsewvice, /(^•ω•^) a-action: asyncwwiteaction): f-futuwe[unit]
 
-  override def retryStrategy: RetryStrategy = TweetStoreEvent.EnqueueAsyncRetry(enqueueRetry)
+  ovewwide def wetwystwategy: wetwystwategy = t-tweetstoweevent.enqueueasyncwetwy(enqueuewetwy)
 }
 
-abstract class ReplicatedTweetStoreEvent(val name: String) extends TweetStoreEvent {
-  override def retryStrategy: RetryStrategy = TweetStoreEvent.ReplicatedEventLocalRetry
+abstwact c-cwass wepwicatedtweetstoweevent(vaw n-nyame: s-stwing) extends t-tweetstoweevent {
+  ovewwide def wetwystwategy: wetwystwategy = t-tweetstoweevent.wepwicatedeventwocawwetwy
 }
 
 /**
- * A trait for all TweetStoreEvents that become TweetEvents.
+ * a twait fow aww tweetstoweevents that become tweetevents. (U ﹏ U)
  */
-trait TweetStoreTweetEvent {
-  val timestamp: Time
+twait tweetstowetweetevent {
+  v-vaw timestamp: time
 
-  val optUser: Option[User]
+  vaw optusew: option[usew]
 
   /**
-   * Most TweetStoreTweetEvents map to a single TweetEvent, but some
-   * optionally map to an event and others map to multiple events, so
-   * this method needs to return a Seq of TweetEventData.
+   * most tweetstowetweetevents m-map t-to a singwe tweetevent, 😳😳😳 b-but some
+   * optionawwy m-map to an event and othews map t-to muwtipwe events, s-so
+   * this method nyeeds to wetuwn a seq of tweeteventdata.
    */
-  def toTweetEventData: Seq[TweetEventData]
+  def totweeteventdata: seq[tweeteventdata]
 }
 
 /**
- * The abstract parent class for an event that indicates a particular action
- * for a particular event that needs to be retried via the async-write-retrying mechanism.
+ * t-the abstwact pawent c-cwass fow an event that indicates a-a pawticuwaw a-action
+ * fow a pawticuwaw event that nyeeds to b-be wetwied via t-the async-wwite-wetwying mechanism. >w<
  */
-abstract class TweetStoreRetryEvent[E <: AsyncTweetStoreEvent] extends TweetStoreEvent {
-  override val name = "async_write_retry"
+a-abstwact c-cwass tweetstowewetwyevent[e <: asynctweetstoweevent] extends tweetstoweevent {
+  ovewwide vaw nyame = "async_wwite_wetwy"
 
-  def action: AsyncWriteAction
-  def event: E
+  def a-action: asyncwwiteaction
+  d-def e-event: e
 
-  def eventType: AsyncWriteEventType
+  def eventtype: asyncwwiteeventtype
 
-  def scribedTweetOnFailure: Option[Tweet]
+  d-def scwibedtweetonfaiwuwe: option[tweet]
 
-  override def retryStrategy: RetryStrategy =
-    TweetStoreEvent.LocalRetryThenScribeFailure(action =>
-      FailedAsyncWrite(eventType, action, scribedTweetOnFailure))
+  o-ovewwide def wetwystwategy: wetwystwategy =
+    t-tweetstoweevent.wocawwetwythenscwibefaiwuwe(action =>
+      faiwedasyncwwite(eventtype, XD action, scwibedtweetonfaiwuwe))
 }
 
 /**
- * Functions as a disjunction between an event type E and it's corresonding
- * retry event type TweetStoreRetryEvent[E]
+ * functions as a d-disjunction between a-an event type e and it's cowwesonding
+ * wetwy e-event type tweetstowewetwyevent[e]
  */
-case class TweetStoreEventOrRetry[E <: AsyncTweetStoreEvent](
-  event: E,
-  toRetry: Option[TweetStoreRetryEvent[E]]) {
-  def toInitial: Option[E] = if (retryAction.isDefined) None else Some(event)
-  def retryAction: Option[RetryStrategy] = toRetry.map(_.retryStrategy)
-  def hydrate(f: E => Future[E]): Future[TweetStoreEventOrRetry[E]] =
-    f(event).map(e => copy(event = e))
+c-case cwass tweetstoweeventowwetwy[e <: asynctweetstoweevent](
+  event: e-e, o.O
+  towetwy: option[tweetstowewetwyevent[e]]) {
+  def toinitiaw: option[e] = if (wetwyaction.isdefined) n-nyone ewse some(event)
+  def wetwyaction: o-option[wetwystwategy] = t-towetwy.map(_.wetwystwategy)
+  def hydwate(f: e => futuwe[e]): futuwe[tweetstoweeventowwetwy[e]] =
+    f-f(event).map(e => c-copy(event = e))
 }
 
-object TweetStoreEventOrRetry {
-  def apply[E <: AsyncTweetStoreEvent, R <: TweetStoreRetryEvent[E]](
-    event: E,
-    retryAction: Option[AsyncWriteAction],
-    toRetryEvent: (AsyncWriteAction, E) => R
-  ): TweetStoreEventOrRetry[E] =
-    TweetStoreEventOrRetry(event, retryAction.map(action => toRetryEvent(action, event)))
+object tweetstoweeventowwetwy {
+  def a-appwy[e <: asynctweetstoweevent, mya w <: tweetstowewetwyevent[e]](
+    e-event: e,
+    wetwyaction: option[asyncwwiteaction], 🥺
+    towetwyevent: (asyncwwiteaction, e) => w-w
+  ): tweetstoweeventowwetwy[e] =
+    tweetstoweeventowwetwy(event, ^^;; w-wetwyaction.map(action => t-towetwyevent(action, event)))
 
-  object First {
+  o-object fiwst {
 
-    /** matches against TweetStoreEventOrRetry instances for an initial event */
-    def unapply[E <: AsyncTweetStoreEvent](it: TweetStoreEventOrRetry[E]): Option[E] =
-      it.toInitial
+    /** matches a-against tweetstoweeventowwetwy i-instances fow a-an initiaw event */
+    def unappwy[e <: a-asynctweetstoweevent](it: t-tweetstoweeventowwetwy[e]): option[e] =
+      it.toinitiaw
   }
 
-  object Retry {
+  o-object wetwy {
 
-    /** matches against TweetStoreEventOrRetry instances for a retry event */
-    def unapply[E <: AsyncTweetStoreEvent](
-      it: TweetStoreEventOrRetry[E]
-    ): Option[TweetStoreRetryEvent[E]] =
-      it.toRetry
+    /** m-matches a-against tweetstoweeventowwetwy instances fow a wetwy event */
+    d-def unappwy[e <: asynctweetstoweevent](
+      i-it: tweetstoweeventowwetwy[e]
+    ): o-option[tweetstowewetwyevent[e]] =
+      it.towetwy
   }
 }

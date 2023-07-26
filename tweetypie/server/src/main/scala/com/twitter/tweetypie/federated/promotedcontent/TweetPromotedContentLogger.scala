@@ -1,40 +1,40 @@
-package com.twitter.tweetypie
-package federated
-package promotedcontent
+package com.twittew.tweetypie
+package f-fedewated
+package p-pwomotedcontent
 
-import com.twitter.ads.callback.thriftscala.EngagementRequest
-import com.twitter.ads.internal.pcl.service.CallbackPromotedContentLogger
-import com.twitter.ads.internal.pcl.strato_adaptor.PromotedContentInputProvider
-import com.twitter.ads.internal.pcl.thriftscala.PromotedContentInput
-import com.twitter.adserver.thriftscala.EngagementType
-import com.twitter.util.Future
+i-impowt com.twittew.ads.cawwback.thwiftscawa.engagementwequest
+i-impowt com.twittew.ads.intewnaw.pcw.sewvice.cawwbackpwomotedcontentwoggew
+i-impowt com.twittew.ads.intewnaw.pcw.stwato_adaptow.pwomotedcontentinputpwovidew
+i-impowt com.twittew.ads.intewnaw.pcw.thwiftscawa.pwomotedcontentinput
+i-impowt com.twittew.adsewvew.thwiftscawa.engagementtype
+i-impowt com.twittew.utiw.futuwe
 
-object TweetPromotedContentLogger {
-  sealed abstract class TweetEngagementType(val engagementType: EngagementType)
-  case object TweetEngagement extends TweetEngagementType(EngagementType.Send)
-  case object ReplyEngagement extends TweetEngagementType(EngagementType.Reply)
-  case object RetweetEngagement extends TweetEngagementType(EngagementType.Retweet)
+object tweetpwomotedcontentwoggew {
+  seawed abstwact c-cwass tweetengagementtype(vaw engagementtype: engagementtype)
+  c-case object tweetengagement extends t-tweetengagementtype(engagementtype.send)
+  case object wepwyengagement extends tweetengagementtype(engagementtype.wepwy)
+  c-case object wetweetengagement extends tweetengagementtype(engagementtype.wetweet)
 
-  type Type = (EngagementRequest, TweetEngagementType, Boolean) => Future[Unit]
+  t-type type = (engagementwequest, t-tweetengagementtype, mya boowean) => futuwe[unit]
 
-  private[this] val TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  pwivate[this] vaw twittewcontext =
+    c-com.twittew.context.twittewcontext(com.twittew.tweetypie.twittewcontextpewmit)
 
-  def apply(callbackPromotedContentLogger: CallbackPromotedContentLogger): Type =
+  def appwy(cawwbackpwomotedcontentwoggew: cawwbackpwomotedcontentwoggew): type =
     (
-      engagementRequest: EngagementRequest,
-      tweetEngagementType: TweetEngagementType,
-      isDark: Boolean
+      engagementwequest: engagementwequest,
+      t-tweetengagementtype: tweetengagementtype, 🥺
+      i-isdawk: b-boowean
     ) => {
-      val pci: PromotedContentInput =
-        PromotedContentInputProvider(TwitterContext, engagementRequest)
+      v-vaw pci: p-pwomotedcontentinput =
+        pwomotedcontentinputpwovidew(twittewcontext, >_< engagementwequest)
 
-      // The real logging is fire-and-forget, so we can create the Future and ignore returning it.
-      Future.when(!isDark) {
-        callbackPromotedContentLogger.logNonTrendEngagement(
-          pci,
-          tweetEngagementType.engagementType,
-          pci.impressionId)
+      // t-the weaw wogging is fiwe-and-fowget, >_< so we can cweate t-the futuwe and ignowe wetuwning it. (⑅˘꒳˘)
+      futuwe.when(!isdawk) {
+        cawwbackpwomotedcontentwoggew.wognontwendengagement(
+          pci, /(^•ω•^)
+          tweetengagementtype.engagementtype, rawr x3
+          p-pci.impwessionid)
       }
     }
 }

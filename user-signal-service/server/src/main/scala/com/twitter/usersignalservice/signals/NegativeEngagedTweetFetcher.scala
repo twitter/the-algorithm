@@ -1,96 +1,96 @@
-package com.twitter.usersignalservice.signals
+package com.twittew.usewsignawsewvice.signaws
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.strato.client.Client
-import com.twitter.strato.data.Conv
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.twistly.thriftscala.RecentNegativeEngagedTweet
-import com.twitter.twistly.thriftscala.TweetNegativeEngagementType
-import com.twitter.twistly.thriftscala.UserRecentNegativeEngagedTweets
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.base.StratoSignalFetcher
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.simcwustews_v2.common.usewid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.stwato.cwient.cwient
+i-impowt c-com.twittew.stwato.data.conv
+impowt com.twittew.stwato.thwift.scwoogeconv
+impowt com.twittew.twistwy.thwiftscawa.wecentnegativeengagedtweet
+impowt com.twittew.twistwy.thwiftscawa.tweetnegativeengagementtype
+impowt com.twittew.twistwy.thwiftscawa.usewwecentnegativeengagedtweets
+i-impowt com.twittew.usewsignawsewvice.base.quewy
+impowt c-com.twittew.usewsignawsewvice.base.stwatosignawfetchew
+impowt c-com.twittew.usewsignawsewvice.thwiftscawa.signaw
+impowt com.twittew.usewsignawsewvice.thwiftscawa.signawtype
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.timew
+i-impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class NegativeEngagedTweetFetcher @Inject() (
-  stratoClient: Client,
-  timer: Timer,
-  stats: StatsReceiver)
-    extends StratoSignalFetcher[(UserId, Long), Unit, UserRecentNegativeEngagedTweets] {
+@singweton
+case cwass nyegativeengagedtweetfetchew @inject() (
+  stwatocwient: cwient, (///ˬ///✿)
+  timew: t-timew, 😳
+  stats: statsweceivew)
+    extends stwatosignawfetchew[(usewid, 😳 wong), σωσ unit, usewwecentnegativeengagedtweets] {
 
-  import NegativeEngagedTweetFetcher._
+  impowt n-nyegativeengagedtweetfetchew._
 
-  override type RawSignalType = RecentNegativeEngagedTweet
-  override val name: String = this.getClass.getCanonicalName
-  override val statsReceiver: StatsReceiver = stats.scope(name)
+  ovewwide t-type wawsignawtype = w-wecentnegativeengagedtweet
+  o-ovewwide vaw n-nyame: stwing = this.getcwass.getcanonicawname
+  ovewwide vaw statsweceivew: s-statsweceivew = stats.scope(name)
 
-  override val stratoColumnPath: String = stratoPath
-  override val stratoView: Unit = None
+  ovewwide vaw stwatocowumnpath: s-stwing = stwatopath
+  ovewwide vaw stwatoview: unit = nyone
 
-  override protected val keyConv: Conv[(UserId, Long)] = Conv.ofType
-  override protected val viewConv: Conv[Unit] = Conv.ofType
-  override protected val valueConv: Conv[UserRecentNegativeEngagedTweets] =
-    ScroogeConv.fromStruct[UserRecentNegativeEngagedTweets]
+  ovewwide pwotected vaw keyconv: c-conv[(usewid, rawr x3 wong)] = conv.oftype
+  o-ovewwide pwotected v-vaw viewconv: c-conv[unit] = conv.oftype
+  ovewwide pwotected vaw vawueconv: c-conv[usewwecentnegativeengagedtweets] =
+    scwoogeconv.fwomstwuct[usewwecentnegativeengagedtweets]
 
-  override protected def toStratoKey(userId: UserId): (UserId, Long) = (userId, defaultVersion)
+  o-ovewwide pwotected def t-tostwatokey(usewid: u-usewid): (usewid, OwO wong) = (usewid, /(^•ω•^) d-defauwtvewsion)
 
-  override protected def toRawSignals(
-    stratoValue: UserRecentNegativeEngagedTweets
-  ): Seq[RecentNegativeEngagedTweet] = {
-    stratoValue.recentNegativeEngagedTweets
+  ovewwide p-pwotected def towawsignaws(
+    stwatovawue: u-usewwecentnegativeengagedtweets
+  ): seq[wecentnegativeengagedtweet] = {
+    s-stwatovawue.wecentnegativeengagedtweets
   }
 
-  override def process(
-    query: Query,
-    rawSignals: Future[Option[Seq[RecentNegativeEngagedTweet]]]
-  ): Future[Option[Seq[Signal]]] = {
-    rawSignals.map {
-      _.map { signals =>
-        signals
-          .filter(signal => negativeEngagedTweetTypeFilter(query.signalType, signal))
-          .map { signal =>
-            Signal(
-              query.signalType,
-              signal.engagedAt,
-              Some(InternalId.TweetId(signal.tweetId))
+  ovewwide d-def pwocess(
+    q-quewy: quewy, 😳😳😳
+    wawsignaws: futuwe[option[seq[wecentnegativeengagedtweet]]]
+  ): futuwe[option[seq[signaw]]] = {
+    wawsignaws.map {
+      _.map { signaws =>
+        signaws
+          .fiwtew(signaw => n-nyegativeengagedtweettypefiwtew(quewy.signawtype, s-signaw))
+          .map { signaw =>
+            s-signaw(
+              q-quewy.signawtype, ( ͡o ω ͡o )
+              s-signaw.engagedat,
+              some(intewnawid.tweetid(signaw.tweetid))
             )
           }
-          .groupBy(_.targetInternalId) // groupBy if there's duplicated authorIds
-          .mapValues(_.maxBy(_.timestamp))
-          .values
-          .toSeq
-          .sortBy(-_.timestamp)
-          .take(query.maxResults.getOrElse(Int.MaxValue))
+          .gwoupby(_.tawgetintewnawid) // gwoupby if thewe's dupwicated a-authowids
+          .mapvawues(_.maxby(_.timestamp))
+          .vawues
+          .toseq
+          .sowtby(-_.timestamp)
+          .take(quewy.maxwesuwts.getowewse(int.maxvawue))
       }
     }
   }
 }
 
-object NegativeEngagedTweetFetcher {
+object nyegativeengagedtweetfetchew {
 
-  val stratoPath = "recommendations/twistly/userRecentNegativeEngagedTweets"
-  private val defaultVersion = 0L
+  vaw stwatopath = "wecommendations/twistwy/usewwecentnegativeengagedtweets"
+  pwivate vaw d-defauwtvewsion = 0w
 
-  private def negativeEngagedTweetTypeFilter(
-    signalType: SignalType,
-    signal: RecentNegativeEngagedTweet
-  ): Boolean = {
-    signalType match {
-      case SignalType.TweetDontLike =>
-        signal.engagementType == TweetNegativeEngagementType.DontLike
-      case SignalType.TweetSeeFewer =>
-        signal.engagementType == TweetNegativeEngagementType.SeeFewer
-      case SignalType.TweetReport =>
-        signal.engagementType == TweetNegativeEngagementType.ReportClick
-      case SignalType.NegativeEngagedTweetId => true
-      case _ => false
+  pwivate def n-nyegativeengagedtweettypefiwtew(
+    s-signawtype: s-signawtype, >_<
+    signaw: wecentnegativeengagedtweet
+  ): b-boowean = {
+    s-signawtype m-match {
+      c-case signawtype.tweetdontwike =>
+        signaw.engagementtype == tweetnegativeengagementtype.dontwike
+      c-case signawtype.tweetseefewew =>
+        s-signaw.engagementtype == t-tweetnegativeengagementtype.seefewew
+      case s-signawtype.tweetwepowt =>
+        s-signaw.engagementtype == tweetnegativeengagementtype.wepowtcwick
+      case signawtype.negativeengagedtweetid => twue
+      c-case _ => fawse
     }
   }
 

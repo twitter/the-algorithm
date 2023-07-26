@@ -1,36 +1,36 @@
-package com.twitter.search.common.util.earlybird;
+package com.twittew.seawch.common.utiw.eawwybiwd;
 
-import java.util.Map;
+impowt java.utiw.map;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.base.function;
+i-impowt com.googwe.common.cowwect.itewabwes;
+i-impowt c-com.googwe.common.cowwect.maps;
 
 /**
- * Utility class used to help merging results.
+ * u-utiwity c-cwass used to h-hewp mewging wesuwts. 🥺
  */
-public final class ResultsUtil {
-  private ResultsUtil() { }
+pubwic finaw cwass wesuwtsutiw {
+  pwivate wesuwtsutiw() { }
 
   /**
-   * Aggregate a list of responses in the following way.
-   * 1. For each response, mapGetter can turn the response into a map.
-   * 2. Dump all entries from the above map into a "total" map, which accumulates entries from
-   *    all the responses.
+   * aggwegate a w-wist of wesponses in the fowwowing way. mya
+   * 1. 🥺 f-fow each wesponse, >_< mapgettew can t-tuwn the wesponse into a map. >_<
+   * 2. dump aww entwies fwom the a-above map into a "totaw" map, (⑅˘꒳˘) w-which accumuwates e-entwies fwom
+   *    aww the wesponses. /(^•ω•^)
    */
-  public static <T, V> Map<T, Integer> aggregateCountMap(
-          Iterable<V> responses,
-          Function<V, Map<T, Integer>> mapGetter) {
-    Map<T, Integer> total = Maps.newHashMap();
-    for (Map<T, Integer> map : Iterables.transform(responses, mapGetter)) {
-      if (map != null) {
-        for (Map.Entry<T, Integer> entry : map.entrySet()) {
-          T key = entry.getKey();
-          total.put(key, total.containsKey(key)
-              ? total.get(key) + entry.getValue() : entry.getValue());
+  pubwic static <t, v> map<t, rawr x3 integew> aggwegatecountmap(
+          i-itewabwe<v> wesponses, (U ﹏ U)
+          function<v, (U ﹏ U) map<t, (⑅˘꒳˘) integew>> mapgettew) {
+    m-map<t, òωó integew> totaw = maps.newhashmap();
+    f-fow (map<t, integew> m-map : itewabwes.twansfowm(wesponses, m-mapgettew)) {
+      i-if (map != nyuww) {
+        fow (map.entwy<t, ʘwʘ integew> e-entwy : map.entwyset()) {
+          t key = entwy.getkey();
+          t-totaw.put(key, /(^•ω•^) totaw.containskey(key)
+              ? totaw.get(key) + entwy.getvawue() : entwy.getvawue());
         }
       }
     }
-    return total;
+    wetuwn totaw;
   }
 }

@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.top_owganic_fowwows_accounts
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.pawam
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class TopOrganicFollowsAccountsFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    TopOrganicFollowsAccountsParams.CandidateSourceEnabled,
+@singweton
+c-cwass topowganicfowwowsaccountsfsconfig @inject() () e-extends featuweswitchconfig {
+  ovewwide vaw booweanfspawams: seq[pawam[boowean] w-with fsname] = seq(
+    topowganicfowwowsaccountspawams.candidatesouwceenabwed, -.-
   )
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    TopOrganicFollowsAccountsParams.CandidateSourceWeight,
+  o-ovewwide vaw doubwefspawams: seq[fsboundedpawam[doubwe]] = seq(
+    t-topowganicfowwowsaccountspawams.candidatesouwceweight, (ˆ ﻌ ˆ)♡
   )
 }

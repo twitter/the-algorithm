@@ -1,13 +1,13 @@
-# Notification Light Ranker Model
+# nyotification wight wankew modew
 
-## Model Context
-There are 4 major components of Twitter notifications recommendation system: 1) candidate generation 2) light ranking 3) heavy ranking & 4) quality control. This notification light ranker model bridges candidate generation and heavy ranking by pre-selecting highly-relevant candidates from the initial huge candidate pool. It’s a light-weight model to reduce system cost during heavy ranking without hurting user experience.
+## m-modew context
+t-thewe awe 4 m-majow components o-of twittew nyotifications w-wecommendation s-system: 1) c-candidate genewation 2) w-wight wanking 3) heavy wanking & 4) quawity contwow. (U ﹏ U) this nyotification w-wight wankew modew bwidges candidate genewation a-and heavy wanking by pwe-sewecting h-highwy-wewevant candidates fwom the initiaw huge candidate p-poow. (U ﹏ U) it’s a wight-weight modew t-to weduce system c-cost duwing heavy wanking without huwting usew expewience. (⑅˘꒳˘)
 
-## Directory Structure
-- BUILD: this file defines python library dependencies
-- model_pools_mlp.py: this file defines tensorflow model architecture for the notification light ranker model
-- deep_norm.py: this file contains 1) how to build the tensorflow graph with specified model architecture, loss function and training configuration. 2) how to set up the overall model training & evaluation pipeline
-- eval_model.py: the main python entry file to set up the overall model evaluation pipeline
+## diwectowy stwuctuwe
+- b-buiwd: this fiwe defines python wibwawy dependencies
+- modew_poows_mwp.py: t-this fiwe defines tensowfwow m-modew awchitectuwe f-fow the nyotification w-wight w-wankew modew
+- deep_nowm.py: this fiwe contains 1) h-how to buiwd the tensowfwow gwaph with specified m-modew awchitectuwe, òωó woss function and twaining configuwation. 2) how to set up the ovewaww m-modew twaining & evawuation pipewine
+- e-evaw_modew.py: t-the main p-python entwy fiwe to set up the ovewaww modew evawuation pipewine
 
 
 

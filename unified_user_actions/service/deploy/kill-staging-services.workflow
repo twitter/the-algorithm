@@ -1,46 +1,46 @@
 {
-  "role": "discode",
-  "name": "uua-kill-staging-services",
-  "config-files": [],
-  "build": {
-    "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 1"
-    },
-    "dependencies": [],
+  "wowe": "discode", >_<
+  "name": "uua-kiww-staging-sewvices", (ꈍᴗꈍ)
+  "config-fiwes": [], ^•ﻌ•^
+  "buiwd": {
+    "pway": twue, OwO
+    "twiggew": {
+      "cwon-scheduwe": "0 17 * * 1"
+    }, 🥺
+    "dependencies": [], òωó
     "steps": []
-  },
-  "targets": [
+  }, o.O
+  "tawgets": [
     {
-      "type": "script",
-      "name": "uua-kill-staging-services",
-      "keytab": "/var/lib/tss/keys/fluffy/keytabs/client/discode.keytab",
-      "repository": "source",
-      "command": "bash unified_user_actions/scripts/kill_staging.sh",
+      "type": "scwipt", (U ᵕ U❁)
+      "name": "uua-kiww-staging-sewvices", (⑅˘꒳˘)
+      "keytab": "/vaw/wib/tss/keys/fwoofy/keytabs/cwient/discode.keytab", ( ͡o ω ͡o )
+      "wepositowy": "souwce", UwU
+      "command": "bash unified_usew_actions/scwipts/kiww_staging.sh", rawr x3
       "dependencies": [{
-         "version": "latest",
-         "role": "aurora",
-         "name": "aurora"
-      }],
+         "vewsion": "watest", rawr
+         "wowe": "auwowa", σωσ
+         "name": "auwowa"
+      }], σωσ
       "timeout": "10.minutes"
     }
   ],
-  "subscriptions": [
+  "subscwiptions": [
    {
-     "type": "SLACK",
-     "recipients": [
+     "type": "swack",
+     "wecipients": [
        {
-         "to": "unified_user_actions_dev"
+         "to": "unified_usew_actions_dev"
        }
-     ],
-     "events": ["WORKFLOW_SUCCESS"]
-   },
+     ], >_<
+     "events": ["wowkfwow_success"]
+   }, :3
    {
-     "type": "SLACK",
-     "recipients": [{
-       "to": "unified_user_actions_dev"
-     }],
-     "events": ["*FAILED"]
+     "type": "swack", (U ﹏ U)
+     "wecipients": [{
+       "to": "unified_usew_actions_dev"
+     }], -.-
+     "events": ["*faiwed"]
    }
   ]
 }

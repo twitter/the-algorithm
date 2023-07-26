@@ -1,119 +1,119 @@
-package com.twitter.simclusters_v2.scio.bq_generation
+package com.twittew.simcwustews_v2.scio.bq_genewation
 package tweets_ann
 
-import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getMTSConsumerEmbeddingsFav90P20MSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getInterestedIn2020SQL
-import com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.TweetsANNFromBQ.getTweetRecommendationsBQ
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl0El15ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El15ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El50ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
-import com.twitter.simclusters_v2.thriftscala.CandidateTweets
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
-import com.twitter.tcdc.bqblaster.beam.syntax.BigQueryIOHelpers
-import com.twitter.tcdc.bqblaster.beam.BQBlasterIO.AvroConverter
-import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
-import com.twitter.tcdc.bqblaster.core.transform.RootTransform
-import java.time.Instant
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.joda.time.DateTime
+i-impowt c-com.googwe.api.sewvices.bigquewy.modew.timepawtitioning
+i-impowt com.spotify.scio.sciocontext
+i-impowt c-com.spotify.scio.codews.codew
+i-impowt com.twittew.beam.io.daw.daw
+i-impowt com.twittew.beam.io.fs.muwtifowmat.pathwayout
+i-impowt com.twittew.beam.job.datewangeoptions
+impowt com.twittew.convewsions.duwationops.wichduwationfwomint
+impowt com.twittew.daw.cwient.dataset.keyvawdawdataset
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.scio_intewnaw.codews.thwiftstwuctwazybinawyscwoogecodew
+impowt c-com.twittew.scio_intewnaw.job.sciobeamjob
+impowt c-com.twittew.scwooge.thwiftstwuct
+impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.bqgenewationutiw.getmtsconsumewembeddingsfav90p20msqw
+impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.bqgenewationutiw.getintewestedin2020sqw
+impowt c-com.twittew.simcwustews_v2.scio.bq_genewation.tweets_ann.tweetsannfwombq.gettweetwecommendationsbq
+impowt com.twittew.simcwustews_v2.hdfs_souwces.offwinetweetwecommendationsfwomintewestedin20m145k2020scawadataset
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.offwinetweetwecommendationsfwomintewestedin20m145k2020hw0ew15scawadataset
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.offwinetweetwecommendationsfwomintewestedin20m145k2020hw2ew15scawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.offwinetweetwecommendationsfwomintewestedin20m145k2020hw2ew50scawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.offwinetweetwecommendationsfwomintewestedin20m145k2020hw8ew50scawadataset
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.offwinetweetwecommendationsfwommtsconsumewembeddingsscawadataset
+impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.bqtabwedetaiws
+impowt com.twittew.simcwustews_v2.thwiftscawa.candidatetweets
+impowt com.twittew.simcwustews_v2.thwiftscawa.candidatetweetswist
+i-impowt com.twittew.tcdc.bqbwastew.beam.syntax.bigquewyiohewpews
+impowt com.twittew.tcdc.bqbwastew.beam.bqbwastewio.avwoconvewtew
+i-impowt com.twittew.tcdc.bqbwastew.cowe.avwo.typedpwojection
+i-impowt com.twittew.tcdc.bqbwastew.cowe.twansfowm.woottwansfowm
+i-impowt java.time.instant
+i-impowt owg.apache.beam.sdk.io.gcp.bigquewy.bigquewyio
+impowt owg.joda.time.datetime
 
-trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
-  // Configs to set for different type of embeddings and jobs
-  val isAdhoc: Boolean
-  val getConsumerEmbeddingsSQLFunc: (DateTime, Int) => String
-  val outputTable: BQTableDetails
-  val keyValDatasetOutputPath: String
-  val tweetRecommentationsSnapshotDataset: KeyValDALDataset[KeyVal[Long, CandidateTweetsList]]
-  val tweetEmbeddingsGenerationHalfLife: Int = Config.SimClustersTweetEmbeddingsGenerationHalfLife
-  val tweetEmbeddingsGenerationEmbeddingLength: Int =
-    Config.SimClustersTweetEmbeddingsGenerationEmbeddingLength
+t-twait tweetsannjob extends sciobeamjob[datewangeoptions] {
+  // configs to set f-fow diffewent type of embeddings and jobs
+  vaw isadhoc: boowean
+  vaw getconsumewembeddingssqwfunc: (datetime, rawr x3 int) => stwing
+  v-vaw outputtabwe: bqtabwedetaiws
+  v-vaw keyvawdatasetoutputpath: s-stwing
+  vaw tweetwecommentationssnapshotdataset: k-keyvawdawdataset[keyvaw[wong, (✿oωo) candidatetweetswist]]
+  vaw tweetembeddingsgenewationhawfwife: int = config.simcwustewstweetembeddingsgenewationhawfwife
+  v-vaw tweetembeddingsgenewationembeddingwength: i-int =
+    config.simcwustewstweetembeddingsgenewationembeddingwength
 
-  // Base configs
-  val projectId = "twttr-recos-ml-prod"
-  val environment: DAL.Env = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+  // b-base configs
+  v-vaw pwojectid = "twttw-wecos-mw-pwod"
+  vaw enviwonment: d-daw.env = if (isadhoc) d-daw.enviwonment.dev ewse daw.enviwonment.pwod
 
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
+  ovewwide impwicit d-def scwoogecodew[t <: thwiftstwuct: m-manifest]: codew[t] =
+    t-thwiftstwuctwazybinawyscwoogecodew.scwoogecodew
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    // The time when the job is scheduled
-    val queryTimestamp = opts.interval.getEnd
+  o-ovewwide def configuwepipewine(sc: sciocontext, (ˆ ﻌ ˆ)♡ opts: datewangeoptions): unit = {
+    // the time when the job is scheduwed
+    v-vaw quewytimestamp = o-opts.intewvaw.getend
 
-    // Read consumer embeddings SQL
-    val consumerEmbeddingsSQL = getConsumerEmbeddingsSQLFunc(queryTimestamp, 14)
+    // wead consumew e-embeddings s-sqw
+    vaw consumewembeddingssqw = g-getconsumewembeddingssqwfunc(quewytimestamp, :3 14)
 
-    // Generate tweet embeddings and tweet ANN results
-    val tweetRecommendations =
-      getTweetRecommendationsBQ(
-        sc,
-        queryTimestamp,
-        consumerEmbeddingsSQL,
-        tweetEmbeddingsGenerationHalfLife,
-        tweetEmbeddingsGenerationEmbeddingLength
+    // genewate tweet embeddings and tweet ann wesuwts
+    v-vaw tweetwecommendations =
+      gettweetwecommendationsbq(
+        sc, (U ᵕ U❁)
+        quewytimestamp, ^^;;
+        consumewembeddingssqw, mya
+        t-tweetembeddingsgenewationhawfwife, 😳😳😳
+        tweetembeddingsgenewationembeddingwength
       )
 
-    // Setup BQ writer
-    val ingestionTime = opts.getDate().value.getEnd.toDate
-    val bqFieldsTransform = RootTransform
-      .Builder()
-      .withPrependedFields("ingestionTime" -> TypedProjection.fromConstant(ingestionTime))
-    val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("ingestionTime").setExpirationMs(3.days.inMilliseconds)
-    val bqWriter = BigQueryIO
-      .write[CandidateTweets]
-      .to(outputTable.toString)
-      .withExtendedErrorInfo()
-      .withTimePartitioning(timePartitioning)
-      .withLoadJobProjectId(projectId)
-      .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
-      .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
-      .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND)
+    // s-setup b-bq wwitew
+    v-vaw ingestiontime = opts.getdate().vawue.getend.todate
+    v-vaw b-bqfiewdstwansfowm = w-woottwansfowm
+      .buiwdew()
+      .withpwependedfiewds("ingestiontime" -> t-typedpwojection.fwomconstant(ingestiontime))
+    vaw timepawtitioning = nyew timepawtitioning()
+      .settype("houw").setfiewd("ingestiontime").setexpiwationms(3.days.inmiwwiseconds)
+    v-vaw b-bqwwitew = bigquewyio
+      .wwite[candidatetweets]
+      .to(outputtabwe.tostwing)
+      .withextendedewwowinfo()
+      .withtimepawtitioning(timepawtitioning)
+      .withwoadjobpwojectid(pwojectid)
+      .withthwiftsuppowt(bqfiewdstwansfowm.buiwd(), OwO a-avwoconvewtew.wegacy)
+      .withcweatedisposition(bigquewyio.wwite.cweatedisposition.cweate_if_needed)
+      .withwwitedisposition(bigquewyio.wwite.wwitedisposition.wwite_append)
 
-    // Save Tweet ANN results to BQ
-    tweetRecommendations
-      .map { userToTweetRecommendations =>
+    // s-save tweet a-ann wesuwts to bq
+    tweetwecommendations
+      .map { usewtotweetwecommendations =>
         {
-          CandidateTweets(
-            targetUserId = userToTweetRecommendations.userId,
-            recommendedTweets = userToTweetRecommendations.tweetCandidates)
+          candidatetweets(
+            tawgetusewid = u-usewtotweetwecommendations.usewid, rawr
+            wecommendedtweets = usewtotweetwecommendations.tweetcandidates)
         }
       }
-      .saveAsCustomOutput(s"WriteToBQTable - ${outputTable}", bqWriter)
+      .saveascustomoutput(s"wwitetobqtabwe - ${outputtabwe}", XD bqwwitew)
 
-    // Save Tweet ANN results as KeyValSnapshotDataset
-    tweetRecommendations
-      .map { userToTweetRecommendations =>
-        KeyVal(
-          userToTweetRecommendations.userId,
-          CandidateTweetsList(userToTweetRecommendations.tweetCandidates))
-      }.saveAsCustomOutput(
-        name = "WriteTweetRecommendationsToKeyValDataset",
-        DAL.writeVersionedKeyVal(
-          tweetRecommentationsSnapshotDataset,
-          PathLayout.VersionedPath(prefix =
-            ((if (!isAdhoc)
-                Config.RootMHPath
-              else
-                Config.AdhocRootPath)
-              + keyValDatasetOutputPath)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = environment,
+    // save tweet ann wesuwts a-as keyvawsnapshotdataset
+    tweetwecommendations
+      .map { usewtotweetwecommendations =>
+        keyvaw(
+          u-usewtotweetwecommendations.usewid, (U ﹏ U)
+          c-candidatetweetswist(usewtotweetwecommendations.tweetcandidates))
+      }.saveascustomoutput(
+        n-nyame = "wwitetweetwecommendationstokeyvawdataset", (˘ω˘)
+        daw.wwitevewsionedkeyvaw(
+          t-tweetwecommentationssnapshotdataset, UwU
+          pathwayout.vewsionedpath(pwefix =
+            ((if (!isadhoc)
+                c-config.wootmhpath
+              e-ewse
+                config.adhocwootpath)
+              + keyvawdatasetoutputpath)), >_<
+          instant = instant.ofepochmiwwi(opts.intewvaw.getendmiwwis - 1w), σωσ
+          enviwonmentovewwide = e-enviwonment, 🥺
         )
       )
   }
@@ -121,177 +121,177 @@ trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
 }
 
 /**
- * Scio job for adhoc run for tweet recommendations from IIKF 2020
+ * scio job f-fow adhoc wun fow tweet wecommendations f-fwom iikf 2020
  */
-object IIKF2020TweetsANNBQAdhocJob extends TweetsANNJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
-    "twttr-recos-ml-prod",
-    "multi_type_simclusters",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_adhoc")
-  override val keyValDatasetOutputPath = Config.IIKFANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+o-object iikf2020tweetsannbqadhocjob extends tweetsannjob {
+  o-ovewwide v-vaw isadhoc = twue
+  ovewwide vaw g-getconsumewembeddingssqwfunc = g-getintewestedin2020sqw
+  ovewwide vaw outputtabwe = bqtabwedetaiws(
+    "twttw-wecos-mw-pwod", 🥺
+    "muwti_type_simcwustews", ʘwʘ
+    "offwine_tweet_wecommendations_fwom_intewested_in_20m_145k_2020_adhoc")
+  ovewwide v-vaw keyvawdatasetoutputpath = c-config.iikfannoutputpath
+  ovewwide v-vaw tweetwecommentationssnapshotdataset: keyvawdawdataset[
+    k-keyvaw[wong, :3 c-candidatetweetswist]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
+    offwinetweetwecommendationsfwomintewestedin20m145k2020scawadataset
 }
 
 /**
- * Scio job for adhoc run for tweet recommendations from IIKF 2020 with
- * - Half life = 8hrs
- * - Embedding Length = 50
+ * s-scio job fow adhoc wun fow tweet wecommendations fwom iikf 2020 with
+ * - hawf wife = 8hws
+ * - e-embedding wength = 50
  */
-object IIKF2020Hl8El50TweetsANNBQAdhocJob extends TweetsANNJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
-    "twttr-recos-ml-prod",
-    "multi_type_simclusters",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50_adhoc")
-  override val keyValDatasetOutputPath = Config.IIKFHL8EL50ANNOutputPath
-  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+o-object iikf2020hw8ew50tweetsannbqadhocjob extends tweetsannjob {
+  o-ovewwide v-vaw isadhoc = twue
+  ovewwide vaw getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  o-ovewwide vaw outputtabwe = bqtabwedetaiws(
+    "twttw-wecos-mw-pwod", (U ﹏ U)
+    "muwti_type_simcwustews", (U ﹏ U)
+    "offwine_tweet_wecommendations_fwom_intewested_in_20m_145k_2020_hw_8_ew_50_adhoc")
+  ovewwide vaw keyvawdatasetoutputpath = config.iikfhw8ew50annoutputpath
+  o-ovewwide vaw tweetembeddingsgenewationembeddingwength: int = 50
+  o-ovewwide v-vaw tweetwecommentationssnapshotdataset: keyvawdawdataset[
+    keyvaw[wong, ʘwʘ candidatetweetswist]
   ] = {
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
+    offwinetweetwecommendationsfwomintewestedin20m145k2020hw8ew50scawadataset
   }
 }
 
 /**
- * Scio job for adhoc run for tweet recommendations from MTS Consumer Embeddings
+ * s-scio job fow a-adhoc wun fow tweet wecommendations fwom mts consumew embeddings
  */
-object MTSConsumerEmbeddingsTweetsANNBQAdhocJob extends TweetsANNJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getMTSConsumerEmbeddingsFav90P20MSQL
-  override val outputTable = BQTableDetails(
-    "twttr-recos-ml-prod",
-    "multi_type_simclusters",
-    "offline_tweet_recommendations_from_mts_consumer_embeddings_adhoc")
-  override val keyValDatasetOutputPath = Config.MTSConsumerEmbeddingsANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+o-object mtsconsumewembeddingstweetsannbqadhocjob extends t-tweetsannjob {
+  ovewwide vaw isadhoc = twue
+  ovewwide vaw getconsumewembeddingssqwfunc = g-getmtsconsumewembeddingsfav90p20msqw
+  ovewwide vaw outputtabwe = b-bqtabwedetaiws(
+    "twttw-wecos-mw-pwod", >w<
+    "muwti_type_simcwustews", rawr x3
+    "offwine_tweet_wecommendations_fwom_mts_consumew_embeddings_adhoc")
+  o-ovewwide vaw keyvawdatasetoutputpath = config.mtsconsumewembeddingsannoutputpath
+  o-ovewwide vaw tweetwecommentationssnapshotdataset: k-keyvawdawdataset[
+    k-keyvaw[wong, OwO c-candidatetweetswist]
   ] =
-    OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
+    offwinetweetwecommendationsfwommtsconsumewembeddingsscawadataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020
-The schedule cmd needs to be run only if there is any change in the config
+scio j-job fow batch w-wun fow tweet wecommendations fwom iikf 2020
+the s-scheduwe cmd n-nyeeds to be wun o-onwy if thewe is any change in the config
  */
-object IIKF2020TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
-    "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020")
-  override val keyValDatasetOutputPath = Config.IIKFANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+object i-iikf2020tweetsannbqbatchjob extends tweetsannjob {
+  o-ovewwide v-vaw isadhoc = fawse
+  ovewwide vaw getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  ovewwide v-vaw outputtabwe = b-bqtabwedetaiws(
+    "twttw-bq-cassowawy-pwod", ^•ﻌ•^
+    "usew", >_<
+    "offwine_tweet_wecommendations_fwom_intewested_in_20m_145k_2020")
+  o-ovewwide v-vaw keyvawdatasetoutputpath = config.iikfannoutputpath
+  ovewwide v-vaw tweetwecommentationssnapshotdataset: keyvawdawdataset[
+    keyvaw[wong, OwO candidatetweetswist]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
+    offwinetweetwecommendationsfwomintewestedin20m145k2020scawadataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: None, no decay, direct sum
- - Embedding Length: 15
-The schedule cmd needs to be run only if there is any change in the config
+scio j-job fow batch wun fow tweet wecommendations f-fwom iikf 2020 with p-pawametew setup:
+ - hawf wife: n-nyone, >_< nyo decay, (ꈍᴗꈍ) diwect sum
+ - e-embedding wength: 15
+t-the scheduwe c-cmd nyeeds to b-be wun onwy if t-thewe is any change in the config
  */
-object IIKF2020Hl0El15TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
-    "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_0_EL_15")
-  override val keyValDatasetOutputPath = Config.IIKFHL0EL15ANNOutputPath
-  override val tweetEmbeddingsGenerationHalfLife: Int = -1
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+object iikf2020hw0ew15tweetsannbqbatchjob extends tweetsannjob {
+  ovewwide vaw isadhoc = fawse
+  ovewwide v-vaw getconsumewembeddingssqwfunc = g-getintewestedin2020sqw
+  o-ovewwide vaw outputtabwe = b-bqtabwedetaiws(
+    "twttw-bq-cassowawy-pwod", >w<
+    "usew", (U ﹏ U)
+    "offwine_tweet_wecommendations_fwom_intewested_in_20m_145k_2020_hw_0_ew_15")
+  ovewwide vaw keyvawdatasetoutputpath = config.iikfhw0ew15annoutputpath
+  ovewwide v-vaw tweetembeddingsgenewationhawfwife: int = -1
+  o-ovewwide vaw tweetwecommentationssnapshotdataset: k-keyvawdawdataset[
+    keyvaw[wong, ^^ candidatetweetswist]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl0El15ScalaDataset
+    offwinetweetwecommendationsfwomintewestedin20m145k2020hw0ew15scawadataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: 2hrs
- - Embedding Length: 15
-The schedule cmd needs to be run only if there is any change in the config
+scio j-job fow batch w-wun fow tweet wecommendations f-fwom iikf 2020 with p-pawametew setup:
+ - hawf wife: 2hws
+ - embedding wength: 15
+the scheduwe cmd n-nyeeds to be wun o-onwy if thewe i-is any change in t-the config
  */
-object IIKF2020Hl2El15TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
-    "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_15")
-  override val keyValDatasetOutputPath = Config.IIKFHL2EL15ANNOutputPath
-  override val tweetEmbeddingsGenerationHalfLife: Int = 7200000 // 2hrs in ms
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+o-object iikf2020hw2ew15tweetsannbqbatchjob extends t-tweetsannjob {
+  o-ovewwide vaw isadhoc = fawse
+  o-ovewwide vaw getconsumewembeddingssqwfunc = g-getintewestedin2020sqw
+  ovewwide v-vaw outputtabwe = bqtabwedetaiws(
+    "twttw-bq-cassowawy-pwod", (U ﹏ U)
+    "usew", :3
+    "offwine_tweet_wecommendations_fwom_intewested_in_20m_145k_2020_hw_2_ew_15")
+  ovewwide vaw keyvawdatasetoutputpath = c-config.iikfhw2ew15annoutputpath
+  ovewwide v-vaw tweetembeddingsgenewationhawfwife: i-int = 7200000 // 2hws in ms
+  ovewwide v-vaw tweetwecommentationssnapshotdataset: keyvawdawdataset[
+    keyvaw[wong, (✿oωo) candidatetweetswist]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El15ScalaDataset
+    o-offwinetweetwecommendationsfwomintewestedin20m145k2020hw2ew15scawadataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: 2hrs
- - Embedding Length: 50
-The schedule cmd needs to be run only if there is any change in the config
+s-scio j-job fow batch wun fow tweet wecommendations fwom iikf 2020 with p-pawametew setup:
+ - hawf wife: 2hws
+ - embedding w-wength: 50
+the s-scheduwe cmd nyeeds to be wun onwy i-if thewe is any change in the c-config
  */
-object IIKF2020Hl2El50TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
-    "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_50")
-  override val keyValDatasetOutputPath = Config.IIKFHL2EL50ANNOutputPath
-  override val tweetEmbeddingsGenerationHalfLife: Int = 7200000 // 2hrs in ms
-  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+object i-iikf2020hw2ew50tweetsannbqbatchjob extends tweetsannjob {
+  ovewwide vaw isadhoc = f-fawse
+  ovewwide vaw getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  o-ovewwide vaw o-outputtabwe = bqtabwedetaiws(
+    "twttw-bq-cassowawy-pwod", XD
+    "usew",
+    "offwine_tweet_wecommendations_fwom_intewested_in_20m_145k_2020_hw_2_ew_50")
+  ovewwide v-vaw keyvawdatasetoutputpath = config.iikfhw2ew50annoutputpath
+  o-ovewwide vaw t-tweetembeddingsgenewationhawfwife: i-int = 7200000 // 2hws in ms
+  ovewwide vaw tweetembeddingsgenewationembeddingwength: int = 50
+  ovewwide vaw tweetwecommentationssnapshotdataset: keyvawdawdataset[
+    keyvaw[wong, >w< candidatetweetswist]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El50ScalaDataset
+    offwinetweetwecommendationsfwomintewestedin20m145k2020hw2ew50scawadataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: 8hrs
- - Embedding Length: 50
-The schedule cmd needs to be run only if there is any change in the config
+scio job fow batch wun f-fow tweet wecommendations f-fwom iikf 2020 with pawametew setup:
+ - h-hawf wife: 8hws
+ - e-embedding w-wength: 50
+the scheduwe cmd nyeeds t-to be wun onwy if thewe is any c-change in the c-config
  */
-object IIKF2020Hl8El50TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
-    "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50")
-  override val keyValDatasetOutputPath = Config.IIKFHL8EL50ANNOutputPath
-  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+object iikf2020hw8ew50tweetsannbqbatchjob e-extends tweetsannjob {
+  ovewwide vaw isadhoc = f-fawse
+  ovewwide v-vaw getconsumewembeddingssqwfunc = getintewestedin2020sqw
+  ovewwide vaw o-outputtabwe = bqtabwedetaiws(
+    "twttw-bq-cassowawy-pwod", òωó
+    "usew",
+    "offwine_tweet_wecommendations_fwom_intewested_in_20m_145k_2020_hw_8_ew_50")
+  o-ovewwide v-vaw keyvawdatasetoutputpath = c-config.iikfhw8ew50annoutputpath
+  o-ovewwide vaw t-tweetembeddingsgenewationembeddingwength: i-int = 50
+  o-ovewwide v-vaw tweetwecommentationssnapshotdataset: keyvawdawdataset[
+    keyvaw[wong, (ꈍᴗꈍ) c-candidatetweetswist]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
+    o-offwinetweetwecommendationsfwomintewestedin20m145k2020hw8ew50scawadataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from MTS Consumer Embeddings
-The schedule cmd needs to be run only if there is any change in the config
+s-scio job fow batch wun f-fow tweet wecommendations fwom mts consumew embeddings
+t-the scheduwe cmd nyeeds t-to be wun onwy i-if thewe is any c-change in the config
  */
-object MTSConsumerEmbeddingsTweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getMTSConsumerEmbeddingsFav90P20MSQL
-  override val outputTable = BQTableDetails(
-    "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_from_mts_consumer_embeddings")
-  override val keyValDatasetOutputPath = Config.MTSConsumerEmbeddingsANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+object m-mtsconsumewembeddingstweetsannbqbatchjob extends t-tweetsannjob {
+  ovewwide vaw i-isadhoc = fawse
+  ovewwide vaw getconsumewembeddingssqwfunc = g-getmtsconsumewembeddingsfav90p20msqw
+  ovewwide vaw outputtabwe = bqtabwedetaiws(
+    "twttw-bq-cassowawy-pwod", rawr x3
+    "usew", rawr x3
+    "offwine_tweet_wecommendations_fwom_mts_consumew_embeddings")
+  ovewwide vaw keyvawdatasetoutputpath = c-config.mtsconsumewembeddingsannoutputpath
+  ovewwide vaw tweetwecommentationssnapshotdataset: k-keyvawdawdataset[
+    k-keyvaw[wong, σωσ candidatetweetswist]
   ] =
-    OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
+    offwinetweetwecommendationsfwommtsconsumewembeddingsscawadataset
 }

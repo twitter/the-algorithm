@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.service.gate_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow
 
-import com.twitter.product_mixer.core.service.ExecutorResult
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
 
-case class GateExecutorResult(
-  individualGateResults: Seq[ExecutedGateResult])
-    extends ExecutorResult
+c-case c-cwass gateexecutowwesuwt(
+  i-individuawgatewesuwts: s-seq[exekawaii~dgatewesuwt])
+    e-extends executowwesuwt

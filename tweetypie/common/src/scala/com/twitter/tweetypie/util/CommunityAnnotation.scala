@@ -1,29 +1,29 @@
-package com.twitter.tweetypie.util
+package com.twittew.tweetypie.utiw
 
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
-import com.twitter.tweetypie.thriftscala.EscherbirdEntityAnnotations
-import com.twitter.tweetypie.thriftscala.Tweet
+impowt com.twittew.eschewbiwd.thwiftscawa.tweetentityannotation
+i-impowt com.twittew.tweetypie.thwiftscawa.eschewbiwdentityannotations
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
 
-object CommunityAnnotation {
+o-object communityannotation {
 
-  val groupId: Long = 8
-  val domainId: Long = 31
+  v-vaw gwoupid: w-wong = 8
+  v-vaw domainid: wong = 31
 
-  def apply(communityId: Long): TweetEntityAnnotation =
-    TweetEntityAnnotation(groupId, domainId, entityId = communityId)
+  d-def appwy(communityid: w-wong): tweetentityannotation =
+    tweetentityannotation(gwoupid, ( ͡o ω ͡o ) domainid, entityid = communityid)
 
-  def unapply(annotation: TweetEntityAnnotation): Option[Long] =
-    annotation match {
-      case TweetEntityAnnotation(`groupId`, `domainId`, entityId) => Some(entityId)
-      case _ => None
+  def unappwy(annotation: t-tweetentityannotation): option[wong] =
+    annotation m-match {
+      case tweetentityannotation(`gwoupid`, rawr x3 `domainid`, nyaa~~ e-entityid) => some(entityid)
+      case _ => nyone
     }
 
-  // Returns None instead of Some(Seq()) when there are non-community annotations present
-  def additionalFieldsToCommunityIDs(additionalFields: Tweet): Option[Seq[Long]] = {
-    additionalFields.escherbirdEntityAnnotations
+  // w-wetuwns nyone instead of some(seq()) w-when thewe a-awe nyon-community annotations pwesent
+  def additionawfiewdstocommunityids(additionawfiewds: tweet): option[seq[wong]] = {
+    a-additionawfiewds.eschewbiwdentityannotations
       .map {
-        case EscherbirdEntityAnnotations(entityAnnotations) =>
-          entityAnnotations.flatMap(CommunityAnnotation.unapply)
-      }.filter(_.nonEmpty)
+        case eschewbiwdentityannotations(entityannotations) =>
+          entityannotations.fwatmap(communityannotation.unappwy)
+      }.fiwtew(_.nonempty)
   }
 }

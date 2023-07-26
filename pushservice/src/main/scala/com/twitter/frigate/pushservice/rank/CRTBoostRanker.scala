@@ -1,54 +1,54 @@
-package com.twitter.frigate.pushservice.rank
+package com.twittew.fwigate.pushsewvice.wank
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.candidatedetaiws
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype
 
 /**
- *  This Ranker re-ranks MR candidates, boosting input CRTs.
- *  Relative ranking between input CRTs and rest of the candidates doesn't change
+ *  t-this wankew we-wanks m-mw candidates, mya boosting input cwts. ^^
+ *  wewative wanking between input cwts a-and west of the candidates doesn't change
  *
- *  Ex: T: Tweet candidate, F: input CRT candidatess
+ *  e-ex: t: tweet candidate, f: input c-cwt candidatess
  *
- *  T3, F2, T1, T2, F1 => F2, F1, T3, T1, T2
+ *  t3, 😳😳😳 f2, t1, t2, mya f1 => f2, f1, t3, 😳 t1, t-t2
  */
-case class CRTBoostRanker(statsReceiver: StatsReceiver) {
+case cwass cwtboostwankew(statsweceivew: s-statsweceivew) {
 
-  private val recsToBoostStat = statsReceiver.stat("recs_to_boost")
-  private val otherRecsStat = statsReceiver.stat("other_recs")
+  p-pwivate vaw wecstobooststat = statsweceivew.stat("wecs_to_boost")
+  pwivate vaw othewwecsstat = s-statsweceivew.stat("othew_wecs")
 
-  private def boostCrtToTop(
-    inputCandidates: Seq[CandidateDetails[PushCandidate]],
-    crtToBoost: CommonRecommendationType
-  ): Seq[CandidateDetails[PushCandidate]] = {
-    val (upRankedCandidates, otherCandidates) =
-      inputCandidates.partition(_.candidate.commonRecType == crtToBoost)
-    recsToBoostStat.add(upRankedCandidates.size)
-    otherRecsStat.add(otherCandidates.size)
-    upRankedCandidates ++ otherCandidates
+  pwivate def boostcwttotop(
+    inputcandidates: seq[candidatedetaiws[pushcandidate]], -.-
+    c-cwttoboost: commonwecommendationtype
+  ): s-seq[candidatedetaiws[pushcandidate]] = {
+    v-vaw (upwankedcandidates, 🥺 o-othewcandidates) =
+      i-inputcandidates.pawtition(_.candidate.commonwectype == cwttoboost)
+    wecstobooststat.add(upwankedcandidates.size)
+    o-othewwecsstat.add(othewcandidates.size)
+    upwankedcandidates ++ othewcandidates
   }
 
-  final def boostCrtsToTop(
-    inputCandidates: Seq[CandidateDetails[PushCandidate]],
-    crtsToBoost: Seq[CommonRecommendationType]
-  ): Seq[CandidateDetails[PushCandidate]] = {
-    crtsToBoost.headOption match {
-      case Some(crt) =>
-        val upRankedCandidates = boostCrtToTop(inputCandidates, crt)
-        boostCrtsToTop(upRankedCandidates, crtsToBoost.tail)
-      case None => inputCandidates
+  f-finaw def boostcwtstotop(
+    inputcandidates: seq[candidatedetaiws[pushcandidate]], o.O
+    cwtstoboost: seq[commonwecommendationtype]
+  ): s-seq[candidatedetaiws[pushcandidate]] = {
+    cwtstoboost.headoption m-match {
+      c-case some(cwt) =>
+        v-vaw upwankedcandidates = boostcwttotop(inputcandidates, /(^•ω•^) cwt)
+        boostcwtstotop(upwankedcandidates, nyaa~~ c-cwtstoboost.taiw)
+      c-case nyone => inputcandidates
     }
   }
 
-  final def boostCrtsToTopStableOrder(
-    inputCandidates: Seq[CandidateDetails[PushCandidate]],
-    crtsToBoost: Seq[CommonRecommendationType]
-  ): Seq[CandidateDetails[PushCandidate]] = {
-    val crtsToBoostSet = crtsToBoost.toSet
-    val (upRankedCandidates, otherCandidates) = inputCandidates.partition(candidateDetail =>
-      crtsToBoostSet.contains(candidateDetail.candidate.commonRecType))
+  f-finaw d-def boostcwtstotopstabweowdew(
+    inputcandidates: s-seq[candidatedetaiws[pushcandidate]], nyaa~~
+    cwtstoboost: seq[commonwecommendationtype]
+  ): s-seq[candidatedetaiws[pushcandidate]] = {
+    vaw cwtstoboostset = cwtstoboost.toset
+    v-vaw (upwankedcandidates, :3 othewcandidates) = i-inputcandidates.pawtition(candidatedetaiw =>
+      cwtstoboostset.contains(candidatedetaiw.candidate.commonwectype))
 
-    upRankedCandidates ++ otherCandidates
+    u-upwankedcandidates ++ o-othewcandidates
   }
 }

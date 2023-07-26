@@ -1,83 +1,83 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
-import com.twitter.search.core.earlybird.index.util.SearchSortUtils;
-import com.twitter.search.earlybird.search.queries.SinceUntilFilter;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.timemappew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.intbwockpoow;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.utiw.seawchsowtutiws;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.quewies.sinceuntiwfiwtew;
 
-public abstract class AbstractInMemoryTimeMapper implements TimeMapper {
-  // Reverse map: timestamp to first doc ID seen with that timestamp.
-  // This is two arrays: the timestamps (sorted), and the doc ids.
-  protected final IntBlockPool reverseMapTimes;
-  protected final IntBlockPool reverseMapIds;
-  protected volatile int reverseMapLastIndex;
+p-pubwic abstwact c-cwass abstwactinmemowytimemappew i-impwements timemappew {
+  // wevewse map: timestamp to fiwst doc id seen w-with that timestamp. ^^;;
+  // this is two awways: t-the timestamps (sowted), 🥺 and the d-doc ids.
+  pwotected finaw intbwockpoow wevewsemaptimes;
+  pwotected f-finaw intbwockpoow wevewsemapids;
+  p-pwotected v-vowatiwe int wevewsemapwastindex;
 
-  public AbstractInMemoryTimeMapper() {
-    this.reverseMapTimes = new IntBlockPool(ILLEGAL_TIME, "time_mapper_times");
-    this.reverseMapIds = new IntBlockPool(ILLEGAL_TIME, "time_mapper_ids");
-    this.reverseMapLastIndex = -1;
+  pubwic abstwactinmemowytimemappew() {
+    this.wevewsemaptimes = n-nyew intbwockpoow(iwwegaw_time, (⑅˘꒳˘) "time_mappew_times");
+    this.wevewsemapids = nyew intbwockpoow(iwwegaw_time, nyaa~~ "time_mappew_ids");
+    this.wevewsemapwastindex = -1;
   }
 
-  protected AbstractInMemoryTimeMapper(int reverseMapLastIndex,
-                                       IntBlockPool reverseMapTimes,
-                                       IntBlockPool reverseMapIds) {
-    this.reverseMapTimes = reverseMapTimes;
-    this.reverseMapIds = reverseMapIds;
-    this.reverseMapLastIndex = reverseMapLastIndex;
+  pwotected a-abstwactinmemowytimemappew(int wevewsemapwastindex, :3
+                                       i-intbwockpoow w-wevewsemaptimes, ( ͡o ω ͡o )
+                                       i-intbwockpoow wevewsemapids) {
+    t-this.wevewsemaptimes = wevewsemaptimes;
+    this.wevewsemapids = wevewsemapids;
+    t-this.wevewsemapwastindex = wevewsemapwastindex;
   }
 
-  @Override
-  public final int getLastTime() {
-    return reverseMapLastIndex == -1 ? ILLEGAL_TIME : reverseMapTimes.get(reverseMapLastIndex);
+  @ovewwide
+  pubwic f-finaw int getwasttime() {
+    wetuwn wevewsemapwastindex == -1 ? iwwegaw_time : wevewsemaptimes.get(wevewsemapwastindex);
   }
 
-  @Override
-  public final int getFirstTime() {
-    return reverseMapLastIndex == -1 ? ILLEGAL_TIME : reverseMapTimes.get(0);
+  @ovewwide
+  pubwic finaw int getfiwsttime() {
+    w-wetuwn wevewsemapwastindex == -1 ? iwwegaw_time : w-wevewsemaptimes.get(0);
   }
 
-  @Override
-  public final int findFirstDocId(int timeSeconds, int smallestDocID) {
-    if (timeSeconds == SinceUntilFilter.NO_FILTER || reverseMapLastIndex == -1) {
-      return smallestDocID;
+  @ovewwide
+  p-pubwic finaw int f-findfiwstdocid(int timeseconds, mya int smowestdocid) {
+    if (timeseconds == s-sinceuntiwfiwtew.no_fiwtew || w-wevewsemapwastindex == -1) {
+      wetuwn s-smowestdocid;
     }
 
-    final int index = SearchSortUtils.binarySearch(
-        new IntArrayComparator(), 0, reverseMapLastIndex, timeSeconds, false);
+    f-finaw int index = s-seawchsowtutiws.binawyseawch(
+        nyew intawwaycompawatow(), (///ˬ///✿) 0, (˘ω˘) w-wevewsemapwastindex, ^^;; timeseconds, (✿oωo) fawse);
 
-    if (index == reverseMapLastIndex && reverseMapTimes.get(index) < timeSeconds) {
-      // Special case for out of bounds time.
-      return smallestDocID;
+    i-if (index == wevewsemapwastindex && w-wevewsemaptimes.get(index) < timeseconds) {
+      // s-speciaw c-case fow out of bounds time. (U ﹏ U)
+      wetuwn smowestdocid;
     }
 
-    return reverseMapIds.get(index);
+    wetuwn wevewsemapids.get(index);
   }
 
-  protected abstract void setTime(int docID, int timeSeconds);
+  pwotected abstwact void settime(int docid, -.- int timeseconds);
 
-  protected void doAddMapping(int docID, int timeSeconds) {
-    setTime(docID, timeSeconds);
-    int lastTime = getLastTime();
-    if (timeSeconds > lastTime) {
-      // Found a timestamp newer than any timestamp we've seen before.
-      // Add a reverse mapping to this tweet (the first seen with this timestamp).
+  pwotected v-void doaddmapping(int docid, i-int timeseconds) {
+    settime(docid, ^•ﻌ•^ t-timeseconds);
+    i-int w-wasttime = getwasttime();
+    if (timeseconds > wasttime) {
+      // found a timestamp n-nyewew than any timestamp we've seen befowe. rawr
+      // add a wevewse mapping to this tweet (the f-fiwst seen with this timestamp). (˘ω˘)
       //
-      // When indexing out of order tweets, we could have gaps in the timestamps recorded in
-      // reverseMapTimes. For example, if we get 3 tweets with timestamp T0, T0 + 5, T0 + 3, then we
-      // will only record T0 and T0 + 5 in reverseMapTimes. However, this should not be an issue,
-      // because reverseMapTimes is only used by findFirstDocId(), and it's OK for that method to
-      // return a smaller doc ID than strictly necessary (in this case, findFirstDocId(T0 + 3) will
-      // return the doc ID of the second tweet, instead of returning the doc ID of the third tweet).
-      reverseMapTimes.add(timeSeconds);
-      reverseMapIds.add(docID);
-      reverseMapLastIndex++;
+      // w-when i-indexing out of o-owdew tweets, nyaa~~ we couwd have gaps i-in the timestamps w-wecowded in
+      // w-wevewsemaptimes. UwU f-fow exampwe, :3 if we get 3 tweets with timestamp t-t0, (⑅˘꒳˘) t0 + 5, t-t0 + 3, (///ˬ///✿) then w-we
+      // wiww o-onwy wecowd t0 a-and t0 + 5 in wevewsemaptimes. ^^;; howevew, >_< this shouwd nyot be an issue, rawr x3
+      // b-because wevewsemaptimes is onwy used by findfiwstdocid(), /(^•ω•^) and it's ok fow that method to
+      // w-wetuwn a smowew doc id than stwictwy nyecessawy (in this case, :3 f-findfiwstdocid(t0 + 3) w-wiww
+      // w-wetuwn the doc id of the second t-tweet, (ꈍᴗꈍ) instead of wetuwning t-the doc id of t-the thiwd tweet).
+      wevewsemaptimes.add(timeseconds);
+      wevewsemapids.add(docid);
+      wevewsemapwastindex++;
     }
   }
 
-  private class IntArrayComparator implements SearchSortUtils.Comparator<Integer> {
-    @Override
-    public int compare(int index, Integer value) {
-      return Integer.compare(reverseMapTimes.get(index), value);
+  pwivate cwass intawwaycompawatow i-impwements seawchsowtutiws.compawatow<integew> {
+    @ovewwide
+    p-pubwic int compawe(int index, /(^•ω•^) i-integew vawue) {
+      w-wetuwn integew.compawe(wevewsemaptimes.get(index), (⑅˘꒳˘) vawue);
     }
   }
 }

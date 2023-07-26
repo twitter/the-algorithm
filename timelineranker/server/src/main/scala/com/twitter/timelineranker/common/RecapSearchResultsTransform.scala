@@ -1,88 +1,88 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.model.TweetIdRange
-import com.twitter.timelineranker.parameters.recap.RecapParams
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.relevance_search.SearchClient.TweetTypes
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt com.twittew.timewinewankew.modew.tweetidwange
+i-impowt com.twittew.timewinewankew.pawametews.wecap.wecappawams
+impowt com.twittew.timewines.cwients.wewevance_seawch.seawchcwient
+impowt com.twittew.timewines.cwients.wewevance_seawch.seawchcwient.tweettypes
+impowt com.twittew.utiw.futuwe
 
 /**
- * Fetch recap/recycled search results using the search client
- * and populate them into the CandidateEnvelope
+ * f-fetch wecap/wecycwed seawch wesuwts u-using the seawch cwient
+ * and p-popuwate them into the candidateenvewope
  */
-class RecapSearchResultsTransform(
-  searchClient: SearchClient,
-  maxCountProvider: DependencyProvider[Int],
-  returnAllResultsProvider: DependencyProvider[Boolean],
-  relevanceOptionsMaxHitsToProcessProvider: DependencyProvider[Int],
-  enableExcludeSourceTweetIdsProvider: DependencyProvider[Boolean],
-  enableSettingTweetTypesWithTweetKindOptionProvider: DependencyProvider[Boolean],
-  perRequestSearchClientIdProvider: DependencyProvider[Option[String]],
-  relevanceSearchProvider: DependencyProvider[Boolean] =
-    DependencyProvider.from(RecapParams.EnableRelevanceSearchParam),
-  statsReceiver: StatsReceiver,
-  logSearchDebugInfo: Boolean = true)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
-  private[this] val excludedTweetIdsStat = statsReceiver.stat("excludedTweetIds")
+cwass wecapseawchwesuwtstwansfowm(
+  s-seawchcwient: seawchcwient, σωσ
+  m-maxcountpwovidew: d-dependencypwovidew[int], rawr x3
+  wetuwnawwwesuwtspwovidew: dependencypwovidew[boowean], OwO
+  wewevanceoptionsmaxhitstopwocesspwovidew: dependencypwovidew[int], /(^•ω•^)
+  e-enabweexcwudesouwcetweetidspwovidew: dependencypwovidew[boowean], 😳😳😳
+  enabwesettingtweettypeswithtweetkindoptionpwovidew: dependencypwovidew[boowean], ( ͡o ω ͡o )
+  pewwequestseawchcwientidpwovidew: d-dependencypwovidew[option[stwing]], >_<
+  wewevanceseawchpwovidew: d-dependencypwovidew[boowean] =
+    d-dependencypwovidew.fwom(wecappawams.enabwewewevanceseawchpawam), >w<
+  s-statsweceivew: s-statsweceivew, rawr
+  wogseawchdebuginfo: boowean = t-twue)
+    extends futuweawwow[candidateenvewope, 😳 candidateenvewope] {
+  pwivate[this] v-vaw maxcountstat = statsweceivew.stat("maxcount")
+  pwivate[this] vaw nyumwesuwtsfwomseawchstat = statsweceivew.stat("numwesuwtsfwomseawch")
+  pwivate[this] v-vaw excwudedtweetidsstat = statsweceivew.stat("excwudedtweetids")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = maxCountProvider(envelope.query)
-    maxCountStat.add(maxCount)
+  ovewwide d-def appwy(envewope: c-candidateenvewope): f-futuwe[candidateenvewope] = {
+    vaw maxcount = maxcountpwovidew(envewope.quewy)
+    maxcountstat.add(maxcount)
 
-    val excludedTweetIdsOpt = envelope.query.excludedTweetIds
-    excludedTweetIdsOpt.foreach { excludedTweetIds =>
-      excludedTweetIdsStat.add(excludedTweetIds.size)
+    v-vaw excwudedtweetidsopt = e-envewope.quewy.excwudedtweetids
+    excwudedtweetidsopt.foweach { e-excwudedtweetids =>
+      e-excwudedtweetidsstat.add(excwudedtweetids.size)
     }
 
-    val tweetIdRange = envelope.query.range
-      .map(TweetIdRange.fromTimelineRange)
-      .getOrElse(TweetIdRange.default)
+    vaw tweetidwange = e-envewope.quewy.wange
+      .map(tweetidwange.fwomtimewinewange)
+      .getowewse(tweetidwange.defauwt)
 
-    val beforeTweetIdExclusive = tweetIdRange.toId
-    val afterTweetIdExclusive = tweetIdRange.fromId
+    vaw befowetweetidexcwusive = t-tweetidwange.toid
+    vaw aftewtweetidexcwusive = tweetidwange.fwomid
 
-    val returnAllResults = returnAllResultsProvider(envelope.query)
-    val relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcessProvider(envelope.query)
+    v-vaw wetuwnawwwesuwts = w-wetuwnawwwesuwtspwovidew(envewope.quewy)
+    vaw wewevanceoptionsmaxhitstopwocess = w-wewevanceoptionsmaxhitstopwocesspwovidew(envewope.quewy)
 
-    Future
+    f-futuwe
       .join(
-        envelope.followGraphData.followedUserIdsFuture,
-        envelope.followGraphData.retweetsMutedUserIdsFuture
-      ).flatMap {
-        case (followedIds, retweetsMutedIds) =>
-          val followedIdsIncludingSelf = followedIds.toSet + envelope.query.userId
+        envewope.fowwowgwaphdata.fowwowedusewidsfutuwe, >w<
+        envewope.fowwowgwaphdata.wetweetsmutedusewidsfutuwe
+      ).fwatmap {
+        case (fowwowedids, (⑅˘꒳˘) wetweetsmutedids) =>
+          vaw fowwowedidsincwudingsewf = fowwowedids.toset + e-envewope.quewy.usewid
 
-          searchClient
-            .getUsersTweetsForRecap(
-              userId = envelope.query.userId,
-              followedUserIds = followedIdsIncludingSelf,
-              retweetsMutedUserIds = retweetsMutedIds,
-              maxCount = maxCount,
-              tweetTypes = TweetTypes.fromTweetKindOption(envelope.query.options),
-              searchOperator = envelope.query.searchOperator,
-              beforeTweetIdExclusive = beforeTweetIdExclusive,
-              afterTweetIdExclusive = afterTweetIdExclusive,
-              enableSettingTweetTypesWithTweetKindOption =
-                enableSettingTweetTypesWithTweetKindOptionProvider(envelope.query),
-              excludedTweetIds = excludedTweetIdsOpt,
-              earlybirdOptions = envelope.query.earlybirdOptions,
-              getOnlyProtectedTweets = false,
-              logSearchDebugInfo = logSearchDebugInfo,
-              returnAllResults = returnAllResults,
-              enableExcludeSourceTweetIdsQuery =
-                enableExcludeSourceTweetIdsProvider(envelope.query),
-              relevanceSearch = relevanceSearchProvider(envelope.query),
-              searchClientId = perRequestSearchClientIdProvider(envelope.query),
-              relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcess
-            ).map { results =>
-              numResultsFromSearchStat.add(results.size)
-              envelope.copy(searchResults = results)
+          seawchcwient
+            .getusewstweetsfowwecap(
+              usewid = e-envewope.quewy.usewid, OwO
+              fowwowedusewids = fowwowedidsincwudingsewf, (ꈍᴗꈍ)
+              w-wetweetsmutedusewids = w-wetweetsmutedids,
+              m-maxcount = maxcount, 😳
+              tweettypes = tweettypes.fwomtweetkindoption(envewope.quewy.options), 😳😳😳
+              seawchopewatow = e-envewope.quewy.seawchopewatow, mya
+              befowetweetidexcwusive = befowetweetidexcwusive, mya
+              aftewtweetidexcwusive = aftewtweetidexcwusive, (⑅˘꒳˘)
+              e-enabwesettingtweettypeswithtweetkindoption =
+                enabwesettingtweettypeswithtweetkindoptionpwovidew(envewope.quewy), (U ﹏ U)
+              e-excwudedtweetids = e-excwudedtweetidsopt, mya
+              e-eawwybiwdoptions = envewope.quewy.eawwybiwdoptions, ʘwʘ
+              g-getonwypwotectedtweets = f-fawse, (˘ω˘)
+              w-wogseawchdebuginfo = w-wogseawchdebuginfo,
+              wetuwnawwwesuwts = wetuwnawwwesuwts, (U ﹏ U)
+              e-enabweexcwudesouwcetweetidsquewy =
+                e-enabweexcwudesouwcetweetidspwovidew(envewope.quewy), ^•ﻌ•^
+              w-wewevanceseawch = w-wewevanceseawchpwovidew(envewope.quewy), (˘ω˘)
+              s-seawchcwientid = pewwequestseawchcwientidpwovidew(envewope.quewy), :3
+              wewevanceoptionsmaxhitstopwocess = wewevanceoptionsmaxhitstopwocess
+            ).map { w-wesuwts =>
+              nyumwesuwtsfwomseawchstat.add(wesuwts.size)
+              envewope.copy(seawchwesuwts = wesuwts)
             }
       }
   }

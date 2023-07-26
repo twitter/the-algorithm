@@ -1,22 +1,22 @@
-package com.twitter.home_mixer.product.list_recommended_users.param
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.pawam
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ExcludedIdsMaxLengthParam
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.SupportedClientFSName
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
+impowt com.twittew.home_mixew.pawam.decidew.decidewkey
+i-impowt c-com.twittew.home_mixew.pwoduct.wist_wecommended_usews.pawam.wistwecommendedusewspawam.excwudedidsmaxwengthpawam
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.pawam.wistwecommendedusewspawam.sewvewmaxwesuwtspawam
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.pawam.wistwecommendedusewspawam.suppowtedcwientfsname
+i-impowt com.twittew.pwoduct_mixew.cowe.pwoduct.pwoductpawamconfig
+i-impowt c-com.twittew.sewvo.decidew.decidewkeyname
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ListRecommendedUsersParamConfig @Inject() () extends ProductParamConfig {
-  override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableListRecommendedUsersProduct
-  override val supportedClientFSName: String = SupportedClientFSName
+@singweton
+cwass wistwecommendedusewspawamconfig @inject() () extends pwoductpawamconfig {
+  o-ovewwide vaw enabweddecidewkey: decidewkeyname = decidewkey.enabwewistwecommendedusewspwoduct
+  o-ovewwide vaw suppowtedcwientfsname: stwing = suppowtedcwientfsname
 
-  override val boundedIntFSOverrides = Seq(
-    ServerMaxResultsParam,
-    ExcludedIdsMaxLengthParam
+  o-ovewwide vaw boundedintfsovewwides = seq(
+    sewvewmaxwesuwtspawam, -.-
+    e-excwudedidsmaxwengthpawam
   )
 }

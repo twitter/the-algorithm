@@ -1,96 +1,96 @@
-package com.twitter.search.common.schema.earlybird;
+package com.twittew.seawch.common.schema.eawwybiwd;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.immutabwewist;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.schema.SchemaBuilder;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftTokenStreamSerializer;
-import com.twitter.search.common.util.analysis.CharTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.TermPayloadAttributeSerializer;
+i-impowt com.twittew.common.text.utiw.tokenstweamsewiawizew;
+i-impowt c-com.twittew.seawch.common.schema.schemabuiwdew;
+i-impowt com.twittew.seawch.common.schema.base.fiewdnametoidmapping;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewdconfiguwation;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewdsettings;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwifttokenstweamsewiawizew;
+impowt com.twittew.seawch.common.utiw.anawysis.chawtewmattwibutesewiawizew;
+impowt com.twittew.seawch.common.utiw.anawysis.tewmpaywoadattwibutesewiawizew;
 
 /**
- * Build class used to build a ThriftSchema
+ * buiwd c-cwass used to buiwd a thwiftschema
  */
-public class EarlybirdSchemaBuilder extends SchemaBuilder {
-  private final EarlybirdCluster cluster;
+pubwic c-cwass eawwybiwdschemabuiwdew extends schemabuiwdew {
+  p-pwivate finaw eawwybiwdcwustew cwustew;
 
-  public EarlybirdSchemaBuilder(FieldNameToIdMapping idMapping,
-                                EarlybirdCluster cluster,
-                                TokenStreamSerializer.Version tokenStreamSerializerVersion) {
-    super(idMapping, tokenStreamSerializerVersion);
-    this.cluster = cluster;
+  pubwic eawwybiwdschemabuiwdew(fiewdnametoidmapping i-idmapping, (ˆ ﻌ ˆ)♡
+                                eawwybiwdcwustew c-cwustew, 😳😳😳
+                                t-tokenstweamsewiawizew.vewsion tokenstweamsewiawizewvewsion) {
+    supew(idmapping, (U ﹏ U) tokenstweamsewiawizewvewsion);
+    this.cwustew = cwustew;
   }
 
   /**
-   * Configure the specified field to be Out-of-order.
-   * In the realtime cluster, this causes Earlybird to used the skip list posting format.
+   * c-configuwe the specified fiewd to be out-of-owdew. (///ˬ///✿)
+   * in the weawtime cwustew, 😳 this c-causes eawwybiwd to used the skip w-wist posting fowmat. 😳
    */
-  public final EarlybirdSchemaBuilder withOutOfOrderEnabledForField(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  pubwic f-finaw eawwybiwdschemabuiwdew w-withoutofowdewenabwedfowfiewd(stwing f-fiewdname) {
+    if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn this;
     }
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
-    Preconditions.checkState(settings.isSetIndexedFieldSettings(),
-                             "Out of order field must be indexed");
-    settings.getIndexedFieldSettings().setSupportOutOfOrderAppends(true);
-    return this;
+    t-thwiftfiewdsettings settings =
+        schema.getfiewdconfigs().get(idmapping.getfiewdid(fiewdname)).getsettings();
+    p-pweconditions.checkstate(settings.issetindexedfiewdsettings(), σωσ
+                             "out of owdew fiewd must be indexed");
+    settings.getindexedfiewdsettings().setsuppowtoutofowdewappends(twue);
+    wetuwn this;
   }
 
   /**
-   * This turns on tweet specific normalizations. This turns on the following two token processors:
-   * {@link com.twitter.search.common.util.text.splitter.HashtagMentionPunctuationSplitter}
-   * {@link com.twitter.search.common.util.text.filter.NormalizedTokenFilter}
+   * this tuwns on t-tweet specific nowmawizations. rawr x3 this tuwns on the f-fowwowing two token p-pwocessows:
+   * {@wink c-com.twittew.seawch.common.utiw.text.spwittew.hashtagmentionpunctuationspwittew}
+   * {@wink com.twittew.seawch.common.utiw.text.fiwtew.nowmawizedtokenfiwtew}
    * <p/>
-   * HashtagMentionPunctuationSplitter would break a mention or hashtag like @ab_cd or #ab_cd into
-   * tokens {ab, cd}.
-   * NormalizedTokenFilter strips out the # @ $ from the tokens.
+   * hashtagmentionpunctuationspwittew wouwd b-bweak a mention o-ow hashtag wike @ab_cd ow #ab_cd i-into
+   * tokens {ab, OwO c-cd}.
+   * nyowmawizedtokenfiwtew s-stwips out the # @ $ fwom t-the tokens.
    */
-  public final EarlybirdSchemaBuilder withTweetSpecificNormalization(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  pubwic finaw eawwybiwdschemabuiwdew w-withtweetspecificnowmawization(stwing fiewdname) {
+    i-if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn this;
     }
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
-    Preconditions.checkState(settings.isSetIndexedFieldSettings(),
-                             "Tweet text field must be indexed.");
-    settings.getIndexedFieldSettings().setDeprecated_performTweetSpecificNormalizations(true);
-    return this;
+    t-thwiftfiewdsettings s-settings =
+        schema.getfiewdconfigs().get(idmapping.getfiewdid(fiewdname)).getsettings();
+    pweconditions.checkstate(settings.issetindexedfiewdsettings(), /(^•ω•^)
+                             "tweet text fiewd must be indexed.");
+    settings.getindexedfiewdsettings().setdepwecated_pewfowmtweetspecificnowmawizations(twue);
+    wetuwn this;
   }
 
   /**
-   * Add a twitter photo facet field.
+   * a-add a twittew photo f-facet fiewd. 😳😳😳
    */
-  public final EarlybirdSchemaBuilder withPhotoUrlFacetField(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  pubwic f-finaw eawwybiwdschemabuiwdew w-withphotouwwfacetfiewd(stwing f-fiewdname) {
+    if (!shouwdincwudefiewd(fiewdname)) {
+      wetuwn this;
     }
-    ThriftFieldSettings photoFieldSettings = getNoPositionNoFreqSettings();
-    ThriftTokenStreamSerializer tokenStreamSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    tokenStreamSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(
-            CharTermAttributeSerializer.class.getName(),
-            TermPayloadAttributeSerializer.class.getName()));
-    photoFieldSettings
-        .getIndexedFieldSettings()
-        .setTokenStreamSerializer(tokenStreamSerializer)
-        .setTokenized(true);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName),
-                        new ThriftFieldConfiguration(fieldName).setSettings(photoFieldSettings));
-    return this;
+    thwiftfiewdsettings photofiewdsettings = g-getnopositionnofweqsettings();
+    thwifttokenstweamsewiawizew tokenstweamsewiawizew =
+        nyew thwifttokenstweamsewiawizew(tokenstweamsewiawizewvewsion);
+    tokenstweamsewiawizew.setattwibutesewiawizewcwassnames(
+        i-immutabwewist.<stwing>of(
+            chawtewmattwibutesewiawizew.cwass.getname(), ( ͡o ω ͡o )
+            t-tewmpaywoadattwibutesewiawizew.cwass.getname()));
+    p-photofiewdsettings
+        .getindexedfiewdsettings()
+        .settokenstweamsewiawizew(tokenstweamsewiawizew)
+        .settokenized(twue);
+    p-putintofiewdconfigs(idmapping.getfiewdid(fiewdname), >_<
+                        nyew t-thwiftfiewdconfiguwation(fiewdname).setsettings(photofiewdsettings));
+    w-wetuwn t-this;
   }
 
   /**
-   * Returns whether the given field should be included or dropped.
+   * w-wetuwns whethew the given fiewd shouwd b-be incwuded ow dwopped. >w<
    */
-  @Override
-  protected boolean shouldIncludeField(String fieldName) {
-    return EarlybirdFieldConstants.getFieldConstant(fieldName).isValidFieldInCluster(cluster);
+  @ovewwide
+  p-pwotected b-boowean shouwdincwudefiewd(stwing f-fiewdname) {
+    w-wetuwn eawwybiwdfiewdconstants.getfiewdconstant(fiewdname).isvawidfiewdincwustew(cwustew);
   }
 }
 

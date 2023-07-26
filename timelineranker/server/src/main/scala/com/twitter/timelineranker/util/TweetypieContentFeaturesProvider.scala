@@ -1,114 +1,114 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.contentfeatures.ContentFeaturesProvider
-import com.twitter.timelineranker.core.HydratedTweets
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.tweetypie.thriftscala.MediaEntity
-import com.twitter.tweetypie.thriftscala.TweetInclude
-import com.twitter.tweetypie.thriftscala.{Tweet => TTweet}
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt c-com.twittew.timewinewankew.contentfeatuwes.contentfeatuwespwovidew
+i-impowt com.twittew.timewinewankew.cowe.hydwatedtweets
+i-impowt c-com.twittew.timewinewankew.modew.wecapquewy
+i-impowt c-com.twittew.timewinewankew.wecap.modew.contentfeatuwes
+impowt com.twittew.timewines.cwients.tweetypie.tweetypiecwient
+impowt com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewines.modew.tweet.hydwatedtweet
+impowt com.twittew.timewines.utiw.faiwopenhandwew
+i-impowt com.twittew.tweetypie.thwiftscawa.mediaentity
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetincwude
+impowt com.twittew.tweetypie.thwiftscawa.{tweet => ttweet}
+i-impowt com.twittew.utiw.futuwe
 
-object TweetypieContentFeaturesProvider {
-  val DefaultTweetyPieFieldsToHydrate: Set[TweetInclude] = TweetyPieClient.CoreTweetFields ++
-    TweetyPieClient.MediaFields ++
-    TweetyPieClient.SelfThreadFields ++
-    Set[TweetInclude](TweetInclude.MediaEntityFieldId(MediaEntity.AdditionalMetadataField.id))
+object tweetypiecontentfeatuwespwovidew {
+  v-vaw defauwttweetypiefiewdstohydwate: s-set[tweetincwude] = tweetypiecwient.cowetweetfiewds ++
+    tweetypiecwient.mediafiewds ++
+    tweetypiecwient.sewfthweadfiewds ++
+    set[tweetincwude](tweetincwude.mediaentityfiewdid(mediaentity.additionawmetadatafiewd.id))
 
-  //add Tweet fields from semantic core
-  val TweetyPieFieldsToHydrate: Set[TweetInclude] = DefaultTweetyPieFieldsToHydrate ++
-    Set[TweetInclude](TweetInclude.TweetFieldId(TTweet.EscherbirdEntityAnnotationsField.id))
-  val EmptyHydratedTweets: HydratedTweets =
-    HydratedTweets(Seq.empty[HydratedTweet], Seq.empty[HydratedTweet])
-  val EmptyHydratedTweetsFuture: Future[HydratedTweets] = Future.value(EmptyHydratedTweets)
+  //add tweet f-fiewds fwom semantic cowe
+  vaw tweetypiefiewdstohydwate: set[tweetincwude] = defauwttweetypiefiewdstohydwate ++
+    set[tweetincwude](tweetincwude.tweetfiewdid(ttweet.eschewbiwdentityannotationsfiewd.id))
+  v-vaw emptyhydwatedtweets: hydwatedtweets =
+    h-hydwatedtweets(seq.empty[hydwatedtweet], ^•ﻌ•^ s-seq.empty[hydwatedtweet])
+  v-vaw emptyhydwatedtweetsfutuwe: f-futuwe[hydwatedtweets] = futuwe.vawue(emptyhydwatedtweets)
 }
 
-class TweetypieContentFeaturesProvider(
-  tweetHydrator: TweetHydrator,
-  enableContentFeaturesGate: Gate[RecapQuery],
-  enableTokensInContentFeaturesGate: Gate[RecapQuery],
-  enableTweetTextInContentFeaturesGate: Gate[RecapQuery],
-  enableConversationControlContentFeaturesGate: Gate[RecapQuery],
-  enableTweetMediaHydrationGate: Gate[RecapQuery],
-  statsReceiver: StatsReceiver)
-    extends ContentFeaturesProvider {
-  val scopedStatsReceiver: StatsReceiver = statsReceiver.scope("TweetypieContentFeaturesProvider")
+cwass tweetypiecontentfeatuwespwovidew(
+  tweethydwatow: t-tweethydwatow, (˘ω˘)
+  enabwecontentfeatuwesgate: gate[wecapquewy], :3
+  enabwetokensincontentfeatuwesgate: g-gate[wecapquewy], ^^;;
+  enabwetweettextincontentfeatuwesgate: gate[wecapquewy], 🥺
+  enabweconvewsationcontwowcontentfeatuwesgate: gate[wecapquewy], (⑅˘꒳˘)
+  enabwetweetmediahydwationgate: gate[wecapquewy], nyaa~~
+  s-statsweceivew: statsweceivew)
+    e-extends contentfeatuwespwovidew {
+  v-vaw scopedstatsweceivew: s-statsweceivew = statsweceivew.scope("tweetypiecontentfeatuwespwovidew")
 
-  override def apply(
-    query: RecapQuery,
-    tweetIds: Seq[TweetId]
-  ): Future[Map[TweetId, ContentFeatures]] = {
-    import TweetypieContentFeaturesProvider._
+  ovewwide def appwy(
+    q-quewy: wecapquewy, :3
+    t-tweetids: seq[tweetid]
+  ): f-futuwe[map[tweetid, ( ͡o ω ͡o ) c-contentfeatuwes]] = {
+    impowt tweetypiecontentfeatuwespwovidew._
 
-    val tweetypieHydrationHandler = new FailOpenHandler(scopedStatsReceiver)
-    val hydratePenguinTextFeatures = enableContentFeaturesGate(query)
-    val hydrateSemanticCoreFeatures = enableContentFeaturesGate(query)
-    val hydrateTokens = enableTokensInContentFeaturesGate(query)
-    val hydrateTweetText = enableTweetTextInContentFeaturesGate(query)
-    val hydrateConversationControl = enableConversationControlContentFeaturesGate(query)
+    v-vaw tweetypiehydwationhandwew = nyew faiwopenhandwew(scopedstatsweceivew)
+    v-vaw hydwatepenguintextfeatuwes = enabwecontentfeatuwesgate(quewy)
+    vaw hydwatesemanticcowefeatuwes = e-enabwecontentfeatuwesgate(quewy)
+    vaw hydwatetokens = e-enabwetokensincontentfeatuwesgate(quewy)
+    vaw hydwatetweettext = e-enabwetweettextincontentfeatuwesgate(quewy)
+    v-vaw hydwateconvewsationcontwow = enabweconvewsationcontwowcontentfeatuwesgate(quewy)
 
-    val userId = query.userId
+    vaw usewid = quewy.usewid
 
-    val hydratedTweetsFuture = tweetypieHydrationHandler {
-      // tweetyPie fields to hydrate given hydrateSemanticCoreFeatures
-      val fieldsToHydrateWithSemanticCore = if (hydrateSemanticCoreFeatures) {
-        TweetyPieFieldsToHydrate
-      } else {
-        DefaultTweetyPieFieldsToHydrate
+    vaw hydwatedtweetsfutuwe = tweetypiehydwationhandwew {
+      // tweetypie fiewds t-to hydwate given h-hydwatesemanticcowefeatuwes
+      vaw fiewdstohydwatewithsemanticcowe = i-if (hydwatesemanticcowefeatuwes) {
+        t-tweetypiefiewdstohydwate
+      } e-ewse {
+        defauwttweetypiefiewdstohydwate
       }
 
-      // tweetyPie fields to hydrate given hydrateSemanticCoreFeatures & hydrateConversationControl
-      val fieldsToHydrateWithConversationControl = if (hydrateConversationControl) {
-        fieldsToHydrateWithSemanticCore ++ TweetyPieClient.ConversationControlField
-      } else {
-        fieldsToHydrateWithSemanticCore
+      // tweetypie fiewds to hydwate g-given hydwatesemanticcowefeatuwes & hydwateconvewsationcontwow
+      vaw fiewdstohydwatewithconvewsationcontwow = if (hydwateconvewsationcontwow) {
+        fiewdstohydwatewithsemanticcowe ++ t-tweetypiecwient.convewsationcontwowfiewd
+      } ewse {
+        f-fiewdstohydwatewithsemanticcowe
       }
 
-      tweetHydrator.hydrate(Some(userId), tweetIds, fieldsToHydrateWithConversationControl)
+      t-tweethydwatow.hydwate(some(usewid), mya t-tweetids, fiewdstohydwatewithconvewsationcontwow)
 
-    } { e: Throwable => EmptyHydratedTweetsFuture }
+    } { e-e: thwowabwe => e-emptyhydwatedtweetsfutuwe }
 
-    hydratedTweetsFuture.map[Map[TweetId, ContentFeatures]] { hydratedTweets =>
-      hydratedTweets.outerTweets.map { hydratedTweet =>
-        val contentFeaturesFromTweet = ContentFeatures.Empty.copy(
-          selfThreadMetadata = hydratedTweet.tweet.selfThreadMetadata
+    h-hydwatedtweetsfutuwe.map[map[tweetid, (///ˬ///✿) c-contentfeatuwes]] { hydwatedtweets =>
+      hydwatedtweets.outewtweets.map { h-hydwatedtweet =>
+        vaw c-contentfeatuwesfwomtweet = c-contentfeatuwes.empty.copy(
+          s-sewfthweadmetadata = h-hydwatedtweet.tweet.sewfthweadmetadata
         )
 
-        val contentFeaturesWithText = TweetTextFeaturesExtractor.addTextFeaturesFromTweet(
-          contentFeaturesFromTweet,
-          hydratedTweet.tweet,
-          hydratePenguinTextFeatures,
-          hydrateTokens,
-          hydrateTweetText
+        vaw contentfeatuweswithtext = tweettextfeatuwesextwactow.addtextfeatuwesfwomtweet(
+          contentfeatuwesfwomtweet, (˘ω˘)
+          h-hydwatedtweet.tweet, ^^;;
+          hydwatepenguintextfeatuwes, (✿oωo)
+          hydwatetokens, (U ﹏ U)
+          hydwatetweettext
         )
-        val contentFeaturesWithMedia = TweetMediaFeaturesExtractor.addMediaFeaturesFromTweet(
-          contentFeaturesWithText,
-          hydratedTweet.tweet,
-          enableTweetMediaHydrationGate(query)
+        vaw contentfeatuweswithmedia = tweetmediafeatuwesextwactow.addmediafeatuwesfwomtweet(
+          c-contentfeatuweswithtext,
+          hydwatedtweet.tweet, -.-
+          enabwetweetmediahydwationgate(quewy)
         )
-        val contentFeaturesWithAnnotations = TweetAnnotationFeaturesExtractor
-          .addAnnotationFeaturesFromTweet(
-            contentFeaturesWithMedia,
-            hydratedTweet.tweet,
-            hydrateSemanticCoreFeatures
+        vaw c-contentfeatuweswithannotations = t-tweetannotationfeatuwesextwactow
+          .addannotationfeatuwesfwomtweet(
+            c-contentfeatuweswithmedia, ^•ﻌ•^
+            hydwatedtweet.tweet, rawr
+            h-hydwatesemanticcowefeatuwes
           )
-        // add conversationControl to content features if hydrateConversationControl is true
-        if (hydrateConversationControl) {
-          val contentFeaturesWithConversationControl = contentFeaturesWithAnnotations.copy(
-            conversationControl = hydratedTweet.tweet.conversationControl
+        // add convewsationcontwow t-to c-content featuwes if hydwateconvewsationcontwow is twue
+        if (hydwateconvewsationcontwow) {
+          vaw contentfeatuweswithconvewsationcontwow = contentfeatuweswithannotations.copy(
+            convewsationcontwow = hydwatedtweet.tweet.convewsationcontwow
           )
-          hydratedTweet.tweetId -> contentFeaturesWithConversationControl
-        } else {
-          hydratedTweet.tweetId -> contentFeaturesWithAnnotations
+          h-hydwatedtweet.tweetid -> contentfeatuweswithconvewsationcontwow
+        } e-ewse {
+          hydwatedtweet.tweetid -> c-contentfeatuweswithannotations
         }
 
-      }.toMap
+      }.tomap
     }
   }
 }

@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.pipeline
+package com.twittew.pwoduct_mixew.cowe.pipewine
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.state.HasResult
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiewstack
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasexecutowwesuwts
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.haswesuwt
 
 /**
- * A pipeline builder that is responsible for taking a PipelineConfig and creating a final pipeline
- * from it. It provides an [[NewPipelineArrowBuilder]] for composing the pipeline's underlying arrow
- * from [[Step]]s.
+ * a-a pipewine b-buiwdew that is w-wesponsibwe fow t-taking a pipewineconfig a-and cweating a-a finaw pipewine
+ * fwom it. (✿oωo) it pwovides an [[newpipewineawwowbuiwdew]] fow composing the p-pipewine's undewwying awwow
+ * fwom [[step]]s. (ˆ ﻌ ˆ)♡
  *
- * @tparam Config The Pipeline Config
- * @tparam PipelineArrowResult The expected final result
- * @tparam PipelineArrowState State object for maintaining state across the pipeline.
- * @tparam OutputPipeline The final pipeline
+ * @tpawam config t-the pipewine config
+ * @tpawam p-pipewineawwowwesuwt the expected finaw wesuwt
+ * @tpawam pipewineawwowstate state o-object fow maintaining state a-acwoss the pipewine. (˘ω˘)
+ * @tpawam o-outputpipewine the finaw pipewine
  */
-trait NewPipelineBuilder[
-  Config <: PipelineConfig,
-  PipelineArrowResult,
-  PipelineArrowState <: HasExecutorResults[PipelineArrowState] with HasResult[PipelineArrowResult],
-  OutputPipeline <: Pipeline[_, _]] {
+twait nyewpipewinebuiwdew[
+  config <: pipewineconfig, (⑅˘꒳˘)
+  pipewineawwowwesuwt, (///ˬ///✿)
+  p-pipewineawwowstate <: hasexecutowwesuwts[pipewineawwowstate] with haswesuwt[pipewineawwowwesuwt], 😳😳😳
+  outputpipewine <: pipewine[_, 🥺 _]] {
 
-  type ArrowResult = PipelineArrowResult
-  type ArrowState = PipelineArrowState
+  t-type awwowwesuwt = pipewineawwowwesuwt
+  t-type a-awwowstate = pipewineawwowstate
 
-  def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    arrowBuilder: NewPipelineArrowBuilder[ArrowResult, ArrowState],
-    config: Config
-  ): OutputPipeline
+  d-def buiwd(
+    p-pawentcomponentidentifiewstack: componentidentifiewstack, mya
+    awwowbuiwdew: nyewpipewineawwowbuiwdew[awwowwesuwt, 🥺 a-awwowstate], >_<
+    config: config
+  ): outputpipewine
 }

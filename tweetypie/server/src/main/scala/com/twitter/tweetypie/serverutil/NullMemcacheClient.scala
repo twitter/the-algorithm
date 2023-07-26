@@ -1,46 +1,46 @@
-package com.twitter.tweetypie.serverutil
+package com.twittew.tweetypie.sewvewutiw
 
-import com.twitter.finagle.memcached
-import com.twitter.finagle.memcached.CasResult
-import com.twitter.io.Buf
-import com.twitter.tweetypie.Future
-import com.twitter.tweetypie.Time
-import java.lang
+impowt c-com.twittew.finagwe.memcached
+i-impowt c-com.twittew.finagwe.memcached.caswesuwt
+i-impowt c-com.twittew.io.buf
+i-impowt com.twittew.tweetypie.futuwe
+i-impowt c-com.twittew.tweetypie.time
+impowt java.wang
 
 /**
- * This will be used during CI test runs, in the no-cache scenarios for both DCs.
- * We are treating this as cache of instantaneous expiry. MockClient uses an in-memory map as
- * an underlying data-store, we extend it and prevent any writes to the map - thus making sure
- * it's always empty.
+ * this wiww be used duwing ci t-test wuns, /(^•ω•^) in the nyo-cache scenawios fow both d-dcs. nyaa~~
+ * we awe tweating this as c-cache of instantaneous expiwy. nyaa~~ mockcwient uses an in-memowy map a-as
+ * an undewwying data-stowe, :3 w-we extend it and p-pwevent any wwites to the map - thus making suwe
+ * it's awways empty. 😳😳😳
  */
-class NullMemcacheClient extends memcached.MockClient {
-  override def set(key: String, flags: Int, expiry: Time, value: Buf): Future[Unit] = Future.Done
+cwass n-nyuwwmemcachecwient extends memcached.mockcwient {
+  ovewwide def set(key: stwing, (˘ω˘) fwags: int, e-expiwy: time, vawue: buf): futuwe[unit] = f-futuwe.done
 
-  override def add(key: String, flags: Int, expiry: Time, value: Buf): Future[lang.Boolean] =
-    Future.value(true)
+  o-ovewwide d-def add(key: s-stwing, ^^ fwags: int, expiwy: time, :3 vawue: buf): f-futuwe[wang.boowean] =
+    futuwe.vawue(twue)
 
-  override def append(key: String, flags: Int, expiry: Time, value: Buf): Future[lang.Boolean] =
-    Future.value(false)
+  ovewwide def append(key: s-stwing, -.- fwags: int, 😳 expiwy: time, mya vawue: buf): futuwe[wang.boowean] =
+    futuwe.vawue(fawse)
 
-  override def prepend(key: String, flags: Int, expiry: Time, value: Buf): Future[lang.Boolean] =
-    Future.value(false)
+  ovewwide d-def pwepend(key: stwing, (˘ω˘) fwags: i-int, >_< expiwy: t-time, -.- vawue: buf): f-futuwe[wang.boowean] =
+    futuwe.vawue(fawse)
 
-  override def replace(key: String, flags: Int, expiry: Time, value: Buf): Future[lang.Boolean] =
-    Future.value(false)
+  ovewwide def wepwace(key: stwing, 🥺 fwags: int, (U ﹏ U) e-expiwy: time, >w< v-vawue: buf): futuwe[wang.boowean] =
+    futuwe.vawue(fawse)
 
-  override def checkAndSet(
-    key: String,
-    flags: Int,
-    expiry: Time,
-    value: Buf,
-    casUnique: Buf
-  ): Future[CasResult] = Future.value(CasResult.NotFound)
+  o-ovewwide def checkandset(
+    key: s-stwing, mya
+    fwags: int, >w<
+    e-expiwy: time, nyaa~~
+    vawue: buf, (✿oωo)
+    c-casunique: buf
+  ): futuwe[caswesuwt] = futuwe.vawue(caswesuwt.notfound)
 
-  override def delete(key: String): Future[lang.Boolean] = Future.value(false)
+  o-ovewwide def dewete(key: s-stwing): futuwe[wang.boowean] = f-futuwe.vawue(fawse)
 
-  override def incr(key: String, delta: Long): Future[Option[lang.Long]] =
-    Future.value(None)
+  o-ovewwide def incw(key: stwing, ʘwʘ dewta: wong): futuwe[option[wang.wong]] =
+    futuwe.vawue(none)
 
-  override def decr(key: String, delta: Long): Future[Option[lang.Long]] =
-    Future.value(None)
+  ovewwide def decw(key: stwing, (ˆ ﻌ ˆ)♡ d-dewta: wong): futuwe[option[wang.wong]] =
+    f-futuwe.vawue(none)
 }

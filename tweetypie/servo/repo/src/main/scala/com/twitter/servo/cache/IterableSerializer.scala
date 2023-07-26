@@ -1,84 +1,84 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.util.{Throw, Return, Try}
-import java.io.{DataOutputStream, ByteArrayOutputStream}
-import java.nio.ByteBuffer
-import scala.collection.mutable
-import scala.util.control.NonFatal
+impowt com.twittew.utiw.{thwow, w-wetuwn, 😳😳😳 twy}
+impowt j-java.io.{dataoutputstweam, :3 byteawwayoutputstweam}
+i-impowt java.nio.bytebuffew
+i-impowt scawa.cowwection.mutabwe
+i-impowt scawa.utiw.contwow.nonfataw
 
-object IterableSerializer {
-  // Serialized format for version 0:
-  // Header:
-  //   1 byte  - Version
-  //   4 byte  - number of items
-  // Data, 1 per item:
-  //   4 bytes - item length in bytes (n)
-  //   n bytes - item data
-  val FormatVersion = 0
+o-object itewabwesewiawizew {
+  // s-sewiawized f-fowmat fow vewsion 0:
+  // headew:
+  //   1 byte  - vewsion
+  //   4 byte  - nyumbew o-of items
+  // data, OwO 1 pew item:
+  //   4 bytes - i-item wength in bytes (n)
+  //   n-ny bytes - item data
+  vaw fowmatvewsion = 0
 }
 
 /**
- * A `Serializer` for `Iterable[T]`s.
+ * a `sewiawizew` f-fow `itewabwe[t]`s. (U ﹏ U)
  *
- * @param itemSerializer a Serializer for the individual elements.
- * @param itemSizeEstimate estimated size in bytes of individual elements
+ * @pawam itemsewiawizew a-a sewiawizew f-fow the individuaw ewements. >w<
+ * @pawam itemsizeestimate estimated size in bytes of individuaw e-ewements
  */
-class IterableSerializer[T, C <: Iterable[T]](
-  newBuilder: () => mutable.Builder[T, C],
-  itemSerializer: Serializer[T],
-  itemSizeEstimate: Int = 8)
-    extends Serializer[C] {
-  import IterableSerializer.FormatVersion
+cwass itewabwesewiawizew[t, (U ﹏ U) c <: itewabwe[t]](
+  nyewbuiwdew: () => mutabwe.buiwdew[t, 😳 c-c],
+  itemsewiawizew: s-sewiawizew[t], (ˆ ﻌ ˆ)♡
+  i-itemsizeestimate: i-int = 8)
+    e-extends sewiawizew[c] {
+  impowt itewabwesewiawizew.fowmatvewsion
 
-  if (itemSizeEstimate <= 0) {
-    throw new IllegalArgumentException(
-      "Item size estimate must be positive. Invalid estimate provided: " + itemSizeEstimate
+  i-if (itemsizeestimate <= 0) {
+    thwow nyew iwwegawawgumentexception(
+      "item s-size estimate must be positive. 😳😳😳 invawid estimate pwovided: " + itemsizeestimate
     )
   }
 
-  override def to(iterable: C): Try[Array[Byte]] = Try {
-    assert(iterable.hasDefiniteSize, "Must have a definite size: %s".format(iterable))
+  ovewwide def t-to(itewabwe: c): twy[awway[byte]] = t-twy {
+    a-assewt(itewabwe.hasdefinitesize, (U ﹏ U) "must h-have a definite size: %s".fowmat(itewabwe))
 
-    val numItems = iterable.size
-    val baos = new ByteArrayOutputStream(1 + 4 + (numItems * (4 + itemSizeEstimate)))
-    val output = new DataOutputStream(baos)
+    vaw nyumitems = itewabwe.size
+    v-vaw baos = n-nyew byteawwayoutputstweam(1 + 4 + (numitems * (4 + itemsizeestimate)))
+    v-vaw output = nyew d-dataoutputstweam(baos)
 
-    // Write serialization version format and set length.
-    output.writeByte(FormatVersion)
-    output.writeInt(numItems)
+    // wwite sewiawization v-vewsion fowmat and set wength. (///ˬ///✿)
+    o-output.wwitebyte(fowmatvewsion)
+    output.wwiteint(numitems)
 
-    iterable.foreach { item =>
-      val itemBytes = itemSerializer.to(item).get()
-      output.writeInt(itemBytes.length)
-      output.write(itemBytes)
+    itewabwe.foweach { i-item =>
+      vaw itembytes = itemsewiawizew.to(item).get()
+      o-output.wwiteint(itembytes.wength)
+      output.wwite(itembytes)
     }
-    output.flush()
-    baos.toByteArray()
+    o-output.fwush()
+    baos.tobyteawway()
   }
 
-  override def from(bytes: Array[Byte]): Try[C] = {
-    try {
-      val buf = ByteBuffer.wrap(bytes)
-      val formatVersion = buf.get()
-      if (formatVersion < 0 || formatVersion > FormatVersion) {
-        Throw(new IllegalArgumentException("Invalid serialization format: " + formatVersion))
-      } else {
-        val numItems = buf.getInt()
-        val builder = newBuilder()
-        builder.sizeHint(numItems)
+  o-ovewwide def fwom(bytes: awway[byte]): twy[c] = {
+    twy {
+      vaw buf = bytebuffew.wwap(bytes)
+      vaw fowmatvewsion = b-buf.get()
+      i-if (fowmatvewsion < 0 || fowmatvewsion > fowmatvewsion) {
+        thwow(new i-iwwegawawgumentexception("invawid s-sewiawization f-fowmat: " + fowmatvewsion))
+      } ewse {
+        vaw nyumitems = buf.getint()
+        v-vaw buiwdew = nyewbuiwdew()
+        buiwdew.sizehint(numitems)
 
-        var i = 0
-        while (i < numItems) {
-          val itemBytes = new Array[Byte](buf.getInt())
-          buf.get(itemBytes)
-          val item = itemSerializer.from(itemBytes).get()
-          builder += item
-          i += 1
+        vaw i = 0
+        whiwe (i < nyumitems) {
+          v-vaw itembytes = nyew awway[byte](buf.getint())
+          buf.get(itembytes)
+          v-vaw i-item = itemsewiawizew.fwom(itembytes).get()
+          b-buiwdew += item
+          i-i += 1
         }
-        Return(builder.result())
+        w-wetuwn(buiwdew.wesuwt())
       }
-    } catch {
-      case NonFatal(e) => Throw(e)
+    } c-catch {
+      case n-nyonfataw(e) => thwow(e)
     }
   }
 }

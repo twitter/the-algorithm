@@ -1,100 +1,100 @@
-package com.twitter.search.earlybird.querycache;
+package com.twittew.seawch.eawwybiwd.quewycache;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+impowt java.utiw.awways;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.set;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+i-impowt com.googwe.common.cowwect.immutabwewist;
+i-impowt com.googwe.common.cowwect.sets;
 
-import com.twitter.search.common.constants.QueryCacheConstants;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
+i-impowt com.twittew.seawch.common.constants.quewycacheconstants;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+i-impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatowconstants;
 
-import static com.twitter.search.common.util.RuleBasedConverter.Rule;
+impowt static com.twittew.seawch.common.utiw.wuwebasedconvewtew.wuwe;
 
 /**
- * Rules to convert exclude operators into cached filters and consolidate them.
- * NOTE: this is copied from blender/core/parser/service/queryparser/QueryCacheConversionRules.java
- * We should remove the blender one once this is in production.
+ * wuwes to convewt e-excwude opewatows into cached fiwtews and consowidate t-them. :3
+ * nyote: this is c-copied fwom bwendew/cowe/pawsew/sewvice/quewypawsew/quewycacheconvewsionwuwes.java
+ * we shouwd wemove the bwendew one once this i-is in pwoduction. ^^;;
  */
-public final class QueryCacheConversionRules {
-  static final SearchOperator EXCLUDE_ANTISOCIAL =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.ANTISOCIAL);
-  static final SearchOperator EXCLUDE_SPAM =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.SPAM);
-  static final SearchOperator EXCLUDE_REPLIES =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.REPLIES);
-  static final SearchOperator EXCLUDE_NATIVERETWEETS =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.NATIVE_RETWEETS);
+pubwic finaw c-cwass quewycacheconvewsionwuwes {
+  s-static finaw seawchopewatow excwude_antisociaw =
+      nyew seawchopewatow(seawchopewatow.type.excwude, 🥺 seawchopewatowconstants.antisociaw);
+  s-static finaw seawchopewatow excwude_spam =
+      nyew seawchopewatow(seawchopewatow.type.excwude, (⑅˘꒳˘) seawchopewatowconstants.spam);
+  s-static finaw seawchopewatow e-excwude_wepwies =
+      n-nyew s-seawchopewatow(seawchopewatow.type.excwude, nyaa~~ seawchopewatowconstants.wepwies);
+  s-static finaw seawchopewatow excwude_nativewetweets =
+      nyew s-seawchopewatow(seawchopewatow.type.excwude, :3 seawchopewatowconstants.native_wetweets);
 
-  public static final SearchOperator CACHED_EXCLUDE_ANTISOCIAL =
-      new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_ANTISOCIAL);
-  static final SearchOperator CACHED_EXCLUDE_NATIVERETWEETS =
-      new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_ANTISOCIAL_AND_NATIVERETWEETS);
-  static final SearchOperator CACHED_EXCLUDE_SPAM =
-      new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_SPAM);
-  static final SearchOperator CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS =
-      new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_SPAM_AND_NATIVERETWEETS);
-  static final SearchOperator CACHED_EXCLUDE_REPLIES =
-      new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_REPLIES);
+  pubwic static finaw s-seawchopewatow cached_excwude_antisociaw =
+      nyew seawchopewatow(seawchopewatow.type.cached_fiwtew, ( ͡o ω ͡o )
+                         quewycacheconstants.excwude_antisociaw);
+  static finaw seawchopewatow cached_excwude_nativewetweets =
+      n-nyew seawchopewatow(seawchopewatow.type.cached_fiwtew, mya
+                         q-quewycacheconstants.excwude_antisociaw_and_nativewetweets);
+  s-static f-finaw seawchopewatow cached_excwude_spam =
+      nyew seawchopewatow(seawchopewatow.type.cached_fiwtew, (///ˬ///✿)
+                         quewycacheconstants.excwude_spam);
+  s-static f-finaw seawchopewatow cached_excwude_spam_and_nativewetweets =
+      n-nyew seawchopewatow(seawchopewatow.type.cached_fiwtew, (˘ω˘)
+                         q-quewycacheconstants.excwude_spam_and_nativewetweets);
+  static f-finaw seawchopewatow cached_excwude_wepwies =
+      n-nyew seawchopewatow(seawchopewatow.type.cached_fiwtew, ^^;;
+                         quewycacheconstants.excwude_wepwies);
 
-  private QueryCacheConversionRules() {
+  pwivate quewycacheconvewsionwuwes() {
   }
 
-  public static final List<Rule<Query>> DEFAULT_RULES = ImmutableList.of(
-      // basic translation from exclude:filter to cached filter
-      new Rule<>(new Query[]{EXCLUDE_ANTISOCIAL},
-                 new Query[]{CACHED_EXCLUDE_ANTISOCIAL}),
+  p-pubwic static finaw w-wist<wuwe<quewy>> defauwt_wuwes = i-immutabwewist.of(
+      // b-basic twanswation fwom excwude:fiwtew to cached fiwtew
+      nyew wuwe<>(new quewy[]{excwude_antisociaw},
+                 nyew quewy[]{cached_excwude_antisociaw}), (✿oωo)
 
-      new Rule<>(new Query[]{EXCLUDE_SPAM},
-                 new Query[]{CACHED_EXCLUDE_SPAM}),
+      n-nyew wuwe<>(new q-quewy[]{excwude_spam}, (U ﹏ U)
+                 nyew quewy[]{cached_excwude_spam}), -.-
 
-      new Rule<>(new Query[]{EXCLUDE_NATIVERETWEETS},
-                 new Query[]{CACHED_EXCLUDE_NATIVERETWEETS}),
+      n-new w-wuwe<>(new quewy[]{excwude_nativewetweets}, ^•ﻌ•^
+                 n-nyew quewy[]{cached_excwude_nativewetweets}), rawr
 
-      new Rule<>(new Query[]{EXCLUDE_REPLIES},
-                 new Query[]{CACHED_EXCLUDE_REPLIES}),
+      nyew wuwe<>(new quewy[]{excwude_wepwies}, (˘ω˘)
+                 n-nyew quewy[]{cached_excwude_wepwies}), nyaa~~
 
-      // combine two cached filter to a new one
-      new Rule<>(new Query[]{CACHED_EXCLUDE_SPAM, CACHED_EXCLUDE_NATIVERETWEETS},
-                 new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS}),
+      // combine two cached fiwtew to a nyew one
+      nyew w-wuwe<>(new quewy[]{cached_excwude_spam, cached_excwude_nativewetweets},
+                 n-nyew q-quewy[]{cached_excwude_spam_and_nativewetweets}), UwU
 
-      // Remove redundant filters. A cached filter is redundant when it coexist with a
-      // more strict filter. Note all the filter will filter out antisocial.
-      new Rule<>(
-          new Query[]{CACHED_EXCLUDE_SPAM, CACHED_EXCLUDE_ANTISOCIAL},
-          new Query[]{CACHED_EXCLUDE_SPAM}),
+      // w-wemove wedundant fiwtews. :3 a-a cached fiwtew i-is wedundant w-when it coexist w-with a
+      // mowe stwict fiwtew. (⑅˘꒳˘) nyote aww t-the fiwtew wiww f-fiwtew out antisociaw.
+      n-nyew w-wuwe<>(
+          n-new quewy[]{cached_excwude_spam, (///ˬ///✿) cached_excwude_antisociaw},
+          nyew quewy[]{cached_excwude_spam}), ^^;;
 
-      new Rule<>(
-          new Query[]{CACHED_EXCLUDE_NATIVERETWEETS, CACHED_EXCLUDE_ANTISOCIAL},
-          new Query[]{CACHED_EXCLUDE_NATIVERETWEETS}),
+      n-nyew wuwe<>(
+          nyew quewy[]{cached_excwude_nativewetweets, >_< cached_excwude_antisociaw}, rawr x3
+          nyew quewy[]{cached_excwude_nativewetweets}), /(^•ω•^)
 
-      new Rule<>(
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS, CACHED_EXCLUDE_ANTISOCIAL},
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS}),
+      nyew wuwe<>(
+          n-nyew quewy[]{cached_excwude_spam_and_nativewetweets, :3 cached_excwude_antisociaw}, (ꈍᴗꈍ)
+          nyew quewy[]{cached_excwude_spam_and_nativewetweets}),
 
-      new Rule<>(
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS, CACHED_EXCLUDE_SPAM},
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS}),
+      n-nyew wuwe<>(
+          n-nyew q-quewy[]{cached_excwude_spam_and_nativewetweets, /(^•ω•^) cached_excwude_spam}, (⑅˘꒳˘)
+          n-nyew quewy[]{cached_excwude_spam_and_nativewetweets}), ( ͡o ω ͡o )
 
-      new Rule<>(
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS, CACHED_EXCLUDE_NATIVERETWEETS},
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS})
+      new wuwe<>(
+          n-nyew quewy[]{cached_excwude_spam_and_nativewetweets, òωó c-cached_excwude_nativewetweets}, (⑅˘꒳˘)
+          nyew quewy[]{cached_excwude_spam_and_nativewetweets})
   );
 
-  public static final List<Query> STRIP_ANNOTATIONS_QUERIES;
+  pubwic static finaw wist<quewy> stwip_annotations_quewies;
   static {
-    Set<Query> stripAnnotationsQueries = Sets.newHashSet();
-    for (Rule<Query> rule : DEFAULT_RULES) {
-      stripAnnotationsQueries.addAll(Arrays.asList(rule.getSources()));
+    set<quewy> s-stwipannotationsquewies = sets.newhashset();
+    f-fow (wuwe<quewy> wuwe : d-defauwt_wuwes) {
+      s-stwipannotationsquewies.addaww(awways.aswist(wuwe.getsouwces()));
     }
-    STRIP_ANNOTATIONS_QUERIES = ImmutableList.copyOf(stripAnnotationsQueries);
+    stwip_annotations_quewies = immutabwewist.copyof(stwipannotationsquewies);
   }
 }

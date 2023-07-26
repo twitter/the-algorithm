@@ -1,13 +1,13 @@
-package com.twitter.home_mixer.service
+package com.twittew.home_mixew.sewvice
 
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AllowedLdapGroups
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy.accesspowicy
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy.awwowedwdapgwoups
 
-object HomeMixerAccessPolicy {
+o-object homemixewaccesspowicy {
 
   /**
-   * Access policies can be configured on a product-by-product basis but you may also want products
-   * to have a common policy.
+   * a-access powicies c-can be configuwed o-on a pwoduct-by-pwoduct b-basis b-but you may awso w-want pwoducts
+   * to have a common powicy. σωσ
    */
-  val DefaultHomeMixerAccessPolicy: Set[AccessPolicy] = Set(AllowedLdapGroups(Set.empty[String]))
+  vaw defauwthomemixewaccesspowicy: set[accesspowicy] = s-set(awwowedwdapgwoups(set.empty[stwing]))
 }

@@ -1,45 +1,45 @@
-package com.twitter.tweetypie.caching
+package com.twittew.tweetypie.caching
 
 /**
- * Encodes the possible states of a value loaded from memcached.
+ * encodes t-the possibwe s-states of a vawue w-woaded fwom m-memcached. ( ͡o ω ͡o )
  *
- * @see [[ValueSerializer]] and [[CacheOperations]]
+ * @see [[vawuesewiawizew]] a-and [[cacheopewations]]
  */
-sealed trait CacheResult[+V]
+s-seawed twait c-cachewesuwt[+v]
 
-object CacheResult {
-
-  /**
-   * Signals that the value could not be successfully loaded from
-   * cache. `Failure` values should not be written back to cache.
-   *
-   * This value may result from an error talking to the memcached
-   * instance or it may be returned from the Serializer when the value
-   * should not be reused, but should also not be overwritten.
-   */
-  final case class Failure(e: Throwable) extends CacheResult[Nothing]
+o-object cachewesuwt {
 
   /**
-   * Signals that the cache load attempt was successful, but there was
-   * not a usable value.
+   * signaws that the vawue couwd nyot be successfuwwy woaded fwom
+   * c-cache. (U ﹏ U) `faiwuwe` vawues shouwd nyot be wwitten b-back to cache. (///ˬ///✿)
    *
-   * When processing a `Miss`, the value should be written back to
-   * cache if it loads successfully.
+   * this vawue may wesuwt f-fwom an ewwow tawking to the memcached
+   * instance ow it m-may be wetuwned fwom the sewiawizew w-when the vawue
+   * s-shouwd nyot be weused, >w< but shouwd awso nyot be ovewwwitten. rawr
    */
-  case object Miss extends CacheResult[Nothing]
+  finaw c-case cwass faiwuwe(e: thwowabwe) extends cachewesuwt[nothing]
 
   /**
-   * Signals that the value was found in cache.
+   * signaws that the cache w-woad attempt was successfuw, mya b-but thewe was
+   * n-nyot a usabwe v-vawue. ^^
    *
-   * It is not necessary to load the value from the original source.
+   * w-when pwocessing a `miss`, 😳😳😳 the vawue shouwd be w-wwitten back to
+   * cache if it woads successfuwwy.
    */
-  case class Fresh[V](value: V) extends CacheResult[V]
+  c-case object miss extends cachewesuwt[nothing]
 
   /**
-   * Signals that the value was found in cache.
+   * signaws that the vawue was found in cache. mya
    *
-   * This value should be used, but it should be refreshed
-   * out-of-band.
+   * i-it is nyot nyecessawy t-to woad the vawue f-fwom the owiginaw s-souwce. 😳
    */
-  case class Stale[V](value: V) extends CacheResult[V]
+  case cwass fwesh[v](vawue: v) extends cachewesuwt[v]
+
+  /**
+   * s-signaws t-that the vawue was found in cache. -.-
+   *
+   * t-this v-vawue shouwd be used, 🥺 but it shouwd b-be wefweshed
+   * out-of-band. o.O
+   */
+  c-case cwass stawe[v](vawue: v) extends c-cachewesuwt[v]
 }

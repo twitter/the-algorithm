@@ -1,148 +1,148 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces
 
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
+impowt c-com.twittew.timewines.configapi.duwationconvewsion
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt c-com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.convewsions.duwationops._
 
-object FeatureStoreSourceParams {
-  case object EnableTopicAggregateFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableTopicAggregateFeatures,
-        default = true
+object featuwestowesouwcepawams {
+  case object enabwetopicaggwegatefeatuwes
+      e-extends fspawam[boowean](
+        nyame = f-featuwehydwationsouwcesfeatuweswitchkeys.enabwetopicaggwegatefeatuwes, (⑅˘꒳˘)
+        defauwt = twue
       )
-  case object EnableAlgorithmAggregateFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableAlgorithmAggregateFeatures,
-        default = false
+  c-case object enabweawgowithmaggwegatefeatuwes
+      extends fspawam[boowean](
+        nyame = featuwehydwationsouwcesfeatuweswitchkeys.enabweawgowithmaggwegatefeatuwes, (///ˬ///✿)
+        d-defauwt = fawse
       )
-  case object EnableAuthorTopicAggregateFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableAuthorTopicAggregateFeatures,
-        default = true
+  c-case object e-enabweauthowtopicaggwegatefeatuwes
+      extends fspawam[boowean](
+        nyame = featuwehydwationsouwcesfeatuweswitchkeys.enabweauthowtopicaggwegatefeatuwes, ^^;;
+        d-defauwt = twue
       )
-  case object EnableUserTopicFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableUserTopicFeatures,
-        default = false
+  case object enabweusewtopicfeatuwes
+      extends fspawam[boowean](
+        nyame = f-featuwehydwationsouwcesfeatuweswitchkeys.enabweusewtopicfeatuwes, >_<
+        defauwt = fawse
       )
-  case object EnableTargetUserFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableTargetUserFeatures,
-        default = true
+  c-case o-object enabwetawgetusewfeatuwes
+      e-extends fspawam[boowean](
+        n-nyame = featuwehydwationsouwcesfeatuweswitchkeys.enabwetawgetusewfeatuwes, rawr x3
+        defauwt = t-twue
       )
-  case object EnableTargetUserUserAuthorUserStateRealTimeAggregatesFeature
-      extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableTargetUserUserAuthorUserStateRealTimeAggregatesFeature,
-        default = true
+  case object enabwetawgetusewusewauthowusewstateweawtimeaggwegatesfeatuwe
+      e-extends fspawam[boowean](
+        nyame =
+          featuwehydwationsouwcesfeatuweswitchkeys.enabwetawgetusewusewauthowusewstateweawtimeaggwegatesfeatuwe, /(^•ω•^)
+        defauwt = twue
       )
-  case object EnableTargetUserResurrectionFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableTargetUserResurrectionFeatures,
-        default = true
+  case object enabwetawgetusewwesuwwectionfeatuwes
+      e-extends fspawam[boowean](
+        nyame = f-featuwehydwationsouwcesfeatuweswitchkeys.enabwetawgetusewwesuwwectionfeatuwes, :3
+        d-defauwt = t-twue
       )
-  case object EnableTargetUserWtfImpressionFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableTargetUserWtfImpressionFeatures,
-        default = true
+  case object enabwetawgetusewwtfimpwessionfeatuwes
+      extends fspawam[boowean](
+        n-nyame = f-featuwehydwationsouwcesfeatuweswitchkeys.enabwetawgetusewwtfimpwessionfeatuwes, (ꈍᴗꈍ)
+        defauwt = t-twue
       )
-  case object EnableCandidateUserFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateUserFeatures,
-        default = true
+  c-case object enabwecandidateusewfeatuwes
+      extends fspawam[boowean](
+        n-nyame = featuwehydwationsouwcesfeatuweswitchkeys.enabwecandidateusewfeatuwes, /(^•ω•^)
+        defauwt = t-twue
       )
-  case object EnableCandidateUserAuthorRealTimeAggregateFeatures
-      extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateUserAuthorRealTimeAggregateFeatures,
-        default = true
+  case object enabwecandidateusewauthowweawtimeaggwegatefeatuwes
+      extends fspawam[boowean](
+        n-nyame =
+          featuwehydwationsouwcesfeatuweswitchkeys.enabwecandidateusewauthowweawtimeaggwegatefeatuwes, (⑅˘꒳˘)
+        d-defauwt = twue
       )
-  case object EnableCandidateUserResurrectionFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateUserResurrectionFeatures,
-        default = true
+  case object e-enabwecandidateusewwesuwwectionfeatuwes
+      e-extends fspawam[boowean](
+        nyame = featuwehydwationsouwcesfeatuweswitchkeys.enabwecandidateusewwesuwwectionfeatuwes, ( ͡o ω ͡o )
+        defauwt = twue
       )
-  case object EnableCandidateUserTimelinesAuthorAggregateFeatures
-      extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateUserTimelinesAuthorAggregateFeatures,
-        default = true
+  case object enabwecandidateusewtimewinesauthowaggwegatefeatuwes
+      extends fspawam[boowean](
+        nyame =
+          f-featuwehydwationsouwcesfeatuweswitchkeys.enabwecandidateusewtimewinesauthowaggwegatefeatuwes, òωó
+        d-defauwt = twue
       )
-  case object EnableUserCandidateEdgeFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableUserCandidateEdgeFeatures,
-        default = true
+  case object e-enabweusewcandidateedgefeatuwes
+      e-extends f-fspawam[boowean](
+        nyame = featuwehydwationsouwcesfeatuweswitchkeys.enabweusewcandidateedgefeatuwes, (⑅˘꒳˘)
+        defauwt = t-twue
       )
-  case object EnableUserCandidateWtfImpressionCandidateFeatures
-      extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableUserCandidateWtfImpressionCandidateFeatures,
-        default = true
+  case object enabweusewcandidatewtfimpwessioncandidatefeatuwes
+      extends fspawam[boowean](
+        nyame =
+          featuwehydwationsouwcesfeatuweswitchkeys.enabweusewcandidatewtfimpwessioncandidatefeatuwes, XD
+        d-defauwt = twue
       )
-  case object EnableUserWtfAlgEdgeFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableUserWtfAlgEdgeFeatures,
-        default = false
+  c-case object e-enabweusewwtfawgedgefeatuwes
+      e-extends fspawam[boowean](
+        nyame = featuwehydwationsouwcesfeatuweswitchkeys.enabweusewwtfawgedgefeatuwes, -.-
+        d-defauwt = f-fawse
       )
-  case object EnableSimilarToUserFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableSimilarToUserFeatures,
-        default = true
-      )
-
-  case object EnableCandidatePrecomputedNotificationFeatures
-      extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidatePrecomputedNotificationFeatures,
-        default = false
+  c-case object e-enabwesimiwawtousewfeatuwes
+      extends fspawam[boowean](
+        nyame = featuwehydwationsouwcesfeatuweswitchkeys.enabwesimiwawtousewfeatuwes, :3
+        d-defauwt = t-twue
       )
 
-  case object EnableCandidateClientFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateClientFeatures,
-        default = false
+  c-case object e-enabwecandidatepwecomputednotificationfeatuwes
+      e-extends fspawam[boowean](
+        nyame =
+          featuwehydwationsouwcesfeatuweswitchkeys.enabwecandidatepwecomputednotificationfeatuwes, nyaa~~
+        d-defauwt = fawse
       )
 
-  case object EnableUserClientFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableUserClientFeatures,
-        default = false
+  case object enabwecandidatecwientfeatuwes
+      extends fspawam[boowean](
+        n-nyame = featuwehydwationsouwcesfeatuweswitchkeys.enabwecandidatecwientfeatuwes, 😳
+        defauwt = fawse
       )
 
-  case object EnableSeparateClientForTimelinesAuthors
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.UseSeparateClientForTimelinesAuthor,
-        default = false
+  case o-object enabweusewcwientfeatuwes
+      e-extends f-fspawam[boowean](
+        nyame = f-featuwehydwationsouwcesfeatuweswitchkeys.enabweusewcwientfeatuwes, (⑅˘꒳˘)
+        defauwt = f-fawse
       )
 
-  case object EnableSeparateClientForMetricCenterUserCounting
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.UseSeparateClientMetricCenterUserCounting,
-        default = false
+  c-case object enabwesepawatecwientfowtimewinesauthows
+      extends fspawam[boowean](
+        nyame = featuwehydwationsouwcesfeatuweswitchkeys.usesepawatecwientfowtimewinesauthow, nyaa~~
+        defauwt = fawse
       )
 
-  case object EnableSeparateClientForNotifications
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.UseSeparateClientForNotifications,
-        default = false
+  case o-object enabwesepawatecwientfowmetwiccentewusewcounting
+      extends fspawam[boowean](
+        n-nyame = featuwehydwationsouwcesfeatuweswitchkeys.usesepawatecwientmetwiccentewusewcounting, OwO
+        defauwt = fawse
       )
 
-  case object EnableSeparateClientForGizmoduck
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.UseSeparateClientForGizmoduck,
-        default = false
+  c-case object enabwesepawatecwientfownotifications
+      e-extends fspawam[boowean](
+        nyame = featuwehydwationsouwcesfeatuweswitchkeys.usesepawatecwientfownotifications, rawr x3
+        d-defauwt = fawse
       )
 
-  case object GlobalFetchTimeout
-      extends FSBoundedParam[Duration](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.FeatureHydrationTimeout,
-        default = 240.millisecond,
-        min = 100.millisecond,
-        max = 400.millisecond)
-      with HasDurationConversion {
-    override def durationConversion: DurationConversion = DurationConversion.FromMillis
+  c-case object enabwesepawatecwientfowgizmoduck
+      extends fspawam[boowean](
+        n-name = featuwehydwationsouwcesfeatuweswitchkeys.usesepawatecwientfowgizmoduck,
+        d-defauwt = fawse
+      )
+
+  case object gwobawfetchtimeout
+      extends f-fsboundedpawam[duwation](
+        n-nyame = featuwehydwationsouwcesfeatuweswitchkeys.featuwehydwationtimeout, XD
+        d-defauwt = 240.miwwisecond, σωσ
+        min = 100.miwwisecond, (U ᵕ U❁)
+        m-max = 400.miwwisecond)
+      w-with hasduwationconvewsion {
+    ovewwide d-def duwationconvewsion: duwationconvewsion = duwationconvewsion.fwommiwwis
   }
 }

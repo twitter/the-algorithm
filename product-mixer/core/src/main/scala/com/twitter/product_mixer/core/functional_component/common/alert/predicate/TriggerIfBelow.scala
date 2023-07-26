@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.common.alert.predicate
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate
 
 /**
- * A [[Predicate]] that triggers if the metric this is used with lowers below
- * the [[threshold]] for [[datapointsPastThreshold]] per [[duration]]
+ * a [[pwedicate]] t-that twiggews i-if the metwic t-this is used w-with wowews bewow
+ * t-the [[thweshowd]] f-fow [[datapointspastthweshowd]] p-pew [[duwation]]
  */
-case class TriggerIfBelow(
-  override val threshold: Double,
-  override val datapointsPastThreshold: Int = 10,
-  override val duration: Int = 15,
-  override val metricGranularity: MetricGranularity = Minutes)
-    extends Predicate
-    with ThroughputPredicate {
-  override val operator: Operator = `<`
+case c-cwass twiggewifbewow(
+  ovewwide vaw thweshowd: doubwe, ^^;;
+  ovewwide vaw datapointspastthweshowd: i-int = 10,
+  ovewwide vaw duwation: int = 15, >_<
+  o-ovewwide vaw metwicgwanuwawity: m-metwicgwanuwawity = minutes)
+    extends pwedicate
+    with thwoughputpwedicate {
+  o-ovewwide vaw opewatow: opewatow = `<`
 }

@@ -1,85 +1,85 @@
-package com.twitter.home_mixer.product.following.param
+package com.twittew.home_mixew.pwoduct.fowwowing.pawam
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.WhoToFollowModuleDisplayType
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe.whotofowwowmoduwedispwaytype
+i-impowt c-com.twittew.timewines.configapi.duwationconvewsion
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fsenumpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
+impowt com.twittew.timewines.configapi.hasduwationconvewsion
+impowt com.twittew.utiw.duwation
 
-object FollowingParam {
-  val SupportedClientFSName = "following_supported_client"
+o-object fowwowingpawam {
+  vaw suppowtedcwientfsname = "fowwowing_suppowted_cwient"
 
-  object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "following_server_max_results",
-        default = 100,
-        min = 1,
+  o-object sewvewmaxwesuwtspawam
+      extends fsboundedpawam[int](
+        n-nyame = "fowwowing_sewvew_max_wesuwts", 😳😳😳
+        defauwt = 100, mya
+        min = 1, 😳
         max = 500
       )
 
-  object EnableWhoToFollowCandidatePipelineParam
-      extends FSParam[Boolean](
-        name = "following_enable_who_to_follow",
-        default = true
+  o-object enabwewhotofowwowcandidatepipewinepawam
+      extends f-fspawam[boowean](
+        n-nyame = "fowwowing_enabwe_who_to_fowwow", -.-
+        defauwt = twue
       )
 
-  object EnableAdsCandidatePipelineParam
-      extends FSParam[Boolean](
-        name = "following_enable_ads",
-        default = true
+  object enabweadscandidatepipewinepawam
+      extends fspawam[boowean](
+        n-nyame = "fowwowing_enabwe_ads", 🥺
+        defauwt = twue
       )
 
-  object EnableFlipInjectionModuleCandidatePipelineParam
-      extends FSParam[Boolean](
-        name = "following_enable_flip_inline_injection_module",
-        default = true
+  object enabwefwipinjectionmoduwecandidatepipewinepawam
+      extends fspawam[boowean](
+        n-nyame = "fowwowing_enabwe_fwip_inwine_injection_moduwe", o.O
+        defauwt = t-twue
       )
 
-  object FlipInlineInjectionModulePosition
-      extends FSBoundedParam[Int](
-        name = "following_flip_inline_injection_module_position",
-        default = 0,
-        min = 0,
-        max = 1000
+  o-object fwipinwineinjectionmoduweposition
+      e-extends fsboundedpawam[int](
+        n-nyame = "fowwowing_fwip_inwine_injection_moduwe_position", /(^•ω•^)
+        defauwt = 0,
+        min = 0, nyaa~~
+        m-max = 1000
       )
 
-  object WhoToFollowPositionParam
-      extends FSBoundedParam[Int](
-        name = "following_who_to_follow_position",
-        default = 5,
+  object whotofowwowpositionpawam
+      extends f-fsboundedpawam[int](
+        nyame = "fowwowing_who_to_fowwow_position", nyaa~~
+        defauwt = 5, :3
         min = 0,
         max = 99
       )
 
-  object WhoToFollowMinInjectionIntervalParam
-      extends FSBoundedParam[Duration](
-        "following_who_to_follow_min_injection_interval_in_minutes",
-        default = 1800.minutes,
-        min = 0.minutes,
-        max = 6000.minutes)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMinutes
+  object whotofowwowmininjectionintewvawpawam
+      e-extends fsboundedpawam[duwation](
+        "fowwowing_who_to_fowwow_min_injection_intewvaw_in_minutes", 😳😳😳
+        defauwt = 1800.minutes, (˘ω˘)
+        m-min = 0.minutes, ^^
+        m-max = 6000.minutes)
+      w-with hasduwationconvewsion {
+    ovewwide vaw duwationconvewsion: duwationconvewsion = d-duwationconvewsion.fwomminutes
   }
 
-  object WhoToFollowDisplayTypeIdParam
-      extends FSEnumParam[WhoToFollowModuleDisplayType.type](
-        name = "following_enable_who_to_follow_display_type_id",
-        default = WhoToFollowModuleDisplayType.Vertical,
-        enum = WhoToFollowModuleDisplayType
+  o-object whotofowwowdispwaytypeidpawam
+      extends f-fsenumpawam[whotofowwowmoduwedispwaytype.type](
+        n-nyame = "fowwowing_enabwe_who_to_fowwow_dispway_type_id", :3
+        defauwt = w-whotofowwowmoduwedispwaytype.vewticaw, -.-
+        enum = whotofowwowmoduwedispwaytype
       )
 
-  object WhoToFollowDisplayLocationParam
-      extends FSParam[String](
-        name = "following_who_to_follow_display_location",
-        default = "timeline_reverse_chron"
+  o-object whotofowwowdispwaywocationpawam
+      extends fspawam[stwing](
+        nyame = "fowwowing_who_to_fowwow_dispway_wocation", 😳
+        d-defauwt = "timewine_wevewse_chwon"
       )
 
-  object EnableFastAds
-      extends FSParam[Boolean](
-        name = "following_enable_fast_ads",
-        default = true
+  object e-enabwefastads
+      extends f-fspawam[boowean](
+        n-nyame = "fowwowing_enabwe_fast_ads", mya
+        defauwt = twue
       )
 }

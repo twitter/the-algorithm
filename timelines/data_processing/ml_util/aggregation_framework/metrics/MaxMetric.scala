@@ -1,64 +1,64 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon.getTimestamp
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import java.lang.{Long => JLong}
-import java.lang.{Number => JNumber}
-import java.lang.{Double => JDouble}
-import scala.math.max
+impowt com.twittew.mw.api._
+i-impowt com.twittew.mw.api.utiw.swichdatawecowd
+impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.aggwegationmetwiccommon.gettimestamp
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.time
+i-impowt java.wang.{wong => jwong}
+i-impowt java.wang.{numbew => j-jnumbew}
+impowt j-java.wang.{doubwe => jdoubwe}
+impowt scawa.math.max
 
-case class TypedMaxMetric[T <: JNumber](defaultValue: Double = 0.0)
-    extends TimedValueAggregationMetric[T] {
-  override val operatorName = "max"
+case cwass typedmaxmetwic[t <: j-jnumbew](defauwtvawue: doubwe = 0.0)
+    extends timedvawueaggwegationmetwic[t] {
+  o-ovewwide vaw opewatowname = "max"
 
-  override def getIncrementValue(
-    dataRecord: DataRecord,
-    feature: Option[Feature[T]],
-    timestampFeature: Feature[JLong]
-  ): TimedValue[Double] = {
-    val value = feature
-      .flatMap(SRichDataRecord(dataRecord).getFeatureValueOpt(_))
-      .map(_.doubleValue()).getOrElse(defaultValue)
-    val timestamp = Time.fromMilliseconds(getTimestamp(dataRecord, timestampFeature))
-    TimedValue[Double](value = value, timestamp = timestamp)
+  ovewwide d-def getincwementvawue(
+    datawecowd: datawecowd, (///ˬ///✿)
+    featuwe: option[featuwe[t]], >w<
+    timestampfeatuwe: f-featuwe[jwong]
+  ): timedvawue[doubwe] = {
+    v-vaw vawue = featuwe
+      .fwatmap(swichdatawecowd(datawecowd).getfeatuwevawueopt(_))
+      .map(_.doubwevawue()).getowewse(defauwtvawue)
+    vaw t-timestamp = time.fwommiwwiseconds(gettimestamp(datawecowd, rawr timestampfeatuwe))
+    timedvawue[doubwe](vawue = vawue, mya timestamp = timestamp)
   }
 
-  override def plus(
-    left: TimedValue[Double],
-    right: TimedValue[Double],
-    halfLife: Duration
-  ): TimedValue[Double] = {
+  o-ovewwide def pwus(
+    weft: timedvawue[doubwe], ^^
+    wight: timedvawue[doubwe], 😳😳😳
+    h-hawfwife: duwation
+  ): t-timedvawue[doubwe] = {
 
-    assert(
-      halfLife.toString == "Duration.Top",
-      s"halfLife must be Duration.Top when using max metric, but ${halfLife.toString} is used"
+    a-assewt(
+      h-hawfwife.tostwing == "duwation.top", mya
+      s-s"hawfwife must be duwation.top when using m-max metwic, 😳 but ${hawfwife.tostwing} is used"
     )
 
-    TimedValue[Double](
-      value = max(left.value, right.value),
-      timestamp = left.timestamp.max(right.timestamp)
+    timedvawue[doubwe](
+      v-vawue = max(weft.vawue, -.- wight.vawue), 🥺
+      timestamp = weft.timestamp.max(wight.timestamp)
     )
   }
 
-  override def zero(timeOpt: Option[Long]): TimedValue[Double] =
-    TimedValue[Double](
-      value = 0.0,
-      timestamp = Time.fromMilliseconds(0)
+  ovewwide def zewo(timeopt: option[wong]): t-timedvawue[doubwe] =
+    timedvawue[doubwe](
+      v-vawue = 0.0, o.O
+      t-timestamp = t-time.fwommiwwiseconds(0)
     )
 }
 
-object MaxMetric extends EasyMetric {
-  def forFeatureType[T](
-    featureType: FeatureType,
-  ): Option[AggregationMetric[T, _]] =
-    featureType match {
-      case FeatureType.CONTINUOUS =>
-        Some(TypedMaxMetric[JDouble]().asInstanceOf[AggregationMetric[T, Double]])
-      case FeatureType.DISCRETE =>
-        Some(TypedMaxMetric[JLong]().asInstanceOf[AggregationMetric[T, Double]])
-      case _ => None
+object maxmetwic extends easymetwic {
+  d-def fowfeatuwetype[t](
+    f-featuwetype: featuwetype,
+  ): o-option[aggwegationmetwic[t, /(^•ω•^) _]] =
+    f-featuwetype match {
+      case f-featuwetype.continuous =>
+        some(typedmaxmetwic[jdoubwe]().asinstanceof[aggwegationmetwic[t, nyaa~~ d-doubwe]])
+      case featuwetype.discwete =>
+        some(typedmaxmetwic[jwong]().asinstanceof[aggwegationmetwic[t, nyaa~~ d-doubwe]])
+      case _ => n-nyone
     }
 }

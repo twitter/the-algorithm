@@ -1,101 +1,101 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.twittew.fwigate.pushsewvice.adaptow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.base.DiscoverTwitterCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
-import com.twitter.frigate.pushservice.predicate.DiscoverTwitterPredicate
-import com.twitter.frigate.pushservice.predicate.TargetPredicates
-import com.twitter.frigate.pushservice.util.PushAppPermissionUtil
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fwigate.common.base.candidatesouwce
+i-impowt com.twittew.fwigate.common.base.candidatesouwceewigibwe
+i-impowt com.twittew.fwigate.common.base.discovewtwittewcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.fwigate.pushsewvice.pawams.{pushfeatuweswitchpawams => f-fs}
+impowt com.twittew.fwigate.pushsewvice.pwedicate.discovewtwittewpwedicate
+impowt com.twittew.fwigate.pushsewvice.pwedicate.tawgetpwedicates
+impowt com.twittew.fwigate.pushsewvice.utiw.pushapppewmissionutiw
+impowt com.twittew.fwigate.pushsewvice.utiw.pushdeviceutiw
+impowt c-com.twittew.fwigate.thwiftscawa.{commonwecommendationtype => cwt}
+impowt com.twittew.utiw.futuwe
 
-class OnboardingPushCandidateAdaptor(
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+cwass onboawdingpushcandidateadaptow(
+  gwobawstats: s-statsweceivew)
+    extends candidatesouwce[tawget, OwO wawcandidate]
+    w-with candidatesouwceewigibwe[tawget, (U ﹏ U) wawcandidate] {
 
-  override val name: String = this.getClass.getSimpleName
+  ovewwide vaw nyame: stwing = t-this.getcwass.getsimpwename
 
-  private[this] val stats = globalStats.scope(name)
-  private[this] val requestNum = stats.counter("request_num")
-  private[this] val addressBookCandNum = stats.counter("address_book_cand_num")
-  private[this] val completeOnboardingCandNum = stats.counter("complete_onboarding_cand_num")
+  pwivate[this] v-vaw stats = gwobawstats.scope(name)
+  p-pwivate[this] vaw wequestnum = stats.countew("wequest_num")
+  pwivate[this] vaw addwessbookcandnum = s-stats.countew("addwess_book_cand_num")
+  pwivate[this] vaw compweteonboawdingcandnum = stats.countew("compwete_onboawding_cand_num")
 
-  private def generateOnboardingPushRawCandidate(
-    _target: Target,
-    _commonRecType: CRT
-  ): RawCandidate = {
-    new RawCandidate with DiscoverTwitterCandidate {
-      override val target = _target
-      override val commonRecType = _commonRecType
+  pwivate def g-genewateonboawdingpushwawcandidate(
+    _tawget: tawget, >w<
+    _commonwectype: cwt
+  ): w-wawcandidate = {
+    n-nyew w-wawcandidate with d-discovewtwittewcandidate {
+      ovewwide vaw tawget = _tawget
+      o-ovewwide vaw commonwectype = _commonwectype
     }
   }
 
-  private def getEligibleCandsForTarget(
-    target: Target
-  ): Future[Option[Seq[RawCandidate]]] = {
-    val addressBookFatigue =
-      TargetPredicates
-        .pushRecTypeFatiguePredicate(
-          CRT.AddressBookUploadPush,
-          FS.FatigueForOnboardingPushes,
-          FS.MaxOnboardingPushInInterval,
-          stats)(Seq(target)).map(_.head)
-    val completeOnboardingFatigue =
-      TargetPredicates
-        .pushRecTypeFatiguePredicate(
-          CRT.CompleteOnboardingPush,
-          FS.FatigueForOnboardingPushes,
-          FS.MaxOnboardingPushInInterval,
-          stats)(Seq(target)).map(_.head)
+  pwivate def getewigibwecandsfowtawget(
+    t-tawget: tawget
+  ): futuwe[option[seq[wawcandidate]]] = {
+    vaw addwessbookfatigue =
+      tawgetpwedicates
+        .pushwectypefatiguepwedicate(
+          cwt.addwessbookupwoadpush, (U ﹏ U)
+          f-fs.fatiguefowonboawdingpushes, 😳
+          fs.maxonboawdingpushinintewvaw, (ˆ ﻌ ˆ)♡
+          s-stats)(seq(tawget)).map(_.head)
+    v-vaw compweteonboawdingfatigue =
+      t-tawgetpwedicates
+        .pushwectypefatiguepwedicate(
+          cwt.compweteonboawdingpush, 😳😳😳
+          fs.fatiguefowonboawdingpushes, (U ﹏ U)
+          fs.maxonboawdingpushinintewvaw, (///ˬ///✿)
+          s-stats)(seq(tawget)).map(_.head)
 
-    Future
+    f-futuwe
       .join(
-        target.appPermissions,
-        addressBookFatigue,
-        completeOnboardingFatigue
+        tawget.apppewmissions, 😳
+        a-addwessbookfatigue, 😳
+        c-compweteonboawdingfatigue
       ).map {
-        case (appPermissionOpt, addressBookPredicate, completeOnboardingPredicate) =>
-          val addressBookUploaded =
-            PushAppPermissionUtil.hasTargetUploadedAddressBook(appPermissionOpt)
-          val abUploadCandidate =
-            if (!addressBookUploaded && addressBookPredicate && target.params(
-                FS.EnableAddressBookPush)) {
-              addressBookCandNum.incr()
-              Some(generateOnboardingPushRawCandidate(target, CRT.AddressBookUploadPush))
-            } else if (!addressBookUploaded && (completeOnboardingPredicate ||
-              target.params(FS.DisableOnboardingPushFatigue)) && target.params(
-                FS.EnableCompleteOnboardingPush)) {
-              completeOnboardingCandNum.incr()
-              Some(generateOnboardingPushRawCandidate(target, CRT.CompleteOnboardingPush))
-            } else None
+        case (apppewmissionopt, σωσ a-addwessbookpwedicate, rawr x3 compweteonboawdingpwedicate) =>
+          v-vaw addwessbookupwoaded =
+            pushapppewmissionutiw.hastawgetupwoadedaddwessbook(apppewmissionopt)
+          vaw abupwoadcandidate =
+            i-if (!addwessbookupwoaded && addwessbookpwedicate && t-tawget.pawams(
+                fs.enabweaddwessbookpush)) {
+              a-addwessbookcandnum.incw()
+              s-some(genewateonboawdingpushwawcandidate(tawget, OwO cwt.addwessbookupwoadpush))
+            } ewse if (!addwessbookupwoaded && (compweteonboawdingpwedicate ||
+              tawget.pawams(fs.disabweonboawdingpushfatigue)) && tawget.pawams(
+                fs.enabwecompweteonboawdingpush)) {
+              compweteonboawdingcandnum.incw()
+              s-some(genewateonboawdingpushwawcandidate(tawget, c-cwt.compweteonboawdingpush))
+            } ewse nyone
 
-          val allCandidates =
-            Seq(abUploadCandidate).filter(_.isDefined).flatten
-          if (allCandidates.nonEmpty) Some(allCandidates) else None
+          v-vaw awwcandidates =
+            s-seq(abupwoadcandidate).fiwtew(_.isdefined).fwatten
+          i-if (awwcandidates.nonempty) some(awwcandidates) ewse nyone
       }
   }
 
-  override def get(inputTarget: Target): Future[Option[Seq[RawCandidate]]] = {
-    requestNum.incr()
-    val minDurationForMRElapsed =
-      DiscoverTwitterPredicate
-        .minDurationElapsedSinceLastMrPushPredicate(
-          name,
-          FS.MrMinDurationSincePushForOnboardingPushes,
-          stats)(Seq(inputTarget)).map(_.head)
-    minDurationForMRElapsed.flatMap { minDurationElapsed =>
-      if (minDurationElapsed) getEligibleCandsForTarget(inputTarget) else Future.None
+  ovewwide d-def get(inputtawget: tawget): futuwe[option[seq[wawcandidate]]] = {
+    wequestnum.incw()
+    vaw minduwationfowmwewapsed =
+      discovewtwittewpwedicate
+        .minduwationewapsedsincewastmwpushpwedicate(
+          n-nyame, /(^•ω•^)
+          fs.mwminduwationsincepushfowonboawdingpushes, 😳😳😳
+          s-stats)(seq(inputtawget)).map(_.head)
+    m-minduwationfowmwewapsed.fwatmap { m-minduwationewapsed =>
+      if (minduwationewapsed) g-getewigibwecandsfowtawget(inputtawget) e-ewse futuwe.none
     }
   }
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    PushDeviceUtil
-      .isRecommendationsEligible(target).map(_ && target.params(FS.EnableOnboardingPushes))
+  o-ovewwide d-def iscandidatesouwceavaiwabwe(tawget: tawget): futuwe[boowean] = {
+    pushdeviceutiw
+      .iswecommendationsewigibwe(tawget).map(_ && t-tawget.pawams(fs.enabweonboawdingpushes))
   }
 }

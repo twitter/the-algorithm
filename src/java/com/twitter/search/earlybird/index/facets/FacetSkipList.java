@@ -1,126 +1,126 @@
-package com.twitter.search.earlybird.index.facets;
+package com.twittew.seawch.eawwybiwd.index.facets;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+impowt java.io.ioexception;
+impowt j-java.utiw.hashset;
+i-impowt j-java.utiw.itewatow;
+i-impowt java.utiw.set;
 
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
+i-impowt o-owg.apache.wucene.anawysis.tokenstweam;
+i-impowt o-owg.apache.wucene.anawysis.tokenattwibutes.chawtewmattwibute;
+impowt owg.apache.wucene.index.tewm;
+impowt owg.apache.wucene.seawch.booweancwause;
+impowt owg.apache.wucene.seawch.booweanquewy;
+impowt owg.apache.wucene.seawch.quewy;
+i-impowt owg.apache.wucene.seawch.tewmquewy;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.facets.facetcountstate;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmwequest;
 
-public abstract class FacetSkipList {
-  public static class SkipTokenStream extends TokenStream {
-    private CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
+pubwic a-abstwact cwass facetskipwist {
+  p-pubwic static c-cwass skiptokenstweam extends tokenstweam {
+    pwivate chawtewmattwibute tewmatt = addattwibute(chawtewmattwibute.cwass);
 
-    private Iterator<Schema.FieldInfo> iterator;
-    private Set<Schema.FieldInfo> facetFields = new HashSet<>();
+    p-pwivate itewatow<schema.fiewdinfo> itewatow;
+    pwivate set<schema.fiewdinfo> facetfiewds = nyew hashset<>();
 
-    public void add(Schema.FieldInfo field) {
-      this.facetFields.add(field);
+    p-pubwic void add(schema.fiewdinfo f-fiewd) {
+      t-this.facetfiewds.add(fiewd);
     }
 
-    @Override
-    public final boolean incrementToken() throws IOException {
-      if (iterator == null) {
-        iterator = facetFields.iterator();
+    @ovewwide
+    p-pubwic f-finaw boowean incwementtoken() thwows ioexception {
+      i-if (itewatow == nyuww) {
+        itewatow = f-facetfiewds.itewatow();
       }
 
-      while (iterator.hasNext()) {
-        Schema.FieldInfo field = iterator.next();
-        if (field.getFieldType().isStoreFacetSkiplist()) {
-          termAtt.setEmpty();
-          termAtt.append(EarlybirdFieldConstant.getFacetSkipFieldName(field.getName()));
+      whiwe (itewatow.hasnext()) {
+        schema.fiewdinfo fiewd = itewatow.next();
+        if (fiewd.getfiewdtype().isstowefacetskipwist()) {
+          tewmatt.setempty();
+          tewmatt.append(eawwybiwdfiewdconstant.getfacetskipfiewdname(fiewd.getname()));
 
-          return true;
+          w-wetuwn twue;
         }
       }
 
-      return false;
+      w-wetuwn fawse;
     }
   }
 
   /**
-   * Returns a Term query to search in the given facet field.
+   * w-wetuwns a tewm q-quewy to seawch in the given facet fiewd. (˘ω˘)
    */
-  public static Term getSkipListTerm(Schema.FieldInfo facetField) {
-    if (facetField.getFieldType().isStoreFacetSkiplist()) {
-      return new Term(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-                      EarlybirdFieldConstant.getFacetSkipFieldName(facetField.getName()));
+  pubwic static t-tewm getskipwisttewm(schema.fiewdinfo f-facetfiewd) {
+    if (facetfiewd.getfiewdtype().isstowefacetskipwist()) {
+      w-wetuwn n-new tewm(eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), nyaa~~
+                      eawwybiwdfiewdconstant.getfacetskipfiewdname(facetfiewd.getname()));
     }
-    return null;
+    w-wetuwn nyuww;
   }
 
   /**
-   * Returns a disjunction query that searches in all facet fields in the given facet count state.
+   * wetuwns a disjunction q-quewy that seawches in aww facet fiewds i-in the given facet count state. UwU
    */
-  public static Query getSkipListQuery(FacetCountState facetCountState) {
-    Set<Schema.FieldInfo> fieldsWithSkipLists =
-        facetCountState.getFacetFieldsToCountWithSkipLists();
+  p-pubwic static quewy getskipwistquewy(facetcountstate f-facetcountstate) {
+    s-set<schema.fiewdinfo> fiewdswithskipwists =
+        facetcountstate.getfacetfiewdstocountwithskipwists();
 
-    if (fieldsWithSkipLists == null || fieldsWithSkipLists.isEmpty()) {
-      return null;
+    if (fiewdswithskipwists == nyuww || fiewdswithskipwists.isempty()) {
+      wetuwn nyuww;
     }
 
-    Query skipLists;
+    quewy skipwists;
 
-    if (fieldsWithSkipLists.size() == 1) {
-      skipLists = new TermQuery(getSkipListTerm(fieldsWithSkipLists.iterator().next()));
-    } else {
-      BooleanQuery.Builder disjunctionBuilder = new BooleanQuery.Builder();
-      for (Schema.FieldInfo facetField : fieldsWithSkipLists) {
-        disjunctionBuilder.add(
-            new TermQuery(new Term(
-                EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-                EarlybirdFieldConstant.getFacetSkipFieldName(facetField.getName()))),
-            BooleanClause.Occur.SHOULD);
+    i-if (fiewdswithskipwists.size() == 1) {
+      s-skipwists = nyew tewmquewy(getskipwisttewm(fiewdswithskipwists.itewatow().next()));
+    } e-ewse {
+      b-booweanquewy.buiwdew d-disjunctionbuiwdew = nyew booweanquewy.buiwdew();
+      fow (schema.fiewdinfo facetfiewd : f-fiewdswithskipwists) {
+        disjunctionbuiwdew.add(
+            nyew tewmquewy(new tewm(
+                eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), :3
+                e-eawwybiwdfiewdconstant.getfacetskipfiewdname(facetfiewd.getname()))),
+            booweancwause.occuw.shouwd);
       }
-      skipLists = disjunctionBuilder.build();
+      s-skipwists = disjunctionbuiwdew.buiwd();
     }
 
-    return skipLists;
+    w-wetuwn skipwists;
   }
 
   /**
-   * Returns a term request that can be used to get term statistics for the skip list term
-   * associated with the provided facet. Returns null, if this FacetField is configured to not
-   * store a skiplist.
+   * w-wetuwns a tewm wequest that c-can be used to g-get tewm statistics f-fow the skip w-wist tewm
+   * associated with the pwovided facet. (⑅˘꒳˘) w-wetuwns nyuww, (///ˬ///✿) i-if this facetfiewd i-is configuwed t-to not
+   * s-stowe a skipwist. ^^;;
    */
-  public static ThriftTermRequest getSkipListTermRequest(Schema schema, String facetName) {
-    return getSkipListTermRequest(schema.getFacetFieldByFacetName(facetName));
+  pubwic static thwifttewmwequest getskipwisttewmwequest(schema s-schema, >_< stwing facetname) {
+    wetuwn getskipwisttewmwequest(schema.getfacetfiewdbyfacetname(facetname));
   }
 
   /**
-   * Returns a term request that can be used to get term statistics for the skip list term
-   * associated with the provided facet. Returns null, if this FacetField is configured to not
-   * store a skiplist.
+   * wetuwns a tewm wequest that c-can be used to get tewm statistics fow the skip wist tewm
+   * associated w-with the p-pwovided facet. rawr x3 w-wetuwns nyuww, /(^•ω•^) if this facetfiewd i-is configuwed to nyot
+   * s-stowe a skipwist. :3
    */
-  public static ThriftTermRequest getSkipListTermRequest(Schema.FieldInfo facetField) {
-    return facetField != null && facetField.getFieldType().isStoreFacetSkiplist()
-           ? new ThriftTermRequest(
-                EarlybirdFieldConstant.getFacetSkipFieldName(facetField.getName()))
-             .setFieldName(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName())
-           : null;
+  p-pubwic static thwifttewmwequest getskipwisttewmwequest(schema.fiewdinfo facetfiewd) {
+    wetuwn facetfiewd != nyuww && f-facetfiewd.getfiewdtype().isstowefacetskipwist()
+           ? nyew thwifttewmwequest(
+                e-eawwybiwdfiewdconstant.getfacetskipfiewdname(facetfiewd.getname()))
+             .setfiewdname(eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname())
+           : nyuww;
   }
 
   /**
-   * Returns a term request using the specified fieldName. This is only a temporary solution until
-   * Blender can access the Schema to pass the FacetIDMap into the method above.
+   * w-wetuwns a tewm w-wequest using the specified fiewdname. (ꈍᴗꈍ) this is onwy a-a tempowawy s-sowution untiw
+   * bwendew can a-access the schema t-to pass the facetidmap into the method above. /(^•ω•^)
    *
-   * @deprecated Temporary solution until Blender
+   * @depwecated tempowawy sowution untiw bwendew
    */
-  @Deprecated
-  public static ThriftTermRequest getSkipListTermRequest(String fieldName) {
-    return new ThriftTermRequest(EarlybirdFieldConstant.getFacetSkipFieldName(fieldName))
-        .setFieldName(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName());
+  @depwecated
+  p-pubwic s-static thwifttewmwequest g-getskipwisttewmwequest(stwing fiewdname) {
+    w-wetuwn n-nyew thwifttewmwequest(eawwybiwdfiewdconstant.getfacetskipfiewdname(fiewdname))
+        .setfiewdname(eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname());
   }
 }

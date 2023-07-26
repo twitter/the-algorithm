@@ -1,19 +1,19 @@
-package com.twitter.tsp.common
+package com.twittew.tsp.common
 
-import com.twitter.servo.decider.DeciderKeyEnum
+impowt com.twittew.sewvo.decidew.decidewkeyenum
 
-object DeciderConstants {
-  val enableTopicSocialProofScore = "enable_topic_social_proof_score"
-  val enableHealthSignalsScoreDeciderKey = "enable_tweet_health_score"
-  val enableUserAgathaScoreDeciderKey = "enable_user_agatha_score"
+o-object decidewconstants {
+  v-vaw e-enabwetopicsociawpwoofscowe = "enabwe_topic_sociaw_pwoof_scowe"
+  v-vaw enabweheawthsignawsscowedecidewkey = "enabwe_tweet_heawth_scowe"
+  v-vaw enabweusewagathascowedecidewkey = "enabwe_usew_agatha_scowe"
 }
 
-object DeciderKey extends DeciderKeyEnum {
+o-object d-decidewkey extends d-decidewkeyenum {
 
-  val enableHealthSignalsScoreDeciderKey: Value = Value(
-    DeciderConstants.enableHealthSignalsScoreDeciderKey
+  vaw enabweheawthsignawsscowedecidewkey: vawue = vawue(
+    decidewconstants.enabweheawthsignawsscowedecidewkey
   )
-  val enableUserAgathaScoreDeciderKey: Value = Value(
-    DeciderConstants.enableUserAgathaScoreDeciderKey
+  vaw enabweusewagathascowedecidewkey: v-vawue = vawue(
+    decidewconstants.enabweusewagathascowedecidewkey
   )
 }

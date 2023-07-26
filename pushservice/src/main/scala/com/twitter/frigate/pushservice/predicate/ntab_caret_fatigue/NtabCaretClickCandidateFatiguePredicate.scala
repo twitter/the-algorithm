@@ -1,87 +1,87 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.FatiguePredicate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.frigate.common.base.Candidate
-import com.twitter.frigate.common.base.TargetInfo
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.common.base.{RecommendationType => BaseRecommendationType}
-import com.twitter.frigate.common.predicate.CandidateWithRecommendationTypeAndTargetInfoWithCaretFeedbackHistory
-import com.twitter.frigate.common.predicate.FrigateHistoryFatiguePredicate.TimeSeries
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.predicate.CaretFeedbackHistoryFilter
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.pwedicate.fatiguepwedicate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+i-impowt c-com.twittew.fwigate.common.base.candidate
+i-impowt c-com.twittew.fwigate.common.base.tawgetinfo
+i-impowt com.twittew.fwigate.common.wec_types.wectypes
+impowt com.twittew.fwigate.common.base.{wecommendationtype => basewecommendationtype}
+impowt com.twittew.fwigate.common.pwedicate.candidatewithwecommendationtypeandtawgetinfowithcawetfeedbackhistowy
+impowt com.twittew.fwigate.common.pwedicate.fwigatehistowyfatiguepwedicate.timesewies
+i-impowt com.twittew.notificationsewvice.thwiftscawa.cawetfeedbackdetaiws
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.cawetfeedbackhistowyfiwtew
 
-object NtabCaretClickContFnFatiguePredicate {
+object nytabcawetcwickcontfnfatiguepwedicate {
 
-  private val MagicRecsCategory = "MagicRecs"
+  p-pwivate vaw magicwecscategowy = "magicwecs"
 
-  def ntabCaretClickContFnFatiguePredicates(
-    filterHistory: TimeSeries => TimeSeries =
-      FatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: Target => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] =
-      CaretFeedbackHistoryFilter.caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    filterInlineFeedbackHistory: Seq[FeedbackModel] => Seq[FeedbackModel] =
-      NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(RecTypes.sharedNTabCaretFatigueTypes),
-    name: String = "NTabCaretClickFnCandidatePredicates"
+  def nytabcawetcwickcontfnfatiguepwedicates(
+    fiwtewhistowy: timesewies => timesewies =
+      f-fatiguepwedicate.wectypesonwyfiwtew(wectypes.shawedntabcawetfatiguetypes), 😳😳😳
+    fiwtewcawetfeedbackhistowy: t-tawget => s-seq[
+      cawetfeedbackdetaiws
+    ] => seq[cawetfeedbackdetaiws] =
+      cawetfeedbackhistowyfiwtew.cawetfeedbackhistowyfiwtew(seq(magicwecscategowy)), mya
+    fiwtewinwinefeedbackhistowy: s-seq[feedbackmodew] => seq[feedbackmodew] =
+      nytabcawetcwickfatigueutiws.feedbackmodewfiwtewbycwt(wectypes.shawedntabcawetfatiguetypes), 😳
+    nyame: stwing = "ntabcawetcwickfncandidatepwedicates"
   )(
-    implicit globalStats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val scopedStats = globalStats.scope(name)
-    CRTBasedNtabCaretClickFatiguePredicates
-      .f1TriggeredCRTBasedNtabCaretClickFnFatiguePredicate[
-        Candidate with BaseRecommendationType with TargetInfo[
-          Target
+    impwicit gwobawstats: s-statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    v-vaw scopedstats = g-gwobawstats.scope(name)
+    c-cwtbasedntabcawetcwickfatiguepwedicates
+      .f1twiggewedcwtbasedntabcawetcwickfnfatiguepwedicate[
+        c-candidate with basewecommendationtype with tawgetinfo[
+          t-tawget
         ]
       ](
-        filterHistory = filterHistory,
-        filterCaretFeedbackHistory = filterCaretFeedbackHistory,
-        filterInlineFeedbackHistory = filterInlineFeedbackHistory
+        fiwtewhistowy = fiwtewhistowy, -.-
+        fiwtewcawetfeedbackhistowy = fiwtewcawetfeedbackhistowy, 🥺
+        f-fiwtewinwinefeedbackhistowy = fiwtewinwinefeedbackhistowy
       )
-      .applyOnlyToCandidateWithRecommendationTypeAndTargetWithCaretFeedbackHistory
-      .withName("f1_triggered_fn_seelessoften_fatigue")
-      .andThen(
-        CRTBasedNtabCaretClickFatiguePredicates
-          .nonF1TriggeredCRTBasedNtabCaretClickFnFatiguePredicate[
-            Candidate with BaseRecommendationType with TargetInfo[
-              Target
+      .appwyonwytocandidatewithwecommendationtypeandtawgetwithcawetfeedbackhistowy
+      .withname("f1_twiggewed_fn_seewessoften_fatigue")
+      .andthen(
+        cwtbasedntabcawetcwickfatiguepwedicates
+          .nonf1twiggewedcwtbasedntabcawetcwickfnfatiguepwedicate[
+            candidate with basewecommendationtype with tawgetinfo[
+              t-tawget
             ]
           ](
-            filterHistory = filterHistory,
-            filterCaretFeedbackHistory = filterCaretFeedbackHistory,
-            filterInlineFeedbackHistory = filterInlineFeedbackHistory
+            fiwtewhistowy = f-fiwtewhistowy, o.O
+            f-fiwtewcawetfeedbackhistowy = f-fiwtewcawetfeedbackhistowy, /(^•ω•^)
+            fiwtewinwinefeedbackhistowy = fiwtewinwinefeedbackhistowy
           )
-          .applyOnlyToCandidateWithRecommendationTypeAndTargetWithCaretFeedbackHistory)
-      .withName("nonf1_triggered_fn_seelessoften_fatigue")
-      .andThen(
-        CRTBasedNtabCaretClickFatiguePredicates
-          .tripHqTweetTriggeredCRTBasedNtabCaretClickFnFatiguePredicate[
-            Candidate with BaseRecommendationType with TargetInfo[
-              Target
+          .appwyonwytocandidatewithwecommendationtypeandtawgetwithcawetfeedbackhistowy)
+      .withname("nonf1_twiggewed_fn_seewessoften_fatigue")
+      .andthen(
+        cwtbasedntabcawetcwickfatiguepwedicates
+          .twiphqtweettwiggewedcwtbasedntabcawetcwickfnfatiguepwedicate[
+            c-candidate with b-basewecommendationtype with tawgetinfo[
+              t-tawget
             ]
           ](
-            filterHistory = filterHistory,
-            filterCaretFeedbackHistory = filterCaretFeedbackHistory,
-            filterInlineFeedbackHistory = filterInlineFeedbackHistory
+            f-fiwtewhistowy = fiwtewhistowy, nyaa~~
+            f-fiwtewcawetfeedbackhistowy = fiwtewcawetfeedbackhistowy, nyaa~~
+            fiwtewinwinefeedbackhistowy = f-fiwtewinwinefeedbackhistowy
           )
-          .applyOnlyToCandidateWithRecommendationTypeAndTargetWithCaretFeedbackHistory)
-      .withName("trip_hq_tweet_triggered_fn_seelessoften_fatigue")
-      .andThen(
-        CRTBasedNtabCaretClickFatiguePredicates
-          .genericCRTBasedNtabCaretClickFnFatiguePredicate[
-            Candidate with BaseRecommendationType with TargetInfo[
-              Target
+          .appwyonwytocandidatewithwecommendationtypeandtawgetwithcawetfeedbackhistowy)
+      .withname("twip_hq_tweet_twiggewed_fn_seewessoften_fatigue")
+      .andthen(
+        cwtbasedntabcawetcwickfatiguepwedicates
+          .genewiccwtbasedntabcawetcwickfnfatiguepwedicate[
+            candidate with basewecommendationtype w-with tawgetinfo[
+              tawget
             ]
           ](
-            filterHistory = filterHistory,
-            filterCaretFeedbackHistory = filterCaretFeedbackHistory,
-            filterInlineFeedbackHistory = filterInlineFeedbackHistory)
-          .applyOnlyToCandidateWithRecommendationTypeAndTargetWithCaretFeedbackHistory
-          .withName("generic_fn_seelessoften_fatigue")
+            f-fiwtewhistowy = fiwtewhistowy, :3
+            f-fiwtewcawetfeedbackhistowy = f-fiwtewcawetfeedbackhistowy, 😳😳😳
+            fiwtewinwinefeedbackhistowy = fiwtewinwinefeedbackhistowy)
+          .appwyonwytocandidatewithwecommendationtypeandtawgetwithcawetfeedbackhistowy
+          .withname("genewic_fn_seewessoften_fatigue")
       )
   }
 }

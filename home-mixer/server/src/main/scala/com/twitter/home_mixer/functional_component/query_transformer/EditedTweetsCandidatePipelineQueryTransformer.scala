@@ -1,85 +1,85 @@
-package com.twitter.home_mixer.functional_component.query_transformer
+package com.twittew.home_mixew.functionaw_component.quewy_twansfowmew
 
-import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelinemixer.clients.persistence.EntryWithItemIds
-import com.twitter.timelines.persistence.thriftscala.RequestType
-import com.twitter.timelines.util.client_info.ClientPlatform
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Time
+impowt com.twittew.common_intewnaw.anawytics.twittew_cwient_usew_agent_pawsew.usewagent
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.pewsistenceentwiesfeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewinemixew.cwients.pewsistence.entwywithitemids
+impowt com.twittew.timewines.pewsistence.thwiftscawa.wequesttype
+i-impowt com.twittew.timewines.utiw.cwient_info.cwientpwatfowm
+impowt com.twittew.timewinesewvice.modew.wich.entityidtype
+i-impowt com.twittew.utiw.time
 
-object EditedTweetsCandidatePipelineQueryTransformer
-    extends CandidatePipelineQueryTransformer[PipelineQuery, Seq[Long]] {
+object editedtweetscandidatepipewinequewytwansfowmew
+    e-extends candidatepipewinequewytwansfowmew[pipewinequewy, >_< seq[wong]] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("EditedTweets")
+  ovewwide vaw i-identifiew: twansfowmewidentifiew = twansfowmewidentifiew("editedtweets")
 
-  // The time window for which a tweet remains editable after creation.
-  private val EditTimeWindow = 60.minutes
+  // t-the time window f-fow which a tweet wemains editabwe aftew cweation. >w<
+  pwivate vaw edittimewindow = 60.minutes
 
-  override def transform(query: PipelineQuery): Seq[Long] = {
-    val applicableCandidates = getApplicableCandidates(query)
+  o-ovewwide def twansfowm(quewy: pipewinequewy): seq[wong] = {
+    vaw appwicabwecandidates = getappwicabwecandidates(quewy)
 
-    if (applicableCandidates.nonEmpty) {
-      // Include the response corresponding with the Previous Timeline Load (PTL).
-      // Any tweets in it could have become stale since being served.
-      val previousTimelineLoadTime = applicableCandidates.head.servedTime
+    if (appwicabwecandidates.nonempty) {
+      // i-incwude the wesponse c-cowwesponding w-with the pwevious t-timewine woad (ptw). rawr
+      // a-any tweets in it couwd have become stawe since being s-sewved. 😳
+      vaw pwevioustimewinewoadtime = appwicabwecandidates.head.sewvedtime
 
-      // The time window for editing a tweet is 60 minutes,
-      // so we ignore responses older than (PTL Time - 60 mins).
-      val inWindowCandidates: Seq[PersistenceStoreEntry] = applicableCandidates
-        .takeWhile(_.servedTime.until(previousTimelineLoadTime) < EditTimeWindow)
+      // t-the time window fow editing a tweet is 60 minutes,
+      // so we ignowe wesponses owdew than (ptw t-time - 60 mins). >w<
+      vaw inwindowcandidates: s-seq[pewsistencestoweentwy] = a-appwicabwecandidates
+        .takewhiwe(_.sewvedtime.untiw(pwevioustimewinewoadtime) < e-edittimewindow)
 
-      // Exclude the tweet IDs for which ReplaceEntry instructions have already been sent.
-      val (tweetsAlreadyReplaced, tweetsToCheck) = inWindowCandidates
-        .partition(_.entryWithItemIds.itemIds.exists(_.head.entryIdToReplace.nonEmpty))
+      // excwude the tweet ids fow which wepwaceentwy instwuctions h-have a-awweady been sent. (⑅˘꒳˘)
+      vaw (tweetsawweadywepwaced, OwO t-tweetstocheck) = i-inwindowcandidates
+        .pawtition(_.entwywithitemids.itemids.exists(_.head.entwyidtowepwace.nonempty))
 
-      val tweetIdFromEntry: PartialFunction[PersistenceStoreEntry, Long] = {
-        case entry if entry.tweetId.nonEmpty => entry.tweetId.get
+      vaw tweetidfwomentwy: p-pawtiawfunction[pewsistencestoweentwy, (ꈍᴗꈍ) wong] = {
+        c-case entwy if entwy.tweetid.nonempty => entwy.tweetid.get
       }
 
-      val tweetIdsAlreadyReplaced: Set[Long] = tweetsAlreadyReplaced.collect(tweetIdFromEntry).toSet
-      val tweetIdsToCheck: Seq[Long] = tweetsToCheck.collect(tweetIdFromEntry)
+      vaw tweetidsawweadywepwaced: s-set[wong] = tweetsawweadywepwaced.cowwect(tweetidfwomentwy).toset
+      v-vaw tweetidstocheck: seq[wong] = t-tweetstocheck.cowwect(tweetidfwomentwy)
 
-      tweetIdsToCheck.filterNot(tweetIdsAlreadyReplaced.contains).distinct
-    } else Seq.empty
+      t-tweetidstocheck.fiwtewnot(tweetidsawweadywepwaced.contains).distinct
+    } ewse seq.empty
   }
 
-  // The candidates here come from the Timelines Persistence Store, via a query feature
-  private def getApplicableCandidates(query: PipelineQuery): Seq[PersistenceStoreEntry] = {
-    val userAgent = UserAgent.fromString(query.clientContext.userAgent.getOrElse(""))
-    val clientPlatform = ClientPlatform.fromQueryOptions(query.clientContext.appId, userAgent)
+  // the candidates hewe come fwom the timewines pewsistence stowe, via a quewy f-featuwe
+  pwivate d-def getappwicabwecandidates(quewy: pipewinequewy): s-seq[pewsistencestoweentwy] = {
+    v-vaw u-usewagent = usewagent.fwomstwing(quewy.cwientcontext.usewagent.getowewse(""))
+    vaw cwientpwatfowm = cwientpwatfowm.fwomquewyoptions(quewy.cwientcontext.appid, 😳 usewagent)
 
-    val sortedResponses = query.features
-      .getOrElse(FeatureMap.empty)
-      .getOrElse(PersistenceEntriesFeature, Seq.empty)
-      .filter(_.clientPlatform == clientPlatform)
-      .sortBy(-_.servedTime.inMilliseconds)
+    v-vaw sowtedwesponses = quewy.featuwes
+      .getowewse(featuwemap.empty)
+      .getowewse(pewsistenceentwiesfeatuwe, 😳😳😳 seq.empty)
+      .fiwtew(_.cwientpwatfowm == cwientpwatfowm)
+      .sowtby(-_.sewvedtime.inmiwwiseconds)
 
-    val recentResponses = sortedResponses.indexWhere(_.requestType == RequestType.Initial) match {
-      case -1 => sortedResponses
-      case lastGetInitialIndex => sortedResponses.take(lastGetInitialIndex + 1)
+    vaw wecentwesponses = s-sowtedwesponses.indexwhewe(_.wequesttype == wequesttype.initiaw) m-match {
+      c-case -1 => s-sowtedwesponses
+      case wastgetinitiawindex => s-sowtedwesponses.take(wastgetinitiawindex + 1)
     }
 
-    recentResponses.flatMap { r =>
-      r.entries.collect {
-        case entry if entry.entityIdType == EntityIdType.Tweet =>
-          PersistenceStoreEntry(entry, r.servedTime, r.clientPlatform, r.requestType)
+    wecentwesponses.fwatmap { w-w =>
+      w-w.entwies.cowwect {
+        c-case entwy if entwy.entityidtype == entityidtype.tweet =>
+          pewsistencestoweentwy(entwy, mya w-w.sewvedtime, mya w.cwientpwatfowm, (⑅˘꒳˘) w-w.wequesttype)
       }
     }.distinct
   }
 }
 
-case class PersistenceStoreEntry(
-  entryWithItemIds: EntryWithItemIds,
-  servedTime: Time,
-  clientPlatform: ClientPlatform,
-  requestType: RequestType) {
+c-case c-cwass pewsistencestoweentwy(
+  e-entwywithitemids: entwywithitemids, (U ﹏ U)
+  sewvedtime: time, mya
+  cwientpwatfowm: c-cwientpwatfowm, ʘwʘ
+  wequesttype: wequesttype) {
 
-  // Timelines Persistence Store currently includes 1 tweet ID per entryWithItemIds for tweets
-  val tweetId: Option[Long] = entryWithItemIds.itemIds.flatMap(_.head.tweetId)
+  // timewines pewsistence stowe cuwwentwy incwudes 1 t-tweet id pew entwywithitemids fow tweets
+  vaw tweetid: option[wong] = entwywithitemids.itemids.fwatmap(_.head.tweetid)
 }

@@ -1,154 +1,154 @@
-use log::debug;
+use wog::debug;
 use std::fs;
 
-use serde_json::{Map, Value};
+use s-sewde_json::{map, ʘwʘ v-vawue};
 
-use crate::error::SegDenseError;
-use crate::mapper::{FeatureInfo, FeatureMapper, MapWriter};
-use crate::segdense_transform_spec_home_recap_2022::{self as seg_dense, InputFeature};
+use c-cwate::ewwow::segdenseewwow;
+u-use c-cwate::mappew::{featuweinfo, ( ͡o ω ͡o ) f-featuwemappew, o.O m-mapwwitew};
+u-use cwate::segdense_twansfowm_spec_home_wecap_2022::{sewf as seg_dense, >w< inputfeatuwe};
 
-pub fn load_config(file_name: &str) -> Result<seg_dense::Root, SegDenseError> {
-    let json_str = fs::read_to_string(file_name)?;
-    // &format!("Unable to load segdense file {}", file_name));
-    let seg_dense_config = parse(&json_str)?;
-    // &format!("Unable to parse segdense file {}", file_name));
-    Ok(seg_dense_config)
+pub fn woad_config(fiwe_name: &stw) -> wesuwt<seg_dense::woot, s-segdenseewwow> {
+    wet json_stw = fs::wead_to_stwing(fiwe_name)?;
+    // &fowmat!("unabwe t-to woad segdense fiwe {}", 😳 f-fiwe_name));
+    wet seg_dense_config = pawse(&json_stw)?;
+    // &fowmat!("unabwe to pawse segdense fiwe {}", 🥺 f-fiwe_name));
+    ok(seg_dense_config)
 }
 
-pub fn parse(json_str: &str) -> Result<seg_dense::Root, SegDenseError> {
-    let root: seg_dense::Root = serde_json::from_str(json_str)?;
-    Ok(root)
+pub f-fn pawse(json_stw: &stw) -> wesuwt<seg_dense::woot, rawr x3 s-segdenseewwow> {
+    wet woot: seg_dense::woot = sewde_json::fwom_stw(json_stw)?;
+    ok(woot)
 }
 
 /**
- * Given a json string containing a seg dense schema create a feature mapper
- * which is essentially:
+ * g-given a json stwing containing a seg dense schema cweate a featuwe mappew
+ * which i-is essentiawwy:
  *
- *   {feature-id -> (Tensor Index, Index of feature within the tensor)}
+ *   {featuwe-id -> (tensow index, o.O index of f-featuwe within t-the tensow)}
  *
- *   Feature id : 64 bit hash of the feature name used in DataRecords.
+ *   f-featuwe id : 64 b-bit hash of the featuwe nyame used in datawecowds. rawr
  *
- *   Tensor Index : A vector of tensors is passed to the model. Tensor
- *     index refers to the tensor this feature is part of.
+ *   t-tensow index : a vectow of tensows is passed to t-the modew. ʘwʘ tensow
+ *     index wefews to the tensow this featuwe is pawt of. 😳😳😳
  *
- *   Index of feature in tensor : The tensors are vectors, the index of
- *     feature is the position to put the feature value.
+ *   index of featuwe i-in tensow : the tensows awe v-vectows, ^^;; the i-index of
+ *     f-featuwe is the position to put the featuwe vawue. o.O
  *
- * There are many assumptions made in this function that is very model specific.
- * These assumptions are called out below and need to be schematized eventually.
+ * thewe awe m-many assumptions m-made in this function that is v-vewy modew specific.
+ * t-these assumptions awe cawwed o-out bewow and nyeed to be s-schematized eventuawwy. (///ˬ///✿)
  *
- * Call this once for each segdense schema and cache the FeatureMapper.
+ * caww this once fow e-each segdense schema and cache t-the featuwemappew. σωσ
  */
-pub fn safe_load_config(json_str: &str) -> Result<FeatureMapper, SegDenseError> {
-    let root = parse(json_str)?;
-    load_from_parsed_config(root)
+pub fn safe_woad_config(json_stw: &stw) -> w-wesuwt<featuwemappew, nyaa~~ s-segdenseewwow> {
+    wet woot = pawse(json_stw)?;
+    woad_fwom_pawsed_config(woot)
 }
 
-// Perf note : make 'root' un-owned
-pub fn load_from_parsed_config(root: seg_dense::Root) -> Result<FeatureMapper, SegDenseError> {
-    let v = root.input_features_map;
+// pewf nyote : make 'woot' un-owned
+pub fn woad_fwom_pawsed_config(woot: s-seg_dense::woot) -> w-wesuwt<featuwemappew, ^^;; segdenseewwow> {
+    w-wet v = w-woot.input_featuwes_map;
 
-    // Do error check
-    let map: Map<String, Value> = match v {
-        Value::Object(map) => map,
-        _ => return Err(SegDenseError::JsonMissingObject),
+    // d-do ewwow check
+    wet map: map<stwing, ^•ﻌ•^ vawue> = match v {
+        v-vawue::object(map) => map, σωσ
+        _ => wetuwn eww(segdenseewwow::jsonmissingobject), -.-
     };
 
-    let mut fm: FeatureMapper = FeatureMapper::new();
+    wet mut fm: f-featuwemappew = featuwemappew::new();
 
-    let items = map.values();
+    w-wet i-items = map.vawues();
 
-    // Perf : Consider a way to avoid clone here
-    for item in items.cloned() {
-        let mut vec = match item {
-            Value::Array(v) => v,
-            _ => return Err(SegDenseError::JsonMissingArray),
+    // pewf : c-considew a way to avoid cwone h-hewe
+    fow i-item in items.cwoned() {
+        w-wet mut vec = m-match item {
+            vawue::awway(v) => v, ^^;;
+            _ => w-wetuwn eww(segdenseewwow::jsonmissingawway), XD
         };
 
-        if vec.len() != 1 {
-            return Err(SegDenseError::JsonArraySize);
+        i-if vec.wen() != 1 {
+            w-wetuwn eww(segdenseewwow::jsonawwaysize);
         }
 
-        let val = vec.pop().unwrap();
+        w-wet v-vaw = vec.pop().unwwap();
 
-        let input_feature: seg_dense::InputFeature = serde_json::from_value(val)?;
-        let feature_id = input_feature.feature_id;
-        let feature_info = to_feature_info(&input_feature);
+        wet input_featuwe: seg_dense::inputfeatuwe = sewde_json::fwom_vawue(vaw)?;
+        w-wet featuwe_id = input_featuwe.featuwe_id;
+        wet featuwe_info = to_featuwe_info(&input_featuwe);
 
-        match feature_info {
-            Some(info) => {
-                debug!("{:?}", info);
-                fm.set(feature_id, info)
+        match featuwe_info {
+            some(info) => {
+                d-debug!("{:?}", 🥺 info);
+                fm.set(featuwe_id, òωó info)
             }
-            None => (),
+            none => (),
         }
     }
 
-    Ok(fm)
+    o-ok(fm)
 }
-#[allow(dead_code)]
-fn add_feature_info_to_mapper(
-    feature_mapper: &mut FeatureMapper,
-    input_features: &Vec<InputFeature>,
+#[awwow(dead_code)]
+f-fn add_featuwe_info_to_mappew(
+    f-featuwe_mappew: &mut featuwemappew, (ˆ ﻌ ˆ)♡
+    i-input_featuwes: &vec<inputfeatuwe>, -.-
 ) {
-    for input_feature in input_features.iter() {
-        let feature_id = input_feature.feature_id;
-        let feature_info = to_feature_info(input_feature);
+    fow input_featuwe i-in input_featuwes.itew() {
+        w-wet featuwe_id = input_featuwe.featuwe_id;
+        wet featuwe_info = to_featuwe_info(input_featuwe);
 
-        match feature_info {
-            Some(info) => {
-                debug!("{:?}", info);
-                feature_mapper.set(feature_id, info)
+        match featuwe_info {
+            s-some(info) => {
+                debug!("{:?}", :3 i-info);
+                featuwe_mappew.set(featuwe_id, ʘwʘ i-info)
             }
-            None => (),
+            n-nyone => (), 🥺
         }
     }
 }
 
-pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<FeatureInfo> {
-    if input_feature.maybe_exclude {
-        return None;
+pub fn to_featuwe_info(input_featuwe: &seg_dense::inputfeatuwe) -> option<featuweinfo> {
+    i-if i-input_featuwe.maybe_excwude {
+        wetuwn nyone;
     }
 
-    // This part needs to be schema driven
+    // t-this pawt nyeeds t-to be schema dwiven
     //
-    //   tensor index : Which of these tensors this feature is part of
-    //      [Continious, Binary, Discrete, User_embedding, user_eng_embedding, author_embedding]
-    //      Note that this order is fixed/hardcoded here, and need to be schematized
+    //   tensow index : which of these tensows this f-featuwe is pawt o-of
+    //      [continious, >_< binawy, d-discwete, ʘwʘ usew_embedding, (˘ω˘) u-usew_eng_embedding, (✿oωo) a-authow_embedding]
+    //      nyote that this o-owdew is fixed/hawdcoded hewe, (///ˬ///✿) and need to be schematized
     //
-    let tensor_idx: i8 = match input_feature.feature_id {
-        // user.timelines.twhin_user_follow_embeddings.twhin_user_follow_embeddings
-        // Feature name is mapped to a feature-id value. The hardcoded values below correspond to a specific feature name.
-        -2550691008059411095 => 3,
+    wet tensow_idx: i-i8 = match i-input_featuwe.featuwe_id {
+        // usew.timewines.twhin_usew_fowwow_embeddings.twhin_usew_fowwow_embeddings
+        // featuwe n-nyame is mapped t-to a featuwe-id vawue. rawr x3 the hawdcoded vawues bewow cowwespond t-to a specific featuwe nyame. -.-
+        -2550691008059411095 => 3, ^^
 
-        // user.timelines.twhin_user_engagement_embeddings.twhin_user_engagement_embeddings
-        5390650078733277231 => 4,
+        // usew.timewines.twhin_usew_engagement_embeddings.twhin_usew_engagement_embeddings
+        5390650078733277231 => 4, (⑅˘꒳˘)
 
-        // original_author.timelines.twhin_author_follow_embeddings.twhin_author_follow_embeddings
-        3223956748566688423 => 5,
+        // owiginaw_authow.timewines.twhin_authow_fowwow_embeddings.twhin_authow_fowwow_embeddings
+        3223956748566688423 => 5, nyaa~~
 
-        _ => match input_feature.feature_type {
-            //   feature_type : src/thrift/com/twitter/ml/api/data.thrift
-            //       BINARY = 1, CONTINUOUS = 2, DISCRETE = 3,
-            //    Map to slots in [Continious, Binary, Discrete, ..]
-            1 => 1,
-            2 => 0,
-            3 => 2,
-            _ => -1,
+        _ => match input_featuwe.featuwe_type {
+            //   f-featuwe_type : swc/thwift/com/twittew/mw/api/data.thwift
+            //       binawy = 1, /(^•ω•^) c-continuous = 2, (U ﹏ U) d-discwete = 3, 😳😳😳
+            //    map to swots in [continious, >w< binawy, XD discwete, ..]
+            1 => 1, o.O
+            2 => 0, mya
+            3 => 2, 🥺
+            _ => -1, ^^;;
         },
     };
 
-    if input_feature.index < 0 {
-        return None;
+    i-if i-input_featuwe.index < 0 {
+        wetuwn nyone;
     }
 
-    // Handle this case later
-    if tensor_idx == -1 {
-        return None;
+    // handwe this case watew
+    if tensow_idx == -1 {
+        w-wetuwn nyone;
     }
 
-    Some(FeatureInfo {
-        tensor_index: tensor_idx,
-        index_within_tensor: input_feature.index,
+    some(featuweinfo {
+        t-tensow_index: tensow_idx, :3
+        index_within_tensow: input_featuwe.index, (U ﹏ U)
     })
 }

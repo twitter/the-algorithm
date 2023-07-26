@@ -1,180 +1,180 @@
-package com.twitter.product_mixer.core.service.pipeline_execution_logger
+package com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_execution_woggew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.PipelineExecutionLoggerAllowList
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.FuturePools
-import com.twitter.product_mixer.shared_library.observer.Observer.FutureObserver
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import pprint.PPrinter
-import pprint.Tree
-import pprint.Util
-import pprint.tuplePrefix
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.inject.annotations.fwag
+i-impowt com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags.pwoductmixewfwagmoduwe.pipewineexecutionwoggewawwowwist
+i-impowt c-com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags.pwoductmixewfwagmoduwe.sewvicewocaw
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.utiw.futuwepoows
+impowt com.twittew.pwoduct_mixew.shawed_wibwawy.obsewvew.obsewvew.futuweobsewvew
+impowt com.twittew.utiw.twy
+impowt com.twittew.utiw.wogging.wogging
+impowt p-ppwint.ppwintew
+impowt ppwint.twee
+impowt ppwint.utiw
+i-impowt ppwint.tupwepwefix
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * Initial implementation from:
- * https://stackoverflow.com/questions/15718506/scala-how-to-print-case-classes-like-pretty-printed-tree/57080463#57080463
+ * initiaw impwementation fwom:
+ * h-https://stackovewfwow.com/questions/15718506/scawa-how-to-pwint-case-cwasses-wike-pwetty-pwinted-twee/57080463#57080463
  */
-object AllowListedPipelineExecutionLogger {
+object a-awwowwistedpipewineexecutionwoggew {
 
   /**
-   * Given a case class who's arguments are all declared fields on the class,
-   * returns an iterator of the field name and values
+   * g-given a case cwass who's awguments awe aww decwawed fiewds on the cwass, 🥺
+   * w-wetuwns an itewatow of the fiewd nyame and vawues
    */
-  private[pipeline_execution_logger] def caseClassFields(
-    caseClass: Product
-  ): Iterator[(String, Any)] = {
-    val fieldValues = caseClass.productIterator.toSet
-    val fields = caseClass.getClass.getDeclaredFields.toSeq
-      .filterNot(f => f.isSynthetic || java.lang.reflect.Modifier.isStatic(f.getModifiers))
-    fields.iterator
-      .map { f =>
-        f.setAccessible(true)
-        f.getName -> f.get(caseClass)
-      }.filter { case (_, v) => fieldValues.contains(v) }
+  pwivate[pipewine_execution_woggew] def casecwassfiewds(
+    c-casecwass: pwoduct
+  ): i-itewatow[(stwing, OwO a-any)] = {
+    v-vaw fiewdvawues = c-casecwass.pwoductitewatow.toset
+    vaw fiewds = casecwass.getcwass.getdecwawedfiewds.toseq
+      .fiwtewnot(f => f-f.issynthetic || java.wang.wefwect.modifiew.isstatic(f.getmodifiews))
+    fiewds.itewatow
+      .map { f-f =>
+        f.setaccessibwe(twue)
+        f.getname -> f.get(casecwass)
+      }.fiwtew { case (_, >w< v) => fiewdvawues.contains(v) }
   }
 
   /**
-   * Returns whether a given [[Product]] is a case class which we can render nicely which:
-   * - has a [[Product.productArity]] <= the number of declared fields
-   * - isn't a built in binary operator
-   * - isn't a tuple
-   * - who's arguments are fields (not methods)
-   * - every [[Product.productElement]] has a corresponding field
+   * w-wetuwns whethew a given [[pwoduct]] i-is a case cwass w-which we can w-wendew nyicewy which:
+   * - has a [[pwoduct.pwoductawity]] <= the nyumbew of decwawed f-fiewds
+   * - i-isn't a buiwt in binawy opewatow
+   * - i-isn't a-a tupwe
+   * - who's awguments a-awe fiewds (not methods)
+   * - e-evewy [[pwoduct.pwoductewement]] has a cowwesponding fiewd
    *
-   * This will return false for some case classes where we can not reliably determine which field names correspond to
-   * each value in the case class (this can happen if a case class implements an abstract class resulting in val fields
-   * becoming methods.
+   * t-this wiww wetuwn fawse fow s-some case cwasses whewe we can n-not wewiabwy detewmine w-which fiewd nyames cowwespond to
+   * each vawue in the case cwass (this can happen if a case cwass impwements a-an abstwact c-cwass wesuwting in vaw fiewds
+   * b-becoming m-methods. 🥺
    */
-  private[pipeline_execution_logger] def isRenderableCaseClass(caseClass: Product): Boolean = {
-    val possibleToBeRenderableCaseClass =
-      caseClass.getClass.getDeclaredFields.length >= caseClass.productArity
-    val isntBuiltInOperator =
-      !(caseClass.productArity == 2 && Util.isOperator(caseClass.productPrefix))
-    val isntTuple = !caseClass.getClass.getName.startsWith(tuplePrefix)
-    val declaredFieldsMatchesCaseClassFields = {
-      val caseClassFields = caseClass.productIterator.toSet
-      caseClass.getClass.getDeclaredFields.iterator
-        .filterNot(f => f.isSynthetic || java.lang.reflect.Modifier.isStatic(f.getModifiers))
+  p-pwivate[pipewine_execution_woggew] def iswendewabwecasecwass(casecwass: pwoduct): boowean = {
+    v-vaw possibwetobewendewabwecasecwass =
+      casecwass.getcwass.getdecwawedfiewds.wength >= casecwass.pwoductawity
+    vaw isntbuiwtinopewatow =
+      !(casecwass.pwoductawity == 2 && utiw.isopewatow(casecwass.pwoductpwefix))
+    vaw isnttupwe = !casecwass.getcwass.getname.stawtswith(tupwepwefix)
+    v-vaw decwawedfiewdsmatchescasecwassfiewds = {
+      vaw casecwassfiewds = c-casecwass.pwoductitewatow.toset
+      casecwass.getcwass.getdecwawedfiewds.itewatow
+        .fiwtewnot(f => f-f.issynthetic || j-java.wang.wefwect.modifiew.isstatic(f.getmodifiews))
         .count { f =>
-          f.setAccessible(true)
-          caseClassFields.contains(f.get(caseClass))
-        } >= caseClass.productArity
+          f-f.setaccessibwe(twue)
+          c-casecwassfiewds.contains(f.get(casecwass))
+        } >= c-casecwass.pwoductawity
     }
 
-    possibleToBeRenderableCaseClass && isntBuiltInOperator && isntTuple && declaredFieldsMatchesCaseClassFields
+    p-possibwetobewendewabwecasecwass && isntbuiwtinopewatow && isnttupwe && decwawedfiewdsmatchescasecwassfiewds
   }
 
-  /** Makes a [[Tree]] which will render as `key = value` */
-  private def keyValuePair(key: String, value: Tree): Tree = {
-    Tree.Infix(Tree.Literal(key), "=", value)
+  /** m-makes a-a [[twee]] which w-wiww wendew as `key = v-vawue` */
+  p-pwivate def keyvawuepaiw(key: stwing, nyaa~~ vawue: twee): twee = {
+    t-twee.infix(twee.witewaw(key), ^^ "=", vawue)
   }
 
   /**
-   * Special handling for case classes who's field names can be easily paired with their values.
-   * This will make the [[PPrinter]] render them as
+   * speciaw handwing fow case cwasses who's fiewd nyames can be easiwy p-paiwed with theiw vawues. >w<
+   * this wiww make the [[ppwintew]] w-wendew them as
    * {{{
-   *   CaseClassName(
-   *     field1 = value1,
-   *     field2 = value2
+   *   c-casecwassname(
+   *     f-fiewd1 = vawue1, OwO
+   *     f-fiewd2 = vawue2
    *   )
    * }}}
-   * instead of
+   * instead o-of
    * {{{
-   *   CaseClassName(
-   *     value1,
-   *     value2
+   *   c-casecwassname(
+   *     vawue1, XD
+   *     vawue2
    *   )
    * }}}
    *
-   * For case classes who's fields end up being compiled as methods, this will fall back
-   * to the built in handling of case classes without their field names.
+   * fow case cwasses who's fiewds end up being compiwed a-as methods, ^^;; this wiww faww b-back
+   * to the buiwt in handwing o-of case cwasses w-without theiw fiewd nyames. 🥺
    */
-  private[pipeline_execution_logger] def additionalHandlers: PartialFunction[Any, Tree] = {
-    case caseClass: Product if isRenderableCaseClass(caseClass) =>
-      Tree.Apply(
-        caseClass.productPrefix,
-        caseClassFields(caseClass).flatMap {
-          case (key, value) =>
-            val valueTree = printer.treeify(value, false, true)
-            Seq(keyValuePair(key, valueTree))
+  pwivate[pipewine_execution_woggew] d-def additionawhandwews: p-pawtiawfunction[any, XD twee] = {
+    c-case casecwass: p-pwoduct if iswendewabwecasecwass(casecwass) =>
+      twee.appwy(
+        casecwass.pwoductpwefix, (U ᵕ U❁)
+        casecwassfiewds(casecwass).fwatmap {
+          case (key, :3 v-vawue) =>
+            vaw v-vawuetwee = pwintew.tweeify(vawue, ( ͡o ω ͡o ) f-fawse, òωó twue)
+            seq(keyvawuepaiw(key, σωσ vawuetwee))
         }
       )
   }
 
   /**
-   * [[PPrinter]] instance to use when rendering scala objects
-   * uses BlackAndWhite because colors mangle the output when looking at the logs in plain text
+   * [[ppwintew]] i-instance to use w-when wendewing scawa objects
+   * u-uses bwackandwhite because cowows mangwe the output when wooking at the wogs in p-pwain text
    */
-  private val printer: PPrinter = PPrinter.BlackWhite.copy(
-    // arbitrary high value to turn off truncation
-    defaultHeight = Int.MaxValue,
-    // the relatively high width will cause some wrapping but many of the pretty printed objects
-    // will be sparse (e.g. None,\n None,\n, None,\n)
-    defaultWidth = 300,
-    // use reflection to print field names (can be deleted in Scala 2.13)
-    additionalHandlers = additionalHandlers
+  p-pwivate vaw pwintew: ppwintew = ppwintew.bwackwhite.copy(
+    // a-awbitwawy h-high vawue to tuwn off twuncation
+    defauwtheight = int.maxvawue, (U ᵕ U❁)
+    // t-the wewativewy high width wiww cause some wwapping but many of the pwetty p-pwinted objects
+    // wiww be spawse (e.g. (✿oωo) n-nyone,\n nyone,\n, ^^ n-nyone,\n)
+    defauwtwidth = 300,
+    // use wefwection to pwint f-fiewd nyames (can b-be deweted in scawa 2.13)
+    additionawhandwews = additionawhandwews
   )
 
-  /** Given any scala object, return a String representation of it */
-  private[pipeline_execution_logger] def objectAsString(o: Any): String =
-    printer.tokenize(o).mkString
+  /** g-given any scawa object, w-wetuwn a stwing wepwesentation of it */
+  pwivate[pipewine_execution_woggew] def o-objectasstwing(o: any): stwing =
+    p-pwintew.tokenize(o).mkstwing
 }
 
-@Singleton
-class AllowListedPipelineExecutionLogger @Inject() (
-  @Flag(ServiceLocal) isServiceLocal: Boolean,
-  @Flag(PipelineExecutionLoggerAllowList) allowList: Seq[String],
-  statsReceiver: StatsReceiver)
-    extends PipelineExecutionLogger
-    with Logging {
+@singweton
+c-cwass awwowwistedpipewineexecutionwoggew @inject() (
+  @fwag(sewvicewocaw) issewvicewocaw: b-boowean, ^•ﻌ•^
+  @fwag(pipewineexecutionwoggewawwowwist) awwowwist: seq[stwing], XD
+  s-statsweceivew: s-statsweceivew)
+    e-extends pipewineexecutionwoggew
+    with w-wogging {
 
-  private val scopedStats = statsReceiver.scope("AllowListedPipelineExecutionLogger")
+  p-pwivate vaw scopedstats = statsweceivew.scope("awwowwistedpipewineexecutionwoggew")
 
-  val allowListRoles: Set[String] = allowList.toSet
+  vaw awwowwistwowes: s-set[stwing] = a-awwowwist.toset
 
-  private val futurePool =
-    FuturePools.boundedFixedThreadPool(
-      "AllowListedPipelineExecutionLogger",
-      // single thread, may need to be adjusted higher if it cant keep up with the work queue
-      fixedThreadCount = 1,
-      // arbitrarily large enough to handle spikes without causing large allocations or retaining past multiple GC cycles
-      workQueueSize = 100,
-      scopedStats
+  p-pwivate vaw futuwepoow =
+    futuwepoows.boundedfixedthweadpoow(
+      "awwowwistedpipewineexecutionwoggew", :3
+      // s-singwe thwead, (ꈍᴗꈍ) may nyeed to be a-adjusted highew i-if it cant keep up with the wowk queue
+      fixedthweadcount = 1, :3
+      // awbitwawiwy w-wawge e-enough to handwe s-spikes without c-causing wawge awwocations ow wetaining p-past muwtipwe gc cycwes
+      wowkqueuesize = 100, (U ﹏ U)
+      scopedstats
     )
 
-  private val futureObserver = new FutureObserver[Unit](scopedStats, Seq.empty)
+  pwivate vaw futuweobsewvew = n-nyew futuweobsewvew[unit](scopedstats, UwU seq.empty)
 
-  private val loggerOutputPath = Try(System.getProperty("log.allow_listed_execution_logger.output"))
+  p-pwivate vaw woggewoutputpath = t-twy(system.getpwopewty("wog.awwow_wisted_execution_woggew.output"))
 
-  override def apply(pipelineQuery: PipelineQuery, message: Any): Unit = {
+  ovewwide d-def appwy(pipewinequewy: pipewinequewy, message: a-any): unit = {
 
-    val userRoles: Set[String] = pipelineQuery.clientContext.userRoles.getOrElse(Set.empty)
+    v-vaw usewwowes: s-set[stwing] = p-pipewinequewy.cwientcontext.usewwowes.getowewse(set.empty)
 
-    // Check if this request is in the allowlist via a cleverly optimized set intersection
-    val allowListed =
-      if (allowListRoles.size > userRoles.size)
-        userRoles.exists(allowListRoles.contains)
-      else
-        allowListRoles.exists(userRoles.contains)
+    // c-check if this wequest is in the awwowwist via a cwevewwy optimized set intewsection
+    vaw awwowwisted =
+      i-if (awwowwistwowes.size > u-usewwowes.size)
+        u-usewwowes.exists(awwowwistwowes.contains)
+      ewse
+        a-awwowwistwowes.exists(usewwowes.contains)
 
-    if (isServiceLocal || allowListed) {
-      futureObserver(
+    if (issewvicewocaw || awwowwisted) {
+      futuweobsewvew(
         /**
-         * failure to enqueue the work will result with a failed [[com.twitter.util.Future]]
-         * containing a [[java.util.concurrent.RejectedExecutionException]] which the wrapping [[futureObserver]]
-         * will record metrics for.
+         * faiwuwe t-to enqueue the w-wowk wiww wesuwt with a faiwed [[com.twittew.utiw.futuwe]]
+         * c-containing a [[java.utiw.concuwwent.wejectedexecutionexception]] which the w-wwapping [[futuweobsewvew]]
+         * w-wiww wecowd metwics fow. 😳😳😳
          */
-        futurePool {
-          logger.info(AllowListedPipelineExecutionLogger.objectAsString(message))
+        f-futuwepoow {
+          w-woggew.info(awwowwistedpipewineexecutionwoggew.objectasstwing(message))
 
-          if (isServiceLocal && loggerOutputPath.isReturn) {
-            println(s"Logged request to: ${loggerOutputPath.get()}")
+          if (issewvicewocaw && woggewoutputpath.iswetuwn) {
+            pwintwn(s"wogged wequest to: ${woggewoutputpath.get()}")
           }
         }
       )

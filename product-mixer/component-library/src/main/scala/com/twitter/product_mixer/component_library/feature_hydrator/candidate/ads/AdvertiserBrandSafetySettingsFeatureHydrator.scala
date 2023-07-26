@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.ads
 
-import com.twitter.adserver.{thriftscala => ad}
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt com.twittew.adsewvew.{thwiftscawa => ad}
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.ads.adscandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.quewy.ads.adsquewy
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-object AdvertiserBrandSafetySettingsFeature
-    extends FeatureWithDefaultOnFailure[AdsCandidate, Option[ad.AdvertiserBrandSafetySettings]] {
-  override val defaultValue = None
+o-object advewtisewbwandsafetysettingsfeatuwe
+    extends featuwewithdefauwtonfaiwuwe[adscandidate, 🥺 option[ad.advewtisewbwandsafetysettings]] {
+  ovewwide vaw defauwtvawue = n-nyone
 }
 
-@Singleton
-case class AdvertiserBrandSafetySettingsFeatureHydrator[
-  Query <: PipelineQuery with AdsQuery,
-  Candidate <: AdsCandidate] @Inject() (
-  advertiserBrandSafetySettingsStore: ReadableStore[Long, ad.AdvertiserBrandSafetySettings])
-    extends CandidateFeatureHydrator[Query, Candidate] {
+@singweton
+case cwass advewtisewbwandsafetysettingsfeatuwehydwatow[
+  q-quewy <: p-pipewinequewy with adsquewy, >_<
+  candidate <: adscandidate] @inject() (
+  advewtisewbwandsafetysettingsstowe: w-weadabwestowe[wong, >_< ad.advewtisewbwandsafetysettings])
+    extends candidatefeatuwehydwatow[quewy, (⑅˘꒳˘) candidate] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "AdvertiserBrandSafetySettings")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew = f-featuwehydwatowidentifiew(
+    "advewtisewbwandsafetysettings")
 
-  override val features: Set[Feature[_, _]] = Set(AdvertiserBrandSafetySettingsFeature)
+  o-ovewwide v-vaw featuwes: s-set[featuwe[_, /(^•ω•^) _]] = set(advewtisewbwandsafetysettingsfeatuwe)
 
-  override def apply(
-    query: Query,
-    candidate: Candidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
+  ovewwide def a-appwy(
+    quewy: quewy, rawr x3
+    candidate: candidate,
+    e-existingfeatuwes: featuwemap
+  ): stitch[featuwemap] = {
 
-    val featureMapFuture: Future[FeatureMap] = advertiserBrandSafetySettingsStore
-      .get(candidate.adImpression.advertiserId)
-      .map { advertiserBrandSafetySettingsOpt =>
-        FeatureMapBuilder()
-          .add(AdvertiserBrandSafetySettingsFeature, advertiserBrandSafetySettingsOpt).build()
+    vaw featuwemapfutuwe: futuwe[featuwemap] = advewtisewbwandsafetysettingsstowe
+      .get(candidate.adimpwession.advewtisewid)
+      .map { a-advewtisewbwandsafetysettingsopt =>
+        featuwemapbuiwdew()
+          .add(advewtisewbwandsafetysettingsfeatuwe, (U ﹏ U) advewtisewbwandsafetysettingsopt).buiwd()
       }
 
-    Stitch.callFuture(featureMapFuture)
+    stitch.cawwfutuwe(featuwemapfutuwe)
   }
 }

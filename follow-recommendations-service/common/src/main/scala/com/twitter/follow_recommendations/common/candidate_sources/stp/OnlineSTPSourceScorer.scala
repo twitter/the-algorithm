@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.haswecentfowwowedusewids
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.haspawams
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class OnlineSTPSourceScorer @Inject() (
-  onlineSTPSourceWithEPScorer: OnlineSTPSourceWithEPScorer)
-    extends CandidateSource[
-      HasClientContext with HasParams with HasRecentFollowedUserIds,
-      CandidateUser
+@singweton
+cwass onwinestpsouwcescowew @inject() (
+  o-onwinestpsouwcewithepscowew: onwinestpsouwcewithepscowew)
+    extends candidatesouwce[
+      h-hascwientcontext with haspawams w-with haswecentfowwowedusewids, :3
+      candidateusew
     ] {
 
-  override def apply(
-    request: HasClientContext with HasParams with HasRecentFollowedUserIds
-  ): Stitch[Seq[CandidateUser]] = {
-    onlineSTPSourceWithEPScorer(request)
+  ovewwide def appwy(
+    wequest: h-hascwientcontext with haspawams w-with haswecentfowwowedusewids
+  ): s-stitch[seq[candidateusew]] = {
+    onwinestpsouwcewithepscowew(wequest)
   }
 
-  override val identifier: CandidateSourceIdentifier = BaseOnlineSTPSource.Identifier
+  ovewwide vaw identifiew: candidatesouwceidentifiew = baseonwinestpsouwce.identifiew
 }

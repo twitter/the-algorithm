@@ -1,10 +1,10 @@
-package com.twitter.timelineranker
+package com.twittew.timewinewankew
 
-import com.twitter.timelineranker.core.FutureDependencyTransformer
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.TweetId
+impowt com.twittew.timewinewankew.cowe.futuwedependencytwansfowmew
+i-impowt com.twittew.timewinewankew.wecap.modew.contentfeatuwes
+i-impowt com.twittew.timewines.modew.tweetid
 
-package object contentfeatures {
-  type ContentFeaturesProvider =
-    FutureDependencyTransformer[Seq[TweetId], Map[TweetId, ContentFeatures]]
+p-package object contentfeatuwes {
+  t-type contentfeatuwespwovidew =
+    f-futuwedependencytwansfowmew[seq[tweetid], o.O m-map[tweetid, (U ᵕ U❁) contentfeatuwes]]
 }

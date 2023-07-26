@@ -1,17 +1,17 @@
-# Java library for feature encoding and decoding utilities.
-java_library(
-    sources = ["*.java"],
-    platform = "java8",
-    provides = artifact(
-        org = "com.twitter.search.common",
-        name = "encoding-features",
-        repo = artifactory,
-    ),
-    tags = ["bazel-compatible"],
+# java wibwawy fow featuwe encoding a-and decoding u-utiwities. rawr x3
+java_wibwawy(
+    s-souwces = ["*.java"], rawr
+    p-pwatfowm = "java8", σωσ
+    pwovides = a-awtifact(
+        o-owg = "com.twittew.seawch.common", σωσ
+        n-nyame = "encoding-featuwes", >_<
+        w-wepo = awtifactowy,
+    ), :3
+    tags = ["bazew-compatibwe"], (U ﹏ U)
     dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/thrift/com/twitter/search/common:indexing-java",
+        "3wdpawty/jvm/com/googwe/guava", -.-
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", (ˆ ﻌ ˆ)♡
+        "swc/java/com/twittew/seawch/common/schema/base", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/seawch/common:indexing-java", (U ᵕ U❁)
     ],
 )

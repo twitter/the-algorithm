@@ -1,63 +1,63 @@
-package com.twitter.representationscorer.modules
+package com.twittew.wepwesentationscowew.moduwes
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.inject.TwitterModule
-import com.twitter.representation_manager.config.ClientConfig
-import com.twitter.representation_manager.config.EnabledInMemoryCacheParams
-import com.twitter.representation_manager.config.InMemoryCacheParams
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ModelVersion._
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.wepwesentation_managew.config.cwientconfig
+i-impowt com.twittew.wepwesentation_managew.config.enabwedinmemowycachepawams
+i-impowt com.twittew.wepwesentation_managew.config.inmemowycachepawams
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype._
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion._
+impowt javax.inject.singweton
 
-object RMSConfigModule extends TwitterModule {
-  def getCacheName(embedingType: EmbeddingType, modelVersion: ModelVersion): String =
-    s"${embedingType.name}_${modelVersion.name}_in_mem_cache"
+o-object wmsconfigmoduwe extends twittewmoduwe {
+  def getcachename(embedingtype: e-embeddingtype, 😳 modewvewsion: m-modewvewsion): stwing =
+    s"${embedingtype.name}_${modewvewsion.name}_in_mem_cache"
 
-  @Singleton
-  @Provides
-  def providesRMSClientConfig: ClientConfig = {
-    val cacheParamsMap: Map[
-      (EmbeddingType, ModelVersion),
-      InMemoryCacheParams
-    ] = Map(
-      // Tweet Embeddings
-      (LogFavBasedTweet, Model20m145k2020) -> EnabledInMemoryCacheParams(
-        ttl = 10.minutes,
-        maxKeys = 1048575, // 800MB
-        cacheName = getCacheName(LogFavBasedTweet, Model20m145k2020)),
-      (LogFavLongestL2EmbeddingTweet, Model20m145k2020) -> EnabledInMemoryCacheParams(
-        ttl = 5.minute,
-        maxKeys = 1048575, // 800MB
-        cacheName = getCacheName(LogFavLongestL2EmbeddingTweet, Model20m145k2020)),
-      // User - KnownFor Embeddings
-      (FavBasedProducer, Model20m145k2020) -> EnabledInMemoryCacheParams(
-        ttl = 1.day,
-        maxKeys = 500000, // 400MB
-        cacheName = getCacheName(FavBasedProducer, Model20m145k2020)),
-      // User - InterestedIn Embeddings
-      (LogFavBasedUserInterestedInFromAPE, Model20m145k2020) -> EnabledInMemoryCacheParams(
-        ttl = 6.hours,
-        maxKeys = 262143,
-        cacheName = getCacheName(LogFavBasedUserInterestedInFromAPE, Model20m145k2020)),
-      (FavBasedUserInterestedIn, Model20m145k2020) -> EnabledInMemoryCacheParams(
-        ttl = 6.hours,
-        maxKeys = 262143,
-        cacheName = getCacheName(FavBasedUserInterestedIn, Model20m145k2020)),
-      // Topic Embeddings
-      (FavTfgTopic, Model20m145k2020) -> EnabledInMemoryCacheParams(
-        ttl = 12.hours,
-        maxKeys = 262143, // 200MB
-        cacheName = getCacheName(FavTfgTopic, Model20m145k2020)),
-      (LogFavBasedKgoApeTopic, Model20m145k2020) -> EnabledInMemoryCacheParams(
-        ttl = 6.hours,
-        maxKeys = 262143,
-        cacheName = getCacheName(LogFavBasedKgoApeTopic, Model20m145k2020)),
+  @singweton
+  @pwovides
+  def pwovideswmscwientconfig: c-cwientconfig = {
+    vaw cachepawamsmap: m-map[
+      (embeddingtype, -.- m-modewvewsion), 🥺
+      inmemowycachepawams
+    ] = map(
+      // tweet embeddings
+      (wogfavbasedtweet, o.O modew20m145k2020) -> e-enabwedinmemowycachepawams(
+        ttw = 10.minutes, /(^•ω•^)
+        maxkeys = 1048575, nyaa~~ // 800mb
+        cachename = getcachename(wogfavbasedtweet, nyaa~~ m-modew20m145k2020)), :3
+      (wogfavwongestw2embeddingtweet, 😳😳😳 modew20m145k2020) -> e-enabwedinmemowycachepawams(
+        t-ttw = 5.minute, (˘ω˘)
+        m-maxkeys = 1048575, ^^ // 800mb
+        c-cachename = getcachename(wogfavwongestw2embeddingtweet, :3 modew20m145k2020)), -.-
+      // usew - knownfow e-embeddings
+      (favbasedpwoducew, 😳 modew20m145k2020) -> enabwedinmemowycachepawams(
+        t-ttw = 1.day, mya
+        maxkeys = 500000, (˘ω˘) // 400mb
+        cachename = getcachename(favbasedpwoducew, >_< modew20m145k2020)), -.-
+      // usew - intewestedin e-embeddings
+      (wogfavbasedusewintewestedinfwomape, 🥺 modew20m145k2020) -> e-enabwedinmemowycachepawams(
+        t-ttw = 6.houws, (U ﹏ U)
+        m-maxkeys = 262143, >w<
+        cachename = getcachename(wogfavbasedusewintewestedinfwomape, mya modew20m145k2020)), >w<
+      (favbasedusewintewestedin, nyaa~~ m-modew20m145k2020) -> enabwedinmemowycachepawams(
+        t-ttw = 6.houws, (✿oωo)
+        maxkeys = 262143, ʘwʘ
+        c-cachename = g-getcachename(favbasedusewintewestedin, (ˆ ﻌ ˆ)♡ modew20m145k2020)), 😳😳😳
+      // t-topic embeddings
+      (favtfgtopic, :3 modew20m145k2020) -> e-enabwedinmemowycachepawams(
+        ttw = 12.houws, OwO
+        maxkeys = 262143, (U ﹏ U) // 200mb
+        c-cachename = getcachename(favtfgtopic, >w< m-modew20m145k2020)), (U ﹏ U)
+      (wogfavbasedkgoapetopic, 😳 modew20m145k2020) -> e-enabwedinmemowycachepawams(
+        ttw = 6.houws, (ˆ ﻌ ˆ)♡
+        m-maxkeys = 262143,
+        cachename = getcachename(wogfavbasedkgoapetopic, 😳😳😳 modew20m145k2020)), (U ﹏ U)
     )
 
-    new ClientConfig(inMemCacheParamsOverrides = cacheParamsMap)
+    nyew cwientconfig(inmemcachepawamsovewwides = cachepawamsmap)
   }
 
 }

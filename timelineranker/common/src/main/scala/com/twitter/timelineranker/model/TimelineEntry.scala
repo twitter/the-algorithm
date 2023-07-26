@@ -1,18 +1,18 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
 
-object TimelineEntry {
-  def fromThrift(entry: thrift.TimelineEntry): TimelineEntry = {
-    entry match {
-      case thrift.TimelineEntry.Tweet(e) => Tweet.fromThrift(e)
-      case thrift.TimelineEntry.TweetypieTweet(e) => new HydratedTweetEntry(e)
-      case _ => throw new IllegalArgumentException(s"Unsupported type: $entry")
+o-object timewineentwy {
+  d-def f-fwomthwift(entwy: t-thwift.timewineentwy): t-timewineentwy = {
+    e-entwy match {
+      case thwift.timewineentwy.tweet(e) => tweet.fwomthwift(e)
+      case thwift.timewineentwy.tweetypietweet(e) => nyew hydwatedtweetentwy(e)
+      c-case _ => thwow nyew iwwegawawgumentexception(s"unsuppowted type: $entwy")
     }
   }
 }
 
-trait TimelineEntry {
-  def toTimelineEntryThrift: thrift.TimelineEntry
-  def throwIfInvalid(): Unit
+t-twait timewineentwy {
+  d-def totimewineentwythwift: thwift.timewineentwy
+  def thwowifinvawid(): unit
 }

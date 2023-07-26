@@ -1,126 +1,126 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import org.apache.lucene.util.ByteBlockPool;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.StringHelper;
+impowt o-owg.apache.wucene.utiw.bytebwockpoow;
+i-impowt owg.apache.wucene.utiw.byteswef;
+impowt o-owg.apache.wucene.utiw.stwinghewpew;
 
 /**
- * Utility class for BytePools which have each term's length encoded before the contents in the
- * ByteBlockPool
- * Another solution is to have a class that encapsulates both textStarts and the byteBlockPool and
- * knows how the byteBlockPool is used to store the strings
+ * u-utiwity cwass f-fow bytepoows which h-have each tewm's w-wength encoded b-befowe the contents in the
+ * bytebwockpoow
+ * anothew sowution is to have a-a cwass that encapsuwates both textstawts and the b-bytebwockpoow and
+ * knows how t-the bytebwockpoow is used to stowe the stwings
  **/
-public abstract class ByteTermUtils {
+pubwic abstwact c-cwass bytetewmutiws {
   /**
-   * Fill in a BytesRef from term's length & bytes encoded in byte block
+   * fiww in a b-byteswef fwom tewm's w-wength & bytes encoded in byte bwock
    */
-  public static int setBytesRef(final BaseByteBlockPool byteBlockPool,
-                                BytesRef term,
-                                final int textStart) {
-    final byte[] block = term.bytes =
-            byteBlockPool.pool.buffers[textStart >>> ByteBlockPool.BYTE_BLOCK_SHIFT];
-    final int start = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
-    int pos = start;
+  pubwic static int setbyteswef(finaw b-basebytebwockpoow bytebwockpoow, 😳
+                                byteswef tewm, 😳😳😳
+                                finaw int t-textstawt) {
+    finaw byte[] bwock = t-tewm.bytes =
+            bytebwockpoow.poow.buffews[textstawt >>> b-bytebwockpoow.byte_bwock_shift];
+    f-finaw i-int stawt = textstawt & bytebwockpoow.byte_bwock_mask;
+    int p-pos = stawt;
 
-    byte b = block[pos++];
-    term.length = b & 0x7F;
-    for (int shift = 7; (b & 0x80) != 0; shift += 7) {
-      b = block[pos++];
-      term.length |= (b & 0x7F) << shift;
+    byte b = bwock[pos++];
+    tewm.wength = b & 0x7f;
+    f-fow (int shift = 7; (b & 0x80) != 0; shift += 7) {
+      b = bwock[pos++];
+      tewm.wength |= (b & 0x7f) << shift;
     }
-    term.offset = pos;
+    t-tewm.offset = pos;
 
-    assert term.length >= 0;
-    return textStart + (pos - start) + term.length;
+    a-assewt tewm.wength >= 0;
+    wetuwn t-textstawt + (pos - s-stawt) + tewm.wength;
   }
 
    /**
-    * Test whether the text for current RawPostingList p equals
-    * current tokenText in utf8.
+    * test whethew the text fow cuwwent w-wawpostingwist p-p equaws
+    * cuwwent tokentext i-in utf8. (˘ω˘)
     */
-   public static boolean postingEquals(final BaseByteBlockPool termPool,
-       final int textStart, final BytesRef other) {
-     final byte[] block = termPool.pool.getBlocks()[textStart >>> ByteBlockPool.BYTE_BLOCK_SHIFT];
-     assert block != null;
+   p-pubwic static boowean postingequaws(finaw b-basebytebwockpoow tewmpoow, ʘwʘ
+       f-finaw int textstawt, ( ͡o ω ͡o ) finaw byteswef othew) {
+     f-finaw byte[] bwock = tewmpoow.poow.getbwocks()[textstawt >>> b-bytebwockpoow.byte_bwock_shift];
+     assewt bwock != n-nyuww;
 
-     int pos = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
+     i-int pos = textstawt & bytebwockpoow.byte_bwock_mask;
 
-     byte b = block[pos++];
-     int len = b & 0x7F;
-     for (int shift = 7; (b & 0x80) != 0; shift += 7) {
-       b = block[pos++];
-       len |= (b & 0x7F) << shift;
+     byte b = bwock[pos++];
+     int wen = b & 0x7f;
+     fow (int shift = 7; (b & 0x80) != 0; shift += 7) {
+       b = b-bwock[pos++];
+       w-wen |= (b & 0x7f) << shift;
      }
 
-     if (len == other.length) {
-       final byte[] utf8Bytes = other.bytes;
-       for (int tokenPos = other.offset;
-               tokenPos < other.length + other.offset; pos++, tokenPos++) {
-         if (utf8Bytes[tokenPos] != block[pos]) {
-           return false;
+     i-if (wen == othew.wength) {
+       f-finaw byte[] u-utf8bytes = othew.bytes;
+       fow (int tokenpos = othew.offset;
+               tokenpos < othew.wength + o-othew.offset; pos++, o.O tokenpos++) {
+         if (utf8bytes[tokenpos] != bwock[pos]) {
+           w-wetuwn fawse;
          }
        }
-       return true;
-     } else {
-       return false;
+       w-wetuwn twue;
+     } e-ewse {
+       w-wetuwn fawse;
      }
    }
 
    /**
-    * Returns the hashCode of the term stored at the given position in the block pool.
+    * wetuwns t-the hashcode o-of the tewm stowed a-at the given p-position in the bwock poow. >w<
     */
-   public static int hashCode(
-       final BaseByteBlockPool termPool, final int textStart) {
-    final byte[] block = termPool.pool.getBlocks()[textStart >>> ByteBlockPool.BYTE_BLOCK_SHIFT];
-    final int start = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
+   pubwic s-static int hashcode(
+       f-finaw b-basebytebwockpoow t-tewmpoow, 😳 finaw i-int textstawt) {
+    finaw byte[] bwock = tewmpoow.poow.getbwocks()[textstawt >>> bytebwockpoow.byte_bwock_shift];
+    f-finaw int stawt = textstawt & bytebwockpoow.byte_bwock_mask;
 
-    int pos = start;
+    int pos = stawt;
 
-    byte b = block[pos++];
-    int len = b & 0x7F;
-    for (int shift = 7; (b & 0x80) != 0; shift += 7) {
-      b = block[pos++];
-      len |= (b & 0x7F) << shift;
+    byte b = bwock[pos++];
+    i-int wen = b & 0x7f;
+    fow (int shift = 7; (b & 0x80) != 0; shift += 7) {
+      b = b-bwock[pos++];
+      w-wen |= (b & 0x7f) << s-shift;
     }
 
-    // Hash code returned here must be consistent with the one used in TermHashTable.lookupItem, so
-    // use the fixed hash seed. See TermHashTable.lookupItem for explanation of fixed hash seed.
-    return StringHelper.murmurhash3_x86_32(block, pos, len, InvertedRealtimeIndex.FIXED_HASH_SEED);
+    // hash code wetuwned h-hewe must be consistent with t-the one used in t-tewmhashtabwe.wookupitem, 🥺 so
+    // use the fixed hash seed. rawr x3 see tewmhashtabwe.wookupitem fow expwanation o-of fixed hash seed. o.O
+    w-wetuwn stwinghewpew.muwmuwhash3_x86_32(bwock, rawr pos, wen, invewtedweawtimeindex.fixed_hash_seed);
   }
 
   /**
-   * Copies the utf8 encoded byte ref to the termPool.
-   * @param termPool
-   * @param utf8
-   * @return The text's start position in the termPool
+   * c-copies the utf8 e-encoded byte wef to the tewmpoow. ʘwʘ
+   * @pawam tewmpoow
+   * @pawam u-utf8
+   * @wetuwn t-the text's stawt position i-in the tewmpoow
    */
-  public static int copyToTermPool(BaseByteBlockPool termPool, BytesRef bytes) {
-    // Maybe grow the termPool before we write.  Assume we need 5 bytes in
-    // the worst case to store the VInt.
-    if (bytes.length + 5 + termPool.byteUpto > ByteBlockPool.BYTE_BLOCK_SIZE) {
-      // Not enough room in current block
-      termPool.nextBuffer();
+  p-pubwic static int copytotewmpoow(basebytebwockpoow tewmpoow, 😳😳😳 byteswef bytes) {
+    // m-maybe gwow the tewmpoow b-befowe we w-wwite. ^^;;  assume we nyeed 5 bytes i-in
+    // the w-wowst case to stowe the vint. o.O
+    i-if (bytes.wength + 5 + tewmpoow.byteupto > bytebwockpoow.byte_bwock_size) {
+      // nyot enough woom in cuwwent b-bwock
+      tewmpoow.nextbuffew();
     }
 
-    final int textStart = termPool.byteUpto + termPool.byteOffset;
+    f-finaw int textstawt = tewmpoow.byteupto + tewmpoow.byteoffset;
 
-    writeVInt(termPool, bytes.length);
-    System.arraycopy(bytes.bytes, bytes.offset, termPool.buffer, termPool.byteUpto, bytes.length);
-    termPool.byteUpto += bytes.length;
+    w-wwitevint(tewmpoow, (///ˬ///✿) b-bytes.wength);
+    system.awwaycopy(bytes.bytes, σωσ bytes.offset, nyaa~~ tewmpoow.buffew, ^^;; t-tewmpoow.byteupto, bytes.wength);
+    tewmpoow.byteupto += bytes.wength;
 
-    return textStart;
+    wetuwn textstawt;
   }
 
-  private static void writeVInt(final BaseByteBlockPool termPool, final int v) {
-    int value = v;
-    final byte[] block = termPool.buffer;
-    int blockUpto = termPool.byteUpto;
+  pwivate static void w-wwitevint(finaw basebytebwockpoow tewmpoow, ^•ﻌ•^ f-finaw int v) {
+    i-int vawue = v;
+    finaw byte[] bwock = tewmpoow.buffew;
+    int bwockupto = t-tewmpoow.byteupto;
 
-    while ((value & ~0x7F) != 0) {
-      block[blockUpto++] = (byte) ((value & 0x7f) | 0x80);
-      value >>>= 7;
+    w-whiwe ((vawue & ~0x7f) != 0) {
+      bwock[bwockupto++] = (byte) ((vawue & 0x7f) | 0x80);
+      vawue >>>= 7;
     }
-    block[blockUpto++] =  (byte) value;
-    termPool.byteUpto = blockUpto;
+    bwock[bwockupto++] =  (byte) v-vawue;
+    tewmpoow.byteupto = b-bwockupto;
   }
 }

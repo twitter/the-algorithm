@@ -1,454 +1,454 @@
-package com.twitter.simclusters_v2.scalding.embedding.twice
+package com.twittew.simcwustews_v2.scawding.embedding.twice
 
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.UniqueID
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.clustering.ConnectedComponentsClusteringMethod
-import com.twitter.simclusters_v2.common.clustering.LargestDimensionClusteringMethod
-import com.twitter.simclusters_v2.common.clustering.LouvainClusteringMethod
-import com.twitter.simclusters_v2.common.clustering.MedoidRepresentativeSelectionMethod
-import com.twitter.simclusters_v2.common.clustering.MaxFavScoreRepresentativeSelectionMethod
-import com.twitter.simclusters_v2.common.clustering.SimilarityFunctions
-import com.twitter.simclusters_v2.hdfs_sources.ClustersMembersConnectedComponentsApeSimilarityScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.ClustersMembersLargestDimApeSimilarity2DayUpdateScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.ClustersMembersLargestDimApeSimilarityScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.ClustersMembersLouvainApeSimilarityScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceByLargestDim2DayUpdateScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceByLargestDimScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceByLargestDimFavScoreScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceConnectedComponentsScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceLouvainScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceBaseApp.ProducerEmbeddingSource
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+impowt c-com.twittew.scawding.awgs
+i-impowt c-com.twittew.scawding.datewange
+i-impowt com.twittew.scawding.days
+i-impowt com.twittew.scawding.duwation
+i-impowt c-com.twittew.scawding.execution
+impowt c-com.twittew.scawding.wichdate
+impowt com.twittew.scawding.uniqueid
+impowt com.twittew.simcwustews_v2.common.simcwustewsembedding
+impowt com.twittew.simcwustews_v2.common.cwustewing.connectedcomponentscwustewingmethod
+impowt c-com.twittew.simcwustews_v2.common.cwustewing.wawgestdimensioncwustewingmethod
+impowt com.twittew.simcwustews_v2.common.cwustewing.wouvaincwustewingmethod
+impowt com.twittew.simcwustews_v2.common.cwustewing.medoidwepwesentativesewectionmethod
+i-impowt com.twittew.simcwustews_v2.common.cwustewing.maxfavscowewepwesentativesewectionmethod
+impowt com.twittew.simcwustews_v2.common.cwustewing.simiwawityfunctions
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.cwustewsmembewsconnectedcomponentsapesimiwawityscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.cwustewsmembewswawgestdimapesimiwawity2dayupdatescawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.cwustewsmembewswawgestdimapesimiwawityscawadataset
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.cwustewsmembewswouvainapesimiwawityscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.intewestedintwicebywawgestdim2dayupdatescawadataset
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.intewestedintwicebywawgestdimscawadataset
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.intewestedintwicebywawgestdimfavscowescawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.intewestedintwiceconnectedcomponentsscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.intewestedintwicewouvainscawadataset
+impowt com.twittew.simcwustews_v2.scawding.embedding.twice.intewestedintwicebaseapp.pwoducewembeddingsouwce
+impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+i-impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt java.utiw.timezone
 
 /**
- To build & deploy the TWICE scheduled jobs via workflows:
+ to buiwd & depwoy the twice scheduwed jobs via w-wowkfwows:
 
- scalding workflow upload \
-  --workflow interested_in_twice-batch \
-  --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_largest_dim-batch,src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_louvain-batch,src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_connected_components-batch \
-  --scm-paths "src/scala/com/twitter/simclusters_v2/scalding/embedding/twice/*" \
-  --autoplay \
+ scawding wowkfwow u-upwoad \
+  --wowkfwow i-intewested_in_twice-batch \
+  --jobs s-swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/twice:intewested_in_twice_wawgest_dim-batch,swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/twice:intewested_in_twice_wouvain-batch,swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/twice:intewested_in_twice_connected_components-batch \
+  --scm-paths "swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/twice/*" \
+  --autopway \
 
- -> See workflow here: https://workflows.twitter.biz/workflow/cassowary/interested_in_twice-batch
+ -> s-see wowkfwow hewe: https://wowkfwows.twittew.biz/wowkfwow/cassowawy/intewested_in_twice-batch
 
- (Use `scalding workflow upload --help` for a breakdown of the different flags)
+ (use `scawding wowkfwow upwoad --hewp` f-fow a bweakdown of the diffewent fwags)
  */*/
 
-object InterestedInTwiceLargestDimScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+o-object intewestedintwicewawgestdimscheduwedapp
+    extends intewestedintwicebaseapp[simcwustewsembedding]
+    with scheduwedexecutionapp {
 
-  override def firstTime: RichDate = RichDate("2021-09-02")
-  override def batchIncrement: Duration = Days(7)
+  ovewwide d-def fiwsttime: wichdate = wichdate("2021-09-02")
+  o-ovewwide def b-batchincwement: d-duwation = days(7)
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersMatchingLargestDimension
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+  ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewing: (
+    simcwustewsembedding, rawr x3
+    simcwustewsembedding
+  ) => d-doubwe =
+    s-simiwawityfunctions.simcwustewsmatchingwawgestdimension
+  ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative: (
+    s-simcwustewsembedding, OwO
+    s-simcwustewsembedding
+  ) => doubwe =
+    simiwawityfunctions.simcwustewscosinesimiwawity
 
   /**
-   * Top-level method of this application.
+   * t-top-wevew method of this a-appwication.
    */
-  def runOnDateRange(
-    args: Args
+  def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit datewange: datewange, ^•ﻌ•^
+    t-timezone: timezone, >_<
+    uniqueid: u-uniqueid
+  ): e-execution[unit] = {
 
-    runScheduledApp(
-      new LargestDimensionClusteringMethod(),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_by_largest_dim",
-      "clusters_members_largest_dim_ape_similarity",
-      InterestedInTwiceByLargestDimScalaDataset,
-      ClustersMembersLargestDimApeSimilarityScalaDataset,
-      args.getOrElse("num-reducers", "4000").toInt
+    wunscheduwedapp(
+      nyew wawgestdimensioncwustewingmethod(), OwO
+      nyew medoidwepwesentativesewectionmethod[simcwustewsembedding](
+        pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative), >_<
+      pwoducewembeddingsouwce.getaggwegatabwepwoducewembeddings, (ꈍᴗꈍ)
+      "intewested_in_twice_by_wawgest_dim", >w<
+      "cwustews_membews_wawgest_dim_ape_simiwawity", (U ﹏ U)
+      intewestedintwicebywawgestdimscawadataset,
+      c-cwustewsmembewswawgestdimapesimiwawityscawadataset, ^^
+      a-awgs.getowewse("num-weducews", (U ﹏ U) "4000").toint
     )
 
   }
 
 }
 
-object InterestedInTwiceLargestDimMaxFavScoreScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+object intewestedintwicewawgestdimmaxfavscowescheduwedapp
+    e-extends intewestedintwicebaseapp[simcwustewsembedding]
+    w-with s-scheduwedexecutionapp {
 
-  override def firstTime: RichDate = RichDate("2022-06-30")
-  override def batchIncrement: Duration = Days(7)
+  ovewwide def fiwsttime: wichdate = w-wichdate("2022-06-30")
+  ovewwide def batchincwement: duwation = days(7)
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersMatchingLargestDimension
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+  ovewwide d-def pwoducewpwoducewsimiwawityfnfowcwustewing: (
+    simcwustewsembedding, :3
+    s-simcwustewsembedding
+  ) => d-doubwe =
+    simiwawityfunctions.simcwustewsmatchingwawgestdimension
+  o-ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative: (
+    s-simcwustewsembedding, (✿oωo)
+    s-simcwustewsembedding
+  ) => d-doubwe =
+    s-simiwawityfunctions.simcwustewscosinesimiwawity
 
   /**
-   * Top-level method of this application.
+   * top-wevew method of this appwication. XD
    */
-  def runOnDateRange(
-    args: Args
+  d-def w-wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit d-datewange: datewange, >w<
+    timezone: timezone, òωó
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
 
-    runScheduledApp(
-      new LargestDimensionClusteringMethod(),
-      new MaxFavScoreRepresentativeSelectionMethod[SimClustersEmbedding](),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_by_largest_dim_fav_score",
-      "clusters_members_largest_dim_ape_similarity",
-      InterestedInTwiceByLargestDimFavScoreScalaDataset,
-      ClustersMembersLargestDimApeSimilarityScalaDataset,
-      args.getOrElse("num-reducers", "4000").toInt
+    wunscheduwedapp(
+      nyew wawgestdimensioncwustewingmethod(), (ꈍᴗꈍ)
+      nyew maxfavscowewepwesentativesewectionmethod[simcwustewsembedding](), rawr x3
+      p-pwoducewembeddingsouwce.getaggwegatabwepwoducewembeddings, rawr x3
+      "intewested_in_twice_by_wawgest_dim_fav_scowe", σωσ
+      "cwustews_membews_wawgest_dim_ape_simiwawity",
+      intewestedintwicebywawgestdimfavscowescawadataset, (ꈍᴗꈍ)
+      cwustewsmembewswawgestdimapesimiwawityscawadataset, rawr
+      awgs.getowewse("num-weducews", ^^;; "4000").toint
     )
 
   }
 
 }
 
-object InterestedInTwiceLouvainScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+o-object intewestedintwicewouvainscheduwedapp
+    e-extends intewestedintwicebaseapp[simcwustewsembedding]
+    w-with scheduwedexecutionapp {
 
-  override def firstTime: RichDate = RichDate("2021-09-02")
-  override def batchIncrement: Duration = Days(7)
+  o-ovewwide def fiwsttime: w-wichdate = w-wichdate("2021-09-02")
+  ovewwide def batchincwement: duwation = days(7)
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+  ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewing: (
+    s-simcwustewsembedding, rawr x3
+    simcwustewsembedding
+  ) => d-doubwe =
+    simiwawityfunctions.simcwustewscosinesimiwawity
+  ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative: (
+    s-simcwustewsembedding, (ˆ ﻌ ˆ)♡
+    s-simcwustewsembedding
+  ) => doubwe =
+    simiwawityfunctions.simcwustewscosinesimiwawity
 
   /**
-   * Top-level method of this application.
+   * top-wevew m-method of this a-appwication. σωσ
    */
-  def runOnDateRange(
-    args: Args
+  def wunondatewange(
+    a-awgs: a-awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: datewange, (U ﹏ U)
+    timezone: timezone, >w<
+    uniqueid: u-uniqueid
+  ): e-execution[unit] = {
 
-    runScheduledApp(
-      new LouvainClusteringMethod(
-        args.required("cosine_similarity_threshold").toDouble,
-        args.optional("resolution_factor").map(_.toDouble)),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_louvain",
-      "clusters_members_louvain_ape_similarity",
-      InterestedInTwiceLouvainScalaDataset,
-      ClustersMembersLouvainApeSimilarityScalaDataset,
-      args.getOrElse("num-reducers", "4000").toInt
+    w-wunscheduwedapp(
+      nyew wouvaincwustewingmethod(
+        a-awgs.wequiwed("cosine_simiwawity_thweshowd").todoubwe, σωσ
+        a-awgs.optionaw("wesowution_factow").map(_.todoubwe)), nyaa~~
+      nyew medoidwepwesentativesewectionmethod[simcwustewsembedding](
+        p-pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative), 🥺
+      pwoducewembeddingsouwce.getaggwegatabwepwoducewembeddings, rawr x3
+      "intewested_in_twice_wouvain", σωσ
+      "cwustews_membews_wouvain_ape_simiwawity", (///ˬ///✿)
+      intewestedintwicewouvainscawadataset, (U ﹏ U)
+      cwustewsmembewswouvainapesimiwawityscawadataset, ^^;;
+      awgs.getowewse("num-weducews", 🥺 "4000").toint
     )
 
   }
 
 }
 
-object InterestedInTwiceConnectedComponentsScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+o-object intewestedintwiceconnectedcomponentsscheduwedapp
+    e-extends intewestedintwicebaseapp[simcwustewsembedding]
+    with scheduwedexecutionapp {
 
-  override def firstTime: RichDate = RichDate("2021-09-02")
-  override def batchIncrement: Duration = Days(7)
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+  o-ovewwide d-def fiwsttime: wichdate = wichdate("2021-09-02")
+  ovewwide def batchincwement: d-duwation = days(7)
+  ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewing: (
+    simcwustewsembedding, òωó
+    simcwustewsembedding
+  ) => d-doubwe =
+    simiwawityfunctions.simcwustewscosinesimiwawity
+  ovewwide d-def pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative: (
+    s-simcwustewsembedding, XD
+    simcwustewsembedding
+  ) => doubwe =
+    simiwawityfunctions.simcwustewscosinesimiwawity
 
   /**
-   * Top-level method of this application.
+   * t-top-wevew method o-of this appwication. :3
    */
-  def runOnDateRange(
-    args: Args
+  def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit datewange: datewange, (U ﹏ U)
+    t-timezone: timezone, >w<
+    uniqueid: uniqueid
+  ): execution[unit] = {
 
-    runScheduledApp(
-      new ConnectedComponentsClusteringMethod(
-        args.required("cosine_similarity_threshold").toDouble),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_connected_components",
-      "clusters_members_connected_components_ape_similarity",
-      InterestedInTwiceConnectedComponentsScalaDataset,
-      ClustersMembersConnectedComponentsApeSimilarityScalaDataset,
-      args.getOrElse("num-reducers", "4000").toInt
+    w-wunscheduwedapp(
+      nyew c-connectedcomponentscwustewingmethod(
+        awgs.wequiwed("cosine_simiwawity_thweshowd").todoubwe), /(^•ω•^)
+      n-nyew medoidwepwesentativesewectionmethod[simcwustewsembedding](
+        p-pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative), (⑅˘꒳˘)
+      pwoducewembeddingsouwce.getaggwegatabwepwoducewembeddings, ʘwʘ
+      "intewested_in_twice_connected_components", rawr x3
+      "cwustews_membews_connected_components_ape_simiwawity", (˘ω˘)
+      i-intewestedintwiceconnectedcomponentsscawadataset, o.O
+      c-cwustewsmembewsconnectedcomponentsapesimiwawityscawadataset, 😳
+      a-awgs.getowewse("num-weducews", o.O "4000").toint
     )
 
   }
 
 }
 
-/** Production Scalding job that calculates TWICE embeddings in a shorter period (every two days).
+/** pwoduction s-scawding j-job that cawcuwates twice embeddings in a showtew p-pewiod (evewy t-two days). ^^;;
  *
- * Given that the input sources of TWICE are updated more frequently (e.g., user_user_graph is
- * updated every 2 day), updating TWICE embedding every 2 day will better capture interests of new
- * users and the interest shift of existing users.
+ * g-given that the input souwces of twice awe updated m-mowe fwequentwy (e.g., usew_usew_gwaph i-is
+ * u-updated evewy 2 day), ( ͡o ω ͡o ) updating twice embedding evewy 2 day wiww b-bettew captuwe i-intewests of nyew
+ * u-usews and t-the intewest shift of existing usews. ^^;;
  *
- * To build & deploy the scheduled job via workflows:
+ * t-to buiwd & depwoy the scheduwed job via wowkfwows:
  * {{{
- * scalding workflow upload \
- * --workflow interested_in_twice_2_day_update-batch \
- * --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_largest_dim_2_day_update-batch \
- * --scm-paths "src/scala/com/twitter/simclusters_v2/scalding/embedding/twice/*" \
- * --autoplay
+ * scawding wowkfwow upwoad \
+ * --wowkfwow i-intewested_in_twice_2_day_update-batch \
+ * --jobs swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/twice:intewested_in_twice_wawgest_dim_2_day_update-batch \
+ * --scm-paths "swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/twice/*" \
+ * --autopway
  * }}}
  *
  */*/
-object InterestedInTwiceLargestDim2DayUpdateScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+o-object intewestedintwicewawgestdim2dayupdatescheduwedapp
+    e-extends intewestedintwicebaseapp[simcwustewsembedding]
+    with scheduwedexecutionapp {
 
-  override def firstTime: RichDate = RichDate("2022-04-06")
-  override def batchIncrement: Duration = Days(2)
+  o-ovewwide def fiwsttime: wichdate = w-wichdate("2022-04-06")
+  o-ovewwide d-def batchincwement: d-duwation = d-days(2)
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersMatchingLargestDimension
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+  ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewing: (
+    simcwustewsembedding,
+    simcwustewsembedding
+  ) => doubwe =
+    simiwawityfunctions.simcwustewsmatchingwawgestdimension
+  ovewwide d-def pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative: (
+    s-simcwustewsembedding, ^^;;
+    s-simcwustewsembedding
+  ) => doubwe =
+    s-simiwawityfunctions.simcwustewscosinesimiwawity
 
   /**
-   * Top-level method of this application.
+   * top-wevew method of this appwication. XD
    */
-  def runOnDateRange(
-    args: Args
+  def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit datewange: d-datewange, 🥺
+    timezone: timezone, (///ˬ///✿)
+    uniqueid: u-uniqueid
+  ): e-execution[unit] = {
 
-    runScheduledApp(
-      new LargestDimensionClusteringMethod(),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_by_largest_dim_2_day_update",
-      "clusters_members_largest_dim_ape_similarity_2_day_update",
-      InterestedInTwiceByLargestDim2DayUpdateScalaDataset,
-      ClustersMembersLargestDimApeSimilarity2DayUpdateScalaDataset,
-      args.getOrElse("num-reducers", "4000").toInt
+    wunscheduwedapp(
+      n-nyew wawgestdimensioncwustewingmethod(), (U ᵕ U❁)
+      nyew m-medoidwepwesentativesewectionmethod[simcwustewsembedding](
+        pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative),
+      pwoducewembeddingsouwce.getaggwegatabwepwoducewembeddings, ^^;;
+      "intewested_in_twice_by_wawgest_dim_2_day_update", ^^;;
+      "cwustews_membews_wawgest_dim_ape_simiwawity_2_day_update", rawr
+      intewestedintwicebywawgestdim2dayupdatescawadataset, (˘ω˘)
+      cwustewsmembewswawgestdimapesimiwawity2dayupdatescawadataset, 🥺
+      awgs.getowewse("num-weducews", "4000").toint
     )
   }
 }
 
 /**
 
-[Preferred way] To run a locally built adhoc job:
- ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_<CLUSTERING_METHOD>-adhoc
- scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_<CLUSTERING_METHOD>-adhoc
+[pwefewwed w-way] to w-wun a wocawwy buiwt a-adhoc job:
+ ./bazew b-bundwe s-swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/twice:intewested_in_twice_<cwustewing_method>-adhoc
+ scawding w-wemote wun --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/twice:intewested_in_twice_<cwustewing_method>-adhoc
 
-To build and run a adhoc job with workflows:
- scalding workflow upload \
-  --workflow interested_in_twice-adhoc \
-  --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_largest_dim-adhoc,src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_louvain-adhoc,src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_connected_components-adhoc \
-  --scm-paths "src/scala/com/twitter/simclusters_v2/scalding/embedding/twice/*" \
-  --autoplay \
+to buiwd a-and wun a adhoc j-job with wowkfwows:
+ scawding wowkfwow u-upwoad \
+  --wowkfwow intewested_in_twice-adhoc \
+  --jobs swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/twice:intewested_in_twice_wawgest_dim-adhoc,swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/twice:intewested_in_twice_wouvain-adhoc,swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/twice:intewested_in_twice_connected_components-adhoc \
+  --scm-paths "swc/scawa/com/twittew/simcwustews_v2/scawding/embedding/twice/*" \
+  --autopway \
 
  */*/
-object InterestedInTwiceLargestDimAdhocApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with AdhocExecutionApp {
+o-object intewestedintwicewawgestdimadhocapp
+    e-extends i-intewestedintwicebaseapp[simcwustewsembedding]
+    with adhocexecutionapp {
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersMatchingLargestDimension
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+  o-ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewing: (
+    simcwustewsembedding, nyaa~~
+    s-simcwustewsembedding
+  ) => d-doubwe =
+    s-simiwawityfunctions.simcwustewsmatchingwawgestdimension
+  ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative: (
+    simcwustewsembedding, :3
+    s-simcwustewsembedding
+  ) => doubwe =
+    simiwawityfunctions.simcwustewscosinesimiwawity
 
   /**
-   * Top-level method of this application.
+   * t-top-wevew m-method of this appwication. /(^•ω•^)
    */
-  def runOnDateRange(
-    args: Args
+  def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit datewange: d-datewange, ^•ﻌ•^
+    timezone: timezone, UwU
+    uniqueid: u-uniqueid
+  ): execution[unit] = {
 
-    runAdhocApp(
-      new LargestDimensionClusteringMethod(),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_by_largest_dim",
-      "clusters_members_largest_dim_ape_similarity",
-      args.getOrElse("num-reducers", "4000").toInt
+    wunadhocapp(
+      nyew w-wawgestdimensioncwustewingmethod(), 😳😳😳
+      n-nyew medoidwepwesentativesewectionmethod[simcwustewsembedding](
+        p-pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative), OwO
+      pwoducewembeddingsouwce.getaggwegatabwepwoducewembeddings, ^•ﻌ•^
+      "intewested_in_twice_by_wawgest_dim", (ꈍᴗꈍ)
+      "cwustews_membews_wawgest_dim_ape_simiwawity", (⑅˘꒳˘)
+      a-awgs.getowewse("num-weducews", (⑅˘꒳˘) "4000").toint
     )
 
   }
 }
 
-object InterestedInTwiceLargestDimMaxFavScoreAdhocApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with AdhocExecutionApp {
+o-object intewestedintwicewawgestdimmaxfavscoweadhocapp
+    e-extends intewestedintwicebaseapp[simcwustewsembedding]
+    with adhocexecutionapp {
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersMatchingLargestDimension
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+  ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewing: (
+    simcwustewsembedding, (ˆ ﻌ ˆ)♡
+    simcwustewsembedding
+  ) => doubwe =
+    simiwawityfunctions.simcwustewsmatchingwawgestdimension
+  ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative: (
+    simcwustewsembedding, /(^•ω•^)
+    simcwustewsembedding
+  ) => doubwe =
+    simiwawityfunctions.simcwustewscosinesimiwawity
 
   /**
-   * Top-level method of this application.
+   * top-wevew method o-of this appwication. òωó
    */
-  def runOnDateRange(
-    args: Args
+  d-def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    impwicit d-datewange: d-datewange, (⑅˘꒳˘)
+    t-timezone: timezone, (U ᵕ U❁)
+    uniqueid: u-uniqueid
+  ): execution[unit] = {
 
-    runAdhocApp(
-      new LargestDimensionClusteringMethod(),
-      new MaxFavScoreRepresentativeSelectionMethod[SimClustersEmbedding](),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_by_largest_dim_fav_score",
-      "clusters_members_largest_dim_ape_similarity",
-      args.getOrElse("num-reducers", "4000").toInt
+    w-wunadhocapp(
+      n-nyew wawgestdimensioncwustewingmethod(), >w<
+      n-nyew maxfavscowewepwesentativesewectionmethod[simcwustewsembedding](), σωσ
+      p-pwoducewembeddingsouwce.getaggwegatabwepwoducewembeddings, -.-
+      "intewested_in_twice_by_wawgest_dim_fav_scowe", o.O
+      "cwustews_membews_wawgest_dim_ape_simiwawity", ^^
+      a-awgs.getowewse("num-weducews", >_< "4000").toint
     )
 
   }
 }
 
-object InterestedInTwiceLouvainAdhocApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with AdhocExecutionApp {
+object intewestedintwicewouvainadhocapp
+    extends i-intewestedintwicebaseapp[simcwustewsembedding]
+    w-with adhocexecutionapp {
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+  o-ovewwide def p-pwoducewpwoducewsimiwawityfnfowcwustewing: (
+    s-simcwustewsembedding, >w<
+    s-simcwustewsembedding
+  ) => d-doubwe =
+    s-simiwawityfunctions.simcwustewscosinesimiwawity
+  o-ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative: (
+    simcwustewsembedding, >_<
+    s-simcwustewsembedding
+  ) => d-doubwe =
+    s-simiwawityfunctions.simcwustewscosinesimiwawity
 
   /**
-   * Top-level method of this application.
+   * top-wevew m-method of this appwication. >w<
    */
-  def runOnDateRange(
-    args: Args
+  def w-wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit d-datewange: datewange, rawr
+    t-timezone: timezone, rawr x3
+    u-uniqueid: uniqueid
+  ): execution[unit] = {
 
-    runAdhocApp(
-      new LouvainClusteringMethod(
-        args.required("cosine_similarity_threshold").toDouble,
-        args.optional("resolution_factor").map(_.toDouble)),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_louvain",
-      "clusters_members_louvain_ape_similarity",
-      args.getOrElse("num-reducers", "4000").toInt
+    w-wunadhocapp(
+      nyew wouvaincwustewingmethod(
+        a-awgs.wequiwed("cosine_simiwawity_thweshowd").todoubwe,
+        awgs.optionaw("wesowution_factow").map(_.todoubwe)), ( ͡o ω ͡o )
+      n-nyew medoidwepwesentativesewectionmethod[simcwustewsembedding](
+        pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative), (˘ω˘)
+      pwoducewembeddingsouwce.getaggwegatabwepwoducewembeddings, 😳
+      "intewested_in_twice_wouvain", OwO
+      "cwustews_membews_wouvain_ape_simiwawity", (˘ω˘)
+      awgs.getowewse("num-weducews", "4000").toint
     )
 
   }
 }
 
-object InterestedInTwiceConnectedComponentsAdhocApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with AdhocExecutionApp {
+object intewestedintwiceconnectedcomponentsadhocapp
+    e-extends intewestedintwicebaseapp[simcwustewsembedding]
+    with adhocexecutionapp {
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+  o-ovewwide d-def pwoducewpwoducewsimiwawityfnfowcwustewing: (
+    simcwustewsembedding, òωó
+    simcwustewsembedding
+  ) => doubwe =
+    simiwawityfunctions.simcwustewscosinesimiwawity
+  o-ovewwide def pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative: (
+    simcwustewsembedding, ( ͡o ω ͡o )
+    s-simcwustewsembedding
+  ) => doubwe =
+    s-simiwawityfunctions.simcwustewscosinesimiwawity
 
   /**
-   * Top-level method of this application.
+   * t-top-wevew method of this appwication. UwU
    */
-  def runOnDateRange(
-    args: Args
+  d-def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit datewange: datewange, /(^•ω•^)
+    timezone: timezone, (ꈍᴗꈍ)
+    u-uniqueid: uniqueid
+  ): e-execution[unit] = {
 
-    runAdhocApp(
-      new ConnectedComponentsClusteringMethod(
-        args.required("cosine_similarity_threshold").toDouble),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_connected_components",
-      "clusters_members_connected_components_ape_similarity",
-      args.getOrElse("num-reducers", "4000").toInt
+    w-wunadhocapp(
+      n-nyew connectedcomponentscwustewingmethod(
+        awgs.wequiwed("cosine_simiwawity_thweshowd").todoubwe), 😳
+      n-new medoidwepwesentativesewectionmethod[simcwustewsembedding](
+        p-pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative), mya
+      p-pwoducewembeddingsouwce.getaggwegatabwepwoducewembeddings,
+      "intewested_in_twice_connected_components", mya
+      "cwustews_membews_connected_components_ape_simiwawity",
+      a-awgs.getowewse("num-weducews", /(^•ω•^) "4000").toint
     )
   }
 }

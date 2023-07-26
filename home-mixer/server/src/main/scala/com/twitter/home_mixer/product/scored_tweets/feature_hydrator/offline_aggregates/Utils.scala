@@ -1,36 +1,36 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.suggests.common.dense_data_record.thriftjava.DenseCompactDataRecord
+impowt c-com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.mw.api.wichdatawecowd
+i-impowt com.twittew.timewines.suggests.common.dense_data_wecowd.thwiftjava.densecompactdatawecowd
 
-private[offline_aggregates] object Utils {
+p-pwivate[offwine_aggwegates] o-object u-utiws {
 
   /**
-   * Selects only those values in map that correspond to the keys in ids and apply the provided
-   * transform to the selected values. This is a convenience method for use by Timelines Aggregation
-   * Framework based features.
+   * sewects onwy those vawues in map that cowwespond to the k-keys in ids and appwy the pwovided
+   * twansfowm t-to the sewected vawues. (⑅˘꒳˘) this i-is a convenience method fow use by timewines aggwegation
+   * fwamewowk b-based featuwes.
    *
-   * @param idsToSelect The set of ids to extract values for.
-   * @param transform A transform to apply to the selected values.
-   * @param map Map[Long, DenseCompactDataRecord]
+   * @pawam idstosewect t-the set of i-ids to extwact vawues fow. /(^•ω•^)
+   * @pawam twansfowm a twansfowm to appwy to the sewected v-vawues. rawr x3
+   * @pawam map map[wong, (U ﹏ U) densecompactdatawecowd]
    */
-  def selectAndTransform(
-    idsToSelect: Seq[Long],
-    transform: DenseCompactDataRecord => DataRecord,
-    map: java.util.Map[java.lang.Long, DenseCompactDataRecord],
-  ): Map[Long, DataRecord] = {
-    val filtered: Seq[(Long, DataRecord)] =
-      for {
-        id <- idsToSelect if map.containsKey(id)
-      } yield {
-        id -> transform(map.get(id))
+  def sewectandtwansfowm(
+    idstosewect: s-seq[wong], (U ﹏ U)
+    twansfowm: densecompactdatawecowd => d-datawecowd, (⑅˘꒳˘)
+    m-map: java.utiw.map[java.wang.wong, òωó d-densecompactdatawecowd], ʘwʘ
+  ): m-map[wong, /(^•ω•^) datawecowd] = {
+    vaw fiwtewed: s-seq[(wong, ʘwʘ datawecowd)] =
+      fow {
+        id <- idstosewect i-if map.containskey(id)
+      } yiewd {
+        id -> twansfowm(map.get(id))
       }
-    filtered.toMap
+    fiwtewed.tomap
   }
 
-  def filterDataRecord(dr: DataRecord, featureContext: FeatureContext): Unit = {
-    new RichDataRecord(dr, featureContext).dropUnknownFeatures()
+  def fiwtewdatawecowd(dw: datawecowd, σωσ f-featuwecontext: featuwecontext): u-unit = {
+    n-nyew wichdatawecowd(dw, OwO f-featuwecontext).dwopunknownfeatuwes()
   }
 }

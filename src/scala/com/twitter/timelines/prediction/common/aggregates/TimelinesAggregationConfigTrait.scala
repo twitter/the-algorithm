@@ -1,50 +1,50 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.twittew.timewines.pwediction.common.aggwegates
 
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationConfig
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
+impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegationconfig
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegategwoup
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup
 
-trait TimelinesAggregationConfigTrait
-    extends TimelinesAggregationConfigDetails
-    with AggregationConfig {
-  private val aggregateGroups = Set(
-    authorTopicAggregates,
-    userTopicAggregates,
-    userTopicAggregatesV2,
-    userInferredTopicAggregates,
-    userInferredTopicAggregatesV2,
-    userAggregatesV2,
-    userAggregatesV5Continuous,
-    userReciprocalEngagementAggregates,
-    userAuthorAggregatesV5,
-    userOriginalAuthorReciprocalEngagementAggregates,
-    originalAuthorReciprocalEngagementAggregates,
-    tweetSourceUserAuthorAggregatesV1,
-    userEngagerAggregates,
-    userMentionAggregates,
-    twitterWideUserAggregates,
-    twitterWideUserAuthorAggregates,
-    userRequestHourAggregates,
-    userRequestDowAggregates,
-    userListAggregates,
-    userMediaUnderstandingAnnotationAggregates,
-  ) ++ userAuthorAggregatesV2
+t-twait timewinesaggwegationconfigtwait
+    e-extends t-timewinesaggwegationconfigdetaiws
+    w-with aggwegationconfig {
+  p-pwivate vaw aggwegategwoups = set(
+    authowtopicaggwegates, rawr x3
+    usewtopicaggwegates, (U ﹏ U)
+    usewtopicaggwegatesv2, (U ﹏ U)
+    u-usewinfewwedtopicaggwegates, (⑅˘꒳˘)
+    usewinfewwedtopicaggwegatesv2, òωó
+    usewaggwegatesv2, ʘwʘ
+    usewaggwegatesv5continuous, /(^•ω•^)
+    u-usewwecipwocawengagementaggwegates, ʘwʘ
+    usewauthowaggwegatesv5, σωσ
+    u-usewowiginawauthowwecipwocawengagementaggwegates, OwO
+    owiginawauthowwecipwocawengagementaggwegates, 😳😳😳
+    tweetsouwceusewauthowaggwegatesv1, 😳😳😳
+    usewengagewaggwegates, o.O
+    usewmentionaggwegates,
+    t-twittewwideusewaggwegates, ( ͡o ω ͡o )
+    twittewwideusewauthowaggwegates, (U ﹏ U)
+    u-usewwequesthouwaggwegates, (///ˬ///✿)
+    u-usewwequestdowaggwegates, >w<
+    usewwistaggwegates, rawr
+    usewmediaundewstandingannotationaggwegates, mya
+  ) ++ usewauthowaggwegatesv2
 
-  val aggregatesToComputeList: Set[List[TypedAggregateGroup[_]]] =
-    aggregateGroups.map(_.buildTypedAggregateGroups())
+  vaw aggwegatestocomputewist: set[wist[typedaggwegategwoup[_]]] =
+    a-aggwegategwoups.map(_.buiwdtypedaggwegategwoups())
 
-  override val aggregatesToCompute: Set[TypedAggregateGroup[_]] = aggregatesToComputeList.flatten
+  ovewwide vaw aggwegatestocompute: set[typedaggwegategwoup[_]] = aggwegatestocomputewist.fwatten
 
   /*
-   * Feature selection config to save storage space and manhattan query bandwidth.
-   * Only the most important features found using offline RCE simulations are used
-   * when actually training and serving. This selector is used by
-   * [[com.twitter.timelines.data_processing.jobs.timeline_ranking_user_features.TimelineRankingAggregatesV2FeaturesProdJob]]
-   * but defined here to keep it in sync with the config that computes the aggregates.
+   * featuwe sewection config t-to save stowage space and manhattan q-quewy bandwidth. ^^
+   * o-onwy t-the most impowtant f-featuwes found using offwine wce simuwations a-awe used
+   * when actuawwy twaining and sewving. 😳😳😳 t-this sewectow is used by
+   * [[com.twittew.timewines.data_pwocessing.jobs.timewine_wanking_usew_featuwes.timewinewankingaggwegatesv2featuwespwodjob]]
+   * but defined hewe to keep it in sync with the config that computes t-the aggwegates.
    */
-  val AggregatesV2FeatureSelector = FeatureSelectorConfig.AggregatesV2ProdFeatureSelector
+  vaw aggwegatesv2featuwesewectow = f-featuwesewectowconfig.aggwegatesv2pwodfeatuwesewectow
 
-  def filterAggregatesGroups(storeNames: Set[String]): Set[AggregateGroup] = {
-    aggregateGroups.filter(aggregateGroup => storeNames.contains(aggregateGroup.outputStore.name))
+  d-def fiwtewaggwegatesgwoups(stowenames: s-set[stwing]): set[aggwegategwoup] = {
+    aggwegategwoups.fiwtew(aggwegategwoup => stowenames.contains(aggwegategwoup.outputstowe.name))
   }
 }

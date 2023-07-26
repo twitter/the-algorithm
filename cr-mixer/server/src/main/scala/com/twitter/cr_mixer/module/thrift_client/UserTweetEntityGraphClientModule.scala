@@ -1,44 +1,44 @@
-package com.twitter.cr_mixer.module.thrift_client
+package com.twittew.cw_mixew.moduwe.thwift_cwient
 
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.module.core.TimeoutConfigModule.UtegClientTimeoutFlagName
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.service.ReqRep
-import com.twitter.finagle.service.ResponseClass
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
-import com.twitter.util.Duration
-import com.twitter.util.Throw
+impowt com.twittew.app.fwag
+i-impowt c-com.twittew.cw_mixew.moduwe.cowe.timeoutconfigmoduwe.utegcwienttimeoutfwagname
+i-impowt com.twittew.finagwe.thwiftmux
+i-impowt c-com.twittew.finagwe.mux.cwientdiscawdedwequestexception
+i-impowt com.twittew.finagwe.sewvice.weqwep
+i-impowt com.twittew.finagwe.sewvice.wesponsecwass
+i-impowt com.twittew.finagwe.sewvice.wetwybudget
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+impowt com.twittew.inject.injectow
+i-impowt com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe
+impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.usewtweetentitygwaph
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.thwow
 
-object UserTweetEntityGraphClientModule
-    extends ThriftMethodBuilderClientModule[
-      UserTweetEntityGraph.ServicePerEndpoint,
-      UserTweetEntityGraph.MethodPerEndpoint
+object usewtweetentitygwaphcwientmoduwe
+    e-extends thwiftmethodbuiwdewcwientmoduwe[
+      u-usewtweetentitygwaph.sewvicepewendpoint, 🥺
+      u-usewtweetentitygwaph.methodpewendpoint
     ]
-    with MtlsClient {
+    with mtwscwient {
 
-  override val label = "user-tweet-entity-graph"
-  override val dest = "/s/cassowary/user_tweet_entity_graph"
-  private val userTweetEntityGraphClientTimeout: Flag[Duration] =
-    flag[Duration](UtegClientTimeoutFlagName, "user tweet entity graph client timeout")
-  override def requestTimeout: Duration = userTweetEntityGraphClientTimeout()
+  ovewwide vaw wabew = "usew-tweet-entity-gwaph"
+  ovewwide v-vaw dest = "/s/cassowawy/usew_tweet_entity_gwaph"
+  pwivate vaw usewtweetentitygwaphcwienttimeout: fwag[duwation] =
+    fwag[duwation](utegcwienttimeoutfwagname, >_< "usew t-tweet entity gwaph c-cwient timeout")
+  o-ovewwide def w-wequesttimeout: d-duwation = usewtweetentitygwaphcwienttimeout()
 
-  override def retryBudget: RetryBudget = RetryBudget.Empty
+  ovewwide def wetwybudget: wetwybudget = w-wetwybudget.empty
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client =
-    super
-      .configureThriftMuxClient(injector, client)
-      .withStatsReceiver(injector.instance[StatsReceiver].scope("clnt"))
-      .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+  ovewwide def configuwethwiftmuxcwient(
+    injectow: i-injectow, >_<
+    cwient: thwiftmux.cwient
+  ): thwiftmux.cwient =
+    supew
+      .configuwethwiftmuxcwient(injectow, (⑅˘꒳˘) cwient)
+      .withstatsweceivew(injectow.instance[statsweceivew].scope("cwnt"))
+      .withwesponsecwassifiew {
+        case weqwep(_, /(^•ω•^) t-thwow(_: cwientdiscawdedwequestexception)) => wesponsecwass.ignowabwe
       }
 
 }

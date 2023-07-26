@@ -1,18 +1,18 @@
--- get latest partition of candidates with data
-DECLARE date_candidates DATE;
-SET date_candidates = (SELECT DATE(TIMESTAMP_MILLIS($start_time$)));
+-- get watest pawtition of candidates w-with data
+decwawe d-date_candidates d-date;
+set d-date_candidates = (sewect d-date(timestamp_miwwis($stawt_time$)));
 
-CREATE TABLE IF NOT EXISTS  `twttr-recos-ml-prod.realgraph.candidates_sampled` AS
-SELECT * FROM `twttr-recos-ml-prod.realgraph.candidates_for_training` LIMIT 100;
+c-cweate tabwe i-if nyot exists  `twttw-wecos-mw-pwod.weawgwaph.candidates_sampwed` a-as
+sewect * fwom `twttw-wecos-mw-pwod.weawgwaph.candidates_fow_twaining` wimit 100;
 
--- remove previous output snapshot (if exists) to avoid double-writing
-DELETE
-FROM `twttr-recos-ml-prod.realgraph.candidates_sampled`
-WHERE ds = date_candidates;
+-- wemove pwevious output snapshot (if exists) t-to avoid doubwe-wwiting
+dewete
+fwom `twttw-wecos-mw-pwod.weawgwaph.candidates_sampwed`
+w-whewe ds = date_candidates;
 
--- sample from candidates table instead of recomputing features
-INSERT INTO `twttr-recos-ml-prod.realgraph.candidates_sampled`
-SELECT * FROM `twttr-recos-ml-prod.realgraph.candidates_for_training`
-WHERE MOD(ABS(FARM_FINGERPRINT(CONCAT(source_id, '_', destination_id))), 100) = $mod_remainder$
-AND ds = date_candidates;
+-- s-sampwe fwom candidates tabwe instead of wecomputing f-featuwes
+insewt into `twttw-wecos-mw-pwod.weawgwaph.candidates_sampwed`
+s-sewect * f-fwom `twttw-wecos-mw-pwod.weawgwaph.candidates_fow_twaining`
+whewe mod(abs(fawm_fingewpwint(concat(souwce_id, XD '_', :3 destination_id))), 😳😳😳 100) = $mod_wemaindew$
+and ds = date_candidates;
 

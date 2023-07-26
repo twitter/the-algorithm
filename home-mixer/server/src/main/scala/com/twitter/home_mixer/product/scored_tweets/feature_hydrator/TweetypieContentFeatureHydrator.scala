@@ -1,144 +1,144 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.escherbird.{thriftscala => esb}
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.MediaUnderstandingAnnotationIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetypieContentRepository
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.content.ContentFeatureAdapter
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.home_mixer.util.tweetypie.content.FeatureExtractionHelper
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.common.util.MediaUnderstandingAnnotations
-import com.twitter.tweetypie.{thriftscala => tp}
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+impowt com.twittew.eschewbiwd.{thwiftscawa => e-esb}
+impowt c-com.twittew.finagwe.stats.stat
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.mediaundewstandingannotationidsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.souwcetweetidfeatuwe
+i-impowt c-com.twittew.home_mixew.pawam.homemixewinjectionnames.tweetypiecontentwepositowy
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.content.contentfeatuweadaptew
+impowt com.twittew.home_mixew.utiw.obsewvedkeyvawuewesuwthandwew
+impowt com.twittew.home_mixew.utiw.tweetypie.content.featuweextwactionhewpew
+impowt c-com.twittew.mw.api.datawecowd
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.sewvo.keyvawue.keyvawuewesuwt
+impowt com.twittew.sewvo.wepositowy.keyvawuewepositowy
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.pwediction.common.utiw.mediaundewstandingannotations
+impowt com.twittew.tweetypie.{thwiftscawa => tp}
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
+i-impowt c-com.twittew.utiw.twy
+i-impowt javax.inject.inject
+impowt javax.inject.named
+impowt j-javax.inject.singweton
+impowt scawa.cowwection.javaconvewtews._
 
-object TweetypieContentDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+o-object tweetypiecontentdatawecowdfeatuwe
+    extends datawecowdinafeatuwe[tweetcandidate]
+    with featuwewithdefauwtonfaiwuwe[tweetcandidate, (///ˬ///✿) datawecowd] {
+  ovewwide def defauwtvawue: d-datawecowd = nyew datawecowd()
 }
 
-@Singleton
-class TweetypieContentFeatureHydrator @Inject() (
-  @Named(TweetypieContentRepository) client: KeyValueRepository[Seq[Long], Long, tp.Tweet],
-  override val statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with ObservedKeyValueResultHandler {
+@singweton
+c-cwass t-tweetypiecontentfeatuwehydwatow @inject() (
+  @named(tweetypiecontentwepositowy) c-cwient: keyvawuewepositowy[seq[wong], ^^;; wong, >_< tp.tweet],
+  ovewwide vaw statsweceivew: s-statsweceivew)
+    e-extends buwkcandidatefeatuwehydwatow[pipewinequewy, rawr x3 t-tweetcandidate]
+    w-with obsewvedkeyvawuewesuwthandwew {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TweetypieContent")
+  ovewwide v-vaw identifiew: featuwehydwatowidentifiew = f-featuwehydwatowidentifiew("tweetypiecontent")
 
-  override val features: Set[Feature[_, _]] = Set(
-    MediaUnderstandingAnnotationIdsFeature,
-    TweetypieContentDataRecordFeature
+  ovewwide vaw featuwes: set[featuwe[_, /(^•ω•^) _]] = set(
+    m-mediaundewstandingannotationidsfeatuwe, :3
+    tweetypiecontentdatawecowdfeatuwe
   )
 
-  override val statScope: String = identifier.toString
+  o-ovewwide vaw statscope: s-stwing = identifiew.tostwing
 
-  private val bulkRequestLatencyStat =
-    statsReceiver.scope(statScope).scope("bulkRequest").stat("latency_ms")
-  private val postTransformerLatencyStat =
-    statsReceiver.scope(statScope).scope("postTransformer").stat("latency_ms")
-  private val bulkPostTransformerLatencyStat =
-    statsReceiver.scope(statScope).scope("bulkPostTransformer").stat("latency_ms")
+  p-pwivate vaw buwkwequestwatencystat =
+    statsweceivew.scope(statscope).scope("buwkwequest").stat("watency_ms")
+  pwivate vaw posttwansfowmewwatencystat =
+    statsweceivew.scope(statscope).scope("posttwansfowmew").stat("watency_ms")
+  pwivate vaw buwkposttwansfowmewwatencystat =
+    s-statsweceivew.scope(statscope).scope("buwkposttwansfowmew").stat("watency_ms")
 
-  private val DefaultDataRecord: DataRecord = new DataRecord()
+  p-pwivate vaw defauwtdatawecowd: d-datawecowd = n-new datawecowd()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val tweetIdsToHydrate = candidates.map(getCandidateOriginalTweetId).distinct
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, (ꈍᴗꈍ)
+    candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[seq[featuwemap]] = offwoadfutuwepoows.offwoadfutuwe {
+    vaw tweetidstohydwate = candidates.map(getcandidateowiginawtweetid).distinct
 
-    val response: Future[KeyValueResult[Long, tp.Tweet]] = Stat.timeFuture(bulkRequestLatencyStat) {
-      if (tweetIdsToHydrate.isEmpty) Future.value(KeyValueResult.empty)
-      else client(tweetIdsToHydrate)
+    v-vaw wesponse: futuwe[keyvawuewesuwt[wong, /(^•ω•^) tp.tweet]] = s-stat.timefutuwe(buwkwequestwatencystat) {
+      i-if (tweetidstohydwate.isempty) f-futuwe.vawue(keyvawuewesuwt.empty)
+      ewse cwient(tweetidstohydwate)
     }
 
-    response.flatMap { result =>
-      Stat.timeFuture(bulkPostTransformerLatencyStat) {
-        OffloadFuturePools
-          .parallelize[CandidateWithFeatures[TweetCandidate], Try[(Seq[Long], DataRecord)]](
-            candidates,
-            parTransformer(result, _),
-            parallelism = 32,
-            default = Return((Seq.empty, DefaultDataRecord))
+    w-wesponse.fwatmap { w-wesuwt =>
+      s-stat.timefutuwe(buwkposttwansfowmewwatencystat) {
+        o-offwoadfutuwepoows
+          .pawawwewize[candidatewithfeatuwes[tweetcandidate], twy[(seq[wong], datawecowd)]](
+            c-candidates, (⑅˘꒳˘)
+            pawtwansfowmew(wesuwt, ( ͡o ω ͡o ) _),
+            p-pawawwewism = 32,
+            d-defauwt = wetuwn((seq.empty, òωó d-defauwtdatawecowd))
           ).map {
             _.map {
-              case Return(result) =>
-                FeatureMapBuilder()
-                  .add(MediaUnderstandingAnnotationIdsFeature, result._1)
-                  .add(TweetypieContentDataRecordFeature, result._2)
-                  .build()
-              case Throw(e) =>
-                FeatureMapBuilder()
-                  .add(MediaUnderstandingAnnotationIdsFeature, Throw(e))
-                  .add(TweetypieContentDataRecordFeature, Throw(e))
-                  .build()
+              c-case wetuwn(wesuwt) =>
+                featuwemapbuiwdew()
+                  .add(mediaundewstandingannotationidsfeatuwe, (⑅˘꒳˘) wesuwt._1)
+                  .add(tweetypiecontentdatawecowdfeatuwe, XD wesuwt._2)
+                  .buiwd()
+              c-case thwow(e) =>
+                featuwemapbuiwdew()
+                  .add(mediaundewstandingannotationidsfeatuwe, thwow(e))
+                  .add(tweetypiecontentdatawecowdfeatuwe, -.- thwow(e))
+                  .buiwd()
             }
           }
       }
     }
   }
 
-  private def parTransformer(
-    result: KeyValueResult[Long, tp.Tweet],
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Try[(Seq[Long], DataRecord)] = {
-    val originalTweetId = Some(getCandidateOriginalTweetId(candidate))
-    val value = observedGet(key = originalTweetId, keyValueResult = result)
-    Stat.time(postTransformerLatencyStat)(postTransformer(value))
+  pwivate d-def pawtwansfowmew(
+    wesuwt: keyvawuewesuwt[wong, :3 tp.tweet], nyaa~~
+    c-candidate: candidatewithfeatuwes[tweetcandidate]
+  ): t-twy[(seq[wong], d-datawecowd)] = {
+    vaw owiginawtweetid = s-some(getcandidateowiginawtweetid(candidate))
+    vaw vawue = o-obsewvedget(key = o-owiginawtweetid, 😳 keyvawuewesuwt = wesuwt)
+    stat.time(posttwansfowmewwatencystat)(posttwansfowmew(vawue))
   }
 
-  private def postTransformer(
-    result: Try[Option[tp.Tweet]]
-  ): Try[(Seq[Long], DataRecord)] = {
-    result.map { tweet =>
-      val transformedValue = tweet.map(FeatureExtractionHelper.extractFeatures)
-      val semanticAnnotations = transformedValue
-        .flatMap { contentFeatures =>
-          contentFeatures.semanticCoreAnnotations.map {
-            getNonSensitiveHighRecallMediaUnderstandingAnnotationEntityIds
+  pwivate def posttwansfowmew(
+    w-wesuwt: twy[option[tp.tweet]]
+  ): t-twy[(seq[wong], (⑅˘꒳˘) datawecowd)] = {
+    w-wesuwt.map { tweet =>
+      v-vaw twansfowmedvawue = tweet.map(featuweextwactionhewpew.extwactfeatuwes)
+      v-vaw s-semanticannotations = twansfowmedvawue
+        .fwatmap { c-contentfeatuwes =>
+          c-contentfeatuwes.semanticcoweannotations.map {
+            getnonsensitivehighwecawwmediaundewstandingannotationentityids
           }
-        }.getOrElse(Seq.empty)
-      val dataRecord = ContentFeatureAdapter.adaptToDataRecords(transformedValue).asScala.head
-      (semanticAnnotations, dataRecord)
+        }.getowewse(seq.empty)
+      vaw datawecowd = contentfeatuweadaptew.adapttodatawecowds(twansfowmedvawue).asscawa.head
+      (semanticannotations, nyaa~~ datawecowd)
     }
   }
 
-  private def getCandidateOriginalTweetId(
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Long = {
-    candidate.features
-      .getOrElse(SourceTweetIdFeature, None).getOrElse(candidate.candidate.id)
+  pwivate d-def getcandidateowiginawtweetid(
+    c-candidate: c-candidatewithfeatuwes[tweetcandidate]
+  ): wong = {
+    candidate.featuwes
+      .getowewse(souwcetweetidfeatuwe, OwO n-nyone).getowewse(candidate.candidate.id)
   }
 
-  private def getNonSensitiveHighRecallMediaUnderstandingAnnotationEntityIds(
-    semanticCoreAnnotations: Seq[esb.TweetEntityAnnotation]
-  ): Seq[Long] =
-    semanticCoreAnnotations
-      .filter(MediaUnderstandingAnnotations.isEligibleNonSensitiveHighRecallMUAnnotation)
-      .map(_.entityId)
+  p-pwivate def getnonsensitivehighwecawwmediaundewstandingannotationentityids(
+    s-semanticcoweannotations: seq[esb.tweetentityannotation]
+  ): seq[wong] =
+    semanticcoweannotations
+      .fiwtew(mediaundewstandingannotations.isewigibwenonsensitivehighwecawwmuannotation)
+      .map(_.entityid)
 }

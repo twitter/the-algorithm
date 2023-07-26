@@ -1,24 +1,24 @@
-package com.twitter.timelineranker.core
+package com.twittew.timewinewankew.cowe
 
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.model.TweetId
+impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.tweetwecommendation
+i-impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+i-impowt c-com.twittew.timewinewankew.modew.wecapquewy
+impowt c-com.twittew.timewines.modew.tweetid
 
-object CandidateEnvelope {
-  val EmptySearchResults: Seq[ThriftSearchResult] = Seq.empty[ThriftSearchResult]
-  val EmptyHydratedTweets: HydratedTweets = HydratedTweets(Seq.empty, Seq.empty)
-  val EmptyUtegResults: Map[TweetId, TweetRecommendation] = Map.empty[TweetId, TweetRecommendation]
+o-object c-candidateenvewope {
+  v-vaw emptyseawchwesuwts: seq[thwiftseawchwesuwt] = seq.empty[thwiftseawchwesuwt]
+  vaw emptyhydwatedtweets: hydwatedtweets = h-hydwatedtweets(seq.empty, seq.empty)
+  vaw emptyutegwesuwts: m-map[tweetid, (ˆ ﻌ ˆ)♡ tweetwecommendation] = map.empty[tweetid, (˘ω˘) t-tweetwecommendation]
 }
 
-case class CandidateEnvelope(
-  query: RecapQuery,
-  searchResults: Seq[ThriftSearchResult] = CandidateEnvelope.EmptySearchResults,
-  utegResults: Map[TweetId, TweetRecommendation] = CandidateEnvelope.EmptyUtegResults,
-  hydratedTweets: HydratedTweets = CandidateEnvelope.EmptyHydratedTweets,
-  followGraphData: FollowGraphDataFuture = FollowGraphDataFuture.EmptyFollowGraphDataFuture,
-  // The source tweets are
-  // - the retweeted tweet, for retweets
-  // - the inReplyTo tweet, for extended replies
-  sourceSearchResults: Seq[ThriftSearchResult] = CandidateEnvelope.EmptySearchResults,
-  sourceHydratedTweets: HydratedTweets = CandidateEnvelope.EmptyHydratedTweets)
+case cwass candidateenvewope(
+  quewy: wecapquewy, (⑅˘꒳˘)
+  seawchwesuwts: s-seq[thwiftseawchwesuwt] = candidateenvewope.emptyseawchwesuwts, (///ˬ///✿)
+  u-utegwesuwts: m-map[tweetid, 😳😳😳 tweetwecommendation] = candidateenvewope.emptyutegwesuwts, 🥺
+  hydwatedtweets: hydwatedtweets = c-candidateenvewope.emptyhydwatedtweets, mya
+  fowwowgwaphdata: fowwowgwaphdatafutuwe = fowwowgwaphdatafutuwe.emptyfowwowgwaphdatafutuwe,
+  // the souwce t-tweets awe
+  // - the wetweeted t-tweet, 🥺 fow wetweets
+  // - t-the i-inwepwyto tweet, >_< f-fow extended wepwies
+  souwceseawchwesuwts: seq[thwiftseawchwesuwt] = c-candidateenvewope.emptyseawchwesuwts, >_<
+  souwcehydwatedtweets: hydwatedtweets = c-candidateenvewope.emptyhydwatedtweets)

@@ -1,65 +1,65 @@
-package com.twitter.search.earlybird_root.quota;
+package com.twittew.seawch.eawwybiwd_woot.quota;
 
-import java.util.Optional;
+impowt java.utiw.optionaw;
 
-import javax.inject.Inject;
+i-impowt j-javax.inject.inject;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.dark.ServerSetResolver.SelfServerSetResolver;
+i-impowt com.twittew.seawch.common.dawk.sewvewsetwesowvew.sewfsewvewsetwesowvew;
 
 /**
- * A config based implementation of the {@code ClientIdQuotaManager} interface.
- * It uses a ConfigBasedQuotaConfig object to load the contents of the config.
+ * a c-config based impwementation o-of t-the {@code cwientidquotamanagew} intewface. (///ˬ///✿)
+ * it uses a configbasedquotaconfig object to woad the contents of the c-config. >w<
  */
-public class ConfigRepoBasedQuotaManager implements ClientIdQuotaManager {
+pubwic cwass configwepobasedquotamanagew impwements c-cwientidquotamanagew {
 
-  public static final String COMMON_POOL_CLIENT_ID = "common_pool";
+  pubwic s-static finaw stwing common_poow_cwient_id = "common_poow";
 
-  private final ConfigBasedQuotaConfig quotaConfig;
-  private final SelfServerSetResolver serverSetResolver;
+  pwivate finaw configbasedquotaconfig q-quotaconfig;
+  pwivate finaw s-sewfsewvewsetwesowvew s-sewvewsetwesowvew;
 
-  /** Creates a new ConfigRepoBasedQuotaManager instance. */
-  @Inject
-  public ConfigRepoBasedQuotaManager(
-      SelfServerSetResolver serverSetResolver,
-      ConfigBasedQuotaConfig quotaConfig) {
-    Preconditions.checkNotNull(quotaConfig);
+  /** cweates a nyew configwepobasedquotamanagew instance. rawr */
+  @inject
+  pubwic configwepobasedquotamanagew(
+      sewfsewvewsetwesowvew s-sewvewsetwesowvew, mya
+      configbasedquotaconfig quotaconfig) {
+    pweconditions.checknotnuww(quotaconfig);
 
-    this.quotaConfig = quotaConfig;
-    this.serverSetResolver = serverSetResolver;
+    this.quotaconfig = q-quotaconfig;
+    this.sewvewsetwesowvew = s-sewvewsetwesowvew;
   }
 
-  @Override
-  public Optional<QuotaInfo> getQuotaForClient(String clientId) {
-    Optional<QuotaInfo> quotaForClient = quotaConfig.getQuotaForClient(clientId);
+  @ovewwide
+  p-pubwic o-optionaw<quotainfo> g-getquotafowcwient(stwing cwientid) {
+    optionaw<quotainfo> q-quotafowcwient = quotaconfig.getquotafowcwient(cwientid);
 
-    if (!quotaForClient.isPresent()) {
-      return Optional.empty();
+    if (!quotafowcwient.ispwesent()) {
+      w-wetuwn optionaw.empty();
     }
 
-    QuotaInfo quota = quotaForClient.get();
+    quotainfo quota = quotafowcwient.get();
 
-    int quotaValue = quota.getQuota();
-    int rootInstanceCount = serverSetResolver.getServerSetSize();
-    if (rootInstanceCount > 0) {
-      quotaValue = (int) Math.ceil((double) quotaValue / rootInstanceCount);
+    int quotavawue = quota.getquota();
+    i-int wootinstancecount = sewvewsetwesowvew.getsewvewsetsize();
+    i-if (wootinstancecount > 0) {
+      q-quotavawue = (int) m-math.ceiw((doubwe) quotavawue / wootinstancecount);
     }
 
-    return Optional.of(
-        new QuotaInfo(
-            quota.getQuotaClientId(),
-            quota.getQuotaEmail(),
-            quotaValue,
-            quota.shouldEnforceQuota(),
-            quota.getClientTier(),
-            quota.hasArchiveAccess()));
+    wetuwn optionaw.of(
+        n-nyew quotainfo(
+            q-quota.getquotacwientid(), ^^
+            quota.getquotaemaiw(), 😳😳😳
+            q-quotavawue, mya
+            q-quota.shouwdenfowcequota(), 😳
+            quota.getcwienttiew(), -.-
+            quota.hasawchiveaccess()));
   }
 
-  @Override
-  public QuotaInfo getCommonPoolQuota() {
-    Optional<QuotaInfo> commonPoolQuota = getQuotaForClient(COMMON_POOL_CLIENT_ID);
-    Preconditions.checkState(commonPoolQuota.isPresent());
-    return commonPoolQuota.get();
+  @ovewwide
+  p-pubwic quotainfo getcommonpoowquota() {
+    o-optionaw<quotainfo> commonpoowquota = getquotafowcwient(common_poow_cwient_id);
+    p-pweconditions.checkstate(commonpoowquota.ispwesent());
+    wetuwn c-commonpoowquota.get();
   }
 }

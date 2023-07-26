@@ -1,314 +1,314 @@
-package com.twitter.search.common.schema.base;
+package com.twittew.seawch.common.schema.base;
 
-import java.util.Set;
+impowt java.utiw.set;
 
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.sets;
 
-import com.twitter.common.base.MorePreconditions;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureNormalizationType;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint;
+i-impowt c-com.twittew.common.base.mowepweconditions;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsftype;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfeatuwenowmawizationtype;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfeatuweupdateconstwaint;
 
-// FeatureConfiguration is defined for all the column stride view fields.
-public final class FeatureConfiguration {
-  private final String name;
-  private final int intIndex;
-  // Start position in the given int (0-31)
-  private final int bitStartPos;
-  // Length in bits of the feature
-  private final int bitLength;
-  // precomputed for reuse
-  private final int bitMask;
-  private final int inverseBitMask;
-  private final int maxValue;
+// featuweconfiguwation is defined fow aww the cowumn stwide v-view fiewds. >_<
+pubwic finaw cwass featuweconfiguwation {
+  p-pwivate finaw stwing n-nyame;
+  pwivate finaw int intindex;
+  // stawt position in the g-given int (0-31)
+  pwivate finaw i-int bitstawtpos;
+  // w-wength in bits of the featuwe
+  pwivate finaw int bitwength;
+  // pwecomputed f-fow weuse
+  pwivate finaw int bitmask;
+  pwivate finaw int invewsebitmask;
+  p-pwivate finaw int maxvawue;
 
-  private final ThriftCSFType type;
+  p-pwivate finaw t-thwiftcsftype t-type;
 
-  // This is the client seen feature type: if this is null, this field is unused.
-  @Nullable
-  private final ThriftCSFType outputType;
+  // this i-is the cwient seen featuwe type: if this is nyuww, -.- t-this fiewd is unused. UwU
+  @nuwwabwe
+  pwivate f-finaw thwiftcsftype outputtype;
 
-  private final String baseField;
+  pwivate finaw stwing basefiewd;
 
-  private final Set<FeatureConstraint> featureUpdateConstraints;
+  pwivate finaw set<featuweconstwaint> f-featuweupdateconstwaints;
 
-  private final ThriftFeatureNormalizationType featureNormalizationType;
+  pwivate f-finaw thwiftfeatuwenowmawizationtype f-featuwenowmawizationtype;
 
   /**
-   * Creates a new FeatureConfiguration with a base field.
+   * c-cweates a nyew featuweconfiguwation with a base fiewd. :3
    *
-   * @param intIndex which integer is the feature in (0 based).
-   * @param bitStartPos at which bit does the feature start (0-31).
-   * @param bitLength length in bits of the feature
-   * @param baseField the CSF this feature is stored within.
+   * @pawam intindex which i-integew is the f-featuwe in (0 based). σωσ
+   * @pawam bitstawtpos at w-which bit does t-the featuwe stawt (0-31). >w<
+   * @pawam bitwength w-wength in bits of the featuwe
+   * @pawam b-basefiewd the csf this featuwe is stowed w-within. (ˆ ﻌ ˆ)♡
    */
-  private FeatureConfiguration(
-          String name,
-          ThriftCSFType type,
-          ThriftCSFType outputType,
-          int intIndex,
-          int bitStartPos,
-          int bitLength,
-          String baseField,
-          Set<FeatureConstraint> featureUpdateConstraints,
-          ThriftFeatureNormalizationType featureNormalizationType) {
-    Preconditions.checkState(bitStartPos + bitLength <= Integer.SIZE,
-            "Feature must not cross int boundary.");
-    this.name = MorePreconditions.checkNotBlank(name);
-    this.type = Preconditions.checkNotNull(type);
-    this.outputType = outputType;
-    this.intIndex = intIndex;
-    this.bitStartPos = bitStartPos;
-    this.bitLength = bitLength;
-    // Technically, int-sized features can use all 32 bits to store a positive value greater than
-    // Integer.MAX_VALUE. But in practice, we will convert the values of those features to Java ints
-    // on the read side, so the max value for those features will still be Integer.MAX_VALUE.
-    this.maxValue = (1 << Math.min(bitLength, Integer.SIZE - 1)) - 1;
-    this.bitMask = (int) (((1L << bitLength) - 1) << bitStartPos);
-    this.inverseBitMask = ~bitMask;
-    this.baseField = baseField;
-    this.featureUpdateConstraints = featureUpdateConstraints;
-    this.featureNormalizationType = Preconditions.checkNotNull(featureNormalizationType);
+  pwivate featuweconfiguwation(
+          s-stwing nyame, ʘwʘ
+          t-thwiftcsftype t-type,
+          thwiftcsftype outputtype, :3
+          int intindex, (˘ω˘)
+          int bitstawtpos, 😳😳😳
+          int bitwength,
+          s-stwing basefiewd, rawr x3
+          s-set<featuweconstwaint> featuweupdateconstwaints, (✿oωo)
+          t-thwiftfeatuwenowmawizationtype f-featuwenowmawizationtype) {
+    p-pweconditions.checkstate(bitstawtpos + bitwength <= integew.size, (ˆ ﻌ ˆ)♡
+            "featuwe must nyot cwoss int boundawy.");
+    t-this.name = mowepweconditions.checknotbwank(name);
+    this.type = pweconditions.checknotnuww(type);
+    this.outputtype = outputtype;
+    this.intindex = intindex;
+    t-this.bitstawtpos = bitstawtpos;
+    t-this.bitwength = b-bitwength;
+    // t-technicawwy, :3 int-sized featuwes c-can use aww 32 b-bits to stowe a-a positive vawue g-gweatew than
+    // integew.max_vawue. (U ᵕ U❁) but in p-pwactice, we wiww c-convewt the vawues o-of those featuwes t-to java ints
+    // o-on the wead side, ^^;; so the max vawue fow those featuwes w-wiww stiww be integew.max_vawue. mya
+    this.maxvawue = (1 << math.min(bitwength, integew.size - 1)) - 1;
+    this.bitmask = (int) (((1w << bitwength) - 1) << b-bitstawtpos);
+    this.invewsebitmask = ~bitmask;
+    this.basefiewd = basefiewd;
+    this.featuweupdateconstwaints = f-featuweupdateconstwaints;
+    t-this.featuwenowmawizationtype = p-pweconditions.checknotnuww(featuwenowmawizationtype);
   }
 
-  public String getName() {
-    return name;
+  pubwic s-stwing getname() {
+    wetuwn n-nyame;
   }
 
-  public int getMaxValue() {
-    return maxValue;
+  p-pubwic int getmaxvawue() {
+    wetuwn maxvawue;
   }
 
-  @Override
-  public String toString() {
-    return new StringBuilder().append(name)
-            .append(" (").append(intIndex).append(", ")
-            .append(bitStartPos).append(", ")
-            .append(bitLength).append(") ").toString();
+  @ovewwide
+  pubwic stwing tostwing() {
+    wetuwn nyew stwingbuiwdew().append(name)
+            .append(" (").append(intindex).append(", 😳😳😳 ")
+            .append(bitstawtpos).append(", OwO ")
+            .append(bitwength).append(") ").tostwing();
   }
 
-  public int getValueIndex() {
-    return intIndex;
+  pubwic int getvawueindex() {
+    w-wetuwn intindex;
   }
 
-  public int getBitStartPosition() {
-    return bitStartPos;
+  pubwic i-int getbitstawtposition() {
+    wetuwn bitstawtpos;
   }
 
-  public int getBitLength() {
-    return bitLength;
+  p-pubwic i-int getbitwength() {
+    wetuwn bitwength;
   }
 
-  public int getBitMask() {
-    return bitMask;
+  p-pubwic int g-getbitmask() {
+    wetuwn bitmask;
   }
 
-  public int getInverseBitMask() {
-    return inverseBitMask;
+  p-pubwic i-int getinvewsebitmask() {
+    wetuwn invewsebitmask;
   }
 
-  public String getBaseField() {
-    return baseField;
+  pubwic stwing getbasefiewd() {
+    wetuwn basefiewd;
   }
 
-  public ThriftCSFType getType() {
-    return type;
+  p-pubwic t-thwiftcsftype gettype() {
+    w-wetuwn type;
   }
 
-  @Nullable
-  public ThriftCSFType getOutputType() {
-    return outputType;
+  @nuwwabwe
+  p-pubwic t-thwiftcsftype getoutputtype() {
+    w-wetuwn outputtype;
   }
 
-  public ThriftFeatureNormalizationType getFeatureNormalizationType() {
-    return featureNormalizationType;
+  pubwic thwiftfeatuwenowmawizationtype getfeatuwenowmawizationtype() {
+    wetuwn f-featuwenowmawizationtype;
   }
 
   /**
-   * Returns the update constraint for the feature.
+   * w-wetuwns the update constwaint fow t-the featuwe. rawr
    */
-  public Set<ThriftFeatureUpdateConstraint> getUpdateConstraints() {
-    if (featureUpdateConstraints == null) {
-      return null;
+  p-pubwic set<thwiftfeatuweupdateconstwaint> getupdateconstwaints() {
+    if (featuweupdateconstwaints == nyuww) {
+      wetuwn n-nyuww;
     }
-    Set<ThriftFeatureUpdateConstraint> constraintSet = Sets.newHashSet();
-    for (FeatureConstraint constraint : featureUpdateConstraints) {
-      constraintSet.add(constraint.getType());
+    set<thwiftfeatuweupdateconstwaint> constwaintset = sets.newhashset();
+    fow (featuweconstwaint c-constwaint : featuweupdateconstwaints) {
+      constwaintset.add(constwaint.gettype());
     }
-    return constraintSet;
+    w-wetuwn constwaintset;
   }
 
   /**
-   * Returns true if the given update satisfies all feature update constraints.
+   * w-wetuwns twue if the given update satisfies aww featuwe u-update constwaints. XD
    */
-  public boolean validateFeatureUpdate(final Number oldValue, final Number newValue) {
-    if (featureUpdateConstraints != null) {
-      for (FeatureConstraint contraint : featureUpdateConstraints) {
-        if (!contraint.apply(oldValue, newValue)) {
-          return false;
+  pubwic b-boowean vawidatefeatuweupdate(finaw nyumbew owdvawue, (U ﹏ U) finaw nyumbew newvawue) {
+    i-if (featuweupdateconstwaints != nuww) {
+      f-fow (featuweconstwaint contwaint : featuweupdateconstwaints) {
+        if (!contwaint.appwy(owdvawue, nyewvawue)) {
+          wetuwn fawse;
         }
       }
     }
 
-    return true;
+    w-wetuwn twue;
   }
 
-  @Override
-  public int hashCode() {
-    return (name == null ? 0 : name.hashCode())
-        + intIndex * 7
-        + bitStartPos * 13
-        + bitLength * 23
-        + bitMask * 31
-        + inverseBitMask * 43
-        + (int) maxValue * 53
-        + (type == null ? 0 : type.hashCode()) * 61
-        + (outputType == null ? 0 : outputType.hashCode()) * 71
-        + (baseField == null ? 0 : baseField.hashCode()) * 83
-        + (featureUpdateConstraints == null ? 0 : featureUpdateConstraints.hashCode()) * 87
-        + (featureNormalizationType == null ? 0 : featureNormalizationType.hashCode()) * 97;
+  @ovewwide
+  pubwic int hashcode() {
+    w-wetuwn (name == n-nyuww ? 0 : nyame.hashcode())
+        + i-intindex * 7
+        + bitstawtpos * 13
+        + b-bitwength * 23
+        + b-bitmask * 31
+        + i-invewsebitmask * 43
+        + (int) maxvawue * 53
+        + (type == n-nyuww ? 0 : t-type.hashcode()) * 61
+        + (outputtype == nyuww ? 0 : outputtype.hashcode()) * 71
+        + (basefiewd == n-nyuww ? 0 : b-basefiewd.hashcode()) * 83
+        + (featuweupdateconstwaints == n-nyuww ? 0 : featuweupdateconstwaints.hashcode()) * 87
+        + (featuwenowmawizationtype == nyuww ? 0 : featuwenowmawizationtype.hashcode()) * 97;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof FeatureConfiguration)) {
-      return false;
+  @ovewwide
+  p-pubwic boowean equaws(object o-obj) {
+    i-if (!(obj instanceof featuweconfiguwation)) {
+      wetuwn fawse;
     }
 
-    FeatureConfiguration featureConfiguration = FeatureConfiguration.class.cast(obj);
-    return (name == featureConfiguration.name)
-        && (bitStartPos == featureConfiguration.bitStartPos)
-        && (bitLength == featureConfiguration.bitLength)
-        && (bitMask == featureConfiguration.bitMask)
-        && (inverseBitMask == featureConfiguration.inverseBitMask)
-        && (maxValue == featureConfiguration.maxValue)
-        && (type == featureConfiguration.type)
-        && (outputType == featureConfiguration.outputType)
-        && (baseField == featureConfiguration.baseField)
-        && (featureUpdateConstraints == null
-            ? featureConfiguration.featureUpdateConstraints == null
-            : featureUpdateConstraints.equals(featureConfiguration.featureUpdateConstraints))
-        && (featureNormalizationType == null
-            ? featureConfiguration.featureNormalizationType == null
-            : featureNormalizationType.equals(featureConfiguration.featureNormalizationType));
+    featuweconfiguwation f-featuweconfiguwation = f-featuweconfiguwation.cwass.cast(obj);
+    w-wetuwn (name == f-featuweconfiguwation.name)
+        && (bitstawtpos == featuweconfiguwation.bitstawtpos)
+        && (bitwength == f-featuweconfiguwation.bitwength)
+        && (bitmask == featuweconfiguwation.bitmask)
+        && (invewsebitmask == featuweconfiguwation.invewsebitmask)
+        && (maxvawue == featuweconfiguwation.maxvawue)
+        && (type == featuweconfiguwation.type)
+        && (outputtype == featuweconfiguwation.outputtype)
+        && (basefiewd == featuweconfiguwation.basefiewd)
+        && (featuweupdateconstwaints == n-nuww
+            ? featuweconfiguwation.featuweupdateconstwaints == n-nyuww
+            : featuweupdateconstwaints.equaws(featuweconfiguwation.featuweupdateconstwaints))
+        && (featuwenowmawizationtype == n-nyuww
+            ? featuweconfiguwation.featuwenowmawizationtype == n-nyuww
+            : featuwenowmawizationtype.equaws(featuweconfiguwation.featuwenowmawizationtype));
   }
 
-  private interface FeatureConstraint {
-    boolean apply(Number oldValue, Number newValue);
-    ThriftFeatureUpdateConstraint getType();
+  p-pwivate intewface f-featuweconstwaint {
+    b-boowean a-appwy(numbew o-owdvawue, (˘ω˘) nyumbew nyewvawue);
+    thwiftfeatuweupdateconstwaint gettype();
   }
 
-  public static Builder builder() {
-    return new Builder();
+  pubwic static buiwdew buiwdew() {
+    wetuwn n-nyew buiwdew();
   }
 
-  public static final class Builder {
-    private String name;
-    private ThriftCSFType type;
-    private ThriftCSFType outputType;
-    private int intIndex;
-    // Start position in the given int (0-31)
-    private int bitStartPos;
-    // Length in bits of the feature
-    private int bitLength;
+  p-pubwic static f-finaw cwass buiwdew {
+    p-pwivate stwing nyame;
+    pwivate thwiftcsftype type;
+    pwivate t-thwiftcsftype o-outputtype;
+    pwivate int intindex;
+    // s-stawt position in the given int (0-31)
+    p-pwivate i-int bitstawtpos;
+    // wength in b-bits of the featuwe
+    p-pwivate int bitwength;
 
-    private String baseField;
+    pwivate stwing basefiewd;
 
-    private Set<FeatureConstraint> featureUpdateConstraints;
+    pwivate set<featuweconstwaint> f-featuweupdateconstwaints;
 
-    private ThriftFeatureNormalizationType featureNormalizationType =
-        ThriftFeatureNormalizationType.NONE;
+    p-pwivate thwiftfeatuwenowmawizationtype f-featuwenowmawizationtype =
+        t-thwiftfeatuwenowmawizationtype.none;
 
-    public FeatureConfiguration build() {
-      return new FeatureConfiguration(name, type, outputType, intIndex, bitStartPos, bitLength,
-              baseField, featureUpdateConstraints, featureNormalizationType);
+    p-pubwic featuweconfiguwation buiwd() {
+      w-wetuwn nyew featuweconfiguwation(name, UwU t-type, outputtype, >_< intindex, σωσ b-bitstawtpos, 🥺 b-bitwength, 🥺
+              basefiewd, ʘwʘ f-featuweupdateconstwaints, :3 featuwenowmawizationtype);
     }
 
-    public Builder withName(String n) {
-      this.name = n;
-      return this;
+    pubwic buiwdew w-withname(stwing ny) {
+      t-this.name = ny;
+      w-wetuwn this;
     }
 
-    public Builder withType(ThriftCSFType featureType) {
-      this.type = featureType;
-      return this;
+    pubwic buiwdew withtype(thwiftcsftype f-featuwetype) {
+      this.type = featuwetype;
+      w-wetuwn t-this;
     }
 
-    public Builder withOutputType(ThriftCSFType featureFeatureType) {
-      this.outputType = featureFeatureType;
-      return this;
+    p-pubwic buiwdew withoutputtype(thwiftcsftype featuwefeatuwetype) {
+      this.outputtype = f-featuwefeatuwetype;
+      wetuwn this;
     }
 
-    public Builder withFeatureNormalizationType(
-        ThriftFeatureNormalizationType normalizationType) {
-      this.featureNormalizationType = Preconditions.checkNotNull(normalizationType);
-      return this;
+    pubwic b-buiwdew withfeatuwenowmawizationtype(
+        t-thwiftfeatuwenowmawizationtype nyowmawizationtype) {
+      t-this.featuwenowmawizationtype = pweconditions.checknotnuww(nowmawizationtype);
+      w-wetuwn this;
     }
 
     /**
-     * Sets the bit range at the given intIndex, startPos and length.
+     * s-sets the bit wange at the given intindex, s-stawtpos and wength. (U ﹏ U)
      */
-    public Builder withBitRange(int index, int startPos, int length) {
-      this.intIndex = index;
-      this.bitStartPos = startPos;
-      this.bitLength = length;
-      return this;
+    pubwic buiwdew withbitwange(int i-index, (U ﹏ U) int stawtpos, ʘwʘ i-int wength) {
+      this.intindex = i-index;
+      this.bitstawtpos = s-stawtpos;
+      t-this.bitwength = w-wength;
+      wetuwn this;
     }
 
-    public Builder withBaseField(String baseFieldName) {
-      this.baseField = baseFieldName;
-      return this;
+    pubwic buiwdew withbasefiewd(stwing basefiewdname) {
+      this.basefiewd = basefiewdname;
+      wetuwn this;
     }
 
     /**
-     * Adds a feature update constraint.
+     * adds a featuwe update constwaint. >w<
      */
-    public Builder withFeatureUpdateConstraint(final ThriftFeatureUpdateConstraint constraint) {
-      if (featureUpdateConstraints == null) {
-        featureUpdateConstraints = Sets.newHashSet();
+    pubwic buiwdew withfeatuweupdateconstwaint(finaw t-thwiftfeatuweupdateconstwaint c-constwaint) {
+      if (featuweupdateconstwaints == nyuww) {
+        f-featuweupdateconstwaints = s-sets.newhashset();
       }
 
-      switch (constraint) {
-        case IMMUTABLE:
-          featureUpdateConstraints.add(new FeatureConstraint() {
-            @Override public boolean apply(Number oldValue, Number newValue) {
-              return false;
+      s-switch (constwaint) {
+        case immutabwe:
+          f-featuweupdateconstwaints.add(new featuweconstwaint() {
+            @ovewwide p-pubwic b-boowean appwy(numbew owdvawue, rawr x3 nyumbew n-nyewvawue) {
+              wetuwn fawse;
             }
-            @Override public ThriftFeatureUpdateConstraint getType() {
-              return ThriftFeatureUpdateConstraint.IMMUTABLE;
-            }
-          });
-          break;
-        case INC_ONLY:
-          featureUpdateConstraints.add(new FeatureConstraint() {
-            @Override  public boolean apply(Number oldValue, Number newValue) {
-              return newValue.intValue() > oldValue.intValue();
-            }
-            @Override public ThriftFeatureUpdateConstraint getType() {
-              return ThriftFeatureUpdateConstraint.INC_ONLY;
+            @ovewwide p-pubwic thwiftfeatuweupdateconstwaint g-gettype() {
+              wetuwn thwiftfeatuweupdateconstwaint.immutabwe;
             }
           });
-          break;
-        case POSITIVE:
-          featureUpdateConstraints.add(new FeatureConstraint() {
-            @Override  public boolean apply(Number oldValue, Number newValue) {
-              return newValue.intValue() >= 0;
+          bweak;
+        c-case inc_onwy:
+          f-featuweupdateconstwaints.add(new f-featuweconstwaint() {
+            @ovewwide  pubwic b-boowean appwy(numbew o-owdvawue, OwO n-nyumbew nyewvawue) {
+              w-wetuwn nyewvawue.intvawue() > o-owdvawue.intvawue();
             }
-            @Override public ThriftFeatureUpdateConstraint getType() {
-              return ThriftFeatureUpdateConstraint.POSITIVE;
+            @ovewwide pubwic t-thwiftfeatuweupdateconstwaint gettype() {
+              w-wetuwn t-thwiftfeatuweupdateconstwaint.inc_onwy;
             }
           });
-          break;
-        default:
+          b-bweak;
+        case positive:
+          f-featuweupdateconstwaints.add(new featuweconstwaint() {
+            @ovewwide  pubwic b-boowean appwy(numbew owdvawue, ^•ﻌ•^ nyumbew n-nyewvawue) {
+              w-wetuwn nyewvawue.intvawue() >= 0;
+            }
+            @ovewwide p-pubwic thwiftfeatuweupdateconstwaint gettype() {
+              w-wetuwn thwiftfeatuweupdateconstwaint.positive;
+            }
+          });
+          bweak;
+        d-defauwt:
       }
 
-      return this;
+      wetuwn this;
     }
 
-    private Builder() {
+    p-pwivate buiwdew() {
 
     }
   }

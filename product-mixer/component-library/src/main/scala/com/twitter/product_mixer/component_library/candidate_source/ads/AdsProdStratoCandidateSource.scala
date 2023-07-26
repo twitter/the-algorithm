@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.candidate_source.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.ads
 
-import com.twitter.adserver.thriftscala.AdImpression
-import com.twitter.adserver.thriftscala.AdRequestParams
-import com.twitter.adserver.thriftscala.AdRequestResponse
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.ads.admixer.MakeAdRequestClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.adsewvew.thwiftscawa.adimpwession
+i-impowt c-com.twittew.adsewvew.thwiftscawa.adwequestpawams
+i-impowt com.twittew.adsewvew.thwiftscawa.adwequestwesponse
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato.stwatokeyfetchewsouwce
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stwato.cwient.fetchew
+impowt com.twittew.stwato.genewated.cwient.ads.admixew.makeadwequestcwientcowumn
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class AdsProdStratoCandidateSource @Inject() (adsClient: MakeAdRequestClientColumn)
-    extends StratoKeyFetcherSource[
-      AdRequestParams,
-      AdRequestResponse,
-      AdImpression
+@singweton
+cwass adspwodstwatocandidatesouwce @inject() (adscwient: makeadwequestcwientcowumn)
+    e-extends stwatokeyfetchewsouwce[
+      adwequestpawams, nyaa~~
+      a-adwequestwesponse, /(^•ω•^)
+      adimpwession
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("AdsProdStrato")
+  ovewwide vaw identifiew: candidatesouwceidentifiew = c-candidatesouwceidentifiew("adspwodstwato")
 
-  override val fetcher: Fetcher[AdRequestParams, Unit, AdRequestResponse] = adsClient.fetcher
+  ovewwide v-vaw fetchew: f-fetchew[adwequestpawams, rawr unit, adwequestwesponse] = adscwient.fetchew
 
-  override protected def stratoResultTransformer(
-    stratoResult: AdRequestResponse
-  ): Seq[AdImpression] =
-    stratoResult.impressions
+  ovewwide pwotected def s-stwatowesuwttwansfowmew(
+    stwatowesuwt: adwequestwesponse
+  ): seq[adimpwession] =
+    stwatowesuwt.impwessions
 }

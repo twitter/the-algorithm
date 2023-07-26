@@ -1,179 +1,179 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.{Duration, Local}
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.utiw.{duwation, OwO w-wocaw}
 
 /**
- * A strategy for tracking success rate, usually over a window
+ * a-a stwategy fow twacking s-success w-wate, XD usuawwy ovew a-a window
  */
-trait SuccessRateTracker { self =>
-  def record(successes: Int, failures: Int): Unit
-  def successRate: Double
+t-twait successwatetwackew { sewf =>
+  def wecowd(successes: int, faiwuwes: int): u-unit
+  def successwate: doubwe
 
   /**
-   * A [[Gate]] whose availability is computed from the success rate (SR) reported by the tracker.
+   * a [[gate]] w-whose avaiwabiwity is computed f-fwom the success wate (sw) wepowted by the twackew. ^^;;
    *
-   * @param availabilityFromSuccessRate function to calculate availability of gate given SR
+   * @pawam a-avaiwabiwityfwomsuccesswate function to c-cawcuwate avaiwabiwity o-of gate given sw
    */
-  def availabilityGate(availabilityFromSuccessRate: Double => Double): Gate[Unit] =
-    Gate.fromAvailability(availabilityFromSuccessRate(successRate))
+  def avaiwabiwitygate(avaiwabiwityfwomsuccesswate: doubwe => doubwe): gate[unit] =
+    g-gate.fwomavaiwabiwity(avaiwabiwityfwomsuccesswate(successwate))
 
   /**
-   * A [[Gate]] whose availability is computed from the success rate reported by the tracker
-   * with stats attached.
+   * a [[gate]] whose avaiwabiwity is computed fwom the success wate w-wepowted by the twackew
+   * w-with stats attached. 🥺
    */
-  def observedAvailabilityGate(
-    availabilityFromSuccessRate: Double => Double,
-    stats: StatsReceiver
-  ): Gate[Unit] =
-    new Gate[Unit] {
-      val underlying = availabilityGate(availabilityFromSuccessRate)
-      val availabilityGauge =
-        stats.addGauge("availability") { availabilityFromSuccessRate(successRate).toFloat }
-      override def apply[U](u: U)(implicit asT: <:<[U, Unit]): Boolean = underlying.apply(u)
+  d-def o-obsewvedavaiwabiwitygate(
+    a-avaiwabiwityfwomsuccesswate: doubwe => doubwe, XD
+    s-stats: statsweceivew
+  ): gate[unit] =
+    nyew g-gate[unit] {
+      vaw undewwying = avaiwabiwitygate(avaiwabiwityfwomsuccesswate)
+      vaw avaiwabiwitygauge =
+        stats.addgauge("avaiwabiwity") { avaiwabiwityfwomsuccesswate(successwate).tofwoat }
+      o-ovewwide def appwy[u](u: u)(impwicit a-ast: <:<[u, (U ᵕ U❁) u-unit]): boowean = u-undewwying.appwy(u)
     }
 
   /**
-   * Tracks number of successes and failures as counters, and success_rate as a gauge
+   * twacks nyumbew of successes and faiwuwes a-as countews, :3 a-and success_wate as a gauge
    */
-  def observed(stats: StatsReceiver) = {
-    val successCounter = stats.counter("successes")
-    val failureCounter = stats.counter("failures")
-    new SuccessRateTracker {
-      private[this] val successRateGauge = stats.addGauge("success_rate")(successRate.toFloat)
-      override def record(successes: Int, failures: Int) = {
-        self.record(successes, failures)
-        successCounter.incr(successes)
-        failureCounter.incr(failures)
+  d-def obsewved(stats: s-statsweceivew) = {
+    vaw successcountew = s-stats.countew("successes")
+    vaw faiwuwecountew = s-stats.countew("faiwuwes")
+    nyew successwatetwackew {
+      pwivate[this] v-vaw successwategauge = stats.addgauge("success_wate")(successwate.tofwoat)
+      ovewwide d-def wecowd(successes: int, ( ͡o ω ͡o ) faiwuwes: i-int) = {
+        s-sewf.wecowd(successes, òωó faiwuwes)
+        successcountew.incw(successes)
+        faiwuwecountew.incw(faiwuwes)
       }
-      override def successRate = self.successRate
+      ovewwide def successwate = sewf.successwate
     }
   }
 }
 
-object SuccessRateTracker {
+object successwatetwackew {
 
   /**
-   * Track success rate (SR) using [[RecentAverage]]
+   * t-twack success w-wate (sw) using [[wecentavewage]]
    *
-   * Defaults success rate to 100% which prevents early failures (or periods of 0 data points,
-   * e.g. tracking backend SR during failover) from producing dramatic drops in success rate.
+   * defauwts success w-wate to 100% which p-pwevents eawwy f-faiwuwes (ow pewiods of 0 data points, σωσ
+   * e.g. (U ᵕ U❁) twacking backend s-sw duwing faiwuvw) fwom pwoducing dwamatic dwops in success wate. (✿oωo)
    *
-   * @param window Window size as duration
+   * @pawam w-window window size as duwation
    */
-  def recentWindowed(window: Duration) =
-    new AverageSuccessRateTracker(new RecentAverage(window, defaultAverage = 1.0))
+  d-def w-wecentwindowed(window: d-duwation) =
+    nyew avewagesuccesswatetwackew(new w-wecentavewage(window, d-defauwtavewage = 1.0))
 
   /**
-   * Track success rate using [[WindowedAverage]]
+   * t-twack success w-wate using [[windowedavewage]]
    *
-   * Initializes the windowedAverage to one window's worth of successes.  This prevents
-   * the problem where early failures produce dramatic drops in the success rate.
+   * initiawizes the windowedavewage t-to one w-window's wowth o-of successes. ^^  t-this pwevents
+   * t-the pwobwem whewe eawwy faiwuwes pwoduce dwamatic dwops in the s-success wate. ^•ﻌ•^
    *
-   * @param windowSize Window size in number of data points
+   * @pawam windowsize window size in nyumbew of data points
    */
-  def rollingWindow(windowSize: Int) =
-    new AverageSuccessRateTracker(new WindowedAverage(windowSize, initialValue = Some(1.0)))
+  def wowwingwindow(windowsize: int) =
+    n-new avewagesuccesswatetwackew(new windowedavewage(windowsize, XD initiawvawue = some(1.0)))
 }
 
 /**
- * Tracks success rate using an [[Average]]
+ * t-twacks success w-wate using a-an [[avewage]]
  *
- * @param average Strategy for recording an average, usually over a window
+ * @pawam avewage s-stwategy fow wecowding an avewage, :3 u-usuawwy o-ovew a window
  */
-class AverageSuccessRateTracker(average: Average) extends SuccessRateTracker {
-  def record(successes: Int, failures: Int): Unit =
-    average.record(successes, successes + failures)
+cwass avewagesuccesswatetwackew(avewage: avewage) extends successwatetwackew {
+  def wecowd(successes: int, (ꈍᴗꈍ) faiwuwes: i-int): unit =
+    avewage.wecowd(successes, :3 s-successes + faiwuwes)
 
-  def successRate: Double = average.value.getOrElse(1)
+  def s-successwate: doubwe = a-avewage.vawue.getowewse(1)
 }
 
 /**
- * EwmaSuccessRateTracker computes a failure rate with exponential decay over a time bound.
+ * ewmasuccesswatetwackew computes a faiwuwe w-wate with exponentiaw d-decay ovew a time bound. (U ﹏ U)
  *
- * @param halfLife determines the rate of decay. Assuming a hypothetical service that is initially
- * 100% successful and then instantly switches to 50% successful, it will take `halfLife` time
- * for this tracker to report a success rate of ~75%.
+ * @pawam h-hawfwife detewmines t-the wate of decay. UwU assuming a hypotheticaw sewvice that is initiawwy
+ * 100% s-successfuw and t-then instantwy s-switches to 50% successfuw, it wiww t-take `hawfwife` t-time
+ * fow this twackew to w-wepowt a success wate of ~75%. 😳😳😳
  */
-class EwmaSuccessRateTracker(halfLife: Duration) extends SuccessRateTracker {
-  // math.exp(-x) = 0.50 when x == ln(2)
-  // math.exp(-x / Tau) == math.exp(-x / halfLife * ln(2)) therefore when x/halfLife == 1, the
-  // decay output is 0.5
-  private[this] val Tau: Double = halfLife.inNanoseconds.toDouble / math.log(2.0)
+cwass ewmasuccesswatetwackew(hawfwife: duwation) extends successwatetwackew {
+  // m-math.exp(-x) = 0.50 w-when x == wn(2)
+  // math.exp(-x / tau) == m-math.exp(-x / h-hawfwife * wn(2)) thewefowe when x/hawfwife == 1, XD the
+  // decay o-output is 0.5
+  pwivate[this] vaw tau: doubwe = hawfwife.innanoseconds.todoubwe / math.wog(2.0)
 
-  private[this] var stamp: Long = EwmaSuccessRateTracker.nanoTime()
-  private[this] var decayingFailureRate: Double = 0.0
+  p-pwivate[this] vaw stamp: wong = ewmasuccesswatetwackew.nanotime()
+  p-pwivate[this] v-vaw decayingfaiwuwewate: doubwe = 0.0
 
-  def record(successes: Int, failures: Int): Unit = {
-    if (successes < 0 || failures < 0) return
+  def wecowd(successes: int, o.O faiwuwes: i-int): unit = {
+    i-if (successes < 0 || faiwuwes < 0) wetuwn
 
-    val total = successes + failures
-    if (total == 0) return
+    vaw totaw = successes + f-faiwuwes
+    if (totaw == 0) wetuwn
 
-    val observation = (failures.toDouble / total) max 0.0 min 1.0
+    v-vaw obsewvation = (faiwuwes.todoubwe / totaw) max 0.0 min 1.0
 
-    synchronized {
-      val time = EwmaSuccessRateTracker.nanoTime()
-      val delta = ((time - stamp) max 0L).toDouble
-      val weight = math.exp(-delta / Tau)
-      decayingFailureRate = (decayingFailureRate * weight) + (observation * (1.0 - weight))
-      stamp = time
+    synchwonized {
+      vaw time = ewmasuccesswatetwackew.nanotime()
+      v-vaw dewta = ((time - stamp) m-max 0w).todoubwe
+      v-vaw weight = math.exp(-dewta / t-tau)
+      decayingfaiwuwewate = (decayingfaiwuwewate * weight) + (obsewvation * (1.0 - weight))
+      s-stamp = t-time
     }
   }
 
   /**
-   *  The current success rate computed as the inverse of the failure rate.
+   *  t-the cuwwent success wate computed a-as the invewse o-of the faiwuwe wate. (⑅˘꒳˘)
    */
-  def successRate: Double = 1.0 - failureRate
+  def successwate: d-doubwe = 1.0 - f-faiwuwewate
 
-  def failureRate = synchronized { decayingFailureRate }
+  def f-faiwuwewate = synchwonized { decayingfaiwuwewate }
 }
 
-private[servo] trait NanoTimeControl {
-  def set(nanoTime: Long): Unit
-  def advance(delta: Long): Unit
-  def advance(delta: Duration): Unit = advance(delta.inNanoseconds)
+p-pwivate[sewvo] twait nyanotimecontwow {
+  d-def set(nanotime: w-wong): unit
+  def advance(dewta: wong): unit
+  def advance(dewta: d-duwation): u-unit = advance(dewta.innanoseconds)
 }
 
-object EwmaSuccessRateTracker {
-  private[EwmaSuccessRateTracker] val localNanoTime = new Local[() => Long]
+o-object e-ewmasuccesswatetwackew {
+  pwivate[ewmasuccesswatetwackew] v-vaw wocawnanotime = nyew wocaw[() => wong]
 
-  private[EwmaSuccessRateTracker] def nanoTime(): Long = {
-    localNanoTime() match {
-      case None => System.nanoTime()
-      case Some(f) => f()
+  pwivate[ewmasuccesswatetwackew] def nyanotime(): wong = {
+    wocawnanotime() m-match {
+      case nyone => s-system.nanotime()
+      case s-some(f) => f()
     }
   }
 
   /**
-   * Execute body with the time function replaced by `timeFunction`
-   * WARNING: This is only meant for testing purposes.
+   * exekawaii~ b-body with the time function wepwaced b-by `timefunction`
+   * w-wawning: t-this is onwy m-meant fow testing p-puwposes. 😳😳😳
    */
-  private[this] def withNanoTimeFunction[A](
-    timeFunction: => Long
+  pwivate[this] def withnanotimefunction[a](
+    timefunction: => wong
   )(
-    body: NanoTimeControl => A
-  ): A = {
-    @volatile var tf = () => timeFunction
+    body: nyanotimecontwow => a
+  ): a-a = {
+    @vowatiwe v-vaw tf = () => t-timefunction
 
-    localNanoTime.let(() => tf()) {
-      val timeControl = new NanoTimeControl {
-        def set(nanoTime: Long): Unit = {
-          tf = () => nanoTime
+    wocawnanotime.wet(() => t-tf()) {
+      vaw timecontwow = nyew nyanotimecontwow {
+        def set(nanotime: w-wong): unit = {
+          t-tf = () => nyanotime
         }
-        def advance(delta: Long): Unit = {
-          val newNanoTime = tf() + delta
-          tf = () => newNanoTime
+        d-def advance(dewta: wong): unit = {
+          vaw nyewnanotime = t-tf() + dewta
+          t-tf = () => nyewnanotime
         }
       }
 
-      body(timeControl)
+      b-body(timecontwow)
     }
   }
 
-  private[this] def withNanoTimeAt[A](nanoTime: Long)(body: NanoTimeControl => A): A =
-    withNanoTimeFunction(nanoTime)(body)
+  p-pwivate[this] def withnanotimeat[a](nanotime: wong)(body: nyanotimecontwow => a): a =
+    w-withnanotimefunction(nanotime)(body)
 
-  private[servo] def withCurrentNanoTimeFrozen[A](body: NanoTimeControl => A): A =
-    withNanoTimeAt(System.nanoTime())(body)
+  p-pwivate[sewvo] d-def w-withcuwwentnanotimefwozen[a](body: n-nyanotimecontwow => a): a =
+    w-withnanotimeat(system.nanotime())(body)
 }

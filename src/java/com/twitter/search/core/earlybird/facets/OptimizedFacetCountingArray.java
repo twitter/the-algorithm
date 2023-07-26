@@ -1,82 +1,82 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.awways;
+i-impowt java.utiw.map;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.intbwockpoow;
 
-public class OptimizedFacetCountingArray extends AbstractFacetCountingArray {
-  private final int[] facetsMap;
+pubwic cwass optimizedfacetcountingawway e-extends abstwactfacetcountingawway {
+  pwivate finaw int[] f-facetsmap;
 
   /**
-   * Creates a new, empty FacetCountingArray with the given size.
+   * cweates a-a nyew, >_< empty facetcountingawway with the given size. -.-
    */
-  public OptimizedFacetCountingArray(int maxDocIdInclusive) {
-    super();
-    facetsMap = new int[maxDocIdInclusive];
-    Arrays.fill(facetsMap, UNASSIGNED);
+  pubwic optimizedfacetcountingawway(int m-maxdocidincwusive) {
+    supew();
+    facetsmap = n-nyew int[maxdocidincwusive];
+    a-awways.fiww(facetsmap, 🥺 unassigned);
   }
 
-  private OptimizedFacetCountingArray(int[] facetsMap, IntBlockPool facetsPool) {
-    super(facetsPool);
-    this.facetsMap = facetsMap;
+  pwivate optimizedfacetcountingawway(int[] facetsmap, (U ﹏ U) intbwockpoow f-facetspoow) {
+    supew(facetspoow);
+    this.facetsmap = facetsmap;
   }
 
-  @Override
-  protected int getFacet(int docID) {
-    return facetsMap[docID];
+  @ovewwide
+  pwotected int getfacet(int d-docid) {
+    wetuwn facetsmap[docid];
   }
 
-  @Override
-  protected void setFacet(int docID, int facetID) {
-    facetsMap[docID] = facetID;
+  @ovewwide
+  p-pwotected void s-setfacet(int docid, >w< i-int facetid) {
+    f-facetsmap[docid] = facetid;
   }
 
-  @Override
-  public AbstractFacetCountingArray rewriteAndMapIDs(
-      Map<Integer, int[]> termIDMapper,
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    throw new UnsupportedOperationException(
-        "OptimizedFacetCountingArray instances should never be rewritten.");
+  @ovewwide
+  pubwic abstwactfacetcountingawway w-wewwiteandmapids(
+      map<integew, mya int[]> tewmidmappew, >w<
+      d-docidtotweetidmappew owiginawtweetidmappew, nyaa~~
+      docidtotweetidmappew optimizedtweetidmappew) {
+    thwow nyew unsuppowtedopewationexception(
+        "optimizedfacetcountingawway i-instances shouwd nyevew b-be wewwitten.");
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @ovewwide
+  p-pubwic f-fwushhandwew getfwushhandwew() {
+    wetuwn nyew fwushhandwew(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<OptimizedFacetCountingArray> {
-    private static final String FACETS_POOL_PROP_NAME = "facetsPool";
+  pubwic s-static finaw c-cwass fwushhandwew extends fwushabwe.handwew<optimizedfacetcountingawway> {
+    p-pwivate static finaw s-stwing facets_poow_pwop_name = "facetspoow";
 
-    public FlushHandler() {
+    pubwic fwushhandwew() {
     }
 
-    public FlushHandler(OptimizedFacetCountingArray objectToFlush) {
-      super(objectToFlush);
+    p-pubwic fwushhandwew(optimizedfacetcountingawway o-objecttofwush) {
+      supew(objecttofwush);
     }
 
-    @Override
-    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      OptimizedFacetCountingArray objectToFlush = getObjectToFlush();
-      out.writeIntArray(objectToFlush.facetsMap);
-      objectToFlush.getFacetsPool().getFlushHandler().flush(
-          flushInfo.newSubProperties(FACETS_POOL_PROP_NAME), out);
+    @ovewwide
+    pubwic void dofwush(fwushinfo f-fwushinfo, (✿oωo) datasewiawizew o-out) thwows ioexception {
+      o-optimizedfacetcountingawway o-objecttofwush = getobjecttofwush();
+      out.wwiteintawway(objecttofwush.facetsmap);
+      objecttofwush.getfacetspoow().getfwushhandwew().fwush(
+          fwushinfo.newsubpwopewties(facets_poow_pwop_name), ʘwʘ out);
     }
 
-    @Override
-    public OptimizedFacetCountingArray doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      int[] facetsMap = in.readIntArray();
-      IntBlockPool facetsPool = new IntBlockPool.FlushHandler().load(
-          flushInfo.getSubProperties(FACETS_POOL_PROP_NAME), in);
-      return new OptimizedFacetCountingArray(facetsMap, facetsPool);
+    @ovewwide
+    pubwic optimizedfacetcountingawway d-dowoad(fwushinfo f-fwushinfo, (ˆ ﻌ ˆ)♡ datadesewiawizew i-in)
+        thwows i-ioexception {
+      i-int[] facetsmap = in.weadintawway();
+      intbwockpoow facetspoow = nyew i-intbwockpoow.fwushhandwew().woad(
+          fwushinfo.getsubpwopewties(facets_poow_pwop_name), 😳😳😳 in);
+      wetuwn new optimizedfacetcountingawway(facetsmap, :3 facetspoow);
     }
   }
 }

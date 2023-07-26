@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.transforms.dedup
+package com.twittew.fowwow_wecommendations.common.twansfowms.dedup
 
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.stitch.Stitch
-import scala.collection.mutable
+impowt com.twittew.fowwow_wecommendations.common.base.twansfowm
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.stitch.stitch
+i-impowt scawa.cowwection.mutabwe
 
-class DedupTransform[Request, Candidate <: UniversalNoun[Long]]()
-    extends Transform[Request, Candidate] {
-  override def transform(target: Request, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] = {
-    val seen = mutable.HashSet[Long]()
-    Stitch.value(candidates.filter(candidate => seen.add(candidate.id)))
+c-cwass deduptwansfowm[wequest, -.- c-candidate <: u-univewsawnoun[wong]]()
+    e-extends t-twansfowm[wequest, (ˆ ﻌ ˆ)♡ candidate] {
+  ovewwide def twansfowm(tawget: wequest, (⑅˘꒳˘) candidates: s-seq[candidate]): stitch[seq[candidate]] = {
+    vaw seen = m-mutabwe.hashset[wong]()
+    stitch.vawue(candidates.fiwtew(candidate => s-seen.add(candidate.id)))
   }
 }

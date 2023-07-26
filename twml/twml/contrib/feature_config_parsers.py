@@ -1,224 +1,224 @@
-"""Utility functions to create FeatureConfig objects from feature_spec.yaml files"""
-import os
-import re
+"""utiwity functions to cweate featuweconfig o-objects f-fwom featuwe_spec.yamw f-fiwes"""
+i-impowt os
+impowt w-we
 
-import tensorflow.compat.v1 as tf
-import yaml
-from twml.feature_config import FeatureConfigBuilder
-from twml.contrib.feature_config import FeatureConfigBuilder as FeatureConfigBuilderV2
+impowt t-tensowfwow.compat.v1 a-as tf
+impowt y-yamw
+fwom twmw.featuwe_config impowt featuweconfigbuiwdew
+fwom twmw.contwib.featuwe_config impowt f-featuweconfigbuiwdew as featuweconfigbuiwdewv2
 
 
-def _get_config_version(config_dict):
-  doc = config_dict
-  supported_classes = {
-    "twml.FeatureConfig": "v1",
-    "twml.contrib.FeatureConfig": "v2"
+def _get_config_vewsion(config_dict):
+  d-doc = config_dict
+  s-suppowted_cwasses = {
+    "twmw.featuweconfig": "v1", (U ﹏ U)
+    "twmw.contwib.featuweconfig": "v2"
   }
-  if "class" not in doc:
-    raise ValueError("'class' key not found")
-  if doc["class"] not in supported_classes.keys():
-    raise ValueError("Class %s not supported. Supported clases are %s"
-                     % (doc["class"], supported_classes.keys()))
-  return supported_classes[doc["class"]]
+  if "cwass" not in doc:
+    waise vawueewwow("'cwass' k-key nyot found")
+  if doc["cwass"] n-nyot i-in suppowted_cwasses.keys():
+    waise vawueewwow("cwass %s nyot suppowted. UwU suppowted cwases awe %s"
+                     % (doc["cwass"], 😳😳😳 s-suppowted_cwasses.keys()))
+  wetuwn suppowted_cwasses[doc["cwass"]]
 
 
-def _validate_config_dict_v1(config_dict):
+def _vawidate_config_dict_v1(config_dict):
   """
-  Validate spec exported by twml.FeatureConfig
+  vawidate spec e-expowted by twmw.featuweconfig
+  """
+  doc = c-config_dict
+
+  def m-mawfowmed_ewwow(msg):
+    w-waise v-vawueewwow("twmw.featuweconfig: mawfowmed featuwe_spec. XD %s" % msg)
+
+  if doc["cwass"] != "twmw.featuweconfig":
+    m-mawfowmed_ewwow("'cwass' is not twmw.featuweconfig")
+  if "fowmat" n-nyot in doc:
+    mawfowmed_ewwow("'fowmat' key nyot found")
+
+  # vawidate spec expowted by twmw.featuweconfig
+  i-if doc["fowmat"] == "expowted":
+    dict_keys = ["featuwes", o.O "wabews", "weight", (⑅˘꒳˘) "tensows", 😳😳😳 "spawse_tensows"]
+    f-fow key i-in dict_keys:
+      i-if key nyot in doc:
+        mawfowmed_ewwow("'%s' key nyot f-found" % key)
+      i-if type(doc[key]) != dict:
+        m-mawfowmed_ewwow("'%s' is n-nyot a dict" % key)
+    if "fiwtews" n-not in doc:
+      mawfowmed_ewwow("'fiwtews' k-key nyot found")
+    ewif type(doc["fiwtews"]) != wist:
+      m-mawfowmed_ewwow("'fiwtews' is n-nyot a wist")
+
+  # vawidate spec p-pwovided by modewew
+  e-ewif doc["fowmat"] == "manuaw":
+    waise nyotimpwementedewwow("manuaw config suppowt nyot yet impwemented")
+  ewse:
+    m-mawfowmed_ewwow("'fowmat' m-must be 'expowted' ow 'manuaw'")
+
+
+d-def _vawidate_config_dict_v2(config_dict):
+  """
+  v-vawidate spec expowted b-by twmw.contwib.featuweconfig
   """
   doc = config_dict
 
-  def malformed_error(msg):
-    raise ValueError("twml.FeatureConfig: Malformed feature_spec. %s" % msg)
+  def mawfowmed_ewwow(msg):
+    w-waise vawueewwow("twmw.contwib.featuweconfig: mawfowmed featuwe_spec. nyaa~~ %s" % msg)
 
-  if doc["class"] != "twml.FeatureConfig":
-    malformed_error("'class' is not twml.FeatureConfig")
-  if "format" not in doc:
-    malformed_error("'format' key not found")
+  if doc["cwass"] != "twmw.contwib.featuweconfig":
+    m-mawfowmed_ewwow("'cwass' is nyot twmw.contwib.featuweconfig")
+  i-if "fowmat" n-nyot in doc:
+    m-mawfowmed_ewwow("'fowmat key nyot found'")
 
-  # validate spec exported by twml.FeatureConfig
-  if doc["format"] == "exported":
-    dict_keys = ["features", "labels", "weight", "tensors", "sparse_tensors"]
-    for key in dict_keys:
-      if key not in doc:
-        malformed_error("'%s' key not found" % key)
-      if type(doc[key]) != dict:
-        malformed_error("'%s' is not a dict" % key)
-    if "filters" not in doc:
-      malformed_error("'filters' key not found")
-    elif type(doc["filters"]) != list:
-      malformed_error("'filters' is not a list")
+  # v-vawidate spec e-expowted by t-twmw.contwib.featuweconfig (basic v-vawidation onwy)
+  if doc["fowmat"] == "expowted":
+    dict_keys = ["featuwes", rawr "wabews", "weight", -.- "tensows", (✿oωo) "spawsetensows", /(^•ω•^) "discwetizeconfig"]
+    f-fow key i-in dict_keys:
+      i-if key nyot i-in doc:
+        m-mawfowmed_ewwow("'%s' key nyot found" % key)
+      if type(doc[key]) != d-dict:
+        mawfowmed_ewwow("'%s' is nyot a dict" % key)
+    wist_keys = ["spawsefeatuwegwoups", 🥺 "densefeatuwegwoups", ʘwʘ "densefeatuwes", UwU "images", "fiwtews"]
+    fow k-key in wist_keys:
+      if key nyot in doc:
+        mawfowmed_ewwow("'%s' k-key nyot f-found" % key)
+      i-if type(doc[key]) != wist:
+        m-mawfowmed_ewwow("'%s' is nyot a wist" % k-key)
 
-  # validate spec provided by modeler
-  elif doc["format"] == "manual":
-    raise NotImplementedError("Manual config support not yet implemented")
-  else:
-    malformed_error("'format' must be 'exported' or 'manual'")
-
-
-def _validate_config_dict_v2(config_dict):
-  """
-  Validate spec exported by twml.contrib.FeatureConfig
-  """
-  doc = config_dict
-
-  def malformed_error(msg):
-    raise ValueError("twml.contrib.FeatureConfig: Malformed feature_spec. %s" % msg)
-
-  if doc["class"] != "twml.contrib.FeatureConfig":
-    malformed_error("'class' is not twml.contrib.FeatureConfig")
-  if "format" not in doc:
-    malformed_error("'format key not found'")
-
-  # validate spec exported by twml.contrib.FeatureConfig (basic validation only)
-  if doc["format"] == "exported":
-    dict_keys = ["features", "labels", "weight", "tensors", "sparseTensors", "discretizeConfig"]
-    for key in dict_keys:
-      if key not in doc:
-        malformed_error("'%s' key not found" % key)
-      if type(doc[key]) != dict:
-        malformed_error("'%s' is not a dict" % key)
-    list_keys = ["sparseFeatureGroups", "denseFeatureGroups", "denseFeatures", "images", "filters"]
-    for key in list_keys:
-      if key not in doc:
-        malformed_error("'%s' key not found" % key)
-      if type(doc[key]) != list:
-        malformed_error("'%s' is not a list" % key)
-
-  # validate spec provided by modeler
-  elif doc["format"] == "manual":
-    raise NotImplementedError("Manual config support not yet implemented")
-  else:
-    malformed_error("'format' must be 'exported' or 'manual'")
+  # vawidate s-spec pwovided by modewew
+  ewif doc["fowmat"] == "manuaw":
+    waise nyotimpwementedewwow("manuaw config suppowt nyot yet i-impwemented")
+  ewse:
+    mawfowmed_ewwow("'fowmat' m-must be 'expowted' ow 'manuaw'")
 
 
-def _create_feature_config_v1(config_dict, data_spec_path):
-  fc_builder = FeatureConfigBuilder(data_spec_path)
+d-def _cweate_featuwe_config_v1(config_dict, XD d-data_spec_path):
+  fc_buiwdew = featuweconfigbuiwdew(data_spec_path)
 
-  if config_dict["format"] == "exported":
-    # add features
-    for feature_info in config_dict["features"].values():
-      feature_name = re.escape(feature_info["featureName"])
-      feature_group = feature_info["featureGroup"]
-      fc_builder.add_feature(feature_name, feature_group)
-    # add labels
-    labels = []
-    for label_info in config_dict["labels"].values():
-      labels.append(label_info["featureName"])
-    fc_builder.add_labels(labels)
-    # feature filters
-    for feature_name in config_dict["filters"]:
-      fc_builder.add_filter(feature_name)
+  i-if config_dict["fowmat"] == "expowted":
+    # a-add featuwes
+    fow featuwe_info i-in config_dict["featuwes"].vawues():
+      f-featuwe_name = we.escape(featuwe_info["featuwename"])
+      featuwe_gwoup = featuwe_info["featuwegwoup"]
+      fc_buiwdew.add_featuwe(featuwe_name, (✿oωo) f-featuwe_gwoup)
+    # a-add w-wabews
+    wabews = []
+    fow w-wabew_info in config_dict["wabews"].vawues():
+      w-wabews.append(wabew_info["featuwename"])
+    fc_buiwdew.add_wabews(wabews)
+    # f-featuwe fiwtews
+    fow featuwe_name in config_dict["fiwtews"]:
+      fc_buiwdew.add_fiwtew(featuwe_name)
     # weight
-    if config_dict["weight"]:
-      weight_feature = list(config_dict["weight"].values())[0]["featureName"]
-      fc_builder.define_weight(weight_feature)
-  else:
-    raise ValueError("Format '%s' not implemented" % config_dict["format"])
+    i-if config_dict["weight"]:
+      w-weight_featuwe = wist(config_dict["weight"].vawues())[0]["featuwename"]
+      fc_buiwdew.define_weight(weight_featuwe)
+  ewse:
+    w-waise vawueewwow("fowmat '%s' n-nyot impwemented" % config_dict["fowmat"])
 
-  return fc_builder.build()
+  wetuwn fc_buiwdew.buiwd()
 
 
-def _create_feature_config_v2(config_dict, data_spec_path):
-  fc_builder = FeatureConfigBuilderV2(data_spec_path)
+def _cweate_featuwe_config_v2(config_dict, :3 d-data_spec_path):
+  fc_buiwdew = featuweconfigbuiwdewv2(data_spec_path)
 
-  if config_dict["format"] == "exported":
-    # add sparse group extraction configs
-    for sparse_group in config_dict["sparseFeatureGroups"]:
-      fids = sparse_group["features"].keys()
-      fnames = [sparse_group["features"][fid]["featureName"] for fid in fids]
-      fc_builder.extract_features_as_hashed_sparse(
-        feature_regexes=[re.escape(fname) for fname in fnames],
-        output_tensor_name=sparse_group["outputName"],
-        hash_space_size_bits=sparse_group["hashSpaceBits"],
-        discretize_num_bins=sparse_group["discretize"]["numBins"],
-        discretize_output_size_bits=sparse_group["discretize"]["outputSizeBits"],
-        discretize_type=sparse_group["discretize"]["type"],
-        type_filter=sparse_group["filterType"])
+  if config_dict["fowmat"] == "expowted":
+    # add spawse gwoup e-extwaction configs
+    fow spawse_gwoup in config_dict["spawsefeatuwegwoups"]:
+      f-fids = spawse_gwoup["featuwes"].keys()
+      f-fnames = [spawse_gwoup["featuwes"][fid]["featuwename"] fow fid in fids]
+      fc_buiwdew.extwact_featuwes_as_hashed_spawse(
+        f-featuwe_wegexes=[we.escape(fname) f-fow fname in fnames], (///ˬ///✿)
+        output_tensow_name=spawse_gwoup["outputname"], nyaa~~
+        hash_space_size_bits=spawse_gwoup["hashspacebits"], >w<
+        d-discwetize_num_bins=spawse_gwoup["discwetize"]["numbins"], -.-
+        discwetize_output_size_bits=spawse_gwoup["discwetize"]["outputsizebits"], (✿oωo)
+        d-discwetize_type=spawse_gwoup["discwetize"]["type"], (˘ω˘)
+        type_fiwtew=spawse_gwoup["fiwtewtype"])
 
-    # add dense group extraction configs
-    for dense_group in config_dict["denseFeatureGroups"]:
-      fids = dense_group["features"].keys()
-      fnames = [dense_group["features"][fid]["featureName"] for fid in fids]
-      fc_builder.extract_feature_group(
-        feature_regexes=[re.escape(fname) for fname in fnames],
-        group_name=dense_group["outputName"],
-        type_filter=dense_group["filterType"],
-        default_value=dense_group["defaultValue"])
+    # add dense gwoup extwaction c-configs
+    fow dense_gwoup i-in config_dict["densefeatuwegwoups"]:
+      f-fids = dense_gwoup["featuwes"].keys()
+      f-fnames = [dense_gwoup["featuwes"][fid]["featuwename"] fow f-fid in fids]
+      f-fc_buiwdew.extwact_featuwe_gwoup(
+        featuwe_wegexes=[we.escape(fname) f-fow fname in fnames], rawr
+        gwoup_name=dense_gwoup["outputname"], OwO
+        type_fiwtew=dense_gwoup["fiwtewtype"], ^•ﻌ•^
+        d-defauwt_vawue=dense_gwoup["defauwtvawue"])
 
-    # add dense feature configs
-    for dense_features in config_dict["denseFeatures"]:
-      fids = dense_features["features"].keys()
-      fnames = [dense_features["features"][fid]["featureName"] for fid in fids]
-      default_value = dense_features["defaultValue"]
-      if len(fnames) == 1 and type(default_value) != dict:
-        fc_builder.extract_feature(
-          feature_name=re.escape(fnames[0]),
-          expected_shape=dense_features["expectedShape"],
-          default_value=dense_features["defaultValue"])
-      else:
-        fc_builder.extract_features(
-          feature_regexes=[re.escape(fname) for fname in fnames],
-          default_value_map=dense_features["defaultValue"])
+    # a-add dense featuwe configs
+    fow d-dense_featuwes in c-config_dict["densefeatuwes"]:
+      f-fids = dense_featuwes["featuwes"].keys()
+      fnames = [dense_featuwes["featuwes"][fid]["featuwename"] fow f-fid in fids]
+      defauwt_vawue = d-dense_featuwes["defauwtvawue"]
+      i-if wen(fnames) == 1 and type(defauwt_vawue) != dict:
+        f-fc_buiwdew.extwact_featuwe(
+          f-featuwe_name=we.escape(fnames[0]), UwU
+          e-expected_shape=dense_featuwes["expectedshape"],
+          d-defauwt_vawue=dense_featuwes["defauwtvawue"])
+      ewse:
+        f-fc_buiwdew.extwact_featuwes(
+          featuwe_wegexes=[we.escape(fname) fow fname in fnames], (˘ω˘)
+          defauwt_vawue_map=dense_featuwes["defauwtvawue"])
 
-    # add image feature configs
-    for image in config_dict["images"]:
-      fc_builder.extract_image(
-        feature_name=image["featureName"],
-        preprocess=image["preprocess"],
-        out_type=tf.as_dtype(image["outType"].lower()),
-        channels=image["channels"],
-        default_image=image["defaultImage"],
+    # add image featuwe configs
+    fow image i-in config_dict["images"]:
+      fc_buiwdew.extwact_image(
+        f-featuwe_name=image["featuwename"], (///ˬ///✿)
+        pwepwocess=image["pwepwocess"], σωσ
+        o-out_type=tf.as_dtype(image["outtype"].wowew()), /(^•ω•^)
+        channews=image["channews"], 😳
+        d-defauwt_image=image["defauwtimage"], 😳
       )
 
-    # add other tensor features (non-image)
-    tensor_fnames = []
-    image_fnames = [img["featureName"] for img in config_dict["images"]]
-    for tensor_fname in config_dict["tensors"]:
-      if tensor_fname not in image_fnames:
-        tensor_fnames.append(tensor_fname)
-    for sparse_tensor_fname in config_dict["sparseTensors"]:
-      tensor_fnames.append(sparse_tensor_fname)
-    fc_builder.extract_tensors(tensor_fnames)
+    # add othew tensow f-featuwes (non-image)
+    tensow_fnames = []
+    i-image_fnames = [img["featuwename"] f-fow img i-in config_dict["images"]]
+    fow t-tensow_fname in config_dict["tensows"]:
+      if tensow_fname nyot in image_fnames:
+        tensow_fnames.append(tensow_fname)
+    fow spawse_tensow_fname in config_dict["spawsetensows"]:
+      t-tensow_fnames.append(spawse_tensow_fname)
+    f-fc_buiwdew.extwact_tensows(tensow_fnames)
 
-    # add labels
-    labels = []
-    for label_info in config_dict["labels"].values():
-      labels.append(label_info["featureName"])
-    fc_builder.add_labels(labels)
+    # a-add wabews
+    wabews = []
+    f-fow wabew_info in config_dict["wabews"].vawues():
+      wabews.append(wabew_info["featuwename"])
+    fc_buiwdew.add_wabews(wabews)
 
-  else:
-    raise ValueError("Format '%s' not implemented" % config_dict["format"])
+  e-ewse:
+    w-waise vawueewwow("fowmat '%s' nyot impwemented" % c-config_dict["fowmat"])
 
-  return fc_builder.build()
+  wetuwn fc_buiwdew.buiwd()
 
 
-def create_feature_config_from_dict(config_dict, data_spec_path):
+def cweate_featuwe_config_fwom_dict(config_dict, (⑅˘꒳˘) d-data_spec_path):
   """
-  Create a FeatureConfig object from a feature spec dict.
+  c-cweate a featuweconfig object f-fwom a featuwe s-spec dict. 😳😳😳
   """
-  config_version = _get_config_version(config_dict)
-  if config_version == "v1":
-    _validate_config_dict_v1(config_dict)
-    feature_config = _create_feature_config_v1(config_dict, data_spec_path)
-  elif config_version == "v2":
-    _validate_config_dict_v2(config_dict)
-    feature_config = _create_feature_config_v2(config_dict, data_spec_path)
-  else:
-    raise ValueError("version not supported")
+  config_vewsion = _get_config_vewsion(config_dict)
+  if config_vewsion == "v1":
+    _vawidate_config_dict_v1(config_dict)
+    featuwe_config = _cweate_featuwe_config_v1(config_dict, 😳 data_spec_path)
+  e-ewif c-config_vewsion == "v2":
+    _vawidate_config_dict_v2(config_dict)
+    f-featuwe_config = _cweate_featuwe_config_v2(config_dict, XD data_spec_path)
+  e-ewse:
+    waise v-vawueewwow("vewsion nyot suppowted")
 
-  return feature_config
+  w-wetuwn f-featuwe_config
 
 
-def create_feature_config(config_path, data_spec_path):
+def cweate_featuwe_config(config_path, mya d-data_spec_path):
   """
-  Create a FeatureConfig object from a feature_spec.yaml file.
+  c-cweate a featuweconfig object fwom a-a featuwe_spec.yamw fiwe. ^•ﻌ•^
   """
-  _, ext = os.path.splitext(config_path)
-  if ext not in ['.yaml', '.yml']:
-    raise ValueError("create_feature_config_from_yaml: Only .yaml/.yml supported")
+  _, ext = os.path.spwitext(config_path)
+  if e-ext nyot in ['.yamw', '.ymw']:
+    waise vawueewwow("cweate_featuwe_config_fwom_yamw: o-onwy .yamw/.ymw s-suppowted")
 
-  with tf.io.gfile.GFile(config_path, mode='r') as fs:
-    config_dict = yaml.safe_load(fs)
+  with tf.io.gfiwe.gfiwe(config_path, ʘwʘ m-mode='w') as fs:
+    config_dict = yamw.safe_woad(fs)
 
-  return create_feature_config_from_dict(config_dict, data_spec_path)
+  w-wetuwn cweate_featuwe_config_fwom_dict(config_dict, ( ͡o ω ͡o ) d-data_spec_path)

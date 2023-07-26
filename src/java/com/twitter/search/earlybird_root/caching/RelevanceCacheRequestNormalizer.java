@@ -1,40 +1,40 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.google.common.base.Optional;
+impowt com.googwe.common.base.optionaw;
 
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.common.caching.filter.CacheRequestNormalizer;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+i-impowt c-com.twittew.seawch.common.caching.cacheutiw;
+i-impowt com.twittew.seawch.common.caching.fiwtew.cachewequestnowmawizew;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-public class RelevanceCacheRequestNormalizer extends
-    CacheRequestNormalizer<EarlybirdRequestContext, EarlybirdRequest> {
-  private static final SearchCounter RELEVANCE_FORCE_CACHED_LOGGED_IN_REQUEST =
-      SearchCounter.export("relevance_force_cached_logged_in_request");
+pubwic c-cwass wewevancecachewequestnowmawizew extends
+    cachewequestnowmawizew<eawwybiwdwequestcontext, >_< eawwybiwdwequest> {
+  pwivate s-static finaw seawchcountew wewevance_fowce_cached_wogged_in_wequest =
+      s-seawchcountew.expowt("wewevance_fowce_cached_wogged_in_wequest");
 
-  private final SearchDecider decider;
-  private final String relevanceStripPersonalizationFieldsDeciderKey;
+  pwivate finaw s-seawchdecidew decidew;
+  pwivate finaw stwing wewevancestwippewsonawizationfiewdsdecidewkey;
 
-  public RelevanceCacheRequestNormalizer(
-      SearchDecider decider,
-      String normalizedSearchRootName) {
-    this.decider = decider;
-    this.relevanceStripPersonalizationFieldsDeciderKey =
-        String.format("relevance_%s_force_cache_logged_in_requests", normalizedSearchRootName);
+  p-pubwic wewevancecachewequestnowmawizew(
+      seawchdecidew d-decidew, rawr x3
+      s-stwing nyowmawizedseawchwootname) {
+    this.decidew = decidew;
+    this.wewevancestwippewsonawizationfiewdsdecidewkey =
+        stwing.fowmat("wewevance_%s_fowce_cache_wogged_in_wequests", mya n-nyowmawizedseawchwootname);
   }
 
-  @Override
-  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContext requestContext) {
-    boolean cacheLoggedInRequest =
-        decider.isAvailable(relevanceStripPersonalizationFieldsDeciderKey);
+  @ovewwide
+  pubwic optionaw<eawwybiwdwequest> nyowmawizewequest(eawwybiwdwequestcontext wequestcontext) {
+    boowean cachewoggedinwequest =
+        d-decidew.isavaiwabwe(wewevancestwippewsonawizationfiewdsdecidewkey);
 
-    if (cacheLoggedInRequest) {
-      RELEVANCE_FORCE_CACHED_LOGGED_IN_REQUEST.increment();
+    if (cachewoggedinwequest) {
+      wewevance_fowce_cached_wogged_in_wequest.incwement();
     }
 
-    return Optional.fromNullable(CacheUtil.normalizeRequestForCache(
-                                     requestContext.getRequest(), cacheLoggedInRequest));
+    w-wetuwn optionaw.fwomnuwwabwe(cacheutiw.nowmawizewequestfowcache(
+                                     w-wequestcontext.getwequest(), nyaa~~ c-cachewoggedinwequest));
   }
 }

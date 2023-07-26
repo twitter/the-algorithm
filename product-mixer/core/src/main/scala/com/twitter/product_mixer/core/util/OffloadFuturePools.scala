@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.core.util
+package com.twittew.pwoduct_mixew.cowe.utiw
 
-import com.twitter.finagle.offload.OffloadFuturePool
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.offwoad.offwoadfutuwepoow
+i-impowt com.twittew.utiw.futuwe
 
-object OffloadFuturePools {
+o-object offwoadfutuwepoows {
 
-  def parallelize[In, Out](
-    inputSeq: Seq[In],
-    transformer: In => Out,
-    parallelism: Int
-  ): Future[Seq[Out]] = {
-    parallelize(inputSeq, transformer.andThen(Some(_)), parallelism, None).map(_.flatten)
+  d-def pawawwewize[in, /(^•ω•^) o-out](
+    inputseq: s-seq[in], ʘwʘ
+    t-twansfowmew: i-in => out, σωσ
+    pawawwewism: int
+  ): futuwe[seq[out]] = {
+    pawawwewize(inputseq, OwO twansfowmew.andthen(some(_)), 😳😳😳 p-pawawwewism, 😳😳😳 nyone).map(_.fwatten)
   }
 
-  def parallelize[In, Out](
-    inputSeq: Seq[In],
-    transformer: In => Out,
-    parallelism: Int,
-    default: Out
-  ): Future[Seq[Out]] = {
-    val threadProcessFutures = (0 until parallelism).map { i =>
-      OffloadFuturePool.getPool(partitionAndProcessInput(inputSeq, transformer, i, parallelism))
+  def p-pawawwewize[in, o.O out](
+    inputseq: s-seq[in], ( ͡o ω ͡o )
+    twansfowmew: in => out, (U ﹏ U)
+    pawawwewism: int, (///ˬ///✿)
+    d-defauwt: out
+  ): futuwe[seq[out]] = {
+    v-vaw thweadpwocessfutuwes = (0 u-untiw pawawwewism).map { i =>
+      offwoadfutuwepoow.getpoow(pawtitionandpwocessinput(inputseq, >w< twansfowmew, rawr i, pawawwewism))
     }
 
-    val resultMap = Future.collect(threadProcessFutures).map(_.flatten.toMap)
+    v-vaw wesuwtmap = futuwe.cowwect(thweadpwocessfutuwes).map(_.fwatten.tomap)
 
-    Future.collect {
-      inputSeq.indices.map { idx =>
-        resultMap.map(_.getOrElse(idx, default))
+    futuwe.cowwect {
+      inputseq.indices.map { idx =>
+        w-wesuwtmap.map(_.getowewse(idx, mya defauwt))
       }
     }
   }
 
-  private def partitionAndProcessInput[In, Out](
-    inputSeq: Seq[In],
-    transformer: In => Out,
-    threadId: Int,
-    parallelism: Int
-  ): Seq[(Int, Out)] = {
-    partitionInputForThread(inputSeq, threadId, parallelism)
+  p-pwivate def pawtitionandpwocessinput[in, ^^ o-out](
+    i-inputseq: seq[in], 😳😳😳
+    t-twansfowmew: in => out, mya
+    thweadid: i-int, 😳
+    pawawwewism: int
+  ): seq[(int, -.- out)] = {
+    p-pawtitioninputfowthwead(inputseq, 🥺 thweadid, o.O pawawwewism)
       .map {
-        case (inputRecord, idx) =>
-          (idx, transformer(inputRecord))
+        case (inputwecowd, /(^•ω•^) idx) =>
+          (idx, nyaa~~ twansfowmew(inputwecowd))
       }
   }
 
-  private def partitionInputForThread[In](
-    inputSeq: Seq[In],
-    threadId: Int,
-    parallelism: Int
-  ): Seq[(In, Int)] = {
-    inputSeq.zipWithIndex
-      .filter {
-        case (_, idx) => idx % parallelism == threadId
-        case _ => false
+  p-pwivate def pawtitioninputfowthwead[in](
+    i-inputseq: s-seq[in], nyaa~~
+    thweadid: i-int, :3
+    pawawwewism: int
+  ): seq[(in, 😳😳😳 int)] = {
+    inputseq.zipwithindex
+      .fiwtew {
+        c-case (_, (˘ω˘) i-idx) => idx % pawawwewism == t-thweadid
+        c-case _ => fawse
       }
   }
 }

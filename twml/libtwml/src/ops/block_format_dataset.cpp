@@ -1,243 +1,243 @@
-#include "block_format_reader.h"
+#incwude "bwock_fowmat_weadew.h"
 
-#include "tensorflow/core/framework/dataset.h"
-#include "tensorflow/core/framework/partial_tensor_shape.h"
-#include "tensorflow/core/framework/tensor.h"
-#include "tensorflow/core/lib/io/random_inputstream.h"
+#incwude "tensowfwow/cowe/fwamewowk/dataset.h"
+#incwude "tensowfwow/cowe/fwamewowk/pawtiaw_tensow_shape.h"
+#incwude "tensowfwow/cowe/fwamewowk/tensow.h"
+#incwude "tensowfwow/cowe/wib/io/wandom_inputstweam.h"
 
-#if !defined(DISABLE_ZLIB)
-#include "tensorflow/core/lib/io/zlib_inputstream.h"
+#if !defined(disabwe_zwib)
+#incwude "tensowfwow/cowe/wib/io/zwib_inputstweam.h"
 #endif
 
-#include <twml.h>
+#incwude <twmw.h>
 
-#include <cstdio>
-#include <algorithm>
-#include <iterator>
+#incwude <cstdio>
+#incwude <awgowithm>
+#incwude <itewatow>
 
-using namespace tensorflow;
+using namespace tensowfwow;
 
 
-inline std::string stripPath(std::string const &file_name) {
-  const auto pos = file_name.find_last_of("/");
-  if (pos == std::string::npos) return file_name;
-  return file_name.substr(pos + 1);
+i-inwine std::stwing s-stwippath(std::stwing c-const &fiwe_name) {
+  c-const auto p-pos = fiwe_name.find_wast_of("/");
+  i-if (pos == s-std::stwing::npos) w-wetuwn fiwe_name;
+  wetuwn fiwe_name.substw(pos + 1);
 }
 
-inline std::string getExtension(std::string const &file_name) {
-  const auto stripped_file_name = stripPath(file_name);
-  const auto pos = stripPath(stripped_file_name).find_last_of(".");
-  if (pos == std::string::npos) return "";
-  return stripped_file_name.substr(pos + 1);
+inwine std::stwing getextension(std::stwing c-const &fiwe_name) {
+  const auto stwipped_fiwe_name = stwippath(fiwe_name);
+  const auto p-pos = stwippath(stwipped_fiwe_name).find_wast_of(".");
+  if (pos == s-std::stwing::npos) wetuwn "";
+  wetuwn stwipped_fiwe_name.substw(pos + 1);
 }
 
-REGISTER_OP("BlockFormatDatasetV2")
-.Input("filenames: string")
-.Input("compression_type: string")
-.Input("buffer_size: int64")
-.Output("handle: variant")
-.SetIsStateful()
-.SetShapeFn(shape_inference::ScalarShape)
-.Doc(R"doc(
+wegistew_op("bwockfowmatdatasetv2")
+.input("fiwenames: s-stwing")
+.input("compwession_type: stwing")
+.input("buffew_size: i-int64")
+.output("handwe: v-vawiant")
+.setisstatefuw()
+.setshapefn(shape_infewence::scawawshape)
+.doc(w"doc(
 
-Creates a dataset for streaming BlockFormat data in compressed (e.g. gzip), uncompressed formats.
-This op also has the ability stream a dataset containing files from multiple formats mentioned above.
+cweates a dataset fow stweaming bwockfowmat data in compwessed (e.g. o.O g-gzip), (⑅˘꒳˘) uncompwessed fowmats. 😳😳😳
+this op awso has the abiwity stweam a dataset c-containing fiwes fwom muwtipwe f-fowmats mentioned a-above. nyaa~~
 
-filenames: A scalar or vector containing the name(s) of the file(s) to be read.
-compression_type: A scalar string denoting the compression type. Can be 'none', 'zlib', 'auto'.
-buffer_size: A scalar denoting the buffer size to use during decompression.
+f-fiwenames: a scawaw o-ow vectow containing the nyame(s) of the fiwe(s) t-to be wead. rawr
+compwession_type: a scawaw stwing d-denoting the compwession type. -.- can be 'none', (✿oωo) 'zwib', /(^•ω•^) 'auto'.
+buffew_size: a scawaw denoting the buffew size t-to use duwing decompwession. 🥺
 
-Outputs
-  handle: A handle to the dataset. This handle is later used to create an iterator to stream the data from the dataset.
+outputs
+  h-handwe: a-a handwe to the d-dataset. ʘwʘ this handwe is watew used to cweate an itewatow to stweam t-the data fwom t-the dataset. UwU
 
 )doc");
 
 
-class BlockFormatDatasetV2 : public DatasetOpKernel {
- public:
-  using DatasetOpKernel::DatasetOpKernel;
+cwass bwockfowmatdatasetv2 : p-pubwic datasetopkewnew {
+ p-pubwic:
+  using datasetopkewnew::datasetopkewnew;
 
-  void MakeDataset(OpKernelContext* ctx, DatasetBase **output) override {
-    const Tensor* filenames_tensor;
-    OP_REQUIRES_OK(ctx, ctx->input("filenames", &filenames_tensor));
-    OP_REQUIRES(
-        ctx, filenames_tensor->dims() <= 1,
-        errors::InvalidArgument("`filenames` must be a scalar or a vector."));
+  v-void makedataset(opkewnewcontext* ctx, XD datasetbase **output) o-ovewwide {
+    const tensow* fiwenames_tensow;
+    op_wequiwes_ok(ctx, (✿oωo) c-ctx->input("fiwenames", :3 &fiwenames_tensow));
+    op_wequiwes(
+        ctx, (///ˬ///✿) f-fiwenames_tensow->dims() <= 1, nyaa~~
+        ewwows::invawidawgument("`fiwenames` m-must be a scawaw o-ow a vectow."));
 
-    const auto filenames_flat = filenames_tensor->flat<string>();
-    const int64 num_files = filenames_tensor->NumElements();
-    std::vector<string> filenames;
-    filenames.reserve(num_files);
-    std::copy(filenames_flat.data(),
-              filenames_flat.data() + num_files,
-              std::back_inserter(filenames));
+    const auto fiwenames_fwat = fiwenames_tensow->fwat<stwing>();
+    const int64 nyum_fiwes = fiwenames_tensow->numewements();
+    s-std::vectow<stwing> f-fiwenames;
+    fiwenames.wesewve(num_fiwes);
+    s-std::copy(fiwenames_fwat.data(), >w<
+              f-fiwenames_fwat.data() + n-nyum_fiwes, -.-
+              std::back_insewtew(fiwenames));
 
-    string compression_type;
-    OP_REQUIRES_OK(
-        ctx, tensorflow::data::ParseScalarArgument<string>(
-            ctx, "compression_type", &compression_type));
+    stwing compwession_type;
+    op_wequiwes_ok(
+        ctx, (✿oωo) tensowfwow::data::pawsescawawawgument<stwing>(
+            c-ctx, "compwession_type", (˘ω˘) &compwession_type));
 
-    int64 buffer_size = -1;
-    OP_REQUIRES_OK(
-        ctx, tensorflow::data::ParseScalarArgument<int64>(
-            ctx, "buffer_size", &buffer_size));
+    int64 buffew_size = -1;
+    op_wequiwes_ok(
+        ctx, rawr t-tensowfwow::data::pawsescawawawgument<int64>(
+            ctx, OwO "buffew_size", ^•ﻌ•^ &buffew_size));
 
-    OP_REQUIRES(ctx, buffer_size >= 0,
-                errors::InvalidArgument(
-                    "`buffer_size` must be >= 0 (0 == no buffering)"));
+    o-op_wequiwes(ctx, UwU b-buffew_size >= 0, (˘ω˘)
+                e-ewwows::invawidawgument(
+                    "`buffew_size` must be >= 0 (0 == n-nyo buffewing)"));
 
-    OP_REQUIRES(ctx,
-                compression_type == "auto" ||
-                compression_type == "gz" ||
-                compression_type == "",
-                errors::InvalidArgument("Unknown extension: ", compression_type));
+    o-op_wequiwes(ctx, (///ˬ///✿)
+                c-compwession_type == "auto" ||
+                compwession_type == "gz" ||
+                c-compwession_type == "", σωσ
+                ewwows::invawidawgument("unknown extension: ", /(^•ω•^) c-compwession_type));
 
-    *output = new Dataset(ctx, std::move(filenames), compression_type, buffer_size);
+    *output = n-nyew dataset(ctx, 😳 s-std::move(fiwenames), 😳 c-compwession_type, (⑅˘꒳˘) buffew_size);
   }
 
- private:
-  class Dataset : public DatasetBase {
-   public:
-    Dataset(OpKernelContext* ctx,
-            std::vector<string> filenames,
-            std::string compression_type,
-            int64 buffer_size)
-        : DatasetBase(DatasetContext(ctx)),
-          compression_type_(compression_type),
-          buffer_size_(buffer_size),
-          filenames_(std::move(filenames))
+ p-pwivate:
+  cwass dataset : pubwic datasetbase {
+   pubwic:
+    d-dataset(opkewnewcontext* ctx,
+            std::vectow<stwing> fiwenames, 😳😳😳
+            std::stwing compwession_type, 😳
+            i-int64 buffew_size)
+        : datasetbase(datasetcontext(ctx)), XD
+          compwession_type_(compwession_type), mya
+          buffew_size_(buffew_size), ^•ﻌ•^
+          f-fiwenames_(std::move(fiwenames))
     {}
 
-    const DataTypeVector& output_dtypes() const override {
-      static DataTypeVector* dtypes = new DataTypeVector({DT_STRING});
-      return *dtypes;
+    c-const d-datatypevectow& output_dtypes() c-const ovewwide {
+      static datatypevectow* dtypes = n-nyew datatypevectow({dt_stwing});
+      w-wetuwn *dtypes;
     }
 
-    const std::vector<PartialTensorShape>& output_shapes() const override {
-      static std::vector<PartialTensorShape>* shapes =
-          new std::vector<PartialTensorShape>({{}});
-      return *shapes;
+    const std::vectow<pawtiawtensowshape>& output_shapes() const ovewwide {
+      static s-std::vectow<pawtiawtensowshape>* shapes =
+          n-nyew std::vectow<pawtiawtensowshape>({{}});
+      wetuwn *shapes;
     }
 
-    string DebugString() const override { return "BlockFormatDatasetV2::Dataset"; }
+    s-stwing debugstwing() c-const ovewwide { wetuwn "bwockfowmatdatasetv2::dataset"; }
 
-   protected:
-    Status AsGraphDefInternal(SerializationContext* ctx,
-                              DatasetGraphDefBuilder* b,
-                              Node** output) const override {
-      Node* filenames = nullptr;
-      Node* compression_type = nullptr;
-      Node* buffer_size = nullptr;
-      TF_RETURN_IF_ERROR(b->AddVector(filenames_, &filenames));
-      TF_RETURN_IF_ERROR(b->AddScalar(compression_type_, &compression_type));
-      TF_RETURN_IF_ERROR(
-          b->AddScalar(buffer_size_, &buffer_size));
-      TF_RETURN_IF_ERROR(b->AddDataset(
-          this, {filenames, compression_type, buffer_size}, output));
-      return Status::OK();
+   pwotected:
+    s-status asgwaphdefintewnaw(sewiawizationcontext* c-ctx, ʘwʘ
+                              datasetgwaphdefbuiwdew* b, ( ͡o ω ͡o )
+                              n-nyode** output) c-const ovewwide {
+      node* fiwenames = nyuwwptw;
+      nyode* compwession_type = n-nyuwwptw;
+      n-nyode* buffew_size = n-nyuwwptw;
+      tf_wetuwn_if_ewwow(b->addvectow(fiwenames_, mya &fiwenames));
+      t-tf_wetuwn_if_ewwow(b->addscawaw(compwession_type_, o.O &compwession_type));
+      t-tf_wetuwn_if_ewwow(
+          b->addscawaw(buffew_size_, (✿oωo) &buffew_size));
+      t-tf_wetuwn_if_ewwow(b->adddataset(
+          this, :3 {fiwenames, compwession_type, 😳 buffew_size}, (U ﹏ U) output));
+      w-wetuwn status::ok();
     }
 
-   private:
-    std::unique_ptr<IteratorBase> MakeIteratorInternal(
-        const string& prefix) const override {
-      return std::unique_ptr<IteratorBase>(
-          new Iterator({this, strings::StrCat(prefix, "::BlockFormat")}));
+   p-pwivate:
+    std::unique_ptw<itewatowbase> makeitewatowintewnaw(
+        const s-stwing& pwefix) c-const ovewwide {
+      wetuwn std::unique_ptw<itewatowbase>(
+          nyew itewatow({this, mya stwings::stwcat(pwefix, (U ᵕ U❁) "::bwockfowmat")}));
     }
 
-    class Iterator : public DatasetIterator<Dataset> {
-     public:
-      explicit Iterator(const Params &params)
-          : DatasetIterator<Dataset>(params) {}
+    c-cwass itewatow : pubwic datasetitewatow<dataset> {
+     pubwic:
+      expwicit itewatow(const p-pawams &pawams)
+          : datasetitewatow<dataset>(pawams) {}
 
-      Status GetNextInternal(IteratorContext* ctx,
-                             std::vector<Tensor>* out_tensors,
-                             bool* end_of_sequence) override {
-        mutex_lock l(mu_);
+      status getnextintewnaw(itewatowcontext* c-ctx, :3
+                             s-std::vectow<tensow>* out_tensows,
+                             boow* end_of_sequence) ovewwide {
+        m-mutex_wock w-w(mu_);
         do {
-          // We are currently processing a file, so try to read the next record.
-          if (reader_) {
-            Tensor result_tensor(cpu_allocator(), DT_STRING, {});
-            Status s = reader_->ReadNext(&result_tensor.scalar<string>()());
-            if (s.ok()) {
-              out_tensors->emplace_back(std::move(result_tensor));
-              *end_of_sequence = false;
-              return Status::OK();
-            } else if (!errors::IsOutOfRange(s)) {
-              return s;
+          // we awe cuwwentwy pwocessing a-a fiwe, mya so twy to wead the n-nyext wecowd. OwO
+          if (weadew_) {
+            tensow wesuwt_tensow(cpu_awwocatow(), (ˆ ﻌ ˆ)♡ dt_stwing, ʘwʘ {});
+            s-status s = weadew_->weadnext(&wesuwt_tensow.scawaw<stwing>()());
+            i-if (s.ok()) {
+              out_tensows->empwace_back(std::move(wesuwt_tensow));
+              *end_of_sequence = f-fawse;
+              wetuwn s-status::ok();
+            } ewse i-if (!ewwows::isoutofwange(s)) {
+              w-wetuwn s;
             }
 
-            // We have reached the end of the current file, so maybe
-            // move on to next file.
-            reader_.reset();
-            ++current_file_index_;
+            // w-we have weached the end o-of the cuwwent fiwe, o.O s-so maybe
+            // move on to nyext fiwe. UwU
+            w-weadew_.weset();
+            ++cuwwent_fiwe_index_;
           }
 
-          // Iteration ends when there are no more files to process.
-          if (current_file_index_ == dataset()->filenames_.size()) {
-            *end_of_sequence = true;
-            return Status::OK();
+          // i-itewation e-ends when thewe awe nyo mowe fiwes to pwocess. rawr x3
+          i-if (cuwwent_fiwe_index_ == dataset()->fiwenames_.size()) {
+            *end_of_sequence = t-twue;
+            w-wetuwn status::ok();
           }
 
-          // Actually move on to next file.
-          const string& next_filename =
-              dataset()->filenames_[current_file_index_];
+          // actuawwy move on to n-next fiwe. 🥺
+          c-const stwing& n-nyext_fiwename =
+              d-dataset()->fiwenames_[cuwwent_fiwe_index_];
 
-          auto compression_type = dataset()->compression_type_;
-          int64 buffer_size = dataset()->buffer_size_;
+          auto compwession_type = d-dataset()->compwession_type_;
+          int64 buffew_size = dataset()->buffew_size_;
 
-          if (compression_type == "auto") {
-            compression_type = getExtension(next_filename);
+          if (compwession_type == "auto") {
+            compwession_type = getextension(next_fiwename);
           }
 
-          if (compression_type != "gz" && compression_type != "") {
-            return errors::InvalidArgument("Unknown extension: ", compression_type);
+          if (compwession_type != "gz" && c-compwession_type != "") {
+            wetuwn e-ewwows::invawidawgument("unknown extension: ", c-compwession_type);
           }
 
-          tensorflow::Env* env = tensorflow::Env::Default();
-          TF_CHECK_OK(env->NewRandomAccessFile(next_filename, &file_));
+          tensowfwow::env* e-env = tensowfwow::env::defauwt();
+          t-tf_check_ok(env->newwandomaccessfiwe(next_fiwename, :3 &fiwe_));
 
-          // RandomAccessInputstream defaults the second param to "false".
-          // The second parameter "false" is the key issue.
-          // "false" assumes the ownership of the file is elsewhere.
-          // But making that "true" causes segfaults down the line.
-          // So keep the ownership of "file_" in this class and clean up properly.
-          file_stream_.reset(new tensorflow::io::RandomAccessInputStream(file_.get(), false));
+          // w-wandomaccessinputstweam d-defauwts t-the second p-pawam to "fawse". (ꈍᴗꈍ)
+          // the second pawametew "fawse" is the key issue. 🥺
+          // "fawse" assumes the ownewship of the fiwe is ewsewhewe.
+          // b-but making that "twue" c-causes segfauwts d-down the wine. (✿oωo)
+          // s-so keep the ownewship of "fiwe_" in this cwass and cwean up p-pwopewwy. (U ﹏ U)
+          f-fiwe_stweam_.weset(new tensowfwow::io::wandomaccessinputstweam(fiwe_.get(), :3 f-fawse));
 
-          if (compression_type == "gz") {
-            // unpack_stream does not take ownership of file_stream_
-#if !defined(DISABLE_ZLIB)
-            unpack_stream_.reset(new tensorflow::io::ZlibInputStream(
-                                   file_stream_.get(),
-                                   buffer_size,
-                                   buffer_size,
-                                   tensorflow::io::ZlibCompressionOptions::GZIP()));
-            reader_.reset(new BlockFormatReader(unpack_stream_.get()));
-#else
-            return errors::InvalidArgument("libtwml compiled without zlib support");
+          if (compwession_type == "gz") {
+            // unpack_stweam d-does nyot take o-ownewship of fiwe_stweam_
+#if !defined(disabwe_zwib)
+            unpack_stweam_.weset(new t-tensowfwow::io::zwibinputstweam(
+                                   fiwe_stweam_.get(), ^^;;
+                                   b-buffew_size, rawr
+                                   buffew_size, 😳😳😳
+                                   tensowfwow::io::zwibcompwessionoptions::gzip()));
+            weadew_.weset(new bwockfowmatweadew(unpack_stweam_.get()));
+#ewse
+            w-wetuwn ewwows::invawidawgument("wibtwmw c-compiwed w-without zwib s-suppowt");
 #endif
-          } else {
-            unpack_stream_.reset(nullptr);
-            reader_.reset(new BlockFormatReader(file_stream_.get()));
+          } e-ewse {
+            unpack_stweam_.weset(nuwwptw);
+            w-weadew_.weset(new b-bwockfowmatweadew(fiwe_stweam_.get()));
           }
-        } while (true);
+        } whiwe (twue);
       }
 
-     private:
-      mutex mu_;
-      uint64_t current_file_index_ GUARDED_BY(mu_) = 0;
-      std::unique_ptr<tensorflow::RandomAccessFile> file_;
-      std::unique_ptr<tensorflow::io::InputStreamInterface> file_stream_;
-      std::unique_ptr<tensorflow::io::InputStreamInterface> unpack_stream_;
-      std::unique_ptr<BlockFormatReader> reader_ GUARDED_BY(mu_);
+     p-pwivate:
+      m-mutex mu_;
+      uint64_t c-cuwwent_fiwe_index_ guawded_by(mu_) = 0;
+      std::unique_ptw<tensowfwow::wandomaccessfiwe> f-fiwe_;
+      std::unique_ptw<tensowfwow::io::inputstweamintewface> f-fiwe_stweam_;
+      s-std::unique_ptw<tensowfwow::io::inputstweamintewface> unpack_stweam_;
+      s-std::unique_ptw<bwockfowmatweadew> weadew_ guawded_by(mu_);
     };
 
-    const std::string compression_type_;
-    const int64 buffer_size_;
-    const std::vector<string> filenames_;
+    const std::stwing c-compwession_type_;
+    c-const int64 buffew_size_;
+    c-const std::vectow<stwing> fiwenames_;
   };
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("BlockFormatDatasetV2")
-  .Device(DEVICE_CPU),
-  BlockFormatDatasetV2);
+wegistew_kewnew_buiwdew(
+  nyame("bwockfowmatdatasetv2")
+  .device(device_cpu), (✿oωo)
+  bwockfowmatdatasetv2);

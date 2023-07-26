@@ -1,251 +1,251 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "google/protobuf/any.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
-import "tensorflow/core/framework/variable.proto";
-import "tensorflow/core/framework/versions.proto";
-import "tensorflow/core/protobuf/struct.proto";
-import "tensorflow/core/protobuf/trackable_object_graph.proto";
+impowt "googwe/pwotobuf/any.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/tensow_shape.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/types.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/vawiabwe.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/vewsions.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/stwuct.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/twackabwe_object_gwaph.pwoto";
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option c-cc_enabwe_awenas = twue;
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// A SavedObjectGraph is part of object-based SavedModels in TF 2.0. It
-// describes the directed graph of Python objects (or equivalent in other
-// languages) that make up a model, with nodes[0] at the root.
+// a savedobjectgwaph is p-pawt of object-based savedmodews in tf 2.0. 😳 it
+// d-descwibes the diwected gwaph o-of python objects (ow equivawent in othew
+// wanguages) that make u-up a modew, mya with nyodes[0] at t-the woot. mya
 
-// SavedObjectGraph shares some structure with TrackableObjectGraph, but
-// SavedObjectGraph belongs to the MetaGraph and contains pointers to functions
-// and type information, while TrackableObjectGraph lives in the checkpoint
-// and contains pointers only to variable values.
+// savedobjectgwaph shawes s-some stwuctuwe with twackabweobjectgwaph, /(^•ω•^) but
+// savedobjectgwaph bewongs to the metagwaph a-and contains pointews to functions
+// and type infowmation, ^^;; whiwe twackabweobjectgwaph w-wives in the checkpoint
+// a-and contains p-pointews onwy to v-vawiabwe vawues. 🥺
 
-message SavedObjectGraph {
-  // Flattened list of objects in the object graph.
+m-message savedobjectgwaph {
+  // fwattened wist of objects in t-the object gwaph. ^^
   //
-  // The position of the object in this list indicates its id.
-  // Nodes[0] is considered the root node.
-  repeated SavedObject nodes = 1;
+  // the position of the o-object in this wist indicates its id. ^•ﻌ•^
+  // nyodes[0] is considewed the woot nyode. /(^•ω•^)
+  wepeated savedobject n-nyodes = 1;
 
-  // Information about captures and output structures in concrete functions.
-  // Referenced from SavedBareConcreteFunction and SavedFunction.
-  map<string, SavedConcreteFunction> concrete_functions = 2;
+  // infowmation a-about captuwes a-and output s-stwuctuwes in concwete functions. ^^
+  // wefewenced fwom savedbaweconcwetefunction a-and savedfunction. 🥺
+  m-map<stwing, (U ᵕ U❁) savedconcwetefunction> c-concwete_functions = 2;
 }
 
-message SavedObject {
-  // Objects which this object depends on: named edges in the dependency
-  // graph.
+m-message savedobject {
+  // objects which this o-object depends on: nyamed edges i-in the dependency
+  // gwaph. 😳😳😳
   //
-  // Note: All kinds of SavedObject may have children, except
-  // "constant" and "captured_tensor".
-  repeated TrackableObjectGraph.TrackableObject.ObjectReference children = 1;
+  // nyote: a-aww kinds of savedobject may h-have chiwdwen, nyaa~~ except
+  // "constant" and "captuwed_tensow". (˘ω˘)
+  wepeated t-twackabweobjectgwaph.twackabweobject.objectwefewence c-chiwdwen = 1;
 
-  // Ordered list of dependencies that must be loaded before this object.
-  // SavedModel loads with the bottom-up approach, by first creating all objects
-  // (in the order defined by the dependencies), then connecting the edges.
-  repeated TrackableObjectGraph.TrackableObject.ObjectReference dependencies =
+  // owdewed wist of dependencies that must be woaded befowe this object. >_<
+  // savedmodew woads with t-the bottom-up appwoach, XD b-by fiwst cweating aww objects
+  // (in t-the owdew defined b-by the dependencies), rawr x3 t-then connecting the edges. ( ͡o ω ͡o )
+  wepeated twackabweobjectgwaph.twackabweobject.objectwefewence dependencies =
       15;
 
-  // Removed when forking SavedObject from TrackableObjectGraph.
-  reserved "attributes";
-  reserved 2;
+  // w-wemoved when fowking savedobject fwom twackabweobjectgwaph. :3
+  wesewved "attwibutes";
+  wesewved 2;
 
-  // Slot variables owned by this object. This describes the three-way
-  // (optimizer, variable, slot variable) relationship; none of the three
-  // depend on the others directly.
+  // s-swot vawiabwes owned b-by this object. mya t-this descwibes the t-thwee-way
+  // (optimizew, σωσ vawiabwe, (ꈍᴗꈍ) s-swot vawiabwe) w-wewationship; n-none of the t-thwee
+  // depend on the othews diwectwy. OwO
   //
-  // Note: currently only valid if kind == "user_object".
-  repeated TrackableObjectGraph.TrackableObject.SlotVariableReference
-      slot_variables = 3;
+  // n-note: cuwwentwy o-onwy vawid i-if kind == "usew_object". o.O
+  w-wepeated t-twackabweobjectgwaph.twackabweobject.swotvawiabwewefewence
+      swot_vawiabwes = 3;
 
   oneof kind {
-    SavedUserObject user_object = 4;
-    SavedAsset asset = 5;
-    SavedFunction function = 6;
-    SavedVariable variable = 7;
-    SavedBareConcreteFunction bare_concrete_function = 8;
-    SavedConstant constant = 9;
-    SavedResource resource = 10;
-    CapturedTensor captured_tensor = 12;
+    savedusewobject u-usew_object = 4;
+    savedasset asset = 5;
+    savedfunction function = 6;
+    savedvawiabwe vawiabwe = 7;
+    s-savedbaweconcwetefunction bawe_concwete_function = 8;
+    savedconstant constant = 9;
+    s-savedwesouwce w-wesouwce = 10;
+    c-captuwedtensow captuwed_tensow = 12;
   }
 
-  // Stores the functions used to save and restore this object. At most one of
-  // `saveable_objects` or `registered_saver` is defined for each SavedObject.
-  // See the comment below for the difference between SaveableObject and
-  // registered savers.
-  map<string, SaveableObject> saveable_objects = 11;
+  // s-stowes the functions used t-to save and westowe t-this object. at most one of
+  // `saveabwe_objects` ow `wegistewed_savew` is defined fow each savedobject. 😳😳😳
+  // see the comment b-bewow fow the diffewence between s-saveabweobject and
+  // wegistewed s-savews. /(^•ω•^)
+  m-map<stwing, OwO saveabweobject> saveabwe_objects = 11;
 
-  // The fields below are filled when the user serializes a registered Trackable
-  // class or an object with a registered saver function.
+  // the fiewds bewow awe f-fiwwed when the u-usew sewiawizes a wegistewed twackabwe
+  // c-cwass o-ow an object with a wegistewed savew function.
   //
-  // Registered classes may save additional metadata and supersede the
-  // default loading process where nodes are recreated from the proto.
-  // If the registered class cannot be found, then the object will load as one
-  // one of the default trackable objects: Autotrackable (a class similar to
-  // tf.Module), tf.function, or tf.Variable.
+  // wegistewed cwasses may s-save additionaw m-metadata and s-supewsede the
+  // defauwt woading p-pwocess whewe n-nyodes awe wecweated fwom the pwoto. ^^
+  // i-if the wegistewed cwass cannot be found, (///ˬ///✿) then the object wiww woad as o-one
+  // one of t-the defauwt twackabwe objects: autotwackabwe (a c-cwass simiwaw to
+  // t-tf.moduwe), (///ˬ///✿) tf.function, (///ˬ///✿) ow tf.vawiabwe. ʘwʘ
   //
-  // Unlike SaveableObjects, which store the functions for saving and restoring
-  // from tensors, registered savers allow Trackables to write checkpoint shards
-  // directly (e.g. for performance or coordination reasons).
-  // *All registered savers must be available when loading the SavedModel.*
+  // unwike s-saveabweobjects, ^•ﻌ•^ which stowe the functions fow saving and westowing
+  // fwom tensows, OwO w-wegistewed savews awwow twackabwes to wwite c-checkpoint shawds
+  // d-diwectwy (e.g. (U ﹏ U) fow pewfowmance ow coowdination weasons). (ˆ ﻌ ˆ)♡
+  // *aww w-wegistewed s-savews must be avaiwabwe when woading the savedmodew.*
 
-  // The name of the registered class of the form "{package}.{class_name}".
-  // This field is used to search for the registered class at loading time.
-  string registered_name = 13;
-  // The user-generated proto storing metadata for this object, to be passed to
-  // the registered classes's _deserialize_from_proto method when this object is
-  // loaded from the SavedModel.
-  google.protobuf.Any serialized_user_proto = 14;
+  // t-the nyame of the wegistewed c-cwass of the fowm "{package}.{cwass_name}".
+  // this fiewd is used to seawch fow the wegistewed c-cwass at woading time. (⑅˘꒳˘)
+  stwing w-wegistewed_name = 13;
+  // t-the usew-genewated p-pwoto stowing metadata fow this o-object, (U ﹏ U) to be passed t-to
+  // the w-wegistewed cwasses's _desewiawize_fwom_pwoto method when this o-object is
+  // woaded f-fwom the savedmodew. o.O
+  googwe.pwotobuf.any sewiawized_usew_pwoto = 14;
 
-  // String name of the registered saver. At most one of `saveable_objects` or
-  // `registered_saver` is defined for each SavedObject.
-  string registered_saver = 16;
+  // s-stwing nyame o-of the wegistewed s-savew. mya at most one of `saveabwe_objects` ow
+  // `wegistewed_savew` i-is defined fow each savedobject. XD
+  s-stwing w-wegistewed_savew = 16;
 }
 
-// A SavedUserObject is an object (in the object-oriented language of the
-// TensorFlow program) of some user- or framework-defined class other than
-// those handled specifically by the other kinds of SavedObjects.
+// a savedusewobject is an object (in the object-owiented w-wanguage of t-the
+// tensowfwow p-pwogwam) of some u-usew- ow fwamewowk-defined cwass o-othew than
+// those handwed specificawwy by the othew kinds of savedobjects. òωó
 //
-// This object cannot be evaluated as a tensor, and therefore cannot be bound
-// to an input of a function.
-message SavedUserObject {
-  // Corresponds to a registration of the type to use in the loading program.
-  string identifier = 1;
-  // Version information from the producer of this SavedUserObject.
-  VersionDef version = 2;
-  // Metadata for deserializing this object.
+// this object c-cannot be evawuated as a tensow, a-and thewefowe cannot be bound
+// t-to an input of a function.
+m-message savedusewobject {
+  // cowwesponds to a w-wegistwation of t-the type to use i-in the woading pwogwam.
+  s-stwing i-identifiew = 1;
+  // vewsion infowmation fwom the pwoducew of this savedusewobject. (˘ω˘)
+  vewsiondef vewsion = 2;
+  // m-metadata fow d-desewiawizing this o-object. :3
   //
-  // Deprecated! At the time of deprecation, Keras was the only user of this
-  // field, and its saving and loading code will be updated shortly.
-  // Please save your application-specific metadata to a separate file.
-  string metadata = 3 [deprecated = true];
+  // depwecated! OwO a-at the time of depwecation, mya kewas was the onwy usew of this
+  // f-fiewd, and its s-saving and woading code wiww be u-updated showtwy. (˘ω˘)
+  // pwease save youw appwication-specific m-metadata t-to a sepawate fiwe. o.O
+  stwing m-metadata = 3 [depwecated = twue];
 }
 
-// A SavedAsset points to an asset in the MetaGraph.
+// a-a savedasset points to an asset in the metagwaph.
 //
-// When bound to a function this object evaluates to a tensor with the absolute
-// filename. Users should not depend on a particular part of the filename to
-// remain stable (e.g. basename could be changed).
-message SavedAsset {
-  // Index into `MetaGraphDef.asset_file_def[]` that describes the Asset.
+// when bound to a-a function this o-object evawuates t-to a tensow with t-the absowute
+// f-fiwename. (✿oωo) usews shouwd nyot d-depend on a pawticuwaw p-pawt of the fiwename to
+// w-wemain stabwe (e.g. (ˆ ﻌ ˆ)♡ b-basename couwd be changed). ^^;;
+m-message savedasset {
+  // index into `metagwaphdef.asset_fiwe_def[]` t-that descwibes the asset. OwO
   //
-  // Only the field `AssetFileDef.filename` is used. Other fields, such as
-  // `AssetFileDef.tensor_info`, MUST be ignored.
-  int32 asset_file_def_index = 1;
+  // o-onwy t-the fiewd `assetfiwedef.fiwename` is used. 🥺 othew f-fiewds, mya such as
+  // `assetfiwedef.tensow_info`, must be ignowed. 😳
+  int32 asset_fiwe_def_index = 1;
 }
 
-// A function with multiple signatures, possibly with non-Tensor arguments.
-message SavedFunction {
-  repeated string concrete_functions = 1;
-  FunctionSpec function_spec = 2;
+// a-a function w-with muwtipwe s-signatuwes, òωó possibwy with nyon-tensow awguments. /(^•ω•^)
+message savedfunction {
+  wepeated s-stwing concwete_functions = 1;
+  functionspec function_spec = 2;
 }
 
-message CapturedTensor {
-  // Name of captured tensor
-  string name = 1;
+m-message c-captuwedtensow {
+  // name of c-captuwed tensow
+  stwing nyame = 1;
 
-  // Name of concrete function which contains the computed graph tensor.
-  string concrete_function = 2;
+  // n-nyame o-of concwete function which contains the computed g-gwaph tensow. -.-
+  stwing concwete_function = 2;
 }
 
-// Stores low-level information about a concrete function. Referenced in either
-// a SavedFunction or a SavedBareConcreteFunction.
-message SavedConcreteFunction {
-  repeated int32 bound_inputs = 2;
+// stowes wow-wevew i-infowmation a-about a concwete function. òωó wefewenced i-in eithew
+// a savedfunction o-ow a savedbaweconcwetefunction. /(^•ω•^)
+m-message savedconcwetefunction {
+  w-wepeated int32 bound_inputs = 2;
 
-  // Input in canonicalized form that was received to create this concrete
-  // function.
-  StructuredValue canonicalized_input_signature = 3;
-  // Output that was the return value of this function after replacing all
-  // Tensors with TensorSpecs. This can be an arbitrary nested function and will
-  // be used to reconstruct the full structure from pure tensors.
-  StructuredValue output_signature = 4;
+  // input in canonicawized fowm that was weceived to cweate this concwete
+  // function. /(^•ω•^)
+  stwuctuwedvawue canonicawized_input_signatuwe = 3;
+  // output that was the wetuwn vawue of this function aftew wepwacing a-aww
+  // tensows w-with tensowspecs. 😳 this can be an awbitwawy nyested f-function and w-wiww
+  // be used t-to weconstwuct the fuww stwuctuwe f-fwom puwe tensows. :3
+  stwuctuwedvawue o-output_signatuwe = 4;
 }
 
-message SavedBareConcreteFunction {
-  // Identifies a SavedConcreteFunction.
-  string concrete_function_name = 1;
+m-message savedbaweconcwetefunction {
+  // identifies a-a savedconcwetefunction. (U ᵕ U❁)
+  stwing concwete_function_name = 1;
 
-  // A sequence of unique strings, one per Tensor argument.
-  repeated string argument_keywords = 2;
-  // The prefix of `argument_keywords` which may be identified by position.
-  int64 allowed_positional_arguments = 3;
-  // The spec of the function that this ConcreteFunction is traced from. This
-  // allows the ConcreteFunction to be called with nest structure inputs. This
-  // field may not be populated. If this field is absent, the concrete function
-  // can only be called with flat inputs.
-  // TODO(b/169361281): support calling saved ConcreteFunction with structured
-  // inputs in C++ SavedModel API.
-  FunctionSpec function_spec = 4;
+  // a-a sequence o-of unique stwings, ʘwʘ one pew tensow awgument. o.O
+  w-wepeated stwing a-awgument_keywowds = 2;
+  // t-the pwefix of `awgument_keywowds` w-which may be i-identified by position. ʘwʘ
+  i-int64 a-awwowed_positionaw_awguments = 3;
+  // t-the spec o-of the function that this concwetefunction i-is twaced f-fwom. ^^ this
+  // a-awwows the concwetefunction t-to be cawwed with nyest stwuctuwe inputs. ^•ﻌ•^ this
+  // f-fiewd may nyot be popuwated. mya i-if this fiewd i-is absent, UwU the concwete f-function
+  // can onwy be c-cawwed with fwat inputs. >_<
+  // t-todo(b/169361281): suppowt cawwing s-saved concwetefunction with stwuctuwed
+  // inputs i-in c++ savedmodew api. /(^•ω•^)
+  functionspec function_spec = 4;
 }
 
-message SavedConstant {
-  // An Operation name for a ConstantOp in this SavedObjectGraph's MetaGraph.
-  string operation = 1;
+message savedconstant {
+  // an opewation nyame f-fow a constantop in this savedobjectgwaph's m-metagwaph. òωó
+  s-stwing opewation = 1;
 }
 
-// Represents a Variable that is initialized by loading the contents from the
-// checkpoint.
-message SavedVariable {
-  DataType dtype = 1;
-  TensorShapeProto shape = 2;
-  bool trainable = 3;
-  VariableSynchronization synchronization = 4;
-  VariableAggregation aggregation = 5;
-  string name = 6;
-  string device = 7;
-  // List of component variables for a distributed variable.
+// wepwesents a vawiabwe that i-is initiawized by woading the c-contents fwom the
+// c-checkpoint. σωσ
+m-message savedvawiabwe {
+  datatype dtype = 1;
+  t-tensowshapepwoto s-shape = 2;
+  boow twainabwe = 3;
+  v-vawiabwesynchwonization synchwonization = 4;
+  vawiabweaggwegation a-aggwegation = 5;
+  stwing n-nyame = 6;
+  stwing d-device = 7;
+  // w-wist of component vawiabwes f-fow a distwibuted v-vawiabwe. ( ͡o ω ͡o )
   //
-  // When this field is non-empty, the SavedVariable will be assumed
-  // to be a distributed variable defined by the components listed here.
+  // w-when this f-fiewd is nyon-empty, nyaa~~ the savedvawiabwe w-wiww be a-assumed
+  // to b-be a distwibuted v-vawiabwe defined b-by the components w-wisted hewe. :3
   //
-  // This is only supported by experimental loaders at the moment.
-  repeated SavedVariable experimental_distributed_variable_components = 8;
+  // t-this i-is onwy suppowted by expewimentaw w-woadews at the moment. UwU
+  wepeated s-savedvawiabwe expewimentaw_distwibuted_vawiabwe_components = 8;
 }
 
-// Represents `FunctionSpec` used in `Function`. This represents a
-// function that has been wrapped as a TensorFlow `Function`.
-message FunctionSpec {
-  // Full arg spec from inspect.getfullargspec().
-  StructuredValue fullargspec = 1;
-  // Whether this represents a class method.
-  bool is_method = 2;
-  // The input signature, if specified.
-  StructuredValue input_signature = 5;
+// w-wepwesents `functionspec` u-used in `function`. o.O t-this wepwesents a
+// function that has been wwapped as a-a tensowfwow `function`. (ˆ ﻌ ˆ)♡
+m-message f-functionspec {
+  // fuww awg spec fwom inspect.getfuwwawgspec(). ^^;;
+  stwuctuwedvawue f-fuwwawgspec = 1;
+  // w-whethew this wepwesents a-a cwass method. ʘwʘ
+  b-boow is_method = 2;
+  // the input signatuwe, σωσ if specified. ^^;;
+  s-stwuctuwedvawue i-input_signatuwe = 5;
 
-  // Whether the function should be compiled by XLA.
+  // w-whethew t-the function shouwd be compiwed by xwa.
   //
-  // The public interface to `tf.function` uses an optional boolean to
-  // represent three distinct states for this field.  Unfortunately, proto3
-  // removes the ability to explicitly check for the presence or absence of a
-  // field, so we instead map to an enum.
+  // t-the pubwic i-intewface to `tf.function` uses an optionaw boowean t-to
+  // wepwesent thwee distinct states fow t-this fiewd. ʘwʘ  unfowtunatewy, ^^ pwoto3
+  // w-wemoves t-the abiwity to expwicitwy check f-fow the pwesence o-ow absence of a
+  // fiewd, nyaa~~ s-so we instead map to an enum. (///ˬ///✿)
   //
-  // See `tf.function` for details.
-  enum JitCompile {
-    DEFAULT = 0;
-    ON = 1;
-    OFF = 2;
+  // s-see `tf.function` f-fow detaiws. XD
+  e-enum jitcompiwe {
+    defauwt = 0;
+    o-on = 1;
+    off = 2;
   }
-  JitCompile jit_compile = 6;
+  jitcompiwe j-jit_compiwe = 6;
 
-  reserved 3, 4;
+  w-wesewved 3, :3 4;
 }
 
-// A SavedResource represents a TF object that holds state during its lifetime.
-// An object of this type can have a reference to a:
-// create_resource() and an initialize() function.
-message SavedResource {
-  // A device specification indicating a required placement for the resource
-  // creation function, e.g. "CPU". An empty string allows the user to select a
-  // device.
-  string device = 1;
+// a s-savedwesouwce wepwesents a tf object t-that howds state duwing its wifetime.
+// an o-object of this t-type can have a w-wefewence to a:
+// cweate_wesouwce() and an initiawize() function. òωó
+message savedwesouwce {
+  // a-a device specification indicating a-a wequiwed pwacement f-fow the wesouwce
+  // cweation function, ^^ e-e.g. "cpu". an empty stwing awwows t-the usew to s-sewect a
+  // device. ^•ﻌ•^
+  s-stwing device = 1;
 }
 
-message SaveableObject {
-  // Node ids of concrete functions for saving and loading from a checkpoint.
-  // These functions save and restore directly from tensors.
+m-message s-saveabweobject {
+  // nyode ids of concwete functions fow saving and woading f-fwom a checkpoint. σωσ
+  // these f-functions save and westowe diwectwy fwom tensows. (ˆ ﻌ ˆ)♡
   int32 save_function = 2;
-  int32 restore_function = 3;
+  i-int32 westowe_function = 3;
 }

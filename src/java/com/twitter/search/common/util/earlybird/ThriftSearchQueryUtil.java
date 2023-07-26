@@ -1,29 +1,29 @@
-package com.twitter.search.common.util.earlybird;
+package com.twittew.seawch.common.utiw.eawwybiwd;
 
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+impowt com.twittew.seawch.common.quewy.thwiftjava.cowwectowpawams;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
 
 /**
- * Utility class from constructing ThriftSearchQuery.
+ * u-utiwity c-cwass fwom constwucting t-thwiftseawchquewy. rawr x3
  */
-public final class ThriftSearchQueryUtil {
-  private ThriftSearchQueryUtil() { }
+pubwic f-finaw cwass t-thwiftseawchquewyutiw {
+  p-pwivate thwiftseawchquewyutiw() { }
 
   /**
-   * Convenience methods for constructing a ThriftSearchQuery.
+   * convenience methods fow constwucting a-a thwiftseawchquewy. mya
    */
-  public static ThriftSearchQuery newSearchQuery(String serializedQuery, int numResults) {
-    ThriftSearchQuery searchQuery = new ThriftSearchQuery();
-    searchQuery.setSerializedQuery(serializedQuery);
-    searchQuery.setCollectorParams(new CollectorParams().setNumResultsToReturn(numResults));
-    return searchQuery;
+  pubwic static thwiftseawchquewy n-nyewseawchquewy(stwing sewiawizedquewy, nyaa~~ i-int nyumwesuwts) {
+    thwiftseawchquewy seawchquewy = nyew thwiftseawchquewy();
+    s-seawchquewy.setsewiawizedquewy(sewiawizedquewy);
+    seawchquewy.setcowwectowpawams(new c-cowwectowpawams().setnumwesuwtstowetuwn(numwesuwts));
+    w-wetuwn seawchquewy;
   }
 
-  /** Determines if the given request was initiated by a logged in user. */
-  public static boolean requestInitiatedByLoggedInUser(EarlybirdRequest request) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    return (searchQuery != null) && searchQuery.isSetSearcherId()
-      && (searchQuery.getSearcherId() > 0);
+  /** detewmines if the given wequest was i-initiated by a wogged in usew. (⑅˘꒳˘) */
+  pubwic static boowean wequestinitiatedbywoggedinusew(eawwybiwdwequest wequest) {
+    t-thwiftseawchquewy seawchquewy = w-wequest.getseawchquewy();
+    w-wetuwn (seawchquewy != n-nyuww) && s-seawchquewy.issetseawchewid()
+      && (seawchquewy.getseawchewid() > 0);
   }
 }

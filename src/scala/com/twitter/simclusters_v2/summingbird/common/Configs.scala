@@ -1,70 +1,70 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+i-impowt c-com.twittew.utiw.duwation
 
-object Configs {
+o-object configs {
 
-  final val role = "cassowary"
+  f-finaw vaw wowe = "cassowawy"
 
-  final val ZoneAtla: String = "atla"
+  f-finaw vaw zoneatwa: s-stwing = "atwa"
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KDec11: String = "20M_145K_dec11"
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KUpdated: String = "20M_145K_updated"
-  final val ModelVersion20M145K2020: String = "20M_145K_2020"
+  @depwecated("use 'common/modewvewsions'", nyaa~~ "2019-09-04")
+  f-finaw vaw modewvewsion20m145kdec11: stwing = "20m_145k_dec11"
+  @depwecated("use 'common/modewvewsions'", nyaa~~ "2019-09-04")
+  finaw vaw modewvewsion20m145kupdated: stwing = "20m_145k_updated"
+  finaw vaw modewvewsion20m145k2020: s-stwing = "20m_145k_2020"
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersionMap: Map[String, ModelVersion] = Map(
-    ModelVersion20M145KDec11 -> ModelVersion.Model20m145kDec11,
-    ModelVersion20M145KUpdated -> ModelVersion.Model20m145kUpdated,
-    ModelVersion20M145K2020 -> ModelVersion.Model20m145k2020
+  @depwecated("use 'common/modewvewsions'", :3 "2019-09-04")
+  finaw vaw modewvewsionmap: m-map[stwing, 😳😳😳 modewvewsion] = m-map(
+    modewvewsion20m145kdec11 -> modewvewsion.modew20m145kdec11, (˘ω˘)
+    modewvewsion20m145kupdated -> modewvewsion.modew20m145kupdated, ^^
+    m-modewvewsion20m145k2020 -> modewvewsion.modew20m145k2020
   )
 
-  final val favScoreThresholdForUserInterest: String => Double = {
-    case ModelVersion20M145KDec11 => 0.15
-    case ModelVersion20M145KUpdated => 1.0
-    case ModelVersion20M145K2020 => 0.3
-    case modelVersionStr => throw new Exception(s"$modelVersionStr is not a valid model")
+  f-finaw vaw favscowethweshowdfowusewintewest: s-stwing => doubwe = {
+    case modewvewsion20m145kdec11 => 0.15
+    case modewvewsion20m145kupdated => 1.0
+    case modewvewsion20m145k2020 => 0.3
+    c-case modewvewsionstw => thwow nyew exception(s"$modewvewsionstw is nyot a vawid modew")
   }
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ReversedModelVersionMap = ModelVersionMap.map(_.swap)
+  @depwecated("use 'common/modewvewsions'", :3 "2019-09-04")
+  f-finaw vaw wevewsedmodewvewsionmap = modewvewsionmap.map(_.swap)
 
-  final val batchesToKeep: Int = 1
+  f-finaw v-vaw batchestokeep: i-int = 1
 
-  final val HalfLife: Duration = 8.hours
-  final val HalfLifeInMs: Long = HalfLife.inMilliseconds
+  f-finaw vaw hawfwife: duwation = 8.houws
+  finaw v-vaw hawfwifeinms: wong = hawfwife.inmiwwiseconds
 
-  final val topKTweetsPerCluster: Int = 1600
+  finaw vaw topktweetspewcwustew: i-int = 1600
 
-  final val topKClustersPerEntity: Int = 50
+  finaw vaw topkcwustewspewentity: int = 50
 
-  // the config used in offline job only
-  final val topKClustersPerTweet: Int = 400
+  // the config used in offwine job onwy
+  finaw vaw t-topkcwustewspewtweet: int = 400
 
-  // minimum score to save clusterIds in entityTopKClusters cache
-  // entity includes entities other than tweetId.
-  final val scoreThresholdForEntityTopKClustersCache: Double = 0.02
+  // m-minimum s-scowe to save cwustewids i-in entitytopkcwustews cache
+  // entity incwudes entities othew than tweetid. -.-
+  f-finaw v-vaw scowethweshowdfowentitytopkcwustewscache: doubwe = 0.02
 
-  // minimum score to save clusterIds in tweetTopKClusters cache
-  final val scoreThresholdForTweetTopKClustersCache: Double = 0.02
+  // m-minimum scowe t-to save cwustewids in tweettopkcwustews c-cache
+  finaw vaw scowethweshowdfowtweettopkcwustewscache: d-doubwe = 0.02
 
-  // minimum score to save tweetIds in clusterTopKTweets cache
-  final val scoreThresholdForClusterTopKTweetsCache: Double = 0.001
+  // minimum scowe to save tweetids i-in cwustewtopktweets cache
+  f-finaw vaw scowethweshowdfowcwustewtopktweetscache: doubwe = 0.001
 
-  // minimum score to save entities in clusterTopKEntities cache
-  final val scoreThresholdForClusterTopKEntitiesCache: Double = 0.001
+  // m-minimum s-scowe to save entities in cwustewtopkentities cache
+  finaw vaw scowethweshowdfowcwustewtopkentitiescache: doubwe = 0.001
 
-  final val MinFavoriteCount = 8
+  finaw vaw minfavowitecount = 8
 
-  final val OldestTweetInLightIndexInMillis = 1.hours.inMillis
+  finaw vaw owdesttweetinwightindexinmiwwis = 1.houws.inmiwwis
 
-  final val OldestTweetFavEventTimeInMillis = 3.days.inMillis
+  f-finaw vaw owdesttweetfaveventtimeinmiwwis = 3.days.inmiwwis
 
-  final val FirstUpdateValue = 1
+  f-finaw vaw fiwstupdatevawue = 1
 
-  final val TempUpdateValue = -1
+  finaw vaw tempupdatevawue = -1
 }

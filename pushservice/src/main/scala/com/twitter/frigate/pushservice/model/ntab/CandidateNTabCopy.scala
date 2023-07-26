@@ -1,21 +1,21 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.common.util.MRNtabCopy
-import com.twitter.frigate.common.util.MrNtabCopyObjects
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.take.InvalidNtabCopyIdException
-import com.twitter.frigate.pushservice.take.NtabCopyIdNotFoundException
+impowt com.twittew.fwigate.common.utiw.mwntabcopy
+i-impowt com.twittew.fwigate.common.utiw.mwntabcopyobjects
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.take.invawidntabcopyidexception
+i-impowt c-com.twittew.fwigate.pushsewvice.take.ntabcopyidnotfoundexception
 
-trait CandidateNTabCopy {
-  self: PushCandidate =>
+t-twait candidatentabcopy {
+  sewf: p-pushcandidate =>
 
-  def ntabCopy: MRNtabCopy =
-    ntabCopyId
-      .map(getNtabCopyFromCopyId).getOrElse(
-        throw new NtabCopyIdNotFoundException(s"NtabCopyId not found for $commonRecType"))
+  def nytabcopy: mwntabcopy =
+    nytabcopyid
+      .map(getntabcopyfwomcopyid).getowewse(
+        thwow n-nyew nytabcopyidnotfoundexception(s"ntabcopyid nyot found fow $commonwectype"))
 
-  private def getNtabCopyFromCopyId(ntabCopyId: Int): MRNtabCopy =
-    MrNtabCopyObjects
-      .getCopyFromId(ntabCopyId).getOrElse(
-        throw new InvalidNtabCopyIdException(s"Unknown NTab Copy ID: $ntabCopyId"))
+  pwivate def getntabcopyfwomcopyid(ntabcopyid: i-int): mwntabcopy =
+    mwntabcopyobjects
+      .getcopyfwomid(ntabcopyid).getowewse(
+        t-thwow new invawidntabcopyidexception(s"unknown nytab copy id: $ntabcopyid"))
 }

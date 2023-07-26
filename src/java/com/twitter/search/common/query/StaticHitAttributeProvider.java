@@ -1,32 +1,32 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+impowt j-java.utiw.cowwections;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
 
 /**
- * A hit attribute provider based on the static data
+ * a-a hit a-attwibute pwovidew b-based on the s-static data
  */
-public class StaticHitAttributeProvider implements HitAttributeProvider {
-  private int currentDocId;
-  private Map<Integer, List<String>> currentHitAttr;
+pubwic cwass statichitattwibutepwovidew impwements hitattwibutepwovidew {
+  pwivate i-int cuwwentdocid;
+  pwivate map<integew, >_< wist<stwing>> c-cuwwenthitattw;
 
-  public StaticHitAttributeProvider() {
+  pubwic statichitattwibutepwovidew() {
   }
 
   /**
-   * Set a fake last doc id and hit attribution, this is only used to generate explanation.
+   * s-set a fake wast doc id and hit attwibution, rawr x3 this is onwy used t-to genewate expwanation. mya
    */
-  public void setCurrentHitAttr(int docId, Map<Integer, List<String>> hitAttr) {
-    this.currentDocId = docId;
-    this.currentHitAttr = hitAttr;
+  p-pubwic void s-setcuwwenthitattw(int docid, nyaa~~ map<integew, (⑅˘꒳˘) wist<stwing>> hitattw) {
+    this.cuwwentdocid = d-docid;
+    this.cuwwenthitattw = hitattw;
   }
 
-  @Override
-  public Map<Integer, List<String>> getHitAttribution(int docId) {
-    if (docId == currentDocId) {
-      return currentHitAttr;
+  @ovewwide
+  pubwic map<integew, rawr x3 wist<stwing>> g-gethitattwibution(int docid) {
+    if (docid == c-cuwwentdocid) {
+      w-wetuwn cuwwenthitattw;
     }
-    return Collections.EMPTY_MAP;
+    w-wetuwn cowwections.empty_map;
   }
 }

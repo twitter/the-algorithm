@@ -1,152 +1,152 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.twittew.fwigate.pushsewvice.adaptow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.base.ListPushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.predicate.TargetPredicates
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.interests_discovery.thriftscala.DisplayLocation
-import com.twitter.interests_discovery.thriftscala.NonPersonalizedRecommendedLists
-import com.twitter.interests_discovery.thriftscala.RecommendedListsRequest
-import com.twitter.interests_discovery.thriftscala.RecommendedListsResponse
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fwigate.common.base.candidatesouwce
+i-impowt com.twittew.fwigate.common.base.candidatesouwceewigibwe
+i-impowt com.twittew.fwigate.common.base.wistpushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.tawgetpwedicates
+impowt com.twittew.fwigate.pushsewvice.utiw.pushdeviceutiw
+impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.geoduck.sewvice.thwiftscawa.wocationwesponse
+impowt com.twittew.intewests_discovewy.thwiftscawa.dispwaywocation
+i-impowt com.twittew.intewests_discovewy.thwiftscawa.nonpewsonawizedwecommendedwists
+impowt com.twittew.intewests_discovewy.thwiftscawa.wecommendedwistswequest
+i-impowt com.twittew.intewests_discovewy.thwiftscawa.wecommendedwistswesponse
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
 
-case class ListsToRecommendCandidateAdaptor(
-  listRecommendationsStore: ReadableStore[String, NonPersonalizedRecommendedLists],
-  geoDuckV2Store: ReadableStore[Long, LocationResponse],
-  idsStore: ReadableStore[RecommendedListsRequest, RecommendedListsResponse],
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+case cwass wiststowecommendcandidateadaptow(
+  w-wistwecommendationsstowe: weadabwestowe[stwing, (⑅˘꒳˘) n-nyonpewsonawizedwecommendedwists], (///ˬ///✿)
+  geoduckv2stowe: weadabwestowe[wong, ^^;; w-wocationwesponse], >_<
+  idsstowe: weadabwestowe[wecommendedwistswequest, rawr x3 wecommendedwistswesponse],
+  gwobawstats: s-statsweceivew)
+    extends candidatesouwce[tawget, /(^•ω•^) wawcandidate]
+    with candidatesouwceewigibwe[tawget, :3 wawcandidate] {
 
-  override val name: String = this.getClass.getSimpleName
+  o-ovewwide vaw nyame: stwing = this.getcwass.getsimpwename
 
-  private[this] val stats = globalStats.scope(name)
-  private[this] val noLocationCodeCounter = stats.counter("no_location_code")
-  private[this] val noCandidatesCounter = stats.counter("no_candidates_for_geo")
-  private[this] val disablePopGeoListsCounter = stats.counter("disable_pop_geo_lists")
-  private[this] val disableIDSListsCounter = stats.counter("disable_ids_lists")
+  p-pwivate[this] v-vaw stats = g-gwobawstats.scope(name)
+  p-pwivate[this] vaw nyowocationcodecountew = stats.countew("no_wocation_code")
+  pwivate[this] v-vaw nyocandidatescountew = stats.countew("no_candidates_fow_geo")
+  p-pwivate[this] vaw disabwepopgeowistscountew = stats.countew("disabwe_pop_geo_wists")
+  pwivate[this] vaw disabweidswistscountew = stats.countew("disabwe_ids_wists")
 
-  private def getListCandidate(
-    targetUser: Target,
-    _listId: Long
-  ): RawCandidate with ListPushCandidate = {
-    new RawCandidate with ListPushCandidate {
-      override val listId: Long = _listId
+  pwivate d-def getwistcandidate(
+    tawgetusew: t-tawget, (ꈍᴗꈍ)
+    _wistid: w-wong
+  ): w-wawcandidate with wistpushcandidate = {
+    nyew wawcandidate with wistpushcandidate {
+      o-ovewwide vaw w-wistid: wong = _wistid
 
-      override val commonRecType: CommonRecommendationType = CommonRecommendationType.List
+      ovewwide v-vaw commonwectype: c-commonwecommendationtype = commonwecommendationtype.wist
 
-      override val target: Target = targetUser
+      o-ovewwide vaw tawget: tawget = t-tawgetusew
     }
   }
 
-  private def getListsRecommendedFromHistory(
-    target: Target
-  ): Future[Seq[Long]] = {
-    target.history.map { history =>
-      history.sortedHistory.flatMap {
-        case (_, notif) if notif.commonRecommendationType == List =>
-          notif.listNotification.map(_.listId)
-        case _ => None
+  pwivate def getwistswecommendedfwomhistowy(
+    tawget: tawget
+  ): f-futuwe[seq[wong]] = {
+    tawget.histowy.map { h-histowy =>
+      histowy.sowtedhistowy.fwatmap {
+        c-case (_, /(^•ω•^) n-nyotif) if nyotif.commonwecommendationtype == wist =>
+          nyotif.wistnotification.map(_.wistid)
+        case _ => nyone
       }
     }
   }
 
-  private def getIDSListRecs(
-    target: Target,
-    historicalListIds: Seq[Long]
-  ): Future[Seq[Long]] = {
-    val request = RecommendedListsRequest(
-      target.targetId,
-      DisplayLocation.ListDiscoveryPage,
-      Some(historicalListIds)
+  pwivate def getidswistwecs(
+    t-tawget: t-tawget, (⑅˘꒳˘)
+    histowicawwistids: seq[wong]
+  ): futuwe[seq[wong]] = {
+    v-vaw wequest = w-wecommendedwistswequest(
+      t-tawget.tawgetid, ( ͡o ω ͡o )
+      dispwaywocation.wistdiscovewypage, òωó
+      some(histowicawwistids)
     )
-    if (target.params(PushFeatureSwitchParams.EnableIDSListRecommendations)) {
-      idsStore.get(request).map {
-        case Some(response) =>
-          response.channels.map(_.id)
-        case _ => Nil
+    if (tawget.pawams(pushfeatuweswitchpawams.enabweidswistwecommendations)) {
+      i-idsstowe.get(wequest).map {
+        case some(wesponse) =>
+          wesponse.channews.map(_.id)
+        case _ => nyiw
       }
-    } else {
-      disableIDSListsCounter.incr()
-      Future.Nil
+    } e-ewse {
+      disabweidswistscountew.incw()
+      futuwe.niw
     }
   }
 
-  private def getPopGeoLists(
-    target: Target,
-    historicalListIds: Seq[Long]
-  ): Future[Seq[Long]] = {
-    if (target.params(PushFeatureSwitchParams.EnablePopGeoListRecommendations)) {
-      geoDuckV2Store.get(target.targetId).flatMap {
-        case Some(locationResponse) if locationResponse.geohash.isDefined =>
-          val geoHashLength =
-            target.params(PushFeatureSwitchParams.ListRecommendationsGeoHashLength)
-          val geoHash = locationResponse.geohash.get.take(geoHashLength)
-          listRecommendationsStore
-            .get(s"geohash_$geoHash")
+  p-pwivate def g-getpopgeowists(
+    t-tawget: tawget, (⑅˘꒳˘)
+    histowicawwistids: s-seq[wong]
+  ): f-futuwe[seq[wong]] = {
+    i-if (tawget.pawams(pushfeatuweswitchpawams.enabwepopgeowistwecommendations)) {
+      g-geoduckv2stowe.get(tawget.tawgetid).fwatmap {
+        case some(wocationwesponse) if w-wocationwesponse.geohash.isdefined =>
+          v-vaw geohashwength =
+            t-tawget.pawams(pushfeatuweswitchpawams.wistwecommendationsgeohashwength)
+          v-vaw geohash = w-wocationwesponse.geohash.get.take(geohashwength)
+          wistwecommendationsstowe
+            .get(s"geohash_$geohash")
             .map {
-              case Some(recommendedLists) =>
-                recommendedLists.recommendedListsByAlgo.flatMap { topLists =>
-                  topLists.lists.collect {
-                    case list if !historicalListIds.contains(list.listId) => list.listId
+              case some(wecommendedwists) =>
+                w-wecommendedwists.wecommendedwistsbyawgo.fwatmap { topwists =>
+                  topwists.wists.cowwect {
+                    case wist if !histowicawwistids.contains(wist.wistid) => wist.wistid
                   }
                 }
-              case _ => Nil
+              c-case _ => nyiw
             }
         case _ =>
-          noLocationCodeCounter.incr()
-          Future.Nil
+          nyowocationcodecountew.incw()
+          futuwe.niw
       }
-    } else {
-      disablePopGeoListsCounter.incr()
-      Future.Nil
+    } e-ewse {
+      d-disabwepopgeowistscountew.incw()
+      f-futuwe.niw
     }
   }
 
-  override def get(target: Target): Future[Option[Seq[RawCandidate]]] = {
-    getListsRecommendedFromHistory(target).flatMap { historicalListIds =>
-      Future
+  ovewwide def g-get(tawget: tawget): futuwe[option[seq[wawcandidate]]] = {
+    g-getwistswecommendedfwomhistowy(tawget).fwatmap { h-histowicawwistids =>
+      futuwe
         .join(
-          getPopGeoLists(target, historicalListIds),
-          getIDSListRecs(target, historicalListIds)
+          getpopgeowists(tawget, XD histowicawwistids), -.-
+          getidswistwecs(tawget, :3 histowicawwistids)
         )
         .map {
-          case (popGeoListsIds, idsListIds) =>
-            val candidates = (idsListIds ++ popGeoListsIds).map(getListCandidate(target, _))
-            Some(candidates)
-          case _ =>
-            noCandidatesCounter.incr()
-            None
+          c-case (popgeowistsids, nyaa~~ idswistids) =>
+            v-vaw candidates = (idswistids ++ popgeowistsids).map(getwistcandidate(tawget, _))
+            s-some(candidates)
+          c-case _ =>
+            nyocandidatescountew.incw()
+            nyone
         }
     }
   }
 
-  private val pushCapFatiguePredicate = TargetPredicates.pushRecTypeFatiguePredicate(
-    CommonRecommendationType.List,
-    PushFeatureSwitchParams.ListRecommendationsPushInterval,
-    PushFeatureSwitchParams.MaxListRecommendationsPushGivenInterval,
-    stats,
+  pwivate vaw p-pushcapfatiguepwedicate = t-tawgetpwedicates.pushwectypefatiguepwedicate(
+    commonwecommendationtype.wist, 😳
+    pushfeatuweswitchpawams.wistwecommendationspushintewvaw, (⑅˘꒳˘)
+    p-pushfeatuweswitchpawams.maxwistwecommendationspushgivenintewvaw, nyaa~~
+    s-stats, OwO
   )
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
+  ovewwide def iscandidatesouwceavaiwabwe(tawget: tawget): futuwe[boowean] = {
 
-    val isNotFatigued = pushCapFatiguePredicate.apply(Seq(target)).map(_.head)
+    vaw isnotfatigued = p-pushcapfatiguepwedicate.appwy(seq(tawget)).map(_.head)
 
-    Future
+    f-futuwe
       .join(
-        PushDeviceUtil.isRecommendationsEligible(target),
-        isNotFatigued
+        p-pushdeviceutiw.iswecommendationsewigibwe(tawget), rawr x3
+        isnotfatigued
       ).map {
-        case (userRecommendationsEligible, isUnderCAP) =>
-          userRecommendationsEligible && isUnderCAP && target.params(
-            PushFeatureSwitchParams.EnableListRecommendations)
+        c-case (usewwecommendationsewigibwe, XD i-isundewcap) =>
+          usewwecommendationsewigibwe && i-isundewcap && tawget.pawams(
+            pushfeatuweswitchpawams.enabwewistwecommendations)
       }
   }
 }

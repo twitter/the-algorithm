@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.twhin_embeddings
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.twhin_embeddings
 
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.ml.api.{thriftscala => ml}
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
+impowt com.twittew.mw.api.datatype
+i-impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.featuwecontext
+i-impowt c-com.twittew.mw.api.wichdatawecowd
+i-impowt com.twittew.mw.api.utiw.scawatojavadatawecowdconvewsions
+i-impowt com.twittew.mw.api.{thwiftscawa => m-mw}
+impowt com.twittew.timewines.pwediction.common.adaptews.timewinesmutatingadaptewbase
 
-sealed trait TwhinEmbeddingsAdapter extends TimelinesMutatingAdapterBase[Option[ml.FloatTensor]] {
-  def twhinEmbeddingsFeature: Feature.Tensor
+s-seawed twait twhinembeddingsadaptew extends timewinesmutatingadaptewbase[option[mw.fwoattensow]] {
+  def twhinembeddingsfeatuwe: featuwe.tensow
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(
-    twhinEmbeddingsFeature
+  o-ovewwide def getfeatuwecontext: featuwecontext = new f-featuwecontext(
+    twhinembeddingsfeatuwe
   )
 
-  override def setFeatures(
-    embedding: Option[ml.FloatTensor],
-    richDataRecord: RichDataRecord
-  ): Unit = {
-    embedding.foreach { floatTensor =>
-      richDataRecord.setFeatureValue(
-        twhinEmbeddingsFeature,
-        ScalaToJavaDataRecordConversions.scalaTensor2Java(
-          ml.GeneralTensor
-            .FloatTensor(floatTensor)))
+  o-ovewwide def setfeatuwes(
+    embedding: option[mw.fwoattensow], (U ﹏ U)
+    wichdatawecowd: w-wichdatawecowd
+  ): unit = {
+    e-embedding.foweach { fwoattensow =>
+      w-wichdatawecowd.setfeatuwevawue(
+        twhinembeddingsfeatuwe,
+        scawatojavadatawecowdconvewsions.scawatensow2java(
+          mw.genewawtensow
+            .fwoattensow(fwoattensow)))
     }
   }
 }
 
-object TwhinEmbeddingsFeatures {
-  val TwhinAuthorFollowEmbeddingsFeature: Feature.Tensor = new Feature.Tensor(
-    "original_author.twhin.tw_hi_n.author_follow_as_float_tensor",
-    DataType.FLOAT
+object twhinembeddingsfeatuwes {
+  v-vaw twhinauthowfowwowembeddingsfeatuwe: featuwe.tensow = nyew featuwe.tensow(
+    "owiginaw_authow.twhin.tw_hi_n.authow_fowwow_as_fwoat_tensow", (///ˬ///✿)
+    datatype.fwoat
   )
 
-  val TwhinUserEngagementEmbeddingsFeature: Feature.Tensor = new Feature.Tensor(
-    "user.twhin.tw_hi_n.user_engagement_as_float_tensor",
-    DataType.FLOAT
+  v-vaw twhinusewengagementembeddingsfeatuwe: f-featuwe.tensow = n-nyew featuwe.tensow(
+    "usew.twhin.tw_hi_n.usew_engagement_as_fwoat_tensow", >w<
+    d-datatype.fwoat
   )
 
-  val TwhinUserFollowEmbeddingsFeature: Feature.Tensor = new Feature.Tensor(
-    "user.twhin.tw_hi_n.user_follow_as_float_tensor",
-    DataType.FLOAT
+  v-vaw twhinusewfowwowembeddingsfeatuwe: featuwe.tensow = nyew featuwe.tensow(
+    "usew.twhin.tw_hi_n.usew_fowwow_as_fwoat_tensow", rawr
+    d-datatype.fwoat
   )
 }
 
-object TwhinAuthorFollowEmbeddingsAdapter extends TwhinEmbeddingsAdapter {
-  override val twhinEmbeddingsFeature: Feature.Tensor =
-    TwhinEmbeddingsFeatures.TwhinAuthorFollowEmbeddingsFeature
+object twhinauthowfowwowembeddingsadaptew e-extends twhinembeddingsadaptew {
+  ovewwide vaw twhinembeddingsfeatuwe: featuwe.tensow =
+    twhinembeddingsfeatuwes.twhinauthowfowwowembeddingsfeatuwe
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  ovewwide vaw commonfeatuwes: set[featuwe[_]] = set.empty
 }
 
-object TwhinUserEngagementEmbeddingsAdapter extends TwhinEmbeddingsAdapter {
-  override val twhinEmbeddingsFeature: Feature.Tensor =
-    TwhinEmbeddingsFeatures.TwhinUserEngagementEmbeddingsFeature
+object t-twhinusewengagementembeddingsadaptew extends t-twhinembeddingsadaptew {
+  o-ovewwide v-vaw twhinembeddingsfeatuwe: featuwe.tensow =
+    twhinembeddingsfeatuwes.twhinusewengagementembeddingsfeatuwe
 
-  override val commonFeatures: Set[Feature[_]] = Set(twhinEmbeddingsFeature)
+  ovewwide v-vaw commonfeatuwes: s-set[featuwe[_]] = set(twhinembeddingsfeatuwe)
 }
 
-object TwhinUserFollowEmbeddingsAdapter extends TwhinEmbeddingsAdapter {
-  override val twhinEmbeddingsFeature: Feature.Tensor =
-    TwhinEmbeddingsFeatures.TwhinUserFollowEmbeddingsFeature
+o-object twhinusewfowwowembeddingsadaptew e-extends twhinembeddingsadaptew {
+  o-ovewwide vaw twhinembeddingsfeatuwe: featuwe.tensow =
+    t-twhinembeddingsfeatuwes.twhinusewfowwowembeddingsfeatuwe
 
-  override val commonFeatures: Set[Feature[_]] = Set(twhinEmbeddingsFeature)
+  ovewwide vaw commonfeatuwes: s-set[featuwe[_]] = set(twhinembeddingsfeatuwe)
 }

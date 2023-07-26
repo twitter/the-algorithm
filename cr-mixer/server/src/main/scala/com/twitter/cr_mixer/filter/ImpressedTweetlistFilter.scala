@@ -1,63 +1,63 @@
-package com.twitter.cr_mixer.filter
+package com.twittew.cw_mixew.fiwtew
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.util.Future
-import javax.inject.Singleton
+impowt com.twittew.cw_mixew.modew.candidategenewatowquewy
+i-impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt j-javax.inject.singweton
 
-@Singleton
-case class ImpressedTweetlistFilter() extends FilterBase {
-  import ImpressedTweetlistFilter._
+@singweton
+case cwass impwessedtweetwistfiwtew() extends fiwtewbase {
+  impowt impwessedtweetwistfiwtew._
 
-  override val name: String = this.getClass.getCanonicalName
+  o-ovewwide vaw nyame: stwing = this.getcwass.getcanonicawname
 
-  override type ConfigType = FilterConfig
+  o-ovewwide type configtype = f-fiwtewconfig
 
   /*
-   Filtering removes some candidates based on configurable criteria.
+   fiwtewing wemoves some candidates based on c-configuwabwe cwitewia.
    */
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: FilterConfig
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    // Remove candidates which match a source tweet, or which are passed in impressedTweetList
-    val sourceTweetsMatch = candidates
-      .flatMap {
+  ovewwide def fiwtew(
+    c-candidates: s-seq[seq[initiawcandidate]], mya
+    config: fiwtewconfig
+  ): futuwe[seq[seq[initiawcandidate]]] = {
+    // wemove candidates which match a souwce t-tweet, ^^ ow which awe passed in impwessedtweetwist
+    vaw souwcetweetsmatch = candidates
+      .fwatmap {
 
         /***
-         * Within a Seq[Seq[InitialCandidate]], all candidates within a inner Seq
-         * are guaranteed to have the same sourceInfo. Hence, we can pick .headOption
-         * to represent the whole list when filtering by the internalId of the sourceInfoOpt.
-         * But of course the similarityEngineInfo could be different.
+         * w-within a seq[seq[initiawcandidate]], 😳😳😳 aww candidates w-within a-a innew seq
+         * a-awe guawanteed t-to have the same souwceinfo. mya hence, 😳 we can p-pick .headoption
+         * to wepwesent the whowe w-wist when fiwtewing by the intewnawid of the souwceinfoopt. -.-
+         * but of couwse the simiwawityengineinfo c-couwd be diffewent. 🥺
          */
-        _.headOption.flatMap { candidate =>
-          candidate.candidateGenerationInfo.sourceInfoOpt.map(_.internalId)
+        _.headoption.fwatmap { candidate =>
+          c-candidate.candidategenewationinfo.souwceinfoopt.map(_.intewnawid)
         }
-      }.collect {
-        case InternalId.TweetId(id) => id
+      }.cowwect {
+        case i-intewnawid.tweetid(id) => i-id
       }
 
-    val impressedTweetList: Set[TweetId] =
-      config.impressedTweetList ++ sourceTweetsMatch
+    vaw impwessedtweetwist: set[tweetid] =
+      c-config.impwessedtweetwist ++ s-souwcetweetsmatch
 
-    val filteredCandidateMap: Seq[Seq[InitialCandidate]] =
-      candidates.map {
-        _.filterNot { candidate =>
-          impressedTweetList.contains(candidate.tweetId)
+    vaw fiwtewedcandidatemap: s-seq[seq[initiawcandidate]] =
+      c-candidates.map {
+        _.fiwtewnot { candidate =>
+          i-impwessedtweetwist.contains(candidate.tweetid)
         }
       }
-    Future.value(filteredCandidateMap)
+    futuwe.vawue(fiwtewedcandidatemap)
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
-    request: CGQueryType
-  ): FilterConfig = {
-    FilterConfig(request.impressedTweetList)
+  ovewwide d-def wequesttoconfig[cgquewytype <: candidategenewatowquewy](
+    wequest: cgquewytype
+  ): f-fiwtewconfig = {
+    fiwtewconfig(wequest.impwessedtweetwist)
   }
 }
 
-object ImpressedTweetlistFilter {
-  case class FilterConfig(impressedTweetList: Set[TweetId])
+o-object impwessedtweetwistfiwtew {
+  case cwass f-fiwtewconfig(impwessedtweetwist: s-set[tweetid])
 }

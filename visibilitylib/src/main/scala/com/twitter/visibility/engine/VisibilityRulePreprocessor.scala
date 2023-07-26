@@ -1,156 +1,156 @@
-package com.twitter.visibility.engine
+package com.twittew.visibiwity.engine
 
-import com.twitter.abdecider.NullABDecider
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.visibility.builder.VisibilityResultBuilder
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.Rule.DisabledRuleResult
-import com.twitter.visibility.rules.Rule.EvaluatedRuleResult
-import com.twitter.visibility.rules.State._
-import com.twitter.visibility.rules._
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.providers.PolicyProvider
+impowt com.twittew.abdecidew.nuwwabdecidew
+i-impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
+i-impowt c-com.twittew.utiw.twy
+i-impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwtbuiwdew
+i-impowt com.twittew.visibiwity.featuwes._
+i-impowt com.twittew.visibiwity.modews.safetywevew
+impowt com.twittew.visibiwity.wuwes.wuwe.disabwedwuwewesuwt
+impowt com.twittew.visibiwity.wuwes.wuwe.evawuatedwuwewesuwt
+impowt c-com.twittew.visibiwity.wuwes.state._
+impowt com.twittew.visibiwity.wuwes._
+impowt c-com.twittew.visibiwity.wuwes.pwovidews.pwovidedevawuationcontext
+impowt com.twittew.visibiwity.wuwes.pwovidews.powicypwovidew
 
-class VisibilityRulePreprocessor private (
-  metricsRecorder: VisibilityResultsMetricRecorder,
-  policyProviderOpt: Option[PolicyProvider] = None) {
+c-cwass visibiwitywuwepwepwocessow pwivate (
+  metwicswecowdew: visibiwitywesuwtsmetwicwecowdew, rawr x3
+  p-powicypwovidewopt: option[powicypwovidew] = n-nyone) {
 
-  private[engine] def filterEvaluableRules(
-    evaluationContext: ProvidedEvaluationContext,
-    resultBuilder: VisibilityResultBuilder,
-    rules: Seq[Rule]
-  ): (VisibilityResultBuilder, Seq[Rule]) = {
-    val (builder, ruleList) = rules.foldLeft((resultBuilder, Seq.empty[Rule])) {
-      case ((builder, nextPassRules), rule) =>
-        if (evaluationContext.ruleEnabledInContext(rule)) {
-          val missingFeatures: Set[Feature[_]] = rule.featureDependencies.collect {
-            case feature: Feature[_] if !builder.featureMap.contains(feature) => feature
+  pwivate[engine] d-def fiwtewevawuabwewuwes(
+    evawuationcontext: pwovidedevawuationcontext, XD
+    wesuwtbuiwdew: v-visibiwitywesuwtbuiwdew, σωσ
+    wuwes: seq[wuwe]
+  ): (visibiwitywesuwtbuiwdew, (U ᵕ U❁) seq[wuwe]) = {
+    vaw (buiwdew, (U ﹏ U) wuwewist) = w-wuwes.fowdweft((wesuwtbuiwdew, :3 seq.empty[wuwe])) {
+      c-case ((buiwdew, n-nyextpasswuwes), ( ͡o ω ͡o ) wuwe) =>
+        i-if (evawuationcontext.wuweenabwedincontext(wuwe)) {
+          v-vaw missingfeatuwes: set[featuwe[_]] = w-wuwe.featuwedependencies.cowwect {
+            case featuwe: featuwe[_] if !buiwdew.featuwemap.contains(featuwe) => f-featuwe
           }
 
-          if (missingFeatures.isEmpty) {
-            (builder, nextPassRules :+ rule)
-          } else {
-            metricsRecorder.recordRuleMissingFeatures(rule.name, missingFeatures)
+          if (missingfeatuwes.isempty) {
+            (buiwdew, σωσ nyextpasswuwes :+ wuwe)
+          } ewse {
+            metwicswecowdew.wecowdwuwemissingfeatuwes(wuwe.name, >w< missingfeatuwes)
             (
-              builder.withRuleResult(
-                rule,
-                RuleResult(NotEvaluated, MissingFeature(missingFeatures))
-              ),
-              nextPassRules
+              b-buiwdew.withwuwewesuwt(
+                wuwe, 😳😳😳
+                w-wuwewesuwt(notevawuated, OwO m-missingfeatuwe(missingfeatuwes))
+              ), 😳
+              n-nyextpasswuwes
             )
           }
-        } else {
-          (builder.withRuleResult(rule, DisabledRuleResult), nextPassRules)
+        } ewse {
+          (buiwdew.withwuwewesuwt(wuwe, 😳😳😳 disabwedwuwewesuwt), (˘ω˘) nyextpasswuwes)
         }
     }
-    (builder, ruleList)
+    (buiwdew, ʘwʘ wuwewist)
   }
 
-  private[visibility] def preFilterRules(
-    evaluationContext: ProvidedEvaluationContext,
-    resolvedFeatureMap: Map[Feature[_], Any],
-    resultBuilder: VisibilityResultBuilder,
-    rules: Seq[Rule]
-  ): (VisibilityResultBuilder, Seq[Rule]) = {
-    val isResolvedFeatureMap = resultBuilder.featureMap.isInstanceOf[ResolvedFeatureMap]
-    val (builder, ruleList) = rules.foldLeft((resultBuilder, Seq.empty[Rule])) {
-      case ((builder, nextPassRules), rule) =>
-        rule.preFilter(evaluationContext, resolvedFeatureMap, NullABDecider) match {
-          case NeedsFullEvaluation =>
-            (builder, nextPassRules :+ rule)
-          case NotFiltered =>
-            (builder, nextPassRules :+ rule)
-          case Filtered if isResolvedFeatureMap =>
-            (builder, nextPassRules :+ rule)
-          case Filtered =>
-            (builder.withRuleResult(rule, EvaluatedRuleResult), nextPassRules)
+  p-pwivate[visibiwity] d-def pwefiwtewwuwes(
+    evawuationcontext: pwovidedevawuationcontext, ( ͡o ω ͡o )
+    w-wesowvedfeatuwemap: m-map[featuwe[_], o.O any],
+    wesuwtbuiwdew: v-visibiwitywesuwtbuiwdew, >w<
+    wuwes: s-seq[wuwe]
+  ): (visibiwitywesuwtbuiwdew, 😳 seq[wuwe]) = {
+    vaw i-iswesowvedfeatuwemap = wesuwtbuiwdew.featuwemap.isinstanceof[wesowvedfeatuwemap]
+    v-vaw (buiwdew, 🥺 wuwewist) = w-wuwes.fowdweft((wesuwtbuiwdew, rawr x3 s-seq.empty[wuwe])) {
+      case ((buiwdew, o.O nyextpasswuwes), rawr wuwe) =>
+        wuwe.pwefiwtew(evawuationcontext, ʘwʘ wesowvedfeatuwemap, 😳😳😳 nyuwwabdecidew) m-match {
+          c-case nyeedsfuwwevawuation =>
+            (buiwdew, ^^;; nextpasswuwes :+ w-wuwe)
+          c-case nyotfiwtewed =>
+            (buiwdew, o.O n-nyextpasswuwes :+ wuwe)
+          case fiwtewed if iswesowvedfeatuwemap =>
+            (buiwdew, (///ˬ///✿) n-nyextpasswuwes :+ wuwe)
+          case fiwtewed =>
+            (buiwdew.withwuwewesuwt(wuwe, σωσ evawuatedwuwewesuwt), nyaa~~ nyextpasswuwes)
         }
     }
-    (builder, ruleList)
+    (buiwdew, ^^;; w-wuwewist)
   }
 
-  private[visibility] def evaluate(
-    evaluationContext: ProvidedEvaluationContext,
-    safetyLevel: SafetyLevel,
-    resultBuilder: VisibilityResultBuilder
-  ): (VisibilityResultBuilder, Seq[Rule]) = {
-    val visibilityPolicy = policyProviderOpt match {
-      case Some(policyProvider) =>
-        policyProvider.policyForSurface(safetyLevel)
-      case None => RuleBase.RuleMap(safetyLevel)
+  pwivate[visibiwity] d-def evawuate(
+    e-evawuationcontext: pwovidedevawuationcontext, ^•ﻌ•^
+    s-safetywevew: safetywevew, σωσ
+    w-wesuwtbuiwdew: v-visibiwitywesuwtbuiwdew
+  ): (visibiwitywesuwtbuiwdew, -.- s-seq[wuwe]) = {
+    v-vaw visibiwitypowicy = powicypwovidewopt match {
+      c-case s-some(powicypwovidew) =>
+        p-powicypwovidew.powicyfowsuwface(safetywevew)
+      c-case nyone => w-wuwebase.wuwemap(safetywevew)
     }
 
-    if (evaluationContext.params(safetyLevel.enabledParam)) {
-      evaluate(evaluationContext, visibilityPolicy, resultBuilder)
-    } else {
-      metricsRecorder.recordAction(safetyLevel, "disabled")
+    if (evawuationcontext.pawams(safetywevew.enabwedpawam)) {
+      evawuate(evawuationcontext, ^^;; visibiwitypowicy, XD w-wesuwtbuiwdew)
+    } ewse {
+      metwicswecowdew.wecowdaction(safetywevew, 🥺 "disabwed")
 
-      val rules: Seq[Rule] = visibilityPolicy.forContentId(resultBuilder.contentId)
-      val skippedResultBuilder = resultBuilder
-        .withRuleResultMap(rules.map(r => r -> RuleResult(Allow, Skipped)).toMap)
-        .withVerdict(verdict = Allow)
-        .withFinished(finished = true)
+      vaw wuwes: seq[wuwe] = visibiwitypowicy.fowcontentid(wesuwtbuiwdew.contentid)
+      vaw s-skippedwesuwtbuiwdew = wesuwtbuiwdew
+        .withwuwewesuwtmap(wuwes.map(w => w -> wuwewesuwt(awwow, òωó skipped)).tomap)
+        .withvewdict(vewdict = a-awwow)
+        .withfinished(finished = t-twue)
 
-      (skippedResultBuilder, rules)
+      (skippedwesuwtbuiwdew, (ˆ ﻌ ˆ)♡ w-wuwes)
     }
   }
 
-  private[visibility] def evaluate(
-    evaluationContext: ProvidedEvaluationContext,
-    visibilityPolicy: VisibilityPolicy,
-    resultBuilder: VisibilityResultBuilder,
-  ): (VisibilityResultBuilder, Seq[Rule]) = {
+  pwivate[visibiwity] d-def evawuate(
+    evawuationcontext: pwovidedevawuationcontext, -.-
+    v-visibiwitypowicy: v-visibiwitypowicy,
+    wesuwtbuiwdew: visibiwitywesuwtbuiwdew, :3
+  ): (visibiwitywesuwtbuiwdew, ʘwʘ seq[wuwe]) = {
 
-    val rules: Seq[Rule] = visibilityPolicy.forContentId(resultBuilder.contentId)
+    vaw wuwes: seq[wuwe] = visibiwitypowicy.fowcontentid(wesuwtbuiwdew.contentid)
 
-    val (secondPassBuilder, secondPassRules) =
-      filterEvaluableRules(evaluationContext, resultBuilder, rules)
+    v-vaw (secondpassbuiwdew, 🥺 secondpasswuwes) =
+      f-fiwtewevawuabwewuwes(evawuationcontext, >_< wesuwtbuiwdew, ʘwʘ w-wuwes)
 
-    val secondPassFeatureMap = secondPassBuilder.featureMap
+    v-vaw secondpassfeatuwemap = secondpassbuiwdew.featuwemap
 
-    val secondPassConstantFeatures: Set[Feature[_]] = RuleBase
-      .getFeaturesForRules(secondPassRules)
-      .filter(secondPassFeatureMap.containsConstant(_))
+    vaw secondpassconstantfeatuwes: s-set[featuwe[_]] = w-wuwebase
+      .getfeatuwesfowwuwes(secondpasswuwes)
+      .fiwtew(secondpassfeatuwemap.containsconstant(_))
 
-    val secondPassFeatureValues: Set[(Feature[_], Any)] = secondPassConstantFeatures.map {
-      feature =>
-        Try(secondPassFeatureMap.getConstant(feature)) match {
-          case Return(value) => (feature, value)
-          case Throw(ex) =>
-            metricsRecorder.recordFailedFeature(feature, ex)
-            (feature, FeatureFailedPlaceholderObject(ex))
+    vaw secondpassfeatuwevawues: s-set[(featuwe[_], (˘ω˘) a-any)] = secondpassconstantfeatuwes.map {
+      featuwe =>
+        twy(secondpassfeatuwemap.getconstant(featuwe)) match {
+          case wetuwn(vawue) => (featuwe, (✿oωo) v-vawue)
+          c-case t-thwow(ex) =>
+            metwicswecowdew.wecowdfaiwedfeatuwe(featuwe, (///ˬ///✿) e-ex)
+            (featuwe, rawr x3 f-featuwefaiwedpwacehowdewobject(ex))
         }
     }
 
-    val resolvedFeatureMap: Map[Feature[_], Any] =
-      secondPassFeatureValues.filterNot {
-        case (_, value) => value.isInstanceOf[FeatureFailedPlaceholderObject]
-      }.toMap
+    vaw wesowvedfeatuwemap: m-map[featuwe[_], -.- any] =
+      secondpassfeatuwevawues.fiwtewnot {
+        case (_, ^^ vawue) => vawue.isinstanceof[featuwefaiwedpwacehowdewobject]
+      }.tomap
 
-    val (preFilteredResultBuilder, preFilteredRules) = preFilterRules(
-      evaluationContext,
-      resolvedFeatureMap,
-      secondPassBuilder,
-      secondPassRules
+    vaw (pwefiwtewedwesuwtbuiwdew, (⑅˘꒳˘) p-pwefiwtewedwuwes) = p-pwefiwtewwuwes(
+      evawuationcontext, nyaa~~
+      wesowvedfeatuwemap, /(^•ω•^)
+      secondpassbuiwdew,
+      s-secondpasswuwes
     )
 
-    val preFilteredFeatureMap =
-      RuleBase.removeUnusedFeaturesFromFeatureMap(
-        preFilteredResultBuilder.featureMap,
-        preFilteredRules)
+    v-vaw pwefiwtewedfeatuwemap =
+      wuwebase.wemoveunusedfeatuwesfwomfeatuwemap(
+        pwefiwtewedwesuwtbuiwdew.featuwemap, (U ﹏ U)
+        pwefiwtewedwuwes)
 
-    (preFilteredResultBuilder.withFeatureMap(preFilteredFeatureMap), preFilteredRules)
+    (pwefiwtewedwesuwtbuiwdew.withfeatuwemap(pwefiwtewedfeatuwemap), 😳😳😳 pwefiwtewedwuwes)
   }
 }
 
-object VisibilityRulePreprocessor {
-  def apply(
-    metricsRecorder: VisibilityResultsMetricRecorder,
-    policyProviderOpt: Option[PolicyProvider] = None
-  ): VisibilityRulePreprocessor = {
-    new VisibilityRulePreprocessor(metricsRecorder, policyProviderOpt)
+o-object visibiwitywuwepwepwocessow {
+  def appwy(
+    metwicswecowdew: visibiwitywesuwtsmetwicwecowdew, >w<
+    powicypwovidewopt: o-option[powicypwovidew] = nyone
+  ): visibiwitywuwepwepwocessow = {
+    new v-visibiwitywuwepwepwocessow(metwicswecowdew, XD p-powicypwovidewopt)
   }
 }

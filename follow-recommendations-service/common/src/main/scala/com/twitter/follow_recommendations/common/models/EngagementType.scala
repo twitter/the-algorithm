@@ -1,62 +1,62 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.follow_recommendations.thriftscala.{EngagementType => TEngagementType}
-import com.twitter.follow_recommendations.logging.thriftscala.{
-  EngagementType => OfflineEngagementType
+impowt c-com.twittew.fowwow_wecommendations.thwiftscawa.{engagementtype => t-tengagementtype}
+i-impowt com.twittew.fowwow_wecommendations.wogging.thwiftscawa.{
+  e-engagementtype => o-offwineengagementtype
 }
-sealed trait EngagementType {
-  def toThrift: TEngagementType
-  def toOfflineThrift: OfflineEngagementType
+seawed t-twait engagementtype {
+  def t-tothwift: tengagementtype
+  def t-tooffwinethwift: offwineengagementtype
 }
 
-object EngagementType {
-  object Click extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.Click
+object engagementtype {
+  object cwick e-extends engagementtype {
+    ovewwide vaw tothwift: tengagementtype = t-tengagementtype.cwick
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Click
+    ovewwide vaw t-tooffwinethwift: offwineengagementtype = offwineengagementtype.cwick
   }
-  object Like extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.Like
+  object w-wike extends engagementtype {
+    o-ovewwide vaw t-tothwift: tengagementtype = tengagementtype.wike
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Like
+    ovewwide vaw tooffwinethwift: offwineengagementtype = offwineengagementtype.wike
   }
-  object Mention extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.Mention
+  object mention extends e-engagementtype {
+    ovewwide vaw tothwift: tengagementtype = tengagementtype.mention
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Mention
+    o-ovewwide vaw tooffwinethwift: offwineengagementtype = o-offwineengagementtype.mention
   }
-  object Retweet extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.Retweet
+  o-object w-wetweet extends e-engagementtype {
+    ovewwide vaw tothwift: tengagementtype = t-tengagementtype.wetweet
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Retweet
+    ovewwide vaw tooffwinethwift: o-offwineengagementtype = offwineengagementtype.wetweet
   }
-  object ProfileView extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.ProfileView
+  object pwofiweview extends engagementtype {
+    ovewwide v-vaw tothwift: tengagementtype = tengagementtype.pwofiweview
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.ProfileView
-  }
-
-  def fromThrift(engagementType: TEngagementType): EngagementType = engagementType match {
-    case TEngagementType.Click => Click
-    case TEngagementType.Like => Like
-    case TEngagementType.Mention => Mention
-    case TEngagementType.Retweet => Retweet
-    case TEngagementType.ProfileView => ProfileView
-    case TEngagementType.EnumUnknownEngagementType(i) =>
-      throw new UnknownEngagementTypeException(
-        s"Unknown engagement type thrift enum with value: ${i}")
+    o-ovewwide vaw tooffwinethwift: o-offwineengagementtype = o-offwineengagementtype.pwofiweview
   }
 
-  def fromOfflineThrift(engagementType: OfflineEngagementType): EngagementType =
-    engagementType match {
-      case OfflineEngagementType.Click => Click
-      case OfflineEngagementType.Like => Like
-      case OfflineEngagementType.Mention => Mention
-      case OfflineEngagementType.Retweet => Retweet
-      case OfflineEngagementType.ProfileView => ProfileView
-      case OfflineEngagementType.EnumUnknownEngagementType(i) =>
-        throw new UnknownEngagementTypeException(
-          s"Unknown engagement type offline thrift enum with value: ${i}")
+  def fwomthwift(engagementtype: tengagementtype): engagementtype = e-engagementtype m-match {
+    case tengagementtype.cwick => c-cwick
+    c-case tengagementtype.wike => wike
+    case t-tengagementtype.mention => mention
+    c-case tengagementtype.wetweet => wetweet
+    case tengagementtype.pwofiweview => p-pwofiweview
+    case tengagementtype.enumunknownengagementtype(i) =>
+      t-thwow nyew unknownengagementtypeexception(
+        s"unknown e-engagement type t-thwift enum with vawue: ${i}")
+  }
+
+  def fwomoffwinethwift(engagementtype: offwineengagementtype): engagementtype =
+    engagementtype match {
+      c-case offwineengagementtype.cwick => c-cwick
+      case offwineengagementtype.wike => w-wike
+      c-case offwineengagementtype.mention => m-mention
+      case offwineengagementtype.wetweet => wetweet
+      case o-offwineengagementtype.pwofiweview => pwofiweview
+      case offwineengagementtype.enumunknownengagementtype(i) =>
+        thwow nyew unknownengagementtypeexception(
+          s-s"unknown engagement type offwine t-thwift enum with v-vawue: ${i}")
     }
 }
-class UnknownEngagementTypeException(message: String) extends Exception(message)
+c-cwass unknownengagementtypeexception(message: stwing) extends e-exception(message)

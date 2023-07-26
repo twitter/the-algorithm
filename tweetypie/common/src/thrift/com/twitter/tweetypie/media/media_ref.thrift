@@ -1,20 +1,20 @@
-namespace java com.twitter.tweetypie.media.thriftjava
-#@namespace scala com.twitter.tweetypie.media.thriftscala
-#@namespace strato com.twitter.tweetypie.media
-namespace py gen.twitter.tweetypie.media
-namespace rb TweetyPie
+namespace java com.twittew.tweetypie.media.thwiftjava
+#@namespace scawa com.twittew.tweetypie.media.thwiftscawa
+#@namespace s-stwato c-com.twittew.tweetypie.media
+n-nyamespace p-py gen.twittew.tweetypie.media
+n-nyamespace w-wb tweetypie
 
 
 /**
-* A MediaRef represents a reference to a piece of media in MediaInfoService, along with metadata
-* about the source Tweet that the media came from in case of pasted media.
+* a-a mediawef w-wepwesents a wefewence to a piece of media in mediainfosewvice, rawr x3 awong with metadata
+* a-about the souwce tweet that the media came f-fwom in case of pasted media. nyaa~~
 **/
-struct MediaRef {
-  1: string generic_media_key (personalDataType = 'MediaId')
+s-stwuct mediawef {
+  1: stwing genewic_media_key (pewsonawdatatype = 'mediaid')
 
-  // For Tweets with pasted media, the id of the Tweet where this media was copied from
-  2: optional i64 source_tweet_id (personalDataType = 'TweetId')
+  // fow tweets w-with pasted media, /(^•ω•^) the id o-of the tweet whewe t-this media was copied fwom
+  2: optionaw i64 souwce_tweet_id (pewsonawdatatype = 'tweetid')
 
-  // The author of source_tweet_id
-  3: optional i64 source_user_id (personalDataType = 'UserId')
-}(persisted='true', hasPersonalData='true')
+  // the authow o-of souwce_tweet_id
+  3: optionaw i64 souwce_usew_id (pewsonawdatatype = 'usewid')
+}(pewsisted='twue', rawr haspewsonawdata='twue')

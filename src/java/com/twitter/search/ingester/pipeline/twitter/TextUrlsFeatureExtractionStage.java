@@ -1,53 +1,53 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+impowt owg.apache.commons.pipewine.stageexception;
+i-impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+i-impowt owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
 
-import com.twitter.search.common.relevance.classifiers.TweetOffensiveEvaluator;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.scorers.TweetTextScorer;
-import com.twitter.search.common.relevance.text.TweetParser;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
+i-impowt com.twittew.seawch.common.wewevance.cwassifiews.tweetoffensiveevawuatow;
+i-impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+i-impowt c-com.twittew.seawch.common.wewevance.scowews.tweettextscowew;
+impowt c-com.twittew.seawch.common.wewevance.text.tweetpawsew;
+impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
 
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class TextUrlsFeatureExtractionStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private final TweetParser tweetParser = new TweetParser();
-  private TweetOffensiveEvaluator offensiveEvaluator;
-  private final TweetTextScorer tweetTextScorer = new TweetTextScorer(null);
+@consumedtypes(twittewmessage.cwass)
+@pwoducesconsumed
+pubwic cwass textuwwsfeatuweextwactionstage e-extends twittewbasestage
+    <ingestewtwittewmessage, >_< ingestewtwittewmessage> {
+  pwivate finaw t-tweetpawsew tweetpawsew = nyew t-tweetpawsew();
+  pwivate tweetoffensiveevawuatow offensiveevawuatow;
+  pwivate finaw t-tweettextscowew tweettextscowew = n-nyew tweettextscowew(nuww);
 
-  @Override
-  protected void doInnerPreprocess()  {
-    innerSetup();
+  @ovewwide
+  p-pwotected void doinnewpwepwocess()  {
+    innewsetup();
   }
 
-  @Override
-  protected void innerSetup() {
-    offensiveEvaluator = wireModule.getTweetOffensiveEvaluator();
+  @ovewwide
+  pwotected void innewsetup() {
+    offensiveevawuatow = w-wiwemoduwe.gettweetoffensiveevawuatow();
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a TwitterMessage instance: " + obj);
+  @ovewwide
+  pubwic void innewpwocess(object obj) thwows stageexception {
+    if (!(obj instanceof ingestewtwittewmessage)) {
+      t-thwow nyew stageexception(this, (⑅˘꒳˘) "object is n-not a twittewmessage i-instance: " + o-obj);
     }
 
-    IngesterTwitterMessage message = IngesterTwitterMessage.class.cast(obj);
-    extract(message);
-    emitAndCount(message);
+    i-ingestewtwittewmessage message = ingestewtwittewmessage.cwass.cast(obj);
+    e-extwact(message);
+    emitandcount(message);
   }
 
-  private void extract(IngesterTwitterMessage message) {
-    tweetParser.parseUrls(message);
-    offensiveEvaluator.evaluate(message);
-    tweetTextScorer.scoreTweet(message);
+  pwivate void e-extwact(ingestewtwittewmessage message) {
+    tweetpawsew.pawseuwws(message);
+    offensiveevawuatow.evawuate(message);
+    tweettextscowew.scowetweet(message);
   }
 
-  @Override
-  protected IngesterTwitterMessage innerRunStageV2(IngesterTwitterMessage message) {
-    extract(message);
-    return message;
+  @ovewwide
+  pwotected i-ingestewtwittewmessage innewwunstagev2(ingestewtwittewmessage m-message) {
+    extwact(message);
+    w-wetuwn message;
   }
 }

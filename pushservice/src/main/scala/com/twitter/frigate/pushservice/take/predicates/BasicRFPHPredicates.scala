@@ -1,7 +1,7 @@
-package com.twitter.frigate.pushservice.take.predicates
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
+package com.twittew.fwigate.pushsewvice.take.pwedicates
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.hewmit.pwedicate.namedpwedicate
 
-trait BasicRFPHPredicates[C <: PushCandidate] {
-  val predicates: List[NamedPredicate[C]]
+t-twait basicwfphpwedicates[c <: pushcandidate] {
+  v-vaw pwedicates: w-wist[namedpwedicate[c]]
 }

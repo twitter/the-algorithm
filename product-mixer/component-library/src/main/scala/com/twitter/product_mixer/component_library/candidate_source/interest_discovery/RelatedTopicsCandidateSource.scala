@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.component_library.candidate_source.interest_discovery
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.intewest_discovewy
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.inject.Logging
-import com.twitter.interests_discovery.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+impowt com.googwe.inject.inject
+i-impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.inject.wogging
+i-impowt c-com.twittew.intewests_discovewy.{thwiftscawa => t-t}
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stitch.stitch
 
 /**
- * Generate a list of related topics results from IDS getRelatedTopics (thrift) endpoint.
- * Returns related topics, given a topic, whereas [[RecommendedTopicsCandidateSource]] returns
- * recommended topics, given a user.
+ * genewate a wist of wewated topics wesuwts fwom i-ids getwewatedtopics (thwift) endpoint. (U ﹏ U)
+ * wetuwns wewated topics, >_< g-given a topic, rawr x3 wheweas [[wecommendedtopicscandidatesouwce]] w-wetuwns
+ * wecommended topics, mya given a usew. nyaa~~
  */
-@Singleton
-class RelatedTopicsCandidateSource @Inject() (
-  interestDiscoveryService: t.InterestsDiscoveryService.MethodPerEndpoint)
-    extends CandidateSource[t.RelatedTopicsRequest, t.RelatedTopic]
-    with Logging {
+@singweton
+cwass w-wewatedtopicscandidatesouwce @inject() (
+  intewestdiscovewysewvice: t.intewestsdiscovewysewvice.methodpewendpoint)
+    e-extends c-candidatesouwce[t.wewatedtopicswequest, (⑅˘꒳˘) t.wewatedtopic]
+    with wogging {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(name = "RelatedTopics")
+  ovewwide vaw identifiew: candidatesouwceidentifiew =
+    c-candidatesouwceidentifiew(name = "wewatedtopics")
 
-  override def apply(
-    request: t.RelatedTopicsRequest
-  ): Stitch[Seq[t.RelatedTopic]] = {
-    Stitch
-      .callFuture(interestDiscoveryService.getRelatedTopics(request))
-      .map { response: t.RelatedTopicsResponse =>
-        response.topics
+  ovewwide def appwy(
+    wequest: t.wewatedtopicswequest
+  ): stitch[seq[t.wewatedtopic]] = {
+    s-stitch
+      .cawwfutuwe(intewestdiscovewysewvice.getwewatedtopics(wequest))
+      .map { wesponse: t-t.wewatedtopicswesponse =>
+        w-wesponse.topics
       }
   }
 }

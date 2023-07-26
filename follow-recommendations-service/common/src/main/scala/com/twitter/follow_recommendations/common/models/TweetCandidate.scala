@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-case class TweetCandidate(
-  tweetId: Long,
-  authorId: Long,
-  score: Option[Double])
+case cwass t-tweetcandidate(
+  t-tweetid: wong, òωó
+  a-authowid: w-wong, o.O
+  scowe: o-option[doubwe])

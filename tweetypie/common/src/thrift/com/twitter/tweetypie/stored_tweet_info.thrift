@@ -1,52 +1,52 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
+namespace java com.twittew.tweetypie.thwiftjava
+#@namespace scawa c-com.twittew.tweetypie.thwiftscawa
+#@namespace stwato c-com.twittew.tweetypie
 
-include "com/twitter/tweetypie/tweet.thrift"
+i-incwude "com/twittew/tweetypie/tweet.thwift"
 
-struct HardDeleted {
-  1: i64 soft_deleted_timestamp_msec
-  2: i64 timestamp_msec
+s-stwuct h-hawddeweted {
+  1: i-i64 soft_deweted_timestamp_msec
+  2: i-i64 timestamp_msec
 }
 
-struct SoftDeleted {
+s-stwuct softdeweted {
   1: i64 timestamp_msec
 }
 
-struct BounceDeleted {
+stwuct bouncedeweted {
   1: i64 timestamp_msec
 }
 
-struct Undeleted {
+s-stwuct undeweted {
   1: i64 timestamp_msec
 }
 
-struct ForceAdded {
-  1: i64 timestamp_msec
+stwuct fowceadded {
+  1: i-i64 timestamp_msec
 }
 
-struct NotFound {}
+stwuct nyotfound {}
 
-union StoredTweetState {
-  1: HardDeleted hard_deleted
-  2: SoftDeleted soft_deleted
-  3: BounceDeleted bounce_deleted
-  4: Undeleted undeleted
-  5: ForceAdded force_added
-  6: NotFound not_found
+u-union stowedtweetstate {
+  1: hawddeweted hawd_deweted
+  2: softdeweted soft_deweted
+  3: bouncedeweted b-bounce_deweted
+  4: undeweted undeweted
+  5: f-fowceadded f-fowce_added
+  6: nyotfound nyot_found
 }
 
-enum StoredTweetError {
-  CORRUPT                     = 1,
-  SCRUBBED_FIELDS_PRESENT     = 2,
-  FIELDS_MISSING_OR_INVALID   = 3,
-  SHOULD_BE_HARD_DELETED      = 4,
-  FAILED_FETCH                = 5
+enum stowedtweetewwow {
+  cowwupt                     = 1, nyaa~~
+  s-scwubbed_fiewds_pwesent     = 2, (⑅˘꒳˘)
+  fiewds_missing_ow_invawid   = 3, rawr x3
+  shouwd_be_hawd_deweted      = 4, (✿oωo)
+  faiwed_fetch                = 5
 }
 
-struct StoredTweetInfo {
-  1: required i64 tweet_id
-  2: optional tweet.Tweet tweet
-  3: optional StoredTweetState stored_tweet_state
-  4: required list<StoredTweetError> errors = []
+stwuct stowedtweetinfo {
+  1: w-wequiwed i64 tweet_id
+  2: optionaw t-tweet.tweet t-tweet
+  3: optionaw s-stowedtweetstate s-stowed_tweet_state
+  4: wequiwed wist<stowedtweetewwow> ewwows = []
 }

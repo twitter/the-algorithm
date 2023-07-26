@@ -1,203 +1,203 @@
-use arrayvec::ArrayVec;
-use itertools::Itertools;
-use log::info;
-use std::sync::Arc;
-use tokio::sync::oneshot::Sender;
-use tokio::time::Instant;
+use awwayvec::awwayvec;
+use itewtoows::itewtoows;
+u-use wog::info;
+u-use std::sync::awc;
+u-use tokio::sync::oneshot::sendew;
+u-use tokio::time::instant;
 
-use crate::bootstrap::{TensorInput, TensorInputEnum};
-use crate::cli_args::{ARGS, MODEL_SPECS};
-use crate::{Callback, MAX_NUM_INPUTS, PredictResult};
-use crate::metrics::{
-    BATCH_SIZE, BATCH_SIZE_BY_MODEL, BLOCKING_REQUEST_NUM, MODEL_INFERENCE_TIME_COLLECTOR,
-    NUM_BATCH_PREDICTION, NUM_BATCH_PREDICTION_BY_MODEL, NUM_BATCHES_DROPPED,
-    NUM_BATCHES_DROPPED_BY_MODEL, NUM_PREDICTION_BY_MODEL, NUM_REQUESTS_DROPPED,
-    NUM_REQUESTS_DROPPED_BY_MODEL,
+u-use cwate::bootstwap::{tensowinput, ( ͡o ω ͡o ) t-tensowinputenum};
+u-use cwate::cwi_awgs::{awgs, rawr x3 m-modew_specs};
+use cwate::{cawwback, nyaa~~ max_num_inputs, >_< pwedictwesuwt};
+use cwate::metwics::{
+    b-batch_size, ^^;; batch_size_by_modew, (ˆ ﻌ ˆ)♡ bwocking_wequest_num, ^^;; modew_infewence_time_cowwectow, (⑅˘꒳˘)
+    n-nyum_batch_pwediction, rawr x3 nyum_batch_pwediction_by_modew, (///ˬ///✿) n-nyum_batches_dwopped, 🥺
+    nyum_batches_dwopped_by_modew, >_< nyum_pwediction_by_modew, UwU nyum_wequests_dwopped, >_<
+    n-nyum_wequests_dwopped_by_modew, -.-
 };
-use crate::predict_service::Model;
-use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice;
-use crate::tf_proto::tensorflow_serving::PredictRequest;
-use crate::tf_proto::DataType;
+use cwate::pwedict_sewvice::modew;
+u-use cwate::tf_pwoto::tensowfwow_sewving::modew_spec::vewsionchoice;
+u-use cwate::tf_pwoto::tensowfwow_sewving::pwedictwequest;
+use cwate::tf_pwoto::datatype;
 
-#[derive(Debug)]
-pub struct BatchPredictor<T: Model> {
-    pub model: Arc<T>,
-    pub input_tensors: Vec<Vec<TensorInput>>,
-    pub callbacks: Vec<Callback>,
-    pub cur_batch_size: usize,
-    pub max_batch_size: usize,
-    pub batch_time_out_millis: u64,
-    pub queue_reset_ts: Instant,
-    pub queue_earliest_rq_ts: Instant,
+#[dewive(debug)]
+pub stwuct batchpwedictow<t: modew> {
+    pub m-modew: awc<t>,
+    pub input_tensows: vec<vec<tensowinput>>, mya
+    pub cawwbacks: vec<cawwback>,
+    p-pub cuw_batch_size: usize, >w<
+    p-pub max_batch_size: u-usize, (U ﹏ U)
+    p-pub batch_time_out_miwwis: u64, 😳😳😳
+    p-pub queue_weset_ts: instant, o.O
+    pub queue_eawwiest_wq_ts: i-instant, òωó
 }
 
-impl PredictRequest {
-    #[inline(always)]
-    pub fn take_input_vals(
-        &mut self,
-        inputs: &ArrayVec<String, MAX_NUM_INPUTS>,
-    ) -> Vec<TensorInput> {
-        let mut model_inputs = Vec::<TensorInput>::new();
-        for input_name in inputs.as_slice() {
-            let input_tensor = self
+impw pwedictwequest {
+    #[inwine(awways)]
+    pub fn take_input_vaws(
+        &mut s-sewf, 😳😳😳
+        inputs: &awwayvec<stwing, σωσ max_num_inputs>, (⑅˘꒳˘)
+    ) -> vec<tensowinput> {
+        wet mut modew_inputs = vec::<tensowinput>::new();
+        f-fow input_name in inputs.as_swice() {
+            w-wet i-input_tensow = s-sewf
                 .inputs
                 .get_mut(input_name)
-                .unwrap_or_else(|| panic!("can't find {:?}", input_name));
-            let dims = match &input_tensor.tensor_shape {
-                None => None,
-                Some(data) => Some(data.dim.iter().map(|d| d.size).collect_vec()),
+                .unwwap_ow_ewse(|| panic!("can't find {:?}", (///ˬ///✿) input_name));
+            wet dims = m-match &input_tensow.tensow_shape {
+                n-nyone => nyone, 🥺
+                s-some(data) => s-some(data.dim.itew().map(|d| d.size).cowwect_vec()), OwO
             };
-            match input_tensor.dtype() {
-                DataType::DtFloat => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Float(std::mem::take(&mut input_tensor.float_val)),
-                    input_name.to_string(),
-                    dims,
+            m-match input_tensow.dtype() {
+                datatype::dtfwoat => m-modew_inputs.push(tensowinput::new(
+                    tensowinputenum::fwoat(std::mem::take(&mut input_tensow.fwoat_vaw)), >w<
+                    input_name.to_stwing(),
+                    d-dims, 🥺
                 )),
-                DataType::DtDouble => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Double(std::mem::take(&mut input_tensor.double_val)),
-                    input_name.to_string(),
+                datatype::dtdoubwe => m-modew_inputs.push(tensowinput::new(
+                    tensowinputenum::doubwe(std::mem::take(&mut i-input_tensow.doubwe_vaw)), nyaa~~
+                    i-input_name.to_stwing(), ^^
+                    dims, >w<
+                )), OwO
+                datatype::dtint32 => modew_inputs.push(tensowinput::new(
+                    tensowinputenum::int(std::mem::take(&mut input_tensow.int_vaw)), XD
+                    input_name.to_stwing(), ^^;;
+                    dims, 🥺
+                )), XD
+                d-datatype::dtstwing => m-modew_inputs.push(tensowinput::new(
+                    tensowinputenum::stwing(std::mem::take(&mut input_tensow.stwing_vaw)), (U ᵕ U❁)
+                    i-input_name.to_stwing(), :3
+                    d-dims,
+                )), ( ͡o ω ͡o )
+                d-datatype::dtint64 => modew_inputs.push(tensowinput::new(
+                    tensowinputenum::int64(std::mem::take(&mut input_tensow.int64_vaw)), òωó
+                    i-input_name.to_stwing(), σωσ
                     dims,
-                )),
-                DataType::DtInt32 => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Int(std::mem::take(&mut input_tensor.int_val)),
-                    input_name.to_string(),
-                    dims,
-                )),
-                DataType::DtString => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::String(std::mem::take(&mut input_tensor.string_val)),
-                    input_name.to_string(),
-                    dims,
-                )),
-                DataType::DtInt64 => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Int64(std::mem::take(&mut input_tensor.int64_val)),
-                    input_name.to_string(),
-                    dims,
-                )),
-                DataType::DtBool => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Boolean(std::mem::take(&mut input_tensor.bool_val)),
-                    input_name.to_string(),
-                    dims,
-                )),
-                _ => panic!("unsupport input tensor type {:?}", input_tensor.dtype()),
+                )), (U ᵕ U❁)
+                datatype::dtboow => modew_inputs.push(tensowinput::new(
+                    tensowinputenum::boowean(std::mem::take(&mut i-input_tensow.boow_vaw)), (✿oωo)
+                    input_name.to_stwing(), ^^
+                    d-dims,
+                )), ^•ﻌ•^
+                _ => p-panic!("unsuppowt i-input tensow type {:?}", XD input_tensow.dtype()), :3
             }
         }
-        model_inputs
+        m-modew_inputs
     }
-    #[inline(always)]
-    pub fn take_model_spec(&mut self) -> (String, Option<i64>) {
-        let model_spec = self.model_spec.as_mut().unwrap();
-        let version = model_spec
-            .version_choice
-            .as_ref()
-            .and_then(|choice| match choice {
-                VersionChoice::Version(version) => Some(*version),
-                _ => None,
+    #[inwine(awways)]
+    p-pub fn take_modew_spec(&mut s-sewf) -> (stwing, o-option<i64>) {
+        wet modew_spec = sewf.modew_spec.as_mut().unwwap();
+        w-wet vewsion = modew_spec
+            .vewsion_choice
+            .as_wef()
+            .and_then(|choice| m-match c-choice {
+                v-vewsionchoice::vewsion(vewsion) => s-some(*vewsion), (ꈍᴗꈍ)
+                _ => nyone, :3
             });
-        (std::mem::take(&mut model_spec.name), version)
+        (std::mem::take(&mut modew_spec.name), (U ﹏ U) vewsion)
     }
 }
 
-impl<T: Model> Drop for BatchPredictor<T> {
-    fn drop(&mut self) {
+i-impw<t: modew> dwop fow batchpwedictow<t> {
+    fn dwop(&mut sewf) {
         info!(
-            "drop old batch predictor for:{:}, queue:{}",
-            self.model,
-            self.input_tensors.len()
+            "dwop o-owd batch pwedictow fow:{:}, UwU queue:{}", 😳😳😳
+            sewf.modew, XD
+            sewf.input_tensows.wen()
         );
-        if !self.input_tensors.is_empty() {
-            info!("now flush old predictor queue:{}", self.input_tensors.len());
-            self.batch_predict();
+        i-if !sewf.input_tensows.is_empty() {
+            i-info!("now f-fwush owd pwedictow queue:{}", o.O s-sewf.input_tensows.wen());
+            sewf.batch_pwedict();
         }
     }
 }
 
-impl<T: Model> BatchPredictor<T> {
-    #[inline(always)]
-    pub fn push(&mut self, val: Vec<TensorInput>, resp: Sender<PredictResult>, ts: Instant) {
-        if self.input_tensors.is_empty() {
-            //only when queue is empty then we update ts to represent first request time
-            self.queue_reset_ts = Instant::now();
-            self.queue_earliest_rq_ts = ts;
+i-impw<t: modew> b-batchpwedictow<t> {
+    #[inwine(awways)]
+    pub fn push(&mut sewf, (⑅˘꒳˘) vaw: vec<tensowinput>, 😳😳😳 wesp: sendew<pwedictwesuwt>, nyaa~~ ts: instant) {
+        i-if sewf.input_tensows.is_empty() {
+            //onwy when queue i-is empty then we update ts to w-wepwesent fiwst w-wequest time
+            sewf.queue_weset_ts = instant::now();
+            sewf.queue_eawwiest_wq_ts = t-ts;
         }
-        self.cur_batch_size += 1;
-        self.input_tensors.push(val);
-        self.callbacks.push(Callback(resp, self.cur_batch_size));
+        s-sewf.cuw_batch_size += 1;
+        sewf.input_tensows.push(vaw);
+        sewf.cawwbacks.push(cawwback(wesp, rawr s-sewf.cuw_batch_size));
     }
-    #[inline(always)]
-    pub fn batch_predict(&mut self) {
-        BATCH_SIZE_BY_MODEL
-            .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
-            .add(self.cur_batch_size as i64);
-        BATCH_SIZE.add(self.cur_batch_size as i64);
-        let mut batch_input_tensors = Vec::with_capacity(self.max_batch_size);
-        let mut batch_callbacks = Vec::with_capacity(self.max_batch_size);
-        let mut batch_size = 0;
-        //now we swap so we can take two queues to the blocking-send thread and reset current queues
-        std::mem::swap(&mut self.input_tensors, &mut batch_input_tensors);
-        std::mem::swap(&mut self.callbacks, &mut batch_callbacks);
-        std::mem::swap(&mut self.cur_batch_size, &mut batch_size);
-        let model = self.model.clone();
-        let batch_earliest_rq_ts = self.queue_earliest_rq_ts;
-        //info!("batch predict for model:{}, size:{}", self.tf_model.export_dir, vals0.len());
-        BLOCKING_REQUEST_NUM.inc();
-        tokio::task::spawn_blocking(move || {
-            //proactively drop stale batches, we drop the entire batch
-            //as long as one request in that batch is stale. We may drop more than we could this way
-            //but this should work fairly decently well
-            if (batch_earliest_rq_ts.elapsed().as_millis() as u64) < ARGS.batch_drop_millis {
-                let model_inference_time_start = Instant::now();
-                let (tensor_outs, batch_ends) =
-                    model.do_predict(batch_input_tensors, batch_size as u64);
-                MODEL_INFERENCE_TIME_COLLECTOR
-                    .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
-                    .observe(model_inference_time_start.elapsed().as_millis() as f64);
-                let mut batch_starts = vec![0; tensor_outs.len()];
-                for (i, Callback(resp, _)) in batch_callbacks.into_iter().enumerate() {
-                    let mut tensors_send_back = vec![];
-                    for (j, tensor_out) in tensor_outs.iter().enumerate() {
-                        tensors_send_back.push(tensor_out.slice(batch_starts[j], batch_ends[j][i]));
-                        batch_starts[j] = batch_ends[j][i];
+    #[inwine(awways)]
+    pub f-fn batch_pwedict(&mut sewf) {
+        batch_size_by_modew
+            .with_wabew_vawues(&[&modew_specs[sewf.modew.modew_idx()]])
+            .add(sewf.cuw_batch_size as i64);
+        batch_size.add(sewf.cuw_batch_size a-as i-i64);
+        wet m-mut batch_input_tensows = vec::with_capacity(sewf.max_batch_size);
+        w-wet m-mut batch_cawwbacks = vec::with_capacity(sewf.max_batch_size);
+        w-wet mut batch_size = 0;
+        //now we swap so we can take two queues to the bwocking-send t-thwead and w-weset cuwwent queues
+        std::mem::swap(&mut sewf.input_tensows, -.- &mut b-batch_input_tensows);
+        s-std::mem::swap(&mut sewf.cawwbacks, (✿oωo) &mut batch_cawwbacks);
+        std::mem::swap(&mut s-sewf.cuw_batch_size, /(^•ω•^) &mut batch_size);
+        wet modew = sewf.modew.cwone();
+        wet batch_eawwiest_wq_ts = sewf.queue_eawwiest_wq_ts;
+        //info!("batch p-pwedict fow modew:{}, size:{}", 🥺 sewf.tf_modew.expowt_diw, ʘwʘ v-vaws0.wen());
+        b-bwocking_wequest_num.inc();
+        tokio::task::spawn_bwocking(move || {
+            //pwoactivewy dwop stawe batches, UwU we dwop t-the entiwe batch
+            //as w-wong as one wequest in that batch is stawe. we may dwop mowe t-than we couwd this way
+            //but t-this shouwd wowk faiwwy decentwy weww
+            if (batch_eawwiest_wq_ts.ewapsed().as_miwwis() a-as u64) < awgs.batch_dwop_miwwis {
+                w-wet modew_infewence_time_stawt = i-instant::now();
+                wet (tensow_outs, XD b-batch_ends) =
+                    modew.do_pwedict(batch_input_tensows, (✿oωo) b-batch_size a-as u64);
+                modew_infewence_time_cowwectow
+                    .with_wabew_vawues(&[&modew_specs[modew.modew_idx()]])
+                    .obsewve(modew_infewence_time_stawt.ewapsed().as_miwwis() a-as f64);
+                wet mut batch_stawts = v-vec![0; tensow_outs.wen()];
+                f-fow (i, :3 cawwback(wesp, (///ˬ///✿) _)) in batch_cawwbacks.into_itew().enumewate() {
+                    wet m-mut tensows_send_back = v-vec![];
+                    f-fow (j, nyaa~~ tensow_out) in tensow_outs.itew().enumewate() {
+                        tensows_send_back.push(tensow_out.swice(batch_stawts[j], >w< b-batch_ends[j][i]));
+                        batch_stawts[j] = b-batch_ends[j][i];
                     }
-                    if resp
-                        .send(PredictResult::Ok(tensors_send_back, model.version()))
-                        .is_err()
+                    i-if wesp
+                        .send(pwedictwesuwt::ok(tensows_send_back, -.- modew.vewsion()))
+                        .is_eww()
                     {
-                        //use dropped metrics here as this is expected under high load
-                        NUM_REQUESTS_DROPPED.inc();
-                        NUM_REQUESTS_DROPPED_BY_MODEL
-                            .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
+                        //use dwopped metwics hewe a-as this is expected u-undew high w-woad
+                        n-nyum_wequests_dwopped.inc();
+                        nyum_wequests_dwopped_by_modew
+                            .with_wabew_vawues(&[&modew_specs[modew.modew_idx()]])
                             .inc();
                     }
                 }
-            } else {
-                for Callback(resp, _) in batch_callbacks.into_iter() {
-                    if resp.send(PredictResult::DropDueToOverload).is_err() {
-                        NUM_REQUESTS_DROPPED.inc();
-                        NUM_REQUESTS_DROPPED_BY_MODEL
-                            .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
+            } ewse {
+                f-fow cawwback(wesp, (✿oωo) _) in batch_cawwbacks.into_itew() {
+                    if wesp.send(pwedictwesuwt::dwopduetoovewwoad).is_eww() {
+                        nyum_wequests_dwopped.inc();
+                        nyum_wequests_dwopped_by_modew
+                            .with_wabew_vawues(&[&modew_specs[modew.modew_idx()]])
                             .inc();
                     }
                 }
-                NUM_BATCHES_DROPPED.inc();
-                NUM_BATCHES_DROPPED_BY_MODEL
-                    .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
+                nyum_batches_dwopped.inc();
+                n-nyum_batches_dwopped_by_modew
+                    .with_wabew_vawues(&[&modew_specs[modew.modew_idx()]])
                     .inc();
             }
-            BLOCKING_REQUEST_NUM.dec();
+            bwocking_wequest_num.dec();
         });
-        NUM_BATCH_PREDICTION.inc();
-        NUM_BATCH_PREDICTION_BY_MODEL
-            .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
+        n-nyum_batch_pwediction.inc();
+        nyum_batch_pwediction_by_modew
+            .with_wabew_vawues(&[&modew_specs[sewf.modew.modew_idx()]])
             .inc();
-        // Note:
-        //  self.cur_batch_size is swapped with batch_size above
-        //  Use the local variable batch_size here
-        NUM_PREDICTION_BY_MODEL
-            .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
-            .inc_by(batch_size as u64);
+        // n-nyote:
+        //  sewf.cuw_batch_size is swapped with b-batch_size above
+        //  use the wocaw vawiabwe b-batch_size h-hewe
+        nyum_pwediction_by_modew
+            .with_wabew_vawues(&[&modew_specs[sewf.modew.modew_idx()]])
+            .inc_by(batch_size as u-u64);
     }
-    #[inline(always)]
-    pub fn duration_past(&self, millis: u64) -> bool {
-        self.queue_reset_ts.elapsed().as_millis() as u64 >= millis
+    #[inwine(awways)]
+    p-pub fn duwation_past(&sewf, (˘ω˘) m-miwwis: u64) -> boow {
+        sewf.queue_weset_ts.ewapsed().as_miwwis() as u64 >= miwwis
     }
 }

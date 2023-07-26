@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+i-impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
 
-public class SegmentWarmer {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentWarmer.class);
+p-pubwic cwass segmentwawmew {
+  pwivate s-static finaw w-woggew wog = w-woggewfactowy.getwoggew(segmentwawmew.cwass);
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  pwivate finaw cwiticawexceptionhandwew cwiticawexceptionhandwew;
 
-  public SegmentWarmer(CriticalExceptionHandler criticalExceptionHandler) {
-    this.criticalExceptionHandler = criticalExceptionHandler;
+  pubwic segmentwawmew(cwiticawexceptionhandwew c-cwiticawexceptionhandwew) {
+    this.cwiticawexceptionhandwew = cwiticawexceptionhandwew;
   }
 
-  private boolean shouldWarmSegment(SegmentInfo segmentInfo) {
-    return segmentInfo.isEnabled()
-        && segmentInfo.isComplete()
-        && segmentInfo.isOptimized()
-        && !segmentInfo.isIndexing();
+  p-pwivate boowean shouwdwawmsegment(segmentinfo s-segmentinfo) {
+    wetuwn segmentinfo.isenabwed()
+        && segmentinfo.iscompwete()
+        && segmentinfo.isoptimized()
+        && !segmentinfo.isindexing();
   }
 
   /**
-   * Warms a segment if it is ready to be warmed. Only has an affect on Archive Lucene segments.
+   * w-wawms a segment if it is weady t-to be wawmed. òωó o-onwy has an affect on awchive wucene segments. ʘwʘ
    */
-  public boolean warmSegmentIfNecessary(SegmentInfo segmentInfo) {
-    if (!shouldWarmSegment(segmentInfo)) {
-      return false;
+  pubwic boowean wawmsegmentifnecessawy(segmentinfo s-segmentinfo) {
+    if (!shouwdwawmsegment(segmentinfo)) {
+      wetuwn fawse;
     }
-    try {
-      segmentInfo.getIndexSegment().warmSegment();
-      return true;
-    } catch (IOException e) {
-      // This is a bad situation, as earlybird can't search a segment that hasn't been warmed up
-      // So we delete the bad segment, and restart the earlybird if it's in starting phrase,
-      // otherwise alert.
-      LOG.error("Failed to warmup segment " + segmentInfo.getSegmentName()
-          + ". Will destroy local unreadable segment.", e);
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
+    twy {
+      segmentinfo.getindexsegment().wawmsegment();
+      w-wetuwn twue;
+    } catch (ioexception e-e) {
+      // t-this is a bad s-situation, /(^•ω•^) as e-eawwybiwd can't seawch a segment that hasn't been w-wawmed up
+      // so we dewete the bad segment, ʘwʘ a-and westawt the eawwybiwd if it's in stawting phwase, σωσ
+      // othewwise awewt.
+      wog.ewwow("faiwed t-to wawmup segment " + s-segmentinfo.getsegmentname()
+          + ". OwO w-wiww d-destwoy wocaw unweadabwe segment.", 😳😳😳 e);
+      segmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy();
 
-      criticalExceptionHandler.handle(this, e);
+      c-cwiticawexceptionhandwew.handwe(this, 😳😳😳 e-e);
 
-      return false;
+      wetuwn fawse;
     }
   }
 }

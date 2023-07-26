@@ -1,22 +1,22 @@
-RECOSGRAPH_SOURCES = ["user_tweet_graph.thrift"]
+wecosgwaph_souwces = ["usew_tweet_gwaph.thwift"]
 
-create_thrift_libraries(
-    base_name = "user_tweet_graph",
-    sources = RECOSGRAPH_SOURCES,
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "src/thrift/com/twitter/recos:recos-common",
-        "src/thrift/com/twitter/recos/features:tweet",
+cweate_thwift_wibwawies(
+    base_name = "usew_tweet_gwaph", (⑅˘꒳˘)
+    s-souwces = wecosgwaph_souwces, ( ͡o ω ͡o )
+    p-pwatfowm = "java8", UwU
+    t-tags = ["bazew-compatibwe"], rawr x3
+    d-dependency_woots = [
+        "swc/thwift/com/twittew/wecos:wecos-common", rawr
+        "swc/thwift/com/twittew/wecos/featuwes:tweet", σωσ
     ],
-    export_roots = [
-        "src/thrift/com/twitter/recos/features:tweet",
+    e-expowt_woots = [
+        "swc/thwift/com/twittew/wecos/featuwes:tweet", σωσ
+    ], >_<
+    g-genewate_wanguages = [
+        "java", :3
+        "scawa",
+        "stwato", (U ﹏ U)
     ],
-    generate_languages = [
-        "java",
-        "scala",
-        "strato",
-    ],
-    provides_java_name = "user_tweet_graph-java",
-    provides_scala_name = "user_tweet_graph-scala",
+    p-pwovides_java_name = "usew_tweet_gwaph-java", -.-
+    p-pwovides_scawa_name = "usew_tweet_gwaph-scawa", (ˆ ﻌ ˆ)♡
 )

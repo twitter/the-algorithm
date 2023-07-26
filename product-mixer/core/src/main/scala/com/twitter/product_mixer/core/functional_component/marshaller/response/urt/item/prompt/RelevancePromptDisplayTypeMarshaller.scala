@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.pwompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt._
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.singweton
 
-@Singleton
-class RelevancePromptDisplayTypeMarshaller {
+@singweton
+c-cwass wewevancepwomptdispwaytypemawshawwew {
 
-  def apply(
-    relevancePromptDisplayType: RelevancePromptDisplayType
-  ): urt.RelevancePromptDisplayType = relevancePromptDisplayType match {
-    case Normal => urt.RelevancePromptDisplayType.Normal
-    case Compact => urt.RelevancePromptDisplayType.Compact
-    case Large => urt.RelevancePromptDisplayType.Large
-    case ThumbsUpAndDown => urt.RelevancePromptDisplayType.ThumbsUpAndDown
+  d-def appwy(
+    w-wewevancepwomptdispwaytype: w-wewevancepwomptdispwaytype
+  ): u-uwt.wewevancepwomptdispwaytype = wewevancepwomptdispwaytype match {
+    case nyowmaw => uwt.wewevancepwomptdispwaytype.nowmaw
+    c-case compact => uwt.wewevancepwomptdispwaytype.compact
+    case w-wawge => uwt.wewevancepwomptdispwaytype.wawge
+    case thumbsupanddown => u-uwt.wewevancepwomptdispwaytype.thumbsupanddown
   }
 }

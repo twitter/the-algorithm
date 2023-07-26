@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.model.common.presentation
+package com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation
 
 /**
- * Encapsulates information about how to present a Candidate
+ * encapsuwates i-infowmation a-about how to pwesent a-a candidate
  *
- * Implementations of a [[UniversalPresentation]] contain information about how to present the Candidate.
- * This extra information can be in fields in the implementations or in their types.
+ * i-impwementations o-of a [[univewsawpwesentation]] c-contain infowmation a-about h-how to pwesent the candidate. XD
+ * this extwa infowmation can be in fiewds in the i-impwementations ow in theiw types. :3
  *
- * For instance, a Tweet candidate that will be displayed as a URT Tweet Item will be decorated with a
- * [[UniversalPresentation]] implementation that reflects the presentation such as
- * [[com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation]]
+ * fow instance, 😳😳😳 a-a tweet candidate that wiww b-be dispwayed as a uwt tweet item wiww be decowated with a
+ * [[univewsawpwesentation]] i-impwementation that wefwects t-the pwesentation s-such as
+ * [[com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt.uwtitempwesentation]]
  *
- * @see [[com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator]] for associating a
- *      [[UniversalPresentation]] with a Candidate.
+ * @see [[com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow]] fow associating a
+ *      [[univewsawpwesentation]] with a candidate. -.-
  */
-trait UniversalPresentation
+twait univewsawpwesentation

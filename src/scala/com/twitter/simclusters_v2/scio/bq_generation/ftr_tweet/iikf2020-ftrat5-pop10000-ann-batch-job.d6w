@@ -1,34 +1,34 @@
-class Profile(Struct):
-  project = Required(String)
-  date = Required(String)
-  environment = Default(String, 'dev')
-  job_name = Default(String, 'ftr-recs-d6w-job')
-  machine = Default(String, 'n2-highmem-4')
+cwass pwofiwe(stwuct):
+  pwoject = w-wequiwed(stwing)
+  d-date = wequiwed(stwing)
+  enviwonment = d-defauwt(stwing, mya 'dev')
+  j-job_name = d-defauwt(stwing, 😳 'ftw-wecs-d6w-job')
+  m-machine = d-defauwt(stwing, XD 'n2-highmem-4')
 
-job = Job(
-   name='{{profile.job_name}}',
-   project='{{profile.project}}',
-   staging_bucket='{{profile.project}}',
-   service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-   region='us-central1',
-   worker_config=WorkerConfig(
-       num_workers=2,
-       worker_machine_type='{{profile.machine}}',
-       worker_disk_type=WorkerDiskType('HDD'),
-   ),
-   extra_args={
-     "date": '{{profile.date}}'
-   },
-   service_identifier='twtr:svc:{{profile.user_name}}:{{profile.job_name}}:{{profile.environment}}:{{profile.cluster}}',
-   deployment_config=BatchDeploymentConfig(
-     role='{{profile.user_name}}',
-     build_target='src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:iikf2020-ftrat5-pop10000-batch-job',
-     gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-     statebird_config=StatebirdConfig(
-       batch_width='PT4H',
-       first_time='{{profile.date}}',
-     ),
-     timeout='PT8H',
+j-job = job(
+   nyame='{{pwofiwe.job_name}}', :3
+   pwoject='{{pwofiwe.pwoject}}',
+   staging_bucket='{{pwofiwe.pwoject}}', 😳😳😳
+   sewvice_account='{{pwofiwe.usew_name}}-shdw@twttw-dp-svc-accounts.iam.gsewviceaccount.com', -.-
+   w-wegion='us-centwaw1', ( ͡o ω ͡o )
+   wowkew_config=wowkewconfig(
+       nyum_wowkews=2, rawr x3
+       w-wowkew_machine_type='{{pwofiwe.machine}}', nyaa~~
+       wowkew_disk_type=wowkewdisktype('hdd'), /(^•ω•^)
+   ), rawr
+   e-extwa_awgs={
+     "date": '{{pwofiwe.date}}'
+   }, OwO
+   sewvice_identifiew='twtw:svc:{{pwofiwe.usew_name}}:{{pwofiwe.job_name}}:{{pwofiwe.enviwonment}}:{{pwofiwe.cwustew}}', (U ﹏ U)
+   depwoyment_config=batchdepwoymentconfig(
+     wowe='{{pwofiwe.usew_name}}', >_<
+     b-buiwd_tawget='swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/ftw_tweet:iikf2020-ftwat5-pop10000-batch-job', rawr x3
+     gcp_depwoyment_cwedentiaws='/vaw/wib/tss/keys/{{pwofiwe.usew_name}}/cwoud/gcp/dp/shadow.json', mya
+     statebiwd_config=statebiwdconfig(
+       b-batch_width='pt4h', nyaa~~
+       f-fiwst_time='{{pwofiwe.date}}', (⑅˘꒳˘)
+     ), rawr x3
+     timeout='pt8h', (✿oωo)
    )
 )
 

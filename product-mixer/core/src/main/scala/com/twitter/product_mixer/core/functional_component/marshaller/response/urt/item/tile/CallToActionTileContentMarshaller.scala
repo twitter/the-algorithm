@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tiwe
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.CtaButtonMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.CallToActionTileContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.button.ctabuttonmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe.cawwtoactiontiwecontent
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class CallToActionTileContentMarshaller @Inject() (
-  ctaButtonMarshaller: CtaButtonMarshaller,
-  richTextMarshaller: RichTextMarshaller) {
+@singweton
+cwass cawwtoactiontiwecontentmawshawwew @inject() (
+  ctabuttonmawshawwew: ctabuttonmawshawwew,
+  w-wichtextmawshawwew: wichtextmawshawwew) {
 
-  def apply(callToActionTileContent: CallToActionTileContent): urt.TileContentCallToAction =
-    urt.TileContentCallToAction(
-      text = callToActionTileContent.text,
-      richText = callToActionTileContent.richText.map(richTextMarshaller(_)),
-      ctaButton = callToActionTileContent.ctaButton.map(ctaButtonMarshaller(_))
+  def appwy(cawwtoactiontiwecontent: c-cawwtoactiontiwecontent): uwt.tiwecontentcawwtoaction =
+    u-uwt.tiwecontentcawwtoaction(
+      text = cawwtoactiontiwecontent.text, ^^;;
+      wichtext = cawwtoactiontiwecontent.wichtext.map(wichtextmawshawwew(_)), >_<
+      c-ctabutton = cawwtoactiontiwecontent.ctabutton.map(ctabuttonmawshawwew(_))
     )
 }

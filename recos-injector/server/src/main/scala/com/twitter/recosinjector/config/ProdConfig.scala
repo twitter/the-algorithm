@@ -1,29 +1,29 @@
-package com.twitter.recosinjector.config
+package com.twittew.wecosinjectow.config
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.logging.Logger
-import com.twitter.recosinjector.decider.RecosInjectorDecider
+impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.wecosinjectow.decidew.wecosinjectowdecidew
 
-case class ProdConfig(
-  override val serviceIdentifier: ServiceIdentifier
-)(implicit val statsReceiver: StatsReceiver) extends {
-  // Due to trait initialization logic in Scala, any abstract members declared in Config or
-  // DeployConfig should be declared in this block. Otherwise the abstract member might initialize
-  // to null if invoked before before object creation finishing.
+c-case cwass pwodconfig(
+  ovewwide vaw sewviceidentifiew: sewviceidentifiew
+)(impwicit vaw statsweceivew: s-statsweceivew) extends {
+  // due t-to twait initiawization wogic in s-scawa, mya any abstwact membews decwawed in config ow
+  // depwoyconfig s-shouwd be decwawed in this b-bwock. nyaa~~ othewwise t-the abstwact membew might initiawize
+  // to nyuww if invoked befowe befowe object c-cweation finishing. (⑅˘꒳˘)
 
-  val recosInjectorThriftClientId = ClientId("recos-injector.prod")
+  vaw wecosinjectowthwiftcwientid = cwientid("wecos-injectow.pwod")
 
-  val outputKafkaTopicPrefix = "recos_injector"
+  vaw outputkafkatopicpwefix = "wecos_injectow"
 
-  val log = Logger("ProdConfig")
+  vaw wog = woggew("pwodconfig")
 
-  val recosInjectorCoreSvcsCacheDest = "/srv#/prod/local/cache/recos_metadata"
+  v-vaw wecosinjectowcowesvcscachedest = "/swv#/pwod/wocaw/cache/wecos_metadata"
 
-  val recosInjectorDecider = RecosInjectorDecider(
-    isProd = true,
-    dataCenter = serviceIdentifier.zone
+  vaw wecosinjectowdecidew = w-wecosinjectowdecidew(
+    i-ispwod = t-twue, rawr x3
+    datacentew = s-sewviceidentifiew.zone
   )
 
-} with DeployConfig
+} with depwoyconfig

@@ -1,14 +1,14 @@
 junit_tests(
-    sources = ["*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/org/scalatest",
-        "3rdparty/jvm/org/scalatestplus:junit",
-        "finatra/inject/inject-core/src/test/scala/com/twitter/inject",
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/driver",
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/hydrator:base",
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/partitioner:base",
-        "unified_user_actions/enricher/src/test/scala/com/twitter/unified_user_actions/enricher:fixture",
-        "util/util-core:scala",
+    souwces = ["*.scawa"], (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [
+        "3wdpawty/jvm/owg/scawatest", OwO
+        "3wdpawty/jvm/owg/scawatestpwus:junit", 🥺
+        "finatwa/inject/inject-cowe/swc/test/scawa/com/twittew/inject", òωó
+        "unified_usew_actions/enwichew/swc/main/scawa/com/twittew/unified_usew_actions/enwichew/dwivew", o.O
+        "unified_usew_actions/enwichew/swc/main/scawa/com/twittew/unified_usew_actions/enwichew/hydwatow:base", (U ᵕ U❁)
+        "unified_usew_actions/enwichew/swc/main/scawa/com/twittew/unified_usew_actions/enwichew/pawtitionew:base", (⑅˘꒳˘)
+        "unified_usew_actions/enwichew/swc/test/scawa/com/twittew/unified_usew_actions/enwichew:fixtuwe", ( ͡o ω ͡o )
+        "utiw/utiw-cowe:scawa", UwU
     ],
 )

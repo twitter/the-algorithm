@@ -1,226 +1,226 @@
-package com.twitter.ann.common
+package com.twittew.ann.common
 
-import com.google.common.io.ByteStreams
-import com.twitter.ann.common.thriftscala.AnnIndexMetadata
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.mediaservices.commons.codec.ThriftByteBufferCodec
-import com.twitter.search.common.file.AbstractFile
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
-import java.nio.channels.Channels
-import org.apache.beam.sdk.io.FileSystems
-import org.apache.beam.sdk.io.fs.MoveOptions
-import org.apache.beam.sdk.io.fs.ResolveOptions
-import org.apache.beam.sdk.io.fs.ResolveOptions.StandardResolveOptions
-import org.apache.beam.sdk.io.fs.ResourceId
-import org.apache.beam.sdk.util.MimeTypes
-import org.apache.hadoop.io.IOUtils
-import scala.collection.JavaConverters._
+impowt com.googwe.common.io.bytestweams
+i-impowt com.twittew.ann.common.thwiftscawa.annindexmetadata
+i-impowt com.twittew.mediasewvices.commons.codec.awwaybytebuffewcodec
+i-impowt com.twittew.mediasewvices.commons.codec.thwiftbytebuffewcodec
+i-impowt c-com.twittew.seawch.common.fiwe.abstwactfiwe
+i-impowt j-java.io.ioexception
+i-impowt java.io.inputstweam
+impowt java.io.outputstweam
+impowt java.nio.channews.channews
+impowt owg.apache.beam.sdk.io.fiwesystems
+i-impowt owg.apache.beam.sdk.io.fs.moveoptions
+impowt o-owg.apache.beam.sdk.io.fs.wesowveoptions
+impowt o-owg.apache.beam.sdk.io.fs.wesowveoptions.standawdwesowveoptions
+impowt owg.apache.beam.sdk.io.fs.wesouwceid
+impowt owg.apache.beam.sdk.utiw.mimetypes
+i-impowt owg.apache.hadoop.io.ioutiws
+impowt s-scawa.cowwection.javaconvewtews._
 
 /**
- * This class creates a wrapper around GCS filesystem and HDFS filesystem for the index
- * generation job. It implements the basic methods required by the index generation job and hides
- * the logic around handling HDFS vs GCS.
+ * t-this cwass cweates a wwappew awound gcs fiwesystem and hdfs fiwesystem f-fow the index
+ * genewation job. ^^ it impwements the basic methods wequiwed by the i-index genewation job and hides
+ * t-the wogic awound h-handwing hdfs v-vs gcs. >w<
  */
-class IndexOutputFile(val abstractFile: AbstractFile, val resourceId: ResourceId) {
+c-cwass indexoutputfiwe(vaw abstwactfiwe: abstwactfiwe, OwO v-vaw wesouwceid: wesouwceid) {
 
-  // Success file name
-  private val SUCCESS_FILE = "_SUCCESS"
-  private val INDEX_METADATA_FILE = "ANN_INDEX_METADATA"
-  private val MetadataCodec = new ThriftByteBufferCodec[AnnIndexMetadata](AnnIndexMetadata)
+  // success f-fiwe nyame
+  pwivate vaw success_fiwe = "_success"
+  pwivate vaw index_metadata_fiwe = "ann_index_metadata"
+  pwivate vaw metadatacodec = nyew t-thwiftbytebuffewcodec[annindexmetadata](annindexmetadata)
 
   /**
-   * Constructor for ResourceId. This is used for GCS filesystem
-   * @param resourceId
+   * constwuctow f-fow wesouwceid. XD t-this is used f-fow gcs fiwesystem
+   * @pawam wesouwceid
    */
-  def this(resourceId: ResourceId) = {
-    this(null, resourceId)
+  def this(wesouwceid: wesouwceid) = {
+    this(nuww, ^^;; w-wesouwceid)
   }
 
   /**
-   * Constructor for AbstractFile. This is used for HDFS and local filesystem
-   * @param abstractFile
+   * c-constwuctow fow abstwactfiwe. 🥺 t-this is used fow h-hdfs and wocaw fiwesystem
+   * @pawam a-abstwactfiwe
    */
-  def this(abstractFile: AbstractFile) = {
-    this(abstractFile, null)
+  def t-this(abstwactfiwe: abstwactfiwe) = {
+    this(abstwactfiwe, XD n-nyuww)
   }
 
   /**
-   * Returns true if this instance is around an AbstractFile.
-   * @return
+   * wetuwns twue i-if this instance is awound an abstwactfiwe.
+   * @wetuwn
    */
-  def isAbstractFile(): Boolean = {
-    abstractFile != null
+  d-def isabstwactfiwe(): b-boowean = {
+    abstwactfiwe != nyuww
   }
 
   /**
-   * Creates a _SUCCESS file in the current directory.
+   * cweates a _success fiwe in the cuwwent diwectowy. (U ᵕ U❁)
    */
-  def createSuccessFile(): Unit = {
-    if (isAbstractFile()) {
-      abstractFile.createSuccessFile()
-    } else {
-      val successFile =
-        resourceId.resolve(SUCCESS_FILE, ResolveOptions.StandardResolveOptions.RESOLVE_FILE)
-      val successWriterChannel = FileSystems.create(successFile, MimeTypes.BINARY)
-      successWriterChannel.close()
+  d-def cweatesuccessfiwe(): u-unit = {
+    if (isabstwactfiwe()) {
+      abstwactfiwe.cweatesuccessfiwe()
+    } e-ewse {
+      vaw s-successfiwe =
+        w-wesouwceid.wesowve(success_fiwe, :3 wesowveoptions.standawdwesowveoptions.wesowve_fiwe)
+      vaw successwwitewchannew = fiwesystems.cweate(successfiwe, ( ͡o ω ͡o ) mimetypes.binawy)
+      successwwitewchannew.cwose()
     }
   }
 
   /**
-   * Returns whether the current instance represents a directory
-   * @return True if the current instance is a directory
+   * w-wetuwns whethew the cuwwent instance wepwesents a diwectowy
+   * @wetuwn twue if the cuwwent i-instance is a diwectowy
    */
-  def isDirectory(): Boolean = {
-    if (isAbstractFile()) {
-      abstractFile.isDirectory
-    } else {
-      resourceId.isDirectory
+  d-def isdiwectowy(): b-boowean = {
+    i-if (isabstwactfiwe()) {
+      abstwactfiwe.isdiwectowy
+    } e-ewse {
+      w-wesouwceid.isdiwectowy
     }
   }
 
   /**
-   * Return the current path of the file represented by the current instance
-   * @return The path string of the file/directory
+   * w-wetuwn the cuwwent p-path of the fiwe wepwesented by the cuwwent i-instance
+   * @wetuwn t-the path stwing o-of the fiwe/diwectowy
    */
-  def getPath(): String = {
-    if (isAbstractFile()) {
-      abstractFile.getPath.toString
-    } else {
-      if (resourceId.isDirectory) {
-        resourceId.getCurrentDirectory.toString
-      } else {
-        resourceId.getCurrentDirectory.toString + resourceId.getFilename
+  d-def getpath(): s-stwing = {
+    if (isabstwactfiwe()) {
+      abstwactfiwe.getpath.tostwing
+    } ewse {
+      i-if (wesouwceid.isdiwectowy) {
+        wesouwceid.getcuwwentdiwectowy.tostwing
+      } ewse {
+        wesouwceid.getcuwwentdiwectowy.tostwing + wesouwceid.getfiwename
       }
     }
   }
 
   /**
-   * Creates a new file @param fileName in the current directory.
-   * @param fileName
-   * @return A new file inside the current directory
+   * cweates a nyew f-fiwe @pawam fiwename in the cuwwent diwectowy. òωó
+   * @pawam fiwename
+   * @wetuwn a nyew fiwe i-inside the cuwwent d-diwectowy
    */
-  def createFile(fileName: String): IndexOutputFile = {
-    if (isAbstractFile()) {
-      // AbstractFile treats files and directories the same way. Hence, not checking for directory
-      // here.
-      new IndexOutputFile(abstractFile.getChild(fileName))
-    } else {
-      if (!resourceId.isDirectory) {
-        // If this is not a directory, throw exception.
-        throw new IllegalArgumentException(getPath() + " is not a directory.")
+  d-def cweatefiwe(fiwename: stwing): indexoutputfiwe = {
+    i-if (isabstwactfiwe()) {
+      // abstwactfiwe tweats f-fiwes and diwectowies t-the same way. σωσ hence, nyot checking fow diwectowy
+      // hewe. (U ᵕ U❁)
+      nyew indexoutputfiwe(abstwactfiwe.getchiwd(fiwename))
+    } e-ewse {
+      if (!wesouwceid.isdiwectowy) {
+        // i-if this is nyot a diwectowy, (✿oωo) t-thwow exception. ^^
+        t-thwow nyew iwwegawawgumentexception(getpath() + " is nyot a-a diwectowy.")
       }
-      new IndexOutputFile(
-        resourceId.resolve(fileName, ResolveOptions.StandardResolveOptions.RESOLVE_FILE))
+      n-nyew indexoutputfiwe(
+        wesouwceid.wesowve(fiwename, ^•ﻌ•^ wesowveoptions.standawdwesowveoptions.wesowve_fiwe))
     }
   }
 
   /**
-   * Creates a new directory @param directoryName in the current directory.
-   * @param directoryName
-   * @return A new directory inside the current directory
+   * c-cweates a n-nyew diwectowy @pawam diwectowyname in the cuwwent diwectowy. XD
+   * @pawam diwectowyname
+   * @wetuwn a-a nyew diwectowy i-inside the c-cuwwent diwectowy
    */
-  def createDirectory(directoryName: String): IndexOutputFile = {
-    if (isAbstractFile()) {
-      // AbstractFile treats files and directories the same way. Hence, not checking for directory
-      // here.
-      val dir = abstractFile.getChild(directoryName)
-      dir.mkdirs()
-      new IndexOutputFile(dir)
-    } else {
-      if (!resourceId.isDirectory) {
-        // If this is not a directory, throw exception.
-        throw new IllegalArgumentException(getPath() + " is not a directory.")
+  def c-cweatediwectowy(diwectowyname: stwing): i-indexoutputfiwe = {
+    if (isabstwactfiwe()) {
+      // a-abstwactfiwe tweats fiwes and diwectowies the same way. :3 hence, nyot checking fow d-diwectowy
+      // h-hewe. (ꈍᴗꈍ)
+      vaw diw = abstwactfiwe.getchiwd(diwectowyname)
+      diw.mkdiws()
+      n-nyew indexoutputfiwe(diw)
+    } e-ewse {
+      if (!wesouwceid.isdiwectowy) {
+        // if this is nyot a diwectowy, :3 thwow e-exception. (U ﹏ U)
+        thwow nyew iwwegawawgumentexception(getpath() + " is nyot a diwectowy.")
       }
-      val newResourceId =
-        resourceId.resolve(directoryName, ResolveOptions.StandardResolveOptions.RESOLVE_DIRECTORY)
+      v-vaw nyewwesouwceid =
+        wesouwceid.wesowve(diwectowyname, UwU w-wesowveoptions.standawdwesowveoptions.wesowve_diwectowy)
 
-      // Create a tmp file and delete in order to trigger directory creation
-      val tmpFile =
-        newResourceId.resolve("tmp", ResolveOptions.StandardResolveOptions.RESOLVE_FILE)
-      val tmpWriterChannel = FileSystems.create(tmpFile, MimeTypes.BINARY)
-      tmpWriterChannel.close()
-      FileSystems.delete(List(tmpFile).asJava, MoveOptions.StandardMoveOptions.IGNORE_MISSING_FILES)
+      // cweate a-a tmp fiwe and dewete in owdew to twiggew diwectowy cweation
+      v-vaw tmpfiwe =
+        nyewwesouwceid.wesowve("tmp", 😳😳😳 w-wesowveoptions.standawdwesowveoptions.wesowve_fiwe)
+      vaw tmpwwitewchannew = fiwesystems.cweate(tmpfiwe, XD mimetypes.binawy)
+      t-tmpwwitewchannew.cwose()
+      fiwesystems.dewete(wist(tmpfiwe).asjava, o.O m-moveoptions.standawdmoveoptions.ignowe_missing_fiwes)
 
-      new IndexOutputFile(newResourceId)
+      nyew indexoutputfiwe(newwesouwceid)
     }
   }
 
-  def getChild(fileName: String, isDirectory: Boolean = false): IndexOutputFile = {
-    if (isAbstractFile()) {
-      new IndexOutputFile(abstractFile.getChild(fileName))
-    } else {
-      val resolveOption = if (isDirectory) {
-        StandardResolveOptions.RESOLVE_DIRECTORY
-      } else {
-        StandardResolveOptions.RESOLVE_FILE
+  def getchiwd(fiwename: stwing, (⑅˘꒳˘) isdiwectowy: b-boowean = fawse): indexoutputfiwe = {
+    i-if (isabstwactfiwe()) {
+      n-nyew indexoutputfiwe(abstwactfiwe.getchiwd(fiwename))
+    } e-ewse {
+      vaw wesowveoption = i-if (isdiwectowy) {
+        s-standawdwesowveoptions.wesowve_diwectowy
+      } e-ewse {
+        standawdwesowveoptions.wesowve_fiwe
       }
-      new IndexOutputFile(resourceId.resolve(fileName, resolveOption))
+      n-new indexoutputfiwe(wesouwceid.wesowve(fiwename, 😳😳😳 w-wesowveoption))
     }
   }
 
   /**
-   * Returns an OutputStream for the underlying file.
-   * Note: Close the OutputStream after writing
-   * @return
+   * wetuwns an outputstweam f-fow the undewwying f-fiwe. nyaa~~
+   * n-nyote: cwose the outputstweam aftew wwiting
+   * @wetuwn
    */
-  def getOutputStream(): OutputStream = {
-    if (isAbstractFile()) {
-      abstractFile.getByteSink.openStream()
-    } else {
-      if (resourceId.isDirectory) {
-        // If this is a directory, throw exception.
-        throw new IllegalArgumentException(getPath() + " is a directory.")
+  d-def getoutputstweam(): outputstweam = {
+    i-if (isabstwactfiwe()) {
+      a-abstwactfiwe.getbytesink.openstweam()
+    } ewse {
+      if (wesouwceid.isdiwectowy) {
+        // if this is a diwectowy, rawr t-thwow exception. -.-
+        t-thwow new iwwegawawgumentexception(getpath() + " i-is a diwectowy.")
       }
-      val writerChannel = FileSystems.create(resourceId, MimeTypes.BINARY)
-      Channels.newOutputStream(writerChannel)
+      v-vaw wwitewchannew = fiwesystems.cweate(wesouwceid, (✿oωo) m-mimetypes.binawy)
+      channews.newoutputstweam(wwitewchannew)
     }
   }
 
   /**
-   * Returns an InputStream for the underlying file.
-   * Note: Close the InputStream after reading
-   * @return
+   * wetuwns an inputstweam fow the undewwying fiwe. /(^•ω•^)
+   * n-nyote: cwose the inputstweam aftew w-weading
+   * @wetuwn
    */
-  def getInputStream(): InputStream = {
-    if (isAbstractFile()) {
-      abstractFile.getByteSource.openStream()
-    } else {
-      if (resourceId.isDirectory) {
-        // If this is a directory, throw exception.
-        throw new IllegalArgumentException(getPath() + " is a directory.")
+  def getinputstweam(): i-inputstweam = {
+    if (isabstwactfiwe()) {
+      a-abstwactfiwe.getbytesouwce.openstweam()
+    } ewse {
+      i-if (wesouwceid.isdiwectowy) {
+        // i-if this i-is a diwectowy, 🥺 t-thwow exception. ʘwʘ
+        t-thwow nyew iwwegawawgumentexception(getpath() + " is a diwectowy.")
       }
-      val readChannel = FileSystems.open(resourceId)
-      Channels.newInputStream(readChannel)
+      vaw weadchannew = fiwesystems.open(wesouwceid)
+      channews.newinputstweam(weadchannew)
     }
   }
 
   /**
-   * Copies content from the srcIn into the current file.
-   * @param srcIn
+   * copies content fwom t-the swcin into t-the cuwwent fiwe. UwU
+   * @pawam s-swcin
    */
-  def copyFrom(srcIn: InputStream): Unit = {
-    val out = getOutputStream()
-    try {
-      IOUtils.copyBytes(srcIn, out, 4096)
-      out.close()
-    } catch {
-      case ex: IOException =>
-        IOUtils.closeStream(out);
-        throw ex;
+  def copyfwom(swcin: i-inputstweam): unit = {
+    vaw out = getoutputstweam()
+    twy {
+      i-ioutiws.copybytes(swcin, XD o-out, 4096)
+      out.cwose()
+    } c-catch {
+      case ex: ioexception =>
+        ioutiws.cwosestweam(out);
+        t-thwow ex;
     }
   }
 
-  def writeIndexMetadata(annIndexMetadata: AnnIndexMetadata): Unit = {
-    val out = createFile(INDEX_METADATA_FILE).getOutputStream()
-    val bytes = ArrayByteBufferCodec.decode(MetadataCodec.encode(annIndexMetadata))
-    out.write(bytes)
-    out.close()
+  d-def wwiteindexmetadata(annindexmetadata: a-annindexmetadata): u-unit = {
+    vaw out = cweatefiwe(index_metadata_fiwe).getoutputstweam()
+    vaw bytes = awwaybytebuffewcodec.decode(metadatacodec.encode(annindexmetadata))
+    out.wwite(bytes)
+    o-out.cwose()
   }
 
-  def loadIndexMetadata(): AnnIndexMetadata = {
-    val in = ByteStreams.toByteArray(getInputStream())
-    MetadataCodec.decode(ArrayByteBufferCodec.encode(in))
+  d-def woadindexmetadata(): a-annindexmetadata = {
+    v-vaw in = bytestweams.tobyteawway(getinputstweam())
+    m-metadatacodec.decode(awwaybytebuffewcodec.encode(in))
   }
 }

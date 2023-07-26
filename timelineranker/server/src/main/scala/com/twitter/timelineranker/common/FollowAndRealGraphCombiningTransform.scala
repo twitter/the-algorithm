@@ -1,197 +1,197 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.parameters.recap.RecapQueryContext
-import com.twitter.timelineranker.parameters.in_network_tweets.InNetworkTweetParams.RecycledMaxFollowedUsersEnableAntiDilutionParam
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.timelines.earlybird.common.options.AuthorScoreAdjustments
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.stat
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt c-com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt com.twittew.timewinewankew.pawametews.wecap.wecapquewycontext
+i-impowt com.twittew.timewinewankew.pawametews.in_netwowk_tweets.innetwowktweetpawams.wecycwedmaxfowwowedusewsenabweantidiwutionpawam
+impowt com.twittew.timewinewankew.visibiwity.fowwowgwaphdatapwovidew
+impowt com.twittew.timewines.eawwybiwd.common.options.authowscoweadjustments
+impowt com.twittew.utiw.futuwe
 
 /**
- * Transform which conditionally augments follow graph data using the real graph,
- * derived from the earlybirdOptions passed in the query
+ * t-twansfowm which conditionawwy augments f-fowwow gwaph data using the weaw g-gwaph, (⑅˘꒳˘)
+ * dewived fwom the eawwybiwdoptions passed in the quewy
  *
- * @param followGraphDataProvider data provider to be used for fetching updated mutual follow info
- * @param maxFollowedUsersProvider max number of users to return
- * @param enableRealGraphUsersProvider should we augment using real graph data?
- * @param maxRealGraphAndFollowedUsersProvider max combined users to return, overrides maxFollowedUsersProvider above
- * @param statsReceiver scoped stats received
+ * @pawam fowwowgwaphdatapwovidew d-data pwovidew to be used f-fow fetching updated m-mutuaw fowwow info
+ * @pawam maxfowwowedusewspwovidew max numbew of usews to w-wetuwn
+ * @pawam enabweweawgwaphusewspwovidew shouwd we augment using weaw gwaph data?
+ * @pawam m-maxweawgwaphandfowwowedusewspwovidew max combined u-usews to wetuwn, rawr x3 o-ovewwides m-maxfowwowedusewspwovidew a-above
+ * @pawam statsweceivew scoped stats w-weceived
  */
-class FollowAndRealGraphCombiningTransform(
-  followGraphDataProvider: FollowGraphDataProvider,
-  maxFollowedUsersProvider: DependencyProvider[Int],
-  enableRealGraphUsersProvider: DependencyProvider[Boolean],
-  maxRealGraphAndFollowedUsersProvider: DependencyProvider[Int],
-  imputeRealGraphAuthorWeightsProvider: DependencyProvider[Boolean],
-  imputeRealGraphAuthorWeightsPercentileProvider: DependencyProvider[Int],
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+cwass fowwowandweawgwaphcombiningtwansfowm(
+  fowwowgwaphdatapwovidew: fowwowgwaphdatapwovidew, (///ˬ///✿)
+  m-maxfowwowedusewspwovidew: dependencypwovidew[int], 🥺
+  enabweweawgwaphusewspwovidew: dependencypwovidew[boowean], >_<
+  maxweawgwaphandfowwowedusewspwovidew: dependencypwovidew[int],
+  i-imputeweawgwaphauthowweightspwovidew: dependencypwovidew[boowean], UwU
+  i-imputeweawgwaphauthowweightspewcentiwepwovidew: d-dependencypwovidew[int], >_<
+  s-statsweceivew: statsweceivew)
+    extends futuweawwow[candidateenvewope, -.- candidateenvewope] {
 
-  // Number of authors in the seedset after mixing followed users and real graph users
-  // Only have this stat if user follows >= maxFollowedUsers and enableRealGraphUsers is true and onlyRealGraphUsers is false
-  val numFollowAndRealGraphUsersStat: Stat = statsReceiver.stat("numFollowAndRealGraphUsers")
-  val numFollowAndRealGraphUsersFromFollowGraphStat =
-    statsReceiver.scope("numFollowAndRealGraphUsers").stat("FollowGraphUsers")
-  val numFollowAndRealGraphUsersFromRealGraphStat =
-    statsReceiver.scope("numFollowAndRealGraphUsers").stat("RealGraphUsers")
-  val numFollowAndRealGraphUsersFromRealGraphCounter =
-    statsReceiver.scope("numFollowAndRealGraphUsers").counter()
+  // n-nyumbew o-of authows in the seedset aftew m-mixing fowwowed u-usews and weaw gwaph usews
+  // o-onwy have this stat if usew fowwows >= m-maxfowwowedusews and enabweweawgwaphusews is twue and onwyweawgwaphusews i-is fawse
+  vaw nyumfowwowandweawgwaphusewsstat: s-stat = statsweceivew.stat("numfowwowandweawgwaphusews")
+  vaw n-nyumfowwowandweawgwaphusewsfwomfowwowgwaphstat =
+    s-statsweceivew.scope("numfowwowandweawgwaphusews").stat("fowwowgwaphusews")
+  vaw nyumfowwowandweawgwaphusewsfwomweawgwaphstat =
+    statsweceivew.scope("numfowwowandweawgwaphusews").stat("weawgwaphusews")
+  vaw nyumfowwowandweawgwaphusewsfwomweawgwaphcountew =
+    statsweceivew.scope("numfowwowandweawgwaphusews").countew()
 
-  // Number of authors in the seedset with only followed users
-  // Only have this stat if user follows >= maxFollowedUsers and enableRealGraphUsers is false
-  val numFollowedUsersStat: Stat = statsReceiver.stat("numFollowedUsers")
+  // nyumbew of authows in the seedset w-with onwy fowwowed u-usews
+  // onwy have this stat i-if usew fowwows >= m-maxfowwowedusews a-and enabweweawgwaphusews is fawse
+  vaw nyumfowwowedusewsstat: stat = statsweceivew.stat("numfowwowedusews")
 
-  // Number of authors in the seedset with only followed users
-  // Only have this stat if user follows < maxFollowedUsers
-  val numFollowedUsersLessThanMaxStat: Stat = statsReceiver.stat("numFollowedUsersLessThanMax")
-  val numFollowedUsersLessThanMaxCounter =
-    statsReceiver.scope("numFollowedUsersLessThanMax").counter()
-  val numFollowedUsersMoreThanMaxStat: Stat = statsReceiver.stat("numFollowedUsersMoreThanMax")
-  val numFollowedUsersMoreThanMaxCounter =
-    statsReceiver.scope("numFollowedUsersMoreThanMax").counter()
+  // n-nyumbew of authows in the seedset with onwy fowwowed usews
+  // onwy h-have this stat if usew fowwows < m-maxfowwowedusews
+  v-vaw nyumfowwowedusewswessthanmaxstat: s-stat = statsweceivew.stat("numfowwowedusewswessthanmax")
+  v-vaw nyumfowwowedusewswessthanmaxcountew =
+    s-statsweceivew.scope("numfowwowedusewswessthanmax").countew()
+  v-vaw nyumfowwowedusewsmowethanmaxstat: s-stat = statsweceivew.stat("numfowwowedusewsmowethanmax")
+  vaw nyumfowwowedusewsmowethanmaxcountew =
+    statsweceivew.scope("numfowwowedusewsmowethanmax").countew()
 
-  val realGraphAuthorWeightsSumProdStat: Stat = statsReceiver.stat("realGraphAuthorWeightsSumProd")
-  val realGraphAuthorWeightsSumMinExpStat: Stat =
-    statsReceiver.stat("realGraphAuthorWeightsSumMinExp")
-  val realGraphAuthorWeightsSumP50ExpStat: Stat =
-    statsReceiver.stat("realGraphAuthorWeightsSumP50Exp")
-  val realGraphAuthorWeightsSumP95ExpStat: Stat =
-    statsReceiver.stat("realGraphAuthorWeightsSumP95Exp")
-  val numAuthorsWithoutRealgraphScoreStat: Stat =
-    statsReceiver.stat("numAuthorsWithoutRealgraphScore")
+  v-vaw weawgwaphauthowweightssumpwodstat: s-stat = statsweceivew.stat("weawgwaphauthowweightssumpwod")
+  v-vaw weawgwaphauthowweightssumminexpstat: s-stat =
+    s-statsweceivew.stat("weawgwaphauthowweightssumminexp")
+  vaw weawgwaphauthowweightssump50expstat: stat =
+    statsweceivew.stat("weawgwaphauthowweightssump50exp")
+  v-vaw weawgwaphauthowweightssump95expstat: stat =
+    statsweceivew.stat("weawgwaphauthowweightssump95exp")
+  vaw nyumauthowswithoutweawgwaphscowestat: stat =
+    statsweceivew.stat("numauthowswithoutweawgwaphscowe")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val realGraphData = envelope.query.earlybirdOptions
-      .map(_.authorScoreAdjustments.authorScoreMap)
-      .getOrElse(Map.empty)
+  o-ovewwide def appwy(envewope: candidateenvewope): futuwe[candidateenvewope] = {
+    v-vaw weawgwaphdata = e-envewope.quewy.eawwybiwdoptions
+      .map(_.authowscoweadjustments.authowscowemap)
+      .getowewse(map.empty)
 
-    Future
+    f-futuwe
       .join(
-        envelope.followGraphData.followedUserIdsFuture,
-        envelope.followGraphData.mutedUserIdsFuture
+        envewope.fowwowgwaphdata.fowwowedusewidsfutuwe, mya
+        envewope.fowwowgwaphdata.mutedusewidsfutuwe
       ).map {
-        case (followedUserIds, mutedUserIds) =>
-          // Anti-dilution param for DDG-16198
-          val recycledMaxFollowedUsersEnableAntiDilutionParamProvider =
-            DependencyProvider.from(RecycledMaxFollowedUsersEnableAntiDilutionParam)
+        c-case (fowwowedusewids, >w< mutedusewids) =>
+          // a-anti-diwution p-pawam fow ddg-16198
+          vaw wecycwedmaxfowwowedusewsenabweantidiwutionpawampwovidew =
+            dependencypwovidew.fwom(wecycwedmaxfowwowedusewsenabweantidiwutionpawam)
 
-          val maxFollowedUsers = {
-            if (followedUserIds.size > RecapQueryContext.MaxFollowedUsers.default && recycledMaxFollowedUsersEnableAntiDilutionParamProvider(
-                envelope.query)) {
-              // trigger experiment
-              maxFollowedUsersProvider(envelope.query)
-            } else {
-              maxFollowedUsersProvider(envelope.query)
+          vaw maxfowwowedusews = {
+            if (fowwowedusewids.size > w-wecapquewycontext.maxfowwowedusews.defauwt && wecycwedmaxfowwowedusewsenabweantidiwutionpawampwovidew(
+                envewope.quewy)) {
+              // t-twiggew expewiment
+              maxfowwowedusewspwovidew(envewope.quewy)
+            } e-ewse {
+              m-maxfowwowedusewspwovidew(envewope.quewy)
             }
           }
 
-          val filteredRealGraphUserIds = realGraphData.keySet
-            .filterNot(mutedUserIds)
-            .take(maxFollowedUsers)
-            .toSeq
+          vaw fiwtewedweawgwaphusewids = w-weawgwaphdata.keyset
+            .fiwtewnot(mutedusewids)
+            .take(maxfowwowedusews)
+            .toseq
 
-          val filteredFollowedUserIds = followedUserIds.filterNot(mutedUserIds)
+          v-vaw fiwtewedfowwowedusewids = fowwowedusewids.fiwtewnot(mutedusewids)
 
-          if (followedUserIds.size < maxFollowedUsers) {
-            numFollowedUsersLessThanMaxStat.add(filteredFollowedUserIds.size)
+          i-if (fowwowedusewids.size < m-maxfowwowedusews) {
+            nyumfowwowedusewswessthanmaxstat.add(fiwtewedfowwowedusewids.size)
             // stats
-            numFollowedUsersLessThanMaxCounter.incr()
-            (filteredFollowedUserIds, false)
-          } else {
-            numFollowedUsersMoreThanMaxStat.add(filteredFollowedUserIds.size)
-            numFollowedUsersMoreThanMaxCounter.incr()
-            if (enableRealGraphUsersProvider(envelope.query)) {
-              val maxRealGraphAndFollowedUsersNum =
-                maxRealGraphAndFollowedUsersProvider(envelope.query)
-              require(
-                maxRealGraphAndFollowedUsersNum >= maxFollowedUsers,
-                "maxRealGraphAndFollowedUsers must be greater than or equal to maxFollowedUsers."
+            nyumfowwowedusewswessthanmaxcountew.incw()
+            (fiwtewedfowwowedusewids, (U ﹏ U) fawse)
+          } e-ewse {
+            n-nyumfowwowedusewsmowethanmaxstat.add(fiwtewedfowwowedusewids.size)
+            numfowwowedusewsmowethanmaxcountew.incw()
+            i-if (enabweweawgwaphusewspwovidew(envewope.quewy)) {
+              vaw maxweawgwaphandfowwowedusewsnum =
+                m-maxweawgwaphandfowwowedusewspwovidew(envewope.quewy)
+              w-wequiwe(
+                maxweawgwaphandfowwowedusewsnum >= m-maxfowwowedusews, 😳😳😳
+                "maxweawgwaphandfowwowedusews must be gweatew than ow equaw to maxfowwowedusews."
               )
-              val recentFollowedUsersNum = RecapQueryContext.MaxFollowedUsers.bounds
-                .apply(maxRealGraphAndFollowedUsersNum - filteredRealGraphUserIds.size)
+              vaw w-wecentfowwowedusewsnum = w-wecapquewycontext.maxfowwowedusews.bounds
+                .appwy(maxweawgwaphandfowwowedusewsnum - fiwtewedweawgwaphusewids.size)
 
-              val recentFollowedUsers =
-                filteredFollowedUserIds
-                  .filterNot(filteredRealGraphUserIds.contains)
-                  .take(recentFollowedUsersNum)
+              vaw w-wecentfowwowedusews =
+                f-fiwtewedfowwowedusewids
+                  .fiwtewnot(fiwtewedweawgwaphusewids.contains)
+                  .take(wecentfowwowedusewsnum)
 
-              val filteredFollowAndRealGraphUserIds =
-                recentFollowedUsers ++ filteredRealGraphUserIds
+              vaw fiwtewedfowwowandweawgwaphusewids =
+                wecentfowwowedusews ++ f-fiwtewedweawgwaphusewids
 
-              // Track the size of recentFollowedUsers from SGS
-              numFollowAndRealGraphUsersFromFollowGraphStat.add(recentFollowedUsers.size)
-              // Track the size of filteredRealGraphUserIds from real graph dataset.
-              numFollowAndRealGraphUsersFromRealGraphStat.add(filteredRealGraphUserIds.size)
+              // twack the size of wecentfowwowedusews fwom sgs
+              n-nyumfowwowandweawgwaphusewsfwomfowwowgwaphstat.add(wecentfowwowedusews.size)
+              // twack the size of fiwtewedweawgwaphusewids f-fwom w-weaw gwaph dataset.
+              nyumfowwowandweawgwaphusewsfwomweawgwaphstat.add(fiwtewedweawgwaphusewids.size)
 
-              numFollowAndRealGraphUsersFromRealGraphCounter.incr()
+              nyumfowwowandweawgwaphusewsfwomweawgwaphcountew.incw()
 
-              numFollowAndRealGraphUsersStat.add(filteredFollowAndRealGraphUserIds.size)
+              nyumfowwowandweawgwaphusewsstat.add(fiwtewedfowwowandweawgwaphusewids.size)
 
-              (filteredFollowAndRealGraphUserIds, true)
-            } else {
-              numFollowedUsersStat.add(followedUserIds.size)
-              (filteredFollowedUserIds, false)
+              (fiwtewedfowwowandweawgwaphusewids, o.O t-twue)
+            } e-ewse {
+              nyumfowwowedusewsstat.add(fowwowedusewids.size)
+              (fiwtewedfowwowedusewids, òωó fawse)
             }
           }
       }.map {
-        case (updatedFollowSeq, shouldUpdateMutualFollows) =>
-          val updatedMutualFollowing = if (shouldUpdateMutualFollows) {
-            followGraphDataProvider.getMutuallyFollowingUserIds(
-              envelope.query.userId,
-              updatedFollowSeq)
-          } else {
-            envelope.followGraphData.mutuallyFollowingUserIdsFuture
+        case (updatedfowwowseq, 😳😳😳 s-shouwdupdatemutuawfowwows) =>
+          vaw updatedmutuawfowwowing = i-if (shouwdupdatemutuawfowwows) {
+            fowwowgwaphdatapwovidew.getmutuawwyfowwowingusewids(
+              envewope.quewy.usewid, σωσ
+              updatedfowwowseq)
+          } e-ewse {
+            envewope.fowwowgwaphdata.mutuawwyfowwowingusewidsfutuwe
           }
 
-          val followGraphData = envelope.followGraphData.copy(
-            followedUserIdsFuture = Future.value(updatedFollowSeq),
-            mutuallyFollowingUserIdsFuture = updatedMutualFollowing
+          v-vaw fowwowgwaphdata = e-envewope.fowwowgwaphdata.copy(
+            fowwowedusewidsfutuwe = f-futuwe.vawue(updatedfowwowseq), (⑅˘꒳˘)
+            mutuawwyfowwowingusewidsfutuwe = u-updatedmutuawfowwowing
           )
 
-          val authorIdsWithRealgraphScore = realGraphData.keySet
-          val authorIdsWithoutRealgraphScores =
-            updatedFollowSeq.filterNot(authorIdsWithRealgraphScore.contains)
+          v-vaw authowidswithweawgwaphscowe = w-weawgwaphdata.keyset
+          vaw authowidswithoutweawgwaphscowes =
+            u-updatedfowwowseq.fiwtewnot(authowidswithweawgwaphscowe.contains)
 
-          //stat for logging the percentage of users' followings that do not have a realgraph score
-          if (updatedFollowSeq.nonEmpty)
-            numAuthorsWithoutRealgraphScoreStat.add(
-              authorIdsWithoutRealgraphScores.size / updatedFollowSeq.size * 100)
+          //stat f-fow wogging the pewcentage of usews' f-fowwowings that d-do not have a weawgwaph s-scowe
+          if (updatedfowwowseq.nonempty)
+            numauthowswithoutweawgwaphscowestat.add(
+              a-authowidswithoutweawgwaphscowes.size / updatedfowwowseq.size * 100)
 
-          if (imputeRealGraphAuthorWeightsProvider(envelope.query) && realGraphData.nonEmpty) {
-            val imputedScorePercentile =
-              imputeRealGraphAuthorWeightsPercentileProvider(envelope.query) / 100.0
-            val existingAuthorIdScores = realGraphData.values.toList.sorted
-            val imputedScoreIndex = Math.min(
-              existingAuthorIdScores.length - 1,
-              (existingAuthorIdScores.length * imputedScorePercentile).toInt)
-            val imputedScore = existingAuthorIdScores(imputedScoreIndex)
+          i-if (imputeweawgwaphauthowweightspwovidew(envewope.quewy) && w-weawgwaphdata.nonempty) {
+            vaw imputedscowepewcentiwe =
+              imputeweawgwaphauthowweightspewcentiwepwovidew(envewope.quewy) / 100.0
+            v-vaw existingauthowidscowes = w-weawgwaphdata.vawues.towist.sowted
+            v-vaw imputedscoweindex = m-math.min(
+              existingauthowidscowes.wength - 1, (///ˬ///✿)
+              (existingauthowidscowes.wength * i-imputedscowepewcentiwe).toint)
+            vaw imputedscowe = existingauthowidscowes(imputedscoweindex)
 
-            val updatedAuthorScoreMap = realGraphData ++ authorIdsWithoutRealgraphScores
-              .map(_ -> imputedScore).toMap
-            imputedScorePercentile match {
+            vaw updatedauthowscowemap = weawgwaphdata ++ a-authowidswithoutweawgwaphscowes
+              .map(_ -> imputedscowe).tomap
+            i-imputedscowepewcentiwe match {
               case 0.0 =>
-                realGraphAuthorWeightsSumMinExpStat.add(updatedAuthorScoreMap.values.sum.toFloat)
+                w-weawgwaphauthowweightssumminexpstat.add(updatedauthowscowemap.vawues.sum.tofwoat)
               case 0.5 =>
-                realGraphAuthorWeightsSumP50ExpStat.add(updatedAuthorScoreMap.values.sum.toFloat)
+                w-weawgwaphauthowweightssump50expstat.add(updatedauthowscowemap.vawues.sum.tofwoat)
               case 0.95 =>
-                realGraphAuthorWeightsSumP95ExpStat.add(updatedAuthorScoreMap.values.sum.toFloat)
-              case _ =>
+                w-weawgwaphauthowweightssump95expstat.add(updatedauthowscowemap.vawues.sum.tofwoat)
+              c-case _ =>
             }
-            val earlybirdOptionsWithUpdatedAuthorScoreMap = envelope.query.earlybirdOptions
-              .map(_.copy(authorScoreAdjustments = AuthorScoreAdjustments(updatedAuthorScoreMap)))
-            val updatedQuery =
-              envelope.query.copy(earlybirdOptions = earlybirdOptionsWithUpdatedAuthorScoreMap)
-            envelope.copy(query = updatedQuery, followGraphData = followGraphData)
-          } else {
-            envelope.query.earlybirdOptions
-              .map(_.authorScoreAdjustments.authorScoreMap.values.sum.toFloat).foreach {
-                realGraphAuthorWeightsSumProdStat.add(_)
+            v-vaw eawwybiwdoptionswithupdatedauthowscowemap = e-envewope.quewy.eawwybiwdoptions
+              .map(_.copy(authowscoweadjustments = a-authowscoweadjustments(updatedauthowscowemap)))
+            vaw updatedquewy =
+              envewope.quewy.copy(eawwybiwdoptions = eawwybiwdoptionswithupdatedauthowscowemap)
+            envewope.copy(quewy = updatedquewy, 🥺 fowwowgwaphdata = fowwowgwaphdata)
+          } e-ewse {
+            e-envewope.quewy.eawwybiwdoptions
+              .map(_.authowscoweadjustments.authowscowemap.vawues.sum.tofwoat).foweach {
+                w-weawgwaphauthowweightssumpwodstat.add(_)
               }
-            envelope.copy(followGraphData = followGraphData)
+            envewope.copy(fowwowgwaphdata = f-fowwowgwaphdata)
           }
       }
   }

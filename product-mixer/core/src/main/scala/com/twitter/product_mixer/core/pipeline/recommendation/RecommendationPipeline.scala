@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.pipeline.recommendation
+package com.twittew.pwoduct_mixew.cowe.pipewine.wecommendation
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Arrow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.wecommendationpipewineidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.awwow
 
 /**
- * A Recommendation Pipeline
+ * a-a wecommendation p-pipewine
  *
- * This is an abstract class, as we only construct these via the [[RecommendationPipelineBuilder]].
+ * t-this i-is an abstwact cwass, (˘ω˘) as we onwy constwuct these via the [[wecommendationpipewinebuiwdew]]. (⑅˘꒳˘)
  *
- * A [[RecommendationPipeline]] is capable of processing requests (queries) and returning responses (results)
- * in the correct format to directly send to users.
+ * a [[wecommendationpipewine]] i-is capabwe of pwocessing wequests (quewies) and w-wetuwning wesponses (wesuwts)
+ * in the cowwect f-fowmat to diwectwy send to usews. (///ˬ///✿)
  *
- * @tparam Query the domain model for the query or request
- * @tparam Candidate the type of the candidates
- * @tparam Result the final marshalled result type
+ * @tpawam quewy the domain modew fow the quewy o-ow wequest
+ * @tpawam candidate t-the type of t-the candidates
+ * @tpawam wesuwt the finaw mawshawwed wesuwt type
  */
-abstract class RecommendationPipeline[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  Result]
-    extends Pipeline[Query, Result] {
-  override private[core] val config: RecommendationPipelineConfig[Query, Candidate, _, Result]
-  override val arrow: Arrow[Query, RecommendationPipelineResult[Candidate, Result]]
-  override val identifier: RecommendationPipelineIdentifier
+abstwact c-cwass wecommendationpipewine[
+  quewy <: pipewinequewy, 😳😳😳
+  candidate <: univewsawnoun[any], 🥺
+  wesuwt]
+    e-extends pipewine[quewy, mya w-wesuwt] {
+  ovewwide p-pwivate[cowe] v-vaw config: w-wecommendationpipewineconfig[quewy, 🥺 candidate, >_< _, wesuwt]
+  ovewwide v-vaw awwow: awwow[quewy, >_< wecommendationpipewinewesuwt[candidate, (⑅˘꒳˘) wesuwt]]
+  o-ovewwide vaw identifiew: wecommendationpipewineidentifiew
 }

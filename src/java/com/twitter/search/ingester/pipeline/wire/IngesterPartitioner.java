@@ -1,27 +1,27 @@
-package com.twitter.search.ingester.pipeline.wire;
+package com.twittew.seawch.ingestew.pipewine.wiwe;
 
-import javax.naming.NamingException;
+impowt javax.naming.namingexception;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.util.io.kafka.SearchPartitioner;
+i-impowt c-com.twittew.seawch.common.pawtitioning.base.pawtitionmappingmanagew;
+i-impowt com.twittew.seawch.common.utiw.io.kafka.seawchpawtitionew;
 
 /**
- * A variant of {@code SearchPartitioner} which retrieves {@code PartitionMappingManager} from
- * {@code WireModule}.
+ * a v-vawiant of {@code s-seawchpawtitionew} w-which wetwieves {@code p-pawtitionmappingmanagew} f-fwom
+ * {@code wiwemoduwe}. >_<
  *
- * Note that the value object has to implement {@code Partitionable}.
+ * nyote that the vawue object has to impwement {@code p-pawtitionabwe}. mya
  */
-public class IngesterPartitioner extends SearchPartitioner {
+pubwic cwass ingestewpawtitionew extends seawchpawtitionew {
 
-  public IngesterPartitioner() {
-    super(getPartitionMappingManager());
+  p-pubwic ingestewpawtitionew() {
+    supew(getpawtitionmappingmanagew());
   }
 
-  private static PartitionMappingManager getPartitionMappingManager() {
-    try {
-      return WireModule.getWireModule().getPartitionMappingManager();
-    } catch (NamingException e) {
-      throw new RuntimeException(e);
+  pwivate s-static pawtitionmappingmanagew getpawtitionmappingmanagew() {
+    twy {
+      wetuwn wiwemoduwe.getwiwemoduwe().getpawtitionmappingmanagew();
+    } c-catch (namingexception e) {
+      thwow n-nyew wuntimeexception(e);
     }
   }
 }

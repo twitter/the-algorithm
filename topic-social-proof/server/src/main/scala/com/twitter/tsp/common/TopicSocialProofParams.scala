@@ -1,104 +1,104 @@
-package com.twitter.tsp.common
+package com.twittew.tsp.common
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.timewines.configapi.baseconfig
+i-impowt com.twittew.timewines.configapi.baseconfigbuiwdew
+impowt c-com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.featuweswitchovewwideutiw
 
-object TopicSocialProofParams {
+o-object topicsociawpwoofpawams {
 
-  object TopicTweetsSemanticCoreVersionId
-      extends FSBoundedParam[Long](
-        name = "topic_tweets_semantic_core_annotation_version_id",
-        default = 1433487161551032320L,
-        min = 0L,
-        max = Long.MaxValue
+  o-object topictweetssemanticcowevewsionid
+      extends fsboundedpawam[wong](
+        nyame = "topic_tweets_semantic_cowe_annotation_vewsion_id", :3
+        defauwt = 1433487161551032320w, 😳😳😳
+        m-min = 0w, (˘ω˘)
+        max = wong.maxvawue
       )
-  object TopicTweetsSemanticCoreVersionIdsSet
-      extends FSParam[Set[Long]](
-        name = "topic_tweets_semantic_core_annotation_version_id_allowed_set",
-        default = Set(TopicTweetsSemanticCoreVersionId.default))
+  o-object topictweetssemanticcowevewsionidsset
+      e-extends fspawam[set[wong]](
+        nyame = "topic_tweets_semantic_cowe_annotation_vewsion_id_awwowed_set", ^^
+        defauwt = set(topictweetssemanticcowevewsionid.defauwt))
 
   /**
-   * Controls the Topic Social Proof cosine similarity threshold for the Topic Tweets.
+   * contwows the t-topic sociaw pwoof cosine simiwawity t-thweshowd f-fow the topic tweets. :3
    */
-  object TweetToTopicCosineSimilarityThreshold
-      extends FSBoundedParam[Double](
-        name = "topic_tweets_cosine_similarity_threshold_tsp",
-        default = 0.0,
-        min = 0.0,
+  object tweettotopiccosinesimiwawitythweshowd
+      extends fsboundedpawam[doubwe](
+        nyame = "topic_tweets_cosine_simiwawity_thweshowd_tsp", -.-
+        d-defauwt = 0.0, 😳
+        min = 0.0, mya
         max = 1.0
       )
 
-  object EnablePersonalizedContextTopics // master feature switch to enable backfill
-      extends FSParam[Boolean](
-        name = "topic_tweets_personalized_contexts_enable_personalized_contexts",
-        default = false
+  object enabwepewsonawizedcontexttopics // mastew featuwe s-switch to enabwe backfiww
+      e-extends fspawam[boowean](
+        n-nyame = "topic_tweets_pewsonawized_contexts_enabwe_pewsonawized_contexts", (˘ω˘)
+        d-defauwt = f-fawse
       )
 
-  object EnableYouMightLikeTopic
-      extends FSParam[Boolean](
-        name = "topic_tweets_personalized_contexts_enable_you_might_like",
-        default = false
+  object enabweyoumightwiketopic
+      extends fspawam[boowean](
+        n-nyame = "topic_tweets_pewsonawized_contexts_enabwe_you_might_wike", >_<
+        defauwt = fawse
       )
 
-  object EnableRecentEngagementsTopic
-      extends FSParam[Boolean](
-        name = "topic_tweets_personalized_contexts_enable_recent_engagements",
-        default = false
+  object enabwewecentengagementstopic
+      e-extends fspawam[boowean](
+        nyame = "topic_tweets_pewsonawized_contexts_enabwe_wecent_engagements", -.-
+        defauwt = fawse
       )
 
-  object EnableTopicTweetHealthFilterPersonalizedContexts
-      extends FSParam[Boolean](
-        name = "topic_tweets_personalized_contexts_health_switch",
-        default = true
+  object enabwetopictweetheawthfiwtewpewsonawizedcontexts
+      e-extends fspawam[boowean](
+        nyame = "topic_tweets_pewsonawized_contexts_heawth_switch",
+        d-defauwt = t-twue
       )
 
-  object EnableTweetToTopicScoreRanking
-      extends FSParam[Boolean](
-        name = "topic_tweets_enable_tweet_to_topic_score_ranking",
-        default = true
+  o-object enabwetweettotopicscowewanking
+      extends fspawam[boowean](
+        nyame = "topic_tweets_enabwe_tweet_to_topic_scowe_wanking", 🥺
+        defauwt = t-twue
       )
 
 }
 
-object FeatureSwitchConfig {
-  private val enumFeatureSwitchOverrides = FeatureSwitchOverrideUtil
-    .getEnumFSOverrides(
-      NullStatsReceiver,
-      Logger(getClass),
+o-object featuweswitchconfig {
+  pwivate vaw enumfeatuweswitchovewwides = f-featuweswitchovewwideutiw
+    .getenumfsovewwides(
+      n-nyuwwstatsweceivew, (U ﹏ U)
+      woggew(getcwass), >w<
     )
 
-  private val intFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides()
+  p-pwivate vaw intfeatuweswitchovewwides = featuweswitchovewwideutiw.getboundedintfsovewwides()
 
-  private val longFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBoundedLongFSOverrides(
-    TopicSocialProofParams.TopicTweetsSemanticCoreVersionId
+  p-pwivate vaw wongfeatuweswitchovewwides = featuweswitchovewwideutiw.getboundedwongfsovewwides(
+    t-topicsociawpwoofpawams.topictweetssemanticcowevewsionid
   )
 
-  private val doubleFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-    TopicSocialProofParams.TweetToTopicCosineSimilarityThreshold,
+  pwivate v-vaw doubwefeatuweswitchovewwides = featuweswitchovewwideutiw.getboundeddoubwefsovewwides(
+    t-topicsociawpwoofpawams.tweettotopiccosinesimiwawitythweshowd, mya
   )
 
-  private val longSetFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getLongSetFSOverrides(
-    TopicSocialProofParams.TopicTweetsSemanticCoreVersionIdsSet,
+  p-pwivate vaw wongsetfeatuweswitchovewwides = featuweswitchovewwideutiw.getwongsetfsovewwides(
+    topicsociawpwoofpawams.topictweetssemanticcowevewsionidsset, >w<
   )
 
-  private val booleanFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-    TopicSocialProofParams.EnablePersonalizedContextTopics,
-    TopicSocialProofParams.EnableYouMightLikeTopic,
-    TopicSocialProofParams.EnableRecentEngagementsTopic,
-    TopicSocialProofParams.EnableTopicTweetHealthFilterPersonalizedContexts,
-    TopicSocialProofParams.EnableTweetToTopicScoreRanking,
+  pwivate vaw booweanfeatuweswitchovewwides = featuweswitchovewwideutiw.getbooweanfsovewwides(
+    topicsociawpwoofpawams.enabwepewsonawizedcontexttopics, nyaa~~
+    topicsociawpwoofpawams.enabweyoumightwiketopic, (✿oωo)
+    t-topicsociawpwoofpawams.enabwewecentengagementstopic, ʘwʘ
+    t-topicsociawpwoofpawams.enabwetopictweetheawthfiwtewpewsonawizedcontexts, (ˆ ﻌ ˆ)♡
+    topicsociawpwoofpawams.enabwetweettotopicscowewanking, 😳😳😳
   )
-  val config: BaseConfig = BaseConfigBuilder()
-    .set(enumFeatureSwitchOverrides: _*)
-    .set(intFeatureSwitchOverrides: _*)
-    .set(longFeatureSwitchOverrides: _*)
-    .set(doubleFeatureSwitchOverrides: _*)
-    .set(longSetFeatureSwitchOverrides: _*)
-    .set(booleanFeatureSwitchOverrides: _*)
-    .build()
+  vaw c-config: baseconfig = b-baseconfigbuiwdew()
+    .set(enumfeatuweswitchovewwides: _*)
+    .set(intfeatuweswitchovewwides: _*)
+    .set(wongfeatuweswitchovewwides: _*)
+    .set(doubwefeatuweswitchovewwides: _*)
+    .set(wongsetfeatuweswitchovewwides: _*)
+    .set(booweanfeatuweswitchovewwides: _*)
+    .buiwd()
 }

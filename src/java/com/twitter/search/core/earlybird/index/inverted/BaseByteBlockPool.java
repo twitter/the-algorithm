@@ -1,373 +1,373 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
-import java.util.Arrays;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.awways;
 
-import org.apache.lucene.store.DataInput;
-import org.apache.lucene.store.DataOutput;
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.ByteBlockPool;
-import org.apache.lucene.util.BytesRef;
+i-impowt owg.apache.wucene.stowe.datainput;
+i-impowt o-owg.apache.wucene.stowe.dataoutput;
+i-impowt owg.apache.wucene.utiw.awwayutiw;
+i-impowt o-owg.apache.wucene.utiw.bytebwockpoow;
+impowt owg.apache.wucene.utiw.byteswef;
 
-import static org.apache.lucene.util.RamUsageEstimator.NUM_BYTES_OBJECT_REF;
+impowt static owg.apache.wucene.utiw.wamusageestimatow.num_bytes_object_wef;
 
 /**
- * Base class for BlockPools backed by byte[] arrays.
+ * b-base cwass fow bwockpoows backed by byte[] a-awways.
  */
-public abstract class BaseByteBlockPool {
+pubwic abstwact c-cwass basebytebwockpoow {
   /**
-   * The extra object with final array is necessary to guarantee visibility to
-   * other threads without synchronization/using volatile.
+   * the extwa object with finaw awway is nyecessawy t-to guawantee visibiwity to
+   * o-othew thweads w-without synchwonization/using vowatiwe. (ˆ ﻌ ˆ)♡
    *
-   * From 'Java Concurrency in practice' by Brian Goetz, p. 349:
+   * fwom 'java concuwwency in pwactice' by bwian g-goetz, o.O p. 349:
    *
-   * "Initialization safety guarantees that for properly constructed objects, all
-   *  threads will see the correct values of final fields that were set by the con-
-   *  structor, regardless of how the object is published. Further, any variables
-   *  that can be reached through a final field of a properly constructed object
-   *  (such as the elements of a final array or the contents of a HashMap refer-
-   *  enced by a final field) are also guaranteed to be visible to other threads."
+   * "initiawization safety guawantees that fow pwopewwy constwucted objects, :3 a-aww
+   *  thweads wiww see the c-cowwect vawues o-of finaw fiewds t-that wewe set b-by the con-
+   *  stwuctow, -.- wegawdwess of how the o-object is pubwished. ( ͡o ω ͡o ) fuwthew, any vawiabwes
+   *  t-that can be weached thwough a finaw fiewd of a pwopewwy constwucted object
+   *  (such as the e-ewements of a finaw awway ow the c-contents of a h-hashmap wefew-
+   *  e-enced by a finaw fiewd) awe awso guawanteed to be visibwe t-to othew thweads."
    */
-  public static final class Pool {
-    public final byte[][] buffers;
+  p-pubwic static finaw cwass p-poow {
+    p-pubwic finaw byte[][] buffews;
 
-    public Pool(byte[][] buffers) {
-      this.buffers = buffers;
+    p-pubwic poow(byte[][] buffews) {
+      t-this.buffews = buffews;
     }
 
-    public byte[][] getBlocks() {
-      return buffers;
+    pubwic b-byte[][] getbwocks() {
+      wetuwn buffews;
     }
   }
 
-  public Pool pool = new Pool(new byte[10][]);
-  // The index of the current buffer in pool.buffers.
-  public int bufferUpto = -1;
-  // The number of bytes that have been written in the current buffer.
-  public int byteUpto = ByteBlockPool.BYTE_BLOCK_SIZE;
-  // The current buffer, i.e. a reference to pool.buffers[bufferUpto]
-  public byte[] buffer;
-  // The total number of bytes that have been used up to now, excluding the current buffer.
-  public int byteOffset = -ByteBlockPool.BYTE_BLOCK_SIZE;
-  // The one and only WriteStream for this pool.
-  private WriteStream writeStream = new WriteStream();
+  p-pubwic poow poow = n-nyew poow(new byte[10][]);
+  // t-the index of the cuwwent buffew in poow.buffews. /(^•ω•^)
+  pubwic int buffewupto = -1;
+  // the nyumbew of bytes that have been wwitten i-in the cuwwent b-buffew. (⑅˘꒳˘)
+  pubwic int byteupto = b-bytebwockpoow.byte_bwock_size;
+  // t-the cuwwent b-buffew, òωó i.e. a wefewence to poow.buffews[buffewupto]
+  pubwic byte[] buffew;
+  // t-the totaw nyumbew of bytes that have been used up to nyow, 🥺 excwuding the cuwwent b-buffew. (ˆ ﻌ ˆ)♡
+  pubwic int byteoffset = -bytebwockpoow.byte_bwock_size;
+  // t-the one a-and onwy wwitestweam f-fow this poow. -.-
+  pwivate w-wwitestweam wwitestweam = n-nyew wwitestweam();
 
-  protected BaseByteBlockPool() { }
+  p-pwotected basebytebwockpoow() { }
 
   /**
-   * Used for loading flushed pool.
+   * used f-fow woading fwushed poow. σωσ
    */
-  protected BaseByteBlockPool(Pool pool, int bufferUpto, int byteUpTo, int byteOffset) {
-    this.pool = pool;
-    this.bufferUpto = bufferUpto;
-    this.byteUpto = byteUpTo;
-    this.byteOffset = byteOffset;
-    if (bufferUpto >= 0) {
-      this.buffer = pool.buffers[bufferUpto];
+  pwotected b-basebytebwockpoow(poow p-poow, >_< int b-buffewupto, :3 int b-byteupto, OwO int byteoffset) {
+    t-this.poow = poow;
+    this.buffewupto = buffewupto;
+    this.byteupto = b-byteupto;
+    this.byteoffset = byteoffset;
+    if (buffewupto >= 0) {
+      this.buffew = poow.buffews[buffewupto];
     }
   }
 
   /**
-   * Resets the index of the pool to 0 in the first buffer and resets the byte arrays of
-   * all previously allocated buffers to 0s.
+   * w-wesets the index of the poow to 0 in the fiwst buffew and wesets t-the byte awways o-of
+   * aww p-pweviouswy awwocated buffews to 0s. rawr
    */
-  public void reset() {
-    if (bufferUpto != -1) {
-      // We allocated at least one buffer
+  p-pubwic void weset() {
+    i-if (buffewupto != -1) {
+      // w-we awwocated at weast one buffew
 
-      for (int i = 0; i < bufferUpto; i++) {
-        // Fully zero fill buffers that we fully used
-        Arrays.fill(pool.buffers[i], (byte) 0);
+      fow (int i = 0; i < buffewupto; i++) {
+        // f-fuwwy zewo fiww buffews that we f-fuwwy used
+        awways.fiww(poow.buffews[i], (///ˬ///✿) (byte) 0);
       }
 
-      // Partial zero fill the final buffer
-      Arrays.fill(pool.buffers[bufferUpto], 0, byteUpto, (byte) 0);
+      // pawtiaw z-zewo fiww t-the finaw buffew
+      awways.fiww(poow.buffews[buffewupto], ^^ 0, byteupto, XD (byte) 0);
 
-      bufferUpto = 0;
-      byteUpto = 0;
-      byteOffset = 0;
-      buffer = pool.buffers[0];
+      b-buffewupto = 0;
+      b-byteupto = 0;
+      byteoffset = 0;
+      b-buffew = p-poow.buffews[0];
     }
   }
 
   /**
-   * Switches to the next buffer and positions the index at its beginning.
+   * switches to the nyext buffew and positions the index a-at its beginning. UwU
    */
-  public void nextBuffer() {
-    if (1 + bufferUpto == pool.buffers.length) {
-      byte[][] newBuffers = new byte[ArrayUtil.oversize(pool.buffers.length + 1,
-                                                           NUM_BYTES_OBJECT_REF)][];
-      System.arraycopy(pool.buffers, 0, newBuffers, 0, pool.buffers.length);
-      pool = new Pool(newBuffers);
+  p-pubwic v-void nyextbuffew() {
+    if (1 + b-buffewupto == p-poow.buffews.wength) {
+      byte[][] nyewbuffews = n-nyew byte[awwayutiw.ovewsize(poow.buffews.wength + 1, o.O
+                                                           nyum_bytes_object_wef)][];
+      system.awwaycopy(poow.buffews, 😳 0, newbuffews, 0, (˘ω˘) poow.buffews.wength);
+      p-poow = nyew p-poow(newbuffews);
     }
-    buffer = pool.buffers[1 + bufferUpto] = new byte[ByteBlockPool.BYTE_BLOCK_SIZE];
-    bufferUpto++;
+    buffew = poow.buffews[1 + b-buffewupto] = n-nyew byte[bytebwockpoow.byte_bwock_size];
+    buffewupto++;
 
-    byteUpto = 0;
-    byteOffset += ByteBlockPool.BYTE_BLOCK_SIZE;
+    byteupto = 0;
+    byteoffset += b-bytebwockpoow.byte_bwock_size;
   }
 
   /**
-   * Returns the start offset of the next data that will be added to the pool, UNLESS the data is
-   * added using addBytes and avoidSplitting = true
+   * wetuwns the stawt offset of the nyext data that wiww be added t-to the poow, 🥺 unwess the data is
+   * added using a-addbytes and a-avoidspwitting = twue
    */
-  public int getOffset() {
-    return byteOffset + byteUpto;
+  pubwic int getoffset() {
+    wetuwn b-byteoffset + b-byteupto;
   }
 
   /**
-   * Returns the start offset of b in the pool
-   * @param b byte to put
+   * wetuwns the stawt offset of b in the poow
+   * @pawam b-b byte to put
    */
-  public int addByte(byte b) {
-    int initOffset = byteOffset + byteUpto;
-    int remainingBytesInBuffer = ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto;
-    // If the buffer is full, move on to the next one.
-    if (remainingBytesInBuffer <= 0) {
-      nextBuffer();
+  pubwic int a-addbyte(byte b) {
+    int initoffset = byteoffset + byteupto;
+    i-int wemainingbytesinbuffew = bytebwockpoow.byte_bwock_size - b-byteupto;
+    // i-if the buffew is fuww, move on t-to the nyext one. ^^
+    if (wemainingbytesinbuffew <= 0) {
+      nyextbuffew();
     }
-    buffer[byteUpto] = b;
-    byteUpto++;
-    return initOffset;
+    b-buffew[byteupto] = b-b;
+    b-byteupto++;
+    wetuwn initoffset;
   }
 
   /**
-   * Returns the start offset of the bytes in the pool.
-   *        If avoidSplitting is false, this is guaranteed to return the same value that would be
-   *        returned by getOffset()
-   * @param bytes source array
-   * @param length number of bytes to put
-   * @param avoidSplitting if possible (the length is less than ByteBlockPool.BYTE_BLOCK_SIZE),
-   *        the bytes will not be split across buffer boundaries. This is useful for small data
-   *        that will be read a lot (small amount of space wasted in return for avoiding copying
-   *        memory when calling getBytes).
+   * w-wetuwns the s-stawt offset of the bytes in the poow. >w<
+   *        i-if avoidspwitting i-is fawse, ^^;; t-this is guawanteed to wetuwn the same vawue that w-wouwd be
+   *        wetuwned by g-getoffset()
+   * @pawam b-bytes souwce awway
+   * @pawam wength nyumbew of bytes t-to put
+   * @pawam a-avoidspwitting i-if possibwe (the w-wength is wess than bytebwockpoow.byte_bwock_size),
+   *        t-the bytes wiww nyot be spwit acwoss buffew boundawies. (˘ω˘) this is usefuw fow smow data
+   *        t-that wiww be wead a wot (smow a-amount of space wasted in wetuwn f-fow avoiding copying
+   *        m-memowy when cawwing getbytes). OwO
    */
-  public int addBytes(byte[] bytes, int offset, int length, boolean avoidSplitting) {
-    // The first time this is called, there may not be an existing buffer yet.
-    if (buffer == null) {
-      nextBuffer();
+  p-pubwic i-int addbytes(byte[] b-bytes, (ꈍᴗꈍ) int o-offset, òωó int wength, b-boowean avoidspwitting) {
+    // the fiwst time this is cawwed, ʘwʘ thewe may nyot be an existing buffew yet. ʘwʘ
+    if (buffew == n-nyuww) {
+      n-nyextbuffew();
     }
 
-    int remainingBytesInBuffer = ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto;
+    i-int wemainingbytesinbuffew = bytebwockpoow.byte_bwock_size - b-byteupto;
 
-    if (avoidSplitting && length < ByteBlockPool.BYTE_BLOCK_SIZE) {
-      if (remainingBytesInBuffer < length) {
-        nextBuffer();
+    if (avoidspwitting && wength < bytebwockpoow.byte_bwock_size) {
+      i-if (wemainingbytesinbuffew < w-wength) {
+        nyextbuffew();
       }
-      int initOffset = byteOffset + byteUpto;
-      System.arraycopy(bytes, offset, buffer, byteUpto, length);
-      byteUpto += length;
-      return initOffset;
-    } else {
-      int initOffset = byteOffset + byteUpto;
-      if (remainingBytesInBuffer < length) {
-        // Must split the bytes across buffers.
-        int remainingLength = length;
-        while (remainingLength > ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto) {
-          int lengthToCopy = ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto;
-          System.arraycopy(bytes, length - remainingLength + offset,
-                  buffer, byteUpto, lengthToCopy);
-          remainingLength -= lengthToCopy;
-          nextBuffer();
+      i-int initoffset = byteoffset + byteupto;
+      s-system.awwaycopy(bytes, nyaa~~ o-offset, UwU buffew, byteupto, (⑅˘꒳˘) w-wength);
+      b-byteupto += wength;
+      wetuwn initoffset;
+    } ewse {
+      int initoffset = b-byteoffset + b-byteupto;
+      i-if (wemainingbytesinbuffew < w-wength) {
+        // m-must spwit the bytes acwoss b-buffews. (˘ω˘)
+        i-int wemainingwength = wength;
+        w-whiwe (wemainingwength > b-bytebwockpoow.byte_bwock_size - byteupto) {
+          i-int wengthtocopy = bytebwockpoow.byte_bwock_size - byteupto;
+          s-system.awwaycopy(bytes, wength - w-wemainingwength + o-offset, :3
+                  buffew, (˘ω˘) b-byteupto, wengthtocopy);
+          wemainingwength -= wengthtocopy;
+          n-nyextbuffew();
         }
-        System.arraycopy(bytes, length - remainingLength + offset,
-                buffer, byteUpto, remainingLength);
-        byteUpto += remainingLength;
-      } else {
-        // Just add all bytes to the current buffer.
-        System.arraycopy(bytes, offset, buffer, byteUpto, length);
-        byteUpto += length;
+        s-system.awwaycopy(bytes, nyaa~~ w-wength - wemainingwength + offset, (U ﹏ U)
+                buffew, nyaa~~ byteupto, ^^;; w-wemainingwength);
+        byteupto += wemainingwength;
+      } e-ewse {
+        // j-just add aww bytes to the cuwwent b-buffew. OwO
+        system.awwaycopy(bytes, nyaa~~ o-offset, UwU b-buffew, byteupto, 😳 wength);
+        byteupto += w-wength;
       }
-      return initOffset;
+      wetuwn initoffset;
     }
   }
 
   /**
-   * Default addBytes. Does not avoid splitting.
-   * @see #addBytes(byte[], int, boolean)
+   * d-defauwt addbytes. 😳 d-does nyot avoid spwitting. (ˆ ﻌ ˆ)♡
+   * @see #addbytes(byte[], (✿oωo) i-int, boowean)
    */
-  public int addBytes(byte[] bytes, int length) {
-    return addBytes(bytes, 0, length, false);
+  p-pubwic int addbytes(byte[] b-bytes, nyaa~~ i-int wength) {
+    wetuwn addbytes(bytes, ^^ 0, wength, (///ˬ///✿) fawse);
   }
 
   /**
-   * Default addBytes. Does not avoid splitting.
-   * @see #addBytes(byte[], int, boolean)
+   * defauwt addbytes. 😳 does nyot avoid spwitting. òωó
+   * @see #addbytes(byte[], ^^;; int, boowean)
    */
-  public int addBytes(byte[] bytes, int offset, int length) {
-    return addBytes(bytes, offset, length, false);
+  pubwic int addbytes(byte[] bytes, rawr int offset, (ˆ ﻌ ˆ)♡ int wength) {
+    wetuwn addbytes(bytes, XD o-offset, wength, >_< f-fawse);
   }
 
   /**
-   * Reads one byte from the pool.
-   * @param offset location to read byte from
+   * weads one byte fwom t-the poow. (˘ω˘)
+   * @pawam o-offset wocation t-to wead byte fwom
    */
-  public byte getByte(int offset) {
-    int bufferIndex = offset >>> ByteBlockPool.BYTE_BLOCK_SHIFT;
-    int bufferOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
-    return pool.buffers[bufferIndex][bufferOffset];
+  p-pubwic byte getbyte(int offset) {
+    i-int buffewindex = o-offset >>> bytebwockpoow.byte_bwock_shift;
+    i-int buffewoffset = offset & b-bytebwockpoow.byte_bwock_mask;
+    w-wetuwn poow.buffews[buffewindex][buffewoffset];
   }
 
   /**
-   * Returns false if offset is invalid or there aren't these many bytes
-   * available in the pool.
-   * @param offset location to start reading bytes from
-   * @param length number of bytes to read
-   * @param output the object to write the output to. MUST be non null.
+   * wetuwns fawse if offset is i-invawid ow thewe a-awen't these m-many bytes
+   * a-avaiwabwe in the p-poow. 😳
+   * @pawam o-offset wocation t-to stawt weading b-bytes fwom
+   * @pawam w-wength nyumbew of bytes t-to wead
+   * @pawam o-output the o-object to wwite the output to. o.O m-must be non nyuww. (ꈍᴗꈍ)
    */
-  public boolean getBytesToBytesRef(int offset, int length, BytesRef output) {
-    if (offset < 0 || offset + length > byteUpto + byteOffset) {
-      return false;
+  pubwic boowean getbytestobyteswef(int o-offset, rawr x3 int wength, ^^ byteswef output) {
+    i-if (offset < 0 || offset + w-wength > b-byteupto + byteoffset) {
+      wetuwn fawse;
     }
-    int currentBuffer = offset >>> ByteBlockPool.BYTE_BLOCK_SHIFT;
-    int currentOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
-    // If the requested bytes are split across pools, we have to make a new array of bytes
-    // to copy them into and return a ref to that.
-    if (currentOffset + length <= ByteBlockPool.BYTE_BLOCK_SIZE) {
-      output.bytes = pool.buffers[currentBuffer];
-      output.offset = currentOffset;
-      output.length = length;
-    } else {
-      byte[] bytes = new byte[length];
-      int remainingLength = length;
-      while (remainingLength > ByteBlockPool.BYTE_BLOCK_SIZE - currentOffset) {
-        int lengthToCopy = ByteBlockPool.BYTE_BLOCK_SIZE - currentOffset;
-        System.arraycopy(pool.buffers[currentBuffer], currentOffset, bytes,
-                         length - remainingLength, lengthToCopy);
-        remainingLength -= lengthToCopy;
-        currentBuffer++;
-        currentOffset = 0;
+    i-int cuwwentbuffew = offset >>> b-bytebwockpoow.byte_bwock_shift;
+    int cuwwentoffset = offset & b-bytebwockpoow.byte_bwock_mask;
+    // if t-the wequested bytes awe spwit acwoss poows, OwO we have to make a nyew awway of bytes
+    // t-to copy them into and w-wetuwn a wef to t-that. ^^
+    if (cuwwentoffset + wength <= bytebwockpoow.byte_bwock_size) {
+      output.bytes = poow.buffews[cuwwentbuffew];
+      o-output.offset = cuwwentoffset;
+      o-output.wength = w-wength;
+    } e-ewse {
+      byte[] bytes = nyew byte[wength];
+      i-int wemainingwength = wength;
+      w-whiwe (wemainingwength > bytebwockpoow.byte_bwock_size - c-cuwwentoffset) {
+        int wengthtocopy = bytebwockpoow.byte_bwock_size - c-cuwwentoffset;
+        system.awwaycopy(poow.buffews[cuwwentbuffew], :3 c-cuwwentoffset, o.O b-bytes, -.-
+                         w-wength - wemainingwength, (U ﹏ U) wengthtocopy);
+        w-wemainingwength -= w-wengthtocopy;
+        c-cuwwentbuffew++;
+        c-cuwwentoffset = 0;
       }
-      System.arraycopy(pool.buffers[currentBuffer], currentOffset, bytes, length - remainingLength,
-                       remainingLength);
-      output.bytes = bytes;
-      output.length = bytes.length;
-      output.offset = 0;
+      system.awwaycopy(poow.buffews[cuwwentbuffew], o.O c-cuwwentoffset, OwO b-bytes, ^•ﻌ•^ wength - w-wemainingwength,
+                       wemainingwength);
+      o-output.bytes = b-bytes;
+      o-output.wength = b-bytes.wength;
+      o-output.offset = 0;
     }
-    return true;
+    wetuwn twue;
 
   }
 
   /**
-   * Returns the read bytes, or null if offset is invalid or there aren't these many bytes
-   * available in the pool.
-   * @param offset location to start reading bytes from
-   * @param length number of bytes to read
+   * w-wetuwns the wead bytes, ʘwʘ ow nyuww i-if offset is invawid ow thewe a-awen't these many b-bytes
+   * avaiwabwe i-in the poow. :3
+   * @pawam offset wocation to stawt weading bytes fwom
+   * @pawam w-wength n-nyumbew of bytes t-to wead
    */
-  public BytesRef getBytes(int offset, int length) {
-    BytesRef result = new BytesRef();
-    if (getBytesToBytesRef(offset, length, result)) {
-      return result;
-    } else {
-      return null;
+  pubwic byteswef getbytes(int offset, 😳 int wength) {
+    b-byteswef w-wesuwt = nyew byteswef();
+    if (getbytestobyteswef(offset, òωó wength, w-wesuwt)) {
+      w-wetuwn wesuwt;
+    } ewse {
+      wetuwn nyuww;
     }
   }
 
   /**
-   * get a new readStream at a given offset for this pool.
+   * g-get a-a nyew weadstweam a-at a given offset f-fow this poow. 🥺
    *
-   * Notice that individual ReadStreams are not threadsafe, but you can get as many ReadStreams as
-   * you want.
+   * nyotice that individuaw w-weadstweams a-awe nyot thweadsafe, rawr x3 but you can get as many weadstweams a-as
+   * you want. ^•ﻌ•^
    */
-  public ReadStream getReadStream(int offset) {
-    return new ReadStream(offset);
+  pubwic weadstweam g-getweadstweam(int offset) {
+    w-wetuwn nyew w-weadstweam(offset);
   }
 
   /**
-   * get the (one and only) WriteStream for this pool.
+   * get the (one a-and onwy) wwitestweam f-fow this poow. :3
    *
-   * Notice that there is exactly one WriteStream per pool, and it is not threadsafe.
+   * n-nyotice that thewe is exactwy o-one wwitestweam p-pew poow, (ˆ ﻌ ˆ)♡ and it i-is not thweadsafe. (U ᵕ U❁)
    */
-  public WriteStream getWriteStream() {
-    return writeStream;
+  p-pubwic wwitestweam g-getwwitestweam() {
+    w-wetuwn wwitestweam;
   }
 
   /**
-   * A DataOutput-like interface for writing "contiguous" data to a ByteBlockPool.
+   * a-a dataoutput-wike intewface f-fow wwiting "contiguous" data to a bytebwockpoow. :3
    *
-   * This is not threadsafe.
+   * this is nyot t-thweadsafe. ^^;;
    */
-  public final class WriteStream extends DataOutput {
-    private WriteStream() { }
+  p-pubwic finaw c-cwass wwitestweam extends dataoutput {
+    pwivate wwitestweam() { }
 
     /**
-     * Returns the start offset of the next data that will be added to the pool, UNLESS the data is
-     * added using addBytes and avoidSplitting = true
+     * wetuwns the s-stawt offset of the next data t-that wiww be added t-to the poow, unwess the data is
+     * added u-using addbytes and avoidspwitting = t-twue
      */
-    public int getOffset() {
-      return BaseByteBlockPool.this.getOffset();
-    }
-
-    /**
-     * Write bytes to the pool.
-     * @param bytes  source array
-     * @param offset  offset in bytes of the data to write
-     * @param length  number of bytes to put
-     * @param avoidSplitting  same as {link ByteBlockPool.addBytes}
-     * @return  the start offset of the bytes in the pool
-     */
-    public int writeBytes(byte[] bytes, int offset, int length, boolean avoidSplitting) {
-      return addBytes(bytes, offset, length, avoidSplitting);
-    }
-
-    @Override
-    public void writeBytes(byte[] b, int offset, int length) throws IOException {
-      addBytes(b, offset, length);
-    }
-
-    @Override
-    public void writeByte(byte b) {
-      addByte(b);
-    }
-  }
-
-  /**
-   * A DataInput-like interface for reading "contiguous" data from a ByteBlockPool.
-   *
-   * This is not threadsafe.
-   *
-   * This does not fully implement the DataInput interface - its DataInput.readBytes method throws
-   * UnsupportedOperationException because this class provides a facility for no-copy reading.
-   */
-  public final class ReadStream extends DataInput {
-    private int offset;
-
-    private ReadStream(int offset) {
-      this.offset = offset;
-    }
-
-    public BytesRef readBytes(int n) {
-      return readBytes(n, false);
+    p-pubwic int g-getoffset() {
+      w-wetuwn basebytebwockpoow.this.getoffset();
     }
 
     /**
-     * read n bytes that were written with a given value of avoidSplitting
-     * @param n  number of bytes to read.
-     * @param avoidSplitting  this should be the same that was used at writeBytes time.
-     * @return  a reference to the bytes read or null.
+     * w-wwite bytes to the poow. ( ͡o ω ͡o )
+     * @pawam bytes  souwce awway
+     * @pawam offset  o-offset in bytes of the data t-to wwite
+     * @pawam wength  nyumbew of bytes to put
+     * @pawam a-avoidspwitting  same as {wink bytebwockpoow.addbytes}
+     * @wetuwn  the stawt offset of t-the bytes in the p-poow
      */
-    public BytesRef readBytes(int n, boolean avoidSplitting) {
-      int currentBuffer = offset >>> ByteBlockPool.BYTE_BLOCK_SHIFT;
-      int currentOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
-      if (avoidSplitting && n < ByteBlockPool.BYTE_BLOCK_SIZE
-          && currentOffset + n > ByteBlockPool.BYTE_BLOCK_SIZE) {
-        ++currentBuffer;
-        currentOffset = 0;
-        offset = currentBuffer << ByteBlockPool.BYTE_BLOCK_SHIFT;
+    pubwic int wwitebytes(byte[] b-bytes, o.O int offset, ^•ﻌ•^ int wength, XD boowean avoidspwitting) {
+      wetuwn a-addbytes(bytes, o-offset, ^^ wength, o.O avoidspwitting);
+    }
+
+    @ovewwide
+    p-pubwic void wwitebytes(byte[] b, ( ͡o ω ͡o ) i-int offset, /(^•ω•^) int wength) thwows ioexception {
+      addbytes(b, o-offset, 🥺 wength);
+    }
+
+    @ovewwide
+    pubwic void wwitebyte(byte b-b) {
+      a-addbyte(b);
+    }
+  }
+
+  /**
+   * a-a datainput-wike intewface fow weading "contiguous" d-data fwom a bytebwockpoow. nyaa~~
+   *
+   * this is nyot thweadsafe. mya
+   *
+   * this d-does not fuwwy i-impwement the d-datainput intewface - i-its datainput.weadbytes method thwows
+   * u-unsuppowtedopewationexception because t-this cwass pwovides a faciwity fow nyo-copy w-weading. XD
+   */
+  pubwic finaw cwass weadstweam e-extends datainput {
+    pwivate int offset;
+
+    p-pwivate weadstweam(int o-offset) {
+      this.offset = o-offset;
+    }
+
+    p-pubwic b-byteswef weadbytes(int n) {
+      wetuwn weadbytes(n, nyaa~~ f-fawse);
+    }
+
+    /**
+     * wead ny bytes that wewe wwitten w-with a given vawue of avoidspwitting
+     * @pawam ny  nyumbew of bytes to w-wead. ʘwʘ
+     * @pawam a-avoidspwitting  t-this shouwd b-be the same that w-was used at wwitebytes time. (⑅˘꒳˘)
+     * @wetuwn  a w-wefewence to the bytes wead ow nyuww. :3
+     */
+    p-pubwic byteswef weadbytes(int n-ny, -.- boowean avoidspwitting) {
+      int cuwwentbuffew = offset >>> b-bytebwockpoow.byte_bwock_shift;
+      i-int cuwwentoffset = offset & b-bytebwockpoow.byte_bwock_mask;
+      if (avoidspwitting && n-ny < bytebwockpoow.byte_bwock_size
+          && c-cuwwentoffset + ny > bytebwockpoow.byte_bwock_size) {
+        ++cuwwentbuffew;
+        c-cuwwentoffset = 0;
+        o-offset = cuwwentbuffew << bytebwockpoow.byte_bwock_shift;
       }
-      BytesRef result = getBytes(offset, n);
-      this.offset += n;
-      return result;
+      b-byteswef wesuwt = getbytes(offset, 😳😳😳 ny);
+      this.offset += ny;
+      w-wetuwn wesuwt;
     }
 
-    @Override
-    public byte readByte() {
-      return getByte(offset++);
+    @ovewwide
+    pubwic b-byte weadbyte() {
+      wetuwn getbyte(offset++);
     }
 
-    @Override
-    public void readBytes(byte[] b, int off, int len) throws IOException {
-      throw new UnsupportedOperationException("Use the no-copies version of ReadBytes instead.");
+    @ovewwide
+    p-pubwic v-void weadbytes(byte[] b-b, (U ﹏ U) int off, o.O int wen) thwows i-ioexception {
+      t-thwow nyew unsuppowtedopewationexception("use t-the nyo-copies vewsion of w-weadbytes instead.");
     }
   }
 }

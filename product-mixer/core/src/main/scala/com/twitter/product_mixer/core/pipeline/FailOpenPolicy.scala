@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.core.pipeline
+package com.twittew.pwoduct_mixew.cowe.pipewine
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.misconfiguwedfeatuwemapfaiwuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecategowy
 
 /**
- * [[FailOpenPolicy]] determines what should happen in the event that a candidate pipeline fails
- * to execute successfully.
+ * [[faiwopenpowicy]] d-detewmines nyani s-shouwd happen i-in the event that a-a candidate pipewine f-faiws
+ * t-to exekawaii~ successfuwwy. OwO
  *
- * Exercise caution when creating new fail open policies. Product Mixer will fail open by default in
- * certain error cases (e.g. closed gate on a candidate pipeline) but these might inadvertently be
- * excluded by a new policy.
+ * e-exewcise caution when cweating nyew faiw open powicies. 😳😳😳 pwoduct mixew wiww faiw o-open by defauwt in
+ * cewtain ewwow cases (e.g. 😳😳😳 c-cwosed gate on a candidate pipewine) b-but these might inadvewtentwy be
+ * excwuded by a nyew powicy. o.O
  */
-trait FailOpenPolicy {
-  def apply(failureCategory: PipelineFailureCategory): Boolean
+t-twait faiwopenpowicy {
+  d-def appwy(faiwuwecategowy: pipewinefaiwuwecategowy): b-boowean
 }
 
-object FailOpenPolicy {
+object faiwopenpowicy {
 
   /**
-   * Always fail open on candidate pipeline failures except
-   * for [[MisconfiguredFeatureMapFailure]]s because it's a programmer error
-   * and should always fail loudly, even with an [[Always]] p[[FailOpenPolicy]]
+   * awways faiw open on candidate pipewine faiwuwes e-except
+   * fow [[misconfiguwedfeatuwemapfaiwuwe]]s because it's a pwogwammew ewwow
+   * a-and shouwd awways faiw woudwy, e-even with an [[awways]] p-p[[faiwopenpowicy]]
    */
-  val Always: FailOpenPolicy = (category: PipelineFailureCategory) => {
-    category != MisconfiguredFeatureMapFailure
+  v-vaw awways: f-faiwopenpowicy = (categowy: pipewinefaiwuwecategowy) => {
+    categowy != m-misconfiguwedfeatuwemapfaiwuwe
   }
 
   /**
-   * Never fail open on candidate pipeline failures.
+   * nyevew faiw open on candidate p-pipewine faiwuwes. ( ͡o ω ͡o )
    *
-   * @note this is more restrictive than the default behavior which is to allow gate closed
-   *       failures.
+   * @note this is mowe westwictive than the defauwt behaviow which i-is to awwow gate cwosed
+   *       f-faiwuwes.
    */
-  val Never: FailOpenPolicy = (_: PipelineFailureCategory) => false
+  v-vaw nyevew: f-faiwopenpowicy = (_: pipewinefaiwuwecategowy) => fawse
 
-  // Build a policy that will fail open for a given set of categories
-  def apply(categories: Set[PipelineFailureCategory]): FailOpenPolicy =
-    (failureCategory: PipelineFailureCategory) =>
-      categories
-        .contains(failureCategory)
+  // buiwd a powicy t-that wiww faiw open f-fow a given set of categowies
+  d-def appwy(categowies: s-set[pipewinefaiwuwecategowy]): faiwopenpowicy =
+    (faiwuwecategowy: p-pipewinefaiwuwecategowy) =>
+      categowies
+        .contains(faiwuwecategowy)
 }

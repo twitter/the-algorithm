@@ -1,48 +1,48 @@
-# Without this alias, library :follow-recommendations-service_lib would conflict with :bin
-alias(
-    name = "follow-recommendations-service",
-    target = ":follow-recommendations-service_lib",
+# without this awias, 😳 wibwawy :fowwow-wecommendations-sewvice_wib w-wouwd confwict w-with :bin
+awias(
+    n-nyame = "fowwow-wecommendations-sewvice", XD
+    t-tawget = ":fowwow-wecommendations-sewvice_wib", :3
 )
 
-target(
-    name = "follow-recommendations-service_lib",
+t-tawget(
+    n-nyame = "fowwow-wecommendations-sewvice_wib", 😳😳😳
+    d-dependencies = [
+        "fowwow-wecommendations-sewvice/sewvew/swc/main/scawa/com/twittew/fowwow_wecommendations", -.-
+        "fowwow-wecommendations-sewvice/sewvew/swc/main/scawa/com/twittew/fowwow_wecommendations/modews",
+    ], ( ͡o ω ͡o )
+)
+
+j-jvm_binawy(
+    nyame = "bin", rawr x3
+    basename = "fowwow-wecommendations-sewvice", nyaa~~
+    main = "com.twittew.fowwow_wecommendations.fowwowwecommendationssewvicethwiftsewvewmain", /(^•ω•^)
+    wuntime_pwatfowm = "java11", rawr
+    tags = ["bazew-compatibwe"], OwO
     dependencies = [
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/models",
-    ],
+        ":fowwow-wecommendations-sewvice", (U ﹏ U)
+        "3wdpawty/jvm/ch/qos/wogback:wogback-cwassic", >_<
+        "finagwe/finagwe-zipkin-scwibe/swc/main/scawa", rawr x3
+        "finatwa/inject/inject-wogback/swc/main/scawa", mya
+        "wogwens/wogwens-wogback/swc/main/scawa/com/twittew/wogwens/wogback", nyaa~~
+        "twittew-sewvew-intewnaw/swc/main/scawa", (⑅˘꒳˘)
+        "twittew-sewvew/wogback-cwassic/swc/main/scawa", rawr x3
+    ], (✿oωo)
 )
 
-jvm_binary(
-    name = "bin",
-    basename = "follow-recommendations-service",
-    main = "com.twitter.follow_recommendations.FollowRecommendationsServiceThriftServerMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":follow-recommendations-service",
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "finagle/finagle-zipkin-scribe/src/main/scala",
-        "finatra/inject/inject-logback/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+#  a-auwowa wowkfwows buiwd phase convention w-wequiwes a jvm_app nyamed with ${pwoject-name}-app
+j-jvm_app(
+    nyame = "fowwow-wecommendations-sewvice-app", (ˆ ﻌ ˆ)♡
+    awchive = "zip", (˘ω˘)
+    binawy = ":bin", (⑅˘꒳˘)
+    b-bundwes = [
+        bundwe(
+            f-fiweset = [
+                "sewvew/swc/main/wesouwces/*", (///ˬ///✿)
+                "sewvew/swc/main/wesouwces/**/*", 😳😳😳
+            ], 🥺
+            o-owning_tawget = "fowwow-wecommendations-sewvice/sewvew/swc/main/wesouwces:fws_wesouwces", mya
+            wewative_to = "sewvew/swc/main/wesouwces", 🥺
+        ), >_<
     ],
-)
-
-#  Aurora Workflows build phase convention requires a jvm_app named with ${project-name}-app
-jvm_app(
-    name = "follow-recommendations-service-app",
-    archive = "zip",
-    binary = ":bin",
-    bundles = [
-        bundle(
-            fileset = [
-                "server/src/main/resources/*",
-                "server/src/main/resources/**/*",
-            ],
-            owning_target = "follow-recommendations-service/server/src/main/resources:frs_resources",
-            relative_to = "server/src/main/resources",
-        ),
-    ],
-    tags = ["bazel-compatible"],
+    tags = ["bazew-compatibwe"], >_<
 )

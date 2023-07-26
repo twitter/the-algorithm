@@ -1,189 +1,189 @@
-package com.twitter.product_mixer.core.product.registry
+package com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.RootIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.product.ProductPipeline
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineBuilderFactory
-import com.twitter.product_mixer.core.service.component_registry.ComponentRegistry
-import com.twitter.product_mixer.core.service.component_registry.ComponentRegistrySnapshot
-import com.twitter.product_mixer.shared_library.observer.Observer
-import com.twitter.util.Try
-import com.twitter.util.Var
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.reflect.runtime.universe._
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiewstack
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductpipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.wootidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewinebuiwdewfactowy
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.component_wegistwy.componentwegistwy
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.component_wegistwy.componentwegistwysnapshot
+impowt com.twittew.pwoduct_mixew.shawed_wibwawy.obsewvew.obsewvew
+i-impowt com.twittew.utiw.twy
+impowt com.twittew.utiw.vaw
+impowt com.twittew.utiw.wogging.wogging
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
+impowt scawa.wefwect.wuntime.univewse._
 
-@Singleton
-class ProductPipelineRegistry @Inject() (
-  componentRegistry: ComponentRegistry,
-  productPipelineRegistryConfig: ProductPipelineRegistryConfig,
-  productPipelineBuilderFactory: ProductPipelineBuilderFactory,
-  statsReceiver: StatsReceiver)
-    extends Logging {
+@singweton
+c-cwass pwoductpipewinewegistwy @inject() (
+  c-componentwegistwy: componentwegistwy, σωσ
+  pwoductpipewinewegistwyconfig: pwoductpipewinewegistwyconfig, (⑅˘꒳˘)
+  pwoductpipewinebuiwdewfactowy: p-pwoductpipewinebuiwdewfactowy, (///ˬ///✿)
+  statsweceivew: statsweceivew)
+    extends wogging {
 
-  private val rootIdentifierStack = ComponentIdentifierStack(RootIdentifier())
+  pwivate v-vaw wootidentifiewstack = componentidentifiewstack(wootidentifiew())
 
-  private val rebuildObserver =
-    Observer.function[Unit](statsReceiver, "ProductPipelineRegistry", "rebuild")
-
-  /**
-   * Internal state of ProductPipelineRegistry.
-   *
-   * Build once on startup, and later whenever `rebuild()` is called.
-   */
-  private[this] val productPipelineByProduct =
-    Var[Map[Product, ProductPipeline[_ <: Request, _]]](buildProductPipelineByProduct())
+  pwivate v-vaw webuiwdobsewvew =
+    o-obsewvew.function[unit](statsweceivew, 🥺 "pwoductpipewinewegistwy", OwO "webuiwd")
 
   /**
-   * Triggers a rebuild of the ProductPipelineRegistry and also the ComponentRegistry
+   * i-intewnaw s-state of pwoductpipewinewegistwy. >w<
    *
-   * Failed rebuilds will throw an exception - likely one of the listed ones - and the product
-   * registry and component registry will not be modified.
-   *
-   * @throws MultipleProductPipelinesForAProductException
-   * @throws ComponentIdentifierCollisionException
-   * @throws ChildComponentCollisionException
+   * buiwd once on stawtup, 🥺 and watew w-whenevew `webuiwd()` is cawwed. nyaa~~
    */
-  private[core] def rebuild(): Unit = {
-    Try {
-      rebuildObserver {
-        productPipelineByProduct.update(buildProductPipelineByProduct())
+  pwivate[this] v-vaw pwoductpipewinebypwoduct =
+    vaw[map[pwoduct, ^^ pwoductpipewine[_ <: wequest, >w< _]]](buiwdpwoductpipewinebypwoduct())
+
+  /**
+   * twiggews a webuiwd of the pwoductpipewinewegistwy a-and awso the componentwegistwy
+   *
+   * f-faiwed webuiwds w-wiww thwow a-an exception - wikewy one of the wisted ones - and the pwoduct
+   * w-wegistwy and c-component wegistwy wiww nyot be m-modified. OwO
+   *
+   * @thwows m-muwtipwepwoductpipewinesfowapwoductexception
+   * @thwows componentidentifiewcowwisionexception
+   * @thwows c-chiwdcomponentcowwisionexception
+   */
+  pwivate[cowe] d-def webuiwd(): unit = {
+    twy {
+      webuiwdobsewvew {
+        p-pwoductpipewinebypwoduct.update(buiwdpwoductpipewinebypwoduct())
       }
-    }.onFailure { ex =>
-        error("Failed to rebuild ProductPipelineRegistry", ex)
+    }.onfaiwuwe { ex =>
+        e-ewwow("faiwed to webuiwd p-pwoductpipewinewegistwy", XD ex)
       }.get()
   }
 
   /**
-   * register the provided pipeline recursively register all of it's children components
-   * that are added to the [[Pipeline]]'s [[Pipeline.children]]
+   * w-wegistew the pwovided pipewine wecuwsivewy wegistew aww of it's chiwdwen components
+   * that awe added to the [[pipewine]]'s [[pipewine.chiwdwen]]
    */
-  private def registerPipelineAndChildren(
-    componentRegistrySnapshot: ComponentRegistrySnapshot,
-    pipeline: Pipeline[_, _],
-    parentIdentifierStack: ComponentIdentifierStack
-  ): Unit = {
-    val identifierStackString =
-      s"${parentIdentifierStack.componentIdentifiers.reverse.mkString("\t->\t")}\t->\t${pipeline.identifier}"
-    info(identifierStackString)
+  p-pwivate d-def wegistewpipewineandchiwdwen(
+    componentwegistwysnapshot: c-componentwegistwysnapshot, ^^;;
+    p-pipewine: pipewine[_, 🥺 _],
+    p-pawentidentifiewstack: componentidentifiewstack
+  ): unit = {
+    vaw identifiewstackstwing =
+      s-s"${pawentidentifiewstack.componentidentifiews.wevewse.mkstwing("\t->\t")}\t->\t${pipewine.identifiew}"
+    info(identifiewstackstwing)
 
-    componentRegistrySnapshot.register(
-      component = pipeline,
-      parentIdentifierStack = parentIdentifierStack)
+    componentwegistwysnapshot.wegistew(
+      component = pipewine, XD
+      p-pawentidentifiewstack = pawentidentifiewstack)
 
-    val identifierStackWithCurrentPipeline = parentIdentifierStack.push(pipeline.identifier)
-    pipeline.children.foreach {
-      case childPipeline: Pipeline[_, _] =>
-        info(s"$identifierStackString\t->\t${childPipeline.identifier}")
-        registerPipelineAndChildren(
-          componentRegistrySnapshot,
-          childPipeline,
-          identifierStackWithCurrentPipeline)
-      case component =>
-        info(s"$identifierStackString\t->\t${component.identifier}")
-        componentRegistrySnapshot.register(
-          component = component,
-          parentIdentifierStack = identifierStackWithCurrentPipeline)
+    v-vaw i-identifiewstackwithcuwwentpipewine = p-pawentidentifiewstack.push(pipewine.identifiew)
+    pipewine.chiwdwen.foweach {
+      c-case c-chiwdpipewine: p-pipewine[_, (U ᵕ U❁) _] =>
+        i-info(s"$identifiewstackstwing\t->\t${chiwdpipewine.identifiew}")
+        wegistewpipewineandchiwdwen(
+          componentwegistwysnapshot, :3
+          chiwdpipewine, ( ͡o ω ͡o )
+          i-identifiewstackwithcuwwentpipewine)
+      c-case component =>
+        i-info(s"$identifiewstackstwing\t->\t${component.identifiew}")
+        c-componentwegistwysnapshot.wegistew(
+          component = c-component, òωó
+          pawentidentifiewstack = identifiewstackwithcuwwentpipewine)
     }
   }
 
   /*
-   * Internal method (not for callers outside of this class, see rebuild() for those)
+   * intewnaw method (not f-fow cawwews outside of this cwass, σωσ see webuiwd() fow those)
    *
-   * Produces an updated Map[Product, ProductPipeline] and also refreshes the global component registry
+   * pwoduces an updated m-map[pwoduct, (U ᵕ U❁) pwoductpipewine] and awso wefweshes the gwobaw component w-wegistwy
    */
-  private[this] def buildProductPipelineByProduct(
-  ): Map[Product, ProductPipeline[_ <: Request, _]] = {
+  p-pwivate[this] d-def buiwdpwoductpipewinebypwoduct(
+  ): map[pwoduct, (✿oωo) p-pwoductpipewine[_ <: wequest, ^^ _]] = {
 
-    // Build a new component registry snapshot.
-    val newComponentRegistry = new ComponentRegistrySnapshot()
-
-    info(
-      "Registering all products, pipelines, and components (this may be helpful if you encounter dependency injection errors)")
-    info("debug details are in the form of `parent -> child`")
-
-    // handle the case of multiple ProductPipelines having the same product
-    checkForAndThrowMultipleProductPipelinesForAProduct()
-
-    // Build a Map[Product, ProductPipeline], registering everything in the new component registry recursively
-    val pipelinesByProduct: Map[Product, ProductPipeline[_ <: Request, _]] =
-      productPipelineRegistryConfig.productPipelineConfigs.map { productPipelineConfig =>
-        val product = productPipelineConfig.product
-        info(s"Recursively registering ${product.identifier}")
-
-        // gets the ComponentIdentifierStack without the RootIdentifier since
-        // we don't want RootIdentifier to show up in stats or errors
-        val productPipeline =
-          productPipelineBuilderFactory.get.build(
-            ComponentIdentifierStack(product.identifier),
-            productPipelineConfig)
-
-        // gets RootIdentifier so we can register Products under the correct hierarchy
-        newComponentRegistry.register(product, rootIdentifierStack)
-        registerPipelineAndChildren(
-          newComponentRegistry,
-          productPipeline,
-          rootIdentifierStack.push(product.identifier))
-
-        // In addition to registering the component in the main registry, we want to maintain a map of
-        // product to the product pipeline to allow for O(1) lookup by product on the request hot path
-        product -> productPipeline
-      }.toMap
+    // buiwd a n-new component wegistwy s-snapshot. ^•ﻌ•^
+    vaw nyewcomponentwegistwy = new componentwegistwysnapshot()
 
     info(
-      s"Successfully registered ${newComponentRegistry.getAllRegisteredComponents
-        .count(_.identifier.isInstanceOf[ProductIdentifier])} products and " +
-        s"${newComponentRegistry.getAllRegisteredComponents.length} " +
-        s"components total, query the component registry endpoint for details")
+      "wegistewing aww pwoducts, XD pipewines, :3 and components (this m-may be hewpfuw if you e-encountew dependency injection e-ewwows)")
+    i-info("debug detaiws awe in the fowm of `pawent -> c-chiwd`")
 
-    componentRegistry.set(newComponentRegistry)
+    // h-handwe the case of muwtipwe pwoductpipewines h-having the same p-pwoduct
+    checkfowandthwowmuwtipwepwoductpipewinesfowapwoduct()
 
-    pipelinesByProduct
+    // buiwd a map[pwoduct, (ꈍᴗꈍ) pwoductpipewine], :3 wegistewing evewything in the nyew c-component wegistwy w-wecuwsivewy
+    v-vaw pipewinesbypwoduct: map[pwoduct, pwoductpipewine[_ <: w-wequest, _]] =
+      p-pwoductpipewinewegistwyconfig.pwoductpipewineconfigs.map { pwoductpipewineconfig =>
+        v-vaw pwoduct = pwoductpipewineconfig.pwoduct
+        info(s"wecuwsivewy wegistewing ${pwoduct.identifiew}")
+
+        // gets the c-componentidentifiewstack w-without the wootidentifiew since
+        // w-we don't w-want wootidentifiew to show up in stats ow ewwows
+        vaw pwoductpipewine =
+          p-pwoductpipewinebuiwdewfactowy.get.buiwd(
+            componentidentifiewstack(pwoduct.identifiew), (U ﹏ U)
+            pwoductpipewineconfig)
+
+        // gets wootidentifiew so we can wegistew p-pwoducts undew the cowwect hiewawchy
+        nyewcomponentwegistwy.wegistew(pwoduct, UwU w-wootidentifiewstack)
+        w-wegistewpipewineandchiwdwen(
+          nyewcomponentwegistwy, 😳😳😳
+          pwoductpipewine, XD
+          wootidentifiewstack.push(pwoduct.identifiew))
+
+        // i-in addition to w-wegistewing the component in the main wegistwy, o.O we want to maintain a-a map of
+        // pwoduct t-to the pwoduct pipewine to awwow fow o(1) wookup by pwoduct on t-the wequest hot path
+        pwoduct -> p-pwoductpipewine
+      }.tomap
+
+    i-info(
+      s"successfuwwy w-wegistewed ${newcomponentwegistwy.getawwwegistewedcomponents
+        .count(_.identifiew.isinstanceof[pwoductidentifiew])} pwoducts and " +
+        s-s"${newcomponentwegistwy.getawwwegistewedcomponents.wength} " +
+        s-s"components totaw, (⑅˘꒳˘) q-quewy the component wegistwy e-endpoint fow d-detaiws")
+
+    componentwegistwy.set(newcomponentwegistwy)
+
+    pipewinesbypwoduct
   }
 
-  // handle the case of multiple ProductPipelines having the same product
-  private def checkForAndThrowMultipleProductPipelinesForAProduct(): Unit = {
-    productPipelineRegistryConfig.productPipelineConfigs.groupBy(_.product.identifier).foreach {
-      case (product, productPipelines) if productPipelines.length != 1 =>
-        throw new MultipleProductPipelinesForAProductException(
-          product,
-          productPipelines.map(_.identifier))
-      case _ =>
+  // handwe t-the case of m-muwtipwe pwoductpipewines h-having the same pwoduct
+  pwivate def c-checkfowandthwowmuwtipwepwoductpipewinesfowapwoduct(): unit = {
+    p-pwoductpipewinewegistwyconfig.pwoductpipewineconfigs.gwoupby(_.pwoduct.identifiew).foweach {
+      c-case (pwoduct, 😳😳😳 pwoductpipewines) if pwoductpipewines.wength != 1 =>
+        thwow nyew muwtipwepwoductpipewinesfowapwoductexception(
+          p-pwoduct, nyaa~~
+          p-pwoductpipewines.map(_.identifiew))
+      c-case _ =>
     }
   }
 
-  def getProductPipeline[MixerRequest <: Request: TypeTag, ResponseType: TypeTag](
-    product: Product
-  ): ProductPipeline[MixerRequest, ResponseType] = {
-    // Check and cast the bounded existential types to the concrete types
-    (typeOf[MixerRequest], typeOf[ResponseType]) match {
-      case (req, res) if req =:= typeOf[MixerRequest] && res =:= typeOf[ResponseType] =>
-        productPipelineByProduct.sample
-          .getOrElse(product, throw new ProductNotFoundException(product))
-          .asInstanceOf[ProductPipeline[MixerRequest, ResponseType]]
+  d-def getpwoductpipewine[mixewwequest <: wequest: typetag, rawr w-wesponsetype: typetag](
+    pwoduct: pwoduct
+  ): pwoductpipewine[mixewwequest, -.- wesponsetype] = {
+    // check a-and cast the bounded existentiaw t-types to the concwete types
+    (typeof[mixewwequest], (✿oωo) t-typeof[wesponsetype]) match {
+      case (weq, /(^•ω•^) w-wes) if weq =:= typeof[mixewwequest] && w-wes =:= typeof[wesponsetype] =>
+        p-pwoductpipewinebypwoduct.sampwe
+          .getowewse(pwoduct, 🥺 t-thwow nyew p-pwoductnotfoundexception(pwoduct))
+          .asinstanceof[pwoductpipewine[mixewwequest, ʘwʘ w-wesponsetype]]
       case _ =>
-        throw new UnknownPipelineResponseException(product)
+        thwow nyew unknownpipewinewesponseexception(pwoduct)
     }
   }
 }
 
-class ProductNotFoundException(product: Product)
-    extends RuntimeException(s"No Product found for $product")
+cwass pwoductnotfoundexception(pwoduct: pwoduct)
+    extends wuntimeexception(s"no p-pwoduct found f-fow $pwoduct")
 
-class UnknownPipelineResponseException(product: Product)
-    extends RuntimeException(s"Unknown pipeline response for $product")
+c-cwass unknownpipewinewesponseexception(pwoduct: pwoduct)
+    e-extends wuntimeexception(s"unknown pipewine wesponse fow $pwoduct")
 
-class MultipleProductPipelinesForAProductException(
-  product: ProductIdentifier,
-  pipelineIdentifiers: Seq[ProductPipelineIdentifier])
-    extends IllegalStateException(s"Multiple ProductPipelines found for $product, found " +
-      s"${pipelineIdentifiers
-        .map(productPipelineIdentifier => s"$productPipelineIdentifier from ${productPipelineIdentifier.file}")
-        .mkString(", ")} ")
+cwass muwtipwepwoductpipewinesfowapwoductexception(
+  p-pwoduct: p-pwoductidentifiew, UwU
+  pipewineidentifiews: s-seq[pwoductpipewineidentifiew])
+    extends iwwegawstateexception(s"muwtipwe pwoductpipewines f-found f-fow $pwoduct, found " +
+      s-s"${pipewineidentifiews
+        .map(pwoductpipewineidentifiew => s-s"$pwoductpipewineidentifiew fwom ${pwoductpipewineidentifiew.fiwe}")
+        .mkstwing(", XD ")} ")

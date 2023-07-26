@@ -1,82 +1,82 @@
-package com.twitter.tweetypie
-package service
-package observer
+package com.twittew.tweetypie
+package s-sewvice
+package o-obsewvew
 
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
-import com.twitter.tweetypie.thriftscala.BatchComposeMode
-import com.twitter.tweetypie.thriftscala.PostTweetRequest
-import com.twitter.tweetypie.thriftscala.PostTweetResult
-import com.twitter.tweetypie.thriftscala.TweetCreateState
-import com.twitter.util.Memoize
+impowt c-com.twittew.eschewbiwd.thwiftscawa.tweetentityannotation
+impowt c-com.twittew.tweetypie.thwiftscawa.batchcomposemode
+i-impowt c-com.twittew.tweetypie.thwiftscawa.posttweetwequest
+i-impowt com.twittew.tweetypie.thwiftscawa.posttweetwesuwt
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetcweatestate
+impowt com.twittew.utiw.memoize
 
-private[service] object PostTweetObserver {
-  def observeResults(stats: StatsReceiver, byClient: Boolean): Effect[PostTweetResult] = {
-    val stateScope = stats.scope("state")
-    val tweetObserver = Observer.countTweetAttributes(stats, byClient)
+pwivate[sewvice] object posttweetobsewvew {
+  d-def obsewvewesuwts(stats: statsweceivew, bycwient: boowean): e-effect[posttweetwesuwt] = {
+    vaw statescope = s-stats.scope("state")
+    vaw tweetobsewvew = obsewvew.counttweetattwibutes(stats, rawr x3 b-bycwient)
 
-    val stateCounters =
-      Memoize { st: TweetCreateState => stateScope.counter(Observer.camelToUnderscore(st.name)) }
+    vaw statecountews =
+      m-memoize { s-st: tweetcweatestate => statescope.countew(obsewvew.camewtoundewscowe(st.name)) }
 
-    Effect { result =>
-      stateCounters(result.state).incr()
-      if (result.state == TweetCreateState.Ok) result.tweet.foreach(tweetObserver)
+    effect { wesuwt =>
+      statecountews(wesuwt.state).incw()
+      if (wesuwt.state == t-tweetcweatestate.ok) wesuwt.tweet.foweach(tweetobsewvew)
     }
   }
 
-  private def isCommunity(req: PostTweetRequest): Boolean = {
-    val CommunityGroupId = 8L
-    val CommunityDomainId = 31L
-    req.additionalFields
-      .flatMap(_.escherbirdEntityAnnotations).exists { e =>
-        e.entityAnnotations.collect {
-          case TweetEntityAnnotation(CommunityGroupId, CommunityDomainId, _) => true
-        }.nonEmpty
+  pwivate def iscommunity(weq: posttweetwequest): b-boowean = {
+    vaw communitygwoupid = 8w
+    v-vaw communitydomainid = 31w
+    w-weq.additionawfiewds
+      .fwatmap(_.eschewbiwdentityannotations).exists { e-e =>
+        e-e.entityannotations.cowwect {
+          case tweetentityannotation(communitygwoupid, OwO communitydomainid, /(^•ω•^) _) => t-twue
+        }.nonempty
       }
   }
 
-  def observerRequest(stats: StatsReceiver): Effect[PostTweetRequest] = {
-    val optionsScope = stats.scope("options")
-    val narrowcastCounter = optionsScope.counter("narrowcast")
-    val nullcastCounter = optionsScope.counter("nullcast")
-    val inReplyToStatusIdCounter = optionsScope.counter("in_reply_to_status_id")
-    val placeIdCounter = optionsScope.counter("place_id")
-    val geoCoordinatesCounter = optionsScope.counter("geo_coordinates")
-    val placeMetadataCounter = optionsScope.counter("place_metadata")
-    val mediaUploadIdCounter = optionsScope.counter("media_upload_id")
-    val darkCounter = optionsScope.counter("dark")
-    val tweetToNarrowcastingCounter = optionsScope.counter("tweet_to_narrowcasting")
-    val autoPopulateReplyMetadataCounter = optionsScope.counter("auto_populate_reply_metadata")
-    val attachmentUrlCounter = optionsScope.counter("attachment_url")
-    val excludeReplyUserIdsCounter = optionsScope.counter("exclude_reply_user_ids")
-    val excludeReplyUserIdsStat = optionsScope.stat("exclude_reply_user_ids")
-    val uniquenessIdCounter = optionsScope.counter("uniqueness_id")
-    val batchModeScope = optionsScope.scope("batch_mode")
-    val batchModeFirstCounter = batchModeScope.counter("first")
-    val batchModeSubsequentCounter = batchModeScope.counter("subsequent")
-    val communitiesCounter = optionsScope.counter("communities")
+  def obsewvewwequest(stats: statsweceivew): e-effect[posttweetwequest] = {
+    vaw optionsscope = stats.scope("options")
+    vaw nyawwowcastcountew = optionsscope.countew("nawwowcast")
+    vaw nyuwwcastcountew = o-optionsscope.countew("nuwwcast")
+    vaw i-inwepwytostatusidcountew = o-optionsscope.countew("in_wepwy_to_status_id")
+    v-vaw pwaceidcountew = optionsscope.countew("pwace_id")
+    vaw geocoowdinatescountew = o-optionsscope.countew("geo_coowdinates")
+    v-vaw pwacemetadatacountew = optionsscope.countew("pwace_metadata")
+    v-vaw mediaupwoadidcountew = o-optionsscope.countew("media_upwoad_id")
+    vaw d-dawkcountew = optionsscope.countew("dawk")
+    vaw tweettonawwowcastingcountew = o-optionsscope.countew("tweet_to_nawwowcasting")
+    vaw autopopuwatewepwymetadatacountew = optionsscope.countew("auto_popuwate_wepwy_metadata")
+    v-vaw attachmentuwwcountew = optionsscope.countew("attachment_uww")
+    v-vaw excwudewepwyusewidscountew = optionsscope.countew("excwude_wepwy_usew_ids")
+    vaw e-excwudewepwyusewidsstat = o-optionsscope.stat("excwude_wepwy_usew_ids")
+    vaw uniquenessidcountew = optionsscope.countew("uniqueness_id")
+    vaw batchmodescope = optionsscope.scope("batch_mode")
+    vaw batchmodefiwstcountew = b-batchmodescope.countew("fiwst")
+    v-vaw batchmodesubsequentcountew = batchmodescope.countew("subsequent")
+    v-vaw communitiescountew = o-optionsscope.countew("communities")
 
-    Effect { request =>
-      if (request.narrowcast.nonEmpty) narrowcastCounter.incr()
-      if (request.nullcast) nullcastCounter.incr()
-      if (request.inReplyToTweetId.nonEmpty) inReplyToStatusIdCounter.incr()
-      if (request.geo.flatMap(_.placeId).nonEmpty) placeIdCounter.incr()
-      if (request.geo.flatMap(_.coordinates).nonEmpty) geoCoordinatesCounter.incr()
-      if (request.geo.flatMap(_.placeMetadata).nonEmpty) placeMetadataCounter.incr()
-      if (request.mediaUploadIds.nonEmpty) mediaUploadIdCounter.incr()
-      if (request.dark) darkCounter.incr()
-      if (request.enableTweetToNarrowcasting) tweetToNarrowcastingCounter.incr()
-      if (request.autoPopulateReplyMetadata) autoPopulateReplyMetadataCounter.incr()
-      if (request.attachmentUrl.nonEmpty) attachmentUrlCounter.incr()
-      if (request.excludeReplyUserIds.exists(_.nonEmpty)) excludeReplyUserIdsCounter.incr()
-      if (isCommunity(request)) communitiesCounter.incr()
-      if (request.uniquenessId.nonEmpty) uniquenessIdCounter.incr()
-      request.transientContext.flatMap(_.batchCompose).foreach {
-        case BatchComposeMode.BatchFirst => batchModeFirstCounter.incr()
-        case BatchComposeMode.BatchSubsequent => batchModeSubsequentCounter.incr()
+    e-effect { wequest =>
+      if (wequest.nawwowcast.nonempty) nyawwowcastcountew.incw()
+      i-if (wequest.nuwwcast) nyuwwcastcountew.incw()
+      if (wequest.inwepwytotweetid.nonempty) inwepwytostatusidcountew.incw()
+      if (wequest.geo.fwatmap(_.pwaceid).nonempty) p-pwaceidcountew.incw()
+      if (wequest.geo.fwatmap(_.coowdinates).nonempty) g-geocoowdinatescountew.incw()
+      i-if (wequest.geo.fwatmap(_.pwacemetadata).nonempty) p-pwacemetadatacountew.incw()
+      if (wequest.mediaupwoadids.nonempty) m-mediaupwoadidcountew.incw()
+      i-if (wequest.dawk) d-dawkcountew.incw()
+      i-if (wequest.enabwetweettonawwowcasting) tweettonawwowcastingcountew.incw()
+      if (wequest.autopopuwatewepwymetadata) autopopuwatewepwymetadatacountew.incw()
+      if (wequest.attachmentuww.nonempty) a-attachmentuwwcountew.incw()
+      i-if (wequest.excwudewepwyusewids.exists(_.nonempty)) e-excwudewepwyusewidscountew.incw()
+      if (iscommunity(wequest)) c-communitiescountew.incw()
+      i-if (wequest.uniquenessid.nonempty) uniquenessidcountew.incw()
+      wequest.twansientcontext.fwatmap(_.batchcompose).foweach {
+        case batchcomposemode.batchfiwst => b-batchmodefiwstcountew.incw()
+        case batchcomposemode.batchsubsequent => batchmodesubsequentcountew.incw()
         case _ =>
       }
 
-      excludeReplyUserIdsStat.add(request.excludeReplyUserIds.size)
+      excwudewepwyusewidsstat.add(wequest.excwudewepwyusewids.size)
     }
   }
 }

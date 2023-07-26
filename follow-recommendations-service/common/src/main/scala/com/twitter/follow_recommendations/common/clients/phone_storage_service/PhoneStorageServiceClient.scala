@@ -1,34 +1,34 @@
-package com.twitter.follow_recommendations.common.clients.phone_storage_service
+package com.twittew.fowwow_wecommendations.common.cwients.phone_stowage_sewvice
 
-import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
-import com.twitter.phonestorage.api.thriftscala.GetUserPhonesByUsersRequest
-import com.twitter.phonestorage.api.thriftscala.PhoneStorageService
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.cds.contact_consent_state.thwiftscawa.puwposeofpwocessing
+i-impowt c-com.twittew.phonestowage.api.thwiftscawa.getusewphonesbyusewswequest
+i-impowt c-com.twittew.phonestowage.api.thwiftscawa.phonestowagesewvice
+i-impowt c-com.twittew.stitch.stitch
+i-impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class PhoneStorageServiceClient @Inject() (
-  val phoneStorageService: PhoneStorageService.MethodPerEndpoint) {
+@singweton
+cwass phonestowagesewvicecwient @inject() (
+  vaw phonestowagesewvice: p-phonestowagesewvice.methodpewendpoint) {
 
   /**
-   * PSS can potentially return multiple phone records.
-   * The current implementation of getUserPhonesByUsers returns only a single phone for a single user_id but
-   * we can trivially support handling multiple in case that changes in the future.
+   * pss can potentiawwy wetuwn muwtipwe p-phone wecowds. (✿oωo)
+   * the cuwwent i-impwementation of getusewphonesbyusews wetuwns onwy a singwe p-phone fow a singwe usew_id but
+   * w-we can twiviawwy s-suppowt handwing muwtipwe in case that changes in the futuwe. (ˆ ﻌ ˆ)♡
    */
-  def getPhoneNumbers(
-    userId: Long,
-    purposeOfProcessing: PurposeOfProcessing,
-    forceCarrierLookup: Option[Boolean] = None
-  ): Stitch[Seq[String]] = {
-    val req = GetUserPhonesByUsersRequest(
-      userIds = Seq(userId),
-      forceCarrierLookup = forceCarrierLookup,
-      purposesOfProcessing = Some(Seq(purposeOfProcessing))
+  def getphonenumbews(
+    u-usewid: wong,
+    puwposeofpwocessing: puwposeofpwocessing, (˘ω˘)
+    fowcecawwiewwookup: option[boowean] = n-nyone
+  ): stitch[seq[stwing]] = {
+    v-vaw weq = getusewphonesbyusewswequest(
+      u-usewids = s-seq(usewid), (⑅˘꒳˘)
+      f-fowcecawwiewwookup = fowcecawwiewwookup, (///ˬ///✿)
+      puwposesofpwocessing = s-some(seq(puwposeofpwocessing))
     )
 
-    Stitch.callFuture(phoneStorageService.getUserPhonesByUsers(req)) map {
-      _.userPhones.map(_.phoneNumber)
+    stitch.cawwfutuwe(phonestowagesewvice.getusewphonesbyusews(weq)) map {
+      _.usewphones.map(_.phonenumbew)
     }
   }
 }

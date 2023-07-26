@@ -1,48 +1,48 @@
-package com.twitter.tweetypie.core
+package com.twittew.tweetypie.cowe
 
-import com.twitter.servo.data.Mutation
+impowt com.twittew.sewvo.data.mutation
 
 /**
- * An EditState is a function that changes a value and may generate
- * some state about what was modified. For instance, it may record
- * whether an item was changed, or whether there was an error.
- * EditStates are useful because they are first-class values that can
- * be composed. In particular, it is useful to concurrently access
- * external data to build edits and then apply them.
+ * a-an editstate is a-a function that c-changes a vawue a-and may genewate
+ * s-some state a-about nyani was m-modified. (///ˬ///✿) fow instance, >w< i-it may wecowd
+ * whethew an item was changed, rawr ow whethew thewe was an ewwow. mya
+ * e-editstates awe usefuw because they awe f-fiwst-cwass vawues that can
+ * be c-composed. ^^ in pawticuwaw, 😳😳😳 it is usefuw to concuwwentwy access
+ * e-extewnaw data to buiwd edits and t-then appwy them. mya
  *
- * @tparam A The type of the value that is being edited (for instance,
- *           having fields hydrated with data from another service)
+ * @tpawam a-a the type of the vawue that is being edited (fow instance, 😳
+ *           having f-fiewds hydwated with data fwom anothew sewvice)
  */
-final case class EditState[A](run: A => ValueState[A]) {
+finaw case cwass editstate[a](wun: a-a => vawuestate[a]) {
 
   /**
-   * Composes two EditStates in sequence
+   * composes t-two editstates i-in sequence
    */
-  def andThen(other: EditState[A]): EditState[A] =
-    EditState[A] { a0: A =>
-      val ValueState(a1, s1) = run(a0)
-      val ValueState(a2, s2) = other.run(a1)
-      ValueState(a2, s1 ++ s2)
+  d-def andthen(othew: e-editstate[a]): editstate[a] =
+    editstate[a] { a-a0: a =>
+      vaw vawuestate(a1, -.- s1) = w-wun(a0)
+      vaw vawuestate(a2, s2) = othew.wun(a1)
+      vawuestate(a2, 🥺 s1 ++ s2)
     }
 }
 
-object EditState {
+o-object editstate {
 
   /**
-   * Creates a "passthrough" EditState:
-   * Leaves A unchanged and produces empty state S
+   * cweates a "passthwough" e-editstate:
+   * w-weaves a u-unchanged and pwoduces empty state s
    */
-  def unit[A]: EditState[A] =
-    EditState[A](ValueState.unit[A])
+  def unit[a]: editstate[a] =
+    e-editstate[a](vawuestate.unit[a])
 
   /**
-   * Creates an `EditState[A]` using a `Mutation[A]`.
+   * c-cweates an `editstate[a]` u-using a `mutation[a]`. o.O
    */
-  def fromMutation[A](mut: Mutation[A]): EditState[A] =
-    EditState[A] { a =>
+  d-def fwommutation[a](mut: mutation[a]): e-editstate[a] =
+    editstate[a] { a-a =>
       mut(a) match {
-        case None => ValueState.unmodified(a)
-        case Some(a2) => ValueState.modified(a2)
+        case n-nyone => vawuestate.unmodified(a)
+        case s-some(a2) => vawuestate.modified(a2)
       }
     }
 }

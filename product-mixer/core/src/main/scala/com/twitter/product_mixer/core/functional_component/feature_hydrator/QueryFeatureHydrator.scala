@@ -1,79 +1,79 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.SupportsConditionally
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.suppowtsconditionawwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
 /**
- * Hydrate features about the query itself (not about the candidates)
- * e.g. features about the user who is making the request, what country the request originated from, etc.
+ * hydwate featuwes about the quewy itsewf (not a-about the candidates)
+ * e.g. featuwes about the u-usew who is making the wequest, rawr x3 n-nyani countwy the wequest owiginated fwom, XD etc.
  *
- * @note [[BaseQueryFeatureHydrator]]s populate [[Feature]]s with last-write-wins semantics for
- *       duplicate [[Feature]]s, where the last hydrator to run that populates a [[Feature]] will
- *       override any previously run [[BaseQueryFeatureHydrator]]s values for that [[Feature]].
- *       In a [[com.twitter.product_mixer.core.pipeline.PipelineConfig PipelineConfig]] this means
- *       that the right-most [[BaseQueryFeatureHydrator]] to populate a given [[Feature]] will be
- *       the value that is available to use.
+ * @note [[basequewyfeatuwehydwatow]]s popuwate [[featuwe]]s w-with wast-wwite-wins semantics f-fow
+ *       dupwicate [[featuwe]]s, σωσ w-whewe the wast hydwatow to wun that popuwates a [[featuwe]] wiww
+ *       ovewwide a-any pweviouswy wun [[basequewyfeatuwehydwatow]]s vawues fow that [[featuwe]]. (U ᵕ U❁)
+ *       in a [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewineconfig p-pipewineconfig]] this m-means
+ *       t-that the wight-most [[basequewyfeatuwehydwatow]] t-to popuwate a g-given [[featuwe]] wiww be
+ *       the vawue that i-is avaiwabwe to use. (U ﹏ U)
  *
- * @note if you want to conditionally run a [[BaseQueryFeatureHydrator]] you can use the mixin [[com.twitter.product_mixer.core.model.common.Conditionally]]
- *       or to gate on a [[com.twitter.timelines.configapi.Param]] you can use [[com.twitter.product_mixer.component_library.feature_hydrator.query.param_gated.ParamGatedQueryFeatureHydrator]]
+ * @note if you want t-to conditionawwy wun a [[basequewyfeatuwehydwatow]] you can use the mixin [[com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy]]
+ *       ow to gate on a [[com.twittew.timewines.configapi.pawam]] you can u-use [[com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.pawam_gated.pawamgatedquewyfeatuwehydwatow]]
  *
- * @note Any exceptions that are thrown or returned as [[Stitch.exception]] will be added to the
- *       [[FeatureMap]] for the [[Feature]]s that were supposed to be hydrated.
- *       Accessing a failed Feature will throw if using [[FeatureMap.get]] for Features that aren't
- *       [[com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure]]
+ * @note any exceptions t-that awe thwown o-ow wetuwned a-as [[stitch.exception]] wiww be added to the
+ *       [[featuwemap]] fow the [[featuwe]]s t-that wewe s-supposed to be hydwated. :3
+ *       a-accessing a-a faiwed featuwe wiww thwow if using [[featuwemap.get]] f-fow featuwes that awen't
+ *       [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe]]
  */
-trait BaseQueryFeatureHydrator[-Query <: PipelineQuery, FeatureType <: Feature[_, _]]
-    extends FeatureHydrator[FeatureType]
-    with SupportsConditionally[Query] {
+t-twait basequewyfeatuwehydwatow[-quewy <: pipewinequewy, ( ͡o ω ͡o ) featuwetype <: f-featuwe[_, σωσ _]]
+    extends featuwehydwatow[featuwetype]
+    w-with suppowtsconditionawwy[quewy] {
 
-  override val identifier: FeatureHydratorIdentifier
+  ovewwide vaw identifiew: f-featuwehydwatowidentifiew
 
-  /** Hydrates a [[FeatureMap]] for a given [[Query]] */
-  def hydrate(query: Query): Stitch[FeatureMap]
+  /** h-hydwates a [[featuwemap]] fow a given [[quewy]] */
+  def hydwate(quewy: quewy): stitch[featuwemap]
 }
 
-trait QueryFeatureHydrator[-Query <: PipelineQuery]
-    extends BaseQueryFeatureHydrator[Query, Feature[_, _]]
+twait quewyfeatuwehydwatow[-quewy <: p-pipewinequewy]
+    e-extends basequewyfeatuwehydwatow[quewy, >w< featuwe[_, 😳😳😳 _]]
 
 /**
- * When an [[AsyncHydrator]] is run it will hydrate features in the background
- * and will make them available starting at the specified point in execution.
+ * when an [[asynchydwatow]] i-is wun it wiww hydwate f-featuwes i-in the backgwound
+ * and wiww make them avaiwabwe stawting at the s-specified point in execution. OwO
  *
- * When `hydrateBefore` is reached, any duplicate [[Feature]]s that were already hydrated will be
- * overridden with the new value from the [[AsyncHydrator]]
+ * when `hydwatebefowe` is weached, 😳 any dupwicate [[featuwe]]s t-that wewe awweady hydwated wiww b-be
+ * ovewwidden w-with the nyew v-vawue fwom the [[asynchydwatow]]
  *
- * @note [[AsyncHydrator]]s have the same last-write-wins semantics for duplicate [[Feature]]s
- *       as [[BaseQueryFeatureHydrator]] but with some nuance. If [[AsyncHydrator]]s for the
- *       same [[Feature]] have the same `hydrateBefore` then the right-most [[AsyncHydrator]]s
- *       value takes precedence. Similarly, [[AsyncHydrator]]s always hydrate after any other
- *       [[BaseQueryFeatureHydrator]]. See the examples for more detail.
- * @example if [[QueryFeatureHydrator]]s that populate the same [[Feature]] are defined in a `PipelineConfig`
- *          such as `[ asyncHydratorForFeatureA, normalHydratorForFeatureA ]`, where `asyncHydratorForFeatureA`
- *          is an [[AsyncHydrator]], when `asyncHydratorForFeatureA` reaches it's `hydrateBefore`
- *          Step in the Pipeline, the value for `FeatureA` from the `asyncHydratorForFeatureA` will override
- *          the existing value from `normalHydratorForFeatureA`, even though in the initial `PipelineConfig`
- *          they are ordered differently.
- * @example if [[AsyncHydrator]]s that populate the same [[Feature]] are defined in a `PipelineConfig`
- *          such as `[ asyncHydratorForFeatureA1, asyncHydratorForFeatureA2 ]`, where both [[AsyncHydrator]]s
- *          have the same `hydrateBefore`, when `hydrateBefore` is reached, the value for `FeatureA` from
- *          `asyncHydratorForFeatureA2` will override the value from `asyncHydratorForFeatureA1`.
+ * @note [[asynchydwatow]]s have the same wast-wwite-wins semantics f-fow dupwicate [[featuwe]]s
+ *       a-as [[basequewyfeatuwehydwatow]] b-but w-with some nyuance. 😳😳😳 if [[asynchydwatow]]s fow the
+ *       s-same [[featuwe]] h-have t-the same `hydwatebefowe` t-then the w-wight-most [[asynchydwatow]]s
+ *       vawue takes pwecedence. simiwawwy, (˘ω˘) [[asynchydwatow]]s a-awways hydwate aftew any othew
+ *       [[basequewyfeatuwehydwatow]]. ʘwʘ see the exampwes fow mowe detaiw. ( ͡o ω ͡o )
+ * @exampwe if [[quewyfeatuwehydwatow]]s t-that popuwate the same [[featuwe]] awe defined in a `pipewineconfig`
+ *          s-such as `[ asynchydwatowfowfeatuwea, o.O n-nyowmawhydwatowfowfeatuwea ]`, >w< w-whewe `asynchydwatowfowfeatuwea`
+ *          is an [[asynchydwatow]], 😳 w-when `asynchydwatowfowfeatuwea` weaches i-it's `hydwatebefowe`
+ *          s-step in the pipewine, 🥺 the vawue fow `featuwea` fwom the `asynchydwatowfowfeatuwea` wiww ovewwide
+ *          the existing vawue f-fwom `nowmawhydwatowfowfeatuwea`, rawr x3 even though i-in the initiaw `pipewineconfig`
+ *          they awe owdewed d-diffewentwy. o.O
+ * @exampwe i-if [[asynchydwatow]]s that popuwate the same [[featuwe]] a-awe defined in a-a `pipewineconfig`
+ *          such as `[ asynchydwatowfowfeatuwea1, a-asynchydwatowfowfeatuwea2 ]`, w-whewe both [[asynchydwatow]]s
+ *          have the same `hydwatebefowe`, rawr when `hydwatebefowe` is weached, ʘwʘ the v-vawue fow `featuwea` f-fwom
+ *          `asynchydwatowfowfeatuwea2` w-wiww ovewwide the vawue fwom `asynchydwatowfowfeatuwea1`. 😳😳😳
  */
-trait AsyncHydrator {
-  _: BaseQueryFeatureHydrator[_, _] =>
+t-twait asynchydwatow {
+  _: b-basequewyfeatuwehydwatow[_, ^^;; _] =>
 
   /**
-   * A [[PipelineStepIdentifier]] from the [[com.twitter.product_mixer.core.pipeline.PipelineConfig]] this is used in
-   * by which the [[FeatureMap]] returned by this [[AsyncHydrator]] will be completed.
+   * a [[pipewinestepidentifiew]] f-fwom the [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewineconfig]] this is used in
+   * by which the [[featuwemap]] wetuwned b-by this [[asynchydwatow]] w-wiww be compweted. o.O
    *
-   * Access to the [[Feature]]s from this [[AsyncHydrator]] prior to reaching the provided
-   * [[PipelineStepIdentifier]]s will result in a [[com.twitter.product_mixer.core.feature.featuremap.MissingFeatureException]].
+   * access to the [[featuwe]]s f-fwom this [[asynchydwatow]] p-pwiow to weaching the pwovided
+   * [[pipewinestepidentifiew]]s wiww wesuwt in a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.missingfeatuweexception]]. (///ˬ///✿)
    *
-   * @note If [[PipelineStepIdentifier]] is a Step which is run in parallel, the [[Feature]]s will be available for all the parallel Steps.
+   * @note i-if [[pipewinestepidentifiew]] is a step which is wun in pawawwew, σωσ the [[featuwe]]s wiww be avaiwabwe f-fow aww the pawawwew steps. nyaa~~
    */
-  def hydrateBefore: PipelineStepIdentifier
+  def h-hydwatebefowe: p-pipewinestepidentifiew
 }

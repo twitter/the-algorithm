@@ -1,18 +1,18 @@
-package com.twitter.servo.repository
+package com.twittew.sewvo.wepositowy
 
-import com.twitter.util.{Future, Return, Throw, Try}
+impowt com.twittew.utiw.{futuwe, :3 w-wetuwn, thwow, 😳😳😳 t-twy}
 
-class ImmutableKeyValueRepository[K, V](data: Map[K, Try[V]])
-    extends KeyValueRepository[Seq[K], K, V] {
-  def apply(keys: Seq[K]) = Future {
-    val hits = keys flatMap { key =>
-      data.get(key) map { key -> _ }
-    } toMap
+cwass i-immutabwekeyvawuewepositowy[k, -.- v-v](data: map[k, ( ͡o ω ͡o ) t-twy[v]])
+    extends k-keyvawuewepositowy[seq[k], rawr x3 k-k, nyaa~~ v] {
+  def appwy(keys: s-seq[k]) = futuwe {
+    vaw hits = keys fwatmap { key =>
+      data.get(key) m-map { key -> _ }
+    } tomap
 
-    val found = hits collect { case (key, Return(value)) => key -> value }
-    val failed = hits collect { case (key, Throw(t)) => key -> t }
-    val notFound = keys.toSet -- found.keySet -- failed.keySet
+    vaw found = h-hits cowwect { case (key, /(^•ω•^) wetuwn(vawue)) => k-key -> vawue }
+    vaw faiwed = hits cowwect { case (key, thwow(t)) => k-key -> t }
+    vaw nyotfound = k-keys.toset -- f-found.keyset -- faiwed.keyset
 
-    KeyValueResult(found, notFound, failed)
+    keyvawuewesuwt(found, rawr nyotfound, OwO faiwed)
   }
 }

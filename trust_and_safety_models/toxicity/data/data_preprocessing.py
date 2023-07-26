@@ -1,118 +1,118 @@
-from abc import ABC
-import re
+fwom abc impowt abc
+impowt we
 
-from toxicity_ml_pipeline.settings.hcomp_settings import TOXIC_35
+fwom t-toxicity_mw_pipewine.settings.hcomp_settings i-impowt toxic_35
 
-import numpy as np
-
-
-TOXIC_35_set = set(TOXIC_35)
-
-url_group = r"(\bhttps?:\/\/\S+)"
-mention_group = r"(\B@\S+)"
-urls_mentions_re = re.compile(url_group + r"|" + mention_group, re.IGNORECASE)
-url_re = re.compile(url_group, re.IGNORECASE)
-mention_re = re.compile(mention_group, re.IGNORECASE)
-newline_re = re.compile(r"\n+", re.IGNORECASE)
-and_re = re.compile(r"&\s?amp\s?;", re.IGNORECASE)
+i-impowt nyumpy as n-nyp
 
 
-class DataframeCleaner(ABC):
-  def __init__(self):
+toxic_35_set = s-set(toxic_35)
+
+u-uww_gwoup = w-w"(\bhttps?:\/\/\s+)"
+m-mention_gwoup = w"(\b@\s+)"
+uwws_mentions_we = we.compiwe(uww_gwoup + w"|" + m-mention_gwoup, (⑅˘꒳˘) we.ignowecase)
+uww_we = we.compiwe(uww_gwoup, (///ˬ///✿) w-we.ignowecase)
+mention_we = we.compiwe(mention_gwoup, ^^;; w-we.ignowecase)
+nyewwine_we = we.compiwe(w"\n+", >_< we.ignowecase)
+a-and_we = we.compiwe(w"&\s?amp\s?;", rawr x3 w-we.ignowecase)
+
+
+c-cwass datafwamecweanew(abc):
+  def __init__(sewf):
     pass
 
-  def _clean(self, df):
-    return df
+  def _cwean(sewf, /(^•ω•^) df):
+    w-wetuwn df
 
-  def _systematic_preprocessing(self, df):
-    df.reset_index(inplace=True, drop=True)
-    if "media_url" in df.columns:
-      print(".... removing tweets with media")
-      df.drop(df[~df.media_url.isna()].index, inplace=True, axis=0)
-    else:
-      print("WARNING you are not removing tweets with media to train a BERT model.")
+  def _systematic_pwepwocessing(sewf, :3 df):
+    df.weset_index(inpwace=twue, (ꈍᴗꈍ) dwop=twue)
+    if "media_uww" i-in df.cowumns:
+      pwint(".... wemoving t-tweets with m-media")
+      df.dwop(df[~df.media_uww.isna()].index, /(^•ω•^) i-inpwace=twue, (⑅˘꒳˘) a-axis=0)
+    ewse:
+      pwint("wawning you awe n-nyot wemoving tweets with media to twain a bewt m-modew.")
 
-    print(".... deleting duplicates")
-    df.drop_duplicates("text", inplace=True, keep="last")
-    print(f"Got {df.shape[0]} after cleaning")
+    pwint(".... deweting dupwicates")
+    df.dwop_dupwicates("text", ( ͡o ω ͡o ) inpwace=twue, òωó keep="wast")
+    p-pwint(f"got {df.shape[0]} aftew c-cweaning")
 
-    return df.reset_index(inplace=False, drop=True)
+    w-wetuwn df.weset_index(inpwace=fawse, (⑅˘꒳˘) d-dwop=twue)
 
-  def _postprocess(self, df, *args, **kwargs):
-    return df
+  def _postpwocess(sewf, XD df, -.- *awgs, **kwawgs):
+    wetuwn df
 
-  def __call__(self, df, *args, **kwargs):
-    print(f"Got {df.shape[0]} before cleaning")
+  d-def __caww__(sewf, :3 d-df, nyaa~~ *awgs, **kwawgs):
+    pwint(f"got {df.shape[0]} befowe c-cweaning")
 
-    df["raw_text"] = df.text
-    df = self._clean(df)
+    d-df["waw_text"] = df.text
+    df = s-sewf._cwean(df)
 
-    df = self._systematic_preprocessing(df)
+    df = sewf._systematic_pwepwocessing(df)
 
-    return self._postprocess(df, *args, **kwargs)
-
-
-def mapping_func(el):
-  if el.aggregated_content in TOXIC_35_set:
-    return 2
-  if el.label == 1:
-    return 1
-  return 0
+    w-wetuwn sewf._postpwocess(df, 😳 *awgs, **kwawgs)
 
 
-class DefaultENNoPreprocessor(DataframeCleaner):
-  def _postprocess(self, df, *args, **kwargs):
-    if "toxic_count" in df.columns and "non_toxic_count" in df.columns:
-      df["vote"] = df.toxic_count / (df.toxic_count + df.non_toxic_count)
-      df["agreement_rate"] = np.max((df.vote, 1 - df.vote), axis=0)
-
-    if "label_column" in kwargs and kwargs["label_column"] != "label":
-      if kwargs["label_column"] == "aggregated_content":
-        print("Replacing v3 label by v3.5 label.")
-        if "num_classes" in kwargs and kwargs["num_classes"] < 3:
-          df["label"] = np.where(df.aggregated_content.isin(TOXIC_35_set), 1, 0)
-        elif "num_classes" in kwargs and kwargs["num_classes"] == 3:
-          print("Making it a 3-class pb")
-          df["label"] = df.apply(mapping_func, axis=1)
-        else:
-          raise NotImplementedError
-      elif kwargs['label_column'] in df.columns:
-        df['label'] = df[kwargs['label_column']]
-        if kwargs['class_weight'] is not None:
-          df["class_weight"] = np.where(df['label'] == 1, 1-kwargs['class_weight'],
-                                        kwargs['class_weight'])
-      else:
-        raise NotImplementedError
-
-    if "filter_low_agreements" in kwargs and kwargs["filter_low_agreements"] == True:
-      df.drop(df[(df.agreement_rate <= 0.6)].index, axis=0, inplace=True)
-      raise NotImplementedError
-
-    return df
+def mapping_func(ew):
+  if ew.aggwegated_content i-in toxic_35_set:
+    wetuwn 2
+  i-if ew.wabew == 1:
+    wetuwn 1
+  w-wetuwn 0
 
 
-class DefaultENPreprocessor(DefaultENNoPreprocessor):
-  def _clean(self, adhoc_df):
-    print(
-      ".... removing \\n and replacing @mentions and URLs by placeholders. "
-      "Emoji filtering is not done."
+c-cwass defauwtennopwepwocessow(datafwamecweanew):
+  def _postpwocess(sewf, (⑅˘꒳˘) df, *awgs, **kwawgs):
+    if "toxic_count" in df.cowumns and "non_toxic_count" in df.cowumns:
+      df["vote"] = d-df.toxic_count / (df.toxic_count + df.non_toxic_count)
+      d-df["agweement_wate"] = nyp.max((df.vote, nyaa~~ 1 - d-df.vote), OwO a-axis=0)
+
+    if "wabew_cowumn" in k-kwawgs and kwawgs["wabew_cowumn"] != "wabew":
+      if kwawgs["wabew_cowumn"] == "aggwegated_content":
+        pwint("wepwacing v3 wabew by v3.5 w-wabew.")
+        if "num_cwasses" in kwawgs and kwawgs["num_cwasses"] < 3:
+          df["wabew"] = n-nyp.whewe(df.aggwegated_content.isin(toxic_35_set), 1, rawr x3 0)
+        ewif "num_cwasses" i-in kwawgs a-and kwawgs["num_cwasses"] == 3:
+          pwint("making i-it a 3-cwass pb")
+          d-df["wabew"] = d-df.appwy(mapping_func, XD a-axis=1)
+        e-ewse:
+          waise nyotimpwementedewwow
+      ewif k-kwawgs['wabew_cowumn'] i-in df.cowumns:
+        d-df['wabew'] = d-df[kwawgs['wabew_cowumn']]
+        i-if kwawgs['cwass_weight'] is nyot nyone:
+          df["cwass_weight"] = n-nyp.whewe(df['wabew'] == 1, σωσ 1-kwawgs['cwass_weight'], (U ᵕ U❁)
+                                        kwawgs['cwass_weight'])
+      ewse:
+        waise nyotimpwementedewwow
+
+    if "fiwtew_wow_agweements" in kwawgs and kwawgs["fiwtew_wow_agweements"] == t-twue:
+      df.dwop(df[(df.agweement_wate <= 0.6)].index, (U ﹏ U) axis=0, :3 inpwace=twue)
+      waise nyotimpwementedewwow
+
+    w-wetuwn df
+
+
+c-cwass defauwtenpwepwocessow(defauwtennopwepwocessow):
+  d-def _cwean(sewf, ( ͡o ω ͡o ) adhoc_df):
+    p-pwint(
+      ".... wemoving \\n a-and wepwacing @mentions a-and uwws by pwacehowdews. σωσ "
+      "emoji fiwtewing is nyot done."
     )
-    adhoc_df["text"] = [url_re.sub("URL", tweet) for tweet in adhoc_df.raw_text.values]
-    adhoc_df["text"] = [mention_re.sub("MENTION", tweet) for tweet in adhoc_df.text.values]
-    adhoc_df["text"] = [
-      newline_re.sub(" ", tweet).lstrip(" ").rstrip(" ") for tweet in adhoc_df.text.values
+    adhoc_df["text"] = [uww_we.sub("uww", >w< tweet) fow tweet in adhoc_df.waw_text.vawues]
+    adhoc_df["text"] = [mention_we.sub("mention", 😳😳😳 t-tweet) fow tweet in adhoc_df.text.vawues]
+    a-adhoc_df["text"] = [
+      nyewwine_we.sub(" ", OwO t-tweet).wstwip(" ").wstwip(" ") f-fow tweet in adhoc_df.text.vawues
     ]
-    adhoc_df["text"] = [and_re.sub("&", tweet) for tweet in adhoc_df.text.values]
+    adhoc_df["text"] = [and_we.sub("&", 😳 tweet) fow tweet i-in adhoc_df.text.vawues]
 
-    return adhoc_df
+    w-wetuwn adhoc_df
 
 
-class Defaulti18nPreprocessor(DataframeCleaner):
-  def _clean(self, adhoc_df):
-    print(".... removing @mentions, \\n and URLs. Emoji filtering is not done.")
-    adhoc_df["text"] = [urls_mentions_re.sub("", tweet) for tweet in adhoc_df.raw_text.values]
-    adhoc_df["text"] = [
-      newline_re.sub(" ", tweet).lstrip(" ").rstrip(" ") for tweet in adhoc_df.text.values
+cwass defauwti18npwepwocessow(datafwamecweanew):
+  d-def _cwean(sewf, 😳😳😳 a-adhoc_df):
+    pwint(".... wemoving @mentions, (˘ω˘) \\n and uwws. ʘwʘ emoji fiwtewing i-is nyot done.")
+    a-adhoc_df["text"] = [uwws_mentions_we.sub("", ( ͡o ω ͡o ) t-tweet) fow tweet in adhoc_df.waw_text.vawues]
+    a-adhoc_df["text"] = [
+      n-nyewwine_we.sub(" ", o.O tweet).wstwip(" ").wstwip(" ") f-fow tweet in adhoc_df.text.vawues
     ]
 
-    return adhoc_df
+    wetuwn adhoc_df

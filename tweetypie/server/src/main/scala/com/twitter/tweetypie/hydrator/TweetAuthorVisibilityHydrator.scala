@@ -1,43 +1,43 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
 
 /**
- * Ensures that the tweet's author and source tweet's author (if retweet) are visible to the
- * viewing user - ctx.opts.forUserId - when enforceVisibilityFiltering is true.
- * If either of these users is not visible then a FilteredState.Suppress will be returned.
+ * e-ensuwes that t-the tweet's authow a-and souwce t-tweet's authow (if wetweet) awe visibwe to the
+ * viewing usew - ctx.opts.fowusewid - w-when enfowcevisibiwityfiwtewing is twue. σωσ
+ * if eithew of t-these usews is not visibwe then a-a fiwtewedstate.suppwess wiww be wetuwned. OwO
  *
- * Note: blocking relationship is NOT checked here, this means if viewing user `forUserId` is blocked
- * by either the tweet's author or source tweet's author, this will not filter out the tweet.
+ * nyote: bwocking w-wewationship is nyot checked hewe, 😳😳😳 t-this means if v-viewing usew `fowusewid` is bwocked
+ * by eithew the tweet's authow ow souwce t-tweet's authow, 😳😳😳 this wiww nyot fiwtew out the tweet. o.O
  */
-object TweetAuthorVisibilityHydrator {
-  type Type = ValueHydrator[Unit, TweetCtx]
+object tweetauthowvisibiwityhydwatow {
+  t-type type = vawuehydwatow[unit, ( ͡o ω ͡o ) tweetctx]
 
-  def apply(repo: UserVisibilityRepository.Type): Type =
-    ValueHydrator[Unit, TweetCtx] { (_, ctx) =>
-      val ids = Seq(ctx.userId) ++ ctx.sourceUserId
-      val keys = ids.map(id => toRepoQuery(id, ctx))
+  def a-appwy(wepo: usewvisibiwitywepositowy.type): type =
+    v-vawuehydwatow[unit, (U ﹏ U) t-tweetctx] { (_, (///ˬ///✿) c-ctx) =>
+      vaw ids = seq(ctx.usewid) ++ c-ctx.souwceusewid
+      vaw keys = ids.map(id => towepoquewy(id, >w< c-ctx))
 
-      Stitch
-        .traverse(keys)(repo.apply).flatMap { responses =>
-          val fs: Option[FilteredState.Unavailable] = responses.flatten.headOption
+      stitch
+        .twavewse(keys)(wepo.appwy).fwatmap { wesponses =>
+          vaw fs: option[fiwtewedstate.unavaiwabwe] = wesponses.fwatten.headoption
 
           fs match {
-            case Some(fs: FilteredState.Unavailable) => Stitch.exception(fs)
-            case None => ValueState.StitchUnmodifiedUnit
+            c-case some(fs: fiwtewedstate.unavaiwabwe) => s-stitch.exception(fs)
+            c-case nyone => v-vawuestate.stitchunmodifiedunit
           }
         }
-    }.onlyIf((_, ctx) => ctx.opts.enforceVisibilityFiltering)
+    }.onwyif((_, rawr ctx) => ctx.opts.enfowcevisibiwityfiwtewing)
 
-  private def toRepoQuery(userId: UserId, ctx: TweetCtx) =
-    UserVisibilityRepository.Query(
-      UserKey(userId),
-      ctx.opts.forUserId,
-      ctx.tweetId,
-      ctx.isRetweet,
-      ctx.opts.isInnerQuotedTweet,
-      Some(ctx.opts.safetyLevel))
+  pwivate def towepoquewy(usewid: usewid, mya ctx: tweetctx) =
+    u-usewvisibiwitywepositowy.quewy(
+      u-usewkey(usewid), ^^
+      ctx.opts.fowusewid, 😳😳😳
+      c-ctx.tweetid, mya
+      c-ctx.iswetweet, 😳
+      ctx.opts.isinnewquotedtweet, -.-
+      s-some(ctx.opts.safetywevew))
 }

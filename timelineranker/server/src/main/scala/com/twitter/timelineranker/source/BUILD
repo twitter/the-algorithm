@@ -1,22 +1,22 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "timelineranker/common:model",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/core",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/revchron",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/util",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/visibility",
-        "timelines/src/main/scala/com/twitter/timelines/clients/relevance_search",
-        "timelines/src/main/scala/com/twitter/timelines/util/stats",
-        "timelines/src/main/scala/com/twitter/timelines/visibility",
-        "timelineservice/common/src/main/scala/com/twitter/timelineservice/model",
-        "util/util-core:util-core-util",
-        "util/util-logging/src/main/scala",
-        "util/util-stats/src/main/scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/guava", òωó
+        "3wdpawty/jvm/com/googwe/inject:guice", o.O
+        "3wdpawty/jvm/owg/apache/hadoop:hadoop-cwient-defauwt", (U ᵕ U❁)
+        "timewinewankew/common:modew", (⑅˘꒳˘)
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/cowe", ( ͡o ω ͡o )
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/pawametews/wevchwon", UwU
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/utiw", rawr x3
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/visibiwity", rawr
+        "timewines/swc/main/scawa/com/twittew/timewines/cwients/wewevance_seawch", σωσ
+        "timewines/swc/main/scawa/com/twittew/timewines/utiw/stats", σωσ
+        "timewines/swc/main/scawa/com/twittew/timewines/visibiwity", >_<
+        "timewinesewvice/common/swc/main/scawa/com/twittew/timewinesewvice/modew", :3
+        "utiw/utiw-cowe:utiw-cowe-utiw",
+        "utiw/utiw-wogging/swc/main/scawa", (U ﹏ U)
+        "utiw/utiw-stats/swc/main/scawa", -.-
     ],
 )

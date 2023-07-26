@@ -1,245 +1,245 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+package com.twittew.seawch.ingestew.pipewine.twittew.kafka;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+impowt j-java.time.duwation;
+i-impowt java.utiw.awwaywist;
+i-impowt java.utiw.cowwections;
+i-impowt java.utiw.wist;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.StageDriver;
-import org.apache.commons.pipeline.StageException;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.SaslAuthenticationException;
-import org.apache.kafka.common.errors.SerializationException;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.pipeline.twitter.TwitterBaseStage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.util.PipelineUtil;
+impowt o-owg.apache.commons.pipewine.pipewine;
+impowt owg.apache.commons.pipewine.stagedwivew;
+impowt owg.apache.commons.pipewine.stageexception;
+impowt o-owg.apache.kafka.cwients.consumew.consumewwecowds;
+impowt owg.apache.kafka.cwients.consumew.kafkaconsumew;
+i-impowt owg.apache.kafka.common.topicpawtition;
+impowt owg.apache.kafka.common.ewwows.saswauthenticationexception;
+i-impowt owg.apache.kafka.common.ewwows.sewiawizationexception;
+impowt owg.apache.kafka.common.sewiawization.desewiawizew;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
+impowt com.twittew.seawch.common.decidew.decidewutiw;
+i-impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.ingestew.pipewine.twittew.twittewbasestage;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestageexception;
+impowt c-com.twittew.seawch.ingestew.pipewine.utiw.pipewineutiw;
 
 /**
- * A stage to read Thrift payloads from a Kafka topic.
+ * a stage to wead thwift paywoads fwom a kafka topic. OwO
  */
-public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
-  private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerStage.class);
-  private static final String SHUT_DOWN_ON_AUTH_FAIL = "shut_down_on_authentication_fail";
-  private String kafkaClientId;
-  private String kafkaTopicName;
-  private String kafkaConsumerGroupId;
-  private String kafkaClusterPath;
-  private int maxPollRecords = 1;
-  private int pollTimeoutMs = 1000;
-  private boolean partitioned;
-  private String deciderKey;
-  private final Deserializer<R> deserializer;
-  private SearchCounter pollCount;
-  private SearchCounter deserializationErrorCount;
-  private SearchRateCounter droppedMessages;
+pubwic a-abstwact cwass kafkaconsumewstage<w> e-extends t-twittewbasestage<void, >w< w-w> {
+  pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(kafkaconsumewstage.cwass);
+  p-pwivate static finaw stwing shut_down_on_auth_faiw = "shut_down_on_authentication_faiw";
+  p-pwivate stwing kafkacwientid;
+  pwivate stwing kafkatopicname;
+  pwivate stwing kafkaconsumewgwoupid;
+  p-pwivate stwing kafkacwustewpath;
+  p-pwivate i-int maxpowwwecowds = 1;
+  p-pwivate int powwtimeoutms = 1000;
+  pwivate boowean pawtitioned;
+  p-pwivate stwing d-decidewkey;
+  pwivate finaw desewiawizew<w> d-desewiawizew;
+  p-pwivate seawchcountew p-powwcount;
+  pwivate seawchcountew d-desewiawizationewwowcount;
+  pwivate seawchwatecountew dwoppedmessages;
 
-  private KafkaConsumer<Long, R> kafkaConsumer;
+  p-pwivate kafkaconsumew<wong, 🥺 w> kafkaconsumew;
 
-  protected KafkaConsumerStage(String kafkaClientId, String kafkaTopicName,
-                            String kafkaConsumerGroupId, String kafkaClusterPath,
-                               String deciderKey, Deserializer<R> deserializer) {
+  p-pwotected kafkaconsumewstage(stwing kafkacwientid, nyaa~~ s-stwing kafkatopicname, ^^
+                            s-stwing kafkaconsumewgwoupid, >w< stwing kafkacwustewpath, OwO
+                               stwing decidewkey, XD desewiawizew<w> desewiawizew) {
 
-    this.kafkaClientId = kafkaClientId;
-    this.kafkaTopicName = kafkaTopicName;
-    this.kafkaConsumerGroupId = kafkaConsumerGroupId;
-    this.kafkaClusterPath = kafkaClusterPath;
-    this.deciderKey = deciderKey;
-    this.deserializer = deserializer;
+    this.kafkacwientid = kafkacwientid;
+    this.kafkatopicname = k-kafkatopicname;
+    t-this.kafkaconsumewgwoupid = kafkaconsumewgwoupid;
+    t-this.kafkacwustewpath = k-kafkacwustewpath;
+    t-this.decidewkey = decidewkey;
+    this.desewiawizew = desewiawizew;
   }
 
-  protected KafkaConsumerStage(Deserializer<R> deserializer) {
-    this.deserializer = deserializer;
+  p-pwotected kafkaconsumewstage(desewiawizew<w> desewiawizew) {
+    this.desewiawizew = desewiawizew;
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    commonInnerSetupStats();
+  @ovewwide
+  pwotected v-void initstats() {
+    supew.initstats();
+    c-commoninnewsetupstats();
   }
 
-  private void commonInnerSetupStats() {
-    pollCount = SearchCounter.export(getStageNamePrefix() + "_poll_count");
-    deserializationErrorCount =
-        SearchCounter.export(getStageNamePrefix() + "_deserialization_error_count");
-    droppedMessages =
-        SearchRateCounter.export(getStageNamePrefix() + "_dropped_messages");
+  p-pwivate void c-commoninnewsetupstats() {
+    powwcount = s-seawchcountew.expowt(getstagenamepwefix() + "_poww_count");
+    d-desewiawizationewwowcount =
+        s-seawchcountew.expowt(getstagenamepwefix() + "_desewiawization_ewwow_count");
+    dwoppedmessages =
+        s-seawchwatecountew.expowt(getstagenamepwefix() + "_dwopped_messages");
   }
 
-  @Override
-  protected void innerSetupStats() {
-    commonInnerSetupStats();
+  @ovewwide
+  pwotected void innewsetupstats() {
+    c-commoninnewsetupstats();
   }
 
-  @Override
-  protected void doInnerPreprocess() {
-    commonInnerSetup();
-    PipelineUtil.feedStartObjectToStage(this);
+  @ovewwide
+  p-pwotected void d-doinnewpwepwocess() {
+    c-commoninnewsetup();
+    p-pipewineutiw.feedstawtobjecttostage(this);
   }
 
-  private void commonInnerSetup() {
-    Preconditions.checkNotNull(kafkaClientId);
-    Preconditions.checkNotNull(kafkaClusterPath);
-    Preconditions.checkNotNull(kafkaTopicName);
+  pwivate void commoninnewsetup() {
+    pweconditions.checknotnuww(kafkacwientid);
+    p-pweconditions.checknotnuww(kafkacwustewpath);
+    pweconditions.checknotnuww(kafkatopicname);
 
-    kafkaConsumer = wireModule.newKafkaConsumer(
-        kafkaClusterPath,
-        deserializer,
-        kafkaClientId,
-        kafkaConsumerGroupId,
-        maxPollRecords);
-    if (partitioned) {
-      kafkaConsumer.assign(Collections.singletonList(
-          new TopicPartition(kafkaTopicName, wireModule.getPartition())));
-    } else {
-      kafkaConsumer.subscribe(Collections.singleton(kafkaTopicName));
+    kafkaconsumew = wiwemoduwe.newkafkaconsumew(
+        kafkacwustewpath, ^^;;
+        desewiawizew, 🥺
+        kafkacwientid, XD
+        kafkaconsumewgwoupid, (U ᵕ U❁)
+        m-maxpowwwecowds);
+    if (pawtitioned) {
+      kafkaconsumew.assign(cowwections.singwetonwist(
+          nyew topicpawtition(kafkatopicname, :3 wiwemoduwe.getpawtition())));
+    } e-ewse {
+      k-kafkaconsumew.subscwibe(cowwections.singweton(kafkatopicname));
     }
   }
 
-  @Override
-  protected void innerSetup() {
-    commonInnerSetup();
+  @ovewwide
+  p-pwotected void innewsetup() {
+    commoninnewsetup();
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    StageDriver driver = ((Pipeline) stageContext).getStageDriver(this);
-    while (driver.getState() == StageDriver.State.RUNNING) {
-      pollAndEmit();
+  @ovewwide
+  p-pubwic void innewpwocess(object o-obj) thwows s-stageexception {
+    stagedwivew dwivew = ((pipewine) stagecontext).getstagedwivew(this);
+    whiwe (dwivew.getstate() == stagedwivew.state.wunning) {
+      powwandemit();
     }
 
-    LOG.info("StageDriver state is no longer RUNNING, closing Kafka consumer.");
-    closeKafkaConsumer();
+    w-wog.info("stagedwivew state is nyo wongew w-wunning, ( ͡o ω ͡o ) cwosing kafka consumew.");
+    c-cwosekafkaconsumew();
   }
 
-  @VisibleForTesting
-  void pollAndEmit() throws StageException {
-    try {
-      List<R> records = poll();
-      for (R record : records) {
-        emitAndCount(record);
+  @visibwefowtesting
+  v-void powwandemit() thwows stageexception {
+    twy {
+      wist<w> w-wecowds = poww();
+      f-fow (w wecowd : wecowds) {
+        e-emitandcount(wecowd);
       }
-    } catch (PipelineStageException e) {
-      throw new StageException(this, e);
+    } c-catch (pipewinestageexception e) {
+      thwow new stageexception(this, òωó e);
     }
   }
 
   /***
-   * Poll Kafka and get the items from the topic. Record stats.
-   * @return
-   * @throws PipelineStageException
+   * poww kafka a-and get the items f-fwom the topic. σωσ w-wecowd stats. (U ᵕ U❁)
+   * @wetuwn
+   * @thwows pipewinestageexception
    */
-  public List<R> pollFromTopic() throws PipelineStageException {
-    long startingTime = startProcessing();
-    List<R> polledItems = poll();
-    endProcessing(startingTime);
-    return polledItems;
+  p-pubwic w-wist<w> powwfwomtopic() thwows pipewinestageexception {
+    w-wong stawtingtime = stawtpwocessing();
+    wist<w> powweditems = poww();
+    e-endpwocessing(stawtingtime);
+    w-wetuwn powweditems;
   }
 
-  private List<R> poll() throws PipelineStageException  {
-    List<R> recordsFromKafka = new ArrayList<>();
-    try {
-      ConsumerRecords<Long, R> records = kafkaConsumer.poll(Duration.ofMillis(pollTimeoutMs));
-      pollCount.increment();
-      records.iterator().forEachRemaining(record -> {
-        if (deciderKey == null || DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey)) {
-          recordsFromKafka.add(record.value());
-        } else {
-          droppedMessages.increment();
+  pwivate wist<w> p-poww() thwows p-pipewinestageexception  {
+    wist<w> wecowdsfwomkafka = nyew awwaywist<>();
+    t-twy {
+      consumewwecowds<wong, (✿oωo) w> wecowds = kafkaconsumew.poww(duwation.ofmiwwis(powwtimeoutms));
+      powwcount.incwement();
+      wecowds.itewatow().foweachwemaining(wecowd -> {
+        i-if (decidewkey == nyuww || decidewutiw.isavaiwabwefowwandomwecipient(decidew, ^^ decidewkey)) {
+          w-wecowdsfwomkafka.add(wecowd.vawue());
+        } e-ewse {
+          dwoppedmessages.incwement();
         }
       });
 
-    } catch (SerializationException e) {
-      deserializationErrorCount.increment();
-      LOG.error("Failed to deserialize the value.", e);
-    } catch (SaslAuthenticationException e) {
-      if (DeciderUtil.isAvailableForRandomRecipient(decider, SHUT_DOWN_ON_AUTH_FAIL)) {
-        wireModule.getPipelineExceptionHandler()
-            .logAndShutdown("Authentication error connecting to Kafka broker: " + e);
-      } else {
-        throw new PipelineStageException(this, "Kafka Authentication Error", e);
+    } catch (sewiawizationexception e) {
+      desewiawizationewwowcount.incwement();
+      w-wog.ewwow("faiwed t-to desewiawize the vawue.", ^•ﻌ•^ e);
+    } catch (saswauthenticationexception e-e) {
+      if (decidewutiw.isavaiwabwefowwandomwecipient(decidew, XD s-shut_down_on_auth_faiw)) {
+        wiwemoduwe.getpipewineexceptionhandwew()
+            .wogandshutdown("authentication ewwow connecting to kafka bwokew: " + e-e);
+      } ewse {
+        t-thwow nyew pipewinestageexception(this, :3 "kafka authentication e-ewwow", (ꈍᴗꈍ) e);
       }
-    } catch (Exception e) {
-      throw new PipelineStageException(e);
+    } c-catch (exception e) {
+      t-thwow nyew pipewinestageexception(e);
     }
 
-    return recordsFromKafka;
+    w-wetuwn wecowdsfwomkafka;
   }
 
-  @VisibleForTesting
-  void closeKafkaConsumer() {
-    try {
-      kafkaConsumer.close();
-      LOG.info("Kafka kafkaConsumer for {} was closed", getFullStageName());
-    } catch (Exception e) {
-      log.error("Failed to close Kafka kafkaConsumer", e);
+  @visibwefowtesting
+  v-void cwosekafkaconsumew() {
+    twy {
+      k-kafkaconsumew.cwose();
+      w-wog.info("kafka kafkaconsumew fow {} was cwosed", :3 g-getfuwwstagename());
+    } c-catch (exception e-e) {
+      wog.ewwow("faiwed to cwose kafka kafkaconsumew", (U ﹏ U) e-e);
     }
   }
 
-  @Override
-  public void release() {
-    closeKafkaConsumer();
-    super.release();
+  @ovewwide
+  pubwic v-void wewease() {
+    c-cwosekafkaconsumew();
+    supew.wewease();
   }
 
-  @Override
-  public void cleanupStageV2() {
-    closeKafkaConsumer();
+  @ovewwide
+  pubwic void cweanupstagev2() {
+    c-cwosekafkaconsumew();
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaClientId(String kafkaClientId) {
-    this.kafkaClientId = kafkaClientId;
+  @suppwesswawnings("unused")  // s-set fwom pipewine c-config
+  pubwic v-void setkafkacwientid(stwing kafkacwientid) {
+    t-this.kafkacwientid = kafkacwientid;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaTopicName(String kafkaTopicName) {
-    this.kafkaTopicName = kafkaTopicName;
+  @suppwesswawnings("unused")  // set fwom pipewine config
+  pubwic void setkafkatopicname(stwing kafkatopicname) {
+    t-this.kafkatopicname = kafkatopicname;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaConsumerGroupId(String kafkaConsumerGroupId) {
-    this.kafkaConsumerGroupId = kafkaConsumerGroupId;
+  @suppwesswawnings("unused")  // set fwom pipewine c-config
+  pubwic void setkafkaconsumewgwoupid(stwing k-kafkaconsumewgwoupid) {
+    this.kafkaconsumewgwoupid = k-kafkaconsumewgwoupid;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setMaxPollRecords(int maxPollRecords) {
-    this.maxPollRecords = maxPollRecords;
+  @suppwesswawnings("unused")  // set fwom pipewine c-config
+  pubwic v-void setmaxpowwwecowds(int m-maxpowwwecowds) {
+    t-this.maxpowwwecowds = m-maxpowwwecowds;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setPollTimeoutMs(int pollTimeoutMs) {
-    this.pollTimeoutMs = pollTimeoutMs;
+  @suppwesswawnings("unused")  // set fwom pipewine config
+  pubwic void setpowwtimeoutms(int powwtimeoutms) {
+    this.powwtimeoutms = powwtimeoutms;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setPartitioned(boolean partitioned) {
-    this.partitioned = partitioned;
+  @suppwesswawnings("unused")  // s-set f-fwom pipewine config
+  p-pubwic void setpawtitioned(boowean p-pawtitioned) {
+    this.pawtitioned = pawtitioned;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setDeciderKey(String deciderKey) {
-    this.deciderKey = deciderKey;
+  @suppwesswawnings("unused")  // set fwom pipewine c-config
+  p-pubwic void setdecidewkey(stwing decidewkey) {
+    t-this.decidewkey = decidewkey;
   }
 
-  @VisibleForTesting
-  KafkaConsumer<Long, R> getKafkaConsumer() {
-    return kafkaConsumer;
+  @visibwefowtesting
+  kafkaconsumew<wong, UwU w-w> getkafkaconsumew() {
+    w-wetuwn kafkaconsumew;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaClusterPath(String kafkaClusterPath) {
-    this.kafkaClusterPath = kafkaClusterPath;
+  @suppwesswawnings("unused")  // s-set fwom p-pipewine config
+  pubwic void setkafkacwustewpath(stwing kafkacwustewpath) {
+    this.kafkacwustewpath = k-kafkacwustewpath;
   }
 }

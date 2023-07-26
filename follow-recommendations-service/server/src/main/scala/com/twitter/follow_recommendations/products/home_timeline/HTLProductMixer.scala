@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.products.home_timeline
+package com.twittew.fowwow_wecommendations.pwoducts.home_timewine
 
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
 
-case object HTLProductMixer extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("HomeTimeline")
-  override val stringCenterProject: Option[String] = Some("people-discovery")
+c-case o-object htwpwoductmixew e-extends pwoduct {
+  o-ovewwide v-vaw identifiew: p-pwoductidentifiew = p-pwoductidentifiew("hometimewine")
+  ovewwide vaw stwingcentewpwoject: option[stwing] = some("peopwe-discovewy")
 }

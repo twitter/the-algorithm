@@ -1,26 +1,26 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "finagle/finagle-core/src/main",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/param",
-        "joinkey/src/main/scala/com/twitter/joinkey/context",
-        "joinkey/src/main/thrift/com/twitter/joinkey/context:joinkey-context-scala",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator/urt/builder",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/marshaller/response/urt",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "src/scala/com/twitter/suggests/controller_data",
-        "src/thrift/com/twitter/suggests/controller_data:controller_data-scala",
-        "src/thrift/com/twitter/timelinescorer/common/scoredtweetcandidate:thrift-scala",
-        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
-        "src/thrift/com/twitter/timelineservice/server/suggests/logging:thrift-scala",
-        "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/model/candidate",
-        "timelines/src/main/scala/com/twitter/timelines/injection/scribe",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/bijection:scwooge", (⑅˘꒳˘)
+        "finagwe/finagwe-cowe/swc/main", ( ͡o ω ͡o )
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew", UwU
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew/wequest", rawr x3
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/pawam",
+        "joinkey/swc/main/scawa/com/twittew/joinkey/context", rawr
+        "joinkey/swc/main/thwift/com/twittew/joinkey/context:joinkey-context-scawa", σωσ
+        "pwoduct-mixew/component-wibwawy/swc/main/scawa/com/twittew/pwoduct_mixew/component_wibwawy/modew/candidate", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/decowatow/uwt/buiwdew",
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/mawshawwew/wesponse/uwt", >_<
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine", :3
+        "swc/scawa/com/twittew/suggests/contwowwew_data", (U ﹏ U)
+        "swc/thwift/com/twittew/suggests/contwowwew_data:contwowwew_data-scawa", -.-
+        "swc/thwift/com/twittew/timewinescowew/common/scowedtweetcandidate:thwift-scawa", (ˆ ﻌ ˆ)♡
+        "swc/thwift/com/twittew/timewinesewvice/sewvew/intewnaw:thwift-scawa", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/timewinesewvice/sewvew/suggests/wogging:thwift-scawa", (U ᵕ U❁)
+        "timewinemixew/sewvew/swc/main/scawa/com/twittew/timewinemixew/injection/modew/candidate", -.-
+        "timewines/swc/main/scawa/com/twittew/timewines/injection/scwibe", ^^;;
     ],
 )

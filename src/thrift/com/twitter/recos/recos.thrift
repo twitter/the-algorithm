@@ -1,176 +1,176 @@
-namespace java com.twitter.recos.thriftjava
-#@namespace scala com.twitter.recos.thriftscala
-namespace rb Recos
+namespace java com.twittew.wecos.thwiftjava
+#@namespace scawa com.twittew.wecos.thwiftscawa
+n-nyamespace w-wb wecos
 
-include "com/twitter/recos/features/tweet.thrift"
+i-incwude "com/twittew/wecos/featuwes/tweet.thwift"
 
-enum RecommendTweetDisplayLocation {
-  HomeTimeline       = 0
-  Peek               = 1
-  WelcomeFlow        = 2
-  NetworkDigest      = 3
-  BackfillDigest     = 4
-  NetworkDigestExp1  = 5
-  NetworkDigestExp2  = 6 // deprecated
-  NetworkDigestExp3  = 7 // deprecated
-  HttpEndpoint       = 8
-  HomeTimeline1      = 9
-  HomeTimeline2      = 10
-  HomeTimeline3      = 11
-  HomeTimeline4      = 12
-  Poptart            = 13
-  NetworkDigestExp4  = 14
-  NetworkDigestExp5  = 15
-  NetworkDigestExp6  = 16
-  NetworkDigestExp7  = 17
-  NetworkDigestExp8  = 18
-  NetworkDigestExp9  = 19
-  InstantTimeline1   = 20 // AB1 + whitelist
-  InstantTimeline2   = 21 // AB1 + !whitelist
-  InstantTimeline3   = 22 // AB2 + whitelist
-  InstantTimeline4   = 23 // AB2 + !whitelist
-  BackfillDigestActive  = 24 // deprecated
-  BackfillDigestDormant = 25 // deprecated
-  ExploreUS             = 26 // deprecated
-  ExploreBR             = 27 // deprecated
-  ExploreIN             = 28 // deprecated
-  ExploreES             = 29 // deprecated
-  ExploreJP             = 30 // deprecated
-  MagicRecs             = 31
-  MagicRecs1            = 32
-  MagicRecs2            = 33
-  MagicRecs3            = 34
-  SMSDiscover           = 35
-  FastFollower          = 36
-  InstantTimeline5      = 37 // for instant timeline experiment
-  InstantTimeline6      = 38 // for instant timeline experiment
-  InstantTimeline7      = 39 // for instant timeline experiment
-  InstantTimeline8      = 40 // for instant timeline experiment
-  LoggedOutProfile      = 41
-  LoggedOutPermalink    = 42
-  Poptart2              = 43
+e-enum wecommendtweetdispwaywocation {
+  h-hometimewine       = 0
+  p-peek               = 1
+  w-wewcomefwow        = 2
+  n-nyetwowkdigest      = 3
+  backfiwwdigest     = 4
+  nyetwowkdigestexp1  = 5
+  netwowkdigestexp2  = 6 // depwecated
+  nyetwowkdigestexp3  = 7 // d-depwecated
+  httpendpoint       = 8
+  hometimewine1      = 9
+  h-hometimewine2      = 10
+  hometimewine3      = 11
+  h-hometimewine4      = 12
+  poptawt            = 13
+  nyetwowkdigestexp4  = 14
+  nyetwowkdigestexp5  = 15
+  n-nyetwowkdigestexp6  = 16
+  nyetwowkdigestexp7  = 17
+  n-netwowkdigestexp8  = 18
+  n-nyetwowkdigestexp9  = 19
+  instanttimewine1   = 20 // ab1 + whitewist
+  instanttimewine2   = 21 // ab1 + !whitewist
+  i-instanttimewine3   = 22 // ab2 + whitewist
+  instanttimewine4   = 23 // ab2 + !whitewist
+  backfiwwdigestactive  = 24 // depwecated
+  backfiwwdigestdowmant = 25 // d-depwecated
+  expwoweus             = 26 // d-depwecated
+  e-expwowebw             = 27 // d-depwecated
+  expwowein             = 28 // d-depwecated
+  expwowees             = 29 // depwecated
+  e-expwowejp             = 30 // depwecated
+  magicwecs             = 31
+  magicwecs1            = 32
+  m-magicwecs2            = 33
+  magicwecs3            = 34
+  smsdiscovew           = 35
+  fastfowwowew          = 36
+  instanttimewine5      = 37 // fow instant t-timewine expewiment
+  instanttimewine6      = 38 // f-fow instant t-timewine e-expewiment
+  instanttimewine7      = 39 // fow instant timewine expewiment
+  instanttimewine8      = 40 // f-fow instant t-timewine expewiment
+  woggedoutpwofiwe      = 41
+  w-woggedoutpewmawink    = 42
+  p-poptawt2              = 43
 }
 
-enum RelatedTweetDisplayLocation {
-  Permalink       = 0
-  Permalink1      = 1
-  MobilePermalink = 2
-  Permalink3      = 3
-  Permalink4      = 4
-  RelatedTweets   = 5
-  RelatedTweets1  = 6
-  RelatedTweets2  = 7
-  RelatedTweets3  = 8
-  RelatedTweets4  = 9
-  LoggedOutProfile = 10
-  LoggedOutPermalink = 11
+enum wewatedtweetdispwaywocation {
+  p-pewmawink       = 0
+  pewmawink1      = 1
+  m-mobiwepewmawink = 2
+  pewmawink3      = 3
+  pewmawink4      = 4
+  w-wewatedtweets   = 5
+  wewatedtweets1  = 6
+  w-wewatedtweets2  = 7
+  wewatedtweets3  = 8
+  w-wewatedtweets4  = 9
+  w-woggedoutpwofiwe = 10
+  woggedoutpewmawink = 11
 }
 
-enum DDGBucket {
-  Control           = 0
-  Treatment         = 1
-  None              = 2
+enum ddgbucket {
+  contwow           = 0
+  tweatment         = 1
+  nyone              = 2
 }
 
-struct RecommendTweetRequest {
-  1: required i64                                   requesterId           // user id of the requesting user
-  2: required RecommendTweetDisplayLocation         displayLocation       // display location from the client
-  3: optional i64                                   clientId              // twitter api client id
-  4: optional i32                                   maxResults            // number of suggested results to return
-  5: optional list<i64>                             excludedTweetIds      // list of tweet ids to exclude from response
-  6: optional list<i64>                             excludedAuthorIds     // list of author ids to exclude from response
-  7: optional i64                                   guestId               // guestId
-  8: optional string                                languageCode          // Language code
-  9: optional string                                countryCode           // Country code
-  10: optional string                               ipAddress             // ip address of the user
-  11: optional string                               deviceId              // udid/uuid of device
-  12: optional bool                                 populateTweetFeatures // whether to populate tweet features. RecommendedTweet.tweetFeatures in the response will only be populated if this is set.
+stwuct wecommendtweetwequest {
+  1: w-wequiwed i-i64                                   wequestewid           // u-usew id of the w-wequesting usew
+  2: w-wequiwed wecommendtweetdispwaywocation         dispwaywocation       // dispway wocation fwom t-the cwient
+  3: optionaw i64                                   cwientid              // twittew api cwient id
+  4: o-optionaw i32                                   m-maxwesuwts            // nyumbew o-of suggested w-wesuwts to wetuwn
+  5: optionaw w-wist<i64>                             e-excwudedtweetids      // w-wist of tweet i-ids to excwude fwom wesponse
+  6: optionaw wist<i64>                             e-excwudedauthowids     // w-wist o-of authow ids to e-excwude fwom wesponse
+  7: o-optionaw i64                                   guestid               // guestid
+  8: o-optionaw stwing                                wanguagecode          // wanguage code
+  9: optionaw stwing                                countwycode           // c-countwy code
+  10: optionaw stwing                               ipaddwess             // i-ip a-addwess of the u-usew
+  11: optionaw stwing                               d-deviceid              // udid/uuid of device
+  12: o-optionaw b-boow                                 popuwatetweetfeatuwes // whethew to popuwate tweet featuwes. (˘ω˘) wecommendedtweet.tweetfeatuwes in the wesponse w-wiww onwy be popuwated if t-this is set. (///ˬ///✿)
 }
 
-struct Bucket {
-  1: required string                                experimentName        // name of experiment (or not). experiment could be production or whatever fits
-  2: required string                                bucket                // name of bucket (may or may not be a DDG bucket, e.g., production)
+stwuct bucket {
+  1: w-wequiwed stwing                                e-expewimentname        // nyame of expewiment (ow n-nyot). σωσ expewiment c-couwd be pwoduction ow nyanievew f-fits
+  2: w-wequiwed stwing                                bucket                // nyame of bucket (may ow may nyot be a d-ddg bucket, /(^•ω•^) e.g., p-pwoduction)
 }
 
-struct RelatedTweetRequest {
-  1: required i64                                   tweetId               // original tweet id
-  2: required RelatedTweetDisplayLocation           displayLocation       // display location from the client
-  3: optional i64                                   clientId              // twitter api client id
-  4: optional i64                                   requesterId           // user id of the requesting user
-  5: optional i32                                   maxResults            // number of suggested results to return
-  6: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  7: optional list<i64>                             excludedAuthorIds     // list of author ids to exclude from response
-  8: optional i64                                   guestId               // guestId
-  9: optional string                                languageCode          // Language code
-  10: optional string                               countryCode           // Country code
-  11: optional string                               ipAddress             // ip address of the user
-  12: optional string                               deviceId              // udid/uuid of device
-  13: optional string                               userAgent             // userAgent of the requesting user
+s-stwuct wewatedtweetwequest {
+  1: wequiwed i64                                   t-tweetid               // o-owiginaw tweet id
+  2: w-wequiwed wewatedtweetdispwaywocation           dispwaywocation       // dispway wocation fwom the cwient
+  3: o-optionaw i64                                   cwientid              // t-twittew api cwient id
+  4: optionaw i64                                   w-wequestewid           // u-usew id of the wequesting usew
+  5: optionaw i32                                   m-maxwesuwts            // nyumbew of suggested wesuwts to wetuwn
+  6: optionaw wist<i64>                             e-excwudetweetids       // wist of tweet ids to e-excwude fwom wesponse
+  7: o-optionaw wist<i64>                             excwudedauthowids     // wist of authow i-ids to excwude f-fwom wesponse
+  8: optionaw i64                                   guestid               // guestid
+  9: o-optionaw stwing                                w-wanguagecode          // wanguage code
+  10: optionaw stwing                               countwycode           // c-countwy code
+  11: optionaw s-stwing                               i-ipaddwess             // ip addwess o-of the usew
+  12: optionaw stwing                               d-deviceid              // u-udid/uuid o-of device
+  13: optionaw stwing                               u-usewagent             // u-usewagent of the wequesting usew
 }
 
-enum SocialProofType {
-  FollowedBy = 1,
-  FavoritedBy = 2,
-  RetweetedBy = 3,
-  SimilarTo = 4,
-  RESERVED_2 = 5,
-  RESERVED_3 = 6,
-  RESERVED_4 = 7,
-  RESERVED_5 = 8,
-  RESERVED_6 = 9,
-  RESERVED_7 = 10
+enum s-sociawpwooftype {
+  f-fowwowedby = 1,
+  f-favowitedby = 2, 😳
+  wetweetedby = 3, 😳
+  simiwawto = 4, (⑅˘꒳˘)
+  w-wesewved_2 = 5, 😳😳😳
+  wesewved_3 = 6, 😳
+  w-wesewved_4 = 7, XD
+  w-wesewved_5 = 8, mya
+  wesewved_6 = 9, ^•ﻌ•^
+  wesewved_7 = 10
 }
 
-enum Algorithm {
-  Salsa = 1,
-  PastEmailClicks = 2,
-  SimilarToEmailClicks = 3,
-  PastClientEventClicks = 4,
-  VitNews = 5,
-  StrongTieScoring = 6,
-  PollsFromGraph = 7,
-  PollsBasedOnGeo = 8,
-  RESERVED_9 = 9,
-  RESERVED_10 = 10,
-  RESERVED_11 = 11,
+enum a-awgowithm {
+  s-sawsa = 1,
+  pastemaiwcwicks = 2, ʘwʘ
+  s-simiwawtoemaiwcwicks = 3, ( ͡o ω ͡o )
+  p-pastcwienteventcwicks = 4, mya
+  vitnews = 5, o.O
+  s-stwongtiescowing = 6, (✿oωo)
+  powwsfwomgwaph = 7, :3
+  powwsbasedongeo = 8, 😳
+  wesewved_9 = 9, (U ﹏ U)
+  wesewved_10 = 10,
+  wesewved_11 = 11, mya
 }
 
-struct RecommendedTweet {
-  1: required i64                            tweetId
-  2: required i64                            authorId
-  3: required list<i64>                      socialProof
-  4: required string                         feedbackToken
-  5: optional list<i64>                      favBy          // optionally provide a list of users who fav'ed the tweet if exist
-  6: optional tweet.RecommendedTweetFeatures tweetFeatures  // the features of a recommended tweet
-  7: optional SocialProofType                socialProofType // type of social proof. favBy should be deprecated soon
-  8: optional string                         socialProofOverride // should be set only for DDGs, for en-only experiments. SocialProofType is ignored when this field is set
-  9: optional Algorithm                      algorithm // algorithm used 
-  10: optional double                        score     // score
-  11: optional bool                          isFollowingAuthor // true if the target user follows the author of the tweet 
+s-stwuct wecommendedtweet {
+  1: w-wequiwed i64                            t-tweetid
+  2: wequiwed i64                            a-authowid
+  3: wequiwed w-wist<i64>                      sociawpwoof
+  4: w-wequiwed stwing                         f-feedbacktoken
+  5: o-optionaw w-wist<i64>                      favby          // optionawwy pwovide a wist of usews who fav'ed the tweet if exist
+  6: optionaw t-tweet.wecommendedtweetfeatuwes t-tweetfeatuwes  // t-the featuwes of a wecommended t-tweet
+  7: optionaw sociawpwooftype                sociawpwooftype // type of s-sociaw pwoof. (U ᵕ U❁) favby s-shouwd be depwecated soon
+  8: o-optionaw stwing                         sociawpwoofovewwide // shouwd be set o-onwy fow ddgs, :3 f-fow en-onwy expewiments. mya sociawpwooftype i-is ignowed w-when this fiewd is set
+  9: optionaw awgowithm                      awgowithm // awgowithm used 
+  10: o-optionaw d-doubwe                        s-scowe     // scowe
+  11: o-optionaw b-boow                          isfowwowingauthow // t-twue if the t-tawget usew fowwows the authow o-of the tweet 
 }
 
-struct RelatedTweet {
-  1: required i64                  tweetId
-  2: required i64                  authorId
-  3: required double               score
-  4: required string               feedbackToken
+s-stwuct wewatedtweet {
+  1: wequiwed i-i64                  tweetid
+  2: wequiwed i-i64                  authowid
+  3: w-wequiwed doubwe               s-scowe
+  4: wequiwed stwing               f-feedbacktoken
 }
 
-struct RecommendTweetResponse {
-  1: required list<RecommendedTweet> tweets
-  2: optional DDGBucket              bucket                // deprecated
-  3: optional Bucket                 assignedBucket        // for client-side experimentation
+stwuct wecommendtweetwesponse {
+  1: w-wequiwed wist<wecommendedtweet> t-tweets
+  2: optionaw d-ddgbucket              bucket                // depwecated
+  3: optionaw b-bucket                 assignedbucket        // fow cwient-side e-expewimentation
 }
 
-struct RelatedTweetResponse {
-  1: required list<RelatedTweet>   tweets                                 // a list of related tweets
-  2: optional Bucket               assignedBucket                         // the bucket used for treatment
+s-stwuct wewatedtweetwesponse {
+  1: wequiwed wist<wewatedtweet>   t-tweets                                 // a w-wist of wewated t-tweets
+  2: optionaw bucket               assignedbucket                         // t-the bucket used fow tweatment
 }
 
 /**
- * The main interface-definition for Recos.
+ * the m-main intewface-definition f-fow wecos. OwO
  */
-service Recos {
-  RecommendTweetResponse recommendTweets  (RecommendTweetRequest request)
-  RelatedTweetResponse relatedTweets  (RelatedTweetRequest request)
+sewvice w-wecos {
+  wecommendtweetwesponse wecommendtweets  (wecommendtweetwequest w-wequest)
+  w-wewatedtweetwesponse w-wewatedtweets  (wewatedtweetwequest wequest)
 }

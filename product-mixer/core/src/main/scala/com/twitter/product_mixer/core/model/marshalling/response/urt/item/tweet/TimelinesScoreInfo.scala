@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet
 
-case class TimelinesScoreInfo(score: Double)
+case cwass timewinesscoweinfo(scowe: d-doubwe)

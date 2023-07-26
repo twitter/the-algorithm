@@ -1,32 +1,32 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.twittew.cw_mixew.simiwawity_engine
 
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.simclusters_v2.common.TweetId
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
+impowt com.twittew.cw_mixew.modew.tweetwithcandidategenewationinfo
+i-impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt scawa.cowwection.mutabwe
+i-impowt scawa.cowwection.mutabwe.awwaybuffew
 
-object SimilaritySourceOrderingUtil {
+o-object simiwawitysouwceowdewingutiw {
   /**
-   * This function flatten and dedup input candidates according to the order in the input Seq
-   * [[candidate10, candidate11], [candidate20, candidate21]] => [candidate10, candidate11, candidate20, candidate21]
+   * t-this function fwatten a-and dedup i-input candidates a-accowding to the owdew in the input seq
+   * [[candidate10, rawr candidate11], OwO [candidate20, (U ﹏ U) candidate21]] => [candidate10, >_< c-candidate11, rawr x3 candidate20, mya candidate21]
    */
-  def keepGivenOrder(
-    candidates: Seq[Seq[TweetWithCandidateGenerationInfo]],
-  ): Seq[TweetWithCandidateGenerationInfo] = {
+  d-def keepgivenowdew(
+    candidates: seq[seq[tweetwithcandidategenewationinfo]], nyaa~~
+  ): s-seq[tweetwithcandidategenewationinfo] = {
 
-    val seen = mutable.Set[TweetId]()
-    val combinedCandidates = candidates.flatten
-    val result = ArrayBuffer[TweetWithCandidateGenerationInfo]()
+    vaw seen = mutabwe.set[tweetid]()
+    vaw combinedcandidates = c-candidates.fwatten
+    vaw wesuwt = awwaybuffew[tweetwithcandidategenewationinfo]()
 
-    combinedCandidates.foreach { candidate =>
-      val candidateTweetId = candidate.tweetId
-      val seenCandidate = seen.contains(candidateTweetId) // de-dup
-      if (!seenCandidate) {
-        result += candidate
-        seen.add(candidate.tweetId)
+    c-combinedcandidates.foweach { c-candidate =>
+      vaw candidatetweetid = candidate.tweetid
+      vaw seencandidate = seen.contains(candidatetweetid) // d-de-dup
+      if (!seencandidate) {
+        wesuwt += candidate
+        seen.add(candidate.tweetid)
       }
     }
-    //convert result to immutable seq
-    result.toList
+    //convewt wesuwt t-to immutabwe seq
+    wesuwt.towist
   }
 }

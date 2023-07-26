@@ -1,88 +1,88 @@
-package com.twitter.recos.user_tweet_graph.relatedTweetHandlers
+package com.twittew.wecos.usew_tweet_gwaph.wewatedtweethandwews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
-import com.twitter.recos.user_tweet_graph.thriftscala._
-import com.twitter.recos.util.Stats._
-import com.twitter.servo.request._
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import scala.concurrent.duration.HOURS
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.recos.user_tweet_graph.store.UserRecentFollowersStore
-import com.twitter.recos.user_tweet_graph.util.FetchRHSTweetsUtil
-import com.twitter.recos.user_tweet_graph.util.FilterUtil
-import com.twitter.recos.user_tweet_graph.util.GetRelatedTweetCandidatesUtil
-import com.twitter.recos.util.Action
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.gwaphjet.bipawtite.api.bipawtitegwaph
+i-impowt com.twittew.wecos.usew_tweet_gwaph.thwiftscawa._
+i-impowt com.twittew.wecos.utiw.stats._
+i-impowt com.twittew.sewvo.wequest._
+i-impowt c-com.twittew.utiw.duwation
+i-impowt c-com.twittew.utiw.futuwe
+impowt scawa.concuwwent.duwation.houws
+impowt com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.wecos.usew_tweet_gwaph.stowe.usewwecentfowwowewsstowe
+impowt com.twittew.wecos.usew_tweet_gwaph.utiw.fetchwhstweetsutiw
+i-impowt com.twittew.wecos.usew_tweet_gwaph.utiw.fiwtewutiw
+impowt com.twittew.wecos.usew_tweet_gwaph.utiw.getwewatedtweetcandidatesutiw
+i-impowt com.twittew.wecos.utiw.action
 
 /**
- * Implementation of the Thrift-defined service interface for producerBasedRelatedTweets.
+ * impwementation of the t-thwift-defined sewvice intewface f-fow pwoducewbasedwewatedtweets. rawr x3
  *
  */
-class ProducerBasedRelatedTweetsHandler(
-  bipartiteGraph: BipartiteGraph,
-  userRecentFollowersStore: ReadableStore[UserRecentFollowersStore.Query, Seq[UserId]],
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[ProducerBasedRelatedTweetRequest, RelatedTweetResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+c-cwass pwoducewbasedwewatedtweetshandwew(
+  bipawtitegwaph: bipawtitegwaph, OwO
+  usewwecentfowwowewsstowe: weadabwestowe[usewwecentfowwowewsstowe.quewy, /(^•ω•^) seq[usewid]], 😳😳😳
+  s-statsweceivew: statsweceivew)
+    extends wequesthandwew[pwoducewbasedwewatedtweetwequest, ( ͡o ω ͡o ) wewatedtweetwesponse] {
+  pwivate vaw stats = s-statsweceivew.scope(this.getcwass.getsimpwename)
 
-  override def apply(request: ProducerBasedRelatedTweetRequest): Future[RelatedTweetResponse] = {
-    trackFutureBlockStats(stats) {
-      val maxResults = request.maxResults.getOrElse(200)
-      val maxNumFollowers = request.maxNumFollowers.getOrElse(500)
-      val minScore = request.minScore.getOrElse(0.0)
-      val maxTweetAge = request.maxTweetAgeInHours.getOrElse(48)
-      val minResultDegree = request.minResultDegree.getOrElse(50)
-      val minCooccurrence = request.minCooccurrence.getOrElse(4)
-      val excludeTweetIds = request.excludeTweetIds.getOrElse(Seq.empty).toSet
+  ovewwide d-def appwy(wequest: p-pwoducewbasedwewatedtweetwequest): f-futuwe[wewatedtweetwesponse] = {
+    t-twackfutuwebwockstats(stats) {
+      vaw maxwesuwts = wequest.maxwesuwts.getowewse(200)
+      v-vaw maxnumfowwowews = wequest.maxnumfowwowews.getowewse(500)
+      vaw m-minscowe = wequest.minscowe.getowewse(0.0)
+      vaw maxtweetage = wequest.maxtweetageinhouws.getowewse(48)
+      vaw minwesuwtdegwee = wequest.minwesuwtdegwee.getowewse(50)
+      vaw mincooccuwwence = w-wequest.mincooccuwwence.getowewse(4)
+      vaw excwudetweetids = w-wequest.excwudetweetids.getowewse(seq.empty).toset
 
-      val followersFut = fetchFollowers(request.producerId, Some(maxNumFollowers))
-      followersFut.map { followers =>
-        val rhsTweetIds = FetchRHSTweetsUtil.fetchRHSTweets(
-          followers,
-          bipartiteGraph,
-          Set(Action.Favorite, Action.Retweet)
+      v-vaw fowwowewsfut = f-fetchfowwowews(wequest.pwoducewid, >_< some(maxnumfowwowews))
+      fowwowewsfut.map { fowwowews =>
+        v-vaw whstweetids = f-fetchwhstweetsutiw.fetchwhstweets(
+          fowwowews, >w<
+          b-bipawtitegwaph, rawr
+          s-set(action.favowite, 😳 action.wetweet)
         )
 
-        val scorePreFactor = 1000.0 / followers.size
-        val relatedTweetCandidates = GetRelatedTweetCandidatesUtil.getRelatedTweetCandidates(
-          rhsTweetIds,
-          minCooccurrence,
-          minResultDegree,
-          scorePreFactor,
-          bipartiteGraph)
+        v-vaw scowepwefactow = 1000.0 / fowwowews.size
+        v-vaw wewatedtweetcandidates = getwewatedtweetcandidatesutiw.getwewatedtweetcandidates(
+          w-whstweetids, >w<
+          mincooccuwwence, (⑅˘꒳˘)
+          m-minwesuwtdegwee, OwO
+          scowepwefactow, (ꈍᴗꈍ)
+          b-bipawtitegwaph)
 
-        val relatedTweets = relatedTweetCandidates
-          .filter { relatedTweet =>
-            FilterUtil.tweetAgeFilter(
-              relatedTweet.tweetId,
-              Duration(maxTweetAge, HOURS)) && (relatedTweet.score > minScore) && (!excludeTweetIds
-              .contains(relatedTweet.tweetId))
-          }.take(maxResults)
-        stats.stat("response_size").add(relatedTweets.size)
-        RelatedTweetResponse(tweets = relatedTweets)
+        v-vaw wewatedtweets = wewatedtweetcandidates
+          .fiwtew { wewatedtweet =>
+            fiwtewutiw.tweetagefiwtew(
+              wewatedtweet.tweetid,
+              duwation(maxtweetage, 😳 h-houws)) && (wewatedtweet.scowe > m-minscowe) && (!excwudetweetids
+              .contains(wewatedtweet.tweetid))
+          }.take(maxwesuwts)
+        stats.stat("wesponse_size").add(wewatedtweets.size)
+        w-wewatedtweetwesponse(tweets = w-wewatedtweets)
       }
     }
   }
 
-  private def fetchFollowers(
-    producerId: Long,
-    maxNumFollower: Option[Int],
-  ): Future[Seq[Long]] = {
-    val query =
-      UserRecentFollowersStore.Query(producerId, maxNumFollower, None)
+  p-pwivate def fetchfowwowews(
+    pwoducewid: wong, 😳😳😳
+    m-maxnumfowwowew: option[int], mya
+  ): futuwe[seq[wong]] = {
+    vaw quewy =
+      usewwecentfowwowewsstowe.quewy(pwoducewid, mya m-maxnumfowwowew, (⑅˘꒳˘) nyone)
 
-    val followersFut = userRecentFollowersStore.get(query)
-    followersFut.map { followersOpt =>
-      val followers = followersOpt.getOrElse(Seq.empty)
-      val followerIds = followers.distinct.filter { userId =>
-        val userDegree = bipartiteGraph.getLeftNodeDegree(userId)
-        // constrain to more active users that have >1 engagement to optimize latency, and <100 engagements to avoid spammy behavior
-        userDegree > 1 && userDegree < 100
+    v-vaw fowwowewsfut = u-usewwecentfowwowewsstowe.get(quewy)
+    f-fowwowewsfut.map { fowwowewsopt =>
+      v-vaw f-fowwowews = fowwowewsopt.getowewse(seq.empty)
+      v-vaw fowwowewids = f-fowwowews.distinct.fiwtew { usewid =>
+        vaw usewdegwee = b-bipawtitegwaph.getweftnodedegwee(usewid)
+        // c-constwain t-to mowe active u-usews that have >1 e-engagement to optimize watency, (U ﹏ U) and <100 engagements to avoid s-spammy behaviow
+        usewdegwee > 1 && usewdegwee < 100
       }
-      stats.stat("follower_size_after_filter").add(followerIds.size)
-      followerIds
+      stats.stat("fowwowew_size_aftew_fiwtew").add(fowwowewids.size)
+      fowwowewids
     }
   }
 }

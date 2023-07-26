@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.premarshaller.urp.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwp.buiwdew
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageBody
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.pagebody
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Trait for our builder which given a query and selections will return a `PageBody`
+ * t-twait fow o-ouw buiwdew which g-given a quewy a-and sewections wiww w-wetuwn a `pagebody`
  *
- * @tparam Query
+ * @tpawam quewy
  */
-trait PageBodyBuilder[-Query <: PipelineQuery] {
+twait pagebodybuiwdew[-quewy <: pipewinequewy] {
 
-  def build(
-    query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): PageBody
+  def buiwd(
+    q-quewy: quewy, :3
+    sewections: seq[candidatewithdetaiws]
+  ): p-pagebody
 }

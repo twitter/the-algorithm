@@ -1,38 +1,38 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.twittew.fowwow_wecommendations.common.wankews.mw_wankew.scowing
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.wankews.common.wankewid
+i-impowt com.twittew.fowwow_wecommendations.common.wankews.common.wankewid.wankewid
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ScorerFactory @Inject() (
-  postnuxProdScorer: PostnuxDeepbirdProdScorer,
-  randomScorer: RandomScorer,
-  stats: StatsReceiver) {
+@singweton
+c-cwass s-scowewfactowy @inject() (
+  postnuxpwodscowew: postnuxdeepbiwdpwodscowew, (✿oωo)
+  wandomscowew: wandomscowew, (ˆ ﻌ ˆ)♡
+  s-stats: statsweceivew) {
 
-  private val scorerFactoryStats = stats.scope("scorer_factory")
-  private val scorerStat = scorerFactoryStats.scope("scorer")
+  pwivate vaw s-scowewfactowystats = stats.scope("scowew_factowy")
+  p-pwivate vaw scowewstat = scowewfactowystats.scope("scowew")
 
-  def getScorers(
-    rankerIds: Seq[RankerId]
-  ): Seq[Scorer] = {
-    rankerIds.map { scorerId =>
-      val scorer: Scorer = getScorerById(scorerId)
-      // count # of times a ranker has been requested
-      scorerStat.counter(scorer.id.toString).incr()
-      scorer
+  def getscowews(
+    w-wankewids: seq[wankewid]
+  ): s-seq[scowew] = {
+    w-wankewids.map { scowewid =>
+      vaw scowew: scowew = getscowewbyid(scowewid)
+      // c-count # of times a wankew has been wequested
+      scowewstat.countew(scowew.id.tostwing).incw()
+      scowew
     }
   }
 
-  def getScorerById(scorerId: RankerId): Scorer = scorerId match {
-    case RankerId.PostNuxProdRanker =>
-      postnuxProdScorer
-    case RankerId.RandomRanker =>
-      randomScorer
-    case _ =>
-      scorerStat.counter("invalid_scorer_type").incr()
-      throw new IllegalArgumentException("unknown_scorer_type")
+  def g-getscowewbyid(scowewid: wankewid): s-scowew = scowewid m-match {
+    c-case wankewid.postnuxpwodwankew =>
+      p-postnuxpwodscowew
+    case wankewid.wandomwankew =>
+      wandomscowew
+    c-case _ =>
+      scowewstat.countew("invawid_scowew_type").incw()
+      thwow nyew iwwegawawgumentexception("unknown_scowew_type")
   }
 }

@@ -1,58 +1,58 @@
-#pragma once
+#pwagma once
 
-#ifdef __cplusplus
+#ifdef __cpwuspwus
 
-#include <twml/defines.h>
-#include <cstdint>
-#include <cstddef>
-#include <cstring>
+#incwude <twmw/defines.h>
+#incwude <cstdint>
+#incwude <cstddef>
+#incwude <cstwing>
 
-namespace twml {
+nyamespace t-twmw {
 
-// A low-level binary Thrift writer that can also compute output size
-// in dry run mode without copying memory. See also https://git.io/vNPiv
+// a wow-wevew b-binawy thwift w-wwitew that c-can awso compute o-output size
+// i-in dwy wun mode w-without copying m-memowy. (ˆ ﻌ ˆ)♡ see awso https://git.io/vnpiv
 //
-// WARNING: Users of this class are responsible for generating valid Thrift
-// by following the Thrift binary protocol (https://git.io/vNPiv).
-class TWMLAPI ThriftWriter {
-  protected:
-    bool m_dry_run;
-    uint8_t *m_buffer;
-    size_t m_buffer_size;
-    size_t m_bytes_written;
+// wawning: usews of this cwass awe wesponsibwe f-fow genewating vawid thwift
+// by fowwowing t-the thwift binawy pwotocow (https://git.io/vnpiv). 😳😳😳
+c-cwass twmwapi thwiftwwitew {
+  pwotected:
+    boow m_dwy_wun;
+    u-uint8_t *m_buffew;
+    size_t m_buffew_size;
+    s-size_t m-m_bytes_wwitten;
 
-    template <typename T> inline uint64_t write(T val);
+    tempwate <typename t> inwine uint64_t wwite(t vaw);
 
-  public:
-    // buffer:       Memory to write the binary Thrift to.
-    // buffer_size:  Length of the buffer.
-    // dry_run:      If true, just count bytes 'written' but do not copy memory.
-    //               If false, write binary Thrift to the buffer normally.
-    //               Useful to determine output size for TensorFlow allocations.
-    ThriftWriter(uint8_t *buffer, size_t buffer_size, bool dry_run = false) :
-        m_dry_run(dry_run),
-        m_buffer(buffer),
-        m_buffer_size(buffer_size),
-        m_bytes_written(0) {}
+  p-pubwic:
+    // buffew:       memowy to wwite the binawy thwift to. :3
+    // buffew_size:  w-wength of the buffew. OwO
+    // d-dwy_wun:      i-if twue, just c-count bytes 'wwitten' b-but do nyot copy memowy. (U ﹏ U)
+    //               if fawse, >w< wwite b-binawy thwift to the buffew nowmawwy. (U ﹏ U)
+    //               u-usefuw to detewmine output size fow tensowfwow awwocations. 😳
+    thwiftwwitew(uint8_t *buffew, (ˆ ﻌ ˆ)♡ size_t buffew_size, 😳😳😳 b-boow dwy_wun = fawse) :
+        m-m_dwy_wun(dwy_wun), (U ﹏ U)
+        m-m_buffew(buffew), (///ˬ///✿)
+        m-m_buffew_size(buffew_size), 😳
+        m_bytes_wwitten(0) {}
 
-    // total bytes written to the buffer since object creation
-    uint64_t getBytesWritten();
+    // totaw bytes wwitten to t-the buffew since o-object cweation
+    uint64_t getbyteswwitten();
 
-    // encode headers and values into the buffer
-    uint64_t writeStructFieldHeader(int8_t field_type, int16_t field_id);
-    uint64_t writeStructStop();
-    uint64_t writeListHeader(int8_t element_type, int32_t num_elems);
-    uint64_t writeMapHeader(int8_t key_type, int8_t val_type, int32_t num_elems);
-    uint64_t writeDouble(double val);
-    uint64_t writeInt8(int8_t val);
-    uint64_t writeInt16(int16_t val);
-    uint64_t writeInt32(int32_t val);
-    uint64_t writeInt64(int64_t val);
-    uint64_t writeBinary(const uint8_t *bytes, int32_t num_bytes);
-    // clients expect UTF-8-encoded strings per the Thrift protocol
-    // (often this is just used to send bytes, not real strings though)
-    uint64_t writeString(std::string str);
-    uint64_t writeBool(bool val);
+    // e-encode h-headews and vawues into the buffew
+    u-uint64_t wwitestwuctfiewdheadew(int8_t fiewd_type, 😳 i-int16_t fiewd_id);
+    uint64_t wwitestwuctstop();
+    u-uint64_t wwitewistheadew(int8_t ewement_type, σωσ i-int32_t nyum_ewems);
+    uint64_t w-wwitemapheadew(int8_t k-key_type, rawr x3 int8_t vaw_type, OwO int32_t nyum_ewems);
+    uint64_t wwitedoubwe(doubwe vaw);
+    uint64_t wwiteint8(int8_t v-vaw);
+    u-uint64_t wwiteint16(int16_t vaw);
+    uint64_t w-wwiteint32(int32_t v-vaw);
+    u-uint64_t wwiteint64(int64_t vaw);
+    uint64_t wwitebinawy(const u-uint8_t *bytes, /(^•ω•^) int32_t nyum_bytes);
+    // cwients expect utf-8-encoded stwings pew the thwift p-pwotocow
+    // (often this is j-just used to send b-bytes, 😳😳😳 nyot w-weaw stwings though)
+    uint64_t w-wwitestwing(std::stwing s-stw);
+    u-uint64_t wwiteboow(boow v-vaw);
 };
 
 }

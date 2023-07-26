@@ -1,50 +1,50 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.component
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stitch.stitch
 
-sealed trait BaseCandidateSource[-Request, +Candidate] extends Component {
+s-seawed twait b-basecandidatesouwce[-wequest, nyaa~~ +candidate] e-extends c-component {
 
-  /** @see [[CandidateSourceIdentifier]] */
-  val identifier: CandidateSourceIdentifier
+  /** @see [[candidatesouwceidentifiew]] */
+  vaw identifiew: candidatesouwceidentifiew
 }
 
 /**
- * A [[CandidateSource]] returns a Seq of ''potential'' content
+ * a [[candidatesouwce]] wetuwns a-a seq of ''potentiaw'' content
  *
- * @note [[CandidateSource]]s that return a single value need to transform
- *       it into a Seq, either by doing `Seq(value)` or extracting
- *       candidates from the value.
+ * @note [[candidatesouwce]]s that wetuwn a singwe v-vawue nyeed to twansfowm
+ *       i-it into a seq, :3 eithew by doing `seq(vawue)` ow extwacting
+ *       c-candidates fwom the vawue. 😳😳😳
  *
- * @tparam Request arguments to get the potential content
- * @tparam Candidate the potential content
+ * @tpawam w-wequest awguments t-to get the potentiaw content
+ * @tpawam candidate the potentiaw content
  */
-trait CandidateSource[-Request, +Candidate] extends BaseCandidateSource[Request, Candidate] {
+t-twait candidatesouwce[-wequest, (˘ω˘) +candidate] extends basecandidatesouwce[wequest, candidate] {
 
-  /** returns a Seq of ''potential'' content */
-  def apply(request: Request): Stitch[Seq[Candidate]]
+  /** wetuwns a s-seq of ''potentiaw'' content */
+  d-def appwy(wequest: w-wequest): stitch[seq[candidate]]
 }
 
 /**
- * A [[CandidateSourceWithExtractedFeatures]] returns a result containing both a Seq of
- * ''potential'' candidates as well as an extracted feature map that will later be appended
- * to the pipeline's [[com.twitter.product_mixer.core.pipeline.PipelineQuery]] feature map. This is
- * useful for candidate sources that return features that might be useful later on without needing
- * to re-hydrate them.
+ * a-a [[candidatesouwcewithextwactedfeatuwes]] w-wetuwns a wesuwt containing both a seq o-of
+ * ''potentiaw'' candidates as weww as an extwacted f-featuwe map that wiww watew be appended
+ * to the pipewine's [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy]] featuwe map. ^^ this is
+ * usefuw fow c-candidate souwces that wetuwn f-featuwes that might b-be usefuw watew o-on without needing
+ * to we-hydwate them. :3
  *
- * @note [[CandidateSource]]s that return a single value need to transform
- *       it into a Seq, either by doing `Seq(value)` or extracting
- *       candidates from the value.
+ * @note [[candidatesouwce]]s that wetuwn a singwe v-vawue nyeed t-to twansfowm
+ *       it into a s-seq, eithew by d-doing `seq(vawue)` ow extwacting
+ *       c-candidates fwom the vawue. -.-
  *
- * @tparam Request arguments to get the potential content
- * @tparam Candidate the potential content
+ * @tpawam w-wequest awguments to get the potentiaw content
+ * @tpawam c-candidate the potentiaw c-content
  */
-trait CandidateSourceWithExtractedFeatures[-Request, +Candidate]
-    extends BaseCandidateSource[Request, Candidate] {
+twait candidatesouwcewithextwactedfeatuwes[-wequest, 😳 +candidate]
+    e-extends basecandidatesouwce[wequest, mya c-candidate] {
 
-  /** returns a result containing a seq of ''potential'' content and extracted features
-   * from the candidate source.
+  /** wetuwns a wesuwt containing a seq of ''potentiaw'' content and extwacted featuwes
+   * fwom the candidate s-souwce. (˘ω˘)
    * */
-  def apply(request: Request): Stitch[CandidatesWithSourceFeatures[Candidate]]
+  d-def appwy(wequest: wequest): s-stitch[candidateswithsouwcefeatuwes[candidate]]
 }

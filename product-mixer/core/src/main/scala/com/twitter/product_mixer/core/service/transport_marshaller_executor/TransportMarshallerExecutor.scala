@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.core.service.transport_marshaller_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.twanspowt_mawshawwew_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor.Inputs
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor.Result
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.twanspowt_mawshawwew_executow.twanspowtmawshawwewexecutow.inputs
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.twanspowt_mawshawwew_executow.twanspowtmawshawwewexecutow.wesuwt
+impowt com.twittew.stitch.awwow
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
 /**
- * Executes a [[TransportMarshaller]].
+ * exekawaii~s a [[twanspowtmawshawwew]]. mya
  *
- * @note This is a synchronous transform, so we don't observe it directly. Failures and such
- *       can be observed at the parent pipeline.
+ * @note this is a synchwonous t-twansfowm, 🥺 so we don't o-obsewve it diwectwy. >_< faiwuwes and such
+ *       can be obsewved a-at the pawent pipewine.
  */
-@Singleton
-class TransportMarshallerExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
+@singweton
+cwass twanspowtmawshawwewexecutow @inject() (ovewwide v-vaw s-statsweceivew: statsweceivew)
+    extends executow {
 
-  def arrow[DomainResponseType <: HasMarshalling, TransportResponseType](
-    marshaller: TransportMarshaller[DomainResponseType, TransportResponseType],
-    context: Executor.Context
-  ): Arrow[Inputs[DomainResponseType], Result[TransportResponseType]] = {
-    val arrow =
-      Arrow.map[Inputs[DomainResponseType], Result[TransportResponseType]] {
-        case Inputs(domainResponse) => Result(marshaller(domainResponse))
+  def awwow[domainwesponsetype <: hasmawshawwing, >_< t-twanspowtwesponsetype](
+    mawshawwew: twanspowtmawshawwew[domainwesponsetype, (⑅˘꒳˘) twanspowtwesponsetype], /(^•ω•^)
+    context: executow.context
+  ): a-awwow[inputs[domainwesponsetype], rawr x3 wesuwt[twanspowtwesponsetype]] = {
+    v-vaw a-awwow =
+      awwow.map[inputs[domainwesponsetype], (U ﹏ U) w-wesuwt[twanspowtwesponsetype]] {
+        c-case inputs(domainwesponse) => wesuwt(mawshawwew(domainwesponse))
       }
 
-    wrapComponentWithExecutorBookkeeping(context, marshaller.identifier)(arrow)
+    w-wwapcomponentwithexecutowbookkeeping(context, (U ﹏ U) mawshawwew.identifiew)(awwow)
   }
 }
 
-object TransportMarshallerExecutor {
-  case class Inputs[DomainResponseType <: HasMarshalling](domainResponse: DomainResponseType)
-  case class Result[TransportResponseType](result: TransportResponseType) extends ExecutorResult
+object twanspowtmawshawwewexecutow {
+  c-case cwass inputs[domainwesponsetype <: hasmawshawwing](domainwesponse: domainwesponsetype)
+  case cwass wesuwt[twanspowtwesponsetype](wesuwt: twanspowtwesponsetype) extends e-executowwesuwt
 }

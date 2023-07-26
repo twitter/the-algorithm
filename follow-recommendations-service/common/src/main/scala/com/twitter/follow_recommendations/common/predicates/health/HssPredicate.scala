@@ -1,95 +1,95 @@
-package com.twitter.follow_recommendations.common.predicates.hss
+package com.twittew.fowwow_wecommendations.common.pwedicates.hss
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.models.FilterReason.FailOpen
-import com.twitter.hss.api.thriftscala.SignalValue
-import com.twitter.hss.api.thriftscala.UserHealthSignal.AgathaCseDouble
-import com.twitter.hss.api.thriftscala.UserHealthSignal.NsfwAgathaUserScoreDouble
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.hss.user_signals.api.HealthSignalsOnUserClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
-import com.twitter.util.Duration
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.utiw.defauwttimew
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.pwedicatewesuwt
+i-impowt com.twittew.fowwow_wecommendations.common.base.statsutiw
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.fiwtewweason
+impowt com.twittew.fowwow_wecommendations.common.modews.fiwtewweason.faiwopen
+impowt c-com.twittew.hss.api.thwiftscawa.signawvawue
+impowt com.twittew.hss.api.thwiftscawa.usewheawthsignaw.agathacsedoubwe
+impowt com.twittew.hss.api.thwiftscawa.usewheawthsignaw.nsfwagathausewscowedoubwe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.genewated.cwient.hss.usew_signaws.api.heawthsignawsonusewcwientcowumn
+i-impowt com.twittew.timewines.configapi.haspawams
+i-impowt c-com.twittew.utiw.wogging.wogging
+impowt com.twittew.utiw.duwation
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * Filter out candidates based on Health Signal Store (HSS) health signals
+ * fiwtew out c-candidates based on heawth signaw stowe (hss) heawth signaws
  */
-@Singleton
-case class HssPredicate @Inject() (
-  healthSignalsOnUserClientColumn: HealthSignalsOnUserClientColumn,
-  statsReceiver: StatsReceiver)
-    extends Predicate[(HasClientContext with HasParams, CandidateUser)]
-    with Logging {
+@singweton
+case c-cwass hsspwedicate @inject() (
+  heawthsignawsonusewcwientcowumn: h-heawthsignawsonusewcwientcowumn, /(^•ω•^)
+  s-statsweceivew: s-statsweceivew)
+    e-extends pwedicate[(hascwientcontext with h-haspawams, 😳😳😳 candidateusew)]
+    with wogging {
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
+  pwivate vaw s-stats: statsweceivew = statsweceivew.scope(this.getcwass.getname)
 
-  override def apply(
-    pair: (HasClientContext with HasParams, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (request, candidate) = pair
-    StatsUtil.profileStitch(
-      getHssPredicateResult(request, candidate),
-      stats.scope("getHssPredicateResult")
+  ovewwide def appwy(
+    paiw: (hascwientcontext with haspawams, ( ͡o ω ͡o ) candidateusew)
+  ): s-stitch[pwedicatewesuwt] = {
+    vaw (wequest, >_< c-candidate) = p-paiw
+    statsutiw.pwofiwestitch(
+      g-gethsspwedicatewesuwt(wequest, >w< candidate), rawr
+      stats.scope("gethsspwedicatewesuwt")
     )
   }
 
-  private def getHssPredicateResult(
-    request: HasClientContext with HasParams,
-    candidate: CandidateUser
-  ): Stitch[PredicateResult] = {
+  pwivate def gethsspwedicatewesuwt(
+    w-wequest: hascwientcontext w-with haspawams, 😳
+    candidate: candidateusew
+  ): s-stitch[pwedicatewesuwt] = {
 
-    val hssCseScoreThreshold: Double = request.params(HssPredicateParams.HssCseScoreThreshold)
-    val hssNsfwScoreThreshold: Double = request.params(HssPredicateParams.HssNsfwScoreThreshold)
-    val timeout: Duration = request.params(HssPredicateParams.HssApiTimeout)
+    v-vaw hsscsescowethweshowd: doubwe = w-wequest.pawams(hsspwedicatepawams.hsscsescowethweshowd)
+    vaw hssnsfwscowethweshowd: d-doubwe = wequest.pawams(hsspwedicatepawams.hssnsfwscowethweshowd)
+    vaw timeout: d-duwation = wequest.pawams(hsspwedicatepawams.hssapitimeout)
 
-    healthSignalsOnUserClientColumn.fetcher
-      .fetch(candidate.id, Seq(AgathaCseDouble, NsfwAgathaUserScoreDouble))
-      .map { fetchResult =>
-        fetchResult.v match {
-          case Some(response) =>
-            val agathaCseScoreDouble: Double = userHealthSignalValueToDoubleOpt(
-              response.signalValues.get(AgathaCseDouble)).getOrElse(0d)
-            val agathaNsfwScoreDouble: Double = userHealthSignalValueToDoubleOpt(
-              response.signalValues.get(NsfwAgathaUserScoreDouble)).getOrElse(0d)
+    heawthsignawsonusewcwientcowumn.fetchew
+      .fetch(candidate.id, >w< s-seq(agathacsedoubwe, (⑅˘꒳˘) nysfwagathausewscowedoubwe))
+      .map { f-fetchwesuwt =>
+        f-fetchwesuwt.v match {
+          case some(wesponse) =>
+            vaw agathacsescowedoubwe: doubwe = usewheawthsignawvawuetodoubweopt(
+              w-wesponse.signawvawues.get(agathacsedoubwe)).getowewse(0d)
+            v-vaw agathansfwscowedoubwe: doubwe = usewheawthsignawvawuetodoubweopt(
+              w-wesponse.signawvawues.get(nsfwagathausewscowedoubwe)).getowewse(0d)
 
-            stats.stat("agathaCseScoreDistribution").add(agathaCseScoreDouble.toFloat)
-            stats.stat("agathaNsfwScoreDistribution").add(agathaNsfwScoreDouble.toFloat)
+            s-stats.stat("agathacsescowedistwibution").add(agathacsescowedoubwe.tofwoat)
+            s-stats.stat("agathansfwscowedistwibution").add(agathansfwscowedoubwe.tofwoat)
 
             /**
-             * Only filter out the candidate when it has both high Agatha CSE score and NSFW score, as the Agatha CSE
-             * model is an old one that may not be precise or have high recall.
+             * onwy fiwtew out the candidate when it has both high a-agatha cse scowe and nysfw scowe, OwO as the agatha cse
+             * modew is an o-owd one that may nyot be pwecise o-ow have high w-wecaww. (ꈍᴗꈍ)
              */
-            if (agathaCseScoreDouble >= hssCseScoreThreshold && agathaNsfwScoreDouble >= hssNsfwScoreThreshold) {
-              PredicateResult.Invalid(Set(FilterReason.HssSignal))
-            } else {
-              PredicateResult.Valid
+            i-if (agathacsescowedoubwe >= hsscsescowethweshowd && a-agathansfwscowedoubwe >= h-hssnsfwscowethweshowd) {
+              p-pwedicatewesuwt.invawid(set(fiwtewweason.hsssignaw))
+            } e-ewse {
+              pwedicatewesuwt.vawid
             }
-          case None =>
-            PredicateResult.Valid
+          case n-nyone =>
+            p-pwedicatewesuwt.vawid
         }
       }
-      .within(timeout)(DefaultTimer)
-      .rescue {
-        case e: Exception =>
-          stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-          Stitch(PredicateResult.Invalid(Set(FailOpen)))
+      .within(timeout)(defauwttimew)
+      .wescue {
+        c-case e-e: exception =>
+          s-stats.scope("wescued").countew(e.getcwass.getsimpwename).incw()
+          stitch(pwedicatewesuwt.invawid(set(faiwopen)))
       }
   }
 
-  private def userHealthSignalValueToDoubleOpt(signalValue: Option[SignalValue]): Option[Double] = {
-    signalValue match {
-      case Some(SignalValue.DoubleValue(value)) => Some(value)
-      case _ => None
+  pwivate def usewheawthsignawvawuetodoubweopt(signawvawue: o-option[signawvawue]): option[doubwe] = {
+    signawvawue match {
+      case some(signawvawue.doubwevawue(vawue)) => some(vawue)
+      c-case _ => nyone
     }
   }
 }

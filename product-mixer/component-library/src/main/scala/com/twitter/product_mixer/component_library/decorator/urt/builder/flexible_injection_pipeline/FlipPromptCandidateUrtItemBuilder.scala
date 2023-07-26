@@ -1,205 +1,205 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.fwexibwe_injection_pipewine
 
-import com.twitter.onboarding.injections.thriftscala.Injection
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.OnboardingInjectionConversions._
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptCarouselTileFeature
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptInjectionsFeature
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptOffsetInModuleFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverFullCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCoverContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.HeaderImagePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.onboawding.injections.thwiftscawa.injection
+i-impowt com.twittew.onboawding.injections.{thwiftscawa => o-onboawdingthwift}
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.fwexibwe_injection_pipewine.onboawdinginjectionconvewsions._
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basepwomptcandidate
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew.fwippwomptcawousewtiwefeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew.fwippwomptinjectionsfeatuwe
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew.fwippwomptoffsetinmoduwefeatuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewfuwwcovewdispwaytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewhawfcovewdispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.fuwwcovew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.fuwwcovewcontent
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.hawfcovew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.hawfcovewcontent
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.headewimagepwomptmessagecontent
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.inwinepwomptmessagecontent
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messagecontent
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messagepwomptitem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt.pwomptitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.timewinesdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object FlipPromptCandidateUrtItemBuilder {
-  val FlipPromptClientEventInfoElement: String = "flip-prompt-message"
+o-object fwippwomptcandidateuwtitembuiwdew {
+  vaw fwippwomptcwienteventinfoewement: s-stwing = "fwip-pwompt-message"
 }
 
-case class FlipPromptCandidateUrtItemBuilder[-Query <: PipelineQuery]()
-    extends CandidateUrtEntryBuilder[Query, BasePromptCandidate[Any], TimelineItem] {
+c-case cwass f-fwippwomptcandidateuwtitembuiwdew[-quewy <: pipewinequewy]()
+    e-extends candidateuwtentwybuiwdew[quewy, (✿oωo) basepwomptcandidate[any], /(^•ω•^) timewineitem] {
 
-  override def apply(
-    query: Query,
-    promptCandidate: BasePromptCandidate[Any],
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    val injection = candidateFeatures.get(FlipPromptInjectionsFeature)
+  o-ovewwide def appwy(
+    quewy: quewy, 🥺
+    p-pwomptcandidate: basepwomptcandidate[any], ʘwʘ
+    candidatefeatuwes: featuwemap
+  ): timewineitem = {
+    vaw injection = c-candidatefeatuwes.get(fwippwomptinjectionsfeatuwe)
 
     injection match {
-      case onboardingthrift.Injection.InlinePrompt(candidate) =>
-        MessagePromptItem(
-          id = promptCandidate.id.toString,
-          sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-          clientEventInfo = buildClientEventInfo(injection),
-          feedbackActionInfo = candidate.feedbackInfo.map(convertFeedbackInfo),
-          isPinned = Some(candidate.isPinnedEntry),
-          content = getInlinePromptMessageContent(candidate),
-          impressionCallbacks = candidate.impressionCallbacks.map(_.map(convertCallback).toList)
+      c-case onboawdingthwift.injection.inwinepwompt(candidate) =>
+        m-messagepwomptitem(
+          i-id = pwomptcandidate.id.tostwing,
+          sowtindex = nyone, UwU // sowt indexes awe automaticawwy s-set in t-the domain mawshawwew phase
+          c-cwienteventinfo = b-buiwdcwienteventinfo(injection), XD
+          feedbackactioninfo = c-candidate.feedbackinfo.map(convewtfeedbackinfo), (✿oωo)
+          ispinned = s-some(candidate.ispinnedentwy), :3
+          content = getinwinepwomptmessagecontent(candidate), (///ˬ///✿)
+          i-impwessioncawwbacks = candidate.impwessioncawwbacks.map(_.map(convewtcawwback).towist)
         )
-      case onboardingthrift.Injection.FullCover(candidate) =>
-        FullCover(
-          id = promptCandidate.id.toString,
-          // Note that sort index is not used for Covers, as they are not TimelineEntry and do not have entryId
-          sortIndex = None,
-          clientEventInfo =
-            Some(OnboardingInjectionConversions.convertClientEventInfo(candidate.clientEventInfo)),
-          content = getFullCoverContent(candidate)
+      c-case onboawdingthwift.injection.fuwwcovew(candidate) =>
+        f-fuwwcovew(
+          i-id = pwomptcandidate.id.tostwing, nyaa~~
+          // nyote that sowt index is nyot used fow covews, >w< as they awe nyot timewineentwy and do nyot have e-entwyid
+          s-sowtindex = nyone, -.-
+          cwienteventinfo =
+            s-some(onboawdinginjectionconvewsions.convewtcwienteventinfo(candidate.cwienteventinfo)), (✿oωo)
+          c-content = getfuwwcovewcontent(candidate)
         )
-      case onboardingthrift.Injection.HalfCover(candidate) =>
-        HalfCover(
-          id = promptCandidate.id.toString,
-          // Note that sort index is not used for Covers, as they are not TimelineEntry and do not have entryId
-          sortIndex = None,
-          clientEventInfo =
-            Some(OnboardingInjectionConversions.convertClientEventInfo(candidate.clientEventInfo)),
-          content = getHalfCoverContent(candidate)
+      c-case onboawdingthwift.injection.hawfcovew(candidate) =>
+        hawfcovew(
+          id = pwomptcandidate.id.tostwing, (˘ω˘)
+          // n-nyote that sowt index is not used fow covews, rawr as they awe nyot timewineentwy a-and do nyot have entwyid
+          s-sowtindex = n-nyone, OwO
+          c-cwienteventinfo =
+            some(onboawdinginjectionconvewsions.convewtcwienteventinfo(candidate.cwienteventinfo)), ^•ﻌ•^
+          c-content = g-gethawfcovewcontent(candidate)
         )
-      case Injection.TilesCarousel(_) =>
-        val offsetInModuleOption =
-          candidateFeatures.get(FlipPromptOffsetInModuleFeature)
-        val offsetInModule =
-          offsetInModuleOption.getOrElse(throw FlipPromptOffsetInModuleMissing)
-        val tileOption =
-          candidateFeatures.get(FlipPromptCarouselTileFeature)
-        val tile = tileOption.getOrElse(throw FlipPromptCarouselTileMissing)
-        TilesCarouselConversions.convertTile(tile, offsetInModule)
-      case onboardingthrift.Injection.RelevancePrompt(candidate) =>
-        PromptItem(
-          id = promptCandidate.id.toString,
-          sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-          clientEventInfo = buildClientEventInfo(injection),
-          content = RelevancePromptConversions.convertContent(candidate),
-          impressionCallbacks = Some(candidate.impressionCallbacks.map(convertCallback).toList)
+      c-case injection.tiwescawousew(_) =>
+        v-vaw offsetinmoduweoption =
+          candidatefeatuwes.get(fwippwomptoffsetinmoduwefeatuwe)
+        v-vaw offsetinmoduwe =
+          o-offsetinmoduweoption.getowewse(thwow f-fwippwomptoffsetinmoduwemissing)
+        vaw t-tiweoption =
+          c-candidatefeatuwes.get(fwippwomptcawousewtiwefeatuwe)
+        vaw tiwe = tiweoption.getowewse(thwow fwippwomptcawousewtiwemissing)
+        t-tiwescawousewconvewsions.convewttiwe(tiwe, UwU offsetinmoduwe)
+      case onboawdingthwift.injection.wewevancepwompt(candidate) =>
+        pwomptitem(
+          id = pwomptcandidate.id.tostwing, (˘ω˘)
+          sowtindex = none, (///ˬ///✿) // s-sowt indexes awe automaticawwy set in the domain mawshawwew phase
+          c-cwienteventinfo = b-buiwdcwienteventinfo(injection), σωσ
+          c-content = wewevancepwomptconvewsions.convewtcontent(candidate), /(^•ω•^)
+          i-impwessioncawwbacks = some(candidate.impwessioncawwbacks.map(convewtcawwback).towist)
         )
-      case _ => throw new UnsupportedFlipPromptException(injection)
+      c-case _ => t-thwow nyew unsuppowtedfwippwomptexception(injection)
     }
   }
 
-  private def getInlinePromptMessageContent(
-    candidate: onboardingthrift.InlinePrompt
-  ): MessageContent = {
-    candidate.image match {
-      case Some(image) =>
-        HeaderImagePromptMessageContent(
-          headerImage = convertImage(image),
-          headerText = Some(candidate.headerText.text),
-          bodyText = candidate.bodyText.map(_.text),
-          primaryButtonAction = candidate.primaryAction.map(convertButtonAction),
-          secondaryButtonAction = candidate.secondaryAction.map(convertButtonAction),
-          headerRichText = Some(convertRichText(candidate.headerText)),
-          bodyRichText = candidate.bodyText.map(convertRichText),
-          action =
-            None
+  pwivate def getinwinepwomptmessagecontent(
+    candidate: onboawdingthwift.inwinepwompt
+  ): m-messagecontent = {
+    candidate.image m-match {
+      case some(image) =>
+        h-headewimagepwomptmessagecontent(
+          h-headewimage = convewtimage(image), 😳
+          headewtext = some(candidate.headewtext.text), 😳
+          b-bodytext = c-candidate.bodytext.map(_.text), (⑅˘꒳˘)
+          pwimawybuttonaction = c-candidate.pwimawyaction.map(convewtbuttonaction), 😳😳😳
+          s-secondawybuttonaction = candidate.secondawyaction.map(convewtbuttonaction), 😳
+          headewwichtext = some(convewtwichtext(candidate.headewtext)), XD
+          bodywichtext = c-candidate.bodytext.map(convewtwichtext), mya
+          a-action =
+            n-nyone
         )
-      case None =>
-        InlinePromptMessageContent(
-          headerText = candidate.headerText.text,
-          bodyText = candidate.bodyText.map(_.text),
-          primaryButtonAction = candidate.primaryAction.map(convertButtonAction),
-          secondaryButtonAction = candidate.secondaryAction.map(convertButtonAction),
-          headerRichText = Some(convertRichText(candidate.headerText)),
-          bodyRichText = candidate.bodyText.map(convertRichText),
-          socialContext = candidate.socialContext.map(convertSocialContext),
-          userFacepile = candidate.promptUserFacepile.map(convertUserFacePile)
+      case nyone =>
+        i-inwinepwomptmessagecontent(
+          h-headewtext = candidate.headewtext.text, ^•ﻌ•^
+          b-bodytext = candidate.bodytext.map(_.text), ʘwʘ
+          pwimawybuttonaction = candidate.pwimawyaction.map(convewtbuttonaction), ( ͡o ω ͡o )
+          secondawybuttonaction = c-candidate.secondawyaction.map(convewtbuttonaction), mya
+          h-headewwichtext = some(convewtwichtext(candidate.headewtext)), o.O
+          bodywichtext = c-candidate.bodytext.map(convewtwichtext), (✿oωo)
+          s-sociawcontext = candidate.sociawcontext.map(convewtsociawcontext), :3
+          usewfacepiwe = candidate.pwomptusewfacepiwe.map(convewtusewfacepiwe)
         )
     }
   }
 
-  private def getFullCoverContent(
-    candidate: onboardingthrift.FullCover
-  ): FullCoverContent =
-    FullCoverContent(
-      displayType = CoverFullCoverDisplayType,
-      primaryText = convertRichText(candidate.primaryText),
-      primaryCoverCta = convertCoverCta(candidate.primaryButtonAction),
-      secondaryCoverCta = candidate.secondaryButtonAction.map(convertCoverCta),
-      secondaryText = candidate.secondaryText.map(convertRichText),
-      imageVariant = candidate.image.map(img => convertImageVariant(img.image)),
-      details = candidate.detailText.map(convertRichText),
-      dismissInfo = candidate.dismissInfo.map(convertDismissInfo),
-      imageDisplayType = candidate.image.map(img => convertImageDisplayType(img.imageDisplayType)),
-      impressionCallbacks = candidate.impressionCallbacks.map(_.map(convertCallback).toList)
+  p-pwivate def getfuwwcovewcontent(
+    candidate: onboawdingthwift.fuwwcovew
+  ): fuwwcovewcontent =
+    f-fuwwcovewcontent(
+      dispwaytype = covewfuwwcovewdispwaytype, 😳
+      p-pwimawytext = c-convewtwichtext(candidate.pwimawytext), (U ﹏ U)
+      pwimawycovewcta = convewtcovewcta(candidate.pwimawybuttonaction), mya
+      secondawycovewcta = candidate.secondawybuttonaction.map(convewtcovewcta), (U ᵕ U❁)
+      s-secondawytext = c-candidate.secondawytext.map(convewtwichtext), :3
+      imagevawiant = candidate.image.map(img => convewtimagevawiant(img.image)), mya
+      d-detaiws = candidate.detaiwtext.map(convewtwichtext), OwO
+      d-dismissinfo = candidate.dismissinfo.map(convewtdismissinfo), (ˆ ﻌ ˆ)♡
+      imagedispwaytype = candidate.image.map(img => c-convewtimagedispwaytype(img.imagedispwaytype)), ʘwʘ
+      impwessioncawwbacks = c-candidate.impwessioncawwbacks.map(_.map(convewtcawwback).towist)
     )
 
-  private def getHalfCoverContent(
-    candidate: onboardingthrift.HalfCover
-  ): HalfCoverContent =
-    HalfCoverContent(
-      displayType =
-        candidate.displayType.map(convertHalfCoverDisplayType).getOrElse(CoverHalfCoverDisplayType),
-      primaryText = convertRichText(candidate.primaryText),
-      primaryCoverCta = convertCoverCta(candidate.primaryButtonAction),
-      secondaryCoverCta = candidate.secondaryButtonAction.map(convertCoverCta),
-      secondaryText = candidate.secondaryText.map(convertRichText),
-      coverImage = candidate.image.map(convertCoverImage),
-      dismissible = candidate.dismissible,
-      dismissInfo = candidate.dismissInfo.map(convertDismissInfo),
-      impressionCallbacks = candidate.impressionCallbacks.map(_.map(convertCallback).toList)
+  p-pwivate def gethawfcovewcontent(
+    c-candidate: onboawdingthwift.hawfcovew
+  ): hawfcovewcontent =
+    h-hawfcovewcontent(
+      d-dispwaytype =
+        c-candidate.dispwaytype.map(convewthawfcovewdispwaytype).getowewse(covewhawfcovewdispwaytype),
+      pwimawytext = c-convewtwichtext(candidate.pwimawytext), o.O
+      p-pwimawycovewcta = convewtcovewcta(candidate.pwimawybuttonaction), UwU
+      secondawycovewcta = c-candidate.secondawybuttonaction.map(convewtcovewcta), rawr x3
+      s-secondawytext = c-candidate.secondawytext.map(convewtwichtext), 🥺
+      covewimage = candidate.image.map(convewtcovewimage), :3
+      d-dismissibwe = candidate.dismissibwe, (ꈍᴗꈍ)
+      d-dismissinfo = c-candidate.dismissinfo.map(convewtdismissinfo), 🥺
+      impwessioncawwbacks = candidate.impwessioncawwbacks.map(_.map(convewtcawwback).towist)
     )
 
-  private def buildClientEventInfo(
-    injection: Injection
-  ): Option[ClientEventInfo] = {
-    injection match {
-      //To keep parity between TimelineMixer and Product Mixer, inline prompt switches sets the prompt product identifier as the component and no element. Also includes clientEventDetails
-      case onboardingthrift.Injection.InlinePrompt(candidate) =>
-        val clientEventDetails: ClientEventDetails =
-          ClientEventDetails(
-            conversationDetails = None,
-            timelinesDetails = Some(TimelinesDetails(injectionType = Some("Message"), None, None)),
-            articleDetails = None,
-            liveEventDetails = None,
-            commerceDetails = None
+  pwivate def b-buiwdcwienteventinfo(
+    i-injection: i-injection
+  ): o-option[cwienteventinfo] = {
+    injection m-match {
+      //to keep pawity between timewinemixew and pwoduct mixew, (✿oωo) inwine pwompt switches s-sets the pwompt pwoduct identifiew a-as the component and nyo ewement. (U ﹏ U) a-awso incwudes cwienteventdetaiws
+      c-case onboawdingthwift.injection.inwinepwompt(candidate) =>
+        vaw c-cwienteventdetaiws: c-cwienteventdetaiws =
+          c-cwienteventdetaiws(
+            c-convewsationdetaiws = n-nyone, :3
+            timewinesdetaiws = some(timewinesdetaiws(injectiontype = some("message"), ^^;; nyone, nyone)), rawr
+            awticwedetaiws = nyone, 😳😳😳
+            w-wiveeventdetaiws = n-nyone, (✿oωo)
+            commewcedetaiws = n-nyone
           )
-        Some(
-          ClientEventInfo(
-            component = candidate.injectionIdentifier,
-            element = None,
-            details = Some(clientEventDetails),
-            action = None,
-            entityToken = None))
-      // To keep parity between TLM and PM we swap component and elements.
-      case onboardingthrift.Injection.RelevancePrompt(candidate) =>
-        Some(
-          ClientEventInfo(
-            // Identifier is prefixed with onboarding per TLM
-            component = Some("onboarding_" + candidate.injectionIdentifier),
-            element = Some("relevance_prompt"),
-            details = None,
-            action = None,
-            entityToken = None
+        some(
+          c-cwienteventinfo(
+            component = candidate.injectionidentifiew, OwO
+            ewement = nyone, ʘwʘ
+            d-detaiws = s-some(cwienteventdetaiws), (ˆ ﻌ ˆ)♡
+            action = n-nyone, (U ﹏ U)
+            entitytoken = nyone))
+      // t-to keep pawity b-between twm and pm we swap c-component and ewements. UwU
+      case o-onboawdingthwift.injection.wewevancepwompt(candidate) =>
+        some(
+          cwienteventinfo(
+            // identifiew is pwefixed with o-onboawding pew t-twm
+            c-component = some("onboawding_" + c-candidate.injectionidentifiew), XD
+            e-ewement = some("wewevance_pwompt"), ʘwʘ
+            d-detaiws = n-nyone, rawr x3
+            action = n-nyone, ^^;;
+            e-entitytoken = nyone
           ))
 
-      case _ => None
+      c-case _ => nyone
     }
   }
 
 }
 
-class UnsupportedFlipPromptException(injection: onboardingthrift.Injection)
-    extends UnsupportedOperationException(
-      "Unsupported timeline item " + TransportMarshaller.getSimpleName(injection.getClass))
+cwass u-unsuppowtedfwippwomptexception(injection: onboawdingthwift.injection)
+    e-extends u-unsuppowtedopewationexception(
+      "unsuppowted timewine item " + t-twanspowtmawshawwew.getsimpwename(injection.getcwass))
 
-object FlipPromptOffsetInModuleMissing
-    extends NoSuchElementException(
-      "FlipPromptOffsetInModuleFeature must be set for the TilesCarousel FLIP injection in PromptCandidateSource")
+object fwippwomptoffsetinmoduwemissing
+    extends n-nyosuchewementexception(
+      "fwippwomptoffsetinmoduwefeatuwe m-must be set fow t-the tiwescawousew fwip injection in pwomptcandidatesouwce")
 
-object FlipPromptCarouselTileMissing
-    extends NoSuchElementException(
-      "FlipPromptCarouselTileFeature must be set for the TilesCarousel FLIP injection in PromptCandidateSource")
+object fwippwomptcawousewtiwemissing
+    e-extends nyosuchewementexception(
+      "fwippwomptcawousewtiwefeatuwe must be set fow the t-tiwescawousew f-fwip injection in pwomptcandidatesouwce")

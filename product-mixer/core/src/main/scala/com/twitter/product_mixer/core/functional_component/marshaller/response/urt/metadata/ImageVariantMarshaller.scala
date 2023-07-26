@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.ColorPaletteMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.cowow.cowowpawettemawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagevawiant
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class ImageVariantMarshaller @Inject() (
-  colorPaletteMarshaller: ColorPaletteMarshaller) {
+@singweton
+cwass imagevawiantmawshawwew @inject() (
+  cowowpawettemawshawwew: cowowpawettemawshawwew) {
 
-  def apply(imageVariant: ImageVariant): urt.ImageVariant = urt.ImageVariant(
-    url = imageVariant.url,
-    width = imageVariant.width,
-    height = imageVariant.height,
-    palette = imageVariant.palette.map { paletteList => paletteList.map(colorPaletteMarshaller(_)) }
+  def appwy(imagevawiant: i-imagevawiant): uwt.imagevawiant = uwt.imagevawiant(
+    u-uww = imagevawiant.uww, (U ᵕ U❁)
+    width = imagevawiant.width, -.-
+    h-height = imagevawiant.height, ^^;;
+    pawette = imagevawiant.pawette.map { pawettewist => pawettewist.map(cowowpawettemawshawwew(_)) }
   )
 }

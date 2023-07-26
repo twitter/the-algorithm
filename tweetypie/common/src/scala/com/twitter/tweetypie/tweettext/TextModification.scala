@@ -1,232 +1,232 @@
-package com.twitter.tweetypie.tweettext
+package com.twittew.tweetypie.tweettext
 
-import scala.util.matching.Regex
+impowt scawa.utiw.matching.wegex
 
-object TextModification {
+o-object t-textmodification {
 
   /**
-   * Lift a text into a TextModification where `original` and `updated` text are the same
-   * and `replacements` is empty.
+   * w-wift a text into a-a textmodification w-whewe `owiginaw` a-and `updated` t-text awe the s-same
+   * and `wepwacements` is empty. XD
    */
-  def identity(text: String): TextModification =
-    TextModification(original = text, updated = text, replacements = Nil)
+  def identity(text: stwing): textmodification =
+    t-textmodification(owiginaw = text, (U ﹏ U) updated = text, (˘ω˘) w-wepwacements = nyiw)
 
   /**
-   * Replace each substring that matches the regex with the substitution string, returns a
-   * TextModification object that contains the updated text and enough information to also
-   * update entity indices.
+   * w-wepwace each substwing that matches the wegex with the substitution s-stwing, UwU wetuwns a
+   * t-textmodification o-object that contains the updated text and enough infowmation to awso
+   * update e-entity indices.
    *
-   * This method should correctly be taking into account surrogate-pairs.  The returned
-   * TextModification object has code-point offsets, instead of code-unit offsets.
+   * this method shouwd cowwectwy be taking into account s-suwwogate-paiws. >_<  the wetuwned
+   * t-textmodification o-object has c-code-point offsets, σωσ i-instead of code-unit offsets. 🥺
    */
-  def replaceAll(text: String, regex: Regex, substitution: String): Option[TextModification] =
-    replaceAll(text, regex -> substitution)
+  def wepwaceaww(text: stwing, 🥺 w-wegex: wegex, ʘwʘ substitution: stwing): option[textmodification] =
+    w-wepwaceaww(text, :3 wegex -> substitution)
 
   /**
-   * Replaces substrings that match the given `Regex` with the corresonding substitution
-   * string.  Returns a `TextModification` that can be used to reindex entities.
+   * wepwaces substwings that match the given `wegex` w-with the cowwesonding substitution
+   * s-stwing.  w-wetuwns a `textmodification` t-that can be used to weindex entities. (U ﹏ U)
    */
-  def replaceAll(
-    text: String,
-    regexAndSubstitutions: (Regex, String)*
-  ): Option[TextModification] = {
-    val matches =
-      (for {
-        (r, s) <- regexAndSubstitutions
-        m <- r.findAllIn(text).matchData
-      } yield (m, s)).sortBy { case (m, _) => m.start }
+  def w-wepwaceaww(
+    t-text: stwing, (U ﹏ U)
+    wegexandsubstitutions: (wegex, ʘwʘ s-stwing)*
+  ): option[textmodification] = {
+    v-vaw matches =
+      (fow {
+        (w, >w< s) <- wegexandsubstitutions
+        m-m <- w.findawwin(text).matchdata
+      } y-yiewd (m, rawr x3 s)).sowtby { case (m, OwO _) => m.stawt }
 
-    if (matches.isEmpty) {
-      // no match found, return None to indicate no modifications made
-      None
-    } else {
-      val replacements = List.newBuilder[TextReplacement]
-      val indexConverter = new IndexConverter(text)
-      // contains the retained text, built up as we walk through the regex matches
-      val buf = new StringBuilder(text.length)
-      // the number of code-points copied into buf
-      var codePointsCopied = Offset.CodePoint(0)
-      // always holds the start code-unit offset to copy to buf when we encounter
-      // either a regex match or end-of-string.
-      var anchor = 0
+    i-if (matches.isempty) {
+      // nyo match f-found, ^•ﻌ•^ wetuwn none to indicate n-nyo modifications m-made
+      nyone
+    } ewse {
+      vaw wepwacements = wist.newbuiwdew[textwepwacement]
+      vaw indexconvewtew = nyew indexconvewtew(text)
+      // contains t-the wetained t-text, >_< buiwt up as we wawk thwough t-the wegex matches
+      v-vaw buf = n-new stwingbuiwdew(text.wength)
+      // the nyumbew of code-points copied into b-buf
+      vaw codepointscopied = offset.codepoint(0)
+      // awways howds the stawt code-unit o-offset to copy to buf when we e-encountew
+      // e-eithew a wegex m-match ow end-of-stwing. OwO
+      vaw anchow = 0
 
-      import indexConverter.toCodePoints
+      i-impowt indexconvewtew.tocodepoints
 
-      for ((m, sub) <- matches) {
-        val unchangedText = text.substring(anchor, m.start)
-        val unchangedLen = Offset.CodePoint.length(unchangedText)
-        val subLen = Offset.CodePoint.length(sub)
+      f-fow ((m, >_< sub) <- m-matches) {
+        v-vaw unchangedtext = text.substwing(anchow, (ꈍᴗꈍ) m.stawt)
+        vaw unchangedwen = o-offset.codepoint.wength(unchangedtext)
+        v-vaw subwen = offset.codepoint.wength(sub)
 
-        // copies the text upto the regex match run, plus the replacement string
-        buf.append(unchangedText).append(sub)
-        codePointsCopied += unchangedLen + subLen
+        // c-copies the t-text upto the w-wegex match wun, pwus the wepwacement stwing
+        buf.append(unchangedtext).append(sub)
+        c-codepointscopied += unchangedwen + subwen
 
-        // the offsets indicate the indices of the matched string in the original
-        // text, and the indices of the replacement string in the updated string
-        replacements +=
-          TextReplacement(
-            originalFrom = toCodePoints(Offset.CodeUnit(m.start)),
-            originalTo = toCodePoints(Offset.CodeUnit(m.end)),
-            updatedFrom = codePointsCopied - subLen,
-            updatedTo = codePointsCopied
+        // the offsets indicate the indices of the m-matched stwing in the owiginaw
+        // text, >w< and the indices o-of the wepwacement s-stwing in the u-updated stwing
+        wepwacements +=
+          t-textwepwacement(
+            owiginawfwom = t-tocodepoints(offset.codeunit(m.stawt)), (U ﹏ U)
+            o-owiginawto = tocodepoints(offset.codeunit(m.end)), ^^
+            updatedfwom = codepointscopied - subwen, (U ﹏ U)
+            updatedto = c-codepointscopied
           )
 
-        anchor = m.end
+        anchow = m-m.end
       }
 
-      buf.append(text.substring(anchor))
+      buf.append(text.substwing(anchow))
 
-      Some(TextModification(text, buf.toString, replacements.result()))
+      s-some(textmodification(text, :3 b-buf.tostwing, (✿oωo) wepwacements.wesuwt()))
     }
   }
 
   /**
-   * Inserts a string at a specified code point offset.
-   * Returns a `TextModification` that can be used to reindex entities.
+   * insewts a-a stwing at a s-specified code point offset. XD
+   * w-wetuwns a `textmodification` that c-can be used to weindex entities. >w<
    */
-  def insertAt(
-    originalText: String,
-    insertAt: Offset.CodePoint,
-    textToInsert: String
-  ): TextModification = {
-    val insertAtCodeUnit = insertAt.toCodeUnit(originalText).toInt
-    val (before, after) = originalText.splitAt(insertAtCodeUnit)
-    val updatedText = s"$before$textToInsert$after"
-    val textToInsertLength = TweetText.codePointLength(textToInsert)
+  def insewtat(
+    owiginawtext: stwing, òωó
+    i-insewtat: o-offset.codepoint, (ꈍᴗꈍ)
+    t-texttoinsewt: stwing
+  ): t-textmodification = {
+    v-vaw insewtatcodeunit = i-insewtat.tocodeunit(owiginawtext).toint
+    vaw (befowe, rawr x3 aftew) = owiginawtext.spwitat(insewtatcodeunit)
+    vaw updatedtext = s"$befowe$texttoinsewt$aftew"
+    v-vaw texttoinsewtwength = t-tweettext.codepointwength(texttoinsewt)
 
-    TextModification(
-      original = originalText,
-      updated = updatedText,
-      replacements = List(
-        TextReplacement.fromCodePoints(
-          originalFrom = insertAt.toInt,
-          originalTo = insertAt.toInt,
-          updatedFrom = insertAt.toInt,
-          updatedTo = insertAt.toInt + textToInsertLength
+    textmodification(
+      owiginaw = owiginawtext, rawr x3
+      u-updated = updatedtext, σωσ
+      w-wepwacements = wist(
+        textwepwacement.fwomcodepoints(
+          owiginawfwom = i-insewtat.toint, (ꈍᴗꈍ)
+          owiginawto = insewtat.toint, rawr
+          updatedfwom = insewtat.toint, ^^;;
+          u-updatedto = insewtat.toint + texttoinsewtwength
         ))
     )
   }
 }
 
 /**
- * Encodes information about insertions/deletions/replacements made to a string, providing
- * the original string, the updated string, and a list of TextReplacement objects
- * that encode the indices of the segments that were changed.  Using this information,
- * it is possible to map an offset into the original string to an offset into the updated
- * string, assuming the text at the offset was not within one of the modified segments.
+ * e-encodes i-infowmation about insewtions/dewetions/wepwacements made to a stwing, rawr x3 pwoviding
+ * t-the owiginaw s-stwing, (ˆ ﻌ ˆ)♡ the updated stwing, σωσ and a wist of textwepwacement objects
+ * t-that encode the indices o-of the segments that wewe changed. (U ﹏ U)  using this infowmation, >w<
+ * i-it is possibwe to map an offset i-into the owiginaw s-stwing to an offset into the updated
+ * s-stwing, σωσ assuming the text a-at the offset w-was nyot within o-one of the modified segments.
  *
- * All offsets are code-points, not UTF6 code-units.
+ * a-aww offsets a-awe code-points, nyaa~~ nyot utf6 code-units. 🥺
  */
-case class TextModification(
-  original: String,
-  updated: String,
-  replacements: List[TextReplacement]) {
-  private val originalLen = Offset.CodePoint.length(original)
+case c-cwass textmodification(
+  o-owiginaw: s-stwing, rawr x3
+  updated: stwing, σωσ
+  wepwacements: w-wist[textwepwacement]) {
+  pwivate v-vaw owiginawwen = o-offset.codepoint.wength(owiginaw)
 
   /**
-   * Using an offset into the original String, computes the equivalent offset into the updated
-   * string.  If the offset falls within a segment that was removed/replaced, None is returned.
+   * using an offset into the owiginaw stwing, (///ˬ///✿) computes t-the equivawent o-offset into t-the updated
+   * s-stwing. (U ﹏ U)  if the offset fawws w-within a segment that was wemoved/wepwaced, ^^;; nyone is wetuwned. 🥺
    */
-  def reindex(index: Offset.CodePoint): Option[Offset.CodePoint] =
-    reindex(index, Offset.CodePoint(0), replacements)
+  def weindex(index: offset.codepoint): o-option[offset.codepoint] =
+    weindex(index, òωó o-offset.codepoint(0), XD wepwacements)
 
   /**
-   * Reindexes an entity of type T.  Returns the updated entity, or None if either the `fromIndex`
-   * or `toIndex` value is now out of range.
+   * w-weindexes an entity of t-type t. :3  wetuwns the updated entity, (U ﹏ U) o-ow nyone if e-eithew the `fwomindex`
+   * o-ow `toindex` v-vawue i-is nyow out of wange. >w<
    */
-  def reindexEntity[T: TextEntity](e: T): Option[T] =
-    for {
-      from <- reindex(Offset.CodePoint(TextEntity.fromIndex(e)))
-      to <- reindex(Offset.CodePoint(TextEntity.toIndex(e) - 1))
-    } yield TextEntity.move(e, from.toShort, (to.toShort + 1).toShort)
+  def weindexentity[t: textentity](e: t): option[t] =
+    fow {
+      fwom <- weindex(offset.codepoint(textentity.fwomindex(e)))
+      t-to <- weindex(offset.codepoint(textentity.toindex(e) - 1))
+    } y-yiewd textentity.move(e, /(^•ω•^) f-fwom.toshowt, (⑅˘꒳˘) (to.toshowt + 1).toshowt)
 
   /**
-   * Reindexes a sequence of entities of type T.  Some entities could be filtered
-   * out if they span a region of text that has been removed.
+   * weindexes a sequence o-of entities of type t. ʘwʘ  some entities couwd be fiwtewed
+   * o-out if they s-span a wegion of text that has been w-wemoved. rawr x3
    */
-  def reindexEntities[T: TextEntity](es: Seq[T]): Seq[T] =
-    for (e <- es; e2 <- reindexEntity(e)) yield e2
+  def weindexentities[t: textentity](es: s-seq[t]): s-seq[t] =
+    fow (e <- es; e-e2 <- weindexentity(e)) y-yiewd e2
 
   /**
-   * Swaps `original` and `updated` text and inverts all `TextReplacement` instances.
+   * swaps `owiginaw` and `updated` text and invewts aww `textwepwacement` i-instances. (˘ω˘)
    */
-  def inverse: TextModification =
-    TextModification(updated, original, replacements.map(_.inverse))
+  d-def invewse: t-textmodification =
+    t-textmodification(updated, o.O o-owiginaw, 😳 wepwacements.map(_.invewse))
 
-  // recursively walks through the list of TextReplacement objects computing
-  // offsets to add/substract from 'shift', which accumulates all changes and
-  // then gets added to index at the end.
-  private def reindex(
-    index: Offset.CodePoint,
-    shift: Offset.CodePoint,
-    reps: List[TextReplacement]
-  ): Option[Offset.CodePoint] =
-    reps match {
-      case Nil =>
-        if (index.toInt >= 0 && index <= originalLen)
-          Some(index + shift)
-        else
-          None
-      case (r @ TextReplacement(fr, to, _, _)) :: tail =>
-        if (index < fr) Some(index + shift)
-        else if (index < to) None
-        else reindex(index, shift + r.lengthDelta, tail)
+  // wecuwsivewy wawks t-thwough the wist o-of textwepwacement objects computing
+  // o-offsets t-to add/substwact fwom 'shift', o.O w-which accumuwates aww changes and
+  // then g-gets added to index at the end. ^^;;
+  p-pwivate def weindex(
+    i-index: offset.codepoint, ( ͡o ω ͡o )
+    s-shift: offset.codepoint,
+    weps: wist[textwepwacement]
+  ): o-option[offset.codepoint] =
+    w-weps match {
+      c-case nyiw =>
+        if (index.toint >= 0 && index <= owiginawwen)
+          some(index + s-shift)
+        ewse
+          nyone
+      case (w @ t-textwepwacement(fw, ^^;; t-to, _, _)) :: taiw =>
+        i-if (index < fw) some(index + s-shift)
+        e-ewse if (index < to) nyone
+        ewse weindex(index, ^^;; s-shift + w.wengthdewta, XD taiw)
     }
 }
 
-object TextReplacement {
-  def fromCodePoints(
-    originalFrom: Int,
-    originalTo: Int,
-    updatedFrom: Int,
-    updatedTo: Int
-  ): TextReplacement =
-    TextReplacement(
-      Offset.CodePoint(originalFrom),
-      Offset.CodePoint(originalTo),
-      Offset.CodePoint(updatedFrom),
-      Offset.CodePoint(updatedTo)
+o-object textwepwacement {
+  d-def fwomcodepoints(
+    o-owiginawfwom: int,
+    owiginawto: i-int, 🥺
+    u-updatedfwom: int, (///ˬ///✿)
+    u-updatedto: int
+  ): textwepwacement =
+    textwepwacement(
+      offset.codepoint(owiginawfwom), (U ᵕ U❁)
+      offset.codepoint(owiginawto), ^^;;
+      offset.codepoint(updatedfwom), ^^;;
+      offset.codepoint(updatedto)
     )
 }
 
 /**
- * Encodes the indices of a segment of text in one string that maps to a replacement
- * segment in an updated version of the text.  The replacement segment could be empty
- * (updatedTo == updatedFrom), indicating the segment was removed.
+ * encodes the indices of a segment of text in one stwing that maps to a wepwacement
+ * segment i-in an updated vewsion o-of the text. rawr  the wepwacement segment couwd b-be empty
+ * (updatedto == u-updatedfwom), i-indicating the segment w-was wemoved. (˘ω˘)
  *
- * All offsets are code-points, not UTF16 code-units.
+ * aww offsets a-awe code-points, 🥺 n-nyot utf16 code-units. nyaa~~
  *
- * `originalFrom` and `updatedFrom` are inclusive.
- * `originalTo` and `updatedTo` are exclusive.
+ * `owiginawfwom` and `updatedfwom` awe i-incwusive. :3
+ * `owiginawto` and `updatedto` a-awe e-excwusive. /(^•ω•^)
  */
-case class TextReplacement(
-  originalFrom: Offset.CodePoint,
-  originalTo: Offset.CodePoint,
-  updatedFrom: Offset.CodePoint,
-  updatedTo: Offset.CodePoint) {
-  def originalLength: Offset.CodePoint = originalTo - originalFrom
-  def updatedLength: Offset.CodePoint = updatedTo - updatedFrom
-  def lengthDelta: Offset.CodePoint = updatedLength - originalLength
+case cwass textwepwacement(
+  owiginawfwom: offset.codepoint, ^•ﻌ•^
+  o-owiginawto: offset.codepoint, UwU
+  u-updatedfwom: offset.codepoint, 😳😳😳
+  u-updatedto: offset.codepoint) {
+  d-def owiginawwength: o-offset.codepoint = o-owiginawto - o-owiginawfwom
+  d-def updatedwength: o-offset.codepoint = updatedto - u-updatedfwom
+  d-def wengthdewta: o-offset.codepoint = updatedwength - o-owiginawwength
 
-  def shiftOriginal(offset: Offset.CodePoint): TextReplacement =
-    copy(originalFrom = originalFrom + offset, originalTo = originalTo + offset)
+  def shiftowiginaw(offset: o-offset.codepoint): textwepwacement =
+    copy(owiginawfwom = o-owiginawfwom + o-offset, OwO owiginawto = o-owiginawto + offset)
 
-  def shiftUpdated(offset: Offset.CodePoint): TextReplacement =
-    copy(updatedFrom = updatedFrom + offset, updatedTo = updatedTo + offset)
+  def s-shiftupdated(offset: offset.codepoint): t-textwepwacement =
+    copy(updatedfwom = u-updatedfwom + offset, ^•ﻌ•^ updatedto = u-updatedto + offset)
 
-  def shift(offset: Offset.CodePoint): TextReplacement =
-    TextReplacement(
-      originalFrom + offset,
-      originalTo + offset,
-      updatedFrom + offset,
-      updatedTo + offset
+  def shift(offset: offset.codepoint): textwepwacement =
+    textwepwacement(
+      owiginawfwom + o-offset, (ꈍᴗꈍ)
+      owiginawto + o-offset, (⑅˘꒳˘)
+      u-updatedfwom + offset, (⑅˘꒳˘)
+      updatedto + offset
     )
 
-  def inverse: TextReplacement =
-    TextReplacement(
-      originalFrom = updatedFrom,
-      originalTo = updatedTo,
-      updatedFrom = originalFrom,
-      updatedTo = originalTo
+  def invewse: textwepwacement =
+    t-textwepwacement(
+      owiginawfwom = u-updatedfwom, (ˆ ﻌ ˆ)♡
+      o-owiginawto = u-updatedto, /(^•ω•^)
+      updatedfwom = owiginawfwom, òωó
+      u-updatedto = o-owiginawto
     )
 }

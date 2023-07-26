@@ -1,118 +1,118 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+impowt java.utiw.winkedhashmap;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.cowwect.immutabwewist;
+i-impowt c-com.googwe.common.cowwect.immutabweset;
 
-import org.apache.lucene.util.BytesRef;
+impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultUrl;
-import com.twitter.service.spiderduck.gen.MediaTypes;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtuww;
+i-impowt com.twittew.sewvice.spidewduck.gen.mediatypes;
 
 /**
- * A collector for collecting expanded urls from facets. Note that the only thing connecting this
- * collector with expanded URLs is the fact that we only store the expanded url in the facet fields.
+ * a-a cowwectow fow cowwecting expanded uwws fwom facets. :3 nyote t-that the onwy thing connecting t-this
+ * cowwectow w-with expanded uwws is the fact that we onwy stowe the expanded uww in the facet f-fiewds. ( ͡o ω ͡o )
  */
-public class ExpandedUrlCollector extends AbstractFacetTermCollector {
-  private static final ImmutableSet<String> FACET_CONTAINS_URL = ImmutableSet.of(
-      EarlybirdFieldConstant.VIDEOS_FACET,
-      EarlybirdFieldConstant.IMAGES_FACET,
-      EarlybirdFieldConstant.NEWS_FACET,
-      EarlybirdFieldConstant.LINKS_FACET,
-      EarlybirdFieldConstant.TWIMG_FACET);
+pubwic cwass expandeduwwcowwectow extends abstwactfacettewmcowwectow {
+  pwivate static finaw immutabweset<stwing> f-facet_contains_uww = immutabweset.of(
+      e-eawwybiwdfiewdconstant.videos_facet, mya
+      e-eawwybiwdfiewdconstant.images_facet, (///ˬ///✿)
+      e-eawwybiwdfiewdconstant.news_facet, (˘ω˘)
+      eawwybiwdfiewdconstant.winks_facet, ^^;;
+      e-eawwybiwdfiewdconstant.twimg_facet);
 
-  private final Map<String, ThriftSearchResultUrl> dedupedUrls = new LinkedHashMap<>();
+  pwivate finaw map<stwing, (✿oωo) thwiftseawchwesuwtuww> d-dedupeduwws = new winkedhashmap<>();
 
 
-  @Override
-  protected String getTermFromProvider(
-      String facetName,
-      long termID,
-      FacetLabelProvider provider) {
-    String url = null;
-    if (EarlybirdFieldConstant.TWIMG_FACET.equals(facetName)) {
-      // Special case extraction of media url for twimg.
-      FacetLabelProvider.FacetLabelAccessor photoAccessor = provider.getLabelAccessor();
-      BytesRef termPayload = photoAccessor.getTermPayload(termID);
-      if (termPayload != null) {
-        url = termPayload.utf8ToString();
+  @ovewwide
+  pwotected s-stwing gettewmfwompwovidew(
+      stwing facetname, (U ﹏ U)
+      wong tewmid, -.-
+      facetwabewpwovidew pwovidew) {
+    stwing uww = nyuww;
+    i-if (eawwybiwdfiewdconstant.twimg_facet.equaws(facetname)) {
+      // speciaw c-case extwaction o-of media uww f-fow twimg. ^•ﻌ•^
+      facetwabewpwovidew.facetwabewaccessow photoaccessow = pwovidew.getwabewaccessow();
+      b-byteswef t-tewmpaywoad = photoaccessow.gettewmpaywoad(tewmid);
+      i-if (tewmpaywoad != n-nyuww) {
+        uww = tewmpaywoad.utf8tostwing();
       }
-    } else {
-      url = provider.getLabelAccessor().getTermText(termID);
+    } e-ewse {
+      uww = pwovidew.getwabewaccessow().gettewmtext(tewmid);
     }
-    return url;
+    w-wetuwn uww;
   }
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
+  @ovewwide
+  pubwic boowean cowwect(int docid, rawr w-wong tewmid, (˘ω˘) int fiewdid) {
 
-    String url = getTermFromFacet(termID, fieldID, FACET_CONTAINS_URL);
-    if (url == null || url.isEmpty()) {
-      return false;
+    s-stwing uww = gettewmfwomfacet(tewmid, nyaa~~ f-fiewdid, UwU f-facet_contains_uww);
+    if (uww == nyuww || uww.isempty()) {
+      wetuwn fawse;
     }
 
-    ThriftSearchResultUrl resultUrl = new ThriftSearchResultUrl();
-    resultUrl.setOriginalUrl(url);
-    MediaTypes mediaType = getMediaType(findFacetName(fieldID));
-    resultUrl.setMediaType(mediaType);
+    thwiftseawchwesuwtuww wesuwtuww = n-nyew thwiftseawchwesuwtuww();
+    w-wesuwtuww.setowiginawuww(uww);
+    mediatypes m-mediatype = getmediatype(findfacetname(fiewdid));
+    w-wesuwtuww.setmediatype(mediatype);
 
-    // Media links will show up twice:
-    //   - once in image/native_image/video/news facets
-    //   - another time in the links facet
+    // m-media winks wiww show up twice:
+    //   - once in image/native_image/video/news f-facets
+    //   - anothew time in the winks facet
     //
-    // For those urls, we only want to return the media version. If it is non-media version, only
-    // write to map if doesn't exist already, if media version, overwrite any previous entries.
-    if (mediaType == MediaTypes.UNKNOWN) {
-      if (!dedupedUrls.containsKey(url)) {
-        dedupedUrls.put(url, resultUrl);
+    // fow those uwws, :3 w-we onwy want to wetuwn the media v-vewsion. (⑅˘꒳˘) if i-it is nyon-media v-vewsion, (///ˬ///✿) onwy
+    // wwite to m-map if doesn't exist a-awweady, ^^;; if m-media vewsion, >_< o-ovewwwite any pwevious entwies. rawr x3
+    if (mediatype == m-mediatypes.unknown) {
+      i-if (!dedupeduwws.containskey(uww)) {
+        d-dedupeduwws.put(uww, /(^•ω•^) w-wesuwtuww);
       }
-    } else {
-      dedupedUrls.put(url, resultUrl);
+    } e-ewse {
+      dedupeduwws.put(uww, :3 wesuwtuww);
     }
 
-    return true;
+    wetuwn twue;
   }
 
-  @Override
-  public void fillResultAndClear(ThriftSearchResult result) {
-    result.getMetadata().setTweetUrls(getExpandedUrls());
-    dedupedUrls.clear();
+  @ovewwide
+  pubwic void f-fiwwwesuwtandcweaw(thwiftseawchwesuwt wesuwt) {
+    wesuwt.getmetadata().settweetuwws(getexpandeduwws());
+    dedupeduwws.cweaw();
   }
 
-  @VisibleForTesting
-  List<ThriftSearchResultUrl> getExpandedUrls() {
-    return ImmutableList.copyOf(dedupedUrls.values());
+  @visibwefowtesting
+  wist<thwiftseawchwesuwtuww> getexpandeduwws() {
+    w-wetuwn immutabwewist.copyof(dedupeduwws.vawues());
   }
 
   /**
-   * Gets the Spiderduck media type for a given facet name.
+   * gets the spidewduck media type fow a given f-facet nyame. (ꈍᴗꈍ)
    *
-   * @param facetName A given facet name.
-   * @return {@code MediaTypes} enum corresponding to the facet name.
+   * @pawam f-facetname a given f-facet nyame. /(^•ω•^)
+   * @wetuwn {@code mediatypes} e-enum cowwesponding to the facet n-nyame. (⑅˘꒳˘)
    */
-  private static MediaTypes getMediaType(String facetName) {
-    if (facetName == null) {
-      return MediaTypes.UNKNOWN;
+  pwivate s-static mediatypes getmediatype(stwing facetname) {
+    if (facetname == nyuww) {
+      wetuwn mediatypes.unknown;
     }
 
-    switch (facetName) {
-      case EarlybirdFieldConstant.TWIMG_FACET:
-        return MediaTypes.NATIVE_IMAGE;
-      case EarlybirdFieldConstant.IMAGES_FACET:
-        return MediaTypes.IMAGE;
-      case EarlybirdFieldConstant.VIDEOS_FACET:
-        return MediaTypes.VIDEO;
-      case EarlybirdFieldConstant.NEWS_FACET:
-        return MediaTypes.NEWS;
-      default:
-        return MediaTypes.UNKNOWN;
+    s-switch (facetname) {
+      case eawwybiwdfiewdconstant.twimg_facet:
+        w-wetuwn mediatypes.native_image;
+      case eawwybiwdfiewdconstant.images_facet:
+        w-wetuwn mediatypes.image;
+      c-case eawwybiwdfiewdconstant.videos_facet:
+        wetuwn mediatypes.video;
+      c-case eawwybiwdfiewdconstant.news_facet:
+        w-wetuwn mediatypes.news;
+      defauwt:
+        w-wetuwn mediatypes.unknown;
     }
   }
 }

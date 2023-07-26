@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.wichtext
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.wichtext.basewichtextbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class StaticRichTextBuilder(richText: RichText)
-    extends BaseRichTextBuilder[PipelineQuery, UniversalNoun[Any]] {
+c-case c-cwass staticwichtextbuiwdew(wichtext: w-wichtext)
+    extends basewichtextbuiwdew[pipewinequewy, (U ﹏ U) univewsawnoun[any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): RichText = richText
+  ovewwide def appwy(
+    quewy: pipewinequewy, -.-
+    c-candidate: univewsawnoun[any], (ˆ ﻌ ˆ)♡
+    candidatefeatuwes: f-featuwemap
+  ): wichtext = wichtext
 }

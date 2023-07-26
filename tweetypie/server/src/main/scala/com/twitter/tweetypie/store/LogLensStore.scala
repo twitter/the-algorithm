@@ -1,168 +1,168 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.twitter.finagle.tracing.Trace
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.media.Media.ownMedia
+impowt c-com.fastewxmw.jackson.databind.objectmappew
+impowt c-com.fastewxmw.jackson.moduwe.scawa.defauwtscawamoduwe
+i-impowt c-com.twittew.finagwe.twacing.twace
+i-impowt com.twittew.tweetypie.additionawfiewds.additionawfiewds
+i-impowt com.twittew.tweetypie.cwient_id.cwientidhewpew
+i-impowt com.twittew.tweetypie.media.media.ownmedia
 
-trait LogLensStore
-    extends TweetStoreBase[LogLensStore]
-    with InsertTweet.Store
-    with DeleteTweet.Store
-    with UndeleteTweet.Store
-    with SetAdditionalFields.Store
-    with DeleteAdditionalFields.Store
-    with ScrubGeo.Store
-    with Takedown.Store
-    with UpdatePossiblySensitiveTweet.Store {
-  def wrap(w: TweetStore.Wrap): LogLensStore =
-    new TweetStoreWrapper(w, this)
-      with LogLensStore
-      with InsertTweet.StoreWrapper
-      with DeleteTweet.StoreWrapper
-      with UndeleteTweet.StoreWrapper
-      with SetAdditionalFields.StoreWrapper
-      with DeleteAdditionalFields.StoreWrapper
-      with ScrubGeo.StoreWrapper
-      with Takedown.StoreWrapper
-      with UpdatePossiblySensitiveTweet.StoreWrapper
+twait wogwensstowe
+    extends tweetstowebase[wogwensstowe]
+    w-with insewttweet.stowe
+    with dewetetweet.stowe
+    w-with undewetetweet.stowe
+    with setadditionawfiewds.stowe
+    w-with deweteadditionawfiewds.stowe
+    with scwubgeo.stowe
+    with takedown.stowe
+    with updatepossibwysensitivetweet.stowe {
+  d-def wwap(w: tweetstowe.wwap): w-wogwensstowe =
+    n-nyew tweetstowewwappew(w, :3 this)
+      with wogwensstowe
+      with insewttweet.stowewwappew
+      with dewetetweet.stowewwappew
+      w-with undewetetweet.stowewwappew
+      with setadditionawfiewds.stowewwappew
+      with deweteadditionawfiewds.stowewwappew
+      w-with scwubgeo.stowewwappew
+      w-with t-takedown.stowewwappew
+      with u-updatepossibwysensitivetweet.stowewwappew
 }
 
-object LogLensStore {
-  def apply(
-    tweetCreationsLogger: Logger,
-    tweetDeletionsLogger: Logger,
-    tweetUndeletionsLogger: Logger,
-    tweetUpdatesLogger: Logger,
-    clientIdHelper: ClientIdHelper,
-  ): LogLensStore =
-    new LogLensStore {
-      private[this] val mapper = new ObjectMapper().registerModule(DefaultScalaModule)
+o-object wogwensstowe {
+  def appwy(
+    tweetcweationswoggew: w-woggew,
+    tweetdewetionswoggew: woggew, (⑅˘꒳˘)
+    tweetundewetionswoggew: w-woggew, (///ˬ///✿)
+    tweetupdateswoggew: woggew, ^^;;
+    cwientidhewpew: cwientidhewpew, >_<
+  ): wogwensstowe =
+    n-nyew wogwensstowe {
+      pwivate[this] v-vaw mappew = nyew o-objectmappew().wegistewmoduwe(defauwtscawamoduwe)
 
-      private def logMessage(logger: Logger, data: (String, Any)*): Future[Unit] =
-        Future {
-          val allData = data ++ defaultData
-          val msg = mapper.writeValueAsString(Map(allData: _*))
-          logger.info(msg)
+      p-pwivate def wogmessage(woggew: woggew, rawr x3 data: (stwing, /(^•ω•^) a-any)*): futuwe[unit] =
+        f-futuwe {
+          vaw awwdata = d-data ++ defauwtdata
+          vaw m-msg = mappew.wwitevawueasstwing(map(awwdata: _*))
+          woggew.info(msg)
         }
 
-      // Note: Longs are logged as strings to avoid JSON 53-bit numeric truncation
-      private def defaultData: Seq[(String, Any)] = {
-        val viewer = TwitterContext()
-        Seq(
-          "client_id" -> getOpt(clientIdHelper.effectiveClientId),
-          "service_id" -> getOpt(clientIdHelper.effectiveServiceIdentifier),
-          "trace_id" -> Trace.id.traceId.toString,
-          "audit_ip" -> getOpt(viewer.flatMap(_.auditIp)),
-          "application_id" -> getOpt(viewer.flatMap(_.clientApplicationId).map(_.toString)),
-          "user_agent" -> getOpt(viewer.flatMap(_.userAgent)),
-          "authenticated_user_id" -> getOpt(viewer.flatMap(_.authenticatedUserId).map(_.toString))
+      // nyote: wongs a-awe wogged as stwings to avoid j-json 53-bit nyumewic twuncation
+      pwivate def d-defauwtdata: seq[(stwing, :3 any)] = {
+        v-vaw viewew = twittewcontext()
+        s-seq(
+          "cwient_id" -> g-getopt(cwientidhewpew.effectivecwientid), (ꈍᴗꈍ)
+          "sewvice_id" -> getopt(cwientidhewpew.effectivesewviceidentifiew), /(^•ω•^)
+          "twace_id" -> twace.id.twaceid.tostwing, (⑅˘꒳˘)
+          "audit_ip" -> getopt(viewew.fwatmap(_.auditip)), ( ͡o ω ͡o )
+          "appwication_id" -> getopt(viewew.fwatmap(_.cwientappwicationid).map(_.tostwing)), òωó
+          "usew_agent" -> getopt(viewew.fwatmap(_.usewagent)), (⑅˘꒳˘)
+          "authenticated_usew_id" -> getopt(viewew.fwatmap(_.authenticatedusewid).map(_.tostwing))
         )
       }
 
-      private def getOpt[A](opt: Option[A]): Any =
-        opt.getOrElse(null)
+      pwivate d-def getopt[a](opt: o-option[a]): any =
+        o-opt.getowewse(nuww)
 
-      override val insertTweet: FutureEffect[InsertTweet.Event] =
-        FutureEffect[InsertTweet.Event] { event =>
-          logMessage(
-            tweetCreationsLogger,
-            "type" -> "create_tweet",
-            "tweet_id" -> event.tweet.id.toString,
-            "user_id" -> event.user.id.toString,
-            "source_tweet_id" -> getOpt(event.sourceTweet.map(_.id.toString)),
-            "source_user_id" -> getOpt(event.sourceUser.map(_.id.toString)),
-            "directed_at_user_id" -> getOpt(getDirectedAtUser(event.tweet).map(_.userId.toString)),
-            "reply_to_tweet_id" -> getOpt(
-              getReply(event.tweet).flatMap(_.inReplyToStatusId).map(_.toString)),
-            "reply_to_user_id" -> getOpt(getReply(event.tweet).map(_.inReplyToUserId.toString)),
-            "media_ids" -> ownMedia(event.tweet).map(_.mediaId.toString)
+      ovewwide v-vaw insewttweet: f-futuweeffect[insewttweet.event] =
+        futuweeffect[insewttweet.event] { event =>
+          wogmessage(
+            t-tweetcweationswoggew, XD
+            "type" -> "cweate_tweet",
+            "tweet_id" -> event.tweet.id.tostwing, -.-
+            "usew_id" -> event.usew.id.tostwing, :3
+            "souwce_tweet_id" -> getopt(event.souwcetweet.map(_.id.tostwing)), nyaa~~
+            "souwce_usew_id" -> getopt(event.souwceusew.map(_.id.tostwing)),
+            "diwected_at_usew_id" -> getopt(getdiwectedatusew(event.tweet).map(_.usewid.tostwing)), 😳
+            "wepwy_to_tweet_id" -> g-getopt(
+              getwepwy(event.tweet).fwatmap(_.inwepwytostatusid).map(_.tostwing)), (⑅˘꒳˘)
+            "wepwy_to_usew_id" -> g-getopt(getwepwy(event.tweet).map(_.inwepwytousewid.tostwing)), nyaa~~
+            "media_ids" -> o-ownmedia(event.tweet).map(_.mediaid.tostwing)
           )
         }
 
-      override val deleteTweet: FutureEffect[DeleteTweet.Event] =
-        FutureEffect[DeleteTweet.Event] { event =>
-          logMessage(
-            tweetDeletionsLogger,
-            "type" -> "delete_tweet",
-            "tweet_id" -> event.tweet.id.toString,
-            "user_id" -> getOpt(event.user.map(_.id.toString)),
-            "source_tweet_id" -> getOpt(getShare(event.tweet).map(_.sourceStatusId.toString)),
-            "by_user_id" -> getOpt(event.byUserId.map(_.toString)),
-            "passthrough_audit_ip" -> getOpt(event.auditPassthrough.flatMap(_.host)),
-            "media_ids" -> ownMedia(event.tweet).map(_.mediaId.toString),
-            "cascaded_from_tweet_id" -> getOpt(event.cascadedFromTweetId.map(_.toString))
+      o-ovewwide vaw dewetetweet: futuweeffect[dewetetweet.event] =
+        f-futuweeffect[dewetetweet.event] { e-event =>
+          w-wogmessage(
+            t-tweetdewetionswoggew,
+            "type" -> "dewete_tweet", OwO
+            "tweet_id" -> event.tweet.id.tostwing, rawr x3
+            "usew_id" -> getopt(event.usew.map(_.id.tostwing)), XD
+            "souwce_tweet_id" -> g-getopt(getshawe(event.tweet).map(_.souwcestatusid.tostwing)), σωσ
+            "by_usew_id" -> g-getopt(event.byusewid.map(_.tostwing)),
+            "passthwough_audit_ip" -> g-getopt(event.auditpassthwough.fwatmap(_.host)), (U ᵕ U❁)
+            "media_ids" -> o-ownmedia(event.tweet).map(_.mediaid.tostwing), (U ﹏ U)
+            "cascaded_fwom_tweet_id" -> g-getopt(event.cascadedfwomtweetid.map(_.tostwing))
           )
         }
 
-      override val undeleteTweet: FutureEffect[UndeleteTweet.Event] =
-        FutureEffect[UndeleteTweet.Event] { event =>
-          logMessage(
-            tweetUndeletionsLogger,
-            "type" -> "undelete_tweet",
-            "tweet_id" -> event.tweet.id.toString,
-            "user_id" -> event.user.id.toString,
-            "source_tweet_id" -> getOpt(getShare(event.tweet).map(_.sourceStatusId.toString)),
-            "media_ids" -> ownMedia(event.tweet).map(_.mediaId.toString)
+      ovewwide vaw undewetetweet: futuweeffect[undewetetweet.event] =
+        futuweeffect[undewetetweet.event] { e-event =>
+          wogmessage(
+            tweetundewetionswoggew, :3
+            "type" -> "undewete_tweet", ( ͡o ω ͡o )
+            "tweet_id" -> event.tweet.id.tostwing, σωσ
+            "usew_id" -> event.usew.id.tostwing, >w<
+            "souwce_tweet_id" -> getopt(getshawe(event.tweet).map(_.souwcestatusid.tostwing)), 😳😳😳
+            "media_ids" -> o-ownmedia(event.tweet).map(_.mediaid.tostwing)
           )
         }
 
-      override val setAdditionalFields: FutureEffect[SetAdditionalFields.Event] =
-        FutureEffect[SetAdditionalFields.Event] { event =>
-          logMessage(
-            tweetUpdatesLogger,
-            "type" -> "set_additional_fields",
-            "tweet_id" -> event.additionalFields.id.toString,
-            "field_ids" -> AdditionalFields.nonEmptyAdditionalFieldIds(event.additionalFields)
+      ovewwide vaw setadditionawfiewds: futuweeffect[setadditionawfiewds.event] =
+        futuweeffect[setadditionawfiewds.event] { e-event =>
+          w-wogmessage(
+            t-tweetupdateswoggew, OwO
+            "type" -> "set_additionaw_fiewds", 😳
+            "tweet_id" -> event.additionawfiewds.id.tostwing, 😳😳😳
+            "fiewd_ids" -> a-additionawfiewds.nonemptyadditionawfiewdids(event.additionawfiewds)
           )
         }
 
-      override val deleteAdditionalFields: FutureEffect[DeleteAdditionalFields.Event] =
-        FutureEffect[DeleteAdditionalFields.Event] { event =>
-          logMessage(
-            tweetUpdatesLogger,
-            "type" -> "delete_additional_fields",
-            "tweet_id" -> event.tweetId.toString,
-            "field_ids" -> event.fieldIds
+      ovewwide vaw d-deweteadditionawfiewds: f-futuweeffect[deweteadditionawfiewds.event] =
+        futuweeffect[deweteadditionawfiewds.event] { event =>
+          wogmessage(
+            tweetupdateswoggew, (˘ω˘)
+            "type" -> "dewete_additionaw_fiewds", ʘwʘ
+            "tweet_id" -> event.tweetid.tostwing, ( ͡o ω ͡o )
+            "fiewd_ids" -> event.fiewdids
           )
         }
 
-      override val scrubGeo: FutureEffect[ScrubGeo.Event] =
-        FutureEffect[ScrubGeo.Event] { event =>
-          Future.join(
-            event.tweetIds.map { tweetId =>
-              logMessage(
-                tweetUpdatesLogger,
-                "type" -> "scrub_geo",
-                "tweet_id" -> tweetId.toString,
-                "user_id" -> event.userId.toString
+      ovewwide vaw s-scwubgeo: futuweeffect[scwubgeo.event] =
+        futuweeffect[scwubgeo.event] { e-event =>
+          futuwe.join(
+            event.tweetids.map { t-tweetid =>
+              w-wogmessage(
+                tweetupdateswoggew, o.O
+                "type" -> "scwub_geo", >w<
+                "tweet_id" -> tweetid.tostwing, 😳
+                "usew_id" -> e-event.usewid.tostwing
               )
             }
           )
         }
 
-      override val takedown: FutureEffect[Takedown.Event] =
-        FutureEffect[Takedown.Event] { event =>
-          logMessage(
-            tweetUpdatesLogger,
-            "type" -> "takedown",
-            "tweet_id" -> event.tweet.id.toString,
-            "user_id" -> getUserId(event.tweet).toString,
-            "reasons" -> event.takedownReasons
+      o-ovewwide vaw takedown: futuweeffect[takedown.event] =
+        f-futuweeffect[takedown.event] { event =>
+          w-wogmessage(
+            tweetupdateswoggew, 🥺
+            "type" -> "takedown", rawr x3
+            "tweet_id" -> event.tweet.id.tostwing, o.O
+            "usew_id" -> getusewid(event.tweet).tostwing, rawr
+            "weasons" -> event.takedownweasons
           )
         }
 
-      override val updatePossiblySensitiveTweet: FutureEffect[UpdatePossiblySensitiveTweet.Event] =
-        FutureEffect[UpdatePossiblySensitiveTweet.Event] { event =>
-          logMessage(
-            tweetUpdatesLogger,
-            "type" -> "update_possibly_sensitive_tweet",
-            "tweet_id" -> event.tweet.id.toString,
-            "nsfw_admin" -> TweetLenses.nsfwAdmin(event.tweet),
-            "nsfw_user" -> TweetLenses.nsfwUser(event.tweet)
+      o-ovewwide v-vaw updatepossibwysensitivetweet: f-futuweeffect[updatepossibwysensitivetweet.event] =
+        futuweeffect[updatepossibwysensitivetweet.event] { event =>
+          w-wogmessage(
+            t-tweetupdateswoggew, ʘwʘ
+            "type" -> "update_possibwy_sensitive_tweet", 😳😳😳
+            "tweet_id" -> event.tweet.id.tostwing, ^^;;
+            "nsfw_admin" -> t-tweetwenses.nsfwadmin(event.tweet), o.O
+            "nsfw_usew" -> tweetwenses.nsfwusew(event.tweet)
           )
         }
     }

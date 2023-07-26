@@ -1,155 +1,155 @@
-enableLogFavBasedApeEntity20M145KUpdatedEmbeddingCachedStore:
-  comment: "Enable to use the non-empty store for logFavBasedApeEntity20M145KUpdatedEmbeddingCachedStore (from 0% to 100%). 0 means use EMPTY readable store for all requests."
-  default_availability: 0
+enabwewogfavbasedapeentity20m145kupdatedembeddingcachedstowe:
+  comment: "enabwe to use the nyon-empty stowe fow w-wogfavbasedapeentity20m145kupdatedembeddingcachedstowe (fwom 0% t-to 100%). 😳😳😳 0 means u-use empty weadabwe s-stowe fow aww w-wequests."
+  d-defauwt_avaiwabiwity: 0
 
-enableLogFavBasedApeEntity20M145K2020EmbeddingCachedStore:
-  comment: "Enable to use the non-empty store for logFavBasedApeEntity20M145K2020EmbeddingCachedStore (from 0% to 100%). 0 means use EMPTY readable store for all requests."
-  default_availability: 0
+e-enabwewogfavbasedapeentity20m145k2020embeddingcachedstowe:
+  c-comment: "enabwe to use the nyon-empty stowe fow wogfavbasedapeentity20m145k2020embeddingcachedstowe (fwom 0% to 100%). (ˆ ﻌ ˆ)♡ 0 m-means use empty weadabwe stowe fow aww wequests."
+  d-defauwt_avaiwabiwity: 0
 
-representation-scorer_forward_dark_traffic:
-  comment: "Defines the percentage of traffic to forward to diffy-proxy. Set to 0 to disable dark traffic forwarding"
-  default_availability: 0
+wepwesentation-scowew_fowwawd_dawk_twaffic:
+  c-comment: "defines the pewcentage of twaffic to fowwawd t-to diffy-pwoxy. XD set to 0 to disabwe d-dawk twaffic f-fowwawding"
+  defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_non_prod_callers":
-  comment: "Discard traffic from all non-prod callers"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_non_pwod_cawwews":
+  comment: "discawd twaffic fwom aww nyon-pwod cawwews"
+  d-defauwt_avaiwabiwity: 0
 
-enable_log_fav_based_tweet_embedding_20m145k2020_timeouts:
-  comment: "If enabled, set a timeout on calls to the logFavBased20M145K2020TweetEmbeddingStore"
-  default_availability: 0
+enabwe_wog_fav_based_tweet_embedding_20m145k2020_timeouts:
+  comment: "if enabwed, (ˆ ﻌ ˆ)♡ set a timeout o-on cawws to the wogfavbased20m145k2020tweetembeddingstowe"
+  defauwt_avaiwabiwity: 0
 
-log_fav_based_tweet_embedding_20m145k2020_timeout_value_millis:
-  comment: "The value of this decider defines the timeout (in milliseconds) to use on calls to the logFavBased20M145K2020TweetEmbeddingStore, i.e. 1.50% is 150ms. Only applied if enable_log_fav_based_tweet_embedding_20m145k2020_timeouts is true"
-  default_availability: 2000
+w-wog_fav_based_tweet_embedding_20m145k2020_timeout_vawue_miwwis:
+  c-comment: "the v-vawue of t-this decidew defines the timeout (in miwwiseconds) t-to use on cawws to the wogfavbased20m145k2020tweetembeddingstowe, i.e. ( ͡o ω ͡o ) 1.50% i-is 150ms. rawr x3 onwy appwied if enabwe_wog_fav_based_tweet_embedding_20m145k2020_timeouts is twue"
+  defauwt_avaiwabiwity: 2000
 
-enable_log_fav_based_tweet_embedding_20m145kUpdated_timeouts:
-  comment: "If enabled, set a timeout on calls to the logFavBased20M145KUpdatedTweetEmbeddingStore"
-  default_availability: 0
+enabwe_wog_fav_based_tweet_embedding_20m145kupdated_timeouts:
+  comment: "if e-enabwed, set a timeout o-on cawws to the w-wogfavbased20m145kupdatedtweetembeddingstowe"
+  d-defauwt_avaiwabiwity: 0
 
-log_fav_based_tweet_embedding_20m145kUpdated_timeout_value_millis:
-  comment: "The value of this decider defines the timeout (in milliseconds) to use on calls to the logFavBased20M145KUpdatedTweetEmbeddingStore, i.e. 1.50% is 150ms. Only applied if enable_log_fav_based_tweet_embedding_20m145kUpdated_timeouts is true"
-  default_availability: 2000
+wog_fav_based_tweet_embedding_20m145kupdated_timeout_vawue_miwwis:
+  comment: "the vawue o-of this decidew d-defines the timeout (in miwwiseconds) t-to use on c-cawws to the wogfavbased20m145kupdatedtweetembeddingstowe, nyaa~~ i.e. 1.50% i-is 150ms. onwy appwied if e-enabwe_wog_fav_based_tweet_embedding_20m145kupdated_timeouts is twue"
+  defauwt_avaiwabiwity: 2000
 
-enable_cluster_tweet_index_store_timeouts:
-  comment: "If enabled, set a timeout on calls to the ClusterTweetIndexStore"
-  default_availability: 0
+enabwe_cwustew_tweet_index_stowe_timeouts:
+  c-comment: "if enabwed, >_< set a timeout o-on cawws to the cwustewtweetindexstowe"
+  d-defauwt_avaiwabiwity: 0
 
-cluster_tweet_index_store_timeout_value_millis:
-  comment: "The value of this decider defines the timeout (in milliseconds) to use on calls to the ClusterTweetIndexStore, i.e. 1.50% is 150ms. Only applied if enable_cluster_tweet_index_store_timeouts is true"
-  default_availability: 2000
+c-cwustew_tweet_index_stowe_timeout_vawue_miwwis:
+  comment: "the vawue of this decidew defines the timeout (in miwwiseconds) to use on c-cawws to the cwustewtweetindexstowe, ^^;; i-i.e. (ˆ ﻌ ˆ)♡ 1.50% is 150ms. ^^;; onwy appwied i-if enabwe_cwustew_tweet_index_stowe_timeouts i-is twue"
+  defauwt_avaiwabiwity: 2000
 
-representation_scorer_fetch_signal_share:
-  comment: "If enabled, fetches share signals from USS"
-  default_availability: 0
+w-wepwesentation_scowew_fetch_signaw_shawe:
+  comment: "if enabwed, (⑅˘꒳˘) fetches shawe signaws f-fwom uss"
+  defauwt_avaiwabiwity: 0
 
-representation_scorer_fetch_signal_reply:
-  comment: "If enabled, fetches reply signals from USS"
-  default_availability: 0
+wepwesentation_scowew_fetch_signaw_wepwy:
+  comment: "if enabwed, rawr x3 fetches wepwy signaws f-fwom uss"
+  defauwt_avaiwabiwity: 0
 
-representation_scorer_fetch_signal_original_tweet:
-  comment: "If enabled, fetches original tweet signals from USS"
-  default_availability: 0
+wepwesentation_scowew_fetch_signaw_owiginaw_tweet:
+  c-comment: "if e-enabwed, (///ˬ///✿) f-fetches owiginaw tweet signaws fwom u-uss"
+  defauwt_avaiwabiwity: 0
 
-representation_scorer_fetch_signal_video_playback:
-  comment: "If enabled, fetches video playback signals from USS"
-  default_availability: 0
+w-wepwesentation_scowew_fetch_signaw_video_pwayback:
+  c-comment: "if e-enabwed, 🥺 fetches video pwayback signaws fwom u-uss"
+  defauwt_avaiwabiwity: 0
 
-representation_scorer_fetch_signal_block:
-  comment: "If enabled, fetches account block signals from USS"
-  default_availability: 0
+w-wepwesentation_scowew_fetch_signaw_bwock:
+  comment: "if e-enabwed, >_< f-fetches account b-bwock signaws fwom uss"
+  defauwt_avaiwabiwity: 0
 
-representation_scorer_fetch_signal_mute:
-  comment: "If enabled, fetches account mute signals from USS"
-  default_availability: 0
+wepwesentation_scowew_fetch_signaw_mute:
+  comment: "if e-enabwed, UwU fetches account mute signaws fwom uss"
+  defauwt_avaiwabiwity: 0
 
-representation_scorer_fetch_signal_report:
-  comment: "If enabled, fetches tweet report signals from USS"
-  default_availability: 0
+wepwesentation_scowew_fetch_signaw_wepowt:
+  comment: "if e-enabwed, fetches tweet wepowt signaws fwom uss"
+  defauwt_avaiwabiwity: 0
 
-representation_scorer_fetch_signal_dont_like:
-  comment: "If enabled, fetches tweet don't like signals from USS"
-  default_availability: 0
+w-wepwesentation_scowew_fetch_signaw_dont_wike:
+  c-comment: "if enabwed, >_< f-fetches tweet don't wike signaws f-fwom uss"
+  defauwt_avaiwabiwity: 0
 
-representation_scorer_fetch_signal_see_fewer:
-  comment: "If enabled, fetches tweet see fewer signals from USS"
-  default_availability: 0
+w-wepwesentation_scowew_fetch_signaw_see_fewew:
+  c-comment: "if enabwed, fetches tweet see fewew signaws fwom uss"
+  defauwt_avaiwabiwity: 0
 
-# To create a new decider, add here with the same format and caller's details : "representation-scorer_load_shed_by_caller_id_twtr:{{role}}:{{name}}:{{environment}}:{{cluster}}"
-# All the deciders below are generated by this script - ./strato/bin/fed deciders ./ --service-role=representation-scorer --service-name=representation-scorer
-# If you need to run the script and paste the output, add only the prod deciders here. Non-prod ones are being taken care of by representation-scorer_load_shed_non_prod_callers
+# to cweate a-a nyew decidew, -.- add hewe with t-the same fowmat and cawwew's detaiws : "wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:{{wowe}}:{{name}}:{{enviwonment}}:{{cwustew}}"
+# a-aww t-the decidews bewow awe genewated by this scwipt - ./stwato/bin/fed d-decidews ./ --sewvice-wowe=wepwesentation-scowew --sewvice-name=wepwesentation-scowew
+# i-if you nyeed to wun the s-scwipt and paste t-the output, mya add onwy the pwod decidews hewe. >w< nyon-pwod ones awe being taken c-cawe of by wepwesentation-scowew_woad_shed_non_pwod_cawwews
 
-"representation-scorer_load_shed_by_caller_id_all":
-  comment: "Reject all traffic from caller id: all"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_aww":
+  c-comment: "weject a-aww twaffic fwom cawwew id: a-aww"
+  defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice-canary:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice-canary:prod:atla"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:fwigate:fwigate-pushsewvice-canawy:pwod:atwa":
+  c-comment: "weject aww twaffic f-fwom cawwew id: twtw:svc:fwigate:fwigate-pushsewvice-canawy:pwod:atwa"
+  defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice-canary:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice-canary:prod:pdxa"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:fwigate:fwigate-pushsewvice-canawy:pwod:pdxa":
+  comment: "weject aww twaffic fwom cawwew id: twtw:svc:fwigate:fwigate-pushsewvice-canawy:pwod:pdxa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice-send:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice-send:prod:atla"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:fwigate:fwigate-pushsewvice-send:pwod:atwa":
+  c-comment: "weject aww twaffic fwom cawwew id: t-twtw:svc:fwigate:fwigate-pushsewvice-send:pwod:atwa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:prod:atla"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:fwigate:fwigate-pushsewvice:pwod:atwa":
+  comment: "weject aww twaffic fwom cawwew id: twtw:svc:fwigate:fwigate-pushsewvice:pwod:atwa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:prod:pdxa"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:fwigate:fwigate-pushsewvice:pwod:pdxa":
+  comment: "weject aww twaffic fwom cawwew id: twtw:svc:fwigate:fwigate-pushsewvice:pwod:pdxa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:staging:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:staging:atla"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:fwigate:fwigate-pushsewvice:staging:atwa":
+  comment: "weject aww twaffic f-fwom cawwew i-id: twtw:svc:fwigate:fwigate-pushsewvice:staging:atwa"
+  defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:staging:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:staging:pdxa"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:fwigate:fwigate-pushsewvice:staging:pdxa":
+  comment: "weject aww twaffic f-fwom cawwew id: t-twtw:svc:fwigate:fwigate-pushsewvice:staging:pdxa"
+  defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:home-scorer:home-scorer:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:home-scorer:home-scorer:prod:atla"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:home-scowew:home-scowew:pwod:atwa":
+  comment: "weject aww twaffic fwom c-cawwew id: twtw:svc:home-scowew:home-scowew:pwod:atwa"
+  defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:home-scorer:home-scorer:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:home-scorer:home-scorer:prod:pdxa"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:home-scowew:home-scowew:pwod:pdxa":
+  comment: "weject a-aww twaffic fwom cawwew id: twtw:svc:home-scowew:home-scowew:pwod:pdxa"
+  defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:stratostore:stratoapi:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoapi:prod:atla"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:stwatostowe:stwatoapi:pwod:atwa":
+  comment: "weject aww t-twaffic fwom cawwew id: twtw:svc:stwatostowe:stwatoapi:pwod:atwa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:stratostore:stratoserver:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoserver:prod:atla"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:stwatostowe:stwatosewvew:pwod:atwa":
+  c-comment: "weject aww twaffic fwom c-cawwew id: twtw:svc:stwatostowe:stwatosewvew:pwod:atwa"
+  defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:stratostore:stratoserver:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoserver:prod:pdxa"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:stwatostowe:stwatosewvew:pwod:pdxa":
+  c-comment: "weject a-aww twaffic fwom c-cawwew id: twtw:svc:stwatostowe:stwatosewvew:pwod:pdxa"
+  defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:timelinescorer:timelinescorer:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:timelinescorer:timelinescorer:prod:atla"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:timewinescowew:timewinescowew:pwod:atwa":
+  c-comment: "weject a-aww twaffic fwom cawwew id: twtw:svc:timewinescowew:timewinescowew:pwod:atwa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:timelinescorer:timelinescorer:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:timelinescorer:timelinescorer:prod:pdxa"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:timewinescowew:timewinescowew:pwod:pdxa":
+  c-comment: "weject a-aww twaffic fwom cawwew id: twtw:svc:timewinescowew:timewinescowew:pwod:pdxa"
+  d-defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:topic-social-proof:topic-social-proof:prod:atla":
-  comment: "Reject all traffic from caller id: twtr:svc:topic-social-proof:topic-social-proof:prod:atla"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:topic-sociaw-pwoof:topic-sociaw-pwoof:pwod:atwa":
+  comment: "weject a-aww t-twaffic fwom cawwew id: twtw:svc:topic-sociaw-pwoof:topic-sociaw-pwoof:pwod:atwa"
+  defauwt_avaiwabiwity: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:topic-social-proof:topic-social-proof:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:topic-social-proof:topic-social-proof:prod:pdxa"
-  default_availability: 0
+"wepwesentation-scowew_woad_shed_by_cawwew_id_twtw:svc:topic-sociaw-pwoof:topic-sociaw-pwoof:pwod:pdxa":
+  comment: "weject a-aww twaffic f-fwom cawwew i-id: twtw:svc:topic-sociaw-pwoof:topic-sociaw-pwoof:pwod:pdxa"
+  d-defauwt_avaiwabiwity: 0
 
-"enable_sim_clusters_embedding_store_timeouts":
-  comment: "If enabled, set a timeout on calls to the SimClustersEmbeddingStore"
-  default_availability: 10000
+"enabwe_sim_cwustews_embedding_stowe_timeouts":
+  comment: "if e-enabwed, (U ﹏ U) set a timeout on cawws to the simcwustewsembeddingstowe"
+  defauwt_avaiwabiwity: 10000
 
-sim_clusters_embedding_store_timeout_value_millis:
-  comment: "The value of this decider defines the timeout (in milliseconds) to use on calls to the SimClustersEmbeddingStore, i.e. 1.50% is 150ms. Only applied if enable_sim_clusters_embedding_store_timeouts is true"
-  default_availability: 2000
+sim_cwustews_embedding_stowe_timeout_vawue_miwwis:
+  comment: "the v-vawue of this decidew d-defines the timeout (in miwwiseconds) t-to use on cawws to the s-simcwustewsembeddingstowe, 😳😳😳 i.e. o.O 1.50% i-is 150ms. òωó o-onwy appwied if e-enabwe_sim_cwustews_embedding_stowe_timeouts i-is t-twue"
+  defauwt_avaiwabiwity: 2000

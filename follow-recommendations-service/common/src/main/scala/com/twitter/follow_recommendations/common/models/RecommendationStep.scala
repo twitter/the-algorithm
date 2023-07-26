@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
+impowt c-com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
+impowt com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
 
-case class RecommendationStep(
-  recommendations: Seq[FlowRecommendation],
-  followedUserIds: Set[Long]) {
+c-case cwass wecommendationstep(
+  w-wecommendations: s-seq[fwowwecommendation], :3
+  fowwowedusewids: s-set[wong]) {
 
-  def toThrift: t.RecommendationStep = t.RecommendationStep(
-    recommendations = recommendations.map(_.toThrift),
-    followedUserIds = followedUserIds
+  d-def tothwift: t.wecommendationstep = t.wecommendationstep(
+    wecommendations = wecommendations.map(_.tothwift), 😳😳😳
+    fowwowedusewids = fowwowedusewids
   )
 
-  def toOfflineThrift: offline.OfflineRecommendationStep =
-    offline.OfflineRecommendationStep(
-      recommendations = recommendations.map(_.toOfflineThrift),
-      followedUserIds = followedUserIds)
+  def t-tooffwinethwift: offwine.offwinewecommendationstep =
+    offwine.offwinewecommendationstep(
+      w-wecommendations = wecommendations.map(_.tooffwinethwift), -.-
+      f-fowwowedusewids = fowwowedusewids)
 
 }
 
-object RecommendationStep {
+object wecommendationstep {
 
-  def fromThrift(recommendationStep: t.RecommendationStep): RecommendationStep = {
-    RecommendationStep(
-      recommendations = recommendationStep.recommendations.map(FlowRecommendation.fromThrift),
-      followedUserIds = recommendationStep.followedUserIds.toSet)
+  d-def fwomthwift(wecommendationstep: t.wecommendationstep): w-wecommendationstep = {
+    w-wecommendationstep(
+      wecommendations = wecommendationstep.wecommendations.map(fwowwecommendation.fwomthwift), ( ͡o ω ͡o )
+      fowwowedusewids = wecommendationstep.fowwowedusewids.toset)
   }
 
 }

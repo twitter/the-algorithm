@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.message
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.CompactPromptMessageContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.compactpwomptmessagecontent
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class CompactPromptMessageContentMarshaller @Inject() (
-  messageTextActionMarshaller: MessageTextActionMarshaller,
-  messageActionMarshaller: MessageActionMarshaller,
-  richTextMarshaller: RichTextMarshaller) {
+@singweton
+c-cwass c-compactpwomptmessagecontentmawshawwew @inject() (
+  m-messagetextactionmawshawwew: messagetextactionmawshawwew,
+  messageactionmawshawwew: messageactionmawshawwew, -.-
+  wichtextmawshawwew: w-wichtextmawshawwew) {
 
-  def apply(compactPromptMessageContent: CompactPromptMessageContent): urt.MessageContent =
-    urt.MessageContent.CompactPrompt(
-      urt.CompactPrompt(
-        headerText = compactPromptMessageContent.headerText,
-        bodyText = compactPromptMessageContent.bodyText,
-        primaryButtonAction =
-          compactPromptMessageContent.primaryButtonAction.map(messageTextActionMarshaller(_)),
-        secondaryButtonAction =
-          compactPromptMessageContent.secondaryButtonAction.map(messageTextActionMarshaller(_)),
-        action = compactPromptMessageContent.action.map(messageActionMarshaller(_)),
-        headerRichText = compactPromptMessageContent.headerRichText.map(richTextMarshaller(_)),
-        bodyRichText = compactPromptMessageContent.bodyRichText.map(richTextMarshaller(_))
+  def appwy(compactpwomptmessagecontent: compactpwomptmessagecontent): u-uwt.messagecontent =
+    uwt.messagecontent.compactpwompt(
+      u-uwt.compactpwompt(
+        headewtext = compactpwomptmessagecontent.headewtext, ( ͡o ω ͡o )
+        bodytext = compactpwomptmessagecontent.bodytext, rawr x3
+        p-pwimawybuttonaction =
+          compactpwomptmessagecontent.pwimawybuttonaction.map(messagetextactionmawshawwew(_)), nyaa~~
+        s-secondawybuttonaction =
+          c-compactpwomptmessagecontent.secondawybuttonaction.map(messagetextactionmawshawwew(_)), /(^•ω•^)
+        action = compactpwomptmessagecontent.action.map(messageactionmawshawwew(_)), rawr
+        headewwichtext = compactpwomptmessagecontent.headewwichtext.map(wichtextmawshawwew(_)), OwO
+        b-bodywichtext = compactpwomptmessagecontent.bodywichtext.map(wichtextmawshawwew(_))
       )
     )
 }

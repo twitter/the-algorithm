@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.feature.featuremap
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap
 
-import com.twitter.product_mixer.core.feature.Feature
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
 
-case class MissingFeatureException(feature: Feature[_, _])
-    extends Exception("Missing value for " + feature) {
-  override def toString: String = getMessage
+c-case cwass missingfeatuweexception(featuwe: f-featuwe[_, -.- _])
+    e-extends exception("missing v-vawue f-fow " + featuwe) {
+  o-ovewwide def t-tostwing: stwing = getmessage
 }
 
-class InvalidPredictionRecordMergeException
-    extends Exception(
-      "Use FeatureMap.plusPlusOptimized instead of FeatureMap.++ when the FeatureMaps on both sides of the merge contain PredictionRecords")
+cwass invawidpwedictionwecowdmewgeexception
+    extends exception(
+      "use featuwemap.pwuspwusoptimized instead o-of featuwemap.++ when the featuwemaps on b-both sides of the mewge contain p-pwedictionwecowds")

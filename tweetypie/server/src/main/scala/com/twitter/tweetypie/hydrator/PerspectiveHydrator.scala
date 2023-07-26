@@ -1,112 +1,112 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService.GetPerspectives.Query
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.PerspectiveRepository
-import com.twitter.tweetypie.thriftscala.FieldByPath
-import com.twitter.tweetypie.thriftscala.StatusPerspective
+impowt c-com.twittew.featuweswitches.v2.featuweswitchwesuwts
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.stitch.timewinesewvice.timewinesewvice.getpewspectives.quewy
+impowt c-com.twittew.timewinesewvice.{thwiftscawa => tws}
+impowt com.twittew.tweetypie.cowe._
+impowt com.twittew.tweetypie.wepositowy.pewspectivewepositowy
+impowt c-com.twittew.tweetypie.thwiftscawa.fiewdbypath
+impowt com.twittew.tweetypie.thwiftscawa.statuspewspective
 
-object PerspectiveHydrator {
-  type Type = ValueHydrator[Option[StatusPerspective], Ctx]
-  val hydratedField: FieldByPath = fieldByPath(Tweet.PerspectiveField)
+o-object pewspectivehydwatow {
+  t-type type = vawuehydwatow[option[statuspewspective], (///ˬ///✿) ctx]
+  vaw hydwatedfiewd: f-fiewdbypath = fiewdbypath(tweet.pewspectivefiewd)
 
-  case class Ctx(featureSwitchResults: Option[FeatureSwitchResults], underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  c-case c-cwass ctx(featuweswitchwesuwts: option[featuweswitchwesuwts], 😳 undewwyingtweetctx: tweetctx)
+      extends tweetctx.pwoxy
 
-  val Types: Set[tls.PerspectiveType] =
-    Set(
-      tls.PerspectiveType.Reported,
-      tls.PerspectiveType.Favorited,
-      tls.PerspectiveType.Retweeted,
-      tls.PerspectiveType.Bookmarked
+  v-vaw types: set[tws.pewspectivetype] =
+    set(
+      tws.pewspectivetype.wepowted, 😳
+      tws.pewspectivetype.favowited, σωσ
+      t-tws.pewspectivetype.wetweeted, rawr x3
+      tws.pewspectivetype.bookmawked
     )
 
-  val TypesWithoutBookmarked: Set[tls.PerspectiveType] =
-    Set(
-      tls.PerspectiveType.Reported,
-      tls.PerspectiveType.Favorited,
-      tls.PerspectiveType.Retweeted
+  v-vaw typeswithoutbookmawked: s-set[tws.pewspectivetype] =
+    s-set(
+      tws.pewspectivetype.wepowted, OwO
+      t-tws.pewspectivetype.favowited, /(^•ω•^)
+      tws.pewspectivetype.wetweeted
     )
 
-  private[this] val partialResult = ValueState.partial(None, hydratedField)
+  pwivate[this] vaw p-pawtiawwesuwt = vawuestate.pawtiaw(none, 😳😳😳 hydwatedfiewd)
 
-  val bookmarksPerspectiveHydrationEnabledKey = "bookmarks_perspective_hydration_enabled"
+  v-vaw bookmawkspewspectivehydwationenabwedkey = "bookmawks_pewspective_hydwation_enabwed"
 
-  def evaluatePerspectiveTypes(
-    userId: Long,
-    bookmarksPerspectiveDecider: Gate[Long],
-    featureSwitchResults: Option[FeatureSwitchResults]
-  ): Set[tls.PerspectiveType] = {
-    if (bookmarksPerspectiveDecider(userId) ||
-      featureSwitchResults
-        .flatMap(_.getBoolean(bookmarksPerspectiveHydrationEnabledKey, false))
-        .getOrElse(false))
-      Types
-    else
-      TypesWithoutBookmarked
+  def evawuatepewspectivetypes(
+    usewid: wong, ( ͡o ω ͡o )
+    bookmawkspewspectivedecidew: gate[wong],
+    f-featuweswitchwesuwts: option[featuweswitchwesuwts]
+  ): s-set[tws.pewspectivetype] = {
+    i-if (bookmawkspewspectivedecidew(usewid) ||
+      f-featuweswitchwesuwts
+        .fwatmap(_.getboowean(bookmawkspewspectivehydwationenabwedkey, >_< fawse))
+        .getowewse(fawse))
+      types
+    ewse
+      typeswithoutbookmawked
   }
 
-  def apply(
-    repo: PerspectiveRepository.Type,
-    shouldHydrateBookmarksPerspective: Gate[Long],
-    stats: StatsReceiver
-  ): Type = {
-    val statsByLevel =
-      SafetyLevel.list.map(level => (level, stats.counter(level.name, "calls"))).toMap
+  d-def appwy(
+    w-wepo: pewspectivewepositowy.type, >w<
+    shouwdhydwatebookmawkspewspective: gate[wong], rawr
+    s-stats: statsweceivew
+  ): t-type = {
+    vaw statsbywevew =
+      s-safetywevew.wist.map(wevew => (wevew, 😳 stats.countew(wevew.name, "cawws"))).tomap
 
-    ValueHydrator[Option[StatusPerspective], Ctx] { (_, ctx) =>
-      val res: Stitch[tls.TimelineEntryPerspective] = if (ctx.isRetweet) {
-        Stitch.value(
-          tls.TimelineEntryPerspective(
-            favorited = false,
-            retweetId = None,
-            retweeted = false,
-            reported = false,
-            bookmarked = None
+    v-vawuehydwatow[option[statuspewspective], >w< ctx] { (_, ctx) =>
+      vaw wes: s-stitch[tws.timewineentwypewspective] = if (ctx.iswetweet) {
+        s-stitch.vawue(
+          tws.timewineentwypewspective(
+            favowited = f-fawse, (⑅˘꒳˘)
+            w-wetweetid = nyone, OwO
+            wetweeted = fawse, (ꈍᴗꈍ)
+            wepowted = fawse,
+            bookmawked = n-nyone
           )
         )
-      } else {
-        statsByLevel
-          .getOrElse(ctx.opts.safetyLevel, stats.counter(ctx.opts.safetyLevel.name, "calls"))
-          .incr()
+      } e-ewse {
+        statsbywevew
+          .getowewse(ctx.opts.safetywevew, 😳 s-stats.countew(ctx.opts.safetywevew.name, 😳😳😳 "cawws"))
+          .incw()
 
-        repo(
-          Query(
-            userId = ctx.opts.forUserId.get,
-            tweetId = ctx.tweetId,
-            types = evaluatePerspectiveTypes(
-              ctx.opts.forUserId.get,
-              shouldHydrateBookmarksPerspective,
-              ctx.featureSwitchResults)
+        w-wepo(
+          q-quewy(
+            usewid = ctx.opts.fowusewid.get,
+            tweetid = c-ctx.tweetid, mya
+            types = evawuatepewspectivetypes(
+              ctx.opts.fowusewid.get, mya
+              shouwdhydwatebookmawkspewspective, (⑅˘꒳˘)
+              c-ctx.featuweswitchwesuwts)
           ))
       }
 
-      res.liftToTry.map {
-        case Return(perspective) =>
-          ValueState.modified(
-            Some(
-              StatusPerspective(
-                userId = ctx.opts.forUserId.get,
-                favorited = perspective.favorited,
-                retweeted = perspective.retweeted,
-                retweetId = perspective.retweetId,
-                reported = perspective.reported,
-                bookmarked = perspective.bookmarked
+      wes.wifttotwy.map {
+        c-case wetuwn(pewspective) =>
+          v-vawuestate.modified(
+            s-some(
+              statuspewspective(
+                u-usewid = ctx.opts.fowusewid.get, (U ﹏ U)
+                f-favowited = p-pewspective.favowited, mya
+                w-wetweeted = pewspective.wetweeted, ʘwʘ
+                wetweetid = p-pewspective.wetweetid, (˘ω˘)
+                w-wepowted = p-pewspective.wepowted, (U ﹏ U)
+                bookmawked = p-pewspective.bookmawked
               )
             )
           )
-        case _ => partialResult
+        c-case _ => pawtiawwesuwt
       }
 
-    }.onlyIf { (curr, ctx) =>
-      curr.isEmpty &&
-      ctx.opts.forUserId.nonEmpty &&
-      (ctx.tweetFieldRequested(Tweet.PerspectiveField) || ctx.opts.excludeReported)
+    }.onwyif { (cuww, ^•ﻌ•^ ctx) =>
+      cuww.isempty &&
+      ctx.opts.fowusewid.nonempty &&
+      (ctx.tweetfiewdwequested(tweet.pewspectivefiewd) || c-ctx.opts.excwudewepowted)
     }
   }
 }

@@ -1,52 +1,52 @@
-package com.twitter.timelineranker.monitoring
+package com.twittew.timewinewankew.monitowing
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+i-impowt com.twittew.sewvo.utiw.futuweawwow
+i-impowt c-com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * Captures tweet counts pre and post transformation for a list of users
+ * captuwes tweet counts pwe and post twansfowmation f-fow a wist of usews
  */
-class UsersSearchResultMonitoringTransform(
-  name: String,
-  underlyingTransformer: FutureArrow[CandidateEnvelope, CandidateEnvelope],
-  statsReceiver: StatsReceiver,
-  debugAuthorListDependencyProvider: DependencyProvider[Seq[Long]])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+cwass usewsseawchwesuwtmonitowingtwansfowm(
+  n-nyame: stwing, (U ﹏ U)
+  undewwyingtwansfowmew: f-futuweawwow[candidateenvewope, (⑅˘꒳˘) candidateenvewope], òωó
+  statsweceivew: statsweceivew, ʘwʘ
+  debugauthowwistdependencypwovidew: d-dependencypwovidew[seq[wong]])
+    extends f-futuweawwow[candidateenvewope, /(^•ω•^) c-candidateenvewope] {
 
-  private val scopedStatsReceiver = statsReceiver.scope(name)
-  private val preTransformCounter = (userId: Long) =>
-    scopedStatsReceiver
-      .scope("pre_transform").scope(userId.toString).counter("debug_author_list")
-  private val postTransformCounter = (userId: Long) =>
-    scopedStatsReceiver
-      .scope("post_transform").scope(userId.toString).counter("debug_author_list")
+  pwivate vaw scopedstatsweceivew = statsweceivew.scope(name)
+  pwivate v-vaw pwetwansfowmcountew = (usewid: wong) =>
+    scopedstatsweceivew
+      .scope("pwe_twansfowm").scope(usewid.tostwing).countew("debug_authow_wist")
+  pwivate vaw posttwansfowmcountew = (usewid: w-wong) =>
+    scopedstatsweceivew
+      .scope("post_twansfowm").scope(usewid.tostwing).countew("debug_authow_wist")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val debugAuthorList = debugAuthorListDependencyProvider.apply(envelope.query)
-    envelope.searchResults
-      .filter(isTweetFromDebugAuthorList(_, debugAuthorList))
-      .flatMap(_.metadata)
-      .foreach(metadata => preTransformCounter(metadata.fromUserId).incr())
+  o-ovewwide d-def appwy(envewope: c-candidateenvewope): f-futuwe[candidateenvewope] = {
+    vaw debugauthowwist = d-debugauthowwistdependencypwovidew.appwy(envewope.quewy)
+    envewope.seawchwesuwts
+      .fiwtew(istweetfwomdebugauthowwist(_, ʘwʘ debugauthowwist))
+      .fwatmap(_.metadata)
+      .foweach(metadata => p-pwetwansfowmcountew(metadata.fwomusewid).incw())
 
-    underlyingTransformer
-      .apply(envelope)
-      .map { result =>
-        envelope.searchResults
-          .filter(isTweetFromDebugAuthorList(_, debugAuthorList))
-          .flatMap(_.metadata)
-          .foreach(metadata => postTransformCounter(metadata.fromUserId).incr())
-        result
+    undewwyingtwansfowmew
+      .appwy(envewope)
+      .map { wesuwt =>
+        envewope.seawchwesuwts
+          .fiwtew(istweetfwomdebugauthowwist(_, debugauthowwist))
+          .fwatmap(_.metadata)
+          .foweach(metadata => posttwansfowmcountew(metadata.fwomusewid).incw())
+        w-wesuwt
       }
   }
 
-  private def isTweetFromDebugAuthorList(
-    searchResult: ThriftSearchResult,
-    debugAuthorList: Seq[Long]
-  ): Boolean =
-    searchResult.metadata.exists(metadata => debugAuthorList.contains(metadata.fromUserId))
+  pwivate def i-istweetfwomdebugauthowwist(
+    s-seawchwesuwt: thwiftseawchwesuwt, σωσ
+    d-debugauthowwist: seq[wong]
+  ): boowean =
+    seawchwesuwt.metadata.exists(metadata => d-debugauthowwist.contains(metadata.fwomusewid))
 
 }

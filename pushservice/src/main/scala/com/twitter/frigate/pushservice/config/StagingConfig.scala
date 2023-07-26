@@ -1,193 +1,193 @@
-package com.twitter.frigate.pushservice.config
+package com.twittew.fwigate.pushsewvice.config
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.conversions.DurationOps._
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thrift.RichClientParam
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.frigate.common.config.RateLimiterGenerator
-import com.twitter.frigate.common.filter.DynamicRequestMeterFilter
-import com.twitter.frigate.common.history.InvalidatingAfterWritesPushServiceHistoryStore
-import com.twitter.frigate.common.history.ManhattanHistoryStore
-import com.twitter.frigate.common.history.ManhattanKVHistoryStore
-import com.twitter.frigate.common.history.ReadOnlyHistoryStore
-import com.twitter.frigate.common.history.PushServiceHistoryStore
-import com.twitter.frigate.common.history.SimplePushServiceHistoryStore
-import com.twitter.frigate.common.util.Finagle
-import com.twitter.frigate.data_pipeline.features_common.FeatureStoreUtil
-import com.twitter.frigate.data_pipeline.features_common.TargetLevelFeaturesConfig
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.DeciderKey
-import com.twitter.frigate.pushservice.params.PushQPSLimitConstants
-import com.twitter.frigate.pushservice.params.PushServiceTunableKeys
-import com.twitter.frigate.pushservice.params.ShardParams
-import com.twitter.frigate.pushservice.store._
-import com.twitter.frigate.pushservice.thriftscala.PushRequestScribe
-import com.twitter.frigate.scribe.thriftscala.NotificationScribe
-import com.twitter.ibis2.service.thriftscala.Ibis2Service
-import com.twitter.logging.Logger
-import com.twitter.notificationservice.api.thriftscala.DeleteCurrentTimelineForUserRequest
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationRequest
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationResponse
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationResponseType
-import com.twitter.notificationservice.thriftscala.DeleteGenericNotificationRequest
-import com.twitter.notificationservice.thriftscala.NotificationService
-import com.twitter.notificationservice.thriftscala.NotificationService$FinagleClient
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.util.tunable.TunableMap
-import com.twitter.util.Future
-import com.twitter.util.Timer
+impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.decidew.decidew
+i-impowt c-com.twittew.featuweswitches.v2.featuweswitches
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finagwe.thwift.cwientid
+impowt com.twittew.finagwe.thwift.wichcwientpawam
+impowt com.twittew.finagwe.utiw.defauwttimew
+i-impowt com.twittew.fwigate.common.config.watewimitewgenewatow
+impowt c-com.twittew.fwigate.common.fiwtew.dynamicwequestmetewfiwtew
+impowt c-com.twittew.fwigate.common.histowy.invawidatingaftewwwitespushsewvicehistowystowe
+impowt com.twittew.fwigate.common.histowy.manhattanhistowystowe
+impowt com.twittew.fwigate.common.histowy.manhattankvhistowystowe
+impowt c-com.twittew.fwigate.common.histowy.weadonwyhistowystowe
+impowt com.twittew.fwigate.common.histowy.pushsewvicehistowystowe
+i-impowt c-com.twittew.fwigate.common.histowy.simpwepushsewvicehistowystowe
+impowt com.twittew.fwigate.common.utiw.finagwe
+impowt com.twittew.fwigate.data_pipewine.featuwes_common.featuwestoweutiw
+impowt com.twittew.fwigate.data_pipewine.featuwes_common.tawgetwevewfeatuwesconfig
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.pawams.decidewkey
+impowt com.twittew.fwigate.pushsewvice.pawams.pushqpswimitconstants
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushsewvicetunabwekeys
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.shawdpawams
+i-impowt com.twittew.fwigate.pushsewvice.stowe._
+i-impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushwequestscwibe
+impowt com.twittew.fwigate.scwibe.thwiftscawa.notificationscwibe
+i-impowt com.twittew.ibis2.sewvice.thwiftscawa.ibis2sewvice
+impowt com.twittew.wogging.woggew
+i-impowt com.twittew.notificationsewvice.api.thwiftscawa.dewetecuwwenttimewinefowusewwequest
+impowt com.twittew.notificationsewvice.thwiftscawa.cweategenewicnotificationwequest
+impowt com.twittew.notificationsewvice.thwiftscawa.cweategenewicnotificationwesponse
+impowt com.twittew.notificationsewvice.thwiftscawa.cweategenewicnotificationwesponsetype
+i-impowt com.twittew.notificationsewvice.thwiftscawa.dewetegenewicnotificationwequest
+impowt c-com.twittew.notificationsewvice.thwiftscawa.notificationsewvice
+i-impowt com.twittew.notificationsewvice.thwiftscawa.notificationsewvice$finagwecwient
+i-impowt com.twittew.sewvo.decidew.decidewgatebuiwdew
+impowt com.twittew.utiw.tunabwe.tunabwemap
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.timew
 
-case class StagingConfig(
-  override val isServiceLocal: Boolean,
-  override val localConfigRepoPath: String,
-  override val inMemCacheOff: Boolean,
-  override val decider: Decider,
-  override val abDecider: LoggingABDecider,
-  override val featureSwitches: FeatureSwitches,
-  override val shardParams: ShardParams,
-  override val serviceIdentifier: ServiceIdentifier,
-  override val tunableMap: TunableMap,
+c-case cwass stagingconfig(
+  ovewwide vaw issewvicewocaw: b-boowean, (///ˬ///✿)
+  o-ovewwide vaw wocawconfigwepopath: s-stwing, rawr x3
+  ovewwide vaw i-inmemcacheoff: boowean, -.-
+  ovewwide vaw decidew: d-decidew, ^^
+  ovewwide vaw abdecidew: w-woggingabdecidew, (⑅˘꒳˘)
+  ovewwide v-vaw featuweswitches: f-featuweswitches, nyaa~~
+  ovewwide vaw shawdpawams: shawdpawams, /(^•ω•^)
+  ovewwide vaw sewviceidentifiew: sewviceidentifiew, (U ﹏ U)
+  ovewwide vaw t-tunabwemap: tunabwemap, 😳😳😳
 )(
-  implicit val statsReceiver: StatsReceiver)
+  i-impwicit vaw statsweceivew: statsweceivew)
     extends {
-  // Due to trait initialization logic in Scala, any abstract members declared in Config or
-  // DeployConfig should be declared in this block. Otherwise the abstract member might initialize to
-  // null if invoked before object creation finishing.
+  // d-due t-to twait initiawization w-wogic in scawa, >w< any abstwact membews decwawed in config o-ow
+  // depwoyconfig shouwd be decwawed in this bwock. XD othewwise the abstwact m-membew might initiawize to
+  // n-nyuww if invoked b-befowe object cweation f-finishing. o.O
 
-  val log = Logger("StagingConfig")
+  vaw wog = w-woggew("stagingconfig")
 
-  // Client ids
-  val notifierThriftClientId = ClientId("frigate-notifier.dev")
-  val loggedOutNotifierThriftClientId = ClientId("frigate-logged-out-notifier.dev")
-  val pushserviceThriftClientId: ClientId = ClientId("frigate-pushservice.staging")
+  // c-cwient i-ids
+  vaw nyotifiewthwiftcwientid = c-cwientid("fwigate-notifiew.dev")
+  vaw woggedoutnotifiewthwiftcwientid = c-cwientid("fwigate-wogged-out-notifiew.dev")
+  v-vaw pushsewvicethwiftcwientid: cwientid = c-cwientid("fwigate-pushsewvice.staging")
 
-  override val fanoutMetadataColumn = "frigate/magicfanout/staging/mh/fanoutMetadata"
+  o-ovewwide vaw f-fanoutmetadatacowumn = "fwigate/magicfanout/staging/mh/fanoutmetadata"
 
   // dest
-  val frigateHistoryCacheDest = "/srv#/test/local/cache/twemcache_frigate_history"
-  val memcacheCASDest = "/srv#/test/local/cache/twemcache_magic_recs_cas_dev:twemcaches"
-  val pushServiceMHCacheDest = "/srv#/test/local/cache/twemcache_pushservice_test"
-  val entityGraphCacheDest = "/srv#/test/local/cache/twemcache_pushservice_test"
-  val pushServiceCoreSvcsCacheDest = "/srv#/test/local/cache/twemcache_pushservice_core_svcs_test"
-  val historyStoreMemcacheDest = "/srv#/test/local/cache/twemcache_eventstream_test:twemcaches"
-  val userTweetEntityGraphDest = "/cluster/local/cassowary/staging/user_tweet_entity_graph"
-  val userUserGraphDest = "/cluster/local/cassowary/staging/user_user_graph"
-  val lexServiceDest = "/srv#/staging/local/live-video/timeline-thrift"
-  val deepbirdv2PredictionServiceDest = "/cluster/local/frigate/staging/deepbirdv2-magicrecs"
+  vaw fwigatehistowycachedest = "/swv#/test/wocaw/cache/twemcache_fwigate_histowy"
+  vaw memcachecasdest = "/swv#/test/wocaw/cache/twemcache_magic_wecs_cas_dev:twemcaches"
+  vaw pushsewvicemhcachedest = "/swv#/test/wocaw/cache/twemcache_pushsewvice_test"
+  v-vaw entitygwaphcachedest = "/swv#/test/wocaw/cache/twemcache_pushsewvice_test"
+  vaw pushsewvicecowesvcscachedest = "/swv#/test/wocaw/cache/twemcache_pushsewvice_cowe_svcs_test"
+  vaw histowystowememcachedest = "/swv#/test/wocaw/cache/twemcache_eventstweam_test:twemcaches"
+  vaw usewtweetentitygwaphdest = "/cwustew/wocaw/cassowawy/staging/usew_tweet_entity_gwaph"
+  vaw usewusewgwaphdest = "/cwustew/wocaw/cassowawy/staging/usew_usew_gwaph"
+  vaw wexsewvicedest = "/swv#/staging/wocaw/wive-video/timewine-thwift"
+  v-vaw deepbiwdv2pwedictionsewvicedest = "/cwustew/wocaw/fwigate/staging/deepbiwdv2-magicwecs"
 
-  override val featureStoreUtil = FeatureStoreUtil.withParams(Some(serviceIdentifier))
-  override val targetLevelFeaturesConfig = TargetLevelFeaturesConfig()
-  val mrRequestScriberNode = "validation_mr_request_scribe"
-  val loggedOutMrRequestScriberNode = "lo_mr_request_scribe"
+  ovewwide vaw featuwestoweutiw = featuwestoweutiw.withpawams(some(sewviceidentifiew))
+  o-ovewwide vaw tawgetwevewfeatuwesconfig = t-tawgetwevewfeatuwesconfig()
+  v-vaw mwwequestscwibewnode = "vawidation_mw_wequest_scwibe"
+  vaw woggedoutmwwequestscwibewnode = "wo_mw_wequest_scwibe"
 
-  override val timer: Timer = DefaultTimer
+  o-ovewwide vaw timew: timew = defauwttimew
 
-  override val pushSendEventStreamName = "frigate_pushservice_send_event_staging"
+  o-ovewwide v-vaw pushsendeventstweamname = "fwigate_pushsewvice_send_event_staging"
 
-  override val pushIbisV2Store = {
-    val service = Finagle.readWriteThriftService(
-      "ibis-v2-service",
-      "/s/ibis2/ibis2",
-      statsReceiver,
-      notifierThriftClientId,
-      requestTimeout = 6.seconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+  ovewwide vaw pushibisv2stowe = {
+    vaw sewvice = finagwe.weadwwitethwiftsewvice(
+      "ibis-v2-sewvice", mya
+      "/s/ibis2/ibis2", 🥺
+      statsweceivew, ^^;;
+      nyotifiewthwiftcwientid, :3
+      wequesttimeout = 6.seconds, (U ﹏ U)
+      m-mtwssewviceidentifiew = some(sewviceidentifiew)
     )
 
-    val pushIbisClient = new Ibis2Service.FinagledClient(
-      new DynamicRequestMeterFilter(
-        tunableMap(PushServiceTunableKeys.IbisQpsLimitTunableKey),
-        RateLimiterGenerator.asTuple(_, shardParams.numShards, 20),
-        PushQPSLimitConstants.IbisOrNTabQPSForRFPH
-      )(timer).andThen(service),
-      RichClientParam(serviceName = "ibis-v2-service")
+    v-vaw pushibiscwient = nyew ibis2sewvice.finagwedcwient(
+      n-nyew dynamicwequestmetewfiwtew(
+        t-tunabwemap(pushsewvicetunabwekeys.ibisqpswimittunabwekey), OwO
+        watewimitewgenewatow.astupwe(_, 😳😳😳 shawdpawams.numshawds, 20), (ˆ ﻌ ˆ)♡
+        p-pushqpswimitconstants.ibisowntabqpsfowwfph
+      )(timew).andthen(sewvice), XD
+      w-wichcwientpawam(sewvicename = "ibis-v2-sewvice")
     )
 
-    StagingIbis2Store(PushIbis2Store(pushIbisClient))
+    stagingibis2stowe(pushibis2stowe(pushibiscwient))
   }
 
-  val notificationServiceClient: NotificationService$FinagleClient = {
-    val service = Finagle.readWriteThriftService(
-      "notificationservice",
-      "/s/notificationservice/notificationservice",
-      statsReceiver,
-      pushserviceThriftClientId,
-      requestTimeout = 10.seconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+  v-vaw n-nyotificationsewvicecwient: nyotificationsewvice$finagwecwient = {
+    vaw sewvice = finagwe.weadwwitethwiftsewvice(
+      "notificationsewvice", (ˆ ﻌ ˆ)♡
+      "/s/notificationsewvice/notificationsewvice", ( ͡o ω ͡o )
+      statsweceivew, rawr x3
+      p-pushsewvicethwiftcwientid, nyaa~~
+      w-wequesttimeout = 10.seconds, >_<
+      m-mtwssewviceidentifiew = some(sewviceidentifiew)
     )
 
-    new NotificationService.FinagledClient(
-      new DynamicRequestMeterFilter(
-        tunableMap(PushServiceTunableKeys.NtabQpsLimitTunableKey),
-        RateLimiterGenerator.asTuple(_, shardParams.numShards, 20),
-        PushQPSLimitConstants.IbisOrNTabQPSForRFPH)(timer).andThen(service),
-      RichClientParam(serviceName = "notificationservice")
+    nyew notificationsewvice.finagwedcwient(
+      n-nyew dynamicwequestmetewfiwtew(
+        t-tunabwemap(pushsewvicetunabwekeys.ntabqpswimittunabwekey), ^^;;
+        watewimitewgenewatow.astupwe(_, (ˆ ﻌ ˆ)♡ s-shawdpawams.numshawds, ^^;; 20), (⑅˘꒳˘)
+        pushqpswimitconstants.ibisowntabqpsfowwfph)(timew).andthen(sewvice), rawr x3
+      wichcwientpawam(sewvicename = "notificationsewvice")
     )
   }
-} with DeployConfig {
+} with depwoyconfig {
 
-  // Scribe
-  private val notificationScribeLog = Logger("StagingNotificationScribe")
+  // s-scwibe
+  pwivate v-vaw nyotificationscwibewog = woggew("stagingnotificationscwibe")
 
-  override def notificationScribe(data: NotificationScribe): Unit = {
-    notificationScribeLog.info(data.toString)
+  ovewwide d-def nyotificationscwibe(data: n-nyotificationscwibe): unit = {
+    nyotificationscwibewog.info(data.tostwing)
   }
-  private val requestScribeLog = Logger("StagingRequestScribe")
+  pwivate vaw w-wequestscwibewog = woggew("stagingwequestscwibe")
 
-  override def requestScribe(data: PushRequestScribe): Unit = {
-    requestScribeLog.info(data.toString)
+  ovewwide def wequestscwibe(data: pushwequestscwibe): u-unit = {
+    wequestscwibewog.info(data.tostwing)
   }
 
-  // history store
-  override val historyStore = new InvalidatingAfterWritesPushServiceHistoryStore(
-    ReadOnlyHistoryStore(
-      ManhattanHistoryStore(notificationHistoryStore, statsReceiver)
-    ),
-    recentHistoryCacheClient,
-    new DeciderGateBuilder(decider)
-      .idGate(DeciderKey.enableInvalidatingCachedHistoryStoreAfterWrites)
+  // histowy s-stowe
+  ovewwide v-vaw histowystowe = nyew invawidatingaftewwwitespushsewvicehistowystowe(
+    weadonwyhistowystowe(
+      manhattanhistowystowe(notificationhistowystowe, (///ˬ///✿) s-statsweceivew)
+    ), 🥺
+    w-wecenthistowycachecwient, >_<
+    nyew decidewgatebuiwdew(decidew)
+      .idgate(decidewkey.enabweinvawidatingcachedhistowystoweaftewwwites)
   )
 
-  override val emailHistoryStore: PushServiceHistoryStore = new SimplePushServiceHistoryStore(
-    emailNotificationHistoryStore)
+  ovewwide vaw emaiwhistowystowe: p-pushsewvicehistowystowe = nyew s-simpwepushsewvicehistowystowe(
+    emaiwnotificationhistowystowe)
 
-  // history store
-  override val loggedOutHistoryStore =
-    new InvalidatingAfterWritesPushServiceHistoryStore(
-      ReadOnlyHistoryStore(
-        ManhattanKVHistoryStore(
-          manhattanKVLoggedOutHistoryStoreEndpoint,
-          "frigate_notification_logged_out_history")),
-      recentHistoryCacheClient,
-      new DeciderGateBuilder(decider)
-        .idGate(DeciderKey.enableInvalidatingCachedLoggedOutHistoryStoreAfterWrites)
+  // histowy stowe
+  ovewwide v-vaw woggedouthistowystowe =
+    nyew invawidatingaftewwwitespushsewvicehistowystowe(
+      w-weadonwyhistowystowe(
+        m-manhattankvhistowystowe(
+          manhattankvwoggedouthistowystoweendpoint, UwU
+          "fwigate_notification_wogged_out_histowy")), >_<
+      wecenthistowycachecwient, -.-
+      n-nyew decidewgatebuiwdew(decidew)
+        .idgate(decidewkey.enabweinvawidatingcachedwoggedouthistowystoweaftewwwites)
     )
 
-  override def notificationServiceSend(
-    target: Target,
-    request: CreateGenericNotificationRequest
-  ): Future[CreateGenericNotificationResponse] =
-    target.isTeamMember.flatMap { isTeamMember =>
-      if (isTeamMember) {
-        notificationServiceClient.createGenericNotification(request)
-      } else {
-        log.info(s"Mock creating generic notification $request for user: ${target.targetId}")
-        Future.value(
-          CreateGenericNotificationResponse(CreateGenericNotificationResponseType.Success)
+  ovewwide def n-nyotificationsewvicesend(
+    t-tawget: tawget, mya
+    w-wequest: cweategenewicnotificationwequest
+  ): futuwe[cweategenewicnotificationwesponse] =
+    t-tawget.isteammembew.fwatmap { i-isteammembew =>
+      if (isteammembew) {
+        nyotificationsewvicecwient.cweategenewicnotification(wequest)
+      } e-ewse {
+        w-wog.info(s"mock c-cweating genewic nyotification $wequest fow usew: ${tawget.tawgetid}")
+        f-futuwe.vawue(
+          cweategenewicnotificationwesponse(cweategenewicnotificationwesponsetype.success)
         )
       }
     }
 
-  override def notificationServiceDelete(
-    request: DeleteGenericNotificationRequest
-  ): Future[Unit] = Future.Unit
+  ovewwide d-def nyotificationsewvicedewete(
+    w-wequest: dewetegenewicnotificationwequest
+  ): futuwe[unit] = futuwe.unit
 
-  override def notificationServiceDeleteTimeline(
-    request: DeleteCurrentTimelineForUserRequest
-  ): Future[Unit] = Future.Unit
+  o-ovewwide def n-nyotificationsewvicedewetetimewine(
+    w-wequest: d-dewetecuwwenttimewinefowusewwequest
+  ): futuwe[unit] = f-futuwe.unit
 }

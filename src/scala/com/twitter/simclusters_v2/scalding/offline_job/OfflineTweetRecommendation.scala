@@ -1,176 +1,176 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+package com.twittew.simcwustews_v2.scawding.offwine_job
 
-import com.twitter.algebird.Aggregator.size
-import com.twitter.algebird.{Aggregator, QTreeAggregatorLowerBound}
-import com.twitter.scalding.{Execution, Stat, TypedPipe, UniqueID}
-import com.twitter.simclusters_v2.candidate_source._
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.{
-  ClusterTopKTweetsWithScores,
-  ClustersUserIsInterestedIn
+impowt com.twittew.awgebiwd.aggwegatow.size
+i-impowt com.twittew.awgebiwd.{aggwegatow, (///ˬ///✿) q-qtweeaggwegatowwowewbound}
+i-impowt com.twittew.scawding.{execution, σωσ s-stat, typedpipe, nyaa~~ u-uniqueid}
+impowt c-com.twittew.simcwustews_v2.candidate_souwce._
+i-impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  cwustewtopktweetswithscowes,
+  cwustewsusewisintewestedin
 }
-import java.nio.ByteBuffer
+impowt java.nio.bytebuffew
 
-case class OfflineRecConfig(
-  maxTweetRecs: Int, // total number of tweet recs.
-  maxTweetsPerUser: Int,
-  maxClustersToQuery: Int,
-  minTweetScoreThreshold: Double,
-  rankClustersBy: ClusterRanker.Value)
+case c-cwass offwinewecconfig(
+  maxtweetwecs: int, ^^;; // t-totaw nyumbew of tweet wecs. ^•ﻌ•^
+  maxtweetspewusew: i-int, σωσ
+  maxcwustewstoquewy: int, -.-
+  mintweetscowethweshowd: doubwe, ^^;;
+  w-wankcwustewsby: cwustewwankew.vawue)
 
 /**
- * An offline simulation of the tweet rec logic in [[InterestedInTweetCandidateStore]].
- * The main difference is that instead of using Memcache, it uses an offline clusterTopK store as
- * the tweet source.
- * Also, instead of taking a single userId as input, it processes a pipe of users altogether.
+ * a-an offwine simuwation o-of the tweet wec wogic in [[intewestedintweetcandidatestowe]]. XD
+ * the main diffewence is that instead of u-using memcache, 🥺 it uses an offwine cwustewtopk stowe as
+ * the tweet souwce. òωó
+ * a-awso, (ˆ ﻌ ˆ)♡ instead of taking a singwe u-usewid as input, -.- i-it pwocesses a-a pipe of usews a-awtogethew. :3
  */
-object OfflineTweetRecommendation {
+object offwinetweetwecommendation {
 
-  case class ScoredTweet(tweetId: TweetId, score: Double) {
+  case cwass s-scowedtweet(tweetid: tweetid, ʘwʘ scowe: doubwe) {
 
-    def toTuple: (TweetId, Double) = {
-      (tweetId, score)
+    d-def totupwe: (tweetid, 🥺 doubwe) = {
+      (tweetid, >_< scowe)
     }
   }
 
-  object ScoredTweet {
-    def apply(tuple: (TweetId, Double)): ScoredTweet = new ScoredTweet(tuple._1, tuple._2)
-    implicit val scoredOrdering: Ordering[ScoredTweet] = (x: ScoredTweet, y: ScoredTweet) => {
-      Ordering.Double.compare(x.score, y.score)
+  object scowedtweet {
+    def appwy(tupwe: (tweetid, ʘwʘ d-doubwe)): scowedtweet = nyew scowedtweet(tupwe._1, (˘ω˘) t-tupwe._2)
+    i-impwicit vaw scowedowdewing: owdewing[scowedtweet] = (x: s-scowedtweet, (✿oωo) y: scowedtweet) => {
+      owdewing.doubwe.compawe(x.scowe, (///ˬ///✿) y.scowe)
     }
   }
 
-  def getTopTweets(
-    config: OfflineRecConfig,
-    targetUsersPipe: TypedPipe[Long],
-    userIsInterestedInPipe: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    clusterTopKTweetsPipe: TypedPipe[ClusterTopKTweetsWithScores]
+  d-def gettoptweets(
+    c-config: offwinewecconfig, rawr x3
+    tawgetusewspipe: typedpipe[wong], -.-
+    u-usewisintewestedinpipe: t-typedpipe[(wong, ^^ cwustewsusewisintewestedin)], (⑅˘꒳˘)
+    cwustewtopktweetspipe: t-typedpipe[cwustewtopktweetswithscowes]
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[TypedPipe[(Long, Seq[ScoredTweet])]] = {
-    val tweetRecommendedCount = Stat("NumTweetsRecomended")
-    val targetUserCount = Stat("NumTargetUsers")
-    val userWithRecsCount = Stat("NumUsersWithAtLeastTweetRec")
+    impwicit uniqueid: u-uniqueid
+  ): execution[typedpipe[(wong, nyaa~~ seq[scowedtweet])]] = {
+    v-vaw tweetwecommendedcount = s-stat("numtweetswecomended")
+    vaw tawgetusewcount = s-stat("numtawgetusews")
+    v-vaw usewwithwecscount = stat("numusewswithatweasttweetwec")
 
-    // For every user, read the user's interested-in clusters and cluster's weights
-    val userClusterWeightPipe: TypedPipe[(Int, (Long, Double))] =
-      targetUsersPipe.asKeys
-        .join(userIsInterestedInPipe)
-        .flatMap {
-          case (userId, (_, clustersWithScores)) =>
-            targetUserCount.inc()
-            val topClusters = ClusterRanker
-              .getTopKClustersByScore(
-                clustersWithScores.clusterIdToScores.toMap,
-                ClusterRanker.RankByNormalizedFavScore,
-                config.maxClustersToQuery
-              ).toList
-            topClusters.map {
-              case (clusterId, clusterWeightForUser) =>
-                (clusterId, (userId, clusterWeightForUser))
+    // fow evewy usew, /(^•ω•^) wead the usew's intewested-in cwustews and cwustew's weights
+    v-vaw usewcwustewweightpipe: t-typedpipe[(int, (U ﹏ U) (wong, doubwe))] =
+      t-tawgetusewspipe.askeys
+        .join(usewisintewestedinpipe)
+        .fwatmap {
+          c-case (usewid, 😳😳😳 (_, c-cwustewswithscowes)) =>
+            tawgetusewcount.inc()
+            vaw topcwustews = cwustewwankew
+              .gettopkcwustewsbyscowe(
+                c-cwustewswithscowes.cwustewidtoscowes.tomap, >w<
+                cwustewwankew.wankbynowmawizedfavscowe, XD
+                config.maxcwustewstoquewy
+              ).towist
+            topcwustews.map {
+              case (cwustewid, o.O cwustewweightfowusew) =>
+                (cwustewid, mya (usewid, 🥺 c-cwustewweightfowusew))
             }
         }
 
-    // For every cluster, read the top tweets in the cluster, and their weights
-    val clusterTweetWeightPipe: TypedPipe[(Int, List[(Long, Double)])] =
-      clusterTopKTweetsPipe
-        .flatMap { cluster =>
-          val tweets =
-            cluster.topKTweets.toList // Convert to a List, otherwise .flatMap dedups by clusterIds
-              .flatMap {
-                case (tid, persistedScores) =>
-                  val tweetWeight = persistedScores.score.map(_.value).getOrElse(0.0)
-                  if (tweetWeight > 0) {
-                    Some((tid, tweetWeight))
-                  } else {
-                    None
+    // fow evewy cwustew, ^^;; w-wead the t-top tweets in the c-cwustew, :3 and theiw weights
+    v-vaw cwustewtweetweightpipe: t-typedpipe[(int, (U ﹏ U) w-wist[(wong, OwO d-doubwe)])] =
+      cwustewtopktweetspipe
+        .fwatmap { cwustew =>
+          v-vaw tweets =
+            c-cwustew.topktweets.towist // c-convewt to a wist, 😳😳😳 o-othewwise .fwatmap d-dedups by cwustewids
+              .fwatmap {
+                case (tid, (ˆ ﻌ ˆ)♡ pewsistedscowes) =>
+                  vaw tweetweight = p-pewsistedscowes.scowe.map(_.vawue).getowewse(0.0)
+                  if (tweetweight > 0) {
+                    some((tid, XD tweetweight))
+                  } ewse {
+                    nyone
                   }
               }
-          if (tweets.nonEmpty) {
-            Some((cluster.clusterId, tweets))
-          } else {
-            None
+          i-if (tweets.nonempty) {
+            some((cwustew.cwustewid, tweets))
+          } ewse {
+            n-nyone
           }
         }
 
-    // Collect all the tweets from clusters user is interested in
-    val recommendedTweetsPipe = userClusterWeightPipe
-      .sketch(4000)(cid => ByteBuffer.allocate(4).putInt(cid).array(), Ordering.Int)
-      .join(clusterTweetWeightPipe)
-      .flatMap {
-        case (_, ((userId, clusterWeight), tweetsPerCluster)) =>
-          tweetsPerCluster.map {
-            case (tid, tweetWeight) =>
-              val contribution = clusterWeight * tweetWeight
-              ((userId, tid), contribution)
+    // c-cowwect a-aww the tweets fwom cwustews usew i-is intewested in
+    vaw wecommendedtweetspipe = u-usewcwustewweightpipe
+      .sketch(4000)(cid => b-bytebuffew.awwocate(4).putint(cid).awway(), owdewing.int)
+      .join(cwustewtweetweightpipe)
+      .fwatmap {
+        case (_, (ˆ ﻌ ˆ)♡ ((usewid, cwustewweight), ( ͡o ω ͡o ) tweetspewcwustew)) =>
+          tweetspewcwustew.map {
+            c-case (tid, rawr x3 tweetweight) =>
+              vaw c-contwibution = cwustewweight * tweetweight
+              ((usewid, nyaa~~ tid), contwibution)
           }
       }
-      .sumByKey
-      .withReducers(5000)
+      .sumbykey
+      .withweducews(5000)
 
-    // Filter by minimum score threshold
-    val scoreFilteredTweetsPipe = recommendedTweetsPipe
-      .collect {
-        case ((userId, tid), score) if score >= config.minTweetScoreThreshold =>
-          (userId, ScoredTweet(tid, score))
+    // f-fiwtew b-by minimum scowe thweshowd
+    vaw scowefiwtewedtweetspipe = w-wecommendedtweetspipe
+      .cowwect {
+        c-case ((usewid, >_< tid), scowe) if scowe >= c-config.mintweetscowethweshowd =>
+          (usewid, ^^;; s-scowedtweet(tid, (ˆ ﻌ ˆ)♡ scowe))
       }
 
-    // Rank top tweets for each user
-    val topTweetsPerUserPipe = scoreFilteredTweetsPipe.group
-      .sortedReverseTake(config.maxTweetsPerUser)(ScoredTweet.scoredOrdering)
-      .flatMap {
-        case (userId, tweets) =>
-          userWithRecsCount.inc()
-          tweetRecommendedCount.incBy(tweets.size)
+    // wank top tweets fow each usew
+    vaw toptweetspewusewpipe = s-scowefiwtewedtweetspipe.gwoup
+      .sowtedwevewsetake(config.maxtweetspewusew)(scowedtweet.scowedowdewing)
+      .fwatmap {
+        c-case (usewid, ^^;; t-tweets) =>
+          usewwithwecscount.inc()
+          t-tweetwecommendedcount.incby(tweets.size)
 
-          tweets.map { t => (userId, t) }
+          t-tweets.map { t => (usewid, (⑅˘꒳˘) t) }
       }
-      .forceToDiskExecution
+      .fowcetodiskexecution
 
-    val topTweetsPipe = topTweetsPerUserPipe
-      .flatMap { tweets =>
-        approximateScoreAtTopK(tweets.map(_._2.score), config.maxTweetRecs).map { threshold =>
-          tweets
-            .collect {
-              case (userId, tweet) if tweet.score >= threshold =>
-                (userId, List(tweet))
+    v-vaw toptweetspipe = toptweetspewusewpipe
+      .fwatmap { tweets =>
+        appwoximatescoweattopk(tweets.map(_._2.scowe), rawr x3 config.maxtweetwecs).map { thweshowd =>
+          t-tweets
+            .cowwect {
+              c-case (usewid, (///ˬ///✿) tweet) if tweet.scowe >= thweshowd =>
+                (usewid, 🥺 wist(tweet))
             }
-            .sumByKey
-            .toTypedPipe
+            .sumbykey
+            .totypedpipe
         }
       }
-    topTweetsPipe
+    toptweetspipe
   }
 
   /**
-   * Returns the approximate score at the k'th top ranked record using sampling.
-   * This score can then be used to filter for the top K elements in a big pipe where
-   * K is too big to fit in memory.
+   * w-wetuwns t-the appwoximate scowe at the k'th top wanked wecowd using sampwing. >_<
+   * t-this scowe can then be used to fiwtew fow the top k ewements in a b-big pipe whewe
+   * k is too big to fit in memowy. UwU
    *
    */
-  def approximateScoreAtTopK(pipe: TypedPipe[Double], topK: Int): Execution[Double] = {
-    val defaultScore = 0.0
-    println("approximateScoreAtTopK: topK=" + topK)
+  d-def appwoximatescoweattopk(pipe: t-typedpipe[doubwe], >_< topk: int): execution[doubwe] = {
+    vaw defauwtscowe = 0.0
+    p-pwintwn("appwoximatescoweattopk: t-topk=" + topk)
     pipe
-      .aggregate(size)
-      .getOrElseExecution(0L)
-      .flatMap { len =>
-        println("approximateScoreAtTopK: len=" + len)
-        val topKPercentile = if (len == 0 || topK > len) 0 else 1 - topK.toDouble / len.toDouble
-        val randomSample = Aggregator.reservoirSample[Double](Math.max(100000, topK / 100))
+      .aggwegate(size)
+      .getowewseexecution(0w)
+      .fwatmap { wen =>
+        pwintwn("appwoximatescoweattopk: w-wen=" + wen)
+        vaw topkpewcentiwe = i-if (wen == 0 || topk > wen) 0 ewse 1 - topk.todoubwe / w-wen.todoubwe
+        vaw wandomsampwe = a-aggwegatow.wesewvoiwsampwe[doubwe](math.max(100000, -.- t-topk / 100))
         pipe
-          .aggregate(randomSample)
-          .getOrElseExecution(List.empty)
-          .flatMap { sample =>
-            TypedPipe
-              .from(sample)
-              .aggregate(QTreeAggregatorLowerBound[Double](topKPercentile))
-              .getOrElseExecution(defaultScore)
+          .aggwegate(wandomsampwe)
+          .getowewseexecution(wist.empty)
+          .fwatmap { s-sampwe =>
+            typedpipe
+              .fwom(sampwe)
+              .aggwegate(qtweeaggwegatowwowewbound[doubwe](topkpewcentiwe))
+              .getowewseexecution(defauwtscowe)
           }
       }
-      .map { score =>
-        println("approximateScoreAtTopK: topK percentile score=" + score)
-        score
+      .map { s-scowe =>
+        p-pwintwn("appwoximatescoweattopk: t-topk pewcentiwe scowe=" + s-scowe)
+        s-scowe
       }
   }
 }

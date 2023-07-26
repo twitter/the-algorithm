@@ -1,18 +1,18 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.twittew.cw_mixew.simiwawity_engine
 
-import com.twitter.cr_mixer.param.ConsumerEmbeddingBasedTwoTowerParams
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.timelines.configapi
+impowt com.twittew.cw_mixew.pawam.consumewembeddingbasedtwotowewpawams
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt c-com.twittew.timewines.configapi
 
-object ConsumerEmbeddingBasedTwoTowerSimilarityEngine {
-  def fromParams(
-    sourceId: InternalId,
-    params: configapi.Params,
-  ): HnswANNEngineQuery = {
-    HnswANNEngineQuery(
-      sourceId = sourceId,
-      modelId = params(ConsumerEmbeddingBasedTwoTowerParams.ModelIdParam),
-      params = params
+o-object consumewembeddingbasedtwotowewsimiwawityengine {
+  d-def fwompawams(
+    s-souwceid: intewnawid, σωσ
+    pawams: c-configapi.pawams, σωσ
+  ): h-hnswannenginequewy = {
+    h-hnswannenginequewy(
+      souwceid = souwceid, >_<
+      modewid = pawams(consumewembeddingbasedtwotowewpawams.modewidpawam), :3
+      pawams = p-pawams
     )
   }
 }

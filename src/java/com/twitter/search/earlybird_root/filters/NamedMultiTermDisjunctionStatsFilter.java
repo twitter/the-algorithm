@@ -1,45 +1,45 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.concuwwent.concuwwenthashmap;
+impowt j-java.utiw.concuwwent.concuwwentmap;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+i-impowt c-com.twittew.finagwe.sewvice;
+impowt c-com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.seawch.common.metwics.pewcentiwe;
+impowt com.twittew.seawch.common.metwics.pewcentiweutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.utiw.futuwe;
 
-public class NamedMultiTermDisjunctionStatsFilter extends
-    SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+pubwic cwass namedmuwtitewmdisjunctionstatsfiwtew extends
+    s-simpwefiwtew<eawwybiwdwequest, >_< eawwybiwdwesponse> {
 
-    private static final String STAT_FORMAT = "named_disjunction_size_client_%s_key_%s";
-    // ClientID -> disjunction name -> operand count
-    private static final ConcurrentMap<String, ConcurrentMap<String, Percentile<Integer>>>
-        NAMED_MULTI_TERM_DISJUNCTION_IDS_COUNT = new ConcurrentHashMap<>();
+    pwivate s-static finaw stwing stat_fowmat = "named_disjunction_size_cwient_%s_key_%s";
+    // cwientid -> disjunction nyame -> o-opewand count
+    pwivate s-static finaw concuwwentmap<stwing, (⑅˘꒳˘) c-concuwwentmap<stwing, /(^•ω•^) pewcentiwe<integew>>>
+        nyamed_muwti_tewm_disjunction_ids_count = new concuwwenthashmap<>();
 
-    @Override
-    public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-        Service<EarlybirdRequest, EarlybirdResponse> service) {
+    @ovewwide
+    pubwic futuwe<eawwybiwdwesponse> a-appwy(eawwybiwdwequest wequest, rawr x3
+        sewvice<eawwybiwdwequest, eawwybiwdwesponse> sewvice) {
 
-        if (request.getSearchQuery().isSetNamedDisjunctionMap()) {
-            for (Map.Entry<String, List<Long>> entry
-                : request.getSearchQuery().getNamedDisjunctionMap().entrySet()) {
+        i-if (wequest.getseawchquewy().issetnameddisjunctionmap()) {
+            fow (map.entwy<stwing, (U ﹏ U) w-wist<wong>> e-entwy
+                : w-wequest.getseawchquewy().getnameddisjunctionmap().entwyset()) {
 
-                Map<String, Percentile<Integer>> statsForClient =
-                    NAMED_MULTI_TERM_DISJUNCTION_IDS_COUNT.computeIfAbsent(
-                        request.getClientId(), clientId -> new ConcurrentHashMap<>());
-                Percentile<Integer> stats = statsForClient.computeIfAbsent(entry.getKey(),
-                    keyName -> PercentileUtil.createPercentile(
-                        String.format(STAT_FORMAT, request.getClientId(), keyName)));
+                m-map<stwing, pewcentiwe<integew>> statsfowcwient =
+                    n-nyamed_muwti_tewm_disjunction_ids_count.computeifabsent(
+                        wequest.getcwientid(), (U ﹏ U) cwientid -> n-nyew concuwwenthashmap<>());
+                pewcentiwe<integew> stats = statsfowcwient.computeifabsent(entwy.getkey(), (⑅˘꒳˘)
+                    keyname -> pewcentiweutiw.cweatepewcentiwe(
+                        stwing.fowmat(stat_fowmat, òωó wequest.getcwientid(), ʘwʘ k-keyname)));
 
-                stats.record(entry.getValue().size());
+                stats.wecowd(entwy.getvawue().size());
             }
         }
 
-        return service.apply(request);
+        w-wetuwn s-sewvice.appwy(wequest);
     }
 }

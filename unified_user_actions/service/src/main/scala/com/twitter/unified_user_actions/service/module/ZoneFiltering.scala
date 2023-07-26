@@ -1,22 +1,22 @@
-package com.twitter.unified_user_actions.service.module
+package com.twittew.unified_usew_actions.sewvice.moduwe
 
-import com.twitter.kafka.client.headers.ATLA
-import com.twitter.kafka.client.headers.Implicits._
-import com.twitter.kafka.client.headers.PDXA
-import com.twitter.kafka.client.headers.Zone
-import org.apache.kafka.clients.consumer.ConsumerRecord
+impowt com.twittew.kafka.cwient.headews.atwa
+i-impowt com.twittew.kafka.cwient.headews.impwicits._
+i-impowt c-com.twittew.kafka.cwient.headews.pdxa
+i-impowt com.twittew.kafka.cwient.headews.zone
+i-impowt owg.apache.kafka.cwients.consumew.consumewwecowd
 
-object ZoneFiltering {
-  def zoneMapping(zone: String): Zone = zone.toLowerCase match {
-    case "atla" => ATLA
-    case "pdxa" => PDXA
+o-object z-zonefiwtewing {
+  d-def zonemapping(zone: stwing): zone = zone.towowewcase match {
+    case "atwa" => a-atwa
+    case "pdxa" => pdxa
     case _ =>
-      throw new IllegalArgumentException(
-        s"zone must be provided and must be one of [atla,pdxa], provided $zone")
+      t-thwow nyew iwwegawawgumentexception(
+        s-s"zone must be pwovided and must be one of [atwa,pdxa], rawr x3 pwovided $zone")
   }
 
-  def localDCFiltering[K, V](event: ConsumerRecord[K, V], localZone: Zone): Boolean =
-    event.headers().isLocalZone(localZone)
+  d-def wocawdcfiwtewing[k, nyaa~~ v](event: c-consumewwecowd[k, /(^•ω•^) v-v], wocawzone: zone): boowean =
+    event.headews().iswocawzone(wocawzone)
 
-  def noFiltering[K, V](event: ConsumerRecord[K, V], localZone: Zone): Boolean = true
+  def nyofiwtewing[k, rawr v](event: c-consumewwecowd[k, OwO v], wocawzone: zone): boowean = twue
 }

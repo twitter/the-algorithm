@@ -1,71 +1,71 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.TweetIsEditTweet
-import com.twitter.visibility.features.TweetIsInitialTweet
-import com.twitter.visibility.features.TweetIsLatestTweet
-import com.twitter.visibility.features.TweetIsStaleTweet
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.tweetypie.thwiftscawa.editcontwow
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt c-com.twittew.visibiwity.featuwes.tweetisedittweet
+i-impowt com.twittew.visibiwity.featuwes.tweetisinitiawtweet
+impowt com.twittew.visibiwity.featuwes.tweetiswatesttweet
+impowt com.twittew.visibiwity.featuwes.tweetisstawetweet
 
-class EditTweetFeatures(
-  statsReceiver: StatsReceiver) {
+cwass edittweetfeatuwes(
+  s-statsweceivew: statsweceivew) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("edit_tweet_features")
-  private[this] val tweetIsEditTweet =
-    scopedStatsReceiver.scope(TweetIsEditTweet.name).counter("requests")
-  private[this] val tweetIsStaleTweet =
-    scopedStatsReceiver.scope(TweetIsStaleTweet.name).counter("requests")
-  private[this] val tweetIsLatestTweet =
-    scopedStatsReceiver.scope(TweetIsLatestTweet.name).counter("requests")
-  private[this] val tweetIsInitialTweet =
-    scopedStatsReceiver.scope(TweetIsInitialTweet.name).counter("requests")
+  pwivate[this] v-vaw scopedstatsweceivew = s-statsweceivew.scope("edit_tweet_featuwes")
+  pwivate[this] vaw tweetisedittweet =
+    scopedstatsweceivew.scope(tweetisedittweet.name).countew("wequests")
+  p-pwivate[this] vaw tweetisstawetweet =
+    s-scopedstatsweceivew.scope(tweetisstawetweet.name).countew("wequests")
+  p-pwivate[this] vaw tweetiswatesttweet =
+    scopedstatsweceivew.scope(tweetiswatesttweet.name).countew("wequests")
+  pwivate[this] vaw tweetisinitiawtweet =
+    s-scopedstatsweceivew.scope(tweetisinitiawtweet.name).countew("wequests")
 
-  def forTweet(
-    tweet: Tweet
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(TweetIsEditTweet, tweetIsEditTweet(tweet))
-      .withConstantFeature(TweetIsStaleTweet, tweetIsStaleTweet(tweet))
-      .withConstantFeature(TweetIsLatestTweet, tweetIsLatestTweet(tweet))
-      .withConstantFeature(TweetIsInitialTweet, tweetIsInitialTweet(tweet))
+  def fowtweet(
+    tweet: tweet
+  ): featuwemapbuiwdew => featuwemapbuiwdew = {
+    _.withconstantfeatuwe(tweetisedittweet, nyaa~~ t-tweetisedittweet(tweet))
+      .withconstantfeatuwe(tweetisstawetweet, :3 tweetisstawetweet(tweet))
+      .withconstantfeatuwe(tweetiswatesttweet, 😳😳😳 t-tweetiswatesttweet(tweet))
+      .withconstantfeatuwe(tweetisinitiawtweet, (˘ω˘) t-tweetisinitiawtweet(tweet))
   }
 
-  def tweetIsStaleTweet(tweet: Tweet, incrementMetric: Boolean = true): Boolean = {
-    if (incrementMetric) tweetIsStaleTweet.incr()
+  d-def tweetisstawetweet(tweet: t-tweet, ^^ incwementmetwic: boowean = twue): boowean = {
+    if (incwementmetwic) t-tweetisstawetweet.incw()
 
-    tweet.editControl match {
-      case None => false
-      case Some(ec) =>
+    tweet.editcontwow match {
+      c-case nyone => fawse
+      case some(ec) =>
         ec match {
-          case eci: EditControl.Initial => eci.initial.editTweetIds.last != tweet.id
-          case ece: EditControl.Edit =>
-            ece.edit.editControlInitial.exists(_.editTweetIds.last != tweet.id)
-          case _ => false
+          case eci: editcontwow.initiaw => e-eci.initiaw.edittweetids.wast != tweet.id
+          case e-ece: editcontwow.edit =>
+            e-ece.edit.editcontwowinitiaw.exists(_.edittweetids.wast != t-tweet.id)
+          case _ => fawse
         }
     }
   }
 
-  def tweetIsEditTweet(tweet: Tweet, incrementMetric: Boolean = true): Boolean = {
-    if (incrementMetric) tweetIsEditTweet.incr()
+  def t-tweetisedittweet(tweet: t-tweet, :3 incwementmetwic: b-boowean = twue): b-boowean = {
+    if (incwementmetwic) t-tweetisedittweet.incw()
 
-    tweet.editControl match {
-      case None => false
-      case Some(ec) =>
+    tweet.editcontwow m-match {
+      case nyone => fawse
+      case s-some(ec) =>
         ec match {
-          case _: EditControl.Initial => false
-          case _ => true
+          c-case _: editcontwow.initiaw => f-fawse
+          c-case _ => twue
         }
     }
   }
 
-  def tweetIsLatestTweet(tweet: Tweet): Boolean = {
-    tweetIsLatestTweet.incr()
-    !tweetIsStaleTweet(tweet = tweet, incrementMetric = false)
+  def tweetiswatesttweet(tweet: tweet): boowean = {
+    tweetiswatesttweet.incw()
+    !tweetisstawetweet(tweet = tweet, incwementmetwic = fawse)
   }
 
-  def tweetIsInitialTweet(tweet: Tweet): Boolean = {
-    tweetIsInitialTweet.incr()
-    !tweetIsEditTweet(tweet = tweet, incrementMetric = false)
+  d-def tweetisinitiawtweet(tweet: t-tweet): boowean = {
+    tweetisinitiawtweet.incw()
+    !tweetisedittweet(tweet = tweet, -.- incwementmetwic = f-fawse)
   }
 }

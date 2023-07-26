@@ -1,41 +1,41 @@
-package com.twitter.servo.decider
+package com.twittew.sewvo.decidew
 
-import com.twitter.decider.{Decider, Feature}
-import com.twitter.servo.util.Gate
-import com.twitter.servo.gate.DeciderGate
+impowt com.twittew.decidew.{decidew, o.O f-featuwe}
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.sewvo.gate.decidewgate
 
 /**
- * Convenience syntax for creating decider gates
+ * c-convenience s-syntax fow cweating d-decidew gates
  */
-class DeciderGateBuilder(decider: Decider) {
+c-cwass decidewgatebuiwdew(decidew: d-decidew) {
 
   /**
-   * idGate should be used when the result of the gate needs to be consistent between repeated
-   * invocations, with the condition that consistency is dependent up on passing identical
-   * parameter between the invocations.
+   * idgate shouwd be used when the wesuwt of the gate nyeeds to be consistent b-between wepeated
+   * invocations, ( ͡o ω ͡o ) with t-the condition that consistency i-is dependent up on passing identicaw
+   * pawametew between the i-invocations. (U ﹏ U)
    */
-  def idGate(key: DeciderKeyName): Gate[Long] =
-    DeciderGate.byId(keyToFeature(key))
+  def idgate(key: d-decidewkeyname): g-gate[wong] =
+    decidewgate.byid(keytofeatuwe(key))
 
   /**
-   * linearGate should be used when the probability of the gate returning true needs to
-   * increase linearly with the availability of feature.
+   * wineawgate shouwd be used when the pwobabiwity o-of the gate wetuwning twue nyeeds to
+   * incwease wineawwy with the avaiwabiwity o-of featuwe. (///ˬ///✿)
    */
-  def linearGate(key: DeciderKeyName): Gate[Unit] =
-    DeciderGate.linear(keyToFeature(key))
+  def w-wineawgate(key: d-decidewkeyname): g-gate[unit] =
+    d-decidewgate.wineaw(keytofeatuwe(key))
 
   /**
-   * typedLinearGate is a linearGate that conforms to the gate of the specified type.
+   * typedwineawgate is a wineawgate t-that confowms to the gate of the specified t-type. >w<
    */
-  def typedLinearGate[T](key: DeciderKeyName): Gate[T] =
-    linearGate(key).contramap[T] { _ => () }
+  def typedwineawgate[t](key: decidewkeyname): gate[t] =
+    wineawgate(key).contwamap[t] { _ => () }
 
   /**
-   * expGate should be used when the probability of the gate returning true needs to
-   * increase exponentially with the availability of feature.
+   * expgate s-shouwd be used when the pwobabiwity o-of the g-gate wetuwning t-twue nyeeds to
+   * incwease exponentiawwy with the avaiwabiwity o-of featuwe. rawr
    */
-  def expGate(key: DeciderKeyName, exponent: Int): Gate[Unit] =
-    DeciderGate.exp(keyToFeature(key), exponent)
+  d-def expgate(key: decidewkeyname, mya e-exponent: i-int): gate[unit] =
+    decidewgate.exp(keytofeatuwe(key), ^^ e-exponent)
 
-  def keyToFeature(key: DeciderKeyName): Feature = decider.feature(key.toString)
+  def keytofeatuwe(key: d-decidewkeyname): featuwe = decidew.featuwe(key.tostwing)
 }

@@ -1,27 +1,27 @@
-package com.twitter.search.common.schema.base;
+package com.twittew.seawch.common.schema.base;
 
-import java.util.Map;
+impowt java.utiw.map;
 
-import com.google.common.collect.ImmutableMap;
+i-impowt com.googwe.common.cowwect.immutabwemap;
 
 /**
- * Maps from fieldName to fieldIDs.
+ * m-maps f-fwom fiewdname t-to fiewdids. nyaa~~
  */
-public abstract class FieldNameToIdMapping {
+p-pubwic abstwact c-cwass fiewdnametoidmapping {
   /**
-   * Returns field ID for the given fieldName.
-   * Can throw unchecked exceptions is the fieldName is not known to Earlybird.
+   * w-wetuwns f-fiewd id fow the given fiewdname. /(^•ω•^)
+   * can thwow unchecked exceptions is the fiewdname i-is nyot known to eawwybiwd. rawr
    */
-  public abstract int getFieldID(String fieldName);
+  pubwic a-abstwact int getfiewdid(stwing f-fiewdname);
 
   /**
-   * Wrap the given map into a fieldNameToIdMapping instance.
+   * wwap the given map into a fiewdnametoidmapping i-instance. OwO
    */
-  public static FieldNameToIdMapping newFieldNameToIdMapping(Map<String, Integer> map) {
-    final ImmutableMap<String, Integer> immutableMap = ImmutableMap.copyOf(map);
-    return new FieldNameToIdMapping() {
-      @Override public int getFieldID(String fieldName) {
-        return immutableMap.get(fieldName);
+  pubwic s-static fiewdnametoidmapping nyewfiewdnametoidmapping(map<stwing, (U ﹏ U) i-integew> map) {
+    finaw immutabwemap<stwing, >_< integew> immutabwemap = immutabwemap.copyof(map);
+    wetuwn n-nyew fiewdnametoidmapping() {
+      @ovewwide pubwic int getfiewdid(stwing fiewdname) {
+        wetuwn immutabwemap.get(fiewdname);
       }
     };
   }

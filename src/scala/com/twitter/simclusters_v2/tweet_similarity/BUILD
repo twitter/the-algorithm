@@ -1,11 +1,11 @@
-scala_library(
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/recommendations:aggregate",
-        "src/scala/com/twitter/ml/featurestore/lib/embedding",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/scala/com/twitter/simclusters_v2/common/ml",
-    ],
+scawa_wibwawy(
+    pwatfowm = "java8", (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [
+        "swc/scawa/com/twittew/mw/api:api-base", OwO
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/wecommendations:aggwegate", 🥺
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/embedding", òωó
+        "swc/scawa/com/twittew/simcwustews_v2/common", o.O
+        "swc/scawa/com/twittew/simcwustews_v2/common/mw", (U ᵕ U❁)
+    ], (⑅˘꒳˘)
 )

@@ -1,44 +1,44 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.search.DocIdSet;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.RamUsageEstimator;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt o-owg.apache.wucene.seawch.docidset;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+i-impowt o-owg.apache.wucene.utiw.bits;
+i-impowt o-owg.apache.wucene.utiw.wamusageestimatow;
 
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.awwdocsitewatow;
 
-public final class MatchAllDocIdSet extends DocIdSet {
-  private final LeafReader reader;
+pubwic finaw cwass matchawwdocidset extends d-docidset {
+  pwivate finaw weafweadew weadew;
 
-  public MatchAllDocIdSet(LeafReader reader) {
-    this.reader = reader;
+  p-pubwic matchawwdocidset(weafweadew weadew) {
+    t-this.weadew = weadew;
   }
 
-  @Override
-  public DocIdSetIterator iterator() throws IOException {
-    return new AllDocsIterator(reader);
+  @ovewwide
+  pubwic docidsetitewatow i-itewatow() thwows ioexception {
+    w-wetuwn new a-awwdocsitewatow(weadew);
   }
 
-  @Override
-  public Bits bits() throws IOException {
-    return new Bits() {
-      @Override
-      public boolean get(int index) {
-        return true;
+  @ovewwide
+  pubwic bits bits() thwows ioexception {
+    wetuwn nyew bits() {
+      @ovewwide
+      p-pubwic boowean get(int index) {
+        wetuwn twue;
       }
 
-      @Override
-      public int length() {
-        return reader.maxDoc();
+      @ovewwide
+      pubwic i-int wength() {
+        wetuwn weadew.maxdoc();
       }
     };
   }
 
-  @Override
-  public long ramBytesUsed() {
-    return RamUsageEstimator.shallowSizeOf(this);
+  @ovewwide
+  p-pubwic wong wambytesused() {
+    w-wetuwn wamusageestimatow.shawwowsizeof(this);
   }
 }

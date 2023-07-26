@@ -1,31 +1,31 @@
-package com.twitter.simclustersann.common
+package com.twittew.simcwustewsann.common
 
-object FlagNames {
-
-  /**
-   * Global Settings
-   */
-  final val ServiceTimeout = "service.timeout"
-  final val DarkTrafficFilterDeciderKey = "thrift.dark.traffic.filter.decider_key"
+object f-fwagnames {
 
   /**
-   * Cache Setting
+   * g-gwobaw s-settings
    */
-  final val CacheDest = "cache_module.dest"
-  final val CacheTimeout = "cache_module.timeout"
-  // Only turn on the async update when the SANN Cluster has the production taffic.
-  final val CacheAsyncUpdate = "cache_module.async_update"
+  f-finaw vaw sewvicetimeout = "sewvice.timeout"
+  f-finaw vaw dawktwafficfiwtewdecidewkey = "thwift.dawk.twaffic.fiwtew.decidew_key"
 
   /**
-   * Warmup Settings
+   * c-cache s-setting
    */
-  final val DisableWarmup = "warmup.disable"
-  final val NumberOfThreads = "warmup.thread_number"
-  final val RateLimiterQPS = "warmup.rate_limiter_qps"
+  f-finaw vaw cachedest = "cache_moduwe.dest"
+  finaw vaw cachetimeout = "cache_moduwe.timeout"
+  // onwy tuwn on the async update when the sann c-cwustew has the pwoduction taffic. ^^;;
+  finaw vaw cacheasyncupdate = "cache_moduwe.async_update"
 
   /**
-   * Algorithm Parameters
+   * w-wawmup settings
    */
-  final val MaxTopTweetPerCluster = "sim_clusters.ann.max_top_tweets_per_cluster"
+  f-finaw vaw disabwewawmup = "wawmup.disabwe"
+  finaw vaw nyumbewofthweads = "wawmup.thwead_numbew"
+  finaw vaw watewimitewqps = "wawmup.wate_wimitew_qps"
+
+  /**
+   * awgowithm p-pawametews
+   */
+  finaw vaw maxtoptweetpewcwustew = "sim_cwustews.ann.max_top_tweets_pew_cwustew"
 
 }

@@ -1,19 +1,19 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.thriftscala.Share
+impowt c-com.twittew.tweetypie.thwiftscawa.shawe
 
 /**
- * When creating a retweet, we set parent_status_id to the tweet id that the user sent (the tweet they're retweeting).
- * Old tweets have parent_status_id set to zero.
- * When loading the old tweets, we should set parent_status_id to source_status_id if it's zero.
+ * w-when cweating a-a wetweet, :3 we s-set pawent_status_id t-to the tweet i-id that the u-usew sent (the tweet they'we wetweeting). 😳😳😳
+ * owd tweets have pawent_status_id set t-to zewo. -.-
+ * when woading the owd tweets, ( ͡o ω ͡o ) we shouwd s-set pawent_status_id to souwce_status_id i-if it's zewo. rawr x3
  */
-object RetweetParentStatusIdRepairer {
-  private val shareMutation =
-    Mutation.fromPartial[Option[Share]] {
-      case Some(share) if share.parentStatusId == 0L =>
-        Some(share.copy(parentStatusId = share.sourceStatusId))
+object wetweetpawentstatusidwepaiwew {
+  pwivate v-vaw shawemutation =
+    mutation.fwompawtiaw[option[shawe]] {
+      c-case some(shawe) i-if shawe.pawentstatusid == 0w =>
+        some(shawe.copy(pawentstatusid = shawe.souwcestatusid))
     }
 
-  private[tweetypie] val tweetMutation = TweetLenses.share.mutation(shareMutation)
+  pwivate[tweetypie] vaw tweetmutation = tweetwenses.shawe.mutation(shawemutation)
 }

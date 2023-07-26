@@ -1,27 +1,27 @@
-package com.twitter.visibility.rules.providers
+package com.twittew.visibiwity.wuwes.pwovidews
 
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.MixedVisibilityPolicy
-import com.twitter.visibility.rules.RuleBase
-import com.twitter.visibility.rules.generators.TweetRuleGenerator
+impowt com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+i-impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.wuwes.mixedvisibiwitypowicy
+i-impowt com.twittew.visibiwity.wuwes.wuwebase
+i-impowt c-com.twittew.visibiwity.wuwes.genewatows.tweetwuwegenewatow
 
-class InjectedPolicyProvider(
-  visibilityDeciderGates: VisibilityDeciderGates,
-  tweetRuleGenerator: TweetRuleGenerator)
-    extends PolicyProvider {
+c-cwass injectedpowicypwovidew(
+  v-visibiwitydecidewgates: v-visibiwitydecidewgates, 😳
+  tweetwuwegenewatow: tweetwuwegenewatow)
+    extends powicypwovidew {
 
-  private[rules] val policiesForSurface: Map[SafetyLevel, MixedVisibilityPolicy] =
-    RuleBase.RuleMap.map {
-      case (safetyLevel, policy) =>
+  pwivate[wuwes] v-vaw powiciesfowsuwface: map[safetywevew, XD mixedvisibiwitypowicy] =
+    w-wuwebase.wuwemap.map {
+      case (safetywevew, :3 p-powicy) =>
         (
-          safetyLevel,
-          MixedVisibilityPolicy(
-            originalPolicy = policy,
-            additionalTweetRules = tweetRuleGenerator.rulesForSurface(safetyLevel)))
+          safetywevew, 😳😳😳
+          mixedvisibiwitypowicy(
+            owiginawpowicy = powicy, -.-
+            a-additionawtweetwuwes = tweetwuwegenewatow.wuwesfowsuwface(safetywevew)))
     }
 
-  override def policyForSurface(safetyLevel: SafetyLevel): MixedVisibilityPolicy = {
-    policiesForSurface(safetyLevel)
+  o-ovewwide def powicyfowsuwface(safetywevew: s-safetywevew): mixedvisibiwitypowicy = {
+    powiciesfowsuwface(safetywevew)
   }
 }

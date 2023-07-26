@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.flows.ads
-import com.twitter.follow_recommendations.common.candidate_sources.promoted_accounts.PromotedCandidateUser
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.AdMetadata
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.UserCandidateSourceDetails
+package com.twittew.fowwow_wecommendations.fwows.ads
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.pwomoted_accounts.pwomotedcandidateusew
+impowt c-com.twittew.fowwow_wecommendations.common.modews.accountpwoof
+i-impowt com.twittew.fowwow_wecommendations.common.modews.admetadata
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.weason
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.usewcandidatesouwcedetaiws
 
-object PromotedAccountsUtil {
-  def toCandidateUser(promotedCandidateUser: PromotedCandidateUser): CandidateUser = {
-    CandidateUser(
-      id = promotedCandidateUser.id,
-      score = None,
-      adMetadata =
-        Some(AdMetadata(promotedCandidateUser.position, promotedCandidateUser.adImpression)),
-      reason = Some(
-        Reason(
-          accountProof = Some(AccountProof(followProof = Some(promotedCandidateUser.followProof))))
-      ),
-      userCandidateSourceDetails = Some(
-        UserCandidateSourceDetails(
-          promotedCandidateUser.primaryCandidateSource,
-          Map.empty,
-          Map.empty,
-          None))
+o-object pwomotedaccountsutiw {
+  def tocandidateusew(pwomotedcandidateusew: pwomotedcandidateusew): candidateusew = {
+    candidateusew(
+      i-id = pwomotedcandidateusew.id, -.-
+      scowe = nyone, ( ͡o ω ͡o )
+      a-admetadata =
+        some(admetadata(pwomotedcandidateusew.position, rawr x3 p-pwomotedcandidateusew.adimpwession)), nyaa~~
+      weason = some(
+        weason(
+          a-accountpwoof = some(accountpwoof(fowwowpwoof = s-some(pwomotedcandidateusew.fowwowpwoof))))
+      ), /(^•ω•^)
+      u-usewcandidatesouwcedetaiws = some(
+        usewcandidatesouwcedetaiws(
+          pwomotedcandidateusew.pwimawycandidatesouwce, rawr
+          map.empty, OwO
+          m-map.empty, (U ﹏ U)
+          nyone))
     )
   }
 }

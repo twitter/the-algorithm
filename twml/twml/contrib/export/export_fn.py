@@ -1,264 +1,264 @@
 """
-Functions for exporting models for different modes.
+functions fow expowting modews f-fow diffewent m-modes. 🥺
 """
-from collections import OrderedDict
-import os
+fwom c-cowwections impowt o-owdeweddict
+impowt o-os
 
-import tensorflow.compat.v1 as tf
-from tensorflow.python.estimator.export import export
-import twml
-import yaml
+impowt t-tensowfwow.compat.v1 a-as tf
+fwom t-tensowfwow.python.estimatow.expowt impowt expowt
+impowt twmw
+impowt yamw
 
 
-def get_sparse_batch_supervised_input_receiver_fn(feature_config, keep_fields=None):
-  """Gets supervised_input_receiver_fn that decodes a BatchPredictionRequest as sparse tensors
-  with labels and weights as defined in feature_config.
-  This input_receiver_fn is required for exporting models with 'train' mode to be trained with
-  Java API
+def get_spawse_batch_supewvised_input_weceivew_fn(featuwe_config, ʘwʘ k-keep_fiewds=none):
+  """gets supewvised_input_weceivew_fn that decodes a-a batchpwedictionwequest as s-spawse tensows
+  with wabews and weights as defined in featuwe_config. :3
+  t-this input_weceivew_fn is wequiwed fow e-expowting modews w-with 'twain' mode to be twained with
+  java api
 
-  Args:
-    feature_config (FeatureConfig): deepbird v2 feature config object
-    keep_fields (list): list of fields to keep
+  awgs:
+    featuwe_config (featuweconfig): deepbiwd v2 featuwe c-config object
+    keep_fiewds (wist): wist of fiewds to keep
 
-  Returns:
-    supervised_input_receiver_fn: input_receiver_fn used for train mode
+  wetuwns:
+    s-supewvised_input_weceivew_fn: input_weceivew_fn u-used fow twain mode
   """
-  def supervised_input_receiver_fn():
-    serialized_request = tf.placeholder(dtype=tf.uint8, name='request')
-    receiver_tensors = {'request': serialized_request}
+  d-def s-supewvised_input_weceivew_fn():
+    s-sewiawized_wequest = tf.pwacehowdew(dtype=tf.uint8, nyame='wequest')
+    w-weceivew_tensows = {'wequest': sewiawized_wequest}
 
-    bpr = twml.contrib.readers.HashedBatchPredictionRequest(serialized_request, feature_config)
-    features = bpr.get_sparse_features() if keep_fields is None else bpr.get_features(keep_fields)
-    features['weights'] = bpr.weights
-    labels = bpr.labels
-    features, labels = bpr.apply_filter(features, labels)
+    bpw = twmw.contwib.weadews.hashedbatchpwedictionwequest(sewiawized_wequest, (U ﹏ U) f-featuwe_config)
+    featuwes = bpw.get_spawse_featuwes() if keep_fiewds is nyone ewse bpw.get_featuwes(keep_fiewds)
+    f-featuwes['weights'] = bpw.weights
+    wabews = bpw.wabews
+    f-featuwes, (U ﹏ U) w-wabews = bpw.appwy_fiwtew(featuwes, ʘwʘ w-wabews)
 
-    return export.SupervisedInputReceiver(features, labels, receiver_tensors)
+    wetuwn expowt.supewvisedinputweceivew(featuwes, >w< wabews, weceivew_tensows)
 
-  return supervised_input_receiver_fn
+  wetuwn supewvised_input_weceivew_fn
 
 
-def update_build_graph_fn_for_train(build_graph_fn):
-  """Updates a build_graph_fn by inserting in graph output a serialized BatchPredictionResponse
-  similar to the export_output_fns for serving.
-  The key difference here is that
-  1. We insert serialized BatchPredictionResponse in graph output with key 'prediction' instead of
-     creating an export_output object. This is because of the way estimators export model in 'train'
-     mode doesn't take custom export_output
-  2. We only do it when `mode == 'train'` to avoid altering the graph when exporting
-     for 'infer' mode
+d-def update_buiwd_gwaph_fn_fow_twain(buiwd_gwaph_fn):
+  """updates a-a buiwd_gwaph_fn by insewting i-in gwaph output a-a sewiawized batchpwedictionwesponse
+  s-simiwaw to the expowt_output_fns f-fow sewving. rawr x3
+  the key diffewence hewe i-is that
+  1. OwO we insewt sewiawized b-batchpwedictionwesponse in g-gwaph output with k-key 'pwediction' instead of
+     cweating an expowt_output object. ^•ﻌ•^ this is because of the way estimatows expowt m-modew in 'twain'
+     m-mode doesn't take custom e-expowt_output
+  2. >_< w-we onwy do i-it when `mode == 'twain'` to avoid awtewing the gwaph when expowting
+     f-fow 'infew' mode
 
-  Args:
-    build_graph_fn (Callable): deepbird v2 build graph function
+  awgs:
+    buiwd_gwaph_fn (cawwabwe): deepbiwd v2 buiwd gwaph function
 
-  Returns:
-    new_build_graph_fn: An updated build_graph_fn that inserts serialized BatchPredictResponse
-                        to graph output when in 'train' mode
+  w-wetuwns:
+    nyew_buiwd_gwaph_fn: a-an updated b-buiwd_gwaph_fn t-that insewts sewiawized batchpwedictwesponse
+                        t-to gwaph o-output when in 'twain' m-mode
   """
-  def new_build_graph_fn(features, label, mode, params, config=None):
-    output = build_graph_fn(features, label, mode, params, config)
-    if mode == tf.estimator.ModeKeys.TRAIN:
+  d-def nyew_buiwd_gwaph_fn(featuwes, OwO wabew, >_< mode, pawams, config=none):
+    o-output = b-buiwd_gwaph_fn(featuwes, (ꈍᴗꈍ) w-wabew, >w< mode, pawams, c-config)
+    i-if mode == tf.estimatow.modekeys.twain:
       output.update(
-        twml.export_output_fns.batch_prediction_continuous_output_fn(output)[
-          tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY].outputs
+        twmw.expowt_output_fns.batch_pwediction_continuous_output_fn(output)[
+          tf.saved_modew.signatuwe_constants.defauwt_sewving_signatuwe_def_key].outputs
       )
-    return output
-  return new_build_graph_fn
+    wetuwn output
+  w-wetuwn nyew_buiwd_gwaph_fn
 
 
-def export_model_for_train_and_infer(
-    trainer, feature_config, keep_fields, export_dir, as_text=False):
-  """Function for exporting model with both 'train' and 'infer' mode.
+def expowt_modew_fow_twain_and_infew(
+    twainew, featuwe_config, keep_fiewds, (U ﹏ U) expowt_diw, ^^ a-as_text=fawse):
+  """function fow expowting modew with both 'twain' and 'infew' m-mode. (U ﹏ U)
 
-  This means the exported saved_model.pb will contain two meta graphs, one with tag 'train'
-  and the other with tag 'serve', and it can be loaded in Java API with either tag depending on
-  the use case
+  t-this means the e-expowted saved_modew.pb wiww contain t-two meta gwaphs, :3 one with t-tag 'twain'
+  and t-the othew with tag 'sewve', (✿oωo) and it can be woaded in java api with eithew tag depending on
+  the u-use case
 
-  Args:
-    trainer (DataRecordTrainer): deepbird v2 DataRecordTrainer
-    feature_config (FeatureConfig): deepbird v2 feature config
-    keep_fields (list of string): list of field keys, e.g.
-                                  ('ids', 'keys', 'values', 'batch_size', 'total_size', 'codes')
-    export_dir (str): a directory (local or hdfs) to export model to
-    as_text (bool): if True, write 'saved_model.pb' as binary file, else write
-                    'saved_model.pbtxt' as human readable text file. Default False
+  awgs:
+    twainew (datawecowdtwainew): d-deepbiwd v2 datawecowdtwainew
+    f-featuwe_config (featuweconfig): d-deepbiwd v2 featuwe config
+    keep_fiewds (wist o-of stwing): w-wist of fiewd keys, XD e.g.
+                                  ('ids', >w< 'keys', 'vawues', òωó 'batch_size', (ꈍᴗꈍ) 'totaw_size', 'codes')
+    e-expowt_diw (stw): a-a diwectowy (wocaw ow hdfs) to expowt modew to
+    as_text (boow): if twue, rawr x3 w-wwite 'saved_modew.pb' a-as binawy f-fiwe, rawr x3 ewse wwite
+                    'saved_modew.pbtxt' as human w-weadabwe text f-fiwe. σωσ defauwt fawse
   """
-  train_input_receiver_fn = get_sparse_batch_supervised_input_receiver_fn(
-    feature_config, keep_fields)
-  predict_input_receiver_fn = twml.parsers.get_sparse_serving_input_receiver_fn(
-    feature_config, keep_fields)
-  trainer._export_output_fn = twml.export_output_fns.batch_prediction_continuous_output_fn
-  trainer._build_graph_fn = update_build_graph_fn_for_train(trainer._build_graph_fn)
-  trainer._estimator._export_all_saved_models(
-    export_dir_base=export_dir,
-    input_receiver_fn_map={
-      tf.estimator.ModeKeys.TRAIN: train_input_receiver_fn,
-      tf.estimator.ModeKeys.PREDICT: predict_input_receiver_fn
-    },
-    as_text=as_text,
+  twain_input_weceivew_fn = g-get_spawse_batch_supewvised_input_weceivew_fn(
+    featuwe_config, (ꈍᴗꈍ) keep_fiewds)
+  pwedict_input_weceivew_fn = twmw.pawsews.get_spawse_sewving_input_weceivew_fn(
+    f-featuwe_config, rawr k-keep_fiewds)
+  twainew._expowt_output_fn = twmw.expowt_output_fns.batch_pwediction_continuous_output_fn
+  t-twainew._buiwd_gwaph_fn = u-update_buiwd_gwaph_fn_fow_twain(twainew._buiwd_gwaph_fn)
+  twainew._estimatow._expowt_aww_saved_modews(
+    expowt_diw_base=expowt_diw, ^^;;
+    input_weceivew_fn_map={
+      t-tf.estimatow.modekeys.twain: twain_input_weceivew_fn, rawr x3
+      tf.estimatow.modekeys.pwedict: pwedict_input_weceivew_fn
+    }, (ˆ ﻌ ˆ)♡
+    as_text=as_text, σωσ
   )
 
-  trainer.export_model_effects(export_dir)
+  t-twainew.expowt_modew_effects(expowt_diw)
 
 
-def export_all_models_with_receivers(estimator, export_dir,
-                                     train_input_receiver_fn,
-                                     eval_input_receiver_fn,
-                                     predict_input_receiver_fn,
-                                     export_output_fn,
-                                     export_modes=('train', 'eval', 'predict'),
-                                     register_model_fn=None,
-                                     feature_spec=None,
-                                     checkpoint_path=None,
-                                     log_features=True):
+def expowt_aww_modews_with_weceivews(estimatow, (U ﹏ U) e-expowt_diw, >w<
+                                     t-twain_input_weceivew_fn, σωσ
+                                     evaw_input_weceivew_fn, nyaa~~
+                                     pwedict_input_weceivew_fn, 🥺
+                                     expowt_output_fn, rawr x3
+                                     e-expowt_modes=('twain', σωσ 'evaw', 'pwedict'), (///ˬ///✿)
+                                     w-wegistew_modew_fn=none, (U ﹏ U)
+                                     featuwe_spec=none, ^^;;
+                                     checkpoint_path=none, 🥺
+                                     wog_featuwes=twue):
   """
-  Function for exporting a model with train, eval, and infer modes.
+  f-function fow expowting a-a modew with twain, òωó evaw, and infew modes.
 
-  Args:
-    estimator:
-      Should be of type tf.estimator.Estimator.
-      You can get this from trainer using trainer.estimator
-    export_dir:
-      Directory to export the model.
-    train_input_receiver_fn:
-      Input receiver for train interface.
-    eval_input_receiver_fn:
-      Input receiver for eval interface.
-    predict_input_receiver_fn:
-      Input receiver for predict interface.
-    export_output_fn:
-      export_output_fn to be used for serving.
-    export_modes:
-      A list to Specify what modes to export. Can be "train", "eval", "predict".
-      Defaults to ["train", "eval", "predict"]
-    register_model_fn:
-      An optional function which is called with export_dir after models are exported.
-      Defaults to None.
-  Returns:
-     The timestamped directory the models are exported to.
+  awgs:
+    estimatow:
+      s-shouwd be of type tf.estimatow.estimatow. XD
+      y-you c-can get this fwom twainew using t-twainew.estimatow
+    expowt_diw:
+      d-diwectowy t-to expowt the m-modew. :3
+    twain_input_weceivew_fn:
+      input w-weceivew fow twain i-intewface. (U ﹏ U)
+    evaw_input_weceivew_fn:
+      input weceivew fow e-evaw intewface. >w<
+    p-pwedict_input_weceivew_fn:
+      i-input weceivew fow pwedict intewface. /(^•ω•^)
+    e-expowt_output_fn:
+      expowt_output_fn t-to be u-used fow sewving. (⑅˘꒳˘)
+    expowt_modes:
+      a wist to specify nyani m-modes to expowt. ʘwʘ c-can be "twain", rawr x3 "evaw", "pwedict". (˘ω˘)
+      d-defauwts t-to ["twain", o.O "evaw", 😳 "pwedict"]
+    wegistew_modew_fn:
+      a-an optionaw function which is cawwed with expowt_diw aftew modews awe expowted. o.O
+      defauwts t-to none. ^^;;
+  wetuwns:
+     the timestamped d-diwectowy the modews a-awe expowted to. ( ͡o ω ͡o )
   """
-  # TODO: Fix for hogwild / distributed training.
+  # todo: f-fix fow hogwiwd / distwibuted twaining. ^^;;
 
-  if export_dir is None:
-    raise ValueError("export_dir can not be None")
-  export_dir = twml.util.sanitize_hdfs_path(export_dir)
-  input_receiver_fn_map = {}
+  i-if expowt_diw i-is nyone:
+    w-waise vawueewwow("expowt_diw c-can nyot be n-nyone")
+  expowt_diw = twmw.utiw.sanitize_hdfs_path(expowt_diw)
+  input_weceivew_fn_map = {}
 
-  if "train" in export_modes:
-    input_receiver_fn_map[tf.estimator.ModeKeys.TRAIN] = train_input_receiver_fn
+  if "twain" in expowt_modes:
+    input_weceivew_fn_map[tf.estimatow.modekeys.twain] = twain_input_weceivew_fn
 
-  if "eval" in export_modes:
-    input_receiver_fn_map[tf.estimator.ModeKeys.EVAL] = eval_input_receiver_fn
+  if "evaw" in expowt_modes:
+    i-input_weceivew_fn_map[tf.estimatow.modekeys.evaw] = e-evaw_input_weceivew_fn
 
-  if "predict" in export_modes:
-    input_receiver_fn_map[tf.estimator.ModeKeys.PREDICT] = predict_input_receiver_fn
+  i-if "pwedict" in expowt_modes:
+    i-input_weceivew_fn_map[tf.estimatow.modekeys.pwedict] = pwedict_input_weceivew_fn
 
-  export_dir = estimator._export_all_saved_models(
-    export_dir_base=export_dir,
-    input_receiver_fn_map=input_receiver_fn_map,
-    checkpoint_path=checkpoint_path,
+  expowt_diw = estimatow._expowt_aww_saved_modews(
+    e-expowt_diw_base=expowt_diw, ^^;;
+    i-input_weceivew_fn_map=input_weceivew_fn_map, XD
+    checkpoint_path=checkpoint_path, 🥺
   )
 
-  if register_model_fn is not None:
-    register_model_fn(export_dir, feature_spec, log_features)
+  i-if wegistew_modew_fn is nyot nyone:
+    wegistew_modew_fn(expowt_diw, (///ˬ///✿) f-featuwe_spec, (U ᵕ U❁) w-wog_featuwes)
 
-  return export_dir
+  wetuwn expowt_diw
 
 
-def export_all_models(trainer,
-                      export_dir,
-                      parse_fn,
-                      serving_input_receiver_fn,
-                      export_output_fn=None,
-                      export_modes=('train', 'eval', 'predict'),
-                      feature_spec=None,
-                      checkpoint=None,
-                      log_features=True):
+d-def expowt_aww_modews(twainew, ^^;;
+                      e-expowt_diw, ^^;;
+                      pawse_fn, rawr
+                      sewving_input_weceivew_fn, (˘ω˘)
+                      expowt_output_fn=none, 🥺
+                      expowt_modes=('twain', nyaa~~ 'evaw', :3 'pwedict'),
+                      f-featuwe_spec=none, /(^•ω•^)
+                      c-checkpoint=none, ^•ﻌ•^
+                      w-wog_featuwes=twue):
   """
-  Function for exporting a model with train, eval, and infer modes.
+  f-function f-fow expowting a modew with t-twain, UwU evaw, and i-infew modes. 😳😳😳
 
-  Args:
-    trainer:
-      An object of type twml.trainers.Trainer.
-    export_dir:
-      Directory to export the model.
-    parse_fn:
-      The parse function used parse the inputs for train and eval.
-    serving_input_receiver_fn:
-      The input receiver function used during serving.
-    export_output_fn:
-      export_output_fn to be used for serving.
-    export_modes:
-      A list to Specify what modes to export. Can be "train", "eval", "predict".
-      Defaults to ["train", "eval", "predict"]
-    feature_spec:
-      A dictionary obtained from FeatureConfig.get_feature_spec() to serialize
-      as feature_spec.yaml in export_dir.
-      Defaults to None
-  Returns:
-     The timestamped directory the models are exported to.
+  awgs:
+    twainew:
+      a-an object o-of type twmw.twainews.twainew. OwO
+    expowt_diw:
+      d-diwectowy to expowt the modew. ^•ﻌ•^
+    pawse_fn:
+      t-the pawse function u-used pawse the inputs f-fow twain and evaw. (ꈍᴗꈍ)
+    sewving_input_weceivew_fn:
+      the i-input weceivew function used duwing sewving. (⑅˘꒳˘)
+    e-expowt_output_fn:
+      e-expowt_output_fn t-to be used fow sewving. (⑅˘꒳˘)
+    expowt_modes:
+      a wist t-to specify nyani modes to expowt. (ˆ ﻌ ˆ)♡ can be "twain", /(^•ω•^) "evaw", òωó "pwedict".
+      defauwts t-to ["twain", (⑅˘꒳˘) "evaw", (U ᵕ U❁) "pwedict"]
+    f-featuwe_spec:
+      a dictionawy obtained f-fwom featuweconfig.get_featuwe_spec() to sewiawize
+      as f-featuwe_spec.yamw i-in expowt_diw. >w<
+      defauwts to nyone
+  wetuwns:
+     t-the timestamped diwectowy the modews a-awe expowted to. σωσ
   """
-  # Only export from chief in hogwild or distributed modes.
-  if trainer.params.get('distributed', False) and not trainer.estimator.config.is_chief:
-    tf.logging.info("Trainer.export_model ignored due to instance not being chief.")
-    return
+  # o-onwy expowt fwom chief i-in hogwiwd ow distwibuted modes. -.-
+  i-if twainew.pawams.get('distwibuted', o.O f-fawse) a-and nyot twainew.estimatow.config.is_chief:
+    tf.wogging.info("twainew.expowt_modew ignowed due to instance nyot being chief.")
+    wetuwn
 
-  if feature_spec is None:
-    if getattr(trainer, '_feature_config') is None:
-      raise ValueError("feature_spec is set to None."
-                       "Please pass feature_spec=feature_config.get_feature_spec() to the export_all_model function")
-    else:
-      feature_spec = trainer._feature_config.get_feature_spec()
+  if featuwe_spec is nyone:
+    if getattw(twainew, ^^ '_featuwe_config') is nyone:
+      waise vawueewwow("featuwe_spec is set to nyone."
+                       "pwease pass featuwe_spec=featuwe_config.get_featuwe_spec() t-to the e-expowt_aww_modew function")
+    ewse:
+      featuwe_spec = t-twainew._featuwe_config.get_featuwe_spec()
 
-  export_dir = twml.util.sanitize_hdfs_path(export_dir)
-  old_export_output_fn = trainer._export_output_fn
-  trainer._export_output_fn = export_output_fn
-  supervised_input_receiver_fn = twml.parsers.convert_to_supervised_input_receiver_fn(parse_fn)
-  if not checkpoint:
-    checkpoint = trainer.best_or_latest_checkpoint
+  e-expowt_diw = t-twmw.utiw.sanitize_hdfs_path(expowt_diw)
+  owd_expowt_output_fn = t-twainew._expowt_output_fn
+  twainew._expowt_output_fn = e-expowt_output_fn
+  s-supewvised_input_weceivew_fn = twmw.pawsews.convewt_to_supewvised_input_weceivew_fn(pawse_fn)
+  i-if nyot checkpoint:
+    checkpoint = t-twainew.best_ow_watest_checkpoint
 
-  export_dir = export_all_models_with_receivers(estimator=trainer.estimator,
-                                                export_dir=export_dir,
-                                                train_input_receiver_fn=supervised_input_receiver_fn,
-                                                eval_input_receiver_fn=supervised_input_receiver_fn,
-                                                predict_input_receiver_fn=serving_input_receiver_fn,
-                                                export_output_fn=export_output_fn,
-                                                export_modes=export_modes,
-                                                register_model_fn=trainer.export_model_effects,
-                                                feature_spec=feature_spec,
-                                                checkpoint_path=checkpoint,
-                                                log_features=log_features)
-  trainer._export_output_fn = old_export_output_fn
-  return export_dir
+  e-expowt_diw = expowt_aww_modews_with_weceivews(estimatow=twainew.estimatow, >_<
+                                                expowt_diw=expowt_diw, >w<
+                                                t-twain_input_weceivew_fn=supewvised_input_weceivew_fn, >_<
+                                                e-evaw_input_weceivew_fn=supewvised_input_weceivew_fn, >w<
+                                                p-pwedict_input_weceivew_fn=sewving_input_weceivew_fn, rawr
+                                                e-expowt_output_fn=expowt_output_fn, rawr x3
+                                                e-expowt_modes=expowt_modes, ( ͡o ω ͡o )
+                                                w-wegistew_modew_fn=twainew.expowt_modew_effects, (˘ω˘)
+                                                f-featuwe_spec=featuwe_spec, 😳
+                                                c-checkpoint_path=checkpoint, OwO
+                                                w-wog_featuwes=wog_featuwes)
+  twainew._expowt_output_fn = o-owd_expowt_output_fn
+  w-wetuwn expowt_diw
 
 
-def export_feature_spec(dir_path, feature_spec_dict):
+d-def expowt_featuwe_spec(diw_path, (˘ω˘) featuwe_spec_dict):
   """
-  Exports a FeatureConfig.get_feature_spec() dict to <dir_path>/feature_spec.yaml.
+  e-expowts a featuweconfig.get_featuwe_spec() dict to <diw_path>/featuwe_spec.yamw. òωó
   """
-  def ordered_dict_representer(dumper, data):
-    return dumper.represent_mapping('tag:yaml.org,2002:map', data.items())
+  d-def owdewed_dict_wepwesentew(dumpew, ( ͡o ω ͡o ) data):
+    w-wetuwn dumpew.wepwesent_mapping('tag:yamw.owg,2002:map', UwU d-data.items())
 
-  try:
-    # needed for Python 2
-    yaml.add_representer(str, yaml.representer.SafeRepresenter.represent_str)
-    yaml.add_representer(unicode, yaml.representer.SafeRepresenter.represent_unicode)
-  except NameError:
-    # 'unicode' type doesn't exist on Python 3
-    # PyYAML handles unicode correctly in Python 3
+  t-twy:
+    # nyeeded fow p-python 2
+    yamw.add_wepwesentew(stw, yamw.wepwesentew.safewepwesentew.wepwesent_stw)
+    y-yamw.add_wepwesentew(unicode, /(^•ω•^) yamw.wepwesentew.safewepwesentew.wepwesent_unicode)
+  e-except nyameewwow:
+    # 'unicode' type doesn't e-exist on python 3
+    # pyyamw handwes unicode cowwectwy in python 3
     pass
 
-  yaml.add_representer(OrderedDict, ordered_dict_representer)
+  y-yamw.add_wepwesentew(owdeweddict, (ꈍᴗꈍ) owdewed_dict_wepwesentew)
 
-  fbase = "feature_spec.yaml"
-  fname = fbase.encode('utf-8') if type(dir_path) != str else fbase
-  file_path = os.path.join(dir_path, fname)
-  with tf.io.gfile.GFile(file_path, mode='w') as f:
-    yaml.dump(feature_spec_dict, f, default_flow_style=False, allow_unicode=True)
-  tf.logging.info("Exported feature spec to %s" % file_path)
+  f-fbase = "featuwe_spec.yamw"
+  f-fname = fbase.encode('utf-8') if type(diw_path) != stw ewse fbase
+  f-fiwe_path = os.path.join(diw_path, 😳 fname)
+  with t-tf.io.gfiwe.gfiwe(fiwe_path, mya m-mode='w') as f:
+    y-yamw.dump(featuwe_spec_dict, mya f, defauwt_fwow_stywe=fawse, /(^•ω•^) awwow_unicode=twue)
+  t-tf.wogging.info("expowted f-featuwe spec to %s" % f-fiwe_path)
 
-  return file_path
+  wetuwn fiwe_path
 
 
-# Keep the alias for compatibility.
-get_supervised_input_receiver_fn = twml.parsers.convert_to_supervised_input_receiver_fn
+# keep the a-awias fow compatibiwity. ^^;;
+get_supewvised_input_weceivew_fn = t-twmw.pawsews.convewt_to_supewvised_input_weceivew_fn

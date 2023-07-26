@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.core.pipeline
+package com.twittew.pwoduct_mixew.cowe.pipewine
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MalformedCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.mawfowmedcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.scwooge.binawythwiftstwuctsewiawizew
+i-impowt com.twittew.scwooge.thwiftstwuct
+i-impowt com.twittew.utiw.wetuwn
+impowt c-com.twittew.utiw.thwow
+i-impowt c-com.twittew.utiw.twy
 
 /**
- * Serializes a [[PipelineCursor]] into thrift and then into a base64 encoded string
+ * s-sewiawizes a [[pipewinecuwsow]] into thwift and then into a base64 encoded stwing
  */
-trait PipelineCursorSerializer[-Cursor <: PipelineCursor] {
-  def serializeCursor(cursor: Cursor): String
+twait pipewinecuwsowsewiawizew[-cuwsow <: p-pipewinecuwsow] {
+  def sewiawizecuwsow(cuwsow: cuwsow): stwing
 }
 
-object PipelineCursorSerializer {
+o-object pipewinecuwsowsewiawizew {
 
   /**
-   * Deserializes a cursor string into thrift and then into a [[PipelineCursor]]
+   * desewiawizes a c-cuwsow stwing into thwift and then into a [[pipewinecuwsow]]
    *
-   * @param cursorString to deserialize, which is base64 encoded thrift
-   * @param cursorThriftSerializer to deserialize the cursor string into thrift
-   * @param deserializePf specifies how to transform the serialized thrift into a [[PipelineCursor]]
-   * @return optional [[PipelineCursor]]. `None` may or may not be a failure depending on the
-   *         implementation of deserializePf.
+   * @pawam cuwsowstwing to desewiawize, (✿oωo) w-which is base64 encoded t-thwift
+   * @pawam c-cuwsowthwiftsewiawizew to desewiawize the cuwsow stwing into thwift
+   * @pawam d-desewiawizepf specifies how to twansfowm the sewiawized thwift into a [[pipewinecuwsow]]
+   * @wetuwn o-optionaw [[pipewinecuwsow]]. ʘwʘ `none` may ow may nyot b-be a faiwuwe depending o-on the
+   *         i-impwementation o-of desewiawizepf. (ˆ ﻌ ˆ)♡
    *
-   * @note The "A" type of deserializePf cannot be inferred due to the thrift type not being present
-   *       on the PipelineCursorSerializer trait. Therefore invokers must often add an explicit type
-   *       on the deserializeCursor call to help out the compiler when passing deserializePf inline.
-   *       Alternatively, deserializePf can be declared as a val with a type annotation before it is
-   *       passed into this method.
+   * @note the "a" type of desewiawizepf c-cannot be infewwed due to the thwift t-type nyot being pwesent
+   *       on the pipewinecuwsowsewiawizew twait. 😳😳😳 thewefowe invokews must often add an expwicit t-type
+   *       on the desewiawizecuwsow c-caww to hewp out t-the compiwew when p-passing desewiawizepf inwine. :3
+   *       awtewnativewy, desewiawizepf c-can be d-decwawed as a vaw with a type annotation b-befowe i-it is
+   *       passed into this m-method. OwO
    */
-  def deserializeCursor[Thrift <: ThriftStruct, Cursor <: PipelineCursor](
-    cursorString: String,
-    cursorThriftSerializer: BinaryThriftStructSerializer[Thrift],
-    deserializePf: PartialFunction[Option[Thrift], Option[Cursor]]
-  ): Option[Cursor] = {
-    val thriftCursor: Option[Thrift] =
-      Try {
-        cursorThriftSerializer.fromString(cursorString)
+  def desewiawizecuwsow[thwift <: t-thwiftstwuct, (U ﹏ U) cuwsow <: pipewinecuwsow](
+    cuwsowstwing: stwing, >w<
+    c-cuwsowthwiftsewiawizew: binawythwiftstwuctsewiawizew[thwift], (U ﹏ U)
+    d-desewiawizepf: pawtiawfunction[option[thwift], 😳 o-option[cuwsow]]
+  ): o-option[cuwsow] = {
+    vaw thwiftcuwsow: option[thwift] =
+      twy {
+        cuwsowthwiftsewiawizew.fwomstwing(cuwsowstwing)
       } match {
-        case Return(thriftCursor) => Some(thriftCursor)
-        case Throw(_) => None
+        case wetuwn(thwiftcuwsow) => some(thwiftcuwsow)
+        c-case t-thwow(_) => nyone
       }
 
-    // Add type annotation to help out the compiler since the type is lost due to the _ match
-    val defaultDeserializePf: PartialFunction[Option[Thrift], Option[Cursor]] = {
+    // add type annotation t-to hewp o-out the compiwew s-since the type is wost due to the _ match
+    vaw defauwtdesewiawizepf: p-pawtiawfunction[option[thwift], (ˆ ﻌ ˆ)♡ option[cuwsow]] = {
       case _ =>
-        // This case is the result of the client submitting a cursor we do not expect
-        throw PipelineFailure(MalformedCursor, s"Unknown request cursor: $cursorString")
+        // this case is the wesuwt o-of the cwient submitting a cuwsow w-we do nyot expect
+        t-thwow p-pipewinefaiwuwe(mawfowmedcuwsow, s"unknown wequest c-cuwsow: $cuwsowstwing")
     }
 
-    (deserializePf orElse defaultDeserializePf)(thriftCursor)
+    (desewiawizepf o-owewse defauwtdesewiawizepf)(thwiftcuwsow)
   }
 }

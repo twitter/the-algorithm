@@ -1,491 +1,491 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.PriorityQueue;
+impowt java.utiw.awways;
+i-impowt j-java.utiw.compawatow;
+i-impowt j-java.utiw.pwiowityqueue;
 
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetEarlybirdSortingMode;
-import com.twitter.search.core.earlybird.facets.FacetAccumulator;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider.FacetLabelAccessor;
-import com.twitter.search.core.earlybird.facets.LanguageHistogram;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
+i-impowt c-com.twittew.seawch.common.wanking.thwiftjava.thwiftfaceteawwybiwdsowtingmode;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetaccumuwatow;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew.facetwabewaccessow;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.wanguagehistogwam;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcount;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcountmetadata;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetfiewdwesuwts;
 
-public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
-  private static final int DEFAULT_HASH_SIZE = 4096;
+p-pubwic cwass hashingandpwuningfacetaccumuwatow e-extends facetaccumuwatow {
+  pwivate static finaw int defauwt_hash_size = 4096;
   /**
-   * 4 longs per entry accommodates long termIDs.
-   * Although entries could be encoded in 3 bytes, 4 ensures that no entry is split
-   * across cache lines.
+   * 4 wongs pew entwy a-accommodates wong tewmids. (ˆ ﻌ ˆ)♡
+   * a-awthough entwies c-couwd be encoded in 3 bytes, -.- 4 ensuwes that nyo entwy is spwit
+   * acwoss cache w-wines. σωσ
    */
-  protected static final int LONGS_PER_ENTRY = 4;
-  private static final double LOAD_FACTOR = 0.5;
-  private static final long BITSHIFT_MAX_TWEEPCRED = 32;
-  private static final long PENALTY_COUNT_MASK = (1L << BITSHIFT_MAX_TWEEPCRED) - 1;
+  pwotected static finaw int wongs_pew_entwy = 4;
+  pwivate static finaw doubwe w-woad_factow = 0.5;
+  pwivate static f-finaw wong b-bitshift_max_tweepcwed = 32;
+  p-pwivate static finaw w-wong penawty_count_mask = (1w << bitshift_max_tweepcwed) - 1;
 
-  protected static final long UNASSIGNED = -1;
+  pwotected s-static finaw wong unassigned = -1;
 
-  protected LanguageHistogram languageHistogram = new LanguageHistogram();
+  pwotected w-wanguagehistogwam wanguagehistogwam = nyew wanguagehistogwam();
 
-  protected static final class HashTable {
-    protected final long[] hash;
-    protected final int size;
-    protected final int maxLoad;
-    protected final int mask;
+  pwotected static finaw cwass hashtabwe {
+    p-pwotected finaw wong[] hash;
+    p-pwotected finaw i-int size;
+    pwotected f-finaw int maxwoad;
+    pwotected finaw int mask;
 
-    public HashTable(int size) {
-      hash = new long[LONGS_PER_ENTRY * size];
-      Arrays.fill(hash, UNASSIGNED);
-      this.size = size;
-      // Ensure alignment to LONGS_PER_ENTRY-byte boundaries
-      this.mask = LONGS_PER_ENTRY * (size - 1);
-      this.maxLoad = (int) (size * LOAD_FACTOR);
+    pubwic h-hashtabwe(int s-size) {
+      hash = nyew wong[wongs_pew_entwy * s-size];
+      a-awways.fiww(hash, unassigned);
+      t-this.size = size;
+      // e-ensuwe awignment to wongs_pew_entwy-byte boundawies
+      t-this.mask = wongs_pew_entwy * (size - 1);
+      t-this.maxwoad = (int) (size * woad_factow);
     }
 
-    protected void reset() {
-      Arrays.fill(hash, UNASSIGNED);
+    p-pwotected void w-weset() {
+      awways.fiww(hash, >_< unassigned);
     }
 
-    private final Cursor cursor = new Cursor();
+    pwivate finaw cuwsow cuwsow = nyew cuwsow();
 
-    public int findHashPosition(long termID) {
-      int code = (new Long(termID)).hashCode();
-      int hashPos = code & mask;
+    pubwic i-int findhashposition(wong t-tewmid) {
+      int c-code = (new wong(tewmid)).hashcode();
+      i-int h-hashpos = code & mask;
 
-      if (cursor.readFromHash(hashPos) && (cursor.termID != termID)) {
-        final int inc = ((code >> 8) + code) | 1;
+      if (cuwsow.weadfwomhash(hashpos) && (cuwsow.tewmid != tewmid)) {
+        f-finaw int inc = ((code >> 8) + code) | 1;
         do {
-          code += inc;
-          hashPos = code & this.mask;
-        } while (cursor.readFromHash(hashPos) && (cursor.termID != termID));
+          code += i-inc;
+          hashpos = code & t-this.mask;
+        } w-whiwe (cuwsow.weadfwomhash(hashpos) && (cuwsow.tewmid != t-tewmid));
       }
 
-      return hashPos;
+      wetuwn h-hashpos;
     }
 
     /**
-     * The cursor can be used to access the different fields of a hash entry.
-     * Callers should always position the cursor with readFromHash() before
-     * accessing the members.
+     * the c-cuwsow can be u-used to access t-the diffewent fiewds of a hash entwy. :3
+     * cawwews s-shouwd awways p-position the c-cuwsow with weadfwomhash() b-befowe
+     * a-accessing the membews. OwO
      */
-    private final class Cursor {
-      private int simpleCount;
-      private int weightedCount;
-      private int penaltyCount;
-      private int maxTweepcred;
-      private long termID;
+    pwivate finaw cwass c-cuwsow {
+      pwivate int simpwecount;
+      pwivate int weightedcount;
+      pwivate int penawtycount;
+      pwivate int maxtweepcwed;
+      pwivate w-wong tewmid;
 
-      public void writeToHash(int position) {
-        long payload = (((long) maxTweepcred) << BITSHIFT_MAX_TWEEPCRED)
-                       | ((long) penaltyCount);
+      pubwic void wwitetohash(int position) {
+        w-wong p-paywoad = (((wong) m-maxtweepcwed) << bitshift_max_tweepcwed)
+                       | ((wong) p-penawtycount);
 
-        assert itemPenaltyCount(payload) == penaltyCount : payload + ", "
-                      + itemPenaltyCount(payload) + " != " + penaltyCount;
-        assert itemMaxTweepCred(payload) == maxTweepcred;
+        assewt itempenawtycount(paywoad) == p-penawtycount : p-paywoad + ", rawr "
+                      + itempenawtycount(paywoad) + " != " + penawtycount;
+        assewt itemmaxtweepcwed(paywoad) == maxtweepcwed;
 
-        hash[position] = termID;
-        hash[position + 1] = simpleCount;
-        hash[position + 2] = weightedCount;
-        hash[position + 3] = payload;
+        hash[position] = t-tewmid;
+        hash[position + 1] = s-simpwecount;
+        hash[position + 2] = w-weightedcount;
+        h-hash[position + 3] = paywoad;
       }
 
-      /** Returns the item ID, or UNASSIGNED */
-      public boolean readFromHash(int position) {
-        long entry = hash[position];
-        if (entry == UNASSIGNED) {
-          termID = UNASSIGNED;
-          return false;
+      /** wetuwns t-the item id, (///ˬ///✿) o-ow unassigned */
+      pubwic b-boowean weadfwomhash(int p-position) {
+        wong entwy = hash[position];
+        if (entwy == unassigned) {
+          tewmid = u-unassigned;
+          w-wetuwn fawse;
         }
 
-        termID = entry;
+        t-tewmid = entwy;
 
-        simpleCount = (int) hash[position + 1];
-        weightedCount = (int) hash[position + 2];
-        long payload = hash[position + 3];
+        s-simpwecount = (int) h-hash[position + 1];
+        weightedcount = (int) h-hash[position + 2];
+        wong paywoad = hash[position + 3];
 
-        penaltyCount = itemPenaltyCount(payload);
-        maxTweepcred = itemMaxTweepCred(payload);
+        penawtycount = itempenawtycount(paywoad);
+        m-maxtweepcwed = itemmaxtweepcwed(paywoad);
 
-        return true;
+        w-wetuwn twue;
       }
     }
   }
 
-  protected static int itemPenaltyCount(long payload) {
-    return (int) (payload & PENALTY_COUNT_MASK);
+  pwotected static int itempenawtycount(wong p-paywoad) {
+    wetuwn (int) (paywoad & p-penawty_count_mask);
   }
 
-  protected static int itemMaxTweepCred(long payload) {
-    return (int) (payload >>> BITSHIFT_MAX_TWEEPCRED);
+  pwotected static int itemmaxtweepcwed(wong paywoad) {
+    w-wetuwn (int) (paywoad >>> bitshift_max_tweepcwed);
   }
 
-  protected int numItems;
-  protected final HashTable hashTable;
-  protected final long[] sortBuffer;
-  private FacetLabelProvider facetLabelProvider;
+  pwotected int nyumitems;
+  pwotected finaw h-hashtabwe hashtabwe;
+  pwotected finaw wong[] s-sowtbuffew;
+  pwivate f-facetwabewpwovidew facetwabewpwovidew;
 
-  private int totalSimpleCount;
-  private int totalWeightedCount;
-  private int totalPenalty;
+  pwivate int totawsimpwecount;
+  pwivate int totawweightedcount;
+  p-pwivate int totawpenawty;
 
-  static final double DEFAULT_QUERY_INDEPENDENT_PENALTY_WEIGHT = 1.0;
-  private final double queryIndependentPenaltyWeight;
+  static f-finaw doubwe defauwt_quewy_independent_penawty_weight = 1.0;
+  pwivate finaw doubwe quewyindependentpenawtyweight;
 
-  private final FacetComparator facetComparator;
+  p-pwivate finaw facetcompawatow f-facetcompawatow;
 
-  public HashingAndPruningFacetAccumulator(FacetLabelProvider facetLabelProvider,
-          FacetComparator comparator) {
-    this(DEFAULT_HASH_SIZE, facetLabelProvider,
-            DEFAULT_QUERY_INDEPENDENT_PENALTY_WEIGHT, comparator);
+  pubwic hashingandpwuningfacetaccumuwatow(facetwabewpwovidew facetwabewpwovidew,
+          f-facetcompawatow compawatow) {
+    t-this(defauwt_hash_size, ^^ f-facetwabewpwovidew, XD
+            defauwt_quewy_independent_penawty_weight, UwU c-compawatow);
   }
 
-  public HashingAndPruningFacetAccumulator(FacetLabelProvider facetLabelProvider,
-          double queryIndependentPenaltyWeight, FacetComparator comparator) {
-    this(DEFAULT_HASH_SIZE, facetLabelProvider, queryIndependentPenaltyWeight, comparator);
+  pubwic hashingandpwuningfacetaccumuwatow(facetwabewpwovidew f-facetwabewpwovidew, o.O
+          d-doubwe q-quewyindependentpenawtyweight, facetcompawatow c-compawatow) {
+    t-this(defauwt_hash_size, 😳 facetwabewpwovidew, (˘ω˘) quewyindependentpenawtyweight, 🥺 c-compawatow);
   }
 
   /**
-   * Creates a new, empty HashingAndPruningFacetAccumulator with the given initial size.
-   * HashSize will be rounded up to the next power-of-2 value.
+   * c-cweates a-a new, ^^ empty hashingandpwuningfacetaccumuwatow with the given initiaw size. >w<
+   * h-hashsize wiww be wounded up to t-the nyext powew-of-2 v-vawue. ^^;;
    */
-  public HashingAndPruningFacetAccumulator(int hashSize, FacetLabelProvider facetLabelProvider,
-          double queryIndependentPenaltyWeight, FacetComparator comparator) {
-    int powerOfTwoSize = 2;
-    while (hashSize > powerOfTwoSize) {
-      powerOfTwoSize *= 2;
+  pubwic hashingandpwuningfacetaccumuwatow(int hashsize, (˘ω˘) facetwabewpwovidew facetwabewpwovidew, OwO
+          d-doubwe q-quewyindependentpenawtyweight, (ꈍᴗꈍ) f-facetcompawatow c-compawatow) {
+    int powewoftwosize = 2;
+    w-whiwe (hashsize > powewoftwosize) {
+      powewoftwosize *= 2;
     }
 
-    this.facetComparator  = comparator;
-    hashTable = new HashTable(powerOfTwoSize);
-    sortBuffer = new long[LONGS_PER_ENTRY * (int) Math.ceil(LOAD_FACTOR * powerOfTwoSize)];
-    this.facetLabelProvider = facetLabelProvider;
-    this.queryIndependentPenaltyWeight = queryIndependentPenaltyWeight;
+    this.facetcompawatow  = compawatow;
+    hashtabwe = n-nyew hashtabwe(powewoftwosize);
+    sowtbuffew = n-nyew wong[wongs_pew_entwy * (int) math.ceiw(woad_factow * p-powewoftwosize)];
+    this.facetwabewpwovidew = f-facetwabewpwovidew;
+    this.quewyindependentpenawtyweight = q-quewyindependentpenawtyweight;
   }
 
-  @Override
-  public void reset(FacetLabelProvider facetLabelProviderToReset) {
-    this.facetLabelProvider = facetLabelProviderToReset;
-    this.numItems = 0;
-    this.hashTable.reset();
-    this.totalSimpleCount = 0;
-    this.totalPenalty = 0;
-    this.totalWeightedCount = 0;
-    languageHistogram.clear();
+  @ovewwide
+  p-pubwic v-void weset(facetwabewpwovidew facetwabewpwovidewtoweset) {
+    t-this.facetwabewpwovidew = f-facetwabewpwovidewtoweset;
+    this.numitems = 0;
+    this.hashtabwe.weset();
+    this.totawsimpwecount = 0;
+    this.totawpenawty = 0;
+    this.totawweightedcount = 0;
+    wanguagehistogwam.cweaw();
   }
 
 
-  @Override
-  public int add(long termID, int weightedCounterIncrement, int penaltyIncrement, int tweepCred) {
-    int hashPos = hashTable.findHashPosition(termID);
+  @ovewwide
+  p-pubwic int a-add(wong tewmid, òωó i-int weightedcountewincwement, ʘwʘ int penawtyincwement, ʘwʘ i-int tweepcwed) {
+    int hashpos = hashtabwe.findhashposition(tewmid);
 
-    totalPenalty += penaltyIncrement;
-    totalSimpleCount++;
-    totalWeightedCount += weightedCounterIncrement;
+    totawpenawty += p-penawtyincwement;
+    t-totawsimpwecount++;
+    totawweightedcount += w-weightedcountewincwement;
 
-    if (hashTable.cursor.termID == UNASSIGNED) {
-      hashTable.cursor.termID = termID;
-      hashTable.cursor.simpleCount = 1;
-      hashTable.cursor.weightedCount = weightedCounterIncrement;
-      hashTable.cursor.penaltyCount = penaltyIncrement;
-      hashTable.cursor.maxTweepcred = tweepCred;
-      hashTable.cursor.writeToHash(hashPos);
+    if (hashtabwe.cuwsow.tewmid == unassigned) {
+      h-hashtabwe.cuwsow.tewmid = t-tewmid;
+      hashtabwe.cuwsow.simpwecount = 1;
+      h-hashtabwe.cuwsow.weightedcount = w-weightedcountewincwement;
+      hashtabwe.cuwsow.penawtycount = penawtyincwement;
+      hashtabwe.cuwsow.maxtweepcwed = tweepcwed;
+      h-hashtabwe.cuwsow.wwitetohash(hashpos);
 
-      numItems++;
-      if (numItems >= hashTable.maxLoad) {
-        prune();
+      n-nyumitems++;
+      i-if (numitems >= h-hashtabwe.maxwoad) {
+        p-pwune();
       }
-      return 1;
-    } else {
+      wetuwn 1;
+    } e-ewse {
 
-      hashTable.cursor.simpleCount++;
-      hashTable.cursor.weightedCount += weightedCounterIncrement;
+      h-hashtabwe.cuwsow.simpwecount++;
+      hashtabwe.cuwsow.weightedcount += w-weightedcountewincwement;
 
-      if (tweepCred > hashTable.cursor.maxTweepcred) {
-        hashTable.cursor.maxTweepcred = tweepCred;
+      i-if (tweepcwed > hashtabwe.cuwsow.maxtweepcwed) {
+        h-hashtabwe.cuwsow.maxtweepcwed = tweepcwed;
       }
 
-      hashTable.cursor.penaltyCount += penaltyIncrement;
-      hashTable.cursor.writeToHash(hashPos);
-      return hashTable.cursor.simpleCount;
+      hashtabwe.cuwsow.penawtycount += p-penawtyincwement;
+      hashtabwe.cuwsow.wwitetohash(hashpos);
+      w-wetuwn hashtabwe.cuwsow.simpwecount;
     }
   }
 
-  @Override
-  public void recordLanguage(int languageId) {
-    languageHistogram.increment(languageId);
+  @ovewwide
+  p-pubwic void wecowdwanguage(int w-wanguageid) {
+    wanguagehistogwam.incwement(wanguageid);
   }
 
-  @Override
-  public LanguageHistogram getLanguageHistogram() {
-    return languageHistogram;
+  @ovewwide
+  pubwic wanguagehistogwam g-getwanguagehistogwam() {
+    w-wetuwn wanguagehistogwam;
   }
 
-  private void prune() {
-    copyToSortBuffer();
-    hashTable.reset();
+  p-pwivate void pwune() {
+    copytosowtbuffew();
+    hashtabwe.weset();
 
-    int targetNumItems = (int) (hashTable.maxLoad >> 1);
+    i-int tawgetnumitems = (int) (hashtabwe.maxwoad >> 1);
 
-    int minCount = 2;
-    int nextMinCount = Integer.MAX_VALUE;
+    int mincount = 2;
+    i-int nextmincount = i-integew.max_vawue;
 
-    final int n = LONGS_PER_ENTRY * numItems;
+    finaw int ny = wongs_pew_entwy * n-nyumitems;
 
-    while (numItems > targetNumItems) {
-      for (int i = 0; i < n; i += LONGS_PER_ENTRY) {
-        long item = sortBuffer[i];
-        if (item != UNASSIGNED) {
-          int count = (int) sortBuffer[i + 1];
-          if (count < minCount) {
+    whiwe (numitems > t-tawgetnumitems) {
+      f-fow (int i = 0; i < ny; i += wongs_pew_entwy) {
+        w-wong item = sowtbuffew[i];
+        if (item != unassigned) {
+          i-int count = (int) s-sowtbuffew[i + 1];
+          if (count < m-mincount) {
             evict(i);
-          } else if (count < nextMinCount) {
-            nextMinCount = count;
+          } e-ewse if (count < n-nyextmincount) {
+            n-nyextmincount = count;
           }
         }
       }
-      if (minCount == nextMinCount) {
-        minCount++;
-      } else {
-        minCount = nextMinCount;
+      if (mincount == nyextmincount) {
+        mincount++;
+      } ewse {
+        mincount = nyextmincount;
       }
-      nextMinCount = Integer.MAX_VALUE;
+      nextmincount = integew.max_vawue;
     }
 
-    // rehash
-    for (int i = 0; i < n; i += LONGS_PER_ENTRY) {
-      long item = sortBuffer[i];
-      if (item != UNASSIGNED) {
-        final long termID = item;
-        int hashPos = hashTable.findHashPosition(termID);
-        for (int j = 0; j < LONGS_PER_ENTRY; ++j) {
-          hashTable.hash[hashPos + j] = sortBuffer[i + j];
+    // wehash
+    fow (int i = 0; i < ny; i += wongs_pew_entwy) {
+      wong item = sowtbuffew[i];
+      i-if (item != unassigned) {
+        f-finaw wong tewmid = item;
+        int hashpos = h-hashtabwe.findhashposition(tewmid);
+        fow (int j-j = 0; j < w-wongs_pew_entwy; ++j) {
+          hashtabwe.hash[hashpos + j-j] = sowtbuffew[i + j-j];
         }
       }
     }
   }
 
-  // overridable for unit test
-  protected void evict(int index) {
-    sortBuffer[index] = UNASSIGNED;
-    numItems--;
+  // o-ovewwidabwe fow unit test
+  p-pwotected void evict(int index) {
+    s-sowtbuffew[index] = u-unassigned;
+    nyumitems--;
   }
 
-  @Override
-  public ThriftFacetFieldResults getAllFacets() {
-    return getTopFacets(numItems);
+  @ovewwide
+  pubwic t-thwiftfacetfiewdwesuwts g-getawwfacets() {
+    w-wetuwn gettopfacets(numitems);
   }
 
-  @Override
-  public ThriftFacetFieldResults getTopFacets(final int numRequested) {
-    int n = numRequested > numItems ? numItems : numRequested;
+  @ovewwide
+  p-pubwic thwiftfacetfiewdwesuwts g-gettopfacets(finaw i-int nyumwequested) {
+    int n-ny = nyumwequested > n-nyumitems ? n-nyumitems : nyumwequested;
 
-    if (n == 0) {
-      return null;
+    i-if (n == 0) {
+      w-wetuwn nyuww;
     }
 
-    ThriftFacetFieldResults facetResults = new ThriftFacetFieldResults();
-    facetResults.setTotalCount(totalSimpleCount);
-    facetResults.setTotalScore(totalWeightedCount);
-    facetResults.setTotalPenalty(totalPenalty);
+    t-thwiftfacetfiewdwesuwts facetwesuwts = n-new thwiftfacetfiewdwesuwts();
+    facetwesuwts.settotawcount(totawsimpwecount);
+    facetwesuwts.settotawscowe(totawweightedcount);
+    f-facetwesuwts.settotawpenawty(totawpenawty);
 
-    copyToSortBuffer();
+    copytosowtbuffew();
 
-    // sort table using the facet comparator
-    PriorityQueue<Item> pq = new PriorityQueue<>(numItems, facetComparator.getComparator(true));
+    // s-sowt t-tabwe using the f-facet compawatow
+    pwiowityqueue<item> p-pq = nyew pwiowityqueue<>(numitems, nyaa~~ f-facetcompawatow.getcompawatow(twue));
 
-    for (int i = 0; i < LONGS_PER_ENTRY * numItems; i += LONGS_PER_ENTRY) {
-      pq.add(new Item(sortBuffer, i));
+    fow (int i-i = 0; i < wongs_pew_entwy * nyumitems; i += w-wongs_pew_entwy) {
+      pq.add(new item(sowtbuffew, UwU i));
     }
 
-    FacetLabelAccessor accessor = facetLabelProvider.getLabelAccessor();
+    facetwabewaccessow a-accessow = facetwabewpwovidew.getwabewaccessow();
 
-    for (int i = 0; i < n; i++) {
-      Item item = pq.poll();
-      long id = item.getTermId();
+    f-fow (int i = 0; i-i < ny; i++) {
+      item item = pq.poww();
+      wong id = item.gettewmid();
 
-      int penalty = item.getPenaltyCount() + (int) (queryIndependentPenaltyWeight
-              * accessor.getOffensiveCount(id));
-      ThriftFacetCount result = new ThriftFacetCount().setFacetLabel(accessor.getTermText(id));
-      result.setPenaltyCount(penalty);
-      result.setSimpleCount(item.getSimpleCount());
-      result.setWeightedCount(item.getWeightedCount());
-      result.setMetadata(new ThriftFacetCountMetadata().setMaxTweepCred(item.getMaxTweetCred()));
+      i-int penawty = item.getpenawtycount() + (int) (quewyindependentpenawtyweight
+              * a-accessow.getoffensivecount(id));
+      t-thwiftfacetcount w-wesuwt = nyew thwiftfacetcount().setfacetwabew(accessow.gettewmtext(id));
+      wesuwt.setpenawtycount(penawty);
+      w-wesuwt.setsimpwecount(item.getsimpwecount());
+      w-wesuwt.setweightedcount(item.getweightedcount());
+      wesuwt.setmetadata(new t-thwiftfacetcountmetadata().setmaxtweepcwed(item.getmaxtweetcwed()));
 
-      result.setFacetCount(result.getWeightedCount());
-      facetResults.addToTopFacets(result);
+      wesuwt.setfacetcount(wesuwt.getweightedcount());
+      facetwesuwts.addtotopfacets(wesuwt);
     }
 
-    return facetResults;
+    wetuwn facetwesuwts;
   }
 
-  // Compacts the hashtable entries in place by removing empty hashes.  After
-  // this operation it's no longer a hash table but a array of entries.
-  private void copyToSortBuffer() {
-    int upto = 0;
+  // c-compacts the hashtabwe entwies i-in pwace by w-wemoving empty hashes. (⑅˘꒳˘)  a-aftew
+  // this opewation i-it's nyo wongew a-a hash tabwe but a-a awway of entwies. (˘ω˘)
+  p-pwivate void copytosowtbuffew() {
+    int u-upto = 0;
 
-    for (int i = 0; i < hashTable.hash.length; i += LONGS_PER_ENTRY) {
-      if (hashTable.hash[i] != UNASSIGNED) {
-        for (int j = 0; j < LONGS_PER_ENTRY; ++j) {
-          sortBuffer[upto + j] = hashTable.hash[i + j];
+    f-fow (int i = 0; i-i < hashtabwe.hash.wength; i-i += w-wongs_pew_entwy) {
+      i-if (hashtabwe.hash[i] != u-unassigned) {
+        f-fow (int j = 0; j < wongs_pew_entwy; ++j) {
+          s-sowtbuffew[upto + j] = hashtabwe.hash[i + j-j];
         }
-        upto += LONGS_PER_ENTRY;
+        upto += wongs_pew_entwy;
       }
     }
-    assert upto == numItems * LONGS_PER_ENTRY;
+    a-assewt u-upto == nyumitems * w-wongs_pew_entwy;
   }
 
   /**
-   * Sorts facets in the following order:
-   * 1) ascending by weightedCount
-   * 2) if weightedCount equal: ascending by simpleCount
-   * 3) if weightedCount and simpleCount equal: descending by penaltyCount
+   * sowts facets in the fowwowing owdew:
+   * 1) a-ascending by w-weightedcount
+   * 2) i-if weightedcount equaw: ascending by simpwecount
+   * 3) if weightedcount a-and simpwecount e-equaw: descending by penawtycount
    */
-  public static int compareFacetCounts(int weightedCount1, int simpleCount1, int penaltyCount1,
-                                       int weightedCount2, int simpleCount2, int penaltyCount2,
-                                       boolean simpleCountPrecedence) {
-    if (simpleCountPrecedence) {
-      if (simpleCount1 < simpleCount2) {
-        return -1;
-      } else if (simpleCount1 > simpleCount2) {
-        return 1;
-      } else {
-        if (weightedCount1 < weightedCount2) {
-          return -1;
-        } else if (weightedCount1 > weightedCount2) {
-          return 1;
-        } else {
-          if (penaltyCount1 < penaltyCount2) {
+  p-pubwic s-static int compawefacetcounts(int weightedcount1, :3 int simpwecount1, int penawtycount1, (˘ω˘)
+                                       i-int weightedcount2, i-int simpwecount2, nyaa~~ i-int penawtycount2, (U ﹏ U)
+                                       b-boowean simpwecountpwecedence) {
+    if (simpwecountpwecedence) {
+      if (simpwecount1 < s-simpwecount2) {
+        w-wetuwn -1;
+      } ewse if (simpwecount1 > simpwecount2) {
+        w-wetuwn 1;
+      } ewse {
+        if (weightedcount1 < w-weightedcount2) {
+          wetuwn -1;
+        } e-ewse i-if (weightedcount1 > weightedcount2) {
+          w-wetuwn 1;
+        } e-ewse {
+          if (penawtycount1 < p-penawtycount2) {
             // descending
-            return 1;
-          } else if (penaltyCount1 > penaltyCount2) {
-            return -1;
-          } else {
-            return 0;
+            w-wetuwn 1;
+          } e-ewse if (penawtycount1 > p-penawtycount2) {
+            wetuwn -1;
+          } e-ewse {
+            wetuwn 0;
           }
         }
       }
-    } else {
-      if (weightedCount1 < weightedCount2) {
-        return -1;
-      } else if (weightedCount1 > weightedCount2) {
-        return 1;
-      } else {
-        if (simpleCount1 < simpleCount2) {
-          return -1;
-        } else if (simpleCount1 > simpleCount2) {
-          return 1;
-        } else {
-          if (penaltyCount1 < penaltyCount2) {
-            // descending
-            return 1;
-          } else if (penaltyCount1 > penaltyCount2) {
-            return -1;
-          } else {
-            return 0;
+    } e-ewse {
+      i-if (weightedcount1 < w-weightedcount2) {
+        wetuwn -1;
+      } e-ewse if (weightedcount1 > weightedcount2) {
+        wetuwn 1;
+      } e-ewse {
+        i-if (simpwecount1 < s-simpwecount2) {
+          wetuwn -1;
+        } ewse if (simpwecount1 > simpwecount2) {
+          wetuwn 1;
+        } e-ewse {
+          if (penawtycount1 < p-penawtycount2) {
+            // d-descending
+            wetuwn 1;
+          } ewse if (penawtycount1 > penawtycount2) {
+            w-wetuwn -1;
+          } ewse {
+            w-wetuwn 0;
           }
         }
       }
     }
   }
 
-  public static final class FacetComparator {
-    private final Comparator<ThriftFacetCount> thriftComparator;
-    private final Comparator<Item> comparator;
+  p-pubwic s-static finaw cwass f-facetcompawatow {
+    p-pwivate finaw compawatow<thwiftfacetcount> thwiftcompawatow;
+    pwivate finaw compawatow<item> c-compawatow;
 
-    private FacetComparator(Comparator<ThriftFacetCount> thriftComparator,
-                            Comparator<Item> comparator) {
-      this.thriftComparator = thriftComparator;
-      this.comparator = comparator;
+    pwivate f-facetcompawatow(compawatow<thwiftfacetcount> thwiftcompawatow, nyaa~~
+                            compawatow<item> compawatow) {
+      this.thwiftcompawatow = t-thwiftcompawatow;
+      this.compawatow = compawatow;
     }
 
-    public Comparator<ThriftFacetCount> getThriftComparator() {
-      return getThriftComparator(false);
+    pubwic compawatow<thwiftfacetcount> g-getthwiftcompawatow() {
+      w-wetuwn getthwiftcompawatow(fawse);
     }
 
-    public Comparator<ThriftFacetCount> getThriftComparator(boolean reverse) {
-      return reverse ? getReverseComparator(thriftComparator) : thriftComparator;
+    p-pubwic compawatow<thwiftfacetcount> getthwiftcompawatow(boowean w-wevewse) {
+      w-wetuwn wevewse ? getwevewsecompawatow(thwiftcompawatow) : t-thwiftcompawatow;
     }
 
-    private Comparator<Item> getComparator(boolean reverse) {
-      return reverse ? getReverseComparator(comparator) : comparator;
+    pwivate compawatow<item> g-getcompawatow(boowean wevewse) {
+      wetuwn wevewse ? getwevewsecompawatow(compawatow) : c-compawatow;
     }
   }
 
-  public static final FacetComparator SIMPLE_COUNT_COMPARATOR = new FacetComparator(
-      (facet1, facet2) -> compareFacetCounts(
-          facet1.weightedCount, facet1.simpleCount, facet1.penaltyCount,
-          facet2.weightedCount, facet2.simpleCount, facet2.penaltyCount,
-          true),
-      (facet1, facet2) -> compareFacetCounts(
-          facet1.getWeightedCount(), facet1.getSimpleCount(), facet1.getPenaltyCount(),
-          facet2.getWeightedCount(), facet2.getSimpleCount(), facet2.getPenaltyCount(),
-          true));
+  pubwic static finaw facetcompawatow s-simpwe_count_compawatow = nyew f-facetcompawatow(
+      (facet1, ^^;; f-facet2) -> compawefacetcounts(
+          facet1.weightedcount, OwO facet1.simpwecount, nyaa~~ f-facet1.penawtycount, UwU
+          facet2.weightedcount, 😳 facet2.simpwecount, 😳 facet2.penawtycount, (ˆ ﻌ ˆ)♡
+          twue),
+      (facet1, (✿oωo) facet2) -> c-compawefacetcounts(
+          f-facet1.getweightedcount(), nyaa~~ f-facet1.getsimpwecount(), ^^ f-facet1.getpenawtycount(), (///ˬ///✿)
+          facet2.getweightedcount(), 😳 facet2.getsimpwecount(), òωó f-facet2.getpenawtycount(), ^^;;
+          t-twue));
 
 
-  public static final FacetComparator WEIGHTED_COUNT_COMPARATOR = new FacetComparator(
-      (facet1, facet2) -> compareFacetCounts(
-          facet1.weightedCount, facet1.simpleCount, facet1.penaltyCount,
-          facet2.weightedCount, facet2.simpleCount, facet2.penaltyCount,
-          false),
-      (facet1, facet2) -> compareFacetCounts(
-          facet1.getWeightedCount(), facet1.getSimpleCount(), facet1.getPenaltyCount(),
-          facet2.getWeightedCount(), facet2.getSimpleCount(), facet2.getPenaltyCount(),
-          false));
+  pubwic static finaw facetcompawatow w-weighted_count_compawatow = nyew facetcompawatow(
+      (facet1, rawr facet2) -> compawefacetcounts(
+          f-facet1.weightedcount, (ˆ ﻌ ˆ)♡ facet1.simpwecount, XD facet1.penawtycount, >_<
+          f-facet2.weightedcount, (˘ω˘) f-facet2.simpwecount, 😳 facet2.penawtycount, o.O
+          f-fawse), (ꈍᴗꈍ)
+      (facet1, rawr x3 f-facet2) -> compawefacetcounts(
+          f-facet1.getweightedcount(), ^^ facet1.getsimpwecount(), OwO facet1.getpenawtycount(), ^^
+          f-facet2.getweightedcount(), :3 facet2.getsimpwecount(), o.O facet2.getpenawtycount(), -.-
+          f-fawse));
 
   /**
-   * Returns the appropriate FacetComparator for the specified sortingMode.
+   * wetuwns the appwopwiate facetcompawatow fow the specified s-sowtingmode.
    */
-  public static FacetComparator getComparator(ThriftFacetEarlybirdSortingMode sortingMode) {
-    switch (sortingMode) {
-      case SORT_BY_WEIGHTED_COUNT:
-        return WEIGHTED_COUNT_COMPARATOR;
-      case SORT_BY_SIMPLE_COUNT:
-      default:
-        return SIMPLE_COUNT_COMPARATOR;
+  p-pubwic s-static facetcompawatow g-getcompawatow(thwiftfaceteawwybiwdsowtingmode s-sowtingmode) {
+    switch (sowtingmode) {
+      c-case sowt_by_weighted_count:
+        wetuwn weighted_count_compawatow;
+      case sowt_by_simpwe_count:
+      d-defauwt:
+        wetuwn s-simpwe_count_compawatow;
     }
   }
 
-  private static <T> Comparator<T> getReverseComparator(final Comparator<T> comparator) {
-    return (t1, t2) -> -comparator.compare(t1, t2);
+  pwivate static <t> compawatow<t> g-getwevewsecompawatow(finaw c-compawatow<t> compawatow) {
+    w-wetuwn (t1, (U ﹏ U) t2) -> -compawatow.compawe(t1, o.O t2);
   }
 
-  static final class Item {
-    private final long[] data;
-    private final int offset;
+  s-static f-finaw cwass item {
+    pwivate finaw w-wong[] data;
+    p-pwivate finaw int offset;
 
-    Item(long[] data, int offset) {
+    i-item(wong[] data, OwO int offset) {
       this.data = data;
-      this.offset = offset;
+      t-this.offset = offset;
     }
 
-    public long getTermId() {
-      return data[offset];
+    p-pubwic wong gettewmid() {
+      wetuwn data[offset];
     }
 
-    public int getSimpleCount() {
-      return (int) data[offset + 1];
+    p-pubwic int getsimpwecount() {
+      w-wetuwn (int) d-data[offset + 1];
     }
 
-    public int getWeightedCount() {
-      return (int) data[offset + 2];
+    pubwic int getweightedcount() {
+      w-wetuwn (int) d-data[offset + 2];
     }
 
-    public int getPenaltyCount() {
-      return itemPenaltyCount(data[offset + 3]);
+    pubwic int getpenawtycount() {
+      w-wetuwn itempenawtycount(data[offset + 3]);
     }
 
-    public int getMaxTweetCred() {
-      return itemMaxTweepCred(data[offset + 3]);
+    pubwic i-int getmaxtweetcwed() {
+      wetuwn itemmaxtweepcwed(data[offset + 3]);
     }
 
-    @Override public int hashCode() {
-      return (int) (31 * getTermId());
+    @ovewwide p-pubwic int hashcode() {
+      w-wetuwn (int) (31 * gettewmid());
     }
 
-    @Override public boolean equals(Object o) {
-      return getTermId() == ((Item) o).getTermId();
+    @ovewwide pubwic boowean equaws(object o) {
+      wetuwn g-gettewmid() == ((item) o-o).gettewmid();
     }
 
   }

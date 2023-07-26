@@ -1,51 +1,51 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.FilteredState.Unavailable.TweetDeleted
-import com.twitter.tweetypie.thriftscala.ConversationControl
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.cowe.fiwtewedstate.unavaiwabwe.tweetdeweted
+i-impowt com.twittew.tweetypie.thwiftscawa.convewsationcontwow
 
 /**
- * This repository loads up the conversation control values for a tweet which controls who can reply
- * to a tweet. Because the conversation control values are stored on the root tweet of a conversation,
- * we need to make sure that the code is able to load the data from the root tweet. To ensure this,
- * no visibility filtering options are set on the query to load the root tweet fields.
+ * t-this wepositowy woads up the convewsation contwow vawues fow a tweet which c-contwows who can wepwy
+ * to a tweet. >w< because t-the convewsation contwow vawues a-awe stowed on the woot tweet of a convewsation, (U ﹏ U)
+ * we nyeed to make s-suwe that the code is abwe to w-woad the data f-fwom the woot tweet. 😳 to ensuwe this, (ˆ ﻌ ˆ)♡
+ * nyo visibiwity fiwtewing options awe set o-on the quewy to woad the woot tweet fiewds. 😳😳😳
  *
- * If visibility filtering was enabled, and the root tweet was filtered for the requesting user,
- * then the conversation control data would not be returned and enforcement would effectively be
- * side-stepped.
+ * if visibiwity fiwtewing was enabwed, (U ﹏ U) a-and the woot tweet was fiwtewed f-fow the w-wequesting usew, (///ˬ///✿)
+ * t-then the convewsation c-contwow data wouwd nyot be wetuwned and e-enfowcement wouwd effectivewy be
+ * side-stepped. 😳
  */
-object ConversationControlRepository {
-  private[this] val log = Logger(getClass)
-  type Type = (TweetId, CacheControl) => Stitch[Option[ConversationControl]]
+o-object convewsationcontwowwepositowy {
+  pwivate[this] vaw wog = woggew(getcwass)
+  type type = (tweetid, 😳 cachecontwow) => s-stitch[option[convewsationcontwow]]
 
-  def apply(repo: TweetRepository.Type, stats: StatsReceiver): Type =
-    (conversationId: TweetId, cacheControl: CacheControl) => {
-      val options = TweetQuery.Options(
-        include = TweetQuery.Include(Set(Tweet.ConversationControlField.id)),
-        // We want the root tweet of a conversation that we're looking up to be
-        // cached with the same policy as the tweet we're looking up.
-        cacheControl = cacheControl,
-        enforceVisibilityFiltering = false,
-        safetyLevel = SafetyLevel.FilterNone
+  def appwy(wepo: t-tweetwepositowy.type, s-stats: statsweceivew): t-type =
+    (convewsationid: tweetid, cachecontwow: cachecontwow) => {
+      vaw options = t-tweetquewy.options(
+        i-incwude = tweetquewy.incwude(set(tweet.convewsationcontwowfiewd.id)), σωσ
+        // w-we w-want the woot tweet of a convewsation t-that we'we wooking up to b-be
+        // cached with the same powicy as the t-tweet we'we wooking up. rawr x3
+        c-cachecontwow = cachecontwow, OwO
+        e-enfowcevisibiwityfiwtewing = f-fawse, /(^•ω•^)
+        safetywevew = safetywevew.fiwtewnone
       )
 
-      repo(conversationId, options)
-        .map(rootTweet => rootTweet.conversationControl)
-        .handle {
-          // We don't know of any case where tweets would return NotFound, but for
-          // for pragmatic reasons, we're opening the conversation for replies
-          // in case a bug causing tweets to be NotFound exists.
-          case NotFound =>
-            stats.counter("tweet_not_found")
-            None
-          // If no root tweet is found, the reply has no conversation controls
-          // this is by design, deleting the root tweet "opens" the conversation
-          case TweetDeleted =>
-            stats.counter("tweet_deleted")
-            None
+      wepo(convewsationid, 😳😳😳 options)
+        .map(woottweet => woottweet.convewsationcontwow)
+        .handwe {
+          // we don't k-know of any c-case whewe tweets wouwd wetuwn n-nyotfound, ( ͡o ω ͡o ) but fow
+          // f-fow pwagmatic weasons, >_< w-we'we opening the convewsation fow wepwies
+          // in case a bug causing t-tweets to be nyotfound exists. >w<
+          case nyotfound =>
+            stats.countew("tweet_not_found")
+            n-nyone
+          // if nyo w-woot tweet is f-found, rawr the wepwy h-has nyo convewsation contwows
+          // t-this i-is by design, d-deweting the woot t-tweet "opens" the convewsation
+          case t-tweetdeweted =>
+            s-stats.countew("tweet_deweted")
+            n-nyone
         }
     }
 }

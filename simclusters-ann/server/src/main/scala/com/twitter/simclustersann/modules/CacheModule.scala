@@ -1,34 +1,34 @@
-package com.twitter.simclustersann.modules
+package com.twittew.simcwustewsann.moduwes
 
-import com.google.inject.Provides
-import com.twitter.finagle.memcached.Client
-import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.inject.TwitterModule
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.annotations.Flag
-import com.twitter.simclustersann.common.FlagNames
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.ClientName
-import com.twitter.storehaus_internal.util.ZkEndPoint
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.twittew.finagwe.memcached.cwient
+i-impowt j-javax.inject.singweton
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.inject.annotations.fwag
+impowt com.twittew.simcwustewsann.common.fwagnames
+impowt c-com.twittew.stowehaus_intewnaw.memcache.memcachestowe
+impowt com.twittew.stowehaus_intewnaw.utiw.cwientname
+i-impowt com.twittew.stowehaus_intewnaw.utiw.zkendpoint
 
-object CacheModule extends TwitterModule {
+object cachemoduwe extends twittewmoduwe {
 
-  @Singleton
-  @Provides
-  def providesCache(
-    @Flag(FlagNames.CacheDest) cacheDest: String,
-    @Flag(FlagNames.CacheTimeout) cacheTimeout: Int,
-    serviceIdentifier: ServiceIdentifier,
-    stats: StatsReceiver
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache_simclusters_ann"),
-      dest = ZkEndPoint(cacheDest),
-      timeout = cacheTimeout.milliseconds,
-      retries = 0,
-      statsReceiver = stats.scope("cache_client"),
-      serviceIdentifier = serviceIdentifier
+  @singweton
+  @pwovides
+  d-def pwovidescache(
+    @fwag(fwagnames.cachedest) cachedest: s-stwing, >_<
+    @fwag(fwagnames.cachetimeout) c-cachetimeout: int, rawr x3
+    sewviceidentifiew: sewviceidentifiew, mya
+    stats: statsweceivew
+  ): cwient =
+    m-memcachestowe.memcachedcwient(
+      name = cwientname("memcache_simcwustews_ann"), nyaa~~
+      dest = zkendpoint(cachedest),
+      timeout = cachetimeout.miwwiseconds, (⑅˘꒳˘)
+      w-wetwies = 0,
+      statsweceivew = s-stats.scope("cache_cwient"), rawr x3
+      s-sewviceidentifiew = s-sewviceidentifiew
     )
 }

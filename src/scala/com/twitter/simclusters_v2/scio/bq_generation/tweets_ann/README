@@ -1,95 +1,95 @@
-To run iikf-tweets-ann-adhoc-job (adhoc):
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-tweets-ann-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-tweets-ann-adhoc-job.d6w \
-  --jar dist/iikf-tweets-ann-adhoc-job.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-03-28" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-tweets-ann-adhoc-job" --ignore-existing
+to wun iikf-tweets-ann-adhoc-job (adhoc):
+bin/d6w c-cweate \
+  ${gcp_pwoject_name}/us-centwaw1/iikf-tweets-ann-adhoc-job \
+  s-swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/tweets_ann/iikf-tweets-ann-adhoc-job.d6w \
+  --jaw d-dist/iikf-tweets-ann-adhoc-job.jaw \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=youw_wdap \
+  --bind=pwofiwe.date="2022-03-28" \
+  --bind=pwofiwe.machine="n2-highmem-4" \
+  --bind=pwofiwe.job_name="iikf-tweets-ann-adhoc-job" --ignowe-existing
 
-To run iikf-hl-8-el-50-tweets-ann-adhoc-job (adhoc):
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-8-el-50-tweets-ann-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-8-el-50-tweets-ann-adhoc-job.d6w \
-  --jar dist/iikf-hl-8-el-50-tweets-ann-adhoc-job.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-03-28" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-8-el-50-tweets-ann-adhoc-job" --ignore-existing
+t-to wun iikf-hw-8-ew-50-tweets-ann-adhoc-job (adhoc):
+b-bin/d6w c-cweate \
+  ${gcp_pwoject_name}/us-centwaw1/iikf-hw-8-ew-50-tweets-ann-adhoc-job \
+  s-swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/tweets_ann/iikf-hw-8-ew-50-tweets-ann-adhoc-job.d6w \
+  --jaw dist/iikf-hw-8-ew-50-tweets-ann-adhoc-job.jaw \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=youw_wdap \
+  --bind=pwofiwe.date="2022-03-28" \
+  --bind=pwofiwe.machine="n2-highmem-4" \
+  --bind=pwofiwe.job_name="iikf-hw-8-ew-50-tweets-ann-adhoc-job" --ignowe-existing
 
-To run mts-consumer-embeddings-tweets-ann-adhoc-job (adhoc)
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/mts-consumer-embeddings-tweets-ann-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/mts-consumer-embeddings-tweets-ann-adhoc-job.d6w \
-  --jar dist/mts-consumer-embeddings-tweets-ann-adhoc-job.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-03-28" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="mts-consumer-embeddings-tweets-ann-adhoc-job" --ignore-existing
+t-to wun mts-consumew-embeddings-tweets-ann-adhoc-job (adhoc)
+bin/d6w cweate \
+  ${gcp_pwoject_name}/us-centwaw1/mts-consumew-embeddings-tweets-ann-adhoc-job \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/tweets_ann/mts-consumew-embeddings-tweets-ann-adhoc-job.d6w \
+  --jaw dist/mts-consumew-embeddings-tweets-ann-adhoc-job.jaw \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=youw_wdap \
+  --bind=pwofiwe.date="2022-03-28" \
+  --bind=pwofiwe.machine="n2-highmem-4" \
+  --bind=pwofiwe.job_name="mts-consumew-embeddings-tweets-ann-adhoc-job" --ignowe-existing
 
 
-To schedule iikf-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-tweets-ann-batch-job"
+to scheduwe iikf-tweets-ann-batch-job (batch)
+b-bin/d6w scheduwe \
+  ${gcp_pwoject_name}/us-centwaw1/iikf-tweets-ann-batch-job \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/tweets_ann/iikf-tweets-ann-batch-job.d6w \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.date="2022-03-26" \
+  --bind=pwofiwe.machine="n2-highmem-4" \
+  --bind=pwofiwe.job_name="iikf-tweets-ann-batch-job"
 
-To schedule iikf-hl-0-el-15-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-0-el-15-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-0-el-15-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-0-el-15-tweets-ann-batch-job"
+t-to scheduwe iikf-hw-0-ew-15-tweets-ann-batch-job (batch)
+bin/d6w s-scheduwe \
+  ${gcp_pwoject_name}/us-centwaw1/iikf-hw-0-ew-15-tweets-ann-batch-job \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/tweets_ann/iikf-hw-0-ew-15-tweets-ann-batch-job.d6w \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.date="2022-03-26" \
+  --bind=pwofiwe.machine="n2-highmem-4" \
+  --bind=pwofiwe.job_name="iikf-hw-0-ew-15-tweets-ann-batch-job"
 
-To schedule iikf-hl-2-el-15-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-2-el-15-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-2-el-15-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-2-el-15-tweets-ann-batch-job"
+to scheduwe iikf-hw-2-ew-15-tweets-ann-batch-job (batch)
+b-bin/d6w scheduwe \
+  ${gcp_pwoject_name}/us-centwaw1/iikf-hw-2-ew-15-tweets-ann-batch-job \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/tweets_ann/iikf-hw-2-ew-15-tweets-ann-batch-job.d6w \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.date="2022-03-26" \
+  --bind=pwofiwe.machine="n2-highmem-4" \
+  --bind=pwofiwe.job_name="iikf-hw-2-ew-15-tweets-ann-batch-job"
 
-To schedule iikf-hl-2-el-50-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-2-el-50-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-2-el-50-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-2-el-50-tweets-ann-batch-job"
+t-to scheduwe i-iikf-hw-2-ew-50-tweets-ann-batch-job (batch)
+bin/d6w scheduwe \
+  ${gcp_pwoject_name}/us-centwaw1/iikf-hw-2-ew-50-tweets-ann-batch-job \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/tweets_ann/iikf-hw-2-ew-50-tweets-ann-batch-job.d6w \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.date="2022-03-26" \
+  --bind=pwofiwe.machine="n2-highmem-4" \
+  --bind=pwofiwe.job_name="iikf-hw-2-ew-50-tweets-ann-batch-job"
 
-To schedule iikf-hl-8-el-50-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-8-el-50-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-8-el-50-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-8-el-50-tweets-ann-batch-job"
+to scheduwe iikf-hw-8-ew-50-tweets-ann-batch-job (batch)
+bin/d6w s-scheduwe \
+  ${gcp_pwoject_name}/us-centwaw1/iikf-hw-8-ew-50-tweets-ann-batch-job \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/tweets_ann/iikf-hw-8-ew-50-tweets-ann-batch-job.d6w \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.date="2022-03-26" \
+  --bind=pwofiwe.machine="n2-highmem-4" \
+  --bind=pwofiwe.job_name="iikf-hw-8-ew-50-tweets-ann-batch-job"
 
-To schedule mts-consumer-embeddings-tweets-ann-batch-job(batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/mts-consumer-embeddings-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/mts-consumer-embeddings-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="mts-consumer-embeddings-tweets-ann-batch-job"
+to scheduwe mts-consumew-embeddings-tweets-ann-batch-job(batch)
+bin/d6w scheduwe \
+  ${gcp_pwoject_name}/us-centwaw1/mts-consumew-embeddings-tweets-ann-batch-job \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/tweets_ann/mts-consumew-embeddings-tweets-ann-batch-job.d6w \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.date="2022-03-26" \
+  --bind=pwofiwe.machine="n2-highmem-4" \
+  --bind=pwofiwe.job_name="mts-consumew-embeddings-tweets-ann-batch-job"
 
 

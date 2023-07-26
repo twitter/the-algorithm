@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.wecent_engagement
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fsname
+i-impowt c-com.twittew.timewines.configapi.pawam
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class RepeatedProfileVisitsFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
-    Seq(
-      RepeatedProfileVisitsParams.IncludeCandidates,
-      RepeatedProfileVisitsParams.UseOnlineDataset,
+@singweton
+c-cwass wepeatedpwofiwevisitsfsconfig @inject() () extends featuweswitchconfig {
+  ovewwide v-vaw booweanfspawams: seq[pawam[boowean] with f-fsname] =
+    seq(
+      wepeatedpwofiwevisitspawams.incwudecandidates, ^^;;
+      w-wepeatedpwofiwevisitspawams.useonwinedataset, >_<
     )
-  override val intFSParams: Seq[FSBoundedParam[Int]] =
-    Seq(
-      RepeatedProfileVisitsParams.RecommendationThreshold,
-      RepeatedProfileVisitsParams.BucketingThreshold,
+  ovewwide vaw intfspawams: seq[fsboundedpawam[int]] =
+    seq(
+      w-wepeatedpwofiwevisitspawams.wecommendationthweshowd, mya
+      wepeatedpwofiwevisitspawams.bucketingthweshowd, mya
     )
 }

@@ -1,44 +1,44 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.twittew.cw_mixew.thwiftjava
+#@namespace scawa c-com.twittew.cw_mixew.thwiftscawa
+#@namespace s-stwato c-com.twittew.cw_mixew
 
 
-// NOTE: DO NOT depend on MetricTags for important ML Features or business logic.
-// MetricTags are meant for stats tracking & debugging purposes ONLY.
-// cr-mixer may change its definitions & how each candidate is tagged without public notice.
-// NOTE: TSPS needs the caller (Home) to specify which signal it uses to make Personalized Topics
-enum MetricTag {
-  // Source Signal Tags
-  TweetFavorite         = 0
-  Retweet               = 1
-  TrafficAttribution    = 2
-  OriginalTweet         = 3
-  Reply                 = 4
-  TweetShare            = 5
+// n-nyote: d-do nyot depend o-on metwictags f-fow impowtant m-mw featuwes ow business wogic. >_<
+// metwictags awe meant fow stats twacking & debugging p-puwposes onwy. >_<
+// cw-mixew may change its d-definitions & how each candidate i-is tagged without pubwic nyotice. (⑅˘꒳˘)
+// nyote: tsps nyeeds the cawwew (home) t-to specify which signaw i-it uses to make p-pewsonawized topics
+enum metwictag {
+  // souwce signaw tags
+  tweetfavowite         = 0
+  w-wetweet               = 1
+  twafficattwibution    = 2
+  owiginawtweet         = 3
+  wepwy                 = 4
+  tweetshawe            = 5
 
-  UserFollow            = 101
-  UserRepeatedProfileVisit = 102
+  u-usewfowwow            = 101
+  usewwepeatedpwofiwevisit = 102
 
-  PushOpenOrNtabClick   = 201
+  p-pushopenowntabcwick   = 201
 
-  HomeTweetClick        = 301
-  HomeVideoView         = 302
+  h-hometweetcwick        = 301
+  h-homevideoview         = 302
 
-  // sim engine types
-  SimClustersANN        = 401
-  TweetBasedUserTweetGraph    = 402
-  TweetBasedTwHINANN          = 403
-  ConsumerEmbeddingBasedTwHINANN = 404
+  // s-sim engine types
+  simcwustewsann        = 401
+  tweetbasedusewtweetgwaph    = 402
+  tweetbasedtwhinann          = 403
+  c-consumewembeddingbasedtwhinann = 404
 
 
   // combined engine types
-  UserInterestedIn      = 501 // Will deprecate soon
-  LookalikeUTG          = 502
-  TwhinCollabFilter     = 503
+  usewintewestedin      = 501 // w-wiww depwecate soon
+  wookawikeutg          = 502
+  twhincowwabfiwtew     = 503
 
-  // Offline Twice
-  TwiceUserId           = 601
+  // offwine twice
+  twiceusewid           = 601
 
-  // Other Metric Tags
-  RequestHealthFilterPushOpenBasedTweetEmbedding = 701
-} (persisted='true', hasPersonalData='true')
+  // othew m-metwic tags
+  wequestheawthfiwtewpushopenbasedtweetembedding = 701
+} (pewsisted='twue', /(^•ω•^) h-haspewsonawdata='twue')

@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.service.transformer_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.twansfowmew_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.transformer.Transformer
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.twansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt c-com.twittew.stitch.awwow
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class TransformerExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
-  def arrow[In, Out](
-    transformer: Transformer[In, Out],
-    context: Executor.Context
-  ): Arrow[In, Out] = {
-    wrapComponentWithExecutorBookkeeping(
-      context,
-      transformer.identifier
-    )(Arrow.map(transformer.transform))
+@singweton
+cwass twansfowmewexecutow @inject() (ovewwide vaw statsweceivew: statsweceivew) extends executow {
+  d-def awwow[in, -.- out](
+    twansfowmew: twansfowmew[in, ^^;; o-out], >_<
+    context: e-executow.context
+  ): awwow[in, mya out] = {
+    wwapcomponentwithexecutowbookkeeping(
+      context, mya
+      t-twansfowmew.identifiew
+    )(awwow.map(twansfowmew.twansfowm))
   }
 }

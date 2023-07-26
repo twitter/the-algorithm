@@ -1,73 +1,73 @@
-package com.twitter.home_mixer
+package com.twittew.home_mixew
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.home_mixer.{thriftscala => st}
-import com.twitter.util.logging.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.product_mixer.core.{thriftscala => pt}
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.thwift.cwientid
+i-impowt c-com.twittew.finatwa.thwift.wouting.thwiftwawmup
+i-impowt com.twittew.home_mixew.{thwiftscawa => st}
+i-impowt com.twittew.utiw.wogging.wogging
+i-impowt c-com.twittew.inject.utiws.handwew
+i-impowt com.twittew.pwoduct_mixew.cowe.{thwiftscawa => p-pt}
+impowt com.twittew.scwooge.wequest
+impowt com.twittew.scwooge.wesponse
+impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+i-impowt com.twittew.utiw.twy
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class HomeMixerThriftServerWarmupHandler @Inject() (warmup: ThriftWarmup)
-    extends Handler
-    with Logging {
+@singweton
+cwass homemixewthwiftsewvewwawmuphandwew @inject() (wawmup: t-thwiftwawmup)
+    extends handwew
+    with wogging {
 
-  private val clientId = ClientId("thrift-warmup-client")
+  pwivate vaw c-cwientid = cwientid("thwift-wawmup-cwient")
 
-  def handle(): Unit = {
-    val testIds = Seq(1, 2, 3)
-    try {
-      clientId.asCurrent {
-        testIds.foreach { id =>
-          val warmupReq = warmupQuery(id)
-          info(s"Sending warm-up request to service with query: $warmupReq")
-          warmup.sendRequest(
-            method = st.HomeMixer.GetUrtResponse,
-            req = Request(st.HomeMixer.GetUrtResponse.Args(warmupReq)))(assertWarmupResponse)
+  def handwe(): unit = {
+    v-vaw t-testids = seq(1, :3 2, 3)
+    twy {
+      cwientid.ascuwwent {
+        testids.foweach { id =>
+          v-vaw wawmupweq = wawmupquewy(id)
+          info(s"sending wawm-up wequest to sewvice with quewy: $wawmupweq")
+          w-wawmup.sendwequest(
+            method = s-st.homemixew.getuwtwesponse, 😳😳😳
+            weq = w-wequest(st.homemixew.getuwtwesponse.awgs(wawmupweq)))(assewtwawmupwesponse)
         }
       }
-    } catch {
-      case e: Throwable => error(e.getMessage, e)
+    } c-catch {
+      c-case e: thwowabwe => ewwow(e.getmessage, (˘ω˘) e)
     }
-    info("Warm-up done.")
+    info("wawm-up d-done.")
   }
 
-  private def warmupQuery(userId: Long): st.HomeMixerRequest = {
-    val clientContext = pt.ClientContext(
-      userId = Some(userId),
-      guestId = None,
-      appId = Some(12345L),
-      ipAddress = Some("0.0.0.0"),
-      userAgent = Some("FAKE_USER_AGENT_FOR_WARMUPS"),
-      countryCode = Some("US"),
-      languageCode = Some("en"),
-      isTwoffice = None,
-      userRoles = None,
-      deviceId = Some("FAKE_DEVICE_ID_FOR_WARMUPS")
+  pwivate def wawmupquewy(usewid: w-wong): st.homemixewwequest = {
+    vaw cwientcontext = pt.cwientcontext(
+      usewid = s-some(usewid), ^^
+      guestid = n-nyone, :3
+      appid = s-some(12345w), -.-
+      i-ipaddwess = some("0.0.0.0"), 😳
+      usewagent = some("fake_usew_agent_fow_wawmups"), mya
+      c-countwycode = s-some("us"), (˘ω˘)
+      wanguagecode = s-some("en"), >_<
+      i-istwoffice = nyone, -.-
+      usewwowes = n-nyone, 🥺
+      deviceid = s-some("fake_device_id_fow_wawmups")
     )
-    st.HomeMixerRequest(
-      clientContext = clientContext,
-      product = st.Product.Following,
-      productContext = Some(st.ProductContext.Following(st.Following())),
-      maxResults = Some(3)
+    st.homemixewwequest(
+      cwientcontext = cwientcontext, (U ﹏ U)
+      pwoduct = s-st.pwoduct.fowwowing, >w<
+      pwoductcontext = s-some(st.pwoductcontext.fowwowing(st.fowwowing())), mya
+      maxwesuwts = some(3)
     )
   }
 
-  private def assertWarmupResponse(
-    result: Try[Response[st.HomeMixer.GetUrtResponse.SuccessType]]
-  ): Unit = {
-    result match {
-      case Return(_) => // ok
-      case Throw(exception) =>
-        warn("Error performing warm-up request.")
-        error(exception.getMessage, exception)
+  p-pwivate def assewtwawmupwesponse(
+    w-wesuwt: twy[wesponse[st.homemixew.getuwtwesponse.successtype]]
+  ): unit = {
+    wesuwt match {
+      case wetuwn(_) => // ok
+      case thwow(exception) =>
+        w-wawn("ewwow p-pewfowming wawm-up wequest.")
+        e-ewwow(exception.getmessage, >w< e-exception)
     }
   }
 }

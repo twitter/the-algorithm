@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.audio_space
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.audio_space
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space.AudioSpaceItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.audio_space.audiospaceitem
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class AudioSpaceItemMarshaller @Inject() () {
+@singweton
+c-cwass audiospaceitemmawshawwew @inject() () {
 
-  def apply(audioSpaceItem: AudioSpaceItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.AudioSpace(
-      urt.AudioSpace(
-        id = audioSpaceItem.id
+  d-def appwy(audiospaceitem: audiospaceitem): uwt.timewineitemcontent =
+    uwt.timewineitemcontent.audiospace(
+      uwt.audiospace(
+        i-id = audiospaceitem.id
       )
     )
 }

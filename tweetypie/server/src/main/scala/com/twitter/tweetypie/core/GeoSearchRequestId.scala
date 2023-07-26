@@ -1,3 +1,3 @@
-package com.twitter.tweetypie.core
+package com.twittew.tweetypie.cowe
 
-case class GeoSearchRequestId(requestID: String)
+case cwass geoseawchwequestid(wequestid: s-stwing)

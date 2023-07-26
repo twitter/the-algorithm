@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.{Injection => Serializer}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ConversationTweetClientEventDetailsBuilder.ControllerDataSerializer
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.suggests.controller_data.home_tweets.thriftscala.HomeTweetsControllerData
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.home_tweets.v1.thriftscala.{
-  HomeTweetsControllerData => HomeTweetsControllerDataV1
+impowt com.twittew.bijection.scwooge.binawyscawacodec
+i-impowt c-com.twittew.bijection.base64stwing
+i-impowt com.twittew.bijection.{injection => s-sewiawizew}
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata.convewsationtweetcwienteventdetaiwsbuiwdew.contwowwewdatasewiawizew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventdetaiwsbuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.timewinesdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.suggests.contwowwew_data.home_tweets.thwiftscawa.hometweetscontwowwewdata
+impowt c-com.twittew.suggests.contwowwew_data.thwiftscawa.contwowwewdata
+impowt com.twittew.suggests.contwowwew_data.home_tweets.v1.thwiftscawa.{
+  h-hometweetscontwowwewdata => hometweetscontwowwewdatav1
 }
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
+impowt com.twittew.suggests.contwowwew_data.v2.thwiftscawa.{contwowwewdata => contwowwewdatav2}
 
-object ConversationTweetClientEventDetailsBuilder {
-  implicit val ByteSerializer: Serializer[ControllerData, Array[Byte]] =
-    BinaryScalaCodec(ControllerData)
+o-object convewsationtweetcwienteventdetaiwsbuiwdew {
+  impwicit v-vaw bytesewiawizew: s-sewiawizew[contwowwewdata, 😳😳😳 awway[byte]] =
+    binawyscawacodec(contwowwewdata)
 
-  val ControllerDataSerializer: Serializer[ControllerData, String] =
-    Serializer.connect[ControllerData, Array[Byte], Base64String, String]
+  vaw contwowwewdatasewiawizew: s-sewiawizew[contwowwewdata, mya stwing] =
+    sewiawizew.connect[contwowwewdata, 😳 awway[byte], -.- base64stwing, s-stwing]
 }
 
-case class ConversationTweetClientEventDetailsBuilder[-Query <: PipelineQuery](
-  injectionType: Option[String])
-    extends BaseClientEventDetailsBuilder[Query, BaseTweetCandidate] {
+case cwass convewsationtweetcwienteventdetaiwsbuiwdew[-quewy <: p-pipewinequewy](
+  injectiontype: o-option[stwing])
+    e-extends basecwienteventdetaiwsbuiwdew[quewy, 🥺 basetweetcandidate] {
 
-  override def apply(
-    query: Query,
-    tweetCandidate: BaseTweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails] =
-    Some(
-      ClientEventDetails(
-        conversationDetails = None,
-        timelinesDetails = Some(
-          TimelinesDetails(
-            injectionType = injectionType,
-            controllerData = Some(buildControllerData(query.getUserOrGuestId)),
-            sourceData = None)),
-        articleDetails = None,
-        liveEventDetails = None,
-        commerceDetails = None
+  o-ovewwide def appwy(
+    quewy: quewy, o.O
+    t-tweetcandidate: basetweetcandidate,
+    candidatefeatuwes: f-featuwemap
+  ): option[cwienteventdetaiws] =
+    some(
+      cwienteventdetaiws(
+        convewsationdetaiws = nyone, /(^•ω•^)
+        t-timewinesdetaiws = some(
+          t-timewinesdetaiws(
+            i-injectiontype = i-injectiontype, nyaa~~
+            contwowwewdata = some(buiwdcontwowwewdata(quewy.getusewowguestid)), nyaa~~
+            souwcedata = n-nyone)), :3
+        a-awticwedetaiws = nyone, 😳😳😳
+        w-wiveeventdetaiws = n-nyone, (˘ω˘)
+        commewcedetaiws = n-nyone
       ))
 
-  private def buildControllerData(traceId: Option[Long]): String =
-    ControllerDataSerializer(
-      ControllerData.V2(
-        ControllerDataV2.HomeTweets(
-          HomeTweetsControllerData.V1(
-            HomeTweetsControllerDataV1(
-              tweetTypesBitmap = 0L,
-              traceId = traceId,
+  pwivate d-def buiwdcontwowwewdata(twaceid: option[wong]): stwing =
+    c-contwowwewdatasewiawizew(
+      contwowwewdata.v2(
+        c-contwowwewdatav2.hometweets(
+          hometweetscontwowwewdata.v1(
+            h-hometweetscontwowwewdatav1(
+              t-tweettypesbitmap = 0w, ^^
+              twaceid = twaceid, :3
             )
           )
         )

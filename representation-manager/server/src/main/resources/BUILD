@@ -1,7 +1,7 @@
-resources(
-    sources = [
-        "*.xml",
-        "config/*.yml",
+wesouwces(
+    souwces = [
+        "*.xmw", >_<
+        "config/*.ymw", (ꈍᴗꈍ)
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
 )

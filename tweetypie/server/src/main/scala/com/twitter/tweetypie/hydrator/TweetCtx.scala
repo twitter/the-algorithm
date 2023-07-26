@@ -1,90 +1,90 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie
-import com.twitter.tweetypie.core.TweetData
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
-import org.apache.thrift.protocol.TField
+impowt c-com.twittew.tweetypie
+i-impowt c-com.twittew.tweetypie.cowe.tweetdata
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.thwiftscawa._
+i-impowt o-owg.apache.thwift.pwotocow.tfiewd
 
 /**
- * Encapsulates basic, immutable details about a tweet to be hydrated, along with the
- * `TweetQuery.Options`.  Only tweet data that are not affected by hydration should be
- * exposed here, as a single `TweetCtx` instance should be usable for the entire hydration
- * of a tweet.
+ * encapsuwates basic, (⑅˘꒳˘) immutabwe detaiws about a tweet t-to be hydwated, XD awong with the
+ * `tweetquewy.options`. -.-  onwy t-tweet data that awe nyot affected b-by hydwation shouwd be
+ * exposed hewe, as a singwe `tweetctx` instance shouwd b-be usabwe fow the entiwe hydwation
+ * o-of a tweet. :3
  */
-trait TweetCtx {
-  def opts: TweetQuery.Options
+t-twait tweetctx {
+  def opts: tweetquewy.options
 
-  def tweetId: TweetId
-  def userId: UserId
-  def text: String
-  def createdAt: Time
-  def createdVia: String
-  def isRetweet: Boolean
-  def isReply: Boolean
-  def isSelfReply: Boolean
-  def sourceUserId: Option[UserId]
-  def sourceTweetId: Option[TweetId]
-  def inReplyToTweetId: Option[TweetId]
-  def geoCoordinates: Option[GeoCoordinates]
-  def placeId: Option[String]
-  def hasTakedown: Boolean
-  def quotedTweet: Option[QuotedTweet]
+  def tweetid: tweetid
+  d-def usewid: usewid
+  def text: stwing
+  def cweatedat: time
+  def cweatedvia: stwing
+  d-def iswetweet: boowean
+  d-def iswepwy: boowean
+  d-def issewfwepwy: b-boowean
+  d-def souwceusewid: option[usewid]
+  def souwcetweetid: o-option[tweetid]
+  def inwepwytotweetid: option[tweetid]
+  d-def geocoowdinates: option[geocoowdinates]
+  def pwaceid: option[stwing]
+  def hastakedown: boowean
+  def quotedtweet: o-option[quotedtweet]
 
-  def completedHydrations: Set[HydrationType]
+  def compwetedhydwations: s-set[hydwationtype]
 
-  def isInitialInsert: Boolean = opts.cause.initialInsert(tweetId)
+  d-def isinitiawinsewt: b-boowean = opts.cause.initiawinsewt(tweetid)
 
-  def tweetFieldRequested(field: TField): Boolean = tweetFieldRequested(field.id)
-  def tweetFieldRequested(fieldId: FieldId): Boolean = opts.include.tweetFields.contains(fieldId)
+  def tweetfiewdwequested(fiewd: tfiewd): boowean = tweetfiewdwequested(fiewd.id)
+  d-def tweetfiewdwequested(fiewdid: f-fiewdid): boowean = opts.incwude.tweetfiewds.contains(fiewdid)
 
-  def mediaFieldRequested(field: TField): Boolean = mediaFieldRequested(field.id)
-  def mediaFieldRequested(fieldId: FieldId): Boolean = opts.include.mediaFields.contains(fieldId)
+  d-def mediafiewdwequested(fiewd: t-tfiewd): boowean = mediafiewdwequested(fiewd.id)
+  d-def mediafiewdwequested(fiewdid: fiewdid): b-boowean = opts.incwude.mediafiewds.contains(fiewdid)
 }
 
-object TweetCtx {
-  def from(td: TweetData, opts: TweetQuery.Options): TweetCtx = FromTweetData(td, opts)
+object t-tweetctx {
+  def fwom(td: tweetdata, nyaa~~ o-opts: tweetquewy.options): t-tweetctx = f-fwomtweetdata(td, 😳 opts)
 
-  trait Proxy extends TweetCtx {
-    protected def underlyingTweetCtx: TweetCtx
+  twait pwoxy extends tweetctx {
+    pwotected def undewwyingtweetctx: tweetctx
 
-    def opts: TweetQuery.Options = underlyingTweetCtx.opts
-    def tweetId: TweetId = underlyingTweetCtx.tweetId
-    def userId: UserId = underlyingTweetCtx.userId
-    def text: String = underlyingTweetCtx.text
-    def createdAt: Time = underlyingTweetCtx.createdAt
-    def createdVia: String = underlyingTweetCtx.createdVia
-    def isRetweet: Boolean = underlyingTweetCtx.isRetweet
-    def isReply: Boolean = underlyingTweetCtx.isReply
-    def isSelfReply: Boolean = underlyingTweetCtx.isSelfReply
-    def sourceUserId: Option[UserId] = underlyingTweetCtx.sourceUserId
-    def sourceTweetId: Option[TweetId] = underlyingTweetCtx.sourceTweetId
-    def inReplyToTweetId: Option[TweetId] = underlyingTweetCtx.inReplyToTweetId
-    def geoCoordinates: Option[GeoCoordinates] = underlyingTweetCtx.geoCoordinates
-    def placeId: Option[String] = underlyingTweetCtx.placeId
-    def hasTakedown: Boolean = underlyingTweetCtx.hasTakedown
-    def completedHydrations: Set[HydrationType] = underlyingTweetCtx.completedHydrations
-    def quotedTweet: Option[QuotedTweet] = underlyingTweetCtx.quotedTweet
+    def opts: tweetquewy.options = u-undewwyingtweetctx.opts
+    d-def tweetid: tweetid = u-undewwyingtweetctx.tweetid
+    def u-usewid: usewid = u-undewwyingtweetctx.usewid
+    def text: stwing = undewwyingtweetctx.text
+    def cweatedat: t-time = undewwyingtweetctx.cweatedat
+    def cweatedvia: stwing = undewwyingtweetctx.cweatedvia
+    def iswetweet: b-boowean = undewwyingtweetctx.iswetweet
+    def i-iswepwy: boowean = u-undewwyingtweetctx.iswepwy
+    d-def issewfwepwy: boowean = undewwyingtweetctx.issewfwepwy
+    d-def souwceusewid: o-option[usewid] = u-undewwyingtweetctx.souwceusewid
+    d-def souwcetweetid: option[tweetid] = undewwyingtweetctx.souwcetweetid
+    d-def inwepwytotweetid: o-option[tweetid] = u-undewwyingtweetctx.inwepwytotweetid
+    d-def geocoowdinates: o-option[geocoowdinates] = undewwyingtweetctx.geocoowdinates
+    def pwaceid: option[stwing] = undewwyingtweetctx.pwaceid
+    d-def hastakedown: boowean = undewwyingtweetctx.hastakedown
+    def compwetedhydwations: set[hydwationtype] = undewwyingtweetctx.compwetedhydwations
+    def quotedtweet: o-option[quotedtweet] = undewwyingtweetctx.quotedtweet
   }
 
-  private case class FromTweetData(td: TweetData, opts: TweetQuery.Options) extends TweetCtx {
-    private val tweet = td.tweet
-    def tweetId: MediaId = tweet.id
-    def userId: UserId = getUserId(tweet)
-    def text: String = getText(tweet)
-    def createdAt: Time = getTimestamp(tweet)
-    def createdVia: String = TweetLenses.createdVia.get(tweet)
-    def isRetweet: Boolean = getShare(tweet).isDefined
-    def isSelfReply: Boolean = tweetypie.isSelfReply(tweet)
-    def isReply: Boolean = getReply(tweet).isDefined
-    def sourceUserId: Option[MediaId] = getShare(tweet).map(_.sourceUserId)
-    def sourceTweetId: Option[MediaId] = getShare(tweet).map(_.sourceStatusId)
-    def inReplyToTweetId: Option[MediaId] = getReply(tweet).flatMap(_.inReplyToStatusId)
-    def geoCoordinates: Option[GeoCoordinates] = TweetLenses.geoCoordinates.get(tweet)
-    def placeId: Option[String] = TweetLenses.placeId.get(tweet)
-    def hasTakedown: Boolean = TweetLenses.hasTakedown(tweet)
-    def completedHydrations: Set[HydrationType] = td.completedHydrations
-    def quotedTweet: Option[QuotedTweet] = getQuotedTweet(tweet)
+  pwivate case cwass fwomtweetdata(td: t-tweetdata, (⑅˘꒳˘) o-opts: tweetquewy.options) e-extends tweetctx {
+    pwivate vaw t-tweet = td.tweet
+    def tweetid: m-mediaid = tweet.id
+    d-def usewid: usewid = getusewid(tweet)
+    def text: stwing = gettext(tweet)
+    def c-cweatedat: time = gettimestamp(tweet)
+    d-def cweatedvia: stwing = t-tweetwenses.cweatedvia.get(tweet)
+    d-def iswetweet: boowean = getshawe(tweet).isdefined
+    d-def issewfwepwy: b-boowean = tweetypie.issewfwepwy(tweet)
+    def i-iswepwy: boowean = g-getwepwy(tweet).isdefined
+    def souwceusewid: option[mediaid] = getshawe(tweet).map(_.souwceusewid)
+    def s-souwcetweetid: o-option[mediaid] = g-getshawe(tweet).map(_.souwcestatusid)
+    def i-inwepwytotweetid: o-option[mediaid] = getwepwy(tweet).fwatmap(_.inwepwytostatusid)
+    d-def geocoowdinates: option[geocoowdinates] = tweetwenses.geocoowdinates.get(tweet)
+    def pwaceid: option[stwing] = t-tweetwenses.pwaceid.get(tweet)
+    d-def hastakedown: boowean = tweetwenses.hastakedown(tweet)
+    d-def compwetedhydwations: s-set[hydwationtype] = td.compwetedhydwations
+    def quotedtweet: option[quotedtweet] = g-getquotedtweet(tweet)
   }
 }

@@ -1,37 +1,37 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.online.{FeatureStoreClient, FeatureStoreRequest}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.prediction.common.adapters.TimelinesAdapterBase
-import com.twitter.util.Future
-import scala.collection.JavaConverters._
+impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.featuwestowe.wib.usewid
+i-impowt com.twittew.mw.featuwestowe.wib.data.pwedictionwecowd
+i-impowt com.twittew.mw.featuwestowe.wib.entity.entity
+i-impowt c-com.twittew.mw.featuwestowe.wib.onwine.{featuwestowecwient, (⑅˘꒳˘) f-featuwestowewequest}
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.timewines.pwediction.common.adaptews.timewinesadaptewbase
+impowt com.twittew.utiw.futuwe
+i-impowt scawa.cowwection.javaconvewtews._
 
-class UserFeaturesReadableStore(
-  featureStoreClient: FeatureStoreClient,
-  userEntity: Entity[UserId],
-  userFeaturesAdapter: TimelinesAdapterBase[PredictionRecord])
-    extends ReadableStore[Set[Long], DataRecord] {
+cwass usewfeatuwesweadabwestowe(
+  f-featuwestowecwient: featuwestowecwient, (///ˬ///✿)
+  u-usewentity: entity[usewid], 😳😳😳
+  usewfeatuwesadaptew: timewinesadaptewbase[pwedictionwecowd])
+    extends weadabwestowe[set[wong], 🥺 d-datawecowd] {
 
-  override def multiGet[K <: Set[Long]](keys: Set[K]): Map[K, Future[Option[DataRecord]]] = {
-    val orderedKeys = keys.toSeq
-    val featureStoreRequests: Seq[FeatureStoreRequest] = orderedKeys.map { key: Set[Long] =>
-      FeatureStoreRequest(
-        entityIds = key.map(userId => userEntity.withId(UserId(userId))).toSeq
+  ovewwide def muwtiget[k <: s-set[wong]](keys: s-set[k]): map[k, mya futuwe[option[datawecowd]]] = {
+    vaw owdewedkeys = keys.toseq
+    vaw featuwestowewequests: s-seq[featuwestowewequest] = owdewedkeys.map { key: set[wong] =>
+      featuwestowewequest(
+        entityids = k-key.map(usewid => usewentity.withid(usewid(usewid))).toseq
       )
     }
-    val predictionRecordsFut: Future[Seq[PredictionRecord]] = featureStoreClient(
-      featureStoreRequests)
+    v-vaw pwedictionwecowdsfut: f-futuwe[seq[pwedictionwecowd]] = f-featuwestowecwient(
+      f-featuwestowewequests)
 
-    orderedKeys.zipWithIndex.map {
-      case (userId, index) =>
-        val dataRecordFutOpt = predictionRecordsFut.map { predictionRecords =>
-          userFeaturesAdapter.adaptToDataRecords(predictionRecords(index)).asScala.headOption
+    owdewedkeys.zipwithindex.map {
+      case (usewid, 🥺 i-index) =>
+        vaw datawecowdfutopt = pwedictionwecowdsfut.map { p-pwedictionwecowds =>
+          usewfeatuwesadaptew.adapttodatawecowds(pwedictionwecowds(index)).asscawa.headoption
         }
-        (userId, dataRecordFutOpt)
-    }.toMap
+        (usewid, >_< datawecowdfutopt)
+    }.tomap
   }
 }

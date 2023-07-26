@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.offwine_aggwegates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion.CombineCountsPolicy
-import com.twitter.timelines.prediction.common.adapters.TimelinesIRecordAdapter
+impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.mw.api.wichdatawecowd
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.convewsion.combinecountspowicy
+i-impowt com.twittew.timewines.pwediction.common.adaptews.timewinesiwecowdadaptew
 
-class SparseAggregatesToDenseAdapter(policy: CombineCountsPolicy)
-    extends TimelinesIRecordAdapter[Seq[DataRecord]] {
+c-cwass spawseaggwegatestodenseadaptew(powicy: c-combinecountspowicy)
+    e-extends timewinesiwecowdadaptew[seq[datawecowd]] {
 
-  override def setFeatures(input: Seq[DataRecord], mutableDataRecord: RichDataRecord): Unit =
-    policy.defaultMergeRecord(mutableDataRecord.getRecord, input.toList)
+  ovewwide def setfeatuwes(input: seq[datawecowd], (U ᵕ U❁) mutabwedatawecowd: w-wichdatawecowd): unit =
+    powicy.defauwtmewgewecowd(mutabwedatawecowd.getwecowd, -.- i-input.towist)
 
-  override val getFeatureContext: FeatureContext =
-    new FeatureContext(policy.outputFeaturesPostMerge.toSeq: _*)
+  ovewwide v-vaw getfeatuwecontext: featuwecontext =
+    nyew featuwecontext(powicy.outputfeatuwespostmewge.toseq: _*)
 }

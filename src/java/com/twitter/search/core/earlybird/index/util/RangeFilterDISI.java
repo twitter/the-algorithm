@@ -1,58 +1,58 @@
-package com.twitter.search.core.earlybird.index.util;
+package com.twittew.seawch.cowe.eawwybiwd.index.utiw;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.search.DocIdSetIterator;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt o-owg.apache.wucene.seawch.docidsetitewatow;
 
 /**
- * A doc id set iterator that iterates over a filtered set of ids from firstId inclusive to lastId
- * inclusive.
+ * a-a doc id s-set itewatow that i-itewates ovew a-a fiwtewed set o-of ids fwom fiwstid incwusive to wastid
+ * incwusive. o.O
  */
-public class RangeFilterDISI extends DocIdSetIterator {
-  private final RangeDISI delegate;
+pubwic cwass wangefiwtewdisi e-extends docidsetitewatow {
+  pwivate finaw wangedisi dewegate;
 
-  public RangeFilterDISI(LeafReader reader) throws IOException {
-    this(reader, 0, reader.maxDoc() - 1);
+  p-pubwic wangefiwtewdisi(weafweadew w-weadew) thwows ioexception {
+    this(weadew, ( ͡o ω ͡o ) 0, (U ﹏ U) weadew.maxdoc() - 1);
   }
 
-  public RangeFilterDISI(LeafReader reader, int smallestDocID, int largestDocID)
-      throws IOException {
-    this.delegate = new RangeDISI(reader, smallestDocID, largestDocID);
+  p-pubwic wangefiwtewdisi(weafweadew w-weadew, (///ˬ///✿) i-int smowestdocid, >w< int wawgestdocid)
+      thwows ioexception {
+    this.dewegate = n-nyew wangedisi(weadew, rawr smowestdocid, mya wawgestdocid);
   }
 
-  @Override
-  public int docID() {
-    return delegate.docID();
+  @ovewwide
+  pubwic int docid() {
+    w-wetuwn dewegate.docid();
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    delegate.nextDoc();
-    return nextValidDoc();
+  @ovewwide
+  pubwic int nyextdoc() t-thwows ioexception {
+    d-dewegate.nextdoc();
+    w-wetuwn n-nyextvawiddoc();
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    delegate.advance(target);
-    return nextValidDoc();
+  @ovewwide
+  pubwic int advance(int tawget) t-thwows ioexception {
+    dewegate.advance(tawget);
+    wetuwn n-nyextvawiddoc();
   }
 
-  private int nextValidDoc() throws IOException {
-    int doc = delegate.docID();
-    while (doc != NO_MORE_DOCS && !shouldReturnDoc()) {
-      doc = delegate.nextDoc();
+  pwivate int nyextvawiddoc() thwows ioexception {
+    int doc = dewegate.docid();
+    w-whiwe (doc != nyo_mowe_docs && !shouwdwetuwndoc()) {
+      d-doc = dewegate.nextdoc();
     }
-    return doc;
+    w-wetuwn d-doc;
   }
 
-  @Override
-  public long cost() {
-    return delegate.cost();
+  @ovewwide
+  pubwic wong cost() {
+    wetuwn dewegate.cost();
   }
 
-  // Override this method to add additional filters. Should return true if the current doc is OK.
-  protected boolean shouldReturnDoc() throws IOException {
-    return true;
+  // o-ovewwide t-this method to add additionaw fiwtews. ^^ s-shouwd wetuwn t-twue if the cuwwent doc is o-ok. 😳😳😳
+  pwotected boowean shouwdwetuwndoc() t-thwows ioexception {
+    wetuwn twue;
   }
 }

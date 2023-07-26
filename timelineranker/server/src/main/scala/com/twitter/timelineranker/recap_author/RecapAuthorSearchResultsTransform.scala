@@ -1,69 +1,69 @@
-package com.twitter.timelineranker.recap_author
+package com.twittew.timewinewankew.wecap_authow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.model.TweetIdRange
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.relevance_search.SearchClient.TweetTypes
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt c-com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt com.twittew.timewinewankew.modew.tweetidwange
+i-impowt c-com.twittew.timewines.cwients.wewevance_seawch.seawchcwient
+i-impowt com.twittew.timewines.cwients.wewevance_seawch.seawchcwient.tweettypes
+impowt com.twittew.timewines.modew.usewid
+impowt com.twittew.utiw.futuwe
 
 /**
- * Fetch recap results based on an author id set passed into the query.
- * Calls into the same search method as Recap, but uses the authorIds instead of the SGS-provided followedIds.
+ * fetch wecap wesuwts b-based on an authow id set passed into the quewy. (✿oωo)
+ * c-cawws into the same seawch m-method as wecap, ʘwʘ but uses the authowids instead of the sgs-pwovided f-fowwowedids. (ˆ ﻌ ˆ)♡
  */
-class RecapAuthorSearchResultsTransform(
-  searchClient: SearchClient,
-  maxCountProvider: DependencyProvider[Int],
-  relevanceOptionsMaxHitsToProcessProvider: DependencyProvider[Int],
-  enableSettingTweetTypesWithTweetKindOptionProvider: DependencyProvider[Boolean],
-  statsReceiver: StatsReceiver,
-  logSearchDebugInfo: Boolean = false)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
-  private[this] val numInputAuthorsStat = statsReceiver.stat("numInputAuthors")
-  private[this] val excludedTweetIdsStat = statsReceiver.stat("excludedTweetIds")
+cwass wecapauthowseawchwesuwtstwansfowm(
+  s-seawchcwient: s-seawchcwient, 😳😳😳
+  maxcountpwovidew: dependencypwovidew[int], :3
+  wewevanceoptionsmaxhitstopwocesspwovidew: dependencypwovidew[int], OwO
+  e-enabwesettingtweettypeswithtweetkindoptionpwovidew: dependencypwovidew[boowean], (U ﹏ U)
+  statsweceivew: statsweceivew, >w<
+  wogseawchdebuginfo: b-boowean = fawse)
+    extends f-futuweawwow[candidateenvewope, (U ﹏ U) c-candidateenvewope] {
+  p-pwivate[this] v-vaw maxcountstat = statsweceivew.stat("maxcount")
+  pwivate[this] v-vaw nyuminputauthowsstat = statsweceivew.stat("numinputauthows")
+  pwivate[this] v-vaw excwudedtweetidsstat = statsweceivew.stat("excwudedtweetids")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = maxCountProvider(envelope.query)
-    maxCountStat.add(maxCount)
+  ovewwide def appwy(envewope: candidateenvewope): futuwe[candidateenvewope] = {
+    vaw maxcount = m-maxcountpwovidew(envewope.quewy)
+    maxcountstat.add(maxcount)
 
-    val authorIds = envelope.query.authorIds.getOrElse(Seq.empty[UserId])
-    numInputAuthorsStat.add(authorIds.size)
+    v-vaw authowids = e-envewope.quewy.authowids.getowewse(seq.empty[usewid])
+    n-nyuminputauthowsstat.add(authowids.size)
 
-    val excludedTweetIdsOpt = envelope.query.excludedTweetIds
-    excludedTweetIdsOpt.map { excludedTweetIds => excludedTweetIdsStat.add(excludedTweetIds.size) }
+    vaw excwudedtweetidsopt = envewope.quewy.excwudedtweetids
+    excwudedtweetidsopt.map { excwudedtweetids => e-excwudedtweetidsstat.add(excwudedtweetids.size) }
 
-    val tweetIdRange = envelope.query.range
-      .map(TweetIdRange.fromTimelineRange)
-      .getOrElse(TweetIdRange.default)
+    v-vaw tweetidwange = envewope.quewy.wange
+      .map(tweetidwange.fwomtimewinewange)
+      .getowewse(tweetidwange.defauwt)
 
-    val beforeTweetIdExclusive = tweetIdRange.toId
-    val afterTweetIdExclusive = tweetIdRange.fromId
+    v-vaw befowetweetidexcwusive = t-tweetidwange.toid
+    vaw aftewtweetidexcwusive = t-tweetidwange.fwomid
 
-    val relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcessProvider(envelope.query)
+    vaw wewevanceoptionsmaxhitstopwocess = w-wewevanceoptionsmaxhitstopwocesspwovidew(envewope.quewy)
 
-    searchClient
-      .getUsersTweetsForRecap(
-        userId = envelope.query.userId,
-        followedUserIds = authorIds.toSet, // user authorIds as the set of followed users
-        retweetsMutedUserIds = Set.empty,
-        maxCount = maxCount,
-        tweetTypes = TweetTypes.fromTweetKindOption(envelope.query.options),
-        searchOperator = envelope.query.searchOperator,
-        beforeTweetIdExclusive = beforeTweetIdExclusive,
-        afterTweetIdExclusive = afterTweetIdExclusive,
-        enableSettingTweetTypesWithTweetKindOption =
-          enableSettingTweetTypesWithTweetKindOptionProvider(envelope.query),
-        excludedTweetIds = excludedTweetIdsOpt,
-        earlybirdOptions = envelope.query.earlybirdOptions,
-        getOnlyProtectedTweets = false,
-        logSearchDebugInfo = logSearchDebugInfo,
-        returnAllResults = true,
-        enableExcludeSourceTweetIdsQuery = false,
-        relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcess
-      ).map { results => envelope.copy(searchResults = results) }
+    seawchcwient
+      .getusewstweetsfowwecap(
+        usewid = envewope.quewy.usewid, 😳
+        f-fowwowedusewids = authowids.toset, (ˆ ﻌ ˆ)♡ // u-usew authowids as the set of fowwowed u-usews
+        w-wetweetsmutedusewids = set.empty,
+        maxcount = maxcount, 😳😳😳
+        tweettypes = tweettypes.fwomtweetkindoption(envewope.quewy.options), (U ﹏ U)
+        seawchopewatow = envewope.quewy.seawchopewatow, (///ˬ///✿)
+        b-befowetweetidexcwusive = b-befowetweetidexcwusive, 😳
+        aftewtweetidexcwusive = a-aftewtweetidexcwusive, 😳
+        e-enabwesettingtweettypeswithtweetkindoption =
+          e-enabwesettingtweettypeswithtweetkindoptionpwovidew(envewope.quewy), σωσ
+        excwudedtweetids = excwudedtweetidsopt, rawr x3
+        eawwybiwdoptions = e-envewope.quewy.eawwybiwdoptions, OwO
+        getonwypwotectedtweets = fawse, /(^•ω•^)
+        wogseawchdebuginfo = wogseawchdebuginfo, 😳😳😳
+        w-wetuwnawwwesuwts = twue, ( ͡o ω ͡o )
+        e-enabweexcwudesouwcetweetidsquewy = f-fawse, >_<
+        w-wewevanceoptionsmaxhitstopwocess = wewevanceoptionsmaxhitstopwocess
+      ).map { wesuwts => e-envewope.copy(seawchwesuwts = w-wesuwts) }
   }
 }

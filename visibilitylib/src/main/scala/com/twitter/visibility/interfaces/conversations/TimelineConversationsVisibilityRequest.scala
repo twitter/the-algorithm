@@ -1,20 +1,20 @@
-package com.twitter.visibility.interfaces.conversations
+package com.twittew.visibiwity.intewfaces.convewsations
 
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.gizmoduck.thriftscala.LabelValue
-import com.twitter.servo.repository.KeyValueResult
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.visibility.models.ViewerContext
+impowt com.twittew.gizmoduck.thwiftscawa.wabew
+i-impowt com.twittew.gizmoduck.thwiftscawa.wabewvawue
+i-impowt c-com.twittew.sewvo.wepositowy.keyvawuewesuwt
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.safetywabew
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywabewtype
+i-impowt c-com.twittew.visibiwity.modews.viewewcontext
 
-case class TimelineConversationsVisibilityRequest(
-  conversationId: Long,
-  tweetIds: Seq[Long],
-  viewerContext: ViewerContext,
-  minimalSectioningOnly: Boolean = false,
-  prefetchedSafetyLabels: Option[KeyValueResult[Long, Map[SafetyLabelType, SafetyLabel]]] = None,
-  prefetchedTweetAuthorUserLabels: Option[KeyValueResult[Long, Map[LabelValue, Label]]] = None,
-  innerCircleOfFriendsRelationships: Option[KeyValueResult[Long, Boolean]] = None,
-  tweetParentIdMap: Option[Map[Long, Option[Long]]] = None,
-  rootAuthorIsVerified: Boolean = false,
-  tweetAuthors: Option[KeyValueResult[Long, Long]] = None)
+case cwass timewineconvewsationsvisibiwitywequest(
+  convewsationid: wong, (U ﹏ U)
+  tweetids: s-seq[wong], >_<
+  viewewcontext: viewewcontext, rawr x3
+  m-minimawsectioningonwy: boowean = f-fawse,
+  pwefetchedsafetywabews: option[keyvawuewesuwt[wong, mya map[safetywabewtype, nyaa~~ safetywabew]]] = n-nyone, (⑅˘꒳˘)
+  pwefetchedtweetauthowusewwabews: option[keyvawuewesuwt[wong, rawr x3 m-map[wabewvawue, (✿oωo) w-wabew]]] = nyone, (ˆ ﻌ ˆ)♡
+  innewciwcweoffwiendswewationships: option[keyvawuewesuwt[wong, (˘ω˘) boowean]] = nyone, (⑅˘꒳˘)
+  t-tweetpawentidmap: option[map[wong, (///ˬ///✿) option[wong]]] = nyone, 😳😳😳
+  wootauthowisvewified: b-boowean = fawse, 🥺
+  tweetauthows: o-option[keyvawuewesuwt[wong, mya w-wong]] = nyone)

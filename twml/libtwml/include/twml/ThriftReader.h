@@ -1,53 +1,53 @@
-#pragma once
+#pwagma once
 
-#ifdef __cplusplus
+#ifdef __cpwuspwus
 
-#include <twml/defines.h>
-#include <cstdint>
-#include <cstddef>
-#include <cstring>
+#incwude <twmw/defines.h>
+#incwude <cstdint>
+#incwude <cstddef>
+#incwude <cstwing>
 
-namespace twml {
+nyamespace t-twmw {
 
-class ThriftReader {
- protected:
-  const uint8_t *m_buffer;
+cwass thwiftweadew {
+ p-pwotected:
+  c-const u-uint8_t *m_buffew;
 
- public:
+ p-pubwic:
 
-  ThriftReader(const uint8_t *buffer): m_buffer(buffer) {}
+  t-thwiftweadew(const u-uint8_t *buffew): m-m_buffew(buffew) {}
 
-  const uint8_t *getBuffer() { return m_buffer; }
+  const uint8_t *getbuffew() { wetuwn m_buffew; }
 
-  void setBuffer(const uint8_t *buffer) { m_buffer = buffer; }
+  v-void setbuffew(const uint8_t *buffew) { m_buffew = b-buffew; }
 
-  template<typename T> T readDirect() {
-    T val;
-    memcpy(&val, m_buffer, sizeof(T));
-    m_buffer += sizeof(T);
-    return val;
+  tempwate<typename t-t> t weaddiwect() {
+    t vaw;
+    memcpy(&vaw, (⑅˘꒳˘) m_buffew, (///ˬ///✿) sizeof(t));
+    m-m_buffew += sizeof(t);
+    w-wetuwn vaw;
   }
 
-  template<typename T> void skip() {
-    m_buffer += sizeof(T);
+  t-tempwate<typename t> void skip() {
+    m_buffew += sizeof(t);
   }
 
-  void skipLength(size_t length) {
-    m_buffer += length;
+  void skipwength(size_t w-wength) {
+    m_buffew += wength;
   }
 
-  uint8_t readByte();
-  int16_t readInt16();
-  int32_t readInt32();
-  int64_t readInt64();
-  double readDouble();
+  uint8_t weadbyte();
+  int16_t weadint16();
+  i-int32_t weadint32();
+  i-int64_t weadint64();
+  d-doubwe w-weaddoubwe();
 
-  template<typename T> inline
-  int32_t getRawBuffer(const uint8_t **begin) {
-    int32_t length = readInt32();
-    *begin = m_buffer;
-    skipLength(length * sizeof(T));
-    return length;
+  t-tempwate<typename t> inwine
+  int32_t getwawbuffew(const u-uint8_t **begin) {
+    int32_t wength = weadint32();
+    *begin = m-m_buffew;
+    skipwength(wength * sizeof(t));
+    wetuwn wength;
   }
 
 };

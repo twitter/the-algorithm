@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.twittew.fowwow_wecommendations.common.pwedicates
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.pwedicatewesuwt
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.fiwtewweason
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.pawam
 
 /**
- * This predicate allows us to filter candidates given its source.
- * To avoid bucket dilution, we only want to evaluate the param (which would implicitly trigger
- * bucketing for FSParams) only if the candidate source fn yields true.
- * The param provided should be true when we want to keep the candidate and false otherwise.
+ * this pwedicate awwows u-us to fiwtew candidates given its souwce. 🥺
+ * to a-avoid bucket diwution, >_< we onwy w-want to evawuate the pawam (which wouwd impwicitwy twiggew
+ * bucketing f-fow fspawams) onwy if the c-candidate souwce f-fn yiewds twue.
+ * the pawam pwovided shouwd be twue when we want to keep the c-candidate and fawse othewwise. >_<
  */
-class CandidateSourceParamPredicate(
-  val param: Param[Boolean],
-  val reason: FilterReason,
-  candidateSources: Set[CandidateSourceIdentifier])
-    extends Predicate[CandidateUser] {
-  override def apply(candidate: CandidateUser): Stitch[PredicateResult] = {
-    // we want to avoid evaluating the param if the candidate source fn yields false
-    if (candidate.getCandidateSources.keys.exists(candidateSources.contains) && !candidate.params(
-        param)) {
-      Stitch.value(PredicateResult.Invalid(Set(reason)))
-    } else {
-      Stitch.value(PredicateResult.Valid)
+cwass candidatesouwcepawampwedicate(
+  vaw pawam: pawam[boowean], (⑅˘꒳˘)
+  v-vaw weason: fiwtewweason, /(^•ω•^)
+  c-candidatesouwces: s-set[candidatesouwceidentifiew])
+    e-extends p-pwedicate[candidateusew] {
+  ovewwide def appwy(candidate: candidateusew): s-stitch[pwedicatewesuwt] = {
+    // we want to avoid evawuating the p-pawam if the candidate souwce fn yiewds fawse
+    if (candidate.getcandidatesouwces.keys.exists(candidatesouwces.contains) && !candidate.pawams(
+        pawam)) {
+      stitch.vawue(pwedicatewesuwt.invawid(set(weason)))
+    } e-ewse {
+      stitch.vawue(pwedicatewesuwt.vawid)
     }
   }
 }

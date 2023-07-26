@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.reaction
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.weaction
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.reaction.ImmediateTimelineReaction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.reaction.RemoteTimelineReaction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.reaction.TimelineReaction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.weaction.immediatetimewineweaction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.weaction.wemotetimewineweaction
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.weaction.timewineweaction
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class TimelineReactionMarshaller @Inject() () {
-  def apply(timelineReaction: TimelineReaction): urt.TimelineReaction = {
-    val execution = timelineReaction.execution match {
-      case ImmediateTimelineReaction(key) =>
-        urt.TimelineReactionExecution.Immediate(urt.ImmediateTimelineReaction(key))
-      case RemoteTimelineReaction(requestParams, timeoutInSeconds) =>
-        urt.TimelineReactionExecution.Remote(
-          urt.RemoteTimelineReaction(
-            requestParams,
-            timeoutInSeconds
+@singweton
+cwass timewineweactionmawshawwew @inject() () {
+  def appwy(timewineweaction: t-timewineweaction): uwt.timewineweaction = {
+    vaw execution = t-timewineweaction.execution match {
+      case i-immediatetimewineweaction(key) =>
+        uwt.timewineweactionexecution.immediate(uwt.immediatetimewineweaction(key))
+      case wemotetimewineweaction(wequestpawams, timeoutinseconds) =>
+        u-uwt.timewineweactionexecution.wemote(
+          uwt.wemotetimewineweaction(
+            wequestpawams, XD
+            t-timeoutinseconds
           ))
     }
-    urt.TimelineReaction(
-      execution = execution,
-      maxExecutionCount = timelineReaction.maxExecutionCount
+    u-uwt.timewineweaction(
+      execution = execution, :3
+      maxexecutioncount = timewineweaction.maxexecutioncount
     )
   }
 }

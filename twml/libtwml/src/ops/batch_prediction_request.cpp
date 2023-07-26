@@ -1,183 +1,183 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
+#incwude "wesouwce_utiws.h"
 
-REGISTER_OP("DecodeAndHashBatchPredictionRequest")
-.Input("input_bytes: uint8")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("decode_mode: int = 0")
-.Output("hashed_data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
-.Doc(R"doc(
-A tensorflow OP that decodes batch prediction request and creates a handle to the batch of hashed data records.
+wegistew_op("decodeandhashbatchpwedictionwequest")
+.input("input_bytes: uint8")
+.attw("keep_featuwes: wist(int)")
+.attw("keep_codes: w-wist(int)")
+.attw("decode_mode: i-int = 0")
+.output("hashed_data_wecowd_handwe: w-wesouwce")
+.setshapefn(shape_infewence::scawawshape)
+.doc(w"doc(
+a-a tensowfwow o-op that decodes b-batch pwediction w-wequest and cweates a-a handwe to the batch of hashed data wecowds. 🥺
 
-Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  decode_mode: integer, indicates which decoding method to use. Let a sparse continuous
-    have a feature_name and a dict of {name: value}. 0 indicates feature_ids are computed
-    as hash(name). 1 indicates feature_ids are computed as hash(feature_name, name)
-  shared_name: name used by the resource handle inside the resource manager.
-  container: name used by the container of the resources.
+attw
+  keep_featuwes: a wist o-of int ids to keep. >_<
+  keep_codes: theiw cowwesponding c-code. UwU
+  decode_mode: integew, >_< i-indicates which decoding method to use. -.- wet a spawse continuous
+    h-have a featuwe_name and a-a dict of {name: v-vawue}. mya 0 indicates featuwe_ids awe computed
+    as hash(name). >w< 1 indicates featuwe_ids a-awe computed as hash(featuwe_name, (U ﹏ U) nyame)
+  shawed_name: nyame used by t-the wesouwce handwe inside the w-wesouwce managew. 😳😳😳
+  c-containew: nyame u-used by the c-containew of the wesouwces. o.O
 
-shared_name and container are required when inheriting from ResourceOpKernel.
+shawed_name and containew a-awe wequiwed when inhewiting fwom wesouwceopkewnew. òωó
 
-Input
-  input_bytes: Input tensor containing the serialized batch of BatchPredictionRequest.
+i-input
+  input_bytes: input tensow containing the sewiawized batch of batchpwedictionwequest. 😳😳😳
 
-Outputs
-  hashed_data_record_handle: A resource handle to the HashedDataRecordResource containing batch of HashedDataRecords.
+o-outputs
+  hashed_data_wecowd_handwe: a-a wesouwce handwe t-to the hasheddatawecowdwesouwce c-containing batch of hasheddatawecowds. σωσ
 )doc");
 
-class DecodeAndHashBatchPredictionRequest : public OpKernel {
- public:
-  explicit DecodeAndHashBatchPredictionRequest(OpKernelConstruction* context)
-      : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+cwass decodeandhashbatchpwedictionwequest : pubwic o-opkewnew {
+ p-pubwic:
+  expwicit decodeandhashbatchpwedictionwequest(opkewnewconstwuction* c-context)
+      : opkewnew(context) {
+    s-std::vectow<int64> keep_featuwes;
+    s-std::vectow<int64> keep_codes;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    o-op_wequiwes_ok(context, (⑅˘꒳˘) context->getattw("keep_featuwes", (///ˬ///✿) &keep_featuwes));
+    op_wequiwes_ok(context, 🥺 c-context->getattw("keep_codes", OwO &keep_codes));
+    op_wequiwes_ok(context, >w< c-context->getattw("decode_mode", 🥺 &m_decode_mode));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    op_wequiwes(context, nyaa~~ keep_featuwes.size() == k-keep_codes.size(),
+                e-ewwows::invawidawgument("keep keys and vawues must have same size."));
 
-#ifdef USE_DENSE_HASH
+#ifdef use_dense_hash
     m_keep_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+#endif  // use_dense_hash
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    f-fow (uint64_t i-i = 0; i < keep_featuwes.size(); i-i++) {
+      m-m_keep_map[keep_featuwes[i]] = k-keep_codes[i];
     }
   }
 
- private:
-  twml::Map<int64_t, int64_t> m_keep_map;
+ pwivate:
+  twmw::map<int64_t, ^^ int64_t> m-m_keep_map;
   int64 m_decode_mode;
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      HashedDataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<HashedDataRecordResource>(context, 0, &resource));
+  void compute(opkewnewcontext* context) o-ovewwide {
+    twy {
+      hasheddatawecowdwesouwce *wesouwce = n-nuwwptw;
+      o-op_wequiwes_ok(context, >w< m-makewesouwcehandwe<hasheddatawecowdwesouwce>(context, OwO 0, &wesouwce));
 
-      // Store the input bytes in the resource so it isnt freed before the resource.
-      // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
-      const uint8_t *input_bytes = resource->input.flat<uint8>().data();
-      twml::HashedDataRecordReader reader;
-      twml::HashedBatchPredictionRequest bpr;
-      reader.setKeepMap(&m_keep_map);
-      reader.setBuffer(input_bytes);
-      reader.setDecodeMode(m_decode_mode);
-      bpr.decode(reader);
+      // stowe the i-input bytes in t-the wesouwce so i-it isnt fweed b-befowe the wesouwce. XD
+      // this is nyecessawy b-because we awe n-nyot copying the c-contents fow tensows. ^^;;
+      w-wesouwce->input = context->input(0);
+      c-const uint8_t *input_bytes = wesouwce->input.fwat<uint8>().data();
+      twmw::hasheddatawecowdweadew weadew;
+      t-twmw::hashedbatchpwedictionwequest bpw;
+      weadew.setkeepmap(&m_keep_map);
+      weadew.setbuffew(input_bytes);
+      weadew.setdecodemode(m_decode_mode);
+      bpw.decode(weadew);
 
-      resource->common = std::move(bpr.common());
-      resource->records = std::move(bpr.requests());
+      wesouwce->common = s-std::move(bpw.common());
+      wesouwce->wecowds = std::move(bpw.wequests());
 
-      // Each datarecord has a copy of common features.
-      // Initialize total_size by common_size * num_records
-      int64 common_size = static_cast<int64>(resource->common.totalSize());
-      int64 num_records = static_cast<int64>(resource->records.size());
-      int64 total_size = common_size * num_records;
-      for (const auto &record : resource->records) {
-        total_size += static_cast<int64>(record.totalSize());
+      // each datawecowd h-has a copy o-of common featuwes. 🥺
+      // i-initiawize totaw_size b-by common_size * nyum_wecowds
+      i-int64 common_size = s-static_cast<int64>(wesouwce->common.totawsize());
+      int64 nyum_wecowds = static_cast<int64>(wesouwce->wecowds.size());
+      int64 totaw_size = common_size * nyum_wecowds;
+      f-fow (const auto &wecowd : wesouwce->wecowds) {
+        t-totaw_size += static_cast<int64>(wecowd.totawsize());
       }
 
-      resource->total_size = total_size;
-      resource->num_labels = 0;
-      resource->num_weights = 0;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      w-wesouwce->totaw_size = t-totaw_size;
+      wesouwce->num_wabews = 0;
+      wesouwce->num_weights = 0;
+    } c-catch (const s-std::exception &e) {
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("DecodeAndHashBatchPredictionRequest").Device(DEVICE_CPU),
-  DecodeAndHashBatchPredictionRequest);
+w-wegistew_kewnew_buiwdew(
+  n-nyame("decodeandhashbatchpwedictionwequest").device(device_cpu), XD
+  decodeandhashbatchpwedictionwequest);
 
-REGISTER_OP("DecodeBatchPredictionRequest")
-.Input("input_bytes: uint8")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Output("data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
-.Doc(R"doc(
-A tensorflow OP that decodes batch prediction request and creates a handle to the batch of data records.
+wegistew_op("decodebatchpwedictionwequest")
+.input("input_bytes: uint8")
+.attw("keep_featuwes: wist(int)")
+.attw("keep_codes: wist(int)")
+.output("data_wecowd_handwe: w-wesouwce")
+.setshapefn(shape_infewence::scawawshape)
+.doc(w"doc(
+a-a t-tensowfwow op that decodes batch p-pwediction wequest a-and cweates a handwe to the b-batch of data wecowds. (U ᵕ U❁)
 
-Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  shared_name: name used by the resource handle inside the resource manager.
-  container: name used by the container of the resources.
+attw
+  keep_featuwes: a wist of int ids to keep. :3
+  keep_codes: t-theiw cowwesponding c-code. ( ͡o ω ͡o )
+  shawed_name: nyame used by the w-wesouwce handwe i-inside the wesouwce managew. òωó
+  containew: nyame used by the containew o-of the wesouwces. σωσ
 
-shared_name and container are required when inheriting from ResourceOpKernel.
+shawed_name and containew awe wequiwed when inhewiting f-fwom wesouwceopkewnew. (U ᵕ U❁)
 
-Input
-  input_bytes: Input tensor containing the serialized batch of BatchPredictionRequest.
+input
+  input_bytes: input t-tensow containing t-the sewiawized batch of batchpwedictionwequest. (✿oωo)
 
-Outputs
-  data_record_handle: A resource handle to the DataRecordResource containing batch of DataRecords.
+outputs
+  data_wecowd_handwe: a-a wesouwce h-handwe to the datawecowdwesouwce containing batch of datawecowds. ^^
 )doc");
 
-class DecodeBatchPredictionRequest : public OpKernel {
- public:
-  explicit DecodeBatchPredictionRequest(OpKernelConstruction* context)
-      : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+cwass d-decodebatchpwedictionwequest : pubwic opkewnew {
+ p-pubwic:
+  expwicit decodebatchpwedictionwequest(opkewnewconstwuction* context)
+      : opkewnew(context) {
+    s-std::vectow<int64> keep_featuwes;
+    s-std::vectow<int64> k-keep_codes;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
+    op_wequiwes_ok(context, ^•ﻌ•^ c-context->getattw("keep_featuwes", XD &keep_featuwes));
+    op_wequiwes_ok(context, :3 c-context->getattw("keep_codes", &keep_codes));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    o-op_wequiwes(context, (ꈍᴗꈍ) k-keep_featuwes.size() == keep_codes.size(), :3
+                e-ewwows::invawidawgument("keep k-keys and vawues must have same size."));
 
-#ifdef USE_DENSE_HASH
-    m_keep_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+#ifdef u-use_dense_hash
+    m-m_keep_map.set_empty_key(0);
+#endif  // u-use_dense_hash
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    fow (uint64_t i = 0; i < keep_featuwes.size(); i-i++) {
+      m_keep_map[keep_featuwes[i]] = k-keep_codes[i];
     }
   }
 
- private:
-  twml::Map<int64_t, int64_t> m_keep_map;
+ p-pwivate:
+  twmw::map<int64_t, (U ﹏ U) int64_t> m_keep_map;
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      DataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<DataRecordResource>(context, 0, &resource));
+  v-void compute(opkewnewcontext* c-context) ovewwide {
+    t-twy {
+      d-datawecowdwesouwce *wesouwce = nyuwwptw;
+      o-op_wequiwes_ok(context, UwU makewesouwcehandwe<datawecowdwesouwce>(context, 😳😳😳 0, &wesouwce));
 
-      // Store the input bytes in the resource so it isnt freed before the resource.
-      // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
-      const uint8_t *input_bytes = resource->input.flat<uint8>().data();
-      twml::DataRecordReader reader;
-      twml::BatchPredictionRequest bpr;
-      reader.setKeepMap(&m_keep_map);
-      reader.setBuffer(input_bytes);
-      bpr.decode(reader);
+      // stowe the input bytes in the wesouwce so it isnt fweed befowe t-the wesouwce. XD
+      // this is n-nyecessawy because we awe not c-copying the contents fow tensows. o.O
+      w-wesouwce->input = context->input(0);
+      c-const uint8_t *input_bytes = w-wesouwce->input.fwat<uint8>().data();
+      t-twmw::datawecowdweadew w-weadew;
+      t-twmw::batchpwedictionwequest bpw;
+      weadew.setkeepmap(&m_keep_map);
+      weadew.setbuffew(input_bytes);
+      bpw.decode(weadew);
 
-      resource->common = std::move(bpr.common());
-      resource->records = std::move(bpr.requests());
+      wesouwce->common = std::move(bpw.common());
+      wesouwce->wecowds = std::move(bpw.wequests());
 
-      resource->num_weights = 0;
-      resource->num_labels = 0;
-      resource->keep_map = &m_keep_map;
+      w-wesouwce->num_weights = 0;
+      w-wesouwce->num_wabews = 0;
+      w-wesouwce->keep_map = &m_keep_map;
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("DecodeBatchPredictionRequest").Device(DEVICE_CPU),
-  DecodeBatchPredictionRequest);
+wegistew_kewnew_buiwdew(
+  nyame("decodebatchpwedictionwequest").device(device_cpu), (⑅˘꒳˘)
+  decodebatchpwedictionwequest);

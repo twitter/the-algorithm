@@ -1,218 +1,218 @@
-# Loadtest ANN query service with random embeddings
+# woadtest ann quewy sewvice with w-wandom embeddings
 
-An ANN query service can be load-tested with random embeddings as queries, generated automatically by loadtest tool.
-Example script to load test a ANN query service with random embeddings:
-
-```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest-service \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=hnsw \
-  --bind=profile.metric=Cosine \
-  --bind=profile.index_id_type=int \
-  --bind=profile.hnsw_ef=400,600,800 \
-  --bind=profile.embedding_dimension=3 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=remote \
-  --bind=profile.service_destination=/srv#/staging/local/apoorvs/ann-server-test \
-  --bind=profile.with_random_queries=True \
-  --bind=profile.random_queries_count=50000 \
-  --bind=profile.random_embedding_min_value=-10.0 \
-  --bind=profile.random_embedding_max_value=10.0
-```
-
-It will run the loadtest with `50000` random embeddings, where each embedding value will be range bounded between `random_embedding_min_value` and `random_embedding_max_value`.
-In the above the case it will be bounded between `-10.0` and `10.0`.
-If `random_embedding_min_value` and `random_embedding_max_value` are not supplied default value of `-1.0` and `1.0` will be used.
-
-## Results
-
-Load test results will be printed to stdout of an aurora job.
-
-# Loadtest ANN query service with query set
-
-An ANN query service can be load-tested with sample queries drawn from the embeddings dataset.
-For creating sample queries i.e `query_set` refer this [section](#query-set-generator).
-
-Test is run with `live` version of loadtest binary that is already available in packer.
-Example script to load test a ANN query service:
+a-an ann quewy s-sewvice can be w-woad-tested with w-wandom embeddings a-as quewies, mya genewated a-automaticawwy b-by woadtest toow. 🥺
+exampwe scwipt to woad test a ann quewy sewvice with wandom e-embeddings:
 
 ```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest-service \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.query_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/query_set \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=hnsw \
-  --bind=profile.query_id_type=string \
-  --bind=profile.index_id_type=string \
-  --bind=profile.metric=Cosine \
-  --bind=profile.hnsw_ef=400,600,800 \
-  --bind=profile.embedding_dimension=100 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=remote \
-  --bind=profile.service_destination=/srv#/staging/local/apoorvs/ann-server-test
+$ auwowa job cweate smf1/<wowe>/staging/ann-woadtest-sewvice a-ann/swc/main/auwowa/woadtest/woadtest.auwowa \
+  --bind=pwofiwe.name=ann-woadtest-sewvice \
+  --bind=pwofiwe.wowe=<wowe> \
+  --bind=pwofiwe.duwation_sec=10 \
+  --bind=pwofiwe.numbew_of_neighbows=10 \
+  --bind=pwofiwe.qps=200 \
+  --bind=pwofiwe.awgo=hnsw \
+  --bind=pwofiwe.metwic=cosine \
+  --bind=pwofiwe.index_id_type=int \
+  --bind=pwofiwe.hnsw_ef=400,600,800 \
+  --bind=pwofiwe.embedding_dimension=3 \
+  --bind=pwofiwe.concuwwency_wevew=8 \
+  --bind=pwofiwe.woadtest_type=wemote \
+  --bind=pwofiwe.sewvice_destination=/swv#/staging/wocaw/apoowvs/ann-sewvew-test \
+  --bind=pwofiwe.with_wandom_quewies=twue \
+  --bind=pwofiwe.wandom_quewies_count=50000 \
+  --bind=pwofiwe.wandom_embedding_min_vawue=-10.0 \
+  --bind=pwofiwe.wandom_embedding_max_vawue=10.0
 ```
 
-# In-Memory based loadtest for measuring recall
+it wiww wun the w-woadtest with `50000` wandom embeddings, ^^;; whewe each embedding v-vawue wiww be wange bounded between `wandom_embedding_min_vawue` a-and `wandom_embedding_max_vawue`. :3
+i-in the above the case it wiww be bounded between `-10.0` and `10.0`. (U ﹏ U)
+if `wandom_embedding_min_vawue` a-and `wandom_embedding_max_vawue` awe nyot suppwied defauwt vawue of `-1.0` and `1.0` wiww b-be used. OwO
 
-Load test can be with the above created dataset in memory.
-For running in in-memory mode, index is created in memory, and for that you need `query_set/index_set/truth_set`.
-For creating this dataset refer this [section](#knn-truth-set-generator).
+## wesuwts
 
-Test is run with `live` version loadtest binary that is already available in packer.
-Example script In-Memory index building and benchmarking:
+woad test w-wesuwts wiww b-be pwinted to stdout o-of an auwowa j-job. 😳😳😳
+
+# woadtest ann quewy sewvice with quewy s-set
+
+an ann quewy sewvice can be woad-tested with s-sampwe quewies dwawn fwom the embeddings dataset.
+fow cweating sampwe quewies i.e `quewy_set` w-wefew this [section](#quewy-set-genewatow). (ˆ ﻌ ˆ)♡
+
+test i-is wun with `wive` v-vewsion of w-woadtest binawy that is awweady avaiwabwe in packew. XD
+exampwe scwipt t-to woad test a-a ann quewy sewvice:
 
 ```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.truth_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/true_knn \
-  --bind=profile.query_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/query_set \
-  --bind=profile.index_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/index_set \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=hnsw \
-  --bind=profile.query_id_type=string \
-  --bind=profile.index_id_type=string \
-  --bind=profile.metric=Cosine \
-  --bind=profile.hnsw_ef_construction=15 \
-  --bind=profile.hnsw_max_m=10 \
-  --bind=profile.hnsw_ef=400,600,800 \
-  --bind=profile.embedding_dimension=100 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=local
+$ auwowa job cweate s-smf1/<wowe>/staging/ann-woadtest-sewvice a-ann/swc/main/auwowa/woadtest/woadtest.auwowa \
+  --bind=pwofiwe.name=ann-woadtest-sewvice \
+  --bind=pwofiwe.wowe=<wowe> \
+  --bind=pwofiwe.duwation_sec=10 \
+  --bind=pwofiwe.quewy_set_diw=hdfs:///usew/cowtex/ann_exampwe/dataset/seawch/quewy_knn/quewy_set \
+  --bind=pwofiwe.numbew_of_neighbows=10 \
+  --bind=pwofiwe.qps=200 \
+  --bind=pwofiwe.awgo=hnsw \
+  --bind=pwofiwe.quewy_id_type=stwing \
+  --bind=pwofiwe.index_id_type=stwing \
+  --bind=pwofiwe.metwic=cosine \
+  --bind=pwofiwe.hnsw_ef=400,600,800 \
+  --bind=pwofiwe.embedding_dimension=100 \
+  --bind=pwofiwe.concuwwency_wevew=8 \
+  --bind=pwofiwe.woadtest_type=wemote \
+  --bind=pwofiwe.sewvice_destination=/swv#/staging/wocaw/apoowvs/ann-sewvew-test
 ```
 
-# Loadtest faiss
+# in-memowy b-based woadtest fow measuwing w-wecaww
+
+woad test can be with the above cweated d-dataset in memowy. (ˆ ﻌ ˆ)♡
+fow wunning i-in in-memowy mode, ( ͡o ω ͡o ) index is cweated i-in memowy, rawr x3 and f-fow that you need `quewy_set/index_set/twuth_set`. nyaa~~
+fow cweating this dataset wefew this [section](#knn-twuth-set-genewatow). >_<
+
+test is wun with `wive` vewsion w-woadtest binawy t-that is awweady avaiwabwe in packew. ^^;;
+e-exampwe scwipt i-in-memowy index b-buiwding and benchmawking:
 
 ```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest-service \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=faiss \ # Changed to faiss
-  --bind=profile.faiss_nprobe=1,3,9,27,81,128,256,512 \ # Added
-  --bind=profile.faiss_quantizerKfactorRF=1,2 \ # Pass a list to do grid search
-  --bind=profile.faiss_quantizerNprobe=128 \ # Added
-  --bind=profile.metric=Cosine \
-  --bind=profile.index_id_type=int \
-  --bind=profile.embedding_dimension=3 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=remote \
-  --bind=profile.service_destination=/srv#/staging/local/apoorvs/ann-server-test \
-  --bind=profile.with_random_queries=True \
-  --bind=profile.random_queries_count=50000 \
-  --bind=profile.random_embedding_min_value=-10.0 \
-  --bind=profile.random_embedding_max_value=10.0
+$ auwowa job cweate smf1/<wowe>/staging/ann-woadtest a-ann/swc/main/auwowa/woadtest/woadtest.auwowa \
+  --bind=pwofiwe.name=ann-woadtest \
+  --bind=pwofiwe.wowe=<wowe> \
+  --bind=pwofiwe.duwation_sec=10 \
+  --bind=pwofiwe.twuth_set_diw=hdfs:///usew/cowtex/ann_exampwe/dataset/seawch/quewy_knn/twue_knn \
+  --bind=pwofiwe.quewy_set_diw=hdfs:///usew/cowtex/ann_exampwe/dataset/seawch/quewy_knn/quewy_set \
+  --bind=pwofiwe.index_set_diw=hdfs:///usew/cowtex/ann_exampwe/dataset/seawch/quewy_knn/index_set \
+  --bind=pwofiwe.numbew_of_neighbows=10 \
+  --bind=pwofiwe.qps=200 \
+  --bind=pwofiwe.awgo=hnsw \
+  --bind=pwofiwe.quewy_id_type=stwing \
+  --bind=pwofiwe.index_id_type=stwing \
+  --bind=pwofiwe.metwic=cosine \
+  --bind=pwofiwe.hnsw_ef_constwuction=15 \
+  --bind=pwofiwe.hnsw_max_m=10 \
+  --bind=pwofiwe.hnsw_ef=400,600,800 \
+  --bind=pwofiwe.embedding_dimension=100 \
+  --bind=pwofiwe.concuwwency_wevew=8 \
+  --bind=pwofiwe.woadtest_type=wocaw
 ```
 
-Full list of faiss specific parameters. [Exact definition of all available parameters](https://github.com/facebookresearch/faiss/blob/36f2998a6469280cef3b0afcde2036935a29aa1f/faiss/AutoTune.cpp#L444). Please reach out if you need to use parameters which aren't shown below
-
-```
-faiss_nprobe                = Default(String, '1')
-faiss_quantizerEf           = Default(String, '0')
-faiss_quantizerKfactorRF    = Default(String, '0')
-faiss_quantizerNprobe       = Default(String, '0')
-faiss_ht                    = Default(String, '0')
-```
-
-# Query Set Generator
-
-Sample queries can be generated from the embeddings dataset and can be used directly with load test in tab format.
-To generate sample queries `EmbeddingSamplingJob` can be used as follows.
+# woadtest faiss
 
 ```bash
-$ ./bazel bundle cortex-core/entity-embeddings/src/scala/main/com/twitter/scalding/util/EmbeddingFormat:embeddingformat-deploy
-
-$ export INPUT_PATH=/user/cortex/embeddings/user/tfwproducersg/embedding_datarecords_on_data/2018/05/01
-$ export ENTITY_KIND=user
-$ export EMBEDDING_INPUT_FORMAT=usertensor
-$ export OUTPUT_PATH=/user/$USER/sample_embeddings
-$ export SAMPLE_PERCENT=0.1
-
-$ oscar hdfs \
-    --screen --tee log.txt \
-    --hadoop-client-memory 6000 \
-    --hadoop-properties "yarn.app.mapreduce.am.resource.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map.memory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce.memory.mb=7500;mapred.task.timeout=36000000;" \
-    --min-split-size 284217728 \
-    --bundle embeddingformat-deploy \
-    --host hadoopnest1.smf1.twitter.com \
-    --tool com.twitter.scalding.entityembeddings.util.EmbeddingFormat.EmbeddingSamplingJob -- \
-    --entity_kind $ENTITY_KIND \
-    --input.embedding_path $INPUT_PATH \
-    --input.embedding_format $EMBEDDING_INPUT_FORMAT \
-    --output.embedding_path $OUTPUT_PATH \
-    --output.embedding_format tab \
-    --sample_percent $SAMPLE_PERCENT
+$ auwowa job cweate smf1/<wowe>/staging/ann-woadtest-sewvice ann/swc/main/auwowa/woadtest/woadtest.auwowa \
+  --bind=pwofiwe.name=ann-woadtest-sewvice \
+  --bind=pwofiwe.wowe=<wowe> \
+  --bind=pwofiwe.duwation_sec=10 \
+  --bind=pwofiwe.numbew_of_neighbows=10 \
+  --bind=pwofiwe.qps=200 \
+  --bind=pwofiwe.awgo=faiss \ # c-changed to faiss
+  --bind=pwofiwe.faiss_npwobe=1,3,9,27,81,128,256,512 \ # a-added
+  --bind=pwofiwe.faiss_quantizewkfactowwf=1,2 \ # p-pass a-a wist to do gwid seawch
+  --bind=pwofiwe.faiss_quantizewnpwobe=128 \ # a-added
+  --bind=pwofiwe.metwic=cosine \
+  --bind=pwofiwe.index_id_type=int \
+  --bind=pwofiwe.embedding_dimension=3 \
+  --bind=pwofiwe.concuwwency_wevew=8 \
+  --bind=pwofiwe.woadtest_type=wemote \
+  --bind=pwofiwe.sewvice_destination=/swv#/staging/wocaw/apoowvs/ann-sewvew-test \
+  --bind=pwofiwe.with_wandom_quewies=twue \
+  --bind=pwofiwe.wandom_quewies_count=50000 \
+  --bind=pwofiwe.wandom_embedding_min_vawue=-10.0 \
+  --bind=pwofiwe.wandom_embedding_max_vawue=10.0
 ```
 
-It will sample 0.1% of embeddings and store them in `tab` format to hdfs that can be direcly used as `query_set` for loadtest.
+f-fuww wist o-of faiss specific p-pawametews. (ˆ ﻌ ˆ)♡ [exact definition of aww avaiwabwe p-pawametews](https://github.com/facebookweseawch/faiss/bwob/36f2998a6469280cef3b0afcde2036935a29aa1f/faiss/autotune.cpp#w444). ^^;; pwease w-weach out i-if you nyeed to u-use pawametews which a-awen't shown bewow
 
-# Knn Truth Set Generator
+```
+faiss_npwobe                = defauwt(stwing, (⑅˘꒳˘) '1')
+faiss_quantizewef           = d-defauwt(stwing, rawr x3 '0')
+faiss_quantizewkfactowwf    = defauwt(stwing, (///ˬ///✿) '0')
+faiss_quantizewnpwobe       = defauwt(stwing, 🥺 '0')
+faiss_ht                    = d-defauwt(stwing, >_< '0')
+```
 
-To use load test framework to benchmark recall, you need to split your data set into index_set, query_set and knn_truth
+# quewy set genewatow
 
-- index_set: data that will be indexed for ann
-- query_set: data that will be used for queries
-- truth_set: the real nearest neighbor used as truth to compute recall
-
-And also you need to figure out the dimension for your embedding vectors.
-
-KnnTruthSetGenerator can help to prepare data sets:
+sampwe quewies can be genewated f-fwom the e-embeddings dataset a-and can be used diwectwy with w-woad test in tab fowmat. UwU
+to genewate s-sampwe quewies `embeddingsampwingjob` c-can be used as fowwows. >_<
 
 ```bash
-$ ./bazel bundle ann/src/main/scala/com/twitter/ann/scalding/offline:ann-offline-deploy
+$ ./bazew bundwe cowtex-cowe/entity-embeddings/swc/scawa/main/com/twittew/scawding/utiw/embeddingfowmat:embeddingfowmat-depwoy
 
-$ export QUERY_EMBEDDINGS_PATH=/user/cortex-mlx/official_examples/ann/non_pii_random_user_embeddings_tab_format
-$ export INDEX_EMBEDDINGS_PATH=/user/cortex-mlx/official_examples/ann/non_pii_random_user_embeddings_tab_format
-$ export TRUTH_SET_PATH=/user/$USER/truth_set
-$ export INDEX_SET_PATH=/user/$USER/index_set
-$ export QUERY_SET_PATH=/user/$USER/query_set
-$ export METRIC=InnerProduct
-$ export QUERY_ENTITY_KIND=user
-$ export INDEX_ENTITY_KIND=user
-$ export NEIGHBOURS=10
+$ expowt input_path=/usew/cowtex/embeddings/usew/tfwpwoducewsg/embedding_datawecowds_on_data/2018/05/01
+$ expowt entity_kind=usew
+$ expowt embedding_input_fowmat=usewtensow
+$ e-expowt output_path=/usew/$usew/sampwe_embeddings
+$ e-expowt sampwe_pewcent=0.1
 
-$ oscar hdfs \
-  --screen --tee log.txt \
-  --hadoop-client-memory 6000 \
-  --hadoop-properties "yarn.app.mapreduce.am.resource.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map.memory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce.memory.mb=7500;mapred.task.timeout=36000000;" \
-  --bundle ann-offline-deploy \
-  --min-split-size 284217728 \
-  --host hadoopnest1.smf1.twitter.com \
-  --tool com.twitter.ann.scalding.offline.KnnTruthSetGenerator -- \
-  --neighbors $NEIGHBOURS \
-  --metric $METRIC \
-  --query_entity_kind $QUERY_ENTITY_KIND \
-  --query.embedding_path $QUERY_EMBEDDINGS_PATH \
-  --query.embedding_format tab \
-  --query_sample_percent 50.0 \
-  --index_entity_kind $INDEX_ENTITY_KIND \
-  --index.embedding_path $INDEX_EMBEDDINGS_PATH \
-  --index.embedding_format tab \
-  --index_sample_percent 90.0 \
-  --query_set_output.embedding_path $QUERY_SET_PATH \
-  --query_set_output.embedding_format tab \
-  --index_set_output.embedding_path $INDEX_SET_PATH \
-  --index_set_output.embedding_format tab \
-  --truth_set_output_path $TRUTH_SET_PATH \
-  --reducers 100
+$ oscaw h-hdfs \
+    --scween --tee w-wog.txt \
+    --hadoop-cwient-memowy 6000 \
+    --hadoop-pwopewties "yawn.app.mapweduce.am.wesouwce.mb=6000;yawn.app.mapweduce.am.command-opts='-xmx7500m';mapweduce.map.memowy.mb=7500;mapweduce.weduce.java.opts='-xmx6000m';mapweduce.weduce.memowy.mb=7500;mapwed.task.timeout=36000000;" \
+    --min-spwit-size 284217728 \
+    --bundwe embeddingfowmat-depwoy \
+    --host hadoopnest1.smf1.twittew.com \
+    --toow com.twittew.scawding.entityembeddings.utiw.embeddingfowmat.embeddingsampwingjob -- \
+    --entity_kind $entity_kind \
+    --input.embedding_path $input_path \
+    --input.embedding_fowmat $embedding_input_fowmat \
+    --output.embedding_path $output_path \
+    --output.embedding_fowmat t-tab \
+    --sampwe_pewcent $sampwe_pewcent
 ```
 
-It will sample 90% of index set embeddings and 50% of query embeddings from total and then it will generate 3 datasets from the same that are index set, query set and true nearest neighbours from query to index in the tab format.
-`Note`: The reason for using high sample percent is due to the fact the sample embeddings dataset is small. For real use cases query set should be really small.
-Set `--reducers` according to the embeddings dataset size.
+i-it wiww sampwe 0.1% of embeddings a-and stowe t-them in `tab` fowmat to hdfs that can be diwecwy used as `quewy_set` fow woadtest. -.-
 
-# FAQ
+# k-knn twuth s-set genewatow
 
-There are multiple type of `query_id_type` and `index_id_type` that can be used. Some native types like string/int/long or related to entity embeddings
-like tweet/word/user/url... for more info: [Link](https://cgit.twitter.biz/source/tree/src/scala/com/twitter/cortex/ml/embeddings/common/EntityKind.scala#n8)
+t-to use woad test fwamewowk to b-benchmawk wecaww, mya y-you nyeed to spwit youw data s-set into index_set, >w< quewy_set and knn_twuth
+
+- index_set: data that wiww be indexed f-fow ann
+- quewy_set: d-data that wiww be used fow quewies
+- twuth_set: t-the weaw n-neawest nyeighbow used as twuth to compute wecaww
+
+and awso you n-nyeed to figuwe out the dimension fow youw embedding vectows. (U ﹏ U)
+
+knntwuthsetgenewatow c-can hewp to pwepawe data sets:
+
+```bash
+$ ./bazew bundwe ann/swc/main/scawa/com/twittew/ann/scawding/offwine:ann-offwine-depwoy
+
+$ e-expowt q-quewy_embeddings_path=/usew/cowtex-mwx/officiaw_exampwes/ann/non_pii_wandom_usew_embeddings_tab_fowmat
+$ expowt index_embeddings_path=/usew/cowtex-mwx/officiaw_exampwes/ann/non_pii_wandom_usew_embeddings_tab_fowmat
+$ expowt t-twuth_set_path=/usew/$usew/twuth_set
+$ e-expowt index_set_path=/usew/$usew/index_set
+$ expowt quewy_set_path=/usew/$usew/quewy_set
+$ expowt metwic=innewpwoduct
+$ expowt quewy_entity_kind=usew
+$ e-expowt index_entity_kind=usew
+$ expowt nyeighbouws=10
+
+$ o-oscaw hdfs \
+  --scween --tee wog.txt \
+  --hadoop-cwient-memowy 6000 \
+  --hadoop-pwopewties "yawn.app.mapweduce.am.wesouwce.mb=6000;yawn.app.mapweduce.am.command-opts='-xmx7500m';mapweduce.map.memowy.mb=7500;mapweduce.weduce.java.opts='-xmx6000m';mapweduce.weduce.memowy.mb=7500;mapwed.task.timeout=36000000;" \
+  --bundwe ann-offwine-depwoy \
+  --min-spwit-size 284217728 \
+  --host hadoopnest1.smf1.twittew.com \
+  --toow c-com.twittew.ann.scawding.offwine.knntwuthsetgenewatow -- \
+  --neighbows $neighbouws \
+  --metwic $metwic \
+  --quewy_entity_kind $quewy_entity_kind \
+  --quewy.embedding_path $quewy_embeddings_path \
+  --quewy.embedding_fowmat tab \
+  --quewy_sampwe_pewcent 50.0 \
+  --index_entity_kind $index_entity_kind \
+  --index.embedding_path $index_embeddings_path \
+  --index.embedding_fowmat t-tab \
+  --index_sampwe_pewcent 90.0 \
+  --quewy_set_output.embedding_path $quewy_set_path \
+  --quewy_set_output.embedding_fowmat t-tab \
+  --index_set_output.embedding_path $index_set_path \
+  --index_set_output.embedding_fowmat tab \
+  --twuth_set_output_path $twuth_set_path \
+  --weducews 100
+```
+
+i-it wiww sampwe 90% of index set e-embeddings and 50% o-of quewy embeddings f-fwom totaw and then it wiww g-genewate 3 datasets f-fwom the same that awe index set, 😳😳😳 quewy s-set and twue nyeawest n-neighbouws f-fwom quewy to index in the tab fowmat. o.O
+`note`: t-the weason fow using high sampwe p-pewcent is due t-to the fact the sampwe embeddings dataset is smow. òωó fow weaw use c-cases quewy set s-shouwd be weawwy s-smow. 😳😳😳
+set `--weducews` a-accowding to the embeddings d-dataset size. σωσ
+
+# faq
+
+thewe awe muwtipwe type of `quewy_id_type` and `index_id_type` that can b-be used. (⑅˘꒳˘) some nyative types wike s-stwing/int/wong ow wewated to e-entity embeddings
+wike tweet/wowd/usew/uww... fow m-mowe info: [wink](https://cgit.twittew.biz/souwce/twee/swc/scawa/com/twittew/cowtex/mw/embeddings/common/entitykind.scawa#n8)

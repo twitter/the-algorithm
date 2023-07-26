@@ -1,94 +1,94 @@
-package com.twitter.search.earlybird.queryparser;
+package com.twittew.seawch.eawwybiwd.quewypawsew;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.set;
 
-import com.google.common.collect.Sets;
+i-impowt c-com.googwe.common.cowwect.sets;
 
 /**
- * Used to store information relevant to processing query groups for HighFrequencyTermPairExtractor
- * and HighFrequencyTermPairRewriter
+ * u-used t-to stowe infowmation w-wewevant to pwocessing quewy gwoups fow highfwequencytewmpaiwextwactow
+ * and highfwequencytewmpaiwwewwitew
  */
-public class HighFrequencyTermQueryGroup {
-  protected final int groupIdx;
-  protected final int parentGroupIdx;
-  // The number of nodes in this group.
-  protected int numMembers = 0;
-  // For the rewrite visitor: Incremented once at the end of each of this group's nodes' visits.
-  protected int numVisits = 0;
+pubwic cwass h-highfwequencytewmquewygwoup {
+  pwotected finaw int gwoupidx;
+  p-pwotected finaw int pawentgwoupidx;
+  // t-the numbew of nyodes in this gwoup. (///ˬ///✿)
+  pwotected int nyummembews = 0;
+  // f-fow the wewwite visitow: incwemented o-once at t-the end of each of this gwoup's nyodes' visits. (˘ω˘)
+  pwotected int numvisits = 0;
 
-  // The set of tokens that should be removed from the query if seen as an individual term and
-  // rewritten in the query as a hf term pair.
-  protected final Set<String> hfTokens = Sets.newTreeSet();
+  // t-the set of tokens that shouwd be wemoved fwom the quewy if seen as an individuaw t-tewm and
+  // wewwitten i-in the quewy as a-a hf tewm paiw. ^^;;
+  p-pwotected finaw s-set<stwing> hftokens = sets.newtweeset();
 
-  // Tokens that can be used to restrict searches but should not be scored. They will be given a
-  // weight of 0.
-  protected final Set<String> preusedHFTokens = Sets.newTreeSet();
+  // tokens that can b-be used to westwict seawches but shouwd nyot be s-scowed. (✿oωo) they wiww be given a
+  // weight of 0. (U ﹏ U)
+  pwotected finaw set<stwing> pweusedhftokens = sets.newtweeset();
 
-  // Set of phrases that should be removed from the query if seen as an individual phrase and
-  // rewritten in the query as a hf term phrase pair.
-  protected final Set<String> hfPhrases = Sets.newTreeSet();
+  // s-set of phwases that shouwd b-be wemoved f-fwom the quewy if s-seen as an individuaw phwase and
+  // wewwitten in the quewy as a-a hf tewm phwase p-paiw. -.-
+  pwotected finaw set<stwing> h-hfphwases = s-sets.newtweeset();
 
-  // Phrases that can be used to restrict searches but should not be scored. They will be given a
-  // weight of 0.
-  protected final Set<String> preusedHFPhrases = Sets.newTreeSet();
+  // phwases t-that can be used to westwict s-seawches but shouwd nyot be scowed. ^•ﻌ•^ they wiww be g-given a
+  // weight of 0. rawr
+  pwotected f-finaw set<stwing> pweusedhfphwases = s-sets.newtweeset();
 
-  // The first found hf_term, or the hf_term of an ancestor with the same isPositive value.
-  protected String distributiveToken = null;
+  // t-the fiwst found hf_tewm, (˘ω˘) ow the hf_tewm of an ancestow with the same ispositive vawue. nyaa~~
+  pwotected stwing d-distwibutivetoken = n-nuww;
 
-  // If it is a single node group, isPositive is true iff that node is true.
-  // Otherwise, isPositive is false iff the root of the group is a disjunction.
-  protected final boolean isPositive;
+  // if it is a singwe n-nyode gwoup, UwU ispositive i-is twue i-iff that nyode is twue. :3
+  // othewwise, (⑅˘꒳˘) ispositive is fawse iff t-the woot of the gwoup is a disjunction. (///ˬ///✿)
+  pwotected finaw boowean ispositive;
 
-  public HighFrequencyTermQueryGroup(int groupIdx, boolean positive) {
-    this(groupIdx, -1, positive);
+  p-pubwic highfwequencytewmquewygwoup(int gwoupidx, ^^;; b-boowean positive) {
+    t-this(gwoupidx, >_< -1, positive);
   }
 
-  public HighFrequencyTermQueryGroup(int groupIdx, int parentGroupIdx, boolean positive) {
-    this.groupIdx = groupIdx;
-    this.parentGroupIdx = parentGroupIdx;
-    isPositive = positive;
+  p-pubwic highfwequencytewmquewygwoup(int gwoupidx, rawr x3 i-int pawentgwoupidx, /(^•ω•^) b-boowean positive) {
+    t-this.gwoupidx = g-gwoupidx;
+    this.pawentgwoupidx = pawentgwoupidx;
+    i-ispositive = p-positive;
   }
 
-  public boolean hasPhrases() {
-    return !hfPhrases.isEmpty() || !preusedHFPhrases.isEmpty();
+  p-pubwic boowean h-hasphwases() {
+    w-wetuwn !hfphwases.isempty() || !pweusedhfphwases.isempty();
   }
 
-  protected List<String> tokensFromPhrases() {
-    if (!hasPhrases()) {
-      return null;
+  pwotected wist<stwing> tokensfwomphwases() {
+    i-if (!hasphwases()) {
+      wetuwn nyuww;
     }
-    List<String> tokens = new ArrayList<>();
-    for (String phrase : hfPhrases) {
-      for (String term : phrase.split(" ")) {
-        tokens.add(term);
+    wist<stwing> tokens = nyew awwaywist<>();
+    fow (stwing p-phwase : hfphwases) {
+      fow (stwing tewm : phwase.spwit(" ")) {
+        t-tokens.add(tewm);
       }
     }
-    for (String phrase : preusedHFPhrases) {
-      for (String term : phrase.split(" ")) {
-        tokens.add(term);
+    f-fow (stwing p-phwase : pweusedhfphwases) {
+      fow (stwing t-tewm : phwase.spwit(" ")) {
+        tokens.add(tewm);
       }
     }
-    return tokens;
+    w-wetuwn t-tokens;
   }
 
-  protected void removePreusedTokens() {
-    hfTokens.removeAll(preusedHFTokens);
-    List<String> phraseTokens = tokensFromPhrases();
-    if (phraseTokens != null) {
-      hfTokens.removeAll(phraseTokens);
-      preusedHFTokens.removeAll(phraseTokens);
+  pwotected void wemovepweusedtokens() {
+    hftokens.wemoveaww(pweusedhftokens);
+    wist<stwing> phwasetokens = tokensfwomphwases();
+    i-if (phwasetokens != nyuww) {
+      h-hftokens.wemoveaww(phwasetokens);
+      pweusedhftokens.wemoveaww(phwasetokens);
     }
-    hfPhrases.removeAll(preusedHFPhrases);
+    h-hfphwases.wemoveaww(pweusedhfphwases);
   }
 
-  protected String getTokenFromPhrase() {
-    List<String> phraseTokens = tokensFromPhrases();
-    if (phraseTokens != null) {
-      return phraseTokens.get(0);
-    } else {
-      return null;
+  p-pwotected stwing gettokenfwomphwase() {
+    wist<stwing> phwasetokens = t-tokensfwomphwases();
+    i-if (phwasetokens != nyuww) {
+      w-wetuwn p-phwasetokens.get(0);
+    } ewse {
+      wetuwn nyuww;
     }
   }
 }

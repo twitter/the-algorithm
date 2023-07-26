@@ -1,53 +1,53 @@
-package com.twitter.product_mixer.component_library.candidate_source.business_profiles
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.business_pwofiwes
 
-import com.twitter.product_mixer.component_library.model.cursor.NextCursorFeature
-import com.twitter.product_mixer.component_library.model.cursor.PreviousCursorFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherWithSourceFeaturesSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.consumer_identity.business_profiles.BusinessProfileTeamMembersOnUserClientColumn
-import com.twitter.strato.generated.client.consumer_identity.business_profiles.BusinessProfileTeamMembersOnUserClientColumn.{
-  Value => TeamMembersSlice
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.nextcuwsowfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.pweviouscuwsowfeatuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato.stwatokeyviewfetchewwithsouwcefeatuwessouwce
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.stwato.cwient.fetchew
+impowt com.twittew.stwato.genewated.cwient.consumew_identity.business_pwofiwes.businesspwofiweteammembewsonusewcwientcowumn
+impowt com.twittew.stwato.genewated.cwient.consumew_identity.business_pwofiwes.businesspwofiweteammembewsonusewcwientcowumn.{
+  v-vawue => teammembewsswice
 }
-import com.twitter.strato.generated.client.consumer_identity.business_profiles.BusinessProfileTeamMembersOnUserClientColumn.{
-  View => TeamMembersView
+impowt com.twittew.stwato.genewated.cwient.consumew_identity.business_pwofiwes.businesspwofiweteammembewsonusewcwientcowumn.{
+  v-view => teammembewsview
 }
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TeamMembersCandidateSource @Inject() (
-  column: BusinessProfileTeamMembersOnUserClientColumn)
-    extends StratoKeyViewFetcherWithSourceFeaturesSource[
-      Long,
-      TeamMembersView,
-      TeamMembersSlice,
-      Long
+@singweton
+cwass teammembewscandidatesouwce @inject() (
+  cowumn: businesspwofiweteammembewsonusewcwientcowumn)
+    extends s-stwatokeyviewfetchewwithsouwcefeatuwessouwce[
+      wong, /(^•ω•^)
+      t-teammembewsview, rawr x3
+      t-teammembewsswice, (U ﹏ U)
+      wong
     ] {
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "BusinessProfileTeamMembers")
+  ovewwide vaw identifiew: candidatesouwceidentifiew = candidatesouwceidentifiew(
+    "businesspwofiweteammembews")
 
-  override val fetcher: Fetcher[Long, TeamMembersView, TeamMembersSlice] = column.fetcher
+  o-ovewwide vaw fetchew: fetchew[wong, (U ﹏ U) teammembewsview, (⑅˘꒳˘) teammembewsswice] = cowumn.fetchew
 
-  override def stratoResultTransformer(
-    stratoKey: Long,
-    stratoResult: TeamMembersSlice
-  ): Seq[Long] =
-    stratoResult.members
+  ovewwide def s-stwatowesuwttwansfowmew(
+    stwatokey: wong,
+    s-stwatowesuwt: t-teammembewsswice
+  ): s-seq[wong] =
+    s-stwatowesuwt.membews
 
-  override protected def extractFeaturesFromStratoResult(
-    stratoKey: Long,
-    stratoResult: TeamMembersSlice
-  ): FeatureMap = {
-    val featureMapBuilder = FeatureMapBuilder()
-    stratoResult.previousCursor.foreach { cursor =>
-      featureMapBuilder.add(PreviousCursorFeature, cursor.toString)
+  ovewwide pwotected def extwactfeatuwesfwomstwatowesuwt(
+    s-stwatokey: wong, òωó
+    stwatowesuwt: teammembewsswice
+  ): f-featuwemap = {
+    vaw featuwemapbuiwdew = featuwemapbuiwdew()
+    stwatowesuwt.pweviouscuwsow.foweach { cuwsow =>
+      featuwemapbuiwdew.add(pweviouscuwsowfeatuwe, ʘwʘ c-cuwsow.tostwing)
     }
-    stratoResult.nextCursor.foreach { cursor =>
-      featureMapBuilder.add(NextCursorFeature, cursor.toString)
+    stwatowesuwt.nextcuwsow.foweach { c-cuwsow =>
+      f-featuwemapbuiwdew.add(nextcuwsowfeatuwe, /(^•ω•^) c-cuwsow.tostwing)
     }
-    featureMapBuilder.build()
+    featuwemapbuiwdew.buiwd()
   }
 }

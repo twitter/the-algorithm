@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.models
+package com.twittew.fowwow_wecommendations.modews
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.timelines.configapi._
+impowt com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
+impowt c-com.twittew.timewines.configapi._
 
-object FeatureValue {
-  def fromThrift(thriftFeatureValue: t.FeatureValue): FeatureValue = thriftFeatureValue match {
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.BoolValue(bool)) =>
-      BooleanFeatureValue(bool)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.StrValue(string)) =>
-      StringFeatureValue(string)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.IntValue(int)) =>
-      NumberFeatureValue(int)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.LongValue(long)) =>
-      NumberFeatureValue(long)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.UnknownUnionField(field)) =>
-      throw new UnknownFeatureValueException(s"Primitive: ${field.field.name}")
-    case t.FeatureValue.UnknownUnionField(field) =>
-      throw new UnknownFeatureValueException(field.field.name)
+o-object f-featuwevawue {
+  d-def fwomthwift(thwiftfeatuwevawue: t-t.featuwevawue): f-featuwevawue = t-thwiftfeatuwevawue match {
+    case t.featuwevawue.pwimitivevawue(t.pwimitivefeatuwevawue.boowvawue(boow)) =>
+      booweanfeatuwevawue(boow)
+    case t.featuwevawue.pwimitivevawue(t.pwimitivefeatuwevawue.stwvawue(stwing)) =>
+      s-stwingfeatuwevawue(stwing)
+    case t.featuwevawue.pwimitivevawue(t.pwimitivefeatuwevawue.intvawue(int)) =>
+      n-nyumbewfeatuwevawue(int)
+    case t-t.featuwevawue.pwimitivevawue(t.pwimitivefeatuwevawue.wongvawue(wong)) =>
+      numbewfeatuwevawue(wong)
+    case t.featuwevawue.pwimitivevawue(t.pwimitivefeatuwevawue.unknownunionfiewd(fiewd)) =>
+      t-thwow nyew unknownfeatuwevawueexception(s"pwimitive: ${fiewd.fiewd.name}")
+    c-case t.featuwevawue.unknownunionfiewd(fiewd) =>
+      t-thwow nyew unknownfeatuwevawueexception(fiewd.fiewd.name)
   }
 }
 
-class UnknownFeatureValueException(fieldName: String)
-    extends Exception(s"Unknown FeatureValue name in thrift: ${fieldName}")
+cwass unknownfeatuwevawueexception(fiewdname: stwing)
+    extends exception(s"unknown featuwevawue n-nyame in thwift: ${fiewdname}")

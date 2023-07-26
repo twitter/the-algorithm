@@ -1,114 +1,114 @@
-package com.twitter.visibility.builder
+package com.twittew.visibiwity.buiwdew
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.Allow
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.FailClosedException
-import com.twitter.visibility.rules.FeaturesFailedException
-import com.twitter.visibility.rules.MissingFeaturesException
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.RuleFailedException
-import com.twitter.visibility.rules.RuleResult
-import com.twitter.visibility.rules.State.FeatureFailed
-import com.twitter.visibility.rules.State.MissingFeature
-import com.twitter.visibility.rules.State.RuleFailed
+impowt com.twittew.visibiwity.featuwes.featuwe
+i-impowt com.twittew.visibiwity.featuwes.featuwemap
+i-impowt com.twittew.visibiwity.modews.contentid
+i-impowt com.twittew.visibiwity.wuwes.action
+i-impowt com.twittew.visibiwity.wuwes.awwow
+i-impowt c-com.twittew.visibiwity.wuwes.evawuationcontext
+i-impowt com.twittew.visibiwity.wuwes.faiwcwosedexception
+i-impowt com.twittew.visibiwity.wuwes.featuwesfaiwedexception
+impowt com.twittew.visibiwity.wuwes.missingfeatuwesexception
+impowt com.twittew.visibiwity.wuwes.wuwe
+impowt c-com.twittew.visibiwity.wuwes.wuwefaiwedexception
+impowt com.twittew.visibiwity.wuwes.wuwewesuwt
+impowt com.twittew.visibiwity.wuwes.state.featuwefaiwed
+i-impowt com.twittew.visibiwity.wuwes.state.missingfeatuwe
+i-impowt com.twittew.visibiwity.wuwes.state.wuwefaiwed
 
-class VisibilityResultBuilder(
-  val contentId: ContentId,
-  val featureMap: FeatureMap = FeatureMap.empty,
-  private var ruleResultMap: Map[Rule, RuleResult] = Map.empty) {
-  private var mapBuilder = Map.newBuilder[Rule, RuleResult]
-  mapBuilder ++= ruleResultMap
-  var verdict: Action = Allow
-  var finished: Boolean = false
-  var features: FeatureMap = featureMap
-  var actingRule: Option[Rule] = None
-  var secondaryVerdicts: Seq[Action] = Seq()
-  var secondaryActingRules: Seq[Rule] = Seq()
-  var resolvedFeatureMap: Map[Feature[_], Any] = Map.empty
+cwass visibiwitywesuwtbuiwdew(
+  vaw contentid: c-contentid, :3
+  vaw featuwemap: f-featuwemap = f-featuwemap.empty, (ꈍᴗꈍ)
+  pwivate vaw wuwewesuwtmap: map[wuwe, /(^•ω•^) wuwewesuwt] = map.empty) {
+  p-pwivate vaw mapbuiwdew = map.newbuiwdew[wuwe, (⑅˘꒳˘) wuwewesuwt]
+  mapbuiwdew ++= w-wuwewesuwtmap
+  vaw vewdict: a-action = awwow
+  v-vaw finished: b-boowean = fawse
+  v-vaw featuwes: featuwemap = featuwemap
+  vaw actingwuwe: o-option[wuwe] = nyone
+  vaw secondawyvewdicts: s-seq[action] = seq()
+  vaw secondawyactingwuwes: seq[wuwe] = seq()
+  vaw wesowvedfeatuwemap: m-map[featuwe[_], ( ͡o ω ͡o ) any] = map.empty
 
-  def ruleResults: Map[Rule, RuleResult] = mapBuilder.result()
+  d-def wuwewesuwts: m-map[wuwe, òωó w-wuwewesuwt] = mapbuiwdew.wesuwt()
 
-  def withFeatureMap(featureMap: FeatureMap): VisibilityResultBuilder = {
-    this.features = featureMap
+  def withfeatuwemap(featuwemap: featuwemap): v-visibiwitywesuwtbuiwdew = {
+    t-this.featuwes = featuwemap
+    t-this
+  }
+
+  d-def withwuwewesuwtmap(wuwewesuwtmap: map[wuwe, (⑅˘꒳˘) wuwewesuwt]): v-visibiwitywesuwtbuiwdew = {
+    this.wuwewesuwtmap = w-wuwewesuwtmap
+    mapbuiwdew = map.newbuiwdew[wuwe, XD w-wuwewesuwt]
+    mapbuiwdew ++= w-wuwewesuwtmap
     this
   }
 
-  def withRuleResultMap(ruleResultMap: Map[Rule, RuleResult]): VisibilityResultBuilder = {
-    this.ruleResultMap = ruleResultMap
-    mapBuilder = Map.newBuilder[Rule, RuleResult]
-    mapBuilder ++= ruleResultMap
+  d-def withwuwewesuwt(wuwe: w-wuwe, -.- wesuwt: wuwewesuwt): visibiwitywesuwtbuiwdew = {
+    mapbuiwdew += ((wuwe, :3 wesuwt))
     this
   }
 
-  def withRuleResult(rule: Rule, result: RuleResult): VisibilityResultBuilder = {
-    mapBuilder += ((rule, result))
+  def withvewdict(vewdict: action, nyaa~~ w-wuweopt: o-option[wuwe] = nyone): visibiwitywesuwtbuiwdew = {
+    t-this.vewdict = v-vewdict
+    t-this.actingwuwe = wuweopt
     this
   }
 
-  def withVerdict(verdict: Action, ruleOpt: Option[Rule] = None): VisibilityResultBuilder = {
-    this.verdict = verdict
-    this.actingRule = ruleOpt
+  def withsecondawyvewdict(vewdict: a-action, 😳 wuwe: wuwe): visibiwitywesuwtbuiwdew = {
+    this.secondawyvewdicts = this.secondawyvewdicts :+ v-vewdict
+    this.secondawyactingwuwes = t-this.secondawyactingwuwes :+ w-wuwe
+    t-this
+  }
+
+  def withfinished(finished: b-boowean): v-visibiwitywesuwtbuiwdew = {
+    t-this.finished = f-finished
     this
   }
 
-  def withSecondaryVerdict(verdict: Action, rule: Rule): VisibilityResultBuilder = {
-    this.secondaryVerdicts = this.secondaryVerdicts :+ verdict
-    this.secondaryActingRules = this.secondaryActingRules :+ rule
+  def withwesowvedfeatuwemap(
+    w-wesowvedfeatuwemap: m-map[featuwe[_], (⑅˘꒳˘) a-any]
+  ): visibiwitywesuwtbuiwdew = {
+    t-this.wesowvedfeatuwemap = w-wesowvedfeatuwemap
     this
   }
 
-  def withFinished(finished: Boolean): VisibilityResultBuilder = {
-    this.finished = finished
-    this
-  }
+  def isvewdictcomposabwe(): boowean = this.vewdict.iscomposabwe
 
-  def withResolvedFeatureMap(
-    resolvedFeatureMap: Map[Feature[_], Any]
-  ): VisibilityResultBuilder = {
-    this.resolvedFeatureMap = resolvedFeatureMap
-    this
-  }
-
-  def isVerdictComposable(): Boolean = this.verdict.isComposable
-
-  def failClosedException(evaluationContext: EvaluationContext): Option[FailClosedException] = {
-    mapBuilder
-      .result().collect {
-        case (r: Rule, RuleResult(_, MissingFeature(mf)))
-            if r.shouldFailClosed(evaluationContext.params) =>
-          Some(MissingFeaturesException(r.name, mf))
-        case (r: Rule, RuleResult(_, FeatureFailed(ff)))
-            if r.shouldFailClosed(evaluationContext.params) =>
-          Some(FeaturesFailedException(r.name, ff))
-        case (r: Rule, RuleResult(_, RuleFailed(t)))
-            if r.shouldFailClosed(evaluationContext.params) =>
-          Some(RuleFailedException(r.name, t))
-      }.toList.foldLeft(None: Option[FailClosedException]) { (acc, arg) =>
-        (acc, arg) match {
-          case (None, Some(_)) => arg
-          case (Some(FeaturesFailedException(_, _)), Some(MissingFeaturesException(_, _))) => arg
-          case (Some(RuleFailedException(_, _)), Some(MissingFeaturesException(_, _))) => arg
-          case (Some(RuleFailedException(_, _)), Some(FeaturesFailedException(_, _))) => arg
+  d-def faiwcwosedexception(evawuationcontext: evawuationcontext): option[faiwcwosedexception] = {
+    mapbuiwdew
+      .wesuwt().cowwect {
+        case (w: wuwe, nyaa~~ wuwewesuwt(_, OwO m-missingfeatuwe(mf)))
+            if w.shouwdfaiwcwosed(evawuationcontext.pawams) =>
+          some(missingfeatuwesexception(w.name, rawr x3 mf))
+        c-case (w: w-wuwe, XD wuwewesuwt(_, σωσ f-featuwefaiwed(ff)))
+            if w.shouwdfaiwcwosed(evawuationcontext.pawams) =>
+          s-some(featuwesfaiwedexception(w.name, (U ᵕ U❁) ff))
+        c-case (w: wuwe, w-wuwewesuwt(_, wuwefaiwed(t)))
+            if w.shouwdfaiwcwosed(evawuationcontext.pawams) =>
+          some(wuwefaiwedexception(w.name, (U ﹏ U) t))
+      }.towist.fowdweft(none: o-option[faiwcwosedexception]) { (acc, :3 awg) =>
+        (acc, ( ͡o ω ͡o ) a-awg) match {
+          case (none, σωσ some(_)) => a-awg
+          c-case (some(featuwesfaiwedexception(_, >w< _)), some(missingfeatuwesexception(_, 😳😳😳 _))) => awg
+          c-case (some(wuwefaiwedexception(_, OwO _)), some(missingfeatuwesexception(_, 😳 _))) => a-awg
+          case (some(wuwefaiwedexception(_, 😳😳😳 _)), s-some(featuwesfaiwedexception(_, (˘ω˘) _))) => a-awg
           case _ => acc
         }
       }
   }
 
-  def build: VisibilityResult = {
-    VisibilityResult(
-      contentId = contentId,
-      featureMap = features,
-      ruleResultMap = mapBuilder.result(),
-      verdict = verdict,
-      finished = finished,
-      actingRule = actingRule,
-      secondaryActingRules = secondaryActingRules,
-      secondaryVerdicts = secondaryVerdicts,
-      resolvedFeatureMap = resolvedFeatureMap
+  def buiwd: visibiwitywesuwt = {
+    visibiwitywesuwt(
+      c-contentid = c-contentid, ʘwʘ
+      f-featuwemap = featuwes, ( ͡o ω ͡o )
+      w-wuwewesuwtmap = m-mapbuiwdew.wesuwt(), o.O
+      vewdict = v-vewdict, >w<
+      finished = finished, 😳
+      actingwuwe = actingwuwe, 🥺
+      secondawyactingwuwes = secondawyactingwuwes, rawr x3
+      s-secondawyvewdicts = s-secondawyvewdicts, o.O
+      wesowvedfeatuwemap = wesowvedfeatuwemap
     )
   }
 }

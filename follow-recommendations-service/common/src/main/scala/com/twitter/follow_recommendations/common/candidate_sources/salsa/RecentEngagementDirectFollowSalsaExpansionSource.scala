@@ -1,40 +1,40 @@
-package com.twitter.follow_recommendations.common.candidate_sources.salsa
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sawsa
 
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.fowwow_wecommendations.common.cwients.weaw_time_weaw_gwaph.weawtimeweawgwaphcwient
+i-impowt com.twittew.hewmit.modew.awgowithm
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stitch.stitch
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class RecentEngagementDirectFollowSalsaExpansionSource @Inject() (
-  realTimeRealGraphClient: RealTimeRealGraphClient,
-  salsaExpander: SalsaExpander)
-    extends SalsaExpansionBasedCandidateSource[Long](salsaExpander) {
+@singweton
+cwass wecentengagementdiwectfowwowsawsaexpansionsouwce @inject() (
+  weawtimeweawgwaphcwient: weawtimeweawgwaphcwient, OwO
+  sawsaexpandew: s-sawsaexpandew)
+    extends sawsaexpansionbasedcandidatesouwce[wong](sawsaexpandew) {
 
-  override val identifier: CandidateSourceIdentifier =
-    RecentEngagementDirectFollowSalsaExpansionSource.Identifier
+  ovewwide v-vaw identifiew: candidatesouwceidentifiew =
+    w-wecentengagementdiwectfowwowsawsaexpansionsouwce.identifiew
 
-  override def firstDegreeNodes(target: Long): Stitch[Seq[Long]] = realTimeRealGraphClient
-    .getUsersRecentlyEngagedWith(
-      target,
-      RealTimeRealGraphClient.EngagementScoreMap,
-      includeDirectFollowCandidates = true,
-      includeNonDirectFollowCandidates = false
-    ).map { recentlyFollowed =>
-      recentlyFollowed
-        .take(RecentEngagementDirectFollowSalsaExpansionSource.NumFirstDegreeNodesToRetrieve)
+  ovewwide def fiwstdegweenodes(tawget: wong): stitch[seq[wong]] = weawtimeweawgwaphcwient
+    .getusewswecentwyengagedwith(
+      t-tawget, (U ﹏ U)
+      weawtimeweawgwaphcwient.engagementscowemap, >_<
+      incwudediwectfowwowcandidates = t-twue, rawr x3
+      incwudenondiwectfowwowcandidates = f-fawse
+    ).map { wecentwyfowwowed =>
+      wecentwyfowwowed
+        .take(wecentengagementdiwectfowwowsawsaexpansionsouwce.numfiwstdegweenodestowetwieve)
         .map(_.id)
     }
 
-  override def maxResults(target: Long): Int =
-    RecentEngagementDirectFollowSalsaExpansionSource.OutputSize
+  ovewwide def maxwesuwts(tawget: w-wong): int =
+    wecentengagementdiwectfowwowsawsaexpansionsouwce.outputsize
 }
 
-object RecentEngagementDirectFollowSalsaExpansionSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.RecentEngagementSarusOcCur.toString)
-  val NumFirstDegreeNodesToRetrieve = 10
-  val OutputSize = 200
+object wecentengagementdiwectfowwowsawsaexpansionsouwce {
+  vaw identifiew: candidatesouwceidentifiew = candidatesouwceidentifiew(
+    a-awgowithm.wecentengagementsawusoccuw.tostwing)
+  vaw nyumfiwstdegweenodestowetwieve = 10
+  v-vaw outputsize = 200
 }

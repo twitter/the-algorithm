@@ -1,44 +1,44 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorUpdater.getCursorByType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.uwtcuwsowupdatew.getcuwsowbytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowopewation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowtype
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object UrtCursorUpdater {
+o-object uwtcuwsowupdatew {
 
-  def getCursorByType(
-    entries: Seq[TimelineEntry],
-    cursorType: CursorType
-  ): Option[CursorOperation] = {
-    entries.collectFirst {
-      case cursor: CursorOperation if cursor.cursorType == cursorType => cursor
+  def getcuwsowbytype(
+    entwies: seq[timewineentwy], OwO
+    cuwsowtype: c-cuwsowtype
+  ): option[cuwsowopewation] = {
+    entwies.cowwectfiwst {
+      c-case cuwsow: cuwsowopewation i-if cuwsow.cuwsowtype == cuwsowtype => cuwsow
     }
   }
 }
 
-// If a CursorCandidate is returned by a Candidate Source, use this trait to update that Cursor as
-// necessary (as opposed to building a new cursor which is done with the UrtCursorBuilder)
-trait UrtCursorUpdater[-Query <: PipelineQuery] extends UrtCursorBuilder[Query] { self =>
+// if a cuwsowcandidate i-is wetuwned by a candidate s-souwce, 😳😳😳 use this t-twait to update that cuwsow as
+// nyecessawy (as opposed to buiwding a nyew cuwsow w-which is done with the uwtcuwsowbuiwdew)
+twait uwtcuwsowupdatew[-quewy <: pipewinequewy] e-extends uwtcuwsowbuiwdew[quewy] { sewf =>
 
-  def getExistingCursor(entries: Seq[TimelineEntry]): Option[CursorOperation] = {
-    getCursorByType(entries, self.cursorType)
+  d-def getexistingcuwsow(entwies: s-seq[timewineentwy]): o-option[cuwsowopewation] = {
+    g-getcuwsowbytype(entwies, 😳😳😳 sewf.cuwsowtype)
   }
 
-  def update(query: Query, entries: Seq[TimelineEntry]): Seq[TimelineEntry] = {
-    if (includeOperation(query, entries)) {
-      getExistingCursor(entries)
-        .map { existingCursor =>
-          // Safe .get because includeOperation() is shared in this context
-          // build() method creates a new CursorOperation. We copy over the `idToReplace`
-          // from the existing cursor.
-          val newCursor =
-            build(query, entries).get
-              .copy(idToReplace = existingCursor.idToReplace)
+  def update(quewy: q-quewy, o.O entwies: seq[timewineentwy]): seq[timewineentwy] = {
+    i-if (incwudeopewation(quewy, ( ͡o ω ͡o ) entwies)) {
+      getexistingcuwsow(entwies)
+        .map { existingcuwsow =>
+          // safe .get because incwudeopewation() is s-shawed in this context
+          // buiwd() method c-cweates a nyew c-cuwsowopewation. (U ﹏ U) w-we copy ovew the `idtowepwace`
+          // fwom the existing cuwsow. (///ˬ///✿)
+          v-vaw nyewcuwsow =
+            b-buiwd(quewy, >w< entwies).get
+              .copy(idtowepwace = existingcuwsow.idtowepwace)
 
-          entries.filterNot(_ == existingCursor) :+ newCursor
-        }.getOrElse(entries)
-    } else entries
+          e-entwies.fiwtewnot(_ == e-existingcuwsow) :+ nyewcuwsow
+        }.getowewse(entwies)
+    } e-ewse entwies
   }
 }

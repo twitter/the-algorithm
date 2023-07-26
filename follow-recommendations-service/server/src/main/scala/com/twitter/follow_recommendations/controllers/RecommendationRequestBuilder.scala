@@ -1,39 +1,39 @@
-package com.twitter.follow_recommendations.controllers
+package com.twittew.fowwow_wecommendations.contwowwews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.models.DebugParams
-import com.twitter.follow_recommendations.models.DisplayContext
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.cwientcontextconvewtew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.dispwaywocation
+i-impowt c-com.twittew.fowwow_wecommendations.modews.debugpawams
+i-impowt c-com.twittew.fowwow_wecommendations.modews.dispwaycontext
+i-impowt c-com.twittew.fowwow_wecommendations.modews.wecommendationwequest
+impowt com.twittew.fowwow_wecommendations.{thwiftscawa => t}
+impowt com.twittew.gizmoduck.thwiftscawa.usewtype
+impowt com.twittew.stitch.stitch
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class RecommendationRequestBuilder @Inject() (
-  requestBuilderUserFetcher: RequestBuilderUserFetcher,
-  statsReceiver: StatsReceiver) {
-  private val scopedStats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val isSoftUserCounter = scopedStats.counter("is_soft_user")
+@singweton
+c-cwass wecommendationwequestbuiwdew @inject() (
+  wequestbuiwdewusewfetchew: w-wequestbuiwdewusewfetchew, >_<
+  statsweceivew: statsweceivew) {
+  pwivate vaw scopedstats = statsweceivew.scope(this.getcwass.getsimpwename)
+  p-pwivate vaw issoftusewcountew = s-scopedstats.countew("is_soft_usew")
 
-  def fromThrift(tRequest: t.RecommendationRequest): Stitch[RecommendationRequest] = {
-    requestBuilderUserFetcher.fetchUser(tRequest.clientContext.userId).map { userOpt =>
-      val isSoftUser = userOpt.exists(_.userType == UserType.Soft)
-      if (isSoftUser) isSoftUserCounter.incr()
-      RecommendationRequest(
-        clientContext = ClientContextConverter.fromThrift(tRequest.clientContext),
-        displayLocation = DisplayLocation.fromThrift(tRequest.displayLocation),
-        displayContext = tRequest.displayContext.map(DisplayContext.fromThrift),
-        maxResults = tRequest.maxResults,
-        cursor = tRequest.cursor,
-        excludedIds = tRequest.excludedIds,
-        fetchPromotedContent = tRequest.fetchPromotedContent,
-        debugParams = tRequest.debugParams.map(DebugParams.fromThrift),
-        userLocationState = tRequest.userLocationState,
-        isSoftUser = isSoftUser
+  d-def fwomthwift(twequest: t.wecommendationwequest): stitch[wecommendationwequest] = {
+    wequestbuiwdewusewfetchew.fetchusew(twequest.cwientcontext.usewid).map { usewopt =>
+      v-vaw issoftusew = usewopt.exists(_.usewtype == usewtype.soft)
+      if (issoftusew) issoftusewcountew.incw()
+      w-wecommendationwequest(
+        cwientcontext = c-cwientcontextconvewtew.fwomthwift(twequest.cwientcontext), >_<
+        d-dispwaywocation = d-dispwaywocation.fwomthwift(twequest.dispwaywocation), (⑅˘꒳˘)
+        d-dispwaycontext = twequest.dispwaycontext.map(dispwaycontext.fwomthwift), /(^•ω•^)
+        maxwesuwts = t-twequest.maxwesuwts, rawr x3
+        cuwsow = twequest.cuwsow, (U ﹏ U)
+        e-excwudedids = twequest.excwudedids, (U ﹏ U)
+        fetchpwomotedcontent = twequest.fetchpwomotedcontent, (⑅˘꒳˘)
+        debugpawams = twequest.debugpawams.map(debugpawams.fwomthwift), òωó
+        u-usewwocationstate = twequest.usewwocationstate, ʘwʘ
+        issoftusew = i-issoftusew
       )
     }
 

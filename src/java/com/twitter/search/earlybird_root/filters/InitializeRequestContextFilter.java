@@ -1,66 +1,66 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import javax.inject.Inject;
+impowt javax.inject.inject;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Filter;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.QueryParsingUtils;
-import com.twitter.search.earlybird_root.common.TwitterContextProvider;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.util.Future;
+i-impowt c-com.twittew.common.utiw.cwock;
+impowt c-com.twittew.finagwe.fiwtew;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.eawwybiwd.common.eawwybiwdwequestutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.quewypawsingutiws;
+impowt c-com.twittew.seawch.eawwybiwd_woot.common.twittewcontextpwovidew;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+i-impowt com.twittew.utiw.futuwe;
 
 /**
- * Creates a new RequestContext from an EarlybirdRequest, and passes the RequestContext down to
- * the rest of the filter/service chain.
+ * cweates a nyew wequestcontext fwom an eawwybiwdwequest, 😳 a-and passes the wequestcontext d-down to
+ * t-the west of the fiwtew/sewvice chain. -.-
  */
-public class InitializeRequestContextFilter extends
-    Filter<EarlybirdRequest, EarlybirdResponse, EarlybirdRequestContext, EarlybirdResponse> {
+pubwic cwass initiawizewequestcontextfiwtew extends
+    f-fiwtew<eawwybiwdwequest, 🥺 eawwybiwdwesponse, o.O eawwybiwdwequestcontext, /(^•ω•^) eawwybiwdwesponse> {
 
-  @VisibleForTesting
-  static final SearchCounter FAILED_QUERY_PARSING =
-      SearchCounter.export("initialize_request_context_filter_query_parsing_failure");
+  @visibwefowtesting
+  static finaw seawchcountew f-faiwed_quewy_pawsing =
+      seawchcountew.expowt("initiawize_wequest_context_fiwtew_quewy_pawsing_faiwuwe");
 
-  private final SearchDecider decider;
-  private final TwitterContextProvider twitterContextProvider;
-  private final Clock clock;
+  p-pwivate finaw seawchdecidew d-decidew;
+  p-pwivate f-finaw twittewcontextpwovidew twittewcontextpwovidew;
+  pwivate finaw c-cwock cwock;
 
   /**
-   * The constructor of the filter.
+   * the constwuctow of t-the fiwtew. nyaa~~
    */
-  @Inject
-  public InitializeRequestContextFilter(SearchDecider decider,
-                                        TwitterContextProvider twitterContextProvider,
-                                        Clock clock) {
-    this.decider = decider;
-    this.twitterContextProvider = twitterContextProvider;
-    this.clock = clock;
+  @inject
+  pubwic initiawizewequestcontextfiwtew(seawchdecidew decidew, nyaa~~
+                                        twittewcontextpwovidew twittewcontextpwovidew, :3
+                                        cwock c-cwock) {
+    this.decidew = decidew;
+    t-this.twittewcontextpwovidew = t-twittewcontextpwovidew;
+    t-this.cwock = cwock;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> a-appwy(
+      e-eawwybiwdwequest wequest, 😳😳😳
+      s-sewvice<eawwybiwdwequestcontext, (˘ω˘) e-eawwybiwdwesponse> sewvice) {
 
-    EarlybirdRequestUtil.recordClientClockDiff(request);
+    e-eawwybiwdwequestutiw.wecowdcwientcwockdiff(wequest);
 
-    EarlybirdRequestContext requestContext;
-    try {
-      requestContext = EarlybirdRequestContext.newContext(
-          request, decider, twitterContextProvider.get(), clock);
-    } catch (QueryParserException e) {
-      FAILED_QUERY_PARSING.increment();
-      return QueryParsingUtils.newClientErrorResponse(request, e);
+    eawwybiwdwequestcontext wequestcontext;
+    t-twy {
+      wequestcontext = eawwybiwdwequestcontext.newcontext(
+          wequest, ^^ d-decidew, :3 twittewcontextpwovidew.get(), c-cwock);
+    } catch (quewypawsewexception e-e) {
+      f-faiwed_quewy_pawsing.incwement();
+      wetuwn quewypawsingutiws.newcwientewwowwesponse(wequest, -.- e);
     }
 
-    return service.apply(requestContext);
+    wetuwn sewvice.appwy(wequestcontext);
   }
 }

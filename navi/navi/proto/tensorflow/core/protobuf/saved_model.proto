@@ -1,23 +1,23 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/protobuf/meta_graph.proto";
+impowt "tensowfwow/cowe/pwotobuf/meta_gwaph.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "SavedModelProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option c-cc_enabwe_awenas = t-twue;
+option j-java_outew_cwassname = "savedmodewpwotos";
+option j-java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// SavedModel is the high level serialization format for TensorFlow Models.
-// See [todo: doc links, similar to session_bundle] for more information.
-message SavedModel {
-  // The schema version of the SavedModel instance. Used for versioning when
-  // making future changes to the specification/implementation. Initial value
-  // at release will be 1.
-  int64 saved_model_schema_version = 1;
+// savedmodew is the high wevew sewiawization fowmat fow tensowfwow m-modews.
+// see [todo: doc winks, nyaa~~ simiwaw to s-session_bundwe] fow mowe infowmation. /(^•ω•^)
+m-message savedmodew {
+  // the schema vewsion of the savedmodew i-instance. rawr used fow vewsioning w-when
+  // making f-futuwe changes to the specification/impwementation. OwO initiaw vawue
+  // at wewease wiww be 1. (U ﹏ U)
+  i-int64 saved_modew_schema_vewsion = 1;
 
-  // One or more MetaGraphs.
-  repeated MetaGraphDef meta_graphs = 2;
+  // one ow mowe metagwaphs. >_<
+  wepeated metagwaphdef meta_gwaphs = 2;
 }

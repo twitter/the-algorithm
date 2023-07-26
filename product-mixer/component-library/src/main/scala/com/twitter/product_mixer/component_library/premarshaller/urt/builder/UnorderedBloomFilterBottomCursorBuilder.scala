@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedBloomFilterCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.util.bloomfilter.AdaptiveLongIntBloomFilterBuilder
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtunowdewedbwoomfiwtewcuwsow
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.cuwsow.uwtcuwsowsewiawizew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.bottomcuwsow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowtype
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinecuwsowsewiawizew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.seawch.common.utiw.bwoomfiwtew.adaptivewongintbwoomfiwtewbuiwdew
 
 /**
- * Builds [[UrtUnorderedBloomFilterCursor]] in the Bottom position
+ * buiwds [[uwtunowdewedbwoomfiwtewcuwsow]] i-in the bottom position
  *
- * @param idSelector Specifies the entry from which to derive the `id` field
- * @param serializer Converts the cursor to an encoded string
+ * @pawam i-idsewectow specifies the entwy fwom which to dewive the `id` fiewd
+ * @pawam s-sewiawizew convewts t-the cuwsow to a-an encoded stwing
  */
-case class UnorderedBloomFilterBottomCursorBuilder(
-  idSelector: PartialFunction[UniversalNoun[_], Long],
-  serializer: PipelineCursorSerializer[UrtUnorderedBloomFilterCursor] = UrtCursorSerializer)
-    extends UrtCursorBuilder[
-      PipelineQuery with HasPipelineCursor[UrtUnorderedBloomFilterCursor]
+case cwass unowdewedbwoomfiwtewbottomcuwsowbuiwdew(
+  idsewectow: pawtiawfunction[univewsawnoun[_], (⑅˘꒳˘) w-wong],
+  sewiawizew: pipewinecuwsowsewiawizew[uwtunowdewedbwoomfiwtewcuwsow] = uwtcuwsowsewiawizew)
+    extends uwtcuwsowbuiwdew[
+      pipewinequewy w-with haspipewinecuwsow[uwtunowdewedbwoomfiwtewcuwsow]
     ] {
 
-  override val cursorType: CursorType = BottomCursor
+  ovewwide vaw cuwsowtype: c-cuwsowtype = b-bottomcuwsow
 
-  override def cursorValue(
-    query: PipelineQuery with HasPipelineCursor[UrtUnorderedBloomFilterCursor],
-    entries: Seq[TimelineEntry]
-  ): String = {
-    val bloomFilter = query.pipelineCursor.map(_.longIntBloomFilter)
-    val ids = entries.collect(idSelector)
+  o-ovewwide d-def cuwsowvawue(
+    quewy: pipewinequewy with haspipewinecuwsow[uwtunowdewedbwoomfiwtewcuwsow], /(^•ω•^)
+    e-entwies: seq[timewineentwy]
+  ): stwing = {
+    vaw bwoomfiwtew = q-quewy.pipewinecuwsow.map(_.wongintbwoomfiwtew)
+    vaw ids = entwies.cowwect(idsewectow)
 
-    val cursor = UrtUnorderedBloomFilterCursor(
-      initialSortIndex = nextBottomInitialSortIndex(query, entries),
-      longIntBloomFilter = AdaptiveLongIntBloomFilterBuilder.build(ids, bloomFilter)
+    vaw cuwsow = uwtunowdewedbwoomfiwtewcuwsow(
+      initiawsowtindex = n-nyextbottominitiawsowtindex(quewy, rawr x3 entwies), (U ﹏ U)
+      w-wongintbwoomfiwtew = a-adaptivewongintbwoomfiwtewbuiwdew.buiwd(ids, (U ﹏ U) bwoomfiwtew)
     )
 
-    serializer.serializeCursor(cursor)
+    s-sewiawizew.sewiawizecuwsow(cuwsow)
   }
 }

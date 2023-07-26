@@ -1,19 +1,19 @@
-package com.twitter.tweetypie
-package service
-package observer
+package com.twittew.tweetypie
+package s-sewvice
+package o-obsewvew
 
-import com.twitter.finagle.stats.StatsReceiver
+impowt c-com.twittew.finagwe.stats.statsweceivew
 
 /**
- * "Result State" is, for every singular tweet read, we categorize the tweet
- * result as a success or failure.
- * These stats enable us to track true TPS success rates.
+ * "wesuwt s-state" i-is, -.- fow evewy s-singuwaw tweet w-wead, ( ͡o ω ͡o ) we categowize t-the tweet
+ * wesuwt as a success ow faiwuwe. rawr x3
+ * these stats enabwe us to twack t-twue tps success wates. nyaa~~
  */
-private[service] case class ResultStateStats(private val underlying: StatsReceiver) {
-  private val stats = underlying.scope("result_state")
-  private val successCounter = stats.counter("success")
-  private val failedCounter = stats.counter("failed")
+pwivate[sewvice] c-case cwass wesuwtstatestats(pwivate vaw undewwying: s-statsweceivew) {
+  pwivate vaw stats = undewwying.scope("wesuwt_state")
+  pwivate vaw successcountew = s-stats.countew("success")
+  pwivate v-vaw faiwedcountew = s-stats.countew("faiwed")
 
-  def success(delta: Long = 1): Unit = successCounter.incr(delta)
-  def failed(delta: Long = 1): Unit = failedCounter.incr(delta)
+  def success(dewta: wong = 1): unit = successcountew.incw(dewta)
+  def faiwed(dewta: w-wong = 1): unit = faiwedcountew.incw(dewta)
 }

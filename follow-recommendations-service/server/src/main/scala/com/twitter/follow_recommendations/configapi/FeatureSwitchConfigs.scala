@@ -1,138 +1,138 @@
-package com.twitter.follow_recommendations.configapi
+package com.twittew.fowwow_wecommendations.configapi
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.base.SocialProofEnforcedCandidateSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeoQualityFollowSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeoSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.real_graph.RealGraphOonFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RepeatedProfileVisitsFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SimsSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.SimsExpansionFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingExpansionSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStpSourceFsConfig
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OnlineSTPSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.user_user_graph.UserUserGraphFSConfig
-import com.twitter.follow_recommendations.common.feature_hydration.sources.FeatureHydrationSourcesFSConfig
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.WeightedCandidateSourceRankerFSConfig
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.follow_recommendations.flows.content_recommender_flow.ContentRecommenderFlowFSConfig
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicateFSConfig
-import com.twitter.follow_recommendations.common.predicates.hss.HssPredicateFSConfig
-import com.twitter.follow_recommendations.common.predicates.sgs.SgsPredicateFSConfig
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlowFSConfig
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.base.sociawpwoofenfowcedcandidatesouwcefsconfig
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.cwowd_seawch_accounts.cwowdseawchaccountsfsconfig
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popgeoquawityfowwowsouwcefsconfig
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.top_owganic_fowwows_accounts.topowganicfowwowsaccountsfsconfig
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popgeosouwcefsconfig
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.ppmi_wocawe_fowwow.ppmiwocawefowwowsouwcefsconfig
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.weaw_gwaph.weawgwaphoonfsconfig
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.wecent_engagement.wepeatedpwofiwevisitsfsconfig
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims.simssouwcefsconfig
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion.wecentengagementsimiwawusewsfsconfig
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion.simsexpansionfsconfig
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sociawgwaph.wecentfowwowingwecentfowwowingexpansionsouwcefsconfig
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.stp.offwinestpsouwcefsconfig
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.stp.onwinestpsouwcefsconfig
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.twianguwaw_woops.twianguwawwoopsfsconfig
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.usew_usew_gwaph.usewusewgwaphfsconfig
+i-impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces.featuwehydwationsouwcesfsconfig
+i-impowt com.twittew.fowwow_wecommendations.common.wankews.weighted_candidate_souwce_wankew.weightedcandidatesouwcewankewfsconfig
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+impowt c-com.twittew.fowwow_wecommendations.fwows.content_wecommendew_fwow.contentwecommendewfwowfsconfig
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.gizmoduck.gizmoduckpwedicatefsconfig
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.hss.hsspwedicatefsconfig
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.sgs.sgspwedicatefsconfig
+i-impowt com.twittew.fowwow_wecommendations.fwows.post_nux_mw.postnuxmwfwowfsconfig
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.timewines.configapi.baseconfigbuiwdew
+i-impowt c-com.twittew.timewines.configapi.featuweswitchovewwideutiw
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class FeatureSwitchConfigs @Inject() (
-  globalFeatureSwitchConfig: GlobalFeatureSwitchConfig,
-  featureHydrationSourcesFSConfig: FeatureHydrationSourcesFSConfig,
-  weightedCandidateSourceRankerFSConfig: WeightedCandidateSourceRankerFSConfig,
-  // Flow related config
-  contentRecommenderFlowFSConfig: ContentRecommenderFlowFSConfig,
-  postNuxMlFlowFSConfig: PostNuxMlFlowFSConfig,
-  // Candidate source related config
-  crowdSearchAccountsFSConfig: CrowdSearchAccountsFSConfig,
-  offlineStpSourceFsConfig: OfflineStpSourceFsConfig,
-  onlineSTPSourceFSConfig: OnlineSTPSourceFSConfig,
-  popGeoSourceFSConfig: PopGeoSourceFSConfig,
-  popGeoQualityFollowFSConfig: PopGeoQualityFollowSourceFSConfig,
-  realGraphOonFSConfig: RealGraphOonFSConfig,
-  repeatedProfileVisitsFSConfig: RepeatedProfileVisitsFSConfig,
-  recentEngagementSimilarUsersFSConfig: RecentEngagementSimilarUsersFSConfig,
-  recentFollowingRecentFollowingExpansionSourceFSConfig: RecentFollowingRecentFollowingExpansionSourceFSConfig,
-  simsExpansionFSConfig: SimsExpansionFSConfig,
-  simsSourceFSConfig: SimsSourceFSConfig,
-  socialProofEnforcedCandidateSourceFSConfig: SocialProofEnforcedCandidateSourceFSConfig,
-  triangularLoopsFSConfig: TriangularLoopsFSConfig,
-  userUserGraphFSConfig: UserUserGraphFSConfig,
-  // Predicate related configs
-  gizmoduckPredicateFSConfig: GizmoduckPredicateFSConfig,
-  hssPredicateFSConfig: HssPredicateFSConfig,
-  sgsPredicateFSConfig: SgsPredicateFSConfig,
-  ppmiLocaleSourceFSConfig: PPMILocaleFollowSourceFSConfig,
-  topOrganicFollowsAccountsFSConfig: TopOrganicFollowsAccountsFSConfig,
-  statsReceiver: StatsReceiver) {
+@singweton
+cwass featuweswitchconfigs @inject() (
+  gwobawfeatuweswitchconfig: g-gwobawfeatuweswitchconfig, (⑅˘꒳˘)
+  featuwehydwationsouwcesfsconfig: featuwehydwationsouwcesfsconfig, XD
+  weightedcandidatesouwcewankewfsconfig: weightedcandidatesouwcewankewfsconfig, -.-
+  // fwow wewated c-config
+  contentwecommendewfwowfsconfig: c-contentwecommendewfwowfsconfig,
+  p-postnuxmwfwowfsconfig: p-postnuxmwfwowfsconfig, :3
+  // candidate souwce wewated config
+  cwowdseawchaccountsfsconfig: c-cwowdseawchaccountsfsconfig, nyaa~~
+  o-offwinestpsouwcefsconfig: offwinestpsouwcefsconfig, 😳
+  o-onwinestpsouwcefsconfig: o-onwinestpsouwcefsconfig, (⑅˘꒳˘)
+  popgeosouwcefsconfig: p-popgeosouwcefsconfig, nyaa~~
+  popgeoquawityfowwowfsconfig: p-popgeoquawityfowwowsouwcefsconfig, OwO
+  weawgwaphoonfsconfig: weawgwaphoonfsconfig, rawr x3
+  w-wepeatedpwofiwevisitsfsconfig: wepeatedpwofiwevisitsfsconfig, XD
+  w-wecentengagementsimiwawusewsfsconfig: wecentengagementsimiwawusewsfsconfig, σωσ
+  w-wecentfowwowingwecentfowwowingexpansionsouwcefsconfig: w-wecentfowwowingwecentfowwowingexpansionsouwcefsconfig, (U ᵕ U❁)
+  simsexpansionfsconfig: simsexpansionfsconfig, (U ﹏ U)
+  simssouwcefsconfig: simssouwcefsconfig, :3
+  sociawpwoofenfowcedcandidatesouwcefsconfig: sociawpwoofenfowcedcandidatesouwcefsconfig, ( ͡o ω ͡o )
+  twianguwawwoopsfsconfig: t-twianguwawwoopsfsconfig, σωσ
+  u-usewusewgwaphfsconfig: usewusewgwaphfsconfig, >w<
+  // p-pwedicate wewated c-configs
+  g-gizmoduckpwedicatefsconfig: gizmoduckpwedicatefsconfig, 😳😳😳
+  hsspwedicatefsconfig: hsspwedicatefsconfig, OwO
+  s-sgspwedicatefsconfig: sgspwedicatefsconfig, 😳
+  ppmiwocawesouwcefsconfig: ppmiwocawefowwowsouwcefsconfig, 😳😳😳
+  topowganicfowwowsaccountsfsconfig: t-topowganicfowwowsaccountsfsconfig, (˘ω˘)
+  statsweceivew: s-statsweceivew) {
 
-  val logger = Logger(classOf[FeatureSwitchConfigs])
+  v-vaw w-woggew = woggew(cwassof[featuweswitchconfigs])
 
-  val mergedFSConfig =
-    FeatureSwitchConfig.merge(
-      Seq(
-        globalFeatureSwitchConfig,
-        featureHydrationSourcesFSConfig,
-        weightedCandidateSourceRankerFSConfig,
-        // Flow related config
-        contentRecommenderFlowFSConfig,
-        postNuxMlFlowFSConfig,
-        // Candidate source related config
-        crowdSearchAccountsFSConfig,
-        offlineStpSourceFsConfig,
-        onlineSTPSourceFSConfig,
-        popGeoSourceFSConfig,
-        popGeoQualityFollowFSConfig,
-        realGraphOonFSConfig,
-        repeatedProfileVisitsFSConfig,
-        recentEngagementSimilarUsersFSConfig,
-        recentFollowingRecentFollowingExpansionSourceFSConfig,
-        simsExpansionFSConfig,
-        simsSourceFSConfig,
-        socialProofEnforcedCandidateSourceFSConfig,
-        triangularLoopsFSConfig,
-        userUserGraphFSConfig,
-        // Predicate related configs:
-        gizmoduckPredicateFSConfig,
-        hssPredicateFSConfig,
-        sgsPredicateFSConfig,
-        ppmiLocaleSourceFSConfig,
-        topOrganicFollowsAccountsFSConfig,
+  vaw mewgedfsconfig =
+    f-featuweswitchconfig.mewge(
+      s-seq(
+        g-gwobawfeatuweswitchconfig, ʘwʘ
+        f-featuwehydwationsouwcesfsconfig, ( ͡o ω ͡o )
+        weightedcandidatesouwcewankewfsconfig, o.O
+        // fwow wewated c-config
+        c-contentwecommendewfwowfsconfig, >w<
+        p-postnuxmwfwowfsconfig, 😳
+        // c-candidate s-souwce wewated config
+        cwowdseawchaccountsfsconfig, 🥺
+        offwinestpsouwcefsconfig, rawr x3
+        o-onwinestpsouwcefsconfig, o.O
+        popgeosouwcefsconfig, rawr
+        popgeoquawityfowwowfsconfig, ʘwʘ
+        weawgwaphoonfsconfig, 😳😳😳
+        wepeatedpwofiwevisitsfsconfig, ^^;;
+        wecentengagementsimiwawusewsfsconfig, o.O
+        wecentfowwowingwecentfowwowingexpansionsouwcefsconfig, (///ˬ///✿)
+        s-simsexpansionfsconfig, σωσ
+        simssouwcefsconfig, nyaa~~
+        sociawpwoofenfowcedcandidatesouwcefsconfig, ^^;;
+        twianguwawwoopsfsconfig, ^•ﻌ•^
+        u-usewusewgwaphfsconfig, σωσ
+        // p-pwedicate wewated c-configs:
+        gizmoduckpwedicatefsconfig, -.-
+        h-hsspwedicatefsconfig, ^^;;
+        sgspwedicatefsconfig, XD
+        p-ppmiwocawesouwcefsconfig, 🥺
+        t-topowganicfowwowsaccountsfsconfig, òωó
       )
     )
 
   /**
-   * enum params have to be listed in this main file together as otherwise we'll have to pass in
-   * some signature like `Seq[FSEnumParams[_]]` which are generics of generics and won't compile.
-   * we only have enumFsParams from globalFeatureSwitchConfig at the moment
+   * enum pawams have to be wisted in this main fiwe togethew as othewwise we'ww h-have to pass in
+   * some signatuwe w-wike `seq[fsenumpawams[_]]` which awe genewics o-of genewics a-and won't compiwe. (ˆ ﻌ ˆ)♡
+   * we onwy have enumfspawams f-fwom gwobawfeatuweswitchconfig a-at the moment
    */
-  val enumOverrides = globalFeatureSwitchConfig.enumFsParams.flatMap { enumParam =>
-    FeatureSwitchOverrideUtil.getEnumFSOverrides(statsReceiver, logger, enumParam)
+  vaw enumovewwides = g-gwobawfeatuweswitchconfig.enumfspawams.fwatmap { e-enumpawam =>
+    featuweswitchovewwideutiw.getenumfsovewwides(statsweceivew, -.- woggew, :3 enumpawam)
   }
 
-  val gatedOverrides = mergedFSConfig.gatedOverridesMap.flatMap {
-    case (fsName, overrides) =>
-      FeatureSwitchOverrideUtil.gatedOverrides(fsName, overrides: _*)
+  vaw gatedovewwides = mewgedfsconfig.gatedovewwidesmap.fwatmap {
+    c-case (fsname, ʘwʘ o-ovewwides) =>
+      f-featuweswitchovewwideutiw.gatedovewwides(fsname, ovewwides: _*)
   }
 
-  val enumSeqOverrides = globalFeatureSwitchConfig.enumSeqFsParams.flatMap { enumSeqParam =>
-    FeatureSwitchOverrideUtil.getEnumSeqFSOverrides(statsReceiver, logger, enumSeqParam)
+  v-vaw enumseqovewwides = g-gwobawfeatuweswitchconfig.enumseqfspawams.fwatmap { enumseqpawam =>
+    f-featuweswitchovewwideutiw.getenumseqfsovewwides(statsweceivew, 🥺 woggew, >_< enumseqpawam)
   }
 
-  val overrides =
-    FeatureSwitchOverrideUtil
-      .getBooleanFSOverrides(mergedFSConfig.booleanFSParams: _*) ++
-      FeatureSwitchOverrideUtil
-        .getBoundedIntFSOverrides(mergedFSConfig.intFSParams: _*) ++
-      FeatureSwitchOverrideUtil
-        .getBoundedLongFSOverrides(mergedFSConfig.longFSParams: _*) ++
-      FeatureSwitchOverrideUtil
-        .getBoundedDoubleFSOverrides(mergedFSConfig.doubleFSParams: _*) ++
-      FeatureSwitchOverrideUtil
-        .getDurationFSOverrides(mergedFSConfig.durationFSParams: _*) ++
-      FeatureSwitchOverrideUtil
-        .getBoundedOptionalDoubleOverrides(mergedFSConfig.optionalDoubleFSParams: _*) ++
-      FeatureSwitchOverrideUtil.getStringSeqFSOverrides(mergedFSConfig.stringSeqFSParams: _*) ++
-      enumOverrides ++
-      gatedOverrides ++
-      enumSeqOverrides
+  vaw ovewwides =
+    featuweswitchovewwideutiw
+      .getbooweanfsovewwides(mewgedfsconfig.booweanfspawams: _*) ++
+      f-featuweswitchovewwideutiw
+        .getboundedintfsovewwides(mewgedfsconfig.intfspawams: _*) ++
+      f-featuweswitchovewwideutiw
+        .getboundedwongfsovewwides(mewgedfsconfig.wongfspawams: _*) ++
+      featuweswitchovewwideutiw
+        .getboundeddoubwefsovewwides(mewgedfsconfig.doubwefspawams: _*) ++
+      featuweswitchovewwideutiw
+        .getduwationfsovewwides(mewgedfsconfig.duwationfspawams: _*) ++
+      f-featuweswitchovewwideutiw
+        .getboundedoptionawdoubweovewwides(mewgedfsconfig.optionawdoubwefspawams: _*) ++
+      f-featuweswitchovewwideutiw.getstwingseqfsovewwides(mewgedfsconfig.stwingseqfspawams: _*) ++
+      enumovewwides ++
+      gatedovewwides ++
+      enumseqovewwides
 
-  val config = BaseConfigBuilder(overrides).build("FollowRecommendationServiceFeatureSwitches")
+  v-vaw config = baseconfigbuiwdew(ovewwides).buiwd("fowwowwecommendationsewvicefeatuweswitches")
 }

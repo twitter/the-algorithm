@@ -1,111 +1,111 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.apache.thwift.texception;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.ValidationBehavior;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+i-impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.woot.vawidationbehaviow;
+i-impowt com.twittew.seawch.eawwybiwd.common.eawwybiwdwequestutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwddebuginfo;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
 
-public class EarlybirdServiceValidationBehavior
-    extends ValidationBehavior.DefaultValidationBehavior<EarlybirdRequest, EarlybirdResponse> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdServiceValidationBehavior.class);
+pubwic cwass eawwybiwdsewvicevawidationbehaviow
+    extends v-vawidationbehaviow.defauwtvawidationbehaviow<eawwybiwdwequest, ^^;; eawwybiwdwesponse> {
+  p-pwivate s-static finaw woggew wog =
+      woggewfactowy.getwoggew(eawwybiwdsewvicevawidationbehaviow.cwass);
 
-  private static final EarlybirdDebugInfo EARLYBIRD_DEBUG_INFO =
-          new EarlybirdDebugInfo().setHost("earlybird_root");
+  pwivate static finaw eawwybiwddebuginfo e-eawwybiwd_debug_info =
+          nyew eawwybiwddebuginfo().sethost("eawwybiwd_woot");
 
-  private static final SearchCounter INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_LOW =
-      SearchCounter.export("invalid_success_response_threshold_too_low");
-  private static final SearchCounter INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_HIGH =
-      SearchCounter.export("invalid_success_response_threshold_too_high");
+  pwivate static finaw seawchcountew invawid_success_wesponse_thweshowd_too_wow =
+      seawchcountew.expowt("invawid_success_wesponse_thweshowd_too_wow");
+  p-pwivate static finaw seawchcountew i-invawid_success_wesponse_thweshowd_too_high =
+      s-seawchcountew.expowt("invawid_success_wesponse_thweshowd_too_high");
 
-  protected EarlybirdResponse createErrorResponse(String errorMsg) {
-    EarlybirdResponse response = new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 0);
+  p-pwotected eawwybiwdwesponse c-cweateewwowwesponse(stwing ewwowmsg) {
+    eawwybiwdwesponse w-wesponse = nyew eawwybiwdwesponse(eawwybiwdwesponsecode.cwient_ewwow, 🥺 0);
 
-    // We're changing some ERROR logs to WARN on our side, so we want to ensure
-    // that the response contains the debug information the client needs to
-    // resolve the problem.
-    response.setDebugInfo(EARLYBIRD_DEBUG_INFO);
-    response.setDebugString(errorMsg);
+    // we'we changing some e-ewwow wogs to wawn on ouw side, (⑅˘꒳˘) so we want to ensuwe
+    // that the wesponse contains the debug i-infowmation the cwient nyeeds t-to
+    // wesowve t-the pwobwem. nyaa~~
+    w-wesponse.setdebuginfo(eawwybiwd_debug_info);
+    wesponse.setdebugstwing(ewwowmsg);
 
-    return response;
+    wetuwn wesponse;
   }
 
-  @Override
-  public EarlybirdResponse getResponseIfInvalidRequest(EarlybirdRequest request) {
-    // First, fix up the query.
-    EarlybirdRequestUtil.checkAndSetCollectorParams(request);
-    EarlybirdRequestUtil.logAndFixExcessiveValues(request);
+  @ovewwide
+  p-pubwic eawwybiwdwesponse g-getwesponseifinvawidwequest(eawwybiwdwequest wequest) {
+    // f-fiwst, :3 f-fix up the quewy. ( ͡o ω ͡o )
+    eawwybiwdwequestutiw.checkandsetcowwectowpawams(wequest);
+    e-eawwybiwdwequestutiw.wogandfixexcessivevawues(wequest);
 
-    try {
-      request.validate();
-    } catch (TException e) {
-      String errorMsg = "Invalid EarlybirdRequest. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    twy {
+      wequest.vawidate();
+    } c-catch (texception e) {
+      stwing ewwowmsg = "invawid e-eawwybiwdwequest. mya " + wequest;
+      w-wog.wawn(ewwowmsg);
+      wetuwn cweateewwowwesponse(ewwowmsg);
     }
 
-    if (request.isSetSearchSegmentId() && request.getSearchSegmentId() <= 0) {
-      String errorMsg = "Bad time slice ID: " + request.getSearchSegmentId();
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    i-if (wequest.issetseawchsegmentid() && w-wequest.getseawchsegmentid() <= 0) {
+      stwing ewwowmsg = "bad time swice id: " + wequest.getseawchsegmentid();
+      wog.wawn(ewwowmsg);
+      wetuwn cweateewwowwesponse(ewwowmsg);
     }
 
-    if (request.isSetTermStatisticsRequest()
-        && request.getTermStatisticsRequest().isSetHistogramSettings()
-        && request.getTermStatisticsRequest().getHistogramSettings().getNumBins() == 0) {
+    if (wequest.issettewmstatisticswequest()
+        && w-wequest.gettewmstatisticswequest().issethistogwamsettings()
+        && w-wequest.gettewmstatisticswequest().gethistogwamsettings().getnumbins() == 0) {
 
-      String errorMsg = "numBins for term statistics histograms request cannot be zero: " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+      stwing e-ewwowmsg = "numbins f-fow tewm statistics h-histogwams wequest cannot be zewo: " + wequest;
+      w-wog.wawn(ewwowmsg);
+      wetuwn cweateewwowwesponse(ewwowmsg);
     }
 
-    if (!request.isSetSearchQuery()
-        || request.getSearchQuery() == null) {
-      String errorMsg = "Invalid EarlybirdRequest, no ThriftSearchQuery specified. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    if (!wequest.issetseawchquewy()
+        || wequest.getseawchquewy() == n-nuww) {
+      stwing ewwowmsg = "invawid e-eawwybiwdwequest, (///ˬ///✿) n-nyo t-thwiftseawchquewy specified. (˘ω˘) " + w-wequest;
+      w-wog.wawn(ewwowmsg);
+      w-wetuwn c-cweateewwowwesponse(ewwowmsg);
     }
 
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+    thwiftseawchquewy seawchquewy = w-wequest.getseawchquewy();
 
-    if (!searchQuery.getCollectorParams().isSetNumResultsToReturn()) {
-      String errorMsg = "ThriftSearchQuery.numResultsToReturn not set. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    i-if (!seawchquewy.getcowwectowpawams().issetnumwesuwtstowetuwn()) {
+      s-stwing ewwowmsg = "thwiftseawchquewy.numwesuwtstowetuwn n-nyot s-set. ^^;; " + wequest;
+      wog.wawn(ewwowmsg);
+      wetuwn cweateewwowwesponse(ewwowmsg);
     }
 
-    if (searchQuery.getCollectorParams().getNumResultsToReturn() < 0) {
-      String errorMsg = "Invalid ThriftSearchQuery.collectorParams.numResultsToReturn: "
-          + searchQuery.getCollectorParams().getNumResultsToReturn() + ". " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    if (seawchquewy.getcowwectowpawams().getnumwesuwtstowetuwn() < 0) {
+      s-stwing ewwowmsg = "invawid thwiftseawchquewy.cowwectowpawams.numwesuwtstowetuwn: "
+          + seawchquewy.getcowwectowpawams().getnumwesuwtstowetuwn() + ". (✿oωo) " + wequest;
+      wog.wawn(ewwowmsg);
+      wetuwn cweateewwowwesponse(ewwowmsg);
     }
 
-    if (request.isSetSuccessfulResponseThreshold()) {
-      double successfulResponseThreshold = request.getSuccessfulResponseThreshold();
-      if (successfulResponseThreshold <= 0) {
-        String errorMsg = "Success response threshold is below or equal to 0: "
-            + successfulResponseThreshold + " request: " + request;
-        LOG.warn(errorMsg);
-        INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_LOW.increment();
-        return createErrorResponse(errorMsg);
-      } else if (successfulResponseThreshold > 1) {
-        String errorMsg = "Success response threshold is above 1: " + successfulResponseThreshold
-            + " request: " + request;
-        LOG.warn(errorMsg);
-        INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_HIGH.increment();
-        return createErrorResponse(errorMsg);
+    i-if (wequest.issetsuccessfuwwesponsethweshowd()) {
+      doubwe successfuwwesponsethweshowd = wequest.getsuccessfuwwesponsethweshowd();
+      if (successfuwwesponsethweshowd <= 0) {
+        s-stwing ewwowmsg = "success w-wesponse thweshowd i-is bewow ow equaw to 0: "
+            + s-successfuwwesponsethweshowd + " wequest: " + w-wequest;
+        w-wog.wawn(ewwowmsg);
+        invawid_success_wesponse_thweshowd_too_wow.incwement();
+        wetuwn cweateewwowwesponse(ewwowmsg);
+      } ewse if (successfuwwesponsethweshowd > 1) {
+        stwing ewwowmsg = "success wesponse thweshowd i-is above 1: " + successfuwwesponsethweshowd
+            + " w-wequest: " + wequest;
+        wog.wawn(ewwowmsg);
+        i-invawid_success_wesponse_thweshowd_too_high.incwement();
+        w-wetuwn cweateewwowwesponse(ewwowmsg);
       }
     }
 
-    return null;
+    wetuwn nyuww;
   }
 }

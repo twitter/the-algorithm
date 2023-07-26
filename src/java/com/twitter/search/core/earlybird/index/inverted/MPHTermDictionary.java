@@ -1,190 +1,190 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import org.apache.lucene.index.BaseTermsEnum;
-import org.apache.lucene.index.ImpactsEnum;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.SlowImpactsEnum;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.packed.PackedInts;
+i-impowt owg.apache.wucene.index.basetewmsenum;
+i-impowt owg.apache.wucene.index.impactsenum;
+i-impowt owg.apache.wucene.index.postingsenum;
+i-impowt o-owg.apache.wucene.index.swowimpactsenum;
+i-impowt o-owg.apache.wucene.index.tewmsenum;
+impowt owg.apache.wucene.utiw.byteswef;
+impowt owg.apache.wucene.utiw.packed.packedints;
 
-import com.twitter.search.common.util.hash.BDZAlgorithm;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+impowt com.twittew.seawch.common.utiw.hash.bdzawgowithm;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
-public class MPHTermDictionary implements TermDictionary, Flushable {
-  private final BDZAlgorithm termsHashFunction;
-  private final PackedInts.Reader termPointers;
-  private final ByteBlockPool termPool;
-  private final TermPointerEncoding termPointerEncoding;
-  private final int numTerms;
+p-pubwic cwass mphtewmdictionawy impwements tewmdictionawy, 😳😳😳 fwushabwe {
+  pwivate f-finaw bdzawgowithm tewmshashfunction;
+  p-pwivate f-finaw packedints.weadew tewmpointews;
+  pwivate finaw bytebwockpoow tewmpoow;
+  p-pwivate finaw tewmpointewencoding tewmpointewencoding;
+  pwivate finaw int nyumtewms;
 
-  MPHTermDictionary(int numTerms, BDZAlgorithm termsHashFunction,
-      PackedInts.Reader termPointers, ByteBlockPool termPool,
-      TermPointerEncoding termPointerEncoding) {
-    this.numTerms = numTerms;
-    this.termsHashFunction = termsHashFunction;
-    this.termPointers = termPointers;
-    this.termPool = termPool;
-    this.termPointerEncoding = termPointerEncoding;
+  m-mphtewmdictionawy(int nyumtewms, >w< bdzawgowithm t-tewmshashfunction, XD
+      p-packedints.weadew t-tewmpointews, o.O b-bytebwockpoow tewmpoow, mya
+      tewmpointewencoding t-tewmpointewencoding) {
+    this.numtewms = nyumtewms;
+    this.tewmshashfunction = tewmshashfunction;
+    t-this.tewmpointews = tewmpointews;
+    this.tewmpoow = tewmpoow;
+    this.tewmpointewencoding = tewmpointewencoding;
   }
 
-  @Override
-  public int getNumTerms() {
-    return numTerms;
+  @ovewwide
+  p-pubwic int getnumtewms() {
+    w-wetuwn nyumtewms;
   }
 
-  @Override
-  public int lookupTerm(BytesRef term) {
-    int termID = termsHashFunction.lookup(term);
-    if (termID >= getNumTerms() || termID < 0) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+  @ovewwide
+  p-pubwic i-int wookuptewm(byteswef tewm) {
+    int tewmid = tewmshashfunction.wookup(tewm);
+    i-if (tewmid >= g-getnumtewms() || tewmid < 0) {
+      w-wetuwn eawwybiwdindexsegmentatomicweadew.tewm_not_found;
     }
 
-    if (ByteTermUtils.postingEquals(termPool, termPointerEncoding
-            .getTextStart((int) termPointers.get(termID)), term)) {
-      return termID;
-    } else {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+    i-if (bytetewmutiws.postingequaws(tewmpoow, 🥺 tewmpointewencoding
+            .gettextstawt((int) t-tewmpointews.get(tewmid)), ^^;; tewm)) {
+      w-wetuwn tewmid;
+    } ewse {
+      wetuwn eawwybiwdindexsegmentatomicweadew.tewm_not_found;
     }
   }
 
-  @Override
-  public boolean getTerm(int termID, BytesRef text, BytesRef termPayload) {
-    int termPointer = (int) termPointers.get(termID);
-    boolean hasTermPayload = termPointerEncoding.hasPayload(termPointer);
-    int textStart = termPointerEncoding.getTextStart(termPointer);
-    // setBytesRef sets the passed in BytesRef "text" to the term in the termPool.
-    // As a side effect it returns the offset of the next entry in the pool after the term,
-    // which may optionally be used if this term has a payload.
-    int termPayloadStart = ByteTermUtils.setBytesRef(termPool, text, textStart);
-    if (termPayload != null && hasTermPayload) {
-      ByteTermUtils.setBytesRef(termPool, termPayload, termPayloadStart);
+  @ovewwide
+  p-pubwic boowean gettewm(int t-tewmid, :3 byteswef text, (U ﹏ U) byteswef t-tewmpaywoad) {
+    i-int tewmpointew = (int) tewmpointews.get(tewmid);
+    boowean hastewmpaywoad = tewmpointewencoding.haspaywoad(tewmpointew);
+    int textstawt = tewmpointewencoding.gettextstawt(tewmpointew);
+    // s-setbyteswef s-sets the passed in byteswef "text" t-to the t-tewm in the tewmpoow. OwO
+    // as a-a side effect it wetuwns the offset of the nyext entwy in the p-poow aftew the tewm, 😳😳😳
+    // which may optionawwy be used if this tewm has a paywoad. (ˆ ﻌ ˆ)♡
+    i-int tewmpaywoadstawt = bytetewmutiws.setbyteswef(tewmpoow, XD t-text, (ˆ ﻌ ˆ)♡ textstawt);
+    i-if (tewmpaywoad != n-nyuww && hastewmpaywoad) {
+      b-bytetewmutiws.setbyteswef(tewmpoow, t-tewmpaywoad, ( ͡o ω ͡o ) tewmpaywoadstawt);
     }
 
-    return hasTermPayload;
+    w-wetuwn h-hastewmpaywoad;
   }
 
-  @Override
-  public TermsEnum createTermsEnum(OptimizedMemoryIndex index) {
-    return new MPHTermsEnum(index);
+  @ovewwide
+  pubwic tewmsenum cweatetewmsenum(optimizedmemowyindex i-index) {
+    w-wetuwn n-nyew mphtewmsenum(index);
   }
 
-  public static class MPHTermsEnum extends BaseTermsEnum {
-    private int termID;
-    private final BytesRef bytesRef = new BytesRef();
-    private final OptimizedMemoryIndex index;
+  p-pubwic static c-cwass mphtewmsenum extends basetewmsenum {
+    pwivate int tewmid;
+    pwivate finaw b-byteswef byteswef = nyew byteswef();
+    pwivate finaw optimizedmemowyindex index;
 
-    MPHTermsEnum(OptimizedMemoryIndex index) {
-      this.index = index;
+    mphtewmsenum(optimizedmemowyindex index) {
+      this.index = i-index;
     }
 
-    @Override
-    public int docFreq() {
-      return index.getDF(termID);
+    @ovewwide
+    pubwic int docfweq() {
+      wetuwn index.getdf(tewmid);
     }
 
-    @Override
-    public PostingsEnum postings(PostingsEnum reuse, int flags) throws IOException {
-      int postingsPointer = index.getPostingListPointer(termID);
-      int numPostings = index.getNumPostings(termID);
-      return index.getPostingLists().postings(postingsPointer, numPostings, flags);
+    @ovewwide
+    p-pubwic p-postingsenum p-postings(postingsenum weuse, rawr x3 int f-fwags) thwows ioexception {
+      i-int postingspointew = i-index.getpostingwistpointew(tewmid);
+      int nyumpostings = index.getnumpostings(tewmid);
+      wetuwn index.getpostingwists().postings(postingspointew, nyaa~~ nyumpostings, >_< f-fwags);
     }
 
-    @Override
-    public ImpactsEnum impacts(int flags) throws IOException {
-      return new SlowImpactsEnum(postings(null, flags));
+    @ovewwide
+    pubwic impactsenum i-impacts(int fwags) thwows i-ioexception {
+      w-wetuwn nyew swowimpactsenum(postings(nuww, ^^;; fwags));
     }
 
-    @Override
-    public SeekStatus seekCeil(BytesRef text) throws IOException {
-      termID = index.lookupTerm(text);
+    @ovewwide
+    p-pubwic seekstatus s-seekceiw(byteswef text) thwows i-ioexception {
+      t-tewmid = index.wookuptewm(text);
 
-      if (termID == -1) {
-        return SeekStatus.END;
-      } else {
-        return SeekStatus.FOUND;
+      if (tewmid == -1) {
+        wetuwn seekstatus.end;
+      } ewse {
+        w-wetuwn s-seekstatus.found;
       }
     }
 
-    @Override
-    public BytesRef next() {
-      return null;
+    @ovewwide
+    p-pubwic byteswef nyext() {
+      w-wetuwn nyuww;
     }
 
-    @Override
-    public long ord() {
-      return termID;
+    @ovewwide
+    p-pubwic wong owd() {
+      w-wetuwn tewmid;
     }
 
-    @Override
-    public void seekExact(long ord) {
-      if (ord < index.getNumTerms()) {
-        termID = (int) ord;
-        index.getTerm(termID, bytesRef, null);
+    @ovewwide
+    pubwic void seekexact(wong owd) {
+      if (owd < index.getnumtewms()) {
+        t-tewmid = (int) o-owd;
+        index.gettewm(tewmid, (ˆ ﻌ ˆ)♡ byteswef, ^^;; nyuww);
       }
     }
 
-    @Override
-    public BytesRef term() {
-      return bytesRef;
+    @ovewwide
+    p-pubwic byteswef t-tewm() {
+      wetuwn byteswef;
     }
 
-    @Override
-    public long totalTermFreq() {
-      return docFreq();
+    @ovewwide
+    pubwic wong totawtewmfweq() {
+      wetuwn d-docfweq();
     }
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @suppwesswawnings("unchecked")
+  @ovewwide
+  pubwic fwushhandwew getfwushhandwew() {
+    wetuwn nyew fwushhandwew(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<MPHTermDictionary> {
-    static final String NUM_TERMS_PROP_NAME = "numTerms";
-    private final TermPointerEncoding termPointerEncoding;
+  p-pubwic static cwass fwushhandwew extends f-fwushabwe.handwew<mphtewmdictionawy> {
+    s-static finaw stwing nyum_tewms_pwop_name = "numtewms";
+    pwivate finaw tewmpointewencoding tewmpointewencoding;
 
-    public FlushHandler(TermPointerEncoding termPointerEncoding) {
-      super();
-      this.termPointerEncoding = termPointerEncoding;
+    p-pubwic f-fwushhandwew(tewmpointewencoding tewmpointewencoding) {
+      supew();
+      this.tewmpointewencoding = t-tewmpointewencoding;
     }
 
-    public FlushHandler(MPHTermDictionary objectToFlush) {
-      super(objectToFlush);
-      this.termPointerEncoding = objectToFlush.termPointerEncoding;
+    pubwic fwushhandwew(mphtewmdictionawy o-objecttofwush) {
+      supew(objecttofwush);
+      this.tewmpointewencoding = objecttofwush.tewmpointewencoding;
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      MPHTermDictionary objectToFlush = getObjectToFlush();
-      flushInfo.addIntProperty(NUM_TERMS_PROP_NAME, objectToFlush.getNumTerms());
+    @ovewwide
+    p-pwotected void dofwush(fwushinfo f-fwushinfo, (⑅˘꒳˘) d-datasewiawizew out)
+        t-thwows ioexception {
+      mphtewmdictionawy o-objecttofwush = g-getobjecttofwush();
+      f-fwushinfo.addintpwopewty(num_tewms_pwop_name, rawr x3 objecttofwush.getnumtewms());
 
-      out.writePackedInts(objectToFlush.termPointers);
-      objectToFlush.termPool.getFlushHandler().flush(flushInfo.newSubProperties("termPool"), out);
-      objectToFlush.termsHashFunction.getFlushHandler()
-              .flush(flushInfo.newSubProperties("termsHashFunction"), out);
+      o-out.wwitepackedints(objecttofwush.tewmpointews);
+      o-objecttofwush.tewmpoow.getfwushhandwew().fwush(fwushinfo.newsubpwopewties("tewmpoow"), (///ˬ///✿) out);
+      objecttofwush.tewmshashfunction.getfwushhandwew()
+              .fwush(fwushinfo.newsubpwopewties("tewmshashfunction"), o-out);
     }
 
-    @Override
-    protected MPHTermDictionary doLoad(FlushInfo flushInfo,
-        DataDeserializer in) throws IOException {
-      int numTerms = flushInfo.getIntProperty(NUM_TERMS_PROP_NAME);
-      PackedInts.Reader termPointers = in.readPackedInts();
-      ByteBlockPool termPool = (new ByteBlockPool.FlushHandler()).load(
-              flushInfo.getSubProperties("termPool"), in);
-      BDZAlgorithm termsHashFunction = (new BDZAlgorithm.FlushHandler()).load(
-              flushInfo.getSubProperties("termsHashFunction"), in);
+    @ovewwide
+    p-pwotected m-mphtewmdictionawy dowoad(fwushinfo fwushinfo, 🥺
+        d-datadesewiawizew in) t-thwows ioexception {
+      i-int numtewms = fwushinfo.getintpwopewty(num_tewms_pwop_name);
+      packedints.weadew tewmpointews = in.weadpackedints();
+      b-bytebwockpoow t-tewmpoow = (new b-bytebwockpoow.fwushhandwew()).woad(
+              f-fwushinfo.getsubpwopewties("tewmpoow"), >_< in);
+      bdzawgowithm t-tewmshashfunction = (new bdzawgowithm.fwushhandwew()).woad(
+              fwushinfo.getsubpwopewties("tewmshashfunction"), in);
 
-      return new MPHTermDictionary(numTerms, termsHashFunction, termPointers,
-              termPool, termPointerEncoding);
+      wetuwn nyew mphtewmdictionawy(numtewms, UwU tewmshashfunction, >_< t-tewmpointews, -.-
+              tewmpoow, mya t-tewmpointewencoding);
     }
   }
 }

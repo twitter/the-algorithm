@@ -1,32 +1,32 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.frigate.pushservice.model.TopicProofTweetPushCandidate
-import com.twitter.frigate.pushservice.exception.UttEntityNotFoundException
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.topicpwooftweetpushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.exception.uttentitynotfoundexception
+i-impowt c-com.twittew.utiw.futuwe
 
-trait TopicProofTweetIbis2Hydrator extends TweetCandidateIbis2Hydrator {
-  self: TopicProofTweetPushCandidate =>
+t-twait topicpwooftweetibis2hydwatow e-extends t-tweetcandidateibis2hydwatow {
+  s-sewf: topicpwooftweetpushcandidate =>
 
-  private lazy val implicitTopicTweetModelValues: Map[String, String] = {
-    val uttEntity = localizedUttEntity.getOrElse(
-      throw new UttEntityNotFoundException(
-        s"${getClass.getSimpleName} UttEntity missing for $tweetId"))
+  pwivate wazy vaw impwicittopictweetmodewvawues: map[stwing, >_< stwing] = {
+    v-vaw uttentity = wocawizeduttentity.getowewse(
+      thwow n-nyew uttentitynotfoundexception(
+        s"${getcwass.getsimpwename} u-uttentity missing fow $tweetid"))
 
-    Map(
-      "topic_name" -> uttEntity.localizedNameForDisplay,
-      "topic_id" -> uttEntity.entityId.toString
+    map(
+      "topic_name" -> uttentity.wocawizednamefowdispway, rawr x3
+      "topic_id" -> uttentity.entityid.tostwing
     )
   }
 
-  override lazy val modelName: String = pushCopy.ibisPushModelName
+  o-ovewwide wazy vaw modewname: s-stwing = p-pushcopy.ibispushmodewname
 
-  override lazy val tweetModelValues: Future[Map[String, String]] =
-    for {
-      superModelValues <- super.tweetModelValues
-      tweetInlineModelValues <- tweetInlineActionModelValue
-    } yield {
-      superModelValues ++
-        tweetInlineModelValues ++
-        implicitTopicTweetModelValues
+  ovewwide wazy vaw tweetmodewvawues: futuwe[map[stwing, mya s-stwing]] =
+    fow {
+      supewmodewvawues <- supew.tweetmodewvawues
+      tweetinwinemodewvawues <- t-tweetinwineactionmodewvawue
+    } yiewd {
+      s-supewmodewvawues ++
+        t-tweetinwinemodewvawues ++
+        i-impwicittopictweetmodewvawues
     }
 }

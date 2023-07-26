@@ -1,72 +1,72 @@
-package com.twitter.follow_recommendations.services
+package com.twittew.fowwow_wecommendations.sewvices
 
-import com.twitter.finagle.stats.StatsReceiver
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.configapi.Params
-import com.twitter.follow_recommendations.common.utils.DisplayLocationProductConverterUtil
-import com.twitter.follow_recommendations.configapi.deciders.DeciderParams
-import com.twitter.follow_recommendations.logging.FrsLogger
-import com.twitter.follow_recommendations.models.{DebugParams => FrsDebugParams}
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.models.RecommendationResponse
-import com.twitter.follow_recommendations.models.Request
-import com.twitter.product_mixer.core.model.marshalling.request.{
-  DebugParams => ProductMixerDebugParams
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
+i-impowt c-com.twittew.timewines.configapi.pawams
+i-impowt c-com.twittew.fowwow_wecommendations.common.utiws.dispwaywocationpwoductconvewtewutiw
+i-impowt com.twittew.fowwow_wecommendations.configapi.decidews.decidewpawams
+impowt com.twittew.fowwow_wecommendations.wogging.fwswoggew
+impowt com.twittew.fowwow_wecommendations.modews.{debugpawams => fwsdebugpawams}
+i-impowt com.twittew.fowwow_wecommendations.modews.wecommendationwequest
+impowt com.twittew.fowwow_wecommendations.modews.wecommendationwesponse
+i-impowt com.twittew.fowwow_wecommendations.modews.wequest
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.{
+  debugpawams => pwoductmixewdebugpawams
 }
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.stitch.Stitch
+impowt com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy.pwoductpipewinewegistwy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewinewequest
+impowt com.twittew.stitch.stitch
 
-@Singleton
-class ProductMixerRecommendationService @Inject() (
-  productPipelineRegistry: ProductPipelineRegistry,
-  resultLogger: FrsLogger,
-  baseStats: StatsReceiver) {
+@singweton
+c-cwass p-pwoductmixewwecommendationsewvice @inject() (
+  pwoductpipewinewegistwy: pwoductpipewinewegistwy,
+  wesuwtwoggew: fwswoggew, /(^•ω•^)
+  b-basestats: statsweceivew) {
 
-  private val stats = baseStats.scope("product_mixer_recos_service_stats")
-  private val loggingStats = stats.scope("logged")
+  pwivate vaw stats = basestats.scope("pwoduct_mixew_wecos_sewvice_stats")
+  pwivate vaw woggingstats = s-stats.scope("wogged")
 
-  def get(request: RecommendationRequest, params: Params): Stitch[RecommendationResponse] = {
-    if (params(DeciderParams.EnableRecommendations)) {
-      val productMixerRequest = convertToProductMixerRequest(request)
+  def get(wequest: w-wecommendationwequest, nyaa~~ p-pawams: pawams): s-stitch[wecommendationwesponse] = {
+    if (pawams(decidewpawams.enabwewecommendations)) {
+      v-vaw pwoductmixewwequest = convewttopwoductmixewwequest(wequest)
 
-      productPipelineRegistry
-        .getProductPipeline[Request, RecommendationResponse](productMixerRequest.product)
-        .process(ProductPipelineRequest(productMixerRequest, params)).onSuccess { response =>
-          if (resultLogger.shouldLog(request.debugParams)) {
-            loggingStats.counter().incr()
-            resultLogger.logRecommendationResult(request, response)
+      pwoductpipewinewegistwy
+        .getpwoductpipewine[wequest, nyaa~~ wecommendationwesponse](pwoductmixewwequest.pwoduct)
+        .pwocess(pwoductpipewinewequest(pwoductmixewwequest, :3 p-pawams)).onsuccess { wesponse =>
+          if (wesuwtwoggew.shouwdwog(wequest.debugpawams)) {
+            w-woggingstats.countew().incw()
+            wesuwtwoggew.wogwecommendationwesuwt(wequest, 😳😳😳 wesponse)
           }
         }
-    } else {
-      Stitch.value(RecommendationResponse(Nil))
+    } ewse {
+      stitch.vawue(wecommendationwesponse(niw))
     }
 
   }
 
-  def convertToProductMixerRequest(frsRequest: RecommendationRequest): Request = {
-    Request(
-      maxResults = frsRequest.maxResults,
-      debugParams = convertToProductMixerDebugParams(frsRequest.debugParams),
-      productContext = None,
-      product =
-        DisplayLocationProductConverterUtil.displayLocationToProduct(frsRequest.displayLocation),
-      clientContext = frsRequest.clientContext,
-      serializedRequestCursor = frsRequest.cursor,
-      frsDebugParams = frsRequest.debugParams,
-      displayLocation = frsRequest.displayLocation,
-      excludedIds = frsRequest.excludedIds,
-      fetchPromotedContent = frsRequest.fetchPromotedContent,
-      userLocationState = frsRequest.userLocationState
+  def convewttopwoductmixewwequest(fwswequest: w-wecommendationwequest): wequest = {
+    w-wequest(
+      maxwesuwts = f-fwswequest.maxwesuwts, (˘ω˘)
+      d-debugpawams = convewttopwoductmixewdebugpawams(fwswequest.debugpawams), ^^
+      pwoductcontext = nyone, :3
+      p-pwoduct =
+        d-dispwaywocationpwoductconvewtewutiw.dispwaywocationtopwoduct(fwswequest.dispwaywocation), -.-
+      cwientcontext = f-fwswequest.cwientcontext, 😳
+      s-sewiawizedwequestcuwsow = fwswequest.cuwsow,
+      f-fwsdebugpawams = fwswequest.debugpawams, mya
+      d-dispwaywocation = fwswequest.dispwaywocation, (˘ω˘)
+      excwudedids = f-fwswequest.excwudedids, >_<
+      fetchpwomotedcontent = f-fwswequest.fetchpwomotedcontent, -.-
+      usewwocationstate = f-fwswequest.usewwocationstate
     )
   }
 
-  private def convertToProductMixerDebugParams(
-    frsDebugParams: Option[FrsDebugParams]
-  ): Option[ProductMixerDebugParams] = {
-    frsDebugParams.map { debugParams =>
-      ProductMixerDebugParams(debugParams.featureOverrides, None)
+  p-pwivate def convewttopwoductmixewdebugpawams(
+    fwsdebugpawams: option[fwsdebugpawams]
+  ): option[pwoductmixewdebugpawams] = {
+    fwsdebugpawams.map { debugpawams =>
+      p-pwoductmixewdebugpawams(debugpawams.featuweovewwides, 🥺 n-nyone)
     }
   }
 }

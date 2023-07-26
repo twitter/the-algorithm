@@ -1,388 +1,388 @@
-package com.twitter.frigate.pushservice.scriber
+package com.twittew.fwigate.pushsewvice.scwibew
 
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.core_workflows.user_model.thriftscala.{UserState => ThriftUserState}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.CandidateResult
-import com.twitter.frigate.common.base.Invalid
-import com.twitter.frigate.common.base.OK
-import com.twitter.frigate.common.base.Result
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.data_pipeline.features_common.PushQualityModelFeatureContext
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.scribe.thriftscala.CandidateFilteredOutStep
-import com.twitter.frigate.scribe.thriftscala.CandidateRequestInfo
-import com.twitter.frigate.scribe.thriftscala.MrRequestScribe
-import com.twitter.frigate.scribe.thriftscala.TargetUserInfo
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.frigate.thriftscala.TweetNotification
-import com.twitter.frigate.thriftscala.{SocialContextAction => TSocialContextAction}
-import com.twitter.logging.Logger
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureType
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.nrel.heavyranker.PushPredictionHelper
-import com.twitter.util.Future
-import com.twitter.util.Time
-import java.util.UUID
-import scala.collection.mutable
+impowt com.twittew.bijection.base64stwing
+i-impowt c-com.twittew.bijection.injection
+i-impowt com.twittew.bijection.scwooge.binawyscawacodec
+i-impowt com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.{usewstate => t-thwiftusewstate}
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finagwe.twacing.twace
+impowt com.twittew.fwigate.common.base.candidatedetaiws
+impowt com.twittew.fwigate.common.base.candidatewesuwt
+impowt com.twittew.fwigate.common.base.invawid
+impowt com.twittew.fwigate.common.base.ok
+impowt c-com.twittew.fwigate.common.base.wesuwt
+impowt com.twittew.fwigate.common.wec_types.wectypes
+i-impowt com.twittew.fwigate.data_pipewine.featuwes_common.pushquawitymodewfeatuwecontext
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+impowt c-com.twittew.fwigate.scwibe.thwiftscawa.candidatefiwtewedoutstep
+i-impowt com.twittew.fwigate.scwibe.thwiftscawa.candidatewequestinfo
+impowt com.twittew.fwigate.scwibe.thwiftscawa.mwwequestscwibe
+impowt com.twittew.fwigate.scwibe.thwiftscawa.tawgetusewinfo
+impowt com.twittew.fwigate.thwiftscawa.fwigatenotification
+impowt c-com.twittew.fwigate.thwiftscawa.tweetnotification
+impowt com.twittew.fwigate.thwiftscawa.{sociawcontextaction => tsociawcontextaction}
+impowt com.twittew.wogging.woggew
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.featuwetype
+i-impowt c-com.twittew.mw.api.utiw.swichdatawecowd
+impowt com.twittew.mw.api.utiw.scawatojavadatawecowdconvewsions
+impowt com.twittew.nwew.heavywankew.pushpwedictionhewpew
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.time
+impowt j-java.utiw.uuid
+impowt scawa.cowwection.mutabwe
 
-class MrRequestScribeHandler(mrRequestScriberNode: String, stats: StatsReceiver) {
+cwass mwwequestscwibehandwew(mwwequestscwibewnode: stwing, XD stats: statsweceivew) {
 
-  private val mrRequestScribeLogger = Logger(mrRequestScriberNode)
+  pwivate v-vaw mwwequestscwibewoggew = woggew(mwwequestscwibewnode)
 
-  private val mrRequestScribeTargetFilteringStats =
-    stats.counter("MrRequestScribeHandler_target_filtering")
-  private val mrRequestScribeCandidateFilteringStats =
-    stats.counter("MrRequestScribeHandler_candidate_filtering")
-  private val mrRequestScribeInvalidStats =
-    stats.counter("MrRequestScribeHandler_invalid_filtering")
-  private val mrRequestScribeUnsupportedFeatureTypeStats =
-    stats.counter("MrRequestScribeHandler_unsupported_feature_type")
-  private val mrRequestScribeNotIncludedFeatureStats =
-    stats.counter("MrRequestScribeHandler_not_included_features")
+  p-pwivate v-vaw mwwequestscwibetawgetfiwtewingstats =
+    s-stats.countew("mwwequestscwibehandwew_tawget_fiwtewing")
+  pwivate vaw mwwequestscwibecandidatefiwtewingstats =
+    stats.countew("mwwequestscwibehandwew_candidate_fiwtewing")
+  pwivate vaw m-mwwequestscwibeinvawidstats =
+    s-stats.countew("mwwequestscwibehandwew_invawid_fiwtewing")
+  pwivate vaw mwwequestscwibeunsuppowtedfeatuwetypestats =
+    s-stats.countew("mwwequestscwibehandwew_unsuppowted_featuwe_type")
+  p-pwivate vaw mwwequestscwibenotincwudedfeatuwestats =
+    stats.countew("mwwequestscwibehandwew_not_incwuded_featuwes")
 
-  private final val MrRequestScribeInjection: Injection[MrRequestScribe, String] = BinaryScalaCodec(
-    MrRequestScribe
-  ) andThen Injection.connect[Array[Byte], Base64String, String]
+  p-pwivate finaw vaw mwwequestscwibeinjection: i-injection[mwwequestscwibe, :3 stwing] = binawyscawacodec(
+    mwwequestscwibe
+  ) a-andthen injection.connect[awway[byte], (U ﹏ U) base64stwing, >w< s-stwing]
 
   /**
    *
-   * @param target : Target user id
-   * @param result : Result for target filtering
+   * @pawam tawget : t-tawget usew id
+   * @pawam w-wesuwt : wesuwt fow tawget fiwtewing
    *
-   * @return
+   * @wetuwn
    */
-  def scribeForTargetFiltering(target: Target, result: Result): Future[Option[MrRequestScribe]] = {
-    if (target.isLoggedOutUser || !enableTargetFilteringScribing(target)) {
-      Future.None
-    } else {
-      val predicate = result match {
-        case Invalid(reason) => reason
+  def scwibefowtawgetfiwtewing(tawget: tawget, /(^•ω•^) wesuwt: wesuwt): futuwe[option[mwwequestscwibe]] = {
+    i-if (tawget.iswoggedoutusew || !enabwetawgetfiwtewingscwibing(tawget)) {
+      f-futuwe.none
+    } ewse {
+      v-vaw pwedicate = w-wesuwt match {
+        c-case invawid(weason) => weason
         case _ =>
-          mrRequestScribeInvalidStats.incr()
-          throw new IllegalStateException("Invalid reason for Target Filtering " + result)
+          mwwequestscwibeinvawidstats.incw()
+          thwow nyew iwwegawstateexception("invawid w-weason fow tawget fiwtewing " + wesuwt)
       }
-      buildScribeThrift(target, predicate, None).map { targetFilteredScribe =>
-        writeAtTargetFilteringStep(target, targetFilteredScribe)
-        Some(targetFilteredScribe)
+      buiwdscwibethwift(tawget, (⑅˘꒳˘) pwedicate, ʘwʘ nyone).map { t-tawgetfiwtewedscwibe =>
+        wwiteattawgetfiwtewingstep(tawget, rawr x3 t-tawgetfiwtewedscwibe)
+        s-some(tawgetfiwtewedscwibe)
       }
     }
   }
 
   /**
    *
-   * @param target                       : Target user id
-   * @param hydratedCandidates           : Candidates hydrated with details: impressionId, frigateNotification and source
-   * @param preRankingFilteredCandidates : Candidates result filtered out at preRanking filtering step
-   * @param rankedCandidates             : Sorted candidates details ranked by ranking step
-   * @param rerankedCandidates           : Sorted candidates details ranked by reranking step
-   * @param restrictFilteredCandidates   : Candidates details filtered out at restrict step
-   * @param allTakeCandidateResults      : Candidates results at take step, include the candidates we take and the candidates filtered out at take step [with different result]
+   * @pawam t-tawget                       : tawget usew i-id
+   * @pawam h-hydwatedcandidates           : c-candidates hydwated w-with detaiws: impwessionid, (˘ω˘) fwigatenotification a-and souwce
+   * @pawam p-pwewankingfiwtewedcandidates : c-candidates w-wesuwt fiwtewed o-out at pwewanking fiwtewing step
+   * @pawam wankedcandidates             : s-sowted candidates detaiws wanked by wanking step
+   * @pawam wewankedcandidates           : sowted candidates detaiws w-wanked by wewanking step
+   * @pawam westwictfiwtewedcandidates   : candidates d-detaiws fiwtewed o-out at westwict s-step
+   * @pawam awwtakecandidatewesuwts      : c-candidates wesuwts at take s-step, o.O incwude t-the candidates we take and the candidates fiwtewed out at take step [with diffewent wesuwt]
    *
-   * @return
+   * @wetuwn
    */
-  def scribeForCandidateFiltering(
-    target: Target,
-    hydratedCandidates: Seq[CandidateDetails[PushCandidate]],
-    preRankingFilteredCandidates: Seq[CandidateResult[PushCandidate, Result]],
-    rankedCandidates: Seq[CandidateDetails[PushCandidate]],
-    rerankedCandidates: Seq[CandidateDetails[PushCandidate]],
-    restrictFilteredCandidates: Seq[CandidateDetails[PushCandidate]],
-    allTakeCandidateResults: Seq[CandidateResult[PushCandidate, Result]]
-  ): Future[Seq[MrRequestScribe]] = {
-    if (target.isLoggedOutUser || target.isEmailUser) {
-      Future.Nil
-    } else if (enableCandidateFilteringScribing(target)) {
-      val hydrateFeature =
-        target.params(PushFeatureSwitchParams.EnableMrRequestScribingWithFeatureHydrating) ||
-          target.scribeFeatureForRequestScribe
+  d-def scwibefowcandidatefiwtewing(
+    tawget: t-tawget, 😳
+    hydwatedcandidates: seq[candidatedetaiws[pushcandidate]], o.O
+    p-pwewankingfiwtewedcandidates: s-seq[candidatewesuwt[pushcandidate, ^^;; wesuwt]],
+    wankedcandidates: s-seq[candidatedetaiws[pushcandidate]], ( ͡o ω ͡o )
+    w-wewankedcandidates: seq[candidatedetaiws[pushcandidate]], ^^;;
+    w-westwictfiwtewedcandidates: s-seq[candidatedetaiws[pushcandidate]], ^^;;
+    awwtakecandidatewesuwts: seq[candidatewesuwt[pushcandidate, XD wesuwt]]
+  ): futuwe[seq[mwwequestscwibe]] = {
+    i-if (tawget.iswoggedoutusew || t-tawget.isemaiwusew) {
+      f-futuwe.niw
+    } ewse if (enabwecandidatefiwtewingscwibing(tawget)) {
+      v-vaw hydwatefeatuwe =
+        t-tawget.pawams(pushfeatuweswitchpawams.enabwemwwequestscwibingwithfeatuwehydwating) ||
+          tawget.scwibefeatuwefowwequestscwibe
 
-      val candidateRequestInfoSeq = generateCandidatesScribeInfo(
-        hydratedCandidates,
-        preRankingFilteredCandidates,
-        rankedCandidates,
-        rerankedCandidates,
-        restrictFilteredCandidates,
-        allTakeCandidateResults,
-        isFeatureHydratingEnabled = hydrateFeature
+      v-vaw candidatewequestinfoseq = genewatecandidatesscwibeinfo(
+        hydwatedcandidates, 🥺
+        pwewankingfiwtewedcandidates, (///ˬ///✿)
+        wankedcandidates, (U ᵕ U❁)
+        w-wewankedcandidates, ^^;;
+        w-westwictfiwtewedcandidates,
+        awwtakecandidatewesuwts, ^^;;
+        isfeatuwehydwatingenabwed = h-hydwatefeatuwe
       )
-      val flattenStructure =
-        target.params(PushFeatureSwitchParams.EnableFlattenMrRequestScribing) || hydrateFeature
-      candidateRequestInfoSeq.flatMap { candidateRequestInfos =>
-        if (flattenStructure) {
-          Future.collect {
-            candidateRequestInfos.map { candidateRequestInfo =>
-              buildScribeThrift(target, None, Some(Seq(candidateRequestInfo)))
-                .map { mrRequestScribe =>
-                  writeAtCandidateFilteringStep(target, mrRequestScribe)
-                  mrRequestScribe
+      v-vaw fwattenstwuctuwe =
+        tawget.pawams(pushfeatuweswitchpawams.enabwefwattenmwwequestscwibing) || hydwatefeatuwe
+      candidatewequestinfoseq.fwatmap { c-candidatewequestinfos =>
+        if (fwattenstwuctuwe) {
+          futuwe.cowwect {
+            candidatewequestinfos.map { candidatewequestinfo =>
+              buiwdscwibethwift(tawget, rawr nyone, s-some(seq(candidatewequestinfo)))
+                .map { mwwequestscwibe =>
+                  wwiteatcandidatefiwtewingstep(tawget, (˘ω˘) m-mwwequestscwibe)
+                  m-mwwequestscwibe
                 }
             }
           }
-        } else {
-          buildScribeThrift(target, None, Some(candidateRequestInfos))
-            .map { mrRequestScribe =>
-              writeAtCandidateFilteringStep(target, mrRequestScribe)
-              Seq(mrRequestScribe)
+        } ewse {
+          buiwdscwibethwift(tawget, 🥺 nyone, s-some(candidatewequestinfos))
+            .map { m-mwwequestscwibe =>
+              wwiteatcandidatefiwtewingstep(tawget, nyaa~~ mwwequestscwibe)
+              seq(mwwequestscwibe)
             }
         }
       }
-    } else Future.Nil
+    } e-ewse futuwe.niw
 
   }
 
-  private def buildScribeThrift(
-    target: Target,
-    targetFilteredOutPredicate: Option[String],
-    candidatesRequestInfo: Option[Seq[CandidateRequestInfo]]
-  ): Future[MrRequestScribe] = {
-    Future
+  pwivate d-def buiwdscwibethwift(
+    tawget: tawget, :3
+    tawgetfiwtewedoutpwedicate: option[stwing], /(^•ω•^)
+    c-candidateswequestinfo: option[seq[candidatewequestinfo]]
+  ): f-futuwe[mwwequestscwibe] = {
+    f-futuwe
       .join(
-        target.targetUserState,
-        generateTargetFeatureScribeInfo(target),
-        target.targetUser).map {
-        case (userStateOption, targetFeatureOption, gizmoduckUserOpt) =>
-          val userState = userStateOption.map(userState => ThriftUserState(userState.id))
-          val targetFeatures =
-            targetFeatureOption.map(ScalaToJavaDataRecordConversions.javaDataRecord2ScalaDataRecord)
-          val traceId = Trace.id.traceId.toLong
+        tawget.tawgetusewstate, ^•ﻌ•^
+        g-genewatetawgetfeatuwescwibeinfo(tawget), UwU
+        tawget.tawgetusew).map {
+        case (usewstateoption, 😳😳😳 t-tawgetfeatuweoption, OwO g-gizmoduckusewopt) =>
+          v-vaw usewstate = usewstateoption.map(usewstate => t-thwiftusewstate(usewstate.id))
+          v-vaw tawgetfeatuwes =
+            tawgetfeatuweoption.map(scawatojavadatawecowdconvewsions.javadatawecowd2scawadatawecowd)
+          vaw twaceid = t-twace.id.twaceid.towong
 
-          MrRequestScribe(
-            requestId = UUID.randomUUID.toString.replaceAll("-", ""),
-            scribedTimeMs = Time.now.inMilliseconds,
-            targetUserId = target.targetId,
-            targetUserInfo = Some(
-              TargetUserInfo(
-                userState,
-                features = targetFeatures,
-                userType = gizmoduckUserOpt.map(_.userType))
-            ),
-            targetFilteredOutPredicate = targetFilteredOutPredicate,
-            candidates = candidatesRequestInfo,
-            traceId = Some(traceId)
+          m-mwwequestscwibe(
+            w-wequestid = uuid.wandomuuid.tostwing.wepwaceaww("-", ^•ﻌ•^ ""),
+            scwibedtimems = t-time.now.inmiwwiseconds, (ꈍᴗꈍ)
+            tawgetusewid = t-tawget.tawgetid,
+            t-tawgetusewinfo = some(
+              tawgetusewinfo(
+                usewstate, (⑅˘꒳˘)
+                featuwes = t-tawgetfeatuwes, (⑅˘꒳˘)
+                u-usewtype = g-gizmoduckusewopt.map(_.usewtype))
+            ), (ˆ ﻌ ˆ)♡
+            t-tawgetfiwtewedoutpwedicate = tawgetfiwtewedoutpwedicate, /(^•ω•^)
+            c-candidates = candidateswequestinfo, òωó
+            twaceid = some(twaceid)
           )
       }
   }
 
-  private def generateTargetFeatureScribeInfo(
-    target: Target
-  ): Future[Option[DataRecord]] = {
-    val featureList =
-      target.params(PushFeatureSwitchParams.TargetLevelFeatureListForMrRequestScribing)
-    if (featureList.nonEmpty) {
-      PushPredictionHelper
-        .getDataRecordFromTargetFeatureMap(
-          target.targetId,
-          target.featureMap,
+  pwivate def genewatetawgetfeatuwescwibeinfo(
+    t-tawget: tawget
+  ): futuwe[option[datawecowd]] = {
+    v-vaw featuwewist =
+      tawget.pawams(pushfeatuweswitchpawams.tawgetwevewfeatuwewistfowmwwequestscwibing)
+    if (featuwewist.nonempty) {
+      p-pushpwedictionhewpew
+        .getdatawecowdfwomtawgetfeatuwemap(
+          tawget.tawgetid, (⑅˘꒳˘)
+          t-tawget.featuwemap, (U ᵕ U❁)
           stats
-        ).map { dataRecord =>
-          val richRecord =
-            new SRichDataRecord(dataRecord, PushQualityModelFeatureContext.featureContext)
+        ).map { d-datawecowd =>
+          v-vaw wichwecowd =
+            nyew s-swichdatawecowd(datawecowd, >w< p-pushquawitymodewfeatuwecontext.featuwecontext)
 
-          val selectedRecord =
-            SRichDataRecord(new DataRecord(), PushQualityModelFeatureContext.featureContext)
-          featureList.map { featureName =>
-            val feature: Feature[_] = {
-              try {
-                PushQualityModelFeatureContext.featureContext.getFeature(featureName)
-              } catch {
-                case _: Exception =>
-                  mrRequestScribeNotIncludedFeatureStats.incr()
-                  throw new IllegalStateException(
-                    "Scribing features not included in FeatureContext: " + featureName)
+          v-vaw sewectedwecowd =
+            swichdatawecowd(new datawecowd(), σωσ pushquawitymodewfeatuwecontext.featuwecontext)
+          featuwewist.map { featuwename =>
+            vaw featuwe: featuwe[_] = {
+              t-twy {
+                p-pushquawitymodewfeatuwecontext.featuwecontext.getfeatuwe(featuwename)
+              } c-catch {
+                case _: exception =>
+                  m-mwwequestscwibenotincwudedfeatuwestats.incw()
+                  thwow nyew iwwegawstateexception(
+                    "scwibing featuwes n-nyot incwuded in f-featuwecontext: " + featuwename)
               }
             }
 
-            richRecord.getFeatureValueOpt(feature).foreach { featureVal =>
-              feature.getFeatureType() match {
-                case FeatureType.BINARY =>
-                  selectedRecord.setFeatureValue(
-                    feature.asInstanceOf[Feature[Boolean]],
-                    featureVal.asInstanceOf[Boolean])
-                case FeatureType.CONTINUOUS =>
-                  selectedRecord.setFeatureValue(
-                    feature.asInstanceOf[Feature[Double]],
-                    featureVal.asInstanceOf[Double])
-                case FeatureType.STRING =>
-                  selectedRecord.setFeatureValue(
-                    feature.asInstanceOf[Feature[String]],
-                    featureVal.asInstanceOf[String])
-                case FeatureType.DISCRETE =>
-                  selectedRecord.setFeatureValue(
-                    feature.asInstanceOf[Feature[Long]],
-                    featureVal.asInstanceOf[Long])
-                case _ =>
-                  mrRequestScribeUnsupportedFeatureTypeStats.incr()
+            w-wichwecowd.getfeatuwevawueopt(featuwe).foweach { featuwevaw =>
+              featuwe.getfeatuwetype() match {
+                c-case f-featuwetype.binawy =>
+                  sewectedwecowd.setfeatuwevawue(
+                    f-featuwe.asinstanceof[featuwe[boowean]], -.-
+                    f-featuwevaw.asinstanceof[boowean])
+                case featuwetype.continuous =>
+                  sewectedwecowd.setfeatuwevawue(
+                    featuwe.asinstanceof[featuwe[doubwe]], o.O
+                    f-featuwevaw.asinstanceof[doubwe])
+                c-case f-featuwetype.stwing =>
+                  s-sewectedwecowd.setfeatuwevawue(
+                    f-featuwe.asinstanceof[featuwe[stwing]],
+                    featuwevaw.asinstanceof[stwing])
+                c-case featuwetype.discwete =>
+                  s-sewectedwecowd.setfeatuwevawue(
+                    featuwe.asinstanceof[featuwe[wong]], ^^
+                    f-featuwevaw.asinstanceof[wong])
+                c-case _ =>
+                  mwwequestscwibeunsuppowtedfeatuwetypestats.incw()
               }
             }
           }
-          Some(selectedRecord.getRecord)
+          s-some(sewectedwecowd.getwecowd)
         }
-    } else Future.None
+    } ewse futuwe.none
   }
 
-  private def generateCandidatesScribeInfo(
-    hydratedCandidates: Seq[CandidateDetails[PushCandidate]],
-    preRankingFilteredCandidates: Seq[CandidateResult[PushCandidate, Result]],
-    rankedCandidates: Seq[CandidateDetails[PushCandidate]],
-    rerankedCandidates: Seq[CandidateDetails[PushCandidate]],
-    restrictFilteredCandidates: Seq[CandidateDetails[PushCandidate]],
-    allTakeCandidateResults: Seq[CandidateResult[PushCandidate, Result]],
-    isFeatureHydratingEnabled: Boolean
-  ): Future[Seq[CandidateRequestInfo]] = {
-    val candidatesMap = new mutable.HashMap[String, CandidateRequestInfo]
+  pwivate d-def genewatecandidatesscwibeinfo(
+    hydwatedcandidates: seq[candidatedetaiws[pushcandidate]], >_<
+    p-pwewankingfiwtewedcandidates: s-seq[candidatewesuwt[pushcandidate, >w< wesuwt]],
+    w-wankedcandidates: seq[candidatedetaiws[pushcandidate]], >_<
+    wewankedcandidates: s-seq[candidatedetaiws[pushcandidate]], >w<
+    w-westwictfiwtewedcandidates: s-seq[candidatedetaiws[pushcandidate]], rawr
+    awwtakecandidatewesuwts: seq[candidatewesuwt[pushcandidate, rawr x3 wesuwt]], ( ͡o ω ͡o )
+    i-isfeatuwehydwatingenabwed: boowean
+  ): futuwe[seq[candidatewequestinfo]] = {
+    v-vaw candidatesmap = n-nyew mutabwe.hashmap[stwing, (˘ω˘) candidatewequestinfo]
 
-    hydratedCandidates.foreach { hydratedCandidate =>
-      val frgNotif = hydratedCandidate.candidate.frigateNotification
-      val simplifiedTweetNotificationOpt = frgNotif.tweetNotification.map { tweetNotification =>
-        TweetNotification(
-          tweetNotification.tweetId,
-          Seq.empty[TSocialContextAction],
-          tweetNotification.tweetAuthorId)
+    h-hydwatedcandidates.foweach { hydwatedcandidate =>
+      v-vaw fwgnotif = h-hydwatedcandidate.candidate.fwigatenotification
+      vaw simpwifiedtweetnotificationopt = f-fwgnotif.tweetnotification.map { tweetnotification =>
+        tweetnotification(
+          t-tweetnotification.tweetid, 😳
+          s-seq.empty[tsociawcontextaction], OwO
+          tweetnotification.tweetauthowid)
       }
-      val simplifiedFrigateNotification = FrigateNotification(
-        frgNotif.commonRecommendationType,
-        frgNotif.notificationDisplayLocation,
-        tweetNotification = simplifiedTweetNotificationOpt
+      v-vaw simpwifiedfwigatenotification = f-fwigatenotification(
+        f-fwgnotif.commonwecommendationtype, (˘ω˘)
+        f-fwgnotif.notificationdispwaywocation, òωó
+        tweetnotification = simpwifiedtweetnotificationopt
       )
-      candidatesMap(hydratedCandidate.candidate.impressionId) = CandidateRequestInfo(
-        candidateId = "",
-        candidateSource = hydratedCandidate.source.substring(
-          0,
-          Math.min(6, hydratedCandidate.source.length)
-        ),
-        frigateNotification = Some(simplifiedFrigateNotification),
-        modelScore = None,
-        rankPosition = None,
-        rerankPosition = None,
-        features = None,
-        isSent = Some(false)
+      candidatesmap(hydwatedcandidate.candidate.impwessionid) = candidatewequestinfo(
+        candidateid = "", ( ͡o ω ͡o )
+        candidatesouwce = hydwatedcandidate.souwce.substwing(
+          0, UwU
+          math.min(6, hydwatedcandidate.souwce.wength)
+        ), /(^•ω•^)
+        fwigatenotification = some(simpwifiedfwigatenotification), (ꈍᴗꈍ)
+        modewscowe = nyone, 😳
+        w-wankposition = n-nyone, mya
+        wewankposition = nyone, mya
+        f-featuwes = nyone, /(^•ω•^)
+        i-issent = s-some(fawse)
       )
     }
 
-    preRankingFilteredCandidates.foreach { preRankingFilteredCandidateResult =>
-      candidatesMap(preRankingFilteredCandidateResult.candidate.impressionId) =
-        candidatesMap(preRankingFilteredCandidateResult.candidate.impressionId)
+    pwewankingfiwtewedcandidates.foweach { p-pwewankingfiwtewedcandidatewesuwt =>
+      candidatesmap(pwewankingfiwtewedcandidatewesuwt.candidate.impwessionid) =
+        c-candidatesmap(pwewankingfiwtewedcandidatewesuwt.candidate.impwessionid)
           .copy(
-            candidateFilteredOutPredicate = preRankingFilteredCandidateResult.result match {
-              case Invalid(reason) => reason
+            c-candidatefiwtewedoutpwedicate = pwewankingfiwtewedcandidatewesuwt.wesuwt m-match {
+              case i-invawid(weason) => w-weason
               case _ => {
-                mrRequestScribeInvalidStats.incr()
-                throw new IllegalStateException(
-                  "Invalid reason for Candidate Filtering " + preRankingFilteredCandidateResult.result)
+                mwwequestscwibeinvawidstats.incw()
+                t-thwow nyew i-iwwegawstateexception(
+                  "invawid w-weason fow c-candidate fiwtewing " + p-pwewankingfiwtewedcandidatewesuwt.wesuwt)
               }
             },
-            candidateFilteredOutStep = Some(CandidateFilteredOutStep.PreRankFiltering)
+            c-candidatefiwtewedoutstep = s-some(candidatefiwtewedoutstep.pwewankfiwtewing)
           )
     }
 
-    for {
-      _ <- Future.collectToTry {
-        rankedCandidates.zipWithIndex.map {
-          case (rankedCandidateDetail, index) =>
-            val modelScoresFut = {
-              val crt = rankedCandidateDetail.candidate.commonRecType
-              if (RecTypes.notEligibleForModelScoreTracking.contains(crt)) Future.None
-              else rankedCandidateDetail.candidate.modelScores.map(Some(_))
+    f-fow {
+      _ <- f-futuwe.cowwecttotwy {
+        wankedcandidates.zipwithindex.map {
+          case (wankedcandidatedetaiw, i-index) =>
+            v-vaw modewscowesfut = {
+              v-vaw cwt = wankedcandidatedetaiw.candidate.commonwectype
+              if (wectypes.notewigibwefowmodewscowetwacking.contains(cwt)) f-futuwe.none
+              ewse wankedcandidatedetaiw.candidate.modewscowes.map(some(_))
             }
 
-            modelScoresFut.map { modelScores =>
-              candidatesMap(rankedCandidateDetail.candidate.impressionId) =
-                candidatesMap(rankedCandidateDetail.candidate.impressionId).copy(
-                  rankPosition = Some(index),
-                  modelScore = modelScores
+            modewscowesfut.map { m-modewscowes =>
+              candidatesmap(wankedcandidatedetaiw.candidate.impwessionid) =
+                c-candidatesmap(wankedcandidatedetaiw.candidate.impwessionid).copy(
+                  wankposition = s-some(index), ^^;;
+                  m-modewscowe = modewscowes
                 )
             }
         }
       }
 
-      _ = rerankedCandidates.zipWithIndex.foreach {
-        case (rerankedCandidateDetail, index) => {
-          candidatesMap(rerankedCandidateDetail.candidate.impressionId) =
-            candidatesMap(rerankedCandidateDetail.candidate.impressionId).copy(
-              rerankPosition = Some(index)
+      _ = w-wewankedcandidates.zipwithindex.foweach {
+        case (wewankedcandidatedetaiw, 🥺 i-index) => {
+          candidatesmap(wewankedcandidatedetaiw.candidate.impwessionid) =
+            c-candidatesmap(wewankedcandidatedetaiw.candidate.impwessionid).copy(
+              wewankposition = s-some(index)
             )
         }
       }
 
-      _ <- Future.collectToTry {
-        rerankedCandidates.map { rerankedCandidateDetail =>
-          if (isFeatureHydratingEnabled) {
-            PushPredictionHelper
-              .getDataRecord(
-                rerankedCandidateDetail.candidate.target.targetHydrationContext,
-                rerankedCandidateDetail.candidate.target.featureMap,
-                rerankedCandidateDetail.candidate.candidateHydrationContext,
-                rerankedCandidateDetail.candidate.candidateFeatureMap(),
+      _ <- futuwe.cowwecttotwy {
+        wewankedcandidates.map { wewankedcandidatedetaiw =>
+          if (isfeatuwehydwatingenabwed) {
+            pushpwedictionhewpew
+              .getdatawecowd(
+                w-wewankedcandidatedetaiw.candidate.tawget.tawgethydwationcontext, ^^
+                wewankedcandidatedetaiw.candidate.tawget.featuwemap, ^•ﻌ•^
+                w-wewankedcandidatedetaiw.candidate.candidatehydwationcontext, /(^•ω•^)
+                w-wewankedcandidatedetaiw.candidate.candidatefeatuwemap(), ^^
                 stats
-              ).map { features =>
-                candidatesMap(rerankedCandidateDetail.candidate.impressionId) =
-                  candidatesMap(rerankedCandidateDetail.candidate.impressionId).copy(
-                    features = Some(
-                      ScalaToJavaDataRecordConversions.javaDataRecord2ScalaDataRecord(features))
+              ).map { featuwes =>
+                candidatesmap(wewankedcandidatedetaiw.candidate.impwessionid) =
+                  c-candidatesmap(wewankedcandidatedetaiw.candidate.impwessionid).copy(
+                    featuwes = s-some(
+                      s-scawatojavadatawecowdconvewsions.javadatawecowd2scawadatawecowd(featuwes))
                   )
               }
-          } else Future.Unit
+          } e-ewse futuwe.unit
         }
       }
 
-      _ = restrictFilteredCandidates.foreach { restrictFilteredCandidateDetatil =>
-        candidatesMap(restrictFilteredCandidateDetatil.candidate.impressionId) =
-          candidatesMap(restrictFilteredCandidateDetatil.candidate.impressionId)
-            .copy(candidateFilteredOutStep = Some(CandidateFilteredOutStep.Restrict))
+      _ = westwictfiwtewedcandidates.foweach { w-westwictfiwtewedcandidatedetatiw =>
+        c-candidatesmap(westwictfiwtewedcandidatedetatiw.candidate.impwessionid) =
+          candidatesmap(westwictfiwtewedcandidatedetatiw.candidate.impwessionid)
+            .copy(candidatefiwtewedoutstep = some(candidatefiwtewedoutstep.westwict))
       }
 
-      _ = allTakeCandidateResults.foreach { allTakeCandidateResult =>
-        allTakeCandidateResult.result match {
-          case OK =>
-            candidatesMap(allTakeCandidateResult.candidate.impressionId) =
-              candidatesMap(allTakeCandidateResult.candidate.impressionId).copy(isSent = Some(true))
-          case Invalid(reason) =>
-            candidatesMap(allTakeCandidateResult.candidate.impressionId) =
-              candidatesMap(allTakeCandidateResult.candidate.impressionId).copy(
-                candidateFilteredOutPredicate = reason,
-                candidateFilteredOutStep = Some(CandidateFilteredOutStep.PostRankFiltering))
+      _ = awwtakecandidatewesuwts.foweach { a-awwtakecandidatewesuwt =>
+        awwtakecandidatewesuwt.wesuwt match {
+          c-case ok =>
+            candidatesmap(awwtakecandidatewesuwt.candidate.impwessionid) =
+              c-candidatesmap(awwtakecandidatewesuwt.candidate.impwessionid).copy(issent = s-some(twue))
+          c-case invawid(weason) =>
+            candidatesmap(awwtakecandidatewesuwt.candidate.impwessionid) =
+              c-candidatesmap(awwtakecandidatewesuwt.candidate.impwessionid).copy(
+                c-candidatefiwtewedoutpwedicate = w-weason, 🥺
+                c-candidatefiwtewedoutstep = some(candidatefiwtewedoutstep.postwankfiwtewing))
           case _ =>
-            mrRequestScribeInvalidStats.incr()
-            throw new IllegalStateException(
-              "Invalid reason for Candidate Filtering " + allTakeCandidateResult.result)
+            m-mwwequestscwibeinvawidstats.incw()
+            t-thwow nyew iwwegawstateexception(
+              "invawid w-weason f-fow candidate fiwtewing " + a-awwtakecandidatewesuwt.wesuwt)
         }
       }
-    } yield candidatesMap.values.toSeq
+    } y-yiewd candidatesmap.vawues.toseq
   }
 
-  private def enableTargetFilteringScribing(target: Target): Boolean = {
-    target.params(PushParams.EnableMrRequestScribing) && target.params(
-      PushFeatureSwitchParams.EnableMrRequestScribingForTargetFiltering)
+  p-pwivate d-def enabwetawgetfiwtewingscwibing(tawget: tawget): b-boowean = {
+    tawget.pawams(pushpawams.enabwemwwequestscwibing) && t-tawget.pawams(
+      pushfeatuweswitchpawams.enabwemwwequestscwibingfowtawgetfiwtewing)
   }
 
-  private def enableCandidateFilteringScribing(target: Target): Boolean = {
-    target.params(PushParams.EnableMrRequestScribing) && target.params(
-      PushFeatureSwitchParams.EnableMrRequestScribingForCandidateFiltering)
+  p-pwivate d-def enabwecandidatefiwtewingscwibing(tawget: tawget): b-boowean = {
+    tawget.pawams(pushpawams.enabwemwwequestscwibing) && tawget.pawams(
+      pushfeatuweswitchpawams.enabwemwwequestscwibingfowcandidatefiwtewing)
   }
 
-  private def writeAtTargetFilteringStep(target: Target, mrRequestScribe: MrRequestScribe) = {
-    logToScribe(mrRequestScribe)
-    mrRequestScribeTargetFilteringStats.incr()
+  pwivate d-def wwiteattawgetfiwtewingstep(tawget: t-tawget, (U ᵕ U❁) m-mwwequestscwibe: mwwequestscwibe) = {
+    wogtoscwibe(mwwequestscwibe)
+    mwwequestscwibetawgetfiwtewingstats.incw()
   }
 
-  private def writeAtCandidateFilteringStep(target: Target, mrRequestScribe: MrRequestScribe) = {
-    logToScribe(mrRequestScribe)
-    mrRequestScribeCandidateFilteringStats.incr()
+  p-pwivate def wwiteatcandidatefiwtewingstep(tawget: t-tawget, 😳😳😳 mwwequestscwibe: mwwequestscwibe) = {
+    w-wogtoscwibe(mwwequestscwibe)
+    m-mwwequestscwibecandidatefiwtewingstats.incw()
   }
 
-  private def logToScribe(mrRequestScribe: MrRequestScribe): Unit = {
-    val logEntry: String = MrRequestScribeInjection(mrRequestScribe)
-    mrRequestScribeLogger.info(logEntry)
+  pwivate def wogtoscwibe(mwwequestscwibe: mwwequestscwibe): u-unit = {
+    v-vaw wogentwy: s-stwing = mwwequestscwibeinjection(mwwequestscwibe)
+    m-mwwequestscwibewoggew.info(wogentwy)
   }
 }

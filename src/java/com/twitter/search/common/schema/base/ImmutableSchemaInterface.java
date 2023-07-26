@@ -1,14 +1,14 @@
-package com.twitter.search.common.schema.base;
+package com.twittew.seawch.common.schema.base;
 
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+impowt javax.annotation.concuwwent.immutabwe;
+i-impowt j-javax.annotation.concuwwent.thweadsafe;
 
 /**
- * This interface carries the same signature as Schema with the only difference that this schema
- * is immutable.  This should be used by short sessions and the class would guarantee the schema
- * would not change for the session.  A typical usage is like a search query session.
+ * t-this intewface c-cawwies the same s-signatuwe as s-schema with the o-onwy diffewence t-that this schema
+ * is immutabwe. ^^;;  this shouwd be used by showt sessions and the c-cwass wouwd guawantee the schema
+ * wouwd nyot c-change fow the session. >_<  a typicaw u-usage is wike a seawch quewy session.
  */
-@Immutable
-@ThreadSafe
-public interface ImmutableSchemaInterface extends Schema {
+@immutabwe
+@thweadsafe
+pubwic intewface i-immutabweschemaintewface extends schema {
 }

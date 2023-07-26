@@ -1,81 +1,81 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
 
-using namespace tensorflow;
+using nyamespace tensowfwow;
 
-REGISTER_OP("IsotonicCalibration")
-.Attr("T: {float, double}")
-.Input("input: T")
-.Input("xs: T")
-.Input("ys: T")
-.Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-  // output shape should be the same as input shape.
-  c->set_output(0, c->input(0));
-  return Status::OK();
-}).Doc(R"doc(
+w-wegistew_op("isotoniccawibwation")
+.attw("t: {fwoat, nyaa~~ d-doubwe}")
+.input("input: t")
+.input("xs: t")
+.input("ys: t")
+.output("output: t-t")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+  // o-output shape shouwd b-be the same a-as input shape.
+  c-c->set_output(0, nyaa~~ c->input(0));
+  wetuwn status::ok();
+}).doc(w"doc(
 
-This operation calibrates probabilities by fitting to a piece-wise non-decreasing function.
+this opewation cawibwates p-pwobabiwities by fitting to a piece-wise nyon-decweasing f-function. :3
 
-Input
-  input: A tensor containing uncalibrated probabilities.
-  xs: A tensor containing the boundaries of the bins.
-  ys: A tensor contianing calibrated values for the corresponding bins.
+input
+  input: a-a tensow containing uncawibwated pwobabiwities. 😳😳😳
+  xs: a tensow c-containing the boundawies of t-the bins. (˘ω˘)
+  ys: a-a tensow contianing cawibwated vawues fow the cowwesponding bins.
 
-Expected Sizes:
-  input: [batch_size, num_labels].
-  xs, ys: [num_labels, num_bins].
+expected sizes:
+  i-input: [batch_size, ^^ nyum_wabews]. :3
+  xs, ys: [num_wabews, -.- nyum_bins]. 😳
 
-Expected Types:
-  input: float or double.
-  xs, ys: same as input.
+expected types:
+  input: f-fwoat ow doubwe. mya
+  xs, ys: s-same as input. (˘ω˘)
 
-Outputs
-  output: A tensor containing calibrated probabilities with same shape and size as input.
+o-outputs
+  output: a-a tensow containing c-cawibwated pwobabiwities with same shape a-and size as input. >_<
 
 )doc");
 
-template<typename T>
-class IsotonicCalibration : public OpKernel {
- public:
-  explicit IsotonicCalibration(OpKernelConstruction* context)
-      : OpKernel(context) {}
+tempwate<typename t>
+cwass isotoniccawibwation : p-pubwic opkewnew {
+ pubwic:
+  expwicit isotoniccawibwation(opkewnewconstwuction* context)
+      : opkewnew(context) {}
 
 
-  void Compute(OpKernelContext* context) override {
-    const Tensor& input = context->input(0);
-    const Tensor& xs = context->input(1);
-    const Tensor& ys = context->input(2);
+  void compute(opkewnewcontext* c-context) ovewwide {
+    const t-tensow& input = c-context->input(0);
+    c-const tensow& xs = context->input(1);
+    const tensow& ys = context->input(2);
 
-    Tensor* output = nullptr;
-    OP_REQUIRES_OK(
-      context,
-      context->allocate_output(0, input.shape(), &output));
+    t-tensow* output = n-nyuwwptw;
+    op_wequiwes_ok(
+      context, -.-
+      c-context->awwocate_output(0, 🥺 i-input.shape(), (U ﹏ U) &output));
 
-    try {
-      const twml::Tensor twml_input = TFTensor_to_twml_tensor(input);
-      const twml::Tensor twml_xs = TFTensor_to_twml_tensor(xs);
-      const twml::Tensor twml_ys = TFTensor_to_twml_tensor(ys);
-      twml::Tensor twml_output = TFTensor_to_twml_tensor(*output);
+    twy {
+      const t-twmw::tensow twmw_input = tftensow_to_twmw_tensow(input);
+      c-const twmw::tensow twmw_xs = tftensow_to_twmw_tensow(xs);
+      const twmw::tensow t-twmw_ys = tftensow_to_twmw_tensow(ys);
+      twmw::tensow twmw_output = t-tftensow_to_twmw_tensow(*output);
 
-      twml::linearInterpolation(twml_output, twml_input, twml_xs, twml_ys);
+      twmw::wineawintewpowation(twmw_output, t-twmw_input, >w< t-twmw_xs, mya twmw_ys);
     }  catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-#define REGISTER(Type)                \
+#define wegistew(type)                \
                                       \
-  REGISTER_KERNEL_BUILDER(            \
-    Name("IsotonicCalibration")       \
-    .Device(DEVICE_CPU)               \
-    .TypeConstraint<Type>("T"),       \
-    IsotonicCalibration<Type>);       \
+  wegistew_kewnew_buiwdew(            \
+    nyame("isotoniccawibwation")       \
+    .device(device_cpu)               \
+    .typeconstwaint<type>("t"), >w<       \
+    i-isotoniccawibwation<type>);       \
 
-REGISTER(float);
-REGISTER(double);
+w-wegistew(fwoat);
+wegistew(doubwe);

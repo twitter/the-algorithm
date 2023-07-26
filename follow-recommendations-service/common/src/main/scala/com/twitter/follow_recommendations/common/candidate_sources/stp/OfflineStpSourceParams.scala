@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.timewines.configapi.fspawam
 
-object OfflineStpSourceParams {
-  // If enabled, we use the new, denser version of PMI matrix to generate OfflineSTP candidates.
-  case object UseDenserPmiMatrix
-      extends FSParam[Boolean]("offline_stp_source_use_denser_pmi_matrix", default = false)
+o-object offwinestpsouwcepawams {
+  // i-if e-enabwed, rawr we use t-the nyew, σωσ densew v-vewsion of pmi m-matwix to genewate o-offwinestp candidates. σωσ
+  c-case object usedensewpmimatwix
+      extends fspawam[boowean]("offwine_stp_souwce_use_densew_pmi_matwix", >_< defauwt = fawse)
 }

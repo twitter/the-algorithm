@@ -1,167 +1,167 @@
-.. _aggregation:
+.. _aggwegation:
 
-Core Concepts
+cowe concepts
 =============
 
-This page provides an overview of the aggregation framework and goes through examples on how to define aggregate features. In general, we can think of an aggregate feature as a grouped set of records, on which we incrementally update the aggregate feature values, crossed by the provided features and conditional on the provided labels.
+this p-page pwovides a-an ovewview of t-the aggwegation f-fwamewowk and goes t-thwough exampwes o-on how to define a-aggwegate featuwes. 😳 i-in genewaw, :3 we can think of an aggwegate featuwe as a gwouped set of wecowds, (U ᵕ U❁) o-on which we incwementawwy update the aggwegate f-featuwe vawues, ʘwʘ cwossed by t-the pwovided featuwes and conditionaw on the pwovided wabews. o.O
 
-AggregateGroup
+a-aggwegategwoup
 --------------
 
-An `AggregateGroup` defines a single unit of aggregate computation, similar to a SQL query. These are executed by the underlying jobs (internally, a `DataRecordAggregationMonoid <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/DataRecordAggregationMonoid.scala#n42>`_ is applied to `DataRecords` that contain the features to aggregate). Many of these groups can exist to define different types of aggregate features.
+an `aggwegategwoup` defines a singwe u-unit of aggwegate c-computation, ʘwʘ simiwaw to a sqw quewy. ^^ these awe exekawaii~d by the undewwying j-jobs (intewnawwy, ^•ﻌ•^ a `datawecowdaggwegationmonoid <https://cgit.twittew.biz/souwce/twee/timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk/datawecowdaggwegationmonoid.scawa#n42>`_ is appwied to `datawecowds` that contain t-the featuwes to aggwegate). m-many of these gwoups c-can exist to d-define diffewent t-types of aggwegate featuwes. mya
 
-Let's start with the following examples of an `AggregateGroup` to discuss the meaning of each of its constructor arguments:
+wet's stawt with t-the fowwowing exampwes of an `aggwegategwoup` to discuss the meaning o-of each of its constwuctow awguments:
 
-.. code-block:: scala
+.. code-bwock:: scawa
 
-   val UserAggregateStore = "user_aggregates"
-   val aggregatesToCompute: Set[TypedAggregateGroup[_]] = Set(
-     AggregateGroup(
-       inputSource = timelinesDailyRecapSource,
-       aggregatePrefix = "user_aggregate_v2",
-       preTransformOpt = Some(RemoveUserIdZero),
-       keys = Set(USER_ID),
-       features = Set(HAS_PHOTO),
-       labels = Set(IS_FAVORITED),
-       metrics = Set(CountMetric, SumMetric),
-       halfLives = Set(50.days),
-       outputStore = OfflineAggregateStore(
-         name = UserAggregateStore,
-         startDate = "2016-07-15 00:00",
-         commonConfig = timelinesDailyAggregateSink,
-         batchesToKeep = 5
+   vaw usewaggwegatestowe = "usew_aggwegates"
+   vaw aggwegatestocompute: set[typedaggwegategwoup[_]] = s-set(
+     aggwegategwoup(
+       i-inputsouwce = t-timewinesdaiwywecapsouwce, UwU
+       a-aggwegatepwefix = "usew_aggwegate_v2", >_<
+       pwetwansfowmopt = some(wemoveusewidzewo), /(^•ω•^)
+       keys = s-set(usew_id), òωó
+       f-featuwes = set(has_photo), σωσ
+       w-wabews = s-set(is_favowited), ( ͡o ω ͡o )
+       metwics = s-set(countmetwic, nyaa~~ summetwic), :3
+       h-hawfwives = set(50.days), UwU
+       outputstowe = o-offwineaggwegatestowe(
+         nyame = u-usewaggwegatestowe, o.O
+         stawtdate = "2016-07-15 00:00", (ˆ ﻌ ˆ)♡
+         c-commonconfig = t-timewinesdaiwyaggwegatesink, ^^;;
+         batchestokeep = 5
        )
      )
-     .flatMap(_.buildTypedAggregateGroups)
+     .fwatmap(_.buiwdtypedaggwegategwoups)
    )
 
-This `AggregateGroup` computes the number of times each user has faved a tweet with a photo. The aggregate count is decayed with a 50 day halflife.
+this `aggwegategwoup` computes the nyumbew of times each usew has faved a tweet w-with a photo. ʘwʘ the a-aggwegate count is decayed with a-a 50 day hawfwife. σωσ
 
-Naming and preprocessing
+n-nyaming and p-pwepwocessing
 ------------------------
 
-`UserAggregateStore` is a string val that acts as a scope of a "root path" to which this group of aggregate features will be written. The root path is provided separately by the implementing job.
+`usewaggwegatestowe` is a stwing vaw that acts as a scope of a "woot p-path" to which this gwoup of aggwegate featuwes wiww be wwitten. ^^;; the woot path is p-pwovided sepawatewy by the impwementing j-job. ʘwʘ
 
-`inputSource` defines the input source of `DataRecords` that we aggregate on. These records contain the relevant features required for aggregation. 
+`inputsouwce` d-defines t-the input souwce of `datawecowds` t-that we a-aggwegate on. ^^ these w-wecowds contain t-the wewevant featuwes wequiwed fow aggwegation. nyaa~~ 
 
-`aggregatePrefix` tells the framework what prefix to use for the aggregate features it generates. A descriptive naming scheme with versioning makes it easier to maintain features as you add or remove them over the long-term.
+`aggwegatepwefix` t-tewws the f-fwamewowk nyani p-pwefix to use f-fow the aggwegate f-featuwes it genewates. (///ˬ///✿) a descwiptive nyaming scheme with vewsioning m-makes it easiew to maintain featuwes as you add ow wemove them ovew the wong-tewm. XD
 
-`preTransforms` is a `Seq[com.twitter.ml.api.ITransform] <https://cgit.twitter.biz/source/tree/src/java/com/twitter/ml/api/ITransform.java>`_ that can be applied to the data records read from the input source before they are fed into the `AggregateGroup` to apply aggregation. These transforms are optional but can be useful for certain preprocessing operations for a group's raw input features. 
+`pwetwansfowms` is a `seq[com.twittew.mw.api.itwansfowm] <https://cgit.twittew.biz/souwce/twee/swc/java/com/twittew/mw/api/itwansfowm.java>`_ t-that can be appwied to the data wecowds wead fwom the input s-souwce befowe t-they awe fed into t-the `aggwegategwoup` to appwy a-aggwegation. :3 these twansfowms a-awe optionaw but c-can be usefuw fow cewtain pwepwocessing opewations fow a gwoup's waw input featuwes. òωó 
 
-.. admonition:: Examples
+.. admonition:: e-exampwes
   
-  You can downsample input data records by providing `preTransforms`. In addition, you could also join different input labels (e.g. "is_push_openend" and "is_push_favorited") and transform them into a combined label that is their union ("is_push_engaged") on which aggregate counts will be calculated.
+  you can downsampwe i-input data wecowds by pwoviding `pwetwansfowms`. ^^ i-in addition, ^•ﻌ•^ y-you couwd awso join diffewent input wabews (e.g. σωσ "is_push_openend" a-and "is_push_favowited") a-and twansfowm them into a combined w-wabew that i-is theiw union ("is_push_engaged") on which aggwegate counts wiww be cawcuwated.
 
 
-Keys
+keys
 ----
 
-`keys` is a crucial field in the config. It defines a `Set[com.twitter.ml.api.Feature]` which specifies a set of grouping keys to use for this `AggregateGroup`.
+`keys` i-is a cwuciaw f-fiewd in the c-config. (ˆ ﻌ ˆ)♡ it defines a `set[com.twittew.mw.api.featuwe]` w-which specifies a-a set of gwouping keys to u-use fow this `aggwegategwoup`. nyaa~~
 
-Keys can only be of 3 supported types currently: `DISCRETE`, `STRING` and `SPARSE_BINARY`. Using a discrete or a string/text feature as a key specifies the unit to group records by before applying counting/aggregation operators.
+keys can onwy be of 3 suppowted types cuwwentwy: `discwete`, ʘwʘ `stwing` and `spawse_binawy`. ^•ﻌ•^ u-using a-a discwete ow a stwing/text featuwe as a key specifies t-the unit t-to gwoup wecowds by befowe appwying counting/aggwegation opewatows. rawr x3
 
 
-.. admonition:: Examples
+.. a-admonition:: exampwes
 
-  .. cssclass:: shortlist
+  .. csscwass:: showtwist
 
-  #. If the key is `USER_ID`, this tells the framework to group all records by `USER_ID`, and then apply aggregations (sum/count/etc) within each user’s data to generate aggregate features for each user.
+  #. 🥺 if the key is `usew_id`, ʘwʘ t-this tewws the fwamewowk to gwoup aww w-wecowds by `usew_id`, (˘ω˘) a-and then appwy aggwegations (sum/count/etc) within each usew’s data to g-genewate aggwegate f-featuwes fow each usew. o.O
 
-  #. If the key is `(USER_ID, AUTHOR_ID)`, then the `AggregateGroup` will output features for each unique user-author pair in the input data.
+  #. if the key is `(usew_id, σωσ authow_id)`, (ꈍᴗꈍ) t-then the `aggwegategwoup` wiww output featuwes f-fow each unique usew-authow paiw in the input data. (ˆ ﻌ ˆ)♡
 
-  #. Finally, using a sparse binary feature as key has special "flattening" or "flatMap" like semantics. For example, consider grouping by `(USER_ID, AUTHOR_INTEREST_IDS)` where `AUTHOR_INTEREST_IDS` is a sparse binary feature which represents a set of topic IDs the author may be tweeting about. This creates one record for each `(user_id, interest_id)` pair - so each record with multiple author interests is flattened before feeding it to the aggregation.
+  #. o.O f-finawwy, using a spawse binawy featuwe a-as key has s-speciaw "fwattening" ow "fwatmap" w-wike semantics. :3 fow exampwe, -.- c-considew gwouping b-by `(usew_id, ( ͡o ω ͡o ) a-authow_intewest_ids)` whewe `authow_intewest_ids` i-is a spawse binawy f-featuwe which wepwesents a set of topic ids t-the authow may b-be tweeting about. /(^•ω•^) t-this cweates one wecowd fow each `(usew_id, (⑅˘꒳˘) i-intewest_id)` paiw - so each wecowd w-with muwtipwe a-authow intewests is fwattened befowe feeding it to the aggwegation. òωó
 
-Features
+f-featuwes
 --------
 
-`features` specifies a `Set[com.twitter.ml.api.Feature]` to aggregate within each group (defined by the keys specified earlier).
+`featuwes` s-specifies a `set[com.twittew.mw.api.featuwe]` t-to aggwegate w-within each gwoup (defined by the k-keys specified eawwiew). 🥺
 
-We support 2 types of `features`: `BINARY` and `CONTINUOUS`.
+we suppowt 2 types of `featuwes`: `binawy` and `continuous`. (ˆ ﻌ ˆ)♡
 
-The semantics of how the aggregation works is slightly different based on the type of “feature”, and based on the “metric” (or aggregation operation):
+the semantics of how the a-aggwegation wowks is swightwy d-diffewent based on the type of “featuwe”, -.- and b-based on the “metwic” (ow aggwegation opewation):
 
-.. cssclass:: shortlist
+.. c-csscwass:: showtwist
 
-#. Binary Feature, Count Metric: Suppose we have a binary feature `HAS_PHOTO` in this set, and are applying the “Count” metric (see below for more details on the metrics), with key `USER_ID`. The semantics is that this computes a feature which measures the count of records with `HAS_PHOTO` set to true for each user.
+#. σωσ b-binawy featuwe, >_< c-count metwic: s-suppose we have a-a binawy featuwe `has_photo` i-in this set, :3 and awe appwying the “count” metwic (see bewow fow mowe detaiws on the metwics), OwO with key `usew_id`. rawr the semantics i-is that this c-computes a featuwe w-which measuwes the count of w-wecowds with `has_photo` set to twue fow each usew. (///ˬ///✿)
 
-#. Binary Feature, Sum Metric - Does not apply. No feature will be computed.
+#. binawy f-featuwe, ^^ sum metwic - d-does nyot appwy. XD nyo featuwe w-wiww be computed. UwU
 
-#. Continuous Feature, Count Metric - The count metric treats all features as binary features ignoring their value. For example, suppose we have a continuous feature `NUM_CHARACTERS_IN_TWEET`, and key `USER_ID`. This measures the count of records that have this feature `NUM_CHARACTERS_IN_TWEET` present.
+#. o.O continuous featuwe, 😳 count m-metwic - the c-count metwic tweats aww featuwes a-as binawy featuwes i-ignowing theiw vawue. (˘ω˘) fow exampwe, 🥺 suppose we have a continuous featuwe `num_chawactews_in_tweet`, ^^ a-and key `usew_id`. >w< t-this measuwes t-the count o-of wecowds that h-have this featuwe `num_chawactews_in_tweet` pwesent. ^^;;
 
-#. Continuous Feature, Sum Metric - In the above example, the features measures the sum of (num_characters_in_tweet) over all a user’s records. Dividing this sum feature by the count feature would give the average number of characters in all tweets.
+#. c-continuous f-featuwe, (˘ω˘) sum metwic - in the a-above exampwe, OwO t-the featuwes measuwes the sum o-of (num_chawactews_in_tweet) ovew aww a usew’s w-wecowds. (ꈍᴗꈍ) dividing this sum featuwe b-by the count f-featuwe wouwd give the avewage n-nyumbew of chawactews in aww tweets. òωó
 
-.. admonition:: Unsupported feature types
+.. admonition:: u-unsuppowted f-featuwe types
 
-  `DISCRETE` and `SPARSE` features are not supported by the Sum Metric, because there is no meaning in summing a discrete feature or a sparse feature. You can use them with the CountMetric, but they may not do what you would expect since they will be treated as binary features losing all the information within the feature. The best way to use these is as “keys” and not as “features”.
+  `discwete` a-and `spawse` featuwes awe nyot suppowted by the sum m-metwic, because thewe is nyo meaning in summing a-a discwete featuwe o-ow a spawse featuwe. ʘwʘ you can u-use them with the countmetwic, ʘwʘ b-but they may nyot d-do nyani you wouwd expect since they wiww be t-tweated as binawy featuwes wosing aww the infowmation w-within the f-featuwe. the best way to use these i-is as “keys” and nyot as “featuwes”. nyaa~~
 
-.. admonition:: Setting includeAnyFeature
+.. a-admonition:: s-setting incwudeanyfeatuwe
 
-  If constructor argument `includeAnyFeature` is set, the framework will append a feature with scope `any_feature` to the set of all features you define. This additional feature simply measures the total count of records. So if you set your features to be equal to Set.empty, this will measure the count of records for a given `USER_ID`.
+  if c-constwuctow awgument `incwudeanyfeatuwe` is set, UwU the fwamewowk wiww append a featuwe with scope `any_featuwe` to the set of aww featuwes you define. (⑅˘꒳˘) this additionaw featuwe simpwy measuwes the totaw count of wecowds. (˘ω˘) so if you set youw featuwes t-to be equaw t-to set.empty, :3 this wiww measuwe the count of w-wecowds fow a given `usew_id`. (˘ω˘)
 
-Labels
+w-wabews
 ------
 
-`labels` specifies a set of `BINARY` features that you can cross with, prior to applying aggregations on the `features`. This essentially restricts the aggregate computation to a subset of the records within a particular key.
+`wabews` s-specifies a set of `binawy` f-featuwes that you can cwoss w-with, nyaa~~ pwiow to appwying a-aggwegations on the `featuwes`. (U ﹏ U) t-this essentiawwy westwicts t-the aggwegate c-computation to a subset of the wecowds within a p-pawticuwaw key. nyaa~~
 
-We typically use this to represent engagement labels in an ML model, in this case, `IS_FAVORITED`.
+w-we typicawwy use t-this to wepwesent e-engagement w-wabews in an mw m-modew, ^^;; in this case, OwO `is_favowited`. nyaa~~
 
-In this example, we are grouping by `USER_ID`, the feature is `HAS_PHOTO`, the label is `IS_FAVORITED`, and we are computing `CountMetric`. The system will output a feature for each user that represents the number of favorites on tweets having photos by this `userId`.
+i-in this exampwe, UwU w-we awe gwouping b-by `usew_id`, 😳 the featuwe i-is `has_photo`, 😳 t-the wabew is `is_favowited`, (ˆ ﻌ ˆ)♡ a-and we awe computing `countmetwic`. (✿oωo) t-the system wiww output a featuwe fow each usew t-that wepwesents the nyumbew of f-favowites on tweets h-having photos b-by this `usewid`. nyaa~~
 
-.. admonition:: Setting includeAnyLabel
+.. admonition:: s-setting incwudeanywabew
 
-  If constructor argument `includeAnyLabel` is set (as it is by default), then similar to `any_feature`, the framework automatically appends a label of type `any_label` to the set of all labels you define, which represents not applying any filter or cross.
+  if constwuctow awgument `incwudeanywabew` i-is set (as it is by defauwt), ^^ t-then simiwaw to `any_featuwe`, (///ˬ///✿) t-the fwamewowk automaticawwy appends a wabew of type `any_wabew` to the set o-of aww wabews you define, 😳 which w-wepwesents not a-appwying any fiwtew ow cwoss. òωó
   
-In this example, `any_label` and `any_feature` are set by default and the system would actually output 4 features for each `user_id`:
+in this exampwe, ^^;; `any_wabew` and `any_featuwe` awe set by defauwt a-and the system wouwd actuawwy o-output 4 featuwes f-fow each `usew_id`:
 
-.. cssclass:: shortlist
+.. c-csscwass:: showtwist
 
-#. The number of `IS_FAVORITED` (favorites) on tweet impressions having `HAS_PHOTO=true`
+#. rawr the nyumbew o-of `is_favowited` (favowites) on t-tweet impwessions having `has_photo=twue`
 
-#. The number of `IS_FAVORITED` (favorites) on all tweet impressions (`any_feature` aggregate)
+#. t-the nyumbew of `is_favowited` (favowites) on aww tweet impwessions (`any_featuwe` a-aggwegate)
 
-#. The number of tweet impressions having `HAS_PHOTO=true` (`any_label` aggregate)
+#. (ˆ ﻌ ˆ)♡ the nyumbew of t-tweet impwessions h-having `has_photo=twue` (`any_wabew` a-aggwegate)
 
-#. The total number of tweet impressions for this user id (`any_feature.any_label` aggregate)
+#. the totaw n-numbew of tweet i-impwessions fow t-this usew id (`any_featuwe.any_wabew` a-aggwegate)
 
-.. admonition:: Disabling includeAnyLabel
+.. admonition:: d-disabwing incwudeanywabew
 
-  To disable this automatically generated feature you can use `includeAnyLabel = false` in your config. This will remove some useful features (particularly for counterfactual signal), but it can greatly save on space since it does not store every possible impressed set of keys in the output store. So use this if you are short on space, but not otherwise.
+  to d-disabwe this automaticawwy g-genewated f-featuwe you c-can use `incwudeanywabew = f-fawse` i-in youw config. XD t-this wiww wemove some usefuw f-featuwes (pawticuwawwy fow countewfactuaw s-signaw), >_< but it can g-gweatwy save on s-space since it does n-nyot stowe evewy possibwe impwessed set of keys in the output s-stowe. (˘ω˘) so use t-this if you awe s-showt on space, 😳 but nyot othewwise. o.O
 
-Metrics
+metwics
 -------
 
-`metrics` specifies the aggregate operators to apply. The most commonly used are `Count`, `Sum` and `SumSq`.
+`metwics` specifies the aggwegate o-opewatows t-to appwy. (ꈍᴗꈍ) the most commonwy used a-awe `count`, rawr x3 `sum` a-and `sumsq`. ^^
 
-As mentioned before, `Count` can be applied to all types of features, but treats every feature as binary and ignores the value of the feature. `Sum` and `SumSq` can only be applied to Continuous features - they will ignore all other features you specify. By combining sum and sumsq and count, you can produce powerful “z-score” features or other distributional features using a post-transform.
+as mentioned befowe, OwO `count` can be appwied t-to aww types of f-featuwes, ^^ but tweats e-evewy featuwe a-as binawy and ignowes the vawue of the featuwe. :3 `sum` a-and `sumsq` c-can onwy be appwied to continuous featuwes - t-they wiww ignowe aww othew featuwes you specify. o.O b-by combining sum and sumsq and c-count, -.- you can p-pwoduce powewfuw “z-scowe” featuwes ow othew d-distwibutionaw f-featuwes using a post-twansfowm. (U ﹏ U)
 
-It is also possible to add your own aggregate operators (e.g. `LastResetMetric <https://phabricator.twitter.biz/D228537>`_) to the framework with some additional work.
+i-it is awso possibwe to add youw o-own aggwegate o-opewatows (e.g. o.O `wastwesetmetwic <https://phabwicatow.twittew.biz/d228537>`_) to t-the fwamewowk w-with some additionaw wowk. OwO
 
-HalfLives
+hawfwives
 ---------
 
-`halfLives` specifies how fast aggregate features should be decayed. It is important to note that the framework works on an incremental basis: in the batch implementation, the summingbird-scalding job takes in the most recently computed aggregate features, processed on data until day `N-1`, then reads new data records for day `N` and computes updated values of the aggregate features. Similarly, the decay of real-time aggregate features takes the actual time delta between the current time and the last time the aggregate feature value was updated.
+`hawfwives` s-specifies h-how fast a-aggwegate featuwes shouwd be decayed. ^•ﻌ•^ i-it is impowtant to nyote that the fwamewowk w-wowks on an incwementaw b-basis: i-in the batch impwementation, ʘwʘ the summingbiwd-scawding job takes in the most wecentwy c-computed aggwegate featuwes, :3 p-pwocessed on d-data untiw day `n-1`, 😳 then weads nyew data wecowds f-fow day `n` and computes updated v-vawues of the a-aggwegate featuwes. òωó s-simiwawwy, 🥺 t-the decay of weaw-time a-aggwegate featuwes takes the actuaw time dewta between the cuwwent time a-and the wast time the aggwegate f-featuwe vawue was updated. rawr x3
 
-The halflife `H` specifies how fast to decay old sums/counts to simulate a sliding window of counts. The implementation is such that it will take `H` amount of time to decay an aggregate feature to half its initial value. New observed values of sums/counts are added to the aggregate feature value.
+the hawfwife `h` specifies how fast t-to decay owd sums/counts to simuwate a swiding window of counts. ^•ﻌ•^ the impwementation i-is such that i-it wiww take `h` amount of time t-to decay an aggwegate featuwe to hawf its initiaw v-vawue. :3 nyew obsewved v-vawues of sums/counts awe a-added to the aggwegate featuwe v-vawue. (ˆ ﻌ ˆ)♡
 
-.. admonition:: Batch and real-time
+.. admonition:: batch and weaw-time
   
-  In the batch use case where aggregate features are recomputed on a daily basis, we typically take halflives on the order of weeks or longer (in Timelines, 50 days). In the real-time use case, shorter halflives are appropriate (hours) since they are updated as client engagements are received by the summingbird job.
+  in the batch use c-case whewe aggwegate featuwes awe wecomputed o-on a daiwy basis, (U ᵕ U❁) w-we typicawwy take h-hawfwives on the owdew of weeks ow wongew (in t-timewines, :3 50 days). ^^;; in the weaw-time use case, ( ͡o ω ͡o ) showtew hawfwives awe appwopwiate (houws) s-since t-they awe updated a-as cwient engagements a-awe weceived by the summingbiwd job.
 
 
-SQL Equivalent
+s-sqw equivawent
 --------------
-Conceptually, you can also think of it as:
+c-conceptuawwy, o.O you can awso think of i-it as:
 
-.. code-block:: sql
+.. code-bwock:: sqw
 
-  INSERT INTO <outputStore>.<aggregatePrefix>
-  SELECT AGG(<features>) /* AGG is <metrics>, which is a exponentially decaying SUM or COUNT etc. based on the halfLifves */
-  FROM (
-    SELECT preTransformOpt(*) FROM <inputSource>
+  insewt into <outputstowe>.<aggwegatepwefix>
+  sewect a-agg(<featuwes>) /* agg is <metwics>, ^•ﻌ•^ which i-is a exponentiawwy d-decaying sum ow count etc. XD based o-on the hawfwifves */
+  f-fwom (
+    s-sewect pwetwansfowmopt(*) fwom <inputsouwce>
   ) 
-  GROUP BY <keys>
-  WHERE <labels> = True
+  gwoup b-by <keys>
+  whewe <wabews> = twue
 
-any_features is AGG(*).
+any_featuwes i-is agg(*). ^^
 
-any_labels removes the WHERE clause.
+any_wabews wemoves the whewe cwause.

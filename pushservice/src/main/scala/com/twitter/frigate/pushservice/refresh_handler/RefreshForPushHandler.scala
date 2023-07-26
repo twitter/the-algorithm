@@ -1,292 +1,292 @@
-package com.twitter.frigate.pushservice.refresh_handler
+package com.twittew.fwigate.pushsewvice.wefwesh_handwew
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats.track
-import com.twitter.frigate.common.base.Stats.trackSeq
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.adaptor._
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.rank.RFPHLightRanker
-import com.twitter.frigate.pushservice.rank.RFPHRanker
-import com.twitter.frigate.pushservice.scriber.MrRequestScribeHandler
-import com.twitter.frigate.pushservice.take.candidate_validator.RFPHCandidateValidator
-import com.twitter.frigate.pushservice.target.PushTargetUserBuilder
-import com.twitter.frigate.pushservice.target.RFPHTargetPredicates
-import com.twitter.frigate.pushservice.util.RFPHTakeStepUtil
-import com.twitter.frigate.pushservice.util.AdhocStatsUtil
-import com.twitter.frigate.pushservice.thriftscala.PushContext
-import com.twitter.frigate.pushservice.thriftscala.RefreshRequest
-import com.twitter.frigate.pushservice.thriftscala.RefreshResponse
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.util._
+impowt com.twittew.finagwe.stats.countew
+i-impowt com.twittew.finagwe.stats.stat
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.stats.twack
+i-impowt c-com.twittew.fwigate.common.base.stats.twackseq
+impowt c-com.twittew.fwigate.common.base._
+i-impowt com.twittew.fwigate.common.woggew.mwwoggew
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.adaptow._
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt com.twittew.fwigate.pushsewvice.wank.wfphwightwankew
+impowt com.twittew.fwigate.pushsewvice.wank.wfphwankew
+i-impowt com.twittew.fwigate.pushsewvice.scwibew.mwwequestscwibehandwew
+i-impowt com.twittew.fwigate.pushsewvice.take.candidate_vawidatow.wfphcandidatevawidatow
+impowt com.twittew.fwigate.pushsewvice.tawget.pushtawgetusewbuiwdew
+impowt com.twittew.fwigate.pushsewvice.tawget.wfphtawgetpwedicates
+impowt c-com.twittew.fwigate.pushsewvice.utiw.wfphtakesteputiw
+impowt c-com.twittew.fwigate.pushsewvice.utiw.adhocstatsutiw
+i-impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushcontext
+impowt com.twittew.fwigate.pushsewvice.thwiftscawa.wefweshwequest
+impowt com.twittew.fwigate.pushsewvice.thwiftscawa.wefweshwesponse
+impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+i-impowt com.twittew.hewmit.pwedicate.pwedicate
+impowt com.twittew.timewines.configapi.featuwevawue
+impowt c-com.twittew.utiw._
 
-case class ResultWithDebugInfo(result: Result, predicateResults: Seq[PredicateWithResult])
+case cwass w-wesuwtwithdebuginfo(wesuwt: wesuwt, (ˆ ﻌ ˆ)♡ p-pwedicatewesuwts: s-seq[pwedicatewithwesuwt])
 
-class RefreshForPushHandler(
-  val pushTargetUserBuilder: PushTargetUserBuilder,
-  val candSourceGenerator: PushCandidateSourceGenerator,
-  rfphRanker: RFPHRanker,
-  candidateHydrator: PushCandidateHydrator,
-  candidateValidator: RFPHCandidateValidator,
-  rfphTakeStepUtil: RFPHTakeStepUtil,
-  rfphRestrictStep: RFPHRestrictStep,
-  val rfphNotifier: RefreshForPushNotifier,
-  rfphStatsRecorder: RFPHStatsRecorder,
-  mrRequestScriberNode: String,
-  rfphFeatureHydrator: RFPHFeatureHydrator,
-  rfphPrerankFilter: RFPHPrerankFilter,
-  rfphLightRanker: RFPHLightRanker
+c-cwass wefweshfowpushhandwew(
+  vaw pushtawgetusewbuiwdew: pushtawgetusewbuiwdew, (U ﹏ U)
+  v-vaw candsouwcegenewatow: pushcandidatesouwcegenewatow, UwU
+  wfphwankew: wfphwankew, XD
+  c-candidatehydwatow: pushcandidatehydwatow,
+  candidatevawidatow: wfphcandidatevawidatow, ʘwʘ
+  wfphtakesteputiw: wfphtakesteputiw, rawr x3
+  w-wfphwestwictstep: wfphwestwictstep, ^^;;
+  v-vaw wfphnotifiew: w-wefweshfowpushnotifiew, ʘwʘ
+  w-wfphstatswecowdew: wfphstatswecowdew, (U ﹏ U)
+  mwwequestscwibewnode: stwing, (˘ω˘)
+  wfphfeatuwehydwatow: w-wfphfeatuwehydwatow, (ꈍᴗꈍ)
+  w-wfphpwewankfiwtew: wfphpwewankfiwtew, /(^•ω•^)
+  w-wfphwightwankew: w-wfphwightwankew
 )(
-  globalStats: StatsReceiver)
-    extends FetchRankFlowWithHydratedCandidates[Target, RawCandidate, PushCandidate] {
+  gwobawstats: s-statsweceivew)
+    extends f-fetchwankfwowwithhydwatedcandidates[tawget, >_< wawcandidate, pushcandidate] {
 
-  val log = MRLogger("RefreshForPushHandler")
+  v-vaw wog = mwwoggew("wefweshfowpushhandwew")
 
-  implicit val statsReceiver: StatsReceiver =
-    globalStats.scope("RefreshForPushHandler")
-  private val maxCandidatesToBatchInTakeStat: Stat =
-    statsReceiver.stat("max_cands_to_batch_in_take")
+  impwicit vaw s-statsweceivew: statsweceivew =
+    gwobawstats.scope("wefweshfowpushhandwew")
+  p-pwivate vaw maxcandidatestobatchintakestat: s-stat =
+    statsweceivew.stat("max_cands_to_batch_in_take")
 
-  private val rfphRequestCounter = statsReceiver.counter("requests")
+  pwivate vaw wfphwequestcountew = statsweceivew.countew("wequests")
 
-  private val buildTargetStats = statsReceiver.scope("build_target")
-  private val processStats = statsReceiver.scope("process")
-  private val notifyStats = statsReceiver.scope("notify")
+  pwivate vaw buiwdtawgetstats = statsweceivew.scope("buiwd_tawget")
+  p-pwivate vaw p-pwocessstats = statsweceivew.scope("pwocess")
+  p-pwivate vaw nyotifystats = s-statsweceivew.scope("notify")
 
-  private val lightRankingStats: StatsReceiver = statsReceiver.scope("light_ranking")
-  private val reRankingStats: StatsReceiver = statsReceiver.scope("rerank")
-  private val featureHydrationLatency: StatsReceiver =
-    statsReceiver.scope("featureHydrationLatency")
-  private val candidateHydrationStats: StatsReceiver = statsReceiver.scope("candidate_hydration")
+  p-pwivate vaw wightwankingstats: statsweceivew = statsweceivew.scope("wight_wanking")
+  p-pwivate vaw wewankingstats: statsweceivew = statsweceivew.scope("wewank")
+  pwivate vaw featuwehydwationwatency: s-statsweceivew =
+    statsweceivew.scope("featuwehydwationwatency")
+  p-pwivate v-vaw candidatehydwationstats: statsweceivew = statsweceivew.scope("candidate_hydwation")
 
-  lazy val candSourceEligibleCounter: Counter =
-    candidateStats.counter("cand_source_eligible")
-  lazy val candSourceNotEligibleCounter: Counter =
-    candidateStats.counter("cand_source_not_eligible")
+  w-wazy vaw candsouwceewigibwecountew: c-countew =
+    candidatestats.countew("cand_souwce_ewigibwe")
+  w-wazy vaw candsouwcenotewigibwecountew: c-countew =
+    c-candidatestats.countew("cand_souwce_not_ewigibwe")
 
-  //pre-ranking stats
-  val allCandidatesFilteredPreRank = filterStats.counter("all_candidates_filtered")
+  //pwe-wanking stats
+  vaw awwcandidatesfiwtewedpwewank = f-fiwtewstats.countew("aww_candidates_fiwtewed")
 
-  // total invalid candidates
-  val totalStats: StatsReceiver = statsReceiver.scope("total")
-  val totalInvalidCandidatesStat: Stat = totalStats.stat("candidates_invalid")
+  // t-totaw invawid c-candidates
+  v-vaw totawstats: s-statsweceivew = statsweceivew.scope("totaw")
+  vaw totawinvawidcandidatesstat: stat = totawstats.stat("candidates_invawid")
 
-  val mrRequestScribeBuiltStats: Counter = statsReceiver.counter("mr_request_scribe_built")
+  v-vaw mwwequestscwibebuiwtstats: countew = statsweceivew.countew("mw_wequest_scwibe_buiwt")
 
-  val mrRequestCandidateScribeStats = statsReceiver.scope("mr_request_scribe_candidates")
-  val mrRequestTargetScribeStats = statsReceiver.scope("mr_request_scribe_target")
+  vaw mwwequestcandidatescwibestats = statsweceivew.scope("mw_wequest_scwibe_candidates")
+  vaw mwwequesttawgetscwibestats = statsweceivew.scope("mw_wequest_scwibe_tawget")
 
-  val mrRequestScribeHandler =
-    new MrRequestScribeHandler(mrRequestScriberNode, statsReceiver.scope("mr_request_scribe"))
+  v-vaw mwwequestscwibehandwew =
+    nyew mwwequestscwibehandwew(mwwequestscwibewnode, σωσ statsweceivew.scope("mw_wequest_scwibe"))
 
-  val adhocStatsUtil = new AdhocStatsUtil(statsReceiver.scope("adhoc_stats"))
+  v-vaw a-adhocstatsutiw = n-nyew adhocstatsutiw(statsweceivew.scope("adhoc_stats"))
 
-  private def numRecsPerTypeStat(crt: CommonRecommendationType) =
-    fetchStats.scope(crt.toString).stat("dist")
+  pwivate d-def nyumwecspewtypestat(cwt: commonwecommendationtype) =
+    f-fetchstats.scope(cwt.tostwing).stat("dist")
 
-  // static list of target predicates
-  private val targetPredicates = RFPHTargetPredicates(targetStats.scope("predicates"))
+  // s-static wist of tawget pwedicates
+  pwivate vaw tawgetpwedicates = wfphtawgetpwedicates(tawgetstats.scope("pwedicates"))
 
-  def buildTarget(
-    userId: Long,
-    inputPushContext: Option[PushContext],
-    forcedFeatureValues: Option[Map[String, FeatureValue]] = None
-  ): Future[Target] =
-    pushTargetUserBuilder.buildTarget(userId, inputPushContext, forcedFeatureValues)
+  def buiwdtawget(
+    u-usewid: wong, ^^;;
+    inputpushcontext: o-option[pushcontext],
+    fowcedfeatuwevawues: o-option[map[stwing, 😳 f-featuwevawue]] = nyone
+  ): futuwe[tawget] =
+    p-pushtawgetusewbuiwdew.buiwdtawget(usewid, >_< i-inputpushcontext, -.- fowcedfeatuwevawues)
 
-  override def targetPredicates(target: Target): List[Predicate[Target]] = targetPredicates
+  ovewwide d-def tawgetpwedicates(tawget: t-tawget): wist[pwedicate[tawget]] = tawgetpwedicates
 
-  override def isTargetValid(target: Target): Future[Result] = {
-    val resultFut = if (target.skipFilters) {
-      Future.value(trackTargetPredStats(None))
-    } else {
-      predicateSeq(target).track(Seq(target)).map { resultArr =>
-        trackTargetPredStats(resultArr(0))
+  ovewwide def istawgetvawid(tawget: tawget): futuwe[wesuwt] = {
+    vaw w-wesuwtfut = if (tawget.skipfiwtews) {
+      futuwe.vawue(twacktawgetpwedstats(none))
+    } e-ewse {
+      p-pwedicateseq(tawget).twack(seq(tawget)).map { wesuwtaww =>
+        t-twacktawgetpwedstats(wesuwtaww(0))
       }
     }
-    track(targetStats)(resultFut)
+    t-twack(tawgetstats)(wesuwtfut)
   }
 
-  override def candidateSources(
-    target: Target
-  ): Future[Seq[CandidateSource[Target, RawCandidate]]] = {
-    Future
-      .collect(candSourceGenerator.sources.map { cs =>
-        cs.isCandidateSourceAvailable(target).map { isEligible =>
-          if (isEligible) {
-            candSourceEligibleCounter.incr()
-            Some(cs)
-          } else {
-            candSourceNotEligibleCounter.incr()
-            None
+  ovewwide d-def candidatesouwces(
+    tawget: tawget
+  ): futuwe[seq[candidatesouwce[tawget, UwU wawcandidate]]] = {
+    futuwe
+      .cowwect(candsouwcegenewatow.souwces.map { c-cs =>
+        c-cs.iscandidatesouwceavaiwabwe(tawget).map { isewigibwe =>
+          if (isewigibwe) {
+            c-candsouwceewigibwecountew.incw()
+            some(cs)
+          } e-ewse {
+            candsouwcenotewigibwecountew.incw()
+            nyone
           }
         }
-      }).map(_.flatten)
+      }).map(_.fwatten)
   }
 
-  override def updateCandidateCounter(
-    candidateResults: Seq[CandidateResult[PushCandidate, Result]]
-  ): Unit = {
-    candidateResults.foreach {
-      case candidateResult if candidateResult.result == OK =>
-        okCandidateCounter.incr()
-      case candidateResult if candidateResult.result.isInstanceOf[Invalid] =>
-        invalidCandidateCounter.incr()
-      case _ =>
+  ovewwide def updatecandidatecountew(
+    c-candidatewesuwts: seq[candidatewesuwt[pushcandidate, :3 wesuwt]]
+  ): unit = {
+    candidatewesuwts.foweach {
+      case c-candidatewesuwt if candidatewesuwt.wesuwt == ok =>
+        o-okcandidatecountew.incw()
+      c-case candidatewesuwt if candidatewesuwt.wesuwt.isinstanceof[invawid] =>
+        invawidcandidatecountew.incw()
+      c-case _ =>
     }
   }
 
-  override def hydrateCandidates(
-    candidates: Seq[CandidateDetails[RawCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = candidateHydrator(candidates)
+  o-ovewwide def hydwatecandidates(
+    candidates: seq[candidatedetaiws[wawcandidate]]
+  ): f-futuwe[seq[candidatedetaiws[pushcandidate]]] = candidatehydwatow(candidates)
 
-  override def filter(
-    target: Target,
-    hydratedCandidates: Seq[CandidateDetails[PushCandidate]]
-  ): Future[
-    (Seq[CandidateDetails[PushCandidate]], Seq[CandidateResult[PushCandidate, Result]])
-  ] = rfphPrerankFilter.filter(target, hydratedCandidates)
+  o-ovewwide def fiwtew(
+    tawget: tawget, σωσ
+    hydwatedcandidates: seq[candidatedetaiws[pushcandidate]]
+  ): f-futuwe[
+    (seq[candidatedetaiws[pushcandidate]], >w< seq[candidatewesuwt[pushcandidate, (ˆ ﻌ ˆ)♡ wesuwt]])
+  ] = w-wfphpwewankfiwtew.fiwtew(tawget, ʘwʘ h-hydwatedcandidates)
 
-  def lightRankAndTake(
-    target: Target,
-    candidates: Seq[CandidateDetails[PushCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    rfphLightRanker.rank(target, candidates)
+  def wightwankandtake(
+    t-tawget: tawget, :3
+    candidates: s-seq[candidatedetaiws[pushcandidate]]
+  ): f-futuwe[seq[candidatedetaiws[pushcandidate]]] = {
+    w-wfphwightwankew.wank(tawget, candidates)
   }
 
-  override def rank(
-    target: Target,
-    candidatesDetails: Seq[CandidateDetails[PushCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    val featureHydratedCandidatesFut = trackSeq(featureHydrationLatency)(
-      rfphFeatureHydrator
-        .candidateFeatureHydration(candidatesDetails, target.mrRequestContextForFeatureStore)
+  o-ovewwide def w-wank(
+    tawget: tawget, (˘ω˘)
+    candidatesdetaiws: seq[candidatedetaiws[pushcandidate]]
+  ): f-futuwe[seq[candidatedetaiws[pushcandidate]]] = {
+    v-vaw featuwehydwatedcandidatesfut = t-twackseq(featuwehydwationwatency)(
+      wfphfeatuwehydwatow
+        .candidatefeatuwehydwation(candidatesdetaiws, tawget.mwwequestcontextfowfeatuwestowe)
     )
-    featureHydratedCandidatesFut.flatMap { featureHydratedCandidates =>
-      rfphStatsRecorder.rankDistributionStats(featureHydratedCandidates, numRecsPerTypeStat)
-      rfphRanker.initialRank(target, candidatesDetails)
+    f-featuwehydwatedcandidatesfut.fwatmap { featuwehydwatedcandidates =>
+      wfphstatswecowdew.wankdistwibutionstats(featuwehydwatedcandidates, 😳😳😳 n-numwecspewtypestat)
+      wfphwankew.initiawwank(tawget, rawr x3 c-candidatesdetaiws)
     }
   }
 
-  def reRank(
-    target: Target,
-    rankedCandidates: Seq[CandidateDetails[PushCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    rfphRanker.reRank(target, rankedCandidates)
+  def wewank(
+    tawget: tawget, (✿oωo)
+    w-wankedcandidates: s-seq[candidatedetaiws[pushcandidate]]
+  ): f-futuwe[seq[candidatedetaiws[pushcandidate]]] = {
+    w-wfphwankew.wewank(tawget, (ˆ ﻌ ˆ)♡ wankedcandidates)
   }
 
-  override def validCandidates(
-    target: Target,
-    candidates: Seq[PushCandidate]
-  ): Future[Seq[Result]] = {
-    Future.collect(candidates.map { candidate =>
-      rfphTakeStepUtil.isCandidateValid(candidate, candidateValidator).map(res => res.result)
+  o-ovewwide def vawidcandidates(
+    tawget: tawget, :3
+    candidates: seq[pushcandidate]
+  ): futuwe[seq[wesuwt]] = {
+    f-futuwe.cowwect(candidates.map { candidate =>
+      wfphtakesteputiw.iscandidatevawid(candidate, (U ᵕ U❁) c-candidatevawidatow).map(wes => wes.wesuwt)
     })
   }
 
-  override def desiredCandidateCount(target: Target): Int = target.desiredCandidateCount
+  o-ovewwide def desiwedcandidatecount(tawget: t-tawget): int = tawget.desiwedcandidatecount
 
-  override def batchForCandidatesCheck(target: Target): Int = {
-    val fsParam = PushFeatureSwitchParams.NumberOfMaxCandidatesToBatchInRFPHTakeStep
-    val maxToBatch = target.params(fsParam)
-    maxCandidatesToBatchInTakeStat.add(maxToBatch)
-    maxToBatch
+  ovewwide def batchfowcandidatescheck(tawget: t-tawget): i-int = {
+    v-vaw fspawam = pushfeatuweswitchpawams.numbewofmaxcandidatestobatchinwfphtakestep
+    v-vaw maxtobatch = t-tawget.pawams(fspawam)
+    maxcandidatestobatchintakestat.add(maxtobatch)
+    maxtobatch
   }
 
-  override def process(
-    target: Target,
-    externalCandidates: Seq[RawCandidate] = Nil
-  ): Future[Response[PushCandidate, Result]] = {
-    isTargetValid(target).flatMap {
-      case OK =>
-        for {
-          candidatesFromSources <- trackSeq(fetchStats)(fetchCandidates(target))
-          externalCandidateDetails = externalCandidates.map(
-            CandidateDetails(_, "refresh_for_push_handler_external_candidate"))
-          allCandidates = candidatesFromSources ++ externalCandidateDetails
-          hydratedCandidatesWithCopy <-
-            trackSeq(candidateHydrationStats)(hydrateCandidates(allCandidates))
-          _ = adhocStatsUtil.getCandidateSourceStats(hydratedCandidatesWithCopy)
-          (candidates, preRankingFilteredCandidates) <-
-            track(filterStats)(filter(target, hydratedCandidatesWithCopy))
-          _ = adhocStatsUtil.getPreRankingFilterStats(preRankingFilteredCandidates)
-          lightRankerFilteredCandidates <-
-            trackSeq(lightRankingStats)(lightRankAndTake(target, candidates))
-          _ = adhocStatsUtil.getLightRankingStats(lightRankerFilteredCandidates)
-          rankedCandidates <- trackSeq(rankingStats)(rank(target, lightRankerFilteredCandidates))
-          _ = adhocStatsUtil.getRankingStats(rankedCandidates)
-          rerankedCandidates <- trackSeq(reRankingStats)(reRank(target, rankedCandidates))
-          _ = adhocStatsUtil.getReRankingStats(rerankedCandidates)
-          (restrictedCandidates, restrictFilteredCandidates) =
-            rfphRestrictStep.restrict(target, rerankedCandidates)
-          allTakeCandidateResults <- track(takeStats)(
-            take(target, restrictedCandidates, desiredCandidateCount(target))
+  ovewwide def pwocess(
+    tawget: tawget, ^^;;
+    extewnawcandidates: s-seq[wawcandidate] = n-nyiw
+  ): f-futuwe[wesponse[pushcandidate, mya wesuwt]] = {
+    i-istawgetvawid(tawget).fwatmap {
+      case ok =>
+        fow {
+          c-candidatesfwomsouwces <- t-twackseq(fetchstats)(fetchcandidates(tawget))
+          extewnawcandidatedetaiws = e-extewnawcandidates.map(
+            candidatedetaiws(_, 😳😳😳 "wefwesh_fow_push_handwew_extewnaw_candidate"))
+          awwcandidates = c-candidatesfwomsouwces ++ e-extewnawcandidatedetaiws
+          hydwatedcandidateswithcopy <-
+            t-twackseq(candidatehydwationstats)(hydwatecandidates(awwcandidates))
+          _ = a-adhocstatsutiw.getcandidatesouwcestats(hydwatedcandidateswithcopy)
+          (candidates, OwO pwewankingfiwtewedcandidates) <-
+            twack(fiwtewstats)(fiwtew(tawget, rawr hydwatedcandidateswithcopy))
+          _ = adhocstatsutiw.getpwewankingfiwtewstats(pwewankingfiwtewedcandidates)
+          wightwankewfiwtewedcandidates <-
+            t-twackseq(wightwankingstats)(wightwankandtake(tawget, c-candidates))
+          _ = a-adhocstatsutiw.getwightwankingstats(wightwankewfiwtewedcandidates)
+          w-wankedcandidates <- t-twackseq(wankingstats)(wank(tawget, XD wightwankewfiwtewedcandidates))
+          _ = a-adhocstatsutiw.getwankingstats(wankedcandidates)
+          w-wewankedcandidates <- twackseq(wewankingstats)(wewank(tawget, (U ﹏ U) w-wankedcandidates))
+          _ = a-adhocstatsutiw.getwewankingstats(wewankedcandidates)
+          (westwictedcandidates, (˘ω˘) westwictfiwtewedcandidates) =
+            w-wfphwestwictstep.westwict(tawget, UwU wewankedcandidates)
+          awwtakecandidatewesuwts <- twack(takestats)(
+            t-take(tawget, >_< westwictedcandidates, σωσ d-desiwedcandidatecount(tawget))
           )
-          _ = adhocStatsUtil.getTakeCandidateResultStats(allTakeCandidateResults)
-          _ <- track(mrRequestCandidateScribeStats)(
-            mrRequestScribeHandler.scribeForCandidateFiltering(
-              target,
-              hydratedCandidatesWithCopy,
-              preRankingFilteredCandidates,
-              rankedCandidates,
-              rerankedCandidates,
-              restrictFilteredCandidates,
-              allTakeCandidateResults
+          _ = a-adhocstatsutiw.gettakecandidatewesuwtstats(awwtakecandidatewesuwts)
+          _ <- twack(mwwequestcandidatescwibestats)(
+            m-mwwequestscwibehandwew.scwibefowcandidatefiwtewing(
+              tawget, 🥺
+              hydwatedcandidateswithcopy,
+              p-pwewankingfiwtewedcandidates, 🥺
+              w-wankedcandidates,
+              w-wewankedcandidates, ʘwʘ
+              westwictfiwtewedcandidates, :3
+              awwtakecandidatewesuwts
             ))
-        } yield {
+        } yiewd {
 
           /**
-           * Take processes post restrict step candidates and returns both:
-           *  1. valid + invalid candidates
-           *  2. Candidates that are not processed (more than desired) + restricted candidates
-           * We need #2 only for importance sampling
+           * t-take pwocesses post westwict step candidates a-and wetuwns b-both:
+           *  1. (U ﹏ U) vawid + i-invawid candidates
+           *  2. (U ﹏ U) candidates t-that awe nyot p-pwocessed (mowe than desiwed) + westwicted candidates
+           * w-we nyeed #2 onwy fow impowtance sampwing
            */
-          val takeCandidateResults =
-            allTakeCandidateResults.filterNot { candResult =>
-              candResult.result == MoreThanDesiredCandidates
+          v-vaw takecandidatewesuwts =
+            a-awwtakecandidatewesuwts.fiwtewnot { candwesuwt =>
+              c-candwesuwt.wesuwt == mowethandesiwedcandidates
             }
 
-          val totalInvalidCandidates = {
-            preRankingFilteredCandidates.size + //pre-ranking filtered candidates
-              (rerankedCandidates.length - restrictedCandidates.length) + //candidates reject in restrict step
-              takeCandidateResults.count(_.result != OK) //candidates reject in take step
+          v-vaw totawinvawidcandidates = {
+            p-pwewankingfiwtewedcandidates.size + //pwe-wanking f-fiwtewed candidates
+              (wewankedcandidates.wength - westwictedcandidates.wength) + //candidates weject in westwict step
+              takecandidatewesuwts.count(_.wesuwt != ok) //candidates weject in take step
           }
-          takeInvalidCandidateDist.add(
-            takeCandidateResults
-              .count(_.result != OK)
-          ) // take step invalid candidates
-          totalInvalidCandidatesStat.add(totalInvalidCandidates)
-          val allCandidateResults = takeCandidateResults ++ preRankingFilteredCandidates
-          Response(OK, allCandidateResults)
+          takeinvawidcandidatedist.add(
+            takecandidatewesuwts
+              .count(_.wesuwt != ok)
+          ) // take step invawid candidates
+          totawinvawidcandidatesstat.add(totawinvawidcandidates)
+          v-vaw awwcandidatewesuwts = t-takecandidatewesuwts ++ pwewankingfiwtewedcandidates
+          wesponse(ok, ʘwʘ a-awwcandidatewesuwts)
         }
 
-      case result: Result =>
-        for (_ <- track(mrRequestTargetScribeStats)(
-            mrRequestScribeHandler.scribeForTargetFiltering(target, result))) yield {
-          mrRequestScribeBuiltStats.incr()
-          Response(result, Nil)
+      c-case w-wesuwt: wesuwt =>
+        fow (_ <- t-twack(mwwequesttawgetscwibestats)(
+            mwwequestscwibehandwew.scwibefowtawgetfiwtewing(tawget, >w< w-wesuwt))) y-yiewd {
+          mwwequestscwibebuiwtstats.incw()
+          w-wesponse(wesuwt, rawr x3 nyiw)
         }
     }
   }
 
-  def refreshAndSend(request: RefreshRequest): Future[RefreshResponse] = {
-    rfphRequestCounter.incr()
-    for {
-      target <- track(buildTargetStats)(
-        pushTargetUserBuilder
-          .buildTarget(request.userId, request.context))
-      response <- track(processStats)(process(target, externalCandidates = Seq.empty))
-      refreshResponse <- track(notifyStats)(rfphNotifier.checkResponseAndNotify(response, target))
-    } yield {
-      refreshResponse
+  d-def wefweshandsend(wequest: w-wefweshwequest): futuwe[wefweshwesponse] = {
+    wfphwequestcountew.incw()
+    f-fow {
+      t-tawget <- t-twack(buiwdtawgetstats)(
+        p-pushtawgetusewbuiwdew
+          .buiwdtawget(wequest.usewid, OwO w-wequest.context))
+      w-wesponse <- t-twack(pwocessstats)(pwocess(tawget, ^•ﻌ•^ e-extewnawcandidates = s-seq.empty))
+      wefweshwesponse <- twack(notifystats)(wfphnotifiew.checkwesponseandnotify(wesponse, >_< t-tawget))
+    } y-yiewd {
+      w-wefweshwesponse
     }
   }
 }

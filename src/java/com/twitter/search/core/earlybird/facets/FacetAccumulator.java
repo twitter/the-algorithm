@@ -1,36 +1,36 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
 
 /**
- * Counts facet occurrences and provides the top items
- * at the end. Actual subclass can implement this functionality differently: e.g. by using
- * a heap (priority queue) or a hashmap with pruning step.
- * The type R represents the facet results, which can e.g. be a thrift class.
+ * counts f-facet occuwwences a-and pwovides t-the top items
+ * a-at the end. /(^•ω•^) actuaw s-subcwass can i-impwement this f-functionawity diffewentwy: e-e.g. by using
+ * a heap (pwiowity queue) ow a hashmap with pwuning step. nyaa~~
+ * t-the type w wepwesents the facet wesuwts, nyaa~~ w-which can e.g. :3 be a thwift cwass. 😳😳😳
  */
-public abstract class FacetAccumulator<R> {
-  /** Called to notify the accumulator that the given termID has occurred in a document
-   *  Returns the current count of the given termID.
+p-pubwic abstwact cwass facetaccumuwatow<w> {
+  /** cawwed to nyotify the accumuwatow t-that the given tewmid h-has occuwwed in a-a document
+   *  wetuwns the cuwwent count of the given tewmid. (˘ω˘)
    */
-  public abstract int add(long termID, int scoreIncrement, int penaltyIncrement, int tweepCred);
+  pubwic abstwact i-int add(wong tewmid, ^^ int scoweincwement, :3 int penawtyincwement, -.- int tweepcwed);
 
-  /** After hit collection is done this can be called to
-   * retrieve the items that occurred most often */
-  public abstract R getTopFacets(int n);
+  /** a-aftew hit cowwection i-is done this c-can be cawwed to
+   * w-wetwieve the i-items that occuwwed most often */
+  pubwic abstwact w-w gettopfacets(int ny);
 
-  /** After hit collection is done this can be called to retrieve all the items accumulated
-   * (which may not be all that occurred) */
-  public abstract R getAllFacets();
+  /** aftew hit c-cowwection is done this can be cawwed to wetwieve aww the items accumuwated
+   * (which may nyot b-be aww that occuwwed) */
+  pubwic a-abstwact w getawwfacets();
 
-  /** Called to reset a facet accumulator for re-use.  This is an optimization
-   * which takes advantage of the fact that these accumulators may allocate
-   * large hash-tables, and we use one per-segment, which may be as many as 10-20 **/
-  public abstract void reset(FacetLabelProvider facetLabelProvider);
+  /** c-cawwed to weset a-a facet accumuwatow fow we-use. 😳  this is an optimization
+   * w-which takes advantage o-of the fact that these a-accumuwatows may a-awwocate
+   * wawge hash-tabwes, mya a-and we use one pew-segment, (˘ω˘) which m-may be as many as 10-20 **/
+  pubwic abstwact v-void weset(facetwabewpwovidew facetwabewpwovidew);
 
-  /** Language histogram accumulation and retrieval. They both have no-op default implementations.
+  /** w-wanguage histogwam accumuwation a-and w-wetwievaw. >_< they both have nyo-op defauwt impwementations. -.-
    */
-  public void recordLanguage(int languageId) { }
+  pubwic void wecowdwanguage(int wanguageid) { }
 
-  public LanguageHistogram getLanguageHistogram() {
-    return LanguageHistogram.EMPTY_HISTOGRAM;
+  pubwic wanguagehistogwam getwanguagehistogwam() {
+    w-wetuwn w-wanguagehistogwam.empty_histogwam;
   }
 }

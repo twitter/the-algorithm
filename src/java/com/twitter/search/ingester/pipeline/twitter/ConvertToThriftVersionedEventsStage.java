@@ -1,83 +1,83 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import javax.naming.NamingException;
+impowt javax.naming.namingexception;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
+i-impowt o-owg.apache.commons.pipewine.stageexception;
+impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+i-impowt o-owg.apache.commons.pipewine.vawidation.pwoducedtypes;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+i-impowt c-com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+impowt com.twittew.seawch.ingestew.modew.ingestewthwiftvewsionedevents;
+impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+impowt c-com.twittew.seawch.ingestew.pipewine.utiw.pipewinestagewuntimeexception;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducedTypes(ThriftVersionedEvents.class)
-public class ConvertToThriftVersionedEventsStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterThriftVersionedEvents> {
-  private ThriftVersionedEventsConverter converter;
+@consumedtypes(ingestewtwittewmessage.cwass)
+@pwoducedtypes(thwiftvewsionedevents.cwass)
+pubwic cwass convewttothwiftvewsionedeventsstage e-extends twittewbasestage
+    <ingestewtwittewmessage, :3 ingestewthwiftvewsionedevents> {
+  p-pwivate thwiftvewsionedeventsconvewtew convewtew;
 
-  @Override
-  public void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    innerSetup();
+  @ovewwide
+  pubwic void doinnewpwepwocess() thwows s-stageexception, -.- nyamingexception {
+    s-supew.doinnewpwepwocess();
+    i-innewsetup();
   }
 
-  @Override
-  protected void innerSetup() throws NamingException {
-    converter = new ThriftVersionedEventsConverter(wireModule.getPenguinVersions());
+  @ovewwide
+  pwotected void innewsetup() thwows namingexception {
+    c-convewtew = nyew thwiftvewsionedeventsconvewtew(wiwemoduwe.getpenguinvewsions());
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage: " + obj);
+  @ovewwide
+  pubwic void innewpwocess(object obj) t-thwows stageexception {
+    if (!(obj i-instanceof i-ingestewtwittewmessage)) {
+      t-thwow nyew stageexception(this, 😳 "object i-is nyot an ingestewtwittewmessage: " + obj);
     }
 
-    IngesterTwitterMessage ingesterTwitterMessage = (IngesterTwitterMessage) obj;
-    IngesterThriftVersionedEvents maybeEvents = tryToConvert(ingesterTwitterMessage);
+    i-ingestewtwittewmessage ingestewtwittewmessage = (ingestewtwittewmessage) obj;
+    i-ingestewthwiftvewsionedevents maybeevents = twytoconvewt(ingestewtwittewmessage);
 
-    if (maybeEvents == null) {
-      throw new StageException(
-          this, "Object is not a retweet or a reply: " + ingesterTwitterMessage);
+    if (maybeevents == nyuww) {
+      thwow n-nyew stageexception(
+          this, mya "object i-is nyot a wetweet o-ow a wepwy: " + i-ingestewtwittewmessage);
     }
 
-    emitAndCount(maybeEvents);
+    emitandcount(maybeevents);
 
   }
 
-  @Override
-  protected IngesterThriftVersionedEvents innerRunStageV2(IngesterTwitterMessage message) {
-    IngesterThriftVersionedEvents maybeEvents = tryToConvert(message);
+  @ovewwide
+  pwotected ingestewthwiftvewsionedevents innewwunstagev2(ingestewtwittewmessage m-message) {
+    i-ingestewthwiftvewsionedevents maybeevents = twytoconvewt(message);
 
-    if (maybeEvents == null) {
-      throw new PipelineStageRuntimeException("Object is not a retweet or reply, does not have to"
-          + " pass to next stage");
+    i-if (maybeevents == n-nyuww) {
+      thwow n-nyew pipewinestagewuntimeexception("object is n-nyot a wetweet ow wepwy, (˘ω˘) does nyot have to"
+          + " p-pass to nyext stage");
     }
 
-    return maybeEvents;
+    w-wetuwn maybeevents;
   }
 
-  private IngesterThriftVersionedEvents tryToConvert(IngesterTwitterMessage message) {
-    converter.updatePenguinVersions(wireModule.getCurrentlyEnabledPenguinVersions());
+  p-pwivate i-ingestewthwiftvewsionedevents twytoconvewt(ingestewtwittewmessage message) {
+    convewtew.updatepenguinvewsions(wiwemoduwe.getcuwwentwyenabwedpenguinvewsions());
 
-    if (!message.isRetweet() && !message.isReplyToTweet()) {
-      return null;
+    if (!message.iswetweet() && !message.iswepwytotweet()) {
+      wetuwn nyuww;
     }
 
-    if (message.isRetweet()) {
-      return converter.toOutOfOrderAppend(
-          message.getRetweetMessage().getSharedId(),
-          EarlybirdFieldConstants.EarlybirdFieldConstant.RETWEETED_BY_USER_ID,
-          message.getUserId(),
-          message.getDebugEvents().deepCopy());
+    if (message.iswetweet()) {
+      w-wetuwn convewtew.tooutofowdewappend(
+          m-message.getwetweetmessage().getshawedid(), >_<
+          eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.wetweeted_by_usew_id, -.-
+          m-message.getusewid(), 🥺
+          m-message.getdebugevents().deepcopy());
     }
 
-    return converter.toOutOfOrderAppend(
-        message.getInReplyToStatusId().get(),
-        EarlybirdFieldConstants.EarlybirdFieldConstant.REPLIED_TO_BY_USER_ID,
-        message.getUserId(),
-        message.getDebugEvents().deepCopy());
+    w-wetuwn convewtew.tooutofowdewappend(
+        message.getinwepwytostatusid().get(), (U ﹏ U)
+        eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.wepwied_to_by_usew_id, >w<
+        message.getusewid(), mya
+        message.getdebugevents().deepcopy());
   }
 }

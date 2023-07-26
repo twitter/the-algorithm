@@ -1,53 +1,53 @@
-package com.twitter.timelineranker.server
+package com.twittew.timewinewankew.sewvew
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.logging.Logger
-import com.twitter.timelineranker.model._
-import com.twitter.timelines.warmup.TwitterServerWarmup
-import com.twitter.timelineservice.model.TimelineId
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineranker.config.TimelineRankerConstants
-import com.twitter.timelineranker.thriftscala.{TimelineRanker => ThriftTimelineRanker}
-import com.twitter.util.Future
-import com.twitter.util.Duration
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.timewinewankew.modew._
+i-impowt c-com.twittew.timewines.wawmup.twittewsewvewwawmup
+i-impowt com.twittew.timewinesewvice.modew.timewineid
+i-impowt com.twittew.timewinesewvice.modew.cowe.timewinekind
+impowt com.twittew.timewinewankew.config.timewinewankewconstants
+impowt com.twittew.timewinewankew.thwiftscawa.{timewinewankew => thwifttimewinewankew}
+i-impowt com.twittew.utiw.futuwe
+impowt c-com.twittew.utiw.duwation
 
-object Warmup {
-  val WarmupForwardingTime: Duration = 25.seconds
+object w-wawmup {
+  vaw wawmupfowwawdingtime: duwation = 25.seconds
 }
 
-class Warmup(
-  localInstance: TimelineRanker,
-  forwardingClient: ThriftTimelineRanker.MethodPerEndpoint,
-  override val logger: Logger)
-    extends TwitterServerWarmup {
-  override val WarmupClientId: ClientId = ClientId(TimelineRankerConstants.WarmupClientName)
-  override val NumWarmupRequests = 20
-  override val MinSuccessfulRequests = 10
+cwass wawmup(
+  w-wocawinstance: timewinewankew, 😳😳😳
+  f-fowwawdingcwient: t-thwifttimewinewankew.methodpewendpoint, o.O
+  ovewwide vaw woggew: woggew)
+    extends twittewsewvewwawmup {
+  ovewwide vaw wawmupcwientid: c-cwientid = cwientid(timewinewankewconstants.wawmupcwientname)
+  ovewwide vaw nyumwawmupwequests = 20
+  ovewwide vaw m-minsuccessfuwwequests = 10
 
-  private[this] val warmupUserId = Math.abs(scala.util.Random.nextLong())
-  private[server] val reverseChronQuery = ReverseChronTimelineQuery(
-    id = new TimelineId(warmupUserId, TimelineKind.home),
-    maxCount = Some(20),
-    range = Some(TweetIdRange.default)
-  ).toThrift
-  private[server] val recapQuery = RecapQuery(
-    userId = warmupUserId,
-    maxCount = Some(20),
-    range = Some(TweetIdRange.default)
-  ).toThriftRecapQuery
+  pwivate[this] vaw w-wawmupusewid = m-math.abs(scawa.utiw.wandom.nextwong())
+  p-pwivate[sewvew] v-vaw wevewsechwonquewy = wevewsechwontimewinequewy(
+    id = nyew timewineid(wawmupusewid, ( ͡o ω ͡o ) t-timewinekind.home), (U ﹏ U)
+    maxcount = some(20), (///ˬ///✿)
+    w-wange = some(tweetidwange.defauwt)
+  ).tothwift
+  pwivate[sewvew] vaw wecapquewy = wecapquewy(
+    usewid = wawmupusewid, >w<
+    m-maxcount = some(20), rawr
+    wange = s-some(tweetidwange.defauwt)
+  ).tothwiftwecapquewy
 
-  override def sendSingleWarmupRequest(): Future[Unit] = {
-    val localWarmups = Seq(
-      localInstance.getTimelines(Seq(reverseChronQuery)),
-      localInstance.getRecycledTweetCandidates(Seq(recapQuery))
+  o-ovewwide d-def sendsingwewawmupwequest(): futuwe[unit] = {
+    vaw wocawwawmups = seq(
+      w-wocawinstance.gettimewines(seq(wevewsechwonquewy)), mya
+      w-wocawinstance.getwecycwedtweetcandidates(seq(wecapquewy))
     )
 
-    // send forwarding requests but ignore failures
-    forwardingClient.getTimelines(Seq(reverseChronQuery)).unit.handle {
-      case e => logger.warning(e, "fowarding request failed")
+    // send fowwawding w-wequests but i-ignowe faiwuwes
+    fowwawdingcwient.gettimewines(seq(wevewsechwonquewy)).unit.handwe {
+      c-case e => woggew.wawning(e, ^^ "fowawding wequest f-faiwed")
     }
 
-    Future.join(localWarmups).unit
+    futuwe.join(wocawwawmups).unit
   }
 }

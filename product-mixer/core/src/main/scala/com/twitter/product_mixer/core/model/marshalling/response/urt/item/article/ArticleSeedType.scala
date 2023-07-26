@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.article
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe
 
-sealed trait ArticleSeedType
-
-/**
- * Seed UTEG with a user's following list (1st degree network)
- */
-case object FollowingListSeed extends ArticleSeedType
+seawed twait a-awticweseedtype
 
 /**
- * Seed UTEG with a user's friends of friends (follow graph + 1) list
+ * s-seed uteg w-with a usew's f-fowwowing wist (1st d-degwee nyetwowk)
  */
-case object FriendsOfFriendsSeed extends ArticleSeedType
+c-case object f-fowwowingwistseed e-extends awticweseedtype
 
 /**
- * Seed UTEG with a given lists' members
+ * seed uteg with a usew's fwiends of fwiends (fowwow gwaph + 1) w-wist
  */
-case object ListIdSeed extends ArticleSeedType
+case object fwiendsoffwiendsseed extends awticweseedtype
+
+/**
+ * seed u-uteg with a given wists' membews
+ */
+c-case object wistidseed extends awticweseedtype

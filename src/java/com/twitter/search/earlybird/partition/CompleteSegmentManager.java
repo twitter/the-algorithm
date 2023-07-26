@@ -1,348 +1,348 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Supplier;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.itewatow;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.function.suppwiew;
 
-import com.google.common.collect.Lists;
+i-impowt com.googwe.common.cowwect.wists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.segment.SegmentDataProvider;
+impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.common.utiw.io.wecowdweadew.wecowdweadew;
+i-impowt com.twittew.seawch.common.utiw.zktwywock.zookeepewtwywockfactowy;
+impowt c-com.twittew.seawch.eawwybiwd.eawwybiwdstatus;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
+impowt com.twittew.seawch.eawwybiwd.document.tweetdocument;
+impowt c-com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+impowt com.twittew.seawch.eawwybiwd.segment.segmentdatapwovidew;
 
 /**
- * CompleteSegmentManager is used to parallelize indexing of complete (not partial) segments
- * on startup.  It also populates the fields used by the PartitionManager.
+ * c-compwetesegmentmanagew i-is used to pawawwewize indexing of compwete (not pawtiaw) segments
+ * on s-stawtup. (ꈍᴗꈍ)  it awso popuwates the fiewds used by the pawtitionmanagew. (⑅˘꒳˘)
  */
-public class CompleteSegmentManager {
-  private static final Logger LOG = LoggerFactory.getLogger(CompleteSegmentManager.class);
+pubwic c-cwass compwetesegmentmanagew {
+  pwivate static f-finaw woggew wog = w-woggewfactowy.getwoggew(compwetesegmentmanagew.cwass);
 
-  private static final String INDEX_COMPLETED_SEGMENTS =
-      "indexing, optimizing and flushing complete segments";
-  private static final String LOAD_COMPLETED_SEGMENTS = "loading complete segments";
-  private static final String INDEX_UPDATES_FOR_COMPLETED_SEGMENTS =
-      "indexing updates for complete segments";
-  private static final String BUILD_MULTI_SEGMENT_TERM_DICT =
-      "build multi segment term dictionaries";
+  p-pwivate s-static finaw stwing index_compweted_segments =
+      "indexing, (⑅˘꒳˘) optimizing a-and fwushing compwete segments";
+  pwivate static f-finaw stwing woad_compweted_segments = "woading compwete segments";
+  pwivate static finaw stwing index_updates_fow_compweted_segments =
+      "indexing updates f-fow compwete segments";
+  pwivate s-static finaw s-stwing buiwd_muwti_segment_tewm_dict =
+      "buiwd m-muwti segment tewm dictionawies";
 
-  // Max number of segments being loaded / indexed concurrently.
-  private final int maxConcurrentSegmentIndexers =
-      EarlybirdProperty.MAX_CONCURRENT_SEGMENT_INDEXERS.get(3);
+  // max nyumbew of segments b-being woaded / i-indexed concuwwentwy. (ˆ ﻌ ˆ)♡
+  pwivate f-finaw int maxconcuwwentsegmentindexews =
+      e-eawwybiwdpwopewty.max_concuwwent_segment_indexews.get(3);
 
-  // The state we are building.
-  protected final SegmentDataProvider segmentDataProvider;
-  private final InstrumentedQueue<ThriftVersionedEvents> retryQueue;
+  // the state we a-awe buiwding. /(^•ω•^)
+  pwotected finaw s-segmentdatapwovidew segmentdatapwovidew;
+  pwivate f-finaw instwumentedqueue<thwiftvewsionedevents> wetwyqueue;
 
-  private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
-  private final UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer;
+  p-pwivate finaw usewupdatesstweamindexew u-usewupdatesstweamindexew;
+  p-pwivate finaw usewscwubgeoeventstweamindexew usewscwubgeoeventstweamindexew;
 
-  private final SegmentManager segmentManager;
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final Clock clock;
-  private MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
-  private final SegmentSyncConfig segmentSyncConfig;
+  pwivate finaw segmentmanagew segmentmanagew;
+  pwivate finaw z-zookeepewtwywockfactowy z-zktwywockfactowy;
+  pwivate f-finaw seawchindexingmetwicset s-seawchindexingmetwicset;
+  pwivate f-finaw cwock cwock;
+  pwivate muwtisegmenttewmdictionawymanagew muwtisegmenttewmdictionawymanagew;
+  p-pwivate finaw segmentsyncconfig segmentsyncconfig;
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  pwivate finaw cwiticawexceptionhandwew cwiticawexceptionhandwew;
 
-  private boolean interrupted = false;
+  p-pwivate boowean intewwupted = f-fawse;
 
-  public CompleteSegmentManager(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      SegmentDataProvider segmentDataProvider,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SegmentManager segmentManager,
-      InstrumentedQueue<ThriftVersionedEvents> retryQueue,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      Clock clock,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      SegmentSyncConfig segmentSyncConfig,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
-    this.segmentDataProvider = segmentDataProvider;
-    this.userUpdatesStreamIndexer = userUpdatesStreamIndexer;
-    this.userScrubGeoEventStreamIndexer = userScrubGeoEventStreamIndexer;
-    this.segmentManager = segmentManager;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.clock = clock;
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.retryQueue = retryQueue;
-    this.criticalExceptionHandler = criticalExceptionHandler;
+  pubwic c-compwetesegmentmanagew(
+      z-zookeepewtwywockfactowy zookeepewtwywockfactowy, òωó
+      s-segmentdatapwovidew s-segmentdatapwovidew, (⑅˘꒳˘)
+      u-usewupdatesstweamindexew u-usewupdatesstweamindexew, (U ᵕ U❁)
+      usewscwubgeoeventstweamindexew usewscwubgeoeventstweamindexew, >w<
+      s-segmentmanagew s-segmentmanagew, σωσ
+      i-instwumentedqueue<thwiftvewsionedevents> w-wetwyqueue, -.-
+      s-seawchindexingmetwicset seawchindexingmetwicset, o.O
+      cwock cwock, ^^
+      m-muwtisegmenttewmdictionawymanagew muwtisegmenttewmdictionawymanagew, >_<
+      segmentsyncconfig segmentsyncconfig,
+      cwiticawexceptionhandwew cwiticawexceptionhandwew) {
+    this.zktwywockfactowy = zookeepewtwywockfactowy;
+    t-this.segmentdatapwovidew = segmentdatapwovidew;
+    this.usewupdatesstweamindexew = usewupdatesstweamindexew;
+    this.usewscwubgeoeventstweamindexew = u-usewscwubgeoeventstweamindexew;
+    t-this.segmentmanagew = s-segmentmanagew;
+    this.seawchindexingmetwicset = s-seawchindexingmetwicset;
+    this.cwock = c-cwock;
+    this.muwtisegmenttewmdictionawymanagew = m-muwtisegmenttewmdictionawymanagew;
+    this.segmentsyncconfig = segmentsyncconfig;
+    this.wetwyqueue = wetwyqueue;
+    this.cwiticawexceptionhandwew = c-cwiticawexceptionhandwew;
   }
 
   /**
-   * Indexes all user events.
+   * indexes a-aww usew events. >w<
    */
-  public void indexUserEvents() {
-    LOG.info("Loading/indexing user events.");
-    StartupUserEventIndexer startupUserEventIndexer = new StartupUserEventIndexer(
-        searchIndexingMetricSet,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        segmentManager,
-        clock
+  pubwic v-void indexusewevents() {
+    wog.info("woading/indexing u-usew events.");
+    stawtupuseweventindexew stawtupuseweventindexew = n-new stawtupuseweventindexew(
+        s-seawchindexingmetwicset, >_<
+        usewupdatesstweamindexew, >w<
+        u-usewscwubgeoeventstweamindexew, rawr
+        s-segmentmanagew, rawr x3
+        cwock
     );
 
-    startupUserEventIndexer.indexAllEvents();
-    LOG.info("Finished loading/indexing user events.");
+    stawtupuseweventindexew.indexawwevents();
+    wog.info("finished woading/indexing u-usew e-events.");
   }
 
   /**
-   * Loads or indexes from scratch all complete segments.
+   * w-woads ow indexes fwom s-scwatch aww compwete s-segments. ( ͡o ω ͡o )
    *
-   * @param segmentsToIndexProvider A supplier that provides the list of all complete segments.
+   * @pawam segmentstoindexpwovidew a-a suppwiew that pwovides the wist of aww compwete segments.
    */
-  public void indexCompleteSegments(
-      Supplier<Iterable<SegmentInfo>> segmentsToIndexProvider) throws Exception {
-    List<Thread> segmentIndexers = Lists.newArrayList();
+  pubwic v-void indexcompwetesegments(
+      s-suppwiew<itewabwe<segmentinfo>> segmentstoindexpwovidew) thwows exception {
+    w-wist<thwead> s-segmentindexews = wists.newawwaywist();
 
-    EarlybirdStatus.beginEvent(
-        INDEX_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInIndexCompletedSegments);
-    while (!interrupted && !Thread.currentThread().isInterrupted()) {
-      try {
-        // Get the refreshed list of local segment databases.
-        segmentManager.updateSegments(segmentDataProvider.newSegmentList());
-        Iterator<SegmentInfo> segmentsToIndex = segmentsToIndexProvider.get().iterator();
+    eawwybiwdstatus.beginevent(
+        index_compweted_segments, (˘ω˘) seawchindexingmetwicset.stawtupinindexcompwetedsegments);
+    w-whiwe (!intewwupted && !thwead.cuwwentthwead().isintewwupted()) {
+      twy {
+        // get the wefweshed wist of wocaw segment databases. 😳
+        s-segmentmanagew.updatesegments(segmentdatapwovidew.newsegmentwist());
+        itewatow<segmentinfo> segmentstoindex = s-segmentstoindexpwovidew.get().itewatow();
 
-        // Start up to max concurrent segment indexers.
-        segmentIndexers.clear();
-        while (segmentsToIndex.hasNext() && segmentIndexers.size() < maxConcurrentSegmentIndexers) {
-          SegmentInfo nextSegment = segmentsToIndex.next();
-          if (!nextSegment.isComplete()) {
-            Thread thread = new Thread(new SingleSegmentIndexer(nextSegment),
-                                       "startup-segment-indexer-" + nextSegment.getSegmentName());
-            thread.start();
-            segmentIndexers.add(thread);
+        // s-stawt up to max concuwwent segment indexews. OwO
+        segmentindexews.cweaw();
+        w-whiwe (segmentstoindex.hasnext() && s-segmentindexews.size() < maxconcuwwentsegmentindexews) {
+          segmentinfo nyextsegment = segmentstoindex.next();
+          i-if (!nextsegment.iscompwete()) {
+            thwead thwead = n-nyew thwead(new singwesegmentindexew(nextsegment), (˘ω˘)
+                                       "stawtup-segment-indexew-" + nyextsegment.getsegmentname());
+            thwead.stawt();
+            s-segmentindexews.add(thwead);
           }
         }
 
-        // No remaining indexer threads, we're done.
-        if (segmentIndexers.size() == 0) {
-          LOG.info("Finished indexing complete segments");
-          EarlybirdStatus.endEvent(
-              INDEX_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInIndexCompletedSegments);
-          break;
+        // nyo wemaining indexew t-thweads, òωó w-we'we done. ( ͡o ω ͡o )
+        if (segmentindexews.size() == 0) {
+          w-wog.info("finished indexing compwete s-segments");
+          e-eawwybiwdstatus.endevent(
+              i-index_compweted_segments, UwU seawchindexingmetwicset.stawtupinindexcompwetedsegments);
+          b-bweak;
         }
 
-        // Wait for threads to complete fully.
-        LOG.info("Started {} indexing threads", segmentIndexers.size());
-        for (Thread thread : segmentIndexers) {
-          thread.join();
+        // wait f-fow thweads to compwete fuwwy. /(^•ω•^)
+        wog.info("stawted {} i-indexing thweads", (ꈍᴗꈍ) s-segmentindexews.size());
+        f-fow (thwead thwead : segmentindexews) {
+          thwead.join();
         }
-        LOG.info("Joined all {} indexing threads", segmentIndexers.size());
-      } catch (IOException e) {
-        LOG.error("IOException in SegmentStartupManager loop", e);
-      } catch (InterruptedException e) {
-        interrupted = true;
-        LOG.error("Interrupted joining segment indexer thread", e);
+        w-wog.info("joined aww {} indexing t-thweads", s-segmentindexews.size());
+      } catch (ioexception e) {
+        wog.ewwow("ioexception i-in segmentstawtupmanagew w-woop", 😳 e);
+      } c-catch (intewwuptedexception e-e) {
+        intewwupted = twue;
+        w-wog.ewwow("intewwupted joining segment indexew thwead", mya e);
       }
     }
   }
 
   /**
-   * Loads all given complete segments.
+   * woads aww given compwete segments. mya
    *
-   * @param completeSegments The list of all complete segments to be loaded.
+   * @pawam c-compwetesegments the wist o-of aww compwete segments to be w-woaded. /(^•ω•^)
    */
-  public void loadCompleteSegments(List<SegmentInfo> completeSegments) throws Exception {
-    if (!interrupted && !Thread.currentThread().isInterrupted()) {
-      LOG.info("Starting to load {} complete segments.", completeSegments.size());
-      EarlybirdStatus.beginEvent(
-          LOAD_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInLoadCompletedSegments);
+  pubwic void woadcompwetesegments(wist<segmentinfo> c-compwetesegments) thwows exception {
+    i-if (!intewwupted && !thwead.cuwwentthwead().isintewwupted()) {
+      w-wog.info("stawting t-to woad {} c-compwete segments.", c-compwetesegments.size());
+      eawwybiwdstatus.beginevent(
+          woad_compweted_segments, ^^;; seawchindexingmetwicset.stawtupinwoadcompwetedsegments);
 
-      List<Thread> segmentThreads = Lists.newArrayList();
-      List<SegmentInfo> segmentsToBeLoaded = Lists.newArrayList();
-      for (SegmentInfo segmentInfo : completeSegments) {
-        if (segmentInfo.isEnabled()) {
-          segmentsToBeLoaded.add(segmentInfo);
-          Thread segmentLoaderThread = new Thread(
-              () -> new SegmentLoader(segmentSyncConfig, criticalExceptionHandler)
-                  .load(segmentInfo),
-              "startup-segment-loader-" + segmentInfo.getSegmentName());
-          segmentThreads.add(segmentLoaderThread);
-          segmentLoaderThread.start();
-        } else {
-          LOG.info("Will not load segment {} because it's disabled.", segmentInfo.getSegmentName());
+      wist<thwead> segmentthweads = wists.newawwaywist();
+      wist<segmentinfo> s-segmentstobewoaded = w-wists.newawwaywist();
+      f-fow (segmentinfo segmentinfo : c-compwetesegments) {
+        if (segmentinfo.isenabwed()) {
+          segmentstobewoaded.add(segmentinfo);
+          thwead segmentwoadewthwead = n-nyew thwead(
+              () -> n-nyew segmentwoadew(segmentsyncconfig, 🥺 cwiticawexceptionhandwew)
+                  .woad(segmentinfo), ^^
+              "stawtup-segment-woadew-" + s-segmentinfo.getsegmentname());
+          segmentthweads.add(segmentwoadewthwead);
+          segmentwoadewthwead.stawt();
+        } ewse {
+          w-wog.info("wiww n-not woad segment {} because i-it's disabwed.", ^•ﻌ•^ s-segmentinfo.getsegmentname());
         }
       }
 
-      for (Thread segmentLoaderThread : segmentThreads) {
-        segmentLoaderThread.join();
+      fow (thwead segmentwoadewthwead : segmentthweads) {
+        segmentwoadewthwead.join();
       }
 
-      for (SegmentInfo segmentInfo : segmentsToBeLoaded) {
-        if (!segmentInfo.getSyncInfo().isLoaded()) {
-          // Throw an exception if a segment could not be loaded: We do not want earlybirds to
-          // startup with missing segments.
-          throw new RuntimeException("Could not load segment " + segmentInfo.getSegmentName());
+      f-fow (segmentinfo s-segmentinfo : s-segmentstobewoaded) {
+        if (!segmentinfo.getsyncinfo().iswoaded()) {
+          // t-thwow an e-exception if a segment couwd nyot b-be woaded: we d-do nyot want eawwybiwds to
+          // s-stawtup w-with missing segments. /(^•ω•^)
+          thwow nyew wuntimeexception("couwd n-nyot woad segment " + segmentinfo.getsegmentname());
         }
       }
 
-      LOG.info("Loaded all complete segments, starting indexing all updates.");
-      EarlybirdStatus.beginEvent(
-          INDEX_UPDATES_FOR_COMPLETED_SEGMENTS,
-          searchIndexingMetricSet.startupInIndexUpdatesForCompletedSegments);
+      wog.info("woaded a-aww compwete segments, ^^ stawting i-indexing aww u-updates.");
+      eawwybiwdstatus.beginevent(
+          i-index_updates_fow_compweted_segments, 🥺
+          seawchindexingmetwicset.stawtupinindexupdatesfowcompwetedsegments);
 
-      // Index all updates for all complete segments until we're fully caught up.
-      if (!EarlybirdCluster.isArchive(segmentManager.getEarlybirdIndexConfig().getCluster())) {
-        segmentThreads.clear();
-        for (SegmentInfo segmentInfo : completeSegments) {
-          if (segmentInfo.isEnabled()) {
-            Thread segmentUpdatesThread = new Thread(
-                () -> new SimpleUpdateIndexer(
-                    segmentDataProvider.getSegmentDataReaderSet(),
-                    searchIndexingMetricSet,
-                    retryQueue,
-                    criticalExceptionHandler).indexAllUpdates(segmentInfo),
-                "startup-complete-segment-update-indexer-" + segmentInfo.getSegmentName());
-            segmentThreads.add(segmentUpdatesThread);
-            segmentUpdatesThread.start();
-          } else {
-            LOG.info("Will not index updates for segment {} because it's disabled.",
-                     segmentInfo.getSegmentName());
+      // index aww u-updates fow aww c-compwete segments u-untiw we'we fuwwy caught up. (U ᵕ U❁)
+      if (!eawwybiwdcwustew.isawchive(segmentmanagew.geteawwybiwdindexconfig().getcwustew())) {
+        segmentthweads.cweaw();
+        f-fow (segmentinfo segmentinfo : compwetesegments) {
+          i-if (segmentinfo.isenabwed()) {
+            t-thwead segmentupdatesthwead = nyew thwead(
+                () -> n-nyew simpweupdateindexew(
+                    segmentdatapwovidew.getsegmentdataweadewset(), 😳😳😳
+                    s-seawchindexingmetwicset, nyaa~~
+                    w-wetwyqueue, (˘ω˘)
+                    cwiticawexceptionhandwew).indexawwupdates(segmentinfo), >_<
+                "stawtup-compwete-segment-update-indexew-" + segmentinfo.getsegmentname());
+            s-segmentthweads.add(segmentupdatesthwead);
+            segmentupdatesthwead.stawt();
+          } ewse {
+            w-wog.info("wiww n-nyot index updates fow segment {} b-because it's disabwed.", XD
+                     s-segmentinfo.getsegmentname());
           }
         }
 
-        for (Thread segmentUpdatesThread : segmentThreads) {
-          segmentUpdatesThread.join();
+        f-fow (thwead segmentupdatesthwead : s-segmentthweads) {
+          segmentupdatesthwead.join();
         }
       }
-      LOG.info("Indexed updates for all complete segments.");
-      EarlybirdStatus.endEvent(
-          INDEX_UPDATES_FOR_COMPLETED_SEGMENTS,
-          searchIndexingMetricSet.startupInIndexUpdatesForCompletedSegments);
+      wog.info("indexed updates fow aww compwete segments.");
+      eawwybiwdstatus.endevent(
+          index_updates_fow_compweted_segments, rawr x3
+          seawchindexingmetwicset.stawtupinindexupdatesfowcompwetedsegments);
 
-      EarlybirdStatus.endEvent(
-          LOAD_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInLoadCompletedSegments);
+      eawwybiwdstatus.endevent(
+          woad_compweted_segments, ( ͡o ω ͡o ) seawchindexingmetwicset.stawtupinwoadcompwetedsegments);
     }
   }
 
   /**
-   * Builds the term dictionary that spans all earlybird segments. Some fields share the term
-   * dictionary across segments as an optimization.
+   * buiwds the tewm dictionawy that spans a-aww eawwybiwd s-segments. :3 some fiewds shawe the tewm
+   * dictionawy a-acwoss segments a-as an optimization.
    */
-  public void buildMultiSegmentTermDictionary() {
-    EarlybirdStatus.beginEvent(
-        BUILD_MULTI_SEGMENT_TERM_DICT,
-        searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
-    if (!interrupted && !Thread.currentThread().isInterrupted()) {
-      LOG.info("Building multi segment term dictionaries.");
-      boolean built = multiSegmentTermDictionaryManager.buildDictionary();
-      LOG.info("Done building multi segment term dictionaries, result: {}", built);
+  p-pubwic void buiwdmuwtisegmenttewmdictionawy() {
+    eawwybiwdstatus.beginevent(
+        b-buiwd_muwti_segment_tewm_dict, mya
+        seawchindexingmetwicset.stawtupinmuwtisegmenttewmdictionawyupdates);
+    i-if (!intewwupted && !thwead.cuwwentthwead().isintewwupted()) {
+      wog.info("buiwding m-muwti segment tewm dictionawies.");
+      b-boowean buiwt = muwtisegmenttewmdictionawymanagew.buiwddictionawy();
+      w-wog.info("done b-buiwding muwti segment tewm dictionawies, σωσ w-wesuwt: {}", (ꈍᴗꈍ) buiwt);
     }
-    EarlybirdStatus.endEvent(
-        BUILD_MULTI_SEGMENT_TERM_DICT,
-        searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
+    eawwybiwdstatus.endevent(
+        b-buiwd_muwti_segment_tewm_dict, OwO
+        s-seawchindexingmetwicset.stawtupinmuwtisegmenttewmdictionawyupdates);
   }
 
   /**
-   * Warms up the data in the given segments. The warm up will usually make sure that all necessary
-   * is loaded in RAM and all relevant data structures are created before the segments starts
-   * serving real requests.
+   * w-wawms u-up the data in t-the given segments. o.O t-the wawm up w-wiww usuawwy make s-suwe that aww nyecessawy
+   * i-is woaded in wam a-and aww wewevant d-data stwuctuwes awe cweated b-befowe the segments stawts
+   * sewving weaw wequests. 😳😳😳
    *
-   * @param segments The list of segments to warm up.
+   * @pawam s-segments the wist of segments t-to wawm up. /(^•ω•^)
    */
-  public final void warmSegments(Iterable<SegmentInfo> segments) throws InterruptedException {
-    int threadId = 1;
-    Iterator<SegmentInfo> it = segments.iterator();
+  p-pubwic f-finaw void wawmsegments(itewabwe<segmentinfo> segments) thwows i-intewwuptedexception {
+    int thweadid = 1;
+    i-itewatow<segmentinfo> it = segments.itewatow();
 
-    try {
-      List<Thread> segmentWarmers = Lists.newLinkedList();
-      while (it.hasNext()) {
+    t-twy {
+      wist<thwead> segmentwawmews = w-wists.newwinkedwist();
+      whiwe (it.hasnext()) {
 
-        segmentWarmers.clear();
-        while (it.hasNext() && segmentWarmers.size() < maxConcurrentSegmentIndexers) {
-          final SegmentInfo segment = it.next();
-          Thread t = new Thread(() ->
-            new SegmentWarmer(criticalExceptionHandler).warmSegmentIfNecessary(segment),
-              "startup-warmer-" + threadId++);
+        segmentwawmews.cweaw();
+        whiwe (it.hasnext() && segmentwawmews.size() < m-maxconcuwwentsegmentindexews) {
+          finaw segmentinfo s-segment = i-it.next();
+          thwead t = nyew thwead(() ->
+            nyew segmentwawmew(cwiticawexceptionhandwew).wawmsegmentifnecessawy(segment), OwO
+              "stawtup-wawmew-" + t-thweadid++);
 
-          t.start();
-          segmentWarmers.add(t);
+          t.stawt();
+          s-segmentwawmews.add(t);
         }
 
-        for (Thread t : segmentWarmers) {
+        f-fow (thwead t-t : segmentwawmews) {
           t.join();
         }
       }
-    } catch (InterruptedException e) {
-      LOG.error("Interrupted segment warmer thread", e);
-      Thread.currentThread().interrupt();
-      throw e;
+    } catch (intewwuptedexception e-e) {
+      wog.ewwow("intewwupted s-segment wawmew thwead", ^^ e);
+      t-thwead.cuwwentthwead().intewwupt();
+      thwow e;
     }
   }
 
   /**
-   * Indexes a complete segment.
+   * indexes a-a compwete segment. (///ˬ///✿)
    */
-  private class SingleSegmentIndexer implements Runnable {
-    private final SegmentInfo segmentInfo;
+  p-pwivate cwass s-singwesegmentindexew i-impwements wunnabwe {
+    pwivate f-finaw segmentinfo s-segmentinfo;
 
-    public SingleSegmentIndexer(SegmentInfo segmentInfo) {
-      this.segmentInfo = segmentInfo;
+    p-pubwic s-singwesegmentindexew(segmentinfo segmentinfo) {
+      t-this.segmentinfo = s-segmentinfo;
     }
 
-    @Override
-    public void run() {
-      // 0) Check if the segment can be loaded. This might copy the segment from HDFS.
-      if (new SegmentLoader(segmentSyncConfig, criticalExceptionHandler)
-          .downloadSegment(segmentInfo)) {
-        LOG.info("Will not index segment {} because it was downloaded from HDFS.",
-                 segmentInfo.getSegmentName());
-        segmentInfo.setComplete(true);
-        return;
+    @ovewwide
+    p-pubwic void wun() {
+      // 0) c-check if the segment c-can be woaded. (///ˬ///✿) t-this might c-copy the segment f-fwom hdfs. (///ˬ///✿)
+      if (new segmentwoadew(segmentsyncconfig, ʘwʘ c-cwiticawexceptionhandwew)
+          .downwoadsegment(segmentinfo)) {
+        wog.info("wiww n-nyot index segment {} because i-it was downwoaded f-fwom hdfs.", ^•ﻌ•^
+                 s-segmentinfo.getsegmentname());
+        segmentinfo.setcompwete(twue);
+        wetuwn;
       }
 
-      LOG.info("SingleSegmentIndexer starting for segment: " + segmentInfo);
+      wog.info("singwesegmentindexew s-stawting f-fow segment: " + s-segmentinfo);
 
-      // 1) Index all tweets in this segment.
-      RecordReader<TweetDocument> tweetReader;
-      try {
-        tweetReader = segmentDataProvider.getSegmentDataReaderSet().newDocumentReader(segmentInfo);
-        if (tweetReader != null) {
-          tweetReader.setExhaustStream(true);
+      // 1) index aww tweets in this segment. OwO
+      w-wecowdweadew<tweetdocument> t-tweetweadew;
+      twy {
+        t-tweetweadew = s-segmentdatapwovidew.getsegmentdataweadewset().newdocumentweadew(segmentinfo);
+        if (tweetweadew != nyuww) {
+          tweetweadew.setexhauststweam(twue);
         }
-      } catch (Exception e) {
-        throw new RuntimeException("Could not create tweet reader for segment: " + segmentInfo, e);
+      } c-catch (exception e-e) {
+        t-thwow nyew wuntimeexception("couwd n-nyot cweate tweet weadew fow segment: " + segmentinfo, (U ﹏ U) e-e);
       }
 
-      new SimpleSegmentIndexer(tweetReader, searchIndexingMetricSet).indexSegment(segmentInfo);
+      n-nyew simpwesegmentindexew(tweetweadew, (ˆ ﻌ ˆ)♡ seawchindexingmetwicset).indexsegment(segmentinfo);
 
-      if (!segmentInfo.isComplete() || segmentInfo.isIndexing()) {
-        throw new RuntimeException("Segment does not appear to be complete: " + segmentInfo);
+      i-if (!segmentinfo.iscompwete() || segmentinfo.isindexing()) {
+        thwow nyew w-wuntimeexception("segment does nyot a-appeaw to be c-compwete: " + segmentinfo);
       }
 
-      // 2) Index all updates in this segment (archive earlybirds don't have updates).
-      if (!EarlybirdCluster.isArchive(segmentManager.getEarlybirdIndexConfig().getCluster())) {
-        new SimpleUpdateIndexer(
-            segmentDataProvider.getSegmentDataReaderSet(),
-            searchIndexingMetricSet,
-            retryQueue,
-            criticalExceptionHandler).indexAllUpdates(segmentInfo);
+      // 2) index aww updates i-in this segment (awchive e-eawwybiwds don't have u-updates). (⑅˘꒳˘)
+      if (!eawwybiwdcwustew.isawchive(segmentmanagew.geteawwybiwdindexconfig().getcwustew())) {
+        n-nyew simpweupdateindexew(
+            s-segmentdatapwovidew.getsegmentdataweadewset(), (U ﹏ U)
+            s-seawchindexingmetwicset, o.O
+            w-wetwyqueue, mya
+            cwiticawexceptionhandwew).indexawwupdates(segmentinfo);
       }
 
-      // 3) Optimize the segment.
-      SegmentOptimizer.optimize(segmentInfo);
+      // 3) o-optimize the segment. XD
+      s-segmentoptimizew.optimize(segmentinfo);
 
-      // 4) Flush to HDFS if necessary.
-      new SegmentHdfsFlusher(zkTryLockFactory, segmentSyncConfig)
-          .flushSegmentToDiskAndHDFS(segmentInfo);
+      // 4) f-fwush to hdfs if nyecessawy.
+      n-nyew segmenthdfsfwushew(zktwywockfactowy, òωó segmentsyncconfig)
+          .fwushsegmenttodiskandhdfs(segmentinfo);
 
-      // 5) Unload the segment from memory.
-      segmentInfo.getIndexSegment().close();
+      // 5) unwoad the segment f-fwom memowy. (˘ω˘)
+      s-segmentinfo.getindexsegment().cwose();
     }
   }
 

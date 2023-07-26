@@ -1,81 +1,81 @@
-package com.twitter.follow_recommendations.common.clients.gizmoduck
+package com.twittew.fowwow_wecommendations.common.cwients.gizmoduck
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.PerspectiveEdge
-import com.twitter.gizmoduck.thriftscala.QueryFields
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.base.statsutiw
+i-impowt com.twittew.gizmoduck.thwiftscawa.wookupcontext
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.pewspectiveedge
+i-impowt com.twittew.gizmoduck.thwiftscawa.quewyfiewds
+i-impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.stitch.gizmoduck.gizmoduck
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class GizmoduckClient @Inject() (gizmoduckStitchClient: Gizmoduck, statsReceiver: StatsReceiver) {
-  val stats = statsReceiver.scope("gizmoduck_client")
-  val getByIdStats = stats.scope("get_by_id")
-  val getUserById = stats.scope("get_user_by_id")
+@singweton
+cwass gizmoduckcwient @inject() (gizmoduckstitchcwient: g-gizmoduck, :3 statsweceivew: statsweceivew) {
+  vaw stats = statsweceivew.scope("gizmoduck_cwient")
+  v-vaw getbyidstats = stats.scope("get_by_id")
+  v-vaw getusewbyid = stats.scope("get_usew_by_id")
 
-  def isProtected(userId: Long): Stitch[Boolean] = {
-    // get latency metrics with StatsUtil.profileStitch when calling .getById
-    val response = StatsUtil.profileStitch(
-      gizmoduckStitchClient.getById(userId, Set(QueryFields.Safety)),
-      getByIdStats
+  def ispwotected(usewid: wong): stitch[boowean] = {
+    // g-get watency metwics with statsutiw.pwofiwestitch w-when cawwing .getbyid
+    v-vaw wesponse = statsutiw.pwofiwestitch(
+      gizmoduckstitchcwient.getbyid(usewid, -.- set(quewyfiewds.safety)), 😳
+      getbyidstats
     )
-    response.map { result =>
-      result.user.flatMap(_.safety).map(_.isProtected).getOrElse(true)
+    w-wesponse.map { wesuwt =>
+      wesuwt.usew.fwatmap(_.safety).map(_.ispwotected).getowewse(twue)
     }
   }
 
-  def getUserName(userId: Long, forUserId: Long): Stitch[Option[String]] = {
-    val queryFields = GizmoduckClient.GetUserByIdUserNameQueryFields
-    val lookupContext = LookupContext(
-      forUserId = Some(forUserId),
-      perspectiveEdges = Some(GizmoduckClient.DefaultPerspectiveEdges)
+  def getusewname(usewid: wong, mya f-fowusewid: wong): stitch[option[stwing]] = {
+    v-vaw quewyfiewds = g-gizmoduckcwient.getusewbyidusewnamequewyfiewds
+    v-vaw wookupcontext = w-wookupcontext(
+      fowusewid = some(fowusewid), (˘ω˘)
+      pewspectiveedges = s-some(gizmoduckcwient.defauwtpewspectiveedges)
     )
-    // get latency metrics with StatsUtil.profileStitch when calling .getUserById
-    val response = StatsUtil.profileStitch(
-      gizmoduckStitchClient.getUserById(userId, queryFields, lookupContext),
-      getUserById
+    // get watency metwics with statsutiw.pwofiwestitch w-when cawwing .getusewbyid
+    vaw wesponse = statsutiw.pwofiwestitch(
+      gizmoduckstitchcwient.getusewbyid(usewid, >_< quewyfiewds, -.- wookupcontext), 🥺
+      g-getusewbyid
     )
-    response.map(_.profile.map(_.name))
+    wesponse.map(_.pwofiwe.map(_.name))
   }
 }
 
-object GizmoduckClient {
-  // Similar to GizmoduckUserRepository.DefaultPerspectiveEdges
-  val DefaultPerspectiveEdges: Set[PerspectiveEdge] =
-    Set(
-      PerspectiveEdge.Blocking,
-      PerspectiveEdge.BlockedBy,
-      PerspectiveEdge.DeviceFollowing,
-      PerspectiveEdge.FollowRequestSent,
-      PerspectiveEdge.Following,
-      PerspectiveEdge.FollowedBy,
-      PerspectiveEdge.LifelineFollowing,
-      PerspectiveEdge.LifelineFollowedBy,
-      PerspectiveEdge.Muting,
-      PerspectiveEdge.NoRetweetsFrom
+o-object g-gizmoduckcwient {
+  // s-simiwaw to gizmoduckusewwepositowy.defauwtpewspectiveedges
+  vaw defauwtpewspectiveedges: set[pewspectiveedge] =
+    s-set(
+      pewspectiveedge.bwocking, (U ﹏ U)
+      p-pewspectiveedge.bwockedby, >w<
+      pewspectiveedge.devicefowwowing, mya
+      p-pewspectiveedge.fowwowwequestsent, >w<
+      p-pewspectiveedge.fowwowing, nyaa~~
+      pewspectiveedge.fowwowedby, (✿oωo)
+      p-pewspectiveedge.wifewinefowwowing, ʘwʘ
+      pewspectiveedge.wifewinefowwowedby, (ˆ ﻌ ˆ)♡
+      p-pewspectiveedge.muting, 😳😳😳
+      pewspectiveedge.nowetweetsfwom
     )
 
-  // From GizmoduckUserRepository.DefaultQueryFields
-  val GetUserByIdQueryFields: Set[QueryFields] = Set(
-    QueryFields.Account,
-    QueryFields.Counts,
-    QueryFields.ExtendedProfile,
-    QueryFields.Perspective,
-    QueryFields.Profile,
-    QueryFields.ProfileDesign,
-    QueryFields.ProfileLocation,
-    QueryFields.Safety,
-    QueryFields.Roles,
-    QueryFields.Takedowns,
-    QueryFields.UrlEntities,
-    QueryFields.DirectMessageView,
-    QueryFields.MediaView
+  // fwom g-gizmoduckusewwepositowy.defauwtquewyfiewds
+  vaw g-getusewbyidquewyfiewds: set[quewyfiewds] = s-set(
+    q-quewyfiewds.account, :3
+    quewyfiewds.counts, OwO
+    quewyfiewds.extendedpwofiwe, (U ﹏ U)
+    quewyfiewds.pewspective, >w<
+    quewyfiewds.pwofiwe, (U ﹏ U)
+    quewyfiewds.pwofiwedesign, 😳
+    quewyfiewds.pwofiwewocation, (ˆ ﻌ ˆ)♡
+    quewyfiewds.safety, 😳😳😳
+    q-quewyfiewds.wowes, (U ﹏ U)
+    q-quewyfiewds.takedowns,
+    quewyfiewds.uwwentities, (///ˬ///✿)
+    q-quewyfiewds.diwectmessageview, 😳
+    q-quewyfiewds.mediaview
   )
 
-  val GetUserByIdUserNameQueryFields: Set[QueryFields] = Set(
-    QueryFields.Profile
+  v-vaw getusewbyidusewnamequewyfiewds: set[quewyfiewds] = set(
+    quewyfiewds.pwofiwe
   )
 }

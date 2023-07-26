@@ -1,11 +1,11 @@
-scala_library(
-    sources = [
-        "*.scala",
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", >_<
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    # Our runtime is using Java 11, but for compatibility with other internal libraries that
-    # are still on Java 8, we'll make our target platform to be Java 8 as well until everyone can
-    # migrate.
-    platform = "java8",
-    tags = ["bazel-compatible"],
+    compiwew_option_sets = ["fataw_wawnings"], :3
+    # o-ouw w-wuntime is using j-java 11, (U ﹏ U) but fow c-compatibiwity w-with othew intewnaw w-wibwawies that
+    # a-awe stiww o-on java 8, -.- we'ww make ouw tawget pwatfowm to be java 8 as weww untiw evewyone c-can
+    # migwate. (ˆ ﻌ ˆ)♡
+    pwatfowm = "java8", (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"],
 )

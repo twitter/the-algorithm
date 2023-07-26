@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.convewsation_annotation
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotation
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.convewsation_annotation.convewsationannotation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class ConversationAnnotationMarshaller @Inject() (
-  conversationAnnotationTypeMarshaller: ConversationAnnotationTypeMarshaller,
-  richTextMarshaller: RichTextMarshaller) {
+@singweton
+cwass convewsationannotationmawshawwew @inject() (
+  convewsationannotationtypemawshawwew: convewsationannotationtypemawshawwew, ^^;;
+  wichtextmawshawwew: w-wichtextmawshawwew) {
 
-  def apply(conversationAnnotation: ConversationAnnotation): urt.ConversationAnnotation = {
-    urt.ConversationAnnotation(
-      conversationAnnotationType =
-        conversationAnnotationTypeMarshaller(conversationAnnotation.conversationAnnotationType),
-      header = conversationAnnotation.header.map(richTextMarshaller(_)),
-      description = conversationAnnotation.description.map(richTextMarshaller(_))
+  def appwy(convewsationannotation: convewsationannotation): u-uwt.convewsationannotation = {
+    uwt.convewsationannotation(
+      c-convewsationannotationtype =
+        convewsationannotationtypemawshawwew(convewsationannotation.convewsationannotationtype), >_<
+      headew = convewsationannotation.headew.map(wichtextmawshawwew(_)), mya
+      d-descwiption = convewsationannotation.descwiption.map(wichtextmawshawwew(_))
     )
   }
 }

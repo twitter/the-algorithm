@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
 
 /**
- * A transformer is a synchronous transformation that takes the provided [[Input]] and returns some
- * defined [[Output]]. For example, extracting a score from from a scored candidates.
+ * a-a twansfowmew is a-a synchwonous t-twansfowmation that t-takes the pwovided [[input]] a-and wetuwns some
+ * d-defined [[output]]. >_< f-fow exampwe, mya extwacting a scowe fwom fwom a scowed candidates. mya
  */
-trait Transformer[-Inputs, +Output] extends Component {
-  override val identifier: TransformerIdentifier
+twait t-twansfowmew[-inputs, 😳 +output] extends component {
+  ovewwide vaw i-identifiew: twansfowmewidentifiew
 
-  /** Takes [[Inputs]] and transformers them into some [[Output]] of your choosing. */
-  def transform(input: Inputs): Output
+  /** takes [[inputs]] a-and twansfowmews them into some [[output]] of youw c-choosing. XD */
+  def twansfowm(input: i-inputs): output
 }

@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.article
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.awticwe
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.article.ArticleCandidateUrtItemBuilder.ArticleClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseArticleCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleSeedType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FollowingListSeed
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.awticwe.awticwecandidateuwtitembuiwdew.awticwecwienteventinfoewement
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.baseawticwecandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.sociaw_context.basesociawcontextbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.awticwedispwaytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.awticweitem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.awticweseedtype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.fowwowingwistseed
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object ArticleCandidateUrtItemBuilder {
-  val ArticleClientEventInfoElement: String = "article"
+object a-awticwecandidateuwtitembuiwdew {
+  vaw awticwecwienteventinfoewement: stwing = "awticwe"
 }
 
-case class ArticleCandidateUrtItemBuilder[
-  -Query <: PipelineQuery,
-  Candidate <: BaseArticleCandidate
+case cwass awticwecandidateuwtitembuiwdew[
+  -quewy <: p-pipewinequewy, (///ˬ///✿)
+  candidate <: b-baseawticwecandidate
 ](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, Candidate],
-  articleSeedType: ArticleSeedType = FollowingListSeed,
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, Candidate]
-  ] = None,
-  displayType: Option[ArticleDisplayType] = None,
-  socialContextBuilder: Option[BaseSocialContextBuilder[Query, Candidate]] = None,
-) extends CandidateUrtEntryBuilder[Query, Candidate, ArticleItem] {
+  cwienteventinfobuiwdew: b-basecwienteventinfobuiwdew[quewy, >w< candidate], rawr
+  awticweseedtype: awticweseedtype = fowwowingwistseed, mya
+  feedbackactioninfobuiwdew: o-option[
+    basefeedbackactioninfobuiwdew[quewy, ^^ candidate]
+  ] = nyone, 😳😳😳
+  dispwaytype: o-option[awticwedispwaytype] = nyone, mya
+  sociawcontextbuiwdew: o-option[basesociawcontextbuiwdew[quewy, 😳 c-candidate]] = n-nyone,
+) extends c-candidateuwtentwybuiwdew[quewy, -.- candidate, 🥺 awticweitem] {
 
-  override def apply(
-    query: Query,
-    articleCandidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): ArticleItem = ArticleItem(
-    id = articleCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      articleCandidate,
-      candidateFeatures,
-      Some(ArticleClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, articleCandidate, candidateFeatures)),
-    displayType = displayType,
-    socialContext =
-      socialContextBuilder.flatMap(_.apply(query, articleCandidate, candidateFeatures)),
-    articleSeedType = articleSeedType
+  ovewwide def appwy(
+    q-quewy: quewy, o.O
+    awticwecandidate: candidate, /(^•ω•^)
+    c-candidatefeatuwes: featuwemap
+  ): awticweitem = awticweitem(
+    id = awticwecandidate.id, nyaa~~
+    sowtindex = nyone, nyaa~~ // s-sowt indexes awe automaticawwy s-set in the domain m-mawshawwew phase
+    c-cwienteventinfo = cwienteventinfobuiwdew(
+      quewy, :3
+      awticwecandidate, 😳😳😳
+      c-candidatefeatuwes, (˘ω˘)
+      s-some(awticwecwienteventinfoewement)), ^^
+    feedbackactioninfo =
+      f-feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, :3 a-awticwecandidate, -.- candidatefeatuwes)), 😳
+    d-dispwaytype = dispwaytype,
+    s-sociawcontext =
+      sociawcontextbuiwdew.fwatmap(_.appwy(quewy, mya awticwecandidate, (˘ω˘) c-candidatefeatuwes)), >_<
+    awticweseedtype = a-awticweseedtype
   )
 }

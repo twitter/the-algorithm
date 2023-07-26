@@ -1,9 +1,9 @@
-package com.twitter.frigate.pushservice.params
+package com.twittew.fwigate.pushsewvice.pawams
 
-import com.twitter.util.tunable.TunableMap
+impowt com.twittew.utiw.tunabwe.tunabwemap
 
-object PushServiceTunableKeys {
-  final val IbisQpsLimitTunableKey = TunableMap.Key[Int]("ibis2.qps.limit")
-  final val NtabQpsLimitTunableKey = TunableMap.Key[Int]("ntab.qps.limit")
-  final val TweetPerspectiveStoreQpsLimit = TunableMap.Key[Int]("tweetperspective.qps.limit")
+o-object p-pushsewvicetunabwekeys {
+  f-finaw v-vaw ibisqpswimittunabwekey = t-tunabwemap.key[int]("ibis2.qps.wimit")
+  f-finaw vaw n-nytabqpswimittunabwekey = t-tunabwemap.key[int]("ntab.qps.wimit")
+  finaw vaw tweetpewspectivestoweqpswimit = tunabwemap.key[int]("tweetpewspective.qps.wimit")
 }

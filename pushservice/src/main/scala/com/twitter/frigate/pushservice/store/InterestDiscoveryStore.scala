@@ -1,16 +1,16 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.interests_discovery.thriftscala.InterestsDiscoveryService
-import com.twitter.interests_discovery.thriftscala.RecommendedListsRequest
-import com.twitter.interests_discovery.thriftscala.RecommendedListsResponse
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.intewests_discovewy.thwiftscawa.intewestsdiscovewysewvice
+i-impowt c-com.twittew.intewests_discovewy.thwiftscawa.wecommendedwistswequest
+i-impowt com.twittew.intewests_discovewy.thwiftscawa.wecommendedwistswesponse
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.utiw.futuwe
 
-case class InterestDiscoveryStore(
-  client: InterestsDiscoveryService.MethodPerEndpoint)
-    extends ReadableStore[RecommendedListsRequest, RecommendedListsResponse] {
+c-case cwass intewestdiscovewystowe(
+  cwient: intewestsdiscovewysewvice.methodpewendpoint)
+    extends weadabwestowe[wecommendedwistswequest, -.- w-wecommendedwistswesponse] {
 
-  override def get(request: RecommendedListsRequest): Future[Option[RecommendedListsResponse]] = {
-    client.getListRecos(request).map(Some(_))
+  ovewwide def get(wequest: w-wecommendedwistswequest): futuwe[option[wecommendedwistswesponse]] = {
+    c-cwient.getwistwecos(wequest).map(some(_))
   }
 }

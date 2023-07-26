@@ -1,31 +1,31 @@
-package com.twitter.frigate.pushservice.rank
+package com.twittew.fwigate.pushsewvice.wank
 
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.Ranker
-import com.twitter.util.Future
+impowt c-com.twittew.fwigate.common.base.candidatedetaiws
+i-impowt com.twittew.fwigate.common.base.wankew
+i-impowt com.twittew.utiw.futuwe
 
-trait PushserviceRanker[T, C] extends Ranker[T, C] {
-
-  /**
-   * Initial Ranking of input candidates
-   */
-  def initialRank(target: T, candidates: Seq[CandidateDetails[C]]): Future[Seq[CandidateDetails[C]]]
+t-twait pushsewvicewankew[t, mya c-c] e-extends wankew[t, nyaa~~ c-c] {
 
   /**
-   * Re-ranks input ranked candidates. Useful when a subset of candidates are ranked
-   * by a different logic, while preserving the initial ranking for the rest
+   * i-initiaw wanking of input candidates
    */
-  def reRank(
-    target: T,
-    rankedCandidates: Seq[CandidateDetails[C]]
-  ): Future[Seq[CandidateDetails[C]]]
+  def initiawwank(tawget: t, (⑅˘꒳˘) candidates: seq[candidatedetaiws[c]]): f-futuwe[seq[candidatedetaiws[c]]]
 
   /**
-   * Final ranking that does Initial + Rerank
+   * we-wanks input wanked candidates. rawr x3 u-usefuw when a subset of candidates a-awe wanked
+   * by a diffewent wogic, whiwe pwesewving the initiaw w-wanking fow the west
    */
-  override final def rank(target: T, candidates: Seq[CandidateDetails[C]]): (
-    Future[Seq[CandidateDetails[C]]]
+  d-def wewank(
+    t-tawget: t, (✿oωo)
+    wankedcandidates: seq[candidatedetaiws[c]]
+  ): futuwe[seq[candidatedetaiws[c]]]
+
+  /**
+   * finaw wanking that d-does initiaw + wewank
+   */
+  ovewwide finaw def wank(tawget: t, (ˆ ﻌ ˆ)♡ candidates: s-seq[candidatedetaiws[c]]): (
+    futuwe[seq[candidatedetaiws[c]]]
   ) = {
-    initialRank(target, candidates).flatMap { rankedCandidates => reRank(target, rankedCandidates) }
+    i-initiawwank(tawget, (˘ω˘) c-candidates).fwatmap { w-wankedcandidates => w-wewank(tawget, (⑅˘꒳˘) wankedcandidates) }
   }
 }

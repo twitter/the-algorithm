@@ -1,95 +1,95 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/tensor_description.proto";
+impowt "tensowfwow/cowe/fwamewowk/tensow_descwiption.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "LogMemoryProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/log_memory_go_proto";
+o-option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "wogmemowypwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+option j-java_package = "owg.tensowfwow.fwamewowk";
+o-option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/wog_memowy_go_pwoto";
 
-message MemoryLogStep {
-  // Process-unique step id.
+m-message memowywogstep {
+  // pwocess-unique step id. (U ﹏ U)
   int64 step_id = 1;
 
-  // Handle describing the feeds and fetches of the step.
-  string handle = 2;
+  // handwe descwibing t-the feeds and fetches of the step. >w<
+  stwing h-handwe = 2;
 }
 
-message MemoryLogTensorAllocation {
-  // Process-unique step id.
+message memowywogtensowawwocation {
+  // p-pwocess-unique step id. (U ﹏ U)
   int64 step_id = 1;
 
-  // Name of the kernel making the allocation as set in GraphDef,
-  // e.g., "affine2/weights/Assign".
-  string kernel_name = 2;
+  // name of the kewnew m-making the awwocation as set in g-gwaphdef, 😳
+  // e-e.g., "affine2/weights/assign". (ˆ ﻌ ˆ)♡
+  stwing kewnew_name = 2;
 
-  // Allocated tensor details.
-  TensorDescription tensor = 3;
+  // awwocated tensow detaiws. 😳😳😳
+  tensowdescwiption tensow = 3;
 }
 
-message MemoryLogTensorDeallocation {
-  // Id of the tensor buffer being deallocated, used to match to a
-  // corresponding allocation.
-  int64 allocation_id = 1;
+message m-memowywogtensowdeawwocation {
+  // id of the tensow buffew being deawwocated, (U ﹏ U) used to match t-to a
+  // cowwesponding awwocation. (///ˬ///✿)
+  i-int64 awwocation_id = 1;
 
-  // Name of the allocator used.
-  string allocator_name = 2;
+  // n-nyame of t-the awwocatow used. 😳
+  s-stwing awwocatow_name = 2;
 }
 
-message MemoryLogTensorOutput {
-  // Process-unique step id.
+message memowywogtensowoutput {
+  // pwocess-unique s-step id. 😳
   int64 step_id = 1;
 
-  // Name of the kernel producing an output as set in GraphDef, e.g.,
-  // "affine2/weights/Assign".
-  string kernel_name = 2;
+  // nyame o-of the kewnew pwoducing an output as set in gwaphdef, σωσ e.g.,
+  // "affine2/weights/assign". rawr x3
+  stwing kewnew_name = 2;
 
-  // Index of the output being set.
-  int32 index = 3;
+  // index o-of the output being set. OwO
+  int32 i-index = 3;
 
-  // Output tensor details.
-  TensorDescription tensor = 4;
+  // o-output tensow d-detaiws.
+  tensowdescwiption tensow = 4;
 }
 
-message MemoryLogRawAllocation {
-  // Process-unique step id.
-  int64 step_id = 1;
+message memowywogwawawwocation {
+  // pwocess-unique s-step id. /(^•ω•^)
+  int64 s-step_id = 1;
 
-  // Name of the operation making the allocation.
-  string operation = 2;
+  // nyame of t-the opewation making t-the awwocation. 😳😳😳
+  stwing opewation = 2;
 
-  // Number of bytes in the allocation.
-  int64 num_bytes = 3;
+  // n-nyumbew of bytes in the awwocation. ( ͡o ω ͡o )
+  i-int64 nyum_bytes = 3;
 
-  // Address of the allocation.
-  uint64 ptr = 4;
+  // addwess of t-the awwocation. >_<
+  uint64 ptw = 4;
 
-  // Id of the tensor buffer being allocated, used to match to a
-  // corresponding deallocation.
-  int64 allocation_id = 5;
+  // i-id of the tensow buffew b-being awwocated, >w< u-used to match to a
+  // cowwesponding deawwocation. rawr
+  int64 awwocation_id = 5;
 
-  // Name of the allocator used.
-  string allocator_name = 6;
+  // nyame of the awwocatow used. 😳
+  stwing awwocatow_name = 6;
 }
 
-message MemoryLogRawDeallocation {
-  // Process-unique step id.
+m-message memowywogwawdeawwocation {
+  // p-pwocess-unique step i-id. >w<
   int64 step_id = 1;
 
-  // Name of the operation making the deallocation.
-  string operation = 2;
+  // nyame o-of the opewation m-making the deawwocation. (⑅˘꒳˘)
+  stwing opewation = 2;
 
-  // Id of the tensor buffer being deallocated, used to match to a
-  // corresponding allocation.
-  int64 allocation_id = 3;
+  // id o-of the tensow buffew being deawwocated, OwO used to match to a
+  // cowwesponding awwocation. (ꈍᴗꈍ)
+  i-int64 awwocation_id = 3;
 
-  // Name of the allocator used.
-  string allocator_name = 4;
+  // n-nyame o-of the awwocatow u-used. 😳
+  stwing awwocatow_name = 4;
 
-  // True if the deallocation is queued and will be performed later,
-  // e.g. for GPU lazy freeing of buffers.
-  bool deferred = 5;
+  // t-twue i-if the deawwocation i-is queued and w-wiww be pewfowmed watew, 😳😳😳
+  // e.g. mya fow gpu wazy f-fweeing of buffews. mya
+  b-boow defewwed = 5;
 }

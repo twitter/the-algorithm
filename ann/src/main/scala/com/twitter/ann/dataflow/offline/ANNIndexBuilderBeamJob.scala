@@ -1,460 +1,460 @@
-package com.twitter.ann.dataflow.offline
+package com.twittew.ann.datafwow.offwine
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.ScioMetrics
-import com.twitter.ann.annoy.TypedAnnoyIndex
-import com.twitter.ann.brute_force.SerializableBruteForceIndex
-import com.twitter.ann.common.thriftscala.AnnIndexMetadata
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Cosine
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.IndexOutputFile
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.ReadWriteFuturePool
-import com.twitter.ann.faiss.FaissIndexer
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.ann.serialization.PersistedEmbeddingInjection
-import com.twitter.ann.serialization.ThriftIteratorIO
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.ann.util.IndexBuilderUtils
-import com.twitter.beam.io.bigquery.BigQueryIO
-import com.twitter.beam.io.dal.DalObservedDatasetRegistration
-import com.twitter.beam.job.DateRange
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.cortex.ml.embeddings.common._
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.api.embedding.EmbeddingMath
-import com.twitter.ml.api.embedding.EmbeddingSerDe
-import com.twitter.ml.api.thriftscala.{Embedding => TEmbedding}
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.SemanticCoreId
-import com.twitter.ml.featurestore.lib.TfwId
-import com.twitter.ml.featurestore.lib.TweetId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.RichDate
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.{Environment => StatebirdEnvironment}
-import com.twitter.util.Await
-import com.twitter.util.FuturePool
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
-import java.time.Instant
-import java.util.TimeZone
-import java.util.concurrent.Executors
-import org.apache.beam.sdk.io.FileSystems
-import org.apache.beam.sdk.io.fs.ResolveOptions
-import org.apache.beam.sdk.io.fs.ResourceId
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.TypedRead
-import org.apache.beam.sdk.options.Default
-import org.apache.beam.sdk.options.Description
-import org.apache.beam.sdk.transforms.DoFn
-import org.apache.beam.sdk.transforms.DoFn._
-import org.apache.beam.sdk.transforms.PTransform
-import org.apache.beam.sdk.transforms.ParDo
-import org.apache.beam.sdk.values.KV
-import org.apache.beam.sdk.values.PCollection
-import org.apache.beam.sdk.values.PDone
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+impowt c-com.spotify.scio.sciocontext
+i-impowt c-com.spotify.scio.sciometwics
+i-impowt com.twittew.ann.annoy.typedannoyindex
+i-impowt c-com.twittew.ann.bwute_fowce.sewiawizabwebwutefowceindex
+i-impowt c-com.twittew.ann.common.thwiftscawa.annindexmetadata
+impowt com.twittew.ann.common.distance
+impowt com.twittew.ann.common.cosine
+impowt com.twittew.ann.common.entityembedding
+impowt com.twittew.ann.common.indexoutputfiwe
+i-impowt com.twittew.ann.common.metwic
+impowt com.twittew.ann.common.weadwwitefutuwepoow
+impowt com.twittew.ann.faiss.faissindexew
+i-impowt com.twittew.ann.hnsw.typedhnswindex
+impowt c-com.twittew.ann.sewiawization.pewsistedembeddinginjection
+impowt com.twittew.ann.sewiawization.thwiftitewatowio
+impowt com.twittew.ann.sewiawization.thwiftscawa.pewsistedembedding
+i-impowt com.twittew.ann.utiw.indexbuiwdewutiws
+impowt com.twittew.beam.io.bigquewy.bigquewyio
+i-impowt com.twittew.beam.io.daw.dawobsewveddatasetwegistwation
+i-impowt com.twittew.beam.job.datewange
+impowt com.twittew.beam.job.datewangeoptions
+impowt com.twittew.cowtex.mw.embeddings.common._
+impowt com.twittew.mw.api.embedding.embedding
+impowt com.twittew.mw.api.embedding.embeddingmath
+i-impowt com.twittew.mw.api.embedding.embeddingsewde
+impowt com.twittew.mw.api.thwiftscawa.{embedding => tembedding}
+impowt c-com.twittew.mw.featuwestowe.wib.entityid
+impowt c-com.twittew.mw.featuwestowe.wib.semanticcoweid
+impowt c-com.twittew.mw.featuwestowe.wib.tfwid
+i-impowt c-com.twittew.mw.featuwestowe.wib.tweetid
+impowt com.twittew.mw.featuwestowe.wib.usewid
+i-impowt com.twittew.scawding.dateops
+impowt c-com.twittew.scawding.wichdate
+impowt com.twittew.scio_intewnaw.job.sciobeamjob
+impowt com.twittew.statebiwd.v2.thwiftscawa.{enviwonment => statebiwdenviwonment}
+impowt com.twittew.utiw.await
+impowt com.twittew.utiw.futuwepoow
+impowt com.twittew.wtf.beam.bq_embedding_expowt.bqquewyutiws
+i-impowt java.time.instant
+impowt j-java.utiw.timezone
+i-impowt java.utiw.concuwwent.executows
+i-impowt owg.apache.beam.sdk.io.fiwesystems
+impowt owg.apache.beam.sdk.io.fs.wesowveoptions
+impowt owg.apache.beam.sdk.io.fs.wesouwceid
+i-impowt owg.apache.beam.sdk.io.gcp.bigquewy.bigquewyio.typedwead
+i-impowt owg.apache.beam.sdk.options.defauwt
+impowt o-owg.apache.beam.sdk.options.descwiption
+i-impowt owg.apache.beam.sdk.twansfowms.dofn
+i-impowt owg.apache.beam.sdk.twansfowms.dofn._
+impowt owg.apache.beam.sdk.twansfowms.ptwansfowm
+i-impowt owg.apache.beam.sdk.twansfowms.pawdo
+impowt owg.apache.beam.sdk.vawues.kv
+impowt owg.apache.beam.sdk.vawues.pcowwection
+i-impowt owg.apache.beam.sdk.vawues.pdone
+impowt o-owg.swf4j.woggew
+impowt owg.swf4j.woggewfactowy
 
-trait ANNOptions extends DateRangeOptions {
-  @Description("Output GCS path for the generated index")
-  def getOutputPath(): String
-  def setOutputPath(value: String): Unit
+t-twait annoptions e-extends datewangeoptions {
+  @descwiption("output gcs path fow the genewated index")
+  def getoutputpath(): stwing
+  def setoutputpath(vawue: stwing): unit
 
-  @Description("If set, the index is grouped")
-  @Default.Boolean(false)
-  def getGrouped: Boolean
-  def setGrouped(value: Boolean): Unit
+  @descwiption("if s-set, /(^•ω•^) the index i-is gwouped")
+  @defauwt.boowean(fawse)
+  def g-getgwouped: boowean
+  d-def setgwouped(vawue: b-boowean): unit
 
-  @Description(
-    "If set, a segment will be registered for the provided DAL dataset module which will trigger " +
-      "DAL registration.")
-  @Default.Boolean(false)
-  def getEnableDalRegistration: Boolean
-  def setEnableDalRegistration(value: Boolean): Unit
+  @descwiption(
+    "if set, -.- a segment wiww be wegistewed f-fow the pwovided daw dataset moduwe which wiww twiggew " +
+      "daw wegistwation.")
+  @defauwt.boowean(fawse)
+  d-def getenabwedawwegistwation: boowean
+  d-def setenabwedawwegistwation(vawue: b-boowean): unit
 
-  @Description(
-    "Output GCS path for the generated index. The OutputPath should be of the format " +
-      "'gs://user.{{user_name}}.dp.gcp.twttr.net/subDir/outputDir' and OutputDALPath will be " +
-      "'subDir/outputDir' for this to work")
-  def getOutputDALPath: String
-  def setOutputDALPath(value: String): Unit
+  @descwiption(
+    "output g-gcs path fow the genewated index. òωó t-the outputpath s-shouwd be of the f-fowmat " +
+      "'gs://usew.{{usew_name}}.dp.gcp.twttw.net/subdiw/outputdiw' a-and outputdawpath wiww be " +
+      "'subdiw/outputdiw' fow this t-to wowk")
+  def g-getoutputdawpath: s-stwing
+  def s-setoutputdawpath(vawue: s-stwing): unit
 
-  @Description("Get ANN index dataset name")
-  def getDatasetModuleName: String
-  def setDatasetModuleName(value: String): Unit
+  @descwiption("get ann index dataset nyame")
+  d-def getdatasetmoduwename: stwing
+  def setdatasetmoduwename(vawue: stwing): unit
 
-  @Description("Get ANN index dataset owner role")
-  def getDatasetOwnerRole: String
-  def setDatasetOwnerRole(value: String): Unit
+  @descwiption("get ann index dataset o-ownew wowe")
+  def getdatasetownewwowe: stwing
+  def setdatasetownewwowe(vawue: s-stwing): unit
 
-  @Description("If set, index is written in <output>/<timestamp>")
-  @Default.Boolean(false)
-  def getOutputWithTimestamp: Boolean
-  def setOutputWithTimestamp(value: Boolean): Unit
+  @descwiption("if s-set, /(^•ω•^) index is w-wwitten in <output>/<timestamp>")
+  @defauwt.boowean(fawse)
+  def g-getoutputwithtimestamp: boowean
+  d-def setoutputwithtimestamp(vawue: b-boowean): unit
 
-  @Description("File which contains a SQL query to retrieve embeddings from BQ")
-  def getDatasetSqlPath: String
-  def setDatasetSqlPath(value: String): Unit
+  @descwiption("fiwe which contains a sqw quewy to wetwieve embeddings fwom b-bq")
+  def getdatasetsqwpath: stwing
+  def setdatasetsqwpath(vawue: s-stwing): unit
 
-  @Description("Dimension of embedding in the input data. See go/ann")
-  def getDimension: Int
-  def setDimension(value: Int): Unit
+  @descwiption("dimension of embedding in the i-input data. /(^•ω•^) see g-go/ann")
+  def getdimension: int
+  def setdimension(vawue: i-int): u-unit
 
-  @Description("The type of entity ID that is used with the embeddings. See go/ann")
-  def getEntityKind: String
-  def setEntityKind(value: String): Unit
+  @descwiption("the type o-of entity id t-that is used with the embeddings. see go/ann")
+  def getentitykind: stwing
+  def s-setentitykind(vawue: s-stwing): unit
 
-  @Description("The kind of index you want to generate (HNSW/Annoy/Brute Force/faiss). See go/ann")
-  def getAlgo: String
-  def setAlgo(value: String): Unit
+  @descwiption("the k-kind of index you want t-to genewate (hnsw/annoy/bwute f-fowce/faiss). 😳 see g-go/ann")
+  def getawgo: stwing
+  def setawgo(vawue: stwing): unit
 
-  @Description("Distance metric (InnerProduct/Cosine/L2). See go/ann")
-  def getMetric: String
-  def setMetric(value: String): Unit
+  @descwiption("distance metwic (innewpwoduct/cosine/w2). :3 s-see g-go/ann")
+  def getmetwic: stwing
+  def setmetwic(vawue: s-stwing): u-unit
 
-  @Description("Specifies how many parallel inserts happen to the index. See go/ann")
-  def getConcurrencyLevel: Int
-  def setConcurrencyLevel(value: Int): Unit
+  @descwiption("specifies how many pawawwew insewts happen to the index. (U ᵕ U❁) s-see go/ann")
+  def getconcuwwencywevew: int
+  def setconcuwwencywevew(vawue: int): u-unit
 
-  @Description(
-    "Used by HNSW algo. Larger value increases build time but will give better recall. See go/ann")
-  def getEfConstruction: Int
-  def setEfConstruction(value: Int): Unit
+  @descwiption(
+    "used by hnsw awgo. ʘwʘ wawgew vawue incweases b-buiwd time b-but wiww give bettew wecaww. o.O see go/ann")
+  def getefconstwuction: i-int
+  def s-setefconstwuction(vawue: int): unit
 
-  @Description(
-    "Used by HNSW algo. Larger value increases the index size but will give better recall. " +
-      "See go/ann")
-  def getMaxM: Int
-  def setMaxM(value: Int): Unit
+  @descwiption(
+    "used by hnsw awgo. ʘwʘ wawgew v-vawue incweases the index size b-but wiww give bettew wecaww. ^^ " +
+      "see go/ann")
+  def getmaxm: int
+  def s-setmaxm(vawue: int): unit
 
-  @Description("Used by HNSW algo. Approximate number of elements that will be indexed. See go/ann")
-  def getExpectedElements: Int
-  def setExpectedElements(value: Int): Unit
+  @descwiption("used b-by hnsw awgo. ^•ﻌ•^ a-appwoximate nyumbew of ewements t-that wiww be indexed. see go/ann")
+  d-def getexpectedewements: i-int
+  d-def setexpectedewements(vawue: int): unit
 
-  @Description(
-    "Used by Annoy. num_trees is provided during build time and affects the build time and the " +
-      "index size. A larger value will give more accurate results, but larger indexes. See go/ann")
-  def getAnnoyNumTrees: Int
-  def setAnnoyNumTrees(value: Int): Unit
+  @descwiption(
+    "used b-by annoy. mya n-nyum_twees is pwovided duwing buiwd time and a-affects the buiwd t-time and the " +
+      "index s-size. a wawgew vawue wiww give mowe accuwate wesuwts, b-but wawgew indexes. UwU see go/ann")
+  d-def getannoynumtwees: int
+  d-def setannoynumtwees(vawue: int): unit
 
-  @Description(
-    "FAISS factory string determines the ANN algorithm and compression. " +
-      "See https://github.com/facebookresearch/faiss/wiki/The-index-factory")
-  def getFAISSFactoryString: String
-  def setFAISSFactoryString(value: String): Unit
+  @descwiption(
+    "faiss factowy stwing detewmines t-the ann awgowithm a-and compwession. >_< " +
+      "see h-https://github.com/facebookweseawch/faiss/wiki/the-index-factowy")
+  d-def getfaissfactowystwing: stwing
+  def s-setfaissfactowystwing(vawue: stwing): unit
 
-  @Description("Sample rate for training during creation of FAISS index. Default is 0.05f")
-  @Default.Float(0.05f)
-  def getTrainingSampleRate: Float
-  def setTrainingSampleRate(value: Float): Unit
+  @descwiption("sampwe wate fow twaining duwing cweation of faiss index. d-defauwt is 0.05f")
+  @defauwt.fwoat(0.05f)
+  def gettwainingsampwewate: f-fwoat
+  def settwainingsampwewate(vawue: f-fwoat): unit
 }
 
 /**
- * Builds ANN index.
+ * buiwds a-ann index. /(^•ω•^)
  *
- * The input embeddings are read from BigQuery using the input SQL query. The output from this SQL
- * query needs to have two columns, "entityID" [Long] and "embedding" [List[Double]]
+ * the input e-embeddings awe wead f-fwom bigquewy u-using the input s-sqw quewy. òωó the o-output fwom this sqw
+ * quewy nyeeds to have two cowumns, σωσ "entityid" [wong] and "embedding" [wist[doubwe]]
  *
- * Output directory supported is GCS bucket
+ * output diwectowy suppowted is g-gcs bucket
  */
-object ANNIndexBuilderBeamJob extends ScioBeamJob[ANNOptions] {
-  val counterNameSpace = "ANNIndexBuilderBeamJob"
-  val LOG: Logger = LoggerFactory.getLogger(this.getClass)
-  implicit val timeZone: TimeZone = DateOps.UTC
+object a-annindexbuiwdewbeamjob e-extends sciobeamjob[annoptions] {
+  v-vaw countewnamespace = "annindexbuiwdewbeamjob"
+  vaw wog: woggew = woggewfactowy.getwoggew(this.getcwass)
+  impwicit v-vaw timezone: t-timezone = dateops.utc
 
-  def configurePipeline(sc: ScioContext, opts: ANNOptions): Unit = {
-    val startDate: RichDate = RichDate(opts.interval.getStart.toDate)
-    val endDate: RichDate = RichDate(opts.interval.getEnd.toDate)
-    val instant = Instant.now()
-    val out = {
-      val base = FileSystems.matchNewResource(opts.getOutputPath, /*isDirectory=*/ true)
-      if (opts.getOutputWithTimestamp) {
-        base.resolve(
-          instant.toEpochMilli.toString,
-          ResolveOptions.StandardResolveOptions.RESOLVE_DIRECTORY)
-      } else {
-        base
+  def c-configuwepipewine(sc: sciocontext, opts: annoptions): u-unit = {
+    v-vaw stawtdate: wichdate = w-wichdate(opts.intewvaw.getstawt.todate)
+    v-vaw enddate: wichdate = wichdate(opts.intewvaw.getend.todate)
+    vaw instant = instant.now()
+    v-vaw o-out = {
+      v-vaw base = fiwesystems.matchnewwesouwce(opts.getoutputpath, ( ͡o ω ͡o ) /*isdiwectowy=*/ t-twue)
+      i-if (opts.getoutputwithtimestamp) {
+        base.wesowve(
+          i-instant.toepochmiwwi.tostwing, nyaa~~
+          w-wesowveoptions.standawdwesowveoptions.wesowve_diwectowy)
+      } ewse {
+        b-base
       }
     }
 
-    // Define template variables which we would like to be replaced in the corresponding sql file
-    val templateVariables =
-      Map(
-        "START_DATE" -> startDate.toString(DateOps.DATETIME_HMS_WITH_DASH),
-        "END_DATE" -> endDate.toString(DateOps.DATETIME_HMS_WITH_DASH)
+    // d-define tempwate vawiabwes which w-we wouwd wike to be wepwaced in the cowwesponding s-sqw fiwe
+    vaw tempwatevawiabwes =
+      m-map(
+        "stawt_date" -> s-stawtdate.tostwing(dateops.datetime_hms_with_dash), :3
+        "end_date" -> enddate.tostwing(dateops.datetime_hms_with_dash)
       )
 
-    val embeddingFetchQuery =
-      BQQueryUtils.getBQQueryFromSqlFile(opts.getDatasetSqlPath, templateVariables)
+    v-vaw embeddingfetchquewy =
+      bqquewyutiws.getbqquewyfwomsqwfiwe(opts.getdatasetsqwpath, UwU tempwatevawiabwes)
 
-    val sCollection = if (opts.getGrouped) {
-      sc.customInput(
-        "Read grouped data from BQ",
-        BigQueryIO
-          .readClass[GroupedEmbeddingData]()
-          .fromQuery(embeddingFetchQuery).usingStandardSql()
-          .withMethod(TypedRead.Method.DIRECT_READ)
+    v-vaw scowwection = i-if (opts.getgwouped) {
+      s-sc.custominput(
+        "wead gwouped data fwom bq", o.O
+        bigquewyio
+          .weadcwass[gwoupedembeddingdata]()
+          .fwomquewy(embeddingfetchquewy).usingstandawdsqw()
+          .withmethod(typedwead.method.diwect_wead)
       )
-    } else {
-      sc.customInput(
-        "Read flat data from BQ",
-        BigQueryIO
-          .readClass[FlatEmbeddingData]().fromQuery(embeddingFetchQuery).usingStandardSql()
-          .withMethod(TypedRead.Method.DIRECT_READ)
+    } e-ewse {
+      sc.custominput(
+        "wead fwat data fwom b-bq", (ˆ ﻌ ˆ)♡
+        bigquewyio
+          .weadcwass[fwatembeddingdata]().fwomquewy(embeddingfetchquewy).usingstandawdsqw()
+          .withmethod(typedwead.method.diwect_wead)
       )
     }
 
-    val processedCollection =
-      sCollection
-        .flatMap(transformTableRowToKeyVal)
-        .groupBy(_.getKey)
+    v-vaw pwocessedcowwection =
+      s-scowwection
+        .fwatmap(twansfowmtabwewowtokeyvaw)
+        .gwoupby(_.getkey)
         .map {
-          case (groupName, groupValue) =>
-            Map(groupName -> groupValue.map(_.getValue))
+          case (gwoupname, ^^;; g-gwoupvawue) =>
+            m-map(gwoupname -> gwoupvawue.map(_.getvawue))
         }
 
-    val annIndexMetadata =
-      AnnIndexMetadata(timestamp = Some(instant.getEpochSecond), withGroups = Some(opts.getGrouped))
+    vaw annindexmetadata =
+      a-annindexmetadata(timestamp = some(instant.getepochsecond), ʘwʘ withgwoups = s-some(opts.getgwouped))
 
-    // Count the number of groups and output the ANN index metadata
-    processedCollection.count.map(count => {
-      val annGroupedIndexMetadata = annIndexMetadata.copy(
-        numGroups = Some(count.intValue())
+    // c-count the nyumbew of gwoups a-and output the ann index metadata
+    p-pwocessedcowwection.count.map(count => {
+      v-vaw anngwoupedindexmetadata = a-annindexmetadata.copy(
+        nyumgwoups = some(count.intvawue())
       )
-      val indexOutDir = new IndexOutputFile(out)
-      indexOutDir.writeIndexMetadata(annGroupedIndexMetadata)
+      vaw indexoutdiw = nyew indexoutputfiwe(out)
+      indexoutdiw.wwiteindexmetadata(anngwoupedindexmetadata)
     })
 
-    // Generate Index
-    processedCollection.saveAsCustomOutput(
-      "Serialise to Disk",
-      OutputSink(
-        out,
-        opts.getAlgo.equals("faiss"),
-        opts.getOutputDALPath,
-        opts.getEnableDalRegistration,
-        opts.getDatasetModuleName,
-        opts.getDatasetOwnerRole,
-        instant,
-        opts.getDate(),
-        counterNameSpace
+    // genewate index
+    pwocessedcowwection.saveascustomoutput(
+      "sewiawise to disk", σωσ
+      outputsink(
+        out, ^^;;
+        opts.getawgo.equaws("faiss"), ʘwʘ
+        o-opts.getoutputdawpath, ^^
+        o-opts.getenabwedawwegistwation, nyaa~~
+        opts.getdatasetmoduwename, (///ˬ///✿)
+        opts.getdatasetownewwowe, XD
+        i-instant, :3
+        o-opts.getdate(), òωó
+        c-countewnamespace
       )
     )
   }
 
-  def transformTableRowToKeyVal(
-    data: BaseEmbeddingData
-  ): Option[KV[String, KV[Long, TEmbedding]]] = {
-    val transformTable = ScioMetrics.counter(counterNameSpace, "transform_table_row_to_kv")
-    for {
-      id <- data.entityId
-    } yield {
-      transformTable.inc()
-      val groupName: String = if (data.isInstanceOf[GroupedEmbeddingData]) {
-        (data.asInstanceOf[GroupedEmbeddingData]).groupId.get
-      } else {
+  def twansfowmtabwewowtokeyvaw(
+    d-data: baseembeddingdata
+  ): o-option[kv[stwing, ^^ k-kv[wong, ^•ﻌ•^ tembedding]]] = {
+    v-vaw twansfowmtabwe = s-sciometwics.countew(countewnamespace, σωσ "twansfowm_tabwe_wow_to_kv")
+    f-fow {
+      id <- data.entityid
+    } yiewd {
+      t-twansfowmtabwe.inc()
+      v-vaw gwoupname: s-stwing = if (data.isinstanceof[gwoupedembeddingdata]) {
+        (data.asinstanceof[gwoupedembeddingdata]).gwoupid.get
+      } e-ewse {
         ""
       }
 
-      KV.of[String, KV[Long, TEmbedding]](
-        groupName,
-        KV.of[Long, TEmbedding](
-          id,
-          EmbeddingSerDe.toThrift(Embedding(data.embedding.map(_.toFloat).toArray)))
+      k-kv.of[stwing, (ˆ ﻌ ˆ)♡ k-kv[wong, tembedding]](
+        g-gwoupname, nyaa~~
+        k-kv.of[wong, ʘwʘ t-tembedding](
+          id, ^•ﻌ•^
+          e-embeddingsewde.tothwift(embedding(data.embedding.map(_.tofwoat).toawway)))
       )
     }
   }
 
-  case class OutputSink(
-    outDir: ResourceId,
-    isFaiss: Boolean,
-    outputDALPath: String,
-    enableDalRegistration: Boolean,
-    datasetModuleName: String,
-    datasetOwnerRole: String,
-    instant: Instant,
-    date: DateRange,
-    counterNameSpace: String)
-      extends PTransform[PCollection[Map[String, Iterable[KV[Long, TEmbedding]]]], PDone] {
-    override def expand(input: PCollection[Map[String, Iterable[KV[Long, TEmbedding]]]]): PDone = {
-      PDone.in {
-        val dummyOutput = {
-          if (isFaiss) {
-            input
-              .apply(
-                "Build&WriteFaissANNIndex",
-                ParDo.of(new BuildFaissANNIndex(outDir, counterNameSpace))
+  c-case cwass o-outputsink(
+    outdiw: wesouwceid, rawr x3
+    i-isfaiss: boowean, 🥺
+    outputdawpath: stwing, ʘwʘ
+    e-enabwedawwegistwation: boowean, (˘ω˘)
+    datasetmoduwename: s-stwing, o.O
+    datasetownewwowe: stwing, σωσ
+    i-instant: i-instant, (ꈍᴗꈍ)
+    date: datewange, (ˆ ﻌ ˆ)♡
+    c-countewnamespace: stwing)
+      e-extends ptwansfowm[pcowwection[map[stwing, o.O itewabwe[kv[wong, :3 t-tembedding]]]], -.- pdone] {
+    o-ovewwide def expand(input: pcowwection[map[stwing, ( ͡o ω ͡o ) itewabwe[kv[wong, /(^•ω•^) tembedding]]]]): pdone = {
+      p-pdone.in {
+        vaw dummyoutput = {
+          i-if (isfaiss) {
+            i-input
+              .appwy(
+                "buiwd&wwitefaissannindex", (⑅˘꒳˘)
+                pawdo.of(new buiwdfaissannindex(outdiw, òωó countewnamespace))
               )
-          } else {
+          } e-ewse {
             input
-              .apply(
-                "Build&WriteANNIndex",
-                ParDo.of(new BuildANNIndex(outDir, counterNameSpace))
+              .appwy(
+                "buiwd&wwiteannindex", 🥺
+                p-pawdo.of(new b-buiwdannindex(outdiw, (ˆ ﻌ ˆ)♡ c-countewnamespace))
               )
           }
         }
 
-        if (enableDalRegistration) {
+        if (enabwedawwegistwation) {
           input
-            .apply(
-              "Register DAL Dataset",
-              DalObservedDatasetRegistration(
-                datasetModuleName,
-                datasetOwnerRole,
-                outputDALPath,
+            .appwy(
+              "wegistew d-daw dataset", -.-
+              d-dawobsewveddatasetwegistwation(
+                datasetmoduwename, σωσ
+                d-datasetownewwowe, >_<
+                outputdawpath, :3
                 instant,
-                Some(StatebirdEnvironment.Prod),
-                Some("ANN Index Data Files"))
+                s-some(statebiwdenviwonment.pwod), OwO
+                some("ann index data f-fiwes"))
             )
-            .getPipeline
-        } else {
-          dummyOutput.getPipeline
+            .getpipewine
+        } e-ewse {
+          dummyoutput.getpipewine
         }
       }
     }
   }
 
-  class BuildANNIndex(outDir: ResourceId, counterNameSpace: String)
-      extends DoFn[Map[String, Iterable[KV[Long, TEmbedding]]], Unit] {
+  c-cwass buiwdannindex(outdiw: wesouwceid, rawr countewnamespace: s-stwing)
+      extends d-dofn[map[stwing, (///ˬ///✿) i-itewabwe[kv[wong, ^^ t-tembedding]]], XD unit] {
 
-    def transformKeyValToEmbeddingWithEntity[T <: EntityId](
-      entityKind: EntityKind[T]
+    d-def twansfowmkeyvawtoembeddingwithentity[t <: e-entityid](
+      e-entitykind: e-entitykind[t]
     )(
-      keyVal: KV[Long, TEmbedding]
-    ): EntityEmbedding[T] = {
-      val entityId = entityKind match {
-        case UserKind => UserId(keyVal.getKey).toThrift
-        case TweetKind => TweetId(keyVal.getKey).toThrift
-        case TfwKind => TfwId(keyVal.getKey).toThrift
-        case SemanticCoreKind => SemanticCoreId(keyVal.getKey).toThrift
-        case _ => throw new IllegalArgumentException(s"Unsupported embedding kind: $entityKind")
+      k-keyvaw: k-kv[wong, UwU tembedding]
+    ): entityembedding[t] = {
+      v-vaw e-entityid = entitykind match {
+        c-case usewkind => usewid(keyvaw.getkey).tothwift
+        c-case tweetkind => t-tweetid(keyvaw.getkey).tothwift
+        c-case tfwkind => t-tfwid(keyvaw.getkey).tothwift
+        case semanticcowekind => semanticcoweid(keyvaw.getkey).tothwift
+        c-case _ => t-thwow new iwwegawawgumentexception(s"unsuppowted e-embedding kind: $entitykind")
       }
-      EntityEmbedding[T](
-        EntityId.fromThrift(entityId).asInstanceOf[T],
-        EmbeddingSerDe.fromThrift(keyVal.getValue))
+      entityembedding[t](
+        entityid.fwomthwift(entityid).asinstanceof[t], o.O
+        embeddingsewde.fwomthwift(keyvaw.getvawue))
     }
 
-    @ProcessElement
-    def processElement[T <: EntityId, D <: Distance[D]](
-      @Element dataGrouped: Map[String, Iterable[KV[Long, TEmbedding]]],
-      context: ProcessContext
-    ): Unit = {
-      val opts = context.getPipelineOptions.as(classOf[ANNOptions])
-      val uncastEntityKind = EntityKind.getEntityKind(opts.getEntityKind)
-      val entityKind = uncastEntityKind.asInstanceOf[EntityKind[T]]
-      val transformKVtoEmbeddings =
-        ScioMetrics.counter(counterNameSpace, "transform_kv_to_embeddings")
+    @pwocessewement
+    d-def pwocessewement[t <: e-entityid, 😳 d <: distance[d]](
+      @ewement datagwouped: m-map[stwing, i-itewabwe[kv[wong, (˘ω˘) tembedding]]], 🥺
+      context: pwocesscontext
+    ): unit = {
+      v-vaw o-opts = context.getpipewineoptions.as(cwassof[annoptions])
+      v-vaw uncastentitykind = e-entitykind.getentitykind(opts.getentitykind)
+      vaw entitykind = uncastentitykind.asinstanceof[entitykind[t]]
+      vaw t-twansfowmkvtoembeddings =
+        s-sciometwics.countew(countewnamespace, ^^ "twansfowm_kv_to_embeddings")
 
-      val _ = dataGrouped.map {
-        case (groupName, data) =>
-          val annEmbeddings = data.map { kv =>
-            transformKVtoEmbeddings.inc()
-            transformKeyValToEmbeddingWithEntity(entityKind)(kv)
+      vaw _ = datagwouped.map {
+        case (gwoupname, >w< d-data) =>
+          vaw annembeddings = data.map { k-kv =>
+            twansfowmkvtoembeddings.inc()
+            t-twansfowmkeyvawtoembeddingwithentity(entitykind)(kv)
           }
 
-          val out = {
-            if (opts.getGrouped && groupName != "") {
-              outDir.resolve(groupName, ResolveOptions.StandardResolveOptions.RESOLVE_DIRECTORY)
-            } else {
-              outDir
+          v-vaw out = {
+            i-if (opts.getgwouped && g-gwoupname != "") {
+              outdiw.wesowve(gwoupname, ^^;; w-wesowveoptions.standawdwesowveoptions.wesowve_diwectowy)
+            } ewse {
+              o-outdiw
             }
           }
-          LOG.info(s"Writing output to ${out}")
+          w-wog.info(s"wwiting o-output to ${out}")
 
-          val metric = Metric.fromString(opts.getMetric).asInstanceOf[Metric[D]]
-          val concurrencyLevel = opts.getConcurrencyLevel
-          val dimension = opts.getDimension
-          val threadPool = Executors.newFixedThreadPool(concurrencyLevel)
+          vaw m-metwic = metwic.fwomstwing(opts.getmetwic).asinstanceof[metwic[d]]
+          vaw concuwwencywevew = o-opts.getconcuwwencywevew
+          v-vaw dimension = o-opts.getdimension
+          vaw thweadpoow = e-executows.newfixedthweadpoow(concuwwencywevew)
 
-          LOG.info(s"Building ANN index of type ${opts.getAlgo}")
-          val serialization = opts.getAlgo match {
-            case "brute_force" =>
-              val PersistedEmbeddingIO =
-                new ThriftIteratorIO[PersistedEmbedding](PersistedEmbedding)
-              SerializableBruteForceIndex(
-                metric,
-                FuturePool.apply(threadPool),
-                new PersistedEmbeddingInjection(entityKind.byteInjection),
-                PersistedEmbeddingIO
+          wog.info(s"buiwding ann index of t-type ${opts.getawgo}")
+          v-vaw sewiawization = o-opts.getawgo match {
+            case "bwute_fowce" =>
+              vaw pewsistedembeddingio =
+                n-nyew thwiftitewatowio[pewsistedembedding](pewsistedembedding)
+              sewiawizabwebwutefowceindex(
+                m-metwic, (˘ω˘)
+                f-futuwepoow.appwy(thweadpoow), OwO
+                nyew pewsistedembeddinginjection(entitykind.byteinjection), (ꈍᴗꈍ)
+                pewsistedembeddingio
               )
-            case "annoy" =>
-              TypedAnnoyIndex.indexBuilder(
-                dimension,
-                opts.getAnnoyNumTrees,
-                metric,
-                entityKind.byteInjection,
-                FuturePool.apply(threadPool)
+            c-case "annoy" =>
+              typedannoyindex.indexbuiwdew(
+                dimension, òωó
+                o-opts.getannoynumtwees, ʘwʘ
+                m-metwic, ʘwʘ
+                e-entitykind.byteinjection, nyaa~~
+                f-futuwepoow.appwy(thweadpoow)
               )
-            case "hnsw" =>
-              val efConstruction = opts.getEfConstruction
-              val maxM = opts.getMaxM
-              val expectedElements = opts.getExpectedElements
-              TypedHnswIndex.serializableIndex(
-                dimension,
-                metric,
-                efConstruction,
-                maxM,
-                expectedElements,
-                entityKind.byteInjection,
-                ReadWriteFuturePool(FuturePool.apply(threadPool))
+            c-case "hnsw" =>
+              vaw efconstwuction = opts.getefconstwuction
+              vaw maxm = opts.getmaxm
+              vaw expectedewements = o-opts.getexpectedewements
+              typedhnswindex.sewiawizabweindex(
+                d-dimension, UwU
+                metwic, (⑅˘꒳˘)
+                efconstwuction, (˘ω˘)
+                maxm, :3
+                e-expectedewements, (˘ω˘)
+                entitykind.byteinjection,
+                weadwwitefutuwepoow(futuwepoow.appwy(thweadpoow))
               )
           }
 
-          val future =
-            IndexBuilderUtils.addToIndex(serialization, annEmbeddings.toSeq, concurrencyLevel)
-          Await.result(future.map { _ =>
-            serialization.toDirectory(out)
+          vaw futuwe =
+            indexbuiwdewutiws.addtoindex(sewiawization, nyaa~~ a-annembeddings.toseq, (U ﹏ U) c-concuwwencywevew)
+          await.wesuwt(futuwe.map { _ =>
+            s-sewiawization.todiwectowy(out)
           })
       }
     }
   }
 
-  class BuildFaissANNIndex(outDir: ResourceId, counterNameSpace: String)
-      extends DoFn[Map[String, Iterable[KV[Long, TEmbedding]]], Unit] {
+  cwass buiwdfaissannindex(outdiw: wesouwceid, nyaa~~ c-countewnamespace: s-stwing)
+      extends dofn[map[stwing, ^^;; itewabwe[kv[wong, OwO t-tembedding]]], nyaa~~ unit] {
 
-    @ProcessElement
-    def processElement[D <: Distance[D]](
-      @Element dataGrouped: Map[String, Iterable[KV[Long, TEmbedding]]],
-      context: ProcessContext
-    ): Unit = {
-      val opts = context.getPipelineOptions.as(classOf[ANNOptions])
-      val transformKVtoEmbeddings =
-        ScioMetrics.counter(counterNameSpace, "transform_kv_to_embeddings")
+    @pwocessewement
+    d-def pwocessewement[d <: distance[d]](
+      @ewement datagwouped: map[stwing, UwU itewabwe[kv[wong, 😳 t-tembedding]]], 😳
+      context: pwocesscontext
+    ): unit = {
+      v-vaw opts = context.getpipewineoptions.as(cwassof[annoptions])
+      v-vaw twansfowmkvtoembeddings =
+        s-sciometwics.countew(countewnamespace, (ˆ ﻌ ˆ)♡ "twansfowm_kv_to_embeddings")
 
-      val _ = dataGrouped.map {
-        case (groupName, data) =>
-          val out = {
-            if (opts.getGrouped && groupName != "") {
-              outDir.resolve(groupName, ResolveOptions.StandardResolveOptions.RESOLVE_DIRECTORY)
-            } else {
-              outDir
+      vaw _ = datagwouped.map {
+        c-case (gwoupname, (✿oωo) data) =>
+          vaw out = {
+            if (opts.getgwouped && gwoupname != "") {
+              outdiw.wesowve(gwoupname, nyaa~~ w-wesowveoptions.standawdwesowveoptions.wesowve_diwectowy)
+            } e-ewse {
+              o-outdiw
             }
           }
-          LOG.info(s"Writing output to ${out}")
+          w-wog.info(s"wwiting output to ${out}")
 
-          val metric = Metric.fromString(opts.getMetric).asInstanceOf[Metric[D]]
-          val maybeNormalizedPipe = data.map { kv =>
-            transformKVtoEmbeddings.inc()
-            val embedding = EmbeddingSerDe.floatEmbeddingSerDe.fromThrift(kv.getValue)
-            EntityEmbedding[Long](
-              kv.getKey,
-              if (metric == Cosine) {
-                EmbeddingMath.Float.normalize(embedding)
-              } else {
-                embedding
+          vaw metwic = metwic.fwomstwing(opts.getmetwic).asinstanceof[metwic[d]]
+          v-vaw maybenowmawizedpipe = d-data.map { kv =>
+            twansfowmkvtoembeddings.inc()
+            v-vaw embedding = embeddingsewde.fwoatembeddingsewde.fwomthwift(kv.getvawue)
+            entityembedding[wong](
+              kv.getkey, ^^
+              i-if (metwic == cosine) {
+                embeddingmath.fwoat.nowmawize(embedding)
+              } e-ewse {
+                e-embedding
               }
             )
           }
 
-          // Generate Index
-          FaissIndexer.buildAndWriteFaissIndex(
-            maybeNormalizedPipe,
-            opts.getTrainingSampleRate,
-            opts.getFAISSFactoryString,
-            metric,
-            new IndexOutputFile(out))
+          // genewate index
+          f-faissindexew.buiwdandwwitefaissindex(
+            m-maybenowmawizedpipe, (///ˬ///✿)
+            o-opts.gettwainingsampwewate, 😳
+            opts.getfaissfactowystwing, òωó
+            metwic, ^^;;
+            n-nyew indexoutputfiwe(out))
       }
     }
   }

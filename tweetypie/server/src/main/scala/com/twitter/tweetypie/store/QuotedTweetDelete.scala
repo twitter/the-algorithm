@@ -1,45 +1,45 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object QuotedTweetDelete extends TweetStore.SyncModule {
+o-object quotedtweetdewete e-extends tweetstowe.syncmoduwe {
 
-  case class Event(
-    quotingTweetId: TweetId,
-    quotingUserId: UserId,
-    quotedTweetId: TweetId,
-    quotedUserId: UserId,
-    timestamp: Time,
-    optUser: Option[User] = None)
-      extends SyncTweetStoreEvent("quoted_tweet_delete")
-      with TweetStoreTweetEvent {
+  c-case cwass event(
+    q-quotingtweetid: t-tweetid, >_<
+    q-quotingusewid: usewid, >_<
+    quotedtweetid: tweetid, (⑅˘꒳˘)
+    quotedusewid: usewid, /(^•ω•^)
+    t-timestamp: time, rawr x3
+    optusew: option[usew] = n-nyone)
+      extends synctweetstoweevent("quoted_tweet_dewete")
+      w-with tweetstowetweetevent {
 
-    override def toTweetEventData: Seq[TweetEventData] =
-      Seq(
-        TweetEventData.QuotedTweetDeleteEvent(
-          QuotedTweetDeleteEvent(
-            quotingTweetId = quotingTweetId,
-            quotingUserId = quotingUserId,
-            quotedTweetId = quotedTweetId,
-            quotedUserId = quotedUserId
+    ovewwide def totweeteventdata: s-seq[tweeteventdata] =
+      seq(
+        t-tweeteventdata.quotedtweetdeweteevent(
+          q-quotedtweetdeweteevent(
+            quotingtweetid = quotingtweetid, (U ﹏ U)
+            quotingusewid = quotingusewid, (U ﹏ U)
+            q-quotedtweetid = quotedtweetid, (⑅˘꒳˘)
+            quotedusewid = quotedusewid
           )
         )
       )
   }
 
-  trait Store {
-    val quotedTweetDelete: FutureEffect[Event]
+  twait s-stowe {
+    vaw quotedtweetdewete: f-futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val quotedTweetDelete: FutureEffect[Event] = wrap(underlying.quotedTweetDelete)
+  t-twait stowewwappew e-extends stowe { s-sewf: tweetstowewwappew[stowe] =>
+    ovewwide vaw quotedtweetdewete: f-futuweeffect[event] = wwap(undewwying.quotedtweetdewete)
   }
 
-  object Store {
-    def apply(eventBusEnqueueStore: TweetEventBusStore): Store =
-      new Store {
-        override val quotedTweetDelete: FutureEffect[Event] = eventBusEnqueueStore.quotedTweetDelete
+  object s-stowe {
+    def appwy(eventbusenqueuestowe: tweeteventbusstowe): stowe =
+      new stowe {
+        ovewwide vaw q-quotedtweetdewete: futuweeffect[event] = e-eventbusenqueuestowe.quotedtweetdewete
       }
   }
 }

@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.tile
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.tiwe
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tile.TileCandidateUrtItemBuilder.TopicTileClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.PromptCarouselTileCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.StandardTileContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.tiwe.tiwecandidateuwtitembuiwdew.topictiwecwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.pwomptcawousewtiwecandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe.standawdtiwecontent
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe.tiweitem
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object TileCandidateUrtItemBuilder {
-  val TopicTileClientEventInfoElement: String = "tile"
+object tiwecandidateuwtitembuiwdew {
+  vaw topictiwecwienteventinfoewement: s-stwing = "tiwe"
 }
 
-case class TileCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, PromptCarouselTileCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, PromptCarouselTileCandidate]
-  ] = None)
-    extends CandidateUrtEntryBuilder[Query, PromptCarouselTileCandidate, TileItem] {
+case cwass tiwecandidateuwtitembuiwdew[-quewy <: p-pipewinequewy](
+  cwienteventinfobuiwdew: b-basecwienteventinfobuiwdew[quewy, (U ﹏ U) pwomptcawousewtiwecandidate], (U ﹏ U)
+  feedbackactioninfobuiwdew: option[
+    b-basefeedbackactioninfobuiwdew[quewy, (⑅˘꒳˘) pwomptcawousewtiwecandidate]
+  ] = n-nyone)
+    extends c-candidateuwtentwybuiwdew[quewy, pwomptcawousewtiwecandidate, òωó tiweitem] {
 
-  override def apply(
-    query: Query,
-    tileCandidate: PromptCarouselTileCandidate,
-    candidateFeatures: FeatureMap
-  ): TileItem = TileItem(
-    id = tileCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      tileCandidate,
-      candidateFeatures,
-      Some(TopicTileClientEventInfoElement)),
-    title = "", //This data is ignored do
-    supportingText = "",
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, tileCandidate, candidateFeatures)),
-    image = None,
-    url = None,
-    content = StandardTileContent(
-      title = "",
-      supportingText = "",
-      badge = None
+  ovewwide def appwy(
+    quewy: quewy, ʘwʘ
+    t-tiwecandidate: pwomptcawousewtiwecandidate, /(^•ω•^)
+    candidatefeatuwes: featuwemap
+  ): tiweitem = t-tiweitem(
+    id = tiwecandidate.id, ʘwʘ
+    s-sowtindex = nyone, σωσ // s-sowt indexes a-awe automaticawwy s-set in the domain mawshawwew phase
+    cwienteventinfo = cwienteventinfobuiwdew(
+      q-quewy, OwO
+      tiwecandidate, 😳😳😳
+      candidatefeatuwes, 😳😳😳
+      some(topictiwecwienteventinfoewement)), o.O
+    t-titwe = "", ( ͡o ω ͡o ) //this data is ignowed do
+    suppowtingtext = "", (U ﹏ U)
+    feedbackactioninfo =
+      feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, (///ˬ///✿) tiwecandidate, >w< c-candidatefeatuwes)), rawr
+    image = n-nyone, mya
+    uww = n-nyone, ^^
+    content = s-standawdtiwecontent(
+      titwe = "", 😳😳😳
+      suppowtingtext = "", mya
+      badge = nyone
     )
   )
 }

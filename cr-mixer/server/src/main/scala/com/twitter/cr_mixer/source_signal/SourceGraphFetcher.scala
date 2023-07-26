@@ -1,70 +1,70 @@
-package com.twitter.cr_mixer.source_signal
+package com.twittew.cw_mixew.souwce_signaw
 
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
+impowt c-com.twittew.cw_mixew.modew.gwaphsouwceinfo
+i-impowt c-com.twittew.cw_mixew.souwce_signaw.souwcefetchew.fetchewquewy
+i-impowt com.twittew.cw_mixew.thwiftscawa.souwcetype
+i-impowt com.twittew.fwigate.common.utiw.statsutiw
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.utiw.futuwe
 
 /***
- * A SourceGraphFetcher is a trait that extends from `SourceFetcher`
- * and is specialized in tackling User Graph (eg., RealGraphOon, FRS) fetch.
+ * a-a souwcegwaphfetchew is a twait that extends fwom `souwcefetchew`
+ * and is speciawized i-in tackwing usew gwaph (eg., weawgwaphoon, /(^•ω•^) f-fws) fetch. nyaa~~
  *
- * The [[ResultType]] of a SourceGraphFetcher is a `GraphSourceInfo` which contains a userSeedSet.
- * When we pass in userId, the underlying store returns one GraphSourceInfo.
+ * the [[wesuwttype]] o-of a souwcegwaphfetchew is a `gwaphsouwceinfo` which contains a-a usewseedset. nyaa~~
+ * when we pass i-in usewid, :3 the u-undewwying stowe wetuwns one gwaphsouwceinfo. 😳😳😳
  */
-trait SourceGraphFetcher extends SourceFetcher[GraphSourceInfo] {
-  protected final val DefaultSeedScore = 1.0
-  protected def graphSourceType: SourceType
+twait souwcegwaphfetchew extends souwcefetchew[gwaphsouwceinfo] {
+  p-pwotected finaw vaw defauwtseedscowe = 1.0
+  pwotected def gwaphsouwcetype: souwcetype
 
   /***
-   * RawDataType contains a consumers seed UserId and a score (weight)
+   * w-wawdatatype contains a-a consumews seed u-usewid and a scowe (weight)
    */
-  protected type RawDataType = (UserId, Double)
+  p-pwotected t-type wawdatatype = (usewid, (˘ω˘) doubwe)
 
-  def trackStats(
-    query: FetcherQuery
+  def twackstats(
+    q-quewy: fetchewquewy
   )(
-    func: => Future[Option[GraphSourceInfo]]
-  ): Future[Option[GraphSourceInfo]] = {
-    val productScopedStats = stats.scope(query.product.originalName)
-    val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
-    StatsUtil
-      .trackOptionStats(productScopedStats) {
-        StatsUtil
-          .trackOptionStats(productUserStateScopedStats) {
-            func
+    func: => f-futuwe[option[gwaphsouwceinfo]]
+  ): futuwe[option[gwaphsouwceinfo]] = {
+    vaw pwoductscopedstats = stats.scope(quewy.pwoduct.owiginawname)
+    vaw pwoductusewstatescopedstats = p-pwoductscopedstats.scope(quewy.usewstate.tostwing)
+    statsutiw
+      .twackoptionstats(pwoductscopedstats) {
+        s-statsutiw
+          .twackoptionstats(pwoductusewstatescopedstats) {
+            f-func
           }
       }
   }
 
-  // Track per item stats on the fetched graph results
-  def trackPerItemStats(
-    query: FetcherQuery
+  // t-twack pew item stats on the fetched gwaph wesuwts
+  def twackpewitemstats(
+    quewy: f-fetchewquewy
   )(
-    func: => Future[Option[Seq[RawDataType]]]
-  ): Future[Option[Seq[RawDataType]]] = {
-    val productScopedStats = stats.scope(query.product.originalName)
-    val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
-    StatsUtil.trackOptionItemsStats(productScopedStats) {
-      StatsUtil.trackOptionItemsStats(productUserStateScopedStats) {
+    f-func: => futuwe[option[seq[wawdatatype]]]
+  ): f-futuwe[option[seq[wawdatatype]]] = {
+    v-vaw pwoductscopedstats = stats.scope(quewy.pwoduct.owiginawname)
+    v-vaw pwoductusewstatescopedstats = pwoductscopedstats.scope(quewy.usewstate.tostwing)
+    s-statsutiw.twackoptionitemsstats(pwoductscopedstats) {
+      statsutiw.twackoptionitemsstats(pwoductusewstatescopedstats) {
         func
       }
     }
   }
 
   /***
-   * Convert Seq[RawDataType] into GraphSourceInfo
+   * c-convewt seq[wawdatatype] i-into gwaphsouwceinfo
    */
-  protected final def convertGraphSourceInfo(
-    userWithScores: Seq[RawDataType]
-  ): GraphSourceInfo = {
-    GraphSourceInfo(
-      sourceType = graphSourceType,
-      seedWithScores = userWithScores.map { userWithScore =>
-        userWithScore._1 -> userWithScore._2
-      }.toMap
+  pwotected finaw def c-convewtgwaphsouwceinfo(
+    usewwithscowes: seq[wawdatatype]
+  ): g-gwaphsouwceinfo = {
+    gwaphsouwceinfo(
+      souwcetype = gwaphsouwcetype, ^^
+      seedwithscowes = usewwithscowes.map { usewwithscowe =>
+        u-usewwithscowe._1 -> u-usewwithscowe._2
+      }.tomap
     )
   }
 }

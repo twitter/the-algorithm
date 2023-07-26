@@ -1,47 +1,47 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/protobuf/master.proto";
+impowt "tensowfwow/cowe/pwotobuf/mastew.pwoto";
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option c-cc_enabwe_awenas = t-twue;
+option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Records the creation of a new replay session.  We record the device listing
-// here to capture the state of the cluster.
-message NewReplaySession {
-  ListDevicesResponse devices = 1;
-  string session_handle = 2;
+// w-wecowds t-the cweation of a-a nyew wepway s-session. (⑅˘꒳˘)  we wecowd the device wisting
+// hewe to captuwe the state of the cwustew. òωó
+m-message nyewwepwaysession {
+  wistdeviceswesponse devices = 1;
+  s-stwing session_handwe = 2;
 }
 
-message ReplayOp {
-  double start_time_us = 31;
-  double end_time_us = 32;
+message wepwayop {
+  d-doubwe stawt_time_us = 31;
+  doubwe end_time_us = 32;
 
   oneof op {
-    CreateSessionRequest create_session = 1;
-    ExtendSessionRequest extend_session = 2;
-    PartialRunSetupRequest partial_run_setup = 3;
-    RunStepRequest run_step = 4;
-    CloseSessionRequest close_session = 5;
-    ListDevicesRequest list_devices = 6;
-    ResetRequest reset_request = 7;
-    MakeCallableRequest make_callable = 8;
-    RunCallableRequest run_callable = 9;
-    ReleaseCallableRequest release_callable = 10;
-    NewReplaySession new_replay_session = 11;
+    cweatesessionwequest c-cweate_session = 1;
+    extendsessionwequest e-extend_session = 2;
+    p-pawtiawwunsetupwequest pawtiaw_wun_setup = 3;
+    wunstepwequest wun_step = 4;
+    cwosesessionwequest c-cwose_session = 5;
+    wistdeviceswequest wist_devices = 6;
+    wesetwequest weset_wequest = 7;
+    makecawwabwewequest m-make_cawwabwe = 8;
+    wuncawwabwewequest w-wun_cawwabwe = 9;
+    w-weweasecawwabwewequest w-wewease_cawwabwe = 10;
+    n-nyewwepwaysession nyew_wepway_session = 11;
   }
 
-  oneof response {
-    CreateSessionResponse create_session_response = 21;
-    ExtendSessionResponse extend_session_response = 22;
-    PartialRunSetupResponse partial_run_setup_response = 23;
-    RunStepResponse run_step_response = 24;
-    CloseSessionResponse close_session_response = 25;
-    ListDevicesResponse list_devices_response = 26;
-    ResetResponse reset_request_response = 27;
-    MakeCallableResponse make_callable_response = 28;
-    RunCallableResponse run_callable_response = 29;
-    ReleaseCallableResponse release_callable_response = 30;
+  oneof w-wesponse {
+    cweatesessionwesponse cweate_session_wesponse = 21;
+    e-extendsessionwesponse extend_session_wesponse = 22;
+    pawtiawwunsetupwesponse pawtiaw_wun_setup_wesponse = 23;
+    wunstepwesponse wun_step_wesponse = 24;
+    c-cwosesessionwesponse cwose_session_wesponse = 25;
+    w-wistdeviceswesponse w-wist_devices_wesponse = 26;
+    w-wesetwesponse weset_wequest_wesponse = 27;
+    makecawwabwewesponse make_cawwabwe_wesponse = 28;
+    w-wuncawwabwewesponse wun_cawwabwe_wesponse = 29;
+    weweasecawwabwewesponse w-wewease_cawwabwe_wesponse = 30;
   }
 }

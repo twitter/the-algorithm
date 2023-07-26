@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_service
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.timewine_sewvice
 
-import com.twitter.product_mixer.component_library.model.cursor.NextCursorFeature
-import com.twitter.product_mixer.component_library.model.cursor.PreviousCursorFeature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.timelineservice.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.nextcuwsowfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.pweviouscuwsowfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwcewithextwactedfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidateswithsouwcefeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stitch.timewinesewvice.timewinesewvice
+impowt c-com.twittew.timewinesewvice.{thwiftscawa => t}
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-case object TimelineServiceResponseWasTruncatedFeature
-    extends FeatureWithDefaultOnFailure[PipelineQuery, Boolean] {
-  override val defaultValue: Boolean = false
+case o-object timewinesewvicewesponsewastwuncatedfeatuwe
+    extends featuwewithdefauwtonfaiwuwe[pipewinequewy, 😳😳😳 boowean] {
+  o-ovewwide vaw defauwtvawue: b-boowean = fawse
 }
 
-@Singleton
-class TimelineServiceTweetCandidateSource @Inject() (
-  timelineService: TimelineService)
-    extends CandidateSourceWithExtractedFeatures[t.TimelineQuery, t.Tweet] {
+@singweton
+c-cwass timewinesewvicetweetcandidatesouwce @inject() (
+  timewinesewvice: timewinesewvice)
+    extends candidatesouwcewithextwactedfeatuwes[t.timewinequewy, 🥺 t.tweet] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("TimelineServiceTweet")
+  o-ovewwide vaw identifiew: candidatesouwceidentifiew =
+    candidatesouwceidentifiew("timewinesewvicetweet")
 
-  override def apply(request: t.TimelineQuery): Stitch[CandidatesWithSourceFeatures[t.Tweet]] = {
-    timelineService
-      .getTimeline(request).map { timeline =>
-        val candidates = timeline.entries.collect {
-          case t.TimelineEntry.Tweet(tweet) => tweet
+  ovewwide d-def appwy(wequest: t.timewinequewy): s-stitch[candidateswithsouwcefeatuwes[t.tweet]] = {
+    t-timewinesewvice
+      .gettimewine(wequest).map { timewine =>
+        v-vaw candidates = t-timewine.entwies.cowwect {
+          case t.timewineentwy.tweet(tweet) => tweet
         }
 
-        val candidateSourceFeatures =
-          FeatureMapBuilder()
-            .add(TimelineServiceResponseWasTruncatedFeature, timeline.wasTruncated.getOrElse(false))
-            .add(PreviousCursorFeature, timeline.responseCursor.flatMap(_.top).getOrElse(""))
-            .add(NextCursorFeature, timeline.responseCursor.flatMap(_.bottom).getOrElse(""))
-            .build()
+        v-vaw candidatesouwcefeatuwes =
+          featuwemapbuiwdew()
+            .add(timewinesewvicewesponsewastwuncatedfeatuwe, mya timewine.wastwuncated.getowewse(fawse))
+            .add(pweviouscuwsowfeatuwe, 🥺 timewine.wesponsecuwsow.fwatmap(_.top).getowewse(""))
+            .add(nextcuwsowfeatuwe, >_< t-timewine.wesponsecuwsow.fwatmap(_.bottom).getowewse(""))
+            .buiwd()
 
-        CandidatesWithSourceFeatures(candidates = candidates, features = candidateSourceFeatures)
+        candidateswithsouwcefeatuwes(candidates = candidates, >_< featuwes = candidatesouwcefeatuwes)
       }
   }
 

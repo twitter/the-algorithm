@@ -1,5 +1,5 @@
-"""Gets the path of headers for the current Tensorflow library"""
+"""gets the path of headews fow the c-cuwwent tensowfwow w-wibwawy"""
 
-import tensorflow.compat.v1 as tf
+i-impowt tensowfwow.compat.v1 a-as t-tf
 
-print(tf.sysconfig.get_include(), end='')
+pwint(tf.sysconfig.get_incwude(), o.O e-end='')

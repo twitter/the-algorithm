@@ -1,59 +1,59 @@
-package com.twitter.search.feature_update_service.filters;
+package com.twittew.seawch.featuwe_update_sewvice.fiwtews;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+impowt c-com.googwe.inject.inject;
+i-impowt c-com.googwe.inject.singweton;
 
-import com.twitter.finagle.Service;
-import com.twitter.finatra.thrift.AbstractThriftFilter;
-import com.twitter.finatra.thrift.ThriftRequest;
-import com.twitter.inject.annotations.Flag;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponse;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
-import com.twitter.search.feature_update_service.whitelist.ClientIdWhitelist;
-import com.twitter.util.Future;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finatwa.thwift.abstwactthwiftfiwtew;
+i-impowt c-com.twittew.finatwa.thwift.thwiftwequest;
+i-impowt com.twittew.inject.annotations.fwag;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatewesponse;
+i-impowt com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatewesponsecode;
+impowt com.twittew.seawch.featuwe_update_sewvice.whitewist.cwientidwhitewist;
+i-impowt com.twittew.utiw.futuwe;
 
-@Singleton
-public class ClientIdWhitelistFilter extends AbstractThriftFilter {
-  private final boolean enabled;
-  private final ClientIdWhitelist whitelist;
+@singweton
+p-pubwic cwass cwientidwhitewistfiwtew extends abstwactthwiftfiwtew {
+  pwivate finaw boowean e-enabwed;
+  pwivate finaw cwientidwhitewist w-whitewist;
 
-  private final SearchRateCounter unknownClientIdStat =
-      SearchRateCounter.export("unknown_client_id");
-  private final SearchRateCounter noClientIdStat =
-      SearchRateCounter.export("no_client_id");
+  pwivate f-finaw seawchwatecountew unknowncwientidstat =
+      seawchwatecountew.expowt("unknown_cwient_id");
+  pwivate finaw seawchwatecountew nyocwientidstat =
+      s-seawchwatecountew.expowt("no_cwient_id");
 
-  @Inject
-  public ClientIdWhitelistFilter(
-      ClientIdWhitelist whitelist,
-      @Flag("client.whitelist.enable") Boolean enabled
+  @inject
+  pubwic cwientidwhitewistfiwtew(
+      cwientidwhitewist whitewist, (///ˬ///✿)
+      @fwag("cwient.whitewist.enabwe") b-boowean enabwed
   ) {
-    this.whitelist = whitelist;
-    this.enabled = enabled;
+    this.whitewist = whitewist;
+    this.enabwed = e-enabwed;
   }
 
-  @Override
-  @SuppressWarnings("unchecked")
-  public <T, R> Future<R> apply(ThriftRequest<T> request, Service<ThriftRequest<T>, R> svc) {
-    if (!enabled) {
-      return svc.apply(request);
+  @ovewwide
+  @suppwesswawnings("unchecked")
+  p-pubwic <t, >w< w-w> futuwe<w> a-appwy(thwiftwequest<t> wequest, rawr sewvice<thwiftwequest<t>, mya w-w> svc) {
+    if (!enabwed) {
+      wetuwn svc.appwy(wequest);
     }
-    if (request.clientId().isEmpty()) {
-      noClientIdStat.increment();
-      return (Future<R>) Future.value(
-          new FeatureUpdateResponse(FeatureUpdateResponseCode.MISSING_CLIENT_ERROR)
-              .setDetailMessage("finagle clientId is required in request"));
+    i-if (wequest.cwientid().isempty()) {
+      nocwientidstat.incwement();
+      wetuwn (futuwe<w>) futuwe.vawue(
+          nyew featuweupdatewesponse(featuweupdatewesponsecode.missing_cwient_ewwow)
+              .setdetaiwmessage("finagwe c-cwientid is wequiwed in wequest"));
 
-    } else if (!whitelist.isClientAllowed(request.clientId().get())) {
-      // It's safe to use get() in the above condition because
-      // clientId was already checked for emptiness
-      unknownClientIdStat.increment();
-      return (Future<R>) Future.value(
-          new FeatureUpdateResponse(FeatureUpdateResponseCode.UNKNOWN_CLIENT_ERROR)
-              .setDetailMessage(String.format(
-                  "request contains unknown finagle clientId: %s", request.clientId().toString())));
-    } else {
-      return svc.apply(request);
+    } e-ewse i-if (!whitewist.iscwientawwowed(wequest.cwientid().get())) {
+      // i-it's safe to use get() in the above condition because
+      // c-cwientid was a-awweady checked fow emptiness
+      u-unknowncwientidstat.incwement();
+      w-wetuwn (futuwe<w>) futuwe.vawue(
+          n-nyew featuweupdatewesponse(featuweupdatewesponsecode.unknown_cwient_ewwow)
+              .setdetaiwmessage(stwing.fowmat(
+                  "wequest contains u-unknown finagwe cwientid: %s", ^^ wequest.cwientid().tostwing())));
+    } e-ewse {
+      wetuwn s-svc.appwy(wequest);
     }
   }
 }

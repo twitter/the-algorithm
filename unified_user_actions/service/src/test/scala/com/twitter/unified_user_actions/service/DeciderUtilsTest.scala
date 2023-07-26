@@ -1,74 +1,74 @@
-package com.twitter.unified_user_actions.service
+package com.twittew.unified_usew_actions.sewvice
 
-import com.twitter.decider.MockDecider
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.service.module.ClientEventDeciderUtils
-import com.twitter.unified_user_actions.service.module.DefaultDeciderUtils
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.util.Time
-import com.twitter.util.mock.Mockito
-import org.junit.runner.RunWith
-import org.scalatestplus.junit.JUnitRunner
+impowt com.twittew.decidew.mockdecidew
+i-impowt com.twittew.inject.test
+i-impowt com.twittew.unified_usew_actions.sewvice.moduwe.cwienteventdecidewutiws
+i-impowt com.twittew.unified_usew_actions.sewvice.moduwe.defauwtdecidewutiws
+i-impowt com.twittew.unified_usew_actions.thwiftscawa._
+i-impowt com.twittew.utiw.time
+i-impowt com.twittew.utiw.mock.mockito
+i-impowt o-owg.junit.wunnew.wunwith
+impowt owg.scawatestpwus.junit.junitwunnew
 
-@RunWith(classOf[JUnitRunner])
-class DeciderUtilsTest extends Test with Mockito {
-  trait Fixture {
-    val frozenTime = Time.fromMilliseconds(1658949273000L)
+@wunwith(cwassof[junitwunnew])
+cwass decidewutiwstest extends t-test with mockito {
+  twait fixtuwe {
+    vaw f-fwozentime = time.fwommiwwiseconds(1658949273000w)
 
-    val publishActionTypes =
-      Set[ActionType](ActionType.ServerTweetFav, ActionType.ClientTweetRenderImpression)
+    vaw pubwishactiontypes =
+      s-set[actiontype](actiontype.sewvewtweetfav, (˘ω˘) actiontype.cwienttweetwendewimpwession)
 
-    def decider(
-      features: Set[String] = publishActionTypes.map { action =>
-        s"Publish${action.name}"
+    def decidew(
+      featuwes: set[stwing] = p-pubwishactiontypes.map { action =>
+        s-s"pubwish${action.name}"
       }
-    ) = new MockDecider(features = features)
+    ) = new m-mockdecidew(featuwes = featuwes)
 
-    def mkUUA(actionType: ActionType) = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(91L)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = 1L,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(101L))),
+    def mkuua(actiontype: actiontype) = unifiedusewaction(
+      usewidentifiew = u-usewidentifiew(usewid = some(91w)), ^^
+      item = item.tweetinfo(
+        tweetinfo(
+          actiontweetid = 1w, :3
+          actiontweetauthowinfo = s-some(authowinfo(authowid = some(101w))), -.-
         )
-      ),
-      actionType = actionType,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 1001L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerTlsFavs,
-        traceId = Some(31L)
+      ), 😳
+      a-actiontype = a-actiontype, mya
+      e-eventmetadata = e-eventmetadata(
+        souwcetimestampms = 1001w, (˘ω˘)
+        weceivedtimestampms = f-fwozentime.inmiwwiseconds, >_<
+        souwcewineage = souwcewineage.sewvewtwsfavs, -.-
+        twaceid = some(31w)
       )
     )
 
-    val uuaServerTweetFav = mkUUA(ActionType.ServerTweetFav)
-    val uuaClientTweetFav = mkUUA(ActionType.ClientTweetFav)
-    val uuaClientTweetRenderImpression = mkUUA(ActionType.ClientTweetRenderImpression)
+    vaw uuasewvewtweetfav = m-mkuua(actiontype.sewvewtweetfav)
+    vaw uuacwienttweetfav = mkuua(actiontype.cwienttweetfav)
+    vaw uuacwienttweetwendewimpwession = mkuua(actiontype.cwienttweetwendewimpwession)
   }
 
-  test("Decider Utils") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        DefaultDeciderUtils.shouldPublish(
-          decider = decider(),
-          uua = uuaServerTweetFav,
-          sinkTopic = "") shouldBe true
-        DefaultDeciderUtils.shouldPublish(
-          decider = decider(),
-          uua = uuaClientTweetFav,
-          sinkTopic = "") shouldBe false
-        ClientEventDeciderUtils.shouldPublish(
-          decider = decider(),
-          uua = uuaClientTweetRenderImpression,
-          sinkTopic = "unified_user_actions_engagements") shouldBe false
-        ClientEventDeciderUtils.shouldPublish(
-          decider = decider(),
-          uua = uuaClientTweetFav,
-          sinkTopic = "unified_user_actions_engagements") shouldBe false
-        ClientEventDeciderUtils.shouldPublish(
-          decider = decider(features = Set[String](s"Publish${ActionType.ClientTweetFav.name}")),
-          uua = uuaClientTweetFav,
-          sinkTopic = "unified_user_actions_engagements") shouldBe true
+  test("decidew utiws") {
+    n-nyew fixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        d-defauwtdecidewutiws.shouwdpubwish(
+          d-decidew = decidew(), 🥺
+          uua = uuasewvewtweetfav, (U ﹏ U)
+          sinktopic = "") s-shouwdbe t-twue
+        defauwtdecidewutiws.shouwdpubwish(
+          d-decidew = d-decidew(), >w<
+          uua = u-uuacwienttweetfav, mya
+          sinktopic = "") shouwdbe fawse
+        c-cwienteventdecidewutiws.shouwdpubwish(
+          decidew = decidew(), >w<
+          u-uua = uuacwienttweetwendewimpwession, nyaa~~
+          sinktopic = "unified_usew_actions_engagements") s-shouwdbe fawse
+        cwienteventdecidewutiws.shouwdpubwish(
+          d-decidew = d-decidew(), (✿oωo)
+          uua = uuacwienttweetfav, ʘwʘ
+          sinktopic = "unified_usew_actions_engagements") shouwdbe fawse
+        cwienteventdecidewutiws.shouwdpubwish(
+          decidew = d-decidew(featuwes = s-set[stwing](s"pubwish${actiontype.cwienttweetfav.name}")), (ˆ ﻌ ˆ)♡
+          uua = u-uuacwienttweetfav, 😳😳😳
+          s-sinktopic = "unified_usew_actions_engagements") s-shouwdbe twue
       }
     }
   }

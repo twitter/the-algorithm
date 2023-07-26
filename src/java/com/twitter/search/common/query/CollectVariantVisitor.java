@@ -1,13 +1,13 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import com.twitter.search.queryparser.query.annotation.Annotation;
+impowt c-com.twittew.seawch.quewypawsew.quewy.annotation.annotation;
 
 
 /**
- * A visitor that collects the nodes that have :v annotation
+ * a-a visitow that c-cowwects the n-nyodes that have :v a-annotation
  */
-public class CollectVariantVisitor extends CollectAnnotationsVisitor {
-  public CollectVariantVisitor() {
-    super(Annotation.Type.VARIANT);
+p-pubwic cwass c-cowwectvawiantvisitow e-extends cowwectannotationsvisitow {
+  pubwic cowwectvawiantvisitow() {
+    supew(annotation.type.vawiant);
   }
 }

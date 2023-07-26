@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-case class ConversationDetails(conversationSection: Option[ConversationSection])
+case cwass convewsationdetaiws(convewsationsection: o-option[convewsationsection])

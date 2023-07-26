@@ -1,91 +1,91 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
+impowt j-java.io.cwoseabwe;
+i-impowt java.io.ioexception;
+i-impowt java.utiw.concuwwent.scheduwedexecutowsewvice;
+i-impowt java.utiw.concuwwent.scheduwedfutuwe;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt c-com.twittew.seawch.common.concuwwent.scheduwedexecutowsewvicefactowy;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
 
 /**
- * Executes a single periodic task.
+ * exekawaii~s a-a singwe pewiodic task. (U ﹏ U)
  */
-public abstract class OneTaskScheduledExecutorManager
-    extends ScheduledExecutorManager implements Closeable {
-  private final ScheduledExecutorTask scheduledTask;
-  private final PeriodicActionParams periodicActionParams;
+pubwic abstwact c-cwass onetaskscheduwedexecutowmanagew
+    extends scheduwedexecutowmanagew i-impwements cwoseabwe {
+  pwivate finaw scheduwedexecutowtask scheduwedtask;
+  pwivate f-finaw pewiodicactionpawams pewiodicactionpawams;
 
-  public OneTaskScheduledExecutorManager(
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      String threadNameFormat,
-      boolean isDaemon,
-      PeriodicActionParams periodicActionParams,
-      ShutdownWaitTimeParams shutdownTiming,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this(executorServiceFactory.build(threadNameFormat, isDaemon), periodicActionParams,
-        shutdownTiming, searchStatsReceiver, criticalExceptionHandler);
+  p-pubwic o-onetaskscheduwedexecutowmanagew(
+      scheduwedexecutowsewvicefactowy executowsewvicefactowy, >w<
+      stwing thweadnamefowmat, (U ﹏ U)
+      boowean isdaemon, 😳
+      p-pewiodicactionpawams pewiodicactionpawams, (ˆ ﻌ ˆ)♡
+      shutdownwaittimepawams shutdowntiming, 😳😳😳
+      seawchstatsweceivew seawchstatsweceivew, (U ﹏ U)
+      c-cwiticawexceptionhandwew cwiticawexceptionhandwew) {
+    t-this(executowsewvicefactowy.buiwd(thweadnamefowmat, (///ˬ///✿) i-isdaemon), 😳 p-pewiodicactionpawams, 😳
+        s-shutdowntiming, σωσ seawchstatsweceivew, rawr x3 cwiticawexceptionhandwew);
   }
 
-  public OneTaskScheduledExecutorManager(
-      ScheduledExecutorService executor,
-      PeriodicActionParams periodicActionParams,
-      ShutdownWaitTimeParams shutdownTiming,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this(executor, periodicActionParams, shutdownTiming, searchStatsReceiver, null,
-        criticalExceptionHandler, Clock.SYSTEM_CLOCK);
+  p-pubwic onetaskscheduwedexecutowmanagew(
+      scheduwedexecutowsewvice executow, OwO
+      pewiodicactionpawams pewiodicactionpawams, /(^•ω•^)
+      s-shutdownwaittimepawams shutdowntiming, 😳😳😳
+      seawchstatsweceivew seawchstatsweceivew, ( ͡o ω ͡o )
+      cwiticawexceptionhandwew cwiticawexceptionhandwew) {
+    t-this(executow, >_< pewiodicactionpawams, >w< s-shutdowntiming, rawr s-seawchstatsweceivew, 😳 nuww,
+        c-cwiticawexceptionhandwew, >w< cwock.system_cwock);
   }
 
-  public OneTaskScheduledExecutorManager(
-      ScheduledExecutorService executor,
-      PeriodicActionParams periodicActionParams,
-      ShutdownWaitTimeParams shutdownWaitTimeParams,
-      SearchStatsReceiver searchStatsReceiver,
-      SearchCounter iterationCounter,
-      CriticalExceptionHandler criticalExceptionHandler,
-      Clock clock) {
-    super(executor, shutdownWaitTimeParams, searchStatsReceiver, iterationCounter,
-        criticalExceptionHandler, clock);
+  pubwic onetaskscheduwedexecutowmanagew(
+      scheduwedexecutowsewvice e-executow, (⑅˘꒳˘)
+      p-pewiodicactionpawams pewiodicactionpawams, OwO
+      shutdownwaittimepawams s-shutdownwaittimepawams, (ꈍᴗꈍ)
+      s-seawchstatsweceivew seawchstatsweceivew, 😳
+      seawchcountew i-itewationcountew, 😳😳😳
+      cwiticawexceptionhandwew c-cwiticawexceptionhandwew, mya
+      cwock cwock) {
+    s-supew(executow, mya shutdownwaittimepawams, (⑅˘꒳˘) s-seawchstatsweceivew, (U ﹏ U) itewationcountew, mya
+        c-cwiticawexceptionhandwew, ʘwʘ c-cwock);
 
-    this.periodicActionParams = periodicActionParams;
-    this.scheduledTask = new ScheduledExecutorTask(getIterationCounter(), clock) {
-      @Override
-      protected void runOneIteration() {
-        OneTaskScheduledExecutorManager.this.runOneIteration();
+    this.pewiodicactionpawams = pewiodicactionpawams;
+    this.scheduwedtask = nyew scheduwedexecutowtask(getitewationcountew(), (˘ω˘) cwock) {
+      @ovewwide
+      pwotected void wunoneitewation() {
+        o-onetaskscheduwedexecutowmanagew.this.wunoneitewation();
       }
     };
   }
 
   /**
-   * Schedule the single internally specified task returned by getScheduledTask.
+   * s-scheduwe the singwe i-intewnawwy specified t-task wetuwned b-by getscheduwedtask. (U ﹏ U)
    */
-  public ScheduledFuture schedule() {
-    return this.scheduleNewTask(
-        this.getScheduledTask(),
-        this.periodicActionParams
+  pubwic scheduwedfutuwe scheduwe() {
+    wetuwn t-this.scheduwenewtask(
+        this.getscheduwedtask(), ^•ﻌ•^
+        this.pewiodicactionpawams
     );
   }
 
   /**
-   * The code that the task executes.
+   * the code that the task exekawaii~s. (˘ω˘)
    */
-  protected abstract void runOneIteration();
+  pwotected a-abstwact void wunoneitewation();
 
-  public ScheduledExecutorTask getScheduledTask() {
-    return scheduledTask;
+  p-pubwic s-scheduwedexecutowtask g-getscheduwedtask() {
+    wetuwn scheduwedtask;
   }
 
-  @Override
-  public void close() throws IOException {
-    try {
+  @ovewwide
+  p-pubwic v-void cwose() thwows i-ioexception {
+    t-twy {
       shutdown();
-    } catch (InterruptedException e) {
-      throw new IOException(e);
+    } catch (intewwuptedexception e-e) {
+      thwow n-nyew ioexception(e);
     }
   }
 }

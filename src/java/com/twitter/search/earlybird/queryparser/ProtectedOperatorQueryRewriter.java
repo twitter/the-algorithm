@@ -1,153 +1,153 @@
-package com.twitter.search.earlybird.queryparser;
+package com.twittew.seawch.eawwybiwd.quewypawsew;
 
-import java.util.List;
+impowt java.utiw.wist;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.immutabwewist;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+i-impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+i-impowt com.twittew.seawch.quewypawsew.quewy.conjunction;
+i-impowt c-com.twittew.seawch.quewypawsew.quewy.disjunction;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow;
+impowt c-com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatowconstants;
 
-public class ProtectedOperatorQueryRewriter {
-  private static final String ERROR_MESSAGE = "Positive 'protected' operator must be in the root"
-      + " query node and the root query node must be a Conjunction.";
-  private static final Query EXCLUDE_PROTECTED_OPERATOR =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.PROTECTED);
+pubwic cwass pwotectedopewatowquewywewwitew {
+  p-pwivate static finaw stwing e-ewwow_message = "positive 'pwotected' opewatow must be in the woot"
+      + " q-quewy nyode and the woot quewy n-nyode must be a-a conjunction.";
+  pwivate static finaw quewy excwude_pwotected_opewatow =
+      nyew seawchopewatow(seawchopewatow.type.excwude, ^^;; seawchopewatowconstants.pwotected);
 
   /**
-   * Rewrite a query with positive 'protected' operator into an equivalent query without the positive
-   * 'protected' operator. This method assumes the following preconditions hold:
-   *  1. 'followedUserIds' is not empty
-   *  2. the query's root node is of type Conjunction
-   *  3. the query's root node is not negated
-   *  4. there is one positive 'protected' operator in the root node
-   *  5. there is only one 'protected' operator in the whole query
+   * w-wewwite a quewy with positive 'pwotected' opewatow into an equivawent quewy without t-the positive
+   * 'pwotected' opewatow. ^•ﻌ•^ this m-method assumes t-the fowwowing p-pweconditions howd:
+   *  1. σωσ 'fowwowedusewids' i-is nyot empty
+   *  2. -.- the quewy's woot nyode is o-of type conjunction
+   *  3. ^^;; the quewy's woot nyode i-is nyot nyegated
+   *  4. XD thewe is one positive 'pwotected' opewatow in the woot nyode
+   *  5. 🥺 thewe is onwy one 'pwotected' o-opewatow in the whowe quewy
    *
-   *  Query with '[include protected]' operator is rewritten into a Disjunction of a query with
-   *  protected Tweets only and a query with public Tweets only.
-   *  For example,
-   *    Original query:
-   *      (* "cat" [include protected])
-   *        with followedUserIds=[1, 7, 12] where 1 and 7 are protected users
-   *    Rewritten query:
+   *  q-quewy w-with '[incwude pwotected]' o-opewatow is wewwitten into a disjunction of a quewy with
+   *  p-pwotected t-tweets onwy and a quewy with p-pubwic tweets onwy. òωó
+   *  f-fow exampwe, (ˆ ﻌ ˆ)♡
+   *    owiginaw quewy:
+   *      (* "cat" [incwude p-pwotected])
+   *        with fowwowedusewids=[1, -.- 7, 12] w-whewe 1 and 7 awe pwotected usews
+   *    wewwitten q-quewy:
    *      (+
-   *        (* "cat" [multi_term_disjunction from_user_id 1 7])
-   *        (* "cat" [exclude protected])
+   *        (* "cat" [muwti_tewm_disjunction fwom_usew_id 1 7])
+   *        (* "cat" [excwude p-pwotected])
    *      )
    *
-   *  Query with '[filter protected]' operator is rewritten with multi_term_disjunction from_user_id
-   *  operator.
-   *  For example,
-   *    Original query:
-   *      (* "cat" [filter protected])
-   *        with followedUserIds=[1, 7, 12] where 1 and 7 are protected users
-   *    Rewritten query:
-   *      (* "cat" [multi_term_disjunction from_user_id 1 7])
+   *  quewy w-with '[fiwtew p-pwotected]' opewatow is wewwitten with muwti_tewm_disjunction fwom_usew_id
+   *  opewatow. :3
+   *  fow exampwe, ʘwʘ
+   *    owiginaw quewy:
+   *      (* "cat" [fiwtew p-pwotected])
+   *        w-with fowwowedusewids=[1, 🥺 7, >_< 12] whewe 1 a-and 7 awe pwotected u-usews
+   *    w-wewwitten quewy:
+   *      (* "cat" [muwti_tewm_disjunction fwom_usew_id 1 7])
    */
-  public Query rewrite(Query parsedQuery, List<Long> followedUserIds, UserTable userTable) {
-    Preconditions.checkState(followedUserIds != null && !followedUserIds.isEmpty(),
-        "'followedUserIds' should not be empty when positive 'protected' operator exists.");
-    Preconditions.checkState(
-        parsedQuery.isTypeOf(com.twitter.search.queryparser.query.Query.QueryType.CONJUNCTION),
-        ERROR_MESSAGE);
-    Conjunction parsedConjQuery = (Conjunction) parsedQuery;
-    List<Query> children = parsedConjQuery.getChildren();
-    int opIndex = findPositiveProtectedOperatorIndex(children);
-    Preconditions.checkState(opIndex >= 0, ERROR_MESSAGE);
-    SearchOperator protectedOp = (SearchOperator) children.get(opIndex);
+  pubwic quewy wewwite(quewy p-pawsedquewy, ʘwʘ wist<wong> fowwowedusewids, (˘ω˘) usewtabwe usewtabwe) {
+    pweconditions.checkstate(fowwowedusewids != nyuww && !fowwowedusewids.isempty(), (✿oωo)
+        "'fowwowedusewids' s-shouwd nyot be empty when p-positive 'pwotected' o-opewatow exists.");
+    p-pweconditions.checkstate(
+        pawsedquewy.istypeof(com.twittew.seawch.quewypawsew.quewy.quewy.quewytype.conjunction), (///ˬ///✿)
+        ewwow_message);
+    conjunction pawsedconjquewy = (conjunction) pawsedquewy;
+    w-wist<quewy> chiwdwen = p-pawsedconjquewy.getchiwdwen();
+    i-int opindex = f-findpositivepwotectedopewatowindex(chiwdwen);
+    pweconditions.checkstate(opindex >= 0, rawr x3 ewwow_message);
+    s-seawchopewatow p-pwotectedop = (seawchopewatow) c-chiwdwen.get(opindex);
 
-    ImmutableList.Builder<Query> otherChildrenBuilder = ImmutableList.builder();
-    otherChildrenBuilder.addAll(children.subList(0, opIndex));
-    if (opIndex + 1 < children.size()) {
-      otherChildrenBuilder.addAll(children.subList(opIndex + 1, children.size()));
+    immutabwewist.buiwdew<quewy> o-othewchiwdwenbuiwdew = i-immutabwewist.buiwdew();
+    othewchiwdwenbuiwdew.addaww(chiwdwen.subwist(0, -.- opindex));
+    if (opindex + 1 < chiwdwen.size()) {
+      o-othewchiwdwenbuiwdew.addaww(chiwdwen.subwist(opindex + 1, ^^ chiwdwen.size()));
     }
-    List<Query> otherChildren = otherChildrenBuilder.build();
+    wist<quewy> othewchiwdwen = othewchiwdwenbuiwdew.buiwd();
 
-    List<Long> protectedUserIds = getProtectedUserIds(followedUserIds, userTable);
-    if (protectedOp.getOperatorType() == SearchOperator.Type.FILTER) {
-      if (protectedUserIds.isEmpty()) {
-        // match none query
-        return Disjunction.EMPTY_DISJUNCTION;
-      } else {
-        return parsedConjQuery.newBuilder()
-            .setChildren(otherChildren)
-            .addChild(createFromUserIdMultiTermDisjunctionQuery(protectedUserIds))
-            .build();
+    wist<wong> pwotectedusewids = getpwotectedusewids(fowwowedusewids, (⑅˘꒳˘) u-usewtabwe);
+    if (pwotectedop.getopewatowtype() == seawchopewatow.type.fiwtew) {
+      if (pwotectedusewids.isempty()) {
+        // m-match nyone q-quewy
+        w-wetuwn disjunction.empty_disjunction;
+      } ewse {
+        w-wetuwn pawsedconjquewy.newbuiwdew()
+            .setchiwdwen(othewchiwdwen)
+            .addchiwd(cweatefwomusewidmuwtitewmdisjunctionquewy(pwotectedusewids))
+            .buiwd();
       }
-    } else {
-      // 'include' or negated 'exclude' operator
-      // negated 'exclude' is considered the same as 'include' to be consistent with the logic in
-      // EarlybirdLuceneQueryVisitor
-      if (protectedUserIds.isEmpty()) {
-        // return public only query
-        return parsedConjQuery.newBuilder()
-            .setChildren(otherChildren)
-            .addChild(EXCLUDE_PROTECTED_OPERATOR)
-            .build();
-      } else {
-        // build a disjunction of protected only query and public only query
-        Query protectedOnlyQuery = parsedConjQuery.newBuilder()
-            .setChildren(otherChildren)
-            .addChild(createFromUserIdMultiTermDisjunctionQuery(protectedUserIds))
-            .build();
-        Query publicOnlyQuery = parsedConjQuery.newBuilder()
-            .setChildren(otherChildren)
-            .addChild(EXCLUDE_PROTECTED_OPERATOR)
-            .build();
-        return new Disjunction(protectedOnlyQuery, publicOnlyQuery);
+    } ewse {
+      // 'incwude' o-ow n-nyegated 'excwude' opewatow
+      // nyegated 'excwude' is considewed the same as 'incwude' to be c-consistent with the wogic in
+      // e-eawwybiwdwucenequewyvisitow
+      if (pwotectedusewids.isempty()) {
+        // w-wetuwn pubwic o-onwy quewy
+        wetuwn pawsedconjquewy.newbuiwdew()
+            .setchiwdwen(othewchiwdwen)
+            .addchiwd(excwude_pwotected_opewatow)
+            .buiwd();
+      } ewse {
+        // b-buiwd a disjunction o-of pwotected onwy quewy a-and pubwic onwy q-quewy
+        quewy pwotectedonwyquewy = pawsedconjquewy.newbuiwdew()
+            .setchiwdwen(othewchiwdwen)
+            .addchiwd(cweatefwomusewidmuwtitewmdisjunctionquewy(pwotectedusewids))
+            .buiwd();
+        quewy pubwiconwyquewy = pawsedconjquewy.newbuiwdew()
+            .setchiwdwen(othewchiwdwen)
+            .addchiwd(excwude_pwotected_opewatow)
+            .buiwd();
+        w-wetuwn n-nyew disjunction(pwotectedonwyquewy, nyaa~~ p-pubwiconwyquewy);
       }
     }
   }
 
-  private Query createFromUserIdMultiTermDisjunctionQuery(List<Long> userIds) {
-    ImmutableList.Builder<String> operandsBuilder = ImmutableList.builder();
-    operandsBuilder
-        .add(EarlybirdFieldConstants.EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName());
-    for (Long userId : userIds) {
-      operandsBuilder.add(userId.toString());
+  pwivate quewy cweatefwomusewidmuwtitewmdisjunctionquewy(wist<wong> u-usewids) {
+    i-immutabwewist.buiwdew<stwing> opewandsbuiwdew = i-immutabwewist.buiwdew();
+    opewandsbuiwdew
+        .add(eawwybiwdfiewdconstants.eawwybiwdfiewdconstant.fwom_usew_id_fiewd.getfiewdname());
+    fow (wong usewid : usewids) {
+      opewandsbuiwdew.add(usewid.tostwing());
     }
-    List<String> operands = operandsBuilder.build();
-    return new SearchOperator(SearchOperator.Type.MULTI_TERM_DISJUNCTION, operands);
+    w-wist<stwing> o-opewands = opewandsbuiwdew.buiwd();
+    wetuwn nyew seawchopewatow(seawchopewatow.type.muwti_tewm_disjunction, /(^•ω•^) o-opewands);
   }
 
-  private List<Long> getProtectedUserIds(List<Long> followedUserIds, UserTable userTable) {
-    ImmutableList.Builder<Long> protectedUserIds = ImmutableList.builder();
-    for (Long userId : followedUserIds) {
-      if (userTable.isSet(userId, UserTable.IS_PROTECTED_BIT)) {
-        protectedUserIds.add(userId);
+  p-pwivate wist<wong> getpwotectedusewids(wist<wong> fowwowedusewids, (U ﹏ U) usewtabwe u-usewtabwe) {
+    immutabwewist.buiwdew<wong> pwotectedusewids = immutabwewist.buiwdew();
+    fow (wong usewid : f-fowwowedusewids) {
+      if (usewtabwe.isset(usewid, usewtabwe.is_pwotected_bit)) {
+        p-pwotectedusewids.add(usewid);
       }
     }
-    return protectedUserIds.build();
+    w-wetuwn pwotectedusewids.buiwd();
   }
 
-  private int findPositiveProtectedOperatorIndex(List<Query> children) {
-    for (int i = 0; i < children.size(); i++) {
-      Query child = children.get(i);
-      if (child instanceof SearchOperator) {
-        SearchOperator searchOp = (SearchOperator) child;
-        if (SearchOperatorConstants.PROTECTED.equals(searchOp.getOperand())
-            && (isNegateExclude(searchOp) || isPositive(searchOp))) {
-          return i;
+  pwivate int findpositivepwotectedopewatowindex(wist<quewy> chiwdwen) {
+    f-fow (int i = 0; i-i < chiwdwen.size(); i++) {
+      quewy chiwd = chiwdwen.get(i);
+      i-if (chiwd instanceof s-seawchopewatow) {
+        seawchopewatow seawchop = (seawchopewatow) chiwd;
+        i-if (seawchopewatowconstants.pwotected.equaws(seawchop.getopewand())
+            && (isnegateexcwude(seawchop) || ispositive(seawchop))) {
+          w-wetuwn i;
         }
       }
     }
 
-    return -1;
+    wetuwn -1;
   }
 
-  private boolean isNegateExclude(SearchOperator searchOp) {
-    return searchOp.mustNotOccur()
-        && searchOp.getOperatorType() == SearchOperator.Type.EXCLUDE;
+  p-pwivate boowean isnegateexcwude(seawchopewatow s-seawchop) {
+    wetuwn seawchop.mustnotoccuw()
+        && s-seawchop.getopewatowtype() == s-seawchopewatow.type.excwude;
   }
 
-  private boolean isPositive(SearchOperator searchOp) {
-    return !searchOp.mustNotOccur()
-        && (searchOp.getOperatorType() == SearchOperator.Type.INCLUDE
-        || searchOp.getOperatorType() == SearchOperator.Type.FILTER);
+  p-pwivate boowean ispositive(seawchopewatow s-seawchop) {
+    w-wetuwn !seawchop.mustnotoccuw()
+        && (seawchop.getopewatowtype() == seawchopewatow.type.incwude
+        || seawchop.getopewatowtype() == s-seawchopewatow.type.fiwtew);
   }
 }

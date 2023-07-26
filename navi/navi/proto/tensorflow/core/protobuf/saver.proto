@@ -1,48 +1,48 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "SaverProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.util";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_enabwe_awenas = t-twue;
+option java_outew_cwassname = "savewpwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+option java_package = "owg.tensowfwow.utiw";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Protocol buffer representing the configuration of a Saver.
-message SaverDef {
-  // The name of the tensor in which to specify the filename when saving or
-  // restoring a model checkpoint.
-  string filename_tensor_name = 1;
+// p-pwotocow buffew w-wepwesenting t-the configuwation o-of a savew. :3
+message savewdef {
+  // the nyame of the tensow in which to specify t-the fiwename when saving ow
+  // westowing a-a modew checkpoint. 😳😳😳
+  stwing fiwename_tensow_name = 1;
 
-  // The operation to run when saving a model checkpoint.
-  string save_tensor_name = 2;
+  // t-the opewation to wun when saving a modew checkpoint. (˘ω˘)
+  s-stwing save_tensow_name = 2;
 
-  // The operation to run when restoring a model checkpoint.
-  string restore_op_name = 3;
+  // the opewation t-to wun when w-westowing a modew checkpoint. ^^
+  stwing westowe_op_name = 3;
 
-  // Maximum number of checkpoints to keep.  If 0, no checkpoints are deleted.
+  // maximum nyumbew of checkpoints t-to keep. :3  if 0, nyo checkpoints awe deweted. -.-
   int32 max_to_keep = 4;
 
-  // Shard the save files, one per device that has Variable nodes.
-  bool sharded = 5;
+  // shawd t-the save fiwes, 😳 one pew device t-that has vawiabwe n-nyodes. mya
+  boow s-shawded = 5;
 
-  // How often to keep an additional checkpoint. If not specified, only the last
-  // "max_to_keep" checkpoints are kept; if specified, in addition to keeping
-  // the last "max_to_keep" checkpoints, an additional checkpoint will be kept
-  // for every n hours of training.
-  float keep_checkpoint_every_n_hours = 6;
+  // h-how often to keep an additionaw checkpoint. (˘ω˘) i-if nyot specified, onwy the wast
+  // "max_to_keep" checkpoints a-awe kept; if specified, >_< in addition to keeping
+  // the wast "max_to_keep" checkpoints, -.- an additionaw c-checkpoint wiww be kept
+  // f-fow evewy n-ny houws of twaining. 🥺
+  f-fwoat keep_checkpoint_evewy_n_houws = 6;
 
-  // A version number that identifies a different on-disk checkpoint format.
-  // Usually, each subclass of BaseSaverBuilder works with a particular
-  // version/format.  However, it is possible that the same builder may be
-  // upgraded to support a newer checkpoint format in the future.
-  enum CheckpointFormatVersion {
-    // Internal legacy format.
-    LEGACY = 0;
-    // Deprecated format: tf.Saver() which works with tensorflow::table::Table.
-    V1 = 1;
-    // Current format: more efficient.
-    V2 = 2;
+  // a vewsion nyumbew that identifies a diffewent o-on-disk checkpoint f-fowmat. (U ﹏ U)
+  // usuawwy, >w< each s-subcwass of basesavewbuiwdew w-wowks with a pawticuwaw
+  // vewsion/fowmat. mya  h-howevew, >w< it is possibwe t-that the same buiwdew may be
+  // upgwaded t-to suppowt a nyewew checkpoint f-fowmat in the futuwe. nyaa~~
+  enum checkpointfowmatvewsion {
+    // i-intewnaw w-wegacy fowmat. (✿oωo)
+    wegacy = 0;
+    // depwecated fowmat: tf.savew() which wowks with tensowfwow::tabwe::tabwe. ʘwʘ
+    v1 = 1;
+    // c-cuwwent f-fowmat: mowe efficient. (ˆ ﻌ ˆ)♡
+    v2 = 2;
   }
-  CheckpointFormatVersion version = 7;
+  c-checkpointfowmatvewsion v-vewsion = 7;
 }

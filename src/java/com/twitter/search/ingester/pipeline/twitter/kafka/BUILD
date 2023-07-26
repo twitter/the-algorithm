@@ -1,32 +1,32 @@
-java_library(
-    sources = ["*.java"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/commons-logging",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "decider/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common/util:system-mocks",
-        "src/java/com/twitter/common_internal/text/version",
-        "src/java/com/twitter/search/common/debug",
-        "src/java/com/twitter/search/common/decider",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/partitioning/base",
-        "src/java/com/twitter/search/common/relevance:entities_and_filters",
-        "src/java/com/twitter/search/common/util/io/kafka",
-        "src/java/com/twitter/search/common/util/thrift:text-protocol",
-        "src/java/com/twitter/search/ingester/model",
-        "src/java/com/twitter/search/ingester/pipeline/twitter",
-        "src/java/com/twitter/search/ingester/pipeline/util",
-        "src/java/com/twitter/search/ingester/pipeline/wire",
-        "src/java/org/apache/commons/pipeline",
-        "src/thrift/com/twitter/search/common:indexing-java",
-        "src/thrift/com/twitter/search/common:schema-java",
-        "src/thrift/com/twitter/search/common/debug:debug-java",
-        "util/util-core:util-core-util",
-        "util/util-core/src/main/java/com/twitter/util/javainterop",
+java_wibwawy(
+    souwces = ["*.java"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/commons-wogging", òωó
+        "3wdpawty/jvm/owg/apache/kafka:kafka-cwients", o.O
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", (U ᵕ U❁)
+        "decidew/swc/main/scawa", (⑅˘꒳˘)
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", ( ͡o ω ͡o )
+        "swc/java/com/twittew/common/base", UwU
+        "swc/java/com/twittew/common/utiw:system-mocks", rawr x3
+        "swc/java/com/twittew/common_intewnaw/text/vewsion", rawr
+        "swc/java/com/twittew/seawch/common/debug", σωσ
+        "swc/java/com/twittew/seawch/common/decidew", σωσ
+        "swc/java/com/twittew/seawch/common/metwics", >_<
+        "swc/java/com/twittew/seawch/common/pawtitioning/base", :3
+        "swc/java/com/twittew/seawch/common/wewevance:entities_and_fiwtews", (U ﹏ U)
+        "swc/java/com/twittew/seawch/common/utiw/io/kafka", -.-
+        "swc/java/com/twittew/seawch/common/utiw/thwift:text-pwotocow", (ˆ ﻌ ˆ)♡
+        "swc/java/com/twittew/seawch/ingestew/modew", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/ingestew/pipewine/twittew", (U ᵕ U❁)
+        "swc/java/com/twittew/seawch/ingestew/pipewine/utiw", -.-
+        "swc/java/com/twittew/seawch/ingestew/pipewine/wiwe", ^^;;
+        "swc/java/owg/apache/commons/pipewine", >_<
+        "swc/thwift/com/twittew/seawch/common:indexing-java", mya
+        "swc/thwift/com/twittew/seawch/common:schema-java", mya
+        "swc/thwift/com/twittew/seawch/common/debug:debug-java", 😳
+        "utiw/utiw-cowe:utiw-cowe-utiw", XD
+        "utiw/utiw-cowe/swc/main/java/com/twittew/utiw/javaintewop", :3
     ],
 )

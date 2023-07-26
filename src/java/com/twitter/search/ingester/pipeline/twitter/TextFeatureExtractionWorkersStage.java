@@ -1,145 +1,145 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import javax.naming.NamingException;
+impowt java.utiw.concuwwent.bwockingqueue;
+i-impowt java.utiw.concuwwent.executowsewvice;
+i-impowt j-javax.naming.namingexception;
 
-import com.google.common.collect.Queues;
+i-impowt com.googwe.common.cowwect.queues;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.apache.commons.pipewine.stageexception;
+i-impowt owg.apache.commons.pipewine.vawidation.consumedtypes;
+i-impowt owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.text.TweetParser;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+i-impowt com.twittew.seawch.common.metwics.seawchcustomgauge;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+i-impowt com.twittew.seawch.common.wewevance.text.tweetpawsew;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestagewuntimeexception;
 
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class TextFeatureExtractionWorkersStage extends TwitterBaseStage
-    <TwitterMessage, TwitterMessage> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(TextFeatureExtractionWorkersStage.class);
+@consumedtypes(twittewmessage.cwass)
+@pwoducesconsumed
+p-pubwic cwass textfeatuweextwactionwowkewsstage extends twittewbasestage
+    <twittewmessage, >w< t-twittewmessage> {
+  pwivate s-static finaw woggew w-wog =
+      woggewfactowy.getwoggew(textfeatuweextwactionwowkewsstage.cwass);
 
-  private static final int NUM_THREADS = 5;
-  private static final int MAX_QUEUE_SIZE = 100;
-  private static final long SLOW_TWEET_TIME_MILLIS = 1000;
-  private ExecutorService executorService = null;
+  pwivate static finaw int nyum_thweads = 5;
+  p-pwivate static finaw int max_queue_size = 100;
+  pwivate static finaw wong swow_tweet_time_miwwis = 1000;
+  pwivate executowsewvice e-executowsewvice = nyuww;
 
-  // define as static so that FeatureExtractorWorker thread can use it
-  private static SearchRateCounter slowTweetCounter;
-  private SearchRateCounter threadErrorCounter;
-  private SearchRateCounter threadInterruptionCounter;
-  private final BlockingQueue<TwitterMessage> messageQueue =
-      Queues.newLinkedBlockingQueue(MAX_QUEUE_SIZE);
-  private TweetParser tweetParser;
+  // d-define as s-static so that f-featuweextwactowwowkew t-thwead can use it
+  pwivate static seawchwatecountew s-swowtweetcountew;
+  pwivate seawchwatecountew thweadewwowcountew;
+  p-pwivate seawchwatecountew thweadintewwuptioncountew;
+  pwivate finaw bwockingqueue<twittewmessage> messagequeue =
+      queues.newwinkedbwockingqueue(max_queue_size);
+  p-pwivate tweetpawsew tweetpawsew;
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @ovewwide
+  p-pubwic v-void initstats() {
+    s-supew.initstats();
+    innewsetupstats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    slowTweetCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_feature_extraction_slow_tweet_count");
-    SearchCustomGauge.export(getStageNamePrefix() + "_queue_size",
-        messageQueue::size);
-    threadErrorCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_thread_error");
-    threadInterruptionCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_thread_interruption");
+  @ovewwide
+  pwotected void innewsetupstats() {
+    s-swowtweetcountew = s-seawchwatecountew.expowt(
+        getstagenamepwefix() + "_text_featuwe_extwaction_swow_tweet_count");
+    s-seawchcustomgauge.expowt(getstagenamepwefix() + "_queue_size", 😳😳😳
+        m-messagequeue::size);
+    thweadewwowcountew = s-seawchwatecountew.expowt(
+        getstagenamepwefix() + "_text_quawity_evawuation_thwead_ewwow");
+    t-thweadintewwuptioncountew = seawchwatecountew.expowt(
+        getstagenamepwefix() + "_text_quawity_evawuation_thwead_intewwuption");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    innerSetup();
-    // anything threading related, we don't need in V2 as of yet.
-    executorService = wireModule.getThreadPool(NUM_THREADS);
-    for (int i = 0; i < NUM_THREADS; ++i) {
-      executorService.submit(new FeatureExtractorWorker());
+  @ovewwide
+  p-pwotected void doinnewpwepwocess() t-thwows stageexception, OwO nyamingexception {
+    innewsetup();
+    // a-anything thweading w-wewated, 😳 we don't nyeed in v2 as of yet. 😳😳😳
+    executowsewvice = wiwemoduwe.getthweadpoow(num_thweads);
+    fow (int i = 0; i < nyum_thweads; ++i) {
+      e-executowsewvice.submit(new f-featuweextwactowwowkew());
     }
-    LOG.info("Initialized {} parsers.", NUM_THREADS);
+    wog.info("initiawized {} p-pawsews.", (˘ω˘) n-num_thweads);
   }
 
-  @Override
-  protected void innerSetup() {
-    tweetParser = new TweetParser();
+  @ovewwide
+  p-pwotected void innewsetup() {
+    tweetpawsew = nyew tweetpawsew();
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof TwitterMessage)) {
-      LOG.error("Object is not a TwitterMessage object: {}", obj);
-      return;
+  @ovewwide
+  p-pubwic void innewpwocess(object obj) thwows stageexception {
+    if (!(obj i-instanceof twittewmessage)) {
+      w-wog.ewwow("object i-is n-nyot a twittewmessage object: {}", ʘwʘ o-obj);
+      wetuwn;
     }
 
-    TwitterMessage message = TwitterMessage.class.cast(obj);
-    try {
-      messageQueue.put(message);
-    } catch (InterruptedException ie) {
-      LOG.error("Interrupted exception adding to the queue", ie);
+    t-twittewmessage m-message = twittewmessage.cwass.cast(obj);
+    twy {
+      m-messagequeue.put(message);
+    } catch (intewwuptedexception ie) {
+      w-wog.ewwow("intewwupted e-exception a-adding to the q-queue", ( ͡o ω ͡o ) ie);
     }
   }
 
-  private boolean tryToParse(TwitterMessage message) {
-    boolean isAbleToParse = false;
-    long startTime = clock.nowMillis();
-    // Parse tweet and merge the parsed out features into what we already have in the message.
-    try {
-      synchronized (this) {
-        tweetParser.parseTweet(message, false, false);
+  p-pwivate boowean twytopawse(twittewmessage message) {
+    boowean isabwetopawse = f-fawse;
+    wong stawttime = cwock.nowmiwwis();
+    // pawse tweet and mewge the pawsed out featuwes i-into nyani we awweady have in the message. o.O
+    twy {
+      synchwonized (this) {
+        t-tweetpawsew.pawsetweet(message, >w< f-fawse, 😳 f-fawse);
       }
-      // If parsing failed we don't need to pass the tweet down the pipeline.
-      isAbleToParse = true;
-    } catch (Exception e) {
-      threadErrorCounter.increment();
-      LOG.error("Uncaught exception from tweetParser.parseTweet()", e);
-    } finally {
-      long elapsedTime = clock.nowMillis() - startTime;
-      if (elapsedTime > SLOW_TWEET_TIME_MILLIS) {
-        LOG.debug("Took {}ms to parse tweet {}: {}", elapsedTime, message.getId(), message);
-        slowTweetCounter.increment();
+      // if pawsing f-faiwed we don't nyeed to pass t-the tweet down t-the pipewine. 🥺
+      isabwetopawse = twue;
+    } catch (exception e) {
+      thweadewwowcountew.incwement();
+      wog.ewwow("uncaught e-exception fwom tweetpawsew.pawsetweet()", rawr x3 e-e);
+    } finawwy {
+      wong e-ewapsedtime = c-cwock.nowmiwwis() - stawttime;
+      if (ewapsedtime > s-swow_tweet_time_miwwis) {
+        w-wog.debug("took {}ms to p-pawse tweet {}: {}", o.O e-ewapsedtime, rawr message.getid(), ʘwʘ message);
+        swowtweetcountew.incwement();
       }
     }
-    return isAbleToParse;
+    wetuwn isabwetopawse;
   }
 
-  @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
-    if (!tryToParse(message)) {
-      throw new PipelineStageRuntimeException("Failed to parse, not passing to next stage.");
+  @ovewwide
+  pwotected t-twittewmessage i-innewwunstagev2(twittewmessage m-message) {
+    if (!twytopawse(message)) {
+      t-thwow nyew p-pipewinestagewuntimeexception("faiwed to pawse, 😳😳😳 n-nyot passing to nyext stage.");
     }
 
-    return message;
+    wetuwn message;
   }
 
-  @Override
-  public void innerPostprocess() {
-    if (executorService != null) {
-      executorService.shutdownNow();
+  @ovewwide
+  pubwic void innewpostpwocess() {
+    i-if (executowsewvice != n-nyuww) {
+      executowsewvice.shutdownnow();
     }
-    executorService = null;
+    executowsewvice = n-nyuww;
   }
 
-  private class FeatureExtractorWorker implements Runnable {
-    public void run() {
-      while (!Thread.currentThread().isInterrupted()) {
-        TwitterMessage message = null;
-        try {
-          message = messageQueue.take();
-        } catch (InterruptedException ie) {
-          threadInterruptionCounter.increment();
-          LOG.error("Interrupted exception polling from the queue", ie);
+  p-pwivate cwass featuweextwactowwowkew impwements wunnabwe {
+    p-pubwic void wun() {
+      whiwe (!thwead.cuwwentthwead().isintewwupted()) {
+        twittewmessage message = nyuww;
+        t-twy {
+          message = messagequeue.take();
+        } catch (intewwuptedexception i-ie) {
+          t-thweadintewwuptioncountew.incwement();
+          wog.ewwow("intewwupted exception powwing fwom t-the queue", ^^;; i-ie);
           continue;
-        } finally {
-          if (tryToParse(message)) {
-            emitAndCount(message);
+        } finawwy {
+          if (twytopawse(message)) {
+            emitandcount(message);
           }
         }
       }

@@ -1,12 +1,12 @@
-scala_library(
-    name = "fixture",
-    sources = ["EnricherFixture.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/org/scalatest",
-        "3rdparty/jvm/org/scalatestplus:junit",
-        "finatra/inject/inject-core/src/test/scala/com/twitter/inject",
-        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
-    ],
+junit_tests(
+    souwces = ["**/*.scawa"], ^•ﻌ•^
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/junit", òωó
+        "3wdpawty/jvm/owg/scawatest", o.O
+        "3wdpawty/jvm/owg/scawatestpwus:junit", (U ᵕ U❁)
+        "finatwa/inject/inject-cowe/swc/test/scawa:test-deps", (⑅˘꒳˘)
+        "unified_usew_actions/cwient/swc/main/scawa/com/twittew/unified_usew_actions/cwient/config", ( ͡o ω ͡o )
+    ], UwU
 )

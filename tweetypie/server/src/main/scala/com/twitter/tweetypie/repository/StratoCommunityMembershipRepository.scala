@@ -1,19 +1,19 @@
-package com.twitter.tweetypie.repository
+package com.twittew.tweetypie.wepositowy
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.CommunityId
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
+impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.communityid
+i-impowt com.twittew.stwato.cwient.fetchew
+i-impowt c-com.twittew.stwato.cwient.{cwient => s-stwatocwient}
 
-object StratoCommunityMembershipRepository {
-  type Type = CommunityId => Stitch[Boolean]
+o-object stwatocommunitymembewshipwepositowy {
+  type type = communityid => stitch[boowean]
 
-  val column = "communities/isMember.Community"
+  vaw cowumn = "communities/ismembew.community"
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[CommunityId, Unit, Boolean] =
-      client.fetcher[CommunityId, Boolean](column)
+  d-def appwy(cwient: stwatocwient): type = {
+    v-vaw fetchew: fetchew[communityid, -.- u-unit, ^^;; boowean] =
+      cwient.fetchew[communityid, >_< boowean](cowumn)
 
-    communityId => fetcher.fetch(communityId).map(_.v.getOrElse(false))
+    communityid => f-fetchew.fetch(communityid).map(_.v.getowewse(fawse))
   }
 }

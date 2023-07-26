@@ -1,5 +1,5 @@
-package com.twitter.visibility.interfaces.search
+package com.twittew.visibiwity.intewfaces.seawch
 
-case class BatchSearchVisibilityResponse(
-  visibilityResults: Map[Long, CombinedVisibilityResult],
-  failedTweetIds: Seq[Long])
+case cwass batchseawchvisibiwitywesponse(
+  v-visibiwitywesuwts: m-map[wong, 🥺 combinedvisibiwitywesuwt], òωó
+  f-faiwedtweetids: s-seq[wong])

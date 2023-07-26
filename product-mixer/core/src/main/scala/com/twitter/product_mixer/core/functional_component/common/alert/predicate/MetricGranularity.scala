@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.functional_component.common.alert.predicate
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate
 
 /**
- * Specifies the metric granularity
+ * specifies t-the metwic gwanuwawity
  *
- * @see [[https://docbird.twitter.biz/mon/reference.html#predicate DURATION]]
+ * @see [[https://docbiwd.twittew.biz/mon/wefewence.htmw#pwedicate d-duwation]]
  */
-sealed trait MetricGranularity { val unit: String }
+s-seawed twait metwicgwanuwawity { v-vaw unit: stwing }
 
 /**
- * Use minutely metrics and have alert durations in terms of minutes
+ * u-use m-minutewy metwics a-and have awewt d-duwations in tewms of minutes
  *
- * i.e. for a [[Predicate]] if [[Predicate.datapointsPastThreshold]] = 5 and [[Predicate.duration]] = 10
- * then the alert will trigger if there are at least 5 '''minutely''' metric points that are past the threshold
- * in any 10 '''minute''' period
+ * i.e. OwO fow a [[pwedicate]] if [[pwedicate.datapointspastthweshowd]] = 5 and [[pwedicate.duwation]] = 10
+ * t-then the awewt wiww twiggew if thewe a-awe at weast 5 '''minutewy''' metwic points that a-awe past the thweshowd
+ * in any 10 '''minute''' pewiod
  */
-case object Minutes extends MetricGranularity { override val unit: String = "m" }
+case o-object minutes extends metwicgwanuwawity { ovewwide v-vaw unit: s-stwing = "m" }
 
 /**
- * Use hourly metrics and have alert durations in terms of hours
+ * use houwwy metwics and have awewt duwations in tewms of h-houws
  *
- * i.e. for a [[Predicate]] if [[Predicate.datapointsPastThreshold]] = 5 and [[Predicate.duration]] = 10
- * then the alert will trigger if there are at least 5 '''hourly''' metric points that are past the threshold
- * in any 10 '''hour''' period
+ * i.e. fow a [[pwedicate]] if [[pwedicate.datapointspastthweshowd]] = 5 and [[pwedicate.duwation]] = 10
+ * then the awewt w-wiww twiggew if thewe awe at w-weast 5 '''houwwy''' m-metwic points t-that awe past t-the thweshowd
+ * in any 10 '''houw''' pewiod
  */
-case object Hours extends MetricGranularity { override val unit: String = "h" }
+c-case object houws extends metwicgwanuwawity { ovewwide vaw unit: s-stwing = "h" }
 
 /**
- * Use daily metrics and have alert durations in terms of days
+ * use daiwy metwics and have awewt duwations in tewms of days
  *
- * i.e. for a [[Predicate]] if [[Predicate.datapointsPastThreshold]] = 5 and [[Predicate.duration]] = 10
- * then the alert will trigger if there are at least 5 '''daily''' metric points that are past the threshold
- * in any 10 '''day''' period
+ * i.e. 😳😳😳 f-fow a [[pwedicate]] if [[pwedicate.datapointspastthweshowd]] = 5 a-and [[pwedicate.duwation]] = 10
+ * t-then the a-awewt wiww twiggew if thewe awe at weast 5 '''daiwy''' metwic points t-that awe past t-the thweshowd
+ * in any 10 '''day''' p-pewiod
  */
-case object Days extends MetricGranularity { override val unit: String = "d" }
+c-case object days extends metwicgwanuwawity { o-ovewwide vaw unit: stwing = "d" }

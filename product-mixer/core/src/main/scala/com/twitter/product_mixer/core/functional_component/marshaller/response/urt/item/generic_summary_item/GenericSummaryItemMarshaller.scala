@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.genewic_summawy_item
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.MediaMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.media.mediamawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.pwomotedmetadatamawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.genewic_summawy.genewicsummawyitem
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class GenericSummaryItemMarshaller @Inject() (
-  genericSummaryDisplayTypeMarshaller: GenericSummaryDisplayTypeMarshaller,
-  genericSummaryContextMarshaller: GenericSummaryContextMarshaller,
-  genericSummaryActionMarshaller: GenericSummaryActionMarshaller,
-  mediaMarshaller: MediaMarshaller,
-  promotedMetadataMarshaller: PromotedMetadataMarshaller,
-  richTextMarshaller: RichTextMarshaller) {
+@singweton
+c-cwass genewicsummawyitemmawshawwew @inject() (
+  genewicsummawydispwaytypemawshawwew: genewicsummawydispwaytypemawshawwew, (⑅˘꒳˘)
+  g-genewicsummawycontextmawshawwew: genewicsummawycontextmawshawwew, rawr x3
+  g-genewicsummawyactionmawshawwew: genewicsummawyactionmawshawwew, (✿oωo)
+  mediamawshawwew: mediamawshawwew, (ˆ ﻌ ˆ)♡
+  pwomotedmetadatamawshawwew: p-pwomotedmetadatamawshawwew, (˘ω˘)
+  wichtextmawshawwew: w-wichtextmawshawwew) {
 
-  def apply(genericSummaryItem: GenericSummaryItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.GenericSummary(
-      urt.GenericSummary(
-        headline = richTextMarshaller(genericSummaryItem.headline),
-        displayType = genericSummaryDisplayTypeMarshaller(genericSummaryItem.displayType),
-        userAttributionIds = genericSummaryItem.userAttributionIds,
-        media = genericSummaryItem.media.map(mediaMarshaller(_)),
-        context = genericSummaryItem.context.map(genericSummaryContextMarshaller(_)),
-        timestamp = genericSummaryItem.timestamp.map(_.inMilliseconds),
-        onClickAction = genericSummaryItem.onClickAction.map(genericSummaryActionMarshaller(_)),
-        promotedMetadata = genericSummaryItem.promotedMetadata.map(promotedMetadataMarshaller(_))
+  d-def appwy(genewicsummawyitem: genewicsummawyitem): uwt.timewineitemcontent =
+    uwt.timewineitemcontent.genewicsummawy(
+      uwt.genewicsummawy(
+        h-headwine = wichtextmawshawwew(genewicsummawyitem.headwine), (⑅˘꒳˘)
+        dispwaytype = genewicsummawydispwaytypemawshawwew(genewicsummawyitem.dispwaytype), (///ˬ///✿)
+        usewattwibutionids = genewicsummawyitem.usewattwibutionids, 😳😳😳
+        m-media = genewicsummawyitem.media.map(mediamawshawwew(_)), 🥺
+        context = g-genewicsummawyitem.context.map(genewicsummawycontextmawshawwew(_)), mya
+        t-timestamp = g-genewicsummawyitem.timestamp.map(_.inmiwwiseconds), 🥺
+        o-oncwickaction = genewicsummawyitem.oncwickaction.map(genewicsummawyactionmawshawwew(_)), >_<
+        pwomotedmetadata = g-genewicsummawyitem.pwomotedmetadata.map(pwomotedmetadatamawshawwew(_))
       )
     )
 }

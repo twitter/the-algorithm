@@ -1,18 +1,18 @@
-java_library(
-    sources = ["*.java"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "3rdparty/jvm/commons-lang",
-        "3rdparty/jvm/org/apache/thrift",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/thrift/com/twitter/ann/common:ann-common-java",
-        "mediaservices/commons/src/main/scala:futuretracker",
-        "scrooge/scrooge-core",
-        "src/java/com/twitter/search/common/file",
+java_wibwawy(
+    souwces = ["*.java"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    p-pwatfowm = "java8",
+    t-tags = ["bazew-compatibwe"], òωó
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/guava", o.O
+        "3wdpawty/jvm/com/googwe/inject:guice", (U ᵕ U❁)
+        "3wdpawty/jvm/com/twittew/bijection:cowe", (⑅˘꒳˘)
+        "3wdpawty/jvm/commons-wang", ( ͡o ω ͡o )
+        "3wdpawty/jvm/owg/apache/thwift", UwU
+        "ann/swc/main/scawa/com/twittew/ann/common", rawr x3
+        "ann/swc/main/thwift/com/twittew/ann/common:ann-common-java",
+        "mediasewvices/commons/swc/main/scawa:futuwetwackew", rawr
+        "scwooge/scwooge-cowe", σωσ
+        "swc/java/com/twittew/seawch/common/fiwe", σωσ
     ],
 )

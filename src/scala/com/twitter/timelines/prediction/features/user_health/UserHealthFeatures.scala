@@ -1,23 +1,23 @@
-package com.twitter.timelines.prediction.features.user_health
+package com.twittew.timewines.pwediction.featuwes.usew_heawth
 
-import com.twitter.ml.api.Feature
-import com.twitter.timelines.author_features.user_health.thriftscala.UserState
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType.{UserState => UserStatePDT}
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import scala.collection.JavaConverters._
+impowt c-com.twittew.mw.api.featuwe
+i-impowt com.twittew.timewines.authow_featuwes.usew_heawth.thwiftscawa.usewstate
+impowt c-com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype.{usewstate => u-usewstatepdt}
+i-impowt c-com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+impowt s-scawa.cowwection.javaconvewtews._
 
-object UserHealthFeatures {
-  val UserState = new Feature.Discrete("user_health.user_state", Set(UserStatePDT, UserType).asJava)
-  val IsLightMinusUser =
-    new Feature.Binary("user_health.is_light_minus_user", Set(UserStatePDT, UserType).asJava)
-  val AuthorState =
-    new Feature.Discrete("user_health.author_state", Set(UserStatePDT, UserType).asJava)
-  val NumAuthorFollowers =
-    new Feature.Continuous("author_health.num_followers", Set(CountOfFollowersAndFollowees).asJava)
-  val NumAuthorConnectDays = new Feature.Continuous("author_health.num_connect_days")
-  val NumAuthorConnect = new Feature.Continuous("author_health.num_connect")
+o-object usewheawthfeatuwes {
+  vaw usewstate = nyew featuwe.discwete("usew_heawth.usew_state", /(^•ω•^) set(usewstatepdt, rawr u-usewtype).asjava)
+  vaw iswightminususew =
+    n-nyew featuwe.binawy("usew_heawth.is_wight_minus_usew", OwO set(usewstatepdt, (U ﹏ U) usewtype).asjava)
+  v-vaw authowstate =
+    nyew featuwe.discwete("usew_heawth.authow_state", >_< set(usewstatepdt, rawr x3 usewtype).asjava)
+  v-vaw nyumauthowfowwowews =
+    nyew featuwe.continuous("authow_heawth.num_fowwowews", s-set(countoffowwowewsandfowwowees).asjava)
+  v-vaw nyumauthowconnectdays = nyew featuwe.continuous("authow_heawth.num_connect_days")
+  vaw nyumauthowconnect = nyew featuwe.continuous("authow_heawth.num_connect")
 
-  val IsUserVerifiedUnion = new Feature.Binary("user_account.is_user_verified_union")
+  v-vaw isusewvewifiedunion = nyew featuwe.binawy("usew_account.is_usew_vewified_union")
 }
 
-case class UserHealthFeatures(id: Long, userStateOpt: Option[UserState])
+case cwass usewheawthfeatuwes(id: wong, mya usewstateopt: o-option[usewstate])

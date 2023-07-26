@@ -1,28 +1,28 @@
-package com.twitter.ann.common
+package com.twittew.ann.common
 
-import com.twitter.bijection.{Bijection, Injection}
+impowt com.twittew.bijection.{bijection, >_< i-injection}
 
-// Class providing commonly used injections that can be used directly with ANN apis.
-// Injection  prefixed with `J` can be used in java directly with ANN apis.
-object AnnInjections {
-  val LongInjection: Injection[Long, Array[Byte]] = Injection.long2BigEndian
+// c-cwass pwoviding c-commonwy u-used injections t-that can be used d-diwectwy with ann a-apis. rawr x3
+// injection  p-pwefixed with `j` can be used in java diwectwy with ann apis. mya
+object anninjections {
+  v-vaw wonginjection: injection[wong, nyaa~~ a-awway[byte]] = injection.wong2bigendian
 
-  def StringInjection: Injection[String, Array[Byte]] = Injection.utf8
+  d-def stwinginjection: injection[stwing, (⑅˘꒳˘) awway[byte]] = i-injection.utf8
 
-  def IntInjection: Injection[Int, Array[Byte]] = Injection.int2BigEndian
+  def intinjection: i-injection[int, rawr x3 a-awway[byte]] = injection.int2bigendian
 
-  val JLongInjection: Injection[java.lang.Long, Array[Byte]] =
-    Bijection.long2Boxed
-      .asInstanceOf[Bijection[Long, java.lang.Long]]
-      .inverse
-      .andThen(LongInjection)
+  vaw jwonginjection: injection[java.wang.wong, (✿oωo) awway[byte]] =
+    b-bijection.wong2boxed
+      .asinstanceof[bijection[wong, (ˆ ﻌ ˆ)♡ java.wang.wong]]
+      .invewse
+      .andthen(wonginjection)
 
-  val JStringInjection: Injection[java.lang.String, Array[Byte]] =
-    StringInjection
+  vaw jstwinginjection: injection[java.wang.stwing, (˘ω˘) awway[byte]] =
+    stwinginjection
 
-  val JIntInjection: Injection[java.lang.Integer, Array[Byte]] =
-    Bijection.int2Boxed
-      .asInstanceOf[Bijection[Int, java.lang.Integer]]
-      .inverse
-      .andThen(IntInjection)
+  v-vaw jintinjection: injection[java.wang.integew, (⑅˘꒳˘) a-awway[byte]] =
+    b-bijection.int2boxed
+      .asinstanceof[bijection[int, j-java.wang.integew]]
+      .invewse
+      .andthen(intinjection)
 }

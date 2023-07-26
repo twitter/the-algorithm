@@ -1,157 +1,157 @@
-package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.wecent_engagement
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.dds.jobs.repeated_profile_visits.thriftscala.ProfileVisitorInfo
-import com.twitter.experiments.general_metrics.thriftscala.IdType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.Engagement
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import com.twitter.hermit.model.Algorithm
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.rux.RepeatedProfileVisitsAggregateClientColumn
+impowt com.googwe.inject.inject
+i-impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.dds.jobs.wepeated_pwofiwe_visits.thwiftscawa.pwofiwevisitowinfo
+i-impowt c-com.twittew.expewiments.genewaw_metwics.thwiftscawa.idtype
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.weaw_time_weaw_gwaph.engagement
+impowt com.twittew.fowwow_wecommendations.common.cwients.weaw_time_weaw_gwaph.weawtimeweawgwaphcwient
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.timewines.configapi.haspawams
+impowt com.twittew.timewines.configapi.pawams
+impowt com.twittew.hewmit.modew.awgowithm
+i-impowt com.twittew.inject.wogging
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.genewated.cwient.wux.wepeatedpwofiwevisitsaggwegatecwientcowumn
 
-@Singleton
-class RepeatedProfileVisitsSource @Inject() (
-  repeatedProfileVisitsAggregateClientColumn: RepeatedProfileVisitsAggregateClientColumn,
-  realTimeRealGraphClient: RealTimeRealGraphClient,
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser]
-    with Logging {
+@singweton
+c-cwass wepeatedpwofiwevisitssouwce @inject() (
+  wepeatedpwofiwevisitsaggwegatecwientcowumn: wepeatedpwofiwevisitsaggwegatecwientcowumn, -.-
+  weawtimeweawgwaphcwient: weawtimeweawgwaphcwient, ^^
+  s-statsweceivew: statsweceivew)
+    extends candidatesouwce[haspawams with h-hascwientcontext, (⑅˘꒳˘) candidateusew]
+    w-with wogging {
 
-  val identifier: CandidateSourceIdentifier =
-    RepeatedProfileVisitsSource.Identifier
+  v-vaw identifiew: c-candidatesouwceidentifiew =
+    w-wepeatedpwofiwevisitssouwce.identifiew
 
-  val sourceStatsReceiver = statsReceiver.scope("repeated_profile_visits_source")
-  val offlineFetchErrorCounter = sourceStatsReceiver.counter("offline_fetch_error")
-  val offlineFetchSuccessCounter = sourceStatsReceiver.counter("offline_fetch_success")
-  val onlineFetchErrorCounter = sourceStatsReceiver.counter("online_fetch_error")
-  val onlineFetchSuccessCounter = sourceStatsReceiver.counter("online_fetch_success")
-  val noRepeatedProfileVisitsAboveBucketingThresholdCounter =
-    sourceStatsReceiver.counter("no_repeated_profile_visits_above_bucketing_threshold")
-  val hasRepeatedProfileVisitsAboveBucketingThresholdCounter =
-    sourceStatsReceiver.counter("has_repeated_profile_visits_above_bucketing_threshold")
-  val noRepeatedProfileVisitsAboveRecommendationsThresholdCounter =
-    sourceStatsReceiver.counter("no_repeated_profile_visits_above_recommendations_threshold")
-  val hasRepeatedProfileVisitsAboveRecommendationsThresholdCounter =
-    sourceStatsReceiver.counter("has_repeated_profile_visits_above_recommendations_threshold")
-  val includeCandidatesCounter = sourceStatsReceiver.counter("include_candidates")
-  val noIncludeCandidatesCounter = sourceStatsReceiver.counter("no_include_candidates")
+  vaw souwcestatsweceivew = statsweceivew.scope("wepeated_pwofiwe_visits_souwce")
+  v-vaw offwinefetchewwowcountew = souwcestatsweceivew.countew("offwine_fetch_ewwow")
+  vaw offwinefetchsuccesscountew = s-souwcestatsweceivew.countew("offwine_fetch_success")
+  vaw onwinefetchewwowcountew = souwcestatsweceivew.countew("onwine_fetch_ewwow")
+  vaw onwinefetchsuccesscountew = souwcestatsweceivew.countew("onwine_fetch_success")
+  vaw nyowepeatedpwofiwevisitsabovebucketingthweshowdcountew =
+    s-souwcestatsweceivew.countew("no_wepeated_pwofiwe_visits_above_bucketing_thweshowd")
+  vaw h-haswepeatedpwofiwevisitsabovebucketingthweshowdcountew =
+    souwcestatsweceivew.countew("has_wepeated_pwofiwe_visits_above_bucketing_thweshowd")
+  v-vaw nyowepeatedpwofiwevisitsabovewecommendationsthweshowdcountew =
+    s-souwcestatsweceivew.countew("no_wepeated_pwofiwe_visits_above_wecommendations_thweshowd")
+  vaw haswepeatedpwofiwevisitsabovewecommendationsthweshowdcountew =
+    souwcestatsweceivew.countew("has_wepeated_pwofiwe_visits_above_wecommendations_thweshowd")
+  vaw i-incwudecandidatescountew = s-souwcestatsweceivew.countew("incwude_candidates")
+  vaw nyoincwudecandidatescountew = s-souwcestatsweceivew.countew("no_incwude_candidates")
 
-  // Returns visited user -> visit count, via off dataset.
-  def applyWithOfflineDataset(targetUserId: Long): Stitch[Map[Long, Int]] = {
-    repeatedProfileVisitsAggregateClientColumn.fetcher
-      .fetch(ProfileVisitorInfo(id = targetUserId, idType = IdType.User)).map(_.v)
-      .handle {
-        case e: Throwable =>
-          logger.error("Strato fetch for RepeatedProfileVisitsAggregateClientColumn failed: " + e)
-          offlineFetchErrorCounter.incr()
-          None
-      }.onSuccess { result =>
-        offlineFetchSuccessCounter.incr()
-      }.map { resultOption =>
-        resultOption
-          .flatMap { result =>
-            result.profileVisitSet.map { profileVisitSet =>
-              profileVisitSet
-                .filter(profileVisit => profileVisit.totalTargetVisitsInLast14Days.getOrElse(0) > 0)
-                .filter(profileVisit => !profileVisit.doesSourceIdFollowTargetId.getOrElse(false))
-                .flatMap { profileVisit =>
-                  (profileVisit.targetId, profileVisit.totalTargetVisitsInLast14Days) match {
-                    case (Some(targetId), Some(totalVisitsInLast14Days)) =>
-                      Some(targetId -> totalVisitsInLast14Days)
-                    case _ => None
+  // w-wetuwns visited usew -> v-visit count, via off dataset. nyaa~~
+  d-def appwywithoffwinedataset(tawgetusewid: wong): stitch[map[wong, /(^•ω•^) int]] = {
+    w-wepeatedpwofiwevisitsaggwegatecwientcowumn.fetchew
+      .fetch(pwofiwevisitowinfo(id = tawgetusewid, (U ﹏ U) i-idtype = idtype.usew)).map(_.v)
+      .handwe {
+        c-case e: thwowabwe =>
+          w-woggew.ewwow("stwato fetch fow wepeatedpwofiwevisitsaggwegatecwientcowumn faiwed: " + e)
+          offwinefetchewwowcountew.incw()
+          nyone
+      }.onsuccess { wesuwt =>
+        o-offwinefetchsuccesscountew.incw()
+      }.map { w-wesuwtoption =>
+        wesuwtoption
+          .fwatmap { w-wesuwt =>
+            w-wesuwt.pwofiwevisitset.map { p-pwofiwevisitset =>
+              pwofiwevisitset
+                .fiwtew(pwofiwevisit => pwofiwevisit.totawtawgetvisitsinwast14days.getowewse(0) > 0)
+                .fiwtew(pwofiwevisit => !pwofiwevisit.doessouwceidfowwowtawgetid.getowewse(fawse))
+                .fwatmap { pwofiwevisit =>
+                  (pwofiwevisit.tawgetid, 😳😳😳 p-pwofiwevisit.totawtawgetvisitsinwast14days) match {
+                    case (some(tawgetid), >w< some(totawvisitsinwast14days)) =>
+                      some(tawgetid -> t-totawvisitsinwast14days)
+                    case _ => n-nyone
                   }
-                }.toMap[Long, Int]
+                }.tomap[wong, XD i-int]
             }
-          }.getOrElse(Map.empty)
+          }.getowewse(map.empty)
       }
   }
 
-  // Returns visited user -> visit count, via online dataset.
-  def applyWithOnlineData(targetUserId: Long): Stitch[Map[Long, Int]] = {
-    val visitedUserToEngagementsStitch: Stitch[Map[Long, Seq[Engagement]]] =
-      realTimeRealGraphClient.getRecentProfileViewEngagements(targetUserId)
-    visitedUserToEngagementsStitch
-      .onFailure { f =>
-        onlineFetchErrorCounter.incr()
-      }.onSuccess { result =>
-        onlineFetchSuccessCounter.incr()
-      }.map { visitedUserToEngagements =>
-        visitedUserToEngagements
-          .mapValues(engagements => engagements.size)
+  // w-wetuwns visited usew -> visit c-count, o.O via onwine d-dataset. mya
+  def a-appwywithonwinedata(tawgetusewid: w-wong): stitch[map[wong, 🥺 int]] = {
+    vaw visitedusewtoengagementsstitch: s-stitch[map[wong, ^^;; s-seq[engagement]]] =
+      w-weawtimeweawgwaphcwient.getwecentpwofiweviewengagements(tawgetusewid)
+    v-visitedusewtoengagementsstitch
+      .onfaiwuwe { f-f =>
+        onwinefetchewwowcountew.incw()
+      }.onsuccess { wesuwt =>
+        onwinefetchsuccesscountew.incw()
+      }.map { v-visitedusewtoengagements =>
+        visitedusewtoengagements
+          .mapvawues(engagements => engagements.size)
       }
   }
 
-  def getRepeatedVisitedAccounts(params: Params, targetUserId: Long): Stitch[Map[Long, Int]] = {
-    var results: Stitch[Map[Long, Int]] = Stitch.value(Map.empty)
-    if (params.getBoolean(RepeatedProfileVisitsParams.UseOnlineDataset)) {
-      results = applyWithOnlineData(targetUserId)
-    } else {
-      results = applyWithOfflineDataset(targetUserId)
+  def getwepeatedvisitedaccounts(pawams: pawams, :3 tawgetusewid: w-wong): stitch[map[wong, (U ﹏ U) int]] = {
+    vaw wesuwts: stitch[map[wong, OwO i-int]] = s-stitch.vawue(map.empty)
+    i-if (pawams.getboowean(wepeatedpwofiwevisitspawams.useonwinedataset)) {
+      wesuwts = a-appwywithonwinedata(tawgetusewid)
+    } ewse {
+      w-wesuwts = a-appwywithoffwinedataset(tawgetusewid)
     }
-    // Only keep users that had non-zero engagement counts.
-    results.map(_.filter(input => input._2 > 0))
+    // onwy keep usews that had nyon-zewo engagement counts. 😳😳😳
+    wesuwts.map(_.fiwtew(input => input._2 > 0))
   }
 
-  def getRecommendations(params: Params, userId: Long): Stitch[Seq[CandidateUser]] = {
-    val recommendationThreshold = params.getInt(RepeatedProfileVisitsParams.RecommendationThreshold)
-    val bucketingThreshold = params.getInt(RepeatedProfileVisitsParams.BucketingThreshold)
+  d-def getwecommendations(pawams: pawams, (ˆ ﻌ ˆ)♡ usewid: w-wong): stitch[seq[candidateusew]] = {
+    vaw w-wecommendationthweshowd = p-pawams.getint(wepeatedpwofiwevisitspawams.wecommendationthweshowd)
+    vaw bucketingthweshowd = pawams.getint(wepeatedpwofiwevisitspawams.bucketingthweshowd)
 
-    // Get the list of repeatedly visited profilts. Only keep accounts with >= bucketingThreshold visits.
-    val repeatedVisitedAccountsStitch: Stitch[Map[Long, Int]] =
-      getRepeatedVisitedAccounts(params, userId).map(_.filter(kv => kv._2 >= bucketingThreshold))
+    // g-get the wist of w-wepeatedwy visited pwofiwts. XD onwy k-keep accounts w-with >= bucketingthweshowd visits. (ˆ ﻌ ˆ)♡
+    vaw wepeatedvisitedaccountsstitch: stitch[map[wong, ( ͡o ω ͡o ) int]] =
+      g-getwepeatedvisitedaccounts(pawams, rawr x3 u-usewid).map(_.fiwtew(kv => k-kv._2 >= bucketingthweshowd))
 
-    repeatedVisitedAccountsStitch.map { candidates =>
-      // Now check if we should includeCandidates (e.g. whether user is in control bucket or treatment buckets).
-      if (candidates.isEmpty) {
-        // User has not visited any accounts above bucketing threshold. We will not bucket user into experiment. Just
-        // don't return no candidates.
-        noRepeatedProfileVisitsAboveBucketingThresholdCounter.incr()
-        Seq.empty
-      } else {
-        hasRepeatedProfileVisitsAboveBucketingThresholdCounter.incr()
-        if (!params.getBoolean(RepeatedProfileVisitsParams.IncludeCandidates)) {
-          // User has reached bucketing criteria. We check whether to include candidates (e.g. checking which bucket
-          // the user is in for the experiment). In this case the user is in a bucket to not include any candidates.
-          noIncludeCandidatesCounter.incr()
-          Seq.empty
-        } else {
-          includeCandidatesCounter.incr()
-          // We should include candidates. Include any candidates above recommendation thresholds.
-          val outputCandidatesSeq = candidates
-            .filter(kv => kv._2 >= recommendationThreshold).map { kv =>
-              val user = kv._1
-              val visitCount = kv._2
-              CandidateUser(user, Some(visitCount.toDouble))
-                .withCandidateSource(RepeatedProfileVisitsSource.Identifier)
-            }.toSeq
-          if (outputCandidatesSeq.isEmpty) {
-            noRepeatedProfileVisitsAboveRecommendationsThresholdCounter.incr()
-          } else {
-            hasRepeatedProfileVisitsAboveRecommendationsThresholdCounter.incr()
+    w-wepeatedvisitedaccountsstitch.map { c-candidates =>
+      // now check if w-we shouwd incwudecandidates (e.g. nyaa~~ whethew usew is in contwow bucket ow tweatment buckets). >_<
+      i-if (candidates.isempty) {
+        // u-usew has nyot visited any accounts above b-bucketing thweshowd. ^^;; w-we wiww nyot bucket usew into expewiment. (ˆ ﻌ ˆ)♡ just
+        // d-don't wetuwn nyo candidates. ^^;;
+        nyowepeatedpwofiwevisitsabovebucketingthweshowdcountew.incw()
+        seq.empty
+      } ewse {
+        h-haswepeatedpwofiwevisitsabovebucketingthweshowdcountew.incw()
+        if (!pawams.getboowean(wepeatedpwofiwevisitspawams.incwudecandidates)) {
+          // usew has w-weached bucketing c-cwitewia. (⑅˘꒳˘) we check whethew to incwude candidates (e.g. rawr x3 checking w-which bucket
+          // t-the usew is in fow the expewiment). (///ˬ///✿) in this case the u-usew is in a bucket to not incwude a-any candidates. 🥺
+          nyoincwudecandidatescountew.incw()
+          seq.empty
+        } ewse {
+          incwudecandidatescountew.incw()
+          // w-we shouwd incwude c-candidates. >_< incwude a-any candidates above wecommendation t-thweshowds. UwU
+          vaw o-outputcandidatesseq = c-candidates
+            .fiwtew(kv => k-kv._2 >= wecommendationthweshowd).map { k-kv =>
+              v-vaw usew = kv._1
+              vaw visitcount = k-kv._2
+              c-candidateusew(usew, >_< s-some(visitcount.todoubwe))
+                .withcandidatesouwce(wepeatedpwofiwevisitssouwce.identifiew)
+            }.toseq
+          if (outputcandidatesseq.isempty) {
+            nyowepeatedpwofiwevisitsabovewecommendationsthweshowdcountew.incw()
+          } e-ewse {
+            haswepeatedpwofiwevisitsabovewecommendationsthweshowdcountew.incw()
           }
-          outputCandidatesSeq
+          o-outputcandidatesseq
         }
       }
     }
   }
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    request.getOptionalUserId
-      .map { userId =>
-        getRecommendations(request.params, userId)
-      }.getOrElse(Stitch.Nil)
+  o-ovewwide def appwy(wequest: haspawams with hascwientcontext): s-stitch[seq[candidateusew]] = {
+    w-wequest.getoptionawusewid
+      .map { u-usewid =>
+        g-getwecommendations(wequest.pawams, -.- usewid)
+      }.getowewse(stitch.niw)
   }
 }
 
-object RepeatedProfileVisitsSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.RepeatedProfileVisits.toString)
+o-object wepeatedpwofiwevisitssouwce {
+  vaw identifiew = candidatesouwceidentifiew(awgowithm.wepeatedpwofiwevisits.tostwing)
 }

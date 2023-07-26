@@ -1,29 +1,29 @@
-from twml.contrib.pruning import apply_mask
-from twml.layers import Layer
+fwom twmw.contwib.pwuning impowt a-appwy_mask
+fwom t-twmw.wayews impowt w-wayew
 
 
-class MaskLayer(Layer):
+cwass m-maskwayew(wayew):
   """
-  This layer corresponds to `twml.contrib.pruning.apply_mask`.
+  t-this w-wayew cowwesponds t-to `twmw.contwib.pwuning.appwy_mask`. -.-
 
-  It applies a binary mask to mask out channels of a given tensor. The masks can be
-  optimized using `twml.contrib.trainers.PruningDataRecordTrainer`.
+  i-it appwies a binawy mask to mask out channews of a given tensow. ( ͡o ω ͡o ) the m-masks can be
+  optimized using `twmw.contwib.twainews.pwuningdatawecowdtwainew`. rawr x3
   """
 
-  def call(self, inputs, **kwargs):
+  def caww(sewf, nyaa~~ i-inputs, /(^•ω•^) **kwawgs):
     """
-    Applies a binary mask to the channels of the input.
+    appwies a-a binawy mask to the channews of the input. rawr
 
-    Arguments:
-      inputs:
-        input tensor
-      **kwargs:
-        additional keyword arguments
+    awguments:
+      i-inputs:
+        input tensow
+      **kwawgs:
+        a-additionaw k-keywowd awguments
 
-    Returns:
-      Masked tensor
+    wetuwns:
+      masked tensow
     """
-    return apply_mask(inputs)
+    wetuwn appwy_mask(inputs)
 
-  def compute_output_shape(self, input_shape):
-    return input_shape
+  def compute_output_shape(sewf, OwO i-input_shape):
+    wetuwn input_shape

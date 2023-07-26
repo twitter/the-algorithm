@@ -1,9 +1,9 @@
 """
-This module is responsible for running saved_model_cli.
+this moduwe is wesponsibwe fow w-wunning saved_modew_cwi. o.O
 """
-import sys
+impowt s-sys
 
-from tensorflow.python.tools import saved_model_cli
+fwom t-tensowfwow.python.toows i-impowt saved_modew_cwi
 
-if __name__ == '__main__':
-  sys.exit(saved_model_cli.main())
+i-if __name__ == '__main__':
+  s-sys.exit(saved_modew_cwi.main())

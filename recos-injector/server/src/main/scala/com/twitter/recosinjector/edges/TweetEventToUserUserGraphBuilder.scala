@@ -1,65 +1,65 @@
-package com.twitter.recosinjector.edges
+package com.twittew.wecosinjectow.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.TweetCreateEventDetails
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wecos.utiw.action
+i-impowt c-com.twittew.wecosinjectow.utiw.tweetcweateeventdetaiws
+i-impowt c-com.twittew.utiw.futuwe
 
 /**
- * Given a tweet creation event, parse for UserUserGraph edges. Specifically, when a new tweet is
- * created, extract the valid mentioned and mediatagged users in the tweet and create edges for them
+ * g-given a tweet cweation e-event, nyaa~~ pawse f-fow usewusewgwaph edges. :3 specificawwy, 😳😳😳 when a nyew tweet is
+ * cweated, (˘ω˘) extwact t-the vawid mentioned and mediatagged usews in t-the tweet and cweate edges fow t-them
  */
-class TweetEventToUserUserGraphBuilder(
+cwass tweeteventtousewusewgwaphbuiwdew(
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetCreateEventDetails, UserUserEdge] {
-  private val tweetOrQuoteEventCounter = statsReceiver.counter("num_tweet_or_quote_event")
-  private val nonTweetOrQuoteEventCounter = statsReceiver.counter("num_non_tweet_or_quote_event")
-  private val mentionEdgeCounter = statsReceiver.counter("num_mention_edge")
-  private val mediatagEdgeCounter = statsReceiver.counter("num_mediatag_edge")
+  ovewwide impwicit vaw statsweceivew: s-statsweceivew)
+    extends eventtomessagebuiwdew[tweetcweateeventdetaiws, ^^ u-usewusewedge] {
+  p-pwivate vaw tweetowquoteeventcountew = statsweceivew.countew("num_tweet_ow_quote_event")
+  pwivate vaw nyontweetowquoteeventcountew = statsweceivew.countew("num_non_tweet_ow_quote_event")
+  pwivate vaw m-mentionedgecountew = statsweceivew.countew("num_mention_edge")
+  pwivate vaw mediatagedgecountew = statsweceivew.countew("num_mediatag_edge")
 
-  override def shouldProcessEvent(event: TweetCreateEventDetails): Future[Boolean] = {
-    // For user interactions, only new tweets and quotes are considered (no replies or retweets)
-    event.userTweetEngagement.action match {
-      case Action.Tweet | Action.Quote =>
-        tweetOrQuoteEventCounter.incr()
-        Future(true)
+  ovewwide def s-shouwdpwocessevent(event: tweetcweateeventdetaiws): f-futuwe[boowean] = {
+    // fow u-usew intewactions, :3 o-onwy nyew t-tweets and quotes awe considewed (no wepwies ow w-wetweets)
+    event.usewtweetengagement.action match {
+      case action.tweet | a-action.quote =>
+        tweetowquoteeventcountew.incw()
+        futuwe(twue)
       case _ =>
-        nonTweetOrQuoteEventCounter.incr()
-        Future(false)
+        nyontweetowquoteeventcountew.incw()
+        futuwe(fawse)
     }
   }
 
-  override def buildEdges(event: TweetCreateEventDetails): Future[Seq[UserUserEdge]] = {
-    val mentionEdges = event.validMentionUserIds
-      .map(_.map { mentionUserId =>
-        UserUserEdge(
-          sourceUser = event.userTweetEngagement.engageUserId,
-          targetUser = mentionUserId,
-          action = Action.Mention,
-          metadata = Some(System.currentTimeMillis())
+  o-ovewwide def buiwdedges(event: t-tweetcweateeventdetaiws): f-futuwe[seq[usewusewedge]] = {
+    v-vaw mentionedges = event.vawidmentionusewids
+      .map(_.map { mentionusewid =>
+        usewusewedge(
+          s-souwceusew = e-event.usewtweetengagement.engageusewid, -.-
+          tawgetusew = m-mentionusewid, 😳
+          a-action = action.mention, mya
+          m-metadata = some(system.cuwwenttimemiwwis())
         )
-      }).getOrElse(Nil)
+      }).getowewse(niw)
 
-    val mediatagEdges = event.validMediatagUserIds
-      .map(_.map { mediatagUserId =>
-        UserUserEdge(
-          sourceUser = event.userTweetEngagement.engageUserId,
-          targetUser = mediatagUserId,
-          action = Action.MediaTag,
-          metadata = Some(System.currentTimeMillis())
+    vaw mediatagedges = e-event.vawidmediatagusewids
+      .map(_.map { mediatagusewid =>
+        usewusewedge(
+          s-souwceusew = event.usewtweetengagement.engageusewid, (˘ω˘)
+          t-tawgetusew = mediatagusewid, >_<
+          a-action = a-action.mediatag,
+          metadata = some(system.cuwwenttimemiwwis())
         )
-      }).getOrElse(Nil)
+      }).getowewse(niw)
 
-    mentionEdgeCounter.incr(mentionEdges.size)
-    mediatagEdgeCounter.incr(mediatagEdges.size)
-    Future(mentionEdges ++ mediatagEdges)
+    mentionedgecountew.incw(mentionedges.size)
+    mediatagedgecountew.incw(mediatagedges.size)
+    futuwe(mentionedges ++ mediatagedges)
   }
 
-  override def filterEdges(
-    event: TweetCreateEventDetails,
-    edges: Seq[UserUserEdge]
-  ): Future[Seq[UserUserEdge]] = {
-    Future(edges)
+  ovewwide def fiwtewedges(
+    e-event: tweetcweateeventdetaiws, -.-
+    e-edges: seq[usewusewedge]
+  ): futuwe[seq[usewusewedge]] = {
+    f-futuwe(edges)
   }
 }

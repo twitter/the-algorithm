@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.component_library.module
+package com.twittew.pwoduct_mixew.component_wibwawy.moduwe
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.stitch.socialgraph.SocialGraph
-import javax.inject.Singleton
+impowt c-com.googwe.inject.pwovides
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.thwiftmux.methodbuiwdew
+i-impowt c-com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt com.twittew.inject.injectow
+impowt com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe
+impowt com.twittew.sociawgwaph.thwiftscawa.sociawgwaphsewvice
+i-impowt com.twittew.stitch.sociawgwaph.sociawgwaph
+impowt javax.inject.singweton
 
-object SocialGraphServiceModule
-    extends ThriftMethodBuilderClientModule[
-      SocialGraphService.ServicePerEndpoint,
-      SocialGraphService.MethodPerEndpoint
+object sociawgwaphsewvicemoduwe
+    e-extends thwiftmethodbuiwdewcwientmoduwe[
+      s-sociawgwaphsewvice.sewvicepewendpoint, rawr
+      sociawgwaphsewvice.methodpewendpoint
     ]
-    with MtlsClient {
+    with mtwscwient {
 
-  val label: String = "socialgraphservice"
-  val dest: String = "/s/socialgraph/socialgraph"
+  vaw wabew: s-stwing = "sociawgwaphsewvice"
+  vaw dest: stwing = "/s/sociawgwaph/sociawgwaph"
 
-  @Singleton
-  @Provides
-  def provideGizmoduckStitchClient(
-    socialGraphService: SocialGraphService.MethodPerEndpoint
-  ): SocialGraph =
-    new SocialGraph(socialGraphService)
+  @singweton
+  @pwovides
+  d-def pwovidegizmoduckstitchcwient(
+    s-sociawgwaphsewvice: sociawgwaphsewvice.methodpewendpoint
+  ): sociawgwaph =
+    nyew sociawgwaph(sociawgwaphsewvice)
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder.withTimeoutPerRequest(400.millis)
+  ovewwide p-pwotected def configuwemethodbuiwdew(
+    injectow: injectow, OwO
+    methodbuiwdew: methodbuiwdew
+  ): m-methodbuiwdew = {
+    methodbuiwdew.withtimeoutpewwequest(400.miwwis)
   }
 }

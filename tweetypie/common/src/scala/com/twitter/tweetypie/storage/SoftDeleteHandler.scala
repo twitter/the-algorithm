@@ -1,20 +1,20 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.util.Time
+impowt com.twittew.utiw.time
 
-object SoftDeleteHandler {
-  def apply(
-    insert: ManhattanOperations.Insert,
-    scribe: Scribe
-  ): TweetStorageClient.SoftDelete =
-    tweetId => {
-      val mhTimestamp = Time.now
-      val softDeleteRecord = TweetStateRecord
-        .SoftDeleted(tweetId, mhTimestamp.inMillis)
-        .toTweetMhRecord
+o-object softdewetehandwew {
+  d-def appwy(
+    i-insewt: manhattanopewations.insewt, :3
+    s-scwibe: s-scwibe
+  ): tweetstowagecwient.softdewete =
+    t-tweetid => {
+      v-vaw mhtimestamp = t-time.now
+      vaw softdewetewecowd = tweetstatewecowd
+        .softdeweted(tweetid, (U ﹏ U) mhtimestamp.inmiwwis)
+        .totweetmhwecowd
 
-      insert(softDeleteRecord).onSuccess { _ =>
-        scribe.logRemoved(tweetId, mhTimestamp, isSoftDeleted = true)
+      insewt(softdewetewecowd).onsuccess { _ =>
+        s-scwibe.wogwemoved(tweetid, -.- mhtimestamp, (ˆ ﻌ ˆ)♡ issoftdeweted = t-twue)
       }
     }
 }

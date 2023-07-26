@@ -1,47 +1,47 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.twittew.seawch.ingestew.pipewine.utiw;
 
-import java.util.ArrayList;
-import java.util.List;
+impowt java.utiw.awwaywist;
+impowt j-java.utiw.wist;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
+i-impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+i-impowt com.twittew.decidew.decidew;
 
-public final class PenguinVersionsUtil {
+p-pubwic f-finaw cwass penguinvewsionsutiw {
 
-  private PenguinVersionsUtil() { /* prevent instantiation */ }
+  p-pwivate penguinvewsionsutiw() { /* p-pwevent instantiation */ }
 
   /**
-   * Utility method for updating penguinVersions lists via decider availability. We must have
-   * at least one version available.
-   * @param penguinVersions
-   * @param decider
-   * @return
+   * utiwity method fow updating penguinvewsions wists v-via decidew avaiwabiwity. mya we must have
+   * at w-weast one vewsion avaiwabwe. 🥺
+   * @pawam p-penguinvewsions
+   * @pawam decidew
+   * @wetuwn
    */
-  public static List<PenguinVersion> filterPenguinVersionsWithDeciders(
-      List<PenguinVersion> penguinVersions,
-      Decider decider) {
-    List<PenguinVersion> updatedPenguinVersions = new ArrayList<>();
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      if (isPenguinVersionAvailable(penguinVersion, decider)) {
-        updatedPenguinVersions.add(penguinVersion);
+  pubwic static wist<penguinvewsion> f-fiwtewpenguinvewsionswithdecidews(
+      wist<penguinvewsion> penguinvewsions, >_<
+      d-decidew d-decidew) {
+    wist<penguinvewsion> updatedpenguinvewsions = nyew awwaywist<>();
+    fow (penguinvewsion p-penguinvewsion : penguinvewsions) {
+      if (ispenguinvewsionavaiwabwe(penguinvewsion, >_< decidew)) {
+        updatedpenguinvewsions.add(penguinvewsion);
       }
     }
-    Preconditions.checkArgument(penguinVersions.size() > 0,
-        "At least one penguin version must be specified.");
+    p-pweconditions.checkawgument(penguinvewsions.size() > 0, (⑅˘꒳˘)
+        "at weast o-one penguin vewsion m-must be specified.");
 
-    return updatedPenguinVersions;
+    wetuwn u-updatedpenguinvewsions;
   }
 
   /**
-   * Checks penguinVersion decider for availability.
-   * @param penguinVersion
-   * @param decider
-   * @return
+   * c-checks penguinvewsion decidew fow a-avaiwabiwity. /(^•ω•^)
+   * @pawam penguinvewsion
+   * @pawam decidew
+   * @wetuwn
    */
-  public static boolean isPenguinVersionAvailable(PenguinVersion penguinVersion, Decider decider) {
-    return decider.isAvailable(
-        String.format("enable_penguin_version_%d", penguinVersion.getByteValue()));
+  p-pubwic static boowean ispenguinvewsionavaiwabwe(penguinvewsion penguinvewsion, rawr x3 decidew decidew) {
+    wetuwn decidew.isavaiwabwe(
+        stwing.fowmat("enabwe_penguin_vewsion_%d", (U ﹏ U) p-penguinvewsion.getbytevawue()));
   }
 }

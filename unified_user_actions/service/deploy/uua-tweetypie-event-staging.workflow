@@ -1,38 +1,38 @@
 {
-  "role": "discode",
-  "name": "uua-tweetypie-event-staging",
-  "config-files": [
-    "uua-tweetypie-event.aurora"
-  ],
-  "build": {
-    "play": true,
+  "wowe": "discode", XD
+  "name": "uua-tweetypie-event-staging", >_<
+  "config-fiwes": [
+    "uua-tweetypie-event.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew",
+        "name": "packew-cwient-no-pex", OwO
+        "vewsion": "watest"
       }
-    ],
+    ], 🥺
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-tweetypie-event"
-      },
+        "type": "bazew-bundwe", òωó
+        "name": "bundwe", o.O
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-tweetypie-event"
+      }, (U ᵕ U❁)
       {
-        "type": "packer",
-        "name": "uua-tweetypie-event-staging",
-        "artifact": "./dist/uua-tweetypie-event.zip"
+        "type": "packew", (⑅˘꒳˘)
+        "name": "uua-tweetypie-event-staging", ( ͡o ω ͡o )
+        "awtifact": "./dist/uua-tweetypie-event.zip"
       }
     ]
-  },
-  "targets": [
+  }, UwU
+  "tawgets": [
     {
-      "type": "group",
-      "name": "staging",
-      "targets": [
+      "type": "gwoup", rawr x3
+      "name": "staging", rawr
+      "tawgets": [
         {
-          "name": "uua-tweetypie-event-staging-pdxa",
+          "name": "uua-tweetypie-event-staging-pdxa", σωσ
           "key": "pdxa/discode/staging/uua-tweetypie-event"
         }
       ]

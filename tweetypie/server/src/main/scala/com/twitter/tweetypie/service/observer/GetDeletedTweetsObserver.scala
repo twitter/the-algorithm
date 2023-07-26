@@ -1,24 +1,24 @@
-package com.twitter.tweetypie
-package service
-package observer
+package com.twittew.tweetypie
+package s-sewvice
+package o-obsewvew
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.tweetypie.thriftscala.GetDeletedTweetResult
-import com.twitter.tweetypie.thriftscala.GetDeletedTweetsRequest
+impowt c-com.twittew.sewvo.exception.thwiftscawa.cwientewwow
+i-impowt c-com.twittew.tweetypie.thwiftscawa.getdewetedtweetwesuwt
+i-impowt c-com.twittew.tweetypie.thwiftscawa.getdewetedtweetswequest
 
-private[service] object GetDeletedTweetsObserver {
-  type Type = ObserveExchange[GetDeletedTweetsRequest, Seq[GetDeletedTweetResult]]
+p-pwivate[sewvice] object getdewetedtweetsobsewvew {
+  type type = obsewveexchange[getdewetedtweetswequest, mya seq[getdewetedtweetwesuwt]]
 
-  def observeExchange(stats: StatsReceiver): Effect[Type] = {
-    val resultStateStats = ResultStateStats(stats)
+  d-def obsewveexchange(stats: statsweceivew): effect[type] = {
+    vaw wesuwtstatestats = wesuwtstatestats(stats)
 
-    Effect {
-      case (request, response) =>
-        response match {
-          case Return(_) | Throw(ClientError(_)) =>
-            resultStateStats.success(request.tweetIds.size)
-          case Throw(_) =>
-            resultStateStats.failed(request.tweetIds.size)
+    e-effect {
+      case (wequest, mya w-wesponse) =>
+        wesponse match {
+          case wetuwn(_) | t-thwow(cwientewwow(_)) =>
+            wesuwtstatestats.success(wequest.tweetids.size)
+          c-case thwow(_) =>
+            w-wesuwtstatestats.faiwed(wequest.tweetids.size)
         }
     }
   }

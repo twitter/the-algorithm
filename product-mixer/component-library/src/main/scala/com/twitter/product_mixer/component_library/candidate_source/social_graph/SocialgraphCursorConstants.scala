@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.component_library.candidate_source.social_graph
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.sociaw_gwaph
 
-object SocialgraphCursorConstants {
-  val EndCursor: Long = 0L
-  val StartCursor: Long = -1L
-  val LastSortIndex: Long = 0L
+object sociawgwaphcuwsowconstants {
+  v-vaw endcuwsow: w-wong = 0w
+  v-vaw stawtcuwsow: w-wong = -1w
+  v-vaw wastsowtindex: w-wong = 0w
 }

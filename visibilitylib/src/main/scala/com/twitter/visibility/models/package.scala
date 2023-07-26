@@ -1,5 +1,5 @@
-package com.twitter.visibility
+package com.twittew.visibiwity
 
-package object models {
-  type CommunityId = Long
+package object modews {
+  t-type communityid = w-wong
 }

@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.TopTweetsCacheUtil;
-import com.twitter.search.common.caching.filter.ServicePostProcessor;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+i-impowt c-com.twittew.seawch.common.caching.cache;
+i-impowt c-com.twittew.seawch.common.caching.toptweetscacheutiw;
+i-impowt c-com.twittew.seawch.common.caching.fiwtew.sewvicepostpwocessow;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+impowt static com.googwe.common.base.pweconditions.checknotnuww;
 
-public class TopTweetsServicePostProcessor
-    extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final Logger LOG = LoggerFactory.getLogger(TopTweetsServicePostProcessor.class);
+p-pubwic cwass toptweetssewvicepostpwocessow
+    e-extends sewvicepostpwocessow<eawwybiwdwequestcontext, 🥺 eawwybiwdwesponse> {
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(toptweetssewvicepostpwocessow.cwass);
 
-  public static final int CACHE_AGE_IN_MS = 600000;
-  public static final int NO_RESULT_CACHE_AGE_IN_MS = 300000;
+  pubwic static f-finaw int cache_age_in_ms = 600000;
+  p-pubwic static finaw int nyo_wesuwt_cache_age_in_ms = 300000;
 
-  private final Cache<EarlybirdRequest, EarlybirdResponse> cache;
+  pwivate finaw cache<eawwybiwdwequest, >_< e-eawwybiwdwesponse> cache;
 
-  public TopTweetsServicePostProcessor(Cache<EarlybirdRequest, EarlybirdResponse> cache) {
-    this.cache = checkNotNull(cache);
+  pubwic toptweetssewvicepostpwocessow(cache<eawwybiwdwequest, >_< eawwybiwdwesponse> cache) {
+    t-this.cache = checknotnuww(cache);
   }
 
-  @Override
-  public void processServiceResponse(EarlybirdRequestContext requestContext,
-                                     EarlybirdResponse serviceResponse) {
+  @ovewwide
+  pubwic v-void pwocesssewvicewesponse(eawwybiwdwequestcontext w-wequestcontext, (⑅˘꒳˘)
+                                     eawwybiwdwesponse s-sewvicewesponse) {
 
-    EarlybirdRequest originalRequest = requestContext.getRequest();
-    LOG.debug("Writing to top tweets cache. Request: {}, Response: {}",
-        originalRequest, serviceResponse);
-    TopTweetsCacheUtil.cacheResults(originalRequest,
-        serviceResponse,
-        cache,
-        CACHE_AGE_IN_MS,
-        NO_RESULT_CACHE_AGE_IN_MS);
+    e-eawwybiwdwequest owiginawwequest = wequestcontext.getwequest();
+    w-wog.debug("wwiting to top tweets cache. /(^•ω•^) wequest: {}, rawr x3 w-wesponse: {}", (U ﹏ U)
+        owiginawwequest, (U ﹏ U) sewvicewesponse);
+    toptweetscacheutiw.cachewesuwts(owiginawwequest, (⑅˘꒳˘)
+        sewvicewesponse, òωó
+        cache, ʘwʘ
+        c-cache_age_in_ms,
+        nyo_wesuwt_cache_age_in_ms);
   }
 }

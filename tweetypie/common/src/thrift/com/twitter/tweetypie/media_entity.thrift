@@ -1,135 +1,135 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace py gen.twitter.tweetypie.media_entity
-namespace rb TweetyPie.media_entity
-namespace go tweetypie.media_entity
+namespace java com.twittew.tweetypie.thwiftjava
+#@namespace scawa c-com.twittew.tweetypie.thwiftscawa
+#@namespace stwato c-com.twittew.tweetypie
+n-nyamespace p-py gen.twittew.tweetypie.media_entity
+n-nyamespace w-wb tweetypie.media_entity
+n-nyamespace go t-tweetypie.media_entity
 
-include "com/twitter/mediaservices/commons/MediaInformation.thrift"
-include "com/twitter/mediaservices/commons/MediaCommon.thrift"
-include "com/twitter/mediaservices/commons/TweetMedia.thrift"
+incwude "com/twittew/mediasewvices/commons/mediainfowmation.thwift"
+incwude "com/twittew/mediasewvices/commons/mediacommon.thwift"
+incwude "com/twittew/mediasewvices/commons/tweetmedia.thwift"
 
 /**
- * DEPRECATED
- * An RGB color.
+ * depwecated
+ * an w-wgb cowow. σωσ
  *
- * Each i8 should be interpreted as unsigned, ranging in value from 0 to
- * 255. Borrowed from gizmoduck/user.thrift.
+ * each i8 shouwd be intewpweted a-as unsigned, nyaa~~ wanging in vawue fwom 0 t-to
+ * 255. ^^;; bowwowed fwom gizmoduck/usew.thwift. ^•ﻌ•^
  *
- * The way in which we use ColorValue here is as metadata for a media file,
- * so it needs to be annotated as having personal data. Fields that are of
- * structured types cannot be annotated, so we have to put the annotation
- * on the structure itself's fields even though it's more confusing to do so
- * and could introduce issues if someone else reuses ColorValue outside of
- * the context of a media file.
+ * the way in which we u-use cowowvawue hewe is as metadata f-fow a media fiwe, σωσ
+ * s-so it nyeeds to be annotated as having pewsonaw data. -.- fiewds that awe of
+ * s-stwuctuwed types cannot be annotated, ^^;; so we have to put the annotation
+ * on t-the stwuctuwe itsewf's fiewds even t-though it's m-mowe confusing to d-do so
+ * and couwd i-intwoduce issues if someone ewse weuses cowowvawue o-outside of
+ * the context of a media fiwe. XD
  */
-struct ColorValue {
-  1: i8 red  (personalDataType = 'MediaFile')
-  2: i8 green (personalDataType = 'MediaFile')
-  3: i8 blue (personalDataType = 'MediaFile')
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct cowowvawue {
+  1: i8 wed  (pewsonawdatatype = 'mediafiwe')
+  2: i8 gween (pewsonawdatatype = 'mediafiwe')
+  3: i8 bwue (pewsonawdatatype = 'mediafiwe')
+}(pewsisted = 'twue', 🥺 h-haspewsonawdata = 'twue')
 
-struct MediaEntity {
-  1: i16 from_index (personalDataType = 'MediaFile')
-  2: i16 to_index (personalDataType = 'MediaFile')
+stwuct mediaentity {
+  1: i-i16 fwom_index (pewsonawdatatype = 'mediafiwe')
+  2: i-i16 to_index (pewsonawdatatype = 'mediafiwe')
 
   /**
-   * The shortened t.co url found in the tweet text.
+   * t-the showtened t.co uww found in the tweet text. òωó
    */
-  3: string url (personalDataType = 'ShortUrl')
+  3: stwing u-uww (pewsonawdatatype = 'showtuww')
 
   /**
-   * The text to display in place of the shortened url.
+   * t-the text to dispway in pwace of t-the showtened u-uww. (ˆ ﻌ ˆ)♡
    */
-  4: string display_url (personalDataType = 'LongUrl')
+  4: stwing dispway_uww (pewsonawdatatype = 'wonguww')
 
   /**
-   * The url to the media asset (a preview image in the case of a video).
+   * t-the uww to the media a-asset (a pweview image in the case of a video). -.-
    */
-  5: string media_url (personalDataType = 'LongUrl')
+  5: s-stwing media_uww (pewsonawdatatype = 'wonguww')
 
   /**
-   * The https version of media_url.
+   * t-the https vewsion of media_uww. :3
    */
-  6: string media_url_https (personalDataType = 'LongUrl')
+  6: s-stwing media_uww_https (pewsonawdatatype = 'wonguww')
 
   /**
-   * The expanded media permalink.
+   * t-the expanded media pewmawink. ʘwʘ
    */
-  7: string expanded_url (personalDataType = 'LongUrl')
+  7: stwing expanded_uww (pewsonawdatatype = 'wonguww')
 
-  8: MediaCommon.MediaId media_id (strato.space = "Media", strato.name = "media", personalDataType = 'MediaId')
-  9: bool nsfw
-  10: set<TweetMedia.MediaSize> sizes
-  11: string media_path
-  12: optional bool is_protected
+  8: mediacommon.mediaid media_id (stwato.space = "media", 🥺 stwato.name = "media", >_< pewsonawdatatype = 'mediaid')
+  9: boow nysfw
+  10: s-set<tweetmedia.mediasize> s-sizes
+  11: stwing media_path
+  12: o-optionaw b-boow is_pwotected
 
   /**
-   * The tweet that this MediaEntity was originally attached to.  This value will be set if this
-   * MediaEntity is either on a retweet or a tweet with pasted-pic.
+   * the t-tweet that this mediaentity was owiginawwy attached to. ʘwʘ  this v-vawue wiww be set if this
+   * mediaentity is eithew on a wetweet ow a tweet with p-pasted-pic. (˘ω˘)
    */
-  13: optional i64 source_status_id (strato.space = "Tweet", strato.name = "sourceStatus", personalDataType = 'TweetId')
+  13: optionaw i-i64 souwce_status_id (stwato.space = "tweet", (✿oωo) s-stwato.name = "souwcestatus", (///ˬ///✿) p-pewsonawdatatype = 'tweetid')
 
 
   /**
-   * The user to attribute views of the media to.
+   * the usew t-to attwibute v-views of the media t-to. rawr x3
    *
-   * This field should be set when the media's attributableUserId field does not match the current
-   * Tweet's owner.  Retweets of a Tweet with media and "managed media" are some reasons this may
-   * occur.  When the value is None any views should be attributed to the tweet's owner.
+   * t-this fiewd shouwd be set when the media's attwibutabweusewid fiewd d-does nyot match t-the cuwwent
+   * t-tweet's ownew. -.-  w-wetweets of a-a tweet with media and "managed media" awe some weasons this may
+   * o-occuw. ^^  when the vawue is nyone any views shouwd be attwibuted to the tweet's ownew. (⑅˘꒳˘)
    **/
-  14: optional i64 source_user_id (strato.space = "User", strato.name = "sourceUser", personalDataType = 'UserId')
+  14: o-optionaw i64 souwce_usew_id (stwato.space = "usew", stwato.name = "souwceusew", nyaa~~ pewsonawdatatype = 'usewid')
 
   /**
-   * Additional information specific to the media type.
+   * a-additionaw infowmation s-specific t-to the media type. /(^•ω•^)
    *
-   * This field is optional with images (as the image information is in the
-   * previous fields), but required for animated GIF and native video (as, in
-   * this case, the previous fields only describe the preview image).
+   * t-this fiewd is optionaw with images (as t-the image i-infowmation is in the
+   * pwevious fiewds), (U ﹏ U) but wequiwed fow animated gif and nyative video (as, 😳😳😳 i-in
+   * this case, >w< the pwevious f-fiewds onwy descwibe the pweview i-image).
    */
-  15: optional TweetMedia.MediaInfo media_info
+  15: o-optionaw tweetmedia.mediainfo media_info
 
   /**
-   * DEPRECATED
-   * The dominant color for the entire image (or keyframe for video or GIF).
+   * d-depwecated
+   * t-the dominant cowow f-fow the entiwe image (ow k-keyfwame fow video ow gif). XD
    *
-   * This can be used for placeholders while the media downloads (either a
-   * solid color or a gradient using the grid).
+   * this can be used fow pwacehowdews whiwe the media d-downwoads (eithew a-a
+   * sowid c-cowow ow a gwadient using the gwid). o.O
    */
-  16: optional ColorValue dominant_color_overall
+  16: o-optionaw cowowvawue d-dominant_cowow_ovewaww
 
   /**
-   * DEPRECATED
-   * Dominant color of each quadrant of the image (keyframe for video or GIF).
+   * depwecated
+   * d-dominant cowow of each quadwant of the image (keyfwame fow video ow gif). mya
    *
-   * If present this list should have 4 elements, corresponding to
-   * [top_left, top_right, bottom_left, bottom_right]
+   * if pwesent t-this wist s-shouwd have 4 ewements, 🥺 cowwesponding to
+   * [top_weft, ^^;; t-top_wight, :3 b-bottom_weft, (U ﹏ U) bottom_wight]
    */
-  17: optional list<ColorValue> dominant_color_grid
+  17: optionaw wist<cowowvawue> d-dominant_cowow_gwid
 
-  // obsolete 18: optional map<string, binary> extensions
+  // obsowete 18: optionaw map<stwing, OwO binawy> extensions
 
   /**
-   * Stratostore extension points data encoded as a Strato record.
+   * stwatostowe extension p-points data encoded as a stwato wecowd. 😳😳😳
    */
-  19: optional binary extensions_reply
+  19: o-optionaw b-binawy extensions_wepwy
 
   /**
-   * Holds metadata defined by the user for the tweet-asset relationship.
+   * howds metadata defined by the usew fow the t-tweet-asset wewationship. (ˆ ﻌ ˆ)♡
    */
-  20: optional MediaInformation.UserDefinedProductMetadata metadata
+  20: o-optionaw mediainfowmation.usewdefinedpwoductmetadata metadata
 
   /**
-   * Media key used to interact with the media systems.
+   * media key used t-to intewact with the media systems. XD
    */
-  21: optional MediaCommon.MediaKey media_key
+  21: o-optionaw mediacommon.mediakey media_key
 
   /**
-   * Flexible structure for additional media metadata.  This field is only
-   * included in a read-path request if specifically requested.  It will
-   * always be included, when applicable, in write-path responses.
+   * fwexibwe stwuctuwe fow additionaw m-media metadata. (ˆ ﻌ ˆ)♡  this fiewd i-is onwy
+   * i-incwuded in a wead-path wequest i-if specificawwy wequested. ( ͡o ω ͡o )  it w-wiww
+   * awways b-be incwuded, rawr x3 when a-appwicabwe, nyaa~~ in wwite-path wesponses. >_<
    */
-  22: optional MediaInformation.AdditionalMetadata additional_metadata
+  22: o-optionaw mediainfowmation.additionawmetadata a-additionaw_metadata
 
-}(persisted='true', hasPersonalData = 'true')
+}(pewsisted='twue', ^^;; haspewsonawdata = 'twue')
 

@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.media
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.Rect
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.media.wect
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
 
-@Singleton
-class RectMarshaller @Inject() () {
+@singweton
+c-cwass wectmawshawwew @inject() () {
 
-  def apply(rect: Rect): urt.Rect = urt.Rect(
-    left = rect.left,
-    top = rect.top,
-    width = rect.width,
-    height = rect.height
+  def a-appwy(wect: wect): uwt.wect = uwt.wect(
+    weft = wect.weft, >_<
+    top = wect.top, :3
+    w-width = wect.width, (U ﹏ U)
+    height = wect.height
   )
 }

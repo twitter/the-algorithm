@@ -1,22 +1,22 @@
-java_library(
-    sources = ["*.java"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "decider/src/main/scala",
-        "finatra-internal/thrift/src/main/thrift:thrift-java",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift:controller",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/exceptions",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/filters",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/modules",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/response",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/routing",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/util/io/periodic",
-        "src/java/com/twitter/search/common/util/thrift:text-protocol",
-        "src/java/com/twitter/search/feature_update_service/whitelist",
-        "src/thrift/com/twitter/search/feature_update_service/thrift:thrift-java",
+java_wibwawy(
+    souwces = ["*.java"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", òωó
+        "decidew/swc/main/scawa", o.O
+        "finatwa-intewnaw/thwift/swc/main/thwift:thwift-java", (U ᵕ U❁)
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift", (⑅˘꒳˘)
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift:contwowwew", ( ͡o ω ͡o )
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift/exceptions", UwU
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift/fiwtews", rawr x3
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift/moduwes", rawr
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift/wesponse", σωσ
+        "finatwa/thwift/swc/main/scawa/com/twittew/finatwa/thwift/wouting", σωσ
+        "swc/java/com/twittew/seawch/common/metwics", >_<
+        "swc/java/com/twittew/seawch/common/utiw/io/pewiodic", :3
+        "swc/java/com/twittew/seawch/common/utiw/thwift:text-pwotocow", (U ﹏ U)
+        "swc/java/com/twittew/seawch/featuwe_update_sewvice/whitewist", -.-
+        "swc/thwift/com/twittew/seawch/featuwe_update_sewvice/thwift:thwift-java", (ˆ ﻌ ˆ)♡
     ],
 )

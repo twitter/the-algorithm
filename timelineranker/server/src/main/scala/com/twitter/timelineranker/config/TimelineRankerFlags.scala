@@ -1,72 +1,72 @@
-package com.twitter.timelineranker.config
+package com.twittew.timewinewankew.config
 
-import com.twitter.app.Flags
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.timelines.config.CommonFlags
-import com.twitter.timelines.config.ConfigUtils
-import com.twitter.timelines.config.Datacenter
-import com.twitter.timelines.config.Env
-import com.twitter.timelines.config.ProvidesServiceIdentifier
-import java.net.InetSocketAddress
-import com.twitter.app.Flag
+impowt c-com.twittew.app.fwags
+i-impowt com.twittew.finagwe.mtws.authentication.emptysewviceidentifiew
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.timewines.config.commonfwags
+i-impowt c-com.twittew.timewines.config.configutiws
+impowt com.twittew.timewines.config.datacentew
+impowt com.twittew.timewines.config.env
+i-impowt com.twittew.timewines.config.pwovidessewviceidentifiew
+impowt java.net.inetsocketaddwess
+impowt com.twittew.app.fwag
 
-class TimelineRankerFlags(flag: Flags)
-    extends CommonFlags(flag)
-    with ConfigUtils
-    with ProvidesServiceIdentifier {
-  val dc: Flag[String] = flag(
-    "dc",
+c-cwass timewinewankewfwags(fwag: fwags)
+    extends c-commonfwags(fwag)
+    with configutiws
+    with pwovidessewviceidentifiew {
+  v-vaw dc: fwag[stwing] = fwag(
+    "dc", :3
     "smf1",
-    "Name of data center in which this instance will execute"
+    "name o-of data centew in w-which this instance wiww exekawaii~"
   )
-  val environment: Flag[String] = flag(
-    "environment",
-    "devel",
-    "The mesos environment in which this instance will be running"
+  vaw enviwonment: fwag[stwing] = fwag(
+    "enviwonment", -.-
+    "devew",
+    "the m-mesos enviwonment in which this instance wiww be wunning"
   )
-  val maxConcurrency: Flag[Int] = flag(
-    "maxConcurrency",
-    200,
-    "Maximum concurrent requests"
+  vaw m-maxconcuwwency: fwag[int] = fwag(
+    "maxconcuwwency", 😳
+    200, mya
+    "maximum c-concuwwent w-wequests"
   )
-  val servicePort: Flag[InetSocketAddress] = flag(
-    "service.port",
-    new InetSocketAddress(8287),
-    "Port number that this thrift service will listen on"
+  v-vaw sewvicepowt: f-fwag[inetsocketaddwess] = fwag(
+    "sewvice.powt", (˘ω˘)
+    nyew inetsocketaddwess(8287), >_<
+    "powt n-nyumbew that this thwift sewvice wiww w-wisten on"
   )
-  val serviceCompactPort: Flag[InetSocketAddress] = flag(
-    "service.compact.port",
-    new InetSocketAddress(8288),
-    "Port number that the TCompactProtocol-based thrift service will listen on"
-  )
-
-  val serviceIdentifier: Flag[ServiceIdentifier] = flag[ServiceIdentifier](
-    "service.identifier",
-    EmptyServiceIdentifier,
-    "service identifier for this service for use with mutual TLS, " +
-      "format is expected to be -service.identifier=\"role:service:environment:zone\""
+  vaw sewvicecompactpowt: fwag[inetsocketaddwess] = fwag(
+    "sewvice.compact.powt", -.-
+    nyew inetsocketaddwess(8288), 🥺
+    "powt nyumbew that the t-tcompactpwotocow-based thwift s-sewvice wiww wisten o-on"
   )
 
-  val opportunisticTlsLevel = flag[String](
-    "opportunistic.tls.level",
-    "desired",
-    "The server's OpportunisticTls level."
+  vaw s-sewviceidentifiew: fwag[sewviceidentifiew] = fwag[sewviceidentifiew](
+    "sewvice.identifiew", (U ﹏ U)
+    emptysewviceidentifiew, >w<
+    "sewvice i-identifiew f-fow this sewvice fow use w-with mutuaw tws, mya " +
+      "fowmat i-is expected to be -sewvice.identifiew=\"wowe:sewvice:enviwonment:zone\""
   )
 
-  val requestRateLimit: Flag[Double] = flag[Double](
-    "requestRateLimit",
-    1000.0,
-    "Request rate limit to be used by the client request authorizer"
+  v-vaw oppowtunistictwswevew = fwag[stwing](
+    "oppowtunistic.tws.wevew", >w<
+    "desiwed", nyaa~~
+    "the sewvew's oppowtunistictws w-wevew."
   )
 
-  val enableThriftmuxCompression = flag(
-    "enableThriftmuxServerCompression",
-    true,
-    "build server with thriftmux compression enabled"
+  vaw wequestwatewimit: f-fwag[doubwe] = fwag[doubwe](
+    "wequestwatewimit", (✿oωo)
+    1000.0, ʘwʘ
+    "wequest w-wate wimit to be used by the cwient w-wequest authowizew"
   )
 
-  def getDatacenter: Datacenter.Value = getDC(dc())
-  def getEnv: Env.Value = getEnv(environment())
-  override def getServiceIdentifier: ServiceIdentifier = serviceIdentifier()
+  v-vaw enabwethwiftmuxcompwession = fwag(
+    "enabwethwiftmuxsewvewcompwession", (ˆ ﻌ ˆ)♡
+    twue, 😳😳😳
+    "buiwd sewvew with thwiftmux compwession enabwed"
+  )
+
+  def getdatacentew: d-datacentew.vawue = g-getdc(dc())
+  def getenv: e-env.vawue = g-getenv(enviwonment())
+  o-ovewwide def getsewviceidentifiew: sewviceidentifiew = sewviceidentifiew()
 }

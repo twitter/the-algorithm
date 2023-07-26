@@ -1,87 +1,87 @@
-package com.twitter.ann.hnsw
+package com.twittew.ann.hnsw
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
-import java.io.OutputStream
-import java.util.concurrent.ConcurrentHashMap
-import scala.collection.JavaConverters._
+impowt c-com.twittew.ann.common.embeddingtype.embeddingvectow
+i-impowt c-com.twittew.bijection.injection
+i-impowt com.twittew.seawch.common.fiwe.abstwactfiwe
+i-impowt java.io.outputstweam
+impowt j-java.utiw.concuwwent.concuwwenthashmap
+i-impowt s-scawa.cowwection.javaconvewtews._
 
-private[hnsw] object JMapBasedIdEmbeddingMap {
+pwivate[hnsw] object jmapbasedidembeddingmap {
 
   /**
-   * Creates in-memory concurrent hashmap based container that for storing id embedding mapping.
-   * @param expectedElements: Expected num of elements for sizing hint, need not be exact.
+   * cweates in-memowy concuwwent hashmap b-based containew that fow stowing id embedding m-mapping. 😳
+   * @pawam expectedewements: e-expected nyum of ewements fow sizing hint, 😳😳😳 nyeed nyot b-be exact. mya
    */
-  def applyInMemory[T](expectedElements: Int): IdEmbeddingMap[T] =
-    new JMapBasedIdEmbeddingMap[T](
-      new ConcurrentHashMap[T, EmbeddingVector](expectedElements),
-      Option.empty
+  def appwyinmemowy[t](expectedewements: i-int): i-idembeddingmap[t] =
+    nyew jmapbasedidembeddingmap[t](
+      nyew concuwwenthashmap[t, mya embeddingvectow](expectedewements), (⑅˘꒳˘)
+      option.empty
     )
 
   /**
-   * Creates in-memory concurrent hashmap based container that can be serialized to disk for storing id embedding mapping.
-   * @param expectedElements: Expected num of elements for sizing hint, need not be exact.
-   * @param injection : Injection for typed Id T to Array[Byte]
+   * c-cweates in-memowy concuwwent hashmap based containew that can be sewiawized to d-disk fow stowing id embedding m-mapping. (U ﹏ U)
+   * @pawam e-expectedewements: e-expected n-nyum of ewements fow sizing hint, mya nyeed nyot be e-exact. ʘwʘ
+   * @pawam injection : injection fow typed i-id t to awway[byte]
    */
-  def applyInMemoryWithSerialization[T](
-    expectedElements: Int,
-    injection: Injection[T, Array[Byte]]
-  ): IdEmbeddingMap[T] =
-    new JMapBasedIdEmbeddingMap[T](
-      new ConcurrentHashMap[T, EmbeddingVector](expectedElements),
-      Some(injection)
+  def appwyinmemowywithsewiawization[t](
+    expectedewements: int, (˘ω˘)
+    injection: injection[t, (U ﹏ U) awway[byte]]
+  ): idembeddingmap[t] =
+    n-new jmapbasedidembeddingmap[t](
+      nyew c-concuwwenthashmap[t, ^•ﻌ•^ e-embeddingvectow](expectedewements), (˘ω˘)
+      s-some(injection)
     )
 
   /**
-   * Loads id embedding mapping in in-memory concurrent hashmap.
-   * @param embeddingFile: Local/Hdfs file path for embeddings
-   * @param injection : Injection for typed Id T to Array[Byte]
-   * @param numElements: Expected num of elements for sizing hint, need not be exact
+   * woads id embedding mapping in in-memowy concuwwent h-hashmap. :3
+   * @pawam e-embeddingfiwe: wocaw/hdfs f-fiwe path fow e-embeddings
+   * @pawam injection : i-injection fow typed id t to a-awway[byte]
+   * @pawam nyumewements: expected n-nyum of ewements fow sizing hint, ^^;; n-nyeed nyot be exact
    */
-  def loadInMemory[T](
-    embeddingFile: AbstractFile,
-    injection: Injection[T, Array[Byte]],
-    numElements: Option[Int] = Option.empty
-  ): IdEmbeddingMap[T] = {
-    val map = numElements match {
-      case Some(elements) => new ConcurrentHashMap[T, EmbeddingVector](elements)
-      case None => new ConcurrentHashMap[T, EmbeddingVector]()
+  def w-woadinmemowy[t](
+    e-embeddingfiwe: abstwactfiwe, 🥺
+    injection: injection[t, (⑅˘꒳˘) awway[byte]], nyaa~~
+    nyumewements: option[int] = option.empty
+  ): i-idembeddingmap[t] = {
+    v-vaw map = nyumewements m-match {
+      c-case some(ewements) => n-nyew concuwwenthashmap[t, :3 embeddingvectow](ewements)
+      case nyone => new concuwwenthashmap[t, ( ͡o ω ͡o ) e-embeddingvectow]()
     }
-    HnswIOUtil.loadEmbeddings(
-      embeddingFile,
-      injection,
-      new JMapBasedIdEmbeddingMap(map, Some(injection))
+    hnswioutiw.woadembeddings(
+      embeddingfiwe, mya
+      injection, (///ˬ///✿)
+      nyew j-jmapbasedidembeddingmap(map, (˘ω˘) some(injection))
     )
   }
 }
 
-private[this] class JMapBasedIdEmbeddingMap[T](
-  map: java.util.concurrent.ConcurrentHashMap[T, EmbeddingVector],
-  injection: Option[Injection[T, Array[Byte]]])
-    extends IdEmbeddingMap[T] {
-  override def putIfAbsent(id: T, embedding: EmbeddingVector): EmbeddingVector = {
-    map.putIfAbsent(id, embedding)
+pwivate[this] c-cwass j-jmapbasedidembeddingmap[t](
+  map: j-java.utiw.concuwwent.concuwwenthashmap[t, ^^;; embeddingvectow], (✿oωo)
+  i-injection: option[injection[t, (U ﹏ U) a-awway[byte]]])
+    e-extends idembeddingmap[t] {
+  o-ovewwide def putifabsent(id: t, -.- embedding: embeddingvectow): embeddingvectow = {
+    map.putifabsent(id, ^•ﻌ•^ e-embedding)
   }
 
-  override def put(id: T, embedding: EmbeddingVector): EmbeddingVector = {
-    map.put(id, embedding)
+  o-ovewwide d-def put(id: t-t, rawr embedding: e-embeddingvectow): embeddingvectow = {
+    map.put(id, (˘ω˘) embedding)
   }
 
-  override def get(id: T): EmbeddingVector = {
+  o-ovewwide def get(id: t): embeddingvectow = {
     map.get(id)
   }
 
-  override def iter(): Iterator[(T, EmbeddingVector)] =
+  ovewwide def itew(): i-itewatow[(t, embeddingvectow)] =
     map
-      .entrySet()
-      .iterator()
-      .asScala
-      .map(e => (e.getKey, e.getValue))
+      .entwyset()
+      .itewatow()
+      .asscawa
+      .map(e => (e.getkey, nyaa~~ e.getvawue))
 
-  override def size(): Int = map.size()
+  ovewwide d-def size(): int = m-map.size()
 
-  override def toDirectory(embeddingFile: OutputStream): Unit = {
-    HnswIOUtil.saveEmbeddings(embeddingFile, injection.get, iter())
+  o-ovewwide def todiwectowy(embeddingfiwe: outputstweam): u-unit = {
+    hnswioutiw.saveembeddings(embeddingfiwe, UwU i-injection.get, :3 i-itew())
   }
 }

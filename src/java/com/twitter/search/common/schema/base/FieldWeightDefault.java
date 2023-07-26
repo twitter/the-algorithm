@@ -1,110 +1,110 @@
-package com.twitter.search.common.schema.base;
+package com.twittew.seawch.common.schema.base;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+impowt java.utiw.winkedhashmap;
+impowt j-java.utiw.map;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.cowwect.immutabwemap;
+i-impowt com.googwe.common.cowwect.maps;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+i-impowt s-static com.googwe.common.base.pweconditions.checknotnuww;
 
 /**
- * Records whether a field's enabled for search by default and its default weight. Note that these
- * two are decoupled -- a field can have a default weight but not enabled for search by default.
- * In a query it can be enabled by an annotation that does not specify a weight (e.g., ":f:foo"),
- * which would then use the default weight.
+ * w-wecowds whethew a-a fiewd's e-enabwed fow seawch by defauwt and its defauwt weight. /(^•ω•^) nyote that these
+ * two awe d-decoupwed -- a fiewd can have a defauwt weight b-but nyot enabwed fow seawch by d-defauwt. :3
+ * in a quewy it can be enabwed by an annotation that does n-nyot specify a weight (e.g., ":f:foo"), (ꈍᴗꈍ)
+ * which w-wouwd then u-use the defauwt weight. /(^•ω•^)
  *
- * Instances are mutable.
+ * instances awe mutabwe. (⑅˘꒳˘)
  */
-public class FieldWeightDefault {
-  private final boolean enabled;
-  private final float weight;
+pubwic cwass fiewdweightdefauwt {
+  p-pwivate finaw boowean enabwed;
+  pwivate finaw fwoat weight;
 
-  public FieldWeightDefault(boolean enabled, float weight) {
-    this.enabled = enabled;
-    this.weight = weight;
+  pubwic f-fiewdweightdefauwt(boowean enabwed, ( ͡o ω ͡o ) fwoat weight) {
+    t-this.enabwed = e-enabwed;
+    t-this.weight = w-weight;
   }
 
-  public static FieldWeightDefault fromSignedWeight(float signedValue) {
-    return new FieldWeightDefault(signedValue >= 0, Math.abs(signedValue));
+  pubwic static fiewdweightdefauwt f-fwomsignedweight(fwoat signedvawue) {
+    wetuwn nyew fiewdweightdefauwt(signedvawue >= 0, òωó m-math.abs(signedvawue));
   }
 
   /**
-   * Returns an immutable map from field name to default field weights for only enabled fields.
-   * Fields that are not enabled for search by default will not be included.
+   * wetuwns an immutabwe map fwom fiewd nyame to defauwt fiewd weights fow o-onwy enabwed fiewds. (⑅˘꒳˘)
+   * fiewds t-that awe nyot enabwed f-fow seawch b-by defauwt wiww nyot be incwuded. XD
    */
-  public static <T> ImmutableMap<T, Float> getOnlyEnabled(
-      Map<T, FieldWeightDefault> map) {
+  pubwic static <t> immutabwemap<t, -.- f-fwoat> g-getonwyenabwed(
+      map<t, :3 f-fiewdweightdefauwt> m-map) {
 
-    ImmutableMap.Builder<T, Float> builder = ImmutableMap.builder();
-    for (Map.Entry<T, FieldWeightDefault> entry : map.entrySet()) {
-      if (entry.getValue().isEnabled()) {
-        builder.put(entry.getKey(), entry.getValue().getWeight());
+    immutabwemap.buiwdew<t, nyaa~~ f-fwoat> buiwdew = immutabwemap.buiwdew();
+    f-fow (map.entwy<t, 😳 fiewdweightdefauwt> entwy : m-map.entwyset()) {
+      if (entwy.getvawue().isenabwed()) {
+        b-buiwdew.put(entwy.getkey(), (⑅˘꒳˘) entwy.getvawue().getweight());
       }
     }
-    return builder.build();
+    w-wetuwn buiwdew.buiwd();
   }
 
-  public boolean isEnabled() {
-    return enabled;
+  p-pubwic boowean isenabwed() {
+    wetuwn enabwed;
   }
 
-  public float getWeight() {
-    return weight;
+  pubwic fwoat getweight() {
+    wetuwn weight;
   }
 
   /**
-   * Overlays the base field-weight map with the given one. Since it is an overlay, a
-   * field that does not exist in the base map will never be added. Also, negative value means
-   * the field is not enabled for search by default, but if it is, the absolute value would serve as
-   * the default.
+   * o-ovewways t-the base fiewd-weight map with t-the given one. s-since it is an o-ovewway, nyaa~~ a
+   * fiewd that does nyot exist in the base map wiww n-nyevew be added. OwO awso, negative vawue means
+   * the fiewd is nyot enabwed fow s-seawch by defauwt, rawr x3 but if it is, XD t-the absowute vawue w-wouwd sewve a-as
+   * the defauwt. σωσ
    */
-  public static ImmutableMap<String, FieldWeightDefault> overrideFieldWeightMap(
-      Map<String, FieldWeightDefault> base,
-      Map<String, Double> fieldWeightMapOverride) {
+  pubwic s-static immutabwemap<stwing, (U ᵕ U❁) f-fiewdweightdefauwt> o-ovewwidefiewdweightmap(
+      m-map<stwing, (U ﹏ U) fiewdweightdefauwt> base, :3
+      map<stwing, ( ͡o ω ͡o ) doubwe> f-fiewdweightmapovewwide) {
 
-    checkNotNull(base);
-    if (fieldWeightMapOverride == null) {
-      return ImmutableMap.copyOf(base);
+    c-checknotnuww(base);
+    i-if (fiewdweightmapovewwide == n-nyuww) {
+      w-wetuwn immutabwemap.copyof(base);
     }
 
-    LinkedHashMap<String, FieldWeightDefault> map = Maps.newLinkedHashMap(base);
-    for (Map.Entry<String, Double> entry : fieldWeightMapOverride.entrySet()) {
-      if (base.containsKey(entry.getKey())
-          && entry.getValue() >= -Float.MAX_VALUE
-          && entry.getValue() <= Float.MAX_VALUE) {
+    winkedhashmap<stwing, σωσ fiewdweightdefauwt> map = m-maps.newwinkedhashmap(base);
+    fow (map.entwy<stwing, >w< doubwe> entwy : fiewdweightmapovewwide.entwyset()) {
+      if (base.containskey(entwy.getkey())
+          && entwy.getvawue() >= -fwoat.max_vawue
+          && e-entwy.getvawue() <= fwoat.max_vawue) {
 
         map.put(
-            entry.getKey(),
-            FieldWeightDefault.fromSignedWeight(entry.getValue().floatValue()));
+            entwy.getkey(), 😳😳😳
+            fiewdweightdefauwt.fwomsignedweight(entwy.getvawue().fwoatvawue()));
       }
     }
 
-    return ImmutableMap.copyOf(map);
+    w-wetuwn immutabwemap.copyof(map);
   }
 
   /**
-   * Creates a field-to-FieldWeightDefault map from the given field-to-weight map, where negative
-   * weight means the the field is not enabled for search by default, but if it is (e.g.,
-   * by annotation), the absolute value of the weight shall be used.
+   * c-cweates a fiewd-to-fiewdweightdefauwt m-map fwom the given fiewd-to-weight m-map, OwO whewe nyegative
+   * w-weight means t-the the fiewd is nyot enabwed fow seawch by defauwt, 😳 but if it is (e.g.,
+   * by annotation), t-the absowute vawue of the weight s-shaww be used. 😳😳😳
    */
-  public static <T> ImmutableMap<T, FieldWeightDefault> fromSignedWeightMap(
-      Map<T, ? extends Number> signedWeightMap) {
+  pubwic s-static <t> immutabwemap<t, f-fiewdweightdefauwt> fwomsignedweightmap(
+      map<t, (˘ω˘) ? e-extends numbew> s-signedweightmap) {
 
-    ImmutableMap.Builder<T, FieldWeightDefault> builder = ImmutableMap.builder();
-    for (Map.Entry<T, ? extends Number> entry : signedWeightMap.entrySet()) {
-      // If double to float conversion failed, we will get a float infinity.
-      // See http://stackoverflow.com/a/10075093/716468
-      float floatValue = entry.getValue().floatValue();
-      if (floatValue != Float.NEGATIVE_INFINITY
-          && floatValue != Float.POSITIVE_INFINITY) {
+    immutabwemap.buiwdew<t, ʘwʘ f-fiewdweightdefauwt> b-buiwdew = immutabwemap.buiwdew();
+    fow (map.entwy<t, ( ͡o ω ͡o ) ? extends nyumbew> entwy : signedweightmap.entwyset()) {
+      // i-if doubwe to fwoat c-convewsion f-faiwed, o.O we wiww get a fwoat infinity. >w<
+      // see h-http://stackovewfwow.com/a/10075093/716468
+      f-fwoat fwoatvawue = entwy.getvawue().fwoatvawue();
+      i-if (fwoatvawue != fwoat.negative_infinity
+          && fwoatvawue != fwoat.positive_infinity) {
 
-        builder.put(
-            entry.getKey(),
-            FieldWeightDefault.fromSignedWeight(floatValue));
+        buiwdew.put(
+            e-entwy.getkey(), 😳
+            f-fiewdweightdefauwt.fwomsignedweight(fwoatvawue));
       }
     }
 
-    return builder.build();
+    wetuwn buiwdew.buiwd();
   }
 }

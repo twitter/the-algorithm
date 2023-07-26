@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.component_library.module.http
+package com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http
 
-import com.google.inject.Provides
-import com.twitter.finagle.http.ProxyCredentials
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.security.{Credentials => CredentialsUtil}
-import java.io.File
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.http.pwoxycwedentiaws
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.inject.annotations.fwag
+i-impowt com.twittew.utiw.secuwity.{cwedentiaws => c-cwedentiawsutiw}
+i-impowt java.io.fiwe
+i-impowt javax.inject.singweton
 
-object ProxyCredentialsModule extends TwitterModule {
-  final val HttpClientWithProxyCredentialsPath = "http_client.proxy.proxy_credentials_path"
+object pwoxycwedentiawsmoduwe extends t-twittewmoduwe {
+  finaw vaw httpcwientwithpwoxycwedentiawspath = "http_cwient.pwoxy.pwoxy_cwedentiaws_path"
 
-  flag[String](HttpClientWithProxyCredentialsPath, "", "Path the load the proxy credentials")
+  fwag[stwing](httpcwientwithpwoxycwedentiawspath, 😳😳😳 "", "path t-the woad the pwoxy cwedentiaws")
 
-  @Provides
-  @Singleton
-  def providesProxyCredentials(
-    @Flag(HttpClientWithProxyCredentialsPath) proxyCredentialsPath: String,
-  ): ProxyCredentials = {
-    val credentialsFile = new File(proxyCredentialsPath)
-    ProxyCredentials(CredentialsUtil(credentialsFile))
-      .getOrElse(throw MissingProxyCredentialsException)
+  @pwovides
+  @singweton
+  d-def pwovidespwoxycwedentiaws(
+    @fwag(httpcwientwithpwoxycwedentiawspath) pwoxycwedentiawspath: stwing, -.-
+  ): pwoxycwedentiaws = {
+    v-vaw cwedentiawsfiwe = nyew fiwe(pwoxycwedentiawspath)
+    p-pwoxycwedentiaws(cwedentiawsutiw(cwedentiawsfiwe))
+      .getowewse(thwow m-missingpwoxycwedentiawsexception)
   }
 
-  object MissingProxyCredentialsException extends Exception("Proxy Credentials not found")
+  object missingpwoxycwedentiawsexception extends exception("pwoxy cwedentiaws n-nyot found")
 }

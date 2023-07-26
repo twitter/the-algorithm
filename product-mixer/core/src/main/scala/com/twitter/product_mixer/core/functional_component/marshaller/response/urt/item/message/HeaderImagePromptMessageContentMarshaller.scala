@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.message
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.HeaderImagePromptMessageContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.headewimagepwomptmessagecontent
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class HeaderImagePromptMessageContentMarshaller @Inject() (
-  messageImageMarshaller: MessageImageMarshaller,
-  messageTextActionMarshaller: MessageTextActionMarshaller,
-  messageActionMarshaller: MessageActionMarshaller,
-  richTextMarshaller: RichTextMarshaller) {
+@singweton
+c-cwass headewimagepwomptmessagecontentmawshawwew @inject() (
+  m-messageimagemawshawwew: m-messageimagemawshawwew, 😳😳😳
+  messagetextactionmawshawwew: messagetextactionmawshawwew, -.-
+  messageactionmawshawwew: messageactionmawshawwew, ( ͡o ω ͡o )
+  w-wichtextmawshawwew: wichtextmawshawwew) {
 
-  def apply(
-    headerImagePromptMessageContent: HeaderImagePromptMessageContent
-  ): urt.MessageContent =
-    urt.MessageContent.HeaderImagePrompt(
-      urt.HeaderImagePrompt(
-        headerImage = messageImageMarshaller(headerImagePromptMessageContent.headerImage),
-        headerText = headerImagePromptMessageContent.headerText,
-        bodyText = headerImagePromptMessageContent.bodyText,
-        primaryButtonAction =
-          headerImagePromptMessageContent.primaryButtonAction.map(messageTextActionMarshaller(_)),
-        secondaryButtonAction =
-          headerImagePromptMessageContent.secondaryButtonAction.map(messageTextActionMarshaller(_)),
-        action = headerImagePromptMessageContent.action.map(messageActionMarshaller(_)),
-        headerRichText = headerImagePromptMessageContent.headerRichText.map(richTextMarshaller(_)),
-        bodyRichText = headerImagePromptMessageContent.bodyRichText.map(richTextMarshaller(_))
+  def a-appwy(
+    headewimagepwomptmessagecontent: headewimagepwomptmessagecontent
+  ): u-uwt.messagecontent =
+    uwt.messagecontent.headewimagepwompt(
+      uwt.headewimagepwompt(
+        headewimage = m-messageimagemawshawwew(headewimagepwomptmessagecontent.headewimage), rawr x3
+        headewtext = headewimagepwomptmessagecontent.headewtext, nyaa~~
+        b-bodytext = headewimagepwomptmessagecontent.bodytext, /(^•ω•^)
+        pwimawybuttonaction =
+          headewimagepwomptmessagecontent.pwimawybuttonaction.map(messagetextactionmawshawwew(_)), rawr
+        s-secondawybuttonaction =
+          headewimagepwomptmessagecontent.secondawybuttonaction.map(messagetextactionmawshawwew(_)), OwO
+        action = headewimagepwomptmessagecontent.action.map(messageactionmawshawwew(_)), (U ﹏ U)
+        headewwichtext = headewimagepwomptmessagecontent.headewwichtext.map(wichtextmawshawwew(_)), >_<
+        bodywichtext = h-headewimagepwomptmessagecontent.bodywichtext.map(wichtextmawshawwew(_))
       )
     )
 }

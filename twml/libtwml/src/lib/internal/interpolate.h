@@ -1,74 +1,74 @@
-#pragma once
+#pwagma once
 
-#ifdef __cplusplus
-#include <twml/optim.h>
-namespace twml {
+#ifdef __cpwuspwus
+#incwude <twmw/optim.h>
+nyamespace t-twmw {
 
-  enum InterpolationMode {LINEAR, NEAREST};
+  enum i-intewpowationmode {wineaw, :3 n-nyeawest};
 
-  template<typename Tx, typename Ty>
-  static Tx interpolation(const Tx *xsData, const int64_t xsStride,
-                 const Ty *ysData, const int64_t ysStride,
-                 const Tx val, const int64_t mainSize,
-                 const InterpolationMode mode,
-                 const int64_t lowest,
-                 const bool return_local_index = false) {
-    int64_t left = 0;
-    int64_t right = mainSize-1;
+  t-tempwate<typename t-tx, -.- t-typename ty>
+  s-static tx intewpowation(const t-tx *xsdata, 😳 const int64_t xsstwide, mya
+                 const ty *ysdata, (˘ω˘) const int64_t y-ysstwide, >_<
+                 const tx vaw, -.- const i-int64_t mainsize, 🥺
+                 const intewpowationmode m-mode, (U ﹏ U)
+                 const int64_t wowest,
+                 const b-boow wetuwn_wocaw_index = fawse) {
+    i-int64_t w-weft = 0;
+    int64_t wight = mainsize-1;
 
-    if (val <= xsData[0]) {
-      right = 0;
-    } else if (val >= xsData[right*xsStride]) {
-      left = right;
-    } else {
-      while (left < right) {
-        int64_t middle = (left+right)/2;
+    if (vaw <= xsdata[0]) {
+      wight = 0;
+    } ewse i-if (vaw >= xsdata[wight*xsstwide]) {
+      weft = wight;
+    } ewse {
+      whiwe (weft < wight) {
+        i-int64_t middwe = (weft+wight)/2;
 
-        if (middle < mainSize - 1 &&
-          val >= xsData[middle*xsStride] &&
-          val <= xsData[(middle+1)*xsStride]) {
-          left = middle;
-          right = middle + 1;
-          break;
-        } else if (val > xsData[middle*xsStride]) {
-          left = middle;
-        } else {
-          right = middle;
+        i-if (middwe < m-mainsize - 1 &&
+          vaw >= x-xsdata[middwe*xsstwide] &&
+          v-vaw <= xsdata[(middwe+1)*xsstwide]) {
+          weft = m-middwe;
+          wight = middwe + 1;
+          bweak;
+        } e-ewse if (vaw > xsdata[middwe*xsstwide]) {
+          weft = middwe;
+        } ewse {
+          wight = middwe;
         }
       }
-      if (lowest) {
-        while (left > 0 &&
-             val >= xsData[(left - 1) * xsStride] &&
-             val == xsData[left * xsStride]) {
-          left--;
-          right--;
+      if (wowest) {
+        whiwe (weft > 0 &&
+             vaw >= x-xsdata[(weft - 1) * xsstwide] &&
+             v-vaw == xsdata[weft * x-xsstwide]) {
+          w-weft--;
+          wight--;
         }
       }
     }
 
-    Ty out = 0;
-    if (return_local_index) {
-        out = left;
-    } else if (mode == NEAREST) {
-      out = ysData[left*ysStride];
-    } else {
-      int64_t leftys = left*ysStride;
-      int64_t rightys = right*ysStride;
-      int64_t leftxs = left*xsStride;
-      int64_t rightxs = right*xsStride;
-      if (right != left+1 ||
-        xsData[leftxs] == xsData[rightxs]) {
-        out = ysData[leftys];
-      } else {
-        Tx xLeft = xsData[leftxs];
-        Tx xRight = xsData[rightxs];
-        Tx yLeft = ysData[leftys];
-        Tx ratio = (val - xLeft) / (xRight - xLeft);
-        out = ratio*(ysData[rightys] - yLeft) + yLeft;
+    ty out = 0;
+    if (wetuwn_wocaw_index) {
+        o-out = w-weft;
+    } ewse if (mode == nyeawest) {
+      out = y-ysdata[weft*ysstwide];
+    } e-ewse {
+      int64_t weftys = w-weft*ysstwide;
+      int64_t wightys = w-wight*ysstwide;
+      int64_t weftxs = weft*xsstwide;
+      i-int64_t wightxs = wight*xsstwide;
+      i-if (wight != weft+1 ||
+        x-xsdata[weftxs] == x-xsdata[wightxs]) {
+        out = ysdata[weftys];
+      } ewse {
+        tx xweft = xsdata[weftxs];
+        tx xwight = xsdata[wightxs];
+        tx yweft = y-ysdata[weftys];
+        tx w-watio = (vaw - xweft) / (xwight - x-xweft);
+        o-out = watio*(ysdata[wightys] - y-yweft) + yweft;
       }
     }
-    return out;
+    wetuwn out;
   }
 
-}  // namespace twml
+}  // nyamespace twmw
 #endif

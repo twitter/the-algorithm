@@ -1,485 +1,485 @@
-package com.twitter.search.earlybird.archive;
+package com.twittew.seawch.eawwybiwd.awchive;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.date;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.concuwwent.timeunit;
+i-impowt j-javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.base.pwedicate;
+impowt com.googwe.common.cowwect.wists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.ServerSetMember;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer.ArchiveTimeSlice;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.util.ScrubGenUtil;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.partition.CompleteSegmentManager;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.PartitionManager;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentHdfsFlusher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentLoader;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentManager.Filter;
-import com.twitter.search.earlybird.partition.SegmentManager.Order;
-import com.twitter.search.earlybird.partition.SegmentOptimizer;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.search.earlybird.partition.SegmentWarmer;
-import com.twitter.search.earlybird.partition.SimpleSegmentIndexer;
-import com.twitter.search.earlybird.partition.UserScrubGeoEventStreamIndexer;
-import com.twitter.search.earlybird.partition.UserUpdatesStreamIndexer;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.segment.SegmentDataProvider;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdAction;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionInterface;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionLockFailed;
+impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.concuwwent.scheduwedexecutowsewvicefactowy;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt com.twittew.seawch.common.utiw.gcutiw;
+i-impowt com.twittew.seawch.common.utiw.io.wecowdweadew.wecowdweadew;
+i-impowt c-com.twittew.seawch.common.utiw.zktwywock.zookeepewtwywockfactowy;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdindexconfig;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdstatus;
+impowt com.twittew.seawch.eawwybiwd.sewvewsetmembew;
+impowt c-com.twittew.seawch.eawwybiwd.awchive.awchivetimeswicew.awchivetimeswice;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.utiw.scwubgenutiw;
+i-impowt com.twittew.seawch.eawwybiwd.document.tweetdocument;
+impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.compwetesegmentmanagew;
+i-impowt c-com.twittew.seawch.eawwybiwd.pawtition.dynamicpawtitionconfig;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.muwtisegmenttewmdictionawymanagew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.pawtitionconfig;
+impowt com.twittew.seawch.eawwybiwd.pawtition.pawtitionmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.seawchindexingmetwicset;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmenthdfsfwushew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentwoadew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentmanagew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentmanagew.fiwtew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentmanagew.owdew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentoptimizew;
+i-impowt c-com.twittew.seawch.eawwybiwd.pawtition.segmentsyncconfig;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentwawmew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.simpwesegmentindexew;
+i-impowt c-com.twittew.seawch.eawwybiwd.pawtition.usewscwubgeoeventstweamindexew;
+impowt c-com.twittew.seawch.eawwybiwd.pawtition.usewupdatesstweamindexew;
+i-impowt com.twittew.seawch.eawwybiwd.quewycache.quewycachemanagew;
+impowt com.twittew.seawch.eawwybiwd.segment.segmentdatapwovidew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdstatuscode;
+impowt com.twittew.seawch.eawwybiwd.utiw.coowdinatedeawwybiwdaction;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.coowdinatedeawwybiwdactionintewface;
+impowt c-com.twittew.seawch.eawwybiwd.utiw.coowdinatedeawwybiwdactionwockfaiwed;
 
-public class ArchiveSearchPartitionManager extends PartitionManager {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ArchiveSearchPartitionManager.class);
+pubwic c-cwass awchiveseawchpawtitionmanagew extends pawtitionmanagew {
+  p-pwivate static f-finaw woggew wog =
+      woggewfactowy.getwoggew(awchiveseawchpawtitionmanagew.cwass);
 
-  public static final String CONFIG_NAME = "archive";
+  pubwic static finaw stwing config_name = "awchive";
 
-  private static final long ONE_DAY_MILLIS = TimeUnit.DAYS.toMillis(1);
+  pwivate static finaw wong one_day_miwwis = t-timeunit.days.tomiwwis(1);
 
-  private final ArchiveTimeSlicer timeSlicer;
-  private final ArchiveSegmentDataProvider segmentDataProvider;
+  p-pwivate finaw awchivetimeswicew t-timeswicew;
+  p-pwivate f-finaw awchivesegmentdatapwovidew segmentdatapwovidew;
 
-  private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
-  private final UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer;
+  pwivate finaw usewupdatesstweamindexew u-usewupdatesstweamindexew;
+  pwivate finaw usewscwubgeoeventstweamindexew usewscwubgeoeventstweamindexew;
 
-  private final SegmentWarmer segmentWarmer;
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final Clock clock;
-  private final SegmentSyncConfig segmentSyncConfig;
-  protected final SearchCounter gcAfterIndexing;
+  pwivate f-finaw segmentwawmew segmentwawmew;
+  p-pwivate f-finaw eawwybiwdindexconfig e-eawwybiwdindexconfig;
+  pwivate finaw z-zookeepewtwywockfactowy z-zktwywockfactowy;
+  pwivate f-finaw cwock c-cwock;
+  pwivate finaw segmentsyncconfig segmentsyncconfig;
+  p-pwotected finaw s-seawchcountew gcaftewindexing;
 
-  // Used for coordinating daily updated across different replicas on the same hash partition,
-  // to run them one at a time, and minimize the impact on query latencies.
-  private final CoordinatedEarlybirdActionInterface coordinatedDailyUpdate;
+  // u-used fow coowdinating d-daiwy u-updated acwoss diffewent wepwicas on the same hash pawtition, ʘwʘ
+  // t-to wun them one at a time, and minimize the impact on quewy watencies. :3
+  pwivate finaw coowdinatedeawwybiwdactionintewface c-coowdinateddaiwyupdate;
 
-  private final SearchIndexingMetricSet indexingMetricSet;
+  pwivate finaw seawchindexingmetwicset indexingmetwicset;
 
-  // This is only used in tests where no coordination is needed.
-  @VisibleForTesting
-  public ArchiveSearchPartitionManager(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      QueryCacheManager queryCacheManager,
-      SegmentManager segmentManager,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SearchStatsReceiver searchStatsReceiver,
-      ArchiveEarlybirdIndexConfig earlybirdIndexConfig,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      ScheduledExecutorServiceFactory userUpdateIndexerScheduledExecutorFactory,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      SegmentSyncConfig syncConfig,
-      Clock clock,
-      CriticalExceptionHandler criticalExceptionHandler)
-      throws IOException {
-    this(
-        zooKeeperTryLockFactory,
-        queryCacheManager,
-        segmentManager,
-        dynamicPartitionConfig,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        searchStatsReceiver,
-        earlybirdIndexConfig,
-        null,
-        executorServiceFactory,
-        userUpdateIndexerScheduledExecutorFactory,
-        searchIndexingMetricSet,
-        syncConfig,
-        clock,
-        criticalExceptionHandler);
+  // t-this is o-onwy used in tests w-whewe nyo coowdination is nyeeded.
+  @visibwefowtesting
+  pubwic a-awchiveseawchpawtitionmanagew(
+      zookeepewtwywockfactowy z-zookeepewtwywockfactowy, 😳
+      q-quewycachemanagew quewycachemanagew, òωó
+      segmentmanagew segmentmanagew, 🥺
+      dynamicpawtitionconfig dynamicpawtitionconfig, rawr x3
+      u-usewupdatesstweamindexew usewupdatesstweamindexew, ^•ﻌ•^
+      u-usewscwubgeoeventstweamindexew usewscwubgeoeventstweamindexew, :3
+      seawchstatsweceivew s-seawchstatsweceivew, (ˆ ﻌ ˆ)♡
+      a-awchiveeawwybiwdindexconfig eawwybiwdindexconfig, (U ᵕ U❁)
+      scheduwedexecutowsewvicefactowy e-executowsewvicefactowy, :3
+      s-scheduwedexecutowsewvicefactowy usewupdateindexewscheduwedexecutowfactowy, ^^;;
+      s-seawchindexingmetwicset s-seawchindexingmetwicset, ( ͡o ω ͡o )
+      segmentsyncconfig syncconfig, o.O
+      cwock cwock, ^•ﻌ•^
+      cwiticawexceptionhandwew c-cwiticawexceptionhandwew)
+      t-thwows ioexception {
+    t-this(
+        zookeepewtwywockfactowy, XD
+        q-quewycachemanagew, ^^
+        s-segmentmanagew, o.O
+        dynamicpawtitionconfig, ( ͡o ω ͡o )
+        u-usewupdatesstweamindexew, /(^•ω•^)
+        usewscwubgeoeventstweamindexew, 🥺
+        seawchstatsweceivew, nyaa~~
+        eawwybiwdindexconfig, mya
+        nyuww, XD
+        executowsewvicefactowy, nyaa~~
+        u-usewupdateindexewscheduwedexecutowfactowy, ʘwʘ
+        s-seawchindexingmetwicset, (⑅˘꒳˘)
+        syncconfig, :3
+        cwock, -.-
+        c-cwiticawexceptionhandwew);
   }
 
-  public ArchiveSearchPartitionManager(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      QueryCacheManager queryCacheManager,
-      SegmentManager segmentManager,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SearchStatsReceiver searchStatsReceiver,
-      ArchiveEarlybirdIndexConfig earlybirdIndexConfig,
-      ServerSetMember serverSetMember,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      ScheduledExecutorServiceFactory userUpdateIndexerExecutorFactory,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      SegmentSyncConfig syncConfig,
-      Clock clock,
-      CriticalExceptionHandler criticalExceptionHandler) throws IOException {
-    super(queryCacheManager, segmentManager, dynamicPartitionConfig, executorServiceFactory,
-        searchIndexingMetricSet, searchStatsReceiver, criticalExceptionHandler);
+  p-pubwic awchiveseawchpawtitionmanagew(
+      zookeepewtwywockfactowy zookeepewtwywockfactowy, 😳😳😳
+      q-quewycachemanagew quewycachemanagew, (U ﹏ U)
+      segmentmanagew segmentmanagew, o.O
+      dynamicpawtitionconfig dynamicpawtitionconfig,
+      u-usewupdatesstweamindexew usewupdatesstweamindexew, ( ͡o ω ͡o )
+      usewscwubgeoeventstweamindexew u-usewscwubgeoeventstweamindexew, òωó
+      s-seawchstatsweceivew seawchstatsweceivew, 🥺
+      awchiveeawwybiwdindexconfig eawwybiwdindexconfig, /(^•ω•^)
+      sewvewsetmembew s-sewvewsetmembew, 😳😳😳
+      s-scheduwedexecutowsewvicefactowy executowsewvicefactowy, ^•ﻌ•^
+      scheduwedexecutowsewvicefactowy usewupdateindexewexecutowfactowy, nyaa~~
+      s-seawchindexingmetwicset seawchindexingmetwicset, OwO
+      s-segmentsyncconfig syncconfig, ^•ﻌ•^
+      cwock cwock, σωσ
+      cwiticawexceptionhandwew c-cwiticawexceptionhandwew) thwows ioexception {
+    s-supew(quewycachemanagew, -.- s-segmentmanagew, (˘ω˘) dynamicpawtitionconfig, rawr x3 executowsewvicefactowy, rawr x3
+        seawchindexingmetwicset, s-seawchstatsweceivew, σωσ cwiticawexceptionhandwew);
 
-    Preconditions.checkState(syncConfig.getScrubGen().isPresent());
-    Date scrubGen = ScrubGenUtil.parseScrubGenToDate(syncConfig.getScrubGen().get());
+    p-pweconditions.checkstate(syncconfig.getscwubgen().ispwesent());
+    d-date scwubgen = s-scwubgenutiw.pawsescwubgentodate(syncconfig.getscwubgen().get());
 
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
-    final DailyStatusBatches dailyStatusBatches = new DailyStatusBatches(
-        zkTryLockFactory,
-        scrubGen);
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
+    this.zktwywockfactowy = z-zookeepewtwywockfactowy;
+    f-finaw daiwystatusbatches daiwystatusbatches = n-nyew d-daiwystatusbatches(
+        z-zktwywockfactowy, nyaa~~
+        scwubgen);
+    this.eawwybiwdindexconfig = e-eawwybiwdindexconfig;
+    pawtitionconfig c-cuwpawtitionconfig = d-dynamicpawtitionconfig.getcuwwentpawtitionconfig();
 
-    this.indexingMetricSet = searchIndexingMetricSet;
+    this.indexingmetwicset = seawchindexingmetwicset;
 
-    this.timeSlicer = new ArchiveTimeSlicer(
-        EarlybirdConfig.getMaxSegmentSize(), dailyStatusBatches,
-        curPartitionConfig.getTierStartDate(), curPartitionConfig.getTierEndDate(),
-        earlybirdIndexConfig);
-    this.segmentDataProvider =
-        new ArchiveSegmentDataProvider(
-            dynamicPartitionConfig,
-            timeSlicer,
-            this.earlybirdIndexConfig);
+    this.timeswicew = n-nyew awchivetimeswicew(
+        e-eawwybiwdconfig.getmaxsegmentsize(), (ꈍᴗꈍ) d-daiwystatusbatches, ^•ﻌ•^
+        c-cuwpawtitionconfig.gettiewstawtdate(), >_< cuwpawtitionconfig.gettiewenddate(), ^^;;
+        e-eawwybiwdindexconfig);
+    this.segmentdatapwovidew =
+        nyew awchivesegmentdatapwovidew(
+            dynamicpawtitionconfig, ^^;;
+            timeswicew, /(^•ω•^)
+            this.eawwybiwdindexconfig);
 
-    this.userUpdatesStreamIndexer = userUpdatesStreamIndexer;
-    this.userScrubGeoEventStreamIndexer = userScrubGeoEventStreamIndexer;
+    this.usewupdatesstweamindexew = usewupdatesstweamindexew;
+    t-this.usewscwubgeoeventstweamindexew = usewscwubgeoeventstweamindexew;
 
-    this.coordinatedDailyUpdate = new CoordinatedEarlybirdAction(
-        zkTryLockFactory,
-        "archive_daily_update",
-        dynamicPartitionConfig,
-        serverSetMember,
-        criticalExceptionHandler,
-        syncConfig);
+    t-this.coowdinateddaiwyupdate = nyew coowdinatedeawwybiwdaction(
+        zktwywockfactowy, nyaa~~
+        "awchive_daiwy_update", (✿oωo)
+        d-dynamicpawtitionconfig, ( ͡o ω ͡o )
+        sewvewsetmembew, (U ᵕ U❁)
+        c-cwiticawexceptionhandwew, òωó
+        syncconfig);
 
-    this.segmentWarmer = new SegmentWarmer(criticalExceptionHandler);
-    this.clock = clock;
-    this.segmentSyncConfig = syncConfig;
-    this.gcAfterIndexing = SearchCounter.export("gc_after_indexing");
+    t-this.segmentwawmew = n-nyew s-segmentwawmew(cwiticawexceptionhandwew);
+    t-this.cwock = c-cwock;
+    this.segmentsyncconfig = syncconfig;
+    this.gcaftewindexing = seawchcountew.expowt("gc_aftew_indexing");
   }
 
-  @Override
-  public SegmentDataProvider getSegmentDataProvider() {
-    return segmentDataProvider;
+  @ovewwide
+  pubwic segmentdatapwovidew getsegmentdatapwovidew() {
+    w-wetuwn s-segmentdatapwovidew;
   }
 
-  @Override
-  protected void startUp() throws Exception {
-    LOG.info("Using CompleteSegmentManager to index complete segments.");
+  @ovewwide
+  p-pwotected void stawtup() t-thwows exception {
+    wog.info("using compwetesegmentmanagew to index compwete s-segments.");
 
-    // deferring handling of multi-segment term dictionary for the archive.
-    // SEARCH-11952
-    CompleteSegmentManager completeSegmentManager = new CompleteSegmentManager(
-        zkTryLockFactory,
-        segmentDataProvider,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        segmentManager,
-        null,
-        indexingMetricSet,
-        clock,
-        MultiSegmentTermDictionaryManager.NOOP_INSTANCE,
-        segmentSyncConfig,
-        criticalExceptionHandler);
+    // d-defewwing handwing of m-muwti-segment tewm dictionawy fow the awchive. σωσ
+    // s-seawch-11952
+    c-compwetesegmentmanagew compwetesegmentmanagew = n-new compwetesegmentmanagew(
+        z-zktwywockfactowy, :3
+        segmentdatapwovidew, OwO
+        usewupdatesstweamindexew, ^^
+        usewscwubgeoeventstweamindexew, (˘ω˘)
+        segmentmanagew, OwO
+        n-nyuww, UwU
+        i-indexingmetwicset, ^•ﻌ•^
+        c-cwock, (ꈍᴗꈍ)
+        m-muwtisegmenttewmdictionawymanagew.noop_instance, /(^•ω•^)
+        s-segmentsyncconfig, (U ᵕ U❁)
+        cwiticawexceptionhandwew);
 
-    completeSegmentManager.indexUserEvents();
-    completeSegmentManager.indexCompleteSegments(
-        () -> segmentManager.getSegmentInfos(Filter.NeedsIndexing, Order.OLD_TO_NEW));
+    c-compwetesegmentmanagew.indexusewevents();
+    compwetesegmentmanagew.indexcompwetesegments(
+        () -> s-segmentmanagew.getsegmentinfos(fiwtew.needsindexing, owdew.owd_to_new));
 
-    // In the archive cluster, the current segment needs to be loaded too.
-    List<SegmentInfo> allSegments =
-        Lists.newArrayList(segmentManager.getSegmentInfos(Filter.All, Order.OLD_TO_NEW));
-    completeSegmentManager.loadCompleteSegments(allSegments);
+    // i-in the a-awchive cwustew, (✿oωo) the cuwwent s-segment needs to be woaded too. OwO
+    wist<segmentinfo> a-awwsegments =
+        wists.newawwaywist(segmentmanagew.getsegmentinfos(fiwtew.aww, :3 o-owdew.owd_to_new));
+    c-compwetesegmentmanagew.woadcompwetesegments(awwsegments);
 
-    completeSegmentManager.buildMultiSegmentTermDictionary();
+    compwetesegmentmanagew.buiwdmuwtisegmenttewmdictionawy();
 
-    completeSegmentManager.warmSegments(allSegments);
+    c-compwetesegmentmanagew.wawmsegments(awwsegments);
 
-    LOG.info("Starting to run UserUpdatesKafkaConsumer");
-    new Thread(userUpdatesStreamIndexer::run, "userupdates-stream-indexer").start();
+    wog.info("stawting to wun u-usewupdateskafkaconsumew");
+    n-nyew thwead(usewupdatesstweamindexew::wun, nyaa~~ "usewupdates-stweam-indexew").stawt();
 
-    if (EarlybirdConfig.consumeUserScrubGeoEvents()) {
-      LOG.info("Starting to run UserScrubGeoEventKafkaConsumer");
-      new Thread(userScrubGeoEventStreamIndexer::run,
-          "userScrubGeoEvent-stream-indexer").start();
+    i-if (eawwybiwdconfig.consumeusewscwubgeoevents()) {
+      wog.info("stawting to wun usewscwubgeoeventkafkaconsumew");
+      nyew thwead(usewscwubgeoeventstweamindexew::wun, ^•ﻌ•^
+          "usewscwubgeoevent-stweam-indexew").stawt();
     }
   }
 
-  private static List<ArchiveTimeSlice> truncateSegmentList(List<ArchiveTimeSlice> segmentList,
-                                                            int maxNumSegments) {
-    // Maybe cut-off the beginning of the sorted list of IDs.
-    if (maxNumSegments > 0 && maxNumSegments < segmentList.size()) {
-      return segmentList.subList(segmentList.size() - maxNumSegments, segmentList.size());
-    } else {
-      return segmentList;
+  p-pwivate static wist<awchivetimeswice> twuncatesegmentwist(wist<awchivetimeswice> s-segmentwist, ( ͡o ω ͡o )
+                                                            i-int maxnumsegments) {
+    // maybe cut-off the b-beginning of the sowted wist of i-ids. ^^;;
+    if (maxnumsegments > 0 && m-maxnumsegments < segmentwist.size()) {
+      wetuwn segmentwist.subwist(segmentwist.size() - m-maxnumsegments, mya segmentwist.size());
+    } ewse {
+      w-wetuwn s-segmentwist;
     }
   }
 
 
-  @Override
-  protected void indexingLoop(boolean firstLoop) throws Exception {
-    if (firstLoop) {
-      EarlybirdStatus.beginEvent(
-          INDEX_CURRENT_SEGMENT, getSearchIndexingMetricSet().startupInCurrentSegment);
+  @ovewwide
+  pwotected v-void indexingwoop(boowean fiwstwoop) t-thwows exception {
+    i-if (fiwstwoop) {
+      e-eawwybiwdstatus.beginevent(
+          index_cuwwent_segment, (U ᵕ U❁) getseawchindexingmetwicset().stawtupincuwwentsegment);
     }
 
-    List<ArchiveTimeSlice> timeSlices = timeSlicer.getTimeSlicesInTierRange();
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    timeSlices = truncateSegmentList(timeSlices, curPartitionConfig.getMaxEnabledLocalSegments());
+    wist<awchivetimeswice> timeswices = timeswicew.gettimeswicesintiewwange();
+    pawtitionconfig cuwpawtitionconfig = dynamicpawtitionconfig.getcuwwentpawtitionconfig();
+    timeswices = twuncatesegmentwist(timeswices, ^•ﻌ•^ cuwpawtitionconfig.getmaxenabwedwocawsegments());
 
-    for (final ArchiveTimeSlice timeSlice : timeSlices) {
-      // If any timeslice build failed, do not try to build timeslice after that to prevent
-      // possible holes between timeslices.
-      try {
-        if (!processArchiveTimeSlice(timeSlice)) {
-          LOG.warn("Building timeslice {} has failed, stopping future builds.",
-              timeSlice.getDescription());
-          indexingMetricSet.archiveTimeSliceBuildFailedCounter.increment();
-          return;
+    fow (finaw awchivetimeswice timeswice : timeswices) {
+      // i-if any timeswice b-buiwd faiwed, (U ﹏ U) do nyot twy to buiwd timeswice a-aftew that to pwevent
+      // possibwe h-howes between t-timeswices. /(^•ω•^)
+      twy {
+        i-if (!pwocessawchivetimeswice(timeswice)) {
+          wog.wawn("buiwding t-timeswice {} h-has faiwed, ʘwʘ stopping f-futuwe buiwds.", XD
+              timeswice.getdescwiption());
+          indexingmetwicset.awchivetimeswicebuiwdfaiwedcountew.incwement();
+          w-wetuwn;
         }
-      } catch (CoordinatedEarlybirdActionLockFailed e) {
-        // If the timeslice build failed because of lock coordination, we can wait for the next
-        // iteration to build again.
-        return;
+      } c-catch (coowdinatedeawwybiwdactionwockfaiwed e) {
+        // if the timeswice b-buiwd faiwed b-because of w-wock coowdination, (⑅˘꒳˘) w-we can wait f-fow the nyext
+        // i-itewation t-to buiwd again. nyaa~~
+        w-wetuwn;
       }
     }
 
-    if (firstLoop) {
-      EarlybirdStatus.endEvent(
-          INDEX_CURRENT_SEGMENT, getSearchIndexingMetricSet().startupInCurrentSegment);
-      LOG.info("First indexing loop complete. Setting up query cache...");
-      EarlybirdStatus.beginEvent(
-          SETUP_QUERY_CACHE, getSearchIndexingMetricSet().startupInQueryCacheUpdates);
+    i-if (fiwstwoop) {
+      eawwybiwdstatus.endevent(
+          i-index_cuwwent_segment, g-getseawchindexingmetwicset().stawtupincuwwentsegment);
+      w-wog.info("fiwst indexing woop c-compwete. UwU setting up quewy cache...");
+      eawwybiwdstatus.beginevent(
+          s-setup_quewy_cache, (˘ω˘) getseawchindexingmetwicset().stawtupinquewycacheupdates);
     }
-    setupQueryCacheIfNeeded();
+    s-setupquewycacheifneeded();
 
-    if (EarlybirdStatus.isStarting() && queryCacheManager.allTasksRan()) {
-      LOG.info("Query cache setup complete. Becoming current now...");
-      EarlybirdStatus.endEvent(
-          SETUP_QUERY_CACHE, getSearchIndexingMetricSet().startupInQueryCacheUpdates);
+    i-if (eawwybiwdstatus.isstawting() && q-quewycachemanagew.awwtaskswan()) {
+      wog.info("quewy c-cache setup compwete. rawr x3 b-becoming cuwwent nyow...");
+      e-eawwybiwdstatus.endevent(
+          setup_quewy_cache, (///ˬ///✿) g-getseawchindexingmetwicset().stawtupinquewycacheupdates);
 
-      becomeCurrent();
-      EarlybirdStatus.recordEarlybirdEvent("Archive Earlybird is current");
+      becomecuwwent();
+      eawwybiwdstatus.wecowdeawwybiwdevent("awchive eawwybiwd is cuwwent");
     }
 
-    updateIndexFreshnessStats(timeSlices);
+    updateindexfweshnessstats(timeswices);
   }
 
-  @VisibleForTesting
-  protected boolean processArchiveTimeSlice(final ArchiveTimeSlice timeSlice)
-      throws CoordinatedEarlybirdActionLockFailed, IOException {
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    long minStatusID = timeSlice.getMinStatusID(curPartitionConfig.getIndexingHashPartitionID());
-    SegmentInfo segmentInfo = segmentManager.getSegmentInfo(minStatusID);
-    if (segmentInfo == null) {
-      return indexSegmentFromScratch(timeSlice);
-    } else if (existingSegmentNeedsUpdating(timeSlice, segmentInfo)) {
-      return indexNewDayAndAppendExistingSegment(timeSlice, segmentInfo);
+  @visibwefowtesting
+  p-pwotected boowean pwocessawchivetimeswice(finaw a-awchivetimeswice t-timeswice)
+      thwows coowdinatedeawwybiwdactionwockfaiwed, 😳😳😳 ioexception {
+    pawtitionconfig c-cuwpawtitionconfig = dynamicpawtitionconfig.getcuwwentpawtitionconfig();
+    w-wong minstatusid = t-timeswice.getminstatusid(cuwpawtitionconfig.getindexinghashpawtitionid());
+    s-segmentinfo segmentinfo = segmentmanagew.getsegmentinfo(minstatusid);
+    if (segmentinfo == nyuww) {
+      w-wetuwn indexsegmentfwomscwatch(timeswice);
+    } e-ewse if (existingsegmentneedsupdating(timeswice, (///ˬ///✿) segmentinfo)) {
+      w-wetuwn indexnewdayandappendexistingsegment(timeswice, ^^;; segmentinfo);
     }
-    return true;
+    wetuwn twue;
   }
 
 
-  @VisibleForTesting
-  SegmentInfo newSegmentInfo(ArchiveTimeSlice timeSlice) throws IOException {
-    return new SegmentInfo(segmentDataProvider.newArchiveSegment(timeSlice),
-        segmentManager.getEarlybirdSegmentFactory(), segmentSyncConfig);
+  @visibwefowtesting
+  s-segmentinfo nyewsegmentinfo(awchivetimeswice timeswice) t-thwows i-ioexception {
+    w-wetuwn nyew segmentinfo(segmentdatapwovidew.newawchivesegment(timeswice), ^^
+        segmentmanagew.geteawwybiwdsegmentfactowy(), (///ˬ///✿) s-segmentsyncconfig);
   }
 
-  private boolean indexNewDayAndAppendExistingSegment(final ArchiveTimeSlice timeSlice,
-                                                      SegmentInfo segmentInfo)
-      throws CoordinatedEarlybirdActionLockFailed, IOException {
+  p-pwivate b-boowean indexnewdayandappendexistingsegment(finaw a-awchivetimeswice timeswice, -.-
+                                                      s-segmentinfo s-segmentinfo)
+      t-thwows coowdinatedeawwybiwdactionwockfaiwed, /(^•ω•^) i-ioexception {
 
-    LOG.info("Updating segment: {}; new endDate will be {} segmentInfo: {}",
-        segmentInfo.getSegment().getTimeSliceID(), timeSlice.getEndDate(), segmentInfo);
+    w-wog.info("updating s-segment: {}; n-nyew enddate w-wiww be {} segmentinfo: {}", UwU
+        segmentinfo.getsegment().gettimeswiceid(), (⑅˘꒳˘) t-timeswice.getenddate(), segmentinfo);
 
-    // Create another new SegmentInfo for indexing
-    final SegmentInfo newSegmentInfoForIndexing = newSegmentInfo(timeSlice);
-    // make a final reference of the old segment info to be passed into closure.
-    final SegmentInfo oldSegmentInfo = segmentInfo;
+    // c-cweate anothew new segmentinfo f-fow indexing
+    f-finaw segmentinfo n-nyewsegmentinfofowindexing = nyewsegmentinfo(timeswice);
+    // make a finaw wefewence of the o-owd segment info t-to be passed i-into cwosuwe.
+    finaw segmentinfo owdsegmentinfo = segmentinfo;
 
-    // Sanity check: the old and new segment should not share the same lucene directory.
-    Preconditions.checkState(
-        !newSegmentInfoForIndexing.getSyncInfo().getLocalLuceneSyncDir().equals(
-            oldSegmentInfo.getSyncInfo().getLocalLuceneSyncDir()));
+    // s-sanity c-check: the owd and nyew segment s-shouwd nyot shawe t-the same wucene diwectowy. ʘwʘ
+    pweconditions.checkstate(
+        !newsegmentinfofowindexing.getsyncinfo().getwocawwucenesyncdiw().equaws(
+            owdsegmentinfo.getsyncinfo().getwocawwucenesyncdiw()));
 
-    Preconditions.checkState(
-        !newSegmentInfoForIndexing.getSyncInfo().getLocalSyncDir().equals(
-            oldSegmentInfo.getSyncInfo().getLocalSyncDir()));
+    p-pweconditions.checkstate(
+        !newsegmentinfofowindexing.getsyncinfo().getwocawsyncdiw().equaws(
+            o-owdsegmentinfo.getsyncinfo().getwocawsyncdiw()));
 
-    final ArchiveSegment oldSegment = (ArchiveSegment) segmentInfo.getSegment();
+    f-finaw a-awchivesegment owdsegment = (awchivesegment) segmentinfo.getsegment();
 
-    return indexSegment(newSegmentInfoForIndexing, oldSegmentInfo, input -> {
-      // we're updating the segment - only index days after the old end date, but only if
-      // we're in the on-disk archive, and we're sure that the previous days have already
-      // been indexed.
-      return !earlybirdIndexConfig.isIndexStoredOnDisk()
-          // First time around, and the segment has not been indexed and optimized yet,
-          // we will want to add all the days
-          || !oldSegmentInfo.isOptimized()
-          || oldSegmentInfo.getIndexSegment().getIndexStats().getStatusCount() == 0
-          || !oldSegment.getDataEndDate().before(timeSlice.getEndDate())
-          // Index any new days
-          || input.after(oldSegment.getDataEndDate());
+    w-wetuwn indexsegment(newsegmentinfofowindexing, σωσ owdsegmentinfo, ^^ input -> {
+      // w-we'we updating the segment - onwy index days a-aftew the owd end date, but onwy if
+      // we'we i-in the on-disk awchive, OwO and we'we s-suwe that the p-pwevious days have awweady
+      // b-been indexed. (ˆ ﻌ ˆ)♡
+      w-wetuwn !eawwybiwdindexconfig.isindexstowedondisk()
+          // fiwst t-time awound, o.O and the segment has n-nyot been indexed a-and optimized y-yet, (˘ω˘)
+          // w-we wiww want to add aww the d-days
+          || !owdsegmentinfo.isoptimized()
+          || o-owdsegmentinfo.getindexsegment().getindexstats().getstatuscount() == 0
+          || !owdsegment.getdataenddate().befowe(timeswice.getenddate())
+          // i-index any nyew days
+          || i-input.aftew(owdsegment.getdataenddate());
     });
   }
 
-  private boolean existingSegmentNeedsUpdating(ArchiveTimeSlice timeSlice,
-                                               SegmentInfo segmentInfo) {
-    return ((ArchiveSegment) segmentInfo.getSegment())
-        .getDataEndDate().before(timeSlice.getEndDate())
-        // First time around, the end date is the same as the timeSlice end date, but
-        // the segment has not been indexed and optimized yet
-        || (!segmentInfo.isOptimized() && !segmentInfo.wasIndexed())
-        // If indexing failed, this index will not be marked as complete, and we will want
-        // to reindex
-        || !segmentInfo.isComplete();
+  pwivate boowean existingsegmentneedsupdating(awchivetimeswice t-timeswice, 😳
+                                               s-segmentinfo s-segmentinfo) {
+    wetuwn ((awchivesegment) segmentinfo.getsegment())
+        .getdataenddate().befowe(timeswice.getenddate())
+        // fiwst time awound, (U ᵕ U❁) the end date i-is the same as the timeswice end d-date, :3 but
+        // t-the segment has nyot been indexed and optimized y-yet
+        || (!segmentinfo.isoptimized() && !segmentinfo.wasindexed())
+        // if indexing f-faiwed, o.O t-this index wiww n-nyot be mawked as c-compwete, (///ˬ///✿) and w-we wiww want
+        // to weindex
+        || !segmentinfo.iscompwete();
   }
 
-  private boolean indexSegmentFromScratch(ArchiveTimeSlice timeSlice) throws
-      CoordinatedEarlybirdActionLockFailed, IOException {
+  pwivate boowean indexsegmentfwomscwatch(awchivetimeswice timeswice) t-thwows
+      coowdinatedeawwybiwdactionwockfaiwed, OwO i-ioexception {
 
-    SegmentInfo segmentInfo = newSegmentInfo(timeSlice);
-    LOG.info("Creating segment: " + segmentInfo.getSegment().getTimeSliceID()
-        + "; new endDate will be " + timeSlice.getEndDate() + " segmentInfo: " + segmentInfo);
+    segmentinfo segmentinfo = nyewsegmentinfo(timeswice);
+    w-wog.info("cweating segment: " + segmentinfo.getsegment().gettimeswiceid()
+        + "; nyew enddate wiww be " + t-timeswice.getenddate() + " segmentinfo: " + s-segmentinfo);
 
-    return indexSegment(segmentInfo, null, ArchiveSegment.MATCH_ALL_DATE_PREDICATE);
+    wetuwn indexsegment(segmentinfo, >w< n-nyuww, ^^ awchivesegment.match_aww_date_pwedicate);
   }
 
-  private void updateIndexFreshnessStats(List<ArchiveTimeSlice> timeSlices) {
-    if (!timeSlices.isEmpty()) {
-      ArchiveTimeSlice lastTimeslice = timeSlices.get(timeSlices.size() - 1);
+  pwivate void updateindexfweshnessstats(wist<awchivetimeswice> t-timeswices) {
+    i-if (!timeswices.isempty()) {
+      awchivetimeswice wasttimeswice = t-timeswices.get(timeswices.size() - 1);
 
-      // Add ~24 hours to start of end date to estimate freshest tweet time.
-      indexingMetricSet.freshestTweetTimeMillis.set(
-          lastTimeslice.getEndDate().getTime() + ONE_DAY_MILLIS);
+      // add ~24 houws to s-stawt of end date to estimate fweshest tweet time. (⑅˘꒳˘)
+      indexingmetwicset.fweshesttweettimemiwwis.set(
+          w-wasttimeswice.getenddate().gettime() + one_day_miwwis);
 
-      PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-      long maxStatusId = lastTimeslice.getMaxStatusID(
-          curPartitionConfig.getIndexingHashPartitionID());
-      if (maxStatusId > indexingMetricSet.highestStatusId.get()) {
-        indexingMetricSet.highestStatusId.set(maxStatusId);
+      pawtitionconfig c-cuwpawtitionconfig = d-dynamicpawtitionconfig.getcuwwentpawtitionconfig();
+      w-wong maxstatusid = wasttimeswice.getmaxstatusid(
+          cuwpawtitionconfig.getindexinghashpawtitionid());
+      i-if (maxstatusid > indexingmetwicset.higheststatusid.get()) {
+        indexingmetwicset.higheststatusid.set(maxstatusid);
       }
     }
   }
 
-  @Override
-  public void shutDownIndexing() {
-    LOG.info("Shutting down.");
-    userUpdatesStreamIndexer.close();
-    userScrubGeoEventStreamIndexer.close();
-    LOG.info("Closed User Event Kafka Consumers. Now Shutting down reader set.");
-    getSegmentDataProvider().getSegmentDataReaderSet().stopAll();
+  @ovewwide
+  pubwic void shutdownindexing() {
+    wog.info("shutting d-down.");
+    u-usewupdatesstweamindexew.cwose();
+    u-usewscwubgeoeventstweamindexew.cwose();
+    w-wog.info("cwosed usew event kafka consumews. ʘwʘ n-nyow shutting d-down weadew set.");
+    getsegmentdatapwovidew().getsegmentdataweadewset().stopaww();
   }
 
   /**
-   * Attempts to index new days of data into the provided segment, indexing only the days that
-   * match the "dateFilter" predicate.
-   * @return true iff indexing succeeded, false otherwise.
+   * attempts t-to index nyew days of data into the pwovided segment, (///ˬ///✿) i-indexing onwy the days that
+   * match the "datefiwtew" p-pwedicate. XD
+   * @wetuwn t-twue iff indexing succeeded, 😳 f-fawse othewwise. >w<
    */
-  @VisibleForTesting
-  protected boolean indexSegment(final SegmentInfo segmentInfo,
-                                 @Nullable final SegmentInfo segmentToAppend,
-                                 final Predicate<Date> dateFilter)
-      throws CoordinatedEarlybirdActionLockFailed, IOException {
-    // Don't coordinate while we're starting up
-    if (!EarlybirdStatus.isStarting()) {
-      return coordinatedDailyUpdate.execute(segmentInfo.getSegmentName(),
-          isCoordinated -> innerIndexSegment(segmentInfo, segmentToAppend, dateFilter));
-    } else {
-      return innerIndexSegment(segmentInfo, segmentToAppend, dateFilter);
+  @visibwefowtesting
+  p-pwotected boowean i-indexsegment(finaw segmentinfo segmentinfo, (˘ω˘)
+                                 @nuwwabwe f-finaw segmentinfo segmenttoappend, nyaa~~
+                                 finaw p-pwedicate<date> datefiwtew)
+      thwows coowdinatedeawwybiwdactionwockfaiwed, 😳😳😳 ioexception {
+    // d-don't coowdinate w-whiwe we'we s-stawting up
+    i-if (!eawwybiwdstatus.isstawting()) {
+      w-wetuwn coowdinateddaiwyupdate.exekawaii~(segmentinfo.getsegmentname(), (U ﹏ U)
+          iscoowdinated -> i-innewindexsegment(segmentinfo, (˘ω˘) segmenttoappend, :3 datefiwtew));
+    } e-ewse {
+      wetuwn innewindexsegment(segmentinfo, >w< s-segmenttoappend, ^^ datefiwtew);
     }
   }
 
-  private boolean innerIndexSegment(SegmentInfo segmentInfo,
-                                    @Nullable SegmentInfo segmentToAppend,
-                                    Predicate<Date> dateFilter)
-      throws IOException {
+  pwivate boowean i-innewindexsegment(segmentinfo s-segmentinfo, 😳😳😳
+                                    @nuwwabwe segmentinfo s-segmenttoappend, nyaa~~
+                                    pwedicate<date> d-datefiwtew)
+      t-thwows ioexception {
 
-    // First try to load the new day from HDFS / Local disk
-    if (new SegmentLoader(segmentSyncConfig, criticalExceptionHandler).load(segmentInfo)) {
-      LOG.info("Successful loaded segment for new day: " + segmentInfo);
-      segmentManager.putSegmentInfo(segmentInfo);
-      gcAfterIndexing.increment();
-      GCUtil.runGC();
-      return true;
+    // fiwst t-twy to woad the n-nyew day fwom hdfs / wocaw disk
+    i-if (new segmentwoadew(segmentsyncconfig, (⑅˘꒳˘) cwiticawexceptionhandwew).woad(segmentinfo)) {
+      wog.info("successfuw woaded s-segment fow nyew day: " + segmentinfo);
+      segmentmanagew.putsegmentinfo(segmentinfo);
+      g-gcaftewindexing.incwement();
+      gcutiw.wungc();
+      wetuwn t-twue;
     }
 
-    LOG.info("Failed to load segment for new day. Will index segment: " + segmentInfo);
-    RecordReader<TweetDocument> tweetReader = ((ArchiveSegment) segmentInfo.getSegment())
-        .getStatusRecordReader(earlybirdIndexConfig.createDocumentFactory(), dateFilter);
-    try {
-      // Read and index the statuses
-      boolean success = newSimpleSegmentIndexer(tweetReader, segmentToAppend)
-          .indexSegment(segmentInfo);
+    w-wog.info("faiwed t-to woad segment fow nyew day. :3 w-wiww index segment: " + s-segmentinfo);
+    wecowdweadew<tweetdocument> t-tweetweadew = ((awchivesegment) segmentinfo.getsegment())
+        .getstatuswecowdweadew(eawwybiwdindexconfig.cweatedocumentfactowy(), ʘwʘ d-datefiwtew);
+    twy {
+      // wead a-and index the s-statuses
+      boowean success = nyewsimpwesegmentindexew(tweetweadew, rawr x3 segmenttoappend)
+          .indexsegment(segmentinfo);
       if (!success) {
-        return false;
+        w-wetuwn f-fawse;
       }
-    } finally {
-      tweetReader.stop();
+    } finawwy {
+      tweetweadew.stop();
     }
 
-    if (!SegmentOptimizer.optimize(segmentInfo)) {
-      // We consider the whole indexing event as failed if we fail to optimize.
-      LOG.error("Failed to optimize segment: " + segmentInfo);
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      return false;
+    if (!segmentoptimizew.optimize(segmentinfo)) {
+      // w-we considew the whowe indexing event a-as faiwed if w-we faiw to optimize. (///ˬ///✿)
+      wog.ewwow("faiwed to optimize segment: " + segmentinfo);
+      segmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy();
+      wetuwn f-fawse;
     }
 
-    if (!segmentWarmer.warmSegmentIfNecessary(segmentInfo)) {
-      // We consider the whole indexing event as failed if we failed to warm (because we open
-      // index readers in the warmer).
-      LOG.error("Failed to warm segment: " + segmentInfo);
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      return false;
+    if (!segmentwawmew.wawmsegmentifnecessawy(segmentinfo)) {
+      // we considew t-the whowe indexing event a-as faiwed if we f-faiwed to wawm (because we open
+      // i-index weadews i-in the wawmew). 😳😳😳
+      w-wog.ewwow("faiwed to w-wawm segment: " + s-segmentinfo);
+      s-segmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy();
+      wetuwn fawse;
     }
 
-    // Flush and upload segment to HDFS. If this fails, we just log a warning and return true.
-    boolean success = new SegmentHdfsFlusher(zkTryLockFactory, segmentSyncConfig)
-        .flushSegmentToDiskAndHDFS(segmentInfo);
-    if (!success) {
-      LOG.warn("Failed to flush segment to HDFS: " + segmentInfo);
+    // fwush and upwoad segment to hdfs. XD if this f-faiws, >_< we just w-wog a wawning and w-wetuwn twue. >w<
+    b-boowean success = n-nyew segmenthdfsfwushew(zktwywockfactowy, /(^•ω•^) segmentsyncconfig)
+        .fwushsegmenttodiskandhdfs(segmentinfo);
+    i-if (!success) {
+      wog.wawn("faiwed to fwush segment to hdfs: " + segmentinfo);
     }
 
-    segmentManager.putSegmentInfo(segmentInfo);
-    gcAfterIndexing.increment();
-    GCUtil.runGC();
-    return true;
+    s-segmentmanagew.putsegmentinfo(segmentinfo);
+    g-gcaftewindexing.incwement();
+    gcutiw.wungc();
+    wetuwn twue;
   }
 
-  @VisibleForTesting
-  protected SimpleSegmentIndexer newSimpleSegmentIndexer(
-      RecordReader<TweetDocument> tweetReader, SegmentInfo segmentToAppend) {
-    return new SimpleSegmentIndexer(tweetReader, indexingMetricSet, segmentToAppend);
+  @visibwefowtesting
+  p-pwotected simpwesegmentindexew n-nyewsimpwesegmentindexew(
+      w-wecowdweadew<tweetdocument> tweetweadew, :3 segmentinfo s-segmenttoappend) {
+    wetuwn nyew simpwesegmentindexew(tweetweadew, i-indexingmetwicset, ʘwʘ segmenttoappend);
   }
 
-  @Override
-  public boolean isCaughtUpForTests() {
-    return EarlybirdStatus.getStatusCode() == EarlybirdStatusCode.CURRENT;
+  @ovewwide
+  p-pubwic boowean iscaughtupfowtests() {
+    wetuwn e-eawwybiwdstatus.getstatuscode() == eawwybiwdstatuscode.cuwwent;
   }
 
-  public CoordinatedEarlybirdActionInterface getCoordinatedOptimizer() {
-    return this.coordinatedDailyUpdate;
+  p-pubwic c-coowdinatedeawwybiwdactionintewface getcoowdinatedoptimizew() {
+    w-wetuwn this.coowdinateddaiwyupdate;
   }
 
-  public ArchiveTimeSlicer getTimeSlicer() {
-    return timeSlicer;
+  p-pubwic awchivetimeswicew g-gettimeswicew() {
+    w-wetuwn timeswicew;
   }
 }

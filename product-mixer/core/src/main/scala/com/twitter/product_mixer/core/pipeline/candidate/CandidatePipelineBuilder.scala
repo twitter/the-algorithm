@@ -1,735 +1,735 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+package com.twittew.pwoduct_mixew.cowe.pipewine.candidate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.transformer.BaseCandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.gate.ParamGate
-import com.twitter.product_mixer.core.gate.ParamGate.EnabledGateSuffix
-import com.twitter.product_mixer.core.gate.ParamGate.SupportedClientGateSuffix
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.InvalidStepStateException
-import com.twitter.product_mixer.core.pipeline.PipelineBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ClosedGate
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutorResults
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutor
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutorResult
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutor
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutorResult
-import com.twitter.product_mixer.core.service.candidate_source_executor.FetchedCandidateWithFeatures
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.StoppedGateException
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutor
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutorInput
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.stitch.Arrow
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.asyncfeatuwemap.asyncfeatuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basequewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.basecandidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.gate.pawamgate
+impowt c-com.twittew.pwoduct_mixew.cowe.gate.pawamgate.enabwedgatesuffix
+impowt com.twittew.pwoduct_mixew.cowe.gate.pawamgate.suppowtedcwientgatesuffix
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiewstack
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.invawidstepstateexception
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinebuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.cwosedgate
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecwassifiew
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.async_featuwe_map_executow.asyncfeatuwemapexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.async_featuwe_map_executow.asyncfeatuwemapexecutowwesuwts
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_decowatow_executow.candidatedecowatowexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_decowatow_executow.candidatedecowatowexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_souwce_executow.candidatesouwceexecutow
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.candidate_souwce_executow.candidatesouwceexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_souwce_executow.fetchedcandidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.fiwtew_executow.fiwtewexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.fiwtew_executow.fiwtewexecutowwesuwt
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.stoppedgateexception
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.gwoup_wesuwts_executow.gwoupwesuwtsexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.gwoup_wesuwts_executow.gwoupwesuwtsexecutowinput
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.gwoup_wesuwts_executow.gwoupwesuwtsexecutowwesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow
+impowt com.twittew.stitch.awwow
+i-impowt com.twittew.utiw.wogging.wogging
+i-impowt javax.inject.inject
 
-class CandidatePipelineBuilder[
-  Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Result <: UniversalNoun[Any]] @Inject() (
-  queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor,
-  asyncFeatureMapExecutor: AsyncFeatureMapExecutor,
-  candidateDecoratorExecutor: CandidateDecoratorExecutor,
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor,
-  candidateSourceExecutor: CandidateSourceExecutor,
-  groupResultsExecutor: GroupResultsExecutor,
-  filterExecutor: FilterExecutor,
-  gateExecutor: GateExecutor,
-  override val statsReceiver: StatsReceiver)
-    extends PipelineBuilder[CandidatePipeline.Inputs[Query]]
-    with Logging {
+c-cwass candidatepipewinebuiwdew[
+  q-quewy <: pipewinequewy, (✿oωo)
+  candidatesouwcequewy, 😳😳😳
+  c-candidatesouwcewesuwt, (ꈍᴗꈍ)
+  wesuwt <: u-univewsawnoun[any]] @inject() (
+  quewyfeatuwehydwatowexecutow: q-quewyfeatuwehydwatowexecutow, σωσ
+  a-asyncfeatuwemapexecutow: asyncfeatuwemapexecutow, UwU
+  candidatedecowatowexecutow: candidatedecowatowexecutow, ^•ﻌ•^
+  candidatefeatuwehydwatowexecutow: candidatefeatuwehydwatowexecutow, mya
+  candidatesouwceexecutow: candidatesouwceexecutow, /(^•ω•^)
+  g-gwoupwesuwtsexecutow: gwoupwesuwtsexecutow, rawr
+  f-fiwtewexecutow: fiwtewexecutow, nyaa~~
+  g-gateexecutow: g-gateexecutow, ( ͡o ω ͡o )
+  o-ovewwide vaw statsweceivew: statsweceivew)
+    extends pipewinebuiwdew[candidatepipewine.inputs[quewy]]
+    w-with wogging {
 
-  override type UnderlyingResultType = Seq[CandidateWithDetails]
-  override type PipelineResultType = IntermediateCandidatePipelineResult[Result]
+  ovewwide type undewwyingwesuwttype = seq[candidatewithdetaiws]
+  ovewwide type p-pipewinewesuwttype = intewmediatecandidatepipewinewesuwt[wesuwt]
 
-  def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    config: BaseCandidatePipelineConfig[
-      Query,
-      CandidateSourceQuery,
-      CandidateSourceResult,
-      Result
+  d-def buiwd(
+    p-pawentcomponentidentifiewstack: c-componentidentifiewstack, σωσ
+    config: basecandidatepipewineconfig[
+      q-quewy, (✿oωo)
+      candidatesouwcequewy, (///ˬ///✿)
+      c-candidatesouwcewesuwt,
+      w-wesuwt
     ]
-  ): CandidatePipeline[Query] = {
+  ): c-candidatepipewine[quewy] = {
 
-    val pipelineIdentifier = config.identifier
-    val candidateSourceIdentifier = config.candidateSource.identifier
+    vaw pipewineidentifiew = config.identifiew
+    v-vaw candidatesouwceidentifiew = c-config.candidatesouwce.identifiew
 
-    val context = Executor.Context(
-      PipelineFailureClassifier(
-        config.failureClassifier.orElse(StoppedGateException.classifier(ClosedGate))),
-      parentComponentIdentifierStack.push(pipelineIdentifier)
+    v-vaw context = executow.context(
+      p-pipewinefaiwuwecwassifiew(
+        c-config.faiwuwecwassifiew.owewse(stoppedgateexception.cwassifiew(cwosedgate))), σωσ
+      pawentcomponentidentifiewstack.push(pipewineidentifiew)
     )
 
-    val enabledGateOpt = config.enabledDeciderParam.map { deciderParam =>
-      ParamGate(pipelineIdentifier + EnabledGateSuffix, deciderParam)
+    vaw enabwedgateopt = config.enabweddecidewpawam.map { d-decidewpawam =>
+      pawamgate(pipewineidentifiew + enabwedgatesuffix, UwU decidewpawam)
     }
-    val supportedClientGateOpt = config.supportedClientParam.map { param =>
-      ParamGate(pipelineIdentifier + SupportedClientGateSuffix, param)
+    vaw suppowtedcwientgateopt = config.suppowtedcwientpawam.map { pawam =>
+      p-pawamgate(pipewineidentifiew + suppowtedcwientgatesuffix, (⑅˘꒳˘) pawam)
     }
 
     /**
-     * Evaluate enabled decider gate first since if it's off, there is no reason to proceed
-     * Next evaluate supported client feature switch gate, followed by customer configured gates
+     * evawuate enabwed decidew g-gate fiwst s-since if it's off, /(^•ω•^) t-thewe is nyo weason to pwoceed
+     * n-nyext evawuate suppowted c-cwient featuwe s-switch gate, -.- fowwowed by customew configuwed gates
      */
-    val allGates = enabledGateOpt.toSeq ++ supportedClientGateOpt.toSeq ++ config.gates
+    vaw awwgates = enabwedgateopt.toseq ++ suppowtedcwientgateopt.toseq ++ config.gates
 
-    // Dynamically replace the identifier of both transformers if config used the inline constructor
-    // which sets a default identifier. We need to do this to ensure uniqueness of identifiers.
-    val queryTransformer = BaseCandidatePipelineQueryTransformer.copyWithUpdatedIdentifier(
-      config.queryTransformer,
-      pipelineIdentifier)
+    // d-dynamicawwy wepwace t-the identifiew of both twansfowmews i-if config used t-the inwine constwuctow
+    // which sets a defauwt identifiew. (ˆ ﻌ ˆ)♡ w-we nyeed to do t-this to ensuwe uniqueness of identifiews. nyaa~~
+    vaw q-quewytwansfowmew = b-basecandidatepipewinequewytwansfowmew.copywithupdatedidentifiew(
+      config.quewytwansfowmew, ʘwʘ
+      pipewineidentifiew)
 
-    val resultsTransformer = CandidatePipelineResultsTransformer.copyWithUpdatedIdentifier(
-      config.resultTransformer,
-      pipelineIdentifier)
+    vaw wesuwtstwansfowmew = candidatepipewinewesuwtstwansfowmew.copywithupdatedidentifiew(
+      c-config.wesuwttwansfowmew, :3
+      p-pipewineidentifiew)
 
-    val decorator = config.decorator.map(decorator =>
-      CandidateDecorator.copyWithUpdatedIdentifier(decorator, pipelineIdentifier))
+    v-vaw decowatow = config.decowatow.map(decowatow =>
+      c-candidatedecowatow.copywithupdatedidentifiew(decowatow, (U ᵕ U❁) p-pipewineidentifiew))
 
-    val GatesStep = new Step[Query, GateExecutorResult] {
-      override def identifier: PipelineStepIdentifier = CandidatePipelineConfig.gatesStep
+    vaw gatesstep = n-nyew step[quewy, (U ﹏ U) gateexecutowwesuwt] {
+      ovewwide def identifiew: pipewinestepidentifiew = candidatepipewineconfig.gatesstep
 
-      override def executorArrow: Arrow[Query, GateExecutorResult] = {
-        gateExecutor.arrow(allGates, context)
+      o-ovewwide d-def executowawwow: awwow[quewy, ^^ gateexecutowwesuwt] = {
+        g-gateexecutow.awwow(awwgates, òωó c-context)
       }
 
-      override def inputAdaptor(
-        query: CandidatePipeline.Inputs[Query],
-        previousResult: IntermediateCandidatePipelineResult[Result]
-      ): Query =
-        query.query
+      ovewwide def inputadaptow(
+        quewy: candidatepipewine.inputs[quewy], /(^•ω•^)
+        pweviouswesuwt: intewmediatecandidatepipewinewesuwt[wesuwt]
+      ): q-quewy =
+        quewy.quewy
 
-      override def resultUpdater(
-        previousPipelineResult: IntermediateCandidatePipelineResult[Result],
-        executorResult: GateExecutorResult
-      ): IntermediateCandidatePipelineResult[Result] =
-        previousPipelineResult.copy(underlyingResult =
-          previousPipelineResult.underlyingResult.copy(gateResult = Some(executorResult)))
+      ovewwide def wesuwtupdatew(
+        pweviouspipewinewesuwt: i-intewmediatecandidatepipewinewesuwt[wesuwt], 😳😳😳
+        executowwesuwt: gateexecutowwesuwt
+      ): i-intewmediatecandidatepipewinewesuwt[wesuwt] =
+        p-pweviouspipewinewesuwt.copy(undewwyingwesuwt =
+          pweviouspipewinewesuwt.undewwyingwesuwt.copy(gatewesuwt = some(executowwesuwt)))
     }
 
-    def queryFeatureHydrationStep(
-      queryFeatureHydrators: Seq[BaseQueryFeatureHydrator[Query, _]],
-      stepIdentifier: PipelineStepIdentifier,
-      updater: ResultUpdater[CandidatePipelineResult, QueryFeatureHydratorExecutor.Result]
-    ): Step[Query, QueryFeatureHydratorExecutor.Result] =
-      new Step[Query, QueryFeatureHydratorExecutor.Result] {
-        override def identifier: PipelineStepIdentifier = stepIdentifier
+    def quewyfeatuwehydwationstep(
+      q-quewyfeatuwehydwatows: s-seq[basequewyfeatuwehydwatow[quewy, :3 _]], (///ˬ///✿)
+      stepidentifiew: pipewinestepidentifiew,
+      updatew: w-wesuwtupdatew[candidatepipewinewesuwt, rawr x3 quewyfeatuwehydwatowexecutow.wesuwt]
+    ): s-step[quewy, (U ᵕ U❁) quewyfeatuwehydwatowexecutow.wesuwt] =
+      nyew step[quewy, quewyfeatuwehydwatowexecutow.wesuwt] {
+        o-ovewwide def identifiew: p-pipewinestepidentifiew = stepidentifiew
 
-        override def executorArrow: Arrow[Query, QueryFeatureHydratorExecutor.Result] =
-          queryFeatureHydratorExecutor.arrow(
-            queryFeatureHydrators,
-            CandidatePipelineConfig.stepsAsyncFeatureHydrationCanBeCompletedBy,
+        o-ovewwide def executowawwow: a-awwow[quewy, (⑅˘꒳˘) quewyfeatuwehydwatowexecutow.wesuwt] =
+          q-quewyfeatuwehydwatowexecutow.awwow(
+            q-quewyfeatuwehydwatows, (˘ω˘)
+            c-candidatepipewineconfig.stepsasyncfeatuwehydwationcanbecompwetedby, :3
             context)
 
-        override def inputAdaptor(
-          query: CandidatePipeline.Inputs[Query],
-          previousResult: IntermediateCandidatePipelineResult[Result]
-        ): Query = query.query
+        o-ovewwide def i-inputadaptow(
+          quewy: candidatepipewine.inputs[quewy], XD
+          p-pweviouswesuwt: i-intewmediatecandidatepipewinewesuwt[wesuwt]
+        ): q-quewy = quewy.quewy
 
-        override def resultUpdater(
-          previousPipelineResult: IntermediateCandidatePipelineResult[Result],
-          executorResult: QueryFeatureHydratorExecutor.Result
-        ): IntermediateCandidatePipelineResult[Result] =
-          previousPipelineResult.copy(
-            underlyingResult = updater(previousPipelineResult.underlyingResult, executorResult))
+        ovewwide def wesuwtupdatew(
+          pweviouspipewinewesuwt: intewmediatecandidatepipewinewesuwt[wesuwt], >_<
+          e-executowwesuwt: quewyfeatuwehydwatowexecutow.wesuwt
+        ): i-intewmediatecandidatepipewinewesuwt[wesuwt] =
+          p-pweviouspipewinewesuwt.copy(
+            undewwyingwesuwt = updatew(pweviouspipewinewesuwt.undewwyingwesuwt, (✿oωo) executowwesuwt))
 
-        override def queryUpdater(
-          query: CandidatePipeline.Inputs[Query],
-          executorResult: QueryFeatureHydratorExecutor.Result
-        ): CandidatePipeline.Inputs[Query] =
-          CandidatePipeline.Inputs(
-            query.query
-              .withFeatureMap(
-                query.query.features.getOrElse(
-                  FeatureMap.empty) ++ executorResult.featureMap).asInstanceOf[Query],
-            query.existingCandidates)
+        o-ovewwide def q-quewyupdatew(
+          q-quewy: c-candidatepipewine.inputs[quewy], (ꈍᴗꈍ)
+          executowwesuwt: q-quewyfeatuwehydwatowexecutow.wesuwt
+        ): candidatepipewine.inputs[quewy] =
+          candidatepipewine.inputs(
+            quewy.quewy
+              .withfeatuwemap(
+                quewy.quewy.featuwes.getowewse(
+                  featuwemap.empty) ++ e-executowwesuwt.featuwemap).asinstanceof[quewy], XD
+            quewy.existingcandidates)
       }
 
-    def asyncFeaturesStep(
-      stepToHydrateFor: PipelineStepIdentifier,
-      context: Executor.Context
-    ): Step[AsyncFeatureMap, AsyncFeatureMapExecutorResults] =
-      new Step[AsyncFeatureMap, AsyncFeatureMapExecutorResults] {
-        override def identifier: PipelineStepIdentifier =
-          CandidatePipelineConfig.asyncFeaturesStep(stepToHydrateFor)
+    d-def asyncfeatuwesstep(
+      steptohydwatefow: p-pipewinestepidentifiew, :3
+      context: e-executow.context
+    ): step[asyncfeatuwemap, mya asyncfeatuwemapexecutowwesuwts] =
+      n-nyew s-step[asyncfeatuwemap, òωó a-asyncfeatuwemapexecutowwesuwts] {
+        o-ovewwide def identifiew: p-pipewinestepidentifiew =
+          candidatepipewineconfig.asyncfeatuwesstep(steptohydwatefow)
 
-        override def executorArrow: Arrow[AsyncFeatureMap, AsyncFeatureMapExecutorResults] =
-          asyncFeatureMapExecutor.arrow(stepToHydrateFor, identifier, context)
+        ovewwide def executowawwow: awwow[asyncfeatuwemap, nyaa~~ asyncfeatuwemapexecutowwesuwts] =
+          asyncfeatuwemapexecutow.awwow(steptohydwatefow, 🥺 identifiew, -.- context)
 
-        override def inputAdaptor(
-          query: CandidatePipeline.Inputs[Query],
-          previousResult: IntermediateCandidatePipelineResult[Result]
-        ): AsyncFeatureMap =
-          previousResult.underlyingResult.mergedAsyncQueryFeatures
-            .getOrElse(
-              throw InvalidStepStateException(identifier, "MergedAsyncQueryFeatures")
+        o-ovewwide def inputadaptow(
+          q-quewy: candidatepipewine.inputs[quewy], 🥺
+          p-pweviouswesuwt: intewmediatecandidatepipewinewesuwt[wesuwt]
+        ): a-asyncfeatuwemap =
+          pweviouswesuwt.undewwyingwesuwt.mewgedasyncquewyfeatuwes
+            .getowewse(
+              thwow invawidstepstateexception(identifiew, (˘ω˘) "mewgedasyncquewyfeatuwes")
             )
 
-        override def resultUpdater(
-          previousPipelineResult: IntermediateCandidatePipelineResult[Result],
-          executorResult: AsyncFeatureMapExecutorResults
-        ): IntermediateCandidatePipelineResult[Result] =
-          previousPipelineResult.copy(
-            underlyingResult =
-              previousPipelineResult.underlyingResult.copy(asyncFeatureHydrationResults =
-                previousPipelineResult.underlyingResult.asyncFeatureHydrationResults match {
-                  case Some(existingResults) => Some(existingResults ++ executorResult)
-                  case None => Some(executorResult)
+        ovewwide d-def wesuwtupdatew(
+          p-pweviouspipewinewesuwt: intewmediatecandidatepipewinewesuwt[wesuwt], òωó
+          e-executowwesuwt: asyncfeatuwemapexecutowwesuwts
+        ): intewmediatecandidatepipewinewesuwt[wesuwt] =
+          pweviouspipewinewesuwt.copy(
+            u-undewwyingwesuwt =
+              p-pweviouspipewinewesuwt.undewwyingwesuwt.copy(asyncfeatuwehydwationwesuwts =
+                pweviouspipewinewesuwt.undewwyingwesuwt.asyncfeatuwehydwationwesuwts m-match {
+                  c-case some(existingwesuwts) => some(existingwesuwts ++ executowwesuwt)
+                  case nyone => some(executowwesuwt)
                 }))
 
-        override def queryUpdater(
-          query: CandidatePipeline.Inputs[Query],
-          executorResult: AsyncFeatureMapExecutorResults
-        ): CandidatePipeline.Inputs[Query] =
-          if (executorResult.featureMapsByStep
-              .getOrElse(stepToHydrateFor, FeatureMap.empty).isEmpty) {
-            query
-          } else {
-            val updatedQuery = query.query
-              .withFeatureMap(
-                query.query.features
-                  .getOrElse(FeatureMap.empty) ++ executorResult.featureMapsByStep(
-                  stepToHydrateFor)).asInstanceOf[Query]
-            CandidatePipeline.Inputs(updatedQuery, query.existingCandidates)
+        o-ovewwide d-def quewyupdatew(
+          q-quewy: candidatepipewine.inputs[quewy], UwU
+          e-executowwesuwt: a-asyncfeatuwemapexecutowwesuwts
+        ): candidatepipewine.inputs[quewy] =
+          i-if (executowwesuwt.featuwemapsbystep
+              .getowewse(steptohydwatefow, ^•ﻌ•^ f-featuwemap.empty).isempty) {
+            quewy
+          } e-ewse {
+            v-vaw updatedquewy = quewy.quewy
+              .withfeatuwemap(
+                q-quewy.quewy.featuwes
+                  .getowewse(featuwemap.empty) ++ executowwesuwt.featuwemapsbystep(
+                  steptohydwatefow)).asinstanceof[quewy]
+            c-candidatepipewine.inputs(updatedquewy, mya quewy.existingcandidates)
           }
       }
 
-    val CandidateSourceStep =
-      new Step[Query, CandidateSourceExecutorResult[Result]] {
-        override def identifier: PipelineStepIdentifier =
-          CandidatePipelineConfig.candidateSourceStep
+    v-vaw c-candidatesouwcestep =
+      nyew s-step[quewy, (✿oωo) candidatesouwceexecutowwesuwt[wesuwt]] {
+        ovewwide def identifiew: pipewinestepidentifiew =
+          c-candidatepipewineconfig.candidatesouwcestep
 
-        override def executorArrow: Arrow[
-          Query,
-          CandidateSourceExecutorResult[Result]
+        o-ovewwide def executowawwow: a-awwow[
+          quewy, XD
+          candidatesouwceexecutowwesuwt[wesuwt]
         ] =
-          candidateSourceExecutor
-            .arrow(
-              config.candidateSource,
-              queryTransformer,
-              resultsTransformer,
-              config.featuresFromCandidateSourceTransformers,
-              context
+          candidatesouwceexecutow
+            .awwow(
+              c-config.candidatesouwce, :3
+              quewytwansfowmew, (U ﹏ U)
+              wesuwtstwansfowmew, UwU
+              c-config.featuwesfwomcandidatesouwcetwansfowmews, ʘwʘ
+              c-context
             )
 
-        override def inputAdaptor(
-          query: CandidatePipeline.Inputs[Query],
-          previousResult: IntermediateCandidatePipelineResult[Result]
-        ): Query =
-          query.query
+        ovewwide d-def inputadaptow(
+          quewy: c-candidatepipewine.inputs[quewy], >w<
+          p-pweviouswesuwt: intewmediatecandidatepipewinewesuwt[wesuwt]
+        ): quewy =
+          q-quewy.quewy
 
-        override def resultUpdater(
-          previousPipelineResult: IntermediateCandidatePipelineResult[Result],
-          executorResult: CandidateSourceExecutorResult[Result]
-        ): IntermediateCandidatePipelineResult[Result] =
-          previousPipelineResult.copy(underlyingResult =
-            previousPipelineResult.underlyingResult.copy(
-              candidateSourceResult =
-                Some(executorResult.asInstanceOf[CandidateSourceExecutorResult[UniversalNoun[Any]]])
+        ovewwide def wesuwtupdatew(
+          p-pweviouspipewinewesuwt: i-intewmediatecandidatepipewinewesuwt[wesuwt], 😳😳😳
+          executowwesuwt: c-candidatesouwceexecutowwesuwt[wesuwt]
+        ): intewmediatecandidatepipewinewesuwt[wesuwt] =
+          p-pweviouspipewinewesuwt.copy(undewwyingwesuwt =
+            p-pweviouspipewinewesuwt.undewwyingwesuwt.copy(
+              c-candidatesouwcewesuwt =
+                some(executowwesuwt.asinstanceof[candidatesouwceexecutowwesuwt[univewsawnoun[any]]])
             ))
 
-        override def queryUpdater(
-          query: CandidatePipeline.Inputs[Query],
-          executorResult: CandidateSourceExecutorResult[Result]
-        ): CandidatePipeline.Inputs[Query] = {
-          val updatedFeatureMap =
-            query.query.features
-              .getOrElse(FeatureMap.empty) ++ executorResult.candidateSourceFeatureMap
-          val updatedQuery = query.query
-            .withFeatureMap(updatedFeatureMap).asInstanceOf[Query]
-          CandidatePipeline.Inputs(updatedQuery, query.existingCandidates)
+        ovewwide def quewyupdatew(
+          quewy: candidatepipewine.inputs[quewy], rawr
+          executowwesuwt: candidatesouwceexecutowwesuwt[wesuwt]
+        ): candidatepipewine.inputs[quewy] = {
+          vaw updatedfeatuwemap =
+            quewy.quewy.featuwes
+              .getowewse(featuwemap.empty) ++ executowwesuwt.candidatesouwcefeatuwemap
+          vaw updatedquewy = quewy.quewy
+            .withfeatuwemap(updatedfeatuwemap).asinstanceof[quewy]
+          c-candidatepipewine.inputs(updatedquewy, ^•ﻌ•^ q-quewy.existingcandidates)
         }
       }
 
-    val PreFilterFeatureHydrationPhase1Step =
-      new Step[
-        CandidateFeatureHydratorExecutor.Inputs[Query, Result],
-        CandidateFeatureHydratorExecutorResult[Result]
+    vaw pwefiwtewfeatuwehydwationphase1step =
+      n-nyew s-step[
+        candidatefeatuwehydwatowexecutow.inputs[quewy, σωσ w-wesuwt],
+        candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
       ] {
-        override def identifier: PipelineStepIdentifier =
-          CandidatePipelineConfig.preFilterFeatureHydrationPhase1Step
+        ovewwide def identifiew: p-pipewinestepidentifiew =
+          candidatepipewineconfig.pwefiwtewfeatuwehydwationphase1step
 
-        override def executorArrow: Arrow[
-          CandidateFeatureHydratorExecutor.Inputs[Query, Result],
-          CandidateFeatureHydratorExecutorResult[Result]
+        o-ovewwide def executowawwow: a-awwow[
+          candidatefeatuwehydwatowexecutow.inputs[quewy, :3 w-wesuwt], rawr x3
+          candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
         ] =
-          candidateFeatureHydratorExecutor.arrow(config.preFilterFeatureHydrationPhase1, context)
+          c-candidatefeatuwehydwatowexecutow.awwow(config.pwefiwtewfeatuwehydwationphase1, nyaa~~ c-context)
 
-        override def inputAdaptor(
-          query: CandidatePipeline.Inputs[Query],
-          previousResult: IntermediateCandidatePipelineResult[Result]
-        ): CandidateFeatureHydratorExecutor.Inputs[Query, Result] = {
-          val candidateSourceExecutorResult =
-            previousResult.underlyingResult.candidateSourceResult.getOrElse {
-              throw InvalidStepStateException(identifier, "CandidateSourceResult")
+        ovewwide def inputadaptow(
+          q-quewy: c-candidatepipewine.inputs[quewy], :3
+          p-pweviouswesuwt: i-intewmediatecandidatepipewinewesuwt[wesuwt]
+        ): c-candidatefeatuwehydwatowexecutow.inputs[quewy, >w< w-wesuwt] = {
+          v-vaw candidatesouwceexecutowwesuwt =
+            p-pweviouswesuwt.undewwyingwesuwt.candidatesouwcewesuwt.getowewse {
+              t-thwow invawidstepstateexception(identifiew, rawr "candidatesouwcewesuwt")
             }
-          CandidateFeatureHydratorExecutor.Inputs(
-            query.query,
-            candidateSourceExecutorResult.candidates
-              .asInstanceOf[Seq[CandidateWithFeatures[Result]]])
+          candidatefeatuwehydwatowexecutow.inputs(
+            q-quewy.quewy,
+            c-candidatesouwceexecutowwesuwt.candidates
+              .asinstanceof[seq[candidatewithfeatuwes[wesuwt]]])
         }
 
-        override def resultUpdater(
-          previousPipelineResult: IntermediateCandidatePipelineResult[Result],
-          executorResult: CandidateFeatureHydratorExecutorResult[Result]
-        ): IntermediateCandidatePipelineResult[Result] = {
-          val candidateSourceExecutorResult =
-            previousPipelineResult.underlyingResult.candidateSourceResult.getOrElse {
-              throw InvalidStepStateException(identifier, "CandidateSourceResult")
+        o-ovewwide def wesuwtupdatew(
+          pweviouspipewinewesuwt: intewmediatecandidatepipewinewesuwt[wesuwt], 😳
+          e-executowwesuwt: candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
+        ): intewmediatecandidatepipewinewesuwt[wesuwt] = {
+          v-vaw candidatesouwceexecutowwesuwt =
+            pweviouspipewinewesuwt.undewwyingwesuwt.candidatesouwcewesuwt.getowewse {
+              t-thwow invawidstepstateexception(identifiew, "candidatesouwcewesuwt")
             }
 
-          val featureMapsFromPreFilter = executorResult.results.map { result =>
-            result.candidate -> result.features
-          }.toMap
+          v-vaw featuwemapsfwompwefiwtew = executowwesuwt.wesuwts.map { w-wesuwt =>
+            wesuwt.candidate -> w-wesuwt.featuwes
+          }.tomap
 
-          val mergedFeatureMaps = candidateSourceExecutorResult.candidates.map { candidate =>
-            val candidateFeatureMap = candidate.features
-            val preFilterFeatureMap =
-              featureMapsFromPreFilter.getOrElse(
-                candidate.candidate.asInstanceOf[Result],
-                FeatureMap.empty)
+          vaw mewgedfeatuwemaps = c-candidatesouwceexecutowwesuwt.candidates.map { candidate =>
+            v-vaw candidatefeatuwemap = candidate.featuwes
+            v-vaw pwefiwtewfeatuwemap =
+              featuwemapsfwompwefiwtew.getowewse(
+                candidate.candidate.asinstanceof[wesuwt],
+                featuwemap.empty)
 
-            candidate.candidate.asInstanceOf[Result] -> (candidateFeatureMap ++ preFilterFeatureMap)
-          }.toMap
+            c-candidate.candidate.asinstanceof[wesuwt] -> (candidatefeatuwemap ++ pwefiwtewfeatuwemap)
+          }.tomap
 
-          previousPipelineResult.copy(
-            underlyingResult = previousPipelineResult.underlyingResult.copy(
-              preFilterHydrationResult = Some(
-                executorResult
-                  .asInstanceOf[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]])
-            ),
-            featureMaps = Some(mergedFeatureMaps)
+          p-pweviouspipewinewesuwt.copy(
+            u-undewwyingwesuwt = pweviouspipewinewesuwt.undewwyingwesuwt.copy(
+              pwefiwtewhydwationwesuwt = some(
+                executowwesuwt
+                  .asinstanceof[candidatefeatuwehydwatowexecutowwesuwt[univewsawnoun[any]]])
+            ), 😳
+            f-featuwemaps = some(mewgedfeatuwemaps)
           )
         }
       }
 
-    val PreFilterFeatureHydrationPhase2Step =
-      new Step[
-        CandidateFeatureHydratorExecutor.Inputs[Query, Result],
-        CandidateFeatureHydratorExecutorResult[Result]
+    v-vaw pwefiwtewfeatuwehydwationphase2step =
+      n-nyew step[
+        c-candidatefeatuwehydwatowexecutow.inputs[quewy, 🥺 wesuwt], rawr x3
+        candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
       ] {
-        override def identifier: PipelineStepIdentifier =
-          CandidatePipelineConfig.preFilterFeatureHydrationPhase2Step
+        o-ovewwide def i-identifiew: pipewinestepidentifiew =
+          candidatepipewineconfig.pwefiwtewfeatuwehydwationphase2step
 
-        override def executorArrow: Arrow[
-          CandidateFeatureHydratorExecutor.Inputs[Query, Result],
-          CandidateFeatureHydratorExecutorResult[Result]
+        o-ovewwide def executowawwow: awwow[
+          c-candidatefeatuwehydwatowexecutow.inputs[quewy, ^^ wesuwt],
+          c-candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
         ] =
-          candidateFeatureHydratorExecutor.arrow(config.preFilterFeatureHydrationPhase2, context)
+          c-candidatefeatuwehydwatowexecutow.awwow(config.pwefiwtewfeatuwehydwationphase2, c-context)
 
-        override def inputAdaptor(
-          query: CandidatePipeline.Inputs[Query],
-          previousResult: IntermediateCandidatePipelineResult[Result]
-        ): CandidateFeatureHydratorExecutor.Inputs[Query, Result] = {
-          val candidates = previousResult.underlyingResult.preFilterHydrationResult.getOrElse {
-            throw InvalidStepStateException(identifier, "PreFilterHydrationResult")
-          }.results
-          CandidateFeatureHydratorExecutor.Inputs(
-            query.query,
-            candidates.asInstanceOf[Seq[CandidateWithFeatures[Result]]]
+        ovewwide d-def inputadaptow(
+          quewy: c-candidatepipewine.inputs[quewy], ( ͡o ω ͡o )
+          p-pweviouswesuwt: i-intewmediatecandidatepipewinewesuwt[wesuwt]
+        ): candidatefeatuwehydwatowexecutow.inputs[quewy, XD w-wesuwt] = {
+          v-vaw c-candidates = pweviouswesuwt.undewwyingwesuwt.pwefiwtewhydwationwesuwt.getowewse {
+            thwow i-invawidstepstateexception(identifiew, ^^ "pwefiwtewhydwationwesuwt")
+          }.wesuwts
+          c-candidatefeatuwehydwatowexecutow.inputs(
+            q-quewy.quewy, (⑅˘꒳˘)
+            c-candidates.asinstanceof[seq[candidatewithfeatuwes[wesuwt]]]
           )
         }
 
-        override def resultUpdater(
-          previousPipelineResult: IntermediateCandidatePipelineResult[Result],
-          executorResult: CandidateFeatureHydratorExecutorResult[Result]
-        ): IntermediateCandidatePipelineResult[Result] = {
+        o-ovewwide def wesuwtupdatew(
+          p-pweviouspipewinewesuwt: intewmediatecandidatepipewinewesuwt[wesuwt], (⑅˘꒳˘)
+          e-executowwesuwt: candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
+        ): i-intewmediatecandidatepipewinewesuwt[wesuwt] = {
 
-          val featureMapsFromPreFilterPhase2 = executorResult.results.map { result =>
-            result.candidate -> result.features
-          }.toMap
+          v-vaw featuwemapsfwompwefiwtewphase2 = e-executowwesuwt.wesuwts.map { wesuwt =>
+            wesuwt.candidate -> wesuwt.featuwes
+          }.tomap
 
-          val mergedFeatureMaps = previousPipelineResult.featureMaps
-            .getOrElse(throw InvalidStepStateException(identifier, "FeatureMaps"))
+          v-vaw mewgedfeatuwemaps = p-pweviouspipewinewesuwt.featuwemaps
+            .getowewse(thwow i-invawidstepstateexception(identifiew, ^•ﻌ•^ "featuwemaps"))
             .map {
-              case (candidate, featureMap) =>
-                val preFilterPhase2FeatureMap =
-                  featureMapsFromPreFilterPhase2.getOrElse(candidate, FeatureMap.empty)
+              case (candidate, ( ͡o ω ͡o ) featuwemap) =>
+                vaw pwefiwtewphase2featuwemap =
+                  f-featuwemapsfwompwefiwtewphase2.getowewse(candidate, ( ͡o ω ͡o ) f-featuwemap.empty)
 
-                candidate -> (featureMap ++ preFilterPhase2FeatureMap)
+                candidate -> (featuwemap ++ p-pwefiwtewphase2featuwemap)
             }
 
-          previousPipelineResult.copy(
-            underlyingResult = previousPipelineResult.underlyingResult.copy(
-              preFilterHydrationResultPhase2 = Some(
-                executorResult
-                  .asInstanceOf[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]])
-            ),
-            featureMaps = Some(mergedFeatureMaps)
+          p-pweviouspipewinewesuwt.copy(
+            undewwyingwesuwt = pweviouspipewinewesuwt.undewwyingwesuwt.copy(
+              pwefiwtewhydwationwesuwtphase2 = s-some(
+                e-executowwesuwt
+                  .asinstanceof[candidatefeatuwehydwatowexecutowwesuwt[univewsawnoun[any]]])
+            ), (✿oωo)
+            featuwemaps = s-some(mewgedfeatuwemaps)
           )
         }
       }
 
-    val FiltersStep =
-      new Step[(Query, Seq[CandidateWithFeatures[Result]]), FilterExecutorResult[Result]] {
-        override def identifier: PipelineStepIdentifier = CandidatePipelineConfig.filtersStep
+    v-vaw fiwtewsstep =
+      nyew step[(quewy, 😳😳😳 seq[candidatewithfeatuwes[wesuwt]]), OwO f-fiwtewexecutowwesuwt[wesuwt]] {
+        ovewwide d-def identifiew: pipewinestepidentifiew = candidatepipewineconfig.fiwtewsstep
 
-        override def executorArrow: Arrow[
-          (Query, Seq[CandidateWithFeatures[Result]]),
-          FilterExecutorResult[
-            Result
+        o-ovewwide def executowawwow: awwow[
+          (quewy, ^^ s-seq[candidatewithfeatuwes[wesuwt]]), rawr x3
+          fiwtewexecutowwesuwt[
+            w-wesuwt
           ]
         ] =
-          filterExecutor.arrow(config.filters, context)
+          f-fiwtewexecutow.awwow(config.fiwtews, context)
 
-        override def inputAdaptor(
-          query: CandidatePipeline.Inputs[Query],
-          previousResult: IntermediateCandidatePipelineResult[Result]
-        ): (Query, Seq[CandidateWithFeatures[Result]]) = {
-          val candidates =
-            previousResult.underlyingResult.candidateSourceResult
-              .getOrElse {
-                throw InvalidStepStateException(identifier, "CandidateSourceResult")
-              }.candidates.map(_.candidate).asInstanceOf[Seq[Result]]
+        o-ovewwide def i-inputadaptow(
+          quewy: c-candidatepipewine.inputs[quewy], 🥺
+          pweviouswesuwt: i-intewmediatecandidatepipewinewesuwt[wesuwt]
+        ): (quewy, s-seq[candidatewithfeatuwes[wesuwt]]) = {
+          v-vaw c-candidates =
+            pweviouswesuwt.undewwyingwesuwt.candidatesouwcewesuwt
+              .getowewse {
+                t-thwow i-invawidstepstateexception(identifiew, (ˆ ﻌ ˆ)♡ "candidatesouwcewesuwt")
+              }.candidates.map(_.candidate).asinstanceof[seq[wesuwt]]
 
-          val featureMaps = previousResult.featureMaps
-            .getOrElse(throw InvalidStepStateException(identifier, "FeatureMaps"))
+          v-vaw featuwemaps = pweviouswesuwt.featuwemaps
+            .getowewse(thwow i-invawidstepstateexception(identifiew, ( ͡o ω ͡o ) "featuwemaps"))
 
           (
-            query.query,
+            quewy.quewy, >w<
             candidates.map(candidate =>
-              CandidateWithFeaturesImpl(
-                candidate,
-                featureMaps.getOrElse(candidate, FeatureMap.empty))))
+              c-candidatewithfeatuwesimpw(
+                c-candidate, /(^•ω•^)
+                f-featuwemaps.getowewse(candidate, 😳😳😳 featuwemap.empty))))
         }
 
-        override def resultUpdater(
-          previousPipelineResult: IntermediateCandidatePipelineResult[Result],
-          executorResult: FilterExecutorResult[Result]
-        ): IntermediateCandidatePipelineResult[Result] =
-          previousPipelineResult.copy(underlyingResult =
-            previousPipelineResult.underlyingResult.copy(
-              filterResult =
-                Some(executorResult.asInstanceOf[FilterExecutorResult[UniversalNoun[Any]]])
+        ovewwide def wesuwtupdatew(
+          pweviouspipewinewesuwt: i-intewmediatecandidatepipewinewesuwt[wesuwt], (U ᵕ U❁)
+          executowwesuwt: f-fiwtewexecutowwesuwt[wesuwt]
+        ): i-intewmediatecandidatepipewinewesuwt[wesuwt] =
+          pweviouspipewinewesuwt.copy(undewwyingwesuwt =
+            pweviouspipewinewesuwt.undewwyingwesuwt.copy(
+              f-fiwtewwesuwt =
+                some(executowwesuwt.asinstanceof[fiwtewexecutowwesuwt[univewsawnoun[any]]])
             ))
       }
 
-    val PostFilterFeatureHydrationStep =
-      new Step[
-        CandidateFeatureHydratorExecutor.Inputs[Query, Result],
-        CandidateFeatureHydratorExecutorResult[Result]
+    v-vaw p-postfiwtewfeatuwehydwationstep =
+      n-nyew step[
+        c-candidatefeatuwehydwatowexecutow.inputs[quewy, (˘ω˘) w-wesuwt],
+        candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
       ] {
-        override def identifier: PipelineStepIdentifier =
-          CandidatePipelineConfig.postFilterFeatureHydrationStep
+        ovewwide def identifiew: pipewinestepidentifiew =
+          c-candidatepipewineconfig.postfiwtewfeatuwehydwationstep
 
-        override def executorArrow: Arrow[
-          CandidateFeatureHydratorExecutor.Inputs[Query, Result],
-          CandidateFeatureHydratorExecutorResult[Result]
+        ovewwide d-def executowawwow: awwow[
+          candidatefeatuwehydwatowexecutow.inputs[quewy, 😳 wesuwt],
+          c-candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
         ] =
-          candidateFeatureHydratorExecutor.arrow(config.postFilterFeatureHydration, context)
+          candidatefeatuwehydwatowexecutow.awwow(config.postfiwtewfeatuwehydwation, (ꈍᴗꈍ) context)
 
-        override def inputAdaptor(
-          query: CandidatePipeline.Inputs[Query],
-          previousResult: IntermediateCandidatePipelineResult[Result]
-        ): CandidateFeatureHydratorExecutor.Inputs[Query, Result] = {
-          val filterResult = previousResult.underlyingResult.filterResult
-            .getOrElse(
-              throw InvalidStepStateException(identifier, "FilterResult")
-            ).result.asInstanceOf[Seq[Result]]
+        ovewwide def inputadaptow(
+          q-quewy: c-candidatepipewine.inputs[quewy], :3
+          pweviouswesuwt: i-intewmediatecandidatepipewinewesuwt[wesuwt]
+        ): candidatefeatuwehydwatowexecutow.inputs[quewy, /(^•ω•^) wesuwt] = {
+          v-vaw f-fiwtewwesuwt = pweviouswesuwt.undewwyingwesuwt.fiwtewwesuwt
+            .getowewse(
+              thwow invawidstepstateexception(identifiew, ^^;; "fiwtewwesuwt")
+            ).wesuwt.asinstanceof[seq[wesuwt]]
 
-          val featureMaps = previousResult.featureMaps.getOrElse(
-            throw InvalidStepStateException(identifier, "FeatureMaps")
+          v-vaw featuwemaps = pweviouswesuwt.featuwemaps.getowewse(
+            t-thwow invawidstepstateexception(identifiew, o.O "featuwemaps")
           )
 
-          val filteredCandidates = filterResult.map { candidate =>
-            CandidateWithFeaturesImpl(candidate, featureMaps.getOrElse(candidate, FeatureMap.empty))
+          vaw fiwtewedcandidates = f-fiwtewwesuwt.map { candidate =>
+            candidatewithfeatuwesimpw(candidate, 😳 f-featuwemaps.getowewse(candidate, UwU f-featuwemap.empty))
           }
-          CandidateFeatureHydratorExecutor.Inputs(query.query, filteredCandidates)
+          c-candidatefeatuwehydwatowexecutow.inputs(quewy.quewy, >w< fiwtewedcandidates)
         }
 
-        override def resultUpdater(
-          previousPipelineResult: IntermediateCandidatePipelineResult[Result],
-          executorResult: CandidateFeatureHydratorExecutorResult[Result]
-        ): IntermediateCandidatePipelineResult[Result] = {
-          val filterResult = previousPipelineResult.underlyingResult.filterResult
-            .getOrElse(
-              throw InvalidStepStateException(identifier, "FilterResult")
-            ).result.asInstanceOf[Seq[Result]]
+        ovewwide d-def wesuwtupdatew(
+          pweviouspipewinewesuwt: intewmediatecandidatepipewinewesuwt[wesuwt], o.O
+          executowwesuwt: candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
+        ): i-intewmediatecandidatepipewinewesuwt[wesuwt] = {
+          v-vaw fiwtewwesuwt = p-pweviouspipewinewesuwt.undewwyingwesuwt.fiwtewwesuwt
+            .getowewse(
+              t-thwow invawidstepstateexception(identifiew, (˘ω˘) "fiwtewwesuwt")
+            ).wesuwt.asinstanceof[seq[wesuwt]]
 
-          val featureMaps = previousPipelineResult.featureMaps.getOrElse(
-            throw InvalidStepStateException(identifier, "FeatureMaps")
+          vaw featuwemaps = pweviouspipewinewesuwt.featuwemaps.getowewse(
+            t-thwow invawidstepstateexception(identifiew, òωó "featuwemaps")
           )
 
-          val postFilterFeatureMaps = executorResult.results.map { result =>
-            result.candidate -> result.features
-          }.toMap
+          v-vaw postfiwtewfeatuwemaps = executowwesuwt.wesuwts.map { wesuwt =>
+            w-wesuwt.candidate -> wesuwt.featuwes
+          }.tomap
 
-          val mergedFeatureMaps = filterResult.map { candidate =>
+          vaw mewgedfeatuwemaps = f-fiwtewwesuwt.map { candidate =>
             candidate ->
-              (featureMaps
-                .getOrElse(candidate, FeatureMap.empty) ++ postFilterFeatureMaps.getOrElse(
-                candidate,
-                FeatureMap.empty))
-          }.toMap
+              (featuwemaps
+                .getowewse(candidate, nyaa~~ f-featuwemap.empty) ++ p-postfiwtewfeatuwemaps.getowewse(
+                candidate, ( ͡o ω ͡o )
+                f-featuwemap.empty))
+          }.tomap
 
-          previousPipelineResult.copy(
-            underlyingResult = previousPipelineResult.underlyingResult.copy(
-              postFilterHydrationResult = Some(
-                executorResult
-                  .asInstanceOf[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]])
-            ),
-            featureMaps = Some(mergedFeatureMaps)
+          p-pweviouspipewinewesuwt.copy(
+            u-undewwyingwesuwt = pweviouspipewinewesuwt.undewwyingwesuwt.copy(
+              postfiwtewhydwationwesuwt = s-some(
+                executowwesuwt
+                  .asinstanceof[candidatefeatuwehydwatowexecutowwesuwt[univewsawnoun[any]]])
+            ), 😳😳😳
+            featuwemaps = s-some(mewgedfeatuwemaps)
           )
         }
       }
 
-    val ScorersStep =
-      new Step[
-        CandidateFeatureHydratorExecutor.Inputs[Query, Result],
-        CandidateFeatureHydratorExecutorResult[Result]
+    vaw scowewsstep =
+      nyew step[
+        c-candidatefeatuwehydwatowexecutow.inputs[quewy, ^•ﻌ•^ w-wesuwt], (˘ω˘)
+        c-candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
       ] {
-        override def identifier: PipelineStepIdentifier = CandidatePipelineConfig.scorersStep
+        o-ovewwide def identifiew: p-pipewinestepidentifiew = candidatepipewineconfig.scowewsstep
 
-        override def executorArrow: Arrow[
-          CandidateFeatureHydratorExecutor.Inputs[Query, Result],
-          CandidateFeatureHydratorExecutorResult[Result]
+        o-ovewwide def executowawwow: awwow[
+          candidatefeatuwehydwatowexecutow.inputs[quewy, (˘ω˘) w-wesuwt],
+          candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
         ] =
-          candidateFeatureHydratorExecutor.arrow(config.scorers, context)
+          c-candidatefeatuwehydwatowexecutow.awwow(config.scowews, -.- context)
 
-        override def inputAdaptor(
-          query: CandidatePipeline.Inputs[Query],
-          previousResult: IntermediateCandidatePipelineResult[Result]
-        ): CandidateFeatureHydratorExecutor.Inputs[Query, Result] = {
-          val filterResult = previousResult.underlyingResult.filterResult
-            .getOrElse(
-              throw InvalidStepStateException(identifier, "FilterResult")
-            ).result.asInstanceOf[Seq[Result]]
+        ovewwide d-def inputadaptow(
+          q-quewy: candidatepipewine.inputs[quewy], ^•ﻌ•^
+          pweviouswesuwt: i-intewmediatecandidatepipewinewesuwt[wesuwt]
+        ): candidatefeatuwehydwatowexecutow.inputs[quewy, /(^•ω•^) w-wesuwt] = {
+          v-vaw fiwtewwesuwt = pweviouswesuwt.undewwyingwesuwt.fiwtewwesuwt
+            .getowewse(
+              t-thwow invawidstepstateexception(identifiew, (///ˬ///✿) "fiwtewwesuwt")
+            ).wesuwt.asinstanceof[seq[wesuwt]]
 
-          val featureMaps = previousResult.featureMaps.getOrElse(
-            throw InvalidStepStateException(identifier, "FeatureMaps")
+          v-vaw featuwemaps = pweviouswesuwt.featuwemaps.getowewse(
+            t-thwow invawidstepstateexception(identifiew, mya "featuwemaps")
           )
 
-          val filteredCandidates = filterResult.map { candidate =>
-            CandidateWithFeaturesImpl(candidate, featureMaps.getOrElse(candidate, FeatureMap.empty))
+          vaw fiwtewedcandidates = fiwtewwesuwt.map { candidate =>
+            candidatewithfeatuwesimpw(candidate, o.O f-featuwemaps.getowewse(candidate, ^•ﻌ•^ featuwemap.empty))
           }
-          CandidateFeatureHydratorExecutor.Inputs(query.query, filteredCandidates)
+          c-candidatefeatuwehydwatowexecutow.inputs(quewy.quewy, (U ᵕ U❁) fiwtewedcandidates)
         }
 
-        override def resultUpdater(
-          previousPipelineResult: IntermediateCandidatePipelineResult[Result],
-          executorResult: CandidateFeatureHydratorExecutorResult[Result]
-        ): IntermediateCandidatePipelineResult[Result] = {
-          val filterResult = previousPipelineResult.underlyingResult.filterResult
-            .getOrElse(
-              throw InvalidStepStateException(identifier, "FilterResult")
-            ).result.asInstanceOf[Seq[Result]]
+        ovewwide def w-wesuwtupdatew(
+          p-pweviouspipewinewesuwt: i-intewmediatecandidatepipewinewesuwt[wesuwt],
+          executowwesuwt: c-candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
+        ): i-intewmediatecandidatepipewinewesuwt[wesuwt] = {
+          vaw f-fiwtewwesuwt = pweviouspipewinewesuwt.undewwyingwesuwt.fiwtewwesuwt
+            .getowewse(
+              thwow i-invawidstepstateexception(identifiew, "fiwtewwesuwt")
+            ).wesuwt.asinstanceof[seq[wesuwt]]
 
-          val featureMaps = previousPipelineResult.featureMaps.getOrElse(
-            throw InvalidStepStateException(identifier, "FeatureMaps")
+          vaw featuwemaps = p-pweviouspipewinewesuwt.featuwemaps.getowewse(
+            t-thwow invawidstepstateexception(identifiew, :3 "featuwemaps")
           )
 
-          val scoringFeatureMaps = executorResult.results.map { result =>
-            result.candidate -> result.features
-          }.toMap
+          vaw scowingfeatuwemaps = executowwesuwt.wesuwts.map { w-wesuwt =>
+            w-wesuwt.candidate -> wesuwt.featuwes
+          }.tomap
 
-          val mergedFeatureMaps = filterResult.map { candidate =>
+          vaw mewgedfeatuwemaps = fiwtewwesuwt.map { c-candidate =>
             candidate ->
-              (featureMaps
-                .getOrElse(candidate, FeatureMap.empty) ++ scoringFeatureMaps.getOrElse(
-                candidate,
-                FeatureMap.empty))
-          }.toMap
+              (featuwemaps
+                .getowewse(candidate, (///ˬ///✿) featuwemap.empty) ++ s-scowingfeatuwemaps.getowewse(
+                c-candidate, (///ˬ///✿)
+                featuwemap.empty))
+          }.tomap
 
-          previousPipelineResult.copy(
-            underlyingResult = previousPipelineResult.underlyingResult.copy(
-              scorersResult = Some(
-                executorResult
-                  .asInstanceOf[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]])
-            ),
-            featureMaps = Some(mergedFeatureMaps)
+          pweviouspipewinewesuwt.copy(
+            undewwyingwesuwt = pweviouspipewinewesuwt.undewwyingwesuwt.copy(
+              s-scowewswesuwt = some(
+                executowwesuwt
+                  .asinstanceof[candidatefeatuwehydwatowexecutowwesuwt[univewsawnoun[any]]])
+            ), 🥺
+            f-featuwemaps = some(mewgedfeatuwemaps)
           )
         }
       }
 
-    val DecorationStep =
-      new Step[(Query, Seq[CandidateWithFeatures[Result]]), CandidateDecoratorExecutorResult] {
-        override def identifier: PipelineStepIdentifier = CandidatePipelineConfig.decoratorStep
+    vaw decowationstep =
+      n-nyew step[(quewy, -.- s-seq[candidatewithfeatuwes[wesuwt]]), nyaa~~ candidatedecowatowexecutowwesuwt] {
+        o-ovewwide d-def identifiew: p-pipewinestepidentifiew = c-candidatepipewineconfig.decowatowstep
 
-        override def executorArrow: Arrow[
-          (Query, Seq[CandidateWithFeatures[Result]]),
-          CandidateDecoratorExecutorResult
+        o-ovewwide d-def executowawwow: awwow[
+          (quewy, (///ˬ///✿) seq[candidatewithfeatuwes[wesuwt]]), 🥺
+          candidatedecowatowexecutowwesuwt
         ] =
-          candidateDecoratorExecutor.arrow(decorator, context)
+          candidatedecowatowexecutow.awwow(decowatow, >w< context)
 
-        override def inputAdaptor(
-          query: CandidatePipeline.Inputs[Query],
-          previousResult: IntermediateCandidatePipelineResult[Result]
-        ): (Query, Seq[CandidateWithFeatures[Result]]) = {
-          val keptCandidates = previousResult.underlyingResult.filterResult
-            .getOrElse {
-              throw InvalidStepStateException(identifier, "FilterResult")
-            }.result.asInstanceOf[Seq[Result]]
+        ovewwide def inputadaptow(
+          q-quewy: candidatepipewine.inputs[quewy], rawr x3
+          p-pweviouswesuwt: i-intewmediatecandidatepipewinewesuwt[wesuwt]
+        ): (quewy, (⑅˘꒳˘) s-seq[candidatewithfeatuwes[wesuwt]]) = {
+          v-vaw keptcandidates = p-pweviouswesuwt.undewwyingwesuwt.fiwtewwesuwt
+            .getowewse {
+              thwow invawidstepstateexception(identifiew, σωσ "fiwtewwesuwt")
+            }.wesuwt.asinstanceof[seq[wesuwt]]
 
-          val featureMaps = previousResult.featureMaps.getOrElse {
-            throw InvalidStepStateException(identifier, "FeatureMaps")
+          vaw featuwemaps = pweviouswesuwt.featuwemaps.getowewse {
+            thwow i-invawidstepstateexception(identifiew, XD "featuwemaps")
           }
 
           (
-            query.query,
-            keptCandidates.map(candidate =>
-              CandidateWithFeaturesImpl(
-                candidate,
-                featureMaps.getOrElse(candidate, FeatureMap.empty))))
+            q-quewy.quewy, -.-
+            keptcandidates.map(candidate =>
+              candidatewithfeatuwesimpw(
+                candidate, >_<
+                featuwemaps.getowewse(candidate, rawr f-featuwemap.empty))))
         }
 
-        override def resultUpdater(
-          previousPipelineResult: IntermediateCandidatePipelineResult[Result],
-          executorResult: CandidateDecoratorExecutorResult
-        ): IntermediateCandidatePipelineResult[Result] =
-          previousPipelineResult.copy(underlyingResult =
-            previousPipelineResult.underlyingResult.copy(
-              candidateDecoratorResult = Some(executorResult)
+        o-ovewwide def w-wesuwtupdatew(
+          pweviouspipewinewesuwt: intewmediatecandidatepipewinewesuwt[wesuwt],
+          e-executowwesuwt: candidatedecowatowexecutowwesuwt
+        ): intewmediatecandidatepipewinewesuwt[wesuwt] =
+          p-pweviouspipewinewesuwt.copy(undewwyingwesuwt =
+            p-pweviouspipewinewesuwt.undewwyingwesuwt.copy(
+              candidatedecowatowwesuwt = some(executowwesuwt)
             ))
       }
 
     /**
-     * ResultStep is a synchronous step that basically takes the outputs from the other steps, groups modules,
-     * and puts things into the final result object
+     * w-wesuwtstep is a synchwonous s-step that b-basicawwy takes the outputs fwom t-the othew steps, 😳😳😳 g-gwoups moduwes, UwU
+     * a-and puts t-things into the f-finaw wesuwt object
      */
-    val ResultStep = new Step[GroupResultsExecutorInput[Result], GroupResultsExecutorResult] {
-      override def identifier: PipelineStepIdentifier = CandidatePipelineConfig.resultStep
+    v-vaw wesuwtstep = nyew step[gwoupwesuwtsexecutowinput[wesuwt], (U ﹏ U) g-gwoupwesuwtsexecutowwesuwt] {
+      o-ovewwide def identifiew: pipewinestepidentifiew = c-candidatepipewineconfig.wesuwtstep
 
-      override def executorArrow: Arrow[
-        GroupResultsExecutorInput[Result],
-        GroupResultsExecutorResult
-      ] = groupResultsExecutor.arrow(pipelineIdentifier, candidateSourceIdentifier, context)
+      ovewwide def executowawwow: awwow[
+        g-gwoupwesuwtsexecutowinput[wesuwt],
+        gwoupwesuwtsexecutowwesuwt
+      ] = g-gwoupwesuwtsexecutow.awwow(pipewineidentifiew, (˘ω˘) candidatesouwceidentifiew, /(^•ω•^) c-context)
 
-      override def inputAdaptor(
-        query: CandidatePipeline.Inputs[Query],
-        previousResult: IntermediateCandidatePipelineResult[Result]
-      ): GroupResultsExecutorInput[Result] = {
+      o-ovewwide def inputadaptow(
+        quewy: candidatepipewine.inputs[quewy], (U ﹏ U)
+        p-pweviouswesuwt: intewmediatecandidatepipewinewesuwt[wesuwt]
+      ): gwoupwesuwtsexecutowinput[wesuwt] = {
 
-        val underlying = previousResult.underlyingResult
+        v-vaw u-undewwying = pweviouswesuwt.undewwyingwesuwt
 
-        val keptCandidates = underlying.filterResult
-          .getOrElse(
-            throw InvalidStepStateException(identifier, "FilterResult")
-          ).result.asInstanceOf[Seq[Result]]
+        vaw keptcandidates = undewwying.fiwtewwesuwt
+          .getowewse(
+            t-thwow invawidstepstateexception(identifiew, ^•ﻌ•^ "fiwtewwesuwt")
+          ).wesuwt.asinstanceof[seq[wesuwt]]
 
-        val decorations = underlying.candidateDecoratorResult
-          .getOrElse(
-            throw InvalidStepStateException(identifier, "DecorationResult")
-          ).result.map(decoration => decoration.candidate -> decoration.presentation).toMap
+        v-vaw decowations = undewwying.candidatedecowatowwesuwt
+          .getowewse(
+            thwow i-invawidstepstateexception(identifiew, >w< "decowationwesuwt")
+          ).wesuwt.map(decowation => decowation.candidate -> decowation.pwesentation).tomap
 
-        val combinedFeatureMaps: Map[Result, FeatureMap] = previousResult.featureMaps.getOrElse(
-          throw InvalidStepStateException(identifier, "FeatureMaps"))
+        v-vaw combinedfeatuwemaps: m-map[wesuwt, ʘwʘ featuwemap] = p-pweviouswesuwt.featuwemaps.getowewse(
+          t-thwow invawidstepstateexception(identifiew, òωó "featuwemaps"))
 
-        val filteredCandidates = keptCandidates.map { candidate =>
-          val updatedMap = combinedFeatureMaps
-            .get(candidate).getOrElse(FeatureMap.empty)
-          FetchedCandidateWithFeatures(candidate, updatedMap)
+        vaw fiwtewedcandidates = k-keptcandidates.map { c-candidate =>
+          v-vaw updatedmap = c-combinedfeatuwemaps
+            .get(candidate).getowewse(featuwemap.empty)
+          fetchedcandidatewithfeatuwes(candidate, o.O updatedmap)
         }
 
-        GroupResultsExecutorInput(
-          candidates = filteredCandidates,
-          decorations = decorations
+        gwoupwesuwtsexecutowinput(
+          candidates = fiwtewedcandidates, ( ͡o ω ͡o )
+          decowations = decowations
         )
       }
 
-      override def resultUpdater(
-        previousPipelineResult: IntermediateCandidatePipelineResult[Result],
-        executorResult: GroupResultsExecutorResult
-      ): IntermediateCandidatePipelineResult[Result] =
-        previousPipelineResult.copy(underlyingResult = previousPipelineResult.underlyingResult
-          .copy(result = Some(executorResult.candidatesWithDetails)))
+      ovewwide def wesuwtupdatew(
+        p-pweviouspipewinewesuwt: i-intewmediatecandidatepipewinewesuwt[wesuwt], mya
+        e-executowwesuwt: g-gwoupwesuwtsexecutowwesuwt
+      ): i-intewmediatecandidatepipewinewesuwt[wesuwt] =
+        p-pweviouspipewinewesuwt.copy(undewwyingwesuwt = pweviouspipewinewesuwt.undewwyingwesuwt
+          .copy(wesuwt = s-some(executowwesuwt.candidateswithdetaiws)))
     }
 
-    val builtSteps = Seq(
-      GatesStep,
-      queryFeatureHydrationStep(
-        config.queryFeatureHydration,
-        CandidatePipelineConfig.fetchQueryFeaturesStep,
-        (pipelineResult, executorResult) =>
-          pipelineResult.copy(queryFeatures = Some(executorResult))
-      ),
-      queryFeatureHydrationStep(
-        config.queryFeatureHydrationPhase2,
-        CandidatePipelineConfig.fetchQueryFeaturesPhase2Step,
-        (pipelineResult, executorResult) =>
-          pipelineResult.copy(
-            queryFeaturesPhase2 = Some(executorResult),
-            mergedAsyncQueryFeatures = Some(
-              pipelineResult.queryFeatures
-                .getOrElse(
-                  throw InvalidStepStateException(
-                    CandidatePipelineConfig.fetchQueryFeaturesPhase2Step,
-                    "QueryFeatures")
-                ).asyncFeatureMap ++ executorResult.asyncFeatureMap)
+    v-vaw buiwtsteps = seq(
+      g-gatesstep, >_<
+      q-quewyfeatuwehydwationstep(
+        config.quewyfeatuwehydwation, rawr
+        candidatepipewineconfig.fetchquewyfeatuwesstep, >_<
+        (pipewinewesuwt, (U ﹏ U) e-executowwesuwt) =>
+          pipewinewesuwt.copy(quewyfeatuwes = some(executowwesuwt))
+      ), rawr
+      q-quewyfeatuwehydwationstep(
+        config.quewyfeatuwehydwationphase2, (U ᵕ U❁)
+        c-candidatepipewineconfig.fetchquewyfeatuwesphase2step, (ˆ ﻌ ˆ)♡
+        (pipewinewesuwt, >_< e-executowwesuwt) =>
+          pipewinewesuwt.copy(
+            q-quewyfeatuwesphase2 = s-some(executowwesuwt), ^^;;
+            m-mewgedasyncquewyfeatuwes = some(
+              p-pipewinewesuwt.quewyfeatuwes
+                .getowewse(
+                  t-thwow invawidstepstateexception(
+                    candidatepipewineconfig.fetchquewyfeatuwesphase2step, ʘwʘ
+                    "quewyfeatuwes")
+                ).asyncfeatuwemap ++ e-executowwesuwt.asyncfeatuwemap)
           )
-      ),
-      asyncFeaturesStep(CandidatePipelineConfig.candidateSourceStep, context),
-      CandidateSourceStep,
-      asyncFeaturesStep(CandidatePipelineConfig.preFilterFeatureHydrationPhase1Step, context),
-      PreFilterFeatureHydrationPhase1Step,
-      asyncFeaturesStep(CandidatePipelineConfig.preFilterFeatureHydrationPhase2Step, context),
-      PreFilterFeatureHydrationPhase2Step,
-      asyncFeaturesStep(CandidatePipelineConfig.filtersStep, context),
-      FiltersStep,
-      asyncFeaturesStep(CandidatePipelineConfig.postFilterFeatureHydrationStep, context),
-      PostFilterFeatureHydrationStep,
-      asyncFeaturesStep(CandidatePipelineConfig.scorersStep, context),
-      ScorersStep,
-      asyncFeaturesStep(CandidatePipelineConfig.decoratorStep, context),
-      DecorationStep,
-      ResultStep
+      ), 😳😳😳
+      asyncfeatuwesstep(candidatepipewineconfig.candidatesouwcestep, UwU c-context),
+      c-candidatesouwcestep, OwO
+      a-asyncfeatuwesstep(candidatepipewineconfig.pwefiwtewfeatuwehydwationphase1step, :3 context),
+      p-pwefiwtewfeatuwehydwationphase1step, -.-
+      asyncfeatuwesstep(candidatepipewineconfig.pwefiwtewfeatuwehydwationphase2step, 🥺 context), -.-
+      p-pwefiwtewfeatuwehydwationphase2step, -.-
+      asyncfeatuwesstep(candidatepipewineconfig.fiwtewsstep, (U ﹏ U) context),
+      fiwtewsstep,
+      asyncfeatuwesstep(candidatepipewineconfig.postfiwtewfeatuwehydwationstep, context), rawr
+      postfiwtewfeatuwehydwationstep,
+      a-asyncfeatuwesstep(candidatepipewineconfig.scowewsstep, mya context), ( ͡o ω ͡o )
+      scowewsstep, /(^•ω•^)
+      asyncfeatuwesstep(candidatepipewineconfig.decowatowstep, >_< context), (✿oωo)
+      decowationstep, 😳😳😳
+      wesuwtstep
     )
 
-    /** The main execution logic for this Candidate Pipeline. */
-    val finalArrow: Arrow[CandidatePipeline.Inputs[Query], CandidatePipelineResult] =
-      buildCombinedArrowFromSteps(
-        steps = builtSteps,
-        context = context,
-        initialEmptyResult =
-          IntermediateCandidatePipelineResult.empty[Result](config.candidateSource.identifier),
-        stepsInOrderFromConfig = CandidatePipelineConfig.stepsInOrder
-      ).map(_.underlyingResult)
+    /** t-the main execution wogic fow this candidate pipewine. (ꈍᴗꈍ) */
+    v-vaw finawawwow: awwow[candidatepipewine.inputs[quewy], 🥺 c-candidatepipewinewesuwt] =
+      buiwdcombinedawwowfwomsteps(
+        steps = b-buiwtsteps, mya
+        context = c-context, (ˆ ﻌ ˆ)♡
+        initiawemptywesuwt =
+          i-intewmediatecandidatepipewinewesuwt.empty[wesuwt](config.candidatesouwce.identifiew), (⑅˘꒳˘)
+        s-stepsinowdewfwomconfig = candidatepipewineconfig.stepsinowdew
+      ).map(_.undewwyingwesuwt)
 
-    val configFromBuilder = config
-    new CandidatePipeline[Query] {
-      override private[core] val config: BaseCandidatePipelineConfig[Query, _, _, _] =
-        configFromBuilder
-      override val arrow: Arrow[CandidatePipeline.Inputs[Query], CandidatePipelineResult] =
-        finalArrow
-      override val identifier: CandidatePipelineIdentifier = pipelineIdentifier
-      override val alerts: Seq[Alert] = config.alerts
-      override val children: Seq[Component] =
-        allGates ++
-          config.queryFeatureHydration ++
-          Seq(queryTransformer, config.candidateSource, resultsTransformer) ++
-          config.featuresFromCandidateSourceTransformers ++
-          decorator.toSeq ++
-          config.preFilterFeatureHydrationPhase1 ++
-          config.filters ++
-          config.postFilterFeatureHydration ++
-          config.scorers
+    vaw configfwombuiwdew = c-config
+    nyew candidatepipewine[quewy] {
+      ovewwide pwivate[cowe] v-vaw config: basecandidatepipewineconfig[quewy, òωó _, _, o.O _] =
+        c-configfwombuiwdew
+      ovewwide v-vaw awwow: awwow[candidatepipewine.inputs[quewy], XD c-candidatepipewinewesuwt] =
+        f-finawawwow
+      ovewwide vaw identifiew: c-candidatepipewineidentifiew = pipewineidentifiew
+      ovewwide v-vaw awewts: seq[awewt] = config.awewts
+      ovewwide vaw chiwdwen: seq[component] =
+        awwgates ++
+          c-config.quewyfeatuwehydwation ++
+          s-seq(quewytwansfowmew, (˘ω˘) config.candidatesouwce, (ꈍᴗꈍ) w-wesuwtstwansfowmew) ++
+          c-config.featuwesfwomcandidatesouwcetwansfowmews ++
+          decowatow.toseq ++
+          c-config.pwefiwtewfeatuwehydwationphase1 ++
+          config.fiwtews ++
+          config.postfiwtewfeatuwehydwation ++
+          config.scowews
     }
   }
 
-  private case class CandidateWithFeaturesImpl(candidate: Result, features: FeatureMap)
-      extends CandidateWithFeatures[Result]
+  pwivate case cwass candidatewithfeatuwesimpw(candidate: w-wesuwt, >w< f-featuwes: featuwemap)
+      e-extends candidatewithfeatuwes[wesuwt]
 }

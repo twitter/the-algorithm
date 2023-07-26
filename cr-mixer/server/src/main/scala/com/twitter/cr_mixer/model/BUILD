@@ -1,16 +1,16 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core",
-        "content-recommender/thrift/src/main/thrift:thrift-scala",
-        "cr-mixer/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift-scala",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/core_workflows/user_model:user_model-scala",
-        "src/thrift/com/twitter/recos:recos-common-scala",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "configapi/configapi-cowe", (⑅˘꒳˘)
+        "content-wecommendew/thwift/swc/main/thwift:thwift-scawa", ( ͡o ω ͡o )
+        "cw-mixew/thwift/swc/main/thwift:thwift-scawa", UwU
+        "pwoduct-mixew/cowe/swc/main/thwift/com/twittew/pwoduct_mixew/cowe:thwift-scawa", rawr x3
+        "swc/scawa/com/twittew/simcwustews_v2/common", rawr
+        "swc/thwift/com/twittew/cowe_wowkfwows/usew_modew:usew_modew-scawa", σωσ
+        "swc/thwift/com/twittew/wecos:wecos-common-scawa", σωσ
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", >_<
     ],
 )

@@ -1,474 +1,474 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.awwaywist;
+i-impowt j-java.utiw.cowwections;
+i-impowt java.utiw.hashmap;
+i-impowt java.utiw.itewatow;
+i-impowt j-java.utiw.wist;
+impowt java.utiw.map;
+impowt java.utiw.concuwwent.concuwwenthashmap;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.store.Directory;
+impowt owg.apache.wucene.index.diwectowyweadew;
+impowt owg.apache.wucene.index.indexwwitewconfig;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+impowt owg.apache.wucene.stowe.diwectowy;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.facets.FacetCountingArrayWriter;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideByteIndex;
-import com.twitter.search.core.earlybird.index.column.DocValuesManager;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.inverted.DeletedDocs;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
-import com.twitter.search.core.earlybird.index.inverted.InvertedRealtimeIndex;
-import com.twitter.search.core.earlybird.index.inverted.OptimizedMemoryIndex;
-import com.twitter.search.core.earlybird.index.inverted.TermPointerEncoding;
+impowt com.twittew.common.cowwections.paiw;
+impowt c-com.twittew.seawch.common.schema.base.eawwybiwdfiewdtype;
+impowt c-com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.abstwactfacetcountingawway;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetcountingawwaywwitew;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetidmap;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidebyteindex;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.cowumn.docvawuesmanagew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdindexextensionsdata;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdindexextensionsfactowy;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.deweteddocs;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedindex;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedweawtimeindex;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.optimizedmemowyindex;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.tewmpointewencoding;
 
 /**
- * Base class that references data structures belonging to an Earlybird segment.
+ * base cwass that w-wefewences data stwuctuwes bewonging t-to an eawwybiwd s-segment. ( ͡o ω ͡o )
  */
-public abstract class EarlybirdIndexSegmentData implements Flushable {
+p-pubwic abstwact cwass eawwybiwdindexsegmentdata impwements fwushabwe {
   /**
-   * This class has a map which contains a snapshot of max published pointers, to distinguish the
-   * documents in the skip lists that are fully indexed, and safe to return to searchers and those
-   * that are in progress and should not be returned to searchers. See
-   * "Earlybird Indexing Latency Design Document"
-   * for rationale and design.
+   * t-this cwass h-has a map which contains a snapshot o-of max pubwished p-pointews, /(^•ω•^) to distinguish t-the
+   * documents in the skip wists t-that awe fuwwy indexed, 🥺 and safe to wetuwn t-to seawchews and those
+   * that a-awe in pwogwess and shouwd nyot b-be wetuwned to s-seawchews. nyaa~~ see
+   * "eawwybiwd indexing watency design document"
+   * fow wationawe and design. mya
    *
-   * It also has the smallestDocID, which determines the smallest assigned doc ID in the tweet ID
-   * mapper that is safe to traverse.
+   * it awso has the smowestdocid, w-which detewmines t-the smowest assigned doc i-id in the tweet i-id
+   * mappew t-that is safe to twavewse. XD
    *
-   * The pointer map and smallestDocID need to be updated atomically. See SEARCH-27650.
+   * the pointew map and smowestdocid n-nyeed to be updated atomicawwy. nyaa~~ see seawch-27650. ʘwʘ
    */
-  public static class SyncData {
-    private final Map<InvertedIndex, Integer> indexPointers;
-    private final int smallestDocID;
+  pubwic static cwass syncdata {
+    p-pwivate finaw map<invewtedindex, (⑅˘꒳˘) i-integew> indexpointews;
+    p-pwivate finaw int s-smowestdocid;
 
-    public SyncData(Map<InvertedIndex, Integer> indexPointers, int smallestDocID) {
-      this.indexPointers = indexPointers;
-      this.smallestDocID = smallestDocID;
+    pubwic syncdata(map<invewtedindex, :3 i-integew> i-indexpointews, i-int smowestdocid) {
+      t-this.indexpointews = indexpointews;
+      this.smowestdocid = smowestdocid;
     }
 
-    public Map<InvertedIndex, Integer> getIndexPointers() {
-      return indexPointers;
+    p-pubwic map<invewtedindex, -.- i-integew> g-getindexpointews() {
+      wetuwn i-indexpointews;
     }
 
-    public int getSmallestDocID() {
-      return smallestDocID;
+    p-pubwic int getsmowestdocid() {
+      wetuwn smowestdocid;
     }
   }
 
-  private volatile SyncData syncData;
+  pwivate vowatiwe syncdata s-syncdata;
 
-  private final int maxSegmentSize;
-  private final long timeSliceID;
+  pwivate finaw int maxsegmentsize;
+  pwivate finaw wong timeswiceid;
 
-  private final ConcurrentHashMap<String, QueryCacheResultForSegment> queryCacheMap =
-      new ConcurrentHashMap<>();
-  private final AbstractFacetCountingArray facetCountingArray;
-  private final boolean isOptimized;
-  private final ConcurrentHashMap<String, InvertedIndex> perFieldMap;
-  private final ConcurrentHashMap<String, ColumnStrideByteIndex> normsMap;
+  pwivate finaw c-concuwwenthashmap<stwing, 😳😳😳 quewycachewesuwtfowsegment> quewycachemap =
+      nyew concuwwenthashmap<>();
+  p-pwivate f-finaw abstwactfacetcountingawway f-facetcountingawway;
+  pwivate f-finaw boowean isoptimized;
+  p-pwivate finaw concuwwenthashmap<stwing, (U ﹏ U) i-invewtedindex> pewfiewdmap;
+  pwivate finaw concuwwenthashmap<stwing, o.O cowumnstwidebyteindex> nyowmsmap;
 
-  private final Map<String, FacetLabelProvider> facetLabelProviders;
-  private final FacetIDMap facetIDMap;
+  pwivate finaw m-map<stwing, ( ͡o ω ͡o ) facetwabewpwovidew> facetwabewpwovidews;
+  p-pwivate finaw facetidmap f-facetidmap;
 
-  private final Schema schema;
-  private final DocValuesManager docValuesManager;
+  p-pwivate finaw schema schema;
+  pwivate finaw docvawuesmanagew docvawuesmanagew;
 
-  private final DeletedDocs deletedDocs;
+  p-pwivate finaw d-deweteddocs deweteddocs;
 
-  private final DocIDToTweetIDMapper docIdToTweetIdMapper;
-  private final TimeMapper timeMapper;
+  pwivate f-finaw docidtotweetidmappew d-docidtotweetidmappew;
+  pwivate finaw timemappew timemappew;
 
-  static LeafReader getLeafReaderFromOptimizedDirectory(Directory directory) throws IOException {
-    List<LeafReaderContext> leaves = DirectoryReader.open(directory).getContext().leaves();
-    int leavesSize = leaves.size();
-    Preconditions.checkState(1 == leavesSize,
-        "Expected one leaf reader in directory %s, but found %s", directory, leavesSize);
-    return leaves.get(0).reader();
+  static weafweadew g-getweafweadewfwomoptimizeddiwectowy(diwectowy d-diwectowy) thwows i-ioexception {
+    wist<weafweadewcontext> w-weaves = d-diwectowyweadew.open(diwectowy).getcontext().weaves();
+    int weavessize = w-weaves.size();
+    pweconditions.checkstate(1 == weavessize, òωó
+        "expected one weaf weadew in diwectowy %s, 🥺 b-but found %s", /(^•ω•^) d-diwectowy, 😳😳😳 weavessize);
+    wetuwn weaves.get(0).weadew();
   }
 
   /**
-   * Creates a new SegmentData instance using the provided data.
+   * c-cweates a-a nyew segmentdata instance using the pwovided data. ^•ﻌ•^
    */
-  public EarlybirdIndexSegmentData(
-      int maxSegmentSize,
-      long timeSliceID,
-      Schema schema,
-      boolean isOptimized,
-      int smallestDocID,
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-      ConcurrentHashMap<String, ColumnStrideByteIndex> normsMap,
-      AbstractFacetCountingArray facetCountingArray,
-      DocValuesManager docValuesManager,
-      Map<String, FacetLabelProvider> facetLabelProviders,
-      FacetIDMap facetIDMap,
-      DeletedDocs deletedDocs,
-      DocIDToTweetIDMapper docIdToTweetIdMapper,
-      TimeMapper timeMapper) {
-    this.maxSegmentSize = maxSegmentSize;
-    this.timeSliceID = timeSliceID;
-    this.schema = schema;
-    this.isOptimized = isOptimized;
-    this.facetCountingArray = facetCountingArray;
-    this.perFieldMap = perFieldMap;
-    this.syncData = new SyncData(buildIndexPointers(), smallestDocID);
-    this.normsMap = normsMap;
-    this.docValuesManager = docValuesManager;
-    this.facetLabelProviders = facetLabelProviders;
-    this.facetIDMap = facetIDMap;
-    this.deletedDocs = deletedDocs;
-    this.docIdToTweetIdMapper = docIdToTweetIdMapper;
-    this.timeMapper = timeMapper;
+  p-pubwic eawwybiwdindexsegmentdata(
+      int maxsegmentsize, nyaa~~
+      wong timeswiceid, OwO
+      schema schema, ^•ﻌ•^
+      b-boowean isoptimized, σωσ
+      int smowestdocid, -.-
+      concuwwenthashmap<stwing, (˘ω˘) i-invewtedindex> p-pewfiewdmap, rawr x3
+      concuwwenthashmap<stwing, rawr x3 cowumnstwidebyteindex> nyowmsmap, σωσ
+      abstwactfacetcountingawway f-facetcountingawway, nyaa~~
+      d-docvawuesmanagew docvawuesmanagew, (ꈍᴗꈍ)
+      map<stwing, ^•ﻌ•^ facetwabewpwovidew> facetwabewpwovidews, >_<
+      facetidmap f-facetidmap, ^^;;
+      deweteddocs d-deweteddocs, ^^;;
+      docidtotweetidmappew docidtotweetidmappew, /(^•ω•^)
+      timemappew t-timemappew) {
+    this.maxsegmentsize = m-maxsegmentsize;
+    t-this.timeswiceid = timeswiceid;
+    t-this.schema = schema;
+    this.isoptimized = isoptimized;
+    t-this.facetcountingawway = f-facetcountingawway;
+    t-this.pewfiewdmap = pewfiewdmap;
+    t-this.syncdata = n-nyew syncdata(buiwdindexpointews(), nyaa~~ smowestdocid);
+    this.nowmsmap = n-nyowmsmap;
+    t-this.docvawuesmanagew = d-docvawuesmanagew;
+    this.facetwabewpwovidews = facetwabewpwovidews;
+    t-this.facetidmap = facetidmap;
+    t-this.deweteddocs = d-deweteddocs;
+    this.docidtotweetidmappew = docidtotweetidmappew;
+    this.timemappew = t-timemappew;
 
-    Preconditions.checkNotNull(schema);
+    p-pweconditions.checknotnuww(schema);
   }
 
-  public final Schema getSchema() {
-    return schema;
+  p-pubwic finaw s-schema getschema() {
+    wetuwn s-schema;
   }
 
   /**
-   * Returns all {@link EarlybirdIndexExtensionsData} instances contained in this segment.
-   * Since index extensions are optional, the returned map might be null or empty.
+   * wetuwns aww {@wink eawwybiwdindexextensionsdata} instances contained i-in this segment. (✿oωo)
+   * since index e-extensions awe optionaw, ( ͡o ω ͡o ) the w-wetuwned map might be nuww ow empty. (U ᵕ U❁)
    */
-  public abstract <S extends EarlybirdIndexExtensionsData> S getIndexExtensionsData();
+  p-pubwic abstwact <s e-extends eawwybiwdindexextensionsdata> s-s getindexextensionsdata();
 
-  public DocIDToTweetIDMapper getDocIDToTweetIDMapper() {
-    return docIdToTweetIdMapper;
+  p-pubwic docidtotweetidmappew g-getdocidtotweetidmappew() {
+    w-wetuwn docidtotweetidmappew;
   }
 
-  public TimeMapper getTimeMapper() {
-    return timeMapper;
+  pubwic timemappew gettimemappew() {
+    wetuwn timemappew;
   }
 
-  public final DocValuesManager getDocValuesManager() {
-    return docValuesManager;
+  pubwic finaw docvawuesmanagew g-getdocvawuesmanagew() {
+    w-wetuwn docvawuesmanagew;
   }
 
-  public Map<String, FacetLabelProvider> getFacetLabelProviders() {
-    return facetLabelProviders;
+  p-pubwic map<stwing, òωó facetwabewpwovidew> g-getfacetwabewpwovidews() {
+    wetuwn facetwabewpwovidews;
   }
 
-  public FacetIDMap getFacetIDMap() {
-    return facetIDMap;
+  pubwic facetidmap getfacetidmap() {
+    w-wetuwn facetidmap;
   }
 
   /**
-   * Returns the QueryCacheResult for the given filter for this segment.
+   * w-wetuwns the quewycachewesuwt f-fow the given fiwtew fow this segment. σωσ
    */
-  public QueryCacheResultForSegment getQueryCacheResult(String queryCacheFilterName) {
-    return queryCacheMap.get(queryCacheFilterName);
+  p-pubwic quewycachewesuwtfowsegment g-getquewycachewesuwt(stwing quewycachefiwtewname) {
+    wetuwn q-quewycachemap.get(quewycachefiwtewname);
   }
 
-  public long getQueryCachesCardinality() {
-    return queryCacheMap.values().stream().mapToLong(q -> q.getCardinality()).sum();
+  p-pubwic wong getquewycachescawdinawity() {
+    wetuwn quewycachemap.vawues().stweam().maptowong(q -> q.getcawdinawity()).sum();
   }
 
   /**
-   * Get cache cardinality for each query cache.
-   * @return
+   * get cache cawdinawity fow each q-quewy cache. :3
+   * @wetuwn
    */
-  public List<Pair<String, Long>> getPerQueryCacheCardinality() {
-    ArrayList<Pair<String, Long>> result = new ArrayList<>();
+  p-pubwic wist<paiw<stwing, OwO w-wong>> g-getpewquewycachecawdinawity() {
+    a-awwaywist<paiw<stwing, ^^ wong>> w-wesuwt = nyew a-awwaywist<>();
 
-    queryCacheMap.forEach((cacheName, queryCacheResult) -> {
-      result.add(Pair.of(cacheName, queryCacheResult.getCardinality()));
+    quewycachemap.foweach((cachename, (˘ω˘) q-quewycachewesuwt) -> {
+      w-wesuwt.add(paiw.of(cachename, OwO quewycachewesuwt.getcawdinawity()));
     });
-    return result;
+    w-wetuwn wesuwt;
   }
 
   /**
-   * Updates the QueryCacheResult stored for the given filter for this segment
+   * updates the quewycachewesuwt stowed fow the given f-fiwtew fow this segment
    */
-  public QueryCacheResultForSegment updateQueryCacheResult(
-      String queryCacheFilterName, QueryCacheResultForSegment queryCacheResultForSegment) {
-    return queryCacheMap.put(queryCacheFilterName, queryCacheResultForSegment);
+  p-pubwic quewycachewesuwtfowsegment u-updatequewycachewesuwt(
+      stwing quewycachefiwtewname, UwU q-quewycachewesuwtfowsegment quewycachewesuwtfowsegment) {
+    wetuwn quewycachemap.put(quewycachefiwtewname, ^•ﻌ•^ q-quewycachewesuwtfowsegment);
   }
 
   /**
-   * Subclasses are allowed to return null here to disable writing to a FacetCountingArray.
+   * s-subcwasses a-awe awwowed to wetuwn nyuww hewe to disabwe wwiting to a facetcountingawway. (ꈍᴗꈍ)
    */
-  public FacetCountingArrayWriter createFacetCountingArrayWriter() {
-    return getFacetCountingArray() != null
-        ? new FacetCountingArrayWriter(getFacetCountingArray()) : null;
+  p-pubwic facetcountingawwaywwitew cweatefacetcountingawwaywwitew() {
+    w-wetuwn getfacetcountingawway() != n-nyuww
+        ? nyew facetcountingawwaywwitew(getfacetcountingawway()) : n-nyuww;
   }
 
-  public int getMaxSegmentSize() {
-    return maxSegmentSize;
+  pubwic i-int getmaxsegmentsize() {
+    w-wetuwn maxsegmentsize;
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  pubwic wong gettimeswiceid() {
+    w-wetuwn timeswiceid;
   }
 
-  public void updateSmallestDocID(int smallestDocID) {
-    // Atomic swap
-    syncData = new SyncData(Collections.unmodifiableMap(buildIndexPointers()), smallestDocID);
+  pubwic void updatesmowestdocid(int smowestdocid) {
+    // a-atomic swap
+    s-syncdata = nyew syncdata(cowwections.unmodifiabwemap(buiwdindexpointews()), /(^•ω•^) s-smowestdocid);
   }
 
-  private Map<InvertedIndex, Integer> buildIndexPointers() {
-    Map<InvertedIndex, Integer> newIndexPointers = new HashMap<>();
-    for (InvertedIndex index : perFieldMap.values()) {
-      if (index.hasMaxPublishedPointer()) {
-        newIndexPointers.put(index, index.getMaxPublishedPointer());
+  pwivate m-map<invewtedindex, (U ᵕ U❁) i-integew> buiwdindexpointews() {
+    m-map<invewtedindex, (✿oωo) integew> nyewindexpointews = nyew hashmap<>();
+    fow (invewtedindex index : pewfiewdmap.vawues()) {
+      if (index.hasmaxpubwishedpointew()) {
+        nyewindexpointews.put(index, OwO index.getmaxpubwishedpointew());
       }
     }
 
-    return newIndexPointers;
+    wetuwn nyewindexpointews;
   }
 
-  public SyncData getSyncData() {
-    return syncData;
+  pubwic syncdata getsyncdata() {
+    wetuwn s-syncdata;
   }
 
-  public AbstractFacetCountingArray getFacetCountingArray() {
-    return facetCountingArray;
+  p-pubwic abstwactfacetcountingawway getfacetcountingawway() {
+    wetuwn facetcountingawway;
   }
 
-  public void addField(String fieldName, InvertedIndex field) {
-    perFieldMap.put(fieldName, field);
+  p-pubwic void a-addfiewd(stwing f-fiewdname, :3 invewtedindex fiewd) {
+    p-pewfiewdmap.put(fiewdname, nyaa~~ fiewd);
   }
 
-  public Map<String, InvertedIndex> getPerFieldMap() {
-    return Collections.unmodifiableMap(perFieldMap);
+  p-pubwic map<stwing, ^•ﻌ•^ i-invewtedindex> getpewfiewdmap() {
+    w-wetuwn cowwections.unmodifiabwemap(pewfiewdmap);
   }
 
-  public InvertedIndex getFieldIndex(String fieldName) {
-    return perFieldMap.get(fieldName);
+  p-pubwic invewtedindex g-getfiewdindex(stwing fiewdname) {
+    wetuwn p-pewfiewdmap.get(fiewdname);
   }
 
-  public Map<String, ColumnStrideByteIndex> getNormsMap() {
-    return Collections.unmodifiableMap(normsMap);
+  p-pubwic map<stwing, ( ͡o ω ͡o ) c-cowumnstwidebyteindex> g-getnowmsmap() {
+    w-wetuwn cowwections.unmodifiabwemap(nowmsmap);
   }
 
-  public DeletedDocs getDeletedDocs() {
-    return deletedDocs;
-  }
-
-  /**
-   * Returns the norms index for the given field name.
-   */
-  public ColumnStrideByteIndex getNormIndex(String fieldName) {
-    return normsMap == null ? null : normsMap.get(fieldName);
+  p-pubwic d-deweteddocs getdeweteddocs() {
+    w-wetuwn deweteddocs;
   }
 
   /**
-   * Returns the norms index for the given field name, add if not exist.
+   * w-wetuwns the nyowms index f-fow the given fiewd n-nyame. ^^;;
    */
-  public ColumnStrideByteIndex createNormIndex(String fieldName) {
-    if (normsMap == null) {
-      return null;
+  p-pubwic cowumnstwidebyteindex getnowmindex(stwing f-fiewdname) {
+    wetuwn nyowmsmap == nyuww ? n-nyuww : nyowmsmap.get(fiewdname);
+  }
+
+  /**
+   * wetuwns the nyowms i-index fow t-the given fiewd n-nyame, mya add if nyot exist.
+   */
+  p-pubwic cowumnstwidebyteindex cweatenowmindex(stwing fiewdname) {
+    i-if (nowmsmap == nyuww) {
+      w-wetuwn nyuww;
     }
-    ColumnStrideByteIndex csf = normsMap.get(fieldName);
-    if (csf == null) {
-      csf = new ColumnStrideByteIndex(fieldName, maxSegmentSize);
-      normsMap.put(fieldName, csf);
+    cowumnstwidebyteindex c-csf = nyowmsmap.get(fiewdname);
+    if (csf == nyuww) {
+      csf = nyew cowumnstwidebyteindex(fiewdname, (U ᵕ U❁) maxsegmentsize);
+      n-nyowmsmap.put(fiewdname, ^•ﻌ•^ csf);
     }
-    return csf;
+    w-wetuwn c-csf;
   }
 
   /**
-   * Flushes this segment to disk.
+   * fwushes this segment to disk. (U ﹏ U)
    */
-  public void flushSegment(FlushInfo flushInfo, DataSerializer out) throws IOException {
-    getFlushHandler().flush(flushInfo, out);
+  p-pubwic void fwushsegment(fwushinfo fwushinfo, /(^•ω•^) datasewiawizew o-out) t-thwows ioexception {
+    g-getfwushhandwew().fwush(fwushinfo, ʘwʘ out);
   }
 
-  public final boolean isOptimized() {
-    return this.isOptimized;
+  pubwic f-finaw boowean i-isoptimized() {
+    wetuwn this.isoptimized;
   }
 
   /**
-   * Returns a new atomic reader for this segment.
+   * w-wetuwns a nyew atomic weadew fow this s-segment.
    */
-  public EarlybirdIndexSegmentAtomicReader createAtomicReader() throws IOException {
-    EarlybirdIndexSegmentAtomicReader reader = doCreateAtomicReader();
-    EarlybirdIndexExtensionsData indexExtension = getIndexExtensionsData();
-    if (indexExtension != null) {
-      indexExtension.setupExtensions(reader);
+  pubwic eawwybiwdindexsegmentatomicweadew c-cweateatomicweadew() t-thwows ioexception {
+    e-eawwybiwdindexsegmentatomicweadew weadew = d-docweateatomicweadew();
+    e-eawwybiwdindexextensionsdata indexextension = g-getindexextensionsdata();
+    i-if (indexextension != nyuww) {
+      i-indexextension.setupextensions(weadew);
     }
-    return reader;
+    w-wetuwn weadew;
   }
 
   /**
-   * Creates a new atomic reader for this segment.
+   * c-cweates a nyew a-atomic weadew f-fow this segment. XD
    */
-  protected abstract EarlybirdIndexSegmentAtomicReader doCreateAtomicReader() throws IOException;
+  p-pwotected a-abstwact eawwybiwdindexsegmentatomicweadew d-docweateatomicweadew() thwows ioexception;
 
   /**
-   * Creates a new segment writer for this segment.
+   * c-cweates a nyew segment wwitew f-fow this segment. (⑅˘꒳˘)
    */
-  public abstract EarlybirdIndexSegmentWriter createEarlybirdIndexSegmentWriter(
-      IndexWriterConfig indexWriterConfig) throws IOException;
+  pubwic abstwact eawwybiwdindexsegmentwwitew c-cweateeawwybiwdindexsegmentwwitew(
+      i-indexwwitewconfig i-indexwwitewconfig) thwows ioexception;
 
-  public abstract static class AbstractSegmentDataFlushHandler
-      <S extends EarlybirdIndexExtensionsData>
-      extends Flushable.Handler<EarlybirdIndexSegmentData> {
-    protected static final String MAX_SEGMENT_SIZE_PROP_NAME = "maxSegmentSize";
-    protected static final String TIME_SLICE_ID_PROP_NAME = "time_slice_id";
-    protected static final String SMALLEST_DOCID_PROP_NAME = "smallestDocID";
-    protected static final String DOC_ID_MAPPER_SUBPROPS_NAME = "doc_id_mapper";
-    protected static final String TIME_MAPPER_SUBPROPS_NAME = "time_mapper";
-    public static final String IS_OPTIMIZED_PROP_NAME = "isOptimized";
+  pubwic abstwact s-static cwass abstwactsegmentdatafwushhandwew
+      <s e-extends eawwybiwdindexextensionsdata>
+      e-extends fwushabwe.handwew<eawwybiwdindexsegmentdata> {
+    pwotected static finaw stwing max_segment_size_pwop_name = "maxsegmentsize";
+    p-pwotected s-static finaw stwing time_swice_id_pwop_name = "time_swice_id";
+    p-pwotected s-static finaw stwing smowest_docid_pwop_name = "smowestdocid";
+    pwotected static finaw stwing d-doc_id_mappew_subpwops_name = "doc_id_mappew";
+    p-pwotected s-static finaw stwing t-time_mappew_subpwops_name = "time_mappew";
+    pubwic static finaw stwing i-is_optimized_pwop_name = "isoptimized";
 
-    // Abstract methods child classes should implement:
-    // 1. How to additional data structures
-    protected abstract void flushAdditionalDataStructures(
-        FlushInfo flushInfo, DataSerializer out, EarlybirdIndexSegmentData toFlush)
-            throws IOException;
+    // a-abstwact methods chiwd cwasses shouwd impwement:
+    // 1. nyaa~~ h-how to additionaw data stwuctuwes
+    p-pwotected abstwact void fwushadditionawdatastwuctuwes(
+        f-fwushinfo fwushinfo, UwU d-datasewiawizew out, (˘ω˘) eawwybiwdindexsegmentdata t-tofwush)
+            t-thwows ioexception;
 
-    // 2. Load additional data structures and construct SegmentData.
-    // Common data structures should be passed into this method to avoid code duplication.
-    // Subclasses should load additional data structures and construct a SegmentData.
-    protected abstract EarlybirdIndexSegmentData constructSegmentData(
-        FlushInfo flushInfo,
-        ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-        int maxSegmentSize,
-        S indexExtension,
-        DocIDToTweetIDMapper docIdToTweetIdMapper,
-        TimeMapper timeMapper,
-        DataDeserializer in) throws IOException;
+    // 2. rawr x3 woad additionaw d-data stwuctuwes and constwuct s-segmentdata. (///ˬ///✿)
+    // c-common d-data stwuctuwes s-shouwd be passed into this method t-to avoid code d-dupwication. 😳😳😳
+    // s-subcwasses shouwd woad additionaw d-data stwuctuwes and constwuct a segmentdata. (///ˬ///✿)
+    p-pwotected a-abstwact eawwybiwdindexsegmentdata c-constwuctsegmentdata(
+        fwushinfo fwushinfo, ^^;;
+        concuwwenthashmap<stwing, ^^ invewtedindex> pewfiewdmap, (///ˬ///✿)
+        int m-maxsegmentsize, -.-
+        s indexextension, /(^•ω•^)
+        d-docidtotweetidmappew d-docidtotweetidmappew, UwU
+        timemappew timemappew, (⑅˘꒳˘)
+        d-datadesewiawizew in) thwows i-ioexception;
 
-    protected abstract S newIndexExtension();
+    p-pwotected abstwact s-s nyewindexextension();
 
-    protected final Schema schema;
-    protected final EarlybirdIndexExtensionsFactory indexExtensionsFactory;
-    private final Flushable.Handler<? extends DocIDToTweetIDMapper> docIdMapperFlushHandler;
-    private final Flushable.Handler<? extends TimeMapper> timeMapperFlushHandler;
+    p-pwotected finaw s-schema schema;
+    pwotected finaw eawwybiwdindexextensionsfactowy indexextensionsfactowy;
+    pwivate finaw f-fwushabwe.handwew<? extends docidtotweetidmappew> d-docidmappewfwushhandwew;
+    pwivate finaw fwushabwe.handwew<? extends timemappew> timemappewfwushhandwew;
 
-    public AbstractSegmentDataFlushHandler(
-        Schema schema,
-        EarlybirdIndexExtensionsFactory indexExtensionsFactory,
-        Flushable.Handler<? extends DocIDToTweetIDMapper> docIdMapperFlushHandler,
-        Flushable.Handler<? extends TimeMapper> timeMapperFlushHandler) {
-      super();
-      this.schema = schema;
-      this.indexExtensionsFactory = indexExtensionsFactory;
-      this.docIdMapperFlushHandler = docIdMapperFlushHandler;
-      this.timeMapperFlushHandler = timeMapperFlushHandler;
-    }
-
-    public AbstractSegmentDataFlushHandler(EarlybirdIndexSegmentData objectToFlush) {
-      super(objectToFlush);
-      this.schema = objectToFlush.schema;
-      this.indexExtensionsFactory = null; // factory only needed for loading SegmentData from disk
-      this.docIdMapperFlushHandler = null; // docIdMapperFlushHandler needed only for loading data
-      this.timeMapperFlushHandler = null; // timeMapperFlushHandler needed only for loading data
+    p-pubwic abstwactsegmentdatafwushhandwew(
+        schema schema, ʘwʘ
+        eawwybiwdindexextensionsfactowy indexextensionsfactowy, σωσ
+        fwushabwe.handwew<? e-extends d-docidtotweetidmappew> docidmappewfwushhandwew, ^^
+        f-fwushabwe.handwew<? extends timemappew> timemappewfwushhandwew) {
+      s-supew();
+      t-this.schema = schema;
+      this.indexextensionsfactowy = i-indexextensionsfactowy;
+      this.docidmappewfwushhandwew = d-docidmappewfwushhandwew;
+      this.timemappewfwushhandwew = timemappewfwushhandwew;
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      EarlybirdIndexSegmentData segmentData = getObjectToFlush();
+    pubwic a-abstwactsegmentdatafwushhandwew(eawwybiwdindexsegmentdata objecttofwush) {
+      supew(objecttofwush);
+      t-this.schema = o-objecttofwush.schema;
+      t-this.indexextensionsfactowy = nyuww; // factowy onwy nyeeded f-fow woading segmentdata fwom disk
+      this.docidmappewfwushhandwew = nyuww; // docidmappewfwushhandwew n-nyeeded o-onwy fow woading d-data
+      t-this.timemappewfwushhandwew = nyuww; // timemappewfwushhandwew nyeeded onwy fow w-woading data
+    }
 
-      Preconditions.checkState(segmentData.docIdToTweetIdMapper instanceof Flushable);
-      ((Flushable) segmentData.docIdToTweetIdMapper).getFlushHandler().flush(
-          flushInfo.newSubProperties(DOC_ID_MAPPER_SUBPROPS_NAME), out);
+    @ovewwide
+    p-pwotected void dofwush(fwushinfo fwushinfo, OwO d-datasewiawizew out)
+        thwows ioexception {
+      e-eawwybiwdindexsegmentdata segmentdata = getobjecttofwush();
 
-      if (segmentData.timeMapper != null) {
-        segmentData.timeMapper.getFlushHandler()
-            .flush(flushInfo.newSubProperties(TIME_MAPPER_SUBPROPS_NAME), out);
+      p-pweconditions.checkstate(segmentdata.docidtotweetidmappew i-instanceof fwushabwe);
+      ((fwushabwe) s-segmentdata.docidtotweetidmappew).getfwushhandwew().fwush(
+          f-fwushinfo.newsubpwopewties(doc_id_mappew_subpwops_name), (ˆ ﻌ ˆ)♡ o-out);
+
+      if (segmentdata.timemappew != nuww) {
+        segmentdata.timemappew.getfwushhandwew()
+            .fwush(fwushinfo.newsubpwopewties(time_mappew_subpwops_name), o.O o-out);
       }
 
-      flushInfo.addBooleanProperty(IS_OPTIMIZED_PROP_NAME, segmentData.isOptimized());
-      flushInfo.addIntProperty(MAX_SEGMENT_SIZE_PROP_NAME, segmentData.getMaxSegmentSize());
-      flushInfo.addLongProperty(TIME_SLICE_ID_PROP_NAME, segmentData.getTimeSliceID());
-      flushInfo.addIntProperty(SMALLEST_DOCID_PROP_NAME,
-                               segmentData.getSyncData().getSmallestDocID());
+      fwushinfo.addbooweanpwopewty(is_optimized_pwop_name, (˘ω˘) segmentdata.isoptimized());
+      f-fwushinfo.addintpwopewty(max_segment_size_pwop_name, 😳 segmentdata.getmaxsegmentsize());
+      fwushinfo.addwongpwopewty(time_swice_id_pwop_name, (U ᵕ U❁) segmentdata.gettimeswiceid());
+      fwushinfo.addintpwopewty(smowest_docid_pwop_name, :3
+                               segmentdata.getsyncdata().getsmowestdocid());
 
-      flushIndexes(flushInfo, out, segmentData);
+      f-fwushindexes(fwushinfo, o.O o-out, s-segmentdata);
 
-      // Flush cluster specific data structures:
-      // FacetCountingArray, TweetIDMapper, LatLonMapper, and TimeMapper
-      flushAdditionalDataStructures(flushInfo, out, segmentData);
+      // f-fwush c-cwustew specific data stwuctuwes:
+      // f-facetcountingawway, (///ˬ///✿) tweetidmappew, OwO watwonmappew, and t-timemappew
+      fwushadditionawdatastwuctuwes(fwushinfo, o-out, >w< segmentdata);
     }
 
-    private void flushIndexes(
-        FlushInfo flushInfo,
-        DataSerializer out,
-        EarlybirdIndexSegmentData segmentData) throws IOException {
-      Map<String, InvertedIndex> perFieldMap = segmentData.getPerFieldMap();
-      FlushInfo fieldProps = flushInfo.newSubProperties("fields");
-      long sizeBeforeFlush = out.length();
-      for (Map.Entry<String, InvertedIndex> entry : perFieldMap.entrySet()) {
-        String fieldName = entry.getKey();
-        entry.getValue().getFlushHandler().flush(fieldProps.newSubProperties(fieldName), out);
+    pwivate void fwushindexes(
+        f-fwushinfo f-fwushinfo, ^^
+        datasewiawizew o-out, (⑅˘꒳˘)
+        eawwybiwdindexsegmentdata s-segmentdata) t-thwows ioexception {
+      m-map<stwing, ʘwʘ i-invewtedindex> pewfiewdmap = segmentdata.getpewfiewdmap();
+      f-fwushinfo fiewdpwops = fwushinfo.newsubpwopewties("fiewds");
+      wong sizebefowefwush = out.wength();
+      f-fow (map.entwy<stwing, (///ˬ///✿) invewtedindex> e-entwy : pewfiewdmap.entwyset()) {
+        stwing fiewdname = entwy.getkey();
+        e-entwy.getvawue().getfwushhandwew().fwush(fiewdpwops.newsubpwopewties(fiewdname), XD o-out);
       }
-      fieldProps.setSizeInBytes(out.length() - sizeBeforeFlush);
+      f-fiewdpwops.setsizeinbytes(out.wength() - sizebefowefwush);
     }
 
-    @Override
-    protected EarlybirdIndexSegmentData doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      DocIDToTweetIDMapper docIdToTweetIdMapper = docIdMapperFlushHandler.load(
-          flushInfo.getSubProperties(DOC_ID_MAPPER_SUBPROPS_NAME), in);
+    @ovewwide
+    p-pwotected eawwybiwdindexsegmentdata d-dowoad(fwushinfo fwushinfo, 😳 d-datadesewiawizew in)
+        t-thwows ioexception {
+      docidtotweetidmappew d-docidtotweetidmappew = d-docidmappewfwushhandwew.woad(
+          fwushinfo.getsubpwopewties(doc_id_mappew_subpwops_name), >w< in);
 
-      FlushInfo timeMapperFlushInfo = flushInfo.getSubProperties(TIME_MAPPER_SUBPROPS_NAME);
-      TimeMapper timeMapper =
-          timeMapperFlushInfo != null ? timeMapperFlushHandler.load(timeMapperFlushInfo, in) : null;
+      fwushinfo timemappewfwushinfo = f-fwushinfo.getsubpwopewties(time_mappew_subpwops_name);
+      t-timemappew timemappew =
+          timemappewfwushinfo != nyuww ? timemappewfwushhandwew.woad(timemappewfwushinfo, (˘ω˘) i-in) : nyuww;
 
-      final int maxSegmentSize = flushInfo.getIntProperty(MAX_SEGMENT_SIZE_PROP_NAME);
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap = loadIndexes(flushInfo, in);
-      return constructSegmentData(
-          flushInfo,
-          perFieldMap,
-          maxSegmentSize,
-          newIndexExtension(),
-          docIdToTweetIdMapper,
-          timeMapper,
-          in);
+      finaw int m-maxsegmentsize = f-fwushinfo.getintpwopewty(max_segment_size_pwop_name);
+      concuwwenthashmap<stwing, nyaa~~ invewtedindex> pewfiewdmap = woadindexes(fwushinfo, 😳😳😳 i-in);
+      wetuwn constwuctsegmentdata(
+          f-fwushinfo, (U ﹏ U)
+          pewfiewdmap, (˘ω˘)
+          m-maxsegmentsize, :3
+          n-nyewindexextension(), >w<
+          docidtotweetidmappew, ^^
+          t-timemappew, 😳😳😳
+          i-in);
     }
 
-    // Move this method into EarlybirdRealtimeIndexSegmentData (careful,
-    // we may need to increment FlushVersion because EarlybirdLuceneIndexSegmentData
-    // currently has the 'fields' subproperty in its FlushInfo as well)
-    private ConcurrentHashMap<String, InvertedIndex> loadIndexes(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap = new ConcurrentHashMap<>();
+    // move t-this method i-into eawwybiwdweawtimeindexsegmentdata (cawefuw, nyaa~~
+    // w-we may nyeed t-to incwement fwushvewsion because eawwybiwdwuceneindexsegmentdata
+    // cuwwentwy has the 'fiewds' subpwopewty i-in its fwushinfo a-as weww)
+    p-pwivate concuwwenthashmap<stwing, (⑅˘꒳˘) i-invewtedindex> w-woadindexes(
+        f-fwushinfo fwushinfo, :3 datadesewiawizew in) thwows ioexception {
+      concuwwenthashmap<stwing, invewtedindex> p-pewfiewdmap = n-nyew concuwwenthashmap<>();
 
-      FlushInfo fieldProps = flushInfo.getSubProperties("fields");
-      Iterator<String> fieldIterator = fieldProps.getKeyIterator();
-      while (fieldIterator.hasNext()) {
-        String fieldName = fieldIterator.next();
-        EarlybirdFieldType fieldType = schema.getFieldInfo(fieldName).getFieldType();
-        FlushInfo subProp = fieldProps.getSubProperties(fieldName);
-        boolean isOptimized = subProp.getBooleanProperty(
-            OptimizedMemoryIndex.FlushHandler.IS_OPTIMIZED_PROP_NAME);
-        final InvertedIndex invertedIndex;
-        if (isOptimized) {
-          if (!fieldType.becomesImmutable()) {
-            throw new IOException("Tried to load an optimized field that is not immutable: "
-                + fieldName);
+      fwushinfo fiewdpwops = fwushinfo.getsubpwopewties("fiewds");
+      itewatow<stwing> f-fiewditewatow = f-fiewdpwops.getkeyitewatow();
+      whiwe (fiewditewatow.hasnext()) {
+        s-stwing fiewdname = fiewditewatow.next();
+        eawwybiwdfiewdtype f-fiewdtype = schema.getfiewdinfo(fiewdname).getfiewdtype();
+        fwushinfo subpwop = f-fiewdpwops.getsubpwopewties(fiewdname);
+        b-boowean isoptimized = subpwop.getbooweanpwopewty(
+            optimizedmemowyindex.fwushhandwew.is_optimized_pwop_name);
+        f-finaw invewtedindex invewtedindex;
+        i-if (isoptimized) {
+          i-if (!fiewdtype.becomesimmutabwe()) {
+            thwow n-nyew ioexception("twied t-to woad a-an optimized f-fiewd that is nyot i-immutabwe: "
+                + f-fiewdname);
           }
-          invertedIndex = (new OptimizedMemoryIndex.FlushHandler(fieldType)).load(subProp, in);
-        } else {
-          invertedIndex = (new InvertedRealtimeIndex.FlushHandler(
-                               fieldType, TermPointerEncoding.DEFAULT_ENCODING))
-              .load(subProp, in);
+          invewtedindex = (new o-optimizedmemowyindex.fwushhandwew(fiewdtype)).woad(subpwop, ʘwʘ i-in);
+        } ewse {
+          i-invewtedindex = (new invewtedweawtimeindex.fwushhandwew(
+                               fiewdtype, rawr x3 t-tewmpointewencoding.defauwt_encoding))
+              .woad(subpwop, (///ˬ///✿) in);
         }
-        perFieldMap.put(fieldName, invertedIndex);
+        p-pewfiewdmap.put(fiewdname, 😳😳😳 invewtedindex);
       }
-      return perFieldMap;
+      wetuwn p-pewfiewdmap;
     }
   }
 
-  public int numDocs() {
-    return docIdToTweetIdMapper.getNumDocs();
+  p-pubwic int nyumdocs() {
+    wetuwn d-docidtotweetidmappew.getnumdocs();
   }
 }

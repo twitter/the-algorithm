@@ -1,238 +1,238 @@
-package com.twitter.frigate.pushservice.refresh_handler
+package com.twittew.fwigate.pushsewvice.wefwesh_handwew
 
-import com.twitter.channels.common.thriftscala.ApiList
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.rec_types.RecTypes.isInNetworkTweetType
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.TrendTweetPushCandidate
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.refresh_handler.cross.CandidateCopyExpansion
-import com.twitter.frigate.pushservice.util.CandidateHydrationUtil._
-import com.twitter.frigate.pushservice.util.MrUserStateUtil
-import com.twitter.frigate.pushservice.util.RelationshipUtil
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt com.twittew.channews.common.thwiftscawa.apiwist
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base._
+i-impowt com.twittew.fwigate.common.wec_types.wectypes.isinnetwowktweettype
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.twendtweetpushcandidate
+impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+impowt c-com.twittew.fwigate.pushsewvice.wefwesh_handwew.cwoss.candidatecopyexpansion
+impowt com.twittew.fwigate.pushsewvice.utiw.candidatehydwationutiw._
+i-impowt com.twittew.fwigate.pushsewvice.utiw.mwusewstateutiw
+impowt com.twittew.fwigate.pushsewvice.utiw.wewationshiputiw
+i-impowt com.twittew.gizmoduck.thwiftscawa.usew
+impowt com.twittew.hewmit.pwedicate.sociawgwaph.wewationedge
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
 
-case class PushCandidateHydrator(
-  socialGraphServiceProcessStore: ReadableStore[RelationEdge, Boolean],
-  safeUserStore: ReadableStore[Long, User],
-  apiListStore: ReadableStore[Long, ApiList],
-  candidateCopyCross: CandidateCopyExpansion
+c-case cwass pushcandidatehydwatow(
+  s-sociawgwaphsewvicepwocessstowe: weadabwestowe[wewationedge, :3 boowean], ( ͡o ω ͡o )
+  safeusewstowe: weadabwestowe[wong, òωó usew], σωσ
+  apiwiststowe: w-weadabwestowe[wong, (U ᵕ U❁) apiwist], (✿oωo)
+  candidatecopycwoss: candidatecopyexpansion
 )(
-  implicit statsReceiver: StatsReceiver,
-  implicit val weightedOpenOrNtabClickModelScorer: PushMLModelScorer) {
+  impwicit s-statsweceivew: statsweceivew, ^^
+  i-impwicit vaw weightedopenowntabcwickmodewscowew: p-pushmwmodewscowew) {
 
-  lazy val candidateWithCopyNumStat = statsReceiver.stat("candidate_with_copy_num")
-  lazy val hydratedCandidateStat = statsReceiver.scope("hydrated_candidates")
-  lazy val mrUserStateStat = statsReceiver.scope("mr_user_state")
+  w-wazy vaw c-candidatewithcopynumstat = statsweceivew.stat("candidate_with_copy_num")
+  wazy v-vaw hydwatedcandidatestat = statsweceivew.scope("hydwated_candidates")
+  wazy vaw mwusewstatestat = s-statsweceivew.scope("mw_usew_state")
 
-  lazy val queryStep = statsReceiver.scope("query_step")
-  lazy val relationEdgeWithoutDuplicateInQueryStep =
-    queryStep.counter("number_of_relationEdge_without_duplicate_in_query_step")
-  lazy val relationEdgeWithoutDuplicateInQueryStepDistribution =
-    queryStep.stat("number_of_relationEdge_without_duplicate_in_query_step_distribution")
+  wazy vaw quewystep = statsweceivew.scope("quewy_step")
+  wazy vaw wewationedgewithoutdupwicateinquewystep =
+    quewystep.countew("numbew_of_wewationedge_without_dupwicate_in_quewy_step")
+  wazy v-vaw wewationedgewithoutdupwicateinquewystepdistwibution =
+    quewystep.stat("numbew_of_wewationedge_without_dupwicate_in_quewy_step_distwibution")
 
-  case class Entities(
-    users: Set[Long] = Set.empty[Long],
-    relationshipEdges: Set[RelationEdge] = Set.empty[RelationEdge]) {
-    def merge(otherEntities: Entities): Entities = {
-      this.copy(
-        users = this.users ++ otherEntities.users,
-        relationshipEdges =
-          this.relationshipEdges ++ otherEntities.relationshipEdges
+  c-case cwass e-entities(
+    u-usews: set[wong] = set.empty[wong], ^•ﻌ•^
+    wewationshipedges: set[wewationedge] = s-set.empty[wewationedge]) {
+    d-def mewge(othewentities: entities): e-entities = {
+      t-this.copy(
+        usews = t-this.usews ++ othewentities.usews, XD
+        w-wewationshipedges =
+          this.wewationshipedges ++ othewentities.wewationshipedges
       )
     }
   }
 
-  case class EntitiesMap(
-    userMap: Map[Long, User] = Map.empty[Long, User],
-    relationshipMap: Map[RelationEdge, Boolean] = Map.empty[RelationEdge, Boolean])
+  c-case cwass entitiesmap(
+    u-usewmap: map[wong, :3 usew] = m-map.empty[wong, (ꈍᴗꈍ) u-usew],
+    wewationshipmap: map[wewationedge, :3 boowean] = map.empty[wewationedge, (U ﹏ U) boowean])
 
-  private def updateCandidateAndCrtStats(
-    candidate: RawCandidate,
-    candidateType: String,
-    numEntities: Int = 1
-  ): Unit = {
-    statsReceiver
-      .scope(candidateType).scope(candidate.commonRecType.name).stat(
-        "totalEntitiesPerCandidateTypePerCrt").add(numEntities)
-    statsReceiver.scope(candidateType).stat("totalEntitiesPerCandidateType").add(numEntities)
+  pwivate def updatecandidateandcwtstats(
+    candidate: wawcandidate, UwU
+    c-candidatetype: s-stwing, 😳😳😳
+    nyumentities: i-int = 1
+  ): unit = {
+    s-statsweceivew
+      .scope(candidatetype).scope(candidate.commonwectype.name).stat(
+        "totawentitiespewcandidatetypepewcwt").add(numentities)
+    s-statsweceivew.scope(candidatetype).stat("totawentitiespewcandidatetype").add(numentities)
   }
 
-  private def collectEntities(
-    candidateDetailsSeq: Seq[CandidateDetails[RawCandidate]]
-  ): Entities = {
-    candidateDetailsSeq
-      .map { candidateDetails =>
-        val pushCandidate = candidateDetails.candidate
+  pwivate def cowwectentities(
+    candidatedetaiwsseq: s-seq[candidatedetaiws[wawcandidate]]
+  ): entities = {
+    candidatedetaiwsseq
+      .map { candidatedetaiws =>
+        vaw pushcandidate = c-candidatedetaiws.candidate
 
-        val userEntities = pushCandidate match {
-          case tweetWithSocialContext: RawCandidate with TweetWithSocialContextTraits =>
-            val authorIdOpt = getAuthorIdFromTweetCandidate(tweetWithSocialContext)
-            val scUserIds = tweetWithSocialContext.socialContextUserIds.toSet
-            updateCandidateAndCrtStats(pushCandidate, "tweetWithSocialContext", scUserIds.size + 1)
-            Entities(users = scUserIds ++ authorIdOpt.toSet)
+        vaw usewentities = p-pushcandidate m-match {
+          c-case tweetwithsociawcontext: w-wawcandidate w-with tweetwithsociawcontexttwaits =>
+            v-vaw authowidopt = g-getauthowidfwomtweetcandidate(tweetwithsociawcontext)
+            vaw scusewids = tweetwithsociawcontext.sociawcontextusewids.toset
+            u-updatecandidateandcwtstats(pushcandidate, XD "tweetwithsociawcontext", o.O s-scusewids.size + 1)
+            e-entities(usews = s-scusewids ++ a-authowidopt.toset)
 
-          case _ => Entities()
+          case _ => entities()
         }
 
-        val relationEntities = {
-          if (isInNetworkTweetType(pushCandidate.commonRecType)) {
-            Entities(
-              relationshipEdges =
-                RelationshipUtil.getPreCandidateRelationshipsForInNetworkTweets(pushCandidate).toSet
+        vaw wewationentities = {
+          i-if (isinnetwowktweettype(pushcandidate.commonwectype)) {
+            entities(
+              wewationshipedges =
+                wewationshiputiw.getpwecandidatewewationshipsfowinnetwowktweets(pushcandidate).toset
             )
-          } else Entities()
+          } ewse entities()
         }
 
-        userEntities.merge(relationEntities)
+        usewentities.mewge(wewationentities)
       }
-      .foldLeft(Entities()) { (e1, e2) => e1.merge(e2) }
+      .fowdweft(entities()) { (e1, (⑅˘꒳˘) e-e2) => e1.mewge(e2) }
 
   }
 
   /**
-   * This method calls Gizmoduck and Social Graph Service, keep the results in EntitiesMap
-   * and passed onto the update candidate phase in the hydration step
+   * this method cawws gizmoduck and sociaw g-gwaph sewvice, 😳😳😳 k-keep the wesuwts i-in entitiesmap
+   * and passed o-onto the update candidate phase i-in the hydwation s-step
    *
-   * @param entities contains all userIds and relationEdges for all candidates
-   * @return EntitiesMap contains userMap and relationshipMap
+   * @pawam entities contains aww usewids and wewationedges fow aww candidates
+   * @wetuwn e-entitiesmap contains u-usewmap and wewationshipmap
    */
-  private def queryEntities(entities: Entities): Future[EntitiesMap] = {
+  pwivate def q-quewyentities(entities: e-entities): futuwe[entitiesmap] = {
 
-    relationEdgeWithoutDuplicateInQueryStep.incr(entities.relationshipEdges.size)
-    relationEdgeWithoutDuplicateInQueryStepDistribution.add(entities.relationshipEdges.size)
+    wewationedgewithoutdupwicateinquewystep.incw(entities.wewationshipedges.size)
+    w-wewationedgewithoutdupwicateinquewystepdistwibution.add(entities.wewationshipedges.size)
 
-    val relationshipMapFuture = Future
-      .collect(socialGraphServiceProcessStore.multiGet(entities.relationshipEdges))
-      .map { resultMap =>
-        resultMap.collect {
-          case (relationshipEdge, Some(res)) => relationshipEdge -> res
-          case (relationshipEdge, None) => relationshipEdge -> false
+    v-vaw wewationshipmapfutuwe = futuwe
+      .cowwect(sociawgwaphsewvicepwocessstowe.muwtiget(entities.wewationshipedges))
+      .map { w-wesuwtmap =>
+        w-wesuwtmap.cowwect {
+          case (wewationshipedge, nyaa~~ some(wes)) => wewationshipedge -> wes
+          case (wewationshipedge, rawr nyone) => w-wewationshipedge -> f-fawse
         }
       }
 
-    val userMapFuture = Future
-      .collect(safeUserStore.multiGet(entities.users))
-      .map { userMap =>
-        userMap.collect {
-          case (userId, Some(user)) =>
-            userId -> user
+    v-vaw usewmapfutuwe = futuwe
+      .cowwect(safeusewstowe.muwtiget(entities.usews))
+      .map { u-usewmap =>
+        u-usewmap.cowwect {
+          case (usewid, -.- some(usew)) =>
+            u-usewid -> usew
         }
       }
 
-    Future.join(userMapFuture, relationshipMapFuture).map {
-      case (uMap, rMap) => EntitiesMap(userMap = uMap, relationshipMap = rMap)
+    futuwe.join(usewmapfutuwe, (✿oωo) wewationshipmapfutuwe).map {
+      case (umap, /(^•ω•^) wmap) => e-entitiesmap(usewmap = u-umap, 🥺 wewationshipmap = wmap)
     }
   }
 
   /**
-   * @param candidateDetails: recommendation candidates for a user
-   * @return sequence of candidates tagged with push and ntab copy id
+   * @pawam candidatedetaiws: w-wecommendation c-candidates fow a usew
+   * @wetuwn sequence of candidates tagged w-with push and nytab copy id
    */
-  private def expandCandidatesWithCopy(
-    candidateDetails: Seq[CandidateDetails[RawCandidate]]
-  ): Future[Seq[(CandidateDetails[RawCandidate], CopyIds)]] = {
-    candidateCopyCross.expandCandidatesWithCopyId(candidateDetails)
+  pwivate def expandcandidateswithcopy(
+    candidatedetaiws: s-seq[candidatedetaiws[wawcandidate]]
+  ): futuwe[seq[(candidatedetaiws[wawcandidate], copyids)]] = {
+    c-candidatecopycwoss.expandcandidateswithcopyid(candidatedetaiws)
   }
 
-  def updateCandidates(
-    candidateDetailsWithCopies: Seq[(CandidateDetails[RawCandidate], CopyIds)],
-    entitiesMaps: EntitiesMap
-  ): Seq[CandidateDetails[PushCandidate]] = {
-    candidateDetailsWithCopies.map {
-      case (candidateDetail, copyIds) =>
-        val pushCandidate = candidateDetail.candidate
-        val userMap = entitiesMaps.userMap
-        val relationshipMap = entitiesMaps.relationshipMap
+  d-def updatecandidates(
+    candidatedetaiwswithcopies: seq[(candidatedetaiws[wawcandidate], ʘwʘ copyids)], UwU
+    entitiesmaps: e-entitiesmap
+  ): s-seq[candidatedetaiws[pushcandidate]] = {
+    candidatedetaiwswithcopies.map {
+      case (candidatedetaiw, XD copyids) =>
+        v-vaw pushcandidate = c-candidatedetaiw.candidate
+        vaw usewmap = entitiesmaps.usewmap
+        vaw w-wewationshipmap = entitiesmaps.wewationshipmap
 
-        val hydratedCandidate = pushCandidate match {
+        v-vaw hydwatedcandidate = p-pushcandidate match {
 
-          case f1TweetCandidate: F1FirstDegree =>
-            getHydratedCandidateForF1FirstDegreeTweet(
-              f1TweetCandidate,
-              userMap,
-              relationshipMap,
-              copyIds)
+          case f1tweetcandidate: f-f1fiwstdegwee =>
+            gethydwatedcandidatefowf1fiwstdegweetweet(
+              f1tweetcandidate, (✿oωo)
+              usewmap, :3
+              w-wewationshipmap, (///ˬ///✿)
+              c-copyids)
 
-          case tweetRetweet: TweetRetweetCandidate =>
-            getHydratedCandidateForTweetRetweet(tweetRetweet, userMap, copyIds)
+          c-case tweetwetweet: tweetwetweetcandidate =>
+            g-gethydwatedcandidatefowtweetwetweet(tweetwetweet, nyaa~~ u-usewmap, copyids)
 
-          case tweetFavorite: TweetFavoriteCandidate =>
-            getHydratedCandidateForTweetFavorite(tweetFavorite, userMap, copyIds)
+          case tweetfavowite: tweetfavowitecandidate =>
+            g-gethydwatedcandidatefowtweetfavowite(tweetfavowite, >w< u-usewmap, c-copyids)
 
-          case tripTweetCandidate: OutOfNetworkTweetCandidate with TripCandidate =>
-            getHydratedCandidateForTripTweetCandidate(tripTweetCandidate, userMap, copyIds)
+          case twiptweetcandidate: o-outofnetwowktweetcandidate with twipcandidate =>
+            g-gethydwatedcandidatefowtwiptweetcandidate(twiptweetcandidate, -.- usewmap, (✿oωo) c-copyids)
 
-          case outOfNetworkTweetCandidate: OutOfNetworkTweetCandidate with TopicCandidate =>
-            getHydratedCandidateForOutOfNetworkTweetCandidate(
-              outOfNetworkTweetCandidate,
-              userMap,
-              copyIds)
+          case outofnetwowktweetcandidate: outofnetwowktweetcandidate w-with topiccandidate =>
+            g-gethydwatedcandidatefowoutofnetwowktweetcandidate(
+              o-outofnetwowktweetcandidate, (˘ω˘)
+              u-usewmap, rawr
+              copyids)
 
-          case topicProofTweetCandidate: TopicProofTweetCandidate =>
-            getHydratedTopicProofTweetCandidate(topicProofTweetCandidate, userMap, copyIds)
+          c-case topicpwooftweetcandidate: topicpwooftweetcandidate =>
+            gethydwatedtopicpwooftweetcandidate(topicpwooftweetcandidate, usewmap, OwO copyids)
 
-          case subscribedSearchTweetCandidate: SubscribedSearchTweetCandidate =>
-            getHydratedSubscribedSearchTweetCandidate(
-              subscribedSearchTweetCandidate,
-              userMap,
-              copyIds)
+          case subscwibedseawchtweetcandidate: subscwibedseawchtweetcandidate =>
+            g-gethydwatedsubscwibedseawchtweetcandidate(
+              subscwibedseawchtweetcandidate, ^•ﻌ•^
+              usewmap, UwU
+              c-copyids)
 
-          case listRecommendation: ListPushCandidate =>
-            getHydratedListCandidate(apiListStore, listRecommendation, copyIds)
+          case wistwecommendation: w-wistpushcandidate =>
+            gethydwatedwistcandidate(apiwiststowe, (˘ω˘) w-wistwecommendation, (///ˬ///✿) copyids)
 
-          case discoverTwitterCandidate: DiscoverTwitterCandidate =>
-            getHydratedCandidateForDiscoverTwitterCandidate(discoverTwitterCandidate, copyIds)
+          c-case discovewtwittewcandidate: d-discovewtwittewcandidate =>
+            g-gethydwatedcandidatefowdiscovewtwittewcandidate(discovewtwittewcandidate, σωσ c-copyids)
 
-          case topTweetImpressionsCandidate: TopTweetImpressionsCandidate =>
-            getHydratedCandidateForTopTweetImpressionsCandidate(
-              topTweetImpressionsCandidate,
-              copyIds)
+          c-case toptweetimpwessionscandidate: toptweetimpwessionscandidate =>
+            gethydwatedcandidatefowtoptweetimpwessionscandidate(
+              toptweetimpwessionscandidate, /(^•ω•^)
+              copyids)
 
-          case trendTweetCandidate: TrendTweetCandidate =>
-            new TrendTweetPushCandidate(
-              trendTweetCandidate,
-              trendTweetCandidate.authorId.flatMap(userMap.get),
-              copyIds)
+          case twendtweetcandidate: twendtweetcandidate =>
+            n-nyew twendtweetpushcandidate(
+              t-twendtweetcandidate, 😳
+              t-twendtweetcandidate.authowid.fwatmap(usewmap.get), 😳
+              copyids)
 
-          case unknownCandidate =>
-            throw new IllegalArgumentException(
-              s"Incorrect candidate for hydration: ${unknownCandidate.commonRecType}")
+          c-case unknowncandidate =>
+            thwow nyew iwwegawawgumentexception(
+              s"incowwect candidate f-fow hydwation: ${unknowncandidate.commonwectype}")
         }
 
-        CandidateDetails(
-          hydratedCandidate,
-          source = candidateDetail.source
+        c-candidatedetaiws(
+          hydwatedcandidate, (⑅˘꒳˘)
+          s-souwce = candidatedetaiw.souwce
         )
     }
   }
 
-  def apply(
-    candidateDetails: Seq[CandidateDetails[RawCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    val isLoggedOutRequest =
-      candidateDetails.headOption.exists(_.candidate.target.isLoggedOutUser)
-    if (!isLoggedOutRequest) {
-      candidateDetails.headOption.map { cd =>
-        MrUserStateUtil.updateMrUserStateStats(cd.candidate.target)(mrUserStateStat)
+  def appwy(
+    candidatedetaiws: s-seq[candidatedetaiws[wawcandidate]]
+  ): f-futuwe[seq[candidatedetaiws[pushcandidate]]] = {
+    vaw i-iswoggedoutwequest =
+      c-candidatedetaiws.headoption.exists(_.candidate.tawget.iswoggedoutusew)
+    if (!iswoggedoutwequest) {
+      candidatedetaiws.headoption.map { cd =>
+        mwusewstateutiw.updatemwusewstatestats(cd.candidate.tawget)(mwusewstatestat)
       }
     }
 
-    expandCandidatesWithCopy(candidateDetails).flatMap { candidateDetailsWithCopy =>
-      candidateWithCopyNumStat.add(candidateDetailsWithCopy.size)
-      val entities = collectEntities(candidateDetailsWithCopy.map(_._1))
-      queryEntities(entities).flatMap { entitiesMap =>
-        val updatedCandidates = updateCandidates(candidateDetailsWithCopy, entitiesMap)
-        updatedCandidates.foreach { cand =>
-          hydratedCandidateStat.counter(cand.candidate.commonRecType.name).incr()
+    e-expandcandidateswithcopy(candidatedetaiws).fwatmap { c-candidatedetaiwswithcopy =>
+      c-candidatewithcopynumstat.add(candidatedetaiwswithcopy.size)
+      v-vaw entities = cowwectentities(candidatedetaiwswithcopy.map(_._1))
+      q-quewyentities(entities).fwatmap { entitiesmap =>
+        v-vaw updatedcandidates = u-updatecandidates(candidatedetaiwswithcopy, 😳😳😳 entitiesmap)
+        u-updatedcandidates.foweach { c-cand =>
+          hydwatedcandidatestat.countew(cand.candidate.commonwectype.name).incw()
         }
-        Future.value(updatedCandidates)
+        f-futuwe.vawue(updatedcandidates)
       }
     }
   }

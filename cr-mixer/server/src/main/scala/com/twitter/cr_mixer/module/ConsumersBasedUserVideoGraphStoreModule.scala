@@ -1,29 +1,29 @@
-package com.twitter.cr_mixer.module
+package com.twittew.cw_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.inject.TwitterModule
-import com.twitter.recos.user_video_graph.thriftscala.ConsumersBasedRelatedTweetRequest
-import com.twitter.recos.user_video_graph.thriftscala.RelatedTweetResponse
-import com.twitter.recos.user_video_graph.thriftscala.UserVideoGraph
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.cw_mixew.modew.moduwenames
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.wecos.usew_video_gwaph.thwiftscawa.consumewsbasedwewatedtweetwequest
+i-impowt com.twittew.wecos.usew_video_gwaph.thwiftscawa.wewatedtweetwesponse
+impowt c-com.twittew.wecos.usew_video_gwaph.thwiftscawa.usewvideogwaph
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt c-com.twittew.utiw.futuwe
+impowt javax.inject.named
+impowt javax.inject.singweton
 
-object ConsumersBasedUserVideoGraphStoreModule extends TwitterModule {
+object consumewsbasedusewvideogwaphstowemoduwe e-extends twittewmoduwe {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.ConsumerBasedUserVideoGraphStore)
-  def providesConsumerBasedUserVideoGraphStore(
-    userVideoGraphService: UserVideoGraph.MethodPerEndpoint
-  ): ReadableStore[ConsumersBasedRelatedTweetRequest, RelatedTweetResponse] = {
-    new ReadableStore[ConsumersBasedRelatedTweetRequest, RelatedTweetResponse] {
-      override def get(
-        k: ConsumersBasedRelatedTweetRequest
-      ): Future[Option[RelatedTweetResponse]] = {
-        userVideoGraphService.consumersBasedRelatedTweets(k).map(Some(_))
+  @pwovides
+  @singweton
+  @named(moduwenames.consumewbasedusewvideogwaphstowe)
+  def pwovidesconsumewbasedusewvideogwaphstowe(
+    usewvideogwaphsewvice: u-usewvideogwaph.methodpewendpoint
+  ): weadabwestowe[consumewsbasedwewatedtweetwequest, >_< w-wewatedtweetwesponse] = {
+    new weadabwestowe[consumewsbasedwewatedtweetwequest, mya wewatedtweetwesponse] {
+      ovewwide def get(
+        k-k: consumewsbasedwewatedtweetwequest
+      ): futuwe[option[wewatedtweetwesponse]] = {
+        u-usewvideogwaphsewvice.consumewsbasedwewatedtweets(k).map(some(_))
       }
     }
   }

@@ -1,39 +1,39 @@
-package com.twitter.recos.user_tweet_graph
+package com.twittew.wecos.usew_tweet_gwaph
 
-import com.twitter.recos.graph_common.MultiSegmentPowerLawBipartiteGraphBuilder.GraphBuilderConfig
+impowt c-com.twittew.wecos.gwaph_common.muwtisegmentpowewwawbipawtitegwaphbuiwdew.gwaphbuiwdewconfig
 
 /**
- * The class holds all the config parameters for recos graph.
+ * t-the cwass h-howds aww the config p-pawametews f-fow wecos gwaph. rawr
  */
-object RecosConfig {
-  val maxNumSegments: Int = 8
-  val maxNumEdgesPerSegment: Int =
-    (1 << 28) // 268M edges per segment, should be able to include 2 days' data
-  val expectedNumLeftNodes: Int =
-    (1 << 26) // should correspond to 67M nodes storage
-  val expectedMaxLeftDegree: Int = 64
-  val leftPowerLawExponent: Double = 16.0 // steep power law as most nodes will have a small degree
-  val expectedNumRightNodes: Int = (1 << 26) // 67M nodes
-  val expectedMaxRightDegree: Int = scala.math.pow(1024, 2).toInt // some nodes will be very popular
-  val rightPowerLawExponent: Double = 4.0 // this will be less steep
+o-object wecosconfig {
+  v-vaw m-maxnumsegments: int = 8
+  vaw maxnumedgespewsegment: int =
+    (1 << 28) // 268m edges pew segment, mya shouwd be abwe t-to incwude 2 days' data
+  vaw expectednumweftnodes: i-int =
+    (1 << 26) // shouwd c-cowwespond to 67m nyodes stowage
+  vaw expectedmaxweftdegwee: int = 64
+  vaw w-weftpowewwawexponent: doubwe = 16.0 // s-steep powew w-waw as most nyodes wiww have a smow degwee
+  vaw expectednumwightnodes: int = (1 << 26) // 67m n-nyodes
+  vaw expectedmaxwightdegwee: int = scawa.math.pow(1024, ^^ 2).toint // some nyodes wiww be vewy popuwaw
+  v-vaw wightpowewwawexponent: doubwe = 4.0 // t-this w-wiww be wess s-steep
 
-  val graphBuilderConfig = GraphBuilderConfig(
-    maxNumSegments = maxNumSegments,
-    maxNumEdgesPerSegment = maxNumEdgesPerSegment,
-    expectedNumLeftNodes = expectedNumLeftNodes,
-    expectedMaxLeftDegree = expectedMaxLeftDegree,
-    leftPowerLawExponent = leftPowerLawExponent,
-    expectedNumRightNodes = expectedNumRightNodes,
-    expectedMaxRightDegree = expectedMaxRightDegree,
-    rightPowerLawExponent = rightPowerLawExponent
+  vaw gwaphbuiwdewconfig = g-gwaphbuiwdewconfig(
+    maxnumsegments = maxnumsegments, 😳😳😳
+    maxnumedgespewsegment = m-maxnumedgespewsegment, mya
+    expectednumweftnodes = expectednumweftnodes, 😳
+    e-expectedmaxweftdegwee = expectedmaxweftdegwee, -.-
+    weftpowewwawexponent = weftpowewwawexponent, 🥺
+    expectednumwightnodes = expectednumwightnodes, o.O
+    expectedmaxwightdegwee = e-expectedmaxwightdegwee, /(^•ω•^)
+    wightpowewwawexponent = wightpowewwawexponent
   )
 
-  println("RecosConfig -          maxNumSegments " + maxNumSegments)
-  println("RecosConfig -   maxNumEdgesPerSegment " + maxNumEdgesPerSegment)
-  println("RecosConfig -    expectedNumLeftNodes " + expectedNumLeftNodes)
-  println("RecosConfig -   expectedMaxLeftDegree " + expectedMaxLeftDegree)
-  println("RecosConfig -    leftPowerLawExponent " + leftPowerLawExponent)
-  println("RecosConfig -   expectedNumRightNodes " + expectedNumRightNodes)
-  println("RecosConfig -  expectedMaxRightDegree " + expectedMaxRightDegree)
-  println("RecosConfig -   rightPowerLawExponent " + rightPowerLawExponent)
+  p-pwintwn("wecosconfig -          m-maxnumsegments " + m-maxnumsegments)
+  pwintwn("wecosconfig -   maxnumedgespewsegment " + maxnumedgespewsegment)
+  p-pwintwn("wecosconfig -    expectednumweftnodes " + e-expectednumweftnodes)
+  pwintwn("wecosconfig -   e-expectedmaxweftdegwee " + e-expectedmaxweftdegwee)
+  pwintwn("wecosconfig -    w-weftpowewwawexponent " + weftpowewwawexponent)
+  pwintwn("wecosconfig -   e-expectednumwightnodes " + expectednumwightnodes)
+  pwintwn("wecosconfig -  e-expectedmaxwightdegwee " + expectedmaxwightdegwee)
+  p-pwintwn("wecosconfig -   wightpowewwawexponent " + w-wightpowewwawexponent)
 }

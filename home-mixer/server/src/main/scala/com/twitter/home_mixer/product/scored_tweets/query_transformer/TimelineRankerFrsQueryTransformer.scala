@@ -1,64 +1,64 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.quewy_twansfowmew
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.core_workflows.user_model.{thriftscala => um}
-import com.twitter.home_mixer.model.HomeFeatures.UserStateFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.FrsSeedUserIdsFeature
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerFrsQueryTransformer._
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.timelineranker.{thriftscala => t}
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.cowe_wowkfwows.usew_modew.{thwiftscawa => u-um}
+impowt com.twittew.home_mixew.modew.homefeatuwes.usewstatefeatuwe
+i-impowt com.twittew.home_mixew.modew.wequest.hasdevicecontext
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.fwsseedusewidsfeatuwe
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.quewy_twansfowmew.timewinewankewfwsquewytwansfowmew._
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.hasquawityfactowstatus
+i-impowt com.twittew.timewinewankew.{thwiftscawa => t}
+impowt com.twittew.timewines.common.modew.tweetkindoption
+impowt com.twittew.timewines.modew.candidate.candidatetweetsouwceid
 
-object TimelineRankerFrsQueryTransformer {
-  private val DefaultSinceDuration = 24.hours
-  private val ExpandedSinceDuration = 48.hours
-  private val MaxTweetsToFetch = 100
+o-object timewinewankewfwsquewytwansfowmew {
+  pwivate vaw defauwtsinceduwation = 24.houws
+  p-pwivate vaw expandedsinceduwation = 48.houws
+  pwivate vaw maxtweetstofetch = 100
 
-  private val tweetKindOptions: TweetKindOption.ValueSet =
-    TweetKindOption(includeOriginalTweetsAndQuotes = true)
+  pwivate vaw tweetkindoptions: t-tweetkindoption.vawueset =
+    tweetkindoption(incwudeowiginawtweetsandquotes = t-twue)
 
-  private val UserStatesForExtendedSinceDuration: Set[um.UserState] = Set(
-    um.UserState.Light,
-    um.UserState.MediumNonTweeter,
-    um.UserState.MediumTweeter,
-    um.UserState.NearZero,
-    um.UserState.New,
-    um.UserState.VeryLight
+  pwivate v-vaw usewstatesfowextendedsinceduwation: set[um.usewstate] = set(
+    um.usewstate.wight, o.O
+    um.usewstate.mediumnontweetew, ( ͡o ω ͡o )
+    um.usewstate.mediumtweetew, (U ﹏ U)
+    u-um.usewstate.neawzewo, (///ˬ///✿)
+    um.usewstate.new, >w<
+    um.usewstate.vewywight
   )
 }
 
-case class TimelineRankerFrsQueryTransformer[
-  Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext
+case cwass timewinewankewfwsquewytwansfowmew[
+  quewy <: pipewinequewy with hasquawityfactowstatus w-with hasdevicecontext
 ](
-  override val candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  override val maxTweetsToFetch: Int = MaxTweetsToFetch)
-    extends CandidatePipelineQueryTransformer[Query, t.RecapQuery]
-    with TimelineRankerQueryTransformer[Query] {
+  ovewwide vaw candidatepipewineidentifiew: c-candidatepipewineidentifiew, rawr
+  o-ovewwide v-vaw maxtweetstofetch: i-int = maxtweetstofetch)
+    extends candidatepipewinequewytwansfowmew[quewy, mya t.wecapquewy]
+    w-with timewinewankewquewytwansfowmew[quewy] {
 
-  override val candidateTweetSourceId = CandidateTweetSourceId.FrsTweet
-  override val options = tweetKindOptions
+  ovewwide vaw candidatetweetsouwceid = c-candidatetweetsouwceid.fwstweet
+  ovewwide vaw options = tweetkindoptions
 
-  override def getTensorflowModel(query: Query): Option[String] = {
-    Some(query.params(ScoredTweetsParam.EarlybirdTensorflowModel.FrsParam))
+  ovewwide def gettensowfwowmodew(quewy: quewy): option[stwing] = {
+    s-some(quewy.pawams(scowedtweetspawam.eawwybiwdtensowfwowmodew.fwspawam))
   }
 
-  override def seedAuthorIds(query: Query): Option[Seq[Long]] = {
-    query.features.flatMap(_.getOrElse(FrsSeedUserIdsFeature, None))
+  ovewwide def seedauthowids(quewy: q-quewy): option[seq[wong]] = {
+    q-quewy.featuwes.fwatmap(_.getowewse(fwsseedusewidsfeatuwe, n-nyone))
   }
 
-  override def transform(input: Query): t.RecapQuery = {
-    val userState = input.features.get.getOrElse(UserStateFeature, None)
+  ovewwide def twansfowm(input: quewy): t-t.wecapquewy = {
+    v-vaw usewstate = input.featuwes.get.getowewse(usewstatefeatuwe, ^^ n-nyone)
 
-    val sinceDuration =
-      if (userState.exists(UserStatesForExtendedSinceDuration.contains)) ExpandedSinceDuration
-      else DefaultSinceDuration
+    v-vaw sinceduwation =
+      if (usewstate.exists(usewstatesfowextendedsinceduwation.contains)) e-expandedsinceduwation
+      ewse d-defauwtsinceduwation
 
-    buildTimelineRankerQuery(input, sinceDuration).toThriftRecapQuery
+    buiwdtimewinewankewquewy(input, 😳😳😳 sinceduwation).tothwiftwecapquewy
   }
 }

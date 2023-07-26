@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.core.functional_component.filter
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter.SupportsConditionally
-import com.twitter.product_mixer.core.model.common
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew.suppowtsconditionawwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.component
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
 /**
- * Takes a sequence of candidates and can filter some out
+ * takes a sequence o-of candidates and can fiwtew some out
  *
- * @note if you want to conditionally run a [[Filter]] you can use the mixin [[Filter.Conditionally]]
- *       or to gate on a [[com.twitter.timelines.configapi.Param]] you can use [[com.twitter.product_mixer.component_library.filter.ParamGatedFilter]]
+ * @note i-if you want to conditionawwy w-wun a [[fiwtew]] you can use the mixin [[fiwtew.conditionawwy]]
+ *       ow to g-gate on a [[com.twittew.timewines.configapi.pawam]] you can use [[com.twittew.pwoduct_mixew.component_wibwawy.fiwtew.pawamgatedfiwtew]]
  *
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
+ * @tpawam q-quewy the d-domain modew fow the quewy ow wequest
+ * @tpawam candidate the type of the candidates
  */
-trait Filter[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-    extends Component
-    with SupportsConditionally[Query, Candidate] {
+twait f-fiwtew[-quewy <: pipewinequewy, >w< candidate <: univewsawnoun[any]]
+    extends component
+    with s-suppowtsconditionawwy[quewy, mya candidate] {
 
-  /** @see [[FilterIdentifier]] */
-  override val identifier: FilterIdentifier
+  /** @see [[fiwtewidentifiew]] */
+  o-ovewwide vaw identifiew: f-fiwtewidentifiew
 
   /**
-   * Filter the list of candidates
+   * f-fiwtew the w-wist of candidates
    *
-   * @return a FilterResult including both the list of kept candidate and the list of removed candidates
+   * @wetuwn a fiwtewwesuwt incwuding both t-the wist of kept candidate and the wist of wemoved c-candidates
    */
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]]
+  def appwy(
+    quewy: quewy, >w<
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): stitch[fiwtewwesuwt[candidate]]
 }
 
-object Filter {
+o-object fiwtew {
 
   /**
-   * Mixin for when you want to conditionally run a [[Filter]]
+   * mixin fow when y-you want to conditionawwy w-wun a [[fiwtew]]
    *
-   * This is a thin wrapper around [[common.Conditionally]] exposing a nicer API for the [[Filter]] specific use-case.
+   * t-this is a thin wwappew awound [[common.conditionawwy]] exposing a nyicew api f-fow the [[fiwtew]] s-specific use-case.
    */
-  trait Conditionally[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-      extends common.Conditionally[Input[Query, Candidate]] { _: Filter[Query, Candidate] =>
+  twait conditionawwy[-quewy <: p-pipewinequewy, nyaa~~ c-candidate <: univewsawnoun[any]]
+      e-extends common.conditionawwy[input[quewy, (✿oωo) candidate]] { _: fiwtew[quewy, ʘwʘ c-candidate] =>
 
-    /** @see [[common.Conditionally.onlyIf]] */
-    def onlyIf(
-      query: Query,
-      candidates: Seq[CandidateWithFeatures[Candidate]]
-    ): Boolean
+    /** @see [[common.conditionawwy.onwyif]] */
+    def onwyif(
+      quewy: quewy,
+      c-candidates: seq[candidatewithfeatuwes[candidate]]
+    ): boowean
 
-    override final def onlyIf(input: Input[Query, Candidate]): Boolean =
-      onlyIf(input.query, input.candidates)
+    o-ovewwide finaw def onwyif(input: i-input[quewy, c-candidate]): boowean =
+      onwyif(input.quewy, (ˆ ﻌ ˆ)♡ input.candidates)
   }
 
-  /** Type alias to obscure [[Filter.Input]] from customers */
-  type SupportsConditionally[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]] =
-    common.SupportsConditionally[Input[Query, Candidate]]
+  /** type awias to obscuwe [[fiwtew.input]] fwom customews */
+  t-type suppowtsconditionawwy[-quewy <: p-pipewinequewy, 😳😳😳 candidate <: u-univewsawnoun[any]] =
+    c-common.suppowtsconditionawwy[input[quewy, :3 c-candidate]]
 
-  /** A case class representing the input arguments to a [[Filter]], mostly for internal use */
-  case class Input[+Query <: PipelineQuery, +Candidate <: UniversalNoun[Any]](
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]])
+  /** a case cwass wepwesenting the input awguments t-to a [[fiwtew]], OwO mostwy fow intewnaw use */
+  case cwass input[+quewy <: p-pipewinequewy, (U ﹏ U) +candidate <: univewsawnoun[any]](
+    quewy: quewy, >w<
+    c-candidates: s-seq[candidatewithfeatuwes[candidate]])
 }

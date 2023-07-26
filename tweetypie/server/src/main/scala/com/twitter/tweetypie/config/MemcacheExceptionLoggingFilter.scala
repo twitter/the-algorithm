@@ -1,62 +1,62 @@
-package com.twitter.tweetypie
-package config
+package com.twittew.tweetypie
+package c-config
 
-import com.twitter.io.Buf
-import com.twitter.finagle.{Service, SimpleFilter}
-import com.twitter.finagle.memcached.protocol._
+impowt c-com.twittew.io.buf
+i-impowt com.twittew.finagwe.{sewvice, mya s-simpwefiwtew}
+i-impowt c-com.twittew.finagwe.memcached.pwotocow._
 
-class MemcacheExceptionLoggingFilter extends SimpleFilter[Command, Response] {
-  // Using a custom logger name so that we can target logging rules specifically
-  // for memcache excpetion logging.
-  val logger: Logger = Logger(getClass)
+c-cwass m-memcacheexceptionwoggingfiwtew extends simpwefiwtew[command, (˘ω˘) wesponse] {
+  // using a custom woggew nyame so that w-we can tawget wogging wuwes specificawwy
+  // fow memcache excpetion w-wogging. >_<
+  vaw woggew: woggew = w-woggew(getcwass)
 
-  def apply(command: Command, service: Service[Command, Response]): Future[Response] = {
-    service(command).respond {
-      case Return(Error(e)) =>
-        log(command, e)
-      case Return(ValuesAndErrors(_, errors)) if errors.nonEmpty =>
-        errors.foreach {
-          case (Buf.Utf8(keyStr), e) =>
-            log(command.name, keyStr, e)
+  def appwy(command: command, -.- sewvice: s-sewvice[command, 🥺 wesponse]): futuwe[wesponse] = {
+    s-sewvice(command).wespond {
+      c-case wetuwn(ewwow(e)) =>
+        wog(command, (U ﹏ U) e)
+      case wetuwn(vawuesandewwows(_, >w< ewwows)) i-if ewwows.nonempty =>
+        ewwows.foweach {
+          case (buf.utf8(keystw), mya e) =>
+            wog(command.name, >w< k-keystw, nyaa~~ e)
         }
-      case Throw(e) =>
-        log(command, e)
+      c-case thwow(e) =>
+        w-wog(command, (✿oωo) e)
 
-      case _ =>
+      c-case _ =>
     }
   }
 
-  private def log(command: Command, e: Throwable): Unit = {
-    log(command.name, getKey(command), e)
+  p-pwivate def wog(command: command, ʘwʘ e-e: thwowabwe): unit = {
+    wog(command.name, (ˆ ﻌ ˆ)♡ getkey(command), 😳😳😳 e)
   }
 
-  private def log(commandName: String, keyStr: String, e: Throwable): Unit = {
-    logger.debug(
-      s"CACHE_EXCEPTION command: ${commandName} key: ${keyStr} exception: ${e.getClass.getName}",
-      e,
+  p-pwivate def wog(commandname: stwing, :3 keystw: stwing, OwO e: thwowabwe): unit = {
+    woggew.debug(
+      s-s"cache_exception command: ${commandname} k-key: ${keystw} e-exception: ${e.getcwass.getname}", (U ﹏ U)
+      e-e, >w<
     )
   }
 
-  private def getKey(command: Command): String = command match {
-    case Get(keys) => toKeyStr(keys)
-    case Gets(keys) => toKeyStr(keys)
+  pwivate def getkey(command: command): stwing = command m-match {
+    c-case get(keys) => tokeystw(keys)
+    c-case gets(keys) => t-tokeystw(keys)
 
-    case Set(Buf.Utf8(key), _, _, _) => key
-    case Add(Buf.Utf8(key), _, _, _) => key
-    case Cas(Buf.Utf8(key), _, _, _, _) => key
-    case Delete(Buf.Utf8(key)) => key
-    case Replace(Buf.Utf8(key), _, _, _) => key
-    case Append(Buf.Utf8(key), _, _, _) => key
-    case Prepend(Buf.Utf8(key), _, _, _) => key
+    case set(buf.utf8(key), (U ﹏ U) _, _, _) => k-key
+    case add(buf.utf8(key), 😳 _, _, _) => key
+    c-case cas(buf.utf8(key), (ˆ ﻌ ˆ)♡ _, 😳😳😳 _, _, _) => key
+    case dewete(buf.utf8(key)) => k-key
+    case wepwace(buf.utf8(key), (U ﹏ U) _, _, _) => k-key
+    case append(buf.utf8(key), (///ˬ///✿) _, _, 😳 _) => k-key
+    case p-pwepend(buf.utf8(key), 😳 _, σωσ _, _) => key
 
-    case Incr(Buf.Utf8(key), _) => key
-    case Decr(Buf.Utf8(key), _) => key
-    case Stats(keys) => toKeyStr(keys)
-    case Quit() => "quit"
-    case Upsert(Buf.Utf8(key), _, _, _, _) => key
-    case Getv(keys) => toKeyStr(keys)
+    case incw(buf.utf8(key), rawr x3 _) => key
+    case decw(buf.utf8(key), OwO _) => key
+    case stats(keys) => tokeystw(keys)
+    c-case quit() => "quit"
+    c-case upsewt(buf.utf8(key), /(^•ω•^) _, _, _, _) => k-key
+    case g-getv(keys) => t-tokeystw(keys)
   }
 
-  private def toKeyStr(keys: Seq[Buf]): String =
-    keys.map { case Buf.Utf8(key) => key }.mkString(",")
+  pwivate def tokeystw(keys: seq[buf]): stwing =
+    k-keys.map { case buf.utf8(key) => key }.mkstwing(",")
 }

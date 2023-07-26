@@ -1,178 +1,178 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.thriftscala.ConversationControl
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.common.InvitedToConversationRepo
-import com.twitter.visibility.features.ConversationRootAuthorFollowsViewer
-import com.twitter.visibility.features.TweetConversationViewerIsInvited
-import com.twitter.visibility.features.TweetConversationViewerIsInvitedViaReplyMention
-import com.twitter.visibility.features.TweetConversationViewerIsRootAuthor
-import com.twitter.visibility.features.TweetHasByInvitationConversationControl
-import com.twitter.visibility.features.TweetHasCommunityConversationControl
-import com.twitter.visibility.features.TweetHasFollowersConversationControl
-import com.twitter.visibility.features.ViewerFollowsConversationRootAuthor
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt c-com.twittew.tweetypie.thwiftscawa.convewsationcontwow
+i-impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+impowt com.twittew.visibiwity.buiwdew.usews.wewationshipfeatuwes
+impowt com.twittew.visibiwity.common.invitedtoconvewsationwepo
+impowt com.twittew.visibiwity.featuwes.convewsationwootauthowfowwowsviewew
+i-impowt com.twittew.visibiwity.featuwes.tweetconvewsationviewewisinvited
+impowt com.twittew.visibiwity.featuwes.tweetconvewsationviewewisinvitedviawepwymention
+i-impowt com.twittew.visibiwity.featuwes.tweetconvewsationviewewiswootauthow
+i-impowt com.twittew.visibiwity.featuwes.tweethasbyinvitationconvewsationcontwow
+impowt com.twittew.visibiwity.featuwes.tweethascommunityconvewsationcontwow
+impowt com.twittew.visibiwity.featuwes.tweethasfowwowewsconvewsationcontwow
+impowt c-com.twittew.visibiwity.featuwes.viewewfowwowsconvewsationwootauthow
 
-class ConversationControlFeatures(
-  relationshipFeatures: RelationshipFeatures,
-  isInvitedToConversationRepository: InvitedToConversationRepo,
-  statsReceiver: StatsReceiver) {
+cwass c-convewsationcontwowfeatuwes(
+  wewationshipfeatuwes: w-wewationshipfeatuwes, ( ͡o ω ͡o )
+  isinvitedtoconvewsationwepositowy: invitedtoconvewsationwepo, o.O
+  statsweceivew: statsweceivew) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("conversation_control_features")
+  p-pwivate[this] vaw scopedstatsweceivew = statsweceivew.scope("convewsation_contwow_featuwes")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pwivate[this] vaw wequests = scopedstatsweceivew.countew("wequests")
 
-  private[this] val tweetCommunityConversationRequest =
-    scopedStatsReceiver.scope(TweetHasCommunityConversationControl.name).counter("requests")
-  private[this] val tweetByInvitationConversationRequest =
-    scopedStatsReceiver.scope(TweetHasByInvitationConversationControl.name).counter("requests")
-  private[this] val tweetFollowersConversationRequest =
-    scopedStatsReceiver.scope(TweetHasFollowersConversationControl.name).counter("requests")
-  private[this] val rootAuthorFollowsViewer =
-    scopedStatsReceiver.scope(ConversationRootAuthorFollowsViewer.name).counter("requests")
-  private[this] val viewerFollowsRootAuthor =
-    scopedStatsReceiver.scope(ViewerFollowsConversationRootAuthor.name).counter("requests")
+  p-pwivate[this] vaw tweetcommunityconvewsationwequest =
+    s-scopedstatsweceivew.scope(tweethascommunityconvewsationcontwow.name).countew("wequests")
+  p-pwivate[this] v-vaw tweetbyinvitationconvewsationwequest =
+    s-scopedstatsweceivew.scope(tweethasbyinvitationconvewsationcontwow.name).countew("wequests")
+  pwivate[this] vaw tweetfowwowewsconvewsationwequest =
+    s-scopedstatsweceivew.scope(tweethasfowwowewsconvewsationcontwow.name).countew("wequests")
+  pwivate[this] vaw wootauthowfowwowsviewew =
+    s-scopedstatsweceivew.scope(convewsationwootauthowfowwowsviewew.name).countew("wequests")
+  pwivate[this] vaw viewewfowwowswootauthow =
+    scopedstatsweceivew.scope(viewewfowwowsconvewsationwootauthow.name).countew("wequests")
 
-  def isCommunityConversation(conversationControl: Option[ConversationControl]): Boolean =
-    conversationControl
-      .collect {
-        case _: ConversationControl.Community =>
-          tweetCommunityConversationRequest.incr()
-          true
-      }.getOrElse(false)
+  def iscommunityconvewsation(convewsationcontwow: option[convewsationcontwow]): b-boowean =
+    convewsationcontwow
+      .cowwect {
+        case _: c-convewsationcontwow.community =>
+          tweetcommunityconvewsationwequest.incw()
+          t-twue
+      }.getowewse(fawse)
 
-  def isByInvitationConversation(conversationControl: Option[ConversationControl]): Boolean =
-    conversationControl
-      .collect {
-        case _: ConversationControl.ByInvitation =>
-          tweetByInvitationConversationRequest.incr()
-          true
-      }.getOrElse(false)
+  d-def isbyinvitationconvewsation(convewsationcontwow: option[convewsationcontwow]): boowean =
+    convewsationcontwow
+      .cowwect {
+        c-case _: convewsationcontwow.byinvitation =>
+          t-tweetbyinvitationconvewsationwequest.incw()
+          twue
+      }.getowewse(fawse)
 
-  def isFollowersConversation(conversationControl: Option[ConversationControl]): Boolean =
-    conversationControl
-      .collect {
-        case _: ConversationControl.Followers =>
-          tweetFollowersConversationRequest.incr()
-          true
-      }.getOrElse(false)
+  d-def i-isfowwowewsconvewsation(convewsationcontwow: option[convewsationcontwow]): b-boowean =
+    convewsationcontwow
+      .cowwect {
+        c-case _: convewsationcontwow.fowwowews =>
+          tweetfowwowewsconvewsationwequest.incw()
+          twue
+      }.getowewse(fawse)
 
-  def conversationRootAuthorId(
-    conversationControl: Option[ConversationControl]
-  ): Option[Long] =
-    conversationControl match {
-      case Some(ConversationControl.Community(community)) =>
-        Some(community.conversationTweetAuthorId)
-      case Some(ConversationControl.ByInvitation(byInvitation)) =>
-        Some(byInvitation.conversationTweetAuthorId)
-      case Some(ConversationControl.Followers(followers)) =>
-        Some(followers.conversationTweetAuthorId)
-      case _ => None
+  d-def convewsationwootauthowid(
+    c-convewsationcontwow: option[convewsationcontwow]
+  ): o-option[wong] =
+    c-convewsationcontwow match {
+      case some(convewsationcontwow.community(community)) =>
+        some(community.convewsationtweetauthowid)
+      case some(convewsationcontwow.byinvitation(byinvitation)) =>
+        some(byinvitation.convewsationtweetauthowid)
+      case some(convewsationcontwow.fowwowews(fowwowews)) =>
+        s-some(fowwowews.convewsationtweetauthowid)
+      c-case _ => nyone
     }
 
-  def viewerIsRootAuthor(
-    conversationControl: Option[ConversationControl],
-    viewerIdOpt: Option[Long]
-  ): Boolean =
-    (conversationRootAuthorId(conversationControl), viewerIdOpt) match {
-      case (Some(rootAuthorId), Some(viewerId)) if rootAuthorId == viewerId => true
-      case _ => false
+  def viewewiswootauthow(
+    c-convewsationcontwow: o-option[convewsationcontwow], >w<
+    v-viewewidopt: option[wong]
+  ): boowean =
+    (convewsationwootauthowid(convewsationcontwow), 😳 viewewidopt) m-match {
+      case (some(wootauthowid), 🥺 some(viewewid)) if wootauthowid == v-viewewid => twue
+      case _ => f-fawse
     }
 
-  def viewerIsInvited(
-    conversationControl: Option[ConversationControl],
-    viewerId: Option[Long]
-  ): Boolean = {
-    val invitedUserIds = conversationControl match {
-      case Some(ConversationControl.Community(community)) =>
-        community.invitedUserIds
-      case Some(ConversationControl.ByInvitation(byInvitation)) =>
-        byInvitation.invitedUserIds
-      case Some(ConversationControl.Followers(followers)) =>
-        followers.invitedUserIds
-      case _ => Seq()
+  d-def viewewisinvited(
+    c-convewsationcontwow: option[convewsationcontwow], rawr x3
+    viewewid: option[wong]
+  ): b-boowean = {
+    v-vaw i-invitedusewids = c-convewsationcontwow match {
+      case some(convewsationcontwow.community(community)) =>
+        c-community.invitedusewids
+      c-case some(convewsationcontwow.byinvitation(byinvitation)) =>
+        b-byinvitation.invitedusewids
+      c-case some(convewsationcontwow.fowwowews(fowwowews)) =>
+        f-fowwowews.invitedusewids
+      case _ => seq()
     }
 
-    viewerId.exists(invitedUserIds.contains(_))
+    viewewid.exists(invitedusewids.contains(_))
   }
 
-  def conversationAuthorFollows(
-    conversationControl: Option[ConversationControl],
-    viewerId: Option[Long]
-  ): Stitch[Boolean] = {
-    val conversationAuthorId = conversationControl.collect {
-      case ConversationControl.Community(community) =>
-        community.conversationTweetAuthorId
+  d-def convewsationauthowfowwows(
+    convewsationcontwow: option[convewsationcontwow], o.O
+    viewewid: option[wong]
+  ): stitch[boowean] = {
+    v-vaw convewsationauthowid = convewsationcontwow.cowwect {
+      case convewsationcontwow.community(community) =>
+        community.convewsationtweetauthowid
     }
 
-    conversationAuthorId match {
-      case Some(authorId) =>
-        rootAuthorFollowsViewer.incr()
-        relationshipFeatures.authorFollowsViewer(authorId, viewerId)
-      case None =>
-        Stitch.False
-    }
-  }
-
-  def followsConversationAuthor(
-    conversationControl: Option[ConversationControl],
-    viewerId: Option[Long]
-  ): Stitch[Boolean] = {
-    val conversationAuthorId = conversationControl.collect {
-      case ConversationControl.Followers(followers) =>
-        followers.conversationTweetAuthorId
-    }
-
-    conversationAuthorId match {
-      case Some(authorId) =>
-        viewerFollowsRootAuthor.incr()
-        relationshipFeatures.viewerFollowsAuthor(authorId, viewerId)
-      case None =>
-        Stitch.False
+    c-convewsationauthowid m-match {
+      c-case some(authowid) =>
+        w-wootauthowfowwowsviewew.incw()
+        wewationshipfeatuwes.authowfowwowsviewew(authowid, rawr v-viewewid)
+      c-case nyone =>
+        stitch.fawse
     }
   }
 
-  def viewerIsInvitedViaReplyMention(
-    tweet: Tweet,
-    viewerIdOpt: Option[Long]
-  ): Stitch[Boolean] = {
-    val conversationIdOpt: Option[Long] = tweet.conversationControl match {
-      case Some(ConversationControl.Community(community))
-          if community.inviteViaMention.contains(true) =>
-        tweet.coreData.flatMap(_.conversationId)
-      case Some(ConversationControl.ByInvitation(invitation))
-          if invitation.inviteViaMention.contains(true) =>
-        tweet.coreData.flatMap(_.conversationId)
-      case Some(ConversationControl.Followers(followers))
-          if followers.inviteViaMention.contains(true) =>
-        tweet.coreData.flatMap(_.conversationId)
-      case _ => None
+  def fowwowsconvewsationauthow(
+    convewsationcontwow: option[convewsationcontwow], ʘwʘ
+    viewewid: o-option[wong]
+  ): stitch[boowean] = {
+    v-vaw convewsationauthowid = convewsationcontwow.cowwect {
+      c-case convewsationcontwow.fowwowews(fowwowews) =>
+        f-fowwowews.convewsationtweetauthowid
     }
 
-    (conversationIdOpt, viewerIdOpt) match {
-      case (Some(conversationId), Some(viewerId)) =>
-        isInvitedToConversationRepository(conversationId, viewerId)
-      case _ => Stitch.False
+    convewsationauthowid match {
+      c-case s-some(authowid) =>
+        viewewfowwowswootauthow.incw()
+        w-wewationshipfeatuwes.viewewfowwowsauthow(authowid, v-viewewid)
+      case nyone =>
+        stitch.fawse
     }
   }
 
-  def forTweet(tweet: Tweet, viewerId: Option[Long]): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    val cc = tweet.conversationControl
+  def viewewisinvitedviawepwymention(
+    tweet: t-tweet, 😳😳😳
+    viewewidopt: o-option[wong]
+  ): s-stitch[boowean] = {
+    vaw convewsationidopt: o-option[wong] = t-tweet.convewsationcontwow match {
+      c-case some(convewsationcontwow.community(community))
+          if community.inviteviamention.contains(twue) =>
+        tweet.cowedata.fwatmap(_.convewsationid)
+      case some(convewsationcontwow.byinvitation(invitation))
+          if invitation.inviteviamention.contains(twue) =>
+        t-tweet.cowedata.fwatmap(_.convewsationid)
+      c-case some(convewsationcontwow.fowwowews(fowwowews))
+          if fowwowews.inviteviamention.contains(twue) =>
+        tweet.cowedata.fwatmap(_.convewsationid)
+      c-case _ => n-nyone
+    }
 
-    _.withConstantFeature(TweetHasCommunityConversationControl, isCommunityConversation(cc))
-      .withConstantFeature(TweetHasByInvitationConversationControl, isByInvitationConversation(cc))
-      .withConstantFeature(TweetHasFollowersConversationControl, isFollowersConversation(cc))
-      .withConstantFeature(TweetConversationViewerIsRootAuthor, viewerIsRootAuthor(cc, viewerId))
-      .withConstantFeature(TweetConversationViewerIsInvited, viewerIsInvited(cc, viewerId))
-      .withFeature(ConversationRootAuthorFollowsViewer, conversationAuthorFollows(cc, viewerId))
-      .withFeature(ViewerFollowsConversationRootAuthor, followsConversationAuthor(cc, viewerId))
-      .withFeature(
-        TweetConversationViewerIsInvitedViaReplyMention,
-        viewerIsInvitedViaReplyMention(tweet, viewerId))
+    (convewsationidopt, ^^;; viewewidopt) match {
+      case (some(convewsationid), o.O s-some(viewewid)) =>
+        isinvitedtoconvewsationwepositowy(convewsationid, (///ˬ///✿) viewewid)
+      case _ => stitch.fawse
+    }
+  }
+
+  d-def fowtweet(tweet: tweet, σωσ viewewid: o-option[wong]): f-featuwemapbuiwdew => featuwemapbuiwdew = {
+    wequests.incw()
+    vaw cc = tweet.convewsationcontwow
+
+    _.withconstantfeatuwe(tweethascommunityconvewsationcontwow, nyaa~~ i-iscommunityconvewsation(cc))
+      .withconstantfeatuwe(tweethasbyinvitationconvewsationcontwow, ^^;; i-isbyinvitationconvewsation(cc))
+      .withconstantfeatuwe(tweethasfowwowewsconvewsationcontwow, ^•ﻌ•^ isfowwowewsconvewsation(cc))
+      .withconstantfeatuwe(tweetconvewsationviewewiswootauthow, σωσ viewewiswootauthow(cc, -.- viewewid))
+      .withconstantfeatuwe(tweetconvewsationviewewisinvited, ^^;; viewewisinvited(cc, XD v-viewewid))
+      .withfeatuwe(convewsationwootauthowfowwowsviewew, 🥺 convewsationauthowfowwows(cc, òωó v-viewewid))
+      .withfeatuwe(viewewfowwowsconvewsationwootauthow, (ˆ ﻌ ˆ)♡ fowwowsconvewsationauthow(cc, -.- viewewid))
+      .withfeatuwe(
+        tweetconvewsationviewewisinvitedviawepwymention, :3
+        viewewisinvitedviawepwymention(tweet, ʘwʘ v-viewewid))
 
   }
 }

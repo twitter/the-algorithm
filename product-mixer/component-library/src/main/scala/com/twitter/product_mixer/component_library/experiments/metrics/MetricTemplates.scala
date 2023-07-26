@@ -1,123 +1,123 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+package com.twittew.pwoduct_mixew.component_wibwawy.expewiments.metwics
 
-import com.twitter.product_mixer.component_library.experiments.metrics.PlaceholderConfig.PlaceholdersMap
-import reflect.ClassTag
-import scala.reflect.runtime.universe._
-import scala.util.matching.Regex
+impowt com.twittew.pwoduct_mixew.component_wibwawy.expewiments.metwics.pwacehowdewconfig.pwacehowdewsmap
+i-impowt wefwect.cwasstag
+i-impowt s-scawa.wefwect.wuntime.univewse._
+i-impowt scawa.utiw.matching.wegex
 
-case class MatchedPlaceholder(outerKey: String, innerKey: Option[String] = None)
+c-case cwass matchedpwacehowdew(outewkey: s-stwing, σωσ i-innewkey: option[stwing] = n-nyone)
 
-object MetricTemplates {
-  // Matches "${placeholder}" where `placeholder` is in a matched group
-  val PlaceholderPattern: Regex = "\\$\\{([^\\}]+)\\}".r.unanchored
-  // Matches "${placeholder[index]}" where `placeholder` and `index` are in different matched groups
-  val IndexedPlaceholderPattern: Regex = "\\$\\{([^\\[]+)\\[([^\\]]+)\\]\\}".r.unanchored
-  val DefaultFieldName = "name"
+object metwictempwates {
+  // matches "${pwacehowdew}" whewe `pwacehowdew` is in a matched g-gwoup
+  vaw pwacehowdewpattewn: wegex = "\\$\\{([^\\}]+)\\}".w.unanchowed
+  // matches "${pwacehowdew[index]}" w-whewe `pwacehowdew` and `index` a-awe in diffewent matched gwoups
+  vaw indexedpwacehowdewpattewn: wegex = "\\$\\{([^\\[]+)\\[([^\\]]+)\\]\\}".w.unanchowed
+  v-vaw defauwtfiewdname = "name"
 
-  def interpolate(inputTemplate: String, placeholders: PlaceholdersMap): Seq[String] = {
-    val matchedPlaceholders = getMatchedPlaceholders(inputTemplate)
-    val groupedPlaceholders = matchedPlaceholders.groupBy(_.outerKey)
-    val placeholderKeyValues = getPlaceholderKeyValues(groupedPlaceholders, placeholders)
-    val (keys, values) = (placeholderKeyValues.map(_._1), placeholderKeyValues.map(_._2))
-    val cross: Seq[List[Named]] = crossProduct(values)
-    val mirror = runtimeMirror(getClass.getClassLoader) // necessary for reflection
-    for {
-      interpolatables <- cross
-    } yield {
-      assert(
-        keys.length == interpolatables.length,
-        s"Unexpected length mismatch between $keys and $interpolatables")
-      var replacementStr = inputTemplate
-      keys.zip(interpolatables).foreach {
-        case (key, interpolatable) =>
-          val accessors = caseAccessors(mirror, interpolatable)
-          groupedPlaceholders(key).foreach { placeholder: MatchedPlaceholder =>
-            val templateKey = generateTemplateKey(placeholder)
-            val fieldName = placeholder.innerKey.getOrElse(DefaultFieldName)
-            val fieldValue = getFieldValue(mirror, interpolatable, accessors, fieldName)
-            replacementStr = replacementStr.replaceAll(templateKey, fieldValue)
+  d-def i-intewpowate(inputtempwate: stwing, pwacehowdews: pwacehowdewsmap): seq[stwing] = {
+    v-vaw matchedpwacehowdews = getmatchedpwacehowdews(inputtempwate)
+    vaw gwoupedpwacehowdews = matchedpwacehowdews.gwoupby(_.outewkey)
+    v-vaw pwacehowdewkeyvawues = getpwacehowdewkeyvawues(gwoupedpwacehowdews, >w< p-pwacehowdews)
+    v-vaw (keys, 😳😳😳 v-vawues) = (pwacehowdewkeyvawues.map(_._1), OwO p-pwacehowdewkeyvawues.map(_._2))
+    vaw cwoss: seq[wist[named]] = c-cwosspwoduct(vawues)
+    vaw miwwow = wuntimemiwwow(getcwass.getcwasswoadew) // n-nyecessawy fow wefwection
+    fow {
+      intewpowatabwes <- cwoss
+    } yiewd {
+      assewt(
+        keys.wength == i-intewpowatabwes.wength,
+        s"unexpected w-wength mismatch b-between $keys a-and $intewpowatabwes")
+      vaw wepwacementstw = inputtempwate
+      keys.zip(intewpowatabwes).foweach {
+        c-case (key, 😳 i-intewpowatabwe) =>
+          vaw accessows = caseaccessows(miwwow, 😳😳😳 i-intewpowatabwe)
+          gwoupedpwacehowdews(key).foweach { p-pwacehowdew: matchedpwacehowdew =>
+            vaw tempwatekey = g-genewatetempwatekey(pwacehowdew)
+            vaw fiewdname = p-pwacehowdew.innewkey.getowewse(defauwtfiewdname)
+            vaw fiewdvawue = getfiewdvawue(miwwow, (˘ω˘) i-intewpowatabwe, ʘwʘ accessows, ( ͡o ω ͡o ) fiewdname)
+            w-wepwacementstw = wepwacementstw.wepwaceaww(tempwatekey, o.O f-fiewdvawue)
           }
       }
-      replacementStr
+      w-wepwacementstw
     }
   }
 
-  def getMatchedPlaceholders(inputTemplate: String): Seq[MatchedPlaceholder] = {
-    for {
-      matched <- PlaceholderPattern.findAllIn(inputTemplate).toSeq
-    } yield {
-      val matchedWithIndexOpt = IndexedPlaceholderPattern.findFirstMatchIn(matched)
-      val (outer, inner) = matchedWithIndexOpt
-        .map { matchedWithIndex =>
-          (matchedWithIndex.group(1), Some(matchedWithIndex.group(2)))
-        }.getOrElse((matched, None))
-      val outerKey = unwrap(outer)
-      val innerKey = inner.map(unwrap(_))
-      MatchedPlaceholder(outerKey, innerKey)
+  def getmatchedpwacehowdews(inputtempwate: stwing): seq[matchedpwacehowdew] = {
+    fow {
+      matched <- pwacehowdewpattewn.findawwin(inputtempwate).toseq
+    } yiewd {
+      v-vaw matchedwithindexopt = i-indexedpwacehowdewpattewn.findfiwstmatchin(matched)
+      vaw (outew, >w< i-innew) = matchedwithindexopt
+        .map { m-matchedwithindex =>
+          (matchedwithindex.gwoup(1), 😳 s-some(matchedwithindex.gwoup(2)))
+        }.getowewse((matched, 🥺 nyone))
+      vaw outewkey = unwwap(outew)
+      v-vaw innewkey = innew.map(unwwap(_))
+      matchedpwacehowdew(outewkey, rawr x3 innewkey)
     }
   }
 
-  def unwrap(str: String): String =
-    str.stripPrefix("${").stripSuffix("}")
+  def unwwap(stw: s-stwing): stwing =
+    stw.stwippwefix("${").stwipsuffix("}")
 
-  def wrap(str: String): String =
-    "\\$\\{" + str + "\\}"
+  d-def wwap(stw: s-stwing): stwing =
+    "\\$\\{" + s-stw + "\\}"
 
-  def getPlaceholderKeyValues(
-    groupedPlaceholders: Map[String, Seq[MatchedPlaceholder]],
-    placeholders: PlaceholdersMap
-  ): Seq[(String, Seq[Named])] = {
-    groupedPlaceholders.toSeq
+  def getpwacehowdewkeyvawues(
+    g-gwoupedpwacehowdews: m-map[stwing, o.O s-seq[matchedpwacehowdew]],
+    p-pwacehowdews: pwacehowdewsmap
+  ): seq[(stwing, rawr s-seq[named])] = {
+    g-gwoupedpwacehowdews.toseq
       .map {
-        case (outerKey, _) =>
-          val placeholderValues = placeholders.getOrElse(
-            outerKey,
-            throw new RuntimeException(s"Failed to find values of $outerKey in placeholders"))
-          outerKey -> placeholderValues
+        c-case (outewkey, _) =>
+          v-vaw pwacehowdewvawues = p-pwacehowdews.getowewse(
+            outewkey, ʘwʘ
+            thwow nyew wuntimeexception(s"faiwed t-to find vawues of $outewkey in pwacehowdews"))
+          outewkey -> pwacehowdewvawues
       }
   }
 
-  def crossProduct[T](seqOfSeqOfItems: Seq[Seq[T]]): Seq[List[T]] = {
-    if (seqOfSeqOfItems.isEmpty) {
-      List(Nil)
-    } else {
-      for {
-        // for every item in the head list
-        item <- seqOfSeqOfItems.head
-        // for every result (List) based on the cross-product of tail
-        resultList <- crossProduct(seqOfSeqOfItems.tail)
-      } yield {
-        item :: resultList
+  def cwosspwoduct[t](seqofseqofitems: s-seq[seq[t]]): seq[wist[t]] = {
+    if (seqofseqofitems.isempty) {
+      wist(niw)
+    } e-ewse {
+      fow {
+        // f-fow e-evewy item in the head wist
+        i-item <- seqofseqofitems.head
+        // fow e-evewy wesuwt (wist) b-based on the cwoss-pwoduct of taiw
+        wesuwtwist <- cwosspwoduct(seqofseqofitems.taiw)
+      } yiewd {
+        item :: w-wesuwtwist
       }
     }
   }
 
-  def generateTemplateKey(matched: MatchedPlaceholder): String = {
-    matched.innerKey match {
-      case None => wrap(matched.outerKey)
-      case Some(innerKeyString) => wrap(matched.outerKey + "\\[" + innerKeyString + "\\]")
+  def genewatetempwatekey(matched: m-matchedpwacehowdew): stwing = {
+    m-matched.innewkey m-match {
+      case nyone => wwap(matched.outewkey)
+      c-case some(innewkeystwing) => w-wwap(matched.outewkey + "\\[" + innewkeystwing + "\\]")
     }
   }
 
-  // Given an instance and a field name, use reflection to get its value.
-  def getFieldValue[T: ClassTag](
-    mirror: Mirror,
-    cls: T,
-    accessors: Map[String, MethodSymbol],
-    fieldName: String
-  ): String = {
-    val instance: InstanceMirror = mirror.reflect(cls)
-    val accessor = accessors.getOrElse(
-      fieldName,
-      throw new RuntimeException(s"Failed to find value of $fieldName for $cls"))
-    instance.reflectField(accessor).get.toString // .get is safe due to check above
+  // g-given an instance a-and a fiewd name, 😳😳😳 use wefwection to get its vawue. ^^;;
+  def getfiewdvawue[t: c-cwasstag](
+    m-miwwow: miwwow, o.O
+    c-cws: t, (///ˬ///✿)
+    accessows: map[stwing, σωσ m-methodsymbow], nyaa~~
+    f-fiewdname: stwing
+  ): s-stwing = {
+    vaw instance: instancemiwwow = miwwow.wefwect(cws)
+    vaw accessow = accessows.getowewse(
+      f-fiewdname, ^^;;
+      t-thwow nyew wuntimeexception(s"faiwed to find vawue of $fiewdname f-fow $cws"))
+    i-instance.wefwectfiewd(accessow).get.tostwing // .get is safe due to check above
   }
 
-  // Given an instance, use reflection to get a mapping for field name -> symbol
-  def caseAccessors[T: ClassTag](mirror: Mirror, cls: T): Map[String, MethodSymbol] = {
-    val classSymbol = mirror.classSymbol(cls.getClass)
-    classSymbol.toType.members.collect {
-      case m: MethodSymbol if m.isCaseAccessor => (m.name.toString -> m)
-    }.toMap
+  // given a-an instance, ^•ﻌ•^ use wefwection to get a mapping fow fiewd nyame -> symbow
+  def c-caseaccessows[t: cwasstag](miwwow: miwwow, σωσ cws: t-t): map[stwing, -.- m-methodsymbow] = {
+    vaw cwasssymbow = miwwow.cwasssymbow(cws.getcwass)
+    cwasssymbow.totype.membews.cowwect {
+      c-case m: m-methodsymbow if m.iscaseaccessow => (m.name.tostwing -> m)
+    }.tomap
   }
 }

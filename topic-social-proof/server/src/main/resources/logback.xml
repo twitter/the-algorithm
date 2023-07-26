@@ -1,155 +1,155 @@
-<configuration>
-  <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
-  <property name="async_queue_size" value="${queue.size:-50000}"/>
-  <property name="async_max_flush_time" value="${max.flush.time:-0}"/>
+<configuwation>
+  <shutdownhook cwass="ch.qos.wogback.cowe.hook.dewayingshutdownhook"/>
+  <pwopewty nyame="async_queue_size" vawue="${queue.size:-50000}"/>
+  <pwopewty n-nyame="async_max_fwush_time" v-vawue="${max.fwush.time:-0}"/>
   <!-- ===================================================== -->
-  <!-- Structured Logging -->
+  <!-- s-stwuctuwed w-wogging -->
   <!-- ===================================================== -->
-  <!-- Only sample 0.1% of the requests -->
-  <property name="splunk_sampling_rate" value="${splunk_sampling_rate:-0.001}"/>
-  <include resource="structured-logger-logback.xml"/>
+  <!-- o-onwy sampwe 0.1% o-of the w-wequests -->
+  <pwopewty n-nyame="spwunk_sampwing_wate" vawue="${spwunk_sampwing_wate:-0.001}"/>
+  <incwude wesouwce="stwuctuwed-woggew-wogback.xmw"/>
   <!-- ===================================================== -->
-  <!-- Service Config -->
+  <!-- sewvice config -->
   <!-- ===================================================== -->
-  <property name="DEFAULT_SERVICE_PATTERN"
-            value="%-16X{transactionId} %logger %msg"/>
-
-  <!-- ===================================================== -->
-  <!-- Common Config -->
-  <!-- ===================================================== -->
-
-  <!-- JUL/JDK14 to Logback bridge -->
-  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-    <resetJUL>true</resetJUL>
-  </contextListener>
-
-  <!-- Service Log (Rollover every 50MB, max 11 logs) -->
-  <appender name="SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${log.service.output}</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-      <fileNamePattern>${log.service.output}.%i</fileNamePattern>
-      <minIndex>1</minIndex>
-      <maxIndex>10</maxIndex>
-    </rollingPolicy>
-    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-      <maxFileSize>50MB</maxFileSize>
-    </triggeringPolicy>
-    <encoder>
-      <pattern>%date %.-3level ${DEFAULT_SERVICE_PATTERN}%n</pattern>
-    </encoder>
-  </appender>
-
-  <!-- Strato package only log (Rollover every 50MB, max 11 logs) -->
-  <appender name="STRATO-ONLY" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${log.strato_only.output}</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-      <fileNamePattern>${log.strato_only.output}.%i</fileNamePattern>
-      <minIndex>1</minIndex>
-      <maxIndex>10</maxIndex>
-    </rollingPolicy>
-    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-      <maxFileSize>50MB</maxFileSize>
-    </triggeringPolicy>
-    <encoder>
-      <pattern>%date %.-3level ${DEFAULT_SERVICE_PATTERN}%n</pattern>
-    </encoder>
-  </appender>
-
-  <!-- LogLens -->
-  <appender name="LOGLENS" class="com.twitter.loglens.logback.LoglensAppender">
-    <mdcAdditionalContext>true</mdcAdditionalContext>
-    <category>loglens</category>
-    <index>${log.lens.index}</index>
-    <tag>${log.lens.tag}/service</tag>
-    <encoder>
-      <pattern>%msg%n</pattern>
-    </encoder>
-    <turboFilter class="ch.qos.logback.classic.turbo.DuplicateMessageFilter">
-      <cacheSize>500</cacheSize>
-      <allowedRepetitions>50</allowedRepetitions>
-    </turboFilter>
-    <filter class="com.twitter.strato.logging.logback.RegexFilter">
-      <forLogger>manhattan-client</forLogger>
-      <excludeRegex>.*InvalidRequest.*</excludeRegex>
-    </filter>
-  </appender>
+  <pwopewty nyame="defauwt_sewvice_pattewn"
+            vawue="%-16x{twansactionid} %woggew %msg"/>
 
   <!-- ===================================================== -->
-  <!-- Primary Async Appenders -->
+  <!-- c-common config -->
   <!-- ===================================================== -->
 
-  <appender name="ASYNC-SERVICE" class="ch.qos.logback.classic.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="SERVICE"/>
-  </appender>
+  <!-- juw/jdk14 to wogback b-bwidge -->
+  <contextwistenew cwass="ch.qos.wogback.cwassic.juw.wevewchangepwopagatow">
+    <wesetjuw>twue</wesetjuw>
+  </contextwistenew>
 
-  <appender name="ASYNC-STRATO-ONLY" class="ch.qos.logback.classic.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="STRATO-ONLY"/>
-  </appender>
+  <!-- s-sewvice wog (wowwuvw evewy 50mb, (ꈍᴗꈍ) max 11 wogs) -->
+  <appendew nyame="sewvice" c-cwass="ch.qos.wogback.cowe.wowwing.wowwingfiweappendew">
+    <fiwe>${wog.sewvice.output}</fiwe>
+    <wowwingpowicy cwass="ch.qos.wogback.cowe.wowwing.fixedwindowwowwingpowicy">
+      <fiwenamepattewn>${wog.sewvice.output}.%i</fiwenamepattewn>
+      <minindex>1</minindex>
+      <maxindex>10</maxindex>
+    </wowwingpowicy>
+    <twiggewingpowicy c-cwass="ch.qos.wogback.cowe.wowwing.sizebasedtwiggewingpowicy">
+      <maxfiwesize>50mb</maxfiwesize>
+    </twiggewingpowicy>
+    <encodew>
+      <pattewn>%date %.-3wevew ${defauwt_sewvice_pattewn}%n</pattewn>
+    </encodew>
+  </appendew>
 
-  <appender name="ASYNC-LOGLENS" class="ch.qos.logback.classic.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="LOGLENS"/>
-  </appender>
+  <!-- s-stwato package onwy wog (wowwuvw evewy 50mb, 😳 max 11 wogs) -->
+  <appendew nyame="stwato-onwy" c-cwass="ch.qos.wogback.cowe.wowwing.wowwingfiweappendew">
+    <fiwe>${wog.stwato_onwy.output}</fiwe>
+    <wowwingpowicy cwass="ch.qos.wogback.cowe.wowwing.fixedwindowwowwingpowicy">
+      <fiwenamepattewn>${wog.stwato_onwy.output}.%i</fiwenamepattewn>
+      <minindex>1</minindex>
+      <maxindex>10</maxindex>
+    </wowwingpowicy>
+    <twiggewingpowicy cwass="ch.qos.wogback.cowe.wowwing.sizebasedtwiggewingpowicy">
+      <maxfiwesize>50mb</maxfiwesize>
+    </twiggewingpowicy>
+    <encodew>
+      <pattewn>%date %.-3wevew ${defauwt_sewvice_pattewn}%n</pattewn>
+    </encodew>
+  </appendew>
+
+  <!-- wogwens -->
+  <appendew nyame="wogwens" cwass="com.twittew.wogwens.wogback.wogwensappendew">
+    <mdcadditionawcontext>twue</mdcadditionawcontext>
+    <categowy>wogwens</categowy>
+    <index>${wog.wens.index}</index>
+    <tag>${wog.wens.tag}/sewvice</tag>
+    <encodew>
+      <pattewn>%msg%n</pattewn>
+    </encodew>
+    <tuwbofiwtew c-cwass="ch.qos.wogback.cwassic.tuwbo.dupwicatemessagefiwtew">
+      <cachesize>500</cachesize>
+      <awwowedwepetitions>50</awwowedwepetitions>
+    </tuwbofiwtew>
+    <fiwtew cwass="com.twittew.stwato.wogging.wogback.wegexfiwtew">
+      <fowwoggew>manhattan-cwient</fowwoggew>
+      <excwudewegex>.*invawidwequest.*</excwudewegex>
+    </fiwtew>
+  </appendew>
 
   <!-- ===================================================== -->
-  <!-- Package Config -->
+  <!-- p-pwimawy async a-appendews -->
   <!-- ===================================================== -->
 
-  <!-- Per-Package Config (shared) -->
-  <logger name="com.twitter" level="info"/>
+  <appendew n-nyame="async-sewvice" c-cwass="ch.qos.wogback.cwassic.asyncappendew">
+    <queuesize>${async_queue_size}</queuesize>
+    <maxfwushtime>${async_max_fwush_time}</maxfwushtime>
+    <appendew-wef wef="sewvice"/>
+  </appendew>
+
+  <appendew nyame="async-stwato-onwy" c-cwass="ch.qos.wogback.cwassic.asyncappendew">
+    <queuesize>${async_queue_size}</queuesize>
+    <maxfwushtime>${async_max_fwush_time}</maxfwushtime>
+    <appendew-wef wef="stwato-onwy"/>
+  </appendew>
+
+  <appendew nyame="async-wogwens" c-cwass="ch.qos.wogback.cwassic.asyncappendew">
+    <queuesize>${async_queue_size}</queuesize>
+    <maxfwushtime>${async_max_fwush_time}</maxfwushtime>
+    <appendew-wef wef="wogwens"/>
+  </appendew>
+
+  <!-- ===================================================== -->
+  <!-- package config -->
+  <!-- ===================================================== -->
+
+  <!-- pew-package config (shawed) -->
+  <woggew n-nyame="com.twittew" wevew="info"/>
 
   <!--
-    By default, we leave the strato package at INFO level.
-    However, this line allows us to set the entire strato package, or a subset of it, to
-    a specific level. For example, if you pass -Dstrato_log_package=streaming -Dstrato_log_level=DEBUG
-    only loggers under com.twitter.strato.streaming.* will be set to DEBUG level. Passing only
-    -Dstrato_log_level will set all of strato.* to the specified level.
+    b-by defauwt, 😳😳😳 we w-weave the stwato p-package at info wevew. mya
+    howevew, mya this wine awwows us to set t-the entiwe stwato p-package, (⑅˘꒳˘) ow a subset of it, (U ﹏ U) to
+    a-a specific w-wevew. mya fow exampwe, if you pass -dstwato_wog_package=stweaming -dstwato_wog_wevew=debug
+    o-onwy woggews undew com.twittew.stwato.stweaming.* w-wiww be set to debug wevew. ʘwʘ passing o-onwy
+    -dstwato_wog_wevew wiww s-set aww of stwato.* to the specified w-wevew. (˘ω˘)
   -->
-  <logger name="com.twitter.strato${strato_log_package:-}" level="${strato_log_level:-INFO}"/>
+  <woggew nyame="com.twittew.stwato${stwato_wog_package:-}" w-wevew="${stwato_wog_wevew:-info}"/>
 
-  <logger name="com.twitter.wilyns" level="warn"/>
-  <logger name="com.twitter.finagle.mux" level="warn"/>
-  <logger name="com.twitter.finagle.serverset2" level="warn"/>
-  <logger name="com.twitter.logging.ScribeHandler" level="warn"/>
-  <logger name="com.twitter.zookeeper.client.internal" level="warn"/>
-  <logger name="com.twitter.decider.StoreDecider" level="warn"/>
+  <woggew nyame="com.twittew.wiwyns" wevew="wawn"/>
+  <woggew nyame="com.twittew.finagwe.mux" wevew="wawn"/>
+  <woggew name="com.twittew.finagwe.sewvewset2" wevew="wawn"/>
+  <woggew n-nyame="com.twittew.wogging.scwibehandwew" w-wevew="wawn"/>
+  <woggew nyame="com.twittew.zookeepew.cwient.intewnaw" wevew="wawn"/>
+  <woggew n-nyame="com.twittew.decidew.stowedecidew" wevew="wawn"/>
 
-  <!-- Per-Package Config (Strato) -->
-  <logger name="com.twitter.distributedlog.client" level="warn"/>
-  <logger name="com.twitter.finagle.mtls.authorization.config.AccessControlListConfiguration" level="warn"/>
-  <logger name="com.twitter.finatra.kafka.common.kerberoshelpers" level="warn"/>
-  <logger name="com.twitter.finatra.kafka.utils.BootstrapServerUtils" level="warn"/>
-  <logger name="com.twitter.server.coordinate" level="error"/>
-  <logger name="com.twitter.zookeeper.client" level="info"/>
-  <logger name="org.apache.zookeeper" level="error"/>
-  <logger name="org.apache.zookeeper.ClientCnxn" level="warn"/>
-  <logger name="ZkSession" level="info"/>
-  <logger name="OptimisticLockingCache" level="off"/>
-  <logger name="manhattan-client" level="warn"/>
-  <logger name="strato.op" level="warn"/>
-  <logger name="org.apache.kafka.clients.NetworkClient" level="error"/>
-  <logger name="org.apache.kafka.clients.consumer.internals" level="error"/>
-  <logger name="org.apache.kafka.clients.producer.internals" level="error"/>
-  <!-- produce a lot of messages like: Building client authenticator with server name kafka -->
-  <logger name="org.apache.kafka.common.network" level="warn"/>
+  <!-- p-pew-package c-config (stwato) -->
+  <woggew name="com.twittew.distwibutedwog.cwient" wevew="wawn"/>
+  <woggew nyame="com.twittew.finagwe.mtws.authowization.config.accesscontwowwistconfiguwation" w-wevew="wawn"/>
+  <woggew nyame="com.twittew.finatwa.kafka.common.kewbewoshewpews" wevew="wawn"/>
+  <woggew name="com.twittew.finatwa.kafka.utiws.bootstwapsewvewutiws" wevew="wawn"/>
+  <woggew n-nyame="com.twittew.sewvew.coowdinate" wevew="ewwow"/>
+  <woggew n-nyame="com.twittew.zookeepew.cwient" w-wevew="info"/>
+  <woggew n-nyame="owg.apache.zookeepew" wevew="ewwow"/>
+  <woggew n-nyame="owg.apache.zookeepew.cwientcnxn" w-wevew="wawn"/>
+  <woggew n-nyame="zksession" wevew="info"/>
+  <woggew n-nyame="optimisticwockingcache" wevew="off"/>
+  <woggew nyame="manhattan-cwient" wevew="wawn"/>
+  <woggew n-nyame="stwato.op" w-wevew="wawn"/>
+  <woggew n-nyame="owg.apache.kafka.cwients.netwowkcwient" w-wevew="ewwow"/>
+  <woggew n-nyame="owg.apache.kafka.cwients.consumew.intewnaws" wevew="ewwow"/>
+  <woggew nyame="owg.apache.kafka.cwients.pwoducew.intewnaws" wevew="ewwow"/>
+  <!-- p-pwoduce a wot of messages wike: buiwding cwient authenticatow with sewvew nyame kafka -->
+  <woggew n-nyame="owg.apache.kafka.common.netwowk" wevew="wawn"/>
 
-  <!-- Root Config -->
-  <root level="${log_level:-INFO}">
-    <appender-ref ref="ASYNC-SERVICE"/>
-    <appender-ref ref="ASYNC-LOGLENS"/>
-  </root>
+  <!-- woot config -->
+  <woot wevew="${wog_wevew:-info}">
+    <appendew-wef w-wef="async-sewvice"/>
+    <appendew-wef wef="async-wogwens"/>
+  </woot>
 
-  <!-- Strato package only logging-->
-  <logger name="com.twitter.strato"
-          level="info"
-          additivity="true">
-    <appender-ref ref="ASYNC-STRATO-ONLY" />
-  </logger>
+  <!-- s-stwato package o-onwy wogging-->
+  <woggew nyame="com.twittew.stwato"
+          w-wevew="info"
+          additivity="twue">
+    <appendew-wef w-wef="async-stwato-onwy" />
+  </woggew>
 
 
-</configuration>
+</configuwation>

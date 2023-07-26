@@ -1,43 +1,43 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt c-com.twittew.home_mixew.pwoduct.fowwowing.modew.homemixewextewnawstwings
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.sociaw_context.basesociawcontextbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata._
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope.pwoductscoped
+impowt com.twittew.stwingcentew.cwient.stwingcentew
+impowt com.twittew.timewinesewvice.suggests.{thwiftscawa => s-st}
+impowt javax.inject.inject
+impowt javax.inject.pwovidew
+i-impowt javax.inject.singweton
 
-@Singleton
-case class PopularInYourAreaSocialContextBuilder @Inject() (
-  externalStrings: HomeMixerExternalStrings,
-  @ProductScoped stringCenterProvider: Provider[StringCenter])
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@singweton
+case cwass popuwawinyouwaweasociawcontextbuiwdew @inject() (
+  e-extewnawstwings: homemixewextewnawstwings, >_<
+  @pwoductscoped s-stwingcentewpwovidew: p-pwovidew[stwingcentew])
+    extends basesociawcontextbuiwdew[pipewinequewy, tweetcandidate] {
 
-  private val stringCenter = stringCenterProvider.get()
-  private val popularInYourAreaString = externalStrings.socialContextPopularInYourAreaString
+  pwivate vaw stwingcentew = s-stwingcentewpwovidew.get()
+  pwivate vaw popuwawinyouwaweastwing = extewnawstwings.sociawcontextpopuwawinyouwaweastwing
 
-  def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
-    val suggestTypeOpt = candidateFeatures.getOrElse(SuggestTypeFeature, None)
-    if (suggestTypeOpt.contains(st.SuggestType.RecommendedTrendTweet)) {
-      Some(
-        GeneralContext(
-          contextType = LocationGeneralContextType,
-          text = stringCenter.prepare(popularInYourAreaString),
-          url = None,
-          contextImageUrls = None,
-          landingUrl = None
+  def appwy(
+    quewy: pipewinequewy, (⑅˘꒳˘)
+    c-candidate: tweetcandidate, /(^•ω•^)
+    c-candidatefeatuwes: f-featuwemap
+  ): o-option[sociawcontext] = {
+    v-vaw suggesttypeopt = candidatefeatuwes.getowewse(suggesttypefeatuwe, rawr x3 nyone)
+    i-if (suggesttypeopt.contains(st.suggesttype.wecommendedtwendtweet)) {
+      some(
+        genewawcontext(
+          c-contexttype = wocationgenewawcontexttype, (U ﹏ U)
+          text = stwingcentew.pwepawe(popuwawinyouwaweastwing), (U ﹏ U)
+          uww = nyone, (⑅˘꒳˘)
+          contextimageuwws = nyone, òωó
+          w-wandinguww = nyone
         ))
-    } else None
+    } e-ewse n-none
   }
 }

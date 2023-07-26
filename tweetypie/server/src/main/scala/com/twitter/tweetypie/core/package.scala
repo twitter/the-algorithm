@@ -1,5 +1,5 @@
-package com.twitter.tweetypie
+package com.twittew.tweetypie
 
-package object core {
-  type TweetResult = ValueState[TweetData]
+package o-object cowe {
+  t-type tweetwesuwt = v-vawuestate[tweetdata]
 }

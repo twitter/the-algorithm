@@ -1,23 +1,23 @@
-package com.twitter.frigate.pushservice.config.mlconfig
+package com.twittew.fwigate.pushsewvice.config.mwconfig
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.ml.prediction.DeepbirdPredictionEngineServiceStore
-import com.twitter.nrel.heavyranker.PushDBv2PredictionServiceStore
+impowt com.twittew.cowtex.deepbiwd.thwiftjava.deepbiwdpwedictionsewvice
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fwigate.common.mw.pwediction.deepbiwdpwedictionenginesewvicestowe
+i-impowt com.twittew.nwew.heavywankew.pushdbv2pwedictionsewvicestowe
 
-object DeepbirdV2ModelConfig {
-  def buildPredictionServiceScoreStore(
-    predictionServiceClient: DeepbirdPredictionService.ServiceToClient,
-    serviceName: String
+o-object deepbiwdv2modewconfig {
+  d-def buiwdpwedictionsewvicescowestowe(
+    p-pwedictionsewvicecwient: d-deepbiwdpwedictionsewvice.sewvicetocwient, (⑅˘꒳˘)
+    s-sewvicename: stwing
   )(
-    implicit statsReceiver: StatsReceiver
-  ): PushDBv2PredictionServiceStore = {
+    impwicit statsweceivew: statsweceivew
+  ): p-pushdbv2pwedictionsewvicestowe = {
 
-    val stats = statsReceiver.scope(serviceName)
-    val serviceStats = statsReceiver.scope("dbv2PredictionServiceStore")
+    vaw stats = statsweceivew.scope(sewvicename)
+    v-vaw sewvicestats = statsweceivew.scope("dbv2pwedictionsewvicestowe")
 
-    new PushDBv2PredictionServiceStore(
-      DeepbirdPredictionEngineServiceStore(predictionServiceClient, batchSize = Some(32))(stats)
-    )(serviceStats)
+    n-nyew pushdbv2pwedictionsewvicestowe(
+      deepbiwdpwedictionenginesewvicestowe(pwedictionsewvicecwient, (U ᵕ U❁) batchsize = some(32))(stats)
+    )(sewvicestats)
   }
 }

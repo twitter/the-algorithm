@@ -1,17 +1,17 @@
-package com.twitter.tweetypie
+package com.twittew.tweetypie
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.thriftscala.FieldByPath
-import org.apache.thrift.protocol.TField
-import com.twitter.context.TwitterContext
+impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy.tweetquewy
+i-impowt com.twittew.tweetypie.thwiftscawa.fiewdbypath
+i-impowt o-owg.apache.thwift.pwotocow.tfiewd
+i-impowt com.twittew.context.twittewcontext
 
-package object hydrator {
-  type TweetDataValueHydrator = ValueHydrator[TweetData, TweetQuery.Options]
-  type TweetDataEditHydrator = EditHydrator[TweetData, TweetQuery.Options]
+p-package o-object hydwatow {
+  type tweetdatavawuehydwatow = vawuehydwatow[tweetdata, (U ᵕ U❁) tweetquewy.options]
+  type tweetdataedithydwatow = e-edithydwatow[tweetdata, -.- tweetquewy.options]
 
-  def fieldByPath(fields: TField*): FieldByPath = FieldByPath(fields.map(_.id))
+  def fiewdbypath(fiewds: t-tfiewd*): fiewdbypath = f-fiewdbypath(fiewds.map(_.id))
 
-  val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  vaw twittewcontext: twittewcontext =
+    com.twittew.context.twittewcontext(com.twittew.tweetypie.twittewcontextpewmit)
 }

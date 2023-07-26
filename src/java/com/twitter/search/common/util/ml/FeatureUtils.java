@@ -1,120 +1,120 @@
-package com.twitter.search.common.util.ml;
+package com.twittew.seawch.common.utiw.mw;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt java.utiw.optionaw;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.sets;
 
 /**
- * Utilities for feature transformation and extraction.
+ * u-utiwities fow featuwe t-twansfowmation a-and extwaction. (ꈍᴗꈍ)
  */
-public final class FeatureUtils {
+pubwic finaw cwass featuweutiws {
 
-  private FeatureUtils() {
+  pwivate featuweutiws() {
   }
 
   /**
-   * Computes the difference between 2 values and returns the ratio of the difference over the
-   * minimum of both, according to these cases:
+   * c-computes the diffewence between 2 vawues a-and wetuwns the watio of the diffewence o-ovew the
+   * minimum of both, /(^•ω•^) accowding to these cases:
    *
-   * 1. if (a > b) return  a / b
-   * 2. if (a < b) return  - b / a
-   * 3. if (a == b == 0) return 0
+   * 1. (⑅˘꒳˘) i-if (a > b) wetuwn  a-a / b
+   * 2. ( ͡o ω ͡o ) if (a < b-b) wetuwn  - b / a
+   * 3. òωó if (a == b == 0) wetuwn 0
    *
-   * The upper/lower limit is (-) maxRatio. For cases 1 and 2, if the denominator is 0,
-   * it returns maxRatio.
+   * the uppew/wowew w-wimit is (-) maxwatio. (⑅˘꒳˘) fow cases 1 and 2, XD if the denominatow is 0, -.-
+   * it w-wetuwns maxwatio. :3
    *
-   * This method is used to define a feature that tells how much larger or smaller is the
-   * first value with respect to the second one..
+   * this m-method is used t-to define a featuwe t-that tewws h-how much wawgew ow smowew is the
+   * fiwst vawue w-with wespect to the second one..
    */
-  public static float diffRatio(float a, float b, float maxRatio) {
-    float diff = a - b;
+  pubwic s-static fwoat diffwatio(fwoat a, nyaa~~ fwoat b, 😳 fwoat maxwatio) {
+    fwoat diff = a - b;
     if (diff == 0) {
-      return 0;
+      wetuwn 0;
     }
-    float denominator = Math.min(a, b);
-    float ratio = denominator != 0 ? Math.abs(diff / denominator) : maxRatio;
-    return Math.copySign(Math.min(ratio, maxRatio), diff);
+    f-fwoat denominatow = math.min(a, (⑅˘꒳˘) b-b);
+    fwoat w-watio = denominatow != 0 ? m-math.abs(diff / denominatow) : maxwatio;
+    wetuwn m-math.copysign(math.min(watio, nyaa~~ maxwatio), d-diff);
   }
 
   /**
-   * Computes the cosine similarity between two maps that represent sparse vectors.
+   * computes the cosine s-simiwawity b-between two maps that wepwesent s-spawse vectows. OwO
    */
-  public static <K, V extends Number> double cosineSimilarity(
-      Map<K, V> vector1, Map<K, V> vector2) {
-    if (vector1 == null || vector1.isEmpty() || vector2 == null || vector2.isEmpty()) {
-      return 0;
+  pubwic static <k, rawr x3 v-v extends nyumbew> doubwe cosinesimiwawity(
+      m-map<k, XD v> vectow1, σωσ map<k, v-v> vectow2) {
+    if (vectow1 == n-nyuww || v-vectow1.isempty() || vectow2 == nyuww || vectow2.isempty()) {
+      wetuwn 0;
     }
-    double squaredSum1 = 0;
-    double squaredSum2 = 0;
-    double squaredCrossSum = 0;
+    doubwe squawedsum1 = 0;
+    doubwe squawedsum2 = 0;
+    doubwe squawedcwosssum = 0;
 
-    for (K key : Sets.union(vector1.keySet(), vector2.keySet())) {
-      double value1 = 0;
-      double value2 = 0;
+    f-fow (k key : sets.union(vectow1.keyset(), (U ᵕ U❁) v-vectow2.keyset())) {
+      doubwe vawue1 = 0;
+      doubwe v-vawue2 = 0;
 
-      V optValue1 = vector1.get(key);
-      if (optValue1 != null) {
-        value1 = optValue1.doubleValue();
+      v-v optvawue1 = v-vectow1.get(key);
+      if (optvawue1 != nyuww) {
+        vawue1 = optvawue1.doubwevawue();
       }
-      V optValue2 = vector2.get(key);
-      if (optValue2 != null) {
-        value2 = optValue2.doubleValue();
+      v optvawue2 = vectow2.get(key);
+      i-if (optvawue2 != nyuww) {
+        vawue2 = optvawue2.doubwevawue();
       }
 
-      squaredSum1 += value1 * value1;
-      squaredSum2 += value2 * value2;
-      squaredCrossSum += value1 * value2;
+      squawedsum1 += v-vawue1 * vawue1;
+      s-squawedsum2 += vawue2 * v-vawue2;
+      s-squawedcwosssum += vawue1 * v-vawue2;
     }
 
-    if (squaredSum1 == 0 || squaredSum2 == 0) {
-      return 0;
-    } else {
-      return squaredCrossSum / Math.sqrt(squaredSum1 * squaredSum2);
-    }
-  }
-
-  /**
-   * Computes the cosine similarity between two (dense) vectors.
-   */
-  public static <V extends Number> double cosineSimilarity(
-      List<V> vector1, List<V> vector2) {
-    if (vector1 == null || vector1.isEmpty() || vector2 == null || vector2.isEmpty()) {
-      return 0;
-    }
-
-    Preconditions.checkArgument(vector1.size() == vector2.size());
-    double squaredSum1 = 0;
-    double squaredSum2 = 0;
-    double squaredCrossSum = 0;
-    for (int i = 0; i < vector1.size(); i++) {
-      double value1 = vector1.get(i).doubleValue();
-      double value2 = vector2.get(i).doubleValue();
-      squaredSum1 += value1 * value1;
-      squaredSum2 += value2 * value2;
-      squaredCrossSum += value1 * value2;
-    }
-
-    if (squaredSum1 == 0 || squaredSum2 == 0) {
-      return 0;
-    } else {
-      return squaredCrossSum / Math.sqrt(squaredSum1 * squaredSum2);
+    i-if (squawedsum1 == 0 || s-squawedsum2 == 0) {
+      w-wetuwn 0;
+    } ewse {
+      wetuwn squawedcwosssum / m-math.sqwt(squawedsum1 * s-squawedsum2);
     }
   }
 
   /**
-   * Finds the key of the map with the highest value (compared in natural order)
+   * c-computes t-the cosine simiwawity b-between two (dense) vectows. (U ﹏ U)
    */
-  @SuppressWarnings("unchecked")
-  public static <K, V extends Comparable> Optional<K> findMaxKey(Map<K, V> map) {
-    if (map == null || map.isEmpty()) {
-      return Optional.empty();
+  pubwic static <v extends n-nyumbew> doubwe cosinesimiwawity(
+      wist<v> vectow1, :3 wist<v> vectow2) {
+    if (vectow1 == n-nuww || vectow1.isempty() || vectow2 == nyuww || vectow2.isempty()) {
+      wetuwn 0;
     }
 
-    Optional<Map.Entry<K, V>> maxEntry = map.entrySet().stream().max(Map.Entry.comparingByValue());
-    return maxEntry.map(Map.Entry::getKey);
+    p-pweconditions.checkawgument(vectow1.size() == v-vectow2.size());
+    d-doubwe squawedsum1 = 0;
+    d-doubwe squawedsum2 = 0;
+    doubwe squawedcwosssum = 0;
+    f-fow (int i = 0; i-i < vectow1.size(); i++) {
+      doubwe vawue1 = vectow1.get(i).doubwevawue();
+      doubwe vawue2 = vectow2.get(i).doubwevawue();
+      s-squawedsum1 += vawue1 * v-vawue1;
+      squawedsum2 += vawue2 * v-vawue2;
+      s-squawedcwosssum += vawue1 * vawue2;
+    }
+
+    i-if (squawedsum1 == 0 || s-squawedsum2 == 0) {
+      wetuwn 0;
+    } e-ewse {
+      w-wetuwn squawedcwosssum / math.sqwt(squawedsum1 * squawedsum2);
+    }
+  }
+
+  /**
+   * finds the key of the map w-with the highest v-vawue (compawed i-in natuwaw owdew)
+   */
+  @suppwesswawnings("unchecked")
+  pubwic s-static <k, ( ͡o ω ͡o ) v-v extends compawabwe> optionaw<k> f-findmaxkey(map<k, σωσ v> map) {
+    if (map == nyuww || map.isempty()) {
+      wetuwn o-optionaw.empty();
+    }
+
+    o-optionaw<map.entwy<k, >w< v>> maxentwy = map.entwyset().stweam().max(map.entwy.compawingbyvawue());
+    w-wetuwn maxentwy.map(map.entwy::getkey);
   }
 
 }

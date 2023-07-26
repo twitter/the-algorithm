@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.timewine_moduwe
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.timewine_moduwe.basemoduweheadewbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduweheadew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.timewines.configapi.pawam
 
-case class ParamGatedModuleHeaderBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  enableParam: Param[Boolean],
-  enabledBuilder: BaseModuleHeaderBuilder[Query, Candidate],
-  defaultBuilder: Option[BaseModuleHeaderBuilder[Query, Candidate]] = None)
-    extends BaseModuleHeaderBuilder[Query, Candidate] {
+case cwass pawamgatedmoduweheadewbuiwdew[-quewy <: pipewinequewy, ( ͡o ω ͡o ) -candidate <: u-univewsawnoun[any]](
+  enabwepawam: pawam[boowean],
+  enabwedbuiwdew: b-basemoduweheadewbuiwdew[quewy, rawr x3 candidate],
+  defauwtbuiwdew: o-option[basemoduweheadewbuiwdew[quewy, nyaa~~ candidate]] = nyone)
+    extends basemoduweheadewbuiwdew[quewy, /(^•ω•^) c-candidate] {
 
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[ModuleHeader] = {
-    if (query.params(enableParam)) {
-      enabledBuilder(query, candidates)
-    } else {
-      defaultBuilder.flatMap(_.apply(query, candidates))
+  def appwy(
+    q-quewy: quewy, rawr
+    c-candidates: seq[candidatewithfeatuwes[candidate]]
+  ): option[moduweheadew] = {
+    if (quewy.pawams(enabwepawam)) {
+      enabwedbuiwdew(quewy, OwO candidates)
+    } e-ewse {
+      defauwtbuiwdew.fwatmap(_.appwy(quewy, (U ﹏ U) candidates))
     }
   }
 }

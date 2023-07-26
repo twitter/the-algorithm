@@ -1,35 +1,35 @@
-package com.twitter.search.ingester.pipeline.util;
-import java.util.concurrent.TimeUnit;
-import com.twitter.common.base.MorePreconditions;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import org.apache.commons.pipeline.stage.StageTimer;
+package com.twittew.seawch.ingestew.pipewine.utiw;
+impowt java.utiw.concuwwent.timeunit;
+i-impowt com.twittew.common.base.mowepweconditions;
+i-impowt c-com.twittew.seawch.common.metwics.seawchtimewstats;
+i-impowt owg.apache.commons.pipewine.stage.stagetimew;
 /**
- * Adds science stats export to StageTimer
+ * a-adds science stats e-expowt to stagetimew
  */
-public class IngesterStageTimer extends StageTimer {
-  private final String name;
-  private final SearchTimerStats timer;
+p-pubwic c-cwass ingestewstagetimew extends stagetimew {
+  pwivate finaw stwing nyame;
+  p-pwivate finaw seawchtimewstats timew;
 
-  public IngesterStageTimer(String statName) {
-    name = MorePreconditions.checkNotBlank(statName);
-    timer = SearchTimerStats.export(name, TimeUnit.NANOSECONDS, true);
+  pubwic i-ingestewstagetimew(stwing statname) {
+    n-nyame = mowepweconditions.checknotbwank(statname);
+    timew = seawchtimewstats.expowt(name, (⑅˘꒳˘) timeunit.nanoseconds, rawr x3 twue);
   }
 
-  public String getName() {
-    return name;
+  p-pubwic stwing getname() {
+    w-wetuwn n-nyame;
   }
 
-  @Override
-  public void start() {
-    // This override is not necessary; it is added for code readability.
-    // super.start puts the current time in startTime
-    super.start();
+  @ovewwide
+  pubwic void stawt() {
+    // this ovewwide is nyot nyecessawy; i-it is added fow code weadabiwity. (✿oωo)
+    // supew.stawt puts the cuwwent t-time in stawttime
+    supew.stawt();
   }
 
-  @Override
-  public void stop() {
-    super.stop();
-    long runTime = System.nanoTime() - startTime.get();
-    timer.timerIncrement(runTime);
+  @ovewwide
+  p-pubwic v-void stop() {
+    s-supew.stop();
+    w-wong wuntime = system.nanotime() - stawttime.get();
+    t-timew.timewincwement(wuntime);
   }
 }

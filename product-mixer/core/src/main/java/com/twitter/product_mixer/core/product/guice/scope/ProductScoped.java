@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.product.guice.scope;
+package com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.Target;
+impowt s-static java.wang.annotation.ewementtype.method;
+i-impowt static j-java.wang.annotation.ewementtype.type;
+i-impowt java.wang.annotation.wetention;
+impowt s-static java.wang.annotation.wetentionpowicy.wuntime;
+i-impowt j-java.wang.annotation.tawget;
 
-import com.google.inject.ScopeAnnotation;
+i-impowt com.googwe.inject.scopeannotation;
 
-@Target({ TYPE, METHOD })
-@Retention(RUNTIME)
-@ScopeAnnotation
-public @interface ProductScoped {}
+@tawget({ type, rawr x3 method })
+@wetention(wuntime)
+@scopeannotation
+pubwic @intewface pwoductscoped {}

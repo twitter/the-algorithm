@@ -1,91 +1,91 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdFeature
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasImageFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasVideoFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionScreenNameFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetUrlsFeature
-import com.twitter.home_mixer.util.tweetypie.content.TweetMediaFeaturesExtractor
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.timelineranker.{thriftscala => tlr}
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.candidatesouwceidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.diwectedatusewidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.eawwybiwdfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.eawwybiwdscowefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.excwusiveconvewsationauthowidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.fwominnetwowksouwcefeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.hasimagefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.hasvideofeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.inwepwytotweetidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.inwepwytousewidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.iswandomtweetfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.mentionscweennamefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.mentionusewidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.quotedtweetidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.quotedusewidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.souwcetweetidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.souwceusewidfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.stweamtokafkafeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.tweetuwwsfeatuwe
+impowt com.twittew.home_mixew.utiw.tweetypie.content.tweetmediafeatuwesextwactow
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt c-com.twittew.timewinewankew.{thwiftscawa => t-tww}
 
-object TimelineRankerResponseTransformer {
+object timewinewankewwesponsetwansfowmew {
 
-  val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    CandidateSourceIdFeature,
-    DirectedAtUserIdFeature,
-    EarlybirdFeature,
-    EarlybirdScoreFeature,
-    ExclusiveConversationAuthorIdFeature,
-    FromInNetworkSourceFeature,
-    HasImageFeature,
-    HasVideoFeature,
-    InReplyToTweetIdFeature,
-    InReplyToUserIdFeature,
-    IsRandomTweetFeature,
-    IsRetweetFeature,
-    MentionScreenNameFeature,
-    MentionUserIdFeature,
-    StreamToKafkaFeature,
-    QuotedTweetIdFeature,
-    QuotedUserIdFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
-    SuggestTypeFeature,
-    TweetUrlsFeature
+  vaw featuwes: s-set[featuwe[_, (U ﹏ U) _]] = set(
+    authowidfeatuwe, >w<
+    candidatesouwceidfeatuwe, mya
+    d-diwectedatusewidfeatuwe, >w<
+    eawwybiwdfeatuwe, nyaa~~
+    eawwybiwdscowefeatuwe, (✿oωo)
+    excwusiveconvewsationauthowidfeatuwe, ʘwʘ
+    fwominnetwowksouwcefeatuwe, (ˆ ﻌ ˆ)♡
+    hasimagefeatuwe, 😳😳😳
+    hasvideofeatuwe, :3
+    i-inwepwytotweetidfeatuwe, OwO
+    inwepwytousewidfeatuwe, (U ﹏ U)
+    i-iswandomtweetfeatuwe, >w<
+    i-iswetweetfeatuwe, (U ﹏ U)
+    m-mentionscweennamefeatuwe, 😳
+    mentionusewidfeatuwe, (ˆ ﻌ ˆ)♡
+    stweamtokafkafeatuwe, 😳😳😳
+    quotedtweetidfeatuwe, (U ﹏ U)
+    q-quotedusewidfeatuwe, (///ˬ///✿)
+    s-souwcetweetidfeatuwe, 😳
+    souwceusewidfeatuwe, 😳
+    s-suggesttypefeatuwe, σωσ
+    t-tweetuwwsfeatuwe
   )
 
-  def transform(candidate: tlr.CandidateTweet): FeatureMap = {
-    val tweet = candidate.tweet
-    val quotedTweet = tweet.filter(_.quotedTweet.exists(_.tweetId != 0)).flatMap(_.quotedTweet)
-    val mentions = tweet.flatMap(_.mentions).getOrElse(Seq.empty)
-    val coreData = tweet.flatMap(_.coreData)
-    val share = coreData.flatMap(_.share)
-    val reply = coreData.flatMap(_.reply)
+  def twansfowm(candidate: t-tww.candidatetweet): featuwemap = {
+    v-vaw tweet = candidate.tweet
+    vaw quotedtweet = t-tweet.fiwtew(_.quotedtweet.exists(_.tweetid != 0)).fwatmap(_.quotedtweet)
+    vaw mentions = t-tweet.fwatmap(_.mentions).getowewse(seq.empty)
+    vaw cowedata = t-tweet.fwatmap(_.cowedata)
+    v-vaw shawe = cowedata.fwatmap(_.shawe)
+    vaw wepwy = cowedata.fwatmap(_.wepwy)
 
-    FeatureMapBuilder()
-      .add(AuthorIdFeature, coreData.map(_.userId))
-      .add(DirectedAtUserIdFeature, coreData.flatMap(_.directedAtUser.map(_.userId)))
-      .add(EarlybirdFeature, candidate.features)
-      .add(EarlybirdScoreFeature, candidate.features.map(_.earlybirdScore))
+    featuwemapbuiwdew()
+      .add(authowidfeatuwe, rawr x3 cowedata.map(_.usewid))
+      .add(diwectedatusewidfeatuwe, OwO cowedata.fwatmap(_.diwectedatusew.map(_.usewid)))
+      .add(eawwybiwdfeatuwe, /(^•ω•^) c-candidate.featuwes)
+      .add(eawwybiwdscowefeatuwe, 😳😳😳 c-candidate.featuwes.map(_.eawwybiwdscowe))
       .add(
-        ExclusiveConversationAuthorIdFeature,
-        tweet.flatMap(_.exclusiveTweetControl.map(_.conversationAuthorId)))
-      .add(FromInNetworkSourceFeature, false)
-      .add(HasImageFeature, tweet.exists(TweetMediaFeaturesExtractor.hasImage))
-      .add(HasVideoFeature, tweet.exists(TweetMediaFeaturesExtractor.hasVideo))
-      .add(InReplyToTweetIdFeature, reply.flatMap(_.inReplyToStatusId))
-      .add(InReplyToUserIdFeature, reply.map(_.inReplyToUserId))
-      .add(IsRandomTweetFeature, candidate.features.exists(_.isRandomTweet.getOrElse(false)))
-      .add(IsRetweetFeature, share.isDefined)
-      .add(MentionScreenNameFeature, mentions.map(_.screenName))
-      .add(MentionUserIdFeature, mentions.flatMap(_.userId))
-      .add(StreamToKafkaFeature, true)
-      .add(QuotedTweetIdFeature, quotedTweet.map(_.tweetId))
-      .add(QuotedUserIdFeature, quotedTweet.map(_.userId))
-      .add(SourceTweetIdFeature, share.map(_.sourceStatusId))
-      .add(SourceUserIdFeature, share.map(_.sourceUserId))
-      .add(TweetUrlsFeature, candidate.features.flatMap(_.urlsList).getOrElse(Seq.empty))
-      .build()
+        excwusiveconvewsationauthowidfeatuwe, ( ͡o ω ͡o )
+        t-tweet.fwatmap(_.excwusivetweetcontwow.map(_.convewsationauthowid)))
+      .add(fwominnetwowksouwcefeatuwe, >_< f-fawse)
+      .add(hasimagefeatuwe, >w< t-tweet.exists(tweetmediafeatuwesextwactow.hasimage))
+      .add(hasvideofeatuwe, rawr tweet.exists(tweetmediafeatuwesextwactow.hasvideo))
+      .add(inwepwytotweetidfeatuwe, 😳 wepwy.fwatmap(_.inwepwytostatusid))
+      .add(inwepwytousewidfeatuwe, >w< wepwy.map(_.inwepwytousewid))
+      .add(iswandomtweetfeatuwe, (⑅˘꒳˘) c-candidate.featuwes.exists(_.iswandomtweet.getowewse(fawse)))
+      .add(iswetweetfeatuwe, shawe.isdefined)
+      .add(mentionscweennamefeatuwe, OwO mentions.map(_.scweenname))
+      .add(mentionusewidfeatuwe, (ꈍᴗꈍ) mentions.fwatmap(_.usewid))
+      .add(stweamtokafkafeatuwe, twue)
+      .add(quotedtweetidfeatuwe, 😳 quotedtweet.map(_.tweetid))
+      .add(quotedusewidfeatuwe, 😳😳😳 quotedtweet.map(_.usewid))
+      .add(souwcetweetidfeatuwe, mya s-shawe.map(_.souwcestatusid))
+      .add(souwceusewidfeatuwe, mya shawe.map(_.souwceusewid))
+      .add(tweetuwwsfeatuwe, (⑅˘꒳˘) c-candidate.featuwes.fwatmap(_.uwwswist).getowewse(seq.empty))
+      .buiwd()
   }
 }

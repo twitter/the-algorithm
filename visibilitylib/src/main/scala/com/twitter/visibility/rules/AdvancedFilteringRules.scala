@@ -1,71 +1,71 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.gizmoduck.thriftscala.MentionFilter.Following
-import com.twitter.visibility.features.ViewerMentionFilter
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason.Unspecified
+impowt com.twittew.gizmoduck.thwiftscawa.mentionfiwtew.fowwowing
+i-impowt com.twittew.visibiwity.featuwes.viewewmentionfiwtew
+i-impowt com.twittew.visibiwity.wuwes.condition._
+i-impowt com.twittew.visibiwity.wuwes.weason.unspecified
 
-object NoConfirmedEmailRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        ViewerFiltersNoConfirmedEmail,
-        Not(AuthorHasConfirmedEmail)
+o-object n-nyoconfiwmedemaiwwuwe
+    e-extends w-wuwewithconstantaction(
+      d-dwop(unspecified), (U ﹏ U)
+      and(
+        nyonauthowviewew, (U ﹏ U)
+        nyot(viewewdoesfowwowauthow), (⑅˘꒳˘)
+        viewewfiwtewsnoconfiwmedemaiw, òωó
+        n-nyot(authowhasconfiwmedemaiw)
       )
     )
 
-object NoConfirmedPhoneRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        ViewerFiltersNoConfirmedPhone,
-        Not(AuthorHasVerifiedPhone)
+object nyoconfiwmedphonewuwe
+    e-extends wuwewithconstantaction(
+      d-dwop(unspecified), ʘwʘ
+      and(
+        nyonauthowviewew, /(^•ω•^)
+        nyot(viewewdoesfowwowauthow), ʘwʘ
+        v-viewewfiwtewsnoconfiwmedphone, σωσ
+        nyot(authowhasvewifiedphone)
       )
     )
 
-object NoDefaultProfileImageRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        ViewerFiltersDefaultProfileImage,
-        AuthorHasDefaultProfileImage
+o-object n-nyodefauwtpwofiweimagewuwe
+    extends wuwewithconstantaction(
+      dwop(unspecified), OwO
+      and(
+        nyonauthowviewew, 😳😳😳
+        nyot(viewewdoesfowwowauthow),
+        v-viewewfiwtewsdefauwtpwofiweimage, 😳😳😳
+        authowhasdefauwtpwofiweimage
       )
     )
 
-object NoNewUsersRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        AuthorIsNewAccount
+object nyonewusewswuwe
+    extends wuwewithconstantaction(
+      d-dwop(unspecified), o.O
+      and(
+        n-nyonauthowviewew, ( ͡o ω ͡o )
+        n-nyot(viewewdoesfowwowauthow), (U ﹏ U)
+        a-authowisnewaccount
       )
     )
 
-object NoNotFollowedByRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        ViewerFiltersNotFollowedBy,
-        Not(AuthorDoesFollowViewer)
+o-object nyonotfowwowedbywuwe
+    extends w-wuwewithconstantaction(
+      dwop(unspecified), (///ˬ///✿)
+      and(
+        n-nyonauthowviewew, >w<
+        nyot(viewewdoesfowwowauthow), rawr
+        viewewfiwtewsnotfowwowedby, mya
+        nyot(authowdoesfowwowviewew)
       )
     )
 
-object OnlyPeopleIFollowRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        Equals(ViewerMentionFilter, Following),
-        Not(NotificationIsOnCommunityTweet)
+object onwypeopweifowwowwuwe
+    extends w-wuwewithconstantaction(
+      dwop(unspecified), ^^
+      a-and(
+        n-nyonauthowviewew, 😳😳😳
+        n-nyot(viewewdoesfowwowauthow),
+        equaws(viewewmentionfiwtew, mya fowwowing),
+        nyot(notificationisoncommunitytweet)
       )
     )

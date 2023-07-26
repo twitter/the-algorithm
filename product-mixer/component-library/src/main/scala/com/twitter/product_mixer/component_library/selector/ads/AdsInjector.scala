@@ -1,73 +1,73 @@
-package com.twitter.product_mixer.component_library.selector.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow.ads
 
-import com.google.inject.Inject
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.goldfinch.adaptors.ads.productmixer.ProductMixerPromotedEntriesAdaptor
-import com.twitter.goldfinch.adaptors.productmixer.ProductMixerNonPromotedEntriesAdaptor
-import com.twitter.goldfinch.adaptors.productmixer.ProductMixerQueryConverter
-import com.twitter.goldfinch.api.AdsInjectionRequestContextConverter
-import com.twitter.goldfinch.api.AdsInjectionSurfaceAreas.SurfaceAreaName
-import com.twitter.goldfinch.api.{AdsInjector => GoldfinchAdsInjector}
-import com.twitter.goldfinch.api.NonPromotedEntriesAdaptor
-import com.twitter.goldfinch.api.PromotedEntriesAdaptor
-import com.twitter.goldfinch.impl.injector.AdsInjectorBuilder
-import com.twitter.goldfinch.impl.injector.product_mixer.AdsInjectionSurfaceAreaAdjustersMap
-import com.twitter.goldfinch.impl.injector.product_mixer.VerticalSizeAdjustmentConfigMap
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.component_library.model.query.ads._
-import com.twitter.product_mixer.core.model.common.presentation._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Singleton
-import com.twitter.goldfinch.impl.core.DefaultFeatureSwitchResultsFactory
-import com.twitter.goldfinch.impl.core.LocalDevelopmentFeatureSwitchResultsFactory
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ConfigRepoLocalPath
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
+impowt com.googwe.inject.inject
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.gowdfinch.adaptows.ads.pwoductmixew.pwoductmixewpwomotedentwiesadaptow
+i-impowt c-com.twittew.gowdfinch.adaptows.pwoductmixew.pwoductmixewnonpwomotedentwiesadaptow
+i-impowt com.twittew.gowdfinch.adaptows.pwoductmixew.pwoductmixewquewyconvewtew
+i-impowt com.twittew.gowdfinch.api.adsinjectionwequestcontextconvewtew
+i-impowt com.twittew.gowdfinch.api.adsinjectionsuwfaceaweas.suwfaceaweaname
+i-impowt com.twittew.gowdfinch.api.{adsinjectow => gowdfinchadsinjectow}
+impowt com.twittew.gowdfinch.api.nonpwomotedentwiesadaptow
+impowt com.twittew.gowdfinch.api.pwomotedentwiesadaptow
+impowt c-com.twittew.gowdfinch.impw.injectow.adsinjectowbuiwdew
+impowt com.twittew.gowdfinch.impw.injectow.pwoduct_mixew.adsinjectionsuwfaceaweaadjustewsmap
+impowt com.twittew.gowdfinch.impw.injectow.pwoduct_mixew.vewticawsizeadjustmentconfigmap
+i-impowt com.twittew.inject.wogging
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.quewy.ads._
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation._
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt javax.inject.singweton
+i-impowt com.twittew.gowdfinch.impw.cowe.defauwtfeatuweswitchwesuwtsfactowy
+impowt c-com.twittew.gowdfinch.impw.cowe.wocawdevewopmentfeatuweswitchwesuwtsfactowy
+impowt c-com.twittew.inject.annotations.fwag
+impowt com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags.pwoductmixewfwagmoduwe.configwepowocawpath
+impowt com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags.pwoductmixewfwagmoduwe.sewvicewocaw
 
-@Singleton
-class AdsInjector @Inject() (
-  statsReceiver: StatsReceiver,
-  @Flag(ConfigRepoLocalPath) localConfigRepoPath: String,
-  @Flag(ServiceLocal) isServiceLocal: Boolean)
-    extends Logging {
-  private val adsQueryRequestConverter: AdsInjectionRequestContextConverter[
-    PipelineQuery with AdsQuery
-  ] = ProductMixerQueryConverter
+@singweton
+cwass adsinjectow @inject() (
+  s-statsweceivew: statsweceivew, :3
+  @fwag(configwepowocawpath) wocawconfigwepopath: stwing, 😳😳😳
+  @fwag(sewvicewocaw) issewvicewocaw: b-boowean)
+    extends wogging {
+  p-pwivate vaw a-adsquewywequestconvewtew: a-adsinjectionwequestcontextconvewtew[
+    p-pipewinequewy with adsquewy
+  ] = pwoductmixewquewyconvewtew
 
-  def forSurfaceArea(
-    surfaceAreaName: SurfaceAreaName
-  ): GoldfinchAdsInjector[
-    PipelineQuery with AdsQuery,
-    CandidateWithDetails,
-    CandidateWithDetails
+  d-def fowsuwfaceawea(
+    suwfaceaweaname: suwfaceaweaname
+  ): g-gowdfinchadsinjectow[
+    pipewinequewy with adsquewy, (˘ω˘)
+    candidatewithdetaiws,
+    candidatewithdetaiws
   ] = {
 
-    val scopedStatsReceiver: StatsReceiver =
-      statsReceiver.scope("goldfinch", surfaceAreaName.toString)
+    vaw scopedstatsweceivew: s-statsweceivew =
+      statsweceivew.scope("gowdfinch", ^^ s-suwfaceaweaname.tostwing)
 
-    val nonAdsAdaptor: NonPromotedEntriesAdaptor[CandidateWithDetails] =
-      ProductMixerNonPromotedEntriesAdaptor(
-        VerticalSizeAdjustmentConfigMap.configsBySurfaceArea(surfaceAreaName),
-        scopedStatsReceiver)
+    v-vaw nyonadsadaptow: n-nyonpwomotedentwiesadaptow[candidatewithdetaiws] =
+      pwoductmixewnonpwomotedentwiesadaptow(
+        vewticawsizeadjustmentconfigmap.configsbysuwfaceawea(suwfaceaweaname),
+        scopedstatsweceivew)
 
-    val adsAdaptor: PromotedEntriesAdaptor[CandidateWithDetails] =
-      new ProductMixerPromotedEntriesAdaptor(scopedStatsReceiver)
+    v-vaw a-adsadaptow: pwomotedentwiesadaptow[candidatewithdetaiws] =
+      nyew pwoductmixewpwomotedentwiesadaptow(scopedstatsweceivew)
 
-    val featureSwitchFactory = if (isServiceLocal) {
-      new LocalDevelopmentFeatureSwitchResultsFactory(
-        surfaceAreaName.toString,
-        configRepoAbsPath = localConfigRepoPath)
-    } else new DefaultFeatureSwitchResultsFactory(surfaceAreaName.toString)
+    v-vaw featuweswitchfactowy = i-if (issewvicewocaw) {
+      nyew w-wocawdevewopmentfeatuweswitchwesuwtsfactowy(
+        suwfaceaweaname.tostwing, :3
+        c-configwepoabspath = wocawconfigwepopath)
+    } ewse nyew d-defauwtfeatuweswitchwesuwtsfactowy(suwfaceaweaname.tostwing)
 
-    new AdsInjectorBuilder[PipelineQuery with AdsQuery, CandidateWithDetails, CandidateWithDetails](
-      requestAdapter = adsQueryRequestConverter,
-      nonPromotedEntriesAdaptor = nonAdsAdaptor,
-      promotedEntriesAdaptor = adsAdaptor,
-      adjusters =
-        AdsInjectionSurfaceAreaAdjustersMap.getAdjusters(surfaceAreaName, scopedStatsReceiver),
-      featureSwitchFactory = featureSwitchFactory,
-      statsReceiver = scopedStatsReceiver,
-      logger = logger
-    ).build()
+    nyew adsinjectowbuiwdew[pipewinequewy w-with adsquewy, -.- candidatewithdetaiws, 😳 c-candidatewithdetaiws](
+      w-wequestadaptew = adsquewywequestconvewtew, mya
+      nyonpwomotedentwiesadaptow = nyonadsadaptow, (˘ω˘)
+      pwomotedentwiesadaptow = adsadaptow, >_<
+      adjustews =
+        adsinjectionsuwfaceaweaadjustewsmap.getadjustews(suwfaceaweaname, -.- s-scopedstatsweceivew),
+      f-featuweswitchfactowy = featuweswitchfactowy, 🥺
+      statsweceivew = scopedstatsweceivew,
+      w-woggew = w-woggew
+    ).buiwd()
   }
 }

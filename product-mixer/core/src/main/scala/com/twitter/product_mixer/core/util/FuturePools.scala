@@ -1,101 +1,101 @@
-package com.twitter.product_mixer.core.util
+package com.twittew.pwoduct_mixew.cowe.utiw
 
-import com.twitter.concurrent.NamedPoolThreadFactory
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Duration
-import com.twitter.util.FuturePool
+impowt c-com.twittew.concuwwent.namedpoowthweadfactowy
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwepoow
 
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+i-impowt java.utiw.concuwwent.awwaybwockingqueue
+i-impowt java.utiw.concuwwent.bwockingqueue
+i-impowt j-java.utiw.concuwwent.winkedbwockingqueue
+impowt java.utiw.concuwwent.thweadpoowexecutow
+impowt java.utiw.concuwwent.timeunit
 
 /**
- * Utility for making [[FuturePool]] with finite thread counts and different work queue options
- * while also monitoring the size of the work queue that's used.
+ * u-utiwity fow making [[futuwepoow]] with f-finite thwead counts and diffewent w-wowk queue options
+ * whiwe awso monitowing the size of the w-wowk queue that's used.
  *
- * This only handles the cases where the number of threads are bounded.
- * For unbounded numbers of threads in a [[FuturePool]] use [[FuturePool.interruptibleUnboundedPool]] instead.
+ * this o-onwy handwes t-the cases whewe the nyumbew of thweads awe bounded.
+ * fow unbounded nyumbews of t-thweads in a [[futuwepoow]] use [[futuwepoow.intewwuptibweunboundedpoow]] instead. nyaa~~
  */
-object FuturePools {
+object futuwepoows {
 
   /**
-   * Makes a [[FuturePool]] with a fixed number of threads and a work queue
-   * with a maximum size of `maxWorkQueueSize`.
+   * makes a [[futuwepoow]] w-with a fixed nyumbew of thweads a-and a wowk queue
+   * w-with a maximum s-size of `maxwowkqueuesize`. UwU
    *
-   * @note the [[FuturePool]] returns a failed [[com.twitter.util.Future]]s containing
-   *       [[java.util.concurrent.RejectedExecutionException]] when trying to enqueue
-   *       work when the work queue is full.
+   * @note t-the [[futuwepoow]] wetuwns a faiwed [[com.twittew.utiw.futuwe]]s containing
+   *       [[java.utiw.concuwwent.wejectedexecutionexception]] w-when twying to enqueue
+   *       wowk w-when the wowk queue is fuww. :3
    */
-  def boundedFixedThreadPool(
-    name: String,
-    fixedThreadCount: Int,
-    workQueueSize: Int,
-    statsReceiver: StatsReceiver
-  ): FuturePool =
-    futurePool(
-      name = name,
-      minThreads = fixedThreadCount,
-      maxThreads = fixedThreadCount,
-      keepIdleThreadsAlive = Duration.Zero,
-      workQueue = new ArrayBlockingQueue[Runnable](workQueueSize),
-      statsReceiver = statsReceiver
+  def boundedfixedthweadpoow(
+    nyame: stwing, (⑅˘꒳˘)
+    fixedthweadcount: int, (///ˬ///✿)
+    w-wowkqueuesize: int, ^^;;
+    statsweceivew: s-statsweceivew
+  ): f-futuwepoow =
+    f-futuwepoow(
+      name = nyame, >_<
+      minthweads = fixedthweadcount, rawr x3
+      m-maxthweads = f-fixedthweadcount, /(^•ω•^)
+      keepidwethweadsawive = d-duwation.zewo, :3
+      w-wowkqueue = nyew awwaybwockingqueue[wunnabwe](wowkqueuesize), (ꈍᴗꈍ)
+      s-statsweceivew = statsweceivew
     )
 
   /**
-   * Makes a [[FuturePool]] with a fix number of threads and an unbounded work queue
+   * m-makes a [[futuwepoow]] with a fix nyumbew of thweads a-and an unbounded wowk queue
    *
-   * @note Since the work queue is unbounded, this will fill up memory if the available worker threads can't keep up
+   * @note s-since the wowk queue is unbounded, /(^•ω•^) t-this wiww fiww u-up memowy if the avaiwabwe wowkew thweads can't keep up
    */
-  def unboundedFixedThreadPool(
-    name: String,
-    fixedThreadCount: Int,
-    statsReceiver: StatsReceiver
-  ): FuturePool =
-    futurePool(
-      name = name,
-      minThreads = fixedThreadCount,
-      maxThreads = fixedThreadCount,
-      keepIdleThreadsAlive = Duration.Zero,
-      workQueue = new LinkedBlockingQueue[Runnable],
-      statsReceiver = statsReceiver
+  def unboundedfixedthweadpoow(
+    name: stwing, (⑅˘꒳˘)
+    fixedthweadcount: i-int, ( ͡o ω ͡o )
+    s-statsweceivew: statsweceivew
+  ): f-futuwepoow =
+    f-futuwepoow(
+      n-nyame = nyame, òωó
+      minthweads = fixedthweadcount, (⑅˘꒳˘)
+      maxthweads = fixedthweadcount, XD
+      k-keepidwethweadsawive = duwation.zewo, -.-
+      wowkqueue = nyew winkedbwockingqueue[wunnabwe], :3
+      statsweceivew = s-statsweceivew
     )
 
   /**
-   * Makes a [[FuturePool]] with the provided thread configuration and
-   * who's `workQueue` is monitored by a [[com.twitter.finagle.stats.Gauge]]
+   * makes a [[futuwepoow]] w-with the pwovided t-thwead configuwation a-and
+   * who's `wowkqueue` i-is monitowed by a-a [[com.twittew.finagwe.stats.gauge]]
    *
-   * @note if `minThreads` == `maxThreads` then the threadpool has a fixed size
+   * @note i-if `minthweads` == `maxthweads` t-then the thweadpoow has a fixed size
    *
-   * @param name name of the threadpool
-   * @param minThreads minimum number of threads in the pool
-   * @param maxThreads maximum number of threads in the pool
-   * @param keepIdleThreadsAlive threads that are idle for this long will be removed from
-   *                             the pool if there are more than `minThreads` in the pool.
-   *                             If the pool size is fixed this is ignored.
+   * @pawam n-nyame n-nyame of the t-thweadpoow
+   * @pawam m-minthweads m-minimum numbew of thweads in the poow
+   * @pawam maxthweads m-maximum nyumbew of thweads in the poow
+   * @pawam keepidwethweadsawive thweads that awe idwe fow t-this wong wiww be wemoved fwom
+   *                             the poow if thewe awe mowe than `minthweads` in t-the poow.
+   *                             i-if t-the poow size is fixed this is ignowed.
    */
-  private def futurePool(
-    name: String,
-    minThreads: Int,
-    maxThreads: Int,
-    keepIdleThreadsAlive: Duration,
-    workQueue: BlockingQueue[Runnable],
-    statsReceiver: StatsReceiver
-  ): FuturePool = {
-    val gaugeReference = statsReceiver.addGauge("workQueueSize")(workQueue.size())
+  p-pwivate def futuwepoow(
+    name: s-stwing, nyaa~~
+    minthweads: i-int, 😳
+    maxthweads: int, (⑅˘꒳˘)
+    keepidwethweadsawive: duwation, nyaa~~
+    wowkqueue: bwockingqueue[wunnabwe], OwO
+    s-statsweceivew: statsweceivew
+  ): f-futuwepoow = {
+    vaw gaugewefewence = s-statsweceivew.addgauge("wowkqueuesize")(wowkqueue.size())
 
-    val threadFactory = new NamedPoolThreadFactory(name, makeDaemons = true)
+    v-vaw thweadfactowy = nyew nyamedpoowthweadfactowy(name, rawr x3 m-makedaemons = t-twue)
 
-    val executorService =
-      new ThreadPoolExecutor(
-        minThreads,
-        maxThreads, // ignored by ThreadPoolExecutor when an unbounded queue is provided
-        keepIdleThreadsAlive.inMillis,
-        TimeUnit.MILLISECONDS,
-        workQueue,
-        threadFactory)
+    vaw executowsewvice =
+      n-nyew thweadpoowexecutow(
+        m-minthweads, XD
+        maxthweads, σωσ // ignowed by thweadpoowexecutow when a-an unbounded queue i-is pwovided
+        k-keepidwethweadsawive.inmiwwis, (U ᵕ U❁)
+        timeunit.miwwiseconds, (U ﹏ U)
+        w-wowkqueue, :3
+        t-thweadfactowy)
 
-    FuturePool.interruptible(executorService)
+    futuwepoow.intewwuptibwe(executowsewvice)
   }
 }

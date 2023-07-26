@@ -1,139 +1,139 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.component_library.selector.InsertRandomPositionResults.randomIndices
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.sewectow.insewtwandompositionwesuwts.wandomindices
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope.pawtitionedcandidates
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.staticpawam
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.timewines.configapi.pawam
 
-import scala.collection.mutable
-import scala.util.Random
+impowt s-scawa.cowwection.mutabwe
+impowt s-scawa.utiw.wandom
 
-object InsertRandomPositionResults {
+object insewtwandompositionwesuwts {
 
   /**
-   * Iterator containing random index between `startIndex` and `endIndex` + `n`
-   * where `n` is the number of times `next` has been called on the iterator
-   * without duplication
+   * itewatow containing wandom i-index between `stawtindex` and `endindex` + `n`
+   * w-whewe `n` i-is the nyumbew of times `next` has been cawwed on the itewatow
+   * without dupwication
    */
-  private[selector] def randomIndices(
-    resultLength: Int,
-    startIndex: Int,
-    endIndex: Int,
-    random: Random
-  ): Iterator[Int] = {
+  p-pwivate[sewectow] def wandomindices(
+    wesuwtwength: int, 😳😳😳
+    stawtindex: int,
+    e-endindex: int, σωσ
+    wandom: w-wandom
+  ): itewatow[int] = {
 
-    /** exclusive because [[Random.nextInt]]'s bound is exclusive */
-    val indexUpperBound = Math.min(endIndex, resultLength)
-
-    /**
-     * keep track of the available indices, `O(n)` space where `n` is `min(endIndex, resultLength) - max(startIndex, 0)`
-     * this ensures fairness which duplicate indices could otherwise skew
-     */
-    val values = mutable.ArrayBuffer(Math.max(0, startIndex) to indexUpperBound: _*)
+    /** e-excwusive b-because [[wandom.nextint]]'s bound i-is excwusive */
+    vaw indexuppewbound = math.min(endindex, (⑅˘꒳˘) wesuwtwength)
 
     /**
-     * Iterator that starts at 1 above the last valid index, [[indexUpperBound]] + 1, and increments monotonically
-     * representing the new highest index possible in the results for the next call
+     * k-keep twack of the avaiwabwe indices, (///ˬ///✿) `o(n)` space w-whewe `n` is `min(endindex, 🥺 wesuwtwength) - max(stawtindex, OwO 0)`
+     * this ensuwes faiwness which dupwicate indices c-couwd othewwise skew
      */
-    Iterator
-      .from(indexUpperBound + 1)
-      .map { indexUpperBound =>
+    v-vaw vawues = m-mutabwe.awwaybuffew(math.max(0, >w< s-stawtindex) to indexuppewbound: _*)
+
+    /**
+     * itewatow that stawts at 1 a-above the wast v-vawid index, 🥺 [[indexuppewbound]] + 1, and incwements m-monotonicawwy
+     * w-wepwesenting the nyew h-highest index possibwe in the w-wesuwts fow the nyext caww
+     */
+    itewatow
+      .fwom(indexuppewbound + 1)
+      .map { i-indexuppewbound =>
         /**
-         * pick a random index-to-insert-candidate-into-results from [[values]] replacing the value at
-         * the chosen index with the new highest index from [[indexUpperBound]], this results in
-         * constant time for picking the random index and adding the new highest valid index instead
-         * of removing the item from the middle and appending the new, which would be `O(n)` to shift
-         * all indices after the removal point
+         * pick a wandom i-index-to-insewt-candidate-into-wesuwts fwom [[vawues]] w-wepwacing t-the vawue at
+         * the chosen index with the nyew highest index fwom [[indexuppewbound]], nyaa~~ this wesuwts in
+         * c-constant time fow p-picking the wandom index and a-adding the nyew h-highest vawid index i-instead
+         * of wemoving the item fwom the middwe and a-appending the nyew, ^^ which wouwd be `o(n)` to shift
+         * aww indices aftew t-the wemovaw point
          */
-        val i = random.nextInt(values.length)
-        val randomIndexToUse = values(i)
-        // override the value at i with the new `upperBoundExclusive` to account for the new index value in the next iteration
-        values(i) = indexUpperBound
+        vaw i = wandom.nextint(vawues.wength)
+        v-vaw wandomindextouse = v-vawues(i)
+        // o-ovewwide the vawue at i with the n-nyew `uppewboundexcwusive` t-to account f-fow the nyew i-index vawue in the next itewation
+        vawues(i) = i-indexuppewbound
 
-        randomIndexToUse
+        w-wandomindextouse
       }
   }
 }
 
-sealed trait InsertedCandidateOrder
+s-seawed twait i-insewtedcandidateowdew
 
 /**
- * Candidates from the `remainingCandidates` side will be inserted in a random order into the `result`
+ * candidates f-fwom the `wemainingcandidates` side wiww be insewted in a wandom owdew i-into the `wesuwt`
  *
- * @example if inserting `[ x, y, z ]` into the `result` then the relative positions of `x`, `y` and `z`
- *          to each other is random, e.g. `y` could come before `x` in the result.
+ * @exampwe if insewting `[ x, >w< y, z ]` into the `wesuwt` then the wewative positions of `x`, OwO `y` a-and `z`
+ *          to each othew is wandom, XD e.g. `y` couwd c-come befowe `x` i-in the wesuwt. ^^;;
  */
-case object UnstableOrderingOfInsertedCandidates extends InsertedCandidateOrder
+c-case object unstabweowdewingofinsewtedcandidates e-extends insewtedcandidateowdew
 
 /**
- * Candidates from the `remainingCandidates` side will be inserted in their original order into the `result`
+ * candidates f-fwom the `wemainingcandidates` s-side wiww be insewted in theiw owiginaw owdew into the `wesuwt`
  *
- * @example if inserting `[ x, y, z ]` into the `result` then the relative positions of `x`, `y` and `z`
- *          to each other will remain the same, e.g. `x` is always before `y` is always before `z` in the final result
+ * @exampwe if insewting `[ x, 🥺 y, z ]` i-into the `wesuwt` then the wewative p-positions of `x`, XD `y` and `z`
+ *          t-to each othew wiww w-wemain the same, (U ᵕ U❁) e.g. `x` is awways befowe `y` i-is awways befowe `z` i-in the finaw wesuwt
  */
-case object StableOrderingOfInsertedCandidates extends InsertedCandidateOrder
+case o-object stabweowdewingofinsewtedcandidates e-extends insewtedcandidateowdew
 
 /**
- * Insert `remainingCandidates` into a random position between the specified indices (inclusive)
+ * insewt `wemainingcandidates` into a wandom position between t-the specified indices (incwusive)
  *
- * @example let `result` = `[ a, b, c, d ]` and we want to insert randomly `[ x, y, z ]`
- *          with `startIndex` =  1, `endIndex` = 2, and [[UnstableOrderingOfInsertedCandidates]].
- *          We can expect a result that looks like `[ a, ... , d ]` where `...` is
- *          a random insertion of `x`, `y`, and `z` into  `[ b, c ]`. So this could look like
- *          `[ a, y, b, x, c, z, d ]`, note that the inserted elements are randomly distributed
- *          among the elements that were originally between the specified indices.
- *          This functions like taking a slice of the original `result` between the indices,
- *          e.g. `[ b, c ]`, then randomly inserting into the slice, e.g. `[ y, b, x, c, z ]`,
- *          before reassembling the `result`, e.g. `[ a ] ++ [ y, b, x, c, z ] ++ [ d ]`.
+ * @exampwe w-wet `wesuwt` = `[ a-a, :3 b, c, ( ͡o ω ͡o ) d ]` and we want to i-insewt wandomwy `[ x-x, òωó y, σωσ z ]`
+ *          with `stawtindex` =  1, (U ᵕ U❁) `endindex` = 2, (✿oωo) a-and [[unstabweowdewingofinsewtedcandidates]]. ^^
+ *          we can expect a wesuwt that wooks wike `[ a, ^•ﻌ•^ ... , d-d ]` whewe `...` i-is
+ *          a wandom insewtion of `x`, XD `y`, a-and `z` into  `[ b-b, :3 c ]`. so this couwd wook wike
+ *          `[ a, (ꈍᴗꈍ) y, b, x, c, :3 z, d ]`, nyote that t-the insewted ewements awe wandomwy distwibuted
+ *          among the ewements that wewe owiginawwy b-between the specified indices. (U ﹏ U)
+ *          this functions w-wike taking a swice o-of the owiginaw `wesuwt` between the indices, UwU
+ *          e.g. 😳😳😳 `[ b, XD c ]`, t-then wandomwy insewting i-into the swice, o.O e.g. `[ y, (⑅˘꒳˘) b, x, c, z ]`,
+ *          befowe w-weassembwing the `wesuwt`, e-e.g. 😳😳😳 `[ a ] ++ [ y, nyaa~~ b, x, c, z ] ++ [ d ]`. rawr
  *
- * @example let `result` = `[ a, b, c, d ]` and we want to insert randomly `[ x, y, z ]`
- *          with `startIndex` =  1, `endIndex` = 2, and [[StableOrderingOfInsertedCandidates]].
- *          We can expect a result that looks something like `[ a, x, b, y, c, z, d ]`,
- *          where `x` is before `y` which is before `z`
+ * @exampwe wet `wesuwt` = `[ a-a, -.- b, c, d ]` and we w-want to insewt w-wandomwy `[ x, (✿oωo) y, z ]`
+ *          w-with `stawtindex` =  1, /(^•ω•^) `endindex` = 2, 🥺 and [[stabweowdewingofinsewtedcandidates]]. ʘwʘ
+ *          w-we can expect a-a wesuwt that w-wooks something wike `[ a, UwU x, b, XD y-y, c, z, d ]`, (✿oωo)
+ *          w-whewe `x` is befowe `y` which is befowe `z`
  *
- * @param startIndex an inclusive index which starts the range where the candidates will be inserted
- * @param endIndex an inclusive index which ends the range where the candidates will be inserted
+ * @pawam s-stawtindex a-an incwusive index w-which stawts the wange whewe the candidates wiww b-be insewted
+ * @pawam endindex a-an incwusive i-index which ends the wange whewe the candidates wiww be insewted
  */
-case class InsertRandomPositionResults[-Query <: PipelineQuery](
-  pipelineScope: CandidateScope,
-  remainingCandidateOrder: InsertedCandidateOrder,
-  startIndex: Param[Int] = StaticParam(0),
-  endIndex: Param[Int] = StaticParam(Int.MaxValue),
-  random: Random = new Random(0))
-    extends Selector[Query] {
+c-case cwass i-insewtwandompositionwesuwts[-quewy <: p-pipewinequewy](
+  p-pipewinescope: candidatescope, :3
+  w-wemainingcandidateowdew: insewtedcandidateowdew, (///ˬ///✿)
+  stawtindex: pawam[int] = staticpawam(0), nyaa~~
+  endindex: p-pawam[int] = staticpawam(int.maxvawue), >w<
+  wandom: w-wandom = nyew wandom(0))
+    e-extends sewectow[quewy] {
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
+  ovewwide d-def appwy(
+    quewy: quewy, -.-
+    w-wemainingcandidates: s-seq[candidatewithdetaiws], (✿oωo)
+    w-wesuwt: s-seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
 
-    val PartitionedCandidates(candidatesInScope, candidatesOutOfScope) =
-      pipelineScope.partition(remainingCandidates)
+    vaw pawtitionedcandidates(candidatesinscope, (˘ω˘) candidatesoutofscope) =
+      pipewinescope.pawtition(wemainingcandidates)
 
-    val randomIndexIterator = {
-      val randomIndexIterator =
-        randomIndices(result.length, query.params(startIndex), query.params(endIndex), random)
+    vaw wandomindexitewatow = {
+      vaw wandomindexitewatow =
+        wandomindices(wesuwt.wength, rawr q-quewy.pawams(stawtindex), q-quewy.pawams(endindex), OwO w-wandom)
 
-      remainingCandidateOrder match {
-        case StableOrderingOfInsertedCandidates =>
-          randomIndexIterator.take(candidatesInScope.length).toSeq.sorted.iterator
-        case UnstableOrderingOfInsertedCandidates =>
-          randomIndexIterator
+      wemainingcandidateowdew m-match {
+        case stabweowdewingofinsewtedcandidates =>
+          wandomindexitewatow.take(candidatesinscope.wength).toseq.sowted.itewatow
+        case unstabweowdewingofinsewtedcandidates =>
+          w-wandomindexitewatow
       }
     }
 
-    val mergedResult = DynamicPositionSelector.mergeByIndexIntoResult(
-      candidatesToInsertByIndex = randomIndexIterator.zip(candidatesInScope.iterator).toSeq,
-      result = result,
-      DynamicPositionSelector.AbsoluteIndices
+    v-vaw mewgedwesuwt = dynamicpositionsewectow.mewgebyindexintowesuwt(
+      c-candidatestoinsewtbyindex = wandomindexitewatow.zip(candidatesinscope.itewatow).toseq, ^•ﻌ•^
+      wesuwt = w-wesuwt, UwU
+      d-dynamicpositionsewectow.absowuteindices
     )
 
-    SelectorResult(remainingCandidates = candidatesOutOfScope, result = mergedResult)
+    sewectowwesuwt(wemainingcandidates = c-candidatesoutofscope, w-wesuwt = mewgedwesuwt)
   }
 }

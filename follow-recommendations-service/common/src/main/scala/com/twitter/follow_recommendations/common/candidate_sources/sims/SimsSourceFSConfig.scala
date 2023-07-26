@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sims
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.fspawam
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class SimsSourceFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean] with FSName] = Seq(
-    SimsSourceParams.DisableHeavyRanker
+@singweton
+c-cwass s-simssouwcefsconfig @inject() () e-extends featuweswitchconfig {
+  ovewwide vaw booweanfspawams: seq[fspawam[boowean] with fsname] = seq(
+    simssouwcepawams.disabweheavywankew
   )
 }

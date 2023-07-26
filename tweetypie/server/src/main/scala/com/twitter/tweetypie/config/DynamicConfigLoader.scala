@@ -1,69 +1,69 @@
-package com.twitter.tweetypie.config
+package com.twittew.tweetypie.config
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.ExceptionCounter
-import com.twitter.tweetypie.serverutil.ActivityUtil
-import com.twitter.util.{Activity, Return, Try}
-import com.twitter.util.logging.Logger
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.sewvo.utiw.exceptioncountew
+i-impowt com.twittew.tweetypie.sewvewutiw.activityutiw
+i-impowt com.twittew.utiw.{activity, o.O w-wetuwn, t-twy}
+impowt com.twittew.utiw.wogging.woggew
 
-trait DynamicConfigLoader {
-  def apply[T](path: String, stats: StatsReceiver, parse: String => T): Activity[Option[T]]
+t-twait dynamicconfigwoadew {
+  d-def a-appwy[t](path: stwing, ( ͡o ω ͡o ) stats: statsweceivew, (U ﹏ U) pawse: stwing => t): activity[option[t]]
 }
 
-object DynamicConfigLoader {
+o-object dynamicconfigwoadew {
 
-  def apply(read: String => Activity[String]): DynamicConfigLoader =
-    new DynamicConfigLoader {
-      val logger = Logger(getClass)
+  def appwy(wead: s-stwing => activity[stwing]): d-dynamicconfigwoadew =
+    nyew dynamicconfigwoadew {
+      vaw woggew = woggew(getcwass)
 
-      private def snoopState[T](stats: StatsReceiver)(a: Activity[T]): Activity[T] = {
-        val pending = stats.counter("pending")
-        val failure = stats.counter("failure")
-        val success = stats.counter("success")
+      p-pwivate def snoopstate[t](stats: s-statsweceivew)(a: a-activity[t]): activity[t] = {
+        vaw pending = stats.countew("pending")
+        vaw faiwuwe = stats.countew("faiwuwe")
+        vaw success = stats.countew("success")
 
-        a.mapState {
-          case s @ Activity.Ok(_) =>
-            success.incr()
+        a.mapstate {
+          c-case s @ activity.ok(_) =>
+            success.incw()
             s
-          case Activity.Pending =>
-            pending.incr()
-            Activity.Pending
-          case s @ Activity.Failed(_) =>
-            failure.incr()
-            s
+          case activity.pending =>
+            pending.incw()
+            a-activity.pending
+          case s @ activity.faiwed(_) =>
+            f-faiwuwe.incw()
+            s-s
         }
       }
 
-      def apply[T](path: String, stats: StatsReceiver, parse: String => T): Activity[Option[T]] = {
-        val exceptionCounter = new ExceptionCounter(stats)
+      d-def appwy[t](path: s-stwing, (///ˬ///✿) stats: statsweceivew, >w< pawse: stwing => t-t): activity[option[t]] = {
+        vaw exceptioncountew = nyew e-exceptioncountew(stats)
 
-        val rawActivity: Activity[T] =
-          snoopState(stats.scope("raw"))(
-            ActivityUtil
-              .strict(read(path))
-              .map(parse)
-              .handle {
+        vaw wawactivity: activity[t] =
+          snoopstate(stats.scope("waw"))(
+            activityutiw
+              .stwict(wead(path))
+              .map(pawse)
+              .handwe {
                 case e =>
-                  exceptionCounter(e)
-                  logger.error(s"Invalid config in $path", e)
-                  throw e
+                  e-exceptioncountew(e)
+                  woggew.ewwow(s"invawid c-config in $path", rawr e-e)
+                  t-thwow e
               }
           )
 
-        val stableActivity =
-          snoopState(stats.scope("stabilized"))(rawActivity.stabilize).mapState[Option[T]] {
-            case Activity.Ok(t) => Activity.Ok(Some(t))
-            case _ => Activity.Ok(None)
+        vaw stabweactivity =
+          snoopstate(stats.scope("stabiwized"))(wawactivity.stabiwize).mapstate[option[t]] {
+            case activity.ok(t) => a-activity.ok(some(t))
+            c-case _ => activity.ok(none)
           }
 
-        stats.provideGauge("config_state") {
-          Try(stableActivity.sample()) match {
-            case Return(Some(c)) => c.hashCode.abs
+        s-stats.pwovidegauge("config_state") {
+          t-twy(stabweactivity.sampwe()) match {
+            c-case wetuwn(some(c)) => c-c.hashcode.abs
             case _ => 0
           }
         }
 
-        stableActivity
+        stabweactivity
       }
     }
 }

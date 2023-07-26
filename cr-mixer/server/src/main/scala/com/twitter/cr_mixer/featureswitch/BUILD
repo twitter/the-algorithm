@@ -1,35 +1,35 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "abdecider/src/main/scala",
-        "configapi/configapi-abdecider",
-        "configapi/configapi-core",
-        "configapi/configapi-featureswitches:v2",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param/decider",
-        "cr-mixer/thrift/src/main/thrift:thrift-scala",
-        "decider/src/main/scala",
-        "discovery-common/src/main/scala/com/twitter/discovery/common/configapi",
-        "featureswitches/featureswitches-core",
-        "featureswitches/featureswitches-core/src/main/scala/com/twitter/featureswitches/v2/builder",
-        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
-        "frigate/frigate-common:util",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/base",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/candidate",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store/health",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store/interests",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store/strato",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/util",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift-scala",
-        "scribelib/marshallers/src/main/scala/com/twitter/scribelib/marshallers",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/core_workflows/user_model:user_model-scala",
-        "src/thrift/com/twitter/frigate:frigate-common-thrift-scala",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "3wdpawty/jvm/javax/inject:javax.inject",
+        "abdecidew/swc/main/scawa", (⑅˘꒳˘)
+        "configapi/configapi-abdecidew", ( ͡o ω ͡o )
+        "configapi/configapi-cowe", UwU
+        "configapi/configapi-featuweswitches:v2", rawr x3
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/pawam", rawr
+        "cw-mixew/sewvew/swc/main/scawa/com/twittew/cw_mixew/pawam/decidew", σωσ
+        "cw-mixew/thwift/swc/main/thwift:thwift-scawa", σωσ
+        "decidew/swc/main/scawa", >_<
+        "discovewy-common/swc/main/scawa/com/twittew/discovewy/common/configapi", :3
+        "featuweswitches/featuweswitches-cowe", (U ﹏ U)
+        "featuweswitches/featuweswitches-cowe/swc/main/scawa/com/twittew/featuweswitches/v2/buiwdew", -.-
+        "finagwe-intewnaw/mtws/swc/main/scawa/com/twittew/finagwe/mtws/authentication", (ˆ ﻌ ˆ)♡
+        "fwigate/fwigate-common:utiw", (⑅˘꒳˘)
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/base", (U ᵕ U❁)
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/candidate", -.-
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/stowe", ^^;;
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/stowe/heawth", >_<
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/stowe/intewests", mya
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/stowe/stwato", mya
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/utiw", 😳
+        "pwoduct-mixew/cowe/swc/main/thwift/com/twittew/pwoduct_mixew/cowe:thwift-scawa", XD
+        "scwibewib/mawshawwews/swc/main/scawa/com/twittew/scwibewib/mawshawwews", :3
+        "swc/scawa/com/twittew/simcwustews_v2/common", 😳😳😳
+        "swc/thwift/com/twittew/cowe_wowkfwows/usew_modew:usew_modew-scawa", -.-
+        "swc/thwift/com/twittew/fwigate:fwigate-common-thwift-scawa", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", rawr x3
     ],
 )

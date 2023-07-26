@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.service.candidate_decorator_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.candidate_decowatow_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.decowation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.stitch.awwow
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class CandidateDecoratorExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
-  def arrow[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    decoratorOpt: Option[CandidateDecorator[Query, Candidate]],
-    context: Executor.Context
-  ): Arrow[(Query, Seq[CandidateWithFeatures[Candidate]]), CandidateDecoratorExecutorResult] = {
-    val decoratorArrow =
-      decoratorOpt match {
-        case Some(decorator) =>
-          val candidateDecoratorArrow =
-            Arrow.flatMap[(Query, Seq[CandidateWithFeatures[Candidate]]), Seq[Decoration]] {
-              case (query, candidatesWithFeatures) => decorator.apply(query, candidatesWithFeatures)
+@singweton
+c-cwass candidatedecowatowexecutow @inject() (ovewwide vaw s-statsweceivew: statsweceivew)
+    extends executow {
+  def awwow[quewy <: pipewinequewy, (✿oωo) c-candidate <: univewsawnoun[any]](
+    decowatowopt: o-option[candidatedecowatow[quewy, (ˆ ﻌ ˆ)♡ c-candidate]], (˘ω˘)
+    context: executow.context
+  ): awwow[(quewy, (⑅˘꒳˘) seq[candidatewithfeatuwes[candidate]]), candidatedecowatowexecutowwesuwt] = {
+    v-vaw decowatowawwow =
+      decowatowopt match {
+        case some(decowatow) =>
+          v-vaw candidatedecowatowawwow =
+            awwow.fwatmap[(quewy, (///ˬ///✿) s-seq[candidatewithfeatuwes[candidate]]), 😳😳😳 s-seq[decowation]] {
+              c-case (quewy, 🥺 candidateswithfeatuwes) => d-decowatow.appwy(quewy, mya candidateswithfeatuwes)
             }
 
-          wrapComponentWithExecutorBookkeeping(context, decorator.identifier)(
-            candidateDecoratorArrow)
+          wwapcomponentwithexecutowbookkeeping(context, 🥺 decowatow.identifiew)(
+            c-candidatedecowatowawwow)
 
-        case _ => Arrow.value(Seq.empty[Decoration])
+        case _ => awwow.vawue(seq.empty[decowation])
       }
 
-    decoratorArrow.map(CandidateDecoratorExecutorResult)
+    decowatowawwow.map(candidatedecowatowexecutowwesuwt)
   }
 }

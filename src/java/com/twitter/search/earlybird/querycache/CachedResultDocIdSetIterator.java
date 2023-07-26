@@ -1,72 +1,72 @@
-package com.twitter.search.earlybird.querycache;
+package com.twittew.seawch.eawwybiwd.quewycache;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.search.DocIdSetIterator;
+i-impowt o-owg.apache.wucene.seawch.docidsetitewatow;
 
-public class CachedResultDocIdSetIterator extends DocIdSetIterator {
-  // With the realtime index, we grow the doc id negatively.
-  // Hence the smallest doc id is the ID the latest/newest document in the cache.
-  private final int cachedSmallestDocID;
+p-pubwic cwass cachedwesuwtdocidsetitewatow e-extends d-docidsetitewatow {
+  // w-with t-the weawtime index, mya w-we gwow the doc id nyegativewy. (˘ω˘)
+  // hence the smowest doc id is the id the w-watest/newest document in the cache. >_<
+  pwivate finaw i-int cachedsmowestdocid;
 
-  // Documents that were indexed after the last cache update
-  private final DocIdSetIterator freshDocIdIterator;
-  // Documents that were cached
-  private final DocIdSetIterator cachedDocIdIterator;
+  // documents that w-wewe indexed aftew the wast cache update
+  pwivate finaw docidsetitewatow f-fweshdociditewatow;
+  // documents that w-wewe cached
+  p-pwivate finaw docidsetitewatow cacheddociditewatow;
 
-  private int currentDocId;
-  private boolean initialized = false;
+  pwivate int cuwwentdocid;
+  p-pwivate boowean initiawized = fawse;
 
-  public CachedResultDocIdSetIterator(int cachedSmallestDocID,
-                                      DocIdSetIterator freshDocIdIterator,
-                                      DocIdSetIterator cachedDocIdIterator) {
-    this.cachedSmallestDocID = cachedSmallestDocID;
+  pubwic cachedwesuwtdocidsetitewatow(int cachedsmowestdocid, -.-
+                                      docidsetitewatow f-fweshdociditewatow, 🥺
+                                      docidsetitewatow c-cacheddociditewatow) {
+    t-this.cachedsmowestdocid = c-cachedsmowestdocid;
 
-    this.freshDocIdIterator = freshDocIdIterator;
-    this.cachedDocIdIterator = cachedDocIdIterator;
-    this.currentDocId = -1;
+    t-this.fweshdociditewatow = fweshdociditewatow;
+    this.cacheddociditewatow = c-cacheddociditewatow;
+    this.cuwwentdocid = -1;
   }
 
-  @Override
-  public int docID() {
-    return currentDocId;
+  @ovewwide
+  pubwic int docid() {
+    w-wetuwn cuwwentdocid;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    if (currentDocId < cachedSmallestDocID) {
-      currentDocId = freshDocIdIterator.nextDoc();
-    } else if (currentDocId != NO_MORE_DOCS) {
-      if (!initialized) {
-        // the first time we come in here, currentDocId should be pointing to
-        // something >= cachedMinDocID. We need to go to the doc after cachedMinDocID.
-        currentDocId = cachedDocIdIterator.advance(currentDocId + 1);
-        initialized = true;
-      } else {
-        currentDocId = cachedDocIdIterator.nextDoc();
+  @ovewwide
+  pubwic int nyextdoc() thwows ioexception {
+    if (cuwwentdocid < cachedsmowestdocid) {
+      c-cuwwentdocid = fweshdociditewatow.nextdoc();
+    } e-ewse i-if (cuwwentdocid != n-nyo_mowe_docs) {
+      if (!initiawized) {
+        // the fiwst time we come i-in hewe, (U ﹏ U) cuwwentdocid s-shouwd be pointing to
+        // s-something >= c-cachedmindocid. >w< we nyeed to g-go to the doc aftew cachedmindocid. mya
+        c-cuwwentdocid = cacheddociditewatow.advance(cuwwentdocid + 1);
+        initiawized = t-twue;
+      } ewse {
+        cuwwentdocid = c-cacheddociditewatow.nextdoc();
       }
     }
-    return currentDocId;
+    wetuwn cuwwentdocid;
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    if (target < cachedSmallestDocID) {
-      currentDocId = freshDocIdIterator.advance(target);
-    } else if (currentDocId != NO_MORE_DOCS) {
-      initialized = true;
-      currentDocId = cachedDocIdIterator.advance(target);
+  @ovewwide
+  p-pubwic int a-advance(int tawget) thwows ioexception {
+    if (tawget < cachedsmowestdocid) {
+      cuwwentdocid = fweshdociditewatow.advance(tawget);
+    } ewse if (cuwwentdocid != nyo_mowe_docs) {
+      i-initiawized = twue;
+      c-cuwwentdocid = cacheddociditewatow.advance(tawget);
     }
 
-    return currentDocId;
+    w-wetuwn c-cuwwentdocid;
   }
 
-  @Override
-  public long cost() {
-    if (currentDocId < cachedSmallestDocID) {
-      return freshDocIdIterator.cost();
-    } else {
-      return cachedDocIdIterator.cost();
+  @ovewwide
+  p-pubwic wong cost() {
+    if (cuwwentdocid < cachedsmowestdocid) {
+      wetuwn f-fweshdociditewatow.cost();
+    } ewse {
+      wetuwn cacheddociditewatow.cost();
     }
   }
 }

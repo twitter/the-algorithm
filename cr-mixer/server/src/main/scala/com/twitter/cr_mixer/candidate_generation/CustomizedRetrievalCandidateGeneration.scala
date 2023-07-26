@@ -1,345 +1,345 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.twittew.cw_mixew.candidate_genewation
 
-import com.twitter.cr_mixer.candidate_generation.CustomizedRetrievalCandidateGeneration.Query
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.CustomizedRetrievalBasedCandidateGenerationParams._
-import com.twitter.cr_mixer.param.CustomizedRetrievalBasedTwhinParams._
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.similarity_engine.DiffusionBasedSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.LookupEngineQuery
-import com.twitter.cr_mixer.similarity_engine.LookupSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TwhinCollabFilterSimilarityEngine
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.Stats
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.timelines.configapi
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.mutable.ArrayBuffer
+impowt com.twittew.cw_mixew.candidate_genewation.customizedwetwievawcandidategenewation.quewy
+i-impowt com.twittew.cw_mixew.modew.candidategenewationinfo
+i-impowt c-com.twittew.cw_mixew.modew.moduwenames
+i-impowt com.twittew.cw_mixew.modew.tweetwithcandidategenewationinfo
+i-impowt c-com.twittew.cw_mixew.modew.tweetwithscowe
+i-impowt c-com.twittew.cw_mixew.pawam.customizedwetwievawbasedcandidategenewationpawams._
+impowt com.twittew.cw_mixew.pawam.customizedwetwievawbasedtwhinpawams._
+impowt com.twittew.cw_mixew.pawam.gwobawpawams
+impowt c-com.twittew.cw_mixew.simiwawity_engine.diffusionbasedsimiwawityengine
+impowt com.twittew.cw_mixew.simiwawity_engine.wookupenginequewy
+impowt com.twittew.cw_mixew.simiwawity_engine.wookupsimiwawityengine
+i-impowt com.twittew.cw_mixew.simiwawity_engine.twhincowwabfiwtewsimiwawityengine
+i-impowt com.twittew.cw_mixew.utiw.intewweaveutiw
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.candidatesouwce
+i-impowt com.twittew.fwigate.common.base.stats
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.timewines.configapi
+impowt c-com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.time
+i-impowt javax.inject.inject
+impowt javax.inject.named
+i-impowt j-javax.inject.singweton
+i-impowt s-scawa.cowwection.mutabwe.awwaybuffew
 
 /**
- * A candidate generator that fetches similar tweets from multiple customized retrieval based candidate sources
+ * a candidate genewatow t-that fetches simiwaw tweets fwom muwtipwe customized w-wetwievaw based candidate souwces
  *
- * Different from [[TweetBasedCandidateGeneration]], this store returns candidates from different
- * similarity engines without blending. In other words, this class shall not be thought of as a
- * Unified Similarity Engine. It is a CG that calls multiple singular Similarity Engines.
+ * diffewent fwom [[tweetbasedcandidategenewation]], XD this stowe wetuwns candidates f-fwom diffewent
+ * simiwawity engines w-without bwending. ʘwʘ i-in othew w-wowds, rawr x3 this cwass shaww nyot be thought of as a
+ * unified simiwawity e-engine. ^^;; it i-is a cg that cawws muwtipwe singuwaw s-simiwawity e-engines. ʘwʘ
  */
-@Singleton
-case class CustomizedRetrievalCandidateGeneration @Inject() (
-  @Named(ModuleNames.TwhinCollabFilterSimilarityEngine)
-  twhinCollabFilterSimilarityEngine: LookupSimilarityEngine[
-    TwhinCollabFilterSimilarityEngine.Query,
-    TweetWithScore
-  ],
-  @Named(ModuleNames.DiffusionBasedSimilarityEngine)
-  diffusionBasedSimilarityEngine: LookupSimilarityEngine[
-    DiffusionBasedSimilarityEngine.Query,
-    TweetWithScore
-  ],
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[
-      Query,
-      Seq[TweetWithCandidateGenerationInfo]
+@singweton
+case cwass c-customizedwetwievawcandidategenewation @inject() (
+  @named(moduwenames.twhincowwabfiwtewsimiwawityengine)
+  twhincowwabfiwtewsimiwawityengine: w-wookupsimiwawityengine[
+    twhincowwabfiwtewsimiwawityengine.quewy, (U ﹏ U)
+    tweetwithscowe
+  ], (˘ω˘)
+  @named(moduwenames.diffusionbasedsimiwawityengine)
+  d-diffusionbasedsimiwawityengine: wookupsimiwawityengine[
+    d-diffusionbasedsimiwawityengine.quewy, (ꈍᴗꈍ)
+    tweetwithscowe
+  ], /(^•ω•^)
+  statsweceivew: s-statsweceivew)
+    e-extends candidatesouwce[
+      quewy, >_<
+      seq[tweetwithcandidategenewationinfo]
     ] {
 
-  override def name: String = this.getClass.getSimpleName
+  ovewwide def nyame: stwing = this.getcwass.getsimpwename
 
-  private val stats = statsReceiver.scope(name)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
+  pwivate vaw stats = s-statsweceivew.scope(name)
+  p-pwivate vaw fetchcandidatesstat = stats.scope("fetchcandidates")
 
   /**
-   * For each Similarity Engine Model, return a list of tweet candidates
+   * f-fow e-each simiwawity e-engine modew, σωσ wetuwn a wist of tweet candidates
    */
-  override def get(
-    query: Query
-  ): Future[Option[Seq[Seq[TweetWithCandidateGenerationInfo]]]] = {
-    query.internalId match {
-      case InternalId.UserId(_) =>
-        Stats.trackOption(fetchCandidatesStat) {
-          val twhinCollabFilterForFollowCandidatesFut = if (query.enableTwhinCollabFilter) {
-            twhinCollabFilterSimilarityEngine.getCandidates(query.twhinCollabFilterFollowQuery)
-          } else Future.None
+  ovewwide d-def get(
+    quewy: quewy
+  ): futuwe[option[seq[seq[tweetwithcandidategenewationinfo]]]] = {
+    quewy.intewnawid match {
+      c-case intewnawid.usewid(_) =>
+        stats.twackoption(fetchcandidatesstat) {
+          v-vaw twhincowwabfiwtewfowfowwowcandidatesfut = i-if (quewy.enabwetwhincowwabfiwtew) {
+            t-twhincowwabfiwtewsimiwawityengine.getcandidates(quewy.twhincowwabfiwtewfowwowquewy)
+          } ewse futuwe.none
 
-          val twhinCollabFilterForEngagementCandidatesFut =
-            if (query.enableTwhinCollabFilter) {
-              twhinCollabFilterSimilarityEngine.getCandidates(
-                query.twhinCollabFilterEngagementQuery)
-            } else Future.None
+          v-vaw twhincowwabfiwtewfowengagementcandidatesfut =
+            i-if (quewy.enabwetwhincowwabfiwtew) {
+              t-twhincowwabfiwtewsimiwawityengine.getcandidates(
+                q-quewy.twhincowwabfiwtewengagementquewy)
+            } ewse futuwe.none
 
-          val twhinMultiClusterForFollowCandidatesFut = if (query.enableTwhinMultiCluster) {
-            twhinCollabFilterSimilarityEngine.getCandidates(query.twhinMultiClusterFollowQuery)
-          } else Future.None
+          v-vaw twhinmuwticwustewfowfowwowcandidatesfut = i-if (quewy.enabwetwhinmuwticwustew) {
+            t-twhincowwabfiwtewsimiwawityengine.getcandidates(quewy.twhinmuwticwustewfowwowquewy)
+          } e-ewse futuwe.none
 
-          val twhinMultiClusterForEngagementCandidatesFut =
-            if (query.enableTwhinMultiCluster) {
-              twhinCollabFilterSimilarityEngine.getCandidates(
-                query.twhinMultiClusterEngagementQuery)
-            } else Future.None
+          v-vaw twhinmuwticwustewfowengagementcandidatesfut =
+            if (quewy.enabwetwhinmuwticwustew) {
+              twhincowwabfiwtewsimiwawityengine.getcandidates(
+                quewy.twhinmuwticwustewengagementquewy)
+            } e-ewse futuwe.none
 
-          val diffusionBasedSimilarityEngineCandidatesFut = if (query.enableRetweetBasedDiffusion) {
-            diffusionBasedSimilarityEngine.getCandidates(query.diffusionBasedSimilarityEngineQuery)
-          } else Future.None
+          vaw diffusionbasedsimiwawityenginecandidatesfut = if (quewy.enabwewetweetbaseddiffusion) {
+            diffusionbasedsimiwawityengine.getcandidates(quewy.diffusionbasedsimiwawityenginequewy)
+          } ewse futuwe.none
 
-          Future
+          f-futuwe
             .join(
-              twhinCollabFilterForFollowCandidatesFut,
-              twhinCollabFilterForEngagementCandidatesFut,
-              twhinMultiClusterForFollowCandidatesFut,
-              twhinMultiClusterForEngagementCandidatesFut,
-              diffusionBasedSimilarityEngineCandidatesFut
+              twhincowwabfiwtewfowfowwowcandidatesfut, ^^;;
+              twhincowwabfiwtewfowengagementcandidatesfut, 😳
+              twhinmuwticwustewfowfowwowcandidatesfut, >_<
+              twhinmuwticwustewfowengagementcandidatesfut,
+              d-diffusionbasedsimiwawityenginecandidatesfut
             ).map {
-              case (
-                    twhinCollabFilterForFollowCandidates,
-                    twhinCollabFilterForEngagementCandidates,
-                    twhinMultiClusterForFollowCandidates,
-                    twhinMultiClusterForEngagementCandidates,
-                    diffusionBasedSimilarityEngineCandidates) =>
-                val maxCandidateNumPerSourceKey = 200
-                val twhinCollabFilterForFollowWithCGInfo =
-                  getTwhinCollabCandidatesWithCGInfo(
-                    twhinCollabFilterForFollowCandidates,
-                    maxCandidateNumPerSourceKey,
-                    query.twhinCollabFilterFollowQuery,
+              c-case (
+                    t-twhincowwabfiwtewfowfowwowcandidates, -.-
+                    twhincowwabfiwtewfowengagementcandidates, UwU
+                    twhinmuwticwustewfowfowwowcandidates, :3
+                    t-twhinmuwticwustewfowengagementcandidates, σωσ
+                    diffusionbasedsimiwawityenginecandidates) =>
+                v-vaw maxcandidatenumpewsouwcekey = 200
+                v-vaw twhincowwabfiwtewfowfowwowwithcginfo =
+                  gettwhincowwabcandidateswithcginfo(
+                    twhincowwabfiwtewfowfowwowcandidates, >w<
+                    maxcandidatenumpewsouwcekey, (ˆ ﻌ ˆ)♡
+                    quewy.twhincowwabfiwtewfowwowquewy, ʘwʘ
                   )
-                val twhinCollabFilterForEngagementWithCGInfo =
-                  getTwhinCollabCandidatesWithCGInfo(
-                    twhinCollabFilterForEngagementCandidates,
-                    maxCandidateNumPerSourceKey,
-                    query.twhinCollabFilterEngagementQuery,
+                vaw twhincowwabfiwtewfowengagementwithcginfo =
+                  g-gettwhincowwabcandidateswithcginfo(
+                    twhincowwabfiwtewfowengagementcandidates, :3
+                    m-maxcandidatenumpewsouwcekey, (˘ω˘)
+                    quewy.twhincowwabfiwtewengagementquewy, 😳😳😳
                   )
-                val twhinMultiClusterForFollowWithCGInfo =
-                  getTwhinCollabCandidatesWithCGInfo(
-                    twhinMultiClusterForFollowCandidates,
-                    maxCandidateNumPerSourceKey,
-                    query.twhinMultiClusterFollowQuery,
+                v-vaw twhinmuwticwustewfowfowwowwithcginfo =
+                  g-gettwhincowwabcandidateswithcginfo(
+                    twhinmuwticwustewfowfowwowcandidates, rawr x3
+                    maxcandidatenumpewsouwcekey, (✿oωo)
+                    q-quewy.twhinmuwticwustewfowwowquewy,
                   )
-                val twhinMultiClusterForEngagementWithCGInfo =
-                  getTwhinCollabCandidatesWithCGInfo(
-                    twhinMultiClusterForEngagementCandidates,
-                    maxCandidateNumPerSourceKey,
-                    query.twhinMultiClusterEngagementQuery,
+                v-vaw twhinmuwticwustewfowengagementwithcginfo =
+                  g-gettwhincowwabcandidateswithcginfo(
+                    t-twhinmuwticwustewfowengagementcandidates, (ˆ ﻌ ˆ)♡
+                    maxcandidatenumpewsouwcekey, :3
+                    quewy.twhinmuwticwustewengagementquewy, (U ᵕ U❁)
                   )
-                val retweetBasedDiffusionWithCGInfo =
-                  getDiffusionBasedCandidatesWithCGInfo(
-                    diffusionBasedSimilarityEngineCandidates,
-                    maxCandidateNumPerSourceKey,
-                    query.diffusionBasedSimilarityEngineQuery,
-                  )
-
-                val twhinCollabCandidateSourcesToBeInterleaved =
-                  ArrayBuffer[Seq[TweetWithCandidateGenerationInfo]](
-                    twhinCollabFilterForFollowWithCGInfo,
-                    twhinCollabFilterForEngagementWithCGInfo,
+                vaw wetweetbaseddiffusionwithcginfo =
+                  getdiffusionbasedcandidateswithcginfo(
+                    d-diffusionbasedsimiwawityenginecandidates, ^^;;
+                    m-maxcandidatenumpewsouwcekey,
+                    q-quewy.diffusionbasedsimiwawityenginequewy, mya
                   )
 
-                val twhinMultiClusterCandidateSourcesToBeInterleaved =
-                  ArrayBuffer[Seq[TweetWithCandidateGenerationInfo]](
-                    twhinMultiClusterForFollowWithCGInfo,
-                    twhinMultiClusterForEngagementWithCGInfo,
+                vaw twhincowwabcandidatesouwcestobeintewweaved =
+                  a-awwaybuffew[seq[tweetwithcandidategenewationinfo]](
+                    t-twhincowwabfiwtewfowfowwowwithcginfo, 😳😳😳
+                    twhincowwabfiwtewfowengagementwithcginfo, OwO
                   )
 
-                val interleavedTwhinCollabCandidates =
-                  InterleaveUtil.interleave(twhinCollabCandidateSourcesToBeInterleaved)
+                v-vaw twhinmuwticwustewcandidatesouwcestobeintewweaved =
+                  awwaybuffew[seq[tweetwithcandidategenewationinfo]](
+                    twhinmuwticwustewfowfowwowwithcginfo, rawr
+                    twhinmuwticwustewfowengagementwithcginfo, XD
+                  )
 
-                val interleavedTwhinMultiClusterCandidates =
-                  InterleaveUtil.interleave(twhinMultiClusterCandidateSourcesToBeInterleaved)
+                vaw intewweavedtwhincowwabcandidates =
+                  intewweaveutiw.intewweave(twhincowwabcandidatesouwcestobeintewweaved)
 
-                val twhinCollabFilterResults =
-                  if (interleavedTwhinCollabCandidates.nonEmpty) {
-                    Some(interleavedTwhinCollabCandidates.take(maxCandidateNumPerSourceKey))
-                  } else None
+                v-vaw intewweavedtwhinmuwticwustewcandidates =
+                  intewweaveutiw.intewweave(twhinmuwticwustewcandidatesouwcestobeintewweaved)
 
-                val twhinMultiClusterResults =
-                  if (interleavedTwhinMultiClusterCandidates.nonEmpty) {
-                    Some(interleavedTwhinMultiClusterCandidates.take(maxCandidateNumPerSourceKey))
-                  } else None
+                v-vaw twhincowwabfiwtewwesuwts =
+                  if (intewweavedtwhincowwabcandidates.nonempty) {
+                    s-some(intewweavedtwhincowwabcandidates.take(maxcandidatenumpewsouwcekey))
+                  } ewse n-nyone
 
-                val diffusionResults =
-                  if (retweetBasedDiffusionWithCGInfo.nonEmpty) {
-                    Some(retweetBasedDiffusionWithCGInfo.take(maxCandidateNumPerSourceKey))
-                  } else None
+                vaw twhinmuwticwustewwesuwts =
+                  if (intewweavedtwhinmuwticwustewcandidates.nonempty) {
+                    some(intewweavedtwhinmuwticwustewcandidates.take(maxcandidatenumpewsouwcekey))
+                  } e-ewse nyone
 
-                Some(
-                  Seq(
-                    twhinCollabFilterResults,
-                    twhinMultiClusterResults,
-                    diffusionResults
-                  ).flatten)
+                vaw diffusionwesuwts =
+                  if (wetweetbaseddiffusionwithcginfo.nonempty) {
+                    some(wetweetbaseddiffusionwithcginfo.take(maxcandidatenumpewsouwcekey))
+                  } ewse nyone
+
+                some(
+                  s-seq(
+                    twhincowwabfiwtewwesuwts, (U ﹏ U)
+                    twhinmuwticwustewwesuwts, (˘ω˘)
+                    d-diffusionwesuwts
+                  ).fwatten)
             }
         }
-      case _ =>
-        throw new IllegalArgumentException("sourceId_is_not_userId_cnt")
+      c-case _ =>
+        thwow nyew iwwegawawgumentexception("souwceid_is_not_usewid_cnt")
     }
   }
 
-  /** Returns a list of tweets that are generated less than `maxTweetAgeHours` hours ago */
-  private def tweetAgeFilter(
-    candidates: Seq[TweetWithScore],
-    maxTweetAgeHours: Duration
-  ): Seq[TweetWithScore] = {
-    // Tweet IDs are approximately chronological (see http://go/snowflake),
-    // so we are building the earliest tweet id once
-    // The per-candidate logic here then be candidate.tweetId > earliestPermittedTweetId, which is far cheaper.
-    val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetAgeHours)
-    candidates.filter { candidate => candidate.tweetId >= earliestTweetId }
+  /** wetuwns a-a wist of tweets t-that awe genewated wess than `maxtweetagehouws` houws ago */
+  pwivate def tweetagefiwtew(
+    c-candidates: seq[tweetwithscowe], UwU
+    maxtweetagehouws: d-duwation
+  ): seq[tweetwithscowe] = {
+    // tweet ids awe appwoximatewy c-chwonowogicaw (see http://go/snowfwake), >_<
+    // s-so we awe buiwding t-the eawwiest tweet id once
+    // t-the pew-candidate wogic hewe t-then be candidate.tweetid > eawwiestpewmittedtweetid, σωσ w-which is f-faw cheapew. 🥺
+    vaw eawwiesttweetid = s-snowfwakeid.fiwstidfow(time.now - m-maxtweetagehouws)
+    candidates.fiwtew { candidate => c-candidate.tweetid >= e-eawwiesttweetid }
   }
 
   /**
-   * AgeFilters tweetCandidates with stats
-   * Only age filter logic is effective here (through tweetAgeFilter). This function acts mostly for metric logging.
+   * a-agefiwtews tweetcandidates with stats
+   * o-onwy age fiwtew wogic is effective h-hewe (thwough t-tweetagefiwtew). 🥺 this function acts mostwy fow metwic wogging. ʘwʘ
    */
-  private def ageFilterWithStats(
-    offlineInterestedInCandidates: Seq[TweetWithScore],
-    maxTweetAgeHours: Duration,
-    scopedStatsReceiver: StatsReceiver
-  ): Seq[TweetWithScore] = {
-    scopedStatsReceiver.stat("size").add(offlineInterestedInCandidates.size)
-    val candidates = offlineInterestedInCandidates.map { candidate =>
-      TweetWithScore(candidate.tweetId, candidate.score)
+  p-pwivate d-def agefiwtewwithstats(
+    o-offwineintewestedincandidates: seq[tweetwithscowe], :3
+    m-maxtweetagehouws: duwation, (U ﹏ U)
+    s-scopedstatsweceivew: statsweceivew
+  ): seq[tweetwithscowe] = {
+    scopedstatsweceivew.stat("size").add(offwineintewestedincandidates.size)
+    vaw candidates = offwineintewestedincandidates.map { c-candidate =>
+      tweetwithscowe(candidate.tweetid, (U ﹏ U) c-candidate.scowe)
     }
-    val filteredCandidates = tweetAgeFilter(candidates, maxTweetAgeHours)
-    scopedStatsReceiver.stat(f"filtered_size").add(filteredCandidates.size)
-    if (filteredCandidates.isEmpty) scopedStatsReceiver.counter(f"empty").incr()
+    vaw f-fiwtewedcandidates = tweetagefiwtew(candidates, ʘwʘ m-maxtweetagehouws)
+    scopedstatsweceivew.stat(f"fiwtewed_size").add(fiwtewedcandidates.size)
+    i-if (fiwtewedcandidates.isempty) s-scopedstatsweceivew.countew(f"empty").incw()
 
-    filteredCandidates
+    f-fiwtewedcandidates
   }
 
-  private def getTwhinCollabCandidatesWithCGInfo(
-    tweetCandidates: Option[Seq[TweetWithScore]],
-    maxCandidateNumPerSourceKey: Int,
-    twhinCollabFilterQuery: LookupEngineQuery[
-      TwhinCollabFilterSimilarityEngine.Query
-    ],
-  ): Seq[TweetWithCandidateGenerationInfo] = {
-    val twhinTweets = tweetCandidates match {
-      case Some(tweetsWithScores) =>
-        tweetsWithScores.map { tweetWithScore =>
-          TweetWithCandidateGenerationInfo(
-            tweetWithScore.tweetId,
-            CandidateGenerationInfo(
-              None,
-              TwhinCollabFilterSimilarityEngine
-                .toSimilarityEngineInfo(twhinCollabFilterQuery, tweetWithScore.score),
-              Seq.empty
+  p-pwivate def gettwhincowwabcandidateswithcginfo(
+    t-tweetcandidates: option[seq[tweetwithscowe]], >w<
+    maxcandidatenumpewsouwcekey: int, rawr x3
+    twhincowwabfiwtewquewy: wookupenginequewy[
+      twhincowwabfiwtewsimiwawityengine.quewy
+    ], OwO
+  ): seq[tweetwithcandidategenewationinfo] = {
+    vaw t-twhintweets = t-tweetcandidates m-match {
+      case some(tweetswithscowes) =>
+        t-tweetswithscowes.map { tweetwithscowe =>
+          tweetwithcandidategenewationinfo(
+            tweetwithscowe.tweetid, ^•ﻌ•^
+            c-candidategenewationinfo(
+              n-nyone, >_<
+              twhincowwabfiwtewsimiwawityengine
+                .tosimiwawityengineinfo(twhincowwabfiwtewquewy, OwO t-tweetwithscowe.scowe), >_<
+              seq.empty
             )
           )
         }
-      case _ => Seq.empty
+      case _ => seq.empty
     }
-    twhinTweets.take(maxCandidateNumPerSourceKey)
+    t-twhintweets.take(maxcandidatenumpewsouwcekey)
   }
 
-  private def getDiffusionBasedCandidatesWithCGInfo(
-    tweetCandidates: Option[Seq[TweetWithScore]],
-    maxCandidateNumPerSourceKey: Int,
-    diffusionBasedSimilarityEngineQuery: LookupEngineQuery[
-      DiffusionBasedSimilarityEngine.Query
-    ],
-  ): Seq[TweetWithCandidateGenerationInfo] = {
-    val diffusionTweets = tweetCandidates match {
-      case Some(tweetsWithScores) =>
-        tweetsWithScores.map { tweetWithScore =>
-          TweetWithCandidateGenerationInfo(
-            tweetWithScore.tweetId,
-            CandidateGenerationInfo(
-              None,
-              DiffusionBasedSimilarityEngine
-                .toSimilarityEngineInfo(diffusionBasedSimilarityEngineQuery, tweetWithScore.score),
-              Seq.empty
+  p-pwivate def getdiffusionbasedcandidateswithcginfo(
+    t-tweetcandidates: o-option[seq[tweetwithscowe]], (ꈍᴗꈍ)
+    maxcandidatenumpewsouwcekey: int, >w<
+    diffusionbasedsimiwawityenginequewy: wookupenginequewy[
+      d-diffusionbasedsimiwawityengine.quewy
+    ], (U ﹏ U)
+  ): s-seq[tweetwithcandidategenewationinfo] = {
+    v-vaw diffusiontweets = t-tweetcandidates m-match {
+      case some(tweetswithscowes) =>
+        t-tweetswithscowes.map { t-tweetwithscowe =>
+          tweetwithcandidategenewationinfo(
+            tweetwithscowe.tweetid, ^^
+            c-candidategenewationinfo(
+              n-nyone, (U ﹏ U)
+              diffusionbasedsimiwawityengine
+                .tosimiwawityengineinfo(diffusionbasedsimiwawityenginequewy, :3 t-tweetwithscowe.scowe), (✿oωo)
+              seq.empty
             )
           )
         }
-      case _ => Seq.empty
+      case _ => seq.empty
     }
-    diffusionTweets.take(maxCandidateNumPerSourceKey)
+    d-diffusiontweets.take(maxcandidatenumpewsouwcekey)
   }
 }
 
-object CustomizedRetrievalCandidateGeneration {
+object c-customizedwetwievawcandidategenewation {
 
-  case class Query(
-    internalId: InternalId,
-    maxCandidateNumPerSourceKey: Int,
-    maxTweetAgeHours: Duration,
-    // twhinCollabFilter
-    enableTwhinCollabFilter: Boolean,
-    twhinCollabFilterFollowQuery: LookupEngineQuery[
-      TwhinCollabFilterSimilarityEngine.Query
+  c-case cwass quewy(
+    i-intewnawid: intewnawid, XD
+    maxcandidatenumpewsouwcekey: int, >w<
+    m-maxtweetagehouws: d-duwation, òωó
+    // t-twhincowwabfiwtew
+    enabwetwhincowwabfiwtew: boowean, (ꈍᴗꈍ)
+    twhincowwabfiwtewfowwowquewy: w-wookupenginequewy[
+      twhincowwabfiwtewsimiwawityengine.quewy
+    ], rawr x3
+    twhincowwabfiwtewengagementquewy: wookupenginequewy[
+      t-twhincowwabfiwtewsimiwawityengine.quewy
+    ], rawr x3
+    // t-twhinmuwticwustew
+    enabwetwhinmuwticwustew: b-boowean, σωσ
+    twhinmuwticwustewfowwowquewy: w-wookupenginequewy[
+      t-twhincowwabfiwtewsimiwawityengine.quewy
     ],
-    twhinCollabFilterEngagementQuery: LookupEngineQuery[
-      TwhinCollabFilterSimilarityEngine.Query
-    ],
-    // twhinMultiCluster
-    enableTwhinMultiCluster: Boolean,
-    twhinMultiClusterFollowQuery: LookupEngineQuery[
-      TwhinCollabFilterSimilarityEngine.Query
-    ],
-    twhinMultiClusterEngagementQuery: LookupEngineQuery[
-      TwhinCollabFilterSimilarityEngine.Query
-    ],
-    enableRetweetBasedDiffusion: Boolean,
-    diffusionBasedSimilarityEngineQuery: LookupEngineQuery[
-      DiffusionBasedSimilarityEngine.Query
-    ],
+    twhinmuwticwustewengagementquewy: wookupenginequewy[
+      twhincowwabfiwtewsimiwawityengine.quewy
+    ], (ꈍᴗꈍ)
+    e-enabwewetweetbaseddiffusion: boowean, rawr
+    diffusionbasedsimiwawityenginequewy: wookupenginequewy[
+      d-diffusionbasedsimiwawityengine.quewy
+    ], ^^;;
   )
 
-  def fromParams(
-    internalId: InternalId,
-    params: configapi.Params
-  ): Query = {
-    val twhinCollabFilterFollowQuery =
-      TwhinCollabFilterSimilarityEngine.fromParams(
-        internalId,
-        params(CustomizedRetrievalBasedTwhinCollabFilterFollowSource),
-        params)
+  d-def fwompawams(
+    i-intewnawid: intewnawid, rawr x3
+    pawams: c-configapi.pawams
+  ): q-quewy = {
+    v-vaw twhincowwabfiwtewfowwowquewy =
+      twhincowwabfiwtewsimiwawityengine.fwompawams(
+        intewnawid, (ˆ ﻌ ˆ)♡
+        pawams(customizedwetwievawbasedtwhincowwabfiwtewfowwowsouwce), σωσ
+        pawams)
 
-    val twhinCollabFilterEngagementQuery =
-      TwhinCollabFilterSimilarityEngine.fromParams(
-        internalId,
-        params(CustomizedRetrievalBasedTwhinCollabFilterEngagementSource),
-        params)
+    vaw twhincowwabfiwtewengagementquewy =
+      twhincowwabfiwtewsimiwawityengine.fwompawams(
+        intewnawid, (U ﹏ U)
+        pawams(customizedwetwievawbasedtwhincowwabfiwtewengagementsouwce), >w<
+        pawams)
 
-    val twhinMultiClusterFollowQuery =
-      TwhinCollabFilterSimilarityEngine.fromParams(
-        internalId,
-        params(CustomizedRetrievalBasedTwhinMultiClusterFollowSource),
-        params)
+    vaw twhinmuwticwustewfowwowquewy =
+      twhincowwabfiwtewsimiwawityengine.fwompawams(
+        intewnawid, σωσ
+        p-pawams(customizedwetwievawbasedtwhinmuwticwustewfowwowsouwce), nyaa~~
+        p-pawams)
 
-    val twhinMultiClusterEngagementQuery =
-      TwhinCollabFilterSimilarityEngine.fromParams(
-        internalId,
-        params(CustomizedRetrievalBasedTwhinMultiClusterEngagementSource),
-        params)
+    vaw twhinmuwticwustewengagementquewy =
+      twhincowwabfiwtewsimiwawityengine.fwompawams(
+        i-intewnawid, 🥺
+        p-pawams(customizedwetwievawbasedtwhinmuwticwustewengagementsouwce), rawr x3
+        p-pawams)
 
-    val diffusionBasedSimilarityEngineQuery =
-      DiffusionBasedSimilarityEngine.fromParams(
-        internalId,
-        params(CustomizedRetrievalBasedRetweetDiffusionSource),
-        params)
+    vaw diffusionbasedsimiwawityenginequewy =
+      d-diffusionbasedsimiwawityengine.fwompawams(
+        intewnawid, σωσ
+        p-pawams(customizedwetwievawbasedwetweetdiffusionsouwce),
+        p-pawams)
 
-    Query(
-      internalId = internalId,
-      maxCandidateNumPerSourceKey = params(GlobalParams.MaxCandidateNumPerSourceKeyParam),
-      maxTweetAgeHours = params(GlobalParams.MaxTweetAgeHoursParam),
-      // twhinCollabFilter
-      enableTwhinCollabFilter = params(EnableTwhinCollabFilterClusterParam),
-      twhinCollabFilterFollowQuery = twhinCollabFilterFollowQuery,
-      twhinCollabFilterEngagementQuery = twhinCollabFilterEngagementQuery,
-      enableTwhinMultiCluster = params(EnableTwhinMultiClusterParam),
-      twhinMultiClusterFollowQuery = twhinMultiClusterFollowQuery,
-      twhinMultiClusterEngagementQuery = twhinMultiClusterEngagementQuery,
-      enableRetweetBasedDiffusion = params(EnableRetweetBasedDiffusionParam),
-      diffusionBasedSimilarityEngineQuery = diffusionBasedSimilarityEngineQuery
+    quewy(
+      i-intewnawid = intewnawid, (///ˬ///✿)
+      m-maxcandidatenumpewsouwcekey = p-pawams(gwobawpawams.maxcandidatenumpewsouwcekeypawam), (U ﹏ U)
+      maxtweetagehouws = pawams(gwobawpawams.maxtweetagehouwspawam), ^^;;
+      // t-twhincowwabfiwtew
+      e-enabwetwhincowwabfiwtew = p-pawams(enabwetwhincowwabfiwtewcwustewpawam), 🥺
+      t-twhincowwabfiwtewfowwowquewy = t-twhincowwabfiwtewfowwowquewy, òωó
+      t-twhincowwabfiwtewengagementquewy = t-twhincowwabfiwtewengagementquewy, XD
+      e-enabwetwhinmuwticwustew = p-pawams(enabwetwhinmuwticwustewpawam), :3
+      twhinmuwticwustewfowwowquewy = t-twhinmuwticwustewfowwowquewy, (U ﹏ U)
+      t-twhinmuwticwustewengagementquewy = t-twhinmuwticwustewengagementquewy, >w<
+      enabwewetweetbaseddiffusion = pawams(enabwewetweetbaseddiffusionpawam), /(^•ω•^)
+      d-diffusionbasedsimiwawityenginequewy = diffusionbasedsimiwawityenginequewy
     )
   }
 }

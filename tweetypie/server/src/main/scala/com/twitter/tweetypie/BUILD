@@ -1,19 +1,19 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "mediaservices/commons/src/main/thrift:thrift-scala",
-        "tweetypie/servo/util",
-        "snowflake:id",
-        "src/thrift/com/twitter/gizmoduck:thrift-scala",
-        "src/thrift/com/twitter/gizmoduck:user-thrift-scala",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:media-entity-scala",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:tweet-scala",
-        "tweetypie/server/src/main/thrift:compiled-scala",
-        "tweetypie/common/src/scala/com/twitter/tweetypie/util",
-        "util/util-slf4j-api",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    p-pwatfowm = "java8", o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "mediasewvices/commons/swc/main/thwift:thwift-scawa", ( ͡o ω ͡o )
+        "tweetypie/sewvo/utiw", UwU
+        "snowfwake:id", rawr x3
+        "swc/thwift/com/twittew/gizmoduck:thwift-scawa", rawr
+        "swc/thwift/com/twittew/gizmoduck:usew-thwift-scawa", σωσ
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:media-entity-scawa", σωσ
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:tweet-scawa", >_<
+        "tweetypie/sewvew/swc/main/thwift:compiwed-scawa", :3
+        "tweetypie/common/swc/scawa/com/twittew/tweetypie/utiw", (U ﹏ U)
+        "utiw/utiw-swf4j-api", -.-
     ],
 )

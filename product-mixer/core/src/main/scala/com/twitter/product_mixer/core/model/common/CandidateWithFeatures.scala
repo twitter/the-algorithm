@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.common
+package com.twittew.pwoduct_mixew.cowe.modew.common
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
 
-/** [[Candidate]] and it's FeatureMap */
-trait CandidateWithFeatures[+Candidate <: UniversalNoun[Any]] {
-  val candidate: Candidate
-  val features: FeatureMap
+/** [[candidate]] a-and it's f-featuwemap */
+t-twait candidatewithfeatuwes[+candidate <: u-univewsawnoun[any]] {
+  v-vaw candidate: c-candidate
+  vaw f-featuwes: featuwemap
 }
 
-object CandidateWithFeatures {
-  def unapply[Candidate <: UniversalNoun[Any]](
-    candidateWithFeatures: CandidateWithFeatures[Candidate]
-  ): Option[(Candidate, FeatureMap)] =
-    Some(
-      (candidateWithFeatures.candidate, candidateWithFeatures.features)
+o-object candidatewithfeatuwes {
+  def unappwy[candidate <: univewsawnoun[any]](
+    c-candidatewithfeatuwes: candidatewithfeatuwes[candidate]
+  ): option[(candidate, f-featuwemap)] =
+    some(
+      (candidatewithfeatuwes.candidate, (U ﹏ U) candidatewithfeatuwes.featuwes)
     )
 }

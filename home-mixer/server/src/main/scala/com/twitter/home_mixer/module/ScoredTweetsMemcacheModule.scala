@@ -1,61 +1,61 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import com.twitter.servo.cache.FinagleMemcache
-import com.twitter.servo.cache.KeyTransformer
-import com.twitter.servo.cache.KeyValueTransformingTtlCache
-import com.twitter.servo.cache.Serializer
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.servo.cache.TtlCache
-import com.twitter.timelines.model.UserId
-import org.apache.thrift.protocol.TCompactProtocol
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.home_mixew.{thwiftscawa => t-t}
+impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.pwoduct_mixew.shawed_wibwawy.memcached_cwient.memcachedcwientbuiwdew
+i-impowt com.twittew.sewvo.cache.finagwememcache
+impowt com.twittew.sewvo.cache.keytwansfowmew
+impowt com.twittew.sewvo.cache.keyvawuetwansfowmingttwcache
+impowt com.twittew.sewvo.cache.sewiawizew
+impowt c-com.twittew.sewvo.cache.thwiftsewiawizew
+impowt com.twittew.sewvo.cache.ttwcache
+i-impowt com.twittew.timewines.modew.usewid
+impowt o-owg.apache.thwift.pwotocow.tcompactpwotocow
 
-import javax.inject.Singleton
+impowt javax.inject.singweton
 
-object ScoredTweetsMemcacheModule extends TwitterModule {
+object scowedtweetsmemcachemoduwe e-extends twittewmoduwe {
 
-  private val ScopeName = "ScoredTweetsCache"
-  private val ProdDestName = "/srv#/prod/local/cache/home_scored_tweets:twemcaches"
-  private val StagingDestName = "/srv#/test/local/cache/twemcache_home_scored_tweets:twemcaches"
-  private val scoredTweetsSerializer: Serializer[t.ScoredTweetsResponse] =
-    new ThriftSerializer[t.ScoredTweetsResponse](
-      t.ScoredTweetsResponse,
-      new TCompactProtocol.Factory())
-  private val userIdKeyTransformer: KeyTransformer[UserId] = (userId: UserId) => userId.toString
+  pwivate v-vaw scopename = "scowedtweetscache"
+  p-pwivate vaw pwoddestname = "/swv#/pwod/wocaw/cache/home_scowed_tweets:twemcaches"
+  pwivate vaw stagingdestname = "/swv#/test/wocaw/cache/twemcache_home_scowed_tweets:twemcaches"
+  pwivate v-vaw scowedtweetssewiawizew: sewiawizew[t.scowedtweetswesponse] =
+    nyew thwiftsewiawizew[t.scowedtweetswesponse](
+      t.scowedtweetswesponse, rawr
+      n-nyew tcompactpwotocow.factowy())
+  p-pwivate vaw usewidkeytwansfowmew: k-keytwansfowmew[usewid] = (usewid: u-usewid) => u-usewid.tostwing
 
-  @Singleton
-  @Provides
-  def providesScoredTweetsCache(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): TtlCache[UserId, t.ScoredTweetsResponse] = {
-    val destName = serviceIdentifier.environment.toLowerCase match {
-      case "prod" => ProdDestName
-      case _ => StagingDestName
+  @singweton
+  @pwovides
+  def pwovidesscowedtweetscache(
+    sewviceidentifiew: s-sewviceidentifiew, mya
+    statsweceivew: statsweceivew
+  ): t-ttwcache[usewid, ^^ t.scowedtweetswesponse] = {
+    vaw destname = sewviceidentifiew.enviwonment.towowewcase match {
+      case "pwod" => p-pwoddestname
+      case _ => stagingdestname
     }
-    val client = MemcachedClientBuilder.buildMemcachedClient(
-      destName = destName,
-      numTries = 2,
-      numConnections = 1,
-      requestTimeout = 200.milliseconds,
-      globalTimeout = 400.milliseconds,
-      connectTimeout = 100.milliseconds,
-      acquisitionTimeout = 100.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver.scope(ScopeName)
+    v-vaw cwient = m-memcachedcwientbuiwdew.buiwdmemcachedcwient(
+      d-destname = destname, 😳😳😳
+      nyumtwies = 2, mya
+      nyumconnections = 1, 😳
+      w-wequesttimeout = 200.miwwiseconds, -.-
+      g-gwobawtimeout = 400.miwwiseconds, 🥺
+      connecttimeout = 100.miwwiseconds,
+      a-acquisitiontimeout = 100.miwwiseconds, o.O
+      s-sewviceidentifiew = sewviceidentifiew, /(^•ω•^)
+      statsweceivew = s-statsweceivew.scope(scopename)
     )
-    val underlyingCache = new FinagleMemcache(client)
+    vaw undewwyingcache = n-nyew finagwememcache(cwient)
 
-    new KeyValueTransformingTtlCache(
-      underlyingCache = underlyingCache,
-      transformer = scoredTweetsSerializer,
-      underlyingKey = userIdKeyTransformer
+    nyew keyvawuetwansfowmingttwcache(
+      undewwyingcache = u-undewwyingcache, nyaa~~
+      twansfowmew = s-scowedtweetssewiawizew, nyaa~~
+      undewwyingkey = u-usewidkeytwansfowmew
     )
   }
 }

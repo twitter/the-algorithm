@@ -1,45 +1,45 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.hermit.store.common.ReadableWritableStore
-import com.twitter.notificationservice.thriftscala.GenericNotificationOverrideKey
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryCompactScalaInjection
-import com.twitter.storage.client.manhattan.bijections.Bijections.LongInjection
-import com.twitter.storage.client.manhattan.bijections.Bijections.StringInjection
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.impl.Component
-import com.twitter.storage.client.manhattan.kv.impl.DescriptorP1L1
-import com.twitter.storage.client.manhattan.kv.impl.KeyDescriptor
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.util.Future
+impowt c-com.twittew.hewmit.stowe.common.weadabwewwitabwestowe
+i-impowt c-com.twittew.notificationsewvice.thwiftscawa.genewicnotificationovewwidekey
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.stowage.cwient.manhattan.bijections.bijections.binawycompactscawainjection
+i-impowt com.twittew.stowage.cwient.manhattan.bijections.bijections.wonginjection
+impowt com.twittew.stowage.cwient.manhattan.bijections.bijections.stwinginjection
+impowt c-com.twittew.stowage.cwient.manhattan.kv.manhattankvendpoint
+impowt com.twittew.stowage.cwient.manhattan.kv.impw.component
+impowt com.twittew.stowage.cwient.manhattan.kv.impw.descwiptowp1w1
+i-impowt com.twittew.stowage.cwient.manhattan.kv.impw.keydescwiptow
+impowt com.twittew.stowage.cwient.manhattan.kv.impw.vawuedescwiptow
+i-impowt com.twittew.utiw.futuwe
 
-case class NTabHistoryStore(mhEndpoint: ManhattanKVEndpoint, dataset: String)
-    extends ReadableWritableStore[(Long, String), GenericNotificationOverrideKey] {
+case cwass nytabhistowystowe(mhendpoint: manhattankvendpoint, rawr x3 d-dataset: stwing)
+    extends w-weadabwewwitabwestowe[(wong, (U ﹏ U) s-stwing), (U ﹏ U) genewicnotificationovewwidekey] {
 
-  private val keyDesc: DescriptorP1L1.EmptyKey[Long, String] =
-    KeyDescriptor(Component(LongInjection), Component(StringInjection))
+  pwivate vaw keydesc: descwiptowp1w1.emptykey[wong, (⑅˘꒳˘) stwing] =
+    keydescwiptow(component(wonginjection), òωó c-component(stwinginjection))
 
-  private val genericNotifKeyValDesc: ValueDescriptor.EmptyValue[GenericNotificationOverrideKey] =
-    ValueDescriptor[GenericNotificationOverrideKey](
-      BinaryCompactScalaInjection(GenericNotificationOverrideKey)
+  pwivate vaw genewicnotifkeyvawdesc: vawuedescwiptow.emptyvawue[genewicnotificationovewwidekey] =
+    vawuedescwiptow[genewicnotificationovewwidekey](
+      b-binawycompactscawainjection(genewicnotificationovewwidekey)
     )
 
-  override def get(key: (Long, String)): Future[Option[GenericNotificationOverrideKey]] = {
-    val (userId, impressionId) = key
-    val mhKey = keyDesc.withDataset(dataset).withPkey(userId).withLkey(impressionId)
+  ovewwide d-def get(key: (wong, ʘwʘ s-stwing)): futuwe[option[genewicnotificationovewwidekey]] = {
+    v-vaw (usewid, /(^•ω•^) i-impwessionid) = key
+    vaw mhkey = keydesc.withdataset(dataset).withpkey(usewid).withwkey(impwessionid)
 
-    Stitch
-      .run(mhEndpoint.get(mhKey, genericNotifKeyValDesc))
-      .map { optionMhValue =>
-        optionMhValue.map(_.contents)
+    s-stitch
+      .wun(mhendpoint.get(mhkey, ʘwʘ genewicnotifkeyvawdesc))
+      .map { optionmhvawue =>
+        o-optionmhvawue.map(_.contents)
       }
   }
 
-  override def put(keyValue: ((Long, String), GenericNotificationOverrideKey)): Future[Unit] = {
-    val ((userId, impressionId), genericNotifOverrideKey) = keyValue
-    val mhKey = keyDesc.withDataset(dataset).withPkey(userId).withLkey(impressionId)
-    val mhVal = genericNotifKeyValDesc.withValue(genericNotifOverrideKey)
-    Stitch.run(mhEndpoint.insert(mhKey, mhVal))
+  ovewwide def put(keyvawue: ((wong, σωσ stwing), genewicnotificationovewwidekey)): futuwe[unit] = {
+    v-vaw ((usewid, OwO impwessionid), 😳😳😳 g-genewicnotifovewwidekey) = keyvawue
+    v-vaw m-mhkey = keydesc.withdataset(dataset).withpkey(usewid).withwkey(impwessionid)
+    vaw mhvaw = genewicnotifkeyvawdesc.withvawue(genewicnotifovewwidekey)
+    stitch.wun(mhendpoint.insewt(mhkey, 😳😳😳 mhvaw))
   }
 
 }

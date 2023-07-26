@@ -1,72 +1,72 @@
-package com.twitter.simclusters_v2.score
+package com.twittew.simcwustews_v2.scowe
 
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore, ScoreId => ThriftScoreId}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.{scowe => t-thwiftscowe, mya scoweid => t-thwiftscoweid}
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * A Score Store is a readableStore with ScoreId as Key and Score as the Value.
- * It also needs to include the algorithm type.
- * A algorithm type should only be used by one Score Store in the application.
+ * a-a scowe s-stowe is a weadabwestowe w-with scoweid as key and scowe as the vawue. (˘ω˘)
+ * it awso nyeeds to incwude t-the awgowithm type. >_<
+ * a awgowithm type shouwd o-onwy be used by one scowe stowe i-in the appwication. -.-
  */
-trait ScoreStore[K <: ScoreId] extends ReadableStore[K, Score] {
+twait scowestowe[k <: scoweid] extends w-weadabwestowe[k, 🥺 scowe] {
 
-  def fromThriftScoreId: ThriftScoreId => K
+  def f-fwomthwiftscoweid: t-thwiftscoweid => k
 
-  // Convert to a Thrift version.
-  def toThriftStore: ReadableStore[ThriftScoreId, ThriftScore] = {
+  // convewt to a thwift vewsion. (U ﹏ U)
+  def tothwiftstowe: w-weadabwestowe[thwiftscoweid, >w< thwiftscowe] = {
     this
-      .composeKeyMapping[ThriftScoreId](fromThriftScoreId)
-      .mapValues(_.toThrift)
+      .composekeymapping[thwiftscoweid](fwomthwiftscoweid)
+      .mapvawues(_.tothwift)
   }
 }
 
 /**
- * A generic Pairwise Score store.
- * Requires provide both left and right side feature hydration.
+ * a genewic paiwwise s-scowe stowe. mya
+ * wequiwes pwovide b-both weft and w-wight side featuwe h-hydwation. >w<
  */
-trait PairScoreStore[K <: PairScoreId, K1, K2, V1, V2] extends ScoreStore[K] {
+t-twait paiwscowestowe[k <: paiwscoweid, nyaa~~ k1, k2, v-v1, v2] extends scowestowe[k] {
 
-  def compositeKey1: K => K1
-  def compositeKey2: K => K2
+  def compositekey1: k-k => k1
+  def compositekey2: k => k2
 
-  // Left side feature hydration
-  def underlyingStore1: ReadableStore[K1, V1]
+  // weft side featuwe hydwation
+  def undewwyingstowe1: w-weadabwestowe[k1, (✿oωo) v1]
 
-  // Right side feature hydration
-  def underlyingStore2: ReadableStore[K2, V2]
+  // w-wight side featuwe h-hydwation
+  d-def undewwyingstowe2: weadabwestowe[k2, ʘwʘ v2]
 
-  def score: (V1, V2) => Future[Option[Double]]
+  def scowe: (v1, (ˆ ﻌ ˆ)♡ v-v2) => futuwe[option[doubwe]]
 
-  override def get(k: K): Future[Option[Score]] = {
-    for {
-      vs <-
-        Future.join(underlyingStore1.get(compositeKey1(k)), underlyingStore2.get(compositeKey2(k)))
+  o-ovewwide def get(k: k): futuwe[option[scowe]] = {
+    f-fow {
+      v-vs <-
+        futuwe.join(undewwyingstowe1.get(compositekey1(k)), 😳😳😳 u-undewwyingstowe2.get(compositekey2(k)))
       v <- vs match {
-        case (Some(v1), Some(v2)) =>
-          score(v1, v2)
-        case _ =>
-          Future.None
+        c-case (some(v1), :3 some(v2)) =>
+          scowe(v1, OwO v2)
+        c-case _ =>
+          futuwe.none
       }
-    } yield {
-      v.map(buildScore)
+    } y-yiewd {
+      v.map(buiwdscowe)
     }
   }
 
-  override def multiGet[KK <: K](ks: Set[KK]): Map[KK, Future[Option[Score]]] = {
+  o-ovewwide def m-muwtiget[kk <: k](ks: set[kk]): map[kk, futuwe[option[scowe]]] = {
 
-    val v1Map = underlyingStore1.multiGet(ks.map { k => compositeKey1(k) })
-    val v2Map = underlyingStore2.multiGet(ks.map { k => compositeKey2(k) })
+    vaw v1map = undewwyingstowe1.muwtiget(ks.map { k => compositekey1(k) })
+    vaw v2map = u-undewwyingstowe2.muwtiget(ks.map { k-k => compositekey2(k) })
 
     ks.map { k =>
-      k -> Future.join(v1Map(compositeKey1(k)), v2Map(compositeKey2(k))).flatMap {
-        case (Some(v1), Some(v2)) =>
-          score(v1, v2).map(_.map(buildScore))
+      k-k -> futuwe.join(v1map(compositekey1(k)), (U ﹏ U) v2map(compositekey2(k))).fwatmap {
+        c-case (some(v1), >w< s-some(v2)) =>
+          scowe(v1, (U ﹏ U) v2).map(_.map(buiwdscowe))
         case _ =>
-          Future.value(None)
+          futuwe.vawue(none)
       }
-    }.toMap
+    }.tomap
   }
 
-  private def buildScore(v: Double): Score = Score(v)
+  p-pwivate def buiwdscowe(v: doubwe): scowe = scowe(v)
 }

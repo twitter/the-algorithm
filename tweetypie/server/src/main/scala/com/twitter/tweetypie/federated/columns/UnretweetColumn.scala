@@ -1,69 +1,69 @@
-package com.twitter.tweetypie
-package federated.columns
+package com.twittew.tweetypie
+package f-fedewated.cowumns
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.federated.context.GetRequestContext
-import com.twitter.tweetypie.federated.context.RequestContext
-import com.twitter.tweetypie.thriftscala.{graphql => gql}
-import com.twitter.tweetypie.{thriftscala => thrift}
+i-impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.stwato.catawog.opmetadata
+i-impowt com.twittew.stwato.config.contactinfo
+i-impowt com.twittew.stwato.config.powicy
+i-impowt c-com.twittew.stwato.data.conv
+impowt com.twittew.stwato.data.descwiption.pwaintext
+impowt com.twittew.stwato.data.wifecycwe.pwoduction
+impowt com.twittew.stwato.fed.stwatofed
+impowt com.twittew.stwato.opcontext.opcontext
+i-impowt com.twittew.stwato.thwift.scwoogeconv
+impowt c-com.twittew.tweetypie.fedewated.context.getwequestcontext
+impowt c-com.twittew.tweetypie.fedewated.context.wequestcontext
+impowt com.twittew.tweetypie.thwiftscawa.{gwaphqw => gqw}
+impowt com.twittew.tweetypie.{thwiftscawa => t-thwift}
 
-class UnretweetColumn(
-  unretweet: thrift.UnretweetRequest => Future[thrift.UnretweetResult],
-  getRequestContext: GetRequestContext,
-) extends StratoFed.Column("tweetypie/unretweet.Tweet")
-    with StratoFed.Execute.StitchWithContext
-    with StratoFed.HandleDarkRequests {
+cwass unwetweetcowumn(
+  u-unwetweet: thwift.unwetweetwequest => f-futuwe[thwift.unwetweetwesuwt], mya
+  getwequestcontext: getwequestcontext, >w<
+) extends stwatofed.cowumn("tweetypie/unwetweet.tweet")
+    with s-stwatofed.exekawaii~.stitchwithcontext
+    with stwatofed.handwedawkwequests {
 
-  override val policy: Policy = AccessPolicy.TweetMutationCommonAccessPolicies
+  ovewwide vaw powicy: powicy = a-accesspowicy.tweetmutationcommonaccesspowicies
 
-  // It's acceptable to retry or reapply an unretweet operation,
-  // as multiple calls result in the same end state.
-  override val isIdempotent: Boolean = true
+  // it's acceptabwe t-to wetwy o-ow weappwy an unwetweet o-opewation, nyaa~~
+  // a-as muwtipwe cawws wesuwt in the same end s-state. (✿oωo)
+  ovewwide vaw isidempotent: boowean = twue
 
-  override type Arg = gql.UnretweetRequest
-  override type Result = gql.UnretweetResponseWithSubqueryPrefetchItems
+  o-ovewwide type awg = gqw.unwetweetwequest
+  ovewwide type wesuwt = gqw.unwetweetwesponsewithsubquewypwefetchitems
 
-  override val argConv: Conv[Arg] = ScroogeConv.fromStruct
-  override val resultConv: Conv[Result] = ScroogeConv.fromStruct
+  ovewwide vaw awgconv: c-conv[awg] = scwoogeconv.fwomstwuct
+  ovewwide vaw w-wesuwtconv: conv[wesuwt] = s-scwoogeconv.fwomstwuct
 
-  override val contactInfo: ContactInfo = TweetypieContactInfo
-  override val metadata: OpMetadata =
-    OpMetadata(
-      Some(Production),
-      Some(PlainText("Removes any retweets by the calling user of the given source tweet.")))
+  o-ovewwide vaw contactinfo: contactinfo = tweetypiecontactinfo
+  o-ovewwide v-vaw metadata: opmetadata =
+    opmetadata(
+      some(pwoduction), ʘwʘ
+      s-some(pwaintext("wemoves a-any wetweets by the cawwing usew o-of the given souwce tweet.")))
 
-  override def execute(gqlRequest: Arg, opContext: OpContext): Stitch[Result] = {
-    val ctx: RequestContext = getRequestContext(opContext)
-    val req = thrift.UnretweetRequest(
-      ctx.twitterUserId,
-      gqlRequest.sourceTweetId,
+  o-ovewwide def exekawaii~(gqwwequest: awg, (ˆ ﻌ ˆ)♡ opcontext: o-opcontext): stitch[wesuwt] = {
+    v-vaw ctx: wequestcontext = g-getwequestcontext(opcontext)
+    v-vaw weq = thwift.unwetweetwequest(
+      ctx.twittewusewid, 😳😳😳
+      gqwwequest.souwcetweetid, :3
     )
 
-    val stitchUnretweet = handleDarkRequest(opContext)(
-      light = Stitch.callFuture(unretweet(req)),
-      // For dark requests, we don't want to send traffic to tweetypie.
-      // Since the response is the same regardless of the request, we take a no-op
-      // action instead.
-      dark = Stitch.value(thrift.UnretweetResult(state = thrift.TweetDeleteState.Ok))
+    vaw stitchunwetweet = handwedawkwequest(opcontext)(
+      wight = stitch.cawwfutuwe(unwetweet(weq)), OwO
+      // f-fow dawk w-wequests, (U ﹏ U) we don't want to send t-twaffic to tweetypie. >w<
+      // s-since the wesponse i-is the same wegawdwess of the wequest, (U ﹏ U) we take a nyo-op
+      // a-action instead. 😳
+      dawk = stitch.vawue(thwift.unwetweetwesuwt(state = thwift.tweetdewetestate.ok))
     )
 
-    stitchUnretweet.map { _ =>
-      gql.UnretweetResponseWithSubqueryPrefetchItems(
-        data = Some(gql.UnretweetResponse(Some(gqlRequest.sourceTweetId)))
+    stitchunwetweet.map { _ =>
+      g-gqw.unwetweetwesponsewithsubquewypwefetchitems(
+        data = some(gqw.unwetweetwesponse(some(gqwwequest.souwcetweetid)))
       )
     }
   }
 }
 
-object UnretweetColumn {
-  val Path = "tweetypie/unretweet.Tweet"
+o-object u-unwetweetcowumn {
+  v-vaw path = "tweetypie/unwetweet.tweet"
 }

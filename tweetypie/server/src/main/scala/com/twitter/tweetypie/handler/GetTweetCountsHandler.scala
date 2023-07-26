@@ -1,43 +1,43 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
 /**
- * Handler for the `getTweetCounts` endpoint.
+ * h-handwew fow t-the `gettweetcounts` endpoint. (U ﹏ U)
  */
-object GetTweetCountsHandler {
-  type Type = FutureArrow[GetTweetCountsRequest, Seq[GetTweetCountsResult]]
+object gettweetcountshandwew {
+  type type = futuweawwow[gettweetcountswequest, (U ﹏ U) s-seq[gettweetcountswesuwt]]
 
-  def apply(repo: TweetCountsRepository.Type): Type = {
+  def appwy(wepo: tweetcountswepositowy.type): t-type = {
 
-    def idToResult(id: TweetId, req: GetTweetCountsRequest): Stitch[GetTweetCountsResult] =
-      Stitch
+    def idtowesuwt(id: t-tweetid, weq: gettweetcountswequest): stitch[gettweetcountswesuwt] =
+      stitch
         .join(
-          // .liftToOption() converts any failures to None result
-          if (req.includeRetweetCount) repo(RetweetsKey(id)).liftToOption() else Stitch.None,
-          if (req.includeReplyCount) repo(RepliesKey(id)).liftToOption() else Stitch.None,
-          if (req.includeFavoriteCount) repo(FavsKey(id)).liftToOption() else Stitch.None,
-          if (req.includeQuoteCount) repo(QuotesKey(id)).liftToOption() else Stitch.None,
-          if (req.includeBookmarkCount) repo(BookmarksKey(id)).liftToOption() else Stitch.None
+          // .wifttooption() convewts any faiwuwes t-to nyone wesuwt
+          if (weq.incwudewetweetcount) wepo(wetweetskey(id)).wifttooption() e-ewse stitch.none, (⑅˘꒳˘)
+          i-if (weq.incwudewepwycount) wepo(wepwieskey(id)).wifttooption() ewse stitch.none, òωó
+          if (weq.incwudefavowitecount) w-wepo(favskey(id)).wifttooption() ewse stitch.none, ʘwʘ
+          if (weq.incwudequotecount) wepo(quoteskey(id)).wifttooption() ewse stitch.none, /(^•ω•^)
+          i-if (weq.incwudebookmawkcount) wepo(bookmawkskey(id)).wifttooption() e-ewse stitch.none
         ).map {
-          case (retweetCount, replyCount, favoriteCount, quoteCount, bookmarkCount) =>
-            GetTweetCountsResult(
-              tweetId = id,
-              retweetCount = retweetCount,
-              replyCount = replyCount,
-              favoriteCount = favoriteCount,
-              quoteCount = quoteCount,
-              bookmarkCount = bookmarkCount
+          c-case (wetweetcount, ʘwʘ w-wepwycount, σωσ favowitecount, OwO q-quotecount, bookmawkcount) =>
+            gettweetcountswesuwt(
+              t-tweetid = id, 😳😳😳
+              wetweetcount = w-wetweetcount, 😳😳😳
+              wepwycount = wepwycount, o.O
+              favowitecount = favowitecount, ( ͡o ω ͡o )
+              quotecount = quotecount, (U ﹏ U)
+              b-bookmawkcount = bookmawkcount
             )
         }
 
-    FutureArrow[GetTweetCountsRequest, Seq[GetTweetCountsResult]] { request =>
-      Stitch.run(
-        Stitch.traverse(request.tweetIds)(idToResult(_, request))
+    f-futuweawwow[gettweetcountswequest, (///ˬ///✿) s-seq[gettweetcountswesuwt]] { w-wequest =>
+      stitch.wun(
+        stitch.twavewse(wequest.tweetids)(idtowesuwt(_, >w< wequest))
       )
     }
   }

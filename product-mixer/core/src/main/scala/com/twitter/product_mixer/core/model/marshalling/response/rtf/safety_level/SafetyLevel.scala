@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.wtf.safety_wevew
 
 /*
-  These are model objects for the thrift enum - src/thrift/com/twitter/spam/rtf/safety_level.thrift
-  Please add new objects as needed for the marhallers
+  these awe m-modew objects f-fow the thwift enum - s-swc/thwift/com/twittew/spam/wtf/safety_wevew.thwift
+  p-pwease a-add nyew objects a-as nyeeded fow t-the mawhawwews
  */
-sealed trait SafetyLevel
+s-seawed twait safetywevew
 
-case object ConversationFocalTweetSafetyLevel extends SafetyLevel
-case object ConversationReplySafetyLevel extends SafetyLevel
-case object ConversationInjectedTweetSafetyLevel extends SafetyLevel
-case object TimelineFocalTweetSafetyLevel extends SafetyLevel
-case object TimelineHomePromotedHydrationSafetyLevel extends SafetyLevel
+case object convewsationfocawtweetsafetywevew extends safetywevew
+c-case object convewsationwepwysafetywevew extends safetywevew
+case o-object convewsationinjectedtweetsafetywevew extends safetywevew
+c-case object timewinefocawtweetsafetywevew extends safetywevew
+c-case object timewinehomepwomotedhydwationsafetywevew extends safetywevew

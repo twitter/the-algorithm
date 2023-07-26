@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait CandidateUrtEntryBuilder[
-  -Query <: PipelineQuery,
-  -BuilderInput <: UniversalNoun[Any],
-  BuilderOutput <: TimelineEntry] {
+t-twait candidateuwtentwybuiwdew[
+  -quewy <: p-pipewinequewy, >_<
+  -buiwdewinput <: u-univewsawnoun[any], :3
+  b-buiwdewoutput <: timewineentwy] {
 
-  def apply(query: Query, candidate: BuilderInput, candidateFeatures: FeatureMap): BuilderOutput
+  def appwy(quewy: quewy, (U ﹏ U) candidate: buiwdewinput, -.- c-candidatefeatuwes: featuwemap): buiwdewoutput
 }

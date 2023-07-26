@@ -1,31 +1,31 @@
-package com.twitter.tweetypie.core
+package com.twittew.tweetypie.cowe
 
-import com.twitter.servo.cache
-import com.twitter.servo.cache.CachedSerializer
-import com.twitter.tweetypie.thriftscala
-import com.twitter.tweetypie.thriftscala.CachedTweet
-import com.twitter.tweetypie.thriftscala.Tweet
-import org.apache.thrift.protocol.TCompactProtocol
+impowt com.twittew.sewvo.cache
+i-impowt com.twittew.sewvo.cache.cachedsewiawizew
+i-impowt com.twittew.tweetypie.thwiftscawa
+i-impowt c-com.twittew.tweetypie.thwiftscawa.cachedtweet
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
+impowt o-owg.apache.thwift.pwotocow.tcompactpwotocow
 
 /**
- * A container object for serializers.
- * Creates a serializer for every object type cached by the tweetypie service
+ * a-a containew o-object fow sewiawizews. mya
+ * cweates a sewiawizew fow evewy object type cached b-by the tweetypie sewvice
  */
-object Serializer {
-  lazy val CompactProtocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory
+object sewiawizew {
+  w-wazy vaw compactpwotocowfactowy: tcompactpwotocow.factowy = n-nyew tcompactpwotocow.factowy
 
-  def toCached[T](underlying: cache.Serializer[T]): cache.CachedSerializer[T] =
-    new cache.CachedSerializer(underlying, CompactProtocolFactory)
+  def tocached[t](undewwying: cache.sewiawizew[t]): cache.cachedsewiawizew[t] =
+    nyew cache.cachedsewiawizew(undewwying, nyaa~~ c-compactpwotocowfactowy)
 
-  object Tweet {
-    lazy val Compact: cache.ThriftSerializer[thriftscala.Tweet] =
-      new cache.ThriftSerializer(thriftscala.Tweet, CompactProtocolFactory)
-    lazy val CachedCompact: CachedSerializer[Tweet] = toCached(Compact)
+  object tweet {
+    w-wazy v-vaw compact: cache.thwiftsewiawizew[thwiftscawa.tweet] =
+      nyew cache.thwiftsewiawizew(thwiftscawa.tweet, (⑅˘꒳˘) compactpwotocowfactowy)
+    wazy vaw cachedcompact: c-cachedsewiawizew[tweet] = tocached(compact)
   }
 
-  object CachedTweet {
-    lazy val Compact: cache.ThriftSerializer[thriftscala.CachedTweet] =
-      new cache.ThriftSerializer(thriftscala.CachedTweet, CompactProtocolFactory)
-    lazy val CachedCompact: CachedSerializer[CachedTweet] = toCached(Compact)
+  object cachedtweet {
+    wazy vaw compact: c-cache.thwiftsewiawizew[thwiftscawa.cachedtweet] =
+      nyew cache.thwiftsewiawizew(thwiftscawa.cachedtweet, rawr x3 c-compactpwotocowfactowy)
+    w-wazy vaw c-cachedcompact: c-cachedsewiawizew[cachedtweet] = tocached(compact)
   }
 }

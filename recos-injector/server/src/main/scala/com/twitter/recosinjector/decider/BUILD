@@ -1,7 +1,7 @@
-scala_library(
-    platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "decider/src/main/scala",
+scawa_wibwawy(
+    pwatfowm = "java11", (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [
+        "decidew/swc/main/scawa", OwO
     ],
 )

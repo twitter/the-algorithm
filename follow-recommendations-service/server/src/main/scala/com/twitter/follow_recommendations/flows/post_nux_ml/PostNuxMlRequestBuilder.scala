@@ -1,172 +1,172 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.twittew.fowwow_wecommendations.fwows.post_nux_mw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.dismiss_store.DismissStore
-import com.twitter.follow_recommendations.common.clients.geoduck.UserLocationFetcher
-import com.twitter.follow_recommendations.common.clients.impression_store.WtfImpressionStore
-import com.twitter.follow_recommendations.common.clients.interests_service.InterestServiceClient
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.clients.user_state.UserStateClient
-import com.twitter.follow_recommendations.common.predicates.dismiss.DismissedCandidatePredicateParams
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils._
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilderParams.DismissedIdScanBudget
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilderParams.TopicIdFetchBudget
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilderParams.WTFImpressionsScanBudget
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.inject.Logging
-import com.twitter.stitch.Stitch
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.cwients.dismiss_stowe.dismissstowe
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.geoduck.usewwocationfetchew
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.impwession_stowe.wtfimpwessionstowe
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.intewests_sewvice.intewestsewvicecwient
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph.sociawgwaphcwient
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.usew_state.usewstatecwient
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.dismiss.dismissedcandidatepwedicatepawams
+impowt com.twittew.fowwow_wecommendations.common.utiws.wescuewithstatsutiws._
+i-impowt com.twittew.fowwow_wecommendations.fwows.post_nux_mw.postnuxmwwequestbuiwdewpawams.dismissedidscanbudget
+impowt com.twittew.fowwow_wecommendations.fwows.post_nux_mw.postnuxmwwequestbuiwdewpawams.topicidfetchbudget
+impowt com.twittew.fowwow_wecommendations.fwows.post_nux_mw.postnuxmwwequestbuiwdewpawams.wtfimpwessionsscanbudget
+i-impowt com.twittew.fowwow_wecommendations.pwoducts.common.pwoductwequest
+impowt c-com.twittew.inject.wogging
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.utiw.time
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class PostNuxMlRequestBuilder @Inject() (
-  socialGraph: SocialGraphClient,
-  wtfImpressionStore: WtfImpressionStore,
-  dismissStore: DismissStore,
-  userLocationFetcher: UserLocationFetcher,
-  interestServiceClient: InterestServiceClient,
-  userStateClient: UserStateClient,
-  statsReceiver: StatsReceiver)
-    extends Logging {
+@singweton
+cwass postnuxmwwequestbuiwdew @inject() (
+  sociawgwaph: sociawgwaphcwient, o.O
+  wtfimpwessionstowe: w-wtfimpwessionstowe, (///ˬ///✿)
+  dismissstowe: dismissstowe, σωσ
+  usewwocationfetchew: usewwocationfetchew, nyaa~~
+  i-intewestsewvicecwient: intewestsewvicecwient,
+  u-usewstatecwient: u-usewstatecwient, ^^;;
+  s-statsweceivew: s-statsweceivew)
+    extends wogging {
 
-  val stats: StatsReceiver = statsReceiver.scope("post_nux_ml_request_builder")
-  val invalidRelationshipUsersStats: StatsReceiver = stats.scope("invalidRelationshipUserIds")
-  private val invalidRelationshipUsersMaxSizeCounter =
-    invalidRelationshipUsersStats.counter("maxSize")
-  private val invalidRelationshipUsersNotMaxSizeCounter =
-    invalidRelationshipUsersStats.counter("notMaxSize")
+  vaw s-stats: statsweceivew = statsweceivew.scope("post_nux_mw_wequest_buiwdew")
+  vaw i-invawidwewationshipusewsstats: statsweceivew = stats.scope("invawidwewationshipusewids")
+  pwivate vaw invawidwewationshipusewsmaxsizecountew =
+    invawidwewationshipusewsstats.countew("maxsize")
+  p-pwivate vaw invawidwewationshipusewsnotmaxsizecountew =
+    i-invawidwewationshipusewsstats.countew("notmaxsize")
 
-  def build(
-    req: ProductRequest,
-    previouslyRecommendedUserIds: Option[Set[Long]] = None,
-    previouslyFollowedUserIds: Option[Set[Long]] = None
-  ): Stitch[PostNuxMlRequest] = {
-    val dl = req.recommendationRequest.displayLocation
-    val resultsStitch = Stitch.collect(
-      req.recommendationRequest.clientContext.userId
-        .map { userId =>
-          val lookBackDuration = req.params(DismissedCandidatePredicateParams.LookBackDuration)
-          val negativeStartTs = -(Time.now - lookBackDuration).inMillis
-          val recentFollowedUserIdsStitch =
-            rescueWithStats(
-              socialGraph.getRecentFollowedUserIds(userId),
-              stats,
-              "recentFollowedUserIds")
-          val invalidRelationshipUserIdsStitch =
-            if (req.params(PostNuxMlParams.EnableInvalidRelationshipPredicate)) {
-              rescueWithStats(
-                socialGraph
-                  .getInvalidRelationshipUserIds(userId)
-                  .onSuccess(ids =>
-                    if (ids.size >= SocialGraphClient.MaxNumInvalidRelationship) {
-                      invalidRelationshipUsersMaxSizeCounter.incr()
-                    } else {
-                      invalidRelationshipUsersNotMaxSizeCounter.incr()
-                    }),
-                stats,
-                "invalidRelationshipUserIds"
+  d-def buiwd(
+    w-weq: pwoductwequest, ^•ﻌ•^
+    pweviouswywecommendedusewids: option[set[wong]] = nyone,
+    p-pweviouswyfowwowedusewids: o-option[set[wong]] = nyone
+  ): stitch[postnuxmwwequest] = {
+    v-vaw dw = w-weq.wecommendationwequest.dispwaywocation
+    vaw wesuwtsstitch = s-stitch.cowwect(
+      weq.wecommendationwequest.cwientcontext.usewid
+        .map { u-usewid =>
+          vaw wookbackduwation = w-weq.pawams(dismissedcandidatepwedicatepawams.wookbackduwation)
+          vaw n-nyegativestawtts = -(time.now - wookbackduwation).inmiwwis
+          v-vaw wecentfowwowedusewidsstitch =
+            w-wescuewithstats(
+              sociawgwaph.getwecentfowwowedusewids(usewid), σωσ
+              stats, -.-
+              "wecentfowwowedusewids")
+          vaw invawidwewationshipusewidsstitch =
+            if (weq.pawams(postnuxmwpawams.enabweinvawidwewationshippwedicate)) {
+              wescuewithstats(
+                sociawgwaph
+                  .getinvawidwewationshipusewids(usewid)
+                  .onsuccess(ids =>
+                    if (ids.size >= s-sociawgwaphcwient.maxnuminvawidwewationship) {
+                      i-invawidwewationshipusewsmaxsizecountew.incw()
+                    } ewse {
+                      i-invawidwewationshipusewsnotmaxsizecountew.incw()
+                    }), ^^;;
+                s-stats, XD
+                "invawidwewationshipusewids"
               )
-            } else {
-              Stitch.value(Seq.empty)
+            } e-ewse {
+              stitch.vawue(seq.empty)
             }
-          // recentFollowedByUserIds are only used in experiment candidate sources
-          val recentFollowedByUserIdsStitch = if (req.params(PostNuxMlParams.GetFollowersFromSgs)) {
-            rescueWithStats(
-              socialGraph.getRecentFollowedByUserIdsFromCachedColumn(userId),
+          // wecentfowwowedbyusewids awe o-onwy used in expewiment candidate souwces
+          vaw wecentfowwowedbyusewidsstitch = if (weq.pawams(postnuxmwpawams.getfowwowewsfwomsgs)) {
+            w-wescuewithstats(
+              sociawgwaph.getwecentfowwowedbyusewidsfwomcachedcowumn(usewid), 🥺
+              s-stats, òωó
+              "wecentfowwowedbyusewids")
+          } e-ewse stitch.vawue(seq.empty)
+          v-vaw wtfimpwessionsstitch =
+            w-wescuewithstatswithin(
+              w-wtfimpwessionstowe.get(usewid, (ˆ ﻌ ˆ)♡ d-dw),
+              s-stats, -.-
+              "wtfimpwessions", :3
+              weq.pawams(wtfimpwessionsscanbudget))
+          vaw dismissedusewidsstitch =
+            w-wescuewithstatswithin(
+              d-dismissstowe.get(usewid, ʘwʘ n-nyegativestawtts, 🥺 n-nyone),
+              stats, >_<
+              "dismissedusewids", ʘwʘ
+              w-weq.pawams(dismissedidscanbudget))
+          vaw wocationstitch =
+            wescueoptionawwithstats(
+              usewwocationfetchew.getgeohashandcountwycode(
+                s-some(usewid), (˘ω˘)
+                weq.wecommendationwequest.cwientcontext.ipaddwess), (✿oωo)
               stats,
-              "recentFollowedByUserIds")
-          } else Stitch.value(Seq.empty)
-          val wtfImpressionsStitch =
-            rescueWithStatsWithin(
-              wtfImpressionStore.get(userId, dl),
-              stats,
-              "wtfImpressions",
-              req.params(WTFImpressionsScanBudget))
-          val dismissedUserIdsStitch =
-            rescueWithStatsWithin(
-              dismissStore.get(userId, negativeStartTs, None),
-              stats,
-              "dismissedUserIds",
-              req.params(DismissedIdScanBudget))
-          val locationStitch =
-            rescueOptionalWithStats(
-              userLocationFetcher.getGeohashAndCountryCode(
-                Some(userId),
-                req.recommendationRequest.clientContext.ipAddress),
-              stats,
-              "userLocation"
+              "usewwocation"
             )
-          val topicIdsStitch =
-            rescueWithStatsWithin(
-              interestServiceClient.fetchUttInterestIds(userId),
-              stats,
-              "topicIds",
-              req.params(TopicIdFetchBudget))
-          val userStateStitch =
-            rescueOptionalWithStats(userStateClient.getUserState(userId), stats, "userState")
-          Stitch.join(
-            recentFollowedUserIdsStitch,
-            invalidRelationshipUserIdsStitch,
-            recentFollowedByUserIdsStitch,
-            dismissedUserIdsStitch,
-            wtfImpressionsStitch,
-            locationStitch,
-            topicIdsStitch,
-            userStateStitch
+          vaw topicidsstitch =
+            wescuewithstatswithin(
+              intewestsewvicecwient.fetchuttintewestids(usewid), (///ˬ///✿)
+              s-stats, rawr x3
+              "topicids", -.-
+              weq.pawams(topicidfetchbudget))
+          vaw usewstatestitch =
+            wescueoptionawwithstats(usewstatecwient.getusewstate(usewid), ^^ s-stats, "usewstate")
+          s-stitch.join(
+            w-wecentfowwowedusewidsstitch, (⑅˘꒳˘)
+            invawidwewationshipusewidsstitch, nyaa~~
+            w-wecentfowwowedbyusewidsstitch, /(^•ω•^)
+            dismissedusewidsstitch,
+            w-wtfimpwessionsstitch, (U ﹏ U)
+            w-wocationstitch, 😳😳😳
+            topicidsstitch, >w<
+            usewstatestitch
           )
         })
 
-    resultsStitch.map {
-      case Some(
+    wesuwtsstitch.map {
+      case some(
             (
-              recentFollowedUserIds,
-              invalidRelationshipUserIds,
-              recentFollowedByUserIds,
-              dismissedUserIds,
-              wtfImpressions,
-              locationInfo,
-              topicIds,
-              userState)) =>
-        PostNuxMlRequest(
-          params = req.params,
-          clientContext = req.recommendationRequest.clientContext,
-          similarToUserIds = Nil,
-          inputExcludeUserIds = req.recommendationRequest.excludedIds.getOrElse(Nil),
-          recentFollowedUserIds = Some(recentFollowedUserIds),
-          invalidRelationshipUserIds = Some(invalidRelationshipUserIds.toSet),
-          recentFollowedByUserIds = Some(recentFollowedByUserIds),
-          dismissedUserIds = Some(dismissedUserIds),
-          displayLocation = dl,
-          maxResults = req.recommendationRequest.maxResults,
-          debugOptions = req.recommendationRequest.debugParams.flatMap(_.debugOptions),
-          wtfImpressions = Some(wtfImpressions),
-          geohashAndCountryCode = locationInfo,
-          uttInterestIds = Some(topicIds),
-          inputPreviouslyRecommendedUserIds = previouslyRecommendedUserIds,
-          inputPreviouslyFollowedUserIds = previouslyFollowedUserIds,
-          isSoftUser = req.recommendationRequest.isSoftUser,
-          userState = userState
+              wecentfowwowedusewids, XD
+              i-invawidwewationshipusewids, o.O
+              wecentfowwowedbyusewids, mya
+              dismissedusewids, 🥺
+              wtfimpwessions, ^^;;
+              w-wocationinfo, :3
+              topicids, (U ﹏ U)
+              u-usewstate)) =>
+        p-postnuxmwwequest(
+          pawams = weq.pawams, OwO
+          cwientcontext = w-weq.wecommendationwequest.cwientcontext, 😳😳😳
+          s-simiwawtousewids = nyiw, (ˆ ﻌ ˆ)♡
+          i-inputexcwudeusewids = weq.wecommendationwequest.excwudedids.getowewse(niw), XD
+          wecentfowwowedusewids = s-some(wecentfowwowedusewids), (ˆ ﻌ ˆ)♡
+          invawidwewationshipusewids = some(invawidwewationshipusewids.toset), ( ͡o ω ͡o )
+          wecentfowwowedbyusewids = some(wecentfowwowedbyusewids), rawr x3
+          d-dismissedusewids = s-some(dismissedusewids), nyaa~~
+          d-dispwaywocation = dw, >_<
+          m-maxwesuwts = w-weq.wecommendationwequest.maxwesuwts,
+          debugoptions = w-weq.wecommendationwequest.debugpawams.fwatmap(_.debugoptions), ^^;;
+          wtfimpwessions = some(wtfimpwessions), (ˆ ﻌ ˆ)♡
+          geohashandcountwycode = wocationinfo, ^^;;
+          u-uttintewestids = s-some(topicids), (⑅˘꒳˘)
+          inputpweviouswywecommendedusewids = pweviouswywecommendedusewids, rawr x3
+          i-inputpweviouswyfowwowedusewids = p-pweviouswyfowwowedusewids,
+          issoftusew = weq.wecommendationwequest.issoftusew, (///ˬ///✿)
+          usewstate = u-usewstate
         )
       case _ =>
-        PostNuxMlRequest(
-          params = req.params,
-          clientContext = req.recommendationRequest.clientContext,
-          similarToUserIds = Nil,
-          inputExcludeUserIds = req.recommendationRequest.excludedIds.getOrElse(Nil),
-          recentFollowedUserIds = None,
-          invalidRelationshipUserIds = None,
-          recentFollowedByUserIds = None,
-          dismissedUserIds = None,
-          displayLocation = dl,
-          maxResults = req.recommendationRequest.maxResults,
-          debugOptions = req.recommendationRequest.debugParams.flatMap(_.debugOptions),
-          wtfImpressions = None,
-          geohashAndCountryCode = None,
-          inputPreviouslyRecommendedUserIds = previouslyRecommendedUserIds,
-          inputPreviouslyFollowedUserIds = previouslyFollowedUserIds,
-          isSoftUser = req.recommendationRequest.isSoftUser,
-          userState = None
+        postnuxmwwequest(
+          pawams = weq.pawams, 🥺
+          c-cwientcontext = weq.wecommendationwequest.cwientcontext, >_<
+          simiwawtousewids = n-nyiw, UwU
+          i-inputexcwudeusewids = weq.wecommendationwequest.excwudedids.getowewse(niw), >_<
+          wecentfowwowedusewids = nyone, -.-
+          i-invawidwewationshipusewids = n-nyone, mya
+          wecentfowwowedbyusewids = nyone, >w<
+          dismissedusewids = n-none, (U ﹏ U)
+          dispwaywocation = d-dw, 😳😳😳
+          maxwesuwts = weq.wecommendationwequest.maxwesuwts, o.O
+          debugoptions = w-weq.wecommendationwequest.debugpawams.fwatmap(_.debugoptions), òωó
+          wtfimpwessions = nyone, 😳😳😳
+          g-geohashandcountwycode = n-nyone, σωσ
+          inputpweviouswywecommendedusewids = p-pweviouswywecommendedusewids, (⑅˘꒳˘)
+          inputpweviouswyfowwowedusewids = p-pweviouswyfowwowedusewids, (///ˬ///✿)
+          i-issoftusew = w-weq.wecommendationwequest.issoftusew, 🥺
+          usewstate = n-nyone
         )
     }
   }

@@ -1,109 +1,109 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.twittew.seawch.eawwybiwd.awchive.segmentbuiwdew;
 
-import java.util.Collection;
+impowt j-java.utiw.cowwection;
 
-import com.google.common.collect.ImmutableList;
-import com.google.inject.Module;
+i-impowt c-com.googwe.common.cowwect.immutabwewist;
+i-impowt c-com.googwe.inject.moduwe;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.app.Flaggable;
-import com.twitter.inject.server.AbstractTwitterServer;
-import com.twitter.util.Future;
-import com.twitter.util.Time;
+impowt com.twittew.app.fwaggabwe;
+impowt com.twittew.inject.sewvew.abstwacttwittewsewvew;
+impowt com.twittew.utiw.futuwe;
+i-impowt com.twittew.utiw.time;
 
-public class SegmentBuilderApp extends AbstractTwitterServer {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentBuilderApp.class);
+pubwic cwass segmentbuiwdewapp extends abstwacttwittewsewvew {
+  p-pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(segmentbuiwdewapp.cwass);
 
-  public SegmentBuilderApp() {
-    createFlag("onlyRunOnce",
-        true,
-        "whether to stop segment builder after one loop",
-        Flaggable.ofBoolean());
+  pubwic segmentbuiwdewapp() {
+    cweatefwag("onwywunonce", rawr x3
+        t-twue, OwO
+        "whethew to stop segment b-buiwdew aftew o-one woop", /(^•ω•^)
+        fwaggabwe.ofboowean());
 
-    createFlag("waitBetweenLoopsMins",
-        60,
-        "how many minutes to wait between building loops",
-        Flaggable.ofInt());
+    cweatefwag("waitbetweenwoopsmins",
+        60, 😳😳😳
+        "how many minutes to wait b-between buiwding woops", ( ͡o ω ͡o )
+        fwaggabwe.ofint());
 
-    createFlag("startup_batch_size",
-        30,
-        "How many instances can start and read timeslice info from HDFS at the same time. "
-            + "If you don't know what this parameter is, please do not change this parameter.",
-        Flaggable.ofInt());
+    cweatefwag("stawtup_batch_size", >_<
+        30, >w<
+        "how many instances c-can stawt and wead timeswice i-info fwom hdfs a-at the same time. rawr "
+            + "if y-you don't k-know nyani this pawametew is, 😳 pwease do nyot change t-this pawametew.", >w<
+        fwaggabwe.ofint());
 
-    createFlag("instance",
-        20,
-        "the job instance number",
-        Flaggable.ofInt());
+    cweatefwag("instance", (⑅˘꒳˘)
+        20, OwO
+        "the job instance n-nyumbew", (ꈍᴗꈍ)
+        fwaggabwe.ofint());
 
-    createFlag("segmentZkLockExpirationHours",
-        0,
-        "max hours to hold the zookeeper lock while building segment",
-        Flaggable.ofInt());
+    cweatefwag("segmentzkwockexpiwationhouws", 😳
+        0, 😳😳😳
+        "max houws to howd the zookeepew wock whiwe buiwding s-segment", mya
+        fwaggabwe.ofint());
 
-    createFlag("startupSleepMins",
-        2L,
-        "sleep multiplier of startupSleepMins before job runs",
-        Flaggable.ofLong());
+    c-cweatefwag("stawtupsweepmins", mya
+        2w, (⑅˘꒳˘)
+        "sweep m-muwtipwiew o-of stawtupsweepmins befowe job wuns", (U ﹏ U)
+        fwaggabwe.ofwong());
 
-    createFlag("maxRetriesOnFailure",
+    c-cweatefwag("maxwetwiesonfaiwuwe", mya
         3,
-        "how many times we should try to rebuild a segment when failure happens",
-        Flaggable.ofInt());
+        "how m-many times we shouwd twy to w-webuiwd a segment w-when faiwuwe happens", ʘwʘ
+        f-fwaggabwe.ofint());
 
-    createFlag("hash_partitions",
-        ImmutableList.of(),
-        "comma separated hash partition ids, e.g., 0,1,3,4. "
-            + "If not specified, all the partitions will be built.",
-        Flaggable.ofJavaList(Flaggable.ofInt()));
+    cweatefwag("hash_pawtitions", (˘ω˘)
+        i-immutabwewist.of(), (U ﹏ U)
+        "comma sepawated hash pawtition ids, ^•ﻌ•^ e-e.g., 0,1,3,4. (˘ω˘) "
+            + "if nyot specified, :3 a-aww the pawtitions wiww be b-buiwt.", ^^;;
+        f-fwaggabwe.ofjavawist(fwaggabwe.ofint()));
 
-    createFlag("numSegmentBuilderPartitions",
+    cweatefwag("numsegmentbuiwdewpawtitions", 🥺
         100,
-        "Number of partitions for dividing up all segment builder work",
-        Flaggable.ofInt());
+        "numbew of pawtitions fow dividing up aww segment buiwdew wowk", (⑅˘꒳˘)
+        fwaggabwe.ofint());
 
-    createFlag("waitBetweenSegmentsSecs",
+    c-cweatefwag("waitbetweensegmentssecs", nyaa~~
         10,
-        "Time to sleep between processing segments.",
-        Flaggable.ofInt());
+        "time t-to sweep between pwocessing segments.", :3
+        f-fwaggabwe.ofint());
 
-    createFlag("waitBeforeQuitMins",
-        2,
-        "How many minutes to sleep before quitting.",
-        Flaggable.ofInt());
+    c-cweatefwag("waitbefowequitmins", ( ͡o ω ͡o )
+        2, mya
+        "how m-many minutes to sweep befowe quitting.", (///ˬ///✿)
+        fwaggabwe.ofint());
 
-    createFlag("scrubGen",
-        "",
-        "Scrub gen for which segment builders should be run.",
-        Flaggable.ofString());
+    c-cweatefwag("scwubgen", (˘ω˘)
+        "", ^^;;
+        "scwub gen fow which segment buiwdews shouwd be wun.", (✿oωo)
+        fwaggabwe.ofstwing());
   }
 
-  @Override
-  public void start() {
-    SegmentBuilder segmentBuilder = injector().instance(SegmentBuilder.class);
-    closeOnExit((Time time) -> {
-      segmentBuilder.doShutdown();
-      return Future.Unit();
+  @ovewwide
+  p-pubwic void stawt() {
+    segmentbuiwdew s-segmentbuiwdew = i-injectow().instance(segmentbuiwdew.cwass);
+    c-cwoseonexit((time time) -> {
+      s-segmentbuiwdew.doshutdown();
+      w-wetuwn futuwe.unit();
     });
 
-    LOG.info("Starting run()");
-    segmentBuilder.run();
-    LOG.info("run() complete");
+    w-wog.info("stawting w-wun()");
+    segmentbuiwdew.wun();
+    wog.info("wun() c-compwete");
 
-    // Now shutdown
-    shutdown();
+    // n-nyow shutdown
+    s-shutdown();
   }
 
-  protected void shutdown() {
-    LOG.info("Calling close() to initiate shutdown");
-    close();
+  p-pwotected v-void shutdown() {
+    wog.info("cawwing cwose() to initiate shutdown");
+    c-cwose();
   }
 
-  @Override
-  public Collection<Module> javaModules() {
-    return ImmutableList.of(new SegmentBuilderModule());
+  @ovewwide
+  pubwic cowwection<moduwe> javamoduwes() {
+    wetuwn immutabwewist.of(new segmentbuiwdewmoduwe());
   }
 }

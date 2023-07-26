@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-social-graph-prod",
-  "config-files": [
-    "uua-social-graph.aurora"
+  "wowe": "discode", XD
+  "name": "uua-sociaw-gwaph-pwod", >_<
+  "config-fiwes": [
+    "uua-sociaw-gwaph.auwowa"
   ],
-  "build": {
-    "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
-    },
+  "buiwd": {
+    "pway": twue, (ꈍᴗꈍ)
+    "twiggew": {
+      "cwon-scheduwe": "0 17 * * 2"
+    }, ^•ﻌ•^
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", OwO
+        "name": "packew-cwient-no-pex", 🥺
+        "vewsion": "watest"
       }
-    ],
+    ], òωó
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-social-graph"
-      },
+        "type": "bazew-bundwe", o.O
+        "name": "bundwe", (U ᵕ U❁)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-sociaw-gwaph"
+      }, (⑅˘꒳˘)
       {
-        "type": "packer",
-        "name": "uua-social-graph",
-        "artifact": "./dist/uua-social-graph.zip"
+        "type": "packew", ( ͡o ω ͡o )
+        "name": "uua-sociaw-gwaph", UwU
+        "awtifact": "./dist/uua-sociaw-gwaph.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr x3
+  "tawgets": [
     {
-      "type": "group",
-      "name": "prod",
-      "targets": [
+      "type": "gwoup", rawr
+      "name": "pwod", σωσ
+      "tawgets": [
         {
-          "name": "uua-social-graph-prod-atla",
-          "key": "atla/discode/prod/uua-social-graph"
-        },
+          "name": "uua-sociaw-gwaph-pwod-atwa", σωσ
+          "key": "atwa/discode/pwod/uua-sociaw-gwaph"
+        }, >_<
         {
-          "name": "uua-social-graph-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-social-graph"
+          "name": "uua-sociaw-gwaph-pwod-pdxa", :3
+          "key": "pdxa/discode/pwod/uua-sociaw-gwaph"
         }
       ]
     }
-  ],
-  "subscriptions": [
+  ], (U ﹏ U)
+  "subscwiptions": [
     {
-      "type": "SLACK",
-      "recipients": [
+      "type": "swack", -.-
+      "wecipients": [
         {
-          "to": "discode-oncall"
+          "to": "discode-oncaww"
         }
-      ],
-      "events": ["WORKFLOW_SUCCESS"]
-    },
+      ], (ˆ ﻌ ˆ)♡
+      "events": ["wowkfwow_success"]
+    }, (⑅˘꒳˘)
     {
-      "type": "SLACK",
-      "recipients": [{
-        "to": "discode-oncall"
-      }],
-      "events": ["*FAILED"]
+      "type": "swack", (U ᵕ U❁)
+      "wecipients": [{
+        "to": "discode-oncaww"
+      }], -.-
+      "events": ["*faiwed"]
     }
   ]
 }

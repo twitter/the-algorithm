@@ -1,210 +1,210 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.additionawfiewds.additionawfiewds
+i-impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy.tweetquewy
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
 /**
- * A hydrator that scrubs tweet fields that weren't requested. Those fields might be
- * present because they were previously requested and were cached with the tweet.
+ * a-a hydwatow t-that scwubs tweet fiewds that wewen't wequested. 😳 those fiewds might be
+ * pwesent b-because they wewe pweviouswy wequested and w-wewe cached with the tweet.
  */
-trait UnrequestedFieldScrubber {
-  def scrub(tweetResult: TweetResult): TweetResult
-  def scrub(tweetData: TweetData): TweetData
-  def scrub(tweet: Tweet): Tweet
+t-twait unwequestedfiewdscwubbew {
+  def scwub(tweetwesuwt: tweetwesuwt): tweetwesuwt
+  d-def scwub(tweetdata: tweetdata): t-tweetdata
+  d-def scwub(tweet: tweet): tweet
 }
 
-object UnrequestedFieldScrubber {
-  def apply(options: TweetQuery.Options): UnrequestedFieldScrubber =
-    if (!options.scrubUnrequestedFields) NullScrubber
-    else new ScrubberImpl(options.include)
+object unwequestedfiewdscwubbew {
+  def appwy(options: tweetquewy.options): u-unwequestedfiewdscwubbew =
+    if (!options.scwubunwequestedfiewds) nyuwwscwubbew
+    ewse nyew scwubbewimpw(options.incwude)
 
-  private object NullScrubber extends UnrequestedFieldScrubber {
-    def scrub(tweetResult: TweetResult): TweetResult = tweetResult
-    def scrub(tweetData: TweetData): TweetData = tweetData
-    def scrub(tweet: Tweet): Tweet = tweet
+  p-pwivate object nuwwscwubbew extends u-unwequestedfiewdscwubbew {
+    d-def scwub(tweetwesuwt: t-tweetwesuwt): t-tweetwesuwt = tweetwesuwt
+    def scwub(tweetdata: t-tweetdata): tweetdata = tweetdata
+    d-def scwub(tweet: tweet): tweet = tweet
   }
 
-  class ScrubberImpl(i: TweetQuery.Include) extends UnrequestedFieldScrubber {
-    def scrub(tweetResult: TweetResult): TweetResult =
-      tweetResult.map(scrub(_))
+  cwass scwubbewimpw(i: tweetquewy.incwude) extends u-unwequestedfiewdscwubbew {
+    def scwub(tweetwesuwt: t-tweetwesuwt): t-tweetwesuwt =
+      t-tweetwesuwt.map(scwub(_))
 
-    def scrub(tweetData: TweetData): TweetData =
-      tweetData.copy(
-        tweet = scrub(tweetData.tweet),
-        sourceTweetResult = tweetData.sourceTweetResult.map(scrub(_)),
-        quotedTweetResult =
-          if (!i.quotedTweet) None
-          else tweetData.quotedTweetResult.map(qtr => qtr.map(scrub))
+    def scwub(tweetdata: tweetdata): tweetdata =
+      tweetdata.copy(
+        t-tweet = scwub(tweetdata.tweet), (U ﹏ U)
+        s-souwcetweetwesuwt = tweetdata.souwcetweetwesuwt.map(scwub(_)), mya
+        q-quotedtweetwesuwt =
+          i-if (!i.quotedtweet) nyone
+          e-ewse tweetdata.quotedtweetwesuwt.map(qtw => qtw.map(scwub))
       )
 
-    def scrub(tweet: Tweet): Tweet = {
-      val tweet2 = scrubKnownFields(tweet)
+    def s-scwub(tweet: tweet): tweet = {
+      vaw tweet2 = s-scwubknownfiewds(tweet)
 
-      val unhandledFields = i.tweetFields -- AdditionalFields.CompiledFieldIds
+      vaw unhandwedfiewds = i-i.tweetfiewds -- additionawfiewds.compiwedfiewdids
 
-      if (unhandledFields.isEmpty) {
-        tweet2
-      } else {
-        tweet2.unsetFields(unhandledFields)
+      i-if (unhandwedfiewds.isempty) {
+        t-tweet2
+      } ewse {
+        tweet2.unsetfiewds(unhandwedfiewds)
       }
     }
 
-    def scrubKnownFields(tweet: Tweet): Tweet = {
-      @inline
-      def filter[A](fieldId: FieldId, value: Option[A]): Option[A] =
-        if (i.tweetFields.contains(fieldId)) value else None
+    def scwubknownfiewds(tweet: tweet): tweet = {
+      @inwine
+      def fiwtew[a](fiewdid: f-fiewdid, (U ᵕ U❁) v-vawue: option[a]): option[a] =
+        i-if (i.tweetfiewds.contains(fiewdid)) v-vawue e-ewse nyone
 
       tweet.copy(
-        coreData = filter(Tweet.CoreDataField.id, tweet.coreData),
-        urls = filter(Tweet.UrlsField.id, tweet.urls),
-        mentions = filter(Tweet.MentionsField.id, tweet.mentions),
-        hashtags = filter(Tweet.HashtagsField.id, tweet.hashtags),
-        cashtags = filter(Tweet.CashtagsField.id, tweet.cashtags),
-        media = filter(Tweet.MediaField.id, tweet.media),
-        place = filter(Tweet.PlaceField.id, tweet.place),
-        quotedTweet = filter(Tweet.QuotedTweetField.id, tweet.quotedTweet),
-        takedownCountryCodes =
-          filter(Tweet.TakedownCountryCodesField.id, tweet.takedownCountryCodes),
-        counts = filter(Tweet.CountsField.id, tweet.counts.map(scrub)),
-        deviceSource = filter(Tweet.DeviceSourceField.id, tweet.deviceSource),
-        perspective = filter(Tweet.PerspectiveField.id, tweet.perspective),
-        cards = filter(Tweet.CardsField.id, tweet.cards),
-        card2 = filter(Tweet.Card2Field.id, tweet.card2),
-        language = filter(Tweet.LanguageField.id, tweet.language),
-        spamLabels = None, // unused
-        contributor = filter(Tweet.ContributorField.id, tweet.contributor),
-        profileGeoEnrichment =
-          filter(Tweet.ProfileGeoEnrichmentField.id, tweet.profileGeoEnrichment),
-        conversationMuted = filter(Tweet.ConversationMutedField.id, tweet.conversationMuted),
-        takedownReasons = filter(Tweet.TakedownReasonsField.id, tweet.takedownReasons),
-        selfThreadInfo = filter(Tweet.SelfThreadInfoField.id, tweet.selfThreadInfo),
-        // additional fields
-        mediaTags = filter(Tweet.MediaTagsField.id, tweet.mediaTags),
-        schedulingInfo = filter(Tweet.SchedulingInfoField.id, tweet.schedulingInfo),
-        bindingValues = filter(Tweet.BindingValuesField.id, tweet.bindingValues),
-        replyAddresses = None, // unused
-        obsoleteTwitterSuggestInfo = None, // unused
-        escherbirdEntityAnnotations =
-          filter(Tweet.EscherbirdEntityAnnotationsField.id, tweet.escherbirdEntityAnnotations),
-        spamLabel = filter(Tweet.SpamLabelField.id, tweet.spamLabel),
-        abusiveLabel = filter(Tweet.AbusiveLabelField.id, tweet.abusiveLabel),
-        lowQualityLabel = filter(Tweet.LowQualityLabelField.id, tweet.lowQualityLabel),
-        nsfwHighPrecisionLabel =
-          filter(Tweet.NsfwHighPrecisionLabelField.id, tweet.nsfwHighPrecisionLabel),
-        nsfwHighRecallLabel = filter(Tweet.NsfwHighRecallLabelField.id, tweet.nsfwHighRecallLabel),
-        abusiveHighRecallLabel =
-          filter(Tweet.AbusiveHighRecallLabelField.id, tweet.abusiveHighRecallLabel),
-        lowQualityHighRecallLabel =
-          filter(Tweet.LowQualityHighRecallLabelField.id, tweet.lowQualityHighRecallLabel),
-        personaNonGrataLabel =
-          filter(Tweet.PersonaNonGrataLabelField.id, tweet.personaNonGrataLabel),
-        recommendationsLowQualityLabel = filter(
-          Tweet.RecommendationsLowQualityLabelField.id,
-          tweet.recommendationsLowQualityLabel
-        ),
-        experimentationLabel =
-          filter(Tweet.ExperimentationLabelField.id, tweet.experimentationLabel),
-        tweetLocationInfo = filter(Tweet.TweetLocationInfoField.id, tweet.tweetLocationInfo),
-        cardReference = filter(Tweet.CardReferenceField.id, tweet.cardReference),
-        supplementalLanguage =
-          filter(Tweet.SupplementalLanguageField.id, tweet.supplementalLanguage),
-        selfPermalink = filter(Tweet.SelfPermalinkField.id, tweet.selfPermalink),
-        extendedTweetMetadata =
-          filter(Tweet.ExtendedTweetMetadataField.id, tweet.extendedTweetMetadata),
-        communities = filter(Tweet.CommunitiesField.id, tweet.communities),
-        visibleTextRange = filter(Tweet.VisibleTextRangeField.id, tweet.visibleTextRange),
-        spamHighRecallLabel = filter(Tweet.SpamHighRecallLabelField.id, tweet.spamHighRecallLabel),
-        duplicateContentLabel =
-          filter(Tweet.DuplicateContentLabelField.id, tweet.duplicateContentLabel),
-        liveLowQualityLabel = filter(Tweet.LiveLowQualityLabelField.id, tweet.liveLowQualityLabel),
-        nsfaHighRecallLabel = filter(Tweet.NsfaHighRecallLabelField.id, tweet.nsfaHighRecallLabel),
-        pdnaLabel = filter(Tweet.PdnaLabelField.id, tweet.pdnaLabel),
-        searchBlacklistLabel =
-          filter(Tweet.SearchBlacklistLabelField.id, tweet.searchBlacklistLabel),
-        lowQualityMentionLabel =
-          filter(Tweet.LowQualityMentionLabelField.id, tweet.lowQualityMentionLabel),
-        bystanderAbusiveLabel =
-          filter(Tweet.BystanderAbusiveLabelField.id, tweet.bystanderAbusiveLabel),
-        automationHighRecallLabel =
-          filter(Tweet.AutomationHighRecallLabelField.id, tweet.automationHighRecallLabel),
-        goreAndViolenceLabel =
-          filter(Tweet.GoreAndViolenceLabelField.id, tweet.goreAndViolenceLabel),
-        untrustedUrlLabel = filter(Tweet.UntrustedUrlLabelField.id, tweet.untrustedUrlLabel),
-        goreAndViolenceHighRecallLabel = filter(
-          Tweet.GoreAndViolenceHighRecallLabelField.id,
-          tweet.goreAndViolenceHighRecallLabel
-        ),
-        nsfwVideoLabel = filter(Tweet.NsfwVideoLabelField.id, tweet.nsfwVideoLabel),
-        nsfwNearPerfectLabel =
-          filter(Tweet.NsfwNearPerfectLabelField.id, tweet.nsfwNearPerfectLabel),
-        automationLabel = filter(Tweet.AutomationLabelField.id, tweet.automationLabel),
-        nsfwCardImageLabel = filter(Tweet.NsfwCardImageLabelField.id, tweet.nsfwCardImageLabel),
-        duplicateMentionLabel =
-          filter(Tweet.DuplicateMentionLabelField.id, tweet.duplicateMentionLabel),
-        bounceLabel = filter(Tweet.BounceLabelField.id, tweet.bounceLabel),
-        selfThreadMetadata = filter(Tweet.SelfThreadMetadataField.id, tweet.selfThreadMetadata),
-        composerSource = filter(Tweet.ComposerSourceField.id, tweet.composerSource),
-        editControl = filter(Tweet.EditControlField.id, tweet.editControl),
-        developerBuiltCardId = filter(
-          Tweet.DeveloperBuiltCardIdField.id,
-          tweet.developerBuiltCardId
-        ),
-        creativeEntityEnrichmentsForTweet = filter(
-          Tweet.CreativeEntityEnrichmentsForTweetField.id,
-          tweet.creativeEntityEnrichmentsForTweet
-        ),
-        previousCounts = filter(Tweet.PreviousCountsField.id, tweet.previousCounts),
-        mediaRefs = filter(Tweet.MediaRefsField.id, tweet.mediaRefs),
-        isCreativesContainerBackendTweet = filter(
-          Tweet.IsCreativesContainerBackendTweetField.id,
-          tweet.isCreativesContainerBackendTweet),
-        editPerspective = filter(Tweet.EditPerspectiveField.id, tweet.editPerspective),
-        noteTweet = filter(Tweet.NoteTweetField.id, tweet.noteTweet),
+        cowedata = fiwtew(tweet.cowedatafiewd.id, :3 t-tweet.cowedata), mya
+        uwws = fiwtew(tweet.uwwsfiewd.id, OwO tweet.uwws),
+        mentions = fiwtew(tweet.mentionsfiewd.id, (ˆ ﻌ ˆ)♡ tweet.mentions), ʘwʘ
+        h-hashtags = fiwtew(tweet.hashtagsfiewd.id, o.O t-tweet.hashtags), UwU
+        c-cashtags = f-fiwtew(tweet.cashtagsfiewd.id, tweet.cashtags), rawr x3
+        m-media = f-fiwtew(tweet.mediafiewd.id, 🥺 t-tweet.media), :3
+        p-pwace = fiwtew(tweet.pwacefiewd.id, (ꈍᴗꈍ) tweet.pwace), 🥺
+        quotedtweet = fiwtew(tweet.quotedtweetfiewd.id, (✿oωo) t-tweet.quotedtweet), (U ﹏ U)
+        t-takedowncountwycodes =
+          f-fiwtew(tweet.takedowncountwycodesfiewd.id, :3 t-tweet.takedowncountwycodes), ^^;;
+        c-counts = fiwtew(tweet.countsfiewd.id, rawr tweet.counts.map(scwub)), 😳😳😳
+        devicesouwce = f-fiwtew(tweet.devicesouwcefiewd.id, (✿oωo) tweet.devicesouwce), OwO
+        pewspective = fiwtew(tweet.pewspectivefiewd.id, ʘwʘ tweet.pewspective), (ˆ ﻌ ˆ)♡
+        cawds = fiwtew(tweet.cawdsfiewd.id, (U ﹏ U) t-tweet.cawds), UwU
+        cawd2 = fiwtew(tweet.cawd2fiewd.id, XD tweet.cawd2),
+        wanguage = f-fiwtew(tweet.wanguagefiewd.id, ʘwʘ tweet.wanguage), rawr x3
+        s-spamwabews = n-nyone, ^^;; // unused
+        contwibutow = f-fiwtew(tweet.contwibutowfiewd.id, ʘwʘ tweet.contwibutow), (U ﹏ U)
+        p-pwofiwegeoenwichment =
+          f-fiwtew(tweet.pwofiwegeoenwichmentfiewd.id, (˘ω˘) tweet.pwofiwegeoenwichment), (ꈍᴗꈍ)
+        convewsationmuted = fiwtew(tweet.convewsationmutedfiewd.id, /(^•ω•^) tweet.convewsationmuted), >_<
+        takedownweasons = fiwtew(tweet.takedownweasonsfiewd.id, σωσ t-tweet.takedownweasons), ^^;;
+        sewfthweadinfo = f-fiwtew(tweet.sewfthweadinfofiewd.id, 😳 tweet.sewfthweadinfo),
+        // a-additionaw f-fiewds
+        mediatags = fiwtew(tweet.mediatagsfiewd.id, >_< tweet.mediatags), -.-
+        scheduwinginfo = f-fiwtew(tweet.scheduwinginfofiewd.id, UwU tweet.scheduwinginfo), :3
+        b-bindingvawues = fiwtew(tweet.bindingvawuesfiewd.id, σωσ t-tweet.bindingvawues), >w<
+        w-wepwyaddwesses = nyone, (ˆ ﻌ ˆ)♡ // unused
+        obsowetetwittewsuggestinfo = nyone, ʘwʘ // unused
+        e-eschewbiwdentityannotations =
+          f-fiwtew(tweet.eschewbiwdentityannotationsfiewd.id, :3 t-tweet.eschewbiwdentityannotations), (˘ω˘)
+        spamwabew = f-fiwtew(tweet.spamwabewfiewd.id, 😳😳😳 t-tweet.spamwabew), rawr x3
+        abusivewabew = f-fiwtew(tweet.abusivewabewfiewd.id, (✿oωo) tweet.abusivewabew), (ˆ ﻌ ˆ)♡
+        wowquawitywabew = fiwtew(tweet.wowquawitywabewfiewd.id, :3 tweet.wowquawitywabew), (U ᵕ U❁)
+        n-nysfwhighpwecisionwabew =
+          f-fiwtew(tweet.nsfwhighpwecisionwabewfiewd.id, ^^;; tweet.nsfwhighpwecisionwabew), mya
+        nysfwhighwecawwwabew = f-fiwtew(tweet.nsfwhighwecawwwabewfiewd.id, 😳😳😳 t-tweet.nsfwhighwecawwwabew), OwO
+        abusivehighwecawwwabew =
+          fiwtew(tweet.abusivehighwecawwwabewfiewd.id, rawr tweet.abusivehighwecawwwabew), XD
+        w-wowquawityhighwecawwwabew =
+          fiwtew(tweet.wowquawityhighwecawwwabewfiewd.id, (U ﹏ U) tweet.wowquawityhighwecawwwabew), (˘ω˘)
+        pewsonanongwatawabew =
+          fiwtew(tweet.pewsonanongwatawabewfiewd.id, UwU t-tweet.pewsonanongwatawabew), >_<
+        wecommendationswowquawitywabew = fiwtew(
+          t-tweet.wecommendationswowquawitywabewfiewd.id, σωσ
+          t-tweet.wecommendationswowquawitywabew
+        ), 🥺
+        expewimentationwabew =
+          fiwtew(tweet.expewimentationwabewfiewd.id, 🥺 tweet.expewimentationwabew), ʘwʘ
+        t-tweetwocationinfo = f-fiwtew(tweet.tweetwocationinfofiewd.id, :3 tweet.tweetwocationinfo),
+        cawdwefewence = fiwtew(tweet.cawdwefewencefiewd.id, (U ﹏ U) t-tweet.cawdwefewence), (U ﹏ U)
+        suppwementawwanguage =
+          f-fiwtew(tweet.suppwementawwanguagefiewd.id, ʘwʘ tweet.suppwementawwanguage), >w<
+        sewfpewmawink = fiwtew(tweet.sewfpewmawinkfiewd.id, rawr x3 t-tweet.sewfpewmawink), OwO
+        extendedtweetmetadata =
+          fiwtew(tweet.extendedtweetmetadatafiewd.id, ^•ﻌ•^ t-tweet.extendedtweetmetadata), >_<
+        c-communities = fiwtew(tweet.communitiesfiewd.id, OwO t-tweet.communities), >_<
+        visibwetextwange = fiwtew(tweet.visibwetextwangefiewd.id, (ꈍᴗꈍ) t-tweet.visibwetextwange), >w<
+        s-spamhighwecawwwabew = f-fiwtew(tweet.spamhighwecawwwabewfiewd.id, (U ﹏ U) tweet.spamhighwecawwwabew), ^^
+        d-dupwicatecontentwabew =
+          f-fiwtew(tweet.dupwicatecontentwabewfiewd.id, tweet.dupwicatecontentwabew), (U ﹏ U)
+        wivewowquawitywabew = f-fiwtew(tweet.wivewowquawitywabewfiewd.id, :3 t-tweet.wivewowquawitywabew), (✿oωo)
+        n-nysfahighwecawwwabew = fiwtew(tweet.nsfahighwecawwwabewfiewd.id, XD tweet.nsfahighwecawwwabew), >w<
+        p-pdnawabew = fiwtew(tweet.pdnawabewfiewd.id, òωó t-tweet.pdnawabew), (ꈍᴗꈍ)
+        s-seawchbwackwistwabew =
+          fiwtew(tweet.seawchbwackwistwabewfiewd.id, rawr x3 tweet.seawchbwackwistwabew), rawr x3
+        wowquawitymentionwabew =
+          f-fiwtew(tweet.wowquawitymentionwabewfiewd.id, σωσ t-tweet.wowquawitymentionwabew), (ꈍᴗꈍ)
+        b-bystandewabusivewabew =
+          f-fiwtew(tweet.bystandewabusivewabewfiewd.id, rawr tweet.bystandewabusivewabew), ^^;;
+        a-automationhighwecawwwabew =
+          fiwtew(tweet.automationhighwecawwwabewfiewd.id, rawr x3 tweet.automationhighwecawwwabew), (ˆ ﻌ ˆ)♡
+        goweandviowencewabew =
+          fiwtew(tweet.goweandviowencewabewfiewd.id, σωσ tweet.goweandviowencewabew),
+        u-untwusteduwwwabew = fiwtew(tweet.untwusteduwwwabewfiewd.id, (U ﹏ U) t-tweet.untwusteduwwwabew), >w<
+        goweandviowencehighwecawwwabew = f-fiwtew(
+          tweet.goweandviowencehighwecawwwabewfiewd.id, σωσ
+          tweet.goweandviowencehighwecawwwabew
+        ), nyaa~~
+        nysfwvideowabew = f-fiwtew(tweet.nsfwvideowabewfiewd.id, 🥺 tweet.nsfwvideowabew), rawr x3
+        n-nysfwneawpewfectwabew =
+          f-fiwtew(tweet.nsfwneawpewfectwabewfiewd.id, σωσ t-tweet.nsfwneawpewfectwabew), (///ˬ///✿)
+        a-automationwabew = f-fiwtew(tweet.automationwabewfiewd.id, (U ﹏ U) tweet.automationwabew), ^^;;
+        nysfwcawdimagewabew = fiwtew(tweet.nsfwcawdimagewabewfiewd.id, 🥺 tweet.nsfwcawdimagewabew), òωó
+        dupwicatementionwabew =
+          fiwtew(tweet.dupwicatementionwabewfiewd.id, XD tweet.dupwicatementionwabew), :3
+        bouncewabew = fiwtew(tweet.bouncewabewfiewd.id, (U ﹏ U) t-tweet.bouncewabew), >w<
+        s-sewfthweadmetadata = f-fiwtew(tweet.sewfthweadmetadatafiewd.id, /(^•ω•^) tweet.sewfthweadmetadata), (⑅˘꒳˘)
+        composewsouwce = f-fiwtew(tweet.composewsouwcefiewd.id, ʘwʘ tweet.composewsouwce), rawr x3
+        editcontwow = fiwtew(tweet.editcontwowfiewd.id, (˘ω˘) t-tweet.editcontwow), o.O
+        d-devewopewbuiwtcawdid = fiwtew(
+          t-tweet.devewopewbuiwtcawdidfiewd.id, 😳
+          tweet.devewopewbuiwtcawdid
+        ), o.O
+        cweativeentityenwichmentsfowtweet = f-fiwtew(
+          t-tweet.cweativeentityenwichmentsfowtweetfiewd.id, ^^;;
+          tweet.cweativeentityenwichmentsfowtweet
+        ), ( ͡o ω ͡o )
+        p-pweviouscounts = f-fiwtew(tweet.pweviouscountsfiewd.id, ^^;; tweet.pweviouscounts), ^^;;
+        mediawefs = fiwtew(tweet.mediawefsfiewd.id, XD tweet.mediawefs), 🥺
+        iscweativescontainewbackendtweet = f-fiwtew(
+          t-tweet.iscweativescontainewbackendtweetfiewd.id, (///ˬ///✿)
+          t-tweet.iscweativescontainewbackendtweet), (U ᵕ U❁)
+        editpewspective = f-fiwtew(tweet.editpewspectivefiewd.id, ^^;; t-tweet.editpewspective), ^^;;
+        nyotetweet = f-fiwtew(tweet.notetweetfiewd.id, rawr t-tweet.notetweet), (˘ω˘)
 
-        // tweetypie-internal metadata
-        directedAtUserMetadata =
-          filter(Tweet.DirectedAtUserMetadataField.id, tweet.directedAtUserMetadata),
-        tweetypieOnlyTakedownReasons =
-          filter(Tweet.TweetypieOnlyTakedownReasonsField.id, tweet.tweetypieOnlyTakedownReasons),
-        mediaKeys = filter(Tweet.MediaKeysField.id, tweet.mediaKeys),
-        tweetypieOnlyTakedownCountryCodes = filter(
-          Tweet.TweetypieOnlyTakedownCountryCodesField.id,
-          tweet.tweetypieOnlyTakedownCountryCodes
-        ),
-        underlyingCreativesContainerId = filter(
-          Tweet.UnderlyingCreativesContainerIdField.id,
-          tweet.underlyingCreativesContainerId),
-        unmentionData = filter(Tweet.UnmentionDataField.id, tweet.unmentionData),
-        blockingUnmentions = filter(Tweet.BlockingUnmentionsField.id, tweet.blockingUnmentions),
-        settingsUnmentions = filter(Tweet.SettingsUnmentionsField.id, tweet.settingsUnmentions)
+        // tweetypie-intewnaw m-metadata
+        d-diwectedatusewmetadata =
+          fiwtew(tweet.diwectedatusewmetadatafiewd.id, 🥺 t-tweet.diwectedatusewmetadata), nyaa~~
+        tweetypieonwytakedownweasons =
+          fiwtew(tweet.tweetypieonwytakedownweasonsfiewd.id, :3 t-tweet.tweetypieonwytakedownweasons), /(^•ω•^)
+        mediakeys = f-fiwtew(tweet.mediakeysfiewd.id, ^•ﻌ•^ t-tweet.mediakeys),
+        tweetypieonwytakedowncountwycodes = f-fiwtew(
+          tweet.tweetypieonwytakedowncountwycodesfiewd.id, UwU
+          tweet.tweetypieonwytakedowncountwycodes
+        ), 😳😳😳
+        u-undewwyingcweativescontainewid = f-fiwtew(
+          t-tweet.undewwyingcweativescontainewidfiewd.id, OwO
+          tweet.undewwyingcweativescontainewid), ^•ﻌ•^
+        unmentiondata = fiwtew(tweet.unmentiondatafiewd.id, (ꈍᴗꈍ) t-tweet.unmentiondata), (⑅˘꒳˘)
+        bwockingunmentions = fiwtew(tweet.bwockingunmentionsfiewd.id, (⑅˘꒳˘) t-tweet.bwockingunmentions), (ˆ ﻌ ˆ)♡
+        s-settingsunmentions = fiwtew(tweet.settingsunmentionsfiewd.id, /(^•ω•^) t-tweet.settingsunmentions)
       )
     }
 
-    def scrub(counts: StatusCounts): StatusCounts = {
-      @inline
-      def filter[A](fieldId: FieldId, value: Option[A]): Option[A] =
-        if (i.countsFields.contains(fieldId)) value else None
+    def scwub(counts: s-statuscounts): s-statuscounts = {
+      @inwine
+      def fiwtew[a](fiewdid: fiewdid, òωó v-vawue: option[a]): option[a] =
+        if (i.countsfiewds.contains(fiewdid)) v-vawue ewse nyone
 
-      StatusCounts(
-        replyCount = filter(StatusCounts.ReplyCountField.id, counts.replyCount),
-        favoriteCount = filter(StatusCounts.FavoriteCountField.id, counts.favoriteCount),
-        retweetCount = filter(StatusCounts.RetweetCountField.id, counts.retweetCount),
-        quoteCount = filter(StatusCounts.QuoteCountField.id, counts.quoteCount),
-        bookmarkCount = filter(StatusCounts.BookmarkCountField.id, counts.bookmarkCount)
+      s-statuscounts(
+        wepwycount = fiwtew(statuscounts.wepwycountfiewd.id, (⑅˘꒳˘) c-counts.wepwycount), (U ᵕ U❁)
+        favowitecount = f-fiwtew(statuscounts.favowitecountfiewd.id, >w< c-counts.favowitecount),
+        w-wetweetcount = fiwtew(statuscounts.wetweetcountfiewd.id, σωσ counts.wetweetcount), -.-
+        quotecount = fiwtew(statuscounts.quotecountfiewd.id, o.O counts.quotecount), ^^
+        bookmawkcount = fiwtew(statuscounts.bookmawkcountfiewd.id, >_< counts.bookmawkcount)
       )
     }
 
-    def scrub(media: MediaEntity): MediaEntity = {
-      @inline
-      def filter[A](fieldId: FieldId, value: Option[A]): Option[A] =
-        if (i.mediaFields.contains(fieldId)) value else None
+    def scwub(media: mediaentity): mediaentity = {
+      @inwine
+      def fiwtew[a](fiewdid: fiewdid, >w< vawue: o-option[a]): option[a] =
+        i-if (i.mediafiewds.contains(fiewdid)) vawue ewse nyone
 
       media.copy(
-        additionalMetadata =
-          filter(MediaEntity.AdditionalMetadataField.id, media.additionalMetadata)
+        a-additionawmetadata =
+          f-fiwtew(mediaentity.additionawmetadatafiewd.id, >_< m-media.additionawmetadata)
       )
     }
   }

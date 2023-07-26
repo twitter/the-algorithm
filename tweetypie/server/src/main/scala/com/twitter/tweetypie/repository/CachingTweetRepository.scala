@@ -1,329 +1,329 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.twitter.finagle.tracing.Trace
-import com.twitter.servo.cache._
-import com.twitter.servo.repository._
-import com.twitter.servo.util.Transformer
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.core.FilteredState.Unavailable.BounceDeleted
-import com.twitter.tweetypie.core.FilteredState.Unavailable.TweetDeleted
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.CachedBounceDeleted.isBounceDeleted
-import com.twitter.tweetypie.repository.CachedBounceDeleted.toBounceDeletedTweetResult
-import com.twitter.tweetypie.thriftscala.CachedTweet
-import com.twitter.util.Base64Long
+i-impowt com.fastewxmw.jackson.databind.objectmappew
+i-impowt com.fastewxmw.jackson.moduwe.scawa.defauwtscawamoduwe
+i-impowt com.twittew.finagwe.twacing.twace
+i-impowt c-com.twittew.sewvo.cache._
+i-impowt c-com.twittew.sewvo.wepositowy._
+impowt com.twittew.sewvo.utiw.twansfowmew
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cwient_id.cwientidhewpew
+impowt com.twittew.tweetypie.cowe.fiwtewedstate.unavaiwabwe.bouncedeweted
+i-impowt com.twittew.tweetypie.cowe.fiwtewedstate.unavaiwabwe.tweetdeweted
+impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy.cachedbouncedeweted.isbouncedeweted
+impowt com.twittew.tweetypie.wepositowy.cachedbouncedeweted.tobouncedewetedtweetwesuwt
+impowt com.twittew.tweetypie.thwiftscawa.cachedtweet
+impowt c-com.twittew.utiw.base64wong
 
-case class TweetKey(cacheVersion: Int, id: TweetId)
-    extends ScopedCacheKey("t", "t", cacheVersion, Base64Long.toBase64(id))
+case cwass tweetkey(cachevewsion: i-int, (///ˬ///✿) id: tweetid)
+    e-extends scopedcachekey("t", (U ᵕ U❁) "t", cachevewsion, ^^;; base64wong.tobase64(id))
 
-case class TweetKeyFactory(cacheVersion: Int) {
-  val fromId: TweetId => TweetKey = (id: TweetId) => TweetKey(cacheVersion, id)
-  val fromTweet: Tweet => TweetKey = (tweet: Tweet) => fromId(tweet.id)
-  val fromCachedTweet: CachedTweet => TweetKey = (ms: CachedTweet) => fromTweet(ms.tweet)
+case cwass tweetkeyfactowy(cachevewsion: i-int) {
+  vaw fwomid: tweetid => tweetkey = (id: tweetid) => tweetkey(cachevewsion, ^^;; i-id)
+  vaw fwomtweet: t-tweet => tweetkey = (tweet: tweet) => f-fwomid(tweet.id)
+  v-vaw f-fwomcachedtweet: cachedtweet => tweetkey = (ms: c-cachedtweet) => fwomtweet(ms.tweet)
 }
 
-// Helper methods for working with cached bounce-deleted tweets,
-// grouped together here to keep the definitions of "bounce
-// deleted" in one place.
-object CachedBounceDeleted {
-  // CachedTweet for use in CachingTweetStore
-  def toBounceDeletedCachedTweet(tweetId: TweetId): CachedTweet =
-    CachedTweet(
-      tweet = Tweet(id = tweetId),
-      isBounceDeleted = Some(true)
+// hewpew m-methods fow wowking with cached bounce-deweted tweets, rawr
+// gwouped togethew hewe to keep the definitions o-of "bounce
+// deweted" i-in one pwace. (˘ω˘)
+object c-cachedbouncedeweted {
+  // c-cachedtweet fow use in cachingtweetstowe
+  def tobouncedewetedcachedtweet(tweetid: tweetid): cachedtweet =
+    cachedtweet(
+      t-tweet = tweet(id = t-tweetid), 🥺
+      isbouncedeweted = s-some(twue)
     )
 
-  def isBounceDeleted(cached: Cached[CachedTweet]): Boolean =
-    cached.status == CachedValueStatus.Found &&
-      cached.value.flatMap(_.isBounceDeleted).contains(true)
+  d-def isbouncedeweted(cached: cached[cachedtweet]): b-boowean =
+    cached.status == c-cachedvawuestatus.found &&
+      cached.vawue.fwatmap(_.isbouncedeweted).contains(twue)
 
-  // TweetResult for use in CachingTweetRepository
-  def toBounceDeletedTweetResult(tweetId: TweetId): TweetResult =
-    TweetResult(
-      TweetData(
-        tweet = Tweet(id = tweetId),
-        isBounceDeleted = true
+  // tweetwesuwt f-fow use in cachingtweetwepositowy
+  d-def tobouncedewetedtweetwesuwt(tweetid: tweetid): tweetwesuwt =
+    t-tweetwesuwt(
+      t-tweetdata(
+        tweet = tweet(id = tweetid), nyaa~~
+        isbouncedeweted = twue
       )
     )
 
-  def isBounceDeleted(tweetResult: TweetResult): Boolean =
-    tweetResult.value.isBounceDeleted
+  def isbouncedeweted(tweetwesuwt: tweetwesuwt): b-boowean =
+    tweetwesuwt.vawue.isbouncedeweted
 }
 
-object TweetResultCache {
-  def apply(
-    tweetDataCache: Cache[TweetId, Cached[TweetData]]
-  ): Cache[TweetId, Cached[TweetResult]] = {
-    val transformer: Transformer[Cached[TweetResult], Cached[TweetData]] =
-      new Transformer[Cached[TweetResult], Cached[TweetData]] {
-        def to(cached: Cached[TweetResult]) =
-          Return(cached.map(_.value))
+o-object tweetwesuwtcache {
+  def appwy(
+    tweetdatacache: c-cache[tweetid, :3 c-cached[tweetdata]]
+  ): c-cache[tweetid, /(^•ω•^) cached[tweetwesuwt]] = {
+    vaw twansfowmew: twansfowmew[cached[tweetwesuwt], ^•ﻌ•^ c-cached[tweetdata]] =
+      nyew twansfowmew[cached[tweetwesuwt], UwU cached[tweetdata]] {
+        def to(cached: c-cached[tweetwesuwt]) =
+          wetuwn(cached.map(_.vawue))
 
-        def from(cached: Cached[TweetData]) =
-          Return(cached.map(TweetResult(_)))
+        d-def fwom(cached: c-cached[tweetdata]) =
+          w-wetuwn(cached.map(tweetwesuwt(_)))
       }
 
-    new KeyValueTransformingCache(
-      tweetDataCache,
-      transformer,
-      identity
+    nyew keyvawuetwansfowmingcache(
+      t-tweetdatacache, 😳😳😳
+      t-twansfowmew, OwO
+      i-identity
     )
   }
 }
 
-object TweetDataCache {
-  def apply(
-    cachedTweetCache: Cache[TweetKey, Cached[CachedTweet]],
-    tweetKeyFactory: TweetId => TweetKey
-  ): Cache[TweetId, Cached[TweetData]] = {
-    val transformer: Transformer[Cached[TweetData], Cached[CachedTweet]] =
-      new Transformer[Cached[TweetData], Cached[CachedTweet]] {
-        def to(cached: Cached[TweetData]) =
-          Return(cached.map(_.toCachedTweet))
+o-object tweetdatacache {
+  def appwy(
+    c-cachedtweetcache: c-cache[tweetkey, ^•ﻌ•^ c-cached[cachedtweet]], (ꈍᴗꈍ)
+    t-tweetkeyfactowy: t-tweetid => tweetkey
+  ): cache[tweetid, (⑅˘꒳˘) cached[tweetdata]] = {
+    vaw twansfowmew: t-twansfowmew[cached[tweetdata], (⑅˘꒳˘) cached[cachedtweet]] =
+      new twansfowmew[cached[tweetdata], (ˆ ﻌ ˆ)♡ cached[cachedtweet]] {
+        def to(cached: cached[tweetdata]) =
+          w-wetuwn(cached.map(_.tocachedtweet))
 
-        def from(cached: Cached[CachedTweet]) =
-          Return(cached.map(c => TweetData.fromCachedTweet(c, cached.cachedAt)))
+        def fwom(cached: cached[cachedtweet]) =
+          wetuwn(cached.map(c => t-tweetdata.fwomcachedtweet(c, /(^•ω•^) c-cached.cachedat)))
       }
 
-    new KeyValueTransformingCache(
-      cachedTweetCache,
-      transformer,
-      tweetKeyFactory
+    n-nyew keyvawuetwansfowmingcache(
+      cachedtweetcache, òωó
+      t-twansfowmew, (⑅˘꒳˘)
+      tweetkeyfactowy
     )
   }
 }
 
-object TombstoneTtl {
-  import CachedResult._
+o-object tombstonettw {
+  i-impowt cachedwesuwt._
 
-  def fixed(ttl: Duration): CachedNotFound[TweetId] => Duration =
-    _ => ttl
+  def fixed(ttw: duwation): cachednotfound[tweetid] => duwation =
+    _ => ttw
 
   /**
-   * A simple ttl calculator that is set to `min` if the age is less than `from`,
-   * then linearly interpolated  between `min` and `max` when the age is between `from` and `to`,
-   * and then equal to `max` if the age is greater than `to`.
+   * a-a simpwe ttw cawcuwatow t-that is set to `min` if the a-age is wess than `fwom`, (U ᵕ U❁)
+   * t-then wineawwy intewpowated  between `min` a-and `max` w-when the age is between `fwom` a-and `to`, >w<
+   * a-and then equaw to `max` if the age is gweatew than `to`. σωσ
    */
-  def linear(
-    min: Duration,
-    max: Duration,
-    from: Duration,
-    to: Duration
-  ): CachedNotFound[TweetId] => Duration = {
-    val rate = (max - min).inMilliseconds / (to - from).inMilliseconds.toDouble
+  def wineaw(
+    min: duwation, -.-
+    m-max: duwation, o.O
+    f-fwom: duwation, ^^
+    t-to: duwation
+  ): cachednotfound[tweetid] => d-duwation = {
+    v-vaw wate = (max - min).inmiwwiseconds / (to - f-fwom).inmiwwiseconds.todoubwe
     cached => {
-      if (SnowflakeId.isSnowflakeId(cached.key)) {
-        val age = cached.cachedAt - SnowflakeId(cached.key).time
-        if (age <= from) min
-        else if (age >= to) max
-        else min + (age - from) * rate
-      } else {
-        // When it's not a snowflake id, cache it for the maximum time.
+      if (snowfwakeid.issnowfwakeid(cached.key)) {
+        vaw age = cached.cachedat - snowfwakeid(cached.key).time
+        i-if (age <= fwom) m-min
+        ewse if (age >= to) max
+        ewse m-min + (age - f-fwom) * wate
+      } ewse {
+        // when it's nyot a snowfwake i-id, >_< cache it fow the maximum time. >w<
         max
       }
     }
   }
 
   /**
-   * Checks if the given `cached` value is an expired tombstone
+   * checks if the given `cached` vawue i-is an expiwed tombstone
    */
-  def isExpired(
-    tombstoneTtl: CachedNotFound[TweetId] => Duration,
-    cached: CachedNotFound[TweetId]
-  ): Boolean =
-    Time.now - cached.cachedAt > tombstoneTtl(cached)
+  def isexpiwed(
+    t-tombstonettw: c-cachednotfound[tweetid] => duwation, >_<
+    cached: cachednotfound[tweetid]
+  ): b-boowean =
+    time.now - c-cached.cachedat > tombstonettw(cached)
 }
 
-object CachingTweetRepository {
-  import CachedResult._
-  import CachedResultAction._
+object cachingtweetwepositowy {
+  impowt cachedwesuwt._
+  i-impowt cachedwesuwtaction._
 
-  val failuresLog: Logger = Logger("com.twitter.tweetypie.repository.CachingTweetRepoFailures")
+  v-vaw faiwuweswog: woggew = woggew("com.twittew.tweetypie.wepositowy.cachingtweetwepofaiwuwes")
 
-  def apply(
-    cache: LockingCache[TweetId, Cached[TweetResult]],
-    tombstoneTtl: CachedNotFound[TweetId] => Duration,
-    stats: StatsReceiver,
-    clientIdHelper: ClientIdHelper,
-    logCacheExceptions: Gate[Unit] = Gate.False,
+  def a-appwy(
+    cache: wockingcache[tweetid, >w< c-cached[tweetwesuwt]], rawr
+    t-tombstonettw: cachednotfound[tweetid] => d-duwation, rawr x3
+    stats: s-statsweceivew, ( ͡o ω ͡o )
+    c-cwientidhewpew: c-cwientidhewpew, (˘ω˘)
+    wogcacheexceptions: g-gate[unit] = g-gate.fawse, 😳
   )(
-    underlying: TweetResultRepository.Type
-  ): TweetResultRepository.Type = {
-    val cachingRepo: ((TweetId, TweetQuery.Options)) => Stitch[TweetResult] =
-      CacheStitch[(TweetId, TweetQuery.Options), TweetId, TweetResult](
-        repo = underlying.tupled,
-        cache = StitchLockingCache(
-          underlying = cache,
-          picker = new TweetRepoCachePicker[TweetResult](_.value.cachedAt)
-        ),
-        queryToKey = _._1, // extract tweet id from (TweetId, TweetQuery.Options)
-        handler = mkHandler(tombstoneTtl, stats, logCacheExceptions, clientIdHelper),
-        cacheable = cacheable
+    undewwying: tweetwesuwtwepositowy.type
+  ): tweetwesuwtwepositowy.type = {
+    v-vaw c-cachingwepo: ((tweetid, OwO t-tweetquewy.options)) => stitch[tweetwesuwt] =
+      cachestitch[(tweetid, (˘ω˘) t-tweetquewy.options), òωó tweetid, t-tweetwesuwt](
+        w-wepo = undewwying.tupwed, ( ͡o ω ͡o )
+        cache = stitchwockingcache(
+          undewwying = cache, UwU
+          p-pickew = n-nyew tweetwepocachepickew[tweetwesuwt](_.vawue.cachedat)
+        ), /(^•ω•^)
+        q-quewytokey = _._1, (ꈍᴗꈍ) // e-extwact tweet id fwom (tweetid, 😳 t-tweetquewy.options)
+        handwew = mkhandwew(tombstonettw, mya stats, wogcacheexceptions, mya cwientidhewpew), /(^•ω•^)
+        cacheabwe = cacheabwe
       )
 
-    (tweetId, options) =>
-      if (options.cacheControl.readFromCache) {
-        cachingRepo((tweetId, options))
-      } else {
-        underlying(tweetId, options)
+    (tweetid, ^^;; o-options) =>
+      if (options.cachecontwow.weadfwomcache) {
+        c-cachingwepo((tweetid, options))
+      } e-ewse {
+        undewwying(tweetid, 🥺 o-options)
       }
   }
 
-  val cacheable: CacheStitch.Cacheable[(TweetId, TweetQuery.Options), TweetResult] = {
-    case ((tweetId, options), tweetResult) =>
-      if (!options.cacheControl.writeToCache) {
-        None
-      } else {
-        tweetResult match {
-          // Write stitch.NotFound as a NotFound cache entry
-          case Throw(com.twitter.stitch.NotFound) =>
-            Some(StitchLockingCache.Val.NotFound)
+  vaw cacheabwe: cachestitch.cacheabwe[(tweetid, t-tweetquewy.options), ^^ t-tweetwesuwt] = {
+    c-case ((tweetid, o-options), ^•ﻌ•^ t-tweetwesuwt) =>
+      if (!options.cachecontwow.wwitetocache) {
+        nyone
+      } ewse {
+        tweetwesuwt match {
+          // wwite stitch.notfound a-as a-a nyotfound cache e-entwy
+          case thwow(com.twittew.stitch.notfound) =>
+            s-some(stitchwockingcache.vaw.notfound)
 
-          // Write FilteredState.TweetDeleted as a Deleted cache entry
-          case Throw(TweetDeleted) =>
-            Some(StitchLockingCache.Val.Deleted)
+          // wwite fiwtewedstate.tweetdeweted as a deweted cache e-entwy
+          c-case thwow(tweetdeweted) =>
+            some(stitchwockingcache.vaw.deweted)
 
-          // Write BounceDeleted as a Found cache entry, with the CachedTweet.isBounceDeleted flag.
-          // servo.cache.thriftscala.CachedValueStatus.Deleted tombstones do not allow for storing
-          // app-defined metadata.
-          case Throw(BounceDeleted) =>
-            Some(StitchLockingCache.Val.Found(toBounceDeletedTweetResult(tweetId)))
+          // w-wwite bouncedeweted as a found cache e-entwy, /(^•ω•^) with the c-cachedtweet.isbouncedeweted fwag. ^^
+          // s-sewvo.cache.thwiftscawa.cachedvawuestatus.deweted t-tombstones do nyot awwow fow stowing
+          // app-defined metadata. 🥺
+          c-case thwow(bouncedeweted) =>
+            s-some(stitchwockingcache.vaw.found(tobouncedewetedtweetwesuwt(tweetid)))
 
-          // Regular found tweets are not written to cache here - instead the cacheable result is
-          // written to cache via TweetHydration.cacheChanges
-          case Return(_: TweetResult) => None
+          // w-weguwaw found t-tweets awe nyot w-wwitten to cache hewe - instead t-the cacheabwe w-wesuwt is
+          // wwitten to c-cache via tweethydwation.cachechanges
+          c-case wetuwn(_: tweetwesuwt) => n-nyone
 
-          // Don't write other exceptions back to cache
-          case _ => None
+          // don't wwite othew exceptions b-back to cache
+          case _ => n-nyone
         }
       }
   }
 
-  object LogLens {
-    private[this] val mapper = new ObjectMapper().registerModule(DefaultScalaModule)
+  o-object wogwens {
+    pwivate[this] v-vaw mappew = nyew objectmappew().wegistewmoduwe(defauwtscawamoduwe)
 
-    def logMessage(logger: Logger, clientIdHelper: ClientIdHelper, data: (String, Any)*): Unit = {
-      val allData = data ++ defaultData(clientIdHelper)
-      val msg = mapper.writeValueAsString(Map(allData: _*))
-      logger.info(msg)
+    def wogmessage(woggew: w-woggew, (U ᵕ U❁) cwientidhewpew: c-cwientidhewpew, d-data: (stwing, 😳😳😳 any)*): unit = {
+      vaw awwdata = d-data ++ defauwtdata(cwientidhewpew)
+      vaw msg = mappew.wwitevawueasstwing(map(awwdata: _*))
+      w-woggew.info(msg)
     }
 
-    private def defaultData(clientIdHelper: ClientIdHelper): Seq[(String, Any)] = {
-      val viewer = TwitterContext()
-      Seq(
-        "client_id" -> clientIdHelper.effectiveClientId,
-        "trace_id" -> Trace.id.traceId.toString,
-        "audit_ip" -> viewer.flatMap(_.auditIp),
-        "application_id" -> viewer.flatMap(_.clientApplicationId),
-        "user_agent" -> viewer.flatMap(_.userAgent),
-        "authenticated_user_id" -> viewer.flatMap(_.authenticatedUserId)
+    p-pwivate def defauwtdata(cwientidhewpew: c-cwientidhewpew): seq[(stwing, nyaa~~ a-any)] = {
+      v-vaw viewew = twittewcontext()
+      seq(
+        "cwient_id" -> c-cwientidhewpew.effectivecwientid, (˘ω˘)
+        "twace_id" -> twace.id.twaceid.tostwing, >_<
+        "audit_ip" -> viewew.fwatmap(_.auditip),
+        "appwication_id" -> v-viewew.fwatmap(_.cwientappwicationid), XD
+        "usew_agent" -> v-viewew.fwatmap(_.usewagent), rawr x3
+        "authenticated_usew_id" -> viewew.fwatmap(_.authenticatedusewid)
       )
     }
   }
 
-  def mkHandler(
-    tombstoneTtl: CachedNotFound[TweetId] => Duration,
-    stats: StatsReceiver,
-    logCacheExceptions: Gate[Unit],
-    clientIdHelper: ClientIdHelper,
-  ): Handler[TweetId, TweetResult] = {
-    val baseHandler = defaultHandler[TweetId, TweetResult]
-    val cacheErrorState = HydrationState(modified = false, cacheErrorEncountered = true)
-    val cachedFoundCounter = stats.counter("cached_found")
-    val notFoundCounter = stats.counter("not_found")
-    val cachedNotFoundAsNotFoundCounter = stats.counter("cached_not_found_as_not_found")
-    val cachedNotFoundAsMissCounter = stats.counter("cached_not_found_as_miss")
-    val cachedDeletedCounter = stats.counter("cached_deleted")
-    val cachedBounceDeletedCounter = stats.counter("cached_bounce_deleted")
-    val failedCounter = stats.counter("failed")
-    val otherCounter = stats.counter("other")
+  d-def mkhandwew(
+    tombstonettw: c-cachednotfound[tweetid] => d-duwation, ( ͡o ω ͡o )
+    stats: s-statsweceivew, :3
+    wogcacheexceptions: gate[unit], mya
+    cwientidhewpew: cwientidhewpew, σωσ
+  ): handwew[tweetid, tweetwesuwt] = {
+    vaw basehandwew = defauwthandwew[tweetid, (ꈍᴗꈍ) tweetwesuwt]
+    vaw cacheewwowstate = hydwationstate(modified = fawse, OwO cacheewwowencountewed = t-twue)
+    vaw cachedfoundcountew = s-stats.countew("cached_found")
+    vaw nyotfoundcountew = stats.countew("not_found")
+    v-vaw c-cachednotfoundasnotfoundcountew = s-stats.countew("cached_not_found_as_not_found")
+    vaw cachednotfoundasmisscountew = s-stats.countew("cached_not_found_as_miss")
+    vaw cacheddewetedcountew = s-stats.countew("cached_deweted")
+    v-vaw cachedbouncedewetedcountew = stats.countew("cached_bounce_deweted")
+    v-vaw faiwedcountew = stats.countew("faiwed")
+    v-vaw othewcountew = s-stats.countew("othew")
 
     {
-      case res @ CachedFound(_, tweetResult, _, _) =>
-        if (isBounceDeleted(tweetResult)) {
-          cachedBounceDeletedCounter.incr()
-          HandleAsFailed(FilteredState.Unavailable.BounceDeleted)
-        } else {
-          cachedFoundCounter.incr()
-          baseHandler(res)
+      case wes @ cachedfound(_, o.O t-tweetwesuwt, 😳😳😳 _, _) =>
+        if (isbouncedeweted(tweetwesuwt)) {
+          c-cachedbouncedewetedcountew.incw()
+          h-handweasfaiwed(fiwtewedstate.unavaiwabwe.bouncedeweted)
+        } e-ewse {
+          c-cachedfoundcountew.incw()
+          b-basehandwew(wes)
         }
 
-      case res @ NotFound(_) =>
-        notFoundCounter.incr()
-        baseHandler(res)
+      c-case wes @ nyotfound(_) =>
+        n-nyotfoundcountew.incw()
+        b-basehandwew(wes)
 
-      // expires NotFound tombstones if old enough
-      case cached @ CachedNotFound(_, _, _) =>
-        if (TombstoneTtl.isExpired(tombstoneTtl, cached)) {
-          cachedNotFoundAsMissCounter.incr()
-          HandleAsMiss
-        } else {
-          cachedNotFoundAsNotFoundCounter.incr()
-          HandleAsNotFound
+      // expiwes nyotfound t-tombstones if o-owd enough
+      c-case cached @ cachednotfound(_, /(^•ω•^) _, _) =>
+        if (tombstonettw.isexpiwed(tombstonettw, OwO c-cached)) {
+          cachednotfoundasmisscountew.incw()
+          handweasmiss
+        } e-ewse {
+          cachednotfoundasnotfoundcountew.incw()
+          h-handweasnotfound
         }
 
-      case CachedDeleted(_, _, _) =>
-        cachedDeletedCounter.incr()
-        HandleAsFailed(FilteredState.Unavailable.TweetDeleted)
+      c-case cacheddeweted(_, ^^ _, _) =>
+        cacheddewetedcountew.incw()
+        h-handweasfaiwed(fiwtewedstate.unavaiwabwe.tweetdeweted)
 
-      // don't attempt to write back to cache on a cache read failure
-      case Failed(k, t) =>
-        // After result is found, mark it with cacheErrorEncountered
-        failedCounter.incr()
+      // don't attempt t-to wwite back to cache on a cache w-wead faiwuwe
+      case faiwed(k, t-t) =>
+        // aftew wesuwt i-is found, (///ˬ///✿) mawk it with cacheewwowencountewed
+        faiwedcountew.incw()
 
-        if (logCacheExceptions()) {
-          LogLens.logMessage(
-            failuresLog,
-            clientIdHelper,
-            "type" -> "cache_failed",
-            "tweet_id" -> k,
-            "throwable" -> t.getClass.getName
+        if (wogcacheexceptions()) {
+          wogwens.wogmessage(
+            f-faiwuweswog, (///ˬ///✿)
+            cwientidhewpew, (///ˬ///✿)
+            "type" -> "cache_faiwed", ʘwʘ
+            "tweet_id" -> k-k, ^•ﻌ•^
+            "thwowabwe" -> t-t.getcwass.getname
           )
         }
 
-        TransformSubAction[TweetResult](HandleAsDoNotCache, _.mapState(_ ++ cacheErrorState))
+        twansfowmsubaction[tweetwesuwt](handweasdonotcache, OwO _.mapstate(_ ++ cacheewwowstate))
 
-      case res =>
-        otherCounter.incr()
-        baseHandler(res)
+      case wes =>
+        o-othewcountew.incw()
+        basehandwew(wes)
     }
 
   }
 }
 
 /**
- * A LockingCache.Picker for use with CachingTweetRepository which prevents overwriting values in
- * cache that are newer than the value previously read from cache.
+ * a-a wockingcache.pickew fow u-use with cachingtweetwepositowy w-which pwevents ovewwwiting vawues in
+ * cache t-that awe nyewew t-than the vawue pweviouswy wead f-fwom cache. (U ﹏ U)
  */
-class TweetRepoCachePicker[T](cachedAt: T => Option[Time]) extends LockingCache.Picker[Cached[T]] {
-  private val newestPicker = new PreferNewestCached[T]
+cwass tweetwepocachepickew[t](cachedat: t => option[time]) e-extends wockingcache.pickew[cached[t]] {
+  p-pwivate vaw n-nyewestpickew = n-nyew pwefewnewestcached[t]
 
-  override def apply(newValue: Cached[T], oldValue: Cached[T]): Option[Cached[T]] = {
-    oldValue.status match {
-      // never overwrite a `Deleted` tombstone via read-through.
-      case CachedValueStatus.Deleted => None
+  ovewwide def appwy(newvawue: c-cached[t], (ˆ ﻌ ˆ)♡ o-owdvawue: c-cached[t]): option[cached[t]] = {
+    o-owdvawue.status match {
+      // n-nyevew o-ovewwwite a `deweted` t-tombstone v-via wead-thwough. (⑅˘꒳˘)
+      c-case cachedvawuestatus.deweted => n-nyone
 
-      // only overwrite a `Found` value with an update based off of that same cache entry.
-      case CachedValueStatus.Found =>
-        newValue.value.flatMap(cachedAt) match {
-          // if prevCacheAt is the same as oldValue.cachedAt, then the value in cache hasn't changed
-          case Some(prevCachedAt) if prevCachedAt == oldValue.cachedAt => Some(newValue)
-          // otherwise, the value in cache has changed since we read it, so don't overwrite
-          case _ => None
+      // o-onwy ovewwwite a-a `found` vawue with an u-update based off of that same cache e-entwy. (U ﹏ U)
+      case cachedvawuestatus.found =>
+        n-nyewvawue.vawue.fwatmap(cachedat) m-match {
+          // i-if pwevcacheat is the same as owdvawue.cachedat, o.O then the vawue in cache hasn't c-changed
+          c-case some(pwevcachedat) i-if pwevcachedat == owdvawue.cachedat => some(newvawue)
+          // othewwise, mya the vawue i-in cache has c-changed since we wead it, XD so don't o-ovewwwite
+          c-case _ => nyone
         }
 
-      // we may hit an expired/older tombstone, which should be safe to overwrite with a fresh
-      // tombstone of a new value returned from Manhattan.
-      case CachedValueStatus.NotFound => newestPicker(newValue, oldValue)
+      // we may hit an expiwed/owdew t-tombstone, òωó w-which shouwd b-be safe to ovewwwite w-with a fwesh
+      // tombstone of a nyew vawue w-wetuwned fwom m-manhattan. (˘ω˘)
+      case cachedvawuestatus.notfound => newestpickew(newvawue, :3 o-owdvawue)
 
-      // we shouldn't see any other CachedValueStatus, but if we do, play it safe and don't
-      // overwrite (it will be as if the read that triggered this never happened)
-      case _ => None
+      // we shouwdn't see any othew cachedvawuestatus, OwO b-but if we do, mya pway it safe and don't
+      // o-ovewwwite (it w-wiww be as if the wead t-that twiggewed t-this nevew happened)
+      case _ => n-none
     }
   }
 }

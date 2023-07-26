@@ -1,192 +1,192 @@
-package com.twitter.servo.repository
+package com.twittew.sewvo.wepositowy
 
-import com.twitter.util.{Future, Try}
+impowt com.twittew.utiw.{futuwe, rawr t-twy}
 
-object KeyValueRepository {
+object k-keyvawuewepositowy {
 
   /**
-   * Builds a KeyValueRepository that returns KeyValueResults in which all keys failed with the
-   * provided Throwable.
+   * b-buiwds a keyvawuewepositowy t-that wetuwns keyvawuewesuwts i-in w-which aww keys faiwed w-with the
+   * p-pwovided thwowabwe. -.-
    */
-  def alwaysFailing[Q <: Seq[K], K, V](failure: Throwable): KeyValueRepository[Q, K, V] =
-    (query: Q) =>
-      Future.value(
-        KeyValueResult[K, V](
-          failed = query map { _ -> failure } toMap
+  def awwaysfaiwing[q <: seq[k], (✿oωo) k, /(^•ω•^) v](faiwuwe: thwowabwe): keyvawuewepositowy[q, k-k, 🥺 v] =
+    (quewy: q) =>
+      futuwe.vawue(
+        k-keyvawuewesuwt[k, ʘwʘ v](
+          f-faiwed = quewy map { _ -> faiwuwe } tomap
         )
       )
 
   /**
-   * Builds an immutable KeyValueRepository
+   * buiwds a-an immutabwe keyvawuewepositowy
    */
-  def apply[K, V](data: Map[K, Try[V]]): KeyValueRepository[Seq[K], K, V] =
-    new ImmutableKeyValueRepository(data)
+  d-def a-appwy[k, UwU v](data: map[k, XD twy[v]]): keyvawuewepositowy[seq[k], (✿oωo) k, v] =
+    nyew immutabwekeyvawuewepositowy(data)
 
   /**
-   * Sets up a mapReduce type operation on a KeyValueRepository where the query mapping function
-   * breaks the query up into smaller chunks, and the reducing function is just KeyValueResult.sum.
+   * s-sets up a mapweduce type opewation on a keyvawuewepositowy whewe the q-quewy mapping function
+   * bweaks t-the quewy u-up into smowew chunks, :3 a-and the weducing f-function is just keyvawuewesuwt.sum. (///ˬ///✿)
    */
-  def chunked[Q, K, V](
-    repo: KeyValueRepository[Q, K, V],
-    chunker: Q => Seq[Q]
-  ): KeyValueRepository[Q, K, V] =
-    Repository.mapReduced(repo, chunker, KeyValueResult.sum[K, V])
+  def chunked[q, nyaa~~ k-k, >w< v](
+    wepo: keyvawuewepositowy[q, -.- k, v],
+    c-chunkew: q => seq[q]
+  ): keyvawuewepositowy[q, (✿oωo) k, v] =
+    wepositowy.mapweduced(wepo, (˘ω˘) chunkew, rawr k-keyvawuewesuwt.sum[k, OwO v])
 
   /**
-   * Wraps a KeyValueRepository with stats recording functionality.
+   * w-wwaps a-a keyvawuewepositowy w-with stats wecowding functionawity.
    */
-  def observed[Q, K, V](
-    repo: KeyValueRepository[Q, K, V],
-    observer: RepositoryObserver,
-    querySize: Q => Int
-  ): KeyValueRepository[Q, K, V] =
-    query => {
-      observer.time(querySize(query)) {
-        repo(query).respond(observer.observeKeyValueResult)
+  def obsewved[q, ^•ﻌ•^ k, v](
+    wepo: k-keyvawuewepositowy[q, UwU k-k, v],
+    obsewvew: w-wepositowyobsewvew, (˘ω˘)
+    q-quewysize: q => int
+  ): k-keyvawuewepositowy[q, (///ˬ///✿) k, v] =
+    q-quewy => {
+      obsewvew.time(quewysize(quewy)) {
+        wepo(quewy).wespond(obsewvew.obsewvekeyvawuewesuwt)
       }
     }
 
   /**
-   * Creates a new KeyValueRepository that dispatches to onTrueRepo if the key
-   * predicate returns true, dispatches to onFalseRepo otherwise.
+   * c-cweates a nyew keyvawuewepositowy t-that dispatches to o-ontwuewepo if the k-key
+   * pwedicate wetuwns twue, σωσ dispatches to onfawsewepo othewwise. /(^•ω•^)
    */
-  def selected[Q <: Seq[K], K, V](
-    select: K => Boolean,
-    onTrueRepo: KeyValueRepository[Q, K, V],
-    onFalseRepo: KeyValueRepository[Q, K, V],
-    queryBuilder: SubqueryBuilder[Q, K]
-  ): KeyValueRepository[Q, K, V] = selectedByQuery(
-    predicateFactory = _ => select,
-    onTrueRepo = onTrueRepo,
-    onFalseRepo = onFalseRepo,
-    queryBuilder = queryBuilder
+  def sewected[q <: seq[k], 😳 k, v](
+    sewect: k => b-boowean, 😳
+    o-ontwuewepo: keyvawuewepositowy[q, (⑅˘꒳˘) k, 😳😳😳 v],
+    onfawsewepo: k-keyvawuewepositowy[q, 😳 k-k, XD v],
+    quewybuiwdew: s-subquewybuiwdew[q, mya k]
+  ): keyvawuewepositowy[q, ^•ﻌ•^ k, v] = s-sewectedbyquewy(
+    pwedicatefactowy = _ => sewect, ʘwʘ
+    ontwuewepo = ontwuewepo, ( ͡o ω ͡o )
+    onfawsewepo = o-onfawsewepo, mya
+    quewybuiwdew = q-quewybuiwdew
   )
 
   /**
-   * Creates a new KeyValueRepository that uses predicateFactory to create a key predicate, then
-   * dispatches to onTrueRepo if the key predicate returns true, dispatches to onFalseRepo
-   * otherwise.
+   * c-cweates a nyew k-keyvawuewepositowy that uses pwedicatefactowy t-to cweate a key p-pwedicate, o.O then
+   * d-dispatches t-to ontwuewepo if the key pwedicate wetuwns twue, (✿oωo) d-dispatches to onfawsewepo
+   * o-othewwise. :3
    */
-  def selectedByQuery[Q <: Seq[K], K, V](
-    predicateFactory: Q => (K => Boolean),
-    onTrueRepo: KeyValueRepository[Q, K, V],
-    onFalseRepo: KeyValueRepository[Q, K, V],
-    queryBuilder: SubqueryBuilder[Q, K]
-  ): KeyValueRepository[Q, K, V] = {
-    val queryIsEmpty = (q: Q) => q.isEmpty
-    val r1 = shortCircuitEmpty(queryIsEmpty)(onTrueRepo)
-    val r2 = shortCircuitEmpty(queryIsEmpty)(onFalseRepo)
+  d-def sewectedbyquewy[q <: s-seq[k], k-k, 😳 v](
+    pwedicatefactowy: q => (k => boowean), (U ﹏ U)
+    ontwuewepo: keyvawuewepositowy[q, mya k-k, v], (U ᵕ U❁)
+    onfawsewepo: keyvawuewepositowy[q, :3 k, v], mya
+    quewybuiwdew: subquewybuiwdew[q, OwO k-k]
+  ): keyvawuewepositowy[q, (ˆ ﻌ ˆ)♡ k, v] = {
+    vaw quewyisempty = (q: q) => q.isempty
+    v-vaw w-w1 = showtciwcuitempty(quewyisempty)(ontwuewepo)
+    v-vaw w2 = showtciwcuitempty(quewyisempty)(onfawsewepo)
 
-    (query: Q) => {
-      val predicate = predicateFactory(query)
-      val (q1, q2) = query.partition(predicate)
-      val futureRst1 = r1(queryBuilder(q1, query))
-      val futureRst2 = r2(queryBuilder(q2, query))
-      for {
-        r1 <- futureRst1
-        r2 <- futureRst2
-      } yield r1 ++ r2
+    (quewy: q) => {
+      v-vaw pwedicate = pwedicatefactowy(quewy)
+      v-vaw (q1, ʘwʘ q2) = q-quewy.pawtition(pwedicate)
+      vaw futuwewst1 = w1(quewybuiwdew(q1, o.O quewy))
+      vaw futuwewst2 = w2(quewybuiwdew(q2, UwU q-quewy))
+      fow {
+        w-w1 <- futuwewst1
+        w2 <- futuwewst2
+      } y-yiewd w-w1 ++ w2
     }
   }
 
   /**
-   * Creates a new KeyValueRepository that dispatches to onTrueRepo if the query
-   * predicate returns true, dispatches to onFalseRepo otherwise.
+   * cweates a nyew keyvawuewepositowy that dispatches t-to ontwuewepo i-if the quewy
+   * pwedicate wetuwns t-twue, rawr x3 dispatches t-to onfawsewepo othewwise. 🥺
    */
-  def choose[Q, K, V](
-    predicate: Q => Boolean,
-    onTrueRepo: KeyValueRepository[Q, K, V],
-    onFalseRepo: KeyValueRepository[Q, K, V]
-  ): KeyValueRepository[Q, K, V] = { (query: Q) =>
+  def choose[q, :3 k, v](
+    pwedicate: q => b-boowean, (ꈍᴗꈍ)
+    ontwuewepo: k-keyvawuewepositowy[q, 🥺 k, v-v],
+    onfawsewepo: keyvawuewepositowy[q, (✿oωo) k-k, v-v]
+  ): keyvawuewepositowy[q, (U ﹏ U) k, v-v] = { (quewy: q) =>
     {
-      if (predicate(query)) {
-        onTrueRepo(query)
-      } else {
-        onFalseRepo(query)
+      if (pwedicate(quewy)) {
+        ontwuewepo(quewy)
+      } ewse {
+        o-onfawsewepo(quewy)
       }
     }
   }
 
   /**
-   * Short-circuit a KeyValueRepository to return an empty
-   * KeyValueResult when the query is empty rather than calling the
-   * backend. It is up to the caller to define empty.
+   * s-showt-ciwcuit a keyvawuewepositowy to wetuwn an empty
+   * k-keyvawuewesuwt w-when the quewy is empty wathew than cawwing the
+   * backend. :3 i-it is up to the cawwew to define empty.
    *
-   * The implementation of repo and isEmpty should satisfy:
+   * the impwementation of wepo a-and isempty shouwd satisfy:
    *
-   * forAll { (q: Q) => !isEmpty(q) || (repo(q).get == KeyValueResult.empty[K, V]) }
+   * fowaww { (q: q-q) => !isempty(q) || (wepo(q).get == k-keyvawuewesuwt.empty[k, ^^;; v]) }
    */
-  def shortCircuitEmpty[Q, K, V](
-    isEmpty: Q => Boolean
+  def showtciwcuitempty[q, rawr k, v](
+    i-isempty: q => b-boowean
   )(
-    repo: KeyValueRepository[Q, K, V]
-  ): KeyValueRepository[Q, K, V] = { q =>
-    if (isEmpty(q)) KeyValueResult.emptyFuture[K, V] else repo(q)
+    wepo: keyvawuewepositowy[q, 😳😳😳 k, v]
+  ): keyvawuewepositowy[q, (✿oωo) k, v-v] = { q =>
+    if (isempty(q)) k-keyvawuewesuwt.emptyfutuwe[k, OwO v] ewse wepo(q)
   }
 
   /**
-   * Short-circuit a KeyValueRepository to return an empty
-   * KeyValueResult for any empty Traversable query rather than
-   * calling the backend.
+   * showt-ciwcuit a keyvawuewepositowy t-to wetuwn an empty
+   * keyvawuewesuwt f-fow any e-empty twavewsabwe quewy wathew t-than
+   * cawwing the backend. ʘwʘ
    *
-   * The implementation of repo should satisfy:
+   * t-the impwementation o-of w-wepo shouwd satisfy:
    *
-   * forAll { (q: Q) => !q.isEmpty || (repo(q).get == KeyValueResult.empty[K, V]) }
+   * fowaww { (q: q) => !q.isempty || (wepo(q).get == k-keyvawuewesuwt.empty[k, (ˆ ﻌ ˆ)♡ v-v]) }
    */
-  def shortCircuitEmpty[Q <: Traversable[_], K, V](
-    repo: KeyValueRepository[Q, K, V]
-  ): KeyValueRepository[Q, K, V] = shortCircuitEmpty[Q, K, V]((_: Q).isEmpty)(repo)
+  def showtciwcuitempty[q <: twavewsabwe[_], (U ﹏ U) k-k, v](
+    wepo: k-keyvawuewepositowy[q, k-k, UwU v]
+  ): keyvawuewepositowy[q, XD k, v] = s-showtciwcuitempty[q, ʘwʘ k, v]((_: q-q).isempty)(wepo)
 
   /**
-   * Turns a bulking KeyValueRepository into a non-bulking Repository.  The query to the
-   * KeyValueRepository must be nothing more than a Seq[K].
+   * t-tuwns a buwking keyvawuewepositowy into a nyon-buwking wepositowy. rawr x3  t-the quewy to the
+   * k-keyvawuewepositowy m-must b-be nyothing mowe than a seq[k]. ^^;;
    */
-  def singular[K, V](repo: KeyValueRepository[Seq[K], K, V]): Repository[K, Option[V]] =
-    singular(repo, (key: K) => Seq(key))
+  d-def singuwaw[k, ʘwʘ v](wepo: keyvawuewepositowy[seq[k], (U ﹏ U) k, v]): wepositowy[k, (˘ω˘) option[v]] =
+    s-singuwaw(wepo, (ꈍᴗꈍ) (key: k) => seq(key))
 
   /**
-   * Turns a bulking KeyValueRepository into a non-bulking Repository.
+   * t-tuwns a buwking keyvawuewepositowy i-into a nyon-buwking wepositowy. /(^•ω•^)
    */
-  def singular[Q, K, V](
-    repo: KeyValueRepository[Q, K, V],
-    queryBuilder: K => Q
-  ): Repository[K, Option[V]] =
+  def s-singuwaw[q, >_< k, v](
+    wepo: k-keyvawuewepositowy[q, σωσ k-k, v], ^^;;
+    q-quewybuiwdew: k => q-q
+  ): wepositowy[k, 😳 o-option[v]] =
     key => {
-      repo(queryBuilder(key)) flatMap { results =>
-        Future.const(results(key))
+      wepo(quewybuiwdew(key)) fwatmap { wesuwts =>
+        futuwe.const(wesuwts(key))
       }
     }
 
   /**
-   * Converts a KeyValueRepository with value type V to one with value type
-   * V2 using a function that maps found values.
+   * convewts a keyvawuewepositowy with vawue type v-v to one with vawue t-type
+   * v2 u-using a function that maps found v-vawues. >_<
    */
-  def mapFound[Q, K, V, V2](
-    repo: KeyValueRepository[Q, K, V],
-    f: V => V2
-  ): KeyValueRepository[Q, K, V2] =
-    repo andThen { _ map { _ mapFound f } }
+  def mapfound[q, -.- k, v, v2](
+    wepo: keyvawuewepositowy[q, UwU k-k, v-v],
+    f: v => v2
+  ): keyvawuewepositowy[q, :3 k, v-v2] =
+    wepo andthen { _ map { _ mapfound f } }
 
   /**
-   * Converts a KeyValueRepository with value type V to one with value type
-   * V2 using a function that maps over results.
+   * c-convewts a keyvawuewepositowy w-with vawue type v t-to one with vawue t-type
+   * v2 using a function that maps ovew wesuwts. σωσ
    */
-  def mapValues[Q, K, V, V2](
-    repo: KeyValueRepository[Q, K, V],
-    f: Try[Option[V]] => Try[Option[V2]]
-  ): KeyValueRepository[Q, K, V2] =
-    repo andThen { _ map { _ mapValues f } }
+  def mapvawues[q, >w< k, v, v2](
+    w-wepo: keyvawuewepositowy[q, k-k, (ˆ ﻌ ˆ)♡ v],
+    f-f: twy[option[v]] => t-twy[option[v2]]
+  ): k-keyvawuewepositowy[q, ʘwʘ k, v2] =
+    w-wepo andthen { _ m-map { _ mapvawues f } }
 
   /**
-   * Turns a KeyValueRepository which may throw an exception to another
-   * KeyValueRepository which always returns Future.value(KeyValueResult)
-   * even when there is an exception
+   * t-tuwns a k-keyvawuewepositowy which may thwow a-an exception to anothew
+   * keyvawuewepositowy w-which awways wetuwns futuwe.vawue(keyvawuewesuwt)
+   * e-even w-when thewe is an exception
    */
-  def scatterExceptions[Q <: Traversable[K], K, V](
-    repo: KeyValueRepository[Q, K, V]
-  ): KeyValueRepository[Q, K, V] =
+  d-def scattewexceptions[q <: twavewsabwe[k], :3 k, v-v](
+    wepo: keyvawuewepositowy[q, (˘ω˘) k-k, v]
+  ): k-keyvawuewepositowy[q, 😳😳😳 k, v] =
     q =>
-      repo(q) handle {
-        case t => KeyValueResult[K, V](failed = q map { _ -> t } toMap)
+      wepo(q) handwe {
+        c-case t => keyvawuewesuwt[k, rawr x3 v](faiwed = q m-map { _ -> t } tomap)
       }
 }

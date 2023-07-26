@@ -1,75 +1,75 @@
-Tweepcred
+tweepcwed
 
-Tweepcred is a social network analysis tool that calculates the influence of Twitter users based on their interactions with other users. The tool uses the PageRank algorithm to rank users based on their influence.
+tweepcwed is a sociaw n-nyetwowk anawysis t-toow that cawcuwates t-the infwuence o-of twittew u-usews based on theiw i-intewactions w-with othew usews. o.O t-the toow uses the pagewank awgowithm to wank usews based on theiw infwuence. ^^
 
-PageRank Algorithm
-PageRank is a graph algorithm that was originally developed by Google to determine the importance of web pages in search results. The algorithm works by assigning a numerical score to each page based on the number and quality of other pages that link to it. The more links a page has from other high-quality pages, the higher its PageRank score.
+p-pagewank awgowithm
+pagewank is a gwaph awgowithm t-that was owiginawwy devewoped b-by googwe to detewmine the impowtance of web pages in seawch wesuwts. >_< t-the awgowithm wowks by assigning a-a nyumewicaw s-scowe to each page based on the nyumbew and quawity of othew pages that wink t-to it. >w< the mowe winks a page has fwom othew high-quawity pages, the highew its p-pagewank scowe. >_<
 
-In the Tweepcred project, the PageRank algorithm is used to determine the influence of Twitter users based on their interactions with other users. The graph is constructed by treating Twitter users as nodes, and their interactions (mentions, retweets, etc.) as edges. The PageRank score of a user represents their influence in the network.
+in the tweepcwed p-pwoject, >w< the p-pagewank awgowithm i-is used to detewmine t-the infwuence of twittew usews based on t-theiw intewactions with othew usews. rawr the gwaph is c-constwucted by tweating twittew usews as nyodes, rawr x3 and theiw intewactions (mentions, ( ͡o ω ͡o ) wetweets, etc.) as edges. (˘ω˘) the p-pagewank scowe of a usew wepwesents t-theiw infwuence i-in the nyetwowk. 😳
 
-Tweepcred PageRank Implementation
-The implementation of the PageRank algorithm in Tweepcred is based on the Hadoop MapReduce framework. The algorithm is split into two stages: preparation and iteration.
+t-tweepcwed pagewank impwementation
+the impwementation of t-the pagewank awgowithm i-in tweepcwed is based on t-the hadoop mapweduce f-fwamewowk. OwO the awgowithm is s-spwit into two stages: pwepawation a-and itewation. (˘ω˘)
 
-The preparation stage involves constructing the graph of Twitter users and their interactions, and initializing each user's PageRank score to a default value. This stage is implemented in the PreparePageRankData class.
+the pwepawation stage invowves c-constwucting the gwaph of twittew u-usews and theiw intewactions, òωó a-and initiawizing e-each usew's pagewank scowe to a defauwt vawue. ( ͡o ω ͡o ) this stage is impwemented in the pwepawepagewankdata cwass. UwU
 
-The iteration stage involves repeatedly calculating and updating the PageRank scores of each user until convergence is reached. This stage is implemented in the UpdatePageRank class, which is run multiple times until the algorithm converges.
+t-the itewation stage i-invowves wepeatedwy cawcuwating a-and updating t-the pagewank scowes o-of each usew untiw convewgence is weached. /(^•ω•^) this stage is impwemented i-in the updatepagewank cwass, (ꈍᴗꈍ) which is wun muwtipwe times untiw the awgowithm c-convewges. 😳
 
-The Tweepcred PageRank implementation also includes a number of optimizations to improve performance and reduce memory usage. These optimizations include block compression, lazy loading, and in-memory caching.
-
-
-========================================== TweepcredBatchJob.scala ==========================================
+the tweepcwed p-pagewank impwementation a-awso incwudes a-a nyumbew of optimizations t-to impwove pewfowmance a-and weduce m-memowy usage. mya t-these optimizations incwude bwock compwession, mya w-wazy woading, /(^•ω•^) a-and in-memowy caching. ^^;;
 
 
-This is a Scala class that represents a batch job for computing the "tweepcred" (Twitter credibility) score for Twitter users using weighted or unweighted PageRank algorithm. The class extends the AnalyticsIterativeBatchJob class, which is part of the Scalding framework used for data processing on Hadoop.
-
-The class defines various properties and methods that are used to configure and run the batch job. The args parameter represents the command-line arguments that are passed to the batch job, such as the --weighted flag that determines whether to use the weighted PageRank algorithm or not.
-
-The run method overrides the run method of the base class and prints the batch statistics after the job has finished. The children method defines a list of child jobs that need to be executed as part of the batch job. The messageHeader method returns a string that represents the header of the batch job message.
-
-========================================== ExtractTweepcred.scala ==========================================
-
-This class is a Scalding job that calculates "tweepcred" from a given pagerank file. Tweepcred is a measure of reputation for Twitter users that takes into account the number of followers they have and the number of people they follow. If the optional argument post_adjust is set to true (default value), then the pagerank values are adjusted based on the user's follower-to-following ratio.
-
-The class takes several command-line arguments specifying input and output files and options, and it uses the Scalding library to perform distributed data processing on the input files. It reads in the pagerank file and a user mass file, both in TSV format, and combines them to produce a new pagerank file with the adjusted values. The adjusted pagerank is then used to calculate tweepcred values, which are written to output files.
-
-The code makes use of the MostRecentCombinedUserSnapshotSource class from the com.twitter.pluck.source.combined_user_source package to obtain user information from the user mass file. It also uses the Reputation class to perform the tweepcred calculations and adjustments.
+========================================== t-tweepcwedbatchjob.scawa ==========================================
 
 
-========================================== UserMass.scala ==========================================
+t-this is a-a scawa cwass that wepwesents a batch job fow computing the "tweepcwed" (twittew c-cwedibiwity) scowe fow twittew usews using weighted ow unweighted pagewank awgowithm. 🥺 the cwass e-extends the anawyticsitewativebatchjob cwass, ^^ which is pawt of the scawding fwamewowk u-used fow d-data pwocessing o-on hadoop. ^•ﻌ•^
 
-The UserMass class is a helper class used to calculate the "mass" of a user on Twitter, as defined by a certain algorithm. The mass score represents the user's reputation and is used in various applications, such as in determining which users should be recommended to follow or which users should have their content highlighted.
+the cwass defines vawious p-pwopewties and methods that a-awe used to configuwe a-and wun the batch job. /(^•ω•^) the awgs pawametew wepwesents the command-wine awguments that awe p-passed to the batch job, ^^ such a-as the --weighted fwag that detewmines w-whethew to u-use the weighted pagewank awgowithm ow nyot. 🥺
 
-The getUserMass method of the UserMass class takes in a CombinedUser object, which contains information about a Twitter user, and returns an optional UserMassInfo object, which contains the user's ID and calculated mass score.
+t-the wun method ovewwides t-the wun method of the base c-cwass and pwints t-the batch statistics aftew the job has finished. (U ᵕ U❁) the chiwdwen method defines a-a wist of chiwd j-jobs that nyeed t-to be exekawaii~d as pawt of the b-batch job. 😳😳😳 the m-messageheadew method wetuwns a s-stwing that wepwesents the headew of the batch job message. nyaa~~
 
-The algorithm used to calculate the mass score takes into account various factors such as the user's account age, number of followers and followings, device usage, and safety status (restricted, suspended, verified). The calculation involves adding and multiplying weight factors and adjusting the mass score based on a threshold for the number of friends and followers.
+========================================== extwacttweepcwed.scawa ==========================================
+
+t-this c-cwass is a scawding job that cawcuwates "tweepcwed" fwom a given p-pagewank fiwe. (˘ω˘) t-tweepcwed is a measuwe of weputation fow twittew usews that takes i-into account the nyumbew of fowwowews they have and the nyumbew of peopwe they f-fowwow. if the optionaw awgument post_adjust is s-set to twue (defauwt v-vawue), >_< then the pagewank vawues awe adjusted based on the u-usew's fowwowew-to-fowwowing watio. XD
+
+t-the cwass takes sevewaw command-wine awguments specifying i-input and output fiwes and options, rawr x3 a-and it uses the scawding wibwawy to pewfowm distwibuted data p-pwocessing on the input fiwes. ( ͡o ω ͡o ) i-it weads in the p-pagewank fiwe and a usew mass fiwe, :3 b-both in tsv fowmat, mya and combines t-them to pwoduce a-a nyew pagewank f-fiwe with the adjusted vawues. σωσ t-the adjusted p-pagewank is then used to cawcuwate tweepcwed vawues, (ꈍᴗꈍ) w-which awe w-wwitten to output f-fiwes. OwO
+
+the code makes use of the mostwecentcombinedusewsnapshotsouwce c-cwass fwom the com.twittew.pwuck.souwce.combined_usew_souwce p-package to o-obtain usew infowmation fwom the usew mass fiwe. o.O it awso uses t-the weputation cwass t-to pewfowm t-the tweepcwed cawcuwations a-and adjustments. 😳😳😳
 
 
-========================================== PreparePageRankData.scala ==========================================
+========================================== usewmass.scawa ==========================================
 
-The PreparePageRankData class prepares the graph data for the page rank calculation. It generates the initial pagerank and then starts the WeightedPageRank job. It has the following functionalities:
+t-the usewmass cwass is a hewpew cwass used to cawcuwate the "mass" of a usew on twittew, /(^•ω•^) as defined b-by a cewtain awgowithm. OwO the m-mass scowe wepwesents the usew's w-weputation and is used in vawious a-appwications, ^^ such as in detewmining w-which u-usews shouwd be w-wecommended to f-fowwow ow which u-usews shouwd have theiw content highwighted. (///ˬ///✿)
 
-It reads the user mass TSV file generated by the twadoop user_mass job.
-It reads the graph data, which is either a TSV file or a combination of flock edges and real graph inputs for weights.
-It generates the initial pagerank as the starting point for the pagerank computation.
-It writes the number of nodes to a TSV file and dumps the nodes to another TSV file.
-It has several options like weighted, flock_edges_only, and input_pagerank to fine-tune the pagerank calculation.
-It also has options for the WeightedPageRank and ExtractTweepcred jobs, like output_pagerank, output_tweepcred, maxiterations, jumpprob, threshold, and post_adjust.
-The PreparePageRankData class has several helper functions like getFlockEdges, getRealGraphEdges, getFlockRealGraphEdges, and getCsvEdges that read the graph data from different sources like DAL, InteractionGraph, or CSV files. It also has the generateInitialPagerank function that generates the initial pagerank from the graph data.
+the getusewmass method of the usewmass cwass takes in a combinedusew o-object, (///ˬ///✿) which c-contains infowmation a-about a twittew usew, (///ˬ///✿) and w-wetuwns an optionaw usewmassinfo object, ʘwʘ which contains the usew's i-id and cawcuwated m-mass scowe. ^•ﻌ•^
 
-========================================== WeightedPageRank.scala ==========================================
+the awgowithm u-used to cawcuwate the mass scowe takes into account v-vawious factows s-such as the usew's account age, OwO n-nyumbew of fowwowews a-and fowwowings, (U ﹏ U) device usage, (ˆ ﻌ ˆ)♡ and safety status (westwicted, (⑅˘꒳˘) suspended, (U ﹏ U) v-vewified). the c-cawcuwation invowves a-adding and m-muwtipwying weight f-factows and adjusting the mass s-scowe based on a-a thweshowd fow the nyumbew of f-fwiends and fowwowews. o.O
 
-WeightedPageRank is a class that performs the weighted PageRank algorithm on a given graph.
 
-The algorithm starts from a given PageRank value and performs one iteration, then tests for convergence. If convergence has not been reached, the algorithm clones itself and starts the next PageRank job with the updated PageRank as input. If convergence has been reached, the algorithm starts the ExtractTweepcred job instead.
+========================================== p-pwepawepagewankdata.scawa ==========================================
 
-The class takes in several options, including the working directory, total number of nodes, nodes file, PageRank file, total difference, whether to perform weighted PageRank, the current iteration, maximum iterations to run, probability of a random jump, and whether to do post adjust.
+the pwepawepagewankdata c-cwass pwepawes the gwaph data fow the page wank c-cawcuwation. mya it genewates the i-initiaw pagewank a-and then stawts the weightedpagewank j-job. XD it has the fowwowing functionawities:
 
-The algorithm reads a nodes file that includes the source node ID, destination node IDs, weights, and mass prior. The algorithm also reads an input PageRank file that includes the source node ID and mass input. The algorithm then performs one iteration of the PageRank algorithm and writes the output PageRank to a file.
+i-it weads the usew m-mass tsv fiwe g-genewated by the twadoop usew_mass job. òωó
+it weads the gwaph data, (˘ω˘) w-which is eithew a tsv fiwe ow a combination of f-fwock edges and w-weaw gwaph inputs fow weights. :3
+i-it genewates the initiaw pagewank a-as the stawting p-point fow the pagewank computation. OwO
+it wwites t-the nyumbew of nyodes to a tsv fiwe and dumps the n-nyodes to anothew t-tsv fiwe. mya
+it has sevewaw options w-wike weighted, (˘ω˘) fwock_edges_onwy, o.O a-and input_pagewank t-to fine-tune t-the pagewank cawcuwation. (✿oωo)
+it awso has options fow the weightedpagewank and extwacttweepcwed jobs, (ˆ ﻌ ˆ)♡ wike output_pagewank, ^^;; output_tweepcwed, OwO maxitewations, 🥺 jumppwob, mya thweshowd, 😳 and post_adjust. òωó
+the pwepawepagewankdata cwass has sevewaw h-hewpew functions w-wike getfwockedges, /(^•ω•^) getweawgwaphedges, -.- getfwockweawgwaphedges, òωó a-and getcsvedges t-that wead the gwaph d-data fwom diffewent souwces w-wike daw, /(^•ω•^) intewactiongwaph, /(^•ω•^) ow csv f-fiwes. 😳 it awso h-has the genewateinitiawpagewank function that g-genewates the initiaw pagewank fwom t-the gwaph data. :3
 
-The algorithm tests for convergence by calculating the total difference between the input and output PageRank masses. If convergence has not been reached, the algorithm clones itself and starts the next PageRank job. If convergence has been reached, the algorithm starts the ExtractTweepcred job.
+========================================== w-weightedpagewank.scawa ==========================================
 
-========================================== Reputation.scala ==========================================
+weightedpagewank is a cwass that p-pewfowms the w-weighted pagewank a-awgowithm on a-a given gwaph. (U ᵕ U❁)
 
-This is a helper class called Reputation that contains methods for calculating a user's reputation score. The first method called scaledReputation takes a Double parameter raw which represents the user's page rank, and returns a Byte value that represents the user's reputation on a scale of 0 to 100. This method uses a formula that involves converting the logarithm of the page rank to a number between 0 and 100.
+t-the awgowithm stawts f-fwom a given p-pagewank vawue a-and pewfowms one i-itewation, ʘwʘ then tests fow convewgence. o.O i-if convewgence h-has nyot b-been weached, ʘwʘ the awgowithm cwones i-itsewf and stawts the nyext pagewank job with t-the updated pagewank as input. ^^ i-if convewgence h-has been weached, ^•ﻌ•^ t-the awgowithm stawts the extwacttweepcwed j-job instead. mya
 
-The second method called adjustReputationsPostCalculation takes three parameters: mass (a Double value representing the user's page rank), numFollowers (an Int value representing the number of followers a user has), and numFollowings (an Int value representing the number of users a user is following). This method reduces the page rank of users who have a low number of followers but a high number of followings. It calculates a division factor based on the ratio of followings to followers, and reduces the user's page rank by dividing it by this factor. The method returns the adjusted page rank.
+the cwass t-takes in sevewaw options, UwU incwuding t-the wowking diwectowy, >_< totaw n-nyumbew of nyodes, /(^•ω•^) nyodes fiwe, òωó pagewank fiwe, σωσ totaw diffewence, ( ͡o ω ͡o ) whethew to p-pewfowm weighted pagewank, nyaa~~ the c-cuwwent itewation, :3 m-maximum itewations to wun, UwU pwobabiwity of a wandom jump, and w-whethew to do post adjust. o.O
+
+the a-awgowithm weads a-a nyodes fiwe that i-incwudes the souwce nyode id, (ˆ ﻌ ˆ)♡ destination nyode i-ids, ^^;; weights, a-and mass pwiow. ʘwʘ the awgowithm awso w-weads an input pagewank fiwe that incwudes the s-souwce nyode id and mass input. σωσ t-the awgowithm t-then pewfowms one i-itewation of the pagewank awgowithm a-and wwites t-the output pagewank t-to a fiwe. ^^;;
+
+t-the awgowithm tests fow convewgence b-by cawcuwating t-the totaw diffewence b-between t-the input and o-output pagewank m-masses. ʘwʘ if convewgence h-has nyot b-been weached, the awgowithm cwones i-itsewf and stawts the next pagewank j-job. ^^ if convewgence has been w-weached, nyaa~~ the a-awgowithm stawts t-the extwacttweepcwed job. (///ˬ///✿)
+
+========================================== weputation.scawa ==========================================
+
+this is a hewpew c-cwass cawwed w-weputation that c-contains methods fow cawcuwating a usew's weputation scowe. XD the f-fiwst method c-cawwed scawedweputation takes a d-doubwe pawametew w-waw which wepwesents the usew's page wank, :3 and wetuwns a byte vawue t-that wepwesents t-the usew's w-weputation on a s-scawe of 0 to 100. òωó this method uses a fowmuwa that i-invowves convewting t-the wogawithm of the page wank to a nyumbew b-between 0 and 100. ^^
+
+the second method cawwed a-adjustweputationspostcawcuwation takes thwee pawametews: m-mass (a d-doubwe vawue wepwesenting the usew's p-page wank), ^•ﻌ•^ n-nyumfowwowews (an int vawue wepwesenting t-the nyumbew of fowwowews a-a usew has), σωσ a-and nyumfowwowings (an i-int vawue w-wepwesenting the nyumbew of usews a-a usew is fowwowing). (ˆ ﻌ ˆ)♡ t-this method w-weduces the page wank of usews w-who have a wow nyumbew of fowwowews but a high n-nyumbew of fowwowings. nyaa~~ i-it cawcuwates a-a division factow based on the watio of fowwowings to fowwowews, ʘwʘ and weduces t-the usew's page wank by dividing i-it by this f-factow. ^•ﻌ•^ the method wetuwns the adjusted page wank. rawr x3

@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.util.concurrent.Callable;
+impowt j-java.utiw.concuwwent.cawwabwe;
 
-import com.google.common.base.Stopwatch;
+i-impowt com.googwe.common.base.stopwatch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-public final class ActionLogger {
-  private static final Logger LOG = LoggerFactory.getLogger(ActionLogger.class);
+p-pubwic finaw c-cwass actionwoggew {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(actionwoggew.cwass);
 
-  private ActionLogger() {
+  pwivate actionwoggew() {
   }
 
   /**
-   * Run a function, logging a message at the start and end, and the time it took.
+   * w-wun a function, ʘwʘ wogging a message at the stawt a-and end, /(^•ω•^) and the time it took. ʘwʘ
    */
-  public static <T> T call(String message, Callable<T> fn) throws Exception {
-    LOG.info("Action starting: '{}'.", message);
-    Stopwatch stopwatch = Stopwatch.createStarted();
-    try {
-      return fn.call();
-    } catch (Throwable e) {
-      LOG.error("Action failed: '{}'.", message, e);
-      throw e;
-    } finally {
-      LOG.info("Action finished in {} '{}'.", stopwatch, message);
+  p-pubwic static <t> t caww(stwing message, σωσ cawwabwe<t> f-fn) thwows exception {
+    wog.info("action s-stawting: '{}'.", OwO m-message);
+    stopwatch stopwatch = stopwatch.cweatestawted();
+    twy {
+      wetuwn f-fn.caww();
+    } catch (thwowabwe e) {
+      wog.ewwow("action faiwed: '{}'.", 😳😳😳 m-message, e);
+      thwow e;
+    } f-finawwy {
+      w-wog.info("action f-finished in {} '{}'.", 😳😳😳 s-stopwatch, message);
     }
   }
 
   /**
-   * Run a function, logging a message at the start and end, and the time it took.
+   * wun a function, w-wogging a message at the stawt and end, o.O a-and the time it took. ( ͡o ω ͡o )
    */
-  public static void run(String message, CheckedRunnable fn) throws Exception {
-    call(message, () -> {
-      fn.run();
-      return null;
+  pubwic static void wun(stwing message, (U ﹏ U) checkedwunnabwe fn) thwows e-exception {
+    caww(message, (///ˬ///✿) () -> {
+      f-fn.wun();
+      w-wetuwn n-nyuww;
     });
   }
 
-  @FunctionalInterface
-  public interface CheckedRunnable {
+  @functionawintewface
+  pubwic intewface checkedwunnabwe {
     /**
-     * A nullary function that throws checked exceptions.
+     * a nyuwwawy function t-that thwows c-checked exceptions. >w<
      */
-    void run() throws Exception;
+    void wun() thwows e-exception;
   }
 }

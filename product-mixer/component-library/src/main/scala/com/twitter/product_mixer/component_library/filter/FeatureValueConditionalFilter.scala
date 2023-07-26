@@ -1,64 +1,64 @@
-package com.twitter.product_mixer.component_library.filter
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew
 
-import com.twitter.product_mixer.component_library.filter.FeatureConditionalFilter.IdentifierInfix
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.fiwtew.featuweconditionawfiwtew.identifiewinfix
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
 /**
- * Predicate to apply to candidate feature, to determine whether to apply filter.
- * True indicates we will apply the filter. False indicates to keep candidate and not apply filter.
- * @tparam FeatureValue
+ * pwedicate to appwy to candidate f-featuwe, >w< to detewmine whethew t-to appwy fiwtew. nyaa~~
+ * twue indicates we wiww appwy the fiwtew. (✿oωo) f-fawse indicates to keep candidate a-and nyot appwy f-fiwtew. ʘwʘ
+ * @tpawam featuwevawue
  */
-trait ShouldApplyFilter[FeatureValue] {
-  def apply(feature: FeatureValue): Boolean
+twait shouwdappwyfiwtew[featuwevawue] {
+  def appwy(featuwe: featuwevawue): b-boowean
 }
 
 /**
- * A filter that applies the [[filter]] for candidates for which [[shouldApplyFilter]] is true, and keeps the others
- * @param feature feature to determine whether to apply underyling filter
- * @param shouldApplyFilter function to determine whether to apply filter
- * @param filter the actual filter to apply if shouldApplyFilter is True
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
- * @tparam FeatureValueType
+ * a fiwtew that appwies the [[fiwtew]] fow candidates fow which [[shouwdappwyfiwtew]] i-is twue, (ˆ ﻌ ˆ)♡ and keeps the o-othews
+ * @pawam f-featuwe featuwe t-to detewmine w-whethew to appwy undewywing fiwtew
+ * @pawam shouwdappwyfiwtew function t-to detewmine whethew to appwy fiwtew
+ * @pawam f-fiwtew the actuaw fiwtew to appwy if shouwdappwyfiwtew is twue
+ * @tpawam quewy the domain m-modew fow the quewy ow wequest
+ * @tpawam c-candidate t-the type of t-the candidates
+ * @tpawam featuwevawuetype
  */
-case class FeatureValueConditionalFilter[
-  -Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  FeatureValueType
+case cwass featuwevawueconditionawfiwtew[
+  -quewy <: pipewinequewy, 😳😳😳
+  c-candidate <: u-univewsawnoun[any], :3
+  featuwevawuetype
 ](
-  feature: Feature[Candidate, FeatureValueType],
-  shouldApplyFilter: ShouldApplyFilter[FeatureValueType],
-  filter: Filter[Query, Candidate])
-    extends Filter[Query, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier(
-    feature.toString + IdentifierInfix + filter.identifier.name
+  f-featuwe: featuwe[candidate, OwO f-featuwevawuetype], (U ﹏ U)
+  shouwdappwyfiwtew: s-shouwdappwyfiwtew[featuwevawuetype], >w<
+  fiwtew: f-fiwtew[quewy, (U ﹏ U) candidate])
+    extends fiwtew[quewy, 😳 c-candidate] {
+  ovewwide v-vaw identifiew: fiwtewidentifiew = f-fiwtewidentifiew(
+    f-featuwe.tostwing + identifiewinfix + fiwtew.identifiew.name
   )
 
-  override val alerts: Seq[Alert] = filter.alerts
+  ovewwide vaw awewts: seq[awewt] = fiwtew.awewts
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val (candidatesToFilter, candidatesToKeep) = candidates.partition { candidate =>
-      shouldApplyFilter(candidate.features.get(feature))
+  ovewwide def appwy(
+    q-quewy: quewy, (ˆ ﻌ ˆ)♡
+    c-candidates: seq[candidatewithfeatuwes[candidate]]
+  ): s-stitch[fiwtewwesuwt[candidate]] = {
+    v-vaw (candidatestofiwtew, 😳😳😳 c-candidatestokeep) = candidates.pawtition { candidate =>
+      shouwdappwyfiwtew(candidate.featuwes.get(featuwe))
     }
-    filter.apply(query, candidatesToFilter).map { filterResult =>
-      FilterResult(
-        kept = filterResult.kept ++ candidatesToKeep.map(_.candidate),
-        removed = filterResult.removed)
+    fiwtew.appwy(quewy, (U ﹏ U) c-candidatestofiwtew).map { fiwtewwesuwt =>
+      fiwtewwesuwt(
+        kept = fiwtewwesuwt.kept ++ candidatestokeep.map(_.candidate), (///ˬ///✿)
+        w-wemoved = fiwtewwesuwt.wemoved)
     }
   }
 }
 
-object FeatureConditionalFilter {
-  val IdentifierInfix = "FeatureConditional"
+o-object f-featuweconditionawfiwtew {
+  v-vaw identifiewinfix = "featuweconditionaw"
 }

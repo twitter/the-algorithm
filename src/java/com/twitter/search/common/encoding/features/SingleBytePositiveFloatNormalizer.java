@@ -1,35 +1,35 @@
-package com.twitter.search.common.encoding.features;
+package com.twittew.seawch.common.encoding.featuwes;
 
 /**
- * Normalizes using the logic described in {@link SingleBytePositiveFloatUtil}.
+ * nyowmawizes u-using the w-wogic descwibed i-in {@wink singwebytepositivefwoatutiw}.
  */
-public class SingleBytePositiveFloatNormalizer extends ByteNormalizer {
+p-pubwic c-cwass singwebytepositivefwoatnowmawizew e-extends b-bytenowmawizew {
 
-  @Override
-  public byte normalize(double val) {
-    return SingleBytePositiveFloatUtil.toSingleBytePositiveFloat((float) val);
+  @ovewwide
+  p-pubwic byte nyowmawize(doubwe vaw) {
+    wetuwn singwebytepositivefwoatutiw.tosingwebytepositivefwoat((fwoat) vaw);
   }
 
-  @Override
-  public double unnormLowerBound(byte norm) {
-    return SingleBytePositiveFloatUtil.toJavaFloat(norm);
-  }
-
-  /**
-   * Get the upper bound of the raw value for a normalized byte.
-   * @deprecated This is wrongly implemented, always use unnormLowerBound(),
-   * or use SmartIntegerNormalizer.
-   */
-  @Override @Deprecated
-  public double unnormUpperBound(byte norm) {
-    return 1 + SingleBytePositiveFloatUtil.toJavaFloat(norm);
+  @ovewwide
+  p-pubwic doubwe unnowmwowewbound(byte nyowm) {
+    wetuwn s-singwebytepositivefwoatutiw.tojavafwoat(nowm);
   }
 
   /**
-   * Return the the post-log2 unnormalized value. This is only used for some legacy Earlybird
-   * features and scoring functions.
+   * get the uppew b-bound of the waw vawue fow a nyowmawized byte. >_<
+   * @depwecated this is wwongwy i-impwemented, rawr x3 awways use unnowmwowewbound(), mya
+   * o-ow use smawtintegewnowmawizew. nyaa~~
    */
-  public double unnormAndLog2(byte norm) {
-    return SingleBytePositiveFloatUtil.toLog2Double(norm);
+  @ovewwide @depwecated
+  p-pubwic doubwe unnowmuppewbound(byte nyowm) {
+    wetuwn 1 + singwebytepositivefwoatutiw.tojavafwoat(nowm);
+  }
+
+  /**
+   * wetuwn the the post-wog2 u-unnowmawized vawue. (⑅˘꒳˘) this is onwy used fow some wegacy eawwybiwd
+   * featuwes a-and scowing functions. rawr x3
+   */
+  pubwic doubwe u-unnowmandwog2(byte n-nyowm) {
+    w-wetuwn singwebytepositivefwoatutiw.towog2doubwe(nowm);
   }
 }

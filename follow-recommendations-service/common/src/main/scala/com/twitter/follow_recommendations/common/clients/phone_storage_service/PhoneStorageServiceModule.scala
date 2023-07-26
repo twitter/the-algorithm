@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.phone_storage_service
+package com.twittew.fowwow_wecommendations.common.cwients.phone_stowage_sewvice
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.phonestorage.api.thriftscala.PhoneStorageService
+impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt c-com.twittew.fowwow_wecommendations.common.cwients.common.basecwientmoduwe
+i-impowt c-com.twittew.phonestowage.api.thwiftscawa.phonestowagesewvice
 
-object PhoneStorageServiceModule
-    extends BaseClientModule[PhoneStorageService.MethodPerEndpoint]
-    with MtlsClient {
-  override val label = "phone-storage-service"
-  override val dest = "/s/ibis-ds-api/ibis-ds-api:thrift2"
+o-object phonestowagesewvicemoduwe
+    e-extends b-basecwientmoduwe[phonestowagesewvice.methodpewendpoint]
+    w-with mtwscwient {
+  ovewwide vaw wabew = "phone-stowage-sewvice"
+  ovewwide vaw dest = "/s/ibis-ds-api/ibis-ds-api:thwift2"
 }

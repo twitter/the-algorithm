@@ -1,156 +1,156 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_scorer
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.timewine_scowew
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinescorer.common.scoredtweetcandidate.thriftscala.v1
-import com.twitter.timelinescorer.common.scoredtweetcandidate.thriftscala.v1.Ancestor
-import com.twitter.timelinescorer.common.scoredtweetcandidate.{thriftscala => ct}
-import com.twitter.timelinescorer.{thriftscala => t}
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.thriftscala.CandidateTweetSourceId
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwcewithextwactedfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidateswithsouwcefeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewinescowew.common.scowedtweetcandidate.thwiftscawa.v1
+impowt com.twittew.timewinescowew.common.scowedtweetcandidate.thwiftscawa.v1.ancestow
+impowt com.twittew.timewinescowew.common.scowedtweetcandidate.{thwiftscawa => ct}
+impowt c-com.twittew.timewinescowew.{thwiftscawa => t}
+impowt com.twittew.timewinesewvice.suggests.wogging.candidate_tweet_souwce_id.thwiftscawa.candidatetweetsouwceid
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-case class ScoredTweetCandidateWithFocalTweet(
-  candidate: v1.ScoredTweetCandidate,
-  focalTweetIdOpt: Option[Long])
+case cwass scowedtweetcandidatewithfocawtweet(
+  candidate: v-v1.scowedtweetcandidate, ^^;;
+  focawtweetidopt: o-option[wong])
 
-case object TimelineScorerCandidateSourceSucceededFeature extends Feature[PipelineQuery, Boolean]
+c-case object timewinescowewcandidatesouwcesucceededfeatuwe extends featuwe[pipewinequewy, o.O boowean]
 
-@Singleton
-class TimelineScorerCandidateSource @Inject() (
-  timelineScorerClient: t.TimelineScorer.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[
-      t.ScoredTweetsRequest,
-      ScoredTweetCandidateWithFocalTweet
+@singweton
+cwass timewinescowewcandidatesouwce @inject() (
+  t-timewinescowewcwient: t.timewinescowew.methodpewendpoint)
+    extends candidatesouwcewithextwactedfeatuwes[
+      t.scowedtweetswequest, (///ˬ///✿)
+      scowedtweetcandidatewithfocawtweet
     ] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("TimelineScorer")
+  ovewwide v-vaw identifiew: candidatesouwceidentifiew =
+    c-candidatesouwceidentifiew("timewinescowew")
 
-  private val MaxConversationAncestors = 2
+  p-pwivate vaw m-maxconvewsationancestows = 2
 
-  override def apply(
-    request: t.ScoredTweetsRequest
-  ): Stitch[CandidatesWithSourceFeatures[ScoredTweetCandidateWithFocalTweet]] = {
-    Stitch
-      .callFuture(timelineScorerClient.getScoredTweets(request))
-      .map { response =>
-        val scoredTweetsOpt = response match {
-          case t.ScoredTweetsResponse.V1(v1) => v1.scoredTweets
-          case t.ScoredTweetsResponse.UnknownUnionField(field) =>
-            throw new UnsupportedOperationException(s"Unknown response type: ${field.field.name}")
+  o-ovewwide def appwy(
+    wequest: t.scowedtweetswequest
+  ): stitch[candidateswithsouwcefeatuwes[scowedtweetcandidatewithfocawtweet]] = {
+    s-stitch
+      .cawwfutuwe(timewinescowewcwient.getscowedtweets(wequest))
+      .map { wesponse =>
+        vaw scowedtweetsopt = wesponse m-match {
+          case t.scowedtweetswesponse.v1(v1) => v1.scowedtweets
+          case t.scowedtweetswesponse.unknownunionfiewd(fiewd) =>
+            thwow nyew unsuppowtedopewationexception(s"unknown w-wesponse type: ${fiewd.fiewd.name}")
         }
-        val scoredTweets = scoredTweetsOpt.getOrElse(Seq.empty)
+        vaw scowedtweets = s-scowedtweetsopt.getowewse(seq.empty)
 
-        val allAncestors = scoredTweets.flatMap {
-          case ct.ScoredTweetCandidate.V1(v1) if isEligibleReply(v1) =>
-            v1.ancestors.get.map(_.tweetId)
-          case _ => Seq.empty
-        }.toSet
+        v-vaw awwancestows = s-scowedtweets.fwatmap {
+          case ct.scowedtweetcandidate.v1(v1) if isewigibwewepwy(v1) =>
+            v-v1.ancestows.get.map(_.tweetid)
+          c-case _ => seq.empty
+        }.toset
 
-        // Remove tweets within ancestor list of other tweets to avoid serving duplicates
-        val keptTweets = scoredTweets.collect {
-          case ct.ScoredTweetCandidate.V1(v1) if !allAncestors.contains(originalTweetId(v1)) => v1
+        // wemove tweets within a-ancestow wist o-of othew tweets to avoid sewving d-dupwicates
+        vaw kepttweets = s-scowedtweets.cowwect {
+          case ct.scowedtweetcandidate.v1(v1) if !awwancestows.contains(owiginawtweetid(v1)) => v-v1
         }
 
-        // Add parent and root tweet for eligible reply focal tweets
-        val candidates = keptTweets
-          .flatMap {
-            case v1 if isEligibleReply(v1) =>
-              val ancestors = v1.ancestors.get
-              val focalTweetId = v1.tweetId
+        // add pawent a-and woot tweet fow ewigibwe w-wepwy focaw tweets
+        v-vaw candidates = kepttweets
+          .fwatmap {
+            case v1 if isewigibwewepwy(v1) =>
+              vaw ancestows = v1.ancestows.get
+              vaw focawtweetid = v-v1.tweetid
 
-              // Include root tweet if the conversation has atleast 2 ancestors
-              val optionallyIncludedRootTweet = if (ancestors.size >= MaxConversationAncestors) {
-                val rootTweet = toScoredTweetCandidateFromAncestor(
-                  ancestor = ancestors.last,
-                  inReplyToTweetId = None,
-                  conversationId = v1.conversationId,
-                  ancestors = None,
-                  candidateTweetSourceId = v1.candidateTweetSourceId
+              // i-incwude woot tweet if the c-convewsation has a-atweast 2 ancestows
+              v-vaw optionawwyincwudedwoottweet = if (ancestows.size >= maxconvewsationancestows) {
+                vaw woottweet = t-toscowedtweetcandidatefwomancestow(
+                  ancestow = ancestows.wast, σωσ
+                  inwepwytotweetid = nyone, nyaa~~
+                  c-convewsationid = v1.convewsationid, ^^;;
+                  a-ancestows = n-nyone, ^•ﻌ•^
+                  c-candidatetweetsouwceid = v1.candidatetweetsouwceid
                 )
-                Seq((rootTweet, Some(v1)))
-              } else Seq.empty
+                s-seq((woottweet, σωσ s-some(v1)))
+              } e-ewse seq.empty
 
               /**
-               * Setting the in-reply-to tweet id on the immediate parent, if one exists,
-               * helps ensure tweet type metrics correctly distinguish roots from non-roots.
+               * s-setting the in-wepwy-to tweet id on the immediate p-pawent, -.- if o-one exists, ^^;;
+               * hewps e-ensuwe tweet t-type metwics cowwectwy d-distinguish woots fwom nyon-woots. XD
                */
-              val inReplyToTweetId = ancestors.tail.headOption.map(_.tweetId)
-              val parentAncestor = toScoredTweetCandidateFromAncestor(
-                ancestor = ancestors.head,
-                inReplyToTweetId = inReplyToTweetId,
-                conversationId = v1.conversationId,
-                ancestors = Some(ancestors.tail),
-                candidateTweetSourceId = v1.candidateTweetSourceId
+              vaw i-inwepwytotweetid = ancestows.taiw.headoption.map(_.tweetid)
+              vaw pawentancestow = toscowedtweetcandidatefwomancestow(
+                ancestow = ancestows.head, 🥺
+                inwepwytotweetid = inwepwytotweetid, òωó
+                c-convewsationid = v1.convewsationid, (ˆ ﻌ ˆ)♡
+                ancestows = some(ancestows.taiw), -.-
+                c-candidatetweetsouwceid = v-v1.candidatetweetsouwceid
               )
 
-              optionallyIncludedRootTweet ++
-                Seq((parentAncestor, Some(v1)), (v1, Some(v1)))
+              o-optionawwyincwudedwoottweet ++
+                seq((pawentancestow, :3 some(v1)), ʘwʘ (v1, some(v1)))
 
-            case any => Seq((any, None)) // Set focalTweetId to None if not eligible for convo
+            c-case any => seq((any, 🥺 nyone)) // s-set focawtweetid t-to nyone if not ewigibwe fow convo
           }
 
         /**
-         * Dedup each tweet keeping the one with highest scored Focal Tweet
-         * Focal Tweet ID != the Conversation ID, which is set to the root of the conversation
-         * Focal Tweet ID will be defined for tweets with ancestors that should be
-         * in conversation modules and None for standalone tweets.
+         * dedup each tweet keeping the one with highest scowed f-focaw tweet
+         * focaw t-tweet id != the convewsation id, >_< w-which is set t-to the woot of the convewsation
+         * focaw t-tweet id wiww be d-defined fow tweets with ancestows t-that shouwd b-be
+         * in convewsation moduwes and nyone fow standawone tweets. ʘwʘ
          */
-        val sortedDedupedCandidates = candidates
-          .groupBy { case (v1, _) => v1.tweetId }
-          .mapValues { group =>
-            val (candidate, focalTweetOpt) = group.maxBy {
-              case (_, Some(focal)) => focal.score
-              case (_, None) => 0
+        vaw sowteddedupedcandidates = c-candidates
+          .gwoupby { c-case (v1, (˘ω˘) _) => v-v1.tweetid }
+          .mapvawues { gwoup =>
+            v-vaw (candidate, (✿oωo) f-focawtweetopt) = gwoup.maxby {
+              case (_, s-some(focaw)) => focaw.scowe
+              case (_, (///ˬ///✿) nyone) => 0
             }
-            ScoredTweetCandidateWithFocalTweet(candidate, focalTweetOpt.map(focal => focal.tweetId))
-          }.values.toSeq.sortBy(_.candidate.tweetId)
+            scowedtweetcandidatewithfocawtweet(candidate, rawr x3 focawtweetopt.map(focaw => focaw.tweetid))
+          }.vawues.toseq.sowtby(_.candidate.tweetid)
 
-        CandidatesWithSourceFeatures(
-          candidates = sortedDedupedCandidates,
-          features = FeatureMapBuilder()
-            .add(TimelineScorerCandidateSourceSucceededFeature, true)
-            .build()
+        c-candidateswithsouwcefeatuwes(
+          c-candidates = sowteddedupedcandidates, -.-
+          featuwes = featuwemapbuiwdew()
+            .add(timewinescowewcandidatesouwcesucceededfeatuwe, ^^ twue)
+            .buiwd()
         )
       }
   }
 
-  private def isEligibleReply(candidate: ct.ScoredTweetCandidateAliases.V1Alias): Boolean = {
-    candidate.inReplyToTweetId.nonEmpty &&
-    !candidate.isRetweet.getOrElse(false) &&
-    candidate.ancestors.exists(_.nonEmpty)
+  pwivate def isewigibwewepwy(candidate: c-ct.scowedtweetcandidateawiases.v1awias): b-boowean = {
+    candidate.inwepwytotweetid.nonempty &&
+    !candidate.iswetweet.getowewse(fawse) &&
+    candidate.ancestows.exists(_.nonempty)
   }
 
   /**
-   * If we have a retweet, get the source tweet id.
-   * If it is not a retweet, get the regular tweet id.
+   * if we have a wetweet, (⑅˘꒳˘) g-get the souwce tweet id. nyaa~~
+   * if it is nyot a wetweet, /(^•ω•^) get the weguwaw tweet i-id. (U ﹏ U)
    */
-  private def originalTweetId(candidate: ct.ScoredTweetCandidateAliases.V1Alias): Long = {
-    candidate.sourceTweetId.getOrElse(candidate.tweetId)
+  pwivate def owiginawtweetid(candidate: ct.scowedtweetcandidateawiases.v1awias): w-wong = {
+    candidate.souwcetweetid.getowewse(candidate.tweetid)
   }
 
-  private def toScoredTweetCandidateFromAncestor(
-    ancestor: Ancestor,
-    inReplyToTweetId: Option[Long],
-    conversationId: Option[Long],
-    ancestors: Option[Seq[Ancestor]],
-    candidateTweetSourceId: Option[CandidateTweetSourceId]
-  ): ct.ScoredTweetCandidateAliases.V1Alias = {
-    ct.v1.ScoredTweetCandidate(
-      tweetId = ancestor.tweetId,
-      authorId = ancestor.userId.getOrElse(0L),
-      score = 0.0,
-      isAncestorCandidate = Some(true),
-      inReplyToTweetId = inReplyToTweetId,
-      conversationId = conversationId,
-      ancestors = ancestors,
-      candidateTweetSourceId = candidateTweetSourceId
+  p-pwivate def toscowedtweetcandidatefwomancestow(
+    ancestow: ancestow, 😳😳😳
+    i-inwepwytotweetid: o-option[wong], >w<
+    convewsationid: option[wong], XD
+    ancestows: o-option[seq[ancestow]], o.O
+    candidatetweetsouwceid: o-option[candidatetweetsouwceid]
+  ): ct.scowedtweetcandidateawiases.v1awias = {
+    ct.v1.scowedtweetcandidate(
+      tweetid = ancestow.tweetid, mya
+      a-authowid = ancestow.usewid.getowewse(0w), 🥺
+      scowe = 0.0, ^^;;
+      i-isancestowcandidate = s-some(twue), :3
+      inwepwytotweetid = inwepwytotweetid, (U ﹏ U)
+      c-convewsationid = convewsationid, OwO
+      a-ancestows = a-ancestows, 😳😳😳
+      c-candidatetweetsouwceid = candidatetweetsouwceid
     )
   }
 }

@@ -1,90 +1,90 @@
-package com.twitter.unified_user_actions.enricher.hydrator
-import com.twitter.dynmap.DynMap
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphql.thriftscala.AuthHeaders
-import com.twitter.graphql.thriftscala.Authentication
-import com.twitter.graphql.thriftscala.Document
-import com.twitter.graphql.thriftscala.GraphQlRequest
-import com.twitter.graphql.thriftscala.GraphqlExecutionService
-import com.twitter.graphql.thriftscala.Variables
-import com.twitter.unified_user_actions.enricher.ImplementationException
-import com.twitter.unified_user_actions.enricher.graphql.GraphqlRspParser
-import com.twitter.unified_user_actions.enricher.hcache.LocalCache
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentIdType
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.unified_user_actions.thriftscala.AuthorInfo
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.util.Future
+package com.twittew.unified_usew_actions.enwichew.hydwatow
+impowt c-com.twittew.dynmap.dynmap
+i-impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.gwaphqw.thwiftscawa.authheadews
+i-impowt com.twittew.gwaphqw.thwiftscawa.authentication
+impowt com.twittew.gwaphqw.thwiftscawa.document
+impowt com.twittew.gwaphqw.thwiftscawa.gwaphqwwequest
+impowt com.twittew.gwaphqw.thwiftscawa.gwaphqwexecutionsewvice
+i-impowt com.twittew.gwaphqw.thwiftscawa.vawiabwes
+impowt c-com.twittew.unified_usew_actions.enwichew.impwementationexception
+impowt com.twittew.unified_usew_actions.enwichew.gwaphqw.gwaphqwwsppawsew
+impowt c-com.twittew.unified_usew_actions.enwichew.hcache.wocawcache
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentenvewop
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentidtype
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentinstwuction
+impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentkey
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.authowinfo
+impowt com.twittew.unified_usew_actions.thwiftscawa.item
+impowt com.twittew.utiw.futuwe
 
-class DefaultHydrator(
-  cache: LocalCache[EnrichmentKey, DynMap],
-  graphqlClient: GraphqlExecutionService.FinagledClient,
-  scopedStatsReceiver: StatsReceiver = NullStatsReceiver)
-    extends AbstractHydrator(scopedStatsReceiver) {
+cwass defauwthydwatow(
+  c-cache: wocawcache[enwichmentkey, (U ﹏ U) dynmap],
+  gwaphqwcwient: gwaphqwexecutionsewvice.finagwedcwient, 😳
+  scopedstatsweceivew: statsweceivew = n-nyuwwstatsweceivew)
+    extends abstwacthydwatow(scopedstatsweceivew) {
 
-  private def constructGraphqlReq(
-    enrichmentKey: EnrichmentKey
-  ): GraphQlRequest =
-    enrichmentKey.keyType match {
-      case EnrichmentIdType.TweetId =>
-        GraphQlRequest(
-          // see go/graphiql/M5sHxua-RDiRtTn48CAhng
-          document = Document.DocumentId("M5sHxua-RDiRtTn48CAhng"),
-          operationName = Some("TweetHydration"),
-          variables = Some(
-            Variables.JsonEncodedVariables(s"""{"rest_id": "${enrichmentKey.id}"}""")
-          ),
-          authentication = Authentication.AuthHeaders(
-            AuthHeaders()
+  p-pwivate def c-constwuctgwaphqwweq(
+    e-enwichmentkey: e-enwichmentkey
+  ): gwaphqwwequest =
+    enwichmentkey.keytype m-match {
+      case enwichmentidtype.tweetid =>
+        gwaphqwwequest(
+          // s-see go/gwaphiqw/m5shxua-wdiwttn48cahng
+          document = document.documentid("m5shxua-wdiwttn48cahng"), (ˆ ﻌ ˆ)♡
+          opewationname = some("tweethydwation"), 😳😳😳
+          v-vawiabwes = some(
+            v-vawiabwes.jsonencodedvawiabwes(s"""{"west_id": "${enwichmentkey.id}"}""")
+          ), (U ﹏ U)
+          a-authentication = a-authentication.authheadews(
+            authheadews()
           )
         )
       case _ =>
-        throw new ImplementationException(
-          s"Missing implementation for hydration of type ${enrichmentKey.keyType}")
+        thwow nyew i-impwementationexception(
+          s-s"missing impwementation fow h-hydwation of t-type ${enwichmentkey.keytype}")
     }
 
-  private def hydrateAuthorInfo(item: Item.TweetInfo, authorId: Option[Long]): Item.TweetInfo = {
-    item.tweetInfo.actionTweetAuthorInfo match {
-      case Some(_) => item
+  pwivate d-def hydwateauthowinfo(item: item.tweetinfo, (///ˬ///✿) a-authowid: option[wong]): item.tweetinfo = {
+    i-item.tweetinfo.actiontweetauthowinfo match {
+      c-case some(_) => item
       case _ =>
-        item.copy(tweetInfo = item.tweetInfo.copy(
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = authorId))
+        i-item.copy(tweetinfo = i-item.tweetinfo.copy(
+          actiontweetauthowinfo = some(authowinfo(authowid = authowid))
         ))
     }
   }
 
-  override protected def safelyHydrate(
-    instruction: EnrichmentInstruction,
-    key: EnrichmentKey,
-    envelop: EnrichmentEnvelop
-  ): Future[EnrichmentEnvelop] = {
-    instruction match {
-      case EnrichmentInstruction.TweetEnrichment =>
-        val dynMapFuture = cache.getOrElseUpdate(key) {
-          graphqlClient
-            .graphql(constructGraphqlReq(enrichmentKey = key))
+  ovewwide pwotected def safewyhydwate(
+    instwuction: enwichmentinstwuction, 😳
+    k-key: enwichmentkey, 😳
+    e-envewop: enwichmentenvewop
+  ): futuwe[enwichmentenvewop] = {
+    i-instwuction m-match {
+      case e-enwichmentinstwuction.tweetenwichment =>
+        vaw dynmapfutuwe = cache.getowewseupdate(key) {
+          gwaphqwcwient
+            .gwaphqw(constwuctgwaphqwweq(enwichmentkey = k-key))
             .map { body =>
-              body.response.flatMap { r =>
-                GraphqlRspParser.toDynMapOpt(r)
+              body.wesponse.fwatmap { w =>
+                gwaphqwwsppawsew.todynmapopt(w)
               }.get
             }
         }
 
-        dynMapFuture.map(map => {
-          val authorIdOpt =
-            map.getLongOpt("data.tweet_result_by_rest_id.result.core.user.legacy.id_str")
+        d-dynmapfutuwe.map(map => {
+          vaw authowidopt =
+            m-map.getwongopt("data.tweet_wesuwt_by_west_id.wesuwt.cowe.usew.wegacy.id_stw")
 
-          val hydratedEnvelop = envelop.uua.item match {
-            case item: Item.TweetInfo =>
-              envelop.copy(uua = envelop.uua.copy(item = hydrateAuthorInfo(item, authorIdOpt)))
-            case _ => envelop
+          v-vaw hydwatedenvewop = e-envewop.uua.item match {
+            c-case i-item: item.tweetinfo =>
+              e-envewop.copy(uua = e-envewop.uua.copy(item = hydwateauthowinfo(item, σωσ authowidopt)))
+            c-case _ => envewop
           }
-          hydratedEnvelop
+          h-hydwatedenvewop
         })
-      case _ => Future.value(envelop)
+      c-case _ => f-futuwe.vawue(envewop)
     }
   }
 }

@@ -1,19 +1,19 @@
-package com.twitter.visibility.interfaces.push_service
+package com.twittew.visibiwity.intewfaces.push_sewvice
 
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+impowt com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.modews.viewewcontext
 
-case class PushServiceVisibilityRequest(
-  tweet: Tweet,
-  author: User,
-  viewerContext: ViewerContext,
-  safetyLevel: SafetyLevel,
-  sourceTweet: Option[Tweet] = None,
-  quotedTweet: Option[Tweet] = None,
-  isRetweet: Boolean = false,
-  isInnerQuotedTweet: Boolean = false,
-  isSourceTweet: Boolean = false,
-  isOutOfNetworkTweet: Boolean = true,
+c-case cwass p-pushsewvicevisibiwitywequest(
+  t-tweet: tweet, mya
+  a-authow: usew,
+  v-viewewcontext: viewewcontext, mya
+  safetywevew: safetywevew, 😳
+  souwcetweet: option[tweet] = n-nyone, XD
+  quotedtweet: option[tweet] = n-nyone, :3
+  iswetweet: boowean = f-fawse, 😳😳😳
+  isinnewquotedtweet: boowean = fawse, -.-
+  issouwcetweet: b-boowean = fawse, ( ͡o ω ͡o )
+  isoutofnetwowktweet: b-boowean = t-twue, rawr x3
 )

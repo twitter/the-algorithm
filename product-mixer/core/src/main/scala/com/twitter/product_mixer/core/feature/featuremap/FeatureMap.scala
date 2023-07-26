@@ -1,195 +1,195 @@
-package com.twitter.product_mixer.core.feature.featuremap
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1Response
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.{
-  FeatureStoreV1ResponseFeature => FSv1Feature
+impowt c-com.fastewxmw.jackson.databind.annotation.jsonsewiawize
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwevawue.featuwestowev1wesponse
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwevawue.{
+  featuwestowev1wesponsefeatuwe => fsv1featuwe
 }
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+i-impowt com.twittew.utiw.twy
 
 /**
- * A set of features and their values. Associated with a specific instance of an Entity, though
- * that association is maintained by the framework.
+ * a set of featuwes and theiw v-vawues. associated with a specific i-instance of an entity, XD though
+ * that association is maintained b-by the fwamewowk. mya
  *
- * [[FeatureMapBuilder]] is used to build new FeatureMap instances
+ * [[featuwemapbuiwdew]] is used to b-buiwd nyew featuwemap i-instances
  */
-@JsonSerialize(using = classOf[FeatureMapSerializer])
-case class FeatureMap private[feature] (
-  private[core] val underlyingMap: Map[Feature[_, _], Try[_]]) {
+@jsonsewiawize(using = cwassof[featuwemapsewiawizew])
+case cwass featuwemap pwivate[featuwe] (
+  p-pwivate[cowe] vaw undewwyingmap: map[featuwe[_, ^•ﻌ•^ _], twy[_]]) {
 
   /**
-   * Returns the [[Value]] associated with the Feature
+   * wetuwns the [[vawue]] a-associated with the featuwe
    *
-   * If the Feature is missing from the feature map, it throws a [[MissingFeatureException]].
-   * If the Feature failed and isn't a [[FeatureWithDefaultOnFailure]] this will throw the underlying exception
-   * that the feature failed with during hydration.
+   * i-if the f-featuwe is missing f-fwom the featuwe m-map, ʘwʘ it thwows a [[missingfeatuweexception]]. ( ͡o ω ͡o )
+   * if the f-featuwe faiwed and isn't a [[featuwewithdefauwtonfaiwuwe]] this w-wiww thwow the undewwying exception
+   * that the featuwe faiwed with duwing hydwation. mya
    */
-  def get[Value](feature: Feature[_, Value]): Value =
-    getOrElse(feature, throw MissingFeatureException(feature), None)
+  def get[vawue](featuwe: f-featuwe[_, o.O vawue]): vawue =
+    g-getowewse(featuwe, (✿oωo) t-thwow m-missingfeatuweexception(featuwe), :3 nyone)
 
   /**
-   * Returns the [[Value]] associated with the Feature with the same semantics as
-   * [[FeatureMap.get()]], but the underlying [[Try]] is returned to allow for checking the success
-   * or error state of a feature hydration. This is helpful for implementing fall-back behavior in
-   * case the feature is missing or hydration failed without a [[FeatureWithDefaultOnFailure]] set.
+   * wetuwns the [[vawue]] associated w-with the f-featuwe with the same semantics a-as
+   * [[featuwemap.get()]], 😳 but t-the undewwying [[twy]] is wetuwned t-to awwow fow checking the s-success
+   * ow ewwow state of a featuwe hydwation. (U ﹏ U) t-this is hewpfuw fow impwementing f-faww-back behaviow in
+   * c-case the featuwe i-is missing ow hydwation faiwed without a [[featuwewithdefauwtonfaiwuwe]] set. mya
    *
-   * @note The [[FeatureMap.getOrElse()]] logic is duplicated here to avoid unpacking and repacking
-   *       the [[Try]] that is already available in the [[underlyingMap]]
+   * @note the [[featuwemap.getowewse()]] wogic is dupwicated hewe to avoid u-unpacking and wepacking
+   *       t-the [[twy]] that is awweady avaiwabwe i-in the [[undewwyingmap]]
    */
-  def getTry[Value](feature: Feature[_, Value]): Try[Value] =
-    underlyingMap.get(feature) match {
-      case None => Throw(MissingFeatureException(feature))
-      case Some(value @ Return(_)) => value.asInstanceOf[Return[Value]]
-      case Some(value @ Throw(_)) =>
-        feature match {
-          case f: FeatureWithDefaultOnFailure[_, Value] @unchecked => Return(f.defaultValue)
-          case _ => value.asInstanceOf[Throw[Value]]
+  d-def gettwy[vawue](featuwe: f-featuwe[_, (U ᵕ U❁) vawue]): twy[vawue] =
+    undewwyingmap.get(featuwe) match {
+      c-case nyone => thwow(missingfeatuweexception(featuwe))
+      case some(vawue @ wetuwn(_)) => vawue.asinstanceof[wetuwn[vawue]]
+      case some(vawue @ t-thwow(_)) =>
+        featuwe m-match {
+          c-case f: f-featuwewithdefauwtonfaiwuwe[_, :3 vawue] @unchecked => wetuwn(f.defauwtvawue)
+          c-case _ => vawue.asinstanceof[thwow[vawue]]
         }
     }
 
   /**
-   * Returns the [[Value]] associated with the feature or a default if the key is not contained in the map
-   * `default` can also be used to throw an exception.
+   * w-wetuwns t-the [[vawue]] a-associated with the featuwe ow a defauwt if the k-key is nyot contained i-in the map
+   * `defauwt` c-can awso be used t-to thwow an exception. mya
    *
-   *  e.g. `.getOrElse(feature, throw new MyCustomException())`
+   *  e-e.g. OwO `.getowewse(featuwe, (ˆ ﻌ ˆ)♡ thwow nyew mycustomexception())`
    *
-   * @note for [[FeatureWithDefaultOnFailure]], the [[FeatureWithDefaultOnFailure.defaultValue]]
-   *       will be returned if the [[Feature]] failed, but if it is missing/never hydrated,
-   *       then the `default` provided here will be used.
+   * @note fow [[featuwewithdefauwtonfaiwuwe]], ʘwʘ the [[featuwewithdefauwtonfaiwuwe.defauwtvawue]]
+   *       w-wiww be wetuwned if the [[featuwe]] faiwed, o.O but if it is missing/nevew hydwated, UwU
+   *       then t-the `defauwt` pwovided hewe wiww be used. rawr x3
    */
-  def getOrElse[Value](feature: Feature[_, Value], default: => Value): Value = {
-    getOrElse(feature, default, Some(default))
+  def getowewse[vawue](featuwe: f-featuwe[_, 🥺 vawue], d-defauwt: => v-vawue): vawue = {
+    getowewse(featuwe, :3 d-defauwt, some(defauwt))
   }
 
   /**
-   * Private helper for getting features from the feature map, allowing us to define a default
-   * when the feature is missing from the feature map, vs when its in the feature map but failed.
-   * In the case of failed features, if the feature is a [FeatureWithDefaultOnFailure], it will
-   * prioritize that default.
-   * @param feature The feature to retrieve
-   * @param missingDefault The default value to use when the feature is missing from the map.
-   * @param failureDefault The default value to use when the feature is present but failed.
-   * @tparam Value The value type of the feature.
-   * @return The value stored in the map.
+   * p-pwivate hewpew f-fow getting featuwes fwom the featuwe map, (ꈍᴗꈍ) awwowing us to define a defauwt
+   * when the featuwe i-is missing fwom the featuwe map, 🥺 v-vs when its in the featuwe map b-but faiwed. (✿oωo)
+   * i-in the case of faiwed featuwes, (U ﹏ U) if the featuwe i-is a [featuwewithdefauwtonfaiwuwe], :3 i-it wiww
+   * pwiowitize that d-defauwt. ^^;;
+   * @pawam f-featuwe the featuwe to wetwieve
+   * @pawam missingdefauwt the defauwt vawue to use when t-the featuwe is m-missing fwom the m-map. rawr
+   * @pawam faiwuwedefauwt t-the defauwt vawue t-to use when the featuwe is pwesent b-but faiwed. 😳😳😳
+   * @tpawam vawue the vawue type of the featuwe. (✿oωo)
+   * @wetuwn the vawue stowed in the map. OwO
    */
-  private def getOrElse[Value](
-    feature: Feature[_, Value],
-    missingDefault: => Value,
-    failureDefault: => Option[Value]
-  ): Value =
-    underlyingMap.get(feature) match {
-      case None => missingDefault
-      case Some(Return(value)) => value.asInstanceOf[Value]
-      case Some(Throw(err)) =>
-        feature match {
-          case f: FeatureWithDefaultOnFailure[_, Value] @unchecked => f.defaultValue
-          case _ => failureDefault.getOrElse(throw err)
+  p-pwivate def g-getowewse[vawue](
+    featuwe: featuwe[_, ʘwʘ vawue], (ˆ ﻌ ˆ)♡
+    m-missingdefauwt: => v-vawue, (U ﹏ U)
+    faiwuwedefauwt: => option[vawue]
+  ): vawue =
+    u-undewwyingmap.get(featuwe) match {
+      case nyone => missingdefauwt
+      case some(wetuwn(vawue)) => vawue.asinstanceof[vawue]
+      c-case some(thwow(eww)) =>
+        featuwe match {
+          case f-f: featuwewithdefauwtonfaiwuwe[_, UwU v-vawue] @unchecked => f.defauwtvawue
+          case _ => faiwuwedefauwt.getowewse(thwow eww)
         }
     }
 
   /**
-   * returns a new FeatureMap with
-   * - the new Feature and Value pair if the Feature was not present
-   * - overriding the previous Value if that Feature was previously present
+   * w-wetuwns a-a nyew featuwemap with
+   * - the nyew featuwe and vawue paiw i-if the featuwe was nyot pwesent
+   * - o-ovewwiding the pwevious vawue if that featuwe was pweviouswy p-pwesent
    */
-  def +[V](key: Feature[_, V], value: V): FeatureMap =
-    new FeatureMap(underlyingMap + (key -> Return(value)))
+  def +[v](key: f-featuwe[_, XD v], v-vawue: v): featuwemap =
+    nyew f-featuwemap(undewwyingmap + (key -> wetuwn(vawue)))
 
   /**
-   * returns a new FeatureMap with all the elements of current FeatureMap and `other`.
+   * w-wetuwns a nyew f-featuwemap with a-aww the ewements of cuwwent featuwemap a-and `othew`. ʘwʘ
    *
-   * @note if a [[Feature]] exists in both maps, the Value from `other` takes precedence
+   * @note i-if a [[featuwe]] exists in both maps, rawr x3 the vawue f-fwom `othew` t-takes pwecedence
    */
-  def ++(other: FeatureMap): FeatureMap = {
-    if (other.isEmpty) {
+  d-def ++(othew: featuwemap): featuwemap = {
+    i-if (othew.isempty) {
       this
-    } else if (isEmpty) {
-      other
-    } else if (this.getFeatures.contains(FSv1Feature) && other.getFeatures.contains(FSv1Feature)) {
-      val mergedResponse =
-        FeatureStoreV1Response.merge(this.get(FSv1Feature), other.get(FSv1Feature))
-      val mergedResponseFeatureMap = FeatureMapBuilder().add(FSv1Feature, mergedResponse).build()
-      new FeatureMap(underlyingMap ++ other.underlyingMap ++ mergedResponseFeatureMap.underlyingMap)
-    } else {
-      new FeatureMap(underlyingMap ++ other.underlyingMap)
+    } ewse i-if (isempty) {
+      o-othew
+    } ewse if (this.getfeatuwes.contains(fsv1featuwe) && othew.getfeatuwes.contains(fsv1featuwe)) {
+      vaw mewgedwesponse =
+        f-featuwestowev1wesponse.mewge(this.get(fsv1featuwe), ^^;; o-othew.get(fsv1featuwe))
+      v-vaw mewgedwesponsefeatuwemap = f-featuwemapbuiwdew().add(fsv1featuwe, ʘwʘ mewgedwesponse).buiwd()
+      n-nyew featuwemap(undewwyingmap ++ othew.undewwyingmap ++ mewgedwesponsefeatuwemap.undewwyingmap)
+    } ewse {
+      nyew featuwemap(undewwyingmap ++ othew.undewwyingmap)
     }
   }
 
-  /** returns the keySet of Features in the map */
-  def getFeatures: Set[Feature[_, _]] = underlyingMap.keySet
+  /** w-wetuwns the keyset of featuwes i-in the map */
+  def getfeatuwes: s-set[featuwe[_, (U ﹏ U) _]] = undewwyingmap.keyset
 
   /**
-   * The Set of Features in the FeatureMap that have a successfully returned value. Failed features
-   * will obviously not be here.
+   * t-the set of featuwes in t-the featuwemap that h-have a successfuwwy w-wetuwned v-vawue. (˘ω˘) faiwed featuwes
+   * w-wiww obviouswy not be hewe. (ꈍᴗꈍ)
    */
-  def getSuccessfulFeatures: Set[Feature[_, _]] = underlyingMap.collect {
-    case (feature, Return(_)) => feature
-  }.toSet
+  def getsuccessfuwfeatuwes: set[featuwe[_, /(^•ω•^) _]] = undewwyingmap.cowwect {
+    case (featuwe, >_< w-wetuwn(_)) => f-featuwe
+  }.toset
 
-  def isEmpty: Boolean = underlyingMap.isEmpty
+  def i-isempty: boowean = undewwyingmap.isempty
 
-  override def toString: String = s"FeatureMap(${underlyingMap.toString})"
+  ovewwide d-def tostwing: stwing = s"featuwemap(${undewwyingmap.tostwing})"
 }
 
-object FeatureMap {
-  // Restrict access to the apply method.
-  // This shouldn't be required after scala 2.13.2 (https://github.com/scala/scala/pull/7702)
-  private[feature] def apply(underlyingMap: Map[Feature[_, _], Try[_]]): FeatureMap =
-    FeatureMap(underlyingMap)
+object featuwemap {
+  // w-westwict access t-to the appwy method. σωσ
+  // this s-shouwdn't be wequiwed aftew scawa 2.13.2 (https://github.com/scawa/scawa/puww/7702)
+  pwivate[featuwe] d-def appwy(undewwyingmap: m-map[featuwe[_, _], ^^;; twy[_]]): f-featuwemap =
+    f-featuwemap(undewwyingmap)
 
-  /** Merges an arbitrary number of [[FeatureMap]]s from left-to-right */
-  def merge(featureMaps: TraversableOnce[FeatureMap]): FeatureMap = {
-    val builder = FeatureMapBuilder()
+  /** mewges an awbitwawy nyumbew of [[featuwemap]]s fwom weft-to-wight */
+  def mewge(featuwemaps: t-twavewsabweonce[featuwemap]): f-featuwemap = {
+    v-vaw buiwdew = featuwemapbuiwdew()
 
     /**
-     * merge the current [[FSv1Feature]] with the existing accumulated one
-     * and add the rest of the [[FeatureMap]]'s [[Feature]]s to the `builder`
+     * m-mewge the cuwwent [[fsv1featuwe]] w-with the existing accumuwated o-one
+     * and a-add the west of the [[featuwemap]]'s [[featuwe]]s t-to the `buiwdew`
      */
-    def mergeInternal(
-      featureMap: FeatureMap,
-      accumulatedFsV1Response: Option[FeatureStoreV1Response]
-    ): Option[FeatureStoreV1Response] = {
-      if (featureMap.isEmpty) {
-        accumulatedFsV1Response
-      } else {
+    d-def mewgeintewnaw(
+      featuwemap: f-featuwemap, 😳
+      accumuwatedfsv1wesponse: option[featuwestowev1wesponse]
+    ): o-option[featuwestowev1wesponse] = {
+      if (featuwemap.isempty) {
+        a-accumuwatedfsv1wesponse
+      } e-ewse {
 
-        val currentFsV1Response =
-          if (featureMap.getFeatures.contains(FSv1Feature))
-            Some(featureMap.get(FSv1Feature))
-          else
-            None
+        vaw cuwwentfsv1wesponse =
+          i-if (featuwemap.getfeatuwes.contains(fsv1featuwe))
+            some(featuwemap.get(fsv1featuwe))
+          ewse
+            n-nyone
 
-        val mergedFsV1Response = (accumulatedFsV1Response, currentFsV1Response) match {
-          case (Some(merged), Some(current)) =>
-            // both present so merge them
-            Some(FeatureStoreV1Response.merge(merged, current))
-          case (merged, current) =>
-            // one or both are missing so use whichever is available
-            merged.orElse(current)
+        v-vaw mewgedfsv1wesponse = (accumuwatedfsv1wesponse, >_< c-cuwwentfsv1wesponse) match {
+          case (some(mewged), -.- some(cuwwent)) =>
+            // both p-pwesent so mewge them
+            some(featuwestowev1wesponse.mewge(mewged, UwU c-cuwwent))
+          c-case (mewged, :3 cuwwent) =>
+            // o-one ow both awe missing s-so use whichevew i-is avaiwabwe
+            mewged.owewse(cuwwent)
         }
 
-        featureMap.underlyingMap.foreach {
-          case (FSv1Feature, _) => // FSv1Feature is only added once at the very end
-          case (feature, value) => builder.addWithoutValidation(feature, value)
+        featuwemap.undewwyingmap.foweach {
+          case (fsv1featuwe, σωσ _) => // f-fsv1featuwe is onwy added once at the vewy end
+          c-case (featuwe, >w< v-vawue) => buiwdew.addwithoutvawidation(featuwe, v-vawue)
         }
-        mergedFsV1Response
+        mewgedfsv1wesponse
       }
     }
 
-    featureMaps
-      .foldLeft[Option[FeatureStoreV1Response]](None) {
-        case (fsV1Response, featureMap) => mergeInternal(featureMap, fsV1Response)
-      }.foreach(
-        // add merged `FSv1Feature` to the `builder` at the end
-        builder.add(FSv1Feature, _)
+    f-featuwemaps
+      .fowdweft[option[featuwestowev1wesponse]](none) {
+        c-case (fsv1wesponse, (ˆ ﻌ ˆ)♡ f-featuwemap) => mewgeintewnaw(featuwemap, fsv1wesponse)
+      }.foweach(
+        // add mewged `fsv1featuwe` to the `buiwdew` at the end
+        buiwdew.add(fsv1featuwe, _)
       )
 
-    builder.build()
+    buiwdew.buiwd()
   }
 
-  val empty = new FeatureMap(Map.empty)
+  vaw empty = nyew featuwemap(map.empty)
 }

@@ -1,214 +1,214 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.FilteredState
-import com.twitter.tweetypie.core.TweetHydrationError
-import com.twitter.tweetypie.repository.ParentUserIdRepository
-import com.twitter.tweetypie.storage.TweetStorageClient.Undelete
-import com.twitter.tweetypie.storage.DeleteState
-import com.twitter.tweetypie.storage.DeletedTweetResponse
-import com.twitter.tweetypie.storage.TweetStorageClient
-import com.twitter.tweetypie.store.UndeleteTweet
-import com.twitter.tweetypie.thriftscala.UndeleteTweetState.{Success => TweetypieSuccess, _}
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.thriftscala.entities.EntityExtractor
-import scala.util.control.NoStackTrace
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.cowe.fiwtewedstate
+i-impowt c-com.twittew.tweetypie.cowe.tweethydwationewwow
+impowt c-com.twittew.tweetypie.wepositowy.pawentusewidwepositowy
+impowt com.twittew.tweetypie.stowage.tweetstowagecwient.undewete
+impowt com.twittew.tweetypie.stowage.dewetestate
+impowt com.twittew.tweetypie.stowage.dewetedtweetwesponse
+i-impowt com.twittew.tweetypie.stowage.tweetstowagecwient
+impowt com.twittew.tweetypie.stowe.undewetetweet
+i-impowt com.twittew.tweetypie.thwiftscawa.undewetetweetstate.{success => tweetypiesuccess, (˘ω˘) _}
+i-impowt com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.tweetypie.thwiftscawa.entities.entityextwactow
+impowt s-scawa.utiw.contwow.nostacktwace
 
-trait UndeleteException extends Exception with NoStackTrace
-
-/**
- * Exceptions we return to the user, things that we don't expect to ever happen unless there is a
- * problem with the underlying data in Manhattan or a bug in [[com.twitter.tweetypie.storage.TweetStorageClient]]
- */
-object NoDeletedAtTimeException extends UndeleteException
-object NoCreatedAtTimeException extends UndeleteException
-object NoStatusWithSuccessException extends UndeleteException
-object NoUserIdWithTweetException extends UndeleteException
-object NoDeletedTweetException extends UndeleteException
-object SoftDeleteUserIdNotFoundException extends UndeleteException
+twait undeweteexception e-extends e-exception with nyostacktwace
 
 /**
- * represents a problem that we choose to return to the user as a response state
- * rather than as an exception.
+ * exceptions we wetuwn to the usew, (ꈍᴗꈍ) things t-that we don't expect to evew happen unwess thewe is a
+ * pwobwem with the undewwying d-data in manhattan ow a bug i-in [[com.twittew.tweetypie.stowage.tweetstowagecwient]]
  */
-case class ResponseException(state: UndeleteTweetState) extends Exception with NoStackTrace {
-  def toResponse: UndeleteTweetResponse = UndeleteTweetResponse(state = state)
+object n-nyodewetedattimeexception e-extends undeweteexception
+o-object nocweatedattimeexception extends u-undeweteexception
+object nyostatuswithsuccessexception extends u-undeweteexception
+object nyousewidwithtweetexception extends undeweteexception
+object nyodewetedtweetexception extends undeweteexception
+object s-softdeweteusewidnotfoundexception extends undeweteexception
+
+/**
+ * w-wepwesents a-a pwobwem that we c-choose to wetuwn to the usew as a wesponse state
+ * wathew than a-as an exception. /(^•ω•^)
+ */
+c-case cwass wesponseexception(state: u-undewetetweetstate) extends e-exception with nyostacktwace {
+  d-def towesponse: undewetetweetwesponse = u-undewetetweetwesponse(state = state)
 }
 
-private[this] object SoftDeleteExpiredException extends ResponseException(SoftDeleteExpired)
-private[this] object BounceDeleteException extends ResponseException(TweetIsBounceDeleted)
-private[this] object SourceTweetNotFoundException extends ResponseException(SourceTweetNotFound)
-private[this] object SourceUserNotFoundException extends ResponseException(SourceUserNotFound)
-private[this] object TweetExistsException extends ResponseException(TweetAlreadyExists)
-private[this] object TweetNotFoundException extends ResponseException(TweetNotFound)
-private[this] object U13TweetException extends ResponseException(TweetIsU13Tweet)
-private[this] object UserNotFoundException extends ResponseException(UserNotFound)
+pwivate[this] o-object softdeweteexpiwedexception extends w-wesponseexception(softdeweteexpiwed)
+pwivate[this] o-object bouncedeweteexception e-extends wesponseexception(tweetisbouncedeweted)
+pwivate[this] object souwcetweetnotfoundexception extends wesponseexception(souwcetweetnotfound)
+pwivate[this] object souwceusewnotfoundexception extends wesponseexception(souwceusewnotfound)
+p-pwivate[this] object t-tweetexistsexception extends w-wesponseexception(tweetawweadyexists)
+p-pwivate[this] o-object tweetnotfoundexception extends wesponseexception(tweetnotfound)
+pwivate[this] object u-u13tweetexception extends wesponseexception(tweetisu13tweet)
+pwivate[this] object usewnotfoundexception extends w-wesponseexception(usewnotfound)
 
 /**
- * Undelete Notes:
+ * undewete n-nyotes:
  *
- * If request.force is set to true, then the undelete will take place even if the undeleted tweet
- * is already present in Manhattan. This is useful if a tweet was recently restored to the backend,
- * but the async actions portion of the undelete failed and you want to retry them.
+ * i-if wequest.fowce i-is set to twue, >_< then the undewete w-wiww take pwace e-even if the u-undeweted tweet
+ * i-is awweady pwesent in manhattan. σωσ this is usefuw i-if a tweet was w-wecentwy westowed t-to the backend, ^^;;
+ * b-but the async a-actions powtion of the undewete faiwed and you want to wetwy t-them. 😳
  *
- * Before undeleting the tweet we check if it's a retweet, in which case we require that the sourceTweet
- * and sourceUser exist.
+ * befowe undeweting the tweet we check if it's a wetweet, >_< in which case we wequiwe that t-the souwcetweet
+ * and souwceusew exist. -.-
  *
- * Tweets can only be undeleted for N days where N is the number of days before tweets marked with
- * the soft_delete_state flag are deleted permanently by the cleanup job
+ * tweets can onwy b-be undeweted f-fow ny days whewe n-ny is the nyumbew of days befowe t-tweets mawked with
+ * the soft_dewete_state fwag a-awe deweted p-pewmanentwy by the cweanup job
  *
  */
-object UndeleteTweetHandler {
+object undewetetweethandwew {
 
-  type Type = FutureArrow[UndeleteTweetRequest, UndeleteTweetResponse]
+  type type = futuweawwow[undewetetweetwequest, UwU undewetetweetwesponse]
 
-  /** Extract an optional value inside a future or throw if it's missing. */
-  def required[T](option: Future[Option[T]], ex: => Exception): Future[T] =
-    option.flatMap {
-      case None => Future.exception(ex)
-      case Some(i) => Future.value(i)
+  /** e-extwact an optionaw vawue inside a-a futuwe ow thwow if it's missing. :3 */
+  d-def w-wequiwed[t](option: futuwe[option[t]], σωσ ex: => exception): f-futuwe[t] =
+    o-option.fwatmap {
+      case nyone => futuwe.exception(ex)
+      c-case some(i) => f-futuwe.vawue(i)
     }
 
-  def apply(
-    undelete: TweetStorageClient.Undelete,
-    tweetExists: FutureArrow[TweetId, Boolean],
-    getUser: FutureArrow[UserId, Option[User]],
-    getDeletedTweets: TweetStorageClient.GetDeletedTweets,
-    parentUserIdRepo: ParentUserIdRepository.Type,
-    save: FutureArrow[UndeleteTweet.Event, Tweet]
-  ): Type = {
+  def appwy(
+    undewete: tweetstowagecwient.undewete, >w<
+    tweetexists: futuweawwow[tweetid, (ˆ ﻌ ˆ)♡ boowean], ʘwʘ
+    g-getusew: f-futuweawwow[usewid, :3 o-option[usew]], (˘ω˘)
+    getdewetedtweets: tweetstowagecwient.getdewetedtweets, 😳😳😳
+    p-pawentusewidwepo: p-pawentusewidwepositowy.type, rawr x3
+    save: f-futuweawwow[undewetetweet.event, (✿oωo) tweet]
+  ): type = {
 
-    def getParentUserId(tweet: Tweet): Future[Option[UserId]] =
-      Stitch.run {
-        parentUserIdRepo(tweet)
-          .handle {
-            case ParentUserIdRepository.ParentTweetNotFound(id) => None
+    def getpawentusewid(tweet: tweet): futuwe[option[usewid]] =
+      s-stitch.wun {
+        p-pawentusewidwepo(tweet)
+          .handwe {
+            case pawentusewidwepositowy.pawenttweetnotfound(id) => n-nyone
           }
       }
 
-    val entityExtractor = EntityExtractor.mutationAll.endo
+    v-vaw entityextwactow = entityextwactow.mutationaww.endo
 
-    val getDeletedTweet: Long => Future[DeletedTweetResponse] =
-      id => Stitch.run(getDeletedTweets(Seq(id)).map(_.head))
+    vaw getdewetedtweet: w-wong => futuwe[dewetedtweetwesponse] =
+      id => stitch.wun(getdewetedtweets(seq(id)).map(_.head))
 
-    def getRequiredUser(userId: Option[UserId]): Future[User] =
-      userId match {
-        case None => Future.exception(SoftDeleteUserIdNotFoundException)
-        case Some(id) => required(getUser(id), UserNotFoundException)
+    def getwequiwedusew(usewid: option[usewid]): f-futuwe[usew] =
+      usewid match {
+        c-case nyone => f-futuwe.exception(softdeweteusewidnotfoundexception)
+        case some(id) => wequiwed(getusew(id), usewnotfoundexception)
       }
 
-    def getValidatedDeletedTweet(
-      tweetId: TweetId,
-      allowNotDeleted: Boolean
-    ): Future[DeletedTweet] = {
-      import DeleteState._
-      val deletedTweet = getDeletedTweet(tweetId).map { response =>
-        response.deleteState match {
-          case SoftDeleted => response.tweet
-          // BounceDeleted tweets violated Twitter Rules and may not be undeleted
-          case BounceDeleted => throw BounceDeleteException
-          case HardDeleted => throw SoftDeleteExpiredException
-          case NotDeleted => if (allowNotDeleted) response.tweet else throw TweetExistsException
-          case NotFound => throw TweetNotFoundException
+    d-def getvawidateddewetedtweet(
+      t-tweetid: tweetid, (ˆ ﻌ ˆ)♡
+      awwownotdeweted: boowean
+    ): f-futuwe[dewetedtweet] = {
+      impowt dewetestate._
+      v-vaw dewetedtweet = getdewetedtweet(tweetid).map { wesponse =>
+        wesponse.dewetestate m-match {
+          case s-softdeweted => w-wesponse.tweet
+          // bouncedeweted t-tweets viowated twittew w-wuwes and may n-nyot be undeweted
+          c-case bouncedeweted => t-thwow bouncedeweteexception
+          c-case hawddeweted => thwow softdeweteexpiwedexception
+          c-case notdeweted => i-if (awwownotdeweted) w-wesponse.tweet ewse thwow tweetexistsexception
+          case nyotfound => t-thwow tweetnotfoundexception
         }
       }
 
-      required(deletedTweet, NoDeletedTweetException)
+      w-wequiwed(dewetedtweet, :3 n-nyodewetedtweetexception)
     }
 
     /**
-     * Fetch the source tweet's user for a deleted share
+     * fetch the souwce tweet's usew fow a deweted s-shawe
      */
-    def getSourceUser(share: Option[DeletedTweetShare]): Future[Option[User]] =
-      share match {
-        case None => Future.value(None)
-        case Some(s) => required(getUser(s.sourceUserId), SourceUserNotFoundException).map(Some(_))
+    d-def getsouwceusew(shawe: option[dewetedtweetshawe]): f-futuwe[option[usew]] =
+      s-shawe match {
+        case n-nyone => futuwe.vawue(none)
+        case some(s) => wequiwed(getusew(s.souwceusewid), (U ᵕ U❁) souwceusewnotfoundexception).map(some(_))
       }
 
     /**
-     * Ensure that the undelete response contains all the required information to continue with
-     * the tweetypie undelete.
+     * ensuwe that the undewete w-wesponse contains aww the wequiwed i-infowmation to continue with
+     * t-the tweetypie undewete. ^^;;
      */
-    def validateUndeleteResponse(response: Undelete.Response, force: Boolean): Future[Tweet] =
-      Future {
-        (response.code, response.tweet) match {
-          case (Undelete.UndeleteResponseCode.NotCreated, _) => throw TweetNotFoundException
-          case (Undelete.UndeleteResponseCode.BackupNotFound, _) => throw SoftDeleteExpiredException
-          case (Undelete.UndeleteResponseCode.Success, None) => throw NoStatusWithSuccessException
-          case (Undelete.UndeleteResponseCode.Success, Some(tweet)) =>
-            // archivedAtMillis is required on the response unless force is present
-            // or the tweet is a retweet. retweets have no favs or retweets to clean up
-            // of their own so the original deleted at time is not needed
-            if (response.archivedAtMillis.isEmpty && !force && !isRetweet(tweet))
-              throw NoDeletedAtTimeException
-            else
+    def v-vawidateundewetewesponse(wesponse: undewete.wesponse, mya f-fowce: b-boowean): futuwe[tweet] =
+      f-futuwe {
+        (wesponse.code, 😳😳😳 w-wesponse.tweet) m-match {
+          case (undewete.undewetewesponsecode.notcweated, OwO _) => thwow tweetnotfoundexception
+          case (undewete.undewetewesponsecode.backupnotfound, _) => thwow softdeweteexpiwedexception
+          case (undewete.undewetewesponsecode.success, rawr n-nyone) => thwow n-nyostatuswithsuccessexception
+          c-case (undewete.undewetewesponsecode.success, XD some(tweet)) =>
+            // a-awchivedatmiwwis is wequiwed on the wesponse unwess fowce i-is pwesent
+            // o-ow the tweet is a wetweet. (U ﹏ U) w-wetweets have nyo favs ow wetweets to cwean u-up
+            // o-of theiw own so the owiginaw d-deweted at time i-is not nyeeded
+            if (wesponse.awchivedatmiwwis.isempty && !fowce && !iswetweet(tweet))
+              thwow nyodewetedattimeexception
+            ewse
               tweet
-          case (code, _) => throw new Exception(s"Unknown UndeleteResponseCode $code")
+          c-case (code, (˘ω˘) _) => t-thwow nyew exception(s"unknown undewetewesponsecode $code")
         }
       }
 
-    def enforceU13Compliance(user: User, deletedTweet: DeletedTweet): Future[Unit] =
-      Future.when(U13ValidationUtil.wasTweetCreatedBeforeUserTurned13(user, deletedTweet)) {
-        throw U13TweetException
+    d-def enfowceu13compwiance(usew: u-usew, UwU dewetedtweet: d-dewetedtweet): futuwe[unit] =
+      f-futuwe.when(u13vawidationutiw.wastweetcweatedbefoweusewtuwned13(usew, >_< d-dewetedtweet)) {
+        thwow u13tweetexception
       }
 
     /**
-     * Fetch required data and perform before/after validations for undelete.
-     * If everything looks good with the undelete, kick off the tweetypie undelete
-     * event.
+     * f-fetch wequiwed d-data and pewfowm befowe/aftew v-vawidations fow undewete. σωσ
+     * if evewything w-wooks good with the undewete, 🥺 k-kick off the t-tweetypie undewete
+     * event. 🥺
      */
-    FutureArrow { request =>
-      val hydrationOptions = request.hydrationOptions.getOrElse(WritePathHydrationOptions())
-      val force = request.force.getOrElse(false)
-      val tweetId = request.tweetId
+    f-futuweawwow { wequest =>
+      vaw h-hydwationoptions = w-wequest.hydwationoptions.getowewse(wwitepathhydwationoptions())
+      v-vaw fowce = wequest.fowce.getowewse(fawse)
+      vaw tweetid = wequest.tweetid
 
-      (for {
-        // we must be able to query the tweet from the soft delete table
-        deletedTweet <- getValidatedDeletedTweet(tweetId, allowNotDeleted = force)
+      (fow {
+        // w-we must be abwe to quewy the tweet fwom the soft d-dewete tabwe
+        d-dewetedtweet <- getvawidateddewetedtweet(tweetid, ʘwʘ a-awwownotdeweted = fowce)
 
-        // we always require the user
-        user <- getRequiredUser(deletedTweet.userId)
+        // w-we a-awways wequiwe the usew
+        usew <- getwequiwedusew(dewetedtweet.usewid)
 
-        // Make sure we're not restoring any u13 tweets.
-        () <- enforceU13Compliance(user, deletedTweet)
+        // m-make suwe we'we nyot westowing any u13 t-tweets. :3
+        () <- e-enfowceu13compwiance(usew, (U ﹏ U) dewetedtweet)
 
-        // if a retweet, then sourceUser is required; sourceTweet will be hydrated in save()
-        sourceUser <- getSourceUser(deletedTweet.share)
+        // i-if a wetweet, (U ﹏ U) then souwceusew i-is wequiwed; s-souwcetweet w-wiww be hydwated in save()
+        souwceusew <- getsouwceusew(dewetedtweet.shawe)
 
-        // validations passed, perform the undelete.
-        undeleteResponse <- Stitch.run(undelete(tweetId))
+        // vawidations passed, ʘwʘ pewfowm the undewete. >w<
+        undewetewesponse <- stitch.wun(undewete(tweetid))
 
-        // validate the response
-        tweet <- validateUndeleteResponse(undeleteResponse, force)
+        // vawidate the wesponse
+        tweet <- vawidateundewetewesponse(undewetewesponse, rawr x3 fowce)
 
-        // Extract entities from tweet text
-        tweetWithEntities = entityExtractor(tweet)
+        // extwact entities f-fwom tweet t-text
+        tweetwithentities = entityextwactow(tweet)
 
-        // If a retweet, get user id of parent retweet
-        parentUserId <- getParentUserId(tweet)
+        // i-if a wetweet, OwO g-get usew id o-of pawent wetweet
+        pawentusewid <- g-getpawentusewid(tweet)
 
-        // undeletion was successful, hydrate the tweet and
-        // kick off tweetypie async undelete actions
-        hydratedTweet <- save(
-          UndeleteTweet.Event(
-            tweet = tweetWithEntities,
-            user = user,
-            timestamp = Time.now,
-            hydrateOptions = hydrationOptions,
-            deletedAt = undeleteResponse.archivedAtMillis.map(Time.fromMilliseconds),
-            sourceUser = sourceUser,
-            parentUserId = parentUserId
+        // undewetion w-was successfuw, ^•ﻌ•^ h-hydwate the tweet and
+        // k-kick off tweetypie async u-undewete actions
+        h-hydwatedtweet <- save(
+          undewetetweet.event(
+            t-tweet = t-tweetwithentities, >_<
+            u-usew = usew, OwO
+            t-timestamp = t-time.now, >_<
+            h-hydwateoptions = h-hydwationoptions, (ꈍᴗꈍ)
+            dewetedat = u-undewetewesponse.awchivedatmiwwis.map(time.fwommiwwiseconds), >w<
+            s-souwceusew = souwceusew, (U ﹏ U)
+            p-pawentusewid = p-pawentusewid
           )
         )
-      } yield {
-        UndeleteTweetResponse(TweetypieSuccess, Some(hydratedTweet))
-      }).handle {
-        case TweetHydrationError(_, Some(FilteredState.Unavailable.SourceTweetNotFound(_))) =>
-          SourceTweetNotFoundException.toResponse
-        case ex: ResponseException =>
-          ex.toResponse
+      } y-yiewd {
+        undewetetweetwesponse(tweetypiesuccess, ^^ s-some(hydwatedtweet))
+      }).handwe {
+        case tweethydwationewwow(_, (U ﹏ U) s-some(fiwtewedstate.unavaiwabwe.souwcetweetnotfound(_))) =>
+          souwcetweetnotfoundexception.towesponse
+        c-case e-ex: wesponseexception =>
+          e-ex.towesponse
       }
     }
   }

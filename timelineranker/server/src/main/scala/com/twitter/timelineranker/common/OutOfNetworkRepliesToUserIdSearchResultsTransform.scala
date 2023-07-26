@@ -1,48 +1,48 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewines.cwients.wewevance_seawch.seawchcwient
+impowt c-com.twittew.utiw.futuwe
 
-object OutOfNetworkRepliesToUserIdSearchResultsTransform {
-  val DefaultMaxTweetCount = 100
+object o-outofnetwowkwepwiestousewidseawchwesuwtstwansfowm {
+  vaw defauwtmaxtweetcount = 100
 }
 
-// Requests search results for out-of-network replies to a user Id
-class OutOfNetworkRepliesToUserIdSearchResultsTransform(
-  searchClient: SearchClient,
-  statsReceiver: StatsReceiver,
-  logSearchDebugInfo: Boolean = true)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
-  private[this] val earlybirdScoreX100Stat = statsReceiver.stat("earlybirdScoreX100")
+// wequests seawch wesuwts fow out-of-netwowk w-wepwies to a usew id
+cwass outofnetwowkwepwiestousewidseawchwesuwtstwansfowm(
+  s-seawchcwient: seawchcwient, (U ﹏ U)
+  s-statsweceivew: statsweceivew, (U ﹏ U)
+  wogseawchdebuginfo: boowean = t-twue)
+    extends futuweawwow[candidateenvewope, (⑅˘꒳˘) c-candidateenvewope] {
+  p-pwivate[this] vaw maxcountstat = statsweceivew.stat("maxcount")
+  pwivate[this] vaw nyumwesuwtsfwomseawchstat = s-statsweceivew.stat("numwesuwtsfwomseawch")
+  pwivate[this] vaw eawwybiwdscowex100stat = statsweceivew.stat("eawwybiwdscowex100")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = envelope.query.maxCount
-      .getOrElse(OutOfNetworkRepliesToUserIdSearchResultsTransform.DefaultMaxTweetCount)
-    maxCountStat.add(maxCount)
+  ovewwide def a-appwy(envewope: candidateenvewope): f-futuwe[candidateenvewope] = {
+    v-vaw maxcount = e-envewope.quewy.maxcount
+      .getowewse(outofnetwowkwepwiestousewidseawchwesuwtstwansfowm.defauwtmaxtweetcount)
+    m-maxcountstat.add(maxcount)
 
-    envelope.followGraphData.followedUserIdsFuture
-      .flatMap {
-        case followedIds =>
-          searchClient
-            .getOutOfNetworkRepliesToUserId(
-              userId = envelope.query.userId,
-              followedUserIds = followedIds.toSet,
-              maxCount = maxCount,
-              earlybirdOptions = envelope.query.earlybirdOptions,
-              logSearchDebugInfo
-            ).map { results =>
-              numResultsFromSearchStat.add(results.size)
-              results.foreach { result =>
-                val earlybirdScoreX100 =
-                  result.metadata.flatMap(_.score).getOrElse(0.0).toFloat * 100
-                earlybirdScoreX100Stat.add(earlybirdScoreX100)
+    envewope.fowwowgwaphdata.fowwowedusewidsfutuwe
+      .fwatmap {
+        case fowwowedids =>
+          s-seawchcwient
+            .getoutofnetwowkwepwiestousewid(
+              usewid = envewope.quewy.usewid, òωó
+              f-fowwowedusewids = fowwowedids.toset, ʘwʘ
+              maxcount = maxcount, /(^•ω•^)
+              eawwybiwdoptions = envewope.quewy.eawwybiwdoptions, ʘwʘ
+              wogseawchdebuginfo
+            ).map { w-wesuwts =>
+              nyumwesuwtsfwomseawchstat.add(wesuwts.size)
+              wesuwts.foweach { w-wesuwt =>
+                v-vaw eawwybiwdscowex100 =
+                  w-wesuwt.metadata.fwatmap(_.scowe).getowewse(0.0).tofwoat * 100
+                eawwybiwdscowex100stat.add(eawwybiwdscowex100)
               }
-              envelope.copy(searchResults = results)
+              envewope.copy(seawchwesuwts = wesuwts)
             }
       }
   }

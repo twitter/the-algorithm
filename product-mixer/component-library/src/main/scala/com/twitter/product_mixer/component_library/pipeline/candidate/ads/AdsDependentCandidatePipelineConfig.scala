@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.DependentCandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
+impowt c-com.twittew.adsewvew.{thwiftscawa => a-ads}
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.ads.adscandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.quewy.ads.adsquewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basecandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.basegate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.dependentcandidatepipewinequewytwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.dependentcandidatepipewineconfig
+impowt com.twittew.timewines.configapi.fspawam
+impowt com.twittew.timewines.configapi.decidew.decidewpawam
 
-class AdsDependentCandidatePipelineConfig[Query <: PipelineQuery with AdsQuery](
-  override val identifier: CandidatePipelineIdentifier,
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]],
-  override val supportedClientParam: Option[FSParam[Boolean]],
-  override val gates: Seq[BaseGate[Query]],
-  override val candidateSource: CandidateSource[
-    ads.AdRequestParams,
-    ads.AdImpression
+c-cwass adsdependentcandidatepipewineconfig[quewy <: pipewinequewy w-with adsquewy](
+  o-ovewwide vaw identifiew: candidatepipewineidentifiew, 😳
+  ovewwide vaw enabweddecidewpawam: option[decidewpawam[boowean]], -.-
+  o-ovewwide vaw suppowtedcwientpawam: option[fspawam[boowean]], 🥺
+  ovewwide vaw gates: seq[basegate[quewy]], o.O
+  ovewwide v-vaw candidatesouwce: candidatesouwce[
+    ads.adwequestpawams, /(^•ω•^)
+    a-ads.adimpwession
   ],
-  override val filters: Seq[Filter[Query, AdsCandidate]],
-  override val postFilterFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[Query, AdsCandidate, _]
+  o-ovewwide vaw fiwtews: s-seq[fiwtew[quewy, nyaa~~ a-adscandidate]],
+  ovewwide vaw postfiwtewfeatuwehydwation: s-seq[
+    basecandidatefeatuwehydwatow[quewy, nyaa~~ adscandidate, :3 _]
   ],
-  override val decorator: Option[CandidateDecorator[Query, AdsCandidate]],
-  override val alerts: Seq[Alert],
-  adsDisplayLocationBuilder: AdsDisplayLocationBuilder[Query],
-  urtRequest: Option[Boolean],
-  getOrganicItemIds: GetOrganicItemIds,
-  countNumOrganicItems: CountNumOrganicItems[Query],
-) extends DependentCandidatePipelineConfig[
-      Query,
-      ads.AdRequestParams,
-      ads.AdImpression,
-      AdsCandidate
+  ovewwide v-vaw decowatow: option[candidatedecowatow[quewy, 😳😳😳 adscandidate]], (˘ω˘)
+  ovewwide vaw awewts: seq[awewt],
+  adsdispwaywocationbuiwdew: a-adsdispwaywocationbuiwdew[quewy], ^^
+  uwtwequest: o-option[boowean], :3
+  g-getowganicitemids: g-getowganicitemids, -.-
+  countnumowganicitems: countnumowganicitems[quewy], 😳
+) extends dependentcandidatepipewineconfig[
+      q-quewy, mya
+      ads.adwequestpawams, (˘ω˘)
+      a-ads.adimpwession, >_<
+      adscandidate
     ] {
 
-  override def queryTransformer: DependentCandidatePipelineQueryTransformer[
-    Query,
-    ads.AdRequestParams
-  ] = AdsDependentCandidatePipelineQueryTransformer(
-    adsDisplayLocationBuilder = adsDisplayLocationBuilder,
-    getOrganicItemIds = getOrganicItemIds,
-    countNumOrganicItems = countNumOrganicItems,
-    urtRequest = urtRequest
+  o-ovewwide d-def quewytwansfowmew: dependentcandidatepipewinequewytwansfowmew[
+    q-quewy, -.-
+    ads.adwequestpawams
+  ] = a-adsdependentcandidatepipewinequewytwansfowmew(
+    adsdispwaywocationbuiwdew = adsdispwaywocationbuiwdew, 🥺
+    g-getowganicitemids = getowganicitemids, (U ﹏ U)
+    countnumowganicitems = c-countnumowganicitems, >w<
+    uwtwequest = u-uwtwequest
   )
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    ads.AdImpression,
-    AdsCandidate
-  ] = AdsCandidatePipelineResultsTransformer
+  o-ovewwide vaw wesuwttwansfowmew: candidatepipewinewesuwtstwansfowmew[
+    ads.adimpwession, mya
+    adscandidate
+  ] = adscandidatepipewinewesuwtstwansfowmew
 }

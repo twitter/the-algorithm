@@ -1,41 +1,41 @@
-package com.twitter.unified_user_actions.adapter.user_modification
+package com.twittew.unified_usew_actions.adaptew.usew_modification
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.gizmoduck.thriftscala.UserModification
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.unified_user_actions.adapter.user_modification_event.UserCreate
-import com.twitter.unified_user_actions.adapter.user_modification_event.UserUpdate
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt com.twittew.gizmoduck.thwiftscawa.usewmodification
+i-impowt c-com.twittew.unified_usew_actions.adaptew.abstwactadaptew
+i-impowt c-com.twittew.unified_usew_actions.adaptew.usew_modification_event.usewcweate
+i-impowt com.twittew.unified_usew_actions.adaptew.usew_modification_event.usewupdate
+impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
 
-class UserModificationAdapter
-    extends AbstractAdapter[UserModification, UnKeyed, UnifiedUserAction] {
+cwass usewmodificationadaptew
+    extends a-abstwactadaptew[usewmodification, 😳😳😳 unkeyed, 🥺 unifiedusewaction] {
 
-  import UserModificationAdapter._
+  i-impowt usewmodificationadaptew._
 
-  override def adaptOneToKeyedMany(
-    input: UserModification,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(input).map { e => (UnKeyed, e) }
+  ovewwide d-def adaptonetokeyedmany(
+    input: usewmodification, mya
+    statsweceivew: statsweceivew = nyuwwstatsweceivew
+  ): s-seq[(unkeyed, 🥺 unifiedusewaction)] =
+    a-adaptevent(input).map { e-e => (unkeyed, >_< e) }
 }
 
-object UserModificationAdapter {
+object usewmodificationadaptew {
 
-  def adaptEvent(input: UserModification): Seq[UnifiedUserAction] =
-    Option(input).toSeq.flatMap { e =>
-      if (e.create.isDefined) { // User create
-        Some(UserCreate.getUUA(input))
-      } else if (e.update.isDefined) { // User updates
-        Some(UserUpdate.getUUA(input))
-      } else if (e.destroy.isDefined) {
-        None
-      } else if (e.erase.isDefined) {
-        None
-      } else {
-        throw new IllegalArgumentException(
-          "None of the possible events is defined, there must be something with the source")
+  def adaptevent(input: usewmodification): s-seq[unifiedusewaction] =
+    option(input).toseq.fwatmap { e =>
+      if (e.cweate.isdefined) { // usew c-cweate
+        some(usewcweate.getuua(input))
+      } e-ewse if (e.update.isdefined) { // u-usew updates
+        some(usewupdate.getuua(input))
+      } e-ewse if (e.destwoy.isdefined) {
+        n-nyone
+      } ewse if (e.ewase.isdefined) {
+        n-nyone
+      } ewse {
+        thwow nyew iwwegawawgumentexception(
+          "none o-of the possibwe events is defined, >_< thewe must be something with the souwce")
       }
     }
 }

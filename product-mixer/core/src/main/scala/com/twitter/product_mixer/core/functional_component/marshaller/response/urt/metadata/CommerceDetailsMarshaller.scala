@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.CommerceDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.commewcedetaiws
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => uwt}
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class CommerceDetailsMarshaller @Inject() () {
+@singweton
+c-cwass commewcedetaiwsmawshawwew @inject() () {
 
-  def apply(commerceDetails: CommerceDetails): urt.CommerceDetails = urt.CommerceDetails(
-    dropId = commerceDetails.dropId,
-    shopV2Id = commerceDetails.shopV2Id,
-    productKey = commerceDetails.productKey,
-    merchantId = commerceDetails.merchantId,
-    productIndex = commerceDetails.productIndex,
+  d-def appwy(commewcedetaiws: c-commewcedetaiws): uwt.commewcedetaiws = uwt.commewcedetaiws(
+    dwopid = commewcedetaiws.dwopid, -.-
+    s-shopv2id = commewcedetaiws.shopv2id, (ˆ ﻌ ˆ)♡
+    pwoductkey = c-commewcedetaiws.pwoductkey, (⑅˘꒳˘)
+    mewchantid = commewcedetaiws.mewchantid, (U ᵕ U❁)
+    pwoductindex = c-commewcedetaiws.pwoductindex, -.-
   )
 }

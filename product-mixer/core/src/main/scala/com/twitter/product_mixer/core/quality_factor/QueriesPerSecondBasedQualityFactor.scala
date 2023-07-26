@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.twittew.pwoduct_mixew.cowe.quawity_factow
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.util.Stopwatch
+impowt com.googwe.common.annotations.visibwefowtesting
+i-impowt c-com.twittew.utiw.stopwatch
 
-case class QueriesPerSecondBasedQualityFactor(
-  override val config: QueriesPerSecondBasedQualityFactorConfig)
-    extends QualityFactor[Int] {
+c-case cwass quewiespewsecondbasedquawityfactow(
+  o-ovewwide vaw config: q-quewiespewsecondbasedquawityfactowconfig)
+    e-extends quawityfactow[int] {
 
-  @VisibleForTesting
-  private[quality_factor] val queryRateCounter: QueryRateCounter = QueryRateCounter(
-    config.queriesPerSecondSampleWindow)
+  @visibwefowtesting
+  p-pwivate[quawity_factow] v-vaw quewywatecountew: quewywatecountew = quewywatecountew(
+    config.quewiespewsecondsampwewindow)
 
-  private val delayedUntilInMillis = Stopwatch.timeMillis() + config.initialDelay.inMillis
+  pwivate v-vaw dewayeduntiwinmiwwis = stopwatch.timemiwwis() + config.initiawdeway.inmiwwis
 
-  private var state: Double = config.qualityFactorBounds.default
+  p-pwivate vaw state: doubwe = c-config.quawityfactowbounds.defauwt
 
-  override def currentValue: Double = state
+  ovewwide def cuwwentvawue: doubwe = state
 
-  override def update(count: Int = 1): Unit = {
-    val queryRate = incrementAndGetQueryRateCount(count)
+  o-ovewwide def update(count: int = 1): u-unit = {
+    v-vaw quewywate = incwementandgetquewywatecount(count)
 
-    // Only update quality factor until the initial delay past.
-    // This allows query rate counter get warm up to reflect
-    // actual traffic load by the time initial delay expires.
-    if (Stopwatch.timeMillis() >= delayedUntilInMillis) {
-      if (queryRate > config.maxQueriesPerSecond) {
-        state = config.qualityFactorBounds.bounds(state - config.delta)
-      } else {
-        state = config.qualityFactorBounds.bounds(state + config.delta)
+    // onwy update quawity factow untiw the initiaw deway p-past. mya
+    // this awwows quewy wate countew get wawm up to wefwect
+    // actuaw t-twaffic woad by the time initiaw d-deway expiwes. 😳
+    i-if (stopwatch.timemiwwis() >= d-dewayeduntiwinmiwwis) {
+      i-if (quewywate > config.maxquewiespewsecond) {
+        state = c-config.quawityfactowbounds.bounds(state - config.dewta)
+      } ewse {
+        s-state = config.quawityfactowbounds.bounds(state + config.dewta)
       }
     }
   }
 
-  private def incrementAndGetQueryRateCount(count: Int): Double = {
-    // Int.MaxValue is used as a special signal from [[QueriesPerSecondBasedQualityFactorObserver]]
-    // to indicate a component failure is observed.
-    // In this case, we do not update queryRateCounter and instead return Int.MaxValue.
-    // As the largest Int value, this should result in the threshold qps for quality factor being
-    // exceeded and directly decrementing quality factor.
-    if (count == Int.MaxValue) {
-      Int.MaxValue.toDouble
-    } else {
-      queryRateCounter.increment(count)
-      queryRateCounter.getRate()
+  pwivate def incwementandgetquewywatecount(count: int): doubwe = {
+    // int.maxvawue is u-used as a speciaw signaw fwom [[quewiespewsecondbasedquawityfactowobsewvew]]
+    // t-to indicate a-a component faiwuwe i-is obsewved. -.-
+    // in this case, 🥺 we do nyot update quewywatecountew a-and instead w-wetuwn int.maxvawue. o.O
+    // as the wawgest i-int vawue, /(^•ω•^) this s-shouwd wesuwt in the thweshowd q-qps fow quawity factow being
+    // e-exceeded and diwectwy decwementing quawity factow. nyaa~~
+    i-if (count == int.maxvawue) {
+      i-int.maxvawue.todoubwe
+    } ewse {
+      q-quewywatecountew.incwement(count)
+      quewywatecountew.getwate()
     }
   }
 
-  override def buildObserver(): QualityFactorObserver =
-    QueriesPerSecondBasedQualityFactorObserver(this)
+  o-ovewwide def buiwdobsewvew(): quawityfactowobsewvew =
+    quewiespewsecondbasedquawityfactowobsewvew(this)
 }

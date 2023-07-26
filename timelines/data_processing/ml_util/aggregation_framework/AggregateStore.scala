@@ -1,5 +1,5 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk
 
-trait AggregateStore extends Serializable {
-  def name: String
+twait a-aggwegatestowe e-extends sewiawizabwe {
+  d-def nyame: s-stwing
 }

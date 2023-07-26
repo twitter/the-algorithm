@@ -1,140 +1,140 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.Set;
+impowt java.utiw.set;
 
-import com.google.common.base.Joiner;
+i-impowt c-com.googwe.common.base.joinew;
 
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
+i-impowt owg.apache.thwift.texception;
+i-impowt owg.swf4j.woggew;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.thrift.ThriftUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.utiw.thwift.thwiftutiws;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.utiw.futuwe;
+impowt com.twittew.utiw.futuweeventwistenew;
 
 /**
- * The general framework for earlybird root to track sensitive results.
+ * t-the genewaw fwamewowk f-fow eawwybiwd woot to twack sensitive wesuwts. (⑅˘꒳˘)
  */
-public abstract class SensitiveResultsTrackingFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+pubwic abstwact c-cwass sensitivewesuwtstwackingfiwtew
+    extends simpwefiwtew<eawwybiwdwequestcontext, XD e-eawwybiwdwesponse> {
 
   /**
-   * The type name is used to distinguish different kinds of sensitive results in log.
+   * t-the type nyame is used to distinguish diffewent kinds of sensitive w-wesuwts in wog. -.-
    */
-  private final String typeName;
+  pwivate finaw stwing typename;
 
   /**
-   * The mark is to control whether to log expensive information.
+   * the mawk is to contwow whethew t-to wog expensive infowmation. :3
    */
-  private final boolean logDetails;
+  p-pwivate f-finaw boowean wogdetaiws;
 
   /**
-   * Constructor helps distinguish different sensitive content trackers.
-   * @param typeName The sensitive content's name (e.g. nullcast)
-   * @param logDetails Whether to log details such as serialized requests and responses
+   * c-constwuctow h-hewps distinguish diffewent sensitive content t-twackews. nyaa~~
+   * @pawam typename the sensitive content's n-nyame (e.g. nyuwwcast)
+   * @pawam wogdetaiws whethew to wog detaiws such as sewiawized w-wequests and wesponses
    */
-  public SensitiveResultsTrackingFilter(final String typeName, boolean logDetails) {
-    super();
-    this.typeName = typeName;
-    this.logDetails = logDetails;
+  pubwic sensitivewesuwtstwackingfiwtew(finaw s-stwing t-typename, 😳 boowean w-wogdetaiws) {
+    supew();
+    this.typename = typename;
+    t-this.wogdetaiws = w-wogdetaiws;
   }
 
   /**
-   * Get the LOG that the sensitive results can write to.
+   * get the wog that t-the sensitive wesuwts c-can wwite to.
    */
-  protected abstract Logger getLogger();
+  pwotected a-abstwact woggew getwoggew();
 
   /**
-   * The counter which counts the number of queries with sensitive results.
+   * the c-countew which counts the nyumbew of quewies with s-sensitive wesuwts. (⑅˘꒳˘)
    */
-  protected abstract SearchCounter getSensitiveQueryCounter();
+  pwotected abstwact s-seawchcountew getsensitivequewycountew();
 
   /**
-   * The counter which counts the number of sensitive results.
+   * t-the countew w-which counts the nyumbew of sensitive wesuwts. nyaa~~
    */
-  protected abstract SearchCounter getSensitiveResultsCounter();
+  pwotected abstwact seawchcountew getsensitivewesuwtscountew();
 
   /**
-   * The method defines how the sensitive results are identified.
+   * the method d-defines how the s-sensitive wesuwts awe identified. OwO
    */
-  protected abstract Set<Long> getSensitiveResults(
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse earlybirdResponse) throws Exception;
+  p-pwotected a-abstwact set<wong> g-getsensitivewesuwts(
+      eawwybiwdwequestcontext wequestcontext, rawr x3
+      eawwybiwdwesponse e-eawwybiwdwesponse) thwows exception;
 
   /**
-   * Get a set of tweets which should be exclude from the sensitive results set.
+   * get a set of tweets which shouwd be excwude f-fwom the sensitive wesuwts set. XD
    */
-  protected abstract Set<Long> getExceptedResults(EarlybirdRequestContext requestContext);
+  p-pwotected a-abstwact set<wong> g-getexceptedwesuwts(eawwybiwdwequestcontext wequestcontext);
 
-  @Override
-  public final Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Future<EarlybirdResponse> response = service.apply(requestContext);
+  @ovewwide
+  p-pubwic finaw futuwe<eawwybiwdwesponse> a-appwy(
+      f-finaw eawwybiwdwequestcontext w-wequestcontext, σωσ
+      sewvice<eawwybiwdwequestcontext, (U ᵕ U❁) eawwybiwdwesponse> s-sewvice) {
+    f-futuwe<eawwybiwdwesponse> w-wesponse = s-sewvice.appwy(wequestcontext);
 
-    response.addEventListener(new FutureEventListener<EarlybirdResponse>() {
-      @Override
-      public void onSuccess(EarlybirdResponse earlybirdResponse) {
-        try {
-          if (earlybirdResponse.responseCode == EarlybirdResponseCode.SUCCESS
-              && earlybirdResponse.isSetSearchResults()
-              && requestContext.getParsedQuery() != null) {
-            Set<Long> statusIds = getSensitiveResults(requestContext, earlybirdResponse);
-            Set<Long> exceptedIds = getExceptedResults(requestContext);
-            statusIds.removeAll(exceptedIds);
+    w-wesponse.addeventwistenew(new futuweeventwistenew<eawwybiwdwesponse>() {
+      @ovewwide
+      pubwic void onsuccess(eawwybiwdwesponse eawwybiwdwesponse) {
+        t-twy {
+          if (eawwybiwdwesponse.wesponsecode == eawwybiwdwesponsecode.success
+              && eawwybiwdwesponse.issetseawchwesuwts()
+              && wequestcontext.getpawsedquewy() != nyuww) {
+            s-set<wong> statusids = getsensitivewesuwts(wequestcontext, (U ﹏ U) eawwybiwdwesponse);
+            s-set<wong> e-exceptedids = getexceptedwesuwts(wequestcontext);
+            statusids.wemoveaww(exceptedids);
 
-            if (statusIds.size() > 0) {
-              getSensitiveQueryCounter().increment();
-              getSensitiveResultsCounter().add(statusIds.size());
-              logContent(requestContext, earlybirdResponse, statusIds);
+            i-if (statusids.size() > 0) {
+              getsensitivequewycountew().incwement();
+              g-getsensitivewesuwtscountew().add(statusids.size());
+              wogcontent(wequestcontext, :3 e-eawwybiwdwesponse, ( ͡o ω ͡o ) s-statusids);
             }
           }
-        } catch (Exception e) {
-          getLogger().error("Caught exception while trying to log sensitive results for query: {}",
-                            requestContext.getParsedQuery().serialize(), e);
+        } catch (exception e) {
+          getwoggew().ewwow("caught exception whiwe twying to wog sensitive w-wesuwts fow quewy: {}", σωσ
+                            wequestcontext.getpawsedquewy().sewiawize(), >w< e-e);
         }
       }
 
-      @Override
-      public void onFailure(Throwable cause) {
+      @ovewwide
+      pubwic v-void onfaiwuwe(thwowabwe c-cause) {
       }
     });
 
-    return response;
+    wetuwn wesponse;
   }
 
-  private void logContent(
-      final EarlybirdRequestContext requestContext,
-      final EarlybirdResponse earlybirdResponse,
-      final Set<Long> statusIds) {
+  p-pwivate void w-wogcontent(
+      finaw eawwybiwdwequestcontext w-wequestcontext, 😳😳😳
+      f-finaw eawwybiwdwesponse eawwybiwdwesponse,
+      finaw set<wong> statusids) {
 
-    if (logDetails) {
-      String base64Request;
-      try {
-        base64Request = ThriftUtils.toBase64EncodedString(requestContext.getRequest());
-      } catch (TException e) {
-        base64Request = "Failed to parse base 64 request";
+    if (wogdetaiws) {
+      stwing base64wequest;
+      t-twy {
+        b-base64wequest = t-thwiftutiws.tobase64encodedstwing(wequestcontext.getwequest());
+      } catch (texception e-e) {
+        b-base64wequest = "faiwed to pawse b-base 64 wequest";
       }
-      getLogger().error("Found " + typeName
+      getwoggew().ewwow("found " + typename
               + ": {} | "
-              + "parsedQuery: {} | "
-              + "request: {} | "
-              + "base 64 request: {} | "
-              + "response: {}",
-          Joiner.on(",").join(statusIds),
-          requestContext.getParsedQuery().serialize(),
-          requestContext.getRequest(),
-          base64Request,
-          earlybirdResponse);
-    } else {
-      getLogger().error("Found " + typeName + ": {} for parsedQuery {}",
-          Joiner.on(",").join(statusIds),
-          requestContext.getParsedQuery().serialize());
+              + "pawsedquewy: {} | "
+              + "wequest: {} | "
+              + "base 64 wequest: {} | "
+              + "wesponse: {}", OwO
+          joinew.on(",").join(statusids), 😳
+          w-wequestcontext.getpawsedquewy().sewiawize(),
+          w-wequestcontext.getwequest(), 😳😳😳
+          base64wequest, (˘ω˘)
+          eawwybiwdwesponse);
+    } e-ewse {
+      g-getwoggew().ewwow("found " + typename + ": {} fow pawsedquewy {}", ʘwʘ
+          joinew.on(",").join(statusids), ( ͡o ω ͡o )
+          w-wequestcontext.getpawsedquewy().sewiawize());
     }
   }
 }

@@ -1,32 +1,32 @@
-package com.twitter.recosinjector.event_processors
+package com.twittew.wecosinjectow.event_pwocessows
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recosinjector.edges.{EventToMessageBuilder, UserUserEdge}
-import com.twitter.recosinjector.publishers.KafkaEventPublisher
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.socialgraph.thriftscala.WriteEvent
-import com.twitter.util.Future
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wecosinjectow.edges.{eventtomessagebuiwdew, (˘ω˘) u-usewusewedge}
+i-impowt com.twittew.wecosinjectow.pubwishews.kafkaeventpubwishew
+i-impowt com.twittew.scwooge.thwiftstwuctcodec
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.wwiteevent
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * This processor listens to events from social graphs services. In particular, a major use case is
- * to listen to user-user follow events.
+ * this pwocessow wistens to events fwom sociaw gwaphs sewvices. (⑅˘꒳˘) i-in pawticuwaw, (///ˬ///✿) a majow use case is
+ * to w-wisten to usew-usew fowwow events. 😳😳😳
  */
-class SocialWriteEventProcessor(
-  override val eventBusStreamName: String,
-  override val thriftStruct: ThriftStructCodec[WriteEvent],
-  override val serviceIdentifier: ServiceIdentifier,
-  kafkaEventPublisher: KafkaEventPublisher,
-  userUserGraphTopic: String,
-  userUserGraphMessageBuilder: EventToMessageBuilder[WriteEvent, UserUserEdge]
+c-cwass sociawwwiteeventpwocessow(
+  ovewwide vaw eventbusstweamname: stwing, 🥺
+  o-ovewwide vaw thwiftstwuct: t-thwiftstwuctcodec[wwiteevent], mya
+  o-ovewwide vaw sewviceidentifiew: sewviceidentifiew, 🥺
+  kafkaeventpubwishew: kafkaeventpubwishew, >_<
+  usewusewgwaphtopic: s-stwing, >_<
+  usewusewgwaphmessagebuiwdew: eventtomessagebuiwdew[wwiteevent, (⑅˘꒳˘) usewusewedge]
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventBusProcessor[WriteEvent] {
+  ovewwide impwicit v-vaw statsweceivew: statsweceivew)
+    e-extends e-eventbuspwocessow[wwiteevent] {
 
-  override def processEvent(event: WriteEvent): Future[Unit] = {
-    userUserGraphMessageBuilder.processEvent(event).map { edges =>
-      edges.foreach { edge =>
-        kafkaEventPublisher.publish(edge.convertToRecosHoseMessage, userUserGraphTopic)
+  o-ovewwide def p-pwocessevent(event: wwiteevent): futuwe[unit] = {
+    u-usewusewgwaphmessagebuiwdew.pwocessevent(event).map { edges =>
+      edges.foweach { edge =>
+        k-kafkaeventpubwishew.pubwish(edge.convewttowecoshosemessage, /(^•ω•^) usewusewgwaphtopic)
       }
     }
   }

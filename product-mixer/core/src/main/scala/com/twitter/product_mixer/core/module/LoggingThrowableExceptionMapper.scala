@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.module
+package com.twittew.pwoduct_mixew.cowe.moduwe
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.inject.Logging
-import com.twitter.util.Future
-import javax.inject.Singleton
-import scala.util.control.NonFatal
+impowt c-com.twittew.finatwa.thwift.exceptions.exceptionmappew
+i-impowt c-com.twittew.inject.wogging
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt j-javax.inject.singweton
+i-impowt scawa.utiw.contwow.nonfataw
 
 /**
- * Similar to [[com.twitter.finatra.thrift.internal.exceptions.ThrowableExceptionMapper]]
+ * simiwaw to [[com.twittew.finatwa.thwift.intewnaw.exceptions.thwowabweexceptionmappew]]
  *
- * But this one also logs the exceptions.
+ * but this one awso wogs the exceptions. 😳
  */
-@Singleton
-class LoggingThrowableExceptionMapper extends ExceptionMapper[Throwable, Nothing] with Logging {
+@singweton
+c-cwass woggingthwowabweexceptionmappew extends exceptionmappew[thwowabwe, XD n-nyothing] with wogging {
 
-  override def handleException(throwable: Throwable): Future[Nothing] = {
-    error("Unhandled Exception", throwable)
+  ovewwide d-def handweexception(thwowabwe: thwowabwe): futuwe[nothing] = {
+    ewwow("unhandwed e-exception", :3 thwowabwe)
 
-    throwable match {
-      case NonFatal(e) => Future.exception(e)
+    t-thwowabwe m-match {
+      case nyonfataw(e) => futuwe.exception(e)
     }
   }
 }

@@ -1,105 +1,105 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import scala.collection.mutable
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt scawa.cowwection.mutabwe
 
 /**
- * Select candidates and add them according to the `pattern`.
- * The pattern is repeated until all candidates contained in the pattern are added to the `result`.
- * If the candidates for a specific [[Bucket]] in the pattern are exhausted, that [[Bucket]] will be
- * skipped on subsequent iterations.
- * If a candidate has a [[Bucket]] that isn't in the pattern it is added to the end of the `result`.
- * The end result is all candidates from all [[candidatePipelines]]s provided will end up in the result.
+ * sewect candidates a-and add them accowding to the `pattewn`. rawr x3
+ * t-the pattewn is wepeated untiw a-aww candidates contained in the pattewn awe added to the `wesuwt`. XD
+ * i-if the candidates fow a s-specific [[bucket]] i-in the pattewn awe exhausted, σωσ that [[bucket]] wiww be
+ * skipped on subsequent i-itewations. (U ᵕ U❁)
+ * if a candidate has a [[bucket]] that isn't in the pattewn it is a-added to the end of the `wesuwt`. (U ﹏ U)
+ * t-the end wesuwt i-is aww candidates f-fwom aww [[candidatepipewines]]s p-pwovided wiww end up in the wesuwt. :3
  *
- * @example If there are no more candidates from a given `CandidatePipeline` then it is skipped, so
- *          with the pattern `Seq(A, A, B, C)`, if there are no more candidates from `B` then it is
- *          effectively the same as `Seq(A, A, C)`. The `result` will contain all candidates from all
- *          `CandidatePipeline`s who's `Bucket` is in the `pattern`.
+ * @exampwe i-if thewe awe nyo mowe candidates fwom a-a given `candidatepipewine` then it is skipped, ( ͡o ω ͡o ) so
+ *          with the pattewn `seq(a, σωσ a, b, c-c)`, >w< if thewe awe nyo mowe candidates f-fwom `b` then i-it is
+ *          e-effectivewy the same as `seq(a, 😳😳😳 a, c)`. OwO the `wesuwt` wiww c-contain aww candidates f-fwom aww
+ *          `candidatepipewine`s who's `bucket` i-is in the `pattewn`. 😳
  *
- * @example If the pattern is `Seq(A, A, B, C)` and the remaining candidates
- *          from the provided `candidatePipelines` are:
- *          - 5 `A`s
- *          - 2 `B`s
- *          - 1 `C`
- *          - 1 `D`s
+ * @exampwe i-if the pattewn is `seq(a, 😳😳😳 a, b-b, (˘ω˘) c)` and the wemaining candidates
+ *          f-fwom the pwovided `candidatepipewines` awe:
+ *          - 5 `a`s
+ *          - 2 `b`s
+ *          - 1 `c`
+ *          - 1 `d`s
  *
- *          then the resulting output for each iteration over the pattern is
- *          - `Seq(A, A, B, C)`
- *          - `Seq(A, A, B)` since there's no more `C`s
- *          - `Seq(A)` since there are no more `B`s or `C`s
- *          - `Seq(D)` since it wasn't in the pattern but is from one of the provided
- *            `candidatePipelines`, it's appended at the end
+ *          then the wesuwting o-output fow each itewation ovew t-the pattewn is
+ *          - `seq(a, ʘwʘ a, b, c)`
+ *          - `seq(a, ( ͡o ω ͡o ) a-a, b)` since t-thewe's nyo mowe `c`s
+ *          - `seq(a)` since thewe awe nyo mowe `b`s ow `c`s
+ *          - `seq(d)` since it wasn't in the pattewn but is fwom one of the p-pwovided
+ *            `candidatepipewines`, o.O i-it's appended at the end
  *
- *          so the `result` that's returned would be `Seq(A, A, B, C, A, A, B, A, D)`
+ *          s-so the `wesuwt` t-that's wetuwned w-wouwd be `seq(a, >w< a, b, 😳 c, a, a, b, a, d)`
  */
-case class InsertAppendPatternResults[-Query <: PipelineQuery, Bucket](
-  candidatePipelines: Set[CandidatePipelineIdentifier],
-  bucketer: Bucketer[Bucket],
-  pattern: Seq[Bucket])
-    extends Selector[Query] {
+case cwass i-insewtappendpattewnwesuwts[-quewy <: pipewinequewy, 🥺 bucket](
+  candidatepipewines: set[candidatepipewineidentifiew], rawr x3
+  b-bucketew: bucketew[bucket], o.O
+  p-pattewn: seq[bucket])
+    e-extends sewectow[quewy] {
 
-  require(pattern.nonEmpty, "`pattern` must be non-empty")
+  w-wequiwe(pattewn.nonempty, rawr "`pattewn` must be nyon-empty")
 
-  override val pipelineScope: CandidateScope = SpecificPipelines(candidatePipelines)
+  o-ovewwide v-vaw pipewinescope: c-candidatescope = s-specificpipewines(candidatepipewines)
 
-  private sealed trait PatternResult
-  private case object NotASelectedCandidatePipeline extends PatternResult
-  private case object NotABucketInThePattern extends PatternResult
-  private case class Bucketed(bucket: Bucket) extends PatternResult
+  pwivate seawed twait pattewnwesuwt
+  p-pwivate case o-object nyotasewectedcandidatepipewine e-extends p-pattewnwesuwt
+  p-pwivate case object nyotabucketinthepattewn extends pattewnwesuwt
+  p-pwivate case cwass bucketed(bucket: bucket) extends pattewnwesuwt
 
-  private val allBucketsInPattern = pattern.toSet
+  pwivate vaw awwbucketsinpattewn = p-pattewn.toset
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val groupedCandidates: Map[PatternResult, Seq[CandidateWithDetails]] =
-      remainingCandidates.groupBy { candidateWithDetails =>
-        if (pipelineScope.contains(candidateWithDetails)) {
-          // if a candidate's Bucket doesnt appear in the pattern it's backfilled at the end
-          val bucket = bucketer(candidateWithDetails)
-          if (allBucketsInPattern.contains(bucket)) {
-            Bucketed(bucket)
-          } else {
-            NotABucketInThePattern
+  ovewwide def appwy(
+    quewy: quewy, ʘwʘ
+    w-wemainingcandidates: s-seq[candidatewithdetaiws], 😳😳😳
+    w-wesuwt: seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    vaw gwoupedcandidates: map[pattewnwesuwt, ^^;; s-seq[candidatewithdetaiws]] =
+      w-wemainingcandidates.gwoupby { candidatewithdetaiws =>
+        if (pipewinescope.contains(candidatewithdetaiws)) {
+          // if a candidate's bucket doesnt appeaw in the p-pattewn it's backfiwwed at the e-end
+          vaw bucket = bucketew(candidatewithdetaiws)
+          i-if (awwbucketsinpattewn.contains(bucket)) {
+            b-bucketed(bucket)
+          } ewse {
+            nyotabucketinthepattewn
           }
-        } else {
-          NotASelectedCandidatePipeline
+        } e-ewse {
+          n-nyotasewectedcandidatepipewine
         }
       }
 
-    val otherCandidates =
-      groupedCandidates.getOrElse(NotASelectedCandidatePipeline, Seq.empty)
+    vaw othewcandidates =
+      g-gwoupedcandidates.getowewse(notasewectedcandidatepipewine, o.O s-seq.empty)
 
-    val notABucketInThePattern =
-      groupedCandidates.getOrElse(NotABucketInThePattern, Seq.empty)
+    vaw nyotabucketinthepattewn =
+      gwoupedcandidates.getowewse(notabucketinthepattewn, (///ˬ///✿) seq.empty)
 
-    // mutable so we can remove finished iterators to optimize when looping for large patterns
-    val groupedBucketsIterators = mutable.HashMap(groupedCandidates.collect {
-      case (Bucketed(bucket), candidatesWithDetails) => (bucket, candidatesWithDetails.iterator)
-    }.toSeq: _*)
+    // mutabwe so we c-can wemove finished i-itewatows to o-optimize when wooping fow wawge p-pattewns
+    vaw g-gwoupedbucketsitewatows = mutabwe.hashmap(gwoupedcandidates.cowwect {
+      case (bucketed(bucket), σωσ c-candidateswithdetaiws) => (bucket, nyaa~~ candidateswithdetaiws.itewatow)
+    }.toseq: _*)
 
-    val patternIterator = Iterator.continually(pattern).flatten
+    vaw pattewnitewatow = itewatow.continuawwy(pattewn).fwatten
 
-    val newResult = new mutable.ArrayBuffer[CandidateWithDetails]()
-    while (groupedBucketsIterators.nonEmpty) {
-      val bucket = patternIterator.next()
-      groupedBucketsIterators.get(bucket) match {
-        case Some(iterator) if iterator.nonEmpty => newResult += iterator.next()
-        case Some(_) => groupedBucketsIterators.remove(bucket)
-        case None =>
+    vaw nyewwesuwt = n-nyew mutabwe.awwaybuffew[candidatewithdetaiws]()
+    w-whiwe (gwoupedbucketsitewatows.nonempty) {
+      vaw bucket = pattewnitewatow.next()
+      g-gwoupedbucketsitewatows.get(bucket) m-match {
+        case some(itewatow) if itewatow.nonempty => nyewwesuwt += i-itewatow.next()
+        case some(_) => gwoupedbucketsitewatows.wemove(bucket)
+        case none =>
       }
     }
 
-    SelectorResult(
-      remainingCandidates = otherCandidates,
-      result = result ++ newResult ++ notABucketInThePattern)
+    sewectowwesuwt(
+      w-wemainingcandidates = othewcandidates, ^^;;
+      wesuwt = w-wesuwt ++ nyewwesuwt ++ n-nyotabucketinthepattewn)
   }
 }

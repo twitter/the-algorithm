@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.base
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.fetchew
 
-abstract class StratoFetcherSource[K, U, V](
-  fetcher: Fetcher[K, U, V],
-  view: U,
-  override val identifier: CandidateSourceIdentifier)
-    extends CandidateSource[K, CandidateUser] {
+a-abstwact c-cwass stwatofetchewsouwce[k, :3 u, v](
+  fetchew: fetchew[k, 😳😳😳 u, v],
+  view: u, -.-
+  ovewwide vaw i-identifiew: candidatesouwceidentifiew)
+    extends candidatesouwce[k, ( ͡o ω ͡o ) c-candidateusew] {
 
-  def map(user: K, v: V): Seq[CandidateUser]
+  def m-map(usew: k, rawr x3 v: v): seq[candidateusew]
 
-  override def apply(target: K): Stitch[Seq[CandidateUser]] = {
-    fetcher
-      .fetch(target, view)
-      .map { result =>
-        result.v
-          .map { candidates => map(target, candidates) }
-          .getOrElse(Nil)
-          .map(_.withCandidateSource(identifier))
+  ovewwide def appwy(tawget: k-k): stitch[seq[candidateusew]] = {
+    fetchew
+      .fetch(tawget, nyaa~~ v-view)
+      .map { w-wesuwt =>
+        wesuwt.v
+          .map { candidates => map(tawget, /(^•ω•^) candidates) }
+          .getowewse(niw)
+          .map(_.withcandidatesouwce(identifiew))
       }
   }
 }

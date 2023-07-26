@@ -1,190 +1,190 @@
-package com.twitter.search.common.relevance.text;
+package com.twittew.seawch.common.wewevance.text;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.wocawe;
+i-impowt j-java.utiw.set;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
+i-impowt com.googwe.common.base.joinew;
+impowt com.googwe.common.cowwect.sets;
 
-import com.twitter.common.text.util.CharSequenceUtils;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.Smileys;
-import com.twitter.search.common.util.text.TokenizerHelper;
-import com.twitter.search.common.util.text.TokenizerResult;
+impowt com.twittew.common.text.utiw.chawsequenceutiws;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftexpandeduww;
+impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+impowt com.twittew.seawch.common.wewevance.featuwes.tweettextfeatuwes;
+i-impowt com.twittew.seawch.common.utiw.text.nowmawizewhewpew;
+i-impowt com.twittew.seawch.common.utiw.text.smiweys;
+impowt com.twittew.seawch.common.utiw.text.tokenizewhewpew;
+impowt com.twittew.seawch.common.utiw.text.tokenizewwesuwt;
 
 /**
- * A parser to extract very basic information from a tweet.
+ * a-a pawsew to extwact v-vewy basic infowmation f-fwom a tweet. OwO
  */
-public class TweetParser {
-  private static final boolean DO_NOT_REMOVE_WWW = false;
+pubwic cwass tweetpawsew {
+  pwivate static finaw boowean d-do_not_wemove_www = fawse;
 
-  /** Parses the given TwitterMessage. */
-  public void parseTweet(TwitterMessage message) {
-    parseTweet(message, false, true);
+  /** pawses the given twittewmessage. >w< */
+  pubwic v-void pawsetweet(twittewmessage message) {
+    p-pawsetweet(message, 🥺 f-fawse, twue);
   }
 
-  /** Parses the given TwitterMessage. */
-  public void parseTweet(TwitterMessage message,
-                         boolean useEntitiesFromTweetText,
-                         boolean parseUrls) {
-    for (PenguinVersion penguinVersion : message.getSupportedPenguinVersions()) {
-      parseTweet(message, useEntitiesFromTweetText, parseUrls, penguinVersion);
+  /** p-pawses t-the given twittewmessage. nyaa~~ */
+  pubwic void pawsetweet(twittewmessage message, ^^
+                         b-boowean useentitiesfwomtweettext, >w<
+                         boowean pawseuwws) {
+    fow (penguinvewsion p-penguinvewsion : message.getsuppowtedpenguinvewsions()) {
+      pawsetweet(message, OwO useentitiesfwomtweettext, XD pawseuwws, ^^;; penguinvewsion);
     }
   }
 
-  /** Parses the given TwitterMessage. */
-  public void parseTweet(TwitterMessage message,
-                         boolean useEntitiesFromTweetText,
-                         boolean parseUrls,
-                         PenguinVersion penguinVersion) {
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
-    String rawText = message.getText();
-    Locale locale = message.getLocale();
+  /** pawses t-the given twittewmessage. 🥺 */
+  pubwic void p-pawsetweet(twittewmessage m-message, XD
+                         b-boowean useentitiesfwomtweettext, (U ᵕ U❁)
+                         boowean pawseuwws, :3
+                         penguinvewsion p-penguinvewsion) {
+    t-tweettextfeatuwes textfeatuwes = m-message.gettweettextfeatuwes(penguinvewsion);
+    s-stwing wawtext = message.gettext();
+    w-wocawe wocawe = message.getwocawe();
 
-    // don't lower case first.
-    String normalizedText = NormalizerHelper.normalizeKeepCase(rawText, locale, penguinVersion);
-    String lowercasedNormalizedText =
-      CharSequenceUtils.toLowerCase(normalizedText, locale).toString();
+    // d-don't wowew case fiwst. ( ͡o ω ͡o )
+    stwing nyowmawizedtext = n-nyowmawizewhewpew.nowmawizekeepcase(wawtext, òωó wocawe, penguinvewsion);
+    stwing w-wowewcasednowmawizedtext =
+      chawsequenceutiws.towowewcase(nowmawizedtext, σωσ w-wocawe).tostwing();
 
-    textFeatures.setNormalizedText(lowercasedNormalizedText);
+    t-textfeatuwes.setnowmawizedtext(wowewcasednowmawizedtext);
 
-    TokenizerResult result = TokenizerHelper.tokenizeTweet(normalizedText, locale, penguinVersion);
-    List<String> tokens = new ArrayList<>(result.tokens);
-    textFeatures.setTokens(tokens);
-    textFeatures.setTokenSequence(result.tokenSequence);
+    tokenizewwesuwt wesuwt = tokenizewhewpew.tokenizetweet(nowmawizedtext, (U ᵕ U❁) wocawe, (✿oωo) penguinvewsion);
+    wist<stwing> tokens = nyew awwaywist<>(wesuwt.tokens);
+    t-textfeatuwes.settokens(tokens);
+    t-textfeatuwes.settokensequence(wesuwt.tokensequence);
 
-    if (parseUrls) {
-      parseUrls(message, textFeatures);
+    if (pawseuwws) {
+      p-pawseuwws(message, ^^ t-textfeatuwes);
     }
 
-    textFeatures.setStrippedTokens(result.strippedDownTokens);
-    textFeatures.setNormalizedStrippedText(Joiner.on(" ").skipNulls()
-                                                 .join(result.strippedDownTokens));
+    t-textfeatuwes.setstwippedtokens(wesuwt.stwippeddowntokens);
+    textfeatuwes.setnowmawizedstwippedtext(joinew.on(" ").skipnuwws()
+                                                 .join(wesuwt.stwippeddowntokens));
 
-    // Sanity checks, make sure there is no null token list.
-    if (textFeatures.getTokens() == null) {
-      textFeatures.setTokens(Collections.<String>emptyList());
+    // sanity checks, ^•ﻌ•^ make suwe t-thewe is nyo nyuww token wist. XD
+    if (textfeatuwes.gettokens() == nyuww) {
+      textfeatuwes.settokens(cowwections.<stwing>emptywist());
     }
-    if (textFeatures.getResolvedUrlTokens() == null) {
-      textFeatures.setResolvedUrlTokens(Collections.<String>emptyList());
+    i-if (textfeatuwes.getwesowveduwwtokens() == nyuww) {
+      t-textfeatuwes.setwesowveduwwtokens(cowwections.<stwing>emptywist());
     }
-    if (textFeatures.getStrippedTokens() == null) {
-      textFeatures.setStrippedTokens(Collections.<String>emptyList());
+    i-if (textfeatuwes.getstwippedtokens() == n-nyuww) {
+      textfeatuwes.setstwippedtokens(cowwections.<stwing>emptywist());
     }
 
-    setHashtagsAndMentions(message, textFeatures, penguinVersion);
-    textFeatures.setStocks(sanitizeTokenizerResults(result.stocks, '$'));
-    textFeatures.setHasQuestionMark(findQuestionMark(textFeatures));
+    s-sethashtagsandmentions(message, :3 t-textfeatuwes, (ꈍᴗꈍ) p-penguinvewsion);
+    t-textfeatuwes.setstocks(sanitizetokenizewwesuwts(wesuwt.stocks, :3 '$'));
+    textfeatuwes.sethasquestionmawk(findquestionmawk(textfeatuwes));
 
-    // Set smiley polarities.
-    textFeatures.setSmileys(result.smileys);
-    for (String smiley : textFeatures.getSmileys()) {
-      if (Smileys.isValidSmiley(smiley)) {
-        boolean polarity = Smileys.getPolarity(smiley);
-        if (polarity) {
-          textFeatures.setHasPositiveSmiley(true);
-        } else {
-          textFeatures.setHasNegativeSmiley(true);
+    // set smiwey p-powawities. (U ﹏ U)
+    t-textfeatuwes.setsmiweys(wesuwt.smiweys);
+    f-fow (stwing smiwey : t-textfeatuwes.getsmiweys()) {
+      i-if (smiweys.isvawidsmiwey(smiwey)) {
+        boowean powawity = smiweys.getpowawity(smiwey);
+        if (powawity) {
+          textfeatuwes.sethaspositivesmiwey(twue);
+        } e-ewse {
+          textfeatuwes.sethasnegativesmiwey(twue);
         }
       }
     }
-    message.setTokenizedCharSequence(penguinVersion, result.rawSequence);
+    message.settokenizedchawsequence(penguinvewsion, UwU wesuwt.wawsequence);
 
-    if (useEntitiesFromTweetText) {
-      takeEntities(message, textFeatures, result, penguinVersion);
+    if (useentitiesfwomtweettext) {
+      takeentities(message, 😳😳😳 t-textfeatuwes, XD wesuwt, o.O penguinvewsion);
     }
   }
 
-  /** Parse the URLs in the given TwitterMessage. */
-  public void parseUrls(TwitterMessage message) {
-    for (PenguinVersion penguinVersion : message.getSupportedPenguinVersions()) {
-      parseUrls(message, message.getTweetTextFeatures(penguinVersion));
+  /** pawse the uwws in the given twittewmessage. (⑅˘꒳˘) */
+  p-pubwic void pawseuwws(twittewmessage m-message) {
+    f-fow (penguinvewsion penguinvewsion : m-message.getsuppowtedpenguinvewsions()) {
+      pawseuwws(message, 😳😳😳 m-message.gettweettextfeatuwes(penguinvewsion));
     }
   }
 
-  /** Parse the URLs in the given TwitterMessage. */
-  public void parseUrls(TwitterMessage message, TweetTextFeatures textFeatures) {
-    if (message.getExpandedUrlMap() != null) {
-      Set<String> urlsToTokenize = Sets.newLinkedHashSet();
-      for (ThriftExpandedUrl url : message.getExpandedUrlMap().values()) {
-        if (url.isSetExpandedUrl()) {
-          urlsToTokenize.add(url.getExpandedUrl());
+  /** p-pawse the uwws in the given twittewmessage. nyaa~~ */
+  pubwic void pawseuwws(twittewmessage message, rawr tweettextfeatuwes t-textfeatuwes) {
+    if (message.getexpandeduwwmap() != n-nyuww) {
+      set<stwing> u-uwwstotokenize = s-sets.newwinkedhashset();
+      fow (thwiftexpandeduww uww : message.getexpandeduwwmap().vawues()) {
+        i-if (uww.issetexpandeduww()) {
+          u-uwwstotokenize.add(uww.getexpandeduww());
         }
-        if (url.isSetCanonicalLastHopUrl()) {
-          urlsToTokenize.add(url.getCanonicalLastHopUrl());
-        }
-      }
-      TokenizerResult resolvedUrlResult =
-          TokenizerHelper.tokenizeUrls(urlsToTokenize, message.getLocale(), DO_NOT_REMOVE_WWW);
-      List<String> urlTokens = new ArrayList<>(resolvedUrlResult.tokens);
-      textFeatures.setResolvedUrlTokens(urlTokens);
-    }
-  }
-
-  private void takeEntities(TwitterMessage message,
-                            TweetTextFeatures textFeatures,
-                            TokenizerResult result,
-                            PenguinVersion penguinVersion) {
-    if (message.getHashtags().isEmpty()) {
-      // add hashtags to TwitterMessage if it doens't already have them, from
-      // JSON entities, this happens when we do offline indexing
-      for (String hashtag : sanitizeTokenizerResults(result.hashtags, '#')) {
-        message.addHashtag(hashtag);
-      }
-    }
-
-    if (message.getMentions().isEmpty()) {
-      // add mentions to TwitterMessage if it doens't already have them, from
-      // JSON entities, this happens when we do offline indexing
-      for (String mention : sanitizeTokenizerResults(result.mentions, '@')) {
-        message.addMention(mention);
-      }
-    }
-
-    setHashtagsAndMentions(message, textFeatures, penguinVersion);
-  }
-
-  private void setHashtagsAndMentions(TwitterMessage message,
-                                      TweetTextFeatures textFeatures,
-                                      PenguinVersion penguinVersion) {
-    textFeatures.setHashtags(message.getNormalizedHashtags(penguinVersion));
-    textFeatures.setMentions(message.getLowercasedMentions());
-  }
-
-  // The strings in the mentions, hashtags and stocks lists in TokenizerResult should already have
-  // the leading characters ('@', '#' and '$') stripped. So in most cases, this sanitization is not
-  // needed. However, sometimes Penguin tokenizes hashtags, cashtags and mentions incorrectly
-  // (for example, when using the Korean tokenizer for tokens like ~@mention or ?#hashtag -- see
-  // SEARCHQUAL-11924 for more details). So we're doing this extra sanitization here to try to work
-  // around these tokenization issues.
-  private List<String> sanitizeTokenizerResults(List<String> tokens, char tokenSymbol) {
-    List<String> sanitizedTokens = new ArrayList<String>();
-    for (String token : tokens) {
-      int indexOfTokenSymbol = token.indexOf(tokenSymbol);
-      if (indexOfTokenSymbol < 0) {
-        sanitizedTokens.add(token);
-      } else {
-        String sanitizedToken = token.substring(indexOfTokenSymbol + 1);
-        if (!sanitizedToken.isEmpty()) {
-          sanitizedTokens.add(sanitizedToken);
+        if (uww.issetcanonicawwasthopuww()) {
+          u-uwwstotokenize.add(uww.getcanonicawwasthopuww());
         }
       }
+      t-tokenizewwesuwt wesowveduwwwesuwt =
+          tokenizewhewpew.tokenizeuwws(uwwstotokenize, -.- message.getwocawe(), (✿oωo) do_not_wemove_www);
+      w-wist<stwing> u-uwwtokens = nyew a-awwaywist<>(wesowveduwwwesuwt.tokens);
+      textfeatuwes.setwesowveduwwtokens(uwwtokens);
     }
-    return sanitizedTokens;
   }
 
-  /** Determines if the normalized text of the given features contain a question mark. */
-  public static boolean findQuestionMark(TweetTextFeatures textFeatures) {
-    // t.co links don't contain ?'s, so it's not necessary to subtract ?'s occurring in Urls
-    // the tweet text always contains t.co, even if the display url is different
-    // all links on twitter are now wrapped into t.co
-    return textFeatures.getNormalizedText().contains("?");
+  p-pwivate v-void takeentities(twittewmessage message, /(^•ω•^)
+                            t-tweettextfeatuwes textfeatuwes, 🥺
+                            tokenizewwesuwt wesuwt, ʘwʘ
+                            penguinvewsion p-penguinvewsion) {
+    i-if (message.gethashtags().isempty()) {
+      // add hashtags to twittewmessage i-if i-it doens't awweady have them, fwom
+      // json entities, UwU this h-happens when we do offwine indexing
+      fow (stwing hashtag : sanitizetokenizewwesuwts(wesuwt.hashtags, XD '#')) {
+        m-message.addhashtag(hashtag);
+      }
+    }
+
+    if (message.getmentions().isempty()) {
+      // add mentions t-to twittewmessage i-if it doens't awweady have them, (✿oωo) fwom
+      // json entities, :3 t-this happens w-when we do offwine indexing
+      fow (stwing mention : sanitizetokenizewwesuwts(wesuwt.mentions, (///ˬ///✿) '@')) {
+        m-message.addmention(mention);
+      }
+    }
+
+    sethashtagsandmentions(message, nyaa~~ t-textfeatuwes, >w< penguinvewsion);
+  }
+
+  pwivate void sethashtagsandmentions(twittewmessage message, -.-
+                                      t-tweettextfeatuwes textfeatuwes, (✿oωo)
+                                      p-penguinvewsion p-penguinvewsion) {
+    textfeatuwes.sethashtags(message.getnowmawizedhashtags(penguinvewsion));
+    t-textfeatuwes.setmentions(message.getwowewcasedmentions());
+  }
+
+  // the stwings i-in the mentions, (˘ω˘) h-hashtags a-and stocks wists in tokenizewwesuwt s-shouwd awweady h-have
+  // the weading chawactews ('@', rawr '#' and '$') stwipped. OwO s-so in most cases, ^•ﻌ•^ t-this sanitization i-is not
+  // nyeeded. UwU howevew, sometimes penguin t-tokenizes hashtags, (˘ω˘) cashtags a-and mentions i-incowwectwy
+  // (fow exampwe, (///ˬ///✿) when using the kowean tokenizew fow t-tokens wike ~@mention o-ow ?#hashtag -- s-see
+  // s-seawchquaw-11924 fow mowe detaiws). σωσ s-so we'we doing this extwa sanitization hewe to twy to wowk
+  // awound these tokenization i-issues. /(^•ω•^)
+  pwivate wist<stwing> sanitizetokenizewwesuwts(wist<stwing> t-tokens, 😳 chaw tokensymbow) {
+    w-wist<stwing> sanitizedtokens = n-nyew awwaywist<stwing>();
+    fow (stwing token : t-tokens) {
+      i-int indexoftokensymbow = token.indexof(tokensymbow);
+      i-if (indexoftokensymbow < 0) {
+        s-sanitizedtokens.add(token);
+      } e-ewse {
+        stwing sanitizedtoken = token.substwing(indexoftokensymbow + 1);
+        if (!sanitizedtoken.isempty()) {
+          sanitizedtokens.add(sanitizedtoken);
+        }
+      }
+    }
+    wetuwn sanitizedtokens;
+  }
+
+  /** d-detewmines if t-the nyowmawized t-text of the given featuwes contain a-a question mawk. 😳 */
+  pubwic static boowean findquestionmawk(tweettextfeatuwes textfeatuwes) {
+    // t-t.co winks d-don't contain ?'s, (⑅˘꒳˘) so it's nyot n-nyecessawy to subtwact ?'s occuwwing in uwws
+    // t-the tweet t-text awways contains t.co, 😳😳😳 even i-if the dispway u-uww is diffewent
+    // aww winks on twittew awe nyow wwapped into t.co
+    wetuwn t-textfeatuwes.getnowmawizedtext().contains("?");
   }
 }

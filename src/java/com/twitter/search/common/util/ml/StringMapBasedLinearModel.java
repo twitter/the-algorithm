@@ -1,125 +1,125 @@
-package com.twitter.search.common.util.ml;
+package com.twittew.seawch.common.utiw.mw;
 
-import java.util.Map;
+impowt j-java.utiw.map;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.base.Function;
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.util.io.TextFileLoadingUtils;
+i-impowt com.twittew.common.base.function;
+i-impowt c-com.twittew.seawch.common.fiwe.abstwactfiwe;
+impowt com.twittew.seawch.common.utiw.io.textfiwewoadingutiws;
 
-import it.unimi.dsi.fastutil.objects.Object2FloatMap;
-import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
+impowt it.unimi.dsi.fastutiw.objects.object2fwoatmap;
+impowt it.unimi.dsi.fastutiw.objects.object2fwoatopenhashmap;
 
 /**
- * Represents a linear model for scoring and classification.
+ * wepwesents a-a wineaw modew fow scowing and cwassification. (///ˬ///✿)
  *
- * Features are represented as arbitrary strings, making this a fairly flexible implementation
- * (at the cost of some performance, since all operations require hash lookups). Instances
- * and weights are both encoded sparsely (as maps) so this implementation is well suited to
- * models with large feature sets where most features are inactive at a given time. Weights
- * for unknown features are assumed to be 0.
+ * f-featuwes awe wepwesented a-as awbitwawy stwings, (˘ω˘) making this a faiwwy fwexibwe impwementation
+ * (at t-the cost of some pewfowmance, ^^;; since a-aww opewations w-wequiwe hash wookups). (✿oωo) instances
+ * and weights awe both encoded spawsewy (as m-maps) so this impwementation is weww suited to
+ * modews with wawge featuwe sets w-whewe most featuwes awe inactive a-at a given time. (U ﹏ U) w-weights
+ * f-fow unknown featuwes a-awe assumed to be 0. -.-
  *
  */
-public class StringMapBasedLinearModel implements MapBasedLinearModel<String> {
-  private static final Logger LOG = LoggerFactory.getLogger(StringMapBasedLinearModel.class);
+pubwic cwass stwingmapbasedwineawmodew i-impwements mapbasedwineawmodew<stwing> {
+  pwivate static f-finaw woggew wog = woggewfactowy.getwoggew(stwingmapbasedwineawmodew.cwass);
 
-  protected final Object2FloatMap<String> model = new Object2FloatOpenHashMap<>();
+  pwotected finaw object2fwoatmap<stwing> modew = nyew object2fwoatopenhashmap<>();
 
   /**
-   * Creates a model from a map of weights.
+   * c-cweates a modew fwom a map of weights. ^•ﻌ•^
    *
-   * @param weights Feature weights.
+   * @pawam w-weights f-featuwe weights. rawr
    */
-  public StringMapBasedLinearModel(Map<String, Float> weights) {
-    model.putAll(weights);
-    model.defaultReturnValue(0.0f);
+  p-pubwic stwingmapbasedwineawmodew(map<stwing, (˘ω˘) fwoat> weights) {
+    modew.putaww(weights);
+    m-modew.defauwtwetuwnvawue(0.0f);
   }
 
   /**
-   * Get the weight of a feature
-   * @param featureName
-   * @return
+   * g-get the weight of a featuwe
+   * @pawam featuwename
+   * @wetuwn
    */
-  public float getWeight(String featureName) {
-    return model.getFloat(featureName);
+  p-pubwic fwoat getweight(stwing f-featuwename) {
+    wetuwn modew.getfwoat(featuwename);
   }
 
   /**
-   * Get the full weight map
+   * g-get the fuww weight map
    */
-  @VisibleForTesting
-  protected Map<String, Float> getWeights() {
-    return model;
+  @visibwefowtesting
+  p-pwotected map<stwing, fwoat> getweights() {
+    w-wetuwn modew;
   }
 
   /**
-   * Evaluate using this model given a feature vector.
-   * @param values The feature vector in format of a hashmap.
-   * @return
+   * e-evawuate using this modew g-given a featuwe v-vectow. nyaa~~
+   * @pawam vawues the featuwe vectow in fowmat of a hashmap.
+   * @wetuwn
    */
-  @Override
-  public float score(Map<String, Float> values) {
-    float score = 0.0f;
-    for (Map.Entry<String, Float> value : values.entrySet()) {
-      String featureName = value.getKey();
-      float weight = getWeight(featureName);
-      if (weight != 0.0f) {
-        score += weight * value.getValue();
-        if (LOG.isDebugEnabled()) {
-          LOG.debug(String.format("%s = %.3f * %.3f = %.3f, ",
-              featureName, weight, value.getValue(),
-              weight * value.getValue()));
+  @ovewwide
+  pubwic fwoat scowe(map<stwing, fwoat> vawues) {
+    f-fwoat s-scowe = 0.0f;
+    fow (map.entwy<stwing, UwU f-fwoat> v-vawue : vawues.entwyset()) {
+      s-stwing featuwename = vawue.getkey();
+      fwoat weight = getweight(featuwename);
+      i-if (weight != 0.0f) {
+        scowe += weight * vawue.getvawue();
+        if (wog.isdebugenabwed()) {
+          wog.debug(stwing.fowmat("%s = %.3f * %.3f = %.3f, :3 ",
+              f-featuwename, (⑅˘꒳˘) weight, vawue.getvawue(), (///ˬ///✿)
+              w-weight * vawue.getvawue()));
         }
       }
     }
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(String.format("Score = %.3f", score));
+    if (wog.isdebugenabwed()) {
+      w-wog.debug(stwing.fowmat("scowe = %.3f", ^^;; s-scowe));
     }
-    return score;
+    wetuwn s-scowe;
   }
 
   /**
-   * Determines whether an instance is positive.
+   * d-detewmines w-whethew an i-instance is positive. >_<
    */
-  @Override
-  public boolean classify(Map<String, Float> values) {
-    return classify(0.0f, values);
+  @ovewwide
+  pubwic boowean cwassify(map<stwing, rawr x3 f-fwoat> v-vawues) {
+    w-wetuwn cwassify(0.0f, /(^•ω•^) v-vawues);
   }
 
-  @Override
-  public boolean classify(float threshold, Map<String, Float> values) {
-    return score(values) > threshold;
+  @ovewwide
+  p-pubwic boowean cwassify(fwoat thweshowd, :3 map<stwing, (ꈍᴗꈍ) fwoat> v-vawues) {
+    wetuwn scowe(vawues) > thweshowd;
   }
 
-  public int size() {
-    return model.size();
+  pubwic int size() {
+    wetuwn modew.size();
   }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("StringMapBasedLinearModel[");
-    for (Map.Entry<String, Float> entry : model.entrySet()) {
-      sb.append(String.format("(%s = %.3f), ", entry.getKey(), entry.getValue()));
+  @ovewwide
+  p-pubwic stwing tostwing() {
+    stwingbuiwdew sb = nyew stwingbuiwdew();
+    s-sb.append("stwingmapbasedwineawmodew[");
+    f-fow (map.entwy<stwing, /(^•ω•^) f-fwoat> entwy : modew.entwyset()) {
+      s-sb.append(stwing.fowmat("(%s = %.3f), (⑅˘꒳˘) ", entwy.getkey(), ( ͡o ω ͡o ) e-entwy.getvawue()));
     }
-    sb.append("]");
-    return sb.toString();
+    s-sb.append("]");
+    wetuwn sb.tostwing();
   }
 
   /**
-   * Loads the model from a TSV file with the following format:
+   * woads the modew fwom a tsv fiwe with the fowwowing f-fowmat:
    *
-   *    feature_name  \t  weight
+   *    featuwe_name  \t  w-weight
    */
-  public static StringMapBasedLinearModel loadFromFile(AbstractFile fileHandle) {
-    Map<String, Float> weights =
-        TextFileLoadingUtils.loadMapFromFile(
-            fileHandle,
-            (Function<String, Float>) item -> Float.parseFloat(item));
-    return new StringMapBasedLinearModel(weights);
+  pubwic s-static stwingmapbasedwineawmodew w-woadfwomfiwe(abstwactfiwe fiwehandwe) {
+    map<stwing, òωó fwoat> w-weights =
+        t-textfiwewoadingutiws.woadmapfwomfiwe(
+            fiwehandwe, (⑅˘꒳˘)
+            (function<stwing, XD f-fwoat>) item -> f-fwoat.pawsefwoat(item));
+    wetuwn nyew stwingmapbasedwineawmodew(weights);
   }
 }

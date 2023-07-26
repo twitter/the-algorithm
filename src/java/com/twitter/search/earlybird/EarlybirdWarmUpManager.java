@@ -1,100 +1,100 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
-import com.google.common.annotations.VisibleForTesting;
+impowt com.googwe.common.annotations.visibwefowtesting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common.zookeeper.ServerSet;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
+i-impowt c-com.twittew.common.utiw.cwock;
+impowt c-com.twittew.common.zookeepew.sewvewset;
+i-impowt c-com.twittew.decidew.decidew;
+i-impowt com.twittew.seawch.common.decidew.decidewutiw;
+impowt com.twittew.seawch.eawwybiwd.pawtition.pawtitionconfig;
+impowt com.twittew.seawch.eawwybiwd.pawtition.seawchindexingmetwicset;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdstatuscode;
 
-public class EarlybirdWarmUpManager {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdWarmUpManager.class);
-  private static final String WARM_UP_ON_DURATION_DECIDER_KEY_PATTERN =
-      "%s_warm_up_duration_seconds";
+pubwic c-cwass eawwybiwdwawmupmanagew {
+  pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(eawwybiwdwawmupmanagew.cwass);
+  pwivate static f-finaw stwing wawm_up_on_duwation_decidew_key_pattewn =
+      "%s_wawm_up_duwation_seconds";
 
-  private final EarlybirdServerSetManager earlybirdServerSetManager;
-  private final String clusterName;
-  private final SearchIndexingMetricSet.StartupMetric startUpInWarmUpMetric;
-  private final Decider decider;
-  private final Clock clock;
+  pwivate finaw eawwybiwdsewvewsetmanagew eawwybiwdsewvewsetmanagew;
+  pwivate finaw s-stwing cwustewname;
+  pwivate f-finaw seawchindexingmetwicset.stawtupmetwic s-stawtupinwawmupmetwic;
+  pwivate finaw decidew decidew;
+  pwivate finaw cwock cwock;
 
-  public EarlybirdWarmUpManager(EarlybirdServerSetManager earlybirdServerSetManager,
-                                PartitionConfig partitionConfig,
-                                SearchIndexingMetricSet searchIndexingMetricSet,
-                                Decider decider,
-                                Clock clock) {
-    this.earlybirdServerSetManager = earlybirdServerSetManager;
-    this.clusterName = partitionConfig.getClusterName();
-    this.startUpInWarmUpMetric = searchIndexingMetricSet.startupInWarmUp;
-    this.decider = decider;
-    this.clock = clock;
+  p-pubwic eawwybiwdwawmupmanagew(eawwybiwdsewvewsetmanagew eawwybiwdsewvewsetmanagew, 😳😳😳
+                                pawtitionconfig pawtitionconfig, mya
+                                seawchindexingmetwicset s-seawchindexingmetwicset, mya
+                                decidew d-decidew, (⑅˘꒳˘)
+                                c-cwock c-cwock) {
+    this.eawwybiwdsewvewsetmanagew = eawwybiwdsewvewsetmanagew;
+    t-this.cwustewname = pawtitionconfig.getcwustewname();
+    this.stawtupinwawmupmetwic = s-seawchindexingmetwicset.stawtupinwawmup;
+    this.decidew = decidew;
+    this.cwock = c-cwock;
   }
 
-  public String getServerSetIdentifier() {
-    return earlybirdServerSetManager.getServerSetIdentifier();
+  pubwic stwing getsewvewsetidentifiew() {
+    wetuwn eawwybiwdsewvewsetmanagew.getsewvewsetidentifiew();
   }
 
   /**
-   * Warms up the earlybird. The earlybird joins a special server set that gets production dark
-   * reads, and leaves this server set after a specified period of time.
+   * wawms up the eawwybiwd. (U ﹏ U) the eawwybiwd j-joins a speciaw sewvew set t-that gets pwoduction d-dawk
+   * w-weads, mya and weaves this sewvew set aftew a specified pewiod of time. ʘwʘ
    */
-  public void warmUp() throws InterruptedException, ServerSet.UpdateException {
-    int warmUpDurationSeconds = DeciderUtil.getAvailability(
-        decider,
-        String.format(WARM_UP_ON_DURATION_DECIDER_KEY_PATTERN, clusterName.replaceAll("-", "_")));
-    if (warmUpDurationSeconds == 0) {
-      LOG.info(String.format("Warm up stage duration for cluster %s set to 0. Skipping.",
-                             clusterName));
-      return;
+  p-pubwic v-void wawmup() thwows intewwuptedexception, (˘ω˘) s-sewvewset.updateexception {
+    i-int wawmupduwationseconds = d-decidewutiw.getavaiwabiwity(
+        decidew, (U ﹏ U)
+        stwing.fowmat(wawm_up_on_duwation_decidew_key_pattewn, ^•ﻌ•^ c-cwustewname.wepwaceaww("-", (˘ω˘) "_")));
+    if (wawmupduwationseconds == 0) {
+      wog.info(stwing.fowmat("wawm up stage duwation f-fow cwustew %s set to 0. :3 skipping.",
+                             c-cwustewname));
+      wetuwn;
     }
 
-    earlybirdServerSetManager.joinServerSet("internal warm up");
+    e-eawwybiwdsewvewsetmanagew.joinsewvewset("intewnaw w-wawm up");
 
-    // If doWarmUp() is interrupted, try to leave the server set, and propagate the
-    // InterruptedException. Otherwise, try to leave the server set, and propagate any exception
-    // that it might throw.
-    InterruptedException warmUpInterruptedException = null;
-    try {
-      doWarmUp(warmUpDurationSeconds);
-    } catch (InterruptedException e) {
-      warmUpInterruptedException = e;
-      throw e;
-    } finally {
-      if (warmUpInterruptedException != null) {
-        try {
-          earlybirdServerSetManager.leaveServerSet("internal warm up");
-        } catch (Exception e) {
-          warmUpInterruptedException.addSuppressed(e);
+    // if dowawmup() is intewwupted, ^^;; twy to weave the sewvew set, 🥺 and pwopagate the
+    // intewwuptedexception. (⑅˘꒳˘) othewwise, nyaa~~ t-twy to w-weave the sewvew set, :3 and pwopagate a-any exception
+    // t-that it m-might thwow. ( ͡o ω ͡o )
+    intewwuptedexception wawmupintewwuptedexception = nyuww;
+    t-twy {
+      dowawmup(wawmupduwationseconds);
+    } catch (intewwuptedexception e) {
+      wawmupintewwuptedexception = e;
+      thwow e;
+    } finawwy {
+      if (wawmupintewwuptedexception != n-nyuww) {
+        twy {
+          e-eawwybiwdsewvewsetmanagew.weavesewvewset("intewnaw w-wawm up");
+        } c-catch (exception e) {
+          w-wawmupintewwuptedexception.addsuppwessed(e);
         }
-      } else {
-        earlybirdServerSetManager.leaveServerSet("internal warm up");
+      } e-ewse {
+        e-eawwybiwdsewvewsetmanagew.weavesewvewset("intewnaw w-wawm up");
       }
     }
   }
 
-  @VisibleForTesting
-  protected void doWarmUp(int warmUpDurationSeconds) throws InterruptedException {
-    long warmUpStartTimeMillis = clock.nowMillis();
-    LOG.info(String.format("Warming up for %d seconds.", warmUpDurationSeconds));
-    EarlybirdStatus.beginEvent("warm_up", startUpInWarmUpMetric);
+  @visibwefowtesting
+  pwotected void dowawmup(int w-wawmupduwationseconds) t-thwows intewwuptedexception {
+    w-wong wawmupstawttimemiwwis = c-cwock.nowmiwwis();
+    w-wog.info(stwing.fowmat("wawming up fow %d seconds.", mya wawmupduwationseconds));
+    eawwybiwdstatus.beginevent("wawm_up", (///ˬ///✿) s-stawtupinwawmupmetwic);
 
-    // Sleep for warmUpDurationSeconds seconds, but check if the server is going down every second.
-    int count = 0;
-    try {
-      while ((count++ < warmUpDurationSeconds)
-             && (EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.STOPPING)) {
-        clock.waitFor(1000);
+    // sweep fow wawmupduwationseconds seconds, (˘ω˘) but check if the sewvew is going down evewy second. ^^;;
+    i-int count = 0;
+    twy {
+      whiwe ((count++ < wawmupduwationseconds)
+             && (eawwybiwdstatus.getstatuscode() != e-eawwybiwdstatuscode.stopping)) {
+        c-cwock.waitfow(1000);
       }
-    } finally {
-      LOG.info(String.format("Done warming up after %d milliseconds.",
-                             clock.nowMillis() - warmUpStartTimeMillis));
-      EarlybirdStatus.endEvent("warm_up", startUpInWarmUpMetric);
+    } f-finawwy {
+      wog.info(stwing.fowmat("done w-wawming up aftew %d miwwiseconds.", (✿oωo)
+                             c-cwock.nowmiwwis() - w-wawmupstawttimemiwwis));
+      eawwybiwdstatus.endevent("wawm_up", (U ﹏ U) stawtupinwawmupmetwic);
     }
   }
 }

@@ -1,37 +1,37 @@
-package com.twitter.simclusters_v2.tweet_similarity
+package com.twittew.simcwustews_v2.tweet_simiwawity
 
-import com.twitter.ml.api.{DataRecord, DataRecordMerger}
-import com.twitter.simclusters_v2.common.ml.{
-  SimClustersEmbeddingAdapter,
-  NormalizedSimClustersEmbeddingAdapter
+impowt com.twittew.mw.api.{datawecowd, rawr x3 d-datawecowdmewgew}
+i-impowt c-com.twittew.simcwustews_v2.common.mw.{
+  s-simcwustewsembeddingadaptew, (✿oωo)
+  n-nyowmawizedsimcwustewsembeddingadaptew
 }
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+i-impowt com.twittew.simcwustews_v2.common.simcwustewsembedding
 
-object ModelBasedTweetSimilaritySimClustersEmbeddingAdapter {
-  val QueryEmbAdapter = new SimClustersEmbeddingAdapter(TweetSimilarityFeatures.QueryTweetEmbedding)
-  val CandidateEmbAdapter = new SimClustersEmbeddingAdapter(
-    TweetSimilarityFeatures.CandidateTweetEmbedding)
+o-object modewbasedtweetsimiwawitysimcwustewsembeddingadaptew {
+  v-vaw quewyembadaptew = nyew simcwustewsembeddingadaptew(tweetsimiwawityfeatuwes.quewytweetembedding)
+  vaw candidateembadaptew = nyew simcwustewsembeddingadaptew(
+    tweetsimiwawityfeatuwes.candidatetweetembedding)
 
-  val NormalizedQueryEmbAdapter = new NormalizedSimClustersEmbeddingAdapter(
-    TweetSimilarityFeatures.QueryTweetEmbedding,
-    TweetSimilarityFeatures.QueryTweetEmbeddingNorm)
-  val NormalizedCandidateEmbAdapter = new NormalizedSimClustersEmbeddingAdapter(
-    TweetSimilarityFeatures.CandidateTweetEmbedding,
-    TweetSimilarityFeatures.CandidateTweetEmbeddingNorm)
+  v-vaw nowmawizedquewyembadaptew = nyew n-nowmawizedsimcwustewsembeddingadaptew(
+    tweetsimiwawityfeatuwes.quewytweetembedding, (ˆ ﻌ ˆ)♡
+    tweetsimiwawityfeatuwes.quewytweetembeddingnowm)
+  v-vaw nyowmawizedcandidateembadaptew = nyew nyowmawizedsimcwustewsembeddingadaptew(
+    tweetsimiwawityfeatuwes.candidatetweetembedding, (˘ω˘)
+    tweetsimiwawityfeatuwes.candidatetweetembeddingnowm)
 
-  def adaptEmbeddingPairToDataRecord(
-    queryEmbedding: SimClustersEmbedding,
-    candidateEmbedding: SimClustersEmbedding,
-    normalized: Boolean
-  ): DataRecord = {
-    val DataRecordMerger = new DataRecordMerger()
-    val queryAdapter = if (normalized) NormalizedQueryEmbAdapter else QueryEmbAdapter
-    val candidateAdapter = if (normalized) NormalizedCandidateEmbAdapter else CandidateEmbAdapter
+  d-def adaptembeddingpaiwtodatawecowd(
+    quewyembedding: s-simcwustewsembedding, (⑅˘꒳˘)
+    c-candidateembedding: simcwustewsembedding, (///ˬ///✿)
+    nyowmawized: boowean
+  ): datawecowd = {
+    vaw datawecowdmewgew = n-nyew datawecowdmewgew()
+    vaw quewyadaptew = if (nowmawized) nowmawizedquewyembadaptew ewse quewyembadaptew
+    v-vaw candidateadaptew = if (nowmawized) n-nyowmawizedcandidateembadaptew e-ewse candidateembadaptew
 
-    val featureDataRecord = queryAdapter.adaptToDataRecord(queryEmbedding)
-    DataRecordMerger.merge(
-      featureDataRecord,
-      candidateAdapter.adaptToDataRecord(candidateEmbedding))
-    featureDataRecord
+    vaw f-featuwedatawecowd = q-quewyadaptew.adapttodatawecowd(quewyembedding)
+    datawecowdmewgew.mewge(
+      featuwedatawecowd, 😳😳😳
+      c-candidateadaptew.adapttodatawecowd(candidateembedding))
+    featuwedatawecowd
   }
 }

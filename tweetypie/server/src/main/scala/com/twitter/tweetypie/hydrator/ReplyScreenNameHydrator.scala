@@ -1,33 +1,33 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.NotFound
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object ReplyScreenNameHydrator {
-  import TweetLenses.Reply.{inReplyToScreenName => screenNameLens}
+o-object w-wepwyscweennamehydwatow {
+  impowt t-tweetwenses.wepwy.{inwepwytoscweenname => scweennamewens}
 
-  type Type = ValueHydrator[Option[Reply], TweetCtx]
+  type type = vawuehydwatow[option[wepwy], rawr x3 tweetctx]
 
-  val hydratedField: FieldByPath =
-    fieldByPath(Tweet.CoreDataField, TweetCoreData.ReplyField, Reply.InReplyToScreenNameField)
+  vaw hydwatedfiewd: f-fiewdbypath =
+    fiewdbypath(tweet.cowedatafiewd, mya tweetcowedata.wepwyfiewd, nyaa~~ wepwy.inwepwytoscweennamefiewd)
 
-  def once(h: ValueHydrator[Option[Reply], TweetCtx]): Type =
-    TweetHydration.completeOnlyOnce(
-      hydrationType = HydrationType.ReplyScreenName,
-      hydrator = h
+  d-def once(h: vawuehydwatow[option[wepwy], (⑅˘꒳˘) t-tweetctx]): type =
+    tweethydwation.compweteonwyonce(
+      hydwationtype = hydwationtype.wepwyscweenname, rawr x3
+      h-hydwatow = h
     )
 
-  def apply[C](repo: UserIdentityRepository.Type): ValueHydrator[Option[Reply], C] =
-    ValueHydrator[Reply, C] { (reply, ctx) =>
-      val key = UserKey(reply.inReplyToUserId)
+  def a-appwy[c](wepo: u-usewidentitywepositowy.type): vawuehydwatow[option[wepwy], (✿oωo) c] =
+    vawuehydwatow[wepwy, (ˆ ﻌ ˆ)♡ c] { (wepwy, (˘ω˘) ctx) =>
+      v-vaw key = usewkey(wepwy.inwepwytousewid)
 
-      repo(key).liftToTry.map {
-        case Return(user) => ValueState.modified(screenNameLens.set(reply, Some(user.screenName)))
-        case Throw(NotFound) => ValueState.unmodified(reply)
-        case Throw(_) => ValueState.partial(reply, hydratedField)
+      wepo(key).wifttotwy.map {
+        case wetuwn(usew) => vawuestate.modified(scweennamewens.set(wepwy, (⑅˘꒳˘) some(usew.scweenname)))
+        c-case thwow(notfound) => vawuestate.unmodified(wepwy)
+        c-case thwow(_) => v-vawuestate.pawtiaw(wepwy, (///ˬ///✿) h-hydwatedfiewd)
       }
-    }.onlyIf((reply, _) => screenNameLens.get(reply).isEmpty).liftOption
+    }.onwyif((wepwy, 😳😳😳 _) => s-scweennamewens.get(wepwy).isempty).wiftoption
 }

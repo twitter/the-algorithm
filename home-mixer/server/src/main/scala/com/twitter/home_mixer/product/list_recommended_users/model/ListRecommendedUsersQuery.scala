@@ -1,31 +1,31 @@
-package com.twitter.home_mixer.product.list_recommended_users.model
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew
 
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProduct
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request._
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Params
+impowt com.twittew.home_mixew.modew.wequest.haswistid
+i-impowt c-com.twittew.home_mixew.modew.wequest.wistwecommendedusewspwoduct
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtunowdewedexcwudeidscuwsow
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest._
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.timewines.configapi.pawams
 
-case class ListRecommendedUsersQuery(
-  override val listId: Long,
-  override val params: Params,
-  override val clientContext: ClientContext,
-  override val pipelineCursor: Option[UrtUnorderedExcludeIdsCursor],
-  override val requestedMaxResults: Option[Int],
-  override val debugOptions: Option[DebugOptions],
-  override val features: Option[FeatureMap],
-  selectedUserIds: Option[Seq[Long]],
-  excludedUserIds: Option[Seq[Long]],
-  listName: Option[String])
-    extends PipelineQuery
-    with HasPipelineCursor[UrtUnorderedExcludeIdsCursor]
-    with HasListId {
+case cwass wistwecommendedusewsquewy(
+  ovewwide vaw wistid: wong, rawr x3
+  ovewwide v-vaw pawams: pawams, (✿oωo)
+  ovewwide vaw cwientcontext: c-cwientcontext, (ˆ ﻌ ˆ)♡
+  ovewwide vaw p-pipewinecuwsow: option[uwtunowdewedexcwudeidscuwsow], (˘ω˘)
+  ovewwide vaw wequestedmaxwesuwts: o-option[int], (⑅˘꒳˘)
+  ovewwide v-vaw debugoptions: o-option[debugoptions], (///ˬ///✿)
+  ovewwide vaw featuwes: option[featuwemap], 😳😳😳
+  sewectedusewids: o-option[seq[wong]], 🥺
+  excwudedusewids: option[seq[wong]], mya
+  wistname: option[stwing])
+    extends pipewinequewy
+    with h-haspipewinecuwsow[uwtunowdewedexcwudeidscuwsow]
+    with haswistid {
 
-  override val product: Product = ListRecommendedUsersProduct
+  o-ovewwide v-vaw pwoduct: p-pwoduct = wistwecommendedusewspwoduct
 
-  override def withFeatureMap(features: FeatureMap): ListRecommendedUsersQuery =
-    copy(features = Some(features))
+  o-ovewwide def withfeatuwemap(featuwes: featuwemap): wistwecommendedusewsquewy =
+    c-copy(featuwes = some(featuwes))
 }

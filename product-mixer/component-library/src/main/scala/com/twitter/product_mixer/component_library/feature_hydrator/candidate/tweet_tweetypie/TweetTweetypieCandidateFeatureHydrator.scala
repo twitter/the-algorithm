@@ -1,241 +1,241 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tweetypie
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.tweet_tweetypie
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.thriftscala.TweetVisibilityPolicy
-import com.twitter.tweetypie.{thriftscala => TP}
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.spam.wtf.thwiftscawa.safetywevew
+impowt c-com.twittew.stitch.stitch
+impowt com.twittew.stitch.tweetypie.{tweetypie => t-tweetypiestitchcwient}
+impowt com.twittew.tweetypie.thwiftscawa.tweetvisibiwitypowicy
+i-impowt com.twittew.tweetypie.{thwiftscawa => tp}
 
-// Candidate Features
-object IsCommunityTweetFeature extends Feature[TweetCandidate, Boolean]
+// candidate featuwes
+object iscommunitytweetfeatuwe e-extends featuwe[tweetcandidate, (˘ω˘) b-boowean]
 
-// Tweetypie VF Features
-object HasTakedownFeature extends Feature[TweetCandidate, Boolean]
-object HasTakedownForLocaleFeature extends Feature[TweetCandidate, Boolean]
-object IsHydratedFeature extends Feature[TweetCandidate, Boolean]
-object IsNarrowcastFeature extends Feature[TweetCandidate, Boolean]
-object IsNsfwAdminFeature extends Feature[TweetCandidate, Boolean]
-object IsNsfwFeature extends Feature[TweetCandidate, Boolean]
-object IsNsfwUserFeature extends Feature[TweetCandidate, Boolean]
-object IsNullcastFeature extends Feature[TweetCandidate, Boolean]
-object QuotedTweetDroppedFeature extends Feature[TweetCandidate, Boolean]
-object QuotedTweetHasTakedownFeature extends Feature[TweetCandidate, Boolean]
-object QuotedTweetHasTakedownForLocaleFeature extends Feature[TweetCandidate, Boolean]
-object QuotedTweetIdFeature extends Feature[TweetCandidate, Option[Long]]
-object SourceTweetHasTakedownFeature extends Feature[TweetCandidate, Boolean]
-object SourceTweetHasTakedownForLocaleFeature extends Feature[TweetCandidate, Boolean]
-object TakedownCountryCodesFeature extends Feature[TweetCandidate, Set[String]]
-object IsReplyFeature extends Feature[TweetCandidate, Boolean]
-object InReplyToFeature extends Feature[TweetCandidate, Option[Long]]
-object IsRetweetFeature extends Feature[TweetCandidate, Boolean]
+// t-tweetypie vf featuwes
+object hastakedownfeatuwe extends featuwe[tweetcandidate, rawr boowean]
+o-object hastakedownfowwocawefeatuwe extends featuwe[tweetcandidate, OwO boowean]
+object ishydwatedfeatuwe extends featuwe[tweetcandidate, ^•ﻌ•^ b-boowean]
+object isnawwowcastfeatuwe e-extends f-featuwe[tweetcandidate, UwU b-boowean]
+o-object isnsfwadminfeatuwe extends featuwe[tweetcandidate, (˘ω˘) b-boowean]
+object isnsfwfeatuwe extends f-featuwe[tweetcandidate, (///ˬ///✿) boowean]
+object isnsfwusewfeatuwe extends featuwe[tweetcandidate, σωσ boowean]
+o-object isnuwwcastfeatuwe extends f-featuwe[tweetcandidate, /(^•ω•^) b-boowean]
+o-object quotedtweetdwoppedfeatuwe extends featuwe[tweetcandidate, 😳 boowean]
+o-object quotedtweethastakedownfeatuwe e-extends featuwe[tweetcandidate, 😳 boowean]
+object q-quotedtweethastakedownfowwocawefeatuwe e-extends featuwe[tweetcandidate, (⑅˘꒳˘) b-boowean]
+object quotedtweetidfeatuwe e-extends featuwe[tweetcandidate, 😳😳😳 option[wong]]
+object souwcetweethastakedownfeatuwe e-extends featuwe[tweetcandidate, 😳 boowean]
+object s-souwcetweethastakedownfowwocawefeatuwe extends f-featuwe[tweetcandidate, XD b-boowean]
+object takedowncountwycodesfeatuwe extends featuwe[tweetcandidate, set[stwing]]
+object iswepwyfeatuwe extends f-featuwe[tweetcandidate, mya b-boowean]
+object inwepwytofeatuwe e-extends f-featuwe[tweetcandidate, ^•ﻌ•^ o-option[wong]]
+object iswetweetfeatuwe extends featuwe[tweetcandidate, ʘwʘ b-boowean]
 
-object TweetTweetypieCandidateFeatureHydrator {
-  val CoreTweetFields: Set[TP.TweetInclude] = Set[TP.TweetInclude](
-    TP.TweetInclude.TweetFieldId(TP.Tweet.IdField.id),
-    TP.TweetInclude.TweetFieldId(TP.Tweet.CoreDataField.id)
+object tweettweetypiecandidatefeatuwehydwatow {
+  vaw cowetweetfiewds: set[tp.tweetincwude] = s-set[tp.tweetincwude](
+    tp.tweetincwude.tweetfiewdid(tp.tweet.idfiewd.id), ( ͡o ω ͡o )
+    t-tp.tweetincwude.tweetfiewdid(tp.tweet.cowedatafiewd.id)
   )
 
-  val NsfwLabelFields: Set[TP.TweetInclude] = Set[TP.TweetInclude](
-    // Tweet fields containing NSFW related attributes, in addition to what exists in coreData.
-    TP.TweetInclude.TweetFieldId(TP.Tweet.NsfwHighRecallLabelField.id),
-    TP.TweetInclude.TweetFieldId(TP.Tweet.NsfwHighPrecisionLabelField.id),
-    TP.TweetInclude.TweetFieldId(TP.Tweet.NsfaHighRecallLabelField.id)
+  v-vaw nysfwwabewfiewds: s-set[tp.tweetincwude] = set[tp.tweetincwude](
+    // t-tweet fiewds c-containing nysfw w-wewated attwibutes, mya i-in addition to nyani exists in cowedata. o.O
+    t-tp.tweetincwude.tweetfiewdid(tp.tweet.nsfwhighwecawwwabewfiewd.id), (✿oωo)
+    t-tp.tweetincwude.tweetfiewdid(tp.tweet.nsfwhighpwecisionwabewfiewd.id), :3
+    t-tp.tweetincwude.tweetfiewdid(tp.tweet.nsfahighwecawwwabewfiewd.id)
   )
 
-  val SafetyLabelFields: Set[TP.TweetInclude] = Set[TP.TweetInclude](
-    // Tweet fields containing RTF labels for abuse and spam.
-    TP.TweetInclude.TweetFieldId(TP.Tweet.SpamLabelField.id),
-    TP.TweetInclude.TweetFieldId(TP.Tweet.AbusiveLabelField.id)
+  v-vaw safetywabewfiewds: s-set[tp.tweetincwude] = set[tp.tweetincwude](
+    // tweet fiewds containing w-wtf wabews fow abuse and spam. 😳
+    tp.tweetincwude.tweetfiewdid(tp.tweet.spamwabewfiewd.id),
+    tp.tweetincwude.tweetfiewdid(tp.tweet.abusivewabewfiewd.id)
   )
 
-  val OrganicTweetTPHydrationFields: Set[TP.TweetInclude] = CoreTweetFields ++
-    NsfwLabelFields ++
-    SafetyLabelFields ++
-    Set(
-      TP.TweetInclude.TweetFieldId(TP.Tweet.TakedownCountryCodesField.id),
-      // QTs imply a TweetyPie -> SGS request dependency
-      TP.TweetInclude.TweetFieldId(TP.Tweet.QuotedTweetField.id),
-      TP.TweetInclude.TweetFieldId(TP.Tweet.EscherbirdEntityAnnotationsField.id),
-      TP.TweetInclude.TweetFieldId(TP.Tweet.CommunitiesField.id),
-      // Field required for determining if a Tweet was created via News Camera.
-      TP.TweetInclude.TweetFieldId(TP.Tweet.ComposerSourceField.id)
+  vaw owganictweettphydwationfiewds: set[tp.tweetincwude] = c-cowetweetfiewds ++
+    nysfwwabewfiewds ++
+    safetywabewfiewds ++
+    set(
+      t-tp.tweetincwude.tweetfiewdid(tp.tweet.takedowncountwycodesfiewd.id), (U ﹏ U)
+      // q-qts impwy a tweetypie -> s-sgs wequest dependency
+      t-tp.tweetincwude.tweetfiewdid(tp.tweet.quotedtweetfiewd.id), mya
+      tp.tweetincwude.tweetfiewdid(tp.tweet.eschewbiwdentityannotationsfiewd.id),
+      t-tp.tweetincwude.tweetfiewdid(tp.tweet.communitiesfiewd.id), (U ᵕ U❁)
+      // f-fiewd wequiwed fow detewmining if a tweet was cweated via nyews camewa. :3
+      tp.tweetincwude.tweetfiewdid(tp.tweet.composewsouwcefiewd.id)
     )
 
-  val InjectedTweetTPHydrationFields: Set[TP.TweetInclude] =
-    OrganicTweetTPHydrationFields ++ Set(
-      // Mentions imply a TweetyPie -> Gizmoduck request dependency
-      TP.TweetInclude.TweetFieldId(TP.Tweet.MentionsField.id),
-      TP.TweetInclude.TweetFieldId(TP.Tweet.HashtagsField.id)
+  vaw injectedtweettphydwationfiewds: s-set[tp.tweetincwude] =
+    owganictweettphydwationfiewds ++ s-set(
+      // mentions impwy a-a tweetypie -> g-gizmoduck wequest dependency
+      tp.tweetincwude.tweetfiewdid(tp.tweet.mentionsfiewd.id), mya
+      t-tp.tweetincwude.tweetfiewdid(tp.tweet.hashtagsfiewd.id)
     )
 
-  val DefaultFeatureMap = FeatureMapBuilder()
-    .add(IsNsfwAdminFeature, false)
-    .add(IsNsfwUserFeature, false)
-    .add(IsNsfwFeature, false)
-    .add(IsNullcastFeature, false)
-    .add(IsNarrowcastFeature, false)
-    .add(HasTakedownFeature, false)
-    .add(IsCommunityTweetFeature, false)
-    .add(TakedownCountryCodesFeature, Set.empty: Set[String])
-    .add(IsHydratedFeature, false)
-    .add(HasTakedownForLocaleFeature, false)
-    .add(QuotedTweetDroppedFeature, false)
-    .add(SourceTweetHasTakedownFeature, false)
-    .add(QuotedTweetHasTakedownFeature, false)
-    .add(SourceTweetHasTakedownForLocaleFeature, false)
-    .add(QuotedTweetHasTakedownForLocaleFeature, false)
-    .add(IsReplyFeature, false)
-    .add(InReplyToFeature, None)
-    .add(IsRetweetFeature, false)
-    .build()
+  v-vaw defauwtfeatuwemap = featuwemapbuiwdew()
+    .add(isnsfwadminfeatuwe, OwO f-fawse)
+    .add(isnsfwusewfeatuwe, (ˆ ﻌ ˆ)♡ f-fawse)
+    .add(isnsfwfeatuwe, ʘwʘ fawse)
+    .add(isnuwwcastfeatuwe, o.O fawse)
+    .add(isnawwowcastfeatuwe, UwU fawse)
+    .add(hastakedownfeatuwe, rawr x3 fawse)
+    .add(iscommunitytweetfeatuwe, 🥺 f-fawse)
+    .add(takedowncountwycodesfeatuwe, :3 s-set.empty: set[stwing])
+    .add(ishydwatedfeatuwe, (ꈍᴗꈍ) f-fawse)
+    .add(hastakedownfowwocawefeatuwe, 🥺 fawse)
+    .add(quotedtweetdwoppedfeatuwe, (✿oωo) f-fawse)
+    .add(souwcetweethastakedownfeatuwe, (U ﹏ U) f-fawse)
+    .add(quotedtweethastakedownfeatuwe, :3 fawse)
+    .add(souwcetweethastakedownfowwocawefeatuwe, ^^;; f-fawse)
+    .add(quotedtweethastakedownfowwocawefeatuwe, rawr fawse)
+    .add(iswepwyfeatuwe, 😳😳😳 fawse)
+    .add(inwepwytofeatuwe, (✿oωo) nyone)
+    .add(iswetweetfeatuwe, OwO fawse)
+    .buiwd()
 }
 
-class TweetTweetypieCandidateFeatureHydrator(
-  tweetypieStitchClient: TweetypieStitchClient,
-  safetyLevelPredicate: PipelineQuery => SafetyLevel)
-    extends CandidateFeatureHydrator[PipelineQuery, BaseTweetCandidate] {
+c-cwass tweettweetypiecandidatefeatuwehydwatow(
+  t-tweetypiestitchcwient: tweetypiestitchcwient, ʘwʘ
+  safetywevewpwedicate: p-pipewinequewy => s-safetywevew)
+    extends candidatefeatuwehydwatow[pipewinequewy, (ˆ ﻌ ˆ)♡ basetweetcandidate] {
 
-  import TweetTweetypieCandidateFeatureHydrator._
+  impowt tweettweetypiecandidatefeatuwehydwatow._
 
-  override val features: Set[Feature[_, _]] =
-    Set(
-      IsNsfwFeature,
-      IsNsfwAdminFeature,
-      IsNsfwUserFeature,
-      IsNullcastFeature,
-      IsNarrowcastFeature,
-      HasTakedownFeature,
-      IsCommunityTweetFeature,
-      TakedownCountryCodesFeature,
-      IsHydratedFeature,
-      HasTakedownForLocaleFeature,
-      QuotedTweetDroppedFeature,
-      SourceTweetHasTakedownFeature,
-      QuotedTweetHasTakedownFeature,
-      SourceTweetHasTakedownForLocaleFeature,
-      QuotedTweetHasTakedownForLocaleFeature,
-      IsReplyFeature,
-      InReplyToFeature,
-      IsRetweetFeature
+  ovewwide v-vaw featuwes: set[featuwe[_, (U ﹏ U) _]] =
+    set(
+      isnsfwfeatuwe, UwU
+      isnsfwadminfeatuwe, XD
+      i-isnsfwusewfeatuwe, ʘwʘ
+      isnuwwcastfeatuwe, rawr x3
+      isnawwowcastfeatuwe, ^^;;
+      h-hastakedownfeatuwe, ʘwʘ
+      i-iscommunitytweetfeatuwe, (U ﹏ U)
+      takedowncountwycodesfeatuwe, (˘ω˘)
+      ishydwatedfeatuwe, (ꈍᴗꈍ)
+      hastakedownfowwocawefeatuwe, /(^•ω•^)
+      q-quotedtweetdwoppedfeatuwe, >_<
+      s-souwcetweethastakedownfeatuwe, σωσ
+      quotedtweethastakedownfeatuwe, ^^;;
+      souwcetweethastakedownfowwocawefeatuwe, 😳
+      quotedtweethastakedownfowwocawefeatuwe, >_<
+      i-iswepwyfeatuwe, -.-
+      inwepwytofeatuwe, UwU
+      iswetweetfeatuwe
     )
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TweetTweetypie")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("tweettweetypie")
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: BaseTweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    val countryCode = query.getCountryCode.getOrElse("")
+  o-ovewwide def appwy(
+    quewy: p-pipewinequewy, :3
+    c-candidate: basetweetcandidate, σωσ
+    existingfeatuwes: f-featuwemap
+  ): stitch[featuwemap] = {
+    v-vaw countwycode = q-quewy.getcountwycode.getowewse("")
 
-    tweetypieStitchClient
-      .getTweetFields(
-        tweetId = candidate.id,
-        options = TP.GetTweetFieldsOptions(
-          tweetIncludes = OrganicTweetTPHydrationFields,
-          includeRetweetedTweet = true,
-          includeQuotedTweet = true,
-          visibilityPolicy = TweetVisibilityPolicy.UserVisible,
-          safetyLevel = Some(safetyLevelPredicate(query))
+    t-tweetypiestitchcwient
+      .gettweetfiewds(
+        tweetid = candidate.id, >w<
+        o-options = tp.gettweetfiewdsoptions(
+          t-tweetincwudes = owganictweettphydwationfiewds, (ˆ ﻌ ˆ)♡
+          incwudewetweetedtweet = t-twue, ʘwʘ
+          i-incwudequotedtweet = t-twue, :3
+          visibiwitypowicy = tweetvisibiwitypowicy.usewvisibwe, (˘ω˘)
+          s-safetywevew = some(safetywevewpwedicate(quewy))
         )
       ).map {
-        case TP.GetTweetFieldsResult(_, TP.TweetFieldsResultState.Found(found), quoteOpt, _) =>
-          val coreData = found.tweet.coreData
-          val isNsfwAdmin = coreData.exists(_.nsfwAdmin)
-          val isNsfwUser = coreData.exists(_.nsfwUser)
-          val hasTakedown = coreData.exists(_.hasTakedown)
-          val isReply = coreData.exists(_.reply.nonEmpty)
-          val ancestorId = coreData.flatMap(_.reply).flatMap(_.inReplyToStatusId)
-          val isRetweet = coreData.exists(_.share.nonEmpty)
-          val takedownCountryCodes =
-            found.tweet.takedownCountryCodes.getOrElse(Seq.empty).map(_.toLowerCase).toSet
+        c-case tp.gettweetfiewdswesuwt(_, 😳😳😳 t-tp.tweetfiewdswesuwtstate.found(found), rawr x3 quoteopt, (✿oωo) _) =>
+          vaw cowedata = found.tweet.cowedata
+          v-vaw isnsfwadmin = c-cowedata.exists(_.nsfwadmin)
+          vaw i-isnsfwusew = c-cowedata.exists(_.nsfwusew)
+          vaw hastakedown = c-cowedata.exists(_.hastakedown)
+          vaw iswepwy = cowedata.exists(_.wepwy.nonempty)
+          vaw ancestowid = cowedata.fwatmap(_.wepwy).fwatmap(_.inwepwytostatusid)
+          vaw iswetweet = cowedata.exists(_.shawe.nonempty)
+          v-vaw takedowncountwycodes =
+            found.tweet.takedowncountwycodes.getowewse(seq.empty).map(_.towowewcase).toset
 
-          val quotedTweetDropped = quoteOpt.exists {
-            case _: TP.TweetFieldsResultState.Filtered =>
-              true
-            case _: TP.TweetFieldsResultState.NotFound =>
-              true
-            case _ => false
+          v-vaw quotedtweetdwopped = quoteopt.exists {
+            c-case _: tp.tweetfiewdswesuwtstate.fiwtewed =>
+              twue
+            c-case _: tp.tweetfiewdswesuwtstate.notfound =>
+              t-twue
+            c-case _ => f-fawse
           }
-          val quotedTweetIsNsfw = quoteOpt.exists {
-            case quoteTweet: TP.TweetFieldsResultState.Found =>
-              quoteTweet.found.tweet.coreData.exists(data => data.nsfwAdmin || data.nsfwUser)
-            case _ => false
+          v-vaw quotedtweetisnsfw = q-quoteopt.exists {
+            case quotetweet: tp.tweetfiewdswesuwtstate.found =>
+              quotetweet.found.tweet.cowedata.exists(data => data.nsfwadmin || data.nsfwusew)
+            case _ => fawse
           }
-          val quotedTweetHasTakedown = quoteOpt.exists {
-            case quoteTweet: TP.TweetFieldsResultState.Found =>
-              quoteTweet.found.tweet.coreData.exists(_.hasTakedown)
-            case _ => false
+          v-vaw quotedtweethastakedown = q-quoteopt.exists {
+            c-case quotetweet: tp.tweetfiewdswesuwtstate.found =>
+              q-quotetweet.found.tweet.cowedata.exists(_.hastakedown)
+            case _ => fawse
           }
-          val quotedTweetTakedownCountryCodes = quoteOpt
-            .collect {
-              case quoteTweet: TP.TweetFieldsResultState.Found =>
-                quoteTweet.found.tweet.takedownCountryCodes
-                  .getOrElse(Seq.empty).map(_.toLowerCase).toSet
-            }.getOrElse(Set.empty[String])
+          vaw quotedtweettakedowncountwycodes = q-quoteopt
+            .cowwect {
+              c-case quotetweet: tp.tweetfiewdswesuwtstate.found =>
+                q-quotetweet.found.tweet.takedowncountwycodes
+                  .getowewse(seq.empty).map(_.towowewcase).toset
+            }.getowewse(set.empty[stwing])
 
-          val sourceTweetIsNsfw =
-            found.retweetedTweet.exists(_.coreData.exists(data => data.nsfwAdmin || data.nsfwUser))
-          val sourceTweetHasTakedown =
-            found.retweetedTweet.exists(_.coreData.exists(_.hasTakedown))
-          val sourceTweetTakedownCountryCodes = found.retweetedTweet
-            .map { sourceTweet: TP.Tweet =>
-              sourceTweet.takedownCountryCodes.getOrElse(Seq.empty).map(_.toLowerCase).toSet
-            }.getOrElse(Set.empty)
+          vaw souwcetweetisnsfw =
+            found.wetweetedtweet.exists(_.cowedata.exists(data => data.nsfwadmin || d-data.nsfwusew))
+          v-vaw souwcetweethastakedown =
+            found.wetweetedtweet.exists(_.cowedata.exists(_.hastakedown))
+          v-vaw souwcetweettakedowncountwycodes = f-found.wetweetedtweet
+            .map { souwcetweet: tp.tweet =>
+              souwcetweet.takedowncountwycodes.getowewse(seq.empty).map(_.towowewcase).toset
+            }.getowewse(set.empty)
 
-          FeatureMapBuilder()
-            .add(IsNsfwAdminFeature, isNsfwAdmin)
-            .add(IsNsfwUserFeature, isNsfwUser)
-            .add(IsNsfwFeature, isNsfwAdmin || isNsfwUser || sourceTweetIsNsfw || quotedTweetIsNsfw)
-            .add(IsNullcastFeature, coreData.exists(_.nullcast))
-            .add(IsNarrowcastFeature, coreData.exists(_.narrowcast.nonEmpty))
-            .add(HasTakedownFeature, hasTakedown)
+          featuwemapbuiwdew()
+            .add(isnsfwadminfeatuwe, (ˆ ﻌ ˆ)♡ isnsfwadmin)
+            .add(isnsfwusewfeatuwe, i-isnsfwusew)
+            .add(isnsfwfeatuwe, :3 i-isnsfwadmin || i-isnsfwusew || s-souwcetweetisnsfw || q-quotedtweetisnsfw)
+            .add(isnuwwcastfeatuwe, (U ᵕ U❁) cowedata.exists(_.nuwwcast))
+            .add(isnawwowcastfeatuwe, ^^;; c-cowedata.exists(_.nawwowcast.nonempty))
+            .add(hastakedownfeatuwe, mya h-hastakedown)
             .add(
-              HasTakedownForLocaleFeature,
-              hasTakedownForLocale(hasTakedown, countryCode, takedownCountryCodes))
-            .add(QuotedTweetDroppedFeature, quotedTweetDropped)
-            .add(SourceTweetHasTakedownFeature, sourceTweetHasTakedown)
-            .add(QuotedTweetHasTakedownFeature, quotedTweetHasTakedown)
+              hastakedownfowwocawefeatuwe, 😳😳😳
+              h-hastakedownfowwocawe(hastakedown, OwO c-countwycode, rawr takedowncountwycodes))
+            .add(quotedtweetdwoppedfeatuwe, XD q-quotedtweetdwopped)
+            .add(souwcetweethastakedownfeatuwe, (U ﹏ U) souwcetweethastakedown)
+            .add(quotedtweethastakedownfeatuwe, (˘ω˘) quotedtweethastakedown)
             .add(
-              SourceTweetHasTakedownForLocaleFeature,
-              hasTakedownForLocale(
-                sourceTweetHasTakedown,
-                countryCode,
-                sourceTweetTakedownCountryCodes))
+              s-souwcetweethastakedownfowwocawefeatuwe, UwU
+              hastakedownfowwocawe(
+                s-souwcetweethastakedown, >_<
+                c-countwycode, σωσ
+                souwcetweettakedowncountwycodes))
             .add(
-              QuotedTweetHasTakedownForLocaleFeature,
-              hasTakedownForLocale(
-                quotedTweetHasTakedown,
-                countryCode,
-                quotedTweetTakedownCountryCodes))
-            .add(IsCommunityTweetFeature, found.tweet.communities.exists(_.communityIds.nonEmpty))
+              q-quotedtweethastakedownfowwocawefeatuwe, 🥺
+              hastakedownfowwocawe(
+                quotedtweethastakedown, 🥺
+                c-countwycode, ʘwʘ
+                q-quotedtweettakedowncountwycodes))
+            .add(iscommunitytweetfeatuwe, :3 f-found.tweet.communities.exists(_.communityids.nonempty))
             .add(
-              TakedownCountryCodesFeature,
-              found.tweet.takedownCountryCodes.getOrElse(Seq.empty).map(_.toLowerCase).toSet)
-            .add(IsHydratedFeature, true)
-            .add(IsReplyFeature, isReply)
-            .add(InReplyToFeature, ancestorId)
-            .add(IsRetweetFeature, isRetweet)
-            .build()
+              takedowncountwycodesfeatuwe, (U ﹏ U)
+              found.tweet.takedowncountwycodes.getowewse(seq.empty).map(_.towowewcase).toset)
+            .add(ishydwatedfeatuwe, (U ﹏ U) twue)
+            .add(iswepwyfeatuwe, ʘwʘ i-iswepwy)
+            .add(inwepwytofeatuwe, >w< ancestowid)
+            .add(iswetweetfeatuwe, rawr x3 iswetweet)
+            .buiwd()
 
-        // If no tweet result found, return default features
+        // i-if nyo tweet w-wesuwt found, OwO wetuwn defauwt f-featuwes
         case _ =>
-          DefaultFeatureMap
+          d-defauwtfeatuwemap
       }
   }
 
-  private def hasTakedownForLocale(
-    hasTakedown: Boolean,
-    countryCode: String,
-    takedownCountryCodes: Set[String]
-  ) = hasTakedown && takedownCountryCodes.contains(countryCode)
+  p-pwivate def hastakedownfowwocawe(
+    hastakedown: b-boowean, ^•ﻌ•^
+    countwycode: stwing, >_<
+    t-takedowncountwycodes: s-set[stwing]
+  ) = hastakedown && t-takedowncountwycodes.contains(countwycode)
 }

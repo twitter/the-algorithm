@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class RichTextMarshaller @Inject() (
-  richTextEntityMarshaller: RichTextEntityMarshaller,
-  richTextAlignmentMarshaller: RichTextAlignmentMarshaller) {
+@singweton
+c-cwass wichtextmawshawwew @inject() (
+  w-wichtextentitymawshawwew: w-wichtextentitymawshawwew, (⑅˘꒳˘)
+  wichtextawignmentmawshawwew: wichtextawignmentmawshawwew) {
 
-  def apply(richText: RichText): urt.RichText = urt.RichText(
-    text = richText.text,
-    entities = richText.entities.map(richTextEntityMarshaller(_)),
-    rtl = richText.rtl,
-    alignment = richText.alignment.map(richTextAlignmentMarshaller(_))
+  def appwy(wichtext: wichtext): uwt.wichtext = u-uwt.wichtext(
+    text = wichtext.text, (U ᵕ U❁)
+    e-entities = wichtext.entities.map(wichtextentitymawshawwew(_)), -.-
+    w-wtw = wichtext.wtw, ^^;;
+    awignment = wichtext.awignment.map(wichtextawignmentmawshawwew(_))
   )
 }

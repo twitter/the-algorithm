@@ -1,67 +1,67 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.util.Throw
-import com.twitter.util.Time
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stowage.cwient.manhattan.kv.deniedmanhattanexception
+i-impowt c-com.twittew.tweetypie.stowage.tweetutiws._
+i-impowt com.twittew.utiw.thwow
+i-impowt c-com.twittew.utiw.time
 
-object DeleteAdditionalFieldsHandler {
-  def apply(
-    delete: ManhattanOperations.Delete,
-    stats: StatsReceiver
-  ): TweetStorageClient.DeleteAdditionalFields =
-    (unfilteredTweetIds: Seq[TweetId], additionalFields: Seq[Field]) => {
-      val tweetIds = unfilteredTweetIds.filter(_ > 0)
-      val additionalFieldIds = additionalFields.map(_.id)
-      require(additionalFields.nonEmpty, "Additional fields to delete cannot be empty")
-      require(
-        additionalFieldIds.min >= TweetFields.firstAdditionalFieldId,
-        s"Additional fields $additionalFields must be in additional field range (>= ${TweetFields.firstAdditionalFieldId})"
+o-object deweteadditionawfiewdshandwew {
+  def appwy(
+    dewete: manhattanopewations.dewete, (U ﹏ U)
+    stats: s-statsweceivew
+  ): tweetstowagecwient.deweteadditionawfiewds =
+    (unfiwtewedtweetids: seq[tweetid], (///ˬ///✿) a-additionawfiewds: seq[fiewd]) => {
+      v-vaw tweetids = unfiwtewedtweetids.fiwtew(_ > 0)
+      vaw additionawfiewdids = additionawfiewds.map(_.id)
+      w-wequiwe(additionawfiewds.nonempty, >w< "additionaw fiewds to dewete c-cannot be empty")
+      w-wequiwe(
+        additionawfiewdids.min >= tweetfiewds.fiwstadditionawfiewdid, rawr
+        s"additionaw fiewds $additionawfiewds must be in a-additionaw fiewd wange (>= ${tweetfiewds.fiwstadditionawfiewdid})"
       )
 
-      Stats.addWidthStat("deleteAdditionalFields", "tweetIds", tweetIds.size, stats)
-      Stats.addWidthStat(
-        "deleteAdditionalFields",
-        "additionalFieldIds",
-        additionalFieldIds.size,
+      stats.addwidthstat("deweteadditionawfiewds", mya "tweetids", ^^ tweetids.size, 😳😳😳 stats)
+      s-stats.addwidthstat(
+        "deweteadditionawfiewds", mya
+        "additionawfiewdids", 😳
+        additionawfiewdids.size, -.-
+        s-stats
+      )
+      s-stats.updatepewfiewdqpscountews(
+        "deweteadditionawfiewds", 🥺
+        a-additionawfiewdids, o.O
+        t-tweetids.size, /(^•ω•^)
         stats
       )
-      Stats.updatePerFieldQpsCounters(
-        "deleteAdditionalFields",
-        additionalFieldIds,
-        tweetIds.size,
-        stats
-      )
-      val mhTimestamp = Time.now
+      vaw m-mhtimestamp = time.now
 
-      val stitches = tweetIds.map { tweetId =>
-        val (fieldIds, mhKeysToDelete) =
-          additionalFieldIds.map { fieldId =>
-            (fieldId, TweetKey.additionalFieldsKey(tweetId, fieldId))
+      vaw stitches = tweetids.map { t-tweetid =>
+        vaw (fiewdids, nyaa~~ mhkeystodewete) =
+          additionawfiewdids.map { fiewdid =>
+            (fiewdid, tweetkey.additionawfiewdskey(tweetid, nyaa~~ fiewdid))
           }.unzip
 
-        val deletionStitches = mhKeysToDelete.map { mhKeyToDelete =>
-          delete(mhKeyToDelete, Some(mhTimestamp)).liftToTry
+        vaw d-dewetionstitches = mhkeystodewete.map { m-mhkeytodewete =>
+          d-dewete(mhkeytodewete, :3 s-some(mhtimestamp)).wifttotwy
         }
 
-        Stitch.collect(deletionStitches).map { responsesTries =>
-          val wasRateLimited = responsesTries.exists {
-            case Throw(e: DeniedManhattanException) => true
-            case _ => false
+        stitch.cowwect(dewetionstitches).map { wesponsestwies =>
+          vaw waswatewimited = w-wesponsestwies.exists {
+            c-case thwow(e: deniedmanhattanexception) => t-twue
+            c-case _ => fawse
           }
 
-          val resultsPerTweet = fieldIds.zip(responsesTries).toMap
+          vaw wesuwtspewtweet = f-fiewdids.zip(wesponsestwies).tomap
 
-          if (wasRateLimited) {
-            buildTweetOverCapacityResponse("deleteAdditionalFields", tweetId, resultsPerTweet)
-          } else {
-            buildTweetResponse("deleteAdditionalFields", tweetId, resultsPerTweet)
+          if (waswatewimited) {
+            buiwdtweetovewcapacitywesponse("deweteadditionawfiewds", 😳😳😳 t-tweetid, (˘ω˘) wesuwtspewtweet)
+          } ewse {
+            b-buiwdtweetwesponse("deweteadditionawfiewds", ^^ tweetid, wesuwtspewtweet)
           }
         }
       }
 
-      Stitch.collect(stitches)
+      stitch.cowwect(stitches)
     }
 }

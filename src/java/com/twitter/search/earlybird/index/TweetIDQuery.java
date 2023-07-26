@@ -1,81 +1,81 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Set;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.awways;
+i-impowt java.utiw.set;
 
-import com.google.common.collect.Sets;
+i-impowt com.googwe.common.cowwect.sets;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+i-impowt owg.apache.wucene.seawch.indexseawchew;
+i-impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.search.IntArrayDocIdSetIterator;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
+impowt c-com.twittew.seawch.common.quewy.defauwtfiwtewweight;
+impowt com.twittew.seawch.common.seawch.intawwaydocidsetitewatow;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentdata;
 
-public class TweetIDQuery extends Query {
-  private final Set<Long> tweetIDs = Sets.newHashSet();
+pubwic cwass tweetidquewy e-extends quewy {
+  pwivate f-finaw set<wong> t-tweetids = sets.newhashset();
 
-  public TweetIDQuery(long... tweetIDs) {
-    for (long tweetID : tweetIDs) {
-      this.tweetIDs.add(tweetID);
+  pubwic tweetidquewy(wong... tweetids) {
+    fow (wong tweetid : tweetids) {
+      this.tweetids.add(tweetid);
     }
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        EarlybirdIndexSegmentData segmentData =
-            ((EarlybirdIndexSegmentAtomicReader) context.reader()).getSegmentData();
-        DocIDToTweetIDMapper docIdToTweetIdMapper = segmentData.getDocIDToTweetIDMapper();
+  @ovewwide
+  p-pubwic weight cweateweight(indexseawchew seawchew, mya scowemode scowemode, fwoat boost) {
+    w-wetuwn nyew defauwtfiwtewweight(this) {
+      @ovewwide
+      p-pwotected docidsetitewatow g-getdocidsetitewatow(weafweadewcontext c-context) thwows i-ioexception {
+        eawwybiwdindexsegmentdata segmentdata =
+            ((eawwybiwdindexsegmentatomicweadew) c-context.weadew()).getsegmentdata();
+        docidtotweetidmappew docidtotweetidmappew = segmentdata.getdocidtotweetidmappew();
 
-        Set<Integer> set = Sets.newHashSet();
-        for (long tweetID : tweetIDs) {
-          int docID = docIdToTweetIdMapper.getDocID(tweetID);
-          if (docID != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-            set.add(docID);
+        s-set<integew> set = sets.newhashset();
+        fow (wong tweetid : tweetids) {
+          int docid = docidtotweetidmappew.getdocid(tweetid);
+          if (docid != docidtotweetidmappew.id_not_found) {
+            set.add(docid);
           }
         }
 
-        if (set.isEmpty()) {
-          return DocIdSetIterator.empty();
+        i-if (set.isempty()) {
+          wetuwn d-docidsetitewatow.empty();
         }
 
-        int[] docIDs = new int[set.size()];
+        i-int[] docids = n-new int[set.size()];
         int i = 0;
-        for (int docID : set) {
-          docIDs[i++] = docID;
+        fow (int docid : s-set) {
+          d-docids[i++] = docid;
         }
-        Arrays.sort(docIDs);
-        return new IntArrayDocIdSetIterator(docIDs);
+        a-awways.sowt(docids);
+        w-wetuwn nyew intawwaydocidsetitewatow(docids);
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return tweetIDs.hashCode();
+  @ovewwide
+  p-pubwic int hashcode() {
+    w-wetuwn tweetids.hashcode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof TweetIDQuery)) {
-      return false;
+  @ovewwide
+  pubwic boowean equaws(object obj) {
+    i-if (!(obj instanceof tweetidquewy)) {
+      w-wetuwn fawse;
     }
 
-    return tweetIDs.equals(TweetIDQuery.class.cast(obj).tweetIDs);
+    wetuwn t-tweetids.equaws(tweetidquewy.cwass.cast(obj).tweetids);
   }
 
-  @Override
-  public String toString(String field) {
-    return "TWEET_ID_QUERY: " + tweetIDs;
+  @ovewwide
+  p-pubwic stwing tostwing(stwing fiewd) {
+    wetuwn "tweet_id_quewy: " + tweetids;
   }
 }

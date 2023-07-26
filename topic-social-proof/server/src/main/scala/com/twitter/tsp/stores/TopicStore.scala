@@ -1,135 +1,135 @@
-package com.twitter.tsp.stores
+package com.twittew.tsp.stowes
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.InterestedInInterestsFetchKey
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.interests.thriftscala.InterestLabel
-import com.twitter.interests.thriftscala.InterestRelationship
-import com.twitter.interests.thriftscala.InterestRelationshipV1
-import com.twitter.interests.thriftscala.InterestedInInterestLookupContext
-import com.twitter.interests.thriftscala.InterestedInInterestModel
-import com.twitter.interests.thriftscala.OptOutInterestLookupContext
-import com.twitter.interests.thriftscala.UserInterest
-import com.twitter.interests.thriftscala.UserInterestData
-import com.twitter.interests.thriftscala.UserInterestsResponse
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.stowe.intewestedinintewestsfetchkey
+i-impowt com.twittew.fwigate.common.stowe.stwato.stwatofetchabwestowe
+i-impowt com.twittew.hewmit.stowe.common.obsewvedweadabwestowe
+i-impowt com.twittew.intewests.thwiftscawa.intewestid
+i-impowt c-com.twittew.intewests.thwiftscawa.intewestwabew
+i-impowt com.twittew.intewests.thwiftscawa.intewestwewationship
+impowt com.twittew.intewests.thwiftscawa.intewestwewationshipv1
+impowt com.twittew.intewests.thwiftscawa.intewestedinintewestwookupcontext
+i-impowt com.twittew.intewests.thwiftscawa.intewestedinintewestmodew
+impowt c-com.twittew.intewests.thwiftscawa.optoutintewestwookupcontext
+impowt com.twittew.intewests.thwiftscawa.usewintewest
+i-impowt com.twittew.intewests.thwiftscawa.usewintewestdata
+impowt com.twittew.intewests.thwiftscawa.usewintewestswesponse
+impowt com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.stwato.cwient.cwient
+i-impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
 
-case class TopicResponse(
-  entityId: Long,
-  interestedInData: Seq[InterestedInInterestModel],
-  scoreOverride: Option[Double] = None,
-  notInterestedInTimestamp: Option[Long] = None,
-  topicFollowTimestamp: Option[Long] = None)
+c-case cwass topicwesponse(
+  entityid: wong, ^^;;
+  intewestedindata: seq[intewestedinintewestmodew], 🥺
+  s-scoweovewwide: option[doubwe] = nyone, (⑅˘꒳˘)
+  nyotintewestedintimestamp: option[wong] = n-none, nyaa~~
+  topicfowwowtimestamp: option[wong] = nyone)
 
-case class TopicResponses(responses: Seq[TopicResponse])
+c-case cwass t-topicwesponses(wesponses: s-seq[topicwesponse])
 
-object TopicStore {
+o-object topicstowe {
 
-  private val InterestedInInterestsColumn = "interests/interestedInInterests"
-  private lazy val ExplicitInterestsContext: InterestedInInterestLookupContext =
-    InterestedInInterestLookupContext(
-      explicitContext = None,
-      inferredContext = None,
-      disableImplicit = Some(true)
+  pwivate vaw intewestedinintewestscowumn = "intewests/intewestedinintewests"
+  p-pwivate wazy vaw expwicitintewestscontext: intewestedinintewestwookupcontext =
+    i-intewestedinintewestwookupcontext(
+      expwicitcontext = nyone, :3
+      infewwedcontext = nyone, ( ͡o ω ͡o )
+      disabweimpwicit = some(twue)
     )
 
-  private def userInterestsResponseToTopicResponse(
-    userInterestsResponse: UserInterestsResponse
-  ): TopicResponses = {
-    val responses = userInterestsResponse.interests.interests.toSeq.flatMap { userInterests =>
-      userInterests.collect {
-        case UserInterest(
-              InterestId.SemanticCore(semanticCoreEntity),
-              Some(UserInterestData.InterestedIn(data))) =>
-          val topicFollowingTimestampOpt = data.collect {
-            case InterestedInInterestModel.ExplicitModel(
-                  InterestRelationship.V1(interestRelationshipV1)) =>
-              interestRelationshipV1.timestampMs
-          }.lastOption
+  p-pwivate def usewintewestswesponsetotopicwesponse(
+    u-usewintewestswesponse: u-usewintewestswesponse
+  ): t-topicwesponses = {
+    vaw wesponses = usewintewestswesponse.intewests.intewests.toseq.fwatmap { usewintewests =>
+      u-usewintewests.cowwect {
+        c-case usewintewest(
+              intewestid.semanticcowe(semanticcoweentity), mya
+              s-some(usewintewestdata.intewestedin(data))) =>
+          v-vaw topicfowwowingtimestampopt = data.cowwect {
+            c-case intewestedinintewestmodew.expwicitmodew(
+                  intewestwewationship.v1(intewestwewationshipv1)) =>
+              i-intewestwewationshipv1.timestampms
+          }.wastoption
 
-          TopicResponse(semanticCoreEntity.id, data, None, None, topicFollowingTimestampOpt)
+          topicwesponse(semanticcoweentity.id, (///ˬ///✿) data, nyone, nyone, (˘ω˘) t-topicfowwowingtimestampopt)
       }
     }
-    TopicResponses(responses)
+    topicwesponses(wesponses)
   }
 
-  def explicitFollowingTopicStore(
-    stratoClient: Client
+  d-def expwicitfowwowingtopicstowe(
+    stwatocwient: c-cwient
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[UserId, TopicResponses] = {
-    val stratoStore =
-      StratoFetchableStore
-        .withUnitView[InterestedInInterestsFetchKey, UserInterestsResponse](
-          stratoClient,
-          InterestedInInterestsColumn)
-        .composeKeyMapping[UserId](uid =>
-          InterestedInInterestsFetchKey(
-            userId = uid,
-            labels = None,
-            lookupContext = Some(ExplicitInterestsContext)
+    i-impwicit statsweceivew: statsweceivew
+  ): weadabwestowe[usewid, topicwesponses] = {
+    vaw stwatostowe =
+      stwatofetchabwestowe
+        .withunitview[intewestedinintewestsfetchkey, ^^;; usewintewestswesponse](
+          s-stwatocwient, (✿oωo)
+          i-intewestedinintewestscowumn)
+        .composekeymapping[usewid](uid =>
+          intewestedinintewestsfetchkey(
+            u-usewid = u-uid, (U ﹏ U)
+            w-wabews = nyone, -.-
+            wookupcontext = some(expwicitintewestscontext)
           ))
-        .mapValues(userInterestsResponseToTopicResponse)
+        .mapvawues(usewintewestswesponsetotopicwesponse)
 
-    ObservedReadableStore(stratoStore)
+    obsewvedweadabwestowe(stwatostowe)
   }
 
-  def userOptOutTopicStore(
-    stratoClient: Client,
-    optOutStratoStorePath: String
+  d-def usewoptouttopicstowe(
+    stwatocwient: cwient, ^•ﻌ•^
+    optoutstwatostowepath: stwing
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[UserId, TopicResponses] = {
-    val stratoStore =
-      StratoFetchableStore
-        .withUnitView[
-          (Long, Option[Seq[InterestLabel]], Option[OptOutInterestLookupContext]),
-          UserInterestsResponse](stratoClient, optOutStratoStorePath)
-        .composeKeyMapping[UserId](uid => (uid, None, None))
-        .mapValues { userInterestsResponse =>
-          val responses = userInterestsResponse.interests.interests.toSeq.flatMap { userInterests =>
-            userInterests.collect {
-              case UserInterest(
-                    InterestId.SemanticCore(semanticCoreEntity),
-                    Some(UserInterestData.InterestedIn(data))) =>
-                TopicResponse(semanticCoreEntity.id, data, None)
+    impwicit statsweceivew: s-statsweceivew
+  ): weadabwestowe[usewid, rawr t-topicwesponses] = {
+    v-vaw stwatostowe =
+      s-stwatofetchabwestowe
+        .withunitview[
+          (wong, (˘ω˘) option[seq[intewestwabew]], nyaa~~ option[optoutintewestwookupcontext]), UwU
+          u-usewintewestswesponse](stwatocwient, :3 o-optoutstwatostowepath)
+        .composekeymapping[usewid](uid => (uid, (⑅˘꒳˘) n-none, nyone))
+        .mapvawues { u-usewintewestswesponse =>
+          vaw wesponses = usewintewestswesponse.intewests.intewests.toseq.fwatmap { u-usewintewests =>
+            u-usewintewests.cowwect {
+              c-case usewintewest(
+                    i-intewestid.semanticcowe(semanticcoweentity), (///ˬ///✿)
+                    s-some(usewintewestdata.intewestedin(data))) =>
+                topicwesponse(semanticcoweentity.id, ^^;; data, nyone)
             }
           }
-          TopicResponses(responses)
+          topicwesponses(wesponses)
         }
-    ObservedReadableStore(stratoStore)
+    o-obsewvedweadabwestowe(stwatostowe)
   }
 
-  def notInterestedInTopicsStore(
-    stratoClient: Client,
-    notInterestedInStorePath: String
+  def nyotintewestedintopicsstowe(
+    stwatocwient: cwient, >_<
+    nyotintewestedinstowepath: stwing
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[UserId, TopicResponses] = {
-    val stratoStore =
-      StratoFetchableStore
-        .withUnitView[Long, Seq[UserInterest]](stratoClient, notInterestedInStorePath)
-        .composeKeyMapping[UserId](identity)
-        .mapValues { notInterestedInInterests =>
-          val responses = notInterestedInInterests.collect {
-            case UserInterest(
-                  InterestId.SemanticCore(semanticCoreEntity),
-                  Some(UserInterestData.NotInterested(notInterestedInData))) =>
-              val notInterestedInTimestampOpt = notInterestedInData.collect {
-                case InterestRelationship.V1(interestRelationshipV1: InterestRelationshipV1) =>
-                  interestRelationshipV1.timestampMs
-              }.lastOption
+    i-impwicit statsweceivew: statsweceivew
+  ): weadabwestowe[usewid, rawr x3 topicwesponses] = {
+    v-vaw stwatostowe =
+      s-stwatofetchabwestowe
+        .withunitview[wong, /(^•ω•^) s-seq[usewintewest]](stwatocwient, :3 nyotintewestedinstowepath)
+        .composekeymapping[usewid](identity)
+        .mapvawues { n-nyotintewestedinintewests =>
+          vaw wesponses = n-nyotintewestedinintewests.cowwect {
+            c-case usewintewest(
+                  intewestid.semanticcowe(semanticcoweentity), (ꈍᴗꈍ)
+                  some(usewintewestdata.notintewested(notintewestedindata))) =>
+              vaw nyotintewestedintimestampopt = nyotintewestedindata.cowwect {
+                case i-intewestwewationship.v1(intewestwewationshipv1: intewestwewationshipv1) =>
+                  i-intewestwewationshipv1.timestampms
+              }.wastoption
 
-              TopicResponse(semanticCoreEntity.id, Seq.empty, None, notInterestedInTimestampOpt)
+              topicwesponse(semanticcoweentity.id, /(^•ω•^) seq.empty, n-nyone, (⑅˘꒳˘) n-notintewestedintimestampopt)
           }
-          TopicResponses(responses)
+          topicwesponses(wesponses)
         }
-    ObservedReadableStore(stratoStore)
+    obsewvedweadabwestowe(stwatostowe)
   }
 
 }

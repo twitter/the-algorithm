@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.service.urp
+package com.twittew.pwoduct_mixew.cowe.sewvice.uwp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
+impowt com.twittew.pages.wendew.{thwiftscawa => u-uwp}
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewinewequest
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy.pwoductpipewinewegistwy
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.timewines.configapi.pawams
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.reflect.runtime.universe.TypeTag
+impowt javax.inject.inject
+impowt javax.inject.singweton
+impowt scawa.wefwect.wuntime.univewse.typetag
 
-@Singleton
-class UrpService @Inject() (productPipelineRegistry: ProductPipelineRegistry) {
+@singweton
+c-cwass uwpsewvice @inject() (pwoductpipewinewegistwy: pwoductpipewinewegistwy) {
 
-  def getUrpResponse[RequestType <: Request](
-    request: RequestType,
-    params: Params
+  def getuwpwesponse[wequesttype <: w-wequest](
+    wequest: wequesttype, >_<
+    p-pawams: pawams
   )(
-    implicit requestTypeTag: TypeTag[RequestType]
-  ): Stitch[urp.Page] =
-    productPipelineRegistry
-      .getProductPipeline[RequestType, urp.Page](request.product)
-      .process(ProductPipelineRequest(request, params))
+    impwicit wequesttypetag: typetag[wequesttype]
+  ): s-stitch[uwp.page] =
+    pwoductpipewinewegistwy
+      .getpwoductpipewine[wequesttype, mya uwp.page](wequest.pwoduct)
+      .pwocess(pwoductpipewinewequest(wequest, p-pawams))
 }

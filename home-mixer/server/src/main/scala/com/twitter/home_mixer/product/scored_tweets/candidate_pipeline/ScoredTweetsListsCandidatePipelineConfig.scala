@@ -1,86 +1,86 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+package com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TweetypieStaticEntitiesFeatureHydrator
-import com.twitter.home_mixer.functional_component.filter.ReplyFilter
-import com.twitter.home_mixer.functional_component.filter.RetweetFilter
-import com.twitter.home_mixer.product.scored_tweets.candidate_source.ListsCandidateSource
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.ListIdsFeature
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CandidatePipeline
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.ScoredTweetsListsResponseFeatureTransformer
-import com.twitter.product_mixer.component_library.gate.NonEmptySeqFeatureGate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelines.configapi.decider.DeciderParam
-import com.twitter.timelineservice.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.tweetypiestaticentitiesfeatuwehydwatow
+i-impowt com.twittew.home_mixew.functionaw_component.fiwtew.wepwyfiwtew
+i-impowt c-com.twittew.home_mixew.functionaw_component.fiwtew.wetweetfiwtew
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_souwce.wistscandidatesouwce
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.wistidsfeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.gate.mincachedtweetsgate
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.cachedscowedtweets
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.candidatepipewine
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew.scowedtweetswistswesponsefeatuwetwansfowmew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.gate.nonemptyseqfeatuwegate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basecandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+i-impowt com.twittew.timewines.configapi.decidew.decidewpawam
+impowt com.twittew.timewinesewvice.{thwiftscawa => t}
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class ScoredTweetsListsCandidatePipelineConfig @Inject() (
-  listsCandidateSource: ListsCandidateSource,
-  tweetypieStaticEntitiesHydrator: TweetypieStaticEntitiesFeatureHydrator)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
-      Seq[t.TimelineQuery],
-      t.Tweet,
-      TweetCandidate
+@singweton
+cwass scowedtweetswistscandidatepipewineconfig @inject() (
+  w-wistscandidatesouwce: w-wistscandidatesouwce, ʘwʘ
+  t-tweetypiestaticentitieshydwatow: t-tweetypiestaticentitiesfeatuwehydwatow)
+    extends candidatepipewineconfig[
+      scowedtweetsquewy, (ˆ ﻌ ˆ)♡
+      s-seq[t.timewinequewy],
+      t.tweet, 😳😳😳
+      tweetcandidate
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ScoredTweetsLists")
+  o-ovewwide vaw identifiew: candidatepipewineidentifiew =
+    candidatepipewineidentifiew("scowedtweetswists")
 
-  private val MaxTweetsToFetchPerList = 20
+  pwivate vaw maxtweetstofetchpewwist = 20
 
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]] =
-    Some(CandidatePipeline.EnableListsParam)
+  ovewwide vaw enabweddecidewpawam: o-option[decidewpawam[boowean]] =
+    some(candidatepipewine.enabwewistspawam)
 
-  override val gates: Seq[Gate[ScoredTweetsQuery]] = Seq(
-    NonEmptySeqFeatureGate(ListIdsFeature),
-    MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam)
+  o-ovewwide vaw gates: s-seq[gate[scowedtweetsquewy]] = s-seq(
+    nyonemptyseqfeatuwegate(wistidsfeatuwe), :3
+    mincachedtweetsgate(identifiew, OwO cachedscowedtweets.mincachedtweetspawam)
   )
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
-    Seq[t.TimelineQuery]
-  ] = { query =>
-    val listIds = query.features.map(_.get(ListIdsFeature)).get
-    listIds.map { listId =>
-      t.TimelineQuery(
-        timelineType = t.TimelineType.List,
-        timelineId = listId,
-        maxCount = MaxTweetsToFetchPerList.toShort,
-        options = Some(t.TimelineQueryOptions(query.clientContext.userId)),
-        timelineId2 = Some(t.TimelineId(t.TimelineType.List, listId, None))
+  ovewwide v-vaw quewytwansfowmew: c-candidatepipewinequewytwansfowmew[
+    scowedtweetsquewy, (U ﹏ U)
+    s-seq[t.timewinequewy]
+  ] = { q-quewy =>
+    vaw wistids = q-quewy.featuwes.map(_.get(wistidsfeatuwe)).get
+    wistids.map { w-wistid =>
+      t.timewinequewy(
+        timewinetype = t-t.timewinetype.wist, >w<
+        timewineid = w-wistid, (U ﹏ U)
+        maxcount = maxtweetstofetchpewwist.toshowt, 😳
+        o-options = s-some(t.timewinequewyoptions(quewy.cwientcontext.usewid)), (ˆ ﻌ ˆ)♡
+        timewineid2 = some(t.timewineid(t.timewinetype.wist, 😳😳😳 wistid, (U ﹏ U) nyone))
       )
     }
   }
 
-  override def candidateSource: CandidateSource[Seq[t.TimelineQuery], t.Tweet] =
-    listsCandidateSource
+  ovewwide def candidatesouwce: candidatesouwce[seq[t.timewinequewy], (///ˬ///✿) t-t.tweet] =
+    wistscandidatesouwce
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.Tweet]
-  ] = Seq(ScoredTweetsListsResponseFeatureTransformer)
+  o-ovewwide vaw featuwesfwomcandidatesouwcetwansfowmews: s-seq[
+    c-candidatefeatuwetwansfowmew[t.tweet]
+  ] = s-seq(scowedtweetswistswesponsefeatuwetwansfowmew)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[t.Tweet, TweetCandidate] = {
-    sourceResult => TweetCandidate(id = sourceResult.statusId)
+  ovewwide vaw wesuwttwansfowmew: candidatepipewinewesuwtstwansfowmew[t.tweet, 😳 t-tweetcandidate] = {
+    souwcewesuwt => tweetcandidate(id = souwcewesuwt.statusid)
   }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ScoredTweetsQuery, TweetCandidate, _]
-  ] = Seq(tweetypieStaticEntitiesHydrator)
+  ovewwide v-vaw pwefiwtewfeatuwehydwationphase1: seq[
+    b-basecandidatefeatuwehydwatow[scowedtweetsquewy, 😳 t-tweetcandidate, σωσ _]
+  ] = s-seq(tweetypiestaticentitieshydwatow)
 
-  override val filters: Seq[Filter[ScoredTweetsQuery, TweetCandidate]] =
-    Seq(ReplyFilter, RetweetFilter)
+  ovewwide vaw f-fiwtews: seq[fiwtew[scowedtweetsquewy, rawr x3 t-tweetcandidate]] =
+    seq(wepwyfiwtew, w-wetweetfiwtew)
 }

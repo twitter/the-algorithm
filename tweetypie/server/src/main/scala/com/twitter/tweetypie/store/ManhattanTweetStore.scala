@@ -1,230 +1,230 @@
-/** Copyright 2010 Twitter, Inc. */
-package com.twitter.tweetypie
-package store
+/** copywight 2010 twittew, (///ˬ///✿) inc. */
+p-package com.twittew.tweetypie
+p-package stowe
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.storage.Field
-import com.twitter.tweetypie.storage.Response.TweetResponse
-import com.twitter.tweetypie.storage.Response.TweetResponseCode
-import com.twitter.tweetypie.storage.TweetStorageClient
-import com.twitter.tweetypie.storage.TweetStorageClient.GetTweet
-import com.twitter.tweetypie.storage.TweetStorageException
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Future
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.additionawfiewds.additionawfiewds
+i-impowt com.twittew.tweetypie.stowage.fiewd
+i-impowt c-com.twittew.tweetypie.stowage.wesponse.tweetwesponse
+i-impowt com.twittew.tweetypie.stowage.wesponse.tweetwesponsecode
+impowt com.twittew.tweetypie.stowage.tweetstowagecwient
+impowt com.twittew.tweetypie.stowage.tweetstowagecwient.gettweet
+impowt com.twittew.tweetypie.stowage.tweetstowageexception
+impowt c-com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.utiw.futuwe
 
-case class UpdateTweetNotFoundException(tweetId: TweetId) extends Exception
+case cwass u-updatetweetnotfoundexception(tweetid: tweetid) e-extends exception
 
-trait ManhattanTweetStore
-    extends TweetStoreBase[ManhattanTweetStore]
-    with InsertTweet.Store
-    with AsyncDeleteTweet.Store
-    with ScrubGeo.Store
-    with SetAdditionalFields.Store
-    with DeleteAdditionalFields.Store
-    with AsyncDeleteAdditionalFields.Store
-    with Takedown.Store
-    with UpdatePossiblySensitiveTweet.Store
-    with AsyncUpdatePossiblySensitiveTweet.Store {
-  def wrap(w: TweetStore.Wrap): ManhattanTweetStore =
-    new TweetStoreWrapper(w, this)
-      with ManhattanTweetStore
-      with InsertTweet.StoreWrapper
-      with AsyncDeleteTweet.StoreWrapper
-      with ScrubGeo.StoreWrapper
-      with SetAdditionalFields.StoreWrapper
-      with DeleteAdditionalFields.StoreWrapper
-      with AsyncDeleteAdditionalFields.StoreWrapper
-      with Takedown.StoreWrapper
-      with UpdatePossiblySensitiveTweet.StoreWrapper
-      with AsyncUpdatePossiblySensitiveTweet.StoreWrapper
+twait manhattantweetstowe
+    extends tweetstowebase[manhattantweetstowe]
+    with insewttweet.stowe
+    w-with asyncdewetetweet.stowe
+    w-with s-scwubgeo.stowe
+    with setadditionawfiewds.stowe
+    with deweteadditionawfiewds.stowe
+    with asyncdeweteadditionawfiewds.stowe
+    w-with takedown.stowe
+    with updatepossibwysensitivetweet.stowe
+    with asyncupdatepossibwysensitivetweet.stowe {
+  def w-wwap(w: tweetstowe.wwap): manhattantweetstowe =
+    n-nyew tweetstowewwappew(w, 🥺 this)
+      w-with m-manhattantweetstowe
+      w-with insewttweet.stowewwappew
+      with asyncdewetetweet.stowewwappew
+      w-with scwubgeo.stowewwappew
+      with setadditionawfiewds.stowewwappew
+      with deweteadditionawfiewds.stowewwappew
+      w-with asyncdeweteadditionawfiewds.stowewwappew
+      with takedown.stowewwappew
+      with updatepossibwysensitivetweet.stowewwappew
+      with asyncupdatepossibwysensitivetweet.stowewwappew
 }
 
 /**
- * A TweetStore implementation that writes to Manhattan.
+ * a tweetstowe i-impwementation that wwites t-to manhattan. >_<
  */
-object ManhattanTweetStore {
-  val Action: AsyncWriteAction.TbirdUpdate.type = AsyncWriteAction.TbirdUpdate
+o-object manhattantweetstowe {
+  v-vaw action: asyncwwiteaction.tbiwdupdate.type = asyncwwiteaction.tbiwdupdate
 
-  private val log = Logger(getClass)
-  private val successResponses = Set(TweetResponseCode.Success, TweetResponseCode.Deleted)
+  pwivate vaw w-wog = woggew(getcwass)
+  p-pwivate vaw successwesponses = s-set(tweetwesponsecode.success, UwU t-tweetwesponsecode.deweted)
 
-  case class AnnotationFailure(message: String) extends Exception(message)
+  case cwass a-annotationfaiwuwe(message: stwing) e-extends exception(message)
 
-  def apply(tweetStorageClient: TweetStorageClient): ManhattanTweetStore = {
+  def appwy(tweetstowagecwient: tweetstowagecwient): manhattantweetstowe = {
 
-    def handleStorageResponses(
-      responsesStitch: Stitch[Seq[TweetResponse]],
-      action: String
-    ): Future[Unit] =
-      Stitch
-        .run(responsesStitch)
-        .onFailure {
-          case ex: TweetStorageException => log.warn("failed on: " + action, ex)
+    d-def handwestowagewesponses(
+      wesponsesstitch: s-stitch[seq[tweetwesponse]], >_<
+      action: stwing
+    ): f-futuwe[unit] =
+      s-stitch
+        .wun(wesponsesstitch)
+        .onfaiwuwe {
+          case ex: tweetstowageexception => wog.wawn("faiwed on: " + action, ex)
           case _ =>
         }
-        .flatMap { responses =>
-          Future.when(responses.exists(resp => !successResponses(resp.overallResponse))) {
-            Future.exception(AnnotationFailure(s"$action gets failure response $responses"))
+        .fwatmap { wesponses =>
+          f-futuwe.when(wesponses.exists(wesp => !successwesponses(wesp.ovewawwwesponse))) {
+            f-futuwe.exception(annotationfaiwuwe(s"$action gets f-faiwuwe wesponse $wesponses"))
           }
         }
 
-    def updateTweetMediaIds(mutation: Mutation[MediaEntity]): Tweet => Tweet =
-      tweet => tweet.copy(media = tweet.media.map(entities => entities.map(mutation.endo)))
+    d-def u-updatetweetmediaids(mutation: mutation[mediaentity]): tweet => tweet =
+      tweet => tweet.copy(media = t-tweet.media.map(entities => entities.map(mutation.endo)))
 
     /**
-     * Does a get and set, and only sets fields that are allowed to be
-     * changed. This also prevents incoming tweets containing incomplete
-     * fields from being saved to Manhattan.
+     * does a get and set, -.- and onwy sets fiewds that a-awe awwowed to be
+     * changed. mya t-this awso pwevents i-incoming t-tweets containing incompwete
+     * f-fiewds fwom b-being saved to manhattan. >w<
      */
-    def updateOneTweetByIdAction(tweetId: TweetId, copyFields: Tweet => Tweet): Future[Unit] = {
-      Stitch.run {
-        tweetStorageClient.getTweet(tweetId).flatMap {
-          case GetTweet.Response.Found(tweet) =>
-            val updatedTweet = copyFields(tweet)
+    d-def updateonetweetbyidaction(tweetid: t-tweetid, (U ﹏ U) copyfiewds: tweet => tweet): f-futuwe[unit] = {
+      s-stitch.wun {
+        t-tweetstowagecwient.gettweet(tweetid).fwatmap {
+          c-case gettweet.wesponse.found(tweet) =>
+            v-vaw updatedtweet = copyfiewds(tweet)
 
-            if (updatedTweet != tweet) {
-              tweetStorageClient.addTweet(updatedTweet)
-            } else {
-              Stitch.Unit
+            if (updatedtweet != tweet) {
+              t-tweetstowagecwient.addtweet(updatedtweet)
+            } ewse {
+              stitch.unit
             }
-          case _ => Stitch.exception(UpdateTweetNotFoundException(tweetId))
+          case _ => stitch.exception(updatetweetnotfoundexception(tweetid))
         }
       }
     }
 
-    // This should NOT be used in parallel with other write operations.
-    // A race condition can occur after changes to the storage library to
-    // return all additional fields. The resulting behavior can cause
-    // fields that were modified by other writes to revert to their old value.
-    def updateOneTweetAction(update: Tweet, copyFields: Tweet => Tweet => Tweet): Future[Unit] =
-      updateOneTweetByIdAction(update.id, copyFields(update))
+    // this shouwd nyot be used i-in pawawwew with othew wwite opewations. 😳😳😳
+    // a wace condition c-can occuw aftew c-changes to the s-stowage wibwawy to
+    // wetuwn a-aww additionaw fiewds. o.O the wesuwting b-behaviow c-can cause
+    // fiewds that wewe modified by othew wwites to wevewt to theiw owd vawue. òωó
+    def u-updateonetweetaction(update: tweet, 😳😳😳 copyfiewds: t-tweet => tweet => tweet): futuwe[unit] =
+      u-updateonetweetbyidaction(update.id, σωσ c-copyfiewds(update))
 
-    def tweetStoreUpdateTweet(tweet: Tweet): Future[Unit] = {
-      val setFields = AdditionalFields.nonEmptyAdditionalFieldIds(tweet).map(Field.additionalField)
-      handleStorageResponses(
-        tweetStorageClient.updateTweet(tweet, setFields).map(Seq(_)),
-        s"updateTweet($tweet, $setFields)"
+    def tweetstoweupdatetweet(tweet: tweet): futuwe[unit] = {
+      vaw s-setfiewds = additionawfiewds.nonemptyadditionawfiewdids(tweet).map(fiewd.additionawfiewd)
+      h-handwestowagewesponses(
+        tweetstowagecwient.updatetweet(tweet, (⑅˘꒳˘) s-setfiewds).map(seq(_)), (///ˬ///✿)
+        s-s"updatetweet($tweet, 🥺 $setfiewds)"
       )
     }
 
-    // This is an edit so update the initial Tweet's control
-    def updateInitialTweet(event: InsertTweet.Event): Future[Unit] = {
-      event.initialTweetUpdateRequest match {
-        case Some(request) =>
-          updateOneTweetByIdAction(
-            request.initialTweetId,
-            tweet => InitialTweetUpdate.updateTweet(tweet, request)
+    // this is an edit so update the initiaw tweet's contwow
+    def u-updateinitiawtweet(event: i-insewttweet.event): f-futuwe[unit] = {
+      event.initiawtweetupdatewequest m-match {
+        c-case some(wequest) =>
+          updateonetweetbyidaction(
+            w-wequest.initiawtweetid, OwO
+            tweet => initiawtweetupdate.updatetweet(tweet, >w< wequest)
           )
-        case None => Future.Unit
+        case nyone => futuwe.unit
       }
     }
 
-    new ManhattanTweetStore {
-      override val insertTweet: FutureEffect[InsertTweet.Event] =
-        FutureEffect[InsertTweet.Event] { event =>
-          Stitch
-            .run(
-              tweetStorageClient.addTweet(event.internalTweet.tweet)
-            ).flatMap(_ => updateInitialTweet(event))
+    n-nyew manhattantweetstowe {
+      o-ovewwide vaw insewttweet: futuweeffect[insewttweet.event] =
+        f-futuweeffect[insewttweet.event] { event =>
+          s-stitch
+            .wun(
+              tweetstowagecwient.addtweet(event.intewnawtweet.tweet)
+            ).fwatmap(_ => updateinitiawtweet(event))
         }
 
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        FutureEffect[AsyncDeleteTweet.Event] { event =>
-          if (event.isBounceDelete) {
-            Stitch.run(tweetStorageClient.bounceDelete(event.tweet.id))
-          } else {
-            Stitch.run(tweetStorageClient.softDelete(event.tweet.id))
+      ovewwide v-vaw asyncdewetetweet: futuweeffect[asyncdewetetweet.event] =
+        futuweeffect[asyncdewetetweet.event] { event =>
+          if (event.isbouncedewete) {
+            stitch.wun(tweetstowagecwient.bouncedewete(event.tweet.id))
+          } ewse {
+            s-stitch.wun(tweetstowagecwient.softdewete(event.tweet.id))
           }
         }
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      ovewwide vaw wetwyasyncdewetetweet: f-futuweeffect[
+        t-tweetstowewetwyevent[asyncdewetetweet.event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        tweetstowe.wetwy(action, 🥺 asyncdewetetweet)
 
-      override val scrubGeo: FutureEffect[ScrubGeo.Event] =
-        FutureEffect[ScrubGeo.Event] { event =>
-          Stitch.run(tweetStorageClient.scrub(event.tweetIds, Seq(Field.Geo)))
+      ovewwide vaw s-scwubgeo: futuweeffect[scwubgeo.event] =
+        f-futuweeffect[scwubgeo.event] { event =>
+          stitch.wun(tweetstowagecwient.scwub(event.tweetids, nyaa~~ seq(fiewd.geo)))
         }
 
-      override val setAdditionalFields: FutureEffect[SetAdditionalFields.Event] =
-        FutureEffect[SetAdditionalFields.Event] { event =>
-          tweetStoreUpdateTweet(event.additionalFields)
+      o-ovewwide vaw setadditionawfiewds: f-futuweeffect[setadditionawfiewds.event] =
+        futuweeffect[setadditionawfiewds.event] { event =>
+          tweetstoweupdatetweet(event.additionawfiewds)
         }
 
-      override val deleteAdditionalFields: FutureEffect[DeleteAdditionalFields.Event] =
-        FutureEffect[DeleteAdditionalFields.Event] { event =>
-          handleStorageResponses(
-            tweetStorageClient.deleteAdditionalFields(
-              Seq(event.tweetId),
-              event.fieldIds.map(Field.additionalField)
-            ),
-            s"deleteAdditionalFields(${event.tweetId}, ${event.fieldIds}})"
+      o-ovewwide vaw deweteadditionawfiewds: futuweeffect[deweteadditionawfiewds.event] =
+        f-futuweeffect[deweteadditionawfiewds.event] { e-event =>
+          handwestowagewesponses(
+            t-tweetstowagecwient.deweteadditionawfiewds(
+              seq(event.tweetid), ^^
+              e-event.fiewdids.map(fiewd.additionawfiewd)
+            ), >w<
+            s-s"deweteadditionawfiewds(${event.tweetid}, OwO ${event.fiewdids}})"
           )
         }
 
-      override val asyncDeleteAdditionalFields: FutureEffect[AsyncDeleteAdditionalFields.Event] =
-        FutureEffect[AsyncDeleteAdditionalFields.Event] { event =>
-          handleStorageResponses(
-            tweetStorageClient.deleteAdditionalFields(
-              Seq(event.tweetId),
-              event.fieldIds.map(Field.additionalField)
-            ),
-            s"deleteAdditionalFields(Seq(${event.tweetId}), ${event.fieldIds}})"
+      o-ovewwide vaw asyncdeweteadditionawfiewds: futuweeffect[asyncdeweteadditionawfiewds.event] =
+        f-futuweeffect[asyncdeweteadditionawfiewds.event] { e-event =>
+          handwestowagewesponses(
+            tweetstowagecwient.deweteadditionawfiewds(
+              s-seq(event.tweetid), XD
+              e-event.fiewdids.map(fiewd.additionawfiewd)
+            ), ^^;;
+            s-s"deweteadditionawfiewds(seq(${event.tweetid}), 🥺 ${event.fiewdids}})"
           )
         }
 
-      override val retryAsyncDeleteAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteAdditionalFields.Event]
+      ovewwide vaw wetwyasyncdeweteadditionawfiewds: f-futuweeffect[
+        tweetstowewetwyevent[asyncdeweteadditionawfiewds.event]
       ] =
-        TweetStore.retry(Action, asyncDeleteAdditionalFields)
+        t-tweetstowe.wetwy(action, XD a-asyncdeweteadditionawfiewds)
 
-      override val takedown: FutureEffect[Takedown.Event] =
-        FutureEffect[Takedown.Event] { event =>
-          val (fieldsToUpdate, fieldsToDelete) =
-            Seq(
-              Field.TweetypieOnlyTakedownCountryCodes,
-              Field.TweetypieOnlyTakedownReasons
-            ).filter(_ => event.updateCodesAndReasons)
-              .partition(f => event.tweet.getFieldBlob(f.id).isDefined)
+      ovewwide vaw takedown: futuweeffect[takedown.event] =
+        futuweeffect[takedown.event] { e-event =>
+          v-vaw (fiewdstoupdate, (U ᵕ U❁) f-fiewdstodewete) =
+            s-seq(
+              fiewd.tweetypieonwytakedowncountwycodes, :3
+              f-fiewd.tweetypieonwytakedownweasons
+            ).fiwtew(_ => event.updatecodesandweasons)
+              .pawtition(f => event.tweet.getfiewdbwob(f.id).isdefined)
 
-          val allFieldsToUpdate = Seq(Field.HasTakedown) ++ fieldsToUpdate
+          vaw awwfiewdstoupdate = seq(fiewd.hastakedown) ++ fiewdstoupdate
 
-          Future
+          f-futuwe
             .join(
-              handleStorageResponses(
-                tweetStorageClient
-                  .updateTweet(event.tweet, allFieldsToUpdate)
-                  .map(Seq(_)),
-                s"updateTweet(${event.tweet}, $allFieldsToUpdate)"
-              ),
-              Future.when(fieldsToDelete.nonEmpty) {
-                handleStorageResponses(
-                  tweetStorageClient
-                    .deleteAdditionalFields(Seq(event.tweet.id), fieldsToDelete),
-                  s"deleteAdditionalFields(Seq(${event.tweet.id}), $fieldsToDelete)"
+              handwestowagewesponses(
+                t-tweetstowagecwient
+                  .updatetweet(event.tweet, ( ͡o ω ͡o ) awwfiewdstoupdate)
+                  .map(seq(_)), òωó
+                s-s"updatetweet(${event.tweet}, σωσ $awwfiewdstoupdate)"
+              ), (U ᵕ U❁)
+              futuwe.when(fiewdstodewete.nonempty) {
+                h-handwestowagewesponses(
+                  tweetstowagecwient
+                    .deweteadditionawfiewds(seq(event.tweet.id), (✿oωo) fiewdstodewete), ^^
+                  s-s"deweteadditionawfiewds(seq(${event.tweet.id}), ^•ﻌ•^ $fiewdstodewete)"
                 )
               }
             ).unit
         }
 
-      override val updatePossiblySensitiveTweet: FutureEffect[UpdatePossiblySensitiveTweet.Event] =
-        FutureEffect[UpdatePossiblySensitiveTweet.Event] { event =>
-          updateOneTweetAction(event.tweet, TweetUpdate.copyNsfwFieldsForUpdate)
+      o-ovewwide v-vaw updatepossibwysensitivetweet: f-futuweeffect[updatepossibwysensitivetweet.event] =
+        f-futuweeffect[updatepossibwysensitivetweet.event] { event =>
+          updateonetweetaction(event.tweet, XD tweetupdate.copynsfwfiewdsfowupdate)
         }
 
-      override val asyncUpdatePossiblySensitiveTweet: FutureEffect[
-        AsyncUpdatePossiblySensitiveTweet.Event
+      ovewwide vaw asyncupdatepossibwysensitivetweet: futuweeffect[
+        asyncupdatepossibwysensitivetweet.event
       ] =
-        FutureEffect[AsyncUpdatePossiblySensitiveTweet.Event] { event =>
-          updateOneTweetAction(event.tweet, TweetUpdate.copyNsfwFieldsForUpdate)
+        futuweeffect[asyncupdatepossibwysensitivetweet.event] { event =>
+          u-updateonetweetaction(event.tweet, :3 t-tweetupdate.copynsfwfiewdsfowupdate)
         }
 
-      override val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUpdatePossiblySensitiveTweet.Event]
+      o-ovewwide vaw wetwyasyncupdatepossibwysensitivetweet: futuweeffect[
+        t-tweetstowewetwyevent[asyncupdatepossibwysensitivetweet.event]
       ] =
-        TweetStore.retry(Action, asyncUpdatePossiblySensitiveTweet)
+        tweetstowe.wetwy(action, (ꈍᴗꈍ) asyncupdatepossibwysensitivetweet)
 
     }
   }

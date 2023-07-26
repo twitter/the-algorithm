@@ -1,133 +1,133 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-sealed trait FilterReason {
-  def reason: String
+seawed t-twait fiwtewweason {
+  d-def weason: s-stwing
 }
 
-object FilterReason {
+object f-fiwtewweason {
 
-  case object NoReason extends FilterReason {
-    override val reason: String = "no_reason"
+  c-case object n-nyoweason extends f-fiwtewweason {
+    o-ovewwide vaw weason: stwing = "no_weason"
   }
 
-  case class ParamReason(paramName: String) extends FilterReason {
-    override val reason: String = s"param_$paramName"
+  case cwass pawamweason(pawamname: stwing) e-extends fiwtewweason {
+    ovewwide vaw weason: s-stwing = s"pawam_$pawamname"
   }
 
-  case object ExcludedId extends FilterReason {
-    override val reason: String = "excluded_id_from_request"
+  case object e-excwudedid extends fiwtewweason {
+    ovewwide vaw weason: stwing = "excwuded_id_fwom_wequest"
   }
 
-  case object ProfileSidebarBlacklist extends FilterReason {
-    override val reason: String = "profile_sidebar_blacklisted_id"
+  c-case object pwofiwesidebawbwackwist e-extends f-fiwtewweason {
+    ovewwide vaw weason: stwing = "pwofiwe_sidebaw_bwackwisted_id"
   }
 
-  case object CuratedAccountsCompetitorList extends FilterReason {
-    override val reason: String = "curated_blacklisted_id"
+  case object cuwatedaccountscompetitowwist e-extends fiwtewweason {
+    ovewwide vaw weason: stwing = "cuwated_bwackwisted_id"
   }
 
-  case class InvalidRelationshipTypes(relationshipTypes: String) extends FilterReason {
-    override val reason: String = s"invalid_relationship_types $relationshipTypes"
+  case cwass invawidwewationshiptypes(wewationshiptypes: stwing) extends f-fiwtewweason {
+    ovewwide v-vaw weason: stwing = s-s"invawid_wewationship_types $wewationshiptypes"
   }
 
-  case object ProfileId extends FilterReason {
-    override val reason: String = "candidate_has_same_id_as_profile"
+  c-case object pwofiweid e-extends fiwtewweason {
+    ovewwide vaw weason: stwing = "candidate_has_same_id_as_pwofiwe"
   }
 
-  case object DismissedId extends FilterReason {
-    override val reason: String = s"dismissed_candidate"
+  c-case object dismissedid extends fiwtewweason {
+    o-ovewwide vaw weason: stwing = s"dismissed_candidate"
   }
 
-  case object OptedOutId extends FilterReason {
-    override val reason: String = s"candidate_opted_out_from_criteria_in_request"
+  case object optedoutid extends fiwtewweason {
+    o-ovewwide vaw weason: stwing = s-s"candidate_opted_out_fwom_cwitewia_in_wequest"
   }
 
-  // gizmoduck predicates
-  case object NoUser extends FilterReason {
-    override val reason: String = "no_user_result_from_gizmoduck"
+  // g-gizmoduck pwedicates
+  c-case object nyousew extends fiwtewweason {
+    ovewwide v-vaw weason: stwing = "no_usew_wesuwt_fwom_gizmoduck"
   }
 
-  case object AddressBookUndiscoverable extends FilterReason {
-    override val reason: String = "not_discoverable_via_address_book"
+  c-case object addwessbookundiscovewabwe e-extends fiwtewweason {
+    o-ovewwide vaw weason: s-stwing = "not_discovewabwe_via_addwess_book"
   }
 
-  case object PhoneBookUndiscoverable extends FilterReason {
-    override val reason: String = "not_discoverable_via_phone_book"
+  case object p-phonebookundiscovewabwe extends fiwtewweason {
+    o-ovewwide vaw weason: stwing = "not_discovewabwe_via_phone_book"
   }
 
-  case object Deactivated extends FilterReason {
-    override val reason: String = "deactivated"
+  c-case object deactivated e-extends fiwtewweason {
+    o-ovewwide vaw weason: stwing = "deactivated"
   }
 
-  case object Suspended extends FilterReason {
-    override val reason: String = "suspended"
+  case object suspended extends fiwtewweason {
+    ovewwide vaw weason: stwing = "suspended"
   }
 
-  case object Restricted extends FilterReason {
-    override val reason: String = "restricted"
+  c-case object w-westwicted extends fiwtewweason {
+    o-ovewwide v-vaw weason: stwing = "westwicted"
   }
 
-  case object NsfwUser extends FilterReason {
-    override val reason: String = "nsfwUser"
+  c-case object nysfwusew extends fiwtewweason {
+    ovewwide v-vaw weason: stwing = "nsfwusew"
   }
 
-  case object NsfwAdmin extends FilterReason {
-    override val reason: String = "nsfwAdmin"
+  case object nysfwadmin extends fiwtewweason {
+    ovewwide v-vaw weason: stwing = "nsfwadmin"
   }
 
-  case object HssSignal extends FilterReason {
-    override val reason: String = "hssSignal"
+  c-case o-object hsssignaw e-extends fiwtewweason {
+    ovewwide v-vaw weason: s-stwing = "hsssignaw"
   }
 
-  case object IsProtected extends FilterReason {
-    override val reason: String = "isProtected"
+  case o-object ispwotected e-extends fiwtewweason {
+    ovewwide vaw weason: stwing = "ispwotected"
   }
 
-  case class CountryTakedown(countryCode: String) extends FilterReason {
-    override val reason: String = s"takedown_in_$countryCode"
+  c-case cwass c-countwytakedown(countwycode: s-stwing) e-extends fiwtewweason {
+    o-ovewwide vaw weason: stwing = s"takedown_in_$countwycode"
   }
 
-  case object Blink extends FilterReason {
-    override val reason: String = "blink"
+  case object bwink extends fiwtewweason {
+    o-ovewwide vaw weason: stwing = "bwink"
   }
 
-  case object AlreadyFollowed extends FilterReason {
-    override val reason: String = "already_followed"
+  case object awweadyfowwowed extends fiwtewweason {
+    o-ovewwide vaw weason: stwing = "awweady_fowwowed"
   }
 
-  case object InvalidRelationship extends FilterReason {
-    override val reason: String = "invalid_relationship"
+  case object invawidwewationship e-extends f-fiwtewweason {
+    o-ovewwide vaw weason: stwing = "invawid_wewationship"
   }
 
-  case object NotFollowingTargetUser extends FilterReason {
-    override val reason: String = "not_following_target_user"
+  c-case object nyotfowwowingtawgetusew extends fiwtewweason {
+    o-ovewwide vaw weason: s-stwing = "not_fowwowing_tawget_usew"
   }
 
-  case object CandidateSideHoldback extends FilterReason {
-    override val reason: String = "candidate_side_holdback"
+  case object candidatesidehowdback extends fiwtewweason {
+    ovewwide vaw weason: stwing = "candidate_side_howdback"
   }
 
-  case object Inactive extends FilterReason {
-    override val reason: String = "inactive"
+  c-case object inactive e-extends fiwtewweason {
+    ovewwide v-vaw weason: s-stwing = "inactive"
   }
 
-  case object MissingRecommendabilityData extends FilterReason {
-    override val reason: String = "missing_recommendability_data"
+  case object missingwecommendabiwitydata e-extends fiwtewweason {
+    o-ovewwide vaw weason: stwing = "missing_wecommendabiwity_data"
   }
 
-  case object HighTweetVelocity extends FilterReason {
-    override val reason: String = "high_tweet_velocity"
+  c-case object h-hightweetvewocity extends fiwtewweason {
+    ovewwide vaw weason: stwing = "high_tweet_vewocity"
   }
 
-  case object AlreadyRecommended extends FilterReason {
-    override val reason: String = "already_recommended"
+  c-case object a-awweadywecommended e-extends fiwtewweason {
+    o-ovewwide vaw w-weason: stwing = "awweady_wecommended"
   }
 
-  case object MinStateNotMet extends FilterReason {
-    override val reason: String = "min_state_user_not_met"
+  case o-object minstatenotmet extends fiwtewweason {
+    ovewwide vaw weason: stwing = "min_state_usew_not_met"
   }
 
-  case object FailOpen extends FilterReason {
-    override val reason: String = "fail_open"
+  c-case object faiwopen e-extends fiwtewweason {
+    ovewwide vaw weason: stwing = "faiw_open"
   }
 }

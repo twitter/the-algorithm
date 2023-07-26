@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtunowdewedexcwudeidscuwsow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.bottomcuwsow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowtype
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinecuwsowsewiawizew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.timewines.configapi.pawam
 
-trait BaseUnorderedExcludeIdsBottomCursorBuilder
-    extends UrtCursorBuilder[
-      PipelineQuery with HasPipelineCursor[UrtUnorderedExcludeIdsCursor]
+twait baseunowdewedexcwudeidsbottomcuwsowbuiwdew
+    extends u-uwtcuwsowbuiwdew[
+      pipewinequewy w-with haspipewinecuwsow[uwtunowdewedexcwudeidscuwsow]
     ] {
 
-  def excludedIdsMaxLengthParam: Param[Int]
+  def excwudedidsmaxwengthpawam: pawam[int]
 
-  def excludeEntriesCollector(entries: Seq[TimelineEntry]): Seq[Long]
+  d-def excwudeentwiescowwectow(entwies: seq[timewineentwy]): s-seq[wong]
 
-  def serializer: PipelineCursorSerializer[UrtUnorderedExcludeIdsCursor]
+  def s-sewiawizew: pipewinecuwsowsewiawizew[uwtunowdewedexcwudeidscuwsow]
 
-  override val cursorType: CursorType = BottomCursor
+  ovewwide vaw cuwsowtype: cuwsowtype = bottomcuwsow
 
-  override def cursorValue(
-    query: PipelineQuery with HasPipelineCursor[UrtUnorderedExcludeIdsCursor],
-    entries: Seq[TimelineEntry]
-  ): String = {
-    val excludedIdsMaxLength = query.params(excludedIdsMaxLengthParam)
-    assert(excludedIdsMaxLength > 0, "Excluded IDs max length must be greater than zero")
+  ovewwide def cuwsowvawue(
+    q-quewy: pipewinequewy with haspipewinecuwsow[uwtunowdewedexcwudeidscuwsow], ʘwʘ
+    entwies: seq[timewineentwy]
+  ): s-stwing = {
+    vaw e-excwudedidsmaxwength = q-quewy.pawams(excwudedidsmaxwengthpawam)
+    a-assewt(excwudedidsmaxwength > 0, /(^•ω•^) "excwuded i-ids max wength must be gweatew than z-zewo")
 
-    val newEntryIds = excludeEntriesCollector(entries)
-    assert(
-      newEntryIds.length < excludedIdsMaxLength,
-      "New entry IDs length must be smaller than excluded IDs max length")
+    vaw nyewentwyids = excwudeentwiescowwectow(entwies)
+    a-assewt(
+      nyewentwyids.wength < excwudedidsmaxwength, ʘwʘ
+      "new entwy ids wength must be smowew than e-excwuded ids max wength")
 
-    val excludedIds = query.pipelineCursor
-      .map(_.excludedIds ++ newEntryIds)
-      .getOrElse(newEntryIds)
-      .takeRight(excludedIdsMaxLength)
+    vaw e-excwudedids = q-quewy.pipewinecuwsow
+      .map(_.excwudedids ++ n-nyewentwyids)
+      .getowewse(newentwyids)
+      .takewight(excwudedidsmaxwength)
 
-    val cursor = UrtUnorderedExcludeIdsCursor(
-      initialSortIndex = nextBottomInitialSortIndex(query, entries),
-      excludedIds = excludedIds
+    vaw cuwsow = uwtunowdewedexcwudeidscuwsow(
+      initiawsowtindex = n-nyextbottominitiawsowtindex(quewy, σωσ e-entwies), OwO
+      excwudedids = excwudedids
     )
 
-    serializer.serializeCursor(cursor)
+    s-sewiawizew.sewiawizecuwsow(cuwsow)
   }
 }

@@ -1,272 +1,272 @@
-package com.twitter.follow_recommendations.common.base
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.util.Stopwatch
-import java.util.concurrent.TimeUnit
-import scala.util.control.NonFatal
+package com.twittew.fowwow_wecommendations.common.base
+impowt com.twittew.finagwe.stats.stat
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowobsewvew
+i-impowt com.twittew.stitch.awwow
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.utiw.stopwatch
+i-impowt java.utiw.concuwwent.timeunit
+impowt scawa.utiw.contwow.nonfataw
 
-object StatsUtil {
-  val LatencyName = "latency_ms"
-  val RequestName = "requests"
-  val SuccessName = "success"
-  val FailureName = "failures"
-  val ResultsName = "results"
-  val ResultsStat = "results_stat"
-  val EmptyResultsName = "empty"
-  val NonEmptyResultsName = "non_empty"
-  val ValidCount = "valid"
-  val InvalidCount = "invalid"
-  val InvalidHasReasons = "has_reasons"
-  val Reasons = "reasons"
-  val QualityFactorStat = "quality_factor_stat"
-  val QualityFactorCounts = "quality_factor_counts"
+object statsutiw {
+  v-vaw watencyname = "watency_ms"
+  vaw wequestname = "wequests"
+  vaw successname = "success"
+  v-vaw faiwuwename = "faiwuwes"
+  vaw wesuwtsname = "wesuwts"
+  v-vaw wesuwtsstat = "wesuwts_stat"
+  vaw emptywesuwtsname = "empty"
+  vaw nyonemptywesuwtsname = "non_empty"
+  vaw vawidcount = "vawid"
+  v-vaw invawidcount = "invawid"
+  vaw invawidhasweasons = "has_weasons"
+  v-vaw weasons = "weasons"
+  v-vaw quawityfactowstat = "quawity_factow_stat"
+  vaw quawityfactowcounts = "quawity_factow_counts"
 
   /**
-   * Helper function for timing a stitch, returning the original stitch.
+   * hewpew function fow timing a stitch, (ꈍᴗꈍ) wetuwning t-the owiginaw stitch. :3
    */
-  def profileStitch[T](stitch: Stitch[T], stat: StatsReceiver): Stitch[T] = {
+  def pwofiwestitch[t](stitch: stitch[t], (U ﹏ U) stat: statsweceivew): s-stitch[t] = {
 
-    Stitch
+    stitch
       .time(stitch)
       .map {
-        case (response, stitchRunDuration) =>
-          stat.counter(RequestName).incr()
-          stat.stat(LatencyName).add(stitchRunDuration.inMilliseconds)
-          response
-            .onSuccess { _ => stat.counter(SuccessName).incr() }
-            .onFailure { e =>
-              stat.counter(FailureName).incr()
-              stat.scope(FailureName).counter(getCleanClassName(e)).incr()
+        c-case (wesponse, UwU s-stitchwunduwation) =>
+          s-stat.countew(wequestname).incw()
+          s-stat.stat(watencyname).add(stitchwunduwation.inmiwwiseconds)
+          wesponse
+            .onsuccess { _ => stat.countew(successname).incw() }
+            .onfaiwuwe { e =>
+              s-stat.countew(faiwuwename).incw()
+              stat.scope(faiwuwename).countew(getcweancwassname(e)).incw()
             }
       }
-      .lowerFromTry
+      .wowewfwomtwy
   }
 
   /**
-   * Helper function for timing an arrow, returning the original arrow.
+   * hewpew function f-fow timing an awwow, 😳😳😳 wetuwning the owiginaw awwow. XD
    */
-  def profileArrow[T, U](arrow: Arrow[T, U], stat: StatsReceiver): Arrow[T, U] = {
+  def pwofiweawwow[t, o.O u](awwow: awwow[t, (⑅˘꒳˘) u-u], stat: statsweceivew): a-awwow[t, 😳😳😳 u] = {
 
-    Arrow
-      .time(arrow)
+    a-awwow
+      .time(awwow)
       .map {
-        case (response, stitchRunDuration) =>
-          stat.counter(RequestName).incr()
-          stat.stat(LatencyName).add(stitchRunDuration.inMilliseconds)
-          response
-            .onSuccess { _ => stat.counter(SuccessName).incr() }
-            .onFailure { e =>
-              stat.counter(FailureName).incr()
-              stat.scope(FailureName).counter(getCleanClassName(e)).incr()
+        c-case (wesponse, nyaa~~ stitchwunduwation) =>
+          stat.countew(wequestname).incw()
+          stat.stat(watencyname).add(stitchwunduwation.inmiwwiseconds)
+          w-wesponse
+            .onsuccess { _ => s-stat.countew(successname).incw() }
+            .onfaiwuwe { e =>
+              s-stat.countew(faiwuwename).incw()
+              s-stat.scope(faiwuwename).countew(getcweancwassname(e)).incw()
             }
       }
-      .lowerFromTry
+      .wowewfwomtwy
   }
 
   /**
-   * Helper function to count and track the distribution of results
+   * hewpew function t-to count and twack the distwibution o-of wesuwts
    */
-  def profileResults[T](results: T, stat: StatsReceiver, size: T => Int): T = {
-    val numResults = size(results)
-    stat.counter(ResultsName).incr(numResults)
-    if (numResults == 0) {
-      stat.counter(EmptyResultsName).incr()
-      results
-    } else {
-      stat.stat(ResultsStat).add(numResults)
-      stat.counter(NonEmptyResultsName).incr()
-      results
+  def pwofiwewesuwts[t](wesuwts: t, rawr stat: s-statsweceivew, -.- size: t => int): t-t = {
+    vaw nyumwesuwts = size(wesuwts)
+    s-stat.countew(wesuwtsname).incw(numwesuwts)
+    i-if (numwesuwts == 0) {
+      stat.countew(emptywesuwtsname).incw()
+      wesuwts
+    } ewse {
+      stat.stat(wesuwtsstat).add(numwesuwts)
+      stat.countew(nonemptywesuwtsname).incw()
+      wesuwts
     }
   }
 
   /**
-   * Helper function to count and track the distribution of a list of results
+   * h-hewpew f-function to count and twack the d-distwibution of a-a wist of wesuwts
    */
-  def profileSeqResults[T](results: Seq[T], stat: StatsReceiver): Seq[T] = {
-    profileResults[Seq[T]](results, stat, _.size)
+  d-def pwofiweseqwesuwts[t](wesuwts: seq[t], (✿oωo) stat: statsweceivew): s-seq[t] = {
+    pwofiwewesuwts[seq[t]](wesuwts, /(^•ω•^) stat, 🥺 _.size)
   }
 
   /**
-   * Helper function for timing a stitch and count the number of results, returning the original stitch.
+   * hewpew function fow timing a-a stitch and count the nyumbew o-of wesuwts, ʘwʘ wetuwning t-the owiginaw s-stitch. UwU
    */
-  def profileStitchResults[T](stitch: Stitch[T], stat: StatsReceiver, size: T => Int): Stitch[T] = {
-    profileStitch(stitch, stat).onSuccess { results => profileResults(results, stat, size) }
+  def pwofiwestitchwesuwts[t](stitch: s-stitch[t], XD s-stat: statsweceivew, (✿oωo) s-size: t-t => int): stitch[t] = {
+    pwofiwestitch(stitch, :3 stat).onsuccess { w-wesuwts => p-pwofiwewesuwts(wesuwts, s-stat, (///ˬ///✿) size) }
   }
 
   /**
-   * Helper function for timing an arrow and count the number of results, returning the original arrow.
+   * h-hewpew function f-fow timing an awwow and count the nyumbew of wesuwts, nyaa~~ wetuwning t-the owiginaw awwow. >w<
    */
-  def profileArrowResults[T, U](
-    arrow: Arrow[T, U],
-    stat: StatsReceiver,
-    size: U => Int
-  ): Arrow[T, U] = {
-    profileArrow(arrow, stat).onSuccess { results => profileResults(results, stat, size) }
+  def pwofiweawwowwesuwts[t, -.- u](
+    awwow: awwow[t, (✿oωo) u],
+    stat: s-statsweceivew, (˘ω˘)
+    size: u => int
+  ): awwow[t, rawr u] = {
+    pwofiweawwow(awwow, OwO s-stat).onsuccess { w-wesuwts => pwofiwewesuwts(wesuwts, ^•ﻌ•^ s-stat, UwU size) }
   }
 
   /**
-   * Helper function for timing a stitch and count a seq of results, returning the original stitch.
+   * hewpew function f-fow timing a stitch and count a-a seq of wesuwts, (˘ω˘) w-wetuwning the owiginaw stitch. (///ˬ///✿)
    */
-  def profileStitchSeqResults[T](stitch: Stitch[Seq[T]], stat: StatsReceiver): Stitch[Seq[T]] = {
-    profileStitchResults[Seq[T]](stitch, stat, _.size)
+  def pwofiwestitchseqwesuwts[t](stitch: stitch[seq[t]], σωσ stat: statsweceivew): s-stitch[seq[t]] = {
+    pwofiwestitchwesuwts[seq[t]](stitch, /(^•ω•^) s-stat, _.size)
   }
 
   /**
-   * Helper function for timing a stitch and count optional results, returning the original stitch.
+   * hewpew function f-fow timing a s-stitch and count optionaw wesuwts, 😳 wetuwning the o-owiginaw stitch. 😳
    */
-  def profileStitchOptionalResults[T](
-    stitch: Stitch[Option[T]],
-    stat: StatsReceiver
-  ): Stitch[Option[T]] = {
-    profileStitchResults[Option[T]](stitch, stat, _.size)
+  d-def pwofiwestitchoptionawwesuwts[t](
+    stitch: stitch[option[t]], (⑅˘꒳˘)
+    s-stat: statsweceivew
+  ): s-stitch[option[t]] = {
+    pwofiwestitchwesuwts[option[t]](stitch, 😳😳😳 stat, 😳 _.size)
   }
 
   /**
-   * Helper function for timing a stitch and count a map of results, returning the original stitch.
+   * hewpew function fow timing a-a stitch and c-count a map of w-wesuwts, XD wetuwning the owiginaw s-stitch.
    */
-  def profileStitchMapResults[K, V](
-    stitch: Stitch[Map[K, V]],
-    stat: StatsReceiver
-  ): Stitch[Map[K, V]] = {
-    profileStitchResults[Map[K, V]](stitch, stat, _.size)
+  d-def pwofiwestitchmapwesuwts[k, mya v](
+    stitch: s-stitch[map[k, ^•ﻌ•^ v]],
+    stat: statsweceivew
+  ): stitch[map[k, ʘwʘ v]] = {
+    pwofiwestitchwesuwts[map[k, ( ͡o ω ͡o ) v]](stitch, s-stat, mya _.size)
   }
 
-  def getCleanClassName(obj: Object): String =
-    obj.getClass.getSimpleName.stripSuffix("$")
+  d-def getcweancwassname(obj: object): stwing =
+    obj.getcwass.getsimpwename.stwipsuffix("$")
 
   /**
-   * Helper function for timing a stitch and count a list of PredicateResult
+   * h-hewpew function f-fow timing a stitch and count a wist of pwedicatewesuwt
    */
-  def profilePredicateResults(
-    predicateResult: Stitch[Seq[PredicateResult]],
-    statsReceiver: StatsReceiver
-  ): Stitch[Seq[PredicateResult]] = {
-    profileStitch[Seq[PredicateResult]](
-      predicateResult,
-      statsReceiver
-    ).onSuccess {
+  def pwofiwepwedicatewesuwts(
+    p-pwedicatewesuwt: stitch[seq[pwedicatewesuwt]], o.O
+    statsweceivew: statsweceivew
+  ): stitch[seq[pwedicatewesuwt]] = {
+    p-pwofiwestitch[seq[pwedicatewesuwt]](
+      pwedicatewesuwt, (✿oωo)
+      statsweceivew
+    ).onsuccess {
       _.map {
-        case PredicateResult.Valid =>
-          statsReceiver.counter(ValidCount).incr()
-        case PredicateResult.Invalid(reasons) =>
-          statsReceiver.counter(InvalidCount).incr()
-          reasons.map { filterReason =>
-            statsReceiver.counter(InvalidHasReasons).incr()
-            statsReceiver.scope(Reasons).counter(filterReason.reason).incr()
+        c-case pwedicatewesuwt.vawid =>
+          s-statsweceivew.countew(vawidcount).incw()
+        case pwedicatewesuwt.invawid(weasons) =>
+          statsweceivew.countew(invawidcount).incw()
+          w-weasons.map { f-fiwtewweason =>
+            statsweceivew.countew(invawidhasweasons).incw()
+            statsweceivew.scope(weasons).countew(fiwtewweason.weason).incw()
           }
       }
     }
   }
 
   /**
-   * Helper function for timing a stitch and count individual PredicateResult
+   * hewpew function fow timing a-a stitch and count individuaw pwedicatewesuwt
    */
-  def profilePredicateResult(
-    predicateResult: Stitch[PredicateResult],
-    statsReceiver: StatsReceiver
-  ): Stitch[PredicateResult] = {
-    profilePredicateResults(
-      predicateResult.map(Seq(_)),
-      statsReceiver
+  d-def pwofiwepwedicatewesuwt(
+    pwedicatewesuwt: stitch[pwedicatewesuwt], :3
+    statsweceivew: s-statsweceivew
+  ): stitch[pwedicatewesuwt] = {
+    p-pwofiwepwedicatewesuwts(
+      p-pwedicatewesuwt.map(seq(_)), 😳
+      statsweceivew
     ).map(_.head)
   }
 
   /**
-   * Helper function for timing an arrow and count a list of PredicateResult
+   * h-hewpew function fow timing a-an awwow and c-count a wist of p-pwedicatewesuwt
    */
-  def profilePredicateResults[Q](
-    predicateResult: Arrow[Q, Seq[PredicateResult]],
-    statsReceiver: StatsReceiver
-  ): Arrow[Q, Seq[PredicateResult]] = {
-    profileArrow[Q, Seq[PredicateResult]](
-      predicateResult,
-      statsReceiver
-    ).onSuccess {
+  def pwofiwepwedicatewesuwts[q](
+    p-pwedicatewesuwt: a-awwow[q, (U ﹏ U) seq[pwedicatewesuwt]], mya
+    statsweceivew: s-statsweceivew
+  ): a-awwow[q, (U ᵕ U❁) seq[pwedicatewesuwt]] = {
+    p-pwofiweawwow[q, :3 seq[pwedicatewesuwt]](
+      pwedicatewesuwt, mya
+      statsweceivew
+    ).onsuccess {
       _.map {
-        case PredicateResult.Valid =>
-          statsReceiver.counter(ValidCount).incr()
-        case PredicateResult.Invalid(reasons) =>
-          statsReceiver.counter(InvalidCount).incr()
-          reasons.map { filterReason =>
-            statsReceiver.counter(InvalidHasReasons).incr()
-            statsReceiver.scope(Reasons).counter(filterReason.reason).incr()
+        c-case pwedicatewesuwt.vawid =>
+          statsweceivew.countew(vawidcount).incw()
+        c-case p-pwedicatewesuwt.invawid(weasons) =>
+          statsweceivew.countew(invawidcount).incw()
+          weasons.map { fiwtewweason =>
+            s-statsweceivew.countew(invawidhasweasons).incw()
+            s-statsweceivew.scope(weasons).countew(fiwtewweason.weason).incw()
           }
       }
     }
   }
 
   /**
-   * Helper function for timing an arrow and count individual PredicateResult
+   * h-hewpew function f-fow timing an awwow and count i-individuaw pwedicatewesuwt
    */
-  def profilePredicateResult[Q](
-    predicateResult: Arrow[Q, PredicateResult],
-    statsReceiver: StatsReceiver
-  ): Arrow[Q, PredicateResult] = {
-    profilePredicateResults(
-      predicateResult.map(Seq(_)),
-      statsReceiver
+  def pwofiwepwedicatewesuwt[q](
+    pwedicatewesuwt: awwow[q, OwO pwedicatewesuwt], (ˆ ﻌ ˆ)♡
+    s-statsweceivew: statsweceivew
+  ): a-awwow[q, ʘwʘ pwedicatewesuwt] = {
+    pwofiwepwedicatewesuwts(
+      p-pwedicatewesuwt.map(seq(_)), o.O
+      statsweceivew
     ).map(_.head)
   }
 
   /**
-   * Helper function for timing a stitch code block
+   * h-hewpew function fow timing a stitch c-code bwock
    */
-  def profileStitchSeqResults[T](
-    stats: StatsReceiver
+  d-def pwofiwestitchseqwesuwts[t](
+    s-stats: s-statsweceivew
   )(
-    block: => Stitch[Seq[T]]
-  ): Stitch[Seq[T]] = {
-    stats.counter(RequestName).incr()
-    profileStitch(stats.stat(LatencyName), TimeUnit.MILLISECONDS) {
-      block onSuccess { r =>
-        if (r.isEmpty) stats.counter(EmptyResultsName).incr()
-        stats.stat(ResultsStat).add(r.size)
-      } onFailure { e =>
+    b-bwock: => stitch[seq[t]]
+  ): stitch[seq[t]] = {
+    stats.countew(wequestname).incw()
+    pwofiwestitch(stats.stat(watencyname), UwU timeunit.miwwiseconds) {
+      bwock onsuccess { w =>
+        i-if (w.isempty) s-stats.countew(emptywesuwtsname).incw()
+        s-stats.stat(wesuwtsstat).add(w.size)
+      } onfaiwuwe { e-e =>
         {
-          stats.counter(FailureName).incr()
-          stats.scope(FailureName).counter(e.getClass.getName).incr()
+          stats.countew(faiwuwename).incw()
+          stats.scope(faiwuwename).countew(e.getcwass.getname).incw()
         }
       }
     }
   }
 
   /**
-   * Time a given asynchronous `f` using the given `unit`.
+   * time a g-given asynchwonous `f` u-using the given `unit`. rawr x3
    */
-  def profileStitch[A](stat: Stat, unit: TimeUnit)(f: => Stitch[A]): Stitch[A] = {
-    val start = Stopwatch.timeNanos()
-    try {
-      f.respond { _ => stat.add(unit.convert(Stopwatch.timeNanos() - start, TimeUnit.NANOSECONDS)) }
+  d-def pwofiwestitch[a](stat: stat, 🥺 unit: timeunit)(f: => stitch[a]): s-stitch[a] = {
+    v-vaw stawt = stopwatch.timenanos()
+    t-twy {
+      f.wespond { _ => stat.add(unit.convewt(stopwatch.timenanos() - s-stawt, :3 timeunit.nanoseconds)) }
     } catch {
-      case NonFatal(e) =>
-        stat.add(unit.convert(Stopwatch.timeNanos() - start, TimeUnit.NANOSECONDS))
-        Stitch.exception(e)
+      case nyonfataw(e) =>
+        stat.add(unit.convewt(stopwatch.timenanos() - s-stawt, (ꈍᴗꈍ) t-timeunit.nanoseconds))
+        s-stitch.exception(e)
     }
   }
 
-  def observeStitchQualityFactor[T](
-    stitch: Stitch[T],
-    qualityFactorObserverOption: Option[QualityFactorObserver],
-    statsReceiver: StatsReceiver
-  ): Stitch[T] = {
-    qualityFactorObserverOption
-      .map { observer =>
-        Stitch
+  d-def obsewvestitchquawityfactow[t](
+    s-stitch: stitch[t], 🥺
+    q-quawityfactowobsewvewoption: o-option[quawityfactowobsewvew], (✿oωo)
+    statsweceivew: s-statsweceivew
+  ): s-stitch[t] = {
+    quawityfactowobsewvewoption
+      .map { o-obsewvew =>
+        stitch
           .time(stitch)
           .map {
-            case (response, stitchRunDuration) =>
-              observer(response, stitchRunDuration)
-              val qfVal = observer.qualityFactor.currentValue.floatValue() * 10000
-              statsReceiver.counter(QualityFactorCounts).incr()
-              statsReceiver
-                .stat(QualityFactorStat)
-                .add(qfVal)
-              response
+            case (wesponse, (U ﹏ U) s-stitchwunduwation) =>
+              obsewvew(wesponse, :3 s-stitchwunduwation)
+              v-vaw qfvaw = obsewvew.quawityfactow.cuwwentvawue.fwoatvawue() * 10000
+              s-statsweceivew.countew(quawityfactowcounts).incw()
+              statsweceivew
+                .stat(quawityfactowstat)
+                .add(qfvaw)
+              wesponse
           }
-          .lowerFromTry
-      }.getOrElse(stitch)
+          .wowewfwomtwy
+      }.getowewse(stitch)
   }
 }

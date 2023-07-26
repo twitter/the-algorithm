@@ -1,180 +1,180 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.scowew
 
-import com.twitter.home_mixer.functional_component.scorer.FeedbackFatigueScorer
-import com.twitter.home_mixer.model.HomeFeatures
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsCreatorFeature
-import com.twitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.BlueVerifiedAuthorInNetworkMultiplierParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.BlueVerifiedAuthorOutOfNetworkMultiplierParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CreatorInNetworkMultiplierParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CreatorOutOfNetworkMultiplierParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.OutOfNetworkScaleFactorParam
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelineservice.{thriftscala => tls}
+impowt c-com.twittew.home_mixew.functionaw_component.scowew.feedbackfatiguescowew
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowisbwuevewifiedfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowiscweatowfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.feedbackhistowyfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.innetwowkfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.inwepwytotweetidfeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.bwuevewifiedauthowinnetwowkmuwtipwiewpawam
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.bwuevewifiedauthowoutofnetwowkmuwtipwiewpawam
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.cweatowinnetwowkmuwtipwiewpawam
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.cweatowoutofnetwowkmuwtipwiewpawam
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.outofnetwowkscawefactowpawam
+impowt com.twittew.home_mixew.utiw.candidatesutiw
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewinesewvice.{thwiftscawa => tws}
 
-trait RescoringFactorProvider {
+t-twait wescowingfactowpwovidew {
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean
+  def sewectow(candidate: candidatewithfeatuwes[tweetcandidate]): boowean
 
-  def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Double
+  def factow(
+    quewy: p-pipewinequewy, o.O
+    candidate: c-candidatewithfeatuwes[tweetcandidate]
+  ): doubwe
 
-  def apply(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate],
-  ): Double = if (selector(candidate)) factor(query, candidate) else 1.0
+  d-def appwy(
+    q-quewy: pipewinequewy, rawr
+    c-candidate: candidatewithfeatuwes[tweetcandidate], ʘwʘ
+  ): doubwe = if (sewectow(candidate)) f-factow(quewy, 😳😳😳 candidate) ewse 1.0
 }
 
 /**
- * Re-scoring multiplier to apply to authors who are eligible subscription content creators
+ * w-we-scowing muwtipwiew to appwy to authows who awe ewigibwe subscwiption content cweatows
  */
-object RescoreCreators extends RescoringFactorProvider {
+o-object wescowecweatows extends w-wescowingfactowpwovidew {
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean =
-    candidate.features.getOrElse(AuthorIsCreatorFeature, false) &&
-      CandidatesUtil.isOriginalTweet(candidate)
+  d-def sewectow(candidate: c-candidatewithfeatuwes[tweetcandidate]): boowean =
+    candidate.featuwes.getowewse(authowiscweatowfeatuwe, ^^;; fawse) &&
+      candidatesutiw.isowiginawtweet(candidate)
 
-  def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Double =
-    if (candidate.features.getOrElse(InNetworkFeature, false))
-      query.params(CreatorInNetworkMultiplierParam)
-    else query.params(CreatorOutOfNetworkMultiplierParam)
+  d-def factow(
+    q-quewy: pipewinequewy, o.O
+    candidate: c-candidatewithfeatuwes[tweetcandidate]
+  ): d-doubwe =
+    if (candidate.featuwes.getowewse(innetwowkfeatuwe, (///ˬ///✿) fawse))
+      quewy.pawams(cweatowinnetwowkmuwtipwiewpawam)
+    e-ewse quewy.pawams(cweatowoutofnetwowkmuwtipwiewpawam)
 }
 
 /**
- * Re-scoring multiplier to apply to authors who are verified by Twitter Blue
+ * we-scowing muwtipwiew t-to appwy to authows who awe vewified by twittew b-bwue
  */
-object RescoreBlueVerified extends RescoringFactorProvider {
+object wescowebwuevewified e-extends wescowingfactowpwovidew {
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean =
-    candidate.features.getOrElse(AuthorIsBlueVerifiedFeature, false) &&
-      CandidatesUtil.isOriginalTweet(candidate)
+  def s-sewectow(candidate: c-candidatewithfeatuwes[tweetcandidate]): boowean =
+    candidate.featuwes.getowewse(authowisbwuevewifiedfeatuwe, σωσ fawse) &&
+      candidatesutiw.isowiginawtweet(candidate)
 
-  def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Double =
-    if (candidate.features.getOrElse(InNetworkFeature, false))
-      query.params(BlueVerifiedAuthorInNetworkMultiplierParam)
-    else query.params(BlueVerifiedAuthorOutOfNetworkMultiplierParam)
+  def factow(
+    quewy: pipewinequewy, nyaa~~
+    candidate: c-candidatewithfeatuwes[tweetcandidate]
+  ): d-doubwe =
+    if (candidate.featuwes.getowewse(innetwowkfeatuwe, f-fawse))
+      q-quewy.pawams(bwuevewifiedauthowinnetwowkmuwtipwiewpawam)
+    ewse q-quewy.pawams(bwuevewifiedauthowoutofnetwowkmuwtipwiewpawam)
 }
 
 /**
- * Re-scoring multiplier to apply to out-of-network tweets
+ * we-scowing muwtipwiew to appwy to out-of-netwowk t-tweets
  */
-object RescoreOutOfNetwork extends RescoringFactorProvider {
+object wescoweoutofnetwowk extends wescowingfactowpwovidew {
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean =
-    !candidate.features.getOrElse(InNetworkFeature, false)
+  def sewectow(candidate: candidatewithfeatuwes[tweetcandidate]): b-boowean =
+    !candidate.featuwes.getowewse(innetwowkfeatuwe, ^^;; fawse)
 
-  def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Double = query.params(OutOfNetworkScaleFactorParam)
+  def f-factow(
+    quewy: p-pipewinequewy, ^•ﻌ•^
+    c-candidate: candidatewithfeatuwes[tweetcandidate]
+  ): d-doubwe = q-quewy.pawams(outofnetwowkscawefactowpawam)
 }
 
 /**
- * Re-scoring multiplier to apply to reply candidates
+ * w-we-scowing m-muwtipwiew to appwy to wepwy candidates
  */
-object RescoreReplies extends RescoringFactorProvider {
+o-object wescowewepwies e-extends w-wescowingfactowpwovidew {
 
-  private val ScaleFactor = 0.75
+  p-pwivate v-vaw scawefactow = 0.75
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean =
-    candidate.features.getOrElse(InReplyToTweetIdFeature, None).isDefined
+  def sewectow(candidate: candidatewithfeatuwes[tweetcandidate]): boowean =
+    candidate.featuwes.getowewse(inwepwytotweetidfeatuwe, σωσ n-nyone).isdefined
 
-  def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Double = ScaleFactor
+  def factow(
+    quewy: pipewinequewy, -.-
+    candidate: candidatewithfeatuwes[tweetcandidate]
+  ): doubwe = scawefactow
 }
 
 /**
- * Re-scoring multiplier to calibrate multi-tasks learning model prediction
+ * w-we-scowing muwtipwiew to cawibwate muwti-tasks weawning modew p-pwediction
  */
-object RescoreMTLNormalization extends RescoringFactorProvider {
+o-object wescowemtwnowmawization e-extends wescowingfactowpwovidew {
 
-  private val ScaleFactor = 1.0
+  pwivate v-vaw scawefactow = 1.0
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean = {
-    candidate.features.contains(HomeFeatures.FocalTweetAuthorIdFeature)
+  def sewectow(candidate: c-candidatewithfeatuwes[tweetcandidate]): b-boowean = {
+    candidate.featuwes.contains(homefeatuwes.focawtweetauthowidfeatuwe)
   }
 
-  def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Double = ScaleFactor
+  def factow(
+    quewy: pipewinequewy, ^^;;
+    candidate: candidatewithfeatuwes[tweetcandidate]
+  ): d-doubwe = scawefactow
 }
 
 /**
- * Re-scoring multiplier to apply to multiple tweets from the same author
+ * we-scowing muwtipwiew t-to appwy to muwtipwe tweets f-fwom the same a-authow
  */
-case class RescoreAuthorDiversity(diversityDiscounts: Map[Long, Double])
-    extends RescoringFactorProvider {
+case cwass wescoweauthowdivewsity(divewsitydiscounts: map[wong, XD doubwe])
+    e-extends w-wescowingfactowpwovidew {
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean =
-    diversityDiscounts.contains(candidate.candidate.id)
+  def sewectow(candidate: c-candidatewithfeatuwes[tweetcandidate]): b-boowean =
+    divewsitydiscounts.contains(candidate.candidate.id)
 
-  def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Double = diversityDiscounts(candidate.candidate.id)
+  def factow(
+    quewy: pipewinequewy, 🥺
+    candidate: candidatewithfeatuwes[tweetcandidate]
+  ): doubwe = divewsitydiscounts(candidate.candidate.id)
 }
 
-case class RescoreFeedbackFatigue(query: PipelineQuery) extends RescoringFactorProvider {
+c-case c-cwass wescowefeedbackfatigue(quewy: p-pipewinequewy) extends wescowingfactowpwovidew {
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean = true
+  d-def sewectow(candidate: c-candidatewithfeatuwes[tweetcandidate]): boowean = t-twue
 
-  private val feedbackEntriesByEngagementType =
-    query.features
-      .getOrElse(FeatureMap.empty).getOrElse(FeedbackHistoryFeature, Seq.empty)
-      .filter { entry =>
-        val timeSinceFeedback = query.queryTime.minus(entry.timestamp)
-        timeSinceFeedback < FeedbackFatigueScorer.DurationForFiltering + FeedbackFatigueScorer.DurationForDiscounting &&
-        entry.feedbackType == tls.FeedbackType.SeeFewer
-      }.groupBy(_.engagementType)
+  pwivate vaw feedbackentwiesbyengagementtype =
+    quewy.featuwes
+      .getowewse(featuwemap.empty).getowewse(feedbackhistowyfeatuwe, òωó seq.empty)
+      .fiwtew { entwy =>
+        v-vaw t-timesincefeedback = quewy.quewytime.minus(entwy.timestamp)
+        timesincefeedback < f-feedbackfatiguescowew.duwationfowfiwtewing + f-feedbackfatiguescowew.duwationfowdiscounting &&
+        entwy.feedbacktype == tws.feedbacktype.seefewew
+      }.gwoupby(_.engagementtype)
 
-  private val authorsToDiscount =
-    FeedbackFatigueScorer.getUserDiscounts(
-      query.queryTime,
-      feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Tweet, Seq.empty))
+  pwivate vaw authowstodiscount =
+    f-feedbackfatiguescowew.getusewdiscounts(
+      quewy.quewytime, (ˆ ﻌ ˆ)♡
+      feedbackentwiesbyengagementtype.getowewse(tws.feedbackengagementtype.tweet, -.- seq.empty))
 
-  private val likersToDiscount =
-    FeedbackFatigueScorer.getUserDiscounts(
-      query.queryTime,
-      feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Like, Seq.empty))
+  pwivate vaw w-wikewstodiscount =
+    feedbackfatiguescowew.getusewdiscounts(
+      quewy.quewytime, :3
+      f-feedbackentwiesbyengagementtype.getowewse(tws.feedbackengagementtype.wike, ʘwʘ s-seq.empty))
 
-  private val followersToDiscount =
-    FeedbackFatigueScorer.getUserDiscounts(
-      query.queryTime,
-      feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Follow, Seq.empty))
+  pwivate vaw fowwowewstodiscount =
+    feedbackfatiguescowew.getusewdiscounts(
+      q-quewy.quewytime, 🥺
+      f-feedbackentwiesbyengagementtype.getowewse(tws.feedbackengagementtype.fowwow, >_< seq.empty))
 
-  private val retweetersToDiscount =
-    FeedbackFatigueScorer.getUserDiscounts(
-      query.queryTime,
-      feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Retweet, Seq.empty))
+  pwivate vaw wetweetewstodiscount =
+    feedbackfatiguescowew.getusewdiscounts(
+      q-quewy.quewytime, ʘwʘ
+      feedbackentwiesbyengagementtype.getowewse(tws.feedbackengagementtype.wetweet, (˘ω˘) s-seq.empty))
 
-  def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Double = {
-    FeedbackFatigueScorer.getScoreMultiplier(
-      candidate,
-      authorsToDiscount,
-      likersToDiscount,
-      followersToDiscount,
-      retweetersToDiscount
+  def factow(
+    quewy: pipewinequewy,
+    candidate: candidatewithfeatuwes[tweetcandidate]
+  ): d-doubwe = {
+    feedbackfatiguescowew.getscowemuwtipwiew(
+      c-candidate, (✿oωo)
+      a-authowstodiscount, (///ˬ///✿)
+      wikewstodiscount, rawr x3
+      f-fowwowewstodiscount, -.-
+      wetweetewstodiscount
     )
   }
 }

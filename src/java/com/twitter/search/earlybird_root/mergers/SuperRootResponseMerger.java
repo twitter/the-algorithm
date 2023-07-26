@@ -1,687 +1,687 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
-import java.util.Collections;
-import java.util.List;
-import javax.annotation.Nullable;
+impowt java.utiw.cowwections;
+i-impowt java.utiw.wist;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Lists;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cache.cachebuiwdew;
+i-impowt c-com.googwe.common.cache.cachewoadew;
+impowt com.googwe.common.cache.woadingcache;
+impowt com.googwe.common.cowwect.wists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.futures.Futures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.common.relevance.utils.ResultComparators;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseMergeUtil;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdServiceResponse;
-import com.twitter.util.Function;
-import com.twitter.util.Function0;
-import com.twitter.util.Future;
+impowt com.twittew.common.cowwections.paiw;
+i-impowt com.twittew.common.quantity.amount;
+impowt com.twittew.common.quantity.time;
+i-impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.futuwes.futuwes;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+i-impowt c-com.twittew.seawch.common.quewy.thwiftjava.eawwytewminationinfo;
+impowt com.twittew.seawch.common.wewevance.utiws.wesuwtcompawatows;
+impowt com.twittew.seawch.common.seawch.eawwytewminationstate;
+impowt com.twittew.seawch.common.utiw.finagweutiw;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.eawwybiwdwesponsemewgeutiw;
+i-impowt com.twittew.seawch.common.utiw.eawwybiwd.eawwybiwdwesponseutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwankingmode;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifttweetsouwce;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdfeatuweschemamewgew;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdsewvicewesponse;
+impowt com.twittew.utiw.function;
+impowt com.twittew.utiw.function0;
+impowt com.twittew.utiw.futuwe;
 
-/** Utility functions for merging recency and relevance results. */
-public class SuperRootResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(SuperRootResponseMerger.class);
-  private static final String ALL_STATS_PREFIX = "superroot_response_merger_";
+/** u-utiwity functions fow mewging w-wecency and wewevance w-wesuwts. -.- */
+p-pubwic cwass supewwootwesponsemewgew {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(supewwootwesponsemewgew.cwass);
+  p-pwivate static f-finaw stwing aww_stats_pwefix = "supewwoot_wesponse_mewgew_";
 
-  private static final SearchCounter FULL_ARCHIVE_MIN_ID_GREATER_THAN_REALTIME_MIN_ID =
-    SearchCounter.export("full_archive_min_id_greater_than_realtime_min_id");
+  p-pwivate static f-finaw seawchcountew fuww_awchive_min_id_gweatew_than_weawtime_min_id =
+    s-seawchcountew.expowt("fuww_awchive_min_id_gweatew_than_weawtime_min_id");
 
-  private static final String ERROR_FORMAT = "%s%s_errors_from_cluster_%s_%s";
+  pwivate s-static finaw stwing ewwow_fowmat = "%s%s_ewwows_fwom_cwustew_%s_%s";
 
-  private final ThriftSearchRankingMode rankingMode;
-  private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
-  private final String featureStatPrefix;
-  private final Clock clock;
-  private final String rankingModeStatPrefix;
+  pwivate f-finaw thwiftseawchwankingmode wankingmode;
+  p-pwivate finaw eawwybiwdfeatuweschemamewgew f-featuweschemamewgew;
+  p-pwivate finaw stwing featuwestatpwefix;
+  pwivate finaw cwock cwock;
+  pwivate finaw stwing wankingmodestatpwefix;
 
-  private final SearchCounter mergedResponseSearchResultsNotSet;
-  private final SearchCounter invalidMinStatusId;
-  private final SearchCounter invalidMaxStatusId;
-  private final SearchCounter noMinIds;
-  private final SearchCounter noMaxIds;
-  private final SearchCounter mergedResponses;
-  private final SearchCounter mergedResponsesWithExactDups;
-  private final LoadingCache<Pair<ThriftTweetSource, ThriftTweetSource>, SearchCounter> dupsStats;
+  pwivate f-finaw seawchcountew m-mewgedwesponseseawchwesuwtsnotset;
+  pwivate f-finaw seawchcountew i-invawidminstatusid;
+  p-pwivate finaw seawchcountew invawidmaxstatusid;
+  pwivate finaw seawchcountew n-nyominids;
+  pwivate finaw seawchcountew nyomaxids;
+  pwivate finaw s-seawchcountew mewgedwesponses;
+  pwivate finaw seawchcountew m-mewgedwesponseswithexactdups;
+  p-pwivate f-finaw woadingcache<paiw<thwifttweetsouwce, -.- thwifttweetsouwce>, s-seawchcountew> d-dupsstats;
 
-  private static final EarlybirdResponse EMPTY_RESPONSE =
-      new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
-          .setSearchResults(new ThriftSearchResults()
-              .setResults(Lists.<ThriftSearchResult>newArrayList()));
+  p-pwivate static f-finaw eawwybiwdwesponse empty_wesponse =
+      nyew eawwybiwdwesponse(eawwybiwdwesponsecode.success, (U ﹏ U) 0)
+          .setseawchwesuwts(new t-thwiftseawchwesuwts()
+              .setwesuwts(wists.<thwiftseawchwesuwt>newawwaywist()));
 
   /**
-   * Creates a new SuperRootResponseMerger instance.
-   * @param rankingMode The ranking mode to use when merging results.
-   * @param featureSchemaMerger The merger that can merge feature schema from different tiers.
-   * @param clock The clock that will be used to merge results.
+   * c-cweates a nyew supewwootwesponsemewgew i-instance. rawr
+   * @pawam w-wankingmode t-the wanking mode to use when mewging wesuwts. mya
+   * @pawam featuweschemamewgew t-the mewgew that can mewge featuwe schema fwom diffewent tiews. ( ͡o ω ͡o )
+   * @pawam cwock the cwock that wiww be used t-to mewge wesuwts. /(^•ω•^)
    */
-  public SuperRootResponseMerger(ThriftSearchRankingMode rankingMode,
-                                 EarlybirdFeatureSchemaMerger featureSchemaMerger,
-                                 Clock clock) {
-    this.rankingModeStatPrefix = rankingMode.name().toLowerCase();
+  pubwic supewwootwesponsemewgew(thwiftseawchwankingmode wankingmode, >_<
+                                 e-eawwybiwdfeatuweschemamewgew f-featuweschemamewgew, (✿oωo)
+                                 c-cwock cwock) {
+    this.wankingmodestatpwefix = w-wankingmode.name().towowewcase();
 
-    this.rankingMode = rankingMode;
-    this.featureSchemaMerger = featureSchemaMerger;
-    this.clock = clock;
-    this.featureStatPrefix = "superroot_" + rankingMode.name().toLowerCase();
+    this.wankingmode = w-wankingmode;
+    t-this.featuweschemamewgew = featuweschemamewgew;
+    this.cwock = cwock;
+    this.featuwestatpwefix = "supewwoot_" + wankingmode.name().towowewcase();
 
-    mergedResponseSearchResultsNotSet = SearchCounter.export(
-        ALL_STATS_PREFIX + rankingModeStatPrefix + "_merged_response_search_results_not_set");
-    invalidMinStatusId =
-      SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix + "_invalid_min_status_id");
-    invalidMaxStatusId =
-      SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix + "_invalid_max_status_id");
-    noMinIds = SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix + "_no_min_ids");
-    noMaxIds = SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix + "_no_max_ids");
-    mergedResponses = SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix
-      + "_merged_responses");
-    mergedResponsesWithExactDups =
-      SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix
-        + "_merged_responses_with_exact_dups");
-    dupsStats = CacheBuilder.newBuilder()
-      .build(new CacheLoader<Pair<ThriftTweetSource, ThriftTweetSource>, SearchCounter>() {
-          @Override
-          public SearchCounter load(Pair<ThriftTweetSource, ThriftTweetSource> key) {
-            return SearchCounter.export(
-                ALL_STATS_PREFIX + rankingModeStatPrefix + "_merged_responses_with_exact_dups_"
-                + key.getFirst().name() + "_" + key.getSecond().name());
+    mewgedwesponseseawchwesuwtsnotset = s-seawchcountew.expowt(
+        aww_stats_pwefix + w-wankingmodestatpwefix + "_mewged_wesponse_seawch_wesuwts_not_set");
+    invawidminstatusid =
+      s-seawchcountew.expowt(aww_stats_pwefix + w-wankingmodestatpwefix + "_invawid_min_status_id");
+    invawidmaxstatusid =
+      seawchcountew.expowt(aww_stats_pwefix + w-wankingmodestatpwefix + "_invawid_max_status_id");
+    n-nyominids = seawchcountew.expowt(aww_stats_pwefix + w-wankingmodestatpwefix + "_no_min_ids");
+    n-nyomaxids = seawchcountew.expowt(aww_stats_pwefix + wankingmodestatpwefix + "_no_max_ids");
+    mewgedwesponses = seawchcountew.expowt(aww_stats_pwefix + wankingmodestatpwefix
+      + "_mewged_wesponses");
+    mewgedwesponseswithexactdups =
+      s-seawchcountew.expowt(aww_stats_pwefix + w-wankingmodestatpwefix
+        + "_mewged_wesponses_with_exact_dups");
+    d-dupsstats = cachebuiwdew.newbuiwdew()
+      .buiwd(new c-cachewoadew<paiw<thwifttweetsouwce, 😳😳😳 t-thwifttweetsouwce>, (ꈍᴗꈍ) seawchcountew>() {
+          @ovewwide
+          p-pubwic seawchcountew woad(paiw<thwifttweetsouwce, 🥺 thwifttweetsouwce> key) {
+            wetuwn s-seawchcountew.expowt(
+                a-aww_stats_pwefix + wankingmodestatpwefix + "_mewged_wesponses_with_exact_dups_"
+                + key.getfiwst().name() + "_" + k-key.getsecond().name());
           }
         });
   }
 
-  private void incrErrorCount(String cluster, @Nullable EarlybirdResponse response) {
-    String cause;
-    if (response != null) {
-      cause = response.getResponseCode().name().toLowerCase();
-    } else {
-      cause = "null_response";
+  p-pwivate void incwewwowcount(stwing cwustew, mya @nuwwabwe eawwybiwdwesponse w-wesponse) {
+    stwing cause;
+    if (wesponse != nyuww) {
+      cause = w-wesponse.getwesponsecode().name().towowewcase();
+    } ewse {
+      cause = "nuww_wesponse";
     }
-    String statName = String.format(
-      ERROR_FORMAT, ALL_STATS_PREFIX, rankingModeStatPrefix, cluster, cause
+    s-stwing s-statname = stwing.fowmat(
+      ewwow_fowmat, (ˆ ﻌ ˆ)♡ aww_stats_pwefix, (⑅˘꒳˘) wankingmodestatpwefix, òωó c-cwustew, c-cause
     );
 
-    SearchCounter.export(statName).increment();
+    seawchcountew.expowt(statname).incwement();
   }
 
   /**
-   * Merges the given response futures.
+   * mewges the given wesponse futuwes. o.O
    *
-   * @param earlybirdRequestContext The earlybird request.
-   * @param realtimeResponseFuture The response from the realtime cluster.
-   * @param protectedResponseFuture The response from the protected cluster.
-   * @param fullArchiveResponseFuture The response from the full archive cluster.
-   * @return A future with the merged results.
+   * @pawam e-eawwybiwdwequestcontext the e-eawwybiwd wequest. XD
+   * @pawam weawtimewesponsefutuwe the wesponse fwom the weawtime cwustew.
+   * @pawam p-pwotectedwesponsefutuwe the wesponse fwom t-the pwotected c-cwustew. (˘ω˘)
+   * @pawam fuwwawchivewesponsefutuwe t-the wesponse fwom the fuww awchive c-cwustew. (ꈍᴗꈍ)
+   * @wetuwn a-a futuwe w-with the mewged wesuwts. >w<
    */
-  public Future<EarlybirdResponse> mergeResponseFutures(
-      final EarlybirdRequestContext earlybirdRequestContext,
-      final Future<EarlybirdServiceResponse> realtimeResponseFuture,
-      final Future<EarlybirdServiceResponse> protectedResponseFuture,
-      final Future<EarlybirdServiceResponse> fullArchiveResponseFuture) {
-    Future<EarlybirdResponse> mergedResponseFuture = Futures.map(
-        realtimeResponseFuture, protectedResponseFuture, fullArchiveResponseFuture,
-        new Function0<EarlybirdResponse>() {
-          @Override
-          public EarlybirdResponse apply() {
-            // If the realtime response is not valid, return an error response.
-            // Also, the realtime service should always be called.
-            EarlybirdServiceResponse realtimeResponse = Futures.get(realtimeResponseFuture);
+  p-pubwic futuwe<eawwybiwdwesponse> m-mewgewesponsefutuwes(
+      finaw eawwybiwdwequestcontext eawwybiwdwequestcontext, XD
+      finaw f-futuwe<eawwybiwdsewvicewesponse> w-weawtimewesponsefutuwe, -.-
+      f-finaw futuwe<eawwybiwdsewvicewesponse> pwotectedwesponsefutuwe, ^^;;
+      finaw futuwe<eawwybiwdsewvicewesponse> f-fuwwawchivewesponsefutuwe) {
+    futuwe<eawwybiwdwesponse> m-mewgedwesponsefutuwe = f-futuwes.map(
+        weawtimewesponsefutuwe, XD pwotectedwesponsefutuwe, :3 fuwwawchivewesponsefutuwe, σωσ
+        nyew f-function0<eawwybiwdwesponse>() {
+          @ovewwide
+          pubwic e-eawwybiwdwesponse a-appwy() {
+            // i-if the weawtime wesponse is nyot v-vawid, XD wetuwn an ewwow wesponse. :3
+            // awso, rawr the weawtime sewvice shouwd awways be cawwed.
+            eawwybiwdsewvicewesponse w-weawtimewesponse = futuwes.get(weawtimewesponsefutuwe);
 
-            if (realtimeResponse.getServiceState().serviceWasRequested()
-                && (!realtimeResponse.getServiceState().serviceWasCalled()
-                    || !EarlybirdResponseMergeUtil.isValidResponse(
-                        realtimeResponse.getResponse()))) {
+            i-if (weawtimewesponse.getsewvicestate().sewvicewaswequested()
+                && (!weawtimewesponse.getsewvicestate().sewvicewascawwed()
+                    || !eawwybiwdwesponsemewgeutiw.isvawidwesponse(
+                        weawtimewesponse.getwesponse()))) {
 
-              incrErrorCount("realtime", realtimeResponse.getResponse());
-              return EarlybirdResponseMergeUtil.transformInvalidResponse(
-                  realtimeResponse.getResponse(), "realtime");
+              i-incwewwowcount("weawtime", 😳 weawtimewesponse.getwesponse());
+              w-wetuwn eawwybiwdwesponsemewgeutiw.twansfowminvawidwesponse(
+                  weawtimewesponse.getwesponse(), 😳😳😳 "weawtime");
             }
 
-            // If we have a protected response and it's not valid, return an error response.
-            EarlybirdServiceResponse protectedResponse = Futures.get(protectedResponseFuture);
-            if (protectedResponse.getServiceState().serviceWasCalled()) {
-              if (!EarlybirdResponseMergeUtil.isValidResponse(protectedResponse.getResponse())) {
-                incrErrorCount("protected", protectedResponse.getResponse());
+            // if we h-have a pwotected w-wesponse and it's n-nyot vawid, (ꈍᴗꈍ) wetuwn a-an ewwow wesponse. 🥺
+            e-eawwybiwdsewvicewesponse pwotectedwesponse = futuwes.get(pwotectedwesponsefutuwe);
+            if (pwotectedwesponse.getsewvicestate().sewvicewascawwed()) {
+              if (!eawwybiwdwesponsemewgeutiw.isvawidwesponse(pwotectedwesponse.getwesponse())) {
+                incwewwowcount("pwotected", ^•ﻌ•^ pwotectedwesponse.getwesponse());
 
-                return EarlybirdResponseMergeUtil.transformInvalidResponse(
-                    protectedResponse.getResponse(), "protected");
+                w-wetuwn eawwybiwdwesponsemewgeutiw.twansfowminvawidwesponse(
+                    p-pwotectedwesponse.getwesponse(), XD "pwotected");
               }
             }
 
-            // If we have a full archive response, check if it's valid.
-            EarlybirdServiceResponse fullArchiveResponse = Futures.get(fullArchiveResponseFuture);
-            boolean archiveHasError =
-              fullArchiveResponse.getServiceState().serviceWasCalled()
-              && !EarlybirdResponseMergeUtil.isValidResponse(fullArchiveResponse.getResponse());
+            // i-if we have a fuww awchive wesponse, ^•ﻌ•^ c-check if it's vawid. ^^;;
+            eawwybiwdsewvicewesponse fuwwawchivewesponse = f-futuwes.get(fuwwawchivewesponsefutuwe);
+            b-boowean awchivehasewwow =
+              f-fuwwawchivewesponse.getsewvicestate().sewvicewascawwed()
+              && !eawwybiwdwesponsemewgeutiw.isvawidwesponse(fuwwawchivewesponse.getwesponse());
 
-            // Merge the responses.
-            EarlybirdResponse mergedResponse = mergeResponses(
-                earlybirdRequestContext,
-                realtimeResponse.getResponse(),
-                protectedResponse.getResponse(),
-                fullArchiveResponse.getResponse());
+            // mewge the wesponses. ʘwʘ
+            e-eawwybiwdwesponse m-mewgedwesponse = mewgewesponses(
+                e-eawwybiwdwequestcontext, OwO
+                w-weawtimewesponse.getwesponse(), 🥺
+                pwotectedwesponse.getwesponse(), (⑅˘꒳˘)
+                fuwwawchivewesponse.getwesponse());
 
-            // If the realtime clusters didn't return any results, and the full archive cluster
-            // returned an error response, return an error merged response.
-            if (archiveHasError && !EarlybirdResponseUtil.hasResults(mergedResponse)) {
-              incrErrorCount("full_archive", fullArchiveResponse.getResponse());
+            // if the weawtime cwustews d-didn't wetuwn a-any wesuwts, (///ˬ///✿) a-and the fuww awchive c-cwustew
+            // w-wetuwned an ewwow wesponse, (✿oωo) w-wetuwn an e-ewwow mewged wesponse. nyaa~~
+            if (awchivehasewwow && !eawwybiwdwesponseutiw.haswesuwts(mewgedwesponse)) {
+              incwewwowcount("fuww_awchive", >w< f-fuwwawchivewesponse.getwesponse());
 
-              return EarlybirdResponseMergeUtil.failedEarlybirdResponse(
-                  fullArchiveResponse.getResponse().getResponseCode(),
-                  "realtime clusters had no results and archive cluster response had error");
+              w-wetuwn eawwybiwdwesponsemewgeutiw.faiwedeawwybiwdwesponse(
+                  fuwwawchivewesponse.getwesponse().getwesponsecode(), (///ˬ///✿)
+                  "weawtime cwustews h-had nyo wesuwts and awchive cwustew wesponse h-had ewwow");
             }
 
-            // Corner case: the realtime response could have exactly numRequested results, and could
-            // be exhausted (not early-terminated). In this case, the request should not have been
-            // sent to the full archive cluster.
-            //   - If the full archive cluster is not available, or was not requested, then we don't
-            //     need to change anything.
-            //   - If the full archive cluster is available and was requested (but wasn't hit
-            //     because we found enough results in the realtime cluster), then we should set the
-            //     early-termination flag on the merged response, to indicate that we potentially
-            //     have more results for this query in our index.
-            if ((fullArchiveResponse.getServiceState()
-                 == EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED)
-                && !EarlybirdResponseUtil.isEarlyTerminated(realtimeResponse.getResponse())) {
-              EarlyTerminationInfo earlyTerminationInfo = new EarlyTerminationInfo(true);
-              earlyTerminationInfo.setEarlyTerminationReason(
-                  EarlyTerminationState.TERMINATED_NUM_RESULTS_EXCEEDED.getTerminationReason());
-              mergedResponse.setEarlyTerminationInfo(earlyTerminationInfo);
+            // cownew case: the w-weawtime wesponse c-couwd have exactwy nyumwequested w-wesuwts, rawr and couwd
+            // be exhausted (not e-eawwy-tewminated). (U ﹏ U) i-in this c-case, ^•ﻌ•^ the wequest shouwd nyot have been
+            // sent to t-the fuww awchive cwustew. (///ˬ///✿)
+            //   - if the fuww awchive c-cwustew is nyot a-avaiwabwe, o.O ow was nyot wequested, >w< t-then we don't
+            //     nyeed to change a-anything. nyaa~~
+            //   - i-if the fuww awchive cwustew is avaiwabwe and w-was wequested (but wasn't hit
+            //     because we found e-enough wesuwts i-in the weawtime cwustew), òωó then w-we shouwd set the
+            //     eawwy-tewmination f-fwag on the m-mewged wesponse, t-to indicate that we potentiawwy
+            //     have mowe wesuwts fow this quewy in ouw index. (U ᵕ U❁)
+            if ((fuwwawchivewesponse.getsewvicestate()
+                 == eawwybiwdsewvicewesponse.sewvicestate.sewvice_not_cawwed)
+                && !eawwybiwdwesponseutiw.iseawwytewminated(weawtimewesponse.getwesponse())) {
+              eawwytewminationinfo eawwytewminationinfo = nyew eawwytewminationinfo(twue);
+              eawwytewminationinfo.seteawwytewminationweason(
+                  eawwytewminationstate.tewminated_num_wesuwts_exceeded.gettewminationweason());
+              mewgedwesponse.seteawwytewminationinfo(eawwytewminationinfo);
             }
 
-            // If we've exhausted all clusters, set the minSearchedStatusID to 0.
-            if (!EarlybirdResponseUtil.isEarlyTerminated(mergedResponse)) {
-              mergedResponse.getSearchResults().setMinSearchedStatusID(0);
+            // i-if w-we've exhausted aww cwustews, (///ˬ///✿) set the minseawchedstatusid t-to 0. (✿oωo)
+            i-if (!eawwybiwdwesponseutiw.iseawwytewminated(mewgedwesponse)) {
+              m-mewgedwesponse.getseawchwesuwts().setminseawchedstatusid(0);
             }
 
-            return mergedResponse;
+            wetuwn mewgedwesponse;
           }
         });
 
-    // Handle all merging exceptions.
-    return handleResponseException(mergedResponseFuture,
-                                   "Exception thrown while merging responses.");
+    // h-handwe aww mewging exceptions. 😳😳😳
+    w-wetuwn h-handwewesponseexception(mewgedwesponsefutuwe,
+                                   "exception thwown whiwe mewging w-wesponses.");
   }
 
   /**
-   * Merge the results in the given responses.
+   * mewge the wesuwts i-in the given w-wesponses. (✿oωo)
    *
-   * @param earlybirdRequestContext The earlybird request context.
-   * @param realtimeResponse The response from the realtime cluster.
-   * @param protectedResponse The response from the protected cluster.
-   * @param fullArchiveResponse The response from the full archive cluster.
-   * @return The merged response.
+   * @pawam eawwybiwdwequestcontext the eawwybiwd w-wequest context. (U ﹏ U)
+   * @pawam w-weawtimewesponse t-the wesponse fwom t-the weawtime c-cwustew. (˘ω˘)
+   * @pawam p-pwotectedwesponse t-the wesponse f-fwom the pwotected c-cwustew. 😳😳😳
+   * @pawam fuwwawchivewesponse t-the wesponse fwom t-the fuww awchive c-cwustew. (///ˬ///✿)
+   * @wetuwn the mewged w-wesponse. (U ᵕ U❁)
    */
-  private EarlybirdResponse mergeResponses(
-      EarlybirdRequestContext earlybirdRequestContext,
-      @Nullable EarlybirdResponse realtimeResponse,
-      @Nullable EarlybirdResponse protectedResponse,
-      @Nullable EarlybirdResponse fullArchiveResponse) {
+  pwivate eawwybiwdwesponse mewgewesponses(
+      e-eawwybiwdwequestcontext eawwybiwdwequestcontext, >_<
+      @nuwwabwe eawwybiwdwesponse w-weawtimewesponse, (///ˬ///✿)
+      @nuwwabwe e-eawwybiwdwesponse p-pwotectedwesponse, (U ᵕ U❁)
+      @nuwwabwe eawwybiwdwesponse f-fuwwawchivewesponse) {
 
-    EarlybirdRequest request = earlybirdRequestContext.getRequest();
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    int numResultsRequested;
+    eawwybiwdwequest wequest = eawwybiwdwequestcontext.getwequest();
+    t-thwiftseawchquewy seawchquewy = w-wequest.getseawchquewy();
+    int nyumwesuwtswequested;
 
-    if (request.isSetNumResultsToReturnAtRoot()) {
-      numResultsRequested = request.getNumResultsToReturnAtRoot();
-    } else {
-      numResultsRequested = searchQuery.getNumResults();
+    i-if (wequest.issetnumwesuwtstowetuwnatwoot()) {
+      nyumwesuwtswequested = wequest.getnumwesuwtstowetuwnatwoot();
+    } ewse {
+      nyumwesuwtswequested = s-seawchquewy.getnumwesuwts();
     }
 
-    Preconditions.checkState(numResultsRequested > 0);
+    pweconditions.checkstate(numwesuwtswequested > 0);
 
-    EarlybirdResponse mergedResponse = EMPTY_RESPONSE.deepCopy();
-    if ((realtimeResponse != null)
-        && (realtimeResponse.getResponseCode() != EarlybirdResponseCode.TIER_SKIPPED)) {
-      mergedResponse = realtimeResponse.deepCopy();
+    e-eawwybiwdwesponse m-mewgedwesponse = empty_wesponse.deepcopy();
+    if ((weawtimewesponse != nyuww)
+        && (weawtimewesponse.getwesponsecode() != e-eawwybiwdwesponsecode.tiew_skipped)) {
+      mewgedwesponse = weawtimewesponse.deepcopy();
     }
 
-    if (!mergedResponse.isSetSearchResults()) {
-      mergedResponseSearchResultsNotSet.increment();
-      mergedResponse.setSearchResults(
-          new ThriftSearchResults(Lists.<ThriftSearchResult>newArrayList()));
+    i-if (!mewgedwesponse.issetseawchwesuwts()) {
+      m-mewgedwesponseseawchwesuwtsnotset.incwement();
+      mewgedwesponse.setseawchwesuwts(
+          n-nyew thwiftseawchwesuwts(wists.<thwiftseawchwesuwt>newawwaywist()));
     }
 
-    // If either the realtime or the full archive response is early-terminated, we want the merged
-    // response to be early-terminated too. The early-termination flag from the realtime response
-    // carries over to the merged response, because mergedResponse is just a deep copy of the
-    // realtime response. So we only need to check the early-termination flag of the full archive
-    // response.
-    if ((fullArchiveResponse != null)
-        && EarlybirdResponseUtil.isEarlyTerminated(fullArchiveResponse)) {
-      mergedResponse.setEarlyTerminationInfo(fullArchiveResponse.getEarlyTerminationInfo());
+    // if eithew the weawtime o-ow the fuww a-awchive wesponse is eawwy-tewminated, >w< w-we want the mewged
+    // wesponse to be eawwy-tewminated t-too. 😳😳😳 the eawwy-tewmination fwag f-fwom the weawtime w-wesponse
+    // c-cawwies ovew to the mewged wesponse, (ˆ ﻌ ˆ)♡ b-because mewgedwesponse i-is j-just a deep copy o-of the
+    // weawtime wesponse. (ꈍᴗꈍ) s-so we onwy nyeed t-to check the e-eawwy-tewmination f-fwag of the fuww a-awchive
+    // w-wesponse. 🥺
+    i-if ((fuwwawchivewesponse != n-nyuww)
+        && eawwybiwdwesponseutiw.iseawwytewminated(fuwwawchivewesponse)) {
+      mewgedwesponse.seteawwytewminationinfo(fuwwawchivewesponse.geteawwytewminationinfo());
     }
 
-    // If realtime has empty results and protected has some results then we copy the early
-    // termination information if that is present
-    if (protectedResponse != null
-        && mergedResponse.getSearchResults().getResults().isEmpty()
-        && !protectedResponse.getSearchResults().getResults().isEmpty()
-        && EarlybirdResponseUtil.isEarlyTerminated(protectedResponse)) {
-      mergedResponse.setEarlyTerminationInfo(protectedResponse.getEarlyTerminationInfo());
+    // i-if weawtime has empty w-wesuwts and pwotected has some wesuwts t-then we copy t-the eawwy
+    // t-tewmination infowmation if that is pwesent
+    if (pwotectedwesponse != n-nyuww
+        && m-mewgedwesponse.getseawchwesuwts().getwesuwts().isempty()
+        && !pwotectedwesponse.getseawchwesuwts().getwesuwts().isempty()
+        && e-eawwybiwdwesponseutiw.iseawwytewminated(pwotectedwesponse)) {
+      mewgedwesponse.seteawwytewminationinfo(pwotectedwesponse.geteawwytewminationinfo());
     }
 
-    // Merge the results.
-    List<ThriftSearchResult> mergedResults = mergeResults(
-        numResultsRequested, realtimeResponse, protectedResponse, fullArchiveResponse);
+    // mewge the wesuwts. >_<
+    wist<thwiftseawchwesuwt> m-mewgedwesuwts = m-mewgewesuwts(
+        nyumwesuwtswequested, OwO w-weawtimewesponse, ^^;; pwotectedwesponse, (✿oωo) f-fuwwawchivewesponse);
 
-    // Trim the merged results if necessary.
-    boolean resultsTrimmed = false;
-    if (mergedResults.size() > numResultsRequested
-        && !(searchQuery.isSetRelevanceOptions()
-             && searchQuery.getRelevanceOptions().isReturnAllResults())) {
-      // If we have more results than requested, trim the result list and re-adjust
-      // minSearchedStatusID.
-      mergedResults = mergedResults.subList(0, numResultsRequested);
+    // twim the mewged wesuwts if nyecessawy. UwU
+    boowean w-wesuwtstwimmed = f-fawse;
+    if (mewgedwesuwts.size() > n-numwesuwtswequested
+        && !(seawchquewy.issetwewevanceoptions()
+             && seawchquewy.getwewevanceoptions().iswetuwnawwwesuwts())) {
+      // i-if we have mowe wesuwts than wequested, ( ͡o ω ͡o ) twim t-the wesuwt wist a-and we-adjust
+      // minseawchedstatusid. (✿oωo)
+      mewgedwesuwts = m-mewgedwesuwts.subwist(0, mya nyumwesuwtswequested);
 
-      // Mark early termination in merged response
-      if (!EarlybirdResponseUtil.isEarlyTerminated(mergedResponse)) {
-        EarlyTerminationInfo earlyTerminationInfo = new EarlyTerminationInfo(true);
-        earlyTerminationInfo.setEarlyTerminationReason(
-            EarlyTerminationState.TERMINATED_NUM_RESULTS_EXCEEDED.getTerminationReason());
-        mergedResponse.setEarlyTerminationInfo(earlyTerminationInfo);
+      // mawk e-eawwy tewmination in mewged wesponse
+      i-if (!eawwybiwdwesponseutiw.iseawwytewminated(mewgedwesponse)) {
+        e-eawwytewminationinfo eawwytewminationinfo = n-nyew eawwytewminationinfo(twue);
+        e-eawwytewminationinfo.seteawwytewminationweason(
+            eawwytewminationstate.tewminated_num_wesuwts_exceeded.gettewminationweason());
+        m-mewgedwesponse.seteawwytewminationinfo(eawwytewminationinfo);
       }
 
-      resultsTrimmed = true;
+      wesuwtstwimmed = t-twue;
     }
 
-    mergedResponse.getSearchResults().setResults(mergedResults);
-    featureSchemaMerger.mergeFeatureSchemaAcrossClusters(
-        earlybirdRequestContext,
-        mergedResponse,
-        featureStatPrefix,
-        realtimeResponse,
-        protectedResponse,
-        fullArchiveResponse);
+    m-mewgedwesponse.getseawchwesuwts().setwesuwts(mewgedwesuwts);
+    f-featuweschemamewgew.mewgefeatuweschemaacwosscwustews(
+        e-eawwybiwdwequestcontext, ( ͡o ω ͡o )
+        mewgedwesponse, :3
+        f-featuwestatpwefix, 😳
+        w-weawtimewesponse,
+        p-pwotectedwesponse, (U ﹏ U)
+        fuwwawchivewesponse);
 
-    // Set the minSearchedStatusID and maxSearchedStatusID fields on the merged response.
-    setMinSearchedStatusId(mergedResponse, realtimeResponse, protectedResponse, fullArchiveResponse,
-        resultsTrimmed);
-    setMaxSearchedStatusId(mergedResponse, realtimeResponse, protectedResponse,
-        fullArchiveResponse);
+    // s-set the minseawchedstatusid and maxseawchedstatusid f-fiewds on the m-mewged wesponse. >w<
+    s-setminseawchedstatusid(mewgedwesponse, UwU weawtimewesponse, 😳 pwotectedwesponse, XD fuwwawchivewesponse, (✿oωo)
+        wesuwtstwimmed);
+    setmaxseawchedstatusid(mewgedwesponse, ^•ﻌ•^ w-weawtimewesponse, mya pwotectedwesponse, (˘ω˘)
+        fuwwawchivewesponse);
 
-    int numRealtimeSearchedSegments =
-        (realtimeResponse != null && realtimeResponse.isSetNumSearchedSegments())
-            ? realtimeResponse.getNumSearchedSegments()
+    i-int nyumweawtimeseawchedsegments =
+        (weawtimewesponse != n-nyuww && weawtimewesponse.issetnumseawchedsegments())
+            ? weawtimewesponse.getnumseawchedsegments()
             : 0;
 
-    int numProtectedSearchedSegments =
-        (protectedResponse != null && protectedResponse.isSetNumSearchedSegments())
-            ? protectedResponse.getNumSearchedSegments()
+    int nyumpwotectedseawchedsegments =
+        (pwotectedwesponse != n-nyuww && pwotectedwesponse.issetnumseawchedsegments())
+            ? p-pwotectedwesponse.getnumseawchedsegments()
             : 0;
 
-    int numArchiveSearchedSegments =
-        (fullArchiveResponse != null && fullArchiveResponse.isSetNumSearchedSegments())
-            ? fullArchiveResponse.getNumSearchedSegments()
+    i-int nyumawchiveseawchedsegments =
+        (fuwwawchivewesponse != n-nyuww && fuwwawchivewesponse.issetnumseawchedsegments())
+            ? f-fuwwawchivewesponse.getnumseawchedsegments()
             : 0;
 
-    mergedResponse.setNumSearchedSegments(
-        numRealtimeSearchedSegments + numProtectedSearchedSegments + numArchiveSearchedSegments);
+    m-mewgedwesponse.setnumseawchedsegments(
+        nyumweawtimeseawchedsegments + nyumpwotectedseawchedsegments + nyumawchiveseawchedsegments);
 
-    if (earlybirdRequestContext.getRequest().getDebugMode() > 0) {
-      mergedResponse.setDebugString(
-          mergeClusterDebugStrings(realtimeResponse, protectedResponse, fullArchiveResponse));
+    if (eawwybiwdwequestcontext.getwequest().getdebugmode() > 0) {
+      m-mewgedwesponse.setdebugstwing(
+          mewgecwustewdebugstwings(weawtimewesponse, nyaa~~ p-pwotectedwesponse, :3 fuwwawchivewesponse));
     }
 
-    return mergedResponse;
+    wetuwn mewgedwesponse;
   }
 
   /**
-   * Merges the given responses.
+   * m-mewges the given wesponses. (✿oωo)
    *
-   * @param numResults the number of results requested
-   * @param realtimeResponse the response from the realtime response
-   * @param protectedResponse the response from the protected response
-   * @param fullArchiveResponse the response from the full archive response
-   * @return the list of merged results
+   * @pawam nyumwesuwts the nyumbew of wesuwts wequested
+   * @pawam w-weawtimewesponse t-the wesponse fwom the w-weawtime wesponse
+   * @pawam pwotectedwesponse the wesponse fwom t-the pwotected w-wesponse
+   * @pawam fuwwawchivewesponse t-the wesponse fwom the fuww a-awchive wesponse
+   * @wetuwn the wist of mewged wesuwts
    */
-  private List<ThriftSearchResult> mergeResults(int numResults,
-                                                @Nullable EarlybirdResponse realtimeResponse,
-                                                @Nullable EarlybirdResponse protectedResponse,
-                                                @Nullable EarlybirdResponse fullArchiveResponse) {
-    mergedResponses.increment();
-    // We first merge the results from the two realtime clusters, Realtime cluster and
-    // Realtime Protected Tweets cluster
-    List<ThriftSearchResult> mergedResults = mergePublicAndProtectedRealtimeResults(
-        numResults,
-        realtimeResponse,
-        protectedResponse,
-        fullArchiveResponse,
-        clock);
+  pwivate wist<thwiftseawchwesuwt> m-mewgewesuwts(int numwesuwts, (U ﹏ U)
+                                                @nuwwabwe eawwybiwdwesponse weawtimewesponse, (ꈍᴗꈍ)
+                                                @nuwwabwe e-eawwybiwdwesponse p-pwotectedwesponse, (˘ω˘)
+                                                @nuwwabwe e-eawwybiwdwesponse fuwwawchivewesponse) {
+    mewgedwesponses.incwement();
+    // w-we fiwst mewge the wesuwts fwom the two weawtime cwustews, weawtime cwustew a-and
+    // w-weawtime pwotected t-tweets cwustew
+    w-wist<thwiftseawchwesuwt> mewgedwesuwts = mewgepubwicandpwotectedweawtimewesuwts(
+        n-nyumwesuwts, ^^
+        w-weawtimewesponse, (⑅˘꒳˘)
+        pwotectedwesponse, rawr
+        fuwwawchivewesponse, :3
+        c-cwock);
 
-    EarlybirdResponseMergeUtil.addResultsToList(mergedResults, fullArchiveResponse,
-                                                ThriftTweetSource.FULL_ARCHIVE_CLUSTER);
+    eawwybiwdwesponsemewgeutiw.addwesuwtstowist(mewgedwesuwts, OwO fuwwawchivewesponse, (ˆ ﻌ ˆ)♡
+                                                t-thwifttweetsouwce.fuww_awchive_cwustew);
 
-    List<ThriftSearchResult> distinctMergedResults =
-        EarlybirdResponseMergeUtil.distinctByStatusId(mergedResults, dupsStats);
-    if (mergedResults != distinctMergedResults) {
-      mergedResponsesWithExactDups.increment();
+    wist<thwiftseawchwesuwt> distinctmewgedwesuwts =
+        e-eawwybiwdwesponsemewgeutiw.distinctbystatusid(mewgedwesuwts, :3 d-dupsstats);
+    if (mewgedwesuwts != d-distinctmewgedwesuwts) {
+      m-mewgedwesponseswithexactdups.incwement();
     }
 
-    if (rankingMode == ThriftSearchRankingMode.RELEVANCE
-        || rankingMode == ThriftSearchRankingMode.TOPTWEETS) {
-      distinctMergedResults.sort(ResultComparators.SCORE_COMPARATOR);
-    } else {
-      distinctMergedResults.sort(ResultComparators.ID_COMPARATOR);
+    i-if (wankingmode == thwiftseawchwankingmode.wewevance
+        || wankingmode == t-thwiftseawchwankingmode.toptweets) {
+      distinctmewgedwesuwts.sowt(wesuwtcompawatows.scowe_compawatow);
+    } ewse {
+      distinctmewgedwesuwts.sowt(wesuwtcompawatows.id_compawatow);
     }
 
-    return distinctMergedResults;
+    w-wetuwn distinctmewgedwesuwts;
   }
 
   /**
-   * Method for merging tweets from protected and realtime clusters
-   *  - realtime, guaranteed newer than any archive tweets
-   *  - protected, also realtime, but with a potentially larger window (optional)
-   *  - archive, public, guaranteed older than any public realtime tweets (optional, used for
-   *    id limits, *not added to results*)
-   * It adds the ThriftSearchResults from protected tweets to the realtimeResponse
+   * method fow mewging tweets fwom pwotected and w-weawtime cwustews
+   *  - w-weawtime, -.- g-guawanteed n-nyewew than any a-awchive tweets
+   *  - pwotected, -.- a-awso weawtime, òωó but with a potentiawwy wawgew w-window (optionaw)
+   *  - awchive, 😳 p-pubwic, nyaa~~ guawanteed owdew than any pubwic weawtime t-tweets (optionaw, (⑅˘꒳˘) u-used fow
+   *    id wimits, 😳 *not a-added to wesuwts*)
+   * i-it adds the thwiftseawchwesuwts f-fwom pwotected tweets to the weawtimewesponse
    *
-   * Algorithm diagram: (with newer tweets at the top)
-   *               ------------------------------------  <--- protected maxSearchedStatusID
-   *               |C:Newest protected realtime tweets|
-   *               | (does not exist if realtime      |
-   *               | maxID >= protected maxID)        |
+   * a-awgowithm d-diagwam: (with nyewew tweets at t-the top)
+   *               ------------------------------------  <--- pwotected maxseawchedstatusid
+   *               |c:newest pwotected weawtime t-tweets|
+   *               | (does not exist i-if weawtime      |
+   *               | maxid >= pwotected maxid)        |
    *
-   *               |     ------------------------     |  <--- 60 seconds ago
-   *               |D:Newer protected realtime tweets |
-   *               | (does not exist if realtime      |
-   *               | maxID >= 60 seconds ago)         |
-   * ----------    |     ------------------------     |  <--- public realtime maxSearchedStatusID
-   * |A:Public|    |E:Automatically valid protected   |
-   * |realtime|    |realtime tweets                   |
-   * ----------    |     ------------------------     |  <--- public realtime minSearchedStatusID
+   *               |     ------------------------     |  <--- 60 s-seconds ago
+   *               |d:newew p-pwotected w-weawtime tweets |
+   *               | (does n-nyot exist if w-weawtime      |
+   *               | maxid >= 60 s-seconds ago)         |
+   * ----------    |     ------------------------     |  <--- pubwic weawtime m-maxseawchedstatusid
+   * |a:pubwic|    |e:automaticawwy vawid pwotected   |
+   * |weawtime|    |weawtime t-tweets                   |
+   * ----------    |     ------------------------     |  <--- p-pubwic weawtime minseawchedstatusid
    *               |                                  |
-   * ----------    |  E if archive is present         |  <--- public archive maxSearchedStatusID
-   * ----------    |  E if archive is present         |  <--- public archive maxSearchedStatusID
-   * |B:Public|    |  F is archive is not present     |
-   * |archive |    |                                  |
-   * ----------    |     ------------------------     |  <--- public archive minSearchedStatusID
-   *               |F:Older protected realtime tweets |
-   *               | (does not exist if protected     |
-   *               | minID >= public minID)           |
-   *               ------------------------------------  <--- protected minSearchedStatusID
-   * Step 1: Select tweets from groups A, and E. If this is enough, return them
-   * Step 2: Select tweets from groups A, E, and F. If this is enough, return them
-   * Step 3: Select tweets from groups A, D, E, and F and return them
+   * ----------    |  e if awchive is pwesent         |  <--- pubwic awchive m-maxseawchedstatusid
+   * ----------    |  e-e if awchive is pwesent         |  <--- pubwic awchive maxseawchedstatusid
+   * |b:pubwic|    |  f-f is awchive is nyot p-pwesent     |
+   * |awchive |    |                                  |
+   * ----------    |     ------------------------     |  <--- p-pubwic awchive minseawchedstatusid
+   *               |f:owdew pwotected weawtime tweets |
+   *               | (does nyot e-exist if pwotected     |
+   *               | minid >= pubwic minid)           |
+   *               ------------------------------------  <--- p-pwotected minseawchedstatusid
+   * step 1: sewect t-tweets fwom gwoups a-a, (U ﹏ U) and e. if this is enough, /(^•ω•^) w-wetuwn them
+   * s-step 2: sewect t-tweets fwom gwoups a-a, OwO e, and f-f. if this is enough, w-wetuwn them
+   * step 3: sewect tweets fwom gwoups a, ( ͡o ω ͡o ) d, e, and f and wetuwn them
    *
-   * There are two primary tradeoffs, both of which favor public tweets:
-   *  (1) Benefit: While public indexing latency is < 60s, auto-updating never misses public tweets
-   *      Cost:    Absence of public tweets may delay protected tweets from being searchable for 60s
-   *  (2) Benefit: No failure or delay from the protected cluster will affect realtime results
-   *      Cost:    If the protected cluster indexes more slowly, auto-update may miss its tweets
+   * t-thewe awe two p-pwimawy twadeoffs, XD b-both of which f-favow pubwic tweets:
+   *  (1) b-benefit: whiwe pubwic i-indexing watency is < 60s, /(^•ω•^) auto-updating nyevew misses pubwic tweets
+   *      c-cost:    absence o-of pubwic tweets may deway pwotected tweets fwom being seawchabwe f-fow 60s
+   *  (2) b-benefit: n-nyo faiwuwe ow deway fwom the pwotected cwustew w-wiww affect weawtime wesuwts
+   *      cost:    i-if the pwotected c-cwustew indexes mowe swowwy, /(^•ω•^) auto-update may m-miss its tweets
    *
-   * @param fullArchiveTweets - used solely for generating anchor points, not merged in.
+   * @pawam fuwwawchivetweets - u-used sowewy f-fow genewating anchow points, 😳😳😳 n-nyot mewged in.
    */
-  @VisibleForTesting
-  static List<ThriftSearchResult> mergePublicAndProtectedRealtimeResults(
-      int numRequested,
-      EarlybirdResponse realtimeTweets,
-      EarlybirdResponse realtimeProtectedTweets,
-      @Nullable EarlybirdResponse fullArchiveTweets,
-      Clock clock) {
-    // See which results will actually be used
-    boolean isRealtimeUsable = EarlybirdResponseUtil.hasResults(realtimeTweets);
-    boolean isArchiveUsable = EarlybirdResponseUtil.hasResults(fullArchiveTweets);
-    boolean isProtectedUsable = EarlybirdResponseUtil.hasResults(realtimeProtectedTweets);
+  @visibwefowtesting
+  s-static w-wist<thwiftseawchwesuwt> m-mewgepubwicandpwotectedweawtimewesuwts(
+      i-int nyumwequested, (ˆ ﻌ ˆ)♡
+      e-eawwybiwdwesponse weawtimetweets,
+      e-eawwybiwdwesponse w-weawtimepwotectedtweets, :3
+      @nuwwabwe eawwybiwdwesponse f-fuwwawchivetweets, òωó
+      cwock cwock) {
+    // see which w-wesuwts wiww actuawwy be used
+    b-boowean isweawtimeusabwe = eawwybiwdwesponseutiw.haswesuwts(weawtimetweets);
+    boowean isawchiveusabwe = eawwybiwdwesponseutiw.haswesuwts(fuwwawchivetweets);
+    b-boowean i-ispwotectedusabwe = eawwybiwdwesponseutiw.haswesuwts(weawtimepwotectedtweets);
 
-    long minId = Long.MIN_VALUE;
-    long maxId = Long.MAX_VALUE;
-    if (isRealtimeUsable) {
-      // Determine the actual upper/lower bounds on the tweet id
-      if (realtimeTweets.getSearchResults().isSetMinSearchedStatusID()) {
-        minId = realtimeTweets.getSearchResults().getMinSearchedStatusID();
+    wong minid = w-wong.min_vawue;
+    wong maxid = wong.max_vawue;
+    i-if (isweawtimeusabwe) {
+      // d-detewmine the actuaw uppew/wowew bounds on t-the tweet id
+      i-if (weawtimetweets.getseawchwesuwts().issetminseawchedstatusid()) {
+        minid = weawtimetweets.getseawchwesuwts().getminseawchedstatusid();
       }
-      if (realtimeTweets.getSearchResults().isSetMaxSearchedStatusID()) {
-        maxId = realtimeTweets.getSearchResults().getMaxSearchedStatusID();
+      i-if (weawtimetweets.getseawchwesuwts().issetmaxseawchedstatusid()) {
+        maxid = weawtimetweets.getseawchwesuwts().getmaxseawchedstatusid();
       }
 
-      int justRight = realtimeTweets.getSearchResults().getResultsSize();
-      if (isArchiveUsable) {
-        justRight += fullArchiveTweets.getSearchResults().getResultsSize();
-        if (fullArchiveTweets.getSearchResults().isSetMinSearchedStatusID()) {
-          long fullArchiveMinId = fullArchiveTweets.getSearchResults().getMinSearchedStatusID();
-          if (fullArchiveMinId <= minId) {
-            minId = fullArchiveMinId;
-          } else {
-            FULL_ARCHIVE_MIN_ID_GREATER_THAN_REALTIME_MIN_ID.increment();
+      int justwight = w-weawtimetweets.getseawchwesuwts().getwesuwtssize();
+      i-if (isawchiveusabwe) {
+        justwight += f-fuwwawchivetweets.getseawchwesuwts().getwesuwtssize();
+        i-if (fuwwawchivetweets.getseawchwesuwts().issetminseawchedstatusid()) {
+          wong fuwwawchiveminid = fuwwawchivetweets.getseawchwesuwts().getminseawchedstatusid();
+          i-if (fuwwawchiveminid <= m-minid) {
+            m-minid = fuwwawchiveminid;
+          } e-ewse {
+            fuww_awchive_min_id_gweatew_than_weawtime_min_id.incwement();
           }
         }
       }
-      if (isProtectedUsable) {
-        for (ThriftSearchResult result : realtimeProtectedTweets.getSearchResults().getResults()) {
-          if (result.getId() >= minId && result.getId() <= maxId) {
-            justRight++;
+      if (ispwotectedusabwe) {
+        fow (thwiftseawchwesuwt wesuwt : weawtimepwotectedtweets.getseawchwesuwts().getwesuwts()) {
+          if (wesuwt.getid() >= minid && w-wesuwt.getid() <= m-maxid) {
+            j-justwight++;
           }
         }
       }
-      if (justRight < numRequested) {
-        // Since this is only used as an upper bound, old (pre-2010) ids are still handled correctly
-        maxId = Math.max(
-            maxId,
-            SnowflakeIdParser.generateValidStatusId(
-                clock.nowMillis() - Amount.of(60, Time.SECONDS).as(Time.MILLISECONDS), 0));
+      if (justwight < nyumwequested) {
+        // s-since t-this is onwy used a-as an uppew bound, 🥺 owd (pwe-2010) i-ids awe stiww h-handwed cowwectwy
+        maxid = m-math.max(
+            m-maxid, (U ﹏ U)
+            snowfwakeidpawsew.genewatevawidstatusid(
+                cwock.nowmiwwis() - a-amount.of(60, XD time.seconds).as(time.miwwiseconds), ^^ 0));
       }
     }
 
-    List<ThriftSearchResult> mergedSearchResults = Lists.newArrayListWithCapacity(numRequested * 2);
+    wist<thwiftseawchwesuwt> mewgedseawchwesuwts = w-wists.newawwaywistwithcapacity(numwequested * 2);
 
-    // Add valid tweets in order of priority: protected, then realtime
-    // Only add results that are within range (that check only matters for protected)
-    if (isProtectedUsable) {
-      EarlybirdResponseMergeUtil.markWithTweetSource(
-          realtimeProtectedTweets.getSearchResults().getResults(),
-          ThriftTweetSource.REALTIME_PROTECTED_CLUSTER);
-      for (ThriftSearchResult result : realtimeProtectedTweets.getSearchResults().getResults()) {
-        if (result.getId() <= maxId && result.getId() >= minId) {
-          mergedSearchResults.add(result);
+    // add vawid tweets i-in owdew of pwiowity: p-pwotected, o.O then weawtime
+    // o-onwy add wesuwts t-that awe w-within wange (that check onwy mattews f-fow pwotected)
+    i-if (ispwotectedusabwe) {
+      eawwybiwdwesponsemewgeutiw.mawkwithtweetsouwce(
+          w-weawtimepwotectedtweets.getseawchwesuwts().getwesuwts(), 😳😳😳
+          thwifttweetsouwce.weawtime_pwotected_cwustew);
+      f-fow (thwiftseawchwesuwt w-wesuwt : weawtimepwotectedtweets.getseawchwesuwts().getwesuwts()) {
+        i-if (wesuwt.getid() <= maxid && wesuwt.getid() >= minid) {
+          m-mewgedseawchwesuwts.add(wesuwt);
         }
       }
     }
 
-    if (isRealtimeUsable) {
-      EarlybirdResponseMergeUtil.addResultsToList(
-          mergedSearchResults, realtimeTweets, ThriftTweetSource.REALTIME_CLUSTER);
+    if (isweawtimeusabwe) {
+      eawwybiwdwesponsemewgeutiw.addwesuwtstowist(
+          m-mewgedseawchwesuwts, weawtimetweets, thwifttweetsouwce.weawtime_cwustew);
     }
 
-    // Set the minSearchedStatusID and maxSearchedStatusID on the protected response to the
-    // minId and maxId that were used to trim the protected results.
-    // This is needed in order to correctly set these IDs on the merged response.
-    ThriftSearchResults protectedResults =
-      EarlybirdResponseUtil.getResults(realtimeProtectedTweets);
-    if ((protectedResults != null)
-        && protectedResults.isSetMinSearchedStatusID()
-        && (protectedResults.getMinSearchedStatusID() < minId)) {
-      protectedResults.setMinSearchedStatusID(minId);
+    // set the minseawchedstatusid and maxseawchedstatusid on the pwotected w-wesponse to the
+    // minid and maxid that wewe used to twim the pwotected wesuwts. /(^•ω•^)
+    // this is nyeeded in o-owdew to cowwectwy set these ids on the mewged w-wesponse. 😳😳😳
+    thwiftseawchwesuwts pwotectedwesuwts =
+      e-eawwybiwdwesponseutiw.getwesuwts(weawtimepwotectedtweets);
+    if ((pwotectedwesuwts != nuww)
+        && p-pwotectedwesuwts.issetminseawchedstatusid()
+        && (pwotectedwesuwts.getminseawchedstatusid() < minid)) {
+      p-pwotectedwesuwts.setminseawchedstatusid(minid);
     }
-    if ((protectedResults != null)
-        && protectedResults.isSetMaxSearchedStatusID()
-        && (protectedResults.getMaxSearchedStatusID() > maxId)) {
-      realtimeProtectedTweets.getSearchResults().setMaxSearchedStatusID(maxId);
+    if ((pwotectedwesuwts != n-nyuww)
+        && p-pwotectedwesuwts.issetmaxseawchedstatusid()
+        && (pwotectedwesuwts.getmaxseawchedstatusid() > maxid)) {
+      weawtimepwotectedtweets.getseawchwesuwts().setmaxseawchedstatusid(maxid);
     }
 
-    return mergedSearchResults;
+    w-wetuwn mewgedseawchwesuwts;
   }
 
   /**
-   * Merges the debug strings of the given cluster responses.
+   * mewges the debug stwings of the given cwustew w-wesponses. ^•ﻌ•^
    *
-   * @param realtimeResponse The response from the realtime cluster.
-   * @param protectedResponse The response from the protected cluster.
-   * @param fullArchiveResponse The response from the full archive cluster.
-   * @return The merged debug string.
+   * @pawam weawtimewesponse t-the wesponse fwom the w-weawtime cwustew. 🥺
+   * @pawam pwotectedwesponse t-the wesponse f-fwom the pwotected cwustew. o.O
+   * @pawam fuwwawchivewesponse t-the wesponse fwom the fuww awchive cwustew. (U ᵕ U❁)
+   * @wetuwn t-the mewged debug stwing. ^^
    */
-  public static String mergeClusterDebugStrings(@Nullable EarlybirdResponse realtimeResponse,
-                                                @Nullable EarlybirdResponse protectedResponse,
-                                                @Nullable EarlybirdResponse fullArchiveResponse) {
-    StringBuilder sb = new StringBuilder();
-    if ((realtimeResponse != null) && realtimeResponse.isSetDebugString()) {
-      sb.append("Realtime response: ").append(realtimeResponse.getDebugString());
+  pubwic static stwing mewgecwustewdebugstwings(@nuwwabwe eawwybiwdwesponse w-weawtimewesponse, (⑅˘꒳˘)
+                                                @nuwwabwe e-eawwybiwdwesponse pwotectedwesponse, :3
+                                                @nuwwabwe e-eawwybiwdwesponse f-fuwwawchivewesponse) {
+    stwingbuiwdew s-sb = nyew stwingbuiwdew();
+    if ((weawtimewesponse != nyuww) && weawtimewesponse.issetdebugstwing()) {
+      s-sb.append("weawtime w-wesponse: ").append(weawtimewesponse.getdebugstwing());
     }
-    if ((protectedResponse != null) && protectedResponse.isSetDebugString()) {
-      if (sb.length() > 0) {
+    if ((pwotectedwesponse != n-nyuww) && pwotectedwesponse.issetdebugstwing()) {
+      i-if (sb.wength() > 0) {
         sb.append("\n");
       }
-      sb.append("Protected response: ").append(protectedResponse.getDebugString());
+      s-sb.append("pwotected wesponse: ").append(pwotectedwesponse.getdebugstwing());
     }
-    if ((fullArchiveResponse != null) && fullArchiveResponse.isSetDebugString()) {
-      if (sb.length() > 0) {
+    if ((fuwwawchivewesponse != nyuww) && f-fuwwawchivewesponse.issetdebugstwing()) {
+      if (sb.wength() > 0) {
         sb.append("\n");
       }
-      sb.append("Full archive response: ").append(fullArchiveResponse.getDebugString());
+      s-sb.append("fuww a-awchive wesponse: ").append(fuwwawchivewesponse.getdebugstwing());
     }
 
-    if (sb.length() == 0) {
-      return null;
+    if (sb.wength() == 0) {
+      wetuwn nyuww;
     }
-    return sb.toString();
+    w-wetuwn sb.tostwing();
   }
 
   /**
-   * Sets the minSearchedStatusID field on the merged response.
+   * sets the minseawchedstatusid fiewd on the mewged wesponse. (///ˬ///✿)
    *
-   * @param mergedResponse The merged response.
-   * @param fullArchiveResponse The full archive response.
-   * @param resultsTrimmed Whether the merged response results were trimmed.
+   * @pawam mewgedwesponse the m-mewged wesponse. :3
+   * @pawam f-fuwwawchivewesponse the fuww awchive w-wesponse. 🥺
+   * @pawam w-wesuwtstwimmed whethew the m-mewged wesponse wesuwts wewe twimmed. mya
    */
-  private void setMinSearchedStatusId(EarlybirdResponse mergedResponse,
-      EarlybirdResponse realtimeResponse,
-      EarlybirdResponse protectedResponse,
-      EarlybirdResponse fullArchiveResponse,
-      boolean resultsTrimmed) {
-    Preconditions.checkNotNull(mergedResponse.getSearchResults());
-    if (resultsTrimmed) {
-      // We got more results that we asked for and we trimmed them.
-      // Set minSearchedStatusID to the ID of the oldest result.
-      ThriftSearchResults searchResults = mergedResponse.getSearchResults();
-      if (searchResults.getResultsSize() > 0) {
-        List<ThriftSearchResult> results = searchResults.getResults();
-        long lastResultId = results.get(results.size() - 1).getId();
-        searchResults.setMinSearchedStatusID(lastResultId);
+  pwivate void setminseawchedstatusid(eawwybiwdwesponse mewgedwesponse, XD
+      eawwybiwdwesponse weawtimewesponse, -.-
+      e-eawwybiwdwesponse pwotectedwesponse, o.O
+      eawwybiwdwesponse fuwwawchivewesponse, (˘ω˘)
+      boowean wesuwtstwimmed) {
+    p-pweconditions.checknotnuww(mewgedwesponse.getseawchwesuwts());
+    i-if (wesuwtstwimmed) {
+      // we g-got mowe wesuwts that we asked fow and we twimmed them. (U ᵕ U❁)
+      // s-set minseawchedstatusid t-to the i-id of the owdest wesuwt. rawr
+      t-thwiftseawchwesuwts seawchwesuwts = m-mewgedwesponse.getseawchwesuwts();
+      if (seawchwesuwts.getwesuwtssize() > 0) {
+        w-wist<thwiftseawchwesuwt> wesuwts = s-seawchwesuwts.getwesuwts();
+        wong wastwesuwtid = wesuwts.get(wesuwts.size() - 1).getid();
+        s-seawchwesuwts.setminseawchedstatusid(wastwesuwtid);
       }
-      return;
+      wetuwn;
     }
 
-    // We did not get more results that we asked for. Get the min of the minSearchedStatusIDs of
-    // the merged responses.
-    List<Long> minIDs = Lists.newArrayList();
-    if (fullArchiveResponse != null
-        && fullArchiveResponse.isSetSearchResults()
-        && fullArchiveResponse.getSearchResults().isSetMinSearchedStatusID()) {
-      minIDs.add(fullArchiveResponse.getSearchResults().getMinSearchedStatusID());
-      if (mergedResponse.getSearchResults().isSetMinSearchedStatusID()
-          && mergedResponse.getSearchResults().getMinSearchedStatusID()
-          < fullArchiveResponse.getSearchResults().getMinSearchedStatusID()) {
-        invalidMinStatusId.increment();
+    // w-we did nyot g-get mowe wesuwts that we asked fow. 🥺 g-get the min o-of the minseawchedstatusids of
+    // t-the mewged wesponses. rawr x3
+    w-wist<wong> minids = wists.newawwaywist();
+    i-if (fuwwawchivewesponse != n-nyuww
+        && fuwwawchivewesponse.issetseawchwesuwts()
+        && fuwwawchivewesponse.getseawchwesuwts().issetminseawchedstatusid()) {
+      m-minids.add(fuwwawchivewesponse.getseawchwesuwts().getminseawchedstatusid());
+      if (mewgedwesponse.getseawchwesuwts().issetminseawchedstatusid()
+          && mewgedwesponse.getseawchwesuwts().getminseawchedstatusid()
+          < fuwwawchivewesponse.getseawchwesuwts().getminseawchedstatusid()) {
+        invawidminstatusid.incwement();
       }
     }
 
-    if (protectedResponse != null
-        && !EarlybirdResponseUtil.hasResults(realtimeResponse)
-        && EarlybirdResponseUtil.hasResults(protectedResponse)
-        && protectedResponse.getSearchResults().isSetMinSearchedStatusID()) {
-      minIDs.add(protectedResponse.getSearchResults().getMinSearchedStatusID());
+    if (pwotectedwesponse != nyuww
+        && !eawwybiwdwesponseutiw.haswesuwts(weawtimewesponse)
+        && eawwybiwdwesponseutiw.haswesuwts(pwotectedwesponse)
+        && pwotectedwesponse.getseawchwesuwts().issetminseawchedstatusid()) {
+      m-minids.add(pwotectedwesponse.getseawchwesuwts().getminseawchedstatusid());
     }
 
-    if (mergedResponse.getSearchResults().isSetMinSearchedStatusID()) {
-      minIDs.add(mergedResponse.getSearchResults().getMinSearchedStatusID());
+    if (mewgedwesponse.getseawchwesuwts().issetminseawchedstatusid()) {
+      minids.add(mewgedwesponse.getseawchwesuwts().getminseawchedstatusid());
     }
 
-    if (!minIDs.isEmpty()) {
-      mergedResponse.getSearchResults().setMinSearchedStatusID(Collections.min(minIDs));
-    } else {
-      noMinIds.increment();
+    i-if (!minids.isempty()) {
+      mewgedwesponse.getseawchwesuwts().setminseawchedstatusid(cowwections.min(minids));
+    } e-ewse {
+      nyominids.incwement();
     }
   }
 
   /**
-   * Sets the maxSearchedStatusID field on the merged response.
+   * sets the maxseawchedstatusid f-fiewd on the mewged wesponse. ( ͡o ω ͡o )
    *
-   * @param mergedResponse The merged response.
-   * @param fullArchiveResponse The full archive response.
+   * @pawam mewgedwesponse t-the mewged wesponse. σωσ
+   * @pawam fuwwawchivewesponse the fuww awchive w-wesponse. rawr x3
    */
-  private void setMaxSearchedStatusId(EarlybirdResponse mergedResponse,
-      EarlybirdResponse realtimeResponse,
-      EarlybirdResponse protectedResponse,
-      EarlybirdResponse fullArchiveResponse) {
+  pwivate void setmaxseawchedstatusid(eawwybiwdwesponse m-mewgedwesponse, (ˆ ﻌ ˆ)♡
+      eawwybiwdwesponse weawtimewesponse, rawr
+      e-eawwybiwdwesponse p-pwotectedwesponse, :3
+      eawwybiwdwesponse fuwwawchivewesponse) {
 
-    Preconditions.checkNotNull(mergedResponse.getSearchResults());
-    List<Long> maxIDs = Lists.newArrayList();
-    if (fullArchiveResponse != null
-        && fullArchiveResponse.isSetSearchResults()
-        && fullArchiveResponse.getSearchResults().isSetMaxSearchedStatusID()) {
-      maxIDs.add(fullArchiveResponse.getSearchResults().getMaxSearchedStatusID());
-      if (mergedResponse.getSearchResults().isSetMaxSearchedStatusID()
-          && fullArchiveResponse.getSearchResults().getMaxSearchedStatusID()
-          > mergedResponse.getSearchResults().getMaxSearchedStatusID()) {
-        invalidMaxStatusId.increment();
+    p-pweconditions.checknotnuww(mewgedwesponse.getseawchwesuwts());
+    w-wist<wong> maxids = wists.newawwaywist();
+    i-if (fuwwawchivewesponse != n-nyuww
+        && fuwwawchivewesponse.issetseawchwesuwts()
+        && fuwwawchivewesponse.getseawchwesuwts().issetmaxseawchedstatusid()) {
+      m-maxids.add(fuwwawchivewesponse.getseawchwesuwts().getmaxseawchedstatusid());
+      if (mewgedwesponse.getseawchwesuwts().issetmaxseawchedstatusid()
+          && fuwwawchivewesponse.getseawchwesuwts().getmaxseawchedstatusid()
+          > mewgedwesponse.getseawchwesuwts().getmaxseawchedstatusid()) {
+        i-invawidmaxstatusid.incwement();
       }
     }
 
-    if (protectedResponse != null
-        && !EarlybirdResponseUtil.hasResults(realtimeResponse)
-        && EarlybirdResponseUtil.hasResults(protectedResponse)
-        && protectedResponse.getSearchResults().isSetMaxSearchedStatusID()) {
+    if (pwotectedwesponse != nyuww
+        && !eawwybiwdwesponseutiw.haswesuwts(weawtimewesponse)
+        && eawwybiwdwesponseutiw.haswesuwts(pwotectedwesponse)
+        && p-pwotectedwesponse.getseawchwesuwts().issetmaxseawchedstatusid()) {
 
-      maxIDs.add(protectedResponse.getSearchResults().getMaxSearchedStatusID());
+      m-maxids.add(pwotectedwesponse.getseawchwesuwts().getmaxseawchedstatusid());
     }
 
-    if (mergedResponse.getSearchResults().isSetMaxSearchedStatusID()) {
-      maxIDs.add(mergedResponse.getSearchResults().getMaxSearchedStatusID());
+    i-if (mewgedwesponse.getseawchwesuwts().issetmaxseawchedstatusid()) {
+      maxids.add(mewgedwesponse.getseawchwesuwts().getmaxseawchedstatusid());
     }
 
-    ThriftSearchResults searchResults = mergedResponse.getSearchResults();
-    if (searchResults.getResultsSize() > 0) {
-      List<ThriftSearchResult> results = searchResults.getResults();
-      maxIDs.add(results.get(0).getId());
+    thwiftseawchwesuwts seawchwesuwts = m-mewgedwesponse.getseawchwesuwts();
+    if (seawchwesuwts.getwesuwtssize() > 0) {
+      w-wist<thwiftseawchwesuwt> wesuwts = seawchwesuwts.getwesuwts();
+      m-maxids.add(wesuwts.get(0).getid());
     }
 
-    if (!maxIDs.isEmpty()) {
-      mergedResponse.getSearchResults().setMaxSearchedStatusID(Collections.max(maxIDs));
-    } else {
-      noMaxIds.increment();
+    i-if (!maxids.isempty()) {
+      mewgedwesponse.getseawchwesuwts().setmaxseawchedstatusid(cowwections.max(maxids));
+    } ewse {
+      nyomaxids.incwement();
     }
   }
 
   /**
-   * Handles exceptions thrown while merging responses. Timeout exceptions are converted to
-   * SERVER_TIMEOUT_ERROR responses. All other exceptions are converted to PERSISTENT_ERROR
-   * responses.
+   * handwes exceptions thwown whiwe mewging w-wesponses. rawr t-timeout exceptions awe convewted to
+   * sewvew_timeout_ewwow w-wesponses. (˘ω˘) aww othew exceptions awe convewted to p-pewsistent_ewwow
+   * w-wesponses. (ˆ ﻌ ˆ)♡
    */
-  private Future<EarlybirdResponse> handleResponseException(
-      Future<EarlybirdResponse> responseFuture, final String debugMsg) {
-    return responseFuture.handle(
-        new Function<Throwable, EarlybirdResponse>() {
-          @Override
-          public EarlybirdResponse apply(Throwable t) {
-            EarlybirdResponseCode responseCode = EarlybirdResponseCode.PERSISTENT_ERROR;
-            if (FinagleUtil.isTimeoutException(t)) {
-              responseCode = EarlybirdResponseCode.SERVER_TIMEOUT_ERROR;
+  p-pwivate f-futuwe<eawwybiwdwesponse> h-handwewesponseexception(
+      f-futuwe<eawwybiwdwesponse> wesponsefutuwe, mya finaw stwing d-debugmsg) {
+    w-wetuwn wesponsefutuwe.handwe(
+        n-nyew function<thwowabwe, (U ᵕ U❁) e-eawwybiwdwesponse>() {
+          @ovewwide
+          p-pubwic eawwybiwdwesponse appwy(thwowabwe t) {
+            e-eawwybiwdwesponsecode wesponsecode = e-eawwybiwdwesponsecode.pewsistent_ewwow;
+            i-if (finagweutiw.istimeoutexception(t)) {
+              w-wesponsecode = eawwybiwdwesponsecode.sewvew_timeout_ewwow;
             }
-            EarlybirdResponse response = new EarlybirdResponse(responseCode, 0);
-            response.setDebugString(debugMsg + "\n" + t);
-            return response;
+            eawwybiwdwesponse wesponse = n-nyew eawwybiwdwesponse(wesponsecode, mya 0);
+            wesponse.setdebugstwing(debugmsg + "\n" + t);
+            w-wetuwn wesponse;
           }
         });
   }

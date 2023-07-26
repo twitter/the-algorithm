@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.functional_component.gate
+package com.twittew.home_mixew.functionaw_component.gate
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.gateidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
-object SupportedLanguagesGate extends Gate[PipelineQuery] {
+o-object s-suppowtedwanguagesgate extends gate[pipewinequewy] {
 
-  override val identifier: GateIdentifier = GateIdentifier("SupportedLanguages")
+  ovewwide vaw identifiew: g-gateidentifiew = gateidentifiew("suppowtedwanguages")
 
-  // Production languages which have high translation coverage for strings used in Home Timeline.
-  private val supportedLanguages: Set[String] = Set(
-    "ar", // Arabic
-    "ar-x-fm", // Arabic (Female)
-    "bg", // Bulgarian
-    "bn", // Bengali
-    "ca", // Catalan
-    "cs", // Czech
-    "da", // Danish
-    "de", // German
-    "el", // Greek
-    "en", // English
-    "en-gb", // British English
-    "en-ss", // English Screen shot
-    "en-xx", // English Pseudo
-    "es", // Spanish
-    "eu", // Basque
-    "fa", // Farsi (Persian)
-    "fi", // Finnish
-    "fil", // Filipino
-    "fr", // French
-    "ga", // Irish
-    "gl", // Galician
-    "gu", // Gujarati
-    "he", // Hebrew
-    "hi", // Hindi
-    "hr", // Croatian
-    "hu", // Hungarian
-    "id", // Indonesian
-    "it", // Italian
-    "ja", // Japanese
-    "kn", // Kannada
-    "ko", // Korean
-    "mr", // Marathi
-    "msa", // Malay
-    "nl", // Dutch
-    "no", // Norwegian
-    "pl", // Polish
-    "pt", // Portuguese
-    "ro", // Romanian
-    "ru", // Russian
-    "sk", // Slovak
-    "sr", // Serbian
-    "sv", // Swedish
-    "ta", // Tamil
-    "th", // Thai
-    "tr", // Turkish
-    "uk", // Ukrainian
-    "ur", // Urdu
-    "vi", // Vietnamese
-    "zh-cn", // Simplified Chinese
-    "zh-tw" // Traditional Chinese
+  // pwoduction w-wanguages which have high t-twanswation covewage fow stwings used in home timewine. 😳😳😳
+  pwivate v-vaw suppowtedwanguages: set[stwing] = s-set(
+    "aw", mya // a-awabic
+    "aw-x-fm", 😳 // awabic (femawe)
+    "bg", -.- // buwgawian
+    "bn", 🥺 // bengawi
+    "ca", o.O // catawan
+    "cs", /(^•ω•^) // czech
+    "da", // d-danish
+    "de", nyaa~~ // gewman
+    "ew", nyaa~~ // gweek
+    "en", :3 // engwish
+    "en-gb", 😳😳😳 // bwitish engwish
+    "en-ss", (˘ω˘) // e-engwish scween shot
+    "en-xx", ^^ // e-engwish p-pseudo
+    "es", :3 // s-spanish
+    "eu", -.- // basque
+    "fa", 😳 // f-fawsi (pewsian)
+    "fi", mya // finnish
+    "fiw", (˘ω˘) // fiwipino
+    "fw", >_< // f-fwench
+    "ga", -.- // iwish
+    "gw", 🥺 // gawician
+    "gu", // g-gujawati
+    "he", (U ﹏ U) // hebwew
+    "hi", >w< // hindi
+    "hw", mya // cwoatian
+    "hu", >w< // hungawian
+    "id", nyaa~~ // indonesian
+    "it", (✿oωo) // itawian
+    "ja", ʘwʘ // j-japanese
+    "kn", (ˆ ﻌ ˆ)♡ // kannada
+    "ko", 😳😳😳 // k-kowean
+    "mw", :3 // mawathi
+    "msa", OwO // m-maway
+    "nw", (U ﹏ U) // d-dutch
+    "no", >w< // nyowwegian
+    "pw", (U ﹏ U) // powish
+    "pt", 😳 // powtuguese
+    "wo", // womanian
+    "wu", (ˆ ﻌ ˆ)♡ // w-wussian
+    "sk", 😳😳😳 // s-swovak
+    "sw", (U ﹏ U) // sewbian
+    "sv", (///ˬ///✿) // s-swedish
+    "ta", 😳 // t-tamiw
+    "th", 😳 // thai
+    "tw", σωσ // t-tuwkish
+    "uk", rawr x3 // ukwainian
+    "uw", OwO // u-uwdu
+    "vi", /(^•ω•^) // vietnamese
+    "zh-cn", 😳😳😳 // simpwified c-chinese
+    "zh-tw" // twaditionaw c-chinese
   )
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
-    Stitch.value(query.getLanguageCode.forall(supportedLanguages.contains))
+  ovewwide def s-shouwdcontinue(quewy: p-pipewinequewy): stitch[boowean] =
+    stitch.vawue(quewy.getwanguagecode.fowaww(suppowtedwanguages.contains))
 }

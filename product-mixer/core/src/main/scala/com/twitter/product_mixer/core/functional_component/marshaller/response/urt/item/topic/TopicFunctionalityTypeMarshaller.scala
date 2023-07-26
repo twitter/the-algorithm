@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.topic
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.BasicTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PivotTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.RecommendationTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFunctionalityType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.basictopicfunctionawitytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.pivottopicfunctionawitytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.wecommendationtopicfunctionawitytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicfunctionawitytype
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class TopicFunctionalityTypeMarshaller @Inject() () {
+@singweton
+cwass topicfunctionawitytypemawshawwew @inject() () {
 
-  def apply(topicFunctionalityType: TopicFunctionalityType): urt.TopicFunctionalityType =
-    topicFunctionalityType match {
-      case BasicTopicFunctionalityType => urt.TopicFunctionalityType.Basic
-      case RecommendationTopicFunctionalityType => urt.TopicFunctionalityType.Recommendation
-      case PivotTopicFunctionalityType => urt.TopicFunctionalityType.Pivot
+  def appwy(topicfunctionawitytype: topicfunctionawitytype): u-uwt.topicfunctionawitytype =
+    topicfunctionawitytype match {
+      c-case basictopicfunctionawitytype => uwt.topicfunctionawitytype.basic
+      c-case wecommendationtopicfunctionawitytype => uwt.topicfunctionawitytype.wecommendation
+      case pivottopicfunctionawitytype => uwt.topicfunctionawitytype.pivot
     }
 }

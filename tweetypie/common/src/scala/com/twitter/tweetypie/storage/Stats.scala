@@ -1,33 +1,33 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.finagle.stats.StatsReceiver
+impowt com.twittew.finagwe.stats.statsweceivew
 
-object Stats {
-  // These two methods below (addWidthStat and updatePerFieldQpsCounters) are called per RPC call for most APIs,
-  // so we rely on the stats receiver that is passed in to the library to do memoization.
+o-object stats {
+  // t-these t-two methods bewow (addwidthstat a-and updatepewfiewdqpscountews) awe c-cawwed pew wpc c-caww fow most a-apis, 🥺
+  // so we w-wewy on the stats weceivew that is passed in to the wibwawy to do memoization.
 
-  private[storage] def addWidthStat(
-    rpcName: String,
-    paramName: String,
-    width: Int,
-    stats: StatsReceiver
-  ): Unit =
-    getStat(rpcName, paramName, stats).add(width)
+  p-pwivate[stowage] def addwidthstat(
+    wpcname: s-stwing, >_<
+    pawamname: stwing, >_<
+    w-width: int, (⑅˘꒳˘)
+    stats: statsweceivew
+  ): unit =
+    getstat(wpcname, /(^•ω•^) pawamname, s-stats).add(width)
 
-  // Updates the counters for each Additional field. The idea here is to expose the QPS for each
-  // additional field
-  private[storage] def updatePerFieldQpsCounters(
-    rpcName: String,
-    fieldIds: Seq[FieldId],
-    count: Int,
-    stats: StatsReceiver
-  ): Unit = {
-    fieldIds.foreach { fieldId => getCounter(rpcName, fieldId, stats).incr(count) }
+  // updates the countews f-fow each additionaw f-fiewd. rawr x3 the idea hewe is to expose the qps fow each
+  // additionaw fiewd
+  p-pwivate[stowage] def updatepewfiewdqpscountews(
+    wpcname: stwing, (U ﹏ U)
+    fiewdids: seq[fiewdid], (U ﹏ U)
+    c-count: int, (⑅˘꒳˘)
+    stats: statsweceivew
+  ): u-unit = {
+    fiewdids.foweach { f-fiewdid => getcountew(wpcname, òωó f-fiewdid, stats).incw(count) }
   }
 
-  private def getCounter(rpcName: String, fieldId: FieldId, stats: StatsReceiver) =
-    stats.scope(rpcName, "fields", fieldId.toString).counter("count")
+  p-pwivate def getcountew(wpcname: stwing, ʘwʘ fiewdid: f-fiewdid, /(^•ω•^) stats: statsweceivew) =
+    stats.scope(wpcname, ʘwʘ "fiewds", σωσ f-fiewdid.tostwing).countew("count")
 
-  private def getStat(rpcName: String, paramName: String, stats: StatsReceiver) =
-    stats.scope(rpcName, paramName).stat("width")
+  pwivate def getstat(wpcname: stwing, OwO pawamname: stwing, 😳😳😳 stats: statsweceivew) =
+    s-stats.scope(wpcname, 😳😳😳 pawamname).stat("width")
 }

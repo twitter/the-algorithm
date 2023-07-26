@@ -1,35 +1,35 @@
-package com.twitter.visibility.util
+package com.twittew.visibiwity.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging._
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wogging._
 
-object LoggingUtil {
+o-object woggingutiw {
 
-  val ExperimentationLog: String = "vf_abdecider"
+  v-vaw expewimentationwog: s-stwing = "vf_abdecidew"
 
-  def mkDefaultHandlerFactory(statsReceiver: StatsReceiver): () => Handler = {
-    QueueingHandler(
-      maxQueueSize = 10000,
-      handler = ScribeHandler(
-        category = "client_event",
-        formatter = BareFormatter,
-        statsReceiver = statsReceiver.scope("client_event_scribe"),
-        level = Some(Level.INFO)
+  d-def m-mkdefauwthandwewfactowy(statsweceivew: s-statsweceivew): () => h-handwew = {
+    queueinghandwew(
+      maxqueuesize = 10000, ( ͡o ω ͡o )
+      handwew = scwibehandwew(
+        categowy = "cwient_event", rawr x3
+        f-fowmattew = bawefowmattew, nyaa~~
+        statsweceivew = s-statsweceivew.scope("cwient_event_scwibe"), /(^•ω•^)
+        wevew = s-some(wevew.info)
       )
     )
   }
 
-  def mkDefaultLoggerFactory(statsReceiver: StatsReceiver): LoggerFactory = {
-    LoggerFactory(
-      node = ExperimentationLog,
-      level = Some(Level.INFO),
-      useParents = false,
-      handlers = List(mkDefaultHandlerFactory(statsReceiver))
+  def mkdefauwtwoggewfactowy(statsweceivew: statsweceivew): woggewfactowy = {
+    w-woggewfactowy(
+      nyode = e-expewimentationwog, rawr
+      w-wevew = some(wevew.info), OwO
+      usepawents = fawse,
+      handwews = wist(mkdefauwthandwewfactowy(statsweceivew))
     )
   }
 
-  def mkDefaultLogger(statsReceiver: StatsReceiver): Logger = {
-    mkDefaultLoggerFactory(statsReceiver)()
+  def mkdefauwtwoggew(statsweceivew: s-statsweceivew): woggew = {
+    mkdefauwtwoggewfactowy(statsweceivew)()
   }
 
 }

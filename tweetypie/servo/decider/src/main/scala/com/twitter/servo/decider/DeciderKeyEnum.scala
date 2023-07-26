@@ -1,3 +1,3 @@
-package com.twitter.servo.decider
+package com.twittew.sewvo.decidew
 
-trait DeciderKeyEnum extends Enumeration
+twait decidewkeyenum e-extends enumewation

@@ -1,60 +1,60 @@
-package com.twitter.unified_user_actions.adapter.social_graph_event
+package com.twittew.unified_usew_actions.adaptew.sociaw_gwaph_event
 
-import com.twitter.socialgraph.thriftscala.LogEventContext
-import com.twitter.socialgraph.thriftscala.SrcTargetRequest
-import com.twitter.socialgraph.thriftscala.WriteEvent
-import com.twitter.socialgraph.thriftscala.WriteRequestResult
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.ProfileInfo
-import com.twitter.unified_user_actions.thriftscala.SourceLineage
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala.UserIdentifier
+impowt com.twittew.sociawgwaph.thwiftscawa.wogeventcontext
+impowt c-com.twittew.sociawgwaph.thwiftscawa.swctawgetwequest
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.wwiteevent
+i-impowt com.twittew.sociawgwaph.thwiftscawa.wwitewequestwesuwt
+impowt c-com.twittew.unified_usew_actions.adaptew.common.adaptewutiws
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.eventmetadata
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.item
+impowt com.twittew.unified_usew_actions.thwiftscawa.pwofiweinfo
+impowt com.twittew.unified_usew_actions.thwiftscawa.souwcewineage
+impowt c-com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+impowt com.twittew.unified_usew_actions.thwiftscawa.usewidentifiew
 
-trait BaseSocialGraphWriteEvent[T] {
-  def uuaActionType: ActionType
+twait basesociawgwaphwwiteevent[t] {
+  d-def uuaactiontype: actiontype
 
-  def getSrcTargetRequest(
-    e: WriteEvent
-  ): Seq[SrcTargetRequest] = getSubType(e) match {
-    case Some(subType: Seq[T]) =>
-      getWriteRequestResultFromSubType(subType).collect {
-        case r if r.validationError.isEmpty => r.request
+  d-def getswctawgetwequest(
+    e: wwiteevent
+  ): seq[swctawgetwequest] = g-getsubtype(e) match {
+    c-case some(subtype: s-seq[t]) =>
+      getwwitewequestwesuwtfwomsubtype(subtype).cowwect {
+        case w if w.vawidationewwow.isempty => w.wequest
       }
-    case _ => Nil
+    case _ => nyiw
   }
 
-  def getSubType(e: WriteEvent): Option[Seq[T]]
-  def getWriteRequestResultFromSubType(subType: Seq[T]): Seq[WriteRequestResult]
+  d-def getsubtype(e: wwiteevent): option[seq[t]]
+  def getwwitewequestwesuwtfwomsubtype(subtype: seq[t]): seq[wwitewequestwesuwt]
 
-  def toUnifiedUserAction(
-    writeEvent: WriteEvent,
-    uuaAction: BaseSocialGraphWriteEvent[_]
-  ): Seq[UnifiedUserAction] =
-    uuaAction.getSrcTargetRequest(writeEvent).map { srcTargetRequest =>
-      UnifiedUserAction(
-        userIdentifier = UserIdentifier(userId = writeEvent.context.loggedInUserId),
-        item = getSocialGraphItem(srcTargetRequest),
-        actionType = uuaAction.uuaActionType,
-        eventMetadata = getEventMetadata(writeEvent.context)
+  d-def tounifiedusewaction(
+    wwiteevent: w-wwiteevent, σωσ
+    u-uuaaction: basesociawgwaphwwiteevent[_]
+  ): s-seq[unifiedusewaction] =
+    u-uuaaction.getswctawgetwequest(wwiteevent).map { swctawgetwequest =>
+      unifiedusewaction(
+        u-usewidentifiew = usewidentifiew(usewid = wwiteevent.context.woggedinusewid), OwO
+        i-item = getsociawgwaphitem(swctawgetwequest), 😳😳😳
+        actiontype = uuaaction.uuaactiontype, 😳😳😳
+        eventmetadata = geteventmetadata(wwiteevent.context)
       )
     }
 
-  def getSocialGraphItem(socialGraphSrcTargetRequest: SrcTargetRequest): Item = {
-    Item.ProfileInfo(
-      ProfileInfo(
-        actionProfileId = socialGraphSrcTargetRequest.target
+  def g-getsociawgwaphitem(sociawgwaphswctawgetwequest: swctawgetwequest): i-item = {
+    i-item.pwofiweinfo(
+      p-pwofiweinfo(
+        actionpwofiweid = sociawgwaphswctawgetwequest.tawget
       )
     )
   }
 
-  def getEventMetadata(context: LogEventContext): EventMetadata = {
-    EventMetadata(
-      sourceTimestampMs = context.timestamp,
-      receivedTimestampMs = AdapterUtils.currentTimestampMs,
-      sourceLineage = SourceLineage.ServerSocialGraphEvents,
+  def geteventmetadata(context: wogeventcontext): e-eventmetadata = {
+    eventmetadata(
+      s-souwcetimestampms = context.timestamp, o.O
+      w-weceivedtimestampms = a-adaptewutiws.cuwwenttimestampms, ( ͡o ω ͡o )
+      souwcewineage = s-souwcewineage.sewvewsociawgwaphevents, (U ﹏ U)
     )
   }
 }

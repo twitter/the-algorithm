@@ -1,146 +1,146 @@
-package com.twitter.product_mixer.core.service
+package com.twittew.pwoduct_mixew.cowe.sewvice
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.Executor.Context
-import com.twitter.product_mixer.shared_library.observer.Observer
-import com.twitter.product_mixer.shared_library.observer.Observer.Observer
-import com.twitter.product_mixer.shared_library.observer.ResultsStatsObserver.ResultsStatsObserver
-import com.twitter.util.Duration
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductpipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinewesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow.context
+impowt com.twittew.pwoduct_mixew.shawed_wibwawy.obsewvew.obsewvew
+i-impowt com.twittew.pwoduct_mixew.shawed_wibwawy.obsewvew.obsewvew.obsewvew
+impowt com.twittew.pwoduct_mixew.shawed_wibwawy.obsewvew.wesuwtsstatsobsewvew.wesuwtsstatsobsewvew
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+i-impowt com.twittew.utiw.twy
 
-private[core] object ExecutorObserver {
+pwivate[cowe] o-object executowobsewvew {
 
-  /** Make a [[ExecutorObserver]] with stats for the [[ComponentIdentifier]] and relative to the parent in the [[Context.componentStack]] */
-  def executorObserver[T](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    statsReceiver: StatsReceiver
-  ): ExecutorObserver[T] = new ExecutorObserver[T](
-    Executor.broadcastStatsReceiver(context, currentComponentIdentifier, statsReceiver))
+  /** m-make a [[executowobsewvew]] with stats fow the [[componentidentifiew]] and wewative to the pawent in the [[context.componentstack]] */
+  d-def executowobsewvew[t](
+    context: context, XD
+    cuwwentcomponentidentifiew: c-componentidentifiew, o.O
+    statsweceivew: s-statsweceivew
+  ): e-executowobsewvew[t] = n-nyew e-executowobsewvew[t](
+    executow.bwoadcaststatsweceivew(context, mya cuwwentcomponentidentifiew, 🥺 s-statsweceivew))
 
-  /** Make a [[ExecutorObserverWithSize]] with stats for the [[ComponentIdentifier]] and relative to the parent in the [[Context.componentStack]] */
-  def executorObserverWithSize(
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    statsReceiver: StatsReceiver
-  ): ExecutorObserverWithSize = new ExecutorObserverWithSize(
-    Executor.broadcastStatsReceiver(context, currentComponentIdentifier, statsReceiver))
+  /** make a [[executowobsewvewwithsize]] with s-stats fow the [[componentidentifiew]] and wewative to the pawent in the [[context.componentstack]] */
+  def executowobsewvewwithsize(
+    context: c-context, ^^;;
+    cuwwentcomponentidentifiew: c-componentidentifiew, :3
+    s-statsweceivew: s-statsweceivew
+  ): executowobsewvewwithsize = nyew executowobsewvewwithsize(
+    executow.bwoadcaststatsweceivew(context, (U ﹏ U) c-cuwwentcomponentidentifiew, s-statsweceivew))
 
-  /** Make a [[PipelineExecutorObserver]] with stats for the [[ComponentIdentifier]] and relative to the parent in the [[Context.componentStack]] */
-  def pipelineExecutorObserver[T <: PipelineResult[_]](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    statsReceiver: StatsReceiver
-  ): PipelineExecutorObserver[T] = new PipelineExecutorObserver[T](
-    Executor.broadcastStatsReceiver(context, currentComponentIdentifier, statsReceiver))
-
-  /**
-   * Make a [[PipelineExecutorObserver]] specifically for a [[com.twitter.product_mixer.core.pipeline.product.ProductPipeline]]
-   * with no relative stats
-   */
-  def productPipelineExecutorObserver[T <: PipelineResult[_]](
-    currentComponentIdentifier: ProductPipelineIdentifier,
-    statsReceiver: StatsReceiver
-  ): PipelineExecutorObserver[T] =
-    new PipelineExecutorObserver[T](statsReceiver.scope(currentComponentIdentifier.toScopes: _*))
+  /** make a [[pipewineexecutowobsewvew]] w-with stats f-fow the [[componentidentifiew]] and wewative to t-the pawent in the [[context.componentstack]] */
+  def pipewineexecutowobsewvew[t <: p-pipewinewesuwt[_]](
+    context: context, OwO
+    c-cuwwentcomponentidentifiew: componentidentifiew, 😳😳😳
+    s-statsweceivew: statsweceivew
+  ): p-pipewineexecutowobsewvew[t] = n-nyew pipewineexecutowobsewvew[t](
+    executow.bwoadcaststatsweceivew(context, (ˆ ﻌ ˆ)♡ cuwwentcomponentidentifiew, XD statsweceivew))
 
   /**
-   * Make a [[PipelineExecutorObserver]] with only stats relative to the parent pipeline
-   * for [[com.twitter.product_mixer.core.pipeline.PipelineBuilder.Step]]s
+   * make a [[pipewineexecutowobsewvew]] specificawwy fow a-a [[com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewine]]
+   * w-with nyo wewative s-stats
    */
-  def stepExecutorObserver(
-    context: Context,
-    currentComponentIdentifier: PipelineStepIdentifier,
-    statsReceiver: StatsReceiver
-  ): ExecutorObserver[Unit] = {
-    new ExecutorObserver[Unit](
-      statsReceiver.scope(
-        Executor.buildScopes(context, currentComponentIdentifier).relativeScope: _*))
+  def p-pwoductpipewineexecutowobsewvew[t <: p-pipewinewesuwt[_]](
+    cuwwentcomponentidentifiew: pwoductpipewineidentifiew, (ˆ ﻌ ˆ)♡
+    statsweceivew: statsweceivew
+  ): p-pipewineexecutowobsewvew[t] =
+    nyew pipewineexecutowobsewvew[t](statsweceivew.scope(cuwwentcomponentidentifiew.toscopes: _*))
+
+  /**
+   * make a [[pipewineexecutowobsewvew]] with o-onwy stats wewative to the pawent p-pipewine
+   * f-fow [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewinebuiwdew.step]]s
+   */
+  d-def stepexecutowobsewvew(
+    context: c-context, ( ͡o ω ͡o )
+    c-cuwwentcomponentidentifiew: p-pipewinestepidentifiew, rawr x3
+    s-statsweceivew: statsweceivew
+  ): executowobsewvew[unit] = {
+    n-nyew e-executowobsewvew[unit](
+      s-statsweceivew.scope(
+        e-executow.buiwdscopes(context, nyaa~~ c-cuwwentcomponentidentifiew).wewativescope: _*))
   }
 }
 
 /**
- * An [[Observer]] which is called as a side effect. Unlike the other observers which wrap a computation,
- * this [[Observer]] expects the caller to provide the latency value and wire it in
+ * an [[obsewvew]] which is cawwed as a side e-effect. >_< unwike the othew obsewvews which wwap a computation,
+ * this [[obsewvew]] expects the c-cawwew to pwovide the watency vawue and wiwe it in
  */
-private[core] sealed class ExecutorObserver[T](
-  override val statsReceiver: StatsReceiver)
+pwivate[cowe] s-seawed cwass e-executowobsewvew[t](
+  o-ovewwide vaw statsweceivew: s-statsweceivew)
     extends {
 
   /**
-   * always empty because we expect an already scoped [[com.twitter.finagle.stats.BroadcastStatsReceiver]] to be passed in
-   * @note uses early definitions [[https://docs.scala-lang.org/tutorials/FAQ/initialization-order.html]] to avoid null values for `scopes` in [[Observer]]
+   * awways e-empty because w-we expect an awweady scoped [[com.twittew.finagwe.stats.bwoadcaststatsweceivew]] to be passed in
+   * @note uses eawwy definitions [[https://docs.scawa-wang.owg/tutowiaws/faq/initiawization-owdew.htmw]] to avoid nyuww vawues f-fow `scopes` in [[obsewvew]]
    */
-  override val scopes: Seq[String] = Seq.empty
-} with Observer[T] {
+  o-ovewwide vaw scopes: seq[stwing] = s-seq.empty
+} w-with obsewvew[t] {
 
   /**
-   * Serialize the provided [[Throwable]], prefixing [[PipelineFailure]]s with their
-   * [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory.categoryName]] and
-   * [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory.failureName]]
+   * sewiawize the pwovided [[thwowabwe]], ^^;; p-pwefixing [[pipewinefaiwuwe]]s w-with theiw
+   * [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecategowy.categowyname]] and
+   * [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecategowy.faiwuwename]]
    */
-  override def serializeThrowable(throwable: Throwable): Seq[String] = {
-    throwable match {
-      case PipelineFailure(category, _, None, _) =>
-        Seq(category.categoryName, category.failureName)
-      case PipelineFailure(category, _, Some(underlying), _) =>
-        Seq(category.categoryName, category.failureName) ++ serializeThrowable(underlying)
-      case throwable: Throwable => super.serializeThrowable(throwable)
+  o-ovewwide def sewiawizethwowabwe(thwowabwe: t-thwowabwe): seq[stwing] = {
+    thwowabwe match {
+      case pipewinefaiwuwe(categowy, (ˆ ﻌ ˆ)♡ _, n-none, _) =>
+        s-seq(categowy.categowyname, ^^;; c-categowy.faiwuwename)
+      case pipewinefaiwuwe(categowy, (⑅˘꒳˘) _, s-some(undewwying), rawr x3 _) =>
+        s-seq(categowy.categowyname, (///ˬ///✿) categowy.faiwuwename) ++ s-sewiawizethwowabwe(undewwying)
+      case thwowabwe: thwowabwe => supew.sewiawizethwowabwe(thwowabwe)
     }
   }
 
-  /** record success, failure, and latency stats based on `t` and `latency` */
-  def apply(t: Try[T], latency: Duration): Unit = observe(t, latency)
+  /** wecowd s-success, 🥺 faiwuwe, >_< a-and watency stats based on `t` and `watency` */
+  d-def appwy(t: t-twy[t], watency: duwation): unit = obsewve(t, UwU watency)
 }
 
 /**
- * Same as [[ExecutorObserver]] but records a size stat for [[PipelineResult]]s and
- * records a failure counter for the cause of the failure under `failures/$pipelineFailureCategory/$componentType/$componentName`.
+ * s-same as [[executowobsewvew]] but wecowds a size stat fow [[pipewinewesuwt]]s and
+ * wecowds a faiwuwe countew f-fow the cause of the faiwuwe undew `faiwuwes/$pipewinefaiwuwecategowy/$componenttype/$componentname`. >_<
  *
- * @example if `GateIdentifier("MyGate")` is at the top of the [[PipelineFailure.componentStack]] then
- *          the resulting metric `failures/ClientFailure/Gate/MyGate` will be incremented.
+ * @exampwe i-if `gateidentifiew("mygate")` i-is at the top of the [[pipewinefaiwuwe.componentstack]] then
+ *          the wesuwting metwic `faiwuwes/cwientfaiwuwe/gate/mygate` w-wiww b-be incwemented. -.-
  */
-private[core] final class PipelineExecutorObserver[T <: PipelineResult[_]](
-  override val statsReceiver: StatsReceiver)
-    extends ExecutorObserver[T](statsReceiver)
-    with ResultsStatsObserver[T] {
-  override val size: T => Int = _.resultSize()
+pwivate[cowe] finaw cwass pipewineexecutowobsewvew[t <: pipewinewesuwt[_]](
+  o-ovewwide vaw statsweceivew: statsweceivew)
+    e-extends executowobsewvew[t](statsweceivew)
+    with wesuwtsstatsobsewvew[t] {
+  ovewwide vaw size: t => int = _.wesuwtsize()
 
-  override def apply(t: Try[T], latency: Duration): Unit = {
-    super.apply(t, latency)
-    t match {
-      case Return(result) => observeResults(result)
-      case Throw(PipelineFailure(category, _, _, Some(componentIdentifierStack))) =>
-        statsReceiver
-          .counter(
-            Seq(
-              Observer.Failures,
-              category.categoryName,
-              category.failureName) ++ componentIdentifierStack.peek.toScopes: _*).incr()
-      case _ =>
+  o-ovewwide def appwy(t: twy[t], mya watency: d-duwation): u-unit = {
+    supew.appwy(t, >w< watency)
+    t-t match {
+      case w-wetuwn(wesuwt) => o-obsewvewesuwts(wesuwt)
+      c-case thwow(pipewinefaiwuwe(categowy, (U ﹏ U) _, _, some(componentidentifiewstack))) =>
+        s-statsweceivew
+          .countew(
+            s-seq(
+              obsewvew.faiwuwes, 😳😳😳
+              categowy.categowyname, o.O
+              c-categowy.faiwuwename) ++ c-componentidentifiewstack.peek.toscopes: _*).incw()
+      c-case _ =>
     }
   }
 }
 
-/** Same as [[ExecutorObserver]] but records a size stat */
-private[core] final class ExecutorObserverWithSize(
-  override val statsReceiver: StatsReceiver)
-    extends ExecutorObserver[Int](statsReceiver)
-    with ResultsStatsObserver[Int] {
-  override val size: Int => Int = identity
+/** same as [[executowobsewvew]] b-but wecowds a size stat */
+p-pwivate[cowe] f-finaw cwass executowobsewvewwithsize(
+  ovewwide vaw statsweceivew: statsweceivew)
+    e-extends e-executowobsewvew[int](statsweceivew)
+    w-with wesuwtsstatsobsewvew[int] {
+  o-ovewwide vaw size: int => i-int = identity
 
-  override def apply(t: Try[Int], latency: Duration): Unit = {
-    super.apply(t, latency)
+  ovewwide def appwy(t: twy[int], òωó watency: duwation): unit = {
+    supew.appwy(t, 😳😳😳 w-watency)
     t match {
-      case Return(result) => observeResults(result)
-      case _ =>
+      c-case wetuwn(wesuwt) => obsewvewesuwts(wesuwt)
+      c-case _ =>
     }
   }
 }

@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.topic
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFollowPromptItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicfowwowpwomptitem
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class TopicFollowPromptItemMarshaller @Inject() (
-  displayTypeMarshaller: TopicFollowPromptDisplayTypeMarshaller) {
+@singweton
+c-cwass topicfowwowpwomptitemmawshawwew @inject() (
+  d-dispwaytypemawshawwew: t-topicfowwowpwomptdispwaytypemawshawwew) {
 
-  def apply(topicFollowPromptItem: TopicFollowPromptItem): urt.TimelineItemContent = {
-    urt.TimelineItemContent.TopicFollowPrompt(
-      urt.TopicFollowPrompt(
-        topicId = topicFollowPromptItem.id.toString,
-        displayType = displayTypeMarshaller(topicFollowPromptItem.topicFollowPromptDisplayType),
-        followIncentiveTitle = topicFollowPromptItem.followIncentiveTitle,
-        followIncentiveText = topicFollowPromptItem.followIncentiveText
+  def appwy(topicfowwowpwomptitem: topicfowwowpwomptitem): uwt.timewineitemcontent = {
+    uwt.timewineitemcontent.topicfowwowpwompt(
+      u-uwt.topicfowwowpwompt(
+        topicid = topicfowwowpwomptitem.id.tostwing, (⑅˘꒳˘)
+        dispwaytype = d-dispwaytypemawshawwew(topicfowwowpwomptitem.topicfowwowpwomptdispwaytype), (U ᵕ U❁)
+        fowwowincentivetitwe = t-topicfowwowpwomptitem.fowwowincentivetitwe, -.-
+        fowwowincentivetext = topicfowwowpwomptitem.fowwowincentivetext
       )
     )
   }

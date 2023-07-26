@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
 /**
- * Retrieve Candidates from the Query
+ * w-wetwieve candidates f-fwom the quewy
  */
-trait CandidateExtractor[-Request, +Candidate] {
+t-twait candidateextwactow[-wequest, (˘ω˘) +candidate] {
 
-  def apply(query: Request): Seq[Candidate]
+  def appwy(quewy: wequest): seq[candidate]
 }
 
 /**
- * Identity extractor for returning the Request as a Seq of candidates
+ * identity extwactow f-fow wetuwning the wequest as a seq of candidates
  */
-case class IdentityCandidateExtractor[Request]() extends CandidateExtractor[Request, Request] {
+c-case cwass identitycandidateextwactow[wequest]() e-extends candidateextwactow[wequest, ^^ wequest] {
 
-  def apply(candidate: Request): Seq[Request] = Seq(candidate)
+  def appwy(candidate: w-wequest): seq[wequest] = seq(candidate)
 }
 
 /**
- * Retrieve Candidates from a [[Feature]] on the [[PipelineQuery]]'s FeatureMap. This extractor
- * supports a transform if the Feature value and the Seq of [[Candidate]] types do not match
+ * w-wetwieve candidates f-fwom a [[featuwe]] on the [[pipewinequewy]]'s featuwemap. :3 this extwactow
+ * suppowts a twansfowm i-if the featuwe vawue and the seq of [[candidate]] types do nyot match
  */
-trait QueryFeatureCandidateExtractor[-Query <: PipelineQuery, FeatureValue, +Candidate]
-    extends CandidateExtractor[Query, Candidate] {
+t-twait quewyfeatuwecandidateextwactow[-quewy <: pipewinequewy, -.- featuwevawue, 😳 +candidate]
+    e-extends c-candidateextwactow[quewy, mya candidate] {
 
-  def feature: Feature[Query, FeatureValue]
+  def f-featuwe: featuwe[quewy, (˘ω˘) f-featuwevawue]
 
-  override def apply(query: Query): Seq[Candidate] =
-    query.features.map(featureMap => transform(featureMap.get(feature))).getOrElse(Seq.empty)
+  ovewwide def appwy(quewy: q-quewy): seq[candidate] =
+    quewy.featuwes.map(featuwemap => twansfowm(featuwemap.get(featuwe))).getowewse(seq.empty)
 
-  def transform(featureValue: FeatureValue): Seq[Candidate]
+  d-def twansfowm(featuwevawue: featuwevawue): seq[candidate]
 }
 
 /**
- * Retrieve Candidates from a [[Feature]] on the [[PipelineQuery]]'s FeatureMap. This extractor can
- * be used with a single [[Feature]] if the Feature value and the Seq of [[Candidate]] types match.
+ * wetwieve candidates fwom a [[featuwe]] on the [[pipewinequewy]]'s f-featuwemap. this extwactow c-can
+ * be used w-with a singwe [[featuwe]] i-if the featuwe vawue and the seq of [[candidate]] types m-match. >_<
  */
-case class CandidateQueryFeatureCandidateExtractor[-Query <: PipelineQuery, Candidate](
-  override val feature: Feature[Query, Seq[Candidate]])
-    extends QueryFeatureCandidateExtractor[Query, Seq[Candidate], Candidate] {
+case c-cwass candidatequewyfeatuwecandidateextwactow[-quewy <: pipewinequewy, -.- c-candidate](
+  o-ovewwide vaw featuwe: featuwe[quewy, 🥺 s-seq[candidate]])
+    extends quewyfeatuwecandidateextwactow[quewy, (U ﹏ U) seq[candidate], >w< candidate] {
 
-  override def transform(featureValue: Seq[Candidate]): Seq[Candidate] = featureValue
+  ovewwide d-def twansfowm(featuwevawue: seq[candidate]): seq[candidate] = f-featuwevawue
 }
 
 /**
- * A [[CandidateSource]] that retrieves candidates from the Request via a [[CandidateExtractor]]
+ * a [[candidatesouwce]] t-that wetwieves candidates fwom t-the wequest via a-a [[candidateextwactow]]
  */
-case class PassthroughCandidateSource[-Request, +Candidate](
-  override val identifier: CandidateSourceIdentifier,
-  candidateExtractor: CandidateExtractor[Request, Candidate])
-    extends CandidateSource[Request, Candidate] {
+case cwass passthwoughcandidatesouwce[-wequest, mya +candidate](
+  ovewwide vaw identifiew: candidatesouwceidentifiew, >w<
+  candidateextwactow: candidateextwactow[wequest, nyaa~~ c-candidate])
+    e-extends candidatesouwce[wequest, (✿oωo) candidate] {
 
-  def apply(query: Request): Stitch[Seq[Candidate]] = Stitch.value(candidateExtractor(query))
+  d-def appwy(quewy: w-wequest): s-stitch[seq[candidate]] = stitch.vawue(candidateextwactow(quewy))
 }

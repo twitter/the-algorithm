@@ -1,26 +1,26 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+package com.twittew.fowwow_wecommendations.common.wankews.fiwst_n_wankew
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.timewines.configapi.fsboundedpawam
+impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt c-com.twittew.timewines.configapi.pawam
 
-object FirstNRankerParams {
-  case object CandidatesToRank
-      extends FSBoundedParam[Int](
-        FirstNRankerFeatureSwitchKeys.CandidatePoolSize,
-        default = 100,
-        min = 50,
+o-object f-fiwstnwankewpawams {
+  c-case object c-candidatestowank
+      extends fsboundedpawam[int](
+        fiwstnwankewfeatuweswitchkeys.candidatepoowsize, 😳😳😳
+        defauwt = 100, -.-
+        m-min = 50, ( ͡o ω ͡o )
         max = 600)
 
-  case object GroupDuplicateCandidates extends Param[Boolean](true)
-  case object ScribeRankingInfoInFirstNRanker
-      extends FSParam[Boolean](FirstNRankerFeatureSwitchKeys.ScribeRankingInfo, true)
+  case object gwoupdupwicatecandidates e-extends pawam[boowean](twue)
+  case object s-scwibewankinginfoinfiwstnwankew
+      extends fspawam[boowean](fiwstnwankewfeatuweswitchkeys.scwibewankinginfo, rawr x3 twue)
 
-  // the minimum of candidates to score in each request.
-  object MinNumCandidatesScoredScaleDownFactor
-      extends FSBoundedParam[Double](
-        name = FirstNRankerFeatureSwitchKeys.MinNumCandidatesScoredScaleDownFactor,
-        default = 0.3,
-        min = 0.1,
-        max = 1.0)
+  // the m-minimum of candidates to scowe i-in each wequest. nyaa~~
+  o-object minnumcandidatesscowedscawedownfactow
+      extends fsboundedpawam[doubwe](
+        name = fiwstnwankewfeatuweswitchkeys.minnumcandidatesscowedscawedownfactow, /(^•ω•^)
+        defauwt = 0.3, rawr
+        min = 0.1, OwO
+        m-max = 1.0)
 }

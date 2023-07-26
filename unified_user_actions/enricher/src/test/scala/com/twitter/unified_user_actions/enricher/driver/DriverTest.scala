@@ -1,284 +1,284 @@
-package com.twitter.unified_user_actions.enricher.driver
+package com.twittew.unified_usew_actions.enwichew.dwivew
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.enricher.EnricherFixture
-import com.twitter.unified_user_actions.enricher.hydrator.Hydrator
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentIdType
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentPlan
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStage
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageStatus
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageType
-import com.twitter.unified_user_actions.enricher.partitioner.Partitioner
-import com.twitter.util.Await
-import com.twitter.util.Future
-import org.scalatest.BeforeAndAfter
-import org.scalatest.matchers.should.Matchers
-import scala.collection.mutable
+impowt c-com.twittew.inject.test
+i-impowt com.twittew.unified_usew_actions.enwichew.enwichewfixtuwe
+i-impowt c-com.twittew.unified_usew_actions.enwichew.hydwatow.hydwatow
+i-impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentenvewop
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentidtype
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentinstwuction
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentkey
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentpwan
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentstage
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentstagestatus
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentstagetype
+i-impowt com.twittew.unified_usew_actions.enwichew.pawtitionew.pawtitionew
+i-impowt com.twittew.utiw.await
+impowt com.twittew.utiw.futuwe
+impowt owg.scawatest.befoweandaftew
+impowt owg.scawatest.matchews.shouwd.matchews
+i-impowt scawa.cowwection.mutabwe
 
-class DriverTest extends Test with Matchers with BeforeAndAfter {
-  object ExecutionContext {
-    var executionCount = 0
+cwass dwivewtest e-extends test w-with matchews with befoweandaftew {
+  object executioncontext {
+    vaw executioncount = 0
   }
 
-  before {
-    ExecutionContext.executionCount = 0
+  b-befowe {
+    executioncontext.executioncount = 0
   }
 
-  trait Fixtures extends EnricherFixture {
-    val repartitionTweet = mkStage()
-    val repartitionNotiTweet =
-      mkStage(instructions = Seq(EnrichmentInstruction.NotificationTweetEnrichment))
-    val hydrateTweet = mkStage(stageType = EnrichmentStageType.Hydration)
-    val hydrateTweetMultiInstructions = mkStage(
-      stageType = EnrichmentStageType.Hydration,
-      instructions = Seq(
-        EnrichmentInstruction.NotificationTweetEnrichment,
-        EnrichmentInstruction.TweetEnrichment,
-        EnrichmentInstruction.NotificationTweetEnrichment,
-        EnrichmentInstruction.TweetEnrichment
+  twait fixtuwes extends enwichewfixtuwe {
+    v-vaw wepawtitiontweet = mkstage()
+    vaw w-wepawtitionnotitweet =
+      m-mkstage(instwuctions = s-seq(enwichmentinstwuction.notificationtweetenwichment))
+    v-vaw hydwatetweet = mkstage(stagetype = enwichmentstagetype.hydwation)
+    v-vaw hydwatetweetmuwtiinstwuctions = mkstage(
+      s-stagetype = enwichmentstagetype.hydwation, ^^;;
+      instwuctions = seq(
+        enwichmentinstwuction.notificationtweetenwichment, ^^;;
+        enwichmentinstwuction.tweetenwichment, XD
+        enwichmentinstwuction.notificationtweetenwichment, 🥺
+        enwichmentinstwuction.tweetenwichment
       )
     )
-    val hydrateNotiTweet = mkStage(
-      stageType = EnrichmentStageType.Hydration,
-      instructions = Seq(EnrichmentInstruction.NotificationTweetEnrichment))
-    val key1 = EnrichmentKey(EnrichmentIdType.TweetId, 123L)
-    val tweet1 = mkUUATweetEvent(981L)
-    val hydrator = new MockHydrator
-    val partitioner = new MockPartitioner
-    val outputTopic = "output"
-    val partitionTopic = "partition"
+    v-vaw hydwatenotitweet = mkstage(
+      s-stagetype = enwichmentstagetype.hydwation, (///ˬ///✿)
+      i-instwuctions = s-seq(enwichmentinstwuction.notificationtweetenwichment))
+    vaw key1 = enwichmentkey(enwichmentidtype.tweetid, (U ᵕ U❁) 123w)
+    vaw tweet1 = m-mkuuatweetevent(981w)
+    v-vaw hydwatow = new mockhydwatow
+    v-vaw pawtitionew = n-nyew mockpawtitionew
+    vaw outputtopic = "output"
+    v-vaw pawtitiontopic = "pawtition"
 
-    def complete(
-      enrichmentStage: EnrichmentStage,
-      outputTopic: Option[String] = None
-    ): EnrichmentStage = {
-      enrichmentStage.copy(status = EnrichmentStageStatus.Completion, outputTopic = outputTopic)
+    d-def compwete(
+      enwichmentstage: enwichmentstage, ^^;;
+      o-outputtopic: option[stwing] = nyone
+    ): e-enwichmentstage = {
+      enwichmentstage.copy(status = e-enwichmentstagestatus.compwetion, ^^;; o-outputtopic = outputtopic)
     }
 
-    def mkPlan(enrichmentStages: EnrichmentStage*): EnrichmentPlan = {
-      EnrichmentPlan(enrichmentStages)
+    def mkpwan(enwichmentstages: enwichmentstage*): enwichmentpwan = {
+      enwichmentpwan(enwichmentstages)
     }
 
-    def mkStage(
-      status: EnrichmentStageStatus = EnrichmentStageStatus.Initialized,
-      stageType: EnrichmentStageType = EnrichmentStageType.Repartition,
-      instructions: Seq[EnrichmentInstruction] = Seq(EnrichmentInstruction.TweetEnrichment)
-    ): EnrichmentStage = {
-      EnrichmentStage(status, stageType, instructions)
+    def mkstage(
+      s-status: enwichmentstagestatus = e-enwichmentstagestatus.initiawized, rawr
+      stagetype: e-enwichmentstagetype = e-enwichmentstagetype.wepawtition, (˘ω˘)
+      i-instwuctions: seq[enwichmentinstwuction] = seq(enwichmentinstwuction.tweetenwichment)
+    ): enwichmentstage = {
+      enwichmentstage(status, 🥺 s-stagetype, nyaa~~ instwuctions)
     }
 
-    trait ExecutionCount {
-      val callMap: mutable.Map[Int, (EnrichmentInstruction, EnrichmentEnvelop)] =
-        mutable.Map[Int, (EnrichmentInstruction, EnrichmentEnvelop)]()
+    twait executioncount {
+      vaw cawwmap: mutabwe.map[int, :3 (enwichmentinstwuction, /(^•ω•^) enwichmentenvewop)] =
+        m-mutabwe.map[int, ^•ﻌ•^ (enwichmentinstwuction, UwU enwichmentenvewop)]()
 
-      def recordExecution(instruction: EnrichmentInstruction, envelop: EnrichmentEnvelop): Unit = {
-        ExecutionContext.executionCount = ExecutionContext.executionCount + 1
-        callMap.put(ExecutionContext.executionCount, (instruction, envelop))
+      d-def w-wecowdexecution(instwuction: enwichmentinstwuction, e-envewop: enwichmentenvewop): unit = {
+        e-executioncontext.executioncount = e-executioncontext.executioncount + 1
+        c-cawwmap.put(executioncontext.executioncount, 😳😳😳 (instwuction, e-envewop))
       }
     }
 
-    class MockHydrator extends Hydrator with ExecutionCount {
-      def hydrate(
-        instruction: EnrichmentInstruction,
-        key: Option[EnrichmentKey],
-        envelop: EnrichmentEnvelop
-      ): Future[EnrichmentEnvelop] = {
-        recordExecution(instruction, envelop)
-        Future(envelop.copy(envelopId = ExecutionContext.executionCount))
+    cwass mockhydwatow extends h-hydwatow with e-executioncount {
+      d-def hydwate(
+        instwuction: e-enwichmentinstwuction, OwO
+        k-key: option[enwichmentkey], ^•ﻌ•^
+        envewop: enwichmentenvewop
+      ): futuwe[enwichmentenvewop] = {
+        w-wecowdexecution(instwuction, (ꈍᴗꈍ) envewop)
+        futuwe(envewop.copy(envewopid = executioncontext.executioncount))
       }
     }
 
-    class MockPartitioner extends Partitioner with ExecutionCount {
-      def repartition(
-        instruction: EnrichmentInstruction,
-        envelop: EnrichmentEnvelop
-      ): Option[EnrichmentKey] = {
-        recordExecution(instruction, envelop)
-        Some(EnrichmentKey(EnrichmentIdType.TweetId, ExecutionContext.executionCount))
+    cwass mockpawtitionew e-extends pawtitionew with executioncount {
+      def wepawtition(
+        instwuction: e-enwichmentinstwuction, (⑅˘꒳˘)
+        e-envewop: e-enwichmentenvewop
+      ): option[enwichmentkey] = {
+        w-wecowdexecution(instwuction, (⑅˘꒳˘) envewop)
+        s-some(enwichmentkey(enwichmentidtype.tweetid, (ˆ ﻌ ˆ)♡ e-executioncontext.executioncount))
       }
     }
   }
 
-  test("single partitioning plan works") {
-    new Fixtures {
-      val driver = new EnrichmentDriver(Some(outputTopic), partitionTopic, hydrator, partitioner)
-      // given a simple plan that only repartition the input and nothing else
-      val plan = mkPlan(repartitionTweet)
+  test("singwe pawtitioning pwan wowks") {
+    nyew fixtuwes {
+      vaw dwivew = nyew e-enwichmentdwivew(some(outputtopic), /(^•ω•^) pawtitiontopic, òωó h-hydwatow, (⑅˘꒳˘) pawtitionew)
+      // g-given a s-simpwe pwan that onwy wepawtition the input and n-nyothing ewse
+      v-vaw pwan = mkpwan(wepawtitiontweet)
 
-      (1L to 10).foreach(id => {
-        val envelop = EnrichmentEnvelop(id, tweet1, plan)
+      (1w to 10).foweach(id => {
+        v-vaw envewop = e-enwichmentenvewop(id, (U ᵕ U❁) tweet1, pwan)
 
         // when
-        val actual = Await.result(driver.execute(Some(key1), Future(envelop)))
+        vaw actuaw = await.wesuwt(dwivew.exekawaii~(some(key1), >w< futuwe(envewop)))
 
-        val expectedKey = Some(key1.copy(id = id))
-        val expectedValue =
-          envelop.copy(plan = mkPlan(complete(repartitionTweet, Some(partitionTopic))))
+        v-vaw expectedkey = s-some(key1.copy(id = i-id))
+        vaw expectedvawue =
+          e-envewop.copy(pwan = m-mkpwan(compwete(wepawtitiontweet, σωσ some(pawtitiontopic))))
 
-        // then the result should have a new partitioned key, with the envelop unchanged except the plan is complete
-        // however, the output topic is the partitionTopic (since this is only a partitioning stage)
-        assert((expectedKey, expectedValue) == actual)
+        // t-then the wesuwt shouwd have a nyew pawtitioned key, -.- with the envewop u-unchanged except t-the pwan is compwete
+        // howevew, o.O the output topic is the p-pawtitiontopic (since t-this is onwy a pawtitioning stage)
+        assewt((expectedkey, ^^ e-expectedvawue) == actuaw)
       })
     }
   }
 
-  test("multi-stage partitioning plan works") {
-    new Fixtures {
-      val driver = new EnrichmentDriver(Some(outputTopic), partitionTopic, hydrator, partitioner)
-      // given a plan that chain multiple repartition stages together
-      val plan = mkPlan(repartitionTweet, repartitionNotiTweet)
-      val envelop1 = EnrichmentEnvelop(1L, tweet1, plan)
+  test("muwti-stage pawtitioning pwan wowks") {
+    n-nyew fixtuwes {
+      vaw dwivew = nyew enwichmentdwivew(some(outputtopic), >_< p-pawtitiontopic, >w< h-hydwatow, >_< pawtitionew)
+      // given a pwan that chain muwtipwe w-wepawtition s-stages togethew
+      vaw pwan = mkpwan(wepawtitiontweet, >w< wepawtitionnotitweet)
+      v-vaw envewop1 = enwichmentenvewop(1w, rawr t-tweet1, rawr x3 pwan)
 
-      // when 1st partitioning trip
-      val actual1 = Await.result(driver.execute(Some(key1), Future(envelop1)))
+      // when 1st pawtitioning twip
+      v-vaw actuaw1 = await.wesuwt(dwivew.exekawaii~(some(key1), ( ͡o ω ͡o ) f-futuwe(envewop1)))
 
-      // then the result should have a new partitioned key, with the envelop unchanged except the
-      // 1st stage of the plan is complete
-      val expectedKey1 = key1.copy(id = 1L)
-      val expectedValue1 =
-        envelop1.copy(plan =
-          mkPlan(complete(repartitionTweet, Some(partitionTopic)), repartitionNotiTweet))
+      // t-then the wesuwt shouwd h-have a nyew pawtitioned key, (˘ω˘) w-with the envewop u-unchanged except t-the
+      // 1st stage of the p-pwan is compwete
+      v-vaw expectedkey1 = key1.copy(id = 1w)
+      vaw expectedvawue1 =
+        e-envewop1.copy(pwan =
+          m-mkpwan(compwete(wepawtitiontweet, 😳 s-some(pawtitiontopic)), OwO wepawtitionnotitweet))
 
-      assert((Some(expectedKey1), expectedValue1) == actual1)
+      assewt((some(expectedkey1), (˘ω˘) e-expectedvawue1) == actuaw1)
 
-      // then, we reuse the last result to exercise the logics on the driver again for the 2st trip
-      val actual2 = Await.result(driver.execute(Some(expectedKey1), Future(expectedValue1)))
-      val expectedKey2 = key1.copy(id = 2L)
-      val expectedValue2 =
-        envelop1.copy(plan = mkPlan(
-          complete(repartitionTweet, Some(partitionTopic)),
-          complete(repartitionNotiTweet, Some(partitionTopic))))
+      // t-then, òωó we w-weuse the wast wesuwt to exewcise the wogics on the dwivew again f-fow the 2st twip
+      v-vaw actuaw2 = a-await.wesuwt(dwivew.exekawaii~(some(expectedkey1), ( ͡o ω ͡o ) f-futuwe(expectedvawue1)))
+      vaw expectedkey2 = k-key1.copy(id = 2w)
+      vaw expectedvawue2 =
+        envewop1.copy(pwan = mkpwan(
+          compwete(wepawtitiontweet, UwU some(pawtitiontopic)), /(^•ω•^)
+          c-compwete(wepawtitionnotitweet, (ꈍᴗꈍ) some(pawtitiontopic))))
 
-      assert((Some(expectedKey2), expectedValue2) == actual2)
+      a-assewt((some(expectedkey2), 😳 expectedvawue2) == a-actuaw2)
     }
   }
 
-  test("single hydration plan works") {
-    new Fixtures {
-      val driver = new EnrichmentDriver(Some(outputTopic), partitionTopic, hydrator, partitioner)
-      // given a simple plan that only hydrate the input and nothing else
-      val plan = mkPlan(hydrateTweet)
+  test("singwe h-hydwation pwan wowks") {
+    n-nyew fixtuwes {
+      v-vaw dwivew = n-nyew enwichmentdwivew(some(outputtopic), mya pawtitiontopic, mya hydwatow, /(^•ω•^) p-pawtitionew)
+      // given a-a simpwe pwan that onwy hydwate the input and nyothing ewse
+      vaw pwan = mkpwan(hydwatetweet)
 
-      (1L to 10).foreach(id => {
-        val envelop = EnrichmentEnvelop(id, tweet1, plan)
+      (1w to 10).foweach(id => {
+        v-vaw envewop = enwichmentenvewop(id, ^^;; t-tweet1, pwan)
 
         // when
-        val actual = Await.result(driver.execute(Some(key1), Future(envelop)))
+        v-vaw actuaw = await.wesuwt(dwivew.exekawaii~(some(key1), 🥺 f-futuwe(envewop)))
 
-        val expectedValue =
-          envelop.copy(envelopId = id, plan = mkPlan(complete(hydrateTweet, Some(outputTopic))))
+        vaw expectedvawue =
+          envewop.copy(envewopid = id, ^^ pwan = m-mkpwan(compwete(hydwatetweet, ^•ﻌ•^ some(outputtopic))))
 
-        // then the result should have the same key, with the envelop hydrated & the plan is complete
-        // the output topic should be the final topic since this is a hydration stage and the plan is complete
-        assert((Some(key1), expectedValue) == actual)
+        // t-then the wesuwt shouwd have the s-same key, /(^•ω•^) with the envewop hydwated & the pwan is c-compwete
+        // t-the output topic shouwd be t-the finaw topic s-since this is a hydwation stage and the pwan is compwete
+        assewt((some(key1), ^^ e-expectedvawue) == a-actuaw)
       })
     }
   }
 
-  test("single hydration with multiple instructions plan works") {
-    new Fixtures {
-      val driver = new EnrichmentDriver(Some(outputTopic), partitionTopic, hydrator, partitioner)
-      // given a simple plan that only hydrate the input and nothing else
-      val plan = mkPlan(hydrateTweetMultiInstructions)
-      val envelop = EnrichmentEnvelop(0L, tweet1, plan)
+  t-test("singwe h-hydwation with m-muwtipwe instwuctions pwan wowks") {
+    n-new fixtuwes {
+      v-vaw dwivew = nyew enwichmentdwivew(some(outputtopic), 🥺 p-pawtitiontopic, (U ᵕ U❁) h-hydwatow, 😳😳😳 pawtitionew)
+      // g-given a simpwe pwan that onwy hydwate the i-input and nyothing ewse
+      vaw p-pwan = mkpwan(hydwatetweetmuwtiinstwuctions)
+      v-vaw envewop = enwichmentenvewop(0w, nyaa~~ t-tweet1, pwan)
 
       // when
-      val actual = Await.result(driver.execute(Some(key1), Future(envelop)))
-      val expectedValue = envelop.copy(
-        envelopId = 4L, // hydrate is called 4 times for 4 instructions in 1 stage
-        plan = mkPlan(complete(hydrateTweetMultiInstructions, Some(outputTopic))))
+      vaw a-actuaw = await.wesuwt(dwivew.exekawaii~(some(key1), (˘ω˘) f-futuwe(envewop)))
+      v-vaw expectedvawue = envewop.copy(
+        envewopid = 4w, >_< // h-hydwate is cawwed 4 times fow 4 instwuctions i-in 1 stage
+        p-pwan = mkpwan(compwete(hydwatetweetmuwtiinstwuctions, XD some(outputtopic))))
 
-      // then the result should have the same key, with the envelop hydrated & the plan is complete
-      // the output topic should be the final topic since this is a hydration stage and the plan is complete
-      assert((Some(key1), expectedValue) == actual)
+      // t-then the wesuwt shouwd h-have the same k-key, rawr x3 with the envewop hydwated & the pwan is c-compwete
+      // the output topic shouwd be the f-finaw topic since t-this is a hydwation stage and t-the pwan is compwete
+      assewt((some(key1), ( ͡o ω ͡o ) e-expectedvawue) == a-actuaw)
     }
   }
 
-  test("multi-stage hydration plan works") {
-    new Fixtures {
-      val driver = new EnrichmentDriver(Some(outputTopic), partitionTopic, hydrator, partitioner)
-      // given a plan that only hydrate twice
-      val plan = mkPlan(hydrateTweet, hydrateNotiTweet)
-      val envelop = EnrichmentEnvelop(1L, tweet1, plan)
+  t-test("muwti-stage hydwation pwan wowks") {
+    nyew fixtuwes {
+      vaw dwivew = nyew enwichmentdwivew(some(outputtopic), pawtitiontopic, hydwatow, :3 pawtitionew)
+      // given a pwan that onwy hydwate twice
+      vaw pwan = mkpwan(hydwatetweet, mya hydwatenotitweet)
+      v-vaw envewop = e-enwichmentenvewop(1w, σωσ tweet1, (ꈍᴗꈍ) pwan)
 
-      // when
-      val actual = Await.result(driver.execute(Some(key1), Future(envelop)))
+      // w-when
+      vaw a-actuaw = await.wesuwt(dwivew.exekawaii~(some(key1), OwO f-futuwe(envewop)))
 
-      // then the result should have the same key, with the envelop hydrated. since there's no
-      // partitioning stages, the driver will just recurse until all the hydration is done,
-      // then output to the final topic
-      val expectedValue =
-        envelop.copy(
-          envelopId = 2L,
-          plan = mkPlan(
-            complete(hydrateTweet),
-            complete(
-              hydrateNotiTweet,
-              Some(outputTopic)
-            ) // only the last stage has the output topic
+      // then the wesuwt s-shouwd have the same key, o.O with the e-envewop hydwated. 😳😳😳 s-since thewe's nyo
+      // p-pawtitioning stages, /(^•ω•^) the dwivew w-wiww just wecuwse u-untiw aww the hydwation is done, OwO
+      // then o-output to the finaw t-topic
+      v-vaw expectedvawue =
+        e-envewop.copy(
+          e-envewopid = 2w, ^^
+          pwan = m-mkpwan(
+            c-compwete(hydwatetweet), (///ˬ///✿)
+            c-compwete(
+              h-hydwatenotitweet, (///ˬ///✿)
+              some(outputtopic)
+            ) // o-onwy the w-wast stage has t-the output topic
           ))
 
-      assert((Some(key1), expectedValue) == actual)
+      assewt((some(key1), (///ˬ///✿) e-expectedvawue) == actuaw)
     }
   }
 
-  test("multi-stage partition+hydration plan works") {
-    new Fixtures {
-      val driver = new EnrichmentDriver(Some(outputTopic), partitionTopic, hydrator, partitioner)
+  test("muwti-stage p-pawtition+hydwation pwan wowks") {
+    n-nyew fixtuwes {
+      v-vaw dwivew = nyew e-enwichmentdwivew(some(outputtopic), ʘwʘ pawtitiontopic, ^•ﻌ•^ h-hydwatow, OwO pawtitionew)
 
-      // given a plan that repartition then hydrate twice
-      val plan = mkPlan(repartitionTweet, hydrateTweet, repartitionNotiTweet, hydrateNotiTweet)
-      var curEnvelop = EnrichmentEnvelop(1L, tweet1, plan)
-      var curKey = key1
+      // g-given a pwan that wepawtition t-then hydwate twice
+      vaw p-pwan = mkpwan(wepawtitiontweet, hydwatetweet, (U ﹏ U) wepawtitionnotitweet, (ˆ ﻌ ˆ)♡ hydwatenotitweet)
+      vaw c-cuwenvewop = enwichmentenvewop(1w, (⑅˘꒳˘) tweet1, pwan)
+      v-vaw cuwkey = k-key1
 
-      // stage 1, partitioning on tweet should be correct
-      var actual = Await.result(driver.execute(Some(curKey), Future(curEnvelop)))
-      var expectedKey = curKey.copy(id = 1L)
-      var expectedValue = curEnvelop.copy(
-        plan = mkPlan(
-          complete(repartitionTweet, Some(partitionTopic)),
-          hydrateTweet,
-          repartitionNotiTweet,
-          hydrateNotiTweet))
+      // stage 1, (U ﹏ U) pawtitioning on tweet shouwd be cowwect
+      v-vaw actuaw = await.wesuwt(dwivew.exekawaii~(some(cuwkey), o.O f-futuwe(cuwenvewop)))
+      v-vaw expectedkey = c-cuwkey.copy(id = 1w)
+      vaw expectedvawue = c-cuwenvewop.copy(
+        p-pwan = mkpwan(
+          c-compwete(wepawtitiontweet, mya some(pawtitiontopic)), XD
+          hydwatetweet,
+          wepawtitionnotitweet,
+          h-hydwatenotitweet))
 
-      assert((Some(expectedKey), expectedValue) == actual)
-      curEnvelop = actual._2
-      curKey = actual._1.get
+      assewt((some(expectedkey), òωó e-expectedvawue) == actuaw)
+      c-cuwenvewop = a-actuaw._2
+      cuwkey = a-actuaw._1.get
 
-      // stage 2-3, hydrating on tweet should be correct
-      // and since the next stage after hydration is a repartition, it will does so correctly
-      actual = Await.result(driver.execute(Some(curKey), Future(curEnvelop)))
-      expectedKey = curKey.copy(id = 3) // repartition is done in stage 3
-      expectedValue = curEnvelop.copy(
-        envelopId = 2L, // hydration is done in stage 2
-        plan = mkPlan(
-          complete(repartitionTweet, Some(partitionTopic)),
-          complete(hydrateTweet),
-          complete(repartitionNotiTweet, Some(partitionTopic)),
-          hydrateNotiTweet)
+      // s-stage 2-3, (˘ω˘) h-hydwating o-on tweet shouwd be cowwect
+      // a-and since the n-next stage aftew h-hydwation is a-a wepawtition, :3 it w-wiww does so cowwectwy
+      actuaw = a-await.wesuwt(dwivew.exekawaii~(some(cuwkey), OwO f-futuwe(cuwenvewop)))
+      e-expectedkey = cuwkey.copy(id = 3) // wepawtition i-is done in stage 3
+      expectedvawue = c-cuwenvewop.copy(
+        envewopid = 2w, mya // h-hydwation i-is done in stage 2
+        p-pwan = mkpwan(
+          compwete(wepawtitiontweet, (˘ω˘) some(pawtitiontopic)), o.O
+          compwete(hydwatetweet), (✿oωo)
+          c-compwete(wepawtitionnotitweet, (ˆ ﻌ ˆ)♡ s-some(pawtitiontopic)), ^^;;
+          h-hydwatenotitweet)
       )
 
-      assert((Some(expectedKey), expectedValue) == actual)
-      curEnvelop = actual._2
-      curKey = actual._1.get
+      assewt((some(expectedkey), expectedvawue) == actuaw)
+      cuwenvewop = a-actuaw._2
+      c-cuwkey = actuaw._1.get
 
-      // then finally, stage 4 would output to the final topic
-      actual = Await.result(driver.execute(Some(curKey), Future(curEnvelop)))
-      expectedKey = curKey // nothing's changed in the key
-      expectedValue = curEnvelop.copy(
-        envelopId = 4L,
-        plan = mkPlan(
-          complete(repartitionTweet, Some(partitionTopic)),
-          complete(hydrateTweet),
-          complete(repartitionNotiTweet, Some(partitionTopic)),
-          complete(hydrateNotiTweet, Some(outputTopic))
+      // t-then f-finawwy, OwO stage 4 wouwd output to the finaw topic
+      actuaw = a-await.wesuwt(dwivew.exekawaii~(some(cuwkey), 🥺 f-futuwe(cuwenvewop)))
+      e-expectedkey = c-cuwkey // nyothing's changed in the key
+      e-expectedvawue = c-cuwenvewop.copy(
+        envewopid = 4w, mya
+        pwan = mkpwan(
+          compwete(wepawtitiontweet, s-some(pawtitiontopic)), 😳
+          compwete(hydwatetweet), òωó
+          compwete(wepawtitionnotitweet, /(^•ω•^) s-some(pawtitiontopic)), -.-
+          compwete(hydwatenotitweet, òωó s-some(outputtopic))
         )
       )
 
-      assert((Some(expectedKey), expectedValue) == actual)
+      a-assewt((some(expectedkey), /(^•ω•^) expectedvawue) == actuaw)
     }
   }
 }

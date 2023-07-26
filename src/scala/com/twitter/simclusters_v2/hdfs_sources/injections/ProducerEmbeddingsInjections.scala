@@ -1,45 +1,45 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twittew.simcwustews_v2.hdfs_souwces.injections
 
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
-  ScalaBinaryThrift,
-  ScalaCompactThrift
+impowt c-com.twittew.hewmit.candidate.thwiftscawa.candidates
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.{
+  w-wong2bigendian,
+  s-scawabinawythwift, (✿oωo)
+  scawacompactthwift
 }
-import com.twitter.simclusters_v2.thriftscala.{
-  PersistedFullClusterId,
-  SimClustersEmbedding,
-  SimClustersEmbeddingId,
-  TopProducersWithScore,
-  TopSimClustersWithScore
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  p-pewsistedfuwwcwustewid, (ˆ ﻌ ˆ)♡
+  s-simcwustewsembedding, (˘ω˘)
+  simcwustewsembeddingid,
+  toppwoducewswithscowe, (⑅˘꒳˘)
+  topsimcwustewswithscowe
 }
 
-object ProducerEmbeddingsInjections {
-  final val ProducerTopKSimClusterEmbeddingsInjection: KeyValInjection[
-    Long,
-    TopSimClustersWithScore
+object pwoducewembeddingsinjections {
+  f-finaw vaw pwoducewtopksimcwustewembeddingsinjection: keyvawinjection[
+    w-wong, (///ˬ///✿)
+    topsimcwustewswithscowe
   ] =
-    KeyValInjection(
-      keyCodec = Long2BigEndian,
-      valueCodec = ScalaCompactThrift(TopSimClustersWithScore))
+    k-keyvawinjection(
+      keycodec = wong2bigendian, 😳😳😳
+      vawuecodec = s-scawacompactthwift(topsimcwustewswithscowe))
 
-  final val SimClusterEmbeddingTopKProducersInjection: KeyValInjection[
-    PersistedFullClusterId,
-    TopProducersWithScore
+  finaw vaw s-simcwustewembeddingtopkpwoducewsinjection: k-keyvawinjection[
+    pewsistedfuwwcwustewid, 🥺
+    toppwoducewswithscowe
   ] =
-    KeyValInjection(
-      keyCodec = ScalaCompactThrift(PersistedFullClusterId),
-      valueCodec = ScalaCompactThrift(TopProducersWithScore))
+    keyvawinjection(
+      keycodec = scawacompactthwift(pewsistedfuwwcwustewid), mya
+      vawuecodec = s-scawacompactthwift(toppwoducewswithscowe))
 
-  final val SimilarUsersInjection: KeyValInjection[Long, Candidates] =
-    KeyValInjection(keyCodec = Long2BigEndian, valueCodec = ScalaCompactThrift(Candidates))
+  finaw vaw simiwawusewsinjection: keyvawinjection[wong, 🥺 candidates] =
+    keyvawinjection(keycodec = w-wong2bigendian, >_< vawuecodec = scawacompactthwift(candidates))
 
-  final val ProducerSimClustersEmbeddingInjection: KeyValInjection[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  f-finaw vaw pwoducewsimcwustewsembeddinginjection: k-keyvawinjection[
+    s-simcwustewsembeddingid, >_<
+    s-simcwustewsembedding
   ] =
-    KeyValInjection(
-      keyCodec = ScalaBinaryThrift(SimClustersEmbeddingId),
-      valueCodec = ScalaBinaryThrift(SimClustersEmbedding))
+    keyvawinjection(
+      keycodec = s-scawabinawythwift(simcwustewsembeddingid), (⑅˘꒳˘)
+      vawuecodec = scawabinawythwift(simcwustewsembedding))
 }

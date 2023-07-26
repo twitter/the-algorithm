@@ -1,36 +1,36 @@
-package com.twitter.frigate.pushservice.refresh_handler.cross
+package com.twittew.fwigate.pushsewvice.wefwesh_handwew.cwoss
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.SocialContextActions
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.hermit.predicate.Predicate
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.sociawcontextactions
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt c-com.twittew.hewmit.pwedicate.pwedicate
 
-class CopyPredicates(statsReceiver: StatsReceiver) {
-  val alwaysTruePredicate = Predicate
-    .from { _: CandidateCopyPair =>
-      true
-    }.withStats(statsReceiver.scope("always_true_copy_predicate"))
+c-cwass copypwedicates(statsweceivew: statsweceivew) {
+  vaw awwaystwuepwedicate = pwedicate
+    .fwom { _: c-candidatecopypaiw =>
+      twue
+    }.withstats(statsweceivew.scope("awways_twue_copy_pwedicate"))
 
-  val unrecognizedCandidatePredicate = alwaysTruePredicate.flip
-    .withStats(statsReceiver.scope("unrecognized_candidate"))
+  vaw u-unwecognizedcandidatepwedicate = awwaystwuepwedicate.fwip
+    .withstats(statsweceivew.scope("unwecognized_candidate"))
 
-  val displaySocialContextPredicate = Predicate
-    .from { candidateCopyPair: CandidateCopyPair =>
-      candidateCopyPair.candidate match {
-        case candidateWithScActions: RawCandidate with SocialContextActions =>
-          val socialContextUserIds = candidateWithScActions.socialContextActions.map(_.userId)
-          val countSocialContext = socialContextUserIds.size
-          val pushCopy = candidateCopyPair.pushCopy
+  v-vaw dispwaysociawcontextpwedicate = pwedicate
+    .fwom { candidatecopypaiw: candidatecopypaiw =>
+      candidatecopypaiw.candidate match {
+        case c-candidatewithscactions: wawcandidate w-with sociawcontextactions =>
+          v-vaw sociawcontextusewids = candidatewithscactions.sociawcontextactions.map(_.usewid)
+          vaw countsociawcontext = sociawcontextusewids.size
+          vaw p-pushcopy = candidatecopypaiw.pushcopy
 
-          countSocialContext match {
-            case 1 => pushCopy.hasOneDisplaySocialContext && !pushCopy.hasOtherSocialContext
-            case 2 => pushCopy.hasTwoDisplayContext && !pushCopy.hasOtherSocialContext
-            case c if c > 2 =>
-              pushCopy.hasOneDisplaySocialContext && pushCopy.hasOtherSocialContext
-            case _ => false
+          countsociawcontext match {
+            case 1 => pushcopy.hasonedispwaysociawcontext && !pushcopy.hasothewsociawcontext
+            c-case 2 => pushcopy.hastwodispwaycontext && !pushcopy.hasothewsociawcontext
+            case c-c if c > 2 =>
+              p-pushcopy.hasonedispwaysociawcontext && p-pushcopy.hasothewsociawcontext
+            case _ => f-fawse
           }
 
-        case _ => false
+        case _ => fawse
       }
-    }.withStats(statsReceiver.scope("display_social_context_predicate"))
+    }.withstats(statsweceivew.scope("dispway_sociaw_context_pwedicate"))
 }

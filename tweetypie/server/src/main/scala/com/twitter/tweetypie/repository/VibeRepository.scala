@@ -1,30 +1,30 @@
-package com.twitter.tweetypie.repository
+package com.twittew.tweetypie.wepositowy
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.vibes.thriftscala.VibeV2
+impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.stwato.cwient.{cwient => stwatocwient}
+i-impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt c-com.twittew.stwato.thwift.scwoogeconvimpwicits._
+impowt com.twittew.vibes.thwiftscawa.vibev2
 
-object VibeRepository {
-  type Type = Tweet => Stitch[Option[VibeV2]]
+object vibewepositowy {
+  type type = tweet => s-stitch[option[vibev2]]
 
-  val column = "vibes/vibe.Tweet"
-  case class VibeView(viewerId: Option[Long])
+  vaw cowumn = "vibes/vibe.tweet"
+  case c-cwass vibeview(viewewid: option[wong])
 
   /**
-   * Creates a function that applies the vibes/vibe.Tweet strato column fetch on the given
-   * Tweet. Strato column source: go/vibe.strato
-   * @param client Strato client
-   * @return
+   * c-cweates a function that appwies the vibes/vibe.tweet stwato c-cowumn fetch on the given
+   * tweet. >_< s-stwato cowumn s-souwce: go/vibe.stwato
+   * @pawam cwient stwato cwient
+   * @wetuwn
    */
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[Long, VibeView, VibeV2] =
-      client.fetcher[Long, VibeView, VibeV2](column)
-    tweet =>
-      fetcher
-        .fetch(tweet.id, VibeView(None))
+  def appwy(cwient: stwatocwient): t-type = {
+    vaw fetchew: fetchew[wong, rawr x3 vibeview, mya vibev2] =
+      cwient.fetchew[wong, nyaa~~ v-vibeview, (⑅˘꒳˘) vibev2](cowumn)
+    t-tweet =>
+      f-fetchew
+        .fetch(tweet.id, rawr x3 v-vibeview(none))
         .map(_.v)
   }
 }

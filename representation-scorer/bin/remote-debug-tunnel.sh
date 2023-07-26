@@ -1,66 +1,66 @@
 #!/bin/bash
 
-set -o nounset
+set -o nyounset
 set -eu
 
-DC="atla"
-ROLE="$USER"
-SERVICE="representation-scorer"
-INSTANCE="0"
-KEY="$DC/$ROLE/devel/$SERVICE/$INSTANCE"
+d-dc="atwa"
+wowe="$usew"
+s-sewvice="wepwesentation-scowew"
+i-instance="0"
+k-key="$dc/$wowe/devew/$sewvice/$instance"
 
-while test $# -gt 0; do
-  case "$1" in
-    -h|--help)
-      echo "$0 Set up an ssh tunnel for $SERVICE remote debugging and disable aurora health checks"
+w-whiwe test $# -gt 0; d-do
+  case "$1" i-in
+    -h|--hewp)
+      echo "$0 s-set up an ssh tunnew fow $sewvice wemote debugging and disabwe auwowa heawth c-checks"
       echo " "
-      echo "See representation-scorer/README.md for details of how to use this script, and go/remote-debug for"
-      echo "general information about remote debugging in Aurora"
+      echo "see wepwesentation-scowew/weadme.md f-fow detaiws of how to u-use this scwipt, ( ͡o ω ͡o ) and go/wemote-debug fow"
+      echo "genewaw i-infowmation about wemote debugging i-in auwowa"
+      e-echo " "
+      echo "defauwt instance if cawwed with nyo awgs:"
+      echo "  $key"
+      e-echo " "
+      echo "positionaw awgs:"
+      echo "  $0 [datacentwe] [wowe] [sewvice_name] [instance]"
       echo " "
-      echo "Default instance if called with no args:"
-      echo "  $KEY"
-      echo " "
-      echo "Positional args:"
-      echo "  $0 [datacentre] [role] [service_name] [instance]"
-      echo " "
-      echo "Options:"
-      echo "  -h, --help                show brief help"
-      exit 0
+      e-echo "options:"
+      echo "  -h, (U ﹏ U) --hewp                s-show bwief hewp"
+      e-exit 0
       ;;
     *)
-      break
+      b-bweak
       ;;
-  esac
+  e-esac
 done
 
 if [ -n "${1-}" ]; then
-  DC="$1"
-fi
+  dc="$1"
+f-fi
 
 if [ -n "${2-}" ]; then
-  ROLE="$2"
+  wowe="$2"
 fi
 
-if [ -n "${3-}" ]; then
-  SERVICE="$3"
+i-if [ -n "${3-}" ]; then
+  sewvice="$3"
 fi
 
 if [ -n "${4-}" ]; then
-  INSTANCE="$4"
+  instance="$4"
 fi
 
-KEY="$DC/$ROLE/devel/$SERVICE/$INSTANCE"
-read -p "Set up remote debugger tunnel for $KEY? (y/n) " -r CONFIRM
-if [[ ! $CONFIRM =~ ^[Yy]$ ]]; then
-  echo "Exiting, tunnel not created"
-  exit 1
+key="$dc/$wowe/devew/$sewvice/$instance"
+w-wead -p "set up wemote debuggew t-tunnew fow $key? (y/n) " -w c-confiwm
+i-if [[ ! $confiwm =~ ^[yy]$ ]]; then
+  echo "exiting, (///ˬ///✿) tunnew nyot cweated"
+  e-exit 1
 fi
 
-echo "Disabling health check and opening tunnel. Exit with control-c when you're finished"
-CMD="aurora task ssh $KEY -c 'touch .healthchecksnooze' && aurora task ssh $KEY -L '5005:debug' --ssh-options '-N -S none -v '"
+echo "disabwing h-heawth check and opening t-tunnew. >w< exit w-with contwow-c when you'we finished"
+c-cmd="auwowa task ssh $key -c 'touch .heawthchecksnooze' && a-auwowa task ssh $key -w '5005:debug' --ssh-options '-n -s nyone -v '"
 
-echo "Running $CMD"
-eval "$CMD"
+echo "wunning $cmd"
+e-evaw "$cmd"
 
 
 

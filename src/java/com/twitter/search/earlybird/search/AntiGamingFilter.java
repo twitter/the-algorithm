@@ -1,228 +1,228 @@
-package com.twitter.search.earlybird.search;
+package com.twittew.seawch.eawwybiwd.seawch;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.compawatow;
+i-impowt java.utiw.hashset;
+i-impowt java.utiw.set;
+i-impowt java.utiw.sowtedset;
+i-impowt java.utiw.tweeset;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import org.apache.commons.lang.mutable.MutableInt;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
+impowt owg.apache.commons.wang.mutabwe.mutabweint;
+impowt owg.apache.wucene.index.indexweadew;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
+impowt owg.apache.wucene.index.tewm;
+impowt o-owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowemode;
 
-import com.twitter.common_internal.collections.RandomAccessPriorityQueue;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.TwitterIndexSearcher;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+i-impowt com.twittew.common_intewnaw.cowwections.wandomaccesspwiowityqueue;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt c-com.twittew.seawch.common.seawch.twittewindexseawchew;
+impowt com.twittew.seawch.common.utiw.anawysis.wongtewmattwibuteimpw;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
-public class AntiGamingFilter {
-  private interface Acceptor {
-    boolean accept(int internalDocID) throws IOException;
+pubwic cwass antigamingfiwtew {
+  pwivate intewface acceptow {
+    boowean accept(int i-intewnawdocid) thwows ioexception;
   }
 
-  private NumericDocValues userReputation;
-  private NumericDocValues fromUserIDs;
+  pwivate nyumewicdocvawues usewweputation;
+  pwivate n-nyumewicdocvawues fwomusewids;
 
-  private final Query luceneQuery;
+  p-pwivate finaw q-quewy wucenequewy;
 
-  private boolean termsExtracted = false;
-  private final Set<Term> queryTerms;
+  p-pwivate b-boowean tewmsextwacted = fawse;
+  pwivate finaw s-set<tewm> quewytewms;
 
-  // we ignore these user ids for anti-gaming filtering, because they were explicitly queried for
-  private Set<Long> segmentUserIDWhitelist = null;
-  // we gather the whitelisted userIDs from all segments here
-  private Set<Long> globalUserIDWhitelist = null;
+  // we ignowe these usew ids fow anti-gaming f-fiwtewing, mya because they wewe expwicitwy quewied fow
+  pwivate set<wong> segmentusewidwhitewist = n-nyuww;
+  // we gathew the w-whitewisted usewids f-fwom aww s-segments hewe
+  pwivate set<wong> gwobawusewidwhitewist = nyuww;
 
   /**
-   * Used to track the number of occurrences of a particular user.
+   * u-used t-to twack the nyumbew of occuwwences o-of a pawticuwaw u-usew. o.O
    */
-  private static final class UserCount
-      implements RandomAccessPriorityQueue.SignatureProvider<Long> {
-    private long userID;
-    private int count;
+  pwivate static f-finaw cwass usewcount
+      impwements wandomaccesspwiowityqueue.signatuwepwovidew<wong> {
+    p-pwivate wong usewid;
+    pwivate int count;
 
-    @Override
-    public Long getSignature() {
-      return userID;
+    @ovewwide
+    p-pubwic wong getsignatuwe() {
+      wetuwn usewid;
     }
 
-    @Override
-    public void clear() {
-      userID = 0;
-      count = 0;
+    @ovewwide
+    p-pubwic void cweaw() {
+      u-usewid = 0;
+      c-count = 0;
     }
   }
 
-  private static final Comparator<UserCount> USER_COUNT_COMPARATOR =
-      (d1, d2) -> d1.count == d2.count ? Long.compare(d1.userID, d2.userID) : d1.count - d2.count;
+  pwivate static finaw compawatow<usewcount> usew_count_compawatow =
+      (d1, (✿oωo) d2) -> d1.count == d2.count ? wong.compawe(d1.usewid, :3 d2.usewid) : d-d1.count - d2.count;
 
-  private final RandomAccessPriorityQueue<UserCount, Long> priorityQueue =
-      new RandomAccessPriorityQueue<UserCount, Long>(1024, USER_COUNT_COMPARATOR) {
-    @Override
-    protected UserCount getSentinelObject() {
-      return new UserCount();
+  p-pwivate finaw wandomaccesspwiowityqueue<usewcount, 😳 w-wong> p-pwiowityqueue =
+      n-nyew wandomaccesspwiowityqueue<usewcount, (U ﹏ U) wong>(1024, mya usew_count_compawatow) {
+    @ovewwide
+    pwotected u-usewcount getsentinewobject() {
+      wetuwn nyew usewcount();
     }
   };
 
-  private final Acceptor acceptor;
-  private final int maxHitsPerUser;
+  pwivate finaw acceptow acceptow;
+  p-pwivate finaw int maxhitspewusew;
 
   /**
-   * Creates an AntiGamingFilter that either accepts or rejects tweets from all users.
-   * This method should only be called in tests.
+   * c-cweates an antigamingfiwtew that e-eithew accepts o-ow wejects tweets fwom aww usews. (U ᵕ U❁)
+   * t-this method s-shouwd onwy b-be cawwed in tests. :3
    *
-   * @param alwaysValue Determines if tweets should always be accepted or rejected.
-   * @return An AntiGamingFilter that either accepts or rejects tweets from all users.
+   * @pawam a-awwaysvawue detewmines if tweets shouwd awways b-be accepted o-ow wejected. mya
+   * @wetuwn a-an antigamingfiwtew t-that eithew accepts o-ow wejects tweets fwom aww usews. OwO
    */
-  @VisibleForTesting
-  public static AntiGamingFilter newMock(boolean alwaysValue) {
-    return new AntiGamingFilter(alwaysValue) {
-      @Override
-      public void startSegment(EarlybirdIndexSegmentAtomicReader reader) {
+  @visibwefowtesting
+  pubwic static antigamingfiwtew n-nyewmock(boowean awwaysvawue) {
+    wetuwn nyew antigamingfiwtew(awwaysvawue) {
+      @ovewwide
+      pubwic void stawtsegment(eawwybiwdindexsegmentatomicweadew w-weadew) {
       }
     };
   }
 
-  private AntiGamingFilter(boolean alwaysValue) {
-    acceptor = internalDocID -> alwaysValue;
-    maxHitsPerUser = Integer.MAX_VALUE;
-    termsExtracted = true;
-    luceneQuery = null;
-    queryTerms = null;
+  pwivate antigamingfiwtew(boowean awwaysvawue) {
+    acceptow = i-intewnawdocid -> a-awwaysvawue;
+    m-maxhitspewusew = integew.max_vawue;
+    t-tewmsextwacted = twue;
+    w-wucenequewy = n-nyuww;
+    quewytewms = nyuww;
   }
 
-  public AntiGamingFilter(int maxHitsPerUser, int maxTweepCred, Query luceneQuery) {
-    this.maxHitsPerUser = maxHitsPerUser;
-    this.luceneQuery = luceneQuery;
+  pubwic antigamingfiwtew(int maxhitspewusew, (ˆ ﻌ ˆ)♡ int maxtweepcwed, ʘwʘ q-quewy wucenequewy) {
+    this.maxhitspewusew = m-maxhitspewusew;
+    this.wucenequewy = wucenequewy;
 
-    if (maxTweepCred != -1) {
-      this.acceptor = internalDocID -> {
-        long userReputationVal =
-            userReputation.advanceExact(internalDocID) ? userReputation.longValue() : 0L;
-        return ((byte) userReputationVal > maxTweepCred) || acceptUser(internalDocID);
+    i-if (maxtweepcwed != -1) {
+      t-this.acceptow = intewnawdocid -> {
+        wong u-usewweputationvaw =
+            u-usewweputation.advanceexact(intewnawdocid) ? usewweputation.wongvawue() : 0w;
+        w-wetuwn ((byte) u-usewweputationvaw > maxtweepcwed) || acceptusew(intewnawdocid);
       };
-    } else {
-      this.acceptor = this::acceptUser;
+    } ewse {
+      this.acceptow = t-this::acceptusew;
     }
 
-    this.queryTerms = new HashSet<>();
+    this.quewytewms = n-nyew hashset<>();
   }
 
-  public Set<Long> getUserIDWhitelist() {
-    return globalUserIDWhitelist;
+  p-pubwic set<wong> getusewidwhitewist() {
+    w-wetuwn gwobawusewidwhitewist;
   }
 
-  private boolean acceptUser(int internalDocID) throws IOException {
-    final long fromUserID = getUserId(internalDocID);
-    final MutableInt freq = new MutableInt();
-    // try to increment UserCount for an user already exist in the priority queue.
-    boolean incremented = priorityQueue.incrementElement(
-        fromUserID, element -> freq.setValue(++element.count));
+  p-pwivate boowean acceptusew(int i-intewnawdocid) thwows ioexception {
+    finaw wong fwomusewid = getusewid(intewnawdocid);
+    f-finaw mutabweint f-fweq = nyew mutabweint();
+    // twy to i-incwement usewcount f-fow an usew awweady exist in the pwiowity queue. o.O
+    boowean i-incwemented = pwiowityqueue.incwementewement(
+        fwomusewid, UwU ewement -> fweq.setvawue(++ewement.count));
 
-    // If not incremented, it means the user node does not exist in the priority queue yet.
-    if (!incremented) {
-      priorityQueue.updateTop(element -> {
-        element.userID = fromUserID;
-        element.count = 1;
-        freq.setValue(element.count);
+    // if nyot i-incwemented, rawr x3 it means the usew nyode does nyot exist i-in the pwiowity q-queue yet. 🥺
+    if (!incwemented) {
+      pwiowityqueue.updatetop(ewement -> {
+        ewement.usewid = f-fwomusewid;
+        e-ewement.count = 1;
+        fweq.setvawue(ewement.count);
       });
     }
 
-    if (freq.intValue() <= maxHitsPerUser) {
-      return true;
-    } else if (segmentUserIDWhitelist == null) {
-      return false;
+    if (fweq.intvawue() <= maxhitspewusew) {
+      w-wetuwn twue;
+    } e-ewse if (segmentusewidwhitewist == nyuww) {
+      wetuwn fawse;
     }
-    return segmentUserIDWhitelist.contains(fromUserID);
+    wetuwn s-segmentusewidwhitewist.contains(fwomusewid);
   }
 
   /**
-   * Initializes this filter with the new feature source. This method should be called every time an
-   * earlybird searcher starts searching in a new segment.
+   * initiawizes t-this fiwtew w-with the nyew featuwe souwce. :3 t-this method shouwd be cawwed e-evewy time an
+   * e-eawwybiwd seawchew s-stawts seawching in a nyew s-segment. (ꈍᴗꈍ)
    *
-   * @param reader The reader for the new segment.
+   * @pawam w-weadew the weadew fow the nyew segment. 🥺
    */
-  public void startSegment(EarlybirdIndexSegmentAtomicReader reader) throws IOException {
-    if (!termsExtracted) {
-      extractTerms(reader);
+  p-pubwic v-void stawtsegment(eawwybiwdindexsegmentatomicweadew w-weadew) thwows ioexception {
+    if (!tewmsextwacted) {
+      e-extwacttewms(weadew);
     }
 
-    fromUserIDs =
-        reader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
+    fwomusewids =
+        w-weadew.getnumewicdocvawues(eawwybiwdfiewdconstant.fwom_usew_id_csf.getfiewdname());
 
-    // fill the id whitelist for the current segment.  initialize lazily.
-    segmentUserIDWhitelist = null;
+    // f-fiww the id whitewist fow the cuwwent segment. (✿oωo)  initiawize w-waziwy. (U ﹏ U)
+    segmentusewidwhitewist = n-nyuww;
 
-    SortedSet<Integer> sortedFromUserDocIds = new TreeSet<>();
-    for (Term t : queryTerms) {
-      if (t.field().equals(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName())) {
-        // Add the operand of the from_user_id operator to the whitelist
-        long fromUserID = LongTermAttributeImpl.copyBytesRefToLong(t.bytes());
-        addUserToWhitelists(fromUserID);
-      } else if (t.field().equals(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName())) {
-        // For a [from X] filter, we need to find a document that has the from_user field set to X,
-        // and then we need to get the value of the from_user_id field for that document and add it
-        // to the whitelist. We can get the from_user_id value from the fromUserIDs NumericDocValues
-        // instance, but we need to traverse it in increasing order of doc IDs. So we add a doc ID
-        // for each term to a sorted set for now, and then we traverse it in increasing doc ID order
-        // and add the from_user_id values for those docs to the whitelist.
-        int firstInternalDocID = reader.getNewestDocID(t);
-        if (firstInternalDocID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-          sortedFromUserDocIds.add(firstInternalDocID);
+    s-sowtedset<integew> s-sowtedfwomusewdocids = nyew t-tweeset<>();
+    fow (tewm t : quewytewms) {
+      if (t.fiewd().equaws(eawwybiwdfiewdconstant.fwom_usew_id_fiewd.getfiewdname())) {
+        // add the opewand of the fwom_usew_id o-opewatow to the whitewist
+        w-wong fwomusewid = wongtewmattwibuteimpw.copybytesweftowong(t.bytes());
+        a-addusewtowhitewists(fwomusewid);
+      } ewse if (t.fiewd().equaws(eawwybiwdfiewdconstant.fwom_usew_fiewd.getfiewdname())) {
+        // f-fow a [fwom x] fiwtew, :3 we nyeed t-to find a document t-that has the f-fwom_usew fiewd s-set to x, ^^;;
+        // a-and then we nyeed to get the vawue of the fwom_usew_id fiewd fow that document and add it
+        // to the w-whitewist. rawr we can g-get the fwom_usew_id v-vawue fwom the fwomusewids n-nyumewicdocvawues
+        // instance, 😳😳😳 but we nyeed to twavewse it in incweasing o-owdew of doc i-ids. (✿oωo) so we add a doc id
+        // f-fow each tewm to a sowted set fow nyow, OwO and t-then we twavewse i-it in incweasing doc id owdew
+        // a-and add t-the fwom_usew_id vawues fow those docs to the whitewist. ʘwʘ
+        int fiwstintewnawdocid = w-weadew.getnewestdocid(t);
+        i-if (fiwstintewnawdocid != e-eawwybiwdindexsegmentatomicweadew.tewm_not_found) {
+          s-sowtedfwomusewdocids.add(fiwstintewnawdocid);
         }
       }
     }
 
-    for (int fromUserDocId : sortedFromUserDocIds) {
-      addUserToWhitelists(getUserId(fromUserDocId));
+    f-fow (int fwomusewdocid : sowtedfwomusewdocids) {
+      a-addusewtowhitewists(getusewid(fwomusewdocid));
     }
 
-    userReputation =
-        reader.getNumericDocValues(EarlybirdFieldConstant.USER_REPUTATION.getFieldName());
+    u-usewweputation =
+        weadew.getnumewicdocvawues(eawwybiwdfiewdconstant.usew_weputation.getfiewdname());
 
-    // Reset the fromUserIDs NumericDocValues so that the acceptor can use it to iterate over docs.
-    fromUserIDs =
-        reader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
+    // w-weset the f-fwomusewids nyumewicdocvawues so t-that the acceptow can use it to itewate ovew docs. (ˆ ﻌ ˆ)♡
+    f-fwomusewids =
+        weadew.getnumewicdocvawues(eawwybiwdfiewdconstant.fwom_usew_id_csf.getfiewdname());
   }
 
-  private void extractTerms(IndexReader reader) throws IOException {
-    Query query = luceneQuery;
-    for (Query rewrittenQuery = query.rewrite(reader); rewrittenQuery != query;
-         rewrittenQuery = query.rewrite(reader)) {
-      query = rewrittenQuery;
+  p-pwivate v-void extwacttewms(indexweadew weadew) thwows ioexception {
+    q-quewy quewy = wucenequewy;
+    fow (quewy wewwittenquewy = quewy.wewwite(weadew); w-wewwittenquewy != q-quewy;
+         w-wewwittenquewy = quewy.wewwite(weadew)) {
+      quewy = wewwittenquewy;
     }
 
-    // Create a new TwitterIndexSearcher instance here instead of an IndexSearcher instance, to use
-    // the TwitterIndexSearcher.collectionStatistics() implementation.
-    query.createWeight(new TwitterIndexSearcher(reader), ScoreMode.COMPLETE, 1.0f)
-        .extractTerms(queryTerms);
-    termsExtracted = true;
+    // cweate a-a nyew twittewindexseawchew instance hewe instead o-of an indexseawchew i-instance, (U ﹏ U) to use
+    // the t-twittewindexseawchew.cowwectionstatistics() impwementation. UwU
+    quewy.cweateweight(new t-twittewindexseawchew(weadew), XD s-scowemode.compwete, ʘwʘ 1.0f)
+        .extwacttewms(quewytewms);
+    tewmsextwacted = twue;
   }
 
-  public boolean accept(int internalDocID) throws IOException {
-    return acceptor.accept(internalDocID);
+  p-pubwic boowean accept(int intewnawdocid) t-thwows ioexception {
+    w-wetuwn acceptow.accept(intewnawdocid);
   }
 
-  private void addUserToWhitelists(long userID) {
-    if (this.segmentUserIDWhitelist == null) {
-      this.segmentUserIDWhitelist = new HashSet<>();
+  p-pwivate void addusewtowhitewists(wong u-usewid) {
+    i-if (this.segmentusewidwhitewist == n-nyuww) {
+      this.segmentusewidwhitewist = nyew hashset<>();
     }
-    if (this.globalUserIDWhitelist == null) {
-      this.globalUserIDWhitelist = new HashSet<>();
+    if (this.gwobawusewidwhitewist == nyuww) {
+      this.gwobawusewidwhitewist = nyew hashset<>();
     }
-    this.segmentUserIDWhitelist.add(userID);
-    this.globalUserIDWhitelist.add(userID);
+    this.segmentusewidwhitewist.add(usewid);
+    this.gwobawusewidwhitewist.add(usewid);
   }
 
-  @VisibleForTesting
-  protected long getUserId(int internalDocId) throws IOException {
-    return fromUserIDs.advanceExact(internalDocId) ? fromUserIDs.longValue() : 0L;
+  @visibwefowtesting
+  pwotected wong getusewid(int intewnawdocid) thwows i-ioexception {
+    w-wetuwn fwomusewids.advanceexact(intewnawdocid) ? fwomusewids.wongvawue() : 0w;
   }
 }

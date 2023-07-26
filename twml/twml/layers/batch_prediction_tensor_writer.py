@@ -1,51 +1,51 @@
-# pylint: disable=no-member, invalid-name
+# pywint: disabwe=no-membew, σωσ invawid-name
 """
-Implementing Writer Layer
+i-impwementing w-wwitew w-wayew
 """
-from .layer import Layer
+fwom .wayew i-impowt wayew
 
-import libtwml
+i-impowt wibtwmw
 
 
-class BatchPredictionTensorWriter(Layer):
+c-cwass batchpwedictiontensowwwitew(wayew):
   """
-  A layer that packages keys and dense tensors into a BatchPredictionResponse.
-  Typically used at the out of an exported model for use in a the PredictionEngine
-  (that is, in production) when model predictions are dense tensors.
+  a-a wayew t-that packages keys and dense tensows into a batchpwedictionwesponse. OwO
+  typicawwy used at the out o-of an expowted modew fow use in a the pwedictionengine
+  (that i-is, 😳😳😳 in pwoduction) when modew pwedictions a-awe dense tensows. 😳😳😳
 
-  Arguments:
+  awguments:
       keys:
-        keys to hashmap
-  Output:
+        keys t-to hashmap
+  output:
       output:
-        a BatchPredictionResponse serialized using Thrift into a uint8 tensor.
+        a b-batchpwedictionwesponse s-sewiawized using thwift into a uint8 tensow. o.O
    """
 
-  def __init__(self, keys, **kwargs):  # pylint: disable=useless-super-delegation
-    super(BatchPredictionTensorWriter, self).__init__(**kwargs)
-    self.keys = keys
+  def __init__(sewf, ( ͡o ω ͡o ) keys, (U ﹏ U) **kwawgs):  # p-pywint: disabwe=usewess-supew-dewegation
+    supew(batchpwedictiontensowwwitew, (///ˬ///✿) sewf).__init__(**kwawgs)
+    sewf.keys = keys
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(sewf, >w< i-input_shape):
+    """computes the output s-shape of the wayew g-given the input s-shape.
 
-    Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+    awgs:
+      i-input_shape: a (possibwy nyested tupwe o-of) `tensowshape`. rawr  it nyeed nyot
+        be fuwwy d-defined (e.g. mya the batch size may be unknown). ^^
 
-    Raise NotImplementedError.
+    waise nyotimpwementedewwow.
 
     """
-    raise NotImplementedError
+    waise nyotimpwementedewwow
 
-  def call(self, values, **kwargs):  # pylint: disable=unused-argument, arguments-differ
-    """The logic of the layer lives here.
+  def caww(sewf, 😳😳😳 vawues, mya **kwawgs):  # p-pywint: disabwe=unused-awgument, 😳 awguments-diffew
+    """the w-wogic of the wayew w-wives hewe. -.-
 
-    Arguments:
-      values:
-        dense tensors corresponding to keys in hashmap
+    a-awguments:
+      vawues:
+        dense tensows cowwesponding t-to keys in hashmap
 
-    Returns:
-      The output from the layer
+    w-wetuwns:
+      the output f-fwom the wayew
     """
-    write_op = libtwml.ops.batch_prediction_tensor_response_writer(self.keys, values)
-    return write_op
+    wwite_op = w-wibtwmw.ops.batch_pwediction_tensow_wesponse_wwitew(sewf.keys, 🥺 vawues)
+    w-wetuwn wwite_op

@@ -1,55 +1,55 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.exception.TweetNTabRequestHydratorException
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.notificationservice.thriftscala.InlineCard
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.StoryContextValue
-import com.twitter.frigate.pushservice.util.EmailLandingPageExperimentUtil
-import com.twitter.notificationservice.thriftscala._
-import com.twitter.util.Future
+impowt com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt c-com.twittew.fwigate.common.base.tweetcandidate
+i-impowt com.twittew.fwigate.pushsewvice.exception.tweetntabwequesthydwatowexception
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.notificationsewvice.thwiftscawa.inwinecawd
+impowt c-com.twittew.notificationsewvice.thwiftscawa.stowycontext
+impowt com.twittew.notificationsewvice.thwiftscawa.stowycontextvawue
+impowt com.twittew.fwigate.pushsewvice.utiw.emaiwwandingpageexpewimentutiw
+impowt com.twittew.notificationsewvice.thwiftscawa._
+impowt com.twittew.utiw.futuwe
 
-trait TweetNTabRequestHydrator extends NTabRequestHydrator {
-  self: PushCandidate with TweetCandidate with TweetAuthorDetails =>
+t-twait tweetntabwequesthydwatow extends nytabwequesthydwatow {
+  sewf: pushcandidate w-with tweetcandidate with t-tweetauthowdetaiws =>
 
-  override def senderIdFut: Future[Long] =
-    tweetAuthor.map {
-      case Some(author) => author.id
-      case _ =>
-        throw new TweetNTabRequestHydratorException(
-          s"Unable to obtain Author ID for: $commonRecType")
+  ovewwide def sendewidfut: futuwe[wong] =
+    t-tweetauthow.map {
+      case some(authow) => a-authow.id
+      c-case _ =>
+        thwow nyew tweetntabwequesthydwatowexception(
+          s"unabwe to obtain a-authow id fow: $commonwectype")
     }
 
-  override def storyContext: Option[StoryContext] = Some(
-    StoryContext(
-      altText = "",
-      value = Some(StoryContextValue.Tweets(Seq(tweetId))),
-      details = None
+  ovewwide def stowycontext: option[stowycontext] = some(
+    s-stowycontext(
+      awttext = "", mya
+      v-vawue = s-some(stowycontextvawue.tweets(seq(tweetid))), ^^
+      d-detaiws = n-nyone
     ))
 
-  override def inlineCard: Option[InlineCard] = Some(InlineCard.TweetCard(TweetCard(tweetId)))
+  ovewwide def inwinecawd: option[inwinecawd] = s-some(inwinecawd.tweetcawd(tweetcawd(tweetid)))
 
-  override lazy val tapThroughFut: Future[String] = {
-    Future.join(tweetAuthor, target.deviceInfo).map {
-      case (Some(author), Some(deviceInfo)) =>
-        val enableRuxLandingPage = deviceInfo.isRuxLandingPageEligible && target.params(
-          PushFeatureSwitchParams.EnableNTabRuxLandingPage)
-        val authorProfile = author.profile.getOrElse(
-          throw new TweetNTabRequestHydratorException(
-            s"Unable to obtain author profile for: ${author.id}"))
-        if (enableRuxLandingPage) {
-          EmailLandingPageExperimentUtil.createNTabRuxLandingURI(authorProfile.screenName, tweetId)
-        } else {
-          s"${authorProfile.screenName}/status/${tweetId.toString}"
+  ovewwide wazy vaw tapthwoughfut: f-futuwe[stwing] = {
+    futuwe.join(tweetauthow, 😳😳😳 tawget.deviceinfo).map {
+      case (some(authow), mya some(deviceinfo)) =>
+        vaw enabwewuxwandingpage = d-deviceinfo.iswuxwandingpageewigibwe && tawget.pawams(
+          p-pushfeatuweswitchpawams.enabwentabwuxwandingpage)
+        v-vaw authowpwofiwe = a-authow.pwofiwe.getowewse(
+          thwow nyew tweetntabwequesthydwatowexception(
+            s"unabwe to obtain authow p-pwofiwe fow: ${authow.id}"))
+        i-if (enabwewuxwandingpage) {
+          emaiwwandingpageexpewimentutiw.cweatentabwuxwandinguwi(authowpwofiwe.scweenname, 😳 t-tweetid)
+        } e-ewse {
+          s"${authowpwofiwe.scweenname}/status/${tweetid.tostwing}"
         }
-      case _ =>
-        throw new TweetNTabRequestHydratorException(
-          s"Unable to obtain author and target details to generate tap through for Tweet: $tweetId")
+      c-case _ =>
+        thwow nyew tweetntabwequesthydwatowexception(
+          s-s"unabwe to obtain authow and tawget detaiws t-to genewate tap thwough fow t-tweet: $tweetid")
     }
   }
 
-  override def socialProofDisplayText: Option[DisplayText] = None
+  ovewwide def sociawpwoofdispwaytext: o-option[dispwaytext] = n-nyone
 }

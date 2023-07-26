@@ -1,99 +1,99 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.MagicFanoutNewsEventCandidate
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.MagicFanoutNewsEventIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.MagicFanoutNewsEventNTabRequestHydrator
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.event.EventPredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutPredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutTargetingPredicateWrappersForCandidate
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.MagicFanoutNtabCaretFatiguePredicate
-import com.twitter.frigate.pushservice.store.EventRequest
-import com.twitter.frigate.pushservice.store.UttEntityHydrationStore
-import com.twitter.frigate.pushservice.take.predicates.BasicSendHandlerPredicates
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.livevideo.timeline.domain.v2.Event
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.storehaus.ReadableStore
+impowt c-com.twittew.eschewbiwd.metadata.thwiftscawa.entitymegadata
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fwigate.common.base.magicfanoutnewseventcandidate
+i-impowt com.twittew.fwigate.common.stowe.intewests.intewestswookupwequestwithcontext
+i-impowt com.twittew.fwigate.magic_events.thwiftscawa.fanoutevent
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.config.config
+impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+impowt c-com.twittew.fwigate.pushsewvice.modew.ibis.magicfanoutnewseventibis2hydwatow
+impowt com.twittew.fwigate.pushsewvice.modew.ntab.magicfanoutnewseventntabwequesthydwatow
+impowt c-com.twittew.fwigate.pushsewvice.pwedicate.pwedicatesfowcandidate
+impowt com.twittew.fwigate.pushsewvice.pwedicate.event.eventpwedicatesfowcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.magic_fanout.magicfanoutpwedicatesfowcandidate
+impowt com.twittew.fwigate.pushsewvice.pwedicate.magic_fanout.magicfanouttawgetingpwedicatewwappewsfowcandidate
+impowt com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue.magicfanoutntabcawetfatiguepwedicate
+impowt c-com.twittew.fwigate.pushsewvice.stowe.eventwequest
+impowt com.twittew.fwigate.pushsewvice.stowe.uttentityhydwationstowe
+i-impowt c-com.twittew.fwigate.pushsewvice.take.pwedicates.basicsendhandwewpwedicates
+impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.hewmit.stowe.semantic_cowe.semanticentityfowquewy
+impowt com.twittew.intewests.thwiftscawa.usewintewests
+impowt c-com.twittew.wivevideo.timewine.domain.v2.event
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsinfewwedentities
+impowt com.twittew.stowehaus.weadabwestowe
 
-class MagicFanoutNewsEventPushCandidate(
-  candidate: RawCandidate with MagicFanoutNewsEventCandidate,
-  copyIds: CopyIds,
-  override val fanoutEvent: Option[FanoutEvent],
-  override val semanticEntityResults: Map[SemanticEntityForQuery, Option[EntityMegadata]],
-  simClusterToEntities: Map[Int, Option[SimClustersInferredEntities]],
-  lexServiceStore: ReadableStore[EventRequest, Event],
-  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
-  uttEntityHydrationStore: UttEntityHydrationStore
+cwass m-magicfanoutnewseventpushcandidate(
+  candidate: w-wawcandidate with m-magicfanoutnewseventcandidate, (U ﹏ U)
+  c-copyids: copyids, (///ˬ///✿)
+  o-ovewwide vaw fanoutevent: option[fanoutevent], 😳
+  o-ovewwide vaw semanticentitywesuwts: map[semanticentityfowquewy, 😳 o-option[entitymegadata]], σωσ
+  simcwustewtoentities: map[int, rawr x3 option[simcwustewsinfewwedentities]], OwO
+  wexsewvicestowe: weadabwestowe[eventwequest, /(^•ω•^) e-event],
+  intewestswookupstowe: w-weadabwestowe[intewestswookupwequestwithcontext, 😳😳😳 u-usewintewests], ( ͡o ω ͡o )
+  u-uttentityhydwationstowe: uttentityhydwationstowe
 )(
-  implicit statsScoped: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends MagicFanoutEventPushCandidate(
-      candidate,
-      copyIds,
-      fanoutEvent,
-      semanticEntityResults,
-      simClusterToEntities,
-      lexServiceStore,
-      interestsLookupStore,
-      uttEntityHydrationStore
-    )(statsScoped, pushModelScorer)
-    with MagicFanoutNewsEventCandidate
-    with MagicFanoutNewsEventIbis2Hydrator
-    with MagicFanoutNewsEventNTabRequestHydrator {
+  impwicit statsscoped: statsweceivew, >_<
+  p-pushmodewscowew: p-pushmwmodewscowew)
+    extends magicfanouteventpushcandidate(
+      c-candidate, >w<
+      c-copyids, rawr
+      fanoutevent, 😳
+      semanticentitywesuwts, >w<
+      s-simcwustewtoentities,
+      wexsewvicestowe, (⑅˘꒳˘)
+      intewestswookupstowe, OwO
+      u-uttentityhydwationstowe
+    )(statsscoped, (ꈍᴗꈍ) pushmodewscowew)
+    with m-magicfanoutnewseventcandidate
+    with magicfanoutnewseventibis2hydwatow
+    w-with magicfanoutnewseventntabwequesthydwatow {
 
-  override lazy val stats: StatsReceiver = statsScoped.scope("MagicFanoutNewsEventPushCandidate")
-  override val statsReceiver: StatsReceiver = statsScoped.scope("MagicFanoutNewsEventPushCandidate")
+  ovewwide w-wazy vaw s-stats: statsweceivew = statsscoped.scope("magicfanoutnewseventpushcandidate")
+  ovewwide vaw statsweceivew: statsweceivew = statsscoped.scope("magicfanoutnewseventpushcandidate")
 }
 
-case class MagicFanoutNewsEventCandidatePredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutNewsEventPushCandidate] {
+case cwass magicfanoutnewseventcandidatepwedicates(config: c-config)
+    extends b-basicsendhandwewpwedicates[magicfanoutnewseventpushcandidate] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  impwicit v-vaw statsweceivew: s-statsweceivew = c-config.statsweceivew.scope(getcwass.getsimpwename)
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutNewsEventPushCandidate]
+  ovewwide vaw pwecandidatespecificpwedicates: wist[
+    n-nyamedpwedicate[magicfanoutnewseventpushcandidate]
   ] =
-    List(
-      EventPredicatesForCandidate.accountCountryPredicateWithAllowlist,
-      PredicatesForCandidate.isDeviceEligibleForNewsOrSports,
-      MagicFanoutPredicatesForCandidate.inferredUserDeviceLanguagePredicate,
-      PredicatesForCandidate.secondaryDormantAccountPredicate(statsReceiver),
-      MagicFanoutPredicatesForCandidate.highPriorityNewsEventExceptedPredicate(
-        MagicFanoutTargetingPredicateWrappersForCandidate
-          .magicFanoutTargetingPredicate(statsReceiver, config)
-      )(config),
-      MagicFanoutPredicatesForCandidate.geoOptOutPredicate(config.safeUserStore),
-      EventPredicatesForCandidate.isNotDuplicateWithEventId,
-      MagicFanoutPredicatesForCandidate.highPriorityNewsEventExceptedPredicate(
-        MagicFanoutPredicatesForCandidate.newsNotificationFatigue()
-      )(config),
-      MagicFanoutPredicatesForCandidate.highPriorityNewsEventExceptedPredicate(
-        MagicFanoutNtabCaretFatiguePredicate()
-      )(config),
-      MagicFanoutPredicatesForCandidate.escherbirdMagicfanoutEventParam()(statsReceiver),
-      MagicFanoutPredicatesForCandidate.hasCustomTargetingForNewsEventsParam(
-        statsReceiver
+    wist(
+      eventpwedicatesfowcandidate.accountcountwypwedicatewithawwowwist, 😳
+      pwedicatesfowcandidate.isdeviceewigibwefownewsowspowts, 😳😳😳
+      magicfanoutpwedicatesfowcandidate.infewwedusewdevicewanguagepwedicate, mya
+      pwedicatesfowcandidate.secondawydowmantaccountpwedicate(statsweceivew), mya
+      m-magicfanoutpwedicatesfowcandidate.highpwiowitynewseventexceptedpwedicate(
+        magicfanouttawgetingpwedicatewwappewsfowcandidate
+          .magicfanouttawgetingpwedicate(statsweceivew, (⑅˘꒳˘) c-config)
+      )(config), (U ﹏ U)
+      m-magicfanoutpwedicatesfowcandidate.geooptoutpwedicate(config.safeusewstowe), mya
+      e-eventpwedicatesfowcandidate.isnotdupwicatewitheventid, ʘwʘ
+      magicfanoutpwedicatesfowcandidate.highpwiowitynewseventexceptedpwedicate(
+        m-magicfanoutpwedicatesfowcandidate.newsnotificationfatigue()
+      )(config), (˘ω˘)
+      m-magicfanoutpwedicatesfowcandidate.highpwiowitynewseventexceptedpwedicate(
+        m-magicfanoutntabcawetfatiguepwedicate()
+      )(config), (U ﹏ U)
+      m-magicfanoutpwedicatesfowcandidate.eschewbiwdmagicfanouteventpawam()(statsweceivew), ^•ﻌ•^
+      magicfanoutpwedicatesfowcandidate.hascustomtawgetingfownewseventspawam(
+        statsweceivew
       )
     )
 
-  override val postCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutNewsEventPushCandidate]
+  o-ovewwide vaw p-postcandidatespecificpwedicates: w-wist[
+    nyamedpwedicate[magicfanoutnewseventpushcandidate]
   ] =
-    List(
-      MagicFanoutPredicatesForCandidate.magicFanoutNoOptoutInterestPredicate,
-      MagicFanoutPredicatesForCandidate.geoTargetingHoldback(),
-      MagicFanoutPredicatesForCandidate.userGeneratedEventsPredicate,
-      EventPredicatesForCandidate.hasTitle,
+    w-wist(
+      m-magicfanoutpwedicatesfowcandidate.magicfanoutnooptoutintewestpwedicate, (˘ω˘)
+      magicfanoutpwedicatesfowcandidate.geotawgetinghowdback(), :3
+      magicfanoutpwedicatesfowcandidate.usewgenewatedeventspwedicate, ^^;;
+      eventpwedicatesfowcandidate.hastitwe, 🥺
     )
 }

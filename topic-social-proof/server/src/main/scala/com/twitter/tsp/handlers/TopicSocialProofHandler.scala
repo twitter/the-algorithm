@@ -1,587 +1,587 @@
-package com.twitter.tsp.handlers
+package com.twittew.tsp.handwews
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.strato.response.Err
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.topic_recos.common.Configs.ConsumerTopicEmbeddingType
-import com.twitter.topic_recos.common.Configs.DefaultModelVersion
-import com.twitter.topic_recos.common.Configs.ProducerTopicEmbeddingType
-import com.twitter.topic_recos.common.Configs.TweetEmbeddingType
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.topic_recos.common.LocaleUtil
-import com.twitter.topiclisting.AnnotationRuleProvider
-import com.twitter.tsp.common.DeciderConstants
-import com.twitter.tsp.common.LoadShedder
-import com.twitter.tsp.common.RecTargetFactory
-import com.twitter.tsp.common.TopicSocialProofDecider
-import com.twitter.tsp.common.TopicSocialProofParams
-import com.twitter.tsp.stores.TopicSocialProofStore
-import com.twitter.tsp.stores.TopicSocialProofStore.TopicSocialProof
-import com.twitter.tsp.stores.UttTopicFilterStore
-import com.twitter.tsp.stores.TopicTweetsCosineSimilarityAggregateStore.ScoreKey
-import com.twitter.tsp.thriftscala.MetricTag
-import com.twitter.tsp.thriftscala.TopicFollowType
-import com.twitter.tsp.thriftscala.TopicListingSetting
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofResponse
-import com.twitter.tsp.thriftscala.TopicWithScore
-import com.twitter.tsp.thriftscala.TspTweetInfo
-import com.twitter.tsp.utils.HealthSignalsUtils
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.mux.cwientdiscawdedwequestexception
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.utiw.statsutiw
+i-impowt c-com.twittew.simcwustews_v2.common.semanticcoweentityid
+impowt com.twittew.simcwustews_v2.common.tweetid
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+impowt com.twittew.stwato.wesponse.eww
+impowt c-com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.topic_wecos.common.configs.consumewtopicembeddingtype
+impowt com.twittew.topic_wecos.common.configs.defauwtmodewvewsion
+impowt c-com.twittew.topic_wecos.common.configs.pwoducewtopicembeddingtype
+impowt com.twittew.topic_wecos.common.configs.tweetembeddingtype
+i-impowt com.twittew.topicwisting.topicwistingviewewcontext
+i-impowt com.twittew.topic_wecos.common.wocaweutiw
+impowt com.twittew.topicwisting.annotationwuwepwovidew
+impowt com.twittew.tsp.common.decidewconstants
+impowt c-com.twittew.tsp.common.woadsheddew
+impowt com.twittew.tsp.common.wectawgetfactowy
+impowt com.twittew.tsp.common.topicsociawpwoofdecidew
+impowt com.twittew.tsp.common.topicsociawpwoofpawams
+impowt c-com.twittew.tsp.stowes.topicsociawpwoofstowe
+impowt com.twittew.tsp.stowes.topicsociawpwoofstowe.topicsociawpwoof
+i-impowt com.twittew.tsp.stowes.utttopicfiwtewstowe
+i-impowt com.twittew.tsp.stowes.topictweetscosinesimiwawityaggwegatestowe.scowekey
+i-impowt c-com.twittew.tsp.thwiftscawa.metwictag
+impowt com.twittew.tsp.thwiftscawa.topicfowwowtype
+impowt c-com.twittew.tsp.thwiftscawa.topicwistingsetting
+impowt com.twittew.tsp.thwiftscawa.topicsociawpwoofwequest
+impowt c-com.twittew.tsp.thwiftscawa.topicsociawpwoofwesponse
+impowt com.twittew.tsp.thwiftscawa.topicwithscowe
+impowt com.twittew.tsp.thwiftscawa.tsptweetinfo
+impowt com.twittew.tsp.utiws.heawthsignawsutiws
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.timew
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.timeoutexception
 
-import scala.util.Random
+impowt scawa.utiw.wandom
 
-class TopicSocialProofHandler(
-  topicSocialProofStore: ReadableStore[TopicSocialProofStore.Query, Seq[TopicSocialProof]],
-  tweetInfoStore: ReadableStore[TweetId, TspTweetInfo],
-  uttTopicFilterStore: UttTopicFilterStore,
-  recTargetFactory: RecTargetFactory,
-  decider: TopicSocialProofDecider,
-  statsReceiver: StatsReceiver,
-  loadShedder: LoadShedder,
-  timer: Timer) {
+cwass topicsociawpwoofhandwew(
+  t-topicsociawpwoofstowe: w-weadabwestowe[topicsociawpwoofstowe.quewy, OwO seq[topicsociawpwoof]], nyaa~~
+  t-tweetinfostowe: w-weadabwestowe[tweetid, UwU tsptweetinfo], 😳
+  utttopicfiwtewstowe: u-utttopicfiwtewstowe, 😳
+  wectawgetfactowy: w-wectawgetfactowy,
+  decidew: topicsociawpwoofdecidew, (ˆ ﻌ ˆ)♡
+  statsweceivew: s-statsweceivew, (✿oωo)
+  woadsheddew: w-woadsheddew, nyaa~~
+  timew: timew) {
 
-  import TopicSocialProofHandler._
+  i-impowt topicsociawpwoofhandwew._
 
-  def getTopicSocialProofResponse(
-    request: TopicSocialProofRequest
-  ): Future[TopicSocialProofResponse] = {
-    val scopedStats = statsReceiver.scope(request.displayLocation.toString)
-    scopedStats.counter("fanoutRequests").incr(request.tweetIds.size)
-    scopedStats.stat("numTweetsPerRequest").add(request.tweetIds.size)
-    StatsUtil.trackBlockStats(scopedStats) {
-      recTargetFactory
-        .buildRecTopicSocialProofTarget(request).flatMap { target =>
-          val enableCosineSimilarityScoreCalculation =
-            decider.isAvailable(DeciderConstants.enableTopicSocialProofScore)
+  d-def gettopicsociawpwoofwesponse(
+    wequest: topicsociawpwoofwequest
+  ): futuwe[topicsociawpwoofwesponse] = {
+    vaw scopedstats = statsweceivew.scope(wequest.dispwaywocation.tostwing)
+    scopedstats.countew("fanoutwequests").incw(wequest.tweetids.size)
+    scopedstats.stat("numtweetspewwequest").add(wequest.tweetids.size)
+    s-statsutiw.twackbwockstats(scopedstats) {
+      w-wectawgetfactowy
+        .buiwdwectopicsociawpwooftawget(wequest).fwatmap { tawget =>
+          v-vaw enabwecosinesimiwawityscowecawcuwation =
+            d-decidew.isavaiwabwe(decidewconstants.enabwetopicsociawpwoofscowe)
 
-          val semanticCoreVersionId =
-            target.params(TopicSocialProofParams.TopicTweetsSemanticCoreVersionId)
+          v-vaw semanticcowevewsionid =
+            tawget.pawams(topicsociawpwoofpawams.topictweetssemanticcowevewsionid)
 
-          val semanticCoreVersionIdsSet =
-            target.params(TopicSocialProofParams.TopicTweetsSemanticCoreVersionIdsSet)
+          vaw semanticcowevewsionidsset =
+            tawget.pawams(topicsociawpwoofpawams.topictweetssemanticcowevewsionidsset)
 
-          val allowListWithTopicFollowTypeFut = uttTopicFilterStore
-            .getAllowListTopicsForUser(
-              request.userId,
-              request.topicListingSetting,
-              TopicListingViewerContext
-                .fromThrift(request.context).copy(languageCode =
-                  LocaleUtil.getStandardLanguageCode(request.context.languageCode)),
-              request.bypassModes.map(_.toSet)
-            ).rescue {
-              case _ =>
-                scopedStats.counter("uttTopicFilterStoreFailure").incr()
-                Future.value(Map.empty[SemanticCoreEntityId, Option[TopicFollowType]])
+          v-vaw awwowwistwithtopicfowwowtypefut = utttopicfiwtewstowe
+            .getawwowwisttopicsfowusew(
+              wequest.usewid, ^^
+              wequest.topicwistingsetting, (///ˬ///✿)
+              topicwistingviewewcontext
+                .fwomthwift(wequest.context).copy(wanguagecode =
+                  w-wocaweutiw.getstandawdwanguagecode(wequest.context.wanguagecode)), 😳
+              wequest.bypassmodes.map(_.toset)
+            ).wescue {
+              c-case _ =>
+                s-scopedstats.countew("utttopicfiwtewstowefaiwuwe").incw()
+                f-futuwe.vawue(map.empty[semanticcoweentityid, option[topicfowwowtype]])
             }
 
-          val tweetInfoMapFut: Future[Map[TweetId, Option[TspTweetInfo]]] = Future
-            .collect(
-              tweetInfoStore.multiGet(request.tweetIds.toSet)
-            ).raiseWithin(TweetInfoStoreTimeout)(timer).rescue {
-              case _: TimeoutException =>
-                scopedStats.counter("tweetInfoStoreTimeout").incr()
-                Future.value(Map.empty[TweetId, Option[TspTweetInfo]])
-              case _ =>
-                scopedStats.counter("tweetInfoStoreFailure").incr()
-                Future.value(Map.empty[TweetId, Option[TspTweetInfo]])
+          v-vaw tweetinfomapfut: f-futuwe[map[tweetid, o-option[tsptweetinfo]]] = f-futuwe
+            .cowwect(
+              tweetinfostowe.muwtiget(wequest.tweetids.toset)
+            ).waisewithin(tweetinfostowetimeout)(timew).wescue {
+              case _: timeoutexception =>
+                scopedstats.countew("tweetinfostowetimeout").incw()
+                f-futuwe.vawue(map.empty[tweetid, òωó o-option[tsptweetinfo]])
+              c-case _ =>
+                s-scopedstats.countew("tweetinfostowefaiwuwe").incw()
+                f-futuwe.vawue(map.empty[tweetid, ^^;; option[tsptweetinfo]])
             }
 
-          val definedTweetInfoMapFut =
-            keepTweetsWithTweetInfoAndLanguage(tweetInfoMapFut, request.displayLocation.toString)
+          vaw definedtweetinfomapfut =
+            keeptweetswithtweetinfoandwanguage(tweetinfomapfut, rawr wequest.dispwaywocation.tostwing)
 
-          Future
-            .join(definedTweetInfoMapFut, allowListWithTopicFollowTypeFut).map {
-              case (tweetInfoMap, allowListWithTopicFollowType) =>
-                val tweetIdsToQuery = tweetInfoMap.keys.toSet
-                val topicProofQueries =
-                  tweetIdsToQuery.map { tweetId =>
-                    TopicSocialProofStore.Query(
-                      TopicSocialProofStore.CacheableQuery(
-                        tweetId = tweetId,
-                        tweetLanguage = LocaleUtil.getSupportedStandardLanguageCodeWithDefault(
-                          tweetInfoMap.getOrElse(tweetId, None).flatMap {
-                            _.language
-                          }),
-                        enableCosineSimilarityScoreCalculation =
-                          enableCosineSimilarityScoreCalculation
-                      ),
-                      allowedSemanticCoreVersionIds = semanticCoreVersionIdsSet
+          f-futuwe
+            .join(definedtweetinfomapfut, (ˆ ﻌ ˆ)♡ awwowwistwithtopicfowwowtypefut).map {
+              case (tweetinfomap, XD awwowwistwithtopicfowwowtype) =>
+                vaw tweetidstoquewy = tweetinfomap.keys.toset
+                v-vaw topicpwoofquewies =
+                  tweetidstoquewy.map { tweetid =>
+                    topicsociawpwoofstowe.quewy(
+                      t-topicsociawpwoofstowe.cacheabwequewy(
+                        t-tweetid = t-tweetid, >_<
+                        tweetwanguage = w-wocaweutiw.getsuppowtedstandawdwanguagecodewithdefauwt(
+                          tweetinfomap.getowewse(tweetid, n-nyone).fwatmap {
+                            _.wanguage
+                          }), (˘ω˘)
+                        e-enabwecosinesimiwawityscowecawcuwation =
+                          enabwecosinesimiwawityscowecawcuwation
+                      ), 😳
+                      awwowedsemanticcowevewsionids = semanticcowevewsionidsset
                     )
                   }
 
-                val topicSocialProofsFut: Future[Map[TweetId, Seq[TopicSocialProof]]] = {
-                  Future
-                    .collect(topicSocialProofStore.multiGet(topicProofQueries)).map(_.map {
-                      case (query, results) =>
-                        query.cacheableQuery.tweetId -> results.toSeq.flatten.filter(
-                          _.semanticCoreVersionId == semanticCoreVersionId)
+                vaw topicsociawpwoofsfut: futuwe[map[tweetid, o.O s-seq[topicsociawpwoof]]] = {
+                  futuwe
+                    .cowwect(topicsociawpwoofstowe.muwtiget(topicpwoofquewies)).map(_.map {
+                      c-case (quewy, (ꈍᴗꈍ) wesuwts) =>
+                        q-quewy.cacheabwequewy.tweetid -> w-wesuwts.toseq.fwatten.fiwtew(
+                          _.semanticcowevewsionid == semanticcowevewsionid)
                     })
-                }.raiseWithin(TopicSocialProofStoreTimeout)(timer).rescue {
-                  case _: TimeoutException =>
-                    scopedStats.counter("topicSocialProofStoreTimeout").incr()
-                    Future(Map.empty[TweetId, Seq[TopicSocialProof]])
-                  case _ =>
-                    scopedStats.counter("topicSocialProofStoreFailure").incr()
-                    Future(Map.empty[TweetId, Seq[TopicSocialProof]])
+                }.waisewithin(topicsociawpwoofstowetimeout)(timew).wescue {
+                  case _: timeoutexception =>
+                    s-scopedstats.countew("topicsociawpwoofstowetimeout").incw()
+                    f-futuwe(map.empty[tweetid, rawr x3 seq[topicsociawpwoof]])
+                  c-case _ =>
+                    s-scopedstats.countew("topicsociawpwoofstowefaiwuwe").incw()
+                    futuwe(map.empty[tweetid, ^^ seq[topicsociawpwoof]])
                 }
 
-                val random = new Random(seed = request.userId.toInt)
+                vaw wandom = nyew wandom(seed = w-wequest.usewid.toint)
 
-                topicSocialProofsFut.map { topicSocialProofs =>
-                  val filteredTopicSocialProofs = filterByAllowedList(
-                    topicSocialProofs,
-                    request.topicListingSetting,
-                    allowListWithTopicFollowType.keySet
+                t-topicsociawpwoofsfut.map { t-topicsociawpwoofs =>
+                  vaw fiwtewedtopicsociawpwoofs = f-fiwtewbyawwowedwist(
+                    t-topicsociawpwoofs, OwO
+                    wequest.topicwistingsetting, ^^
+                    a-awwowwistwithtopicfowwowtype.keyset
                   )
 
-                  val filteredTopicSocialProofsEmptyCount: Int =
-                    filteredTopicSocialProofs.count {
-                      case (_, topicSocialProofs: Seq[TopicSocialProof]) =>
-                        topicSocialProofs.isEmpty
+                  vaw fiwtewedtopicsociawpwoofsemptycount: int =
+                    fiwtewedtopicsociawpwoofs.count {
+                      case (_, :3 t-topicsociawpwoofs: s-seq[topicsociawpwoof]) =>
+                        topicsociawpwoofs.isempty
                     }
 
-                  scopedStats
-                    .counter("filteredTopicSocialProofsCount").incr(filteredTopicSocialProofs.size)
-                  scopedStats
-                    .counter("filteredTopicSocialProofsEmptyCount").incr(
-                      filteredTopicSocialProofsEmptyCount)
+                  scopedstats
+                    .countew("fiwtewedtopicsociawpwoofscount").incw(fiwtewedtopicsociawpwoofs.size)
+                  scopedstats
+                    .countew("fiwtewedtopicsociawpwoofsemptycount").incw(
+                      f-fiwtewedtopicsociawpwoofsemptycount)
 
-                  if (isCrTopicTweets(request)) {
-                    val socialProofs = filteredTopicSocialProofs.mapValues(_.flatMap { topicProof =>
-                      val topicWithScores = buildTopicWithRandomScore(
-                        topicProof,
-                        allowListWithTopicFollowType,
-                        random
+                  i-if (iscwtopictweets(wequest)) {
+                    vaw sociawpwoofs = fiwtewedtopicsociawpwoofs.mapvawues(_.fwatmap { topicpwoof =>
+                      v-vaw topicwithscowes = buiwdtopicwithwandomscowe(
+                        topicpwoof, o.O
+                        awwowwistwithtopicfowwowtype, -.-
+                        w-wandom
                       )
-                      topicWithScores
+                      topicwithscowes
                     })
-                    TopicSocialProofResponse(socialProofs)
-                  } else {
-                    val socialProofs = filteredTopicSocialProofs.mapValues(_.flatMap { topicProof =>
-                      getTopicProofScore(
-                        topicProof = topicProof,
-                        allowListWithTopicFollowType = allowListWithTopicFollowType,
-                        params = target.params,
-                        random = random,
-                        statsReceiver = statsReceiver
+                    topicsociawpwoofwesponse(sociawpwoofs)
+                  } e-ewse {
+                    v-vaw sociawpwoofs = fiwtewedtopicsociawpwoofs.mapvawues(_.fwatmap { topicpwoof =>
+                      gettopicpwoofscowe(
+                        t-topicpwoof = t-topicpwoof, (U ﹏ U)
+                        awwowwistwithtopicfowwowtype = awwowwistwithtopicfowwowtype, o.O
+                        pawams = tawget.pawams, OwO
+                        w-wandom = wandom, ^•ﻌ•^
+                        statsweceivew = s-statsweceivew
                       )
 
-                    }.sortBy(-_.score).take(MaxCandidates))
+                    }.sowtby(-_.scowe).take(maxcandidates))
 
-                    val personalizedContextSocialProofs =
-                      if (target.params(TopicSocialProofParams.EnablePersonalizedContextTopics)) {
-                        val personalizedContextEligibility =
-                          checkPersonalizedContextsEligibility(
-                            target.params,
-                            allowListWithTopicFollowType)
-                        val filteredTweets =
-                          filterPersonalizedContexts(socialProofs, tweetInfoMap, target.params)
-                        backfillPersonalizedContexts(
-                          allowListWithTopicFollowType,
-                          filteredTweets,
-                          request.tags.getOrElse(Map.empty),
-                          personalizedContextEligibility)
-                      } else {
-                        Map.empty[TweetId, Seq[TopicWithScore]]
+                    vaw pewsonawizedcontextsociawpwoofs =
+                      if (tawget.pawams(topicsociawpwoofpawams.enabwepewsonawizedcontexttopics)) {
+                        vaw pewsonawizedcontextewigibiwity =
+                          c-checkpewsonawizedcontextsewigibiwity(
+                            tawget.pawams, ʘwʘ
+                            a-awwowwistwithtopicfowwowtype)
+                        v-vaw fiwtewedtweets =
+                          fiwtewpewsonawizedcontexts(sociawpwoofs, :3 t-tweetinfomap, 😳 tawget.pawams)
+                        b-backfiwwpewsonawizedcontexts(
+                          a-awwowwistwithtopicfowwowtype, òωó
+                          f-fiwtewedtweets, 🥺
+                          wequest.tags.getowewse(map.empty), rawr x3
+                          p-pewsonawizedcontextewigibiwity)
+                      } e-ewse {
+                        map.empty[tweetid, ^•ﻌ•^ seq[topicwithscowe]]
                       }
 
-                    val mergedSocialProofs = socialProofs.map {
-                      case (tweetId, proofs) =>
+                    vaw mewgedsociawpwoofs = s-sociawpwoofs.map {
+                      c-case (tweetid, :3 p-pwoofs) =>
                         (
-                          tweetId,
-                          proofs
-                            ++ personalizedContextSocialProofs.getOrElse(tweetId, Seq.empty))
+                          tweetid, (ˆ ﻌ ˆ)♡
+                          pwoofs
+                            ++ p-pewsonawizedcontextsociawpwoofs.getowewse(tweetid, (U ᵕ U❁) seq.empty))
                     }
 
-                    // Note that we will NOT filter out tweets with no TSP in either case
-                    TopicSocialProofResponse(mergedSocialProofs)
+                    // n-nyote t-that we wiww nyot fiwtew out tweets with nyo tsp in eithew case
+                    t-topicsociawpwoofwesponse(mewgedsociawpwoofs)
                   }
                 }
             }
-        }.flatten.raiseWithin(Timeout)(timer).rescue {
-          case _: ClientDiscardedRequestException =>
-            scopedStats.counter("ClientDiscardedRequestException").incr()
-            Future.value(DefaultResponse)
-          case err: Err if err.code == Err.Cancelled =>
-            scopedStats.counter("CancelledErr").incr()
-            Future.value(DefaultResponse)
+        }.fwatten.waisewithin(timeout)(timew).wescue {
+          c-case _: cwientdiscawdedwequestexception =>
+            s-scopedstats.countew("cwientdiscawdedwequestexception").incw()
+            f-futuwe.vawue(defauwtwesponse)
+          case eww: eww if e-eww.code == eww.cancewwed =>
+            scopedstats.countew("cancewwedeww").incw()
+            futuwe.vawue(defauwtwesponse)
           case _ =>
-            scopedStats.counter("FailedRequests").incr()
-            Future.value(DefaultResponse)
+            scopedstats.countew("faiwedwequests").incw()
+            futuwe.vawue(defauwtwesponse)
         }
     }
   }
 
   /**
-   * Fetch the Score for each Topic Social Proof
+   * f-fetch the scowe fow each topic s-sociaw pwoof
    */
-  private def getTopicProofScore(
-    topicProof: TopicSocialProof,
-    allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]],
-    params: Params,
-    random: Random,
-    statsReceiver: StatsReceiver
-  ): Option[TopicWithScore] = {
-    val scopedStats = statsReceiver.scope("getTopicProofScores")
-    val enableTweetToTopicScoreRanking =
-      params(TopicSocialProofParams.EnableTweetToTopicScoreRanking)
+  pwivate d-def gettopicpwoofscowe(
+    topicpwoof: t-topicsociawpwoof, :3
+    awwowwistwithtopicfowwowtype: map[semanticcoweentityid, ^^;; o-option[topicfowwowtype]], ( ͡o ω ͡o )
+    p-pawams: pawams, o.O
+    w-wandom: w-wandom, ^•ﻌ•^
+    statsweceivew: s-statsweceivew
+  ): option[topicwithscowe] = {
+    vaw scopedstats = statsweceivew.scope("gettopicpwoofscowes")
+    vaw enabwetweettotopicscowewanking =
+      pawams(topicsociawpwoofpawams.enabwetweettotopicscowewanking)
 
-    val minTweetToTopicCosineSimilarityThreshold =
-      params(TopicSocialProofParams.TweetToTopicCosineSimilarityThreshold)
+    vaw m-mintweettotopiccosinesimiwawitythweshowd =
+      p-pawams(topicsociawpwoofpawams.tweettotopiccosinesimiwawitythweshowd)
 
-    val topicWithScore =
-      if (enableTweetToTopicScoreRanking) {
-        scopedStats.counter("enableTweetToTopicScoreRanking").incr()
-        buildTopicWithValidScore(
-          topicProof,
-          TweetEmbeddingType,
-          Some(ConsumerTopicEmbeddingType),
-          Some(ProducerTopicEmbeddingType),
-          allowListWithTopicFollowType,
-          DefaultModelVersion,
-          minTweetToTopicCosineSimilarityThreshold
+    v-vaw topicwithscowe =
+      i-if (enabwetweettotopicscowewanking) {
+        scopedstats.countew("enabwetweettotopicscowewanking").incw()
+        buiwdtopicwithvawidscowe(
+          topicpwoof, XD
+          t-tweetembeddingtype, ^^
+          s-some(consumewtopicembeddingtype), o.O
+          some(pwoducewtopicembeddingtype), ( ͡o ω ͡o )
+          a-awwowwistwithtopicfowwowtype, /(^•ω•^)
+          defauwtmodewvewsion, 🥺
+          mintweettotopiccosinesimiwawitythweshowd
         )
-      } else {
-        scopedStats.counter("buildTopicWithRandomScore").incr()
-        buildTopicWithRandomScore(
-          topicProof,
-          allowListWithTopicFollowType,
-          random
+      } e-ewse {
+        s-scopedstats.countew("buiwdtopicwithwandomscowe").incw()
+        buiwdtopicwithwandomscowe(
+          t-topicpwoof, nyaa~~
+          a-awwowwistwithtopicfowwowtype, mya
+          wandom
         )
       }
-    topicWithScore
+    topicwithscowe
 
   }
 
-  private[handlers] def isCrTopicTweets(
-    request: TopicSocialProofRequest
-  ): Boolean = {
-    // CrTopic (across a variety of DisplayLocations) is the only use case with TopicListingSetting.All
-    request.topicListingSetting == TopicListingSetting.All
+  pwivate[handwews] def iscwtopictweets(
+    w-wequest: t-topicsociawpwoofwequest
+  ): b-boowean = {
+    // c-cwtopic (acwoss a-a vawiety of dispwaywocations) i-is the onwy u-use case with topicwistingsetting.aww
+    wequest.topicwistingsetting == t-topicwistingsetting.aww
   }
 
   /**
-   * Consolidate logics relevant to whether only quality topics should be enabled for Implicit Follows
+   * c-consowidate wogics wewevant to w-whethew onwy quawity topics shouwd be enabwed fow i-impwicit fowwows
    */
 
   /***
-   * Consolidate logics relevant to whether Personalized Contexts backfilling should be enabled
+   * consowidate w-wogics wewevant t-to whethew pewsonawized contexts b-backfiwwing shouwd be enabwed
    */
-  private[handlers] def checkPersonalizedContextsEligibility(
-    params: Params,
-    allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]]
-  ): PersonalizedContextEligibility = {
-    val scopedStats = statsReceiver.scope("checkPersonalizedContextsEligibility")
-    val isRecentFavInAllowlist = allowListWithTopicFollowType
-      .contains(AnnotationRuleProvider.recentFavTopicId)
+  pwivate[handwews] d-def c-checkpewsonawizedcontextsewigibiwity(
+    p-pawams: pawams, XD
+    awwowwistwithtopicfowwowtype: map[semanticcoweentityid, nyaa~~ option[topicfowwowtype]]
+  ): p-pewsonawizedcontextewigibiwity = {
+    vaw scopedstats = statsweceivew.scope("checkpewsonawizedcontextsewigibiwity")
+    v-vaw i-iswecentfavinawwowwist = awwowwistwithtopicfowwowtype
+      .contains(annotationwuwepwovidew.wecentfavtopicid)
 
-    val isRecentFavEligible =
-      isRecentFavInAllowlist && params(TopicSocialProofParams.EnableRecentEngagementsTopic)
-    if (isRecentFavEligible)
-      scopedStats.counter("isRecentFavEligible").incr()
+    v-vaw iswecentfavewigibwe =
+      iswecentfavinawwowwist && pawams(topicsociawpwoofpawams.enabwewecentengagementstopic)
+    if (iswecentfavewigibwe)
+      s-scopedstats.countew("iswecentfavewigibwe").incw()
 
-    val isRecentRetweetInAllowlist = allowListWithTopicFollowType
-      .contains(AnnotationRuleProvider.recentRetweetTopicId)
+    v-vaw iswecentwetweetinawwowwist = awwowwistwithtopicfowwowtype
+      .contains(annotationwuwepwovidew.wecentwetweettopicid)
 
-    val isRecentRetweetEligible =
-      isRecentRetweetInAllowlist && params(TopicSocialProofParams.EnableRecentEngagementsTopic)
-    if (isRecentRetweetEligible)
-      scopedStats.counter("isRecentRetweetEligible").incr()
+    vaw iswecentwetweetewigibwe =
+      i-iswecentwetweetinawwowwist && pawams(topicsociawpwoofpawams.enabwewecentengagementstopic)
+    if (iswecentwetweetewigibwe)
+      s-scopedstats.countew("iswecentwetweetewigibwe").incw()
 
-    val isYMLInAllowlist = allowListWithTopicFollowType
-      .contains(AnnotationRuleProvider.youMightLikeTopicId)
+    v-vaw isymwinawwowwist = awwowwistwithtopicfowwowtype
+      .contains(annotationwuwepwovidew.youmightwiketopicid)
 
-    val isYMLEligible =
-      isYMLInAllowlist && params(TopicSocialProofParams.EnableYouMightLikeTopic)
-    if (isYMLEligible)
-      scopedStats.counter("isYMLEligible").incr()
+    v-vaw isymwewigibwe =
+      isymwinawwowwist && p-pawams(topicsociawpwoofpawams.enabweyoumightwiketopic)
+    i-if (isymwewigibwe)
+      s-scopedstats.countew("isymwewigibwe").incw()
 
-    PersonalizedContextEligibility(isRecentFavEligible, isRecentRetweetEligible, isYMLEligible)
+    pewsonawizedcontextewigibiwity(iswecentfavewigibwe, ʘwʘ iswecentwetweetewigibwe, (⑅˘꒳˘) isymwewigibwe)
   }
 
-  private[handlers] def filterPersonalizedContexts(
-    socialProofs: Map[TweetId, Seq[TopicWithScore]],
-    tweetInfoMap: Map[TweetId, Option[TspTweetInfo]],
-    params: Params
-  ): Map[TweetId, Seq[TopicWithScore]] = {
-    val filters: Seq[(Option[TspTweetInfo], Params) => Boolean] = Seq(
-      healthSignalsFilter,
-      tweetLanguageFilter
+  pwivate[handwews] def fiwtewpewsonawizedcontexts(
+    sociawpwoofs: map[tweetid, :3 seq[topicwithscowe]], -.-
+    tweetinfomap: map[tweetid, 😳😳😳 option[tsptweetinfo]], (U ﹏ U)
+    pawams: pawams
+  ): m-map[tweetid, o.O s-seq[topicwithscowe]] = {
+    vaw fiwtews: seq[(option[tsptweetinfo], ( ͡o ω ͡o ) pawams) => b-boowean] = seq(
+      h-heawthsignawsfiwtew, òωó
+      t-tweetwanguagefiwtew
     )
-    applyFilters(socialProofs, tweetInfoMap, params, filters)
+    appwyfiwtews(sociawpwoofs, 🥺 t-tweetinfomap, /(^•ω•^) pawams, f-fiwtews)
   }
 
   /** *
-   * filter tweets with None tweetInfo and undefined language
+   * f-fiwtew tweets with n-nyone tweetinfo and undefined wanguage
    */
-  private def keepTweetsWithTweetInfoAndLanguage(
-    tweetInfoMapFut: Future[Map[TweetId, Option[TspTweetInfo]]],
-    displayLocation: String
-  ): Future[Map[TweetId, Option[TspTweetInfo]]] = {
-    val scopedStats = statsReceiver.scope(displayLocation)
-    tweetInfoMapFut.map { tweetInfoMap =>
-      val filteredTweetInfoMap = tweetInfoMap.filter {
-        case (_, optTweetInfo: Option[TspTweetInfo]) =>
-          if (optTweetInfo.isEmpty) {
-            scopedStats.counter("undefinedTweetInfoCount").incr()
+  pwivate d-def keeptweetswithtweetinfoandwanguage(
+    t-tweetinfomapfut: futuwe[map[tweetid, 😳😳😳 option[tsptweetinfo]]], ^•ﻌ•^
+    d-dispwaywocation: s-stwing
+  ): f-futuwe[map[tweetid, nyaa~~ o-option[tsptweetinfo]]] = {
+    v-vaw scopedstats = s-statsweceivew.scope(dispwaywocation)
+    tweetinfomapfut.map { t-tweetinfomap =>
+      v-vaw fiwtewedtweetinfomap = t-tweetinfomap.fiwtew {
+        case (_, OwO opttweetinfo: o-option[tsptweetinfo]) =>
+          i-if (opttweetinfo.isempty) {
+            s-scopedstats.countew("undefinedtweetinfocount").incw()
           }
 
-          optTweetInfo.exists { tweetInfo: TspTweetInfo =>
+          opttweetinfo.exists { t-tweetinfo: tsptweetinfo =>
             {
-              if (tweetInfo.language.isEmpty) {
-                scopedStats.counter("undefinedLanguageCount").incr()
+              if (tweetinfo.wanguage.isempty) {
+                s-scopedstats.countew("undefinedwanguagecount").incw()
               }
-              tweetInfo.language.isDefined
+              tweetinfo.wanguage.isdefined
             }
           }
 
       }
-      val undefinedTweetInfoOrLangCount = tweetInfoMap.size - filteredTweetInfoMap.size
-      scopedStats.counter("undefinedTweetInfoOrLangCount").incr(undefinedTweetInfoOrLangCount)
+      v-vaw undefinedtweetinfoowwangcount = tweetinfomap.size - f-fiwtewedtweetinfomap.size
+      s-scopedstats.countew("undefinedtweetinfoowwangcount").incw(undefinedtweetinfoowwangcount)
 
-      scopedStats.counter("TweetInfoCount").incr(tweetInfoMap.size)
+      scopedstats.countew("tweetinfocount").incw(tweetinfomap.size)
 
-      filteredTweetInfoMap
+      f-fiwtewedtweetinfomap
     }
   }
 
   /***
-   * filter tweets with NO evergreen topic social proofs by their health signal scores & tweet languages
-   * i.e., tweets that are possible to be converted into Personalized Context topic tweets
-   * TBD: whether we are going to apply filters to all topic tweet candidates
+   * fiwtew tweets w-with nyo evewgween topic sociaw p-pwoofs by theiw heawth signaw s-scowes & tweet wanguages
+   * i.e., tweets that awe possibwe to be convewted into p-pewsonawized context topic tweets
+   * t-tbd: whethew w-we awe going to appwy fiwtews to aww topic tweet candidates
    */
-  private def applyFilters(
-    socialProofs: Map[TweetId, Seq[TopicWithScore]],
-    tweetInfoMap: Map[TweetId, Option[TspTweetInfo]],
-    params: Params,
-    filters: Seq[(Option[TspTweetInfo], Params) => Boolean]
-  ): Map[TweetId, Seq[TopicWithScore]] = {
-    socialProofs.collect {
-      case (tweetId, socialProofs) if socialProofs.nonEmpty || filters.forall { filter =>
-            filter(tweetInfoMap.getOrElse(tweetId, None), params)
+  p-pwivate def appwyfiwtews(
+    s-sociawpwoofs: m-map[tweetid, ^•ﻌ•^ s-seq[topicwithscowe]], σωσ
+    tweetinfomap: map[tweetid, -.- o-option[tsptweetinfo]], (˘ω˘)
+    p-pawams: pawams, rawr x3
+    fiwtews: s-seq[(option[tsptweetinfo], rawr x3 pawams) => boowean]
+  ): m-map[tweetid, σωσ seq[topicwithscowe]] = {
+    s-sociawpwoofs.cowwect {
+      c-case (tweetid, nyaa~~ s-sociawpwoofs) if sociawpwoofs.nonempty || f-fiwtews.fowaww { f-fiwtew =>
+            f-fiwtew(tweetinfomap.getowewse(tweetid, (ꈍᴗꈍ) n-nyone), pawams)
           } =>
-        tweetId -> socialProofs
+        tweetid -> s-sociawpwoofs
     }
   }
 
-  private def healthSignalsFilter(
-    tweetInfoOpt: Option[TspTweetInfo],
-    params: Params
-  ): Boolean = {
-    !params(
-      TopicSocialProofParams.EnableTopicTweetHealthFilterPersonalizedContexts) || HealthSignalsUtils
-      .isHealthyTweet(tweetInfoOpt)
+  p-pwivate d-def heawthsignawsfiwtew(
+    t-tweetinfoopt: o-option[tsptweetinfo], ^•ﻌ•^
+    p-pawams: p-pawams
+  ): boowean = {
+    !pawams(
+      t-topicsociawpwoofpawams.enabwetopictweetheawthfiwtewpewsonawizedcontexts) || heawthsignawsutiws
+      .isheawthytweet(tweetinfoopt)
   }
 
-  private def tweetLanguageFilter(
-    tweetInfoOpt: Option[TspTweetInfo],
-    params: Params
-  ): Boolean = {
-    PersonalizedContextTopicsAllowedLanguageSet
-      .contains(tweetInfoOpt.flatMap(_.language).getOrElse(LocaleUtil.DefaultLanguage))
+  p-pwivate def tweetwanguagefiwtew(
+    t-tweetinfoopt: option[tsptweetinfo], >_<
+    p-pawams: pawams
+  ): b-boowean = {
+    p-pewsonawizedcontexttopicsawwowedwanguageset
+      .contains(tweetinfoopt.fwatmap(_.wanguage).getowewse(wocaweutiw.defauwtwanguage))
   }
 
-  private[handlers] def backfillPersonalizedContexts(
-    allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]],
-    socialProofs: Map[TweetId, Seq[TopicWithScore]],
-    metricTagsMap: scala.collection.Map[TweetId, scala.collection.Set[MetricTag]],
-    personalizedContextEligibility: PersonalizedContextEligibility
-  ): Map[TweetId, Seq[TopicWithScore]] = {
-    val scopedStats = statsReceiver.scope("backfillPersonalizedContexts")
-    socialProofs.map {
-      case (tweetId, topicWithScores) =>
-        if (topicWithScores.nonEmpty) {
-          tweetId -> Seq.empty
-        } else {
-          val metricTagContainsTweetFav = metricTagsMap
-            .getOrElse(tweetId, Set.empty[MetricTag]).contains(MetricTag.TweetFavorite)
-          val backfillRecentFav =
-            personalizedContextEligibility.isRecentFavEligible && metricTagContainsTweetFav
-          if (metricTagContainsTweetFav)
-            scopedStats.counter("MetricTag.TweetFavorite").incr()
-          if (backfillRecentFav)
-            scopedStats.counter("backfillRecentFav").incr()
+  pwivate[handwews] def backfiwwpewsonawizedcontexts(
+    awwowwistwithtopicfowwowtype: m-map[semanticcoweentityid, ^^;; o-option[topicfowwowtype]], ^^;;
+    s-sociawpwoofs: map[tweetid, /(^•ω•^) seq[topicwithscowe]], nyaa~~
+    metwictagsmap: scawa.cowwection.map[tweetid, (✿oωo) s-scawa.cowwection.set[metwictag]], ( ͡o ω ͡o )
+    p-pewsonawizedcontextewigibiwity: pewsonawizedcontextewigibiwity
+  ): m-map[tweetid, (U ᵕ U❁) s-seq[topicwithscowe]] = {
+    vaw scopedstats = statsweceivew.scope("backfiwwpewsonawizedcontexts")
+    sociawpwoofs.map {
+      c-case (tweetid, òωó t-topicwithscowes) =>
+        i-if (topicwithscowes.nonempty) {
+          t-tweetid -> seq.empty
+        } ewse {
+          vaw metwictagcontainstweetfav = metwictagsmap
+            .getowewse(tweetid, s-set.empty[metwictag]).contains(metwictag.tweetfavowite)
+          v-vaw backfiwwwecentfav =
+            pewsonawizedcontextewigibiwity.iswecentfavewigibwe && metwictagcontainstweetfav
+          i-if (metwictagcontainstweetfav)
+            scopedstats.countew("metwictag.tweetfavowite").incw()
+          if (backfiwwwecentfav)
+            s-scopedstats.countew("backfiwwwecentfav").incw()
 
-          val metricTagContainsRetweet = metricTagsMap
-            .getOrElse(tweetId, Set.empty[MetricTag]).contains(MetricTag.Retweet)
-          val backfillRecentRetweet =
-            personalizedContextEligibility.isRecentRetweetEligible && metricTagContainsRetweet
-          if (metricTagContainsRetweet)
-            scopedStats.counter("MetricTag.Retweet").incr()
-          if (backfillRecentRetweet)
-            scopedStats.counter("backfillRecentRetweet").incr()
+          vaw metwictagcontainswetweet = m-metwictagsmap
+            .getowewse(tweetid, s-set.empty[metwictag]).contains(metwictag.wetweet)
+          vaw backfiwwwecentwetweet =
+            p-pewsonawizedcontextewigibiwity.iswecentwetweetewigibwe && m-metwictagcontainswetweet
+          if (metwictagcontainswetweet)
+            scopedstats.countew("metwictag.wetweet").incw()
+          i-if (backfiwwwecentwetweet)
+            scopedstats.countew("backfiwwwecentwetweet").incw()
 
-          val metricTagContainsRecentSearches = metricTagsMap
-            .getOrElse(tweetId, Set.empty[MetricTag]).contains(
-              MetricTag.InterestsRankerRecentSearches)
+          vaw m-metwictagcontainswecentseawches = m-metwictagsmap
+            .getowewse(tweetid, σωσ s-set.empty[metwictag]).contains(
+              m-metwictag.intewestswankewwecentseawches)
 
-          val backfillYML = personalizedContextEligibility.isYMLEligible
-          if (backfillYML)
-            scopedStats.counter("backfillYML").incr()
+          vaw backfiwwymw = p-pewsonawizedcontextewigibiwity.isymwewigibwe
+          i-if (backfiwwymw)
+            s-scopedstats.countew("backfiwwymw").incw()
 
-          tweetId -> buildBackfillTopics(
-            allowListWithTopicFollowType,
-            backfillRecentFav,
-            backfillRecentRetweet,
-            backfillYML)
+          tweetid -> buiwdbackfiwwtopics(
+            a-awwowwistwithtopicfowwowtype, :3
+            backfiwwwecentfav, OwO
+            backfiwwwecentwetweet,
+            b-backfiwwymw)
         }
     }
   }
 
-  private def buildBackfillTopics(
-    allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]],
-    backfillRecentFav: Boolean,
-    backfillRecentRetweet: Boolean,
-    backfillYML: Boolean
-  ): Seq[TopicWithScore] = {
-    Seq(
-      if (backfillRecentFav) {
-        Some(
-          TopicWithScore(
-            topicId = AnnotationRuleProvider.recentFavTopicId,
-            score = 1.0,
-            topicFollowType = allowListWithTopicFollowType
-              .getOrElse(AnnotationRuleProvider.recentFavTopicId, None)
+  p-pwivate d-def buiwdbackfiwwtopics(
+    awwowwistwithtopicfowwowtype: map[semanticcoweentityid, ^^ option[topicfowwowtype]], (˘ω˘)
+    backfiwwwecentfav: boowean, OwO
+    b-backfiwwwecentwetweet: boowean, UwU
+    b-backfiwwymw: b-boowean
+  ): seq[topicwithscowe] = {
+    seq(
+      if (backfiwwwecentfav) {
+        s-some(
+          topicwithscowe(
+            t-topicid = a-annotationwuwepwovidew.wecentfavtopicid, ^•ﻌ•^
+            s-scowe = 1.0, (ꈍᴗꈍ)
+            t-topicfowwowtype = a-awwowwistwithtopicfowwowtype
+              .getowewse(annotationwuwepwovidew.wecentfavtopicid, /(^•ω•^) nyone)
           ))
-      } else { None },
-      if (backfillRecentRetweet) {
-        Some(
-          TopicWithScore(
-            topicId = AnnotationRuleProvider.recentRetweetTopicId,
-            score = 1.0,
-            topicFollowType = allowListWithTopicFollowType
-              .getOrElse(AnnotationRuleProvider.recentRetweetTopicId, None)
+      } ewse { nyone }, (U ᵕ U❁)
+      if (backfiwwwecentwetweet) {
+        s-some(
+          topicwithscowe(
+            t-topicid = annotationwuwepwovidew.wecentwetweettopicid, (✿oωo)
+            scowe = 1.0, OwO
+            topicfowwowtype = awwowwistwithtopicfowwowtype
+              .getowewse(annotationwuwepwovidew.wecentwetweettopicid, :3 n-nyone)
           ))
-      } else { None },
-      if (backfillYML) {
-        Some(
-          TopicWithScore(
-            topicId = AnnotationRuleProvider.youMightLikeTopicId,
-            score = 1.0,
-            topicFollowType = allowListWithTopicFollowType
-              .getOrElse(AnnotationRuleProvider.youMightLikeTopicId, None)
+      } ewse { nyone }, nyaa~~
+      if (backfiwwymw) {
+        some(
+          topicwithscowe(
+            topicid = a-annotationwuwepwovidew.youmightwiketopicid, ^•ﻌ•^
+            s-scowe = 1.0, ( ͡o ω ͡o )
+            topicfowwowtype = a-awwowwistwithtopicfowwowtype
+              .getowewse(annotationwuwepwovidew.youmightwiketopicid, ^^;; nyone)
           ))
-      } else { None }
-    ).flatten
+      } ewse { n-nyone }
+    ).fwatten
   }
 
-  def toReadableStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse] = {
-    new ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse] {
-      override def get(k: TopicSocialProofRequest): Future[Option[TopicSocialProofResponse]] = {
-        val displayLocation = k.displayLocation.toString
-        loadShedder(displayLocation) {
-          getTopicSocialProofResponse(k).map(Some(_))
-        }.rescue {
-          case LoadShedder.LoadSheddingException =>
-            statsReceiver.scope(displayLocation).counter("LoadSheddingException").incr()
-            Future.None
+  d-def toweadabwestowe: w-weadabwestowe[topicsociawpwoofwequest, mya topicsociawpwoofwesponse] = {
+    n-nyew weadabwestowe[topicsociawpwoofwequest, (U ᵕ U❁) topicsociawpwoofwesponse] {
+      ovewwide d-def get(k: topicsociawpwoofwequest): futuwe[option[topicsociawpwoofwesponse]] = {
+        vaw d-dispwaywocation = k-k.dispwaywocation.tostwing
+        w-woadsheddew(dispwaywocation) {
+          gettopicsociawpwoofwesponse(k).map(some(_))
+        }.wescue {
+          case woadsheddew.woadsheddingexception =>
+            statsweceivew.scope(dispwaywocation).countew("woadsheddingexception").incw()
+            f-futuwe.none
           case _ =>
-            statsReceiver.scope(displayLocation).counter("Exception").incr()
-            Future.None
+            statsweceivew.scope(dispwaywocation).countew("exception").incw()
+            futuwe.none
         }
       }
     }
   }
 }
 
-object TopicSocialProofHandler {
+object t-topicsociawpwoofhandwew {
 
-  private val MaxCandidates = 10
-  // Currently we do hardcode for the language check of PersonalizedContexts Topics
-  private val PersonalizedContextTopicsAllowedLanguageSet: Set[String] =
-    Set("pt", "ko", "es", "ja", "tr", "id", "en", "hi", "ar", "fr", "ru")
+  pwivate v-vaw maxcandidates = 10
+  // c-cuwwentwy we d-do hawdcode fow the wanguage check of pewsonawizedcontexts t-topics
+  p-pwivate vaw pewsonawizedcontexttopicsawwowedwanguageset: set[stwing] =
+    set("pt", ^•ﻌ•^ "ko", (U ﹏ U) "es", "ja", /(^•ω•^) "tw", "id", "en", ʘwʘ "hi", "aw", "fw", XD "wu")
 
-  private val Timeout: Duration = 200.milliseconds
-  private val TopicSocialProofStoreTimeout: Duration = 40.milliseconds
-  private val TweetInfoStoreTimeout: Duration = 60.milliseconds
-  private val DefaultResponse: TopicSocialProofResponse = TopicSocialProofResponse(Map.empty)
+  p-pwivate vaw timeout: duwation = 200.miwwiseconds
+  pwivate v-vaw topicsociawpwoofstowetimeout: duwation = 40.miwwiseconds
+  pwivate vaw tweetinfostowetimeout: d-duwation = 60.miwwiseconds
+  p-pwivate vaw defauwtwesponse: topicsociawpwoofwesponse = topicsociawpwoofwesponse(map.empty)
 
-  case class PersonalizedContextEligibility(
-    isRecentFavEligible: Boolean,
-    isRecentRetweetEligible: Boolean,
-    isYMLEligible: Boolean)
+  c-case cwass pewsonawizedcontextewigibiwity(
+    i-iswecentfavewigibwe: b-boowean, (⑅˘꒳˘)
+    iswecentwetweetewigibwe: boowean, nyaa~~
+    i-isymwewigibwe: boowean)
 
   /**
-   * Calculate the Topic Scores for each (tweet, topic), filter out topic proofs whose scores do not
-   * pass the minimum threshold
+   * cawcuwate t-the topic scowes fow each (tweet, topic), UwU fiwtew out topic p-pwoofs whose scowes d-do nyot
+   * p-pass the minimum t-thweshowd
    */
-  private[handlers] def buildTopicWithValidScore(
-    topicProof: TopicSocialProof,
-    tweetEmbeddingType: EmbeddingType,
-    maybeConsumerEmbeddingType: Option[EmbeddingType],
-    maybeProducerEmbeddingType: Option[EmbeddingType],
-    allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]],
-    simClustersModelVersion: ModelVersion,
-    minTweetToTopicCosineSimilarityThreshold: Double
-  ): Option[TopicWithScore] = {
+  p-pwivate[handwews] def buiwdtopicwithvawidscowe(
+    t-topicpwoof: topicsociawpwoof, (˘ω˘)
+    tweetembeddingtype: embeddingtype, rawr x3
+    m-maybeconsumewembeddingtype: option[embeddingtype], (///ˬ///✿)
+    m-maybepwoducewembeddingtype: option[embeddingtype], 😳😳😳
+    awwowwistwithtopicfowwowtype: m-map[semanticcoweentityid, (///ˬ///✿) o-option[topicfowwowtype]], ^^;;
+    simcwustewsmodewvewsion: modewvewsion, ^^
+    m-mintweettotopiccosinesimiwawitythweshowd: doubwe
+  ): o-option[topicwithscowe] = {
 
-    val consumerScore = maybeConsumerEmbeddingType
-      .flatMap { consumerEmbeddingType =>
-        topicProof.scores.get(
-          ScoreKey(consumerEmbeddingType, tweetEmbeddingType, simClustersModelVersion))
-      }.getOrElse(0.0)
+    v-vaw consumewscowe = maybeconsumewembeddingtype
+      .fwatmap { c-consumewembeddingtype =>
+        t-topicpwoof.scowes.get(
+          scowekey(consumewembeddingtype, (///ˬ///✿) t-tweetembeddingtype, -.- simcwustewsmodewvewsion))
+      }.getowewse(0.0)
 
-    val producerScore = maybeProducerEmbeddingType
-      .flatMap { producerEmbeddingType =>
-        topicProof.scores.get(
-          ScoreKey(producerEmbeddingType, tweetEmbeddingType, simClustersModelVersion))
-      }.getOrElse(0.0)
+    vaw pwoducewscowe = maybepwoducewembeddingtype
+      .fwatmap { p-pwoducewembeddingtype =>
+        topicpwoof.scowes.get(
+          s-scowekey(pwoducewembeddingtype, /(^•ω•^) tweetembeddingtype, UwU simcwustewsmodewvewsion))
+      }.getowewse(0.0)
 
-    val combinedScore = consumerScore + producerScore
-    if (combinedScore > minTweetToTopicCosineSimilarityThreshold || topicProof.ignoreSimClusterFiltering) {
-      Some(
-        TopicWithScore(
-          topicId = topicProof.topicId.entityId,
-          score = combinedScore,
-          topicFollowType =
-            allowListWithTopicFollowType.getOrElse(topicProof.topicId.entityId, None)))
-    } else {
-      None
+    vaw c-combinedscowe = c-consumewscowe + p-pwoducewscowe
+    if (combinedscowe > m-mintweettotopiccosinesimiwawitythweshowd || t-topicpwoof.ignowesimcwustewfiwtewing) {
+      some(
+        t-topicwithscowe(
+          topicid = t-topicpwoof.topicid.entityid, (⑅˘꒳˘)
+          scowe = c-combinedscowe, ʘwʘ
+          t-topicfowwowtype =
+            awwowwistwithtopicfowwowtype.getowewse(topicpwoof.topicid.entityid, σωσ none)))
+    } ewse {
+      nyone
     }
   }
 
-  private[handlers] def buildTopicWithRandomScore(
-    topicSocialProof: TopicSocialProof,
-    allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]],
-    random: Random
-  ): Option[TopicWithScore] = {
+  pwivate[handwews] def b-buiwdtopicwithwandomscowe(
+    t-topicsociawpwoof: topicsociawpwoof, ^^
+    awwowwistwithtopicfowwowtype: map[semanticcoweentityid, OwO o-option[topicfowwowtype]],
+    wandom: wandom
+  ): o-option[topicwithscowe] = {
 
-    Some(
-      TopicWithScore(
-        topicId = topicSocialProof.topicId.entityId,
-        score = random.nextDouble(),
-        topicFollowType =
-          allowListWithTopicFollowType.getOrElse(topicSocialProof.topicId.entityId, None)
+    s-some(
+      topicwithscowe(
+        topicid = topicsociawpwoof.topicid.entityid, (ˆ ﻌ ˆ)♡
+        scowe = w-wandom.nextdoubwe(), o.O
+        topicfowwowtype =
+          awwowwistwithtopicfowwowtype.getowewse(topicsociawpwoof.topicid.entityid, (˘ω˘) n-nyone)
       ))
   }
 
   /**
-   * Filter all the non-qualified Topic Social Proof
+   * fiwtew aww t-the nyon-quawified t-topic sociaw pwoof
    */
-  private[handlers] def filterByAllowedList(
-    topicProofs: Map[TweetId, Seq[TopicSocialProof]],
-    setting: TopicListingSetting,
-    allowList: Set[SemanticCoreEntityId]
-  ): Map[TweetId, Seq[TopicSocialProof]] = {
+  p-pwivate[handwews] d-def fiwtewbyawwowedwist(
+    t-topicpwoofs: map[tweetid, s-seq[topicsociawpwoof]], 😳
+    s-setting: topicwistingsetting, (U ᵕ U❁)
+    a-awwowwist: set[semanticcoweentityid]
+  ): map[tweetid, :3 seq[topicsociawpwoof]] = {
     setting match {
-      case TopicListingSetting.All =>
-        // Return all the topics
-        topicProofs
+      case topicwistingsetting.aww =>
+        // wetuwn a-aww the topics
+        t-topicpwoofs
       case _ =>
-        topicProofs.mapValues(
-          _.filter(topicProof => allowList.contains(topicProof.topicId.entityId)))
+        t-topicpwoofs.mapvawues(
+          _.fiwtew(topicpwoof => a-awwowwist.contains(topicpwoof.topicid.entityid)))
     }
   }
 }

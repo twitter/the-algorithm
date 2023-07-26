@@ -1,44 +1,44 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.SearchCandidateCount
-import com.twitter.visibility.features.SearchQueryHasUser
-import com.twitter.visibility.features.SearchQuerySource
-import com.twitter.visibility.features.SearchResultsPageNumber
-import com.twitter.visibility.interfaces.common.search.SearchVFRequestContext
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.seawch.common.constants.thwiftscawa.thwiftquewysouwce
+i-impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt c-com.twittew.visibiwity.featuwes.seawchcandidatecount
+i-impowt c-com.twittew.visibiwity.featuwes.seawchquewyhasusew
+impowt com.twittew.visibiwity.featuwes.seawchquewysouwce
+impowt com.twittew.visibiwity.featuwes.seawchwesuwtspagenumbew
+impowt c-com.twittew.visibiwity.intewfaces.common.seawch.seawchvfwequestcontext
 
-class SearchContextFeatures(
-  statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("search_context_features")
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val searchResultsPageNumber =
-    scopedStatsReceiver.scope(SearchResultsPageNumber.name).counter("requests")
-  private[this] val searchCandidateCount =
-    scopedStatsReceiver.scope(SearchCandidateCount.name).counter("requests")
-  private[this] val searchQuerySource =
-    scopedStatsReceiver.scope(SearchQuerySource.name).counter("requests")
-  private[this] val searchQueryHasUser =
-    scopedStatsReceiver.scope(SearchQueryHasUser.name).counter("requests")
+cwass seawchcontextfeatuwes(
+  s-statsweceivew: statsweceivew) {
+  p-pwivate[this] vaw scopedstatsweceivew = statsweceivew.scope("seawch_context_featuwes")
+  pwivate[this] v-vaw wequests = scopedstatsweceivew.countew("wequests")
+  p-pwivate[this] v-vaw seawchwesuwtspagenumbew =
+    scopedstatsweceivew.scope(seawchwesuwtspagenumbew.name).countew("wequests")
+  pwivate[this] vaw seawchcandidatecount =
+    scopedstatsweceivew.scope(seawchcandidatecount.name).countew("wequests")
+  p-pwivate[this] vaw seawchquewysouwce =
+    scopedstatsweceivew.scope(seawchquewysouwce.name).countew("wequests")
+  pwivate[this] vaw seawchquewyhasusew =
+    scopedstatsweceivew.scope(seawchquewyhasusew.name).countew("wequests")
 
-  def forSearchContext(
-    searchContext: SearchVFRequestContext
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    searchResultsPageNumber.incr()
-    searchCandidateCount.incr()
-    searchQuerySource.incr()
-    searchQueryHasUser.incr()
+  d-def fowseawchcontext(
+    seawchcontext: s-seawchvfwequestcontext
+  ): f-featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    w-wequests.incw()
+    seawchwesuwtspagenumbew.incw()
+    seawchcandidatecount.incw()
+    s-seawchquewysouwce.incw()
+    seawchquewyhasusew.incw()
 
-    _.withConstantFeature(SearchResultsPageNumber, searchContext.resultsPageNumber)
-      .withConstantFeature(SearchCandidateCount, searchContext.candidateCount)
-      .withConstantFeature(
-        SearchQuerySource,
-        searchContext.querySourceOption match {
-          case Some(querySource) => querySource
-          case _ => ThriftQuerySource.Unknown
+    _.withconstantfeatuwe(seawchwesuwtspagenumbew, mya seawchcontext.wesuwtspagenumbew)
+      .withconstantfeatuwe(seawchcandidatecount, 🥺 seawchcontext.candidatecount)
+      .withconstantfeatuwe(
+        s-seawchquewysouwce, >_<
+        seawchcontext.quewysouwceoption match {
+          case some(quewysouwce) => quewysouwce
+          case _ => thwiftquewysouwce.unknown
         })
-      .withConstantFeature(SearchQueryHasUser, searchContext.queryHasUser)
+      .withconstantfeatuwe(seawchquewyhasusew, >_< s-seawchcontext.quewyhasusew)
   }
 }

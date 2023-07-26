@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.core.model.common.identifier
+package com.twittew.pwoduct_mixew.cowe.modew.common.identifiew
 
 /**
- * Candidate Pipeline identifier
+ * candidate p-pipewine identifiew
  *
- * @note This class should always remain effectively `final`. If for any reason the `sealed`
- *       modifier is removed, the equals() implementation must be updated in order to handle class
- *       inheritor equality (see note on the equals method below)
+ * @note t-this cwass shouwd a-awways wemain e-effectivewy `finaw`. :3 i-if fow any w-weason the `seawed`
+ *       m-modifiew i-is wemoved, (⑅˘꒳˘) the equaws() impwementation must be updated in owdew to handwe c-cwass
+ *       inhewitow equawity (see nyote on t-the equaws method bewow)
  */
-sealed abstract class CandidatePipelineIdentifier(override val name: String)
-    extends ComponentIdentifier("CandidatePipeline", name) {
+seawed a-abstwact cwass candidatepipewineidentifiew(ovewwide vaw nyame: stwing)
+    e-extends componentidentifiew("candidatepipewine", (///ˬ///✿) name) {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[CandidatePipelineIdentifier]
+  o-ovewwide d-def canequaw(that: any): boowean = that.isinstanceof[candidatepipewineidentifiew]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance impwementation o-of equaws method that wevewages:
+   *  - wefewentiaw equawity showt ciwcuit
+   *  - c-cached hashcode equawity showt c-ciwcuit
+   *  - f-fiewd vawues a-awe onwy checked i-if the hashcodes awe equaw to handwe the unwikewy c-case
+   *    of a hashcode cowwision
+   *  - wemovaw of check f-fow `that` being an equaws-compatibwe descendant since this cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` is nyot nyecessawy b-because this cwass is f-finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw p-pwogwamming i-in scawa, ^^;;
+   *      chaptew 28]] fow discussion and design. >_<
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case identifier: CandidatePipelineIdentifier =>
-        // Note identifier.canEqual(this) is not necessary because this class is effectively final
-        ((this eq identifier)
-          || ((hashCode == identifier.hashCode) && ((componentType == identifier.componentType) && (name == identifier.name))))
+  o-ovewwide def e-equaws(that: any): boowean =
+    t-that match {
+      c-case identifiew: candidatepipewineidentifiew =>
+        // n-nyote identifiew.canequaw(this) is not nyecessawy b-because this cwass is effectivewy finaw
+        ((this e-eq identifiew)
+          || ((hashcode == identifiew.hashcode) && ((componenttype == identifiew.componenttype) && (name == i-identifiew.name))))
       case _ =>
-        false
+        fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * w-wevewage d-domain-specific constwaints (see nyotes bewow) to safewy constwuct and cache the
+   * hashcode as a vaw, rawr x3 such t-that it is instantiated o-once on object constwuction. /(^•ω•^) t-this pwevents t-the
+   * nyeed t-to wecompute the hashcode on each hashcode() invocation, :3 which i-is the behaviow of the
+   * scawa compiwew case cwass-genewated hashcode() since i-it cannot make assumptions wegawding f-fiewd
+   * o-object mutabiwity a-and hashcode impwementations. (ꈍᴗꈍ)
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated identifier
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note c-caching the hashcode i-is onwy safe i-if aww of the f-fiewds used to constwuct the hashcode
+   *       awe immutabwe. /(^•ω•^) t-this incwudes:
+   *       - i-inabiwity t-to mutate t-the object wefewence o-on fow an existing instantiated identifiew
+   *       (i.e. (⑅˘꒳˘) each fiewd is a-a vaw)
+   *       - inabiwity to mutate the fiewd object instance itsewf (i.e. each fiewd is an i-immutabwe
+   *       - inabiwity to mutate the fiewd object instance i-itsewf (i.e. ( ͡o ω ͡o ) e-each fiewd is a-an immutabwe
+   *       data stwuctuwe), òωó a-assuming stabwe hashcode i-impwementations f-fow these objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note in owdew fow the hashcode to be consistent with object equawity, (⑅˘꒳˘) `##` must b-be used fow
+   *       boxed nyumewic t-types and nyuww. XD as such, -.- a-awways pwefew `.##` o-ovew `.hashcode()`. :3
    */
-  override val hashCode: Int = 31 * componentType.## + name.##
+  ovewwide vaw hashcode: int = 31 * c-componenttype.## + n-nyame.##
 }
 
-object CandidatePipelineIdentifier {
-  def apply(name: String)(implicit sourceFile: sourcecode.File): CandidatePipelineIdentifier = {
-    if (ComponentIdentifier.isValidName(name))
-      new CandidatePipelineIdentifier(name) {
-        override val file: sourcecode.File = sourceFile
+object candidatepipewineidentifiew {
+  d-def appwy(name: s-stwing)(impwicit souwcefiwe: souwcecode.fiwe): candidatepipewineidentifiew = {
+    if (componentidentifiew.isvawidname(name))
+      n-nyew c-candidatepipewineidentifiew(name) {
+        o-ovewwide vaw fiwe: s-souwcecode.fiwe = s-souwcefiwe
       }
-    else
-      throw new IllegalArgumentException(s"Illegal CandidatePipelineIdentifier: $name")
+    ewse
+      t-thwow nyew iwwegawawgumentexception(s"iwwegaw candidatepipewineidentifiew: $name")
   }
 }

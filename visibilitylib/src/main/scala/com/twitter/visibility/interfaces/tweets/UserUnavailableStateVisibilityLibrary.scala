@@ -1,138 +1,138 @@
-package com.twitter.visibility.interfaces.tweets
+package com.twittew.visibiwity.intewfaces.tweets
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.UserUnavailableFeatures
-import com.twitter.visibility.common.actions.converter.scala.DropReasonConverter
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.TweetIsInnerQuotedTweet
-import com.twitter.visibility.features.TweetIsRetweet
-import com.twitter.visibility.generators.LocalizedInterstitialGenerator
-import com.twitter.visibility.generators.TombstoneGenerator
-import com.twitter.visibility.models.ContentId.UserUnavailableState
-import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.Interstitial
-import com.twitter.visibility.rules.Reason
-import com.twitter.visibility.rules.Tombstone
-import com.twitter.visibility.thriftscala.UserVisibilityResult
+impowt com.twittew.decidew.decidew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.visibiwity.visibiwitywibwawy
+i-impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt c-com.twittew.visibiwity.buiwdew.usews.usewunavaiwabwefeatuwes
+impowt c-com.twittew.visibiwity.common.actions.convewtew.scawa.dwopweasonconvewtew
+i-impowt com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+impowt com.twittew.visibiwity.featuwes.tweetisinnewquotedtweet
+impowt com.twittew.visibiwity.featuwes.tweetiswetweet
+impowt com.twittew.visibiwity.genewatows.wocawizedintewstitiawgenewatow
+i-impowt com.twittew.visibiwity.genewatows.tombstonegenewatow
+impowt com.twittew.visibiwity.modews.contentid.usewunavaiwabwestate
+impowt com.twittew.visibiwity.modews.usewunavaiwabwestateenum
+i-impowt com.twittew.visibiwity.wuwes.dwop
+impowt c-com.twittew.visibiwity.wuwes.intewstitiaw
+impowt com.twittew.visibiwity.wuwes.weason
+impowt com.twittew.visibiwity.wuwes.tombstone
+i-impowt com.twittew.visibiwity.thwiftscawa.usewvisibiwitywesuwt
 
-object UserUnavailableStateVisibilityLibrary {
-  type Type = UserUnavailableStateVisibilityRequest => Stitch[VisibilityResult]
+object usewunavaiwabwestatevisibiwitywibwawy {
+  t-type type = u-usewunavaiwabwestatevisibiwitywequest => stitch[visibiwitywesuwt]
 
-  def apply(
-    visibilityLibrary: VisibilityLibrary,
-    decider: Decider,
-    tombstoneGenerator: TombstoneGenerator,
-    interstitialGenerator: LocalizedInterstitialGenerator
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver.scope("user_unavailable_vis_library")
-    val defaultDropScope = visibilityLibrary.statsReceiver.scope("default_drop")
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+  def appwy(
+    visibiwitywibwawy: visibiwitywibwawy, (˘ω˘)
+    d-decidew: decidew,
+    tombstonegenewatow: tombstonegenewatow, (U ﹏ U)
+    intewstitiawgenewatow: wocawizedintewstitiawgenewatow
+  ): t-type = {
+    vaw wibwawystatsweceivew = v-visibiwitywibwawy.statsweceivew.scope("usew_unavaiwabwe_vis_wibwawy")
+    vaw d-defauwtdwopscope = v-visibiwitywibwawy.statsweceivew.scope("defauwt_dwop")
+    v-vaw vfenginecountew = wibwawystatsweceivew.countew("vf_engine_wequests")
 
-    val userUnavailableFeatures = UserUnavailableFeatures(libraryStatsReceiver)
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
+    vaw u-usewunavaiwabwefeatuwes = usewunavaiwabwefeatuwes(wibwawystatsweceivew)
+    vaw v-visibiwitydecidewgates = visibiwitydecidewgates(decidew)
 
-    { r: UserUnavailableStateVisibilityRequest =>
-      vfEngineCounter.incr()
-      val contentId = UserUnavailableState(r.tweetId)
+    { w: usewunavaiwabwestatevisibiwitywequest =>
+      vfenginecountew.incw()
+      vaw contentid = usewunavaiwabwestate(w.tweetid)
 
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(
-            _.withConstantFeature(TweetIsInnerQuotedTweet, r.isInnerQuotedTweet),
-            _.withConstantFeature(TweetIsRetweet, r.isRetweet),
-            userUnavailableFeatures.forState(r.userUnavailableState)
+      v-vaw featuwemap =
+        visibiwitywibwawy.featuwemapbuiwdew(
+          s-seq(
+            _.withconstantfeatuwe(tweetisinnewquotedtweet, w-w.isinnewquotedtweet), ^•ﻌ•^
+            _.withconstantfeatuwe(tweetiswetweet, (˘ω˘) w-w.iswetweet), :3
+            usewunavaiwabwefeatuwes.fowstate(w.usewunavaiwabwestate)
           )
         )
 
-      val language = r.viewerContext.requestLanguageCode.getOrElse("en")
+      vaw wanguage = w.viewewcontext.wequestwanguagecode.getowewse("en")
 
-      val reason = visibilityLibrary
-        .runRuleEngine(
-          contentId,
-          featureMap,
-          r.viewerContext,
-          r.safetyLevel
-        ).map(defaultToDrop(r.userUnavailableState, defaultDropScope))
-        .map(tombstoneGenerator(_, language))
-        .map(visibilityResult => {
-          if (visibilityDeciderGates.enableLocalizedInterstitialInUserStateLibrary()) {
-            interstitialGenerator(visibilityResult, language)
-          } else {
-            visibilityResult
+      v-vaw weason = v-visibiwitywibwawy
+        .wunwuweengine(
+          contentid, ^^;;
+          f-featuwemap, 🥺
+          w.viewewcontext, (⑅˘꒳˘)
+          w-w.safetywevew
+        ).map(defauwttodwop(w.usewunavaiwabwestate, nyaa~~ defauwtdwopscope))
+        .map(tombstonegenewatow(_, :3 w-wanguage))
+        .map(visibiwitywesuwt => {
+          if (visibiwitydecidewgates.enabwewocawizedintewstitiawinusewstatewibwawy()) {
+            i-intewstitiawgenewatow(visibiwitywesuwt, ( ͡o ω ͡o ) wanguage)
+          } ewse {
+            v-visibiwitywesuwt
           }
         })
 
-      reason
+      weason
     }
   }
 
-  def defaultToDrop(
-    userUnavailableState: UserUnavailableStateEnum,
-    defaultDropScope: StatsReceiver
+  d-def defauwttodwop(
+    usewunavaiwabwestate: usewunavaiwabwestateenum, mya
+    d-defauwtdwopscope: s-statsweceivew
   )(
-    result: VisibilityResult
-  ): VisibilityResult =
-    result.verdict match {
-      case _: Drop | _: Tombstone => result
+    wesuwt: visibiwitywesuwt
+  ): visibiwitywesuwt =
+    wesuwt.vewdict match {
+      case _: dwop | _: t-tombstone => wesuwt
 
-      case _: Interstitial => result
-      case _ =>
-        result.copy(verdict =
-          Drop(userUnavailableStateToDropReason(userUnavailableState, defaultDropScope)))
+      c-case _: intewstitiaw => w-wesuwt
+      c-case _ =>
+        w-wesuwt.copy(vewdict =
+          dwop(usewunavaiwabwestatetodwopweason(usewunavaiwabwestate, defauwtdwopscope)))
     }
 
-  private[this] def userUnavailableStateToDropReason(
-    userUnavailableState: UserUnavailableStateEnum,
-    stats: StatsReceiver
-  ): Reason =
-    userUnavailableState match {
-      case UserUnavailableStateEnum.Erased =>
-        stats.counter("erased").incr()
-        Reason.ErasedAuthor
-      case UserUnavailableStateEnum.Protected =>
-        stats.counter("protected").incr()
-        Reason.ProtectedAuthor
-      case UserUnavailableStateEnum.Offboarded =>
-        stats.counter("offboarded").incr()
-        Reason.OffboardedAuthor
-      case UserUnavailableStateEnum.AuthorBlocksViewer =>
-        stats.counter("author_blocks_viewer").incr()
-        Reason.AuthorBlocksViewer
-      case UserUnavailableStateEnum.Suspended =>
-        stats.counter("suspended_author").incr()
-        Reason.SuspendedAuthor
-      case UserUnavailableStateEnum.Deactivated =>
-        stats.counter("deactivated_author").incr()
-        Reason.DeactivatedAuthor
-      case UserUnavailableStateEnum.Filtered(result) =>
-        stats.counter("filtered").incr()
-        userVisibilityResultToDropReason(result, stats.scope("filtered"))
-      case UserUnavailableStateEnum.Unavailable =>
-        stats.counter("unspecified").incr()
-        Reason.Unspecified
+  pwivate[this] d-def usewunavaiwabwestatetodwopweason(
+    usewunavaiwabwestate: usewunavaiwabwestateenum, (///ˬ///✿)
+    stats: statsweceivew
+  ): weason =
+    usewunavaiwabwestate m-match {
+      case usewunavaiwabwestateenum.ewased =>
+        s-stats.countew("ewased").incw()
+        w-weason.ewasedauthow
+      c-case usewunavaiwabwestateenum.pwotected =>
+        stats.countew("pwotected").incw()
+        weason.pwotectedauthow
+      c-case u-usewunavaiwabwestateenum.offboawded =>
+        s-stats.countew("offboawded").incw()
+        w-weason.offboawdedauthow
+      case usewunavaiwabwestateenum.authowbwocksviewew =>
+        stats.countew("authow_bwocks_viewew").incw()
+        w-weason.authowbwocksviewew
+      c-case usewunavaiwabwestateenum.suspended =>
+        s-stats.countew("suspended_authow").incw()
+        w-weason.suspendedauthow
+      c-case usewunavaiwabwestateenum.deactivated =>
+        stats.countew("deactivated_authow").incw()
+        weason.deactivatedauthow
+      c-case usewunavaiwabwestateenum.fiwtewed(wesuwt) =>
+        stats.countew("fiwtewed").incw()
+        usewvisibiwitywesuwttodwopweason(wesuwt, (˘ω˘) stats.scope("fiwtewed"))
+      case usewunavaiwabwestateenum.unavaiwabwe =>
+        s-stats.countew("unspecified").incw()
+        weason.unspecified
       case _ =>
-        stats.counter("unknown").incr()
-        stats.scope("unknown").counter(userUnavailableState.name).incr()
-        Reason.Unspecified
+        stats.countew("unknown").incw()
+        s-stats.scope("unknown").countew(usewunavaiwabwestate.name).incw()
+        w-weason.unspecified
     }
 
-  private[this] def userVisibilityResultToDropReason(
-    result: UserVisibilityResult,
-    stats: StatsReceiver
-  ): Reason =
-    result.action
-      .flatMap(DropReasonConverter.fromAction)
-      .map { dropReason =>
-        val reason = Reason.fromDropReason(dropReason)
-        stats.counter(reason.name).incr()
-        reason
-      }.getOrElse {
-        stats.counter("empty")
-        Reason.Unspecified
+  p-pwivate[this] def usewvisibiwitywesuwttodwopweason(
+    w-wesuwt: usewvisibiwitywesuwt, ^^;;
+    s-stats: statsweceivew
+  ): w-weason =
+    wesuwt.action
+      .fwatmap(dwopweasonconvewtew.fwomaction)
+      .map { dwopweason =>
+        vaw weason = weason.fwomdwopweason(dwopweason)
+        stats.countew(weason.name).incw()
+        w-weason
+      }.getowewse {
+        stats.countew("empty")
+        w-weason.unspecified
       }
 }

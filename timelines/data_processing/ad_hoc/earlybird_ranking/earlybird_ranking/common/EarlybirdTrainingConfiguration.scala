@@ -1,271 +1,271 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
+package com.twittew.timewines.data_pwocessing.ad_hoc.eawwybiwd_wanking.common
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.ITransform
-import com.twitter.ml.api.transform.CascadeTransform
-import com.twitter.ml.api.transform.TransformFactory
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.search.common.features.SearchResultFeature
-import com.twitter.search.common.features.ExternalTweetFeature
-import com.twitter.search.common.features.TweetFeature
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.prediction.features.request_context.RequestContextFeatures
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.real_graph.RealGraphDataRecordFeatures
-import scala.collection.JavaConverters._
-import java.lang.{Boolean => JBoolean}
+impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.featuwecontext
+i-impowt c-com.twittew.mw.api.itwansfowm
+i-impowt com.twittew.mw.api.twansfowm.cascadetwansfowm
+i-impowt com.twittew.mw.api.twansfowm.twansfowmfactowy
+i-impowt com.twittew.mw.api.utiw.swichdatawecowd
+impowt com.twittew.mw.api.constant.shawedfeatuwes
+impowt c-com.twittew.seawch.common.featuwes.seawchwesuwtfeatuwe
+impowt com.twittew.seawch.common.featuwes.extewnawtweetfeatuwe
+i-impowt com.twittew.seawch.common.featuwes.tweetfeatuwe
+i-impowt com.twittew.timewines.pwediction.featuwes.wecap.wecapfeatuwes
+impowt com.twittew.timewines.pwediction.featuwes.wequest_context.wequestcontextfeatuwes
+impowt com.twittew.timewines.pwediction.featuwes.time_featuwes.timedatawecowdfeatuwes
+impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes
+i-impowt com.twittew.timewines.pwediction.featuwes.weaw_gwaph.weawgwaphdatawecowdfeatuwes
+impowt s-scawa.cowwection.javaconvewtews._
+i-impowt java.wang.{boowean => jboowean}
 
-case class LabelInfo(name: String, downsampleFraction: Double, importance: Double)
+case cwass wabewinfo(name: stwing, /(^•ω•^) downsampwefwaction: d-doubwe, 😳 impowtance: doubwe)
 
-case class LabelInfoWithFeature(info: LabelInfo, feature: Feature[JBoolean])
+case cwass wabewinfowithfeatuwe(info: wabewinfo, 😳 featuwe: featuwe[jboowean])
 
-trait EarlybirdTrainingConfiguration {
+t-twait eawwybiwdtwainingconfiguwation {
 
-  protected def labels: Map[String, Feature.Binary]
+  pwotected d-def wabews: m-map[stwing, featuwe.binawy]
 
-  protected def weights: Map[String, Double] = Map(
-    "detail_expanded" -> 0.3,
-    "favorited" -> 1.0,
-    "open_linked" -> 0.1,
-    "photo_expanded" -> 0.03,
-    "profile_clicked" -> 1.0,
-    "replied" -> 9.0,
-    "retweeted" -> 1.0,
-    "video_playback50" -> 0.01
+  pwotected d-def weights: m-map[stwing, (⑅˘꒳˘) doubwe] = map(
+    "detaiw_expanded" -> 0.3, 😳😳😳
+    "favowited" -> 1.0, 😳
+    "open_winked" -> 0.1, XD
+    "photo_expanded" -> 0.03, mya
+    "pwofiwe_cwicked" -> 1.0, ^•ﻌ•^
+    "wepwied" -> 9.0, ʘwʘ
+    "wetweeted" -> 1.0, ( ͡o ω ͡o )
+    "video_pwayback50" -> 0.01
   )
 
-  // we basically should not downsample any of the precious positive data.
-  // importance are currently set to match the full model's weights.
-  protected def PositiveSamplingRate: Double = 1.0
-  private def NegativeSamplingRate: Double = PositiveSamplingRate * 0.08
+  // we basicawwy s-shouwd nyot downsampwe any of the pwecious positive d-data. mya
+  // impowtance awe cuwwentwy set to match the fuww modew's weights. o.O
+  pwotected def p-positivesampwingwate: doubwe = 1.0
+  p-pwivate def n-nyegativesampwingwate: d-doubwe = positivesampwingwate * 0.08
 
-  // we basically should not downsample any of the precious positive data.
-  // importance are currently set to match the full model's weights.
-  final lazy val LabelInfos: List[LabelInfoWithFeature] = {
-    assert(labels.keySet == weights.keySet)
-    labels.keySet.map(makeLabelInfoWithFeature).toList
+  // we basicawwy shouwd nyot downsampwe a-any of the p-pwecious positive data. (✿oωo)
+  // impowtance a-awe cuwwentwy s-set to match the fuww modew's w-weights. :3
+  finaw wazy vaw w-wabewinfos: wist[wabewinfowithfeatuwe] = {
+    assewt(wabews.keyset == weights.keyset)
+    wabews.keyset.map(makewabewinfowithfeatuwe).towist
   }
 
-  def makeLabelInfoWithFeature(labelName: String): LabelInfoWithFeature = {
-    LabelInfoWithFeature(
-      LabelInfo(labelName, PositiveSamplingRate, weights(labelName)),
-      labels(labelName))
+  d-def makewabewinfowithfeatuwe(wabewname: stwing): w-wabewinfowithfeatuwe = {
+    wabewinfowithfeatuwe(
+      wabewinfo(wabewname, 😳 p-positivesampwingwate, w-weights(wabewname)), (U ﹏ U)
+      wabews(wabewname))
   }
 
-  final lazy val NegativeInfo: LabelInfo = LabelInfo("negative", NegativeSamplingRate, 1.0)
+  finaw wazy vaw nyegativeinfo: wabewinfo = wabewinfo("negative", mya nyegativesampwingwate, (U ᵕ U❁) 1.0)
 
-  // example of features available in schema based namespace:
-  protected def featureToSearchResultFeatureMap: Map[Feature[_], SearchResultFeature] = Map(
-    RecapFeatures.TEXT_SCORE -> TweetFeature.TEXT_SCORE,
-    RecapFeatures.REPLY_COUNT -> TweetFeature.REPLY_COUNT,
-    RecapFeatures.RETWEET_COUNT -> TweetFeature.RETWEET_COUNT,
-    RecapFeatures.FAV_COUNT -> TweetFeature.FAVORITE_COUNT,
-    RecapFeatures.HAS_CARD -> TweetFeature.HAS_CARD_FLAG,
-    RecapFeatures.HAS_CONSUMER_VIDEO -> TweetFeature.HAS_CONSUMER_VIDEO_FLAG,
-    RecapFeatures.HAS_PRO_VIDEO -> TweetFeature.HAS_PRO_VIDEO_FLAG,
-    // no corresponding HAS_NATIVE_VIDEO feature in TweetFeature
-    RecapFeatures.HAS_VINE -> TweetFeature.HAS_VINE_FLAG,
-    RecapFeatures.HAS_PERISCOPE -> TweetFeature.HAS_PERISCOPE_FLAG,
-    RecapFeatures.HAS_NATIVE_IMAGE -> TweetFeature.HAS_NATIVE_IMAGE_FLAG,
-    RecapFeatures.HAS_IMAGE -> TweetFeature.HAS_IMAGE_URL_FLAG,
-    RecapFeatures.HAS_NEWS -> TweetFeature.HAS_NEWS_URL_FLAG,
-    RecapFeatures.HAS_VIDEO -> TweetFeature.HAS_VIDEO_URL_FLAG,
-    RecapFeatures.HAS_TREND -> TweetFeature.HAS_TREND_FLAG,
-    RecapFeatures.HAS_MULTIPLE_HASHTAGS_OR_TRENDS -> TweetFeature.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG,
-    RecapFeatures.IS_OFFENSIVE -> TweetFeature.IS_OFFENSIVE_FLAG,
-    RecapFeatures.IS_REPLY -> TweetFeature.IS_REPLY_FLAG,
-    RecapFeatures.IS_RETWEET -> TweetFeature.IS_RETWEET_FLAG,
-    RecapFeatures.IS_AUTHOR_BOT -> TweetFeature.IS_USER_BOT_FLAG,
-    RecapFeatures.FROM_VERIFIED_ACCOUNT -> TweetFeature.FROM_VERIFIED_ACCOUNT_FLAG,
-    RecapFeatures.USER_REP -> TweetFeature.USER_REPUTATION,
-    RecapFeatures.EMBEDS_IMPRESSION_COUNT -> TweetFeature.EMBEDS_IMPRESSION_COUNT,
-    RecapFeatures.EMBEDS_URL_COUNT -> TweetFeature.EMBEDS_URL_COUNT,
-    // RecapFeatures.VIDEO_VIEW_COUNT deprecated
-    RecapFeatures.FAV_COUNT_V2 -> TweetFeature.FAVORITE_COUNT_V2,
-    RecapFeatures.RETWEET_COUNT_V2 -> TweetFeature.RETWEET_COUNT_V2,
-    RecapFeatures.REPLY_COUNT_V2 -> TweetFeature.REPLY_COUNT_V2,
-    RecapFeatures.IS_SENSITIVE -> TweetFeature.IS_SENSITIVE_CONTENT,
-    RecapFeatures.HAS_MULTIPLE_MEDIA -> TweetFeature.HAS_MULTIPLE_MEDIA_FLAG,
-    RecapFeatures.IS_AUTHOR_PROFILE_EGG -> TweetFeature.PROFILE_IS_EGG_FLAG,
-    RecapFeatures.IS_AUTHOR_NEW -> TweetFeature.IS_USER_NEW_FLAG,
-    RecapFeatures.NUM_MENTIONS -> TweetFeature.NUM_MENTIONS,
-    RecapFeatures.NUM_HASHTAGS -> TweetFeature.NUM_HASHTAGS,
-    RecapFeatures.HAS_VISIBLE_LINK -> TweetFeature.HAS_VISIBLE_LINK_FLAG,
-    RecapFeatures.HAS_LINK -> TweetFeature.HAS_LINK_FLAG,
-    //note: DISCRETE features are not supported by the modelInterpreter tool.
-    // for the following features, we will create separate CONTINUOUS features instead of renaming
-    //RecapFeatures.LINK_LANGUAGE
-    //RecapFeatures.LANGUAGE
-    TimelinesSharedFeatures.HAS_QUOTE -> TweetFeature.HAS_QUOTE_FLAG,
-    TimelinesSharedFeatures.QUOTE_COUNT -> TweetFeature.QUOTE_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_FAV_COUNT -> TweetFeature.WEIGHTED_FAVORITE_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_QUOTE_COUNT -> TweetFeature.WEIGHTED_QUOTE_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_REPLY_COUNT -> TweetFeature.WEIGHTED_REPLY_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_RETWEET_COUNT -> TweetFeature.WEIGHTED_RETWEET_COUNT,
-    TimelinesSharedFeatures.DECAYED_FAVORITE_COUNT -> TweetFeature.DECAYED_FAVORITE_COUNT,
-    TimelinesSharedFeatures.DECAYED_RETWEET_COUNT -> TweetFeature.DECAYED_RETWEET_COUNT,
-    TimelinesSharedFeatures.DECAYED_REPLY_COUNT -> TweetFeature.DECAYED_RETWEET_COUNT,
-    TimelinesSharedFeatures.DECAYED_QUOTE_COUNT -> TweetFeature.DECAYED_QUOTE_COUNT,
-    TimelinesSharedFeatures.FAKE_FAVORITE_COUNT -> TweetFeature.FAKE_FAVORITE_COUNT,
-    TimelinesSharedFeatures.FAKE_RETWEET_COUNT -> TweetFeature.FAKE_RETWEET_COUNT,
-    TimelinesSharedFeatures.FAKE_REPLY_COUNT -> TweetFeature.FAKE_REPLY_COUNT,
-    TimelinesSharedFeatures.FAKE_QUOTE_COUNT -> TweetFeature.FAKE_QUOTE_COUNT,
-    TimelinesSharedFeatures.EMBEDS_IMPRESSION_COUNT_V2 -> TweetFeature.EMBEDS_IMPRESSION_COUNT_V2,
-    TimelinesSharedFeatures.EMBEDS_URL_COUNT_V2 -> TweetFeature.EMBEDS_URL_COUNT_V2,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_FLAG -> TweetFeature.LABEL_ABUSIVE_FLAG,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_HI_RCL_FLAG -> TweetFeature.LABEL_ABUSIVE_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_DUP_CONTENT_FLAG -> TweetFeature.LABEL_DUP_CONTENT_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_PRC_FLAG -> TweetFeature.LABEL_NSFW_HI_PRC_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_RCL_FLAG -> TweetFeature.LABEL_NSFW_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_FLAG -> TweetFeature.LABEL_SPAM_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_HI_RCL_FLAG -> TweetFeature.LABEL_SPAM_HI_RCL_FLAG
+  // exampwe of featuwes avaiwabwe in s-schema based nyamespace:
+  p-pwotected def featuwetoseawchwesuwtfeatuwemap: m-map[featuwe[_], :3 s-seawchwesuwtfeatuwe] = m-map(
+    wecapfeatuwes.text_scowe -> tweetfeatuwe.text_scowe, mya
+    wecapfeatuwes.wepwy_count -> tweetfeatuwe.wepwy_count, OwO
+    w-wecapfeatuwes.wetweet_count -> tweetfeatuwe.wetweet_count, (ˆ ﻌ ˆ)♡
+    wecapfeatuwes.fav_count -> tweetfeatuwe.favowite_count, ʘwʘ
+    wecapfeatuwes.has_cawd -> tweetfeatuwe.has_cawd_fwag, o.O
+    wecapfeatuwes.has_consumew_video -> t-tweetfeatuwe.has_consumew_video_fwag, UwU
+    wecapfeatuwes.has_pwo_video -> t-tweetfeatuwe.has_pwo_video_fwag, rawr x3
+    // n-nyo cowwesponding h-has_native_video featuwe i-in tweetfeatuwe
+    w-wecapfeatuwes.has_vine -> t-tweetfeatuwe.has_vine_fwag, 🥺
+    w-wecapfeatuwes.has_pewiscope -> tweetfeatuwe.has_pewiscope_fwag, :3
+    wecapfeatuwes.has_native_image -> t-tweetfeatuwe.has_native_image_fwag, (ꈍᴗꈍ)
+    w-wecapfeatuwes.has_image -> t-tweetfeatuwe.has_image_uww_fwag, 🥺
+    w-wecapfeatuwes.has_news -> t-tweetfeatuwe.has_news_uww_fwag, (✿oωo)
+    wecapfeatuwes.has_video -> tweetfeatuwe.has_video_uww_fwag, (U ﹏ U)
+    wecapfeatuwes.has_twend -> tweetfeatuwe.has_twend_fwag, :3
+    wecapfeatuwes.has_muwtipwe_hashtags_ow_twends -> t-tweetfeatuwe.has_muwtipwe_hashtags_ow_twends_fwag, ^^;;
+    wecapfeatuwes.is_offensive -> tweetfeatuwe.is_offensive_fwag, rawr
+    wecapfeatuwes.is_wepwy -> tweetfeatuwe.is_wepwy_fwag, 😳😳😳
+    wecapfeatuwes.is_wetweet -> tweetfeatuwe.is_wetweet_fwag, (✿oωo)
+    wecapfeatuwes.is_authow_bot -> t-tweetfeatuwe.is_usew_bot_fwag, OwO
+    wecapfeatuwes.fwom_vewified_account -> tweetfeatuwe.fwom_vewified_account_fwag, ʘwʘ
+    wecapfeatuwes.usew_wep -> tweetfeatuwe.usew_weputation, (ˆ ﻌ ˆ)♡
+    wecapfeatuwes.embeds_impwession_count -> t-tweetfeatuwe.embeds_impwession_count, (U ﹏ U)
+    w-wecapfeatuwes.embeds_uww_count -> t-tweetfeatuwe.embeds_uww_count, UwU
+    // wecapfeatuwes.video_view_count d-depwecated
+    wecapfeatuwes.fav_count_v2 -> t-tweetfeatuwe.favowite_count_v2, XD
+    w-wecapfeatuwes.wetweet_count_v2 -> tweetfeatuwe.wetweet_count_v2, ʘwʘ
+    wecapfeatuwes.wepwy_count_v2 -> tweetfeatuwe.wepwy_count_v2, rawr x3
+    wecapfeatuwes.is_sensitive -> tweetfeatuwe.is_sensitive_content, ^^;;
+    wecapfeatuwes.has_muwtipwe_media -> tweetfeatuwe.has_muwtipwe_media_fwag, ʘwʘ
+    w-wecapfeatuwes.is_authow_pwofiwe_egg -> tweetfeatuwe.pwofiwe_is_egg_fwag, (U ﹏ U)
+    w-wecapfeatuwes.is_authow_new -> tweetfeatuwe.is_usew_new_fwag,
+    wecapfeatuwes.num_mentions -> t-tweetfeatuwe.num_mentions, (˘ω˘)
+    wecapfeatuwes.num_hashtags -> t-tweetfeatuwe.num_hashtags, (ꈍᴗꈍ)
+    wecapfeatuwes.has_visibwe_wink -> tweetfeatuwe.has_visibwe_wink_fwag, /(^•ω•^)
+    w-wecapfeatuwes.has_wink -> t-tweetfeatuwe.has_wink_fwag, >_<
+    //note: discwete f-featuwes awe nyot s-suppowted by the modewintewpwetew toow. σωσ
+    // fow the fowwowing featuwes, ^^;; we w-wiww cweate sepawate c-continuous f-featuwes instead of wenaming
+    //wecapfeatuwes.wink_wanguage
+    //wecapfeatuwes.wanguage
+    t-timewinesshawedfeatuwes.has_quote -> t-tweetfeatuwe.has_quote_fwag, 😳
+    timewinesshawedfeatuwes.quote_count -> t-tweetfeatuwe.quote_count, >_<
+    timewinesshawedfeatuwes.weighted_fav_count -> tweetfeatuwe.weighted_favowite_count, -.-
+    timewinesshawedfeatuwes.weighted_quote_count -> tweetfeatuwe.weighted_quote_count, UwU
+    t-timewinesshawedfeatuwes.weighted_wepwy_count -> t-tweetfeatuwe.weighted_wepwy_count, :3
+    timewinesshawedfeatuwes.weighted_wetweet_count -> tweetfeatuwe.weighted_wetweet_count, σωσ
+    t-timewinesshawedfeatuwes.decayed_favowite_count -> tweetfeatuwe.decayed_favowite_count, >w<
+    t-timewinesshawedfeatuwes.decayed_wetweet_count -> tweetfeatuwe.decayed_wetweet_count, (ˆ ﻌ ˆ)♡
+    timewinesshawedfeatuwes.decayed_wepwy_count -> tweetfeatuwe.decayed_wetweet_count, ʘwʘ
+    t-timewinesshawedfeatuwes.decayed_quote_count -> tweetfeatuwe.decayed_quote_count, :3
+    timewinesshawedfeatuwes.fake_favowite_count -> tweetfeatuwe.fake_favowite_count, (˘ω˘)
+    timewinesshawedfeatuwes.fake_wetweet_count -> t-tweetfeatuwe.fake_wetweet_count, 😳😳😳
+    timewinesshawedfeatuwes.fake_wepwy_count -> tweetfeatuwe.fake_wepwy_count, rawr x3
+    t-timewinesshawedfeatuwes.fake_quote_count -> t-tweetfeatuwe.fake_quote_count, (✿oωo)
+    timewinesshawedfeatuwes.embeds_impwession_count_v2 -> tweetfeatuwe.embeds_impwession_count_v2, (ˆ ﻌ ˆ)♡
+    timewinesshawedfeatuwes.embeds_uww_count_v2 -> t-tweetfeatuwe.embeds_uww_count_v2, :3
+    t-timewinesshawedfeatuwes.wabew_abusive_fwag -> tweetfeatuwe.wabew_abusive_fwag, (U ᵕ U❁)
+    timewinesshawedfeatuwes.wabew_abusive_hi_wcw_fwag -> tweetfeatuwe.wabew_abusive_hi_wcw_fwag, ^^;;
+    timewinesshawedfeatuwes.wabew_dup_content_fwag -> t-tweetfeatuwe.wabew_dup_content_fwag, mya
+    timewinesshawedfeatuwes.wabew_nsfw_hi_pwc_fwag -> t-tweetfeatuwe.wabew_nsfw_hi_pwc_fwag, 😳😳😳
+    timewinesshawedfeatuwes.wabew_nsfw_hi_wcw_fwag -> tweetfeatuwe.wabew_nsfw_hi_wcw_fwag, OwO
+    timewinesshawedfeatuwes.wabew_spam_fwag -> t-tweetfeatuwe.wabew_spam_fwag, rawr
+    timewinesshawedfeatuwes.wabew_spam_hi_wcw_fwag -> tweetfeatuwe.wabew_spam_hi_wcw_fwag
   )
 
-  protected def derivedFeaturesAdder: ITransform =
-    new ITransform {
-      private val hasEnglishTweetDiffUiLangFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.HAS_ENGLISH_TWEET_DIFF_UI_LANG)
-          .asInstanceOf[Feature.Binary]
-      private val hasEnglishUiDiffTweetLangFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.HAS_ENGLISH_UI_DIFF_TWEET_LANG)
-          .asInstanceOf[Feature.Binary]
-      private val hasDiffLangFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.HAS_DIFF_LANG)
-          .asInstanceOf[Feature.Binary]
-      private val isSelfTweetFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.IS_SELF_TWEET)
-          .asInstanceOf[Feature.Binary]
-      private val tweetAgeInSecsFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.TWEET_AGE_IN_SECS)
-          .asInstanceOf[Feature.Continuous]
-      private val authorSpecificScoreFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.AUTHOR_SPECIFIC_SCORE)
-          .asInstanceOf[Feature.Continuous]
+  p-pwotected d-def dewivedfeatuwesaddew: itwansfowm =
+    nyew i-itwansfowm {
+      pwivate vaw h-hasengwishtweetdiffuiwangfeatuwe =
+        f-featuweinstancefwomseawchwesuwtfeatuwe(extewnawtweetfeatuwe.has_engwish_tweet_diff_ui_wang)
+          .asinstanceof[featuwe.binawy]
+      p-pwivate vaw hasengwishuidifftweetwangfeatuwe =
+        featuweinstancefwomseawchwesuwtfeatuwe(extewnawtweetfeatuwe.has_engwish_ui_diff_tweet_wang)
+          .asinstanceof[featuwe.binawy]
+      p-pwivate v-vaw hasdiffwangfeatuwe =
+        featuweinstancefwomseawchwesuwtfeatuwe(extewnawtweetfeatuwe.has_diff_wang)
+          .asinstanceof[featuwe.binawy]
+      pwivate v-vaw issewftweetfeatuwe =
+        f-featuweinstancefwomseawchwesuwtfeatuwe(extewnawtweetfeatuwe.is_sewf_tweet)
+          .asinstanceof[featuwe.binawy]
+      p-pwivate vaw tweetageinsecsfeatuwe =
+        featuweinstancefwomseawchwesuwtfeatuwe(extewnawtweetfeatuwe.tweet_age_in_secs)
+          .asinstanceof[featuwe.continuous]
+      p-pwivate vaw authowspecificscowefeatuwe =
+        f-featuweinstancefwomseawchwesuwtfeatuwe(extewnawtweetfeatuwe.authow_specific_scowe)
+          .asinstanceof[featuwe.continuous]
 
-      // see comments above
-      private val linkLanguageFeature = new Feature.Continuous(TweetFeature.LINK_LANGUAGE.getName)
-      private val languageFeature = new Feature.Continuous(TweetFeature.LANGUAGE.getName)
+      // s-see comments above
+      pwivate vaw winkwanguagefeatuwe = nyew featuwe.continuous(tweetfeatuwe.wink_wanguage.getname)
+      p-pwivate vaw wanguagefeatuwe = nyew f-featuwe.continuous(tweetfeatuwe.wanguage.getname)
 
-      override def transformContext(featureContext: FeatureContext): FeatureContext =
-        featureContext.addFeatures(
-          authorSpecificScoreFeature,
-          // used when training against the full scoreEarlybirdModelEvaluationJob.scala
-          // TimelinesSharedFeatures.PREDICTED_SCORE_LOG,
-          hasEnglishTweetDiffUiLangFeature,
-          hasEnglishUiDiffTweetLangFeature,
-          hasDiffLangFeature,
-          isSelfTweetFeature,
-          tweetAgeInSecsFeature,
-          linkLanguageFeature,
-          languageFeature
+      o-ovewwide d-def twansfowmcontext(featuwecontext: featuwecontext): f-featuwecontext =
+        featuwecontext.addfeatuwes(
+          authowspecificscowefeatuwe, XD
+          // used when twaining against the fuww scoweeawwybiwdmodewevawuationjob.scawa
+          // t-timewinesshawedfeatuwes.pwedicted_scowe_wog, (U ﹏ U)
+          hasengwishtweetdiffuiwangfeatuwe, (˘ω˘)
+          hasengwishuidifftweetwangfeatuwe, UwU
+          h-hasdiffwangfeatuwe, >_<
+          issewftweetfeatuwe, σωσ
+          t-tweetageinsecsfeatuwe, 🥺
+          winkwanguagefeatuwe, 🥺
+          w-wanguagefeatuwe
         )
 
-      override def transform(record: DataRecord): Unit = {
-        val srecord = SRichDataRecord(record)
+      ovewwide d-def twansfowm(wecowd: d-datawecowd): u-unit = {
+        v-vaw swecowd = s-swichdatawecowd(wecowd)
 
-        srecord.getFeatureValueOpt(RealGraphDataRecordFeatures.WEIGHT).map { realgraphWeight =>
-          srecord.setFeatureValue(authorSpecificScoreFeature, realgraphWeight)
+        swecowd.getfeatuwevawueopt(weawgwaphdatawecowdfeatuwes.weight).map { weawgwaphweight =>
+          swecowd.setfeatuwevawue(authowspecificscowefeatuwe, ʘwʘ weawgwaphweight)
         }
 
-        // use this when training against the log of the full score
-        // srecord.getFeatureValueOpt(TimelinesSharedFeatures.PREDICTED_SCORE).map { score =>
-        //   if (score > 0.0) {
-        //     srecord.setFeatureValue(TimelinesSharedFeatures.PREDICTED_SCORE_LOG, Math.log(score))
+        // use this when twaining against t-the wog of the fuww s-scowe
+        // s-swecowd.getfeatuwevawueopt(timewinesshawedfeatuwes.pwedicted_scowe).map { scowe =>
+        //   if (scowe > 0.0) {
+        //     s-swecowd.setfeatuwevawue(timewinesshawedfeatuwes.pwedicted_scowe_wog, math.wog(scowe))
         //   }
         // }
 
-        if (srecord.hasFeature(RequestContextFeatures.LANGUAGE_CODE) && srecord.hasFeature(
-            RecapFeatures.LANGUAGE)) {
-          val uilangIsEnglish = srecord
-            .getFeatureValue(RequestContextFeatures.LANGUAGE_CODE).toString == "en"
-          val tweetIsEnglish = srecord.getFeatureValue(RecapFeatures.LANGUAGE) == 5
-          srecord.setFeatureValue(
-            hasEnglishTweetDiffUiLangFeature,
-            tweetIsEnglish && !uilangIsEnglish
+        if (swecowd.hasfeatuwe(wequestcontextfeatuwes.wanguage_code) && swecowd.hasfeatuwe(
+            w-wecapfeatuwes.wanguage)) {
+          v-vaw uiwangisengwish = swecowd
+            .getfeatuwevawue(wequestcontextfeatuwes.wanguage_code).tostwing == "en"
+          v-vaw tweetisengwish = swecowd.getfeatuwevawue(wecapfeatuwes.wanguage) == 5
+          swecowd.setfeatuwevawue(
+            h-hasengwishtweetdiffuiwangfeatuwe, :3
+            t-tweetisengwish && !uiwangisengwish
           )
-          srecord.setFeatureValue(
-            hasEnglishUiDiffTweetLangFeature,
-            uilangIsEnglish && !tweetIsEnglish
+          swecowd.setfeatuwevawue(
+            h-hasengwishuidifftweetwangfeatuwe, (U ﹏ U)
+            u-uiwangisengwish && !tweetisengwish
           )
         }
-        srecord.getFeatureValueOpt(RecapFeatures.MATCH_UI_LANG).map { match_ui_lang =>
-          srecord.setFeatureValue(
-            hasDiffLangFeature,
-            !match_ui_lang
+        swecowd.getfeatuwevawueopt(wecapfeatuwes.match_ui_wang).map { match_ui_wang =>
+          swecowd.setfeatuwevawue(
+            hasdiffwangfeatuwe, (U ﹏ U)
+            !match_ui_wang
           )
         }
 
-        for {
-          author_id <- srecord.getFeatureValueOpt(SharedFeatures.AUTHOR_ID)
-          user_id <- srecord.getFeatureValueOpt(SharedFeatures.USER_ID)
-        } srecord.setFeatureValue(
-          isSelfTweetFeature,
-          author_id == user_id
+        f-fow {
+          a-authow_id <- s-swecowd.getfeatuwevawueopt(shawedfeatuwes.authow_id)
+          usew_id <- s-swecowd.getfeatuwevawueopt(shawedfeatuwes.usew_id)
+        } s-swecowd.setfeatuwevawue(
+          issewftweetfeatuwe, ʘwʘ
+          a-authow_id == u-usew_id
         )
 
-        srecord.getFeatureValueOpt(TimeDataRecordFeatures.TIME_SINCE_TWEET_CREATION).map {
-          time_since_tweet_creation =>
-            srecord.setFeatureValue(
-              tweetAgeInSecsFeature,
-              time_since_tweet_creation / 1000.0
+        swecowd.getfeatuwevawueopt(timedatawecowdfeatuwes.time_since_tweet_cweation).map {
+          t-time_since_tweet_cweation =>
+            s-swecowd.setfeatuwevawue(
+              tweetageinsecsfeatuwe, >w<
+              t-time_since_tweet_cweation / 1000.0
             )
         }
 
-        srecord.getFeatureValueOpt(RecapFeatures.LINK_LANGUAGE).map { link_language =>
-          srecord.setFeatureValue(
-            linkLanguageFeature,
-            link_language.toDouble
+        swecowd.getfeatuwevawueopt(wecapfeatuwes.wink_wanguage).map { wink_wanguage =>
+          swecowd.setfeatuwevawue(
+            w-winkwanguagefeatuwe, rawr x3
+            wink_wanguage.todoubwe
           )
         }
-        srecord.getFeatureValueOpt(RecapFeatures.LANGUAGE).map { language =>
-          srecord.setFeatureValue(
-            languageFeature,
-            language.toDouble
+        s-swecowd.getfeatuwevawueopt(wecapfeatuwes.wanguage).map { w-wanguage =>
+          swecowd.setfeatuwevawue(
+            w-wanguagefeatuwe, OwO
+            wanguage.todoubwe
           )
         }
       }
     }
 
-  protected def featureInstanceFromSearchResultFeature(
-    tweetFeature: SearchResultFeature
-  ): Feature[_] = {
-    val featureType = tweetFeature.getType
-    val featureName = tweetFeature.getName
+  pwotected def f-featuweinstancefwomseawchwesuwtfeatuwe(
+    t-tweetfeatuwe: s-seawchwesuwtfeatuwe
+  ): featuwe[_] = {
+    vaw featuwetype = tweetfeatuwe.gettype
+    v-vaw featuwename = tweetfeatuwe.getname
 
-    require(
-      !tweetFeature.isDiscrete && (
-        featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.BOOLEAN_VALUE ||
-          featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.DOUBLE_VALUE ||
-          featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.INT32_VALUE
+    wequiwe(
+      !tweetfeatuwe.isdiscwete && (
+        featuwetype == c-com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuwetype.boowean_vawue ||
+          f-featuwetype == com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuwetype.doubwe_vawue ||
+          featuwetype == c-com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuwetype.int32_vawue
       )
     )
 
-    if (featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.BOOLEAN_VALUE)
-      new Feature.Binary(featureName)
-    else
-      new Feature.Continuous(featureName)
+    if (featuwetype == c-com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuwetype.boowean_vawue)
+      n-nyew featuwe.binawy(featuwename)
+    ewse
+      nyew featuwe.continuous(featuwename)
   }
 
-  lazy val EarlybirdFeatureRenamer: ITransform = {
-    val earlybirdFeatureRenameMap: Map[Feature[_], Feature[_]] =
-      featureToSearchResultFeatureMap.map {
-        case (originalFeature, tweetFeature) =>
-          originalFeature -> featureInstanceFromSearchResultFeature(tweetFeature)
-      }.toMap
+  w-wazy vaw eawwybiwdfeatuwewenamew: itwansfowm = {
+    vaw eawwybiwdfeatuwewenamemap: m-map[featuwe[_], ^•ﻌ•^ f-featuwe[_]] =
+      featuwetoseawchwesuwtfeatuwemap.map {
+        c-case (owiginawfeatuwe, >_< tweetfeatuwe) =>
+          o-owiginawfeatuwe -> f-featuweinstancefwomseawchwesuwtfeatuwe(tweetfeatuwe)
+      }.tomap
 
-    new CascadeTransform(
-      List(
-        derivedFeaturesAdder,
-        TransformFactory.produceTransform(
-          TransformFactory.produceFeatureRenameTransformSpec(
-            earlybirdFeatureRenameMap.asJava
+    n-nyew cascadetwansfowm(
+      wist(
+        dewivedfeatuwesaddew, OwO
+        twansfowmfactowy.pwoducetwansfowm(
+          twansfowmfactowy.pwoducefeatuwewenametwansfowmspec(
+            eawwybiwdfeatuwewenamemap.asjava
           )
         )
-      ).asJava
+      ).asjava
     )
   }
 }

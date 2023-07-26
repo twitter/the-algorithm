@@ -1,17 +1,17 @@
-package com.twitter.visibility.interfaces.common.tweets
+package com.twittew.visibiwity.intewfaces.common.tweets
 
-import com.twitter.spam.rtf.thriftscala.SafetyLabelMap
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+impowt com.twittew.spam.wtf.thwiftscawa.safetywabewmap
+impowt c-com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.stwato.cwient.{cwient => s-stwatocwient}
+i-impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
 
-object StratoSafetyLabelMapFetcher {
-  val column = "visibility/baseTweetSafetyLabelMap"
+o-object s-stwatosafetywabewmapfetchew {
+  v-vaw cowumn = "visibiwity/basetweetsafetywabewmap"
 
-  def apply(client: StratoClient): SafetyLabelMapFetcherType = {
-    val fetcher: Fetcher[Long, Unit, SafetyLabelMap] =
-      client.fetcher[Long, SafetyLabelMap](column)
+  d-def appwy(cwient: stwatocwient): safetywabewmapfetchewtype = {
+    vaw fetchew: fetchew[wong, (U ﹏ U) u-unit, safetywabewmap] =
+      cwient.fetchew[wong, -.- safetywabewmap](cowumn)
 
-    tweetId => fetcher.fetch(tweetId).map(_.v)
+    t-tweetid => fetchew.fetch(tweetid).map(_.v)
   }
 }

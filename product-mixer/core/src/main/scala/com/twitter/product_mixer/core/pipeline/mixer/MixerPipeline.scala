@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.pipeline.mixer
+package com.twittew.pwoduct_mixew.cowe.pipewine.mixew
 
-import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Arrow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.mixewpipewineidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.awwow
 
 /**
- * A Mixer Pipeline
+ * a-a mixew p-pipewine
  *
- * This is an abstract class, as we only construct these via the [[MixerPipelineBuilder]].
+ * t-this is an abstwact c-cwass, mya as we onwy constwuct these via the [[mixewpipewinebuiwdew]]. nyaa~~
  *
- * A [[MixerPipeline]] is capable of processing requests (queries) and returning responses (results)
- * in the correct format to directly send to users.
+ * a [[mixewpipewine]] is capabwe of p-pwocessing wequests (quewies) and wetuwning wesponses (wesuwts)
+ * i-in the cowwect fowmat to diwectwy s-send to usews. (⑅˘꒳˘)
  *
- * @tparam Query the domain model for the query or request
- * @tparam Result the final marshalled result type
+ * @tpawam quewy the domain modew fow the quewy ow wequest
+ * @tpawam w-wesuwt the finaw mawshawwed w-wesuwt t-type
  */
-abstract class MixerPipeline[Query <: PipelineQuery, Result] private[mixer]
-    extends Pipeline[Query, Result] {
-  override private[core] val config: MixerPipelineConfig[Query, _, Result]
-  override val arrow: Arrow[Query, MixerPipelineResult[Result]]
-  override val identifier: MixerPipelineIdentifier
+abstwact cwass mixewpipewine[quewy <: pipewinequewy, rawr x3 wesuwt] pwivate[mixew]
+    extends p-pipewine[quewy, (✿oωo) wesuwt] {
+  ovewwide pwivate[cowe] vaw config: mixewpipewineconfig[quewy, (ˆ ﻌ ˆ)♡ _, w-wesuwt]
+  ovewwide v-vaw awwow: awwow[quewy, (˘ω˘) m-mixewpipewinewesuwt[wesuwt]]
+  o-ovewwide v-vaw identifiew: mixewpipewineidentifiew
 }

@@ -1,137 +1,137 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.embedding
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twittew.simcwustews_v2.thwiftjava
+nyamespace py g-gen.twittew.simcwustews_v2.embedding
+#@namespace s-scawa com.twittew.simcwustews_v2.thwiftscawa
+#@namespace s-stwato c-com.twittew.simcwustews_v2
 
-include "com/twitter/simclusters_v2/identifier.thrift"
-include "com/twitter/simclusters_v2/online_store.thrift"
+incwude "com/twittew/simcwustews_v2/identifiew.thwift"
+i-incwude "com/twittew/simcwustews_v2/onwine_stowe.thwift"
 
-struct SimClusterWithScore {
-  1: required i32 clusterId(personalDataType = 'InferredInterests')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct simcwustewwithscowe {
+  1: w-wequiwed i32 cwustewid(pewsonawdatatype = 'infewwedintewests')
+  2: w-wequiwed doubwe scowe(pewsonawdatatype = 'engagementscowe')
+}(pewsisted = 'twue', OwO haspewsonawdata = 'twue')
 
-struct TopSimClustersWithScore {
-  1: required list<SimClusterWithScore> topClusters
-  2: required online_store.ModelVersion modelVersion
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct topsimcwustewswithscowe {
+  1: wequiwed w-wist<simcwustewwithscowe> topcwustews
+  2: wequiwed o-onwine_stowe.modewvewsion modewvewsion
+}(pewsisted = 'twue', rawr x3 h-haspewsonawdata = 'twue')
 
-struct InternalIdWithScore {
-  1: required identifier.InternalId internalId
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct intewnawidwithscowe {
+  1: wequiwed identifiew.intewnawid intewnawid
+  2: wequiwed d-doubwe scowe(pewsonawdatatype = 'engagementscowe')
+}(pewsisted = 'twue', XD haspewsonawdata = 'twue')
 
-struct InternalIdEmbedding {
-  1: required list<InternalIdWithScore> embedding
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct i-intewnawidembedding {
+  1: wequiwed wist<intewnawidwithscowe> embedding
+}(pewsisted = 'twue', σωσ haspewsonawdata = 'twue')
 
-struct SemanticCoreEntityWithScore {
-  1: required i64 entityId(personalDataType = 'SemanticcoreClassification')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct semanticcoweentitywithscowe {
+  1: wequiwed i64 entityid(pewsonawdatatype = 'semanticcowecwassification')
+  2: wequiwed doubwe s-scowe(pewsonawdatatype = 'engagementscowe')
+}(pewsisted = 'twue', (U ᵕ U❁) haspewsonawdata = 'twue')
 
-struct TopSemanticCoreEntitiesWithScore {
-  1: required list<SemanticCoreEntityWithScore> topEntities
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct t-topsemanticcoweentitieswithscowe {
+  1: w-wequiwed w-wist<semanticcoweentitywithscowe> t-topentities
+}(pewsisted = 'twue', (U ﹏ U) haspewsonawdata = 'twue')
 
-struct PersistedFullClusterId {
-  1: required online_store.ModelVersion modelVersion
-  2: required i32 clusterId(personalDataType = 'InferredInterests')
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct pewsistedfuwwcwustewid {
+  1: w-wequiwed onwine_stowe.modewvewsion modewvewsion
+  2: w-wequiwed i32 cwustewid(pewsonawdatatype = 'infewwedintewests')
+}(pewsisted = 'twue', :3 haspewsonawdata = 'twue')
 
-struct DayPartitionedClusterId {
-  1: required i32 clusterId(personalDataType = 'InferredInterests')
-  2: required string dayPartition // format: yyyy-MM-dd
+stwuct daypawtitionedcwustewid {
+  1: wequiwed i32 cwustewid(pewsonawdatatype = 'infewwedintewests')
+  2: wequiwed s-stwing daypawtition // fowmat: y-yyyy-mm-dd
 }
 
-struct TopProducerWithScore {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct toppwoducewwithscowe {
+  1: w-wequiwed i64 usewid(pewsonawdatatype = 'usewid')
+  2: wequiwed doubwe scowe(pewsonawdatatype = 'engagementscowe')
+}(pewsisted = 'twue', ( ͡o ω ͡o ) h-haspewsonawdata = 'twue')
 
-struct TopProducersWithScore {
-  1: required list<TopProducerWithScore> topProducers
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct toppwoducewswithscowe {
+  1: wequiwed w-wist<toppwoducewwithscowe> t-toppwoducews
+}(pewsisted = 'twue', σωσ haspewsonawdata = 'twue')
 
-struct TweetWithScore {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct tweetwithscowe {
+  1: w-wequiwed i64 tweetid(pewsonawdatatype = 'tweetid')
+  2: wequiwed doubwe s-scowe(pewsonawdatatype = 'engagementscowe')
+}(pewsisted = 'twue', >w< haspewsonawdata = 'twue')
 
-struct TweetsWithScore {
-  1: required list<TweetWithScore> tweets
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct tweetswithscowe {
+  1: w-wequiwed w-wist<tweetwithscowe> tweets
+}(pewsisted = 'twue', 😳😳😳 haspewsonawdata = 'twue')
 
-struct TweetTopKTweetsWithScore {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  2: required TweetsWithScore topkTweetsWithScore
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct tweettopktweetswithscowe {
+  1: wequiwed i64 tweetid(pewsonawdatatype = 'tweetid')
+  2: wequiwed tweetswithscowe t-topktweetswithscowe
+}(pewsisted = 'twue', OwO h-haspewsonawdata = 'twue')
 
 /**
-  * The generic SimClustersEmbedding for online long-term storage and real-time calculation.
-  * Use SimClustersEmbeddingId as the only identifier.
-  * Warning: Doesn't include model version and embedding type in the value struct.
+  * the genewic s-simcwustewsembedding f-fow onwine w-wong-tewm stowage and weaw-time cawcuwation. 😳
+  * use simcwustewsembeddingid as t-the onwy identifiew. 😳😳😳
+  * wawning: doesn't incwude modew vewsion and embedding t-type in the vawue stwuct.
   **/
-struct SimClustersEmbedding {
-  1: required list<SimClusterWithScore> embedding
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct simcwustewsembedding {
+  1: w-wequiwed wist<simcwustewwithscowe> e-embedding
+}(pewsisted = 'twue', (˘ω˘) haspewsonawdata = 'twue')
 
-struct SimClustersEmbeddingWithScore {
-  1: required SimClustersEmbedding embedding
-  2: required double score
-}(persisted = 'true', hasPersonalData = 'false')
+s-stwuct simcwustewsembeddingwithscowe {
+  1: w-wequiwed s-simcwustewsembedding e-embedding
+  2: wequiwed doubwe scowe
+}(pewsisted = 'twue', ʘwʘ h-haspewsonawdata = 'fawse')
 
 /**
-  * This is the recommended structure for aggregating embeddings with time decay - the metadata
-  * stores the information needed for decayed aggregation.
+  * t-this is t-the wecommended s-stwuctuwe fow a-aggwegating embeddings with time decay - the metadata
+  * stowes t-the infowmation nyeeded fow decayed aggwegation. ( ͡o ω ͡o )
   **/
-struct SimClustersEmbeddingWithMetadata {
-  1: required SimClustersEmbedding embedding
-  2: required SimClustersEmbeddingMetadata metadata
-}(hasPersonalData = 'true')
+stwuct simcwustewsembeddingwithmetadata {
+  1: wequiwed simcwustewsembedding e-embedding
+  2: wequiwed simcwustewsembeddingmetadata metadata
+}(haspewsonawdata = 'twue')
 
-struct SimClustersEmbeddingIdWithScore {
-  1: required identifier.SimClustersEmbeddingId id
-  2: required double score
-}(persisted = 'true', hasPersonalData = 'false')
+stwuct simcwustewsembeddingidwithscowe {
+  1: w-wequiwed i-identifiew.simcwustewsembeddingid i-id
+  2: wequiwed doubwe s-scowe
+}(pewsisted = 'twue', o.O haspewsonawdata = 'fawse')
 
-struct SimClustersMultiEmbeddingByValues {
-  1: required list<SimClustersEmbeddingWithScore> embeddings
-}(persisted = 'true', hasPersonalData = 'false')
+s-stwuct s-simcwustewsmuwtiembeddingbyvawues {
+  1: wequiwed wist<simcwustewsembeddingwithscowe> embeddings
+}(pewsisted = 'twue', >w< haspewsonawdata = 'fawse')
 
-struct SimClustersMultiEmbeddingByIds {
-  1: required list<SimClustersEmbeddingIdWithScore> ids
-}(persisted = 'true', hasPersonalData = 'false')
+stwuct simcwustewsmuwtiembeddingbyids {
+  1: w-wequiwed wist<simcwustewsembeddingidwithscowe> ids
+}(pewsisted = 'twue', 😳 haspewsonawdata = 'fawse')
 
 /**
- * Generic SimClusters Multiple Embeddings. The identifier.SimClustersMultiEmbeddingId is the key of
- * the multiple embedding.
+ * g-genewic simcwustews m-muwtipwe embeddings. 🥺 t-the identifiew.simcwustewsmuwtiembeddingid is the key of
+ * the muwtipwe embedding. rawr x3
  **/
-union SimClustersMultiEmbedding {
-  1: SimClustersMultiEmbeddingByValues values
-  2: SimClustersMultiEmbeddingByIds ids
-}(persisted = 'true', hasPersonalData = 'false')
+u-union s-simcwustewsmuwtiembedding {
+  1: simcwustewsmuwtiembeddingbyvawues v-vawues
+  2: s-simcwustewsmuwtiembeddingbyids ids
+}(pewsisted = 'twue', o.O haspewsonawdata = 'fawse')
 
 /**
-  * The metadata of a SimClustersEmbedding. The updatedCount represent the version of the Embedding.
-  * For tweet embedding, the updatedCount is same/close to the favorite count.
+  * the metadata of a simcwustewsembedding. rawr t-the updatedcount w-wepwesent t-the vewsion of the embedding. ʘwʘ
+  * f-fow tweet embedding, t-the updatedcount is same/cwose t-to the favowite count. 😳😳😳
   **/
-struct SimClustersEmbeddingMetadata {
-  1: optional i64 updatedAtMs
-  2: optional i64 updatedCount
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct simcwustewsembeddingmetadata {
+  1: optionaw i64 updatedatms
+  2: optionaw i64 updatedcount
+}(pewsisted = 'twue', ^^;; haspewsonawdata = 'twue')
 
 /**
-  * The data structure for PersistentSimClustersEmbedding Store
+  * t-the data stwuctuwe f-fow pewsistentsimcwustewsembedding stowe
   **/
-struct PersistentSimClustersEmbedding {
-  1: required SimClustersEmbedding embedding
-  2: required SimClustersEmbeddingMetadata metadata
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct pewsistentsimcwustewsembedding {
+  1: w-wequiwed simcwustewsembedding embedding
+  2: w-wequiwed simcwustewsembeddingmetadata metadata
+}(pewsisted = 'twue', o.O haspewsonawdata = 'twue')
 
 /**
-  * The data structure for the Multi Model PersistentSimClustersEmbedding Store
+  * t-the data stwuctuwe fow the muwti modew pewsistentsimcwustewsembedding stowe
   **/
-struct MultiModelPersistentSimClustersEmbedding {
-  1: required map<online_store.ModelVersion, PersistentSimClustersEmbedding> multiModelPersistentSimClustersEmbedding
-}(persisted = 'true', hasPersonalData = 'true')
+stwuct muwtimodewpewsistentsimcwustewsembedding {
+  1: wequiwed m-map<onwine_stowe.modewvewsion, (///ˬ///✿) pewsistentsimcwustewsembedding> muwtimodewpewsistentsimcwustewsembedding
+}(pewsisted = 'twue', σωσ h-haspewsonawdata = 'twue')

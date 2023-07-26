@@ -1,148 +1,148 @@
-package com.twitter.search.common.schema.earlybird;
+package com.twittew.seawch.common.schema.eawwybiwd;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.indexing.thriftjava.PackedFeatures;
-import com.twitter.search.common.indexing.thriftjava.VersionedTweetFeatures;
-import com.twitter.search.common.schema.SchemaUtil;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
+i-impowt com.twittew.seawch.common.encoding.featuwes.integewencodedfeatuwes;
+i-impowt c-com.twittew.seawch.common.indexing.thwiftjava.packedfeatuwes;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.vewsionedtweetfeatuwes;
+impowt c-com.twittew.seawch.common.schema.schemautiw;
+i-impowt com.twittew.seawch.common.schema.base.featuweconfiguwation;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
 
 /**
- * A class for encoding earlybird features in integers
+ * a cwass fow encoding eawwybiwd featuwes in i-integews
  */
-public abstract class EarlybirdEncodedFeatures extends IntegerEncodedFeatures {
-  private final ImmutableSchemaInterface schema;
-  private final EarlybirdFieldConstant baseField;
+pubwic abstwact cwass eawwybiwdencodedfeatuwes e-extends integewencodedfeatuwes {
+  p-pwivate finaw immutabweschemaintewface schema;
+  pwivate finaw eawwybiwdfiewdconstant b-basefiewd;
 
-  public EarlybirdEncodedFeatures(ImmutableSchemaInterface schema,
-                                  EarlybirdFieldConstant baseField) {
+  pubwic eawwybiwdencodedfeatuwes(immutabweschemaintewface s-schema,
+                                  e-eawwybiwdfiewdconstant basefiewd) {
     this.schema = schema;
-    this.baseField = baseField;
+    this.basefiewd = basefiewd;
   }
 
   /**
-   * Write this object into packedFeatures of the given VersionedTweetFeatures.
+   * wwite this o-object into packedfeatuwes of the given vewsionedtweetfeatuwes. nyaa~~
    */
-  public void writeFeaturesToVersionedTweetFeatures(
-      VersionedTweetFeatures versionedTweetFeatures) {
-    if (!versionedTweetFeatures.isSetPackedFeatures()) {
-      versionedTweetFeatures.setPackedFeatures(new PackedFeatures());
+  pubwic void wwitefeatuwestovewsionedtweetfeatuwes(
+      v-vewsionedtweetfeatuwes vewsionedtweetfeatuwes) {
+    i-if (!vewsionedtweetfeatuwes.issetpackedfeatuwes()) {
+      v-vewsionedtweetfeatuwes.setpackedfeatuwes(new packedfeatuwes());
     }
-    copyToPackedFeatures(versionedTweetFeatures.getPackedFeatures());
+    c-copytopackedfeatuwes(vewsionedtweetfeatuwes.getpackedfeatuwes());
   }
 
   /**
-   * Write this object into extendedPackedFeatures of the given VersionedTweetFeatures.
+   * w-wwite this object into extendedpackedfeatuwes o-of the given vewsionedtweetfeatuwes. 😳
    */
-  public void writeExtendedFeaturesToVersionedTweetFeatures(
-      VersionedTweetFeatures versionedTweetFeatures) {
-    if (!versionedTweetFeatures.isSetExtendedPackedFeatures()) {
-      versionedTweetFeatures.setExtendedPackedFeatures(new PackedFeatures());
+  pubwic v-void wwiteextendedfeatuwestovewsionedtweetfeatuwes(
+      vewsionedtweetfeatuwes vewsionedtweetfeatuwes) {
+    if (!vewsionedtweetfeatuwes.issetextendedpackedfeatuwes()) {
+      vewsionedtweetfeatuwes.setextendedpackedfeatuwes(new packedfeatuwes());
     }
-    copyToPackedFeatures(versionedTweetFeatures.getExtendedPackedFeatures());
+    copytopackedfeatuwes(vewsionedtweetfeatuwes.getextendedpackedfeatuwes());
   }
 
-  @Override
-  public String toString() {
-    StringBuilder ret = new StringBuilder();
-    ret.append("Tweet features: \n");
-    for (FeatureConfiguration feature
-        : EarlybirdSchemaCreateTool.FEATURE_CONFIGURATION_MAP.values()) {
-      ret.append(feature.getName()).append(": ").append(getFeatureValue(feature)).append("\n");
+  @ovewwide
+  p-pubwic stwing tostwing() {
+    stwingbuiwdew wet = n-nyew stwingbuiwdew();
+    w-wet.append("tweet f-featuwes: \n");
+    fow (featuweconfiguwation featuwe
+        : eawwybiwdschemacweatetoow.featuwe_configuwation_map.vawues()) {
+      w-wet.append(featuwe.getname()).append(": ").append(getfeatuwevawue(featuwe)).append("\n");
     }
-    return ret.toString();
+    w-wetuwn wet.tostwing();
   }
 
-  public boolean isFlagSet(EarlybirdFieldConstant field) {
-    return isFlagSet(schema.getFeatureConfigurationById(field.getFieldId()));
+  p-pubwic boowean i-isfwagset(eawwybiwdfiewdconstant fiewd) {
+    w-wetuwn isfwagset(schema.getfeatuweconfiguwationbyid(fiewd.getfiewdid()));
   }
 
-  public int getFeatureValue(EarlybirdFieldConstant field) {
-    return getFeatureValue(schema.getFeatureConfigurationById(field.getFieldId()));
+  pubwic int g-getfeatuwevawue(eawwybiwdfiewdconstant fiewd) {
+    wetuwn getfeatuwevawue(schema.getfeatuweconfiguwationbyid(fiewd.getfiewdid()));
   }
 
-  public EarlybirdEncodedFeatures setFlag(EarlybirdFieldConstant field) {
-    setFlag(schema.getFeatureConfigurationById(field.getFieldId()));
-    return this;
+  p-pubwic eawwybiwdencodedfeatuwes s-setfwag(eawwybiwdfiewdconstant fiewd) {
+    s-setfwag(schema.getfeatuweconfiguwationbyid(fiewd.getfiewdid()));
+    w-wetuwn this;
   }
 
-  public EarlybirdEncodedFeatures clearFlag(EarlybirdFieldConstant field) {
-    clearFlag(schema.getFeatureConfigurationById(field.getFieldId()));
-    return this;
+  pubwic eawwybiwdencodedfeatuwes cweawfwag(eawwybiwdfiewdconstant fiewd) {
+    cweawfwag(schema.getfeatuweconfiguwationbyid(fiewd.getfiewdid()));
+    wetuwn this;
   }
 
-  public EarlybirdEncodedFeatures setFlagValue(EarlybirdFieldConstant field,
-                                               boolean value) {
-    setFlagValue(schema.getFeatureConfigurationById(field.getFieldId()), value);
-    return this;
+  pubwic e-eawwybiwdencodedfeatuwes s-setfwagvawue(eawwybiwdfiewdconstant fiewd, (⑅˘꒳˘)
+                                               b-boowean vawue) {
+    s-setfwagvawue(schema.getfeatuweconfiguwationbyid(fiewd.getfiewdid()), nyaa~~ v-vawue);
+    wetuwn this;
   }
 
-  public EarlybirdEncodedFeatures setFeatureValue(EarlybirdFieldConstant field,
-                                                  int value) {
-    setFeatureValue(schema.getFeatureConfigurationById(field.getFieldId()), value);
-    return this;
+  pubwic eawwybiwdencodedfeatuwes s-setfeatuwevawue(eawwybiwdfiewdconstant fiewd,
+                                                  int vawue) {
+    setfeatuwevawue(schema.getfeatuweconfiguwationbyid(fiewd.getfiewdid()), OwO vawue);
+    w-wetuwn this;
   }
 
-  public EarlybirdEncodedFeatures setFeatureValueIfGreater(EarlybirdFieldConstant field,
-                                                           int value) {
-    setFeatureValueIfGreater(schema.getFeatureConfigurationById(field.getFieldId()), value);
-    return this;
+  pubwic eawwybiwdencodedfeatuwes s-setfeatuwevawueifgweatew(eawwybiwdfiewdconstant f-fiewd, rawr x3
+                                                           i-int vawue) {
+    setfeatuwevawueifgweatew(schema.getfeatuweconfiguwationbyid(fiewd.getfiewdid()), XD v-vawue);
+    w-wetuwn this;
   }
 
-  public boolean incrementIfNotMaximum(EarlybirdFieldConstant field) {
-    return incrementIfNotMaximum(schema.getFeatureConfigurationById(field.getFieldId()));
+  p-pubwic b-boowean incwementifnotmaximum(eawwybiwdfiewdconstant fiewd) {
+    wetuwn incwementifnotmaximum(schema.getfeatuweconfiguwationbyid(fiewd.getfiewdid()));
   }
 
-  private static final class ArrayEncodedTweetFeatures extends EarlybirdEncodedFeatures {
-    private final int[] encodedInts;
+  p-pwivate static f-finaw cwass awwayencodedtweetfeatuwes e-extends eawwybiwdencodedfeatuwes {
+    p-pwivate f-finaw int[] encodedints;
 
-    private ArrayEncodedTweetFeatures(ImmutableSchemaInterface schema,
-                                      EarlybirdFieldConstant baseField) {
-      super(schema, baseField);
+    pwivate awwayencodedtweetfeatuwes(immutabweschemaintewface schema, σωσ
+                                      e-eawwybiwdfiewdconstant basefiewd) {
+      supew(schema, (U ᵕ U❁) basefiewd);
 
-      final int numIntegers = SchemaUtil.getCSFFieldFixedLength(schema, baseField.getFieldId());
-      Preconditions.checkState(numIntegers > 0);
-      this.encodedInts = new int[numIntegers];
-    }
-
-    @Override
-    public int getNumInts() {
-      return encodedInts.length;
+      finaw int nyumintegews = s-schemautiw.getcsffiewdfixedwength(schema, (U ﹏ U) basefiewd.getfiewdid());
+      pweconditions.checkstate(numintegews > 0);
+      this.encodedints = n-nyew i-int[numintegews];
     }
 
-    @Override
-    public int getInt(int pos) {
-      return encodedInts[pos];
+    @ovewwide
+    p-pubwic int getnumints() {
+      w-wetuwn encodedints.wength;
     }
 
-    @Override
-    public void setInt(int pos, int value) {
-      encodedInts[pos] = value;
+    @ovewwide
+    p-pubwic int getint(int p-pos) {
+      wetuwn encodedints[pos];
+    }
+
+    @ovewwide
+    pubwic void setint(int pos, int vawue) {
+      encodedints[pos] = v-vawue;
     }
   }
 
   /**
-   * Create a new {@link EarlybirdEncodedFeatures} object based on schema and base field.
-   * @param schema the schema for all fields
-   * @param baseField base field's constant value
+   * cweate a nyew {@wink e-eawwybiwdencodedfeatuwes} object based o-on schema and base f-fiewd. :3
+   * @pawam schema the schema fow aww f-fiewds
+   * @pawam b-basefiewd base fiewd's constant v-vawue
    */
-  public static EarlybirdEncodedFeatures newEncodedTweetFeatures(
-      ImmutableSchemaInterface schema, EarlybirdFieldConstant baseField) {
-    return new ArrayEncodedTweetFeatures(schema, baseField);
+  p-pubwic static eawwybiwdencodedfeatuwes nyewencodedtweetfeatuwes(
+      immutabweschemaintewface schema, ( ͡o ω ͡o ) eawwybiwdfiewdconstant b-basefiewd) {
+    w-wetuwn nyew awwayencodedtweetfeatuwes(schema, σωσ b-basefiewd);
   }
 
   /**
-   * Create a new {@link EarlybirdEncodedFeatures} object based on schema and base field name.
-   * @param schema the schema for all fields
-   * @param baseFieldName base field's name
+   * cweate a-a new {@wink e-eawwybiwdencodedfeatuwes} object b-based on schema and base fiewd nyame. >w<
+   * @pawam schema the schema fow aww fiewds
+   * @pawam b-basefiewdname base f-fiewd's nyame
    */
-  public static EarlybirdEncodedFeatures newEncodedTweetFeatures(
-      ImmutableSchemaInterface schema, String baseFieldName) {
-    EarlybirdFieldConstant baseField = EarlybirdFieldConstants.getFieldConstant(baseFieldName);
-    Preconditions.checkNotNull(baseField);
-    return newEncodedTweetFeatures(schema, baseField);
+  pubwic static eawwybiwdencodedfeatuwes n-nyewencodedtweetfeatuwes(
+      i-immutabweschemaintewface schema, 😳😳😳 stwing basefiewdname) {
+    eawwybiwdfiewdconstant b-basefiewd = eawwybiwdfiewdconstants.getfiewdconstant(basefiewdname);
+    pweconditions.checknotnuww(basefiewd);
+    wetuwn nyewencodedtweetfeatuwes(schema, OwO basefiewd);
   }
 }

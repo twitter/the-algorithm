@@ -1,91 +1,91 @@
-JOB = ["job/**/*"]
+job = ["job/**/*"]
 
-scala_library(
-    name = "batch",
-    sources = ["**/*.scala"],
-    platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-only",
+scawa_wibwawy(
+    nyame = "batch", XD
+    s-souwces = ["**/*.scawa"], :3
+    p-pwatfowm = "java8", 😳😳😳
+    t-tags = [
+        "bazew-compatibwe", -.-
+        "bazew-onwy", ( ͡o ω ͡o )
     ],
-    dependencies = [
-        "3rdparty/jvm/cascading:cascading-core",
-        "3rdparty/jvm/cascading:cascading-hadoop",
-        "3rdparty/jvm/cascading:cascading-local",
-        "3rdparty/jvm/cascading:cascading-thrift",
-        "3rdparty/jvm/com/twitter/algebird:core",
-        "3rdparty/jvm/com/twitter/algebird:util",
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "3rdparty/src/jvm/com/twitter/scalding:args",
-        "3rdparty/src/jvm/com/twitter/scalding:commons",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "3rdparty/src/jvm/com/twitter/scalding:date",
-        "3rdparty/src/jvm/com/twitter/scalding:parquet",
-        "3rdparty/src/jvm/com/twitter/summingbird:batch",
-        "3rdparty/src/jvm/com/twitter/summingbird:client",
-        "graphstore/common:flock_follows-java",
-        "src/java/com/twitter/common_internal/util:date_util",
-        "src/java/com/twitter/twadoop/batch",
-        "src/java/com/twitter/twadoop/util/dbconfig",
-        "src/java/com/twitter/twadoop/util/yaml",
-        "src/protobuf/com/twitter/twadoop",
-        "src/scala/com/twitter/pluck",
-        "src/scala/com/twitter/pluck/source/combined_user_source",
-        "src/scala/com/twitter/pluck/source/jdbc",
-        "src/scala/com/twitter/scalding_internal/error_handling",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/multiformat",
-        "src/scala/com/twitter/scalding_internal/source",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:date_util",
-        "src/thrift/com/twitter/gizmoduck:user-thrift-java",
-        "src/thrift/com/twitter/twadoop/user/gen:gen-java",
-        "util/util-core:scala",
+    d-dependencies = [
+        "3wdpawty/jvm/cascading:cascading-cowe", rawr x3
+        "3wdpawty/jvm/cascading:cascading-hadoop", nyaa~~
+        "3wdpawty/jvm/cascading:cascading-wocaw", /(^•ω•^)
+        "3wdpawty/jvm/cascading:cascading-thwift", rawr
+        "3wdpawty/jvm/com/twittew/awgebiwd:cowe", OwO
+        "3wdpawty/jvm/com/twittew/awgebiwd:utiw", (U ﹏ U)
+        "3wdpawty/jvm/com/twittew/stowehaus:awgebwa", >_<
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", rawr x3
+        "3wdpawty/swc/jvm/com/twittew/scawding:awgs", mya
+        "3wdpawty/swc/jvm/com/twittew/scawding:commons", nyaa~~
+        "3wdpawty/swc/jvm/com/twittew/scawding:cowe", (⑅˘꒳˘)
+        "3wdpawty/swc/jvm/com/twittew/scawding:date", rawr x3
+        "3wdpawty/swc/jvm/com/twittew/scawding:pawquet", (✿oωo)
+        "3wdpawty/swc/jvm/com/twittew/summingbiwd:batch", (ˆ ﻌ ˆ)♡
+        "3wdpawty/swc/jvm/com/twittew/summingbiwd:cwient", (˘ω˘)
+        "gwaphstowe/common:fwock_fowwows-java", (⑅˘꒳˘)
+        "swc/java/com/twittew/common_intewnaw/utiw:date_utiw", (///ˬ///✿)
+        "swc/java/com/twittew/twadoop/batch", 😳😳😳
+        "swc/java/com/twittew/twadoop/utiw/dbconfig", 🥺
+        "swc/java/com/twittew/twadoop/utiw/yamw", mya
+        "swc/pwotobuf/com/twittew/twadoop",
+        "swc/scawa/com/twittew/pwuck", 🥺
+        "swc/scawa/com/twittew/pwuck/souwce/combined_usew_souwce", >_<
+        "swc/scawa/com/twittew/pwuck/souwce/jdbc", >_<
+        "swc/scawa/com/twittew/scawding_intewnaw/ewwow_handwing", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/scawding_intewnaw/job", /(^•ω•^)
+        "swc/scawa/com/twittew/scawding_intewnaw/job/anawytics_batch", rawr x3
+        "swc/scawa/com/twittew/scawding_intewnaw/muwtifowmat", (U ﹏ U)
+        "swc/scawa/com/twittew/scawding_intewnaw/souwce", (U ﹏ U)
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:date_utiw", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/gizmoduck:usew-thwift-java", òωó
+        "swc/thwift/com/twittew/twadoop/usew/gen:gen-java", ʘwʘ
+        "utiw/utiw-cowe:scawa", /(^•ω•^)
     ],
 )
 
-#pants.new build target for the old "dist"
-hadoop_binary(
-    name = "graph-batch-deploy",
-    main = "com.twitter.scalding.Tool",
-    platform = "java8",
-    runtime_platform = "java8",
+#pants.new b-buiwd tawget fow t-the owd "dist"
+h-hadoop_binawy(
+    n-nyame = "gwaph-batch-depwoy", ʘwʘ
+    main = "com.twittew.scawding.toow", σωσ
+    pwatfowm = "java8", OwO
+    wuntime_pwatfowm = "java8", 😳😳😳
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", 😳😳😳
+        "bazew-compatibwe:migwated", o.O
+        "bazew-onwy", ( ͡o ω ͡o )
     ],
-    dependencies = [
-        ":tweepcred",
+    d-dependencies = [
+        ":tweepcwed", (U ﹏ U)
     ],
 )
 
-# Generated with `capesospy-v2 create_target tweepcred_job science/scalding/mesos/wtf/recos_platform_atla_proc.yaml`, config hash d63a47.
-scalding_job(
-    name = "tweepcred_job",
-    main = "com.twitter.graph.batch.job.tweepcred.TweepcredBatchJob",
-    args = ["--weighted false --hadoop_config /etc/hadoop/hadoop-conf-proc-atla"],
+# genewated with `capesospy-v2 cweate_tawget tweepcwed_job s-science/scawding/mesos/wtf/wecos_pwatfowm_atwa_pwoc.yamw`, (///ˬ///✿) config hash d-d63a47. >w<
+scawding_job(
+    nyame = "tweepcwed_job", rawr
+    main = "com.twittew.gwaph.batch.job.tweepcwed.tweepcwedbatchjob", mya
+    awgs = ["--weighted f-fawse --hadoop_config /etc/hadoop/hadoop-conf-pwoc-atwa"], ^^
     config = [
-        ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
-        ("hadoop.queue", "cassowary.default"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.reducers", "1200"),
-        ("hadoop.submitter.disk", "200000m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
-    ],
-    cron = "24,44,04 * * * *",
-    hadoop_cluster = "atla-proc",
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
+        ("hadoop.combine-input", 😳😳😳 "twue"),
+        ("hadoop.map.jvm.totaw-memowy", mya "3072m"), 😳
+        ("hadoop.queue", -.- "cassowawy.defauwt"), 🥺
+        ("hadoop.weduce.jvm.totaw-memowy", o.O "3072m"), /(^•ω•^)
+        ("hadoop.weducews", nyaa~~ "1200"),
+        ("hadoop.submittew.disk", nyaa~~ "200000m"), :3
+        ("hadoop.submittew.jvm.totaw-memowy", 😳😳😳 "5120m"), (˘ω˘)
+        ("submittew.tiew", ^^ "pweemptibwe"), :3
+    ], -.-
+    cwon = "24,44,04 * * * *", 😳
+    h-hadoop_cwustew = "atwa-pwoc", mya
+    p-pwatfowm = "java8",
+    wowe = "cassowawy", (˘ω˘)
+    wuntime_pwatfowm = "java8", >_<
     tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+        "bazew-compatibwe:migwated", -.-
+        "bazew-onwy",
+    ], 🥺
     dependencies = [
-        ":tweepcred",
+        ":tweepcwed", (U ﹏ U)
     ],
 )

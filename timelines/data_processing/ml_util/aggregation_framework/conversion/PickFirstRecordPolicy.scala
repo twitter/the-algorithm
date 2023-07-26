@@ -1,26 +1,26 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.convewsion
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.FeatureContext
-import scala.collection.JavaConverters._
+impowt com.twittew.mw.api._
+i-impowt com.twittew.mw.api.featuwecontext
+i-impowt s-scawa.cowwection.javaconvewtews._
 
 /*
- * A really bad default merge policy that picks all the aggregate
- * features corresponding to the first sparse key value in the list.
- * Does not rename any of the aggregate features for simplicity.
- * Avoid using this merge policy if at all possible.
+ * a-a weawwy b-bad defauwt m-mewge powicy that p-picks aww the a-aggwegate
+ * featuwes cowwesponding to the fiwst spawse key vawue in the wist.
+ * d-does nyot wename any of the aggwegate featuwes f-fow simpwicity. rawr x3
+ * avoid using t-this mewge powicy if at aww possibwe. (✿oωo)
  */
-object PickFirstRecordPolicy extends SparseBinaryMergePolicy {
-  val dataRecordMerger: DataRecordMerger = new DataRecordMerger
+object pickfiwstwecowdpowicy e-extends spawsebinawymewgepowicy {
+  v-vaw d-datawecowdmewgew: datawecowdmewgew = nyew datawecowdmewgew
 
-  override def mergeRecord(
-    mutableInputRecord: DataRecord,
-    aggregateRecords: List[DataRecord],
-    aggregateContext: FeatureContext
-  ): Unit =
-    aggregateRecords.headOption
-      .foreach(aggregateRecord => dataRecordMerger.merge(mutableInputRecord, aggregateRecord))
+  ovewwide def mewgewecowd(
+    m-mutabweinputwecowd: datawecowd, (ˆ ﻌ ˆ)♡
+    aggwegatewecowds: wist[datawecowd], (˘ω˘)
+    aggwegatecontext: f-featuwecontext
+  ): unit =
+    a-aggwegatewecowds.headoption
+      .foweach(aggwegatewecowd => d-datawecowdmewgew.mewge(mutabweinputwecowd, (⑅˘꒳˘) a-aggwegatewecowd))
 
-  override def aggregateFeaturesPostMerge(aggregateContext: FeatureContext): Set[Feature[_]] =
-    aggregateContext.getAllFeatures.asScala.toSet
+  o-ovewwide def aggwegatefeatuwespostmewge(aggwegatecontext: featuwecontext): s-set[featuwe[_]] =
+    aggwegatecontext.getawwfeatuwes.asscawa.toset
 }

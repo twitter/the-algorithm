@@ -1,21 +1,21 @@
-scala_library(
-    sources = [
-        "UnifiedUserActionsSourceScrooge.scala",
-    ],
-    compiler_option_sets = ["fatal_warnings"],
-    # Our runtime is using Java 11, but for compatibility with other internal libraries that
-    # are still on Java 8, we'll make our target platform to be Java 8 as well until everyone can
-    # migrate.
-    platform = "java8",
-    tags = ["bazel-compatible"],
+scawa_wibwawy(
+    souwces = [
+        "unifiedusewactionssouwcescwooge.scawa", >_<
+    ], :3
+    compiwew_option_sets = ["fataw_wawnings"], (U ﹏ U)
+    # o-ouw wuntime i-is using j-java 11, -.- but fow c-compatibiwity with o-othew intewnaw w-wibwawies that
+    # a-awe stiww o-on java 8, (ˆ ﻌ ˆ)♡ we'ww make ouw tawget pwatfowm to be java 8 as weww untiw evewyone c-can
+    # migwate. (⑅˘꒳˘)
+    pwatfowm = "java8", (U ᵕ U❁)
+    tags = ["bazew-compatibwe"], -.-
     dependencies = [
-        "3rdparty/src/jvm/com/twitter/summingbird:core",
-        "3rdparty/src/jvm/com/twitter/summingbird:storm",
-        "3rdparty/src/jvm/com/twitter/tormenta:core",
-        "src/scala/com/twitter/summingbird_internal/sources/common",
-        "src/scala/com/twitter/tormenta_internal/scheme",
-        "src/scala/com/twitter/tormenta_internal/spout:kafka2",
-        "unified_user_actions/client/src/main/scala/com/twitter/unified_user_actions/client/config",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
+        "3wdpawty/swc/jvm/com/twittew/summingbiwd:cowe", ^^;;
+        "3wdpawty/swc/jvm/com/twittew/summingbiwd:stowm", >_<
+        "3wdpawty/swc/jvm/com/twittew/towmenta:cowe", mya
+        "swc/scawa/com/twittew/summingbiwd_intewnaw/souwces/common", mya
+        "swc/scawa/com/twittew/towmenta_intewnaw/scheme", 😳
+        "swc/scawa/com/twittew/towmenta_intewnaw/spout:kafka2", XD
+        "unified_usew_actions/cwient/swc/main/scawa/com/twittew/unified_usew_actions/cwient/config",
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", :3
     ],
 )

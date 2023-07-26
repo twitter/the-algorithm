@@ -1,543 +1,543 @@
 """
-This module contains the experiment tracker for tracking training in ML Metastore
+this moduwe contains the expewiment t-twackew fow t-twacking twaining i-in mw metastowe
 """
-from contextlib import contextmanager
-from datetime import datetime
-import getpass
-import hashlib
-import os
-import re
-import sys
-import time
+f-fwom contextwib i-impowt c-contextmanagew
+fwom d-datetime impowt d-datetime
+impowt getpass
+impowt hashwib
+impowt os
+impowt we
+impowt sys
+impowt t-time
 
-from absl import logging
-import tensorflow.compat.v1 as tf
-from twml.hooks import MetricsUpdateHook
-
-
-try:
-  from urllib import quote as encode_url
-except ImportError:
-  from urllib.parse import quote as encode_url
+fwom absw impowt wogging
+impowt tensowfwow.compat.v1 a-as tf
+fwom twmw.hooks i-impowt metwicsupdatehook
 
 
-try:
-  # ML Metastore packages might not be available on GCP.
-  # If they are not found, tracking is disabled
-  import requests
-  from com.twitter.mlmetastore.modelrepo.client import ModelRepoClient
-  from com.twitter.mlmetastore.modelrepo.core.path import (
-    check_valid_id, get_components_from_id, generate_id)
-  from com.twitter.mlmetastore.modelrepo.core import (
-    DeepbirdRun, Experiment, FeatureConfig, FeatureConfigFeature, Model, ProgressReport, Project, StatusUpdate)
-except ImportError:
-  ModelRepoClient = None
+twy:
+  fwom uwwwib impowt quote as e-encode_uww
+except impowtewwow:
+  f-fwom uwwwib.pawse i-impowt quote as encode_uww
 
 
-class ExperimentTracker(object):
+twy:
+  # mw metastowe packages might nyot be avaiwabwe o-on gcp. XD
+  # if they awe nyot found, (⑅˘꒳˘) twacking is disabwed
+  impowt wequests
+  f-fwom com.twittew.mwmetastowe.modewwepo.cwient impowt modewwepocwient
+  f-fwom c-com.twittew.mwmetastowe.modewwepo.cowe.path i-impowt (
+    c-check_vawid_id, nyaa~~ get_components_fwom_id, UwU genewate_id)
+  f-fwom com.twittew.mwmetastowe.modewwepo.cowe impowt (
+    deepbiwdwun, e-expewiment, (˘ω˘) featuweconfig, rawr x3 featuweconfigfeatuwe, (///ˬ///✿) modew, pwogwesswepowt, 😳😳😳 pwoject, (///ˬ///✿) statusupdate)
+e-except impowtewwow:
+  modewwepocwient = n-nyone
+
+
+c-cwass expewimenttwackew(object):
   """
-  A tracker that records twml runs in ML Metastore.
+  a-a twackew that wecowds twmw wuns in mw metastowe. ^^;;
   """
 
-  def __init__(self, params, run_config, save_dir):
+  d-def __init__(sewf, ^^ p-pawams, wun_config, (///ˬ///✿) s-save_diw):
     """
 
-    Args:
-      params (python dict):
-        The trainer params. ExperimentTracker uses `params.experiment_tracking_path` (String) and
-        `params.disable_experiment_tracking`.
-        If `experiment_tracking_path` is set to None, the tracker tries to guess a path with
-        save_dir.
-        If `disable_experiment_tracking` is True, the tracker is disabled.
-      run_config (tf.estimator.RunConfig):
-        The run config used by the estimator.
-      save_dir (str):
-        save_dir of the trainer
+    a-awgs:
+      pawams (python d-dict):
+        the twainew pawams. -.- e-expewimenttwackew uses `pawams.expewiment_twacking_path` (stwing) and
+        `pawams.disabwe_expewiment_twacking`. /(^•ω•^)
+        i-if `expewiment_twacking_path` is set to nyone, UwU t-the twackew twies to guess a path w-with
+        s-save_diw. (⑅˘꒳˘)
+        if `disabwe_expewiment_twacking` is twue, ʘwʘ the twackew is disabwed. σωσ
+      wun_config (tf.estimatow.wunconfig):
+        the wun config used by the e-estimatow. ^^
+      s-save_diw (stw):
+        save_diw o-of the twainew
     """
-    if isinstance(params, dict):
-      self._params = params
-    else:
-      # preserving backward compatibility for people still using HParams
-      logging.warning("Please stop using HParams and use python dicts. HParams are removed in TF 2")
-      self._params = dict((k, v) for k, v in params.values().items() if v != 'null')
-    self._run_config = run_config
-    self._graceful_shutdown_port = self._params.get('health_port')
+    i-if isinstance(pawams, OwO d-dict):
+      sewf._pawams = pawams
+    ewse:
+      # pwesewving b-backwawd compatibiwity fow peopwe stiww using hpawams
+      wogging.wawning("pwease s-stop using hpawams and u-use python dicts. (ˆ ﻌ ˆ)♡ h-hpawams awe wemoved i-in tf 2")
+      sewf._pawams = d-dict((k, o.O v) f-fow k, (˘ω˘) v in pawams.vawues().items() i-if v != 'nuww')
+    s-sewf._wun_config = wun_config
+    sewf._gwacefuw_shutdown_powt = s-sewf._pawams.get('heawth_powt')
 
-    self.tracking_path = self._params.get('experiment_tracking_path')
-    is_tracking_path_too_long = self.tracking_path is not None and len(self.tracking_path) > 256
+    s-sewf.twacking_path = s-sewf._pawams.get('expewiment_twacking_path')
+    i-is_twacking_path_too_wong = s-sewf.twacking_path is nyot nyone and wen(sewf.twacking_path) > 256
 
-    if is_tracking_path_too_long:
-      raise ValueError("Experiment Tracking Path longer than 256 characters")
+    if is_twacking_path_too_wong:
+      w-waise vawueewwow("expewiment twacking path wongew than 256 chawactews")
 
-    self.disabled = (
-      self._params.get('disable_experiment_tracking', False) or
-      not self._is_env_eligible_for_tracking() or
-      ModelRepoClient is None
+    sewf.disabwed = (
+      s-sewf._pawams.get('disabwe_expewiment_twacking', 😳 fawse) ow
+      nyot sewf._is_env_ewigibwe_fow_twacking() ow
+      m-modewwepocwient i-is nyone
     )
 
-    self._is_hogwild = bool(os.environ.get('TWML_HOGWILD_PORTS'))
+    s-sewf._is_hogwiwd = boow(os.enviwon.get('twmw_hogwiwd_powts'))
 
-    self._is_distributed = bool(os.environ.get('TF_CONFIG'))
+    s-sewf._is_distwibuted = boow(os.enviwon.get('tf_config'))
 
-    self._client = None if self.disabled else ModelRepoClient()
+    s-sewf._cwient = n-nyone if sewf.disabwed ewse modewwepocwient()
 
-    run_name_from_environ = self.run_name_from_environ()
-    run_name_can_be_inferred = (
-      self.tracking_path is not None or run_name_from_environ is not None)
+    wun_name_fwom_enviwon = sewf.wun_name_fwom_enviwon()
+    wun_name_can_be_infewwed = (
+      s-sewf.twacking_path is nyot n-nyone ow wun_name_fwom_enviwon is nyot none)
 
-    # Turn the flags off as needed in hogwild / distributed
-    if self._is_hogwild or self._is_distributed:
-      self._env_eligible_for_recording_experiment = (
-        self._run_config.task_type == "evaluator")
-      if run_name_can_be_inferred:
-        self._env_eligible_for_recording_export_metadata = (
-          self._run_config.task_type == "chief")
-      else:
-        logging.info(
-          'experiment_tracking_path is not set and can not be inferred. '
-          'Recording export metadata is disabled because the chief node and eval node '
-          'are setting different experiment tracking paths.')
-        self._env_eligible_for_recording_export_metadata = False
-    else:
-      # Defaults to True
-      self._env_eligible_for_recording_experiment = True
-      self._env_eligible_for_recording_export_metadata = True
+    # t-tuwn the f-fwags off as nyeeded in hogwiwd / distwibuted
+    i-if sewf._is_hogwiwd o-ow sewf._is_distwibuted:
+      sewf._env_ewigibwe_fow_wecowding_expewiment = (
+        s-sewf._wun_config.task_type == "evawuatow")
+      if w-wun_name_can_be_infewwed:
+        sewf._env_ewigibwe_fow_wecowding_expowt_metadata = (
+          sewf._wun_config.task_type == "chief")
+      ewse:
+        wogging.info(
+          'expewiment_twacking_path is nyot set and c-can nyot be infewwed. (U ᵕ U❁) '
+          'wecowding e-expowt m-metadata is disabwed because t-the chief nyode a-and evaw nyode '
+          'awe setting diffewent e-expewiment twacking paths.')
+        sewf._env_ewigibwe_fow_wecowding_expowt_metadata = fawse
+    ewse:
+      # d-defauwts to twue
+      s-sewf._env_ewigibwe_fow_wecowding_expewiment = twue
+      sewf._env_ewigibwe_fow_wecowding_expowt_metadata = t-twue
 
-    if not self.disabled:
-      # Sanitize passed in experiment tracking paths. e.g. own:proJ:exp:Run.Name
-      # -> own:proj:exp:Run_Name
-      if self.tracking_path:
-        try:
-          check_valid_id(self.tracking_path)
-        except ValueError as err:
-          logging.error(f'Invalid experiment tracking path provided. Sanitizing: {self.tracking_path}\nError: {err}')
-          self.tracking_path = generate_id(
-            owner=self.path['owner'],
-            project_name=self.path['project_name'],
-            experiment_name=self.path['experiment_name'],
-            run_name=self.path['run_name']
+    i-if nyot sewf.disabwed:
+      # sanitize passed in expewiment twacking paths. :3 e.g. o.O o-own:pwoj:exp:wun.name
+      # -> own:pwoj:exp:wun_name
+      if sewf.twacking_path:
+        twy:
+          check_vawid_id(sewf.twacking_path)
+        e-except vawueewwow as eww:
+          wogging.ewwow(f'invawid e-expewiment twacking p-path pwovided. (///ˬ///✿) sanitizing: {sewf.twacking_path}\newwow: {eww}')
+          sewf.twacking_path = genewate_id(
+            o-ownew=sewf.path['ownew'], OwO
+            p-pwoject_name=sewf.path['pwoject_name'], >w<
+            expewiment_name=sewf.path['expewiment_name'], ^^
+            wun_name=sewf.path['wun_name']
           )
-          logging.error(f'Generated sanitized experiment tracking path: {self.tracking_path}')
-      else:
-        logging.info(
-          'No experiment_tracking_path set. Experiment Tracker will try to guess a path')
-        self.tracking_path = self.guess_path(save_dir, run_name_from_environ)
-        logging.info('Guessed path: %s', self.tracking_path)
+          wogging.ewwow(f'genewated s-sanitized expewiment twacking p-path: {sewf.twacking_path}')
+      ewse:
+        wogging.info(
+          'no expewiment_twacking_path s-set. expewiment twackew wiww t-twy to guess a-a path')
+        sewf.twacking_path = s-sewf.guess_path(save_diw, (⑅˘꒳˘) wun_name_fwom_enviwon)
+        w-wogging.info('guessed p-path: %s', ʘwʘ s-sewf.twacking_path)
 
-      # additional check to see if generated path is valid
-      try:
-        check_valid_id(self.tracking_path)
-      except ValueError as err:
-        logging.error(
-          'Could not generate valid experiment tracking path. Disabling tracking. ' +
-          'Error:\n{}'.format(err)
+      # additionaw c-check to s-see if genewated path is vawid
+      twy:
+        c-check_vawid_id(sewf.twacking_path)
+      e-except v-vawueewwow as eww:
+        wogging.ewwow(
+          'couwd nyot genewate vawid e-expewiment twacking path. (///ˬ///✿) disabwing t-twacking. XD ' +
+          'ewwow:\n{}'.fowmat(eww)
         )
-        self.disabled = True
+        s-sewf.disabwed = twue
 
-    self.project_id = None if self.disabled else '{}:{}'.format(
-      self.path['owner'], self.path['project_name'])
-    self.base_run_id = None if self.disabled else self.tracking_path
-    self._current_run_name_suffix = None
+    sewf.pwoject_id = nyone if sewf.disabwed e-ewse '{}:{}'.fowmat(
+      s-sewf.path['ownew'], s-sewf.path['pwoject_name'])
+    s-sewf.base_wun_id = nyone i-if sewf.disabwed ewse sewf.twacking_path
+    sewf._cuwwent_wun_name_suffix = nyone
 
-    self._current_tracker_hook = None
+    sewf._cuwwent_twackew_hook = nyone
 
-    if self.disabled:
-      logging.info('Experiment Tracker is disabled')
-    else:
-      logging.info('Experiment Tracker initialized with base run id: %s', self.base_run_id)
+    if sewf.disabwed:
+      w-wogging.info('expewiment twackew is d-disabwed')
+    ewse:
+      wogging.info('expewiment t-twackew initiawized with base w-wun id: %s', 😳 sewf.base_wun_id)
 
-  @contextmanager
-  def track_experiment(self, eval_hooks, get_estimator_spec_fn, name=None):
+  @contextmanagew
+  def twack_expewiment(sewf, >w< e-evaw_hooks, (˘ω˘) get_estimatow_spec_fn, nyaa~~ n-nyame=none):
     """
-    A context manager for tracking experiment. It should wrap the training loop.
-    An experiment tracker eval hook is appended to eval_hooks to collect metrics.
+    a-a context m-managew fow t-twacking expewiment. 😳😳😳 it shouwd wwap the twaining woop. (U ﹏ U)
+    an expewiment twackew evaw hook is appended to evaw_hooks t-to cowwect m-metwics. (˘ω˘)
 
-    Args:
-      eval_hooks (list):
-        The list of eval_hooks to be used. When it's not None, and does not contain any ,
-        MetricsUpdateHook an experiment tracker eval hook is appended to it. When it contains
-        any MetricsUpdateHook, this tracker is disabled to avoid conflict with legacy Model Repo
-        tracker (`TrackRun`).
-      get_estimator_spec_fn (func):
-        A function to get the current EstimatorSpec of the trainer, used by the eval hook.
-      name (str);
-        Name of this training or evaluation. Used as a suffix of the run_id.
+    a-awgs:
+      evaw_hooks (wist):
+        the wist o-of evaw_hooks to be used. :3 when it's nyot nyone, >w< and does nyot contain a-any , ^^
+        m-metwicsupdatehook an expewiment t-twackew evaw hook is appended to it. 😳😳😳 when it c-contains
+        a-any metwicsupdatehook, nyaa~~ this twackew i-is disabwed t-to avoid confwict with wegacy modew wepo
+        twackew (`twackwun`). (⑅˘꒳˘)
+      get_estimatow_spec_fn (func):
+        a-a function t-to get the cuwwent e-estimatowspec o-of the twainew, :3 u-used by the evaw hook. ʘwʘ
+      nyame (stw);
+        n-nyame of this t-twaining ow evawuation. rawr x3 used as a-a suffix of the w-wun_id. (///ˬ///✿)
 
-    Returns:
-      The tracker's eval hook which is appended to eval_hooks.
+    wetuwns:
+      the t-twackew's evaw hook which is appended to evaw_hooks. 😳😳😳
     """
 
-    # disable this tracker if legacy TrackRun hook is present
-    # TODO: remove this once we completely deprecate the old TrackRun interface
-    if eval_hooks is not None:
-      self.disabled = self.disabled or any(isinstance(x, MetricsUpdateHook) for x in eval_hooks)
+    # d-disabwe this twackew if wegacy t-twackwun hook i-is pwesent
+    # todo: wemove t-this once we compwetewy depwecate the owd twackwun i-intewface
+    i-if evaw_hooks i-is nyot nyone:
+      sewf.disabwed = sewf.disabwed ow any(isinstance(x, XD m-metwicsupdatehook) fow x in evaw_hooks)
 
-    logging.info('Is environment eligible for recording experiment: %s',
-                 self._env_eligible_for_recording_experiment)
+    w-wogging.info('is e-enviwonment ewigibwe fow wecowding e-expewiment: %s', >_<
+                 sewf._env_ewigibwe_fow_wecowding_expewiment)
 
-    if self._env_eligible_for_recording_experiment and self._graceful_shutdown_port:
-      requests.post('http://localhost:{}/track_training_start'.format(
-        self._graceful_shutdown_port
+    i-if s-sewf._env_ewigibwe_fow_wecowding_expewiment and sewf._gwacefuw_shutdown_powt:
+      w-wequests.post('http://wocawhost:{}/twack_twaining_stawt'.fowmat(
+        sewf._gwacefuw_shutdown_powt
       ))
 
-    if self.disabled or eval_hooks is None:
-      yield None
-    else:
-      assert self._current_tracker_hook is None, 'experiment tracking has been started already'
+    if sewf.disabwed o-ow evaw_hooks i-is nyone:
+      yiewd nyone
+    e-ewse:
+      assewt sewf._cuwwent_twackew_hook i-is nyone, >w< 'expewiment t-twacking h-has been stawted awweady'
 
-      if name is not None:
-        self._current_run_name_suffix = '_' + name
+      if nyame is nyot nyone:
+        sewf._cuwwent_wun_name_suffix = '_' + nyame
 
-      logging.info('Starting experiment tracking. Path: %s', self._current_run_id)
-      logging.info('Is environment eligible for recording export metadata: %s',
-                   self._env_eligible_for_recording_export_metadata)
-      logging.info('This run will be available at: http://go/mldash/experiments/%s',
-                   encode_url(self.experiment_id))
+      wogging.info('stawting expewiment twacking. /(^•ω•^) path: %s', sewf._cuwwent_wun_id)
+      wogging.info('is enviwonment ewigibwe fow wecowding expowt m-metadata: %s', :3
+                   s-sewf._env_ewigibwe_fow_wecowding_expowt_metadata)
+      wogging.info('this wun wiww be avaiwabwe a-at: http://go/mwdash/expewiments/%s', ʘwʘ
+                   e-encode_uww(sewf.expewiment_id))
 
-      try:
-        self._record_run()
-        self._add_run_status(StatusUpdate(self._current_run_id, status='RUNNING'))
-        self._register_for_graceful_shutdown()
+      t-twy:
+        sewf._wecowd_wun()
+        s-sewf._add_wun_status(statusupdate(sewf._cuwwent_wun_id, (˘ω˘) status='wunning'))
+        s-sewf._wegistew_fow_gwacefuw_shutdown()
 
-        self._current_tracker_hook = self.create_eval_hook(get_estimator_spec_fn)
-      except Exception as err:
-        logging.error(
-          'Failed to record run. This experiment will not be tracked. Error: %s', str(err))
-        self._current_tracker_hook = None
+        s-sewf._cuwwent_twackew_hook = sewf.cweate_evaw_hook(get_estimatow_spec_fn)
+      e-except exception as eww:
+        w-wogging.ewwow(
+          'faiwed t-to wecowd wun. (ꈍᴗꈍ) this expewiment wiww nyot be t-twacked. ^^ ewwow: %s', s-stw(eww))
+        s-sewf._cuwwent_twackew_hook = n-none
 
-      if self._current_tracker_hook is None:
-        yield None
-      else:
-        try:
-          eval_hooks.append(self._current_tracker_hook)
-          yield self._current_tracker_hook
-        except Exception as err:
-          self._add_run_status(
-            StatusUpdate(self._current_run_id, status='FAILED', description=str(err)))
-          self._deregister_for_graceful_shutdown()
-          self._current_tracker_hook = None
-          self._current_run_name_suffix = None
-          logging.error('Experiment tracking done. Experiment failed.')
-          raise
+      i-if sewf._cuwwent_twackew_hook i-is nyone:
+        y-yiewd nyone
+      e-ewse:
+        t-twy:
+          evaw_hooks.append(sewf._cuwwent_twackew_hook)
+          y-yiewd sewf._cuwwent_twackew_hook
+        e-except exception a-as eww:
+          sewf._add_wun_status(
+            s-statusupdate(sewf._cuwwent_wun_id, ^^ status='faiwed', ( ͡o ω ͡o ) descwiption=stw(eww)))
+          s-sewf._dewegistew_fow_gwacefuw_shutdown()
+          sewf._cuwwent_twackew_hook = nyone
+          s-sewf._cuwwent_wun_name_suffix = n-nyone
+          w-wogging.ewwow('expewiment twacking done. -.- e-expewiment faiwed.')
+          w-waise
 
-        try:
-          if self._current_tracker_hook.metric_values:
-            self._record_update(self._current_tracker_hook.metric_values)
-          self._add_run_status(StatusUpdate(self._current_run_id, status='SUCCESS'))
-          logging.info('Experiment tracking done. Experiment succeeded.')
-        except Exception as err:
-          logging.error(
-            'Failed to update mark run as successful. Error: %s', str(err))
-        finally:
-          self._deregister_for_graceful_shutdown()
-          self._current_tracker_hook = None
-          self._current_run_name_suffix = None
+        twy:
+          i-if sewf._cuwwent_twackew_hook.metwic_vawues:
+            sewf._wecowd_update(sewf._cuwwent_twackew_hook.metwic_vawues)
+          s-sewf._add_wun_status(statusupdate(sewf._cuwwent_wun_id, ^^;; status='success'))
+          wogging.info('expewiment twacking done. ^•ﻌ•^ expewiment succeeded.')
+        e-except exception as eww:
+          w-wogging.ewwow(
+            'faiwed t-to update mawk wun as successfuw. (˘ω˘) ewwow: %s', o.O stw(eww))
+        f-finawwy:
+          sewf._dewegistew_fow_gwacefuw_shutdown()
+          s-sewf._cuwwent_twackew_hook = n-nyone
+          s-sewf._cuwwent_wun_name_suffix = nyone
 
-  def create_eval_hook(self, get_estimator_spec_fn):
+  def cweate_evaw_hook(sewf, (✿oωo) g-get_estimatow_spec_fn):
     """
-    Create an eval_hook to track eval metrics
+    c-cweate an evaw_hook to twack evaw m-metwics
 
-    Args:
-      get_estimator_spec_fn (func):
-        A function that returns the current EstimatorSpec of the trainer.
+    awgs:
+      get_estimatow_spec_fn (func):
+        a function that w-wetuwns the cuwwent estimatowspec o-of the twainew. 😳😳😳
     """
-    return MetricsUpdateHook(
-      get_estimator_spec_fn=get_estimator_spec_fn,
-      add_metrics_fn=self._record_update)
+    w-wetuwn metwicsupdatehook(
+      g-get_estimatow_spec_fn=get_estimatow_spec_fn, (ꈍᴗꈍ)
+      add_metwics_fn=sewf._wecowd_update)
 
-  def register_model(self, export_path):
+  d-def wegistew_modew(sewf, σωσ e-expowt_path):
     """
-    Record the exported model.
+    w-wecowd t-the expowted modew. UwU
 
-    Args:
-      export_path (str):
-        The path to the exported model.
+    awgs:
+      e-expowt_path (stw):
+        t-the path to t-the expowted modew. ^•ﻌ•^
     """
-    if self.disabled:
-      return None
+    i-if sewf.disabwed:
+      w-wetuwn nyone
 
-    try:
-      logging.info('Model is exported to %s. Computing hash of the model.', export_path)
-      model_hash = self.compute_model_hash(export_path)
-      logging.info('Model hash: %s. Registering it in ML Metastore.', model_hash)
-      self._client.register_model(Model(model_hash, self.path['owner'], self.base_run_id))
-    except Exception as err:
-      logging.error('Failed to register model. Error: %s', str(err))
+    t-twy:
+      w-wogging.info('modew i-is expowted to %s. mya computing h-hash of the modew.', /(^•ω•^) expowt_path)
+      m-modew_hash = sewf.compute_modew_hash(expowt_path)
+      w-wogging.info('modew h-hash: %s. rawr w-wegistewing it in mw metastowe.', nyaa~~ modew_hash)
+      sewf._cwient.wegistew_modew(modew(modew_hash, ( ͡o ω ͡o ) s-sewf.path['ownew'], σωσ s-sewf.base_wun_id))
+    e-except exception as eww:
+      wogging.ewwow('faiwed to wegistew m-modew. (✿oωo) ewwow: %s', (///ˬ///✿) s-stw(eww))
 
-  def export_feature_spec(self, feature_spec_dict):
+  def expowt_featuwe_spec(sewf, σωσ f-featuwe_spec_dict):
     """
-    Export feature spec to ML Metastore (go/ml-metastore).
+    e-expowt featuwe spec to mw metastowe (go/mw-metastowe). UwU
 
-    Please note that the feature list in FeatureConfig only keeps the list of feature hash ids due
-    to the 1mb upper limit for values in manhattan, and more specific information (feature type,
-    feature name) for each feature config feature is stored separately in FeatureConfigFeature dataset.
+    pwease nyote that the f-featuwe wist in f-featuweconfig o-onwy keeps the wist o-of featuwe hash ids due
+    to the 1mb uppew w-wimit fow vawues i-in manhattan, (⑅˘꒳˘) and mowe specific infowmation (featuwe t-type, /(^•ω•^)
+    featuwe nyame) fow each featuwe c-config featuwe is stowed sepawatewy i-in featuweconfigfeatuwe d-dataset. -.-
 
-    Args:
-       feature_spec_dict (dict): A dictionary obtained from FeatureConfig.get_feature_spec()
+    awgs:
+       f-featuwe_spec_dict (dict): a-a dictionawy obtained fwom featuweconfig.get_featuwe_spec()
     """
-    if self.disabled or not self._env_eligible_for_recording_export_metadata:
-      return None
+    i-if sewf.disabwed ow nyot s-sewf._env_ewigibwe_fow_wecowding_expowt_metadata:
+      w-wetuwn n-nyone
 
-    try:
-      logging.info('Exporting feature spec to ML Metastore.')
-      feature_list = feature_spec_dict['features']
-      label_list = feature_spec_dict['labels']
-      weight_list = feature_spec_dict['weight']
-      self._client.add_feature_config(FeatureConfig(self._current_run_id, list(feature_list.keys()),
-                                                    list(label_list.keys()), list(weight_list.keys())))
+    twy:
+      w-wogging.info('expowting featuwe spec to m-mw metastowe.')
+      f-featuwe_wist = f-featuwe_spec_dict['featuwes']
+      wabew_wist = f-featuwe_spec_dict['wabews']
+      weight_wist = featuwe_spec_dict['weight']
+      s-sewf._cwient.add_featuwe_config(featuweconfig(sewf._cuwwent_wun_id, (ˆ ﻌ ˆ)♡ w-wist(featuwe_wist.keys()), nyaa~~
+                                                    w-wist(wabew_wist.keys()), ʘwʘ wist(weight_wist.keys())))
 
-      feature_config_features = [
-        FeatureConfigFeature(
-          hash_id=_feature_hash_id,
-          feature_name=_feature['featureName'],
-          feature_type=_feature['featureType']
+      featuwe_config_featuwes = [
+        featuweconfigfeatuwe(
+          hash_id=_featuwe_hash_id, :3
+          f-featuwe_name=_featuwe['featuwename'],
+          featuwe_type=_featuwe['featuwetype']
         )
-        for _feature_hash_id, _feature in zip(feature_list.keys(), feature_list.values())
+        f-fow _featuwe_hash_id, (U ᵕ U❁) _featuwe i-in zip(featuwe_wist.keys(), featuwe_wist.vawues())
       ]
-      self._client.add_feature_config_features(list(feature_list.keys()), feature_config_features)
+      sewf._cwient.add_featuwe_config_featuwes(wist(featuwe_wist.keys()), (U ﹏ U) f-featuwe_config_featuwes)
 
-      feature_config_labels = [
-        FeatureConfigFeature(
-          hash_id=_label_hash_id,
-          feature_name=_label['featureName']
+      featuwe_config_wabews = [
+        f-featuweconfigfeatuwe(
+          h-hash_id=_wabew_hash_id, ^^
+          f-featuwe_name=_wabew['featuwename']
         )
-        for _label_hash_id, _label in zip(label_list.keys(), label_list.values())
+        f-fow _wabew_hash_id, _wabew i-in zip(wabew_wist.keys(), òωó wabew_wist.vawues())
       ]
-      self._client.add_feature_config_features(list(label_list.keys()), feature_config_labels)
+      sewf._cwient.add_featuwe_config_featuwes(wist(wabew_wist.keys()), /(^•ω•^) featuwe_config_wabews)
 
-      feature_config_weights = [
-        FeatureConfigFeature(
-          hash_id=_weight_hash_id,
-          feature_name=_weight['featureName'],
-          feature_type=_weight['featureType']
+      f-featuwe_config_weights = [
+        featuweconfigfeatuwe(
+          h-hash_id=_weight_hash_id, 😳😳😳
+          featuwe_name=_weight['featuwename'], :3
+          featuwe_type=_weight['featuwetype']
         )
-        for _weight_hash_id, _weight in zip(weight_list.keys(), weight_list.values())
+        fow _weight_hash_id, (///ˬ///✿) _weight in zip(weight_wist.keys(), rawr x3 w-weight_wist.vawues())
       ]
-      self._client.add_feature_config_features(list(weight_list.keys()), feature_config_weights)
+      sewf._cwient.add_featuwe_config_featuwes(wist(weight_wist.keys()), (U ᵕ U❁) featuwe_config_weights)
 
-    except Exception as err:
-      logging.error('Failed to export feature spec. Error: %s', str(err))
+    except exception as eww:
+      w-wogging.ewwow('faiwed t-to expowt featuwe spec. (⑅˘꒳˘) ewwow: %s', s-stw(eww))
 
-  @property
-  def path(self):
-    if self.disabled:
-      return None
-    return get_components_from_id(self.tracking_path, ensure_valid_id=False)
+  @pwopewty
+  def path(sewf):
+    if sewf.disabwed:
+      wetuwn n-nyone
+    w-wetuwn get_components_fwom_id(sewf.twacking_path, (˘ω˘) ensuwe_vawid_id=fawse)
 
-  @property
-  def experiment_id(self):
-    if self.disabled:
-      return None
-    return '%s:%s:%s' % (self.path['owner'], self.path['project_name'],
-                         self.path['experiment_name'])
+  @pwopewty
+  d-def expewiment_id(sewf):
+    if sewf.disabwed:
+      w-wetuwn nyone
+    wetuwn '%s:%s:%s' % (sewf.path['ownew'], :3 sewf.path['pwoject_name'], XD
+                         sewf.path['expewiment_name'])
 
-  @property
-  def _current_run_name(self):
+  @pwopewty
+  d-def _cuwwent_wun_name(sewf):
     """
-    Return the current run name.
+    wetuwn the cuwwent wun nyame. >_<
     """
-    if self._current_run_name_suffix is not None:
-      return self.path['run_name'] + self._current_run_name_suffix
-    else:
-      return self.path['run_name']
+    i-if sewf._cuwwent_wun_name_suffix i-is nyot n-nyone:
+      wetuwn sewf.path['wun_name'] + sewf._cuwwent_wun_name_suffix
+    e-ewse:
+      wetuwn sewf.path['wun_name']
 
-  @property
-  def _current_run_id(self):
+  @pwopewty
+  def _cuwwent_wun_id(sewf):
     """
-    Return the current run id.
+    wetuwn the cuwwent wun id. (✿oωo)
     """
-    if self._current_run_name_suffix is not None:
-      return self.base_run_id + self._current_run_name_suffix
-    else:
-      return self.base_run_id
+    i-if sewf._cuwwent_wun_name_suffix i-is nyot n-nyone:
+      wetuwn s-sewf.base_wun_id + sewf._cuwwent_wun_name_suffix
+    ewse:
+      w-wetuwn sewf.base_wun_id
 
-  def get_run_status(self) -> str:
-    if not self.disabled:
-      return self._client.get_latest_dbv2_status(self._current_run_id)
+  d-def get_wun_status(sewf) -> stw:
+    if nyot sewf.disabwed:
+      w-wetuwn sewf._cwient.get_watest_dbv2_status(sewf._cuwwent_wun_id)
 
-  def _add_run_status(self, status):
+  def _add_wun_status(sewf, (ꈍᴗꈍ) status):
     """
-    Add run status with underlying client.
+    a-add wun status with undewwying cwient. XD
 
-    Args:
-      status (StatusUpdate):
-        The status update to add.
+    a-awgs:
+      status (statusupdate):
+        t-the status update to a-add. :3
     """
-    if not self.disabled and self._env_eligible_for_recording_experiment:
-      self._client.add_run_status(status)
+    i-if nyot sewf.disabwed a-and sewf._env_ewigibwe_fow_wecowding_expewiment:
+      sewf._cwient.add_wun_status(status)
 
-  def _record_run(self):
+  def _wecowd_wun(sewf):
     """
-    Record the run in ML Metastore.
+    w-wecowd the wun in mw metastowe.
     """
-    if self.disabled or not self._env_eligible_for_recording_experiment:
-      return None
+    if sewf.disabwed o-ow not sewf._env_ewigibwe_fow_wecowding_expewiment:
+      wetuwn nyone
 
-    if not self._client.project_exists(self.project_id):
-      self._client.add_project(Project(self.path['project_name'], self.path['owner']))
-      time.sleep(1)
+    if nyot sewf._cwient.pwoject_exists(sewf.pwoject_id):
+      sewf._cwient.add_pwoject(pwoject(sewf.path['pwoject_name'], mya sewf.path['ownew']))
+      t-time.sweep(1)
 
-    if not self._client.experiment_exists(self.experiment_id):
-      self._client.add_experiment(Experiment(
-        self.path['experiment_name'], self.path['owner'], self.project_id, ''))
-      time.sleep(1)
+    i-if not s-sewf._cwient.expewiment_exists(sewf.expewiment_id):
+      s-sewf._cwient.add_expewiment(expewiment(
+        s-sewf.path['expewiment_name'], òωó sewf.path['ownew'], nyaa~~ s-sewf.pwoject_id, 🥺 ''))
+      time.sweep(1)
 
-    run = DeepbirdRun(self.experiment_id, self._current_run_name, '',
-                      {'raw_command': ' '.join(sys.argv)}, self._params)
-    self._client.add_deepbird_run(run, force=True)
-    time.sleep(1)
+    wun = d-deepbiwdwun(sewf.expewiment_id, -.- sewf._cuwwent_wun_name, 🥺 '', (˘ω˘)
+                      {'waw_command': ' '.join(sys.awgv)}, òωó s-sewf._pawams)
+    sewf._cwient.add_deepbiwd_wun(wun, UwU fowce=twue)
+    t-time.sweep(1)
 
-  def _record_update(self, metrics):
+  d-def _wecowd_update(sewf, ^•ﻌ•^ metwics):
     """
-    Record metrics update in ML Metastore.
+    w-wecowd metwics update i-in mw metastowe. mya
 
-    Args:
-      metrics (dict):
-        The dict of the metrics and their values.
+    a-awgs:
+      metwics (dict):
+        t-the d-dict of the metwics and theiw vawues. (✿oωo)
     """
 
-    if self.disabled or not self._env_eligible_for_recording_experiment:
-      return None
+    i-if sewf.disabwed ow nyot sewf._env_ewigibwe_fow_wecowding_expewiment:
+      wetuwn nyone
 
-    reported_metrics = {}
-    for k, v in metrics.items():
+    wepowted_metwics = {}
+    f-fow k, XD v in metwics.items():
 
-      if hasattr(v, 'item'):
-        reported_metrics[k] = v.item() if v.size == 1 else str(v.tolist())
-      else:
-        logging.warning("Ignoring %s because the value (%s) is not valid" % (k, str(v)))
+      i-if hasattw(v, :3 'item'):
+        wepowted_metwics[k] = v.item() if v.size == 1 ewse s-stw(v.towist())
+      e-ewse:
+        w-wogging.wawning("ignowing %s because the vawue (%s) i-is nyot v-vawid" % (k, (U ﹏ U) stw(v)))
 
-    report = ProgressReport(self._current_run_id, reported_metrics)
+    wepowt = p-pwogwesswepowt(sewf._cuwwent_wun_id, UwU wepowted_metwics)
 
-    try:
-      self._client.add_progress_report(report)
-    except Exception as err:
-      logging.error('Failed to record metrics in ML Metastore. Error: {}'.format(err))
-      logging.error('Run ID: {}'.format(self._current_run_id))
-      logging.error('Progress Report: {}'.format(report.to_json_string()))
+    t-twy:
+      sewf._cwient.add_pwogwess_wepowt(wepowt)
+    except e-exception as eww:
+      w-wogging.ewwow('faiwed to wecowd metwics in mw metastowe. ewwow: {}'.fowmat(eww))
+      wogging.ewwow('wun i-id: {}'.fowmat(sewf._cuwwent_wun_id))
+      wogging.ewwow('pwogwess w-wepowt: {}'.fowmat(wepowt.to_json_stwing()))
 
-  def _register_for_graceful_shutdown(self):
+  def _wegistew_fow_gwacefuw_shutdown(sewf):
     """
-    Register the tracker with the health server, enabling graceful shutdown.
+    wegistew the twackew w-with the heawth sewvew, ʘwʘ enabwing g-gwacefuw shutdown. >w<
 
-    Returns:
-      (Response) health server response
+    w-wetuwns:
+      (wesponse) heawth sewvew wesponse
     """
-    if self._graceful_shutdown_port and not self.disabled and self._env_eligible_for_recording_experiment:
-      return requests.post('http://localhost:{}/register_id/{}'.format(
-        self._graceful_shutdown_port,
-        self._current_run_id
+    if sewf._gwacefuw_shutdown_powt and nyot s-sewf.disabwed and sewf._env_ewigibwe_fow_wecowding_expewiment:
+      wetuwn wequests.post('http://wocawhost:{}/wegistew_id/{}'.fowmat(
+        s-sewf._gwacefuw_shutdown_powt, 😳😳😳
+        sewf._cuwwent_wun_id
       ))
 
-  def _deregister_for_graceful_shutdown(self):
+  d-def _dewegistew_fow_gwacefuw_shutdown(sewf):
     """
-    Deregister the tracker with the health server, disabling graceful shutdown.
+    d-dewegistew the twackew with the h-heawth sewvew, rawr d-disabwing gwacefuw s-shutdown. ^•ﻌ•^
 
-    Returns:
-      (Response) health server response
+    w-wetuwns:
+      (wesponse) h-heawth s-sewvew wesponse
     """
-    if self._graceful_shutdown_port and not self.disabled and self._env_eligible_for_recording_experiment:
-      return requests.post('http://localhost:{}/deregister_id/{}'.format(
-        self._graceful_shutdown_port,
-        self._current_run_id
+    if sewf._gwacefuw_shutdown_powt and nyot sewf.disabwed and sewf._env_ewigibwe_fow_wecowding_expewiment:
+      wetuwn wequests.post('http://wocawhost:{}/dewegistew_id/{}'.fowmat(
+        s-sewf._gwacefuw_shutdown_powt, σωσ
+        sewf._cuwwent_wun_id
       ))
 
-  def _is_env_eligible_for_tracking(self):
+  d-def _is_env_ewigibwe_fow_twacking(sewf):
     """
-    Determine if experiment tracking should run in the env.
+    d-detewmine if e-expewiment twacking s-shouwd wun i-in the env. :3
     """
     is_unit_test = (
-      os.environ.get('PYTEST_CURRENT_TEST') is not None and
-      os.environ.get('TEST_EXP_TRACKER') is None
+      os.enviwon.get('pytest_cuwwent_test') is nyot nyone and
+      os.enviwon.get('test_exp_twackew') i-is nyone
     )
 
-    is_running_on_ci = (
-      getpass.getuser() == 'scoot-service' and
-      os.environ.get('TEST_EXP_TRACKER') is None
+    i-is_wunning_on_ci = (
+      getpass.getusew() == 'scoot-sewvice' and
+      os.enviwon.get('test_exp_twackew') is nyone
     )
 
-    return (
-      not is_unit_test and
-      not is_running_on_ci
+    w-wetuwn (
+      n-not is_unit_test a-and
+      nyot is_wunning_on_ci
     )
 
-  @classmethod
-  def run_name_from_environ(cls):
+  @cwassmethod
+  def w-wun_name_fwom_enviwon(cws):
     """
-    Create run id from environment if possible.
+    cweate wun id fwom enviwonment i-if possibwe. rawr x3
     """
-    job_name = os.environ.get("TWML_JOB_NAME")
-    job_launch_time = os.environ.get("TWML_JOB_LAUNCH_TIME")
+    j-job_name = os.enviwon.get("twmw_job_name")
+    job_waunch_time = os.enviwon.get("twmw_job_waunch_time")
 
-    if not job_name or not job_launch_time:
-      return None
+    if n-nyot job_name ow nyot job_waunch_time:
+      wetuwn n-nyone
 
-    try:
-      # job_launch_time should be in isoformat
-      # python2 doesnt support datetime.fromisoformat, so use hardcoded format string.
-      job_launch_time_formatted = datetime.strptime(job_launch_time,
-                                                    "%Y-%m-%dT%H:%M:%S.%f")
-    except ValueError:
-      # Fallback in case aurora config is generating datetime in a different format.
-      job_launch_time_formatted = (job_launch_time
-                                   .replace("-", "_").replace("T", "_")
-                                   .replace(":", "_").replace(".", "_"))
+    t-twy:
+      # job_waunch_time shouwd b-be in isofowmat
+      # p-python2 d-doesnt suppowt d-datetime.fwomisofowmat, nyaa~~ s-so use h-hawdcoded fowmat stwing. :3
+      j-job_waunch_time_fowmatted = d-datetime.stwptime(job_waunch_time, >w<
+                                                    "%y-%m-%dt%h:%m:%s.%f")
+    except vawueewwow:
+      # f-fawwback in case auwowa config is genewating d-datetime in a diffewent f-fowmat. rawr
+      job_waunch_time_fowmatted = (job_waunch_time
+                                   .wepwace("-", 😳 "_").wepwace("t", 😳 "_")
+                                   .wepwace(":", 🥺 "_").wepwace(".", rawr x3 "_"))
 
-    return '{}_{}'.format(
-      job_name, job_launch_time_formatted.strftime('%m_%d_%Y_%I_%M_%p'))
+    wetuwn '{}_{}'.fowmat(
+      job_name, ^^ j-job_waunch_time_fowmatted.stwftime('%m_%d_%y_%i_%m_%p'))
 
-  @classmethod
-  def guess_path(cls, save_dir, run_name=None):
+  @cwassmethod
+  d-def guess_path(cws, save_diw, ( ͡o ω ͡o ) wun_name=none):
     """
-    Guess an experiment tracking path based on save_dir.
+    g-guess an expewiment twacking path b-based on save_diw. XD
 
-    Returns:
-      (str) guessed path
+    w-wetuwns:
+      (stw) guessed path
     """
-    if not run_name:
-      run_name = 'Unnamed_{}'.format(datetime.now().strftime('%m_%d_%Y_%I_%M_%p'))
+    i-if not wun_name:
+      w-wun_name = 'unnamed_{}'.fowmat(datetime.now().stwftime('%m_%d_%y_%i_%m_%p'))
 
-    if save_dir.startswith('hdfs://'):
-      path_match = re.search(r'/user/([a-z0-9\-_]+)/([a-z0-9\-_]+)', save_dir)
+    if save_diw.stawtswith('hdfs://'):
+      p-path_match = we.seawch(w'/usew/([a-z0-9\-_]+)/([a-z0-9\-_]+)', ^^ save_diw)
 
-      if path_match:
-        groups = path_match.groups()
-        user = groups[0]
-        project_name = groups[1]
+      i-if path_match:
+        gwoups = p-path_match.gwoups()
+        usew = gwoups[0]
+        p-pwoject_name = g-gwoups[1]
 
-        return generate_id(user, 'default', project_name, run_name)
+        wetuwn genewate_id(usew, (⑅˘꒳˘) 'defauwt', pwoject_name, (⑅˘꒳˘) w-wun_name)
 
-    user = getpass.getuser()
-    project_name = re.sub(r'^[a-z0-9\-_]', os.path.basename(save_dir), '')
-    if not project_name:
-      project_name = 'unnamed'
+    u-usew = getpass.getusew()
+    p-pwoject_name = w-we.sub(w'^[a-z0-9\-_]', ^•ﻌ•^ os.path.basename(save_diw), ( ͡o ω ͡o ) '')
+    if nyot pwoject_name:
+      pwoject_name = 'unnamed'
 
-    return generate_id(user, 'default', project_name, run_name)
+    wetuwn genewate_id(usew, ( ͡o ω ͡o ) 'defauwt', (✿oωo) pwoject_name, 😳😳😳 w-wun_name)
 
-  @classmethod
-  def compute_model_hash(cls, export_path):
+  @cwassmethod
+  d-def compute_modew_hash(cws, OwO e-expowt_path):
     """
-    Computes the hash of an exported model. This is a gfile version of
-    twitter.mlmetastore.common.versioning.compute_hash. The two functions should generate
-    the same hash when given the same model.
+    c-computes the h-hash of an expowted m-modew. ^^ this is a gfiwe vewsion o-of
+    twittew.mwmetastowe.common.vewsioning.compute_hash. rawr x3 t-the two functions shouwd genewate
+    t-the same h-hash when given the same modew. 🥺
 
-    Args:
-      export_path (str):
-        The path to the exported model.
+    awgs:
+      e-expowt_path (stw):
+        the path to the expowted m-modew. (ˆ ﻌ ˆ)♡
 
-    Returns:
-      (str) hash of the exported model
+    wetuwns:
+      (stw) h-hash of the e-expowted modew
     """
     paths = []
-    for path, subdirs, files in tf.io.gfile.walk(export_path):
-      for name in sorted(files):
-        paths.append(os.path.join(path, name))
+    f-fow p-path, ( ͡o ω ͡o ) subdiws, >w< fiwes i-in tf.io.gfiwe.wawk(expowt_path):
+      fow n-nyame in sowted(fiwes):
+        p-paths.append(os.path.join(path, /(^•ω•^) nyame))
 
-    paths.sort()
-    hash_object = hashlib.new('sha1')
+    paths.sowt()
+    hash_object = h-hashwib.new('sha1')
 
-    for path in paths:
-      with tf.io.gfile.GFile(path, "rb") as file:
-        hash_object.update(file.read())
+    fow path in p-paths:
+      with t-tf.io.gfiwe.gfiwe(path, 😳😳😳 "wb") a-as fiwe:
+        hash_object.update(fiwe.wead())
 
-    return hash_object.hexdigest()
+    w-wetuwn hash_object.hexdigest()

@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
 
-case class HydratorCandidateResult[+Candidate <: UniversalNoun[Any]](
-  override val candidate: Candidate,
-  override val features: FeatureMap)
-    extends CandidateWithFeatures[Candidate]
+c-case c-cwass hydwatowcandidatewesuwt[+candidate <: u-univewsawnoun[any]](
+  o-ovewwide vaw candidate: candidate, σωσ
+  ovewwide vaw featuwes: featuwemap)
+    e-extends candidatewithfeatuwes[candidate]

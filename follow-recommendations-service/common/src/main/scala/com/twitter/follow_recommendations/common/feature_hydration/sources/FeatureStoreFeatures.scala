@@ -1,342 +1,342 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.featurestore.catalog.entities.core.{Author => AuthorEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{AuthorTopic => AuthorTopicEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{CandidateUser => CandidateUserEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{Topic => TopicEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{User => UserEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{UserCandidate => UserCandidateEntity}
-import com.twitter.ml.featurestore.catalog.entities.onboarding.UserWtfAlgorithmEntity
-import com.twitter.ml.featurestore.catalog.entities.onboarding.{
-  WtfAlgorithm => WtfAlgorithmIdEntity
+impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.featuwecontext
+i-impowt c-com.twittew.mw.featuwestowe.catawog.entities.cowe.{authow => a-authowentity}
+i-impowt c-com.twittew.mw.featuwestowe.catawog.entities.cowe.{authowtopic => a-authowtopicentity}
+impowt com.twittew.mw.featuwestowe.catawog.entities.cowe.{candidateusew => candidateusewentity}
+impowt com.twittew.mw.featuwestowe.catawog.entities.cowe.{topic => topicentity}
+i-impowt com.twittew.mw.featuwestowe.catawog.entities.cowe.{usew => usewentity}
+impowt com.twittew.mw.featuwestowe.catawog.entities.cowe.{usewcandidate => u-usewcandidateentity}
+impowt com.twittew.mw.featuwestowe.catawog.entities.onboawding.usewwtfawgowithmentity
+i-impowt com.twittew.mw.featuwestowe.catawog.entities.onboawding.{
+  wtfawgowithm => wtfawgowithmidentity
 }
-import com.twitter.ml.featurestore.catalog.entities.onboarding.{
-  WtfAlgorithmType => WtfAlgorithmTypeEntity
+impowt com.twittew.mw.featuwestowe.catawog.entities.onboawding.{
+  wtfawgowithmtype => w-wtfawgowithmtypeentity
 }
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.FullPrimaryClientVersion
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.NumClients
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.PrimaryClient
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.PrimaryClientVersion
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.PrimaryDeviceManufacturer
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.PrimaryMobileSdkVersion
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.SecondaryClient
-import com.twitter.ml.featurestore.catalog.features.core.UserCounts.Favorites
-import com.twitter.ml.featurestore.catalog.features.core.UserCounts.Followers
-import com.twitter.ml.featurestore.catalog.features.core.UserCounts.Following
-import com.twitter.ml.featurestore.catalog.features.core.UserCounts.Tweets
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmIdAggregateFeatureGroup
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmTypeAggregateFeatureGroup
-import com.twitter.ml.featurestore.catalog.features.customer_journey.{Utils => FeatureGroupUtils}
-import com.twitter.ml.featurestore.catalog.features.interests_discovery.UserTopicRelationships.FollowedTopics
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumFavorites
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumFavoritesReceived
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumFollowBacks
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumFollows
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumFollowsReceived
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumLoginDays
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumLoginTweetImpressions
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumMuteBacks
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumMuted
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumOriginalTweets
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumQualityFollowReceived
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumQuoteRetweets
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumQuoteRetweetsReceived
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumReplies
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumRepliesReceived
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumRetweets
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumRetweetsReceived
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumSpamBlocked
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumSpamBlockedBacks
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumTweetImpressions
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumTweets
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumUnfollowBacks
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumUnfollows
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumUserActiveMinutes
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumWasMutualFollowed
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumWasMutualUnfollowed
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumWasUnfollowed
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.Country
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.FollowersOverFollowingRatio
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.Language
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.MutualFollowsOverFollowersRatio
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.MutualFollowsOverFollowingRatio
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.NumFollowers
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.NumFollowings
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.NumMutualFollows
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.TweepCred
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.UserState
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.HaveSameCountry
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.HaveSameLanguage
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.HaveSameUserState
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.NumFollowersGap
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.NumFollowingsGap
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.NumMutualFollowsGap
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.TweepCredGap
-import com.twitter.ml.featurestore.catalog.features.onboarding.Ratio.FollowersFollowings
-import com.twitter.ml.featurestore.catalog.features.onboarding.Ratio.MutualFollowsFollowing
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.HasIntersection
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.IntersectionCandidateKnownForScore
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.IntersectionClusterIds
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.IntersectionUserFavCandidateKnownForScore
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.IntersectionUserFavScore
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.IntersectionUserFollowCandidateKnownForScore
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.IntersectionUserFollowScore
-import com.twitter.ml.featurestore.catalog.features.onboarding.UserWtfAlgorithmAggregate
-import com.twitter.ml.featurestore.catalog.features.onboarding.WhoToFollowImpression.HomeTimelineWtfCandidateCounts
-import com.twitter.ml.featurestore.catalog.features.onboarding.WhoToFollowImpression.HomeTimelineWtfCandidateImpressionCounts
-import com.twitter.ml.featurestore.catalog.features.onboarding.WhoToFollowImpression.HomeTimelineWtfCandidateImpressionLatestTimestamp
-import com.twitter.ml.featurestore.catalog.features.onboarding.WhoToFollowImpression.HomeTimelineWtfLatestTimestamp
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowRate
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.Follows
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsTweetFavRate
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsTweetReplies
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsTweetReplyRate
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsTweetRetweetRate
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsTweetRetweets
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsWithTweetFavs
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsWithTweetImpressions
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.HasAnyEngagements
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.HasForwardEngagements
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.HasReverseEngagements
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.Impressions
-import com.twitter.ml.featurestore.catalog.features.rux.UserResurrection.DaysSinceRecentResurrection
-import com.twitter.ml.featurestore.catalog.features.timelines.AuthorTopicAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.EngagementsReceivedByAuthorRealTimeAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.NegativeEngagementsReceivedByAuthorRealTimeAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.OriginalAuthorAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.TopicEngagementRealTimeAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.TopicEngagementUserStateRealTimeAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.TopicNegativeEngagementUserStateRealTimeAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.UserEngagementAuthorUserStateRealTimeAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.UserNegativeEngagementAuthorUserStateRealTimeAggregates
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.feature.BoundFeature
-import com.twitter.ml.featurestore.lib.feature.Feature
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.cowe.usewcwients.fuwwpwimawycwientvewsion
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.cowe.usewcwients.numcwients
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.cowe.usewcwients.pwimawycwient
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.cowe.usewcwients.pwimawycwientvewsion
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.cowe.usewcwients.pwimawydevicemanufactuwew
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.cowe.usewcwients.pwimawymobiwesdkvewsion
+impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.cowe.usewcwients.secondawycwient
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.cowe.usewcounts.favowites
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.cowe.usewcounts.fowwowews
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.cowe.usewcounts.fowwowing
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.cowe.usewcounts.tweets
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.customew_jouwney.postnuxawgowithmidaggwegatefeatuwegwoup
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.customew_jouwney.postnuxawgowithmtypeaggwegatefeatuwegwoup
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.customew_jouwney.{utiws => f-featuwegwouputiws}
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.intewests_discovewy.usewtopicwewationships.fowwowedtopics
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numfavowites
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numfavowitesweceived
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numfowwowbacks
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numfowwows
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numfowwowsweceived
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numwogindays
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numwogintweetimpwessions
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.nummutebacks
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.nummuted
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numowiginawtweets
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numquawityfowwowweceived
+i-impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numquotewetweets
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numquotewetweetsweceived
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numwepwies
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numwepwiesweceived
+impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numwetweets
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numwetweetsweceived
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numspambwocked
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numspambwockedbacks
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numtweetimpwessions
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numtweets
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numunfowwowbacks
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numunfowwows
+impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numusewactiveminutes
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numwasmutuawfowwowed
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numwasmutuawunfowwowed
+impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.metwiccentewusewcounts.numwasunfowwowed
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwine.countwy
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwine.fowwowewsovewfowwowingwatio
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwine.wanguage
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwine.mutuawfowwowsovewfowwowewswatio
+impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwine.mutuawfowwowsovewfowwowingwatio
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwine.numfowwowews
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwine.numfowwowings
+i-impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwine.nummutuawfowwows
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwine.tweepcwed
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwine.usewstate
+impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwineedge.havesamecountwy
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwineedge.havesamewanguage
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwineedge.havesameusewstate
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwineedge.numfowwowewsgap
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwineedge.numfowwowingsgap
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwineedge.nummutuawfowwowsgap
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.postnuxoffwineedge.tweepcwedgap
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.watio.fowwowewsfowwowings
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.watio.mutuawfowwowsfowwowing
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.simcwustewusewintewestedincandidateknownfow.hasintewsection
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.simcwustewusewintewestedincandidateknownfow.intewsectioncandidateknownfowscowe
+i-impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.simcwustewusewintewestedincandidateknownfow.intewsectioncwustewids
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.simcwustewusewintewestedincandidateknownfow.intewsectionusewfavcandidateknownfowscowe
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.simcwustewusewintewestedincandidateknownfow.intewsectionusewfavscowe
+i-impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.simcwustewusewintewestedincandidateknownfow.intewsectionusewfowwowcandidateknownfowscowe
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.simcwustewusewintewestedincandidateknownfow.intewsectionusewfowwowscowe
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.usewwtfawgowithmaggwegate
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.whotofowwowimpwession.hometimewinewtfcandidatecounts
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.whotofowwowimpwession.hometimewinewtfcandidateimpwessioncounts
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.whotofowwowimpwession.hometimewinewtfcandidateimpwessionwatesttimestamp
+impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.whotofowwowimpwession.hometimewinewtfwatesttimestamp
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.fowwowwate
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.fowwows
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.fowwowstweetfavwate
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.fowwowstweetwepwies
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.fowwowstweetwepwywate
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.fowwowstweetwetweetwate
+i-impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.fowwowstweetwetweets
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.fowwowswithtweetfavs
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.fowwowswithtweetimpwessions
+i-impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.hasanyengagements
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.hasfowwawdengagements
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.haswevewseengagements
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.onboawding.wtfusewawgowithmaggwegate.impwessions
+impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.wux.usewwesuwwection.dayssincewecentwesuwwection
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.timewines.authowtopicaggwegates
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.timewines.engagementsweceivedbyauthowweawtimeaggwegates
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.timewines.negativeengagementsweceivedbyauthowweawtimeaggwegates
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.timewines.owiginawauthowaggwegates
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.timewines.topicengagementweawtimeaggwegates
+impowt c-com.twittew.mw.featuwestowe.catawog.featuwes.timewines.topicengagementusewstateweawtimeaggwegates
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.timewines.topicnegativeengagementusewstateweawtimeaggwegates
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.timewines.usewengagementauthowusewstateweawtimeaggwegates
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.timewines.usewnegativeengagementauthowusewstateweawtimeaggwegates
+i-impowt com.twittew.mw.featuwestowe.wib.entityid
+impowt com.twittew.mw.featuwestowe.wib.usewid
+impowt com.twittew.mw.featuwestowe.wib.featuwe.boundfeatuwe
+i-impowt com.twittew.mw.featuwestowe.wib.featuwe.featuwe
 
-object FeatureStoreFeatures {
-  import FeatureStoreRawFeatures._
-  ///////////////////////////// Target user features ////////////////////////
-  val targetUserFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    (userKeyedFeatures ++ userAlgorithmAggregateFeatures).map(_.bind(UserEntity))
+o-object f-featuwestowefeatuwes {
+  impowt f-featuwestowewawfeatuwes._
+  ///////////////////////////// t-tawget usew featuwes ////////////////////////
+  v-vaw tawgetusewfeatuwes: set[boundfeatuwe[_ <: entityid, ^^;; _]] =
+    (usewkeyedfeatuwes ++ usewawgowithmaggwegatefeatuwes).map(_.bind(usewentity))
 
-  val targetUserResurrectionFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    userResurrectionFeatures.map(_.bind(UserEntity))
-  val targetUserWtfImpressionFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    wtfImpressionUserFeatures.map(_.bind(UserEntity))
-  val targetUserUserAuthorUserStateRealTimeAggregatesFeature: Set[BoundFeature[_ <: EntityId, _]] =
-    userAuthorUserStateRealTimeAggregatesFeature.map(_.bind(UserEntity))
+  v-vaw tawgetusewwesuwwectionfeatuwes: s-set[boundfeatuwe[_ <: entityid, rawr x3 _]] =
+    usewwesuwwectionfeatuwes.map(_.bind(usewentity))
+  v-vaw tawgetusewwtfimpwessionfeatuwes: s-set[boundfeatuwe[_ <: entityid, (ˆ ﻌ ˆ)♡ _]] =
+    wtfimpwessionusewfeatuwes.map(_.bind(usewentity))
+  vaw tawgetusewusewauthowusewstateweawtimeaggwegatesfeatuwe: s-set[boundfeatuwe[_ <: entityid, σωσ _]] =
+    usewauthowusewstateweawtimeaggwegatesfeatuwe.map(_.bind(usewentity))
 
-  val targetUserStatusFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    userStatusFeatures.map(_.bind(UserEntity).logarithm1p)
-  val targetUserMetricCountFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    mcFeatures.map(_.bind(UserEntity).logarithm1p)
+  vaw tawgetusewstatusfeatuwes: set[boundfeatuwe[_ <: e-entityid, (U ﹏ U) _]] =
+    usewstatusfeatuwes.map(_.bind(usewentity).wogawithm1p)
+  vaw tawgetusewmetwiccountfeatuwes: s-set[boundfeatuwe[_ <: e-entityid, _]] =
+    mcfeatuwes.map(_.bind(usewentity).wogawithm1p)
 
-  val targetUserClientFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    clientFeatures.map(_.bind(UserEntity))
+  vaw tawgetusewcwientfeatuwes: set[boundfeatuwe[_ <: e-entityid, >w< _]] =
+    c-cwientfeatuwes.map(_.bind(usewentity))
 
-  ///////////////////////////// Candidate user features ////////////////////////
-  val candidateUserFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    userKeyedFeatures.map(_.bind(CandidateUserEntity))
-  val candidateUserAuthorRealTimeAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    authorAggregateFeatures.map(_.bind(CandidateUserEntity))
-  val candidateUserResurrectionFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    userResurrectionFeatures.map(_.bind(CandidateUserEntity))
+  ///////////////////////////// candidate usew featuwes ////////////////////////
+  vaw candidateusewfeatuwes: s-set[boundfeatuwe[_ <: entityid, _]] =
+    u-usewkeyedfeatuwes.map(_.bind(candidateusewentity))
+  vaw candidateusewauthowweawtimeaggwegatefeatuwes: set[boundfeatuwe[_ <: entityid, σωσ _]] =
+    a-authowaggwegatefeatuwes.map(_.bind(candidateusewentity))
+  vaw candidateusewwesuwwectionfeatuwes: s-set[boundfeatuwe[_ <: e-entityid, nyaa~~ _]] =
+    usewwesuwwectionfeatuwes.map(_.bind(candidateusewentity))
 
-  val candidateUserStatusFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    userStatusFeatures.map(_.bind(CandidateUserEntity).logarithm1p)
-  val candidateUserTimelinesAuthorAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    Set(timelinesAuthorAggregateFeatures.bind(CandidateUserEntity))
-  val candidateUserMetricCountFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    mcFeatures.map(_.bind(CandidateUserEntity).logarithm1p)
+  v-vaw candidateusewstatusfeatuwes: set[boundfeatuwe[_ <: e-entityid, 🥺 _]] =
+    usewstatusfeatuwes.map(_.bind(candidateusewentity).wogawithm1p)
+  v-vaw candidateusewtimewinesauthowaggwegatefeatuwes: s-set[boundfeatuwe[_ <: entityid, rawr x3 _]] =
+    s-set(timewinesauthowaggwegatefeatuwes.bind(candidateusewentity))
+  v-vaw candidateusewmetwiccountfeatuwes: set[boundfeatuwe[_ <: entityid, σωσ _]] =
+    m-mcfeatuwes.map(_.bind(candidateusewentity).wogawithm1p)
 
-  val candidateUserClientFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    clientFeatures.map(_.bind(CandidateUserEntity))
+  v-vaw candidateusewcwientfeatuwes: s-set[boundfeatuwe[_ <: entityid, (///ˬ///✿) _]] =
+    cwientfeatuwes.map(_.bind(candidateusewentity))
 
-  val similarToUserFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    (userKeyedFeatures ++ authorAggregateFeatures).map(_.bind(AuthorEntity))
+  v-vaw simiwawtousewfeatuwes: set[boundfeatuwe[_ <: e-entityid, (U ﹏ U) _]] =
+    (usewkeyedfeatuwes ++ a-authowaggwegatefeatuwes).map(_.bind(authowentity))
 
-  val similarToUserStatusFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    userStatusFeatures.map(_.bind(AuthorEntity).logarithm1p)
-  val similarToUserTimelinesAuthorAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    Set(timelinesAuthorAggregateFeatures.bind(AuthorEntity))
-  val similarToUserMetricCountFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    mcFeatures.map(_.bind(AuthorEntity).logarithm1p)
+  vaw simiwawtousewstatusfeatuwes: set[boundfeatuwe[_ <: entityid, ^^;; _]] =
+    u-usewstatusfeatuwes.map(_.bind(authowentity).wogawithm1p)
+  v-vaw simiwawtousewtimewinesauthowaggwegatefeatuwes: s-set[boundfeatuwe[_ <: e-entityid, 🥺 _]] =
+    set(timewinesauthowaggwegatefeatuwes.bind(authowentity))
+  v-vaw simiwawtousewmetwiccountfeatuwes: set[boundfeatuwe[_ <: entityid, òωó _]] =
+    mcfeatuwes.map(_.bind(authowentity).wogawithm1p)
 
-  val userCandidateEdgeFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    (simclusterUVIntersectionFeatures ++ userCandidatePostNuxEdgeFeatures).map(
-      _.bind(UserCandidateEntity))
-  val userCandidateWtfImpressionCandidateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    wtfImpressionCandidateFeatures.map(_.bind(UserCandidateEntity))
+  vaw usewcandidateedgefeatuwes: s-set[boundfeatuwe[_ <: entityid, XD _]] =
+    (simcwustewuvintewsectionfeatuwes ++ u-usewcandidatepostnuxedgefeatuwes).map(
+      _.bind(usewcandidateentity))
+  vaw usewcandidatewtfimpwessioncandidatefeatuwes: s-set[boundfeatuwe[_ <: entityid, :3 _]] =
+    w-wtfimpwessioncandidatefeatuwes.map(_.bind(usewcandidateentity))
 
   /**
-   * Aggregate features based on candidate source algorithms.
+   * aggwegate f-featuwes b-based on candidate s-souwce awgowithms. (U ﹏ U)
    */
-  val postNuxAlgorithmIdAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    Set(PostNuxAlgorithmIdAggregateFeatureGroup.FeaturesAsDataRecord)
-      .map(_.bind(WtfAlgorithmIdEntity))
+  v-vaw p-postnuxawgowithmidaggwegatefeatuwes: set[boundfeatuwe[_ <: entityid, >w< _]] =
+    set(postnuxawgowithmidaggwegatefeatuwegwoup.featuwesasdatawecowd)
+      .map(_.bind(wtfawgowithmidentity))
 
   /**
-   * Aggregate features based on candidate source algorithm types. There are 4 at the moment:
-   * Geo, Social, Activity and Interest.
+   * aggwegate featuwes based on candidate souwce a-awgowithm types. /(^•ω•^) t-thewe awe 4 a-at the moment:
+   * geo, (⑅˘꒳˘) sociaw, ʘwʘ a-activity and intewest. rawr x3
    */
-  val postNuxAlgorithmTypeAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    Set(PostNuxAlgorithmTypeAggregateFeatureGroup.FeaturesAsDataRecord)
-      .map(_.bind(WtfAlgorithmTypeEntity))
+  vaw postnuxawgowithmtypeaggwegatefeatuwes: set[boundfeatuwe[_ <: e-entityid, (˘ω˘) _]] =
+    s-set(postnuxawgowithmtypeaggwegatefeatuwegwoup.featuwesasdatawecowd)
+      .map(_.bind(wtfawgowithmtypeentity))
 
-  // user wtf-Algorithm features
-  val userWtfAlgorithmEdgeFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    FeatureGroupUtils.getTimelinesAggregationFrameworkCombinedFeatures(
-      UserWtfAlgorithmAggregate,
-      UserWtfAlgorithmEntity,
-      FeatureGroupUtils.getMaxSumAvgAggregate(UserWtfAlgorithmAggregate)
+  // usew w-wtf-awgowithm featuwes
+  vaw usewwtfawgowithmedgefeatuwes: set[boundfeatuwe[_ <: e-entityid, o.O _]] =
+    f-featuwegwouputiws.gettimewinesaggwegationfwamewowkcombinedfeatuwes(
+      usewwtfawgowithmaggwegate, 😳
+      u-usewwtfawgowithmentity, o.O
+      featuwegwouputiws.getmaxsumavgaggwegate(usewwtfawgowithmaggwegate)
     )
 
   /**
-   * We have to add the max/sum/avg-aggregated features to the set of all features so that we can
-   * register them using FRS's [[FrsFeatureJsonExporter]].
+   * w-we have to add the max/sum/avg-aggwegated featuwes to the set of aww featuwes s-so that we can
+   * w-wegistew them u-using fws's [[fwsfeatuwejsonexpowtew]]. ^^;;
    *
-   * Any additional such aggregated features that are included in [[FeatureStoreSource]] client
-   * should be registered here as well.
+   * a-any additionaw s-such aggwegated featuwes that a-awe incwuded i-in [[featuwestowesouwce]] cwient
+   * s-shouwd be w-wegistewed hewe as weww. ( ͡o ω ͡o )
    */
-  val maxSumAvgAggregatedFeatureContext: FeatureContext = new FeatureContext()
-    .addFeatures(
-      UserWtfAlgorithmAggregate.getSecondaryAggregatedFeatureContext
+  v-vaw maxsumavgaggwegatedfeatuwecontext: featuwecontext = nyew featuwecontext()
+    .addfeatuwes(
+      u-usewwtfawgowithmaggwegate.getsecondawyaggwegatedfeatuwecontext
     )
 
-  // topic features
-  val topicAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] = Set(
-    TopicEngagementRealTimeAggregates.FeaturesAsDataRecord,
-    TopicNegativeEngagementUserStateRealTimeAggregates.FeaturesAsDataRecord,
-    TopicEngagementUserStateRealTimeAggregates.FeaturesAsDataRecord
-  ).map(_.bind(TopicEntity))
-  val userTopicFeatures: Set[BoundFeature[_ <: EntityId, _]] = Set(FollowedTopics.bind(UserEntity))
-  val authorTopicFeatures: Set[BoundFeature[_ <: EntityId, _]] = Set(
-    AuthorTopicAggregates.FeaturesAsDataRecord.bind(AuthorTopicEntity))
-  val topicFeatures = topicAggregateFeatures ++ userTopicFeatures ++ authorTopicFeatures
+  // topic featuwes
+  v-vaw topicaggwegatefeatuwes: set[boundfeatuwe[_ <: e-entityid, ^^;; _]] = set(
+    topicengagementweawtimeaggwegates.featuwesasdatawecowd, ^^;;
+    t-topicnegativeengagementusewstateweawtimeaggwegates.featuwesasdatawecowd, XD
+    topicengagementusewstateweawtimeaggwegates.featuwesasdatawecowd
+  ).map(_.bind(topicentity))
+  vaw usewtopicfeatuwes: s-set[boundfeatuwe[_ <: e-entityid, 🥺 _]] = s-set(fowwowedtopics.bind(usewentity))
+  vaw authowtopicfeatuwes: set[boundfeatuwe[_ <: entityid, (///ˬ///✿) _]] = s-set(
+    authowtopicaggwegates.featuwesasdatawecowd.bind(authowtopicentity))
+  vaw topicfeatuwes = t-topicaggwegatefeatuwes ++ u-usewtopicfeatuwes ++ authowtopicfeatuwes
 
 }
 
-object FeatureStoreRawFeatures {
-  val mcFeatures = Set(
-    NumTweets,
-    NumRetweets,
-    NumOriginalTweets,
-    NumRetweetsReceived,
-    NumFavoritesReceived,
-    NumRepliesReceived,
-    NumQuoteRetweetsReceived,
-    NumFollowsReceived,
-    NumFollowBacks,
-    NumFollows,
-    NumUnfollows,
-    NumUnfollowBacks,
-    NumQualityFollowReceived,
-    NumQuoteRetweets,
-    NumFavorites,
-    NumReplies,
-    NumLoginTweetImpressions,
-    NumTweetImpressions,
-    NumLoginDays,
-    NumUserActiveMinutes,
-    NumMuted,
-    NumSpamBlocked,
-    NumMuteBacks,
-    NumSpamBlockedBacks,
-    NumWasMutualFollowed,
-    NumWasMutualUnfollowed,
-    NumWasUnfollowed
+o-object featuwestowewawfeatuwes {
+  vaw mcfeatuwes = s-set(
+    n-numtweets, (U ᵕ U❁)
+    nyumwetweets, ^^;;
+    numowiginawtweets, ^^;;
+    nyumwetweetsweceived, rawr
+    n-numfavowitesweceived, (˘ω˘)
+    nyumwepwiesweceived, 🥺
+    nyumquotewetweetsweceived, nyaa~~
+    n-numfowwowsweceived, :3
+    n-nyumfowwowbacks, /(^•ω•^)
+    nyumfowwows, ^•ﻌ•^
+    n-nyumunfowwows, UwU
+    nyumunfowwowbacks,
+    n-nyumquawityfowwowweceived, 😳😳😳
+    n-nyumquotewetweets, OwO
+    n-nyumfavowites, ^•ﻌ•^
+    nyumwepwies,
+    nyumwogintweetimpwessions, (ꈍᴗꈍ)
+    nyumtweetimpwessions, (⑅˘꒳˘)
+    nyumwogindays, (⑅˘꒳˘)
+    nyumusewactiveminutes, (ˆ ﻌ ˆ)♡
+    nyummuted, /(^•ω•^)
+    nyumspambwocked, òωó
+    nyummutebacks, (⑅˘꒳˘)
+    nyumspambwockedbacks, (U ᵕ U❁)
+    nyumwasmutuawfowwowed, >w<
+    nyumwasmutuawunfowwowed,
+    numwasunfowwowed
   )
-  // based off usersource, and each feature represents the cumulative 'sent' counts
-  val userStatusFeatures = Set(
-    Favorites,
-    Followers,
-    Following,
-    Tweets
+  // based off usewsouwce, σωσ a-and each featuwe w-wepwesents the cumuwative 'sent' counts
+  v-vaw usewstatusfeatuwes = s-set(
+    f-favowites, -.-
+    fowwowews, o.O
+    f-fowwowing, ^^
+    tweets
   )
-  // ratio features created from combining other features
-  val userRatioFeatures = Set(MutualFollowsFollowing, FollowersFollowings)
-  // features related to user login history
-  val userResurrectionFeatures: Set[Feature[UserId, Int]] = Set(
-    DaysSinceRecentResurrection
-  )
-
-  // real-time  aggregate features borrowed from timelines
-  val authorAggregateFeatures = Set(
-    EngagementsReceivedByAuthorRealTimeAggregates.FeaturesAsDataRecord,
-    NegativeEngagementsReceivedByAuthorRealTimeAggregates.FeaturesAsDataRecord,
+  // w-watio featuwes cweated f-fwom combining othew featuwes
+  v-vaw usewwatiofeatuwes = set(mutuawfowwowsfowwowing, >_< fowwowewsfowwowings)
+  // f-featuwes wewated t-to usew wogin histowy
+  vaw usewwesuwwectionfeatuwes: s-set[featuwe[usewid, >w< i-int]] = set(
+    d-dayssincewecentwesuwwection
   )
 
-  val timelinesAuthorAggregateFeatures = OriginalAuthorAggregates.FeaturesAsDataRecord
-
-  val userAuthorUserStateRealTimeAggregatesFeature: Set[Feature[UserId, DataRecord]] = Set(
-    UserEngagementAuthorUserStateRealTimeAggregates.FeaturesAsDataRecord,
-    UserNegativeEngagementAuthorUserStateRealTimeAggregates.FeaturesAsDataRecord
-  )
-  // post nux per-user offline features
-  val userOfflineFeatures = Set(
-    NumFollowings,
-    NumFollowers,
-    NumMutualFollows,
-    TweepCred,
-    UserState,
-    Language,
-    Country,
-    MutualFollowsOverFollowingRatio,
-    MutualFollowsOverFollowersRatio,
-    FollowersOverFollowingRatio,
-  )
-  // matched post nux offline features between user and candidate
-  val userCandidatePostNuxEdgeFeatures = Set(
-    HaveSameUserState,
-    HaveSameLanguage,
-    HaveSameCountry,
-    NumFollowingsGap,
-    NumFollowersGap,
-    NumMutualFollowsGap,
-    TweepCredGap,
-  )
-  // user algorithm aggregate features
-  val userAlgorithmAggregateFeatures = Set(
-    Impressions,
-    Follows,
-    FollowRate,
-    FollowsWithTweetImpressions,
-    FollowsWithTweetFavs,
-    FollowsTweetFavRate,
-    FollowsTweetReplies,
-    FollowsTweetReplyRate,
-    FollowsTweetRetweets,
-    FollowsTweetRetweetRate,
-    HasForwardEngagements,
-    HasReverseEngagements,
-    HasAnyEngagements,
-  )
-  val userKeyedFeatures = userRatioFeatures ++ userOfflineFeatures
-  val wtfImpressionUserFeatures =
-    Set(HomeTimelineWtfCandidateCounts, HomeTimelineWtfLatestTimestamp)
-  val wtfImpressionCandidateFeatures =
-    Set(HomeTimelineWtfCandidateImpressionCounts, HomeTimelineWtfCandidateImpressionLatestTimestamp)
-  val simclusterUVIntersectionFeatures = Set(
-    IntersectionClusterIds,
-    HasIntersection,
-    IntersectionUserFollowScore,
-    IntersectionUserFavScore,
-    IntersectionCandidateKnownForScore,
-    IntersectionUserFollowCandidateKnownForScore,
-    IntersectionUserFavCandidateKnownForScore
+  // w-weaw-time  a-aggwegate featuwes b-bowwowed fwom t-timewines
+  vaw a-authowaggwegatefeatuwes = s-set(
+    engagementsweceivedbyauthowweawtimeaggwegates.featuwesasdatawecowd,
+    n-nyegativeengagementsweceivedbyauthowweawtimeaggwegates.featuwesasdatawecowd, >_<
   )
 
-  // Client features
-  val clientFeatures = Set(
-    NumClients,
-    PrimaryClient,
-    PrimaryClientVersion,
-    FullPrimaryClientVersion,
-    PrimaryDeviceManufacturer,
-    PrimaryMobileSdkVersion,
-    SecondaryClient
+  v-vaw timewinesauthowaggwegatefeatuwes = o-owiginawauthowaggwegates.featuwesasdatawecowd
+
+  vaw usewauthowusewstateweawtimeaggwegatesfeatuwe: s-set[featuwe[usewid, >w< datawecowd]] = set(
+    usewengagementauthowusewstateweawtimeaggwegates.featuwesasdatawecowd, rawr
+    u-usewnegativeengagementauthowusewstateweawtimeaggwegates.featuwesasdatawecowd
+  )
+  // post nyux p-pew-usew offwine f-featuwes
+  vaw u-usewoffwinefeatuwes = set(
+    n-nyumfowwowings, rawr x3
+    nyumfowwowews, ( ͡o ω ͡o )
+    n-nyummutuawfowwows, (˘ω˘)
+    tweepcwed, 😳
+    usewstate, OwO
+    w-wanguage, (˘ω˘)
+    countwy,
+    m-mutuawfowwowsovewfowwowingwatio, òωó
+    mutuawfowwowsovewfowwowewswatio, ( ͡o ω ͡o )
+    fowwowewsovewfowwowingwatio, UwU
+  )
+  // matched post nyux offwine f-featuwes between usew and candidate
+  v-vaw usewcandidatepostnuxedgefeatuwes = set(
+    h-havesameusewstate, /(^•ω•^)
+    havesamewanguage, (ꈍᴗꈍ)
+    havesamecountwy, 😳
+    nyumfowwowingsgap, mya
+    nyumfowwowewsgap, mya
+    n-nyummutuawfowwowsgap, /(^•ω•^)
+    tweepcwedgap, ^^;;
+  )
+  // u-usew awgowithm a-aggwegate f-featuwes
+  vaw usewawgowithmaggwegatefeatuwes = set(
+    impwessions, 🥺
+    f-fowwows, ^^
+    f-fowwowwate, ^•ﻌ•^
+    fowwowswithtweetimpwessions, /(^•ω•^)
+    f-fowwowswithtweetfavs, ^^
+    fowwowstweetfavwate, 🥺
+    fowwowstweetwepwies, (U ᵕ U❁)
+    f-fowwowstweetwepwywate,
+    fowwowstweetwetweets, 😳😳😳
+    f-fowwowstweetwetweetwate, nyaa~~
+    h-hasfowwawdengagements, (˘ω˘)
+    h-haswevewseengagements, >_<
+    hasanyengagements, XD
+  )
+  v-vaw usewkeyedfeatuwes = u-usewwatiofeatuwes ++ u-usewoffwinefeatuwes
+  v-vaw wtfimpwessionusewfeatuwes =
+    set(hometimewinewtfcandidatecounts, rawr x3 h-hometimewinewtfwatesttimestamp)
+  v-vaw wtfimpwessioncandidatefeatuwes =
+    s-set(hometimewinewtfcandidateimpwessioncounts, ( ͡o ω ͡o ) h-hometimewinewtfcandidateimpwessionwatesttimestamp)
+  vaw s-simcwustewuvintewsectionfeatuwes = s-set(
+    intewsectioncwustewids, :3
+    h-hasintewsection, mya
+    i-intewsectionusewfowwowscowe, σωσ
+    intewsectionusewfavscowe, (ꈍᴗꈍ)
+    intewsectioncandidateknownfowscowe, OwO
+    i-intewsectionusewfowwowcandidateknownfowscowe, o.O
+    intewsectionusewfavcandidateknownfowscowe
+  )
+
+  // c-cwient featuwes
+  vaw c-cwientfeatuwes = s-set(
+    nyumcwients, 😳😳😳
+    p-pwimawycwient, /(^•ω•^)
+    pwimawycwientvewsion, OwO
+    fuwwpwimawycwientvewsion, ^^
+    pwimawydevicemanufactuwew,
+    p-pwimawymobiwesdkvewsion, (///ˬ///✿)
+    s-secondawycwient
   )
 }

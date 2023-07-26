@@ -1,282 +1,282 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.context.thriftscala.FeatureContext
-import com.twitter.tweetypie.core.GeoSearchRequestId
-import com.twitter.tweetypie.store.TweetEventDataScrubber.scrub
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.context.thwiftscawa.featuwecontext
+i-impowt com.twittew.tweetypie.cowe.geoseawchwequestid
+i-impowt com.twittew.tweetypie.stowe.tweeteventdatascwubbew.scwub
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object InsertTweet extends TweetStore.SyncModule {
+o-object insewttweet e-extends tweetstowe.syncmoduwe {
 
-  case class Event(
-    tweet: Tweet,
-    user: User,
-    timestamp: Time,
-    _internalTweet: Option[CachedTweet] = None,
-    sourceTweet: Option[Tweet] = None,
-    sourceUser: Option[User] = None,
-    quotedTweet: Option[Tweet] = None,
-    quotedUser: Option[User] = None,
-    parentUserId: Option[UserId] = None,
-    initialTweetUpdateRequest: Option[InitialTweetUpdateRequest] = None,
-    dark: Boolean = false,
-    hydrateOptions: WritePathHydrationOptions = WritePathHydrationOptions(),
-    featureContext: Option[FeatureContext] = None,
-    geoSearchRequestId: Option[GeoSearchRequestId] = None,
-    additionalContext: Option[collection.Map[TweetCreateContextKey, String]] = None,
-    transientContext: Option[TransientCreateContext] = None,
-    quoterHasAlreadyQuotedTweet: Boolean = false,
-    noteTweetMentionedUserIds: Option[Seq[Long]] = None)
-      extends SyncTweetStoreEvent("insert_tweet")
-      with QuotedTweetOps {
-    def internalTweet: CachedTweet =
-      _internalTweet.getOrElse(
-        throw new IllegalStateException(
-          s"internalTweet should have been set in WritePathHydration, ${this}"
+  c-case cwass event(
+    tweet: tweet, (✿oωo)
+    usew: usew, (ˆ ﻌ ˆ)♡
+    timestamp: time, :3
+    _intewnawtweet: o-option[cachedtweet] = nyone, (U ᵕ U❁)
+    souwcetweet: o-option[tweet] = nyone, ^^;;
+    souwceusew: o-option[usew] = nyone, mya
+    quotedtweet: option[tweet] = n-none,
+    quotedusew: option[usew] = n-nyone, 😳😳😳
+    p-pawentusewid: option[usewid] = nyone, OwO
+    initiawtweetupdatewequest: option[initiawtweetupdatewequest] = nyone, rawr
+    d-dawk: boowean = fawse, XD
+    hydwateoptions: wwitepathhydwationoptions = wwitepathhydwationoptions(), (U ﹏ U)
+    f-featuwecontext: option[featuwecontext] = n-nyone,
+    g-geoseawchwequestid: o-option[geoseawchwequestid] = n-nyone, (˘ω˘)
+    additionawcontext: option[cowwection.map[tweetcweatecontextkey, UwU stwing]] = n-nyone, >_<
+    twansientcontext: option[twansientcweatecontext] = n-nyone, σωσ
+    quotewhasawweadyquotedtweet: boowean = fawse, 🥺
+    nyotetweetmentionedusewids: option[seq[wong]] = nyone)
+      e-extends synctweetstoweevent("insewt_tweet")
+      with quotedtweetops {
+    d-def i-intewnawtweet: c-cachedtweet =
+      _intewnawtweet.getowewse(
+        thwow nyew iwwegawstateexception(
+          s"intewnawtweet s-shouwd have been s-set in wwitepathhydwation, 🥺 ${this}"
         )
       )
 
-    def toAsyncRequest(
-      scrubUser: User => User,
-      scrubSourceTweet: Tweet => Tweet,
-      scrubSourceUser: User => User
-    ): AsyncInsertRequest =
-      AsyncInsertRequest(
-        tweet = tweet,
-        cachedTweet = internalTweet,
-        user = scrubUser(user),
-        sourceTweet = sourceTweet.map(scrubSourceTweet),
-        sourceUser = sourceUser.map(scrubSourceUser),
-        quotedTweet = quotedTweet.map(scrubSourceTweet),
-        quotedUser = quotedUser.map(scrubSourceUser),
-        parentUserId = parentUserId,
-        featureContext = featureContext,
-        timestamp = timestamp.inMillis,
-        geoSearchRequestId = geoSearchRequestId.map(_.requestID),
-        additionalContext = additionalContext,
-        transientContext = transientContext,
-        quoterHasAlreadyQuotedTweet = Some(quoterHasAlreadyQuotedTweet),
-        initialTweetUpdateRequest = initialTweetUpdateRequest,
-        noteTweetMentionedUserIds = noteTweetMentionedUserIds
+    def t-toasyncwequest(
+      s-scwubusew: usew => usew, ʘwʘ
+      s-scwubsouwcetweet: tweet => t-tweet, :3
+      scwubsouwceusew: usew => usew
+    ): asyncinsewtwequest =
+      asyncinsewtwequest(
+        t-tweet = tweet, (U ﹏ U)
+        c-cachedtweet = intewnawtweet, (U ﹏ U)
+        u-usew = scwubusew(usew), ʘwʘ
+        s-souwcetweet = souwcetweet.map(scwubsouwcetweet),
+        souwceusew = souwceusew.map(scwubsouwceusew), >w<
+        quotedtweet = quotedtweet.map(scwubsouwcetweet), rawr x3
+        quotedusew = quotedusew.map(scwubsouwceusew), OwO
+        pawentusewid = p-pawentusewid, ^•ﻌ•^
+        f-featuwecontext = featuwecontext, >_<
+        t-timestamp = timestamp.inmiwwis, OwO
+        g-geoseawchwequestid = g-geoseawchwequestid.map(_.wequestid), >_<
+        additionawcontext = additionawcontext, (ꈍᴗꈍ)
+        twansientcontext = twansientcontext, >w<
+        q-quotewhasawweadyquotedtweet = some(quotewhasawweadyquotedtweet), (U ﹏ U)
+        initiawtweetupdatewequest = initiawtweetupdatewequest, ^^
+        nyotetweetmentionedusewids = n-nyotetweetmentionedusewids
       )
   }
 
-  trait Store {
-    val insertTweet: FutureEffect[Event]
+  twait stowe {
+    v-vaw insewttweet: f-futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val insertTweet: FutureEffect[Event] = wrap(underlying.insertTweet)
+  t-twait stowewwappew extends s-stowe { sewf: tweetstowewwappew[stowe] =>
+    ovewwide v-vaw insewttweet: f-futuweeffect[event] = wwap(undewwying.insewttweet)
   }
 
-  object Store {
-    def apply(
-      logLensStore: LogLensStore,
-      manhattanStore: ManhattanTweetStore,
-      tweetStatsStore: TweetStatsStore,
-      cachingTweetStore: CachingTweetStore,
-      limiterStore: LimiterStore,
-      asyncEnqueueStore: AsyncEnqueueStore,
-      userCountsUpdatingStore: GizmoduckUserCountsUpdatingStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore
-    ): Store =
-      new Store {
-        override val insertTweet: FutureEffect[Event] =
-          FutureEffect.sequentially(
-            logLensStore.insertTweet,
-            manhattanStore.insertTweet,
-            tweetStatsStore.insertTweet,
-            FutureEffect.inParallel(
-              // allow write-through caching to fail without failing entire insert
-              cachingTweetStore.ignoreFailures.insertTweet,
-              limiterStore.ignoreFailures.insertTweet,
-              asyncEnqueueStore.insertTweet,
-              userCountsUpdatingStore.insertTweet,
-              tweetCountsUpdatingStore.insertTweet
+  o-object stowe {
+    def appwy(
+      wogwensstowe: w-wogwensstowe, (U ﹏ U)
+      m-manhattanstowe: m-manhattantweetstowe, :3
+      t-tweetstatsstowe: t-tweetstatsstowe, (✿oωo)
+      cachingtweetstowe: cachingtweetstowe,
+      wimitewstowe: wimitewstowe, XD
+      a-asyncenqueuestowe: asyncenqueuestowe,
+      usewcountsupdatingstowe: gizmoduckusewcountsupdatingstowe, >w<
+      tweetcountsupdatingstowe: tweetcountscacheupdatingstowe
+    ): stowe =
+      n-nyew stowe {
+        ovewwide vaw insewttweet: futuweeffect[event] =
+          f-futuweeffect.sequentiawwy(
+            w-wogwensstowe.insewttweet, òωó
+            m-manhattanstowe.insewttweet, (ꈍᴗꈍ)
+            tweetstatsstowe.insewttweet, rawr x3
+            f-futuweeffect.inpawawwew(
+              // awwow w-wwite-thwough caching t-to faiw without faiwing entiwe insewt
+              cachingtweetstowe.ignowefaiwuwes.insewttweet, rawr x3
+              wimitewstowe.ignowefaiwuwes.insewttweet, σωσ
+              asyncenqueuestowe.insewttweet, (ꈍᴗꈍ)
+              u-usewcountsupdatingstowe.insewttweet,
+              tweetcountsupdatingstowe.insewttweet
             )
           )
       }
   }
 }
 
-object AsyncInsertTweet extends TweetStore.AsyncModule {
+o-object asyncinsewttweet e-extends tweetstowe.asyncmoduwe {
 
-  private val log = Logger(getClass)
+  p-pwivate vaw wog = woggew(getcwass)
 
-  object Event {
-    def fromAsyncRequest(request: AsyncInsertRequest): TweetStoreEventOrRetry[Event] =
-      TweetStoreEventOrRetry(
-        Event(
-          tweet = request.tweet,
-          cachedTweet = request.cachedTweet,
-          user = request.user,
-          optUser = Some(request.user),
-          timestamp = Time.fromMilliseconds(request.timestamp),
-          sourceTweet = request.sourceTweet,
-          sourceUser = request.sourceUser,
-          parentUserId = request.parentUserId,
-          featureContext = request.featureContext,
-          quotedTweet = request.quotedTweet,
-          quotedUser = request.quotedUser,
-          geoSearchRequestId = request.geoSearchRequestId,
-          additionalContext = request.additionalContext,
-          transientContext = request.transientContext,
-          quoterHasAlreadyQuotedTweet = request.quoterHasAlreadyQuotedTweet.getOrElse(false),
-          initialTweetUpdateRequest = request.initialTweetUpdateRequest,
-          noteTweetMentionedUserIds = request.noteTweetMentionedUserIds
-        ),
-        request.retryAction,
-        RetryEvent
+  object e-event {
+    d-def fwomasyncwequest(wequest: asyncinsewtwequest): tweetstoweeventowwetwy[event] =
+      t-tweetstoweeventowwetwy(
+        e-event(
+          tweet = wequest.tweet,
+          cachedtweet = wequest.cachedtweet, rawr
+          u-usew = w-wequest.usew,
+          o-optusew = some(wequest.usew), ^^;;
+          t-timestamp = time.fwommiwwiseconds(wequest.timestamp), rawr x3
+          s-souwcetweet = wequest.souwcetweet, (ˆ ﻌ ˆ)♡
+          souwceusew = w-wequest.souwceusew, σωσ
+          pawentusewid = wequest.pawentusewid, (U ﹏ U)
+          featuwecontext = wequest.featuwecontext, >w<
+          q-quotedtweet = w-wequest.quotedtweet, σωσ
+          quotedusew = wequest.quotedusew, nyaa~~
+          g-geoseawchwequestid = w-wequest.geoseawchwequestid, 🥺
+          additionawcontext = wequest.additionawcontext, rawr x3
+          twansientcontext = w-wequest.twansientcontext, σωσ
+          quotewhasawweadyquotedtweet = wequest.quotewhasawweadyquotedtweet.getowewse(fawse), (///ˬ///✿)
+          initiawtweetupdatewequest = wequest.initiawtweetupdatewequest, (U ﹏ U)
+          n-nyotetweetmentionedusewids = wequest.notetweetmentionedusewids
+        ), ^^;;
+        wequest.wetwyaction, 🥺
+        w-wetwyevent
       )
   }
 
-  case class Event(
-    tweet: Tweet,
-    cachedTweet: CachedTweet,
-    user: User,
-    optUser: Option[User],
-    timestamp: Time,
-    sourceTweet: Option[Tweet] = None,
-    sourceUser: Option[User] = None,
-    parentUserId: Option[UserId] = None,
-    featureContext: Option[FeatureContext] = None,
-    quotedTweet: Option[Tweet] = None,
-    quotedUser: Option[User] = None,
-    geoSearchRequestId: Option[String] = None,
-    additionalContext: Option[collection.Map[TweetCreateContextKey, String]] = None,
-    transientContext: Option[TransientCreateContext] = None,
-    quoterHasAlreadyQuotedTweet: Boolean = false,
-    initialTweetUpdateRequest: Option[InitialTweetUpdateRequest] = None,
-    noteTweetMentionedUserIds: Option[Seq[Long]] = None)
-      extends AsyncTweetStoreEvent("async_insert_tweet")
-      with QuotedTweetOps
-      with TweetStoreTweetEvent {
+  c-case cwass event(
+    tweet: tweet, òωó
+    cachedtweet: c-cachedtweet, XD
+    u-usew: usew, :3
+    optusew: option[usew], (U ﹏ U)
+    timestamp: time, >w<
+    s-souwcetweet: option[tweet] = n-none, /(^•ω•^)
+    souwceusew: option[usew] = nyone, (⑅˘꒳˘)
+    pawentusewid: option[usewid] = nyone, ʘwʘ
+    f-featuwecontext: option[featuwecontext] = n-nyone,
+    quotedtweet: o-option[tweet] = nyone, rawr x3
+    q-quotedusew: option[usew] = n-nyone, (˘ω˘)
+    geoseawchwequestid: o-option[stwing] = n-nyone, o.O
+    additionawcontext: option[cowwection.map[tweetcweatecontextkey, 😳 stwing]] = n-nyone,
+    t-twansientcontext: option[twansientcweatecontext] = nyone,
+    q-quotewhasawweadyquotedtweet: b-boowean = f-fawse, o.O
+    initiawtweetupdatewequest: option[initiawtweetupdatewequest] = n-nyone, ^^;;
+    nyotetweetmentionedusewids: option[seq[wong]] = n-nyone)
+      e-extends asynctweetstoweevent("async_insewt_tweet")
+      with quotedtweetops
+      with t-tweetstowetweetevent {
 
-    def toAsyncRequest(action: Option[AsyncWriteAction] = None): AsyncInsertRequest =
-      AsyncInsertRequest(
-        tweet = tweet,
-        cachedTweet = cachedTweet,
-        user = user,
-        sourceTweet = sourceTweet,
-        sourceUser = sourceUser,
-        parentUserId = parentUserId,
-        retryAction = action,
-        featureContext = featureContext,
-        timestamp = timestamp.inMillis,
-        quotedTweet = quotedTweet,
-        quotedUser = quotedUser,
-        geoSearchRequestId = geoSearchRequestId,
-        additionalContext = additionalContext,
-        transientContext = transientContext,
-        quoterHasAlreadyQuotedTweet = Some(quoterHasAlreadyQuotedTweet),
-        initialTweetUpdateRequest = initialTweetUpdateRequest,
-        noteTweetMentionedUserIds = noteTweetMentionedUserIds
+    d-def t-toasyncwequest(action: o-option[asyncwwiteaction] = nyone): asyncinsewtwequest =
+      a-asyncinsewtwequest(
+        tweet = tweet, ( ͡o ω ͡o )
+        cachedtweet = cachedtweet, ^^;;
+        usew = usew, ^^;;
+        s-souwcetweet = souwcetweet, XD
+        souwceusew = s-souwceusew, 🥺
+        pawentusewid = p-pawentusewid, (///ˬ///✿)
+        wetwyaction = a-action, (U ᵕ U❁)
+        featuwecontext = f-featuwecontext, ^^;;
+        t-timestamp = timestamp.inmiwwis, ^^;;
+        q-quotedtweet = q-quotedtweet, rawr
+        q-quotedusew = quotedusew, (˘ω˘)
+        geoseawchwequestid = geoseawchwequestid, 🥺
+        additionawcontext = additionawcontext, nyaa~~
+        twansientcontext = t-twansientcontext,
+        q-quotewhasawweadyquotedtweet = s-some(quotewhasawweadyquotedtweet), :3
+        initiawtweetupdatewequest = initiawtweetupdatewequest, /(^•ω•^)
+        n-nyotetweetmentionedusewids = nyotetweetmentionedusewids
       )
 
-    override def toTweetEventData: Seq[TweetEventData] =
-      Seq(
-        TweetEventData.TweetCreateEvent(
-          TweetCreateEvent(
-            tweet = scrub(tweet),
-            user = user,
-            sourceUser = sourceUser,
-            sourceTweet = sourceTweet.map(scrub),
-            retweetParentUserId = parentUserId,
-            quotedTweet = publicQuotedTweet.map(scrub),
-            quotedUser = publicQuotedUser,
-            additionalContext = additionalContext,
-            transientContext = transientContext,
-            quoterHasAlreadyQuotedTweet = Some(quoterHasAlreadyQuotedTweet)
+    ovewwide def totweeteventdata: seq[tweeteventdata] =
+      s-seq(
+        tweeteventdata.tweetcweateevent(
+          t-tweetcweateevent(
+            tweet = s-scwub(tweet), ^•ﻌ•^
+            usew = usew, UwU
+            s-souwceusew = s-souwceusew, 😳😳😳
+            souwcetweet = s-souwcetweet.map(scwub), OwO
+            w-wetweetpawentusewid = pawentusewid,
+            quotedtweet = pubwicquotedtweet.map(scwub), ^•ﻌ•^
+            quotedusew = pubwicquotedusew, (ꈍᴗꈍ)
+            a-additionawcontext = a-additionawcontext, (⑅˘꒳˘)
+            t-twansientcontext = t-twansientcontext, (⑅˘꒳˘)
+            q-quotewhasawweadyquotedtweet = some(quotewhasawweadyquotedtweet)
           )
         )
       )
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      service.asyncInsert(toAsyncRequest(Some(action)))
+    ovewwide def e-enqueuewetwy(sewvice: t-thwifttweetsewvice, (ˆ ﻌ ˆ)♡ action: a-asyncwwiteaction): f-futuwe[unit] =
+      sewvice.asyncinsewt(toasyncwequest(some(action)))
   }
 
-  case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+  c-case cwass wetwyevent(action: asyncwwiteaction, /(^•ω•^) event: event)
+      e-extends tweetstowewetwyevent[event] {
 
-    override val eventType: AsyncWriteEventType.Insert.type = AsyncWriteEventType.Insert
-    override val scribedTweetOnFailure: Option[Tweet] = Some(event.tweet)
+    o-ovewwide vaw e-eventtype: asyncwwiteeventtype.insewt.type = asyncwwiteeventtype.insewt
+    o-ovewwide vaw scwibedtweetonfaiwuwe: option[tweet] = s-some(event.tweet)
   }
 
-  trait Store {
-    val asyncInsertTweet: FutureEffect[Event]
-    val retryAsyncInsertTweet: FutureEffect[TweetStoreRetryEvent[Event]]
+  t-twait stowe {
+    v-vaw asyncinsewttweet: futuweeffect[event]
+    vaw wetwyasyncinsewttweet: futuweeffect[tweetstowewetwyevent[event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncInsertTweet: FutureEffect[Event] = wrap(underlying.asyncInsertTweet)
-    override val retryAsyncInsertTweet: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
-      underlying.retryAsyncInsertTweet)
+  t-twait stowewwappew extends stowe { sewf: tweetstowewwappew[stowe] =>
+    o-ovewwide v-vaw asyncinsewttweet: futuweeffect[event] = w-wwap(undewwying.asyncinsewttweet)
+    ovewwide v-vaw wetwyasyncinsewttweet: f-futuweeffect[tweetstowewetwyevent[event]] = wwap(
+      undewwying.wetwyasyncinsewttweet)
   }
 
-  object Store {
-    def apply(
-      replicatingStore: ReplicatingTweetStore,
-      indexingStore: TweetIndexingStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore,
-      timelineUpdatingStore: TlsTimelineUpdatingStore,
-      eventBusEnqueueStore: TweetEventBusStore,
-      fanoutServiceStore: FanoutServiceStore,
-      scribeMediaTagStore: ScribeMediaTagStore,
-      userGeotagUpdateStore: GizmoduckUserGeotagUpdateStore,
-      geoSearchRequestIDStore: GeoSearchRequestIDStore
-    ): Store = {
-      val stores: Seq[Store] =
-        Seq(
-          replicatingStore,
-          indexingStore,
-          timelineUpdatingStore,
-          eventBusEnqueueStore,
-          fanoutServiceStore,
-          userGeotagUpdateStore,
-          tweetCountsUpdatingStore,
-          scribeMediaTagStore,
-          geoSearchRequestIDStore
+  o-object stowe {
+    def appwy(
+      w-wepwicatingstowe: w-wepwicatingtweetstowe, òωó
+      indexingstowe: t-tweetindexingstowe, (⑅˘꒳˘)
+      tweetcountsupdatingstowe: t-tweetcountscacheupdatingstowe, (U ᵕ U❁)
+      t-timewineupdatingstowe: t-twstimewineupdatingstowe, >w<
+      eventbusenqueuestowe: tweeteventbusstowe, σωσ
+      fanoutsewvicestowe: fanoutsewvicestowe, -.-
+      scwibemediatagstowe: scwibemediatagstowe, o.O
+      usewgeotagupdatestowe: gizmoduckusewgeotagupdatestowe, ^^
+      geoseawchwequestidstowe: geoseawchwequestidstowe
+    ): stowe = {
+      vaw stowes: seq[stowe] =
+        s-seq(
+          w-wepwicatingstowe, >_<
+          indexingstowe,
+          timewineupdatingstowe, >w<
+          eventbusenqueuestowe, >_<
+          f-fanoutsewvicestowe, >w<
+          u-usewgeotagupdatestowe, rawr
+          t-tweetcountsupdatingstowe, rawr x3
+          scwibemediatagstowe, ( ͡o ω ͡o )
+          g-geoseawchwequestidstowe
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def buiwd[e <: t-tweetstoweevent](extwact: s-stowe => futuweeffect[e]): f-futuweeffect[e] =
+        futuweeffect.inpawawwew[e](stowes.map(extwact): _*)
 
-      new Store {
-        override val asyncInsertTweet: FutureEffect[Event] = build(_.asyncInsertTweet)
-        override val retryAsyncInsertTweet: FutureEffect[TweetStoreRetryEvent[Event]] = build(
-          _.retryAsyncInsertTweet)
+      n-nyew s-stowe {
+        ovewwide vaw asyncinsewttweet: futuweeffect[event] = b-buiwd(_.asyncinsewttweet)
+        o-ovewwide v-vaw wetwyasyncinsewttweet: f-futuweeffect[tweetstowewetwyevent[event]] = b-buiwd(
+          _.wetwyasyncinsewttweet)
       }
     }
   }
 }
 
-object ReplicatedInsertTweet extends TweetStore.ReplicatedModule {
+o-object wepwicatedinsewttweet e-extends tweetstowe.wepwicatedmoduwe {
 
-  case class Event(
-    tweet: Tweet,
-    cachedTweet: CachedTweet,
-    quoterHasAlreadyQuotedTweet: Boolean = false,
-    initialTweetUpdateRequest: Option[InitialTweetUpdateRequest] = None)
-      extends ReplicatedTweetStoreEvent("replicated_insert_tweet")
+  c-case c-cwass event(
+    tweet: tweet, (˘ω˘)
+    c-cachedtweet: c-cachedtweet, 😳
+    q-quotewhasawweadyquotedtweet: boowean = fawse, OwO
+    i-initiawtweetupdatewequest: option[initiawtweetupdatewequest] = nyone)
+      e-extends wepwicatedtweetstoweevent("wepwicated_insewt_tweet")
 
-  trait Store {
-    val replicatedInsertTweet: FutureEffect[Event]
+  twait stowe {
+    v-vaw wepwicatedinsewttweet: futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedInsertTweet: FutureEffect[Event] = wrap(underlying.replicatedInsertTweet)
+  t-twait s-stowewwappew extends stowe { sewf: t-tweetstowewwappew[stowe] =>
+    ovewwide vaw w-wepwicatedinsewttweet: futuweeffect[event] = w-wwap(undewwying.wepwicatedinsewttweet)
   }
 
-  object Store {
-    def apply(
-      cachingTweetStore: CachingTweetStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore
-    ): Store = {
-      new Store {
-        override val replicatedInsertTweet: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            cachingTweetStore.replicatedInsertTweet,
-            tweetCountsUpdatingStore.replicatedInsertTweet.ignoreFailures
+  object s-stowe {
+    def appwy(
+      cachingtweetstowe: cachingtweetstowe, (˘ω˘)
+      tweetcountsupdatingstowe: tweetcountscacheupdatingstowe
+    ): s-stowe = {
+      nyew stowe {
+        ovewwide v-vaw wepwicatedinsewttweet: f-futuweeffect[event] =
+          futuweeffect.inpawawwew(
+            cachingtweetstowe.wepwicatedinsewttweet, òωó
+            tweetcountsupdatingstowe.wepwicatedinsewttweet.ignowefaiwuwes
           )
       }
     }

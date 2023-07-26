@@ -1,64 +1,64 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.genewic_summawy
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary.GenericSummaryCandidateUrtItemBuilder.GenericSummaryClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.GenericSummaryCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItemDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.Media
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.util.Time
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.genewic_summawy.genewicsummawycandidateuwtitembuiwdew.genewicsummawycwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.genewicsummawycandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.wichtext.basewichtextbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.genewic_summawy.genewicsummawyitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.genewic_summawy.genewicsummawyitemdispwaytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.media.media
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.pwomotedmetadata
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.utiw.time
 
-object GenericSummaryCandidateUrtItemBuilder {
-  val GenericSummaryClientEventInfoElement: String = "genericsummary"
+object g-genewicsummawycandidateuwtitembuiwdew {
+  vaw genewicsummawycwienteventinfoewement: stwing = "genewicsummawy"
 }
 
-case class GenericSummaryCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, GenericSummaryCandidate],
-  headlineRichTextBuilder: BaseRichTextBuilder[Query, GenericSummaryCandidate],
-  displayType: GenericSummaryItemDisplayType,
-  genericSummaryContextCandidateUrtItemBuilder: Option[
-    GenericSummaryContextBuilder[Query, GenericSummaryCandidate]
-  ] = None,
-  genericSummaryActionCandidateUrtItemBuilder: Option[
-    GenericSummaryActionBuilder[Query, GenericSummaryCandidate]
-  ] = None,
-  timestamp: Option[Time] = None,
-  userAttributionIds: Option[Seq[Long]] = None,
-  media: Option[Media] = None,
-  promotedMetadata: Option[PromotedMetadata] = None,
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, GenericSummaryCandidate]] =
-    None)
-    extends CandidateUrtEntryBuilder[Query, GenericSummaryCandidate, GenericSummaryItem] {
+c-case cwass genewicsummawycandidateuwtitembuiwdew[-quewy <: pipewinequewy](
+  cwienteventinfobuiwdew: b-basecwienteventinfobuiwdew[quewy, 🥺 g-genewicsummawycandidate], (U ﹏ U)
+  headwinewichtextbuiwdew: basewichtextbuiwdew[quewy, >w< genewicsummawycandidate], mya
+  dispwaytype: g-genewicsummawyitemdispwaytype, >w<
+  genewicsummawycontextcandidateuwtitembuiwdew: option[
+    genewicsummawycontextbuiwdew[quewy, nyaa~~ genewicsummawycandidate]
+  ] = nyone, (✿oωo)
+  genewicsummawyactioncandidateuwtitembuiwdew: o-option[
+    genewicsummawyactionbuiwdew[quewy, ʘwʘ g-genewicsummawycandidate]
+  ] = n-nyone, (ˆ ﻌ ˆ)♡
+  timestamp: o-option[time] = n-nyone, 😳😳😳
+  usewattwibutionids: option[seq[wong]] = n-nyone, :3
+  media: option[media] = nyone, OwO
+  p-pwomotedmetadata: option[pwomotedmetadata] = nyone, (U ﹏ U)
+  feedbackactioninfobuiwdew: option[basefeedbackactioninfobuiwdew[quewy, >w< genewicsummawycandidate]] =
+    nyone)
+    extends c-candidateuwtentwybuiwdew[quewy, (U ﹏ U) genewicsummawycandidate, 😳 g-genewicsummawyitem] {
 
-  override def apply(
-    query: Query,
-    genericSummaryCandidate: GenericSummaryCandidate,
-    candidateFeatures: FeatureMap
-  ): GenericSummaryItem = GenericSummaryItem(
-    id = genericSummaryCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      genericSummaryCandidate,
-      candidateFeatures,
-      Some(GenericSummaryClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, genericSummaryCandidate, candidateFeatures)),
-    headline = headlineRichTextBuilder.apply(query, genericSummaryCandidate, candidateFeatures),
-    displayType = displayType,
-    userAttributionIds = userAttributionIds.getOrElse(Seq.empty),
-    media = media,
-    context = genericSummaryContextCandidateUrtItemBuilder.map(
-      _.apply(query, genericSummaryCandidate, candidateFeatures)),
-    timestamp = timestamp,
-    onClickAction = genericSummaryActionCandidateUrtItemBuilder.map(
-      _.apply(query, genericSummaryCandidate, candidateFeatures)),
-    promotedMetadata = promotedMetadata
+  o-ovewwide def a-appwy(
+    quewy: quewy, (ˆ ﻌ ˆ)♡
+    genewicsummawycandidate: genewicsummawycandidate, 😳😳😳
+    candidatefeatuwes: f-featuwemap
+  ): g-genewicsummawyitem = genewicsummawyitem(
+    i-id = genewicsummawycandidate.id,
+    s-sowtindex = none, (U ﹏ U) // sowt i-indexes awe automaticawwy set i-in the domain mawshawwew phase
+    cwienteventinfo = c-cwienteventinfobuiwdew(
+      quewy, (///ˬ///✿)
+      g-genewicsummawycandidate, 😳
+      candidatefeatuwes, 😳
+      s-some(genewicsummawycwienteventinfoewement)), σωσ
+    f-feedbackactioninfo =
+      feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, rawr x3 genewicsummawycandidate, OwO candidatefeatuwes)), /(^•ω•^)
+    headwine = headwinewichtextbuiwdew.appwy(quewy, 😳😳😳 genewicsummawycandidate, ( ͡o ω ͡o ) c-candidatefeatuwes),
+    d-dispwaytype = dispwaytype, >_<
+    u-usewattwibutionids = u-usewattwibutionids.getowewse(seq.empty), >w<
+    m-media = media, rawr
+    context = genewicsummawycontextcandidateuwtitembuiwdew.map(
+      _.appwy(quewy, 😳 genewicsummawycandidate, >w< candidatefeatuwes)), (⑅˘꒳˘)
+    t-timestamp = timestamp, OwO
+    oncwickaction = genewicsummawyactioncandidateuwtitembuiwdew.map(
+      _.appwy(quewy, (ꈍᴗꈍ) genewicsummawycandidate, 😳 candidatefeatuwes)), 😳😳😳
+    p-pwomotedmetadata = pwomotedmetadata
   )
 }

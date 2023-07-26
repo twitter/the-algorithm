@@ -1,63 +1,63 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
+package com.twittew.timewines.data_pwocessing.ad_hoc.eawwybiwd_wanking.twaining_data_genewation
 
-import com.twitter.ml.api.analytics.DataSetAnalyticsPlugin
-import com.twitter.ml.api.matcher.FeatureMatcher
-import com.twitter.ml.api.util.FDsl
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.FeatureStats
-import com.twitter.ml.api.IMatcher
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedJson
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.timelines.data_processing.util.execution.UTCDateRangeFromArgs
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingConfiguration
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import scala.collection.JavaConverters._
+impowt com.twittew.mw.api.anawytics.datasetanawyticspwugin
+i-impowt c-com.twittew.mw.api.matchew.featuwematchew
+i-impowt c-com.twittew.mw.api.utiw.fdsw
+i-impowt com.twittew.mw.api.daiwysuffixfeatuwesouwce
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.datasetpipe
+i-impowt com.twittew.mw.api.featuwestats
+impowt com.twittew.mw.api.imatchew
+impowt com.twittew.scawding.typed.typedpipe
+impowt com.twittew.scawding.execution
+i-impowt com.twittew.scawding.typedjson
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+i-impowt com.twittew.timewines.data_pwocessing.utiw.execution.utcdatewangefwomawgs
+i-impowt com.twittew.timewines.data_pwocessing.ad_hoc.eawwybiwd_wanking.common.eawwybiwdtwainingconfiguwation
+impowt com.twittew.timewines.data_pwocessing.ad_hoc.eawwybiwd_wanking.common.eawwybiwdtwainingwecapconfiguwation
+i-impowt com.twittew.timewines.pwediction.featuwes.wecap.wecapfeatuwes
+i-impowt scawa.cowwection.javaconvewtews._
 
 /**
- * Compute counts and fractions for all labels in a Recap data source.
+ * c-compute counts and fwactions fow aww wabews in a wecap data souwce. mya
  *
- * Arguments:
- * --input   recap data source (containing all labels)
- * --output  path to output JSON file containing stats
+ * awguments:
+ * --input   w-wecap data souwce (containing aww wabews)
+ * --output  path to output json fiwe containing stats
  */
-object EarlybirdStatsJob extends TwitterExecutionApp with UTCDateRangeFromArgs {
+o-object eawwybiwdstatsjob extends twittewexecutionapp w-with u-utcdatewangefwomawgs {
 
-  import DataSetAnalyticsPlugin._
-  import FDsl._
-  import RecapFeatures.IS_EARLYBIRD_UNIFIED_ENGAGEMENT
+  i-impowt d-datasetanawyticspwugin._
+  impowt fdsw._
+  impowt w-wecapfeatuwes.is_eawwybiwd_unified_engagement
 
-  lazy val constants: EarlybirdTrainingConfiguration = new EarlybirdTrainingRecapConfiguration
-  private[this] def addGlobalEngagementLabel(record: DataRecord) = {
-    if (constants.LabelInfos.exists { labelInfo => record.hasFeature(labelInfo.feature) }) {
-      record.setFeatureValue(IS_EARLYBIRD_UNIFIED_ENGAGEMENT, true)
+  wazy vaw constants: eawwybiwdtwainingconfiguwation = n-nyew eawwybiwdtwainingwecapconfiguwation
+  pwivate[this] def addgwobawengagementwabew(wecowd: datawecowd) = {
+    if (constants.wabewinfos.exists { wabewinfo => w-wecowd.hasfeatuwe(wabewinfo.featuwe) }) {
+      wecowd.setfeatuwevawue(is_eawwybiwd_unified_engagement, ^^ t-twue)
     }
-    record
+    w-wecowd
   }
 
-  private[this] def labelFeatureMatcher: IMatcher = {
-    val allLabels =
-      (IS_EARLYBIRD_UNIFIED_ENGAGEMENT :: constants.LabelInfos.map(_.feature)).map(_.getFeatureName)
-    FeatureMatcher.names(allLabels.asJava)
+  p-pwivate[this] def wabewfeatuwematchew: imatchew = {
+    vaw awwwabews =
+      (is_eawwybiwd_unified_engagement :: c-constants.wabewinfos.map(_.featuwe)).map(_.getfeatuwename)
+    f-featuwematchew.names(awwwabews.asjava)
   }
 
-  private[this] def computeStats(data: DataSetPipe): TypedPipe[FeatureStats] = {
-    data
-      .viaRecords { _.map(addGlobalEngagementLabel) }
-      .project(labelFeatureMatcher)
-      .collectFeatureStats()
+  pwivate[this] def c-computestats(data: d-datasetpipe): typedpipe[featuwestats] = {
+    d-data
+      .viawecowds { _.map(addgwobawengagementwabew) }
+      .pwoject(wabewfeatuwematchew)
+      .cowwectfeatuwestats()
   }
 
-  override def job: Execution[Unit] = {
-    for {
-      args <- Execution.getArgs
-      dateRange <- dateRangeEx
-      data = DailySuffixFeatureSource(args("input"))(dateRange).read
-      _ <- computeStats(data).writeExecution(TypedJson(args("output")))
-    } yield ()
+  ovewwide d-def job: execution[unit] = {
+    fow {
+      awgs <- execution.getawgs
+      d-datewange <- datewangeex
+      d-data = daiwysuffixfeatuwesouwce(awgs("input"))(datewange).wead
+      _ <- c-computestats(data).wwiteexecution(typedjson(awgs("output")))
+    } y-yiewd ()
   }
 }

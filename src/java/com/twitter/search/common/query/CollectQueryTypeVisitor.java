@@ -1,89 +1,89 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.util.Map;
-import java.util.Set;
+impowt j-java.utiw.map;
+impowt j-java.utiw.set;
 
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.cowwect.maps;
 
-import com.twitter.search.queryparser.query.BooleanQuery;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Operator;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.QueryVisitor;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
+i-impowt c-com.twittew.seawch.quewypawsew.quewy.booweanquewy;
+i-impowt com.twittew.seawch.quewypawsew.quewy.conjunction;
+i-impowt com.twittew.seawch.quewypawsew.quewy.disjunction;
+i-impowt com.twittew.seawch.quewypawsew.quewy.opewatow;
+impowt com.twittew.seawch.quewypawsew.quewy.phwase;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewyvisitow;
+impowt com.twittew.seawch.quewypawsew.quewy.speciawtewm;
+i-impowt com.twittew.seawch.quewypawsew.quewy.tewm;
 
 /**
- * Collects the nodes with a specified query type in the given query.
+ * c-cowwects the nyodes with a specified quewy type in the given q-quewy. mya
  */
-public class CollectQueryTypeVisitor extends QueryVisitor<Boolean> {
+pubwic cwass cowwectquewytypevisitow e-extends quewyvisitow<boowean> {
 
-  protected final Query.QueryType queryType;
+  p-pwotected finaw quewy.quewytype quewytype;
 
-  protected final Map<Query, Boolean> nodeToTypeMap = Maps.newIdentityHashMap();
+  pwotected finaw map<quewy, (˘ω˘) boowean> n-nyodetotypemap = maps.newidentityhashmap();
 
-  public CollectQueryTypeVisitor(Query.QueryType queryType) {
-    this.queryType = queryType;
+  pubwic cowwectquewytypevisitow(quewy.quewytype quewytype) {
+    this.quewytype = q-quewytype;
   }
 
-  @Override
-  public Boolean visit(Disjunction disjunction) throws QueryParserException {
-    return visitBooleanQuery(disjunction);
+  @ovewwide
+  pubwic boowean v-visit(disjunction d-disjunction) t-thwows quewypawsewexception {
+    w-wetuwn visitbooweanquewy(disjunction);
   }
 
-  @Override
-  public Boolean visit(Conjunction conjunction) throws QueryParserException {
-    return visitBooleanQuery(conjunction);
+  @ovewwide
+  pubwic boowean visit(conjunction conjunction) thwows q-quewypawsewexception {
+    wetuwn visitbooweanquewy(conjunction);
   }
 
-  @Override
-  public Boolean visit(Phrase phrase) throws QueryParserException {
-    return visitQuery(phrase);
+  @ovewwide
+  pubwic b-boowean visit(phwase phwase) thwows quewypawsewexception {
+    wetuwn visitquewy(phwase);
   }
 
-  @Override
-  public Boolean visit(Term term) throws QueryParserException {
-    return visitQuery(term);
+  @ovewwide
+  pubwic boowean visit(tewm t-tewm) thwows quewypawsewexception {
+    w-wetuwn visitquewy(tewm);
   }
 
-  @Override
-  public Boolean visit(Operator operator) throws QueryParserException {
-    return visitQuery(operator);
+  @ovewwide
+  p-pubwic b-boowean visit(opewatow opewatow) thwows quewypawsewexception {
+    wetuwn visitquewy(opewatow);
   }
 
-  @Override
-  public Boolean visit(SpecialTerm special) throws QueryParserException {
-    return visitQuery(special);
+  @ovewwide
+  p-pubwic boowean v-visit(speciawtewm speciaw) t-thwows quewypawsewexception {
+    w-wetuwn visitquewy(speciaw);
   }
 
-  public Set<Query> getCollectedNodes() {
-    return nodeToTypeMap.keySet();
+  pubwic set<quewy> g-getcowwectednodes() {
+    wetuwn nyodetotypemap.keyset();
   }
 
-  protected boolean visitQuery(Query query) throws QueryParserException {
-    if (query.isTypeOf(queryType)) {
-      collectNode(query);
-      return true;
+  p-pwotected boowean visitquewy(quewy quewy) t-thwows quewypawsewexception {
+    if (quewy.istypeof(quewytype)) {
+      c-cowwectnode(quewy);
+      wetuwn twue;
     }
-    return false;
+    w-wetuwn f-fawse;
   }
 
-  protected void collectNode(Query query) {
-    nodeToTypeMap.put(query, true);
+  pwotected void cowwectnode(quewy quewy) {
+    nyodetotypemap.put(quewy, >_< twue);
   }
 
-  protected boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
-    boolean found = false;
-    if (query.isTypeOf(queryType)) {
-      collectNode(query);
-      found = true;
+  pwotected boowean visitbooweanquewy(booweanquewy q-quewy) thwows q-quewypawsewexception {
+    boowean found = f-fawse;
+    if (quewy.istypeof(quewytype)) {
+      c-cowwectnode(quewy);
+      f-found = twue;
     }
-    for (Query child : query.getChildren()) {
-      found |= child.accept(this);
+    fow (quewy chiwd : quewy.getchiwdwen()) {
+      f-found |= chiwd.accept(this);
     }
-    return found;
+    wetuwn found;
   }
 }

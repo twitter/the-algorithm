@@ -1,118 +1,118 @@
-package com.twitter.follow_recommendations
+package com.twittew.fowwow_wecommendations
 
-import com.google.inject.Module
-import com.twitter.finagle.ThriftMux
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.http.HttpServer
-import com.twitter.finatra.http.routing.HttpRouter
-import com.twitter.finatra.international.modules.I18nFactoryModule
-import com.twitter.finatra.international.modules.LanguagesModule
-import com.twitter.finatra.jackson.modules.ScalaObjectMapperModule
-import com.twitter.finatra.mtls.http.{Mtls => HttpMtls}
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters._
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.follow_recommendations.common.clients.addressbook.AddressbookModule
-import com.twitter.follow_recommendations.common.clients.adserver.AdserverModule
-import com.twitter.follow_recommendations.common.clients.cache.MemcacheModule
-import com.twitter.follow_recommendations.common.clients.deepbirdv2.DeepBirdV2PredictionServiceClientModule
-import com.twitter.follow_recommendations.common.clients.email_storage_service.EmailStorageServiceModule
-import com.twitter.follow_recommendations.common.clients.geoduck.LocationServiceModule
-import com.twitter.follow_recommendations.common.clients.gizmoduck.GizmoduckModule
-import com.twitter.follow_recommendations.common.clients.graph_feature_service.GraphFeatureStoreModule
-import com.twitter.follow_recommendations.common.clients.impression_store.ImpressionStoreModule
-import com.twitter.follow_recommendations.common.clients.phone_storage_service.PhoneStorageServiceModule
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphModule
-import com.twitter.follow_recommendations.common.clients.strato.StratoClientModule
-import com.twitter.follow_recommendations.common.constants.ServiceConstants._
-import com.twitter.follow_recommendations.common.feature_hydration.sources.HydrationSourcesModule
-import com.twitter.follow_recommendations.controllers.ThriftController
-import com.twitter.follow_recommendations.modules._
-import com.twitter.follow_recommendations.service.exceptions.UnknownLoggingExceptionMapper
-import com.twitter.follow_recommendations.services.FollowRecommendationsServiceWarmupHandler
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.geoduck.service.common.clientmodules.ReverseGeocoderThriftClientModule
-import com.twitter.inject.thrift.filters.DarkTrafficFilter
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
-import com.twitter.product_mixer.core.controllers.ProductMixerController
-import com.twitter.product_mixer.core.module.PipelineExecutionLoggerModule
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule
-import com.twitter.product_mixer.core.module.stringcenter.ProductScopeStringCenterModule
-import com.twitter.product_mixer.core.product.guice.ProductScopeModule
+impowt c-com.googwe.inject.moduwe
+i-impowt c-com.twittew.finagwe.thwiftmux
+i-impowt com.twittew.finatwa.decidew.moduwes.decidewmoduwe
+i-impowt c-com.twittew.finatwa.http.httpsewvew
+i-impowt com.twittew.finatwa.http.wouting.httpwoutew
+i-impowt com.twittew.finatwa.intewnationaw.moduwes.i18nfactowymoduwe
+impowt com.twittew.finatwa.intewnationaw.moduwes.wanguagesmoduwe
+impowt com.twittew.finatwa.jackson.moduwes.scawaobjectmappewmoduwe
+i-impowt com.twittew.finatwa.mtws.http.{mtws => httpmtws}
+i-impowt com.twittew.finatwa.mtws.thwiftmux.mtws
+impowt com.twittew.finatwa.thwift.thwiftsewvew
+i-impowt com.twittew.finatwa.thwift.fiwtews._
+impowt com.twittew.finagwe.thwift.pwotocows
+impowt com.twittew.finatwa.thwift.wouting.thwiftwoutew
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.addwessbook.addwessbookmoduwe
+impowt c-com.twittew.fowwow_wecommendations.common.cwients.adsewvew.adsewvewmoduwe
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.cache.memcachemoduwe
+impowt com.twittew.fowwow_wecommendations.common.cwients.deepbiwdv2.deepbiwdv2pwedictionsewvicecwientmoduwe
+impowt com.twittew.fowwow_wecommendations.common.cwients.emaiw_stowage_sewvice.emaiwstowagesewvicemoduwe
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.geoduck.wocationsewvicemoduwe
+impowt com.twittew.fowwow_wecommendations.common.cwients.gizmoduck.gizmoduckmoduwe
+impowt com.twittew.fowwow_wecommendations.common.cwients.gwaph_featuwe_sewvice.gwaphfeatuwestowemoduwe
+impowt com.twittew.fowwow_wecommendations.common.cwients.impwession_stowe.impwessionstowemoduwe
+impowt c-com.twittew.fowwow_wecommendations.common.cwients.phone_stowage_sewvice.phonestowagesewvicemoduwe
+impowt com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph.sociawgwaphmoduwe
+impowt c-com.twittew.fowwow_wecommendations.common.cwients.stwato.stwatocwientmoduwe
+i-impowt com.twittew.fowwow_wecommendations.common.constants.sewviceconstants._
+i-impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces.hydwationsouwcesmoduwe
+i-impowt com.twittew.fowwow_wecommendations.contwowwews.thwiftcontwowwew
+impowt com.twittew.fowwow_wecommendations.moduwes._
+i-impowt com.twittew.fowwow_wecommendations.sewvice.exceptions.unknownwoggingexceptionmappew
+impowt com.twittew.fowwow_wecommendations.sewvices.fowwowwecommendationssewvicewawmuphandwew
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.fowwowwecommendationsthwiftsewvice
+impowt com.twittew.geoduck.sewvice.common.cwientmoduwes.wevewsegeocodewthwiftcwientmoduwe
+impowt com.twittew.inject.thwift.fiwtews.dawktwafficfiwtew
+impowt com.twittew.inject.thwift.moduwes.thwiftcwientidmoduwe
+impowt com.twittew.pwoduct_mixew.cowe.contwowwews.pwoductmixewcontwowwew
+i-impowt com.twittew.pwoduct_mixew.cowe.moduwe.pipewineexecutionwoggewmoduwe
+i-impowt com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags.pwoductmixewfwagmoduwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.moduwe.stwingcentew.pwoductscopestwingcentewmoduwe
+impowt com.twittew.pwoduct_mixew.cowe.pwoduct.guice.pwoductscopemoduwe
 
-object FollowRecommendationsServiceThriftServerMain extends FollowRecommendationsServiceThriftServer
+object fowwowwecommendationssewvicethwiftsewvewmain e-extends fowwowwecommendationssewvicethwiftsewvew
 
-class FollowRecommendationsServiceThriftServer
-    extends ThriftServer
-    with Mtls
-    with HttpServer
-    with HttpMtls {
-  override val name: String = "follow-recommendations-service-server"
+c-cwass fowwowwecommendationssewvicethwiftsewvew
+    extends thwiftsewvew
+    w-with mtws
+    with h-httpsewvew
+    with httpmtws {
+  o-ovewwide vaw nyame: stwing = "fowwow-wecommendations-sewvice-sewvew"
 
-  override val modules: Seq[Module] =
-    Seq(
-      ABDeciderModule,
-      AddressbookModule,
-      AdserverModule,
-      ConfigApiModule,
-      DeciderModule,
-      DeepBirdV2PredictionServiceClientModule,
-      DiffyModule,
-      EmailStorageServiceModule,
-      FeaturesSwitchesModule,
-      FlagsModule,
-      GizmoduckModule,
-      GraphFeatureStoreModule,
-      HydrationSourcesModule,
-      I18nFactoryModule,
-      ImpressionStoreModule,
-      LanguagesModule,
-      LocationServiceModule,
-      MemcacheModule,
-      PhoneStorageServiceModule,
-      PipelineExecutionLoggerModule,
-      ProductMixerFlagModule,
-      ProductRegistryModule,
-      new ProductScopeModule(),
-      new ProductScopeStringCenterModule(),
-      new ReverseGeocoderThriftClientModule,
-      ScalaObjectMapperModule,
-      ScorerModule,
-      ScribeModule,
-      SocialGraphModule,
-      StratoClientModule,
-      ThriftClientIdModule,
-      TimerModule,
+  o-ovewwide vaw moduwes: seq[moduwe] =
+    s-seq(
+      abdecidewmoduwe, ( ͡o ω ͡o )
+      addwessbookmoduwe, >_<
+      adsewvewmoduwe, >w<
+      c-configapimoduwe, rawr
+      decidewmoduwe, 😳
+      d-deepbiwdv2pwedictionsewvicecwientmoduwe,
+      d-diffymoduwe, >w<
+      emaiwstowagesewvicemoduwe, (⑅˘꒳˘)
+      featuwesswitchesmoduwe, OwO
+      fwagsmoduwe, (ꈍᴗꈍ)
+      gizmoduckmoduwe, 😳
+      gwaphfeatuwestowemoduwe, 😳😳😳
+      hydwationsouwcesmoduwe, mya
+      i-i18nfactowymoduwe, mya
+      i-impwessionstowemoduwe, (⑅˘꒳˘)
+      wanguagesmoduwe, (U ﹏ U)
+      wocationsewvicemoduwe, mya
+      m-memcachemoduwe, ʘwʘ
+      p-phonestowagesewvicemoduwe, (˘ω˘)
+      p-pipewineexecutionwoggewmoduwe, (U ﹏ U)
+      pwoductmixewfwagmoduwe, ^•ﻌ•^
+      pwoductwegistwymoduwe, (˘ω˘)
+      nyew pwoductscopemoduwe(), :3
+      nyew p-pwoductscopestwingcentewmoduwe(), ^^;;
+      nyew wevewsegeocodewthwiftcwientmoduwe, 🥺
+      scawaobjectmappewmoduwe, (⑅˘꒳˘)
+      scowewmoduwe, nyaa~~
+      scwibemoduwe, :3
+      s-sociawgwaphmoduwe, ( ͡o ω ͡o )
+      stwatocwientmoduwe,
+      t-thwiftcwientidmoduwe, mya
+      t-timewmoduwe, (///ˬ///✿)
     )
 
-  def configureThrift(router: ThriftRouter): Unit = {
-    router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[StatsFilter]
-      .filter[AccessLoggingFilter]
-      .filter[ExceptionMappingFilter]
-      .exceptionMapper[UnknownLoggingExceptionMapper]
-      .filter[DarkTrafficFilter[FollowRecommendationsThriftService.ReqRepServicePerEndpoint]]
-      .add[ThriftController]
+  d-def configuwethwift(woutew: thwiftwoutew): u-unit = {
+    w-woutew
+      .fiwtew[woggingmdcfiwtew]
+      .fiwtew[twaceidmdcfiwtew]
+      .fiwtew[thwiftmdcfiwtew]
+      .fiwtew[statsfiwtew]
+      .fiwtew[accesswoggingfiwtew]
+      .fiwtew[exceptionmappingfiwtew]
+      .exceptionmappew[unknownwoggingexceptionmappew]
+      .fiwtew[dawktwafficfiwtew[fowwowwecommendationsthwiftsewvice.weqwepsewvicepewendpoint]]
+      .add[thwiftcontwowwew]
   }
 
-  override def configureThriftServer(server: ThriftMux.Server): ThriftMux.Server = {
-    server.withProtocolFactory(
-      Protocols.binaryFactory(
-        stringLengthLimit = StringLengthLimit,
-        containerLengthLimit = ContainerLengthLimit))
+  o-ovewwide d-def configuwethwiftsewvew(sewvew: thwiftmux.sewvew): thwiftmux.sewvew = {
+    s-sewvew.withpwotocowfactowy(
+      p-pwotocows.binawyfactowy(
+        s-stwingwengthwimit = s-stwingwengthwimit, (˘ω˘)
+        c-containewwengthwimit = containewwengthwimit))
   }
 
-  override def configureHttp(router: HttpRouter): Unit = router.add(
-    ProductMixerController[FollowRecommendationsThriftService.MethodPerEndpoint](
-      this.injector,
-      FollowRecommendationsThriftService.ExecutePipeline))
+  ovewwide def configuwehttp(woutew: h-httpwoutew): unit = woutew.add(
+    pwoductmixewcontwowwew[fowwowwecommendationsthwiftsewvice.methodpewendpoint](
+      this.injectow, ^^;;
+      fowwowwecommendationsthwiftsewvice.exekawaii~pipewine))
 
-  override def warmup(): Unit = {
-    handle[FollowRecommendationsServiceWarmupHandler]()
+  o-ovewwide def wawmup(): unit = {
+    handwe[fowwowwecommendationssewvicewawmuphandwew]()
   }
 }

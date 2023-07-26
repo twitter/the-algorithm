@@ -1,64 +1,64 @@
-package com.twitter.visibility.configapi
+package com.twittew.visibiwity.configapi
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.featureswitches.FSRecipient
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.timelines.configapi.abdecider.UserRecipientExperimentContextFactory
-import com.twitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.NullExperimentContext
-import com.twitter.timelines.configapi.UseFeatureContextExperimentContext
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.UnitOfDiversion
-import com.twitter.visibility.models.ViewerContext
+impowt c-com.twittew.abdecidew.woggingabdecidew
+i-impowt com.twittew.featuweswitches.fswecipient
+i-impowt com.twittew.featuweswitches.v2.featuweswitches
+i-impowt c-com.twittew.timewines.configapi.abdecidew.usewwecipientexpewimentcontextfactowy
+i-impowt com.twittew.timewines.configapi.featuweswitches.v2.featuweswitchwesuwtsfeatuwecontext
+i-impowt com.twittew.timewines.configapi.featuwecontext
+i-impowt com.twittew.timewines.configapi.nuwwexpewimentcontext
+impowt com.twittew.timewines.configapi.usefeatuwecontextexpewimentcontext
+impowt com.twittew.visibiwity.modews.safetywevew
+impowt c-com.twittew.visibiwity.modews.unitofdivewsion
+impowt com.twittew.visibiwity.modews.viewewcontext
 
-class VisibilityRequestContextFactory(
-  loggingABDecider: LoggingABDecider,
-  featureSwitches: FeatureSwitches) {
-  private val userExperimentContextFactory = new UserRecipientExperimentContextFactory(
-    loggingABDecider
+cwass visibiwitywequestcontextfactowy(
+  w-woggingabdecidew: woggingabdecidew, mya
+  f-featuweswitches: featuweswitches) {
+  pwivate vaw usewexpewimentcontextfactowy = n-nyew usewwecipientexpewimentcontextfactowy(
+    woggingabdecidew
   )
-  private[this] def getFeatureContext(
-    context: ViewerContext,
-    safetyLevel: SafetyLevel,
-    unitsOfDiversion: Seq[UnitOfDiversion]
-  ): FeatureContext = {
-    val uodCustomFields = unitsOfDiversion.map(_.apply)
-    val recipient = FSRecipient(
-      userId = context.userId,
-      guestId = context.guestId,
-      userAgent = context.fsUserAgent,
-      clientApplicationId = context.clientApplicationId,
-      countryCode = context.requestCountryCode,
-      deviceId = context.deviceId,
-      languageCode = context.requestLanguageCode,
-      isTwoffice = Some(context.isTwOffice),
-      userRoles = context.userRoles,
-    ).withCustomFields(("safety_level", safetyLevel.name), uodCustomFields: _*)
+  p-pwivate[this] d-def getfeatuwecontext(
+    context: viewewcontext, 😳
+    safetywevew: s-safetywevew, -.-
+    unitsofdivewsion: seq[unitofdivewsion]
+  ): featuwecontext = {
+    vaw uodcustomfiewds = u-unitsofdivewsion.map(_.appwy)
+    vaw w-wecipient = fswecipient(
+      usewid = c-context.usewid, 🥺
+      g-guestid = c-context.guestid, o.O
+      usewagent = context.fsusewagent, /(^•ω•^)
+      cwientappwicationid = c-context.cwientappwicationid, nyaa~~
+      countwycode = context.wequestcountwycode, nyaa~~
+      deviceid = context.deviceid, :3
+      w-wanguagecode = context.wequestwanguagecode, 😳😳😳
+      istwoffice = some(context.istwoffice), (˘ω˘)
+      usewwowes = context.usewwowes, ^^
+    ).withcustomfiewds(("safety_wevew", :3 safetywevew.name), -.- u-uodcustomfiewds: _*)
 
-    val results = featureSwitches.matchRecipient(recipient)
-    new FeatureSwitchResultsFeatureContext(results)
+    vaw wesuwts = f-featuweswitches.matchwecipient(wecipient)
+    n-nyew featuweswitchwesuwtsfeatuwecontext(wesuwts)
   }
 
-  def apply(
-    context: ViewerContext,
-    safetyLevel: SafetyLevel,
-    unitsOfDiversion: Seq[UnitOfDiversion] = Seq.empty
-  ): VisibilityRequestContext = {
-    val experimentContextBase =
-      context.userId
-        .map(userId => userExperimentContextFactory.apply(userId)).getOrElse(NullExperimentContext)
+  d-def appwy(
+    context: viewewcontext, 😳
+    safetywevew: s-safetywevew, mya
+    u-unitsofdivewsion: seq[unitofdivewsion] = s-seq.empty
+  ): v-visibiwitywequestcontext = {
+    vaw expewimentcontextbase =
+      c-context.usewid
+        .map(usewid => usewexpewimentcontextfactowy.appwy(usewid)).getowewse(nuwwexpewimentcontext)
 
-    val featureContext = getFeatureContext(context, safetyLevel, unitsOfDiversion)
+    v-vaw featuwecontext = getfeatuwecontext(context, (˘ω˘) safetywevew, >_< u-unitsofdivewsion)
 
-    val experimentContext =
-      UseFeatureContextExperimentContext(experimentContextBase, featureContext)
+    vaw expewimentcontext =
+      u-usefeatuwecontextexpewimentcontext(expewimentcontextbase, -.- featuwecontext)
 
-    VisibilityRequestContext(
-      context.userId,
-      context.guestId,
-      experimentContext,
-      featureContext
+    v-visibiwitywequestcontext(
+      c-context.usewid, 🥺
+      context.guestid, (U ﹏ U)
+      expewimentcontext, >w<
+      featuwecontext
     )
   }
 }

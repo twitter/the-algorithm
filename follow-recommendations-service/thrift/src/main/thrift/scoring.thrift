@@ -1,49 +1,49 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namespace java com.twittew.fowwow_wecommendations.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations
 
-include "com/twitter/ml/api/data.thrift"
+i-incwude "com/twittew/mw/api/data.thwift"
 
-struct CandidateSourceDetails {
-  1: optional map<string, double> candidateSourceScores
-  2: optional i32 primarySource
-  3: optional map<string, i32> candidateSourceRanks
-}(hasPersonalData='false')
+s-stwuct c-candidatesouwcedetaiws {
+  1: o-optionaw map<stwing, nyaa~~ d-doubwe> c-candidatesouwcescowes
+  2: optionaw i32 pwimawysouwce
+  3: optionaw map<stwing, i-i32> candidatesouwcewanks
+}(haspewsonawdata='fawse')
 
-struct Score {
-  1: required double value
-  2: optional string rankerId
-  3: optional string scoreType
-}(hasPersonalData='false')
+stwuct scowe {
+  1: wequiwed d-doubwe vawue
+  2: optionaw stwing w-wankewid
+  3: optionaw stwing scowetype
+}(haspewsonawdata='fawse')
 
-// Contains (1) the ML-based heavy ranker and score (2) scores and rankers in producer experiment framework
-struct Scores {
-  1: required list<Score> scores
-  2: optional string selectedRankerId
-  3: required bool isInProducerScoringExperiment
-}(hasPersonalData='false')
+// contains (1) t-the mw-based heavy wankew a-and scowe (2) s-scowes and wankews in pwoducew expewiment fwamewowk
+stwuct scowes {
+  1: wequiwed w-wist<scowe> scowes
+  2: optionaw stwing sewectedwankewid
+  3: wequiwed boow isinpwoducewscowingexpewiment
+}(haspewsonawdata='fawse')
 
-struct RankingInfo {
-  1: optional Scores scores
-  2: optional i32 rank
-}(hasPersonalData='false')
+stwuct w-wankinginfo {
+  1: optionaw scowes s-scowes
+  2: optionaw i-i32 wank
+}(haspewsonawdata='fawse')
 
-// this encapsulates all information related to the ranking process from generation to scoring
-struct ScoringDetails {
-    1: optional CandidateSourceDetails candidateSourceDetails
-    2: optional double score
-    3: optional data.DataRecord dataRecord
-    4: optional list<string> rankerIds
-    5: optional DebugDataRecord debugDataRecord // this field is not logged as it's only used for debugging
-    6: optional map<string, RankingInfo> infoPerRankingStage  // scoring and ranking info per ranking stage
-}(hasPersonalData='true')
+// t-this encapsuwates a-aww infowmation wewated to the wanking pwocess f-fwom genewation to scowing
+stwuct scowingdetaiws {
+    1: o-optionaw candidatesouwcedetaiws candidatesouwcedetaiws
+    2: optionaw doubwe scowe
+    3: optionaw data.datawecowd datawecowd
+    4: o-optionaw wist<stwing> wankewids
+    5: o-optionaw d-debugdatawecowd d-debugdatawecowd // this fiewd is nyot wogged as it's onwy used f-fow debugging
+    6: o-optionaw map<stwing, (✿oωo) wankinginfo> i-infopewwankingstage  // scowing a-and wanking info pew wanking s-stage
+}(haspewsonawdata='twue')
 
-// exactly the same as a data record, except that we store the feature name instead of the id
-struct DebugDataRecord {
-  1: optional set<string> binaryFeatures;                     // stores BINARY features
-  2: optional map<string, double> continuousFeatures;         // stores CONTINUOUS features
-  3: optional map<string, i64> discreteFeatures;              // stores DISCRETE features
-  4: optional map<string, string> stringFeatures;             // stores STRING features
-  5: optional map<string, set<string>> sparseBinaryFeatures;  // stores sparse BINARY features
-  6: optional map<string, map<string, double>> sparseContinuousFeatures; // sparse CONTINUOUS features
-}(hasPersonalData='true')
+// exactwy t-the same as a data wecowd, ʘwʘ except that we stowe t-the featuwe nyame instead of the i-id
+stwuct debugdatawecowd {
+  1: optionaw set<stwing> b-binawyfeatuwes;                     // s-stowes binawy featuwes
+  2: optionaw map<stwing, (ˆ ﻌ ˆ)♡ doubwe> continuousfeatuwes;         // stowes continuous featuwes
+  3: o-optionaw map<stwing, 😳😳😳 i-i64> discwetefeatuwes;              // s-stowes discwete f-featuwes
+  4: o-optionaw map<stwing, :3 stwing> stwingfeatuwes;             // stowes stwing featuwes
+  5: o-optionaw map<stwing, OwO set<stwing>> spawsebinawyfeatuwes;  // stowes spawse binawy featuwes
+  6: o-optionaw map<stwing, (U ﹏ U) map<stwing, d-doubwe>> s-spawsecontinuousfeatuwes; // s-spawse continuous f-featuwes
+}(haspewsonawdata='twue')

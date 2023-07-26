@@ -1,29 +1,29 @@
-package com.twitter.ann.common
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.util.{Future, FuturePool}
+package com.twittew.ann.common
+impowt c-com.googwe.common.annotations.visibwefowtesting
+i-impowt com.twittew.utiw.{futuwe, nyaa~~ f-futuwepoow}
 
-trait ReadWriteFuturePool {
-  def read[T](f: => T): Future[T]
-  def write[T](f: => T): Future[T]
+t-twait weadwwitefutuwepoow {
+  d-def wead[t](f: => t-t): futuwe[t]
+  d-def wwite[t](f: => t-t): futuwe[t]
 }
 
-object ReadWriteFuturePool {
-  def apply(readPool: FuturePool, writePool: FuturePool): ReadWriteFuturePool = {
-    new ReadWriteFuturePoolANN(readPool, writePool)
+object weadwwitefutuwepoow {
+  def appwy(weadpoow: futuwepoow, /(^•ω•^) wwitepoow: f-futuwepoow): weadwwitefutuwepoow = {
+    nyew weadwwitefutuwepoowann(weadpoow, rawr wwitepoow)
   }
 
-  def apply(commonPool: FuturePool): ReadWriteFuturePool = {
-    new ReadWriteFuturePoolANN(commonPool, commonPool)
+  d-def appwy(commonpoow: futuwepoow): w-weadwwitefutuwepoow = {
+    nyew weadwwitefutuwepoowann(commonpoow, OwO commonpoow)
   }
 }
 
-@VisibleForTesting
-private[ann] class ReadWriteFuturePoolANN(readPool: FuturePool, writePool: FuturePool)
-    extends ReadWriteFuturePool {
-  def read[T](f: => T): Future[T] = {
-    readPool.apply(f)
+@visibwefowtesting
+pwivate[ann] cwass w-weadwwitefutuwepoowann(weadpoow: futuwepoow, (U ﹏ U) wwitepoow: f-futuwepoow)
+    e-extends weadwwitefutuwepoow {
+  def wead[t](f: => t): futuwe[t] = {
+    w-weadpoow.appwy(f)
   }
-  def write[T](f: => T): Future[T] = {
-    writePool.apply(f)
+  def wwite[t](f: => t): futuwe[t] = {
+    wwitepoow.appwy(f)
   }
 }

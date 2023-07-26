@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing;
 
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchwesuwtfeatuwes;
+i-impowt c-com.twittew.seawch.eawwybiwd.seawch.wewevance.wineawscowingdata;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
 
-public class BatchHit {
-  private final LinearScoringData scoringData;
-  private final ThriftSearchResultFeatures features;
-  private final ThriftSearchResultMetadata metadata;
-  private final long tweetID;
-  private final long timeSliceID;
+p-pubwic c-cwass batchhit {
+  p-pwivate finaw w-wineawscowingdata s-scowingdata;
+  pwivate finaw thwiftseawchwesuwtfeatuwes featuwes;
+  pwivate f-finaw thwiftseawchwesuwtmetadata metadata;
+  pwivate finaw wong t-tweetid;
+  pwivate finaw wong t-timeswiceid;
 
-  public BatchHit(
-      LinearScoringData scoringData,
-      ThriftSearchResultFeatures features,
-      ThriftSearchResultMetadata metadata,
-      long tweetID,
-      long timeSliceID
+  pubwic batchhit(
+      wineawscowingdata scowingdata, 🥺
+      t-thwiftseawchwesuwtfeatuwes featuwes, mya
+      t-thwiftseawchwesuwtmetadata m-metadata, 🥺
+      wong tweetid, >_<
+      wong timeswiceid
   ) {
-    this.scoringData = scoringData;
-    this.features = features;
+    this.scowingdata = scowingdata;
+    t-this.featuwes = featuwes;
     this.metadata = metadata;
-    this.tweetID = tweetID;
-    this.timeSliceID = timeSliceID;
+    this.tweetid = t-tweetid;
+    this.timeswiceid = timeswiceid;
   }
 
-  public LinearScoringData getScoringData() {
-    return scoringData;
+  p-pubwic wineawscowingdata g-getscowingdata() {
+    w-wetuwn scowingdata;
   }
 
-  public ThriftSearchResultFeatures getFeatures() {
-    return features;
+  pubwic t-thwiftseawchwesuwtfeatuwes getfeatuwes() {
+    wetuwn featuwes;
   }
 
-  public ThriftSearchResultMetadata getMetadata() {
-    return metadata;
+  p-pubwic thwiftseawchwesuwtmetadata getmetadata() {
+    wetuwn metadata;
   }
 
-  public long getTweetID() {
-    return tweetID;
+  p-pubwic wong gettweetid() {
+    wetuwn tweetid;
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  pubwic wong gettimeswiceid() {
+    wetuwn timeswiceid;
   }
 }

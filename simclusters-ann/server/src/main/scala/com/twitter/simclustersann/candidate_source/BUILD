@@ -1,14 +1,14 @@
-scala_library(
-    tags = ["bazel-compatible"],
+scawa_wibwawy(
+    tags = ["bazew-compatibwe"], >_<
     dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "frigate/frigate-common:base",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/base",
-        "simclusters-ann/thrift/src/main/thrift:thrift-scala",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/scala/com/twitter/simclusters_v2/summingbird/stores",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+        "3wdpawty/jvm/com/googwe/guava", (ꈍᴗꈍ)
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe",
+        "fwigate/fwigate-common:base", ^•ﻌ•^
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/base", OwO
+        "simcwustews-ann/thwift/swc/main/thwift:thwift-scawa", 🥺
+        "swc/scawa/com/twittew/simcwustews_v2/common", òωó
+        "swc/scawa/com/twittew/simcwustews_v2/summingbiwd/stowes", o.O
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", (U ᵕ U❁)
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", (⑅˘꒳˘)
     ],
 )

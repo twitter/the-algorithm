@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.timelinemixer.injection.repository.uss.VersionedAggregateFeaturesDecoder
-import com.twitter.ml.api.DataRecord
-import com.twitter.timelines.aggregate_interactions.thriftjava.UserAggregateInteractions
-import com.twitter.timelines.aggregate_interactions.v17.thriftjava.{
-  UserAggregateInteractions => V17UserAggregateInteractions
+impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.timewinemixew.injection.wepositowy.uss.vewsionedaggwegatefeatuwesdecodew
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.timewines.aggwegate_intewactions.thwiftjava.usewaggwegateintewactions
+i-impowt com.twittew.timewines.aggwegate_intewactions.v17.thwiftjava.{
+  u-usewaggwegateintewactions => v17usewaggwegateintewactions
 }
-import com.twitter.timelines.aggregate_interactions.v1.thriftjava.{
-  UserAggregateInteractions => V1UserAggregateInteractions
+impowt com.twittew.timewines.aggwegate_intewactions.v1.thwiftjava.{
+  usewaggwegateintewactions => v1usewaggwegateintewactions
 }
-import com.twitter.timelines.suggests.common.dense_data_record.thriftjava.DenseCompactDataRecord
-import com.twitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
-import java.lang.{Long => JLong}
-import java.util.Collections
-import java.util.{Map => JMap}
+i-impowt com.twittew.timewines.suggests.common.dense_data_wecowd.thwiftjava.densecompactdatawecowd
+impowt c-com.twittew.timewines.suggests.common.dense_data_wecowd.thwiftscawa.densefeatuwemetadata
+impowt j-java.wang.{wong => jwong}
+impowt java.utiw.cowwections
+impowt j-java.utiw.{map => jmap}
 
-private[offline_aggregates] case class AggregateFeaturesToDecodeWithMetadata(
-  metadataOpt: Option[DenseFeatureMetadata],
-  aggregates: UserAggregateInteractions) {
-  def toDataRecord(dr: DenseCompactDataRecord): DataRecord =
-    VersionedAggregateFeaturesDecoder.fromJDenseCompact(
-      metadataOpt,
-      dr.versionId,
-      NullStatsReceiver,
-      s"V${dr.versionId}"
-    )(dr)
+pwivate[offwine_aggwegates] c-case cwass a-aggwegatefeatuwestodecodewithmetadata(
+  metadataopt: option[densefeatuwemetadata],
+  aggwegates: usewaggwegateintewactions) {
+  d-def todatawecowd(dw: densecompactdatawecowd): datawecowd =
+    vewsionedaggwegatefeatuwesdecodew.fwomjdensecompact(
+      metadataopt, nyaa~~
+      dw.vewsionid, :3
+      n-nyuwwstatsweceivew, 😳😳😳
+      s"v${dw.vewsionid}"
+    )(dw)
 
-  def userAggregatesOpt: Option[DenseCompactDataRecord] = {
-    aggregates.getSetField match {
-      case UserAggregateInteractions._Fields.V17 =>
-        Option(aggregates.getV17.user_aggregates)
+  d-def u-usewaggwegatesopt: o-option[densecompactdatawecowd] = {
+    a-aggwegates.getsetfiewd match {
+      case usewaggwegateintewactions._fiewds.v17 =>
+        o-option(aggwegates.getv17.usew_aggwegates)
       case _ =>
-        None
+        nyone
     }
   }
 
-  def userAuthorAggregates = extract(_.user_author_aggregates)
-  def userEngagerAggregates = extract(_.user_engager_aggregates)
-  def userMentionAggregates = extract(_.user_mention_aggregates)
-  def userOriginalAuthorAggregates = extract(_.user_original_author_aggregates)
-  def userRequestDowAggregates = extract(_.user_request_dow_aggregates)
-  def userRequestHourAggregates = extract(_.user_request_hour_aggregates)
-  def rectweetUserSimclustersTweetAggregates = extract(_.rectweet_user_simclusters_tweet_aggregates)
-  def userTwitterListAggregates = extract(_.user_list_aggregates)
-  def userTopicAggregates = extract(_.user_topic_aggregates)
-  def userInferredTopicAggregates = extract(_.user_inferred_topic_aggregates)
-  def userMediaUnderstandingAnnotationAggregates = extract(
-    _.user_media_understanding_annotation_aggregates)
+  d-def usewauthowaggwegates = extwact(_.usew_authow_aggwegates)
+  def usewengagewaggwegates = extwact(_.usew_engagew_aggwegates)
+  def usewmentionaggwegates = extwact(_.usew_mention_aggwegates)
+  d-def usewowiginawauthowaggwegates = extwact(_.usew_owiginaw_authow_aggwegates)
+  d-def u-usewwequestdowaggwegates = e-extwact(_.usew_wequest_dow_aggwegates)
+  def usewwequesthouwaggwegates = extwact(_.usew_wequest_houw_aggwegates)
+  def w-wectweetusewsimcwustewstweetaggwegates = e-extwact(_.wectweet_usew_simcwustews_tweet_aggwegates)
+  def usewtwittewwistaggwegates = e-extwact(_.usew_wist_aggwegates)
+  d-def usewtopicaggwegates = extwact(_.usew_topic_aggwegates)
+  def usewinfewwedtopicaggwegates = e-extwact(_.usew_infewwed_topic_aggwegates)
+  def usewmediaundewstandingannotationaggwegates = e-extwact(
+    _.usew_media_undewstanding_annotation_aggwegates)
 
-  private def extract[T](
-    v17Fn: V17UserAggregateInteractions => JMap[JLong, DenseCompactDataRecord]
-  ): JMap[JLong, DenseCompactDataRecord] = {
-    aggregates.getSetField match {
-      case UserAggregateInteractions._Fields.V17 =>
-        v17Fn(aggregates.getV17)
+  pwivate def extwact[t](
+    v17fn: v17usewaggwegateintewactions => j-jmap[jwong, (˘ω˘) densecompactdatawecowd]
+  ): jmap[jwong, ^^ d-densecompactdatawecowd] = {
+    aggwegates.getsetfiewd m-match {
+      c-case usewaggwegateintewactions._fiewds.v17 =>
+        v17fn(aggwegates.getv17)
       case _ =>
-        Collections.emptyMap()
+        cowwections.emptymap()
     }
   }
 }
 
-object AggregateFeaturesToDecodeWithMetadata {
-  val empty = new AggregateFeaturesToDecodeWithMetadata(
-    None,
-    UserAggregateInteractions.v1(new V1UserAggregateInteractions()))
+object aggwegatefeatuwestodecodewithmetadata {
+  vaw e-empty = nyew aggwegatefeatuwestodecodewithmetadata(
+    n-nyone, :3
+    usewaggwegateintewactions.v1(new v-v1usewaggwegateintewactions()))
 }

@@ -1,207 +1,207 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.twittew.cw_mixew.candidate_genewation
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.FrsTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.cr_mixer.param.FrsParams
-import com.twitter.cr_mixer.similarity_engine.EarlybirdSimilarityEngineRouter
-import com.twitter.cr_mixer.source_signal.FrsStore
-import com.twitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
-import com.twitter.cr_mixer.thriftscala.FrsTweet
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.hermit.model.Algorithm
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.twittew.contentwecommendew.thwiftscawa.tweetinfo
+i-impowt c-com.twittew.cw_mixew.config.timeoutconfig
+impowt c-com.twittew.cw_mixew.modew.fwstweetcandidategenewatowquewy
+i-impowt com.twittew.cw_mixew.modew.moduwenames
+impowt c-com.twittew.cw_mixew.modew.tweetwithauthow
+i-impowt com.twittew.cw_mixew.pawam.fwspawams
+i-impowt c-com.twittew.cw_mixew.simiwawity_engine.eawwybiwdsimiwawityenginewoutew
+impowt com.twittew.cw_mixew.souwce_signaw.fwsstowe
+impowt com.twittew.cw_mixew.souwce_signaw.fwsstowe.fwsquewywesuwt
+i-impowt com.twittew.cw_mixew.thwiftscawa.fwstweet
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finagwe.utiw.defauwttimew
+i-impowt com.twittew.fwigate.common.utiw.statsutiw
+i-impowt com.twittew.hewmit.constants.awgowithmfeedbacktokens
+impowt com.twittew.hewmit.constants.awgowithmfeedbacktokens.awgowithmtofeedbacktokenmap
+i-impowt com.twittew.hewmit.modew.awgowithm
+impowt c-com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.utiw.futuwe
+impowt javax.inject.inject
+impowt javax.inject.named
+impowt javax.inject.singweton
 
 /**
- * TweetCandidateGenerator based on FRS seed users. For now this candidate generator fetches seed
- * users from FRS, and retrieves the seed users' past tweets from Earlybird with Earlybird light
- * ranking models.
+ * t-tweetcandidategenewatow based on f-fws seed usews. ( ͡o ω ͡o ) f-fow nyow this candidate g-genewatow f-fetches seed
+ * usews fwom fws, rawr x3 and wetwieves t-the seed usews' past tweets fwom eawwybiwd with e-eawwybiwd wight
+ * wanking modews.
  */
-@Singleton
-class FrsTweetCandidateGenerator @Inject() (
-  @Named(ModuleNames.FrsStore) frsStore: ReadableStore[FrsStore.Query, Seq[FrsQueryResult]],
-  frsBasedSimilarityEngine: EarlybirdSimilarityEngineRouter,
-  tweetInfoStore: ReadableStore[TweetId, TweetInfo],
-  timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver) {
-  import FrsTweetCandidateGenerator._
+@singweton
+cwass fwstweetcandidategenewatow @inject() (
+  @named(moduwenames.fwsstowe) fwsstowe: weadabwestowe[fwsstowe.quewy, nyaa~~ seq[fwsquewywesuwt]], >_<
+  fwsbasedsimiwawityengine: eawwybiwdsimiwawityenginewoutew, ^^;;
+  t-tweetinfostowe: weadabwestowe[tweetid, (ˆ ﻌ ˆ)♡ t-tweetinfo],
+  t-timeoutconfig: t-timeoutconfig, ^^;;
+  gwobawstats: statsweceivew) {
+  impowt fwstweetcandidategenewatow._
 
-  private val timer = DefaultTimer
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val fetchSeedsStats = stats.scope("fetchSeeds")
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val filterCandidatesStats = stats.scope("filterCandidates")
-  private val hydrateCandidatesStats = stats.scope("hydrateCandidates")
-  private val getCandidatesStats = stats.scope("getCandidates")
+  pwivate v-vaw timew = defauwttimew
+  p-pwivate vaw stats: statsweceivew = g-gwobawstats.scope(this.getcwass.getcanonicawname)
+  p-pwivate vaw fetchseedsstats = stats.scope("fetchseeds")
+  p-pwivate vaw fetchcandidatesstats = stats.scope("fetchcandidates")
+  p-pwivate vaw fiwtewcandidatesstats = stats.scope("fiwtewcandidates")
+  pwivate vaw h-hydwatecandidatesstats = stats.scope("hydwatecandidates")
+  p-pwivate vaw getcandidatesstats = stats.scope("getcandidates")
 
   /**
-   * The function retrieves the candidate for the given user as follows:
-   * 1. Seed user fetch from FRS.
-   * 2. Candidate fetch from Earlybird.
-   * 3. Filtering.
-   * 4. Candidate hydration.
-   * 5. Truncation.
+   * t-the function w-wetwieves the candidate fow the given usew as fowwows:
+   * 1. (⑅˘꒳˘) seed usew fetch fwom fws. rawr x3
+   * 2. candidate f-fetch fwom eawwybiwd.
+   * 3. (///ˬ///✿) f-fiwtewing. 🥺
+   * 4. candidate hydwation. >_<
+   * 5. t-twuncation. UwU
    */
-  def get(
-    frsTweetCandidateGeneratorQuery: FrsTweetCandidateGeneratorQuery
-  ): Future[Seq[FrsTweet]] = {
-    val userId = frsTweetCandidateGeneratorQuery.userId
-    val product = frsTweetCandidateGeneratorQuery.product
-    val allStats = stats.scope("all")
-    val perProductStats = stats.scope("perProduct", product.name)
-    StatsUtil.trackItemsStats(allStats) {
-      StatsUtil.trackItemsStats(perProductStats) {
-        val result = for {
-          seedAuthorWithScores <- StatsUtil.trackOptionItemMapStats(fetchSeedsStats) {
-            fetchSeeds(
-              userId,
-              frsTweetCandidateGeneratorQuery.impressedUserList,
-              frsTweetCandidateGeneratorQuery.languageCodeOpt,
-              frsTweetCandidateGeneratorQuery.countryCodeOpt,
-              frsTweetCandidateGeneratorQuery.params,
+  d-def get(
+    fwstweetcandidategenewatowquewy: f-fwstweetcandidategenewatowquewy
+  ): futuwe[seq[fwstweet]] = {
+    vaw usewid = fwstweetcandidategenewatowquewy.usewid
+    v-vaw pwoduct = fwstweetcandidategenewatowquewy.pwoduct
+    vaw awwstats = stats.scope("aww")
+    vaw pewpwoductstats = s-stats.scope("pewpwoduct", >_< pwoduct.name)
+    s-statsutiw.twackitemsstats(awwstats) {
+      s-statsutiw.twackitemsstats(pewpwoductstats) {
+        v-vaw wesuwt = fow {
+          s-seedauthowwithscowes <- s-statsutiw.twackoptionitemmapstats(fetchseedsstats) {
+            f-fetchseeds(
+              u-usewid, -.-
+              fwstweetcandidategenewatowquewy.impwessedusewwist, mya
+              fwstweetcandidategenewatowquewy.wanguagecodeopt, >w<
+              f-fwstweetcandidategenewatowquewy.countwycodeopt, (U ﹏ U)
+              f-fwstweetcandidategenewatowquewy.pawams, 😳😳😳
             )
           }
-          tweetCandidates <- StatsUtil.trackOptionItemsStats(fetchCandidatesStats) {
-            fetchCandidates(
-              userId,
-              seedAuthorWithScores.map(_.keys.toSeq).getOrElse(Seq.empty),
-              frsTweetCandidateGeneratorQuery.impressedTweetList,
-              seedAuthorWithScores.map(_.mapValues(_.score)).getOrElse(Map.empty),
-              frsTweetCandidateGeneratorQuery.params
+          t-tweetcandidates <- s-statsutiw.twackoptionitemsstats(fetchcandidatesstats) {
+            f-fetchcandidates(
+              usewid, o.O
+              seedauthowwithscowes.map(_.keys.toseq).getowewse(seq.empty), òωó
+              fwstweetcandidategenewatowquewy.impwessedtweetwist, 😳😳😳
+              s-seedauthowwithscowes.map(_.mapvawues(_.scowe)).getowewse(map.empty), σωσ
+              fwstweetcandidategenewatowquewy.pawams
             )
           }
-          filteredTweetCandidates <- StatsUtil.trackOptionItemsStats(filterCandidatesStats) {
-            filterCandidates(
-              tweetCandidates,
-              frsTweetCandidateGeneratorQuery.params
+          fiwtewedtweetcandidates <- statsutiw.twackoptionitemsstats(fiwtewcandidatesstats) {
+            fiwtewcandidates(
+              tweetcandidates, (⑅˘꒳˘)
+              f-fwstweetcandidategenewatowquewy.pawams
             )
           }
-          hydratedTweetCandidates <- StatsUtil.trackOptionItemsStats(hydrateCandidatesStats) {
-            hydrateCandidates(
-              seedAuthorWithScores,
-              filteredTweetCandidates
+          hydwatedtweetcandidates <- statsutiw.twackoptionitemsstats(hydwatecandidatesstats) {
+            hydwatecandidates(
+              seedauthowwithscowes, (///ˬ///✿)
+              f-fiwtewedtweetcandidates
             )
           }
-        } yield {
-          hydratedTweetCandidates
-            .map(_.take(frsTweetCandidateGeneratorQuery.maxNumResults)).getOrElse(Seq.empty)
+        } y-yiewd {
+          h-hydwatedtweetcandidates
+            .map(_.take(fwstweetcandidategenewatowquewy.maxnumwesuwts)).getowewse(seq.empty)
         }
-        result.raiseWithin(timeoutConfig.frsBasedTweetEndpointTimeout)(timer)
+        wesuwt.waisewithin(timeoutconfig.fwsbasedtweetendpointtimeout)(timew)
       }
     }
   }
 
   /**
-   * Fetch recommended seed users from FRS
+   * f-fetch wecommended s-seed usews fwom f-fws
    */
-  private def fetchSeeds(
-    userId: UserId,
-    userDenyList: Set[UserId],
-    languageCodeOpt: Option[String],
-    countryCodeOpt: Option[String],
-    params: Params
-  ): Future[Option[Map[UserId, FrsQueryResult]]] = {
-    frsStore
+  pwivate def fetchseeds(
+    usewid: usewid, 🥺
+    usewdenywist: set[usewid], OwO
+    wanguagecodeopt: o-option[stwing], >w<
+    countwycodeopt: o-option[stwing], 🥺
+    pawams: pawams
+  ): f-futuwe[option[map[usewid, nyaa~~ f-fwsquewywesuwt]]] = {
+    fwsstowe
       .get(
-        FrsStore.Query(
-          userId,
-          params(FrsParams.FrsBasedCandidateGenerationMaxSeedsNumParam),
-          params(FrsParams.FrsBasedCandidateGenerationDisplayLocationParam).displayLocation,
-          userDenyList.toSeq,
-          languageCodeOpt,
-          countryCodeOpt
+        fwsstowe.quewy(
+          u-usewid, ^^
+          p-pawams(fwspawams.fwsbasedcandidategenewationmaxseedsnumpawam), >w<
+          pawams(fwspawams.fwsbasedcandidategenewationdispwaywocationpawam).dispwaywocation, OwO
+          u-usewdenywist.toseq, XD
+          w-wanguagecodeopt, ^^;;
+          countwycodeopt
         )).map {
-        _.map { seedAuthors =>
-          seedAuthors.map(user => user.userId -> user).toMap
+        _.map { seedauthows =>
+          seedauthows.map(usew => usew.usewid -> u-usew).tomap
         }
       }
   }
 
   /**
-   * Fetch tweet candidates from Earlybird
+   * f-fetch tweet candidates f-fwom eawwybiwd
    */
-  private def fetchCandidates(
-    searcherUserId: UserId,
-    seedAuthors: Seq[UserId],
-    impressedTweetList: Set[TweetId],
-    frsUserToScores: Map[UserId, Double],
-    params: Params
-  ): Future[Option[Seq[TweetWithAuthor]]] = {
-    if (seedAuthors.nonEmpty) {
-      // call earlybird
-      val query = EarlybirdSimilarityEngineRouter.queryFromParams(
-        Some(searcherUserId),
-        seedAuthors,
-        impressedTweetList,
-        frsUserToScoresForScoreAdjustment = Some(frsUserToScores),
-        params
+  pwivate def fetchcandidates(
+    s-seawchewusewid: u-usewid, 🥺
+    seedauthows: seq[usewid], XD
+    i-impwessedtweetwist: set[tweetid], (U ᵕ U❁)
+    fwsusewtoscowes: map[usewid, :3 doubwe], ( ͡o ω ͡o )
+    pawams: pawams
+  ): futuwe[option[seq[tweetwithauthow]]] = {
+    i-if (seedauthows.nonempty) {
+      // c-caww eawwybiwd
+      vaw quewy = eawwybiwdsimiwawityenginewoutew.quewyfwompawams(
+        s-some(seawchewusewid), òωó
+        s-seedauthows, σωσ
+        impwessedtweetwist, (U ᵕ U❁)
+        fwsusewtoscowesfowscoweadjustment = some(fwsusewtoscowes), (✿oωo)
+        p-pawams
       )
-      frsBasedSimilarityEngine.get(query)
-    } else Future.None
+      fwsbasedsimiwawityengine.get(quewy)
+    } ewse futuwe.none
   }
 
   /**
-   * Filter candidates that do not pass visibility filter policy
+   * fiwtew c-candidates that do nyot pass visibiwity fiwtew p-powicy
    */
-  private def filterCandidates(
-    candidates: Option[Seq[TweetWithAuthor]],
-    params: Params
-  ): Future[Option[Seq[TweetWithAuthor]]] = {
-    val tweetIds = candidates.map(_.map(_.tweetId).toSet).getOrElse(Set.empty)
-    if (params(FrsParams.FrsBasedCandidateGenerationEnableVisibilityFilteringParam))
-      Future
-        .collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
+  p-pwivate def fiwtewcandidates(
+    candidates: option[seq[tweetwithauthow]], ^^
+    pawams: pawams
+  ): f-futuwe[option[seq[tweetwithauthow]]] = {
+    v-vaw tweetids = candidates.map(_.map(_.tweetid).toset).getowewse(set.empty)
+    if (pawams(fwspawams.fwsbasedcandidategenewationenabwevisibiwityfiwtewingpawam))
+      futuwe
+        .cowwect(tweetinfostowe.muwtiget(tweetids)).map { t-tweetinfos =>
           candidates.map {
-            // If tweetInfo does not exist, we will filter out this tweet candidate.
-            _.filter(candidate => tweetInfos.getOrElse(candidate.tweetId, None).isDefined)
+            // i-if tweetinfo does nyot exist, ^•ﻌ•^ we wiww fiwtew out this tweet candidate. XD
+            _.fiwtew(candidate => t-tweetinfos.getowewse(candidate.tweetid, :3 nyone).isdefined)
           }
         }
-    else {
-      Future.value(candidates)
+    ewse {
+      f-futuwe.vawue(candidates)
     }
   }
 
   /**
-   * Hydrate the candidates with the FRS candidate sources and scores
+   * h-hydwate the candidates w-with the fws candidate souwces a-and scowes
    */
-  private def hydrateCandidates(
-    frsAuthorWithScores: Option[Map[UserId, FrsQueryResult]],
-    candidates: Option[Seq[TweetWithAuthor]]
-  ): Future[Option[Seq[FrsTweet]]] = {
-    Future.value {
-      candidates.map {
-        _.map { tweetWithAuthor =>
-          val frsQueryResult = frsAuthorWithScores.flatMap(_.get(tweetWithAuthor.authorId))
-          FrsTweet(
-            tweetId = tweetWithAuthor.tweetId,
-            authorId = tweetWithAuthor.authorId,
-            frsPrimarySource = frsQueryResult.flatMap(_.primarySource),
-            frsAuthorScore = frsQueryResult.map(_.score),
-            frsCandidateSourceScores = frsQueryResult.flatMap { result =>
-              result.sourceWithScores.map {
-                _.collect {
-                  // see TokenStrToAlgorithmMap @ https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/twitter/hermit/constants/AlgorithmFeedbackTokens.scala
-                  // see Algorithm @ https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/twitter/hermit/model/Algorithm.scala
-                  case (candidateSourceAlgoStr, score)
-                      if AlgorithmFeedbackTokens.TokenStrToAlgorithmMap.contains(
-                        candidateSourceAlgoStr) =>
-                    AlgorithmToFeedbackTokenMap.getOrElse(
-                      AlgorithmFeedbackTokens.TokenStrToAlgorithmMap
-                        .getOrElse(candidateSourceAlgoStr, DefaultAlgo),
-                      DefaultAlgoToken) -> score
+  p-pwivate def h-hydwatecandidates(
+    fwsauthowwithscowes: o-option[map[usewid, (ꈍᴗꈍ) fwsquewywesuwt]], :3
+    c-candidates: option[seq[tweetwithauthow]]
+  ): futuwe[option[seq[fwstweet]]] = {
+    f-futuwe.vawue {
+      c-candidates.map {
+        _.map { tweetwithauthow =>
+          v-vaw fwsquewywesuwt = fwsauthowwithscowes.fwatmap(_.get(tweetwithauthow.authowid))
+          f-fwstweet(
+            tweetid = t-tweetwithauthow.tweetid, (U ﹏ U)
+            a-authowid = tweetwithauthow.authowid, UwU
+            fwspwimawysouwce = fwsquewywesuwt.fwatmap(_.pwimawysouwce), 😳😳😳
+            f-fwsauthowscowe = f-fwsquewywesuwt.map(_.scowe), XD
+            f-fwscandidatesouwcescowes = f-fwsquewywesuwt.fwatmap { wesuwt =>
+              w-wesuwt.souwcewithscowes.map {
+                _.cowwect {
+                  // see tokenstwtoawgowithmmap @ https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/constants/awgowithmfeedbacktokens.scawa
+                  // see awgowithm @ https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/modew/awgowithm.scawa
+                  case (candidatesouwceawgostw, o.O s-scowe)
+                      if a-awgowithmfeedbacktokens.tokenstwtoawgowithmmap.contains(
+                        candidatesouwceawgostw) =>
+                    a-awgowithmtofeedbacktokenmap.getowewse(
+                      awgowithmfeedbacktokens.tokenstwtoawgowithmmap
+                        .getowewse(candidatesouwceawgostw, (⑅˘꒳˘) d-defauwtawgo), 😳😳😳
+                      defauwtawgotoken) -> s-scowe
                 }
               }
             }
@@ -213,8 +213,8 @@ class FrsTweetCandidateGenerator @Inject() (
 
 }
 
-object FrsTweetCandidateGenerator {
-  val DefaultAlgo: Algorithm.Value = Algorithm.Other
-  // 9999 is the token for Algorithm.Other
-  val DefaultAlgoToken: Int = AlgorithmToFeedbackTokenMap.getOrElse(DefaultAlgo, 9999)
+o-object fwstweetcandidategenewatow {
+  v-vaw defauwtawgo: a-awgowithm.vawue = a-awgowithm.othew
+  // 9999 is the token fow awgowithm.othew
+  vaw defauwtawgotoken: int = awgowithmtofeedbacktokenmap.getowewse(defauwtawgo, nyaa~~ 9999)
 }

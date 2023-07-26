@@ -1,89 +1,89 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.DiscoverTwitterCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.DiscoverTwitterPushIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.DiscoverTwitterNtabRequestHydrator
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.take.predicates.BasicRFPHPredicates
-import com.twitter.frigate.pushservice.take.predicates.OutOfNetworkTweetPredicates
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.hermit.predicate.NamedPredicate
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.discovewtwittewcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.fwigate.pushsewvice.config.config
+impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+impowt com.twittew.fwigate.pushsewvice.modew.ibis.discovewtwittewpushibis2hydwatow
+i-impowt com.twittew.fwigate.pushsewvice.modew.ntab.discovewtwittewntabwequesthydwatow
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.pwedicatesfowcandidate
+impowt c-com.twittew.fwigate.pushsewvice.take.pwedicates.basicwfphpwedicates
+impowt com.twittew.fwigate.pushsewvice.take.pwedicates.outofnetwowktweetpwedicates
+impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.hewmit.pwedicate.namedpwedicate
 
-class DiscoverTwitterPushCandidate(
-  candidate: RawCandidate with DiscoverTwitterCandidate,
-  copyIds: CopyIds,
+c-cwass discovewtwittewpushcandidate(
+  c-candidate: wawcandidate w-with discovewtwittewcandidate, -.-
+  copyids: copyids, 🥺
 )(
-  implicit val statsScoped: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with DiscoverTwitterCandidate
-    with DiscoverTwitterPushIbis2Hydrator
-    with DiscoverTwitterNtabRequestHydrator {
+  impwicit vaw statsscoped: statsweceivew, (U ﹏ U)
+  p-pushmodewscowew: pushmwmodewscowew)
+    extends pushcandidate
+    with discovewtwittewcandidate
+    with discovewtwittewpushibis2hydwatow
+    w-with discovewtwittewntabwequesthydwatow {
 
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
+  o-ovewwide v-vaw pushcopyid: o-option[int] = copyids.pushcopyid
 
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
+  o-ovewwide vaw nytabcopyid: option[int] = copyids.ntabcopyid
 
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
+  o-ovewwide vaw copyaggwegationid: option[stwing] = c-copyids.aggwegationid
 
-  override val target: Target = candidate.target
+  ovewwide vaw tawget: tawget = candidate.tawget
 
-  override lazy val commonRecType: CommonRecommendationType = candidate.commonRecType
+  ovewwide wazy vaw commonwectype: c-commonwecommendationtype = candidate.commonwectype
 
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
+  o-ovewwide vaw w-weightedopenowntabcwickmodewscowew: p-pushmwmodewscowew = pushmodewscowew
 
-  override val statsReceiver: StatsReceiver =
-    statsScoped.scope("DiscoverTwitterPushCandidate")
+  ovewwide vaw statsweceivew: s-statsweceivew =
+    s-statsscoped.scope("discovewtwittewpushcandidate")
 }
 
-case class AddressBookPushCandidatePredicates(config: Config)
-    extends BasicRFPHPredicates[DiscoverTwitterPushCandidate] {
+case cwass addwessbookpushcandidatepwedicates(config: c-config)
+    e-extends basicwfphpwedicates[discovewtwittewpushcandidate] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  impwicit vaw s-statsweceivew: statsweceivew = c-config.statsweceivew.scope(getcwass.getsimpwename)
 
-  override val predicates: List[
-    NamedPredicate[DiscoverTwitterPushCandidate]
+  ovewwide vaw pwedicates: wist[
+    n-nyamedpwedicate[discovewtwittewpushcandidate]
   ] =
-    List(
-      PredicatesForCandidate.paramPredicate(
-        PushFeatureSwitchParams.EnableAddressBookPush
+    wist(
+      pwedicatesfowcandidate.pawampwedicate(
+        p-pushfeatuweswitchpawams.enabweaddwessbookpush
       )
     )
 }
 
-case class CompleteOnboardingPushCandidatePredicates(config: Config)
-    extends BasicRFPHPredicates[DiscoverTwitterPushCandidate] {
+case c-cwass compweteonboawdingpushcandidatepwedicates(config: c-config)
+    extends basicwfphpwedicates[discovewtwittewpushcandidate] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  impwicit vaw statsweceivew: statsweceivew = config.statsweceivew.scope(getcwass.getsimpwename)
 
-  override val predicates: List[
-    NamedPredicate[DiscoverTwitterPushCandidate]
+  ovewwide vaw pwedicates: wist[
+    nyamedpwedicate[discovewtwittewpushcandidate]
   ] =
-    List(
-      PredicatesForCandidate.paramPredicate(
-        PushFeatureSwitchParams.EnableCompleteOnboardingPush
+    w-wist(
+      pwedicatesfowcandidate.pawampwedicate(
+        p-pushfeatuweswitchpawams.enabwecompweteonboawdingpush
       )
     )
 }
 
-case class PopGeoTweetCandidatePredicates(override val config: Config)
-    extends OutOfNetworkTweetPredicates[OutOfNetworkTweetPushCandidate] {
+case cwass popgeotweetcandidatepwedicates(ovewwide v-vaw config: c-config)
+    extends o-outofnetwowktweetpwedicates[outofnetwowktweetpushcandidate] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  impwicit vaw statsweceivew: statsweceivew = c-config.statsweceivew.scope(getcwass.getsimpwename)
 
-  override def postCandidateSpecificPredicates: List[
-    NamedPredicate[OutOfNetworkTweetPushCandidate]
-  ] = List(
-    PredicatesForCandidate.htlFatiguePredicate(
-      PushFeatureSwitchParams.NewUserPlaybookAllowedLastLoginHours
+  ovewwide def postcandidatespecificpwedicates: wist[
+    nyamedpwedicate[outofnetwowktweetpushcandidate]
+  ] = wist(
+    pwedicatesfowcandidate.htwfatiguepwedicate(
+      p-pushfeatuweswitchpawams.newusewpwaybookawwowedwastwoginhouws
     )
   )
 }

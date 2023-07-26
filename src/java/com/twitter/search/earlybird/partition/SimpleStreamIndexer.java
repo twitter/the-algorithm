@@ -1,187 +1,187 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
+impowt java.time.duwation;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt java.utiw.concuwwent.atomic.atomicboowean;
+i-impowt j-java.utiw.stweam.cowwectows;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Verify;
+impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.vewify;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
-import org.apache.kafka.common.PartitionInfo;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.WakeupException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.kafka.cwients.consumew.consumewwecowd;
+impowt owg.apache.kafka.cwients.consumew.consumewwecowds;
+impowt owg.apache.kafka.cwients.consumew.kafkaconsumew;
+i-impowt owg.apache.kafka.cwients.consumew.offsetandtimestamp;
+impowt owg.apache.kafka.common.pawtitioninfo;
+i-impowt owg.apache.kafka.common.topicpawtition;
+impowt owg.apache.kafka.common.ewwows.wakeupexception;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.exception.MissingKafkaTopicException;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.eawwybiwd.common.nonpagingassewt;
+i-impowt com.twittew.seawch.eawwybiwd.exception.missingkafkatopicexception;
 
 /**
- * Abstract base class for processing events from Kafka with the goal of indexing them and
- * keeping Earlybirds up to date with the latest events. Indexing is defined by the
- * implementation.
+ * abstwact base cwass fow pwocessing events fwom kafka with t-the goaw of indexing them and
+ * keeping eawwybiwds up to date with the watest events. >w< i-indexing is defined by the
+ * i-impwementation. (U ﹏ U)
  *
- * NOTE: {@link EarlybirdKafkaConsumer} (tweet/tweet events consumer) is doing this in its
- * own way, we might merge in the future.
+ * n-nyote: {@wink e-eawwybiwdkafkaconsumew} (tweet/tweet e-events consumew) is doing this in i-its
+ * own way, 😳😳😳 we might mewge in the futuwe. o.O
  *
- * @param <K> (Long)
- * @param <V> (Event/Thrift type to be consumed)
+ * @pawam <k> (wong)
+ * @pawam <v> (event/thwift t-type to be consumed)
  */
-public abstract class SimpleStreamIndexer<K, V> {
-  private static final Logger LOG = LoggerFactory.getLogger(SimpleStreamIndexer.class);
+pubwic abstwact cwass simpwestweamindexew<k, òωó v> {
+  pwivate static finaw w-woggew wog = woggewfactowy.getwoggew(simpwestweamindexew.cwass);
 
-  private static final Duration POLL_TIMEOUT = Duration.ofMillis(250);
-  private static final Duration CAUGHT_UP_FRESHNESS = Duration.ofSeconds(5);
+  p-pwivate s-static finaw duwation p-poww_timeout = duwation.ofmiwwis(250);
+  pwivate static finaw duwation caught_up_fweshness = d-duwation.ofseconds(5);
 
-  protected static final int MAX_POLL_RECORDS = 1000;
+  p-pwotected static finaw i-int max_poww_wecowds = 1000;
 
-  private final SearchCounter numPollErrors;
-  protected SearchRateCounter indexingSuccesses;
-  protected SearchRateCounter indexingFailures;
+  p-pwivate finaw seawchcountew n-numpowwewwows;
+  pwotected seawchwatecountew i-indexingsuccesses;
+  pwotected seawchwatecountew indexingfaiwuwes;
 
-  protected List<TopicPartition> topicPartitionList;
-  protected final KafkaConsumer<K, V> kafkaConsumer;
-  private final AtomicBoolean running = new AtomicBoolean(true);
-  private final String topic;
+  p-pwotected wist<topicpawtition> topicpawtitionwist;
+  p-pwotected finaw kafkaconsumew<k, 😳😳😳 v-v> kafkaconsumew;
+  p-pwivate finaw atomicboowean wunning = nyew atomicboowean(twue);
+  pwivate finaw stwing topic;
 
-  private boolean isCaughtUp = false;
+  pwivate boowean iscaughtup = f-fawse;
 
   /**
-   * Create a simple stream indexer.
+   * c-cweate a simpwe stweam i-indexew. σωσ
    *
-   * @throws MissingKafkaTopicException - this shouldn't happen, but in case some
-   * external stream is not present, we want to have the caller decide how to
-   * handle it. Some missing streams might be fatal, for others it might not be
-   * justified to block startup. There's no point in constructing this object if
-   * a stream is missing, so we don't allow that to happen.
+   * @thwows m-missingkafkatopicexception - t-this shouwdn't happen, (⑅˘꒳˘) but in case some
+   * extewnaw s-stweam is nyot pwesent, (///ˬ///✿) we want to have the cawwew decide how to
+   * handwe i-it. 🥺 some missing stweams might be f-fataw, OwO fow othews i-it might nyot b-be
+   * justified to bwock stawtup. >w< t-thewe's nyo p-point in constwucting t-this object i-if
+   * a stweam is missing, 🥺 so we don't awwow t-that to happen. nyaa~~
    */
-  public SimpleStreamIndexer(KafkaConsumer<K, V> kafkaConsumer,
-                             String topic) throws MissingKafkaTopicException {
-    this.kafkaConsumer = kafkaConsumer;
-    this.topic = topic;
-    List<PartitionInfo> partitionInfos = this.kafkaConsumer.partitionsFor(topic);
+  p-pubwic s-simpwestweamindexew(kafkaconsumew<k, ^^ v-v> kafkaconsumew, >w<
+                             s-stwing topic) thwows missingkafkatopicexception {
+    this.kafkaconsumew = kafkaconsumew;
+    t-this.topic = topic;
+    wist<pawtitioninfo> pawtitioninfos = this.kafkaconsumew.pawtitionsfow(topic);
 
-    if (partitionInfos == null) {
-      LOG.error("Ooops, no partitions for {}", topic);
-      NonPagingAssert.assertFailed("missing_topic_" + topic);
-      throw new MissingKafkaTopicException(topic);
+    if (pawtitioninfos == nyuww) {
+      wog.ewwow("ooops, OwO n-nyo pawtitions fow {}", topic);
+      nyonpagingassewt.assewtfaiwed("missing_topic_" + topic);
+      t-thwow n-nyew missingkafkatopicexception(topic);
     }
-    LOG.info("Discovered {} partitions for topic: {}", partitionInfos.size(), topic);
+    w-wog.info("discovewed {} pawtitions f-fow topic: {}", pawtitioninfos.size(), XD t-topic);
 
-    numPollErrors = SearchCounter.export("stream_indexer_poll_errors_" + topic);
+    n-nyumpowwewwows = seawchcountew.expowt("stweam_indexew_poww_ewwows_" + topic);
 
-    this.topicPartitionList = partitionInfos
-        .stream()
-        .map(info -> new TopicPartition(topic, info.partition()))
-        .collect(Collectors.toList());
-    this.kafkaConsumer.assign(topicPartitionList);
+    this.topicpawtitionwist = pawtitioninfos
+        .stweam()
+        .map(info -> nyew topicpawtition(topic, ^^;; i-info.pawtition()))
+        .cowwect(cowwectows.towist());
+    this.kafkaconsumew.assign(topicpawtitionwist);
   }
 
   /**
-   * Consume updates on startup until current (eg. until we've seen a record within 5 seconds
-   * of current time.)
+   * c-consume updates on stawtup u-untiw cuwwent (eg. 🥺 u-untiw we've seen a wecowd within 5 seconds
+   * o-of cuwwent time.)
    */
-  public void readRecordsUntilCurrent() {
-    do {
-      ConsumerRecords<K, V> records = poll();
+  p-pubwic void weadwecowdsuntiwcuwwent() {
+    d-do {
+      c-consumewwecowds<k, XD v> wecowds = poww();
 
-      for (ConsumerRecord<K, V> record : records) {
-        if (record.timestamp() > System.currentTimeMillis() - CAUGHT_UP_FRESHNESS.toMillis()) {
-          isCaughtUp = true;
+      fow (consumewwecowd<k, (U ᵕ U❁) v> wecowd : w-wecowds) {
+        i-if (wecowd.timestamp() > s-system.cuwwenttimemiwwis() - caught_up_fweshness.tomiwwis()) {
+          iscaughtup = t-twue;
         }
-        validateAndIndexRecord(record);
+        v-vawidateandindexwecowd(wecowd);
       }
-    } while (!isCaughtUp());
+    } whiwe (!iscaughtup());
   }
 
   /**
-   * Run the consumer, indexing record values directly into their respective structures.
+   * w-wun the consumew, :3 indexing wecowd vawues diwectwy into theiw wespective stwuctuwes. ( ͡o ω ͡o )
    */
-  public void run() {
-    try {
-      while (running.get()) {
-        for (ConsumerRecord<K, V> record : poll()) {
-          validateAndIndexRecord(record);
+  p-pubwic void wun() {
+    t-twy {
+      whiwe (wunning.get()) {
+        fow (consumewwecowd<k, òωó v-v> wecowd : p-poww()) {
+          vawidateandindexwecowd(wecowd);
         }
       }
-    } catch (WakeupException e) {
-      if (running.get()) {
-        LOG.error("Caught wakeup exception while running", e);
+    } catch (wakeupexception e) {
+      i-if (wunning.get()) {
+        wog.ewwow("caught wakeup exception whiwe wunning", σωσ e);
       }
-    } finally {
-      kafkaConsumer.close();
-      LOG.info("Consumer closed.");
+    } f-finawwy {
+      kafkaconsumew.cwose();
+      wog.info("consumew c-cwosed.");
     }
   }
 
-  public boolean isCaughtUp() {
-    return isCaughtUp;
+  p-pubwic boowean iscaughtup() {
+    wetuwn iscaughtup;
   }
 
   /**
-   * For every partition in the topic, seek to an offset that has a timestamp greater
-   * than or equal to the given timestamp.
-   * @param timestamp
+   * fow evewy pawtition in the t-topic, (U ᵕ U❁) seek to an o-offset that has a timestamp gweatew
+   * than ow equaw to the g-given timestamp. (✿oωo)
+   * @pawam timestamp
    */
-  public void seekToTimestamp(Long timestamp) {
-    Map<TopicPartition, Long> partitionTimestampMap = topicPartitionList.stream()
-        .collect(Collectors.toMap(tp -> tp, tp -> timestamp));
-    Map<TopicPartition, OffsetAndTimestamp> partitionOffsetMap =
-        kafkaConsumer.offsetsForTimes(partitionTimestampMap);
+  pubwic v-void seektotimestamp(wong timestamp) {
+    map<topicpawtition, ^^ wong> pawtitiontimestampmap = t-topicpawtitionwist.stweam()
+        .cowwect(cowwectows.tomap(tp -> tp, ^•ﻌ•^ tp -> t-timestamp));
+    m-map<topicpawtition, XD offsetandtimestamp> p-pawtitionoffsetmap =
+        kafkaconsumew.offsetsfowtimes(pawtitiontimestampmap);
 
-    partitionOffsetMap.forEach((tp, offsetAndTimestamp) -> {
-      Verify.verify(offsetAndTimestamp != null,
-        "Couldn't find records after timestamp: " + timestamp);
+    p-pawtitionoffsetmap.foweach((tp, :3 o-offsetandtimestamp) -> {
+      v-vewify.vewify(offsetandtimestamp != nyuww, (ꈍᴗꈍ)
+        "couwdn't f-find w-wecowds aftew timestamp: " + timestamp);
 
-      kafkaConsumer.seek(tp, offsetAndTimestamp.offset());
+      k-kafkaconsumew.seek(tp, o-offsetandtimestamp.offset());
     });
   }
 
   /**
-   * Seeks the kafka consumer to the beginning.
+   * s-seeks the kafka consumew to the beginning. :3
    */
-  public void seekToBeginning() {
-    kafkaConsumer.seekToBeginning(topicPartitionList);
+  p-pubwic void seektobeginning() {
+    kafkaconsumew.seektobeginning(topicpawtitionwist);
   }
 
   /**
-   * Polls and returns at most MAX_POLL_RECORDS records.
-   * @return
+   * p-powws a-and wetuwns at most max_poww_wecowds wecowds. (U ﹏ U)
+   * @wetuwn
    */
-  @VisibleForTesting
-  protected ConsumerRecords<K, V> poll() {
-    ConsumerRecords<K, V> records;
-    try {
-      records = kafkaConsumer.poll(POLL_TIMEOUT);
-    } catch (Exception e) {
-      records = ConsumerRecords.empty();
-      if (e instanceof WakeupException) {
-        throw e;
-      } else {
-        LOG.warn("Error polling from {} kafka topic.", topic, e);
-        numPollErrors.increment();
+  @visibwefowtesting
+  pwotected c-consumewwecowds<k, UwU v-v> poww() {
+    c-consumewwecowds<k, 😳😳😳 v-v> wecowds;
+    twy {
+      w-wecowds = kafkaconsumew.poww(poww_timeout);
+    } catch (exception e) {
+      wecowds = consumewwecowds.empty();
+      if (e instanceof wakeupexception) {
+        t-thwow e;
+      } ewse {
+        w-wog.wawn("ewwow powwing fwom {} k-kafka topic.", XD topic, e);
+        n-nyumpowwewwows.incwement();
       }
     }
-    return records;
+    wetuwn wecowds;
   }
 
-  protected abstract void validateAndIndexRecord(ConsumerRecord<K, V> record);
+  p-pwotected a-abstwact v-void vawidateandindexwecowd(consumewwecowd<k, o.O v> w-wecowd);
 
-  // Shutdown hook which can be called from a seperate thread. Calling consumer.wakeup() interrupts
-  // the running indexer and causes it to first stop polling for new records before gracefully
-  // closing the consumer.
-  public void close() {
-    LOG.info("Shutting down stream indexer for topic {}", topic);
-    running.set(false);
-    kafkaConsumer.wakeup();
+  // s-shutdown hook which can be cawwed fwom a sepewate thwead. (⑅˘꒳˘) cawwing consumew.wakeup() intewwupts
+  // the wunning i-indexew and causes i-it to fiwst s-stop powwing fow nyew wecowds befowe g-gwacefuwwy
+  // cwosing the consumew. 😳😳😳
+  pubwic void cwose() {
+    w-wog.info("shutting d-down stweam indexew fow t-topic {}", nyaa~~ topic);
+    wunning.set(fawse);
+    kafkaconsumew.wakeup();
   }
 }
 

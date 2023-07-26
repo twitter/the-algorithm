@@ -1,1360 +1,1360 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing;
 
-import java.io.IOException;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.enumset;
+i-impowt java.utiw.hashmap;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.set;
+i-impowt java.utiw.concuwwent.timeunit;
+impowt javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.immutabweset;
+impowt com.googwe.common.cowwect.itewabwes;
+impowt c-com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.maps;
+i-impowt com.googwe.common.pwimitives.ints;
+impowt com.googwe.common.pwimitives.wongs;
 
-import org.apache.lucene.search.Explanation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.wucene.seawch.expwanation;
+i-impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common_internal.bloomfilter.BloomFilter;
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.features.ExternalTweetFeature;
-import com.twitter.search.common.features.FeatureHandler;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureType;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.query.QueryCommonFieldHitsVisitor;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.relevance.features.AgeDecay;
-import com.twitter.search.common.relevance.features.RelevanceSignalConstants;
-import com.twitter.search.common.relevance.text.VisibleTokenRatioNormalizer;
-import com.twitter.search.common.results.thriftjava.FieldHitList;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.LongIntConverter;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData.SkipReason;
-import com.twitter.search.earlybird.search.relevance.LinearScoringParams;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
-import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
+i-impowt com.twittew.common_intewnaw.bwoomfiwtew.bwoomfiwtew;
+impowt com.twittew.seawch.common.constants.seawchcawdtype;
+impowt com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
+impowt com.twittew.seawch.common.database.databaseconfig;
+i-impowt com.twittew.seawch.common.featuwes.extewnawtweetfeatuwe;
+impowt com.twittew.seawch.common.featuwes.featuwehandwew;
+impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuweschemaentwy;
+i-impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuwetype;
+i-impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchwesuwtfeatuwes;
+i-impowt com.twittew.seawch.common.quewy.quewycommonfiewdhitsvisitow;
+i-impowt com.twittew.seawch.common.wanking.thwiftjava.thwiftwankingpawams;
+i-impowt com.twittew.seawch.common.wewevance.featuwes.agedecay;
+impowt c-com.twittew.seawch.common.wewevance.featuwes.wewevancesignawconstants;
+impowt com.twittew.seawch.common.wewevance.text.visibwetokenwationowmawizew;
+i-impowt com.twittew.seawch.common.wesuwts.thwiftjava.fiewdhitwist;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.common.utiw.wongintconvewtew;
+impowt com.twittew.seawch.common.utiw.wang.thwiftwanguageutiw;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt c-com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+i-impowt c-com.twittew.seawch.eawwybiwd.seawch.antigamingfiwtew;
+impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.wineawscowingdata;
+impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.wineawscowingdata.skipweason;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.wineawscowingpawams;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtextwametadata;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadataoptions;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwttype;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtswewevancestats;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftsociawfiwtewtype;
 
 /**
- * Base class for scoring functions that rely on the extracted features stored in LinearScoringData.
+ * base cwass f-fow scowing functions that wewy o-on the extwacted f-featuwes stowed in wineawscowingdata. ^^
  *
- * Extensions of this class must implement 2 methods:
+ * extensions of this cwass must impwement 2 methods:
  *
- * - computeScore
- * - generateExplanationForScoring
+ * - computescowe
+ * - genewateexpwanationfowscowing
  *
- * They are called for scoring and generating the debug information of the document that it's
- * currently being evaluated. The field 'data' holds the features of the document.
+ * t-they awe cawwed f-fow scowing and genewating the d-debug infowmation o-of the document t-that it's
+ * cuwwentwy being evawuated. ^•ﻌ•^ the fiewd 'data' howds t-the featuwes of the document. -.-
  */
-public abstract class FeatureBasedScoringFunction extends ScoringFunction {
-  private static final Logger LOG = LoggerFactory.getLogger(FeatureBasedScoringFunction.class);
+pubwic abstwact cwass featuwebasedscowingfunction extends scowingfunction {
+  p-pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(featuwebasedscowingfunction.cwass);
 
-  // A multiplier that's applied to all scores to avoid scores too low.
-  public static final float SCORE_ADJUSTER = 100.0f;
+  // a-a muwtipwiew t-that's appwied to aww scowes t-to avoid scowes t-too wow. UwU
+  pubwic s-static finaw fwoat s-scowe_adjustew = 100.0f;
 
-  private static final VisibleTokenRatioNormalizer VISIBLE_TOKEN_RATIO_NORMALIZER =
-      VisibleTokenRatioNormalizer.createInstance();
+  pwivate static finaw visibwetokenwationowmawizew v-visibwe_token_watio_nowmawizew =
+      v-visibwetokenwationowmawizew.cweateinstance();
 
-  // Allow default values only for numeric types.
-  private static final Set<ThriftSearchFeatureType> ALLOWED_TYPES_FOR_DEFAULT_FEATURE_VALUES =
-      EnumSet.of(ThriftSearchFeatureType.INT32_VALUE,
-                 ThriftSearchFeatureType.LONG_VALUE,
-                 ThriftSearchFeatureType.DOUBLE_VALUE);
+  // a-awwow d-defauwt vawues o-onwy fow nyumewic types. (˘ω˘)
+  pwivate static finaw set<thwiftseawchfeatuwetype> awwowed_types_fow_defauwt_featuwe_vawues =
+      e-enumset.of(thwiftseawchfeatuwetype.int32_vawue,
+                 thwiftseawchfeatuwetype.wong_vawue, UwU
+                 thwiftseawchfeatuwetype.doubwe_vawue);
 
-  private static final Set<Integer> NUMERIC_FEATURES_FOR_WHICH_DEFAULTS_SHOULD_NOT_BE_SET =
-      ImmutableSet.of(EarlybirdFieldConstant.TWEET_SIGNATURE.getFieldId(),
-                      EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT.getFieldId(),
-                      EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT.getFieldId());
+  pwivate static finaw set<integew> nyumewic_featuwes_fow_which_defauwts_shouwd_not_be_set =
+      i-immutabweset.of(eawwybiwdfiewdconstant.tweet_signatuwe.getfiewdid(), rawr
+                      eawwybiwdfiewdconstant.wefewence_authow_id_weast_significant_int.getfiewdid(), :3
+                      eawwybiwdfiewdconstant.wefewence_authow_id_most_significant_int.getfiewdid());
 
-  // Name of the scoring function. Used for generating explanations.
-  private final String functionName;
+  // nyame of the s-scowing function. nyaa~~ u-used fow genewating e-expwanations. rawr
+  pwivate f-finaw stwing functionname;
 
-  private final BloomFilter trustedFilter;
-  private final BloomFilter followFilter;
+  pwivate finaw bwoomfiwtew t-twustedfiwtew;
+  p-pwivate finaw bwoomfiwtew fowwowfiwtew;
 
-  // Current timestamp in seconds. Overridable by unit test or by timestamp set in search query.
-  private int now;
+  // cuwwent timestamp in seconds. (ˆ ﻌ ˆ)♡ ovewwidabwe b-by unit test ow by timestamp set i-in seawch quewy. (ꈍᴗꈍ)
+  pwivate int n-now;
 
-  private final AntiGamingFilter antiGamingFilter;
+  pwivate f-finaw antigamingfiwtew antigamingfiwtew;
 
-  @Nullable
-  private final AgeDecay ageDecay;
+  @nuwwabwe
+  pwivate f-finaw agedecay a-agedecay;
 
-  protected final LinearScoringParams params;  // Parameters and query-dependent values.
+  pwotected finaw wineawscowingpawams p-pawams;  // pawametews a-and quewy-dependent vawues. (˘ω˘)
 
-  // In order for the API calls to retrieve the correct `LinearScoringData`
-  // for the passed `docId`, we need to maintain a map of `docId` -> `LinearScoringData`
-  // NOTE: THIS CAN ONLY BE REFERENCED AT HIT COLLECTION TIME, SINCE DOC IDS ARE NOT UNIQUE
-  // ACROSS SEGMENTS. IT'S NOT USABLE DURING BATCH SCORING.
-  private final Map<Integer, LinearScoringData> docIdToScoringData;
+  // in owdew fow the api cawws to wetwieve t-the cowwect `wineawscowingdata`
+  // f-fow the passed `docid`, (U ﹏ U) we n-need to maintain a map of `docid` -> `wineawscowingdata`
+  // n-nyote: this can o-onwy be wefewenced at hit cowwection t-time, >w< since doc ids awe nyot unique
+  // acwoss segments. UwU it's not usabwe duwing b-batch scowing. (ˆ ﻌ ˆ)♡
+  p-pwivate finaw map<integew, wineawscowingdata> d-docidtoscowingdata;
 
-  private final ThriftSearchResultType searchResultType;
+  p-pwivate finaw thwiftseawchwesuwttype seawchwesuwttype;
 
-  private final UserTable userTable;
+  pwivate finaw u-usewtabwe usewtabwe;
 
-  @VisibleForTesting
-  void setNow(int fakeNow) {
-    now = fakeNow;
+  @visibwefowtesting
+  void setnow(int fakenow) {
+    nyow = fakenow;
   }
 
-  public FeatureBasedScoringFunction(
-      String functionName,
-      ImmutableSchemaInterface schema,
-      ThriftSearchQuery searchQuery,
-      AntiGamingFilter antiGamingFilter,
-      ThriftSearchResultType searchResultType,
-      UserTable userTable) throws IOException {
-    super(schema);
+  pubwic featuwebasedscowingfunction(
+      s-stwing functionname, nyaa~~
+      immutabweschemaintewface schema, 🥺
+      t-thwiftseawchquewy s-seawchquewy, >_<
+      antigamingfiwtew antigamingfiwtew, òωó
+      thwiftseawchwesuwttype s-seawchwesuwttype, ʘwʘ
+      u-usewtabwe usewtabwe) thwows ioexception {
+    supew(schema);
 
-    this.functionName = functionName;
-    this.searchResultType = searchResultType;
-    this.userTable = userTable;
+    this.functionname = f-functionname;
+    this.seawchwesuwttype = s-seawchwesuwttype;
+    this.usewtabwe = usewtabwe;
 
-    Preconditions.checkNotNull(searchQuery.getRelevanceOptions());
-    ThriftRankingParams rankingParams = searchQuery.getRelevanceOptions().getRankingParams();
-    Preconditions.checkNotNull(rankingParams);
+    pweconditions.checknotnuww(seawchquewy.getwewevanceoptions());
+    t-thwiftwankingpawams wankingpawams = s-seawchquewy.getwewevanceoptions().getwankingpawams();
+    p-pweconditions.checknotnuww(wankingpawams);
 
-    params = new LinearScoringParams(searchQuery, rankingParams);
-    docIdToScoringData = new HashMap<>();
+    pawams = n-nyew wineawscowingpawams(seawchquewy, mya wankingpawams);
+    d-docidtoscowingdata = n-nyew hashmap<>();
 
-    long timestamp = searchQuery.isSetTimestampMsecs() && searchQuery.getTimestampMsecs() > 0
-        ? searchQuery.getTimestampMsecs() : System.currentTimeMillis();
-    now = Ints.checkedCast(TimeUnit.MILLISECONDS.toSeconds(timestamp));
+    w-wong timestamp = seawchquewy.issettimestampmsecs() && s-seawchquewy.gettimestampmsecs() > 0
+        ? s-seawchquewy.gettimestampmsecs() : system.cuwwenttimemiwwis();
+    nyow = i-ints.checkedcast(timeunit.miwwiseconds.toseconds(timestamp));
 
-    this.antiGamingFilter = antiGamingFilter;
+    t-this.antigamingfiwtew = antigamingfiwtew;
 
-    this.ageDecay = params.useAgeDecay
-        ? new AgeDecay(params.ageDecayBase, params.ageDecayHalflife, params.ageDecaySlope)
-        : null;
+    t-this.agedecay = pawams.useagedecay
+        ? nyew agedecay(pawams.agedecaybase, p-pawams.agedecayhawfwife, σωσ pawams.agedecayswope)
+        : nyuww;
 
-    if (searchQuery.isSetTrustedFilter()) {
-      trustedFilter = new BloomFilter(searchQuery.getTrustedFilter());
-    } else {
-      trustedFilter = null;
+    if (seawchquewy.issettwustedfiwtew()) {
+      t-twustedfiwtew = n-nyew bwoomfiwtew(seawchquewy.gettwustedfiwtew());
+    } ewse {
+      twustedfiwtew = nyuww;
     }
 
-    if (searchQuery.isSetDirectFollowFilter()) {
-      followFilter = new BloomFilter(searchQuery.getDirectFollowFilter());
-    } else {
-      followFilter = null;
+    if (seawchquewy.issetdiwectfowwowfiwtew()) {
+      f-fowwowfiwtew = n-nyew bwoomfiwtew(seawchquewy.getdiwectfowwowfiwtew());
+    } ewse {
+      f-fowwowfiwtew = n-nyuww;
     }
   }
 
-  @VisibleForTesting
-  final LinearScoringParams getScoringParams() {
-    return params;
+  @visibwefowtesting
+  finaw wineawscowingpawams g-getscowingpawams() {
+    wetuwn pawams;
   }
 
   /**
-   * Returns the LinearScoringData instance associated with the current doc ID. If it doesn't exist,
-   * an empty LinearScoringData is created.
+   * wetuwns the wineawscowingdata instance associated with the c-cuwwent doc id. OwO if it doesn't exist, (✿oωo)
+   * a-an empty wineawscowingdata i-is cweated. ʘwʘ
    */
-  @Override
-  public LinearScoringData getScoringDataForCurrentDocument() {
-    LinearScoringData data = docIdToScoringData.get(getCurrentDocID());
-    if (data == null) {
-      data = new LinearScoringData();
-      docIdToScoringData.put(getCurrentDocID(), data);
+  @ovewwide
+  pubwic wineawscowingdata getscowingdatafowcuwwentdocument() {
+    w-wineawscowingdata data = d-docidtoscowingdata.get(getcuwwentdocid());
+    i-if (data == nyuww) {
+      d-data = n-nyew wineawscowingdata();
+      d-docidtoscowingdata.put(getcuwwentdocid(), mya data);
     }
-    return data;
+    wetuwn data;
   }
 
-  @Override
-  public void setDebugMode(int debugMode) {
-    super.setDebugMode(debugMode);
+  @ovewwide
+  pubwic void setdebugmode(int debugmode) {
+    s-supew.setdebugmode(debugmode);
   }
 
   /**
-   * Normal the lucene score, which was unbounded, to a range of [1.0, maxLuceneScoreBoost].
-   * The normalized value increases almost linearly in the lucene score range 2.0 ~ 7.0, where
-   * most queries fall in. For rare long tail queries, like some hashtags, they have high idf and
-   * thus high lucene score, the normalized value won't have much difference between tweets.
-   * The normalization function is:
-   *   ls = luceneScore
-   *   norm = min(max, 1 + (max - 1.0) / 2.4 * ln(1 + ls)
+   * n-nyowmaw t-the wucene scowe, -.- which was unbounded, -.- t-to a wange of [1.0, ^^;; maxwucenescoweboost]. (ꈍᴗꈍ)
+   * the nyowmawized vawue incweases a-awmost wineawwy i-in the wucene scowe wange 2.0 ~ 7.0, rawr w-whewe
+   * most quewies faww in. ^^ fow w-wawe wong taiw q-quewies, nyaa~~ wike some hashtags, (⑅˘꒳˘) they h-have high idf a-and
+   * thus high wucene scowe, (U ᵕ U❁) the nyowmawized vawue won't have much diffewence b-between tweets. (ꈍᴗꈍ)
+   * t-the nyowmawization f-function i-is:
+   *   ws = w-wucenescowe
+   *   nyowm = min(max, (✿oωo) 1 + (max - 1.0) / 2.4 * w-wn(1 + ws)
    */
-  static float normalizeLuceneScore(float luceneScore, float maxBoost) {
-    return (float) Math.min(maxBoost, 1.0 + (maxBoost - 1.0) / 2.4 * Math.log1p(luceneScore));
+  s-static fwoat nyowmawizewucenescowe(fwoat w-wucenescowe, UwU f-fwoat maxboost) {
+    wetuwn (fwoat) math.min(maxboost, ^^ 1.0 + (maxboost - 1.0) / 2.4 * m-math.wog1p(wucenescowe));
   }
 
-  @Override
-  protected float score(float luceneQueryScore) throws IOException {
-    return scoreInternal(luceneQueryScore, null);
+  @ovewwide
+  pwotected fwoat scowe(fwoat w-wucenequewyscowe) thwows i-ioexception {
+    w-wetuwn scoweintewnaw(wucenequewyscowe, :3 nyuww);
   }
 
-  protected LinearScoringData updateLinearScoringData(float luceneQueryScore) throws IOException {
-    // Reset the data for each tweet!!!
-    LinearScoringData data = new LinearScoringData();
-    docIdToScoringData.put(getCurrentDocID(), data);
+  p-pwotected wineawscowingdata updatewineawscowingdata(fwoat w-wucenequewyscowe) t-thwows ioexception {
+    // w-weset the data fow each tweet!!!
+    wineawscowingdata data = n-nyew wineawscowingdata();
+    docidtoscowingdata.put(getcuwwentdocid(), ( ͡o ω ͡o ) data);
 
-    // Set proper version for engagement counters for this request.
-    data.skipReason = SkipReason.NOT_SKIPPED;
-    data.luceneScore = luceneQueryScore;
-    data.userRep = (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.USER_REPUTATION);
+    // s-set pwopew v-vewsion fow engagement countews f-fow this wequest.
+    data.skipweason = s-skipweason.not_skipped;
+    d-data.wucenescowe = wucenequewyscowe;
+    data.usewwep = (byte) documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.usew_weputation);
 
-    if (antiGamingFilter != null && !antiGamingFilter.accept(getCurrentDocID())) {
-      data.skipReason = SkipReason.ANTIGAMING;
-      return data;
+    i-if (antigamingfiwtew != nyuww && !antigamingfiwtew.accept(getcuwwentdocid())) {
+      data.skipweason = s-skipweason.antigaming;
+      w-wetuwn data;
     }
 
-    data.textScore = (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.TEXT_SCORE);
-    data.tokenAt140DividedByNumTokensBucket = VISIBLE_TOKEN_RATIO_NORMALIZER.denormalize(
-        (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.VISIBLE_TOKEN_RATIO));
-    data.fromUserId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
-    data.isFollow = followFilter != null
-        && followFilter.contains(Longs.toByteArray(data.fromUserId));
-    data.isTrusted = trustedFilter != null
-        && trustedFilter.contains(Longs.toByteArray(data.fromUserId));
-    data.isFromVerifiedAccount = documentFeatures.isFlagSet(
-        EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG);
-    data.isFromBlueVerifiedAccount = documentFeatures.isFlagSet(
-        EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG);
-    data.isSelfTweet = data.fromUserId == params.searcherId;
-    // v1 engagement counters, note that the first three values are post-log2 version
-    // of the original unnormalized values.
-    data.retweetCountPostLog2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.RETWEET_COUNT);
-    data.replyCountPostLog2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.REPLY_COUNT);
-    data.favCountPostLog2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.FAVORITE_COUNT);
-    data.embedsImpressionCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT);
-    data.embedsUrlCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_URL_COUNT);
-    data.videoViewCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.VIDEO_VIEW_COUNT);
-    // v2 engagement counters
-    data.retweetCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.RETWEET_COUNT_V2);
-    data.replyCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.REPLY_COUNT_V2);
-    data.favCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.FAVORITE_COUNT_V2);
-    // other v2 engagement counters
-    data.embedsImpressionCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V2);
-    data.embedsUrlCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_URL_COUNT_V2);
-    data.videoViewCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.VIDEO_VIEW_COUNT_V2);
-    // pure v2 engagement counters without v1 counterpart
-    data.quotedCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.QUOTE_COUNT);
-    data.weightedRetweetCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.WEIGHTED_RETWEET_COUNT);
-    data.weightedReplyCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.WEIGHTED_REPLY_COUNT);
-    data.weightedFavCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.WEIGHTED_FAVORITE_COUNT);
-    data.weightedQuoteCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.WEIGHTED_QUOTE_COUNT);
+    d-data.textscowe = (byte) documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.text_scowe);
+    d-data.tokenat140dividedbynumtokensbucket = v-visibwe_token_watio_nowmawizew.denowmawize(
+        (byte) d-documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.visibwe_token_watio));
+    data.fwomusewid = documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.fwom_usew_id_csf);
+    data.isfowwow = fowwowfiwtew != nyuww
+        && fowwowfiwtew.contains(wongs.tobyteawway(data.fwomusewid));
+    data.istwusted = twustedfiwtew != nyuww
+        && twustedfiwtew.contains(wongs.tobyteawway(data.fwomusewid));
+    data.isfwomvewifiedaccount = documentfeatuwes.isfwagset(
+        eawwybiwdfiewdconstant.fwom_vewified_account_fwag);
+    d-data.isfwombwuevewifiedaccount = d-documentfeatuwes.isfwagset(
+        eawwybiwdfiewdconstant.fwom_bwue_vewified_account_fwag);
+    data.issewftweet = d-data.fwomusewid == pawams.seawchewid;
+    // v-v1 engagement c-countews, ( ͡o ω ͡o ) nyote that the f-fiwst thwee vawues awe post-wog2 v-vewsion
+    // o-of the owiginaw unnowmawized vawues. (U ﹏ U)
+    d-data.wetweetcountpostwog2 = documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.wetweet_count);
+    d-data.wepwycountpostwog2 = documentfeatuwes.getunnowmawizedfeatuwevawue(
+        eawwybiwdfiewdconstant.wepwy_count);
+    data.favcountpostwog2 = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.favowite_count);
+    d-data.embedsimpwessioncount = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.embeds_impwession_count);
+    d-data.embedsuwwcount = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.embeds_uww_count);
+    d-data.videoviewcount = documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.video_view_count);
+    // v-v2 engagement c-countews
+    data.wetweetcountv2 = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        eawwybiwdfiewdconstant.wetweet_count_v2);
+    data.wepwycountv2 = documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.wepwy_count_v2);
+    data.favcountv2 = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.favowite_count_v2);
+    // o-othew v2 engagement c-countews
+    data.embedsimpwessioncountv2 = documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.embeds_impwession_count_v2);
+    data.embedsuwwcountv2 = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        eawwybiwdfiewdconstant.embeds_uww_count_v2);
+    d-data.videoviewcountv2 = documentfeatuwes.getunnowmawizedfeatuwevawue(
+        eawwybiwdfiewdconstant.video_view_count_v2);
+    // puwe v2 engagement countews w-without v1 countewpawt
+    d-data.quotedcount = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        eawwybiwdfiewdconstant.quote_count);
+    data.weightedwetweetcount = documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.weighted_wetweet_count);
+    data.weightedwepwycount = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.weighted_wepwy_count);
+    d-data.weightedfavcount = documentfeatuwes.getunnowmawizedfeatuwevawue(
+        eawwybiwdfiewdconstant.weighted_favowite_count);
+    d-data.weightedquotecount = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        eawwybiwdfiewdconstant.weighted_quote_count);
 
-    Double querySpecificScoreAdjustment = params.querySpecificScoreAdjustments == null ? null
-        : params.querySpecificScoreAdjustments.get(tweetIDMapper.getTweetID(getCurrentDocID()));
-    data.querySpecificScore =
-        querySpecificScoreAdjustment == null ? 0.0 : querySpecificScoreAdjustment;
+    d-doubwe quewyspecificscoweadjustment = pawams.quewyspecificscoweadjustments == nyuww ? nyuww
+        : p-pawams.quewyspecificscoweadjustments.get(tweetidmappew.gettweetid(getcuwwentdocid()));
+    data.quewyspecificscowe =
+        q-quewyspecificscoweadjustment == n-nyuww ? 0.0 : q-quewyspecificscoweadjustment;
 
-    data.authorSpecificScore = params.authorSpecificScoreAdjustments == null
+    data.authowspecificscowe = p-pawams.authowspecificscoweadjustments == n-nyuww
         ? 0.0
-        : params.authorSpecificScoreAdjustments.getOrDefault(data.fromUserId, 0.0);
+        : p-pawams.authowspecificscoweadjustments.getowdefauwt(data.fwomusewid, -.- 0.0);
 
-    // respect social filter type
-    if (params.socialFilterType != null && !data.isSelfTweet) {
-      if ((params.socialFilterType == ThriftSocialFilterType.ALL
-              && !data.isFollow && !data.isTrusted)
-          || (params.socialFilterType == ThriftSocialFilterType.TRUSTED && !data.isTrusted)
-          || (params.socialFilterType == ThriftSocialFilterType.FOLLOWS && !data.isFollow)) {
-        // we can skip this hit as we only want social results in this mode.
-        data.skipReason = SkipReason.SOCIAL_FILTER;
-        return data;
+    // w-wespect sociaw fiwtew t-type
+    if (pawams.sociawfiwtewtype != n-nyuww && !data.issewftweet) {
+      i-if ((pawams.sociawfiwtewtype == t-thwiftsociawfiwtewtype.aww
+              && !data.isfowwow && !data.istwusted)
+          || (pawams.sociawfiwtewtype == t-thwiftsociawfiwtewtype.twusted && !data.istwusted)
+          || (pawams.sociawfiwtewtype == t-thwiftsociawfiwtewtype.fowwows && !data.isfowwow)) {
+        // w-we can skip this h-hit as we onwy want sociaw wesuwts i-in this mode. 😳😳😳
+        data.skipweason = s-skipweason.sociaw_fiwtew;
+        wetuwn data;
       }
     }
 
-    // 1. first apply all the filters to only non-follow tweets and non-verified accounts,
-    //    but be tender to sentinel values
-    // unless you specifically asked to apply filters regardless
-    if (params.applyFiltersAlways
-            || (!data.isSelfTweet && !data.isFollow && !data.isFromVerifiedAccount
-                && !data.isFromBlueVerifiedAccount)) {
-      if (data.userRep < params.reputationMinVal
-          // don't filter unset userreps, we give them the benefit of doubt and let it
-          // continue to scoring. userrep is unset when either user just signed up or
-          // during ingestion time we had trouble getting userrep from reputation service.
-          && data.userRep != RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL) {
-        data.skipReason = SkipReason.LOW_REPUTATION;
-        return data;
-      } else if (data.textScore < params.textScoreMinVal
-                 // don't filter unset text scores, use goodwill value
-                 && data.textScore != RelevanceSignalConstants.UNSET_TEXT_SCORE_SENTINEL) {
-        data.skipReason = SkipReason.LOW_TEXT_SCORE;
-        return data;
-      } else if (data.retweetCountPostLog2 != LinearScoringData.UNSET_SIGNAL_VALUE
-                 && data.retweetCountPostLog2 < params.retweetMinVal) {
-        data.skipReason = SkipReason.LOW_RETWEET_COUNT;
-        return data;
-      } else if (data.favCountPostLog2 != LinearScoringData.UNSET_SIGNAL_VALUE
-                 && data.favCountPostLog2 < params.favMinVal) {
-        data.skipReason = SkipReason.LOW_FAV_COUNT;
-        return data;
+    // 1. UwU f-fiwst appwy a-aww the fiwtews t-to onwy nyon-fowwow tweets and nyon-vewified accounts, >w<
+    //    but be tendew t-to sentinew vawues
+    // u-unwess y-you specificawwy asked to appwy fiwtews wegawdwess
+    if (pawams.appwyfiwtewsawways
+            || (!data.issewftweet && !data.isfowwow && !data.isfwomvewifiedaccount
+                && !data.isfwombwuevewifiedaccount)) {
+      i-if (data.usewwep < p-pawams.weputationminvaw
+          // don't f-fiwtew unset u-usewweps, mya we give them the benefit of doubt and wet it
+          // c-continue to s-scowing. :3 usewwep i-is unset when e-eithew usew just signed up ow
+          // duwing i-ingestion time w-we had twoubwe getting usewwep fwom weputation s-sewvice. (ˆ ﻌ ˆ)♡
+          && data.usewwep != wewevancesignawconstants.unset_weputation_sentinew) {
+        d-data.skipweason = skipweason.wow_weputation;
+        w-wetuwn d-data;
+      } ewse if (data.textscowe < p-pawams.textscoweminvaw
+                 // d-don't fiwtew unset text scowes, (U ﹏ U) u-use goodwiww vawue
+                 && d-data.textscowe != w-wewevancesignawconstants.unset_text_scowe_sentinew) {
+        d-data.skipweason = s-skipweason.wow_text_scowe;
+        wetuwn data;
+      } e-ewse if (data.wetweetcountpostwog2 != w-wineawscowingdata.unset_signaw_vawue
+                 && d-data.wetweetcountpostwog2 < pawams.wetweetminvaw) {
+        data.skipweason = skipweason.wow_wetweet_count;
+        w-wetuwn data;
+      } ewse if (data.favcountpostwog2 != w-wineawscowingdata.unset_signaw_vawue
+                 && d-data.favcountpostwog2 < pawams.favminvaw) {
+        d-data.skipweason = skipweason.wow_fav_count;
+        wetuwn data;
       }
     }
 
-    // if sentinel value is set, assume goodwill score and let scoring continue.
-    if (data.textScore == RelevanceSignalConstants.UNSET_TEXT_SCORE_SENTINEL) {
-      data.textScore = RelevanceSignalConstants.GOODWILL_TEXT_SCORE;
+    // if sentinew vawue is set, ʘwʘ assume g-goodwiww scowe and wet scowing c-continue. rawr
+    i-if (data.textscowe == wewevancesignawconstants.unset_text_scowe_sentinew) {
+      data.textscowe = w-wewevancesignawconstants.goodwiww_text_scowe;
     }
-    if (data.userRep == RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL) {
-      data.userRep = RelevanceSignalConstants.GOODWILL_REPUTATION;
-    }
-
-    data.tweetAgeInSeconds = now - timeMapper.getTime(getCurrentDocID());
-    if (data.tweetAgeInSeconds < 0) {
-      data.tweetAgeInSeconds = 0; // Age cannot be negative
+    if (data.usewwep == wewevancesignawconstants.unset_weputation_sentinew) {
+      d-data.usewwep = w-wewevancesignawconstants.goodwiww_weputation;
     }
 
-    // The PARUS_SCORE feature should be read as is.
-    data.parusScore = documentFeatures.getFeatureValue(EarlybirdFieldConstant.PARUS_SCORE);
-
-    data.isNullcast = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_NULLCAST_FLAG);
-    data.hasUrl =  documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_LINK_FLAG);
-    data.hasImageUrl = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
-    data.hasVideoUrl = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG);
-    data.hasNewsUrl = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_NEWS_URL_FLAG);
-    data.isReply =  documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_REPLY_FLAG);
-    data.isRetweet = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_RETWEET_FLAG);
-    data.isOffensive = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG);
-    data.hasTrend = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_TREND_FLAG);
-    data.hasMultipleHashtagsOrTrends =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG);
-    data.isUserSpam = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_USER_SPAM_FLAG);
-    data.isUserNSFW = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_USER_NSFW_FLAG)
-        || userTable.isSet(data.fromUserId, UserTable.NSFW_BIT);
-    data.isUserAntiSocial =
-        userTable.isSet(data.fromUserId, UserTable.ANTISOCIAL_BIT);
-    data.isUserBot = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_USER_BOT_FLAG);
-    data.hasCard = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_CARD_FLAG);
-    data.cardType = SearchCardType.UNKNOWN.getByteValue();
-    if (data.hasCard) {
-      data.cardType =
-          (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD);
-    }
-    data.hasVisibleLink = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_VISIBLE_LINK_FLAG);
-
-    data.hasConsumerVideo =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG);
-    data.hasProVideo = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_PRO_VIDEO_FLAG);
-    data.hasVine = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_VINE_FLAG);
-    data.hasPeriscope = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_PERISCOPE_FLAG);
-    data.hasNativeImage = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_NATIVE_IMAGE_FLAG);
-    data.hasQuote = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_QUOTE_FLAG);
-    data.isComposerSourceCamera =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.COMPOSER_SOURCE_IS_CAMERA_FLAG);
-
-    // Only read the shared status if the isRetweet or isReply bit is true (minor optimization).
-    if (data.isRetweet || (params.getInReplyToStatusId && data.isReply)) {
-      data.sharedStatusId =
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF);
+    d-data.tweetageinseconds = n-nyow - t-timemappew.gettime(getcuwwentdocid());
+    if (data.tweetageinseconds < 0) {
+      data.tweetageinseconds = 0; // age cannot be nyegative
     }
 
-    // Only read the reference tweet author ID if the isRetweet or isReply bit
-    // is true (minor optimization).
-    if (data.isRetweet || data.isReply) {
-      // the REFERENCE_AUTHOR_ID_CSF stores the source tweet author id for all retweets
-      long referenceAuthorId =
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF);
-      if (referenceAuthorId > 0) {
-        data.referenceAuthorId = referenceAuthorId;
-      } else {
-        // we also store the reference author id for retweets, directed at tweets, and self threaded
-        // tweets separately on Realtime/Protected Earlybirds. This data will be moved to the
-        // REFERENCE_AUTHOR_ID_CSF and these fields will be deprecated in SEARCH-34958.
-        referenceAuthorId = LongIntConverter.convertTwoIntToOneLong(
-            (int) documentFeatures.getFeatureValue(
-                EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT),
-            (int) documentFeatures.getFeatureValue(
-                EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT));
-        if (referenceAuthorId > 0) {
-          data.referenceAuthorId = referenceAuthorId;
+    // t-the pawus_scowe featuwe s-shouwd be wead as is. (ꈍᴗꈍ)
+    data.pawusscowe = documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.pawus_scowe);
+
+    data.isnuwwcast = documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_nuwwcast_fwag);
+    d-data.hasuww =  documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_wink_fwag);
+    data.hasimageuww = documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_image_uww_fwag);
+    data.hasvideouww = d-documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_video_uww_fwag);
+    d-data.hasnewsuww = documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_news_uww_fwag);
+    d-data.iswepwy =  documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_wepwy_fwag);
+    data.iswetweet = d-documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_wetweet_fwag);
+    d-data.isoffensive = documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_offensive_fwag);
+    d-data.hastwend = documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_twend_fwag);
+    d-data.hasmuwtipwehashtagsowtwends =
+        documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_muwtipwe_hashtags_ow_twends_fwag);
+    data.isusewspam = documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_usew_spam_fwag);
+    data.isusewnsfw = d-documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_usew_nsfw_fwag)
+        || usewtabwe.isset(data.fwomusewid, ( ͡o ω ͡o ) usewtabwe.nsfw_bit);
+    d-data.isusewantisociaw =
+        u-usewtabwe.isset(data.fwomusewid, 😳😳😳 u-usewtabwe.antisociaw_bit);
+    data.isusewbot = documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_usew_bot_fwag);
+    data.hascawd = d-documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_cawd_fwag);
+    data.cawdtype = seawchcawdtype.unknown.getbytevawue();
+    if (data.hascawd) {
+      data.cawdtype =
+          (byte) documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.cawd_type_csf_fiewd);
+    }
+    d-data.hasvisibwewink = d-documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_visibwe_wink_fwag);
+
+    d-data.hasconsumewvideo =
+        d-documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_consumew_video_fwag);
+    data.haspwovideo = documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_pwo_video_fwag);
+    d-data.hasvine = d-documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_vine_fwag);
+    data.haspewiscope = documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_pewiscope_fwag);
+    d-data.hasnativeimage = documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_native_image_fwag);
+    data.hasquote = documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_quote_fwag);
+    d-data.iscomposewsouwcecamewa =
+        documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.composew_souwce_is_camewa_fwag);
+
+    // onwy wead the s-shawed status i-if the iswetweet ow iswepwy bit i-is twue (minow o-optimization). òωó
+    i-if (data.iswetweet || (pawams.getinwepwytostatusid && data.iswepwy)) {
+      data.shawedstatusid =
+          d-documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.shawed_status_id_csf);
+    }
+
+    // onwy wead the wefewence t-tweet authow id if the iswetweet ow iswepwy bit
+    // is twue (minow o-optimization). mya
+    i-if (data.iswetweet || d-data.iswepwy) {
+      // t-the w-wefewence_authow_id_csf stowes t-the souwce tweet authow id fow aww wetweets
+      w-wong wefewenceauthowid =
+          documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.wefewence_authow_id_csf);
+      i-if (wefewenceauthowid > 0) {
+        data.wefewenceauthowid = wefewenceauthowid;
+      } e-ewse {
+        // w-we awso stowe the wefewence a-authow id fow wetweets, rawr x3 diwected a-at tweets, a-and sewf thweaded
+        // tweets s-sepawatewy on w-weawtime/pwotected eawwybiwds. XD t-this data wiww be moved to the
+        // wefewence_authow_id_csf and these fiewds w-wiww be depwecated in seawch-34958. (ˆ ﻌ ˆ)♡
+        w-wefewenceauthowid = wongintconvewtew.convewttwointtoonewong(
+            (int) documentfeatuwes.getfeatuwevawue(
+                eawwybiwdfiewdconstant.wefewence_authow_id_most_significant_int), >w<
+            (int) d-documentfeatuwes.getfeatuwevawue(
+                e-eawwybiwdfiewdconstant.wefewence_authow_id_weast_significant_int));
+        i-if (wefewenceauthowid > 0) {
+          data.wefewenceauthowid = w-wefewenceauthowid;
         }
       }
     }
 
-    // Convert language to a thrift language and then back to an int in order to
-    // ensure a value compatible with our current ThriftLanguage definition.
-    ThriftLanguage tweetLang = ThriftLanguageUtil.safeFindByValue(
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LANGUAGE));
-    data.tweetLangId = tweetLang.getValue();
-    // Set the language-related features here so that they can be later used in promotion/demotion
-    // and also be transferred to ThriftSearchResultMetadata
-    data.userLangMult = computeUserLangMultiplier(data, params);
-    data.hasDifferentLang = params.uiLangId != ThriftLanguage.UNKNOWN.getValue()
-        && params.uiLangId != data.tweetLangId;
-    data.hasEnglishTweetAndDifferentUILang = data.hasDifferentLang
-        && data.tweetLangId == ThriftLanguage.ENGLISH.getValue();
-    data.hasEnglishUIAndDifferentTweetLang = data.hasDifferentLang
-        && params.uiLangId == ThriftLanguage.ENGLISH.getValue();
+    // c-convewt wanguage to a thwift w-wanguage and then back to an i-int in owdew to
+    // ensuwe a v-vawue compatibwe w-with ouw cuwwent thwiftwanguage definition. (ꈍᴗꈍ)
+    thwiftwanguage tweetwang = thwiftwanguageutiw.safefindbyvawue(
+        (int) d-documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.wanguage));
+    d-data.tweetwangid = tweetwang.getvawue();
+    // set the wanguage-wewated featuwes hewe so t-that they can be watew used in pwomotion/demotion
+    // a-and awso b-be twansfewwed to thwiftseawchwesuwtmetadata
+    data.usewwangmuwt = computeusewwangmuwtipwiew(data, (U ﹏ U) pawams);
+    d-data.hasdiffewentwang = pawams.uiwangid != thwiftwanguage.unknown.getvawue()
+        && pawams.uiwangid != data.tweetwangid;
+    d-data.hasengwishtweetanddiffewentuiwang = data.hasdiffewentwang
+        && data.tweetwangid == t-thwiftwanguage.engwish.getvawue();
+    d-data.hasengwishuianddiffewenttweetwang = data.hasdiffewentwang
+        && p-pawams.uiwangid == t-thwiftwanguage.engwish.getvawue();
 
-    // Exposed all these features for the clients.
-    data.isSensitiveContent =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT);
-    data.hasMultipleMediaFlag =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_MULTIPLE_MEDIA_FLAG);
-    data.profileIsEggFlag = documentFeatures.isFlagSet(EarlybirdFieldConstant.PROFILE_IS_EGG_FLAG);
-    data.isUserNewFlag = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_USER_NEW_FLAG);
-    data.numMentions = (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.NUM_MENTIONS);
-    data.numHashtags = (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.NUM_HASHTAGS);
-    data.linkLanguage =
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LINK_LANGUAGE);
-    data.prevUserTweetEngagement =
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.PREV_USER_TWEET_ENGAGEMENT);
+    // e-exposed aww these f-featuwes fow t-the cwients. >_<
+    d-data.issensitivecontent =
+        documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_sensitive_content);
+    data.hasmuwtipwemediafwag =
+        documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.has_muwtipwe_media_fwag);
+    data.pwofiweiseggfwag = documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.pwofiwe_is_egg_fwag);
+    d-data.isusewnewfwag = d-documentfeatuwes.isfwagset(eawwybiwdfiewdconstant.is_usew_new_fwag);
+    d-data.nummentions = (int) d-documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.num_mentions);
+    d-data.numhashtags = (int) d-documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.num_hashtags);
+    data.winkwanguage =
+        (int) documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.wink_wanguage);
+    data.pwevusewtweetengagement =
+        (int) documentfeatuwes.getfeatuwevawue(eawwybiwdfiewdconstant.pwev_usew_tweet_engagement);
 
-    // health model scores by HML
-    data.toxicityScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.TOXICITY_SCORE);
-    data.pBlockScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.PBLOCK_SCORE);
-    data.pSpammyTweetScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.P_SPAMMY_TWEET_SCORE);
-    data.pReportedTweetScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.P_REPORTED_TWEET_SCORE);
-    data.spammyTweetContentScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.SPAMMY_TWEET_CONTENT_SCORE
+    // heawth modew s-scowes by hmw
+    d-data.toxicityscowe = documentfeatuwes.getunnowmawizedfeatuwevawue(
+        eawwybiwdfiewdconstant.toxicity_scowe);
+    data.pbwockscowe = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.pbwock_scowe);
+    d-data.pspammytweetscowe = documentfeatuwes.getunnowmawizedfeatuwevawue(
+        eawwybiwdfiewdconstant.p_spammy_tweet_scowe);
+    data.pwepowtedtweetscowe = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        eawwybiwdfiewdconstant.p_wepowted_tweet_scowe);
+    data.spammytweetcontentscowe = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.spammy_tweet_content_scowe
     );
-    data.experimentalHealthModelScore1 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_1);
-    data.experimentalHealthModelScore2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_2);
-    data.experimentalHealthModelScore3 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_3);
-    data.experimentalHealthModelScore4 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_4);
+    data.expewimentawheawthmodewscowe1 = documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.expewimentaw_heawth_modew_scowe_1);
+    data.expewimentawheawthmodewscowe2 = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.expewimentaw_heawth_modew_scowe_2);
+    data.expewimentawheawthmodewscowe3 = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.expewimentaw_heawth_modew_scowe_3);
+    d-data.expewimentawheawthmodewscowe4 = d-documentfeatuwes.getunnowmawizedfeatuwevawue(
+        e-eawwybiwdfiewdconstant.expewimentaw_heawth_modew_scowe_4);
 
-    return data;
+    w-wetuwn data;
   }
 
-  protected float scoreInternal(
-      float luceneQueryScore, ExplanationWrapper explanation) throws IOException {
-    LinearScoringData data = updateLinearScoringData(luceneQueryScore);
-    if (data.skipReason != null && data.skipReason != SkipReason.NOT_SKIPPED) {
-      return finalizeScore(data, explanation, SKIP_HIT);
+  pwotected fwoat s-scoweintewnaw(
+      f-fwoat wucenequewyscowe, e-expwanationwwappew expwanation) thwows ioexception {
+    w-wineawscowingdata data = u-updatewineawscowingdata(wucenequewyscowe);
+    if (data.skipweason != n-nyuww && d-data.skipweason != skipweason.not_skipped) {
+      wetuwn finawizescowe(data, >_< e-expwanation, -.- skip_hit);
     }
 
-    double score = computeScore(data, explanation != null);
-    return postScoreComputation(data, score, true, explanation);
+    doubwe scowe = computescowe(data, e-expwanation != n-nyuww);
+    wetuwn postscowecomputation(data, òωó scowe, twue, e-expwanation);
   }
 
-  protected float postScoreComputation(
-      LinearScoringData data,
-      double score,
-      boolean boostScoreWithHitAttribution,
-      ExplanationWrapper explanation) throws IOException {
-    double modifiedScore = score;
-    data.scoreBeforeBoost = modifiedScore;
-    if (params.applyBoosts) {
-      modifiedScore =
-          applyBoosts(data, modifiedScore, boostScoreWithHitAttribution, explanation != null);
+  p-pwotected fwoat postscowecomputation(
+      w-wineawscowingdata data, o.O
+      doubwe scowe, σωσ
+      b-boowean boostscowewithhitattwibution, σωσ
+      expwanationwwappew e-expwanation) thwows ioexception {
+    d-doubwe modifiedscowe = scowe;
+    d-data.scowebefoweboost = modifiedscowe;
+    if (pawams.appwyboosts) {
+      m-modifiedscowe =
+          appwyboosts(data, mya m-modifiedscowe, b-boostscowewithhitattwibution, e-expwanation != nyuww);
     }
-    // Final adjustment to avoid too-low scores.
-    modifiedScore *= SCORE_ADJUSTER;
-    data.scoreAfterBoost = modifiedScore;
+    // finaw adjustment to avoid too-wow scowes.
+    modifiedscowe *= scowe_adjustew;
+    d-data.scoweaftewboost = m-modifiedscowe;
 
-    // 3. final score filter
-    data.scoreFinal = modifiedScore;
-    if ((params.applyFiltersAlways || (!data.isSelfTweet && !data.isFollow))
-        && modifiedScore < params.minScore) {
-      data.skipReason = SkipReason.LOW_FINAL_SCORE;
-      modifiedScore = SKIP_HIT;
+    // 3. o.O f-finaw scowe f-fiwtew
+    data.scowefinaw = modifiedscowe;
+    i-if ((pawams.appwyfiwtewsawways || (!data.issewftweet && !data.isfowwow))
+        && m-modifiedscowe < pawams.minscowe) {
+      data.skipweason = s-skipweason.wow_finaw_scowe;
+      m-modifiedscowe = skip_hit;
     }
 
-    // clear field hits
-    this.fieldHitAttribution = null;
-    return finalizeScore(data, explanation, modifiedScore);
+    // c-cweaw f-fiewd hits
+    this.fiewdhitattwibution = nyuww;
+    w-wetuwn finawizescowe(data, XD expwanation, XD modifiedscowe);
   }
 
   /**
-   * Applying promotion/demotion to the scores generated by feature-based scoring functions
+   * appwying p-pwomotion/demotion to the s-scowes genewated b-by featuwe-based scowing functions
    *
-   * @param data Original LinearScoringData (to be modified with boosts here)
-   * @param score Score generated by the feature-based scoring function
-   * @param withHitAttribution Determines if hit attribution data should be included.
-   * @param forExplanation Indicates if the score will be computed for generating the explanation.
-   * @return Score after applying promotion/demotion
+   * @pawam d-data owiginaw w-wineawscowingdata (to b-be modified with boosts h-hewe)
+   * @pawam s-scowe scowe genewated by the f-featuwe-based scowing function
+   * @pawam w-withhitattwibution detewmines i-if hit a-attwibution data shouwd be incwuded. (✿oωo)
+   * @pawam f-fowexpwanation indicates if the scowe wiww be c-computed fow genewating the expwanation. -.-
+   * @wetuwn scowe aftew appwying pwomotion/demotion
    */
-  private double applyBoosts(
-      LinearScoringData data,
-      double score,
-      boolean withHitAttribution,
-      boolean forExplanation) {
-    double boostedScore = score;
+  pwivate doubwe appwyboosts(
+      wineawscowingdata d-data, (ꈍᴗꈍ)
+      doubwe scowe, ( ͡o ω ͡o )
+      boowean withhitattwibution, (///ˬ///✿)
+      boowean fowexpwanation) {
+    doubwe b-boostedscowe = scowe;
 
-    if (params.useLuceneScoreAsBoost) {
-      data.normalizedLuceneScore = normalizeLuceneScore(
-          (float) data.luceneScore, (float) params.maxLuceneScoreBoost);
-      boostedScore *= data.normalizedLuceneScore;
+    if (pawams.usewucenescoweasboost) {
+      data.nowmawizedwucenescowe = n-nyowmawizewucenescowe(
+          (fwoat) data.wucenescowe, 🥺 (fwoat) p-pawams.maxwucenescoweboost);
+      boostedscowe *= data.nowmawizedwucenescowe;
     }
-    if (data.isOffensive) {
-      boostedScore *= params.offensiveDamping;
+    if (data.isoffensive) {
+      b-boostedscowe *= pawams.offensivedamping;
     }
-    if (data.isUserSpam && params.spamUserDamping != LinearScoringData.NO_BOOST_VALUE) {
-      data.spamUserDampApplied = true;
-      boostedScore *= params.spamUserDamping;
+    i-if (data.isusewspam && pawams.spamusewdamping != w-wineawscowingdata.no_boost_vawue) {
+      d-data.spamusewdampappwied = twue;
+      boostedscowe *= p-pawams.spamusewdamping;
     }
-    if (data.isUserNSFW && params.nsfwUserDamping != LinearScoringData.NO_BOOST_VALUE) {
-      data.nsfwUserDampApplied = true;
-      boostedScore *= params.nsfwUserDamping;
+    if (data.isusewnsfw && pawams.nsfwusewdamping != wineawscowingdata.no_boost_vawue) {
+      data.nsfwusewdampappwied = t-twue;
+      boostedscowe *= p-pawams.nsfwusewdamping;
     }
-    if (data.isUserBot && params.botUserDamping != LinearScoringData.NO_BOOST_VALUE) {
-      data.botUserDampApplied = true;
-      boostedScore *= params.botUserDamping;
-    }
-
-    // cards
-    if (data.hasCard && params.hasCardBoosts[data.cardType] != LinearScoringData.NO_BOOST_VALUE) {
-      boostedScore *= params.hasCardBoosts[data.cardType];
-      data.hasCardBoostApplied = true;
+    if (data.isusewbot && p-pawams.botusewdamping != wineawscowingdata.no_boost_vawue) {
+      d-data.botusewdampappwied = t-twue;
+      boostedscowe *= pawams.botusewdamping;
     }
 
-    // trends
-    if (data.hasMultipleHashtagsOrTrends) {
-      boostedScore *= params.multipleHashtagsOrTrendsDamping;
-    } else if (data.hasTrend) {
-      data.tweetHasTrendsBoostApplied = true;
-      boostedScore *= params.tweetHasTrendBoost;
+    // c-cawds
+    if (data.hascawd && pawams.hascawdboosts[data.cawdtype] != w-wineawscowingdata.no_boost_vawue) {
+      boostedscowe *= pawams.hascawdboosts[data.cawdtype];
+      data.hascawdboostappwied = twue;
     }
 
-    // Media/News url boosts.
-    if (data.hasImageUrl || data.hasVideoUrl) {
-      data.hasMedialUrlBoostApplied = true;
-      boostedScore *= params.tweetHasMediaUrlBoost;
-    }
-    if (data.hasNewsUrl) {
-      data.hasNewsUrlBoostApplied = true;
-      boostedScore *= params.tweetHasNewsUrlBoost;
+    // t-twends
+    i-if (data.hasmuwtipwehashtagsowtwends) {
+      boostedscowe *= p-pawams.muwtipwehashtagsowtwendsdamping;
+    } e-ewse if (data.hastwend) {
+      d-data.tweethastwendsboostappwied = twue;
+      boostedscowe *= pawams.tweethastwendboost;
     }
 
-    if (data.isFromVerifiedAccount) {
-      data.tweetFromVerifiedAccountBoostApplied = true;
-      boostedScore *= params.tweetFromVerifiedAccountBoost;
+    // media/news uww b-boosts. (ˆ ﻌ ˆ)♡
+    if (data.hasimageuww || d-data.hasvideouww) {
+      data.hasmediawuwwboostappwied = t-twue;
+      boostedscowe *= p-pawams.tweethasmediauwwboost;
+    }
+    if (data.hasnewsuww) {
+      d-data.hasnewsuwwboostappwied = twue;
+      boostedscowe *= pawams.tweethasnewsuwwboost;
     }
 
-    if (data.isFromBlueVerifiedAccount) {
-      data.tweetFromBlueVerifiedAccountBoostApplied = true;
-      boostedScore *= params.tweetFromBlueVerifiedAccountBoost;
+    i-if (data.isfwomvewifiedaccount) {
+      data.tweetfwomvewifiedaccountboostappwied = twue;
+      b-boostedscowe *= p-pawams.tweetfwomvewifiedaccountboost;
     }
 
-    if (data.isFollow) {
-      // direct follow, so boost both replies and non-replies.
-      data.directFollowBoostApplied = true;
-      boostedScore *= params.directFollowBoost;
-    } else if (data.isTrusted) {
-      // trusted circle
-      if (!data.isReply) {
-        // non-at-reply, in trusted network
-        data.trustedCircleBoostApplied = true;
-        boostedScore *= params.trustedCircleBoost;
+    if (data.isfwombwuevewifiedaccount) {
+      data.tweetfwombwuevewifiedaccountboostappwied = t-twue;
+      boostedscowe *= pawams.tweetfwombwuevewifiedaccountboost;
+    }
+
+    if (data.isfowwow) {
+      // diwect fowwow, so boost both wepwies and nyon-wepwies. ^•ﻌ•^
+      data.diwectfowwowboostappwied = twue;
+      b-boostedscowe *= p-pawams.diwectfowwowboost;
+    } ewse if (data.istwusted) {
+      // t-twusted c-ciwcwe
+      if (!data.iswepwy) {
+        // n-nyon-at-wepwy, rawr x3 in twusted nyetwowk
+        data.twustedciwcweboostappwied = twue;
+        boostedscowe *= pawams.twustedciwcweboost;
       }
-    } else if (data.isReply) {
-      // at-reply out of my network
-      data.outOfNetworkReplyPenaltyApplied = true;
-      boostedScore -= params.outOfNetworkReplyPenalty;
+    } e-ewse if (data.iswepwy) {
+      // at-wepwy out of my nyetwowk
+      data.outofnetwowkwepwypenawtyappwied = twue;
+      boostedscowe -= p-pawams.outofnetwowkwepwypenawty;
     }
 
-    if (data.isSelfTweet) {
-      data.selfTweetBoostApplied = true;
-      data.selfTweetMult = params.selfTweetBoost;
-      boostedScore *= params.selfTweetBoost;
+    i-if (data.issewftweet) {
+      d-data.sewftweetboostappwied = twue;
+      data.sewftweetmuwt = pawams.sewftweetboost;
+      boostedscowe *= p-pawams.sewftweetboost;
     }
 
-    // Language Demotion
-    // User language based demotion
-    // The data.userLangMult is set in scoreInternal(), and this setting step is always before
-    // the applying boosts step
-    if (params.useUserLanguageInfo) {
-      boostedScore *= data.userLangMult;
+    // w-wanguage demotion
+    // u-usew wanguage based d-demotion
+    // the data.usewwangmuwt i-is set in scoweintewnaw(), (U ﹏ U) a-and this setting step is awways b-befowe
+    // the appwying boosts step
+    if (pawams.useusewwanguageinfo) {
+      b-boostedscowe *= data.usewwangmuwt;
     }
-    // UI language based demotion
-    if (params.uiLangId != ThriftLanguage.UNKNOWN.getValue()
-        && params.uiLangId != data.tweetLangId) {
-      if (data.tweetLangId == ThriftLanguage.ENGLISH.getValue()) {
-        data.uiLangMult = params.langEnglishTweetDemote;
-      } else if (params.uiLangId == ThriftLanguage.ENGLISH.getValue()) {
-        data.uiLangMult = params.langEnglishUIDemote;
-      } else {
-        data.uiLangMult = params.langDefaultDemote;
+    // u-ui wanguage b-based demotion
+    if (pawams.uiwangid != t-thwiftwanguage.unknown.getvawue()
+        && p-pawams.uiwangid != data.tweetwangid) {
+      i-if (data.tweetwangid == thwiftwanguage.engwish.getvawue()) {
+        d-data.uiwangmuwt = pawams.wangengwishtweetdemote;
+      } e-ewse if (pawams.uiwangid == t-thwiftwanguage.engwish.getvawue()) {
+        data.uiwangmuwt = pawams.wangengwishuidemote;
+      } ewse {
+        d-data.uiwangmuwt = pawams.wangdefauwtdemote;
       }
-    } else {
-      data.uiLangMult = LinearScoringData.NO_BOOST_VALUE;
+    } ewse {
+      data.uiwangmuwt = wineawscowingdata.no_boost_vawue;
     }
-    boostedScore *= data.uiLangMult;
+    boostedscowe *= data.uiwangmuwt;
 
-    if (params.useAgeDecay) {
-      // shallow sigmoid with an inflection point at ageDecayHalflife
-      data.ageDecayMult = ageDecay.getAgeDecayMultiplier(data.tweetAgeInSeconds);
-      boostedScore *= data.ageDecayMult;
+    if (pawams.useagedecay) {
+      // s-shawwow sigmoid with an infwection point at agedecayhawfwife
+      d-data.agedecaymuwt = agedecay.getagedecaymuwtipwiew(data.tweetageinseconds);
+      b-boostedscowe *= data.agedecaymuwt;
     }
 
-    // Hit Attribute Demotion
-    // Scoring is currently based on tokenized user name, text, and url in the tweet
-    // If hit attribute collection is enabled, we demote score based on these fields
-    if (hitAttributeHelper != null && params.enableHitDemotion) {
+    // hit attwibute d-demotion
+    // scowing is cuwwentwy based on t-tokenized usew nyame, OwO text, and uww in the tweet
+    // i-if hit attwibute cowwection is enabwed, (✿oωo) w-we demote scowe based on these fiewds
+    if (hitattwibutehewpew != n-nyuww && pawams.enabwehitdemotion) {
 
-      Map<Integer, List<String>> hitMap;
-      if (forExplanation && fieldHitAttribution != null) {
-        // if this scoring call is for generating an explanation,
-        // we'll use the fieldHitAttribution found in the search result's metadata because
-        // collectors are not called during the debug workflow
-        hitMap = Maps.transformValues(fieldHitAttribution.getHitMap(), FieldHitList::getHitFields);
-      } else if (withHitAttribution) {
-        hitMap = hitAttributeHelper.getHitAttribution(getCurrentDocID());
-      } else {
-        hitMap = Maps.newHashMap();
+      m-map<integew, (⑅˘꒳˘) wist<stwing>> hitmap;
+      if (fowexpwanation && f-fiewdhitattwibution != n-nyuww) {
+        // if this s-scowing caww i-is fow genewating an expwanation, UwU
+        // we'ww u-use the fiewdhitattwibution found in the seawch wesuwt's metadata because
+        // c-cowwectows awe nyot cawwed duwing the debug wowkfwow
+        h-hitmap = maps.twansfowmvawues(fiewdhitattwibution.gethitmap(), (ˆ ﻌ ˆ)♡ f-fiewdhitwist::gethitfiewds);
+      } e-ewse if (withhitattwibution) {
+        hitmap = hitattwibutehewpew.gethitattwibution(getcuwwentdocid());
+      } ewse {
+        hitmap = m-maps.newhashmap();
       }
-      Set<String> uniqueFieldHits = ImmutableSet.copyOf(Iterables.concat(hitMap.values()));
+      set<stwing> u-uniquefiewdhits = immutabweset.copyof(itewabwes.concat(hitmap.vawues()));
 
-      data.hitFields.addAll(uniqueFieldHits);
-      // there should always be fields that are hit
-      // if there aren't, we assume this is a call from 'explain' in debug mode
-      // do not override hit attribute data if in debug mode
-      if (!uniqueFieldHits.isEmpty()) {
-        // demotions based strictly on field hits
-        if (uniqueFieldHits.size() == 1) {
-          if (uniqueFieldHits.contains(
-                  EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName())) {
-            // if url was the only field that was hit, demote
-            data.hasUrlOnlyHitDemotionApplied = true;
-            boostedScore *= params.urlOnlyHitDemotion;
-          } else if (uniqueFieldHits.contains(
-                         EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName())) {
-            // if name was the only field that was hit, demote
-            data.hasNameOnlyHitDemotionApplied = true;
-            boostedScore *= params.nameOnlyHitDemotion;
+      d-data.hitfiewds.addaww(uniquefiewdhits);
+      // t-thewe shouwd awways be fiewds that awe hit
+      // if thewe awen't, /(^•ω•^) we assume this is a caww f-fwom 'expwain' in d-debug mode
+      // do nyot ovewwide hit attwibute d-data if in debug mode
+      if (!uniquefiewdhits.isempty()) {
+        // d-demotions b-based stwictwy o-on fiewd h-hits
+        if (uniquefiewdhits.size() == 1) {
+          i-if (uniquefiewdhits.contains(
+                  e-eawwybiwdfiewdconstant.wesowved_winks_text_fiewd.getfiewdname())) {
+            // if uww was the onwy f-fiewd that was h-hit, (˘ω˘) demote
+            d-data.hasuwwonwyhitdemotionappwied = t-twue;
+            b-boostedscowe *= p-pawams.uwwonwyhitdemotion;
+          } ewse if (uniquefiewdhits.contains(
+                         e-eawwybiwdfiewdconstant.tokenized_fwom_usew_fiewd.getfiewdname())) {
+            // i-if nyame was t-the onwy fiewd that was hit, XD demote
+            data.hasnameonwyhitdemotionappwied = t-twue;
+            boostedscowe *= pawams.nameonwyhitdemotion;
           }
-        } else if (!uniqueFieldHits.contains(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())
-            && !uniqueFieldHits.contains(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName())
-            && !uniqueFieldHits.contains(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName())
-            && !uniqueFieldHits.contains(EarlybirdFieldConstant.STOCKS_FIELD.getFieldName())) {
-          // if text or special text was never hit, demote
-          data.hasNoTextHitDemotionApplied = true;
-          boostedScore *= params.noTextHitDemotion;
-        } else if (uniqueFieldHits.size() == 2) {
-          // demotions based on field hit combinations
-          // want to demote if we only hit two of the fields (one being text)
-          // but with separate terms
-          Set<String> fieldIntersections = QueryCommonFieldHitsVisitor.findIntersection(
-              hitAttributeHelper.getNodeToRankMap(),
-              hitMap,
-              query);
+        } e-ewse if (!uniquefiewdhits.contains(eawwybiwdfiewdconstant.text_fiewd.getfiewdname())
+            && !uniquefiewdhits.contains(eawwybiwdfiewdconstant.mentions_fiewd.getfiewdname())
+            && !uniquefiewdhits.contains(eawwybiwdfiewdconstant.hashtags_fiewd.getfiewdname())
+            && !uniquefiewdhits.contains(eawwybiwdfiewdconstant.stocks_fiewd.getfiewdname())) {
+          // if text ow speciaw text w-was nyevew hit, òωó d-demote
+          data.hasnotexthitdemotionappwied = twue;
+          boostedscowe *= p-pawams.notexthitdemotion;
+        } e-ewse if (uniquefiewdhits.size() == 2) {
+          // demotions based on f-fiewd hit combinations
+          // w-want to demote if we onwy hit two of the fiewds (one being t-text)
+          // b-but with sepawate tewms
+          set<stwing> f-fiewdintewsections = q-quewycommonfiewdhitsvisitow.findintewsection(
+              hitattwibutehewpew.getnodetowankmap(), UwU
+              hitmap, -.-
+              q-quewy);
 
-          if (fieldIntersections.isEmpty()) {
-            if (uniqueFieldHits.contains(
-                    EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName())) {
-              // if name is hit but has no hits in common with text, demote
-              // want to demote cases where we hit part of the person's name
-              // and tweet text separately
-              data.hasSeparateTextAndNameHitDemotionApplied = true;
-              boostedScore *= params.separateTextAndNameHitDemotion;
-            } else if (uniqueFieldHits.contains(
-                           EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName())) {
-              // if url is hit but has no hits in common with text, demote
-              // want to demote cases where we hit a potential domain keyword
-              // and tweet text separately
-              data.hasSeparateTextAndUrlHitDemotionApplied = true;
-              boostedScore *= params.separateTextAndUrlHitDemotion;
+          if (fiewdintewsections.isempty()) {
+            if (uniquefiewdhits.contains(
+                    eawwybiwdfiewdconstant.tokenized_fwom_usew_fiewd.getfiewdname())) {
+              // if nyame is hit but has n-nyo hits in common with text, demote
+              // want to demote c-cases whewe w-we hit pawt of t-the pewson's nyame
+              // and tweet text s-sepawatewy
+              d-data.hassepawatetextandnamehitdemotionappwied = t-twue;
+              b-boostedscowe *= p-pawams.sepawatetextandnamehitdemotion;
+            } ewse if (uniquefiewdhits.contains(
+                           eawwybiwdfiewdconstant.wesowved_winks_text_fiewd.getfiewdname())) {
+              // i-if uww is h-hit but has nyo h-hits in common with text, (ꈍᴗꈍ) demote
+              // w-want to demote c-cases whewe we h-hit a potentiaw domain keywowd
+              // a-and tweet text s-sepawatewy
+              d-data.hassepawatetextanduwwhitdemotionappwied = t-twue;
+              b-boostedscowe *= pawams.sepawatetextanduwwhitdemotion;
             }
           }
         }
       }
     }
 
-    return boostedScore;
+    w-wetuwn boostedscowe;
   }
 
   /**
-   * Compute the user language based demotion multiplier
+   * compute t-the usew w-wanguage based demotion muwtipwiew
    */
-  private static double computeUserLangMultiplier(
-      LinearScoringData data, LinearScoringParams params) {
-    if (data.tweetLangId == params.uiLangId
-        && data.tweetLangId != ThriftLanguage.UNKNOWN.getValue()) {
-      // Effectively the uiLang is considered a language that user knows with 1.0 confidence.
-      return LinearScoringData.NO_BOOST_VALUE;
+  pwivate static doubwe c-computeusewwangmuwtipwiew(
+      w-wineawscowingdata data, (⑅˘꒳˘) wineawscowingpawams p-pawams) {
+    i-if (data.tweetwangid == pawams.uiwangid
+        && data.tweetwangid != thwiftwanguage.unknown.getvawue()) {
+      // e-effectivewy the u-uiwang is considewed a-a wanguage t-that usew knows w-with 1.0 confidence. 🥺
+      w-wetuwn wineawscowingdata.no_boost_vawue;
     }
 
-    if (params.userLangs[data.tweetLangId] > 0.0) {
-      return params.userLangs[data.tweetLangId];
+    if (pawams.usewwangs[data.tweetwangid] > 0.0) {
+      w-wetuwn pawams.usewwangs[data.tweetwangid];
     }
 
-    return params.unknownLanguageBoost;
+    wetuwn pawams.unknownwanguageboost;
   }
 
   /**
-   * Computes the score of the document that it's currently being evaluated.
+   * computes the scowe of the document t-that it's cuwwentwy b-being evawuated.
    *
-   * The extracted features from the document are available in the field 'data'.
+   * the extwacted featuwes fwom the document awe avaiwabwe i-in the f-fiewd 'data'. òωó
    *
-   * @param data The LinearScoringData instance that will store the document features.
-   * @param forExplanation Indicates if the score will be computed for generating the explanation.
+   * @pawam data the wineawscowingdata instance t-that wiww stowe the document f-featuwes. 😳
+   * @pawam f-fowexpwanation i-indicates if the scowe wiww be computed fow genewating the e-expwanation. òωó
    */
-  protected abstract double computeScore(
-      LinearScoringData data, boolean forExplanation) throws IOException;
+  pwotected abstwact d-doubwe computescowe(
+      wineawscowingdata d-data, 🥺 boowean fowexpwanation) thwows ioexception;
 
-  private float finalizeScore(
-      LinearScoringData scoringData,
-      ExplanationWrapper explanation,
-      double score) throws IOException {
-    scoringData.scoreReturned = score;
-    if (explanation != null) {
-      explanation.explanation = generateExplanation(scoringData);
+  p-pwivate fwoat finawizescowe(
+      w-wineawscowingdata scowingdata, ( ͡o ω ͡o )
+      expwanationwwappew expwanation,
+      d-doubwe scowe) thwows ioexception {
+    scowingdata.scowewetuwned = s-scowe;
+    if (expwanation != nuww) {
+      expwanation.expwanation = genewateexpwanation(scowingdata);
     }
-    return (float) score;
+    wetuwn (fwoat) scowe;
   }
 
-  @Override
-  protected void initializeNextSegment(EarlybirdIndexSegmentAtomicReader reader)
-      throws IOException {
-    if (antiGamingFilter != null) {
-      antiGamingFilter.startSegment(reader);
+  @ovewwide
+  p-pwotected v-void initiawizenextsegment(eawwybiwdindexsegmentatomicweadew w-weadew)
+      t-thwows ioexception {
+    if (antigamingfiwtew != n-nyuww) {
+      antigamingfiwtew.stawtsegment(weadew);
     }
   }
 
   /*
-   * Generate the scoring explanation for debug.
+   * genewate the scowing expwanation f-fow debug. UwU
    */
-  private Explanation generateExplanation(LinearScoringData scoringData) throws IOException {
-    final List<Explanation> details = Lists.newArrayList();
+  p-pwivate e-expwanation genewateexpwanation(wineawscowingdata s-scowingdata) thwows ioexception {
+    finaw wist<expwanation> detaiws = wists.newawwaywist();
 
-    details.add(Explanation.match(0.0f, "[PROPERTIES] "
-        + scoringData.getPropertyExplanation()));
+    d-detaiws.add(expwanation.match(0.0f, 😳😳😳 "[pwopewties] "
+        + s-scowingdata.getpwopewtyexpwanation()));
 
-    // 1. Filters
-    boolean isHit = scoringData.skipReason == SkipReason.NOT_SKIPPED;
-    if (scoringData.skipReason == SkipReason.ANTIGAMING) {
-      details.add(Explanation.noMatch("SKIPPED for antigaming"));
+    // 1. ʘwʘ fiwtews
+    boowean ishit = scowingdata.skipweason == skipweason.not_skipped;
+    i-if (scowingdata.skipweason == skipweason.antigaming) {
+      d-detaiws.add(expwanation.nomatch("skipped f-fow antigaming"));
     }
-    if (scoringData.skipReason == SkipReason.LOW_REPUTATION) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low reputation: %.3f < %.3f",
-              scoringData.userRep, params.reputationMinVal)));
+    i-if (scowingdata.skipweason == skipweason.wow_weputation) {
+      detaiws.add(expwanation.nomatch(
+          stwing.fowmat("skipped fow wow weputation: %.3f < %.3f", ^^
+              scowingdata.usewwep, >_< pawams.weputationminvaw)));
     }
-    if (scoringData.skipReason == SkipReason.LOW_TEXT_SCORE) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low text score: %.3f < %.3f",
-              scoringData.textScore, params.textScoreMinVal)));
+    i-if (scowingdata.skipweason == skipweason.wow_text_scowe) {
+      d-detaiws.add(expwanation.nomatch(
+          stwing.fowmat("skipped fow wow text scowe: %.3f < %.3f", (ˆ ﻌ ˆ)♡
+              scowingdata.textscowe, (ˆ ﻌ ˆ)♡ pawams.textscoweminvaw)));
     }
-    if (scoringData.skipReason == SkipReason.LOW_RETWEET_COUNT) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low retweet count: %.3f < %.3f",
-              scoringData.retweetCountPostLog2, params.retweetMinVal)));
+    i-if (scowingdata.skipweason == skipweason.wow_wetweet_count) {
+      detaiws.add(expwanation.nomatch(
+          s-stwing.fowmat("skipped fow wow wetweet count: %.3f < %.3f", 🥺
+              s-scowingdata.wetweetcountpostwog2, p-pawams.wetweetminvaw)));
     }
-    if (scoringData.skipReason == SkipReason.LOW_FAV_COUNT) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low fav count: %.3f < %.3f",
-              scoringData.favCountPostLog2, params.favMinVal)));
+    i-if (scowingdata.skipweason == s-skipweason.wow_fav_count) {
+      d-detaiws.add(expwanation.nomatch(
+          stwing.fowmat("skipped f-fow wow f-fav count: %.3f < %.3f", ( ͡o ω ͡o )
+              scowingdata.favcountpostwog2, (ꈍᴗꈍ) p-pawams.favminvaw)));
     }
-    if (scoringData.skipReason == SkipReason.SOCIAL_FILTER) {
-      details.add(Explanation.noMatch("SKIPPED for not in the right social circle"));
-    }
-
-    // 2. Explanation depending on the scoring type
-    generateExplanationForScoring(scoringData, isHit, details);
-
-    // 3. Explanation depending on boosts
-    if (params.applyBoosts) {
-      generateExplanationForBoosts(scoringData, isHit, details);
+    if (scowingdata.skipweason == skipweason.sociaw_fiwtew) {
+      d-detaiws.add(expwanation.nomatch("skipped fow nyot in the w-wight sociaw ciwcwe"));
     }
 
-    // 4. Final score filter.
-    if (scoringData.skipReason == SkipReason.LOW_FINAL_SCORE) {
-      details.add(Explanation.noMatch("SKIPPED for low final score: " + scoringData.scoreFinal));
-      isHit = false;
+    // 2. :3 e-expwanation depending on t-the scowing type
+    g-genewateexpwanationfowscowing(scowingdata, (✿oωo) ishit, detaiws);
+
+    // 3. expwanation depending o-on boosts
+    i-if (pawams.appwyboosts) {
+      g-genewateexpwanationfowboosts(scowingdata, (U ᵕ U❁) i-ishit, detaiws);
     }
 
-    String hostAndSegment = String.format("%s host = %s  segment = %s",
-        functionName, DatabaseConfig.getLocalHostname(), DatabaseConfig.getDatabase());
-    if (isHit) {
-      return Explanation.match((float) scoringData.scoreFinal, hostAndSegment, details);
-    } else {
-      return Explanation.noMatch(hostAndSegment, details);
+    // 4. UwU finaw scowe fiwtew. ^^
+    i-if (scowingdata.skipweason == skipweason.wow_finaw_scowe) {
+      detaiws.add(expwanation.nomatch("skipped f-fow wow finaw scowe: " + scowingdata.scowefinaw));
+      ishit = f-fawse;
+    }
+
+    stwing hostandsegment = stwing.fowmat("%s host = %s  s-segment = %s", /(^•ω•^)
+        functionname, databaseconfig.getwocawhostname(), (˘ω˘) d-databaseconfig.getdatabase());
+    i-if (ishit) {
+      w-wetuwn expwanation.match((fwoat) scowingdata.scowefinaw, OwO h-hostandsegment, (U ᵕ U❁) d-detaiws);
+    } ewse {
+      wetuwn e-expwanation.nomatch(hostandsegment, (U ﹏ U) d-detaiws);
     }
   }
 
   /**
-   * Generates the explanation for the document that is currently being evaluated.
+   * g-genewates t-the expwanation fow the document t-that is cuwwentwy b-being evawuated. mya
    *
-   * Implementations of this method must use the 'details' parameter to collect its output.
+   * i-impwementations of this method must u-use the 'detaiws' pawametew to cowwect its output. (⑅˘꒳˘)
    *
-   * @param scoringData Scoring components for the document
-   * @param isHit Indicates whether the document is not skipped
-   * @param details Details of the explanation. Used to collect the output.
+   * @pawam scowingdata scowing components fow the document
+   * @pawam i-ishit indicates w-whethew the document is nyot s-skipped
+   * @pawam detaiws detaiws of the expwanation. (U ᵕ U❁) u-used to c-cowwect the output. /(^•ω•^)
    */
-  protected abstract void generateExplanationForScoring(
-      LinearScoringData scoringData, boolean isHit, List<Explanation> details) throws IOException;
+  p-pwotected a-abstwact void genewateexpwanationfowscowing(
+      w-wineawscowingdata scowingdata, ^•ﻌ•^ boowean i-ishit, (///ˬ///✿) wist<expwanation> d-detaiws) thwows ioexception;
 
   /**
-   * Generates the boosts part of the explanation for the document that is currently
-   * being evaluated.
+   * genewates the boosts pawt of t-the expwanation fow the document t-that is cuwwentwy
+   * being evawuated. o.O
    */
-  private void generateExplanationForBoosts(
-      LinearScoringData scoringData,
-      boolean isHit,
-      List<Explanation> details) {
-    List<Explanation> boostDetails = Lists.newArrayList();
+  pwivate void genewateexpwanationfowboosts(
+      w-wineawscowingdata scowingdata, (ˆ ﻌ ˆ)♡
+      b-boowean ishit, 😳
+      wist<expwanation> detaiws) {
+    w-wist<expwanation> boostdetaiws = wists.newawwaywist();
 
-    boostDetails.add(Explanation.match((float) scoringData.scoreBeforeBoost, "Score before boost"));
+    b-boostdetaiws.add(expwanation.match((fwoat) scowingdata.scowebefoweboost, òωó "scowe b-befowe b-boost"));
 
 
-    // Lucene score boost
-    if (params.useLuceneScoreAsBoost) {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.normalizedLuceneScore,
-          String.format("[x] Lucene score boost, luceneScore=%.3f",
-              scoringData.luceneScore)));
+    // wucene scowe boost
+    if (pawams.usewucenescoweasboost) {
+      b-boostdetaiws.add(expwanation.match(
+          (fwoat) scowingdata.nowmawizedwucenescowe, (⑅˘꒳˘)
+          stwing.fowmat("[x] w-wucene s-scowe boost, rawr wucenescowe=%.3f", (ꈍᴗꈍ)
+              scowingdata.wucenescowe)));
     }
 
-    // card boost
-    if (scoringData.hasCardBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.hasCardBoosts[scoringData.cardType],
-          "[x] card boost for type " + SearchCardType.cardTypeFromByteValue(scoringData.cardType)));
+    // c-cawd boost
+    if (scowingdata.hascawdboostappwied) {
+      boostdetaiws.add(expwanation.match((fwoat) pawams.hascawdboosts[scowingdata.cawdtype], ^^
+          "[x] cawd boost fow type " + s-seawchcawdtype.cawdtypefwombytevawue(scowingdata.cawdtype)));
     }
 
-    // Offensive
-    if (scoringData.isOffensive) {
-      boostDetails.add(Explanation.match((float) params.offensiveDamping, "[x] Offensive damping"));
-    } else {
-      boostDetails.add(Explanation.match(LinearScoringData.NO_BOOST_VALUE,
-          String.format("Not Offensive, damping=%.3f", params.offensiveDamping)));
+    // offensive
+    if (scowingdata.isoffensive) {
+      boostdetaiws.add(expwanation.match((fwoat) p-pawams.offensivedamping, (ˆ ﻌ ˆ)♡ "[x] o-offensive damping"));
+    } ewse {
+      b-boostdetaiws.add(expwanation.match(wineawscowingdata.no_boost_vawue, /(^•ω•^)
+          s-stwing.fowmat("not offensive, ^^ damping=%.3f", o.O pawams.offensivedamping)));
     }
 
-    // Spam
-    if (scoringData.spamUserDampApplied) {
-      boostDetails.add(Explanation.match((float) params.spamUserDamping, "[x] Spam"));
+    // s-spam
+    if (scowingdata.spamusewdampappwied) {
+      b-boostdetaiws.add(expwanation.match((fwoat) pawams.spamusewdamping, 😳😳😳 "[x] spam"));
     }
-    // NSFW
-    if (scoringData.nsfwUserDampApplied) {
-      boostDetails.add(Explanation.match((float) params.nsfwUserDamping, "[X] NSFW"));
+    // n-nysfw
+    i-if (scowingdata.nsfwusewdampappwied) {
+      boostdetaiws.add(expwanation.match((fwoat) p-pawams.nsfwusewdamping, XD "[x] n-nsfw"));
     }
-    // Bot
-    if (scoringData.botUserDampApplied) {
-      boostDetails.add(Explanation.match((float) params.botUserDamping, "[X] Bot"));
-    }
-
-    // Multiple hashtags or trends
-    if (scoringData.hasMultipleHashtagsOrTrends) {
-      boostDetails.add(Explanation.match((float) params.multipleHashtagsOrTrendsDamping,
-          "[x] Multiple hashtags or trends boost"));
-    } else {
-      boostDetails.add(Explanation.match(LinearScoringData.NO_BOOST_VALUE,
-          String.format("No multiple hashtags or trends, damping=%.3f",
-              params.multipleHashtagsOrTrendsDamping)));
+    // bot
+    if (scowingdata.botusewdampappwied) {
+      b-boostdetaiws.add(expwanation.match((fwoat) pawams.botusewdamping, nyaa~~ "[x] b-bot"));
     }
 
-    if (scoringData.tweetHasTrendsBoostApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.tweetHasTrendBoost, "[x] Tweet has trend boost"));
+    // m-muwtipwe hashtags o-ow twends
+    i-if (scowingdata.hasmuwtipwehashtagsowtwends) {
+      b-boostdetaiws.add(expwanation.match((fwoat) pawams.muwtipwehashtagsowtwendsdamping, ^•ﻌ•^
+          "[x] m-muwtipwe h-hashtags ow twends boost"));
+    } ewse {
+      b-boostdetaiws.add(expwanation.match(wineawscowingdata.no_boost_vawue, :3
+          stwing.fowmat("no m-muwtipwe hashtags ow twends, ^^ damping=%.3f", o.O
+              pawams.muwtipwehashtagsowtwendsdamping)));
     }
 
-    if (scoringData.hasMedialUrlBoostApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.tweetHasMediaUrlBoost, "[x] Media url boost"));
+    if (scowingdata.tweethastwendsboostappwied) {
+      boostdetaiws.add(expwanation.match(
+          (fwoat) pawams.tweethastwendboost, ^^ "[x] tweet has twend boost"));
     }
 
-    if (scoringData.hasNewsUrlBoostApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.tweetHasNewsUrlBoost, "[x] News url boost"));
+    if (scowingdata.hasmediawuwwboostappwied) {
+      b-boostdetaiws.add(expwanation.match(
+          (fwoat) pawams.tweethasmediauwwboost, (⑅˘꒳˘) "[x] media u-uww boost"));
     }
 
-    boostDetails.add(Explanation.match(0.0f, "[FIELDS HIT] " + scoringData.hitFields));
-
-    if (scoringData.hasNoTextHitDemotionApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.noTextHitDemotion, "[x] No text hit demotion"));
+    if (scowingdata.hasnewsuwwboostappwied) {
+      b-boostdetaiws.add(expwanation.match(
+          (fwoat) p-pawams.tweethasnewsuwwboost, ʘwʘ "[x] nyews uww b-boost"));
     }
 
-    if (scoringData.hasUrlOnlyHitDemotionApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.urlOnlyHitDemotion, "[x] URL only hit demotion"));
+    boostdetaiws.add(expwanation.match(0.0f, mya "[fiewds h-hit] " + scowingdata.hitfiewds));
+
+    i-if (scowingdata.hasnotexthitdemotionappwied) {
+      boostdetaiws.add(expwanation.match(
+          (fwoat) pawams.notexthitdemotion, >w< "[x] nyo text hit demotion"));
     }
 
-    if (scoringData.hasNameOnlyHitDemotionApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.nameOnlyHitDemotion, "[x] Name only hit demotion"));
+    if (scowingdata.hasuwwonwyhitdemotionappwied) {
+      boostdetaiws.add(expwanation.match(
+          (fwoat) p-pawams.uwwonwyhitdemotion, o.O "[x] uww onwy hit demotion"));
     }
 
-    if (scoringData.hasSeparateTextAndNameHitDemotionApplied) {
-      boostDetails.add(Explanation.match((float) params.separateTextAndNameHitDemotion,
-          "[x] Separate text/name demotion"));
+    i-if (scowingdata.hasnameonwyhitdemotionappwied) {
+      boostdetaiws.add(expwanation.match(
+          (fwoat) p-pawams.nameonwyhitdemotion, OwO "[x] nyame onwy hit demotion"));
     }
 
-    if (scoringData.hasSeparateTextAndUrlHitDemotionApplied) {
-      boostDetails.add(Explanation.match((float) params.separateTextAndUrlHitDemotion,
-          "[x] Separate text/url demotion"));
+    if (scowingdata.hassepawatetextandnamehitdemotionappwied) {
+      boostdetaiws.add(expwanation.match((fwoat) pawams.sepawatetextandnamehitdemotion, -.-
+          "[x] sepawate text/name demotion"));
     }
 
-    if (scoringData.tweetFromVerifiedAccountBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.tweetFromVerifiedAccountBoost,
-          "[x] Verified account boost"));
+    if (scowingdata.hassepawatetextanduwwhitdemotionappwied) {
+      b-boostdetaiws.add(expwanation.match((fwoat) p-pawams.sepawatetextanduwwhitdemotion, (U ﹏ U)
+          "[x] s-sepawate text/uww demotion"));
     }
 
-    if (scoringData.tweetFromBlueVerifiedAccountBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.tweetFromBlueVerifiedAccountBoost,
-          "[x] Blue-verified account boost"));
+    i-if (scowingdata.tweetfwomvewifiedaccountboostappwied) {
+      b-boostdetaiws.add(expwanation.match((fwoat) p-pawams.tweetfwomvewifiedaccountboost, òωó
+          "[x] vewified account boost"));
     }
 
-    if (scoringData.selfTweetBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.selfTweetBoost,
-          "[x] Self tweet boost"));
+    i-if (scowingdata.tweetfwombwuevewifiedaccountboostappwied) {
+      b-boostdetaiws.add(expwanation.match((fwoat) pawams.tweetfwombwuevewifiedaccountboost, >w<
+          "[x] b-bwue-vewified a-account boost"));
     }
 
-    if (scoringData.skipReason == LinearScoringData.SkipReason.SOCIAL_FILTER) {
-      boostDetails.add(Explanation.noMatch("SKIPPED for social filter"));
-    } else {
-      if (scoringData.directFollowBoostApplied) {
-        boostDetails.add(Explanation.match((float) params.directFollowBoost,
-            "[x] Direct follow boost"));
+    i-if (scowingdata.sewftweetboostappwied) {
+      b-boostdetaiws.add(expwanation.match((fwoat) p-pawams.sewftweetboost, ^•ﻌ•^
+          "[x] sewf tweet boost"));
+    }
+
+    i-if (scowingdata.skipweason == wineawscowingdata.skipweason.sociaw_fiwtew) {
+      b-boostdetaiws.add(expwanation.nomatch("skipped f-fow sociaw fiwtew"));
+    } e-ewse {
+      i-if (scowingdata.diwectfowwowboostappwied) {
+        b-boostdetaiws.add(expwanation.match((fwoat) p-pawams.diwectfowwowboost, /(^•ω•^)
+            "[x] d-diwect fowwow b-boost"));
       }
-      if (scoringData.trustedCircleBoostApplied) {
-        boostDetails.add(Explanation.match((float) params.trustedCircleBoost,
-            "[x] Trusted circle boost"));
+      i-if (scowingdata.twustedciwcweboostappwied) {
+        boostdetaiws.add(expwanation.match((fwoat) pawams.twustedciwcweboost, ʘwʘ
+            "[x] twusted ciwcwe boost"));
       }
-      if (scoringData.outOfNetworkReplyPenaltyApplied) {
-        boostDetails.add(Explanation.match((float) params.outOfNetworkReplyPenalty,
-            "[-] Out of network reply penalty"));
-      }
-    }
-
-    // Language demotions
-    String langDetails = String.format(
-        "tweetLang=[%s] uiLang=[%s]",
-        ThriftLanguageUtil.getLocaleOf(
-            ThriftLanguage.findByValue(scoringData.tweetLangId)).getLanguage(),
-        ThriftLanguageUtil.getLocaleOf(ThriftLanguage.findByValue(params.uiLangId)).getLanguage());
-    if (scoringData.uiLangMult == 1.0) {
-      boostDetails.add(Explanation.match(
-          LinearScoringData.NO_BOOST_VALUE, "No UI Language demotion: " + langDetails));
-    } else {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.uiLangMult, "[x] UI LangMult: " + langDetails));
-    }
-    StringBuilder userLangDetails = new StringBuilder();
-    userLangDetails.append("userLang=[");
-    for (int i = 0; i < params.userLangs.length; i++) {
-      if (params.userLangs[i] > 0.0) {
-        String lang = ThriftLanguageUtil.getLocaleOf(ThriftLanguage.findByValue(i)).getLanguage();
-        userLangDetails.append(String.format("%s:%.3f,", lang, params.userLangs[i]));
+      i-if (scowingdata.outofnetwowkwepwypenawtyappwied) {
+        boostdetaiws.add(expwanation.match((fwoat) p-pawams.outofnetwowkwepwypenawty, XD
+            "[-] out of nyetwowk wepwy penawty"));
       }
     }
-    userLangDetails.append("]");
-    if (!params.useUserLanguageInfo) {
-      boostDetails.add(Explanation.noMatch(
-          "No User Language Demotion: " + userLangDetails.toString()));
-    } else {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.userLangMult,
-          "[x] User LangMult: " + userLangDetails.toString()));
+
+    // w-wanguage d-demotions
+    s-stwing wangdetaiws = stwing.fowmat(
+        "tweetwang=[%s] u-uiwang=[%s]", (U ᵕ U❁)
+        t-thwiftwanguageutiw.getwocaweof(
+            thwiftwanguage.findbyvawue(scowingdata.tweetwangid)).getwanguage(), (ꈍᴗꈍ)
+        thwiftwanguageutiw.getwocaweof(thwiftwanguage.findbyvawue(pawams.uiwangid)).getwanguage());
+    if (scowingdata.uiwangmuwt == 1.0) {
+      boostdetaiws.add(expwanation.match(
+          wineawscowingdata.no_boost_vawue, rawr x3 "no u-ui wanguage demotion: " + wangdetaiws));
+    } ewse {
+      b-boostdetaiws.add(expwanation.match(
+          (fwoat) scowingdata.uiwangmuwt, :3 "[x] u-ui wangmuwt: " + wangdetaiws));
+    }
+    s-stwingbuiwdew u-usewwangdetaiws = n-nyew stwingbuiwdew();
+    u-usewwangdetaiws.append("usewwang=[");
+    f-fow (int i-i = 0; i < pawams.usewwangs.wength; i-i++) {
+      if (pawams.usewwangs[i] > 0.0) {
+        stwing w-wang = thwiftwanguageutiw.getwocaweof(thwiftwanguage.findbyvawue(i)).getwanguage();
+        usewwangdetaiws.append(stwing.fowmat("%s:%.3f,", (˘ω˘) w-wang, -.- pawams.usewwangs[i]));
+      }
+    }
+    usewwangdetaiws.append("]");
+    i-if (!pawams.useusewwanguageinfo) {
+      b-boostdetaiws.add(expwanation.nomatch(
+          "no usew w-wanguage demotion: " + usewwangdetaiws.tostwing()));
+    } ewse {
+      b-boostdetaiws.add(expwanation.match(
+          (fwoat) s-scowingdata.usewwangmuwt, (ꈍᴗꈍ)
+          "[x] u-usew wangmuwt: " + u-usewwangdetaiws.tostwing()));
     }
 
-    // Age decay
-    String ageDecayDetails = String.format(
-        "age=%d seconds, slope=%.3f, base=%.1f, half-life=%.0f",
-        scoringData.tweetAgeInSeconds, params.ageDecaySlope,
-        params.ageDecayBase, params.ageDecayHalflife);
-    if (params.useAgeDecay) {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.ageDecayMult, "[x] AgeDecay: " + ageDecayDetails));
-    } else {
-      boostDetails.add(Explanation.match(1.0f, "Age decay disabled: " + ageDecayDetails));
+    // age decay
+    s-stwing agedecaydetaiws = s-stwing.fowmat(
+        "age=%d seconds, UwU s-swope=%.3f, σωσ base=%.1f, hawf-wife=%.0f", ^^
+        s-scowingdata.tweetageinseconds, :3 pawams.agedecayswope, ʘwʘ
+        pawams.agedecaybase, 😳 pawams.agedecayhawfwife);
+    if (pawams.useagedecay) {
+      boostdetaiws.add(expwanation.match(
+          (fwoat) scowingdata.agedecaymuwt, ^^ "[x] agedecay: " + agedecaydetaiws));
+    } e-ewse {
+      b-boostdetaiws.add(expwanation.match(1.0f, σωσ "age decay disabwed: " + agedecaydetaiws));
     }
 
-    // Score adjuster
-    boostDetails.add(Explanation.match(SCORE_ADJUSTER, "[x] score adjuster"));
+    // scowe adjustew
+    boostdetaiws.add(expwanation.match(scowe_adjustew, /(^•ω•^) "[x] scowe a-adjustew"));
 
-    Explanation boostCombo = isHit
-        ? Explanation.match((float) scoringData.scoreAfterBoost,
-          "(MATCH) After Boosts and Demotions:", boostDetails)
-        : Explanation.noMatch("After Boosts and Demotions:", boostDetails);
+    e-expwanation boostcombo = ishit
+        ? expwanation.match((fwoat) s-scowingdata.scoweaftewboost, 😳😳😳
+          "(match) a-aftew boosts and demotions:", 😳 b-boostdetaiws)
+        : e-expwanation.nomatch("aftew boosts a-and demotions:", OwO boostdetaiws);
 
-    details.add(boostCombo);
+    d-detaiws.add(boostcombo);
   }
 
-  @Override
-  protected Explanation doExplain(float luceneQueryScore) throws IOException {
-    // Run the scorer again and get the explanation.
-    ExplanationWrapper explanation = new ExplanationWrapper();
-    scoreInternal(luceneQueryScore, explanation);
-    return explanation.explanation;
+  @ovewwide
+  p-pwotected expwanation doexpwain(fwoat wucenequewyscowe) thwows i-ioexception {
+    // w-wun the scowew a-again and g-get the expwanation. :3
+    expwanationwwappew e-expwanation = n-nyew expwanationwwappew();
+    s-scoweintewnaw(wucenequewyscowe, nyaa~~ e-expwanation);
+    wetuwn expwanation.expwanation;
   }
 
-  @Override
-  public void populateResultMetadataBasedOnScoringData(
-      ThriftSearchResultMetadataOptions options,
-      ThriftSearchResultMetadata metadata,
-      LinearScoringData data) throws IOException {
-    metadata.setResultType(searchResultType);
-    metadata.setScore(data.scoreReturned);
-    metadata.setFromUserId(data.fromUserId);
+  @ovewwide
+  p-pubwic v-void popuwatewesuwtmetadatabasedonscowingdata(
+      thwiftseawchwesuwtmetadataoptions options, OwO
+      thwiftseawchwesuwtmetadata metadata, o.O
+      w-wineawscowingdata d-data) thwows ioexception {
+    m-metadata.setwesuwttype(seawchwesuwttype);
+    metadata.setscowe(data.scowewetuwned);
+    metadata.setfwomusewid(data.fwomusewid);
 
-    if (data.isTrusted) {
-      metadata.setIsTrusted(true);
+    if (data.istwusted) {
+      m-metadata.setistwusted(twue);
     }
-    if (data.isFollow) {
-      metadata.setIsFollow(true);
+    i-if (data.isfowwow) {
+      m-metadata.setisfowwow(twue);
     }
-    if (data.skipReason != SkipReason.NOT_SKIPPED) {
-      metadata.setSkipped(true);
+    if (data.skipweason != s-skipweason.not_skipped) {
+      m-metadata.setskipped(twue);
     }
-    if ((data.isRetweet || (params.getInReplyToStatusId && data.isReply))
-        && data.sharedStatusId != LinearScoringData.UNSET_SIGNAL_VALUE) {
-      metadata.setSharedStatusId(data.sharedStatusId);
+    if ((data.iswetweet || (pawams.getinwepwytostatusid && data.iswepwy))
+        && data.shawedstatusid != w-wineawscowingdata.unset_signaw_vawue) {
+      m-metadata.setshawedstatusid(data.shawedstatusid);
     }
-    if (data.hasCard) {
-      metadata.setCardType(data.cardType);
-    }
-
-    // Optional features.  Note: other optional metadata is populated by
-    // AbstractRelevanceCollector, not the scoring function.
-
-    if (options.isGetLuceneScore()) {
-      metadata.setLuceneScore(data.luceneScore);
-    }
-    if (options.isGetReferencedTweetAuthorId()
-        && data.referenceAuthorId != LinearScoringData.UNSET_SIGNAL_VALUE) {
-      metadata.setReferencedTweetAuthorId(data.referenceAuthorId);
+    if (data.hascawd) {
+      m-metadata.setcawdtype(data.cawdtype);
     }
 
-    if (options.isGetMediaBits()) {
-      metadata.setHasConsumerVideo(data.hasConsumerVideo);
-      metadata.setHasProVideo(data.hasProVideo);
-      metadata.setHasVine(data.hasVine);
-      metadata.setHasPeriscope(data.hasPeriscope);
-      boolean hasNativeVideo =
-          data.hasConsumerVideo || data.hasProVideo || data.hasVine || data.hasPeriscope;
-      metadata.setHasNativeVideo(hasNativeVideo);
-      metadata.setHasNativeImage(data.hasNativeImage);
+    // o-optionaw f-featuwes. (U ﹏ U)  n-nyote: othew optionaw metadata is popuwated by
+    // abstwactwewevancecowwectow, (⑅˘꒳˘) nyot the scowing function. OwO
+
+    i-if (options.isgetwucenescowe()) {
+      metadata.setwucenescowe(data.wucenescowe);
+    }
+    if (options.isgetwefewencedtweetauthowid()
+        && d-data.wefewenceauthowid != wineawscowingdata.unset_signaw_vawue) {
+      m-metadata.setwefewencedtweetauthowid(data.wefewenceauthowid);
+    }
+
+    if (options.isgetmediabits()) {
+      metadata.sethasconsumewvideo(data.hasconsumewvideo);
+      metadata.sethaspwovideo(data.haspwovideo);
+      m-metadata.sethasvine(data.hasvine);
+      m-metadata.sethaspewiscope(data.haspewiscope);
+      boowean hasnativevideo =
+          d-data.hasconsumewvideo || data.haspwovideo || data.hasvine || d-data.haspewiscope;
+      metadata.sethasnativevideo(hasnativevideo);
+      metadata.sethasnativeimage(data.hasnativeimage);
     }
 
     metadata
-        .setIsOffensive(data.isOffensive)
-        .setIsReply(data.isReply)
-        .setIsRetweet(data.isRetweet)
-        .setHasLink(data.hasUrl)
-        .setHasTrend(data.hasTrend)
-        .setHasMultipleHashtagsOrTrends(data.hasMultipleHashtagsOrTrends)
-        .setRetweetCount((int) data.retweetCountPostLog2)
-        .setFavCount((int) data.favCountPostLog2)
-        .setReplyCount((int) data.replyCountPostLog2)
-        .setEmbedsImpressionCount((int) data.embedsImpressionCount)
-        .setEmbedsUrlCount((int) data.embedsUrlCount)
-        .setVideoViewCount((int) data.videoViewCount)
-        .setResultType(searchResultType)
-        .setFromVerifiedAccount(data.isFromVerifiedAccount)
-        .setIsUserSpam(data.isUserSpam)
-        .setIsUserNSFW(data.isUserNSFW)
-        .setIsUserBot(data.isUserBot)
-        .setHasImage(data.hasImageUrl)
-        .setHasVideo(data.hasVideoUrl)
-        .setHasNews(data.hasNewsUrl)
-        .setHasCard(data.hasCard)
-        .setHasVisibleLink(data.hasVisibleLink)
-        .setParusScore(data.parusScore)
-        .setTextScore(data.textScore)
-        .setUserRep(data.userRep)
-        .setTokenAt140DividedByNumTokensBucket(data.tokenAt140DividedByNumTokensBucket);
+        .setisoffensive(data.isoffensive)
+        .setiswepwy(data.iswepwy)
+        .setiswetweet(data.iswetweet)
+        .sethaswink(data.hasuww)
+        .sethastwend(data.hastwend)
+        .sethasmuwtipwehashtagsowtwends(data.hasmuwtipwehashtagsowtwends)
+        .setwetweetcount((int) d-data.wetweetcountpostwog2)
+        .setfavcount((int) data.favcountpostwog2)
+        .setwepwycount((int) data.wepwycountpostwog2)
+        .setembedsimpwessioncount((int) data.embedsimpwessioncount)
+        .setembedsuwwcount((int) data.embedsuwwcount)
+        .setvideoviewcount((int) d-data.videoviewcount)
+        .setwesuwttype(seawchwesuwttype)
+        .setfwomvewifiedaccount(data.isfwomvewifiedaccount)
+        .setisusewspam(data.isusewspam)
+        .setisusewnsfw(data.isusewnsfw)
+        .setisusewbot(data.isusewbot)
+        .sethasimage(data.hasimageuww)
+        .sethasvideo(data.hasvideouww)
+        .sethasnews(data.hasnewsuww)
+        .sethascawd(data.hascawd)
+        .sethasvisibwewink(data.hasvisibwewink)
+        .setpawusscowe(data.pawusscowe)
+        .settextscowe(data.textscowe)
+        .setusewwep(data.usewwep)
+        .settokenat140dividedbynumtokensbucket(data.tokenat140dividedbynumtokensbucket);
 
-    if (!metadata.isSetExtraMetadata()) {
-      metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+    i-if (!metadata.issetextwametadata()) {
+      m-metadata.setextwametadata(new t-thwiftseawchwesuwtextwametadata());
     }
-    ThriftSearchResultExtraMetadata extraMetadata = metadata.getExtraMetadata();
+    thwiftseawchwesuwtextwametadata extwametadata = m-metadata.getextwametadata();
 
-    // Promotion/Demotion features
-    extraMetadata.setUserLangScore(data.userLangMult)
-        .setHasDifferentLang(data.hasDifferentLang)
-        .setHasEnglishTweetAndDifferentUILang(data.hasEnglishTweetAndDifferentUILang)
-        .setHasEnglishUIAndDifferentTweetLang(data.hasEnglishUIAndDifferentTweetLang)
-        .setHasQuote(data.hasQuote)
-        .setQuotedCount((int) data.quotedCount)
-        .setWeightedRetweetCount((int) data.weightedRetweetCount)
-        .setWeightedReplyCount((int) data.weightedReplyCount)
-        .setWeightedFavCount((int) data.weightedFavCount)
-        .setWeightedQuoteCount((int) data.weightedQuoteCount)
-        .setQuerySpecificScore(data.querySpecificScore)
-        .setAuthorSpecificScore(data.authorSpecificScore)
-        .setRetweetCountV2((int) data.retweetCountV2)
-        .setFavCountV2((int) data.favCountV2)
-        .setReplyCountV2((int) data.replyCountV2)
-        .setIsComposerSourceCamera(data.isComposerSourceCamera)
-        .setFromBlueVerifiedAccount(data.isFromBlueVerifiedAccount);
+    // pwomotion/demotion f-featuwes
+    extwametadata.setusewwangscowe(data.usewwangmuwt)
+        .sethasdiffewentwang(data.hasdiffewentwang)
+        .sethasengwishtweetanddiffewentuiwang(data.hasengwishtweetanddiffewentuiwang)
+        .sethasengwishuianddiffewenttweetwang(data.hasengwishuianddiffewenttweetwang)
+        .sethasquote(data.hasquote)
+        .setquotedcount((int) data.quotedcount)
+        .setweightedwetweetcount((int) d-data.weightedwetweetcount)
+        .setweightedwepwycount((int) d-data.weightedwepwycount)
+        .setweightedfavcount((int) d-data.weightedfavcount)
+        .setweightedquotecount((int) data.weightedquotecount)
+        .setquewyspecificscowe(data.quewyspecificscowe)
+        .setauthowspecificscowe(data.authowspecificscowe)
+        .setwetweetcountv2((int) data.wetweetcountv2)
+        .setfavcountv2((int) d-data.favcountv2)
+        .setwepwycountv2((int) data.wepwycountv2)
+        .setiscomposewsouwcecamewa(data.iscomposewsouwcecamewa)
+        .setfwombwuevewifiedaccount(data.isfwombwuevewifiedaccount);
 
-    // Health model scores features
-    extraMetadata
-        .setToxicityScore(data.toxicityScore)
-        .setPBlockScore(data.pBlockScore)
-        .setPSpammyTweetScore(data.pSpammyTweetScore)
-        .setPReportedTweetScore(data.pReportedTweetScore)
-        .setSpammyTweetContentScore(data.spammyTweetContentScore)
-        .setExperimentalHealthModelScore1(data.experimentalHealthModelScore1)
-        .setExperimentalHealthModelScore2(data.experimentalHealthModelScore2)
-        .setExperimentalHealthModelScore3(data.experimentalHealthModelScore3)
-        .setExperimentalHealthModelScore4(data.experimentalHealthModelScore4);
+    // heawth modew scowes featuwes
+    extwametadata
+        .settoxicityscowe(data.toxicityscowe)
+        .setpbwockscowe(data.pbwockscowe)
+        .setpspammytweetscowe(data.pspammytweetscowe)
+        .setpwepowtedtweetscowe(data.pwepowtedtweetscowe)
+        .setspammytweetcontentscowe(data.spammytweetcontentscowe)
+        .setexpewimentawheawthmodewscowe1(data.expewimentawheawthmodewscowe1)
+        .setexpewimentawheawthmodewscowe2(data.expewimentawheawthmodewscowe2)
+        .setexpewimentawheawthmodewscowe3(data.expewimentawheawthmodewscowe3)
+        .setexpewimentawheawthmodewscowe4(data.expewimentawheawthmodewscowe4);
 
-    // Return all extra features for clients to consume.
-    if (options.isGetAllFeatures()) {
-      extraMetadata.setIsSensitiveContent(data.isSensitiveContent)
-          .setHasMultipleMediaFlag(data.hasMultipleMediaFlag)
-          .setProfileIsEggFlag(data.profileIsEggFlag)
-          .setIsUserNewFlag(data.isUserNewFlag)
-          .setNumMentions(data.numMentions)
-          .setNumHashtags(data.numHashtags)
-          .setLinkLanguage(data.linkLanguage)
-          .setPrevUserTweetEngagement(data.prevUserTweetEngagement);
+    // wetuwn aww extwa featuwes f-fow cwients t-to consume. 😳
+    if (options.isgetawwfeatuwes()) {
+      extwametadata.setissensitivecontent(data.issensitivecontent)
+          .sethasmuwtipwemediafwag(data.hasmuwtipwemediafwag)
+          .setpwofiweiseggfwag(data.pwofiweiseggfwag)
+          .setisusewnewfwag(data.isusewnewfwag)
+          .setnummentions(data.nummentions)
+          .setnumhashtags(data.numhashtags)
+          .setwinkwanguage(data.winkwanguage)
+          .setpwevusewtweetengagement(data.pwevusewtweetengagement);
     }
 
-    // Set features in new Feature Access API format, in the future this will be the only part
-    // needed in this method, we don't need to set any other metadata fields any more.
-    if (options.isReturnSearchResultFeatures()) {
-      // If the features are unset, and they were requested, then we can retrieve them. If they are
-      // already set, then we don't need to re-read the document features, and the reader
-      // is probably positioned over the wrong document so it will return incorrect results.
-      if (!extraMetadata.isSetFeatures()) {
-        // We ignore all features with default values when returning them in the response,
-        // because it saves a lot of network bandwidth.
-        ThriftSearchResultFeatures features = createFeaturesForDocument(data, true).getFeatures();
-        extraMetadata.setFeatures(features);
+    // set featuwes in nyew featuwe access api fowmat, :3 i-in the futuwe this wiww be the onwy pawt
+    // n-needed in t-this method, ( ͡o ω ͡o ) we d-don't need to set a-any othew metadata fiewds any mowe. 🥺
+    if (options.iswetuwnseawchwesuwtfeatuwes()) {
+      // if the featuwes awe unset, /(^•ω•^) and they wewe wequested, nyaa~~ t-then we can w-wetwieve them. (✿oωo) i-if they awe
+      // a-awweady set, (✿oωo) then we don't n-nyeed to we-wead the document featuwes, (ꈍᴗꈍ) a-and the weadew
+      // is pwobabwy positioned ovew the w-wwong document so i-it wiww wetuwn i-incowwect wesuwts. OwO
+      i-if (!extwametadata.issetfeatuwes()) {
+        // we ignowe a-aww featuwes w-with defauwt vawues when wetuwning them in the wesponse, :3
+        // b-because it s-saves a wot of nyetwowk bandwidth. mya
+        thwiftseawchwesuwtfeatuwes featuwes = c-cweatefeatuwesfowdocument(data, >_< twue).getfeatuwes();
+        extwametadata.setfeatuwes(featuwes);
       }
 
-      // The raw score may have changed since we created the features, so we should update it.
-      extraMetadata.getFeatures().getDoubleValues()
-          .put(ExternalTweetFeature.RAW_EARLYBIRD_SCORE.getId(), data.scoreFinal);
+      // t-the waw scowe m-may have changed s-since we cweated the featuwes, so we shouwd update it. (///ˬ///✿)
+      extwametadata.getfeatuwes().getdoubwevawues()
+          .put(extewnawtweetfeatuwe.waw_eawwybiwd_scowe.getid(), (///ˬ///✿) data.scowefinaw);
     }
 
-    metadata
-        .setIsSelfTweet(data.isSelfTweet)
-        .setIsUserAntiSocial(data.isUserAntiSocial);
+    m-metadata
+        .setissewftweet(data.issewftweet)
+        .setisusewantisociaw(data.isusewantisociaw);
   }
 
   /**
-   * Create earlybird basic features and dervied features for current document.
-   * @return a FeatureHandler object where you can keep adding extra feature values, or you can
-   * call .getFeatures() on it to get a Thrift object to return.
+   * cweate eawwybiwd b-basic featuwes and dewvied featuwes fow cuwwent d-document. 😳😳😳
+   * @wetuwn a f-featuwehandwew object w-whewe you c-can keep adding e-extwa featuwe vawues, o-ow you can
+   * caww .getfeatuwes() o-on it to get a thwift object to wetuwn.
    */
-  protected FeatureHandler createFeaturesForDocument(
-      LinearScoringData data, boolean ignoreDefaultValues) throws IOException {
-    ThriftSearchResultFeatures features = documentFeatures.getSearchResultFeatures(getSchema());
-    if (!ignoreDefaultValues) {
-      setDefaultFeatureValues(features);
+  pwotected featuwehandwew c-cweatefeatuwesfowdocument(
+      wineawscowingdata data, (U ᵕ U❁) boowean i-ignowedefauwtvawues) t-thwows i-ioexception {
+    thwiftseawchwesuwtfeatuwes featuwes = documentfeatuwes.getseawchwesuwtfeatuwes(getschema());
+    if (!ignowedefauwtvawues) {
+      s-setdefauwtfeatuwevawues(featuwes);
     }
 
-    // add derived features
-    return new FeatureHandler(features, ignoreDefaultValues)
-        .addDouble(ExternalTweetFeature.LUCENE_SCORE, data.luceneScore)
-        .addInt(ExternalTweetFeature.TWEET_AGE_IN_SECS, data.tweetAgeInSeconds)
-        .addBoolean(ExternalTweetFeature.IS_SELF_TWEET, data.isSelfTweet)
-        .addBoolean(ExternalTweetFeature.IS_FOLLOW_RETWEET, data.isFollow && data.isRetweet)
-        .addBoolean(ExternalTweetFeature.IS_TRUSTED_RETWEET, data.isTrusted && data.isRetweet)
-        .addBoolean(ExternalTweetFeature.AUTHOR_IS_FOLLOW, data.isFollow)
-        .addBoolean(ExternalTweetFeature.AUTHOR_IS_TRUSTED, data.isTrusted)
-        .addBoolean(ExternalTweetFeature.AUTHOR_IS_ANTISOCIAL, data.isUserAntiSocial)
-        .addBoolean(ExternalTweetFeature.HAS_DIFF_LANG, data.hasDifferentLang)
-        .addBoolean(ExternalTweetFeature.HAS_ENGLISH_TWEET_DIFF_UI_LANG,
-            data.hasEnglishTweetAndDifferentUILang)
-        .addBoolean(ExternalTweetFeature.HAS_ENGLISH_UI_DIFF_TWEET_LANG,
-            data.hasEnglishUIAndDifferentTweetLang)
-        .addDouble(ExternalTweetFeature.SEARCHER_LANG_SCORE, data.userLangMult)
-        .addDouble(ExternalTweetFeature.QUERY_SPECIFIC_SCORE, data.querySpecificScore)
-        .addDouble(ExternalTweetFeature.AUTHOR_SPECIFIC_SCORE, data.authorSpecificScore);
+    // a-add dewived f-featuwes
+    wetuwn n-nyew featuwehandwew(featuwes, (///ˬ///✿) ignowedefauwtvawues)
+        .adddoubwe(extewnawtweetfeatuwe.wucene_scowe, ( ͡o ω ͡o ) data.wucenescowe)
+        .addint(extewnawtweetfeatuwe.tweet_age_in_secs, (✿oωo) data.tweetageinseconds)
+        .addboowean(extewnawtweetfeatuwe.is_sewf_tweet, òωó data.issewftweet)
+        .addboowean(extewnawtweetfeatuwe.is_fowwow_wetweet, (ˆ ﻌ ˆ)♡ data.isfowwow && data.iswetweet)
+        .addboowean(extewnawtweetfeatuwe.is_twusted_wetweet, :3 d-data.istwusted && data.iswetweet)
+        .addboowean(extewnawtweetfeatuwe.authow_is_fowwow, (ˆ ﻌ ˆ)♡ data.isfowwow)
+        .addboowean(extewnawtweetfeatuwe.authow_is_twusted, (U ᵕ U❁) d-data.istwusted)
+        .addboowean(extewnawtweetfeatuwe.authow_is_antisociaw, (U ᵕ U❁) d-data.isusewantisociaw)
+        .addboowean(extewnawtweetfeatuwe.has_diff_wang, XD d-data.hasdiffewentwang)
+        .addboowean(extewnawtweetfeatuwe.has_engwish_tweet_diff_ui_wang, nyaa~~
+            data.hasengwishtweetanddiffewentuiwang)
+        .addboowean(extewnawtweetfeatuwe.has_engwish_ui_diff_tweet_wang, (ˆ ﻌ ˆ)♡
+            d-data.hasengwishuianddiffewenttweetwang)
+        .adddoubwe(extewnawtweetfeatuwe.seawchew_wang_scowe, ʘwʘ data.usewwangmuwt)
+        .adddoubwe(extewnawtweetfeatuwe.quewy_specific_scowe, ^•ﻌ•^ data.quewyspecificscowe)
+        .adddoubwe(extewnawtweetfeatuwe.authow_specific_scowe, mya data.authowspecificscowe);
   }
 
   /**
-   * Adds default values for most numeric features that do not have a value set yet in the given
-   * ThriftSearchResultFeatures instance.
+   * adds defauwt vawues fow most nyumewic featuwes that do nyot have a vawue set yet in t-the given
+   * thwiftseawchwesuwtfeatuwes instance. (ꈍᴗꈍ)
    *
-   * This method is needed because some models do not work properly with missing features. Instead,
-   * they expect all features to be present even if they are unset (their values are 0).
+   * this m-method is nyeeded b-because some modews do nyot w-wowk pwopewwy w-with missing featuwes. (ˆ ﻌ ˆ)♡ instead, (ˆ ﻌ ˆ)♡
+   * they expect a-aww featuwes to b-be pwesent even if they awe unset (theiw vawues a-awe 0). ( ͡o ω ͡o )
    */
-  protected void setDefaultFeatureValues(ThriftSearchResultFeatures features) {
-    for (Map.Entry<Integer, ThriftSearchFeatureSchemaEntry> entry
-             : getSchema().getSearchFeatureSchema().getEntries().entrySet()) {
-      int featureId = entry.getKey();
-      ThriftSearchFeatureSchemaEntry schemaEntry = entry.getValue();
-      if (shouldSetDefaultValueForFeature(schemaEntry.getFeatureType(), featureId)) {
-        switch (schemaEntry.getFeatureType()) {
-          case INT32_VALUE:
-            features.getIntValues().putIfAbsent(featureId, 0);
-            break;
-          case LONG_VALUE:
-            features.getLongValues().putIfAbsent(featureId, 0L);
-            break;
-          case DOUBLE_VALUE:
-            features.getDoubleValues().putIfAbsent(featureId, 0.0);
-            break;
-          default:
-            throw new IllegalArgumentException(
-                "Should set default values only for integer, long or double features. Instead, "
-                + "found feature " + featureId + " of type " + schemaEntry.getFeatureType());
+  p-pwotected void s-setdefauwtfeatuwevawues(thwiftseawchwesuwtfeatuwes f-featuwes) {
+    fow (map.entwy<integew, o.O t-thwiftseawchfeatuweschemaentwy> entwy
+             : getschema().getseawchfeatuweschema().getentwies().entwyset()) {
+      i-int featuweid = e-entwy.getkey();
+      thwiftseawchfeatuweschemaentwy s-schemaentwy = e-entwy.getvawue();
+      if (shouwdsetdefauwtvawuefowfeatuwe(schemaentwy.getfeatuwetype(), 😳😳😳 featuweid)) {
+        switch (schemaentwy.getfeatuwetype()) {
+          case i-int32_vawue:
+            featuwes.getintvawues().putifabsent(featuweid, ʘwʘ 0);
+            b-bweak;
+          case wong_vawue:
+            f-featuwes.getwongvawues().putifabsent(featuweid, :3 0w);
+            bweak;
+          case doubwe_vawue:
+            f-featuwes.getdoubwevawues().putifabsent(featuweid, UwU 0.0);
+            bweak;
+          defauwt:
+            thwow nyew iwwegawawgumentexception(
+                "shouwd s-set defauwt vawues o-onwy fow integew, nyaa~~ w-wong ow doubwe f-featuwes. :3 instead, "
+                + "found featuwe " + featuweid + " of type " + s-schemaentwy.getfeatuwetype());
         }
       }
     }
   }
 
-  protected void overrideFeatureValues(ThriftSearchResultFeatures features,
-                                       ThriftSearchResultFeatures overrideFeatures) {
-    LOG.info("Features before override {}", features);
-    if (overrideFeatures.isSetIntValues()) {
-      overrideFeatures.getIntValues().forEach(features::putToIntValues);
+  p-pwotected void o-ovewwidefeatuwevawues(thwiftseawchwesuwtfeatuwes f-featuwes, nyaa~~
+                                       thwiftseawchwesuwtfeatuwes o-ovewwidefeatuwes) {
+    w-wog.info("featuwes b-befowe o-ovewwide {}", ^^ f-featuwes);
+    if (ovewwidefeatuwes.issetintvawues()) {
+      ovewwidefeatuwes.getintvawues().foweach(featuwes::puttointvawues);
     }
-    if (overrideFeatures.isSetLongValues()) {
-      overrideFeatures.getLongValues().forEach(features::putToLongValues);
+    if (ovewwidefeatuwes.issetwongvawues()) {
+      o-ovewwidefeatuwes.getwongvawues().foweach(featuwes::puttowongvawues);
     }
-    if (overrideFeatures.isSetDoubleValues()) {
-      overrideFeatures.getDoubleValues().forEach(features::putToDoubleValues);
+    i-if (ovewwidefeatuwes.issetdoubwevawues()) {
+      ovewwidefeatuwes.getdoubwevawues().foweach(featuwes::puttodoubwevawues);
     }
-    if (overrideFeatures.isSetBoolValues()) {
-      overrideFeatures.getBoolValues().forEach(features::putToBoolValues);
+    if (ovewwidefeatuwes.issetboowvawues()) {
+      ovewwidefeatuwes.getboowvawues().foweach(featuwes::puttoboowvawues);
     }
-    if (overrideFeatures.isSetStringValues()) {
-      overrideFeatures.getStringValues().forEach(features::putToStringValues);
+    if (ovewwidefeatuwes.issetstwingvawues()) {
+      o-ovewwidefeatuwes.getstwingvawues().foweach(featuwes::puttostwingvawues);
     }
-    if (overrideFeatures.isSetBytesValues()) {
-      overrideFeatures.getBytesValues().forEach(features::putToBytesValues);
+    i-if (ovewwidefeatuwes.issetbytesvawues()) {
+      o-ovewwidefeatuwes.getbytesvawues().foweach(featuwes::puttobytesvawues);
     }
-    if (overrideFeatures.isSetFeatureStoreDiscreteValues()) {
-      overrideFeatures.getFeatureStoreDiscreteValues().forEach(
-          features::putToFeatureStoreDiscreteValues);
+    if (ovewwidefeatuwes.issetfeatuwestowediscwetevawues()) {
+      o-ovewwidefeatuwes.getfeatuwestowediscwetevawues().foweach(
+          f-featuwes::puttofeatuwestowediscwetevawues);
     }
-    if (overrideFeatures.isSetSparseBinaryValues()) {
-      overrideFeatures.getSparseBinaryValues().forEach(features::putToSparseBinaryValues);
+    if (ovewwidefeatuwes.issetspawsebinawyvawues()) {
+      ovewwidefeatuwes.getspawsebinawyvawues().foweach(featuwes::puttospawsebinawyvawues);
     }
-    if (overrideFeatures.isSetSparseContinuousValues()) {
-      overrideFeatures.getSparseContinuousValues().forEach(features::putToSparseContinuousValues);
+    i-if (ovewwidefeatuwes.issetspawsecontinuousvawues()) {
+      o-ovewwidefeatuwes.getspawsecontinuousvawues().foweach(featuwes::puttospawsecontinuousvawues);
     }
-    if (overrideFeatures.isSetGeneralTensorValues()) {
-      overrideFeatures.getGeneralTensorValues().forEach(features::putToGeneralTensorValues);
+    if (ovewwidefeatuwes.issetgenewawtensowvawues()) {
+      o-ovewwidefeatuwes.getgenewawtensowvawues().foweach(featuwes::puttogenewawtensowvawues);
     }
-    if (overrideFeatures.isSetStringTensorValues()) {
-      overrideFeatures.getStringTensorValues().forEach(features::putToStringTensorValues);
+    if (ovewwidefeatuwes.issetstwingtensowvawues()) {
+      o-ovewwidefeatuwes.getstwingtensowvawues().foweach(featuwes::puttostwingtensowvawues);
     }
-    LOG.info("Features after override {}", features);
+    w-wog.info("featuwes a-aftew o-ovewwide {}", nyaa~~ featuwes);
   }
 
   /**
-   * Check if a feature is eligible to have its default value automatically set when absent.
-   * We have a similar logic for building data record.
+   * check if a featuwe is e-ewigibwe to have its defauwt vawue a-automaticawwy set when absent. 😳😳😳
+   * w-we have a-a simiwaw wogic fow buiwding data w-wecowd. ^•ﻌ•^
    */
-  private static boolean shouldSetDefaultValueForFeature(
-      ThriftSearchFeatureType type, int featureId) {
-    return ALLOWED_TYPES_FOR_DEFAULT_FEATURE_VALUES.contains(type)
-        && !NUMERIC_FEATURES_FOR_WHICH_DEFAULTS_SHOULD_NOT_BE_SET.contains(featureId)
-        && (ExternalTweetFeature.EARLYBIRD_INDEXED_FEATURE_IDS.contains(featureId)
-            || ExternalTweetFeature.EARLYBIRD_DERIVED_FEATURE_IDS.contains(featureId));
+  p-pwivate static boowean shouwdsetdefauwtvawuefowfeatuwe(
+      thwiftseawchfeatuwetype t-type, (⑅˘꒳˘) int f-featuweid) {
+    wetuwn awwowed_types_fow_defauwt_featuwe_vawues.contains(type)
+        && !numewic_featuwes_fow_which_defauwts_shouwd_not_be_set.contains(featuweid)
+        && (extewnawtweetfeatuwe.eawwybiwd_indexed_featuwe_ids.contains(featuweid)
+            || extewnawtweetfeatuwe.eawwybiwd_dewived_featuwe_ids.contains(featuweid));
   }
 
-  @Override
-  public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
-    if (relevanceStats == null) {
-      return;
+  @ovewwide
+  pubwic void updatewewevancestats(thwiftseawchwesuwtswewevancestats wewevancestats) {
+    if (wewevancestats == nyuww) {
+      wetuwn;
     }
 
-    LinearScoringData data = getScoringDataForCurrentDocument();
+    wineawscowingdata data = g-getscowingdatafowcuwwentdocument();
 
-    if (data.tweetAgeInSeconds > relevanceStats.getOldestScoredTweetAgeInSeconds()) {
-      relevanceStats.setOldestScoredTweetAgeInSeconds(data.tweetAgeInSeconds);
+    i-if (data.tweetageinseconds > w-wewevancestats.getowdestscowedtweetageinseconds()) {
+      w-wewevancestats.setowdestscowedtweetageinseconds(data.tweetageinseconds);
     }
-    relevanceStats.setNumScored(relevanceStats.getNumScored() + 1);
-    if (data.scoreReturned == SKIP_HIT) {
-      relevanceStats.setNumSkipped(relevanceStats.getNumSkipped() + 1);
-      switch(data.skipReason) {
-        case ANTIGAMING:
-          relevanceStats.setNumSkippedForAntiGaming(
-              relevanceStats.getNumSkippedForAntiGaming() + 1);
-          break;
-        case LOW_REPUTATION:
-          relevanceStats.setNumSkippedForLowReputation(
-              relevanceStats.getNumSkippedForLowReputation() + 1);
-          break;
-        case LOW_TEXT_SCORE:
-          relevanceStats.setNumSkippedForLowTextScore(
-              relevanceStats.getNumSkippedForLowTextScore() + 1);
-          break;
-        case SOCIAL_FILTER:
-          relevanceStats.setNumSkippedForSocialFilter(
-              relevanceStats.getNumSkippedForSocialFilter() + 1);
-          break;
-        case LOW_FINAL_SCORE:
-          relevanceStats.setNumSkippedForLowFinalScore(
-              relevanceStats.getNumSkippedForLowFinalScore() + 1);
-          break;
-        case LOW_RETWEET_COUNT:
-          break;
-        default:
-          LOG.warn("Unknown SkipReason: " + data.skipReason);
+    wewevancestats.setnumscowed(wewevancestats.getnumscowed() + 1);
+    if (data.scowewetuwned == s-skip_hit) {
+      w-wewevancestats.setnumskipped(wewevancestats.getnumskipped() + 1);
+      s-switch(data.skipweason) {
+        case a-antigaming:
+          wewevancestats.setnumskippedfowantigaming(
+              wewevancestats.getnumskippedfowantigaming() + 1);
+          bweak;
+        case wow_weputation:
+          w-wewevancestats.setnumskippedfowwowweputation(
+              w-wewevancestats.getnumskippedfowwowweputation() + 1);
+          b-bweak;
+        c-case wow_text_scowe:
+          wewevancestats.setnumskippedfowwowtextscowe(
+              w-wewevancestats.getnumskippedfowwowtextscowe() + 1);
+          bweak;
+        case sociaw_fiwtew:
+          wewevancestats.setnumskippedfowsociawfiwtew(
+              wewevancestats.getnumskippedfowsociawfiwtew() + 1);
+          b-bweak;
+        case wow_finaw_scowe:
+          w-wewevancestats.setnumskippedfowwowfinawscowe(
+              w-wewevancestats.getnumskippedfowwowfinawscowe() + 1);
+          bweak;
+        case wow_wetweet_count:
+          bweak;
+        defauwt:
+          w-wog.wawn("unknown skipweason: " + d-data.skipweason);
       }
     }
 
-    if (data.isFollow) {
-      relevanceStats.setNumFromDirectFollows(relevanceStats.getNumFromDirectFollows() + 1);
+    if (data.isfowwow) {
+      wewevancestats.setnumfwomdiwectfowwows(wewevancestats.getnumfwomdiwectfowwows() + 1);
     }
-    if (data.isTrusted) {
-      relevanceStats.setNumFromTrustedCircle(relevanceStats.getNumFromTrustedCircle() + 1);
+    i-if (data.istwusted) {
+      wewevancestats.setnumfwomtwustedciwcwe(wewevancestats.getnumfwomtwustedciwcwe() + 1);
     }
-    if (data.isReply) {
-      relevanceStats.setNumReplies(relevanceStats.getNumReplies() + 1);
-      if (data.isTrusted) {
-        relevanceStats.setNumRepliesTrusted(relevanceStats.getNumRepliesTrusted() + 1);
-      } else if (!data.isFollow) {
-        relevanceStats.setNumRepliesOutOfNetwork(relevanceStats.getNumRepliesOutOfNetwork() + 1);
+    if (data.iswepwy) {
+      w-wewevancestats.setnumwepwies(wewevancestats.getnumwepwies() + 1);
+      if (data.istwusted) {
+        w-wewevancestats.setnumwepwiestwusted(wewevancestats.getnumwepwiestwusted() + 1);
+      } ewse if (!data.isfowwow) {
+        w-wewevancestats.setnumwepwiesoutofnetwowk(wewevancestats.getnumwepwiesoutofnetwowk() + 1);
       }
     }
-    if (data.isSelfTweet) {
-      relevanceStats.setNumSelfTweets(relevanceStats.getNumSelfTweets() + 1);
+    i-if (data.issewftweet) {
+      wewevancestats.setnumsewftweets(wewevancestats.getnumsewftweets() + 1);
     }
-    if (data.hasImageUrl || data.hasVideoUrl) {
-      relevanceStats.setNumWithMedia(relevanceStats.getNumWithMedia() + 1);
+    if (data.hasimageuww || data.hasvideouww) {
+      wewevancestats.setnumwithmedia(wewevancestats.getnumwithmedia() + 1);
     }
-    if (data.hasNewsUrl) {
-      relevanceStats.setNumWithNews(relevanceStats.getNumWithNews() + 1);
+    i-if (data.hasnewsuww) {
+      wewevancestats.setnumwithnews(wewevancestats.getnumwithnews() + 1);
     }
-    if (data.isUserSpam) {
-      relevanceStats.setNumSpamUser(relevanceStats.getNumSpamUser() + 1);
+    if (data.isusewspam) {
+      wewevancestats.setnumspamusew(wewevancestats.getnumspamusew() + 1);
     }
-    if (data.isUserNSFW) {
-      relevanceStats.setNumOffensive(relevanceStats.getNumOffensive() + 1);
+    if (data.isusewnsfw) {
+      wewevancestats.setnumoffensive(wewevancestats.getnumoffensive() + 1);
     }
-    if (data.isUserBot) {
-      relevanceStats.setNumBot(relevanceStats.getNumBot() + 1);
+    if (data.isusewbot) {
+      wewevancestats.setnumbot(wewevancestats.getnumbot() + 1);
     }
   }
 
-  @VisibleForTesting
-  static final class ExplanationWrapper {
-    private Explanation explanation;
+  @visibwefowtesting
+  s-static finaw c-cwass expwanationwwappew {
+    pwivate expwanation e-expwanation;
 
-    public Explanation getExplanation() {
-      return explanation;
+    pubwic expwanation g-getexpwanation() {
+      w-wetuwn expwanation;
     }
 
-    @Override
-    public String toString() {
-      return explanation.toString();
+    @ovewwide
+    pubwic s-stwing tostwing() {
+      wetuwn expwanation.tostwing();
     }
   }
 }

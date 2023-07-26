@@ -1,23 +1,23 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], (ꈍᴗꈍ)
     tags = [
-        "bazel-compatible",
+        "bazew-compatibwe", ^•ﻌ•^
     ],
-    dependencies = [
-        "configapi/configapi-abdecider",
-        "configapi/configapi-core",
-        "content-recommender/thrift/src/main/thrift:thrift-scala",
-        "decider/src/main/scala",
-        "discovery-common/src/main/scala/com/twitter/discovery/common/configapi",
-        "featureswitches/featureswitches-core",
-        "finatra/inject/inject-core/src/main/scala",
-        "frigate/frigate-common:base",
-        "frigate/frigate-common:util",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/candidate",
-        "interests-service/thrift/src/main/thrift:thrift-scala",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-        "stitch/stitch-storehaus",
-        "topic-social-proof/server/src/main/thrift:thrift-scala",
-    ],
+    d-dependencies = [
+        "configapi/configapi-abdecidew", OwO
+        "configapi/configapi-cowe", 🥺
+        "content-wecommendew/thwift/swc/main/thwift:thwift-scawa", òωó
+        "decidew/swc/main/scawa", o.O
+        "discovewy-common/swc/main/scawa/com/twittew/discovewy/common/configapi", (U ᵕ U❁)
+        "featuweswitches/featuweswitches-cowe", (⑅˘꒳˘)
+        "finatwa/inject/inject-cowe/swc/main/scawa", ( ͡o ω ͡o )
+        "fwigate/fwigate-common:base", UwU
+        "fwigate/fwigate-common:utiw", rawr x3
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/candidate", rawr
+        "intewests-sewvice/thwift/swc/main/thwift:thwift-scawa", σωσ
+        "swc/scawa/com/twittew/simcwustews_v2/common", σωσ
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", >_<
+        "stitch/stitch-stowehaus", :3
+        "topic-sociaw-pwoof/sewvew/swc/main/thwift:thwift-scawa", (U ﹏ U)
+    ], -.-
 )

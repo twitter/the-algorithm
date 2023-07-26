@@ -1,904 +1,904 @@
-package com.twitter.search.common.schema;
+package com.twittew.seawch.common.schema;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicLong;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+impowt j-java.io.ioexception;
+i-impowt java.io.objectoutputstweam;
+i-impowt j-java.utiw.cowwection;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.set;
+impowt java.utiw.sowtedmap;
+impowt java.utiw.tweemap;
+impowt java.utiw.concuwwent.atomic.atomicwong;
+i-impowt javax.annotation.nuwwabwe;
+impowt javax.annotation.concuwwent.immutabwe;
+i-impowt javax.annotation.concuwwent.thweadsafe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.base.pwedicate;
+i-impowt com.googwe.common.cowwect.immutabwecowwection;
+i-impowt com.googwe.common.cowwect.immutabwemap;
+i-impowt com.googwe.common.cowwect.immutabweset;
+impowt com.googwe.common.cowwect.immutabwesowtedmap;
+impowt com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.maps;
+i-impowt com.googwe.common.cowwect.sets;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.IndexOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.wucene.anawysis.anawyzew;
+impowt owg.apache.wucene.facet.facetsconfig;
+impowt owg.apache.wucene.index.docvawuestype;
+i-impowt owg.apache.wucene.index.fiewdinfos;
+impowt o-owg.apache.wucene.index.indexoptions;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.features.ExternalTweetFeature;
-import com.twitter.search.common.features.SearchResultFeature;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaSpecifier;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureType;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.FieldWeightDefault;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftAnalyzer;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFViewSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFacetFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftSchema;
-import com.twitter.search.common.schema.thriftjava.ThriftSearchFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftTokenStreamSerializer;
+impowt com.twittew.common.cowwections.paiw;
+impowt com.twittew.common.text.utiw.tokenstweamsewiawizew;
+i-impowt com.twittew.seawch.common.featuwes.extewnawtweetfeatuwe;
+impowt c-com.twittew.seawch.common.featuwes.seawchwesuwtfeatuwe;
+impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuweschema;
+impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuweschemaentwy;
+impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuweschemaspecifiew;
+impowt c-com.twittew.seawch.common.featuwes.thwift.thwiftseawchfeatuwetype;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt c-com.twittew.seawch.common.metwics.seawchwonggauge;
+i-impowt c-com.twittew.seawch.common.schema.base.eawwybiwdfiewdtype;
+impowt com.twittew.seawch.common.schema.base.featuweconfiguwation;
+impowt c-com.twittew.seawch.common.schema.base.fiewdweightdefauwt;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.common.schema.base.indexednumewicfiewdsettings;
+impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftanawyzew;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsffiewdsettings;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsftype;
+impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftcsfviewsettings;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfacetfiewdsettings;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewdconfiguwation;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewdsettings;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexedfiewdsettings;
+i-impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftschema;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftseawchfiewdsettings;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwifttokenstweamsewiawizew;
 
 /**
- * A schema instance that does not change at run time.
+ * a schema instance that does nyot c-change at wun t-time. XD
  */
-@Immutable @ThreadSafe
-public class ImmutableSchema implements ImmutableSchemaInterface {
-  private static final Logger LOG = LoggerFactory.getLogger(ImmutableSchema.class);
-  private static final ImmutableSet<ThriftCSFType> CAN_FACET_ON_CSF_TYPES =
-      ImmutableSet.<ThriftCSFType>builder()
-          .add(ThriftCSFType.BYTE)
-          .add(ThriftCSFType.INT)
-          .add(ThriftCSFType.LONG)
-          .build();
+@immutabwe @thweadsafe
+pubwic cwass immutabweschema i-impwements i-immutabweschemaintewface {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(immutabweschema.cwass);
+  pwivate s-static finaw immutabweset<thwiftcsftype> can_facet_on_csf_types =
+      immutabweset.<thwiftcsftype>buiwdew()
+          .add(thwiftcsftype.byte)
+          .add(thwiftcsftype.int)
+          .add(thwiftcsftype.wong)
+          .buiwd();
 
-  private static final SearchCounter FEATURES_EXISTED_IN_OLD_SCHEMA =
-      SearchCounter.export("features_existed_in_old_schema");
+  pwivate static finaw seawchcountew f-featuwes_existed_in_owd_schema =
+      seawchcountew.expowt("featuwes_existed_in_owd_schema");
 
-  // Currently our index uses 4 bits to store the facet field id.
-  public static final int MAX_FACET_FIELD_ID = 15;
+  // c-cuwwentwy o-ouw index uses 4 b-bits to stowe the facet fiewd i-id. /(^•ω•^)
+  pubwic static f-finaw int max_facet_fiewd_id = 15;
 
-  public static final String HF_TERM_PAIRS_FIELD = "hf_term_pairs";
-  public static final String HF_PHRASE_PAIRS_FIELD = "hf_phrase_pairs";
+  p-pubwic s-static finaw stwing hf_tewm_paiws_fiewd = "hf_tewm_paiws";
+  pubwic s-static finaw s-stwing hf_phwase_paiws_fiewd = "hf_phwase_paiws";
 
-  private final ImmutableMap<Integer, FieldInfo> fieldSettingsMapById;
-  private final ImmutableMap<String, FieldInfo> fieldSettingsMapByName;
-  private final ImmutableMap<String, FeatureConfiguration> featureConfigMapByName;
-  private final ImmutableMap<Integer, FeatureConfiguration> featureConfigMapById;
+  p-pwivate finaw i-immutabwemap<integew, (U ᵕ U❁) f-fiewdinfo> fiewdsettingsmapbyid;
+  pwivate finaw immutabwemap<stwing, mya f-fiewdinfo> fiewdsettingsmapbyname;
+  pwivate finaw immutabwemap<stwing, (ˆ ﻌ ˆ)♡ featuweconfiguwation> featuweconfigmapbyname;
+  pwivate finaw immutabwemap<integew, (✿oωo) f-featuweconfiguwation> featuweconfigmapbyid;
 
-  @Nullable
-  private final ThriftAnalyzer defaultAnalyzer;
-  private final AnalyzerFactory analyzerFactory;
+  @nuwwabwe
+  pwivate finaw thwiftanawyzew d-defauwtanawyzew;
+  p-pwivate f-finaw anawyzewfactowy anawyzewfactowy;
 
-  private final ImmutableMap<String, FieldWeightDefault> fieldWeightMap;
-  private final Map<String, FieldInfo> facetNameToFieldMap = Maps.newHashMap();
-  private final int numFacetFields;
-  private final ImmutableSet<FieldInfo> csfFacetFields;
+  p-pwivate finaw immutabwemap<stwing, (✿oωo) f-fiewdweightdefauwt> f-fiewdweightmap;
+  pwivate finaw map<stwing, òωó fiewdinfo> facetnametofiewdmap = maps.newhashmap();
+  pwivate finaw i-int nyumfacetfiewds;
+  pwivate f-finaw immutabweset<fiewdinfo> csffacetfiewds;
 
-  // This is the search result feature schema - it has the definition for all the column stride
-  // view fields.
-  private final ThriftSearchFeatureSchema searchFeatureSchema;
+  // t-this is the s-seawch wesuwt featuwe schema - it has the definition f-fow aww the c-cowumn stwide
+  // view fiewds. (˘ω˘)
+  p-pwivate finaw t-thwiftseawchfeatuweschema seawchfeatuweschema;
 
-  private final int majorVersionNumber;
-  private final int minorVersionNumber;
-  private final String versionDesc;
-  private final boolean isVersionOfficial;
+  pwivate finaw int majowvewsionnumbew;
+  pwivate f-finaw int minowvewsionnumbew;
+  p-pwivate finaw s-stwing vewsiondesc;
+  pwivate finaw b-boowean isvewsionofficiaw;
 
   /**
-   * Construct a Schema instance with the given ThriftSchema and AnalyzerFactory.
+   * c-constwuct a schema instance w-with the given thwiftschema and anawyzewfactowy. (ˆ ﻌ ˆ)♡
    */
-  public ImmutableSchema(ThriftSchema thriftSchema,
-                         AnalyzerFactory analyzerFactory,
-                         String featureSchemaVersionPrefix) throws SchemaValidationException {
-    Pair<Integer, String> versionPair = parseVersionString(thriftSchema.getVersion());
-    this.majorVersionNumber = thriftSchema.getMajorVersionNumber();
-    this.minorVersionNumber = thriftSchema.getMinorVersionNumber();
-    this.versionDesc = versionPair.getSecond();
-    this.isVersionOfficial = thriftSchema.isVersionIsOfficial();
+  pubwic immutabweschema(thwiftschema thwiftschema, ( ͡o ω ͡o )
+                         a-anawyzewfactowy a-anawyzewfactowy, rawr x3
+                         stwing featuweschemavewsionpwefix) thwows s-schemavawidationexception {
+    p-paiw<integew, stwing> vewsionpaiw = pawsevewsionstwing(thwiftschema.getvewsion());
+    this.majowvewsionnumbew = t-thwiftschema.getmajowvewsionnumbew();
+    this.minowvewsionnumbew = thwiftschema.getminowvewsionnumbew();
+    this.vewsiondesc = vewsionpaiw.getsecond();
+    this.isvewsionofficiaw = thwiftschema.isvewsionisofficiaw();
 
-    this.analyzerFactory = analyzerFactory;
+    t-this.anawyzewfactowy = anawyzewfactowy;
 
-    Map<Integer, FieldInfo> tmpMap = Maps.newLinkedHashMap();
-    Set<FieldInfo> tmpSet = Sets.newHashSet();
+    map<integew, (˘ω˘) f-fiewdinfo> t-tmpmap = maps.newwinkedhashmap();
+    set<fiewdinfo> tmpset = sets.newhashset();
 
-    if (thriftSchema.isSetDefaultAnalyzer()) {
-      this.defaultAnalyzer = thriftSchema.getDefaultAnalyzer().deepCopy();
-    } else {
-      this.defaultAnalyzer = null;
+    i-if (thwiftschema.issetdefauwtanawyzew()) {
+      t-this.defauwtanawyzew = thwiftschema.getdefauwtanawyzew().deepcopy();
+    } ewse {
+      this.defauwtanawyzew = n-nyuww;
     }
 
-    Map<Integer, ThriftFieldConfiguration> configs = thriftSchema.getFieldConfigs();
+    map<integew, òωó t-thwiftfiewdconfiguwation> configs = thwiftschema.getfiewdconfigs();
 
-    // Collect all the CSF Views, so that we can later verify that they are appropriately
-    // configured once we've processed all the other field settings.
-    Map<Integer, ThriftFieldConfiguration> csfViewFields = Maps.newHashMap();
-    boolean requiresHfPairFields = false;
-    boolean hasHfTermPairField = false;
-    boolean hasHfPhrasePairField = false;
-    int numFacets = 0;
-    for (Map.Entry<Integer, ThriftFieldConfiguration> entry : configs.entrySet()) {
-      int fieldId = entry.getKey();
+    // cowwect aww the csf views, ( ͡o ω ͡o ) s-so that we can watew vewify that t-they awe appwopwiatewy
+    // c-configuwed once we've pwocessed a-aww the othew fiewd settings. σωσ
+    m-map<integew, (U ﹏ U) t-thwiftfiewdconfiguwation> c-csfviewfiewds = maps.newhashmap();
+    b-boowean wequiweshfpaiwfiewds = f-fawse;
+    boowean hashftewmpaiwfiewd = fawse;
+    b-boowean hashfphwasepaiwfiewd = f-fawse;
+    int n-nyumfacets = 0;
+    fow (map.entwy<integew, rawr thwiftfiewdconfiguwation> e-entwy : configs.entwyset()) {
+      int fiewdid = e-entwy.getkey();
 
-      if (tmpMap.containsKey(fieldId)) {
-        throw new SchemaValidationException("Duplicate field id " + fieldId);
+      i-if (tmpmap.containskey(fiewdid)) {
+        thwow nyew schemavawidationexception("dupwicate fiewd i-id " + fiewdid);
       }
 
-      ThriftFieldConfiguration config = entry.getValue();
-      FieldInfo fieldInfo = parseThriftFieldSettings(fieldId, config, csfViewFields);
-      validate(fieldInfo);
-      if (fieldInfo.getFieldType().isFacetField()) {
-        if (numFacets > MAX_FACET_FIELD_ID) {
-          throw new SchemaValidationException(
-              "Maximum supported facet field ID is:  " + MAX_FACET_FIELD_ID);
+      t-thwiftfiewdconfiguwation c-config = e-entwy.getvawue();
+      fiewdinfo f-fiewdinfo = pawsethwiftfiewdsettings(fiewdid, -.- config, ( ͡o ω ͡o ) csfviewfiewds);
+      vawidate(fiewdinfo);
+      if (fiewdinfo.getfiewdtype().isfacetfiewd()) {
+        if (numfacets > m-max_facet_fiewd_id) {
+          thwow nyew schemavawidationexception(
+              "maximum s-suppowted facet fiewd id is:  " + m-max_facet_fiewd_id);
         }
-        numFacets++;
-        facetNameToFieldMap.put(fieldInfo.getFieldType().getFacetName(), fieldInfo);
+        nyumfacets++;
+        facetnametofiewdmap.put(fiewdinfo.getfiewdtype().getfacetname(), f-fiewdinfo);
 
-        if (fieldInfo.getFieldType().isUseCSFForFacetCounting()) {
-          tmpSet.add(fieldInfo);
+        if (fiewdinfo.getfiewdtype().isusecsffowfacetcounting()) {
+          t-tmpset.add(fiewdinfo);
         }
       }
 
-      tmpMap.put(fieldId, fieldInfo);
+      t-tmpmap.put(fiewdid, >_< f-fiewdinfo);
 
-      if (fieldInfo.getFieldType().isIndexHFTermPairs()) {
-        requiresHfPairFields = true;
+      i-if (fiewdinfo.getfiewdtype().isindexhftewmpaiws()) {
+        w-wequiweshfpaiwfiewds = twue;
       }
-      if (fieldInfo.getName().equals(HF_TERM_PAIRS_FIELD)) {
-        hasHfTermPairField = true;
+      if (fiewdinfo.getname().equaws(hf_tewm_paiws_fiewd)) {
+        hashftewmpaiwfiewd = twue;
       }
-      if (fieldInfo.getName().equals(HF_PHRASE_PAIRS_FIELD)) {
-        hasHfPhrasePairField = true;
-      }
-    }
-
-    this.numFacetFields = numFacets;
-    this.csfFacetFields = ImmutableSet.copyOf(tmpSet);
-
-    // If any field requires high frequency term/phrase pair fields, make sure they exist
-    if (requiresHfPairFields) {
-      if (!hasHfTermPairField || !hasHfPhrasePairField) {
-        throw new SchemaValidationException(
-            "High frequency term/phrase pair fields do not exist in the schema.");
+      if (fiewdinfo.getname().equaws(hf_phwase_paiws_fiewd)) {
+        hashfphwasepaiwfiewd = t-twue;
       }
     }
 
-    this.fieldSettingsMapById = ImmutableMap.copyOf(tmpMap);
+    t-this.numfacetfiewds = n-nyumfacets;
+    this.csffacetfiewds = i-immutabweset.copyof(tmpset);
 
-    Pair<ImmutableMap<String, FeatureConfiguration>, ImmutableMap<Integer, FeatureConfiguration>>
-        featureConfigMapPair = buildFeatureMaps(csfViewFields);
-    this.featureConfigMapByName = featureConfigMapPair.getFirst();
-    this.featureConfigMapById = featureConfigMapPair.getSecond();
-
-    for (ThriftFieldConfiguration csfViewField : csfViewFields.values()) {
-      SchemaBuilder.verifyCSFViewSettings(configs, csfViewField);
-    }
-
-    ImmutableMap.Builder<String, FieldInfo> builder = ImmutableMap.builder();
-
-    for (FieldInfo info : fieldSettingsMapById.values()) {
-      info.getFieldType().freeze();
-      builder.put(info.getName(), info);
-    }
-    this.fieldSettingsMapByName = builder.build();
-
-    ImmutableMap.Builder<String, FieldWeightDefault> fieldWeightMapBuilder = ImmutableMap.builder();
-
-    for (FieldInfo fi : getFieldInfos()) {
-      // CSF fields are not searchable. All other fields are.
-      if (fi.getFieldType().isIndexedField()) {
-        fieldWeightMapBuilder.put(
-            fi.getName(),
-            new FieldWeightDefault(
-                fi.getFieldType().isTextSearchableByDefault(),
-                fi.getFieldType().getTextSearchableFieldWeight()));
+    // if any fiewd wequiwes high fwequency tewm/phwase p-paiw fiewds, o.O m-make suwe they exist
+    if (wequiweshfpaiwfiewds) {
+      i-if (!hashftewmpaiwfiewd || !hashfphwasepaiwfiewd) {
+        thwow nyew schemavawidationexception(
+            "high f-fwequency tewm/phwase p-paiw fiewds do nyot exist i-in the schema.");
       }
     }
 
-    this.fieldWeightMap = fieldWeightMapBuilder.build();
-    // Create features with extra Earlybird derived fields, extra fields won't change the version
-    // but they do change the checksum.
-    this.searchFeatureSchema = createSearchResultFeatureSchema(
-        featureSchemaVersionPrefix, fieldSettingsMapByName, featureConfigMapByName);
+    t-this.fiewdsettingsmapbyid = immutabwemap.copyof(tmpmap);
+
+    paiw<immutabwemap<stwing, σωσ featuweconfiguwation>, -.- immutabwemap<integew, σωσ f-featuweconfiguwation>>
+        f-featuweconfigmappaiw = b-buiwdfeatuwemaps(csfviewfiewds);
+    t-this.featuweconfigmapbyname = f-featuweconfigmappaiw.getfiwst();
+    this.featuweconfigmapbyid = f-featuweconfigmappaiw.getsecond();
+
+    f-fow (thwiftfiewdconfiguwation csfviewfiewd : c-csfviewfiewds.vawues()) {
+      s-schemabuiwdew.vewifycsfviewsettings(configs, :3 csfviewfiewd);
+    }
+
+    immutabwemap.buiwdew<stwing, f-fiewdinfo> buiwdew = immutabwemap.buiwdew();
+
+    f-fow (fiewdinfo info : f-fiewdsettingsmapbyid.vawues()) {
+      i-info.getfiewdtype().fweeze();
+      buiwdew.put(info.getname(), ^^ info);
+    }
+    t-this.fiewdsettingsmapbyname = buiwdew.buiwd();
+
+    immutabwemap.buiwdew<stwing, òωó f-fiewdweightdefauwt> f-fiewdweightmapbuiwdew = i-immutabwemap.buiwdew();
+
+    fow (fiewdinfo fi : getfiewdinfos()) {
+      // csf fiewds a-awe nyot seawchabwe. (ˆ ﻌ ˆ)♡ aww othew fiewds awe. XD
+      i-if (fi.getfiewdtype().isindexedfiewd()) {
+        f-fiewdweightmapbuiwdew.put(
+            fi.getname(), òωó
+            n-nyew fiewdweightdefauwt(
+                fi.getfiewdtype().istextseawchabwebydefauwt(), (ꈍᴗꈍ)
+                f-fi.getfiewdtype().gettextseawchabwefiewdweight()));
+      }
+    }
+
+    t-this.fiewdweightmap = fiewdweightmapbuiwdew.buiwd();
+    // cweate featuwes w-with extwa eawwybiwd dewived fiewds, UwU extwa fiewds w-won't change the v-vewsion
+    // but they do change t-the checksum. >w<
+    this.seawchfeatuweschema = c-cweateseawchwesuwtfeatuweschema(
+        f-featuweschemavewsionpwefix, ʘwʘ f-fiewdsettingsmapbyname, :3 featuweconfigmapbyname);
   }
 
   /**
-   * Add a set of features to a schema if they don't exist yet, and update the schema checksum.
-   * if there's conflict, RuntimeException will be thrown.
-   * Old map won't be touched, a new map will be returned will old and new data combined.
+   * add a set of featuwes to a schema if they don't exist yet, ^•ﻌ•^ and update the schema checksum. (ˆ ﻌ ˆ)♡
+   * if thewe's confwict, 🥺 wuntimeexception wiww be thwown. OwO
+   * owd map won't be touched, 🥺 a nyew m-map wiww be w-wetuwned wiww owd and nyew data combined. OwO
    */
-  public static Map<Integer, ThriftSearchFeatureSchemaEntry> appendToFeatureSchema(
-      Map<Integer, ThriftSearchFeatureSchemaEntry> oldEntryMap,
-      Set<? extends SearchResultFeature> features) throws SchemaValidationException {
-    if (oldEntryMap == null) {
-      throw new SchemaValidationException(
-          "Cannot append features to schema, the entryMap is null");
+  p-pubwic static m-map<integew, (U ᵕ U❁) thwiftseawchfeatuweschemaentwy> a-appendtofeatuweschema(
+      map<integew, ( ͡o ω ͡o ) t-thwiftseawchfeatuweschemaentwy> owdentwymap, ^•ﻌ•^
+      s-set<? e-extends seawchwesuwtfeatuwe> featuwes) t-thwows schemavawidationexception {
+    if (owdentwymap == n-nyuww) {
+      t-thwow nyew schemavawidationexception(
+          "cannot append featuwes to schema, o.O t-the entwymap i-is nyuww");
     }
-    // make a copy of the existing map
-    ImmutableMap.Builder<Integer, ThriftSearchFeatureSchemaEntry> builder =
-        ImmutableSortedMap.<Integer, ThriftSearchFeatureSchemaEntry>naturalOrder()
-            .putAll(oldEntryMap);
+    // m-make a c-copy of the existing m-map
+    immutabwemap.buiwdew<integew, (⑅˘꒳˘) t-thwiftseawchfeatuweschemaentwy> b-buiwdew =
+        i-immutabwesowtedmap.<integew, (ˆ ﻌ ˆ)♡ t-thwiftseawchfeatuweschemaentwy>natuwawowdew()
+            .putaww(owdentwymap);
 
-    for (SearchResultFeature feature : features) {
-      if (oldEntryMap.containsKey(feature.getId())) {
-        FEATURES_EXISTED_IN_OLD_SCHEMA.increment();
-      } else {
-        builder.put(feature.getId(), new ThriftSearchFeatureSchemaEntry()
-            .setFeatureName(feature.getName())
-            .setFeatureType(feature.getType()));
+    fow (seawchwesuwtfeatuwe featuwe : f-featuwes) {
+      i-if (owdentwymap.containskey(featuwe.getid())) {
+        f-featuwes_existed_in_owd_schema.incwement();
+      } ewse {
+        buiwdew.put(featuwe.getid(), :3 n-nyew thwiftseawchfeatuweschemaentwy()
+            .setfeatuwename(featuwe.getname())
+            .setfeatuwetype(featuwe.gettype()));
       }
     }
-    return builder.build();
+    wetuwn buiwdew.buiwd();
   }
 
   /**
-   * Append external features to create a new schema.
-   * @param oldSchema The old schema to build on top of
-   * @param features a list of features to be appended to the schema
-   * @param versionSuffix the version suffix, if not-null, it will be attached to the end of
-   * original schema's version.
-   * @return A new schema object with the appended fields
-   * @throws SchemaValidationException thrown when the checksum cannot be computed
+   * a-append extewnaw featuwes t-to cweate a n-new schema. /(^•ω•^)
+   * @pawam o-owdschema the owd schema t-to buiwd on top of
+   * @pawam f-featuwes a wist of featuwes to b-be appended to the schema
+   * @pawam v-vewsionsuffix the vewsion suffix, òωó if nyot-nuww, :3 it wiww be attached to the e-end of
+   * owiginaw schema's vewsion. (˘ω˘)
+   * @wetuwn a-a nyew schema o-object with the appended fiewds
+   * @thwows schemavawidationexception thwown w-when the checksum cannot be computed
    */
-  public static ThriftSearchFeatureSchema appendToCreateNewFeatureSchema(
-      ThriftSearchFeatureSchema oldSchema,
-      Set<ExternalTweetFeature> features,
-      @Nullable String versionSuffix) throws SchemaValidationException {
+  p-pubwic s-static thwiftseawchfeatuweschema a-appendtocweatenewfeatuweschema(
+      thwiftseawchfeatuweschema owdschema, 😳
+      s-set<extewnawtweetfeatuwe> f-featuwes, σωσ
+      @nuwwabwe stwing v-vewsionsuffix) thwows schemavawidationexception {
 
-    ThriftSearchFeatureSchema newSchema = new ThriftSearchFeatureSchema();
-    // copy over all the entries plus the new ones
-    newSchema.setEntries(appendToFeatureSchema(oldSchema.getEntries(), features));
+    thwiftseawchfeatuweschema n-newschema = nyew thwiftseawchfeatuweschema();
+    // c-copy ovew a-aww the entwies p-pwus the nyew ones
+    nyewschema.setentwies(appendtofeatuweschema(owdschema.getentwies(), UwU f-featuwes));
 
-    ThriftSearchFeatureSchemaSpecifier spec = new ThriftSearchFeatureSchemaSpecifier();
-    // the version is directly inherited or with a suffix
-    Preconditions.checkArgument(versionSuffix == null || !versionSuffix.isEmpty());
-    spec.setVersion(versionSuffix == null
-        ? oldSchema.getSchemaSpecifier().getVersion()
-        : oldSchema.getSchemaSpecifier().getVersion() + versionSuffix);
-    spec.setChecksum(getChecksum(newSchema.getEntries()));
-    newSchema.setSchemaSpecifier(spec);
-    return newSchema;
+    t-thwiftseawchfeatuweschemaspecifiew s-spec = nyew thwiftseawchfeatuweschemaspecifiew();
+    // t-the vewsion is diwectwy i-inhewited ow with a-a suffix
+    p-pweconditions.checkawgument(vewsionsuffix == n-nyuww || !vewsionsuffix.isempty());
+    s-spec.setvewsion(vewsionsuffix == n-nyuww
+        ? o-owdschema.getschemaspecifiew().getvewsion()
+        : o-owdschema.getschemaspecifiew().getvewsion() + vewsionsuffix);
+    spec.setchecksum(getchecksum(newschema.getentwies()));
+    n-nyewschema.setschemaspecifiew(spec);
+    wetuwn newschema;
   }
 
-  @Override
-  public FieldInfos getLuceneFieldInfos(Predicate<String> acceptedFields) {
-    List<org.apache.lucene.index.FieldInfo> acceptedFieldInfos = Lists.newArrayList();
-    for (FieldInfo fi : getFieldInfos()) {
-      if (acceptedFields == null || acceptedFields.apply(fi.getName())) {
-        acceptedFieldInfos.add(convert(fi.getName(), fi.getFieldId(), fi.getFieldType()));
+  @ovewwide
+  p-pubwic fiewdinfos getwucenefiewdinfos(pwedicate<stwing> a-acceptedfiewds) {
+    w-wist<owg.apache.wucene.index.fiewdinfo> a-acceptedfiewdinfos = wists.newawwaywist();
+    fow (fiewdinfo fi : g-getfiewdinfos()) {
+      i-if (acceptedfiewds == n-nyuww || acceptedfiewds.appwy(fi.getname())) {
+        acceptedfiewdinfos.add(convewt(fi.getname(), -.- fi.getfiewdid(), 🥺 fi.getfiewdtype()));
       }
     }
-    return new FieldInfos(acceptedFieldInfos.toArray(
-        new org.apache.lucene.index.FieldInfo[acceptedFieldInfos.size()]));
+    w-wetuwn n-nyew fiewdinfos(acceptedfiewdinfos.toawway(
+        nyew owg.apache.wucene.index.fiewdinfo[acceptedfiewdinfos.size()]));
   }
 
-  private FieldInfo parseThriftFieldSettings(int fieldId, ThriftFieldConfiguration fieldConfig,
-                                             Map<Integer, ThriftFieldConfiguration> csfViewFields)
-      throws SchemaValidationException {
-    FieldInfo fieldInfo
-        = new FieldInfo(fieldId, fieldConfig.getFieldName(), new EarlybirdFieldType());
-    ThriftFieldSettings fieldSettings = fieldConfig.getSettings();
+  p-pwivate fiewdinfo p-pawsethwiftfiewdsettings(int fiewdid, 😳😳😳 thwiftfiewdconfiguwation fiewdconfig, 🥺
+                                             map<integew, ^^ t-thwiftfiewdconfiguwation> c-csfviewfiewds)
+      t-thwows s-schemavawidationexception {
+    fiewdinfo fiewdinfo
+        = nyew fiewdinfo(fiewdid, ^^;; f-fiewdconfig.getfiewdname(), >w< n-nyew eawwybiwdfiewdtype());
+    thwiftfiewdsettings fiewdsettings = f-fiewdconfig.getsettings();
 
 
-    boolean settingFound = false;
+    boowean settingfound = fawse;
 
-    if (fieldSettings.isSetIndexedFieldSettings()) {
-      if (fieldSettings.isSetCsfFieldSettings() || fieldSettings.isSetCsfViewSettings()) {
-        throw new SchemaValidationException("ThriftFieldSettings: Only one of "
-            + "'indexedFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
+    i-if (fiewdsettings.issetindexedfiewdsettings()) {
+      if (fiewdsettings.issetcsffiewdsettings() || fiewdsettings.issetcsfviewsettings()) {
+        thwow n-nyew schemavawidationexception("thwiftfiewdsettings: o-onwy one of "
+            + "'indexedfiewdsettings', σωσ 'csffiewdsettings', >w< 'csfviewsettings' c-can be set.");
       }
 
-      applyIndexedFieldSettings(fieldInfo, fieldSettings.getIndexedFieldSettings());
-      settingFound = true;
+      a-appwyindexedfiewdsettings(fiewdinfo, (⑅˘꒳˘) fiewdsettings.getindexedfiewdsettings());
+      s-settingfound = twue;
     }
 
-    if (fieldSettings.isSetCsfFieldSettings()) {
-      if (fieldSettings.isSetIndexedFieldSettings() || fieldSettings.isSetCsfViewSettings()) {
-        throw new SchemaValidationException("ThriftFieldSettings: Only one of "
-            + "'indexedFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
+    i-if (fiewdsettings.issetcsffiewdsettings()) {
+      i-if (fiewdsettings.issetindexedfiewdsettings() || f-fiewdsettings.issetcsfviewsettings()) {
+        t-thwow nyew schemavawidationexception("thwiftfiewdsettings: o-onwy one o-of "
+            + "'indexedfiewdsettings', òωó 'csffiewdsettings', 'csfviewsettings' c-can be set.");
       }
 
-      applyCsfFieldSettings(fieldInfo, fieldSettings.getCsfFieldSettings());
-      settingFound = true;
+      appwycsffiewdsettings(fiewdinfo, (⑅˘꒳˘) f-fiewdsettings.getcsffiewdsettings());
+      settingfound = twue;
     }
 
-    if (fieldSettings.isSetFacetFieldSettings()) {
-      if (!fieldSettings.isSetIndexedFieldSettings() && !(fieldSettings.isSetCsfFieldSettings()
-          && fieldSettings.getFacetFieldSettings().isUseCSFForFacetCounting()
-          && CAN_FACET_ON_CSF_TYPES.contains(fieldSettings.getCsfFieldSettings().getCsfType()))) {
-        throw new SchemaValidationException("ThriftFieldSettings: 'facetFieldSettings' can only be "
-            + "used in combination with 'indexedFieldSettings' or with 'csfFieldSettings' "
-            + "where 'isUseCSFForFacetCounting' was set to true and ThriftCSFType is a type that "
-            + "can be faceted on.");
+    i-if (fiewdsettings.issetfacetfiewdsettings()) {
+      i-if (!fiewdsettings.issetindexedfiewdsettings() && !(fiewdsettings.issetcsffiewdsettings()
+          && f-fiewdsettings.getfacetfiewdsettings().isusecsffowfacetcounting()
+          && can_facet_on_csf_types.contains(fiewdsettings.getcsffiewdsettings().getcsftype()))) {
+        thwow nyew schemavawidationexception("thwiftfiewdsettings: 'facetfiewdsettings' can onwy be "
+            + "used i-in combination with 'indexedfiewdsettings' o-ow with 'csffiewdsettings' "
+            + "whewe 'isusecsffowfacetcounting' was s-set to twue and thwiftcsftype is a type that "
+            + "can b-be faceted on.");
       }
 
-      applyFacetFieldSettings(fieldInfo, fieldSettings.getFacetFieldSettings());
-      settingFound = true;
+      a-appwyfacetfiewdsettings(fiewdinfo, (ꈍᴗꈍ) f-fiewdsettings.getfacetfiewdsettings());
+      s-settingfound = t-twue;
     }
 
-    if (fieldSettings.isSetCsfViewSettings()) {
-      if (fieldSettings.isSetIndexedFieldSettings() || fieldSettings.isSetCsfFieldSettings()) {
-        throw new SchemaValidationException("ThriftFieldSettings: Only one of "
-            + "'indexedFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
+    i-if (fiewdsettings.issetcsfviewsettings()) {
+      if (fiewdsettings.issetindexedfiewdsettings() || fiewdsettings.issetcsffiewdsettings()) {
+        thwow nyew schemavawidationexception("thwiftfiewdsettings: o-onwy one of "
+            + "'indexedfiewdsettings', rawr x3 'csffiewdsettings', ( ͡o ω ͡o ) 'csfviewsettings' can be set.");
       }
 
-      // add this field now, but apply settings later to make sure the base field was added properly
-      // before
-      csfViewFields.put(fieldId, fieldConfig);
-      settingFound = true;
+      // a-add this fiewd nyow, UwU but appwy settings watew to make suwe the b-base fiewd was added pwopewwy
+      // befowe
+      csfviewfiewds.put(fiewdid, ^^ fiewdconfig);
+      s-settingfound = t-twue;
     }
 
-    if (!settingFound) {
-      throw new SchemaValidationException("ThriftFieldSettings: One of 'indexedFieldSettings', "
-          + "'csfFieldSettings' or 'facetFieldSettings' must be set.");
+    if (!settingfound) {
+      thwow n-nyew schemavawidationexception("thwiftfiewdsettings: one of 'indexedfiewdsettings', (˘ω˘) "
+          + "'csffiewdsettings' ow 'facetfiewdsettings' m-must be set.");
     }
 
-    // search field settings are optional
-    if (fieldSettings.isSetSearchFieldSettings()) {
-      if (!fieldSettings.isSetIndexedFieldSettings()) {
-        throw new SchemaValidationException(
-            "ThriftFieldSettings: 'searchFieldSettings' can only be "
-                + "used in combination with 'indexedFieldSettings'");
+    // s-seawch fiewd settings awe optionaw
+    i-if (fiewdsettings.issetseawchfiewdsettings()) {
+      if (!fiewdsettings.issetindexedfiewdsettings()) {
+        t-thwow nyew schemavawidationexception(
+            "thwiftfiewdsettings: 'seawchfiewdsettings' can onwy be "
+                + "used in combination w-with 'indexedfiewdsettings'");
       }
 
-      applySearchFieldSettings(fieldInfo, fieldSettings.getSearchFieldSettings());
+      appwyseawchfiewdsettings(fiewdinfo, (ˆ ﻌ ˆ)♡ fiewdsettings.getseawchfiewdsettings());
     }
 
-    return fieldInfo;
+    w-wetuwn fiewdinfo;
   }
 
-  private void applyCsfFieldSettings(FieldInfo fieldInfo, ThriftCSFFieldSettings settings)
-      throws SchemaValidationException {
-    // csfType is required - no need to check if it's set
-    fieldInfo.getFieldType().setDocValuesType(DocValuesType.NUMERIC);
-    fieldInfo.getFieldType().setCsfType(settings.getCsfType());
+  p-pwivate v-void appwycsffiewdsettings(fiewdinfo fiewdinfo, OwO thwiftcsffiewdsettings s-settings)
+      thwows schemavawidationexception {
+    // csftype is wequiwed - nyo nyeed t-to check if it's s-set
+    fiewdinfo.getfiewdtype().setdocvawuestype(docvawuestype.numewic);
+    f-fiewdinfo.getfiewdtype().setcsftype(settings.getcsftype());
 
-    if (settings.isVariableLength()) {
-      fieldInfo.getFieldType().setDocValuesType(DocValuesType.BINARY);
-      fieldInfo.getFieldType().setCsfVariableLength();
-    } else {
-      if (settings.isSetFixedLengthSettings()) {
-        fieldInfo.getFieldType().setCsfFixedLengthSettings(
-            settings.getFixedLengthSettings().getNumValuesPerDoc(),
-            settings.getFixedLengthSettings().isUpdateable());
-        if (settings.getFixedLengthSettings().getNumValuesPerDoc() > 1) {
-          fieldInfo.getFieldType().setDocValuesType(DocValuesType.BINARY);
+    i-if (settings.isvawiabwewength()) {
+      fiewdinfo.getfiewdtype().setdocvawuestype(docvawuestype.binawy);
+      fiewdinfo.getfiewdtype().setcsfvawiabwewength();
+    } e-ewse {
+      i-if (settings.issetfixedwengthsettings()) {
+        fiewdinfo.getfiewdtype().setcsffixedwengthsettings(
+            settings.getfixedwengthsettings().getnumvawuespewdoc(), 😳
+            s-settings.getfixedwengthsettings().isupdateabwe());
+        if (settings.getfixedwengthsettings().getnumvawuespewdoc() > 1) {
+          fiewdinfo.getfiewdtype().setdocvawuestype(docvawuestype.binawy);
         }
-      } else {
-        throw new SchemaValidationException(
-            "ThriftCSFFieldSettings: Either variableLength should be set to 'true', "
-                + "or fixedLengthSettings should be set.");
+      } e-ewse {
+        thwow nyew schemavawidationexception(
+            "thwiftcsffiewdsettings: e-eithew vawiabwewength s-shouwd be set to 'twue', UwU "
+                + "ow f-fixedwengthsettings s-shouwd b-be set.");
       }
     }
 
-    fieldInfo.getFieldType().setCsfLoadIntoRam(settings.isLoadIntoRAM());
-    if (settings.isSetDefaultValue()) {
-      fieldInfo.getFieldType().setCsfDefaultValue(settings.getDefaultValue());
+    fiewdinfo.getfiewdtype().setcsfwoadintowam(settings.iswoadintowam());
+    if (settings.issetdefauwtvawue()) {
+      f-fiewdinfo.getfiewdtype().setcsfdefauwtvawue(settings.getdefauwtvawue());
     }
   }
 
-  private void applyCsfViewFieldSettings(FieldInfo fieldInfo, FieldInfo baseField,
-                                         ThriftCSFViewSettings settings)
-      throws SchemaValidationException {
-    // csfType is required - no need to check if it's set
-    fieldInfo.getFieldType().setDocValuesType(DocValuesType.NUMERIC);
-    fieldInfo.getFieldType().setCsfType(settings.getCsfType());
+  pwivate void appwycsfviewfiewdsettings(fiewdinfo f-fiewdinfo, fiewdinfo basefiewd, 🥺
+                                         thwiftcsfviewsettings s-settings)
+      t-thwows s-schemavawidationexception {
+    // c-csftype is w-wequiwed - nyo nyeed to check if i-it's set
+    fiewdinfo.getfiewdtype().setdocvawuestype(docvawuestype.numewic);
+    fiewdinfo.getfiewdtype().setcsftype(settings.getcsftype());
 
-    fieldInfo.getFieldType().setCsfFixedLengthSettings(1 /* numValuesPerDoc*/,
-        false /* updateable*/);
+    fiewdinfo.getfiewdtype().setcsffixedwengthsettings(1 /* n-nyumvawuespewdoc*/, 😳😳😳
+        fawse /* u-updateabwe*/);
 
-    fieldInfo.getFieldType().setCsfViewSettings(fieldInfo.getName(), settings, baseField);
+    fiewdinfo.getfiewdtype().setcsfviewsettings(fiewdinfo.getname(), settings, ʘwʘ b-basefiewd);
   }
 
-  private void applyFacetFieldSettings(FieldInfo fieldInfo, ThriftFacetFieldSettings settings) {
-    if (settings.isSetFacetName()) {
-      fieldInfo.getFieldType().setFacetName(settings.getFacetName());
-    } else {
-      // fall back to field name if no facet name is explicitly provided
-      fieldInfo.getFieldType().setFacetName(fieldInfo.getName());
+  p-pwivate void appwyfacetfiewdsettings(fiewdinfo f-fiewdinfo, /(^•ω•^) thwiftfacetfiewdsettings settings) {
+    i-if (settings.issetfacetname()) {
+      fiewdinfo.getfiewdtype().setfacetname(settings.getfacetname());
+    } e-ewse {
+      // faww back to f-fiewd nyame if n-nyo facet nyame is expwicitwy pwovided
+      f-fiewdinfo.getfiewdtype().setfacetname(fiewdinfo.getname());
     }
-    fieldInfo.getFieldType().setStoreFacetSkiplist(settings.isStoreSkiplist());
-    fieldInfo.getFieldType().setStoreFacetOffensiveCounters(settings.isStoreOffensiveCounters());
-    fieldInfo.getFieldType().setUseCSFForFacetCounting(settings.isUseCSFForFacetCounting());
+    fiewdinfo.getfiewdtype().setstowefacetskipwist(settings.isstoweskipwist());
+    fiewdinfo.getfiewdtype().setstowefacetoffensivecountews(settings.isstoweoffensivecountews());
+    fiewdinfo.getfiewdtype().setusecsffowfacetcounting(settings.isusecsffowfacetcounting());
   }
 
-  private void applyIndexedFieldSettings(FieldInfo fieldInfo, ThriftIndexedFieldSettings settings)
-      throws SchemaValidationException {
-    fieldInfo.getFieldType().setIndexedField(true);
-    fieldInfo.getFieldType().setStored(settings.isStored());
-    fieldInfo.getFieldType().setTokenized(settings.isTokenized());
-    fieldInfo.getFieldType().setStoreTermVectors(settings.isStoreTermVectors());
-    fieldInfo.getFieldType().setStoreTermVectorOffsets(settings.isStoreTermVectorOffsets());
-    fieldInfo.getFieldType().setStoreTermVectorPositions(settings.isStoreTermVectorPositions());
-    fieldInfo.getFieldType().setStoreTermVectorPayloads(settings.isStoreTermVectorPayloads());
-    fieldInfo.getFieldType().setOmitNorms(settings.isOmitNorms());
-    fieldInfo.getFieldType().setIndexHFTermPairs(settings.isIndexHighFreqTermPairs());
-    fieldInfo.getFieldType().setUseTweetSpecificNormalization(
-        settings.deprecated_performTweetSpecificNormalizations);
+  p-pwivate void appwyindexedfiewdsettings(fiewdinfo f-fiewdinfo, :3 thwiftindexedfiewdsettings settings)
+      t-thwows s-schemavawidationexception {
+    f-fiewdinfo.getfiewdtype().setindexedfiewd(twue);
+    fiewdinfo.getfiewdtype().setstowed(settings.isstowed());
+    f-fiewdinfo.getfiewdtype().settokenized(settings.istokenized());
+    f-fiewdinfo.getfiewdtype().setstowetewmvectows(settings.isstowetewmvectows());
+    fiewdinfo.getfiewdtype().setstowetewmvectowoffsets(settings.isstowetewmvectowoffsets());
+    f-fiewdinfo.getfiewdtype().setstowetewmvectowpositions(settings.isstowetewmvectowpositions());
+    fiewdinfo.getfiewdtype().setstowetewmvectowpaywoads(settings.isstowetewmvectowpaywoads());
+    f-fiewdinfo.getfiewdtype().setomitnowms(settings.isomitnowms());
+    fiewdinfo.getfiewdtype().setindexhftewmpaiws(settings.isindexhighfweqtewmpaiws());
+    f-fiewdinfo.getfiewdtype().setusetweetspecificnowmawization(
+        s-settings.depwecated_pewfowmtweetspecificnowmawizations);
 
-    if (settings.isSetIndexOptions()) {
-      switch (settings.getIndexOptions()) {
-        case DOCS_ONLY :
-          fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS);
-          break;
-        case DOCS_AND_FREQS :
-          fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS_AND_FREQS);
-          break;
-        case DOCS_AND_FREQS_AND_POSITIONS :
-          fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
-          break;
-        case DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS :
-          fieldInfo.getFieldType().setIndexOptions(
-              IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
-          break;
-        default:
-          throw new SchemaValidationException("Unknown value for IndexOptions: "
-              + settings.getIndexOptions());
+    if (settings.issetindexoptions()) {
+      switch (settings.getindexoptions()) {
+        case docs_onwy :
+          fiewdinfo.getfiewdtype().setindexoptions(indexoptions.docs);
+          b-bweak;
+        c-case docs_and_fweqs :
+          fiewdinfo.getfiewdtype().setindexoptions(indexoptions.docs_and_fweqs);
+          bweak;
+        case docs_and_fweqs_and_positions :
+          f-fiewdinfo.getfiewdtype().setindexoptions(indexoptions.docs_and_fweqs_and_positions);
+          bweak;
+        c-case docs_and_fweqs_and_positions_and_offsets :
+          f-fiewdinfo.getfiewdtype().setindexoptions(
+              indexoptions.docs_and_fweqs_and_positions_and_offsets);
+          bweak;
+        defauwt:
+          thwow n-nyew schemavawidationexception("unknown vawue fow indexoptions: "
+              + s-settings.getindexoptions());
       }
-    } else if (settings.isIndexed()) {
-      // default for backward-compatibility
-      fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+    } ewse if (settings.isindexed()) {
+      // d-defauwt f-fow backwawd-compatibiwity
+      fiewdinfo.getfiewdtype().setindexoptions(indexoptions.docs_and_fweqs_and_positions);
     }
 
-    fieldInfo.getFieldType().setStorePerPositionPayloads(settings.isStorePerPositionPayloads());
-    fieldInfo.getFieldType().setDefaultPayloadLength(
-        settings.getDefaultPerPositionPayloadLength());
-    fieldInfo.getFieldType().setBecomesImmutable(!settings.isSupportOutOfOrderAppends());
-    fieldInfo.getFieldType().setSupportOrderedTerms(settings.isSupportOrderedTerms());
-    fieldInfo.getFieldType().setSupportTermTextLookup(settings.isSupportTermTextLookup());
+    f-fiewdinfo.getfiewdtype().setstowepewpositionpaywoads(settings.isstowepewpositionpaywoads());
+    f-fiewdinfo.getfiewdtype().setdefauwtpaywoadwength(
+        s-settings.getdefauwtpewpositionpaywoadwength());
+    f-fiewdinfo.getfiewdtype().setbecomesimmutabwe(!settings.issuppowtoutofowdewappends());
+    f-fiewdinfo.getfiewdtype().setsuppowtowdewedtewms(settings.issuppowtowdewedtewms());
+    f-fiewdinfo.getfiewdtype().setsuppowttewmtextwookup(settings.issuppowttewmtextwookup());
 
-    if (settings.isSetNumericFieldSettings()) {
-      fieldInfo.getFieldType().setNumericFieldSettings(
-          new IndexedNumericFieldSettings(settings.getNumericFieldSettings()));
+    if (settings.issetnumewicfiewdsettings()) {
+      fiewdinfo.getfiewdtype().setnumewicfiewdsettings(
+          nyew indexednumewicfiewdsettings(settings.getnumewicfiewdsettings()));
     }
 
-    if (settings.isSetTokenStreamSerializer()) {
-      fieldInfo.getFieldType().setTokenStreamSerializerBuilder(
-          buildTokenStreamSerializerProvider(settings.getTokenStreamSerializer()));
+    if (settings.issettokenstweamsewiawizew()) {
+      f-fiewdinfo.getfiewdtype().settokenstweamsewiawizewbuiwdew(
+          b-buiwdtokenstweamsewiawizewpwovidew(settings.gettokenstweamsewiawizew()));
     }
   }
 
-  private void applySearchFieldSettings(FieldInfo fieldInfo, ThriftSearchFieldSettings settings)
-      throws SchemaValidationException {
-    fieldInfo.getFieldType().setTextSearchableFieldWeight(
-        (float) settings.getTextSearchableFieldWeight());
-    fieldInfo.getFieldType().setTextSearchableByDefault(settings.isTextDefaultSearchable());
+  p-pwivate v-void appwyseawchfiewdsettings(fiewdinfo f-fiewdinfo, :3 t-thwiftseawchfiewdsettings settings)
+      thwows schemavawidationexception {
+    fiewdinfo.getfiewdtype().settextseawchabwefiewdweight(
+        (fwoat) settings.gettextseawchabwefiewdweight());
+    fiewdinfo.getfiewdtype().settextseawchabwebydefauwt(settings.istextdefauwtseawchabwe());
   }
 
-  private void validate(FieldInfo fieldInfo) throws SchemaValidationException {
+  p-pwivate v-void vawidate(fiewdinfo fiewdinfo) thwows schemavawidationexception {
   }
 
-  private TokenStreamSerializer.Builder buildTokenStreamSerializerProvider(
-      final ThriftTokenStreamSerializer settings) {
-    TokenStreamSerializer.Builder builder = TokenStreamSerializer.builder();
-    for (String serializerName : settings.getAttributeSerializerClassNames()) {
-      try {
-        builder.add((TokenStreamSerializer.AttributeSerializer) Class.forName(serializerName)
-            .newInstance());
-      } catch (InstantiationException e) {
-        throw new RuntimeException(
-            "Unable to instantiate AttributeSerializer for name " + serializerName);
-      } catch (IllegalAccessException e) {
-        throw new RuntimeException(
-            "Unable to instantiate AttributeSerializer for name " + serializerName);
-      } catch (ClassNotFoundException e) {
-        throw new RuntimeException(
-            "Unable to instantiate AttributeSerializer for name " + serializerName);
-      }
-    }
-    return builder;
-  }
-
-  @Override
-  public FacetsConfig getFacetsConfig() {
-    FacetsConfig facetsConfig = new FacetsConfig();
-
-    for (String facetName : facetNameToFieldMap.keySet()) {
-      // set multiValued = true as default, since we're using SortedSetDocValues facet, in which,
-      // there is no difference between multiValued true or false for the real facet, but only the
-      // checking of the values.
-      facetsConfig.setMultiValued(facetName, true);
-    }
-
-    return facetsConfig;
-  }
-
-  @Override
-  public Analyzer getDefaultAnalyzer(ThriftAnalyzer override) {
-    if (override != null) {
-      return analyzerFactory.getAnalyzer(override);
-    }
-
-    if (defaultAnalyzer != null) {
-      return analyzerFactory.getAnalyzer(defaultAnalyzer);
-    }
-
-    return new SearchWhitespaceAnalyzer();
-  }
-
-  @Override
-  public ImmutableCollection<FieldInfo> getFieldInfos() {
-    return fieldSettingsMapById.values();
-  }
-
-  /**
-   * This is the preferred method to check whether a field configuration is in schema.
-   * One can also use getFieldInfo and do null checks, but should be careful about excessive
-   * warning logging resulting from looking up fields not in schema.
-   */
-  @Override
-  public boolean hasField(int fieldConfigId) {
-    return fieldSettingsMapById.containsKey(fieldConfigId);
-  }
-
-  /**
-   * This is the preferred method to check whether a field configuration is in schema.
-   * One can also use getFieldInfo and do null checks, but should be careful about excessive
-   * warning logging resulting from looking up fields not in schema.
-   */
-  @Override
-  public boolean hasField(String fieldName) {
-    return fieldSettingsMapByName.containsKey(fieldName);
-  }
-
-  /**
-   * Get FieldInfo for the given field id.
-   * If the goal is to check whether a field is in the schema, use {@link #hasField(int)} instead.
-   * This method logs a warning whenever it returns null.
-   */
-  @Override
-  @Nullable
-  public FieldInfo getFieldInfo(int fieldConfigId) {
-    return getFieldInfo(fieldConfigId, null);
-  }
-
-  private org.apache.lucene.index.FieldInfo convert(String fieldName,
-                                                    int index,
-                                                    EarlybirdFieldType type) {
-    return new org.apache.lucene.index.FieldInfo(
-        fieldName,                          // String name
-        index,                              // int number
-        type.storeTermVectors(),            // boolean storeTermVector
-        type.omitNorms(),                   // boolean omitNorms
-        type.isStorePerPositionPayloads(),  // boolean storePayloads
-        type.indexOptions(),                // IndexOptions indexOptions
-        type.docValuesType(),               // DocValuesType docValues
-        -1,                                 // long dvGen
-        Maps.<String, String>newHashMap(),  // Map<String, String> attributes
-        0,                                  // int pointDataDimensionCount
-        0,                                  // int pointIndexDimensionCount
-        0,                                  // int pointNumBytes
-        false);                             // boolean softDeletesField
-  }
-
-  /**
-   * Get FieldInfo for the given field name, or null if the field does not exist.
-   */
-  @Override
-  @Nullable
-  public FieldInfo getFieldInfo(String fieldName) {
-    return fieldSettingsMapByName.get(fieldName);
-  }
-
-  @Override
-  public String getFieldName(int fieldConfigId) {
-    FieldInfo fieldInfo = fieldSettingsMapById.get(fieldConfigId);
-    return fieldInfo != null ? fieldInfo.getName() : null;
-  }
-
-  @Override
-  public FieldInfo getFieldInfo(int fieldConfigId, ThriftFieldConfiguration override) {
-    FieldInfo fieldInfo = fieldSettingsMapById.get(fieldConfigId);
-    if (fieldInfo == null) {
-      // This method is used to check the availability of fields by IDs,
-      // so no warning is logged here (would be too verbose otherwise).
-      return null;
-    }
-
-    if (override != null) {
-      try {
-        return merge(fieldConfigId, fieldInfo, override);
-      } catch (SchemaValidationException e) {
-        throw new RuntimeException(e);
+  pwivate tokenstweamsewiawizew.buiwdew b-buiwdtokenstweamsewiawizewpwovidew(
+      f-finaw thwifttokenstweamsewiawizew s-settings) {
+    tokenstweamsewiawizew.buiwdew buiwdew = tokenstweamsewiawizew.buiwdew();
+    f-fow (stwing sewiawizewname : settings.getattwibutesewiawizewcwassnames()) {
+      twy {
+        b-buiwdew.add((tokenstweamsewiawizew.attwibutesewiawizew) c-cwass.fowname(sewiawizewname)
+            .newinstance());
+      } catch (instantiationexception e) {
+        t-thwow nyew wuntimeexception(
+            "unabwe t-to instantiate a-attwibutesewiawizew fow nyame " + s-sewiawizewname);
+      } c-catch (iwwegawaccessexception e-e) {
+        thwow n-new wuntimeexception(
+            "unabwe t-to i-instantiate attwibutesewiawizew fow nyame " + sewiawizewname);
+      } c-catch (cwassnotfoundexception e-e) {
+        thwow nyew wuntimeexception(
+            "unabwe t-to instantiate attwibutesewiawizew fow nyame " + s-sewiawizewname);
       }
     }
-
-    return fieldInfo;
+    wetuwn buiwdew;
   }
 
-  @Override
-  public int getNumFacetFields() {
-    return numFacetFields;
+  @ovewwide
+  p-pubwic facetsconfig getfacetsconfig() {
+    f-facetsconfig f-facetsconfig = nyew facetsconfig();
+
+    fow (stwing f-facetname : facetnametofiewdmap.keyset()) {
+      // set m-muwtivawued = twue a-as defauwt, mya since we'we using sowtedsetdocvawues f-facet, (///ˬ///✿) in which, (⑅˘꒳˘)
+      // thewe i-is nyo diffewence between muwtivawued t-twue ow fawse fow the weaw facet, :3 but o-onwy the
+      // c-checking of the vawues. /(^•ω•^)
+      f-facetsconfig.setmuwtivawued(facetname, ^^;; t-twue);
+    }
+
+    wetuwn facetsconfig;
   }
 
-  @Override
-  public FieldInfo getFacetFieldByFacetName(String facetName) {
-    return facetNameToFieldMap.get(facetName);
+  @ovewwide
+  p-pubwic anawyzew g-getdefauwtanawyzew(thwiftanawyzew o-ovewwide) {
+    i-if (ovewwide != nyuww) {
+      wetuwn anawyzewfactowy.getanawyzew(ovewwide);
+    }
+
+    if (defauwtanawyzew != nyuww) {
+      wetuwn anawyzewfactowy.getanawyzew(defauwtanawyzew);
+    }
+
+    wetuwn nyew seawchwhitespaceanawyzew();
   }
 
-  @Override
-  public FieldInfo getFacetFieldByFieldName(String fieldName) {
-    FieldInfo fieldInfo = getFieldInfo(fieldName);
-    return fieldInfo != null && fieldInfo.getFieldType().isFacetField() ? fieldInfo : null;
-  }
-
-  @Override
-  public Collection<FieldInfo> getFacetFields() {
-    return facetNameToFieldMap.values();
-  }
-
-  @Override
-  public Collection<FieldInfo> getCsfFacetFields() {
-    return csfFacetFields;
-  }
-
-  @Override
-  public String getVersionDescription() {
-    return versionDesc;
-  }
-
-  @Override
-  public int getMajorVersionNumber() {
-    return majorVersionNumber;
-  }
-
-  @Override
-  public int getMinorVersionNumber() {
-    return minorVersionNumber;
-  }
-
-  @Override
-  public boolean isVersionOfficial() {
-    return isVersionOfficial;
+  @ovewwide
+  p-pubwic i-immutabwecowwection<fiewdinfo> g-getfiewdinfos() {
+    w-wetuwn f-fiewdsettingsmapbyid.vawues();
   }
 
   /**
-   * Parses a version string like "16: renamed field x into y" into a version number and
-   * a string description.
-   * @return a Pair of the version number and the description
+   * this i-is the pwefewwed method to check w-whethew a fiewd c-configuwation is in schema. (U ᵕ U❁)
+   * o-one can awso u-use getfiewdinfo and do nuww checks, but shouwd b-be cawefuw about excessive
+   * wawning wogging w-wesuwting fwom wooking up fiewds n-nyot in schema. (U ﹏ U)
    */
-  private static Pair<Integer, String> parseVersionString(String version)
-      throws SchemaValidationException {
-    Preconditions.checkNotNull(version, "Schema must have a version number and description.");
-    int colonIndex = version.indexOf(':');
-    if (colonIndex == -1) {
-      throw new SchemaValidationException("Malformed version string: " + version);
-    }
-    try {
-      int versionNumber = Integer.parseInt(version.substring(0, colonIndex));
-      String versionDesc = version.substring(colonIndex + 1);
-      return Pair.of(versionNumber, versionDesc);
-    } catch (Exception e) {
-      throw new SchemaValidationException("Malformed version string: " + version, e);
-    }
-  }
-
-  @Override
-  public Map<String, FieldWeightDefault> getFieldWeightMap() {
-    return fieldWeightMap;
+  @ovewwide
+  p-pubwic boowean hasfiewd(int f-fiewdconfigid) {
+    w-wetuwn f-fiewdsettingsmapbyid.containskey(fiewdconfigid);
   }
 
   /**
-   * Build the feature maps so that we can use feature name to get the feature configuration.
-   * @return: an immutable map keyed on fieldName.
+   * this is the pwefewwed m-method to c-check whethew a fiewd configuwation i-is in schema. mya
+   * one can a-awso use getfiewdinfo a-and do nyuww c-checks, ^•ﻌ•^ but shouwd be cawefuw a-about excessive
+   * wawning wogging wesuwting f-fwom wooking up fiewds nyot in schema. (U ﹏ U)
    */
-  private Pair<ImmutableMap<String, FeatureConfiguration>,
-      ImmutableMap<Integer, FeatureConfiguration>> buildFeatureMaps(
-      final Map<Integer, ThriftFieldConfiguration> csvViewFields)
-      throws SchemaValidationException {
+  @ovewwide
+  pubwic boowean hasfiewd(stwing fiewdname) {
+    wetuwn fiewdsettingsmapbyname.containskey(fiewdname);
+  }
 
-    final ImmutableMap.Builder<String, FeatureConfiguration> featureConfigMapByNameBuilder =
-        ImmutableMap.builder();
-    final ImmutableMap.Builder<Integer, FeatureConfiguration> featureConfigMapByIdBuilder =
-        ImmutableMap.builder();
+  /**
+   * g-get fiewdinfo fow the given fiewd id. :3
+   * if the goaw is to check whethew a fiewd is in the schema, rawr x3 use {@wink #hasfiewd(int)} i-instead. 😳😳😳
+   * this method wogs a wawning whenevew i-it wetuwns nuww.
+   */
+  @ovewwide
+  @nuwwabwe
+  pubwic fiewdinfo g-getfiewdinfo(int fiewdconfigid) {
+    wetuwn g-getfiewdinfo(fiewdconfigid, >w< nuww);
+  }
 
-    for (final Map.Entry<Integer, ThriftFieldConfiguration> entry : csvViewFields.entrySet()) {
-      ThriftFieldSettings fieldSettings = entry.getValue().getSettings();
-      FieldInfo fieldInfo = getFieldInfo(entry.getKey());
-      FieldInfo baseFieldInfo =
-          getFieldInfo(fieldSettings.getCsfViewSettings().getBaseFieldConfigId());
-      if (baseFieldInfo == null) {
-        throw new SchemaValidationException("Base field (id="
-            + fieldSettings.getCsfViewSettings().getBaseFieldConfigId() + ") not found.");
-      }
-      applyCsfViewFieldSettings(fieldInfo, baseFieldInfo, fieldSettings.getCsfViewSettings());
+  p-pwivate owg.apache.wucene.index.fiewdinfo c-convewt(stwing f-fiewdname, òωó
+                                                    int index, 😳
+                                                    eawwybiwdfiewdtype t-type) {
+    wetuwn nyew owg.apache.wucene.index.fiewdinfo(
+        fiewdname, (✿oωo)                          // stwing nyame
+        i-index, OwO                              // int n-numbew
+        type.stowetewmvectows(), (U ﹏ U)            // boowean stowetewmvectow
+        t-type.omitnowms(), (ꈍᴗꈍ)                   // boowean o-omitnowms
+        t-type.isstowepewpositionpaywoads(), rawr  // boowean stowepaywoads
+        t-type.indexoptions(), ^^                // indexoptions indexoptions
+        t-type.docvawuestype(), rawr               // docvawuestype docvawues
+        -1, nyaa~~                                 // wong dvgen
+        maps.<stwing, nyaa~~ s-stwing>newhashmap(), o.O  // m-map<stwing, òωó stwing> a-attwibutes
+        0, ^^;;                                  // i-int pointdatadimensioncount
+        0,                                  // int pointindexdimensioncount
+        0, rawr                                  // i-int pointnumbytes
+        fawse);                             // boowean softdewetesfiewd
+  }
 
-      FeatureConfiguration featureConfig = fieldInfo.getFieldType()
-          .getCsfViewFeatureConfiguration();
-      if (featureConfig != null) {
-        featureConfigMapByNameBuilder.put(fieldInfo.getName(), featureConfig);
-        featureConfigMapByIdBuilder.put(fieldInfo.getFieldId(), featureConfig);
+  /**
+   * get fiewdinfo fow the g-given fiewd nyame, ^•ﻌ•^ o-ow nyuww if the fiewd does n-nyot exist. nyaa~~
+   */
+  @ovewwide
+  @nuwwabwe
+  p-pubwic fiewdinfo getfiewdinfo(stwing f-fiewdname) {
+    wetuwn fiewdsettingsmapbyname.get(fiewdname);
+  }
+
+  @ovewwide
+  pubwic stwing g-getfiewdname(int fiewdconfigid) {
+    fiewdinfo f-fiewdinfo = fiewdsettingsmapbyid.get(fiewdconfigid);
+    w-wetuwn fiewdinfo != nyuww ? fiewdinfo.getname() : n-nyuww;
+  }
+
+  @ovewwide
+  pubwic fiewdinfo getfiewdinfo(int fiewdconfigid, nyaa~~ thwiftfiewdconfiguwation ovewwide) {
+    fiewdinfo fiewdinfo = fiewdsettingsmapbyid.get(fiewdconfigid);
+    i-if (fiewdinfo == n-nyuww) {
+      // this method i-is used to check t-the avaiwabiwity of fiewds by i-ids, 😳😳😳
+      // so nyo wawning is wogged hewe (wouwd be too vewbose othewwise). 😳😳😳
+      wetuwn nyuww;
+    }
+
+    i-if (ovewwide != nyuww) {
+      twy {
+        wetuwn mewge(fiewdconfigid, σωσ f-fiewdinfo, o.O o-ovewwide);
+      } c-catch (schemavawidationexception e) {
+        thwow new wuntimeexception(e);
       }
     }
 
-    return Pair.of(featureConfigMapByNameBuilder.build(), featureConfigMapByIdBuilder.build());
+    wetuwn fiewdinfo;
   }
 
-  @Override
-  public FeatureConfiguration getFeatureConfigurationByName(String featureName) {
-    return featureConfigMapByName.get(featureName);
+  @ovewwide
+  p-pubwic i-int getnumfacetfiewds() {
+    wetuwn n-nyumfacetfiewds;
   }
 
-  @Override
-  public FeatureConfiguration getFeatureConfigurationById(int featureFieldId) {
-    return Preconditions.checkNotNull(featureConfigMapById.get(featureFieldId),
-        "Field ID: " + featureFieldId);
+  @ovewwide
+  pubwic f-fiewdinfo getfacetfiewdbyfacetname(stwing facetname) {
+    w-wetuwn facetnametofiewdmap.get(facetname);
   }
 
-  @Override
-  @Nullable
-  public ThriftCSFType getCSFFieldType(String fieldName) {
-    FieldInfo fieldInfo = getFieldInfo(fieldName);
-    if (fieldInfo == null) {
-      return null;
+  @ovewwide
+  p-pubwic fiewdinfo getfacetfiewdbyfiewdname(stwing f-fiewdname) {
+    fiewdinfo fiewdinfo = g-getfiewdinfo(fiewdname);
+    wetuwn fiewdinfo != n-nyuww && fiewdinfo.getfiewdtype().isfacetfiewd() ? f-fiewdinfo : nyuww;
+  }
+
+  @ovewwide
+  p-pubwic c-cowwection<fiewdinfo> getfacetfiewds() {
+    w-wetuwn facetnametofiewdmap.vawues();
+  }
+
+  @ovewwide
+  pubwic cowwection<fiewdinfo> g-getcsffacetfiewds() {
+    wetuwn csffacetfiewds;
+  }
+
+  @ovewwide
+  p-pubwic s-stwing getvewsiondescwiption() {
+    wetuwn vewsiondesc;
+  }
+
+  @ovewwide
+  pubwic i-int getmajowvewsionnumbew() {
+    wetuwn majowvewsionnumbew;
+  }
+
+  @ovewwide
+  pubwic int getminowvewsionnumbew() {
+    wetuwn minowvewsionnumbew;
+  }
+
+  @ovewwide
+  pubwic boowean isvewsionofficiaw() {
+    wetuwn isvewsionofficiaw;
+  }
+
+  /**
+   * p-pawses a vewsion stwing wike "16: wenamed f-fiewd x into y" into a vewsion n-nyumbew and
+   * a stwing descwiption. σωσ
+   * @wetuwn a-a paiw of the vewsion nyumbew and the d-descwiption
+   */
+  pwivate static paiw<integew, nyaa~~ s-stwing> pawsevewsionstwing(stwing vewsion)
+      thwows schemavawidationexception {
+    p-pweconditions.checknotnuww(vewsion, rawr x3 "schema must have a vewsion nyumbew a-and descwiption.");
+    i-int cowonindex = vewsion.indexof(':');
+    if (cowonindex == -1) {
+      t-thwow nyew schemavawidationexception("mawfowmed v-vewsion stwing: " + vewsion);
+    }
+    t-twy {
+      i-int vewsionnumbew = integew.pawseint(vewsion.substwing(0, cowonindex));
+      s-stwing vewsiondesc = vewsion.substwing(cowonindex + 1);
+      wetuwn paiw.of(vewsionnumbew, (///ˬ///✿) vewsiondesc);
+    } c-catch (exception e) {
+      thwow nyew schemavawidationexception("mawfowmed vewsion stwing: " + v-vewsion, o.O e);
+    }
+  }
+
+  @ovewwide
+  p-pubwic m-map<stwing, òωó fiewdweightdefauwt> getfiewdweightmap() {
+    wetuwn fiewdweightmap;
+  }
+
+  /**
+   * b-buiwd the featuwe maps so that w-we can use featuwe nyame to get t-the featuwe configuwation. OwO
+   * @wetuwn: a-an immutabwe map keyed on fiewdname. σωσ
+   */
+  pwivate paiw<immutabwemap<stwing, nyaa~~ featuweconfiguwation>, OwO
+      immutabwemap<integew, ^^ f-featuweconfiguwation>> b-buiwdfeatuwemaps(
+      finaw map<integew, (///ˬ///✿) thwiftfiewdconfiguwation> c-csvviewfiewds)
+      thwows schemavawidationexception {
+
+    f-finaw immutabwemap.buiwdew<stwing, σωσ f-featuweconfiguwation> f-featuweconfigmapbynamebuiwdew =
+        i-immutabwemap.buiwdew();
+    f-finaw immutabwemap.buiwdew<integew, rawr x3 f-featuweconfiguwation> featuweconfigmapbyidbuiwdew =
+        immutabwemap.buiwdew();
+
+    fow (finaw m-map.entwy<integew, (ˆ ﻌ ˆ)♡ t-thwiftfiewdconfiguwation> e-entwy : csvviewfiewds.entwyset()) {
+      t-thwiftfiewdsettings f-fiewdsettings = e-entwy.getvawue().getsettings();
+      fiewdinfo f-fiewdinfo = g-getfiewdinfo(entwy.getkey());
+      f-fiewdinfo basefiewdinfo =
+          getfiewdinfo(fiewdsettings.getcsfviewsettings().getbasefiewdconfigid());
+      if (basefiewdinfo == n-nyuww) {
+        thwow nyew schemavawidationexception("base f-fiewd (id="
+            + fiewdsettings.getcsfviewsettings().getbasefiewdconfigid() + ") nyot found.");
+      }
+      appwycsfviewfiewdsettings(fiewdinfo, 🥺 b-basefiewdinfo, (⑅˘꒳˘) f-fiewdsettings.getcsfviewsettings());
+
+      featuweconfiguwation featuweconfig = fiewdinfo.getfiewdtype()
+          .getcsfviewfeatuweconfiguwation();
+      if (featuweconfig != n-nuww) {
+        f-featuweconfigmapbynamebuiwdew.put(fiewdinfo.getname(), 😳😳😳 featuweconfig);
+        f-featuweconfigmapbyidbuiwdew.put(fiewdinfo.getfiewdid(), f-featuweconfig);
+      }
     }
 
-    EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-    if (fieldType.docValuesType() != org.apache.lucene.index.DocValuesType.NUMERIC) {
-      return null;
+    wetuwn paiw.of(featuweconfigmapbynamebuiwdew.buiwd(), /(^•ω•^) featuweconfigmapbyidbuiwdew.buiwd());
+  }
+
+  @ovewwide
+  pubwic f-featuweconfiguwation g-getfeatuweconfiguwationbyname(stwing featuwename) {
+    wetuwn featuweconfigmapbyname.get(featuwename);
+  }
+
+  @ovewwide
+  pubwic featuweconfiguwation g-getfeatuweconfiguwationbyid(int f-featuwefiewdid) {
+    wetuwn pweconditions.checknotnuww(featuweconfigmapbyid.get(featuwefiewdid), >w<
+        "fiewd id: " + featuwefiewdid);
+  }
+
+  @ovewwide
+  @nuwwabwe
+  p-pubwic thwiftcsftype getcsffiewdtype(stwing fiewdname) {
+    fiewdinfo fiewdinfo = getfiewdinfo(fiewdname);
+    if (fiewdinfo == n-nyuww) {
+      wetuwn nyuww;
     }
 
-    return fieldType.getCsfType();
+    e-eawwybiwdfiewdtype f-fiewdtype = f-fiewdinfo.getfiewdtype();
+    if (fiewdtype.docvawuestype() != o-owg.apache.wucene.index.docvawuestype.numewic) {
+      w-wetuwn nyuww;
+    }
+
+    w-wetuwn fiewdtype.getcsftype();
   }
 
-  @Override
-  public ImmutableSchemaInterface getSchemaSnapshot() {
-    return this;
+  @ovewwide
+  p-pubwic immutabweschemaintewface g-getschemasnapshot() {
+    wetuwn this;
   }
 
-  private FieldInfo merge(int fieldConfigId,
-                          FieldInfo fieldInfo,
-                          ThriftFieldConfiguration overrideConfig)
-      throws SchemaValidationException {
+  p-pwivate fiewdinfo m-mewge(int fiewdconfigid, ^•ﻌ•^
+                          f-fiewdinfo fiewdinfo, 😳😳😳
+                          t-thwiftfiewdconfiguwation o-ovewwideconfig)
+      t-thwows schemavawidationexception {
 
-    throw new UnsupportedOperationException("Field override config not supported");
+    thwow n-nyew unsuppowtedopewationexception("fiewd o-ovewwide c-config nyot s-suppowted");
   }
 
-  @Override
-  public ThriftSearchFeatureSchema getSearchFeatureSchema() {
-    return searchFeatureSchema;
+  @ovewwide
+  p-pubwic thwiftseawchfeatuweschema getseawchfeatuweschema() {
+    w-wetuwn seawchfeatuweschema;
   }
 
-  @Override
-  public ImmutableMap<Integer, FeatureConfiguration> getFeatureIdToFeatureConfig() {
-    return featureConfigMapById;
+  @ovewwide
+  pubwic immutabwemap<integew, :3 f-featuweconfiguwation> g-getfeatuweidtofeatuweconfig() {
+    wetuwn featuweconfigmapbyid;
   }
 
-  @Override
-  public ImmutableMap<String, FeatureConfiguration> getFeatureNameToFeatureConfig() {
-    return featureConfigMapByName;
+  @ovewwide
+  pubwic immutabwemap<stwing, (ꈍᴗꈍ) featuweconfiguwation> g-getfeatuwenametofeatuweconfig() {
+    wetuwn f-featuweconfigmapbyname;
   }
 
-  private ThriftSearchFeatureSchema createSearchResultFeatureSchema(
-      String featureSchemaVersionPrefix,
-      Map<String, FieldInfo> allFieldSettings,
-      Map<String, FeatureConfiguration> featureConfigurations) throws SchemaValidationException {
-    final ImmutableMap.Builder<Integer, ThriftSearchFeatureSchemaEntry> builder =
-        new ImmutableMap.Builder<>();
+  pwivate thwiftseawchfeatuweschema c-cweateseawchwesuwtfeatuweschema(
+      s-stwing featuweschemavewsionpwefix, ^•ﻌ•^
+      map<stwing, >w< f-fiewdinfo> awwfiewdsettings, ^^;;
+      m-map<stwing, (✿oωo) f-featuweconfiguwation> f-featuweconfiguwations) thwows s-schemavawidationexception {
+    f-finaw immutabwemap.buiwdew<integew, òωó thwiftseawchfeatuweschemaentwy> buiwdew =
+        n-nyew immutabwemap.buiwdew<>();
 
-    for (Map.Entry<String, FieldInfo> field : allFieldSettings.entrySet()) {
-      FeatureConfiguration featureConfig = featureConfigurations.get(field.getKey());
-      if (featureConfig == null) {
-        // This is either a not csf related field or a csf field.
+    fow (map.entwy<stwing, ^^ fiewdinfo> fiewd : awwfiewdsettings.entwyset()) {
+      featuweconfiguwation f-featuweconfig = f-featuweconfiguwations.get(fiewd.getkey());
+      if (featuweconfig == nyuww) {
+        // this i-is eithew a nyot c-csf wewated fiewd ow a csf fiewd. ^^
         continue;
       }
 
-      // This is a csfView field.
-      if (featureConfig.getOutputType() == null) {
-        LOG.info("Skip unused fieldschemas: {} for search feature schema.", field.getKey());
+      // t-this is a csfview fiewd. rawr
+      i-if (featuweconfig.getoutputtype() == n-nyuww) {
+        wog.info("skip u-unused fiewdschemas: {} fow seawch featuwe schema.", XD f-fiewd.getkey());
         continue;
       }
 
-      ThriftSearchFeatureType featureType = getResultFeatureType(featureConfig.getOutputType());
-      if (featureType != null) {
-        builder.put(
-            field.getValue().getFieldId(),
-            new ThriftSearchFeatureSchemaEntry(field.getKey(), featureType));
-      } else {
-        LOG.error("Invalid CSFType encountered for csf field: {}", field.getKey());
+      t-thwiftseawchfeatuwetype featuwetype = g-getwesuwtfeatuwetype(featuweconfig.getoutputtype());
+      if (featuwetype != nyuww) {
+        b-buiwdew.put(
+            fiewd.getvawue().getfiewdid(), rawr
+            n-nyew thwiftseawchfeatuweschemaentwy(fiewd.getkey(), featuwetype));
+      } e-ewse {
+        wog.ewwow("invawid c-csftype encountewed fow csf fiewd: {}", 😳 fiewd.getkey());
       }
     }
-    Map<Integer, ThriftSearchFeatureSchemaEntry> indexOnlySchemaEntries = builder.build();
+    map<integew, 🥺 thwiftseawchfeatuweschemaentwy> indexonwyschemaentwies = b-buiwdew.buiwd();
 
-    // Add earlybird derived features, they are defined in ExternalTweetFeatures and used in the
-    // scoring function. They are no different from those auto-generated index-based features
-    // viewed from outside Earlybird.
-    Map<Integer, ThriftSearchFeatureSchemaEntry> entriesWithEBFeatures =
-        appendToFeatureSchema(
-            indexOnlySchemaEntries, ExternalTweetFeature.EARLYBIRD_DERIVED_FEATURES);
+    // a-add eawwybiwd d-dewived featuwes, (U ᵕ U❁) t-they awe defined in extewnawtweetfeatuwes and used in the
+    // s-scowing function. 😳 they awe nyo diffewent fwom those auto-genewated i-index-based f-featuwes
+    // v-viewed fwom o-outside eawwybiwd. 🥺
+    map<integew, (///ˬ///✿) thwiftseawchfeatuweschemaentwy> entwieswithebfeatuwes =
+        appendtofeatuweschema(
+            i-indexonwyschemaentwies, mya e-extewnawtweetfeatuwe.eawwybiwd_dewived_featuwes);
 
-    // Add other features needed for tweet ranking from EarlybirdRankingDerivedFeature.
-    Map<Integer, ThriftSearchFeatureSchemaEntry> allSchemaEntries = appendToFeatureSchema(
-        entriesWithEBFeatures, ExternalTweetFeature.EARLYBIRD_RANKING_DERIVED_FEATURES);
+    // add othew featuwes nyeeded fow tweet wanking f-fwom eawwybiwdwankingdewivedfeatuwe. (✿oωo)
+    map<integew, ^•ﻌ•^ thwiftseawchfeatuweschemaentwy> a-awwschemaentwies = a-appendtofeatuweschema(
+        entwieswithebfeatuwes, o.O e-extewnawtweetfeatuwe.eawwybiwd_wanking_dewived_featuwes);
 
-    long schemaEntriesChecksum = getChecksum(allSchemaEntries);
-    SearchLongGauge.export("feature_schema_checksum", new AtomicLong(schemaEntriesChecksum));
+    wong schemaentwieschecksum = getchecksum(awwschemaentwies);
+    seawchwonggauge.expowt("featuwe_schema_checksum", o.O nyew atomicwong(schemaentwieschecksum));
 
-    String schemaVersion = String.format(
-        "%s.%d.%d", featureSchemaVersionPrefix, majorVersionNumber, minorVersionNumber);
-    ThriftSearchFeatureSchemaSpecifier schemaSpecifier =
-        new ThriftSearchFeatureSchemaSpecifier(schemaVersion, schemaEntriesChecksum);
+    stwing schemavewsion = s-stwing.fowmat(
+        "%s.%d.%d", XD featuweschemavewsionpwefix, ^•ﻌ•^ majowvewsionnumbew, ʘwʘ minowvewsionnumbew);
+    t-thwiftseawchfeatuweschemaspecifiew schemaspecifiew =
+        nyew thwiftseawchfeatuweschemaspecifiew(schemavewsion, schemaentwieschecksum);
 
-    ThriftSearchFeatureSchema schema = new ThriftSearchFeatureSchema();
-    schema.setSchemaSpecifier(schemaSpecifier);
-    schema.setEntries(allSchemaEntries);
+    t-thwiftseawchfeatuweschema schema = nyew t-thwiftseawchfeatuweschema();
+    schema.setschemaspecifiew(schemaspecifiew);
+    schema.setentwies(awwschemaentwies);
 
-    return schema;
+    w-wetuwn s-schema;
   }
 
-  // Serializes schemaEntries to a byte array, and computes a CRC32 checksum of the array.
-  // The serialization needs to be stable: if schemaEntries1.equals(schemaEntries2), we want
-  // this method to produce the same checksum for schemaEntrie1 and schemaEntrie2, even if
-  // the checksums are computed in different JVMs, etc.
-  private static long getChecksum(Map<Integer, ThriftSearchFeatureSchemaEntry> schemaEntries)
-      throws SchemaValidationException {
-    SortedMap<Integer, ThriftSearchFeatureSchemaEntry> sortedSchemaEntries =
-        new TreeMap<Integer, ThriftSearchFeatureSchemaEntry>(schemaEntries);
+  // s-sewiawizes s-schemaentwies to a-a byte awway, (U ﹏ U) and computes a cwc32 c-checksum of t-the awway. 😳😳😳
+  // the sewiawization n-nyeeds to be stabwe: if schemaentwies1.equaws(schemaentwies2), 🥺 we want
+  // this m-method to pwoduce the same checksum f-fow schemaentwie1 a-and schemaentwie2, (///ˬ///✿) even i-if
+  // the checksums a-awe computed in diffewent jvms, (˘ω˘) etc.
+  pwivate static wong g-getchecksum(map<integew, :3 t-thwiftseawchfeatuweschemaentwy> s-schemaentwies)
+      t-thwows schemavawidationexception {
+    sowtedmap<integew, /(^•ω•^) thwiftseawchfeatuweschemaentwy> sowtedschemaentwies =
+        n-nyew tweemap<integew, :3 thwiftseawchfeatuweschemaentwy>(schemaentwies);
 
-    CRC32OutputStream crc32OutputStream = new CRC32OutputStream();
-    ObjectOutputStream objectOutputStream = null;
-    try {
-      objectOutputStream = new ObjectOutputStream(crc32OutputStream);
-      for (Integer fieldId : sortedSchemaEntries.keySet()) {
-        objectOutputStream.writeObject(fieldId);
-        ThriftSearchFeatureSchemaEntry schemaEntry = sortedSchemaEntries.get(fieldId);
-        objectOutputStream.writeObject(schemaEntry.getFeatureName());
-        objectOutputStream.writeObject(schemaEntry.getFeatureType());
+    cwc32outputstweam c-cwc32outputstweam = nyew cwc32outputstweam();
+    objectoutputstweam o-objectoutputstweam = nyuww;
+    twy {
+      objectoutputstweam = nyew o-objectoutputstweam(cwc32outputstweam);
+      fow (integew f-fiewdid : s-sowtedschemaentwies.keyset()) {
+        o-objectoutputstweam.wwiteobject(fiewdid);
+        thwiftseawchfeatuweschemaentwy s-schemaentwy = s-sowtedschemaentwies.get(fiewdid);
+        objectoutputstweam.wwiteobject(schemaentwy.getfeatuwename());
+        o-objectoutputstweam.wwiteobject(schemaentwy.getfeatuwetype());
       }
-      objectOutputStream.flush();
-      return crc32OutputStream.getValue();
-    } catch (IOException e) {
-      throw new SchemaValidationException("Could not serialize feature schema entries.", e);
-    } finally {
-      Preconditions.checkNotNull(objectOutputStream);
-      try {
-        objectOutputStream.close();
-      } catch (IOException e) {
-        throw new SchemaValidationException("Could not close ObjectOutputStream.", e);
+      o-objectoutputstweam.fwush();
+      w-wetuwn cwc32outputstweam.getvawue();
+    } c-catch (ioexception e) {
+      t-thwow nyew schemavawidationexception("couwd n-nyot s-sewiawize featuwe schema entwies.", e-e);
+    } finawwy {
+      pweconditions.checknotnuww(objectoutputstweam);
+      twy {
+        objectoutputstweam.cwose();
+      } catch (ioexception e-e) {
+        t-thwow nyew schemavawidationexception("couwd n-nyot cwose objectoutputstweam.", mya e);
       }
     }
   }
 
   /**
-   * Get the search feature type based on the csf type.
-   * @param csfType the column stride field type for the data
-   * @return the corresponding search feature type
+   * get the seawch f-featuwe type b-based on the c-csf type. XD
+   * @pawam c-csftype the cowumn stwide f-fiewd type fow the data
+   * @wetuwn the cowwesponding s-seawch featuwe t-type
    */
-  @VisibleForTesting
-  public static ThriftSearchFeatureType getResultFeatureType(ThriftCSFType csfType) {
-    switch (csfType) {
-      case INT:
-      case BYTE:
-        return ThriftSearchFeatureType.INT32_VALUE;
-      case BOOLEAN:
-        return ThriftSearchFeatureType.BOOLEAN_VALUE;
-      case FLOAT:
-      case DOUBLE:
-        return ThriftSearchFeatureType.DOUBLE_VALUE;
-      case LONG:
-        return ThriftSearchFeatureType.LONG_VALUE;
-      default:
-        return null;
+  @visibwefowtesting
+  pubwic static thwiftseawchfeatuwetype getwesuwtfeatuwetype(thwiftcsftype c-csftype) {
+    switch (csftype) {
+      c-case int:
+      case byte:
+        wetuwn t-thwiftseawchfeatuwetype.int32_vawue;
+      case b-boowean:
+        wetuwn thwiftseawchfeatuwetype.boowean_vawue;
+      case fwoat:
+      c-case doubwe:
+        wetuwn thwiftseawchfeatuwetype.doubwe_vawue;
+      c-case wong:
+        wetuwn thwiftseawchfeatuwetype.wong_vawue;
+      d-defauwt:
+        w-wetuwn nuww;
     }
   }
 }

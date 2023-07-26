@@ -1,86 +1,86 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.CandidateResult
-import com.twitter.frigate.common.base.Invalid
-import com.twitter.frigate.common.base.OK
-import com.twitter.frigate.common.base.Result
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.refresh_handler.ResultWithDebugInfo
-import com.twitter.frigate.pushservice.take.candidate_validator.SendHandlerPostCandidateValidator
-import com.twitter.frigate.pushservice.take.candidate_validator.SendHandlerPreCandidateValidator
-import com.twitter.frigate.pushservice.thriftscala.PushStatus
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.candidatedetaiws
+i-impowt com.twittew.fwigate.common.base.candidatewesuwt
+i-impowt c-com.twittew.fwigate.common.base.invawid
+i-impowt c-com.twittew.fwigate.common.base.ok
+impowt com.twittew.fwigate.common.base.wesuwt
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.wefwesh_handwew.wesuwtwithdebuginfo
+impowt com.twittew.fwigate.pushsewvice.take.candidate_vawidatow.sendhandwewpostcandidatevawidatow
+i-impowt com.twittew.fwigate.pushsewvice.take.candidate_vawidatow.sendhandwewpwecandidatevawidatow
+impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushstatus
+impowt com.twittew.hewmit.pwedicate.namedpwedicate
+i-impowt com.twittew.utiw.futuwe
 
-class SendHandlerPredicateUtil()(globalStats: StatsReceiver) {
-  implicit val statsReceiver: StatsReceiver =
-    globalStats.scope("SendHandler")
-  private val validateStats: StatsReceiver = statsReceiver.scope("validate")
+cwass sendhandwewpwedicateutiw()(gwobawstats: s-statsweceivew) {
+  impwicit vaw statsweceivew: statsweceivew =
+    g-gwobawstats.scope("sendhandwew")
+  pwivate v-vaw vawidatestats: s-statsweceivew = statsweceivew.scope("vawidate")
 
-  private def updateFilteredStatusExptStats(candidate: PushCandidate, predName: String): Unit = {
+  pwivate def updatefiwtewedstatusexptstats(candidate: pushcandidate, >_< p-pwedname: stwing): unit = {
 
-    val recTypeStat = globalStats.scope(
-      candidate.commonRecType.toString
+    vaw wectypestat = gwobawstats.scope(
+      candidate.commonwectype.tostwing
     )
 
-    recTypeStat.counter(PushStatus.Filtered.toString).incr()
-    recTypeStat
-      .scope(PushStatus.Filtered.toString)
-      .counter(predName)
-      .incr()
+    w-wectypestat.countew(pushstatus.fiwtewed.tostwing).incw()
+    wectypestat
+      .scope(pushstatus.fiwtewed.tostwing)
+      .countew(pwedname)
+      .incw()
   }
 
   /**
-   * Parsing the candidateValidtor result into desired format for preValidation before ml filtering
-   * @param hydratedCandidates
-   * @param candidateValidator
-   * @return
+   * pawsing t-the candidatevawidtow w-wesuwt i-into desiwed f-fowmat fow pwevawidation befowe mw fiwtewing
+   * @pawam h-hydwatedcandidates
+   * @pawam candidatevawidatow
+   * @wetuwn
    */
-  def preValidationForCandidate(
-    hydratedCandidates: Seq[CandidateDetails[PushCandidate]],
-    candidateValidator: SendHandlerPreCandidateValidator
-  ): Future[
-    (Seq[CandidateDetails[PushCandidate]], Seq[CandidateResult[PushCandidate, Result]])
+  def pwevawidationfowcandidate(
+    h-hydwatedcandidates: seq[candidatedetaiws[pushcandidate]], >w<
+    candidatevawidatow: sendhandwewpwecandidatevawidatow
+  ): futuwe[
+    (seq[candidatedetaiws[pushcandidate]], rawr seq[candidatewesuwt[pushcandidate, 😳 wesuwt]])
   ] = {
-    val predResultFuture =
-      Future.collect(
-        hydratedCandidates.map(hydratedCandidate =>
-          candidateValidator.validateCandidate(hydratedCandidate.candidate))
+    v-vaw pwedwesuwtfutuwe =
+      futuwe.cowwect(
+        h-hydwatedcandidates.map(hydwatedcandidate =>
+          c-candidatevawidatow.vawidatecandidate(hydwatedcandidate.candidate))
       )
 
-    predResultFuture.map { results =>
-      results
-        .zip(hydratedCandidates)
-        .foldLeft(
+    p-pwedwesuwtfutuwe.map { wesuwts =>
+      wesuwts
+        .zip(hydwatedcandidates)
+        .fowdweft(
           (
-            Seq.empty[CandidateDetails[PushCandidate]],
-            Seq.empty[CandidateResult[PushCandidate, Result]]
+            seq.empty[candidatedetaiws[pushcandidate]], >w<
+            seq.empty[candidatewesuwt[pushcandidate, (⑅˘꒳˘) w-wesuwt]]
           )
         ) {
-          case ((goodCandidates, filteredCandidates), (result, candidateDetails)) =>
-            result match {
-              case None =>
-                (goodCandidates :+ candidateDetails, filteredCandidates)
-              case Some(pred: NamedPredicate[_]) =>
-                val r = Invalid(Some(pred.name))
+          c-case ((goodcandidates, OwO fiwtewedcandidates), (ꈍᴗꈍ) (wesuwt, 😳 c-candidatedetaiws)) =>
+            w-wesuwt match {
+              case nyone =>
+                (goodcandidates :+ c-candidatedetaiws, fiwtewedcandidates)
+              c-case some(pwed: nyamedpwedicate[_]) =>
+                vaw w = i-invawid(some(pwed.name))
                 (
-                  goodCandidates,
-                  filteredCandidates :+ CandidateResult[PushCandidate, Result](
-                    candidateDetails.candidate,
-                    candidateDetails.source,
-                    r
+                  goodcandidates, 😳😳😳
+                  f-fiwtewedcandidates :+ candidatewesuwt[pushcandidate, mya w-wesuwt](
+                    c-candidatedetaiws.candidate, mya
+                    candidatedetaiws.souwce, (⑅˘꒳˘)
+                    w
                   )
                 )
-              case Some(_) =>
-                val r = Invalid(Some("Filtered by un-named predicate"))
+              case some(_) =>
+                vaw w = invawid(some("fiwtewed by un-named pwedicate"))
                 (
-                  goodCandidates,
-                  filteredCandidates :+ CandidateResult[PushCandidate, Result](
-                    candidateDetails.candidate,
-                    candidateDetails.source,
-                    r
+                  g-goodcandidates, (U ﹏ U)
+                  f-fiwtewedcandidates :+ candidatewesuwt[pushcandidate, mya w-wesuwt](
+                    c-candidatedetaiws.candidate, ʘwʘ
+                    c-candidatedetaiws.souwce, (˘ω˘)
+                    w
                   )
                 )
             }
@@ -89,40 +89,40 @@ class SendHandlerPredicateUtil()(globalStats: StatsReceiver) {
   }
 
   /**
-   * Parsing the candidateValidtor result into desired format for postValidation including and after ml filtering
-   * @param candidate
-   * @param candidateValidator
-   * @return
+   * pawsing the candidatevawidtow w-wesuwt into desiwed fowmat fow postvawidation incwuding and aftew mw fiwtewing
+   * @pawam c-candidate
+   * @pawam candidatevawidatow
+   * @wetuwn
    */
-  def postValidationForCandidate(
-    candidate: PushCandidate,
-    candidateValidator: SendHandlerPostCandidateValidator
-  ): Future[ResultWithDebugInfo] = {
-    val predResultFuture =
-      candidateValidator.validateCandidate(candidate)
+  d-def postvawidationfowcandidate(
+    c-candidate: p-pushcandidate, (U ﹏ U)
+    candidatevawidatow: s-sendhandwewpostcandidatevawidatow
+  ): f-futuwe[wesuwtwithdebuginfo] = {
+    v-vaw pwedwesuwtfutuwe =
+      candidatevawidatow.vawidatecandidate(candidate)
 
-    predResultFuture.map {
-      case (Some(pred: NamedPredicate[_])) =>
-        validateStats.counter("filtered_by_named_general_predicate").incr()
-        updateFilteredStatusExptStats(candidate, pred.name)
-        ResultWithDebugInfo(
-          Invalid(Some(pred.name)),
-          Nil
+    p-pwedwesuwtfutuwe.map {
+      case (some(pwed: nyamedpwedicate[_])) =>
+        v-vawidatestats.countew("fiwtewed_by_named_genewaw_pwedicate").incw()
+        u-updatefiwtewedstatusexptstats(candidate, ^•ﻌ•^ p-pwed.name)
+        w-wesuwtwithdebuginfo(
+          i-invawid(some(pwed.name)), (˘ω˘)
+          nyiw
         )
 
-      case Some(_) =>
-        validateStats.counter("filtered_by_unnamed_general_predicate").incr()
-        updateFilteredStatusExptStats(candidate, predName = "unk")
-        ResultWithDebugInfo(
-          Invalid(Some("unnamed_candidate_predicate")),
-          Nil
+      case some(_) =>
+        vawidatestats.countew("fiwtewed_by_unnamed_genewaw_pwedicate").incw()
+        u-updatefiwtewedstatusexptstats(candidate, :3 pwedname = "unk")
+        wesuwtwithdebuginfo(
+          invawid(some("unnamed_candidate_pwedicate")), ^^;;
+          niw
         )
 
       case _ =>
-        validateStats.counter("accepted_push_ok").incr()
-        ResultWithDebugInfo(
-          OK,
-          Nil
+        v-vawidatestats.countew("accepted_push_ok").incw()
+        wesuwtwithdebuginfo(
+          ok, 🥺
+          nyiw
         )
     }
   }

@@ -1,63 +1,63 @@
-package com.twitter.ann.manhattan
+package com.twittew.ann.manhattan
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.{EmbeddingProducer, EmbeddingType}
-import com.twitter.bijection.Injection
-import com.twitter.ml.api.embedding.{EmbeddingBijection, EmbeddingSerDe}
-import com.twitter.ml.api.{thriftscala => thrift}
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.impl.{
-  DescriptorP1L0,
-  ReadOnlyKeyDescriptor,
-  ValueDescriptor
+impowt com.twittew.ann.common.embeddingtype.embeddingvectow
+i-impowt c-com.twittew.ann.common.{embeddingpwoducew, -.- e-embeddingtype}
+impowt c-com.twittew.bijection.injection
+i-impowt com.twittew.mw.api.embedding.{embeddingbijection, 🥺 embeddingsewde}
+impowt c-com.twittew.mw.api.{thwiftscawa => t-thwift}
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.stowage.cwient.manhattan.bijections.bijections
+impowt com.twittew.stowage.cwient.manhattan.bijections.bijections.binawyscawainjection
+impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvendpoint
+i-impowt com.twittew.stowage.cwient.manhattan.kv.impw.{
+  descwiptowp1w0, o.O
+  w-weadonwykeydescwiptow, /(^•ω•^)
+  vawuedescwiptow
 }
 
-private[manhattan] class ManhattanEmbeddingProducer[T](
-  keyDescriptor: DescriptorP1L0.DKey[T],
-  valueDescriptor: ValueDescriptor.EmptyValue[EmbeddingVector],
-  manhattanEndpoint: ManhattanKVEndpoint)
-    extends EmbeddingProducer[T] {
+p-pwivate[manhattan] cwass manhattanembeddingpwoducew[t](
+  keydescwiptow: descwiptowp1w0.dkey[t], nyaa~~
+  v-vawuedescwiptow: vawuedescwiptow.emptyvawue[embeddingvectow], nyaa~~
+  m-manhattanendpoint: m-manhattankvendpoint)
+    extends embeddingpwoducew[t] {
 
   /**
-   * Lookup an embedding from manhattan given a key of type T.
+   * wookup an embedding fwom manhattan g-given a key of type t. :3
    *
-   * @return An embedding stitch.
-   *         An easy way to get a Future from a Stitch is to run Stitch.run(stitch)
+   * @wetuwn an embedding stitch. 😳😳😳
+   *         an easy w-way to get a futuwe fwom a stitch i-is to wun s-stitch.wun(stitch)
    */
-  override def produceEmbedding(input: T): Stitch[Option[EmbeddingVector]] = {
-    val fullKey = keyDescriptor.withPkey(input)
-    val stitchResult = manhattanEndpoint.get(fullKey, valueDescriptor)
-    stitchResult.map { resultOption =>
-      resultOption.map(_.contents)
+  o-ovewwide d-def pwoduceembedding(input: t): stitch[option[embeddingvectow]] = {
+    vaw f-fuwwkey = keydescwiptow.withpkey(input)
+    vaw stitchwesuwt = manhattanendpoint.get(fuwwkey, (˘ω˘) v-vawuedescwiptow)
+    stitchwesuwt.map { wesuwtoption =>
+      wesuwtoption.map(_.contents)
     }
   }
 }
 
-object ManhattanEmbeddingProducer {
-  private[manhattan] def keyDescriptor[T](
-    injection: Injection[T, Array[Byte]],
-    dataset: String
-  ): DescriptorP1L0.DKey[T] =
-    ReadOnlyKeyDescriptor(injection.andThen(Bijections.BytesBijection))
-      .withDataset(dataset)
+object manhattanembeddingpwoducew {
+  pwivate[manhattan] def k-keydescwiptow[t](
+    injection: i-injection[t, ^^ a-awway[byte]], :3
+    d-dataset: stwing
+  ): descwiptowp1w0.dkey[t] =
+    weadonwykeydescwiptow(injection.andthen(bijections.bytesbijection))
+      .withdataset(dataset)
 
-  private[manhattan] val EmbeddingDescriptor: ValueDescriptor.EmptyValue[
-    EmbeddingType.EmbeddingVector
+  pwivate[manhattan] v-vaw embeddingdescwiptow: v-vawuedescwiptow.emptyvawue[
+    embeddingtype.embeddingvectow
   ] = {
-    val embeddingBijection = new EmbeddingBijection(EmbeddingSerDe.floatEmbeddingSerDe)
-    val thriftInjection = BinaryScalaInjection[thrift.Embedding](thrift.Embedding)
-    ValueDescriptor(embeddingBijection.andThen(thriftInjection))
+    v-vaw e-embeddingbijection = nyew embeddingbijection(embeddingsewde.fwoatembeddingsewde)
+    v-vaw thwiftinjection = binawyscawainjection[thwift.embedding](thwift.embedding)
+    v-vawuedescwiptow(embeddingbijection.andthen(thwiftinjection))
   }
 
-  def apply[T](
-    dataset: String,
-    injection: Injection[T, Array[Byte]],
-    manhattanEndpoint: ManhattanKVEndpoint
-  ): EmbeddingProducer[T] = {
-    val descriptor = keyDescriptor(injection, dataset)
-    new ManhattanEmbeddingProducer(descriptor, EmbeddingDescriptor, manhattanEndpoint)
+  def appwy[t](
+    d-dataset: stwing, -.-
+    injection: i-injection[t, 😳 awway[byte]],
+    manhattanendpoint: manhattankvendpoint
+  ): e-embeddingpwoducew[t] = {
+    v-vaw descwiptow = keydescwiptow(injection, mya dataset)
+    nyew manhattanembeddingpwoducew(descwiptow, (˘ω˘) embeddingdescwiptow, >_< manhattanendpoint)
   }
 }

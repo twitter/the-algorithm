@@ -1,79 +1,79 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.Collection;
-import javax.naming.NamingException;
+impowt java.utiw.cowwection;
+i-impowt javax.naming.namingexception;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+i-impowt o-owg.apache.commons.pipewine.stageexception;
+i-impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+i-impowt o-owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
 
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.ManhattanCodedLocationProvider;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.util.Future;
+i-impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.batchedewement;
+impowt c-com.twittew.seawch.ingestew.pipewine.utiw.manhattancodedwocationpwovidew;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestageexception;
+i-impowt com.twittew.utiw.futuwe;
 
 /**
- * Read-only stage for looking up location info and populating it onto messages.
+ * wead-onwy s-stage fow wooking up wocation info and popuwating it onto m-messages. (˘ω˘)
  */
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public final class PopulateCodedLocationsBatchedStage
-    extends TwitterBatchedBaseStage<IngesterTwitterMessage, IngesterTwitterMessage> {
-  private static final String GEOCODE_DATASET_NAME = "ingester_geocode_profile_location";
+@consumedtypes(ingestewtwittewmessage.cwass)
+@pwoducesconsumed
+pubwic finaw cwass p-popuwatecodedwocationsbatchedstage
+    e-extends twittewbatchedbasestage<ingestewtwittewmessage, ^^ ingestewtwittewmessage> {
+  pwivate static finaw s-stwing geocode_dataset_name = "ingestew_geocode_pwofiwe_wocation";
 
-  private ManhattanCodedLocationProvider manhattanCodedLocationProvider = null;
+  pwivate manhattancodedwocationpwovidew manhattancodedwocationpwovidew = nyuww;
 
   /**
-   * Require lat/lon from TwitterMessage instead of lookup from coded_locations,
-   * do not batch sql, and simply emit messages passed in with regions populated on them
-   * rather than emitting to indexing queues.
+   * wequiwe wat/won f-fwom twittewmessage instead of w-wookup fwom coded_wocations, :3
+   * d-do nyot batch s-sqw, -.- and simpwy e-emit messages passed in with wegions popuwated o-on them
+   * wathew than emitting to indexing queues. 😳
    */
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @ovewwide
+  p-pwotected void doinnewpwepwocess() thwows stageexception, mya nyamingexception {
+    supew.doinnewpwepwocess();
+    c-commoninnewsetup();
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    super.innerSetup();
-    commonInnerSetup();
+  @ovewwide
+  pwotected void i-innewsetup() thwows p-pipewinestageexception, (˘ω˘) n-nyamingexception {
+    supew.innewsetup();
+    commoninnewsetup();
   }
 
-  private void commonInnerSetup() throws NamingException {
-    this.manhattanCodedLocationProvider = ManhattanCodedLocationProvider.createWithEndpoint(
-        wireModule.getJavaManhattanKVEndpoint(),
-        getStageNamePrefix(),
-        GEOCODE_DATASET_NAME);
+  pwivate void c-commoninnewsetup() t-thwows nyamingexception {
+    this.manhattancodedwocationpwovidew = m-manhattancodedwocationpwovidew.cweatewithendpoint(
+        w-wiwemoduwe.getjavamanhattankvendpoint(), >_<
+        getstagenamepwefix(), -.-
+        g-geocode_dataset_name);
   }
 
-  @Override
-  public void initStats() {
-    super.initStats();
+  @ovewwide
+  pubwic void initstats() {
+    s-supew.initstats();
   }
 
-  @Override
-  protected Class<IngesterTwitterMessage> getQueueObjectType() {
-    return IngesterTwitterMessage.class;
+  @ovewwide
+  pwotected cwass<ingestewtwittewmessage> getqueueobjecttype() {
+    w-wetuwn ingestewtwittewmessage.cwass;
   }
 
-  @Override
-  protected Future<Collection<IngesterTwitterMessage>> innerProcessBatch(Collection<BatchedElement
-      <IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
+  @ovewwide
+  pwotected f-futuwe<cowwection<ingestewtwittewmessage>> innewpwocessbatch(cowwection<batchedewement
+      <ingestewtwittewmessage, 🥺 i-ingestewtwittewmessage>> b-batch) {
 
-    Collection<IngesterTwitterMessage> batchedElements = extractOnlyElementsFromBatch(batch);
-    return manhattanCodedLocationProvider.populateCodedLatLon(batchedElements);
+    cowwection<ingestewtwittewmessage> batchedewements = extwactonwyewementsfwombatch(batch);
+    wetuwn manhattancodedwocationpwovidew.popuwatecodedwatwon(batchedewements);
   }
 
-  @Override
-  protected boolean needsToBeBatched(IngesterTwitterMessage message) {
-    return !message.hasGeoLocation() && (message.getLocation() != null)
-        && !message.getLocation().isEmpty();
+  @ovewwide
+  pwotected boowean needstobebatched(ingestewtwittewmessage m-message) {
+    w-wetuwn !message.hasgeowocation() && (message.getwocation() != nyuww)
+        && !message.getwocation().isempty();
   }
 
-  @Override
-  protected IngesterTwitterMessage transform(IngesterTwitterMessage element) {
-    return element;
+  @ovewwide
+  p-pwotected ingestewtwittewmessage t-twansfowm(ingestewtwittewmessage e-ewement) {
+    wetuwn ewement;
   }
 }

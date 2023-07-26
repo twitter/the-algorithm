@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsData;
+i-impowt com.twittew.seawch.common.schema.base.eawwybiwdfiewdtype;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentdata;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidefiewdindex;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdindexextensionsdata;
 
-public class TweetSearchLuceneIndexExtensionsData implements EarlybirdIndexExtensionsData {
-  @Override
-  public void setupExtensions(EarlybirdIndexSegmentAtomicReader atomicReader) throws IOException {
-    // If we use stock lucene to back the mappers and column stride fields,
-    // we need to initialize them
-    EarlybirdIndexSegmentData segmentData = atomicReader.getSegmentData();
-    DocValuesBasedTweetIDMapper tweetIDMapper =
-        (DocValuesBasedTweetIDMapper) segmentData.getDocIDToTweetIDMapper();
-    tweetIDMapper.initializeWithLuceneReader(
-        atomicReader,
-        getColumnStrideFieldIndex(segmentData, EarlybirdFieldConstant.ID_CSF_FIELD));
+pubwic c-cwass tweetseawchwuceneindexextensionsdata impwements eawwybiwdindexextensionsdata {
+  @ovewwide
+  pubwic void s-setupextensions(eawwybiwdindexsegmentatomicweadew atomicweadew) t-thwows ioexception {
+    // if we use stock wucene to back the mappews and cowumn s-stwide fiewds, (⑅˘꒳˘)
+    // we nyeed t-to initiawize t-them
+    eawwybiwdindexsegmentdata segmentdata = atomicweadew.getsegmentdata();
+    docvawuesbasedtweetidmappew tweetidmappew =
+        (docvawuesbasedtweetidmappew) s-segmentdata.getdocidtotweetidmappew();
+    tweetidmappew.initiawizewithwuceneweadew(
+        atomicweadew, /(^•ω•^)
+        getcowumnstwidefiewdindex(segmentdata, eawwybiwdfiewdconstant.id_csf_fiewd));
 
-    DocValuesBasedTimeMapper timeMapper =
-        (DocValuesBasedTimeMapper) segmentData.getTimeMapper();
-    timeMapper.initializeWithLuceneReader(
-        atomicReader,
-        getColumnStrideFieldIndex(segmentData, EarlybirdFieldConstant.CREATED_AT_CSF_FIELD));
+    d-docvawuesbasedtimemappew timemappew =
+        (docvawuesbasedtimemappew) s-segmentdata.gettimemappew();
+    t-timemappew.initiawizewithwuceneweadew(
+        a-atomicweadew, rawr x3
+        g-getcowumnstwidefiewdindex(segmentdata, (U ﹏ U) eawwybiwdfiewdconstant.cweated_at_csf_fiewd));
   }
 
-  private ColumnStrideFieldIndex getColumnStrideFieldIndex(
-      EarlybirdIndexSegmentData segmentData, EarlybirdFieldConstant csfField) {
-    String csfFieldName = csfField.getFieldName();
-    EarlybirdFieldType fieldType =
-        segmentData.getSchema().getFieldInfo(csfFieldName).getFieldType();
-    Preconditions.checkState(fieldType.isCsfLoadIntoRam());
-    return segmentData.getDocValuesManager().addColumnStrideField(csfFieldName, fieldType);
+  pwivate c-cowumnstwidefiewdindex getcowumnstwidefiewdindex(
+      eawwybiwdindexsegmentdata s-segmentdata, (U ﹏ U) eawwybiwdfiewdconstant csffiewd) {
+    stwing csffiewdname = csffiewd.getfiewdname();
+    eawwybiwdfiewdtype f-fiewdtype =
+        segmentdata.getschema().getfiewdinfo(csffiewdname).getfiewdtype();
+    p-pweconditions.checkstate(fiewdtype.iscsfwoadintowam());
+    w-wetuwn segmentdata.getdocvawuesmanagew().addcowumnstwidefiewd(csffiewdname, (⑅˘꒳˘) f-fiewdtype);
   }
 }

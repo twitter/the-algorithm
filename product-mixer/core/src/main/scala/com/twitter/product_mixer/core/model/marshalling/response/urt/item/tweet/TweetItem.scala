@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.ContextualTweetRef
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.ForwardPivot
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.contextuaw_wef.contextuawtweetwef
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.convewsation_annotation.convewsationannotation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot.fowwawdpivot
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tombstone.tombstoneinfo
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.badge
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.sociawcontext
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.pwewowwmetadata
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.pwomotedmetadata
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
 
-object TweetItem {
-  val TweetEntryNamespace = EntryNamespace("tweet")
-  val PromotedTweetEntryNamespace = EntryNamespace("promoted-tweet")
+o-object tweetitem {
+  vaw tweetentwynamespace = entwynamespace("tweet")
+  vaw pwomotedtweetentwynamespace = entwynamespace("pwomoted-tweet")
 }
 
-case class TweetItem(
-  override val id: Long,
-  override val entryNamespace: EntryNamespace,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  override val isPinned: Option[Boolean],
-  override val entryIdToReplace: Option[String],
-  socialContext: Option[SocialContext],
-  highlights: Option[TweetHighlights],
-  displayType: TweetDisplayType,
-  innerTombstoneInfo: Option[TombstoneInfo],
-  timelinesScoreInfo: Option[TimelinesScoreInfo],
-  hasModeratedReplies: Option[Boolean],
-  forwardPivot: Option[ForwardPivot],
-  innerForwardPivot: Option[ForwardPivot],
-  promotedMetadata: Option[PromotedMetadata],
-  conversationAnnotation: Option[ConversationAnnotation],
-  contextualTweetRef: Option[ContextualTweetRef],
-  prerollMetadata: Option[PrerollMetadata],
-  replyBadge: Option[Badge],
-  destination: Option[Url])
-    extends TimelineItem {
+case c-cwass tweetitem(
+  ovewwide v-vaw id: wong, ʘwʘ
+  o-ovewwide vaw entwynamespace: entwynamespace, (ˆ ﻌ ˆ)♡
+  ovewwide vaw sowtindex: option[wong], 😳😳😳
+  ovewwide v-vaw cwienteventinfo: option[cwienteventinfo], :3
+  ovewwide vaw feedbackactioninfo: option[feedbackactioninfo], OwO
+  ovewwide vaw ispinned: o-option[boowean], (U ﹏ U)
+  ovewwide v-vaw entwyidtowepwace: o-option[stwing], >w<
+  s-sociawcontext: o-option[sociawcontext], (U ﹏ U)
+  highwights: option[tweethighwights], 😳
+  dispwaytype: t-tweetdispwaytype, (ˆ ﻌ ˆ)♡
+  innewtombstoneinfo: option[tombstoneinfo], 😳😳😳
+  t-timewinesscoweinfo: option[timewinesscoweinfo], (U ﹏ U)
+  hasmodewatedwepwies: option[boowean], (///ˬ///✿)
+  fowwawdpivot: option[fowwawdpivot], 😳
+  innewfowwawdpivot: o-option[fowwawdpivot], 😳
+  pwomotedmetadata: o-option[pwomotedmetadata], σωσ
+  c-convewsationannotation: o-option[convewsationannotation], rawr x3
+  contextuawtweetwef: option[contextuawtweetwef], OwO
+  pwewowwmetadata: o-option[pwewowwmetadata], /(^•ω•^)
+  w-wepwybadge: option[badge], 😳😳😳
+  d-destination: o-option[uww])
+    extends timewineitem {
 
   /**
-   * Promoted tweets need to include the impression ID in the entry ID since some clients have
-   * client-side logic that deduplicates ads impression callbacks based on a combination of the
-   * tweet and impression IDs. Not including the impression ID will lead to over deduplication.
+   * p-pwomoted tweets nyeed to incwude t-the impwession id in the entwy id since some c-cwients have
+   * cwient-side w-wogic that dedupwicates ads impwession c-cawwbacks b-based on a combination of the
+   * tweet and impwession ids. ( ͡o ω ͡o ) not incwuding the impwession id wiww wead to ovew d-dedupwication. >_<
    */
-  override lazy val entryIdentifier: String = promotedMetadata
-    .map { metadata =>
-      val impressionId = metadata.impressionString match {
-        case Some(impressionString) if impressionString.nonEmpty => impressionString
-        case _ => throw new IllegalStateException(s"Promoted Tweet $id missing impression ID")
+  o-ovewwide wazy vaw entwyidentifiew: s-stwing = p-pwomotedmetadata
+    .map { m-metadata =>
+      vaw impwessionid = metadata.impwessionstwing match {
+        c-case some(impwessionstwing) if impwessionstwing.nonempty => impwessionstwing
+        case _ => thwow nyew iwwegawstateexception(s"pwomoted t-tweet $id missing impwession i-id")
       }
-      s"$entryNamespace-$id-$impressionId"
-    }.getOrElse(s"$entryNamespace-$id")
+      s-s"$entwynamespace-$id-$impwessionid"
+    }.getowewse(s"$entwynamespace-$id")
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  o-ovewwide def withsowtindex(sowtindex: w-wong): timewineentwy = c-copy(sowtindex = s-some(sowtindex))
 }

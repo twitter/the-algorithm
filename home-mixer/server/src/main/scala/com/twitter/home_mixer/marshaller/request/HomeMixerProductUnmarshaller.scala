@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.marshaller.request
+package com.twittew.home_mixew.mawshawwew.wequest
 
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProduct
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.wequest.fowwowingpwoduct
+impowt c-com.twittew.home_mixew.modew.wequest.fowyoupwoduct
+i-impowt c-com.twittew.home_mixew.modew.wequest.wistwecommendedusewspwoduct
+i-impowt com.twittew.home_mixew.modew.wequest.wisttweetspwoduct
+impowt c-com.twittew.home_mixew.modew.wequest.scowedtweetspwoduct
+impowt c-com.twittew.home_mixew.modew.wequest.subscwibedpwoduct
+i-impowt c-com.twittew.home_mixew.{thwiftscawa => t}
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class HomeMixerProductUnmarshaller @Inject() () {
+@singweton
+c-cwass homemixewpwoductunmawshawwew @inject() () {
 
-  def apply(product: t.Product): Product = product match {
-    case t.Product.Following => FollowingProduct
-    case t.Product.ForYou => ForYouProduct
-    case t.Product.ListManagement =>
-      throw new UnsupportedOperationException(s"This product is no longer used")
-    case t.Product.ScoredTweets => ScoredTweetsProduct
-    case t.Product.ListTweets => ListTweetsProduct
-    case t.Product.ListRecommendedUsers => ListRecommendedUsersProduct
-    case t.Product.Subscribed => SubscribedProduct
-    case t.Product.EnumUnknownProduct(value) =>
-      throw new UnsupportedOperationException(s"Unknown product: $value")
+  def appwy(pwoduct: t-t.pwoduct): pwoduct = pwoduct m-match {
+    case t.pwoduct.fowwowing => fowwowingpwoduct
+    case t-t.pwoduct.fowyou => fowyoupwoduct
+    c-case t.pwoduct.wistmanagement =>
+      t-thwow nyew unsuppowtedopewationexception(s"this pwoduct is nyo wongew used")
+    case t.pwoduct.scowedtweets => scowedtweetspwoduct
+    c-case t.pwoduct.wisttweets => wisttweetspwoduct
+    case t.pwoduct.wistwecommendedusews => wistwecommendedusewspwoduct
+    c-case t.pwoduct.subscwibed => subscwibedpwoduct
+    case t.pwoduct.enumunknownpwoduct(vawue) =>
+      t-thwow nyew u-unsuppowtedopewationexception(s"unknown p-pwoduct: $vawue")
   }
 }

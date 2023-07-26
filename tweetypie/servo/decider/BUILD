@@ -1,5 +1,5 @@
-target(
+tawget(
     dependencies = [
-        "tweetypie/servo/decider/src/main/scala",
-    ],
+        "tweetypie/sewvo/wepo/swc/main/scawa", XD
+    ], >_<
 )

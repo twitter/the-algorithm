@@ -1,18 +1,18 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.clustering
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twittew.simcwustews_v2.thwiftjava
+nyamespace py g-gen.twittew.simcwustews_v2.cwustewing
+#@namespace s-scawa com.twittew.simcwustews_v2.thwiftscawa
+#@namespace s-stwato c-com.twittew.simcwustews_v2
 
 /**
- * Struct that represents an ordered list of producer clusters.
- * The list is meant to be ordered by decreasing cluster size.
+ * s-stwuct that w-wepwesents an o-owdewed wist of p-pwoducew cwustews. 😳
+ * the wist is meant to be owdewed by decweasing cwustew size. XD
  **/
-struct OrderedClustersAndMembers {
-  1: required list<set<i64>> orderedClustersAndMembers (personalDataType = 'UserId')
-  // work around BQ not supporting nested struct such as list<set>
-  2: optional list<ClusterMembers> orderedClustersAndMembersStruct (personalDataType = 'UserId')
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct owdewedcwustewsandmembews {
+  1: wequiwed wist<set<i64>> owdewedcwustewsandmembews (pewsonawdatatype = 'usewid')
+  // w-wowk awound bq nyot suppowting n-nyested stwuct such as wist<set>
+  2: optionaw wist<cwustewmembews> o-owdewedcwustewsandmembewsstwuct (pewsonawdatatype = 'usewid')
+}(pewsisted = 'twue', :3 haspewsonawdata = 'twue')
 
-struct ClusterMembers {
-  1: required set<i64> clusterMembers (personalDataType = 'UserId')
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct cwustewmembews {
+  1: w-wequiwed set<i64> cwustewmembews (pewsonawdatatype = 'usewid')
+}(pewsisted = 'twue', 😳😳😳 haspewsonawdata = 'twue')

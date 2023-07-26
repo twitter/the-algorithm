@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddToModuleTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.addtomoduwetimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinemoduwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class AddToModuleInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddToModuleTimelineInstruction] {
+c-case cwass a-addtomoduweinstwuctionbuiwdew[quewy <: p-pipewinequewy](
+  ovewwide vaw incwudeinstwuction: incwudeinstwuction[quewy] = awwaysincwude)
+    e-extends uwtinstwuctionbuiwdew[quewy, 🥺 addtomoduwetimewineinstwuction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddToModuleTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val moduleEntries = entries.collect {
-        case module: TimelineModule => module
+  o-ovewwide def buiwd(
+    quewy: q-quewy, mya
+    entwies: seq[timewineentwy]
+  ): seq[addtomoduwetimewineinstwuction] = {
+    if (incwudeinstwuction(quewy, e-entwies)) {
+      vaw m-moduweentwies = e-entwies.cowwect {
+        case moduwe: timewinemoduwe => moduwe
       }
-      if (moduleEntries.nonEmpty) {
-        assert(moduleEntries.size == 1, "Currently we only support appending to one module")
-        moduleEntries.headOption.map { moduleEntry =>
-          AddToModuleTimelineInstruction(
-            moduleItems = moduleEntry.items,
-            moduleEntryId = moduleEntry.entryIdentifier,
-            // Currently configuring moduleItemEntryId and prepend fields are not supported.
-            moduleItemEntryId = None,
-            prepend = None
+      if (moduweentwies.nonempty) {
+        a-assewt(moduweentwies.size == 1, 🥺 "cuwwentwy we onwy suppowt appending to one moduwe")
+        moduweentwies.headoption.map { m-moduweentwy =>
+          addtomoduwetimewineinstwuction(
+            m-moduweitems = m-moduweentwy.items, >_<
+            m-moduweentwyid = m-moduweentwy.entwyidentifiew, >_<
+            // cuwwentwy configuwing m-moduweitementwyid and pwepend fiewds awe nyot s-suppowted. (⑅˘꒳˘)
+            moduweitementwyid = nyone,
+            pwepend = nyone
           )
         }
-      }.toSeq
-      else Seq.empty
-    } else {
-      Seq.empty
+      }.toseq
+      ewse seq.empty
+    } ewse {
+      seq.empty
     }
   }
 }

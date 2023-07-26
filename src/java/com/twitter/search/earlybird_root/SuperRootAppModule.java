@@ -1,234 +1,234 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+impowt j-javax.inject.named;
+i-impowt javax.inject.singweton;
 
-import com.google.inject.Key;
-import com.google.inject.Provides;
-import com.google.inject.util.Providers;
+i-impowt com.googwe.inject.key;
+i-impowt com.googwe.inject.pwovides;
+i-impowt com.googwe.inject.utiw.pwovidews;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersionConfig;
-import com.twitter.finagle.Name;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.config.SearchPenguinVersionsConfig;
-import com.twitter.search.common.dark.ResolverProxy;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.root.LoggingSupport;
-import com.twitter.search.common.root.RemoteClientBuilder;
-import com.twitter.search.common.root.SearchRootWarmup;
-import com.twitter.search.common.root.ValidationBehavior;
-import com.twitter.search.common.root.WarmupConfig;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.InjectionNames;
-import com.twitter.search.earlybird_root.filters.EarlybirdClusterAvailableFilter;
-import com.twitter.search.earlybird_root.filters.MarkTweetSourceFilter;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
-import com.twitter.search.earlybird_root.filters.RequestTypeCountFilter;
-import com.twitter.search.earlybird_root.filters.ServiceExceptionHandlingFilter;
-import com.twitter.search.earlybird_root.filters.ServiceResponseValidationFilter;
-import com.twitter.search.earlybird_root.filters.UnsetSuperRootFieldsFilter;
-import com.twitter.util.Future;
+i-impowt com.twittew.app.fwag;
+i-impowt c-com.twittew.app.fwaggabwe;
+impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsionconfig;
+impowt com.twittew.finagwe.name;
+i-impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.stats.statsweceivew;
+i-impowt com.twittew.inject.twittewmoduwe;
+impowt c-com.twittew.seawch.common.config.seawchpenguinvewsionsconfig;
+impowt com.twittew.seawch.common.dawk.wesowvewpwoxy;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt c-com.twittew.seawch.common.woot.woggingsuppowt;
+impowt com.twittew.seawch.common.woot.wemotecwientbuiwdew;
+i-impowt c-com.twittew.seawch.common.woot.seawchwootwawmup;
+impowt com.twittew.seawch.common.woot.vawidationbehaviow;
+impowt com.twittew.seawch.common.woot.wawmupconfig;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifttweetsouwce;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.injectionnames;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.eawwybiwdcwustewavaiwabwefiwtew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.mawktweetsouwcefiwtew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.wequestcontexttoeawwybiwdwequestfiwtew;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.fiwtews.wequesttypecountfiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.sewviceexceptionhandwingfiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.sewvicewesponsevawidationfiwtew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.unsetsupewwootfiewdsfiwtew;
+impowt com.twittew.utiw.futuwe;
 
-public class SuperRootAppModule extends TwitterModule {
-  private final Flag<String> rootRealtimeFlag = createFlag(
-      "root-realtime",
-      "",
-      "Override the path to root-realtime",
-      Flaggable.ofString());
-  private final Flag<String> rootProtectedFlag = createFlag(
-      "root-protected",
-      "",
-      "Override the path to root-protected",
-      Flaggable.ofString());
-  private final Flag<String> rootArchiveFullFlag = createFlag(
-      "root-archive-full",
-      "",
-      "Override the path to root-archive-full",
-      Flaggable.ofString());
-  private final Flag<String> penguinVersionsFlag = createMandatoryFlag(
-      "penguin_versions",
-      "Penguin versions to be tokenized",
-      "",
-      Flaggable.ofString());
+pubwic cwass s-supewwootappmoduwe extends twittewmoduwe {
+  pwivate finaw fwag<stwing> wootweawtimefwag = cweatefwag(
+      "woot-weawtime", ^^;;
+      "", 🥺
+      "ovewwide t-the path to woot-weawtime", XD
+      f-fwaggabwe.ofstwing());
+  p-pwivate finaw f-fwag<stwing> wootpwotectedfwag = cweatefwag(
+      "woot-pwotected", (U ᵕ U❁)
+      "", :3
+      "ovewwide the path to woot-pwotected", ( ͡o ω ͡o )
+      fwaggabwe.ofstwing());
+  p-pwivate f-finaw fwag<stwing> wootawchivefuwwfwag = c-cweatefwag(
+      "woot-awchive-fuww", òωó
+      "", σωσ
+      "ovewwide t-the path to woot-awchive-fuww", (U ᵕ U❁)
+      f-fwaggabwe.ofstwing());
+  pwivate f-finaw fwag<stwing> penguinvewsionsfwag = cweatemandatowyfwag(
+      "penguin_vewsions", (✿oωo)
+      "penguin v-vewsions to be tokenized", ^^
+      "", ^•ﻌ•^
+      f-fwaggabwe.ofstwing());
 
-  @Override
-  public void configure() {
-    // SuperRoot uses all clusters, not just one. We bind EarlybirdCluster to null to indicate that
-    // there is not one specific cluster to use.
-    bind(Key.get(EarlybirdCluster.class)).toProvider(Providers.<EarlybirdCluster>of(null));
+  @ovewwide
+  pubwic v-void configuwe() {
+    // s-supewwoot uses aww cwustews, XD nyot just one. :3 we bind eawwybiwdcwustew to nyuww to indicate that
+    // t-thewe is nyot o-one specific cwustew to use. (ꈍᴗꈍ)
+    b-bind(key.get(eawwybiwdcwustew.cwass)).topwovidew(pwovidews.<eawwybiwdcwustew>of(nuww));
 
-    bind(EarlybirdService.ServiceIface.class).to(SuperRootService.class);
+    b-bind(eawwybiwdsewvice.sewviceiface.cwass).to(supewwootsewvice.cwass);
   }
 
-  @Provides
-  SearchRootWarmup<EarlybirdService.ServiceIface, ?, ?> providesSearchRootWarmup(
-      Clock clock,
-      WarmupConfig config) {
-    return new EarlybirdWarmup(clock, config);
+  @pwovides
+  s-seawchwootwawmup<eawwybiwdsewvice.sewviceiface, :3 ?, ?> pwovidesseawchwootwawmup(
+      cwock cwock, (U ﹏ U)
+      wawmupconfig config) {
+    wetuwn n-nyew eawwybiwdwawmup(cwock, UwU config);
   }
 
-  @Provides
-  @Singleton
-  @Named(InjectionNames.REALTIME)
-  private EarlybirdService.ServiceIface providesRealtimeIface(
-      RemoteClientBuilder<EarlybirdService.ServiceIface> builder,
-      ResolverProxy proxy) throws Exception {
-    Name name = proxy.resolve(rootRealtimeFlag.apply());
-    return builder.createRemoteClient(name, "realtime", "realtime_");
+  @pwovides
+  @singweton
+  @named(injectionnames.weawtime)
+  pwivate eawwybiwdsewvice.sewviceiface pwovidesweawtimeiface(
+      w-wemotecwientbuiwdew<eawwybiwdsewvice.sewviceiface> buiwdew,
+      w-wesowvewpwoxy pwoxy) t-thwows exception {
+    n-nyame nyame = pwoxy.wesowve(wootweawtimefwag.appwy());
+    w-wetuwn buiwdew.cweatewemotecwient(name, 😳😳😳 "weawtime", XD "weawtime_");
   }
 
-  @Provides
-  @Singleton
-  @Named(InjectionNames.REALTIME)
-  private Service<EarlybirdRequestContext, EarlybirdResponse> providesRealtimeService(
-      @Named(InjectionNames.REALTIME)
-      EarlybirdService.ServiceIface realtimeServiceIface,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      StatsReceiver statsReceiver,
-      SearchDecider decider) {
-    return buildClientService(
-        realtimeServiceIface,
-        new EarlybirdClusterAvailableFilter(decider, EarlybirdCluster.REALTIME),
-        new MarkTweetSourceFilter(ThriftTweetSource.REALTIME_CLUSTER),
-        new ServiceExceptionHandlingFilter(EarlybirdCluster.REALTIME),
-        new ServiceResponseValidationFilter(EarlybirdCluster.REALTIME),
-        new RequestTypeCountFilter(EarlybirdCluster.REALTIME.getNameForStats()),
-        requestContextToEarlybirdRequestFilter,
-        new UnsetSuperRootFieldsFilter(),
-        new ClientLatencyFilter(EarlybirdCluster.REALTIME.getNameForStats()));
+  @pwovides
+  @singweton
+  @named(injectionnames.weawtime)
+  p-pwivate s-sewvice<eawwybiwdwequestcontext, o.O e-eawwybiwdwesponse> pwovidesweawtimesewvice(
+      @named(injectionnames.weawtime)
+      eawwybiwdsewvice.sewviceiface w-weawtimesewviceiface, (⑅˘꒳˘)
+      w-wequestcontexttoeawwybiwdwequestfiwtew w-wequestcontexttoeawwybiwdwequestfiwtew, 😳😳😳
+      s-statsweceivew s-statsweceivew, nyaa~~
+      seawchdecidew decidew) {
+    wetuwn b-buiwdcwientsewvice(
+        weawtimesewviceiface, rawr
+        nyew eawwybiwdcwustewavaiwabwefiwtew(decidew, -.- eawwybiwdcwustew.weawtime), (✿oωo)
+        nyew m-mawktweetsouwcefiwtew(thwifttweetsouwce.weawtime_cwustew),
+        nyew sewviceexceptionhandwingfiwtew(eawwybiwdcwustew.weawtime), /(^•ω•^)
+        nyew sewvicewesponsevawidationfiwtew(eawwybiwdcwustew.weawtime), 🥺
+        n-nyew wequesttypecountfiwtew(eawwybiwdcwustew.weawtime.getnamefowstats()), ʘwʘ
+        w-wequestcontexttoeawwybiwdwequestfiwtew, UwU
+        n-nyew unsetsupewwootfiewdsfiwtew(), XD
+        nyew cwientwatencyfiwtew(eawwybiwdcwustew.weawtime.getnamefowstats()));
   }
 
-  @Provides
-  @Singleton
-  @Named(InjectionNames.FULL_ARCHIVE)
-  private EarlybirdService.ServiceIface providesFullArchiveIface(
-      RemoteClientBuilder<EarlybirdService.ServiceIface> builder,
-      ResolverProxy proxy) throws Exception {
-    Name name = proxy.resolve(rootArchiveFullFlag.apply());
-    return builder.createRemoteClient(name, "fullarchive", "full_archive_");
+  @pwovides
+  @singweton
+  @named(injectionnames.fuww_awchive)
+  p-pwivate eawwybiwdsewvice.sewviceiface pwovidesfuwwawchiveiface(
+      w-wemotecwientbuiwdew<eawwybiwdsewvice.sewviceiface> b-buiwdew, (✿oωo)
+      wesowvewpwoxy pwoxy) thwows exception {
+    nyame nyame = pwoxy.wesowve(wootawchivefuwwfwag.appwy());
+    w-wetuwn buiwdew.cweatewemotecwient(name, :3 "fuwwawchive", (///ˬ///✿) "fuww_awchive_");
   }
 
-  @Provides
-  @Singleton
-  @Named(InjectionNames.FULL_ARCHIVE)
-  private Service<EarlybirdRequestContext, EarlybirdResponse> providesFullArchiveService(
-      @Named(InjectionNames.FULL_ARCHIVE)
-      EarlybirdService.ServiceIface fullArchiveServiceIface,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      StatsReceiver statsReceiver,
-      SearchDecider decider) {
-    return buildClientService(
-        fullArchiveServiceIface,
-        new EarlybirdClusterAvailableFilter(decider, EarlybirdCluster.FULL_ARCHIVE),
-        new MarkTweetSourceFilter(ThriftTweetSource.FULL_ARCHIVE_CLUSTER),
-        new ServiceExceptionHandlingFilter(EarlybirdCluster.FULL_ARCHIVE),
-        new ServiceResponseValidationFilter(EarlybirdCluster.FULL_ARCHIVE),
-        new RequestTypeCountFilter(EarlybirdCluster.FULL_ARCHIVE.getNameForStats()),
-        requestContextToEarlybirdRequestFilter,
-        // Disable unset followedUserIds for archive since archive earlybirds rely on this field
-        // to rewrite query to include protected Tweets
-        new UnsetSuperRootFieldsFilter(false),
-        new ClientLatencyFilter(EarlybirdCluster.FULL_ARCHIVE.getNameForStats()));
+  @pwovides
+  @singweton
+  @named(injectionnames.fuww_awchive)
+  pwivate sewvice<eawwybiwdwequestcontext, nyaa~~ e-eawwybiwdwesponse> pwovidesfuwwawchivesewvice(
+      @named(injectionnames.fuww_awchive)
+      eawwybiwdsewvice.sewviceiface f-fuwwawchivesewviceiface, >w<
+      w-wequestcontexttoeawwybiwdwequestfiwtew wequestcontexttoeawwybiwdwequestfiwtew, -.-
+      statsweceivew statsweceivew,
+      s-seawchdecidew decidew) {
+    w-wetuwn buiwdcwientsewvice(
+        f-fuwwawchivesewviceiface, (✿oωo)
+        n-nyew eawwybiwdcwustewavaiwabwefiwtew(decidew, (˘ω˘) eawwybiwdcwustew.fuww_awchive), rawr
+        nyew mawktweetsouwcefiwtew(thwifttweetsouwce.fuww_awchive_cwustew), OwO
+        nyew sewviceexceptionhandwingfiwtew(eawwybiwdcwustew.fuww_awchive), ^•ﻌ•^
+        nyew sewvicewesponsevawidationfiwtew(eawwybiwdcwustew.fuww_awchive), UwU
+        nyew w-wequesttypecountfiwtew(eawwybiwdcwustew.fuww_awchive.getnamefowstats()), (˘ω˘)
+        w-wequestcontexttoeawwybiwdwequestfiwtew, (///ˬ///✿)
+        // d-disabwe unset fowwowedusewids f-fow awchive since a-awchive eawwybiwds wewy on t-this fiewd
+        // to wewwite quewy to incwude pwotected tweets
+        nyew u-unsetsupewwootfiewdsfiwtew(fawse), σωσ
+        n-nyew cwientwatencyfiwtew(eawwybiwdcwustew.fuww_awchive.getnamefowstats()));
   }
 
-  @Provides
-  @Singleton
-  @Named(InjectionNames.PROTECTED)
-  private EarlybirdService.ServiceIface providesProtectedIface(
-      RemoteClientBuilder<EarlybirdService.ServiceIface> builder,
-      ResolverProxy proxy) throws Exception {
-    Name name = proxy.resolve(rootProtectedFlag.apply());
-    return builder.createRemoteClient(name, "protected", "protected_");
+  @pwovides
+  @singweton
+  @named(injectionnames.pwotected)
+  pwivate e-eawwybiwdsewvice.sewviceiface p-pwovidespwotectediface(
+      wemotecwientbuiwdew<eawwybiwdsewvice.sewviceiface> buiwdew, /(^•ω•^)
+      wesowvewpwoxy pwoxy) t-thwows exception {
+    nyame nyame = pwoxy.wesowve(wootpwotectedfwag.appwy());
+    wetuwn buiwdew.cweatewemotecwient(name, 😳 "pwotected", 😳 "pwotected_");
   }
 
-  @Provides
-  @Singleton
-  @Named(InjectionNames.PROTECTED)
-  private Service<EarlybirdRequestContext, EarlybirdResponse> providesProtectedService(
-      @Named(InjectionNames.PROTECTED)
-      EarlybirdService.ServiceIface protectedServiceIface,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      StatsReceiver statsReceiver,
-      SearchDecider decider) {
-    return buildClientService(
-        protectedServiceIface,
-        new EarlybirdClusterAvailableFilter(decider, EarlybirdCluster.PROTECTED),
-        new MarkTweetSourceFilter(ThriftTweetSource.REALTIME_PROTECTED_CLUSTER),
-        new ServiceExceptionHandlingFilter(EarlybirdCluster.PROTECTED),
-        new ServiceResponseValidationFilter(EarlybirdCluster.PROTECTED),
-        new RequestTypeCountFilter(EarlybirdCluster.PROTECTED.getNameForStats()),
-        requestContextToEarlybirdRequestFilter,
-        new UnsetSuperRootFieldsFilter(),
-        new ClientLatencyFilter(EarlybirdCluster.PROTECTED.getNameForStats()));
+  @pwovides
+  @singweton
+  @named(injectionnames.pwotected)
+  pwivate sewvice<eawwybiwdwequestcontext, (⑅˘꒳˘) e-eawwybiwdwesponse> pwovidespwotectedsewvice(
+      @named(injectionnames.pwotected)
+      eawwybiwdsewvice.sewviceiface p-pwotectedsewviceiface, 😳😳😳
+      w-wequestcontexttoeawwybiwdwequestfiwtew wequestcontexttoeawwybiwdwequestfiwtew, 😳
+      statsweceivew statsweceivew, XD
+      s-seawchdecidew d-decidew) {
+    wetuwn buiwdcwientsewvice(
+        pwotectedsewviceiface, mya
+        nyew eawwybiwdcwustewavaiwabwefiwtew(decidew, e-eawwybiwdcwustew.pwotected), ^•ﻌ•^
+        nyew mawktweetsouwcefiwtew(thwifttweetsouwce.weawtime_pwotected_cwustew), ʘwʘ
+        n-new sewviceexceptionhandwingfiwtew(eawwybiwdcwustew.pwotected), ( ͡o ω ͡o )
+        nyew sewvicewesponsevawidationfiwtew(eawwybiwdcwustew.pwotected), mya
+        nyew wequesttypecountfiwtew(eawwybiwdcwustew.pwotected.getnamefowstats()), o.O
+        w-wequestcontexttoeawwybiwdwequestfiwtew, (✿oωo)
+        nyew u-unsetsupewwootfiewdsfiwtew(), :3
+        n-nyew cwientwatencyfiwtew(eawwybiwdcwustew.pwotected.getnamefowstats()));
   }
 
   /**
-   * Builds a Finagle Service based on a EarlybirdService.ServiceIface.
+   * buiwds a finagwe s-sewvice based on a eawwybiwdsewvice.sewviceiface. 😳
    */
-  private Service<EarlybirdRequestContext, EarlybirdResponse> buildClientService(
-      final EarlybirdService.ServiceIface serviceIface,
-      EarlybirdClusterAvailableFilter earlybirdClusterAvailableFilter,
-      MarkTweetSourceFilter markTweetSourceFilter,
-      ServiceExceptionHandlingFilter serviceExceptionHandlingFilter,
-      ServiceResponseValidationFilter serviceResponseValidationFilter,
-      RequestTypeCountFilter requestTypeCountFilter,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      UnsetSuperRootFieldsFilter unsetSuperRootFieldsFilter,
-      ClientLatencyFilter latencyFilter) {
-    Service<EarlybirdRequest, EarlybirdResponse> service =
-        new Service<EarlybirdRequest, EarlybirdResponse>() {
+  p-pwivate s-sewvice<eawwybiwdwequestcontext, (U ﹏ U) e-eawwybiwdwesponse> buiwdcwientsewvice(
+      f-finaw eawwybiwdsewvice.sewviceiface s-sewviceiface, mya
+      eawwybiwdcwustewavaiwabwefiwtew eawwybiwdcwustewavaiwabwefiwtew,
+      m-mawktweetsouwcefiwtew m-mawktweetsouwcefiwtew, (U ᵕ U❁)
+      s-sewviceexceptionhandwingfiwtew sewviceexceptionhandwingfiwtew, :3
+      sewvicewesponsevawidationfiwtew s-sewvicewesponsevawidationfiwtew, mya
+      wequesttypecountfiwtew w-wequesttypecountfiwtew, OwO
+      w-wequestcontexttoeawwybiwdwequestfiwtew wequestcontexttoeawwybiwdwequestfiwtew, (ˆ ﻌ ˆ)♡
+      unsetsupewwootfiewdsfiwtew unsetsupewwootfiewdsfiwtew, ʘwʘ
+      c-cwientwatencyfiwtew w-watencyfiwtew) {
+    s-sewvice<eawwybiwdwequest, o.O e-eawwybiwdwesponse> sewvice =
+        n-nyew sewvice<eawwybiwdwequest, UwU eawwybiwdwesponse>() {
 
-          @Override
-          public Future<EarlybirdResponse> apply(EarlybirdRequest requestContext) {
-            return serviceIface.search(requestContext);
+          @ovewwide
+          pubwic futuwe<eawwybiwdwesponse> appwy(eawwybiwdwequest wequestcontext) {
+            wetuwn sewviceiface.seawch(wequestcontext);
           }
         };
 
-    // We should apply ServiceResponseValidationFilter first, to validate the response.
-    // Then, if the response is valid, we should tag all results with the appropriate tweet source.
-    // ServiceExceptionHandlingFilter should come last, to catch all possible exceptions (that were
-    // thrown by the service, or by ServiceResponseValidationFilter and MarkTweetSourceFilter).
+    // w-we shouwd appwy sewvicewesponsevawidationfiwtew f-fiwst, rawr x3 to vawidate the wesponse. 🥺
+    // t-then, :3 if the wesponse i-is vawid, we shouwd tag aww w-wesuwts with the a-appwopwiate tweet s-souwce. (ꈍᴗꈍ)
+    // s-sewviceexceptionhandwingfiwtew s-shouwd come wast, 🥺 to catch aww possibwe exceptions (that wewe
+    // thwown by the sewvice, (✿oωo) ow by sewvicewesponsevawidationfiwtew a-and mawktweetsouwcefiwtew). (U ﹏ U)
     //
-    // But before we do all of this, we should apply the EarlybirdClusterAvailableFilter to see if
-    // we even need to send the request to this cluster.
-    return earlybirdClusterAvailableFilter
-        .andThen(serviceExceptionHandlingFilter)
-        .andThen(markTweetSourceFilter)
-        .andThen(serviceResponseValidationFilter)
-        .andThen(requestTypeCountFilter)
-        .andThen(requestContextToEarlybirdRequestFilter)
-        .andThen(latencyFilter)
-        .andThen(unsetSuperRootFieldsFilter)
-        .andThen(service);
+    // b-but b-befowe we do aww of this, :3 we shouwd a-appwy the eawwybiwdcwustewavaiwabwefiwtew to see if
+    // we even nyeed to send the wequest t-to this cwustew. ^^;;
+    w-wetuwn eawwybiwdcwustewavaiwabwefiwtew
+        .andthen(sewviceexceptionhandwingfiwtew)
+        .andthen(mawktweetsouwcefiwtew)
+        .andthen(sewvicewesponsevawidationfiwtew)
+        .andthen(wequesttypecountfiwtew)
+        .andthen(wequestcontexttoeawwybiwdwequestfiwtew)
+        .andthen(watencyfiwtew)
+        .andthen(unsetsupewwootfiewdsfiwtew)
+        .andthen(sewvice);
   }
 
-  @Provides
-  public LoggingSupport<EarlybirdRequest, EarlybirdResponse> provideLoggingSupport(
-      SearchDecider decider) {
-    return new EarlybirdServiceLoggingSupport(decider);
+  @pwovides
+  pubwic woggingsuppowt<eawwybiwdwequest, rawr e-eawwybiwdwesponse> pwovidewoggingsuppowt(
+      seawchdecidew d-decidew) {
+    w-wetuwn nyew eawwybiwdsewvicewoggingsuppowt(decidew);
   }
 
-  @Provides
-  public ValidationBehavior<EarlybirdRequest, EarlybirdResponse> provideValidationBehavior() {
-    return new EarlybirdServiceValidationBehavior();
+  @pwovides
+  p-pubwic vawidationbehaviow<eawwybiwdwequest, 😳😳😳 eawwybiwdwesponse> p-pwovidevawidationbehaviow() {
+    wetuwn nyew eawwybiwdsewvicevawidationbehaviow();
   }
 
   /**
-   * Provides the penguin versions that we should use to retokenize the query if requested.
+   * pwovides the penguin vewsions t-that we shouwd u-use to wetokenize t-the quewy if w-wequested. (✿oωo)
    */
-  @Provides
-  @Singleton
-  public PenguinVersionConfig providePenguinVersions() {
-    return SearchPenguinVersionsConfig.deserialize(penguinVersionsFlag.apply());
+  @pwovides
+  @singweton
+  p-pubwic penguinvewsionconfig p-pwovidepenguinvewsions() {
+    w-wetuwn seawchpenguinvewsionsconfig.desewiawize(penguinvewsionsfwag.appwy());
   }
 }

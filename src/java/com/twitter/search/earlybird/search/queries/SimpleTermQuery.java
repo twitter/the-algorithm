@@ -1,86 +1,86 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.ConstantScoreWeight;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.index.postingsenum;
+i-impowt owg.apache.wucene.index.tewmsenum;
+i-impowt o-owg.apache.wucene.seawch.constantscowescowew;
+i-impowt owg.apache.wucene.seawch.constantscoweweight;
+i-impowt owg.apache.wucene.seawch.indexseawchew;
+i-impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowew;
+impowt owg.apache.wucene.seawch.scowemode;
+impowt o-owg.apache.wucene.seawch.weight;
 
 /**
- * A version of a term query that we can use when we already know the term id (in case where we
- * previously looked it up), and have a TermsEnum to get the actual postings.
+ * a vewsion of a tewm q-quewy that we can use when we a-awweady know the tewm id (in case whewe we
+ * pweviouswy wooked i-it up), and have a tewmsenum to g-get the actuaw postings. OwO
  *
- * This is can be used for constant score queries, where only iterating on the postings is required.
+ * this i-is can be used fow constant scowe quewies, (U ﹏ U) whewe onwy itewating on the postings i-is wequiwed. >w<
  */
-class SimpleTermQuery extends Query {
-  private final TermsEnum termsEnum;
-  private final long termId;
+cwass simpwetewmquewy extends quewy {
+  pwivate finaw tewmsenum t-tewmsenum;
+  pwivate finaw w-wong tewmid;
 
-  public SimpleTermQuery(TermsEnum termsEnum, long termId) {
-    this.termsEnum = termsEnum;
-    this.termId = termId;
+  p-pubwic simpwetewmquewy(tewmsenum t-tewmsenum, (U ﹏ U) wong t-tewmid) {
+    this.tewmsenum = tewmsenum;
+    this.tewmid = tewmid;
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    return new SimpleTermQueryWeight(scoreMode);
+  @ovewwide
+  p-pubwic weight cweateweight(indexseawchew seawchew, 😳 scowemode s-scowemode, (ˆ ﻌ ˆ)♡ fwoat boost)
+      thwows ioexception {
+    wetuwn nyew simpwetewmquewyweight(scowemode);
   }
 
-  @Override
-  public int hashCode() {
-    return (termsEnum == null ? 0 : termsEnum.hashCode()) * 13 + (int) termId;
+  @ovewwide
+  pubwic i-int hashcode() {
+    wetuwn (tewmsenum == n-nyuww ? 0 : t-tewmsenum.hashcode()) * 13 + (int) t-tewmid;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof SimpleTermQuery)) {
-      return false;
+  @ovewwide
+  pubwic boowean equaws(object obj) {
+    i-if (!(obj instanceof s-simpwetewmquewy)) {
+      wetuwn fawse;
     }
 
-    SimpleTermQuery query = SimpleTermQuery.class.cast(obj);
-    return (termsEnum == null ? query.termsEnum == null : termsEnum.equals(query.termsEnum))
-        && (termId == query.termId);
+    s-simpwetewmquewy q-quewy = simpwetewmquewy.cwass.cast(obj);
+    w-wetuwn (tewmsenum == nyuww ? q-quewy.tewmsenum == nyuww : tewmsenum.equaws(quewy.tewmsenum))
+        && (tewmid == quewy.tewmid);
   }
 
-  @Override
-  public String toString(String field) {
-    return "SimpleTermQuery(" + field + ":" + termId + ")";
+  @ovewwide
+  p-pubwic stwing tostwing(stwing f-fiewd) {
+    wetuwn "simpwetewmquewy(" + fiewd + ":" + t-tewmid + ")";
   }
 
-  private class SimpleTermQueryWeight extends ConstantScoreWeight {
-    private final ScoreMode scoreMode;
+  p-pwivate cwass simpwetewmquewyweight extends constantscoweweight {
+    pwivate finaw scowemode scowemode;
 
-    public SimpleTermQueryWeight(ScoreMode scoreMode) {
-      super(SimpleTermQuery.this, 1.0f);
-      this.scoreMode = scoreMode;
+    pubwic simpwetewmquewyweight(scowemode s-scowemode) {
+      s-supew(simpwetewmquewy.this, 😳😳😳 1.0f);
+      this.scowemode = s-scowemode;
     }
 
-    @Override
-    public String toString() {
-      return "weight(" + SimpleTermQuery.this + ")";
+    @ovewwide
+    p-pubwic stwing t-tostwing() {
+      wetuwn "weight(" + simpwetewmquewy.this + ")";
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      termsEnum.seekExact(termId);
+    @ovewwide
+    pubwic scowew scowew(weafweadewcontext c-context) thwows ioexception {
+      tewmsenum.seekexact(tewmid);
 
-      PostingsEnum docs = termsEnum.postings(
-          null, scoreMode.needsScores() ? PostingsEnum.FREQS : PostingsEnum.NONE);
-      assert docs != null;
-      return new ConstantScoreScorer(this, 0, scoreMode, docs);
+      postingsenum docs = tewmsenum.postings(
+          n-nyuww, (U ﹏ U) scowemode.needsscowes() ? postingsenum.fweqs : p-postingsenum.none);
+      a-assewt docs != n-nyuww;
+      wetuwn new constantscowescowew(this, (///ˬ///✿) 0, 😳 s-scowemode, d-docs);
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return true;
+    @ovewwide
+    p-pubwic boowean i-iscacheabwe(weafweadewcontext ctx) {
+      wetuwn t-twue;
     }
   }
 }

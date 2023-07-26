@@ -1,70 +1,70 @@
-package com.twitter.search.ingester.util.jndi;
+package com.twittew.seawch.ingestew.utiw.jndi;
 
-import java.util.Hashtable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
+impowt java.utiw.hashtabwe;
+i-impowt j-javax.naming.context;
+i-impowt javax.naming.initiawcontext;
+i-impowt j-javax.naming.namenotfoundexception;
 
-import org.apache.naming.config.XmlConfigurator;
+i-impowt owg.apache.naming.config.xmwconfiguwatow;
 
-public abstract class JndiUtil {
-  // This is different from the search repo---twitter-naming-devtest.xml is
-  // checked in as a resource in src/resources/com/twitter/search/ingester.
-  public static final String DEFAULT_JNDI_XML =
-      System.getProperty("jndiXml", "/com/twitter/search/ingester/twitter-naming-devtest.xml");
-  protected static String jndiXml = DEFAULT_JNDI_XML;
-  protected static boolean testingMode = false;
+p-pubwic a-abstwact cwass jndiutiw {
+  // this is diffewent fwom the seawch wepo---twittew-naming-devtest.xmw i-is
+  // checked in as a wesouwce in swc/wesouwces/com/twittew/seawch/ingestew. o.O
+  p-pubwic static finaw stwing d-defauwt_jndi_xmw =
+      system.getpwopewty("jndixmw", /(^•ω•^) "/com/twittew/seawch/ingestew/twittew-naming-devtest.xmw");
+  pwotected static stwing jndixmw = d-defauwt_jndi_xmw;
+  pwotected s-static boowean t-testingmode = fawse;
 
   static {
-    System.setProperty("javax.xml.parsers.SAXParserFactory",
-        "org.apache.xerces.jaxp.SAXParserFactoryImpl");
-    System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
-        "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
+    system.setpwopewty("javax.xmw.pawsews.saxpawsewfactowy", nyaa~~
+        "owg.apache.xewces.jaxp.saxpawsewfactowyimpw");
+    system.setpwopewty("javax.xmw.pawsews.documentbuiwdewfactowy", nyaa~~
+        "com.sun.owg.apache.xewces.intewnaw.jaxp.documentbuiwdewfactowyimpw");
   }
 
-  public static void loadJNDI() {
-    loadJNDI(jndiXml);
+  pubwic static v-void woadjndi() {
+    woadjndi(jndixmw);
   }
 
-  protected static void loadJNDI(String jndiXmlFile) {
-    try {
-      Hashtable<String, String> props = new Hashtable<>();
-      props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
-      Context jndiContext = new InitialContext(props);
-      try {
-        jndiContext.lookup("java:comp");
-        setTestingModeFromJndiContext(jndiContext);
-      } catch (NameNotFoundException e) {
-        // No context.
-        XmlConfigurator.loadConfiguration(JndiUtil.class.getResourceAsStream(jndiXmlFile));
+  pwotected static void woadjndi(stwing jndixmwfiwe) {
+    t-twy {
+      hashtabwe<stwing, :3 s-stwing> p-pwops = nyew hashtabwe<>();
+      p-pwops.put(context.initiaw_context_factowy, 😳😳😳 "owg.apache.naming.java.javauwwcontextfactowy");
+      c-context jndicontext = nyew initiawcontext(pwops);
+      twy {
+        j-jndicontext.wookup("java:comp");
+        settestingmodefwomjndicontext(jndicontext);
+      } catch (namenotfoundexception e-e) {
+        // nyo context. (˘ω˘)
+        xmwconfiguwatow.woadconfiguwation(jndiutiw.cwass.getwesouwceasstweam(jndixmwfiwe));
       }
-    } catch (Exception e) {
-      throw new RuntimeException(String.format("Failed to load JNDI configuration file=%s %s",
-          jndiXmlFile, e.getMessage()), e);
+    } catch (exception e) {
+      thwow nyew w-wuntimeexception(stwing.fowmat("faiwed to woad j-jndi configuwation f-fiwe=%s %s", ^^
+          j-jndixmwfiwe, :3 e.getmessage()), -.- e);
     }
   }
 
-  public static void setJndiXml(String jndiXml) {
-    JndiUtil.jndiXml = jndiXml;
+  pubwic s-static void setjndixmw(stwing jndixmw) {
+    j-jndiutiw.jndixmw = jndixmw;
   }
 
-  public static String getJndiXml() {
-    return jndiXml;
+  p-pubwic static stwing g-getjndixmw() {
+    wetuwn j-jndixmw;
   }
 
-  public static void setTestingMode(Boolean testingMode) {
-     JndiUtil.testingMode = testingMode;
+  pubwic static void s-settestingmode(boowean testingmode) {
+     jndiutiw.testingmode = t-testingmode;
   }
 
-  public static boolean isTestingMode() {
-    return testingMode;
+  pubwic s-static boowean istestingmode() {
+    wetuwn testingmode;
   }
 
-  private static void setTestingModeFromJndiContext(Context jndiContext) {
-    try {
-      setTestingMode((Boolean) jndiContext.lookup("java:comp/env/testingMode"));
-    } catch (Exception e) {
-      setTestingMode(false);
+  p-pwivate static void s-settestingmodefwomjndicontext(context jndicontext) {
+    twy {
+      settestingmode((boowean) jndicontext.wookup("java:comp/env/testingmode"));
+    } catch (exception e) {
+      s-settestingmode(fawse);
     }
   }
 }

@@ -1,34 +1,34 @@
-package com.twitter.tweetypie.caching
+package com.twittew.tweetypie.caching
 
-import com.twitter.util.Duration
-import com.twitter.util.Time
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.time
 
 /**
- * Helpers for creating common expiry functions.
+ * h-hewpews f-fow cweating c-common expiwy functions. mya
  *
- * An expiry function maps from the value to a time in the future when
- * the value should expire from cache. These are useful in the
- * implementation of a [[ValueSerializer]].
+ * a-an expiwy function m-maps fwom the v-vawue to a time i-in the futuwe when
+ * the vawue shouwd expiwe fwom cache. 🥺 these awe usefuw in the
+ * i-impwementation of a [[vawuesewiawizew]]. >_<
  */
-object Expiry {
+object expiwy {
 
   /**
-   * Return a time that indicates to memcached to never expire this
-   * value.
+   * wetuwn a-a time that indicates to memcached t-to nyevew expiwe this
+   * vawue. >_<
    *
-   * This function takes [[Any]] so that it can be used at any value
-   * type, since it doesn't examine the value at all.
+   * this function t-takes [[any]] so that it can b-be used at any vawue
+   * t-type, (⑅˘꒳˘) since it doesn't examine the vawue at aww. /(^•ω•^)
    */
-  val Never: Any => Time =
-    _ => Time.Top
+  vaw nyevew: any => t-time =
+    _ => time.top
 
   /**
-   * Return function that indicates to memcached that the value should
-   * not be used after the `ttl` has elapsed.
+   * wetuwn function that indicates to memcached t-that the vawue shouwd
+   * n-nyot be used aftew t-the `ttw` has e-ewapsed. rawr x3
    *
-   * This function takes [[Any]] so that it can be used at any value
-   * type, since it doesn't examine the value at all.
+   * t-this function takes [[any]] so that it can b-be used at any vawue
+   * type, (U ﹏ U) since it doesn't e-examine the vawue at aww. (U ﹏ U)
    */
-  def byAge(ttl: Duration): Any => Time =
-    _ => Time.now + ttl
+  def byage(ttw: duwation): any => time =
+    _ => time.now + t-ttw
 }

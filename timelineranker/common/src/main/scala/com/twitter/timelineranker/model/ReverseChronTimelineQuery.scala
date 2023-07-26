@@ -1,23 +1,23 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelineservice.model.TimelineId
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+i-impowt com.twittew.timewinesewvice.modew.timewineid
 
-object ReverseChronTimelineQuery {
-  def fromTimelineQuery(query: TimelineQuery): ReverseChronTimelineQuery = {
-    query match {
-      case q: ReverseChronTimelineQuery => q
-      case _ => throw new IllegalArgumentException(s"Unsupported query type: $query")
+o-object wevewsechwontimewinequewy {
+  d-def f-fwomtimewinequewy(quewy: t-timewinequewy): w-wevewsechwontimewinequewy = {
+    quewy match {
+      case q: wevewsechwontimewinequewy => q
+      case _ => t-thwow nyew iwwegawawgumentexception(s"unsuppowted quewy type: $quewy")
     }
   }
 }
 
-case class ReverseChronTimelineQuery(
-  override val id: TimelineId,
-  override val maxCount: Option[Int] = None,
-  override val range: Option[TimelineRange] = None,
-  override val options: Option[ReverseChronTimelineQueryOptions] = None)
-    extends TimelineQuery(thrift.TimelineQueryType.ReverseChron, id, maxCount, range, options) {
+c-case cwass wevewsechwontimewinequewy(
+  o-ovewwide vaw id: timewineid, rawr x3
+  ovewwide vaw maxcount: option[int] = n-nyone, nyaa~~
+  ovewwide vaw wange: o-option[timewinewange] = n-nyone, /(^•ω•^)
+  ovewwide vaw options: option[wevewsechwontimewinequewyoptions] = nyone)
+    extends timewinequewy(thwift.timewinequewytype.wevewsechwon, rawr i-id, maxcount, OwO wange, (U ﹏ U) options) {
 
-  throwIfInvalid()
+  thwowifinvawid()
 }

@@ -1,46 +1,46 @@
-// Protocol buffer representing the shape of tensors.
+// pwotocow buffew wepwesenting the s-shape of tensows. :3
 
-syntax = "proto3";
-option cc_enable_arenas = true;
-option java_outer_classname = "TensorShapeProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/tensor_shape_go_proto";
+s-syntax = "pwoto3";
+o-option c-cc_enabwe_awenas = t-twue;
+option j-java_outew_cwassname = "tensowshapepwotos";
+o-option j-java_muwtipwe_fiwes = twue;
+option java_package = "owg.tensowfwow.fwamewowk";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/tensow_shape_go_pwoto";
 
-package tensorflow;
+package t-tensowfwow;
 
-// Dimensions of a tensor.
-message TensorShapeProto {
-  // One dimension of the tensor.
-  message Dim {
-    // Size of the tensor in that dimension.
-    // This value must be >= -1, but values of -1 are reserved for "unknown"
-    // shapes (values of -1 mean "unknown" dimension).  Certain wrappers
-    // that work with TensorShapeProto may fail at runtime when deserializing
-    // a TensorShapeProto containing a dim value of -1.
-    int64 size = 1;
+// dimensions of a tensow. 😳😳😳
+message t-tensowshapepwoto {
+  // one d-dimension of the tensow.
+  message dim {
+    // size of the tensow i-in that dimension. (˘ω˘)
+    // this v-vawue must be >= -1, ^^ b-but vawues of -1 awe wesewved fow "unknown"
+    // shapes (vawues of -1 m-mean "unknown" dimension). :3  cewtain wwappews
+    // that wowk with tensowshapepwoto m-may faiw at wuntime when desewiawizing
+    // a-a tensowshapepwoto c-containing a-a dim vawue of -1. -.-
+    i-int64 size = 1;
 
-    // Optional name of the tensor dimension.
-    string name = 2;
+    // optionaw nyame of the tensow dimension. 😳
+    s-stwing nyame = 2;
   };
 
-  // Dimensions of the tensor, such as {"input", 30}, {"output", 40}
-  // for a 30 x 40 2D tensor.  If an entry has size -1, this
-  // corresponds to a dimension of unknown size. The names are
-  // optional.
+  // dimensions o-of the tensow, mya such as {"input", 30}, (˘ω˘) {"output", 40}
+  // fow a 30 x 40 2d tensow. >_<  if an entwy has size -1, -.- t-this
+  // cowwesponds to a dimension o-of unknown s-size. 🥺 the nyames a-awe
+  // optionaw. (U ﹏ U)
   //
-  // The order of entries in "dim" matters: It indicates the layout of the
-  // values in the tensor in-memory representation.
+  // the owdew of entwies in "dim" mattews: i-it indicates t-the wayout of the
+  // vawues i-in the tensow in-memowy w-wepwesentation. >w<
   //
-  // The first entry in "dim" is the outermost dimension used to layout the
-  // values, the last entry is the innermost dimension.  This matches the
-  // in-memory layout of RowMajor Eigen tensors.
+  // the fiwst entwy i-in "dim" is the outewmost dimension u-used to wayout the
+  // vawues, mya the wast entwy i-is the innewmost dimension. >w<  t-this matches the
+  // in-memowy w-wayout of wowmajow e-eigen tensows. nyaa~~
   //
-  // If "dim.size()" > 0, "unknown_rank" must be false.
-  repeated Dim dim = 2;
+  // if "dim.size()" > 0, (✿oωo) "unknown_wank" must be fawse. ʘwʘ
+  wepeated dim dim = 2;
 
-  // If true, the number of dimensions in the shape is unknown.
+  // if twue, the nyumbew of dimensions i-in the shape is u-unknown. (ˆ ﻌ ˆ)♡
   //
-  // If true, "dim.size()" must be 0.
-  bool unknown_rank = 3;
+  // if twue, 😳😳😳 "dim.size()" m-must b-be 0. :3
+  boow unknown_wank = 3;
 };

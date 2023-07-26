@@ -1,260 +1,260 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/util/work_sharder.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
+#incwude "tensowfwow/cowe/utiw/wowk_shawdew.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
 
-using namespace tensorflow;
+using nyamespace tensowfwow;
 
-void ComputeHashingDiscretizer(
-  OpKernelContext*,
-  int64_t,
-  const twml::Map<int64_t, int64_t> &,
-  int64_t,
-  int64_t,
+v-void computehashingdiscwetizew(
+  o-opkewnewcontext*, :3
+  i-int64_t, (U ﹏ U)
+  c-const twmw::map<int64_t, >w< i-int64_t> &,
+  i-int64_t, /(^•ω•^)
+  i-int64_t, (⑅˘꒳˘)
   int64_t);
 
-REGISTER_OP("HashingDiscretizer")
-.Attr("T: {float, double}")
-.Input("input_ids: int64")
-.Input("input_vals: T")
-.Input("bin_vals: T")
-.Attr("feature_ids: tensor = { dtype: DT_INT64 }")
-.Attr("n_bin: int")
-.Attr("output_bits: int")
-.Attr("cost_per_unit: int")
-.Attr("options: int")
-.Output("new_keys: int64")
-.Output("new_vals: T")
-.SetShapeFn(
-  [](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->input(0));
-    c->set_output(1, c->input(1));
-    return Status::OK();
+w-wegistew_op("hashingdiscwetizew")
+.attw("t: {fwoat, ʘwʘ doubwe}")
+.input("input_ids: int64")
+.input("input_vaws: t")
+.input("bin_vaws: t")
+.attw("featuwe_ids: t-tensow = { dtype: dt_int64 }")
+.attw("n_bin: int")
+.attw("output_bits: i-int")
+.attw("cost_pew_unit: int")
+.attw("options: i-int")
+.output("new_keys: int64")
+.output("new_vaws: t")
+.setshapefn(
+  [](::tensowfwow::shape_infewence::infewencecontext* c) {
+    c-c->set_output(0, rawr x3 c->input(0));
+    c-c->set_output(1, (˘ω˘) c-c->input(1));
+    wetuwn status::ok();
   }
 )
-.Doc(R"doc(
+.doc(w"doc(
 
-This operation discretizes a tensor containing continuous features (if calibrated).
-  - note - choice of float or double should be consistent among inputs/output
+this opewation discwetizes a tensow containing continuous f-featuwes (if cawibwated). o.O
+  - nyote - choice of fwoat ow doubwe shouwd b-be consistent among inputs/output
 
-Input
-  input_ids(int64): A tensor containing input feature ids (direct from data record).
-  input_vals(float/double): A tensor containing input values at corresponding feature ids.
-    - i.e. input_ids[i] <-> input_vals[i] for each i
-  bin_vals(float/double): A tensor containing the bin boundaries for values of a given feature.
-    - float or double, matching input_vals
-  feature_ids(int64 attr): 1D TensorProto of feature IDs seen during calibration
-    -> hint: look up make_tensor_proto:
-       proto_init = np.array(values, dtype=np.int64)
-       tensor_attr = tf.make_tensor_proto(proto_init)
-  n_bin(int): The number of bin boundary values per feature
-    -> hence, n_bin + 1 buckets for each feature
-  output_bits(int): The maximum number of bits to use for the output IDs.
-  cost_per_unit(int): An estimate of the number of CPU cycles (or nanoseconds
-    if not CPU-bound) to complete a unit of work. Overestimating creates too
-    many shards and CPU time will be dominated by per-shard overhead, such as
-    Context creation. Underestimating may not fully make use of the specified
-    parallelism.
-  options(int): selects behavior of the op.
-    0x00 in bits{1:0} for std::lower_bound bucket search.
-    0x01 in bits{1:0} for linear bucket search
-    0x02 in bits{1:0} for std::upper_bound bucket search
-    0x00 in bits{4:2} for integer_multiplicative_hashing
-    0x01 in bits{4:2} for integer64_multiplicative_hashing
-    higher bits/other values are reserved for future extensions
+i-input
+  input_ids(int64): a-a tensow c-containing i-input featuwe ids (diwect fwom data wecowd). 😳
+  i-input_vaws(fwoat/doubwe): a tensow containing input v-vawues at cowwesponding featuwe ids. o.O
+    - i.e. input_ids[i] <-> input_vaws[i] fow each i
+  b-bin_vaws(fwoat/doubwe): a tensow c-containing the b-bin boundawies fow v-vawues of a given featuwe. ^^;;
+    - fwoat ow doubwe, ( ͡o ω ͡o ) matching input_vaws
+  f-featuwe_ids(int64 a-attw): 1d tensowpwoto o-of featuwe ids s-seen duwing cawibwation
+    -> hint: wook up make_tensow_pwoto:
+       p-pwoto_init = nyp.awway(vawues, ^^;; d-dtype=np.int64)
+       tensow_attw = tf.make_tensow_pwoto(pwoto_init)
+  ny_bin(int): the n-nyumbew of bin boundawy vawues p-pew featuwe
+    -> hence, ^^;; ny_bin + 1 b-buckets fow e-each featuwe
+  output_bits(int): the maximum nyumbew of bits to use fow the output ids. XD
+  cost_pew_unit(int): an estimate of the n-nyumbew of cpu c-cycwes (ow nyanoseconds
+    if n-nyot cpu-bound) t-to compwete a unit o-of wowk. 🥺 ovewestimating cweates too
+    many shawds and cpu time w-wiww be dominated by pew-shawd ovewhead, (///ˬ///✿) such as
+    context cweation. (U ᵕ U❁) undewestimating m-may nyot fuwwy make use o-of the specified
+    p-pawawwewism. ^^;;
+  o-options(int): sewects behaviow o-of the op. ^^;;
+    0x00 i-in bits{1:0} f-fow std::wowew_bound b-bucket seawch. rawr
+    0x01 in bits{1:0} f-fow wineaw bucket s-seawch
+    0x02 i-in bits{1:0} f-fow std::uppew_bound b-bucket seawch
+    0x00 in bits{4:2} fow integew_muwtipwicative_hashing
+    0x01 in bits{4:2} f-fow integew64_muwtipwicative_hashing
+    highew bits/othew vawues awe wesewved fow futuwe extensions
 
-Outputs
-  new_keys(int64): The discretized feature ids with same shape and size as keys.
-  new_vals(float or double): The discretized values with the same shape and size as vals.
+outputs
+  n-nyew_keys(int64): the discwetized featuwe ids with same shape a-and size as keys. (˘ω˘)
+  n-nyew_vaws(fwoat o-ow doubwe): the discwetized v-vawues with the same shape and size a-as vaws. 🥺
 
-Operation
-  Note that the discretization operation maps observation vectors to higher dimensional
-    observation vectors. Here, we describe this mapping.
+opewation
+  n-nyote that the discwetization opewation maps obsewvation vectows to highew dimensionaw
+    o-obsewvation vectows. nyaa~~ hewe, w-we descwibe this mapping. :3
 
-  Let a calibrated feature observation be given by (F,x), where F is the ID of the
-    feature, and x is some real value (i.e., continuous feature). This kind of
-    representation is useful for the representation of sparse vectors, where there
-    are many zeros.
+  wet a-a cawibwated featuwe o-obsewvation be given by (f,x), /(^•ω•^) whewe f is t-the id of the
+    f-featuwe, ^•ﻌ•^ and x is some weaw vawue (i.e., c-continuous f-featuwe). UwU this kind of
+    wepwesentation is usefuw fow the wepwesentation o-of spawse vectows, 😳😳😳 w-whewe thewe
+    a-awe many zewos. OwO
 
-  For example, for a dense feature vector [1.2, 2.4, 3.6], we might have
-    (0, 1.2) (1, 2.4) and (2, 3.6), with feature IDs indicating the 0th, 1st, and 2nd
-    elements of the vector.
+  fow exampwe, ^•ﻌ•^ f-fow a dense f-featuwe vectow [1.2, (ꈍᴗꈍ) 2.4, (⑅˘꒳˘) 3.6], we might have
+    (0, (⑅˘꒳˘) 1.2) (1, (ˆ ﻌ ˆ)♡ 2.4) a-and (2, /(^•ω•^) 3.6), with featuwe ids indicating the 0th, òωó 1st, and 2nd
+    ewements o-of the vectow. (⑅˘꒳˘)
 
-  The disretizer performs the following operation:
-    (F,x) -> (map(x|F),1).
-  Hence, we have that map(x|F) is a new feature ID, and the value observed for that
-    feature is 1. We might read map(x|F) as 'the map of x for feature F'.
+  t-the diswetizew pewfowms the fowwowing opewation:
+    (f,x) -> (map(x|f),1). (U ᵕ U❁)
+  h-hence, >w< we have t-that map(x|f) is a nyew featuwe id, σωσ and the vawue obsewved fow that
+    f-featuwe is 1. -.- we might wead map(x|f) as 'the map of x fow featuwe f'. o.O
 
-  For each feature F, we associate a (discrete, finite) set of new feature IDs, newIDs(F).
-    We will then have that map(x|F) is in the set newIDs(F) for any value of x. Each
-    set member of newIDs(F) is associated with a 'bin', as defined by the bin
-    boundaries given in the bin_vals input array. For any two different feature IDs F
-    and G, we would ideally have that INTERSECT(newIDs(F),newIDs(G)) is the empty set.
-    However, this is not guaranteed for this discretizer.
+  f-fow each featuwe f, ^^ we associate a (discwete, >_< finite) s-set of new f-featuwe ids, >w< nyewids(f). >_<
+    we wiww then have that map(x|f) is in the set nyewids(f) f-fow any v-vawue of x. >w< each
+    set membew of nyewids(f) is associated with a-a 'bin', rawr as defined by the bin
+    b-boundawies given in the bin_vaws input awway. rawr x3 fow any two diffewent f-featuwe ids f
+    and g, ( ͡o ω ͡o ) w-we wouwd ideawwy h-have that intewsect(newids(f),newids(g)) is the e-empty set. (˘ω˘)
+    howevew, 😳 this is n-nyot guawanteed f-fow this discwetizew. OwO
 
-  In the case of this hashing discretizer, map(x|F) can actually be written as follows:
-    let bucket = bucket(x|F) be the the bucket index for x, according to the
-    calibration on F. (This is an integer value in [0,n_bin], inclusive)
-    F is an integer ID. Here, we have that map(x|F) = hash_fn(F,bucket). This has
-    the desirable property that the new ID depends only on the calibration data
-    supplied for feature F, and not on any other features in the dataset (e.g.,
-    number of other features present in the calibration data, or order of features
-    in the dataset). Note that PercentileDiscretizer does NOT have this property.
-    This comes at the expense of the possibility of output ID collisions, which
-    we try to minimize through the design of hash_fn.
+  i-in the case of this hashing d-discwetizew, (˘ω˘) m-map(x|f) can actuawwy be wwitten as fowwows:
+    w-wet bucket = b-bucket(x|f) be t-the the bucket index fow x, òωó accowding to the
+    c-cawibwation on f. (this is an i-integew vawue in [0,n_bin], ( ͡o ω ͡o ) i-incwusive)
+    f is an integew id. UwU hewe, /(^•ω•^) we have that m-map(x|f) = hash_fn(f,bucket). (ꈍᴗꈍ) t-this has
+    the d-desiwabwe pwopewty t-that the nyew id depends onwy o-on the cawibwation data
+    suppwied fow featuwe f, and nyot on any othew featuwes in the dataset (e.g.,
+    nyumbew o-of othew featuwes pwesent i-in the cawibwation data, 😳 ow owdew o-of featuwes
+    in the dataset). mya n-nyote that pewcentiwediscwetizew does nyot have t-this pwopewty. mya
+    t-this comes a-at the expense o-of the possibiwity o-of output id cowwisions, /(^•ω•^) which
+    we twy to minimize thwough the design of hash_fn. ^^;;
 
-  Example - consider input vector with a single element, i.e. [x].
-    Let's Discretize to one of 2 values, as follows:
-    Let F=0 for the ID of the single feature in the vector.
-    Let the bin boundary of feature F=0 be BNDRY(F) = BNDRY(0) since F=0
-    bucket = bucket(x|F=0) = 0 if x<=BNDRY(0) else 1
-    Let map(x|F) = hash_fn(F=0,bucket=0) if x<=BNDRY(0) else hash_fn(F=0,bucket=1)
-  If we had another element y in the vector, i.e. [x, y], then we might additionally
-    Let F=1 for element y.
-    Let the bin boundary be BNDRY(F) = BNDRY(1) since F=1
-    bucket = bucket(x|F=1) = 0 if x<=BNDRY(1) else 1
-    Let map(x|F) = hash_fn(F=1,bucket=0) if x<=BNDRY(1) else hash_fn(F=1,bucket=1)
-  Note how the construction of map(x|F=1) does not depend on whether map(x|F=0)
-    was constructed.
+  exampwe - considew input v-vectow with a-a singwe ewement, 🥺 i-i.e. [x].
+    wet's discwetize t-to one of 2 vawues, ^^ as fowwows:
+    wet f=0 fow the id of the s-singwe featuwe in t-the vectow. ^•ﻌ•^
+    wet the bin boundawy o-of featuwe f=0 be bndwy(f) = bndwy(0) since f-f=0
+    bucket = b-bucket(x|f=0) = 0 if x<=bndwy(0) e-ewse 1
+    w-wet map(x|f) = hash_fn(f=0,bucket=0) if x<=bndwy(0) ewse hash_fn(f=0,bucket=1)
+  if we had anothew ewement y in t-the vectow, i.e. /(^•ω•^) [x, y-y], then we m-might additionawwy
+    w-wet f=1 f-fow ewement y. ^^
+    wet the bin boundawy b-be bndwy(f) = b-bndwy(1) since f=1
+    bucket = b-bucket(x|f=1) = 0 i-if x<=bndwy(1) ewse 1
+    w-wet map(x|f) = hash_fn(f=1,bucket=0) if x<=bndwy(1) e-ewse hash_fn(f=1,bucket=1)
+  nyote how the c-constwuction of m-map(x|f=1) does nyot depend on w-whethew map(x|f=0)
+    was constwucted. 🥺
 )doc");
 
-template<typename T>
-class HashingDiscretizer : public OpKernel {
- public:
-  explicit HashingDiscretizer(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context,
-                   context->GetAttr("n_bin", &n_bin_));
-    OP_REQUIRES(context,
-                n_bin_ > 0,
-                errors::InvalidArgument("Must have n_bin_ > 0."));
+tempwate<typename t-t>
+cwass hashingdiscwetizew : p-pubwic opkewnew {
+ p-pubwic:
+  expwicit hashingdiscwetizew(opkewnewconstwuction* context) : opkewnew(context) {
+    op_wequiwes_ok(context, (U ᵕ U❁)
+                   c-context->getattw("n_bin", 😳😳😳 &n_bin_));
+    op_wequiwes(context, nyaa~~
+                ny_bin_ > 0, (˘ω˘)
+                e-ewwows::invawidawgument("must h-have ny_bin_ > 0."));
 
-    OP_REQUIRES_OK(context,
-                   context->GetAttr("output_bits", &output_bits_));
-    OP_REQUIRES(context,
-                output_bits_ > 0,
-                errors::InvalidArgument("Must have output_bits_ > 0."));
+    op_wequiwes_ok(context, >_<
+                   c-context->getattw("output_bits", XD &output_bits_));
+    op_wequiwes(context, rawr x3
+                o-output_bits_ > 0, ( ͡o ω ͡o )
+                e-ewwows::invawidawgument("must have output_bits_ > 0."));
 
-    OP_REQUIRES_OK(context,
-                   context->GetAttr("cost_per_unit", &cost_per_unit_));
-    OP_REQUIRES(context,
-                cost_per_unit_ >= 0,
-                errors::InvalidArgument("Must have cost_per_unit >= 0."));
+    op_wequiwes_ok(context, :3
+                   c-context->getattw("cost_pew_unit", mya &cost_pew_unit_));
+    op_wequiwes(context, σωσ
+                cost_pew_unit_ >= 0, (ꈍᴗꈍ)
+                e-ewwows::invawidawgument("must h-have cost_pew_unit >= 0."));
 
-    OP_REQUIRES_OK(context,
-                   context->GetAttr("options", &options_));
+    op_wequiwes_ok(context, OwO
+                   c-context->getattw("options", o.O &options_));
 
-    // construct the ID_to_index hash map
-    Tensor feature_IDs;
+    // constwuct the id_to_index h-hash m-map
+    tensow featuwe_ids;
 
-    // extract the tensors
-    OP_REQUIRES_OK(context,
-                   context->GetAttr("feature_ids", &feature_IDs));
+    // e-extwact the tensows
+    op_wequiwes_ok(context, 😳😳😳
+                   context->getattw("featuwe_ids", /(^•ω•^) &featuwe_ids));
 
-    // for access to the data
-    // int64_t data type is set in to_layer function of the calibrator objects in Python
-    auto feature_IDs_flat = feature_IDs.flat<int64>();
+    // fow access to the data
+    // int64_t data type is set in to_wayew function of the cawibwatow objects in python
+    auto featuwe_ids_fwat = featuwe_ids.fwat<int64>();
 
-    // verify proper dimension constraints
-    OP_REQUIRES(context,
-                feature_IDs.shape().dims() == 1,
-                errors::InvalidArgument("feature_ids must be 1D."));
+    // vewify p-pwopew dimension c-constwaints
+    op_wequiwes(context, OwO
+                featuwe_ids.shape().dims() == 1, ^^
+                e-ewwows::invawidawgument("featuwe_ids m-must be 1d."));
 
-    // reserve space in the hash map and fill in the values
-    int64_t num_features = feature_IDs.shape().dim_size(0);
-#ifdef USE_DENSE_HASH
-    ID_to_index_.set_empty_key(0);
-    ID_to_index_.resize(num_features);
-#else
-    ID_to_index_.reserve(num_features);
-#endif  // USE_DENSE_HASH
-    for (int64_t i = 0 ; i < num_features ; i++) {
-      ID_to_index_[feature_IDs_flat(i)] = i;
+    // w-wesewve space in the hash m-map and fiww in the vawues
+    i-int64_t nyum_featuwes = f-featuwe_ids.shape().dim_size(0);
+#ifdef use_dense_hash
+    i-id_to_index_.set_empty_key(0);
+    id_to_index_.wesize(num_featuwes);
+#ewse
+    i-id_to_index_.wesewve(num_featuwes);
+#endif  // u-use_dense_hash
+    fow (int64_t i = 0 ; i < n-nyum_featuwes ; i-i++) {
+      id_to_index_[featuwe_ids_fwat(i)] = i-i;
     }
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeHashingDiscretizer(
-      context,
-      output_bits_,
-      ID_to_index_,
-      n_bin_,
-      cost_per_unit_,
-      options_);
+  v-void compute(opkewnewcontext* context) o-ovewwide {
+    c-computehashingdiscwetizew(
+      c-context, (///ˬ///✿)
+      o-output_bits_, (///ˬ///✿)
+      i-id_to_index_, (///ˬ///✿)
+      ny_bin_, ʘwʘ
+      cost_pew_unit_, ^•ﻌ•^
+      o-options_);
   }
 
- private:
-  twml::Map<int64_t, int64_t> ID_to_index_;
-  int n_bin_;
+ p-pwivate:
+  t-twmw::map<int64_t, OwO int64_t> id_to_index_;
+  i-int ny_bin_;
   int output_bits_;
-  int cost_per_unit_;
-  int options_;
+  int cost_pew_unit_;
+  i-int options_;
 };
 
-#define REGISTER(Type)              \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("HashingDiscretizer")      \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    HashingDiscretizer<Type>);      \
+#define wegistew(type)              \
+  wegistew_kewnew_buiwdew(          \
+    nyame("hashingdiscwetizew")      \
+    .device(device_cpu)             \
+    .typeconstwaint<type>("t"),     \
+    h-hashingdiscwetizew<type>);      \
 
-REGISTER(float);
-REGISTER(double);
+w-wegistew(fwoat);
+w-wegistew(doubwe);
 
-void ComputeHashingDiscretizer(
-    OpKernelContext* context,
-    int64_t output_bits,
-    const twml::Map<int64_t, int64_t> &ID_to_index,
-    int64_t n_bin,
-    int64_t cost_per_unit,
+void computehashingdiscwetizew(
+    o-opkewnewcontext* context, (U ﹏ U)
+    i-int64_t output_bits, (ˆ ﻌ ˆ)♡
+    const t-twmw::map<int64_t, (⑅˘꒳˘) int64_t> &id_to_index, (U ﹏ U)
+    i-int64_t ny_bin, o.O
+    int64_t cost_pew_unit, mya
     int64_t options) {
-  const Tensor& keys = context->input(0);
-  const Tensor& vals = context->input(1);
-  const Tensor& bin_vals = context->input(2);
+  const tensow& keys = context->input(0);
+  c-const tensow& vaws = c-context->input(1);
+  c-const tensow& bin_vaws = context->input(2);
 
-  const int64 output_size = keys.dim_size(0);
+  const int64 o-output_size = keys.dim_size(0);
 
-  TensorShape output_shape;
-  OP_REQUIRES_OK(context, TensorShapeUtils::MakeShape(&output_size, 1, &output_shape));
+  t-tensowshape o-output_shape;
+  o-op_wequiwes_ok(context, XD tensowshapeutiws::makeshape(&output_size, 1, òωó &output_shape));
 
-  Tensor* new_keys = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, output_shape, &new_keys));
-  Tensor* new_vals = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(1, output_shape, &new_vals));
+  tensow* n-nyew_keys = nyuwwptw;
+  o-op_wequiwes_ok(context, (˘ω˘) context->awwocate_output(0, :3 output_shape, OwO &new_keys));
+  t-tensow* nyew_vaws = nyuwwptw;
+  op_wequiwes_ok(context, mya c-context->awwocate_output(1, (˘ω˘) output_shape, o.O &new_vaws));
 
-  try {
-    twml::Tensor out_keys_ = TFTensor_to_twml_tensor(*new_keys);
-    twml::Tensor out_vals_ = TFTensor_to_twml_tensor(*new_vals);
+  t-twy {
+    t-twmw::tensow o-out_keys_ = tftensow_to_twmw_tensow(*new_keys);
+    t-twmw::tensow o-out_vaws_ = t-tftensow_to_twmw_tensow(*new_vaws);
 
-    const twml::Tensor in_keys_ = TFTensor_to_twml_tensor(keys);
-    const twml::Tensor in_vals_ = TFTensor_to_twml_tensor(vals);
-    const twml::Tensor bin_vals_ = TFTensor_to_twml_tensor(bin_vals);
+    c-const twmw::tensow in_keys_ = t-tftensow_to_twmw_tensow(keys);
+    c-const t-twmw::tensow in_vaws_ = t-tftensow_to_twmw_tensow(vaws);
+    c-const t-twmw::tensow b-bin_vaws_ = tftensow_to_twmw_tensow(bin_vaws);
 
-    // retrieve the thread pool from the op context
-    auto worker_threads = *(context->device()->tensorflow_cpu_worker_threads());
+    // w-wetwieve the thwead poow f-fwom the op context
+    auto wowkew_thweads = *(context->device()->tensowfwow_cpu_wowkew_thweads());
 
-    // Definition of the computation thread
-    auto task = [&](int64 start, int64 limit) {
-      twml::hashDiscretizerInfer(out_keys_, out_vals_,
-                             in_keys_, in_vals_,
-                             n_bin,
-                             bin_vals_,
-                             output_bits,
-                             ID_to_index,
-                             start, limit,
-                             options);
+    // d-definition of the computation t-thwead
+    a-auto task = [&](int64 s-stawt, (✿oωo) int64 wimit) {
+      twmw::hashdiscwetizewinfew(out_keys_, (ˆ ﻌ ˆ)♡ out_vaws_, ^^;;
+                             i-in_keys_, OwO i-in_vaws_, 🥺
+                             n-ny_bin, mya
+                             bin_vaws_, 😳
+                             output_bits, òωó
+                             id_to_index, /(^•ω•^)
+                             s-stawt, -.- wimit,
+                             o-options);
     };
 
-    // let Tensorflow split up the work as it sees fit
-    Shard(worker_threads.num_threads,
-          worker_threads.workers,
-          output_size,
-          static_cast<int64>(cost_per_unit),
-          task);
-  } catch (const std::exception &e) {
-    context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    // wet t-tensowfwow spwit u-up the wowk as it sees fit
+    shawd(wowkew_thweads.num_thweads, òωó
+          wowkew_thweads.wowkews, /(^•ω•^)
+          o-output_size, /(^•ω•^)
+          s-static_cast<int64>(cost_pew_unit), 😳
+          t-task);
+  } catch (const s-std::exception &e) {
+    context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
   }
 }
 

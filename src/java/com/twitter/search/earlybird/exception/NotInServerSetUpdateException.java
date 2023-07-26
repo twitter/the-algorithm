@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
-import com.twitter.common.zookeeper.ServerSet;
+impowt com.twittew.common.zookeepew.sewvewset;
 
 /**
- * Used when trying to leave a server set when this earlybird is already out of the server set.
+ * u-used when t-twying to weave a-a sewvew set when t-this eawwybiwd i-is awweady out o-of the sewvew set.
  */
-public class NotInServerSetUpdateException extends ServerSet.UpdateException {
-  public NotInServerSetUpdateException(String message) {
-    super(message);
+p-pubwic cwass n-nyotinsewvewsetupdateexception extends sewvewset.updateexception {
+  pubwic nyotinsewvewsetupdateexception(stwing message) {
+    s-supew(message);
   }
 }

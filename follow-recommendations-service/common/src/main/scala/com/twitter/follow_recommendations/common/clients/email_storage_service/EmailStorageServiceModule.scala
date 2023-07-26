@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.email_storage_service
+package com.twittew.fowwow_wecommendations.common.cwients.emaiw_stowage_sewvice
 
-import com.twitter.emailstorage.api.thriftscala.EmailStorageService
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
+impowt com.twittew.emaiwstowage.api.thwiftscawa.emaiwstowagesewvice
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.common.basecwientmoduwe
 
-object EmailStorageServiceModule
-    extends BaseClientModule[EmailStorageService.MethodPerEndpoint]
-    with MtlsClient {
-  override val label = "email-storage-service"
-  override val dest = "/s/email-server/email-server"
+o-object emaiwstowagesewvicemoduwe
+    e-extends b-basecwientmoduwe[emaiwstowagesewvice.methodpewendpoint]
+    w-with m-mtwscwient {
+  o-ovewwide vaw wabew = "emaiw-stowage-sewvice"
+  ovewwide vaw dest = "/s/emaiw-sewvew/emaiw-sewvew"
 }

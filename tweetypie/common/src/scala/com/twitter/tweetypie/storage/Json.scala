@@ -1,17 +1,17 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+impowt com.fastewxmw.jackson.databind.objectmappew
+i-impowt c-com.fastewxmw.jackson.moduwe.scawa.defauwtscawamoduwe
 
-object Json {
-  val TimestampKey = "timestamp"
-  val SoftDeleteTimestampKey = "softdelete_timestamp"
+o-object json {
+  v-vaw timestampkey = "timestamp"
+  v-vaw softdewetetimestampkey = "softdewete_timestamp"
 
-  private val mapper = new ObjectMapper
-  mapper.registerModule(DefaultScalaModule)
+  pwivate v-vaw mappew = n-nyew objectmappew
+  m-mappew.wegistewmoduwe(defauwtscawamoduwe)
 
-  def encode(m: Map[String, Any]): Array[Byte] = mapper.writeValueAsBytes(m)
+  def encode(m: map[stwing, (ˆ ﻌ ˆ)♡ any]): awway[byte] = mappew.wwitevawueasbytes(m)
 
-  def decode(arr: Array[Byte]): Map[String, Any] =
-    mapper.readValue[Map[String, Any]](arr, classOf[Map[String, Any]])
+  d-def decode(aww: awway[byte]): map[stwing, (⑅˘꒳˘) any] =
+    m-mappew.weadvawue[map[stwing, (U ᵕ U❁) any]](aww, -.- c-cwassof[map[stwing, ^^;; any]])
 }

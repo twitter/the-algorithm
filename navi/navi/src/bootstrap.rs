@@ -1,326 +1,326 @@
-use anyhow::Result;
-use log::{info, warn};
-use x509_parser::{prelude::{parse_x509_pem}, parse_x509_certificate};
-use std::collections::HashMap;
-use tokio::time::Instant;
-use tonic::{
-    Request,
-    Response, Status, transport::{Certificate, Identity, Server, ServerTlsConfig},
+use anyhow::wesuwt;
+use wog::{info, (✿oωo) w-wawn};
+use x509_pawsew::{pwewude::{pawse_x509_pem}, :3 p-pawse_x509_cewtificate};
+u-use std::cowwections::hashmap;
+use t-tokio::time::instant;
+u-use tonic::{
+    w-wequest, 😳
+    w-wesponse, (U ﹏ U) s-status, mya twanspowt::{cewtificate, (U ᵕ U❁) identity, sewvew, :3 sewvewtwsconfig}, mya
 };
 
-// protobuf related
-use crate::tf_proto::tensorflow_serving::{
-    ClassificationRequest, ClassificationResponse, GetModelMetadataRequest,
-    GetModelMetadataResponse, MultiInferenceRequest, MultiInferenceResponse, PredictRequest,
-    PredictResponse, RegressionRequest, RegressionResponse,
+// pwotobuf wewated
+use c-cwate::tf_pwoto::tensowfwow_sewving::{
+    cwassificationwequest, OwO cwassificationwesponse, (ˆ ﻌ ˆ)♡ g-getmodewmetadatawequest, ʘwʘ
+    getmodewmetadatawesponse, o.O m-muwtiinfewencewequest, muwtiinfewencewesponse, UwU pwedictwequest, rawr x3
+    pwedictwesponse, 🥺 w-wegwessionwequest, :3 wegwessionwesponse, (ꈍᴗꈍ)
 };
-use crate::{kf_serving::{
-    grpc_inference_service_server::GrpcInferenceService, ModelInferRequest, ModelInferResponse,
-    ModelMetadataRequest, ModelMetadataResponse, ModelReadyRequest, ModelReadyResponse,
-    ServerLiveRequest, ServerLiveResponse, ServerMetadataRequest, ServerMetadataResponse,
-    ServerReadyRequest, ServerReadyResponse,
-}, ModelFactory, tf_proto::tensorflow_serving::prediction_service_server::{
-    PredictionService, PredictionServiceServer,
-}, VERSION, NAME};
+u-use cwate::{kf_sewving::{
+    gwpc_infewence_sewvice_sewvew::gwpcinfewencesewvice, 🥺 m-modewinfewwequest, (✿oωo) modewinfewwesponse, (U ﹏ U)
+    modewmetadatawequest, :3 modewmetadatawesponse, ^^;; modewweadywequest, rawr modewweadywesponse, 😳😳😳
+    sewvewwivewequest, (✿oωo) s-sewvewwivewesponse, OwO sewvewmetadatawequest, ʘwʘ sewvewmetadatawesponse, (ˆ ﻌ ˆ)♡
+    sewvewweadywequest, (U ﹏ U) sewvewweadywesponse, UwU
+}, m-modewfactowy, XD tf_pwoto::tensowfwow_sewving::pwediction_sewvice_sewvew::{
+    p-pwedictionsewvice, ʘwʘ p-pwedictionsewvicesewvew, rawr x3
+}, v-vewsion, ^^;; n-nyame};
 
-use crate::PredictResult;
-use crate::cli_args::{ARGS, INPUTS, OUTPUTS};
-use crate::metrics::{
-    NAVI_VERSION, NUM_PREDICTIONS, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
-    NUM_REQUESTS_RECEIVED, NUM_REQUESTS_RECEIVED_BY_MODEL, RESPONSE_TIME_COLLECTOR,
-    CERT_EXPIRY_EPOCH
+use cwate::pwedictwesuwt;
+use cwate::cwi_awgs::{awgs, ʘwʘ inputs, (U ﹏ U) outputs};
+u-use cwate::metwics::{
+    nyavi_vewsion, (˘ω˘) nyum_pwedictions, (ꈍᴗꈍ) n-nyum_wequests_faiwed, nyum_wequests_faiwed_by_modew, /(^•ω•^)
+    nyum_wequests_weceived, >_< nyum_wequests_weceived_by_modew, σωσ wesponse_time_cowwectow, ^^;;
+    cewt_expiwy_epoch
 };
-use crate::predict_service::{Model, PredictService};
-use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice::Version;
-use crate::tf_proto::tensorflow_serving::ModelSpec;
+use cwate::pwedict_sewvice::{modew, 😳 p-pwedictsewvice};
+use cwate::tf_pwoto::tensowfwow_sewving::modew_spec::vewsionchoice::vewsion;
+u-use cwate::tf_pwoto::tensowfwow_sewving::modewspec;
 
-#[derive(Debug)]
-pub enum TensorInputEnum {
-    String(Vec<Vec<u8>>),
-    Int(Vec<i32>),
-    Int64(Vec<i64>),
-    Float(Vec<f32>),
-    Double(Vec<f64>),
-    Boolean(Vec<bool>),
+#[dewive(debug)]
+p-pub enum t-tensowinputenum {
+    stwing(vec<vec<u8>>), >_<
+    int(vec<i32>), -.-
+    int64(vec<i64>), UwU
+    f-fwoat(vec<f32>), :3
+    d-doubwe(vec<f64>), σωσ
+    boowean(vec<boow>), >w<
 }
 
-#[derive(Debug)]
-pub struct TensorInput {
-    pub tensor_data: TensorInputEnum,
-    pub name: String,
-    pub dims: Option<Vec<i64>>,
+#[dewive(debug)]
+p-pub s-stwuct tensowinput {
+    pub tensow_data: t-tensowinputenum, (ˆ ﻌ ˆ)♡
+    pub nyame: stwing, ʘwʘ
+    p-pub dims: option<vec<i64>>, :3
 }
 
-impl TensorInput {
-    pub fn new(tensor_data: TensorInputEnum, name: String, dims: Option<Vec<i64>>) -> TensorInput {
-        TensorInput {
-            tensor_data,
-            name,
-            dims,
+impw tensowinput {
+    p-pub fn nyew(tensow_data: t-tensowinputenum, (˘ω˘) name: stwing, 😳😳😳 d-dims: option<vec<i64>>) -> t-tensowinput {
+        tensowinput {
+            tensow_data, rawr x3
+            nyame, (✿oωo)
+            dims, (ˆ ﻌ ˆ)♡
         }
     }
 }
 
-impl TensorInputEnum {
-    #[inline(always)]
-    pub(crate) fn extend(&mut self, another: TensorInputEnum) {
-        match (self, another) {
-            (Self::String(input), Self::String(ex)) => input.extend(ex),
-            (Self::Int(input), Self::Int(ex)) => input.extend(ex),
-            (Self::Int64(input), Self::Int64(ex)) => input.extend(ex),
-            (Self::Float(input), Self::Float(ex)) => input.extend(ex),
-            (Self::Double(input), Self::Double(ex)) => input.extend(ex),
-            (Self::Boolean(input), Self::Boolean(ex)) => input.extend(ex),
-            x => panic!("input enum type not matched. input:{:?}, ex:{:?}", x.0, x.1),
+impw tensowinputenum {
+    #[inwine(awways)]
+    pub(cwate) f-fn extend(&mut s-sewf, :3 anothew: tensowinputenum) {
+        m-match (sewf, (U ᵕ U❁) a-anothew) {
+            (sewf::stwing(input), ^^;; s-sewf::stwing(ex)) => input.extend(ex), mya
+            (sewf::int(input), 😳😳😳 sewf::int(ex)) => input.extend(ex), OwO
+            (sewf::int64(input), rawr s-sewf::int64(ex)) => input.extend(ex), XD
+            (sewf::fwoat(input), (U ﹏ U) sewf::fwoat(ex)) => input.extend(ex), (˘ω˘)
+            (sewf::doubwe(input), UwU sewf::doubwe(ex)) => input.extend(ex), >_<
+            (sewf::boowean(input), σωσ s-sewf::boowean(ex)) => input.extend(ex), 🥺
+            x => p-panic!("input e-enum type nyot matched. 🥺 i-input:{:?}, ex:{:?}", ʘwʘ x.0, x-x.1), :3
         }
     }
-    #[inline(always)]
-    pub(crate) fn merge_batch(input_tensors: Vec<Vec<TensorInput>>) -> Vec<TensorInput> {
-        input_tensors
-            .into_iter()
-            .reduce(|mut acc, e| {
-                for (i, ext) in acc.iter_mut().zip(e) {
-                    i.tensor_data.extend(ext.tensor_data);
+    #[inwine(awways)]
+    p-pub(cwate) fn m-mewge_batch(input_tensows: v-vec<vec<tensowinput>>) -> vec<tensowinput> {
+        input_tensows
+            .into_itew()
+            .weduce(|mut a-acc, (U ﹏ U) e| {
+                f-fow (i, (U ﹏ U) e-ext) in acc.itew_mut().zip(e) {
+                    i-i.tensow_data.extend(ext.tensow_data);
                 }
-                acc
+                a-acc
             })
-            .unwrap() //invariant: we expect there's always rows in input_tensors
+            .unwwap() //invawiant: we expect thewe's awways wows in input_tensows
     }
 }
 
 
-///entry point for tfServing gRPC
-#[tonic::async_trait]
-impl<T: Model> GrpcInferenceService for PredictService<T> {
-    async fn server_live(
-        &self,
-        _request: Request<ServerLiveRequest>,
-    ) -> Result<Response<ServerLiveResponse>, Status> {
-        unimplemented!()
+///entwy p-point fow tfsewving gwpc
+#[tonic::async_twait]
+impw<t: modew> gwpcinfewencesewvice fow pwedictsewvice<t> {
+    async fn s-sewvew_wive(
+        &sewf, ʘwʘ
+        _wequest: wequest<sewvewwivewequest>, >w<
+    ) -> wesuwt<wesponse<sewvewwivewesponse>, rawr x3 status> {
+        u-unimpwemented!()
     }
-    async fn server_ready(
-        &self,
-        _request: Request<ServerReadyRequest>,
-    ) -> Result<Response<ServerReadyResponse>, Status> {
-        unimplemented!()
-    }
-
-    async fn model_ready(
-        &self,
-        _request: Request<ModelReadyRequest>,
-    ) -> Result<Response<ModelReadyResponse>, Status> {
-        unimplemented!()
+    a-async fn sewvew_weady(
+        &sewf, OwO
+        _wequest: w-wequest<sewvewweadywequest>, ^•ﻌ•^
+    ) -> wesuwt<wesponse<sewvewweadywesponse>, >_< s-status> {
+        unimpwemented!()
     }
 
-    async fn server_metadata(
-        &self,
-        _request: Request<ServerMetadataRequest>,
-    ) -> Result<Response<ServerMetadataResponse>, Status> {
-        unimplemented!()
+    a-async fn m-modew_weady(
+        &sewf, OwO
+        _wequest: wequest<modewweadywequest>, >_<
+    ) -> wesuwt<wesponse<modewweadywesponse>, (ꈍᴗꈍ) status> {
+        unimpwemented!()
     }
 
-    async fn model_metadata(
-        &self,
-        _request: Request<ModelMetadataRequest>,
-    ) -> Result<Response<ModelMetadataResponse>, Status> {
-        unimplemented!()
+    async fn sewvew_metadata(
+        &sewf, >w<
+        _wequest: w-wequest<sewvewmetadatawequest>, (U ﹏ U)
+    ) -> wesuwt<wesponse<sewvewmetadatawesponse>, ^^ s-status> {
+        unimpwemented!()
     }
 
-    async fn model_infer(
-        &self,
-        _request: Request<ModelInferRequest>,
-    ) -> Result<Response<ModelInferResponse>, Status> {
-        unimplemented!()
+    a-async fn modew_metadata(
+        &sewf, (U ﹏ U)
+        _wequest: w-wequest<modewmetadatawequest>,
+    ) -> wesuwt<wesponse<modewmetadatawesponse>, :3 status> {
+        u-unimpwemented!()
+    }
+
+    a-async fn modew_infew(
+        &sewf, (✿oωo)
+        _wequest: w-wequest<modewinfewwequest>, XD
+    ) -> w-wesuwt<wesponse<modewinfewwesponse>, >w< status> {
+        unimpwemented!()
     }
 }
 
-#[tonic::async_trait]
-impl<T: Model> PredictionService for PredictService<T> {
-    async fn classify(
-        &self,
-        _request: Request<ClassificationRequest>,
-    ) -> Result<Response<ClassificationResponse>, Status> {
-        unimplemented!()
+#[tonic::async_twait]
+impw<t: modew> pwedictionsewvice f-fow p-pwedictsewvice<t> {
+    a-async fn cwassify(
+        &sewf, òωó
+        _wequest: w-wequest<cwassificationwequest>, (ꈍᴗꈍ)
+    ) -> w-wesuwt<wesponse<cwassificationwesponse>, rawr x3 status> {
+        unimpwemented!()
     }
-    async fn regress(
-        &self,
-        _request: Request<RegressionRequest>,
-    ) -> Result<Response<RegressionResponse>, Status> {
-        unimplemented!()
+    a-async fn wegwess(
+        &sewf, rawr x3
+        _wequest: wequest<wegwessionwequest>, σωσ
+    ) -> wesuwt<wesponse<wegwessionwesponse>, (ꈍᴗꈍ) status> {
+        unimpwemented!()
     }
-    async fn predict(
-        &self,
-        request: Request<PredictRequest>,
-    ) -> Result<Response<PredictResponse>, Status> {
-        NUM_REQUESTS_RECEIVED.inc();
-        let start = Instant::now();
-        let mut req = request.into_inner();
-        let (model_spec, version) = req.take_model_spec();
-        NUM_REQUESTS_RECEIVED_BY_MODEL
-            .with_label_values(&[&model_spec])
+    a-async fn pwedict(
+        &sewf, rawr
+        wequest: w-wequest<pwedictwequest>, ^^;;
+    ) -> wesuwt<wesponse<pwedictwesponse>, rawr x3 status> {
+        n-nyum_wequests_weceived.inc();
+        w-wet stawt = instant::now();
+        wet mut weq = wequest.into_innew();
+        w-wet (modew_spec, (ˆ ﻌ ˆ)♡ vewsion) = weq.take_modew_spec();
+        nyum_wequests_weceived_by_modew
+            .with_wabew_vawues(&[&modew_spec])
             .inc();
-        let idx = PredictService::<T>::get_model_index(&model_spec).ok_or_else(|| {
-            Status::failed_precondition(format!("model spec not found:{}", model_spec))
+        wet idx = pwedictsewvice::<t>::get_modew_index(&modew_spec).ok_ow_ewse(|| {
+            s-status::faiwed_pwecondition(fowmat!("modew spec nyot found:{}", σωσ m-modew_spec))
         })?;
-        let input_spec = match INPUTS[idx].get() {
-            Some(input) => input,
-            _ => return Err(Status::not_found(format!("model input spec {}", idx))),
+        w-wet input_spec = match inputs[idx].get() {
+            some(input) => input, (U ﹏ U)
+            _ => w-wetuwn eww(status::not_found(fowmat!("modew i-input spec {}", >w< idx))), σωσ
         };
-        let input_val = req.take_input_vals(input_spec);
-        self.predict(idx, version, input_val, start)
+        wet input_vaw = weq.take_input_vaws(input_spec);
+        s-sewf.pwedict(idx, nyaa~~ vewsion, input_vaw, 🥺 s-stawt)
             .await
-            .map_or_else(
+            .map_ow_ewse(
                 |e| {
-                    NUM_REQUESTS_FAILED.inc();
-                    NUM_REQUESTS_FAILED_BY_MODEL
-                        .with_label_values(&[&model_spec])
+                    nyum_wequests_faiwed.inc();
+                    nyum_wequests_faiwed_by_modew
+                        .with_wabew_vawues(&[&modew_spec])
                         .inc();
-                    Err(Status::internal(e.to_string()))
-                },
-                |res| {
-                    RESPONSE_TIME_COLLECTOR
-                        .with_label_values(&[&model_spec])
-                        .observe(start.elapsed().as_millis() as f64);
+                    eww(status::intewnaw(e.to_stwing()))
+                }, rawr x3
+                |wes| {
+                    w-wesponse_time_cowwectow
+                        .with_wabew_vawues(&[&modew_spec])
+                        .obsewve(stawt.ewapsed().as_miwwis() as f64);
 
-                    match res {
-                        PredictResult::Ok(tensors, version) => {
-                            let mut outputs = HashMap::new();
-                            NUM_PREDICTIONS.with_label_values(&[&model_spec]).inc();
-                            //FIXME: uncomment when prediction scores are normal
-                            // PREDICTION_SCORE_SUM
-                            // .with_label_values(&[&model_spec])
-                            // .inc_by(tensors[0]as f64);
-                            for (tp, output_name) in tensors
-                                .into_iter()
-                                .map(|tensor| tensor.create_tensor_proto())
-                                .zip(OUTPUTS[idx].iter())
+                    m-match wes {
+                        p-pwedictwesuwt::ok(tensows, σωσ vewsion) => {
+                            w-wet mut outputs = h-hashmap::new();
+                            n-nyum_pwedictions.with_wabew_vawues(&[&modew_spec]).inc();
+                            //fixme: u-uncomment when pwediction s-scowes awe n-nowmaw
+                            // pwediction_scowe_sum
+                            // .with_wabew_vawues(&[&modew_spec])
+                            // .inc_by(tensows[0]as f64);
+                            f-fow (tp, (///ˬ///✿) output_name) i-in tensows
+                                .into_itew()
+                                .map(|tensow| tensow.cweate_tensow_pwoto())
+                                .zip(outputs[idx].itew())
                             {
-                                outputs.insert(output_name.to_owned(), tp);
+                                o-outputs.insewt(output_name.to_owned(), (U ﹏ U) tp);
                             }
-                            let reply = PredictResponse {
-                                model_spec: Some(ModelSpec {
-                                    version_choice: Some(Version(version)),
-                                    ..Default::default()
-                                }),
-                                outputs,
+                            wet wepwy = p-pwedictwesponse {
+                                modew_spec: s-some(modewspec {
+                                    v-vewsion_choice: some(vewsion(vewsion)), ^^;;
+                                    ..defauwt::defauwt()
+                                }), 🥺
+                                outputs, òωó
                             };
-                            Ok(Response::new(reply))
+                            ok(wesponse::new(wepwy))
                         }
-                        PredictResult::DropDueToOverload => Err(Status::resource_exhausted("")),
-                        PredictResult::ModelNotFound(idx) => {
-                            Err(Status::not_found(format!("model index {}", idx)))
-                        },
-                        PredictResult::ModelNotReady(idx) => {
-                            Err(Status::unavailable(format!("model index {}", idx)))
+                        pwedictwesuwt::dwopduetoovewwoad => e-eww(status::wesouwce_exhausted("")), XD
+                        pwedictwesuwt::modewnotfound(idx) => {
+                            e-eww(status::not_found(fowmat!("modew i-index {}", :3 i-idx)))
+                        }, (U ﹏ U)
+                        pwedictwesuwt::modewnotweady(idx) => {
+                            eww(status::unavaiwabwe(fowmat!("modew i-index {}", >w< idx)))
                         }
-                        PredictResult::ModelVersionNotFound(idx, version) => Err(
-                            Status::not_found(format!("model index:{}, version {}", idx, version)),
-                        ),
+                        pwedictwesuwt::modewvewsionnotfound(idx, /(^•ω•^) vewsion) => eww(
+                            status::not_found(fowmat!("modew index:{}, (⑅˘꒳˘) vewsion {}", ʘwʘ i-idx, vewsion)), rawr x3
+                        ), (˘ω˘)
                     }
-                },
+                }, o.O
             )
     }
 
-    async fn multi_inference(
-        &self,
-        _request: Request<MultiInferenceRequest>,
-    ) -> Result<Response<MultiInferenceResponse>, Status> {
-        unimplemented!()
+    async fn muwti_infewence(
+        &sewf, 😳
+        _wequest: w-wequest<muwtiinfewencewequest>, o.O
+    ) -> wesuwt<wesponse<muwtiinfewencewesponse>, s-status> {
+        unimpwemented!()
     }
-    async fn get_model_metadata(
-        &self,
-        _request: Request<GetModelMetadataRequest>,
-    ) -> Result<Response<GetModelMetadataResponse>, Status> {
-        unimplemented!()
+    async f-fn get_modew_metadata(
+        &sewf, ^^;;
+        _wequest: wequest<getmodewmetadatawequest>, ( ͡o ω ͡o )
+    ) -> w-wesuwt<wesponse<getmodewmetadatawesponse>, ^^;; s-status> {
+        u-unimpwemented!()
     }
 }
 
-// A function that takes a timestamp as input and returns a ticker stream
-fn report_expiry(expiry_time: i64) {
-    info!("Certificate expires at epoch: {:?}", expiry_time);
-    CERT_EXPIRY_EPOCH.set(expiry_time as i64);
+// a-a function that t-takes a timestamp as input and wetuwns a tickew stweam
+fn wepowt_expiwy(expiwy_time: i64) {
+    info!("cewtificate expiwes at e-epoch: {:?}", ^^;; expiwy_time);
+    c-cewt_expiwy_epoch.set(expiwy_time a-as i64);
 }
 
-pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
-    info!("package: {}, version: {}, args: {:?}", NAME, VERSION, *ARGS);
-    //we follow SemVer. So here we assume MAJOR.MINOR.PATCH
-    let parts = VERSION
-        .split(".")
-        .map(|v| v.parse::<i64>())
-        .collect::<std::result::Result<Vec<_>, _>>()?;
-    if let [major, minor, patch] = &parts[..] {
-        NAVI_VERSION.set(major * 1000_000 + minor * 1000 + patch);
-    } else {
-        warn!(
-            "version {} doesn't follow SemVer conversion of MAJOR.MINOR.PATCH",
-            VERSION
+pub fn bootstwap<t: m-modew>(modew_factowy: modewfactowy<t>) -> wesuwt<()> {
+    info!("package: {}, XD v-vewsion: {}, 🥺 awgs: {:?}", (///ˬ///✿) n-nyame, vewsion, (U ᵕ U❁) *awgs);
+    //we f-fowwow semvew. ^^;; so hewe we assume majow.minow.patch
+    w-wet pawts = vewsion
+        .spwit(".")
+        .map(|v| v-v.pawse::<i64>())
+        .cowwect::<std::wesuwt::wesuwt<vec<_>, ^^;; _>>()?;
+    if wet [majow, rawr m-minow, patch] = &pawts[..] {
+        n-nyavi_vewsion.set(majow * 1000_000 + minow * 1000 + patch);
+    } ewse {
+        wawn!(
+            "vewsion {} doesn't f-fowwow semvew c-convewsion of m-majow.minow.patch", (˘ω˘)
+            v-vewsion
         );
     }
 
     
-    tokio::runtime::Builder::new_multi_thread()
-        .thread_name("async worker")
-        .worker_threads(ARGS.num_worker_threads)
-        .max_blocking_threads(ARGS.max_blocking_threads)
-        .enable_all()
-        .build()
-        .unwrap()
-        .block_on(async {
-            #[cfg(feature = "navi_console")]
-            console_subscriber::init();
-            let addr = format!("0.0.0.0:{}", ARGS.port).parse()?;
+    t-tokio::wuntime::buiwdew::new_muwti_thwead()
+        .thwead_name("async wowkew")
+        .wowkew_thweads(awgs.num_wowkew_thweads)
+        .max_bwocking_thweads(awgs.max_bwocking_thweads)
+        .enabwe_aww()
+        .buiwd()
+        .unwwap()
+        .bwock_on(async {
+            #[cfg(featuwe = "navi_consowe")]
+            c-consowe_subscwibew::init();
+            w-wet addw = fowmat!("0.0.0.0:{}", 🥺 awgs.powt).pawse()?;
 
-            let ps = PredictService::init(model_factory).await;
+            w-wet ps = pwedictsewvice::init(modew_factowy).await;
 
-            let mut builder = if ARGS.ssl_dir.is_empty() {
-                Server::builder()
-            } else {
-                // Read the pem file as a string
-                let pem_str = std::fs::read_to_string(format!("{}/server.crt", ARGS.ssl_dir)).unwrap();
-                let res = parse_x509_pem(&pem_str.as_bytes());
-                match res {
-                    Ok((rem, pem_2)) => {
-                        assert!(rem.is_empty());
-                        assert_eq!(pem_2.label, String::from("CERTIFICATE"));
-                        let res_x509 = parse_x509_certificate(&pem_2.contents);
-                        info!("Certificate label: {}", pem_2.label);
-                        assert!(res_x509.is_ok());
-                        report_expiry(res_x509.unwrap().1.validity().not_after.timestamp());
-                    },
-                    _ => panic!("PEM parsing failed: {:?}", res),
+            w-wet mut buiwdew = if awgs.ssw_diw.is_empty() {
+                s-sewvew::buiwdew()
+            } ewse {
+                // wead the pem fiwe a-as a stwing
+                wet p-pem_stw = std::fs::wead_to_stwing(fowmat!("{}/sewvew.cwt", nyaa~~ a-awgs.ssw_diw)).unwwap();
+                wet wes = p-pawse_x509_pem(&pem_stw.as_bytes());
+                match wes {
+                    ok((wem, :3 pem_2)) => {
+                        a-assewt!(wem.is_empty());
+                        a-assewt_eq!(pem_2.wabew, /(^•ω•^) s-stwing::fwom("cewtificate"));
+                        wet wes_x509 = pawse_x509_cewtificate(&pem_2.contents);
+                        info!("cewtificate w-wabew: {}", ^•ﻌ•^ pem_2.wabew);
+                        assewt!(wes_x509.is_ok());
+                        w-wepowt_expiwy(wes_x509.unwwap().1.vawidity().not_aftew.timestamp());
+                    }, UwU
+                    _ => panic!("pem p-pawsing faiwed: {:?}", 😳😳😳 w-wes), OwO
                 }
 
-                let key = tokio::fs::read(format!("{}/server.key", ARGS.ssl_dir))
+                wet key = t-tokio::fs::wead(fowmat!("{}/sewvew.key", ^•ﻌ•^ a-awgs.ssw_diw))
                     .await
-                    .expect("can't find key file");
-                let crt = tokio::fs::read(format!("{}/server.crt", ARGS.ssl_dir))
+                    .expect("can't find key fiwe");
+                w-wet cwt = tokio::fs::wead(fowmat!("{}/sewvew.cwt", (ꈍᴗꈍ) awgs.ssw_diw))
                     .await
-                    .expect("can't find crt file");
-                let chain = tokio::fs::read(format!("{}/server.chain", ARGS.ssl_dir))
+                    .expect("can't find c-cwt fiwe");
+                w-wet chain = tokio::fs::wead(fowmat!("{}/sewvew.chain", (⑅˘꒳˘) a-awgs.ssw_diw))
                     .await
-                    .expect("can't find chain file");
-                let mut pem = Vec::new();
-                pem.extend(crt);
+                    .expect("can't find chain fiwe");
+                w-wet mut pem = v-vec::new();
+                p-pem.extend(cwt);
                 pem.extend(chain);
-                let identity = Identity::from_pem(pem.clone(), key);
-                let client_ca_cert = Certificate::from_pem(pem.clone());
-                let tls = ServerTlsConfig::new()
+                wet identity = identity::fwom_pem(pem.cwone(), (⑅˘꒳˘) key);
+                wet cwient_ca_cewt = cewtificate::fwom_pem(pem.cwone());
+                wet tws = sewvewtwsconfig::new()
                     .identity(identity) 
-                    .client_ca_root(client_ca_cert);
-                Server::builder()
-                    .tls_config(tls)
-                    .expect("fail to config SSL")
+                    .cwient_ca_woot(cwient_ca_cewt);
+                sewvew::buiwdew()
+                    .tws_config(tws)
+                    .expect("faiw to config ssw")
             };
 
             info!(
-                "Prometheus server started: 0.0.0.0: {}",
-                ARGS.prometheus_port
+                "pwometheus sewvew stawted: 0.0.0.0: {}", (ˆ ﻌ ˆ)♡
+                awgs.pwometheus_powt
             );
 
-            let ps_server = builder
-                .add_service(PredictionServiceServer::new(ps).accept_gzip().send_gzip())
-                .serve(addr);
-            info!("Prediction server started: {}", addr);
-            ps_server.await.map_err(anyhow::Error::msg)
+            wet ps_sewvew = b-buiwdew
+                .add_sewvice(pwedictionsewvicesewvew::new(ps).accept_gzip().send_gzip())
+                .sewve(addw);
+            i-info!("pwediction sewvew stawted: {}", /(^•ω•^) addw);
+            p-ps_sewvew.await.map_eww(anyhow::ewwow::msg)
         })
 }

@@ -1,194 +1,194 @@
-package com.twitter.timelineranker.client
+package com.twittew.timewinewankew.cwient
 
-import com.twitter.finagle.SourcedException
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelineranker.model._
-import com.twitter.timelines.util.stats.RequestStats
-import com.twitter.timelines.util.stats.RequestStatsReceiver
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+impowt c-com.twittew.finagwe.souwcedexception
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+impowt c-com.twittew.timewinewankew.modew._
+i-impowt c-com.twittew.timewines.utiw.stats.wequeststats
+i-impowt com.twittew.timewines.utiw.stats.wequeststatsweceivew
+impowt com.twittew.utiw.futuwe
+impowt c-com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+i-impowt com.twittew.utiw.twy
 
-case class TimelineRankerException(message: String)
-    extends Exception(message)
-    with SourcedException {
-  serviceName = "timelineranker"
+case cwass timewinewankewexception(message: s-stwing)
+    extends exception(message)
+    with souwcedexception {
+  s-sewvicename = "timewinewankew"
 }
 
 /**
- * A timeline ranker client whose methods accept and produce model object instances
- * instead of thrift instances.
+ * a t-timewine wankew c-cwient whose methods accept and pwoduce modew object instances
+ * instead of thwift i-instances. ^•ﻌ•^
  */
-class TimelineRankerClient(
-  private val client: thrift.TimelineRanker.MethodPerEndpoint,
-  statsReceiver: StatsReceiver)
-    extends RequestStats {
+cwass timewinewankewcwient(
+  pwivate vaw cwient: thwift.timewinewankew.methodpewendpoint, σωσ
+  statsweceivew: statsweceivew)
+    e-extends wequeststats {
 
-  private[this] val baseScope = statsReceiver.scope("timelineRankerClient")
-  private[this] val timelinesRequestStats = RequestStatsReceiver(baseScope.scope("timelines"))
-  private[this] val recycledTweetRequestStats = RequestStatsReceiver(
-    baseScope.scope("recycledTweet"))
-  private[this] val recapHydrationRequestStats = RequestStatsReceiver(
-    baseScope.scope("recapHydration"))
-  private[this] val recapAuthorRequestStats = RequestStatsReceiver(baseScope.scope("recapAuthor"))
-  private[this] val entityTweetsRequestStats = RequestStatsReceiver(baseScope.scope("entityTweets"))
-  private[this] val utegLikedByTweetsRequestStats = RequestStatsReceiver(
-    baseScope.scope("utegLikedByTweets"))
+  pwivate[this] v-vaw basescope = s-statsweceivew.scope("timewinewankewcwient")
+  p-pwivate[this] v-vaw timewineswequeststats = wequeststatsweceivew(basescope.scope("timewines"))
+  pwivate[this] v-vaw wecycwedtweetwequeststats = wequeststatsweceivew(
+    basescope.scope("wecycwedtweet"))
+  pwivate[this] v-vaw wecaphydwationwequeststats = wequeststatsweceivew(
+    basescope.scope("wecaphydwation"))
+  pwivate[this] vaw wecapauthowwequeststats = wequeststatsweceivew(basescope.scope("wecapauthow"))
+  p-pwivate[this] vaw entitytweetswequeststats = w-wequeststatsweceivew(basescope.scope("entitytweets"))
+  p-pwivate[this] v-vaw utegwikedbytweetswequeststats = wequeststatsweceivew(
+    basescope.scope("utegwikedbytweets"))
 
-  private[this] def fetchRecapQueryResultHead(
-    results: Seq[Try[CandidateTweetsResult]]
-  ): CandidateTweetsResult = {
-    results.head match {
-      case Return(result) => result
-      case Throw(e) => throw e
+  pwivate[this] d-def f-fetchwecapquewywesuwthead(
+    wesuwts: seq[twy[candidatetweetswesuwt]]
+  ): c-candidatetweetswesuwt = {
+    w-wesuwts.head match {
+      c-case wetuwn(wesuwt) => wesuwt
+      c-case thwow(e) => thwow e
     }
   }
 
-  private[this] def tryResults[Req, Rep](
-    reqs: Seq[Req],
-    stats: RequestStatsReceiver,
-    findError: Req => Option[thrift.TimelineError],
+  p-pwivate[this] def twywesuwts[weq, -.- w-wep](
+    weqs: seq[weq],
+    s-stats: wequeststatsweceivew, ^^;;
+    f-findewwow: weq => option[thwift.timewineewwow], XD
   )(
-    getRep: (Req, RequestStatsReceiver) => Try[Rep]
-  ): Seq[Try[Rep]] = {
-    reqs.map { req =>
-      findError(req) match {
-        case Some(error) if error.reason.exists { _ == thrift.ErrorReason.OverCapacity } =>
-          // bubble up over capacity error, server shall handle it
-          stats.onFailure(error)
-          Throw(error)
-        case Some(error) =>
-          stats.onFailure(error)
-          Throw(TimelineRankerException(error.message))
-        case None =>
-          getRep(req, stats)
+    getwep: (weq, wequeststatsweceivew) => twy[wep]
+  ): seq[twy[wep]] = {
+    weqs.map { weq =>
+      findewwow(weq) m-match {
+        c-case some(ewwow) if e-ewwow.weason.exists { _ == t-thwift.ewwowweason.ovewcapacity } =>
+          // b-bubbwe up ovew capacity ewwow, 🥺 sewvew shaww handwe i-it
+          stats.onfaiwuwe(ewwow)
+          thwow(ewwow)
+        case some(ewwow) =>
+          stats.onfaiwuwe(ewwow)
+          thwow(timewinewankewexception(ewwow.message))
+        c-case nyone =>
+          getwep(weq, òωó stats)
       }
     }
   }
 
-  private[this] def tryCandidateTweetsResults(
-    responses: Seq[thrift.GetCandidateTweetsResponse],
-    requestScopedStats: RequestStatsReceiver
-  ): Seq[Try[CandidateTweetsResult]] = {
-    def errorInResponse(
-      response: thrift.GetCandidateTweetsResponse
-    ): Option[thrift.TimelineError] = {
-      response.error
+  p-pwivate[this] d-def twycandidatetweetswesuwts(
+    w-wesponses: seq[thwift.getcandidatetweetswesponse], (ˆ ﻌ ˆ)♡
+    w-wequestscopedstats: w-wequeststatsweceivew
+  ): s-seq[twy[candidatetweetswesuwt]] = {
+    d-def ewwowinwesponse(
+      wesponse: thwift.getcandidatetweetswesponse
+    ): option[thwift.timewineewwow] = {
+      w-wesponse.ewwow
     }
 
-    tryResults(
-      responses,
-      requestScopedStats,
-      errorInResponse
-    ) { (response, stats) =>
-      stats.onSuccess()
-      Return(CandidateTweetsResult.fromThrift(response))
+    t-twywesuwts(
+      w-wesponses, -.-
+      w-wequestscopedstats, :3
+      e-ewwowinwesponse
+    ) { (wesponse, ʘwʘ stats) =>
+      stats.onsuccess()
+      wetuwn(candidatetweetswesuwt.fwomthwift(wesponse))
     }
   }
 
-  def getTimeline(query: TimelineQuery): Future[Try[Timeline]] = {
-    getTimelines(Seq(query)).map(_.head)
+  d-def gettimewine(quewy: timewinequewy): futuwe[twy[timewine]] = {
+    gettimewines(seq(quewy)).map(_.head)
   }
 
-  def getTimelines(queries: Seq[TimelineQuery]): Future[Seq[Try[Timeline]]] = {
-    def errorInResponse(response: thrift.GetTimelineResponse): Option[thrift.TimelineError] = {
-      response.error
+  def g-gettimewines(quewies: seq[timewinequewy]): futuwe[seq[twy[timewine]]] = {
+    def ewwowinwesponse(wesponse: t-thwift.gettimewinewesponse): o-option[thwift.timewineewwow] = {
+      w-wesponse.ewwow
     }
-    val thriftQueries = queries.map(_.toThrift)
-    timelinesRequestStats.latency {
-      client.getTimelines(thriftQueries).map { responses =>
-        tryResults(
-          responses,
-          timelinesRequestStats,
-          errorInResponse
-        ) { (response, stats) =>
-          response.timeline match {
-            case Some(timeline) =>
-              stats.onSuccess()
-              Return(Timeline.fromThrift(timeline))
-            // Should not really happen.
-            case None =>
-              val tlrException =
-                TimelineRankerException("No timeline returned even when no error occurred.")
-              stats.onFailure(tlrException)
-              Throw(tlrException)
+    vaw thwiftquewies = quewies.map(_.tothwift)
+    t-timewineswequeststats.watency {
+      cwient.gettimewines(thwiftquewies).map { w-wesponses =>
+        twywesuwts(
+          w-wesponses, 🥺
+          timewineswequeststats, >_<
+          ewwowinwesponse
+        ) { (wesponse, stats) =>
+          wesponse.timewine match {
+            c-case some(timewine) =>
+              s-stats.onsuccess()
+              wetuwn(timewine.fwomthwift(timewine))
+            // s-shouwd nyot w-weawwy happen. ʘwʘ
+            case nyone =>
+              v-vaw twwexception =
+                t-timewinewankewexception("no timewine w-wetuwned even when n-nyo ewwow occuwwed.")
+              stats.onfaiwuwe(twwexception)
+              thwow(twwexception)
           }
         }
       }
     }
   }
 
-  def getRecycledTweetCandidates(query: RecapQuery): Future[CandidateTweetsResult] = {
-    getRecycledTweetCandidates(Seq(query)).map(fetchRecapQueryResultHead)
+  def getwecycwedtweetcandidates(quewy: wecapquewy): f-futuwe[candidatetweetswesuwt] = {
+    g-getwecycwedtweetcandidates(seq(quewy)).map(fetchwecapquewywesuwthead)
   }
 
-  def getRecycledTweetCandidates(
-    queries: Seq[RecapQuery]
-  ): Future[Seq[Try[CandidateTweetsResult]]] = {
-    val thriftQueries = queries.map(_.toThriftRecapQuery)
-    recycledTweetRequestStats.latency {
-      client.getRecycledTweetCandidates(thriftQueries).map {
-        tryCandidateTweetsResults(_, recycledTweetRequestStats)
+  d-def getwecycwedtweetcandidates(
+    quewies: s-seq[wecapquewy]
+  ): f-futuwe[seq[twy[candidatetweetswesuwt]]] = {
+    vaw thwiftquewies = quewies.map(_.tothwiftwecapquewy)
+    w-wecycwedtweetwequeststats.watency {
+      cwient.getwecycwedtweetcandidates(thwiftquewies).map {
+        twycandidatetweetswesuwts(_, (˘ω˘) wecycwedtweetwequeststats)
       }
     }
   }
 
-  def hydrateTweetCandidates(query: RecapQuery): Future[CandidateTweetsResult] = {
-    hydrateTweetCandidates(Seq(query)).map(fetchRecapQueryResultHead)
+  def hydwatetweetcandidates(quewy: wecapquewy): f-futuwe[candidatetweetswesuwt] = {
+    h-hydwatetweetcandidates(seq(quewy)).map(fetchwecapquewywesuwthead)
   }
 
-  def hydrateTweetCandidates(queries: Seq[RecapQuery]): Future[Seq[Try[CandidateTweetsResult]]] = {
-    val thriftQueries = queries.map(_.toThriftRecapHydrationQuery)
-    recapHydrationRequestStats.latency {
-      client.hydrateTweetCandidates(thriftQueries).map {
-        tryCandidateTweetsResults(_, recapHydrationRequestStats)
+  def hydwatetweetcandidates(quewies: seq[wecapquewy]): futuwe[seq[twy[candidatetweetswesuwt]]] = {
+    vaw t-thwiftquewies = q-quewies.map(_.tothwiftwecaphydwationquewy)
+    wecaphydwationwequeststats.watency {
+      cwient.hydwatetweetcandidates(thwiftquewies).map {
+        twycandidatetweetswesuwts(_, (✿oωo) w-wecaphydwationwequeststats)
       }
     }
   }
 
-  def getRecapCandidatesFromAuthors(query: RecapQuery): Future[CandidateTweetsResult] = {
-    getRecapCandidatesFromAuthors(Seq(query)).map(fetchRecapQueryResultHead)
+  def getwecapcandidatesfwomauthows(quewy: wecapquewy): futuwe[candidatetweetswesuwt] = {
+    getwecapcandidatesfwomauthows(seq(quewy)).map(fetchwecapquewywesuwthead)
   }
 
-  def getRecapCandidatesFromAuthors(
-    queries: Seq[RecapQuery]
-  ): Future[Seq[Try[CandidateTweetsResult]]] = {
-    val thriftQueries = queries.map(_.toThriftRecapQuery)
-    recapAuthorRequestStats.latency {
-      client.getRecapCandidatesFromAuthors(thriftQueries).map {
-        tryCandidateTweetsResults(_, recapAuthorRequestStats)
+  def getwecapcandidatesfwomauthows(
+    q-quewies: seq[wecapquewy]
+  ): futuwe[seq[twy[candidatetweetswesuwt]]] = {
+    v-vaw thwiftquewies = q-quewies.map(_.tothwiftwecapquewy)
+    wecapauthowwequeststats.watency {
+      cwient.getwecapcandidatesfwomauthows(thwiftquewies).map {
+        twycandidatetweetswesuwts(_, (///ˬ///✿) w-wecapauthowwequeststats)
       }
     }
   }
 
-  def getEntityTweetCandidates(query: RecapQuery): Future[CandidateTweetsResult] = {
-    getEntityTweetCandidates(Seq(query)).map(fetchRecapQueryResultHead)
+  d-def getentitytweetcandidates(quewy: wecapquewy): futuwe[candidatetweetswesuwt] = {
+    getentitytweetcandidates(seq(quewy)).map(fetchwecapquewywesuwthead)
   }
 
-  def getEntityTweetCandidates(
-    queries: Seq[RecapQuery]
-  ): Future[Seq[Try[CandidateTweetsResult]]] = {
-    val thriftQueries = queries.map(_.toThriftEntityTweetsQuery)
-    entityTweetsRequestStats.latency {
-      client.getEntityTweetCandidates(thriftQueries).map {
-        tryCandidateTweetsResults(_, entityTweetsRequestStats)
+  d-def getentitytweetcandidates(
+    quewies: s-seq[wecapquewy]
+  ): futuwe[seq[twy[candidatetweetswesuwt]]] = {
+    vaw thwiftquewies = quewies.map(_.tothwiftentitytweetsquewy)
+    e-entitytweetswequeststats.watency {
+      cwient.getentitytweetcandidates(thwiftquewies).map {
+        twycandidatetweetswesuwts(_, e-entitytweetswequeststats)
       }
     }
   }
 
-  def getUtegLikedByTweetCandidates(query: RecapQuery): Future[CandidateTweetsResult] = {
-    getUtegLikedByTweetCandidates(Seq(query)).map(fetchRecapQueryResultHead)
+  d-def getutegwikedbytweetcandidates(quewy: wecapquewy): f-futuwe[candidatetweetswesuwt] = {
+    getutegwikedbytweetcandidates(seq(quewy)).map(fetchwecapquewywesuwthead)
   }
 
-  def getUtegLikedByTweetCandidates(
-    queries: Seq[RecapQuery]
-  ): Future[Seq[Try[CandidateTweetsResult]]] = {
-    val thriftQueries = queries.map(_.toThriftUtegLikedByTweetsQuery)
-    utegLikedByTweetsRequestStats.latency {
-      client.getUtegLikedByTweetCandidates(thriftQueries).map {
-        tryCandidateTweetsResults(_, utegLikedByTweetsRequestStats)
+  d-def getutegwikedbytweetcandidates(
+    q-quewies: s-seq[wecapquewy]
+  ): futuwe[seq[twy[candidatetweetswesuwt]]] = {
+    v-vaw t-thwiftquewies = quewies.map(_.tothwiftutegwikedbytweetsquewy)
+    utegwikedbytweetswequeststats.watency {
+      c-cwient.getutegwikedbytweetcandidates(thwiftquewies).map {
+        t-twycandidatetweetswesuwts(_, rawr x3 utegwikedbytweetswequeststats)
       }
     }
   }

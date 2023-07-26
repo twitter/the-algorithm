@@ -1,300 +1,300 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow/core/protobuf/graph_debug_info.proto";
+impowt "tensowfwow/cowe/fwamewowk/tensow.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/gwaph_debug_info.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DebugEventProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.util";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option cc_enabwe_awenas = t-twue;
+o-option java_outew_cwassname = "debugeventpwotos";
+o-option java_muwtipwe_fiwes = t-twue;
+option j-java_package = "owg.tensowfwow.utiw";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Available modes for extracting debugging information from a Tensor.
-// TODO(cais): Document the detailed column names and semantics in a separate
-// markdown file once the implementation settles.
-enum TensorDebugMode {
-  UNSPECIFIED = 0;
+// avaiwabwe modes fow extwacting debugging infowmation fwom a-a tensow. ^^
+// todo(cais): document the detaiwed c-cowumn nyames and semantics in a s-sepawate
+// mawkdown fiwe once the impwementation settwes. (///ˬ///✿)
+enum t-tensowdebugmode {
+  unspecified = 0;
 
-  // Only records what tensors are computed, eagerly or in graphs.
-  // No information regarding the value of the tensor is available.
-  NO_TENSOR = 1;
+  // o-onwy w-wecowds nyani tensows awe computed, (///ˬ///✿) eagewwy ow in gwaphs. (///ˬ///✿)
+  // nyo infowmation w-wegawding the vawue of the tensow is avaiwabwe. ʘwʘ
+  no_tensow = 1;
 
-  // A minimalist health summary for float-type tensors.
-  // Contains information only about the presence/absence of pathological
-  // values including Infinity and NaN.
-  // Applicable only to float dtypes.
-  CURT_HEALTH = 2;
+  // a minimawist h-heawth summawy fow fwoat-type t-tensows. ^•ﻌ•^
+  // c-contains infowmation o-onwy about t-the pwesence/absence of pathowogicaw
+  // vawues i-incwuding infinity and nyan. OwO
+  // appwicabwe onwy t-to fwoat dtypes.
+  cuwt_heawth = 2;
 
-  // A concise health summary for float-type tensors.
-  // Contains more information that CURT_HEALTH.
-  // Infinity and NaN are treated differently.
-  // Applicable only to float and integer dtypes.
-  CONCISE_HEALTH = 3;
+  // a concise heawth summawy fow fwoat-type tensows. (U ﹏ U)
+  // c-contains mowe infowmation that c-cuwt_heawth. (ˆ ﻌ ˆ)♡
+  // i-infinity and n-nyan awe tweated diffewentwy. (⑅˘꒳˘)
+  // appwicabwe onwy to fwoat and i-integew dtypes. (U ﹏ U)
+  c-concise_heawth = 3;
 
-  // A detailed health summary.
-  // Contains further detailed information than `CONCISE_HEALTH`.
-  // Information about device, dtype and shape are included.
-  // Counts for various types of values (Infinity, NaN, negative, zero,
-  // positive) are included.
-  // Applicable to float, integer and boolean dtypes.
-  FULL_HEALTH = 4;
+  // a detaiwed h-heawth summawy. o.O
+  // c-contains fuwthew detaiwed i-infowmation than `concise_heawth`. mya
+  // infowmation a-about device, XD dtype and shape awe incwuded. òωó
+  // c-counts fow vawious types o-of vawues (infinity, (˘ω˘) nyan, :3 n-nyegative, OwO zewo,
+  // p-positive) awe incwuded. mya
+  // appwicabwe to fwoat, integew and boowean dtypes. (˘ω˘)
+  fuww_heawth = 4;
 
-  // Provides full runtime shape information, up to a maximum rank, beyond
-  // which the dimension sizes are truncated.
-  SHAPE = 5;
+  // pwovides f-fuww wuntime s-shape infowmation, o.O up to a maximum w-wank, (✿oωo) beyond
+  // w-which the d-dimension sizes awe twuncated. (ˆ ﻌ ˆ)♡
+  shape = 5;
 
-  // Full numeric summary.
-  // Including device, dtype, shape, counts of various types of values
-  // (Infinity, NaN, negative, zero, positive), and summary statistics
-  // (minimum, maximum, mean and variance).
-  // Applicable to float, integer and boolean dtypes.
-  FULL_NUMERICS = 6;
+  // fuww nyumewic s-summawy. ^^;;
+  // incwuding device, OwO dtype, shape, 🥺 counts of vawious types of vawues
+  // (infinity, mya n-nyan, negative, 😳 zewo, positive), òωó a-and summawy statistics
+  // (minimum, /(^•ω•^) m-maximum, m-mean and vawiance). -.-
+  // appwicabwe t-to fwoat, òωó i-integew and boowean d-dtypes. /(^•ω•^)
+  fuww_numewics = 6;
 
-  // Full tensor value.
-  FULL_TENSOR = 7;
+  // f-fuww tensow vawue. /(^•ω•^)
+  fuww_tensow = 7;
 
-  // Reduce the elements of a tensor to a rank-1 tensor of shape [3], in which
-  // - the 1st element is -inf if any element of the tensor is -inf,
-  //   or zero otherwise.
-  // - the 2nd element is +inf if any element of the tensor is +inf,
-  //   or zero otherwise.
-  // - the 3rd element is nan if any element of the tensor is nan, or zero
-  //   otherwise.
-  REDUCE_INF_NAN_THREE_SLOTS = 8;
+  // weduce the ewements o-of a tensow t-to a wank-1 tensow o-of shape [3], 😳 i-in which
+  // - t-the 1st ewement is -inf if any ewement of the tensow is -inf,
+  //   o-ow zewo othewwise. :3
+  // - the 2nd ewement is +inf if any ewement of the tensow is +inf, (U ᵕ U❁)
+  //   o-ow zewo othewwise. ʘwʘ
+  // - the 3wd ewement is nyan if any e-ewement of the t-tensow is nyan, o.O o-ow zewo
+  //   othewwise. ʘwʘ
+  weduce_inf_nan_thwee_swots = 8;
 }
 
-// An Event related to the debugging of a TensorFlow program.
-message DebugEvent {
-  // Timestamp in seconds (with microsecond precision).
-  double wall_time = 1;
+// a-an event wewated to the debugging o-of a tensowfwow p-pwogwam. ^^
+message debugevent {
+  // timestamp in seconds (with micwosecond pwecision). ^•ﻌ•^
+  doubwe w-waww_time = 1;
 
-  // Step of training (if available).
-  int64 step = 2;
+  // step of t-twaining (if avaiwabwe). mya
+  int64 s-step = 2;
 
-  oneof what {
-    // Metadata related to this debugging data.
-    DebugMetadata debug_metadata = 3;
+  oneof n-nyani {
+    // metadata wewated to this debugging d-data. UwU
+    d-debugmetadata debug_metadata = 3;
 
-    // The content of a source file.
-    SourceFile source_file = 4;
+    // the content o-of a souwce f-fiwe. >_<
+    souwcefiwe souwce_fiwe = 4;
 
-    // A stack frame (filename, line number and column number, function name and
-    // code string) with ID.
-    StackFrameWithId stack_frame_with_id = 6;
+    // a stack fwame (fiwename, /(^•ω•^) wine nyumbew and cowumn n-nyumbew, òωó function n-nyame and
+    // c-code stwing) with id. σωσ
+    stackfwamewithid stack_fwame_with_id = 6;
 
-    // The creation of an op within a graph (e.g., a FuncGraph compiled from
-    // a Python function).
-    GraphOpCreation graph_op_creation = 7;
+    // t-the cweation of a-an op within a gwaph (e.g., a funcgwaph c-compiwed fwom
+    // a python function). ( ͡o ω ͡o )
+    gwaphopcweation gwaph_op_cweation = 7;
 
-    // Information about a debugged graph.
-    DebuggedGraph debugged_graph = 8;
+    // i-infowmation a-about a debugged gwaph. nyaa~~
+    debuggedgwaph debugged_gwaph = 8;
 
-    // Execution of an op or a Graph (e.g., a tf.function).
-    Execution execution = 9;
+    // e-execution o-of an op ow a gwaph (e.g., a tf.function). :3
+    execution execution = 9;
 
-    // A graph execution trace: Contains information about the intermediate
-    // tensors computed during the graph execution.
-    GraphExecutionTrace graph_execution_trace = 10;
+    // a gwaph execution t-twace: contains infowmation about the intewmediate
+    // tensows computed duwing t-the gwaph execution. UwU
+    gwaphexecutiontwace gwaph_execution_twace = 10;
 
-    // The ID of the graph (i.e., FuncGraph) executed here: applicable only
-    // to the execution of a FuncGraph.
-    string graph_id = 11;
+    // t-the id of the g-gwaph (i.e., funcgwaph) exekawaii~d hewe: appwicabwe onwy
+    // t-to the execution o-of a funcgwaph. o.O
+    stwing gwaph_id = 11;
 
-    // A device on which debugger-instrumented ops and/or tensors reside.
-    DebuggedDevice debugged_device = 12;
+    // a device o-on which debuggew-instwumented ops and/ow tensows w-weside. (ˆ ﻌ ˆ)♡
+    debuggeddevice debugged_device = 12;
   }
 }
 
-// Metadata about the debugger and the debugged TensorFlow program.
-message DebugMetadata {
-  // Version of TensorFlow.
-  string tensorflow_version = 1;
+// metadata about the d-debuggew and the debugged tensowfwow p-pwogwam. ^^;;
+message d-debugmetadata {
+  // vewsion o-of tensowfwow. ʘwʘ
+  stwing tensowfwow_vewsion = 1;
 
-  // Version of the DebugEvent file format.
-  // Has a format of "debug.Event:<number>", e.g., "debug.Event:1".
-  string file_version = 2;
+  // v-vewsion o-of the debugevent f-fiwe fowmat.
+  // has a fowmat o-of "debug.event:<numbew>", σωσ e-e.g., "debug.event:1". ^^;;
+  stwing fiwe_vewsion = 2;
 
-  // A unique ID for the current run of tfdbg.
-  // A run of tfdbg is defined as a TensorFlow job instrumented by tfdbg.
-  // Multiple hosts in a distributed TensorFlow job instrumented by tfdbg
-  // have the same ID.
-  string tfdbg_run_id = 3;
+  // a unique id f-fow the cuwwent w-wun of tfdbg. ʘwʘ
+  // a-a wun of tfdbg is defined as a tensowfwow job i-instwumented by tfdbg. ^^
+  // muwtipwe h-hosts in a-a distwibuted tensowfwow job instwumented by tfdbg
+  // have the s-same id. nyaa~~
+  stwing t-tfdbg_wun_id = 3;
 }
 
-// Content of a source file involved in the execution of the debugged TensorFlow
-// program.
-message SourceFile {
-  // Path to the file.
-  string file_path = 1;
+// c-content o-of a souwce fiwe invowved in t-the execution of the debugged tensowfwow
+// pwogwam. (///ˬ///✿)
+message souwcefiwe {
+  // path to the fiwe. XD
+  stwing fiwe_path = 1;
 
-  // Name of the host on which the file is located.
-  string host_name = 2;
+  // nyame o-of the host on which the fiwe i-is wocated. :3
+  stwing host_name = 2;
 
-  // Line-by-line content of the file.
-  repeated string lines = 3;
+  // w-wine-by-wine content o-of the fiwe. òωó
+  wepeated stwing w-wines = 3;
 }
 
-// A stack frame with ID.
-message StackFrameWithId {
-  // A unique ID for the stack frame: A UUID-like string.
-  string id = 1;
+// a-a stack fwame w-with id. ^^
+message s-stackfwamewithid {
+  // a-a unique id fow the stack fwame: a uuid-wike stwing. ^•ﻌ•^
+  stwing id = 1;
 
-  // Stack frame, i.e., a frame of a stack trace, containing information
-  // regarding the file name, line number, function name, code content
-  // of the line, and column number (if available).
-  GraphDebugInfo.FileLineCol file_line_col = 2;
+  // stack fwame, σωσ i.e., a fwame o-of a stack twace, c-containing infowmation
+  // w-wegawding the fiwe n-nyame, (ˆ ﻌ ˆ)♡ wine nyumbew, nyaa~~ function nyame, ʘwʘ code content
+  // of the wine, ^•ﻌ•^ a-and cowumn n-nyumbew (if avaiwabwe).
+  gwaphdebuginfo.fiwewinecow f-fiwe_wine_cow = 2;
 }
 
-// Code location information: A stack trace with host-name information.
-// Instead of encoding the detailed stack trace, this proto refers to IDs of
-// stack frames stored as `StackFrameWithId` protos.
-message CodeLocation {
-  // Host name on which the source files are located.
-  string host_name = 1;
+// code wocation infowmation: a-a stack t-twace with host-name infowmation. rawr x3
+// i-instead of e-encoding the detaiwed stack twace, 🥺 this pwoto wefews to ids of
+// stack fwames s-stowed as `stackfwamewithid` p-pwotos. ʘwʘ
+m-message codewocation {
+  // h-host nyame on which t-the souwce fiwes awe wocated. (˘ω˘)
+  s-stwing host_name = 1;
 
-  // ID to a stack frame, each of which is pointed to
-  // by a unique ID. The ordering of the frames is consistent with Python's
-  // `traceback.extract_tb()`.
-  repeated string stack_frame_ids = 2;
+  // i-id to a stack fwame, o.O each of which i-is pointed to
+  // b-by a unique id. σωσ the owdewing o-of the fwames is consistent with python's
+  // `twaceback.extwact_tb()`. (ꈍᴗꈍ)
+  wepeated s-stwing stack_fwame_ids = 2;
 }
 
-// The creation of an op in a TensorFlow Graph (e.g., FuncGraph in TF2).
-message GraphOpCreation {
-  // Type of the op (e.g., "MatMul").
-  string op_type = 1;
+// the cweation o-of an op i-in a tensowfwow gwaph (e.g., funcgwaph i-in tf2). (ˆ ﻌ ˆ)♡
+message gwaphopcweation {
+  // type of the op (e.g., "matmuw"). o.O
+  s-stwing op_type = 1;
 
-  // Name of the op (e.g., "Dense/MatMul_1").
-  string op_name = 2;
+  // n-nyame o-of the op (e.g., "dense/matmuw_1"). :3
+  stwing op_name = 2;
 
-  // Name of the graph that the op is a part of (if available).
-  string graph_name = 3;
+  // nyame of the gwaph that the op i-is a pawt of (if avaiwabwe). -.-
+  stwing gwaph_name = 3;
 
-  // Unique ID of the graph (generated by debugger).
-  // This is the ID of the immediately-enclosing graph.
-  string graph_id = 4;
+  // u-unique i-id of the gwaph (genewated by debuggew). ( ͡o ω ͡o )
+  // t-this is the id of the immediatewy-encwosing g-gwaph. /(^•ω•^)
+  s-stwing gwaph_id = 4;
 
-  // Name of the device that the op is assigned to (if available).
-  string device_name = 5;
+  // nyame of the device that the op i-is assigned to (if avaiwabwe). (⑅˘꒳˘)
+  stwing device_name = 5;
 
-  // Names of the input tensors to the op.
-  repeated string input_names = 6;
+  // n-nyames of the input t-tensows to the op. òωó
+  wepeated s-stwing input_names = 6;
 
-  // Number of output tensors emitted by the op.
-  int32 num_outputs = 7;
+  // nyumbew of output t-tensows emitted b-by the op. 🥺
+  i-int32 nyum_outputs = 7;
 
-  // The unique ID for code location (stack trace) of the op's creation.
-  CodeLocation code_location = 8;
+  // the unique id fow code wocation (stack twace) of the op's cweation.
+  codewocation code_wocation = 8;
 
-  // Unique IDs for the output tensors of this op.
-  repeated int32 output_tensor_ids = 9;
+  // unique ids fow the output tensows of this op. (ˆ ﻌ ˆ)♡
+  wepeated int32 output_tensow_ids = 9;
 }
 
-// A debugger-instrumented graph.
-message DebuggedGraph {
-  // An ID for the graph.
-  // This can be used up to look up graph names. Generated by the debugger.
-  string graph_id = 1;
+// a-a debuggew-instwumented g-gwaph. -.-
+message debuggedgwaph {
+  // an id fow the g-gwaph. σωσ
+  // this c-can be used up t-to wook up gwaph nyames. >_< genewated b-by the debuggew. :3
+  stwing gwaph_id = 1;
 
-  // Name of the graph (if available).
-  string graph_name = 2;
+  // n-nyame of the gwaph (if a-avaiwabwe). OwO
+  stwing gwaph_name = 2;
 
-  // Names of the instrumented ops. This can be used to look up op name
-  // based on the numeric-summary tensors (2nd column).
-  repeated string instrumented_ops = 3;
+  // n-nyames of the instwumented ops. rawr t-this can be used t-to wook up op nyame
+  // based on the nyumewic-summawy t-tensows (2nd c-cowumn). (///ˬ///✿)
+  w-wepeated stwing i-instwumented_ops = 3;
 
-  // Original (uninstrumented) GraphDef (if available).
-  bytes original_graph_def = 4;
+  // owiginaw (uninstwumented) g-gwaphdef (if a-avaiwabwe). ^^
+  b-bytes owiginaw_gwaph_def = 4;
 
-  // An encoded version of a GraphDef.
-  // This graph may include the debugger-inserted ops.
-  bytes instrumented_graph_def = 5;
+  // a-an encoded v-vewsion of a gwaphdef.
+  // this g-gwaph may incwude t-the debuggew-insewted o-ops. XD
+  bytes instwumented_gwaph_def = 5;
 
-  // IDs of the immediate enclosing context (graph), if any.
-  string outer_context_id = 6;
+  // i-ids of the immediate encwosing context (gwaph), UwU i-if any. o.O
+  stwing outew_context_id = 6;
 }
 
-// A device on which ops and/or tensors are instrumented by the debugger.
-message DebuggedDevice {
-  // Name of the device.
-  string device_name = 1;
+// a-a device o-on which ops and/ow t-tensows awe instwumented by t-the debuggew. 😳
+message debuggeddevice {
+  // n-nyame of the device. (˘ω˘)
+  s-stwing device_name = 1;
 
-  // A debugger-generated ID for the device. Guaranteed to be unique within
-  // the scope of the debugged TensorFlow program, including single-host and
-  // multi-host settings.
-  // TODO(cais): Test the uniqueness guarantee in multi-host settings.
-  int32 device_id = 2;
+  // a debuggew-genewated i-id fow the device. 🥺 guawanteed to be unique within
+  // the scope of the debugged t-tensowfwow pwogwam, ^^ incwuding s-singwe-host a-and
+  // muwti-host settings. >w<
+  // todo(cais): test the uniqueness g-guawantee in muwti-host settings. ^^;;
+  i-int32 device_id = 2;
 }
 
-// Data relating to the eager execution of an op or a Graph.
-// For a op that generates N output tensors (N >= 0), only one
-// Execution proto will be used to describe the execution event.
-message Execution {
-  // Op type (e.g., "MatMul").
-  // In the case of a Graph, this is the name of the Graph.
-  string op_type = 1;
+// d-data wewating t-to the eagew execution of an op ow a gwaph. (˘ω˘)
+// f-fow a op that genewates n-ny output tensows (n >= 0), OwO o-onwy one
+// execution pwoto wiww be used to d-descwibe the execution event. (ꈍᴗꈍ)
+message e-execution {
+  // o-op type (e.g., "matmuw"). òωó
+  // i-in the case of a gwaph, ʘwʘ this i-is the nyame o-of the gwaph. ʘwʘ
+  s-stwing op_type = 1;
 
-  // Number of output tensors.
-  int32 num_outputs = 2;
+  // n-nyumbew of output tensows. nyaa~~
+  i-int32 nyum_outputs = 2;
 
-  // The graph that's executed: applicable only to the eager
-  // execution of a FuncGraph.
-  string graph_id = 3;
+  // t-the gwaph t-that's exekawaii~d: a-appwicabwe onwy t-to the eagew
+  // e-execution o-of a funcgwaph.
+  s-stwing gwaph_id = 3;
 
-  // IDs of the input tensors (if available).
-  repeated int64 input_tensor_ids = 4;
+  // ids o-of the input tensows (if avaiwabwe). UwU
+  w-wepeated int64 input_tensow_ids = 4;
 
-  // IDs of the output tensors (if availbable).
-  // If specified, must have the same length as tensor_protos.
-  repeated int64 output_tensor_ids = 5;
+  // i-ids of the output t-tensows (if a-avaiwbabwe). (⑅˘꒳˘)
+  // if specified, (˘ω˘) must have the same wength as tensow_pwotos. :3
+  wepeated i-int64 output_tensow_ids = 5;
 
-  // Type of the tensor value encapsulated in this proto.
-  TensorDebugMode tensor_debug_mode = 6;
+  // t-type o-of the tensow vawue encapsuwated in this pwoto. (˘ω˘)
+  tensowdebugmode t-tensow_debug_mode = 6;
 
-  // Output Tensor values in the type described by `tensor_value_type`.
-  // The length of this should match `num_outputs`.
-  repeated TensorProto tensor_protos = 7;
+  // output t-tensow vawues in the type d-descwibed by `tensow_vawue_type`. nyaa~~
+  // t-the wength of this shouwd match `num_outputs`.
+  wepeated t-tensowpwoto tensow_pwotos = 7;
 
-  // Stack trace of the eager execution.
-  CodeLocation code_location = 8;
+  // s-stack twace o-of the eagew execution. (U ﹏ U)
+  c-codewocation code_wocation = 8;
 
-  // Debugged-generated IDs of the devices on which the output tensors reside.
-  // To look up details about the device (e.g., name), cross-reference this
-  // field with the DebuggedDevice messages.
-  repeated int32 output_tensor_device_ids = 9;
+  // debugged-genewated i-ids of the d-devices on which the output tensows weside. nyaa~~
+  // t-to wook up detaiws about the device (e.g., nyame), ^^;; c-cwoss-wefewence this
+  // fiewd w-with the debuggeddevice m-messages. OwO
+  wepeated i-int32 output_tensow_device_ids = 9;
 
-  // TODO(cais): When backporting to V1 Session.run() support, add more fields
-  // such as fetches and feeds.
+  // t-todo(cais): when backpowting t-to v1 session.wun() suppowt, nyaa~~ a-add mowe fiewds
+  // s-such as f-fetches and feeds. UwU
 }
 
-// Data relating to an execution of a Graph (e.g., an eager execution of a
-// FuncGraph).
-// The values of the intermediate tensors computed in the graph are recorded
-// in this proto. A graph execution may correspond to one or more pieces of
-// `GraphExecutionTrace`, depending on whether the instrumented tensor values
-// are summarized in an aggregated or separate fashion.
-message GraphExecutionTrace {
-  // Unique ID of the context that the executed op(s) belong to (e.g., a
-  // compiled concrete tf.function).
-  string tfdbg_context_id = 1;
+// d-data wewating to an execution o-of a gwaph (e.g., a-an eagew e-execution of a
+// funcgwaph). 😳
+// t-the vawues of the intewmediate tensows computed i-in the gwaph a-awe wecowded
+// i-in this pwoto. 😳 a gwaph execution may cowwespond to one ow mowe pieces of
+// `gwaphexecutiontwace`, (ˆ ﻌ ˆ)♡ d-depending on whethew the instwumented t-tensow v-vawues
+// awe summawized in an aggwegated ow sepawate f-fashion. (✿oωo)
+message gwaphexecutiontwace {
+  // u-unique id of t-the context that t-the exekawaii~d o-op(s) bewong to (e.g., a-a
+  // compiwed concwete tf.function). nyaa~~
+  stwing tfdbg_context_id = 1;
 
-  // Name of the op (applicable only in the case of the `FULL_TENSOR` trace
-  // level).
-  string op_name = 2;
+  // name of the o-op (appwicabwe onwy in the case o-of the `fuww_tensow` twace
+  // wevew). ^^
+  stwing op_name = 2;
 
-  // Output slot of the tensor (applicable only in the case of the `FULL_TENSOR`
-  // trace level).
-  int32 output_slot = 3;
+  // o-output swot of the tensow (appwicabwe onwy in the case of the `fuww_tensow`
+  // twace wevew). (///ˬ///✿)
+  i-int32 output_swot = 3;
 
-  // Type of the tensor value encapsulated in this proto.
-  TensorDebugMode tensor_debug_mode = 4;
+  // t-type of the tensow vawue encapsuwated i-in this pwoto.
+  tensowdebugmode tensow_debug_mode = 4;
 
-  // Tensor value in the type described by `tensor_value_type`.
-  // This tensor may summarize the value of a single intermediate op of the
-  // graph, or those of multiple intermediate tensors.
-  TensorProto tensor_proto = 5;
+  // t-tensow vawue i-in the type descwibed by `tensow_vawue_type`. 😳
+  // t-this tensow may summawize t-the vawue of a singwe intewmediate op of the
+  // gwaph, òωó ow those o-of muwtipwe intewmediate tensows. ^^;;
+  tensowpwoto t-tensow_pwoto = 5;
 
-  // Name of the device that the op belongs to.
-  string device_name = 6;
+  // n-nyame o-of the device that the op bewongs to. rawr
+  stwing d-device_name = 6;
 }

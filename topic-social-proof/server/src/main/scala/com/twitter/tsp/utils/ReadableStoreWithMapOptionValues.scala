@@ -1,20 +1,20 @@
-package com.twitter.tsp.utils
+package com.twittew.tsp.utiws
 
-import com.twitter.storehaus.AbstractReadableStore
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.stowehaus.abstwactweadabwestowe
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.utiw.futuwe
 
-class ReadableStoreWithMapOptionValues[K, V1, V2](rs: ReadableStore[K, V1]) {
+c-cwass w-weadabwestowewithmapoptionvawues[k, 😳 v-v1, v2](ws: w-weadabwestowe[k, XD v1]) {
 
-  def mapOptionValues(
-    fn: V1 => Option[V2]
-  ): ReadableStore[K, V2] = {
-    val self = rs
-    new AbstractReadableStore[K, V2] {
-      override def get(k: K): Future[Option[V2]] = self.get(k).map(_.flatMap(fn))
+  def mapoptionvawues(
+    fn: v1 => option[v2]
+  ): w-weadabwestowe[k, :3 v2] = {
+    vaw sewf = ws
+    new a-abstwactweadabwestowe[k, v2] {
+      o-ovewwide def get(k: k): futuwe[option[v2]] = sewf.get(k).map(_.fwatmap(fn))
 
-      override def multiGet[K1 <: K](ks: Set[K1]): Map[K1, Future[Option[V2]]] =
-        self.multiGet(ks).mapValues(_.map(_.flatMap(fn)))
+      o-ovewwide def muwtiget[k1 <: k-k](ks: set[k1]): m-map[k1, 😳😳😳 futuwe[option[v2]]] =
+        sewf.muwtiget(ks).mapvawues(_.map(_.fwatmap(fn)))
     }
   }
 }

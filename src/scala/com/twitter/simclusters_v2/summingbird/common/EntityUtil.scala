@@ -1,45 +1,45 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
-import com.twitter.cuad.ner.thriftscala.WholeEntityType
-import com.twitter.simclusters_v2.summingbird.common.Implicits.thriftDecayedValueMonoid
-import com.twitter.simclusters_v2.thriftscala.{Scores, SimClusterEntity, TweetTextEntity}
-import scala.collection.Map
+impowt com.twittew.cuad.new.thwiftscawa.whoweentitytype
+i-impowt c-com.twittew.simcwustews_v2.summingbiwd.common.impwicits.thwiftdecayedvawuemonoid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{scowes, >_< s-simcwustewentity, (⑅˘꒳˘) tweettextentity}
+i-impowt scawa.cowwection.map
 
-private[summingbird] object EntityUtil {
+p-pwivate[summingbiwd] o-object entityutiw {
 
-  def updateScoreWithLatestTimestamp[K](
-    scoresMapOption: Option[Map[K, Scores]],
-    timeInMs: Long
-  ): Option[Map[K, Scores]] = {
-    scoresMapOption map { scoresMap =>
-      scoresMap.mapValues(score => updateScoreWithLatestTimestamp(score, timeInMs))
+  d-def updatescowewithwatesttimestamp[k](
+    scowesmapoption: option[map[k, /(^•ω•^) scowes]],
+    timeinms: wong
+  ): o-option[map[k, rawr x3 scowes]] = {
+    scowesmapoption m-map { scowesmap =>
+      scowesmap.mapvawues(scowe => u-updatescowewithwatesttimestamp(scowe, (U ﹏ U) timeinms))
     }
   }
 
-  def updateScoreWithLatestTimestamp(score: Scores, timeInMs: Long): Scores = {
-    score.copy(
-      favClusterNormalized8HrHalfLifeScore = score.favClusterNormalized8HrHalfLifeScore.map {
-        decayedValue => thriftDecayedValueMonoid.decayToTimestamp(decayedValue, timeInMs)
-      },
-      followClusterNormalized8HrHalfLifeScore = score.followClusterNormalized8HrHalfLifeScore.map {
-        decayedValue => thriftDecayedValueMonoid.decayToTimestamp(decayedValue, timeInMs)
+  def updatescowewithwatesttimestamp(scowe: scowes, timeinms: w-wong): scowes = {
+    scowe.copy(
+      f-favcwustewnowmawized8hwhawfwifescowe = s-scowe.favcwustewnowmawized8hwhawfwifescowe.map {
+        decayedvawue => thwiftdecayedvawuemonoid.decaytotimestamp(decayedvawue, timeinms)
+      }, (U ﹏ U)
+      fowwowcwustewnowmawized8hwhawfwifescowe = s-scowe.fowwowcwustewnowmawized8hwhawfwifescowe.map {
+        decayedvawue => thwiftdecayedvawuemonoid.decaytotimestamp(decayedvawue, (⑅˘꒳˘) timeinms)
       }
     )
   }
 
-  def entityToString(entity: SimClusterEntity): String = {
-    entity match {
-      case SimClusterEntity.TweetId(id) => s"t_id:$id"
-      case SimClusterEntity.SpaceId(id) => s"space_id:$id"
-      case SimClusterEntity.TweetEntity(textEntity) =>
-        textEntity match {
-          case TweetTextEntity.Hashtag(str) => s"$str[h_tag]"
-          case TweetTextEntity.Penguin(penguin) =>
-            s"${penguin.textEntity}[penguin]"
-          case TweetTextEntity.Ner(ner) =>
-            s"${ner.textEntity}[ner_${WholeEntityType(ner.wholeEntityType)}]"
-          case TweetTextEntity.SemanticCore(semanticCore) =>
-            s"[sc:${semanticCore.entityId}]"
+  def entitytostwing(entity: s-simcwustewentity): stwing = {
+    e-entity match {
+      c-case s-simcwustewentity.tweetid(id) => s-s"t_id:$id"
+      case simcwustewentity.spaceid(id) => s"space_id:$id"
+      c-case simcwustewentity.tweetentity(textentity) =>
+        textentity m-match {
+          case tweettextentity.hashtag(stw) => s"$stw[h_tag]"
+          case tweettextentity.penguin(penguin) =>
+            s"${penguin.textentity}[penguin]"
+          case tweettextentity.new(new) =>
+            s-s"${new.textentity}[new_${whoweentitytype(new.whoweentitytype)}]"
+          case t-tweettextentity.semanticcowe(semanticcowe) =>
+            s-s"[sc:${semanticcowe.entityid}]"
         }
     }
   }

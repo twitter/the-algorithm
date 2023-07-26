@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.awticwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.Default
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.awticwedispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.defauwt
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ArticleDisplayTypeMarshaller @Inject() () {
-  def apply(articleDisplayType: ArticleDisplayType): urt.ArticleDisplayType =
-    articleDisplayType match {
-      case Default => urt.ArticleDisplayType.Default
+@singweton
+c-cwass a-awticwedispwaytypemawshawwew @inject() () {
+  d-def appwy(awticwedispwaytype: awticwedispwaytype): uwt.awticwedispwaytype =
+    awticwedispwaytype match {
+      c-case defauwt => uwt.awticwedispwaytype.defauwt
     }
 }

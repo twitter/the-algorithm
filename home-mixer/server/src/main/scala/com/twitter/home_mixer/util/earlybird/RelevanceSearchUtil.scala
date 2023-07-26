@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.util.earlybird
+package com.twittew.home_mixew.utiw.eawwybiwd
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.earlybird.{thriftscala => eb}
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant
+impowt c-com.twittew.seawch.eawwybiwd.{thwiftscawa => e-eb}
 
-object RelevanceSearchUtil {
+object wewevanceseawchutiw {
 
-  val Mentions: String = EarlybirdFieldConstant.MENTIONS_FACET
-  val Hashtags: String = EarlybirdFieldConstant.HASHTAGS_FACET
-  val FacetsToFetch: Seq[String] = Seq(Mentions, Hashtags)
+  v-vaw mentions: s-stwing = eawwybiwdfiewdconstant.mentions_facet
+  v-vaw hashtags: s-stwing = eawwybiwdfiewdconstant.hashtags_facet
+  v-vaw facetstofetch: seq[stwing] = seq(mentions, (˘ω˘) hashtags)
 
-  val MetadataOptions: eb.ThriftSearchResultMetadataOptions = {
-    eb.ThriftSearchResultMetadataOptions(
-      getTweetUrls = true,
-      getResultLocation = false,
-      getLuceneScore = false,
-      getInReplyToStatusId = true,
-      getReferencedTweetAuthorId = true,
-      getMediaBits = true,
-      getAllFeatures = true,
-      returnSearchResultFeatures = true,
-      // Set getExclusiveConversationAuthorId in order to retrieve Exclusive / SuperFollow tweets.
-      getExclusiveConversationAuthorId = true
+  vaw metadataoptions: e-eb.thwiftseawchwesuwtmetadataoptions = {
+    eb.thwiftseawchwesuwtmetadataoptions(
+      gettweetuwws = twue, (⑅˘꒳˘)
+      g-getwesuwtwocation = fawse, (///ˬ///✿)
+      getwucenescowe = f-fawse, 😳😳😳
+      getinwepwytostatusid = twue, 🥺
+      getwefewencedtweetauthowid = twue, mya
+      g-getmediabits = twue, 🥺
+      g-getawwfeatuwes = t-twue, >_<
+      wetuwnseawchwesuwtfeatuwes = twue, >_<
+      // set getexcwusiveconvewsationauthowid in owdew to wetwieve excwusive / s-supewfowwow tweets. (⑅˘꒳˘)
+      getexcwusiveconvewsationauthowid = twue
     )
   }
 
-  val RelevanceOptions: eb.ThriftSearchRelevanceOptions = {
-    eb.ThriftSearchRelevanceOptions(
-      proximityScoring = true,
-      maxConsecutiveSameUser = Some(2),
-      rankingParams = None,
-      maxHitsToProcess = Some(500),
-      maxUserBlendCount = Some(3),
-      proximityPhraseWeight = 9.0,
-      returnAllResults = Some(true)
+  vaw wewevanceoptions: eb.thwiftseawchwewevanceoptions = {
+    e-eb.thwiftseawchwewevanceoptions(
+      pwoximityscowing = t-twue, /(^•ω•^)
+      m-maxconsecutivesameusew = s-some(2), rawr x3
+      w-wankingpawams = nyone, (U ﹏ U)
+      maxhitstopwocess = s-some(500),
+      maxusewbwendcount = some(3), (U ﹏ U)
+      pwoximityphwaseweight = 9.0, (⑅˘꒳˘)
+      w-wetuwnawwwesuwts = some(twue)
     )
   }
 }

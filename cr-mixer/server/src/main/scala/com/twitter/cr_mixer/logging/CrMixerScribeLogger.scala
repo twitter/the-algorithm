@@ -1,489 +1,489 @@
-package com.twitter.cr_mixer.logging
+package com.twittew.cw_mixew.wogging
 
-import com.google.common.base.CaseFormat
-import com.twitter.abdecider.ScribingABDeciderUtil
-import com.twitter.scribelib.marshallers.ClientDataProvider
-import com.twitter.scribelib.marshallers.ScribeSerialization
-import com.twitter.timelines.clientevent.MinimalClientDataProvider
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.logging.ScribeLoggerUtils._
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.scribe.ScribeCategories
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetRequest
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetResponse
-import com.twitter.cr_mixer.thriftscala.FetchCandidatesResult
-import com.twitter.cr_mixer.thriftscala.FetchSignalSourcesResult
-import com.twitter.cr_mixer.thriftscala.GetTweetsRecommendationsScribe
-import com.twitter.cr_mixer.thriftscala.InterleaveResult
-import com.twitter.cr_mixer.thriftscala.PerformanceMetrics
-import com.twitter.cr_mixer.thriftscala.PreRankFilterResult
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.cr_mixer.thriftscala.RankResult
-import com.twitter.cr_mixer.thriftscala.Result
-import com.twitter.cr_mixer.thriftscala.SourceSignal
-import com.twitter.cr_mixer.thriftscala.TopLevelApiResult
-import com.twitter.cr_mixer.thriftscala.TweetCandidateWithMetadata
-import com.twitter.cr_mixer.thriftscala.VITTweetCandidateScribe
-import com.twitter.cr_mixer.thriftscala.VITTweetCandidatesScribe
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.util.CandidateGenerationKeyUtil
-import com.twitter.cr_mixer.util.MetricTagUtil
-import com.twitter.decider.SimpleRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finatra.kafka.producers.KafkaProducerBase
-import com.twitter.logging.Logger
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
-import com.twitter.util.Time
+impowt com.googwe.common.base.casefowmat
+i-impowt c-com.twittew.abdecidew.scwibingabdecidewutiw
+i-impowt com.twittew.scwibewib.mawshawwews.cwientdatapwovidew
+i-impowt c-com.twittew.scwibewib.mawshawwews.scwibesewiawization
+i-impowt c-com.twittew.timewines.cwientevent.minimawcwientdatapwovidew
+i-impowt com.twittew.cw_mixew.modew.bwendedcandidate
+impowt com.twittew.cw_mixew.modew.cwcandidategenewatowquewy
+impowt com.twittew.cw_mixew.modew.initiawcandidate
+impowt c-com.twittew.cw_mixew.modew.wankedcandidate
+impowt com.twittew.cw_mixew.wogging.scwibewoggewutiws._
+impowt c-com.twittew.cw_mixew.modew.gwaphsouwceinfo
+impowt c-com.twittew.cw_mixew.pawam.decidew.cwmixewdecidew
+impowt com.twittew.cw_mixew.pawam.decidew.decidewconstants
+impowt com.twittew.cw_mixew.scwibe.scwibecategowies
+impowt com.twittew.cw_mixew.thwiftscawa.cwmixewtweetwequest
+impowt c-com.twittew.cw_mixew.thwiftscawa.cwmixewtweetwesponse
+impowt c-com.twittew.cw_mixew.thwiftscawa.fetchcandidateswesuwt
+i-impowt com.twittew.cw_mixew.thwiftscawa.fetchsignawsouwceswesuwt
+impowt com.twittew.cw_mixew.thwiftscawa.gettweetswecommendationsscwibe
+impowt com.twittew.cw_mixew.thwiftscawa.intewweavewesuwt
+i-impowt com.twittew.cw_mixew.thwiftscawa.pewfowmancemetwics
+impowt com.twittew.cw_mixew.thwiftscawa.pwewankfiwtewwesuwt
+impowt com.twittew.cw_mixew.thwiftscawa.pwoduct
+impowt com.twittew.cw_mixew.thwiftscawa.wankwesuwt
+i-impowt com.twittew.cw_mixew.thwiftscawa.wesuwt
+impowt com.twittew.cw_mixew.thwiftscawa.souwcesignaw
+i-impowt c-com.twittew.cw_mixew.thwiftscawa.topwevewapiwesuwt
+i-impowt com.twittew.cw_mixew.thwiftscawa.tweetcandidatewithmetadata
+i-impowt com.twittew.cw_mixew.thwiftscawa.vittweetcandidatescwibe
+impowt com.twittew.cw_mixew.thwiftscawa.vittweetcandidatesscwibe
+impowt com.twittew.cw_mixew.modew.moduwenames
+i-impowt com.twittew.cw_mixew.modew.souwceinfo
+impowt com.twittew.cw_mixew.utiw.candidategenewationkeyutiw
+impowt c-com.twittew.cw_mixew.utiw.metwictagutiw
+impowt com.twittew.decidew.simpwewecipient
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finagwe.twacing.twace
+impowt com.twittew.finatwa.kafka.pwoducews.kafkapwoducewbase
+i-impowt com.twittew.wogging.woggew
+impowt c-com.twittew.simcwustews_v2.common.usewid
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.stopwatch
+impowt com.twittew.utiw.time
 
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.util.Random
+i-impowt javax.inject.inject
+i-impowt javax.inject.named
+impowt j-javax.inject.singweton
+i-impowt scawa.utiw.wandom
 
-@Singleton
-case class CrMixerScribeLogger @Inject() (
-  decider: CrMixerDecider,
-  statsReceiver: StatsReceiver,
-  @Named(ModuleNames.TweetRecsLogger) tweetRecsScribeLogger: Logger,
-  @Named(ModuleNames.BlueVerifiedTweetRecsLogger) blueVerifiedTweetRecsScribeLogger: Logger,
-  @Named(ModuleNames.TopLevelApiDdgMetricsLogger) ddgMetricsLogger: Logger,
-  kafkaProducer: KafkaProducerBase[String, GetTweetsRecommendationsScribe]) {
+@singweton
+case c-cwass cwmixewscwibewoggew @inject() (
+  decidew: c-cwmixewdecidew, mya
+  statsweceivew: statsweceivew, UwU
+  @named(moduwenames.tweetwecswoggew) t-tweetwecsscwibewoggew: woggew, >_<
+  @named(moduwenames.bwuevewifiedtweetwecswoggew) b-bwuevewifiedtweetwecsscwibewoggew: woggew, /(^•ω•^)
+  @named(moduwenames.topwevewapiddgmetwicswoggew) ddgmetwicswoggew: w-woggew, òωó
+  k-kafkapwoducew: kafkapwoducewbase[stwing, σωσ gettweetswecommendationsscwibe]) {
 
-  import CrMixerScribeLogger._
+  impowt cwmixewscwibewoggew._
 
-  private val scopedStats = statsReceiver.scope("CrMixerScribeLogger")
-  private val topLevelApiStats = scopedStats.scope("TopLevelApi")
-  private val upperFunnelsStats = scopedStats.scope("UpperFunnels")
-  private val kafkaMessagesStats = scopedStats.scope("KafkaMessages")
-  private val topLevelApiDdgMetricsStats = scopedStats.scope("TopLevelApiDdgMetrics")
-  private val blueVerifiedTweetCandidatesStats = scopedStats.scope("BlueVerifiedTweetCandidates")
+  pwivate vaw scopedstats = statsweceivew.scope("cwmixewscwibewoggew")
+  pwivate v-vaw topwevewapistats = s-scopedstats.scope("topwevewapi")
+  pwivate v-vaw uppewfunnewsstats = s-scopedstats.scope("uppewfunnews")
+  p-pwivate vaw kafkamessagesstats = scopedstats.scope("kafkamessages")
+  pwivate vaw topwevewapiddgmetwicsstats = s-scopedstats.scope("topwevewapiddgmetwics")
+  pwivate vaw bwuevewifiedtweetcandidatesstats = scopedstats.scope("bwuevewifiedtweetcandidates")
 
-  private val serialization = new ScribeSerialization {}
+  pwivate vaw sewiawization = n-nyew scwibesewiawization {}
 
-  def scribeSignalSources(
-    query: CrCandidateGeneratorQuery,
-    getResultFn: => Future[(Set[SourceInfo], Map[String, Option[GraphSourceInfo]])]
-  ): Future[(Set[SourceInfo], Map[String, Option[GraphSourceInfo]])] = {
-    scribeResultsAndPerformanceMetrics(
-      ScribeMetadata.from(query),
-      getResultFn,
-      convertToResultFn = convertFetchSignalSourcesResult
+  d-def scwibesignawsouwces(
+    q-quewy: cwcandidategenewatowquewy, ( ͡o ω ͡o )
+    g-getwesuwtfn: => futuwe[(set[souwceinfo], nyaa~~ m-map[stwing, :3 o-option[gwaphsouwceinfo]])]
+  ): f-futuwe[(set[souwceinfo], UwU m-map[stwing, o.O option[gwaphsouwceinfo]])] = {
+    scwibewesuwtsandpewfowmancemetwics(
+      s-scwibemetadata.fwom(quewy), (ˆ ﻌ ˆ)♡
+      g-getwesuwtfn, ^^;;
+      c-convewttowesuwtfn = c-convewtfetchsignawsouwceswesuwt
     )
   }
 
-  def scribeInitialCandidates(
-    query: CrCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[Seq[InitialCandidate]]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    scribeResultsAndPerformanceMetrics(
-      ScribeMetadata.from(query),
-      getResultFn,
-      convertToResultFn = convertFetchCandidatesResult
+  d-def scwibeinitiawcandidates(
+    quewy: cwcandidategenewatowquewy, ʘwʘ
+    getwesuwtfn: => f-futuwe[seq[seq[initiawcandidate]]]
+  ): futuwe[seq[seq[initiawcandidate]]] = {
+    scwibewesuwtsandpewfowmancemetwics(
+      scwibemetadata.fwom(quewy), σωσ
+      getwesuwtfn, ^^;;
+      convewttowesuwtfn = convewtfetchcandidateswesuwt
     )
   }
 
-  def scribePreRankFilterCandidates(
-    query: CrCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[Seq[InitialCandidate]]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    scribeResultsAndPerformanceMetrics(
-      ScribeMetadata.from(query),
-      getResultFn,
-      convertToResultFn = convertPreRankFilterResult
+  d-def scwibepwewankfiwtewcandidates(
+    quewy: cwcandidategenewatowquewy, ʘwʘ
+    getwesuwtfn: => futuwe[seq[seq[initiawcandidate]]]
+  ): futuwe[seq[seq[initiawcandidate]]] = {
+    s-scwibewesuwtsandpewfowmancemetwics(
+      s-scwibemetadata.fwom(quewy), ^^
+      g-getwesuwtfn, nyaa~~
+      convewttowesuwtfn = c-convewtpwewankfiwtewwesuwt
     )
   }
 
-  def scribeInterleaveCandidates(
-    query: CrCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[BlendedCandidate]]
-  ): Future[Seq[BlendedCandidate]] = {
-    scribeResultsAndPerformanceMetrics(
-      ScribeMetadata.from(query),
-      getResultFn,
-      convertToResultFn = convertInterleaveResult,
-      enableKafkaScribe = true
+  def s-scwibeintewweavecandidates(
+    q-quewy: cwcandidategenewatowquewy, (///ˬ///✿)
+    getwesuwtfn: => futuwe[seq[bwendedcandidate]]
+  ): futuwe[seq[bwendedcandidate]] = {
+    scwibewesuwtsandpewfowmancemetwics(
+      scwibemetadata.fwom(quewy), XD
+      g-getwesuwtfn, :3
+      convewttowesuwtfn = convewtintewweavewesuwt, òωó
+      e-enabwekafkascwibe = twue
     )
   }
 
-  def scribeRankedCandidates(
-    query: CrCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[RankedCandidate]]
-  ): Future[Seq[RankedCandidate]] = {
-    scribeResultsAndPerformanceMetrics(
-      ScribeMetadata.from(query),
-      getResultFn,
-      convertToResultFn = convertRankResult
+  d-def scwibewankedcandidates(
+    q-quewy: cwcandidategenewatowquewy,
+    getwesuwtfn: => futuwe[seq[wankedcandidate]]
+  ): f-futuwe[seq[wankedcandidate]] = {
+    s-scwibewesuwtsandpewfowmancemetwics(
+      scwibemetadata.fwom(quewy), ^^
+      getwesuwtfn, ^•ﻌ•^
+      c-convewttowesuwtfn = c-convewtwankwesuwt
     )
   }
 
   /**
-   * Scribe Top Level API Request / Response and performance metrics
-   * for the getTweetRecommendations() endpoint.
+   * scwibe top wevew api wequest / wesponse and pewfowmance metwics
+   * f-fow the gettweetwecommendations() e-endpoint. σωσ
    */
-  def scribeGetTweetRecommendations(
-    request: CrMixerTweetRequest,
-    startTime: Long,
-    scribeMetadata: ScribeMetadata,
-    getResultFn: => Future[CrMixerTweetResponse]
-  ): Future[CrMixerTweetResponse] = {
-    val timer = Stopwatch.start()
-    getResultFn.onSuccess { response =>
-      val latencyMs = timer().inMilliseconds
-      val result = convertTopLevelAPIResult(request, response, startTime)
-      val traceId = Trace.id.traceId.toLong
-      val scribeMsg = buildScribeMessage(result, scribeMetadata, latencyMs, traceId)
+  d-def scwibegettweetwecommendations(
+    wequest: cwmixewtweetwequest, (ˆ ﻌ ˆ)♡
+    s-stawttime: wong, nyaa~~
+    s-scwibemetadata: scwibemetadata, ʘwʘ
+    g-getwesuwtfn: => futuwe[cwmixewtweetwesponse]
+  ): futuwe[cwmixewtweetwesponse] = {
+    vaw timew = stopwatch.stawt()
+    getwesuwtfn.onsuccess { w-wesponse =>
+      v-vaw watencyms = timew().inmiwwiseconds
+      vaw wesuwt = c-convewttopwevewapiwesuwt(wequest, ^•ﻌ•^ w-wesponse, rawr x3 stawttime)
+      vaw twaceid = twace.id.twaceid.towong
+      v-vaw scwibemsg = buiwdscwibemessage(wesuwt, scwibemetadata, watencyms, 🥺 twaceid)
 
-      // We use upperFunnelPerStepScribeRate to cover TopLevelApi scribe logs
-      if (decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.upperFunnelPerStepScribeRate)) {
-        topLevelApiStats.counter(scribeMetadata.product.originalName).incr()
-        scribeResult(scribeMsg)
+      // w-we use uppewfunnewpewstepscwibewate to c-covew topwevewapi s-scwibe wogs
+      if (decidew.isavaiwabwefowid(
+          scwibemetadata.usewid, ʘwʘ
+          decidewconstants.uppewfunnewpewstepscwibewate)) {
+        t-topwevewapistats.countew(scwibemetadata.pwoduct.owiginawname).incw()
+        s-scwibewesuwt(scwibemsg)
       }
-      if (decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.topLevelApiDdgMetricsScribeRate)) {
-        topLevelApiDdgMetricsStats.counter(scribeMetadata.product.originalName).incr()
-        val topLevelDdgMetricsMetadata = TopLevelDdgMetricsMetadata.from(request)
-        publishTopLevelDdgMetrics(
-          logger = ddgMetricsLogger,
-          topLevelDdgMetricsMetadata = topLevelDdgMetricsMetadata,
-          latencyMs = latencyMs,
-          candidateSize = response.tweets.length)
+      if (decidew.isavaiwabwefowid(
+          scwibemetadata.usewid, (˘ω˘)
+          decidewconstants.topwevewapiddgmetwicsscwibewate)) {
+        t-topwevewapiddgmetwicsstats.countew(scwibemetadata.pwoduct.owiginawname).incw()
+        vaw topwevewddgmetwicsmetadata = t-topwevewddgmetwicsmetadata.fwom(wequest)
+        pubwishtopwevewddgmetwics(
+          woggew = ddgmetwicswoggew, o.O
+          topwevewddgmetwicsmetadata = t-topwevewddgmetwicsmetadata, σωσ
+          watencyms = w-watencyms, (ꈍᴗꈍ)
+          c-candidatesize = wesponse.tweets.wength)
       }
     }
   }
 
   /**
-   * Scribe all of the Blue Verified tweets that are candidates from cr-mixer
-   * from the getTweetRecommendations() endpoint for stats tracking/debugging purposes.
+   * s-scwibe aww of the b-bwue vewified tweets t-that awe candidates f-fwom cw-mixew
+   * fwom t-the gettweetwecommendations() endpoint f-fow stats twacking/debugging puwposes. (ˆ ﻌ ˆ)♡
    */
-  def scribeGetTweetRecommendationsForBlueVerified(
-    scribeMetadata: ScribeMetadata,
-    getResultFn: => Future[Seq[RankedCandidate]]
-  ): Future[Seq[RankedCandidate]] = {
-    getResultFn.onSuccess { rankedCandidates =>
-      if (decider.isAvailable(DeciderConstants.enableScribeForBlueVerifiedTweetCandidates)) {
-        blueVerifiedTweetCandidatesStats.counter("process_request").incr()
+  d-def scwibegettweetwecommendationsfowbwuevewified(
+    s-scwibemetadata: s-scwibemetadata, o.O
+    getwesuwtfn: => futuwe[seq[wankedcandidate]]
+  ): f-futuwe[seq[wankedcandidate]] = {
+    getwesuwtfn.onsuccess { w-wankedcandidates =>
+      i-if (decidew.isavaiwabwe(decidewconstants.enabwescwibefowbwuevewifiedtweetcandidates)) {
+        bwuevewifiedtweetcandidatesstats.countew("pwocess_wequest").incw()
 
-        val blueVerifiedTweetCandidates = rankedCandidates.filter { tweet =>
-          tweet.tweetInfo.hasBlueVerifiedAnnotation.contains(true)
+        vaw bwuevewifiedtweetcandidates = wankedcandidates.fiwtew { t-tweet =>
+          t-tweet.tweetinfo.hasbwuevewifiedannotation.contains(twue)
         }
 
-        val impressedBuckets = getImpressedBuckets(blueVerifiedTweetCandidatesStats).getOrElse(Nil)
+        v-vaw impwessedbuckets = g-getimpwessedbuckets(bwuevewifiedtweetcandidatesstats).getowewse(niw)
 
-        val blueVerifiedCandidateScribes = blueVerifiedTweetCandidates.map { candidate =>
-          blueVerifiedTweetCandidatesStats
-            .scope(scribeMetadata.product.name).counter(
-              candidate.tweetInfo.authorId.toString).incr()
-          VITTweetCandidateScribe(
-            tweetId = candidate.tweetId,
-            authorId = candidate.tweetInfo.authorId,
-            score = candidate.predictionScore,
-            metricTags = MetricTagUtil.buildMetricTags(candidate)
+        vaw bwuevewifiedcandidatescwibes = b-bwuevewifiedtweetcandidates.map { candidate =>
+          bwuevewifiedtweetcandidatesstats
+            .scope(scwibemetadata.pwoduct.name).countew(
+              candidate.tweetinfo.authowid.tostwing).incw()
+          vittweetcandidatescwibe(
+            tweetid = c-candidate.tweetid,
+            authowid = candidate.tweetinfo.authowid, :3
+            s-scowe = candidate.pwedictionscowe, -.-
+            metwictags = m-metwictagutiw.buiwdmetwictags(candidate)
           )
         }
 
-        val blueVerifiedScribe =
-          VITTweetCandidatesScribe(
-            uuid = scribeMetadata.requestUUID,
-            userId = scribeMetadata.userId,
-            candidates = blueVerifiedCandidateScribes,
-            product = scribeMetadata.product,
-            impressedBuckets = impressedBuckets
+        vaw bwuevewifiedscwibe =
+          v-vittweetcandidatesscwibe(
+            uuid = scwibemetadata.wequestuuid, ( ͡o ω ͡o )
+            u-usewid = scwibemetadata.usewid, /(^•ω•^)
+            c-candidates = b-bwuevewifiedcandidatescwibes,
+            p-pwoduct = scwibemetadata.pwoduct,
+            i-impwessedbuckets = impwessedbuckets
           )
 
-        publish(
-          logger = blueVerifiedTweetRecsScribeLogger,
-          codec = VITTweetCandidatesScribe,
-          message = blueVerifiedScribe)
+        pubwish(
+          woggew = bwuevewifiedtweetwecsscwibewoggew, (⑅˘꒳˘)
+          codec = vittweetcandidatesscwibe, òωó
+          message = bwuevewifiedscwibe)
       }
     }
   }
 
   /**
-   * Scribe Per-step intermediate results and performance metrics
-   * for each step: fetch signals, fetch candidates, filters, ranker, etc
+   * s-scwibe p-pew-step intewmediate w-wesuwts and pewfowmance m-metwics
+   * fow each step: fetch signaws, fetch candidates, 🥺 fiwtews, w-wankew, (ˆ ﻌ ˆ)♡ etc
    */
-  private[logging] def scribeResultsAndPerformanceMetrics[T](
-    scribeMetadata: ScribeMetadata,
-    getResultFn: => Future[T],
-    convertToResultFn: (T, UserId) => Result,
-    enableKafkaScribe: Boolean = false
-  ): Future[T] = {
-    val timer = Stopwatch.start()
-    getResultFn.onSuccess { input =>
-      val latencyMs = timer().inMilliseconds
-      val result = convertToResultFn(input, scribeMetadata.userId)
-      val traceId = Trace.id.traceId.toLong
-      val scribeMsg = buildScribeMessage(result, scribeMetadata, latencyMs, traceId)
+  p-pwivate[wogging] def s-scwibewesuwtsandpewfowmancemetwics[t](
+    scwibemetadata: scwibemetadata, -.-
+    getwesuwtfn: => futuwe[t], σωσ
+    c-convewttowesuwtfn: (t, >_< u-usewid) => wesuwt, :3
+    enabwekafkascwibe: boowean = f-fawse
+  ): f-futuwe[t] = {
+    vaw timew = stopwatch.stawt()
+    getwesuwtfn.onsuccess { input =>
+      vaw w-watencyms = timew().inmiwwiseconds
+      v-vaw w-wesuwt = convewttowesuwtfn(input, OwO s-scwibemetadata.usewid)
+      vaw t-twaceid = twace.id.twaceid.towong
+      vaw scwibemsg = b-buiwdscwibemessage(wesuwt, rawr s-scwibemetadata, (///ˬ///✿) watencyms, ^^ t-twaceid)
 
-      if (decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.upperFunnelPerStepScribeRate)) {
-        upperFunnelsStats.counter(scribeMetadata.product.originalName).incr()
-        scribeResult(scribeMsg)
+      i-if (decidew.isavaiwabwefowid(
+          scwibemetadata.usewid, XD
+          d-decidewconstants.uppewfunnewpewstepscwibewate)) {
+        uppewfunnewsstats.countew(scwibemetadata.pwoduct.owiginawname).incw()
+        scwibewesuwt(scwibemsg)
       }
 
-      // forks the scribe as a Kafka message for async feature hydration
-      if (enableKafkaScribe && shouldScribeKafkaMessage(
-          scribeMetadata.userId,
-          scribeMetadata.product)) {
-        kafkaMessagesStats.counter(scribeMetadata.product.originalName).incr()
+      // f-fowks the scwibe as a-a kafka message f-fow async featuwe hydwation
+      i-if (enabwekafkascwibe && shouwdscwibekafkamessage(
+          scwibemetadata.usewid, UwU
+          scwibemetadata.pwoduct)) {
+        k-kafkamessagesstats.countew(scwibemetadata.pwoduct.owiginawname).incw()
 
-        val batchedKafkaMessages = downsampleKafkaMessage(scribeMsg)
-        batchedKafkaMessages.foreach { kafkaMessage =>
-          kafkaProducer.send(
-            topic = ScribeCategories.TweetsRecs.scribeCategory,
-            key = traceId.toString,
-            value = kafkaMessage,
-            timestamp = Time.now.inMilliseconds
+        v-vaw batchedkafkamessages = d-downsampwekafkamessage(scwibemsg)
+        batchedkafkamessages.foweach { kafkamessage =>
+          kafkapwoducew.send(
+            t-topic = scwibecategowies.tweetswecs.scwibecategowy, o.O
+            key = twaceid.tostwing, 😳
+            vawue = kafkamessage, (˘ω˘)
+            t-timestamp = t-time.now.inmiwwiseconds
           )
         }
       }
     }
   }
 
-  private def convertTopLevelAPIResult(
-    request: CrMixerTweetRequest,
-    response: CrMixerTweetResponse,
-    startTime: Long
-  ): Result = {
-    Result.TopLevelApiResult(
-      TopLevelApiResult(
-        timestamp = startTime,
-        request = request,
-        response = response
+  pwivate def c-convewttopwevewapiwesuwt(
+    wequest: cwmixewtweetwequest, 🥺
+    w-wesponse: cwmixewtweetwesponse,
+    s-stawttime: wong
+  ): wesuwt = {
+    wesuwt.topwevewapiwesuwt(
+      t-topwevewapiwesuwt(
+        timestamp = stawttime, ^^
+        w-wequest = wequest, >w<
+        wesponse = w-wesponse
       ))
   }
 
-  private def convertFetchSignalSourcesResult(
-    sourceInfoSetTuple: (Set[SourceInfo], Map[String, Option[GraphSourceInfo]]),
-    requestUserId: UserId
-  ): Result = {
-    val sourceSignals = sourceInfoSetTuple._1.map { sourceInfo =>
-      SourceSignal(id = Some(sourceInfo.internalId))
+  pwivate def convewtfetchsignawsouwceswesuwt(
+    s-souwceinfosettupwe: (set[souwceinfo], ^^;; map[stwing, o-option[gwaphsouwceinfo]]), (˘ω˘)
+    w-wequestusewid: u-usewid
+  ): wesuwt = {
+    vaw souwcesignaws = souwceinfosettupwe._1.map { souwceinfo =>
+      souwcesignaw(id = some(souwceinfo.intewnawid))
     }
-    // For source graphs, we pass in requestUserId as a placeholder
-    val sourceGraphs = sourceInfoSetTuple._2.map {
-      case (_, _) =>
-        SourceSignal(id = Some(InternalId.UserId(requestUserId)))
+    // fow souwce gwaphs, we pass in wequestusewid as a pwacehowdew
+    vaw souwcegwaphs = souwceinfosettupwe._2.map {
+      case (_, OwO _) =>
+        s-souwcesignaw(id = s-some(intewnawid.usewid(wequestusewid)))
     }
-    Result.FetchSignalSourcesResult(
-      FetchSignalSourcesResult(
-        signals = Some(sourceSignals ++ sourceGraphs)
+    wesuwt.fetchsignawsouwceswesuwt(
+      fetchsignawsouwceswesuwt(
+        s-signaws = s-some(souwcesignaws ++ s-souwcegwaphs)
       ))
   }
 
-  private def convertFetchCandidatesResult(
-    candidatesSeq: Seq[Seq[InitialCandidate]],
-    requestUserId: UserId
-  ): Result = {
-    val tweetCandidatesWithMetadata = candidatesSeq.flatMap { candidates =>
+  pwivate def c-convewtfetchcandidateswesuwt(
+    candidatesseq: s-seq[seq[initiawcandidate]], (ꈍᴗꈍ)
+    w-wequestusewid: usewid
+  ): wesuwt = {
+    v-vaw tweetcandidateswithmetadata = c-candidatesseq.fwatmap { c-candidates =>
       candidates.map { candidate =>
-        TweetCandidateWithMetadata(
-          tweetId = candidate.tweetId,
-          candidateGenerationKey = Some(
-            CandidateGenerationKeyUtil.toThrift(candidate.candidateGenerationInfo, requestUserId)),
-          score = Some(candidate.getSimilarityScore),
-          numCandidateGenerationKeys = None // not populated yet
+        t-tweetcandidatewithmetadata(
+          t-tweetid = c-candidate.tweetid, òωó
+          candidategenewationkey = s-some(
+            c-candidategenewationkeyutiw.tothwift(candidate.candidategenewationinfo, ʘwʘ w-wequestusewid)), ʘwʘ
+          s-scowe = s-some(candidate.getsimiwawityscowe), nyaa~~
+          n-nyumcandidategenewationkeys = nyone // nyot popuwated y-yet
         )
       }
     }
-    Result.FetchCandidatesResult(FetchCandidatesResult(Some(tweetCandidatesWithMetadata)))
+    w-wesuwt.fetchcandidateswesuwt(fetchcandidateswesuwt(some(tweetcandidateswithmetadata)))
   }
 
-  private def convertPreRankFilterResult(
-    candidatesSeq: Seq[Seq[InitialCandidate]],
-    requestUserId: UserId
-  ): Result = {
-    val tweetCandidatesWithMetadata = candidatesSeq.flatMap { candidates =>
-      candidates.map { candidate =>
-        TweetCandidateWithMetadata(
-          tweetId = candidate.tweetId,
-          candidateGenerationKey = Some(
-            CandidateGenerationKeyUtil.toThrift(candidate.candidateGenerationInfo, requestUserId)),
-          score = Some(candidate.getSimilarityScore),
-          numCandidateGenerationKeys = None // not populated yet
+  p-pwivate def convewtpwewankfiwtewwesuwt(
+    c-candidatesseq: seq[seq[initiawcandidate]], UwU
+    wequestusewid: u-usewid
+  ): wesuwt = {
+    vaw tweetcandidateswithmetadata = c-candidatesseq.fwatmap { c-candidates =>
+      c-candidates.map { candidate =>
+        tweetcandidatewithmetadata(
+          t-tweetid = candidate.tweetid, (⑅˘꒳˘)
+          candidategenewationkey = s-some(
+            candidategenewationkeyutiw.tothwift(candidate.candidategenewationinfo, (˘ω˘) w-wequestusewid)), :3
+          scowe = s-some(candidate.getsimiwawityscowe), (˘ω˘)
+          nyumcandidategenewationkeys = nyone // nyot popuwated yet
         )
       }
     }
-    Result.PreRankFilterResult(PreRankFilterResult(Some(tweetCandidatesWithMetadata)))
+    wesuwt.pwewankfiwtewwesuwt(pwewankfiwtewwesuwt(some(tweetcandidateswithmetadata)))
   }
 
-  // We take InterleaveResult for Unconstrained dataset ML ranker training
-  private def convertInterleaveResult(
-    blendedCandidates: Seq[BlendedCandidate],
-    requestUserId: UserId
-  ): Result = {
-    val tweetCandidatesWithMetadata = blendedCandidates.map { blendedCandidate =>
-      val candidateGenerationKey =
-        CandidateGenerationKeyUtil.toThrift(blendedCandidate.reasonChosen, requestUserId)
-      TweetCandidateWithMetadata(
-        tweetId = blendedCandidate.tweetId,
-        candidateGenerationKey = Some(candidateGenerationKey),
-        authorId = Some(blendedCandidate.tweetInfo.authorId), // for ML pipeline training
-        score = Some(blendedCandidate.getSimilarityScore),
-        numCandidateGenerationKeys = Some(blendedCandidate.potentialReasons.size)
-      ) // hydrate fields for light ranking training data
+  // w-we take intewweavewesuwt fow unconstwained d-dataset m-mw wankew twaining
+  pwivate def convewtintewweavewesuwt(
+    bwendedcandidates: s-seq[bwendedcandidate], nyaa~~
+    wequestusewid: u-usewid
+  ): wesuwt = {
+    v-vaw tweetcandidateswithmetadata = b-bwendedcandidates.map { bwendedcandidate =>
+      vaw candidategenewationkey =
+        c-candidategenewationkeyutiw.tothwift(bwendedcandidate.weasonchosen, (U ﹏ U) w-wequestusewid)
+      tweetcandidatewithmetadata(
+        t-tweetid = bwendedcandidate.tweetid, nyaa~~
+        candidategenewationkey = some(candidategenewationkey), ^^;;
+        a-authowid = some(bwendedcandidate.tweetinfo.authowid), OwO // f-fow mw pipewine t-twaining
+        s-scowe = some(bwendedcandidate.getsimiwawityscowe), nyaa~~
+        nyumcandidategenewationkeys = s-some(bwendedcandidate.potentiawweasons.size)
+      ) // h-hydwate fiewds f-fow wight wanking t-twaining data
     }
-    Result.InterleaveResult(InterleaveResult(Some(tweetCandidatesWithMetadata)))
+    wesuwt.intewweavewesuwt(intewweavewesuwt(some(tweetcandidateswithmetadata)))
   }
 
-  private def convertRankResult(
-    rankedCandidates: Seq[RankedCandidate],
-    requestUserId: UserId
-  ): Result = {
-    val tweetCandidatesWithMetadata = rankedCandidates.map { rankedCandidate =>
-      val candidateGenerationKey =
-        CandidateGenerationKeyUtil.toThrift(rankedCandidate.reasonChosen, requestUserId)
-      TweetCandidateWithMetadata(
-        tweetId = rankedCandidate.tweetId,
-        candidateGenerationKey = Some(candidateGenerationKey),
-        score = Some(rankedCandidate.getSimilarityScore),
-        numCandidateGenerationKeys = Some(rankedCandidate.potentialReasons.size)
+  p-pwivate def convewtwankwesuwt(
+    w-wankedcandidates: s-seq[wankedcandidate], UwU
+    w-wequestusewid: u-usewid
+  ): wesuwt = {
+    v-vaw t-tweetcandidateswithmetadata = w-wankedcandidates.map { wankedcandidate =>
+      v-vaw candidategenewationkey =
+        c-candidategenewationkeyutiw.tothwift(wankedcandidate.weasonchosen, 😳 wequestusewid)
+      t-tweetcandidatewithmetadata(
+        t-tweetid = w-wankedcandidate.tweetid, 😳
+        candidategenewationkey = some(candidategenewationkey), (ˆ ﻌ ˆ)♡
+        scowe = s-some(wankedcandidate.getsimiwawityscowe), (✿oωo)
+        n-nyumcandidategenewationkeys = s-some(wankedcandidate.potentiawweasons.size)
       )
     }
-    Result.RankResult(RankResult(Some(tweetCandidatesWithMetadata)))
+    wesuwt.wankwesuwt(wankwesuwt(some(tweetcandidateswithmetadata)))
   }
 
-  private def buildScribeMessage(
-    result: Result,
-    scribeMetadata: ScribeMetadata,
-    latencyMs: Long,
-    traceId: Long
-  ): GetTweetsRecommendationsScribe = {
-    GetTweetsRecommendationsScribe(
-      uuid = scribeMetadata.requestUUID,
-      userId = scribeMetadata.userId,
-      result = result,
-      traceId = Some(traceId),
-      performanceMetrics = Some(PerformanceMetrics(Some(latencyMs))),
-      impressedBuckets = getImpressedBuckets(scopedStats)
+  pwivate def buiwdscwibemessage(
+    w-wesuwt: w-wesuwt,
+    scwibemetadata: scwibemetadata, nyaa~~
+    w-watencyms: wong, ^^
+    t-twaceid: wong
+  ): gettweetswecommendationsscwibe = {
+    gettweetswecommendationsscwibe(
+      uuid = scwibemetadata.wequestuuid, (///ˬ///✿)
+      u-usewid = scwibemetadata.usewid, 😳
+      w-wesuwt = wesuwt, òωó
+      t-twaceid = s-some(twaceid), ^^;;
+      pewfowmancemetwics = some(pewfowmancemetwics(some(watencyms))), rawr
+      i-impwessedbuckets = g-getimpwessedbuckets(scopedstats)
     )
   }
 
-  private def scribeResult(
-    scribeMsg: GetTweetsRecommendationsScribe
-  ): Unit = {
-    publish(
-      logger = tweetRecsScribeLogger,
-      codec = GetTweetsRecommendationsScribe,
-      message = scribeMsg)
+  pwivate def scwibewesuwt(
+    scwibemsg: gettweetswecommendationsscwibe
+  ): u-unit = {
+    pubwish(
+      woggew = tweetwecsscwibewoggew, (ˆ ﻌ ˆ)♡
+      c-codec = gettweetswecommendationsscwibe, XD
+      message = scwibemsg)
   }
 
   /**
-   * Gate for producing messages to Kafka for async feature hydration
+   * g-gate fow pwoducing m-messages to kafka fow async f-featuwe hydwation
    */
-  private def shouldScribeKafkaMessage(
-    userId: UserId,
-    product: Product
-  ): Boolean = {
-    val isEligibleUser = decider.isAvailable(
-      DeciderConstants.kafkaMessageScribeSampleRate,
-      Some(SimpleRecipient(userId)))
-    val isHomeProduct = (product == Product.Home)
-    isEligibleUser && isHomeProduct
+  p-pwivate def shouwdscwibekafkamessage(
+    u-usewid: usewid, >_<
+    pwoduct: p-pwoduct
+  ): b-boowean = {
+    v-vaw isewigibweusew = d-decidew.isavaiwabwe(
+      decidewconstants.kafkamessagescwibesampwewate, (˘ω˘)
+      s-some(simpwewecipient(usewid)))
+    v-vaw ishomepwoduct = (pwoduct == p-pwoduct.home)
+    isewigibweusew && i-ishomepwoduct
   }
 
   /**
-   * Due to size limits of Strato (see SD-19028), each Kafka message must be downsampled
+   * due to size wimits of s-stwato (see sd-19028), 😳 e-each kafka m-message must be downsampwed
    */
-  private[logging] def downsampleKafkaMessage(
-    scribeMsg: GetTweetsRecommendationsScribe
-  ): Seq[GetTweetsRecommendationsScribe] = {
-    val sampledResultSeq: Seq[Result] = scribeMsg.result match {
-      case Result.InterleaveResult(interleaveResult) =>
-        val sampledTweetsSeq = interleaveResult.tweets
-          .map { tweets =>
-            Random
-              .shuffle(tweets).take(KafkaMaxTweetsPerMessage)
-              .grouped(BatchSize).toSeq
-          }.getOrElse(Seq.empty)
+  pwivate[wogging] def downsampwekafkamessage(
+    scwibemsg: g-gettweetswecommendationsscwibe
+  ): seq[gettweetswecommendationsscwibe] = {
+    v-vaw sampwedwesuwtseq: s-seq[wesuwt] = scwibemsg.wesuwt match {
+      c-case wesuwt.intewweavewesuwt(intewweavewesuwt) =>
+        vaw sampwedtweetsseq = i-intewweavewesuwt.tweets
+          .map { t-tweets =>
+            w-wandom
+              .shuffwe(tweets).take(kafkamaxtweetspewmessage)
+              .gwouped(batchsize).toseq
+          }.getowewse(seq.empty)
 
-        sampledTweetsSeq.map { sampledTweets =>
-          Result.InterleaveResult(InterleaveResult(Some(sampledTweets)))
+        s-sampwedtweetsseq.map { s-sampwedtweets =>
+          wesuwt.intewweavewesuwt(intewweavewesuwt(some(sampwedtweets)))
         }
 
-      // if it's an unrecognized type, err on the side of sending no candidates
-      case _ =>
-        kafkaMessagesStats.counter("InvalidKafkaMessageResultType").incr()
-        Seq(Result.InterleaveResult(InterleaveResult(None)))
+      // if it's an unwecognized type, o.O eww on the side o-of sending nyo candidates
+      c-case _ =>
+        kafkamessagesstats.countew("invawidkafkamessagewesuwttype").incw()
+        seq(wesuwt.intewweavewesuwt(intewweavewesuwt(none)))
     }
 
-    sampledResultSeq.map { sampledResult =>
-      GetTweetsRecommendationsScribe(
-        uuid = scribeMsg.uuid,
-        userId = scribeMsg.userId,
-        result = sampledResult,
-        traceId = scribeMsg.traceId,
-        performanceMetrics = None,
-        impressedBuckets = None
+    sampwedwesuwtseq.map { s-sampwedwesuwt =>
+      gettweetswecommendationsscwibe(
+        uuid = scwibemsg.uuid, (ꈍᴗꈍ)
+        usewid = scwibemsg.usewid,
+        wesuwt = sampwedwesuwt,
+        t-twaceid = s-scwibemsg.twaceid, rawr x3
+        pewfowmancemetwics = n-nyone, ^^
+        impwessedbuckets = nyone
       )
     }
   }
 
   /**
-   * Handles client_event serialization to log data into DDG metrics
+   * handwes cwient_event s-sewiawization t-to wog data into ddg metwics
    */
-  private[logging] def publishTopLevelDdgMetrics(
-    logger: Logger,
-    topLevelDdgMetricsMetadata: TopLevelDdgMetricsMetadata,
-    candidateSize: Long,
-    latencyMs: Long,
-  ): Unit = {
-    val data = Map[Any, Any](
-      "latency_ms" -> latencyMs,
-      "event_value" -> candidateSize
+  p-pwivate[wogging] def pubwishtopwevewddgmetwics(
+    w-woggew: woggew, OwO
+    topwevewddgmetwicsmetadata: topwevewddgmetwicsmetadata, ^^
+    candidatesize: w-wong, :3
+    watencyms: wong, o.O
+  ): unit = {
+    vaw d-data = map[any, -.- a-any](
+      "watency_ms" -> w-watencyms, (U ﹏ U)
+      "event_vawue" -> candidatesize
     )
-    val label: (String, String) = ("tweetrec", "")
-    val namespace = getNamespace(topLevelDdgMetricsMetadata, label) + ("action" -> "candidates")
-    val message =
-      serialization
-        .serializeClientEvent(namespace, getClientData(topLevelDdgMetricsMetadata), data)
-    logger.info(message)
+    vaw wabew: (stwing, o.O s-stwing) = ("tweetwec", OwO "")
+    vaw nyamespace = getnamespace(topwevewddgmetwicsmetadata, ^•ﻌ•^ wabew) + ("action" -> "candidates")
+    vaw m-message =
+      s-sewiawization
+        .sewiawizecwientevent(namespace, ʘwʘ g-getcwientdata(topwevewddgmetwicsmetadata), :3 d-data)
+    woggew.info(message)
   }
 
-  private def getClientData(
-    topLevelDdgMetricsMetadata: TopLevelDdgMetricsMetadata
-  ): ClientDataProvider =
-    MinimalClientDataProvider(
-      userId = topLevelDdgMetricsMetadata.userId,
-      guestId = None,
-      clientApplicationId = topLevelDdgMetricsMetadata.clientApplicationId,
-      countryCode = topLevelDdgMetricsMetadata.countryCode
+  pwivate def getcwientdata(
+    t-topwevewddgmetwicsmetadata: t-topwevewddgmetwicsmetadata
+  ): cwientdatapwovidew =
+    minimawcwientdatapwovidew(
+      u-usewid = topwevewddgmetwicsmetadata.usewid, 😳
+      guestid = nyone, òωó
+      c-cwientappwicationid = topwevewddgmetwicsmetadata.cwientappwicationid, 🥺
+      countwycode = t-topwevewddgmetwicsmetadata.countwycode
     )
 
-  private def getNamespace(
-    topLevelDdgMetricsMetadata: TopLevelDdgMetricsMetadata,
-    label: (String, String)
-  ): Map[String, String] = {
-    val productName =
-      CaseFormat.UPPER_CAMEL
-        .to(CaseFormat.LOWER_UNDERSCORE, topLevelDdgMetricsMetadata.product.originalName)
+  p-pwivate def getnamespace(
+    topwevewddgmetwicsmetadata: topwevewddgmetwicsmetadata, rawr x3
+    w-wabew: (stwing, ^•ﻌ•^ s-stwing)
+  ): m-map[stwing, :3 stwing] = {
+    vaw pwoductname =
+      c-casefowmat.uppew_camew
+        .to(casefowmat.wowew_undewscowe, (ˆ ﻌ ˆ)♡ topwevewddgmetwicsmetadata.pwoduct.owiginawname)
 
-    Map(
-      "client" -> ScribingABDeciderUtil.clientForAppId(
-        topLevelDdgMetricsMetadata.clientApplicationId),
-      "page" -> "cr-mixer",
-      "section" -> productName,
-      "component" -> label._1,
-      "element" -> label._2
+    map(
+      "cwient" -> s-scwibingabdecidewutiw.cwientfowappid(
+        topwevewddgmetwicsmetadata.cwientappwicationid),
+      "page" -> "cw-mixew", (U ᵕ U❁)
+      "section" -> pwoductname, :3
+      "component" -> wabew._1, ^^;;
+      "ewement" -> w-wabew._2
     )
   }
 }
 
-object CrMixerScribeLogger {
-  val KafkaMaxTweetsPerMessage: Int = 200
-  val BatchSize: Int = 20
+o-object c-cwmixewscwibewoggew {
+  v-vaw kafkamaxtweetspewmessage: i-int = 200
+  vaw batchsize: i-int = 20
 }

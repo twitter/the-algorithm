@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow.sowtew
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import scala.util.Random
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt s-scawa.utiw.wandom
 
 /**
- * Randomly shuffles candidates using the provided [[random]]
+ * w-wandomwy s-shuffwes candidates u-using the p-pwovided [[wandom]]
  *
- * @example `UpdateSortResults(RandomShuffleSorter())`
- * @param random used to set the seed and for ease of testing, in most cases leaving it as the default is fine.
+ * @exampwe `updatesowtwesuwts(wandomshuffwesowtew())`
+ * @pawam w-wandom u-used to set the seed and fow ease of testing, >_< in most cases weaving it as the defauwt i-is fine. mya
  */
-case class RandomShuffleSorter(random: Random = new Random(0)) extends SorterProvider with Sorter {
+case cwass wandomshuffwesowtew(wandom: wandom = n-nyew wandom(0)) extends sowtewpwovidew w-with sowtew {
 
-  override def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate] =
-    random.shuffle(candidates)
+  ovewwide def sowt[candidate <: candidatewithdetaiws](candidates: s-seq[candidate]): seq[candidate] =
+    w-wandom.shuffwe(candidates)
 }

@@ -1,13 +1,13 @@
-package com.twitter.visibility.interfaces.common
+package com.twittew.visibiwity.intewfaces.common
 
-import com.twitter.search.blender.services.strato.UserSearchSafetySettings
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelMap
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.stitch.Stitch
+impowt com.twittew.seawch.bwendew.sewvices.stwato.usewseawchsafetysettings
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.safetywabew
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywabewmap
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywabewtype
+impowt c-com.twittew.stitch.stitch
 
-package object tweets {
-  type SafetyLabelFetcherType = (Long, SafetyLabelType) => Stitch[Option[SafetyLabel]]
-  type SafetyLabelMapFetcherType = Long => Stitch[Option[SafetyLabelMap]]
-  type UserSearchSafetySettingsFetcherType = Long => Stitch[UserSearchSafetySettings]
+p-package object t-tweets {
+  type s-safetywabewfetchewtype = (wong, safetywabewtype) => stitch[option[safetywabew]]
+  type safetywabewmapfetchewtype = wong => stitch[option[safetywabewmap]]
+  t-type usewseawchsafetysettingsfetchewtype = wong => stitch[usewseawchsafetysettings]
 }

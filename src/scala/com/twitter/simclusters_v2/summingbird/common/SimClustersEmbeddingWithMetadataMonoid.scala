@@ -1,58 +1,58 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
-import com.twitter.algebird.{Monoid, OptionMonoid}
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.summingbird.common.Monoids.TopKScoresUtils
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersEmbeddingMetadata,
-  SimClustersEmbeddingWithMetadata,
-  SimClustersEmbedding => ThriftSimClustersEmbedding
+impowt com.twittew.awgebiwd.{monoid, 😳 o-optionmonoid}
+i-impowt c-com.twittew.simcwustews_v2.common.simcwustewsembedding
+i-impowt com.twittew.simcwustews_v2.summingbiwd.common.monoids.topkscowesutiws
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  s-simcwustewsembeddingmetadata,
+  s-simcwustewsembeddingwithmetadata, -.-
+  s-simcwustewsembedding => thwiftsimcwustewsembedding
 }
 
 /**
- * Decayed aggregation of embeddings.
+ * decayed aggwegation of embeddings. 🥺
  *
- * When merging 2 embeddings, the older embedding's scores are scaled by time. If a cluster is
- * present in both embeddings, the highest score (after scaling) is used in the result.
+ * when mewging 2 embeddings, o.O t-the owdew embedding's scowes awe scawed b-by time. if a cwustew is
+ * pwesent i-in both embeddings, /(^•ω•^) the highest scowe (aftew scawing) is u-used in the wesuwt. nyaa~~
  *
- * @halfLifeMs - defines how quickly a score decays
- * @topK - only the topk clusters with the highest scores are retained in the result
- * @threshold - any clusters with weights below threshold are excluded from the result
+ * @hawfwifems - defines h-how quickwy a scowe d-decays
+ * @topk - onwy the topk cwustews with the highest scowes awe wetained i-in the wesuwt
+ * @thweshowd - any cwustews with weights bewow thweshowd awe excwuded fwom the w-wesuwt
  */
-class SimClustersEmbeddingWithMetadataMonoid(
-  halfLifeMs: Long,
-  topK: Int,
-  threshold: Double)
-    extends Monoid[SimClustersEmbeddingWithMetadata] {
+cwass simcwustewsembeddingwithmetadatamonoid(
+  h-hawfwifems: w-wong, nyaa~~
+  topk: i-int,
+  thweshowd: d-doubwe)
+    extends monoid[simcwustewsembeddingwithmetadata] {
 
-  override val zero: SimClustersEmbeddingWithMetadata = SimClustersEmbeddingWithMetadata(
-    ThriftSimClustersEmbedding(),
-    SimClustersEmbeddingMetadata()
+  ovewwide v-vaw zewo: simcwustewsembeddingwithmetadata = simcwustewsembeddingwithmetadata(
+    thwiftsimcwustewsembedding(), :3
+    simcwustewsembeddingmetadata()
   )
 
-  private val optionLongMonoid = new OptionMonoid[Long]()
-  private val optionMaxMonoid =
-    new OptionMonoid[Long]()(com.twitter.algebird.Max.maxSemigroup[Long])
+  p-pwivate vaw optionwongmonoid = nyew optionmonoid[wong]()
+  pwivate vaw optionmaxmonoid =
+    n-nyew optionmonoid[wong]()(com.twittew.awgebiwd.max.maxsemigwoup[wong])
 
-  override def plus(
-    x: SimClustersEmbeddingWithMetadata,
-    y: SimClustersEmbeddingWithMetadata
-  ): SimClustersEmbeddingWithMetadata = {
+  ovewwide def p-pwus(
+    x: simcwustewsembeddingwithmetadata,
+    y-y: simcwustewsembeddingwithmetadata
+  ): s-simcwustewsembeddingwithmetadata = {
 
-    val mergedClusterScores = TopKScoresUtils.mergeClusterScoresWithUpdateTimes(
-      x = SimClustersEmbedding(x.embedding).embedding,
-      xUpdatedAtMs = x.metadata.updatedAtMs.getOrElse(0),
-      y = SimClustersEmbedding(y.embedding).embedding,
-      yUpdatedAtMs = y.metadata.updatedAtMs.getOrElse(0),
-      halfLifeMs = halfLifeMs,
-      topK = topK,
-      threshold = threshold
+    vaw mewgedcwustewscowes = topkscowesutiws.mewgecwustewscoweswithupdatetimes(
+      x = simcwustewsembedding(x.embedding).embedding, 😳😳😳
+      x-xupdatedatms = x-x.metadata.updatedatms.getowewse(0), (˘ω˘)
+      y = simcwustewsembedding(y.embedding).embedding, ^^
+      y-yupdatedatms = y-y.metadata.updatedatms.getowewse(0), :3
+      hawfwifems = h-hawfwifems, -.-
+      topk = t-topk, 😳
+      thweshowd = thweshowd
     )
-    SimClustersEmbeddingWithMetadata(
-      embedding = SimClustersEmbedding(mergedClusterScores).toThrift,
-      metadata = SimClustersEmbeddingMetadata(
-        updatedAtMs = optionMaxMonoid.plus(x.metadata.updatedAtMs, y.metadata.updatedAtMs),
-        updatedCount = optionLongMonoid.plus(x.metadata.updatedCount, y.metadata.updatedCount)
+    simcwustewsembeddingwithmetadata(
+      e-embedding = simcwustewsembedding(mewgedcwustewscowes).tothwift, mya
+      m-metadata = simcwustewsembeddingmetadata(
+        u-updatedatms = o-optionmaxmonoid.pwus(x.metadata.updatedatms, y.metadata.updatedatms), (˘ω˘)
+        updatedcount = optionwongmonoid.pwus(x.metadata.updatedcount, >_< y.metadata.updatedcount)
       )
     )
   }

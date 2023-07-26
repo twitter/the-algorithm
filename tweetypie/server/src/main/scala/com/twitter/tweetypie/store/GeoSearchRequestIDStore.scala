@@ -1,72 +1,72 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.geoduck.backend.relevance.thriftscala.ReportFailure
-import com.twitter.geoduck.backend.relevance.thriftscala.ReportResult
-import com.twitter.geoduck.backend.relevance.thriftscala.ConversionReport
-import com.twitter.geoduck.backend.searchrequestid.thriftscala.SearchRequestID
-import com.twitter.geoduck.backend.tweetid.thriftscala.TweetID
-import com.twitter.geoduck.common.thriftscala.GeoduckException
-import com.twitter.geoduck.service.identifier.thriftscala.PlaceIdentifier
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.geoduck.backend.wewevance.thwiftscawa.wepowtfaiwuwe
+i-impowt com.twittew.geoduck.backend.wewevance.thwiftscawa.wepowtwesuwt
+i-impowt c-com.twittew.geoduck.backend.wewevance.thwiftscawa.convewsionwepowt
+i-impowt com.twittew.geoduck.backend.seawchwequestid.thwiftscawa.seawchwequestid
+i-impowt com.twittew.geoduck.backend.tweetid.thwiftscawa.tweetid
+i-impowt com.twittew.geoduck.common.thwiftscawa.geoduckexception
+impowt com.twittew.geoduck.sewvice.identifiew.thwiftscawa.pwaceidentifiew
+impowt com.twittew.sewvo.utiw.futuweawwow
+impowt com.twittew.tweetypie.thwiftscawa._
 
-trait GeoSearchRequestIDStore
-    extends TweetStoreBase[GeoSearchRequestIDStore]
-    with AsyncInsertTweet.Store {
-  def wrap(w: TweetStore.Wrap): GeoSearchRequestIDStore =
-    new TweetStoreWrapper[GeoSearchRequestIDStore](w, this)
-      with GeoSearchRequestIDStore
-      with AsyncInsertTweet.StoreWrapper
+t-twait geoseawchwequestidstowe
+    extends tweetstowebase[geoseawchwequestidstowe]
+    with asyncinsewttweet.stowe {
+  d-def wwap(w: tweetstowe.wwap): g-geoseawchwequestidstowe =
+    nyew tweetstowewwappew[geoseawchwequestidstowe](w, nyaa~~ this)
+      with geoseawchwequestidstowe
+      w-with asyncinsewttweet.stowewwappew
 }
 
-object GeoSearchRequestIDStore {
-  type ConversionReporter = FutureArrow[ConversionReport, ReportResult]
+object g-geoseawchwequestidstowe {
+  t-type convewsionwepowtew = futuweawwow[convewsionwepowt, nyaa~~ wepowtwesuwt]
 
-  val Action: AsyncWriteAction.GeoSearchRequestId.type = AsyncWriteAction.GeoSearchRequestId
-  private val log = Logger(getClass)
+  vaw action: a-asyncwwiteaction.geoseawchwequestid.type = asyncwwiteaction.geoseawchwequestid
+  pwivate vaw wog = woggew(getcwass)
 
-  object FailureHandler {
-    def translateException(failure: ReportResult.Failure): GeoduckException = {
-      failure.failure match {
-        case ReportFailure.Failure(exception) => exception
-        case _ => GeoduckException("Unknown failure: " + failure.toString)
+  object f-faiwuwehandwew {
+    def twanswateexception(faiwuwe: w-wepowtwesuwt.faiwuwe): g-geoduckexception = {
+      f-faiwuwe.faiwuwe m-match {
+        case wepowtfaiwuwe.faiwuwe(exception) => exception
+        c-case _ => geoduckexception("unknown faiwuwe: " + faiwuwe.tostwing)
       }
     }
   }
 
-  def apply(conversionReporter: ConversionReporter): GeoSearchRequestIDStore =
-    new GeoSearchRequestIDStore {
+  d-def appwy(convewsionwepowtew: convewsionwepowtew): geoseawchwequestidstowe =
+    nyew geoseawchwequestidstowe {
 
-      val conversionEffect: FutureEffect[ConversionReport] =
-        FutureEffect
-          .fromPartial[ReportResult] {
-            case unionFailure: ReportResult.Failure =>
-              Future.exception(FailureHandler.translateException(unionFailure))
+      vaw convewsioneffect: f-futuweeffect[convewsionwepowt] =
+        futuweeffect
+          .fwompawtiaw[wepowtwesuwt] {
+            c-case unionfaiwuwe: w-wepowtwesuwt.faiwuwe =>
+              f-futuwe.exception(faiwuwehandwew.twanswateexception(unionfaiwuwe))
           }
-          .contramapFuture(conversionReporter)
+          .contwamapfutuwe(convewsionwepowtew)
 
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
-        conversionEffect.contramapOption[AsyncInsertTweet.Event] { event =>
-          for {
-            isUserProtected <- event.user.safety.map(_.isProtected)
-            geoSearchRequestID <- event.geoSearchRequestId
-            placeType <- event.tweet.place.map(_.`type`)
-            placeId <- event.tweet.coreData.flatMap(_.placeId)
-            placeIdLong <- Try(java.lang.Long.parseUnsignedLong(placeId, 16)).toOption
-            if placeType == PlaceType.Poi && isUserProtected == false
-          } yield {
-            ConversionReport(
-              requestID = SearchRequestID(requestID = geoSearchRequestID),
-              tweetID = TweetID(event.tweet.id),
-              placeID = PlaceIdentifier(placeIdLong)
+      ovewwide vaw asyncinsewttweet: futuweeffect[asyncinsewttweet.event] =
+        c-convewsioneffect.contwamapoption[asyncinsewttweet.event] { e-event =>
+          fow {
+            i-isusewpwotected <- e-event.usew.safety.map(_.ispwotected)
+            geoseawchwequestid <- event.geoseawchwequestid
+            p-pwacetype <- event.tweet.pwace.map(_.`type`)
+            p-pwaceid <- event.tweet.cowedata.fwatmap(_.pwaceid)
+            pwaceidwong <- twy(java.wang.wong.pawseunsignedwong(pwaceid, :3 16)).tooption
+            i-if pwacetype == pwacetype.poi && i-isusewpwotected == fawse
+          } yiewd {
+            c-convewsionwepowt(
+              w-wequestid = seawchwequestid(wequestid = geoseawchwequestid), 😳😳😳
+              tweetid = tweetid(event.tweet.id), (˘ω˘)
+              pwaceid = pwaceidentifiew(pwaceidwong)
             )
           }
         }
 
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
+      ovewwide vaw wetwyasyncinsewttweet: futuweeffect[
+        t-tweetstowewetwyevent[asyncinsewttweet.event]
       ] =
-        TweetStore.retry(Action, asyncInsertTweet)
+        t-tweetstowe.wetwy(action, ^^ asyncinsewttweet)
     }
 }

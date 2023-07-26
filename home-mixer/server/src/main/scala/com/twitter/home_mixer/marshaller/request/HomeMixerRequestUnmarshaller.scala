@@ -1,30 +1,30 @@
-package com.twitter.home_mixer.marshaller.request
+package com.twittew.home_mixew.mawshawwew.wequest
 
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.marshaller.request.ClientContextUnmarshaller
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.wequest.homemixewwequest
+impowt c-com.twittew.home_mixew.{thwiftscawa => t-t}
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wequest.cwientcontextunmawshawwew
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class HomeMixerRequestUnmarshaller @Inject() (
-  clientContextUnmarshaller: ClientContextUnmarshaller,
-  homeProductUnmarshaller: HomeMixerProductUnmarshaller,
-  homeProductContextUnmarshaller: HomeMixerProductContextUnmarshaller,
-  homeDebugParamsUnmarshaller: HomeMixerDebugParamsUnmarshaller) {
+@singweton
+c-cwass h-homemixewwequestunmawshawwew @inject() (
+  c-cwientcontextunmawshawwew: cwientcontextunmawshawwew, (✿oωo)
+  homepwoductunmawshawwew: homemixewpwoductunmawshawwew, (ˆ ﻌ ˆ)♡
+  homepwoductcontextunmawshawwew: homemixewpwoductcontextunmawshawwew, (˘ω˘)
+  homedebugpawamsunmawshawwew: homemixewdebugpawamsunmawshawwew) {
 
-  def apply(homeRequest: t.HomeMixerRequest): HomeMixerRequest = {
-    HomeMixerRequest(
-      clientContext = clientContextUnmarshaller(homeRequest.clientContext),
-      product = homeProductUnmarshaller(homeRequest.product),
-      productContext = homeRequest.productContext.map(homeProductContextUnmarshaller(_)),
-      // Avoid de-serializing cursors in the request unmarshaller. The unmarshaller should never
-      // fail, which is often a possibility when trying to de-serialize a cursor. Cursors can also
-      // be product-specific and more appropriately handled in individual product pipelines.
-      serializedRequestCursor = homeRequest.cursor,
-      maxResults = homeRequest.maxResults,
-      debugParams = homeRequest.debugParams.map(homeDebugParamsUnmarshaller(_)),
-      homeRequestParam = false
+  d-def appwy(homewequest: t.homemixewwequest): homemixewwequest = {
+    homemixewwequest(
+      c-cwientcontext = cwientcontextunmawshawwew(homewequest.cwientcontext), (⑅˘꒳˘)
+      p-pwoduct = homepwoductunmawshawwew(homewequest.pwoduct), (///ˬ///✿)
+      pwoductcontext = homewequest.pwoductcontext.map(homepwoductcontextunmawshawwew(_)), 😳😳😳
+      // avoid d-de-sewiawizing cuwsows in the w-wequest unmawshawwew. 🥺 t-the unmawshawwew shouwd nyevew
+      // faiw, mya which is often a possibiwity w-when twying to de-sewiawize a cuwsow. 🥺 cuwsows can awso
+      // be pwoduct-specific a-and mowe appwopwiatewy handwed i-in individuaw p-pwoduct pipewines. >_<
+      s-sewiawizedwequestcuwsow = h-homewequest.cuwsow, >_<
+      maxwesuwts = homewequest.maxwesuwts, (⑅˘꒳˘)
+      debugpawams = h-homewequest.debugpawams.map(homedebugpawamsunmawshawwew(_)), /(^•ω•^)
+      homewequestpawam = fawse
     )
   }
 }

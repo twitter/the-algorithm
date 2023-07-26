@@ -1,27 +1,27 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-core/src/main",
-        "finatra-internal/tfe",
-        "passbird/bitfields-thrift/src/main/thrift:thrift-scala",
-        "src/scala/com/twitter/common/ip_address_utils",
-        "src/thrift/com/twitter/context:feature-context-scala",
-        "src/thrift/com/twitter/context:twitter-context-scala",
-        "src/thrift/com/twitter/ip_address_utils:ip-address-utils-thrift-scala",
-        "src/thrift/com/twitter/spam/rtf:safety-level-scala",
-        "strato/src/main/scala/com/twitter/strato/access",
-        "strato/src/main/scala/com/twitter/strato/config",
-        "strato/src/main/scala/com/twitter/strato/context",
-        "strato/src/main/scala/com/twitter/strato/data",
-        "strato/src/main/scala/com/twitter/strato/opcontext",
-        "strato/src/main/scala/com/twitter/strato/response",
-        "strato/src/main/scala/com/twitter/strato/thrift",
-        "strato/src/main/thrift/com/twitter/strato/context:thrift-scala",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie",
-        "twitter-context/src/main/scala",
-        "weaverbird/common/src/main/scala/com/twitter/weaverbird/common",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "finagwe/finagwe-cowe/swc/main", (⑅˘꒳˘)
+        "finatwa-intewnaw/tfe", ( ͡o ω ͡o )
+        "passbiwd/bitfiewds-thwift/swc/main/thwift:thwift-scawa", UwU
+        "swc/scawa/com/twittew/common/ip_addwess_utiws", rawr x3
+        "swc/thwift/com/twittew/context:featuwe-context-scawa", rawr
+        "swc/thwift/com/twittew/context:twittew-context-scawa", σωσ
+        "swc/thwift/com/twittew/ip_addwess_utiws:ip-addwess-utiws-thwift-scawa", σωσ
+        "swc/thwift/com/twittew/spam/wtf:safety-wevew-scawa", >_<
+        "stwato/swc/main/scawa/com/twittew/stwato/access", :3
+        "stwato/swc/main/scawa/com/twittew/stwato/config", (U ﹏ U)
+        "stwato/swc/main/scawa/com/twittew/stwato/context", -.-
+        "stwato/swc/main/scawa/com/twittew/stwato/data", (ˆ ﻌ ˆ)♡
+        "stwato/swc/main/scawa/com/twittew/stwato/opcontext", (⑅˘꒳˘)
+        "stwato/swc/main/scawa/com/twittew/stwato/wesponse", (U ᵕ U❁)
+        "stwato/swc/main/scawa/com/twittew/stwato/thwift", -.-
+        "stwato/swc/main/thwift/com/twittew/stwato/context:thwift-scawa", ^^;;
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie", >_<
+        "twittew-context/swc/main/scawa", mya
+        "weavewbiwd/common/swc/main/scawa/com/twittew/weavewbiwd/common", mya
     ],
 )

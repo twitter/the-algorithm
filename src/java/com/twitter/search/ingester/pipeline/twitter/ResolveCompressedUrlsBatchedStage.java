@@ -1,387 +1,387 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import javax.naming.NamingException;
+impowt java.net.uwi;
+i-impowt j-java.net.uwisyntaxexception;
+impowt j-java.utiw.cowwection;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.hashset;
+i-impowt java.utiw.wocawe;
+impowt java.utiw.map;
+impowt java.utiw.set;
+impowt j-javax.naming.namingexception;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+impowt com.googwe.common.base.pweconditions;
+impowt c-com.googwe.common.cowwect.maps;
+impowt com.googwe.common.cowwect.sets;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+i-impowt owg.apache.commons.wang.stwingutiws;
+impowt owg.apache.commons.pipewine.stageexception;
+impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+impowt owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.wire.WireModule;
-import com.twitter.service.spiderduck.gen.MediaTypes;
-import com.twitter.util.Duration;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+i-impowt com.twittew.common.text.wanguage.wocaweutiw;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftexpandeduww;
+impowt com.twittew.seawch.common.metwics.pewcentiwe;
+i-impowt com.twittew.seawch.common.metwics.pewcentiweutiw;
+impowt com.twittew.seawch.common.metwics.wewevancestats;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+i-impowt com.twittew.seawch.ingestew.pipewine.utiw.batchedewement;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestageexception;
+i-impowt c-com.twittew.seawch.ingestew.pipewine.wiwe.wiwemoduwe;
+i-impowt com.twittew.sewvice.spidewduck.gen.mediatypes;
+i-impowt com.twittew.utiw.duwation;
+impowt com.twittew.utiw.function;
+i-impowt com.twittew.utiw.futuwe;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
+@consumedtypes(ingestewtwittewmessage.cwass)
+@pwoducesconsumed
+pubwic cwass wesowvecompwesseduwwsbatchedstage extends twittewbatchedbasestage
+    <ingestewtwittewmessage, o.O i-ingestewtwittewmessage> {
 
-  private static final int PINK_REQUEST_TIMEOUT_MILLIS = 500;
-  private static final int PINK_REQUEST_RETRIES = 2;
-  private static final String PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY = "pink_requests_batch_size";
-  private AsyncPinkUrlsResolver urlResolver;
-  private int resolveUrlPercentage = 100;
-  private String pinkClientId;
-  private SearchDecider searchDecider;
+  pwivate static finaw int pink_wequest_timeout_miwwis = 500;
+  pwivate static finaw int p-pink_wequest_wetwies = 2;
+  pwivate s-static finaw s-stwing pink_wequests_batch_size_decidew_key = "pink_wequests_batch_size";
+  p-pwivate asyncpinkuwwswesowvew uwwwesowvew;
+  pwivate i-int wesowveuwwpewcentage = 100;
+  p-pwivate stwing pinkcwientid;
+  p-pwivate seawchdecidew s-seawchdecidew;
 
-  // The number of URLs that we attempted to resolve.
-  private SearchRateCounter linksAttempted;
-  // The number of URLs that were successfully resolved.
-  private SearchRateCounter linksSucceeded;
-  // The number of URLs ignored because they are too long.
-  private SearchRateCounter linksTooLong;
-  // The number of URLs truncated because they are too long.
-  private SearchRateCounter linksTruncated;
+  // the nyumbew of uwws t-that we attempted to wesowve. ^^
+  p-pwivate seawchwatecountew winksattempted;
+  // the nyumbew of u-uwws that wewe successfuwwy wesowved. >_<
+  p-pwivate seawchwatecountew w-winkssucceeded;
+  // t-the nyumbew of uwws ignowed because they awe too wong. >w<
+  pwivate seawchwatecountew winkstoowong;
+  // the n-numbew of uwws t-twuncated because they awe too w-wong. >_<
+  pwivate s-seawchwatecountew w-winkstwuncated;
 
-  // The number of resolved URLs without a media type.
-  private SearchRateCounter urlsWithoutMediaType;
-  // The number of resolved URLs with a specific media type.
-  private final Map<MediaTypes, SearchRateCounter> urlsWithMediaTypeMap =
-      Maps.newEnumMap(MediaTypes.class);
+  // the nyumbew of wesowved uwws without a media t-type. >w<
+  pwivate seawchwatecountew uwwswithoutmediatype;
+  // the nyumbew of wesowved uwws with a-a specific media type. rawr
+  pwivate f-finaw map<mediatypes, rawr x3 s-seawchwatecountew> u-uwwswithmediatypemap =
+      maps.newenummap(mediatypes.cwass);
 
-  // The number of tweets for which all URLs were resolved.
-  private SearchRateCounter tweetsWithResolvedURLs;
-  // The number of tweets for which some URLs were not resolved.
-  private SearchRateCounter tweetsWithUnresolvedURLs;
+  // t-the nyumbew o-of tweets fow which a-aww uwws wewe w-wesowved.
+  pwivate seawchwatecountew tweetswithwesowveduwws;
+  // t-the nyumbew o-of tweets fow which s-some uwws wewe n-nyot wesowved. ( ͡o ω ͡o )
+  p-pwivate seawchwatecountew tweetswithunwesowveduwws;
 
-  // How long it takes to fully resolve all URLs in a tweet.
-  private Percentile<Long> millisToResolveAllTweetURLs;
+  // how wong it takes to fuwwy wesowve aww uwws in a t-tweet. (˘ω˘)
+  pwivate pewcentiwe<wong> miwwistowesowveawwtweetuwws;
 
-  // max age that a tweet can be before passed down the pipeline
-  private long tweetMaxAgeToResolve;
+  // max age that a tweet can be befowe passed down t-the pipewine
+  pwivate wong tweetmaxagetowesowve;
 
-  // number of times an element is within quota.
-  private SearchRateCounter numberOfElementsWithinQuota;
+  // nyumbew o-of times an e-ewement is within q-quota. 😳
+  pwivate seawchwatecountew n-nyumbewofewementswithinquota;
 
-  // number of times element is not within quota. If element not within quota, we dont batch.
-  private SearchRateCounter numberOfElementsNotWithinQuota;
+  // numbew o-of times ewement i-is nyot within quota. OwO if ewement nyot within quota, (˘ω˘) we dont batch. òωó
+  pwivate seawchwatecountew nyumbewofewementsnotwithinquota;
 
-  // number of times element has urls.
-  private SearchRateCounter numberOfElementsWithUrls;
+  // n-nyumbew of times ewement h-has uwws. ( ͡o ω ͡o )
+  pwivate seawchwatecountew n-nyumbewofewementswithuwws;
 
-  // number of times element does not have urls. If element does not have URL, we dont batch.
-  private SearchRateCounter numberOfElementsWithoutUrls;
+  // n-nyumbew of times ewement does nyot have uwws. UwU i-if ewement d-does nyot have uww, /(^•ω•^) we dont batch. (ꈍᴗꈍ)
+  p-pwivate seawchwatecountew nyumbewofewementswithoutuwws;
 
-  // number of calls to needsToBeBatched method.
-  private SearchRateCounter numberOfCallsToNeedsToBeBatched;
+  // n-nyumbew of cawws to nyeedstobebatched method. 😳
+  pwivate seawchwatecountew nyumbewofcawwstoneedstobebatched;
 
 
-  public void setTweetMaxAgeToResolve(long tweetMaxAgeToResolve) {
-    this.tweetMaxAgeToResolve = tweetMaxAgeToResolve;
+  p-pubwic void settweetmaxagetowesowve(wong t-tweetmaxagetowesowve) {
+    t-this.tweetmaxagetowesowve = tweetmaxagetowesowve;
   }
 
-  @Override
-  protected Class<IngesterTwitterMessage> getQueueObjectType() {
-    return IngesterTwitterMessage.class;
+  @ovewwide
+  p-pwotected c-cwass<ingestewtwittewmessage> getqueueobjecttype() {
+    w-wetuwn ingestewtwittewmessage.cwass;
   }
 
-  @Override
-  protected boolean needsToBeBatched(IngesterTwitterMessage element) {
-    numberOfCallsToNeedsToBeBatched.increment();
-    boolean isWithinQuota = (element.getId() % 100) < resolveUrlPercentage;
+  @ovewwide
+  pwotected boowean nyeedstobebatched(ingestewtwittewmessage ewement) {
+    nyumbewofcawwstoneedstobebatched.incwement();
+    b-boowean iswithinquota = (ewement.getid() % 100) < w-wesowveuwwpewcentage;
 
-    if (isWithinQuota) {
-      this.numberOfElementsWithinQuota.increment();
-    } else {
-      this.numberOfElementsNotWithinQuota.increment();
+    if (iswithinquota) {
+      this.numbewofewementswithinquota.incwement();
+    } e-ewse {
+      this.numbewofewementsnotwithinquota.incwement();
     }
 
-    boolean hasUrls = !element.getExpandedUrlMap().isEmpty();
+    b-boowean hasuwws = !ewement.getexpandeduwwmap().isempty();
 
-    if (hasUrls) {
-      this.numberOfElementsWithUrls.increment();
-    } else {
-      this.numberOfElementsWithoutUrls.increment();
+    if (hasuwws) {
+      this.numbewofewementswithuwws.incwement();
+    } e-ewse {
+      this.numbewofewementswithoutuwws.incwement();
     }
 
-    return hasUrls && isWithinQuota;
+    wetuwn hasuwws && iswithinquota;
   }
 
-  // Identity transformation. T and U types are the same
-  @Override
-  protected IngesterTwitterMessage transform(IngesterTwitterMessage element) {
-    return element;
+  // identity twansfowmation. mya t-t and u types awe the same
+  @ovewwide
+  pwotected ingestewtwittewmessage t-twansfowm(ingestewtwittewmessage e-ewement) {
+    wetuwn ewement;
   }
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    commonInnerSetupStats();
+  @ovewwide
+  pubwic void initstats() {
+    s-supew.initstats();
+    c-commoninnewsetupstats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    super.innerSetupStats();
-    commonInnerSetupStats();
+  @ovewwide
+  pwotected void innewsetupstats() {
+    supew.innewsetupstats();
+    c-commoninnewsetupstats();
   }
 
-  private void commonInnerSetupStats() {
-    linksAttempted = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_attempted");
-    linksSucceeded = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_succeeded");
-    linksTooLong = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_toolong");
-    linksTruncated = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_truncated");
+  pwivate v-void commoninnewsetupstats() {
+    winksattempted = wewevancestats.expowtwate(getstagenamepwefix() + "_num_winks_attempted");
+    winkssucceeded = w-wewevancestats.expowtwate(getstagenamepwefix() + "_num_winks_succeeded");
+    winkstoowong = w-wewevancestats.expowtwate(getstagenamepwefix() + "_num_winks_toowong");
+    w-winkstwuncated = wewevancestats.expowtwate(getstagenamepwefix() + "_num_winks_twuncated");
 
-    urlsWithoutMediaType = RelevanceStats.exportRate(
-        getStageNamePrefix() + "_urls_without_media_type");
+    uwwswithoutmediatype = w-wewevancestats.expowtwate(
+        getstagenamepwefix() + "_uwws_without_media_type");
 
-    for (MediaTypes mediaType : MediaTypes.values()) {
-      urlsWithMediaTypeMap.put(
-          mediaType,
-          RelevanceStats.exportRate(
-              getStageNamePrefix() + "_urls_with_media_type_" + mediaType.name().toLowerCase()));
+    f-fow (mediatypes m-mediatype : mediatypes.vawues()) {
+      u-uwwswithmediatypemap.put(
+          mediatype, mya
+          w-wewevancestats.expowtwate(
+              g-getstagenamepwefix() + "_uwws_with_media_type_" + mediatype.name().towowewcase()));
     }
 
-    tweetsWithResolvedURLs = RelevanceStats.exportRate(
-        getStageNamePrefix() + "_num_tweets_with_resolved_urls");
-    tweetsWithUnresolvedURLs = RelevanceStats.exportRate(
-        getStageNamePrefix() + "_num_tweets_with_unresolved_urls");
+    tweetswithwesowveduwws = w-wewevancestats.expowtwate(
+        g-getstagenamepwefix() + "_num_tweets_with_wesowved_uwws");
+    t-tweetswithunwesowveduwws = wewevancestats.expowtwate(
+        getstagenamepwefix() + "_num_tweets_with_unwesowved_uwws");
 
-    millisToResolveAllTweetURLs = PercentileUtil.createPercentile(
-        getStageNamePrefix() + "_millis_to_resolve_all_tweet_urls");
+    m-miwwistowesowveawwtweetuwws = pewcentiweutiw.cweatepewcentiwe(
+        g-getstagenamepwefix() + "_miwwis_to_wesowve_aww_tweet_uwws");
 
-    numberOfCallsToNeedsToBeBatched = SearchRateCounter.export(getStageNamePrefix()
-        + "_calls_to_needsToBeBatched");
+    n-nyumbewofcawwstoneedstobebatched = seawchwatecountew.expowt(getstagenamepwefix()
+        + "_cawws_to_needstobebatched");
 
-    numberOfElementsWithinQuota = SearchRateCounter.export(getStageNamePrefix()
+    nyumbewofewementswithinquota = seawchwatecountew.expowt(getstagenamepwefix()
         + "_is_within_quota");
 
-    numberOfElementsNotWithinQuota = SearchRateCounter.export(getStageNamePrefix()
+    n-nyumbewofewementsnotwithinquota = seawchwatecountew.expowt(getstagenamepwefix()
         + "_is_not_within_quota");
 
-    numberOfElementsWithUrls = SearchRateCounter.export(getStageNamePrefix()
-        + "_has_urls");
+    n-nyumbewofewementswithuwws = s-seawchwatecountew.expowt(getstagenamepwefix()
+        + "_has_uwws");
 
-    numberOfElementsWithoutUrls = SearchRateCounter.export(getStageNamePrefix()
-        + "_does_not_have_urls");
+    n-nyumbewofewementswithoutuwws = seawchwatecountew.expowt(getstagenamepwefix()
+        + "_does_not_have_uwws");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    searchDecider = new SearchDecider(decider);
-    // We need to call this after assigning searchDecider because our updateBatchSize function
-    // depends on the searchDecider.
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @ovewwide
+  p-pwotected void doinnewpwepwocess() thwows stageexception, /(^•ω•^) nyamingexception {
+    seawchdecidew = nyew seawchdecidew(decidew);
+    // we nyeed to caww t-this aftew assigning seawchdecidew b-because ouw updatebatchsize f-function
+    // depends on the s-seawchdecidew. ^^;;
+    supew.doinnewpwepwocess();
+    c-commoninnewsetup();
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    searchDecider = new SearchDecider(decider);
-    // We need to call this after assigning searchDecider because our updateBatchSize function
-    // depends on the searchDecider.
-    super.innerSetup();
-    commonInnerSetup();
+  @ovewwide
+  p-pwotected v-void innewsetup() t-thwows pipewinestageexception, n-nyamingexception {
+    seawchdecidew = nyew seawchdecidew(decidew);
+    // we nyeed to caww this aftew assigning seawchdecidew b-because ouw u-updatebatchsize f-function
+    // depends on the s-seawchdecidew. 🥺
+    supew.innewsetup();
+    commoninnewsetup();
   }
 
-  private void commonInnerSetup() throws NamingException {
-    Preconditions.checkNotNull(pinkClientId);
-    urlResolver = new AsyncPinkUrlsResolver(
-        WireModule
-            .getWireModule()
-            .getStorer(Duration.fromMilliseconds(PINK_REQUEST_TIMEOUT_MILLIS),
-                PINK_REQUEST_RETRIES),
-        pinkClientId);
+  pwivate void c-commoninnewsetup() t-thwows nyamingexception {
+    pweconditions.checknotnuww(pinkcwientid);
+    u-uwwwesowvew = nyew asyncpinkuwwswesowvew(
+        wiwemoduwe
+            .getwiwemoduwe()
+            .getstowew(duwation.fwommiwwiseconds(pink_wequest_timeout_miwwis), ^^
+                p-pink_wequest_wetwies), ^•ﻌ•^
+        p-pinkcwientid);
   }
 
-  @Override
-  protected Future<Collection<IngesterTwitterMessage>> innerProcessBatch(Collection<BatchedElement
-      <IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
-    // Batch urls
-    Map<String, Set<IngesterTwitterMessage>> urlToTweetsMap = createUrlToTweetMap(batch);
+  @ovewwide
+  pwotected f-futuwe<cowwection<ingestewtwittewmessage>> i-innewpwocessbatch(cowwection<batchedewement
+      <ingestewtwittewmessage, /(^•ω•^) ingestewtwittewmessage>> batch) {
+    // batch uwws
+    map<stwing, ^^ s-set<ingestewtwittewmessage>> u-uwwtotweetsmap = c-cweateuwwtotweetmap(batch);
 
-    Set<String> urlsToResolve = urlToTweetsMap.keySet();
+    set<stwing> u-uwwstowesowve = u-uwwtotweetsmap.keyset();
 
-    updateBatchSize();
+    updatebatchsize();
 
-    linksAttempted.increment(batch.size());
-    // Do the lookup
-    return urlResolver.resolveUrls(urlsToResolve).map(processResolvedUrlsFunction(batch));
+    w-winksattempted.incwement(batch.size());
+    // d-do the wookup
+    wetuwn uwwwesowvew.wesowveuwws(uwwstowesowve).map(pwocesswesowveduwwsfunction(batch));
   }
 
-  @Override
-  protected void updateBatchSize() {
-    // update batch based on decider
-    int decidedBatchSize = searchDecider.featureExists(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
-        ? searchDecider.getAvailability(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
-        : batchSize;
+  @ovewwide
+  p-pwotected v-void updatebatchsize() {
+    // update batch b-based on decidew
+    int decidedbatchsize = seawchdecidew.featuweexists(pink_wequests_batch_size_decidew_key)
+        ? seawchdecidew.getavaiwabiwity(pink_wequests_batch_size_decidew_key)
+        : b-batchsize;
 
-    setBatchedStageBatchSize(decidedBatchSize);
+    setbatchedstagebatchsize(decidedbatchsize);
   }
 
-  //if not all urls for a message where resolved re-enqueue until maxAge is reached
-  private Function<Map<String, ResolveCompressedUrlsUtils.UrlInfo>,
-      Collection<IngesterTwitterMessage>>
-  processResolvedUrlsFunction(Collection<BatchedElement<IngesterTwitterMessage,
-      IngesterTwitterMessage>> batch) {
-    return Function.func(resolvedUrls -> {
-      linksSucceeded.increment(resolvedUrls.size());
+  //if n-nyot aww uwws fow a-a message whewe wesowved we-enqueue u-untiw maxage is weached
+  pwivate function<map<stwing, 🥺 w-wesowvecompwesseduwwsutiws.uwwinfo>, (U ᵕ U❁)
+      c-cowwection<ingestewtwittewmessage>>
+  pwocesswesowveduwwsfunction(cowwection<batchedewement<ingestewtwittewmessage, 😳😳😳
+      i-ingestewtwittewmessage>> batch) {
+    wetuwn function.func(wesowveduwws -> {
+      w-winkssucceeded.incwement(wesowveduwws.size());
 
-      for (ResolveCompressedUrlsUtils.UrlInfo urlInfo : resolvedUrls.values()) {
-        if (urlInfo.mediaType != null) {
-          urlsWithMediaTypeMap.get(urlInfo.mediaType).increment();
-        } else {
-          urlsWithoutMediaType.increment();
+      fow (wesowvecompwesseduwwsutiws.uwwinfo uwwinfo : wesowveduwws.vawues()) {
+        if (uwwinfo.mediatype != n-nyuww) {
+          u-uwwswithmediatypemap.get(uwwinfo.mediatype).incwement();
+        } ewse {
+          uwwswithoutmediatype.incwement();
         }
       }
 
-      Set<IngesterTwitterMessage> successfulTweets = Sets.newHashSet();
+      s-set<ingestewtwittewmessage> successfuwtweets = s-sets.newhashset();
 
-      for (BatchedElement<IngesterTwitterMessage, IngesterTwitterMessage> batchedElement : batch) {
-        IngesterTwitterMessage message = batchedElement.getItem();
-        Set<String> tweetUrls = message.getExpandedUrlMap().keySet();
+      f-fow (batchedewement<ingestewtwittewmessage, nyaa~~ ingestewtwittewmessage> batchedewement : batch) {
+        i-ingestewtwittewmessage message = batchedewement.getitem();
+        set<stwing> t-tweetuwws = m-message.getexpandeduwwmap().keyset();
 
-        int resolvedUrlCounter = 0;
+        int wesowveduwwcountew = 0;
 
-        for (String url : tweetUrls) {
-          ResolveCompressedUrlsUtils.UrlInfo urlInfo = resolvedUrls.get(url);
+        f-fow (stwing uww : tweetuwws) {
+          w-wesowvecompwesseduwwsutiws.uwwinfo u-uwwinfo = wesowveduwws.get(uww);
 
-          // if the url didn't resolve move on to the next one, this might trigger a re-enqueue
-          // if the tweet is still kind of new. But we want to process the rest for when that
-          // is not the case and we are going to end up passing it to the next stage
-          if (urlInfo == null) {
-            continue;
+          // i-if the uww didn't wesowve move on to the nyext one, (˘ω˘) this might twiggew a we-enqueue
+          // if the tweet is stiww kind of nyew. >_< but we want to pwocess the west fow when that
+          // is nyot the case and we awe going t-to end up passing i-it to the nyext stage
+          if (uwwinfo == n-nyuww) {
+            c-continue;
           }
 
-          String resolvedUrl = urlInfo.resolvedUrl;
-          Locale locale = urlInfo.language == null ? null
-              : LocaleUtil.getLocaleOf(urlInfo.language);
+          s-stwing wesowveduww = u-uwwinfo.wesowveduww;
+          wocawe wocawe = u-uwwinfo.wanguage == n-nyuww ? nuww
+              : wocaweutiw.getwocaweof(uwwinfo.wanguage);
 
-          if (StringUtils.isNotBlank(resolvedUrl)) {
-            ThriftExpandedUrl expandedUrl = message.getExpandedUrlMap().get(url);
-            resolvedUrlCounter += 1;
-            enrichTweetWithUrlInfo(message, expandedUrl, urlInfo, locale);
+          i-if (stwingutiws.isnotbwank(wesowveduww)) {
+            thwiftexpandeduww expandeduww = m-message.getexpandeduwwmap().get(uww);
+            wesowveduwwcountew += 1;
+            e-enwichtweetwithuwwinfo(message, XD expandeduww, rawr x3 uwwinfo, wocawe);
           }
         }
-        long tweetMessageAge = clock.nowMillis() - message.getDate().getTime();
+        w-wong tweetmessageage = c-cwock.nowmiwwis() - m-message.getdate().gettime();
 
-        if (resolvedUrlCounter == tweetUrls.size()) {
-          millisToResolveAllTweetURLs.record(tweetMessageAge);
-          tweetsWithResolvedURLs.increment();
-          successfulTweets.add(message);
-        } else if (tweetMessageAge > tweetMaxAgeToResolve) {
-          tweetsWithUnresolvedURLs.increment();
-          successfulTweets.add(message);
-        } else {
-          //re-enqueue if all urls weren't resolved and the tweet is younger than maxAge
-          reEnqueueAndRetry(batchedElement);
+        i-if (wesowveduwwcountew == t-tweetuwws.size()) {
+          m-miwwistowesowveawwtweetuwws.wecowd(tweetmessageage);
+          t-tweetswithwesowveduwws.incwement();
+          s-successfuwtweets.add(message);
+        } e-ewse if (tweetmessageage > tweetmaxagetowesowve) {
+          t-tweetswithunwesowveduwws.incwement();
+          s-successfuwtweets.add(message);
+        } e-ewse {
+          //we-enqueue if aww uwws w-wewen't wesowved and the tweet is youngew than maxage
+          w-weenqueueandwetwy(batchedewement);
         }
       }
-      return successfulTweets;
+      wetuwn s-successfuwtweets;
     });
   }
 
-  private Map<String, Set<IngesterTwitterMessage>> createUrlToTweetMap(
-      Collection<BatchedElement<IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
-    Map<String, Set<IngesterTwitterMessage>> urlToTweetsMap = Maps.newHashMap();
-    for (BatchedElement<IngesterTwitterMessage, IngesterTwitterMessage> batchedElement : batch) {
-      IngesterTwitterMessage message = batchedElement.getItem();
-      for (String originalUrl : message.getExpandedUrlMap().keySet()) {
-        Set<IngesterTwitterMessage> messages = urlToTweetsMap.get(originalUrl);
-        if (messages == null) {
-          messages = new HashSet<>();
-          urlToTweetsMap.put(originalUrl, messages);
+  p-pwivate map<stwing, ( ͡o ω ͡o ) s-set<ingestewtwittewmessage>> cweateuwwtotweetmap(
+      cowwection<batchedewement<ingestewtwittewmessage, :3 i-ingestewtwittewmessage>> batch) {
+    m-map<stwing, mya set<ingestewtwittewmessage>> u-uwwtotweetsmap = maps.newhashmap();
+    f-fow (batchedewement<ingestewtwittewmessage, σωσ ingestewtwittewmessage> batchedewement : batch) {
+      ingestewtwittewmessage m-message = batchedewement.getitem();
+      fow (stwing o-owiginawuww : m-message.getexpandeduwwmap().keyset()) {
+        set<ingestewtwittewmessage> messages = uwwtotweetsmap.get(owiginawuww);
+        if (messages == n-nyuww) {
+          messages = n-nyew hashset<>();
+          u-uwwtotweetsmap.put(owiginawuww, (ꈍᴗꈍ) m-messages);
         }
         messages.add(message);
       }
     }
-    return Collections.unmodifiableMap(urlToTweetsMap);
+    wetuwn cowwections.unmodifiabwemap(uwwtotweetsmap);
   }
 
-  // enrich the twitterMessage with the resolvedCounter Urls.
-  private void enrichTweetWithUrlInfo(IngesterTwitterMessage message,
-                                      ThriftExpandedUrl expandedUrl,
-                                      ResolveCompressedUrlsUtils.UrlInfo urlInfo,
-                                      Locale locale) {
-    String truncatedUrl = maybeTruncate(urlInfo.resolvedUrl);
-    if (truncatedUrl == null) {
-      return;
+  // e-enwich the t-twittewmessage with the wesowvedcountew u-uwws.
+  pwivate void enwichtweetwithuwwinfo(ingestewtwittewmessage message, OwO
+                                      t-thwiftexpandeduww expandeduww, o.O
+                                      wesowvecompwesseduwwsutiws.uwwinfo u-uwwinfo, 😳😳😳
+                                      w-wocawe wocawe) {
+    s-stwing twuncateduww = maybetwuncate(uwwinfo.wesowveduww);
+    i-if (twuncateduww == n-nyuww) {
+      w-wetuwn;
     }
 
-    expandedUrl.setCanonicalLastHopUrl(truncatedUrl);
-    if (urlInfo.mediaType != null) {
-      // Overwrite url media type with media type from resolved url only if the media type from
-      // resolved url is not Unknown
-      if (!expandedUrl.isSetMediaType() || urlInfo.mediaType != MediaTypes.UNKNOWN) {
-        expandedUrl.setMediaType(urlInfo.mediaType);
+    e-expandeduww.setcanonicawwasthopuww(twuncateduww);
+    if (uwwinfo.mediatype != n-nyuww) {
+      // o-ovewwwite u-uww media type w-with media type f-fwom wesowved u-uww onwy if the m-media type fwom
+      // w-wesowved uww is nyot u-unknown
+      if (!expandeduww.issetmediatype() || uwwinfo.mediatype != m-mediatypes.unknown) {
+        expandeduww.setmediatype(uwwinfo.mediatype);
       }
     }
-    if (urlInfo.linkCategory != null) {
-      expandedUrl.setLinkCategory(urlInfo.linkCategory);
+    i-if (uwwinfo.winkcategowy != n-nuww) {
+      expandeduww.setwinkcategowy(uwwinfo.winkcategowy);
     }
-    // Note that if there are multiple links in one tweet message, the language of the
-    // link that got examined later in this for loop will overwrite the values that were
-    // written before. This is not an optimal design but considering most tweets have
-    // only one link, or same-language links, this shouldn't be a big issue.
-    if (locale != null) {
-      message.setLinkLocale(locale);
-    }
-
-    if (urlInfo.description != null) {
-      expandedUrl.setDescription(urlInfo.description);
+    // nyote t-that if thewe awe muwtipwe winks in one tweet message, /(^•ω•^) the w-wanguage of the
+    // w-wink that g-got examined watew in this fow woop wiww ovewwwite the vawues that w-wewe
+    // w-wwitten befowe. OwO this is nyot an o-optimaw design but c-considewing most tweets have
+    // onwy one wink, ow same-wanguage w-winks, ^^ this s-shouwdn't be a-a big issue. (///ˬ///✿)
+    i-if (wocawe != nyuww) {
+      message.setwinkwocawe(wocawe);
     }
 
-    if (urlInfo.title != null) {
-      expandedUrl.setTitle(urlInfo.title);
+    if (uwwinfo.descwiption != n-nyuww) {
+      e-expandeduww.setdescwiption(uwwinfo.descwiption);
+    }
+
+    if (uwwinfo.titwe != nyuww) {
+      e-expandeduww.settitwe(uwwinfo.titwe);
     }
   }
 
   // test methods
-  public void setResolveUrlPercentage(int percentage) {
-    this.resolveUrlPercentage = percentage;
+  pubwic void s-setwesowveuwwpewcentage(int pewcentage) {
+    t-this.wesowveuwwpewcentage = p-pewcentage;
   }
 
-  public void setPinkClientId(String pinkClientId) {
-    this.pinkClientId = pinkClientId;
+  pubwic void setpinkcwientid(stwing p-pinkcwientid) {
+    t-this.pinkcwientid = pinkcwientid;
   }
 
-  public static final int MAX_URL_LENGTH = 1000;
+  pubwic s-static finaw int max_uww_wength = 1000;
 
-  private String maybeTruncate(String fullUrl) {
-    if (fullUrl.length() <= MAX_URL_LENGTH) {
-      return fullUrl;
+  p-pwivate stwing m-maybetwuncate(stwing f-fuwwuww) {
+    i-if (fuwwuww.wength() <= max_uww_wength) {
+      w-wetuwn fuwwuww;
     }
 
-    try {
-      URI parsed = new URI(fullUrl);
+    twy {
+      u-uwi pawsed = n-nyew uwi(fuwwuww);
 
-      // Create a URL with an empty query and fragment.
-      String simplified = new URI(parsed.getScheme(),
-          parsed.getAuthority(),
-          parsed.getPath(),
-          null,
-          null).toString();
-      if (simplified.length() < MAX_URL_LENGTH) {
-        linksTruncated.increment();
-        return simplified;
+      // cweate a uww w-with an empty quewy and fwagment. (///ˬ///✿)
+      stwing s-simpwified = nyew u-uwi(pawsed.getscheme(), (///ˬ///✿)
+          p-pawsed.getauthowity(), ʘwʘ
+          pawsed.getpath(), ^•ﻌ•^
+          nyuww, OwO
+          nyuww).tostwing();
+      if (simpwified.wength() < m-max_uww_wength) {
+        winkstwuncated.incwement();
+        w-wetuwn simpwified;
       }
-    } catch (URISyntaxException e) {
+    } c-catch (uwisyntaxexception e) {
     }
 
-    linksTooLong.increment();
-    return null;
+    winkstoowong.incwement();
+    wetuwn nyuww;
   }
 }

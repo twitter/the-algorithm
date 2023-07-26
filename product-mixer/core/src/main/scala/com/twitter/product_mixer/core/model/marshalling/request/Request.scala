@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest
 
-trait Request
-    extends HasClientContext
-    with HasProduct
-    with HasProductContext
-    with HasSerializedRequestCursor {
-  def maxResults: Option[Int]
-  def debugParams: Option[DebugParams]
+twait wequest
+    e-extends hascwientcontext
+    w-with haspwoduct
+    w-with haspwoductcontext
+    with h-hassewiawizedwequestcuwsow {
+  d-def maxwesuwts: o-option[int]
+  d-def debugpawams: o-option[debugpawams]
 }

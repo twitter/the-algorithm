@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.filter
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-object FeatureFilter {
+object featuwefiwtew {
 
   /**
-   * Builds a Filter using the Feature name as the FilterIdentifier
+   * buiwds a fiwtew u-using the featuwe nyame as the fiwtewidentifiew
    *
-   * @see [[FeatureFilter.fromFeature(identifier, feature)]]
+   * @see [[featuwefiwtew.fwomfeatuwe(identifiew, nyaa~~ f-featuwe)]]
    */
-  def fromFeature[Candidate <: UniversalNoun[Any]](
-    feature: Feature[Candidate, Boolean]
-  ): Filter[PipelineQuery, Candidate] =
-    FeatureFilter.fromFeature(FilterIdentifier(feature.toString), feature)
+  def f-fwomfeatuwe[candidate <: univewsawnoun[any]](
+    featuwe: featuwe[candidate, nyaa~~ boowean]
+  ): fiwtew[pipewinequewy, :3 c-candidate] =
+    featuwefiwtew.fwomfeatuwe(fiwtewidentifiew(featuwe.tostwing), 😳😳😳 f-featuwe)
 
   /**
-   * Builds a Filter that keeps candidates when the provided Boolean Feature is present and True.
-   * If the Feature is missing or False, the candidate is removed.
+   * b-buiwds a fiwtew that keeps candidates when the pwovided boowean featuwe i-is pwesent and twue. (˘ω˘)
+   * if the featuwe is missing ow fawse, ^^ the candidate is wemoved. :3
    *
    *  {{{
-   *  Filter.fromFeature(
-   *    FilterIdentifier("SomeFilter"),
-   *    feature = SomeFeature
+   *  f-fiwtew.fwomfeatuwe(
+   *    fiwtewidentifiew("somefiwtew"), -.-
+   *    f-featuwe = somefeatuwe
    *  )
    *  }}}
    *
-   * @param identifier A FilterIdentifier for the new filter
-   * @param feature A feature of [Candidate, Boolean] type used to determine whether Candidates will be kept
-   *                            when this feature is present and true otherwise they will be removed.
+   * @pawam i-identifiew a-a fiwtewidentifiew f-fow the new fiwtew
+   * @pawam featuwe a f-featuwe of [candidate, 😳 boowean] type used to detewmine w-whethew candidates wiww be kept
+   *                            when this featuwe is pwesent and twue othewwise t-they wiww be wemoved. mya
    */
-  def fromFeature[Candidate <: UniversalNoun[Any]](
-    identifier: FilterIdentifier,
-    feature: Feature[Candidate, Boolean]
-  ): Filter[PipelineQuery, Candidate] = {
-    val i = identifier
+  d-def fwomfeatuwe[candidate <: u-univewsawnoun[any]](
+    i-identifiew: fiwtewidentifiew, (˘ω˘)
+    featuwe: featuwe[candidate, >_< b-boowean]
+  ): f-fiwtew[pipewinequewy, -.- candidate] = {
+    v-vaw i = identifiew
 
-    new Filter[PipelineQuery, Candidate] {
-      override val identifier: FilterIdentifier = i
+    n-nyew fiwtew[pipewinequewy, candidate] {
+      o-ovewwide vaw identifiew: f-fiwtewidentifiew = i
 
-      override def apply(
-        query: PipelineQuery,
-        candidates: Seq[CandidateWithFeatures[Candidate]]
-      ): Stitch[FilterResult[Candidate]] = {
-        val (keptCandidates, removedCandidates) = candidates.partition { filterCandidate =>
-          filterCandidate.features.getOrElse(feature, false)
+      ovewwide def appwy(
+        q-quewy: pipewinequewy,
+        candidates: s-seq[candidatewithfeatuwes[candidate]]
+      ): stitch[fiwtewwesuwt[candidate]] = {
+        v-vaw (keptcandidates, 🥺 w-wemovedcandidates) = candidates.pawtition { fiwtewcandidate =>
+          fiwtewcandidate.featuwes.getowewse(featuwe, (U ﹏ U) fawse)
         }
 
-        Stitch.value(
-          FilterResult(
-            kept = keptCandidates.map(_.candidate),
-            removed = removedCandidates.map(_.candidate)))
+        stitch.vawue(
+          fiwtewwesuwt(
+            k-kept = keptcandidates.map(_.candidate), >w<
+            w-wemoved = wemovedcandidates.map(_.candidate)))
       }
     }
   }

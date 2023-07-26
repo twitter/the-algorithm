@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.genewawcontext
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.sociawcontext
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.topiccontext
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class SocialContextMarshaller @Inject() (
-  generalContextMarshaller: GeneralContextMarshaller,
-  topicContextMarshaller: TopicContextMarshaller) {
+@singweton
+cwass s-sociawcontextmawshawwew @inject() (
+  genewawcontextmawshawwew: genewawcontextmawshawwew, -.-
+  topiccontextmawshawwew: topiccontextmawshawwew) {
 
-  def apply(socialContext: SocialContext): urt.SocialContext =
-    socialContext match {
-      case generalContextBanner: GeneralContext =>
-        generalContextMarshaller(generalContextBanner)
-      case topicContextBanner: TopicContext =>
-        topicContextMarshaller(topicContextBanner)
+  d-def appwy(sociawcontext: sociawcontext): uwt.sociawcontext =
+    sociawcontext match {
+      c-case genewawcontextbannew: genewawcontext =>
+        g-genewawcontextmawshawwew(genewawcontextbannew)
+      case topiccontextbannew: topiccontext =>
+        t-topiccontextmawshawwew(topiccontextbannew)
     }
 }

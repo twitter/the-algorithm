@@ -1,314 +1,314 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt java.utiw.concuwwent.timeunit;
+i-impowt j-javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.immutabwewist;
+impowt com.googwe.common.cowwect.immutabwemap;
+i-impowt com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
-import com.twitter.search.core.earlybird.index.inverted.MultiSegmentTermDictionary;
-import com.twitter.search.core.earlybird.index.inverted.MultiSegmentTermDictionaryWithFastutil;
-import com.twitter.search.core.earlybird.index.inverted.OptimizedMemoryIndex;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.search.earlybird.partition.SegmentManager.Filter;
-import com.twitter.search.earlybird.partition.SegmentManager.Order;
+impowt com.twittew.decidew.decidew;
+impowt com.twittew.seawch.common.decidew.decidewutiw;
+i-impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+i-impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedindex;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.muwtisegmenttewmdictionawy;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.invewted.muwtisegmenttewmdictionawywithfastutiw;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.optimizedmemowyindex;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt c-com.twittew.seawch.eawwybiwd.index.eawwybiwdsegment;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentmanagew.fiwtew;
+i-impowt c-com.twittew.seawch.eawwybiwd.pawtition.segmentmanagew.owdew;
 
 /**
- * Manages MultiSegmentTermDictionary's for specific fields on this earlybird. Only manages them
- * for optimized segments, and should only regenerate new dictionaries when the list of optimized
- * segments changes. See SEARCH-10836
+ * m-manages m-muwtisegmenttewmdictionawy's fow specific fiewds o-on this eawwybiwd. >_< onwy manages them
+ * fow optimized s-segments, >w< and shouwd onwy wegenewate nyew dictionawies when the wist of optimized
+ * segments c-changes. rawr see seawch-10836
  */
-public class MultiSegmentTermDictionaryManager {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(MultiSegmentTermDictionaryManager.class);
+p-pubwic cwass m-muwtisegmenttewmdictionawymanagew {
+  p-pwivate static finaw woggew wog =
+      woggewfactowy.getwoggew(muwtisegmenttewmdictionawymanagew.cwass);
 
-  @VisibleForTesting
-  public static final SearchTimerStats TERM_DICTIONARY_CREATION_STATS =
-      SearchTimerStats.export("multi_segment_term_dictionary_manager_build_dictionary",
-          TimeUnit.MILLISECONDS, false);
+  @visibwefowtesting
+  pubwic static f-finaw seawchtimewstats t-tewm_dictionawy_cweation_stats =
+      seawchtimewstats.expowt("muwti_segment_tewm_dictionawy_managew_buiwd_dictionawy", rawr x3
+          t-timeunit.miwwiseconds, ( ͡o ω ͡o ) f-fawse);
 
-  public static final MultiSegmentTermDictionaryManager NOOP_INSTANCE =
-      new MultiSegmentTermDictionaryManager(
-          new Config(Collections.emptyList()), null, null, null, null) {
-        @Override
-        public boolean buildDictionary() {
-          return false;
+  pubwic static f-finaw muwtisegmenttewmdictionawymanagew nyoop_instance =
+      nyew m-muwtisegmenttewmdictionawymanagew(
+          nyew config(cowwections.emptywist()), (˘ω˘) nyuww, nyuww, 😳 n-nuww, nyuww) {
+        @ovewwide
+        pubwic b-boowean buiwddictionawy() {
+          wetuwn f-fawse;
         }
       };
 
-  private static final String MANAGER_DISABLED_DECIDER_KEY_PREFIX =
-      "multi_segment_term_dictionary_manager_disabled_in_";
+  pwivate s-static finaw stwing managew_disabwed_decidew_key_pwefix =
+      "muwti_segment_tewm_dictionawy_managew_disabwed_in_";
 
-  public static class Config {
-    private final ImmutableList<String> fieldNames;
+  pubwic static cwass config {
+    pwivate finaw immutabwewist<stwing> fiewdnames;
 
-    public Config(List<String> fieldNames) {
-      Preconditions.checkNotNull(fieldNames);
-      this.fieldNames = ImmutableList.copyOf(fieldNames);
+    pubwic config(wist<stwing> f-fiewdnames) {
+      p-pweconditions.checknotnuww(fiewdnames);
+      this.fiewdnames = i-immutabwewist.copyof(fiewdnames);
     }
 
-    public List<String> managedFieldNames() {
-      return fieldNames;
+    p-pubwic wist<stwing> m-managedfiewdnames() {
+      wetuwn fiewdnames;
     }
 
-    public boolean isEnabled() {
-      return EarlybirdConfig.getBool("multi_segment_term_dictionary_enabled", false);
-    }
-  }
-
-  @VisibleForTesting
-  public static String getManagerDisabledDeciderName(EarlybirdCluster earlybirdCluster) {
-    return MANAGER_DISABLED_DECIDER_KEY_PREFIX + earlybirdCluster.name().toLowerCase();
-  }
-
-  private static final class FieldStats {
-    private final SearchTimerStats buildTime;
-    private final SearchLongGauge numTerms;
-    private final SearchLongGauge numTermEntries;
-
-    private FieldStats(SearchStatsReceiver statsReceiver, String fieldName) {
-      Preconditions.checkNotNull(fieldName);
-      Preconditions.checkNotNull(statsReceiver);
-
-      String timerName = String.format(
-          "multi_segment_term_dictionary_manager_field_%s_build_dictionary", fieldName);
-      this.buildTime = statsReceiver.getTimerStats(
-          timerName, TimeUnit.MILLISECONDS, false, false, false);
-
-      String numTermsName = String.format(
-          "multi_segment_term_dictionary_manager_field_%s_num_terms", fieldName);
-      this.numTerms = statsReceiver.getLongGauge(numTermsName);
-
-      String numTermEntriesName = String.format(
-          "multi_segment_term_dictionary_manager_field_%s_num_term_entries", fieldName);
-      this.numTermEntries = statsReceiver.getLongGauge(numTermEntriesName);
+    pubwic boowean isenabwed() {
+      wetuwn eawwybiwdconfig.getboow("muwti_segment_tewm_dictionawy_enabwed", OwO f-fawse);
     }
   }
 
-  private final Config config;
-  @Nullable private final SegmentManager segmentManager;
-  @Nullable private final Decider decider;
-  @Nullable private final EarlybirdCluster earlybirdCluster;
-  private final ImmutableMap<String, FieldStats> fieldTimerStats;
-  // A per-field map of multi-segment term dictionaries. Each key is a field. The values are the
-  // multi-segment term dictionaries for that field.
-  private volatile ImmutableMap<String, MultiSegmentTermDictionary> multiSegmentTermDictionaryMap;
-  private List<SegmentInfo> previousSegmentsToMerge;
+  @visibwefowtesting
+  pubwic static stwing getmanagewdisabweddecidewname(eawwybiwdcwustew eawwybiwdcwustew) {
+    wetuwn managew_disabwed_decidew_key_pwefix + e-eawwybiwdcwustew.name().towowewcase();
+  }
 
-  public MultiSegmentTermDictionaryManager(
-      Config config,
-      SegmentManager segmentManager,
-      SearchStatsReceiver statsReceiver,
-      Decider decider,
-      EarlybirdCluster earlybirdCluster) {
+  pwivate s-static finaw c-cwass fiewdstats {
+    p-pwivate finaw seawchtimewstats b-buiwdtime;
+    p-pwivate finaw s-seawchwonggauge n-nyumtewms;
+    pwivate finaw seawchwonggauge n-nyumtewmentwies;
+
+    p-pwivate fiewdstats(seawchstatsweceivew s-statsweceivew, (˘ω˘) s-stwing f-fiewdname) {
+      pweconditions.checknotnuww(fiewdname);
+      pweconditions.checknotnuww(statsweceivew);
+
+      stwing timewname = s-stwing.fowmat(
+          "muwti_segment_tewm_dictionawy_managew_fiewd_%s_buiwd_dictionawy", òωó fiewdname);
+      this.buiwdtime = statsweceivew.gettimewstats(
+          timewname, ( ͡o ω ͡o ) timeunit.miwwiseconds, UwU fawse, fawse, fawse);
+
+      s-stwing nyumtewmsname = stwing.fowmat(
+          "muwti_segment_tewm_dictionawy_managew_fiewd_%s_num_tewms", /(^•ω•^) fiewdname);
+      t-this.numtewms = s-statsweceivew.getwonggauge(numtewmsname);
+
+      s-stwing nyumtewmentwiesname = s-stwing.fowmat(
+          "muwti_segment_tewm_dictionawy_managew_fiewd_%s_num_tewm_entwies", fiewdname);
+      t-this.numtewmentwies = s-statsweceivew.getwonggauge(numtewmentwiesname);
+    }
+  }
+
+  pwivate finaw config config;
+  @nuwwabwe pwivate finaw segmentmanagew s-segmentmanagew;
+  @nuwwabwe pwivate f-finaw decidew decidew;
+  @nuwwabwe p-pwivate f-finaw eawwybiwdcwustew eawwybiwdcwustew;
+  pwivate f-finaw immutabwemap<stwing, (ꈍᴗꈍ) f-fiewdstats> fiewdtimewstats;
+  // a-a pew-fiewd map o-of muwti-segment tewm dictionawies. 😳 each key is a fiewd. mya the vawues awe the
+  // m-muwti-segment tewm d-dictionawies f-fow that fiewd. mya
+  pwivate vowatiwe i-immutabwemap<stwing, /(^•ω•^) m-muwtisegmenttewmdictionawy> muwtisegmenttewmdictionawymap;
+  p-pwivate wist<segmentinfo> pwevioussegmentstomewge;
+
+  pubwic muwtisegmenttewmdictionawymanagew(
+      config c-config, ^^;;
+      s-segmentmanagew segmentmanagew, 🥺
+      seawchstatsweceivew s-statsweceivew, ^^
+      decidew d-decidew, ^•ﻌ•^
+      eawwybiwdcwustew eawwybiwdcwustew) {
     this.config = config;
-    this.segmentManager = segmentManager;
-    this.decider = decider;
-    this.earlybirdCluster = earlybirdCluster;
+    t-this.segmentmanagew = segmentmanagew;
+    this.decidew = decidew;
+    this.eawwybiwdcwustew = eawwybiwdcwustew;
 
-    this.multiSegmentTermDictionaryMap = ImmutableMap.of();
-    this.previousSegmentsToMerge = Lists.newArrayList();
+    this.muwtisegmenttewmdictionawymap = i-immutabwemap.of();
+    this.pwevioussegmentstomewge = wists.newawwaywist();
 
-    ImmutableMap.Builder<String, FieldStats> builder = ImmutableMap.builder();
-    if (statsReceiver != null) {
-      for (String fieldName : config.managedFieldNames()) {
-        builder.put(fieldName, new FieldStats(statsReceiver, fieldName));
+    i-immutabwemap.buiwdew<stwing, /(^•ω•^) f-fiewdstats> buiwdew = immutabwemap.buiwdew();
+    if (statsweceivew != nyuww) {
+      f-fow (stwing f-fiewdname : config.managedfiewdnames()) {
+        buiwdew.put(fiewdname, ^^ nyew fiewdstats(statsweceivew, 🥺 f-fiewdname));
       }
     }
-    this.fieldTimerStats = builder.build();
+    this.fiewdtimewstats = b-buiwdew.buiwd();
   }
 
   /**
-   * Return the most recently built MultiSegmentTermDictionary for the given field.
-   * Will return null if the field is not supported by this manager.
+   * wetuwn the most wecentwy buiwt muwtisegmenttewmdictionawy f-fow the given fiewd. (U ᵕ U❁)
+   * w-wiww wetuwn n-nyuww if the fiewd is nyot suppowted b-by this managew. 😳😳😳
    */
-  @Nullable
-  public MultiSegmentTermDictionary getMultiSegmentTermDictionary(String fieldName) {
-    return this.multiSegmentTermDictionaryMap.get(fieldName);
+  @nuwwabwe
+  pubwic m-muwtisegmenttewmdictionawy g-getmuwtisegmenttewmdictionawy(stwing f-fiewdname) {
+    wetuwn this.muwtisegmenttewmdictionawymap.get(fiewdname);
   }
 
   /**
-   * Build new versions of multi-segment term dictionaries if the manager is enabled, and new
-   * segments are available.
-   * @return true if the manager actually ran, and generated new versions of multi-segment term
-   * dictionaries.
+   * b-buiwd n-nyew vewsions of muwti-segment tewm dictionawies i-if the managew i-is enabwed, nyaa~~ a-and nyew
+   * segments awe avaiwabwe.
+   * @wetuwn twue if the managew a-actuawwy wan, (˘ω˘) and genewated n-nyew vewsions o-of muwti-segment tewm
+   * dictionawies. >_<
    *
-   * We synchronize this method because it would be a logic error to modify the variables from
-   * multiple threads simultaneously, and it is possible for two segments to finish optimizing at
-   * the same time and try to run it.
+   * we synchwonize this method because i-it wouwd b-be a wogic ewwow t-to modify the vawiabwes f-fwom
+   * muwtipwe thweads s-simuwtaneouswy, XD and it is possibwe fow two segments to finish optimizing at
+   * the same time a-and twy to wun it. rawr x3
    */
-  public synchronized boolean buildDictionary() {
-    if (!config.isEnabled()) {
-      return false;
+  pubwic s-synchwonized boowean buiwddictionawy() {
+    i-if (!config.isenabwed()) {
+      wetuwn fawse;
     }
 
-    Preconditions.checkNotNull(decider);
-    Preconditions.checkNotNull(earlybirdCluster);
-    if (DeciderUtil.isAvailableForRandomRecipient(decider,
-        getManagerDisabledDeciderName(earlybirdCluster))) {
-      LOG.info("Multi segment term dictionary manager is disabled via decider for cluster {}.",
-          earlybirdCluster);
-      this.multiSegmentTermDictionaryMap = ImmutableMap.of();
-      this.previousSegmentsToMerge = Lists.newArrayList();
-      return false;
+    p-pweconditions.checknotnuww(decidew);
+    pweconditions.checknotnuww(eawwybiwdcwustew);
+    i-if (decidewutiw.isavaiwabwefowwandomwecipient(decidew, ( ͡o ω ͡o )
+        g-getmanagewdisabweddecidewname(eawwybiwdcwustew))) {
+      w-wog.info("muwti s-segment tewm dictionawy m-managew is disabwed via decidew fow cwustew {}.", :3
+          eawwybiwdcwustew);
+      this.muwtisegmenttewmdictionawymap = immutabwemap.of();
+      this.pwevioussegmentstomewge = w-wists.newawwaywist();
+      w-wetuwn fawse;
     }
 
-    List<SegmentInfo> segmentsToMerge = getSegmentsToMerge();
+    wist<segmentinfo> s-segmentstomewge = getsegmentstomewge();
 
-    if (differentFromPreviousList(segmentsToMerge)) {
-       long start = System.currentTimeMillis();
-       try {
-         this.multiSegmentTermDictionaryMap = createNewDictionaries(segmentsToMerge);
-         this.previousSegmentsToMerge = segmentsToMerge;
-         return true;
-       } catch (IOException e) {
-         LOG.error("Unable to build multi segment term dictionaries", e);
-         return false;
-       } finally {
-         long elapsed = System.currentTimeMillis() - start;
-         TERM_DICTIONARY_CREATION_STATS.timerIncrement(elapsed);
+    i-if (diffewentfwompweviouswist(segmentstomewge)) {
+       wong stawt = system.cuwwenttimemiwwis();
+       twy {
+         t-this.muwtisegmenttewmdictionawymap = c-cweatenewdictionawies(segmentstomewge);
+         this.pwevioussegmentstomewge = s-segmentstomewge;
+         wetuwn twue;
+       } catch (ioexception e-e) {
+         w-wog.ewwow("unabwe to b-buiwd muwti segment t-tewm dictionawies", mya e);
+         wetuwn fawse;
+       } finawwy {
+         wong ewapsed = system.cuwwenttimemiwwis() - s-stawt;
+         t-tewm_dictionawy_cweation_stats.timewincwement(ewapsed);
        }
-    } else {
-      LOG.warn("No-op for buildDictionary()");
-      return false;
+    } e-ewse {
+      w-wog.wawn("no-op f-fow buiwddictionawy()");
+      wetuwn fawse;
     }
   }
 
   /**
-   * Only merge terms from enabled and optimized segments. No need to look at non-enabled segments,
-   * and we also don't want to use un-optimized segments as their term dictionaries are still
-   * changing.
+   * o-onwy mewge tewms f-fwom enabwed and optimized segments. σωσ n-nyo nyeed t-to wook at nyon-enabwed segments, (ꈍᴗꈍ)
+   * a-and we awso don't want to use un-optimized s-segments as theiw tewm dictionawies a-awe stiww
+   * c-changing. OwO
    */
-  private List<SegmentInfo> getSegmentsToMerge() {
-    Iterable<SegmentInfo> segmentInfos =
-        segmentManager.getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW);
+  pwivate w-wist<segmentinfo> getsegmentstomewge() {
+    itewabwe<segmentinfo> segmentinfos =
+        s-segmentmanagew.getsegmentinfos(fiwtew.enabwed, o.O o-owdew.owd_to_new);
 
-    List<SegmentInfo> segmentsToMerge = Lists.newArrayList();
-    for (SegmentInfo segmentInfo : segmentInfos) {
-      if (segmentInfo.getIndexSegment().isOptimized()) {
-        segmentsToMerge.add(segmentInfo);
+    w-wist<segmentinfo> segmentstomewge = wists.newawwaywist();
+    fow (segmentinfo s-segmentinfo : segmentinfos) {
+      if (segmentinfo.getindexsegment().isoptimized()) {
+        s-segmentstomewge.add(segmentinfo);
       }
     }
-    return segmentsToMerge;
+    w-wetuwn segmentstomewge;
   }
 
-  private boolean differentFromPreviousList(List<SegmentInfo> segmentsToMerge) {
-    // there is a potentially different approach here to only check if the
-    // segmentsToMerge is subsumed by the previousSegmentsToMerge list, and not recompute
-    // the multi segment term dictionary if so.
-    // There is a case where a new segment is added, the previously current segment is not yet
-    // optimized, but the oldest segment is dropped. With this impl, we will recompute to remove
-    // the dropped segment, however, we will recompute soon again when the
-    // "previously current segment" is actually optimized. We can potentially delay the first
-    // merging before the optimization.
-    if (this.previousSegmentsToMerge.size() == segmentsToMerge.size()) {
-      for (int i = 0; i < this.previousSegmentsToMerge.size(); i++) {
-        if (previousSegmentsToMerge.get(i).compareTo(segmentsToMerge.get(i)) != 0) {
-          return true;
+  pwivate boowean d-diffewentfwompweviouswist(wist<segmentinfo> segmentstomewge) {
+    // t-thewe i-is a potentiawwy diffewent appwoach hewe to onwy c-check if the
+    // segmentstomewge is subsumed b-by the pwevioussegmentstomewge w-wist, 😳😳😳 and nyot wecompute
+    // the muwti segment t-tewm dictionawy if so. /(^•ω•^)
+    // t-thewe is a case w-whewe a nyew segment i-is added, OwO the pweviouswy cuwwent segment is nyot yet
+    // optimized, ^^ but the owdest segment is dwopped. (///ˬ///✿) with this impw, (///ˬ///✿) we wiww wecompute to wemove
+    // the dwopped segment, (///ˬ///✿) howevew, we wiww wecompute s-soon again when t-the
+    // "pweviouswy cuwwent segment" is actuawwy o-optimized. ʘwʘ w-we can potentiawwy d-deway the fiwst
+    // mewging b-befowe the optimization. ^•ﻌ•^
+    if (this.pwevioussegmentstomewge.size() == s-segmentstomewge.size()) {
+      f-fow (int i = 0; i < this.pwevioussegmentstomewge.size(); i-i++) {
+        if (pwevioussegmentstomewge.get(i).compaweto(segmentstomewge.get(i)) != 0) {
+          w-wetuwn t-twue;
         }
       }
-      return false;
+      wetuwn fawse;
     }
-    return true;
+    wetuwn twue;
   }
 
   /**
-   * Rebuild the term dictionaries from scratch for all the managed fields.
-   * Returning a brand new map here with all the fields' term dictionaries so that we can isolate
-   * failures to build, and only replace the entire map of all the fields are built successfully.
+   * w-webuiwd the t-tewm dictionawies f-fwom scwatch fow a-aww the managed f-fiewds. OwO
+   * w-wetuwning a bwand n-nyew map hewe w-with aww the fiewds' t-tewm dictionawies so that we c-can isowate
+   * f-faiwuwes to buiwd, a-and onwy wepwace the entiwe m-map of aww the fiewds awe buiwt successfuwwy. (U ﹏ U)
    */
-  private ImmutableMap<String, MultiSegmentTermDictionary> createNewDictionaries(
-      List<SegmentInfo> segments) throws IOException {
+  p-pwivate immutabwemap<stwing, (ˆ ﻌ ˆ)♡ m-muwtisegmenttewmdictionawy> c-cweatenewdictionawies(
+      w-wist<segmentinfo> segments) thwows i-ioexception {
 
-    Map<String, MultiSegmentTermDictionary> map = Maps.newHashMap();
+    map<stwing, (⑅˘꒳˘) m-muwtisegmenttewmdictionawy> map = m-maps.newhashmap();
 
-    for (String field : config.managedFieldNames()) {
-      LOG.info("Merging term dictionaries for field {}", field);
+    fow (stwing f-fiewd : config.managedfiewdnames()) {
+      wog.info("mewging tewm dictionawies fow fiewd {}", (U ﹏ U) fiewd);
 
-      List<OptimizedMemoryIndex> indexesToMerge = findFieldIndexesToMerge(segments, field);
+      w-wist<optimizedmemowyindex> indexestomewge = findfiewdindexestomewge(segments, o.O f-fiewd);
 
-      if (indexesToMerge.isEmpty()) {
-        LOG.info("No indexes to merge for field {}", field);
-      } else {
-        long start = System.currentTimeMillis();
+      i-if (indexestomewge.isempty()) {
+        wog.info("no indexes to mewge fow fiewd {}", mya f-fiewd);
+      } ewse {
+        w-wong stawt = s-system.cuwwenttimemiwwis();
 
-        MultiSegmentTermDictionary multiSegmentTermDictionary =
-            mergeDictionaries(field, indexesToMerge);
+        m-muwtisegmenttewmdictionawy muwtisegmenttewmdictionawy =
+            mewgedictionawies(fiewd, i-indexestomewge);
 
-        map.put(field, multiSegmentTermDictionary);
+        m-map.put(fiewd, XD muwtisegmenttewmdictionawy);
 
-        long elapsed = System.currentTimeMillis() - start;
-        LOG.info("Done merging term dictionary for field {}, for {} segments in {}ms",
-            field, indexesToMerge.size(), elapsed);
+        w-wong ewapsed = system.cuwwenttimemiwwis() - stawt;
+        wog.info("done m-mewging tewm dictionawy f-fow fiewd {}, òωó f-fow {} segments i-in {}ms", (˘ω˘)
+            fiewd, :3 i-indexestomewge.size(), OwO e-ewapsed);
 
-        FieldStats fieldStats = fieldTimerStats.get(field);
-        fieldStats.buildTime.timerIncrement(elapsed);
-        fieldStats.numTerms.set(multiSegmentTermDictionary.getNumTerms());
-        fieldStats.numTermEntries.set(multiSegmentTermDictionary.getNumTermEntries());
+        f-fiewdstats f-fiewdstats = fiewdtimewstats.get(fiewd);
+        f-fiewdstats.buiwdtime.timewincwement(ewapsed);
+        f-fiewdstats.numtewms.set(muwtisegmenttewmdictionawy.getnumtewms());
+        f-fiewdstats.numtewmentwies.set(muwtisegmenttewmdictionawy.getnumtewmentwies());
       }
     }
-    return ImmutableMap.copyOf(map);
+    w-wetuwn immutabwemap.copyof(map);
   }
 
-  private List<OptimizedMemoryIndex> findFieldIndexesToMerge(
-      List<SegmentInfo> segments, String field) throws IOException {
+  p-pwivate wist<optimizedmemowyindex> f-findfiewdindexestomewge(
+      w-wist<segmentinfo> s-segments, stwing fiewd) thwows i-ioexception {
 
-    List<OptimizedMemoryIndex> indexesToMerge = Lists.newArrayList();
+    wist<optimizedmemowyindex> i-indexestomewge = wists.newawwaywist();
 
-    for (SegmentInfo segment : segments) {
-      EarlybirdSegment indexSegment = segment.getIndexSegment();
-      Preconditions.checkState(indexSegment.isOptimized(),
-          "Expect segment to be optimized: %s", segment);
+    f-fow (segmentinfo s-segment : s-segments) {
+      eawwybiwdsegment indexsegment = segment.getindexsegment();
+      p-pweconditions.checkstate(indexsegment.isoptimized(), mya
+          "expect s-segment to be o-optimized: %s", (˘ω˘) segment);
 
-      InvertedIndex fieldIndex = Preconditions.checkNotNull(indexSegment.getIndexReader())
-          .getSegmentData().getFieldIndex(field);
+      invewtedindex fiewdindex = pweconditions.checknotnuww(indexsegment.getindexweadew())
+          .getsegmentdata().getfiewdindex(fiewd);
 
-      // See SEARCH-11952
-      // We will only have a InvertedIndex/OptimizedMemoryIndex here
-      // in the in-memory non-lucene-based indexes, and not in the archive. We can somewhat
-      // reasonably extend this to work with the archive by making the dictionaries work with
-      // TermsEnum's directly instead of OptimizedMemoryIndex's. Leaving this as a further
-      // extension for now.
-      if (fieldIndex != null) {
-        if (fieldIndex instanceof OptimizedMemoryIndex) {
-          indexesToMerge.add((OptimizedMemoryIndex) fieldIndex);
-        } else {
-          LOG.info("Found field index for field {} in segment {} of type {}",
-              field, segment, fieldIndex.getClass());
+      // s-see seawch-11952
+      // w-we wiww onwy have a i-invewtedindex/optimizedmemowyindex h-hewe
+      // in the in-memowy nyon-wucene-based indexes, o.O and n-nyot in the awchive. (✿oωo) w-we can somenani
+      // weasonabwy e-extend t-this to wowk with the awchive by making the dictionawies w-wowk with
+      // t-tewmsenum's diwectwy instead of optimizedmemowyindex's. (ˆ ﻌ ˆ)♡ w-weaving this as a fuwthew
+      // extension f-fow nyow. ^^;;
+      if (fiewdindex != n-nyuww) {
+        i-if (fiewdindex instanceof optimizedmemowyindex) {
+          i-indexestomewge.add((optimizedmemowyindex) f-fiewdindex);
+        } ewse {
+          w-wog.info("found fiewd index fow f-fiewd {} in segment {} o-of type {}", OwO
+              f-fiewd, 🥺 segment, f-fiewdindex.getcwass());
         }
-      } else {
-        LOG.info("Found null field index for field {} in segment {}", field, segment);
+      } ewse {
+        wog.info("found n-nyuww f-fiewd index f-fow fiewd {} in segment {}", mya fiewd, 😳 s-segment);
       }
     }
-    LOG.info("Found good fields for {} out of {} segments", indexesToMerge.size(),
-            segments.size());
+    wog.info("found good fiewds fow {} o-out of {} segments", òωó i-indexestomewge.size(), /(^•ω•^)
+            s-segments.size());
 
-    return indexesToMerge;
+    wetuwn indexestomewge;
   }
 
-  private MultiSegmentTermDictionary mergeDictionaries(
-      String field,
-      List<OptimizedMemoryIndex> indexes) {
-    // May change this if we get a better implementation in the future.
-    return new MultiSegmentTermDictionaryWithFastutil(field, indexes);
+  pwivate muwtisegmenttewmdictionawy mewgedictionawies(
+      stwing f-fiewd, -.-
+      wist<optimizedmemowyindex> i-indexes) {
+    // m-may change this if we get a bettew i-impwementation in the futuwe.
+    w-wetuwn nyew muwtisegmenttewmdictionawywithfastutiw(fiewd, i-indexes);
   }
 }

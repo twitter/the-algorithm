@@ -1,202 +1,202 @@
-package com.twitter.follow_recommendations.common.transforms.modify_social_proof
+package com.twittew.fowwow_wecommendations.common.twansfowms.modify_sociaw_pwoof
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.base.GatedTransform
-import com.twitter.follow_recommendations.common.clients.graph_feature_service.GraphFeatureServiceClient
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.decidew.decidew
+i-impowt com.twittew.decidew.wandomwecipient
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finagwe.utiw.defauwttimew
+i-impowt com.twittew.fowwow_wecommendations.common.base.gatedtwansfowm
+impowt com.twittew.fowwow_wecommendations.common.cwients.gwaph_featuwe_sewvice.gwaphfeatuwesewvicecwient
+impowt com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph.sociawgwaphcwient
+impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.modews.fowwowpwoof
+impowt com.twittew.fowwow_wecommendations.configapi.decidews.decidewkey
+impowt c-com.twittew.gwaph_featuwe_sewvice.thwiftscawa.edgetype
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.timewines.configapi.haspawams
+i-impowt com.twittew.utiw.wogging.wogging
+impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.time
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-object ModifySocialProof {
-  val GfsLagDuration: Duration = 14.days
-  val GfsIntersectionIds: Int = 3
-  val SgsIntersectionIds: Int = 10
-  val LeftEdgeTypes: Set[EdgeType] = Set(EdgeType.Following)
-  val RightEdgeTypes: Set[EdgeType] = Set(EdgeType.FollowedBy)
+object modifysociawpwoof {
+  vaw gfswagduwation: d-duwation = 14.days
+  vaw gfsintewsectionids: i-int = 3
+  v-vaw sgsintewsectionids: i-int = 10
+  v-vaw weftedgetypes: set[edgetype] = set(edgetype.fowwowing)
+  v-vaw wightedgetypes: set[edgetype] = set(edgetype.fowwowedby)
 
   /**
-   * Given the intersection ID's for a particular candidate, update the candidate's social proof
-   * @param candidate          candidate object
-   * @param followProof        follow proof to be added (includes id's and count)
-   * @param stats              stats for tracking
-   * @return                   updated candidate object
+   * g-given the intewsection id's fow a pawticuwaw candidate, UwU update the candidate's sociaw p-pwoof
+   * @pawam candidate          c-candidate o-object
+   * @pawam f-fowwowpwoof        fowwow pwoof to be added (incwudes id's a-and count)
+   * @pawam s-stats              stats f-fow twacking
+   * @wetuwn                   u-updated candidate object
    */
-  def addIntersectionIdsToCandidate(
-    candidate: CandidateUser,
-    followProof: FollowProof,
-    stats: StatsReceiver
-  ): CandidateUser = {
-    // create updated set of social proof
-    val updatedFollowedByOpt = candidate.followedBy match {
-      case Some(existingFollowedBy) => Some((followProof.followedBy ++ existingFollowedBy).distinct)
-      case None if followProof.followedBy.nonEmpty => Some(followProof.followedBy.distinct)
-      case _ => None
+  d-def addintewsectionidstocandidate(
+    c-candidate: candidateusew, 😳😳😳
+    fowwowpwoof: fowwowpwoof, XD
+    stats: statsweceivew
+  ): c-candidateusew = {
+    // cweate updated s-set of sociaw pwoof
+    vaw updatedfowwowedbyopt = c-candidate.fowwowedby m-match {
+      case some(existingfowwowedby) => some((fowwowpwoof.fowwowedby ++ existingfowwowedby).distinct)
+      case nyone if fowwowpwoof.fowwowedby.nonempty => some(fowwowpwoof.fowwowedby.distinct)
+      c-case _ => n-nyone
     }
 
-    val updatedFollowProof = updatedFollowedByOpt.map { updatedFollowedBy =>
-      val updatedCount = followProof.numIds.max(updatedFollowedBy.size)
-      // track stats
-      val numSocialProofAdded = updatedFollowedBy.size - candidate.followedBy.size
-      addCandidatesWithSocialContextCountStat(stats, numSocialProofAdded)
-      FollowProof(updatedFollowedBy, updatedCount)
+    vaw updatedfowwowpwoof = u-updatedfowwowedbyopt.map { u-updatedfowwowedby =>
+      v-vaw updatedcount = fowwowpwoof.numids.max(updatedfowwowedby.size)
+      // twack stats
+      vaw nyumsociawpwoofadded = u-updatedfowwowedby.size - candidate.fowwowedby.size
+      addcandidateswithsociawcontextcountstat(stats, o.O nyumsociawpwoofadded)
+      fowwowpwoof(updatedfowwowedby, (⑅˘꒳˘) updatedcount)
     }
 
-    candidate.setFollowProof(updatedFollowProof)
+    c-candidate.setfowwowpwoof(updatedfowwowpwoof)
   }
 
-  private def addCandidatesWithSocialContextCountStat(
-    statsReceiver: StatsReceiver,
-    count: Int
-  ): Unit = {
-    if (count > 3) {
-      statsReceiver.counter("4_and_more").incr()
-    } else {
-      statsReceiver.counter(count.toString).incr()
+  pwivate d-def addcandidateswithsociawcontextcountstat(
+    s-statsweceivew: s-statsweceivew, 😳😳😳
+    count: int
+  ): u-unit = {
+    i-if (count > 3) {
+      s-statsweceivew.countew("4_and_mowe").incw()
+    } e-ewse {
+      statsweceivew.countew(count.tostwing).incw()
     }
   }
 }
 
 /**
- * This class makes a request to gfs/sgs for hydrating additional social proof on each of the
- * provided candidates.
+ * this cwass m-makes a wequest t-to gfs/sgs f-fow hydwating additionaw s-sociaw p-pwoof on each of the
+ * pwovided candidates. nyaa~~
  */
-@Singleton
-class ModifySocialProof @Inject() (
-  gfsClient: GraphFeatureServiceClient,
-  socialGraphClient: SocialGraphClient,
-  statsReceiver: StatsReceiver,
-  decider: Decider = Decider.True)
-    extends Logging {
-  import ModifySocialProof._
+@singweton
+cwass m-modifysociawpwoof @inject() (
+  gfscwient: gwaphfeatuwesewvicecwient, rawr
+  sociawgwaphcwient: sociawgwaphcwient,
+  statsweceivew: statsweceivew,
+  d-decidew: decidew = decidew.twue)
+    extends wogging {
+  impowt m-modifysociawpwoof._
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val addedStats = stats.scope("num_social_proof_added_per_candidate")
-  private val gfsStats = stats.scope("graph_feature_service")
-  private val sgsStats = stats.scope("social_graph_service")
-  private val previousProofEmptyCounter = stats.counter("previous_proof_empty")
-  private val emptyFollowProofCounter = stats.counter("empty_followed_proof")
+  p-pwivate v-vaw stats = statsweceivew.scope(this.getcwass.getsimpwename)
+  pwivate vaw addedstats = s-stats.scope("num_sociaw_pwoof_added_pew_candidate")
+  pwivate vaw gfsstats = s-stats.scope("gwaph_featuwe_sewvice")
+  p-pwivate vaw sgsstats = stats.scope("sociaw_gwaph_sewvice")
+  pwivate vaw pweviouspwoofemptycountew = stats.countew("pwevious_pwoof_empty")
+  p-pwivate vaw emptyfowwowpwoofcountew = s-stats.countew("empty_fowwowed_pwoof")
 
   /**
-   * For each candidate provided, we get the intersectionIds between the user and the candidate,
-   * appending the unique results to the social proof (followedBy field) if not already previously
-   * seen we query GFS for all users, except for cases specified via the mustCallSgs field or for
-   * very new users, who would not have any data in GFS, due to the lag duration of the service's
-   * processing. this is determined by GfsLagDuration
-   * @param userId id of the target user whom we provide recommendations for
-   * @param candidates list of candidates
-   * @param intersectionIdsNum if provided, determines the maximum number of accounts we want to be hydrated for social proof
-   * @param mustCallSgs Determines if we should query SGS regardless of user age or not.
-   * @return list of candidates updated with additional social proof
+   * fow each candidate p-pwovided, -.- we g-get the intewsectionids between the usew and the c-candidate, (✿oωo)
+   * a-appending the unique wesuwts t-to the sociaw pwoof (fowwowedby f-fiewd) if nyot awweady pweviouswy
+   * seen we quewy gfs fow aww usews, /(^•ω•^) except fow c-cases specified v-via the mustcawwsgs f-fiewd ow fow
+   * vewy nyew u-usews, who wouwd n-nyot have any data in gfs, 🥺 due t-to the wag duwation of the sewvice's
+   * pwocessing. ʘwʘ this is detewmined by gfswagduwation
+   * @pawam u-usewid i-id of the tawget usew whom we pwovide wecommendations f-fow
+   * @pawam c-candidates wist of candidates
+   * @pawam intewsectionidsnum if pwovided, UwU d-detewmines the maximum nyumbew of accounts we want to be hydwated fow sociaw pwoof
+   * @pawam m-mustcawwsgs detewmines if we shouwd quewy sgs wegawdwess o-of usew a-age ow nyot. XD
+   * @wetuwn wist of candidates updated with additionaw s-sociaw pwoof
    */
-  def hydrateSocialProof(
-    userId: Long,
-    candidates: Seq[CandidateUser],
-    intersectionIdsNum: Option[Int] = None,
-    mustCallSgs: Boolean = false,
-    callSgsCachedColumn: Boolean = false,
-    gfsLagDuration: Duration = GfsLagDuration,
-    gfsIntersectionIds: Int = GfsIntersectionIds,
-    sgsIntersectionIds: Int = SgsIntersectionIds,
-  ): Stitch[Seq[CandidateUser]] = {
-    addCandidatesWithSocialContextCountStat(
-      stats.scope("social_context_count_before_hydration"),
-      candidates.count(_.followedBy.isDefined)
+  d-def hydwatesociawpwoof(
+    usewid: wong, (✿oωo)
+    candidates: seq[candidateusew], :3
+    i-intewsectionidsnum: option[int] = nyone, (///ˬ///✿)
+    m-mustcawwsgs: boowean = fawse, nyaa~~
+    cawwsgscachedcowumn: boowean = fawse, >w<
+    g-gfswagduwation: duwation = g-gfswagduwation, -.-
+    g-gfsintewsectionids: int = gfsintewsectionids, (✿oωo)
+    s-sgsintewsectionids: int = s-sgsintewsectionids, (˘ω˘)
+  ): s-stitch[seq[candidateusew]] = {
+    a-addcandidateswithsociawcontextcountstat(
+      stats.scope("sociaw_context_count_befowe_hydwation"), rawr
+      c-candidates.count(_.fowwowedby.isdefined)
     )
-    val candidateIds = candidates.map(_.id)
-    val userAgeOpt = SnowflakeId.timeFromIdOpt(userId).map(Time.now - _)
+    v-vaw candidateids = candidates.map(_.id)
+    vaw usewageopt = s-snowfwakeid.timefwomidopt(usewid).map(time.now - _)
 
-    // this decider gate is used to determine what % of requests is allowed to call
-    // Graph Feature Service. this is useful for ramping down requests to Graph Feature Service
-    // when necessary
-    val deciderKey: String = DeciderKey.EnableGraphFeatureServiceRequests.toString
-    val enableGfsRequests: Boolean = decider.isAvailable(deciderKey, Some(RandomRecipient))
+    // t-this decidew g-gate is used to detewmine nyani % of wequests is a-awwowed to caww
+    // gwaph featuwe s-sewvice. OwO t-this is usefuw fow wamping down wequests to gwaph featuwe sewvice
+    // w-when nyecessawy
+    v-vaw d-decidewkey: stwing = d-decidewkey.enabwegwaphfeatuwesewvicewequests.tostwing
+    vaw enabwegfswequests: b-boowean = decidew.isavaiwabwe(decidewkey, ^•ﻌ•^ some(wandomwecipient))
 
-    // if new query sgs
-    val (candidateToIntersectionIdsMapFut, isGfs) =
-      if (!enableGfsRequests || mustCallSgs || userAgeOpt.exists(_ < gfsLagDuration)) {
+    // if nyew quewy sgs
+    vaw (candidatetointewsectionidsmapfut, UwU isgfs) =
+      i-if (!enabwegfswequests || mustcawwsgs || u-usewageopt.exists(_ < gfswagduwation)) {
         (
-          if (callSgsCachedColumn)
-            socialGraphClient.getIntersectionsFromCachedColumn(
-              userId,
-              candidateIds,
-              intersectionIdsNum.getOrElse(sgsIntersectionIds)
+          i-if (cawwsgscachedcowumn)
+            sociawgwaphcwient.getintewsectionsfwomcachedcowumn(
+              u-usewid, (˘ω˘)
+              candidateids, (///ˬ///✿)
+              intewsectionidsnum.getowewse(sgsintewsectionids)
             )
-          else
-            socialGraphClient.getIntersections(
-              userId,
-              candidateIds,
-              intersectionIdsNum.getOrElse(sgsIntersectionIds)),
-          false)
-      } else {
+          e-ewse
+            s-sociawgwaphcwient.getintewsections(
+              u-usewid, σωσ
+              c-candidateids, /(^•ω•^)
+              i-intewsectionidsnum.getowewse(sgsintewsectionids)), 😳
+          fawse)
+      } ewse {
         (
-          gfsClient.getIntersections(
-            userId,
-            candidateIds,
-            intersectionIdsNum.getOrElse(gfsIntersectionIds)),
-          true)
+          gfscwient.getintewsections(
+            usewid, 😳
+            candidateids, (⑅˘꒳˘)
+            intewsectionidsnum.getowewse(gfsintewsectionids)), 😳😳😳
+          t-twue)
       }
-    val finalCandidates = candidateToIntersectionIdsMapFut
-      .map { candidateToIntersectionIdsMap =>
+    v-vaw finawcandidates = c-candidatetointewsectionidsmapfut
+      .map { candidatetointewsectionidsmap =>
         {
-          previousProofEmptyCounter.incr(candidates.count(_.followedBy.exists(_.isEmpty)))
+          p-pweviouspwoofemptycountew.incw(candidates.count(_.fowwowedby.exists(_.isempty)))
           candidates.map { candidate =>
-            addIntersectionIdsToCandidate(
-              candidate,
-              candidateToIntersectionIdsMap.getOrElse(candidate.id, FollowProof(Seq.empty, 0)),
-              addedStats)
+            addintewsectionidstocandidate(
+              c-candidate, 😳
+              c-candidatetointewsectionidsmap.getowewse(candidate.id, XD fowwowpwoof(seq.empty, mya 0)), ^•ﻌ•^
+              addedstats)
           }
         }
       }
-      .within(250.milliseconds)(DefaultTimer)
-      .rescue {
-        case e: Exception =>
-          error(e.getMessage)
-          if (isGfs) {
-            gfsStats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-          } else {
-            sgsStats.scope("rescued").counter(e.getClass.getSimpleName).incr()
+      .within(250.miwwiseconds)(defauwttimew)
+      .wescue {
+        c-case e: exception =>
+          ewwow(e.getmessage)
+          i-if (isgfs) {
+            gfsstats.scope("wescued").countew(e.getcwass.getsimpwename).incw()
+          } e-ewse {
+            sgsstats.scope("wescued").countew(e.getcwass.getsimpwename).incw()
           }
-          Stitch.value(candidates)
+          s-stitch.vawue(candidates)
       }
 
-    finalCandidates.onSuccess { candidatesSeq =>
-      emptyFollowProofCounter.incr(candidatesSeq.count(_.followedBy.exists(_.isEmpty)))
-      addCandidatesWithSocialContextCountStat(
-        stats.scope("social_context_count_after_hydration"),
-        candidatesSeq.count(_.followedBy.isDefined)
+    f-finawcandidates.onsuccess { candidatesseq =>
+      emptyfowwowpwoofcountew.incw(candidatesseq.count(_.fowwowedby.exists(_.isempty)))
+      addcandidateswithsociawcontextcountstat(
+        stats.scope("sociaw_context_count_aftew_hydwation"), ʘwʘ
+        c-candidatesseq.count(_.fowwowedby.isdefined)
       )
     }
   }
 }
 
 /**
- * This transform uses ModifySocialProof (which makes a request to gfs/sgs) for hydrating additional
- * social proof on each of the provided candidates.
+ * t-this twansfowm u-uses modifysociawpwoof (which m-makes a-a wequest to gfs/sgs) fow hydwating a-additionaw
+ * s-sociaw pwoof on each of the p-pwovided candidates. ( ͡o ω ͡o )
  */
-@Singleton
-class ModifySocialProofTransform @Inject() (modifySocialProof: ModifySocialProof)
-    extends GatedTransform[HasClientContext with HasParams, CandidateUser]
-    with Logging {
+@singweton
+c-cwass modifysociawpwooftwansfowm @inject() (modifysociawpwoof: modifysociawpwoof)
+    e-extends gatedtwansfowm[hascwientcontext with haspawams, mya c-candidateusew]
+    with wogging {
 
-  override def transform(
-    target: HasClientContext with HasParams,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] =
-    target.getOptionalUserId
-      .map(modifySocialProof.hydrateSocialProof(_, candidates)).getOrElse(Stitch.value(candidates))
+  o-ovewwide d-def twansfowm(
+    tawget: hascwientcontext w-with haspawams, o.O
+    candidates: seq[candidateusew]
+  ): s-stitch[seq[candidateusew]] =
+    t-tawget.getoptionawusewid
+      .map(modifysociawpwoof.hydwatesociawpwoof(_, (✿oωo) c-candidates)).getowewse(stitch.vawue(candidates))
 }

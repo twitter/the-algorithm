@@ -1,300 +1,300 @@
-package com.twitter.tweetypie.config
+package com.twittew.tweetypie.config
 
-import com.twitter.decider.Decider
-import com.twitter.decider.DeciderFactory
-import com.twitter.decider.LocalOverrides
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.finagle.filter.DarkTrafficFilter
-import com.twitter.finagle.stats.DefaultStatsReceiver
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.finagle.Filter
-import com.twitter.finagle.Service
-import com.twitter.finagle.SimpleFilter
-import com.twitter.quill.capture._
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.servo.util.WaitForServerSets
-import com.twitter.tweetypie.ThriftTweetService
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.client_id.ConditionalServiceIdentifierStrategy
-import com.twitter.tweetypie.client_id.PreferForwardedServiceIdentifierForStrato
-import com.twitter.tweetypie.client_id.UseTransportServiceIdentifier
-import com.twitter.tweetypie.context.TweetypieContext
-import com.twitter.tweetypie.matching.Tokenizer
-import com.twitter.tweetypie.service._
-import com.twitter.tweetypie.thriftscala.TweetServiceInternal$FinagleService
-import com.twitter.util._
-import com.twitter.util.logging.Logger
-import scala.util.control.NonFatal
+impowt com.twittew.decidew.decidew
+i-impowt com.twittew.decidew.decidewfactowy
+i-impowt com.twittew.decidew.wocawuvwwides
+i-impowt c-com.twittew.featuweswitches.v2.buiwdew.featuweswitchesbuiwdew
+i-impowt com.twittew.finagwe.fiwtew.dawktwafficfiwtew
+i-impowt com.twittew.finagwe.stats.defauwtstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finagwe.thwift.pwotocows
+i-impowt com.twittew.finagwe.utiw.defauwttimew
+impowt com.twittew.finagwe.fiwtew
+impowt com.twittew.finagwe.sewvice
+i-impowt com.twittew.finagwe.simpwefiwtew
+i-impowt com.twittew.quiww.captuwe._
+impowt com.twittew.sewvo.utiw.memoizingstatsweceivew
+impowt com.twittew.sewvo.utiw.waitfowsewvewsets
+i-impowt com.twittew.tweetypie.thwifttweetsewvice
+i-impowt c-com.twittew.tweetypie.cwient_id.cwientidhewpew
+impowt com.twittew.tweetypie.cwient_id.conditionawsewviceidentifiewstwategy
+impowt com.twittew.tweetypie.cwient_id.pwefewfowwawdedsewviceidentifiewfowstwato
+impowt c-com.twittew.tweetypie.cwient_id.usetwanspowtsewviceidentifiew
+impowt com.twittew.tweetypie.context.tweetypiecontext
+impowt com.twittew.tweetypie.matching.tokenizew
+impowt com.twittew.tweetypie.sewvice._
+impowt com.twittew.tweetypie.thwiftscawa.tweetsewviceintewnaw$finagwesewvice
+i-impowt com.twittew.utiw._
+i-impowt com.twittew.utiw.wogging.woggew
+i-impowt s-scawa.utiw.contwow.nonfataw
 
-class TweetServerBuilder(settings: TweetServiceSettings) {
-
-  /**
-   * A logger used by some of the built-in initializers.
-   */
-  val log: Logger = Logger(getClass)
+c-cwass tweetsewvewbuiwdew(settings: tweetsewvicesettings) {
 
   /**
-   * The top-level stats receiver. Defaults to the default StatsReceiver
-   * embedded in Finagle.
+   * a woggew u-used by some of the buiwt-in initiawizews. 😳😳😳
    */
-  val statsReceiver: StatsReceiver =
-    new MemoizingStatsReceiver(DefaultStatsReceiver)
-
-  val hostStatsReceiver: StatsReceiver =
-    if (settings.clientHostStats)
-      statsReceiver
-    else
-      NullStatsReceiver
+  vaw wog: woggew = w-woggew(getcwass)
 
   /**
-   * A timer for scheduling various things.
+   * the top-wevew stats weceivew. nyaa~~ defauwts to the defauwt statsweceivew
+   * embedded i-in finagwe. rawr
    */
-  val timer: Timer = DefaultTimer
+  vaw statsweceivew: s-statsweceivew =
+    n-nyew memoizingstatsweceivew(defauwtstatsweceivew)
+
+  v-vaw hoststatsweceivew: statsweceivew =
+    if (settings.cwienthoststats)
+      statsweceivew
+    e-ewse
+      n-nyuwwstatsweceivew
 
   /**
-   * Creates a decider instance by looking up the decider configuration information
-   * from the settings object.
+   * a timew fow scheduwing v-vawious things. -.-
    */
-  val decider: Decider = {
-    val fileBased = DeciderFactory(settings.deciderBaseFilename, settings.deciderOverlayFilename)()
+  vaw t-timew: timew = defauwttimew
 
-    // Use the tweetypie decider dashboard name for propagating decider overrides.
-    LocalOverrides.decider("tweetypie").orElse(fileBased)
+  /**
+   * c-cweates a decidew instance b-by wooking up the decidew configuwation infowmation
+   * fwom t-the settings object. (✿oωo)
+   */
+  v-vaw decidew: decidew = {
+    vaw f-fiwebased = decidewfactowy(settings.decidewbasefiwename, /(^•ω•^) s-settings.decidewovewwayfiwename)()
+
+    // use the tweetypie decidew dashboawd nyame fow pwopagating decidew ovewwides. 🥺
+    wocawuvwwides.decidew("tweetypie").owewse(fiwebased)
   }
 
-  val deciderGates: TweetypieDeciderGates = {
-    val deciderGates = TweetypieDeciderGates(decider, settings.deciderOverrides)
+  v-vaw decidewgates: t-tweetypiedecidewgates = {
+    vaw decidewgates = t-tweetypiedecidewgates(decidew, ʘwʘ s-settings.decidewovewwides)
 
-    // Write out the configuration overrides to the log so that it's
-    // easy to confirm how this instance has been customized.
-    deciderGates.overrides.foreach {
-      case (overrideName, overrideValue) =>
-        log.info("Decider feature " + overrideName + " overridden to " + overrideValue)
-        if (deciderGates.unusedOverrides.contains(overrideName)) {
-          log.error("Unused decider override flag: " + overrideName)
+    // w-wwite out the configuwation ovewwides to the wog so that i-it's
+    // easy to confiwm how this instance has been customized. UwU
+    decidewgates.ovewwides.foweach {
+      case (ovewwidename, XD o-ovewwidevawue) =>
+        wog.info("decidew featuwe " + o-ovewwidename + " o-ovewwidden t-to " + ovewwidevawue)
+        if (decidewgates.unusedovewwides.contains(ovewwidename)) {
+          w-wog.ewwow("unused d-decidew o-ovewwide fwag: " + o-ovewwidename)
         }
     }
 
-    val scopedReceiver = statsReceiver.scope("decider_values")
+    vaw scopedweceivew = statsweceivew.scope("decidew_vawues")
 
-    deciderGates.availabilityMap.foreach {
-      case (feature, value) =>
-        scopedReceiver.provideGauge(feature) {
-          // Default value of -1 indicates error state.
-          value.getOrElse(-1).toFloat
+    decidewgates.avaiwabiwitymap.foweach {
+      c-case (featuwe, (✿oωo) v-vawue) =>
+        s-scopedweceivew.pwovidegauge(featuwe) {
+          // d-defauwt v-vawue of -1 indicates ewwow state. :3
+          vawue.getowewse(-1).tofwoat
         }
     }
 
-    deciderGates
+    d-decidewgates
   }
 
-  val featureSwitchesWithExperiments = FeatureSwitchesBuilder
-    .createWithExperiments("/features/tweetypie/main")
-    .build()
+  vaw featuweswitcheswithexpewiments = featuweswitchesbuiwdew
+    .cweatewithexpewiments("/featuwes/tweetypie/main")
+    .buiwd()
 
-  val featureSwitchesWithoutExperiments = FeatureSwitchesBuilder
-    .createWithNoExperiments("/features/tweetypie/main", Some(statsReceiver))
-    .build()
+  vaw featuweswitcheswithoutexpewiments = featuweswitchesbuiwdew
+    .cweatewithnoexpewiments("/featuwes/tweetypie/main", (///ˬ///✿) some(statsweceivew))
+    .buiwd()
 
-  // ********* initializer **********
+  // ********* i-initiawizew **********
 
-  private[this] def warmupTextTokenization(logger: Logger): Unit = {
-    logger.info("Warming up text tokenization")
-    val watch = Stopwatch.start()
-    Tokenizer.warmUp()
-    logger.info(s"Warmed up text tokenization in ${watch()}")
+  pwivate[this] def wawmuptexttokenization(woggew: woggew): u-unit = {
+    w-woggew.info("wawming u-up text tokenization")
+    v-vaw watch = stopwatch.stawt()
+    t-tokenizew.wawmup()
+    w-woggew.info(s"wawmed up text tokenization in ${watch()}")
   }
 
-  private[this] def runWarmup(tweetService: Activity[ThriftTweetService]): Unit = {
-    val tokenizationLogger = Logger("com.twitter.tweetypie.TweetServerBuilder.TokenizationWarmup")
-    warmupTextTokenization(tokenizationLogger)
+  pwivate[this] def wunwawmup(tweetsewvice: a-activity[thwifttweetsewvice]): unit = {
+    v-vaw tokenizationwoggew = woggew("com.twittew.tweetypie.tweetsewvewbuiwdew.tokenizationwawmup")
+    w-wawmuptexttokenization(tokenizationwoggew)
 
-    val warmupLogger = Logger("com.twitter.tweetypie.TweetServerBuilder.BackendWarmup")
-    // #1 warmup backends
-    Await.ready(settings.backendWarmupSettings(backendClients, warmupLogger, timer))
+    v-vaw wawmupwoggew = woggew("com.twittew.tweetypie.tweetsewvewbuiwdew.backendwawmup")
+    // #1 wawmup backends
+    a-await.weady(settings.backendwawmupsettings(backendcwients, nyaa~~ w-wawmupwoggew, >w< timew))
 
-    // #2 warmup Tweet Service
-    Await.ready {
-      tweetService.values.toFuture.map(_.get).map { service =>
-        settings.warmupRequestsSettings.foreach(new TweetServiceWarmer(_)(service))
+    // #2 w-wawmup tweet s-sewvice
+    await.weady {
+      tweetsewvice.vawues.tofutuwe.map(_.get).map { sewvice =>
+        settings.wawmupwequestssettings.foweach(new tweetsewvicewawmew(_)(sewvice))
       }
     }
   }
 
-  private[this] def waitForServerSets(): Unit = {
-    val names = backendClients.referencedNames
-    val startTime = Time.now
-    log.info("will wait for serversets: " + names.mkString("\n", "\t\n", ""))
+  pwivate[this] d-def waitfowsewvewsets(): u-unit = {
+    v-vaw nyames = backendcwients.wefewencednames
+    v-vaw stawttime = t-time.now
+    wog.info("wiww w-wait fow sewvewsets: " + nyames.mkstwing("\n", -.- "\t\n", (✿oωo) ""))
 
-    try {
-      Await.result(WaitForServerSets.ready(names, settings.waitForServerSetsTimeout, timer))
-      val duration = Time.now.since(startTime)
-      log.info("resolved all serversets in " + duration)
-    } catch {
-      case NonFatal(ex) => log.warn("failed to resolve all serversets", ex)
+    twy {
+      await.wesuwt(waitfowsewvewsets.weady(names, (˘ω˘) settings.waitfowsewvewsetstimeout, rawr t-timew))
+      vaw d-duwation = time.now.since(stawttime)
+      wog.info("wesowved aww sewvewsets in " + d-duwation)
+    } c-catch {
+      case nyonfataw(ex) => wog.wawn("faiwed to wesowve a-aww sewvewsets", OwO ex)
     }
   }
 
-  private[this] def initialize(tweetService: Activity[ThriftTweetService]): Unit = {
-    waitForServerSets()
-    runWarmup(tweetService)
+  pwivate[this] def initiawize(tweetsewvice: activity[thwifttweetsewvice]): u-unit = {
+    waitfowsewvewsets()
+    wunwawmup(tweetsewvice)
 
-    // try to force a GC before starting to serve requests; this may or may not do anything
-    System.gc()
+    // twy to fowce a-a gc befowe s-stawting to sewve wequests; this may ow may nyot do anything
+    s-system.gc()
   }
 
-  // ********* builders **********
+  // ********* b-buiwdews **********
 
-  val clientIdHelper = new ClientIdHelper(
-    new ConditionalServiceIdentifierStrategy(
-      condition = deciderGates.preferForwardedServiceIdentifierForClientId,
-      ifTrue = PreferForwardedServiceIdentifierForStrato,
-      ifFalse = UseTransportServiceIdentifier,
+  vaw cwientidhewpew = nyew cwientidhewpew(
+    n-nyew conditionawsewviceidentifiewstwategy(
+      condition = d-decidewgates.pwefewfowwawdedsewviceidentifiewfowcwientid, ^•ﻌ•^
+      iftwue = pwefewfowwawdedsewviceidentifiewfowstwato, UwU
+      iffawse = usetwanspowtsewviceidentifiew, (˘ω˘)
     ),
   )
 
-  val backendClients: BackendClients =
-    BackendClients(
-      settings = settings,
-      deciderGates = deciderGates,
-      statsReceiver = statsReceiver,
-      hostStatsReceiver = hostStatsReceiver,
-      timer = timer,
-      clientIdHelper = clientIdHelper,
+  v-vaw backendcwients: backendcwients =
+    b-backendcwients(
+      s-settings = settings,
+      decidewgates = d-decidewgates, (///ˬ///✿)
+      statsweceivew = s-statsweceivew, σωσ
+      h-hoststatsweceivew = h-hoststatsweceivew, /(^•ω•^)
+      timew = timew, 😳
+      c-cwientidhewpew = c-cwientidhewpew, 😳
     )
 
-  val tweetService: Activity[ThriftTweetService] =
-    TweetServiceBuilder(
-      settings = settings,
-      statsReceiver = statsReceiver,
-      timer = timer,
-      deciderGates = deciderGates,
-      featureSwitchesWithExperiments = featureSwitchesWithExperiments,
-      featureSwitchesWithoutExperiments = featureSwitchesWithoutExperiments,
-      backendClients = backendClients,
-      clientIdHelper = clientIdHelper,
+  vaw tweetsewvice: activity[thwifttweetsewvice] =
+    t-tweetsewvicebuiwdew(
+      s-settings = settings, (⑅˘꒳˘)
+      s-statsweceivew = statsweceivew, 😳😳😳
+      timew = timew, 😳
+      d-decidewgates = decidewgates,
+      f-featuweswitcheswithexpewiments = f-featuweswitcheswithexpewiments, XD
+      featuweswitcheswithoutexpewiments = featuweswitcheswithoutexpewiments, mya
+      backendcwients = backendcwients, ^•ﻌ•^
+      c-cwientidhewpew = c-cwientidhewpew, ʘwʘ
     )
 
-  // Strato columns should use this tweetService
-  def stratoTweetService: Activity[ThriftTweetService] =
-    tweetService.map { service =>
-      // Add quill functionality to the strato tweet service only
-      val quillCapture = QuillCaptureBuilder(settings, deciderGates)
-      new QuillTweetService(quillCapture, service)
+  // s-stwato cowumns s-shouwd use this tweetsewvice
+  d-def stwatotweetsewvice: activity[thwifttweetsewvice] =
+    tweetsewvice.map { sewvice =>
+      // add quiww functionawity to the s-stwato tweet sewvice onwy
+      v-vaw quiwwcaptuwe = quiwwcaptuwebuiwdew(settings, d-decidewgates)
+      nyew quiwwtweetsewvice(quiwwcaptuwe, ( ͡o ω ͡o ) s-sewvice)
     }
 
-  def build: Activity[Service[Array[Byte], Array[Byte]]] = {
+  def b-buiwd: activity[sewvice[awway[byte], mya a-awway[byte]]] = {
 
-    val quillCapture = QuillCaptureBuilder(settings, deciderGates)
+    v-vaw q-quiwwcaptuwe = q-quiwwcaptuwebuiwdew(settings, o.O decidewgates)
 
-    val darkTrafficFilter: SimpleFilter[Array[Byte], Array[Byte]] =
-      if (!settings.trafficForkingEnabled) {
-        Filter.identity
-      } else {
-        new DarkTrafficFilter(
-          backendClients.darkTrafficClient,
-          _ => deciderGates.forkDarkTraffic(),
-          statsReceiver
+    vaw dawktwafficfiwtew: simpwefiwtew[awway[byte], (✿oωo) awway[byte]] =
+      if (!settings.twafficfowkingenabwed) {
+        fiwtew.identity
+      } e-ewse {
+        n-nyew d-dawktwafficfiwtew(
+          backendcwients.dawktwafficcwient, :3
+          _ => decidewgates.fowkdawktwaffic(), 😳
+          s-statsweceivew
         )
       }
 
-    val serviceFilter =
-      quillCapture
-        .getServerFilter(ThriftProto.server)
-        .andThen(TweetypieContext.Local.filter[Array[Byte], Array[Byte]])
-        .andThen(darkTrafficFilter)
+    vaw sewvicefiwtew =
+      quiwwcaptuwe
+        .getsewvewfiwtew(thwiftpwoto.sewvew)
+        .andthen(tweetypiecontext.wocaw.fiwtew[awway[byte], (U ﹏ U) awway[byte]])
+        .andthen(dawktwafficfiwtew)
 
-    initialize(tweetService)
+    initiawize(tweetsewvice)
 
-    // tweetService is an Activity[ThriftTweetService], so this callback
-    // is called every time that Activity updates (on ConfigBus changes).
-    tweetService.map { service =>
-      val finagleService =
-        new TweetServiceInternal$FinagleService(
-          service,
-          protocolFactory = Protocols.binaryFactory(),
-          stats = NullStatsReceiver,
-          maxThriftBufferSize = settings.maxThriftBufferSize
+    // t-tweetsewvice i-is an activity[thwifttweetsewvice], so this c-cawwback
+    // is cawwed evewy time that activity u-updates (on configbus c-changes). mya
+    tweetsewvice.map { s-sewvice =>
+      v-vaw finagwesewvice =
+        nyew tweetsewviceintewnaw$finagwesewvice(
+          sewvice, (U ᵕ U❁)
+          pwotocowfactowy = pwotocows.binawyfactowy(), :3
+          stats = nyuwwstatsweceivew, mya
+          m-maxthwiftbuffewsize = s-settings.maxthwiftbuffewsize
         )
 
-      serviceFilter andThen finagleService
+      s-sewvicefiwtew andthen f-finagwesewvice
     }
   }
 }
 
-object QuillCaptureBuilder {
-  val tweetServiceWriteMethods: Set[String] =
-    Set(
-      "async_delete",
-      "async_delete_additional_fields",
-      "async_erase_user_tweets",
-      "async_incr_fav_count",
-      "async_insert",
-      "async_set_additional_fields",
-      "async_set_retweet_visibility",
-      "async_takedown",
-      "async_undelete_tweet",
-      "async_update_possibly_sensitive_tweet",
-      "cascaded_delete_tweet",
-      "delete_additional_fields",
-      "delete_retweets",
-      "delete_tweets",
-      "erase_user_tweets",
-      "flush",
-      "incr_fav_count",
-      "insert",
-      "post_retweet",
-      "post_tweet",
-      "remove",
-      "replicated_delete_additional_fields",
-      "replicated_delete_tweet",
-      "replicated_delete_tweet2",
-      "replicated_incr_fav_count",
-      "replicated_insert_tweet2",
-      "replicated_scrub_geo",
-      "replicated_set_additional_fields",
-      "replicated_set_has_safety_labels",
-      "replicated_set_retweet_visibility",
-      "replicated_takedown",
-      "replicated_undelete_tweet2",
-      "replicated_update_possibly_sensitive_tweet",
-      "scrub_geo",
-      "scrub_geo_update_user_timestamp",
-      "set_additional_fields",
-      "set_has_safety_labels",
-      "set_retweet_visibility",
-      "set_tweet_user_takedown",
-      "takedown",
-      "undelete_tweet"
+o-object quiwwcaptuwebuiwdew {
+  vaw tweetsewvicewwitemethods: set[stwing] =
+    s-set(
+      "async_dewete", OwO
+      "async_dewete_additionaw_fiewds", (ˆ ﻌ ˆ)♡
+      "async_ewase_usew_tweets", ʘwʘ
+      "async_incw_fav_count", o.O
+      "async_insewt", UwU
+      "async_set_additionaw_fiewds", rawr x3
+      "async_set_wetweet_visibiwity", 🥺
+      "async_takedown", :3
+      "async_undewete_tweet", (ꈍᴗꈍ)
+      "async_update_possibwy_sensitive_tweet", 🥺
+      "cascaded_dewete_tweet", (✿oωo)
+      "dewete_additionaw_fiewds", (U ﹏ U)
+      "dewete_wetweets", :3
+      "dewete_tweets", ^^;;
+      "ewase_usew_tweets", rawr
+      "fwush", 😳😳😳
+      "incw_fav_count", (✿oωo)
+      "insewt", OwO
+      "post_wetweet",
+      "post_tweet", ʘwʘ
+      "wemove", (ˆ ﻌ ˆ)♡
+      "wepwicated_dewete_additionaw_fiewds", (U ﹏ U)
+      "wepwicated_dewete_tweet", UwU
+      "wepwicated_dewete_tweet2", XD
+      "wepwicated_incw_fav_count", ʘwʘ
+      "wepwicated_insewt_tweet2", rawr x3
+      "wepwicated_scwub_geo", ^^;;
+      "wepwicated_set_additionaw_fiewds", ʘwʘ
+      "wepwicated_set_has_safety_wabews", (U ﹏ U)
+      "wepwicated_set_wetweet_visibiwity", (˘ω˘)
+      "wepwicated_takedown", (ꈍᴗꈍ)
+      "wepwicated_undewete_tweet2", /(^•ω•^)
+      "wepwicated_update_possibwy_sensitive_tweet", >_<
+      "scwub_geo", σωσ
+      "scwub_geo_update_usew_timestamp", ^^;;
+      "set_additionaw_fiewds", 😳
+      "set_has_safety_wabews", >_<
+      "set_wetweet_visibiwity", -.-
+      "set_tweet_usew_takedown", UwU
+      "takedown", :3
+      "undewete_tweet"
     )
 
-  val tweetServiceReadMethods: Set[String] =
-    Set(
-      "get_tweet_counts",
-      "get_tweet_fields",
-      "get_tweets",
-      "replicated_get_tweet_counts",
-      "replicated_get_tweet_fields",
-      "replicated_get_tweets"
+  v-vaw tweetsewviceweadmethods: set[stwing] =
+    s-set(
+      "get_tweet_counts", σωσ
+      "get_tweet_fiewds", >w<
+      "get_tweets", (ˆ ﻌ ˆ)♡
+      "wepwicated_get_tweet_counts", ʘwʘ
+      "wepwicated_get_tweet_fiewds", :3
+      "wepwicated_get_tweets"
     )
 
-  def apply(settings: TweetServiceSettings, deciderGates: TweetypieDeciderGates): QuillCapture = {
-    val writesStore = SimpleScribeMessageStore("tweetypie_writes")
-      .enabledBy(deciderGates.logWrites)
+  d-def appwy(settings: tweetsewvicesettings, (˘ω˘) d-decidewgates: tweetypiedecidewgates): quiwwcaptuwe = {
+    vaw w-wwitesstowe = simpwescwibemessagestowe("tweetypie_wwites")
+      .enabwedby(decidewgates.wogwwites)
 
-    val readsStore = SimpleScribeMessageStore("tweetypie_reads")
-      .enabledBy(deciderGates.logReads)
+    vaw weadsstowe = s-simpwescwibemessagestowe("tweetypie_weads")
+      .enabwedby(decidewgates.wogweads)
 
-    val messageStore =
-      MessageStore.selected {
-        case msg if tweetServiceWriteMethods.contains(msg.name) => writesStore
-        case msg if tweetServiceReadMethods.contains(msg.name) => readsStore
-        case _ => writesStore
+    v-vaw messagestowe =
+      messagestowe.sewected {
+        c-case msg if tweetsewvicewwitemethods.contains(msg.name) => wwitesstowe
+        c-case m-msg if tweetsewviceweadmethods.contains(msg.name) => w-weadsstowe
+        case _ => wwitesstowe
       }
 
-    new QuillCapture(Store.legacyStore(messageStore), Some(settings.thriftClientId.name))
+    nyew q-quiwwcaptuwe(stowe.wegacystowe(messagestowe), 😳😳😳 some(settings.thwiftcwientid.name))
   }
 }

@@ -1,11 +1,11 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namespace java com.twittew.fowwow_wecommendations.wogging.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.wogging.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations.wogging
 
-enum EngagementType {
-    Click = 0
-    Like = 1
-    Mention = 2
-    Retweet = 3
-    ProfileView = 4
+e-enum e-engagementtype {
+    c-cwick = 0
+    w-wike = 1
+    m-mention = 2
+    w-wetweet = 3
+    pwofiweview = 4
 }

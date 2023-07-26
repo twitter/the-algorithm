@@ -1,136 +1,136 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.HydratedMagicFanoutCreatorEventCandidate
-import com.twitter.frigate.common.base.MagicFanoutCreatorEventCandidate
-import com.twitter.frigate.magic_events.thriftscala.CreatorFanoutType
-import com.twitter.frigate.magic_events.thriftscala.MagicEventsReason
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.MagicFanoutCreatorEventIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.MagicFanoutCreatorEventNtabRequestHydrator
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutPredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.MagicFanoutNtabCaretFatiguePredicate
-import com.twitter.frigate.pushservice.take.predicates.BasicSendHandlerPredicates
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.UserId
-import com.twitter.util.Future
-import scala.util.control.NoStackTrace
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.hydwatedmagicfanoutcweatoweventcandidate
+i-impowt c-com.twittew.fwigate.common.base.magicfanoutcweatoweventcandidate
+i-impowt com.twittew.fwigate.magic_events.thwiftscawa.cweatowfanouttype
+i-impowt c-com.twittew.fwigate.magic_events.thwiftscawa.magiceventsweason
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.config.config
+impowt c-com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+i-impowt com.twittew.fwigate.pushsewvice.modew.ibis.magicfanoutcweatoweventibis2hydwatow
+i-impowt com.twittew.fwigate.pushsewvice.modew.ntab.magicfanoutcweatoweventntabwequesthydwatow
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt com.twittew.fwigate.pushsewvice.pwedicate.pwedicatesfowcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.magic_fanout.magicfanoutpwedicatesfowcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue.magicfanoutntabcawetfatiguepwedicate
+impowt com.twittew.fwigate.pushsewvice.take.pwedicates.basicsendhandwewpwedicates
+impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.fwigate.thwiftscawa.fwigatenotification
+impowt com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.stwato.cwient.usewid
+impowt com.twittew.utiw.futuwe
+i-impowt scawa.utiw.contwow.nostacktwace
 
-class MagicFanoutCreatorEventPushCandidateHydratorException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+cwass m-magicfanoutcweatoweventpushcandidatehydwatowexception(pwivate v-vaw message: stwing)
+    e-extends e-exception(message)
+    with nyostacktwace
 
-class MagicFanoutCreatorEventPushCandidate(
-  candidate: RawCandidate with MagicFanoutCreatorEventCandidate,
-  creatorUser: Option[User],
-  copyIds: CopyIds,
-  creatorTweetCountStore: ReadableStore[UserId, Int]
+cwass m-magicfanoutcweatoweventpushcandidate(
+  candidate: wawcandidate w-with magicfanoutcweatoweventcandidate, >_<
+  cweatowusew: option[usew], rawr x3
+  copyids: copyids, /(^•ω•^)
+  cweatowtweetcountstowe: weadabwestowe[usewid, :3 i-int]
 )(
-  implicit val statsScoped: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with MagicFanoutCreatorEventIbis2Hydrator
-    with MagicFanoutCreatorEventNtabRequestHydrator
-    with MagicFanoutCreatorEventCandidate
-    with HydratedMagicFanoutCreatorEventCandidate {
-  override def creatorId: Long = candidate.creatorId
+  impwicit vaw s-statsscoped: statsweceivew, (ꈍᴗꈍ)
+  p-pushmodewscowew: p-pushmwmodewscowew)
+    extends pushcandidate
+    with magicfanoutcweatoweventibis2hydwatow
+    w-with magicfanoutcweatoweventntabwequesthydwatow
+    w-with magicfanoutcweatoweventcandidate
+    with h-hydwatedmagicfanoutcweatoweventcandidate {
+  o-ovewwide def cweatowid: wong = candidate.cweatowid
 
-  override def hydratedCreator: Option[User] = creatorUser
+  o-ovewwide def hydwatedcweatow: o-option[usew] = cweatowusew
 
-  override lazy val numberOfTweetsFut: Future[Option[Int]] =
-    creatorTweetCountStore.get(UserId(creatorId))
+  ovewwide wazy v-vaw nyumbewoftweetsfut: futuwe[option[int]] =
+    c-cweatowtweetcountstowe.get(usewid(cweatowid))
 
-  lazy val userProfile = hydratedCreator
-    .flatMap(_.profile).getOrElse(
-      throw new MagicFanoutCreatorEventPushCandidateHydratorException(
-        s"Unable to get user profile to generate tapThrough for userId: $creatorId"))
+  wazy vaw usewpwofiwe = h-hydwatedcweatow
+    .fwatmap(_.pwofiwe).getowewse(
+      t-thwow nyew magicfanoutcweatoweventpushcandidatehydwatowexception(
+        s"unabwe to get usew pwofiwe to genewate tapthwough fow usewid: $cweatowid"))
 
-  override val frigateNotification: FrigateNotification = candidate.frigateNotification
+  ovewwide v-vaw fwigatenotification: f-fwigatenotification = candidate.fwigatenotification
 
-  override def subscriberId: Option[Long] = candidate.subscriberId
+  o-ovewwide d-def subscwibewid: o-option[wong] = candidate.subscwibewid
 
-  override def creatorFanoutType: CreatorFanoutType = candidate.creatorFanoutType
+  ovewwide def cweatowfanouttype: c-cweatowfanouttype = candidate.cweatowfanouttype
 
-  override def target: PushTypes.Target = candidate.target
+  ovewwide def tawget: pushtypes.tawget = candidate.tawget
 
-  override def pushId: Long = candidate.pushId
+  o-ovewwide def pushid: wong = c-candidate.pushid
 
-  override def candidateMagicEventsReasons: Seq[MagicEventsReason] =
-    candidate.candidateMagicEventsReasons
+  o-ovewwide d-def candidatemagiceventsweasons: seq[magiceventsweason] =
+    c-candidate.candidatemagiceventsweasons
 
-  override def statsReceiver: StatsReceiver = statsScoped
+  o-ovewwide d-def statsweceivew: s-statsweceivew = statsscoped
 
-  override def pushCopyId: Option[Int] = copyIds.pushCopyId
+  ovewwide def p-pushcopyid: option[int] = c-copyids.pushcopyid
 
-  override def ntabCopyId: Option[Int] = copyIds.ntabCopyId
+  o-ovewwide def nytabcopyid: o-option[int] = c-copyids.ntabcopyid
 
-  override def copyAggregationId: Option[String] = copyIds.aggregationId
+  ovewwide def copyaggwegationid: option[stwing] = copyids.aggwegationid
 
-  override def commonRecType: CommonRecommendationType = candidate.commonRecType
+  o-ovewwide def commonwectype: commonwecommendationtype = candidate.commonwectype
 
-  override def weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
+  ovewwide def weightedopenowntabcwickmodewscowew: p-pushmwmodewscowew = pushmodewscowew
 
 }
 
-case class MagicFanouCreatorSubscriptionEventPushPredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutCreatorEventPushCandidate] {
+case cwass magicfanoucweatowsubscwiptioneventpushpwedicates(config: c-config)
+    e-extends basicsendhandwewpwedicates[magicfanoutcweatoweventpushcandidate] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  i-impwicit vaw statsweceivew: statsweceivew = config.statsweceivew.scope(getcwass.getsimpwename)
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutCreatorEventPushCandidate]
+  o-ovewwide vaw pwecandidatespecificpwedicates: w-wist[
+    nyamedpwedicate[magicfanoutcweatoweventpushcandidate]
   ] =
-    List(
-      PredicatesForCandidate.paramPredicate(
-        PushFeatureSwitchParams.EnableCreatorSubscriptionPush
-      ),
-      PredicatesForCandidate.isDeviceEligibleForCreatorPush,
-      MagicFanoutPredicatesForCandidate.creatorPushTargetIsNotCreator(),
-      MagicFanoutPredicatesForCandidate.duplicateCreatorPredicate,
-      MagicFanoutPredicatesForCandidate.magicFanoutCreatorPushFatiguePredicate(),
+    w-wist(
+      pwedicatesfowcandidate.pawampwedicate(
+        pushfeatuweswitchpawams.enabwecweatowsubscwiptionpush
+      ), /(^•ω•^)
+      pwedicatesfowcandidate.isdeviceewigibwefowcweatowpush, (⑅˘꒳˘)
+      magicfanoutpwedicatesfowcandidate.cweatowpushtawgetisnotcweatow(), ( ͡o ω ͡o )
+      magicfanoutpwedicatesfowcandidate.dupwicatecweatowpwedicate, òωó
+      m-magicfanoutpwedicatesfowcandidate.magicfanoutcweatowpushfatiguepwedicate(), (⑅˘꒳˘)
     )
 
-  override val postCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutCreatorEventPushCandidate]
+  ovewwide v-vaw postcandidatespecificpwedicates: wist[
+    n-nyamedpwedicate[magicfanoutcweatoweventpushcandidate]
   ] =
-    List(
-      MagicFanoutNtabCaretFatiguePredicate(),
-      MagicFanoutPredicatesForCandidate.isSuperFollowingCreator()(config, statsReceiver).flip
+    w-wist(
+      magicfanoutntabcawetfatiguepwedicate(), XD
+      magicfanoutpwedicatesfowcandidate.issupewfowwowingcweatow()(config, -.- statsweceivew).fwip
     )
 }
 
-case class MagicFanoutNewCreatorEventPushPredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutCreatorEventPushCandidate] {
+c-case c-cwass magicfanoutnewcweatoweventpushpwedicates(config: config)
+    e-extends basicsendhandwewpwedicates[magicfanoutcweatoweventpushcandidate] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  i-impwicit vaw statsweceivew: statsweceivew = config.statsweceivew.scope(getcwass.getsimpwename)
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutCreatorEventPushCandidate]
+  ovewwide vaw pwecandidatespecificpwedicates: wist[
+    nyamedpwedicate[magicfanoutcweatoweventpushcandidate]
   ] =
-    List(
-      PredicatesForCandidate.paramPredicate(
-        PushFeatureSwitchParams.EnableNewCreatorPush
-      ),
-      PredicatesForCandidate.isDeviceEligibleForCreatorPush,
-      MagicFanoutPredicatesForCandidate.duplicateCreatorPredicate,
-      MagicFanoutPredicatesForCandidate.magicFanoutCreatorPushFatiguePredicate,
+    w-wist(
+      p-pwedicatesfowcandidate.pawampwedicate(
+        p-pushfeatuweswitchpawams.enabwenewcweatowpush
+      ), :3
+      pwedicatesfowcandidate.isdeviceewigibwefowcweatowpush, nyaa~~
+      m-magicfanoutpwedicatesfowcandidate.dupwicatecweatowpwedicate, 😳
+      m-magicfanoutpwedicatesfowcandidate.magicfanoutcweatowpushfatiguepwedicate, (⑅˘꒳˘)
     )
 
-  override val postCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutCreatorEventPushCandidate]
+  ovewwide vaw p-postcandidatespecificpwedicates: wist[
+    nyamedpwedicate[magicfanoutcweatoweventpushcandidate]
   ] =
-    List(
-      MagicFanoutNtabCaretFatiguePredicate(),
-      MagicFanoutPredicatesForCandidate.isSuperFollowingCreator()(config, statsReceiver).flip
+    wist(
+      magicfanoutntabcawetfatiguepwedicate(), nyaa~~
+      magicfanoutpwedicatesfowcandidate.issupewfowwowingcweatow()(config, OwO s-statsweceivew).fwip
     )
 }

@@ -1,106 +1,106 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.storage.TweetStorageClient.Undelete
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.util.Time
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.stowage.tweetstowagecwient.undewete
+i-impowt com.twittew.tweetypie.stowage.tweetutiws._
+i-impowt c-com.twittew.utiw.time
 
-object UndeleteHandler {
-  def apply(
-    read: ManhattanOperations.Read,
-    localInsert: ManhattanOperations.Insert,
-    remoteInsert: ManhattanOperations.Insert,
-    delete: ManhattanOperations.Delete,
-    undeleteWindowHours: Int,
-    stats: StatsReceiver
-  ): Undelete = {
-    def withinUndeleteWindow(timestampMs: Long) =
-      (Time.now - Time.fromMilliseconds(timestampMs)).inHours < undeleteWindowHours
+o-object undewetehandwew {
+  d-def appwy(
+    w-wead: manhattanopewations.wead, (U ﹏ U)
+    wocawinsewt: manhattanopewations.insewt, ^•ﻌ•^
+    wemoteinsewt: manhattanopewations.insewt, (˘ω˘)
+    d-dewete: manhattanopewations.dewete, :3
+    undewetewindowhouws: int, ^^;;
+    s-stats: statsweceivew
+  ): undewete = {
+    d-def withinundewetewindow(timestampms: wong) =
+      (time.now - time.fwommiwwiseconds(timestampms)).inhouws < undewetewindowhouws
 
-    def prepareUndelete(
-      tweetId: TweetId,
-      records: Seq[TweetManhattanRecord]
-    ): (Undelete.Response, Option[TweetManhattanRecord]) = {
-      val undeleteRecord =
-        Some(TweetStateRecord.Undeleted(tweetId, Time.now.inMillis).toTweetMhRecord)
+    def pwepaweundewete(
+      t-tweetid: tweetid, 🥺
+      wecowds: s-seq[tweetmanhattanwecowd]
+    ): (undewete.wesponse, (⑅˘꒳˘) o-option[tweetmanhattanwecowd]) = {
+      vaw undewetewecowd =
+        some(tweetstatewecowd.undeweted(tweetid, nyaa~~ time.now.inmiwwis).totweetmhwecowd)
 
-      TweetStateRecord.mostRecent(records) match {
-        // check if we need to undo a soft deletion
-        case Some(TweetStateRecord.SoftDeleted(_, createdAt)) =>
-          if (createdAt > 0) {
-            if (withinUndeleteWindow(createdAt)) {
+      tweetstatewecowd.mostwecent(wecowds) m-match {
+        // check if we nyeed to undo a soft dewetion
+        case s-some(tweetstatewecowd.softdeweted(_, :3 cweatedat)) =>
+          if (cweatedat > 0) {
+            i-if (withinundewetewindow(cweatedat)) {
               (
-                mkSuccessfulUndeleteResponse(tweetId, records, Some(createdAt)),
-                undeleteRecord
+                m-mksuccessfuwundewetewesponse(tweetid, ( ͡o ω ͡o ) w-wecowds, s-some(cweatedat)),
+                undewetewecowd
               )
-            } else {
-              (Undelete.Response(Undelete.UndeleteResponseCode.BackupNotFound), None)
+            } ewse {
+              (undewete.wesponse(undewete.undewetewesponsecode.backupnotfound), mya n-nyone)
             }
-          } else {
-            throw InternalError(s"Timestamp unavailable for $tweetId")
+          } ewse {
+            thwow intewnawewwow(s"timestamp u-unavaiwabwe fow $tweetid")
           }
 
-        // BounceDeleted tweets may not be undeleted. see go/bouncedtweet
-        case Some(_: TweetStateRecord.HardDeleted | _: TweetStateRecord.BounceDeleted) =>
-          (Undelete.Response(Undelete.UndeleteResponseCode.BackupNotFound), None)
+        // bouncedeweted tweets may nyot be undeweted. (///ˬ///✿) see go/bouncedtweet
+        case s-some(_: tweetstatewecowd.hawddeweted | _: tweetstatewecowd.bouncedeweted) =>
+          (undewete.wesponse(undewete.undewetewesponsecode.backupnotfound), (˘ω˘) n-nyone)
 
-        case Some(_: TweetStateRecord.Undeleted) =>
-          // We still want to write the undelete record, because at this point, we only know that the local DC's
-          // winning record is not a soft/hard deletion record, while its possible that the remote DC's winning
-          // record might still be a soft deletion record. Having said that, we don't want to set it to true
-          // if the winning record is forceAdd, as the forceAdd call should have ensured that both DCs had the
-          // forceAdd record.
-          (mkSuccessfulUndeleteResponse(tweetId, records), undeleteRecord)
+        c-case some(_: t-tweetstatewecowd.undeweted) =>
+          // we stiww want to wwite the undewete wecowd, ^^;; because a-at this point, (✿oωo) w-we onwy know that the wocaw d-dc's
+          // w-winning wecowd is nyot a soft/hawd d-dewetion wecowd, (U ﹏ U) whiwe its p-possibwe that the wemote dc's winning
+          // wecowd might s-stiww be a soft dewetion wecowd. -.- h-having said that, ^•ﻌ•^ we don't want t-to set it to twue
+          // i-if the winning wecowd is fowceadd, rawr as the fowceadd caww shouwd have ensuwed that both dcs had the
+          // fowceadd wecowd. (˘ω˘)
+          (mksuccessfuwundewetewesponse(tweetid, nyaa~~ w-wecowds), UwU undewetewecowd)
 
-        case Some(_: TweetStateRecord.ForceAdded) =>
-          (mkSuccessfulUndeleteResponse(tweetId, records), None)
+        c-case some(_: tweetstatewecowd.fowceadded) =>
+          (mksuccessfuwundewetewesponse(tweetid, :3 w-wecowds), (⑅˘꒳˘) nyone)
 
-        // lets write the undeletion record just in case there is a softdeletion record in flight
-        case None => (mkSuccessfulUndeleteResponse(tweetId, records), undeleteRecord)
+        // w-wets wwite the undewetion w-wecowd just in case thewe is a softdewetion wecowd in f-fwight
+        case nyone => (mksuccessfuwundewetewesponse(tweetid, (///ˬ///✿) wecowds), ^^;; undewetewecowd)
       }
     }
 
-    // Write the undelete record both locally and remotely to protect
-    // against races with hard delete replication. We only need this
-    // protection for the insertion of the undelete record.
-    def multiInsert(record: TweetManhattanRecord): Stitch[Unit] =
-      Stitch
-        .collect(
-          Seq(
-            localInsert(record).liftToTry,
-            remoteInsert(record).liftToTry
+    // wwite the undewete wecowd both w-wocawwy and wemotewy to pwotect
+    // a-against w-waces with hawd d-dewete wepwication. >_< we onwy nyeed t-this
+    // p-pwotection fow the i-insewtion of t-the undewete wecowd. rawr x3
+    def muwtiinsewt(wecowd: tweetmanhattanwecowd): s-stitch[unit] =
+      s-stitch
+        .cowwect(
+          s-seq(
+            w-wocawinsewt(wecowd).wifttotwy, /(^•ω•^)
+            w-wemoteinsewt(wecowd).wifttotwy
           )
         )
-        .map(collectWithRateLimitCheck)
-        .lowerFromTry
+        .map(cowwectwithwatewimitcheck)
+        .wowewfwomtwy
 
-    def deleteSoftDeleteRecord(tweetId: TweetId): Stitch[Unit] = {
-      val mhKey = TweetKey.softDeletionStateKey(tweetId)
-      delete(mhKey, None)
+    def dewetesoftdewetewecowd(tweetid: tweetid): stitch[unit] = {
+      v-vaw mhkey = tweetkey.softdewetionstatekey(tweetid)
+      dewete(mhkey, nyone)
     }
 
-    tweetId =>
-      for {
-        records <- read(tweetId)
-        (response, undeleteRecord) = prepareUndelete(tweetId, records)
-        _ <- Stitch.collect(undeleteRecord.map(multiInsert)).unit
-        _ <- deleteSoftDeleteRecord(tweetId)
-      } yield {
-        response
+    tweetid =>
+      fow {
+        w-wecowds <- wead(tweetid)
+        (wesponse, :3 undewetewecowd) = pwepaweundewete(tweetid, (ꈍᴗꈍ) wecowds)
+        _ <- stitch.cowwect(undewetewecowd.map(muwtiinsewt)).unit
+        _ <- d-dewetesoftdewetewecowd(tweetid)
+      } y-yiewd {
+        w-wesponse
       }
   }
 
-  private[storage] def mkSuccessfulUndeleteResponse(
-    tweetId: TweetId,
-    records: Seq[TweetManhattanRecord],
-    timestampOpt: Option[Long] = None
+  pwivate[stowage] d-def mksuccessfuwundewetewesponse(
+    tweetid: t-tweetid, /(^•ω•^)
+    wecowds: s-seq[tweetmanhattanwecowd], (⑅˘꒳˘)
+    timestampopt: option[wong] = nyone
   ) =
-    Undelete.Response(
-      Undelete.UndeleteResponseCode.Success,
-      Some(
-        StorageConversions.fromStoredTweet(buildStoredTweet(tweetId, records))
-      ),
-      archivedAtMillis = timestampOpt
+    undewete.wesponse(
+      undewete.undewetewesponsecode.success,
+      s-some(
+        stowageconvewsions.fwomstowedtweet(buiwdstowedtweet(tweetid, ( ͡o ω ͡o ) w-wecowds))
+      ), òωó
+      awchivedatmiwwis = timestampopt
     )
 }

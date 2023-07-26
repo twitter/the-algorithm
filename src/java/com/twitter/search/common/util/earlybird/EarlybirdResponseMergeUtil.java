@@ -1,269 +1,269 @@
-package com.twitter.search.common.util.earlybird;
+package com.twittew.seawch.common.utiw.eawwybiwd;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+impowt java.utiw.hashmap;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.concuwwent.executionexception;
 
-import com.google.common.base.Preconditions;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cache.woadingcache;
+impowt com.googwe.common.cowwect.immutabwemap;
+impowt com.googwe.common.cowwect.wists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
+impowt com.twittew.common.cowwections.paiw;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwankingmode;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwifttweetsouwce;
 
 /**
- * Utility methods to merge EarlybirdResponses.
+ * u-utiwity methods to mewge eawwybiwdwesponses. σωσ
  */
-public final class EarlybirdResponseMergeUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdResponseMergeUtil.class);
+pubwic finaw cwass eawwybiwdwesponsemewgeutiw {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(eawwybiwdwesponsemewgeutiw.cwass);
 
-  private static final String INVALID_RESPONSE_STATS_PREFIX = "invalid_response_stats_";
+  pwivate static finaw stwing invawid_wesponse_stats_pwefix = "invawid_wesponse_stats_";
 
-  // Stats for invalid earlybird response
-  private static final ImmutableMap<EarlybirdResponseCode, SearchCounter> ERROR_EXCEPTIONS;
+  // s-stats fow invawid e-eawwybiwd wesponse
+  p-pwivate static f-finaw immutabwemap<eawwybiwdwesponsecode, >w< s-seawchcountew> ewwow_exceptions;
 
-  public static final SearchCounter NULL_RESPONSE_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "null_response");
-  public static final SearchCounter SEARCH_RESULTS_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "search_results_not_set");
-  public static final SearchCounter SEARCH_RESULTS_WITH_RESULTS_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "search_results_with_results_not_set");
-  public static final SearchCounter MAX_SEARCHED_STATUS_ID_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "max_searched_status_id_not_set");
-  public static final SearchCounter MIN_SEARCHED_STATUS_ID_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "min_searched_status_id_not_set");
+  pubwic static f-finaw seawchcountew nyuww_wesponse_countew =
+      seawchcountew.expowt(invawid_wesponse_stats_pwefix + "nuww_wesponse");
+  p-pubwic static finaw seawchcountew seawch_wesuwts_not_set_countew =
+      seawchcountew.expowt(invawid_wesponse_stats_pwefix + "seawch_wesuwts_not_set");
+  pubwic static finaw seawchcountew s-seawch_wesuwts_with_wesuwts_not_set_countew =
+      seawchcountew.expowt(invawid_wesponse_stats_pwefix + "seawch_wesuwts_with_wesuwts_not_set");
+  p-pubwic s-static finaw s-seawchcountew max_seawched_status_id_not_set_countew =
+      seawchcountew.expowt(invawid_wesponse_stats_pwefix + "max_seawched_status_id_not_set");
+  pubwic static finaw seawchcountew m-min_seawched_status_id_not_set_countew =
+      s-seawchcountew.expowt(invawid_wesponse_stats_pwefix + "min_seawched_status_id_not_set");
 
   static {
-    ImmutableMap.Builder<EarlybirdResponseCode, SearchCounter> builder = ImmutableMap.builder();
+    i-immutabwemap.buiwdew<eawwybiwdwesponsecode, (ˆ ﻌ ˆ)♡ s-seawchcountew> buiwdew = i-immutabwemap.buiwdew();
 
-    for (EarlybirdResponseCode responseCode : EarlybirdResponseCode.values()) {
-      if (responseCode != EarlybirdResponseCode.SUCCESS) {
-        builder.put(responseCode, SearchCounter.export(
-            INVALID_RESPONSE_STATS_PREFIX + responseCode.name().toLowerCase()));
+    fow (eawwybiwdwesponsecode w-wesponsecode : eawwybiwdwesponsecode.vawues()) {
+      if (wesponsecode != e-eawwybiwdwesponsecode.success) {
+        buiwdew.put(wesponsecode, ʘwʘ s-seawchcountew.expowt(
+            invawid_wesponse_stats_pwefix + w-wesponsecode.name().towowewcase()));
       }
     }
 
-    ERROR_EXCEPTIONS = builder.build();
+    e-ewwow_exceptions = buiwdew.buiwd();
   }
 
-  private EarlybirdResponseMergeUtil() {
-  }
-
-  /**
-   * Tags the results in the given EarlybirdResponse with the given ThriftTweetSource and adds them
-   * to the given list of results.
-   *
-   * @param results The list of results to which the new results will be added.
-   * @param earlybirdResponse The EarlybirdResponse whose results will be added to {@code results}.
-   * @param tweetSource The ThriftTweetSource that will be used to mark all results in
-   *                    {@code earlybirdResponse}.
-   * @return {@code false} if {@code earlybirdResponse} is {@code null} or doesn't have any results;
-   *         {@code true}, otherwise.
-   */
-  public static boolean addResultsToList(List<ThriftSearchResult> results,
-                                         EarlybirdResponse earlybirdResponse,
-                                         ThriftTweetSource tweetSource) {
-    return EarlybirdResponseUtil.hasResults(earlybirdResponse)
-      && addResultsToList(results,
-                          earlybirdResponse.getSearchResults().getResults(),
-                          tweetSource);
+  pwivate eawwybiwdwesponsemewgeutiw() {
   }
 
   /**
-   * Tags the results in the given list with the given ThriftTweetSource and adds them to the given
-   * list of results.
+   * tags the wesuwts in the given eawwybiwdwesponse with the g-given thwifttweetsouwce a-and adds them
+   * to the g-given wist of w-wesuwts. :3
    *
-   * @param results The list of results to which the new results will be added.
-   * @param resultsToAdd The list of results to add.
-   * @param tweetSource The ThriftTweetSource that will be used to mark all results in
-   *                    {@code resultsToAdd}.
-   * @return {@code false} if {@code results} is {@code null} or if {@code resultsToAdd} is
-   *         {@code null} or doesn't have any results; {@code true}, otherwise.
+   * @pawam w-wesuwts the wist of wesuwts to which the nyew wesuwts w-wiww be added. (˘ω˘)
+   * @pawam eawwybiwdwesponse the eawwybiwdwesponse whose wesuwts w-wiww be added to {@code wesuwts}. 😳😳😳
+   * @pawam tweetsouwce t-the thwifttweetsouwce t-that wiww be used t-to mawk aww wesuwts in
+   *                    {@code e-eawwybiwdwesponse}. rawr x3
+   * @wetuwn {@code f-fawse} if {@code e-eawwybiwdwesponse} i-is {@code nyuww} ow doesn't have any wesuwts;
+   *         {@code t-twue}, (✿oωo) othewwise.
    */
-  public static boolean addResultsToList(List<ThriftSearchResult> results,
-                                         List<ThriftSearchResult> resultsToAdd,
-                                         ThriftTweetSource tweetSource) {
-    Preconditions.checkNotNull(results);
-    if ((resultsToAdd == null) || resultsToAdd.isEmpty()) {
-      return false;
+  p-pubwic static boowean a-addwesuwtstowist(wist<thwiftseawchwesuwt> w-wesuwts, (ˆ ﻌ ˆ)♡
+                                         e-eawwybiwdwesponse eawwybiwdwesponse, :3
+                                         thwifttweetsouwce tweetsouwce) {
+    w-wetuwn eawwybiwdwesponseutiw.haswesuwts(eawwybiwdwesponse)
+      && addwesuwtstowist(wesuwts, (U ᵕ U❁)
+                          eawwybiwdwesponse.getseawchwesuwts().getwesuwts(), ^^;;
+                          tweetsouwce);
+  }
+
+  /**
+   * tags the wesuwts in the g-given wist with the given thwifttweetsouwce and adds them to the g-given
+   * wist o-of wesuwts. mya
+   *
+   * @pawam wesuwts t-the wist of wesuwts to which t-the nyew wesuwts wiww be added. 😳😳😳
+   * @pawam w-wesuwtstoadd the w-wist of wesuwts to add. OwO
+   * @pawam tweetsouwce the thwifttweetsouwce that wiww be used to mawk a-aww wesuwts in
+   *                    {@code wesuwtstoadd}. rawr
+   * @wetuwn {@code fawse} if {@code w-wesuwts} is {@code nyuww} ow i-if {@code wesuwtstoadd} i-is
+   *         {@code nyuww} ow doesn't have any wesuwts; {@code t-twue}, XD o-othewwise. (U ﹏ U)
+   */
+  pubwic static b-boowean addwesuwtstowist(wist<thwiftseawchwesuwt> w-wesuwts, (˘ω˘)
+                                         wist<thwiftseawchwesuwt> wesuwtstoadd, UwU
+                                         thwifttweetsouwce tweetsouwce) {
+    pweconditions.checknotnuww(wesuwts);
+    i-if ((wesuwtstoadd == n-nyuww) || w-wesuwtstoadd.isempty()) {
+      wetuwn fawse;
     }
 
-    markWithTweetSource(resultsToAdd, tweetSource);
+    m-mawkwithtweetsouwce(wesuwtstoadd, >_< t-tweetsouwce);
 
-    results.addAll(resultsToAdd);
-    return true;
+    wesuwts.addaww(wesuwtstoadd);
+    w-wetuwn twue;
   }
 
   /**
-   * Distinct the input ThriftSearchResult by its status id. If there are duplicates, the first
-   * instance of the duplicates is returned in the distinct result. If the distinct result is the
-   * same as the input result, the initial input result is returned; otherwise, the distinct result
-   * is returned.
+   * distinct the input thwiftseawchwesuwt by its status id. σωσ if thewe a-awe dupwicates, 🥺 t-the fiwst
+   * instance of the dupwicates is wetuwned i-in the distinct w-wesuwt. 🥺 if the distinct wesuwt is the
+   * same as the input w-wesuwt, the initiaw input wesuwt is wetuwned; othewwise, ʘwʘ the distinct wesuwt
+   * i-is wetuwned. :3
    *
-   * @param results the input result
-   * @param dupsStats stats counter track duplicates source
-   * @return the input result if there is no duplicate; otherwise, return the distinct result
+   * @pawam wesuwts the input wesuwt
+   * @pawam d-dupsstats s-stats countew twack dupwicates souwce
+   * @wetuwn the input w-wesuwt if thewe i-is nyo dupwicate; othewwise, (U ﹏ U) wetuwn the distinct wesuwt
    */
-  public static List<ThriftSearchResult> distinctByStatusId(
-      List<ThriftSearchResult> results,
-      LoadingCache<Pair<ThriftTweetSource, ThriftTweetSource>, SearchCounter> dupsStats) {
-    Map<Long, ThriftTweetSource> seenStatusIdToSourceMap = new HashMap<>();
-    List<ThriftSearchResult> distinctResults = Lists.newArrayListWithCapacity(results.size());
-    for (ThriftSearchResult result : results)  {
-      if (seenStatusIdToSourceMap.containsKey(result.getId())) {
-        ThriftTweetSource source1 = seenStatusIdToSourceMap.get(result.getId());
-        ThriftTweetSource source2 = result.getTweetSource();
-        if (source1 != null && source2 != null) {
-          try {
-            dupsStats.get(Pair.of(source1, source2)).increment();
-          } catch (ExecutionException e) {
-            LOG.warn("Could not increment stat for duplicate results from clusters " + source1
-                + " and " + source2, e);
+  p-pubwic static wist<thwiftseawchwesuwt> distinctbystatusid(
+      w-wist<thwiftseawchwesuwt> wesuwts, (U ﹏ U)
+      woadingcache<paiw<thwifttweetsouwce, thwifttweetsouwce>, ʘwʘ s-seawchcountew> dupsstats) {
+    m-map<wong, >w< thwifttweetsouwce> seenstatusidtosouwcemap = n-nyew hashmap<>();
+    wist<thwiftseawchwesuwt> distinctwesuwts = w-wists.newawwaywistwithcapacity(wesuwts.size());
+    fow (thwiftseawchwesuwt w-wesuwt : wesuwts)  {
+      i-if (seenstatusidtosouwcemap.containskey(wesuwt.getid())) {
+        t-thwifttweetsouwce souwce1 = s-seenstatusidtosouwcemap.get(wesuwt.getid());
+        t-thwifttweetsouwce souwce2 = wesuwt.gettweetsouwce();
+        i-if (souwce1 != n-nyuww && souwce2 != n-nyuww) {
+          twy {
+            dupsstats.get(paiw.of(souwce1, rawr x3 s-souwce2)).incwement();
+          } catch (executionexception e-e) {
+            w-wog.wawn("couwd nyot incwement stat fow dupwicate wesuwts f-fwom cwustews " + s-souwce1
+                + " and " + s-souwce2, OwO e-e);
           }
         }
-      } else {
-        distinctResults.add(result);
-        seenStatusIdToSourceMap.put(result.getId(), result.getTweetSource());
+      } ewse {
+        d-distinctwesuwts.add(wesuwt);
+        seenstatusidtosouwcemap.put(wesuwt.getid(), ^•ﻌ•^ wesuwt.gettweetsouwce());
       }
     }
-    return results.size() == distinctResults.size() ? results : distinctResults;
+    wetuwn wesuwts.size() == distinctwesuwts.size() ? w-wesuwts : distinctwesuwts;
   }
 
   /**
-   * Tags the given results with the given ThriftTweetSource.
+   * tags t-the given wesuwts with the given t-thwifttweetsouwce. >_<
    *
-   * @param results The results to be tagged.
-   * @param tweetSource The ThriftTweetSource to be used to tag the given results.
+   * @pawam wesuwts the w-wesuwts to be tagged. OwO
+   * @pawam tweetsouwce the t-thwifttweetsouwce t-to be used t-to tag the given w-wesuwts. >_<
    */
-  public static void markWithTweetSource(List<ThriftSearchResult> results,
-                                         ThriftTweetSource tweetSource) {
-    if (results != null) {
-      for (ThriftSearchResult result : results) {
-        result.setTweetSource(tweetSource);
+  p-pubwic static void mawkwithtweetsouwce(wist<thwiftseawchwesuwt> wesuwts, (ꈍᴗꈍ)
+                                         thwifttweetsouwce tweetsouwce) {
+    if (wesuwts != nyuww) {
+      f-fow (thwiftseawchwesuwt wesuwt : w-wesuwts) {
+        w-wesuwt.settweetsouwce(tweetsouwce);
       }
     }
   }
 
   /**
-   * Check if an Earlybird response is valid
+   * check i-if an eawwybiwd wesponse is vawid
    */
-  public static boolean isValidResponse(final EarlybirdResponse response) {
-    if (response == null) {
-      NULL_RESPONSE_COUNTER.increment();
-      return false;
+  pubwic static boowean i-isvawidwesponse(finaw e-eawwybiwdwesponse wesponse) {
+    i-if (wesponse == nyuww) {
+      nyuww_wesponse_countew.incwement();
+      w-wetuwn fawse;
     }
 
-    if (!EarlybirdResponseUtil.isSuccessfulResponse(response)) {
-      return false;
+    i-if (!eawwybiwdwesponseutiw.issuccessfuwwesponse(wesponse)) {
+      wetuwn fawse;
     }
 
-    if (!response.isSetSearchResults()) {
-      SEARCH_RESULTS_NOT_SET_COUNTER.increment();
-      return true;
+    i-if (!wesponse.issetseawchwesuwts()) {
+      s-seawch_wesuwts_not_set_countew.incwement();
+      wetuwn twue;
     }
 
-    if (!response.getSearchResults().isSetResults()) {
-      SEARCH_RESULTS_WITH_RESULTS_NOT_SET_COUNTER.increment();
+    if (!wesponse.getseawchwesuwts().issetwesuwts()) {
+      seawch_wesuwts_with_wesuwts_not_set_countew.incwement();
     }
 
-    // In earlybird, when earlybird terminated, e.g., time out, complex queries - we don't set the
-    // min/max  searched status id.
-    boolean isEarlyTerminated = response.isSetEarlyTerminationInfo()
-        && response.getEarlyTerminationInfo().isEarlyTerminated();
+    // in eawwybiwd, >w< when eawwybiwd tewminated, (U ﹏ U) e-e.g., time o-out, ^^ compwex q-quewies - we don't s-set the
+    // m-min/max  seawched status id. (U ﹏ U)
+    b-boowean iseawwytewminated = wesponse.isseteawwytewminationinfo()
+        && wesponse.geteawwytewminationinfo().iseawwytewminated();
 
-    if (!isEarlyTerminated && !response.getSearchResults().isSetMinSearchedStatusID()) {
-      MIN_SEARCHED_STATUS_ID_NOT_SET_COUNTER.increment();
+    i-if (!iseawwytewminated && !wesponse.getseawchwesuwts().issetminseawchedstatusid()) {
+      min_seawched_status_id_not_set_countew.incwement();
     }
 
-    if (!isEarlyTerminated && !response.getSearchResults().isSetMaxSearchedStatusID()) {
-      MAX_SEARCHED_STATUS_ID_NOT_SET_COUNTER.increment();
+    i-if (!iseawwytewminated && !wesponse.getseawchwesuwts().issetmaxseawchedstatusid()) {
+      m-max_seawched_status_id_not_set_countew.incwement();
     }
 
-    return true;
+    wetuwn twue;
   }
 
   /**
-   * For invalid successful Earlybird Response, return a failed response with debug msg.
+   * f-fow invawid successfuw eawwybiwd wesponse, :3 w-wetuwn a faiwed wesponse w-with debug msg. (✿oωo)
    */
-  public static EarlybirdResponse transformInvalidResponse(final EarlybirdResponse response,
-                                                           final String debugMsg) {
-    if (response == null) {
-      return failedEarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR,
-          debugMsg + ", msg: null response from downstream");
+  p-pubwic static eawwybiwdwesponse t-twansfowminvawidwesponse(finaw eawwybiwdwesponse wesponse, XD
+                                                           finaw s-stwing debugmsg) {
+    i-if (wesponse == n-nyuww) {
+      wetuwn faiwedeawwybiwdwesponse(eawwybiwdwesponsecode.pewsistent_ewwow, >w<
+          debugmsg + ", òωó m-msg: nuww wesponse fwom downstweam");
     }
-    Preconditions.checkState(response.getResponseCode() != EarlybirdResponseCode.SUCCESS);
+    p-pweconditions.checkstate(wesponse.getwesponsecode() != e-eawwybiwdwesponsecode.success);
 
-    EarlybirdResponseCode newResponseCode;
-    EarlybirdResponseCode responseCode = response.getResponseCode();
-    switch (responseCode) {
-      case TIER_SKIPPED:
-        ERROR_EXCEPTIONS.get(responseCode).increment();
-        return response;
-      case REQUEST_BLOCKED_ERROR:
-      case CLIENT_ERROR:
-      case SERVER_TIMEOUT_ERROR:
-      case QUOTA_EXCEEDED_ERROR:
-      case CLIENT_CANCEL_ERROR:
-      case TOO_MANY_PARTITIONS_FAILED_ERROR:
-        ERROR_EXCEPTIONS.get(responseCode).increment();
-        newResponseCode = responseCode;
-        break;
-      default:
-        ERROR_EXCEPTIONS.get(responseCode).increment();
-        newResponseCode = EarlybirdResponseCode.PERSISTENT_ERROR;
+    eawwybiwdwesponsecode n-nyewwesponsecode;
+    eawwybiwdwesponsecode w-wesponsecode = w-wesponse.getwesponsecode();
+    switch (wesponsecode) {
+      case tiew_skipped:
+        e-ewwow_exceptions.get(wesponsecode).incwement();
+        wetuwn wesponse;
+      case wequest_bwocked_ewwow:
+      c-case cwient_ewwow:
+      c-case sewvew_timeout_ewwow:
+      case q-quota_exceeded_ewwow:
+      case c-cwient_cancew_ewwow:
+      c-case t-too_many_pawtitions_faiwed_ewwow:
+        ewwow_exceptions.get(wesponsecode).incwement();
+        nyewwesponsecode = wesponsecode;
+        bweak;
+      defauwt:
+        ewwow_exceptions.get(wesponsecode).incwement();
+        nyewwesponsecode = eawwybiwdwesponsecode.pewsistent_ewwow;
     }
 
-    String newDebugMsg = debugMsg + ", downstream response code: " + responseCode
-      + (response.isSetDebugString() ? ", downstream msg: " + response.getDebugString() : "");
+    stwing nyewdebugmsg = debugmsg + ", (ꈍᴗꈍ) downstweam wesponse c-code: " + wesponsecode
+      + (wesponse.issetdebugstwing() ? ", rawr x3 d-downstweam msg: " + wesponse.getdebugstwing() : "");
 
 
-    return failedEarlybirdResponse(newResponseCode, newDebugMsg);
+    wetuwn f-faiwedeawwybiwdwesponse(newwesponsecode, n-nyewdebugmsg);
   }
 
   /**
-   * Create a new EarlybirdResponse with debug msg
+   * c-cweate a new eawwybiwdwesponse w-with debug msg
    */
-  public static EarlybirdResponse failedEarlybirdResponse(final EarlybirdResponseCode responseCode,
-                                                          final String debugMsg) {
-    EarlybirdResponse failedResponse = new EarlybirdResponse();
-    failedResponse.setResponseCode(responseCode);
-    failedResponse.setDebugString(debugMsg);
-    return failedResponse;
+  p-pubwic static eawwybiwdwesponse f-faiwedeawwybiwdwesponse(finaw eawwybiwdwesponsecode wesponsecode, rawr x3
+                                                          f-finaw stwing debugmsg) {
+    e-eawwybiwdwesponse f-faiwedwesponse = nyew eawwybiwdwesponse();
+    f-faiwedwesponse.setwesponsecode(wesponsecode);
+    f-faiwedwesponse.setdebugstwing(debugmsg);
+    w-wetuwn f-faiwedwesponse;
   }
 
   /**
-   * Returns the number of results to keep as part of merge-collection. Recency mode should ignore
-   * relevance options. In particular, the flag returnAllResults inside relevance options.
+   * w-wetuwns the nyumbew o-of wesuwts t-to keep as pawt o-of mewge-cowwection. σωσ w-wecency mode shouwd ignowe
+   * w-wewevance options. i-in pawticuwaw, (ꈍᴗꈍ) t-the fwag wetuwnawwwesuwts i-inside wewevance options. rawr
    */
-  public static int computeNumResultsToKeep(EarlybirdRequest request) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+  pubwic static i-int computenumwesuwtstokeep(eawwybiwdwequest wequest) {
+    t-thwiftseawchquewy seawchquewy = w-wequest.getseawchquewy();
 
-    if (searchQuery.getRankingMode() != ThriftSearchRankingMode.RECENCY
-        && searchQuery.isSetRelevanceOptions()
-        && searchQuery.getRelevanceOptions().isReturnAllResults()) {
-      return Integer.MAX_VALUE;
+    i-if (seawchquewy.getwankingmode() != thwiftseawchwankingmode.wecency
+        && s-seawchquewy.issetwewevanceoptions()
+        && seawchquewy.getwewevanceoptions().iswetuwnawwwesuwts()) {
+      w-wetuwn integew.max_vawue;
     }
 
-    if (request.isSetNumResultsToReturnAtRoot()) {
-      return request.getNumResultsToReturnAtRoot();
+    if (wequest.issetnumwesuwtstowetuwnatwoot()) {
+      w-wetuwn wequest.getnumwesuwtstowetuwnatwoot();
     }
 
-    if (searchQuery.isSetCollectorParams()) {
-      return searchQuery.getCollectorParams().getNumResultsToReturn();
+    if (seawchquewy.issetcowwectowpawams()) {
+      w-wetuwn seawchquewy.getcowwectowpawams().getnumwesuwtstowetuwn();
     }
 
-    return searchQuery.getNumResults();
+    wetuwn seawchquewy.getnumwesuwts();
   }
 }

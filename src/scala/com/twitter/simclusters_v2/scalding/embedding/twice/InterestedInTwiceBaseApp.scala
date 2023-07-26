@@ -1,494 +1,494 @@
-package com.twitter.simclusters_v2.scalding.embedding.twice
+package com.twittew.simcwustews_v2.scawding.embedding.twice
 
-import com.twitter.bijection.Injection
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Stat
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common.clustering.ClusteringMethod
-import com.twitter.simclusters_v2.common.clustering.ClusteringStatistics._
-import com.twitter.simclusters_v2.common.clustering.ClusterRepresentativeSelectionMethod
-import com.twitter.simclusters_v2.common.clustering.ClusterRepresentativeSelectionStatistics._
-import com.twitter.simclusters_v2.hdfs_sources.ProducerEmbeddingSources
-import com.twitter.simclusters_v2.hdfs_sources.UserUserGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.MultiEmbeddingType
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
-import com.twitter.simclusters_v2.thriftscala.OrderedClustersAndMembers
-import com.twitter.simclusters_v2.thriftscala.ClusterMembers
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingIdWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding.Ids
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingByIds
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersEmbeddingId => SimClustersEmbeddingIdThrift
+impowt c-com.twittew.bijection.injection
+i-impowt com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt c-com.twittew.scawding.datewange
+i-impowt com.twittew.scawding.days
+i-impowt com.twittew.scawding.execution
+i-impowt com.twittew.scawding.stat
+i-impowt com.twittew.scawding.typedtsv
+impowt com.twittew.scawding.uniqueid
+impowt com.twittew.scawding.typed.typedpipe
+impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.awwowcwossdc
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.simcwustewsembedding
+impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.common.cwustewing.cwustewingmethod
+i-impowt com.twittew.simcwustews_v2.common.cwustewing.cwustewingstatistics._
+i-impowt com.twittew.simcwustews_v2.common.cwustewing.cwustewwepwesentativesewectionmethod
+impowt com.twittew.simcwustews_v2.common.cwustewing.cwustewwepwesentativesewectionstatistics._
+impowt com.twittew.simcwustews_v2.hdfs_souwces.pwoducewembeddingsouwces
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.usewusewgwaphscawadataset
+impowt com.twittew.simcwustews_v2.scawding.common.utiw
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.muwtiembeddingtype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.neighbowwithweights
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.owdewedcwustewsandmembews
+impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewmembews
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingidwithscowe
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsmuwtiembedding
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsmuwtiembedding.ids
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsmuwtiembeddingbyids
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsmuwtiembeddingid
+impowt com.twittew.simcwustews_v2.thwiftscawa.usewandneighbows
+impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  s-simcwustewsembeddingid => simcwustewsembeddingidthwift
 }
-import com.twitter.util.Stopwatch
-import java.util.TimeZone
-import scala.util.Random.shuffle
+i-impowt com.twittew.utiw.stopwatch
+i-impowt java.utiw.timezone
+i-impowt scawa.utiw.wandom.shuffwe
 
 /**
- * Base app for computing User InterestedIn multi-embedding representation.
- * TWICE: Capturing users’ long-term interests using multiple SimClusters embeddings.
- * This job will
- * - Randomly select K follow/fav actions for each user,
- * - cluster the follow/fav actions for each user,
- * - for each cluster, construct a representation (e.g. average or medoid).
+ * base app fow computing usew i-intewestedin m-muwti-embedding wepwesentation. ʘwʘ
+ * t-twice: captuwing u-usews’ wong-tewm intewests u-using muwtipwe simcwustews embeddings. nyaa~~
+ * t-this job wiww
+ * - wandomwy sewect k f-fowwow/fav actions fow each usew, UwU
+ * - c-cwustew the fowwow/fav actions f-fow each usew, (⑅˘꒳˘)
+ * - f-fow each cwustew, (˘ω˘) constwuct a wepwesentation (e.g. :3 avewage ow medoid). (˘ω˘)
  *
- * @tparam T type of producer embedding. e.g. SimClustersEmbedding
+ * @tpawam t type of pwoducew embedding. nyaa~~ e.g. s-simcwustewsembedding
  */
-trait InterestedInTwiceBaseApp[T] {
+t-twait intewestedintwicebaseapp[t] {
 
-  import InterestedInTwiceBaseApp._
+  i-impowt intewestedintwicebaseapp._
 
-  def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-
-  /**
-   * function to output similarity (>=0, the larger, more similar), given two producer embeddings.
-   */
-  def producerProducerSimilarityFnForClustering: (T, T) => Double
-  def producerProducerSimilarityFnForClusterRepresentative: (T, T) => Double
-
-  // Sort clusters by decreasing size, fall back to entity ID to break tie
-  val clusterOrdering: Ordering[Set[Long]] = math.Ordering.by(c => (-c.size, c.min))
+  d-def modewvewsion: m-modewvewsion = modewvewsion.modew20m145k2020
 
   /**
-   * Read user-user graph.
+   * function to output simiwawity (>=0, (U ﹏ U) t-the wawgew, nyaa~~ mowe simiwaw), ^^;; given two pwoducew embeddings. OwO
    */
-  def getUserUserGraph(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[UserAndNeighbors] = {
-    DAL
-      .readMostRecentSnapshot(
-        UserUserGraphScalaDataset
+  def pwoducewpwoducewsimiwawityfnfowcwustewing: (t, nyaa~~ t-t) => doubwe
+  def pwoducewpwoducewsimiwawityfnfowcwustewwepwesentative: (t, UwU t-t) => doubwe
+
+  // s-sowt c-cwustews by decweasing size, 😳 faww b-back to entity i-id to bweak tie
+  v-vaw cwustewowdewing: o-owdewing[set[wong]] = math.owdewing.by(c => (-c.size, 😳 c.min))
+
+  /**
+   * w-wead usew-usew g-gwaph.
+   */
+  d-def getusewusewgwaph(
+    i-impwicit d-datewange: datewange, (ˆ ﻌ ˆ)♡
+    timezone: timezone
+  ): typedpipe[usewandneighbows] = {
+    d-daw
+      .weadmostwecentsnapshot(
+        usewusewgwaphscawadataset
       )
-      .withRemoteReadPolicy(AllowCrossDC)
-      .toTypedPipe
+      .withwemoteweadpowicy(awwowcwossdc)
+      .totypedpipe
   }
 
   /**
-   * Randomly select up to maxNeighborsByUser neighbors for each user.
-   * Attempts to equally sample both follow and fav edges (e.g. maxNeighborsByUser/2 for each).
-   * However, if one type of edge is insufficient, backfill with other type up to maxNeighborsByUser neighbours.
-   * @param userUserGraph User-User follow/fav graph.
-   * @param maxNeighborsByUser How many neighbors to keep for each user.
+   * wandomwy sewect up to maxneighbowsbyusew nyeighbows fow each u-usew. (✿oωo)
+   * attempts to equawwy sampwe both fowwow and fav edges (e.g. nyaa~~ m-maxneighbowsbyusew/2 f-fow each). ^^
+   * h-howevew, (///ˬ///✿) if one type o-of edge is insufficient, 😳 backfiww w-with othew type u-up to maxneighbowsbyusew nyeighbouws. òωó
+   * @pawam usewusewgwaph usew-usew fowwow/fav gwaph. ^^;;
+   * @pawam maxneighbowsbyusew h-how many nyeighbows t-to keep fow each usew. rawr
    */
-  def selectMaxProducersPerUser(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    maxNeighborsByUser: Int = MaxNeighborsByUser
+  d-def sewectmaxpwoducewspewusew(
+    u-usewusewgwaph: typedpipe[usewandneighbows], (ˆ ﻌ ˆ)♡
+    maxneighbowsbyusew: i-int = maxneighbowsbyusew
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[UserAndNeighbors] = {
+    i-impwicit uniqueid: uniqueid
+  ): t-typedpipe[usewandneighbows] = {
 
-    val numOfFollowEdgesStat = Stat(StatNumOfFollowEdges)
-    val numOfFavEdgesStat = Stat(StatNumOfFavEdges)
-    val numOfEdgesCumulativeFrequencyBeforeFilter = Util.CumulativeStat(
-      StatCFNumProducersPerConsumerBeforeFilter,
-      StatCFNumProducersPerConsumerBeforeFilterBuckets)
+    vaw n-nyumoffowwowedgesstat = stat(statnumoffowwowedges)
+    vaw nyumoffavedgesstat = stat(statnumoffavedges)
+    vaw nyumofedgescumuwativefwequencybefowefiwtew = u-utiw.cumuwativestat(
+      s-statcfnumpwoducewspewconsumewbefowefiwtew, XD
+      s-statcfnumpwoducewspewconsumewbefowefiwtewbuckets)
 
-    userUserGraph.map { userAndNeighbors: UserAndNeighbors =>
-      numOfEdgesCumulativeFrequencyBeforeFilter.incForValue(userAndNeighbors.neighbors.size)
+    usewusewgwaph.map { u-usewandneighbows: u-usewandneighbows =>
+      nyumofedgescumuwativefwequencybefowefiwtew.incfowvawue(usewandneighbows.neighbows.size)
 
-      val (followEdges, favEdges) =
-        userAndNeighbors.neighbors.partition(_.isFollowed.contains(true))
-      val randomFollowEdges = shuffle(followEdges)
-      val randomFavEdges = shuffle(favEdges)
+      v-vaw (fowwowedges, >_< favedges) =
+        usewandneighbows.neighbows.pawtition(_.isfowwowed.contains(twue))
+      vaw wandomfowwowedges = shuffwe(fowwowedges)
+      v-vaw wandomfavedges = s-shuffwe(favedges)
 
-      // interleave follow and fav edges, and select top k
-      val interleavedTopKEdges: Seq[NeighborWithWeights] = randomFollowEdges
-        .map(Some(_))
-        .zipAll(
-          randomFavEdges.map(Some(_)),
-          None,
-          None
-        ) // default None value when one edge Seq is shorter than another
-        .flatMap {
-          case (followEdgeOpt, favEdgeOpt) =>
-            Seq(followEdgeOpt, favEdgeOpt)
-        }.flatten
-        .take(maxNeighborsByUser)
+      // intewweave fowwow and fav edges, (˘ω˘) a-and sewect t-top k
+      vaw intewweavedtopkedges: seq[neighbowwithweights] = wandomfowwowedges
+        .map(some(_))
+        .zipaww(
+          w-wandomfavedges.map(some(_)), 😳
+          nyone, o.O
+          nyone
+        ) // defauwt nyone vawue when one edge s-seq is showtew than anothew
+        .fwatmap {
+          case (fowwowedgeopt, (ꈍᴗꈍ) favedgeopt) =>
+            s-seq(fowwowedgeopt, rawr x3 f-favedgeopt)
+        }.fwatten
+        .take(maxneighbowsbyusew)
 
       // edge stats
-      interleavedTopKEdges
-        .foreach { edge =>
-          if (edge.isFollowed.contains(true)) numOfFollowEdgesStat.inc()
-          else numOfFavEdgesStat.inc()
+      intewweavedtopkedges
+        .foweach { edge =>
+          i-if (edge.isfowwowed.contains(twue)) n-nyumoffowwowedgesstat.inc()
+          ewse nyumoffavedgesstat.inc()
         }
 
-      userAndNeighbors.copy(neighbors = interleavedTopKEdges)
+      usewandneighbows.copy(neighbows = i-intewweavedtopkedges)
     }
   }
 
   /**
-   * Get multi embedding for each user:
-   * - For each user, join their follow / fav - based neighbors to producer embeddings,
-   * - Group these neighbors into clusters using the specified clusteringMethod,
-   * - For each cluster, select the medoid as the representation.
+   * get muwti e-embedding fow each usew:
+   * - fow each usew, ^^ join theiw fowwow / f-fav - based nyeighbows to p-pwoducew embeddings, OwO
+   * - g-gwoup these nyeighbows i-into cwustews using the specified c-cwustewingmethod, ^^
+   * - f-fow e-each cwustew, sewect the medoid a-as the wepwesentation. :3
    *
-   * @param userUserGraph User-User follow/fav graph.
-   * @param producerEmbedding producer embedding dataset. e.g. simclusters embeddings, simhash, etc.
-   * @param clusteringMethod A method to group embeddings together.
-   * @param maxClustersPerUser How many clusters to keep per user.
-   * @param clusterRepresentativeSelectionMethod A method to select a cluster representative.
-   * @param numReducers How many reducers to use for sketch operation.
+   * @pawam u-usewusewgwaph usew-usew fowwow/fav gwaph. o.O
+   * @pawam p-pwoducewembedding p-pwoducew embedding d-dataset. -.- e.g. simcwustews embeddings, (U ﹏ U) simhash, e-etc. o.O
+   * @pawam cwustewingmethod a-a method to g-gwoup embeddings togethew. OwO
+   * @pawam maxcwustewspewusew how m-many cwustews to k-keep pew usew. ^•ﻌ•^
+   * @pawam c-cwustewwepwesentativesewectionmethod a-a method to sewect a cwustew wepwesentative. ʘwʘ
+   * @pawam n-nyumweducews how many weducews to use fow sketch opewation.
    */
-  def getMultiEmbeddingPerUser(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    producerEmbedding: TypedPipe[(UserId, T)],
-    clusteringMethod: ClusteringMethod,
-    maxClustersPerUser: Int = MaxClustersPerUser,
-    clusterRepresentativeSelectionMethod: ClusterRepresentativeSelectionMethod[T],
-    numReducers: Int
+  def getmuwtiembeddingpewusew(
+    u-usewusewgwaph: typedpipe[usewandneighbows], :3
+    pwoducewembedding: t-typedpipe[(usewid, 😳 t)],
+    cwustewingmethod: c-cwustewingmethod, òωó
+    maxcwustewspewusew: i-int = maxcwustewspewusew, 🥺
+    c-cwustewwepwesentativesewectionmethod: cwustewwepwesentativesewectionmethod[t], rawr x3
+    n-nyumweducews: i-int
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] = {
+    i-impwicit u-uniqueid: uniqueid
+  ): typedpipe[(usewid, ^•ﻌ•^ seq[set[usewid]], :3 simcwustewsmuwtiembedding)] = {
 
-    val truncatedUserUserGraph: TypedPipe[UserAndNeighbors] = selectMaxProducersPerUser(
-      userUserGraph)
-    val validEdges: TypedPipe[(UserId, NeighborWithWeights)] =
-      truncatedUserUserGraph.flatMap {
-        case UserAndNeighbors(srcId, neighborsWithWeights) =>
-          neighborsWithWeights.map { neighborWithWeights =>
+    vaw twuncatedusewusewgwaph: typedpipe[usewandneighbows] = sewectmaxpwoducewspewusew(
+      u-usewusewgwaph)
+    v-vaw vawidedges: t-typedpipe[(usewid, (ˆ ﻌ ˆ)♡ nyeighbowwithweights)] =
+      t-twuncatedusewusewgwaph.fwatmap {
+        case usewandneighbows(swcid, (U ᵕ U❁) nyeighbowswithweights) =>
+          n-nyeighbowswithweights.map { n-nyeighbowwithweights =>
             (
-              neighborWithWeights.neighborId, // producerId
-              neighborWithWeights.copy(neighborId = srcId))
+              nyeighbowwithweights.neighbowid, :3 // p-pwoducewid
+              nyeighbowwithweights.copy(neighbowid = swcid))
           }
       }
 
-    implicit val l2b: UserId => Array[Byte] = Injection.long2BigEndian
+    i-impwicit vaw w2b: u-usewid => awway[byte] = injection.wong2bigendian
 
-    val totalEdgesNonEmptyProducerEmbeddingsStat = Stat(StatTotalEdgesNonEmptyProducerEmbeddings)
-    val userClusterPairsBeforeTruncation = Stat(StatNumUserClusterPairsBeforeTruncation)
-    val userClusterPairsAfterTruncation = Stat(StatNumUserClusterPairsAfterTruncation)
-    val numUsers = Stat(StatNumUsers)
-    val numOfClustersCumulativeFrequencyBeforeFilter =
-      Util.CumulativeStat(StatCFNumOfClustersBeforeFilter, StatCFNumOfClustersBeforeFilterBuckets)
+    v-vaw totawedgesnonemptypwoducewembeddingsstat = s-stat(stattotawedgesnonemptypwoducewembeddings)
+    vaw usewcwustewpaiwsbefowetwuncation = stat(statnumusewcwustewpaiwsbefowetwuncation)
+    vaw usewcwustewpaiwsaftewtwuncation = stat(statnumusewcwustewpaiwsaftewtwuncation)
+    v-vaw nyumusews = s-stat(statnumusews)
+    v-vaw numofcwustewscumuwativefwequencybefowefiwtew =
+      u-utiw.cumuwativestat(statcfnumofcwustewsbefowefiwtew, ^^;; s-statcfnumofcwustewsbefowefiwtewbuckets)
 
-    // map each clustering statistic to a scalding.Stat
-    val clusteringStatsMap: Map[String, Stat] = Map(
-      StatSimilarityGraphTotalBuildTime -> Stat(StatSimilarityGraphTotalBuildTime),
-      StatClusteringAlgorithmRunTime -> Stat(StatClusteringAlgorithmRunTime),
-      StatMedoidSelectionTime -> Stat(StatMedoidSelectionTime)
+    // map each cwustewing s-statistic to a-a scawding.stat
+    vaw cwustewingstatsmap: m-map[stwing, ( ͡o ω ͡o ) s-stat] = map(
+      statsimiwawitygwaphtotawbuiwdtime -> s-stat(statsimiwawitygwaphtotawbuiwdtime),
+      statcwustewingawgowithmwuntime -> stat(statcwustewingawgowithmwuntime), o.O
+      s-statmedoidsewectiontime -> stat(statmedoidsewectiontime)
     )
-    val cosineSimilarityCumulativeFrequencyBeforeFilter = Util.CumulativeStat(
-      StatCFCosineSimilarityBeforeFilter,
-      StatCFCosineSimilarityBeforeFilterBuckets)
+    v-vaw cosinesimiwawitycumuwativefwequencybefowefiwtew = u-utiw.cumuwativestat(
+      statcfcosinesimiwawitybefowefiwtew, ^•ﻌ•^
+      s-statcfcosinesimiwawitybefowefiwtewbuckets)
 
-    val clusterRepresentativeSelectionTime = Stat(StatClusterRepresentativeSelectionTime)
+    vaw cwustewwepwesentativesewectiontime = s-stat(statcwustewwepwesentativesewectiontime)
 
-    validEdges
-      .sketch(numReducers)
-      .join(producerEmbedding)
+    v-vawidedges
+      .sketch(numweducews)
+      .join(pwoducewembedding)
       .map {
-        case (producerId: UserId, (srcWithWeights: NeighborWithWeights, embedding)) =>
-          totalEdgesNonEmptyProducerEmbeddingsStat.inc()
-          (srcWithWeights.neighborId, (srcWithWeights.copy(neighborId = producerId), embedding))
+        c-case (pwoducewid: usewid, XD (swcwithweights: nyeighbowwithweights, ^^ embedding)) =>
+          t-totawedgesnonemptypwoducewembeddingsstat.inc()
+          (swcwithweights.neighbowid, o.O (swcwithweights.copy(neighbowid = pwoducewid), ( ͡o ω ͡o ) embedding))
       }
-      .group
-      .toList
+      .gwoup
+      .towist
       .map {
-        case (userId: UserId, embeddings: Seq[(NeighborWithWeights, T)]) =>
-          numUsers.inc()
-          val embeddingsMap: Map[Long, T] = embeddings.map {
-            case (n: NeighborWithWeights, e) => (n.neighborId, e)
-          }.toMap
-          val weightsMap: Map[Long, NeighborWithWeights] = embeddings.map {
-            case (n: NeighborWithWeights, _) => (n.neighborId, n)
-          }.toMap
-          // 1. Cluster embeddings
-          val clusters: Set[Set[UserId]] =
-            clusteringMethod
-              .cluster[T](
-                embeddingsMap,
-                producerProducerSimilarityFnForClustering,
-                // Map.get() returns an Option, so will not throw.
-                // Use .foreach() to filter out potential Nones.
-                (name, incr) => {
-                  clusteringStatsMap.get(name).foreach(ctr => ctr.incBy(incr))
-                  if (name == StatComputedSimilarityBeforeFilter)
-                    cosineSimilarityCumulativeFrequencyBeforeFilter.incForValue(incr)
+        case (usewid: u-usewid, /(^•ω•^) embeddings: s-seq[(neighbowwithweights, 🥺 t)]) =>
+          nyumusews.inc()
+          v-vaw embeddingsmap: map[wong, nyaa~~ t-t] = embeddings.map {
+            c-case (n: nyeighbowwithweights, mya e) => (n.neighbowid, XD e-e)
+          }.tomap
+          vaw weightsmap: map[wong, nyaa~~ n-nyeighbowwithweights] = embeddings.map {
+            c-case (n: nyeighbowwithweights, ʘwʘ _) => (n.neighbowid, (⑅˘꒳˘) n-ny)
+          }.tomap
+          // 1. :3 cwustew embeddings
+          v-vaw cwustews: s-set[set[usewid]] =
+            c-cwustewingmethod
+              .cwustew[t](
+                embeddingsmap, -.-
+                pwoducewpwoducewsimiwawityfnfowcwustewing, 😳😳😳
+                // map.get() wetuwns an option, (U ﹏ U) so wiww nyot thwow. o.O
+                // use .foweach() to fiwtew out potentiaw nyones. ( ͡o ω ͡o )
+                (name, òωó incw) => {
+                  cwustewingstatsmap.get(name).foweach(ctw => c-ctw.incby(incw))
+                  if (name == s-statcomputedsimiwawitybefowefiwtew)
+                    cosinesimiwawitycumuwativefwequencybefowefiwtew.incfowvawue(incw)
                 }
               )
 
-          // 2. Sort clusters
-          val sortedClusters: Seq[Set[UserId]] = clusters.toSeq.sorted(clusterOrdering)
+          // 2. 🥺 sowt cwustews
+          v-vaw sowtedcwustews: s-seq[set[usewid]] = c-cwustews.toseq.sowted(cwustewowdewing)
 
-          // 3. Keep only a max number of clusters (avoid OOM)
-          userClusterPairsBeforeTruncation.incBy(sortedClusters.size)
-          numOfClustersCumulativeFrequencyBeforeFilter.incForValue(sortedClusters.size)
-          val truncatedClusters = sortedClusters.take(maxClustersPerUser)
-          userClusterPairsAfterTruncation.incBy(truncatedClusters.size)
+          // 3. /(^•ω•^) keep onwy a max nyumbew o-of cwustews (avoid oom)
+          u-usewcwustewpaiwsbefowetwuncation.incby(sowtedcwustews.size)
+          numofcwustewscumuwativefwequencybefowefiwtew.incfowvawue(sowtedcwustews.size)
+          v-vaw twuncatedcwustews = sowtedcwustews.take(maxcwustewspewusew)
+          usewcwustewpaiwsaftewtwuncation.incby(twuncatedcwustews.size)
 
-          // 4. Get list of cluster representatives
-          val truncatedIdWithScoreList: Seq[SimClustersEmbeddingIdWithScore] =
-            truncatedClusters.map { members: Set[UserId] =>
-              val clusterRepresentationSelectionElapsed = Stopwatch.start()
-              val medoid: UserId = clusterRepresentativeSelectionMethod.selectClusterRepresentative(
-                members.map(id => weightsMap(id)),
-                embeddingsMap)
-              clusterRepresentativeSelectionTime.incBy(
-                clusterRepresentationSelectionElapsed().inMilliseconds)
+          // 4. 😳😳😳 g-get wist of cwustew wepwesentatives
+          v-vaw t-twuncatedidwithscowewist: seq[simcwustewsembeddingidwithscowe] =
+            twuncatedcwustews.map { membews: s-set[usewid] =>
+              v-vaw c-cwustewwepwesentationsewectionewapsed = s-stopwatch.stawt()
+              v-vaw medoid: u-usewid = cwustewwepwesentativesewectionmethod.sewectcwustewwepwesentative(
+                m-membews.map(id => w-weightsmap(id)), ^•ﻌ•^
+                e-embeddingsmap)
+              cwustewwepwesentativesewectiontime.incby(
+                c-cwustewwepwesentationsewectionewapsed().inmiwwiseconds)
 
-              SimClustersEmbeddingIdWithScore(
-                id = SimClustersEmbeddingIdThrift(
-                  EmbeddingType.TwiceUserInterestedIn,
-                  modelVersion,
-                  InternalId.UserId(medoid)),
-                score = members.size)
+              s-simcwustewsembeddingidwithscowe(
+                i-id = simcwustewsembeddingidthwift(
+                  embeddingtype.twiceusewintewestedin, nyaa~~
+                  m-modewvewsion, OwO
+                  intewnawid.usewid(medoid)), ^•ﻌ•^
+                scowe = m-membews.size)
             }
 
           (
-            userId,
-            sortedClusters,
-            SimClustersMultiEmbedding.Ids(
-              SimClustersMultiEmbeddingByIds(ids = truncatedIdWithScoreList)))
+            usewid, σωσ
+            s-sowtedcwustews, -.-
+            s-simcwustewsmuwtiembedding.ids(
+              s-simcwustewsmuwtiembeddingbyids(ids = twuncatedidwithscowewist)))
       }
   }
 
   /**
-   * Write the output to disk as a TypedTsv.
+   * w-wwite the output to d-disk as a typedtsv. (˘ω˘)
    */
-  def writeOutputToTypedTSV(
-    output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)],
-    userToClusterRepresentativesIndexOutputPath: String,
-    userToClusterMembersIndexOutputPath: String
-  ): Execution[(Unit, Unit)] = {
+  def w-wwiteoutputtotypedtsv(
+    output: t-typedpipe[(usewid, rawr x3 seq[set[usewid]], rawr x3 simcwustewsmuwtiembedding)], σωσ
+    usewtocwustewwepwesentativesindexoutputpath: stwing, nyaa~~
+    u-usewtocwustewmembewsindexoutputpath: stwing
+  ): e-execution[(unit, (ꈍᴗꈍ) u-unit)] = {
 
-    // write the user -> cluster representatives index
-    val writeClusterRepresentatives = output
-      .collect {
-        case (userId: Long, _, Ids(ids)) => (userId, ids.ids)
+    // wwite the usew -> cwustew wepwesentatives i-index
+    vaw wwitecwustewwepwesentatives = o-output
+      .cowwect {
+        c-case (usewid: w-wong, ^•ﻌ•^ _, >_< ids(ids)) => (usewid, ^^;; ids.ids)
       }
-      //.shard(partitions = 1)
-      .writeExecution(TypedTsv[(UserId, Seq[SimClustersEmbeddingIdWithScore])](
-        userToClusterRepresentativesIndexOutputPath))
+      //.shawd(pawtitions = 1)
+      .wwiteexecution(typedtsv[(usewid, ^^;; s-seq[simcwustewsembeddingidwithscowe])](
+        u-usewtocwustewwepwesentativesindexoutputpath))
 
-    // write the user -> cluster members index
-    val writeClusterMembers = output
-      .collect {
-        case (userId: Long, clusters: Seq[Set[UserId]], _) => (userId, clusters)
+    // wwite the u-usew -> cwustew membews index
+    vaw wwitecwustewmembews = output
+      .cowwect {
+        case (usewid: w-wong, /(^•ω•^) cwustews: seq[set[usewid]], nyaa~~ _) => (usewid, (✿oωo) c-cwustews)
       }
-      //.shard(partitions = 1)
-      .writeExecution(TypedTsv[(UserId, Seq[Set[UserId]])](userToClusterMembersIndexOutputPath))
+      //.shawd(pawtitions = 1)
+      .wwiteexecution(typedtsv[(usewid, ( ͡o ω ͡o ) s-seq[set[usewid]])](usewtocwustewmembewsindexoutputpath))
 
-    Execution.zip(writeClusterRepresentatives, writeClusterMembers)
+    e-execution.zip(wwitecwustewwepwesentatives, (U ᵕ U❁) wwitecwustewmembews)
 
   }
 
   /**
-   * Write the output to disk as a KeyValDataset.
+   * w-wwite the o-output to disk as a-a keyvawdataset. òωó
    */
-  def writeOutputToKeyValDataset(
-    output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)],
-    embeddingType: MultiEmbeddingType,
-    userToClusterRepresentativesIndexDataset: KeyValDALDataset[
-      KeyVal[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding]
-    ],
-    userToClusterMembersIndexDataset: KeyValDALDataset[KeyVal[UserId, OrderedClustersAndMembers]],
-    userToClusterRepresentativesIndexOutputPath: String,
-    userToClusterMembersIndexOutputPath: String
+  d-def wwiteoutputtokeyvawdataset(
+    output: typedpipe[(usewid, σωσ s-seq[set[usewid]], s-simcwustewsmuwtiembedding)], :3
+    e-embeddingtype: m-muwtiembeddingtype, OwO
+    u-usewtocwustewwepwesentativesindexdataset: k-keyvawdawdataset[
+      k-keyvaw[simcwustewsmuwtiembeddingid, ^^ s-simcwustewsmuwtiembedding]
+    ], (˘ω˘)
+    usewtocwustewmembewsindexdataset: k-keyvawdawdataset[keyvaw[usewid, OwO owdewedcwustewsandmembews]], UwU
+    u-usewtocwustewwepwesentativesindexoutputpath: stwing, ^•ﻌ•^
+    usewtocwustewmembewsindexoutputpath: s-stwing
   )(
-    implicit dateRange: DateRange
-  ): Execution[(Unit, Unit)] = {
-    // write the user -> cluster representatives index
-    val writeClusterRepresentatives = output
+    i-impwicit datewange: d-datewange
+  ): execution[(unit, (ꈍᴗꈍ) unit)] = {
+    // wwite the u-usew -> cwustew w-wepwesentatives i-index
+    vaw wwitecwustewwepwesentatives = output
       .map {
-        case (userId: UserId, _, embeddings: SimClustersMultiEmbedding) =>
-          KeyVal(
-            key = SimClustersMultiEmbeddingId(
-              embeddingType = embeddingType,
-              modelVersion = modelVersion,
-              internalId = InternalId.UserId(userId)
-            ),
-            value = embeddings
+        case (usewid: usewid, /(^•ω•^) _, e-embeddings: simcwustewsmuwtiembedding) =>
+          k-keyvaw(
+            key = s-simcwustewsmuwtiembeddingid(
+              e-embeddingtype = embeddingtype, (U ᵕ U❁)
+              modewvewsion = modewvewsion, (✿oωo)
+              i-intewnawid = i-intewnawid.usewid(usewid)
+            ), OwO
+            v-vawue = embeddings
           )
       }
-      .writeDALVersionedKeyValExecution(
-        userToClusterRepresentativesIndexDataset,
-        D.Suffix(userToClusterRepresentativesIndexOutputPath),
-        ExplicitEndTime(dateRange.end)
+      .wwitedawvewsionedkeyvawexecution(
+        u-usewtocwustewwepwesentativesindexdataset, :3
+        d.suffix(usewtocwustewwepwesentativesindexoutputpath), nyaa~~
+        expwicitendtime(datewange.end)
       )
 
-    // write the user -> cluster members index
-    val writeClusterMembers = output
+    // wwite t-the usew -> cwustew m-membews index
+    vaw wwitecwustewmembews = output
       .map {
-        case (userId: UserId, clusters: Seq[Set[UserId]], _) =>
-          KeyVal(
-            key = userId,
-            value = OrderedClustersAndMembers(clusters, Some(clusters.map(ClusterMembers(_)))))
+        case (usewid: u-usewid, ^•ﻌ•^ cwustews: seq[set[usewid]], ( ͡o ω ͡o ) _) =>
+          keyvaw(
+            k-key = usewid, ^^;;
+            vawue = owdewedcwustewsandmembews(cwustews, mya s-some(cwustews.map(cwustewmembews(_)))))
       }
-      .writeDALVersionedKeyValExecution(
-        userToClusterMembersIndexDataset,
-        D.Suffix(userToClusterMembersIndexOutputPath),
-        ExplicitEndTime(dateRange.end)
+      .wwitedawvewsionedkeyvawexecution(
+        u-usewtocwustewmembewsindexdataset, (U ᵕ U❁)
+        d.suffix(usewtocwustewmembewsindexoutputpath), ^•ﻌ•^
+        e-expwicitendtime(datewange.end)
       )
 
-    Execution.zip(writeClusterRepresentatives, writeClusterMembers)
+    e-execution.zip(wwitecwustewwepwesentatives, (U ﹏ U) wwitecwustewmembews)
   }
 
   /**
-   * Main method for scheduled jobs.
+   * m-main method fow scheduwed j-jobs. /(^•ω•^)
    */
-  def runScheduledApp(
-    clusteringMethod: ClusteringMethod,
-    clusterRepresentativeSelectionMethod: ClusterRepresentativeSelectionMethod[T],
-    producerEmbedding: TypedPipe[(UserId, T)],
-    userToClusterRepresentativesIndexPathSuffix: String,
-    userToClusterMembersIndexPathSuffix: String,
-    userToClusterRepresentativesIndexDataset: KeyValDALDataset[
-      KeyVal[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding]
+  d-def wunscheduwedapp(
+    c-cwustewingmethod: c-cwustewingmethod, ʘwʘ
+    cwustewwepwesentativesewectionmethod: c-cwustewwepwesentativesewectionmethod[t], XD
+    p-pwoducewembedding: t-typedpipe[(usewid, (⑅˘꒳˘) t)], nyaa~~
+    u-usewtocwustewwepwesentativesindexpathsuffix: stwing, UwU
+    usewtocwustewmembewsindexpathsuffix: stwing, (˘ω˘)
+    usewtocwustewwepwesentativesindexdataset: k-keyvawdawdataset[
+      k-keyvaw[simcwustewsmuwtiembeddingid, rawr x3 s-simcwustewsmuwtiembedding]
     ],
-    userToClusterMembersIndexDataset: KeyValDALDataset[KeyVal[UserId, OrderedClustersAndMembers]],
-    numReducers: Int
+    usewtocwustewmembewsindexdataset: keyvawdawdataset[keyvaw[usewid, (///ˬ///✿) owdewedcwustewsandmembews]], 😳😳😳
+    nyumweducews: i-int
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    impwicit d-datewange: datewange, (///ˬ///✿)
+    t-timezone: timezone, ^^;;
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
 
-    val userToClusterRepresentativesIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
-      isAdhoc = false,
-      isManhattanKeyVal = true,
-      modelVersion = modelVersion,
-      pathSuffix = userToClusterRepresentativesIndexPathSuffix
+    vaw usewtocwustewwepwesentativesindexoutputpath: s-stwing = embeddingutiw.gethdfspath(
+      isadhoc = f-fawse, ^^
+      i-ismanhattankeyvaw = t-twue, (///ˬ///✿)
+      m-modewvewsion = modewvewsion, -.-
+      pathsuffix = usewtocwustewwepwesentativesindexpathsuffix
     )
 
-    val userToClusterMembersIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
-      isAdhoc = false,
-      isManhattanKeyVal = true,
-      modelVersion = modelVersion,
-      pathSuffix = userToClusterMembersIndexPathSuffix
+    vaw u-usewtocwustewmembewsindexoutputpath: stwing = embeddingutiw.gethdfspath(
+      i-isadhoc = fawse, /(^•ω•^)
+      ismanhattankeyvaw = twue, UwU
+      modewvewsion = m-modewvewsion, (⑅˘꒳˘)
+      pathsuffix = usewtocwustewmembewsindexpathsuffix
     )
 
-    val execution = Execution.withId { implicit uniqueId =>
-      val output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] =
-        getMultiEmbeddingPerUser(
-          userUserGraph = getUserUserGraph(dateRange.prepend(Days(30)), implicitly),
-          producerEmbedding = producerEmbedding,
-          clusteringMethod = clusteringMethod,
-          clusterRepresentativeSelectionMethod = clusterRepresentativeSelectionMethod,
-          numReducers = numReducers
+    vaw execution = execution.withid { i-impwicit u-uniqueid =>
+      vaw output: t-typedpipe[(usewid, ʘwʘ seq[set[usewid]], σωσ simcwustewsmuwtiembedding)] =
+        g-getmuwtiembeddingpewusew(
+          usewusewgwaph = getusewusewgwaph(datewange.pwepend(days(30)), ^^ i-impwicitwy), OwO
+          pwoducewembedding = p-pwoducewembedding, (ˆ ﻌ ˆ)♡
+          cwustewingmethod = c-cwustewingmethod, o.O
+          cwustewwepwesentativesewectionmethod = cwustewwepwesentativesewectionmethod, (˘ω˘)
+          nyumweducews = n-nyumweducews
         )
 
-      writeOutputToKeyValDataset(
-        output = output,
-        embeddingType = MultiEmbeddingType.TwiceUserInterestedIn,
-        userToClusterRepresentativesIndexDataset = userToClusterRepresentativesIndexDataset,
-        userToClusterMembersIndexDataset = userToClusterMembersIndexDataset,
-        userToClusterRepresentativesIndexOutputPath = userToClusterRepresentativesIndexOutputPath,
-        userToClusterMembersIndexOutputPath = userToClusterMembersIndexOutputPath
+      wwiteoutputtokeyvawdataset(
+        output = o-output, 😳
+        e-embeddingtype = m-muwtiembeddingtype.twiceusewintewestedin, (U ᵕ U❁)
+        usewtocwustewwepwesentativesindexdataset = usewtocwustewwepwesentativesindexdataset, :3
+        u-usewtocwustewmembewsindexdataset = usewtocwustewmembewsindexdataset, o.O
+        usewtocwustewwepwesentativesindexoutputpath = usewtocwustewwepwesentativesindexoutputpath, (///ˬ///✿)
+        usewtocwustewmembewsindexoutputpath = usewtocwustewmembewsindexoutputpath
       )
 
     }
 
-    execution.unit
+    e-execution.unit
   }
 
   /**
-   * Main method for adhoc jobs.
+   * m-main method fow a-adhoc jobs. OwO
    */
-  def runAdhocApp(
-    clusteringMethod: ClusteringMethod,
-    clusterRepresentativeSelectionMethod: ClusterRepresentativeSelectionMethod[T],
-    producerEmbedding: TypedPipe[(UserId, T)],
-    userToClusterRepresentativesIndexPathSuffix: String,
-    userToClusterMembersIndexPathSuffix: String,
-    numReducers: Int
+  d-def wunadhocapp(
+    cwustewingmethod: cwustewingmethod,
+    c-cwustewwepwesentativesewectionmethod: c-cwustewwepwesentativesewectionmethod[t], >w<
+    pwoducewembedding: typedpipe[(usewid, ^^ t-t)],
+    usewtocwustewwepwesentativesindexpathsuffix: stwing, (⑅˘꒳˘)
+    usewtocwustewmembewsindexpathsuffix: s-stwing, ʘwʘ
+    nyumweducews: int
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    impwicit d-datewange: datewange, (///ˬ///✿)
+    t-timezone: timezone, XD
+    u-uniqueid: uniqueid
+  ): e-execution[unit] = {
 
-    val userToClusterRepresentativesIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
-      isAdhoc = true,
-      isManhattanKeyVal = false,
-      modelVersion = modelVersion,
-      pathSuffix = userToClusterRepresentativesIndexPathSuffix
+    v-vaw usewtocwustewwepwesentativesindexoutputpath: stwing = embeddingutiw.gethdfspath(
+      isadhoc = twue, 😳
+      i-ismanhattankeyvaw = fawse, >w<
+      modewvewsion = m-modewvewsion, (˘ω˘)
+      pathsuffix = usewtocwustewwepwesentativesindexpathsuffix
     )
 
-    val userToClusterMembersIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
-      isAdhoc = true,
-      isManhattanKeyVal = false,
-      modelVersion = modelVersion,
-      pathSuffix = userToClusterMembersIndexPathSuffix
+    vaw u-usewtocwustewmembewsindexoutputpath: s-stwing = e-embeddingutiw.gethdfspath(
+      i-isadhoc = twue, nyaa~~
+      i-ismanhattankeyvaw = fawse, 😳😳😳
+      m-modewvewsion = modewvewsion, (U ﹏ U)
+      pathsuffix = u-usewtocwustewmembewsindexpathsuffix
     )
 
-    val execution = Execution.withId { implicit uniqueId =>
-      val output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] =
-        getMultiEmbeddingPerUser(
-          userUserGraph = getUserUserGraph(dateRange.prepend(Days(30)), implicitly),
-          producerEmbedding = producerEmbedding,
-          clusteringMethod = clusteringMethod,
-          clusterRepresentativeSelectionMethod = clusterRepresentativeSelectionMethod,
-          numReducers = numReducers
+    vaw execution = e-execution.withid { impwicit uniqueid =>
+      v-vaw output: t-typedpipe[(usewid, seq[set[usewid]], (˘ω˘) s-simcwustewsmuwtiembedding)] =
+        getmuwtiembeddingpewusew(
+          u-usewusewgwaph = g-getusewusewgwaph(datewange.pwepend(days(30)), impwicitwy), :3
+          p-pwoducewembedding = p-pwoducewembedding, >w<
+          cwustewingmethod = c-cwustewingmethod, ^^
+          cwustewwepwesentativesewectionmethod = cwustewwepwesentativesewectionmethod, 😳😳😳
+          nyumweducews = n-nyumweducews
         )
 
-      writeOutputToTypedTSV(
-        output,
-        userToClusterRepresentativesIndexOutputPath,
-        userToClusterMembersIndexOutputPath)
+      wwiteoutputtotypedtsv(
+        o-output, nyaa~~
+        usewtocwustewwepwesentativesindexoutputpath, (⑅˘꒳˘)
+        usewtocwustewmembewsindexoutputpath)
     }
 
-    execution.unit
+    e-execution.unit
   }
 
 }
 
-object InterestedInTwiceBaseApp {
+o-object intewestedintwicebaseapp {
 
-  // Statistics
-  val StatNumOfFollowEdges = "num_of_follow_edges"
-  val StatNumOfFavEdges = "num_of_fav_edges"
-  val StatTotalEdgesNonEmptyProducerEmbeddings = "total_edges_with_non_empty_producer_embeddings"
-  val StatNumUserClusterPairsBeforeTruncation = "num_user_cluster_pairs_before_truncation"
-  val StatNumUserClusterPairsAfterTruncation = "num_user_cluster_pairs_after_truncation"
-  val StatNumUsers = "num_users"
-  // Cumulative Frequency
-  val StatCFNumProducersPerConsumerBeforeFilter = "num_producers_per_consumer_cf_before_filter"
-  val StatCFNumProducersPerConsumerBeforeFilterBuckets: Seq[Double] =
-    Seq(0, 10, 20, 50, 100, 500, 1000)
-  val StatCFCosineSimilarityBeforeFilter = "cosine_similarity_cf_before_filter"
-  val StatCFCosineSimilarityBeforeFilterBuckets: Seq[Double] =
-    Seq(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
-  val StatCFNumOfClustersBeforeFilter = "num_of_clusters_cf_before_filter"
-  val StatCFNumOfClustersBeforeFilterBuckets: Seq[Double] =
-    Seq(1, 3, 5, 10, 15, 20, 50, 100, 200, 300, 500)
+  // s-statistics
+  vaw statnumoffowwowedges = "num_of_fowwow_edges"
+  v-vaw s-statnumoffavedges = "num_of_fav_edges"
+  vaw stattotawedgesnonemptypwoducewembeddings = "totaw_edges_with_non_empty_pwoducew_embeddings"
+  v-vaw statnumusewcwustewpaiwsbefowetwuncation = "num_usew_cwustew_paiws_befowe_twuncation"
+  vaw statnumusewcwustewpaiwsaftewtwuncation = "num_usew_cwustew_paiws_aftew_twuncation"
+  vaw s-statnumusews = "num_usews"
+  // cumuwative fwequency
+  v-vaw statcfnumpwoducewspewconsumewbefowefiwtew = "num_pwoducews_pew_consumew_cf_befowe_fiwtew"
+  v-vaw statcfnumpwoducewspewconsumewbefowefiwtewbuckets: seq[doubwe] =
+    seq(0, :3 10, 20, 50, ʘwʘ 100, 500, 1000)
+  vaw statcfcosinesimiwawitybefowefiwtew = "cosine_simiwawity_cf_befowe_fiwtew"
+  vaw statcfcosinesimiwawitybefowefiwtewbuckets: s-seq[doubwe] =
+    s-seq(0, rawr x3 10, 20, 30, 40, (///ˬ///✿) 50, 60, 70, 80, 😳😳😳 90, 100)
+  vaw statcfnumofcwustewsbefowefiwtew = "num_of_cwustews_cf_befowe_fiwtew"
+  vaw statcfnumofcwustewsbefowefiwtewbuckets: seq[doubwe] =
+    s-seq(1, XD 3, >_< 5, 10, 15, 20, 50, >w< 100, 200, 300, /(^•ω•^) 500)
 
-  val MaxClustersPerUser: Int = 10
-  val MaxNeighborsByUser: Int = 500
+  vaw maxcwustewspewusew: int = 10
+  v-vaw maxneighbowsbyusew: i-int = 500
 
-  object ProducerEmbeddingSource {
+  object pwoducewembeddingsouwce {
 
     /**
-     * Read log-fav based Aggregatable Producer embeddings dataset.
+     * wead wog-fav based aggwegatabwe pwoducew embeddings d-dataset. :3
      */
-    def getAggregatableProducerEmbeddings(
-      implicit dateRange: DateRange,
-      timeZone: TimeZone
-    ): TypedPipe[(UserId, SimClustersEmbedding)] =
-      ProducerEmbeddingSources
-        .producerEmbeddingSource(
-          EmbeddingType.AggregatableLogFavBasedProducer,
-          ModelVersion.Model20m145k2020)(dateRange.prepend(Days(30)))
-        .mapValues(s => SimClustersEmbedding(s))
+    def getaggwegatabwepwoducewembeddings(
+      impwicit datewange: d-datewange, ʘwʘ
+      timezone: t-timezone
+    ): t-typedpipe[(usewid, (˘ω˘) simcwustewsembedding)] =
+      p-pwoducewembeddingsouwces
+        .pwoducewembeddingsouwce(
+          e-embeddingtype.aggwegatabwewogfavbasedpwoducew, (ꈍᴗꈍ)
+          m-modewvewsion.modew20m145k2020)(datewange.pwepend(days(30)))
+        .mapvawues(s => s-simcwustewsembedding(s))
 
   }
 

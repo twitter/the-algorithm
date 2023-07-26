@@ -1,110 +1,110 @@
-#pragma once
-#include <twml/defines.h>
-#include <twml/Tensor.h>
-#include <twml/Type.h>
-#include <stddef.h>
+#pwagma once
+#incwude <twmw/defines.h>
+#incwude <twmw/tensow.h>
+#incwude <twmw/type.h>
+#incwude <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
+#ifdef __cpwuspwus
+extewn "c" {
 #endif
-    typedef void * twml_hashmap;
-    typedef int64_t tw_hash_key_t;
-    typedef int64_t tw_hash_val_t;
-#ifdef __cplusplus
+    t-typedef void * t-twmw_hashmap;
+    t-typedef int64_t t-tw_hash_key_t;
+    t-typedef i-int64_t tw_hash_vaw_t;
+#ifdef __cpwuspwus
 }
 #endif
 
-#ifdef __cplusplus
-namespace twml {
+#ifdef __cpwuspwus
+n-nyamespace t-twmw {
 
-    typedef tw_hash_key_t HashKey_t;
-    typedef tw_hash_val_t HashVal_t;
+    typedef tw_hash_key_t hashkey_t;
+    typedef tw_hash_vaw_t hashvaw_t;
 
-    class HashMap {
-    private:
-        twml_hashmap m_hashmap;
+    c-cwass hashmap {
+    pwivate:
+        twmw_hashmap m_hashmap;
 
-    public:
-        HashMap();
-        ~HashMap();
+    p-pubwic:
+        hashmap();
+        ~hashmap();
 
-        // Disable copy constructor and assignment
-        // TODO: Fix this after retain and release are added to twml_hashmap
-        HashMap(const HashMap &other) = delete;
-        HashMap& operator=(const HashMap &other) = delete;
+        // d-disabwe copy constwuctow and assignment
+        // todo: f-fix this aftew wetain and wewease a-awe added to t-twmw_hashmap
+        hashmap(const hashmap &othew) = dewete;
+        hashmap& opewatow=(const h-hashmap &othew) = dewete;
 
-        void clear();
+        void cweaw();
         uint64_t size() const;
-        int8_t insert(const HashKey_t key);
-        int8_t insert(const HashKey_t key, const HashVal_t val);
-        void remove(const HashKey_t key);
-        int8_t get(HashVal_t &val, const HashKey_t key) const;
+        i-int8_t insewt(const hashkey_t k-key);
+        i-int8_t insewt(const h-hashkey_t k-key, ^•ﻌ•^ const hashvaw_t vaw);
+        void wemove(const h-hashkey_t key);
+        int8_t get(hashvaw_t &vaw, rawr c-const hashkey_t key) const;
 
-        void insert(Tensor &mask, const Tensor keys);
-        void insert(Tensor &mask, const Tensor keys, const Tensor vals);
-        void remove(const Tensor keys);
-        void get(Tensor &mask, Tensor &vals, const Tensor keys) const;
+        void insewt(tensow &mask, (˘ω˘) const tensow keys);
+        v-void insewt(tensow &mask, nyaa~~ const t-tensow keys, c-const tensow vaws);
+        v-void wemove(const tensow keys);
+        void get(tensow &mask, UwU t-tensow &vaws, :3 c-const tensow keys) const;
 
-        void getInplace(Tensor &mask, Tensor &keys_vals) const;
-        void toTensors(Tensor &keys, Tensor &vals) const;
+        v-void g-getinpwace(tensow &mask, (⑅˘꒳˘) tensow &keys_vaws) c-const;
+        void t-totensows(tensow &keys, (///ˬ///✿) tensow &vaws) const;
     };
 }
 #endif
 
-#ifdef __cplusplus
-extern "C" {
+#ifdef __cpwuspwus
+e-extewn "c" {
 #endif
 
 
-    TWMLAPI twml_err twml_hashmap_create(twml_hashmap *hashmap);
+    twmwapi t-twmw_eww twmw_hashmap_cweate(twmw_hashmap *hashmap);
 
-    TWMLAPI twml_err twml_hashmap_clear(const twml_hashmap hashmap);
+    twmwapi t-twmw_eww twmw_hashmap_cweaw(const t-twmw_hashmap hashmap);
 
-    TWMLAPI twml_err twml_hashmap_get_size(uint64_t *size, const twml_hashmap hashmap);
+    twmwapi twmw_eww twmw_hashmap_get_size(uint64_t *size, ^^;; const twmw_hashmap hashmap);
 
-    TWMLAPI twml_err twml_hashmap_delete(const twml_hashmap hashmap);
+    twmwapi t-twmw_eww twmw_hashmap_dewete(const t-twmw_hashmap hashmap);
 
-    // insert, get, remove single key / value
-    TWMLAPI twml_err twml_hashmap_insert_key(int8_t *mask,
-                                             const twml_hashmap hashmap,
+    // i-insewt, >_< get, rawr x3 w-wemove singwe k-key / vawue
+    twmwapi twmw_eww twmw_hashmap_insewt_key(int8_t *mask, /(^•ω•^)
+                                             const twmw_hashmap h-hashmap, :3
                                              const tw_hash_key_t key);
 
-    TWMLAPI twml_err twml_hashmap_insert_key_and_value(int8_t *mask, twml_hashmap hashmap,
-                                                       const tw_hash_key_t key,
-                                                       const tw_hash_val_t val);
+    twmwapi twmw_eww twmw_hashmap_insewt_key_and_vawue(int8_t *mask, (ꈍᴗꈍ) twmw_hashmap hashmap, /(^•ω•^)
+                                                       c-const tw_hash_key_t k-key, (⑅˘꒳˘)
+                                                       c-const t-tw_hash_vaw_t vaw);
 
-    TWMLAPI twml_err twml_hashmap_remove_key(const twml_hashmap hashmap,
-                                             const tw_hash_key_t key);
+    twmwapi t-twmw_eww twmw_hashmap_wemove_key(const t-twmw_hashmap h-hashmap, ( ͡o ω ͡o )
+                                             c-const tw_hash_key_t key);
 
-    TWMLAPI twml_err twml_hashmap_get_value(int8_t *mask, tw_hash_val_t *val,
-                                            const twml_hashmap hashmap,
-                                            const tw_hash_key_t key);
+    twmwapi t-twmw_eww twmw_hashmap_get_vawue(int8_t *mask, òωó t-tw_hash_vaw_t *vaw, (⑅˘꒳˘)
+                                            c-const twmw_hashmap h-hashmap, XD
+                                            c-const tw_hash_key_t key);
 
-    TWMLAPI twml_err twml_hashmap_insert_keys(twml_tensor masks,
-                                              const twml_hashmap hashmap,
-                                              const twml_tensor keys);
+    twmwapi twmw_eww twmw_hashmap_insewt_keys(twmw_tensow masks, -.-
+                                              c-const twmw_hashmap hashmap,
+                                              const twmw_tensow keys);
 
-    // insert, get, remove tensors of keys / values
-    TWMLAPI twml_err twml_hashmap_insert_keys_and_values(twml_tensor masks,
-                                                         twml_hashmap hashmap,
-                                                         const twml_tensor keys,
-                                                         const twml_tensor vals);
+    // insewt, :3 get, wemove t-tensows of keys / vawues
+    twmwapi twmw_eww twmw_hashmap_insewt_keys_and_vawues(twmw_tensow m-masks, nyaa~~
+                                                         t-twmw_hashmap hashmap, 😳
+                                                         c-const twmw_tensow keys,
+                                                         c-const twmw_tensow vaws);
 
-    TWMLAPI twml_err twml_hashmap_remove_keys(const twml_hashmap hashmap,
-                                              const twml_tensor keys);
+    twmwapi t-twmw_eww t-twmw_hashmap_wemove_keys(const twmw_hashmap hashmap, (⑅˘꒳˘)
+                                              const twmw_tensow keys);
 
-    TWMLAPI twml_err twml_hashmap_get_values(twml_tensor masks,
-                                             twml_tensor vals,
-                                             const twml_hashmap hashmap,
-                                             const twml_tensor keys);
+    twmwapi twmw_eww twmw_hashmap_get_vawues(twmw_tensow m-masks, nyaa~~
+                                             twmw_tensow v-vaws, OwO
+                                             const twmw_hashmap h-hashmap, rawr x3
+                                             c-const twmw_tensow keys);
 
-    TWMLAPI twml_err twml_hashmap_get_values_inplace(twml_tensor masks,
-                                                     twml_tensor keys_vals,
-                                                     const twml_hashmap hashmap);
+    twmwapi twmw_eww t-twmw_hashmap_get_vawues_inpwace(twmw_tensow m-masks, XD
+                                                     twmw_tensow k-keys_vaws, σωσ
+                                                     c-const twmw_hashmap hashmap);
 
-    TWMLAPI twml_err twml_hashmap_to_tensors(twml_tensor keys,
-                                             twml_tensor vals,
-                                             const twml_hashmap hashmap);
-#ifdef __cplusplus
+    twmwapi twmw_eww twmw_hashmap_to_tensows(twmw_tensow keys,
+                                             twmw_tensow v-vaws, (U ᵕ U❁)
+                                             c-const t-twmw_hashmap hashmap);
+#ifdef __cpwuspwus
 }
 #endif

@@ -1,156 +1,156 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.io.IOException;
-import java.util.Map;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.map;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.intbwockpoow;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+impowt it.unimi.dsi.fastutiw.ints.int2intopenhashmap;
 
-public class FacetCountingArray extends AbstractFacetCountingArray {
-  private static final Logger LOG = LoggerFactory.getLogger(FacetCountingArray.class);
+p-pubwic cwass facetcountingawway e-extends abstwactfacetcountingawway {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(facetcountingawway.cwass);
 
-  private final Int2IntOpenHashMap facetsMap;
+  p-pwivate finaw int2intopenhashmap f-facetsmap;
 
   /**
-   * Creates a new, empty FacetCountingArray with the given size.
+   * c-cweates a nyew, 🥺 empty facetcountingawway with the given size. >_<
    */
-  public FacetCountingArray(int maxSegmentSize) {
-    super();
-    facetsMap = new Int2IntOpenHashMap(maxSegmentSize);
-    facetsMap.defaultReturnValue(UNASSIGNED);
+  p-pubwic facetcountingawway(int maxsegmentsize) {
+    supew();
+    facetsmap = nyew int2intopenhashmap(maxsegmentsize);
+    facetsmap.defauwtwetuwnvawue(unassigned);
   }
 
-  private FacetCountingArray(Int2IntOpenHashMap facetsMap, IntBlockPool facetsPool) {
-    super(facetsPool);
-    this.facetsMap = facetsMap;
+  p-pwivate facetcountingawway(int2intopenhashmap f-facetsmap, UwU i-intbwockpoow f-facetspoow) {
+    s-supew(facetspoow);
+    this.facetsmap = facetsmap;
   }
 
-  @Override
-  protected int getFacet(int docID) {
-    return facetsMap.get(docID);
+  @ovewwide
+  p-pwotected int getfacet(int docid) {
+    w-wetuwn facetsmap.get(docid);
   }
 
-  @Override
-  protected void setFacet(int docID, int facetID) {
-    facetsMap.put(docID, facetID);
+  @ovewwide
+  pwotected void setfacet(int docid, >_< int facetid) {
+    facetsmap.put(docid, -.- facetid);
   }
 
-  @Override
-  public AbstractFacetCountingArray rewriteAndMapIDs(
-      Map<Integer, int[]> termIDMapper,
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    Preconditions.checkNotNull(originalTweetIdMapper);
-    Preconditions.checkNotNull(optimizedTweetIdMapper);
+  @ovewwide
+  p-pubwic abstwactfacetcountingawway w-wewwiteandmapids(
+      m-map<integew, mya i-int[]> tewmidmappew, >w<
+      docidtotweetidmappew owiginawtweetidmappew, (U ﹏ U)
+      docidtotweetidmappew o-optimizedtweetidmappew) t-thwows ioexception {
+    p-pweconditions.checknotnuww(owiginawtweetidmappew);
+    p-pweconditions.checknotnuww(optimizedtweetidmappew);
 
-    // We need to rewrite the facet array, because the term ids have to be mapped to the
-    // key space of the minimum perfect hash function that replaces the hash table.
-    // We also need to remap tweet IDs to the optimized doc IDs.
-    int maxDocID = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
-    AbstractFacetCountingArray newArray = new OptimizedFacetCountingArray(maxDocID + 1);
-    final FacetCountingArrayWriter writer = new FacetCountingArrayWriter(newArray);
-    FacetCountIterator iterator = new ArrayFacetCountIterator() {
-      @Override
-      public boolean collect(int docID, long termID, int fieldID) {
-        int[] termIDMap = termIDMapper.get(fieldID);
-        int mappedTermID;
-        // If there isn't a map for this term, we are using the original term IDs and can continue
-        // with that term ID. If there is a term ID map, then we need to use the new term ID,
-        // because the new index will use an MPH term dictionary with new term IDs.
-        if (termIDMap == null) {
-          mappedTermID = (int) termID;
-        } else if (termID < termIDMap.length) {
-          mappedTermID = termIDMap[(int) termID];
-        } else {
-          // During segment optimization we might index a new term after the termIDMap is created
-          // in IndexOptimizer.optimizeInvertedIndexes(). We can safely ignore these terms, as
-          // they will be re-indexed later.
-          return false;
+    // we nyeed t-to wewwite the facet awway, 😳😳😳 because t-the tewm ids have to be mapped to the
+    // k-key space of the minimum pewfect h-hash function that wepwaces the h-hash tabwe. o.O
+    // w-we awso nyeed to wemap tweet ids to the optimized doc ids. òωó
+    int maxdocid = optimizedtweetidmappew.getpweviousdocid(integew.max_vawue);
+    abstwactfacetcountingawway n-nyewawway = n-nyew optimizedfacetcountingawway(maxdocid + 1);
+    finaw f-facetcountingawwaywwitew w-wwitew = n-nyew facetcountingawwaywwitew(newawway);
+    facetcountitewatow itewatow = nyew awwayfacetcountitewatow() {
+      @ovewwide
+      p-pubwic boowean cowwect(int docid, 😳😳😳 wong tewmid, σωσ int fiewdid) {
+        int[] t-tewmidmap = tewmidmappew.get(fiewdid);
+        i-int mappedtewmid;
+        // i-if thewe isn't a m-map fow this tewm, we awe using t-the owiginaw tewm i-ids and can continue
+        // w-with that tewm i-id. (⑅˘꒳˘) if thewe is a tewm id map, (///ˬ///✿) then we nyeed to u-use the nyew tewm i-id,
+        // b-because the nyew i-index wiww use a-an mph tewm dictionawy with nyew tewm ids. 🥺
+        if (tewmidmap == n-nyuww) {
+          mappedtewmid = (int) tewmid;
+        } ewse if (tewmid < tewmidmap.wength) {
+          mappedtewmid = tewmidmap[(int) t-tewmid];
+        } ewse {
+          // duwing segment optimization w-we might index a-a nyew tewm aftew t-the tewmidmap is cweated
+          // i-in indexoptimizew.optimizeinvewtedindexes(). OwO we can safewy i-ignowe these t-tewms, >w< as
+          // they wiww be we-indexed watew. 🥺
+          wetuwn fawse;
         }
 
-        try {
-          long tweetId = originalTweetIdMapper.getTweetID(docID);
-          int newDocId = optimizedTweetIdMapper.getDocID(tweetId);
-          Preconditions.checkState(newDocId != DocIDToTweetIDMapper.ID_NOT_FOUND,
-                                   "Did not find a mapping in the new tweet ID mapper for doc ID "
-                                   + newDocId + ", tweet ID " + tweetId);
+        twy {
+          w-wong tweetid = owiginawtweetidmappew.gettweetid(docid);
+          i-int nyewdocid = optimizedtweetidmappew.getdocid(tweetid);
+          p-pweconditions.checkstate(newdocid != d-docidtotweetidmappew.id_not_found, nyaa~~
+                                   "did nyot find a mapping in t-the nyew tweet id m-mappew fow doc id "
+                                   + n-nyewdocid + ", ^^ t-tweet id " + tweetid);
 
-          writer.addFacet(newDocId, fieldID, mappedTermID);
-        } catch (IOException e) {
-          LOG.error("Caught an unexpected IOException while optimizing facet.", e);
+          wwitew.addfacet(newdocid, >w< fiewdid, mappedtewmid);
+        } catch (ioexception e-e) {
+          w-wog.ewwow("caught a-an unexpected ioexception w-whiwe optimizing f-facet.", OwO e);
         }
 
-        return true;
+        w-wetuwn twue;
       }
     };
 
-    // We want to iterate the facets in increasing tweet ID order. This might not correspond to
-    // decreasing doc ID order in the original mapper (see OutOfOrderRealtimeTweetIDMapper).
-    // However, the optimized mapper should be sorted both by tweet IDs and by doc IDs (in reverse
-    // order). So we need to iterate here over the doc IDs in the optimized mapper, convert them
-    // to doc IDs in the original mapper, and pass those doc IDs to collect().
-    int docId = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
-    while (docId != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      long tweetId = optimizedTweetIdMapper.getTweetID(docId);
-      int originalDocId = originalTweetIdMapper.getDocID(tweetId);
-      iterator.collect(originalDocId);
-      docId = optimizedTweetIdMapper.getPreviousDocID(docId);
+    // we want to itewate the facets in incweasing tweet id o-owdew. XD this might n-nyot cowwespond to
+    // decweasing doc id owdew i-in the owiginaw m-mappew (see outofowdewweawtimetweetidmappew). ^^;;
+    // howevew, 🥺 the optimized m-mappew shouwd be sowted both by tweet ids and by doc ids (in wevewse
+    // owdew). XD s-so we nyeed to itewate hewe ovew the doc ids i-in the optimized m-mappew, (U ᵕ U❁) convewt them
+    // to doc ids in the owiginaw mappew, :3 a-and pass those d-doc ids to cowwect(). ( ͡o ω ͡o )
+    int docid = optimizedtweetidmappew.getpweviousdocid(integew.max_vawue);
+    whiwe (docid != d-docidtotweetidmappew.id_not_found) {
+      wong tweetid = o-optimizedtweetidmappew.gettweetid(docid);
+      int owiginawdocid = owiginawtweetidmappew.getdocid(tweetid);
+      itewatow.cowwect(owiginawdocid);
+      d-docid = optimizedtweetidmappew.getpweviousdocid(docid);
     }
-    return newArray;
+    w-wetuwn n-newawway;
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @ovewwide
+  pubwic fwushhandwew g-getfwushhandwew() {
+    wetuwn n-new fwushhandwew(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<FacetCountingArray> {
-    private static final String FACETS_POOL_PROP_NAME = "facetsPool";
-    private final int maxSegmentSize;
+  p-pubwic static f-finaw cwass fwushhandwew extends f-fwushabwe.handwew<facetcountingawway> {
+    p-pwivate static finaw stwing facets_poow_pwop_name = "facetspoow";
+    p-pwivate finaw i-int maxsegmentsize;
 
-    public FlushHandler(int maxSegmentSize) {
-      this.maxSegmentSize = maxSegmentSize;
+    p-pubwic fwushhandwew(int maxsegmentsize) {
+      t-this.maxsegmentsize = maxsegmentsize;
     }
 
-    public FlushHandler(FacetCountingArray objectToFlush) {
-      super(objectToFlush);
-      maxSegmentSize = -1;
+    p-pubwic f-fwushhandwew(facetcountingawway objecttofwush) {
+      supew(objecttofwush);
+      maxsegmentsize = -1;
     }
 
-    @Override
-    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      FacetCountingArray array = getObjectToFlush();
-      out.writeInt(array.facetsMap.size());
-      for (Int2IntOpenHashMap.Entry entry : array.facetsMap.int2IntEntrySet()) {
-        out.writeInt(entry.getIntKey());
-        out.writeInt(entry.getIntValue());
+    @ovewwide
+    p-pubwic void dofwush(fwushinfo f-fwushinfo, datasewiawizew o-out) t-thwows ioexception {
+      facetcountingawway a-awway = getobjecttofwush();
+      out.wwiteint(awway.facetsmap.size());
+      fow (int2intopenhashmap.entwy entwy : awway.facetsmap.int2intentwyset()) {
+        out.wwiteint(entwy.getintkey());
+        o-out.wwiteint(entwy.getintvawue());
       }
-      array.getFacetsPool().getFlushHandler().flush(
-          flushInfo.newSubProperties(FACETS_POOL_PROP_NAME), out);
+      awway.getfacetspoow().getfwushhandwew().fwush(
+          f-fwushinfo.newsubpwopewties(facets_poow_pwop_name), òωó out);
     }
 
-    @Override
-    public FacetCountingArray doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      int size = in.readInt();
-      Int2IntOpenHashMap facetsMap = new Int2IntOpenHashMap(maxSegmentSize);
-      facetsMap.defaultReturnValue(UNASSIGNED);
-      for (int i = 0; i < size; i++) {
-        facetsMap.put(in.readInt(), in.readInt());
+    @ovewwide
+    p-pubwic facetcountingawway dowoad(fwushinfo fwushinfo, σωσ d-datadesewiawizew in) thwows i-ioexception {
+      i-int size = i-in.weadint();
+      i-int2intopenhashmap f-facetsmap = nyew int2intopenhashmap(maxsegmentsize);
+      facetsmap.defauwtwetuwnvawue(unassigned);
+      fow (int i = 0; i < size; i++) {
+        facetsmap.put(in.weadint(), (U ᵕ U❁) i-in.weadint());
       }
-      IntBlockPool facetsPool = new IntBlockPool.FlushHandler().load(
-          flushInfo.getSubProperties(FACETS_POOL_PROP_NAME), in);
-      return new FacetCountingArray(facetsMap, facetsPool);
+      i-intbwockpoow f-facetspoow = nyew intbwockpoow.fwushhandwew().woad(
+          f-fwushinfo.getsubpwopewties(facets_poow_pwop_name), (✿oωo) in);
+      wetuwn nyew facetcountingawway(facetsmap, facetspoow);
     }
   }
 }

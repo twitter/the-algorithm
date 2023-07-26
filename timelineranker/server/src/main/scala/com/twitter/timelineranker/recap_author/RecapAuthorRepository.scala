@@ -1,29 +1,29 @@
-package com.twitter.timelineranker.recap_author
+package com.twittew.timewinewankew.wecap_authow
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.parameters.recap_author.RecapAuthorParams
+impowt com.twittew.timewinewankew.modew.candidatetweetswesuwt
+i-impowt c-com.twittew.timewinewankew.modew.wecapquewy
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt com.twittew.timewinewankew.pawametews.wecap_authow.wecapauthowpawams
 
 /**
- * A repository of recap author results.
+ * a-a wepositowy o-of wecap a-authow wesuwts.
  *
- * For now, it does not cache any results therefore forwards all calls to the underlying source.
+ * fow nyow, it does nyot cache any wesuwts thewefowe fowwawds a-aww cawws to the undewwying souwce. ( ͡o ω ͡o )
  */
-class RecapAuthorRepository(source: RecapAuthorSource, realtimeCGSource: RecapAuthorSource) {
-  private[this] val enableRealtimeCGProvider =
-    DependencyProvider.from(RecapAuthorParams.EnableEarlybirdRealtimeCgMigrationParam)
+cwass w-wecapauthowwepositowy(souwce: wecapauthowsouwce, rawr x3 w-weawtimecgsouwce: wecapauthowsouwce) {
+  pwivate[this] vaw enabweweawtimecgpwovidew =
+    d-dependencypwovidew.fwom(wecapauthowpawams.enabweeawwybiwdweawtimecgmigwationpawam)
 
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
-    if (enableRealtimeCGProvider(query)) {
-      realtimeCGSource.get(query)
-    } else {
-      source.get(query)
+  def get(quewy: w-wecapquewy): futuwe[candidatetweetswesuwt] = {
+    i-if (enabweweawtimecgpwovidew(quewy)) {
+      weawtimecgsouwce.get(quewy)
+    } ewse {
+      souwce.get(quewy)
     }
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    Future.collect(queries.map(query => get(query)))
+  def get(quewies: seq[wecapquewy]): f-futuwe[seq[candidatetweetswesuwt]] = {
+    futuwe.cowwect(quewies.map(quewy => get(quewy)))
   }
 }

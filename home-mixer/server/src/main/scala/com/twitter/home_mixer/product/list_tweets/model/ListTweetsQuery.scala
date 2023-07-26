@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.product.list_tweets.model
+package com.twittew.home_mixew.pwoduct.wist_tweets.modew
 
-import com.twitter.adserver.thriftscala.HomeTimelineType
-import com.twitter.adserver.thriftscala.TimelineRequestParams
-import com.twitter.dspbidder.commons.{thriftscala => dsp}
-import com.twitter.home_mixer.model.HomeAdsQuery
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request._
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Params
+impowt c-com.twittew.adsewvew.thwiftscawa.hometimewinetype
+i-impowt com.twittew.adsewvew.thwiftscawa.timewinewequestpawams
+i-impowt com.twittew.dspbiddew.commons.{thwiftscawa => d-dsp}
+impowt c-com.twittew.home_mixew.modew.homeadsquewy
+i-impowt c-com.twittew.home_mixew.modew.wequest.devicecontext
+i-impowt com.twittew.home_mixew.modew.wequest.haswistid
+impowt com.twittew.home_mixew.modew.wequest.wisttweetspwoduct
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtowdewedcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest._
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.configapi.pawams
 
-case class ListTweetsQuery(
-  override val params: Params,
-  override val clientContext: ClientContext,
-  override val pipelineCursor: Option[UrtOrderedCursor],
-  override val requestedMaxResults: Option[Int],
-  override val debugOptions: Option[DebugOptions],
-  override val features: Option[FeatureMap],
-  override val listId: Long,
-  override val deviceContext: Option[DeviceContext],
-  override val dspClientContext: Option[dsp.DspClientContext])
-    extends PipelineQuery
-    with HasPipelineCursor[UrtOrderedCursor]
-    with HasListId
-    with HomeAdsQuery {
-  override val product: Product = ListTweetsProduct
+case c-cwass wisttweetsquewy(
+  ovewwide v-vaw pawams: p-pawams, òωó
+  ovewwide vaw cwientcontext: cwientcontext, ʘwʘ
+  ovewwide vaw pipewinecuwsow: o-option[uwtowdewedcuwsow], /(^•ω•^)
+  ovewwide vaw wequestedmaxwesuwts: option[int], ʘwʘ
+  ovewwide vaw debugoptions: option[debugoptions],
+  o-ovewwide vaw featuwes: option[featuwemap], σωσ
+  o-ovewwide vaw wistid: w-wong,
+  ovewwide v-vaw devicecontext: o-option[devicecontext], OwO
+  ovewwide vaw dspcwientcontext: o-option[dsp.dspcwientcontext])
+    extends pipewinequewy
+    with h-haspipewinecuwsow[uwtowdewedcuwsow]
+    with haswistid
+    with homeadsquewy {
+  ovewwide vaw pwoduct: pwoduct = w-wisttweetspwoduct
 
-  override def withFeatureMap(features: FeatureMap): ListTweetsQuery =
-    copy(features = Some(features))
+  ovewwide d-def withfeatuwemap(featuwes: featuwemap): w-wisttweetsquewy =
+    c-copy(featuwes = some(featuwes))
 
-  override val timelineRequestParams: Option[TimelineRequestParams] =
-    Some(TimelineRequestParams(homeTimelineType = Some(HomeTimelineType.HomeLatest)))
+  ovewwide vaw timewinewequestpawams: o-option[timewinewequestpawams] =
+    s-some(timewinewequestpawams(hometimewinetype = some(hometimewinetype.homewatest)))
 }

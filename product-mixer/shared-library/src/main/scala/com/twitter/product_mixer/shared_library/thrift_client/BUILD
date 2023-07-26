@@ -1,20 +1,20 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-thriftmux/src/main/scala",
-        "finatra-internal/mtls-http/src/main/scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "util/util-core",
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    t-tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "finagwe/finagwe-cowe/swc/main", ( ͡o ω ͡o )
+        "finagwe/finagwe-thwiftmux/swc/main/scawa", UwU
+        "finatwa-intewnaw/mtws-http/swc/main/scawa",
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", rawr x3
+        "utiw/utiw-cowe", rawr
     ],
-    exports = [
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-thriftmux/src/main/scala",
-        "finatra-internal/mtls-http/src/main/scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "util/util-core",
+    e-expowts = [
+        "finagwe/finagwe-cowe/swc/main", σωσ
+        "finagwe/finagwe-thwiftmux/swc/main/scawa", σωσ
+        "finatwa-intewnaw/mtws-http/swc/main/scawa", >_<
+        "finatwa-intewnaw/mtws-thwiftmux/swc/main/scawa", :3
+        "utiw/utiw-cowe", (U ﹏ U)
     ],
 )

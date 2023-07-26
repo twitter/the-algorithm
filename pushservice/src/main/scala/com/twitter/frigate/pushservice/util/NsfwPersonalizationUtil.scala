@@ -1,126 +1,126 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWUserSegmentation
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.scio.nsfw_usew_segmentation.thwiftscawa.nsfwusewsegmentation
 
-object NsfwPersonalizationUtil {
-  def computeNsfwUserStats(
-    targetNsfwInfo: Option[NsfwInfo]
+o-object n-nysfwpewsonawizationutiw {
+  d-def computensfwusewstats(
+    tawgetnsfwinfo: option[nsfwinfo]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Unit = {
+    i-impwicit s-statsweceivew: statsweceivew
+  ): unit = {
 
-    def computeNsfwProfileVisitStats(sReceiver: StatsReceiver, nsfwProfileVisits: Long): Unit = {
-      if (nsfwProfileVisits >= 1)
-        sReceiver.counter("nsfwProfileVisits_gt_1").incr()
-      if (nsfwProfileVisits >= 2)
-        sReceiver.counter("nsfwProfileVisits_gt_2").incr()
-      if (nsfwProfileVisits >= 3)
-        sReceiver.counter("nsfwProfileVisits_gt_3").incr()
-      if (nsfwProfileVisits >= 5)
-        sReceiver.counter("nsfwProfileVisits_gt_5").incr()
-      if (nsfwProfileVisits >= 8)
-        sReceiver.counter("nsfwProfileVisits_gt_8").incr()
+    def computensfwpwofiwevisitstats(sweceivew: statsweceivew, (˘ω˘) n-nysfwpwofiwevisits: wong): unit = {
+      if (nsfwpwofiwevisits >= 1)
+        s-sweceivew.countew("nsfwpwofiwevisits_gt_1").incw()
+      if (nsfwpwofiwevisits >= 2)
+        s-sweceivew.countew("nsfwpwofiwevisits_gt_2").incw()
+      if (nsfwpwofiwevisits >= 3)
+        sweceivew.countew("nsfwpwofiwevisits_gt_3").incw()
+      if (nsfwpwofiwevisits >= 5)
+        s-sweceivew.countew("nsfwpwofiwevisits_gt_5").incw()
+      if (nsfwpwofiwevisits >= 8)
+        sweceivew.countew("nsfwpwofiwevisits_gt_8").incw()
     }
 
-    def computeRatioStats(
-      sReceiver: StatsReceiver,
-      ratio: Int,
-      statName: String,
-      intervals: List[Double] = List(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
-    ): Unit = {
-      intervals.foreach { i =>
-        if (ratio > i * 10000)
-          sReceiver.counter(f"${statName}_greater_than_${i}").incr()
+    d-def c-computewatiostats(
+      sweceivew: statsweceivew,
+      watio: int, :3
+      statname: s-stwing, ^^;;
+      intewvaws: wist[doubwe] = wist(0.1, 🥺 0.2, 0.3, 0.4, (⑅˘꒳˘) 0.5, 0.6, 0.7, nyaa~~ 0.8, 0.9)
+    ): unit = {
+      intewvaws.foweach { i-i =>
+        if (watio > i-i * 10000)
+          s-sweceivew.countew(f"${statname}_gweatew_than_${i}").incw()
       }
     }
-    val sReceiver = statsReceiver.scope("nsfw_personalization")
-    sReceiver.counter("AllUsers").incr()
+    v-vaw sweceivew = s-statsweceivew.scope("nsfw_pewsonawization")
+    sweceivew.countew("awwusews").incw()
 
-    (targetNsfwInfo) match {
-      case (Some(nsfwInfo)) =>
-        val sensitive = nsfwInfo.senstiveOptIn.getOrElse(false)
-        val nsfwFollowRatio =
-          nsfwInfo.nsfwFollowRatio
-        val totalFollows = nsfwInfo.totalFollowCount
-        val numNsfwProfileVisits = nsfwInfo.nsfwProfileVisits
-        val nsfwRealGraphScore = nsfwInfo.realGraphScore
-        val nsfwSearchScore = nsfwInfo.searchNsfwScore
-        val totalSearches = nsfwInfo.totalSearches
-        val realGraphScore = nsfwInfo.realGraphScore
-        val searchScore = nsfwInfo.searchNsfwScore
+    (tawgetnsfwinfo) match {
+      case (some(nsfwinfo)) =>
+        vaw s-sensitive = nysfwinfo.senstiveoptin.getowewse(fawse)
+        vaw nysfwfowwowwatio =
+          nysfwinfo.nsfwfowwowwatio
+        v-vaw totawfowwows = nysfwinfo.totawfowwowcount
+        vaw nyumnsfwpwofiwevisits = nysfwinfo.nsfwpwofiwevisits
+        vaw nysfwweawgwaphscowe = nysfwinfo.weawgwaphscowe
+        v-vaw nysfwseawchscowe = nysfwinfo.seawchnsfwscowe
+        v-vaw t-totawseawches = n-nysfwinfo.totawseawches
+        vaw weawgwaphscowe = nysfwinfo.weawgwaphscowe
+        vaw seawchscowe = n-nysfwinfo.seawchnsfwscowe
 
-        if (sensitive)
-          sReceiver.counter("sensitiveOptInEnabled").incr()
-        else
-          sReceiver.counter("sensitiveOptInDisabled").incr()
+        i-if (sensitive)
+          sweceivew.countew("sensitiveoptinenabwed").incw()
+        ewse
+          s-sweceivew.countew("sensitiveoptindisabwed").incw()
 
-        computeRatioStats(sReceiver, nsfwFollowRatio, "nsfwRatio")
-        computeNsfwProfileVisitStats(sReceiver, numNsfwProfileVisits)
-        computeRatioStats(sReceiver, nsfwRealGraphScore.toInt, "nsfwRealGraphScore")
+        c-computewatiostats(sweceivew, :3 nysfwfowwowwatio, ( ͡o ω ͡o ) "nsfwwatio")
+        c-computensfwpwofiwevisitstats(sweceivew, mya nyumnsfwpwofiwevisits)
+        c-computewatiostats(sweceivew, (///ˬ///✿) nysfwweawgwaphscowe.toint, (˘ω˘) "nsfwweawgwaphscowe")
 
-        if (totalSearches >= 10)
-          computeRatioStats(sReceiver, nsfwSearchScore.toInt, "nsfwSearchScore")
-        if (searchScore == 0)
-          sReceiver.counter("lowSearchScore").incr()
-        if (realGraphScore < 500)
-          sReceiver.counter("lowRealScore").incr()
-        if (numNsfwProfileVisits == 0)
-          sReceiver.counter("lowProfileVisit").incr()
-        if (nsfwFollowRatio == 0)
-          sReceiver.counter("lowFollowScore").incr()
+        if (totawseawches >= 10)
+          computewatiostats(sweceivew, ^^;; n-nysfwseawchscowe.toint, (✿oωo) "nsfwseawchscowe")
+        if (seawchscowe == 0)
+          sweceivew.countew("wowseawchscowe").incw()
+        if (weawgwaphscowe < 500)
+          s-sweceivew.countew("wowweawscowe").incw()
+        if (numnsfwpwofiwevisits == 0)
+          s-sweceivew.countew("wowpwofiwevisit").incw()
+        i-if (nsfwfowwowwatio == 0)
+          sweceivew.countew("wowfowwowscowe").incw()
 
-        if (totalSearches > 10 && searchScore > 5000)
-          sReceiver.counter("highSearchScore").incr()
-        if (realGraphScore > 7000)
-          sReceiver.counter("highRealScore").incr()
-        if (numNsfwProfileVisits > 5)
-          sReceiver.counter("highProfileVisit").incr()
-        if (totalFollows > 10 && nsfwFollowRatio > 7000)
-          sReceiver.counter("highFollowScore").incr()
+        if (totawseawches > 10 && seawchscowe > 5000)
+          sweceivew.countew("highseawchscowe").incw()
+        if (weawgwaphscowe > 7000)
+          sweceivew.countew("highweawscowe").incw()
+        if (numnsfwpwofiwevisits > 5)
+          s-sweceivew.countew("highpwofiwevisit").incw()
+        i-if (totawfowwows > 10 && nysfwfowwowwatio > 7000)
+          s-sweceivew.countew("highfowwowscowe").incw()
 
-        if (searchScore == 0 && realGraphScore <= 500 && numNsfwProfileVisits == 0 && nsfwFollowRatio == 0)
-          sReceiver.counter("lowIntent").incr()
-        if ((totalSearches > 10 && searchScore > 5000) || realGraphScore > 7000 || numNsfwProfileVisits > 5 || (totalFollows > 10 && nsfwFollowRatio > 7000))
-          sReceiver.counter("highIntent").incr()
+        i-if (seawchscowe == 0 && w-weawgwaphscowe <= 500 && nyumnsfwpwofiwevisits == 0 && nysfwfowwowwatio == 0)
+          sweceivew.countew("wowintent").incw()
+        i-if ((totawseawches > 10 && seawchscowe > 5000) || weawgwaphscowe > 7000 || nyumnsfwpwofiwevisits > 5 || (totawfowwows > 10 && nysfwfowwowwatio > 7000))
+          s-sweceivew.countew("highintent").incw()
       case _ =>
     }
   }
 }
 
-case class NsfwInfo(nsfwUserSegmentation: NSFWUserSegmentation) {
+c-case cwass nysfwinfo(nsfwusewsegmentation: n-nysfwusewsegmentation) {
 
-  val scalingFactor = 10000 // to convert float to int as custom fields cannot be float
-  val senstiveOptIn: Option[Boolean] = nsfwUserSegmentation.nsfwView
-  val totalFollowCount: Long = nsfwUserSegmentation.totalFollowCnt.getOrElse(0L)
-  val nsfwFollowCnt: Long =
-    nsfwUserSegmentation.nsfwAdminOrHighprecOrAgathaGtP98FollowsCnt.getOrElse(0L)
-  val nsfwFollowRatio: Int = {
-    if (totalFollowCount != 0) {
-      (nsfwFollowCnt * scalingFactor / totalFollowCount).toInt
-    } else 0
+  v-vaw scawingfactow = 10000 // to convewt f-fwoat to int as c-custom fiewds cannot b-be fwoat
+  v-vaw senstiveoptin: option[boowean] = nysfwusewsegmentation.nsfwview
+  v-vaw totawfowwowcount: w-wong = n-nysfwusewsegmentation.totawfowwowcnt.getowewse(0w)
+  v-vaw nysfwfowwowcnt: w-wong =
+    nysfwusewsegmentation.nsfwadminowhighpwecowagathagtp98fowwowscnt.getowewse(0w)
+  vaw nysfwfowwowwatio: int = {
+    i-if (totawfowwowcount != 0) {
+      (nsfwfowwowcnt * scawingfactow / totawfowwowcount).toint
+    } ewse 0
   }
-  val nsfwProfileVisits: Long =
-    nsfwUserSegmentation.nsfwAdminOrHighPrecOrAgathaGtP98Visits
-      .map(_.numProfilesInLast14Days).getOrElse(0L)
-  val realGraphScore: Int =
-    nsfwUserSegmentation.realGraphMetrics
-      .map { rm =>
-        if (rm.totalOutboundRGScore != 0)
-          rm.totalNsfwAdmHPAgthGtP98OutboundRGScore * scalingFactor / rm.totalOutboundRGScore
-        else 0d
-      }.getOrElse(0d).toInt
-  val totalSearches: Long =
-    nsfwUserSegmentation.searchMetrics.map(_.numNonTrndSrchInLast14Days).getOrElse(0L)
-  val searchNsfwScore: Int = nsfwUserSegmentation.searchMetrics
+  vaw nysfwpwofiwevisits: wong =
+    nysfwusewsegmentation.nsfwadminowhighpwecowagathagtp98visits
+      .map(_.numpwofiwesinwast14days).getowewse(0w)
+  vaw w-weawgwaphscowe: int =
+    nysfwusewsegmentation.weawgwaphmetwics
+      .map { wm =>
+        if (wm.totawoutboundwgscowe != 0)
+          wm.totawnsfwadmhpagthgtp98outboundwgscowe * s-scawingfactow / w-wm.totawoutboundwgscowe
+        e-ewse 0d
+      }.getowewse(0d).toint
+  vaw t-totawseawches: wong =
+    nysfwusewsegmentation.seawchmetwics.map(_.numnontwndswchinwast14days).getowewse(0w)
+  v-vaw seawchnsfwscowe: i-int = nysfwusewsegmentation.seawchmetwics
     .map { sm =>
-      if (sm.numNonTrndNonHshtgSrchInLast14Days != 0)
-        sm.numNonTrndNonHshtgGlobalNsfwSrchInLast14Days.toDouble * scalingFactor / sm.numNonTrndNonHshtgSrchInLast14Days
-      else 0
-    }.getOrElse(0d).toInt
-  val hasReported: Boolean =
-    nsfwUserSegmentation.notifFeedbackMetrics.exists(_.notifReportMetrics.exists(_.countTotal != 0))
-  val hasDisliked: Boolean =
-    nsfwUserSegmentation.notifFeedbackMetrics
-      .exists(_.notifDislikeMetrics.exists(_.countTotal != 0))
+      if (sm.numnontwndnonhshtgswchinwast14days != 0)
+        sm.numnontwndnonhshtggwobawnsfwswchinwast14days.todoubwe * scawingfactow / sm.numnontwndnonhshtgswchinwast14days
+      ewse 0
+    }.getowewse(0d).toint
+  v-vaw haswepowted: boowean =
+    n-nysfwusewsegmentation.notiffeedbackmetwics.exists(_.notifwepowtmetwics.exists(_.counttotaw != 0))
+  vaw h-hasdiswiked: boowean =
+    n-nysfwusewsegmentation.notiffeedbackmetwics
+      .exists(_.notifdiswikemetwics.exists(_.counttotaw != 0))
 }

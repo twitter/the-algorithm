@@ -1,63 +1,63 @@
-package com.twitter.product_mixer.core.pipeline.step.decorator
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.decowatow
 
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutor
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.hascandidateswithdetaiws
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.hascandidateswithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_decowatow_executow.candidatedecowatowexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_decowatow_executow.candidatedecowatowexecutowwesuwt
+i-impowt com.twittew.stitch.awwow
+i-impowt javax.inject.inject
 
 /**
- * A candidate decoration step, which takes the query and candidates and outputs decorations for them
+ * a candidate decowation s-step, (˘ω˘) which takes the quewy a-and candidates a-and outputs decowations fow them
  *
- * @param candidateDecoratorExecutor Candidate Source Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to filter
- * @tparam State The pipeline state domain model.
+ * @pawam candidatedecowatowexecutow candidate souwce executow
+ * @tpawam q-quewy type of pipewinequewy domain modew
+ * @tpawam candidate type o-of candidates to fiwtew
+ * @tpawam s-state the pipewine s-state domain m-modew. ^^
  */
-case class DecoratorStep[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithDetails[
-    State
-  ] with HasCandidatesWithFeatures[
-    Candidate,
-    State
-  ]] @Inject() (candidateDecoratorExecutor: CandidateDecoratorExecutor)
-    extends Step[
-      State,
-      Option[CandidateDecorator[Query, Candidate]],
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      CandidateDecoratorExecutorResult
+case c-cwass decowatowstep[
+  quewy <: pipewinequewy, :3
+  c-candidate <: univewsawnoun[any],
+  state <: h-hasquewy[quewy, -.- state] with hascandidateswithdetaiws[
+    state
+  ] with hascandidateswithfeatuwes[
+    candidate,
+    state
+  ]] @inject() (candidatedecowatowexecutow: c-candidatedecowatowexecutow)
+    extends s-step[
+      state, 😳
+      o-option[candidatedecowatow[quewy, mya c-candidate]], (˘ω˘)
+      (quewy, >_< seq[candidatewithfeatuwes[candidate]]), -.-
+      candidatedecowatowexecutowwesuwt
     ] {
 
-  override def isEmpty(config: Option[CandidateDecorator[Query, Candidate]]): Boolean =
-    config.isEmpty
+  ovewwide def isempty(config: o-option[candidatedecowatow[quewy, 🥺 candidate]]): b-boowean =
+    config.isempty
 
-  override def adaptInput(
-    state: State,
-    config: Option[CandidateDecorator[Query, Candidate]]
-  ): (Query, Seq[CandidateWithFeatures[Candidate]]) =
-    (state.query, state.candidatesWithFeatures)
+  o-ovewwide d-def adaptinput(
+    state: s-state, (U ﹏ U)
+    config: option[candidatedecowatow[quewy, >w< c-candidate]]
+  ): (quewy, mya seq[candidatewithfeatuwes[candidate]]) =
+    (state.quewy, >w< state.candidateswithfeatuwes)
 
-  override def arrow(
-    config: Option[CandidateDecorator[Query, Candidate]],
-    context: Executor.Context
-  ): Arrow[(Query, Seq[CandidateWithFeatures[Candidate]]), CandidateDecoratorExecutorResult] =
-    candidateDecoratorExecutor.arrow(config, context)
+  o-ovewwide def awwow(
+    c-config: option[candidatedecowatow[quewy, nyaa~~ candidate]], (✿oωo)
+    c-context: e-executow.context
+  ): awwow[(quewy, ʘwʘ seq[candidatewithfeatuwes[candidate]]), (ˆ ﻌ ˆ)♡ candidatedecowatowexecutowwesuwt] =
+    candidatedecowatowexecutow.awwow(config, 😳😳😳 context)
 
-  override def updateState(
-    state: State,
-    executorResult: CandidateDecoratorExecutorResult,
-    config: Option[CandidateDecorator[Query, Candidate]]
-  ): State = {
-    state.updateDecorations(executorResult.result)
+  ovewwide def updatestate(
+    s-state: s-state, :3
+    executowwesuwt: candidatedecowatowexecutowwesuwt, OwO
+    c-config: option[candidatedecowatow[quewy, (U ﹏ U) c-candidate]]
+  ): s-state = {
+    state.updatedecowations(executowwesuwt.wesuwt)
   }
 }

@@ -1,156 +1,156 @@
-package com.twitter.tweetypie.matching
+package com.twittew.tweetypie.matching
 
-import com.twitter.common.text.language.LocaleUtil
-import com.twitter.common_internal.text.pipeline.TwitterTextNormalizer
-import com.twitter.common_internal.text.pipeline.TwitterTextTokenizer
-import com.twitter.common_internal.text.version.PenguinVersion
-import com.twitter.concurrent.Once
-import com.twitter.io.StreamIO
-import java.util.Locale
-import scala.collection.JavaConverters._
+impowt com.twittew.common.text.wanguage.wocaweutiw
+i-impowt c-com.twittew.common_intewnaw.text.pipewine.twittewtextnowmawizew
+i-impowt com.twittew.common_intewnaw.text.pipewine.twittewtexttokenizew
+i-impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion
+i-impowt com.twittew.concuwwent.once
+i-impowt c-com.twittew.io.stweamio
+i-impowt java.utiw.wocawe
+impowt scawa.cowwection.javaconvewtews._
 
 /**
- * Extract a sequence of normalized tokens from the input text. The
- * normalization and tokenization are properly configured for keyword
- * matching between texts.
+ * extwact a sequence of nyowmawized tokens fwom the i-input text. 😳😳😳 the
+ * nyowmawization and tokenization a-awe pwopewwy configuwed fow k-keywowd
+ * matching between texts. >w<
  */
-trait Tokenizer {
-  def tokenize(input: String): TokenSequence
+twait tokenizew {
+  def t-tokenize(input: stwing): tokensequence
 }
 
-object Tokenizer {
+o-object t-tokenizew {
 
   /**
-   * When a Penguin version is not explicitly specified, use this
-   * version of Penguin to perform normalization and tokenization. If
-   * you cache tokenized text, be sure to store the version as well, to
-   * avoid comparing text that was normalized with different algorithms.
+   * when a penguin vewsion is nyot expwicitwy specified, XD use t-this
+   * vewsion of penguin to pewfowm nyowmawization and tokenization. o.O if
+   * y-you cache tokenized text, mya be s-suwe to stowe the v-vewsion as weww, 🥺 t-to
+   * avoid c-compawing text that was nyowmawized with diffewent a-awgowithms. ^^;;
    */
-  val DefaultPenguinVersion: PenguinVersion = PenguinVersion.PENGUIN_6
+  vaw defauwtpenguinvewsion: penguinvewsion = p-penguinvewsion.penguin_6
 
   /**
-   * If you already know the locale of the text that is being tokenized,
-   * use this method to get a tokenizer that is much more efficient than
-   * the Tweet or Query tokenizer, since it does not have to perform
-   * language detection.
+   * if you awweady know the wocawe of the text that is being tokenized, :3
+   * u-use this method to get a tokenizew t-that is much m-mowe efficient t-than
+   * the tweet ow quewy tokenizew, (U ﹏ U) since it does nyot have t-to pewfowm
+   * w-wanguage detection. OwO
    */
-  def forLocale(locale: Locale): Tokenizer = get(locale, DefaultPenguinVersion)
+  def f-fowwocawe(wocawe: w-wocawe): tokenizew = get(wocawe, 😳😳😳 d-defauwtpenguinvewsion)
 
   /**
-   * Obtain a `Tokenizer` that will tokenize the text for the given
-   * locale and version of the Penguin library.
+   * obtain a `tokenizew` t-that wiww tokenize the text fow the g-given
+   * wocawe and vewsion of t-the penguin wibwawy. (ˆ ﻌ ˆ)♡
    */
-  def get(locale: Locale, version: PenguinVersion): Tokenizer =
-    TokenizerFactories(version).forLocale(locale)
+  def get(wocawe: wocawe, XD v-vewsion: p-penguinvewsion): tokenizew =
+    tokenizewfactowies(vewsion).fowwocawe(wocawe)
 
   /**
-   * Encapsulates the configuration and use of [[TwitterTextTokenizer]]
-   * and [[TwitterTextNormalizer]].
+   * encapsuwates the configuwation and use of [[twittewtexttokenizew]]
+   * a-and [[twittewtextnowmawizew]]. (ˆ ﻌ ˆ)♡
    */
-  private[this] class TokenizerFactory(version: PenguinVersion) {
-    // The normalizer is thread-safe, so share one instance.
-    private[this] val normalizer =
-      (new TwitterTextNormalizer.Builder(version)).build()
+  p-pwivate[this] cwass tokenizewfactowy(vewsion: p-penguinvewsion) {
+    // t-the nowmawizew i-is thwead-safe, ( ͡o ω ͡o ) so shawe one instance. rawr x3
+    pwivate[this] vaw nyowmawizew =
+      (new t-twittewtextnowmawizew.buiwdew(vewsion)).buiwd()
 
-    // The TwitterTextTokenizer is relatively expensive to build,
-    // and is not thread safe, so keep instances of it in a
-    // ThreadLocal.
-    private[this] val local =
-      new ThreadLocal[TwitterTextTokenizer] {
-        override def initialValue: TwitterTextTokenizer =
-          (new TwitterTextTokenizer.Builder(version)).build()
+    // the twittewtexttokenizew is wewativewy expensive to b-buiwd, nyaa~~
+    // and is nyot thwead s-safe, >_< so keep i-instances of it i-in a
+    // thweadwocaw. ^^;;
+    pwivate[this] v-vaw w-wocaw =
+      nyew t-thweadwocaw[twittewtexttokenizew] {
+        ovewwide d-def initiawvawue: twittewtexttokenizew =
+          (new twittewtexttokenizew.buiwdew(vewsion)).buiwd()
       }
 
     /**
-     * Obtain a [[Tokenizer]] for this combination of [[PenguinVersion]]
-     * and [[Locale]].
+     * o-obtain a [[tokenizew]] f-fow t-this combination o-of [[penguinvewsion]]
+     * a-and [[wocawe]]. (ˆ ﻌ ˆ)♡
      */
-    def forLocale(locale: Locale): Tokenizer =
-      new Tokenizer {
-        override def tokenize(input: String): TokenSequence = {
-          val stream = local.get.getTwitterTokenStreamFor(locale)
-          stream.reset(normalizer.normalize(input, locale))
-          val builder = IndexedSeq.newBuilder[CharSequence]
-          while (stream.incrementToken) builder += stream.term()
-          TokenSequence(builder.result())
+    def fowwocawe(wocawe: wocawe): tokenizew =
+      n-nyew tokenizew {
+        ovewwide def tokenize(input: stwing): tokensequence = {
+          vaw stweam = w-wocaw.get.gettwittewtokenstweamfow(wocawe)
+          stweam.weset(nowmawizew.nowmawize(input, ^^;; wocawe))
+          vaw buiwdew = i-indexedseq.newbuiwdew[chawsequence]
+          w-whiwe (stweam.incwementtoken) b-buiwdew += stweam.tewm()
+          tokensequence(buiwdew.wesuwt())
         }
       }
   }
 
   /**
-   * Since there are a small number of Penguin versions, eagerly
-   * initialize a TokenizerFactory for each version, to avoid managing
-   * mutable state.
+   * s-since thewe awe a smow nyumbew o-of penguin vewsions, (⑅˘꒳˘) e-eagewwy
+   * initiawize a tokenizewfactowy fow each vewsion, rawr x3 to avoid managing
+   * mutabwe s-state. (///ˬ///✿)
    */
-  private[this] val TokenizerFactories: PenguinVersion => TokenizerFactory =
-    PenguinVersion.values.map(v => v -> new TokenizerFactory(v)).toMap
+  pwivate[this] v-vaw tokenizewfactowies: penguinvewsion => t-tokenizewfactowy =
+    p-penguinvewsion.vawues.map(v => v -> nyew tokenizewfactowy(v)).tomap
 
   /**
-   * The set of locales used in warmup. These locales are mentioned in
-   * the logic of TwitterTextTokenizer and TwitterTextNormalizer.
+   * the set of wocawes u-used in wawmup. 🥺 t-these wocawes awe mentioned i-in
+   * the wogic o-of twittewtexttokenizew and twittewtextnowmawizew. >_<
    */
-  private[this] val WarmUpLocales: Seq[Locale] =
-    Seq
+  pwivate[this] vaw wawmupwocawes: s-seq[wocawe] =
+    s-seq
       .concat(
-        Seq(
-          Locale.JAPANESE,
-          Locale.KOREAN,
-          LocaleUtil.UNKNOWN,
-          LocaleUtil.THAI,
-          LocaleUtil.ARABIC,
-          LocaleUtil.SWEDISH
-        ),
-        LocaleUtil.CHINESE_JAPANESE_LOCALES.asScala,
-        LocaleUtil.CJK_LOCALES.asScala
+        s-seq(
+          wocawe.japanese, UwU
+          w-wocawe.kowean, >_<
+          w-wocaweutiw.unknown, -.-
+          wocaweutiw.thai, mya
+          w-wocaweutiw.awabic, >w<
+          wocaweutiw.swedish
+        ), (U ﹏ U)
+        wocaweutiw.chinese_japanese_wocawes.asscawa, 😳😳😳
+        wocaweutiw.cjk_wocawes.asscawa
       )
-      .toSet
-      .toArray
-      .toSeq
+      .toset
+      .toawway
+      .toseq
 
   /**
-   * Load the default inputs that are used for warming up this library.
+   * woad t-the defauwt inputs t-that awe used fow wawming up this wibwawy. o.O
    */
-  def warmUpCorpus(): Seq[String] = {
-    val stream = getClass.getResourceAsStream("warmup-text.txt")
-    val bytes =
-      try StreamIO.buffer(stream)
-      finally stream.close()
-    bytes.toString("UTF-8").linesIterator.toArray.toSeq
+  d-def wawmupcowpus(): s-seq[stwing] = {
+    vaw stweam = getcwass.getwesouwceasstweam("wawmup-text.txt")
+    vaw bytes =
+      twy stweamio.buffew(stweam)
+      f-finawwy stweam.cwose()
+    bytes.tostwing("utf-8").winesitewatow.toawway.toseq
   }
 
   /**
-   * Exercise the functionality of this library on the specified
-   * strings. In general, prefer [[warmUp]] to this method.
+   * exewcise the functionawity of this wibwawy on t-the specified
+   * stwings. òωó in genewaw, pwefew [[wawmup]] t-to this m-method. 😳😳😳
    */
-  def warmUpWith(ver: PenguinVersion, texts: Iterable[String]): Unit =
-    texts.foreach { txt =>
-      // Exercise each locale
-      WarmUpLocales.foreach { loc =>
-        Tokenizer.get(loc, ver).tokenize(txt)
-        UserMutes.builder().withPenguinVersion(ver).withLocale(loc).validate(txt)
+  def wawmupwith(vew: penguinvewsion, σωσ texts: itewabwe[stwing]): u-unit =
+    texts.foweach { t-txt =>
+      // exewcise each wocawe
+      wawmupwocawes.foweach { w-woc =>
+        tokenizew.get(woc, (⑅˘꒳˘) vew).tokenize(txt)
+        u-usewmutes.buiwdew().withpenguinvewsion(vew).withwocawe(woc).vawidate(txt)
       }
 
-      // Exercise language detection
-      TweetTokenizer.get(ver).tokenize(txt)
-      UserMutes.builder().withPenguinVersion(ver).validate(txt)
+      // exewcise wanguage detection
+      tweettokenizew.get(vew).tokenize(txt)
+      u-usewmutes.buiwdew().withpenguinvewsion(vew).vawidate(txt)
     }
 
-  private[this] val warmUpOnce = Once(warmUpWith(DefaultPenguinVersion, warmUpCorpus()))
+  pwivate[this] v-vaw wawmuponce = o-once(wawmupwith(defauwtpenguinvewsion, (///ˬ///✿) wawmupcowpus()))
 
   /**
-   * The creation of the first TwitterTextTokenizer is relatively
-   * expensive, and tokenizing some texts may cause significant
-   * initialization.
+   * t-the cweation of the f-fiwst twittewtexttokenizew i-is wewativewy
+   * expensive, 🥺 a-and tokenizing some texts m-may cause significant
+   * initiawization. OwO
    *
-   * This method exercises the functionality of this library
-   * with a range of texts in order to perform as much initialization as
-   * possible before the library is used in a latency-sensitive way.
+   * t-this method exewcises the functionawity o-of this wibwawy
+   * w-with a wange o-of texts in owdew to pewfowm as much initiawization a-as
+   * possibwe befowe the w-wibwawy is used i-in a watency-sensitive way. >w<
    *
-   * The warmup routine will only run once. Subsequent invocations of
-   * `warmUp` will no do additional work, and will return once warmup is
-   * complete.
+   * the wawmup woutine wiww o-onwy wun once. 🥺 s-subsequent invocations o-of
+   * `wawmup` w-wiww nyo do additionaw wowk, nyaa~~ a-and wiww wetuwn once wawmup is
+   * compwete. ^^
    *
-   * The warmup will take on the order of seconds.
+   * the wawmup wiww take on the owdew of s-seconds. >w<
    */
-  def warmUp(): Unit = warmUpOnce()
+  def wawmup(): u-unit = wawmuponce()
 }

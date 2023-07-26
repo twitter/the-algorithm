@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpointOptions
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uwtendpointoptions
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class UrtEndpointOptionsMarshaller @Inject() () {
+@singweton
+c-cwass u-uwtendpointoptionsmawshawwew @inject() () {
 
-  def apply(urtEndpointOptions: UrtEndpointOptions): urt.UrtEndpointOptions =
-    urt.UrtEndpointOptions(
-      requestParams = urtEndpointOptions.requestParams,
-      title = urtEndpointOptions.title,
-      cacheId = urtEndpointOptions.cacheId,
-      subtitle = urtEndpointOptions.subtitle
+  d-def appwy(uwtendpointoptions: uwtendpointoptions): uwt.uwtendpointoptions =
+    uwt.uwtendpointoptions(
+      wequestpawams = uwtendpointoptions.wequestpawams, σωσ
+      titwe = uwtendpointoptions.titwe, >_<
+      cacheid = uwtendpointoptions.cacheid, :3
+      s-subtitwe = uwtendpointoptions.subtitwe
     )
 }

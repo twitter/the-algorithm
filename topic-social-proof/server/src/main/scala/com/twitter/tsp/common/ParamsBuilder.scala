@@ -1,98 +1,98 @@
-package com.twitter.tsp.common
+package com.twittew.tsp.common
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abdecider.UserRecipient
-import com.twitter.contentrecommender.thriftscala.DisplayLocation
-import com.twitter.discovery.common.configapi.FeatureContextBuilder
-import com.twitter.featureswitches.FSRecipient
-import com.twitter.featureswitches.Recipient
-import com.twitter.featureswitches.UserAgent
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.interests.thriftscala.TopicListingViewerContext
-import com.twitter.timelines.configapi
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.configapi.RequestContext
-import com.twitter.timelines.configapi.abdecider.LoggingABDeciderExperimentContext
+impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt c-com.twittew.abdecidew.usewwecipient
+i-impowt com.twittew.contentwecommendew.thwiftscawa.dispwaywocation
+i-impowt c-com.twittew.discovewy.common.configapi.featuwecontextbuiwdew
+i-impowt c-com.twittew.featuweswitches.fswecipient
+i-impowt com.twittew.featuweswitches.wecipient
+impowt com.twittew.featuweswitches.usewagent
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.intewests.thwiftscawa.topicwistingviewewcontext
+impowt com.twittew.timewines.configapi
+i-impowt com.twittew.timewines.configapi.pawams
+impowt c-com.twittew.timewines.configapi.wequestcontext
+impowt com.twittew.timewines.configapi.abdecidew.woggingabdecidewexpewimentcontext
 
-case class ParamsBuilder(
-  featureContextBuilder: FeatureContextBuilder,
-  abDecider: LoggingABDecider,
-  overridesConfig: configapi.Config,
-  statsReceiver: StatsReceiver) {
+case cwass pawamsbuiwdew(
+  f-featuwecontextbuiwdew: featuwecontextbuiwdew, 😳
+  a-abdecidew: woggingabdecidew, σωσ
+  o-ovewwidesconfig: configapi.config, rawr x3
+  statsweceivew: statsweceivew) {
 
-  def buildFromTopicListingViewerContext(
-    topicListingViewerContext: Option[TopicListingViewerContext],
-    displayLocation: DisplayLocation,
-    userRoleOverride: Option[Set[String]] = None
-  ): Params = {
+  def buiwdfwomtopicwistingviewewcontext(
+    t-topicwistingviewewcontext: option[topicwistingviewewcontext], OwO
+    dispwaywocation: dispwaywocation, /(^•ω•^)
+    usewwoweovewwide: option[set[stwing]] = n-nyone
+  ): pawams = {
 
-    topicListingViewerContext.flatMap(_.userId) match {
-      case Some(userId) =>
-        val userRecipient = ParamsBuilder.toFeatureSwitchRecipientWithTopicContext(
-          userId,
-          userRoleOverride,
-          topicListingViewerContext,
-          Some(displayLocation)
+    t-topicwistingviewewcontext.fwatmap(_.usewid) m-match {
+      c-case s-some(usewid) =>
+        vaw usewwecipient = pawamsbuiwdew.tofeatuweswitchwecipientwithtopiccontext(
+          usewid, 😳😳😳
+          u-usewwoweovewwide, ( ͡o ω ͡o )
+          topicwistingviewewcontext, >_<
+          some(dispwaywocation)
         )
 
-        overridesConfig(
-          requestContext = RequestContext(
-            userId = Some(userId),
-            experimentContext = LoggingABDeciderExperimentContext(
-              abDecider,
-              Some(UserRecipient(userId, Some(userId)))),
-            featureContext = featureContextBuilder(
-              Some(userId),
-              Some(userRecipient)
+        o-ovewwidesconfig(
+          wequestcontext = wequestcontext(
+            usewid = some(usewid), >w<
+            expewimentcontext = woggingabdecidewexpewimentcontext(
+              a-abdecidew, rawr
+              some(usewwecipient(usewid, 😳 some(usewid)))), >w<
+            f-featuwecontext = f-featuwecontextbuiwdew(
+              s-some(usewid), (⑅˘꒳˘)
+              some(usewwecipient)
             )
-          ),
-          statsReceiver
+          ), OwO
+          statsweceivew
         )
       case _ =>
-        throw new IllegalArgumentException(
-          s"${this.getClass.getSimpleName} tried to build Param for a request without a userId"
+        t-thwow nyew i-iwwegawawgumentexception(
+          s"${this.getcwass.getsimpwename} t-twied to b-buiwd pawam fow a wequest without a-a usewid"
         )
     }
   }
 }
 
-object ParamsBuilder {
+object pawamsbuiwdew {
 
-  def toFeatureSwitchRecipientWithTopicContext(
-    userId: Long,
-    userRolesOverride: Option[Set[String]],
-    context: Option[TopicListingViewerContext],
-    displayLocationOpt: Option[DisplayLocation]
-  ): Recipient = {
-    val userRoles = userRolesOverride match {
-      case Some(overrides) => Some(overrides)
-      case _ => context.flatMap(_.userRoles.map(_.toSet))
+  d-def tofeatuweswitchwecipientwithtopiccontext(
+    usewid: wong, (ꈍᴗꈍ)
+    u-usewwowesovewwide: option[set[stwing]], 😳
+    c-context: option[topicwistingviewewcontext], 😳😳😳
+    d-dispwaywocationopt: o-option[dispwaywocation]
+  ): wecipient = {
+    vaw usewwowes = usewwowesovewwide match {
+      case some(ovewwides) => some(ovewwides)
+      c-case _ => c-context.fwatmap(_.usewwowes.map(_.toset))
     }
 
-    val recipient = FSRecipient(
-      userId = Some(userId),
-      userRoles = userRoles,
-      deviceId = context.flatMap(_.deviceId),
-      guestId = context.flatMap(_.guestId),
-      languageCode = context.flatMap(_.languageCode),
-      countryCode = context.flatMap(_.countryCode),
-      userAgent = context.flatMap(_.userAgent).flatMap(UserAgent(_)),
-      isVerified = None,
-      isTwoffice = None,
-      tooClient = None,
-      highWaterMark = None
+    vaw w-wecipient = fswecipient(
+      u-usewid = some(usewid), mya
+      u-usewwowes = usewwowes, mya
+      deviceid = context.fwatmap(_.deviceid), (⑅˘꒳˘)
+      g-guestid = context.fwatmap(_.guestid), (U ﹏ U)
+      wanguagecode = context.fwatmap(_.wanguagecode), mya
+      countwycode = c-context.fwatmap(_.countwycode), ʘwʘ
+      usewagent = c-context.fwatmap(_.usewagent).fwatmap(usewagent(_)), (˘ω˘)
+      i-isvewified = n-none, (U ﹏ U)
+      istwoffice = nyone, ^•ﻌ•^
+      t-toocwient = n-nyone, (˘ω˘)
+      h-highwatewmawk = n-nyone
     )
-    displayLocationOpt match {
-      case Some(displayLocation) =>
-        recipient.withCustomFields(displayLocationCustomFieldMap(displayLocation))
-      case None =>
-        recipient
+    dispwaywocationopt match {
+      c-case some(dispwaywocation) =>
+        w-wecipient.withcustomfiewds(dispwaywocationcustomfiewdmap(dispwaywocation))
+      c-case nyone =>
+        w-wecipient
     }
   }
 
-  private val DisplayLocationCustomField = "display_location"
+  p-pwivate vaw dispwaywocationcustomfiewd = "dispway_wocation"
 
-  def displayLocationCustomFieldMap(displayLocation: DisplayLocation): (String, String) =
-    DisplayLocationCustomField -> displayLocation.toString
+  def dispwaywocationcustomfiewdmap(dispwaywocation: dispwaywocation): (stwing, s-stwing) =
+    dispwaywocationcustomfiewd -> dispwaywocation.tostwing
 
 }

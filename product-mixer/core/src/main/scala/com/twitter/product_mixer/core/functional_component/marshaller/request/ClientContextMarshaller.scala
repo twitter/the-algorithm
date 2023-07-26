@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.request
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wequest
 
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.{thriftscala => t}
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.cwientcontext
+i-impowt c-com.twittew.pwoduct_mixew.cowe.{thwiftscawa => t-t}
 
-object ClientContextMarshaller {
+object cwientcontextmawshawwew {
 
-  def apply(clientContext: ClientContext): t.ClientContext = {
-    t.ClientContext(
-      userId = clientContext.userId,
-      guestId = clientContext.guestId,
-      appId = clientContext.appId,
-      ipAddress = clientContext.ipAddress,
-      userAgent = clientContext.userAgent,
-      countryCode = clientContext.countryCode,
-      languageCode = clientContext.languageCode,
-      isTwoffice = clientContext.isTwoffice,
-      userRoles = clientContext.userRoles,
-      deviceId = clientContext.deviceId,
-      mobileDeviceId = clientContext.mobileDeviceId,
-      mobileDeviceAdId = clientContext.mobileDeviceAdId,
-      limitAdTracking = clientContext.limitAdTracking,
-      guestIdAds = clientContext.guestIdAds,
-      guestIdMarketing = clientContext.guestIdMarketing
+  d-def appwy(cwientcontext: c-cwientcontext): t-t.cwientcontext = {
+    t-t.cwientcontext(
+      u-usewid = cwientcontext.usewid, rawr x3
+      guestid = cwientcontext.guestid, nyaa~~
+      appid = cwientcontext.appid, /(^•ω•^)
+      ipaddwess = cwientcontext.ipaddwess, rawr
+      u-usewagent = cwientcontext.usewagent, OwO
+      countwycode = c-cwientcontext.countwycode, (U ﹏ U)
+      wanguagecode = c-cwientcontext.wanguagecode, >_<
+      istwoffice = cwientcontext.istwoffice, rawr x3
+      usewwowes = c-cwientcontext.usewwowes, mya
+      deviceid = cwientcontext.deviceid, nyaa~~
+      m-mobiwedeviceid = c-cwientcontext.mobiwedeviceid, (⑅˘꒳˘)
+      mobiwedeviceadid = cwientcontext.mobiwedeviceadid, rawr x3
+      wimitadtwacking = cwientcontext.wimitadtwacking, (✿oωo)
+      g-guestidads = cwientcontext.guestidads, (ˆ ﻌ ˆ)♡
+      guestidmawketing = cwientcontext.guestidmawketing
     )
   }
 }

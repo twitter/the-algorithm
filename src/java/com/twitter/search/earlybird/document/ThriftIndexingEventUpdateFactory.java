@@ -1,91 +1,91 @@
-package com.twitter.search.earlybird.document;
+package com.twittew.seawch.eawwybiwd.document;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.document.Document;
+i-impowt owg.apache.wucene.document.document;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.schema.SchemaDocumentFactory;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+impowt c-com.twittew.decidew.decidew;
+i-impowt com.twittew.seawch.common.schema.schemadocumentfactowy;
+i-impowt com.twittew.seawch.common.schema.base.fiewdnametoidmapping;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.common.schema.base.thwiftdocumentutiw;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt c-com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
 
 /**
- * Builds a Lucene Document from a ThriftIndexingEvent. A simplified version of
- * {@link ThriftIndexingEventDocumentFactory} that can be used for update events, which exclude
- * many fields that the tweet indexing events contain.
+ * buiwds a wucene document fwom a thwiftindexingevent. ( ͡o ω ͡o ) a-a simpwified vewsion of
+ * {@wink t-thwiftindexingeventdocumentfactowy} t-that can be used fow update events, >_< which excwude
+ * many fiewds that the t-tweet indexing events contain.
  */
-public class ThriftIndexingEventUpdateFactory extends DocumentFactory<ThriftIndexingEvent> {
-  private static final FieldNameToIdMapping ID_MAPPING = new EarlybirdFieldConstants();
+pubwic cwass thwiftindexingeventupdatefactowy extends documentfactowy<thwiftindexingevent> {
+  p-pwivate static finaw fiewdnametoidmapping id_mapping = n-nyew e-eawwybiwdfiewdconstants();
 
-  private final SchemaDocumentFactory schemaDocumentFactory;
-  private final EarlybirdCluster cluster;
-  private final Schema schema;
+  pwivate f-finaw schemadocumentfactowy s-schemadocumentfactowy;
+  pwivate finaw eawwybiwdcwustew c-cwustew;
+  pwivate finaw schema schema;
 
-  public ThriftIndexingEventUpdateFactory(
-      Schema schema,
-      EarlybirdCluster cluster,
-      Decider decider,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this(
-        schema,
-        ThriftIndexingEventDocumentFactory.getSchemaDocumentFactory(schema, cluster, decider),
-        cluster,
-        criticalExceptionHandler
+  p-pubwic thwiftindexingeventupdatefactowy(
+      schema schema,
+      eawwybiwdcwustew cwustew,
+      decidew decidew, >w<
+      c-cwiticawexceptionhandwew cwiticawexceptionhandwew) {
+    t-this(
+        s-schema, rawr
+        t-thwiftindexingeventdocumentfactowy.getschemadocumentfactowy(schema, cwustew, 😳 decidew), >w<
+        cwustew, (⑅˘꒳˘)
+        c-cwiticawexceptionhandwew
     );
   }
 
-  @VisibleForTesting
-  protected ThriftIndexingEventUpdateFactory(
-      Schema schema,
-      SchemaDocumentFactory schemaDocumentFactory,
-      EarlybirdCluster cluster,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(criticalExceptionHandler);
+  @visibwefowtesting
+  p-pwotected thwiftindexingeventupdatefactowy(
+      schema schema, OwO
+      s-schemadocumentfactowy s-schemadocumentfactowy, (ꈍᴗꈍ)
+      eawwybiwdcwustew cwustew, 😳
+      c-cwiticawexceptionhandwew cwiticawexceptionhandwew) {
+    s-supew(cwiticawexceptionhandwew);
     this.schema = schema;
-    this.schemaDocumentFactory = schemaDocumentFactory;
-    this.cluster = cluster;
+    t-this.schemadocumentfactowy = schemadocumentfactowy;
+    t-this.cwustew = cwustew;
   }
 
-  @Override
-  public long getStatusId(ThriftIndexingEvent event) {
-    Preconditions.checkNotNull(event);
-    Preconditions.checkState(
-        event.isSetDocument(), "ThriftDocument is null inside ThriftIndexingEvent.");
+  @ovewwide
+  p-pubwic w-wong getstatusid(thwiftindexingevent event) {
+    pweconditions.checknotnuww(event);
+    pweconditions.checkstate(
+        event.issetdocument(), 😳😳😳 "thwiftdocument is nyuww inside thwiftindexingevent.");
 
-    ThriftDocument thriftDocument;
-    try {
-      // Ideally, we should not call getSchemaSnapshot() here.  But, as this is called only to
-      // retrieve status id and the ID field is static, this is fine for the purpose.
-      thriftDocument = ThriftDocumentPreprocessor.preprocess(
-          event.getDocument(), cluster, schema.getSchemaSnapshot());
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to obtain tweet ID from ThriftDocument: " + event, e);
+    thwiftdocument t-thwiftdocument;
+    t-twy {
+      // ideawwy, mya we shouwd n-nyot caww getschemasnapshot() h-hewe. mya  but, as t-this is cawwed onwy to
+      // wetwieve status id and the id fiewd i-is static, (⑅˘꒳˘) this is fine fow the puwpose. (U ﹏ U)
+      thwiftdocument = thwiftdocumentpwepwocessow.pwepwocess(
+          e-event.getdocument(), mya cwustew, s-schema.getschemasnapshot());
+    } c-catch (ioexception e-e) {
+      thwow nyew i-iwwegawstateexception("unabwe t-to o-obtain tweet id f-fwom thwiftdocument: " + event, ʘwʘ e);
     }
-    return ThriftDocumentUtil.getLongValue(
-        thriftDocument, EarlybirdFieldConstant.ID_FIELD.getFieldName(), ID_MAPPING);
+    wetuwn t-thwiftdocumentutiw.getwongvawue(
+        thwiftdocument, (˘ω˘) eawwybiwdfiewdconstant.id_fiewd.getfiewdname(), (U ﹏ U) id_mapping);
   }
 
-  @Override
-  protected Document innerNewDocument(ThriftIndexingEvent event) throws IOException {
-    Preconditions.checkNotNull(event);
-    Preconditions.checkNotNull(event.getDocument());
+  @ovewwide
+  pwotected d-document i-innewnewdocument(thwiftindexingevent e-event) thwows i-ioexception {
+    pweconditions.checknotnuww(event);
+    pweconditions.checknotnuww(event.getdocument());
 
-    ImmutableSchemaInterface schemaSnapshot = schema.getSchemaSnapshot();
+    immutabweschemaintewface s-schemasnapshot = schema.getschemasnapshot();
 
-    ThriftDocument document = ThriftDocumentPreprocessor.preprocess(
-        event.getDocument(), cluster, schemaSnapshot);
+    thwiftdocument document = thwiftdocumentpwepwocessow.pwepwocess(
+        event.getdocument(), ^•ﻌ•^ cwustew, (˘ω˘) s-schemasnapshot);
 
-    return schemaDocumentFactory.newDocument(document);
+    wetuwn schemadocumentfactowy.newdocument(document);
   }
 }

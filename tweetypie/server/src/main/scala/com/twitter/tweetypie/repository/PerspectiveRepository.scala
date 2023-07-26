@@ -1,15 +1,15 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService.GetPerspectives
-import com.twitter.timelineservice.thriftscala.TimelineEntryPerspective
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.timewinesewvice.timewinesewvice.getpewspectives
+i-impowt c-com.twittew.timewinesewvice.thwiftscawa.timewineentwypewspective
 
-object PerspectiveRepository {
+o-object pewspectivewepositowy {
 
   /**
-   * Same type as com.twitter.stitch.timelineservice.TimelineService.GetPerspectives but without
-   * using Arrow.
+   * s-same type as com.twittew.stitch.timewinesewvice.timewinesewvice.getpewspectives b-but without
+   * using awwow. rawr
    */
-  type Type = GetPerspectives.Query => Stitch[TimelineEntryPerspective]
+  type type = getpewspectives.quewy => stitch[timewineentwypewspective]
 }

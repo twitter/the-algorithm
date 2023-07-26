@@ -1,80 +1,80 @@
-package com.twitter.recosinjector.clients
+package com.twittew.wecosinjectow.cwients
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.socialgraph.thriftscala._
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.wogging.woggew
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa._
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
 
-class SocialGraph(
-  socialGraphIdStore: ReadableStore[IdsRequest, IdsResult]
+c-cwass sociawgwaph(
+  sociawgwaphidstowe: weadabwestowe[idswequest, 😳 idswesuwt]
 )(
-  implicit statsReceiver: StatsReceiver) {
-  import SocialGraph._
-  private val log = Logger()
+  impwicit statsweceivew: s-statsweceivew) {
+  impowt sociawgwaph._
+  pwivate v-vaw wog = woggew()
 
-  private val followedByNotMutedByStats = statsReceiver.scope("followedByNotMutedBy")
+  pwivate vaw f-fowwowedbynotmutedbystats = statsweceivew.scope("fowwowedbynotmutedby")
 
-  private def fetchIdsFromSocialGraph(
-    userId: Long,
-    ids: Seq[Long],
-    relationshipTypes: Map[RelationshipType, Boolean],
-    lookupContext: Option[LookupContext] = IncludeInactiveUnionLookupContext,
-    stats: StatsReceiver
-  ): Future[Seq[Long]] = {
-    if (ids.isEmpty) {
-      stats.counter("fetchIdsEmpty").incr()
-      Future.Nil
-    } else {
-      val relationships = relationshipTypes.map {
-        case (relationshipType, hasRelationship) =>
-          SrcRelationship(
-            source = userId,
-            relationshipType = relationshipType,
-            hasRelationship = hasRelationship,
-            targets = Some(ids)
+  pwivate def fetchidsfwomsociawgwaph(
+    u-usewid: wong, mya
+    ids: seq[wong],
+    w-wewationshiptypes: map[wewationshiptype, (˘ω˘) b-boowean], >_<
+    wookupcontext: option[wookupcontext] = incwudeinactiveunionwookupcontext, -.-
+    stats: statsweceivew
+  ): f-futuwe[seq[wong]] = {
+    if (ids.isempty) {
+      stats.countew("fetchidsempty").incw()
+      futuwe.niw
+    } ewse {
+      v-vaw wewationships = wewationshiptypes.map {
+        c-case (wewationshiptype, 🥺 h-haswewationship) =>
+          s-swcwewationship(
+            souwce = u-usewid, (U ﹏ U)
+            wewationshiptype = wewationshiptype, >w<
+            haswewationship = haswewationship, mya
+            t-tawgets = some(ids)
           )
-      }.toSeq
-      val idsRequest = IdsRequest(
-        relationships = relationships,
-        pageRequest = SelectAllPageRequest,
-        context = lookupContext
+      }.toseq
+      vaw idswequest = i-idswequest(
+        wewationships = wewationships,
+        pagewequest = sewectawwpagewequest, >w<
+        context = w-wookupcontext
       )
-      socialGraphIdStore
-        .get(idsRequest)
-        .map { _.map(_.ids).getOrElse(Nil) }
-        .rescue {
-          case e =>
-            stats.scope("fetchIdsFailure").counter(e.getClass.getSimpleName).incr()
-            log.error(s"Failed with message ${e.toString}")
-            Future.Nil
+      sociawgwaphidstowe
+        .get(idswequest)
+        .map { _.map(_.ids).getowewse(niw) }
+        .wescue {
+          c-case e =>
+            s-stats.scope("fetchidsfaiwuwe").countew(e.getcwass.getsimpwename).incw()
+            w-wog.ewwow(s"faiwed with message ${e.tostwing}")
+            futuwe.niw
         }
     }
   }
 
-  // which of the users in candidates follow userId and have not muted userId
-  def followedByNotMutedBy(userId: Long, candidates: Seq[Long]): Future[Seq[Long]] = {
-    fetchIdsFromSocialGraph(
-      userId,
-      candidates,
-      FollowedByNotMutedRelationships,
-      IncludeInactiveLookupContext,
-      followedByNotMutedByStats
+  // which o-of the usews i-in candidates fowwow usewid and h-have nyot muted u-usewid
+  def fowwowedbynotmutedby(usewid: wong, nyaa~~ c-candidates: seq[wong]): futuwe[seq[wong]] = {
+    f-fetchidsfwomsociawgwaph(
+      usewid, (✿oωo)
+      candidates, ʘwʘ
+      f-fowwowedbynotmutedwewationships, (ˆ ﻌ ˆ)♡
+      incwudeinactivewookupcontext, 😳😳😳
+      f-fowwowedbynotmutedbystats
     )
   }
 
 }
 
-object SocialGraph {
-  val SelectAllPageRequest = Some(PageRequest(selectAll = Some(true)))
+object sociawgwaph {
+  v-vaw s-sewectawwpagewequest = some(pagewequest(sewectaww = some(twue)))
 
-  val IncludeInactiveLookupContext = Some(LookupContext(includeInactive = true))
-  val IncludeInactiveUnionLookupContext = Some(
-    LookupContext(includeInactive = true, performUnion = Some(true))
+  vaw incwudeinactivewookupcontext = some(wookupcontext(incwudeinactive = twue))
+  vaw incwudeinactiveunionwookupcontext = s-some(
+    w-wookupcontext(incwudeinactive = twue, :3 pewfowmunion = s-some(twue))
   )
 
-  val FollowedByNotMutedRelationships: Map[RelationshipType, Boolean] = Map(
-    RelationshipType.FollowedBy -> true,
-    RelationshipType.MutedBy -> false
+  vaw f-fowwowedbynotmutedwewationships: m-map[wewationshiptype, OwO boowean] = map(
+    wewationshiptype.fowwowedby -> twue, (U ﹏ U)
+    w-wewationshiptype.mutedby -> fawse
   )
 }

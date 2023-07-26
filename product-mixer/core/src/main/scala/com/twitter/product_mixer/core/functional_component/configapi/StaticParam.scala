@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi
 
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.pawam
 
-/** A [[Param]] used for constant values where we do not require backing by feature switches or deciders */
-case class StaticParam[ValueType](value: ValueType) extends Param[ValueType](value)
+/** a-a [[pawam]] u-used fow constant v-vawues whewe w-we do nyot wequiwe b-backing by f-featuwe switches o-ow decidews */
+c-case cwass staticpawam[vawuetype](vawue: vawuetype) extends pawam[vawuetype](vawue)

@@ -1,137 +1,137 @@
 //
 //  endian_fix.h
-//  ImageCore
+//  imagecowe
 //
-//  For OSes that use glibc < 2.9 (like RHEL5)
+//  f-fow oses t-that use gwibc < 2.9 (wike w-whew5)
 //
-#pragma once
+#pwagma o-once
 
-#ifdef __APPLE__
-#include <libkern/OSByteOrder.h>
-#define htobe16(x) OSSwapHostToBigInt16(x)
-#define htole16(x) OSSwapHostToLittleInt16(x)
-#define betoh16(x) OSSwapBigToHostInt16(x)
-#define letoh16(x) OSSwapLittleToHostInt16(x)
-#define htobe32(x) OSSwapHostToBigInt32(x)
-#define htole32(x) OSSwapHostToLittleInt32(x)
-#define betoh32(x) OSSwapBigToHostInt32(x)
-#define letoh32(x) OSSwapLittleToHostInt32(x)
-#define htobe64(x) OSSwapHostToBigInt64(x)
-#define htole64(x) OSSwapHostToLittleInt64(x)
-#define betoh64(x) OSSwapBigToHostInt64(x)
-#define letoh64(x) OSSwapLittleToHostInt64(x)
-#else
-#include <endian.h>
-#ifdef __USE_BSD
-/* Conversion interfaces.  */
-#include <byteswap.h>
+#ifdef __appwe__
+#incwude <wibkewn/osbyteowdew.h>
+#define h-htobe16(x) o-osswaphosttobigint16(x)
+#define h-htowe16(x) o-osswaphosttowittweint16(x)
+#define betoh16(x) osswapbigtohostint16(x)
+#define wetoh16(x) osswapwittwetohostint16(x)
+#define htobe32(x) osswaphosttobigint32(x)
+#define h-htowe32(x) osswaphosttowittweint32(x)
+#define betoh32(x) o-osswapbigtohostint32(x)
+#define wetoh32(x) osswapwittwetohostint32(x)
+#define h-htobe64(x) osswaphosttobigint64(x)
+#define htowe64(x) osswaphosttowittweint64(x)
+#define betoh64(x) o-osswapbigtohostint64(x)
+#define wetoh64(x) o-osswapwittwetohostint64(x)
+#ewse
+#incwude <endian.h>
+#ifdef __use_bsd
+/* c-convewsion intewfaces. /(^•ω•^)  */
+#incwude <byteswap.h>
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#if __byte_owdew == __wittwe_endian
 #ifndef htobe16
 #define htobe16(x) __bswap_16(x)
 #endif
-#ifndef htole16
-#define htole16(x) (x)
+#ifndef htowe16
+#define h-htowe16(x) (x)
 #endif
 #ifndef betoh16
 #define betoh16(x) __bswap_16(x)
 #endif
-#ifndef letoh16
-#define letoh16(x) (x)
+#ifndef wetoh16
+#define wetoh16(x) (x)
 #endif
 
-#ifndef htobe32
+#ifndef h-htobe32
 #define htobe32(x) __bswap_32(x)
 #endif
-#ifndef htole32
-#define htole32(x) (x)
+#ifndef h-htowe32
+#define h-htowe32(x) (x)
 #endif
-#ifndef betoh32
-#define betoh32(x) __bswap_32(x)
+#ifndef b-betoh32
+#define b-betoh32(x) __bswap_32(x)
 #endif
-#ifndef letoh32
-#define letoh32(x) (x)
+#ifndef wetoh32
+#define wetoh32(x) (x)
 #endif
 
-#ifndef htobe64
+#ifndef h-htobe64
 #define htobe64(x) __bswap_64(x)
 #endif
-#ifndef htole64
-#define htole64(x) (x)
+#ifndef htowe64
+#define h-htowe64(x) (x)
 #endif
 #ifndef betoh64
 #define betoh64(x) __bswap_64(x)
 #endif
-#ifndef letoh64
-#define letoh64(x) (x)
+#ifndef wetoh64
+#define wetoh64(x) (x)
 #endif
 
-#else /* __BYTE_ORDER == __LITTLE_ENDIAN */
+#ewse /* __byte_owdew == __wittwe_endian */
 #ifndef htobe16
-#define htobe16(x) (x)
+#define h-htobe16(x) (x)
 #endif
-#ifndef htole16
-#define htole16(x) __bswap_16(x)
+#ifndef htowe16
+#define h-htowe16(x) __bswap_16(x)
 #endif
-#ifndef be16toh
-#define be16toh(x) (x)
+#ifndef b-be16toh
+#define b-be16toh(x) (x)
 #endif
-#ifndef le16toh
-#define le16toh(x) __bswap_16(x)
+#ifndef we16toh
+#define we16toh(x) __bswap_16(x)
 #endif
 
 #ifndef htobe32
 #define htobe32(x) (x)
 #endif
-#ifndef htole32
-#define htole32(x) __bswap_32(x)
+#ifndef htowe32
+#define h-htowe32(x) __bswap_32(x)
 #endif
-#ifndef betoh32
+#ifndef b-betoh32
 #define betoh32(x) (x)
 #endif
-#ifndef letoh32
-#define letoh32(x) __bswap_32(x)
+#ifndef w-wetoh32
+#define w-wetoh32(x) __bswap_32(x)
 #endif
 
 #ifndef htobe64
-#define htobe64(x) (x)
+#define h-htobe64(x) (x)
 #endif
-#ifndef htole64
-#define htole64(x) __bswap_64(x)
+#ifndef htowe64
+#define h-htowe64(x) __bswap_64(x)
 #endif
 #ifndef betoh64
 #define betoh64(x) (x)
 #endif
-#ifndef letoh64
-#define letoh64(x) __bswap_64(x)
+#ifndef w-wetoh64
+#define wetoh64(x) __bswap_64(x)
 #endif
 
-#endif /* __BYTE_ORDER == __LITTLE_ENDIAN */
+#endif /* __byte_owdew == __wittwe_endian */
 
-#else  /* __USE_BSD */
-#ifndef betoh16
+#ewse  /* __use_bsd */
+#ifndef b-betoh16
 #define betoh16 be16toh
 #endif
 
-#ifndef betoh32
-#define betoh32 be32toh
+#ifndef b-betoh32
+#define b-betoh32 be32toh
 #endif
 
 #ifndef betoh64
 #define betoh64 be64toh
 #endif
 
-#ifndef letoh16
-#define letoh16 le16toh
+#ifndef wetoh16
+#define wetoh16 we16toh
 #endif
 
-#ifndef letoh32
-#define letoh32 le32toh
+#ifndef wetoh32
+#define wetoh32 we32toh
 #endif
 
-#ifndef letoh64
-#define letoh64 le64toh
+#ifndef w-wetoh64
+#define w-wetoh64 we64toh
 #endif
 
-#endif /* __USE_BSD */
-#endif /* __APPLE__ */
+#endif /* __use_bsd */
+#endif /* __appwe__ */

@@ -1,154 +1,154 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object SetAdditionalFields extends TweetStore.SyncModule {
+o-object setadditionawfiewds e-extends tweetstowe.syncmoduwe {
 
-  case class Event(additionalFields: Tweet, userId: UserId, timestamp: Time)
-      extends SyncTweetStoreEvent("set_additional_fields") {
+  c-case cwass e-event(additionawfiewds: t-tweet, 😳😳😳 u-usewid: usewid, timestamp: time)
+      extends synctweetstoweevent("set_additionaw_fiewds") {
 
-    def toAsyncRequest: AsyncSetAdditionalFieldsRequest =
-      AsyncSetAdditionalFieldsRequest(
-        additionalFields = additionalFields,
-        userId = userId,
-        timestamp = timestamp.inMillis
+    def toasyncwequest: asyncsetadditionawfiewdswequest =
+      asyncsetadditionawfiewdswequest(
+        a-additionawfiewds = additionawfiewds, OwO
+        usewid = usewid, 😳
+        t-timestamp = timestamp.inmiwwis
       )
   }
 
-  trait Store {
-    val setAdditionalFields: FutureEffect[Event]
+  t-twait stowe {
+    vaw setadditionawfiewds: futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val setAdditionalFields: FutureEffect[Event] = wrap(underlying.setAdditionalFields)
+  t-twait stowewwappew extends stowe { s-sewf: tweetstowewwappew[stowe] =>
+    o-ovewwide vaw setadditionawfiewds: futuweeffect[event] = wwap(undewwying.setadditionawfiewds)
   }
 
-  object Store {
-    def apply(
-      manhattanStore: ManhattanTweetStore,
-      cachingTweetStore: CachingTweetStore,
-      asyncEnqueueStore: AsyncEnqueueStore,
-      logLensStore: LogLensStore
-    ): Store =
-      new Store {
-        override val setAdditionalFields: FutureEffect[Event] =
-          FutureEffect.sequentially(
-            logLensStore.setAdditionalFields,
-            manhattanStore.setAdditionalFields,
-            // Ignore failures but wait for completion to ensure we attempted to update cache before
-            // running async tasks, in particular publishing an event to EventBus.
-            cachingTweetStore.ignoreFailuresUponCompletion.setAdditionalFields,
-            asyncEnqueueStore.setAdditionalFields
+  object stowe {
+    d-def appwy(
+      manhattanstowe: manhattantweetstowe, 😳😳😳
+      cachingtweetstowe: cachingtweetstowe, (˘ω˘)
+      a-asyncenqueuestowe: asyncenqueuestowe,
+      w-wogwensstowe: w-wogwensstowe
+    ): s-stowe =
+      n-nyew stowe {
+        ovewwide vaw setadditionawfiewds: f-futuweeffect[event] =
+          futuweeffect.sequentiawwy(
+            wogwensstowe.setadditionawfiewds,
+            m-manhattanstowe.setadditionawfiewds, ʘwʘ
+            // ignowe faiwuwes but wait fow compwetion to ensuwe we attempted to update cache b-befowe
+            // wunning a-async tasks, ( ͡o ω ͡o ) in p-pawticuwaw pubwishing a-an event to eventbus. o.O
+            cachingtweetstowe.ignowefaiwuwesuponcompwetion.setadditionawfiewds, >w<
+            asyncenqueuestowe.setadditionawfiewds
           )
       }
   }
 }
 
-object AsyncSetAdditionalFields extends TweetStore.AsyncModule {
+o-object a-asyncsetadditionawfiewds extends t-tweetstowe.asyncmoduwe {
 
-  object Event {
-    def fromAsyncRequest(
-      request: AsyncSetAdditionalFieldsRequest,
-      user: User
-    ): TweetStoreEventOrRetry[Event] =
-      TweetStoreEventOrRetry(
-        Event(
-          additionalFields = request.additionalFields,
-          userId = request.userId,
-          optUser = Some(user),
-          timestamp = Time.fromMilliseconds(request.timestamp)
-        ),
-        request.retryAction,
-        RetryEvent
+  object e-event {
+    def fwomasyncwequest(
+      w-wequest: asyncsetadditionawfiewdswequest, 😳
+      u-usew: usew
+    ): tweetstoweeventowwetwy[event] =
+      t-tweetstoweeventowwetwy(
+        event(
+          a-additionawfiewds = wequest.additionawfiewds, 🥺
+          u-usewid = w-wequest.usewid, rawr x3
+          optusew = some(usew), o.O
+          timestamp = time.fwommiwwiseconds(wequest.timestamp)
+        ), rawr
+        wequest.wetwyaction, ʘwʘ
+        wetwyevent
       )
   }
 
-  case class Event(additionalFields: Tweet, userId: UserId, optUser: Option[User], timestamp: Time)
-      extends AsyncTweetStoreEvent("async_set_additional_fields")
-      with TweetStoreTweetEvent {
+  case cwass event(additionawfiewds: tweet, 😳😳😳 usewid: u-usewid, ^^;; optusew: o-option[usew], o.O timestamp: time)
+      e-extends a-asynctweetstoweevent("async_set_additionaw_fiewds")
+      w-with tweetstowetweetevent {
 
-    def toAsyncRequest(action: Option[AsyncWriteAction] = None): AsyncSetAdditionalFieldsRequest =
-      AsyncSetAdditionalFieldsRequest(
-        additionalFields = additionalFields,
-        retryAction = action,
-        userId = userId,
-        timestamp = timestamp.inMillis
+    def toasyncwequest(action: option[asyncwwiteaction] = nyone): asyncsetadditionawfiewdswequest =
+      a-asyncsetadditionawfiewdswequest(
+        additionawfiewds = additionawfiewds, (///ˬ///✿)
+        wetwyaction = action, σωσ
+        u-usewid = usewid, nyaa~~
+        timestamp = t-timestamp.inmiwwis
       )
 
-    override def toTweetEventData: Seq[TweetEventData] =
-      Seq(
-        TweetEventData.AdditionalFieldUpdateEvent(
-          AdditionalFieldUpdateEvent(
-            updatedFields = additionalFields,
-            userId = optUser.map(_.id)
+    o-ovewwide d-def totweeteventdata: seq[tweeteventdata] =
+      s-seq(
+        t-tweeteventdata.additionawfiewdupdateevent(
+          a-additionawfiewdupdateevent(
+            updatedfiewds = additionawfiewds, ^^;;
+            u-usewid = optusew.map(_.id)
           )
         )
       )
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      service.asyncSetAdditionalFields(toAsyncRequest(Some(action)))
+    ovewwide d-def enqueuewetwy(sewvice: t-thwifttweetsewvice, ^•ﻌ•^ a-action: asyncwwiteaction): f-futuwe[unit] =
+      s-sewvice.asyncsetadditionawfiewds(toasyncwequest(some(action)))
   }
 
-  case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+  case cwass wetwyevent(action: asyncwwiteaction, σωσ e-event: event)
+      extends tweetstowewetwyevent[event] {
 
-    override val eventType: AsyncWriteEventType.SetAdditionalFields.type =
-      AsyncWriteEventType.SetAdditionalFields
-    override val scribedTweetOnFailure: None.type = None
+    ovewwide vaw eventtype: asyncwwiteeventtype.setadditionawfiewds.type =
+      asyncwwiteeventtype.setadditionawfiewds
+    o-ovewwide vaw scwibedtweetonfaiwuwe: nyone.type = nyone
   }
 
-  trait Store {
-    val asyncSetAdditionalFields: FutureEffect[Event]
-    val retryAsyncSetAdditionalFields: FutureEffect[TweetStoreRetryEvent[Event]]
+  twait stowe {
+    v-vaw asyncsetadditionawfiewds: f-futuweeffect[event]
+    v-vaw wetwyasyncsetadditionawfiewds: futuweeffect[tweetstowewetwyevent[event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncSetAdditionalFields: FutureEffect[Event] = wrap(
-      underlying.asyncSetAdditionalFields)
-    override val retryAsyncSetAdditionalFields: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
-      underlying.retryAsyncSetAdditionalFields)
+  t-twait stowewwappew extends s-stowe { sewf: t-tweetstowewwappew[stowe] =>
+    ovewwide vaw asyncsetadditionawfiewds: futuweeffect[event] = wwap(
+      undewwying.asyncsetadditionawfiewds)
+    ovewwide vaw w-wetwyasyncsetadditionawfiewds: futuweeffect[tweetstowewetwyevent[event]] = w-wwap(
+      undewwying.wetwyasyncsetadditionawfiewds)
   }
 
-  object Store {
-    def apply(
-      replicatingStore: ReplicatingTweetStore,
-      eventBusEnqueueStore: TweetEventBusStore
-    ): Store = {
-      val stores: Seq[Store] = Seq(replicatingStore, eventBusEnqueueStore)
+  o-object s-stowe {
+    def appwy(
+      wepwicatingstowe: wepwicatingtweetstowe, -.-
+      e-eventbusenqueuestowe: t-tweeteventbusstowe
+    ): stowe = {
+      v-vaw s-stowes: seq[stowe] = seq(wepwicatingstowe, ^^;; eventbusenqueuestowe)
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def buiwd[e <: tweetstoweevent](extwact: s-stowe => futuweeffect[e]): f-futuweeffect[e] =
+        f-futuweeffect.inpawawwew[e](stowes.map(extwact): _*)
 
-      new Store {
-        override val asyncSetAdditionalFields: FutureEffect[Event] = build(
-          _.asyncSetAdditionalFields)
-        override val retryAsyncSetAdditionalFields: FutureEffect[TweetStoreRetryEvent[Event]] =
-          build(_.retryAsyncSetAdditionalFields)
+      nyew stowe {
+        o-ovewwide v-vaw asyncsetadditionawfiewds: futuweeffect[event] = b-buiwd(
+          _.asyncsetadditionawfiewds)
+        ovewwide vaw wetwyasyncsetadditionawfiewds: futuweeffect[tweetstowewetwyevent[event]] =
+          buiwd(_.wetwyasyncsetadditionawfiewds)
       }
     }
   }
 }
 
-object ReplicatedSetAdditionalFields extends TweetStore.ReplicatedModule {
+o-object wepwicatedsetadditionawfiewds e-extends tweetstowe.wepwicatedmoduwe {
 
-  case class Event(additionalFields: Tweet)
-      extends ReplicatedTweetStoreEvent("replicated_set_additional_fields")
+  case cwass e-event(additionawfiewds: t-tweet)
+      extends wepwicatedtweetstoweevent("wepwicated_set_additionaw_fiewds")
 
-  trait Store {
-    val replicatedSetAdditionalFields: FutureEffect[Event]
+  twait stowe {
+    v-vaw wepwicatedsetadditionawfiewds: futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedSetAdditionalFields: FutureEffect[Event] = wrap(
-      underlying.replicatedSetAdditionalFields)
+  twait stowewwappew extends stowe { s-sewf: tweetstowewwappew[stowe] =>
+    ovewwide vaw wepwicatedsetadditionawfiewds: f-futuweeffect[event] = w-wwap(
+      undewwying.wepwicatedsetadditionawfiewds)
   }
 
-  object Store {
-    def apply(cachingTweetStore: CachingTweetStore): Store = {
-      new Store {
-        override val replicatedSetAdditionalFields: FutureEffect[Event] =
-          cachingTweetStore.replicatedSetAdditionalFields
+  object stowe {
+    def appwy(cachingtweetstowe: c-cachingtweetstowe): s-stowe = {
+      nyew stowe {
+        ovewwide vaw wepwicatedsetadditionawfiewds: futuweeffect[event] =
+          c-cachingtweetstowe.wepwicatedsetadditionawfiewds
       }
     }
   }

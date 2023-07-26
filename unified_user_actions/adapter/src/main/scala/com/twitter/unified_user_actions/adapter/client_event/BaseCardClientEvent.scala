@@ -1,26 +1,26 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.clientapp.thriftscala.ItemType
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.CardInfo
-import com.twitter.unified_user_actions.thriftscala.Item
+impowt c-com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt com.twittew.cwientapp.thwiftscawa.{item => w-wogeventitem}
+i-impowt com.twittew.cwientapp.thwiftscawa.itemtype
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.cawdinfo
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.item
 
-abstract class BaseCardClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+abstwact cwass basecawdcwientevent(actiontype: actiontype)
+    extends basecwientevent(actiontype = a-actiontype) {
 
-  override def isItemTypeValid(itemTypeOpt: Option[ItemType]): Boolean =
-    ItemTypeFilterPredicates.ignoreItemType(itemTypeOpt)
-  override def getUuaItem(
-    ceItem: LogEventItem,
-    logEvent: LogEvent
-  ): Option[Item] = Some(
-    Item.CardInfo(
-      CardInfo(
-        id = ceItem.id,
-        itemType = ceItem.itemType,
-        actionTweetAuthorInfo = ClientEventCommonUtils.getAuthorInfo(ceItem),
+  ovewwide def isitemtypevawid(itemtypeopt: o-option[itemtype]): boowean =
+    i-itemtypefiwtewpwedicates.ignoweitemtype(itemtypeopt)
+  ovewwide def getuuaitem(
+    ceitem: wogeventitem, ( ͡o ω ͡o )
+    w-wogevent: wogevent
+  ): option[item] = s-some(
+    i-item.cawdinfo(
+      cawdinfo(
+        id = ceitem.id, rawr x3
+        itemtype = c-ceitem.itemtype,
+        actiontweetauthowinfo = cwienteventcommonutiws.getauthowinfo(ceitem), nyaa~~
       ))
   )
 }

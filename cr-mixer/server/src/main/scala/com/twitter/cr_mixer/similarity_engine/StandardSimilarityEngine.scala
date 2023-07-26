@@ -1,65 +1,65 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.twittew.cw_mixew.simiwawity_engine
 
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.MemCacheConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
+impowt com.twittew.cw_mixew.simiwawity_engine.simiwawityengine.memcacheconfig
+i-impowt c-com.twittew.cw_mixew.simiwawity_engine.simiwawityengine.simiwawityengineconfig
+i-impowt com.twittew.cw_mixew.thwiftscawa.simiwawityenginetype
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * @tparam Query ReadableStore's input type.
+ * @tpawam quewy weadabwestowe's input type. (˘ω˘)
  */
-case class EngineQuery[Query](
-  storeQuery: Query,
-  params: Params,
+case cwass enginequewy[quewy](
+  s-stowequewy: quewy, >_<
+  pawams: pawams, -.-
 )
 
 /**
- * A straight forward SimilarityEngine implementation that wraps a ReadableStore
+ * a-a stwaight fowwawd s-simiwawityengine impwementation that wwaps a weadabwestowe
  *
- * @param implementingStore   Provides the candidate retrieval's implementations
- * @param memCacheConfig      If specified, it will wrap the underlying store with a MemCache layer
- *                            You should only enable this for cacheable queries, e.x. TweetIds.
- *                            consumer based UserIds are generally not possible to cache.
- * @tparam Query              ReadableStore's input type
- * @tparam Candidate          ReadableStore's return type is Seq[[[Candidate]]]
+ * @pawam impwementingstowe   p-pwovides the candidate w-wetwievaw's impwementations
+ * @pawam m-memcacheconfig      if specified, 🥺 it wiww wwap the undewwying stowe with a-a memcache wayew
+ *                            you shouwd onwy enabwe this fow cacheabwe quewies, (U ﹏ U) e.x. tweetids. >w<
+ *                            c-consumew based usewids awe genewawwy n-nyot possibwe t-to cache. mya
+ * @tpawam q-quewy              w-weadabwestowe's input type
+ * @tpawam c-candidate          weadabwestowe's wetuwn type i-is seq[[[candidate]]]
  */
-class StandardSimilarityEngine[Query, Candidate <: Serializable](
-  implementingStore: ReadableStore[Query, Seq[Candidate]],
-  override val identifier: SimilarityEngineType,
-  globalStats: StatsReceiver,
-  engineConfig: SimilarityEngineConfig,
-  memCacheConfig: Option[MemCacheConfig[Query]] = None)
-    extends SimilarityEngine[EngineQuery[Query], Candidate] {
+cwass standawdsimiwawityengine[quewy, >w< candidate <: sewiawizabwe](
+  impwementingstowe: weadabwestowe[quewy, nyaa~~ seq[candidate]], (✿oωo)
+  o-ovewwide vaw identifiew: s-simiwawityenginetype, ʘwʘ
+  g-gwobawstats: s-statsweceivew, (ˆ ﻌ ˆ)♡
+  engineconfig: simiwawityengineconfig, 😳😳😳
+  memcacheconfig: o-option[memcacheconfig[quewy]] = n-nyone)
+    extends simiwawityengine[enginequewy[quewy], :3 c-candidate] {
 
-  private val scopedStats = globalStats.scope("similarityEngine", identifier.toString)
+  p-pwivate vaw scopedstats = g-gwobawstats.scope("simiwawityengine", OwO identifiew.tostwing)
 
-  def getScopedStats: StatsReceiver = scopedStats
+  d-def getscopedstats: statsweceivew = scopedstats
 
-  // Add memcache wrapper, if specified
-  private val store = {
-    memCacheConfig match {
-      case Some(config) =>
-        SimilarityEngine.addMemCache(
-          underlyingStore = implementingStore,
-          memCacheConfig = config,
-          statsReceiver = scopedStats
+  // a-add memcache wwappew, (U ﹏ U) if s-specified
+  pwivate vaw stowe = {
+    m-memcacheconfig m-match {
+      case some(config) =>
+        simiwawityengine.addmemcache(
+          undewwyingstowe = impwementingstowe, >w<
+          memcacheconfig = config, (U ﹏ U)
+          s-statsweceivew = s-scopedstats
         )
-      case _ => implementingStore
+      case _ => i-impwementingstowe
     }
   }
 
-  override def getCandidates(
-    engineQuery: EngineQuery[Query]
-  ): Future[Option[Seq[Candidate]]] = {
-    SimilarityEngine.getFromFn(
-      store.get,
-      engineQuery.storeQuery,
-      engineConfig,
-      engineQuery.params,
-      scopedStats
+  ovewwide d-def getcandidates(
+    enginequewy: e-enginequewy[quewy]
+  ): futuwe[option[seq[candidate]]] = {
+    simiwawityengine.getfwomfn(
+      stowe.get, 😳
+      e-enginequewy.stowequewy, (ˆ ﻌ ˆ)♡
+      engineconfig, 😳😳😳
+      enginequewy.pawams, (U ﹏ U)
+      scopedstats
     )
   }
 }

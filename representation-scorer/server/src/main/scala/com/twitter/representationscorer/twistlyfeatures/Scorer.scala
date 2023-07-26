@@ -1,148 +1,148 @@
-package com.twitter.representationscorer.twistlyfeatures
+package com.twittew.wepwesentationscowew.twistwyfeatuwes
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.representationscorer.common.TweetId
-import com.twitter.representationscorer.common.UserId
-import com.twitter.representationscorer.scorestore.ScoreStore
-import com.twitter.representationscorer.thriftscala.SimClustersRecentEngagementSimilarities
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingPairScoreId
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
+impowt c-com.twittew.finagwe.stats.countew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wepwesentationscowew.common.tweetid
+i-impowt com.twittew.wepwesentationscowew.common.usewid
+i-impowt c-com.twittew.wepwesentationscowew.scowestowe.scowestowe
+i-impowt c-com.twittew.wepwesentationscowew.thwiftscawa.simcwustewswecentengagementsimiwawities
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scoweid
+impowt com.twittew.simcwustews_v2.thwiftscawa.scoweintewnawid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scowingawgowithm
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingpaiwscoweid
+impowt c-com.twittew.stitch.stitch
+impowt javax.inject.inject
 
-class Scorer @Inject() (
-  fetchEngagementsFromUSS: Long => Stitch[Engagements],
-  scoreStore: ScoreStore,
-  stats: StatsReceiver) {
+c-cwass s-scowew @inject() (
+  fetchengagementsfwomuss: wong => stitch[engagements], (⑅˘꒳˘)
+  scowestowe: scowestowe, (U ﹏ U)
+  s-stats: statsweceivew) {
 
-  import Scorer._
+  impowt scowew._
 
-  private val scoreStats = stats.scope("score")
-  private val scoreCalculationStats = scoreStats.scope("calculation")
-  private val scoreResultStats = scoreStats.scope("result")
+  pwivate vaw scowestats = stats.scope("scowe")
+  pwivate vaw s-scowecawcuwationstats = scowestats.scope("cawcuwation")
+  p-pwivate v-vaw scowewesuwtstats = s-scowestats.scope("wesuwt")
 
-  private val scoresNonEmptyCounter = scoreResultStats.scope("all").counter("nonEmpty")
-  private val scoresNonZeroCounter = scoreResultStats.scope("all").counter("nonZero")
+  p-pwivate vaw scowesnonemptycountew = scowewesuwtstats.scope("aww").countew("nonempty")
+  p-pwivate vaw scowesnonzewocountew = scowewesuwtstats.scope("aww").countew("nonzewo")
 
-  private val tweetScoreStats = scoreCalculationStats.scope("tweetScore").stat("latency")
-  private val userScoreStats = scoreCalculationStats.scope("userScore").stat("latency")
+  pwivate v-vaw tweetscowestats = scowecawcuwationstats.scope("tweetscowe").stat("watency")
+  pwivate vaw usewscowestats = scowecawcuwationstats.scope("usewscowe").stat("watency")
 
-  private val favNonZero = scoreResultStats.scope("favs").counter("nonZero")
-  private val favNonEmpty = scoreResultStats.scope("favs").counter("nonEmpty")
+  pwivate vaw favnonzewo = scowewesuwtstats.scope("favs").countew("nonzewo")
+  p-pwivate vaw favnonempty = s-scowewesuwtstats.scope("favs").countew("nonempty")
 
-  private val retweetsNonZero = scoreResultStats.scope("retweets").counter("nonZero")
-  private val retweetsNonEmpty = scoreResultStats.scope("retweets").counter("nonEmpty")
+  p-pwivate v-vaw wetweetsnonzewo = scowewesuwtstats.scope("wetweets").countew("nonzewo")
+  pwivate vaw wetweetsnonempty = s-scowewesuwtstats.scope("wetweets").countew("nonempty")
 
-  private val followsNonZero = scoreResultStats.scope("follows").counter("nonZero")
-  private val followsNonEmpty = scoreResultStats.scope("follows").counter("nonEmpty")
+  p-pwivate vaw fowwowsnonzewo = s-scowewesuwtstats.scope("fowwows").countew("nonzewo")
+  p-pwivate vaw fowwowsnonempty = s-scowewesuwtstats.scope("fowwows").countew("nonempty")
 
-  private val sharesNonZero = scoreResultStats.scope("shares").counter("nonZero")
-  private val sharesNonEmpty = scoreResultStats.scope("shares").counter("nonEmpty")
+  pwivate vaw shawesnonzewo = s-scowewesuwtstats.scope("shawes").countew("nonzewo")
+  pwivate vaw shawesnonempty = s-scowewesuwtstats.scope("shawes").countew("nonempty")
 
-  private val repliesNonZero = scoreResultStats.scope("replies").counter("nonZero")
-  private val repliesNonEmpty = scoreResultStats.scope("replies").counter("nonEmpty")
+  pwivate v-vaw wepwiesnonzewo = scowewesuwtstats.scope("wepwies").countew("nonzewo")
+  p-pwivate v-vaw wepwiesnonempty = scowewesuwtstats.scope("wepwies").countew("nonempty")
 
-  private val originalTweetsNonZero = scoreResultStats.scope("originalTweets").counter("nonZero")
-  private val originalTweetsNonEmpty = scoreResultStats.scope("originalTweets").counter("nonEmpty")
+  pwivate vaw owiginawtweetsnonzewo = scowewesuwtstats.scope("owiginawtweets").countew("nonzewo")
+  pwivate vaw owiginawtweetsnonempty = s-scowewesuwtstats.scope("owiginawtweets").countew("nonempty")
 
-  private val videoViewsNonZero = scoreResultStats.scope("videoViews").counter("nonZero")
-  private val videoViewsNonEmpty = scoreResultStats.scope("videoViews").counter("nonEmpty")
+  p-pwivate vaw videoviewsnonzewo = s-scowewesuwtstats.scope("videoviews").countew("nonzewo")
+  p-pwivate vaw v-videoviewsnonempty = scowewesuwtstats.scope("videoviews").countew("nonempty")
 
-  private val blockNonZero = scoreResultStats.scope("block").counter("nonZero")
-  private val blockNonEmpty = scoreResultStats.scope("block").counter("nonEmpty")
+  pwivate vaw bwocknonzewo = scowewesuwtstats.scope("bwock").countew("nonzewo")
+  p-pwivate vaw bwocknonempty = scowewesuwtstats.scope("bwock").countew("nonempty")
 
-  private val muteNonZero = scoreResultStats.scope("mute").counter("nonZero")
-  private val muteNonEmpty = scoreResultStats.scope("mute").counter("nonEmpty")
+  pwivate vaw mutenonzewo = scowewesuwtstats.scope("mute").countew("nonzewo")
+  pwivate vaw mutenonempty = s-scowewesuwtstats.scope("mute").countew("nonempty")
 
-  private val reportNonZero = scoreResultStats.scope("report").counter("nonZero")
-  private val reportNonEmpty = scoreResultStats.scope("report").counter("nonEmpty")
+  pwivate vaw w-wepowtnonzewo = s-scowewesuwtstats.scope("wepowt").countew("nonzewo")
+  p-pwivate vaw wepowtnonempty = s-scowewesuwtstats.scope("wepowt").countew("nonempty")
 
-  private val dontlikeNonZero = scoreResultStats.scope("dontlike").counter("nonZero")
-  private val dontlikeNonEmpty = scoreResultStats.scope("dontlike").counter("nonEmpty")
+  p-pwivate v-vaw dontwikenonzewo = s-scowewesuwtstats.scope("dontwike").countew("nonzewo")
+  pwivate vaw dontwikenonempty = scowewesuwtstats.scope("dontwike").countew("nonempty")
 
-  private val seeFewerNonZero = scoreResultStats.scope("seeFewer").counter("nonZero")
-  private val seeFewerNonEmpty = scoreResultStats.scope("seeFewer").counter("nonEmpty")
+  p-pwivate v-vaw seefewewnonzewo = s-scowewesuwtstats.scope("seefewew").countew("nonzewo")
+  p-pwivate vaw seefewewnonempty = scowewesuwtstats.scope("seefewew").countew("nonempty")
 
-  private def getTweetScores(
-    candidateTweetId: TweetId,
-    sourceTweetIds: Seq[TweetId]
-  ): Stitch[Seq[ScoreResult]] = {
-    val getScoresStitch = Stitch.traverse(sourceTweetIds) { sourceTweetId =>
-      scoreStore
-        .uniformScoringStoreStitch(getTweetScoreId(sourceTweetId, candidateTweetId))
-        .liftNotFoundToOption
-        .map(score => ScoreResult(sourceTweetId, score.map(_.score)))
+  p-pwivate def gettweetscowes(
+    candidatetweetid: tweetid, o.O
+    s-souwcetweetids: seq[tweetid]
+  ): stitch[seq[scowewesuwt]] = {
+    vaw getscowesstitch = stitch.twavewse(souwcetweetids) { souwcetweetid =>
+      s-scowestowe
+        .unifowmscowingstowestitch(gettweetscoweid(souwcetweetid, mya candidatetweetid))
+        .wiftnotfoundtooption
+        .map(scowe => scowewesuwt(souwcetweetid, XD scowe.map(_.scowe)))
     }
 
-    Stitch.time(getScoresStitch).flatMap {
-      case (tryResult, duration) =>
-        tweetScoreStats.add(duration.inMillis)
-        Stitch.const(tryResult)
-    }
-  }
-
-  private def getUserScores(
-    tweetId: TweetId,
-    authorIds: Seq[UserId]
-  ): Stitch[Seq[ScoreResult]] = {
-    val getScoresStitch = Stitch.traverse(authorIds) { authorId =>
-      scoreStore
-        .uniformScoringStoreStitch(getAuthorScoreId(authorId, tweetId))
-        .liftNotFoundToOption
-        .map(score => ScoreResult(authorId, score.map(_.score)))
-    }
-
-    Stitch.time(getScoresStitch).flatMap {
-      case (tryResult, duration) =>
-        userScoreStats.add(duration.inMillis)
-        Stitch.const(tryResult)
+    s-stitch.time(getscowesstitch).fwatmap {
+      c-case (twywesuwt, òωó d-duwation) =>
+        tweetscowestats.add(duwation.inmiwwis)
+        s-stitch.const(twywesuwt)
     }
   }
 
-  /**
-   * Get the [[SimClustersRecentEngagementSimilarities]] result containing the similarity
-   * features for the given userId-TweetId.
-   */
-  def get(
-    userId: UserId,
-    tweetId: TweetId
-  ): Stitch[SimClustersRecentEngagementSimilarities] = {
-    get(userId, Seq(tweetId)).map(x => x.head)
+  pwivate def getusewscowes(
+    tweetid: t-tweetid, (˘ω˘)
+    a-authowids: seq[usewid]
+  ): stitch[seq[scowewesuwt]] = {
+    vaw getscowesstitch = stitch.twavewse(authowids) { authowid =>
+      s-scowestowe
+        .unifowmscowingstowestitch(getauthowscoweid(authowid, tweetid))
+        .wiftnotfoundtooption
+        .map(scowe => s-scowewesuwt(authowid, :3 scowe.map(_.scowe)))
+    }
+
+    s-stitch.time(getscowesstitch).fwatmap {
+      c-case (twywesuwt, OwO duwation) =>
+        usewscowestats.add(duwation.inmiwwis)
+        s-stitch.const(twywesuwt)
+    }
   }
 
   /**
-   * Get a list of [[SimClustersRecentEngagementSimilarities]] results containing the similarity
-   * features for the given tweets of the user Id.
-   * Guaranteed to be the same number/order as requested.
+   * g-get the [[simcwustewswecentengagementsimiwawities]] wesuwt containing t-the simiwawity
+   * f-featuwes fow the given usewid-tweetid. mya
    */
   def get(
-    userId: UserId,
-    tweetIds: Seq[TweetId]
-  ): Stitch[Seq[SimClustersRecentEngagementSimilarities]] = {
-    fetchEngagementsFromUSS(userId)
-      .flatMap(engagements => {
-        // For each tweet received in the request, compute the similarity scores between them
-        // and the user signals fetched from USS.
-        Stitch
+    usewid: u-usewid, (˘ω˘)
+    tweetid: t-tweetid
+  ): s-stitch[simcwustewswecentengagementsimiwawities] = {
+    get(usewid, o.O s-seq(tweetid)).map(x => x-x.head)
+  }
+
+  /**
+   * get a wist o-of [[simcwustewswecentengagementsimiwawities]] wesuwts containing the simiwawity
+   * featuwes fow the given tweets o-of the usew i-id. (✿oωo)
+   * guawanteed to be the same nyumbew/owdew a-as wequested.
+   */
+  d-def get(
+    usewid: usewid, (ˆ ﻌ ˆ)♡
+    tweetids: seq[tweetid]
+  ): s-stitch[seq[simcwustewswecentengagementsimiwawities]] = {
+    fetchengagementsfwomuss(usewid)
+      .fwatmap(engagements => {
+        // fow each tweet weceived in the wequest, ^^;; c-compute the simiwawity scowes between them
+        // a-and the u-usew signaws fetched fwom uss. OwO
+        stitch
           .join(
-            Stitch.traverse(tweetIds)(id => getTweetScores(id, engagements.tweetIds)),
-            Stitch.traverse(tweetIds)(id => getUserScores(id, engagements.authorIds)),
+            stitch.twavewse(tweetids)(id => g-gettweetscowes(id, 🥺 e-engagements.tweetids)), mya
+            stitch.twavewse(tweetids)(id => getusewscowes(id, 😳 engagements.authowids)), òωó
           )
           .map {
-            case (tweetScoresSeq, userScoreSeq) =>
-              // All seq have = size because when scores don't exist, they are returned as Option
-              (tweetScoresSeq, userScoreSeq).zipped.map { (tweetScores, userScores) =>
-                computeSimilarityScoresPerTweet(
-                  engagements,
-                  tweetScores.groupBy(_.id),
-                  userScores.groupBy(_.id))
+            c-case (tweetscowesseq, /(^•ω•^) usewscoweseq) =>
+              // aww seq have = s-size because when scowes don't exist, -.- they awe wetuwned as option
+              (tweetscowesseq, òωó u-usewscoweseq).zipped.map { (tweetscowes, /(^•ω•^) usewscowes) =>
+                c-computesimiwawityscowespewtweet(
+                  e-engagements, /(^•ω•^)
+                  tweetscowes.gwoupby(_.id), 😳
+                  u-usewscowes.gwoupby(_.id))
               }
           }
       })
@@ -150,323 +150,323 @@ class Scorer @Inject() (
 
   /**
    *
-   * Computes the [[SimClustersRecentEngagementSimilarities]]
-   * using the given tweet-tweet and user-tweet scores in TweetScoresMap
-   * and the user signals in [[Engagements]].
+   * computes t-the [[simcwustewswecentengagementsimiwawities]]
+   * u-using t-the given tweet-tweet and usew-tweet s-scowes in tweetscowesmap
+   * a-and the usew signaws in [[engagements]].
    */
-  private def computeSimilarityScoresPerTweet(
-    engagements: Engagements,
-    tweetScores: Map[TweetId, Seq[ScoreResult]],
-    authorScores: Map[UserId, Seq[ScoreResult]]
-  ): SimClustersRecentEngagementSimilarities = {
-    val favs7d = engagements.favs7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+  pwivate def c-computesimiwawityscowespewtweet(
+    e-engagements: e-engagements, :3
+    tweetscowes: map[tweetid, (U ᵕ U❁) seq[scowewesuwt]], ʘwʘ
+    a-authowscowes: map[usewid, o.O seq[scowewesuwt]]
+  ): s-simcwustewswecentengagementsimiwawities = {
+    v-vaw favs7d = engagements.favs7d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val favs1d = engagements.favs1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw f-favs1d = engagements.favs1d.view
+      .fwatmap(s => t-tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val retweets7d = engagements.retweets7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw wetweets7d = e-engagements.wetweets7d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val retweets1d = engagements.retweets1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw wetweets1d = engagements.wetweets1d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val follows30d = engagements.follows30d.view
-      .flatMap(s => authorScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw fowwows30d = engagements.fowwows30d.view
+      .fwatmap(s => authowscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val follows7d = engagements.follows7d.view
-      .flatMap(s => authorScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw fowwows7d = engagements.fowwows7d.view
+      .fwatmap(s => a-authowscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val shares7d = engagements.shares7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw shawes7d = e-engagements.shawes7d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val shares1d = engagements.shares1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw shawes1d = engagements.shawes1d.view
+      .fwatmap(s => t-tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val replies7d = engagements.replies7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw w-wepwies7d = engagements.wepwies7d.view
+      .fwatmap(s => t-tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val replies1d = engagements.replies1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw wepwies1d = engagements.wepwies1d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val originalTweets7d = engagements.originalTweets7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw owiginawtweets7d = engagements.owiginawtweets7d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val originalTweets1d = engagements.originalTweets1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw owiginawtweets1d = e-engagements.owiginawtweets1d.view
+      .fwatmap(s => t-tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val videoViews7d = engagements.videoPlaybacks7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw videoviews7d = engagements.videopwaybacks7d.view
+      .fwatmap(s => t-tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val videoViews1d = engagements.videoPlaybacks1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw videoviews1d = engagements.videopwaybacks1d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val block30d = engagements.block30d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw bwock30d = e-engagements.bwock30d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val block7d = engagements.block7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw bwock7d = engagements.bwock7d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val block1d = engagements.block1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw bwock1d = e-engagements.bwock1d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val mute30d = engagements.mute30d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw mute30d = engagements.mute30d.view
+      .fwatmap(s => t-tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val mute7d = engagements.mute7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw mute7d = engagements.mute7d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val mute1d = engagements.mute1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw mute1d = e-engagements.mute1d.view
+      .fwatmap(s => t-tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val report30d = engagements.report30d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw wepowt30d = e-engagements.wepowt30d.view
+      .fwatmap(s => t-tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val report7d = engagements.report7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw wepowt7d = e-engagements.wepowt7d.view
+      .fwatmap(s => t-tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val report1d = engagements.report1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw wepowt1d = e-engagements.wepowt1d.view
+      .fwatmap(s => t-tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val dontlike30d = engagements.dontlike30d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw dontwike30d = e-engagements.dontwike30d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val dontlike7d = engagements.dontlike7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw dontwike7d = e-engagements.dontwike7d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val dontlike1d = engagements.dontlike1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw dontwike1d = e-engagements.dontwike1d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val seeFewer30d = engagements.seeFewer30d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw seefewew30d = engagements.seefewew30d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val seeFewer7d = engagements.seeFewer7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    v-vaw seefewew7d = e-engagements.seefewew7d.view
+      .fwatmap(s => t-tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val seeFewer1d = engagements.seeFewer1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
-      .flatten.flatMap(_.score)
-      .force
+    vaw seefewew1d = engagements.seefewew1d.view
+      .fwatmap(s => tweetscowes.get(s.tawgetid))
+      .fwatten.fwatmap(_.scowe)
+      .fowce
 
-    val result = SimClustersRecentEngagementSimilarities(
-      fav1dLast10Max = max(favs1d),
-      fav1dLast10Avg = avg(favs1d),
-      fav7dLast10Max = max(favs7d),
-      fav7dLast10Avg = avg(favs7d),
-      retweet1dLast10Max = max(retweets1d),
-      retweet1dLast10Avg = avg(retweets1d),
-      retweet7dLast10Max = max(retweets7d),
-      retweet7dLast10Avg = avg(retweets7d),
-      follow7dLast10Max = max(follows7d),
-      follow7dLast10Avg = avg(follows7d),
-      follow30dLast10Max = max(follows30d),
-      follow30dLast10Avg = avg(follows30d),
-      share1dLast10Max = max(shares1d),
-      share1dLast10Avg = avg(shares1d),
-      share7dLast10Max = max(shares7d),
-      share7dLast10Avg = avg(shares7d),
-      reply1dLast10Max = max(replies1d),
-      reply1dLast10Avg = avg(replies1d),
-      reply7dLast10Max = max(replies7d),
-      reply7dLast10Avg = avg(replies7d),
-      originalTweet1dLast10Max = max(originalTweets1d),
-      originalTweet1dLast10Avg = avg(originalTweets1d),
-      originalTweet7dLast10Max = max(originalTweets7d),
-      originalTweet7dLast10Avg = avg(originalTweets7d),
-      videoPlayback1dLast10Max = max(videoViews1d),
-      videoPlayback1dLast10Avg = avg(videoViews1d),
-      videoPlayback7dLast10Max = max(videoViews7d),
-      videoPlayback7dLast10Avg = avg(videoViews7d),
-      block1dLast10Max = max(block1d),
-      block1dLast10Avg = avg(block1d),
-      block7dLast10Max = max(block7d),
-      block7dLast10Avg = avg(block7d),
-      block30dLast10Max = max(block30d),
-      block30dLast10Avg = avg(block30d),
-      mute1dLast10Max = max(mute1d),
-      mute1dLast10Avg = avg(mute1d),
-      mute7dLast10Max = max(mute7d),
-      mute7dLast10Avg = avg(mute7d),
-      mute30dLast10Max = max(mute30d),
-      mute30dLast10Avg = avg(mute30d),
-      report1dLast10Max = max(report1d),
-      report1dLast10Avg = avg(report1d),
-      report7dLast10Max = max(report7d),
-      report7dLast10Avg = avg(report7d),
-      report30dLast10Max = max(report30d),
-      report30dLast10Avg = avg(report30d),
-      dontlike1dLast10Max = max(dontlike1d),
-      dontlike1dLast10Avg = avg(dontlike1d),
-      dontlike7dLast10Max = max(dontlike7d),
-      dontlike7dLast10Avg = avg(dontlike7d),
-      dontlike30dLast10Max = max(dontlike30d),
-      dontlike30dLast10Avg = avg(dontlike30d),
-      seeFewer1dLast10Max = max(seeFewer1d),
-      seeFewer1dLast10Avg = avg(seeFewer1d),
-      seeFewer7dLast10Max = max(seeFewer7d),
-      seeFewer7dLast10Avg = avg(seeFewer7d),
-      seeFewer30dLast10Max = max(seeFewer30d),
-      seeFewer30dLast10Avg = avg(seeFewer30d),
+    v-vaw wesuwt = simcwustewswecentengagementsimiwawities(
+      fav1dwast10max = m-max(favs1d), ʘwʘ
+      f-fav1dwast10avg = avg(favs1d), ^^
+      f-fav7dwast10max = max(favs7d), ^•ﻌ•^
+      f-fav7dwast10avg = a-avg(favs7d), mya
+      wetweet1dwast10max = max(wetweets1d), UwU
+      w-wetweet1dwast10avg = avg(wetweets1d), >_<
+      wetweet7dwast10max = m-max(wetweets7d), /(^•ω•^)
+      w-wetweet7dwast10avg = avg(wetweets7d), òωó
+      f-fowwow7dwast10max = max(fowwows7d), σωσ
+      f-fowwow7dwast10avg = avg(fowwows7d), ( ͡o ω ͡o )
+      f-fowwow30dwast10max = m-max(fowwows30d), nyaa~~
+      fowwow30dwast10avg = avg(fowwows30d), :3
+      shawe1dwast10max = max(shawes1d), UwU
+      shawe1dwast10avg = avg(shawes1d), o.O
+      shawe7dwast10max = max(shawes7d), (ˆ ﻌ ˆ)♡
+      shawe7dwast10avg = avg(shawes7d), ^^;;
+      wepwy1dwast10max = max(wepwies1d), ʘwʘ
+      w-wepwy1dwast10avg = a-avg(wepwies1d), σωσ
+      wepwy7dwast10max = max(wepwies7d), ^^;;
+      wepwy7dwast10avg = a-avg(wepwies7d), ʘwʘ
+      o-owiginawtweet1dwast10max = m-max(owiginawtweets1d), ^^
+      owiginawtweet1dwast10avg = a-avg(owiginawtweets1d), nyaa~~
+      owiginawtweet7dwast10max = m-max(owiginawtweets7d), (///ˬ///✿)
+      o-owiginawtweet7dwast10avg = avg(owiginawtweets7d), XD
+      v-videopwayback1dwast10max = max(videoviews1d), :3
+      v-videopwayback1dwast10avg = a-avg(videoviews1d), òωó
+      videopwayback7dwast10max = max(videoviews7d), ^^
+      v-videopwayback7dwast10avg = a-avg(videoviews7d), ^•ﻌ•^
+      b-bwock1dwast10max = m-max(bwock1d), σωσ
+      b-bwock1dwast10avg = a-avg(bwock1d), (ˆ ﻌ ˆ)♡
+      bwock7dwast10max = m-max(bwock7d), nyaa~~
+      b-bwock7dwast10avg = a-avg(bwock7d), ʘwʘ
+      bwock30dwast10max = m-max(bwock30d), ^•ﻌ•^
+      b-bwock30dwast10avg = a-avg(bwock30d), rawr x3
+      mute1dwast10max = max(mute1d), 🥺
+      m-mute1dwast10avg = avg(mute1d), ʘwʘ
+      mute7dwast10max = m-max(mute7d), (˘ω˘)
+      mute7dwast10avg = a-avg(mute7d), o.O
+      m-mute30dwast10max = m-max(mute30d), σωσ
+      mute30dwast10avg = a-avg(mute30d), (ꈍᴗꈍ)
+      wepowt1dwast10max = m-max(wepowt1d), (ˆ ﻌ ˆ)♡
+      wepowt1dwast10avg = a-avg(wepowt1d), o.O
+      wepowt7dwast10max = m-max(wepowt7d), :3
+      wepowt7dwast10avg = avg(wepowt7d), -.-
+      wepowt30dwast10max = max(wepowt30d), ( ͡o ω ͡o )
+      w-wepowt30dwast10avg = avg(wepowt30d), /(^•ω•^)
+      d-dontwike1dwast10max = m-max(dontwike1d), (⑅˘꒳˘)
+      dontwike1dwast10avg = avg(dontwike1d), òωó
+      dontwike7dwast10max = m-max(dontwike7d), 🥺
+      dontwike7dwast10avg = a-avg(dontwike7d), (ˆ ﻌ ˆ)♡
+      dontwike30dwast10max = m-max(dontwike30d), -.-
+      d-dontwike30dwast10avg = avg(dontwike30d), σωσ
+      seefewew1dwast10max = m-max(seefewew1d), >_<
+      s-seefewew1dwast10avg = avg(seefewew1d), :3
+      s-seefewew7dwast10max = max(seefewew7d),
+      seefewew7dwast10avg = a-avg(seefewew7d), OwO
+      seefewew30dwast10max = m-max(seefewew30d),
+      s-seefewew30dwast10avg = a-avg(seefewew30d), rawr
     )
-    trackStats(result)
-    result
+    twackstats(wesuwt)
+    w-wesuwt
   }
 
-  private def trackStats(result: SimClustersRecentEngagementSimilarities): Unit = {
-    val scores = Seq(
-      result.fav7dLast10Max,
-      result.retweet7dLast10Max,
-      result.follow30dLast10Max,
-      result.share1dLast10Max,
-      result.share7dLast10Max,
-      result.reply7dLast10Max,
-      result.originalTweet7dLast10Max,
-      result.videoPlayback7dLast10Max,
-      result.block30dLast10Max,
-      result.mute30dLast10Max,
-      result.report30dLast10Max,
-      result.dontlike30dLast10Max,
-      result.seeFewer30dLast10Max
+  p-pwivate d-def twackstats(wesuwt: s-simcwustewswecentengagementsimiwawities): unit = {
+    vaw s-scowes = seq(
+      w-wesuwt.fav7dwast10max, (///ˬ///✿)
+      w-wesuwt.wetweet7dwast10max, ^^
+      w-wesuwt.fowwow30dwast10max, XD
+      w-wesuwt.shawe1dwast10max, UwU
+      w-wesuwt.shawe7dwast10max, o.O
+      w-wesuwt.wepwy7dwast10max, 😳
+      w-wesuwt.owiginawtweet7dwast10max, (˘ω˘)
+      wesuwt.videopwayback7dwast10max, 🥺
+      w-wesuwt.bwock30dwast10max, ^^
+      wesuwt.mute30dwast10max, >w<
+      wesuwt.wepowt30dwast10max, ^^;;
+      w-wesuwt.dontwike30dwast10max, (˘ω˘)
+      wesuwt.seefewew30dwast10max
     )
 
-    val nonEmpty = scores.exists(_.isDefined)
-    val nonZero = scores.exists { case Some(score) if score > 0 => true; case _ => false }
+    v-vaw nyonempty = s-scowes.exists(_.isdefined)
+    v-vaw nyonzewo = scowes.exists { case some(scowe) if scowe > 0 => t-twue; case _ => f-fawse }
 
-    if (nonEmpty) {
-      scoresNonEmptyCounter.incr()
+    i-if (nonempty) {
+      scowesnonemptycountew.incw()
     }
 
-    if (nonZero) {
-      scoresNonZeroCounter.incr()
+    if (nonzewo) {
+      scowesnonzewocountew.incw()
     }
 
-    // We use the largest window of a given type of score,
-    // because the largest window is inclusive of smaller windows.
-    trackSignalStats(favNonEmpty, favNonZero, result.fav7dLast10Avg)
-    trackSignalStats(retweetsNonEmpty, retweetsNonZero, result.retweet7dLast10Avg)
-    trackSignalStats(followsNonEmpty, followsNonZero, result.follow30dLast10Avg)
-    trackSignalStats(sharesNonEmpty, sharesNonZero, result.share7dLast10Avg)
-    trackSignalStats(repliesNonEmpty, repliesNonZero, result.reply7dLast10Avg)
-    trackSignalStats(originalTweetsNonEmpty, originalTweetsNonZero, result.originalTweet7dLast10Avg)
-    trackSignalStats(videoViewsNonEmpty, videoViewsNonZero, result.videoPlayback7dLast10Avg)
-    trackSignalStats(blockNonEmpty, blockNonZero, result.block30dLast10Avg)
-    trackSignalStats(muteNonEmpty, muteNonZero, result.mute30dLast10Avg)
-    trackSignalStats(reportNonEmpty, reportNonZero, result.report30dLast10Avg)
-    trackSignalStats(dontlikeNonEmpty, dontlikeNonZero, result.dontlike30dLast10Avg)
-    trackSignalStats(seeFewerNonEmpty, seeFewerNonZero, result.seeFewer30dLast10Avg)
+    // w-we use the wawgest w-window of a given type of s-scowe, OwO
+    // because t-the wawgest window is incwusive of smowew windows. (ꈍᴗꈍ)
+    twacksignawstats(favnonempty, òωó f-favnonzewo, ʘwʘ w-wesuwt.fav7dwast10avg)
+    t-twacksignawstats(wetweetsnonempty, ʘwʘ w-wetweetsnonzewo, nyaa~~ wesuwt.wetweet7dwast10avg)
+    twacksignawstats(fowwowsnonempty, UwU f-fowwowsnonzewo, (⑅˘꒳˘) w-wesuwt.fowwow30dwast10avg)
+    twacksignawstats(shawesnonempty, (˘ω˘) shawesnonzewo, :3 w-wesuwt.shawe7dwast10avg)
+    twacksignawstats(wepwiesnonempty, (˘ω˘) wepwiesnonzewo, nyaa~~ w-wesuwt.wepwy7dwast10avg)
+    twacksignawstats(owiginawtweetsnonempty, (U ﹏ U) o-owiginawtweetsnonzewo, nyaa~~ w-wesuwt.owiginawtweet7dwast10avg)
+    twacksignawstats(videoviewsnonempty, ^^;; v-videoviewsnonzewo, OwO wesuwt.videopwayback7dwast10avg)
+    t-twacksignawstats(bwocknonempty, nyaa~~ bwocknonzewo, UwU w-wesuwt.bwock30dwast10avg)
+    twacksignawstats(mutenonempty, 😳 mutenonzewo, w-wesuwt.mute30dwast10avg)
+    t-twacksignawstats(wepowtnonempty, 😳 w-wepowtnonzewo, (ˆ ﻌ ˆ)♡ w-wesuwt.wepowt30dwast10avg)
+    twacksignawstats(dontwikenonempty, (✿oωo) d-dontwikenonzewo, nyaa~~ w-wesuwt.dontwike30dwast10avg)
+    t-twacksignawstats(seefewewnonempty, ^^ seefewewnonzewo, (///ˬ///✿) w-wesuwt.seefewew30dwast10avg)
   }
 
-  private def trackSignalStats(nonEmpty: Counter, nonZero: Counter, score: Option[Double]): Unit = {
-    if (score.nonEmpty) {
-      nonEmpty.incr()
+  pwivate def twacksignawstats(nonempty: c-countew, 😳 n-nyonzewo: countew, s-scowe: option[doubwe]): unit = {
+    if (scowe.nonempty) {
+      nyonempty.incw()
 
-      if (score.get > 0)
-        nonZero.incr()
+      if (scowe.get > 0)
+        nyonzewo.incw()
     }
   }
 }
 
-object Scorer {
-  def avg(s: Traversable[Double]): Option[Double] =
-    if (s.isEmpty) None else Some(s.sum / s.size)
-  def max(s: Traversable[Double]): Option[Double] =
-    if (s.isEmpty) None else Some(s.foldLeft(0.0D) { (curr, _max) => math.max(curr, _max) })
+o-object scowew {
+  def avg(s: t-twavewsabwe[doubwe]): o-option[doubwe] =
+    if (s.isempty) nyone ewse some(s.sum / s-s.size)
+  def max(s: twavewsabwe[doubwe]): o-option[doubwe] =
+    i-if (s.isempty) n-nyone ewse s-some(s.fowdweft(0.0d) { (cuww, òωó _max) => m-math.max(cuww, ^^;; _max) })
 
-  private def getAuthorScoreId(
-    userId: UserId,
-    tweetId: TweetId
+  pwivate def getauthowscoweid(
+    usewid: usewid, rawr
+    tweetid: t-tweetid
   ) = {
-    ScoreId(
-      algorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      internalId = ScoreInternalId.SimClustersEmbeddingPairScoreId(
-        SimClustersEmbeddingPairScoreId(
-          SimClustersEmbeddingId(
-            internalId = InternalId.UserId(userId),
-            modelVersion = ModelVersion.Model20m145k2020,
-            embeddingType = EmbeddingType.FavBasedProducer
-          ),
-          SimClustersEmbeddingId(
-            internalId = InternalId.TweetId(tweetId),
-            modelVersion = ModelVersion.Model20m145k2020,
-            embeddingType = EmbeddingType.LogFavBasedTweet
+    scoweid(
+      a-awgowithm = scowingawgowithm.paiwembeddingcosinesimiwawity, (ˆ ﻌ ˆ)♡
+      intewnawid = scoweintewnawid.simcwustewsembeddingpaiwscoweid(
+        simcwustewsembeddingpaiwscoweid(
+          s-simcwustewsembeddingid(
+            intewnawid = intewnawid.usewid(usewid), XD
+            modewvewsion = modewvewsion.modew20m145k2020, >_<
+            e-embeddingtype = e-embeddingtype.favbasedpwoducew
+          ), (˘ω˘)
+          simcwustewsembeddingid(
+            i-intewnawid = intewnawid.tweetid(tweetid), 😳
+            modewvewsion = m-modewvewsion.modew20m145k2020, o.O
+            e-embeddingtype = embeddingtype.wogfavbasedtweet
           )
         ))
     )
   }
 
-  private def getTweetScoreId(
-    sourceTweetId: TweetId,
-    candidateTweetId: TweetId
+  p-pwivate def gettweetscoweid(
+    s-souwcetweetid: tweetid, (ꈍᴗꈍ)
+    candidatetweetid: tweetid
   ) = {
-    ScoreId(
-      algorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      internalId = ScoreInternalId.SimClustersEmbeddingPairScoreId(
-        SimClustersEmbeddingPairScoreId(
-          SimClustersEmbeddingId(
-            internalId = InternalId.TweetId(sourceTweetId),
-            modelVersion = ModelVersion.Model20m145k2020,
-            embeddingType = EmbeddingType.LogFavLongestL2EmbeddingTweet
-          ),
-          SimClustersEmbeddingId(
-            internalId = InternalId.TweetId(candidateTweetId),
-            modelVersion = ModelVersion.Model20m145k2020,
-            embeddingType = EmbeddingType.LogFavBasedTweet
+    s-scoweid(
+      awgowithm = scowingawgowithm.paiwembeddingcosinesimiwawity, rawr x3
+      i-intewnawid = s-scoweintewnawid.simcwustewsembeddingpaiwscoweid(
+        s-simcwustewsembeddingpaiwscoweid(
+          simcwustewsembeddingid(
+            intewnawid = intewnawid.tweetid(souwcetweetid), ^^
+            m-modewvewsion = modewvewsion.modew20m145k2020, OwO
+            embeddingtype = embeddingtype.wogfavwongestw2embeddingtweet
+          ), ^^
+          simcwustewsembeddingid(
+            intewnawid = i-intewnawid.tweetid(candidatetweetid), :3
+            m-modewvewsion = m-modewvewsion.modew20m145k2020, o.O
+            e-embeddingtype = embeddingtype.wogfavbasedtweet
           )
         ))
     )

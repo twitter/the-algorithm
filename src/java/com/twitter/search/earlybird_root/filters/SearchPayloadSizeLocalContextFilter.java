@@ -1,43 +1,43 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.concurrent.atomic.AtomicReference;
+impowt java.utiw.concuwwent.atomic.atomicwefewence;
 
-import scala.Option;
+i-impowt scawa.option;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.context.Contexts;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.SearchPayloadSizeFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+i-impowt c-com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt c-com.twittew.finagwe.context.contexts;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.woot.seawchpaywoadsizefiwtew;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.utiw.futuwe;
 
 /**
- * A filter that sets the clientId in the local context, to be usd later by SearchPayloadSizeFilter.
+ * a fiwtew that sets t-the cwientid in the wocaw context, (U ﹏ U) to be usd watew by seawchpaywoadsizefiwtew. (⑅˘꒳˘)
  */
-public class SearchPayloadSizeLocalContextFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final SearchCounter CLIENT_ID_CONTEXT_KEY_NOT_SET_COUNTER = SearchCounter.export(
-      "search_payload_size_local_context_filter_client_id_context_key_not_set");
+p-pubwic cwass seawchpaywoadsizewocawcontextfiwtew
+    e-extends s-simpwefiwtew<eawwybiwdwequest, òωó eawwybiwdwesponse> {
+  pwivate static finaw seawchcountew cwient_id_context_key_not_set_countew = s-seawchcountew.expowt(
+      "seawch_paywoad_size_wocaw_context_fiwtew_cwient_id_context_key_not_set");
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    // In production, the SearchPayloadSizeFilter.CLIENT_ID_CONTEXT_KEY should always be set
-    // (by ThriftServer). However, it's not set in tests, because tests do not start a ThriftServer.
-    Option<AtomicReference<String>> clientIdOption =
-        Contexts.local().get(SearchPayloadSizeFilter.CLIENT_ID_CONTEXT_KEY);
-    if (clientIdOption.isDefined()) {
-      AtomicReference<String> clientIdReference = clientIdOption.get();
-      Preconditions.checkArgument(clientIdReference.get() == null);
-      clientIdReference.set(request.getClientId());
-    } else {
-      CLIENT_ID_CONTEXT_KEY_NOT_SET_COUNTER.increment();
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> appwy(eawwybiwdwequest wequest, ʘwʘ
+                                         s-sewvice<eawwybiwdwequest, /(^•ω•^) eawwybiwdwesponse> s-sewvice) {
+    // i-in pwoduction, ʘwʘ t-the seawchpaywoadsizefiwtew.cwient_id_context_key s-shouwd awways be set
+    // (by thwiftsewvew). σωσ h-howevew, OwO it's nyot set in tests, 😳😳😳 because tests d-do nyot stawt a thwiftsewvew. 😳😳😳
+    option<atomicwefewence<stwing>> cwientidoption =
+        contexts.wocaw().get(seawchpaywoadsizefiwtew.cwient_id_context_key);
+    if (cwientidoption.isdefined()) {
+      a-atomicwefewence<stwing> cwientidwefewence = c-cwientidoption.get();
+      p-pweconditions.checkawgument(cwientidwefewence.get() == n-nyuww);
+      cwientidwefewence.set(wequest.getcwientid());
+    } ewse {
+      cwient_id_context_key_not_set_countew.incwement();
     }
 
-    return service.apply(request);
+    wetuwn s-sewvice.appwy(wequest);
   }
 }

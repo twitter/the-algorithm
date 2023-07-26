@@ -1,275 +1,275 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.util.concurrent.atomic.AtomicLong;
+impowt java.net.inetaddwess;
+i-impowt java.net.inetsocketaddwess;
+i-impowt java.utiw.concuwwent.atomic.atomicwong;
 
-import javax.annotation.concurrent.GuardedBy;
+i-impowt javax.annotation.concuwwent.guawdedby;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.cowwect.immutabwemap;
+impowt com.googwe.common.cowwect.maps;
 
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.Watcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.zookeepew.keepewexception;
+impowt o-owg.apache.zookeepew.watchew;
+impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.common.zookeeper.ServerSet;
-import com.twitter.common.zookeeper.ZooKeeperClient;
-import com.twitter.common_internal.zookeeper.TwitterServerSet;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.exception.AlreadyInServerSetUpdateException;
-import com.twitter.search.earlybird.exception.NotInServerSetUpdateException;
-import com.twitter.search.earlybird.partition.PartitionConfig;
+impowt c-com.twittew.common.zookeepew.sewvewset;
+impowt com.twittew.common.zookeepew.zookeepewcwient;
+impowt com.twittew.common_intewnaw.zookeepew.twittewsewvewset;
+i-impowt com.twittew.seawch.common.config.config;
+impowt com.twittew.seawch.common.database.databaseconfig;
+i-impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt c-com.twittew.seawch.common.utiw.zookeepew.zookeepewpwoxy;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
+i-impowt com.twittew.seawch.eawwybiwd.config.tiewconfig;
+impowt c-com.twittew.seawch.eawwybiwd.exception.awweadyinsewvewsetupdateexception;
+i-impowt c-com.twittew.seawch.eawwybiwd.exception.notinsewvewsetupdateexception;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.pawtitionconfig;
 
-public class EarlybirdServerSetManager implements ServerSetMember {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdServerSetManager.class);
+pubwic cwass eawwybiwdsewvewsetmanagew i-impwements sewvewsetmembew {
+  pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(eawwybiwdsewvewsetmanagew.cwass);
 
-  // How many times this earlybird joined/left its partition's server set
-  @VisibleForTesting
-  protected final SearchCounter leaveServerSetCounter;
-  @VisibleForTesting
-  protected final SearchCounter joinServerSetCounter;
-  private final ZooKeeperProxy discoveryZKClient;
-  private final SearchLongGauge inServerSetGauge;
-  private final PartitionConfig partitionConfig;
-  private final int port;
-  private final String serverSetNamePrefix;
+  // how many times this eawwybiwd joined/weft its pawtition's sewvew s-set
+  @visibwefowtesting
+  pwotected f-finaw seawchcountew w-weavesewvewsetcountew;
+  @visibwefowtesting
+  p-pwotected finaw seawchcountew joinsewvewsetcountew;
+  pwivate f-finaw zookeepewpwoxy d-discovewyzkcwient;
+  pwivate finaw seawchwonggauge i-insewvewsetgauge;
+  p-pwivate finaw pawtitionconfig pawtitionconfig;
+  pwivate finaw i-int powt;
+  pwivate finaw stwing s-sewvewsetnamepwefix;
 
-  @VisibleForTesting
-  protected final SearchLongGauge connectedToZooKeeper;
+  @visibwefowtesting
+  pwotected finaw seawchwonggauge c-connectedtozookeepew;
 
-  private final Object endpointStatusLock = new Object();
-  @GuardedBy("endpointStatusLock")
-  private ServerSet.EndpointStatus endpointStatus = null;
+  pwivate finaw o-object endpointstatuswock = nyew object();
+  @guawdedby("endpointstatuswock")
+  p-pwivate sewvewset.endpointstatus e-endpointstatus = nyuww;
 
-  private boolean inServerSetForServiceProxy = false;
+  pwivate boowean insewvewsetfowsewvicepwoxy = fawse;
 
-  public EarlybirdServerSetManager(
-      SearchStatsReceiver searchStatsReceiver,
-      ZooKeeperProxy discoveryZKClient,
-      final PartitionConfig partitionConfig,
-      int port,
-      String serverSetNamePrefix) {
-    this.discoveryZKClient = discoveryZKClient;
-    this.partitionConfig = partitionConfig;
-    this.port = port;
-    this.serverSetNamePrefix = serverSetNamePrefix;
+  pubwic eawwybiwdsewvewsetmanagew(
+      seawchstatsweceivew s-seawchstatsweceivew, (˘ω˘)
+      zookeepewpwoxy d-discovewyzkcwient, UwU
+      finaw pawtitionconfig p-pawtitionconfig, >_<
+      i-int powt, σωσ
+      s-stwing sewvewsetnamepwefix) {
+    this.discovewyzkcwient = discovewyzkcwient;
+    this.pawtitionconfig = pawtitionconfig;
+    t-this.powt = powt;
+    this.sewvewsetnamepwefix = sewvewsetnamepwefix;
 
-    // Export serverset related stats
-    Preconditions.checkNotNull(searchStatsReceiver);
-    this.joinServerSetCounter = searchStatsReceiver.getCounter(
-        serverSetNamePrefix + "join_server_set_count");
-    this.leaveServerSetCounter = searchStatsReceiver.getCounter(
-        serverSetNamePrefix + "leave_server_set_count");
+    // expowt sewvewset wewated stats
+    p-pweconditions.checknotnuww(seawchstatsweceivew);
+    this.joinsewvewsetcountew = s-seawchstatsweceivew.getcountew(
+        s-sewvewsetnamepwefix + "join_sewvew_set_count");
+    t-this.weavesewvewsetcountew = seawchstatsweceivew.getcountew(
+        s-sewvewsetnamepwefix + "weave_sewvew_set_count");
 
-    // Create a new stat based on the partition number for hosts-in-partition aggregation.
-    // The value of the stat is dependent on whether the server is in the serverset so that the
-    // aggregate stat reflects the number serving traffic instead of the live process count.
-    AtomicLong sharedInServerSetStatus = new AtomicLong();
-    this.inServerSetGauge = searchStatsReceiver.getLongGauge(
-        serverSetNamePrefix + "is_in_server_set", sharedInServerSetStatus);
-    this.connectedToZooKeeper = searchStatsReceiver.getLongGauge(
-        serverSetNamePrefix + "connected_to_zookeeper");
+    // c-cweate a-a nyew stat b-based on the pawtition nyumbew fow hosts-in-pawtition a-aggwegation. 🥺
+    // t-the vawue o-of the stat i-is dependent on w-whethew the sewvew is in the sewvewset so that the
+    // aggwegate s-stat wefwects the nyumbew sewving twaffic instead of the wive pwocess count. 🥺
+    atomicwong s-shawedinsewvewsetstatus = nyew atomicwong();
+    this.insewvewsetgauge = s-seawchstatsweceivew.getwonggauge(
+        s-sewvewsetnamepwefix + "is_in_sewvew_set", ʘwʘ s-shawedinsewvewsetstatus);
+    this.connectedtozookeepew = s-seawchstatsweceivew.getwonggauge(
+        sewvewsetnamepwefix + "connected_to_zookeepew");
 
-    searchStatsReceiver.getLongGauge(
-        serverSetNamePrefix + "member_of_partition_" + partitionConfig.getIndexingHashPartitionID(),
-        sharedInServerSetStatus);
+    s-seawchstatsweceivew.getwonggauge(
+        s-sewvewsetnamepwefix + "membew_of_pawtition_" + pawtitionconfig.getindexinghashpawtitionid(), :3
+        shawedinsewvewsetstatus);
 
-    this.discoveryZKClient.registerExpirationHandler(() -> connectedToZooKeeper.set(0));
+    this.discovewyzkcwient.wegistewexpiwationhandwew(() -> connectedtozookeepew.set(0));
 
-    this.discoveryZKClient.register(event -> {
-      if (event.getType() == Watcher.Event.EventType.None
-          && event.getState() == Watcher.Event.KeeperState.SyncConnected) {
-        connectedToZooKeeper.set(1);
+    this.discovewyzkcwient.wegistew(event -> {
+      i-if (event.gettype() == watchew.event.eventtype.none
+          && e-event.getstate() == watchew.event.keepewstate.syncconnected) {
+        c-connectedtozookeepew.set(1);
       }
     });
   }
 
   /**
-   * Join ServerSet and update endpointStatus.
-   * This will allow Earlybird consumers, e.g. Blender, to detect when an
-   * Earlybird goes online and offline.
-   * @param username
+   * j-join sewvewset and update endpointstatus. (U ﹏ U)
+   * t-this wiww awwow e-eawwybiwd consumews, (U ﹏ U) e.g. bwendew, ʘwʘ t-to detect w-when an
+   * eawwybiwd goes onwine and offwine.
+   * @pawam usewname
    */
-  @Override
-  public void joinServerSet(String username) throws ServerSet.UpdateException {
-    joinServerSetCounter.increment();
+  @ovewwide
+  pubwic v-void joinsewvewset(stwing u-usewname) t-thwows sewvewset.updateexception {
+    joinsewvewsetcountew.incwement();
 
-    synchronized (endpointStatusLock) {
-      LOG.info("Joining {} ServerSet (instructed by: {}) ...", serverSetNamePrefix, username);
-      if (endpointStatus != null) {
-        LOG.warn("Already in ServerSet. Nothing done.");
-        throw new AlreadyInServerSetUpdateException("Already in ServerSet. Nothing done.");
+    s-synchwonized (endpointstatuswock) {
+      w-wog.info("joining {} sewvewset (instwucted b-by: {}) ...", >w< sewvewsetnamepwefix, rawr x3 usewname);
+      if (endpointstatus != nyuww) {
+        w-wog.wawn("awweady i-in sewvewset. OwO nyothing done.");
+        thwow n-nyew awweadyinsewvewsetupdateexception("awweady i-in sewvewset. ^•ﻌ•^ nyothing done.");
       }
 
-      try {
-        TwitterServerSet.Service service = getServerSetService();
+      twy {
+        twittewsewvewset.sewvice s-sewvice = getsewvewsetsewvice();
 
-        ServerSet serverSet = discoveryZKClient.createServerSet(service);
-        endpointStatus = serverSet.join(
-            new InetSocketAddress(InetAddress.getLocalHost().getHostName(), port),
-            Maps.newHashMap(),
-            partitionConfig.getHostPositionWithinHashPartition());
+        sewvewset sewvewset = discovewyzkcwient.cweatesewvewset(sewvice);
+        endpointstatus = sewvewset.join(
+            n-nyew inetsocketaddwess(inetaddwess.getwocawhost().gethostname(), >_< powt),
+            maps.newhashmap(), OwO
+            p-pawtitionconfig.gethostpositionwithinhashpawtition());
 
-        inServerSetGauge.set(1);
+        i-insewvewsetgauge.set(1);
 
-        String path = service.getPath();
-        EarlybirdStatus.recordEarlybirdEvent("Joined " + serverSetNamePrefix + " ServerSet " + path
-                                             + " (instructed by: " + username + ")");
-        LOG.info("Successfully joined {} ServerSet {} (instructed by: {})",
-                 serverSetNamePrefix, path, username);
-      } catch (Exception e) {
-        endpointStatus = null;
-        String message = "Failed to join " + serverSetNamePrefix + " ServerSet of partition "
-            + partitionConfig.getIndexingHashPartitionID();
-        LOG.error(message, e);
-        throw new ServerSet.UpdateException(message, e);
+        stwing path = sewvice.getpath();
+        eawwybiwdstatus.wecowdeawwybiwdevent("joined " + sewvewsetnamepwefix + " s-sewvewset " + p-path
+                                             + " (instwucted by: " + usewname + ")");
+        wog.info("successfuwwy joined {} s-sewvewset {} (instwucted by: {})", >_<
+                 s-sewvewsetnamepwefix, (ꈍᴗꈍ) path, >w< usewname);
+      } catch (exception e-e) {
+        endpointstatus = n-nyuww;
+        s-stwing message = "faiwed to j-join " + sewvewsetnamepwefix + " sewvewset of pawtition "
+            + p-pawtitionconfig.getindexinghashpawtitionid();
+        w-wog.ewwow(message, (U ﹏ U) e-e);
+        thwow nyew sewvewset.updateexception(message, ^^ e-e);
       }
     }
   }
 
   /**
-   * Takes this Earlybird out of its registered ServerSet.
+   * t-takes this eawwybiwd out of its wegistewed s-sewvewset. (U ﹏ U)
    *
-   * @throws ServerSet.UpdateException if there was a problem leaving the ServerSet,
-   * or if this Earlybird is already not in a ServerSet.
-   * @param username
+   * @thwows s-sewvewset.updateexception if t-thewe was a pwobwem weaving the sewvewset, :3
+   * o-ow if this eawwybiwd is awweady n-nyot in a sewvewset. (✿oωo)
+   * @pawam u-usewname
    */
-  @Override
-  public void leaveServerSet(String username) throws ServerSet.UpdateException {
-    leaveServerSetCounter.increment();
-    synchronized (endpointStatusLock) {
-      LOG.info("Leaving {} ServerSet (instructed by: {}) ...", serverSetNamePrefix, username);
-      if (endpointStatus == null) {
-        String message = "Not in a ServerSet. Nothing done.";
-        LOG.warn(message);
-        throw new NotInServerSetUpdateException(message);
+  @ovewwide
+  pubwic void weavesewvewset(stwing usewname) thwows sewvewset.updateexception {
+    w-weavesewvewsetcountew.incwement();
+    s-synchwonized (endpointstatuswock) {
+      w-wog.info("weaving {} s-sewvewset (instwucted by: {}) ...", XD sewvewsetnamepwefix, >w< u-usewname);
+      if (endpointstatus == nyuww) {
+        stwing message = "not in a sewvewset. òωó n-nyothing done.";
+        wog.wawn(message);
+        t-thwow nyew nyotinsewvewsetupdateexception(message);
       }
 
-      endpointStatus.leave();
-      endpointStatus = null;
-      inServerSetGauge.set(0);
-      EarlybirdStatus.recordEarlybirdEvent("Left " + serverSetNamePrefix
-                                           + " ServerSet (instructed by: " + username + ")");
-      LOG.info("Successfully left {} ServerSet. (instructed by: {})",
-               serverSetNamePrefix, username);
+      endpointstatus.weave();
+      e-endpointstatus = nyuww;
+      i-insewvewsetgauge.set(0);
+      eawwybiwdstatus.wecowdeawwybiwdevent("weft " + s-sewvewsetnamepwefix
+                                           + " s-sewvewset (instwucted b-by: " + u-usewname + ")");
+      w-wog.info("successfuwwy weft {} sewvewset. (ꈍᴗꈍ) (instwucted by: {})", rawr x3
+               sewvewsetnamepwefix, rawr x3 usewname);
     }
   }
 
-  @Override
-  public int getNumberOfServerSetMembers()
-      throws InterruptedException, ZooKeeperClient.ZooKeeperConnectionException, KeeperException {
-    String path = getServerSetService().getPath();
-    return discoveryZKClient.getNumberOfServerSetMembers(path);
+  @ovewwide
+  pubwic int getnumbewofsewvewsetmembews()
+      thwows intewwuptedexception, σωσ zookeepewcwient.zookeepewconnectionexception, (ꈍᴗꈍ) k-keepewexception {
+    s-stwing path = getsewvewsetsewvice().getpath();
+    w-wetuwn discovewyzkcwient.getnumbewofsewvewsetmembews(path);
   }
 
   /**
-   * Determines if this earlybird is in the server set.
+   * detewmines if this e-eawwybiwd is in the sewvew set. rawr
    */
-  @Override
-  public boolean isInServerSet() {
-    synchronized (endpointStatusLock) {
-      return endpointStatus != null;
+  @ovewwide
+  pubwic boowean isinsewvewset() {
+    s-synchwonized (endpointstatuswock) {
+      w-wetuwn endpointstatus != nyuww;
     }
   }
 
   /**
-   * Returns the server set that this earlybird should join.
+   * wetuwns t-the sewvew set that this eawwybiwd shouwd join. ^^;;
    */
-  public String getServerSetIdentifier() {
-    TwitterServerSet.Service service = getServerSetService();
-    return String.format("/cluster/local/%s/%s/%s",
-                         service.getRole(),
-                         service.getEnv(),
-                         service.getName());
+  p-pubwic s-stwing getsewvewsetidentifiew() {
+    twittewsewvewset.sewvice s-sewvice = getsewvewsetsewvice();
+    w-wetuwn stwing.fowmat("/cwustew/wocaw/%s/%s/%s", rawr x3
+                         sewvice.getwowe(), (ˆ ﻌ ˆ)♡
+                         sewvice.getenv(),
+                         sewvice.getname());
   }
 
-  private TwitterServerSet.Service getServerSetService() {
-    // If the tier name is 'all' then it treat it as an untiered EB cluster
-    // and do not add the tier component into the ZK path it registers under.
-    String tierZKPathComponent = "";
-    if (!TierConfig.DEFAULT_TIER_NAME.equalsIgnoreCase(partitionConfig.getTierName())) {
-      tierZKPathComponent = "/" + partitionConfig.getTierName();
+  pwivate twittewsewvewset.sewvice g-getsewvewsetsewvice() {
+    // i-if the tiew nyame i-is 'aww' then i-it tweat it as a-an untiewed eb cwustew
+    // and d-do nyot add the t-tiew component into the zk path i-it wegistews u-undew. σωσ
+    stwing tiewzkpathcomponent = "";
+    i-if (!tiewconfig.defauwt_tiew_name.equawsignowecase(pawtitionconfig.gettiewname())) {
+      tiewzkpathcomponent = "/" + pawtitionconfig.gettiewname();
     }
-    if (EarlybirdConfig.isAurora()) {
-      // ROLE, EARYLBIRD_NAME, and ENV properties are required on Aurora, thus will be set here
-      return new TwitterServerSet.Service(
-          EarlybirdProperty.ROLE.get(),
-          EarlybirdProperty.ENV.get(),
-          getServerSetPath(EarlybirdProperty.EARLYBIRD_NAME.get() + tierZKPathComponent));
-    } else {
-      return new TwitterServerSet.Service(
-          DatabaseConfig.getZooKeeperRole(),
-          Config.getEnvironment(),
-          getServerSetPath("earlybird" + tierZKPathComponent));
+    i-if (eawwybiwdconfig.isauwowa()) {
+      // wowe, (U ﹏ U) e-eawywbiwd_name, >w< a-and env pwopewties awe wequiwed o-on auwowa, σωσ thus wiww be set hewe
+      wetuwn nyew t-twittewsewvewset.sewvice(
+          e-eawwybiwdpwopewty.wowe.get(), nyaa~~
+          e-eawwybiwdpwopewty.env.get(), 🥺
+          getsewvewsetpath(eawwybiwdpwopewty.eawwybiwd_name.get() + tiewzkpathcomponent));
+    } ewse {
+      w-wetuwn nyew twittewsewvewset.sewvice(
+          databaseconfig.getzookeepewwowe(), rawr x3
+          c-config.getenviwonment(), σωσ
+          g-getsewvewsetpath("eawwybiwd" + tiewzkpathcomponent));
     }
   }
 
-  private String getServerSetPath(String earlybirdName) {
-    return String.format("%s%s/hash_partition_%d", serverSetNamePrefix, earlybirdName,
-        partitionConfig.getIndexingHashPartitionID());
+  p-pwivate stwing getsewvewsetpath(stwing e-eawwybiwdname) {
+    w-wetuwn stwing.fowmat("%s%s/hash_pawtition_%d", (///ˬ///✿) sewvewsetnamepwefix, (U ﹏ U) e-eawwybiwdname, ^^;;
+        pawtitionconfig.getindexinghashpawtitionid());
   }
 
   /**
-   * Join ServerSet for ServiceProxy with a named admin port and with a zookeeper path that Service
-   * Proxy can translate to a domain name label that is less than 64 characters (due to the size
-   * limit for domain name labels described here: https://tools.ietf.org/html/rfc1035)
-   * This will allow us to access Earlybirds that are not on mesos via ServiceProxy.
+   * join sewvewset f-fow sewvicepwoxy w-with a nyamed admin powt and w-with a zookeepew path that sewvice
+   * p-pwoxy can t-twanswate to a-a domain nyame wabew that is wess than 64 chawactews (due to the size
+   * wimit fow domain nyame wabews descwibed hewe: https://toows.ietf.owg/htmw/wfc1035)
+   * this wiww awwow us to access eawwybiwds that awe nyot on mesos via sewvicepwoxy. 🥺
    */
-  @Override
-  public void joinServerSetForServiceProxy() {
-    // This additional Zookeeper server set is only necessary for Archive Earlybirds which are
-    // running on bare metal hardware, so ensure that this method is never called for services
-    // on Aurora.
-    Preconditions.checkArgument(!EarlybirdConfig.isAurora(),
-        "Attempting to join server set for ServiceProxy on Earlybird running on Aurora");
+  @ovewwide
+  p-pubwic void j-joinsewvewsetfowsewvicepwoxy() {
+    // this additionaw zookeepew s-sewvew set i-is onwy nyecessawy f-fow awchive eawwybiwds which a-awe
+    // wunning on bawe metaw h-hawdwawe, òωó so ensuwe t-that this method is nyevew c-cawwed fow sewvices
+    // on auwowa. XD
+    p-pweconditions.checkawgument(!eawwybiwdconfig.isauwowa(), :3
+        "attempting t-to join sewvew set fow sewvicepwoxy on eawwybiwd w-wunning o-on auwowa");
 
-    LOG.info("Attempting to join ServerSet for ServiceProxy");
-    try {
-      TwitterServerSet.Service service = getServerSetForServiceProxyOnArchive();
+    w-wog.info("attempting t-to join s-sewvewset fow sewvicepwoxy");
+    t-twy {
+      twittewsewvewset.sewvice s-sewvice = g-getsewvewsetfowsewvicepwoxyonawchive();
 
-      ServerSet serverSet = discoveryZKClient.createServerSet(service);
-      String hostName = InetAddress.getLocalHost().getHostName();
-      int adminPort = EarlybirdConfig.getAdminPort();
-      serverSet.join(
-          new InetSocketAddress(hostName, port),
-          ImmutableMap.of("admin", new InetSocketAddress(hostName, adminPort)),
-          partitionConfig.getHostPositionWithinHashPartition());
+      s-sewvewset sewvewset = discovewyzkcwient.cweatesewvewset(sewvice);
+      s-stwing hostname = i-inetaddwess.getwocawhost().gethostname();
+      i-int adminpowt = eawwybiwdconfig.getadminpowt();
+      s-sewvewset.join(
+          nyew inetsocketaddwess(hostname, (U ﹏ U) powt),
+          i-immutabwemap.of("admin", >w< nyew inetsocketaddwess(hostname, /(^•ω•^) a-adminpowt)), (⑅˘꒳˘)
+          p-pawtitionconfig.gethostpositionwithinhashpawtition());
 
-      String path = service.getPath();
-      LOG.info("Successfully joined ServerSet for ServiceProxy {}", path);
-      inServerSetForServiceProxy = true;
-    } catch (Exception e) {
-      String message = "Failed to join ServerSet for ServiceProxy of partition "
-          + partitionConfig.getIndexingHashPartitionID();
-      LOG.warn(message, e);
+      s-stwing path = sewvice.getpath();
+      w-wog.info("successfuwwy joined s-sewvewset fow sewvicepwoxy {}", ʘwʘ path);
+      insewvewsetfowsewvicepwoxy = t-twue;
+    } catch (exception e-e) {
+      stwing message = "faiwed to join sewvewset fow sewvicepwoxy of p-pawtition "
+          + pawtitionconfig.getindexinghashpawtitionid();
+      w-wog.wawn(message, rawr x3 e);
     }
   }
 
-  @VisibleForTesting
-  protected TwitterServerSet.Service getServerSetForServiceProxyOnArchive() {
-    String serverSetPath = String.format("proxy/%s/p_%d",
-        partitionConfig.getTierName(),
-        partitionConfig.getIndexingHashPartitionID());
-    return new TwitterServerSet.Service(
-        DatabaseConfig.getZooKeeperRole(),
-        Config.getEnvironment(),
-        serverSetPath);
+  @visibwefowtesting
+  p-pwotected twittewsewvewset.sewvice getsewvewsetfowsewvicepwoxyonawchive() {
+    stwing sewvewsetpath = stwing.fowmat("pwoxy/%s/p_%d", (˘ω˘)
+        p-pawtitionconfig.gettiewname(), o.O
+        pawtitionconfig.getindexinghashpawtitionid());
+    w-wetuwn n-nyew twittewsewvewset.sewvice(
+        d-databaseconfig.getzookeepewwowe(), 😳
+        config.getenviwonment(), o.O
+        sewvewsetpath);
   }
 
-  @VisibleForTesting
-  protected boolean isInServerSetForServiceProxy() {
-    return inServerSetForServiceProxy;
+  @visibwefowtesting
+  p-pwotected boowean i-isinsewvewsetfowsewvicepwoxy() {
+    wetuwn i-insewvewsetfowsewvicepwoxy;
   }
 }

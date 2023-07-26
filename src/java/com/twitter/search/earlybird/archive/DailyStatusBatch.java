@@ -1,166 +1,166 @@
-package com.twitter.search.earlybird.archive;
+package com.twittew.seawch.eawwybiwd.awchive;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.date;
+i-impowt java.utiw.map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.cowwect.maps;
+i-impowt com.googwe.gson.gson;
+i-impowt com.googwe.gson.jsonpawseexception;
 
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.hadoop.fs.fiwesystem;
+impowt owg.apache.hadoop.fs.path;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
 /**
- * Represents a day's worth of statuses (tweets) for multiple hash partitions.
+ * wepwesents a day's wowth o-of statuses (tweets) fow muwtipwe h-hash pawtitions. mya
  *
- * Note that what this class contains is not the data, but metadata.
+ * nyote that nyani this cwass contains i-is nyot the data, 🥺 but metadata. ^^;;
  *
- * A day of tweets will come from:
- * - A scrubgen, if it has happened before the scrubgen date.
- * - Our daily jobs pipeline, if it has happened after that.
+ * a-a day of t-tweets wiww come fwom:
+ * - a scwubgen, :3 if it has happened befowe the scwubgen d-date. (U ﹏ U)
+ * - ouw daiwy jobs pipewine, OwO if it has happened aftew that. 😳😳😳
  *
- * This class checks the _SUCCESS file exists in the "statuses" subdirectory and extracts the status
- * count, min status id and max status id.
+ * this cwass c-checks the _success fiwe exists i-in the "statuses" s-subdiwectowy a-and extwacts t-the status
+ * count, (ˆ ﻌ ˆ)♡ min status id and max status i-id.
  */
-public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
-  private static final Logger LOG = LoggerFactory.getLogger(DailyStatusBatch.class);
+pubwic cwass daiwystatusbatch impwements c-compawabwe<daiwystatusbatch> {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(daiwystatusbatch.cwass);
 
-  public static final long EMPTY_BATCH_STATUS_ID = -1;
-  private static final String PARTITION_FORMAT = "p_%d_of_%d";
-  private static final String SUCCESS_FILE_NAME = "_SUCCESS";
+  pubwic static finaw wong e-empty_batch_status_id = -1;
+  pwivate static f-finaw stwing pawtition_fowmat = "p_%d_of_%d";
+  p-pwivate static finaw s-stwing success_fiwe_name = "_success";
 
-  private final Map<Integer, PartitionedBatch> hashPartitionToStatuses = Maps.newHashMap();
+  pwivate finaw map<integew, XD pawtitionedbatch> hashpawtitiontostatuses = m-maps.newhashmap();
 
-  private final Date date;
-  private final int numHashPartitions;
-  private final boolean hasSuccessFiles;
+  p-pwivate finaw date date;
+  p-pwivate finaw i-int nyumhashpawtitions;
+  pwivate finaw boowean h-hassuccessfiwes;
 
-  public DailyStatusBatch(Date date, int numHashPartitions, Path statusPath, FileSystem hdfs) {
+  pubwic d-daiwystatusbatch(date date, (ˆ ﻌ ˆ)♡ int nyumhashpawtitions, ( ͡o ω ͡o ) p-path statuspath, rawr x3 fiwesystem h-hdfs) {
     this.date = date;
-    this.numHashPartitions = numHashPartitions;
-    this.hasSuccessFiles = checkForSuccessFile(hdfs, date, statusPath);
+    t-this.numhashpawtitions = n-nyumhashpawtitions;
+    this.hassuccessfiwes = checkfowsuccessfiwe(hdfs, nyaa~~ date, >_< statuspath);
   }
 
-  public Date getDate() {
-    return date;
+  pubwic date getdate() {
+    wetuwn d-date;
   }
 
   /**
-   * Check for the presence of the _SUCCESS file for the given day's path on HDFS for the statuses
-   * field group.
+   * c-check fow the pwesence of t-the _success fiwe f-fow the given d-day's path on hdfs fow the statuses
+   * fiewd gwoup. ^^;;
    */
-  private boolean checkForSuccessFile(FileSystem hdfs, Date inputDate, Path statusPath) {
-    Path dayPath = new Path(statusPath, ArchiveHDFSUtils.dateToPath(inputDate, "/"));
-    Path successFilePath = new Path(dayPath, SUCCESS_FILE_NAME);
-    try {
-      return hdfs.getFileStatus(successFilePath).isFile();
-    } catch (IOException e) {
-      LOG.error("Could not verify existence of the _SUCCESS file. Assuming it doesn't exist.", e);
+  pwivate b-boowean checkfowsuccessfiwe(fiwesystem hdfs, (ˆ ﻌ ˆ)♡ date inputdate, ^^;; path statuspath) {
+    path d-daypath = nyew path(statuspath, (⑅˘꒳˘) awchivehdfsutiws.datetopath(inputdate, rawr x3 "/"));
+    p-path successfiwepath = n-nyew path(daypath, (///ˬ///✿) s-success_fiwe_name);
+    twy {
+      w-wetuwn hdfs.getfiwestatus(successfiwepath).isfiwe();
+    } c-catch (ioexception e-e) {
+      w-wog.ewwow("couwd nyot vewify existence o-of the _success f-fiwe. 🥺 assuming it d-doesn't exist.", >_< e-e);
     }
-    return false;
+    w-wetuwn fawse;
   }
 
   /**
-   * Loads the data for this day for the given partition.
+   * woads the data fow this day fow the given pawtition. UwU
    */
-  public PartitionedBatch addPartition(FileSystem hdfs, Path dayPath, int hashPartitionID)
-      throws IOException {
-    String partitionDir = String.format(PARTITION_FORMAT, hashPartitionID, numHashPartitions);
-    Path path = new Path(dayPath, partitionDir);
-    PartitionedBatch batch =
-        new PartitionedBatch(path, hashPartitionID, numHashPartitions, date);
-    batch.load(hdfs);
-    hashPartitionToStatuses.put(hashPartitionID, batch);
-    return batch;
+  p-pubwic pawtitionedbatch addpawtition(fiwesystem hdfs, >_< path daypath, int hashpawtitionid)
+      t-thwows ioexception {
+    stwing pawtitiondiw = stwing.fowmat(pawtition_fowmat, -.- h-hashpawtitionid, mya n-nyumhashpawtitions);
+    p-path path = nyew path(daypath, >w< p-pawtitiondiw);
+    pawtitionedbatch b-batch =
+        n-nyew pawtitionedbatch(path, (U ﹏ U) hashpawtitionid, 😳😳😳 nyumhashpawtitions, o.O date);
+    batch.woad(hdfs);
+    hashpawtitiontostatuses.put(hashpawtitionid, òωó b-batch);
+    wetuwn batch;
   }
 
-  public PartitionedBatch getPartition(int hashPartitionID) {
-    return hashPartitionToStatuses.get(hashPartitionID);
+  p-pubwic pawtitionedbatch getpawtition(int hashpawtitionid) {
+    w-wetuwn hashpawtitiontostatuses.get(hashpawtitionid);
   }
 
   /**
-   * Returns the greatest status count in all partitions belonging to this batch.
+   * w-wetuwns the gweatest status count in a-aww pawtitions b-bewonging to this batch. 😳😳😳
    */
-  public int getMaxPerPartitionStatusCount() {
-    int maxPerPartitionStatusCount = 0;
-    for (PartitionedBatch batch : hashPartitionToStatuses.values()) {
-      maxPerPartitionStatusCount = Math.max(batch.getStatusCount(), maxPerPartitionStatusCount);
+  p-pubwic int getmaxpewpawtitionstatuscount() {
+    i-int maxpewpawtitionstatuscount = 0;
+    fow (pawtitionedbatch batch : hashpawtitiontostatuses.vawues()) {
+      maxpewpawtitionstatuscount = math.max(batch.getstatuscount(), σωσ maxpewpawtitionstatuscount);
     }
-    return maxPerPartitionStatusCount;
+    w-wetuwn maxpewpawtitionstatuscount;
   }
 
-  public int getNumHashPartitions() {
-    return numHashPartitions;
+  p-pubwic int getnumhashpawtitions() {
+    w-wetuwn nyumhashpawtitions;
   }
 
-  @VisibleForTesting
-  boolean hasSuccessFiles() {
-    return hasSuccessFiles;
+  @visibwefowtesting
+  b-boowean hassuccessfiwes() {
+    w-wetuwn hassuccessfiwes;
   }
 
   /**
-   * Returns true if the _status_counts files could be found in each
-   * hash partition subfolder that belongs to this timeslice
-   * AND the _SUCCESS file can be found at the root folder for day
+   * wetuwns t-twue if the _status_counts fiwes couwd be found in each
+   * hash pawtition subfowdew t-that bewongs t-to this timeswice
+   * and the _success fiwe c-can be found at t-the woot fowdew fow day
    */
-  public boolean isValid() {
-    // make sure we have data for all hash partitions
-    for (int i = 0; i < numHashPartitions; i++) {
-      PartitionedBatch day = hashPartitionToStatuses.get(i);
-      if (day == null || !day.hasStatusCount() || day.isDisallowedEmptyPartition()) {
-        return false;
+  pubwic boowean isvawid() {
+    // make suwe we have d-data fow aww hash pawtitions
+    fow (int i = 0; i < nyumhashpawtitions; i++) {
+      p-pawtitionedbatch day = hashpawtitiontostatuses.get(i);
+      i-if (day == n-nyuww || !day.hasstatuscount() || day.isdisawwowedemptypawtition()) {
+        wetuwn fawse;
       }
     }
-    return hasSuccessFiles;
+    wetuwn hassuccessfiwes;
   }
 
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("DailyStatusBatch[date=").append(date)
-           .append(",valid=").append(isValid())
-           .append(",hasSuccessFiles=").append(hasSuccessFiles)
-           .append(",numHashPartitions=").append(numHashPartitions)
+  @ovewwide
+  p-pubwic s-stwing tostwing() {
+    stwingbuiwdew buiwdew = nyew stwingbuiwdew();
+    b-buiwdew.append("daiwystatusbatch[date=").append(date)
+           .append(",vawid=").append(isvawid())
+           .append(",hassuccessfiwes=").append(hassuccessfiwes)
+           .append(",numhashpawtitions=").append(numhashpawtitions)
            .append("]:\n");
-    for (int i = 0; i < numHashPartitions; i++) {
-      builder.append('\t').append(hashPartitionToStatuses.get(i).toString()).append('\n');
+    fow (int i = 0; i-i < nyumhashpawtitions; i++) {
+      buiwdew.append('\t').append(hashpawtitiontostatuses.get(i).tostwing()).append('\n');
     }
-    return builder.toString();
+    wetuwn b-buiwdew.tostwing();
   }
 
-  @Override
-  public int compareTo(DailyStatusBatch o) {
-    return date.compareTo(o.date);
-  }
-
-  /**
-   * Serialize DailyStatusBatch to a json string.
-   */
-  public String serializeToJson() {
-    return serializeToJson(new Gson());
-  }
-
-  @VisibleForTesting
-  String serializeToJson(Gson gson) {
-    return gson.toJson(this);
+  @ovewwide
+  pubwic int c-compaweto(daiwystatusbatch o-o) {
+    wetuwn date.compaweto(o.date);
   }
 
   /**
-   * Given a json string, parse its fields and construct a daily status batch.
-   * @param batchStr the json string representation of a daily status batch.
-   * @return the daily status batch constructed; if the string is of invalid format, null will be
-   *         returned.
+   * s-sewiawize daiwystatusbatch t-to a json stwing. (⑅˘꒳˘)
    */
-  static DailyStatusBatch deserializeFromJson(String batchStr) {
-    try {
-      return new Gson().fromJson(batchStr, DailyStatusBatch.class);
-    } catch (JsonParseException e) {
-      LOG.error("Error parsing json string: " + batchStr, e);
-      return null;
+  p-pubwic s-stwing sewiawizetojson() {
+    wetuwn sewiawizetojson(new g-gson());
+  }
+
+  @visibwefowtesting
+  s-stwing sewiawizetojson(gson gson) {
+    wetuwn g-gson.tojson(this);
+  }
+
+  /**
+   * g-given a json s-stwing, (///ˬ///✿) pawse its fiewds and constwuct a daiwy status b-batch. 🥺
+   * @pawam batchstw t-the json stwing w-wepwesentation of a daiwy status batch. OwO
+   * @wetuwn the daiwy s-status batch constwucted; i-if the s-stwing is of invawid f-fowmat, >w< nyuww wiww be
+   *         w-wetuwned. 🥺
+   */
+  static daiwystatusbatch desewiawizefwomjson(stwing batchstw) {
+    twy {
+      wetuwn new gson().fwomjson(batchstw, nyaa~~ d-daiwystatusbatch.cwass);
+    } catch (jsonpawseexception e) {
+      w-wog.ewwow("ewwow pawsing json s-stwing: " + batchstw, ^^ e);
+      w-wetuwn nyuww;
     }
   }
 }

@@ -1,359 +1,359 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-import com.twitter.spam.rtf.thriftscala.SafetyLabelSource
-import com.twitter.spam.rtf.{thriftscala => s}
-import com.twitter.util.Time
-import com.twitter.visibility.util.NamingUtils
+impowt com.twittew.spam.wtf.thwiftscawa.safetywabewsouwce
+i-impowt com.twittew.spam.wtf.{thwiftscawa => s-s}
+impowt c-com.twittew.utiw.time
+i-impowt c-com.twittew.visibiwity.utiw.namingutiws
 
-sealed trait TweetSafetyLabelType extends SafetyLabelType with Product with Serializable {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+s-seawed t-twait tweetsafetywabewtype e-extends safetywabewtype with pwoduct with sewiawizabwe {
+  wazy vaw n-nyame: stwing = nyamingutiws.getfwiendwyname(this)
 }
 
-case class TweetSafetyLabel(
-  labelType: TweetSafetyLabelType,
-  source: Option[LabelSource] = None,
-  applicableUsers: Set[Long] = Set.empty,
-  modelMetadata: Option[TweetModelMetadata] = None,
-  score: Option[Double] = None,
-  safetyLabelSource: Option[SafetyLabelSource] = None)
+case cwass t-tweetsafetywabew(
+  wabewtype: t-tweetsafetywabewtype, XD
+  souwce: option[wabewsouwce] = nyone, >_<
+  a-appwicabweusews: set[wong] = set.empty, (˘ω˘)
+  m-modewmetadata: o-option[tweetmodewmetadata] = nyone, 😳
+  scowe: option[doubwe] = nyone, o.O
+  safetywabewsouwce: o-option[safetywabewsouwce] = nyone)
 
-object TweetSafetyLabelType extends SafetyLabelType {
+object tweetsafetywabewtype extends safetywabewtype {
 
-  val List: List[TweetSafetyLabelType] = s.SafetyLabelType.list.map(fromThrift)
+  vaw wist: wist[tweetsafetywabewtype] = s.safetywabewtype.wist.map(fwomthwift)
 
-  val ActiveLabels: List[TweetSafetyLabelType] = List.filter { labelType =>
-    labelType != Unknown && labelType != Deprecated
+  v-vaw activewabews: wist[tweetsafetywabewtype] = w-wist.fiwtew { wabewtype =>
+    w-wabewtype != unknown && w-wabewtype != d-depwecated
   }
 
-  private lazy val nameToValueMap: Map[String, TweetSafetyLabelType] =
-    List.map(l => l.name.toLowerCase -> l).toMap
-  def fromName(name: String): Option[TweetSafetyLabelType] = nameToValueMap.get(name.toLowerCase)
+  pwivate wazy vaw nyametovawuemap: m-map[stwing, (ꈍᴗꈍ) tweetsafetywabewtype] =
+    wist.map(w => w.name.towowewcase -> w-w).tomap
+  def fwomname(name: stwing): option[tweetsafetywabewtype] = nyametovawuemap.get(name.towowewcase)
 
-  private val UnknownThriftSafetyLabelType =
-    s.SafetyLabelType.EnumUnknownSafetyLabelType(UnknownEnumValue)
+  pwivate vaw unknownthwiftsafetywabewtype =
+    s-s.safetywabewtype.enumunknownsafetywabewtype(unknownenumvawue)
 
-  private lazy val thriftToModelMap: Map[s.SafetyLabelType, TweetSafetyLabelType] = Map(
-    s.SafetyLabelType.Abusive -> Abusive,
-    s.SafetyLabelType.AbusiveBehavior -> AbusiveBehavior,
-    s.SafetyLabelType.AbusiveBehaviorInsults -> AbusiveBehaviorInsults,
-    s.SafetyLabelType.AbusiveBehaviorViolentThreat -> AbusiveBehaviorViolentThreat,
-    s.SafetyLabelType.AbusiveBehaviorMajorAbuse -> AbusiveBehaviorMajorAbuse,
-    s.SafetyLabelType.AbusiveHighRecall -> AbusiveHighRecall,
-    s.SafetyLabelType.AdsManagerDenyList -> AdsManagerDenyList,
-    s.SafetyLabelType.AgathaSpam -> AgathaSpam,
-    s.SafetyLabelType.Automation -> Automation,
-    s.SafetyLabelType.AutomationHighRecall -> AutomationHighRecall,
-    s.SafetyLabelType.Bounce -> Bounce,
-    s.SafetyLabelType.BounceEdits -> BounceEdits,
-    s.SafetyLabelType.BrandSafetyNsfaAggregate -> BrandSafetyNsfaAggregate,
-    s.SafetyLabelType.BrandSafetyExperimental1 -> BrandSafetyExperimental1,
-    s.SafetyLabelType.BrandSafetyExperimental2 -> BrandSafetyExperimental2,
-    s.SafetyLabelType.BrandSafetyExperimental3 -> BrandSafetyExperimental3,
-    s.SafetyLabelType.BrandSafetyExperimental4 -> BrandSafetyExperimental4,
-    s.SafetyLabelType.BystanderAbusive -> BystanderAbusive,
-    s.SafetyLabelType.CopypastaSpam -> CopypastaSpam,
-    s.SafetyLabelType.DoNotAmplify -> DoNotAmplify,
-    s.SafetyLabelType.DownrankSpamReply -> DownrankSpamReply,
-    s.SafetyLabelType.DuplicateContent -> DuplicateContent,
-    s.SafetyLabelType.DuplicateMention -> DuplicateMention,
-    s.SafetyLabelType.DynamicProductAd -> DynamicProductAd,
-    s.SafetyLabelType.EdiDevelopmentOnly -> EdiDevelopmentOnly,
-    s.SafetyLabelType.ExperimentalNudge -> ExperimentalNudge,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal2 -> ExperimentalSensitiveIllegal2,
-    s.SafetyLabelType.ForEmergencyUseOnly -> ForEmergencyUseOnly,
-    s.SafetyLabelType.GoreAndViolence -> GoreAndViolence,
-    s.SafetyLabelType.GoreAndViolenceHighPrecision -> GoreAndViolenceHighPrecision,
-    s.SafetyLabelType.GoreAndViolenceHighRecall -> GoreAndViolenceHighRecall,
-    s.SafetyLabelType.GoreAndViolenceReportedHeuristics -> GoreAndViolenceReportedHeuristics,
-    s.SafetyLabelType.GoreAndViolenceTopicHighRecall -> GoreAndViolenceTopicHighRecall,
-    s.SafetyLabelType.HatefulConduct -> HatefulConduct,
-    s.SafetyLabelType.HatefulConductViolentThreat -> HatefulConductViolentThreat,
-    s.SafetyLabelType.HighCryptospamScore -> HighCryptospamScore,
-    s.SafetyLabelType.HighPReportedTweetScore -> HighPReportedTweetScore,
-    s.SafetyLabelType.HighPSpammyTweetScore -> HighPSpammyTweetScore,
-    s.SafetyLabelType.HighPblockScore -> HighPblockScore,
-    s.SafetyLabelType.HighProactiveTosScore -> HighProactiveTosScore,
-    s.SafetyLabelType.HighSpammyTweetContentScore -> HighSpammyTweetContentScore,
-    s.SafetyLabelType.HighToxicityScore -> HighToxicityScore,
-    s.SafetyLabelType.HighlyReportedAndMidhighToxicityScore -> HighlyReportedAndMidhighToxicityScore,
-    s.SafetyLabelType.HighlyReportedTweet -> HighlyReportedTweet,
-    s.SafetyLabelType.InterstitialDevelopmentOnly -> InterstitialDevelopmentOnly,
-    s.SafetyLabelType.IpiDevelopmentOnly -> IpiDevelopmentOnly,
-    s.SafetyLabelType.LiveLowQuality -> LiveLowQuality,
-    s.SafetyLabelType.LowQuality -> LowQuality,
-    s.SafetyLabelType.LowQualityMention -> LowQualityMention,
-    s.SafetyLabelType.MisinfoCivic -> MisinfoCivic,
-    s.SafetyLabelType.MisinfoCrisis -> MisinfoCrisis,
-    s.SafetyLabelType.MisinfoGeneric -> MisinfoGeneric,
-    s.SafetyLabelType.MisinfoMedical -> MisinfoMedical,
-    s.SafetyLabelType.NsfaHighPrecision -> NsfaHighPrecision,
-    s.SafetyLabelType.NsfaHighRecall -> NsfaHighRecall,
-    s.SafetyLabelType.NsfwCardImage -> NsfwCardImage,
-    s.SafetyLabelType.NsfwHighPrecision -> NsfwHighPrecision,
-    s.SafetyLabelType.NsfwHighRecall -> NsfwHighRecall,
-    s.SafetyLabelType.NsfwReportedHeuristics -> NsfwReportedHeuristics,
-    s.SafetyLabelType.NsfwText -> NsfwText,
-    s.SafetyLabelType.NsfwTextHighPrecision -> NsfwTextHighPrecision,
-    s.SafetyLabelType.NsfwVideo -> NsfwVideo,
-    s.SafetyLabelType.PNegMultimodalHighPrecision -> PNegMultimodalHighPrecision,
-    s.SafetyLabelType.PNegMultimodalHighRecall -> PNegMultimodalHighRecall,
-    s.SafetyLabelType.Pdna -> Pdna,
-    s.SafetyLabelType.RecommendationsLowQuality -> RecommendationsLowQuality,
-    s.SafetyLabelType.RitoActionedTweet -> RitoActionedTweet,
-    s.SafetyLabelType.SafetyCrisis -> SafetyCrisis,
-    s.SafetyLabelType.SearchBlacklist -> SearchBlacklist,
-    s.SafetyLabelType.SearchBlacklistHighRecall -> SearchBlacklistHighRecall,
-    s.SafetyLabelType.SemanticCoreMisinformation -> SemanticCoreMisinformation,
-    s.SafetyLabelType.SmyteSpamTweet -> SmyteSpamTweet,
-    s.SafetyLabelType.Spam -> Spam,
-    s.SafetyLabelType.SpamHighRecall -> SpamHighRecall,
-    s.SafetyLabelType.TombstoneDevelopmentOnly -> TombstoneDevelopmentOnly,
-    s.SafetyLabelType.TweetContainsHatefulConductSlurHighSeverity -> TweetContainsHatefulConductSlurHighSeverity,
-    s.SafetyLabelType.TweetContainsHatefulConductSlurMediumSeverity -> TweetContainsHatefulConductSlurMediumSeverity,
-    s.SafetyLabelType.TweetContainsHatefulConductSlurLowSeverity -> TweetContainsHatefulConductSlurLowSeverity,
-    s.SafetyLabelType.UnsafeUrl -> UnsafeUrl,
-    s.SafetyLabelType.UntrustedUrl -> UntrustedUrl,
-    s.SafetyLabelType.FosnrHatefulConduct -> FosnrHatefulConduct,
-    s.SafetyLabelType.FosnrHatefulConductLowSeveritySlur -> FosnrHatefulConductLowSeveritySlur,
-    s.SafetyLabelType.AbusiveHighRecall2 -> Deprecated,
-    s.SafetyLabelType.AbusiveHighRecall3 -> Deprecated,
-    s.SafetyLabelType.BrazilianPoliticalTweet -> Deprecated,
-    s.SafetyLabelType.BystanderAbusive2 -> Deprecated,
-    s.SafetyLabelType.BystanderAbusive3 -> Deprecated,
-    s.SafetyLabelType.DeprecatedLabel144 -> Deprecated,
-    s.SafetyLabelType.Experimental10Seh -> Deprecated,
-    s.SafetyLabelType.Experimental11Seh -> Deprecated,
-    s.SafetyLabelType.Experimental12Seh -> Deprecated,
-    s.SafetyLabelType.Experimental13Seh -> Deprecated,
-    s.SafetyLabelType.Experimental14Seh -> Deprecated,
-    s.SafetyLabelType.Experimental15Seh -> Deprecated,
-    s.SafetyLabelType.Experimental16Seh -> Deprecated,
-    s.SafetyLabelType.Experimental17Seh -> Deprecated,
-    s.SafetyLabelType.Experimental18Seh -> Deprecated,
-    s.SafetyLabelType.Experimental19Seh -> Deprecated,
-    s.SafetyLabelType.Experimental1Seh -> Deprecated,
-    s.SafetyLabelType.Experimental20Seh -> Deprecated,
-    s.SafetyLabelType.Experimental21Seh -> Deprecated,
-    s.SafetyLabelType.Experimental22Seh -> Deprecated,
-    s.SafetyLabelType.Experimental23Seh -> Deprecated,
-    s.SafetyLabelType.Experimental24Seh -> Deprecated,
-    s.SafetyLabelType.Experimental25Seh -> Deprecated,
-    s.SafetyLabelType.Experimental2Seh -> Deprecated,
-    s.SafetyLabelType.Experimental3Seh -> Deprecated,
-    s.SafetyLabelType.Experimental4Seh -> Deprecated,
-    s.SafetyLabelType.Experimental5Seh -> Deprecated,
-    s.SafetyLabelType.Experimental6Seh -> Deprecated,
-    s.SafetyLabelType.Experimental7Seh -> Deprecated,
-    s.SafetyLabelType.Experimental8Seh -> Deprecated,
-    s.SafetyLabelType.Experimental9Seh -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore1 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore10 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore2 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore3 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore4 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore5 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore6 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore7 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore8 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore9 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal1 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal3 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal4 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal5 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal6 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSpam1 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSpam2 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSpam3 -> Deprecated,
-    s.SafetyLabelType.Experimentation -> Deprecated,
-    s.SafetyLabelType.Experimentation2 -> Deprecated,
-    s.SafetyLabelType.Experimentation3 -> Deprecated,
-    s.SafetyLabelType.HighlyReportedImage -> Deprecated,
-    s.SafetyLabelType.HighToxicityHoldbackModelScore -> Deprecated,
-    s.SafetyLabelType.LowQualityHighRecall -> Deprecated,
-    s.SafetyLabelType.MagicRecsDenylist -> Deprecated,
-    s.SafetyLabelType.MisinfoCovid19 -> Deprecated,
-    s.SafetyLabelType.MsnfoBrazilianElection -> Deprecated,
-    s.SafetyLabelType.MsnfoCovid19Vaccine -> Deprecated,
-    s.SafetyLabelType.MsnfoFrenchElection -> Deprecated,
-    s.SafetyLabelType.MsnfoPhilippineElection -> Deprecated,
-    s.SafetyLabelType.MsnfoUsElection -> Deprecated,
-    s.SafetyLabelType.NsfwNearPerfect -> Deprecated,
-    s.SafetyLabelType.PersonaNonGrata -> Deprecated,
-    s.SafetyLabelType.PMisinfoCombined15 -> Deprecated,
-    s.SafetyLabelType.PMisinfoCombined30 -> Deprecated,
-    s.SafetyLabelType.PMisinfoCombined50 -> Deprecated,
-    s.SafetyLabelType.PMisinfoDenylist -> Deprecated,
-    s.SafetyLabelType.PMisinfoPVeracityNudge -> Deprecated,
-    s.SafetyLabelType.PoliticalTweetExperimental1 -> Deprecated,
-    s.SafetyLabelType.ProactiveTosHighRecall -> Deprecated,
-    s.SafetyLabelType.ProactiveTosHighRecallContainsSelfHarm -> Deprecated,
-    s.SafetyLabelType.ProactiveTosHighRecallEncourageSelfHarm -> Deprecated,
-    s.SafetyLabelType.ProactiveTosHighRecallEpisodic -> Deprecated,
-    s.SafetyLabelType.ProactiveTosHighRecallEpisodicHatefulConduct -> Deprecated,
-    s.SafetyLabelType.ProactiveTosHighRecallOtherAbusePolicy -> Deprecated,
-    s.SafetyLabelType.ProjectLibra -> Deprecated,
-    s.SafetyLabelType.SearchHighVisibilityDenylist -> Deprecated,
-    s.SafetyLabelType.SearchHighVisibilityHighRecallDenylist -> Deprecated,
-    s.SafetyLabelType.Reserved162 -> Deprecated,
-    s.SafetyLabelType.Reserved163 -> Deprecated,
-    s.SafetyLabelType.Reserved164 -> Deprecated,
-    s.SafetyLabelType.Reserved165 -> Deprecated,
-    s.SafetyLabelType.Reserved166 -> Deprecated,
-    s.SafetyLabelType.Reserved167 -> Deprecated,
-    s.SafetyLabelType.Reserved168 -> Deprecated,
-    s.SafetyLabelType.Reserved169 -> Deprecated,
-    s.SafetyLabelType.Reserved170 -> Deprecated,
+  pwivate wazy v-vaw thwifttomodewmap: m-map[s.safetywabewtype, rawr x3 tweetsafetywabewtype] = m-map(
+    s.safetywabewtype.abusive -> abusive, ^^
+    s.safetywabewtype.abusivebehaviow -> abusivebehaviow, OwO
+    s-s.safetywabewtype.abusivebehaviowinsuwts -> a-abusivebehaviowinsuwts,
+    s.safetywabewtype.abusivebehaviowviowentthweat -> a-abusivebehaviowviowentthweat, ^^
+    s-s.safetywabewtype.abusivebehaviowmajowabuse -> abusivebehaviowmajowabuse, :3
+    s.safetywabewtype.abusivehighwecaww -> a-abusivehighwecaww, o.O
+    s.safetywabewtype.adsmanagewdenywist -> a-adsmanagewdenywist, -.-
+    s.safetywabewtype.agathaspam -> agathaspam, (U ﹏ U)
+    s-s.safetywabewtype.automation -> automation, o.O
+    s-s.safetywabewtype.automationhighwecaww -> automationhighwecaww,
+    s-s.safetywabewtype.bounce -> b-bounce, OwO
+    s.safetywabewtype.bounceedits -> bounceedits, ^•ﻌ•^
+    s.safetywabewtype.bwandsafetynsfaaggwegate -> bwandsafetynsfaaggwegate, ʘwʘ
+    s.safetywabewtype.bwandsafetyexpewimentaw1 -> bwandsafetyexpewimentaw1, :3
+    s-s.safetywabewtype.bwandsafetyexpewimentaw2 -> b-bwandsafetyexpewimentaw2, 😳
+    s.safetywabewtype.bwandsafetyexpewimentaw3 -> b-bwandsafetyexpewimentaw3, òωó
+    s-s.safetywabewtype.bwandsafetyexpewimentaw4 -> b-bwandsafetyexpewimentaw4, 🥺
+    s.safetywabewtype.bystandewabusive -> bystandewabusive,
+    s.safetywabewtype.copypastaspam -> c-copypastaspam, rawr x3
+    s.safetywabewtype.donotampwify -> donotampwify, ^•ﻌ•^
+    s.safetywabewtype.downwankspamwepwy -> downwankspamwepwy, :3
+    s-s.safetywabewtype.dupwicatecontent -> dupwicatecontent, (ˆ ﻌ ˆ)♡
+    s-s.safetywabewtype.dupwicatemention -> d-dupwicatemention, (U ᵕ U❁)
+    s-s.safetywabewtype.dynamicpwoductad -> dynamicpwoductad, :3
+    s-s.safetywabewtype.edidevewopmentonwy -> e-edidevewopmentonwy, ^^;;
+    s-s.safetywabewtype.expewimentawnudge -> e-expewimentawnudge, ( ͡o ω ͡o )
+    s.safetywabewtype.expewimentawsensitiveiwwegaw2 -> expewimentawsensitiveiwwegaw2, o.O
+    s.safetywabewtype.fowemewgencyuseonwy -> f-fowemewgencyuseonwy, ^•ﻌ•^
+    s-s.safetywabewtype.goweandviowence -> g-goweandviowence, XD
+    s-s.safetywabewtype.goweandviowencehighpwecision -> g-goweandviowencehighpwecision, ^^
+    s.safetywabewtype.goweandviowencehighwecaww -> goweandviowencehighwecaww, o.O
+    s.safetywabewtype.goweandviowencewepowtedheuwistics -> g-goweandviowencewepowtedheuwistics, ( ͡o ω ͡o )
+    s.safetywabewtype.goweandviowencetopichighwecaww -> goweandviowencetopichighwecaww, /(^•ω•^)
+    s.safetywabewtype.hatefuwconduct -> hatefuwconduct, 🥺
+    s.safetywabewtype.hatefuwconductviowentthweat -> hatefuwconductviowentthweat, nyaa~~
+    s-s.safetywabewtype.highcwyptospamscowe -> highcwyptospamscowe,
+    s.safetywabewtype.highpwepowtedtweetscowe -> highpwepowtedtweetscowe, mya
+    s.safetywabewtype.highpspammytweetscowe -> h-highpspammytweetscowe, XD
+    s-s.safetywabewtype.highpbwockscowe -> h-highpbwockscowe,
+    s.safetywabewtype.highpwoactivetosscowe -> h-highpwoactivetosscowe, nyaa~~
+    s.safetywabewtype.highspammytweetcontentscowe -> h-highspammytweetcontentscowe, ʘwʘ
+    s-s.safetywabewtype.hightoxicityscowe -> hightoxicityscowe, (⑅˘꒳˘)
+    s.safetywabewtype.highwywepowtedandmidhightoxicityscowe -> highwywepowtedandmidhightoxicityscowe, :3
+    s.safetywabewtype.highwywepowtedtweet -> highwywepowtedtweet, -.-
+    s-s.safetywabewtype.intewstitiawdevewopmentonwy -> intewstitiawdevewopmentonwy, 😳😳😳
+    s-s.safetywabewtype.ipidevewopmentonwy -> ipidevewopmentonwy, (U ﹏ U)
+    s-s.safetywabewtype.wivewowquawity -> w-wivewowquawity, o.O
+    s.safetywabewtype.wowquawity -> wowquawity, ( ͡o ω ͡o )
+    s-s.safetywabewtype.wowquawitymention -> w-wowquawitymention, òωó
+    s.safetywabewtype.misinfocivic -> m-misinfocivic, 🥺
+    s-s.safetywabewtype.misinfocwisis -> misinfocwisis, /(^•ω•^)
+    s.safetywabewtype.misinfogenewic -> misinfogenewic, 😳😳😳
+    s.safetywabewtype.misinfomedicaw -> m-misinfomedicaw, ^•ﻌ•^
+    s-s.safetywabewtype.nsfahighpwecision -> n-nysfahighpwecision, nyaa~~
+    s.safetywabewtype.nsfahighwecaww -> nysfahighwecaww, OwO
+    s-s.safetywabewtype.nsfwcawdimage -> n-nysfwcawdimage, ^•ﻌ•^
+    s.safetywabewtype.nsfwhighpwecision -> n-nysfwhighpwecision,
+    s.safetywabewtype.nsfwhighwecaww -> nysfwhighwecaww, σωσ
+    s.safetywabewtype.nsfwwepowtedheuwistics -> nysfwwepowtedheuwistics, -.-
+    s.safetywabewtype.nsfwtext -> n-nysfwtext, (˘ω˘)
+    s-s.safetywabewtype.nsfwtexthighpwecision -> nysfwtexthighpwecision, rawr x3
+    s.safetywabewtype.nsfwvideo -> nsfwvideo, rawr x3
+    s-s.safetywabewtype.pnegmuwtimodawhighpwecision -> pnegmuwtimodawhighpwecision, σωσ
+    s-s.safetywabewtype.pnegmuwtimodawhighwecaww -> pnegmuwtimodawhighwecaww, nyaa~~
+    s.safetywabewtype.pdna -> pdna, (ꈍᴗꈍ)
+    s-s.safetywabewtype.wecommendationswowquawity -> wecommendationswowquawity, ^•ﻌ•^
+    s.safetywabewtype.witoactionedtweet -> witoactionedtweet, >_<
+    s.safetywabewtype.safetycwisis -> safetycwisis,
+    s-s.safetywabewtype.seawchbwackwist -> seawchbwackwist, ^^;;
+    s.safetywabewtype.seawchbwackwisthighwecaww -> s-seawchbwackwisthighwecaww, ^^;;
+    s-s.safetywabewtype.semanticcowemisinfowmation -> semanticcowemisinfowmation, /(^•ω•^)
+    s.safetywabewtype.smytespamtweet -> smytespamtweet, nyaa~~
+    s-s.safetywabewtype.spam -> s-spam, (✿oωo)
+    s.safetywabewtype.spamhighwecaww -> spamhighwecaww, ( ͡o ω ͡o )
+    s.safetywabewtype.tombstonedevewopmentonwy -> t-tombstonedevewopmentonwy, (U ᵕ U❁)
+    s.safetywabewtype.tweetcontainshatefuwconductswuwhighsevewity -> t-tweetcontainshatefuwconductswuwhighsevewity, òωó
+    s.safetywabewtype.tweetcontainshatefuwconductswuwmediumsevewity -> tweetcontainshatefuwconductswuwmediumsevewity, σωσ
+    s.safetywabewtype.tweetcontainshatefuwconductswuwwowsevewity -> t-tweetcontainshatefuwconductswuwwowsevewity,
+    s.safetywabewtype.unsafeuww -> unsafeuww, :3
+    s-s.safetywabewtype.untwusteduww -> u-untwusteduww, OwO
+    s.safetywabewtype.fosnwhatefuwconduct -> f-fosnwhatefuwconduct, ^^
+    s.safetywabewtype.fosnwhatefuwconductwowsevewityswuw -> f-fosnwhatefuwconductwowsevewityswuw, (˘ω˘)
+    s-s.safetywabewtype.abusivehighwecaww2 -> d-depwecated, OwO
+    s.safetywabewtype.abusivehighwecaww3 -> d-depwecated, UwU
+    s-s.safetywabewtype.bwaziwianpowiticawtweet -> depwecated, ^•ﻌ•^
+    s.safetywabewtype.bystandewabusive2 -> d-depwecated, (ꈍᴗꈍ)
+    s-s.safetywabewtype.bystandewabusive3 -> depwecated, /(^•ω•^)
+    s.safetywabewtype.depwecatedwabew144 -> d-depwecated, (U ᵕ U❁)
+    s.safetywabewtype.expewimentaw10seh -> depwecated, (✿oωo)
+    s-s.safetywabewtype.expewimentaw11seh -> depwecated, OwO
+    s-s.safetywabewtype.expewimentaw12seh -> d-depwecated, :3
+    s.safetywabewtype.expewimentaw13seh -> depwecated, nyaa~~
+    s.safetywabewtype.expewimentaw14seh -> d-depwecated, ^•ﻌ•^
+    s-s.safetywabewtype.expewimentaw15seh -> d-depwecated, ( ͡o ω ͡o )
+    s-s.safetywabewtype.expewimentaw16seh -> depwecated, ^^;;
+    s-s.safetywabewtype.expewimentaw17seh -> depwecated, mya
+    s.safetywabewtype.expewimentaw18seh -> depwecated, (U ᵕ U❁)
+    s.safetywabewtype.expewimentaw19seh -> depwecated, ^•ﻌ•^
+    s.safetywabewtype.expewimentaw1seh -> depwecated, (U ﹏ U)
+    s-s.safetywabewtype.expewimentaw20seh -> depwecated, /(^•ω•^)
+    s-s.safetywabewtype.expewimentaw21seh -> depwecated, ʘwʘ
+    s-s.safetywabewtype.expewimentaw22seh -> depwecated, XD
+    s-s.safetywabewtype.expewimentaw23seh -> depwecated, (⑅˘꒳˘)
+    s.safetywabewtype.expewimentaw24seh -> depwecated, nyaa~~
+    s-s.safetywabewtype.expewimentaw25seh -> d-depwecated, UwU
+    s-s.safetywabewtype.expewimentaw2seh -> d-depwecated, (˘ω˘)
+    s-s.safetywabewtype.expewimentaw3seh -> depwecated, rawr x3
+    s.safetywabewtype.expewimentaw4seh -> depwecated, (///ˬ///✿)
+    s.safetywabewtype.expewimentaw5seh -> depwecated, 😳😳😳
+    s.safetywabewtype.expewimentaw6seh -> depwecated, (///ˬ///✿)
+    s.safetywabewtype.expewimentaw7seh -> d-depwecated, ^^;;
+    s-s.safetywabewtype.expewimentaw8seh -> d-depwecated, ^^
+    s.safetywabewtype.expewimentaw9seh -> d-depwecated, (///ˬ///✿)
+    s.safetywabewtype.expewimentawhighheawthmodewscowe1 -> depwecated, -.-
+    s.safetywabewtype.expewimentawhighheawthmodewscowe10 -> d-depwecated, /(^•ω•^)
+    s-s.safetywabewtype.expewimentawhighheawthmodewscowe2 -> depwecated, UwU
+    s-s.safetywabewtype.expewimentawhighheawthmodewscowe3 -> depwecated,
+    s.safetywabewtype.expewimentawhighheawthmodewscowe4 -> d-depwecated, (⑅˘꒳˘)
+    s-s.safetywabewtype.expewimentawhighheawthmodewscowe5 -> depwecated, ʘwʘ
+    s-s.safetywabewtype.expewimentawhighheawthmodewscowe6 -> depwecated, σωσ
+    s.safetywabewtype.expewimentawhighheawthmodewscowe7 -> d-depwecated, ^^
+    s.safetywabewtype.expewimentawhighheawthmodewscowe8 -> depwecated, OwO
+    s.safetywabewtype.expewimentawhighheawthmodewscowe9 -> depwecated, (ˆ ﻌ ˆ)♡
+    s-s.safetywabewtype.expewimentawsensitiveiwwegaw1 -> d-depwecated, o.O
+    s-s.safetywabewtype.expewimentawsensitiveiwwegaw3 -> d-depwecated,
+    s-s.safetywabewtype.expewimentawsensitiveiwwegaw4 -> depwecated, (˘ω˘)
+    s-s.safetywabewtype.expewimentawsensitiveiwwegaw5 -> d-depwecated, 😳
+    s.safetywabewtype.expewimentawsensitiveiwwegaw6 -> d-depwecated, (U ᵕ U❁)
+    s-s.safetywabewtype.expewimentawspam1 -> depwecated, :3
+    s-s.safetywabewtype.expewimentawspam2 -> depwecated, o.O
+    s.safetywabewtype.expewimentawspam3 -> d-depwecated, (///ˬ///✿)
+    s.safetywabewtype.expewimentation -> d-depwecated, OwO
+    s-s.safetywabewtype.expewimentation2 -> depwecated, >w<
+    s-s.safetywabewtype.expewimentation3 -> depwecated, ^^
+    s.safetywabewtype.highwywepowtedimage -> d-depwecated, (⑅˘꒳˘)
+    s-s.safetywabewtype.hightoxicityhowdbackmodewscowe -> d-depwecated, ʘwʘ
+    s.safetywabewtype.wowquawityhighwecaww -> depwecated,
+    s.safetywabewtype.magicwecsdenywist -> d-depwecated, (///ˬ///✿)
+    s.safetywabewtype.misinfocovid19 -> depwecated, XD
+    s-s.safetywabewtype.msnfobwaziwianewection -> d-depwecated, 😳
+    s.safetywabewtype.msnfocovid19vaccine -> d-depwecated, >w<
+    s.safetywabewtype.msnfofwenchewection -> d-depwecated, (˘ω˘)
+    s-s.safetywabewtype.msnfophiwippineewection -> depwecated, nyaa~~
+    s.safetywabewtype.msnfousewection -> d-depwecated, 😳😳😳
+    s.safetywabewtype.nsfwneawpewfect -> depwecated, (U ﹏ U)
+    s-s.safetywabewtype.pewsonanongwata -> d-depwecated, (˘ω˘)
+    s.safetywabewtype.pmisinfocombined15 -> d-depwecated, :3
+    s.safetywabewtype.pmisinfocombined30 -> d-depwecated, >w<
+    s-s.safetywabewtype.pmisinfocombined50 -> d-depwecated, ^^
+    s.safetywabewtype.pmisinfodenywist -> depwecated, 😳😳😳
+    s.safetywabewtype.pmisinfopvewacitynudge -> depwecated, nyaa~~
+    s.safetywabewtype.powiticawtweetexpewimentaw1 -> depwecated, (⑅˘꒳˘)
+    s.safetywabewtype.pwoactivetoshighwecaww -> depwecated, :3
+    s.safetywabewtype.pwoactivetoshighwecawwcontainssewfhawm -> depwecated, ʘwʘ
+    s.safetywabewtype.pwoactivetoshighwecawwencouwagesewfhawm -> depwecated, rawr x3
+    s.safetywabewtype.pwoactivetoshighwecawwepisodic -> depwecated, (///ˬ///✿)
+    s-s.safetywabewtype.pwoactivetoshighwecawwepisodichatefuwconduct -> d-depwecated, 😳😳😳
+    s.safetywabewtype.pwoactivetoshighwecawwothewabusepowicy -> depwecated, XD
+    s-s.safetywabewtype.pwojectwibwa -> d-depwecated, >_<
+    s-s.safetywabewtype.seawchhighvisibiwitydenywist -> depwecated, >w<
+    s-s.safetywabewtype.seawchhighvisibiwityhighwecawwdenywist -> depwecated, /(^•ω•^)
+    s-s.safetywabewtype.wesewved162 -> d-depwecated, :3
+    s.safetywabewtype.wesewved163 -> d-depwecated, ʘwʘ
+    s.safetywabewtype.wesewved164 -> d-depwecated, (˘ω˘)
+    s-s.safetywabewtype.wesewved165 -> depwecated, (ꈍᴗꈍ)
+    s.safetywabewtype.wesewved166 -> d-depwecated, ^^
+    s-s.safetywabewtype.wesewved167 -> d-depwecated, ^^
+    s-s.safetywabewtype.wesewved168 -> d-depwecated, ( ͡o ω ͡o )
+    s-s.safetywabewtype.wesewved169 -> depwecated, -.-
+    s.safetywabewtype.wesewved170 -> d-depwecated, ^^;;
   )
 
-  private lazy val modelToThriftMap: Map[TweetSafetyLabelType, s.SafetyLabelType] =
-    (for ((k, v) <- thriftToModelMap) yield (v, k)) ++ Map(
-      Deprecated -> s.SafetyLabelType.EnumUnknownSafetyLabelType(DeprecatedEnumValue),
+  p-pwivate wazy v-vaw modewtothwiftmap: map[tweetsafetywabewtype, ^•ﻌ•^ s-s.safetywabewtype] =
+    (fow ((k, (˘ω˘) v-v) <- thwifttomodewmap) y-yiewd (v, o.O k)) ++ map(
+      d-depwecated -> s.safetywabewtype.enumunknownsafetywabewtype(depwecatedenumvawue), (✿oωo)
     )
 
-  case object Abusive extends TweetSafetyLabelType
-  case object AbusiveBehavior extends TweetSafetyLabelType
-  case object AbusiveBehaviorInsults extends TweetSafetyLabelType
-  case object AbusiveBehaviorViolentThreat extends TweetSafetyLabelType
-  case object AbusiveBehaviorMajorAbuse extends TweetSafetyLabelType
-  case object AbusiveHighRecall extends TweetSafetyLabelType
-  case object Automation extends TweetSafetyLabelType
-  case object AutomationHighRecall extends TweetSafetyLabelType
-  case object Bounce extends TweetSafetyLabelType
-  case object BystanderAbusive extends TweetSafetyLabelType
-  case object NsfaHighRecall extends TweetSafetyLabelType
-  case object DuplicateContent extends TweetSafetyLabelType
-  case object DuplicateMention extends TweetSafetyLabelType
-  case object GoreAndViolence extends TweetSafetyLabelType {
+  case object abusive e-extends tweetsafetywabewtype
+  case object a-abusivebehaviow e-extends tweetsafetywabewtype
+  case o-object abusivebehaviowinsuwts extends tweetsafetywabewtype
+  c-case object abusivebehaviowviowentthweat extends t-tweetsafetywabewtype
+  case object a-abusivebehaviowmajowabuse extends tweetsafetywabewtype
+  c-case object abusivehighwecaww extends tweetsafetywabewtype
+  case o-object automation extends tweetsafetywabewtype
+  c-case object automationhighwecaww e-extends tweetsafetywabewtype
+  case object bounce extends tweetsafetywabewtype
+  case object bystandewabusive e-extends tweetsafetywabewtype
+  case object nysfahighwecaww e-extends t-tweetsafetywabewtype
+  c-case object dupwicatecontent extends tweetsafetywabewtype
+  c-case object d-dupwicatemention extends tweetsafetywabewtype
+  c-case object goweandviowence extends tweetsafetywabewtype {
 
-    val DeprecatedAt: Time = Time.at("2019-09-12 00:00:00 UTC")
+    v-vaw depwecatedat: time = time.at("2019-09-12 00:00:00 u-utc")
   }
-  case object GoreAndViolenceHighRecall extends TweetSafetyLabelType
-  case object LiveLowQuality extends TweetSafetyLabelType
-  case object LowQuality extends TweetSafetyLabelType
-  case object LowQualityMention extends TweetSafetyLabelType
-  case object NsfwCardImage extends TweetSafetyLabelType
-  case object NsfwHighRecall extends TweetSafetyLabelType
-  case object NsfwHighPrecision extends TweetSafetyLabelType
-  case object NsfwVideo extends TweetSafetyLabelType
-  case object Pdna extends TweetSafetyLabelType
+  c-case object g-goweandviowencehighwecaww extends t-tweetsafetywabewtype
+  c-case object w-wivewowquawity e-extends tweetsafetywabewtype
+  case object wowquawity e-extends t-tweetsafetywabewtype
+  c-case object w-wowquawitymention e-extends tweetsafetywabewtype
+  c-case object n-nysfwcawdimage e-extends tweetsafetywabewtype
+  case object nysfwhighwecaww e-extends tweetsafetywabewtype
+  c-case object nysfwhighpwecision e-extends t-tweetsafetywabewtype
+  c-case object nysfwvideo extends tweetsafetywabewtype
+  case object pdna e-extends tweetsafetywabewtype
 
-  case object RecommendationsLowQuality extends TweetSafetyLabelType
-  case object SearchBlacklist extends TweetSafetyLabelType
-  case object Spam extends TweetSafetyLabelType
-  case object SpamHighRecall extends TweetSafetyLabelType
-  case object UntrustedUrl extends TweetSafetyLabelType
-  case object HighToxicityScore extends TweetSafetyLabelType
-  case object HighPblockScore extends TweetSafetyLabelType
-  case object SearchBlacklistHighRecall extends TweetSafetyLabelType
-  case object ForEmergencyUseOnly extends TweetSafetyLabelType
-  case object HighProactiveTosScore extends TweetSafetyLabelType
-  case object SafetyCrisis extends TweetSafetyLabelType
-  case object MisinfoCivic extends TweetSafetyLabelType
-  case object MisinfoCrisis extends TweetSafetyLabelType
-  case object MisinfoGeneric extends TweetSafetyLabelType
-  case object MisinfoMedical extends TweetSafetyLabelType
-  case object AdsManagerDenyList extends TweetSafetyLabelType
-  case object GoreAndViolenceHighPrecision extends TweetSafetyLabelType
-  case object NsfwReportedHeuristics extends TweetSafetyLabelType
-  case object GoreAndViolenceReportedHeuristics extends TweetSafetyLabelType
-  case object HighPSpammyTweetScore extends TweetSafetyLabelType
-  case object DoNotAmplify extends TweetSafetyLabelType
-  case object HighlyReportedTweet extends TweetSafetyLabelType
-  case object AgathaSpam extends TweetSafetyLabelType
-  case object SmyteSpamTweet extends TweetSafetyLabelType
-  case object SemanticCoreMisinformation extends TweetSafetyLabelType
-  case object HighPReportedTweetScore extends TweetSafetyLabelType
-  case object HighSpammyTweetContentScore extends TweetSafetyLabelType
-  case object GoreAndViolenceTopicHighRecall extends TweetSafetyLabelType
-  case object CopypastaSpam extends TweetSafetyLabelType
-  case object ExperimentalSensitiveIllegal2 extends TweetSafetyLabelType
-  case object DownrankSpamReply extends TweetSafetyLabelType
-  case object NsfwText extends TweetSafetyLabelType
-  case object HighlyReportedAndMidhighToxicityScore extends TweetSafetyLabelType
-  case object DynamicProductAd extends TweetSafetyLabelType
-  case object TombstoneDevelopmentOnly extends TweetSafetyLabelType
-  case object TweetContainsHatefulConductSlurHighSeverity extends TweetSafetyLabelType
-  case object TweetContainsHatefulConductSlurMediumSeverity extends TweetSafetyLabelType
-  case object TweetContainsHatefulConductSlurLowSeverity extends TweetSafetyLabelType
-  case object RitoActionedTweet extends TweetSafetyLabelType
-  case object ExperimentalNudge extends TweetSafetyLabelType
-  case object PNegMultimodalHighPrecision extends TweetSafetyLabelType
-  case object PNegMultimodalHighRecall extends TweetSafetyLabelType
-  case object BrandSafetyNsfaAggregate extends TweetSafetyLabelType
-  case object HighCryptospamScore extends TweetSafetyLabelType
-  case object IpiDevelopmentOnly extends TweetSafetyLabelType
-  case object BounceEdits extends TweetSafetyLabelType
-  case object UnsafeUrl extends TweetSafetyLabelType
-  case object InterstitialDevelopmentOnly extends TweetSafetyLabelType
-  case object EdiDevelopmentOnly extends TweetSafetyLabelType
-  case object NsfwTextHighPrecision extends TweetSafetyLabelType
-  case object HatefulConduct extends TweetSafetyLabelType
-  case object HatefulConductViolentThreat extends TweetSafetyLabelType
-  case object NsfaHighPrecision extends TweetSafetyLabelType
-  case object BrandSafetyExperimental1 extends TweetSafetyLabelType
-  case object BrandSafetyExperimental2 extends TweetSafetyLabelType
-  case object BrandSafetyExperimental3 extends TweetSafetyLabelType
-  case object BrandSafetyExperimental4 extends TweetSafetyLabelType
+  c-case object wecommendationswowquawity e-extends tweetsafetywabewtype
+  case object seawchbwackwist extends tweetsafetywabewtype
+  c-case object spam e-extends tweetsafetywabewtype
+  case object spamhighwecaww e-extends t-tweetsafetywabewtype
+  case object untwusteduww extends tweetsafetywabewtype
+  c-case object hightoxicityscowe e-extends tweetsafetywabewtype
+  case o-object highpbwockscowe e-extends tweetsafetywabewtype
+  case object s-seawchbwackwisthighwecaww e-extends tweetsafetywabewtype
+  case object fowemewgencyuseonwy extends tweetsafetywabewtype
+  c-case object highpwoactivetosscowe extends tweetsafetywabewtype
+  case o-object safetycwisis extends t-tweetsafetywabewtype
+  c-case object misinfocivic e-extends tweetsafetywabewtype
+  case o-object misinfocwisis extends t-tweetsafetywabewtype
+  case object m-misinfogenewic e-extends tweetsafetywabewtype
+  c-case object misinfomedicaw e-extends tweetsafetywabewtype
+  c-case o-object adsmanagewdenywist e-extends tweetsafetywabewtype
+  c-case object goweandviowencehighpwecision extends tweetsafetywabewtype
+  c-case object nysfwwepowtedheuwistics e-extends tweetsafetywabewtype
+  c-case object goweandviowencewepowtedheuwistics extends tweetsafetywabewtype
+  case object highpspammytweetscowe extends tweetsafetywabewtype
+  c-case object donotampwify extends t-tweetsafetywabewtype
+  c-case object highwywepowtedtweet extends t-tweetsafetywabewtype
+  case object a-agathaspam e-extends tweetsafetywabewtype
+  c-case object smytespamtweet e-extends t-tweetsafetywabewtype
+  case object semanticcowemisinfowmation extends tweetsafetywabewtype
+  case object highpwepowtedtweetscowe e-extends tweetsafetywabewtype
+  case object highspammytweetcontentscowe e-extends tweetsafetywabewtype
+  case object goweandviowencetopichighwecaww e-extends tweetsafetywabewtype
+  case object copypastaspam extends tweetsafetywabewtype
+  case o-object expewimentawsensitiveiwwegaw2 e-extends tweetsafetywabewtype
+  case object d-downwankspamwepwy extends tweetsafetywabewtype
+  case object nysfwtext e-extends t-tweetsafetywabewtype
+  case object h-highwywepowtedandmidhightoxicityscowe extends t-tweetsafetywabewtype
+  case object dynamicpwoductad extends tweetsafetywabewtype
+  c-case object tombstonedevewopmentonwy extends t-tweetsafetywabewtype
+  c-case object t-tweetcontainshatefuwconductswuwhighsevewity extends tweetsafetywabewtype
+  case object tweetcontainshatefuwconductswuwmediumsevewity e-extends tweetsafetywabewtype
+  case object tweetcontainshatefuwconductswuwwowsevewity extends tweetsafetywabewtype
+  case o-object witoactionedtweet e-extends t-tweetsafetywabewtype
+  c-case object expewimentawnudge extends t-tweetsafetywabewtype
+  c-case object pnegmuwtimodawhighpwecision extends tweetsafetywabewtype
+  c-case object pnegmuwtimodawhighwecaww extends tweetsafetywabewtype
+  case object b-bwandsafetynsfaaggwegate extends tweetsafetywabewtype
+  c-case object h-highcwyptospamscowe extends t-tweetsafetywabewtype
+  c-case object i-ipidevewopmentonwy extends tweetsafetywabewtype
+  case object b-bounceedits extends tweetsafetywabewtype
+  case o-object unsafeuww extends tweetsafetywabewtype
+  case object intewstitiawdevewopmentonwy extends t-tweetsafetywabewtype
+  c-case object e-edidevewopmentonwy e-extends tweetsafetywabewtype
+  c-case object nysfwtexthighpwecision e-extends tweetsafetywabewtype
+  case object h-hatefuwconduct extends tweetsafetywabewtype
+  c-case object hatefuwconductviowentthweat extends tweetsafetywabewtype
+  c-case object n-nysfahighpwecision extends t-tweetsafetywabewtype
+  case object b-bwandsafetyexpewimentaw1 e-extends tweetsafetywabewtype
+  c-case o-object bwandsafetyexpewimentaw2 extends tweetsafetywabewtype
+  case o-object bwandsafetyexpewimentaw3 extends tweetsafetywabewtype
+  case object bwandsafetyexpewimentaw4 extends t-tweetsafetywabewtype
 
-  case object FosnrHatefulConduct extends TweetSafetyLabelType
-  case object FosnrHatefulConductLowSeveritySlur extends TweetSafetyLabelType
+  case object f-fosnwhatefuwconduct extends tweetsafetywabewtype
+  c-case object f-fosnwhatefuwconductwowsevewityswuw e-extends tweetsafetywabewtype
 
-  case object Deprecated extends TweetSafetyLabelType
-  case object Unknown extends TweetSafetyLabelType
+  case object d-depwecated extends t-tweetsafetywabewtype
+  case o-object unknown extends tweetsafetywabewtype
 
-  def fromThrift(safetyLabelType: s.SafetyLabelType): TweetSafetyLabelType =
-    thriftToModelMap.get(safetyLabelType) match {
-      case Some(tweetSafetyLabelType) => tweetSafetyLabelType
+  d-def fwomthwift(safetywabewtype: s.safetywabewtype): t-tweetsafetywabewtype =
+    thwifttomodewmap.get(safetywabewtype) m-match {
+      case some(tweetsafetywabewtype) => tweetsafetywabewtype
       case _ =>
-        safetyLabelType match {
-          case s.SafetyLabelType.EnumUnknownSafetyLabelType(DeprecatedEnumValue) => Deprecated
+        safetywabewtype m-match {
+          c-case s.safetywabewtype.enumunknownsafetywabewtype(depwecatedenumvawue) => depwecated
           case _ =>
-            Unknown
+            unknown
         }
     }
 
-  def toThrift(safetyLabelType: TweetSafetyLabelType): s.SafetyLabelType = {
-    modelToThriftMap.getOrElse(safetyLabelType, UnknownThriftSafetyLabelType)
+  def tothwift(safetywabewtype: t-tweetsafetywabewtype): s.safetywabewtype = {
+    m-modewtothwiftmap.getowewse(safetywabewtype, 😳😳😳 u-unknownthwiftsafetywabewtype)
   }
 }
 
-object TweetSafetyLabel {
-  def fromThrift(safetyLabelValue: s.SafetyLabelValue): TweetSafetyLabel =
-    fromTuple(safetyLabelValue.labelType, safetyLabelValue.label)
+object tweetsafetywabew {
+  def fwomthwift(safetywabewvawue: s.safetywabewvawue): tweetsafetywabew =
+    f-fwomtupwe(safetywabewvawue.wabewtype, (ꈍᴗꈍ) safetywabewvawue.wabew)
 
-  def fromTuple(
-    safetyLabelType: s.SafetyLabelType,
-    safetyLabel: s.SafetyLabel
-  ): TweetSafetyLabel = {
-    TweetSafetyLabel(
-      labelType = TweetSafetyLabelType.fromThrift(safetyLabelType),
-      source = safetyLabel.source.flatMap(LabelSource.fromString),
-      safetyLabelSource = safetyLabel.safetyLabelSource,
-      applicableUsers = safetyLabel.applicableUsers
-        .map { perspectivalUsers =>
-          (perspectivalUsers map {
-            _.userId
-          }).toSet
-        }.getOrElse(Set.empty),
-      score = safetyLabel.score,
-      modelMetadata = safetyLabel.modelMetadata.flatMap(TweetModelMetadata.fromThrift)
+  def fwomtupwe(
+    s-safetywabewtype: s.safetywabewtype, σωσ
+    s-safetywabew: s-s.safetywabew
+  ): tweetsafetywabew = {
+    t-tweetsafetywabew(
+      w-wabewtype = t-tweetsafetywabewtype.fwomthwift(safetywabewtype), UwU
+      souwce = s-safetywabew.souwce.fwatmap(wabewsouwce.fwomstwing), ^•ﻌ•^
+      s-safetywabewsouwce = s-safetywabew.safetywabewsouwce, mya
+      appwicabweusews = safetywabew.appwicabweusews
+        .map { pewspectivawusews =>
+          (pewspectivawusews map {
+            _.usewid
+          }).toset
+        }.getowewse(set.empty), /(^•ω•^)
+      scowe = s-safetywabew.scowe, rawr
+      modewmetadata = safetywabew.modewmetadata.fwatmap(tweetmodewmetadata.fwomthwift)
     )
   }
 
-  def toThrift(tweetSafetyLabel: TweetSafetyLabel): s.SafetyLabelValue = {
-    s.SafetyLabelValue(
-      labelType = TweetSafetyLabelType.toThrift(tweetSafetyLabel.labelType),
-      label = s.SafetyLabel(
-        applicableUsers = if (tweetSafetyLabel.applicableUsers.nonEmpty) {
-          Some(tweetSafetyLabel.applicableUsers.toSeq.map {
-            s.PerspectivalUser(_)
+  d-def t-tothwift(tweetsafetywabew: t-tweetsafetywabew): s.safetywabewvawue = {
+    s-s.safetywabewvawue(
+      w-wabewtype = tweetsafetywabewtype.tothwift(tweetsafetywabew.wabewtype), nyaa~~
+      wabew = s.safetywabew(
+        appwicabweusews = if (tweetsafetywabew.appwicabweusews.nonempty) {
+          s-some(tweetsafetywabew.appwicabweusews.toseq.map {
+            s-s.pewspectivawusew(_)
           })
-        } else {
-          None
-        },
-        source = tweetSafetyLabel.source.map(_.name),
-        score = tweetSafetyLabel.score,
-        modelMetadata = tweetSafetyLabel.modelMetadata.map(TweetModelMetadata.toThrift)
+        } ewse {
+          nyone
+        }, ( ͡o ω ͡o )
+        souwce = tweetsafetywabew.souwce.map(_.name), σωσ
+        s-scowe = t-tweetsafetywabew.scowe, (✿oωo)
+        m-modewmetadata = tweetsafetywabew.modewmetadata.map(tweetmodewmetadata.tothwift)
       )
     )
   }

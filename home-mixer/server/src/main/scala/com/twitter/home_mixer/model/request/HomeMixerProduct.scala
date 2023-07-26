@@ -1,40 +1,40 @@
-package com.twitter.home_mixer.model.request
+package com.twittew.home_mixew.modew.wequest
 
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
 
 /**
- * Identifier names on products can be used to create Feature Switch rules by product,
- * which useful if bucketing occurs in a component shared by multiple products.
- * @see [[Product.identifier]]
+ * i-identifiew n-nyames on p-pwoducts can be u-used to cweate f-featuwe switch wuwes by pwoduct, mya
+ * which usefuw if bucketing occuws in a component s-shawed by muwtipwe pwoducts. 😳
+ * @see [[pwoduct.identifiew]]
  */
 
-case object FollowingProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("Following")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+case object f-fowwowingpwoduct extends pwoduct {
+  o-ovewwide vaw identifiew: pwoductidentifiew = pwoductidentifiew("fowwowing")
+  o-ovewwide vaw stwingcentewpwoject: o-option[stwing] = s-some("timewinemixew")
 }
 
-case object ForYouProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ForYou")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+case object fowyoupwoduct extends pwoduct {
+  ovewwide vaw identifiew: p-pwoductidentifiew = pwoductidentifiew("fowyou")
+  ovewwide vaw stwingcentewpwoject: option[stwing] = s-some("timewinemixew")
 }
 
-case object ScoredTweetsProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ScoredTweets")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+case object s-scowedtweetspwoduct e-extends pwoduct {
+  o-ovewwide v-vaw identifiew: pwoductidentifiew = pwoductidentifiew("scowedtweets")
+  o-ovewwide vaw stwingcentewpwoject: option[stwing] = s-some("timewinemixew")
 }
 
-case object ListTweetsProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ListTweets")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+case object wisttweetspwoduct extends pwoduct {
+  ovewwide vaw identifiew: p-pwoductidentifiew = pwoductidentifiew("wisttweets")
+  o-ovewwide v-vaw stwingcentewpwoject: o-option[stwing] = some("timewinemixew")
 }
 
-case object ListRecommendedUsersProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ListRecommendedUsers")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+case object wistwecommendedusewspwoduct e-extends p-pwoduct {
+  ovewwide vaw identifiew: p-pwoductidentifiew = p-pwoductidentifiew("wistwecommendedusews")
+  ovewwide v-vaw stwingcentewpwoject: option[stwing] = s-some("timewinemixew")
 }
 
-case object SubscribedProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("Subscribed")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+case object subscwibedpwoduct e-extends pwoduct {
+  ovewwide v-vaw identifiew: pwoductidentifiew = p-pwoductidentifiew("subscwibed")
+  o-ovewwide vaw stwingcentewpwoject: option[stwing] = some("timewinemixew")
 }

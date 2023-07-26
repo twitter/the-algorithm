@@ -1,42 +1,42 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.twittew.fowwow_wecommendations.common.wankews.mw_wankew.scowing
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt c-com.twittew.cowtex.deepbiwd.thwiftjava.deepbiwdpwedictionsewvice
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants
+i-impowt com.twittew.fowwow_wecommendations.common.wankews.common.wankewid
+i-impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.utiw.futuwe
+impowt javax.inject.inject
+impowt javax.inject.named
+impowt javax.inject.singweton
 
 /**
- * This scorer assigns random values between 0 and 1 to each candidate as scores.
+ * t-this scowew assigns wandom vawues between 0 a-and 1 to each candidate a-as scowes. >_<
  */
 
-@Singleton
-class RandomScorer @Inject() (
-  @Named(GuiceNamedConstants.WTF_PROD_DEEPBIRDV2_CLIENT)
-  override val deepbirdClient: DeepbirdPredictionService.ServiceToClient,
-  override val baseStats: StatsReceiver)
-    extends DeepbirdScorer {
-  override val id = RankerId.RandomRanker
-  private val rnd = new scala.util.Random(System.currentTimeMillis())
+@singweton
+cwass wandomscowew @inject() (
+  @named(guicenamedconstants.wtf_pwod_deepbiwdv2_cwient)
+  ovewwide vaw d-deepbiwdcwient: deepbiwdpwedictionsewvice.sewvicetocwient, (⑅˘꒳˘)
+  ovewwide v-vaw basestats: s-statsweceivew)
+    extends deepbiwdscowew {
+  ovewwide vaw id = wankewid.wandomwankew
+  pwivate v-vaw wnd = nyew scawa.utiw.wandom(system.cuwwenttimemiwwis())
 
-  override def predict(dataRecords: Seq[DataRecord]): Future[Seq[Option[Double]]] = {
-    if (dataRecords.isEmpty) {
-      Future.Nil
-    } else {
-      // All candidates are assigned a random value between 0 and 1 as score.
-      Future.value(dataRecords.map(_ => Option(rnd.nextDouble())))
+  ovewwide def pwedict(datawecowds: seq[datawecowd]): f-futuwe[seq[option[doubwe]]] = {
+    if (datawecowds.isempty) {
+      futuwe.niw
+    } e-ewse {
+      // a-aww candidates a-awe assigned a wandom v-vawue between 0 and 1 as scowe. /(^•ω•^)
+      futuwe.vawue(datawecowds.map(_ => o-option(wnd.nextdoubwe())))
     }
   }
 
-  override val modelName = "PostNuxRandomRanker"
+  ovewwide vaw modewname = "postnuxwandomwankew"
 
-  // This is not needed since we are overriding the `predict` function, but we have to override
-  // `predictionFeature` anyway.
-  override val predictionFeature: Feature.Continuous =
-    new Feature.Continuous("prediction.pfollow_pengagement")
+  // t-this is nyot nyeeded since we awe ovewwiding the `pwedict` function, rawr x3 but we have to ovewwide
+  // `pwedictionfeatuwe` a-anyway. (U ﹏ U)
+  ovewwide vaw pwedictionfeatuwe: f-featuwe.continuous =
+    n-nyew featuwe.continuous("pwediction.pfowwow_pengagement")
 }

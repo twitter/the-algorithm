@@ -1,33 +1,33 @@
-// This is used for convolution logging. Also see
-// tensorflow/core/protobuf/autotuing.h
-syntax = "proto3";
+// this is used fow convowution wogging. (⑅˘꒳˘) a-awso see
+// t-tensowfwow/cowe/pwotobuf/autotuing.h
+s-syntax = "pwoto3";
 
-package tensorflow;
+p-package t-tensowfwow;
 
-import "tensorflow/stream_executor/dnn.proto";
+i-impowt "tensowfwow/stweam_executow/dnn.pwoto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// A convolution. Currently it's only used for logging. In the future, we may
-// want to use it in the API as well.
-message ConvolutionProto {
-  stream_executor.dnn.ConvolutionKind kind = 1;
-  stream_executor.dnn.TensorDescriptorProto input = 2;
-  stream_executor.dnn.TensorDescriptorProto filter = 3;
-  stream_executor.dnn.TensorDescriptorProto output = 4;
-  stream_executor.dnn.ConvolutionDescriptorProto conv_desc = 5;
+// a-a convowution. (///ˬ///✿) cuwwentwy it's onwy used fow wogging. 😳😳😳 in the futuwe, 🥺 we may
+// w-want to use it in the api as weww. mya
+message convowutionpwoto {
+  s-stweam_executow.dnn.convowutionkind kind = 1;
+  s-stweam_executow.dnn.tensowdescwiptowpwoto input = 2;
+  stweam_executow.dnn.tensowdescwiptowpwoto fiwtew = 3;
+  s-stweam_executow.dnn.tensowdescwiptowpwoto output = 4;
+  s-stweam_executow.dnn.convowutiondescwiptowpwoto c-conv_desc = 5;
 
-  // result = conv_scale * conv(...) + side_value_scale * side_value.
-  // side_value is an arbitrary buffer if activation is not none. Otherwise, it
-  // has to be the result buffer (using its old values).
-  double conv_scale = 6;
-  double side_value_scale = 7;
+  // wesuwt = conv_scawe * conv(...) + side_vawue_scawe * side_vawue. 🥺
+  // s-side_vawue is an awbitwawy buffew if activation is nyot nyone. >_< othewwise, >_< it
+  // h-has to be the wesuwt buffew (using i-its owd vawues). (⑅˘꒳˘)
+  d-doubwe c-conv_scawe = 6;
+  d-doubwe side_vawue_scawe = 7;
 
-  stream_executor.dnn.ActivationMode activation = 8;
+  stweam_executow.dnn.activationmode activation = 8;
 
-  int64 input_address = 9;
-  int64 filter_address = 10;
-  int64 output_address = 11;
-  int64 bias_address = 12;
-  int64 side_input_address = 13;
+  i-int64 input_addwess = 9;
+  int64 fiwtew_addwess = 10;
+  int64 output_addwess = 11;
+  i-int64 bias_addwess = 12;
+  int64 side_input_addwess = 13;
 }

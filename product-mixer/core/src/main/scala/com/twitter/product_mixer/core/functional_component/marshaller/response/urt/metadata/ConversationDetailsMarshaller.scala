@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ConversationDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.convewsationdetaiws
+impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ConversationDetailsMarshaller @Inject() (sectionMarshaller: ConversationSectionMarshaller) {
+@singweton
+c-cwass c-convewsationdetaiwsmawshawwew @inject() (sectionmawshawwew: convewsationsectionmawshawwew) {
 
-  def apply(conversationDetails: ConversationDetails): urt.ConversationDetails =
-    urt.ConversationDetails(
-      conversationSection = conversationDetails.conversationSection.map(sectionMarshaller(_))
+  d-def appwy(convewsationdetaiws: c-convewsationdetaiws): uwt.convewsationdetaiws =
+    uwt.convewsationdetaiws(
+      convewsationsection = convewsationdetaiws.convewsationsection.map(sectionmawshawwew(_))
     )
 }

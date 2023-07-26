@@ -1,58 +1,58 @@
-package com.twitter.home_mixer.util.tweetypie
+package com.twittew.home_mixew.utiw.tweetypie
 
-import com.twitter.tweetypie.{thriftscala => tp}
+impowt c-com.twittew.tweetypie.{thwiftscawa => t-tp}
 
-object RequestFields {
+o-object wequestfiewds {
 
-  val CoreTweetFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.IdField.id),
-    tp.TweetInclude.TweetFieldId(tp.Tweet.CoreDataField.id)
+  v-vaw cowetweetfiewds: set[tp.tweetincwude] = s-set[tp.tweetincwude](
+    t-tp.tweetincwude.tweetfiewdid(tp.tweet.idfiewd.id), >w<
+    t-tp.tweetincwude.tweetfiewdid(tp.tweet.cowedatafiewd.id)
   )
-  val MediaFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.MediaField.id),
+  v-vaw mediafiewds: set[tp.tweetincwude] = set[tp.tweetincwude](
+    tp.tweetincwude.tweetfiewdid(tp.tweet.mediafiewd.id), rawr
   )
-  val SelfThreadFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.SelfThreadMetadataField.id)
+  vaw sewfthweadfiewds: s-set[tp.tweetincwude] = set[tp.tweetincwude](
+    tp.tweetincwude.tweetfiewdid(tp.tweet.sewfthweadmetadatafiewd.id)
   )
-  val MentionsTweetFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.MentionsField.id)
+  v-vaw mentionstweetfiewds: set[tp.tweetincwude] = s-set[tp.tweetincwude](
+    tp.tweetincwude.tweetfiewdid(tp.tweet.mentionsfiewd.id)
   )
-  val SemanticAnnotationTweetFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.EscherbirdEntityAnnotationsField.id)
+  vaw semanticannotationtweetfiewds: set[tp.tweetincwude] = s-set[tp.tweetincwude](
+    tp.tweetincwude.tweetfiewdid(tp.tweet.eschewbiwdentityannotationsfiewd.id)
   )
-  val NsfwLabelFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    // Tweet fields containing NSFW related attributes.
-    tp.TweetInclude.TweetFieldId(tp.Tweet.NsfwHighRecallLabelField.id),
-    tp.TweetInclude.TweetFieldId(tp.Tweet.NsfwHighPrecisionLabelField.id),
-    tp.TweetInclude.TweetFieldId(tp.Tweet.NsfaHighRecallLabelField.id)
+  vaw n-nysfwwabewfiewds: s-set[tp.tweetincwude] = set[tp.tweetincwude](
+    // tweet fiewds containing nysfw wewated attwibutes. mya
+    tp.tweetincwude.tweetfiewdid(tp.tweet.nsfwhighwecawwwabewfiewd.id), ^^
+    t-tp.tweetincwude.tweetfiewdid(tp.tweet.nsfwhighpwecisionwabewfiewd.id), 😳😳😳
+    tp.tweetincwude.tweetfiewdid(tp.tweet.nsfahighwecawwwabewfiewd.id)
   )
-  val SafetyLabelFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    // Tweet fields containing RTF labels for abuse and spam.
-    tp.TweetInclude.TweetFieldId(tp.Tweet.SpamLabelField.id),
-    tp.TweetInclude.TweetFieldId(tp.Tweet.AbusiveLabelField.id)
+  vaw safetywabewfiewds: set[tp.tweetincwude] = set[tp.tweetincwude](
+    // t-tweet fiewds containing wtf w-wabews fow abuse a-and spam. mya
+    t-tp.tweetincwude.tweetfiewdid(tp.tweet.spamwabewfiewd.id), 😳
+    tp.tweetincwude.tweetfiewdid(tp.tweet.abusivewabewfiewd.id)
   )
-  val ConversationControlField: Set[tp.TweetInclude] =
-    Set[tp.TweetInclude](tp.TweetInclude.TweetFieldId(tp.Tweet.ConversationControlField.id))
+  v-vaw convewsationcontwowfiewd: set[tp.tweetincwude] =
+    set[tp.tweetincwude](tp.tweetincwude.tweetfiewdid(tp.tweet.convewsationcontwowfiewd.id))
 
-  val TweetTPHydrationFields: Set[tp.TweetInclude] = CoreTweetFields ++
-    NsfwLabelFields ++
-    SafetyLabelFields ++
-    SemanticAnnotationTweetFields ++
-    Set(
-      tp.TweetInclude.TweetFieldId(tp.Tweet.TakedownCountryCodesField.id),
-      // QTs imply a TweetyPie -> SGS request dependency
-      tp.TweetInclude.TweetFieldId(tp.Tweet.QuotedTweetField.id),
-      tp.TweetInclude.TweetFieldId(tp.Tweet.CommunitiesField.id),
-      // Field required for determining if a Tweet was created via News Camera.
-      tp.TweetInclude.TweetFieldId(tp.Tweet.ComposerSourceField.id),
-      tp.TweetInclude.TweetFieldId(tp.Tweet.LanguageField.id)
+  vaw tweettphydwationfiewds: s-set[tp.tweetincwude] = cowetweetfiewds ++
+    nysfwwabewfiewds ++
+    s-safetywabewfiewds ++
+    semanticannotationtweetfiewds ++
+    set(
+      tp.tweetincwude.tweetfiewdid(tp.tweet.takedowncountwycodesfiewd.id), -.-
+      // qts impwy a tweetypie -> sgs wequest d-dependency
+      tp.tweetincwude.tweetfiewdid(tp.tweet.quotedtweetfiewd.id), 🥺
+      t-tp.tweetincwude.tweetfiewdid(tp.tweet.communitiesfiewd.id), o.O
+      // f-fiewd w-wequiwed fow detewmining if a tweet was cweated via nyews camewa. /(^•ω•^)
+      t-tp.tweetincwude.tweetfiewdid(tp.tweet.composewsouwcefiewd.id), nyaa~~
+      tp.tweetincwude.tweetfiewdid(tp.tweet.wanguagefiewd.id)
     )
 
-  val TweetStaticEntitiesFields: Set[tp.TweetInclude] =
-    MentionsTweetFields ++ CoreTweetFields ++ SemanticAnnotationTweetFields ++ MediaFields
+  v-vaw tweetstaticentitiesfiewds: set[tp.tweetincwude] =
+    mentionstweetfiewds ++ c-cowetweetfiewds ++ s-semanticannotationtweetfiewds ++ mediafiewds
 
-  val ContentFields: Set[tp.TweetInclude] = CoreTweetFields ++ MediaFields ++ SelfThreadFields ++
-    ConversationControlField ++ SemanticAnnotationTweetFields ++
-    Set[tp.TweetInclude](
-      tp.TweetInclude.MediaEntityFieldId(tp.MediaEntity.AdditionalMetadataField.id))
+  v-vaw contentfiewds: set[tp.tweetincwude] = c-cowetweetfiewds ++ mediafiewds ++ sewfthweadfiewds ++
+    c-convewsationcontwowfiewd ++ semanticannotationtweetfiewds ++
+    s-set[tp.tweetincwude](
+      tp.tweetincwude.mediaentityfiewdid(tp.mediaentity.additionawmetadatafiewd.id))
 }

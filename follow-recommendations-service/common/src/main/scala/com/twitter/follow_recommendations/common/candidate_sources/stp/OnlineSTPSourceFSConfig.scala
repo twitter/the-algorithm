@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.fspawam
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class OnlineSTPSourceFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean] with FSName] = Seq(
-    OnlineSTPSourceParams.DisableHeavyRanker,
-    OnlineSTPSourceParams.UseDBv2Scorer,
+@singweton
+c-cwass onwinestpsouwcefsconfig @inject() () e-extends featuweswitchconfig {
+  o-ovewwide vaw b-booweanfspawams: seq[fspawam[boowean] with fsname] = seq(
+    onwinestpsouwcepawams.disabweheavywankew, rawr
+    onwinestpsouwcepawams.usedbv2scowew, σωσ
   )
 }

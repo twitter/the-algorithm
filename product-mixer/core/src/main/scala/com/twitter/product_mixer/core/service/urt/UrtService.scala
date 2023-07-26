@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.core.service.urt
+package com.twittew.pwoduct_mixew.cowe.sewvice.uwt
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.UrtTransportMarshaller
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.product_mixer.core.{thriftscala => t}
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.util.jackson.ScalaObjectMapper
+impowt com.fastewxmw.jackson.databind.sewiawizationfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.uwttwanspowtmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pwoductdisabwed
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewinewequest
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy.pwoductpipewinewegistwy
+impowt com.twittew.pwoduct_mixew.cowe.{thwiftscawa => t}
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => uwt}
+impowt com.twittew.utiw.jackson.scawaobjectmappew
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.reflect.runtime.universe.TypeTag
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
+impowt scawa.wefwect.wuntime.univewse.typetag
 
 /**
- * Look up and execute products in the [[ProductPipelineRegistry]]
+ * wook up and exekawaii~ p-pwoducts in the [[pwoductpipewinewegistwy]]
  */
-@Singleton
-class UrtService @Inject() (productPipelineRegistry: ProductPipelineRegistry) {
+@singweton
+c-cwass uwtsewvice @inject() (pwoductpipewinewegistwy: p-pwoductpipewinewegistwy) {
 
-  def getUrtResponse[RequestType <: Request](
-    request: RequestType,
-    params: Params
+  def getuwtwesponse[wequesttype <: wequest](
+    wequest: wequesttype, rawr
+    pawams: pawams
   )(
-    implicit requestTypeTag: TypeTag[RequestType]
-  ): Stitch[urt.TimelineResponse] =
-    productPipelineRegistry
-      .getProductPipeline[RequestType, urt.TimelineResponse](request.product)
-      .process(ProductPipelineRequest(request, params))
-      .handle {
-        // Detect ProductDisabled and convert it to TimelineUnavailable
-        case pipelineFailure: PipelineFailure if pipelineFailure.category == ProductDisabled =>
-          UrtTransportMarshaller.unavailable("")
+    i-impwicit wequesttypetag: typetag[wequesttype]
+  ): stitch[uwt.timewinewesponse] =
+    pwoductpipewinewegistwy
+      .getpwoductpipewine[wequesttype, mya u-uwt.timewinewesponse](wequest.pwoduct)
+      .pwocess(pwoductpipewinewequest(wequest, ^^ pawams))
+      .handwe {
+        // d-detect pwoductdisabwed a-and c-convewt it to timewineunavaiwabwe
+        c-case pipewinefaiwuwe: pipewinefaiwuwe i-if pipewinefaiwuwe.categowy == pwoductdisabwed =>
+          uwttwanspowtmawshawwew.unavaiwabwe("")
       }
 
   /**
-   * Get detailed pipeline execution as a serialized JSON String
+   * g-get detaiwed pipewine execution as a sewiawized json stwing
    */
-  def getPipelineExecutionResult[RequestType <: Request](
-    request: RequestType,
-    params: Params
+  def getpipewineexecutionwesuwt[wequesttype <: w-wequest](
+    wequest: w-wequesttype, 😳😳😳
+    p-pawams: pawams
   )(
-    implicit requestTypeTag: TypeTag[RequestType]
-  ): Stitch[t.PipelineExecutionResult] =
-    productPipelineRegistry
-      .getProductPipeline[RequestType, urt.TimelineResponse](request.product)
-      .arrow(ProductPipelineRequest(request, params)).map { detailedResult =>
-        val mapper = ScalaObjectMapper()
-        // configure so that exception is not thrown whenever case class is not serializable
-        mapper.underlying.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-        val serializedJSON = mapper.writePrettyString(detailedResult)
-        t.PipelineExecutionResult(serializedJSON)
+    i-impwicit wequesttypetag: typetag[wequesttype]
+  ): stitch[t.pipewineexecutionwesuwt] =
+    p-pwoductpipewinewegistwy
+      .getpwoductpipewine[wequesttype, mya u-uwt.timewinewesponse](wequest.pwoduct)
+      .awwow(pwoductpipewinewequest(wequest, pawams)).map { d-detaiwedwesuwt =>
+        v-vaw mappew = scawaobjectmappew()
+        // configuwe s-so that exception is nyot t-thwown whenevew case cwass is nyot sewiawizabwe
+        m-mappew.undewwying.configuwe(sewiawizationfeatuwe.faiw_on_empty_beans, 😳 fawse)
+        vaw s-sewiawizedjson = mappew.wwitepwettystwing(detaiwedwesuwt)
+        t-t.pipewineexecutionwesuwt(sewiawizedjson)
       }
 
 }

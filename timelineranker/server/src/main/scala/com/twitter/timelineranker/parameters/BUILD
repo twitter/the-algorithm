@@ -1,18 +1,18 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core",
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "servo/decider",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/entity_tweets",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/in_network_tweets",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/monitoring",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/recap",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/recap_author",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/recap_hydration",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/revchron",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/uteg_liked_by_tweets",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    compiwew_option_sets = ["fataw_wawnings"], OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "configapi/configapi-cowe", òωó
+        "configapi/configapi-cowe/swc/main/scawa/com/twittew/timewines/configapi", o.O
+        "sewvo/decidew", (U ᵕ U❁)
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/pawametews/entity_tweets", (⑅˘꒳˘)
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/pawametews/in_netwowk_tweets", ( ͡o ω ͡o )
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/pawametews/monitowing", UwU
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/pawametews/wecap", rawr x3
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/pawametews/wecap_authow", rawr
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/pawametews/wecap_hydwation", σωσ
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/pawametews/wevchwon", σωσ
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/pawametews/uteg_wiked_by_tweets", >_<
+    ], :3
 )

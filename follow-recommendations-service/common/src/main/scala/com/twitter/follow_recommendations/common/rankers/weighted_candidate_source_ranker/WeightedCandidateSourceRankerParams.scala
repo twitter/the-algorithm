@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+package com.twittew.fowwow_wecommendations.common.wankews.weighted_candidate_souwce_wankew
 
-import com.twitter.timelines.configapi.FSParam
+impowt c-com.twittew.timewines.configapi.fspawam
 
-object WeightedCandidateSourceRankerParams {
-  case object ScribeRankingInfoInWeightedRanker
-      extends FSParam[Boolean]("weighted_ranker_scribe_ranking_info", false)
+o-object w-weightedcandidatesouwcewankewpawams {
+  c-case object s-scwibewankinginfoinweightedwankew
+      e-extends f-fspawam[boowean]("weighted_wankew_scwibe_wanking_info", (⑅˘꒳˘) f-fawse)
 }

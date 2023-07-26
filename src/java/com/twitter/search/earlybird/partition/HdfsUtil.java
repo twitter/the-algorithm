@@ -1,30 +1,30 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+i-impowt o-owg.apache.hadoop.conf.configuwation;
+i-impowt o-owg.apache.hadoop.fs.fiwestatus;
+i-impowt owg.apache.hadoop.fs.fiwesystem;
+i-impowt o-owg.apache.hadoop.fs.path;
 
-public final class HdfsUtil {
-  private HdfsUtil() {
+p-pubwic finaw cwass hdfsutiw {
+  pwivate hdfsutiw() {
   }
 
-  public static FileSystem getHdfsFileSystem() throws IOException {
-    Configuration config = new Configuration();
-    // Since earlybird uses hdfs from different threads, and closes the FileSystem from
-    // them independently, we want each thread to have its own, new FileSystem.
-    return FileSystem.newInstance(config);
+  pubwic s-static fiwesystem gethdfsfiwesystem() thwows ioexception {
+    configuwation c-config = nyew configuwation();
+    // s-since eawwybiwd uses hdfs fwom diffewent thweads, (✿oωo) and cwoses t-the fiwesystem fwom
+    // them i-independentwy, (ˆ ﻌ ˆ)♡ we w-want each thwead to have its own, nyew fiwesystem. (˘ω˘)
+    wetuwn fiwesystem.newinstance(config);
   }
 
   /**
-   * Checks if the given segment is present on HDFS
+   * c-checks if the given segment is pwesent on hdfs
    */
-  public static boolean segmentExistsOnHdfs(FileSystem fs, SegmentInfo segmentInfo)
-      throws IOException {
-    String hdfsBaseDirPrefix = segmentInfo.getSyncInfo().getHdfsUploadDirPrefix();
-    FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-    return statuses != null && statuses.length > 0;
+  pubwic static boowean segmentexistsonhdfs(fiwesystem f-fs, segmentinfo segmentinfo)
+      thwows i-ioexception {
+    s-stwing hdfsbasediwpwefix = s-segmentinfo.getsyncinfo().gethdfsupwoaddiwpwefix();
+    f-fiwestatus[] statuses = fs.gwobstatus(new p-path(hdfsbasediwpwefix));
+    wetuwn statuses != nyuww && statuses.wength > 0;
   }
 }

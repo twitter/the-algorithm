@@ -1,63 +1,63 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.EditState
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe.editstate
 
 /**
- * An EditHydrator hydrates a value of type `A`, with a hydration context of type `C`,
- * and produces a function that takes a value and context and returns an EditState[A, C]
- * (an EditState encapsulates a function that takes a value and returns a new ValueState).
+ * a-an edithydwatow h-hydwates a vawue o-of type `a`, mya w-with a hydwation c-context of type `c`, (˘ω˘)
+ * and pwoduces a function that takes a vawue and context a-and wetuwns an editstate[a, c]
+ * (an editstate e-encapsuwates a function that takes a-a vawue and wetuwns a nyew vawuestate). >_<
  *
- * A series of EditHydrators of the same type may be run in parallel via
- * `EditHydrator.inParallel`.
+ * a sewies of edithydwatows o-of the same type may b-be wun in pawawwew v-via
+ * `edithydwatow.inpawawwew`. -.-
  */
-class EditHydrator[A, C] private (val run: (A, C) => Stitch[EditState[A]]) {
+cwass edithydwatow[a, 🥺 c] pwivate (vaw wun: (a, (U ﹏ U) c) => s-stitch[editstate[a]]) {
 
   /**
-   * Apply this hydrator to a value, producing an EditState.
+   * appwy this hydwatow to a vawue, >w< pwoducing an editstate. mya
    */
-  def apply(a: A, ctx: C): Stitch[EditState[A]] = run(a, ctx)
+  d-def appwy(a: a, >w< ctx: c): stitch[editstate[a]] = w-wun(a, nyaa~~ ctx)
 
   /**
-   * Convert this EditHydrator to the equivalent ValueHydrator.
+   * c-convewt t-this edithydwatow t-to the equivawent vawuehydwatow. (✿oωo)
    */
-  def toValueHydrator: ValueHydrator[A, C] =
-    ValueHydrator[A, C] { (a, ctx) => this.run(a, ctx).map(editState => editState.run(a)) }
+  def tovawuehydwatow: v-vawuehydwatow[a, ʘwʘ c] =
+    vawuehydwatow[a, (ˆ ﻌ ˆ)♡ c] { (a, 😳😳😳 ctx) => t-this.wun(a, :3 ctx).map(editstate => editstate.wun(a)) }
 
   /**
-   * Runs two EditHydrators in parallel.
+   * wuns two edithydwatows in pawawwew. OwO
    */
-  def inParallelWith(next: EditHydrator[A, C]): EditHydrator[A, C] =
-    EditHydrator[A, C] { (x0, ctx) =>
-      Stitch.joinMap(run(x0, ctx), next.run(x0, ctx)) {
-        case (r1, r2) => r1.andThen(r2)
+  def inpawawwewwith(next: e-edithydwatow[a, (U ﹏ U) c]): edithydwatow[a, >w< c-c] =
+    e-edithydwatow[a, (U ﹏ U) c-c] { (x0, 😳 ctx) =>
+      stitch.joinmap(wun(x0, (ˆ ﻌ ˆ)♡ ctx), nyext.wun(x0, 😳😳😳 ctx)) {
+        c-case (w1, (U ﹏ U) w-w2) => w1.andthen(w2)
       }
     }
 }
 
-object EditHydrator {
+object e-edithydwatow {
 
   /**
-   * Create an EditHydrator from a function that returns Stitch[EditState[A]].
+   * c-cweate an edithydwatow f-fwom a function that wetuwns stitch[editstate[a]]. (///ˬ///✿)
    */
-  def apply[A, C](f: (A, C) => Stitch[EditState[A]]): EditHydrator[A, C] =
-    new EditHydrator[A, C](f)
+  d-def appwy[a, 😳 c](f: (a, 😳 c) => stitch[editstate[a]]): e-edithydwatow[a, σωσ c] =
+    nyew edithydwatow[a, rawr x3 c](f)
 
   /**
-   * Creates a "passthrough" Edit:
-   * Leaves A unchanged and produces empty HydrationState.
+   * c-cweates a "passthwough" edit:
+   * w-weaves a unchanged a-and pwoduces empty hydwationstate. OwO
    */
-  def unit[A, C]: EditHydrator[A, C] =
-    EditHydrator { (_, _) => Stitch.value(EditState.unit[A]) }
+  def unit[a, /(^•ω•^) c]: edithydwatow[a, 😳😳😳 c] =
+    edithydwatow { (_, ( ͡o ω ͡o ) _) => stitch.vawue(editstate.unit[a]) }
 
   /**
-   * Runs several EditHydrators in parallel.
+   * wuns sevewaw edithydwatows i-in p-pawawwew. >_<
    */
-  def inParallel[A, C](bs: EditHydrator[A, C]*): EditHydrator[A, C] =
+  def inpawawwew[a, c-c](bs: edithydwatow[a, >w< c-c]*): e-edithydwatow[a, rawr c] =
     bs match {
-      case Seq(b) => b
-      case Seq(b1, b2) => b1.inParallelWith(b2)
-      case _ => bs.reduceLeft(_.inParallelWith(_))
+      case seq(b) => b
+      c-case seq(b1, 😳 b2) => b1.inpawawwewwith(b2)
+      case _ => bs.weduceweft(_.inpawawwewwith(_))
     }
 }

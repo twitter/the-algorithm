@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.moduweitem
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ModuleItemMarshaller @Inject() (
-  timelineItemMarshaller: TimelineItemMarshaller,
-  moduleItemTreeDisplayMarshaller: ModuleItemTreeDisplayMarshaller) {
+@singweton
+c-cwass moduweitemmawshawwew @inject() (
+  t-timewineitemmawshawwew: t-timewineitemmawshawwew, nyaa~~
+  m-moduweitemtweedispwaymawshawwew: moduweitemtweedispwaymawshawwew) {
 
-  def apply(moduleItem: ModuleItem, moduleEntryId: String): urt.ModuleItem = urt.ModuleItem(
-    /* Module items have an identifier comprising both the module entry id and the module item id.
-    Some URT clients will deduplicate globally across different modules.
-    Using the entry id as a prefix ensures that deduplication only happens within a single module,
-    which we believe better aligns with engineers' intentions. */
-    entryId = moduleEntryId + "-" + moduleItem.item.entryIdentifier,
-    item = timelineItemMarshaller(moduleItem.item),
-    dispensable = moduleItem.dispensable,
-    treeDisplay = moduleItem.treeDisplay.map(moduleItemTreeDisplayMarshaller.apply)
+  def appwy(moduweitem: moduweitem, (⑅˘꒳˘) moduweentwyid: s-stwing): uwt.moduweitem = uwt.moduweitem(
+    /* moduwe items have an identifiew c-compwising both the moduwe e-entwy id and the moduwe item id. rawr x3
+    some uwt cwients wiww dedupwicate g-gwobawwy acwoss diffewent m-moduwes. (✿oωo)
+    using t-the entwy id as a pwefix ensuwes that dedupwication onwy happens within a singwe m-moduwe, (ˆ ﻌ ˆ)♡
+    which we bewieve bettew awigns with engineews' intentions. (˘ω˘) */
+    e-entwyid = moduweentwyid + "-" + moduweitem.item.entwyidentifiew, (⑅˘꒳˘)
+    i-item = t-timewineitemmawshawwew(moduweitem.item), (///ˬ///✿)
+    d-dispensabwe = m-moduweitem.dispensabwe, 😳😳😳
+    tweedispway = moduweitem.tweedispway.map(moduweitemtweedispwaymawshawwew.appwy)
   )
 }

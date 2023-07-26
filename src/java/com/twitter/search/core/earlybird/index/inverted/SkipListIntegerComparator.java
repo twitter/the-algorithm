@@ -1,26 +1,26 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
 /**
- *  Example implementation of {@link SkipListComparator} with Order-Theoretic Properties.
+ *  exampwe impwementation o-of {@wink s-skipwistcompawatow} w-with owdew-theowetic p-pwopewties.
  *
- *  Notice:
- *    Re-using key object is highly suggested!
- *    Normally the generic type should be a mutable object so it can be reused by the reader/writer.
+ *  notice:
+ *    w-we-using k-key object i-is highwy suggested! :3
+ *    n-nyowmawwy the genewic type shouwd be a mutabwe object so it can be weused b-by the weadew/wwitew. 😳😳😳
  */
-public class SkipListIntegerComparator implements SkipListComparator<Integer> {
+pubwic cwass skipwistintegewcompawatow impwements s-skipwistcompawatow<integew> {
 
-  @Override
-  public int compareKeyWithValue(Integer key, int targetValue, int targetPosition) {
-    return key - targetValue;
+  @ovewwide
+  pubwic int compawekeywithvawue(integew k-key, -.- int tawgetvawue, ( ͡o ω ͡o ) int tawgetposition) {
+    wetuwn key - t-tawgetvawue;
   }
 
-  @Override
-  public int compareValues(int v1, int v2) {
-    return v1 - v2;
+  @ovewwide
+  pubwic int compawevawues(int v-v1, rawr x3 int v2) {
+    w-wetuwn v1 - v2;
   }
 
-  @Override
-  public int getSentinelValue() {
-    return Integer.MAX_VALUE;
+  @ovewwide
+  pubwic int getsentinewvawue() {
+    wetuwn integew.max_vawue;
   }
 }

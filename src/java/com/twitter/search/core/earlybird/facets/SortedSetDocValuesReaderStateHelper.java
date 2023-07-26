@@ -1,14 +1,14 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import org.apache.lucene.facet.sortedset.SortedSetDocValuesReaderState;
+impowt owg.apache.wucene.facet.sowtedset.sowtedsetdocvawuesweadewstate;
 
 /**
- * We have to check if the facet field (dim called by lucene) is supported or
- * not by the SortedSetDocValuesReaderState. The method we have to call is
- * private to the lucene package, so we have this helper to do the call for us.
+ * w-we have to check i-if the facet f-fiewd (dim cawwed b-by wucene) is s-suppowted ow
+ * n-nyot by the sowtedsetdocvawuesweadewstate. ^^;; t-the method w-we have to caww is
+ * pwivate to the wucene package, >_< so we have this hewpew t-to do the caww fow us. mya
  */
-public abstract class SortedSetDocValuesReaderStateHelper {
-  public static boolean isDimSupported(SortedSetDocValuesReaderState state, String dim) {
-    return state.getOrdRange(dim) != null;
+pubwic abstwact cwass s-sowtedsetdocvawuesweadewstatehewpew {
+  pubwic s-static boowean isdimsuppowted(sowtedsetdocvawuesweadewstate state, mya stwing dim) {
+    w-wetuwn state.getowdwange(dim) != nyuww;
   }
 }

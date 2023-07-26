@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.gwaphqw.contextuaw_wef
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.OuterTweetContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.QuoteTweetId
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.RetweetId
-import com.twitter.strato.graphql.contextual_refs.{thriftscala => thrift}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.contextuaw_wef.outewtweetcontext
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.contextuaw_wef.quotetweetid
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.contextuaw_wef.wetweetid
+i-impowt c-com.twittew.stwato.gwaphqw.contextuaw_wefs.{thwiftscawa => t-thwift}
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class OuterTweetContextMarshaller @Inject() () {
+@singweton
+cwass outewtweetcontextmawshawwew @inject() () {
 
-  def apply(outerTweetContext: OuterTweetContext): thrift.OuterTweetContext =
-    outerTweetContext match {
-      case QuoteTweetId(id) => thrift.OuterTweetContext.QuoteTweetId(id)
-      case RetweetId(id) => thrift.OuterTweetContext.RetweetId(id)
+  def appwy(outewtweetcontext: o-outewtweetcontext): thwift.outewtweetcontext =
+    outewtweetcontext match {
+      case q-quotetweetid(id) => thwift.outewtweetcontext.quotetweetid(id)
+      c-case wetweetid(id) => thwift.outewtweetcontext.wetweetid(id)
     }
 }

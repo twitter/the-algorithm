@@ -1,55 +1,55 @@
-package com.twitter.product_mixer.core.controllers
+package com.twittew.pwoduct_mixew.cowe.contwowwews
 
-import com.twitter.context.TwitterContext
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.product_mixer.TwitterContextPermit
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+impowt com.twittew.context.twittewcontext
+i-impowt c-com.twittew.context.thwiftscawa.viewew
+i-impowt c-com.twittew.pwoduct_mixew.twittewcontextpewmit
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.cwientcontext
 
 /**
- * Mixes in support to forge the UserIds in TwitterContext for debug purposes.
+ * m-mixes in s-suppowt to fowge t-the usewids in twittewcontext fow debug puwposes. nyaa~~
  *
- * A thrift controller can extend DebugTwitterContext and wrap it's execution logic:
+ * a thwift contwowwew can e-extend debugtwittewcontext and wwap it's execution w-wogic:
  *
  * {{{
- * withDebugTwitterContext(request.clientContext) {
- *   Stitch.run(...)
+ * withdebugtwittewcontext(wequest.cwientcontext) {
+ *   s-stitch.wun(...)
  * }
  * }}}
  */
-trait DebugTwitterContext {
+twait debugtwittewcontext {
 
-  private val ctx = TwitterContext(TwitterContextPermit)
+  pwivate v-vaw ctx = twittewcontext(twittewcontextpewmit)
 
   /**
-   * Wrap some function in a debug TwitterContext with hardcoded userIds
-   * to the ClientContext.userId.
+   * wwap some function i-in a debug twittewcontext w-with hawdcoded usewids
+   * to the cwientcontext.usewid. nyaa~~
    *
-   * @param clientContext - A product mixer request client context
-   * @param f The function to wrap
+   * @pawam cwientcontext - a-a pwoduct mixew wequest cwient context
+   * @pawam f the function to wwap
    */
-  def withDebugTwitterContext[T](clientContext: ClientContext)(f: => T): T = {
-    ctx.let(
-      forgeTwitterContext(
-        clientContext.userId
-          .getOrElse(throw new IllegalArgumentException("missing required field: user id")))
+  d-def withdebugtwittewcontext[t](cwientcontext: cwientcontext)(f: => t-t): t-t = {
+    ctx.wet(
+      f-fowgetwittewcontext(
+        c-cwientcontext.usewid
+          .getowewse(thwow nyew iwwegawawgumentexception("missing wequiwed f-fiewd: usew id")))
     )(f)
   }
 
-  // Generate a fake Twitter Context for debug usage.
-  // Generally the TwitterContext is created by the API service, and Strato uses it for permission control.
-  // When we use our debug endpoint, we instead create our own context so that Strato finds something useful.
-  // We enforce ACLs directly via Thrift Web Forms' permission system.
-  private def forgeTwitterContext(userId: Long): Viewer = {
-    Viewer(
-      auditIp = None,
-      ipTags = Set.empty,
-      userId = Some(userId),
-      guestId = None,
-      clientApplicationId = None,
-      userAgent = None,
-      locationToken = None,
-      authenticatedUserId = Some(userId),
-      guestToken = None
+  // genewate a-a fake twittew context fow debug usage. :3
+  // genewawwy the twittewcontext is cweated by the a-api sewvice, 😳😳😳 and stwato uses it f-fow pewmission c-contwow. (˘ω˘)
+  // when w-we use ouw debug endpoint, ^^ we instead cweate ouw own context s-so that stwato finds s-something usefuw. :3
+  // we enfowce a-acws diwectwy v-via thwift web fowms' pewmission s-system. -.-
+  pwivate def fowgetwittewcontext(usewid: w-wong): viewew = {
+    viewew(
+      auditip = n-nyone, 😳
+      iptags = set.empty, mya
+      u-usewid = some(usewid), (˘ω˘)
+      g-guestid = n-nyone, >_<
+      cwientappwicationid = nyone, -.-
+      usewagent = nyone, 🥺
+      wocationtoken = nyone, (U ﹏ U)
+      authenticatedusewid = s-some(usewid), >w<
+      g-guesttoken = nyone
     )
   }
 }

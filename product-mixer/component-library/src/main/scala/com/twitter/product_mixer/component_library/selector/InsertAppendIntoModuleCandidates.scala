@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.component_library.selector.InsertIntoModule.ModuleAndIndex
-import com.twitter.product_mixer.component_library.selector.InsertIntoModule.ModuleWithItemsToAddAndOtherCandidates
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.sewectow.insewtintomoduwe.moduweandindex
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.sewectow.insewtintomoduwe.moduwewithitemstoaddandothewcandidates
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Append all candidates from [[candidatePipeline]] into a module from [[targetModuleCandidatePipeline]].
- * If the results contain multiple modules from the target candidate pipeline,
- * then the candidates will be inserted into the first module.
+ * append aww candidates fwom [[candidatepipewine]] i-into a moduwe fwom [[tawgetmoduwecandidatepipewine]]. -.-
+ * i-if the wesuwts contain muwtipwe moduwes fwom the tawget candidate p-pipewine, 🥺
+ * then the candidates w-wiww be insewted i-into the fiwst moduwe. o.O
  *
- * @note this will throw an [[UnsupportedOperationException]] if the [[candidatePipeline]] contains any modules.
+ * @note this wiww thwow an [[unsuppowtedopewationexception]] if the [[candidatepipewine]] c-contains any moduwes. /(^•ω•^)
  *
- * @note this updates the module in the `remainingCandidates`
+ * @note this updates the moduwe in the `wemainingcandidates`
  */
-case class InsertAppendIntoModuleCandidates(
-  candidatePipeline: CandidatePipelineIdentifier,
-  targetModuleCandidatePipeline: CandidatePipelineIdentifier)
-    extends Selector[PipelineQuery] {
+c-case cwass insewtappendintomoduwecandidates(
+  candidatepipewine: c-candidatepipewineidentifiew, nyaa~~
+  t-tawgetmoduwecandidatepipewine: c-candidatepipewineidentifiew)
+    e-extends sewectow[pipewinequewy] {
 
-  override val pipelineScope: CandidateScope =
-    SpecificPipelines(candidatePipeline, targetModuleCandidatePipeline)
+  ovewwide vaw pipewinescope: c-candidatescope =
+    specificpipewines(candidatepipewine, nyaa~~ tawgetmoduwecandidatepipewine)
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, :3
+    wemainingcandidates: seq[candidatewithdetaiws],
+    wesuwt: s-seq[candidatewithdetaiws]
+  ): sewectowwesuwt = {
 
-    val ModuleWithItemsToAddAndOtherCandidates(
-      moduleToUpdateAndIndex,
-      itemsToInsertIntoModule,
-      otherCandidates) =
-      InsertIntoModule.moduleToUpdate(
-        candidatePipeline,
-        targetModuleCandidatePipeline,
-        remainingCandidates)
+    vaw moduwewithitemstoaddandothewcandidates(
+      m-moduwetoupdateandindex, 😳😳😳
+      i-itemstoinsewtintomoduwe, (˘ω˘)
+      o-othewcandidates) =
+      insewtintomoduwe.moduwetoupdate(
+        candidatepipewine, ^^
+        tawgetmoduwecandidatepipewine, :3
+        wemainingcandidates)
 
-    val updatedRemainingCandidates = moduleToUpdateAndIndex match {
-      case None => remainingCandidates
-      case _ if itemsToInsertIntoModule.isEmpty => remainingCandidates
-      case Some(ModuleAndIndex(moduleToUpdate, indexOfModuleInOtherCandidates)) =>
-        val updatedModuleItems = moduleToUpdate.candidates ++ itemsToInsertIntoModule
-        val updatedModule = moduleToUpdate.copy(candidates = updatedModuleItems)
-        otherCandidates.updated(indexOfModuleInOtherCandidates, updatedModule)
+    v-vaw updatedwemainingcandidates = m-moduwetoupdateandindex match {
+      c-case none => w-wemainingcandidates
+      case _ if itemstoinsewtintomoduwe.isempty => w-wemainingcandidates
+      case some(moduweandindex(moduwetoupdate, -.- i-indexofmoduweinothewcandidates)) =>
+        vaw updatedmoduweitems = m-moduwetoupdate.candidates ++ itemstoinsewtintomoduwe
+        v-vaw updatedmoduwe = moduwetoupdate.copy(candidates = u-updatedmoduweitems)
+        o-othewcandidates.updated(indexofmoduweinothewcandidates, 😳 updatedmoduwe)
     }
 
-    SelectorResult(remainingCandidates = updatedRemainingCandidates, result = result)
+    sewectowwesuwt(wemainingcandidates = updatedwemainingcandidates, mya wesuwt = wesuwt)
   }
 }

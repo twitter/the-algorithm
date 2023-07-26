@@ -1,9 +1,9 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "user-signal-service/server/src/main/scala/com/twitter/usersignalservice/base",
-        "user-signal-service/server/src/main/scala/com/twitter/usersignalservice/columns",
-        "user-signal-service/server/src/main/scala/com/twitter/usersignalservice/config",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [
+        "usew-signaw-sewvice/sewvew/swc/main/scawa/com/twittew/usewsignawsewvice/base", OwO
+        "usew-signaw-sewvice/sewvew/swc/main/scawa/com/twittew/usewsignawsewvice/cowumns", 🥺
+        "usew-signaw-sewvice/sewvew/swc/main/scawa/com/twittew/usewsignawsewvice/config", òωó
     ],
 )

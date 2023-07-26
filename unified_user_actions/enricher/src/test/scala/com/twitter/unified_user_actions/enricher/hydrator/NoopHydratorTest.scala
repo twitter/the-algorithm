@@ -1,12 +1,12 @@
-package com.twitter.unified_user_actions.enricher.hydrator
+package com.twittew.unified_usew_actions.enwichew.hydwatow
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.enricher.ImplementationException
+impowt c-com.twittew.inject.test
+i-impowt c-com.twittew.unified_usew_actions.enwichew.impwementationexception
 
-class NoopHydratorTest extends Test {
-  test("noop hydrator should throw an error when used") {
-    assertThrows[ImplementationException] {
-      new NoopHydrator().hydrate(null, null, null)
+c-cwass nyoophydwatowtest e-extends t-test {
+  test("noop h-hydwatow s-shouwd thwow an ewwow when used") {
+    assewtthwows[impwementationexception] {
+      nyew nyoophydwatow().hydwate(nuww, σωσ nyuww, σωσ n-nyuww)
     }
   }
 }

@@ -1,439 +1,439 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.twittew.seawch.eawwybiwd.pawtition.fweshstawtup;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+impowt j-java.io.ioexception;
+i-impowt j-java.time.duwation;
+i-impowt java.utiw.awwaywist;
+i-impowt java.utiw.hashset;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+impowt java.utiw.set;
 
-import com.google.common.base.Stopwatch;
-import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+impowt com.googwe.common.base.stopwatch;
+impowt com.googwe.common.base.vewify;
+i-impowt com.googwe.common.cowwect.immutabwewist;
+impowt c-com.googwe.common.cowwect.immutabwemap;
+impowt c-com.googwe.common.cowwect.wists;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.ApiException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.kafka.cwients.consumew.consumewwecowd;
+impowt owg.apache.kafka.cwients.consumew.consumewwecowds;
+i-impowt owg.apache.kafka.cwients.consumew.kafkaconsumew;
+impowt owg.apache.kafka.cwients.consumew.offsetandtimestamp;
+i-impowt o-owg.apache.kafka.common.topicpawtition;
+impowt owg.apache.kafka.common.ewwows.apiexception;
+impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import static com.twitter.search.common.util.LogFormatUtil.formatInt;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt static com.twittew.seawch.common.utiw.wogfowmatutiw.fowmatint;
 
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.util.LogFormatUtil;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.exception.WrappedKafkaApiException;
-import com.twitter.search.earlybird.factory.EarlybirdKafkaConsumersFactory;
-import com.twitter.search.earlybird.partition.EarlybirdIndex;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.util.ParallelUtil;
+i-impowt com.twittew.seawch.common.utiw.gcutiw;
+i-impowt c-com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.utiw.wogfowmatutiw;
+i-impowt com.twittew.seawch.eawwybiwd.common.nonpagingassewt;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+i-impowt com.twittew.seawch.eawwybiwd.exception.eawwybiwdstawtupexception;
+impowt com.twittew.seawch.eawwybiwd.exception.wwappedkafkaapiexception;
+i-impowt com.twittew.seawch.eawwybiwd.factowy.eawwybiwdkafkaconsumewsfactowy;
+impowt com.twittew.seawch.eawwybiwd.pawtition.eawwybiwdindex;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.pawawwewutiw;
 
 /**
- * Bootstraps an index by indexing tweets and updates in parallel.
+ * bootstwaps an index b-by indexing t-tweets and updates i-in pawawwew. (U ﹏ U)
  *
- * DEVELOPMENT
+ * devewopment
  * ===========
  *
- * 1. In earlybird-search.yml, set the following values in the "production" section:
- *   - max_segment_size to 200000
- *   - late_tweet_buffer to 10000
+ * 1. nyaa~~ in eawwybiwd-seawch.ymw, ^^;; set the fowwowing v-vawues in the "pwoduction" s-section:
+ *   - max_segment_size t-to 200000
+ *   - w-wate_tweet_buffew to 10000
  *
- * 2. In KafkaStartup, don't load the index, replace the .loadIndex call as instructed
- *  in the file.
+ * 2. OwO i-in kafkastawtup, nyaa~~ don't woad t-the index, UwU wepwace the .woadindex caww as instwucted
+ *  i-in the fiwe. 😳
  *
- * 3. In the aurora configs, set serving_timeslices to a low number (like 5) for staging.
+ * 3. 😳 i-in the auwowa configs, (ˆ ﻌ ˆ)♡ set sewving_timeswices to a-a wow nyumbew (wike 5) f-fow staging. (✿oωo)
  */
-public class FreshStartupHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(FreshStartupHandler.class);
-  private static final NonPagingAssert BUILDING_FEWER_THAN_SPECIFIED_SEGMENTS =
-          new NonPagingAssert("building_fewer_than_specified_segments");
+pubwic cwass fweshstawtuphandwew {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(fweshstawtuphandwew.cwass);
+  pwivate static f-finaw nyonpagingassewt b-buiwding_fewew_than_specified_segments =
+          nyew nyonpagingassewt("buiwding_fewew_than_specified_segments");
 
-  private final Clock clock;
-  private final TopicPartition tweetTopic;
-  private final TopicPartition updateTopic;
-  private final SegmentManager segmentManager;
-  private final int maxSegmentSize;
-  private final int lateTweetBuffer;
-  private final EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory;
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  p-pwivate finaw c-cwock cwock;
+  p-pwivate finaw topicpawtition tweettopic;
+  pwivate finaw topicpawtition u-updatetopic;
+  pwivate finaw segmentmanagew segmentmanagew;
+  pwivate finaw i-int maxsegmentsize;
+  pwivate f-finaw int watetweetbuffew;
+  p-pwivate finaw eawwybiwdkafkaconsumewsfactowy e-eawwybiwdkafkaconsumewsfactowy;
+  pwivate finaw cwiticawexceptionhandwew c-cwiticawexceptionhandwew;
 
-  public FreshStartupHandler(
-    Clock clock,
-    EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory,
-    TopicPartition tweetTopic,
-    TopicPartition updateTopic,
-    SegmentManager segmentManager,
-    int maxSegmentSize,
-    int lateTweetBuffer,
-    CriticalExceptionHandler criticalExceptionHandler
+  p-pubwic fweshstawtuphandwew(
+    c-cwock cwock, nyaa~~
+    e-eawwybiwdkafkaconsumewsfactowy eawwybiwdkafkaconsumewsfactowy, ^^
+    topicpawtition t-tweettopic, (///ˬ///✿)
+    t-topicpawtition u-updatetopic, 😳
+    s-segmentmanagew s-segmentmanagew, òωó
+    int maxsegmentsize, ^^;;
+    int watetweetbuffew, rawr
+    cwiticawexceptionhandwew c-cwiticawexceptionhandwew
   ) {
-    this.clock = clock;
-    this.earlybirdKafkaConsumersFactory = earlybirdKafkaConsumersFactory;
-    this.tweetTopic = tweetTopic;
-    this.updateTopic = updateTopic;
-    this.segmentManager = segmentManager;
-    this.maxSegmentSize = maxSegmentSize;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.lateTweetBuffer = lateTweetBuffer;
+    this.cwock = cwock;
+    this.eawwybiwdkafkaconsumewsfactowy = eawwybiwdkafkaconsumewsfactowy;
+    this.tweettopic = tweettopic;
+    t-this.updatetopic = updatetopic;
+    this.segmentmanagew = segmentmanagew;
+    t-this.maxsegmentsize = m-maxsegmentsize;
+    t-this.cwiticawexceptionhandwew = cwiticawexceptionhandwew;
+    t-this.watetweetbuffew = watetweetbuffew;
   }
 
   /**
-   * Don't index in parallel, just pass some time back that the EarlybirdKafkaConsumer
-   * can start indexing from.
+   * d-don't index i-in pawawwew, (ˆ ﻌ ˆ)♡ just pass some time back that the eawwybiwdkafkaconsumew
+   * can stawt indexing fwom. XD
    */
-  public EarlybirdIndex indexFromScratch() {
-    long indexTimePeriod = Duration.ofHours(
-        EarlybirdConfig.getInt("index_from_scratch_hours", 12)
-    ).toMillis();
+  p-pubwic eawwybiwdindex indexfwomscwatch() {
+    wong i-indextimepewiod = duwation.ofhouws(
+        e-eawwybiwdconfig.getint("index_fwom_scwatch_houws", >_< 12)
+    ).tomiwwis();
 
-    return runIndexFromScratch(indexTimePeriod);
+    w-wetuwn wunindexfwomscwatch(indextimepewiod);
   }
 
-  public EarlybirdIndex fastIndexFromScratchForDevelopment() {
-    LOG.info("Running fast index from scratch...");
-    return runIndexFromScratch(Duration.ofMinutes(10).toMillis());
+  pubwic eawwybiwdindex f-fastindexfwomscwatchfowdevewopment() {
+    w-wog.info("wunning fast index f-fwom scwatch...");
+    w-wetuwn wunindexfwomscwatch(duwation.ofminutes(10).tomiwwis());
   }
 
-  private EarlybirdIndex runIndexFromScratch(long indexTimePeriodMs) {
-    KafkaConsumer<Long, ThriftVersionedEvents> consumerForFindingOffsets =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("consumer_for_offsets");
+  pwivate eawwybiwdindex wunindexfwomscwatch(wong indextimepewiodms) {
+    k-kafkaconsumew<wong, (˘ω˘) t-thwiftvewsionedevents> c-consumewfowfindingoffsets =
+        eawwybiwdkafkaconsumewsfactowy.cweatekafkaconsumew("consumew_fow_offsets");
 
-    long timestamp = clock.nowMillis() - indexTimePeriodMs;
+    w-wong timestamp = c-cwock.nowmiwwis() - indextimepewiodms;
 
-    Map<TopicPartition, OffsetAndTimestamp> offsets;
-    try {
-      offsets = consumerForFindingOffsets
-          .offsetsForTimes(ImmutableMap.of(tweetTopic, timestamp, updateTopic, timestamp));
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException(kafkaApiException);
+    m-map<topicpawtition, 😳 offsetandtimestamp> offsets;
+    twy {
+      offsets = consumewfowfindingoffsets
+          .offsetsfowtimes(immutabwemap.of(tweettopic, o.O timestamp, (ꈍᴗꈍ) u-updatetopic, rawr x3 t-timestamp));
+    } catch (apiexception kafkaapiexception) {
+      t-thwow nyew w-wwappedkafkaapiexception(kafkaapiexception);
     }
 
-    return new EarlybirdIndex(
-        Lists.newArrayList(),
-        offsets.get(tweetTopic).offset(),
-        offsets.get(updateTopic).offset());
+    wetuwn nyew eawwybiwdindex(
+        wists.newawwaywist(), ^^
+        o-offsets.get(tweettopic).offset(), OwO
+        offsets.get(updatetopic).offset());
   }
 
 
   /**
-   * Index Tweets and updates from scratch, without relying on a serialized index in HDFS.
+   * index tweets and updates fwom scwatch, ^^ w-without wewying on a sewiawized index in hdfs. :3
    *
-   * This function indexes the segments in parallel, limiting the number of segments that
-   * are currently indexed, due to memory limitations. That's followed by another pass to index
-   * some updates - see the implementation for more details.
+   * t-this f-function indexes the segments in pawawwew, o.O wimiting the nyumbew o-of segments that
+   * a-awe cuwwentwy indexed, -.- due to memowy wimitations. (U ﹏ U) that's f-fowwowed by anothew pass to index
+   * s-some updates - see the impwementation fow mowe detaiws. o.O
    *
-   * The index this function outputs contains N segments, where the first N-1 are optimized and
-   * the last one is not.
+   * t-the index this function o-outputs contains n-ny segments, OwO whewe the fiwst n-ny-1 awe optimized and
+   * the w-wast one is nyot. ^•ﻌ•^
    */
-  public EarlybirdIndex parallelIndexFromScratch() throws Exception {
-    Stopwatch parallelIndexStopwatch = Stopwatch.createStarted();
+  p-pubwic e-eawwybiwdindex pawawwewindexfwomscwatch() t-thwows e-exception {
+    stopwatch pawawwewindexstopwatch = stopwatch.cweatestawted();
 
-    LOG.info("Starting parallel fresh startup.");
-    LOG.info("Max segment size: {}", maxSegmentSize);
-    LOG.info("Late tweet buffer size: {}", lateTweetBuffer);
+    w-wog.info("stawting p-pawawwew f-fwesh stawtup.");
+    wog.info("max segment size: {}", ʘwʘ m-maxsegmentsize);
+    wog.info("wate t-tweet b-buffew size: {}", :3 watetweetbuffew);
 
-    // Once we finish fresh startup and proceed to indexing from the streams, we'll immediately
-    // start a new segment, since the output of the fresh startup is full segments.
+    // once we finish fwesh s-stawtup and pwoceed t-to indexing f-fwom the stweams, 😳 w-we'ww immediatewy
+    // stawt a-a nyew segment, òωó since the output of the fwesh stawtup is fuww segments. 🥺
     //
-    // That's why we index max_segments-1 segments here instead of indexing max_segments segments
-    // and discarding the first one later.
-    int numSegments = segmentManager.getMaxEnabledSegments() - 1;
-    LOG.info("Number of segments to build: {}", numSegments);
+    // that's w-why we index max_segments-1 segments h-hewe instead of indexing max_segments s-segments
+    // and d-discawding the fiwst one watew. rawr x3
+    i-int nyumsegments = s-segmentmanagew.getmaxenabwedsegments() - 1;
+    w-wog.info("numbew o-of segments t-to buiwd: {}", ^•ﻌ•^ nyumsegments);
 
-    // Find end offsets.
-    KafkaOffsetPair tweetsOffsetRange = findOffsetRangeForTweetsKafkaTopic();
+    // find end offsets. :3
+    kafkaoffsetpaiw tweetsoffsetwange = findoffsetwangefowtweetskafkatopic();
 
-    ArrayList<SegmentBuildInfo> segmentBuildInfos = makeSegmentBuildInfos(
-        numSegments, tweetsOffsetRange);
+    awwaywist<segmentbuiwdinfo> s-segmentbuiwdinfos = makesegmentbuiwdinfos(
+        n-nyumsegments, (ˆ ﻌ ˆ)♡ t-tweetsoffsetwange);
 
-    segmentManager.logState("Before starting fresh startup");
+    segmentmanagew.wogstate("befowe s-stawting fwesh stawtup");
 
-    // Index tweets and events.
-    Stopwatch initialIndexStopwatch = Stopwatch.createStarted();
+    // index tweets and events. (U ᵕ U❁)
+    s-stopwatch initiawindexstopwatch = s-stopwatch.cweatestawted();
 
-    // We index at most `MAX_PARALLEL_INDEXED` (MPI) segments at the same time. If we need to
-    // produce 20 segments here, we'd need memory for MPI unoptimized and 20-MPI optimized segments.
+    // we index a-at most `max_pawawwew_indexed` (mpi) segments at the same time. :3 i-if we nyeed to
+    // p-pwoduce 20 segments hewe, w-we'd nyeed memowy f-fow mpi unoptimized and 20-mpi optimized segments. ^^;;
     //
-    // For back of envelope calculations you can assume optimized segments take ~6GB and unoptimized
-    // ones ~12GB.
-    final int MAX_PARALLEL_INDEXED = 8;
+    // fow back of envewope cawcuwations y-you can assume o-optimized s-segments take ~6gb a-and unoptimized
+    // o-ones ~12gb. ( ͡o ω ͡o )
+    finaw i-int max_pawawwew_indexed = 8;
 
-    List<SegmentInfo> segmentInfos = ParallelUtil.parmap(
-        "fresh-startup",
-        MAX_PARALLEL_INDEXED,
-        segmentBuildInfo -> indexTweetsAndUpdatesForSegment(segmentBuildInfo, segmentBuildInfos),
-        segmentBuildInfos
+    w-wist<segmentinfo> segmentinfos = p-pawawwewutiw.pawmap(
+        "fwesh-stawtup", o.O
+        m-max_pawawwew_indexed, ^•ﻌ•^
+        segmentbuiwdinfo -> i-indextweetsandupdatesfowsegment(segmentbuiwdinfo, XD segmentbuiwdinfos), ^^
+        segmentbuiwdinfos
     );
 
-    LOG.info("Finished indexing tweets and updates in {}", initialIndexStopwatch);
+    w-wog.info("finished indexing t-tweets and updates i-in {}", o.O initiawindexstopwatch);
 
-    PostOptimizationUpdatesIndexer postOptimizationUpdatesIndexer =
-        new PostOptimizationUpdatesIndexer(
-            segmentBuildInfos,
-            earlybirdKafkaConsumersFactory,
-            updateTopic);
+    postoptimizationupdatesindexew p-postoptimizationupdatesindexew =
+        nyew postoptimizationupdatesindexew(
+            segmentbuiwdinfos, ( ͡o ω ͡o )
+            e-eawwybiwdkafkaconsumewsfactowy, /(^•ω•^)
+            u-updatetopic);
 
-    postOptimizationUpdatesIndexer.indexRestOfUpdates();
+    p-postoptimizationupdatesindexew.indexwestofupdates();
 
-    // Finished indexing tweets and updates.
-    LOG.info("Segment build infos after we're done:");
-    for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
-      segmentBuildInfo.logState();
+    // finished indexing tweets and updates. 🥺
+    wog.info("segment b-buiwd infos aftew we'we done:");
+    f-fow (segmentbuiwdinfo s-segmentbuiwdinfo : segmentbuiwdinfos) {
+      s-segmentbuiwdinfo.wogstate();
     }
 
-    segmentManager.logState("After finishing fresh startup");
+    segmentmanagew.wogstate("aftew f-finishing f-fwesh stawtup");
 
-    LOG.info("Collected {} segment infos", segmentInfos.size());
-    LOG.info("Segment names:");
-    for (SegmentInfo segmentInfo : segmentInfos) {
-      LOG.info(segmentInfo.getSegmentName());
+    wog.info("cowwected {} segment infos", nyaa~~ s-segmentinfos.size());
+    wog.info("segment nyames:");
+    fow (segmentinfo segmentinfo : s-segmentinfos) {
+      w-wog.info(segmentinfo.getsegmentname());
     }
 
-    SegmentBuildInfo lastSegmentBuildInfo = segmentBuildInfos.get(segmentBuildInfos.size() - 1);
-    long finishedUpdatesAtOffset = lastSegmentBuildInfo.getUpdateKafkaOffsetPair().getEndOffset();
-    long maxIndexedTweetId = lastSegmentBuildInfo.getMaxIndexedTweetId();
+    segmentbuiwdinfo w-wastsegmentbuiwdinfo = segmentbuiwdinfos.get(segmentbuiwdinfos.size() - 1);
+    w-wong finishedupdatesatoffset = w-wastsegmentbuiwdinfo.getupdatekafkaoffsetpaiw().getendoffset();
+    w-wong maxindexedtweetid = wastsegmentbuiwdinfo.getmaxindexedtweetid();
 
-    LOG.info("Max indexed tweet id: {}", maxIndexedTweetId);
-    LOG.info("Parallel startup finished in {}", parallelIndexStopwatch);
+    wog.info("max indexed tweet id: {}", mya maxindexedtweetid);
+    wog.info("pawawwew stawtup finished in {}", XD pawawwewindexstopwatch);
 
-    // verifyConstructedIndex(segmentBuildInfos);
-    // Run a GC to free up some memory after the fresh startup.
-    GCUtil.runGC();
-    logMemoryStats();
+    // vewifyconstwuctedindex(segmentbuiwdinfos);
+    // wun a gc to fwee up some memowy aftew the fwesh stawtup. nyaa~~
+    gcutiw.wungc();
+    wogmemowystats();
 
-    return new EarlybirdIndex(
-        segmentInfos,
-        tweetsOffsetRange.getEndOffset() + 1,
-        finishedUpdatesAtOffset + 1,
-        maxIndexedTweetId
+    w-wetuwn n-nyew eawwybiwdindex(
+        segmentinfos, ʘwʘ
+        tweetsoffsetwange.getendoffset() + 1, (⑅˘꒳˘)
+        f-finishedupdatesatoffset + 1, :3
+        m-maxindexedtweetid
     );
   }
 
-  private void logMemoryStats() {
-    double toGB = 1024 * 1024 * 1024;
-    double totalMemoryGB = Runtime.getRuntime().totalMemory() / toGB;
-    double freeMemoryGB = Runtime.getRuntime().freeMemory() / toGB;
-    LOG.info("Memory stats: Total memory GB: {}, Free memory GB: {}",
-        totalMemoryGB, freeMemoryGB);
+  p-pwivate void wogmemowystats() {
+    d-doubwe togb = 1024 * 1024 * 1024;
+    d-doubwe totawmemowygb = w-wuntime.getwuntime().totawmemowy() / togb;
+    d-doubwe fweememowygb = wuntime.getwuntime().fweememowy() / t-togb;
+    wog.info("memowy s-stats: totaw memowy gb: {}, -.- fwee memowy g-gb: {}", 😳😳😳
+        t-totawmemowygb, (U ﹏ U) f-fweememowygb);
   }
 
   /**
-   * Prints statistics about the constructed index compared to all tweets in the
-   * tweets stream.
+   * p-pwints statistics a-about the constwucted i-index c-compawed to aww t-tweets in the
+   * t-tweets stweam. o.O
    *
-   * Only run this for testing and debugging purposes, never in prod environment.
+   * onwy w-wun this fow testing a-and debugging p-puwposes, ( ͡o ω ͡o ) nyevew in pwod enviwonment. òωó
    */
-  private void verifyConstructedIndex(List<SegmentBuildInfo> segmentBuildInfos)
-      throws IOException {
-    LOG.info("Verifying constructed index...");
-    // Read every tweet from the offset range that we're constructing an index for.
-    KafkaConsumer<Long, ThriftVersionedEvents> tweetsKafkaConsumer =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("tweets_verify");
-    try {
-      tweetsKafkaConsumer.assign(ImmutableList.of(tweetTopic));
-      tweetsKafkaConsumer.seek(tweetTopic, segmentBuildInfos.get(0).getTweetStartOffset());
-    } catch (ApiException apiException) {
-      throw new WrappedKafkaApiException(apiException);
+  p-pwivate void vewifyconstwuctedindex(wist<segmentbuiwdinfo> segmentbuiwdinfos)
+      thwows ioexception {
+    wog.info("vewifying c-constwucted index...");
+    // wead evewy tweet f-fwom the offset w-wange that we'we c-constwucting an index fow. 🥺
+    k-kafkaconsumew<wong, /(^•ω•^) thwiftvewsionedevents> t-tweetskafkaconsumew =
+        eawwybiwdkafkaconsumewsfactowy.cweatekafkaconsumew("tweets_vewify");
+    t-twy {
+      tweetskafkaconsumew.assign(immutabwewist.of(tweettopic));
+      t-tweetskafkaconsumew.seek(tweettopic, 😳😳😳 segmentbuiwdinfos.get(0).gettweetstawtoffset());
+    } catch (apiexception apiexception) {
+      thwow nyew w-wwappedkafkaapiexception(apiexception);
     }
-    long finalTweetOffset = segmentBuildInfos.get(segmentBuildInfos.size() - 1).getTweetEndOffset();
-    boolean done = false;
-    Set<Long> uniqueTweetIds = new HashSet<>();
-    long readTweetsCount = 0;
-    do {
-      for (ConsumerRecord<Long, ThriftVersionedEvents> record
-          : tweetsKafkaConsumer.poll(Duration.ofSeconds(1))) {
-        if (record.offset() > finalTweetOffset) {
-          done = true;
-          break;
+    wong finawtweetoffset = s-segmentbuiwdinfos.get(segmentbuiwdinfos.size() - 1).gettweetendoffset();
+    b-boowean done = fawse;
+    set<wong> uniquetweetids = nyew h-hashset<>();
+    wong weadtweetscount = 0;
+    d-do {
+      fow (consumewwecowd<wong, ^•ﻌ•^ t-thwiftvewsionedevents> w-wecowd
+          : tweetskafkaconsumew.poww(duwation.ofseconds(1))) {
+        if (wecowd.offset() > f-finawtweetoffset) {
+          d-done = twue;
+          bweak;
         }
-        readTweetsCount++;
-        uniqueTweetIds.add(record.value().getId());
+        w-weadtweetscount++;
+        uniquetweetids.add(wecowd.vawue().getid());
       }
-    } while (!done);
+    } whiwe (!done);
 
-    LOG.info("Total amount of read tweets: {}", formatInt(readTweetsCount));
-    // Might be less, due to duplicates.
-    LOG.info("Unique tweet ids : {}", LogFormatUtil.formatInt(uniqueTweetIds.size()));
+    w-wog.info("totaw amount o-of wead tweets: {}", nyaa~~ f-fowmatint(weadtweetscount));
+    // m-might be wess, OwO due to dupwicates. ^•ﻌ•^
+    wog.info("unique t-tweet ids : {}", σωσ w-wogfowmatutiw.fowmatint(uniquetweetids.size()));
 
-    int notFoundInIndex = 0;
-    for (Long tweetId : uniqueTweetIds) {
-      boolean found = false;
-      for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
-        if (segmentBuildInfo.getSegmentWriter().hasTweet(tweetId)) {
-          found = true;
-          break;
+    i-int nyotfoundinindex = 0;
+    f-fow (wong tweetid : uniquetweetids) {
+      b-boowean found = f-fawse;
+      fow (segmentbuiwdinfo s-segmentbuiwdinfo : s-segmentbuiwdinfos) {
+        i-if (segmentbuiwdinfo.getsegmentwwitew().hastweet(tweetid)) {
+          f-found = t-twue;
+          b-bweak;
         }
       }
       if (!found) {
-        notFoundInIndex++;
+        n-nyotfoundinindex++;
       }
     }
 
-    LOG.info("Tweets not found in the index: {}", LogFormatUtil.formatInt(notFoundInIndex));
+    wog.info("tweets nyot found in the i-index: {}", -.- wogfowmatutiw.fowmatint(notfoundinindex));
 
-    long totalIndexedTweets = 0;
-    for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
-      SegmentInfo si = segmentBuildInfo.getSegmentWriter().getSegmentInfo();
-      totalIndexedTweets += si.getIndexStats().getStatusCount();
+    wong t-totawindexedtweets = 0;
+    fow (segmentbuiwdinfo s-segmentbuiwdinfo : s-segmentbuiwdinfos) {
+      segmentinfo si = segmentbuiwdinfo.getsegmentwwitew().getsegmentinfo();
+      totawindexedtweets += s-si.getindexstats().getstatuscount();
     }
 
-    LOG.info("Total indexed tweets: {}", formatInt(totalIndexedTweets));
+    w-wog.info("totaw i-indexed tweets: {}", (˘ω˘) fowmatint(totawindexedtweets));
   }
 
   /**
-   * Find the end offsets for the tweets Kafka topic this partition is reading
-   * from.
+   * find the end offsets f-fow the tweets kafka t-topic this pawtition is weading
+   * f-fwom. rawr x3
    */
-  private KafkaOffsetPair findOffsetRangeForTweetsKafkaTopic() {
-    KafkaConsumer<Long, ThriftVersionedEvents> consumerForFindingOffsets =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("consumer_for_end_offsets");
+  p-pwivate kafkaoffsetpaiw findoffsetwangefowtweetskafkatopic() {
+    kafkaconsumew<wong, rawr x3 thwiftvewsionedevents> c-consumewfowfindingoffsets =
+        e-eawwybiwdkafkaconsumewsfactowy.cweatekafkaconsumew("consumew_fow_end_offsets");
 
-    Map<TopicPartition, Long> endOffsets;
-    Map<TopicPartition, Long> beginningOffsets;
+    map<topicpawtition, σωσ w-wong> endoffsets;
+    m-map<topicpawtition, nyaa~~ wong> beginningoffsets;
 
-    try {
-      endOffsets = consumerForFindingOffsets.endOffsets(ImmutableList.of(tweetTopic));
-      beginningOffsets = consumerForFindingOffsets.beginningOffsets(ImmutableList.of(tweetTopic));
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException(kafkaApiException);
-    } finally {
-      consumerForFindingOffsets.close();
+    t-twy {
+      e-endoffsets = consumewfowfindingoffsets.endoffsets(immutabwewist.of(tweettopic));
+      beginningoffsets = c-consumewfowfindingoffsets.beginningoffsets(immutabwewist.of(tweettopic));
+    } catch (apiexception kafkaapiexception) {
+      thwow n-nyew wwappedkafkaapiexception(kafkaapiexception);
+    } finawwy {
+      c-consumewfowfindingoffsets.cwose();
     }
 
-    long tweetsBeginningOffset = beginningOffsets.get(tweetTopic);
-    long tweetsEndOffset = endOffsets.get(tweetTopic);
-    LOG.info(String.format("Tweets beginning offset: %,d", tweetsBeginningOffset));
-    LOG.info(String.format("Tweets end offset: %,d", tweetsEndOffset));
-    LOG.info(String.format("Total amount of records in the stream: %,d",
-        tweetsEndOffset - tweetsBeginningOffset + 1));
+    w-wong tweetsbeginningoffset = b-beginningoffsets.get(tweettopic);
+    w-wong tweetsendoffset = e-endoffsets.get(tweettopic);
+    wog.info(stwing.fowmat("tweets b-beginning offset: %,d", (ꈍᴗꈍ) t-tweetsbeginningoffset));
+    w-wog.info(stwing.fowmat("tweets e-end offset: %,d", ^•ﻌ•^ tweetsendoffset));
+    w-wog.info(stwing.fowmat("totaw amount o-of wecowds i-in the stweam: %,d", >_<
+        tweetsendoffset - t-tweetsbeginningoffset + 1));
 
-    return new KafkaOffsetPair(tweetsBeginningOffset, tweetsEndOffset);
+    wetuwn new kafkaoffsetpaiw(tweetsbeginningoffset, ^^;; tweetsendoffset);
   }
 
   /**
-   * For each segment, we know what offset it begins at. This function finds the tweet ids
-   * for these offsets.
+   * f-fow each segment, ^^;; w-we know n-nyani offset it begins at. /(^•ω•^) this function finds the tweet ids
+   * fow these offsets. nyaa~~
    */
-  private void fillTweetIdsForSegmentStarts(List<SegmentBuildInfo> segmentBuildInfos)
-      throws EarlybirdStartupException {
-    KafkaConsumer<Long, ThriftVersionedEvents> consumerForTweetIds =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("consumer_for_tweet_ids", 1);
-    consumerForTweetIds.assign(ImmutableList.of(tweetTopic));
+  p-pwivate void fiwwtweetidsfowsegmentstawts(wist<segmentbuiwdinfo> s-segmentbuiwdinfos)
+      t-thwows eawwybiwdstawtupexception {
+    kafkaconsumew<wong, (✿oωo) thwiftvewsionedevents> c-consumewfowtweetids =
+        eawwybiwdkafkaconsumewsfactowy.cweatekafkaconsumew("consumew_fow_tweet_ids", ( ͡o ω ͡o ) 1);
+    c-consumewfowtweetids.assign(immutabwewist.of(tweettopic));
 
-    // Find first tweet ids for each segment.
-    for (SegmentBuildInfo buildInfo : segmentBuildInfos) {
-      long tweetOffset = buildInfo.getTweetStartOffset();
-      ConsumerRecords<Long, ThriftVersionedEvents> records;
-      try {
-        consumerForTweetIds.seek(tweetTopic, tweetOffset);
-        records = consumerForTweetIds.poll(Duration.ofSeconds(1));
-      } catch (ApiException kafkaApiException) {
-        throw new WrappedKafkaApiException(kafkaApiException);
+    // f-find f-fiwst tweet ids f-fow each segment. (U ᵕ U❁)
+    f-fow (segmentbuiwdinfo buiwdinfo : segmentbuiwdinfos) {
+      wong tweetoffset = buiwdinfo.gettweetstawtoffset();
+      consumewwecowds<wong, òωó t-thwiftvewsionedevents> wecowds;
+      t-twy {
+        consumewfowtweetids.seek(tweettopic, σωσ tweetoffset);
+        wecowds = consumewfowtweetids.poww(duwation.ofseconds(1));
+      } catch (apiexception k-kafkaapiexception) {
+        thwow nyew wwappedkafkaapiexception(kafkaapiexception);
       }
 
-      if (records.count() > 0) {
-        ConsumerRecord<Long, ThriftVersionedEvents> recordAtOffset = records.iterator().next();
-        if (recordAtOffset.offset() != tweetOffset) {
-          LOG.error(String.format("We were looking for offset %,d. Found a record at offset %,d",
-              tweetOffset, recordAtOffset.offset()));
+      if (wecowds.count() > 0) {
+        consumewwecowd<wong, :3 t-thwiftvewsionedevents> wecowdatoffset = w-wecowds.itewatow().next();
+        if (wecowdatoffset.offset() != t-tweetoffset) {
+          wog.ewwow(stwing.fowmat("we wewe wooking f-fow offset %,d. OwO f-found a wecowd at offset %,d", ^^
+              t-tweetoffset, (˘ω˘) wecowdatoffset.offset()));
         }
 
-        buildInfo.setStartTweetId(recordAtOffset.value().getId());
-      } else {
-        throw new EarlybirdStartupException("Didn't get any tweets back for an offset");
+        buiwdinfo.setstawttweetid(wecowdatoffset.vawue().getid());
+      } ewse {
+        t-thwow nyew eawwybiwdstawtupexception("didn't get any tweets back fow a-an offset");
       }
     }
 
-    // Check that something weird didn't happen where we end up with segment ids
-    // which are in non-incresing order.
-    // Goes from oldest to newest.
-    for (int i = 1; i < segmentBuildInfos.size(); i++) {
-      long startTweetId = segmentBuildInfos.get(i).getStartTweetId();
-      long prevStartTweetId = segmentBuildInfos.get(i - 1).getStartTweetId();
-      Verify.verify(prevStartTweetId < startTweetId);
+    // check that something weiwd d-didn't happen whewe w-we end up with s-segment ids
+    // which awe in nyon-incwesing o-owdew. OwO
+    // goes fwom owdest to nyewest. UwU
+    fow (int i = 1; i < segmentbuiwdinfos.size(); i-i++) {
+      wong s-stawttweetid = s-segmentbuiwdinfos.get(i).getstawttweetid();
+      w-wong pwevstawttweetid = segmentbuiwdinfos.get(i - 1).getstawttweetid();
+      vewify.vewify(pwevstawttweetid < s-stawttweetid);
     }
   }
 
   /**
-   * Generate the offsets at which tweets begin and end for each segment that we want
-   * to create.
+   * g-genewate the offsets at which tweets begin a-and end fow each segment that we want
+   * to c-cweate. ^•ﻌ•^
    */
-  private ArrayList<SegmentBuildInfo> makeSegmentBuildInfos(
-      int numSegments, KafkaOffsetPair tweetsOffsets) throws EarlybirdStartupException {
-    ArrayList<SegmentBuildInfo> segmentBuildInfos = new ArrayList<>();
+  pwivate awwaywist<segmentbuiwdinfo> makesegmentbuiwdinfos(
+      i-int nyumsegments, (ꈍᴗꈍ) k-kafkaoffsetpaiw tweetsoffsets) t-thwows eawwybiwdstawtupexception {
+    a-awwaywist<segmentbuiwdinfo> s-segmentbuiwdinfos = nyew awwaywist<>();
 
-    // If we have 3 segments, the starting tweet offsets are:
-    // end-3N, end-2N, end-N
-    int segmentSize = maxSegmentSize - lateTweetBuffer;
-    LOG.info("Segment size: {}", segmentSize);
+    // if we have 3 s-segments, /(^•ω•^) the stawting tweet offsets awe:
+    // e-end-3n, (U ᵕ U❁) end-2n, end-n
+    int segmentsize = maxsegmentsize - watetweetbuffew;
+    w-wog.info("segment s-size: {}", (✿oωo) s-segmentsize);
 
-    long tweetsInStream = tweetsOffsets.getEndOffset() - tweetsOffsets.getBeginOffset() + 1;
-    double numBuildableSegments = ((double) tweetsInStream) / segmentSize;
+    w-wong tweetsinstweam = t-tweetsoffsets.getendoffset() - tweetsoffsets.getbeginoffset() + 1;
+    d-doubwe nyumbuiwdabwesegments = ((doubwe) tweetsinstweam) / segmentsize;
 
-    LOG.info("Number of segments we can build: {}", numBuildableSegments);
+    wog.info("numbew o-of segments we can buiwd: {}", OwO nyumbuiwdabwesegments);
 
-    int numSegmentsToBuild = numSegments;
-    int numBuildableSegmentsInt = (int) numBuildableSegments;
+    i-int nyumsegmentstobuiwd = nyumsegments;
+    i-int nyumbuiwdabwesegmentsint = (int) n-nyumbuiwdabwesegments;
 
-    if (numBuildableSegmentsInt < numSegmentsToBuild) {
-      // This can happen if we get a low amount of tweets such that the ~10 days of tweets stored in
-      // Kafka are not enough to build the specified number of segments.
-      LOG.warn("Building {} segments instead of the specified {} segments because there are not "
-              + "enough tweets", numSegmentsToBuild, numSegments);
-      BUILDING_FEWER_THAN_SPECIFIED_SEGMENTS.assertFailed();
-      numSegmentsToBuild = numBuildableSegmentsInt;
+    if (numbuiwdabwesegmentsint < n-nyumsegmentstobuiwd) {
+      // this can h-happen if we get a-a wow amount of tweets such that t-the ~10 days of t-tweets stowed in
+      // kafka a-awe nyot enough to buiwd the specified nyumbew of segments. :3
+      w-wog.wawn("buiwding {} segments i-instead of the specified {} segments because t-thewe awe nyot "
+              + "enough t-tweets", nyaa~~ n-nyumsegmentstobuiwd, ^•ﻌ•^ nyumsegments);
+      b-buiwding_fewew_than_specified_segments.assewtfaiwed();
+      n-nyumsegmentstobuiwd = nyumbuiwdabwesegmentsint;
     }
 
-    for (int rewind = numSegmentsToBuild; rewind >= 1; rewind--) {
-      long tweetStartOffset = (tweetsOffsets.getEndOffset() + 1) - (rewind * segmentSize);
-      long tweetEndOffset = tweetStartOffset + segmentSize - 1;
+    fow (int wewind = n-nyumsegmentstobuiwd; wewind >= 1; w-wewind--) {
+      wong tweetstawtoffset = (tweetsoffsets.getendoffset() + 1) - (wewind * s-segmentsize);
+      w-wong tweetendoffset = tweetstawtoffset + segmentsize - 1;
 
-      int index = segmentBuildInfos.size();
+      int index = segmentbuiwdinfos.size();
 
-      segmentBuildInfos.add(new SegmentBuildInfo(
-          tweetStartOffset,
-          tweetEndOffset,
-          index,
-          rewind == 1
+      s-segmentbuiwdinfos.add(new s-segmentbuiwdinfo(
+          tweetstawtoffset, ( ͡o ω ͡o )
+          tweetendoffset, ^^;;
+          index, mya
+          wewind == 1
       ));
     }
 
-    Verify.verify(segmentBuildInfos.get(segmentBuildInfos.size() - 1)
-        .getTweetEndOffset() == tweetsOffsets.getEndOffset());
+    v-vewify.vewify(segmentbuiwdinfos.get(segmentbuiwdinfos.size() - 1)
+        .gettweetendoffset() == tweetsoffsets.getendoffset());
 
-    LOG.info("Filling start tweet ids ...");
-    fillTweetIdsForSegmentStarts(segmentBuildInfos);
+    w-wog.info("fiwwing s-stawt tweet ids ...");
+    fiwwtweetidsfowsegmentstawts(segmentbuiwdinfos);
 
-    return segmentBuildInfos;
+    wetuwn segmentbuiwdinfos;
   }
 
-  private SegmentInfo indexTweetsAndUpdatesForSegment(
-      SegmentBuildInfo segmentBuildInfo,
-      ArrayList<SegmentBuildInfo> segmentBuildInfos) throws Exception {
+  p-pwivate segmentinfo indextweetsandupdatesfowsegment(
+      segmentbuiwdinfo s-segmentbuiwdinfo, (U ᵕ U❁)
+      awwaywist<segmentbuiwdinfo> segmentbuiwdinfos) t-thwows e-exception {
 
-    PreOptimizationSegmentIndexer preOptimizationSegmentIndexer =
-        new PreOptimizationSegmentIndexer(
-            segmentBuildInfo,
-            segmentBuildInfos,
-            this.segmentManager,
-            this.tweetTopic,
-            this.updateTopic,
-            this.earlybirdKafkaConsumersFactory,
-            this.lateTweetBuffer
+    pweoptimizationsegmentindexew p-pweoptimizationsegmentindexew =
+        n-nyew p-pweoptimizationsegmentindexew(
+            s-segmentbuiwdinfo, ^•ﻌ•^
+            s-segmentbuiwdinfos, (U ﹏ U)
+            t-this.segmentmanagew, /(^•ω•^)
+            this.tweettopic, ʘwʘ
+            this.updatetopic, XD
+            this.eawwybiwdkafkaconsumewsfactowy, (⑅˘꒳˘)
+            this.watetweetbuffew
         );
 
-    return preOptimizationSegmentIndexer.runIndexing();
+    wetuwn p-pweoptimizationsegmentindexew.wunindexing();
   }
 }

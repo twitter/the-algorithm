@@ -1,76 +1,76 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.spam.rtf.thriftscala.SafetyLabelValue
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.stitch.StitchHelpers
-import com.twitter.visibility.features.TweetId
-import com.twitter.visibility.features.TweetSafetyLabels
-import com.twitter.visibility.features.TweetTimestamp
-import com.twitter.visibility.models.TweetSafetyLabel
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywabew
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywabewtype
+i-impowt c-com.twittew.spam.wtf.thwiftscawa.safetywabewvawue
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+impowt com.twittew.visibiwity.common.stitch.stitchhewpews
+impowt com.twittew.visibiwity.featuwes.tweetid
+i-impowt com.twittew.visibiwity.featuwes.tweetsafetywabews
+impowt com.twittew.visibiwity.featuwes.tweettimestamp
+impowt com.twittew.visibiwity.modews.tweetsafetywabew
 
-class TweetIdFeatures(
-  statsReceiver: StatsReceiver,
-  enableStitchProfiling: Gate[Unit]) {
-  private[this] val scopedStatsReceiver: StatsReceiver = statsReceiver.scope("tweet_id_features")
+c-cwass tweetidfeatuwes(
+  s-statsweceivew: statsweceivew, /(^•ω•^)
+  enabwestitchpwofiwing: gate[unit]) {
+  p-pwivate[this] vaw scopedstatsweceivew: s-statsweceivew = s-statsweceivew.scope("tweet_id_featuwes")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val tweetSafetyLabels =
-    scopedStatsReceiver.scope(TweetSafetyLabels.name).counter("requests")
-  private[this] val tweetTimestamp =
-    scopedStatsReceiver.scope(TweetTimestamp.name).counter("requests")
+  pwivate[this] vaw wequests = scopedstatsweceivew.countew("wequests")
+  pwivate[this] vaw tweetsafetywabews =
+    s-scopedstatsweceivew.scope(tweetsafetywabews.name).countew("wequests")
+  pwivate[this] vaw tweettimestamp =
+    scopedstatsweceivew.scope(tweettimestamp.name).countew("wequests")
 
-  private[this] val labelFetchScope: StatsReceiver =
-    scopedStatsReceiver.scope("labelFetch")
+  pwivate[this] v-vaw wabewfetchscope: statsweceivew =
+    s-scopedstatsweceivew.scope("wabewfetch")
 
-  private[this] def getTweetLabels(
-    tweetId: Long,
-    labelFetcher: Long => Stitch[Map[SafetyLabelType, SafetyLabel]]
-  ): Stitch[Seq[TweetSafetyLabel]] = {
-    val stitch =
-      labelFetcher(tweetId).map { labelMap =>
-        labelMap
-          .map { case (labelType, label) => SafetyLabelValue(labelType, label) }.toSeq
-          .map(TweetSafetyLabel.fromThrift)
+  p-pwivate[this] d-def gettweetwabews(
+    t-tweetid: wong, nyaa~~
+    wabewfetchew: wong => s-stitch[map[safetywabewtype, nyaa~~ safetywabew]]
+  ): stitch[seq[tweetsafetywabew]] = {
+    v-vaw stitch =
+      wabewfetchew(tweetid).map { wabewmap =>
+        wabewmap
+          .map { case (wabewtype, :3 wabew) => safetywabewvawue(wabewtype, 😳😳😳 w-wabew) }.toseq
+          .map(tweetsafetywabew.fwomthwift)
       }
 
-    if (enableStitchProfiling()) {
-      StitchHelpers.profileStitch(
-        stitch,
-        Seq(labelFetchScope)
+    if (enabwestitchpwofiwing()) {
+      s-stitchhewpews.pwofiwestitch(
+        s-stitch, (˘ω˘)
+        s-seq(wabewfetchscope)
       )
-    } else {
+    } ewse {
       stitch
     }
   }
 
-  def forTweetId(
-    tweetId: Long,
-    labelFetcher: Long => Stitch[Map[SafetyLabelType, SafetyLabel]]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    tweetSafetyLabels.incr()
-    tweetTimestamp.incr()
+  def fowtweetid(
+    t-tweetid: w-wong, ^^
+    wabewfetchew: wong => s-stitch[map[safetywabewtype, :3 safetywabew]]
+  ): f-featuwemapbuiwdew => featuwemapbuiwdew = {
+    w-wequests.incw()
+    tweetsafetywabews.incw()
+    t-tweettimestamp.incw()
 
-    _.withFeature(TweetSafetyLabels, getTweetLabels(tweetId, labelFetcher))
-      .withConstantFeature(TweetTimestamp, TweetFeatures.tweetTimestamp(tweetId))
-      .withConstantFeature(TweetId, tweetId)
+    _.withfeatuwe(tweetsafetywabews, -.- gettweetwabews(tweetid, 😳 wabewfetchew))
+      .withconstantfeatuwe(tweettimestamp, t-tweetfeatuwes.tweettimestamp(tweetid))
+      .withconstantfeatuwe(tweetid, mya tweetid)
   }
 
-  def forTweetId(
-    tweetId: Long,
-    constantTweetSafetyLabels: Seq[TweetSafetyLabel]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    tweetSafetyLabels.incr()
-    tweetTimestamp.incr()
+  d-def fowtweetid(
+    tweetid: wong, (˘ω˘)
+    c-constanttweetsafetywabews: s-seq[tweetsafetywabew]
+  ): featuwemapbuiwdew => featuwemapbuiwdew = {
+    wequests.incw()
+    tweetsafetywabews.incw()
+    tweettimestamp.incw()
 
-    _.withConstantFeature(TweetSafetyLabels, constantTweetSafetyLabels)
-      .withConstantFeature(TweetTimestamp, TweetFeatures.tweetTimestamp(tweetId))
-      .withConstantFeature(TweetId, tweetId)
+    _.withconstantfeatuwe(tweetsafetywabews, >_< constanttweetsafetywabews)
+      .withconstantfeatuwe(tweettimestamp, -.- t-tweetfeatuwes.tweettimestamp(tweetid))
+      .withconstantfeatuwe(tweetid, 🥺 t-tweetid)
   }
 }

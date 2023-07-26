@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+impowt c-com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
+i-impowt com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
 
-case class RecentlyEngagedUserId(id: Long, engagementType: EngagementType) {
-  def toThrift: t.RecentlyEngagedUserId =
-    t.RecentlyEngagedUserId(id = id, engagementType = engagementType.toThrift)
+c-case cwass wecentwyengagedusewid(id: w-wong, nyaa~~ engagementtype: e-engagementtype) {
+  d-def tothwift: t.wecentwyengagedusewid =
+    t.wecentwyengagedusewid(id = id, /(^•ω•^) engagementtype = engagementtype.tothwift)
 
-  def toOfflineThrift: offline.RecentlyEngagedUserId =
-    offline.RecentlyEngagedUserId(id = id, engagementType = engagementType.toOfflineThrift)
+  def tooffwinethwift: offwine.wecentwyengagedusewid =
+    o-offwine.wecentwyengagedusewid(id = id, rawr engagementtype = engagementtype.tooffwinethwift)
 }
 
-object RecentlyEngagedUserId {
-  def fromThrift(recentlyEngagedUserId: t.RecentlyEngagedUserId): RecentlyEngagedUserId = {
-    RecentlyEngagedUserId(
-      id = recentlyEngagedUserId.id,
-      engagementType = EngagementType.fromThrift(recentlyEngagedUserId.engagementType)
+object w-wecentwyengagedusewid {
+  def fwomthwift(wecentwyengagedusewid: t-t.wecentwyengagedusewid): wecentwyengagedusewid = {
+    wecentwyengagedusewid(
+      id = w-wecentwyengagedusewid.id, OwO
+      engagementtype = e-engagementtype.fwomthwift(wecentwyengagedusewid.engagementtype)
     )
   }
 
-  def fromOfflineThrift(
-    recentlyEngagedUserId: offline.RecentlyEngagedUserId
-  ): RecentlyEngagedUserId = {
-    RecentlyEngagedUserId(
-      id = recentlyEngagedUserId.id,
-      engagementType = EngagementType.fromOfflineThrift(recentlyEngagedUserId.engagementType)
+  d-def fwomoffwinethwift(
+    wecentwyengagedusewid: offwine.wecentwyengagedusewid
+  ): wecentwyengagedusewid = {
+    w-wecentwyengagedusewid(
+      id = wecentwyengagedusewid.id, (U ﹏ U)
+      engagementtype = engagementtype.fwomoffwinethwift(wecentwyengagedusewid.engagementtype)
     )
   }
 

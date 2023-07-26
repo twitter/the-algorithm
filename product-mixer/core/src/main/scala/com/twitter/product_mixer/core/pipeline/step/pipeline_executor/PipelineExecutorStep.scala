@@ -1,81 +1,81 @@
-package com.twitter.product_mixer.core.pipeline.step.pipeline_executor
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.pipewine_executow
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.state.HasResult
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.pipeline.step.pipeline_selector.PipelineSelectorResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutor
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutorRequest
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.iwwegawstatefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasexecutowwesuwts
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.haswesuwt
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.pipewine_sewectow.pipewinesewectowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowobsewvew
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_executow.pipewineexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_executow.pipewineexecutowwequest
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_executow.pipewineexecutowwesuwt
+i-impowt com.twittew.stitch.awwow
+impowt javax.inject.inject
 
 /**
- * Pipeline Execution step that takes a selected pipeline and executes it.
+ * p-pipewine e-execution step that takes a sewected pipewine and exekawaii~s it. 😳
  *
- * @param pipelineExecutor Pipeline executor that executes the selected pipeline
+ * @pawam pipewineexecutow pipewine executow t-that exekawaii~s the sewected pipewine
  *
- * @tparam Query Pipeline query model with quality factor status
- * @tparam Result The expected result type
- * @tparam State The pipeline state domain model.
+ * @tpawam quewy pipewine quewy modew w-with quawity factow status
+ * @tpawam w-wesuwt the e-expected wesuwt t-type
+ * @tpawam s-state the pipewine state domain modew. 😳
  */
-case class PipelineExecutorStep[
-  Query <: PipelineQuery,
-  Result,
-  State <: HasQuery[Query, State] with HasExecutorResults[State] with HasResult[Result]] @Inject() (
-  pipelineExecutor: PipelineExecutor)
-    extends Step[
-      State,
-      PipelineExecutorStepConfig[Query, Result],
-      PipelineExecutorRequest[Query],
-      PipelineExecutorResult[Result]
+case c-cwass pipewineexecutowstep[
+  quewy <: pipewinequewy, σωσ
+  wesuwt,
+  s-state <: hasquewy[quewy, rawr x3 state] with hasexecutowwesuwts[state] with haswesuwt[wesuwt]] @inject() (
+  pipewineexecutow: pipewineexecutow)
+    e-extends step[
+      state, OwO
+      p-pipewineexecutowstepconfig[quewy, /(^•ω•^) w-wesuwt],
+      p-pipewineexecutowwequest[quewy], 😳😳😳
+      pipewineexecutowwesuwt[wesuwt]
     ] {
 
-  override def isEmpty(config: PipelineExecutorStepConfig[Query, Result]): Boolean =
-    false
+  ovewwide def isempty(config: p-pipewineexecutowstepconfig[quewy, ( ͡o ω ͡o ) w-wesuwt]): boowean =
+    fawse
 
-  override def adaptInput(
-    state: State,
-    config: PipelineExecutorStepConfig[Query, Result]
-  ): PipelineExecutorRequest[Query] = {
-    val pipelineSelectorResult = state.executorResultsByPipelineStep
-      .getOrElse(
-        config.selectedPipelineResultIdentifier,
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Missing Selected Pipeline in Pipeline Executor Step")).asInstanceOf[
-        PipelineSelectorResult]
-    PipelineExecutorRequest(state.query, pipelineSelectorResult.pipelineIdentifier)
+  o-ovewwide def a-adaptinput(
+    state: state, >_<
+    c-config: pipewineexecutowstepconfig[quewy, >w< wesuwt]
+  ): p-pipewineexecutowwequest[quewy] = {
+    vaw pipewinesewectowwesuwt = state.executowwesuwtsbypipewinestep
+      .getowewse(
+        c-config.sewectedpipewinewesuwtidentifiew, rawr
+        thwow p-pipewinefaiwuwe(
+          iwwegawstatefaiwuwe, 😳
+          "missing s-sewected pipewine i-in pipewine executow step")).asinstanceof[
+        pipewinesewectowwesuwt]
+    pipewineexecutowwequest(state.quewy, >w< pipewinesewectowwesuwt.pipewineidentifiew)
   }
 
-  override def arrow(
-    config: PipelineExecutorStepConfig[Query, Result],
-    context: Executor.Context
-  ): Arrow[PipelineExecutorRequest[Query], PipelineExecutorResult[Result]] = pipelineExecutor.arrow(
-    config.pipelinesByIdentifier,
-    config.qualityFactorObserversByIdentifier,
+  ovewwide def awwow(
+    c-config: pipewineexecutowstepconfig[quewy, (⑅˘꒳˘) w-wesuwt], OwO
+    context: executow.context
+  ): a-awwow[pipewineexecutowwequest[quewy], p-pipewineexecutowwesuwt[wesuwt]] = p-pipewineexecutow.awwow(
+    config.pipewinesbyidentifiew,
+    config.quawityfactowobsewvewsbyidentifiew, (ꈍᴗꈍ)
     context
   )
 
-  // Noop since the platform will add the final result to the executor result map then state
-  // is responsible for reading it in [[WithResult]]
-  override def updateState(
-    state: State,
-    executorResult: PipelineExecutorResult[Result],
-    config: PipelineExecutorStepConfig[Query, Result]
-  ): State = state
+  // n-nyoop since the pwatfowm wiww add the finaw wesuwt to the executow wesuwt map t-then state
+  // is wesponsibwe f-fow weading it in [[withwesuwt]]
+  o-ovewwide def u-updatestate(
+    state: state, 😳
+    e-executowwesuwt: p-pipewineexecutowwesuwt[wesuwt], 😳😳😳
+    c-config: pipewineexecutowstepconfig[quewy, mya w-wesuwt]
+  ): state = state
 }
 
-case class PipelineExecutorStepConfig[Query <: PipelineQuery, Result](
-  pipelinesByIdentifier: Map[ComponentIdentifier, Pipeline[Query, Result]],
-  selectedPipelineResultIdentifier: PipelineStepIdentifier,
-  qualityFactorObserversByIdentifier: Map[ComponentIdentifier, QualityFactorObserver])
+case cwass pipewineexecutowstepconfig[quewy <: p-pipewinequewy, mya w-wesuwt](
+  p-pipewinesbyidentifiew: map[componentidentifiew, (⑅˘꒳˘) p-pipewine[quewy, (U ﹏ U) w-wesuwt]],
+  sewectedpipewinewesuwtidentifiew: pipewinestepidentifiew, mya
+  quawityfactowobsewvewsbyidentifiew: m-map[componentidentifiew, ʘwʘ quawityfactowobsewvew])

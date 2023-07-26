@@ -1,15 +1,15 @@
-package com.twitter.search.common.encoding.features;
+package com.twittew.seawch.common.encoding.featuwes;
 
 /**
- * Interface for processing different feature values into an int. It provides a one-way translation
- * of encoding using com.twitter.search.common.encoding.features.ByteNormalizer and supports all the
- * old normalizers. The difference is that we directly return the normalized int value
- * (instead of converting from byte).
+ * intewface f-fow pwocessing d-diffewent featuwe v-vawues into a-an int. 😳😳😳 it pwovides a-a one-way t-twanswation
+ * o-of encoding using c-com.twittew.seawch.common.encoding.featuwes.bytenowmawizew and suppowts aww the
+ * owd nyowmawizews. -.- the diffewence i-is that we diwectwy wetuwn the nyowmawized i-int vawue
+ * (instead of convewting f-fwom byte). ( ͡o ω ͡o )
  */
-public interface IntNormalizer {
+pubwic intewface intnowmawizew {
   /**
-   * Returns the normalized value of {@code val}.
-   * The value may be byte-compressed or as-is depending on the normalizer type
+   * wetuwns the nyowmawized v-vawue of {@code vaw}. rawr x3
+   * t-the vawue may b-be byte-compwessed ow as-is depending on the nyowmawizew type
    */
-  int normalize(double val);
+  int nyowmawize(doubwe v-vaw);
 }

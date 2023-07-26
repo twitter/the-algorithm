@@ -1,423 +1,423 @@
-package com.twitter.simclusters_v2.scalding.common.matrix
+package com.twittew.simcwustews_v2.scawding.common.matwix
 
-import com.twitter.algebird.Semigroup
-import com.twitter.bijection.Injection
-import com.twitter.scalding.{TypedPipe, ValuePipe}
+impowt c-com.twittew.awgebiwd.semigwoup
+i-impowt com.twittew.bijection.injection
+i-impowt com.twittew.scawding.{typedpipe, ʘwʘ vawuepipe}
 
 /**
- * A case class that represents a sparse matrix backed by a TypedPipe[(R, C, V)].
+ * a-a case cwass that w-wepwesents a s-spawse matwix backed b-by a typedpipe[(w, :3 c-c, v)]. 😳
  *
- * We assume the input does not have more than one value per (row, col), and all the input values
- * are non-zero.
+ * we assume the input does nyot have mowe than one vawue pew (wow, òωó c-cow), and aww the input vawues
+ * awe nyon-zewo. 🥺
  *
- * We do not except the input pipe are indexed from 0 to numRows or numCols.
- * The input can be any type (for example, userId/TweetId/Hashtag).
- * We do not convert them to indices, but just use the input as a key to represent the rowId/colId.
+ * we d-do nyot except the input pipe a-awe indexed fwom 0 to nyumwows ow nyumcows. rawr x3
+ * the input can be a-any type (fow exampwe, ^•ﻌ•^ usewid/tweetid/hashtag). :3
+ * w-we do nyot convewt t-them to indices, (ˆ ﻌ ˆ)♡ but just use the input as a key to wepwesent the wowid/cowid. (U ᵕ U❁)
  *
- * Example:
+ * e-exampwe:
  *
- *  val a = SparseMatrix(TypedPipe.from(Seq((1,1,1.0), (2,2,2.0), (3,3,3.0))))
+ *  vaw a = spawsematwix(typedpipe.fwom(seq((1,1,1.0), :3 (2,2,2.0), ^^;; (3,3,3.0))))
  *
- *  val b = a.rowL2Normalize // get a new matrix that has unit-norm each row.
+ *  vaw b = a.woww2nowmawize // g-get a nyew matwix that h-has unit-nowm each w-wow. ( ͡o ω ͡o )
  *
- *  val c = a.multiplySparseMatrix(b) // multiply another matrix
+ *  vaw c-c = a.muwtipwyspawsematwix(b) // m-muwtipwy anothew matwix
  *
- *  val d = a.transpose // transpose the matrix
+ *  vaw d = a.twanspose // t-twanspose the matwix
  *
- * @param pipe underlying pipe. We assume the input does not have more than one value per (row, col),
- *             and all the values are non-zero.
- * @param rowOrd ordering function for row type
- * @param colOrd ordering function for col type
- * @param numericV numeric operations for value type
- * @param semigroupV semigroup for the value type
- * @param rowInj injection function for the row type
- * @param colInj injection function for the col type
- * @tparam R Type for rows
- * @tparam C Type for columns
- * @tparam V Type for elements of the matrix
+ * @pawam pipe u-undewwying pipe. o.O we assume the input does nyot have mowe than one vawue pew (wow, ^•ﻌ•^ cow), XD
+ *             a-and aww the vawues awe nyon-zewo. ^^
+ * @pawam w-wowowd owdewing f-function fow w-wow type
+ * @pawam cowowd owdewing function fow cow type
+ * @pawam n-nyumewicv nyumewic o-opewations fow vawue type
+ * @pawam s-semigwoupv s-semigwoup fow the vawue type
+ * @pawam w-wowinj injection function f-fow the wow type
+ * @pawam cowinj injection f-function fow the cow type
+ * @tpawam w-w type fow wows
+ * @tpawam c-c type fow cowumns
+ * @tpawam v-v type fow ewements of the matwix
  */
-case class SparseMatrix[R, C, V](
-  pipe: TypedPipe[(R, C, V)]
+case cwass spawsematwix[w, o.O c, v](
+  pipe: typedpipe[(w, ( ͡o ω ͡o ) c, v)]
 )(
-  implicit override val rowOrd: Ordering[R],
-  override val colOrd: Ordering[C],
-  override val numericV: Numeric[V],
-  override val semigroupV: Semigroup[V],
-  override val rowInj: Injection[R, Array[Byte]],
-  override val colInj: Injection[C, Array[Byte]])
-    extends TypedPipeMatrix[R, C, V] {
+  impwicit o-ovewwide vaw w-wowowd: owdewing[w], /(^•ω•^)
+  ovewwide v-vaw cowowd: owdewing[c], 🥺
+  o-ovewwide v-vaw nyumewicv: nyumewic[v], nyaa~~
+  ovewwide vaw semigwoupv: semigwoup[v], mya
+  o-ovewwide vaw wowinj: injection[w, XD awway[byte]],
+  ovewwide vaw cowinj: i-injection[c, nyaa~~ awway[byte]])
+    e-extends typedpipematwix[w, ʘwʘ c-c, v-v] {
 
-  // number of non-zero values in the matrix
-  override lazy val nnz: ValuePipe[Long] = {
-    this.filter((_, _, v) => v != numericV.zero).pipe.map(_ => 1L).sum
+  // nyumbew of nyon-zewo v-vawues in the matwix
+  o-ovewwide w-wazy vaw nynz: vawuepipe[wong] = {
+    t-this.fiwtew((_, (⑅˘꒳˘) _, v) => v != nyumewicv.zewo).pipe.map(_ => 1w).sum
   }
 
-  // number of non-zero values in each row
-  lazy val rowNnz: TypedPipe[(R, Long)] = {
-    this.pipe.collect {
-      case (row, _, v) if v != numericV.zero =>
-        row -> 1L
-    }.sumByKey
+  // n-nyumbew of n-nyon-zewo vawues i-in each wow
+  wazy v-vaw wownnz: t-typedpipe[(w, :3 wong)] = {
+    this.pipe.cowwect {
+      case (wow, _, -.- v) if v != n-nyumewicv.zewo =>
+        wow -> 1w
+    }.sumbykey
   }
 
-  // get the num of non-zero values for each col.
-  lazy val colNnz: TypedPipe[(C, Long)] = {
-    this.transpose.rowNnz
+  // get the nyum of nyon-zewo vawues fow each cow. 😳😳😳
+  wazy v-vaw cownnz: typedpipe[(c, (U ﹏ U) wong)] = {
+    this.twanspose.wownnz
   }
 
-  override lazy val uniqueRowIds: TypedPipe[R] = {
-    this.pipe.map(t => t._1).distinct
+  ovewwide w-wazy vaw uniquewowids: t-typedpipe[w] = {
+    t-this.pipe.map(t => t._1).distinct
   }
 
-  override lazy val uniqueColIds: TypedPipe[C] = {
-    this.pipe.map(t => t._2).distinct
+  o-ovewwide wazy vaw uniquecowids: t-typedpipe[c] = {
+    t-this.pipe.map(t => t._2).distinct
   }
 
-  override def getRow(rowId: R): TypedPipe[(C, V)] = {
-    this.pipe.collect {
-      case (i, j, value) if i == rowId =>
-        j -> value
+  ovewwide def getwow(wowid: w): typedpipe[(c, v)] = {
+    this.pipe.cowwect {
+      case (i, o.O j-j, ( ͡o ω ͡o ) vawue) if i == wowid =>
+        j-j -> vawue
     }
   }
 
-  override def getCol(colId: C): TypedPipe[(R, V)] = {
-    this.pipe.collect {
-      case (i, j, value) if j == colId =>
-        i -> value
+  ovewwide d-def getcow(cowid: c-c): typedpipe[(w, òωó v)] = {
+    this.pipe.cowwect {
+      case (i, 🥺 j-j, /(^•ω•^) vawue) i-if j == cowid =>
+        i -> v-vawue
     }
   }
 
-  override def get(rowId: R, colId: C): ValuePipe[V] = {
-    this.pipe.collect {
-      case (i, j, value) if i == rowId && j == colId =>
-        value
-    }.sum // this assumes the matrix does not have any duplicates
+  o-ovewwide def get(wowid: w, 😳😳😳 cowid: c): vawuepipe[v] = {
+    this.pipe.cowwect {
+      case (i, ^•ﻌ•^ j-j, nyaa~~ vawue) if i == w-wowid && j == c-cowid =>
+        vawue
+    }.sum // t-this assumes t-the matwix does nyot have any d-dupwicates
   }
 
-  // filter the matrix based on (row, col, value)
-  def filter(fn: (R, C, V) => Boolean): SparseMatrix[R, C, V] = {
-    SparseMatrix(this.pipe.filter {
-      case (row, col, value) => fn(row, col, value)
+  // fiwtew the matwix based on (wow, cow, OwO vawue)
+  def fiwtew(fn: (w, ^•ﻌ•^ c-c, v) => b-boowean): spawsematwix[w, σωσ c, v] = {
+    spawsematwix(this.pipe.fiwtew {
+      c-case (wow, -.- c-cow, vawue) => fn(wow, (˘ω˘) cow, vawue)
     })
   }
 
-  // filter the matrix based on a subset of rows
-  def filterRows(rows: TypedPipe[R]): SparseMatrix[R, C, V] = {
-    SparseMatrix(this.rowAsKeys.join(rows.asKeys).map {
-      case (row, ((col, value), _)) => (row, col, value)
+  // fiwtew t-the matwix based on a subset of wows
+  def fiwtewwows(wows: typedpipe[w]): spawsematwix[w, rawr x3 c, v] = {
+    spawsematwix(this.wowaskeys.join(wows.askeys).map {
+      c-case (wow, rawr x3 ((cow, vawue), σωσ _)) => (wow, nyaa~~ cow, v-vawue)
     })
   }
 
-  // filter the matrix based on a subset of cols
-  def filterCols(cols: TypedPipe[C]): SparseMatrix[R, C, V] = {
-    this.transpose.filterRows(cols).transpose
+  // f-fiwtew the matwix based on a subset of cows
+  def fiwtewcows(cows: t-typedpipe[c]): s-spawsematwix[w, (ꈍᴗꈍ) c, v] = {
+    this.twanspose.fiwtewwows(cows).twanspose
   }
 
-  // convert the triplet (row, col, value) to a new (row1, col1, value1)
-  def tripleApply[R1, C1, V1](
-    fn: (R, C, V) => (R1, C1, V1)
+  // convewt the twipwet (wow, ^•ﻌ•^ c-cow, vawue) to a nyew (wow1, >_< c-cow1, vawue1)
+  def twipweappwy[w1, ^^;; c1, v1](
+    fn: (w, ^^;; c, v-v) => (w1, /(^•ω•^) c1, v1)
   )(
-    implicit rowOrd1: Ordering[R1],
-    colOrd1: Ordering[C1],
-    numericV1: Numeric[V1],
-    semigroupV1: Semigroup[V1],
-    rowInj: Injection[R1, Array[Byte]],
-    colInj: Injection[C1, Array[Byte]]
-  ): SparseMatrix[R1, C1, V1] = {
-    SparseMatrix(this.pipe.map {
-      case (row, col, value) => fn(row, col, value)
+    impwicit w-wowowd1: o-owdewing[w1], nyaa~~
+    cowowd1: owdewing[c1], (✿oωo)
+    n-nyumewicv1: nyumewic[v1], ( ͡o ω ͡o )
+    s-semigwoupv1: s-semigwoup[v1], (U ᵕ U❁)
+    w-wowinj: injection[w1, òωó a-awway[byte]], σωσ
+    c-cowinj: injection[c1, :3 awway[byte]]
+  ): spawsematwix[w1, c-c1, OwO v-v1] = {
+    spawsematwix(this.pipe.map {
+      case (wow, ^^ c-cow, vawue) => fn(wow, (˘ω˘) cow, vawue)
     })
   }
 
-  // get the l1 norms for all rows
-  lazy val rowL1Norms: TypedPipe[(R, Double)] = {
+  // g-get the w1 nowms fow a-aww wows
+  wazy v-vaw woww1nowms: typedpipe[(w, OwO doubwe)] = {
     this.pipe.map {
-      case (row, _, value) =>
-        row -> numericV.toDouble(value).abs
-    }.sumByKey
+      c-case (wow, UwU _, v-vawue) =>
+        w-wow -> nyumewicv.todoubwe(vawue).abs
+    }.sumbykey
   }
 
-  // get the l2 norms for all rows
-  lazy val rowL2Norms: TypedPipe[(R, Double)] = {
+  // g-get the w2 nyowms fow aww w-wows
+  wazy vaw woww2nowms: typedpipe[(w, ^•ﻌ•^ doubwe)] = {
     this.pipe
       .map {
-        case (row, _, value) =>
-          row -> numericV.toDouble(value) * numericV.toDouble(value)
+        case (wow, (ꈍᴗꈍ) _, /(^•ω•^) vawue) =>
+          w-wow -> nyumewicv.todoubwe(vawue) * nyumewicv.todoubwe(vawue)
       }
-      .sumByKey
-      .mapValues(math.sqrt)
+      .sumbykey
+      .mapvawues(math.sqwt)
   }
 
-  // normalize the matrix to make sure each row has unit norm
-  lazy val rowL2Normalize: SparseMatrix[R, C, Double] = {
-    val result = this.rowAsKeys
-      .join(this.rowL2Norms)
-      .collect {
-        case (row, ((col, value), l2norm)) if l2norm > 0.0 =>
-          (row, col, numericV.toDouble(value) / l2norm)
+  // n-nyowmawize the matwix to m-make suwe each wow has unit nyowm
+  w-wazy vaw woww2nowmawize: spawsematwix[w, (U ᵕ U❁) c-c, (✿oωo) d-doubwe] = {
+    v-vaw wesuwt = this.wowaskeys
+      .join(this.woww2nowms)
+      .cowwect {
+        c-case (wow, OwO ((cow, v-vawue), :3 w2nowm)) if w2nowm > 0.0 =>
+          (wow, nyaa~~ cow, nyumewicv.todoubwe(vawue) / w2nowm)
       }
 
-    SparseMatrix(result)
+    spawsematwix(wesuwt)
   }
 
-  // get the l2 norms for all cols
-  lazy val colL2Norms: TypedPipe[(C, Double)] = {
-    this.transpose.rowL2Norms
+  // get the w2 nyowms fow a-aww cows
+  wazy v-vaw coww2nowms: t-typedpipe[(c, ^•ﻌ•^ doubwe)] = {
+    t-this.twanspose.woww2nowms
   }
 
-  // normalize the matrix to make sure each column has unit norm
-  lazy val colL2Normalize: SparseMatrix[R, C, Double] = {
-    this.transpose.rowL2Normalize.transpose
-  }
-
-  /**
-   * Take topK non-zero elements from each row. Cols are ordered by the `ordering` function
-   */
-  def sortWithTakePerRow(k: Int)(ordering: Ordering[(C, V)]): TypedPipe[(R, Seq[(C, V)])] = {
-    this.rowAsKeys.group.sortedTake(k)(ordering)
+  // nyowmawize the matwix to make suwe each cowumn h-has unit nyowm
+  w-wazy vaw coww2nowmawize: spawsematwix[w, ( ͡o ω ͡o ) c, doubwe] = {
+    t-this.twanspose.woww2nowmawize.twanspose
   }
 
   /**
-   * Take topK non-zero elements from each column. Rows are ordered by the `ordering` function.
-   *
+   * take topk nyon-zewo ewements f-fwom each w-wow. ^^;; cows awe owdewed by the `owdewing` f-function
    */
-  def sortWithTakePerCol(k: Int)(ordering: Ordering[(R, V)]): TypedPipe[(C, Seq[(R, V)])] = {
-    this.transpose.sortWithTakePerRow(k)(ordering)
+  d-def sowtwithtakepewwow(k: int)(owdewing: owdewing[(c, mya v)]): typedpipe[(w, (U ᵕ U❁) seq[(c, v)])] = {
+    t-this.wowaskeys.gwoup.sowtedtake(k)(owdewing)
   }
 
   /**
-   * Multiply another SparseMatrix. The only requirement is that the col type of current matrix should
-   * be same with the row type of the other matrix.
+   * t-take topk n-nyon-zewo ewements f-fwom each cowumn. w-wows awe owdewed by the `owdewing` f-function. ^•ﻌ•^
    *
-   * @param sparseMatrix   another matrix to multiply
-   * @param numReducersOpt optional parameter to set number of reducers. It uses 1000 by default.
-   *                       you can change it based on your applications.
-   * @param ordering2      ordering function for the column type of another matrix
-   * @param injection2     injection function for the column type of another matrix
-   * @tparam C2 col type of another matrix
-   *
-   * @return
    */
-  def multiplySparseMatrix[C2](
-    sparseMatrix: SparseMatrix[C, C2, V],
-    numReducersOpt: Option[Int] = None
+  d-def sowtwithtakepewcow(k: int)(owdewing: o-owdewing[(w, (U ﹏ U) v-v)]): typedpipe[(c, /(^•ω•^) seq[(w, ʘwʘ v-v)])] = {
+    this.twanspose.sowtwithtakepewwow(k)(owdewing)
+  }
+
+  /**
+   * muwtipwy anothew s-spawsematwix. XD the onwy wequiwement i-is that the cow t-type of cuwwent matwix shouwd
+   * b-be same with the wow type of the othew matwix. (⑅˘꒳˘)
+   *
+   * @pawam s-spawsematwix   a-anothew matwix t-to muwtipwy
+   * @pawam nyumweducewsopt optionaw pawametew to s-set numbew of weducews. it uses 1000 by defauwt. nyaa~~
+   *                       y-you c-can change it based on youw appwications. UwU
+   * @pawam o-owdewing2      owdewing f-function fow the c-cowumn type of anothew matwix
+   * @pawam injection2     i-injection function fow the cowumn type o-of anothew matwix
+   * @tpawam c-c2 cow type of anothew matwix
+   *
+   * @wetuwn
+   */
+  d-def muwtipwyspawsematwix[c2](
+    spawsematwix: s-spawsematwix[c, (˘ω˘) c-c2, v],
+    n-nyumweducewsopt: option[int] = nyone
   )(
-    implicit ordering2: Ordering[C2],
-    injection2: Injection[C2, Array[Byte]]
-  ): SparseMatrix[R, C2, V] = {
-    implicit val colInjectionFunction: C => Array[Byte] = colInj.toFunction
+    impwicit owdewing2: owdewing[c2], rawr x3
+    injection2: injection[c2, awway[byte]]
+  ): spawsematwix[w, (///ˬ///✿) c2, v] = {
+    impwicit vaw cowinjectionfunction: c => awway[byte] = c-cowinj.tofunction
 
-    val result =
-      // 1000 is the reducer number used for sketchJoin; 1000 is a number that works well empirically.
-      // feel free to change this or make this as a param if you find this does not work for your case.
-      this.transpose.rowAsKeys
-        .sketch(numReducersOpt.getOrElse(1000))
-        .join(sparseMatrix.rowAsKeys)
+    v-vaw wesuwt =
+      // 1000 is the weducew nyumbew u-used fow sketchjoin; 1000 i-is a n-nyumbew that wowks weww empiwicawwy. 😳😳😳
+      // feew f-fwee to change this ow make t-this as a pawam i-if you find this does nyot wowk f-fow youw case. (///ˬ///✿)
+      this.twanspose.wowaskeys
+        .sketch(numweducewsopt.getowewse(1000))
+        .join(spawsematwix.wowaskeys)
         .map {
-          case (_, ((row1, value1), (col2, value2))) =>
-            (row1, col2) -> numericV.times(value1, value2)
+          c-case (_, ^^;; ((wow1, v-vawue1), ^^ (cow2, (///ˬ///✿) vawue2))) =>
+            (wow1, -.- cow2) -> n-nyumewicv.times(vawue1, /(^•ω•^) vawue2)
         }
-        .sumByKey
+        .sumbykey
         .map {
-          case ((row, col), value) =>
-            (row, col, value)
+          c-case ((wow, c-cow), UwU vawue) =>
+            (wow, (⑅˘꒳˘) c-cow, vawue)
         }
 
-    SparseMatrix(result)
+    s-spawsematwix(wesuwt)
   }
 
   /**
-   * Multiply a SparseRowMatrix. The implementation of this function assume the input SparseRowMatrix
-   * is a skinny matrix, i.e., with a small number of unique columns. Based on our experience, you can
-   * think 100K is a small number here.
+   * m-muwtipwy a-a spawsewowmatwix. ʘwʘ t-the impwementation o-of this function assume t-the input spawsewowmatwix
+   * i-is a skinny matwix, σωσ i-i.e., with a smow nyumbew of u-unique cowumns. ^^ based on ouw expewience, OwO you can
+   * t-think 100k is a smow nyumbew h-hewe. (ˆ ﻌ ˆ)♡
    *
-   * @param skinnyMatrix    another matrix to multiply
-   * @param numReducersOpt  optional parameter to set number of reducers. It uses 1000 by default.
-   *                        you can change it based on your applications.
-   * @param ordering2 ordering function for the column type of another matrix
-   * @param injection2 injection function for the column type of another matrix
-   * @tparam C2 col type of another matrix
+   * @pawam s-skinnymatwix    a-anothew matwix to muwtipwy
+   * @pawam n-nyumweducewsopt  optionaw pawametew t-to set nyumbew of weducews. o.O i-it uses 1000 by defauwt. (˘ω˘)
+   *                        y-you can change it based on youw appwications. 😳
+   * @pawam owdewing2 owdewing function fow t-the cowumn type of anothew matwix
+   * @pawam injection2 i-injection f-function fow the cowumn type of anothew matwix
+   * @tpawam c2 cow type of anothew m-matwix
    *
-   * @return
+   * @wetuwn
    */
-  def multiplySkinnySparseRowMatrix[C2](
-    skinnyMatrix: SparseRowMatrix[C, C2, V],
-    numReducersOpt: Option[Int] = None
+  def muwtipwyskinnyspawsewowmatwix[c2](
+    s-skinnymatwix: s-spawsewowmatwix[c, (U ᵕ U❁) c-c2, :3 v],
+    numweducewsopt: option[int] = nyone
   )(
-    implicit ordering2: Ordering[C2],
-    injection2: Injection[C2, Array[Byte]]
-  ): SparseRowMatrix[R, C2, V] = {
+    i-impwicit o-owdewing2: owdewing[c2], o.O
+    i-injection2: injection[c2, (///ˬ///✿) awway[byte]]
+  ): spawsewowmatwix[w, OwO c2, v] = {
 
-    assert(
-      skinnyMatrix.isSkinnyMatrix,
-      "this function only works for skinny sparse row matrix, otherwise you will get out-of-memory problem")
+    a-assewt(
+      skinnymatwix.isskinnymatwix, >w<
+      "this f-function o-onwy wowks fow s-skinny spawse wow matwix, ^^ othewwise y-you wiww get o-out-of-memowy p-pwobwem")
 
-    implicit val colInjectionFunction: C => Array[Byte] = colInj.toFunction
+    impwicit v-vaw cowinjectionfunction: c => awway[byte] = c-cowinj.tofunction
 
-    val result =
-      // 1000 is the reducer number used for sketchJoin; 1000 is a number that works well empirically.
-      // feel free to change this or make this as a param if you find this does not work for your case.
-      this.transpose.rowAsKeys
-        .sketch(numReducersOpt.getOrElse(1000))
-        .join(skinnyMatrix.pipe)
+    v-vaw w-wesuwt =
+      // 1000 i-is the weducew n-nyumbew used f-fow sketchjoin; 1000 i-is a nyumbew t-that wowks weww empiwicawwy. (⑅˘꒳˘)
+      // f-feew fwee to change this o-ow make this as a pawam if you f-find this does n-nyot wowk fow y-youw case. ʘwʘ
+      this.twanspose.wowaskeys
+        .sketch(numweducewsopt.getowewse(1000))
+        .join(skinnymatwix.pipe)
         .map {
-          case (_, ((row1, value1), colMap)) =>
-            row1 -> colMap.mapValues(v => numericV.times(value1, v))
+          case (_, (///ˬ///✿) ((wow1, XD vawue1), cowmap)) =>
+            w-wow1 -> cowmap.mapvawues(v => n-numewicv.times(vawue1, 😳 v-v))
         }
-        .sumByKey
+        .sumbykey
 
-    SparseRowMatrix(result, skinnyMatrix.isSkinnyMatrix)
+    spawsewowmatwix(wesuwt, >w< skinnymatwix.isskinnymatwix)
   }
 
   /***
-   * Multiply a DenseRowMatrix. The result will be also a DenseRowMatrix.
+   * muwtipwy a d-densewowmatwix. (˘ω˘) t-the wesuwt wiww be awso a densewowmatwix. nyaa~~
    *
-   * @param denseRowMatrix matrix to multiply
-   * @param numReducersOpt optional parameter to set number of reducers. It uses 1000 by default.
-   *                       you can change it based on your applications
-   * @return
+   * @pawam d-densewowmatwix m-matwix to muwtipwy
+   * @pawam nyumweducewsopt optionaw p-pawametew to s-set nyumbew of weducews. 😳😳😳 i-it uses 1000 b-by defauwt. (U ﹏ U)
+   *                       you can change it based o-on youw appwications
+   * @wetuwn
    */
-  def multiplyDenseRowMatrix(
-    denseRowMatrix: DenseRowMatrix[C],
-    numReducersOpt: Option[Int] = None
-  ): DenseRowMatrix[R] = {
+  def m-muwtipwydensewowmatwix(
+    densewowmatwix: densewowmatwix[c], (˘ω˘)
+    numweducewsopt: option[int] = n-nyone
+  ): densewowmatwix[w] = {
 
-    implicit val colInjectionFunction: C => Array[Byte] = colInj.toFunction
-    implicit val arrayVSemiGroup: Semigroup[Array[Double]] = denseRowMatrix.semigroupArrayV
+    impwicit vaw cowinjectionfunction: c-c => awway[byte] = c-cowinj.tofunction
+    i-impwicit vaw awwayvsemigwoup: s-semigwoup[awway[doubwe]] = densewowmatwix.semigwoupawwayv
 
-    val result =
-      // 1000 is the reducer number used for sketchJoin; 1000 is a number that works well empirically.
-      // feel free to change this or make this as a param if you find this does not work for your case.
-      this.transpose.rowAsKeys
-        .sketch(numReducersOpt.getOrElse(1000))
-        .join(denseRowMatrix.pipe)
+    v-vaw wesuwt =
+      // 1000 is t-the weducew nyumbew used fow sketchjoin; 1000 is a-a nyumbew that w-wowks weww empiwicawwy. :3
+      // f-feew fwee to change t-this ow make this as a pawam i-if you find this d-does not wowk f-fow youw case. >w<
+      this.twanspose.wowaskeys
+        .sketch(numweducewsopt.getowewse(1000))
+        .join(densewowmatwix.pipe)
         .map {
-          case (_, ((row1, value1), array)) =>
-            row1 -> array.map(v => numericV.toDouble(value1) * v)
+          c-case (_, ^^ ((wow1, 😳😳😳 vawue1), awway)) =>
+            w-wow1 -> a-awway.map(v => n-nyumewicv.todoubwe(vawue1) * v)
         }
-        .sumByKey
+        .sumbykey
 
-    DenseRowMatrix(result)
+    densewowmatwix(wesuwt)
   }
 
-  // Transpose the matrix.
-  lazy val transpose: SparseMatrix[C, R, V] = {
-    SparseMatrix(
+  // twanspose the matwix. nyaa~~
+  wazy v-vaw twanspose: spawsematwix[c, (⑅˘꒳˘) w-w, :3 v] = {
+    s-spawsematwix(
       this.pipe
         .map {
-          case (row, col, value) =>
-            (col, row, value)
+          case (wow, ʘwʘ c-cow, vawue) =>
+            (cow, rawr x3 wow, vawue)
         })
   }
 
-  // Create a Key-Val TypedPipe for .join() and other use cases.
-  lazy val rowAsKeys: TypedPipe[(R, (C, V))] = {
+  // c-cweate a key-vaw t-typedpipe fow .join() a-and othew u-use cases. (///ˬ///✿)
+  w-wazy vaw wowaskeys: typedpipe[(w, (c, 😳😳😳 v))] = {
     this.pipe
       .map {
-        case (row, col, value) =>
-          (row, (col, value))
+        case (wow, XD cow, v-vawue) =>
+          (wow, >_< (cow, >w< vawue))
       }
   }
 
-  // convert to a TypedPipe
-  lazy val toTypedPipe: TypedPipe[(R, C, V)] = {
+  // c-convewt to a typedpipe
+  wazy vaw totypedpipe: typedpipe[(w, /(^•ω•^) c-c, v)] = {
     this.pipe
   }
 
-  lazy val forceToDisk: SparseMatrix[R, C, V] = {
-    SparseMatrix(this.pipe.forceToDisk)
+  wazy vaw fowcetodisk: spawsematwix[w, :3 c-c, v] = {
+    spawsematwix(this.pipe.fowcetodisk)
   }
 
   /**
-   * Convert the matrix to a SparseRowMatrix. Do this only when the max number of non-zero values per row is
-   * small (say, not more than 200K).
+   * c-convewt the matwix to a spawsewowmatwix. ʘwʘ d-do this onwy when the max nyumbew of n-nyon-zewo vawues p-pew wow is
+   * smow (say, (˘ω˘) nyot m-mowe than 200k). (ꈍᴗꈍ)
    *
-   * @isSkinnyMatrix is the resulted matrix skinny, i.e., number of unique colIds is small (<200K).
-   *                Note the difference between `number of unique colIds` and `max number of non-zero values per row`.
-   * @return
+   * @isskinnymatwix is t-the wesuwted matwix skinny, ^^ i.e., nyumbew of unique cowids is smow (<200k). ^^
+   *                n-nyote the diffewence between `numbew of unique cowids` a-and `max n-nyumbew of nyon-zewo v-vawues pew wow`. ( ͡o ω ͡o )
+   * @wetuwn
    */
-  def toSparseRowMatrix(isSkinnyMatrix: Boolean = false): SparseRowMatrix[R, C, V] = {
-    SparseRowMatrix(
+  def tospawsewowmatwix(isskinnymatwix: b-boowean = fawse): spawsewowmatwix[w, c, -.- v] = {
+    spawsewowmatwix(
       this.pipe.map {
-        case (i, j, v) =>
-          i -> Map(j -> v)
-      }.sumByKey,
-      isSkinnyMatrix)
+        c-case (i, ^^;; j, v) =>
+          i -> m-map(j -> v)
+      }.sumbykey,
+      i-isskinnymatwix)
   }
 
   /**
-   * Convert the matrix to a DenseRowMatrix
+   * c-convewt the matwix to a densewowmatwix
    *
-   * @param numCols the number of columns in the DenseRowMatrix.
-   * @param colToIndexFunction the function to convert colId to the column index in the dense matrix
-   * @return
+   * @pawam n-nyumcows the nyumbew o-of cowumns in the densewowmatwix. ^•ﻌ•^
+   * @pawam cowtoindexfunction t-the function to convewt cowid to the cowumn i-index in the dense matwix
+   * @wetuwn
    */
-  def toDenseRowMatrix(numCols: Int, colToIndexFunction: C => Int): DenseRowMatrix[R] = {
-    this.toSparseRowMatrix(isSkinnyMatrix = true).toDenseRowMatrix(numCols, colToIndexFunction)
+  def todensewowmatwix(numcows: int, (˘ω˘) c-cowtoindexfunction: c-c => int): densewowmatwix[w] = {
+    t-this.tospawsewowmatwix(isskinnymatwix = t-twue).todensewowmatwix(numcows, o.O c-cowtoindexfunction)
   }
 
   /**
-   * Determines whether we should return a given Iterator given a threshold for the sum of values
-   * across a row and whether we are looking to stay under or above that value.
-   * Note that Iterators are mutable/destructive, and even calling .size on it will 'use it up'
-   * i.e. it no longer hasNext and we no longer have any reference to the head of the collection.
+   * detewmines whethew we shouwd w-wetuwn a given itewatow given a thweshowd f-fow the sum of vawues
+   * acwoss a wow and whethew we awe wooking t-to stay undew o-ow above that vawue. (✿oωo)
+   * n-nyote t-that itewatows a-awe mutabwe/destwuctive, 😳😳😳 and even c-cawwing .size on it wiww 'use it up'
+   * i.e. (ꈍᴗꈍ) i-it no wongew hasnext and we nyo w-wongew have any wefewence to the head of the cowwection. σωσ
    *
-   * @param columnValueIterator    Iterator over column-value pairs.
-   * @param threshold The threshold for the sum of values
-   * @param ifMin     True if we want to stay at least above that given value
-   * @return          A new SparseMatrix after we have filtered the ineligible rows
+   * @pawam c-cowumnvawueitewatow    i-itewatow ovew cowumn-vawue paiws.
+   * @pawam t-thweshowd the thweshowd fow the s-sum of vawues
+   * @pawam i-ifmin     twue if we want t-to stay at weast a-above that given vawue
+   * @wetuwn          a-a nyew spawsematwix aftew we have fiwtewed the inewigibwe wows
    */
-  private[this] def filterIter(
-    columnValueIterator: Iterator[(C, V)],
-    threshold: V,
-    ifMin: Boolean
-  ): Iterator[(C, V)] = {
-    var sum: V = numericV.zero
-    var it: Iterator[(C, V)] = Iterator.empty
-    var exceeded = false
-    while (columnValueIterator.hasNext && !exceeded) {
-      val (c, v) = columnValueIterator.next
-      val nextSum = semigroupV.plus(sum, v)
-      val cmp = numericV.compare(nextSum, threshold)
-      if ((ifMin && cmp < 0) || (!ifMin && cmp <= 0)) {
-        it = it ++ Iterator((c, v))
-        sum = nextSum
-      } else {
-        it = it ++ Iterator((c, v))
-        exceeded = true
+  p-pwivate[this] def fiwtewitew(
+    c-cowumnvawueitewatow: itewatow[(c, UwU v)],
+    thweshowd: v-v, ^•ﻌ•^
+    ifmin: boowean
+  ): i-itewatow[(c, mya v-v)] = {
+    vaw sum: v = n-nyumewicv.zewo
+    v-vaw it: itewatow[(c, v)] = i-itewatow.empty
+    vaw exceeded = f-fawse
+    whiwe (cowumnvawueitewatow.hasnext && !exceeded) {
+      vaw (c, /(^•ω•^) v) = c-cowumnvawueitewatow.next
+      v-vaw nyextsum = semigwoupv.pwus(sum, rawr v)
+      vaw cmp = numewicv.compawe(nextsum, thweshowd)
+      i-if ((ifmin && c-cmp < 0) || (!ifmin && cmp <= 0)) {
+        it = it ++ itewatow((c, nyaa~~ v-v))
+        sum = nyextsum
+      } e-ewse {
+        i-it = it ++ itewatow((c, ( ͡o ω ͡o ) v))
+        exceeded = twue
       }
     }
-    (ifMin, exceeded) match {
-      case (true, true) => it ++ columnValueIterator
-      case (true, false) => Iterator.empty
-      case (false, true) => Iterator.empty
-      case (false, false) => it ++ columnValueIterator
+    (ifmin, σωσ exceeded) match {
+      c-case (twue, (✿oωo) twue) => it ++ cowumnvawueitewatow
+      c-case (twue, (///ˬ///✿) fawse) => itewatow.empty
+      c-case (fawse, σωσ t-twue) => itewatow.empty
+      c-case (fawse, UwU f-fawse) => it ++ c-cowumnvawueitewatow
     }
   }
 
   /**
-   * removes entries whose sum over rows do not meet the minimum sum (minSum)
-   * @param minSum  minimum sum for which we want to enforce across all rows
+   * wemoves e-entwies whose s-sum ovew wows d-do nyot meet the minimum sum (minsum)
+   * @pawam minsum  minimum sum fow which we want to enfowce acwoss aww w-wows
    */
-  def filterRowsByMinSum(minSum: V): SparseMatrix[R, C, V] = {
-    val filteredPipe = this.rowAsKeys.group
-      .mapValueStream(filterIter(_, threshold = minSum, ifMin = true)).map {
-        case (r, (c, v)) =>
-          (r, c, v)
+  def f-fiwtewwowsbyminsum(minsum: v-v): s-spawsematwix[w, (⑅˘꒳˘) c-c, v] = {
+    vaw f-fiwtewedpipe = this.wowaskeys.gwoup
+      .mapvawuestweam(fiwtewitew(_, /(^•ω•^) thweshowd = minsum, -.- ifmin = twue)).map {
+        c-case (w, (ˆ ﻌ ˆ)♡ (c, nyaa~~ v-v)) =>
+          (w, ʘwʘ c, v)
       }
-    SparseMatrix(filteredPipe)
+    spawsematwix(fiwtewedpipe)
   }
 
   /**
-   * removes entries whose sum over rows exceed the maximum sum (maxSum)
-   * @param maxSum  maximum sum for which we want to enforce across all rows
+   * w-wemoves e-entwies whose s-sum ovew wows exceed the maximum sum (maxsum)
+   * @pawam m-maxsum  maximum sum fow which we want t-to enfowce acwoss a-aww wows
    */
-  def filterRowsByMaxSum(maxSum: V): SparseMatrix[R, C, V] = {
-    val filteredPipe = this.rowAsKeys.group
-      .mapValueStream(filterIter(_, threshold = maxSum, ifMin = false)).map {
-        case (r, (c, v)) =>
-          (r, c, v)
+  def fiwtewwowsbymaxsum(maxsum: v): spawsematwix[w, :3 c-c, (U ᵕ U❁) v] = {
+    vaw fiwtewedpipe = t-this.wowaskeys.gwoup
+      .mapvawuestweam(fiwtewitew(_, (U ﹏ U) t-thweshowd = maxsum, ^^ ifmin = fawse)).map {
+        c-case (w, òωó (c, v-v)) =>
+          (w, /(^•ω•^) c-c, v)
       }
-    SparseMatrix(filteredPipe)
+    s-spawsematwix(fiwtewedpipe)
   }
 }

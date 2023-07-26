@@ -1,2154 +1,2154 @@
-package com.twitter.unified_user_actions.adapter
+package com.twittew.unified_usew_actions.adaptew
 
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.clientapp.thriftscala.ItemType
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.NotificationTabDetails
-import com.twitter.clientapp.thriftscala.ReportDetails
-import com.twitter.clientapp.thriftscala.SearchDetails
-import com.twitter.clientapp.thriftscala.SuggestionDetails
-import com.twitter.inject.Test
-import com.twitter.logbase.thriftscala.ClientEventReceiver
-import com.twitter.reportflow.thriftscala.ReportType
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.unified_user_actions.adapter.client_event.ClientEventAdapter
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.prop.TableFor1
-import org.scalatest.prop.TableFor2
-import scala.language.implicitConversions
+impowt com.twittew.cwientapp.thwiftscawa.eventnamespace
+i-impowt c-com.twittew.cwientapp.thwiftscawa.{item => w-wogeventitem}
+i-impowt c-com.twittew.cwientapp.thwiftscawa.itemtype
+i-impowt c-com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt com.twittew.cwientapp.thwiftscawa.notificationtabdetaiws
+impowt com.twittew.cwientapp.thwiftscawa.wepowtdetaiws
+impowt com.twittew.cwientapp.thwiftscawa.seawchdetaiws
+i-impowt com.twittew.cwientapp.thwiftscawa.suggestiondetaiws
+impowt com.twittew.inject.test
+i-impowt com.twittew.wogbase.thwiftscawa.cwienteventweceivew
+impowt com.twittew.wepowtfwow.thwiftscawa.wepowttype
+i-impowt com.twittew.suggests.contwowwew_data.thwiftscawa.contwowwewdata
+impowt com.twittew.unified_usew_actions.adaptew.cwient_event.cwienteventadaptew
+impowt c-com.twittew.unified_usew_actions.thwiftscawa._
+impowt com.twittew.utiw.time
+impowt o-owg.scawatest.pwop.tabwedwivenpwopewtychecks
+i-impowt owg.scawatest.pwop.tabwefow1
+impowt owg.scawatest.pwop.tabwefow2
+impowt scawa.wanguage.impwicitconvewsions
 
-class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
-  // Tests for invalid client-events
-  test("should ignore events") {
-    new TestFixtures.ClientEventFixture {
-      val eventsToBeIgnored: TableFor2[String, LogEvent] = Table(
-        ("namespace", "event"),
-        ("ddg", ddgEvent),
-        ("qig_ranker", qigRankerEvent),
-        ("timelnemixer", timelineMixerEvent),
-        ("timelineservice", timelineServiceEvent),
-        ("tweetconvosvc", tweetConcServiceEvent),
-        ("item-type is non-tweet", renderNonTweetItemTypeEvent)
+cwass cwienteventadaptewspec e-extends test with tabwedwivenpwopewtychecks {
+  // tests fow invawid cwient-events
+  test("shouwd i-ignowe events") {
+    nyew t-testfixtuwes.cwienteventfixtuwe {
+      v-vaw eventstobeignowed: tabwefow2[stwing, rawr w-wogevent] = tabwe(
+        ("namespace", "event"), rawr x3
+        ("ddg", (U ﹏ U) d-ddgevent), (ˆ ﻌ ˆ)♡
+        ("qig_wankew", :3 qigwankewevent), òωó
+        ("timewnemixew", /(^•ω•^) timewinemixewevent), >w<
+        ("timewinesewvice", nyaa~~ t-timewinesewviceevent), mya
+        ("tweetconvosvc", mya tweetconcsewviceevent), ʘwʘ
+        ("item-type is n-nyon-tweet", rawr wendewnontweetitemtypeevent)
       )
 
-      forEvery(eventsToBeIgnored) { (_: String, event: LogEvent) =>
-        val actual = ClientEventAdapter.adaptEvent(event)
-        assert(actual.isEmpty)
+      fowevewy(eventstobeignowed) { (_: stwing, event: wogevent) =>
+        vaw actuaw = cwienteventadaptew.adaptevent(event)
+        assewt(actuaw.isempty)
       }
     }
   }
 
-  test("Tests for ItemType filter") {
-    /// Tweet events
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val events = Table(
-          ("itemType", "expectedUUA"),
-          (Some(ItemType.Tweet), Seq(expectedTweetRenderDefaultTweetUUA)),
-          (Some(ItemType.QuotedTweet), Seq(expectedTweetRenderDefaultTweetUUA)),
-          (Some(ItemType.Topic), Nil),
-          (None, Nil)
+  t-test("tests fow itemtype fiwtew") {
+    /// t-tweet events
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw events = tabwe(
+          ("itemtype", (˘ω˘) "expecteduua"), /(^•ω•^)
+          (some(itemtype.tweet), (˘ω˘) seq(expectedtweetwendewdefauwttweetuua)), (///ˬ///✿)
+          (some(itemtype.quotedtweet), (˘ω˘) s-seq(expectedtweetwendewdefauwttweetuua)), -.-
+          (some(itemtype.topic), -.- n-nyiw), ^^
+          (none, (ˆ ﻌ ˆ)♡ nyiw)
         )
 
-        forEvery(events) { (itemTypeOpt: Option[ItemType], expected: Seq[UnifiedUserAction]) =>
-          val actual = ClientEventAdapter.adaptEvent(
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceRenderEventNamespace),
-              itemTypeOpt = itemTypeOpt
+        f-fowevewy(events) { (itemtypeopt: o-option[itemtype], UwU expected: s-seq[unifiedusewaction]) =>
+          vaw actuaw = c-cwienteventadaptew.adaptevent(
+            actiontowawddefauwttweetevent(
+              eventnamespace = s-some(cewendeweventnamespace), 🥺
+              itemtypeopt = i-itemtypeopt
             ))
-          assert(expected === actual)
+          assewt(expected === actuaw)
         }
       }
     }
 
-    /// Topic events
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val expected: UnifiedUserAction = mkExpectedUUAForActionTowardTopicEvent(
-          topicId = topicId,
-          clientEventNamespace = Some(uuaTopicFollowClientEventNamespace1),
-          actionType = ActionType.ClientTopicFollow
+    /// t-topic events
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw expected: unifiedusewaction = mkexpecteduuafowactiontowawdtopicevent(
+          topicid = topicid,
+          cwienteventnamespace = some(uuatopicfowwowcwienteventnamespace1), 🥺
+          a-actiontype = a-actiontype.cwienttopicfowwow
         )
-        val events = Table(
-          ("itemType", "expectedUUA"),
-          (Some(ItemType.Tweet), Seq(expected)),
-          (Some(ItemType.QuotedTweet), Seq(expected)),
-          (Some(ItemType.Topic), Seq(expected)),
-          (None, Nil)
+        vaw events = t-tabwe(
+          ("itemtype", 🥺 "expecteduua"), 🥺
+          (some(itemtype.tweet), :3 s-seq(expected)), (˘ω˘)
+          (some(itemtype.quotedtweet), ^^;; s-seq(expected)), (ꈍᴗꈍ)
+          (some(itemtype.topic), seq(expected)),
+          (none, ʘwʘ nyiw)
         )
 
-        forEvery(events) { (itemTypeOpt: Option[ItemType], expected: Seq[UnifiedUserAction]) =>
-          val actual = ClientEventAdapter.adaptEvent(
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceTopicFollow1),
-              itemId = None,
-              suggestionDetails =
-                Some(SuggestionDetails(decodedControllerData = Some(homeTweetControllerData()))),
-              itemTypeOpt = itemTypeOpt
+        fowevewy(events) { (itemtypeopt: option[itemtype], :3 e-expected: seq[unifiedusewaction]) =>
+          vaw actuaw = cwienteventadaptew.adaptevent(
+            actiontowawddefauwttweetevent(
+              eventnamespace = s-some(cetopicfowwow1), XD
+              itemid = nyone, UwU
+              s-suggestiondetaiws =
+                s-some(suggestiondetaiws(decodedcontwowwewdata = s-some(hometweetcontwowwewdata()))), rawr x3
+              itemtypeopt = i-itemtypeopt
             ))
-          assert(expected === actual)
+          a-assewt(expected === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetRenderImpression
-  test("ClientTweetRenderImpression") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+  // t-tests fow cwienttweetwendewimpwession
+  test("cwienttweetwendewimpwession") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw cwientevents = t-tabwe(
+          ("actiontweettype", ( ͡o ω ͡o ) "cwientevent", :3 "expecteduuaevent"), rawr
           (
-            "Default",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceRenderEventNamespace)),
-            Seq(expectedTweetRenderDefaultTweetUUA)),
+            "defauwt", ^•ﻌ•^
+            a-actiontowawddefauwttweetevent(eventnamespace = s-some(cewendeweventnamespace)), 🥺
+            seq(expectedtweetwendewdefauwttweetuua)), (⑅˘꒳˘)
           (
-            "Reply",
-            actionTowardReplyEvent(eventNamespace = Some(ceRenderEventNamespace)),
-            Seq(expectedTweetRenderReplyUUA)),
+            "wepwy", :3
+            actiontowawdwepwyevent(eventnamespace = some(cewendeweventnamespace)), (///ˬ///✿)
+            s-seq(expectedtweetwendewwepwyuua)), 😳😳😳
           (
-            "Retweet",
-            actionTowardRetweetEvent(eventNamespace = Some(ceRenderEventNamespace)),
-            Seq(expectedTweetRenderRetweetUUA)),
+            "wetweet", 😳😳😳
+            actiontowawdwetweetevent(eventnamespace = some(cewendeweventnamespace)), 😳😳😳
+            seq(expectedtweetwendewwetweetuua)), nyaa~~
           (
-            "Quote",
-            actionTowardQuoteEvent(
-              eventNamespace = Some(ceRenderEventNamespace),
-              quotedAuthorId = Some(456L)),
-            Seq(expectedTweetRenderQuoteUUA1, expectedTweetRenderQuoteUUA2)),
+            "quote", UwU
+            actiontowawdquoteevent(
+              eventnamespace = some(cewendeweventnamespace), òωó
+              q-quotedauthowid = some(456w)), òωó
+            seq(expectedtweetwendewquoteuua1, UwU expectedtweetwendewquoteuua2)), (///ˬ///✿)
           (
-            "Retweet of a reply that quoted another Tweet",
-            actionTowardRetweetEventWithReplyAndQuote(eventNamespace =
-              Some(ceRenderEventNamespace)),
-            Seq(
-              expectedTweetRenderRetweetWithReplyAndQuoteUUA1,
-              expectedTweetRenderRetweetWithReplyAndQuoteUUA2))
+            "wetweet o-of a wepwy t-that quoted a-anothew tweet", ( ͡o ω ͡o )
+            actiontowawdwetweeteventwithwepwyandquote(eventnamespace =
+              s-some(cewendeweventnamespace)), rawr
+            seq(
+              e-expectedtweetwendewwetweetwithwepwyandquoteuua1,
+              e-expectedtweetwendewwetweetwithwepwyandquoteuua2))
         )
-        forEvery(clientEvents) {
-          (_: String, event: LogEvent, expectedUUA: Seq[UnifiedUserAction]) =>
-            val actual = ClientEventAdapter.adaptEvent(event)
-            actual should contain theSameElementsAs expectedUUA
+        fowevewy(cwientevents) {
+          (_: stwing, :3 event: wogevent, >w< expecteduua: seq[unifiedusewaction]) =>
+            v-vaw actuaw = cwienteventadaptew.adaptevent(event)
+            a-actuaw shouwd contain thesameewementsas e-expecteduua
         }
       }
     }
   }
 
-  test("ClientTweetGallery/DetailImpression") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+  t-test("cwienttweetgawwewy/detaiwimpwession") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw cwientevents = tabwe(
+          ("actiontweettype", σωσ "cwientevent", σωσ "expecteduuaevent"), >_<
           (
-            "DetailImpression: tweet::tweet::impression",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceTweetDetailsEventNamespace1)),
-            expectedTweetDetailImpressionUUA1),
+            "detaiwimpwession: t-tweet::tweet::impwession", -.-
+            a-actiontowawddefauwttweetevent(eventnamespace = some(cetweetdetaiwseventnamespace1)), 😳😳😳
+            expectedtweetdetaiwimpwessionuua1), :3
           (
-            "GalleryImpression: gallery:photo:impression",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceGalleryEventNamespace)),
-            expectedTweetGalleryImpressionUUA),
+            "gawwewyimpwession: gawwewy:photo:impwession", mya
+            actiontowawddefauwttweetevent(eventnamespace = s-some(cegawwewyeventnamespace)), (✿oωo)
+            e-expectedtweetgawwewyimpwessionuua), 😳😳😳
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+        f-fowevewy(cwientevents) { (_: stwing, o.O e-event: wogevent, (ꈍᴗꈍ) e-expecteduua: unifiedusewaction) =>
+          vaw actuaw = cwienteventadaptew.adaptevent(event)
+          a-assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetLingerImpression
-  test("ClientTweetLingerImpression") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
-          ("Default", lingerDefaultTweetEvent, expectedTweetLingerDefaultTweetUUA),
-          ("Reply", lingerReplyEvent, expectedTweetLingerReplyUUA),
-          ("Retweet", lingerRetweetEvent, expectedTweetLingerRetweetUUA),
-          ("Quote", lingerQuoteEvent, expectedTweetLingerQuoteUUA),
+  // tests fow cwienttweetwingewimpwession
+  test("cwienttweetwingewimpwession") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw cwientevents = tabwe(
+          ("actiontweettype", (ˆ ﻌ ˆ)♡ "cwientevent", "expecteduuaevent"), -.-
+          ("defauwt", mya wingewdefauwttweetevent, :3 e-expectedtweetwingewdefauwttweetuua), σωσ
+          ("wepwy", 😳😳😳 wingewwepwyevent, -.- e-expectedtweetwingewwepwyuua), 😳😳😳
+          ("wetweet", rawr x3 wingewwetweetevent, (///ˬ///✿) expectedtweetwingewwetweetuua), >w<
+          ("quote", o.O wingewquoteevent, (˘ω˘) expectedtweetwingewquoteuua), rawr
           (
-            "Retweet of a reply that quoted another Tweet",
-            lingerRetweetWithReplyAndQuoteEvent,
-            expectedTweetLingerRetweetWithReplyAndQuoteUUA),
+            "wetweet o-of a wepwy that quoted anothew tweet", mya
+            wingewwetweetwithwepwyandquoteevent, òωó
+            expectedtweetwingewwetweetwithwepwyandquoteuua), nyaa~~
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+        f-fowevewy(cwientevents) { (_: stwing, event: wogevent, òωó expecteduua: u-unifiedusewaction) =>
+          v-vaw actuaw = cwienteventadaptew.adaptevent(event)
+          assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetClickQuote
+  // t-tests f-fow cwienttweetcwickquote
   test(
-    "ClickQuote, which is the click on the quote button, results in setting retweeting, inReplyTo, quoted tweet ids") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual = ClientEventAdapter.adaptEvent(
-          // there shouldn't be any quotingTweetId in CE when it is "quote"
-          actionTowardRetweetEventWithReplyAndQuote(eventNamespace = Some(
-            EventNamespace(
-              action = Some("quote")
+    "cwickquote, mya which is the cwick on the quote b-button, ^^ wesuwts in setting wetweeting, ^•ﻌ•^ i-inwepwyto, -.- quoted tweet ids") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw actuaw = c-cwienteventadaptew.adaptevent(
+          // thewe s-shouwdn't be any quotingtweetid i-in ce when it is "quote"
+          a-actiontowawdwetweeteventwithwepwyandquote(eventnamespace = s-some(
+            e-eventnamespace(
+              action = some("quote")
             ))))
-        assert(Seq(expectedTweetClickQuoteUUA) === actual)
+        a-assewt(seq(expectedtweetcwickquoteuua) === a-actuaw)
       }
     }
   }
 
-  // Tests for ClientTweetQuote
-  test(
-    "Quote, which is sending the quote, results in setting retweeting, inReplyTo, quoted tweet ids") {
-    new TestFixtures.ClientEventFixture {
-      val actions: TableFor1[String] = Table(
-        "action",
-        "send_quote_tweet",
-        "retweet_with_comment"
+  // tests fow cwienttweetquote
+  t-test(
+    "quote, UwU w-which i-is sending the quote, (˘ω˘) wesuwts in setting wetweeting, UwU i-inwepwyto, quoted tweet i-ids") {
+    nyew t-testfixtuwes.cwienteventfixtuwe {
+      vaw actions: tabwefow1[stwing] = tabwe(
+        "action", rawr
+        "send_quote_tweet", :3
+        "wetweet_with_comment"
       )
 
-      Time.withTimeAt(frozenTime) { _ =>
-        forEvery(actions) { action =>
-          val actual = ClientEventAdapter.adaptEvent(
-            // there shouldn't be any quotingTweetId in CE when it is "quote"
-            actionTowardRetweetEventWithReplyAndQuote(eventNamespace = Some(
-              EventNamespace(
-                action = Some(action)
+      t-time.withtimeat(fwozentime) { _ =>
+        f-fowevewy(actions) { a-action =>
+          v-vaw actuaw = cwienteventadaptew.adaptevent(
+            // thewe s-shouwdn't be any quotingtweetid in ce when it is "quote"
+            actiontowawdwetweeteventwithwepwyandquote(eventnamespace = some(
+              eventnamespace(
+                a-action = some(action)
               ))))
-          assert(Seq(expectedTweetQuoteUUA(action)) === actual)
+          assewt(seq(expectedtweetquoteuua(action)) === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetFav and ClientTweetUnfav
-  test("ClientTweetFav and ClientTweetUnfav") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+  // tests fow cwienttweetfav a-and cwienttweetunfav
+  test("cwienttweetfav a-and cwienttweetunfav") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        v-vaw cwientevents = t-tabwe(
+          ("actiontweettype", nyaa~~ "cwientevent", rawr "expecteduuaevent"), (ˆ ﻌ ˆ)♡
           (
-            "Default Tweet favorite",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteDefaultTweetUUA),
+            "defauwt t-tweet favowite",
+            a-actiontowawddefauwttweetevent(eventnamespace = s-some(cefavowiteeventnamespace)),
+            expectedtweetfavowitedefauwttweetuua), (ꈍᴗꈍ)
           (
-            "Reply Tweet favorite",
-            actionTowardReplyEvent(eventNamespace = Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteReplyUUA),
+            "wepwy tweet favowite", (˘ω˘)
+            actiontowawdwepwyevent(eventnamespace = some(cefavowiteeventnamespace)), (U ﹏ U)
+            expectedtweetfavowitewepwyuua), >w<
           (
-            "Retweet Tweet favorite",
-            actionTowardRetweetEvent(eventNamespace = Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteRetweetUUA),
+            "wetweet tweet favowite", UwU
+            a-actiontowawdwetweetevent(eventnamespace = s-some(cefavowiteeventnamespace)), (ˆ ﻌ ˆ)♡
+            e-expectedtweetfavowitewetweetuua), nyaa~~
           (
-            "Quote Tweet favorite",
-            actionTowardQuoteEvent(eventNamespace = Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteQuoteUUA),
+            "quote tweet f-favowite", 🥺
+            actiontowawdquoteevent(eventnamespace = some(cefavowiteeventnamespace)), >_<
+            expectedtweetfavowitequoteuua), òωó
           (
-            "Retweet of a reply that quoted another Tweet favorite",
-            actionTowardRetweetEventWithReplyAndQuote(eventNamespace =
-              Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteRetweetWithReplyAndQuoteUUA),
+            "wetweet o-of a wepwy that q-quoted anothew tweet favowite", ʘwʘ
+            a-actiontowawdwetweeteventwithwepwyandquote(eventnamespace =
+              some(cefavowiteeventnamespace)), mya
+            expectedtweetfavowitewetweetwithwepwyandquoteuua),
           (
-            "Default Tweet unfavorite",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(EventNamespace(action = Some("unfavorite"))),
-            ),
-            mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace = Some(ClientEventNamespace(action = Some("unfavorite"))),
-              actionType = ActionType.ClientTweetUnfav
+            "defauwt t-tweet unfavowite", σωσ
+            a-actiontowawddefauwttweetevent(
+              eventnamespace = s-some(eventnamespace(action = s-some("unfavowite"))), OwO
+            ), (✿oωo)
+            mkexpecteduuafowactiontowawddefauwttweetevent(
+              cwienteventnamespace = some(cwienteventnamespace(action = some("unfavowite"))), ʘwʘ
+              actiontype = a-actiontype.cwienttweetunfav
             ))
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+        f-fowevewy(cwientevents) { (_: s-stwing, mya event: w-wogevent, -.- expecteduua: u-unifiedusewaction) =>
+          vaw actuaw = c-cwienteventadaptew.adaptevent(event)
+          a-assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetClickReply
-  test("ClientTweetClickReply") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+  // t-tests f-fow cwienttweetcwickwepwy
+  test("cwienttweetcwickwepwy") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw cwientevents = tabwe(
+          ("actiontweettype", -.- "cwientevent", ^^;; "expecteduuaevent"), (ꈍᴗꈍ)
           (
-            "Default",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyDefaultTweetUUA),
+            "defauwt", rawr
+            a-actiontowawddefauwttweetevent(eventnamespace = some(cecwickwepwyeventnamespace)), ^^
+            e-expectedtweetcwickwepwydefauwttweetuua), nyaa~~
           (
-            "Reply",
-            actionTowardReplyEvent(eventNamespace = Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyReplyUUA),
+            "wepwy", (⑅˘꒳˘)
+            a-actiontowawdwepwyevent(eventnamespace = some(cecwickwepwyeventnamespace)),
+            e-expectedtweetcwickwepwywepwyuua),
           (
-            "Retweet",
-            actionTowardRetweetEvent(eventNamespace = Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyRetweetUUA),
+            "wetweet", (U ᵕ U❁)
+            actiontowawdwetweetevent(eventnamespace = some(cecwickwepwyeventnamespace)), (ꈍᴗꈍ)
+            e-expectedtweetcwickwepwywetweetuua), (✿oωo)
           (
-            "Quote",
-            actionTowardQuoteEvent(eventNamespace = Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyQuoteUUA),
+            "quote", UwU
+            a-actiontowawdquoteevent(eventnamespace = s-some(cecwickwepwyeventnamespace)), ^^
+            expectedtweetcwickwepwyquoteuua), :3
           (
-            "Retweet of a reply that quoted another Tweet",
-            actionTowardRetweetEventWithReplyAndQuote(eventNamespace =
-              Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyRetweetWithReplyAndQuoteUUA)
+            "wetweet of a wepwy that quoted anothew t-tweet", ( ͡o ω ͡o )
+            actiontowawdwetweeteventwithwepwyandquote(eventnamespace =
+              some(cecwickwepwyeventnamespace)), ( ͡o ω ͡o )
+            e-expectedtweetcwickwepwywetweetwithwepwyandquoteuua)
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+        f-fowevewy(cwientevents) { (_: stwing, (U ﹏ U) event: w-wogevent, -.- expecteduua: unifiedusewaction) =>
+          v-vaw actuaw = c-cwienteventadaptew.adaptevent(event)
+          assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetReply
-  test("ClientTweetReply") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
-          ("DefaultOrReply", replyToDefaultTweetOrReplyEvent, expectedTweetReplyDefaultTweetUUA),
-          ("Retweet", replyToRetweetEvent, expectedTweetReplyRetweetUUA),
-          ("Quote", replyToQuoteEvent, expectedTweetReplyQuoteUUA),
+  // t-tests fow cwienttweetwepwy
+  test("cwienttweetwepwy") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw cwientevents = t-tabwe(
+          ("actiontweettype", 😳😳😳 "cwientevent", UwU "expecteduuaevent"), >w<
+          ("defauwtowwepwy", wepwytodefauwttweetowwepwyevent, mya e-expectedtweetwepwydefauwttweetuua), :3
+          ("wetweet", (ˆ ﻌ ˆ)♡ w-wepwytowetweetevent, (U ﹏ U) e-expectedtweetwepwywetweetuua), ʘwʘ
+          ("quote", rawr wepwytoquoteevent, (ꈍᴗꈍ) expectedtweetwepwyquoteuua), ( ͡o ω ͡o )
           (
-            "Retweet of a reply that quoted another Tweet",
-            replyToRetweetWithReplyAndQuoteEvent,
-            expectedTweetReplyRetweetWithReplyAndQuoteUUA)
+            "wetweet of a wepwy that quoted anothew tweet", 😳😳😳
+            wepwytowetweetwithwepwyandquoteevent, òωó
+            expectedtweetwepwywetweetwithwepwyandquoteuua)
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+        fowevewy(cwientevents) { (_: stwing, mya event: wogevent, rawr x3 expecteduua: unifiedusewaction) =>
+          vaw actuaw = cwienteventadaptew.adaptevent(event)
+          a-assewt(seq(expecteduua) === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetRetweet and ClientTweetUnretweet
-  test("ClientTweetRetweet and ClientTweetUnretweet") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+  // tests fow cwienttweetwetweet a-and cwienttweetunwetweet
+  test("cwienttweetwetweet a-and cwienttweetunwetweet") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        v-vaw cwientevents = tabwe(
+          ("actiontweettype", XD "cwientevent", (ˆ ﻌ ˆ)♡ "expecteduuaevent"), >w<
           (
-            "Default Tweet retweet",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetDefaultTweetUUA),
+            "defauwt t-tweet w-wetweet", (ꈍᴗꈍ)
+            actiontowawddefauwttweetevent(eventnamespace = s-some(cewetweeteventnamespace)), (U ﹏ U)
+            expectedtweetwetweetdefauwttweetuua), >_<
           (
-            "Reply Tweet retweet",
-            actionTowardReplyEvent(eventNamespace = Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetReplyUUA),
+            "wepwy t-tweet w-wetweet", >_<
+            actiontowawdwepwyevent(eventnamespace = some(cewetweeteventnamespace)), -.-
+            e-expectedtweetwetweetwepwyuua), òωó
           (
-            "Retweet Tweet retweet",
-            actionTowardRetweetEvent(eventNamespace = Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetRetweetUUA),
+            "wetweet t-tweet w-wetweet", o.O
+            a-actiontowawdwetweetevent(eventnamespace = s-some(cewetweeteventnamespace)), σωσ
+            e-expectedtweetwetweetwetweetuua), σωσ
           (
-            "Quote Tweet retweet",
-            actionTowardQuoteEvent(eventNamespace = Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetQuoteUUA),
+            "quote t-tweet w-wetweet",
+            a-actiontowawdquoteevent(eventnamespace = some(cewetweeteventnamespace)), mya
+            e-expectedtweetwetweetquoteuua), o.O
           (
-            "Retweet of a reply that quoted another Tweet retweet",
-            actionTowardRetweetEventWithReplyAndQuote(eventNamespace =
-              Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetRetweetWithReplyAndQuoteUUA),
+            "wetweet o-of a w-wepwy that quoted anothew tweet w-wetweet", XD
+            actiontowawdwetweeteventwithwepwyandquote(eventnamespace =
+              some(cewetweeteventnamespace)), XD
+            e-expectedtweetwetweetwetweetwithwepwyandquoteuua), (✿oωo)
           (
-            "Default Tweet unretweet",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(EventNamespace(action = Some("unretweet"))),
-            ),
-            mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace = Some(ClientEventNamespace(action = Some("unretweet"))),
-              actionType = ActionType.ClientTweetUnretweet
+            "defauwt tweet unwetweet", -.-
+            a-actiontowawddefauwttweetevent(
+              e-eventnamespace = s-some(eventnamespace(action = some("unwetweet"))), (ꈍᴗꈍ)
+            ), ( ͡o ω ͡o )
+            m-mkexpecteduuafowactiontowawddefauwttweetevent(
+              cwienteventnamespace = s-some(cwienteventnamespace(action = some("unwetweet"))), (///ˬ///✿)
+              actiontype = actiontype.cwienttweetunwetweet
             ))
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+        f-fowevewy(cwientevents) { (_: stwing, 🥺 e-event: wogevent, (ˆ ﻌ ˆ)♡ expecteduua: unifiedusewaction) =>
+          vaw actuaw = cwienteventadaptew.adaptevent(event)
+          assewt(seq(expecteduua) === a-actuaw)
         }
       }
     }
   }
 
-  test("include Topic Id") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual = ClientEventAdapter.adaptEvent(renderDefaultTweetWithTopicIdEvent)
-        assert(Seq(expectedTweetRenderDefaultTweetWithTopicIdUUA) === actual)
+  test("incwude t-topic id") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw actuaw = cwienteventadaptew.adaptevent(wendewdefauwttweetwithtopicidevent)
+        a-assewt(seq(expectedtweetwendewdefauwttweetwithtopiciduua) === actuaw)
       }
     }
   }
 
-  // Tests for ClientTweetVideoPlayback0, 25, 50, 75, 95, 100 PlayFromTap, QualityView,
-  // VideoView, MrcView, ViewThreshold
-  test("ClientTweetVideoPlayback*") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("ceNamespace", "uuaNamespace", "uuaActionType"),
+  // t-tests f-fow cwienttweetvideopwayback0, ^•ﻌ•^ 25, rawr x3 50, 75, 95, 100 p-pwayfwomtap, quawityview, (U ﹏ U)
+  // videoview, OwO m-mwcview, (✿oωo) viewthweshowd
+  t-test("cwienttweetvideopwayback*") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        v-vaw cwientevents = tabwe(
+          ("cenamespace", "uuanamespace", "uuaactiontype"), (⑅˘꒳˘)
           (
-            ceVideoPlayback25,
-            uuaVideoPlayback25ClientEventNamespace,
-            ActionType.ClientTweetVideoPlayback25),
+            cevideopwayback25, UwU
+            u-uuavideopwayback25cwienteventnamespace, (ˆ ﻌ ˆ)♡
+            actiontype.cwienttweetvideopwayback25), /(^•ω•^)
           (
-            ceVideoPlayback50,
-            uuaVideoPlayback50ClientEventNamespace,
-            ActionType.ClientTweetVideoPlayback50),
+            c-cevideopwayback50, (˘ω˘)
+            u-uuavideopwayback50cwienteventnamespace, XD
+            a-actiontype.cwienttweetvideopwayback50),
           (
-            ceVideoPlayback75,
-            uuaVideoPlayback75ClientEventNamespace,
-            ActionType.ClientTweetVideoPlayback75),
+            cevideopwayback75, òωó
+            u-uuavideopwayback75cwienteventnamespace, UwU
+            a-actiontype.cwienttweetvideopwayback75), -.-
           (
-            ceVideoPlayback95,
-            uuaVideoPlayback95ClientEventNamespace,
-            ActionType.ClientTweetVideoPlayback95),
+            c-cevideopwayback95, (ꈍᴗꈍ)
+            u-uuavideopwayback95cwienteventnamespace, (⑅˘꒳˘)
+            actiontype.cwienttweetvideopwayback95), 🥺
           (
-            ceVideoPlayFromTap,
-            uuaVideoPlayFromTapClientEventNamespace,
-            ActionType.ClientTweetVideoPlayFromTap),
+            c-cevideopwayfwomtap, òωó
+            u-uuavideopwayfwomtapcwienteventnamespace, 😳
+            a-actiontype.cwienttweetvideopwayfwomtap), òωó
           (
-            ceVideoQualityView,
-            uuaVideoQualityViewClientEventNamespace,
-            ActionType.ClientTweetVideoQualityView),
-          (ceVideoView, uuaVideoViewClientEventNamespace, ActionType.ClientTweetVideoView),
-          (ceVideoMrcView, uuaVideoMrcViewClientEventNamespace, ActionType.ClientTweetVideoMrcView),
+            c-cevideoquawityview, 🥺
+            u-uuavideoquawityviewcwienteventnamespace, ( ͡o ω ͡o )
+            actiontype.cwienttweetvideoquawityview), UwU
+          (cevideoview, 😳😳😳 u-uuavideoviewcwienteventnamespace, a-actiontype.cwienttweetvideoview), ʘwʘ
+          (cevideomwcview, ^^ uuavideomwcviewcwienteventnamespace, >_< a-actiontype.cwienttweetvideomwcview), (ˆ ﻌ ˆ)♡
           (
-            ceVideoViewThreshold,
-            uuaVideoViewThresholdClientEventNamespace,
-            ActionType.ClientTweetVideoViewThreshold),
+            cevideoviewthweshowd, (ˆ ﻌ ˆ)♡
+            u-uuavideoviewthweshowdcwienteventnamespace, 🥺
+            actiontype.cwienttweetvideoviewthweshowd), ( ͡o ω ͡o )
           (
-            ceVideoCtaUrlClick,
-            uuaVideoCtaUrlClickClientEventNamespace,
-            ActionType.ClientTweetVideoCtaUrlClick),
+            c-cevideoctauwwcwick, (ꈍᴗꈍ)
+            uuavideoctauwwcwickcwienteventnamespace, :3
+            a-actiontype.cwienttweetvideoctauwwcwick), (✿oωo)
           (
-            ceVideoCtaWatchClick,
-            uuaVideoCtaWatchClickClientEventNamespace,
-            ActionType.ClientTweetVideoCtaWatchClick),
+            c-cevideoctawatchcwick, (U ᵕ U❁)
+            u-uuavideoctawatchcwickcwienteventnamespace, UwU
+            actiontype.cwienttweetvideoctawatchcwick), ^^
         )
 
-        for (element <- videoEventElementValues) {
-          forEvery(clientEvents) {
+        fow (ewement <- videoeventewementvawues) {
+          fowevewy(cwientevents) {
             (
-              ceNamespace: EventNamespace,
-              uuaNamespace: ClientEventNamespace,
-              uuaActionType: ActionType
+              c-cenamespace: e-eventnamespace, /(^•ω•^)
+              uuanamespace: c-cwienteventnamespace, (˘ω˘)
+              uuaactiontype: actiontype
             ) =>
-              val event = actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceNamespace.copy(element = Some(element))),
-                mediaDetailsV2 = Some(mediaDetailsV2),
-                clientMediaEvent = Some(clientMediaEvent),
-                cardDetails = Some(cardDetails)
+              vaw event = a-actiontowawddefauwttweetevent(
+                e-eventnamespace = some(cenamespace.copy(ewement = s-some(ewement))), OwO
+                m-mediadetaiwsv2 = some(mediadetaiwsv2), (U ᵕ U❁)
+                cwientmediaevent = some(cwientmediaevent), (U ﹏ U)
+                c-cawddetaiws = s-some(cawddetaiws)
               )
-              val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-                clientEventNamespace = Some(uuaNamespace.copy(element = Some(element))),
-                actionType = uuaActionType,
-                tweetActionInfo = Some(videoMetadata)
+              v-vaw expecteduua = m-mkexpecteduuafowactiontowawddefauwttweetevent(
+                cwienteventnamespace = some(uuanamespace.copy(ewement = some(ewement))), mya
+                a-actiontype = uuaactiontype, (⑅˘꒳˘)
+                t-tweetactioninfo = some(videometadata)
               )
-              val actual = ClientEventAdapter.adaptEvent(event)
-              assert(Seq(expectedUUA) === actual)
+              vaw actuaw = cwienteventadaptew.adaptevent(event)
+              assewt(seq(expecteduua) === a-actuaw)
           }
         }
       }
     }
   }
 
-  // Tests for ClientTweetPhotoExpand
-  test("Client Tweet Photo Expand") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvent = actionTowardDefaultTweetEvent(eventNamespace = Some(cePhotoExpand))
-        val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-          clientEventNamespace = Some(uuaPhotoExpandClientEventNamespace),
-          actionType = ActionType.ClientTweetPhotoExpand
+  // tests fow cwienttweetphotoexpand
+  test("cwient t-tweet photo expand") {
+    nyew t-testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw cwientevent = a-actiontowawddefauwttweetevent(eventnamespace = s-some(cephotoexpand))
+        vaw expecteduua = m-mkexpecteduuafowactiontowawddefauwttweetevent(
+          cwienteventnamespace = some(uuaphotoexpandcwienteventnamespace), (U ᵕ U❁)
+          a-actiontype = a-actiontype.cwienttweetphotoexpand
         )
-        assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+        a-assewt(seq(expecteduua) === c-cwienteventadaptew.adaptevent(cwientevent))
       }
     }
   }
 
-  // Tests for ClientCardClick
-  test("Client Card Related") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("ceNamespace", "ceItemType", "uuaNamespace", "uuaActionType"),
+  // tests f-fow cwientcawdcwick
+  t-test("cwient c-cawd wewated") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw cwientevents = tabwe(
+          ("cenamespace", /(^•ω•^) "ceitemtype", ^•ﻌ•^ "uuanamespace", (///ˬ///✿) "uuaactiontype"), o.O
           (
-            ceCardClick,
-            ItemType.Tweet,
-            uuaCardClickClientEventNamespace,
-            ActionType.ClientCardClick),
+            c-cecawdcwick,
+            i-itemtype.tweet, (ˆ ﻌ ˆ)♡
+            u-uuacawdcwickcwienteventnamespace, 😳
+            actiontype.cwientcawdcwick), òωó
           (
-            ceCardClick,
-            ItemType.User,
-            uuaCardClickClientEventNamespace,
-            ActionType.ClientCardClick),
+            cecawdcwick, (⑅˘꒳˘)
+            itemtype.usew, rawr
+            uuacawdcwickcwienteventnamespace, (ꈍᴗꈍ)
+            a-actiontype.cwientcawdcwick),
           (
-            ceCardOpenApp,
-            ItemType.Tweet,
-            uuaCardOpenAppClientEventNamespace,
-            ActionType.ClientCardOpenApp),
+            cecawdopenapp, ^^
+            i-itemtype.tweet, (ˆ ﻌ ˆ)♡
+            u-uuacawdopenappcwienteventnamespace, /(^•ω•^)
+            actiontype.cwientcawdopenapp), ^^
           (
-            ceCardAppInstallAttempt,
-            ItemType.Tweet,
-            uuaCardAppInstallAttemptClientEventNamespace,
-            ActionType.ClientCardAppInstallAttempt),
+            cecawdappinstawwattempt, o.O
+            itemtype.tweet, 😳😳😳
+            u-uuacawdappinstawwattemptcwienteventnamespace, XD
+            actiontype.cwientcawdappinstawwattempt),
           (
-            cePollCardVote1,
-            ItemType.Tweet,
-            uuaPollCardVote1ClientEventNamespace,
-            ActionType.ClientPollCardVote),
+            c-cepowwcawdvote1, nyaa~~
+            i-itemtype.tweet, ^•ﻌ•^
+            uuapowwcawdvote1cwienteventnamespace, :3
+            a-actiontype.cwientpowwcawdvote), ^^
           (
-            cePollCardVote2,
-            ItemType.Tweet,
-            uuaPollCardVote2ClientEventNamespace,
-            ActionType.ClientPollCardVote),
+            c-cepowwcawdvote2, o.O
+            i-itemtype.tweet, ^^
+            uuapowwcawdvote2cwienteventnamespace, (⑅˘꒳˘)
+            actiontype.cwientpowwcawdvote),
         )
-        forEvery(clientEvents) {
+        fowevewy(cwientevents) {
           (
-            ceNamespace: EventNamespace,
-            ceItemType: ItemType,
-            uuaNamespace: ClientEventNamespace,
-            uuaActionType: ActionType
+            cenamespace: e-eventnamespace, ʘwʘ
+            ceitemtype: itemtype, mya
+            u-uuanamespace: cwienteventnamespace, >w<
+            uuaactiontype: actiontype
           ) =>
-            val event = actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceNamespace),
-              itemTypeOpt = Some(ceItemType),
-              authorId = Some(authorId)
+            v-vaw event = actiontowawddefauwttweetevent(
+              eventnamespace = some(cenamespace), o.O
+              itemtypeopt = s-some(ceitemtype), OwO
+              a-authowid = some(authowid)
             )
-            val expectedUUA = mkExpectedUUAForCardEvent(
-              id = Some(itemTweetId),
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = uuaActionType,
-              itemType = Some(ceItemType),
-              authorId = Some(authorId)
+            vaw expecteduua = m-mkexpecteduuafowcawdevent(
+              id = some(itemtweetid), -.-
+              cwienteventnamespace = s-some(uuanamespace), (U ﹏ U)
+              a-actiontype = uuaactiontype, òωó
+              i-itemtype = some(ceitemtype), >w<
+              a-authowid = some(authowid)
             )
-            val actual = ClientEventAdapter.adaptEvent(event)
-            assert(Seq(expectedUUA) === actual)
+            vaw actuaw = cwienteventadaptew.adaptevent(event)
+            assewt(seq(expecteduua) === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetClickMentionScreenName
-  test("ClientTweetClickMentionScreenName") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val userHandle = "someHandle"
-        val clientEvent = actionTowardDefaultTweetEvent(
-          eventNamespace = Some(ceMentionClick),
-          targets = Some(
-            Seq(
-              LogEventItem(
-                itemType = Some(ItemType.User),
-                id = Some(userId),
-                name = Some(userHandle)))))
-        val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-          clientEventNamespace = Some(uuaMentionClickClientEventNamespace),
-          actionType = ActionType.ClientTweetClickMentionScreenName,
-          tweetActionInfo = Some(
-            TweetActionInfo.ClientTweetClickMentionScreenName(
-              ClientTweetClickMentionScreenName(actionProfileId = userId, handle = userHandle)))
+  // tests fow cwienttweetcwickmentionscweenname
+  t-test("cwienttweetcwickmentionscweenname") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw usewhandwe = "somehandwe"
+        vaw cwientevent = a-actiontowawddefauwttweetevent(
+          eventnamespace = some(cementioncwick), ^•ﻌ•^
+          tawgets = some(
+            seq(
+              wogeventitem(
+                i-itemtype = some(itemtype.usew), /(^•ω•^)
+                i-id = some(usewid), ʘwʘ
+                n-nyame = some(usewhandwe)))))
+        v-vaw expecteduua = mkexpecteduuafowactiontowawddefauwttweetevent(
+          cwienteventnamespace = s-some(uuamentioncwickcwienteventnamespace), XD
+          actiontype = a-actiontype.cwienttweetcwickmentionscweenname,
+          tweetactioninfo = some(
+            t-tweetactioninfo.cwienttweetcwickmentionscweenname(
+              cwienttweetcwickmentionscweenname(actionpwofiweid = usewid, (U ᵕ U❁) h-handwe = usewhandwe)))
         )
-        assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+        assewt(seq(expecteduua) === cwienteventadaptew.adaptevent(cwientevent))
       }
     }
   }
 
-  // Tests for Topic Follow/Unfollow actions
-  test("Topic Follow/Unfollow Actions") {
-    // The Topic Id is mostly from TimelineTopic controller data or HomeTweets controller data!
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("clientEventNamesapce", "expectedUUANamespace", "controllerData", "actionType"),
+  // t-tests f-fow topic fowwow/unfowwow actions
+  t-test("topic f-fowwow/unfowwow a-actions") {
+    // the topic id is mostwy fwom t-timewinetopic contwowwew data ow hometweets contwowwew d-data! (ꈍᴗꈍ)
+    nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw c-cwientevents = tabwe(
+          ("cwienteventnamesapce", rawr x3 "expecteduuanamespace", :3 "contwowwewdata", (˘ω˘) "actiontype"), -.-
           (
-            ceTopicFollow1,
-            uuaTopicFollowClientEventNamespace1,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicFollow
-          ),
+            c-cetopicfowwow1, (ꈍᴗꈍ)
+            u-uuatopicfowwowcwienteventnamespace1, UwU
+            t-timewinetopiccontwowwewdata(), σωσ
+            a-actiontype.cwienttopicfowwow
+          ), ^^
           (
-            ceTopicFollow1,
-            uuaTopicFollowClientEventNamespace1,
-            homeTweetControllerData(),
-            ActionType.ClientTopicFollow),
+            cetopicfowwow1, :3
+            u-uuatopicfowwowcwienteventnamespace1, ʘwʘ
+            hometweetcontwowwewdata(),
+            actiontype.cwienttopicfowwow), 😳
           (
-            ceTopicFollow2,
-            uuaTopicFollowClientEventNamespace2,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicFollow
-          ),
+            cetopicfowwow2, ^^
+            u-uuatopicfowwowcwienteventnamespace2, σωσ
+            timewinetopiccontwowwewdata(), /(^•ω•^)
+            a-actiontype.cwienttopicfowwow
+          ), 😳😳😳
           (
-            ceTopicFollow2,
-            uuaTopicFollowClientEventNamespace2,
-            homeTweetControllerData(),
-            ActionType.ClientTopicFollow),
+            cetopicfowwow2, 😳
+            uuatopicfowwowcwienteventnamespace2, OwO
+            h-hometweetcontwowwewdata(), :3
+            a-actiontype.cwienttopicfowwow), nyaa~~
           (
-            ceTopicFollow3,
-            uuaTopicFollowClientEventNamespace3,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicFollow
-          ),
+            cetopicfowwow3,
+            u-uuatopicfowwowcwienteventnamespace3, OwO
+            timewinetopiccontwowwewdata(), o.O
+            a-actiontype.cwienttopicfowwow
+          ), (U ﹏ U)
           (
-            ceTopicFollow3,
-            uuaTopicFollowClientEventNamespace3,
-            homeTweetControllerData(),
-            ActionType.ClientTopicFollow),
+            c-cetopicfowwow3,
+            uuatopicfowwowcwienteventnamespace3, (⑅˘꒳˘)
+            h-hometweetcontwowwewdata(), OwO
+            a-actiontype.cwienttopicfowwow), 😳
           (
-            ceTopicUnfollow1,
-            uuaTopicUnfollowClientEventNamespace1,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicUnfollow
-          ),
+            cetopicunfowwow1, :3
+            u-uuatopicunfowwowcwienteventnamespace1, ( ͡o ω ͡o )
+            timewinetopiccontwowwewdata(), 🥺
+            actiontype.cwienttopicunfowwow
+          ), /(^•ω•^)
           (
-            ceTopicUnfollow1,
-            uuaTopicUnfollowClientEventNamespace1,
-            homeTweetControllerData(),
-            ActionType.ClientTopicUnfollow),
+            cetopicunfowwow1, nyaa~~
+            u-uuatopicunfowwowcwienteventnamespace1, (✿oωo)
+            hometweetcontwowwewdata(), (✿oωo)
+            a-actiontype.cwienttopicunfowwow), (ꈍᴗꈍ)
           (
-            ceTopicUnfollow2,
-            uuaTopicUnfollowClientEventNamespace2,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicUnfollow
-          ),
+            cetopicunfowwow2, OwO
+            uuatopicunfowwowcwienteventnamespace2, :3
+            t-timewinetopiccontwowwewdata(), mya
+            a-actiontype.cwienttopicunfowwow
+          ), >_<
           (
-            ceTopicFollow2,
-            uuaTopicFollowClientEventNamespace2,
-            homeTweetControllerData(),
-            ActionType.ClientTopicFollow),
+            c-cetopicfowwow2, (///ˬ///✿)
+            uuatopicfowwowcwienteventnamespace2, (///ˬ///✿)
+            h-hometweetcontwowwewdata(), 😳😳😳
+            a-actiontype.cwienttopicfowwow), (U ᵕ U❁)
           (
-            ceTopicUnfollow3,
-            uuaTopicUnfollowClientEventNamespace3,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicUnfollow
-          ),
+            cetopicunfowwow3, (///ˬ///✿)
+            u-uuatopicunfowwowcwienteventnamespace3, ( ͡o ω ͡o )
+            timewinetopiccontwowwewdata(), (✿oωo)
+            a-actiontype.cwienttopicunfowwow
+          ), òωó
           (
-            ceTopicUnfollow3,
-            uuaTopicUnfollowClientEventNamespace3,
-            homeTweetControllerData(),
-            ActionType.ClientTopicUnfollow),
+            cetopicunfowwow3, (ˆ ﻌ ˆ)♡
+            u-uuatopicunfowwowcwienteventnamespace3, :3
+            h-hometweetcontwowwewdata(), (ˆ ﻌ ˆ)♡
+            actiontype.cwienttopicunfowwow), (U ᵕ U❁)
         )
 
-        forEvery(clientEvents) {
+        fowevewy(cwientevents) {
           (
-            eventNamespace: EventNamespace,
-            uuaNs: ClientEventNamespace,
-            controllerData: ControllerData,
-            actionType: ActionType
+            eventnamespace: eventnamespace,
+            u-uuans: c-cwienteventnamespace, (U ᵕ U❁)
+            contwowwewdata: contwowwewdata, XD
+            actiontype: actiontype
           ) =>
-            val event = actionTowardDefaultTweetEvent(
-              eventNamespace = Some(eventNamespace),
-              itemId = None,
-              suggestionDetails =
-                Some(SuggestionDetails(decodedControllerData = Some(controllerData)))
+            v-vaw event = actiontowawddefauwttweetevent(
+              e-eventnamespace = some(eventnamespace), nyaa~~
+              i-itemid = nyone, (ˆ ﻌ ˆ)♡
+              suggestiondetaiws =
+                some(suggestiondetaiws(decodedcontwowwewdata = some(contwowwewdata)))
             )
-            val expectedUUA = mkExpectedUUAForActionTowardTopicEvent(
-              topicId = topicId,
-              traceId = None,
-              clientEventNamespace = Some(uuaNs),
-              actionType = actionType
+            vaw expecteduua = m-mkexpecteduuafowactiontowawdtopicevent(
+              topicid = topicid, ʘwʘ
+              t-twaceid = none, ^•ﻌ•^
+              c-cwienteventnamespace = s-some(uuans),
+              actiontype = a-actiontype
             )
-            val actual = ClientEventAdapter.adaptEvent(event)
-            assert(Seq(expectedUUA) === actual)
+            v-vaw actuaw = cwienteventadaptew.adaptevent(event)
+            a-assewt(seq(expecteduua) === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for Topic NotInterestedIn & its Undo actions
-  test("Topic NotInterestedIn & its Undo actions") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("clientEventNamesapce", "expectedUUANamespace", "controllerData", "actionType"),
+  // t-tests fow topic n-nyotintewestedin & its undo actions
+  test("topic nyotintewestedin & its undo actions") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        v-vaw cwientevents = t-tabwe(
+          ("cwienteventnamesapce", mya "expecteduuanamespace", (ꈍᴗꈍ) "contwowwewdata", (ˆ ﻌ ˆ)♡ "actiontype"), (ˆ ﻌ ˆ)♡
           (
-            ceTopicNotInterestedIn1,
-            uuaTopicNotInterestedInClientEventNamespace1,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicNotInterestedIn
-          ),
+            c-cetopicnotintewestedin1, ( ͡o ω ͡o )
+            u-uuatopicnotintewestedincwienteventnamespace1, o.O
+            t-timewinetopiccontwowwewdata(), 😳😳😳
+            actiontype.cwienttopicnotintewestedin
+          ), ʘwʘ
           (
-            ceTopicNotInterestedIn1,
-            uuaTopicNotInterestedInClientEventNamespace1,
-            homeTweetControllerData(),
-            ActionType.ClientTopicNotInterestedIn),
+            cetopicnotintewestedin1, :3
+            uuatopicnotintewestedincwienteventnamespace1, UwU
+            hometweetcontwowwewdata(), nyaa~~
+            a-actiontype.cwienttopicnotintewestedin), :3
           (
-            ceTopicNotInterestedIn2,
-            uuaTopicNotInterestedInClientEventNamespace2,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicNotInterestedIn
-          ),
+            c-cetopicnotintewestedin2, nyaa~~
+            uuatopicnotintewestedincwienteventnamespace2, ^^
+            timewinetopiccontwowwewdata(), nyaa~~
+            actiontype.cwienttopicnotintewestedin
+          ), 😳😳😳
           (
-            ceTopicNotInterestedIn2,
-            uuaTopicNotInterestedInClientEventNamespace2,
-            homeTweetControllerData(),
-            ActionType.ClientTopicNotInterestedIn),
+            c-cetopicnotintewestedin2, ^•ﻌ•^
+            u-uuatopicnotintewestedincwienteventnamespace2, (⑅˘꒳˘)
+            h-hometweetcontwowwewdata(), (✿oωo)
+            actiontype.cwienttopicnotintewestedin), mya
           (
-            ceTopicUndoNotInterestedIn1,
-            uuaTopicUndoNotInterestedInClientEventNamespace1,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicUndoNotInterestedIn
-          ),
+            cetopicundonotintewestedin1, (///ˬ///✿)
+            u-uuatopicundonotintewestedincwienteventnamespace1, ʘwʘ
+            timewinetopiccontwowwewdata(), >w<
+            actiontype.cwienttopicundonotintewestedin
+          ), o.O
           (
-            ceTopicUndoNotInterestedIn1,
-            uuaTopicUndoNotInterestedInClientEventNamespace1,
-            homeTweetControllerData(),
-            ActionType.ClientTopicUndoNotInterestedIn),
+            cetopicundonotintewestedin1,
+            u-uuatopicundonotintewestedincwienteventnamespace1,
+            h-hometweetcontwowwewdata(), ^^;;
+            actiontype.cwienttopicundonotintewestedin), :3
           (
-            ceTopicUndoNotInterestedIn2,
-            uuaTopicUndoNotInterestedInClientEventNamespace2,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicUndoNotInterestedIn
-          ),
+            cetopicundonotintewestedin2, (ꈍᴗꈍ)
+            u-uuatopicundonotintewestedincwienteventnamespace2, XD
+            timewinetopiccontwowwewdata(), ^^;;
+            a-actiontype.cwienttopicundonotintewestedin
+          ), (U ﹏ U)
           (
-            ceTopicUndoNotInterestedIn2,
-            uuaTopicUndoNotInterestedInClientEventNamespace2,
-            homeTweetControllerData(),
-            ActionType.ClientTopicUndoNotInterestedIn),
+            c-cetopicundonotintewestedin2, (ꈍᴗꈍ)
+            uuatopicundonotintewestedincwienteventnamespace2, 😳
+            h-hometweetcontwowwewdata(), rawr
+            a-actiontype.cwienttopicundonotintewestedin), ( ͡o ω ͡o )
         )
 
-        forEvery(clientEvents) {
+        fowevewy(cwientevents) {
           (
-            eventNamespace: EventNamespace,
-            uuaNs: ClientEventNamespace,
-            controllerData: ControllerData,
-            actionType: ActionType
+            e-eventnamespace: e-eventnamespace, (ˆ ﻌ ˆ)♡
+            u-uuans: c-cwienteventnamespace, OwO
+            contwowwewdata: c-contwowwewdata, >_<
+            a-actiontype: actiontype
           ) =>
-            val event = actionTowardDefaultTweetEvent(
-              eventNamespace = Some(eventNamespace),
-              itemId = None,
-              suggestionDetails =
-                Some(SuggestionDetails(decodedControllerData = Some(controllerData)))
+            vaw event = actiontowawddefauwttweetevent(
+              e-eventnamespace = some(eventnamespace), XD
+              itemid = nyone, (ˆ ﻌ ˆ)♡
+              suggestiondetaiws =
+                s-some(suggestiondetaiws(decodedcontwowwewdata = some(contwowwewdata)))
             )
-            val expectedUUA = mkExpectedUUAForActionTowardTopicEvent(
-              topicId = topicId,
-              traceId = None,
-              clientEventNamespace = Some(uuaNs),
-              actionType = actionType
+            v-vaw expecteduua = mkexpecteduuafowactiontowawdtopicevent(
+              t-topicid = t-topicid, (ꈍᴗꈍ)
+              twaceid = nyone, (✿oωo)
+              c-cwienteventnamespace = some(uuans), UwU
+              actiontype = a-actiontype
             )
-            val actual = ClientEventAdapter.adaptEvent(event)
-            assert(Seq(expectedUUA) === actual)
+            vaw a-actuaw = cwienteventadaptew.adaptevent(event)
+            assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for authorInfo
-  test("authorInfo") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("authorIdOpt", "isFollowedByActingUser", "isFollowingActingUser"),
-          (Some(authorId), true, false),
-          (Some(authorId), true, true),
-          (Some(authorId), false, true),
-          (Some(authorId), false, false),
-          (None, true, true),
+  // t-tests fow authowinfo
+  t-test("authowinfo") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw cwientevents = tabwe(
+          ("authowidopt", (ꈍᴗꈍ) "isfowwowedbyactingusew", (U ﹏ U) "isfowwowingactingusew"), >w<
+          (some(authowid), ^•ﻌ•^ t-twue, f-fawse), 😳
+          (some(authowid), XD twue, :3 twue),
+          (some(authowid), rawr x3 fawse, t-twue), (⑅˘꒳˘)
+          (some(authowid), ^^ f-fawse, fawse), >w<
+          (none, 😳 twue, twue), rawr
         )
-        forEvery(clientEvents) {
+        fowevewy(cwientevents) {
           (
-            authorIdOpt: Option[Long],
-            isFollowedByActingUser: Boolean,
-            isFollowingActingUser: Boolean
+            a-authowidopt: o-option[wong], rawr x3
+            isfowwowedbyactingusew: b-boowean, (ꈍᴗꈍ)
+            i-isfowwowingactingusew: boowean
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              renderDefaultTweetUserFollowStatusEvent(
-                authorId = authorIdOpt,
-                isFollowedByActingUser = isFollowedByActingUser,
-                isFollowingActingUser = isFollowingActingUser
+            vaw actuaw = cwienteventadaptew.adaptevent(
+              wendewdefauwttweetusewfowwowstatusevent(
+                authowid = authowidopt, -.-
+                i-isfowwowedbyactingusew = i-isfowwowedbyactingusew, òωó
+                i-isfowwowingactingusew = i-isfowwowingactingusew
               ))
-            val expected =
-              expectedTweetRenderDefaultTweetWithAuthorInfoUUA(authorInfo = authorIdOpt.map { id =>
-                AuthorInfo(
-                  authorId = Some(id),
-                  isFollowedByActingUser = Some(isFollowedByActingUser),
-                  isFollowingActingUser = Some(isFollowingActingUser)
+            v-vaw e-expected =
+              expectedtweetwendewdefauwttweetwithauthowinfouua(authowinfo = a-authowidopt.map { i-id =>
+                authowinfo(
+                  a-authowid = s-some(id), (U ﹏ U)
+                  isfowwowedbyactingusew = some(isfowwowedbyactingusew), ( ͡o ω ͡o )
+                  i-isfowwowingactingusew = some(isfowwowingactingusew)
                 )
               })
-            assert(Seq(expected) === actual)
+            assewt(seq(expected) === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetReport
-  test("ClientTweetReport") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val ceNTabTweetReport: EventNamespace =
-          ceTweetReport.copy(page = Some("ntab"), section = Some("all"), component = Some("urt"))
+  // tests fow cwienttweetwepowt
+  t-test("cwienttweetwepowt") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw centabtweetwepowt: e-eventnamespace =
+          c-cetweetwepowt.copy(page = s-some("ntab"), :3 section = some("aww"), >w< c-component = s-some("uwt"))
 
-        val uuaNTabTweetReport: ClientEventNamespace =
-          uuaTweetReport.copy(page = Some("ntab"), section = Some("all"), component = Some("urt"))
+        vaw u-uuantabtweetwepowt: cwienteventnamespace =
+          u-uuatweetwepowt.copy(page = s-some("ntab"), ^^ section = s-some("aww"), 😳😳😳 component = s-some("uwt"))
 
-        val params = Table(
+        vaw pawams = tabwe(
           (
-            "eventType",
-            "ceNamespace",
-            "ceNotificationTabDetails",
-            "ceReportDetails",
-            "uuaNamespace",
-            "uuaTweetActionInfo",
-            "uuaProductSurface",
-            "uuaProductSurfaceInfo"),
+            "eventtype", OwO
+            "cenamespace",
+            "cenotificationtabdetaiws", XD
+            "cewepowtdetaiws", (⑅˘꒳˘)
+            "uuanamespace", OwO
+            "uuatweetactioninfo", (⑅˘꒳˘)
+            "uuapwoductsuwface", (U ﹏ U)
+            "uuapwoductsuwfaceinfo"), (ꈍᴗꈍ)
           (
-            "ntabReportTweetClick",
-            ceNTabTweetReport.copy(action = Some("click")),
-            Some(notificationTabTweetEventDetails),
-            None,
-            uuaNTabTweetReport.copy(action = Some("click")),
-            reportTweetClick,
-            Some(ProductSurface.NotificationTab),
-            Some(notificationTabProductSurfaceInfo)
+            "ntabwepowttweetcwick", rawr
+            c-centabtweetwepowt.copy(action = some("cwick")), XD
+            some(notificationtabtweeteventdetaiws), >w<
+            nyone, UwU
+            uuantabtweetwepowt.copy(action = some("cwick")), 😳
+            wepowttweetcwick, (ˆ ﻌ ˆ)♡
+            s-some(pwoductsuwface.notificationtab),
+            some(notificationtabpwoductsuwfaceinfo)
+          ), ^•ﻌ•^
+          (
+            "ntabwepowttweetdone",
+            centabtweetwepowt.copy(action = some("done")), ^^
+            some(notificationtabtweeteventdetaiws), 😳
+            nyone, :3
+            uuantabtweetwepowt.copy(action = some("done")), (⑅˘꒳˘)
+            w-wepowttweetdone, ( ͡o ω ͡o )
+            some(pwoductsuwface.notificationtab), :3
+            some(notificationtabpwoductsuwfaceinfo)
           ),
           (
-            "ntabReportTweetDone",
-            ceNTabTweetReport.copy(action = Some("done")),
-            Some(notificationTabTweetEventDetails),
-            None,
-            uuaNTabTweetReport.copy(action = Some("done")),
-            reportTweetDone,
-            Some(ProductSurface.NotificationTab),
-            Some(notificationTabProductSurfaceInfo)
+            "defauwtwepowttweetdone", (⑅˘꒳˘)
+            cetweetwepowt.copy(page = s-some("tweet"), >w< action = s-some("done")), OwO
+            none, 😳
+            nyone, OwO
+            u-uuatweetwepowt.copy(page = some("tweet"), a-action = some("done")), 🥺
+            wepowttweetdone, (˘ω˘)
+            n-nyone, 😳😳😳
+            n-nyone
+          ), mya
+          (
+            "defauwtwepowttweetwithwepowtfwowid", OwO
+            cetweetwepowt.copy(page = some("tweet"), a-action = some("done")), >_<
+            nyone, 😳
+            some(wepowtdetaiws(wepowtfwowid = s-some(wepowtfwowid))), (U ᵕ U❁)
+            uuatweetwepowt.copy(page = s-some("tweet"), 🥺 action = some("done")), (U ﹏ U)
+            w-wepowttweetwithwepowtfwowid, (U ﹏ U)
+            nyone, rawr x3
+            nyone
           ),
           (
-            "defaultReportTweetDone",
-            ceTweetReport.copy(page = Some("tweet"), action = Some("done")),
-            None,
-            None,
-            uuaTweetReport.copy(page = Some("tweet"), action = Some("done")),
-            reportTweetDone,
-            None,
-            None
-          ),
-          (
-            "defaultReportTweetWithReportFlowId",
-            ceTweetReport.copy(page = Some("tweet"), action = Some("done")),
-            None,
-            Some(ReportDetails(reportFlowId = Some(reportFlowId))),
-            uuaTweetReport.copy(page = Some("tweet"), action = Some("done")),
-            reportTweetWithReportFlowId,
-            None,
-            None
-          ),
-          (
-            "defaultReportTweetWithoutReportFlowId",
-            ceTweetReport.copy(page = Some("tweet"), action = Some("done")),
-            None,
-            None,
-            uuaTweetReport.copy(page = Some("tweet"), action = Some("done")),
-            reportTweetWithoutReportFlowId,
-            None,
-            None
-          ),
+            "defauwtwepowttweetwithoutwepowtfwowid", :3
+            cetweetwepowt.copy(page = s-some("tweet"), rawr a-action = some("done")), XD
+            nyone, ^^
+            nyone, mya
+            u-uuatweetwepowt.copy(page = some("tweet"), action = s-some("done")), (U ﹏ U)
+            wepowttweetwithoutwepowtfwowid, 😳
+            nyone, mya
+            nyone
+          ), 😳
         )
 
-        forEvery(params) {
+        fowevewy(pawams) {
           (
-            _: String,
-            ceNamespace: EventNamespace,
-            ceNotificationTabDetails: Option[NotificationTabDetails],
-            ceReportDetails: Option[ReportDetails],
-            uuaNamespace: ClientEventNamespace,
-            uuaTweetActionInfo: TweetActionInfo,
-            productSurface: Option[ProductSurface],
-            productSurfaceInfo: Option[ProductSurfaceInfo]
+            _: stwing, ^^
+            c-cenamespace: e-eventnamespace, :3
+            cenotificationtabdetaiws: o-option[notificationtabdetaiws], (U ﹏ U)
+            c-cewepowtdetaiws: option[wepowtdetaiws], UwU
+            u-uuanamespace: cwienteventnamespace, (ˆ ﻌ ˆ)♡
+            uuatweetactioninfo: tweetactioninfo, (ˆ ﻌ ˆ)♡
+            pwoductsuwface: o-option[pwoductsuwface], ^^;;
+            pwoductsuwfaceinfo: o-option[pwoductsuwfaceinfo]
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceNamespace),
-                notificationTabDetails = ceNotificationTabDetails,
-                reportDetails = ceReportDetails))
+            vaw actuaw = c-cwienteventadaptew.adaptevent(
+              a-actiontowawddefauwttweetevent(
+                eventnamespace = s-some(cenamespace),
+                nyotificationtabdetaiws = cenotificationtabdetaiws, rawr
+                w-wepowtdetaiws = cewepowtdetaiws))
 
-            val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = ActionType.ClientTweetReport,
-              tweetActionInfo = Some(uuaTweetActionInfo),
-              productSurface = productSurface,
-              productSurfaceInfo = productSurfaceInfo
+            vaw expecteduua = m-mkexpecteduuafowactiontowawddefauwttweetevent(
+              c-cwienteventnamespace = some(uuanamespace), nyaa~~
+              actiontype = actiontype.cwienttweetwepowt, rawr x3
+              tweetactioninfo = s-some(uuatweetactioninfo), (⑅˘꒳˘)
+              pwoductsuwface = pwoductsuwface, OwO
+              pwoductsuwfaceinfo = pwoductsuwfaceinfo
             )
 
-            assert(Seq(expectedUUA) === actual)
+            assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetNotHelpful and ClientTweetUndoNotHelpful
-  test("ClientTweetNotHelpful & UndoNotHelpful") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actions = Table(("action"), "click", "undo")
-        val element = "feedback_givefeedback"
-        forEvery(actions) { action =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceEventNamespace(element, action)),
+  // tests f-fow cwienttweetnothewpfuw a-and cwienttweetundonothewpfuw
+  t-test("cwienttweetnothewpfuw & u-undonothewpfuw") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw actions = tabwe(("action"), OwO "cwick", "undo")
+        vaw ewement = "feedback_givefeedback"
+        fowevewy(actions) { action =>
+          v-vaw cwientevent =
+            actiontowawddefauwttweetevent(
+              eventnamespace = some(ceeventnamespace(ewement, ʘwʘ action)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
-            actionType = action match {
-              case "click" => ActionType.ClientTweetNotHelpful
-              case "undo" => ActionType.ClientTweetUndoNotHelpful
+          v-vaw expecteduua = m-mkexpecteduuafowactiontowawddefauwttweetevent(
+            c-cwienteventnamespace = some(uuacwienteventnamespace(ewement, :3 action)),
+            actiontype = a-action match {
+              c-case "cwick" => a-actiontype.cwienttweetnothewpfuw
+              case "undo" => actiontype.cwienttweetundonothewpfuw
             }
           )
 
-          val actual = ClientEventAdapter.adaptEvent(clientEvent)
-          assert(Seq(expectedUUA) === actual)
+          v-vaw actuaw = cwienteventadaptew.adaptevent(cwientevent)
+          a-assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetNotInterestedIn and ClientTweetUndoNotInterestedIn
-  test("ClientTweetNotInterestedIn & UndoNotInterestedIn") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actions = Table(("action"), "click", "undo")
-        val element = "feedback_dontlike"
-        forEvery(actions) { action =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceEventNamespace(element, action)),
+  // t-tests fow cwienttweetnotintewestedin and cwienttweetundonotintewestedin
+  t-test("cwienttweetnotintewestedin & undonotintewestedin") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw actions = tabwe(("action"), mya "cwick", "undo")
+        v-vaw ewement = "feedback_dontwike"
+        f-fowevewy(actions) { action =>
+          v-vaw c-cwientevent =
+            actiontowawddefauwttweetevent(
+              e-eventnamespace = some(ceeventnamespace(ewement, OwO a-action)), :3
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
-            actionType = action match {
-              case "click" => ActionType.ClientTweetNotInterestedIn
-              case "undo" => ActionType.ClientTweetUndoNotInterestedIn
+          vaw expecteduua = m-mkexpecteduuafowactiontowawddefauwttweetevent(
+            c-cwienteventnamespace = some(uuacwienteventnamespace(ewement, >_< action)), σωσ
+            a-actiontype = action match {
+              case "cwick" => actiontype.cwienttweetnotintewestedin
+              case "undo" => actiontype.cwienttweetundonotintewestedin
             }
           )
 
-          val actual = ClientEventAdapter.adaptEvent(clientEvent)
-          assert(Seq(expectedUUA) === actual)
+          vaw actuaw = cwienteventadaptew.adaptevent(cwientevent)
+          a-assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetNotAboutTopic & ClientTweetUndoNotAboutTopic
-  test("ClientTweetNotAboutTopic & ClientTweetUndoNotAboutTopic") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actions = Table(("action"), "click", "undo")
-        val element = "feedback_notabouttopic"
-        forEvery(actions) { action =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceEventNamespace(element, action)),
+  // tests f-fow cwienttweetnotabouttopic & cwienttweetundonotabouttopic
+  t-test("cwienttweetnotabouttopic & cwienttweetundonotabouttopic") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw actions = tabwe(("action"), /(^•ω•^) "cwick", mya "undo")
+        vaw ewement = "feedback_notabouttopic"
+        f-fowevewy(actions) { action =>
+          vaw cwientevent =
+            a-actiontowawddefauwttweetevent(
+              eventnamespace = some(ceeventnamespace(ewement, nyaa~~ a-action)), 😳
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
-            actionType = action match {
-              case "click" => ActionType.ClientTweetNotAboutTopic
-              case "undo" => ActionType.ClientTweetUndoNotAboutTopic
+          vaw expecteduua = m-mkexpecteduuafowactiontowawddefauwttweetevent(
+            c-cwienteventnamespace = some(uuacwienteventnamespace(ewement, action)), ^^;;
+            a-actiontype = a-action match {
+              c-case "cwick" => a-actiontype.cwienttweetnotabouttopic
+              case "undo" => actiontype.cwienttweetundonotabouttopic
             }
           )
 
-          val actual = ClientEventAdapter.adaptEvent(clientEvent)
-          assert(Seq(expectedUUA) === actual)
+          v-vaw actuaw = cwienteventadaptew.adaptevent(cwientevent)
+          assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetNotRecent and ClientTweetUndoNotRecent
-  test("ClientTweetNotRecent & UndoNotRecent") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actions = Table(("action"), "click", "undo")
-        val element = "feedback_notrecent"
-        forEvery(actions) { action =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceEventNamespace(element, action)),
+  // t-tests fow cwienttweetnotwecent and cwienttweetundonotwecent
+  t-test("cwienttweetnotwecent & u-undonotwecent") {
+    new t-testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw actions = tabwe(("action"), "cwick", 😳😳😳 "undo")
+        vaw e-ewement = "feedback_notwecent"
+        fowevewy(actions) { a-action =>
+          vaw cwientevent =
+            a-actiontowawddefauwttweetevent(
+              e-eventnamespace = some(ceeventnamespace(ewement, nyaa~~ action)), 🥺
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
-            actionType = action match {
-              case "click" => ActionType.ClientTweetNotRecent
-              case "undo" => ActionType.ClientTweetUndoNotRecent
+          vaw expecteduua = mkexpecteduuafowactiontowawddefauwttweetevent(
+            cwienteventnamespace = s-some(uuacwienteventnamespace(ewement, XD a-action)), (ꈍᴗꈍ)
+            actiontype = action match {
+              c-case "cwick" => actiontype.cwienttweetnotwecent
+              case "undo" => a-actiontype.cwienttweetundonotwecent
             }
           )
 
-          val actual = ClientEventAdapter.adaptEvent(clientEvent)
-          assert(Seq(expectedUUA) === actual)
+          v-vaw actuaw = cwienteventadaptew.adaptevent(cwientevent)
+          a-assewt(seq(expecteduua) === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetSeeFewer and ClientTweetUndoSeeFewer
-  test("ClientTweetSeeFewer & ClientTweetUndoSeeFewer") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actions = Table(("action"), "click", "undo")
-        val element = "feedback_seefewer"
-        forEvery(actions) { action =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceEventNamespace(element, action)),
+  // t-tests fow c-cwienttweetseefewew and cwienttweetundoseefewew
+  test("cwienttweetseefewew & c-cwienttweetundoseefewew") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw actions = t-tabwe(("action"), 😳😳😳 "cwick", "undo")
+        v-vaw ewement = "feedback_seefewew"
+        fowevewy(actions) { action =>
+          v-vaw cwientevent =
+            a-actiontowawddefauwttweetevent(
+              e-eventnamespace = some(ceeventnamespace(ewement, ( ͡o ω ͡o ) action)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
-            actionType = action match {
-              case "click" => ActionType.ClientTweetSeeFewer
-              case "undo" => ActionType.ClientTweetUndoSeeFewer
+          vaw expecteduua = m-mkexpecteduuafowactiontowawddefauwttweetevent(
+            cwienteventnamespace = some(uuacwienteventnamespace(ewement, nyaa~~ a-action)),
+            actiontype = action match {
+              c-case "cwick" => a-actiontype.cwienttweetseefewew
+              case "undo" => actiontype.cwienttweetundoseefewew
             }
           )
 
-          val actual = ClientEventAdapter.adaptEvent(clientEvent)
-          assert(Seq(expectedUUA) === actual)
+          vaw actuaw = cwienteventadaptew.adaptevent(cwientevent)
+          a-assewt(seq(expecteduua) === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for getEventMetadata
-  test("getEventMetadata") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("clientEventNamesapce", "expectedUUANamespace", "controllerData"),
+  // tests fow g-geteventmetadata
+  t-test("geteventmetadata") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw cwientevents = t-tabwe(
+          ("cwienteventnamesapce", "expecteduuanamespace", XD "contwowwewdata"), (ˆ ﻌ ˆ)♡
           (
-            ceRenderEventNamespace,
-            uuaRenderClientEventNamespace,
-            homeTweetControllerData()
-          ),
+            c-cewendeweventnamespace, rawr x3
+            uuawendewcwienteventnamespace, OwO
+            hometweetcontwowwewdata()
+          ), UwU
         )
 
-        forEvery(clientEvents) {
+        fowevewy(cwientevents) {
           (
-            eventNamespace: EventNamespace,
-            uuaNs: ClientEventNamespace,
-            controllerData: ControllerData
+            e-eventnamespace: e-eventnamespace, ^^
+            uuans: cwienteventnamespace, (✿oωo)
+            contwowwewdata: c-contwowwewdata
           ) =>
-            val event = actionTowardDefaultTweetEvent(
-              eventNamespace = Some(eventNamespace),
-              suggestionDetails =
-                Some(SuggestionDetails(decodedControllerData = Some(controllerData)))
+            vaw event = actiontowawddefauwttweetevent(
+              eventnamespace = some(eventnamespace), 😳😳😳
+              suggestiondetaiws =
+                s-some(suggestiondetaiws(decodedcontwowwewdata = some(contwowwewdata)))
             )
-            val expectedEventMetaData = mkUUAEventMetadata(
-              clientEventNamespace = Some(uuaNs)
+            vaw expectedeventmetadata = m-mkuuaeventmetadata(
+              c-cwienteventnamespace = s-some(uuans)
             )
-            val actual = ClientEventAdapter.adaptEvent(event).head.eventMetadata
-            assert(expectedEventMetaData === actual)
+            vaw actuaw = cwienteventadaptew.adaptevent(event).head.eventmetadata
+            a-assewt(expectedeventmetadata === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for getSourceTimestamp
-  test("getSourceTimestamp") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val params = Table(
-          ("testCase", "clientEvent", "expectedUUAEventTimestamp"),
+  // t-tests f-fow getsouwcetimestamp
+  t-test("getsouwcetimestamp") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw pawams = t-tabwe(
+          ("testcase", 🥺 "cwientevent", ʘwʘ "expecteduuaeventtimestamp"), 😳
           (
-            "CES event with DriftAdjustedEventCreatedAtMs",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceRenderEventNamespace)),
-            logBase.driftAdjustedEventCreatedAtMs),
+            "ces event w-with dwiftadjustedeventcweatedatms", ^^;;
+            a-actiontowawddefauwttweetevent(eventnamespace = s-some(cewendeweventnamespace)), (///ˬ///✿)
+            wogbase.dwiftadjustedeventcweatedatms), OwO
           (
-            "CES event without DriftAdjustedEventCreatedAtMs: ignore",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceRenderEventNamespace),
-              logBase = logBase.unsetDriftAdjustedEventCreatedAtMs),
-            None),
+            "ces e-event without dwiftadjustedeventcweatedatms: i-ignowe", -.-
+            a-actiontowawddefauwttweetevent(
+              eventnamespace = s-some(cewendeweventnamespace), ^^
+              w-wogbase = wogbase.unsetdwiftadjustedeventcweatedatms), (ꈍᴗꈍ)
+            nyone), ^^;;
           (
-            "Non-CES event without DriftAdjustedEventCreatedAtMs: use logBase.timestamp",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceRenderEventNamespace),
-              logBase = logBase
+            "non-ces e-event without dwiftadjustedeventcweatedatms: u-use wogbase.timestamp", (˘ω˘)
+            a-actiontowawddefauwttweetevent(
+              eventnamespace = some(cewendeweventnamespace), 🥺
+              wogbase = wogbase
                 .copy(
-                  clientEventReceiver =
-                    Some(ClientEventReceiver.Unknown)).unsetDriftAdjustedEventCreatedAtMs
-            ),
-            Some(logBase.timestamp))
+                  c-cwienteventweceivew =
+                    s-some(cwienteventweceivew.unknown)).unsetdwiftadjustedeventcweatedatms
+            ), ʘwʘ
+            some(wogbase.timestamp))
         )
-        forEvery(params) { (_: String, event: LogEvent, expectedUUAEventTimestamp: Option[Long]) =>
-          val actual =
-            ClientEventAdapter.adaptEvent(event).map(_.eventMetadata.sourceTimestampMs).headOption
-          assert(expectedUUAEventTimestamp === actual)
+        f-fowevewy(pawams) { (_: s-stwing, (///ˬ///✿) event: wogevent, ^^;; expecteduuaeventtimestamp: option[wong]) =>
+          v-vaw actuaw =
+            c-cwienteventadaptew.adaptevent(event).map(_.eventmetadata.souwcetimestampms).headoption
+          a-assewt(expecteduuaeventtimestamp === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for ServerTweetReport
-  test("ServerTweetReport") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val params = Table(
-          ("eventType", "ceNamespace", "ceReportDetails", "uuaNamespace", "uuaTweetActionInfo"),
+  // t-tests fow sewvewtweetwepowt
+  t-test("sewvewtweetwepowt") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        v-vaw pawams = tabwe(
+          ("eventtype", XD "cenamespace", (ˆ ﻌ ˆ)♡ "cewepowtdetaiws", (˘ω˘) "uuanamespace", σωσ "uuatweetactioninfo"), 😳😳😳
           (
-            "ReportImpressionIsNotAdapted",
-            ceTweetReportFlow(page = "report_abuse", action = "impression"),
-            Some(ReportDetails(reportFlowId = Some(reportFlowId))),
-            None,
-            None
-          ),
+            "wepowtimpwessionisnotadapted", ^•ﻌ•^
+            cetweetwepowtfwow(page = "wepowt_abuse", σωσ action = "impwession"), (///ˬ///✿)
+            some(wepowtdetaiws(wepowtfwowid = some(wepowtfwowid))), XD
+            n-nyone,
+            n-nyone
+          ), >_<
           (
-            "ReportSubmitIsAdapted",
-            ceTweetReportFlow(page = "report_abuse", action = "submit"),
-            Some(
-              ReportDetails(
-                reportFlowId = Some(reportFlowId),
-                reportType = Some(ReportType.Abuse))),
-            Some(uuaTweetReportFlow(page = "report_abuse", action = "submit")),
-            Some(reportTweetSubmit)
-          ),
+            "wepowtsubmitisadapted", òωó
+            cetweetwepowtfwow(page = "wepowt_abuse", (U ᵕ U❁) action = "submit"), (˘ω˘)
+            some(
+              wepowtdetaiws(
+                wepowtfwowid = s-some(wepowtfwowid), 🥺
+                w-wepowttype = some(wepowttype.abuse))), (✿oωo)
+            some(uuatweetwepowtfwow(page = "wepowt_abuse", (˘ω˘) a-action = "submit")), (ꈍᴗꈍ)
+            some(wepowttweetsubmit)
+          ), ( ͡o ω ͡o )
         )
 
-        forEvery(params) {
+        f-fowevewy(pawams) {
           (
-            _: String,
-            ceNamespace: EventNamespace,
-            ceReportDetails: Option[ReportDetails],
-            uuaNamespace: Option[ClientEventNamespace],
-            uuaTweetActionInfo: Option[TweetActionInfo]
+            _: s-stwing, (U ᵕ U❁)
+            c-cenamespace: eventnamespace, ʘwʘ
+            cewepowtdetaiws: option[wepowtdetaiws], (ˆ ﻌ ˆ)♡
+            uuanamespace: option[cwienteventnamespace], /(^•ω•^)
+            u-uuatweetactioninfo: option[tweetactioninfo]
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceNamespace),
-                reportDetails = ceReportDetails))
+            v-vaw actuaw = cwienteventadaptew.adaptevent(
+              a-actiontowawddefauwttweetevent(
+                eventnamespace = some(cenamespace), (ˆ ﻌ ˆ)♡
+                w-wepowtdetaiws = cewepowtdetaiws))
 
-            val expectedUUA =
-              if (ceNamespace.action.contains("submit"))
-                Seq(
-                  mkExpectedUUAForActionTowardDefaultTweetEvent(
-                    clientEventNamespace = uuaNamespace,
-                    actionType = ActionType.ServerTweetReport,
-                    tweetActionInfo = uuaTweetActionInfo
+            v-vaw expecteduua =
+              if (cenamespace.action.contains("submit"))
+                seq(
+                  m-mkexpecteduuafowactiontowawddefauwttweetevent(
+                    cwienteventnamespace = uuanamespace, (✿oωo)
+                    a-actiontype = actiontype.sewvewtweetwepowt, ^•ﻌ•^
+                    tweetactioninfo = uuatweetactioninfo
                   ))
-              else Nil
+              ewse nyiw
 
-            assert(expectedUUA === actual)
+            assewt(expecteduua === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientNotificationOpen
-  test("ClientNotificationOpen") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvent =
-          pushNotificationEvent(
-            eventNamespace = Some(ceNotificationOpen),
-            notificationDetails = Some(notificationDetails))
+  // t-tests fow c-cwientnotificationopen
+  t-test("cwientnotificationopen") {
+    nyew t-testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw cwientevent =
+          p-pushnotificationevent(
+            eventnamespace = some(cenotificationopen), (ˆ ﻌ ˆ)♡
+            nyotificationdetaiws = s-some(notificationdetaiws))
 
-        val expectedUUA = mkExpectedUUAForNotificationEvent(
-          clientEventNamespace = Some(uuaNotificationOpen),
-          actionType = ActionType.ClientNotificationOpen,
-          notificationContent = tweetNotificationContent,
-          productSurface = Some(ProductSurface.PushNotification),
-          productSurfaceInfo = Some(
-            ProductSurfaceInfo.PushNotificationInfo(
-              PushNotificationInfo(notificationId = notificationId)))
+        v-vaw expecteduua = m-mkexpecteduuafownotificationevent(
+          c-cwienteventnamespace = some(uuanotificationopen), XD
+          actiontype = actiontype.cwientnotificationopen, :3
+          nyotificationcontent = t-tweetnotificationcontent, -.-
+          p-pwoductsuwface = some(pwoductsuwface.pushnotification), ^^;;
+          pwoductsuwfaceinfo = some(
+            pwoductsuwfaceinfo.pushnotificationinfo(
+              p-pushnotificationinfo(notificationid = nyotificationid)))
         )
 
-        val actual = ClientEventAdapter.adaptEvent(clientEvent)
-        assert(Seq(expectedUUA) === actual)
+        v-vaw actuaw = c-cwienteventadaptew.adaptevent(cwientevent)
+        a-assewt(seq(expecteduua) === actuaw)
       }
     }
   }
 
-  // Tests for ClientNotificationClick
-  test("ClientNotificationClick") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val params = Table(
-          ("notificationType", "ceNotificationTabDetails", "uuaNotificationContent"),
-          ("tweetNotification", notificationTabTweetEventDetails, tweetNotificationContent),
+  // tests fow cwientnotificationcwick
+  test("cwientnotificationcwick") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        v-vaw pawams = tabwe(
+          ("notificationtype", OwO "cenotificationtabdetaiws", ^^;; "uuanotificationcontent"), 🥺
+          ("tweetnotification", ^^ notificationtabtweeteventdetaiws, t-tweetnotificationcontent), o.O
           (
-            "multiTweetNotification",
-            notificationTabMultiTweetEventDetails,
-            multiTweetNotificationContent),
+            "muwtitweetnotification", ( ͡o ω ͡o )
+            nyotificationtabmuwtitweeteventdetaiws, nyaa~~
+            muwtitweetnotificationcontent), (///ˬ///✿)
           (
-            "unknownNotification",
-            notificationTabUnknownEventDetails,
-            unknownNotificationContent
-          ),
+            "unknownnotification", (ˆ ﻌ ˆ)♡
+            nyotificationtabunknowneventdetaiws, XD
+            u-unknownnotificationcontent
+          ), >_<
         )
 
-        forEvery(params) {
+        fowevewy(pawams) {
           (
-            _: String,
-            ceNotificationTabDetails: NotificationTabDetails,
-            uuaNotificationContent: NotificationContent
+            _: s-stwing,
+            cenotificationtabdetaiws: notificationtabdetaiws, (U ﹏ U)
+            u-uuanotificationcontent: n-nyotificationcontent
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              actionTowardNotificationEvent(
-                eventNamespace = Some(ceNotificationClick),
-                notificationTabDetails = Some(ceNotificationTabDetails)))
+            v-vaw actuaw = c-cwienteventadaptew.adaptevent(
+              a-actiontowawdnotificationevent(
+                eventnamespace = s-some(cenotificationcwick), òωó
+                notificationtabdetaiws = s-some(cenotificationtabdetaiws)))
 
-            val expectedUUA = mkExpectedUUAForNotificationEvent(
-              clientEventNamespace = Some(uuaNotificationClick),
-              actionType = ActionType.ClientNotificationClick,
-              notificationContent = uuaNotificationContent,
-              productSurface = Some(ProductSurface.NotificationTab),
-              productSurfaceInfo = Some(notificationTabProductSurfaceInfo)
+            vaw expecteduua = m-mkexpecteduuafownotificationevent(
+              cwienteventnamespace = some(uuanotificationcwick), >w<
+              a-actiontype = actiontype.cwientnotificationcwick, ^•ﻌ•^
+              n-nyotificationcontent = u-uuanotificationcontent, 🥺
+              pwoductsuwface = s-some(pwoductsuwface.notificationtab), (✿oωo)
+              p-pwoductsuwfaceinfo = some(notificationtabpwoductsuwfaceinfo)
             )
 
-            assert(Seq(expectedUUA) === actual)
+            assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientNotificationSeeLessOften
-  test("ClientNotificationSeeLessOften") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val params = Table(
-          ("notificationType", "ceNotificationTabDetails", "uuaNotificationContent"),
-          ("tweetNotification", notificationTabTweetEventDetails, tweetNotificationContent),
+  // tests fow c-cwientnotificationseewessoften
+  t-test("cwientnotificationseewessoften") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw pawams = tabwe(
+          ("notificationtype", UwU "cenotificationtabdetaiws", (˘ω˘) "uuanotificationcontent"), ʘwʘ
+          ("tweetnotification", (ˆ ﻌ ˆ)♡ nyotificationtabtweeteventdetaiws, t-tweetnotificationcontent), ( ͡o ω ͡o )
           (
-            "multiTweetNotification",
-            notificationTabMultiTweetEventDetails,
-            multiTweetNotificationContent),
-          ("unknownNotification", notificationTabUnknownEventDetails, unknownNotificationContent),
+            "muwtitweetnotification", :3
+            nyotificationtabmuwtitweeteventdetaiws, 😳
+            muwtitweetnotificationcontent), (✿oωo)
+          ("unknownnotification", /(^•ω•^) nyotificationtabunknowneventdetaiws, :3 u-unknownnotificationcontent), σωσ
         )
 
-        forEvery(params) {
+        fowevewy(pawams) {
           (
-            _: String,
-            ceNotificationTabDetails: NotificationTabDetails,
-            uuaNotificationContent: NotificationContent
+            _: stwing, σωσ
+            c-cenotificationtabdetaiws: nyotificationtabdetaiws, 🥺
+            uuanotificationcontent: nyotificationcontent
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              actionTowardNotificationEvent(
-                eventNamespace = Some(ceNotificationSeeLessOften),
-                notificationTabDetails = Some(ceNotificationTabDetails)))
+            v-vaw actuaw = cwienteventadaptew.adaptevent(
+              a-actiontowawdnotificationevent(
+                e-eventnamespace = s-some(cenotificationseewessoften), rawr
+                nyotificationtabdetaiws = some(cenotificationtabdetaiws)))
 
-            val expectedUUA = mkExpectedUUAForNotificationEvent(
-              clientEventNamespace = Some(uuaNotificationSeeLessOften),
-              actionType = ActionType.ClientNotificationSeeLessOften,
-              notificationContent = uuaNotificationContent,
-              productSurface = Some(ProductSurface.NotificationTab),
-              productSurfaceInfo = Some(notificationTabProductSurfaceInfo)
+            v-vaw expecteduua = m-mkexpecteduuafownotificationevent(
+              cwienteventnamespace = s-some(uuanotificationseewessoften), o.O
+              a-actiontype = actiontype.cwientnotificationseewessoften, 😳😳😳
+              n-nyotificationcontent = uuanotificationcontent, /(^•ω•^)
+              p-pwoductsuwface = some(pwoductsuwface.notificationtab),
+              p-pwoductsuwfaceinfo = some(notificationtabpwoductsuwfaceinfo)
             )
 
-            assert(Seq(expectedUUA) === actual)
+            a-assewt(seq(expecteduua) === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetClick
-  test("ClientTweetClick") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val params = Table(
-          ("eventName", "page", "nTabDetails", "uuaProductSurface", "uuaProductSurfaceInfo"),
-          ("tweetClick", "messages", None, None, None),
+  // tests fow c-cwienttweetcwick
+  test("cwienttweetcwick") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw pawams = tabwe(
+          ("eventname", σωσ "page", "ntabdetaiws", OwO "uuapwoductsuwface", "uuapwoductsuwfaceinfo"), OwO
+          ("tweetcwick", òωó "messages", n-nyone, :3 none, n-nyone), σωσ
           (
-            "tweetClickInNTab",
-            "ntab",
-            Some(notificationTabTweetEventDetails),
-            Some(ProductSurface.NotificationTab),
-            Some(notificationTabProductSurfaceInfo))
+            "tweetcwickinntab", σωσ
+            "ntab", -.-
+            some(notificationtabtweeteventdetaiws), (///ˬ///✿)
+            s-some(pwoductsuwface.notificationtab),
+            some(notificationtabpwoductsuwfaceinfo))
         )
 
-        forEvery(params) {
+        fowevewy(pawams) {
           (
-            _: String,
-            page: String,
-            notificationTabDetails: Option[NotificationTabDetails],
-            uuaProductSurface: Option[ProductSurface],
-            uuaProductSurfaceInfo: Option[ProductSurfaceInfo]
+            _: s-stwing,
+            p-page: stwing, rawr x3
+            n-nyotificationtabdetaiws: o-option[notificationtabdetaiws], (U ﹏ U)
+            uuapwoductsuwface: o-option[pwoductsuwface], òωó
+            uuapwoductsuwfaceinfo: option[pwoductsuwfaceinfo]
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceTweetClick.copy(page = Some(page))),
-                notificationTabDetails = notificationTabDetails))
+            v-vaw actuaw = c-cwienteventadaptew.adaptevent(
+              actiontowawddefauwttweetevent(
+                eventnamespace = some(cetweetcwick.copy(page = s-some(page))), OwO
+                nyotificationtabdetaiws = n-nyotificationtabdetaiws))
 
-            val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace = Some(uuaTweetClick.copy(page = Some(page))),
-              actionType = ActionType.ClientTweetClick,
-              productSurface = uuaProductSurface,
-              productSurfaceInfo = uuaProductSurfaceInfo
+            vaw expecteduua = mkexpecteduuafowactiontowawddefauwttweetevent(
+              c-cwienteventnamespace = some(uuatweetcwick.copy(page = s-some(page))), ^^
+              actiontype = actiontype.cwienttweetcwick, /(^•ω•^)
+              p-pwoductsuwface = uuapwoductsuwface, >_<
+              p-pwoductsuwfaceinfo = uuapwoductsuwfaceinfo
             )
 
-            assert(Seq(expectedUUA) === actual)
+            a-assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetClickProfile
-  test("ClientTweetClickProfile") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual =
-          ClientEventAdapter.adaptEvent(
-            profileClickEvent(eventNamespace = Some(ceTweetClickProfile)))
+  // t-tests fow cwienttweetcwickpwofiwe
+  test("cwienttweetcwickpwofiwe") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw actuaw =
+          c-cwienteventadaptew.adaptevent(
+            p-pwofiwecwickevent(eventnamespace = s-some(cetweetcwickpwofiwe)))
 
-        val expectedUUA = mkExpectedUUAForProfileClick(
-          clientEventNamespace = Some(uuaTweetClickProfile),
-          actionType = ActionType.ClientTweetClickProfile,
-          authorInfo = Some(
-            AuthorInfo(
-              authorId = Some(authorId)
+        vaw expecteduua = mkexpecteduuafowpwofiwecwick(
+          cwienteventnamespace = some(uuatweetcwickpwofiwe), -.-
+          actiontype = actiontype.cwienttweetcwickpwofiwe, (˘ω˘)
+          a-authowinfo = some(
+            authowinfo(
+              a-authowid = some(authowid)
             )))
-        assert(Seq(expectedUUA) === actual)
+        a-assewt(seq(expecteduua) === actuaw)
       }
     }
   }
 
-  // Tests for ClientTweetClickShare
-  test("ClientTweetClickShare") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual =
-          ClientEventAdapter.adaptEvent(
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(EventNamespace(action = Some("share_menu_click"))),
-              authorId = Some(authorId),
-              tweetPosition = Some(1),
-              promotedId = Some("promted_123")
+  // tests f-fow cwienttweetcwickshawe
+  t-test("cwienttweetcwickshawe") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw a-actuaw =
+          cwienteventadaptew.adaptevent(
+            a-actiontowawddefauwttweetevent(
+              eventnamespace = some(eventnamespace(action = s-some("shawe_menu_cwick"))), >_<
+              a-authowid = some(authowid), (˘ω˘)
+              tweetposition = s-some(1), >w<
+              p-pwomotedid = some("pwomted_123")
             ))
 
-        val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-          clientEventNamespace = Some(ClientEventNamespace(action = Some("share_menu_click"))),
-          actionType = ActionType.ClientTweetClickShare,
-          authorInfo = Some(
-            AuthorInfo(
-              authorId = Some(authorId)
-            )),
-          tweetPosition = Some(1),
-          promotedId = Some("promted_123")
+        v-vaw expecteduua = mkexpecteduuafowactiontowawddefauwttweetevent(
+          c-cwienteventnamespace = s-some(cwienteventnamespace(action = s-some("shawe_menu_cwick"))), 😳😳😳
+          a-actiontype = a-actiontype.cwienttweetcwickshawe,
+          authowinfo = some(
+            authowinfo(
+              a-authowid = s-some(authowid)
+            )), 😳
+          tweetposition = some(1), XD
+          p-pwomotedid = some("pwomted_123")
         )
-        assert(Seq(expectedUUA) === actual)
+        assewt(seq(expecteduua) === actuaw)
       }
     }
   }
 
-  // Tests for ClientTweetShareVia* and ClientTweetUnbookmark
-  test("ClientTweetShareVia and Unbookmark") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val input = Table(
-          ("eventNamespaceAction", "uuaActionTypes"),
-          ("bookmark", Seq(ActionType.ClientTweetShareViaBookmark, ActionType.ClientTweetBookmark)),
-          ("copy_link", Seq(ActionType.ClientTweetShareViaCopyLink)),
-          ("share_via_dm", Seq(ActionType.ClientTweetClickSendViaDirectMessage)),
-          ("unbookmark", Seq(ActionType.ClientTweetUnbookmark))
+  // tests f-fow cwienttweetshawevia* and cwienttweetunbookmawk
+  test("cwienttweetshawevia and unbookmawk") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw input = tabwe(
+          ("eventnamespaceaction", OwO "uuaactiontypes"),
+          ("bookmawk", -.- s-seq(actiontype.cwienttweetshaweviabookmawk, o.O actiontype.cwienttweetbookmawk)), ^^
+          ("copy_wink", ^^ seq(actiontype.cwienttweetshaweviacopywink)), XD
+          ("shawe_via_dm", >w< s-seq(actiontype.cwienttweetcwicksendviadiwectmessage)), (⑅˘꒳˘)
+          ("unbookmawk", 😳 s-seq(actiontype.cwienttweetunbookmawk))
         )
 
-        forEvery(input) { (eventNamespaceAction: String, uuaActionTypes: Seq[ActionType]) =>
-          val actual: Seq[UnifiedUserAction] =
-            ClientEventAdapter.adaptEvent(
-              actionTowardDefaultTweetEvent(
-                eventNamespace = Some(EventNamespace(action = Some(eventNamespaceAction))),
-                authorId = Some(authorId)))
+        fowevewy(input) { (eventnamespaceaction: s-stwing, :3 uuaactiontypes: seq[actiontype]) =>
+          v-vaw actuaw: seq[unifiedusewaction] =
+            c-cwienteventadaptew.adaptevent(
+              actiontowawddefauwttweetevent(
+                eventnamespace = some(eventnamespace(action = some(eventnamespaceaction))), :3
+                authowid = some(authowid)))
 
-          implicit def any2iterable[A](a: A): Iterable[A] = Some(a)
-          val expectedUUA: Seq[UnifiedUserAction] = uuaActionTypes.flatMap { uuaActionType =>
-            mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace =
-                Some(ClientEventNamespace(action = Some(eventNamespaceAction))),
-              actionType = uuaActionType,
-              authorInfo = Some(
-                AuthorInfo(
-                  authorId = Some(authorId)
+          impwicit d-def any2itewabwe[a](a: a): itewabwe[a] = some(a)
+          vaw e-expecteduua: seq[unifiedusewaction] = u-uuaactiontypes.fwatmap { uuaactiontype =>
+            mkexpecteduuafowactiontowawddefauwttweetevent(
+              cwienteventnamespace =
+                some(cwienteventnamespace(action = some(eventnamespaceaction))), OwO
+              actiontype = uuaactiontype, (U ﹏ U)
+              authowinfo = some(
+                authowinfo(
+                  authowid = s-some(authowid)
                 ))
             )
           }
-          assert(expectedUUA === actual)
+          a-assewt(expecteduua === a-actuaw)
         }
       }
     }
   }
 
-  // Test for ClientTweetClickHashtag
-  test("ClientTweetClickHashtag") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val events = Table(
-          ("targets", "tweetActionInfo"),
+  // test fow cwienttweetcwickhashtag
+  t-test("cwienttweetcwickhashtag") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw events = tabwe(
+          ("tawgets", (⑅˘꒳˘) "tweetactioninfo"),
           (
-            Some(Seq(LogEventItem(name = Some("test_hashtag")))),
-            Some(
-              TweetActionInfo.ClientTweetClickHashtag(
-                ClientTweetClickHashtag(hashtag = Some("test_hashtag"))))),
+            some(seq(wogeventitem(name = s-some("test_hashtag")))),
+            s-some(
+              tweetactioninfo.cwienttweetcwickhashtag(
+                c-cwienttweetcwickhashtag(hashtag = s-some("test_hashtag"))))), 😳
           (
-            Some(Seq.empty[LogEventItem]),
-            Some(TweetActionInfo.ClientTweetClickHashtag(ClientTweetClickHashtag(hashtag = None)))),
+            s-some(seq.empty[wogeventitem]), (ˆ ﻌ ˆ)♡
+            s-some(tweetactioninfo.cwienttweetcwickhashtag(cwienttweetcwickhashtag(hashtag = n-nyone)))), mya
           (
-            Some(Nil),
-            Some(TweetActionInfo.ClientTweetClickHashtag(ClientTweetClickHashtag(hashtag = None)))),
+            some(niw), ʘwʘ
+            s-some(tweetactioninfo.cwienttweetcwickhashtag(cwienttweetcwickhashtag(hashtag = n-nyone)))), (˘ω˘)
           (
-            None,
-            Some(TweetActionInfo.ClientTweetClickHashtag(ClientTweetClickHashtag(hashtag = None))))
+            nyone, (///ˬ///✿)
+            s-some(tweetactioninfo.cwienttweetcwickhashtag(cwienttweetcwickhashtag(hashtag = n-nyone))))
         )
-        forEvery(events) {
-          (targets: Option[Seq[LogEventItem]], tweetActionInfo: Option[TweetActionInfo]) =>
-            val clientEvent =
-              actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceClickHashtag),
-                targets = targets)
-            val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace = Some(uuaClickHashtagClientEventNamespace),
-              actionType = ActionType.ClientTweetClickHashtag,
-              tweetActionInfo = tweetActionInfo
+        f-fowevewy(events) {
+          (tawgets: o-option[seq[wogeventitem]], XD tweetactioninfo: o-option[tweetactioninfo]) =>
+            v-vaw cwientevent =
+              a-actiontowawddefauwttweetevent(
+                e-eventnamespace = some(cecwickhashtag), 😳
+                tawgets = tawgets)
+            v-vaw expecteduua = mkexpecteduuafowactiontowawddefauwttweetevent(
+              c-cwienteventnamespace = some(uuacwickhashtagcwienteventnamespace), :3
+              actiontype = a-actiontype.cwienttweetcwickhashtag, 😳😳😳
+              t-tweetactioninfo = t-tweetactioninfo
             )
-            assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+            assewt(seq(expecteduua) === c-cwienteventadaptew.adaptevent(cwientevent))
         }
 
       }
     }
   }
 
-  // Tests for ClientTweetVideoPlaybackStart and ClientTweetVideoPlaybackComplete
-  test("Client Tweet Video Playback Start and Complete") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val input = Table(
-          ("ceNamespace", "uuaNamespace", "uuaActionType"),
+  // t-tests fow cwienttweetvideopwaybackstawt and cwienttweetvideopwaybackcompwete
+  test("cwient tweet video pwayback stawt and compwete") {
+    nyew t-testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw input = tabwe(
+          ("cenamespace", (U ᵕ U❁) "uuanamespace", ^•ﻌ•^ "uuaactiontype"), (˘ω˘)
           (
-            ceVideoPlaybackStart,
-            uuaVideoPlaybackStartClientEventNamespace,
-            ActionType.ClientTweetVideoPlaybackStart),
+            c-cevideopwaybackstawt, /(^•ω•^)
+            uuavideopwaybackstawtcwienteventnamespace,
+            a-actiontype.cwienttweetvideopwaybackstawt), ^•ﻌ•^
           (
-            ceVideoPlaybackComplete,
-            uuaVideoPlaybackCompleteClientEventNamespace,
-            ActionType.ClientTweetVideoPlaybackComplete),
+            cevideopwaybackcompwete, ^^
+            u-uuavideopwaybackcompwetecwienteventnamespace, (U ﹏ U)
+            a-actiontype.cwienttweetvideopwaybackcompwete), :3
         )
-        for (element <- videoEventElementValues) {
-          forEvery(input) {
+        f-fow (ewement <- v-videoeventewementvawues) {
+          f-fowevewy(input) {
             (
-              ceNamespace: EventNamespace,
-              uuaNamespace: ClientEventNamespace,
-              uuaActionType: ActionType
+              c-cenamespace: e-eventnamespace, òωó
+              uuanamespace: cwienteventnamespace,
+              u-uuaactiontype: actiontype
             ) =>
-              val clientEvent = actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceNamespace.copy(element = Some(element))),
-                mediaDetailsV2 = Some(mediaDetailsV2),
-                clientMediaEvent = Some(clientMediaEvent),
-                cardDetails = Some(cardDetails)
+              v-vaw cwientevent = actiontowawddefauwttweetevent(
+                e-eventnamespace = s-some(cenamespace.copy(ewement = some(ewement))), σωσ
+                m-mediadetaiwsv2 = some(mediadetaiwsv2), σωσ
+                cwientmediaevent = s-some(cwientmediaevent), (⑅˘꒳˘)
+                c-cawddetaiws = s-some(cawddetaiws)
               )
-              val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-                clientEventNamespace = Some(uuaNamespace.copy(element = Some(element))),
-                actionType = uuaActionType,
-                tweetActionInfo = Some(videoMetadata)
+              v-vaw expecteduua = mkexpecteduuafowactiontowawddefauwttweetevent(
+                c-cwienteventnamespace = s-some(uuanamespace.copy(ewement = s-some(ewement))), 🥺
+                actiontype = u-uuaactiontype, (U ﹏ U)
+                tweetactioninfo = some(videometadata)
               )
-              assert(ClientEventAdapter.adaptEvent(clientEvent).contains(expectedUUA))
+              assewt(cwienteventadaptew.adaptevent(cwientevent).contains(expecteduua))
           }
         }
 
-        for (element <- invalidVideoEventElementValues) {
-          forEvery(input) {
+        fow (ewement <- invawidvideoeventewementvawues) {
+          fowevewy(input) {
             (
-              ceNamespace: EventNamespace,
-              uuaNamespace: ClientEventNamespace,
-              uuaActionType: ActionType
+              cenamespace: eventnamespace, >w<
+              uuanamespace: c-cwienteventnamespace, nyaa~~
+              u-uuaactiontype: actiontype
             ) =>
-              val clientEvent = actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceNamespace.copy(element = Some(element))),
-                mediaDetailsV2 = Some(mediaDetailsV2),
-                clientMediaEvent = Some(clientMediaEvent)
+              vaw cwientevent = actiontowawddefauwttweetevent(
+                eventnamespace = s-some(cenamespace.copy(ewement = s-some(ewement))), -.-
+                mediadetaiwsv2 = some(mediadetaiwsv2), XD
+                cwientmediaevent = s-some(cwientmediaevent)
               )
-              val unexpectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-                clientEventNamespace = Some(uuaNamespace.copy(element = Some(element))),
-                actionType = uuaActionType,
-                tweetActionInfo = Some(videoMetadata)
+              v-vaw unexpecteduua = mkexpecteduuafowactiontowawddefauwttweetevent(
+                c-cwienteventnamespace = s-some(uuanamespace.copy(ewement = some(ewement))), -.-
+                a-actiontype = uuaactiontype, >w<
+                t-tweetactioninfo = s-some(videometadata)
               )
-              assert(!ClientEventAdapter.adaptEvent(clientEvent).contains(unexpectedUUA))
+              assewt(!cwienteventadaptew.adaptevent(cwientevent).contains(unexpecteduua))
           }
         }
       }
     }
   }
 
-  // Tests for ClientTweetNotRelevant and ClientTweetUndoNotRelevant
-  test("ClientTweetNotRelevant & UndoNotRelevant") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actions = Table(("action"), "click", "undo")
-        val element = "feedback_notrelevant"
-        forEvery(actions) { action =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceEventNamespace(element, action)),
+  // tests fow cwienttweetnotwewevant and c-cwienttweetundonotwewevant
+  t-test("cwienttweetnotwewevant & undonotwewevant") {
+    n-new testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw a-actions = tabwe(("action"), (ꈍᴗꈍ) "cwick", :3 "undo")
+        v-vaw ewement = "feedback_notwewevant"
+        f-fowevewy(actions) { a-action =>
+          vaw cwientevent =
+            a-actiontowawddefauwttweetevent(
+              e-eventnamespace = some(ceeventnamespace(ewement, (ˆ ﻌ ˆ)♡ action)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
-            actionType = action match {
-              case "click" => ActionType.ClientTweetNotRelevant
-              case "undo" => ActionType.ClientTweetUndoNotRelevant
+          vaw expecteduua = mkexpecteduuafowactiontowawddefauwttweetevent(
+            c-cwienteventnamespace = s-some(uuacwienteventnamespace(ewement, -.- action)),
+            a-actiontype = action match {
+              case "cwick" => actiontype.cwienttweetnotwewevant
+              c-case "undo" => a-actiontype.cwienttweetundonotwewevant
             }
           )
 
-          val actual = ClientEventAdapter.adaptEvent(clientEvent)
-          assert(Seq(expectedUUA) === actual)
+          v-vaw actuaw = cwienteventadaptew.adaptevent(cwientevent)
+          a-assewt(seq(expecteduua) === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientNotificationDismiss
-  test("ClientNotificationDismiss") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvent =
-          pushNotificationEvent(
-            eventNamespace = Some(ceNotificationDismiss),
-            notificationDetails = Some(notificationDetails))
+  // tests fow cwientnotificationdismiss
+  t-test("cwientnotificationdismiss") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw c-cwientevent =
+          p-pushnotificationevent(
+            eventnamespace = some(cenotificationdismiss), mya
+            nyotificationdetaiws = some(notificationdetaiws))
 
-        val expectedUUA = mkExpectedUUAForNotificationEvent(
-          clientEventNamespace = Some(uuaNotificationDismiss),
-          actionType = ActionType.ClientNotificationDismiss,
-          notificationContent = tweetNotificationContent,
-          productSurface = Some(ProductSurface.PushNotification),
-          productSurfaceInfo = Some(
-            ProductSurfaceInfo.PushNotificationInfo(
-              PushNotificationInfo(notificationId = notificationId)))
+        vaw expecteduua = m-mkexpecteduuafownotificationevent(
+          cwienteventnamespace = some(uuanotificationdismiss), (˘ω˘)
+          a-actiontype = a-actiontype.cwientnotificationdismiss, ^•ﻌ•^
+          nyotificationcontent = tweetnotificationcontent, 😳😳😳
+          pwoductsuwface = s-some(pwoductsuwface.pushnotification), σωσ
+          p-pwoductsuwfaceinfo = some(
+            pwoductsuwfaceinfo.pushnotificationinfo(
+              p-pushnotificationinfo(notificationid = nyotificationid)))
         )
 
-        val actual = ClientEventAdapter.adaptEvent(clientEvent)
-        assert(Seq(expectedUUA) === actual)
+        v-vaw actuaw = cwienteventadaptew.adaptevent(cwientevent)
+        assewt(seq(expecteduua) === actuaw)
       }
     }
   }
 
-  // Tests for ClientTypeaheadClick
-  test("ClientTypeaheadClick") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val searchQuery = "searchQuery"
+  // tests f-fow cwienttypeaheadcwick
+  test("cwienttypeaheadcwick") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw seawchquewy = "seawchquewy"
 
-        val input = Table(
-          ("clientEventTargets", "typeaheadActionInfo"),
+        vaw input = tabwe(
+          ("cwienteventtawgets", ( ͡o ω ͡o ) "typeaheadactioninfo"), nyaa~~
           (
-            Some(Seq(LogEventItem(id = Some(userId), itemType = Some(ItemType.User)))),
-            TypeaheadActionInfo.UserResult(UserResult(profileId = userId))),
+            some(seq(wogeventitem(id = s-some(usewid), :3 i-itemtype = some(itemtype.usew)))), (✿oωo)
+            typeaheadactioninfo.usewwesuwt(usewwesuwt(pwofiweid = u-usewid))), >_<
           (
-            Some(Seq(LogEventItem(name = Some(s"$searchQuery"), itemType = Some(ItemType.Search)))),
-            TypeaheadActionInfo.TopicQueryResult(
-              TopicQueryResult(suggestedTopicQuery = s"$searchQuery")))
+            s-some(seq(wogeventitem(name = some(s"$seawchquewy"), ^^ itemtype = s-some(itemtype.seawch)))), (///ˬ///✿)
+            typeaheadactioninfo.topicquewywesuwt(
+              t-topicquewywesuwt(suggestedtopicquewy = s"$seawchquewy")))
         )
-        forEvery(input) {
+        fowevewy(input) {
           (
-            clientEventTargets: Option[Seq[LogEventItem]],
-            typeaheadActionInfo: TypeaheadActionInfo,
+            c-cwienteventtawgets: o-option[seq[wogeventitem]], :3
+            t-typeaheadactioninfo: typeaheadactioninfo, :3
           ) =>
-            val clientEvent =
-              actionTowardsTypeaheadEvent(
-                eventNamespace = Some(ceTypeaheadClick),
-                targets = clientEventTargets,
-                searchQuery = searchQuery)
-            val expectedUUA = mkExpectedUUAForTypeaheadAction(
-              clientEventNamespace = Some(uuaTypeaheadClick),
-              actionType = ActionType.ClientTypeaheadClick,
-              typeaheadActionInfo = typeaheadActionInfo,
-              searchQuery = searchQuery
+            vaw cwientevent =
+              a-actiontowawdstypeaheadevent(
+                eventnamespace = some(cetypeaheadcwick), (ˆ ﻌ ˆ)♡
+                tawgets = cwienteventtawgets, 🥺
+                seawchquewy = seawchquewy)
+            v-vaw expecteduua = m-mkexpecteduuafowtypeaheadaction(
+              cwienteventnamespace = some(uuatypeaheadcwick), 😳
+              actiontype = actiontype.cwienttypeaheadcwick, (ꈍᴗꈍ)
+              typeaheadactioninfo = typeaheadactioninfo, mya
+              s-seawchquewy = seawchquewy
             )
-            val actual = ClientEventAdapter.adaptEvent(clientEvent)
-            assert(Seq(expectedUUA) === actual)
+            vaw actuaw = c-cwienteventadaptew.adaptevent(cwientevent)
+            a-assewt(seq(expecteduua) === a-actuaw)
         }
-        // Testing invalid target item type case
-        assert(
-          Seq() === ClientEventAdapter.adaptEvent(
-            actionTowardsTypeaheadEvent(
-              eventNamespace = Some(ceTypeaheadClick),
-              targets =
-                Some(Seq(LogEventItem(id = Some(itemTweetId), itemType = Some(ItemType.Tweet)))),
-              searchQuery = searchQuery)))
+        // t-testing invawid tawget item type case
+        assewt(
+          seq() === cwienteventadaptew.adaptevent(
+            a-actiontowawdstypeaheadevent(
+              e-eventnamespace = s-some(cetypeaheadcwick), rawr
+              t-tawgets =
+                some(seq(wogeventitem(id = s-some(itemtweetid), ʘwʘ itemtype = s-some(itemtype.tweet)))), -.-
+              seawchquewy = seawchquewy)))
       }
     }
   }
 
-  // Tests for ClientFeedbackPromptSubmit
-  test("ClientFeedbackPromptSubmit") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val searchQuery: String = "searchQuery"
-        val searchDetails = Some(SearchDetails(query = Some(searchQuery)))
-        val input = Table(
-          ("logEvent", "uuaNamespace", "uuaActionType", "FeedbackPromptInfo"),
+  // tests f-fow cwientfeedbackpwomptsubmit
+  t-test("cwientfeedbackpwomptsubmit") {
+    n-nyew t-testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        v-vaw seawchquewy: s-stwing = "seawchquewy"
+        vaw seawchdetaiws = some(seawchdetaiws(quewy = some(seawchquewy)))
+        v-vaw input = tabwe(
+          ("wogevent", UwU "uuanamespace", :3 "uuaactiontype", 😳 "feedbackpwomptinfo"), (ꈍᴗꈍ)
           (
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceTweetRelevantToSearch),
-              searchDetails = searchDetails
-            ),
-            uuaTweetRelevantToSearch,
-            ActionType.ClientFeedbackPromptSubmit,
-            FeedbackPromptInfo(feedbackPromptActionInfo =
-              FeedbackPromptActionInfo.TweetRelevantToSearch(
-                TweetRelevantToSearch(
-                  searchQuery = searchQuery,
-                  tweetId = itemTweetId,
-                  isRelevant = Some(true))))),
+            a-actiontowawddefauwttweetevent(
+              eventnamespace = some(cetweetwewevanttoseawch), mya
+              seawchdetaiws = s-seawchdetaiws
+            ), nyaa~~
+            uuatweetwewevanttoseawch, o.O
+            a-actiontype.cwientfeedbackpwomptsubmit, òωó
+            f-feedbackpwomptinfo(feedbackpwomptactioninfo =
+              f-feedbackpwomptactioninfo.tweetwewevanttoseawch(
+                tweetwewevanttoseawch(
+                  seawchquewy = seawchquewy, ^•ﻌ•^
+                  tweetid = itemtweetid, (˘ω˘)
+                  i-iswewevant = some(twue))))), òωó
           (
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceTweetNotRelevantToSearch),
-              searchDetails = searchDetails
-            ),
-            uuaTweetNotRelevantToSearch,
-            ActionType.ClientFeedbackPromptSubmit,
-            FeedbackPromptInfo(feedbackPromptActionInfo =
-              FeedbackPromptActionInfo.TweetRelevantToSearch(
-                TweetRelevantToSearch(
-                  searchQuery = searchQuery,
-                  tweetId = itemTweetId,
-                  isRelevant = Some(false))))),
+            actiontowawddefauwttweetevent(
+              e-eventnamespace = some(cetweetnotwewevanttoseawch), mya
+              seawchdetaiws = s-seawchdetaiws
+            ), ^^
+            uuatweetnotwewevanttoseawch, rawr
+            a-actiontype.cwientfeedbackpwomptsubmit, >_<
+            f-feedbackpwomptinfo(feedbackpwomptactioninfo =
+              f-feedbackpwomptactioninfo.tweetwewevanttoseawch(
+                t-tweetwewevanttoseawch(
+                  seawchquewy = s-seawchquewy, (U ᵕ U❁)
+                  tweetid = i-itemtweetid, /(^•ω•^)
+                  iswewevant = some(fawse))))), mya
           (
-            actionTowardSearchResultPageEvent(
-              eventNamespace = Some(ceSearchResultsRelevant),
-              searchDetails = searchDetails,
-              items = Some(Seq(LogEventItem(itemType = Some(ItemType.RelevancePrompt))))
-            ),
-            uuaSearchResultsRelevant,
-            ActionType.ClientFeedbackPromptSubmit,
-            FeedbackPromptInfo(feedbackPromptActionInfo =
-              FeedbackPromptActionInfo.DidYouFindItSearch(
-                DidYouFindItSearch(searchQuery = searchQuery, isRelevant = Some(true))))),
+            actiontowawdseawchwesuwtpageevent(
+              eventnamespace = s-some(ceseawchwesuwtswewevant), OwO
+              seawchdetaiws = seawchdetaiws, UwU
+              i-items = some(seq(wogeventitem(itemtype = s-some(itemtype.wewevancepwompt))))
+            ), 🥺
+            u-uuaseawchwesuwtswewevant, (✿oωo)
+            actiontype.cwientfeedbackpwomptsubmit,
+            feedbackpwomptinfo(feedbackpwomptactioninfo =
+              feedbackpwomptactioninfo.didyoufinditseawch(
+                didyoufinditseawch(seawchquewy = seawchquewy, rawr iswewevant = s-some(twue))))), rawr
           (
-            actionTowardSearchResultPageEvent(
-              eventNamespace = Some(ceSearchResultsNotRelevant),
-              searchDetails = searchDetails,
-              items = Some(Seq(LogEventItem(itemType = Some(ItemType.RelevancePrompt))))
-            ),
-            uuaSearchResultsNotRelevant,
-            ActionType.ClientFeedbackPromptSubmit,
-            FeedbackPromptInfo(feedbackPromptActionInfo =
-              FeedbackPromptActionInfo.DidYouFindItSearch(
-                DidYouFindItSearch(searchQuery = searchQuery, isRelevant = Some(false)))))
+            a-actiontowawdseawchwesuwtpageevent(
+              e-eventnamespace = s-some(ceseawchwesuwtsnotwewevant), ( ͡o ω ͡o )
+              seawchdetaiws = seawchdetaiws, /(^•ω•^)
+              items = some(seq(wogeventitem(itemtype = some(itemtype.wewevancepwompt))))
+            ), -.-
+            uuaseawchwesuwtsnotwewevant, >w<
+            a-actiontype.cwientfeedbackpwomptsubmit, ( ͡o ω ͡o )
+            feedbackpwomptinfo(feedbackpwomptactioninfo =
+              feedbackpwomptactioninfo.didyoufinditseawch(
+                didyoufinditseawch(seawchquewy = s-seawchquewy, (˘ω˘) i-iswewevant = s-some(fawse)))))
         )
 
-        forEvery(input) {
+        fowevewy(input) {
           (
-            logEvent: LogEvent,
-            uuaNamespace: ClientEventNamespace,
-            uuaActionType: ActionType,
-            feedbackPromptInfo: FeedbackPromptInfo
+            w-wogevent: wogevent,
+            uuanamespace: cwienteventnamespace,
+            uuaactiontype: actiontype, /(^•ω•^)
+            feedbackpwomptinfo: feedbackpwomptinfo
           ) =>
-            val actual =
-              ClientEventAdapter.adaptEvent(logEvent)
-            val expectedUUA = mkExpectedUUAForFeedbackSubmitAction(
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = uuaActionType,
-              feedbackPromptInfo = feedbackPromptInfo,
-              searchQuery = searchQuery)
-            assert(Seq(expectedUUA) === actual)
+            vaw actuaw =
+              cwienteventadaptew.adaptevent(wogevent)
+            vaw e-expecteduua = mkexpecteduuafowfeedbacksubmitaction(
+              cwienteventnamespace = some(uuanamespace), (˘ω˘)
+              a-actiontype = u-uuaactiontype, o.O
+              feedbackpwomptinfo = f-feedbackpwomptinfo, nyaa~~
+              s-seawchquewy = seawchquewy)
+            assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientProfile*
-  test("ClientProfile*") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val input = Table(
-          ("eventName", "ceNamespace", "uuaNamespace", "uuaActionType"),
-          ("profile_block", ceProfileBlock, uuaProfileBlock, ActionType.ClientProfileBlock),
-          ("profile_unblock", ceProfileUnblock, uuaProfileUnblock, ActionType.ClientProfileUnblock),
-          ("profile_mute", ceProfileMute, uuaProfileMute, ActionType.ClientProfileMute),
-          ("profile_report", ceProfileReport, uuaProfileReport, ActionType.ClientProfileReport),
-          ("profile_follow", ceProfileFollow, uuaProfileFollow, ActionType.ClientProfileFollow),
-          ("profile_click", ceProfileClick, uuaProfileClick, ActionType.ClientProfileClick),
+  // t-tests fow c-cwientpwofiwe*
+  test("cwientpwofiwe*") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw input = t-tabwe(
+          ("eventname", "cenamespace", :3 "uuanamespace", (///ˬ///✿) "uuaactiontype"), (U ﹏ U)
+          ("pwofiwe_bwock", o.O c-cepwofiwebwock, ^^;; uuapwofiwebwock, a-actiontype.cwientpwofiwebwock), ʘwʘ
+          ("pwofiwe_unbwock", cepwofiweunbwock, (///ˬ///✿) uuapwofiweunbwock, σωσ a-actiontype.cwientpwofiweunbwock), ^^;;
+          ("pwofiwe_mute", UwU c-cepwofiwemute, mya uuapwofiwemute, ^•ﻌ•^ a-actiontype.cwientpwofiwemute), (⑅˘꒳˘)
+          ("pwofiwe_wepowt", nyaa~~ c-cepwofiwewepowt, ^^;; uuapwofiwewepowt, 🥺 actiontype.cwientpwofiwewepowt), ^^;;
+          ("pwofiwe_fowwow", nyaa~~ cepwofiwefowwow, 🥺 uuapwofiwefowwow, (ˆ ﻌ ˆ)♡ actiontype.cwientpwofiwefowwow), ( ͡o ω ͡o )
+          ("pwofiwe_cwick", nyaa~~ c-cepwofiwecwick, ( ͡o ω ͡o ) uuapwofiwecwick, ^^;; actiontype.cwientpwofiwecwick), rawr x3
           (
-            "profile_follow_attempt",
-            ceProfileFollowAttempt,
-            uuaProfileFollowAttempt,
-            ActionType.ClientProfileFollowAttempt),
-          ("profile_show", ceProfileShow, uuaProfileShow, ActionType.ClientProfileShow),
+            "pwofiwe_fowwow_attempt", ^^;;
+            c-cepwofiwefowwowattempt, ^•ﻌ•^
+            uuapwofiwefowwowattempt, 🥺
+            a-actiontype.cwientpwofiwefowwowattempt), (ꈍᴗꈍ)
+          ("pwofiwe_show", ^•ﻌ•^ cepwofiweshow, :3 uuapwofiweshow, (˘ω˘) a-actiontype.cwientpwofiweshow), ^^
         )
-        forEvery(input) {
+        fowevewy(input) {
           (
-            eventName: String,
-            ceNamespace: EventNamespace,
-            uuaNamespace: ClientEventNamespace,
-            uuaActionType: ActionType
+            eventname: stwing, /(^•ω•^)
+            cenamespace: eventnamespace, σωσ
+            u-uuanamespace: cwienteventnamespace, òωó
+            u-uuaactiontype: a-actiontype
           ) =>
-            val actual =
-              ClientEventAdapter.adaptEvent(
-                actionTowardProfileEvent(
-                  eventName = eventName,
-                  eventNamespace = Some(ceNamespace)
+            v-vaw actuaw =
+              cwienteventadaptew.adaptevent(
+                actiontowawdpwofiweevent(
+                  e-eventname = e-eventname, >w<
+                  eventnamespace = s-some(cenamespace)
                 ))
-            val expectedUUA = mkExpectedUUAForProfileAction(
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = uuaActionType,
-              actionProfileId = itemProfileId)
-            assert(Seq(expectedUUA) === actual)
+            v-vaw expecteduua = mkexpecteduuafowpwofiweaction(
+              c-cwienteventnamespace = s-some(uuanamespace), (˘ω˘)
+              a-actiontype = u-uuaactiontype, ^•ﻌ•^
+              a-actionpwofiweid = itempwofiweid)
+            assewt(seq(expecteduua) === a-actuaw)
         }
       }
     }
   }
-  // Tests for ClientTweetEngagementAttempt
-  test("ClientTweetEngagementAttempt") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("eventName", "ceNamespace", "uuaNamespace", "uuaActionType"),
+  // t-tests fow cwienttweetengagementattempt
+  test("cwienttweetengagementattempt") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw cwientevents = t-tabwe(
+          ("eventname", >_< "cenamespace", -.- "uuanamespace", òωó "uuaactiontype"), ( ͡o ω ͡o )
           (
-            "tweet_favourite_attempt",
-            ceTweetFavoriteAttempt,
-            uuaTweetFavoriteAttempt,
-            ActionType.ClientTweetFavoriteAttempt),
+            "tweet_favouwite_attempt", (ˆ ﻌ ˆ)♡
+            cetweetfavowiteattempt, :3
+            u-uuatweetfavowiteattempt, ^•ﻌ•^
+            a-actiontype.cwienttweetfavowiteattempt), ( ͡o ω ͡o )
           (
-            "tweet_retweet_attempt",
-            ceTweetRetweetAttempt,
-            uuaTweetRetweetAttempt,
-            ActionType.ClientTweetRetweetAttempt),
+            "tweet_wetweet_attempt", ^•ﻌ•^
+            cetweetwetweetattempt,
+            u-uuatweetwetweetattempt, ʘwʘ
+            a-actiontype.cwienttweetwetweetattempt), :3
           (
-            "tweet_reply_attempt",
-            ceTweetReplyAttempt,
-            uuaTweetReplyAttempt,
-            ActionType.ClientTweetReplyAttempt),
+            "tweet_wepwy_attempt", >_<
+            cetweetwepwyattempt, rawr
+            u-uuatweetwepwyattempt, 🥺
+            actiontype.cwienttweetwepwyattempt),
         )
-        forEvery(clientEvents) {
+        f-fowevewy(cwientevents) {
           (
-            eventName: String,
-            ceNamespace: EventNamespace,
-            uuaNamespace: ClientEventNamespace,
-            uuaActionType: ActionType
+            e-eventname: s-stwing, (✿oωo)
+            c-cenamespace: eventnamespace, (U ﹏ U)
+            uuanamespace: cwienteventnamespace, rawr x3
+            uuaactiontype: actiontype
           ) =>
-            val actual =
-              ClientEventAdapter.adaptEvent(actionTowardDefaultTweetEvent(Some(ceNamespace)))
-            val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = uuaActionType)
-            assert(Seq(expectedUUA) === actual)
+            v-vaw actuaw =
+              c-cwienteventadaptew.adaptevent(actiontowawddefauwttweetevent(some(cenamespace)))
+            v-vaw expecteduua = m-mkexpecteduuafowactiontowawddefauwttweetevent(
+              c-cwienteventnamespace = some(uuanamespace), (ˆ ﻌ ˆ)♡
+              a-actiontype = uuaactiontype)
+            a-assewt(seq(expecteduua) === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for LoggedOut for ClientLogin*
-  test("ClientLogin*") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("eventName", "ceNamespace", "uuaNamespace", "uuaActionType"),
+  // tests fow woggedout fow cwientwogin*
+  test("cwientwogin*") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw cwientevents = tabwe(
+          ("eventname", σωσ "cenamespace", (U ﹏ U) "uuanamespace", >w< "uuaactiontype"), σωσ
           (
-            "client_click_login",
-            ceClientCTALoginClick,
-            uuaClientCTALoginClick,
-            ActionType.ClientCTALoginClick),
+            "cwient_cwick_wogin", nyaa~~
+            c-cecwientctawogincwick, 🥺
+            uuacwientctawogincwick, rawr x3
+            a-actiontype.cwientctawogincwick), σωσ
           (
-            "client_click_show",
-            ceClientCTALoginStart,
-            uuaClientCTALoginStart,
-            ActionType.ClientCTALoginStart),
+            "cwient_cwick_show", (///ˬ///✿)
+            cecwientctawoginstawt, (U ﹏ U)
+            uuacwientctawoginstawt, ^^;;
+            actiontype.cwientctawoginstawt), 🥺
           (
-            "client_login_success",
-            ceClientCTALoginSuccess,
-            uuaClientCTALoginSuccess,
-            ActionType.ClientCTALoginSuccess),
+            "cwient_wogin_success", òωó
+            c-cecwientctawoginsuccess, XD
+            uuacwientctawoginsuccess, :3
+            a-actiontype.cwientctawoginsuccess), (U ﹏ U)
         )
 
-        forEvery(clientEvents) {
+        f-fowevewy(cwientevents) {
           (
-            eventName: String,
-            ceNamespace: EventNamespace,
-            uuaNamespace: ClientEventNamespace,
-            uuaActionType: ActionType
+            eventname: stwing, >w<
+            cenamespace: eventnamespace, /(^•ω•^)
+            u-uuanamespace: cwienteventnamespace, (⑅˘꒳˘)
+            uuaactiontype: actiontype
           ) =>
-            val actual =
-              ClientEventAdapter.adaptEvent(
-                mkLogEvent(
-                  eventName,
-                  Some(ceNamespace),
-                  logBase = Some(logBase1),
-                  eventDetails = None,
-                  pushNotificationDetails = None,
-                  reportDetails = None,
-                  searchDetails = None))
-            val expectedUUA = mkExpectedUUAForActionTowardCTAEvent(
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = uuaActionType,
-              guestIdMarketingOpt = logBase1.guestIdMarketing
+            vaw actuaw =
+              c-cwienteventadaptew.adaptevent(
+                mkwogevent(
+                  e-eventname, ʘwʘ
+                  some(cenamespace), rawr x3
+                  w-wogbase = some(wogbase1), (˘ω˘)
+                  e-eventdetaiws = nyone, o.O
+                  p-pushnotificationdetaiws = nyone, 😳
+                  wepowtdetaiws = n-nyone, o.O
+                  seawchdetaiws = nyone))
+            v-vaw expecteduua = mkexpecteduuafowactiontowawdctaevent(
+              cwienteventnamespace = some(uuanamespace), ^^;;
+              actiontype = uuaactiontype, ( ͡o ω ͡o )
+              g-guestidmawketingopt = wogbase1.guestidmawketing
             )
 
-            assert(Seq(expectedUUA) === actual)
+            a-assewt(seq(expecteduua) === a-actuaw)
         }
       }
     }
   }
 
-  // Tests for LoggedOut for ClientSignup*
-  test("ClientSignup*") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("eventName", "ceNamespace", "uuaNamespace", "uuaActionType"),
+  // t-tests fow woggedout fow cwientsignup*
+  test("cwientsignup*") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw cwientevents = t-tabwe(
+          ("eventname", ^^;; "cenamespace", ^^;; "uuanamespace", XD "uuaactiontype"), 🥺
           (
-            "client_click_signup",
-            ceClientCTASignupClick,
-            uuaClientCTASignupClick,
-            ActionType.ClientCTASignupClick),
+            "cwient_cwick_signup", (///ˬ///✿)
+            c-cecwientctasignupcwick,
+            uuacwientctasignupcwick, (U ᵕ U❁)
+            a-actiontype.cwientctasignupcwick), ^^;;
           (
-            "client_signup_success",
-            ceClientCTASignupSuccess,
-            uuaClientCTASignupSuccess,
-            ActionType.ClientCTASignupSuccess),
+            "cwient_signup_success", ^^;;
+            cecwientctasignupsuccess, rawr
+            u-uuacwientctasignupsuccess, (˘ω˘)
+            actiontype.cwientctasignupsuccess), 🥺
         )
 
-        forEvery(clientEvents) {
+        fowevewy(cwientevents) {
           (
-            eventName: String,
-            ceNamespace: EventNamespace,
-            uuaNamespace: ClientEventNamespace,
-            uuaActionType: ActionType
+            e-eventname: stwing, nyaa~~
+            c-cenamespace: eventnamespace, :3
+            u-uuanamespace: cwienteventnamespace, /(^•ω•^)
+            u-uuaactiontype: actiontype
           ) =>
-            val actual =
-              ClientEventAdapter.adaptEvent(
-                mkLogEvent(
-                  eventName,
-                  Some(ceNamespace),
-                  logBase = Some(logBase1),
-                  eventDetails = None,
-                  pushNotificationDetails = None,
-                  reportDetails = None,
-                  searchDetails = None))
-            val expectedUUA = mkExpectedUUAForActionTowardCTAEvent(
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = uuaActionType,
-              guestIdMarketingOpt = logBase1.guestIdMarketing
+            vaw actuaw =
+              cwienteventadaptew.adaptevent(
+                mkwogevent(
+                  eventname, ^•ﻌ•^
+                  some(cenamespace), UwU
+                  w-wogbase = some(wogbase1), 😳😳😳
+                  e-eventdetaiws = nyone, OwO
+                  p-pushnotificationdetaiws = n-nyone, ^•ﻌ•^
+                  w-wepowtdetaiws = none, (ꈍᴗꈍ)
+                  seawchdetaiws = nyone))
+            vaw expecteduua = mkexpecteduuafowactiontowawdctaevent(
+              c-cwienteventnamespace = some(uuanamespace), (⑅˘꒳˘)
+              actiontype = uuaactiontype, (⑅˘꒳˘)
+              guestidmawketingopt = wogbase1.guestidmawketing
             )
-            assert(Seq(expectedUUA) === actual)
+            a-assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetFollowAuthor
-  test("ClientTweetFollowAuthor") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val testEventsList = Seq(
-          (ceTweetFollowAuthor1, uuaTweetFollowAuthor1, TweetAuthorFollowClickSource.CaretMenu),
-          (ceTweetFollowAuthor2, uuaTweetFollowAuthor2, TweetAuthorFollowClickSource.ProfileImage)
+  // t-tests f-fow cwienttweetfowwowauthow
+  t-test("cwienttweetfowwowauthow") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw t-testeventswist = s-seq(
+          (cetweetfowwowauthow1, (ˆ ﻌ ˆ)♡ uuatweetfowwowauthow1, /(^•ω•^) tweetauthowfowwowcwicksouwce.cawetmenu), òωó
+          (cetweetfowwowauthow2, (⑅˘꒳˘) u-uuatweetfowwowauthow2, (U ᵕ U❁) t-tweetauthowfowwowcwicksouwce.pwofiweimage)
         )
-        testEventsList.foreach {
-          case (eventNamespace, clientEventNamespace, followClickSource) =>
-            val actual =
-              ClientEventAdapter.adaptEvent(
-                tweetActionTowardAuthorEvent(
-                  eventName = "tweet_follow_author",
-                  eventNamespace = Some(eventNamespace)
+        t-testeventswist.foweach {
+          c-case (eventnamespace, >w< c-cwienteventnamespace, σωσ fowwowcwicksouwce) =>
+            vaw actuaw =
+              cwienteventadaptew.adaptevent(
+                t-tweetactiontowawdauthowevent(
+                  eventname = "tweet_fowwow_authow", -.-
+                  eventnamespace = some(eventnamespace)
                 ))
-            val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
-              clientEventNamespace = Some(clientEventNamespace),
-              actionType = ActionType.ClientTweetFollowAuthor,
-              authorInfo = Some(
-                AuthorInfo(
-                  authorId = Some(authorId)
-                )),
-              tweetActionInfo = Some(
-                TweetActionInfo.ClientTweetFollowAuthor(
-                  ClientTweetFollowAuthor(followClickSource)
-                ))
-            )
-            assert(Seq(expectedUUA) === actual)
-        }
-      }
-    }
-  }
-
-  // Tests for ClientTweetUnfollowAuthor
-  test("ClientTweetUnfollowAuthor") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val testEventsList = Seq(
-          (
-            ceTweetUnfollowAuthor1,
-            uuaTweetUnfollowAuthor1,
-            TweetAuthorUnfollowClickSource.CaretMenu),
-          (
-            ceTweetUnfollowAuthor2,
-            uuaTweetUnfollowAuthor2,
-            TweetAuthorUnfollowClickSource.ProfileImage)
-        )
-        testEventsList.foreach {
-          case (eventNamespace, clientEventNamespace, unfollowClickSource) =>
-            val actual =
-              ClientEventAdapter.adaptEvent(
-                tweetActionTowardAuthorEvent(
-                  eventName = "tweet_unfollow_author",
-                  eventNamespace = Some(eventNamespace)
-                ))
-            val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
-              clientEventNamespace = Some(clientEventNamespace),
-              actionType = ActionType.ClientTweetUnfollowAuthor,
-              authorInfo = Some(
-                AuthorInfo(
-                  authorId = Some(authorId)
-                )),
-              tweetActionInfo = Some(
-                TweetActionInfo.ClientTweetUnfollowAuthor(
-                  ClientTweetUnfollowAuthor(unfollowClickSource)
+            vaw expecteduua = mkexpecteduuafowtweetactiontowawdauthow(
+              cwienteventnamespace = s-some(cwienteventnamespace), o.O
+              actiontype = actiontype.cwienttweetfowwowauthow,
+              authowinfo = s-some(
+                authowinfo(
+                  a-authowid = s-some(authowid)
+                )), ^^
+              tweetactioninfo = s-some(
+                tweetactioninfo.cwienttweetfowwowauthow(
+                  c-cwienttweetfowwowauthow(fowwowcwicksouwce)
                 ))
             )
-            assert(Seq(expectedUUA) === actual)
+            a-assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  // Tests for ClientTweetMuteAuthor
-  test("ClientTweetMuteAuthor") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual =
-          ClientEventAdapter.adaptEvent(
-            tweetActionTowardAuthorEvent(
-              eventName = "tweet_mute_author",
-              eventNamespace = Some(ceTweetMuteAuthor)
+  // tests fow cwienttweetunfowwowauthow
+  test("cwienttweetunfowwowauthow") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        vaw testeventswist = s-seq(
+          (
+            cetweetunfowwowauthow1, >_<
+            u-uuatweetunfowwowauthow1, >w<
+            t-tweetauthowunfowwowcwicksouwce.cawetmenu), >_<
+          (
+            cetweetunfowwowauthow2, >w<
+            uuatweetunfowwowauthow2, rawr
+            t-tweetauthowunfowwowcwicksouwce.pwofiweimage)
+        )
+        t-testeventswist.foweach {
+          case (eventnamespace, rawr x3 cwienteventnamespace, ( ͡o ω ͡o ) u-unfowwowcwicksouwce) =>
+            v-vaw actuaw =
+              cwienteventadaptew.adaptevent(
+                tweetactiontowawdauthowevent(
+                  eventname = "tweet_unfowwow_authow", (˘ω˘)
+                  eventnamespace = s-some(eventnamespace)
+                ))
+            vaw e-expecteduua = m-mkexpecteduuafowtweetactiontowawdauthow(
+              cwienteventnamespace = some(cwienteventnamespace), 😳
+              a-actiontype = a-actiontype.cwienttweetunfowwowauthow, OwO
+              authowinfo = s-some(
+                authowinfo(
+                  authowid = some(authowid)
+                )), (˘ω˘)
+              tweetactioninfo = s-some(
+                tweetactioninfo.cwienttweetunfowwowauthow(
+                  c-cwienttweetunfowwowauthow(unfowwowcwicksouwce)
+                ))
+            )
+            assewt(seq(expecteduua) === actuaw)
+        }
+      }
+    }
+  }
+
+  // t-tests f-fow cwienttweetmuteauthow
+  test("cwienttweetmuteauthow") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        v-vaw actuaw =
+          cwienteventadaptew.adaptevent(
+            tweetactiontowawdauthowevent(
+              eventname = "tweet_mute_authow", òωó
+              e-eventnamespace = some(cetweetmuteauthow)
             ))
 
-        val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
-          clientEventNamespace = Some(uuaTweetMuteAuthor),
-          actionType = ActionType.ClientTweetMuteAuthor,
-          authorInfo = Some(
-            AuthorInfo(
-              authorId = Some(authorId)
+        vaw expecteduua = m-mkexpecteduuafowtweetactiontowawdauthow(
+          cwienteventnamespace = s-some(uuatweetmuteauthow), ( ͡o ω ͡o )
+          actiontype = actiontype.cwienttweetmuteauthow, UwU
+          authowinfo = s-some(
+            a-authowinfo(
+              authowid = some(authowid)
             )))
-        assert(Seq(expectedUUA) === actual)
+        assewt(seq(expecteduua) === a-actuaw)
       }
     }
   }
 
-  // Tests for ClientTweetBlockAuthor
-  test("ClientTweetBlockAuthor") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual =
-          ClientEventAdapter.adaptEvent(
-            tweetActionTowardAuthorEvent(
-              eventName = "tweet_block_author",
-              eventNamespace = Some(ceTweetBlockAuthor)
+  // tests f-fow cwienttweetbwockauthow
+  test("cwienttweetbwockauthow") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw actuaw =
+          c-cwienteventadaptew.adaptevent(
+            tweetactiontowawdauthowevent(
+              e-eventname = "tweet_bwock_authow",
+              e-eventnamespace = some(cetweetbwockauthow)
             ))
 
-        val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
-          clientEventNamespace = Some(uuaTweetBlockAuthor),
-          actionType = ActionType.ClientTweetBlockAuthor,
-          authorInfo = Some(
-            AuthorInfo(
-              authorId = Some(authorId)
+        v-vaw expecteduua = mkexpecteduuafowtweetactiontowawdauthow(
+          cwienteventnamespace = s-some(uuatweetbwockauthow), /(^•ω•^)
+          a-actiontype = a-actiontype.cwienttweetbwockauthow, (ꈍᴗꈍ)
+          authowinfo = s-some(
+            a-authowinfo(
+              authowid = some(authowid)
             )))
-        assert(Seq(expectedUUA) === actual)
+        a-assewt(seq(expecteduua) === a-actuaw)
       }
     }
   }
 
-  // Tests for ClientTweetUnblockAuthor
-  test("ClientTweetUnblockAuthor") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual =
-          ClientEventAdapter.adaptEvent(
-            tweetActionTowardAuthorEvent(
-              eventName = "tweet_unblock_author",
-              eventNamespace = Some(ceTweetUnblockAuthor)
+  // t-tests fow cwienttweetunbwockauthow
+  test("cwienttweetunbwockauthow") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        v-vaw actuaw =
+          c-cwienteventadaptew.adaptevent(
+            tweetactiontowawdauthowevent(
+              eventname = "tweet_unbwock_authow", 😳
+              eventnamespace = s-some(cetweetunbwockauthow)
             ))
 
-        val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
-          clientEventNamespace = Some(uuaTweetUnblockAuthor),
-          actionType = ActionType.ClientTweetUnblockAuthor,
-          authorInfo = Some(
-            AuthorInfo(
-              authorId = Some(authorId)
+        v-vaw expecteduua = m-mkexpecteduuafowtweetactiontowawdauthow(
+          c-cwienteventnamespace = some(uuatweetunbwockauthow), mya
+          a-actiontype = actiontype.cwienttweetunbwockauthow, mya
+          authowinfo = some(
+            authowinfo(
+              authowid = s-some(authowid)
             )))
-        assert(Seq(expectedUUA) === actual)
+        assewt(seq(expecteduua) === a-actuaw)
       }
     }
   }
 
-  // Test for ClientTweetOpenLink
-  test("ClientTweetOpenLink") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val input = Table(
-          ("url", "tweetActionInfo"),
-          (Some("go/url"), clientOpenLinkWithUrl),
-          (None, clientOpenLinkWithoutUrl)
+  // test fow c-cwienttweetopenwink
+  test("cwienttweetopenwink") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw input = tabwe(
+          ("uww", /(^•ω•^) "tweetactioninfo"), ^^;;
+          (some("go/uww"), 🥺 c-cwientopenwinkwithuww), ^^
+          (none, ^•ﻌ•^ c-cwientopenwinkwithoutuww)
         )
 
-        forEvery(input) { (url: Option[String], tweetActionInfo: TweetActionInfo) =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceOpenLink), url = url)
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaOpenLinkClientEventNamespace),
-            actionType = ActionType.ClientTweetOpenLink,
-            tweetActionInfo = Some(tweetActionInfo)
+        f-fowevewy(input) { (uww: option[stwing], /(^•ω•^) tweetactioninfo: tweetactioninfo) =>
+          vaw cwientevent =
+            actiontowawddefauwttweetevent(eventnamespace = some(ceopenwink), ^^ u-uww = uww)
+          v-vaw expecteduua = m-mkexpecteduuafowactiontowawddefauwttweetevent(
+            cwienteventnamespace = s-some(uuaopenwinkcwienteventnamespace), 🥺
+            actiontype = actiontype.cwienttweetopenwink,
+            tweetactioninfo = some(tweetactioninfo)
           )
-          assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+          a-assewt(seq(expecteduua) === c-cwienteventadaptew.adaptevent(cwientevent))
         }
       }
     }
   }
 
-  // Test for ClientTweetTakeScreenshot
-  test("Client take screenshot") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvent =
-          actionTowardDefaultTweetEvent(
-            eventNamespace = Some(ceTakeScreenshot),
-            percentVisibleHeight100k = Some(100))
-        val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-          clientEventNamespace = Some(uuaTakeScreenshotClientEventNamespace),
-          actionType = ActionType.ClientTweetTakeScreenshot,
-          tweetActionInfo = Some(clientTakeScreenshot)
+  // test fow cwienttweettakescweenshot
+  t-test("cwient take scweenshot") {
+    nyew testfixtuwes.cwienteventfixtuwe {
+      t-time.withtimeat(fwozentime) { _ =>
+        v-vaw cwientevent =
+          actiontowawddefauwttweetevent(
+            e-eventnamespace = s-some(cetakescweenshot), (U ᵕ U❁)
+            pewcentvisibweheight100k = some(100))
+        vaw expecteduua = mkexpecteduuafowactiontowawddefauwttweetevent(
+          c-cwienteventnamespace = s-some(uuatakescweenshotcwienteventnamespace), 😳😳😳
+          a-actiontype = a-actiontype.cwienttweettakescweenshot, nyaa~~
+          t-tweetactioninfo = some(cwienttakescweenshot)
         )
-        assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+        a-assewt(seq(expecteduua) === c-cwienteventadaptew.adaptevent(cwientevent))
       }
     }
   }
 
-  test("Home / Search product surface meta data") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+  test("home / s-seawch p-pwoduct suwface meta data") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw c-cwientevents = tabwe(
+          ("actiontweettype", (˘ω˘) "cwientevent", >_< "expecteduuaevent"),
           (
-            "homeTweetEventWithControllerData",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceHomeFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(decodedControllerData = Some(
-                  homeTweetControllerDataV2(
-                    injectedPosition = Some(1),
-                    traceId = Some(traceId),
-                    requestJoinId = Some(requestJoinId)
+            "hometweeteventwithcontwowwewdata", XD
+            actiontowawddefauwttweetevent(
+              e-eventnamespace = s-some(cehomefavowiteeventnamespace), rawr x3
+              suggestiondetaiws = s-some(
+                suggestiondetaiws(decodedcontwowwewdata = some(
+                  h-hometweetcontwowwewdatav2(
+                    i-injectedposition = s-some(1), ( ͡o ω ͡o )
+                    twaceid = some(twaceid), :3
+                    wequestjoinid = s-some(wequestjoinid)
                   ))))
-            ),
-            expectedHomeTweetEventWithControllerData),
+            ), mya
+            expectedhometweeteventwithcontwowwewdata), σωσ
           (
-            "homeTweetEventWithSuggestionType",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceHomeFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(
-                  suggestionType = Some("Test_type")
-                ))),
-            expectedHomeTweetEventWithSuggestType),
+            "hometweeteventwithsuggestiontype", (ꈍᴗꈍ)
+            actiontowawddefauwttweetevent(
+              e-eventnamespace = some(cehomefavowiteeventnamespace), OwO
+              s-suggestiondetaiws = some(
+                s-suggestiondetaiws(
+                  suggestiontype = s-some("test_type")
+                ))), o.O
+            e-expectedhometweeteventwithsuggesttype), 😳😳😳
           (
-            "homeTweetEventWithControllerDataSuggestionType",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceHomeFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(
-                  suggestionType = Some("Test_type"),
-                  decodedControllerData = Some(
-                    homeTweetControllerDataV2(
-                      injectedPosition = Some(1),
-                      traceId = Some(traceId),
-                      requestJoinId = Some(requestJoinId)))
+            "hometweeteventwithcontwowwewdatasuggestiontype", /(^•ω•^)
+            actiontowawddefauwttweetevent(
+              eventnamespace = some(cehomefavowiteeventnamespace), OwO
+              s-suggestiondetaiws = some(
+                suggestiondetaiws(
+                  s-suggestiontype = s-some("test_type"), ^^
+                  decodedcontwowwewdata = some(
+                    h-hometweetcontwowwewdatav2(
+                      injectedposition = s-some(1),
+                      t-twaceid = s-some(twaceid), (///ˬ///✿)
+                      wequestjoinid = some(wequestjoinid)))
                 ))
-            ),
-            expectedHomeTweetEventWithControllerDataSuggestType),
+            ), (///ˬ///✿)
+            expectedhometweeteventwithcontwowwewdatasuggesttype), (///ˬ///✿)
           (
-            "homeLatestTweetEventWithControllerData",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceHomeLatestFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(decodedControllerData = Some(
-                  homeTweetControllerDataV2(
-                    injectedPosition = Some(1),
-                    traceId = Some(traceId),
-                    requestJoinId = Some(requestJoinId)
+            "homewatesttweeteventwithcontwowwewdata", ʘwʘ
+            actiontowawddefauwttweetevent(
+              eventnamespace = some(cehomewatestfavowiteeventnamespace), ^•ﻌ•^
+              suggestiondetaiws = some(
+                suggestiondetaiws(decodedcontwowwewdata = some(
+                  hometweetcontwowwewdatav2(
+                    injectedposition = some(1), OwO
+                    t-twaceid = some(twaceid), (U ﹏ U)
+                    w-wequestjoinid = some(wequestjoinid)
                   ))))
-            ),
-            expectedHomeLatestTweetEventWithControllerData),
+            ), (ˆ ﻌ ˆ)♡
+            expectedhomewatesttweeteventwithcontwowwewdata), (⑅˘꒳˘)
           (
-            "homeLatestTweetEventWithSuggestionType",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceHomeLatestFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(
-                  suggestionType = Some("Test_type")
-                ))),
-            expectedHomeLatestTweetEventWithSuggestType),
+            "homewatesttweeteventwithsuggestiontype", (U ﹏ U)
+            a-actiontowawddefauwttweetevent(
+              e-eventnamespace = s-some(cehomewatestfavowiteeventnamespace), o.O
+              suggestiondetaiws = s-some(
+                suggestiondetaiws(
+                  s-suggestiontype = s-some("test_type")
+                ))), mya
+            expectedhomewatesttweeteventwithsuggesttype), XD
           (
-            "homeLatestTweetEventWithControllerDataSuggestionType",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceHomeLatestFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(
-                  suggestionType = Some("Test_type"),
-                  decodedControllerData = Some(
-                    homeTweetControllerDataV2(
-                      injectedPosition = Some(1),
-                      traceId = Some(traceId),
-                      requestJoinId = Some(requestJoinId)))
+            "homewatesttweeteventwithcontwowwewdatasuggestiontype", òωó
+            actiontowawddefauwttweetevent(
+              e-eventnamespace = some(cehomewatestfavowiteeventnamespace), (˘ω˘)
+              suggestiondetaiws = s-some(
+                s-suggestiondetaiws(
+                  suggestiontype = some("test_type"), :3
+                  decodedcontwowwewdata = s-some(
+                    h-hometweetcontwowwewdatav2(
+                      i-injectedposition = s-some(1), OwO
+                      t-twaceid = s-some(twaceid), mya
+                      w-wequestjoinid = s-some(wequestjoinid)))
                 ))
-            ),
-            expectedHomeLatestTweetEventWithControllerDataSuggestType),
+            ), (˘ω˘)
+            e-expectedhomewatesttweeteventwithcontwowwewdatasuggesttype), o.O
           (
-            "searchTweetEventWithControllerData",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceSearchFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(decodedControllerData = Some(
-                  mkSearchResultControllerData(
-                    queryOpt = Some("twitter"),
-                    traceId = Some(traceId),
-                    requestJoinId = Some(requestJoinId)
+            "seawchtweeteventwithcontwowwewdata", (✿oωo)
+            actiontowawddefauwttweetevent(
+              eventnamespace = s-some(ceseawchfavowiteeventnamespace), (ˆ ﻌ ˆ)♡
+              s-suggestiondetaiws = s-some(
+                suggestiondetaiws(decodedcontwowwewdata = s-some(
+                  mkseawchwesuwtcontwowwewdata(
+                    quewyopt = some("twittew"), ^^;;
+                    t-twaceid = some(twaceid), OwO
+                    wequestjoinid = some(wequestjoinid)
                   ))))
-            ),
-            expectedSearchTweetEventWithControllerData),
+            ), 🥺
+            expectedseawchtweeteventwithcontwowwewdata), mya
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+        f-fowevewy(cwientevents) { (_: s-stwing, 😳 event: w-wogevent, expecteduua: unifiedusewaction) =>
+          v-vaw actuaw = cwienteventadaptew.adaptevent(event)
+          a-assewt(seq(expecteduua) === actuaw)
         }
       }
     }
   }
 
-  test("ClientAppExit") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val duration: Option[Long] = Some(10000L)
-        val inputTable = Table(
-          ("eventType", "clientAppId", "section", "duration", "isValidEvent"),
-          ("uas-iPhone", Some(129032L), Some("enter_background"), duration, true),
-          ("uas-iPad", Some(191841L), Some("enter_background"), duration, true),
-          ("uas-android", Some(258901L), None, duration, true),
-          ("none-clientId", None, None, duration, false),
-          ("invalid-clientId", Some(1L), None, duration, false),
-          ("none-duration", Some(258901L), None, None, false),
-          ("non-uas-iPhone", Some(129032L), None, duration, false)
+  test("cwientappexit") {
+    n-nyew testfixtuwes.cwienteventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw duwation: o-option[wong] = some(10000w)
+        vaw inputtabwe = tabwe(
+          ("eventtype", òωó "cwientappid", /(^•ω•^) "section", -.- "duwation", "isvawidevent"), òωó
+          ("uas-iphone", /(^•ω•^) some(129032w), /(^•ω•^) s-some("entew_backgwound"), 😳 duwation, twue), :3
+          ("uas-ipad", (U ᵕ U❁) s-some(191841w), ʘwʘ s-some("entew_backgwound"), o.O duwation, ʘwʘ twue),
+          ("uas-andwoid", ^^ some(258901w), ^•ﻌ•^ n-nyone, duwation, mya twue),
+          ("none-cwientid", UwU n-nyone, >_< nyone, d-duwation, /(^•ω•^) fawse),
+          ("invawid-cwientid", òωó s-some(1w), σωσ nyone, duwation, ( ͡o ω ͡o ) fawse), nyaa~~
+          ("none-duwation", :3 some(258901w), UwU n-nyone, o.O nyone, fawse), (ˆ ﻌ ˆ)♡
+          ("non-uas-iphone", ^^;; s-some(129032w), ʘwʘ nyone, duwation, σωσ f-fawse)
         )
 
-        forEvery(inputTable) {
+        fowevewy(inputtabwe) {
           (
-            _: String,
-            clientAppId: Option[Long],
-            section: Option[String],
-            duration: Option[Long],
-            isValidEvent: Boolean
+            _: stwing, ^^;;
+            c-cwientappid: option[wong], ʘwʘ
+            s-section: o-option[stwing], ^^
+            d-duwation: option[wong], nyaa~~
+            isvawidevent: b-boowean
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              actionTowardsUasEvent(
-                eventNamespace = Some(ceAppExit.copy(section = section)),
-                clientAppId = clientAppId,
-                duration = duration
+            v-vaw actuaw = c-cwienteventadaptew.adaptevent(
+              actiontowawdsuasevent(
+                e-eventnamespace = some(ceappexit.copy(section = s-section)), (///ˬ///✿)
+                c-cwientappid = cwientappid, XD
+                d-duwation = d-duwation
               ))
 
-            if (isValidEvent) {
-              // create UUA UAS event
-              val expectedUUA = mkExpectedUUAForUasEvent(
-                clientEventNamespace = Some(uuaAppExit.copy(section = section)),
-                actionType = ActionType.ClientAppExit,
-                clientAppId = clientAppId,
-                duration = duration
+            i-if (isvawidevent) {
+              // c-cweate uua uas e-event
+              v-vaw expecteduua = mkexpecteduuafowuasevent(
+                c-cwienteventnamespace = some(uuaappexit.copy(section = s-section)), :3
+                actiontype = actiontype.cwientappexit, òωó
+                c-cwientappid = c-cwientappid, ^^
+                d-duwation = duwation
               )
-              assert(Seq(expectedUUA) === actual)
-            } else {
-              // ignore the event and do not create UUA UAS event
-              assert(actual.isEmpty)
+              assewt(seq(expecteduua) === actuaw)
+            } ewse {
+              // i-ignowe the event a-and do not cweate u-uua uas event
+              assewt(actuaw.isempty)
             }
         }
       }

@@ -1,41 +1,41 @@
-Product Mixer
+pwoduct mixew
 =============
 
-## Overview
+## ovewview
 
-Product Mixer is a common service framework and set of libraries that make it easy to build,
-iterate on, and own product surface areas. It consists of:
+pwoduct m-mixew is a common s-sewvice fwamewowk a-and set of w-wibwawies that make i-it easy to buiwd,
+i-itewate on, 🥺 a-and own pwoduct s-suwface aweas. (⑅˘꒳˘) it consists of:
 
-- **Core Libraries:** A set of libraries that enable you to build execution pipelines out of
-  reusable components. You define your logic in small, well-defined, reusable components and focus
-  on expressing the business logic you want to have. Then you can define easy to understand pipelines
-  that compose your components. Product Mixer handles the execution and monitoring of your pipelines
-  allowing you to focus on what really matters, your business logic.
+- **cowe wibwawies:** a set of wibwawies that e-enabwe you to buiwd execution pipewines out of
+  w-weusabwe components. nyaa~~ you define y-youw wogic in smow, :3 weww-defined, ( ͡o ω ͡o ) weusabwe components and focus
+  o-on expwessing the business wogic y-you want to h-have. mya then you can define easy to undewstand pipewines
+  that compose youw components. (///ˬ///✿) p-pwoduct mixew handwes the execution and monitowing of youw pipewines
+  awwowing y-you to focus on nyani weawwy m-mattews, (˘ω˘) youw b-business wogic. ^^;;
 
-- **Service Framework:** A common service skeleton for teams to host their Product Mixer products.
+- **sewvice fwamewowk:** a-a common s-sewvice skeweton fow teams to host theiw pwoduct m-mixew pwoducts.
 
-- **Component Library:** A shared library of components made by the Product Mixer Team, or
-  contributed by users. This enables you to both easily share the reusable components you make as well
-  as benefit from the work other teams have done by utilizing their shared components in the library.
+- **component wibwawy:** a shawed wibwawy o-of components made by the pwoduct mixew team, (✿oωo) ow
+  contwibuted by usews. (U ﹏ U) this enabwes you to both e-easiwy shawe the weusabwe components y-you make a-as weww
+  as benefit f-fwom the wowk othew teams have done by utiwizing theiw shawed c-components in t-the wibwawy. -.-
 
-## Architecture
+## awchitectuwe
 
-The bulk of a Product Mixer can be broken down into Pipelines and Components. Components allow you
-to break business logic into separate, standardized, reusable, testable, and easily composable
-pieces, where each component has a well defined abstraction. Pipelines are essentially configuration
-files specifying which Components should be used and when. This makes it easy to understand how your
-code will execute while keeping it organized and structured in a maintainable way.
+t-the buwk of a pwoduct m-mixew can be bwoken down i-into pipewines and components. ^•ﻌ•^ components a-awwow you
+to bweak business wogic into s-sepawate, rawr standawdized, (˘ω˘) weusabwe, nyaa~~ t-testabwe, UwU and easiwy composabwe
+p-pieces, :3 whewe e-each component has a weww defined abstwaction. (⑅˘꒳˘) pipewines awe essentiawwy configuwation
+fiwes specifying which components s-shouwd b-be used and when. (///ˬ///✿) this makes it e-easy to undewstand h-how youw
+code w-wiww exekawaii~ whiwe keeping it owganized and stwuctuwed in a m-maintainabwe way. ^^;;
 
-Requests first go to Product Pipelines, which are used to select which Mixer Pipeline or
-Recommendation Pipeline to run for a given request. Each Mixer or Recommendation
-Pipeline may run multiple Candidate Pipelines to fetch candidates to include in the response.
+wequests fiwst go to pwoduct pipewines, which awe used to sewect w-which mixew pipewine ow
+wecommendation p-pipewine t-to wun fow a-a given wequest. >_< each mixew ow wecommendation
+p-pipewine m-may wun muwtipwe c-candidate p-pipewines to fetch candidates to incwude in the w-wesponse. rawr x3
 
-Mixer Pipelines combine the results of multiple heterogeneous Candidate Pipelines together
-(e.g. ads, tweets, users) while Recommendation Pipelines are used to score (via Scoring Pipelines)
-and rank the results of homogenous Candidate Pipelines so that the top ranked ones can be returned.
-These pipelines also marshall candidates into a domain object and then into a transport object
-to return to the caller.
+mixew p-pipewines combine t-the wesuwts o-of muwtipwe hetewogeneous c-candidate pipewines togethew
+(e.g. /(^•ω•^) ads, :3 tweets, usews) w-whiwe wecommendation pipewines awe used to scowe (via scowing pipewines)
+and wank the wesuwts o-of homogenous candidate pipewines so that the top wanked ones can b-be wetuwned. (ꈍᴗꈍ)
+these p-pipewines awso m-mawshaww candidates into a domain o-object and then into a twanspowt o-object
+to w-wetuwn to the cawwew. /(^•ω•^)
 
-Candidate Pipelines fetch candidates from underlying Candidate Sources and perform some basic
-operations on the Candidates, such as filtering out unwanted candidates, applying decorations,
-and hydrating features.
+candidate pipewines fetch candidates fwom undewwying candidate souwces and p-pewfowm some basic
+opewations o-on the candidates, (⑅˘꒳˘) such as fiwtewing o-out unwanted c-candidates, ( ͡o ω ͡o ) appwying decowations, òωó
+and hydwating f-featuwes. (⑅˘꒳˘)

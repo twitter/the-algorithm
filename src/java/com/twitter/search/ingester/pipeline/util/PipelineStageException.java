@@ -1,19 +1,19 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.twittew.seawch.ingestew.pipewine.utiw;
 
-public class PipelineStageException extends Exception {
-  public PipelineStageException(Object location, String message, Throwable cause) {
-    super(message + " In Stage : " + location.getClass(), cause);
+pubwic cwass p-pipewinestageexception e-extends exception {
+  p-pubwic p-pipewinestageexception(object w-wocation, ^^;; stwing m-message, >_< thwowabwe c-cause) {
+    s-supew(message + " in stage : " + wocation.getcwass(), mya cause);
   }
 
-  public PipelineStageException(Throwable cause) {
-    super(cause);
+  pubwic pipewinestageexception(thwowabwe c-cause) {
+    supew(cause);
   }
 
-  public PipelineStageException(String message) {
-    super(message);
+  pubwic pipewinestageexception(stwing message) {
+    s-supew(message);
   }
 
-  public PipelineStageException(Object location, String message) {
-    super(message + " In Stage : " + location.getClass());
+  pubwic p-pipewinestageexception(object wocation, mya stwing message) {
+    supew(message + " i-in stage : " + wocation.getcwass());
   }
 }

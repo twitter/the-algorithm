@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt
 
-import com.twitter.util.Try
-import javax.mail.internet.InternetAddress
+impowt c-com.twittew.utiw.twy
+i-impowt javax.maiw.intewnet.intewnetaddwess
 
 /**
- * Destination represents the place to which alerts will be sent. Often you will only need one field
- * populated (either a Pager Duty key or a list of emails).
+ * d-destination w-wepwesents the p-pwace to which a-awewts wiww be s-sent. ʘwʘ often you w-wiww onwy nyeed one fiewd
+ * popuwated (eithew a pagew duty key ow a wist of emaiws). σωσ
  *
- * See the Monitoring 2.0 docs for more information on [[https://docbird.twitter.biz/mon/how-to-guides.html?highlight=notificationgroup#set-up-email-pagerduty-and-slack-notifications setting up a Pager Duty rotation]]
+ * see t-the monitowing 2.0 docs fow mowe infowmation on [[https://docbiwd.twittew.biz/mon/how-to-guides.htmw?highwight=notificationgwoup#set-up-emaiw-pagewduty-and-swack-notifications s-setting up a pagew duty wotation]]
  */
-case class Destination(
-  pagerDutyKey: Option[String] = None,
-  emails: Seq[String] = Seq.empty) {
+c-case cwass destination(
+  pagewdutykey: option[stwing] = n-nyone,
+  emaiws: seq[stwing] = s-seq.empty) {
 
-  require(
-    pagerDutyKey.forall(_.length == 32),
-    s"Expected `pagerDutyKey` to be 32 characters long but got `$pagerDutyKey`")
-  emails.foreach { email =>
-    require(
-      Try(new InternetAddress(email).validate()).isReturn,
-      s"Expected only valid email addresses but got an invalid email address: `$email`")
+  w-wequiwe(
+    pagewdutykey.fowaww(_.wength == 32), OwO
+    s"expected `pagewdutykey` to be 32 chawactews wong but got `$pagewdutykey`")
+  emaiws.foweach { e-emaiw =>
+    wequiwe(
+      twy(new intewnetaddwess(emaiw).vawidate()).iswetuwn, 😳😳😳
+      s"expected onwy vawid e-emaiw addwesses but got an invawid e-emaiw addwess: `$emaiw`")
   }
-  require(
-    pagerDutyKey.nonEmpty || emails.nonEmpty,
-    s"Expected a `pagerDutyKey` or at least 1 email address but got neither")
+  w-wequiwe(
+    p-pagewdutykey.nonempty || e-emaiws.nonempty, 😳😳😳
+    s"expected a `pagewdutykey` ow a-at weast 1 emaiw addwess but got neithew")
 }
 
 /**
- * NotificationGroup maps alert levels to destinations. Having different destinations based on the
- * urgency of the alert can sometimes be useful. For example, you could have a daytime on-call for
- * warn alerts and a 24 on-call for critical alerts.
+ * n-nyotificationgwoup maps awewt wevews to destinations. o.O having diffewent destinations based on t-the
+ * uwgency of the awewt can s-sometimes be usefuw. ( ͡o ω ͡o ) f-fow exampwe, (U ﹏ U) y-you couwd have a daytime on-caww fow
+ * wawn awewts and a 24 o-on-caww fow cwiticaw a-awewts. (///ˬ///✿)
  */
-case class NotificationGroup(
-  critical: Destination,
-  warn: Destination)
+case cwass nyotificationgwoup(
+  c-cwiticaw: destination, >w<
+  w-wawn: destination)

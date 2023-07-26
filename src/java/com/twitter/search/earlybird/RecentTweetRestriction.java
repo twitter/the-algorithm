@@ -1,60 +1,60 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
-import scala.Option;
+impowt scawa.option;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
 
-import com.twitter.decider.Decider;
+i-impowt com.twittew.decidew.decidew;
 
-public final class RecentTweetRestriction {
-  private static final String RECENT_TWEETS_THRESHOLD = "recent_tweets_threshold";
-  private static final String QUERY_CACHE_UNTIL_TIME = "query_cache_until_time";
+p-pubwic f-finaw cwass wecenttweetwestwiction {
+  p-pwivate s-static finaw stwing w-wecent_tweets_thweshowd = "wecent_tweets_thweshowd";
+  pwivate static finaw stwing quewy_cache_untiw_time = "quewy_cache_untiw_time";
 
-  @VisibleForTesting
-  public static final int DEFAULT_RECENT_TWEET_SECONDS = 15;
+  @visibwefowtesting
+  pubwic static f-finaw int defauwt_wecent_tweet_seconds = 15;
 
-  private RecentTweetRestriction() {
+  pwivate wecenttweetwestwiction() {
   }
 
   /**
-   * Returns the point in time (in seconds past the unix epoch) before which all tweets will be
-   * completely indexed. This is required by some clients, because they rely on Earlybird monotonically
-   * indexing tweets by ID and that tweets are completely indexed when they see them.
+   * wetuwns the point i-in time (in seconds past the u-unix epoch) befowe which aww tweets wiww be
+   * compwetewy indexed. mya t-this is wequiwed by some c-cwients, >w< because t-they wewy on eawwybiwd monotonicawwy
+   * indexing tweets by id and that tweets a-awe compwetewy indexed when they see them. nyaa~~
    *
-   * @param lastTime The time at which the most recent tweet was indexed, in seconds since the unix
-   * epoch.
+   * @pawam wasttime the time at w-which the most wecent tweet was i-indexed, (✿oωo) in seconds s-since the u-unix
+   * epoch. ʘwʘ
    */
-  public static int recentTweetsUntilTime(Decider decider, int lastTime) {
-    return untilTimeSeconds(decider, lastTime, RECENT_TWEETS_THRESHOLD);
+  p-pubwic static int wecenttweetsuntiwtime(decidew decidew, (ˆ ﻌ ˆ)♡ i-int wasttime) {
+    wetuwn untiwtimeseconds(decidew, 😳😳😳 wasttime, w-wecent_tweets_thweshowd);
   }
 
   /**
-   * Returns the point in time (in seconds past the unix epoch) before which all tweets will be
-   * completely indexed. This is required by some clients, because they rely on Earlybird monotonically
-   * indexing tweets by ID and that tweets are completely indexed when they see them.
+   * wetuwns the point in time (in seconds past the unix epoch) befowe which a-aww tweets wiww be
+   * compwetewy i-indexed. :3 this i-is wequiwed b-by some cwients, OwO because they wewy on eawwybiwd monotonicawwy
+   * i-indexing tweets b-by id and that tweets awe compwetewy i-indexed w-when they see them.
    *
-   * @param lastTime The time at which the most recent tweet was indexed, in seconds since the unix
-   * epoch.
+   * @pawam wasttime the t-time at which the most wecent t-tweet was indexed, (U ﹏ U) in seconds since the unix
+   * e-epoch. >w<
    */
-  public static int queryCacheUntilTime(Decider decider, int lastTime) {
-    return untilTimeSeconds(decider, lastTime, QUERY_CACHE_UNTIL_TIME);
+  pubwic static int q-quewycacheuntiwtime(decidew decidew, (U ﹏ U) int wasttime) {
+    w-wetuwn u-untiwtimeseconds(decidew, 😳 wasttime, quewy_cache_untiw_time);
   }
 
-  private static int untilTimeSeconds(Decider decider, int lastTime, String deciderKey) {
-    int recentTweetSeconds = getRecentTweetSeconds(decider, deciderKey);
+  pwivate static int untiwtimeseconds(decidew decidew, (ˆ ﻌ ˆ)♡ int wasttime, 😳😳😳 stwing d-decidewkey) {
+    i-int wecenttweetseconds = getwecenttweetseconds(decidew, (U ﹏ U) d-decidewkey);
 
-    if (recentTweetSeconds == 0) {
-      return 0;
+    i-if (wecenttweetseconds == 0) {
+      w-wetuwn 0;
     }
 
-    return lastTime - recentTweetSeconds;
+    wetuwn wasttime - wecenttweetseconds;
   }
 
-  private static int getRecentTweetSeconds(Decider decider, String deciderKey) {
-    Option<Object> deciderValue = decider.getAvailability(deciderKey);
-    if (deciderValue.isDefined()) {
-      return (int) deciderValue.get();
+  pwivate static i-int getwecenttweetseconds(decidew decidew, (///ˬ///✿) stwing decidewkey) {
+    option<object> decidewvawue = d-decidew.getavaiwabiwity(decidewkey);
+    if (decidewvawue.isdefined()) {
+      w-wetuwn (int) d-decidewvawue.get();
     }
-    return DEFAULT_RECENT_TWEET_SECONDS;
+    wetuwn d-defauwt_wecent_tweet_seconds;
   }
 }

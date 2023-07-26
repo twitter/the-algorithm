@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.pwompt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.cawwbackmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt.wewevancepwomptcontent
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class RelevancePromptContentMarshaller @Inject() (
-  callbackMarshaller: CallbackMarshaller,
-  relevancePromptDisplayTypeMarshaller: RelevancePromptDisplayTypeMarshaller,
-  relevancePromptFollowUpFeedbackTypeMarshaller: RelevancePromptFollowUpFeedbackTypeMarshaller) {
+@singweton
+c-cwass wewevancepwomptcontentmawshawwew @inject() (
+  c-cawwbackmawshawwew: cawwbackmawshawwew, rawr x3
+  wewevancepwomptdispwaytypemawshawwew: wewevancepwomptdispwaytypemawshawwew,
+  wewevancepwomptfowwowupfeedbacktypemawshawwew: w-wewevancepwomptfowwowupfeedbacktypemawshawwew) {
 
-  def apply(relevancePromptContent: RelevancePromptContent): urt.RelevancePrompt =
-    urt.RelevancePrompt(
-      title = relevancePromptContent.title,
-      confirmation = relevancePromptContent.confirmation,
-      isRelevantText = relevancePromptContent.isRelevantText,
-      notRelevantText = relevancePromptContent.notRelevantText,
-      isRelevantCallback = callbackMarshaller(relevancePromptContent.isRelevantCallback),
-      notRelevantCallback = callbackMarshaller(relevancePromptContent.notRelevantCallback),
-      displayType = relevancePromptDisplayTypeMarshaller(relevancePromptContent.displayType),
-      isRelevantFollowUp = relevancePromptContent.isRelevantFollowUp.map(
-        relevancePromptFollowUpFeedbackTypeMarshaller(_)),
-      notRelevantFollowUp = relevancePromptContent.notRelevantFollowUp.map(
-        relevancePromptFollowUpFeedbackTypeMarshaller(_))
+  def appwy(wewevancepwomptcontent: wewevancepwomptcontent): u-uwt.wewevancepwompt =
+    uwt.wewevancepwompt(
+      t-titwe = wewevancepwomptcontent.titwe, nyaa~~
+      confiwmation = wewevancepwomptcontent.confiwmation, /(^•ω•^)
+      iswewevanttext = w-wewevancepwomptcontent.iswewevanttext, rawr
+      nyotwewevanttext = w-wewevancepwomptcontent.notwewevanttext, OwO
+      i-iswewevantcawwback = cawwbackmawshawwew(wewevancepwomptcontent.iswewevantcawwback), (U ﹏ U)
+      nyotwewevantcawwback = cawwbackmawshawwew(wewevancepwomptcontent.notwewevantcawwback), >_<
+      dispwaytype = wewevancepwomptdispwaytypemawshawwew(wewevancepwomptcontent.dispwaytype), rawr x3
+      iswewevantfowwowup = wewevancepwomptcontent.iswewevantfowwowup.map(
+        w-wewevancepwomptfowwowupfeedbacktypemawshawwew(_)), mya
+      nyotwewevantfowwowup = wewevancepwomptcontent.notwewevantfowwowup.map(
+        wewevancepwomptfowwowupfeedbacktypemawshawwew(_))
     )
 }

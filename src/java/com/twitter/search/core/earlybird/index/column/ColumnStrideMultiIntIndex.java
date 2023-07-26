@@ -1,102 +1,102 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.twittew.seawch.cowe.eawwybiwd.index.cowumn;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+impowt it.unimi.dsi.fastutiw.ints.int2intopenhashmap;
 
-public class ColumnStrideMultiIntIndex extends AbstractColumnStrideMultiIntIndex {
-  private final Int2IntOpenHashMap[] values;
-  private final int maxSize;
+pubwic cwass cowumnstwidemuwtiintindex e-extends abstwactcowumnstwidemuwtiintindex {
+  pwivate f-finaw int2intopenhashmap[] vawues;
+  p-pwivate finaw int maxsize;
 
-  public ColumnStrideMultiIntIndex(String name, int maxSize, int numIntsPerField) {
-    super(name, numIntsPerField);
-    values = new Int2IntOpenHashMap[numIntsPerField];
-    for (int i = 0; i < numIntsPerField; i++) {
-      values[i] = new Int2IntOpenHashMap(maxSize);  // default unset value is 0
+  pubwic cowumnstwidemuwtiintindex(stwing nyame, mya i-int maxsize, ʘwʘ int nyumintspewfiewd) {
+    s-supew(name, (˘ω˘) n-nyumintspewfiewd);
+    vawues = nyew int2intopenhashmap[numintspewfiewd];
+    fow (int i = 0; i < nyumintspewfiewd; i++) {
+      v-vawues[i] = nyew int2intopenhashmap(maxsize);  // defauwt unset vawue is 0
     }
-    this.maxSize = maxSize;
+    t-this.maxsize = maxsize;
   }
 
-  public ColumnStrideMultiIntIndex(String name, Int2IntOpenHashMap[] values, int maxSize) {
-    super(name, values.length);
-    this.values = values;
-    this.maxSize = maxSize;
+  pubwic cowumnstwidemuwtiintindex(stwing n-nyame, int2intopenhashmap[] v-vawues, (U ﹏ U) int maxsize) {
+    s-supew(name, v-vawues.wength);
+    this.vawues = vawues;
+    t-this.maxsize = maxsize;
   }
 
-  @Override
-  public void setValue(int docID, int valueIndex, int value) {
-    values[valueIndex].put(docID, value);
+  @ovewwide
+  pubwic void setvawue(int d-docid, ^•ﻌ•^ int vawueindex, (˘ω˘) int vawue) {
+    vawues[vawueindex].put(docid, :3 vawue);
   }
 
-  @Override
-  public int get(int docID, int valueIndex) {
-    return values[valueIndex].get(docID);
+  @ovewwide
+  pubwic i-int get(int docid, ^^;; int vawueindex) {
+    w-wetuwn v-vawues[vawueindex].get(docid);
   }
 
-  @Override
-  public ColumnStrideFieldIndex optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    return new OptimizedColumnStrideMultiIntIndex(
-        this, originalTweetIdMapper, optimizedTweetIdMapper);
+  @ovewwide
+  p-pubwic cowumnstwidefiewdindex optimize(
+      docidtotweetidmappew owiginawtweetidmappew, 🥺
+      d-docidtotweetidmappew o-optimizedtweetidmappew) thwows ioexception {
+    w-wetuwn n-nyew optimizedcowumnstwidemuwtiintindex(
+        this, (⑅˘꒳˘) owiginawtweetidmappew, nyaa~~ o-optimizedtweetidmappew);
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @ovewwide
+  pubwic f-fwushhandwew getfwushhandwew() {
+    wetuwn n-nyew fwushhandwew(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<ColumnStrideMultiIntIndex> {
-    private static final String NAME_PROP_NAME = "fieldName";
-    private static final String MAX_SIZE_PROP = "maxSize";
+  pubwic static finaw c-cwass fwushhandwew extends fwushabwe.handwew<cowumnstwidemuwtiintindex> {
+    p-pwivate static f-finaw stwing nyame_pwop_name = "fiewdname";
+    pwivate static finaw stwing max_size_pwop = "maxsize";
 
-    public FlushHandler() {
-      super();
-    }
-
-    public FlushHandler(ColumnStrideMultiIntIndex objectToFlush) {
-      super(objectToFlush);
+    pubwic fwushhandwew() {
+      supew();
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      ColumnStrideMultiIntIndex index = getObjectToFlush();
-      flushInfo.addStringProperty(NAME_PROP_NAME, index.getName());
-      flushInfo.addIntProperty(MAX_SIZE_PROP, index.maxSize);
+    pubwic fwushhandwew(cowumnstwidemuwtiintindex o-objecttofwush) {
+      s-supew(objecttofwush);
+    }
 
-      out.writeInt(index.values.length);
-      for (int i = 0; i < index.values.length; i++) {
-        Int2IntOpenHashMap map = index.values[i];
-        out.writeInt(map.size());
-        for (Int2IntOpenHashMap.Entry entry : map.int2IntEntrySet()) {
-          out.writeInt(entry.getIntKey());
-          out.writeInt(entry.getIntValue());
+    @ovewwide
+    pwotected void d-dofwush(fwushinfo f-fwushinfo, :3 datasewiawizew o-out) thwows ioexception {
+      cowumnstwidemuwtiintindex index = g-getobjecttofwush();
+      fwushinfo.addstwingpwopewty(name_pwop_name, ( ͡o ω ͡o ) index.getname());
+      fwushinfo.addintpwopewty(max_size_pwop, mya index.maxsize);
+
+      o-out.wwiteint(index.vawues.wength);
+      fow (int i = 0; i-i < index.vawues.wength; i++) {
+        i-int2intopenhashmap m-map = index.vawues[i];
+        out.wwiteint(map.size());
+        f-fow (int2intopenhashmap.entwy e-entwy : map.int2intentwyset()) {
+          o-out.wwiteint(entwy.getintkey());
+          o-out.wwiteint(entwy.getintvawue());
         }
       }
     }
 
-    @Override
-    protected ColumnStrideMultiIntIndex doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      int numIntsPerField = in.readInt();
-      int maxSize = flushInfo.getIntProperty(MAX_SIZE_PROP);
-      Int2IntOpenHashMap[] values = new Int2IntOpenHashMap[numIntsPerField];
-      for (int i = 0; i < numIntsPerField; i++) {
-        int size = in.readInt();
-        Int2IntOpenHashMap map = new Int2IntOpenHashMap(maxSize);
-        for (int j = 0; j < size; j++) {
-          map.put(in.readInt(), in.readInt());
+    @ovewwide
+    pwotected cowumnstwidemuwtiintindex dowoad(fwushinfo f-fwushinfo, (///ˬ///✿) d-datadesewiawizew i-in)
+        t-thwows ioexception {
+      i-int nyumintspewfiewd = in.weadint();
+      int maxsize = f-fwushinfo.getintpwopewty(max_size_pwop);
+      int2intopenhashmap[] vawues = nyew int2intopenhashmap[numintspewfiewd];
+      fow (int i = 0; i < nyumintspewfiewd; i-i++) {
+        int size = in.weadint();
+        int2intopenhashmap m-map = n-nyew int2intopenhashmap(maxsize);
+        f-fow (int j = 0; j < size; j-j++) {
+          map.put(in.weadint(), (˘ω˘) i-in.weadint());
         }
-        values[i] = map;
+        v-vawues[i] = map;
       }
-      return new ColumnStrideMultiIntIndex(
-          flushInfo.getStringProperty(NAME_PROP_NAME), values, maxSize);
+      wetuwn nyew cowumnstwidemuwtiintindex(
+          fwushinfo.getstwingpwopewty(name_pwop_name), ^^;; vawues, m-maxsize);
     }
   }
 }

@@ -1,72 +1,72 @@
-package com.twitter.tsp.columns
+package com.twittew.tsp.cowumns
 
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config._
-import com.twitter.strato.config.AllowAll
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofOptions
-import com.twitter.tsp.service.TopicSocialProofService
-import com.twitter.tsp.thriftscala.TopicWithScore
-import com.twitter.util.Future
-import com.twitter.util.Try
-import javax.inject.Inject
+impowt com.twittew.stitch.seqgwoup
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.catawog.fetch
+i-impowt c-com.twittew.stwato.catawog.opmetadata
+i-impowt c-com.twittew.stwato.config._
+i-impowt c-com.twittew.stwato.config.awwowaww
+impowt com.twittew.stwato.config.contactinfo
+impowt com.twittew.stwato.config.powicy
+impowt com.twittew.stwato.data.conv
+impowt c-com.twittew.stwato.data.descwiption.pwaintext
+impowt com.twittew.stwato.data.wifecycwe.pwoduction
+impowt com.twittew.stwato.fed.stwatofed
+i-impowt com.twittew.stwato.thwift.scwoogeconv
+impowt c-com.twittew.tsp.thwiftscawa.topicsociawpwoofwequest
+impowt com.twittew.tsp.thwiftscawa.topicsociawpwoofoptions
+impowt com.twittew.tsp.sewvice.topicsociawpwoofsewvice
+impowt c-com.twittew.tsp.thwiftscawa.topicwithscowe
+impowt c-com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.twy
+impowt javax.inject.inject
 
-class TopicSocialProofBatchColumn @Inject() (
-  topicSocialProofService: TopicSocialProofService)
-    extends StratoFed.Column(TopicSocialProofBatchColumn.Path)
-    with StratoFed.Fetch.Stitch {
+cwass topicsociawpwoofbatchcowumn @inject() (
+  topicsociawpwoofsewvice: t-topicsociawpwoofsewvice)
+    extends stwatofed.cowumn(topicsociawpwoofbatchcowumn.path)
+    with stwatofed.fetch.stitch {
 
-  override val policy: Policy =
-    ReadWritePolicy(
-      readPolicy = AllowAll,
-      writePolicy = AllowKeyAuthenticatedTwitterUserId
+  ovewwide v-vaw powicy: powicy =
+    weadwwitepowicy(
+      w-weadpowicy = awwowaww, >w<
+      wwitepowicy = a-awwowkeyauthenticatedtwittewusewid
     )
 
-  override type Key = Long
-  override type View = TopicSocialProofOptions
-  override type Value = Seq[TopicWithScore]
+  o-ovewwide t-type key = wong
+  ovewwide type view = topicsociawpwoofoptions
+  o-ovewwide type vawue = seq[topicwithscowe]
 
-  override val keyConv: Conv[Key] = Conv.ofType
-  override val viewConv: Conv[View] = ScroogeConv.fromStruct[TopicSocialProofOptions]
-  override val valueConv: Conv[Value] = Conv.seq(ScroogeConv.fromStruct[TopicWithScore])
-  override val metadata: OpMetadata =
-    OpMetadata(
-      lifecycle = Some(Production),
-      Some(PlainText("Topic Social Proof Batched Federated Column")))
+  ovewwide vaw keyconv: c-conv[key] = conv.oftype
+  ovewwide vaw viewconv: conv[view] = scwoogeconv.fwomstwuct[topicsociawpwoofoptions]
+  ovewwide vaw v-vawueconv: conv[vawue] = conv.seq(scwoogeconv.fwomstwuct[topicwithscowe])
+  ovewwide v-vaw metadata: o-opmetadata =
+    o-opmetadata(
+      wifecycwe = some(pwoduction), nyaa~~
+      some(pwaintext("topic s-sociaw pwoof b-batched fedewated cowumn")))
 
-  case class TspsGroup(view: View) extends SeqGroup[Long, Fetch.Result[Value]] {
-    override protected def run(keys: Seq[Long]): Future[Seq[Try[Result[Seq[TopicWithScore]]]]] = {
-      val request = TopicSocialProofRequest(
-        userId = view.userId,
-        tweetIds = keys.toSet,
-        displayLocation = view.displayLocation,
-        topicListingSetting = view.topicListingSetting,
-        context = view.context,
-        bypassModes = view.bypassModes,
+  c-case cwass tspsgwoup(view: v-view) extends seqgwoup[wong, (✿oωo) f-fetch.wesuwt[vawue]] {
+    ovewwide pwotected d-def wun(keys: seq[wong]): futuwe[seq[twy[wesuwt[seq[topicwithscowe]]]]] = {
+      v-vaw wequest = topicsociawpwoofwequest(
+        u-usewid = view.usewid, ʘwʘ
+        t-tweetids = k-keys.toset, (ˆ ﻌ ˆ)♡
+        dispwaywocation = view.dispwaywocation, 😳😳😳
+        topicwistingsetting = view.topicwistingsetting, :3
+        context = view.context, OwO
+        b-bypassmodes = v-view.bypassmodes, (U ﹏ U)
         tags = view.tags
       )
 
-      val response = topicSocialProofService
-        .topicSocialProofHandlerStoreStitch(request)
-        .map(_.socialProofs)
-      Stitch
-        .run(response).map(r =>
+      v-vaw wesponse = t-topicsociawpwoofsewvice
+        .topicsociawpwoofhandwewstowestitch(wequest)
+        .map(_.sociawpwoofs)
+      s-stitch
+        .wun(wesponse).map(w =>
           keys.map(key => {
-            Try {
-              val v = r.get(key)
-              if (v.nonEmpty && v.get.nonEmpty) {
+            twy {
+              vaw v = w.get(key)
+              i-if (v.nonempty && v.get.nonempty) {
                 found(v.get)
-              } else {
+              } ewse {
                 missing
               }
             }
@@ -74,11 +74,11 @@ class TopicSocialProofBatchColumn @Inject() (
     }
   }
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
-    Stitch.call(key, TspsGroup(view))
+  ovewwide def fetch(key: k-key, >w< view: view): stitch[wesuwt[vawue]] = {
+    s-stitch.caww(key, (U ﹏ U) t-tspsgwoup(view))
   }
 }
 
-object TopicSocialProofBatchColumn {
-  val Path = "topic-signals/tsp/topic-social-proof-batched"
+o-object topicsociawpwoofbatchcowumn {
+  vaw path = "topic-signaws/tsp/topic-sociaw-pwoof-batched"
 }

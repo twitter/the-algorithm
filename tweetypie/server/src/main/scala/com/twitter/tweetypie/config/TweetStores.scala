@@ -1,577 +1,577 @@
-package com.twitter.tweetypie
-package config
+package com.twittew.tweetypie
+package c-config
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.RetryHandler
-import com.twitter.servo.util.Scribe
-import com.twitter.tweetypie.backends.LimiterService.Feature.MediaTagCreate
-import com.twitter.tweetypie.backends.LimiterService.Feature.Updates
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.handler.TweetBuilder
-import com.twitter.tweetypie.repository.TweetKeyFactory
-import com.twitter.tweetypie.store._
-import com.twitter.tweetypie.tflock.TFlockIndexer
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.util.RetryPolicyBuilder
-import com.twitter.util.Timer
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.sewvo.utiw.wetwyhandwew
+i-impowt com.twittew.sewvo.utiw.scwibe
+i-impowt com.twittew.tweetypie.backends.wimitewsewvice.featuwe.mediatagcweate
+i-impowt com.twittew.tweetypie.backends.wimitewsewvice.featuwe.updates
+i-impowt com.twittew.tweetypie.cwient_id.cwientidhewpew
+i-impowt com.twittew.tweetypie.handwew.tweetbuiwdew
+impowt com.twittew.tweetypie.wepositowy.tweetkeyfactowy
+impowt com.twittew.tweetypie.stowe._
+impowt c-com.twittew.tweetypie.tfwock.tfwockindexew
+impowt com.twittew.tweetypie.thwiftscawa._
+impowt c-com.twittew.tweetypie.utiw.wetwypowicybuiwdew
+impowt com.twittew.utiw.timew
 
-object TweetStores {
-  def apply(
-    settings: TweetServiceSettings,
-    statsReceiver: StatsReceiver,
-    timer: Timer,
-    deciderGates: TweetypieDeciderGates,
-    tweetKeyFactory: TweetKeyFactory,
-    clients: BackendClients,
-    caches: Caches,
-    asyncBuilder: ServiceInvocationBuilder,
-    hasMedia: Tweet => Boolean,
-    clientIdHelper: ClientIdHelper,
-  ): TotalTweetStore = {
+o-object tweetstowes {
+  def appwy(
+    settings: tweetsewvicesettings, -.-
+    s-statsweceivew: statsweceivew, ( ͡o ω ͡o )
+    t-timew: t-timew, /(^•ω•^)
+    decidewgates: tweetypiedecidewgates, (⑅˘꒳˘)
+    tweetkeyfactowy: tweetkeyfactowy, òωó
+    cwients: b-backendcwients, 🥺
+    caches: caches, (ˆ ﻌ ˆ)♡
+    asyncbuiwdew: sewviceinvocationbuiwdew, -.-
+    hasmedia: t-tweet => boowean, σωσ
+    cwientidhewpew: c-cwientidhewpew, >_<
+  ): t-totawtweetstowe = {
 
-    val deferredrpcRetryPolicy =
-      // retry all application exceptions for now.  however, in the future, deferredrpc
-      // may throw a backpressure exception that should not be retried.
-      RetryPolicyBuilder.anyFailure(settings.deferredrpcBackoffs)
+    v-vaw defewwedwpcwetwypowicy =
+      // w-wetwy aww appwication exceptions fow n-nyow. :3  howevew, in the futuwe, OwO defewwedwpc
+      // m-may thwow a backpwessuwe exception that shouwd nyot be wetwied. rawr
+      wetwypowicybuiwdew.anyfaiwuwe(settings.defewwedwpcbackoffs)
 
-    val asyncWriteRetryPolicy =
-      // currently retries all failures with the same back-off times.  might need
-      // to update to handle backpressure exceptions differently.
-      RetryPolicyBuilder.anyFailure(settings.asyncWriteRetryBackoffs)
+    vaw a-asyncwwitewetwypowicy =
+      // cuwwentwy wetwies a-aww faiwuwes w-with the same back-off t-times. (///ˬ///✿)  might nyeed
+      // to update to handwe backpwessuwe e-exceptions d-diffewentwy. ^^
+      wetwypowicybuiwdew.anyfaiwuwe(settings.asyncwwitewetwybackoffs)
 
-    val replicatedEventRetryPolicy =
-      RetryPolicyBuilder.anyFailure(settings.replicatedEventCacheBackoffs)
+    v-vaw wepwicatedeventwetwypowicy =
+      wetwypowicybuiwdew.anyfaiwuwe(settings.wepwicatedeventcachebackoffs)
 
-    val logLensStore =
-      LogLensStore(
-        tweetCreationsLogger = Logger("com.twitter.tweetypie.store.TweetCreations"),
-        tweetDeletionsLogger = Logger("com.twitter.tweetypie.store.TweetDeletions"),
-        tweetUndeletionsLogger = Logger("com.twitter.tweetypie.store.TweetUndeletions"),
-        tweetUpdatesLogger = Logger("com.twitter.tweetypie.store.TweetUpdates"),
-        clientIdHelper = clientIdHelper,
+    v-vaw wogwensstowe =
+      wogwensstowe(
+        t-tweetcweationswoggew = woggew("com.twittew.tweetypie.stowe.tweetcweations"), XD
+        tweetdewetionswoggew = w-woggew("com.twittew.tweetypie.stowe.tweetdewetions"), UwU
+        tweetundewetionswoggew = woggew("com.twittew.tweetypie.stowe.tweetundewetions"), o.O
+        t-tweetupdateswoggew = woggew("com.twittew.tweetypie.stowe.tweetupdates"), 😳
+        c-cwientidhewpew = cwientidhewpew, (˘ω˘)
       )
 
-    val tweetStoreStats = statsReceiver.scope("tweet_store")
+    v-vaw tweetstowestats = s-statsweceivew.scope("tweet_stowe")
 
-    val tweetStatsStore = TweetStatsStore(tweetStoreStats.scope("stats"))
+    vaw tweetstatsstowe = tweetstatsstowe(tweetstowestats.scope("stats"))
 
-    val asyncRetryConfig =
-      new TweetStore.AsyncRetry(
-        asyncWriteRetryPolicy,
-        deferredrpcRetryPolicy,
-        timer,
-        clients.asyncRetryTweetService,
-        Scribe(FailedAsyncWrite, "tweetypie_failed_async_writes")
-      )(_, _)
+    vaw asyncwetwyconfig =
+      nyew tweetstowe.asyncwetwy(
+        asyncwwitewetwypowicy, 🥺
+        defewwedwpcwetwypowicy, ^^
+        t-timew, >w<
+        c-cwients.asyncwetwytweetsewvice, ^^;;
+        scwibe(faiwedasyncwwite, (˘ω˘) "tweetypie_faiwed_async_wwites")
+      )(_, OwO _)
 
-    val manhattanStore = {
-      val scopedStats = tweetStoreStats.scope("base")
-      ManhattanTweetStore(clients.tweetStorageClient)
-        .tracked(scopedStats)
-        .asyncRetry(asyncRetryConfig(scopedStats, ManhattanTweetStore.Action))
+    v-vaw manhattanstowe = {
+      v-vaw scopedstats = t-tweetstowestats.scope("base")
+      manhattantweetstowe(cwients.tweetstowagecwient)
+        .twacked(scopedstats)
+        .asyncwetwy(asyncwetwyconfig(scopedstats, (ꈍᴗꈍ) manhattantweetstowe.action))
     }
 
-    val cachingTweetStore = {
-      val cacheStats = tweetStoreStats.scope("caching")
-      CachingTweetStore(
-        tweetKeyFactory = tweetKeyFactory,
-        tweetCache = caches.tweetCache,
-        stats = cacheStats
-      ).tracked(cacheStats)
-        .asyncRetry(asyncRetryConfig(cacheStats, CachingTweetStore.Action))
-        .replicatedRetry(RetryHandler.failuresOnly(replicatedEventRetryPolicy, timer, cacheStats))
+    vaw cachingtweetstowe = {
+      v-vaw cachestats = tweetstowestats.scope("caching")
+      cachingtweetstowe(
+        tweetkeyfactowy = tweetkeyfactowy, òωó
+        t-tweetcache = caches.tweetcache, ʘwʘ
+        stats = c-cachestats
+      ).twacked(cachestats)
+        .asyncwetwy(asyncwetwyconfig(cachestats, c-cachingtweetstowe.action))
+        .wepwicatedwetwy(wetwyhandwew.faiwuwesonwy(wepwicatedeventwetwypowicy, ʘwʘ t-timew, nyaa~~ cachestats))
     }
 
-    val indexingStore = {
-      val indexingStats = tweetStoreStats.scope("indexing")
-      TweetIndexingStore(
-        new TFlockIndexer(
-          tflock = clients.tflockWriteClient,
-          hasMedia = hasMedia,
-          backgroundIndexingPriority = settings.backgroundIndexingPriority,
-          stats = indexingStats
+    vaw indexingstowe = {
+      v-vaw i-indexingstats = t-tweetstowestats.scope("indexing")
+      t-tweetindexingstowe(
+        nyew tfwockindexew(
+          tfwock = cwients.tfwockwwitecwient, UwU
+          h-hasmedia = hasmedia, (⑅˘꒳˘)
+          b-backgwoundindexingpwiowity = s-settings.backgwoundindexingpwiowity, (˘ω˘)
+          s-stats = i-indexingstats
         )
-      ).tracked(indexingStats)
-        .asyncRetry(asyncRetryConfig(indexingStats, TweetIndexingStore.Action))
+      ).twacked(indexingstats)
+        .asyncwetwy(asyncwetwyconfig(indexingstats, :3 tweetindexingstowe.action))
     }
 
-    val timelineUpdatingStore = {
-      val tlsScope = tweetStoreStats.scope("timeline_updating")
-      TlsTimelineUpdatingStore(
-        processEvent2 = clients.timelineService.processEvent2,
-        hasMedia = hasMedia,
-        stats = tlsScope
-      ).tracked(tlsScope)
-        .asyncRetry(asyncRetryConfig(tlsScope, TlsTimelineUpdatingStore.Action))
+    vaw timewineupdatingstowe = {
+      vaw twsscope = tweetstowestats.scope("timewine_updating")
+      t-twstimewineupdatingstowe(
+        pwocessevent2 = cwients.timewinesewvice.pwocessevent2, (˘ω˘)
+        hasmedia = hasmedia,
+        stats = t-twsscope
+      ).twacked(twsscope)
+        .asyncwetwy(asyncwetwyconfig(twsscope, nyaa~~ twstimewineupdatingstowe.action))
     }
 
-    val guanoServiceStore = {
-      val guanoStats = tweetStoreStats.scope("guano")
-      GuanoServiceStore(clients.guano, guanoStats)
-        .tracked(guanoStats)
-        .asyncRetry(asyncRetryConfig(guanoStats, GuanoServiceStore.Action))
+    vaw guanosewvicestowe = {
+      vaw guanostats = t-tweetstowestats.scope("guano")
+      g-guanosewvicestowe(cwients.guano, (U ﹏ U) g-guanostats)
+        .twacked(guanostats)
+        .asyncwetwy(asyncwetwyconfig(guanostats, nyaa~~ guanosewvicestowe.action))
     }
 
-    val mediaServiceStore = {
-      val mediaStats = tweetStoreStats.scope("media")
-      MediaServiceStore(clients.mediaClient.deleteMedia, clients.mediaClient.undeleteMedia)
-        .tracked(mediaStats)
-        .asyncRetry(asyncRetryConfig(mediaStats, MediaServiceStore.Action))
+    v-vaw mediasewvicestowe = {
+      vaw mediastats = t-tweetstowestats.scope("media")
+      m-mediasewvicestowe(cwients.mediacwient.dewetemedia, ^^;; cwients.mediacwient.undewetemedia)
+        .twacked(mediastats)
+        .asyncwetwy(asyncwetwyconfig(mediastats, OwO mediasewvicestowe.action))
     }
 
-    val userCountsUpdatingStore = {
-      val userCountsStats = tweetStoreStats.scope("user_counts")
-      GizmoduckUserCountsUpdatingStore(clients.gizmoduck.incrCount, hasMedia)
-        .tracked(userCountsStats)
-        .ignoreFailures
+    vaw usewcountsupdatingstowe = {
+      vaw usewcountsstats = tweetstowestats.scope("usew_counts")
+      g-gizmoduckusewcountsupdatingstowe(cwients.gizmoduck.incwcount, nyaa~~ hasmedia)
+        .twacked(usewcountsstats)
+        .ignowefaiwuwes
     }
 
-    val tweetCountsUpdatingStore = {
-      val cacheScope = statsReceiver.scope("tweet_counts_cache")
-      val tweetCountsStats = tweetStoreStats.scope("tweet_counts")
+    v-vaw tweetcountsupdatingstowe = {
+      vaw cachescope = s-statsweceivew.scope("tweet_counts_cache")
+      v-vaw tweetcountsstats = tweetstowestats.scope("tweet_counts")
 
-      val memcacheCountsStore = {
-        val lockingCacheCountsStore =
-          CachedCountsStore.fromLockingCache(caches.tweetCountsCache)
+      vaw memcachecountsstowe = {
+        v-vaw wockingcachecountsstowe =
+          c-cachedcountsstowe.fwomwockingcache(caches.tweetcountscache)
 
-        new AggregatingCachedCountsStore(
-          lockingCacheCountsStore,
-          timer,
-          settings.aggregatedTweetCountsFlushInterval,
-          settings.maxAggregatedCountsSize,
-          cacheScope
+        nyew aggwegatingcachedcountsstowe(
+          w-wockingcachecountsstowe, UwU
+          t-timew, 😳
+          settings.aggwegatedtweetcountsfwushintewvaw, 😳
+          settings.maxaggwegatedcountssize, (ˆ ﻌ ˆ)♡
+          cachescope
         )
       }
 
-      TweetCountsCacheUpdatingStore(memcacheCountsStore)
-        .tracked(tweetCountsStats)
-        .ignoreFailures
+      tweetcountscacheupdatingstowe(memcachecountsstowe)
+        .twacked(tweetcountsstats)
+        .ignowefaiwuwes
     }
 
-    val replicatingStore = {
-      val replicateStats = tweetStoreStats.scope("replicate_out")
-      ReplicatingTweetStore(
-        clients.replicationClient
-      ).tracked(replicateStats)
-        .retry(RetryHandler.failuresOnly(deferredrpcRetryPolicy, timer, replicateStats))
-        .asyncRetry(asyncRetryConfig(replicateStats, ReplicatingTweetStore.Action))
-        .enabledBy(Gate.const(settings.enableReplication))
+    vaw wepwicatingstowe = {
+      vaw wepwicatestats = t-tweetstowestats.scope("wepwicate_out")
+      w-wepwicatingtweetstowe(
+        c-cwients.wepwicationcwient
+      ).twacked(wepwicatestats)
+        .wetwy(wetwyhandwew.faiwuwesonwy(defewwedwpcwetwypowicy, (✿oωo) timew, wepwicatestats))
+        .asyncwetwy(asyncwetwyconfig(wepwicatestats, nyaa~~ w-wepwicatingtweetstowe.action))
+        .enabwedby(gate.const(settings.enabwewepwication))
     }
 
-    val scribeMediaTagStore =
-      ScribeMediaTagStore()
-        .tracked(tweetStoreStats.scope("scribe_media_tag_store"))
+    v-vaw scwibemediatagstowe =
+      scwibemediatagstowe()
+        .twacked(tweetstowestats.scope("scwibe_media_tag_stowe"))
 
-    val limiterStore =
-      LimiterStore(
-        clients.limiterService.incrementByOne(Updates),
-        clients.limiterService.increment(MediaTagCreate)
-      ).tracked(tweetStoreStats.scope("limiter_store"))
+    v-vaw wimitewstowe =
+      wimitewstowe(
+        cwients.wimitewsewvice.incwementbyone(updates), ^^
+        cwients.wimitewsewvice.incwement(mediatagcweate)
+      ).twacked(tweetstowestats.scope("wimitew_stowe"))
 
-    val geoSearchRequestIDStore = {
-      val statsScope = tweetStoreStats.scope("geo_search_request_id")
-      GeoSearchRequestIDStore(FutureArrow(clients.geoRelevance.reportConversion _))
-        .tracked(statsScope)
-        .asyncRetry(asyncRetryConfig(statsScope, GeoSearchRequestIDStore.Action))
+    vaw geoseawchwequestidstowe = {
+      v-vaw s-statsscope = tweetstowestats.scope("geo_seawch_wequest_id")
+      geoseawchwequestidstowe(futuweawwow(cwients.geowewevance.wepowtconvewsion _))
+        .twacked(statsscope)
+        .asyncwetwy(asyncwetwyconfig(statsscope, (///ˬ///✿) geoseawchwequestidstowe.action))
     }
 
-    val userGeotagUpdateStore = {
-      val geotagScope = tweetStoreStats.scope("gizmoduck_user_geotag_updating")
-      GizmoduckUserGeotagUpdateStore(
-        clients.gizmoduck.modifyAndGet,
-        geotagScope
-      ).tracked(geotagScope)
-        .asyncRetry(asyncRetryConfig(geotagScope, GizmoduckUserGeotagUpdateStore.Action))
+    vaw usewgeotagupdatestowe = {
+      vaw g-geotagscope = t-tweetstowestats.scope("gizmoduck_usew_geotag_updating")
+      gizmoduckusewgeotagupdatestowe(
+        cwients.gizmoduck.modifyandget, 😳
+        geotagscope
+      ).twacked(geotagscope)
+        .asyncwetwy(asyncwetwyconfig(geotagscope, òωó gizmoduckusewgeotagupdatestowe.action))
     }
 
-    val fanoutServiceStore = {
-      val fanoutStats = tweetStoreStats.scope("fanout_service_delivery")
-      FanoutServiceStore(clients.fanoutServiceClient, fanoutStats)
-        .tracked(fanoutStats)
-        .asyncRetry(asyncRetryConfig(fanoutStats, FanoutServiceStore.Action))
+    vaw f-fanoutsewvicestowe = {
+      vaw fanoutstats = tweetstowestats.scope("fanout_sewvice_dewivewy")
+      fanoutsewvicestowe(cwients.fanoutsewvicecwient, ^^;; f-fanoutstats)
+        .twacked(fanoutstats)
+        .asyncwetwy(asyncwetwyconfig(fanoutstats, rawr fanoutsewvicestowe.action))
     }
 
     /**
-     * A store that converts Tweetypie TweetEvents to EventBus TweetEvents and sends each event to
-     * the underlying FutureEffect[eventbus.TweetEvent]
+     * a stowe that c-convewts tweetypie t-tweetevents to eventbus tweetevents and sends each event to
+     * t-the undewwying f-futuweeffect[eventbus.tweetevent]
      */
-    val eventBusEnqueueStore = {
-      val enqueueStats = tweetStoreStats.scope("event_bus_enqueueing")
-      val enqueueEffect = FutureEffect[TweetEvent](clients.tweetEventsPublisher.publish)
+    vaw eventbusenqueuestowe = {
+      vaw enqueuestats = tweetstowestats.scope("event_bus_enqueueing")
+      v-vaw enqueueeffect = futuweeffect[tweetevent](cwients.tweeteventspubwishew.pubwish)
 
-      TweetEventBusStore(
-        enqueueEffect
-      ).tracked(enqueueStats)
-        .asyncRetry(asyncRetryConfig(enqueueStats, AsyncWriteAction.EventBusEnqueue))
+      t-tweeteventbusstowe(
+        enqueueeffect
+      ).twacked(enqueuestats)
+        .asyncwetwy(asyncwetwyconfig(enqueuestats, (ˆ ﻌ ˆ)♡ asyncwwiteaction.eventbusenqueue))
     }
 
-    val retweetArchivalEnqueueStore = {
-      val enqueueStats = tweetStoreStats.scope("retweet_archival_enqueueing")
-      val enqueueEffect = FutureEffect(clients.retweetArchivalEventPublisher.publish)
+    vaw wetweetawchivawenqueuestowe = {
+      v-vaw enqueuestats = t-tweetstowestats.scope("wetweet_awchivaw_enqueueing")
+      v-vaw enqueueeffect = futuweeffect(cwients.wetweetawchivaweventpubwishew.pubwish)
 
-      RetweetArchivalEnqueueStore(enqueueEffect)
-        .tracked(enqueueStats)
-        .asyncRetry(asyncRetryConfig(enqueueStats, AsyncWriteAction.RetweetArchivalEnqueue))
+      wetweetawchivawenqueuestowe(enqueueeffect)
+        .twacked(enqueuestats)
+        .asyncwetwy(asyncwetwyconfig(enqueuestats, XD asyncwwiteaction.wetweetawchivawenqueue))
     }
 
-    val asyncEnqueueStore = {
-      val asyncEnqueueStats = tweetStoreStats.scope("async_enqueueing")
-      AsyncEnqueueStore(
-        asyncBuilder.asyncVia(clients.asyncTweetService).service,
-        TweetBuilder.scrubUserInAsyncInserts,
-        TweetBuilder.scrubSourceTweetInAsyncInserts,
-        TweetBuilder.scrubSourceUserInAsyncInserts
-      ).tracked(asyncEnqueueStats)
-        .retry(RetryHandler.failuresOnly(deferredrpcRetryPolicy, timer, asyncEnqueueStats))
+    v-vaw asyncenqueuestowe = {
+      vaw asyncenqueuestats = t-tweetstowestats.scope("async_enqueueing")
+      a-asyncenqueuestowe(
+        a-asyncbuiwdew.asyncvia(cwients.asynctweetsewvice).sewvice, >_<
+        tweetbuiwdew.scwubusewinasyncinsewts, (˘ω˘)
+        t-tweetbuiwdew.scwubsouwcetweetinasyncinsewts, 😳
+        t-tweetbuiwdew.scwubsouwceusewinasyncinsewts
+      ).twacked(asyncenqueuestats)
+        .wetwy(wetwyhandwew.faiwuwesonwy(defewwedwpcwetwypowicy, o.O timew, (ꈍᴗꈍ) asyncenqueuestats))
     }
 
-    val insertTweetStore =
-      InsertTweet.Store(
-        logLensStore = logLensStore,
-        manhattanStore = manhattanStore,
-        tweetStatsStore = tweetStatsStore,
-        cachingTweetStore = cachingTweetStore,
-        limiterStore = limiterStore,
-        asyncEnqueueStore = asyncEnqueueStore,
-        userCountsUpdatingStore = userCountsUpdatingStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    v-vaw insewttweetstowe =
+      i-insewttweet.stowe(
+        w-wogwensstowe = wogwensstowe,
+        manhattanstowe = manhattanstowe, rawr x3
+        t-tweetstatsstowe = tweetstatsstowe, ^^
+        c-cachingtweetstowe = c-cachingtweetstowe, OwO
+        wimitewstowe = wimitewstowe, ^^
+        asyncenqueuestowe = a-asyncenqueuestowe, :3
+        u-usewcountsupdatingstowe = usewcountsupdatingstowe, o.O
+        t-tweetcountsupdatingstowe = t-tweetcountsupdatingstowe
       )
 
-    val asyncInsertStore =
-      AsyncInsertTweet.Store(
-        replicatingStore = replicatingStore,
-        indexingStore = indexingStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore,
-        timelineUpdatingStore = timelineUpdatingStore,
-        eventBusEnqueueStore = eventBusEnqueueStore,
-        fanoutServiceStore = fanoutServiceStore,
-        scribeMediaTagStore = scribeMediaTagStore,
-        userGeotagUpdateStore = userGeotagUpdateStore,
-        geoSearchRequestIDStore = geoSearchRequestIDStore
+    vaw asyncinsewtstowe =
+      a-asyncinsewttweet.stowe(
+        wepwicatingstowe = wepwicatingstowe, -.-
+        indexingstowe = indexingstowe, (U ﹏ U)
+        tweetcountsupdatingstowe = t-tweetcountsupdatingstowe, o.O
+        timewineupdatingstowe = timewineupdatingstowe, OwO
+        e-eventbusenqueuestowe = eventbusenqueuestowe, ^•ﻌ•^
+        f-fanoutsewvicestowe = fanoutsewvicestowe, ʘwʘ
+        s-scwibemediatagstowe = scwibemediatagstowe, :3
+        usewgeotagupdatestowe = u-usewgeotagupdatestowe, 😳
+        g-geoseawchwequestidstowe = g-geoseawchwequestidstowe
       )
 
-    val replicatedInsertTweetStore =
-      ReplicatedInsertTweet.Store(
-        cachingTweetStore = cachingTweetStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    v-vaw wepwicatedinsewttweetstowe =
+      w-wepwicatedinsewttweet.stowe(
+        cachingtweetstowe = cachingtweetstowe, òωó
+        tweetcountsupdatingstowe = tweetcountsupdatingstowe
       )
 
-    val deleteTweetStore =
-      DeleteTweet.Store(
-        cachingTweetStore = cachingTweetStore,
-        asyncEnqueueStore = asyncEnqueueStore,
-        userCountsUpdatingStore = userCountsUpdatingStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore,
-        logLensStore = logLensStore
+    vaw dewetetweetstowe =
+      dewetetweet.stowe(
+        c-cachingtweetstowe = c-cachingtweetstowe,
+        a-asyncenqueuestowe = asyncenqueuestowe, 🥺
+        u-usewcountsupdatingstowe = usewcountsupdatingstowe, rawr x3
+        tweetcountsupdatingstowe = tweetcountsupdatingstowe, ^•ﻌ•^
+        wogwensstowe = w-wogwensstowe
       )
 
-    val asyncDeleteTweetStore =
-      AsyncDeleteTweet.Store(
-        manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
-        replicatingStore = replicatingStore,
-        indexingStore = indexingStore,
-        eventBusEnqueueStore = eventBusEnqueueStore,
-        timelineUpdatingStore = timelineUpdatingStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore,
-        guanoServiceStore = guanoServiceStore,
-        mediaServiceStore = mediaServiceStore
+    v-vaw asyncdewetetweetstowe =
+      asyncdewetetweet.stowe(
+        m-manhattanstowe = manhattanstowe, :3
+        cachingtweetstowe = c-cachingtweetstowe, (ˆ ﻌ ˆ)♡
+        w-wepwicatingstowe = wepwicatingstowe, (U ᵕ U❁)
+        indexingstowe = indexingstowe, :3
+        e-eventbusenqueuestowe = e-eventbusenqueuestowe, ^^;;
+        timewineupdatingstowe = timewineupdatingstowe, ( ͡o ω ͡o )
+        tweetcountsupdatingstowe = tweetcountsupdatingstowe, o.O
+        guanosewvicestowe = g-guanosewvicestowe, ^•ﻌ•^
+        m-mediasewvicestowe = m-mediasewvicestowe
       )
 
-    val replicatedDeleteTweetStore =
-      ReplicatedDeleteTweet.Store(
-        cachingTweetStore = cachingTweetStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    v-vaw wepwicateddewetetweetstowe =
+      w-wepwicateddewetetweet.stowe(
+        cachingtweetstowe = c-cachingtweetstowe, XD
+        t-tweetcountsupdatingstowe = tweetcountsupdatingstowe
       )
 
-    val incrBookmarkCountStore =
-      IncrBookmarkCount.Store(
-        asyncEnqueueStore = asyncEnqueueStore,
-        replicatingStore = replicatingStore
+    v-vaw i-incwbookmawkcountstowe =
+      incwbookmawkcount.stowe(
+        a-asyncenqueuestowe = asyncenqueuestowe, ^^
+        wepwicatingstowe = w-wepwicatingstowe
       )
 
-    val asyncIncrBookmarkCountStore =
-      AsyncIncrBookmarkCount.Store(
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    vaw asyncincwbookmawkcountstowe =
+      a-asyncincwbookmawkcount.stowe(
+        tweetcountsupdatingstowe = t-tweetcountsupdatingstowe
       )
 
-    val replicatedIncrBookmarkCountStore =
-      ReplicatedIncrBookmarkCount.Store(
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    vaw wepwicatedincwbookmawkcountstowe =
+      w-wepwicatedincwbookmawkcount.stowe(
+        tweetcountsupdatingstowe = tweetcountsupdatingstowe
       )
 
-    val incrFavCountStore =
-      IncrFavCount.Store(
-        asyncEnqueueStore = asyncEnqueueStore,
-        replicatingStore = replicatingStore
+    v-vaw incwfavcountstowe =
+      i-incwfavcount.stowe(
+        a-asyncenqueuestowe = asyncenqueuestowe, o.O
+        wepwicatingstowe = wepwicatingstowe
       )
 
-    val asyncIncrFavCountStore =
-      AsyncIncrFavCount.Store(
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    v-vaw asyncincwfavcountstowe =
+      asyncincwfavcount.stowe(
+        tweetcountsupdatingstowe = t-tweetcountsupdatingstowe
       )
 
-    val replicatedIncrFavCountStore =
-      ReplicatedIncrFavCount.Store(
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    v-vaw wepwicatedincwfavcountstowe =
+      wepwicatedincwfavcount.stowe(
+        t-tweetcountsupdatingstowe = tweetcountsupdatingstowe
       )
 
-    val scrubGeoStore =
-      ScrubGeo.Store(
-        logLensStore = logLensStore,
-        manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
-        eventBusEnqueueStore = eventBusEnqueueStore,
-        replicatingStore = replicatingStore
+    v-vaw scwubgeostowe =
+      s-scwubgeo.stowe(
+        wogwensstowe = wogwensstowe, ( ͡o ω ͡o )
+        m-manhattanstowe = manhattanstowe, /(^•ω•^)
+        cachingtweetstowe = cachingtweetstowe,
+        e-eventbusenqueuestowe = e-eventbusenqueuestowe, 🥺
+        wepwicatingstowe = w-wepwicatingstowe
       )
 
-    val replicatedScrubGeoStore =
-      ReplicatedScrubGeo.Store(
-        cachingTweetStore = cachingTweetStore
+    vaw w-wepwicatedscwubgeostowe =
+      w-wepwicatedscwubgeo.stowe(
+        c-cachingtweetstowe = cachingtweetstowe
       )
 
-    val takedownStore =
-      Takedown.Store(
-        logLensStore = logLensStore,
-        manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
-        asyncEnqueueStore = asyncEnqueueStore
+    vaw takedownstowe =
+      takedown.stowe(
+        wogwensstowe = wogwensstowe, nyaa~~
+        manhattanstowe = manhattanstowe, mya
+        cachingtweetstowe = cachingtweetstowe, XD
+        asyncenqueuestowe = asyncenqueuestowe
       )
 
-    val asyncTakedownStore =
-      AsyncTakedown.Store(
-        replicatingStore = replicatingStore,
-        guanoStore = guanoServiceStore,
-        eventBusEnqueueStore = eventBusEnqueueStore
+    vaw asynctakedownstowe =
+      asynctakedown.stowe(
+        w-wepwicatingstowe = w-wepwicatingstowe, nyaa~~
+        guanostowe = guanosewvicestowe, ʘwʘ
+        eventbusenqueuestowe = eventbusenqueuestowe
       )
 
-    val replicatedTakedownStore =
-      ReplicatedTakedown.Store(
-        cachingTweetStore = cachingTweetStore
+    v-vaw wepwicatedtakedownstowe =
+      w-wepwicatedtakedown.stowe(
+        c-cachingtweetstowe = cachingtweetstowe
       )
 
-    val updatePossiblySensitiveTweetStore =
-      UpdatePossiblySensitiveTweet.Store(
-        manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
-        logLensStore = logLensStore,
-        asyncEnqueueStore = asyncEnqueueStore
+    v-vaw updatepossibwysensitivetweetstowe =
+      updatepossibwysensitivetweet.stowe(
+        m-manhattanstowe = m-manhattanstowe, (⑅˘꒳˘)
+        cachingtweetstowe = c-cachingtweetstowe, :3
+        wogwensstowe = w-wogwensstowe, -.-
+        a-asyncenqueuestowe = asyncenqueuestowe
       )
 
-    val asyncUpdatePossiblySensitiveTweetStore =
-      AsyncUpdatePossiblySensitiveTweet.Store(
-        manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
-        replicatingStore = replicatingStore,
-        guanoStore = guanoServiceStore,
-        eventBusStore = eventBusEnqueueStore
+    vaw asyncupdatepossibwysensitivetweetstowe =
+      a-asyncupdatepossibwysensitivetweet.stowe(
+        m-manhattanstowe = m-manhattanstowe, 😳😳😳
+        c-cachingtweetstowe = c-cachingtweetstowe, (U ﹏ U)
+        w-wepwicatingstowe = w-wepwicatingstowe, o.O
+        g-guanostowe = g-guanosewvicestowe, ( ͡o ω ͡o )
+        eventbusstowe = e-eventbusenqueuestowe
       )
 
-    val replicatedUpdatePossiblySensitiveTweetStore =
-      ReplicatedUpdatePossiblySensitiveTweet.Store(
-        cachingTweetStore = cachingTweetStore
+    v-vaw wepwicatedupdatepossibwysensitivetweetstowe =
+      wepwicatedupdatepossibwysensitivetweet.stowe(
+        c-cachingtweetstowe = cachingtweetstowe
       )
 
-    val setAdditionalFieldsStore =
-      SetAdditionalFields.Store(
-        manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
-        asyncEnqueueStore = asyncEnqueueStore,
-        logLensStore = logLensStore
+    v-vaw setadditionawfiewdsstowe =
+      setadditionawfiewds.stowe(
+        manhattanstowe = m-manhattanstowe, òωó
+        cachingtweetstowe = c-cachingtweetstowe, 🥺
+        a-asyncenqueuestowe = a-asyncenqueuestowe, /(^•ω•^)
+        wogwensstowe = w-wogwensstowe
       )
 
-    val asyncSetAdditionalFieldsStore =
-      AsyncSetAdditionalFields.Store(
-        replicatingStore = replicatingStore,
-        eventBusEnqueueStore = eventBusEnqueueStore
+    vaw asyncsetadditionawfiewdsstowe =
+      a-asyncsetadditionawfiewds.stowe(
+        wepwicatingstowe = w-wepwicatingstowe, 😳😳😳
+        eventbusenqueuestowe = eventbusenqueuestowe
       )
 
-    val replicatedSetAdditionalFieldsStore =
-      ReplicatedSetAdditionalFields.Store(
-        cachingTweetStore = cachingTweetStore
+    v-vaw wepwicatedsetadditionawfiewdsstowe =
+      wepwicatedsetadditionawfiewds.stowe(
+        cachingtweetstowe = cachingtweetstowe
       )
 
-    val setRetweetVisibilityStore =
-      SetRetweetVisibility.Store(asyncEnqueueStore = asyncEnqueueStore)
+    vaw setwetweetvisibiwitystowe =
+      s-setwetweetvisibiwity.stowe(asyncenqueuestowe = asyncenqueuestowe)
 
-    val asyncSetRetweetVisibilityStore =
-      AsyncSetRetweetVisibility.Store(
-        tweetIndexingStore = indexingStore,
-        tweetCountsCacheUpdatingStore = tweetCountsUpdatingStore,
-        replicatingTweetStore = replicatingStore,
-        retweetArchivalEnqueueStore = retweetArchivalEnqueueStore
+    v-vaw asyncsetwetweetvisibiwitystowe =
+      asyncsetwetweetvisibiwity.stowe(
+        t-tweetindexingstowe = indexingstowe,
+        tweetcountscacheupdatingstowe = tweetcountsupdatingstowe, ^•ﻌ•^
+        w-wepwicatingtweetstowe = wepwicatingstowe, nyaa~~
+        w-wetweetawchivawenqueuestowe = w-wetweetawchivawenqueuestowe
       )
 
-    val replicatedSetRetweetVisibilityStore =
-      ReplicatedSetRetweetVisibility.Store(
-        tweetCountsCacheUpdatingStore = tweetCountsUpdatingStore
+    vaw w-wepwicatedsetwetweetvisibiwitystowe =
+      wepwicatedsetwetweetvisibiwity.stowe(
+        tweetcountscacheupdatingstowe = tweetcountsupdatingstowe
       )
 
-    val deleteAdditionalFieldsStore =
-      DeleteAdditionalFields.Store(
-        cachingTweetStore = cachingTweetStore,
-        asyncEnqueueStore = asyncEnqueueStore,
-        logLensStore = logLensStore
+    v-vaw deweteadditionawfiewdsstowe =
+      d-deweteadditionawfiewds.stowe(
+        cachingtweetstowe = c-cachingtweetstowe, OwO
+        asyncenqueuestowe = asyncenqueuestowe, ^•ﻌ•^
+        wogwensstowe = w-wogwensstowe
       )
 
-    val asyncDeleteAdditionalFieldsStore =
-      AsyncDeleteAdditionalFields.Store(
-        manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
-        replicatingStore = replicatingStore,
-        eventBusEnqueueStore = eventBusEnqueueStore
+    vaw asyncdeweteadditionawfiewdsstowe =
+      a-asyncdeweteadditionawfiewds.stowe(
+        m-manhattanstowe = m-manhattanstowe, σωσ
+        cachingtweetstowe = c-cachingtweetstowe, -.-
+        w-wepwicatingstowe = w-wepwicatingstowe, (˘ω˘)
+        e-eventbusenqueuestowe = eventbusenqueuestowe
       )
 
-    val replicatedDeleteAdditionalFieldsStore =
-      ReplicatedDeleteAdditionalFields.Store(
-        cachingTweetStore = cachingTweetStore
+    v-vaw w-wepwicateddeweteadditionawfiewdsstowe =
+      w-wepwicateddeweteadditionawfiewds.stowe(
+        c-cachingtweetstowe = c-cachingtweetstowe
       )
 
     /*
-     * This composed store handles all synchronous side effects of an undelete
-     * but does not execute the undeletion.
+     * t-this c-composed stowe h-handwes aww synchwonous side effects o-of an undewete
+     * but d-does not exekawaii~ the undewetion. rawr x3
      *
-     * This store is executed after the actual undelete request succeeds.
-     * The undeletion request is initiated by Undelete.apply()
+     * t-this stowe is e-exekawaii~d aftew t-the actuaw undewete wequest succeeds. rawr x3
+     * the undewetion wequest is initiated b-by undewete.appwy()
      */
-    val undeleteTweetStore =
-      UndeleteTweet.Store(
-        logLensStore = logLensStore,
-        cachingTweetStore = cachingTweetStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore,
-        asyncEnqueueStore = asyncEnqueueStore
+    v-vaw undewetetweetstowe =
+      u-undewetetweet.stowe(
+        wogwensstowe = wogwensstowe, σωσ
+        cachingtweetstowe = cachingtweetstowe, nyaa~~
+        t-tweetcountsupdatingstowe = t-tweetcountsupdatingstowe, (ꈍᴗꈍ)
+        asyncenqueuestowe = a-asyncenqueuestowe
       )
 
-    val asyncUndeleteTweetStore =
-      AsyncUndeleteTweet.Store(
-        cachingTweetStore = cachingTweetStore,
-        eventBusEnqueueStore = eventBusEnqueueStore,
-        indexingStore = indexingStore,
-        replicatingStore = replicatingStore,
-        mediaServiceStore = mediaServiceStore,
-        timelineUpdatingStore = timelineUpdatingStore
+    v-vaw asyncundewetetweetstowe =
+      asyncundewetetweet.stowe(
+        cachingtweetstowe = cachingtweetstowe, ^•ﻌ•^
+        e-eventbusenqueuestowe = eventbusenqueuestowe, >_<
+        i-indexingstowe = i-indexingstowe, ^^;;
+        w-wepwicatingstowe = wepwicatingstowe, ^^;;
+        mediasewvicestowe = m-mediasewvicestowe, /(^•ω•^)
+        t-timewineupdatingstowe = timewineupdatingstowe
       )
 
-    val replicatedUndeleteTweetStore =
-      ReplicatedUndeleteTweet.Store(
-        cachingTweetStore = cachingTweetStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    vaw wepwicatedundewetetweetstowe =
+      w-wepwicatedundewetetweet.stowe(
+        cachingtweetstowe = cachingtweetstowe, nyaa~~
+        tweetcountsupdatingstowe = t-tweetcountsupdatingstowe
       )
 
-    val flushStore =
-      Flush.Store(
-        cachingTweetStore = cachingTweetStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    vaw fwushstowe =
+      f-fwush.stowe(
+        c-cachingtweetstowe = cachingtweetstowe, (✿oωo)
+        t-tweetcountsupdatingstowe = t-tweetcountsupdatingstowe
       )
 
-    val scrubGeoUpdateUserTimestampStore =
-      ScrubGeoUpdateUserTimestamp.Store(
-        cache = caches.geoScrubCache,
-        setInManhattan = clients.geoScrubEventStore.setGeoScrubTimestamp,
-        geotagUpdateStore = userGeotagUpdateStore,
-        tweetEventBusStore = eventBusEnqueueStore
+    vaw scwubgeoupdateusewtimestampstowe =
+      s-scwubgeoupdateusewtimestamp.stowe(
+        cache = caches.geoscwubcache, ( ͡o ω ͡o )
+        s-setinmanhattan = c-cwients.geoscwubeventstowe.setgeoscwubtimestamp, (U ᵕ U❁)
+        geotagupdatestowe = u-usewgeotagupdatestowe, òωó
+        t-tweeteventbusstowe = eventbusenqueuestowe
       )
 
-    val quotedTweetDeleteStore =
-      QuotedTweetDelete.Store(
-        eventBusEnqueueStore = eventBusEnqueueStore
+    v-vaw quotedtweetdewetestowe =
+      q-quotedtweetdewete.stowe(
+        e-eventbusenqueuestowe = eventbusenqueuestowe
       )
 
-    val quotedTweetTakedownStore =
-      QuotedTweetTakedown.Store(
-        eventBusEnqueueStore = eventBusEnqueueStore
+    v-vaw quotedtweettakedownstowe =
+      quotedtweettakedown.stowe(
+        eventbusenqueuestowe = e-eventbusenqueuestowe
       )
 
-    new TotalTweetStore {
-      val asyncDeleteAdditionalFields: FutureEffect[AsyncDeleteAdditionalFields.Event] =
-        asyncDeleteAdditionalFieldsStore.asyncDeleteAdditionalFields
-      val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        asyncDeleteTweetStore.asyncDeleteTweet
-      val asyncIncrBookmarkCount: FutureEffect[AsyncIncrBookmarkCount.Event] =
-        asyncIncrBookmarkCountStore.asyncIncrBookmarkCount
-      val asyncIncrFavCount: FutureEffect[AsyncIncrFavCount.Event] =
-        asyncIncrFavCountStore.asyncIncrFavCount
-      val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] = asyncInsertStore.asyncInsertTweet
-      val asyncSetAdditionalFields: FutureEffect[AsyncSetAdditionalFields.Event] =
-        asyncSetAdditionalFieldsStore.asyncSetAdditionalFields
-      val asyncSetRetweetVisibility: FutureEffect[AsyncSetRetweetVisibility.Event] =
-        asyncSetRetweetVisibilityStore.asyncSetRetweetVisibility
-      val asyncTakedown: FutureEffect[AsyncTakedown.Event] = asyncTakedownStore.asyncTakedown
-      val asyncUndeleteTweet: FutureEffect[AsyncUndeleteTweet.Event] =
-        asyncUndeleteTweetStore.asyncUndeleteTweet
-      val asyncUpdatePossiblySensitiveTweet: FutureEffect[AsyncUpdatePossiblySensitiveTweet.Event] =
-        asyncUpdatePossiblySensitiveTweetStore.asyncUpdatePossiblySensitiveTweet
-      val deleteAdditionalFields: FutureEffect[DeleteAdditionalFields.Event] =
-        deleteAdditionalFieldsStore.deleteAdditionalFields
-      val deleteTweet: FutureEffect[DeleteTweet.Event] = deleteTweetStore.deleteTweet
-      val flush: FutureEffect[Flush.Event] = flushStore.flush
-      val incrBookmarkCount: FutureEffect[IncrBookmarkCount.Event] =
-        incrBookmarkCountStore.incrBookmarkCount
-      val incrFavCount: FutureEffect[IncrFavCount.Event] = incrFavCountStore.incrFavCount
-      val insertTweet: FutureEffect[InsertTweet.Event] = insertTweetStore.insertTweet
-      val quotedTweetDelete: FutureEffect[QuotedTweetDelete.Event] =
-        quotedTweetDeleteStore.quotedTweetDelete
-      val quotedTweetTakedown: FutureEffect[QuotedTweetTakedown.Event] =
-        quotedTweetTakedownStore.quotedTweetTakedown
-      val replicatedDeleteAdditionalFields: FutureEffect[ReplicatedDeleteAdditionalFields.Event] =
-        replicatedDeleteAdditionalFieldsStore.replicatedDeleteAdditionalFields
-      val replicatedDeleteTweet: FutureEffect[ReplicatedDeleteTweet.Event] =
-        replicatedDeleteTweetStore.replicatedDeleteTweet
-      val replicatedIncrBookmarkCount: FutureEffect[ReplicatedIncrBookmarkCount.Event] =
-        replicatedIncrBookmarkCountStore.replicatedIncrBookmarkCount
-      val replicatedIncrFavCount: FutureEffect[ReplicatedIncrFavCount.Event] =
-        replicatedIncrFavCountStore.replicatedIncrFavCount
-      val replicatedInsertTweet: FutureEffect[ReplicatedInsertTweet.Event] =
-        replicatedInsertTweetStore.replicatedInsertTweet
-      val replicatedScrubGeo: FutureEffect[ReplicatedScrubGeo.Event] =
-        replicatedScrubGeoStore.replicatedScrubGeo
-      val replicatedSetAdditionalFields: FutureEffect[ReplicatedSetAdditionalFields.Event] =
-        replicatedSetAdditionalFieldsStore.replicatedSetAdditionalFields
-      val replicatedSetRetweetVisibility: FutureEffect[ReplicatedSetRetweetVisibility.Event] =
-        replicatedSetRetweetVisibilityStore.replicatedSetRetweetVisibility
-      val replicatedTakedown: FutureEffect[ReplicatedTakedown.Event] =
-        replicatedTakedownStore.replicatedTakedown
-      val replicatedUndeleteTweet: FutureEffect[ReplicatedUndeleteTweet.Event] =
-        replicatedUndeleteTweetStore.replicatedUndeleteTweet
-      val replicatedUpdatePossiblySensitiveTweet: FutureEffect[
-        ReplicatedUpdatePossiblySensitiveTweet.Event
+    n-nyew totawtweetstowe {
+      v-vaw asyncdeweteadditionawfiewds: futuweeffect[asyncdeweteadditionawfiewds.event] =
+        asyncdeweteadditionawfiewdsstowe.asyncdeweteadditionawfiewds
+      vaw asyncdewetetweet: futuweeffect[asyncdewetetweet.event] =
+        asyncdewetetweetstowe.asyncdewetetweet
+      v-vaw asyncincwbookmawkcount: futuweeffect[asyncincwbookmawkcount.event] =
+        a-asyncincwbookmawkcountstowe.asyncincwbookmawkcount
+      v-vaw asyncincwfavcount: futuweeffect[asyncincwfavcount.event] =
+        a-asyncincwfavcountstowe.asyncincwfavcount
+      vaw asyncinsewttweet: f-futuweeffect[asyncinsewttweet.event] = a-asyncinsewtstowe.asyncinsewttweet
+      v-vaw asyncsetadditionawfiewds: f-futuweeffect[asyncsetadditionawfiewds.event] =
+        a-asyncsetadditionawfiewdsstowe.asyncsetadditionawfiewds
+      vaw asyncsetwetweetvisibiwity: futuweeffect[asyncsetwetweetvisibiwity.event] =
+        asyncsetwetweetvisibiwitystowe.asyncsetwetweetvisibiwity
+      vaw asynctakedown: f-futuweeffect[asynctakedown.event] = asynctakedownstowe.asynctakedown
+      vaw a-asyncundewetetweet: futuweeffect[asyncundewetetweet.event] =
+        asyncundewetetweetstowe.asyncundewetetweet
+      vaw asyncupdatepossibwysensitivetweet: f-futuweeffect[asyncupdatepossibwysensitivetweet.event] =
+        asyncupdatepossibwysensitivetweetstowe.asyncupdatepossibwysensitivetweet
+      vaw deweteadditionawfiewds: futuweeffect[deweteadditionawfiewds.event] =
+        deweteadditionawfiewdsstowe.deweteadditionawfiewds
+      v-vaw dewetetweet: f-futuweeffect[dewetetweet.event] = dewetetweetstowe.dewetetweet
+      vaw f-fwush: futuweeffect[fwush.event] = fwushstowe.fwush
+      vaw i-incwbookmawkcount: f-futuweeffect[incwbookmawkcount.event] =
+        incwbookmawkcountstowe.incwbookmawkcount
+      v-vaw incwfavcount: futuweeffect[incwfavcount.event] = i-incwfavcountstowe.incwfavcount
+      vaw insewttweet: futuweeffect[insewttweet.event] = insewttweetstowe.insewttweet
+      v-vaw quotedtweetdewete: futuweeffect[quotedtweetdewete.event] =
+        quotedtweetdewetestowe.quotedtweetdewete
+      v-vaw quotedtweettakedown: f-futuweeffect[quotedtweettakedown.event] =
+        q-quotedtweettakedownstowe.quotedtweettakedown
+      vaw wepwicateddeweteadditionawfiewds: futuweeffect[wepwicateddeweteadditionawfiewds.event] =
+        w-wepwicateddeweteadditionawfiewdsstowe.wepwicateddeweteadditionawfiewds
+      vaw wepwicateddewetetweet: futuweeffect[wepwicateddewetetweet.event] =
+        wepwicateddewetetweetstowe.wepwicateddewetetweet
+      vaw wepwicatedincwbookmawkcount: f-futuweeffect[wepwicatedincwbookmawkcount.event] =
+        w-wepwicatedincwbookmawkcountstowe.wepwicatedincwbookmawkcount
+      v-vaw w-wepwicatedincwfavcount: futuweeffect[wepwicatedincwfavcount.event] =
+        wepwicatedincwfavcountstowe.wepwicatedincwfavcount
+      v-vaw wepwicatedinsewttweet: f-futuweeffect[wepwicatedinsewttweet.event] =
+        wepwicatedinsewttweetstowe.wepwicatedinsewttweet
+      vaw w-wepwicatedscwubgeo: futuweeffect[wepwicatedscwubgeo.event] =
+        wepwicatedscwubgeostowe.wepwicatedscwubgeo
+      v-vaw wepwicatedsetadditionawfiewds: futuweeffect[wepwicatedsetadditionawfiewds.event] =
+        wepwicatedsetadditionawfiewdsstowe.wepwicatedsetadditionawfiewds
+      v-vaw w-wepwicatedsetwetweetvisibiwity: futuweeffect[wepwicatedsetwetweetvisibiwity.event] =
+        w-wepwicatedsetwetweetvisibiwitystowe.wepwicatedsetwetweetvisibiwity
+      v-vaw wepwicatedtakedown: futuweeffect[wepwicatedtakedown.event] =
+        w-wepwicatedtakedownstowe.wepwicatedtakedown
+      vaw wepwicatedundewetetweet: futuweeffect[wepwicatedundewetetweet.event] =
+        w-wepwicatedundewetetweetstowe.wepwicatedundewetetweet
+      vaw wepwicatedupdatepossibwysensitivetweet: futuweeffect[
+        w-wepwicatedupdatepossibwysensitivetweet.event
       ] =
-        replicatedUpdatePossiblySensitiveTweetStore.replicatedUpdatePossiblySensitiveTweet
-      val retryAsyncDeleteAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteAdditionalFields.Event]
+        wepwicatedupdatepossibwysensitivetweetstowe.wepwicatedupdatepossibwysensitivetweet
+      vaw wetwyasyncdeweteadditionawfiewds: futuweeffect[
+        tweetstowewetwyevent[asyncdeweteadditionawfiewds.event]
       ] =
-        asyncDeleteAdditionalFieldsStore.retryAsyncDeleteAdditionalFields
-      val retryAsyncDeleteTweet: FutureEffect[TweetStoreRetryEvent[AsyncDeleteTweet.Event]] =
-        asyncDeleteTweetStore.retryAsyncDeleteTweet
-      val retryAsyncInsertTweet: FutureEffect[TweetStoreRetryEvent[AsyncInsertTweet.Event]] =
-        asyncInsertStore.retryAsyncInsertTweet
-      val retryAsyncSetAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncSetAdditionalFields.Event]
+        asyncdeweteadditionawfiewdsstowe.wetwyasyncdeweteadditionawfiewds
+      v-vaw wetwyasyncdewetetweet: f-futuweeffect[tweetstowewetwyevent[asyncdewetetweet.event]] =
+        a-asyncdewetetweetstowe.wetwyasyncdewetetweet
+      v-vaw wetwyasyncinsewttweet: f-futuweeffect[tweetstowewetwyevent[asyncinsewttweet.event]] =
+        asyncinsewtstowe.wetwyasyncinsewttweet
+      v-vaw wetwyasyncsetadditionawfiewds: futuweeffect[
+        tweetstowewetwyevent[asyncsetadditionawfiewds.event]
       ] =
-        asyncSetAdditionalFieldsStore.retryAsyncSetAdditionalFields
-      val retryAsyncSetRetweetVisibility: FutureEffect[
-        TweetStoreRetryEvent[AsyncSetRetweetVisibility.Event]
+        asyncsetadditionawfiewdsstowe.wetwyasyncsetadditionawfiewds
+      v-vaw wetwyasyncsetwetweetvisibiwity: futuweeffect[
+        t-tweetstowewetwyevent[asyncsetwetweetvisibiwity.event]
       ] =
-        asyncSetRetweetVisibilityStore.retryAsyncSetRetweetVisibility
-      val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[AsyncTakedown.Event]] =
-        asyncTakedownStore.retryAsyncTakedown
-      val retryAsyncUndeleteTweet: FutureEffect[TweetStoreRetryEvent[AsyncUndeleteTweet.Event]] =
-        asyncUndeleteTweetStore.retryAsyncUndeleteTweet
-      val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUpdatePossiblySensitiveTweet.Event]
+        asyncsetwetweetvisibiwitystowe.wetwyasyncsetwetweetvisibiwity
+      vaw w-wetwyasynctakedown: f-futuweeffect[tweetstowewetwyevent[asynctakedown.event]] =
+        asynctakedownstowe.wetwyasynctakedown
+      v-vaw wetwyasyncundewetetweet: futuweeffect[tweetstowewetwyevent[asyncundewetetweet.event]] =
+        a-asyncundewetetweetstowe.wetwyasyncundewetetweet
+      v-vaw wetwyasyncupdatepossibwysensitivetweet: f-futuweeffect[
+        t-tweetstowewetwyevent[asyncupdatepossibwysensitivetweet.event]
       ] =
-        asyncUpdatePossiblySensitiveTweetStore.retryAsyncUpdatePossiblySensitiveTweet
-      val scrubGeo: FutureEffect[ScrubGeo.Event] = scrubGeoStore.scrubGeo
-      val setAdditionalFields: FutureEffect[SetAdditionalFields.Event] =
-        setAdditionalFieldsStore.setAdditionalFields
-      val setRetweetVisibility: FutureEffect[SetRetweetVisibility.Event] =
-        setRetweetVisibilityStore.setRetweetVisibility
-      val takedown: FutureEffect[Takedown.Event] = takedownStore.takedown
-      val undeleteTweet: FutureEffect[UndeleteTweet.Event] = undeleteTweetStore.undeleteTweet
-      val updatePossiblySensitiveTweet: FutureEffect[UpdatePossiblySensitiveTweet.Event] =
-        updatePossiblySensitiveTweetStore.updatePossiblySensitiveTweet
-      val scrubGeoUpdateUserTimestamp: FutureEffect[ScrubGeoUpdateUserTimestamp.Event] =
-        scrubGeoUpdateUserTimestampStore.scrubGeoUpdateUserTimestamp
+        asyncupdatepossibwysensitivetweetstowe.wetwyasyncupdatepossibwysensitivetweet
+      v-vaw scwubgeo: futuweeffect[scwubgeo.event] = scwubgeostowe.scwubgeo
+      vaw s-setadditionawfiewds: futuweeffect[setadditionawfiewds.event] =
+        s-setadditionawfiewdsstowe.setadditionawfiewds
+      vaw setwetweetvisibiwity: f-futuweeffect[setwetweetvisibiwity.event] =
+        s-setwetweetvisibiwitystowe.setwetweetvisibiwity
+      v-vaw takedown: futuweeffect[takedown.event] = t-takedownstowe.takedown
+      v-vaw undewetetweet: futuweeffect[undewetetweet.event] = undewetetweetstowe.undewetetweet
+      v-vaw updatepossibwysensitivetweet: futuweeffect[updatepossibwysensitivetweet.event] =
+        u-updatepossibwysensitivetweetstowe.updatepossibwysensitivetweet
+      vaw scwubgeoupdateusewtimestamp: f-futuweeffect[scwubgeoupdateusewtimestamp.event] =
+        s-scwubgeoupdateusewtimestampstowe.scwubgeoupdateusewtimestamp
     }
   }
 }

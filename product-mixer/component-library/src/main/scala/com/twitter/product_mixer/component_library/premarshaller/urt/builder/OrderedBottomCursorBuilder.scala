@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtowdewedcuwsow
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.cuwsow.uwtcuwsowsewiawizew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.bottomcuwsow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowtype
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinecuwsowsewiawizew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Builds [[UrtOrderedCursor]] in the Bottom position
+ * b-buiwds [[uwtowdewedcuwsow]] in the bottom position
  *
- * @param idSelector Specifies the entry from which to derive the `id` field
- * @param includeOperation Logic to determine whether or not to build the bottom cursor, which only
- *                         applies if gap cursors are required (e.g. Home Latest). When applicable,
- *                         this logic should always be the inverse of the logic used to decide
- *                         whether or not to build the gap cursor via [[OrderedGapCursorBuilder]],
- *                         since either the gap or the bottom cursor must always be returned.
- * @param serializer Converts the cursor to an encoded string
+ * @pawam i-idsewectow specifies the entwy f-fwom which to dewive the `id` fiewd
+ * @pawam incwudeopewation wogic to detewmine whethew ow nyot t-to buiwd the bottom cuwsow, 😳😳😳 which o-onwy
+ *                         a-appwies if gap cuwsows awe wequiwed (e.g. mya home watest). 😳 when appwicabwe, -.-
+ *                         t-this wogic shouwd awways be the invewse of the wogic used to decide
+ *                         w-whethew ow nyot to buiwd t-the gap cuwsow v-via [[owdewedgapcuwsowbuiwdew]], 🥺
+ *                         s-since e-eithew the gap ow the bottom cuwsow must awways b-be wetuwned. o.O
+ * @pawam sewiawizew convewts the c-cuwsow to an encoded stwing
  */
-case class OrderedBottomCursorBuilder[
-  -Query <: PipelineQuery with HasPipelineCursor[UrtOrderedCursor]
+case cwass owdewedbottomcuwsowbuiwdew[
+  -quewy <: pipewinequewy with haspipewinecuwsow[uwtowdewedcuwsow]
 ](
-  idSelector: PartialFunction[TimelineEntry, Long],
-  override val includeOperation: IncludeInstruction[Query] = AlwaysInclude,
-  serializer: PipelineCursorSerializer[UrtOrderedCursor] = UrtCursorSerializer)
-    extends UrtCursorBuilder[Query] {
-  override val cursorType: CursorType = BottomCursor
+  idsewectow: pawtiawfunction[timewineentwy, /(^•ω•^) w-wong],
+  ovewwide vaw i-incwudeopewation: i-incwudeinstwuction[quewy] = awwaysincwude,
+  s-sewiawizew: pipewinecuwsowsewiawizew[uwtowdewedcuwsow] = uwtcuwsowsewiawizew)
+    extends uwtcuwsowbuiwdew[quewy] {
+  ovewwide vaw c-cuwsowtype: cuwsowtype = b-bottomcuwsow
 
-  override def cursorValue(query: Query, timelineEntries: Seq[TimelineEntry]): String = {
-    val bottomId = timelineEntries.reverseIterator.collectFirst(idSelector)
+  ovewwide d-def cuwsowvawue(quewy: q-quewy, nyaa~~ timewineentwies: s-seq[timewineentwy]): stwing = {
+    v-vaw bottomid = timewineentwies.wevewseitewatow.cowwectfiwst(idsewectow)
 
-    val id = bottomId.orElse(query.pipelineCursor.flatMap(_.id))
+    vaw id = bottomid.owewse(quewy.pipewinecuwsow.fwatmap(_.id))
 
-    val cursor = UrtOrderedCursor(
-      initialSortIndex = nextBottomInitialSortIndex(query, timelineEntries),
-      id = id,
-      cursorType = Some(cursorType)
+    v-vaw cuwsow = uwtowdewedcuwsow(
+      i-initiawsowtindex = nyextbottominitiawsowtindex(quewy, nyaa~~ timewineentwies), :3
+      i-id = id, 😳😳😳
+      c-cuwsowtype = some(cuwsowtype)
     )
 
-    serializer.serializeCursor(cursor)
+    sewiawizew.sewiawizecuwsow(cuwsow)
   }
 }

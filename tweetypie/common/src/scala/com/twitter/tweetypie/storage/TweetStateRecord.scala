@@ -1,90 +1,90 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.storage.client.manhattan.kv.ManhattanValue
-import com.twitter.util.Time
+impowt com.twittew.stowage.cwient.manhattan.kv.manhattanvawue
+i-impowt com.twittew.utiw.time
 
 /**
- * A [[TweetStateRecord]] represents an action taken on a tweet and can be used to determine a tweet's state.
+ * a-a [[tweetstatewecowd]] w-wepwesents an action t-taken on a t-tweet and can be u-used to detewmine a-a tweet's state. /(^•ω•^)
  *
- * The state is determined by the record with the most recent timestamp. In the absence of any
- * record a tweet is considered found, which is to say the tweet has not been through the
- * deletion process.
+ * t-the state is detewmined by the wecowd with the most wecent timestamp. i-in the absence of any
+ * wecowd a tweet is considewed f-found, :3 which is to say the t-tweet has nyot been thwough the
+ * dewetion pwocess. (ꈍᴗꈍ)
  *
- * The [[TweetStateRecord]] type is determined by the lkey of a tweet manhattan record:
- *    metadata/delete_state      -> HardDeleted
- *    metadata/soft_delete_state -> SoftDeleted
- *    metadata/undelete_state    -> Undeleted
- *    metadata/force_added_state -> ForceAdded
+ * the [[tweetstatewecowd]] t-type is detewmined by the wkey o-of a tweet manhattan w-wecowd:
+ *    metadata/dewete_state      -> hawddeweted
+ *    metadata/soft_dewete_state -> softdeweted
+ *    m-metadata/undewete_state    -> undeweted
+ *    metadata/fowce_added_state -> fowceadded
  *
- * See the README in this directory for more details about the state of a tweet.
+ * see the weadme i-in this diwectowy fow mowe detaiws a-about the s-state of a tweet. /(^•ω•^)
  */
-sealed trait TweetStateRecord {
-  def tweetId: TweetId
-  def createdAt: Long
-  def stateKey: TweetKey.LKey.StateKey
-  def values: Map[String, Long] = Map("timestamp" -> createdAt)
-  def name: String
+s-seawed twait t-tweetstatewecowd {
+  def tweetid: tweetid
+  def c-cweatedat: wong
+  def statekey: tweetkey.wkey.statekey
+  d-def vawues: map[stwing, wong] = map("timestamp" -> cweatedat)
+  def name: stwing
 
-  def toTweetMhRecord: TweetManhattanRecord = {
-    val valByteBuffer = ByteArrayCodec.toByteBuffer(Json.encode(values))
-    val value = ManhattanValue(valByteBuffer, Some(Time.fromMilliseconds(createdAt)))
-    TweetManhattanRecord(TweetKey(tweetId, stateKey), value)
+  def totweetmhwecowd: t-tweetmanhattanwecowd = {
+    vaw vawbytebuffew = b-byteawwaycodec.tobytebuffew(json.encode(vawues))
+    v-vaw vawue = m-manhattanvawue(vawbytebuffew, (⑅˘꒳˘) some(time.fwommiwwiseconds(cweatedat)))
+    tweetmanhattanwecowd(tweetkey(tweetid, ( ͡o ω ͡o ) statekey), òωó v-vawue)
   }
 }
 
-object TweetStateRecord {
+o-object tweetstatewecowd {
 
-  /** When a soft-deleted or bounce deleted tweet is ultimately hard-deleted by an offline job. */
-  case class HardDeleted(tweetId: TweetId, createdAt: Long, deletedAt: Long)
-      extends TweetStateRecord {
-    // timestamp in the mh backend is the hard deletion timestamp
-    override def values = Map("timestamp" -> createdAt, "softdelete_timestamp" -> deletedAt)
-    def stateKey = TweetKey.LKey.HardDeletionStateKey
-    def name = "hard_deleted"
+  /** when a soft-deweted o-ow bounce d-deweted tweet is uwtimatewy hawd-deweted b-by an offwine job. (⑅˘꒳˘) */
+  c-case cwass hawddeweted(tweetid: tweetid, XD cweatedat: wong, -.- dewetedat: w-wong)
+      extends tweetstatewecowd {
+    // t-timestamp in the mh backend i-is the hawd dewetion t-timestamp
+    ovewwide def vawues = map("timestamp" -> cweatedat, :3 "softdewete_timestamp" -> dewetedat)
+    def statekey = tweetkey.wkey.hawddewetionstatekey
+    def nyame = "hawd_deweted"
   }
 
-  /** When a tweet is deleted by the user. It can still be undeleted while in the soft deleted state. */
-  case class SoftDeleted(tweetId: TweetId, createdAt: Long) extends TweetStateRecord {
-    def stateKey = TweetKey.LKey.SoftDeletionStateKey
-    def name = "soft_deleted"
+  /** w-when a-a tweet is deweted by the usew. nyaa~~ i-it can stiww be u-undeweted whiwe i-in the soft deweted state. 😳 */
+  case cwass softdeweted(tweetid: tweetid, (⑅˘꒳˘) cweatedat: w-wong) extends tweetstatewecowd {
+    def statekey = tweetkey.wkey.softdewetionstatekey
+    def nyame = "soft_deweted"
   }
 
-  /** When a tweet is deleted by go/bouncer for violating Twitter Rules. It MAY NOT be undeleted. */
-  case class BounceDeleted(tweetId: TweetId, createdAt: Long) extends TweetStateRecord {
-    def stateKey = TweetKey.LKey.BounceDeletionStateKey
-    def name = "bounce_deleted"
+  /** w-when a tweet is deweted by g-go/bouncew fow v-viowating twittew w-wuwes. nyaa~~ it may nyot be undeweted. OwO */
+  c-case cwass b-bouncedeweted(tweetid: t-tweetid, rawr x3 c-cweatedat: wong) extends tweetstatewecowd {
+    def statekey = t-tweetkey.wkey.bouncedewetionstatekey
+    d-def nyame = "bounce_deweted"
   }
 
-  /** When a tweet is undeleted by an internal system. */
-  case class Undeleted(tweetId: TweetId, createdAt: Long) extends TweetStateRecord {
-    def stateKey = TweetKey.LKey.UnDeletionStateKey
-    def name = "undeleted"
+  /** w-when a tweet i-is undeweted by a-an intewnaw system. XD */
+  case cwass undeweted(tweetid: tweetid, σωσ c-cweatedat: wong) extends tweetstatewecowd {
+    def statekey = tweetkey.wkey.undewetionstatekey
+    def nyame = "undeweted"
   }
 
-  /** When a tweet is created using the forceAdd endpoint. */
-  case class ForceAdded(tweetId: TweetId, createdAt: Long) extends TweetStateRecord {
-    def stateKey = TweetKey.LKey.ForceAddedStateKey
-    def name = "force_added"
+  /** when a tweet is cweated using t-the fowceadd endpoint. (U ᵕ U❁) */
+  case cwass fowceadded(tweetid: tweetid, (U ﹏ U) cweatedat: w-wong) extends t-tweetstatewecowd {
+    d-def statekey = tweetkey.wkey.fowceaddedstatekey
+    d-def nyame = "fowce_added"
   }
 
-  def fromTweetMhRecord(record: TweetManhattanRecord): Option[TweetStateRecord] = {
-    def ts = TimestampDecoder.decode(record, TimestampType.Default).getOrElse(0L)
-    def sdts = TimestampDecoder.decode(record, TimestampType.SoftDelete).getOrElse(0L)
-    def tweetId = record.pkey
+  d-def f-fwomtweetmhwecowd(wecowd: tweetmanhattanwecowd): option[tweetstatewecowd] = {
+    def ts = timestampdecodew.decode(wecowd, :3 timestamptype.defauwt).getowewse(0w)
+    def sdts = t-timestampdecodew.decode(wecowd, ( ͡o ω ͡o ) timestamptype.softdewete).getowewse(0w)
+    d-def tweetid = wecowd.pkey
 
-    record.lkey match {
-      case TweetKey.LKey.HardDeletionStateKey => Some(HardDeleted(tweetId, ts, sdts))
-      case TweetKey.LKey.SoftDeletionStateKey => Some(SoftDeleted(tweetId, ts))
-      case TweetKey.LKey.BounceDeletionStateKey => Some(BounceDeleted(tweetId, ts))
-      case TweetKey.LKey.UnDeletionStateKey => Some(Undeleted(tweetId, ts))
-      case TweetKey.LKey.ForceAddedStateKey => Some(ForceAdded(tweetId, ts))
-      case _ => None
+    w-wecowd.wkey m-match {
+      case tweetkey.wkey.hawddewetionstatekey => some(hawddeweted(tweetid, σωσ t-ts, sdts))
+      c-case tweetkey.wkey.softdewetionstatekey => s-some(softdeweted(tweetid, >w< t-ts))
+      case tweetkey.wkey.bouncedewetionstatekey => some(bouncedeweted(tweetid, 😳😳😳 ts))
+      case tweetkey.wkey.undewetionstatekey => s-some(undeweted(tweetid, OwO t-ts))
+      case t-tweetkey.wkey.fowceaddedstatekey => some(fowceadded(tweetid, 😳 t-ts))
+      c-case _ => nyone
     }
   }
 
-  def fromTweetMhRecords(records: Seq[TweetManhattanRecord]): Seq[TweetStateRecord] =
-    records.flatMap(fromTweetMhRecord)
+  d-def fwomtweetmhwecowds(wecowds: seq[tweetmanhattanwecowd]): seq[tweetstatewecowd] =
+    wecowds.fwatmap(fwomtweetmhwecowd)
 
-  def mostRecent(records: Seq[TweetManhattanRecord]): Option[TweetStateRecord] =
-    fromTweetMhRecords(records).sortBy(_.createdAt).lastOption
+  def mostwecent(wecowds: s-seq[tweetmanhattanwecowd]): o-option[tweetstatewecowd] =
+    fwomtweetmhwecowds(wecowds).sowtby(_.cweatedat).wastoption
 }

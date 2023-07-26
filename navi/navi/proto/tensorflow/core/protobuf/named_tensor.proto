@@ -1,25 +1,25 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/tensor.proto";
+impowt "tensowfwow/cowe/fwamewowk/tensow.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "NamedTensorProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option c-cc_enabwe_awenas = t-twue;
+option j-java_outew_cwassname = "namedtensowpwotos";
+o-option j-java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// A pair of tensor name and tensor values.
-message NamedTensorProto {
-  // Name of the tensor.
-  string name = 1;
+// a paiw of tensow nyame and tensow vawues. /(^•ω•^)
+message n-nyamedtensowpwoto {
+  // nyame of the tensow. rawr
+  s-stwing nyame = 1;
 
-  // The client can populate a TensorProto using a tensorflow::Tensor`, or
-  // directly using the protobuf field accessors.
+  // the c-cwient can popuwate a tensowpwoto using a tensowfwow::tensow`, OwO ow
+  // diwectwy u-using the pwotobuf fiewd accessows. (U ﹏ U)
   //
-  // The client specifies whether the returned tensor values should be
-  // filled tensor fields (float_val, int_val, etc.) or encoded in a
-  // compact form in tensor.tensor_content.
-  TensorProto tensor = 2;
+  // the c-cwient specifies w-whethew the wetuwned tensow vawues shouwd be
+  // fiwwed tensow fiewds (fwoat_vaw, >_< i-int_vaw, etc.) ow encoded in a
+  // compact fowm in tensow.tensow_content.
+  tensowpwoto t-tensow = 2;
 }

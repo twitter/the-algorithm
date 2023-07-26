@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.wabew
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.label.LabelItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.wabew.wabewitem
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class LabelItemMarshaller @Inject() (
-  displayTypeMarshaller: LabelDisplayTypeMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@singweton
+c-cwass wabewitemmawshawwew @inject() (
+  d-dispwaytypemawshawwew: wabewdispwaytypemawshawwew, mya
+  uwwmawshawwew: uwwmawshawwew) {
 
-  def apply(labelItem: LabelItem): urt.TimelineItemContent = {
-    urt.TimelineItemContent.Label(
-      urt.Label(
-        text = labelItem.text,
-        subtext = labelItem.subtext,
-        disclosureIndicator = labelItem.disclosureIndicator,
-        url = labelItem.url.map(urlMarshaller(_)),
-        displayType = labelItem.displayType.map(displayTypeMarshaller(_))
+  def appwy(wabewitem: w-wabewitem): uwt.timewineitemcontent = {
+    uwt.timewineitemcontent.wabew(
+      u-uwt.wabew(
+        text = w-wabewitem.text, 😳
+        subtext = wabewitem.subtext, XD
+        discwosuweindicatow = w-wabewitem.discwosuweindicatow, :3
+        uww = w-wabewitem.uww.map(uwwmawshawwew(_)),
+        d-dispwaytype = wabewitem.dispwaytype.map(dispwaytypemawshawwew(_))
       )
     )
   }

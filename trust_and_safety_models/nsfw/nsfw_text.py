@@ -1,152 +1,152 @@
-from datetime import datetime
-from functools import reduce
-import os
-import pandas as pd
-import re
-from sklearn.metrics import average_precision_score, classification_report, precision_recall_curve, PrecisionRecallDisplay
-from sklearn.model_selection import train_test_split
-import tensorflow as tf
-import matplotlib.pyplot as plt
-import re
+fwom datetime impowt datetime
+fwom f-functoows impowt w-weduce
+impowt o-os
+impowt pandas a-as pd
+impowt we
+f-fwom skweawn.metwics i-impowt avewage_pwecision_scowe, (U ﹏ U) c-cwassification_wepowt, ^•ﻌ•^ p-pwecision_wecaww_cuwve, (˘ω˘) pwecisionwecawwdispway
+fwom skweawn.modew_sewection impowt t-twain_test_spwit
+impowt tensowfwow as tf
+impowt m-matpwotwib.pypwot as pwt
+impowt w-we
 
-from twitter.cuad.representation.models.optimization import create_optimizer
-from twitter.cuad.representation.models.text_encoder import TextEncoder
+fwom twittew.cuad.wepwesentation.modews.optimization impowt cweate_optimizew
+fwom twittew.cuad.wepwesentation.modews.text_encodew i-impowt textencodew
 
-pd.set_option('display.max_colwidth', None)
-pd.set_option('display.expand_frame_repr', False)
+pd.set_option('dispway.max_cowwidth', :3 n-nyone)
+pd.set_option('dispway.expand_fwame_wepw', ^^;; f-fawse)
 
-print(tf.__version__)
-print(tf.config.list_physical_devices())
+pwint(tf.__vewsion__)
+pwint(tf.config.wist_physicaw_devices())
 
-log_path = os.path.join('pnsfwtweettext_model_runs', datetime.now().strftime('%Y-%m-%d_%H.%M.%S'))
+wog_path = os.path.join('pnsfwtweettext_modew_wuns', 🥺 datetime.now().stwftime('%y-%m-%d_%h.%m.%s'))
 
-tweet_text_feature = 'text'
+tweet_text_featuwe = 'text'
 
-params = {
-  'batch_size': 32,
-  'max_seq_lengths': 256,
-  'model_type': 'twitter_bert_base_en_uncased_augmented_mlm',
-  'trainable_text_encoder': True,
-  'lr': 5e-5,
-  'epochs': 10,
+p-pawams = {
+  'batch_size': 32, (⑅˘꒳˘)
+  'max_seq_wengths': 256, nyaa~~
+  'modew_type': 'twittew_bewt_base_en_uncased_augmented_mwm', :3
+  'twainabwe_text_encodew': twue, ( ͡o ω ͡o )
+  'ww': 5e-5, mya
+  'epochs': 10, (///ˬ///✿)
 }
 
-REGEX_PATTERNS = [
-    r'^RT @[A-Za-z0-9_]+: ', 
-    r"@[A-Za-z0-9_]+",
-    r'https:\/\/t\.co\/[A-Za-z0-9]{10}',
-    r'@\?\?\?\?\?',
+wegex_pattewns = [
+    w'^wt @[a-za-z0-9_]+: ', (˘ω˘) 
+    w"@[a-za-z0-9_]+", ^^;;
+    w'https:\/\/t\.co\/[a-za-z0-9]{10}', (✿oωo)
+    w-w'@\?\?\?\?\?', (U ﹏ U)
 ]
 
-EMOJI_PATTERN = re.compile(
+emoji_pattewn = w-we.compiwe(
     "(["
-    "\U0001F1E0-\U0001F1FF"
-    "\U0001F300-\U0001F5FF"
-    "\U0001F600-\U0001F64F"
-    "\U0001F680-\U0001F6FF"
-    "\U0001F700-\U0001F77F"
-    "\U0001F780-\U0001F7FF"
-    "\U0001F800-\U0001F8FF"
-    "\U0001F900-\U0001F9FF"
-    "\U0001FA00-\U0001FA6F"
-    "\U0001FA70-\U0001FAFF"
-    "\U00002702-\U000027B0"
+    "\u0001f1e0-\u0001f1ff"
+    "\u0001f300-\u0001f5ff"
+    "\u0001f600-\u0001f64f"
+    "\u0001f680-\u0001f6ff"
+    "\u0001f700-\u0001f77f"
+    "\u0001f780-\u0001f7ff"
+    "\u0001f800-\u0001f8ff"
+    "\u0001f900-\u0001f9ff"
+    "\u0001fa00-\u0001fa6f"
+    "\u0001fa70-\u0001faff"
+    "\u00002702-\u000027b0"
     "])"
   )
 
-def clean_tweet(text):
-    for pattern in REGEX_PATTERNS:
-        text = re.sub(pattern, '', text)
+d-def cwean_tweet(text):
+    f-fow pattewn in wegex_pattewns:
+        t-text = we.sub(pattewn, -.- '', text)
 
-    text = re.sub(EMOJI_PATTERN, r' \1 ', text)
+    text = we.sub(emoji_pattewn, ^•ﻌ•^ w-w' \1 ', text)
     
-    text = re.sub(r'\n', ' ', text)
+    text = we.sub(w'\n', rawr ' ', t-text)
     
-    return text.strip().lower()
+    wetuwn text.stwip().wowew()
 
 
-df['processed_text'] = df['text'].astype(str).map(clean_tweet)
-df.sample(10)
+df['pwocessed_text'] = df['text'].astype(stw).map(cwean_tweet)
+df.sampwe(10)
 
-X_train, X_val, y_train, y_val = train_test_split(df[['processed_text']], df['is_nsfw'], test_size=0.1, random_state=1)
+x-x_twain, (˘ω˘) x_vaw, nyaa~~ y_twain, y-y_vaw = twain_test_spwit(df[['pwocessed_text']], UwU d-df['is_nsfw'], :3 t-test_size=0.1, (⑅˘꒳˘) wandom_state=1)
 
-def df_to_ds(X, y, shuffle=False):
-  ds = tf.data.Dataset.from_tensor_slices((
-    X.values,
-    tf.one_hot(tf.cast(y.values, tf.int32), depth=2, axis=-1)
+def df_to_ds(x, (///ˬ///✿) y, shuffwe=fawse):
+  ds = tf.data.dataset.fwom_tensow_swices((
+    x-x.vawues, ^^;;
+    t-tf.one_hot(tf.cast(y.vawues, >_< tf.int32), rawr x3 d-depth=2, a-axis=-1)
   ))
   
-  if shuffle:
-    ds = ds.shuffle(1000, seed=1, reshuffle_each_iteration=True)
+  if shuffwe:
+    d-ds = ds.shuffwe(1000, /(^•ω•^) seed=1, :3 w-weshuffwe_each_itewation=twue)
   
-  return ds.map(lambda text, label: ({ tweet_text_feature: text }, label)).batch(params['batch_size'])
+  wetuwn ds.map(wambda text, (ꈍᴗꈍ) w-wabew: ({ tweet_text_featuwe: text }, /(^•ω•^) wabew)).batch(pawams['batch_size'])
 
-ds_train = df_to_ds(X_train, y_train, shuffle=True)
-ds_val = df_to_ds(X_val, y_val)
-X_train.values
+d-ds_twain = df_to_ds(x_twain, (⑅˘꒳˘) y-y_twain, ( ͡o ω ͡o ) s-shuffwe=twue)
+ds_vaw = df_to_ds(x_vaw, òωó y_vaw)
+x_twain.vawues
 
-inputs = tf.keras.layers.Input(shape=(), dtype=tf.string, name=tweet_text_feature)
-encoder = TextEncoder(
-    max_seq_lengths=params['max_seq_lengths'],
-    model_type=params['model_type'],
-    trainable=params['trainable_text_encoder'],
-    local_preprocessor_path='demo-preprocessor'
+inputs = tf.kewas.wayews.input(shape=(), (⑅˘꒳˘) dtype=tf.stwing, XD nyame=tweet_text_featuwe)
+e-encodew = textencodew(
+    m-max_seq_wengths=pawams['max_seq_wengths'], -.-
+    modew_type=pawams['modew_type'], :3
+    twainabwe=pawams['twainabwe_text_encodew'], nyaa~~
+    w-wocaw_pwepwocessow_path='demo-pwepwocessow'
 )
-embedding = encoder([inputs])["pooled_output"]
-predictions = tf.keras.layers.Dense(2, activation='softmax')(embedding)
-model = tf.keras.models.Model(inputs=inputs, outputs=predictions)
+e-embedding = encodew([inputs])["poowed_output"]
+p-pwedictions = tf.kewas.wayews.dense(2, 😳 activation='softmax')(embedding)
+modew = tf.kewas.modews.modew(inputs=inputs, (⑅˘꒳˘) o-outputs=pwedictions)
 
-model.summary()
+modew.summawy()
 
-optimizer = create_optimizer(
-  params['lr'],
-  params['epochs'] * len(ds_train),
+optimizew = cweate_optimizew(
+  pawams['ww'], nyaa~~
+  p-pawams['epochs'] * wen(ds_twain), OwO
   0,
-  weight_decay_rate=0.01,
-  optimizer_type='adamw'
+  w-weight_decay_wate=0.01, rawr x3
+  o-optimizew_type='adamw'
 )
-bce = tf.keras.losses.BinaryCrossentropy(from_logits=False)
-pr_auc = tf.keras.metrics.AUC(curve='PR', num_thresholds=1000, from_logits=False)
-model.compile(optimizer=optimizer, loss=bce, metrics=[pr_auc])
+b-bce = tf.kewas.wosses.binawycwossentwopy(fwom_wogits=fawse)
+pw_auc = tf.kewas.metwics.auc(cuwve='pw', XD nyum_thweshowds=1000, σωσ f-fwom_wogits=fawse)
+m-modew.compiwe(optimizew=optimizew, (U ᵕ U❁) w-woss=bce, (U ﹏ U) m-metwics=[pw_auc])
 
-callbacks = [
-  tf.keras.callbacks.EarlyStopping(
-    monitor='val_loss',
-    mode='min',
-    patience=1,
-    restore_best_weights=True
-  ),
-  tf.keras.callbacks.ModelCheckpoint(
-    filepath=os.path.join(log_path, 'checkpoints', '{epoch:02d}'),
-    save_freq='epoch'
-  ),
-  tf.keras.callbacks.TensorBoard(
-    log_dir=os.path.join(log_path, 'scalars'),
-    update_freq='batch',
-    write_graph=False
+cawwbacks = [
+  tf.kewas.cawwbacks.eawwystopping(
+    m-monitow='vaw_woss', :3
+    m-mode='min', ( ͡o ω ͡o )
+    p-patience=1, σωσ
+    w-westowe_best_weights=twue
+  ), >w<
+  t-tf.kewas.cawwbacks.modewcheckpoint(
+    fiwepath=os.path.join(wog_path, 😳😳😳 'checkpoints', OwO '{epoch:02d}'), 😳
+    save_fweq='epoch'
+  ), 😳😳😳
+  tf.kewas.cawwbacks.tensowboawd(
+    wog_diw=os.path.join(wog_path, (˘ω˘) 'scawaws'), ʘwʘ
+    update_fweq='batch', ( ͡o ω ͡o )
+    w-wwite_gwaph=fawse
   )
 ]
-history = model.fit(
-  ds_train,
-  epochs=params['epochs'],
-  callbacks=callbacks,
-  validation_data=ds_val,
-  steps_per_epoch=len(ds_train)
+histowy = modew.fit(
+  ds_twain,
+  epochs=pawams['epochs'], o.O
+  cawwbacks=cawwbacks, >w<
+  vawidation_data=ds_vaw, 😳
+  s-steps_pew_epoch=wen(ds_twain)
 )
 
-model.predict(["xxx 🍑"])
+modew.pwedict(["xxx 🍑"])
 
-preds = X_val.processed_text.apply(apply_model)
-print(classification_report(y_val, preds >= 0.90, digits=4))
+pweds = x_vaw.pwocessed_text.appwy(appwy_modew)
+pwint(cwassification_wepowt(y_vaw, 🥺 pweds >= 0.90, d-digits=4))
 
-precision, recall, thresholds = precision_recall_curve(y_val, preds)
+p-pwecision, rawr x3 w-wecaww, o.O thweshowds = pwecision_wecaww_cuwve(y_vaw, p-pweds)
 
-fig = plt.figure(figsize=(15, 10))
-plt.plot(precision, recall, lw=2)
-plt.grid()
-plt.xlim(0.2, 1)
-plt.ylim(0.3, 1)
-plt.xlabel("Recall", size=20)
-plt.ylabel("Precision", size=20)
+fig = pwt.figuwe(figsize=(15, rawr 10))
+p-pwt.pwot(pwecision, ʘwʘ w-wecaww, ww=2)
+pwt.gwid()
+pwt.xwim(0.2, 😳😳😳 1)
+pwt.ywim(0.3, ^^;; 1)
+pwt.xwabew("wecaww", o.O size=20)
+p-pwt.ywabew("pwecision", (///ˬ///✿) size=20)
 
-average_precision_score(y_val, preds)
+a-avewage_pwecision_scowe(y_vaw, σωσ pweds)

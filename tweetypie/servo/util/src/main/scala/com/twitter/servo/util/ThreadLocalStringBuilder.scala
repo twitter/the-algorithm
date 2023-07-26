@@ -1,11 +1,11 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-class ThreadLocalStringBuilder(initialSize: Int) extends ThreadLocal[StringBuilder] {
-  override def initialValue = new StringBuilder(initialSize)
+cwass thweadwocawstwingbuiwdew(initiawsize: i-int) e-extends thweadwocaw[stwingbuiwdew] {
+  o-ovewwide d-def initiawvawue = n-nyew stwingbuiwdew(initiawsize)
 
-  def apply() = {
-    val buf = get
-    buf.setLength(0)
+  d-def appwy() = {
+    v-vaw buf = g-get
+    buf.setwength(0)
     buf
   }
 }

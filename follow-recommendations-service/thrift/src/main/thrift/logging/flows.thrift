@@ -1,16 +1,16 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namespace java com.twittew.fowwow_wecommendations.wogging.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.wogging.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations.wogging
 
-struct OfflineFlowRecommendation {
-  1: required i64 userId(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+s-stwuct o-offwinefwowwecommendation {
+  1: w-wequiwed i64 u-usewid(pewsonawdatatype='usewid')
+}(pewsisted='twue', -.- h-haspewsonawdata='twue')
 
-struct OfflineRecommendationStep {
-  1: required list<OfflineFlowRecommendation> recommendations
-  2: required set<i64> followedUserIds(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+s-stwuct offwinewecommendationstep {
+  1: wequiwed wist<offwinefwowwecommendation> wecommendations
+  2: wequiwed set<i64> f-fowwowedusewids(pewsonawdatatype='usewid')
+}(pewsisted='twue', (ˆ ﻌ ˆ)♡ haspewsonawdata='twue')
 
-struct OfflineFlowContext {
-  1: required list<OfflineRecommendationStep> steps
-}(persisted='true', hasPersonalData='true')
+stwuct offwinefwowcontext {
+  1: w-wequiwed wist<offwinewecommendationstep> steps
+}(pewsisted='twue', (⑅˘꒳˘) h-haspewsonawdata='twue')

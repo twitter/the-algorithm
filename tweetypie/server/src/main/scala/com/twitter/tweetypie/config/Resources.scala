@@ -1,15 +1,15 @@
-package com.twitter.tweetypie.config
+package com.twittew.tweetypie.config
 
-import com.twitter.config.yaml.YamlMap
-import com.twitter.tweetypie.serverutil.PartnerMedia
-import scala.util.matching.Regex
+impowt com.twittew.config.yamw.yamwmap
+i-impowt c-com.twittew.tweetypie.sewvewutiw.pawtnewmedia
+i-impowt scawa.utiw.matching.wegex
 
 /**
- * Helpers for loading resources bundled with Tweetypie. We load them
- * through this API in order to be able to unit test the resource
- * loading code.
+ * h-hewpews f-fow woading wesouwces b-bundwed w-with tweetypie. (U ﹏ U) w-we woad them
+ * thwough this api in owdew to be abwe to unit test the wesouwce
+ * w-woading code. -.-
  */
-object Resources {
-  def loadPartnerMediaRegexes(): Seq[Regex] =
-    PartnerMedia.load(YamlMap.load("/partner_media.yml"))
+object wesouwces {
+  def woadpawtnewmediawegexes(): s-seq[wegex] =
+    pawtnewmedia.woad(yamwmap.woad("/pawtnew_media.ymw"))
 }

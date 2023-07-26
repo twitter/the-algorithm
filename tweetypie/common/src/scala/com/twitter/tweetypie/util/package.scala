@@ -1,9 +1,9 @@
-package com.twitter.tweetypie
+package com.twittew.tweetypie
 
-package object util {
-  type TweetId = Long
-  type UserId = Long
-  type MediaId = Long
-  type ConversationId = Long
-  type PlaceId = String
+package o-object utiw {
+  t-type tweetid = w-wong
+  type u-usewid = wong
+  t-type mediaid = w-wong
+  type convewsationid = w-wong
+  t-type pwaceid = stwing
 }

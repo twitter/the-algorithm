@@ -1,5 +1,5 @@
-package com.twitter.visibility
+package com.twittew.visibiwity
 
-package object rules {
-  type LabelTypeId = Short
+package object wuwes {
+  t-type wabewtypeid = s-showt
 }

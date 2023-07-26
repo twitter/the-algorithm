@@ -1,81 +1,81 @@
-package com.twitter.tweetypie.federated.columns
+package com.twittew.tweetypie.fedewated.cowumns
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.federated.context.GetRequestContext
-import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataResponse
-import com.twitter.tweetypie.thriftscala.TweetDeleteState
-import com.twitter.tweetypie.thriftscala.{graphql => gql}
-import com.twitter.tweetypie.{thriftscala => thrift}
-import com.twitter.util.Future
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.catawog.opmetadata
+i-impowt c-com.twittew.stwato.config.contactinfo
+i-impowt c-com.twittew.stwato.config.powicy
+i-impowt com.twittew.stwato.data.conv
+i-impowt com.twittew.stwato.data.descwiption.pwaintext
+i-impowt com.twittew.stwato.data.wifecycwe.pwoduction
+impowt com.twittew.stwato.fed.stwatofed
+impowt com.twittew.stwato.opcontext.opcontext
+impowt com.twittew.stwato.thwift.scwoogeconv
+i-impowt com.twittew.tweetypie.fedewated.context.getwequestcontext
+impowt com.twittew.tweetypie.fedewated.pwefetcheddata.pwefetcheddatawesponse
+impowt com.twittew.tweetypie.thwiftscawa.tweetdewetestate
+i-impowt com.twittew.tweetypie.thwiftscawa.{gwaphqw => g-gqw}
+impowt com.twittew.tweetypie.{thwiftscawa => thwift}
+impowt com.twittew.utiw.futuwe
 
-class DeleteTweetColumn(
-  deleteTweet: thrift.DeleteTweetsRequest => Future[Seq[thrift.DeleteTweetResult]],
-  getRequestContext: GetRequestContext,
-) extends StratoFed.Column(DeleteTweetColumn.Path)
-    with StratoFed.Execute.StitchWithContext
-    with StratoFed.HandleDarkRequests {
+cwass d-dewetetweetcowumn(
+  dewetetweet: t-thwift.dewetetweetswequest => f-futuwe[seq[thwift.dewetetweetwesuwt]], ( ͡o ω ͡o )
+  getwequestcontext: getwequestcontext, >_<
+) extends stwatofed.cowumn(dewetetweetcowumn.path)
+    with stwatofed.exekawaii~.stitchwithcontext
+    w-with stwatofed.handwedawkwequests {
 
-  override val policy: Policy = AccessPolicy.TweetMutationCommonAccessPolicies
+  ovewwide vaw powicy: powicy = accesspowicy.tweetmutationcommonaccesspowicies
 
-  override val isIdempotent: Boolean = true
+  ovewwide v-vaw isidempotent: boowean = t-twue
 
-  override type Arg = gql.DeleteTweetRequest
-  override type Result = gql.DeleteTweetResponseWithSubqueryPrefetchItems
+  ovewwide t-type awg = gqw.dewetetweetwequest
+  o-ovewwide t-type wesuwt = gqw.dewetetweetwesponsewithsubquewypwefetchitems
 
-  override val argConv: Conv[Arg] = ScroogeConv.fromStruct
-  override val resultConv: Conv[Result] = ScroogeConv.fromStruct
+  ovewwide vaw awgconv: conv[awg] = s-scwoogeconv.fwomstwuct
+  ovewwide vaw wesuwtconv: c-conv[wesuwt] = scwoogeconv.fwomstwuct
 
-  override val contactInfo: ContactInfo = TweetypieContactInfo
-  override val metadata: OpMetadata =
-    OpMetadata(Some(Production), Some(PlainText("Deletes a tweet by the calling Twitter user.")))
+  ovewwide vaw contactinfo: contactinfo = tweetypiecontactinfo
+  ovewwide v-vaw metadata: opmetadata =
+    o-opmetadata(some(pwoduction), >w< s-some(pwaintext("dewetes a-a tweet by the cawwing twittew usew.")))
 
-  override def execute(request: Arg, opContext: OpContext): Stitch[Result] = {
-    val ctx = getRequestContext(opContext)
+  ovewwide d-def exekawaii~(wequest: a-awg, rawr opcontext: opcontext): s-stitch[wesuwt] = {
+    v-vaw ctx = getwequestcontext(opcontext)
 
-    val thriftDeleteTweetRequest = thrift.DeleteTweetsRequest(
-      tweetIds = Seq(request.tweetId),
-      // byUserId is picked up by the context in tweetypie.deleteTweet,
-      // but we're passing it in here to be explicit
-      byUserId = Some(ctx.twitterUserId),
+    v-vaw thwiftdewetetweetwequest = thwift.dewetetweetswequest(
+      t-tweetids = seq(wequest.tweetid), 😳
+      // byusewid is picked u-up by the context in tweetypie.dewetetweet, >w<
+      // b-but we'we passing it in h-hewe to be expwicit
+      b-byusewid = some(ctx.twittewusewid), (⑅˘꒳˘)
     )
 
-    val stitchDeleteTweet = handleDarkRequest(opContext)(
-      light = {
-        Stitch.callFuture(deleteTweet(thriftDeleteTweetRequest))
-      },
-      // For dark requests, we don't want to send traffic to tweetypie.
-      // Since the response is the same regardless of the request, we take a no-op
-      // action instead.
-      dark = Stitch.value(Seq(thrift.DeleteTweetResult(request.tweetId, TweetDeleteState.Ok)))
+    vaw stitchdewetetweet = handwedawkwequest(opcontext)(
+      wight = {
+        stitch.cawwfutuwe(dewetetweet(thwiftdewetetweetwequest))
+      }, OwO
+      // fow dawk wequests, (ꈍᴗꈍ) w-we don't w-want to send twaffic to tweetypie. 😳
+      // s-since t-the wesponse is t-the same wegawdwess of the wequest, 😳😳😳 we take a nyo-op
+      // a-action instead. mya
+      dawk = stitch.vawue(seq(thwift.dewetetweetwesuwt(wequest.tweetid, mya tweetdewetestate.ok)))
     )
 
-    stitchDeleteTweet.map { result: Seq[thrift.DeleteTweetResult] =>
-      result.headOption match {
-        case Some(thrift.DeleteTweetResult(id, TweetDeleteState.Ok)) =>
-          gql.DeleteTweetResponseWithSubqueryPrefetchItems(
-            data = Some(gql.DeleteTweetResponse(Some(id))),
-            // Prefetch data is always NotFound to prevent subqueries from hydrating via weaverbird
-            // and possibly returning inconsistent results, i.e. a Found tweet.
-            subqueryPrefetchItems = Some(PrefetchedDataResponse.notFound(id).value)
+    stitchdewetetweet.map { wesuwt: seq[thwift.dewetetweetwesuwt] =>
+      w-wesuwt.headoption match {
+        c-case some(thwift.dewetetweetwesuwt(id, (⑅˘꒳˘) t-tweetdewetestate.ok)) =>
+          g-gqw.dewetetweetwesponsewithsubquewypwefetchitems(
+            data = s-some(gqw.dewetetweetwesponse(some(id))), (U ﹏ U)
+            // p-pwefetch d-data is awways n-nyotfound to pwevent subquewies fwom hydwating v-via weavewbiwd
+            // and p-possibwy wetuwning i-inconsistent w-wesuwts, mya i.e. a-a found tweet. ʘwʘ
+            subquewypwefetchitems = some(pwefetcheddatawesponse.notfound(id).vawue)
           )
-        case Some(thrift.DeleteTweetResult(_, TweetDeleteState.PermissionError)) =>
-          throw ApiErrors.DeletePermissionErr
+        case some(thwift.dewetetweetwesuwt(_, (˘ω˘) t-tweetdewetestate.pewmissionewwow)) =>
+          thwow apiewwows.dewetepewmissioneww
         case _ =>
-          throw ApiErrors.GenericAccessDeniedErr
+          thwow apiewwows.genewicaccessdeniedeww
       }
     }
   }
 }
 
-object DeleteTweetColumn {
-  val Path = "tweetypie/deleteTweet.Tweet"
+o-object dewetetweetcowumn {
+  vaw path = "tweetypie/dewetetweet.tweet"
 }

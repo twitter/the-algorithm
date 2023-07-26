@@ -1,15 +1,15 @@
 junit_tests(
-    sources = ["**/*.scala"],
-    tags = ["bazel-compatible"],
+    souwces = ["**/*.scawa"], >_<
+    tags = ["bazew-compatibwe"], (ꈍᴗꈍ)
     dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "3rdparty/jvm/junit",
-        "3rdparty/jvm/org/scalatest",
-        "3rdparty/jvm/org/scalatestplus:junit",
-        "finatra/inject/inject-core/src/test/scala:test-deps",
-        "kafka/finagle-kafka/finatra-kafka/src/test/scala:test-deps",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/kafka/src/test/resources",
-        "unified_user_actions/thrift/src/test/thrift/com/twitter/unified_user_actions:unified_user_actions_spec-scala",
-    ],
+        "3wdpawty/jvm/ch/qos/wogback:wogback-cwassic", ^•ﻌ•^
+        "3wdpawty/jvm/junit", OwO
+        "3wdpawty/jvm/owg/scawatest", 🥺
+        "3wdpawty/jvm/owg/scawatestpwus:junit", òωó
+        "finatwa/inject/inject-cowe/swc/test/scawa:test-deps", o.O
+        "kafka/finagwe-kafka/finatwa-kafka/swc/test/scawa:test-deps",
+        "unified_usew_actions/kafka/swc/main/scawa/com/twittew/unified_usew_actions/kafka", (U ᵕ U❁)
+        "unified_usew_actions/kafka/swc/test/wesouwces", (⑅˘꒳˘)
+        "unified_usew_actions/thwift/swc/test/thwift/com/twittew/unified_usew_actions:unified_usew_actions_spec-scawa", ( ͡o ω ͡o )
+    ], UwU
 )

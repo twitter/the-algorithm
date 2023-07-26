@@ -1,821 +1,821 @@
-# pylint: disable=arguments-differ, invalid-name
+# pywint: disabwe=awguments-diffew, 🥺 invawid-name
 """
-This module contains the ``DataRecordTrainer``.
-Unlike the parent ``Trainer`` class, the ``DataRecordTrainer``
-is used specifically for processing data records.
-It abstracts away a lot of the intricacies of working with DataRecords.
-`DataRecord <http://go/datarecord>`_ is the main piping format for data samples.
-The `DataRecordTrainer` assumes training data and production responses and requests
-to be organized as the `Thrift prediction service API
+t-this moduwe c-contains the ``datawecowdtwainew``. ʘwʘ
+u-unwike the pawent ``twainew`` c-cwass, (✿oωo) the ``datawecowdtwainew``
+i-is used specificawwy f-fow pwocessing d-data wecowds. rawr
+i-it abstwacts away a wot of the intwicacies of wowking with datawecowds. OwO
+`datawecowd <http://go/datawecowd>`_ i-is the main piping fowmat fow data sampwes.
+the `datawecowdtwainew` a-assumes twaining data and p-pwoduction wesponses and wequests
+to be owganized as the `thwift p-pwediction sewvice api
 
-A ``DataRecord`` is a Thrift struct that defines how to encode the data:
+a ``datawecowd`` i-is a thwift s-stwuct that defines how to encode the data:
 
 ::
 
-  struct DataRecord {
-    1: optional set<i64> binaryFeatures;                     // stores BINARY features
-    2: optional map<i64, double> continuousFeatures;         // stores CONTINUOUS features
-    3: optional map<i64, i64> discreteFeatures;              // stores DISCRETE features
-    4: optional map<i64, string> stringFeatures;             // stores STRING features
-    5: optional map<i64, set<string>> sparseBinaryFeatures;  // stores sparse BINARY features
-    6: optional map<i64, map<string, double>> sparseContinuousFeatures; // sparse CONTINUOUS feature
-    7: optional map<i64, binary> blobFeatures; // stores features as BLOBs (binary large objects)
-    8: optional map<i64, tensor.GeneralTensor> tensors; // stores TENSOR features
-    9: optional map<i64, tensor.SparseTensor> sparseTensors; // stores SPARSE_TENSOR features
+  stwuct datawecowd {
+    1: o-optionaw set<i64> binawyfeatuwes;                     // stowes binawy featuwes
+    2: optionaw m-map<i64, ^^ doubwe> continuousfeatuwes;         // s-stowes continuous f-featuwes
+    3: o-optionaw map<i64, ʘwʘ i-i64> discwetefeatuwes;              // stowes discwete featuwes
+    4: optionaw map<i64, σωσ s-stwing> stwingfeatuwes;             // stowes stwing featuwes
+    5: o-optionaw map<i64, (⑅˘꒳˘) set<stwing>> spawsebinawyfeatuwes;  // stowes spawse binawy featuwes
+    6: optionaw map<i64, (ˆ ﻌ ˆ)♡ m-map<stwing, doubwe>> spawsecontinuousfeatuwes; // s-spawse continuous f-featuwe
+    7: o-optionaw map<i64, :3 binawy> bwobfeatuwes; // stowes featuwes a-as bwobs (binawy w-wawge objects)
+    8: optionaw m-map<i64, ʘwʘ tensow.genewawtensow> t-tensows; // stowes tensow featuwes
+    9: o-optionaw map<i64, (///ˬ///✿) tensow.spawsetensow> s-spawsetensows; // stowes spawse_tensow featuwes
   }
 
 
-A significant portion of Twitter data is hydrated
-and then temporarily stored on HDFS as DataRecords.
-The files are compressed (.gz or .lzo) partitions of data records.
-These form supervised datasets. Each sample captures the relationship
-between input and output (cause and effect).
-To create your own dataset, please see https://github.com/twitter/elephant-bird.
+a-a significant powtion o-of twittew data is hydwated
+and t-then tempowawiwy s-stowed on hdfs as datawecowds. (ˆ ﻌ ˆ)♡
+the fiwes awe compwessed (.gz ow .wzo) pawtitions of data wecowds. 🥺
+these fowm supewvised d-datasets. rawr e-each sampwe captuwes the wewationship
+b-between i-input and output (cause a-and effect). (U ﹏ U)
+to cweate youw own dataset, ^^ pwease see https://github.com/twittew/ewephant-biwd. σωσ
 
-The default ``DataRecordTrainer.[train,evaluate,learn]()`` reads these datarecords.
-The data is a read from multiple ``part-*.[compression]`` files.
-The default behavior of ``DataRecordTrainer`` is to read sparse features from ``DataRecords``.
-This is a legacy default piping format at Twitter.
-The ``DataRecordTrainer`` is flexible enough for research and yet simple enough
-for a new beginner ML practioner.
+t-the defauwt ``datawecowdtwainew.[twain,evawuate,weawn]()`` weads these datawecowds.
+the data is a wead fwom muwtipwe ``pawt-*.[compwession]`` f-fiwes. :3
+the defauwt behaviow o-of ``datawecowdtwainew`` i-is to w-wead spawse featuwes fwom ``datawecowds``. ^^
+t-this i-is a wegacy defauwt p-piping fowmat a-at twittew. (✿oωo)
+the ``datawecowdtwainew`` is fwexibwe enough fow w-weseawch and yet s-simpwe enough
+fow a-a nyew beginnew m-mw pwactionew. òωó
 
-By means of the feature string to key hashing function,
-the ``[train,eval]_feature_config`` constructor arguments
-control which features can be used as sample labels, sample weights,
-or sample features.
-Samples ids, and feature keys, feature values and feature weights
-can be skipped, included, excluded or used as labels, weights, or features.
-This allows you to easily define and control sparse distributions of
-named features.
+b-by means of the featuwe stwing to key hashing function, (U ᵕ U❁)
+the ``[twain,evaw]_featuwe_config`` constwuctow a-awguments
+contwow which featuwes can be used as sampwe wabews, ʘwʘ sampwe weights, ( ͡o ω ͡o )
+ow sampwe f-featuwes.
+sampwes ids, σωσ and featuwe keys, (ˆ ﻌ ˆ)♡ featuwe vawues and f-featuwe weights
+c-can be skipped, (˘ω˘) i-incwuded, 😳 excwuded ow used as wabews, ^•ﻌ•^ w-weights, σωσ ow featuwes. 😳😳😳
+this a-awwows you to easiwy d-define and contwow spawse distwibutions of
+nyamed featuwes.
 
-Yet sparse data is difficult to work with. We are currently working to
-optimize the sparse operations due to inefficiencies in the gradient descent
-and parameter update processes. There are efforts underway
-to minimize the footprint of sparse data as it is inefficient to process.
-CPUs and GPUs much prefer dense tensor data.
+yet spawse data is difficuwt t-to wowk with. rawr we awe cuwwentwy wowking t-to
+optimize the spawse opewations d-due to i-inefficiencies in the gwadient descent
+and pawametew u-update pwocesses. >_< t-thewe awe effowts undewway
+t-to minimize the f-footpwint of spawse data as it is inefficient to pwocess. ʘwʘ
+cpus and gpus much pwefew d-dense tensow d-data. (ˆ ﻌ ˆ)♡
 """
 
-import datetime
+impowt d-datetime
 
-import tensorflow.compat.v1 as tf
-from twitter.deepbird.io.dal import dal_to_hdfs_path, is_dal_path
-import twml
-from twml.trainers import Trainer
-from twml.contrib.feature_importances.feature_importances import (
-  compute_feature_importances,
-  TREE,
-  write_feature_importances_to_hdfs,
-  write_feature_importances_to_ml_dash)
-from absl import logging
+impowt tensowfwow.compat.v1 a-as tf
+f-fwom twittew.deepbiwd.io.daw impowt d-daw_to_hdfs_path, ^^;; is_daw_path
+impowt twmw
+fwom twmw.twainews impowt twainew
+f-fwom twmw.contwib.featuwe_impowtances.featuwe_impowtances i-impowt (
+  compute_featuwe_impowtances, σωσ
+  twee,
+  wwite_featuwe_impowtances_to_hdfs, rawr x3
+  w-wwite_featuwe_impowtances_to_mw_dash)
+f-fwom absw impowt wogging
 
 
-class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
+cwass datawecowdtwainew(twainew):  # pywint: d-disabwe=abstwact-method
   """
-  The ``DataRecordTrainer`` implementation is intended to satisfy the most common use cases
-  at Twitter where only the build_graph methods needs to be overridden.
-  For this reason, ``Trainer.[train,eval]_input_fn`` methods
-  assume a DataRecord dataset partitioned into part files stored in compressed (e.g. gzip) format.
+  the ``datawecowdtwainew`` impwementation is intended to satisfy t-the most common use cases
+  at twittew whewe onwy t-the buiwd_gwaph m-methods nyeeds to be ovewwidden. 😳
+  fow this weason, ``twainew.[twain,evaw]_input_fn`` methods
+  a-assume a datawecowd d-dataset pawtitioned into pawt fiwes stowed in compwessed (e.g. 😳😳😳 g-gzip) fowmat. 😳😳😳
 
-  For use-cases that differ from this common Twitter use-case,
-  further Trainer methods can be overridden.
-  If that still doesn't provide enough flexibility, the user can always
-  use the tf.estimator.Esimator or tf.session.run directly.
+  fow use-cases t-that diffew fwom this common twittew use-case, ( ͡o ω ͡o )
+  fuwthew twainew m-methods can be ovewwidden. rawr x3
+  i-if that stiww d-doesn't pwovide enough fwexibiwity, σωσ t-the usew can awways
+  use the t-tf.estimatow.esimatow o-ow tf.session.wun d-diwectwy. (˘ω˘)
   """
 
   def __init__(
-          self, name, params,
-          build_graph_fn,
-          feature_config=None,
-          **kwargs):
+          s-sewf, >w< nyame, UwU p-pawams,
+          buiwd_gwaph_fn, XD
+          featuwe_config=none, (U ﹏ U)
+          **kwawgs):
     """
-    The DataRecordTrainer constructor builds a
-    ``tf.estimator.Estimator`` and stores it in self.estimator.
-    For this reason, DataRecordTrainer accepts the same Estimator constructor arguments.
-    It also accepts additional arguments to facilitate metric evaluation and multi-phase training
-    (init_from_dir, init_map).
+    t-the datawecowdtwainew c-constwuctow b-buiwds a
+    ``tf.estimatow.estimatow`` and stowes it in sewf.estimatow. (U ᵕ U❁)
+    f-fow this weason, datawecowdtwainew a-accepts the s-same estimatow constwuctow awguments. (ˆ ﻌ ˆ)♡
+    it awso accepts additionaw a-awguments t-to faciwitate metwic e-evawuation a-and muwti-phase twaining
+    (init_fwom_diw, òωó i-init_map). ^•ﻌ•^
 
-    Args:
-      parent arguments:
-        See the `Trainer constructor <#twml.trainers.Trainer.__init__>`_ documentation
-        for a full list of arguments accepted by the parent class.
-      name, params, build_graph_fn (and other parent class args):
-        see documentation for twml.Trainer doc.
-      feature_config:
-        An object of type FeatureConfig describing what features to decode.
-        Defaults to None. But it is needed in the following cases:
-          - `get_train_input_fn()` / `get_eval_input_fn()` is called without a `parse_fn`
-          - `learn()`, `train()`, `eval()`, `calibrate()` are called without providing `*input_fn`.
+    awgs:
+      pawent awguments:
+        see the `twainew constwuctow <#twmw.twainews.twainew.__init__>`_ d-documentation
+        fow a f-fuww wist of awguments accepted b-by the pawent cwass. (///ˬ///✿)
+      nyame, -.- p-pawams, buiwd_gwaph_fn (and othew pawent cwass a-awgs):
+        s-see documentation f-fow twmw.twainew d-doc. >w<
+      featuwe_config:
+        a-an object of type featuweconfig descwibing nyani featuwes to decode. òωó
+        defauwts to nyone. σωσ but it is n-nyeeded in the f-fowwowing cases:
+          - `get_twain_input_fn()` / `get_evaw_input_fn()` i-is cawwed without a `pawse_fn`
+          - `weawn()`, mya `twain()`, `evaw()`, òωó `cawibwate()` a-awe cawwed without pwoviding `*input_fn`. 🥺
 
-      **kwargs:
-        further kwargs can be specified and passed to the Estimator constructor.
+      **kwawgs:
+        fuwthew kwawgs can be specified a-and passed t-to the estimatow constwuctow. (U ﹏ U)
     """
 
-    # NOTE: DO NOT MODIFY `params` BEFORE THIS CALL.
-    super(DataRecordTrainer, self).__init__(
-      name=name, params=params, build_graph_fn=build_graph_fn, **kwargs)
+    # n-nyote: do nyot modify `pawams` befowe this caww. (ꈍᴗꈍ)
+    supew(datawecowdtwainew, (˘ω˘) s-sewf).__init__(
+      n-nyame=name, (✿oωo) pawams=pawams, -.- buiwd_gwaph_fn=buiwd_gwaph_fn, (ˆ ﻌ ˆ)♡ **kwawgs)
 
-    self._feature_config = feature_config
+    s-sewf._featuwe_config = f-featuwe_config
 
-    # date range parameters common to both training and evaluation data:
-    hour_resolution = self.params.get("hour_resolution", 1)
-    data_threads = self.params.get("data_threads", 4)
-    datetime_format = self.params.get("datetime_format", "%Y/%m/%d")
+    # date wange pawametews common to both twaining and evawuation d-data:
+    h-houw_wesowution = s-sewf.pawams.get("houw_wesowution", (✿oωo) 1)
+    d-data_thweads = s-sewf.pawams.get("data_thweads", ʘwʘ 4)
+    datetime_fowmat = s-sewf.pawams.get("datetime_fowmat", (///ˬ///✿) "%y/%m/%d")
 
-    # retrieve the desired training dataset files
-    self._train_files = self.build_files_list(
-      files_list_path=self.params.get("train_files_list", None),
-      data_dir=self.params.get("train_data_dir", None),
-      start_datetime=self.params.get("train_start_datetime", None),
-      end_datetime=self.params.get("train_end_datetime", None),
-      datetime_format=datetime_format, data_threads=data_threads,
-      hour_resolution=hour_resolution, maybe_save=self.is_chief(),
-      overwrite=self.params.get("train_overwrite_files_list", False),
+    # w-wetwieve the desiwed t-twaining dataset f-fiwes
+    sewf._twain_fiwes = sewf.buiwd_fiwes_wist(
+      fiwes_wist_path=sewf.pawams.get("twain_fiwes_wist", rawr n-nyone),
+      data_diw=sewf.pawams.get("twain_data_diw", 🥺 nyone), mya
+      stawt_datetime=sewf.pawams.get("twain_stawt_datetime", mya n-nyone),
+      end_datetime=sewf.pawams.get("twain_end_datetime", mya nyone),
+      d-datetime_fowmat=datetime_fowmat, (⑅˘꒳˘) d-data_thweads=data_thweads, (✿oωo)
+      houw_wesowution=houw_wesowution, 😳 maybe_save=sewf.is_chief(), OwO
+      o-ovewwwite=sewf.pawams.get("twain_ovewwwite_fiwes_wist", (˘ω˘) fawse),
     )
 
-    # retrieve the desired evaluation dataset files
-    eval_name = self.params.get("eval_name", None)
+    # wetwieve the desiwed e-evawuation dataset f-fiwes
+    e-evaw_name = sewf.pawams.get("evaw_name", (✿oωo) nyone)
 
-    if eval_name == "train":
-      self._eval_files = self._train_files
-    else:
-      self._eval_files = self.build_files_list(
-        files_list_path=self.params.get("eval_files_list", None),
-        data_dir=self.params.get("eval_data_dir", None),
-        start_datetime=self.params.get("eval_start_datetime", None),
-        end_datetime=self.params.get("eval_end_datetime", None),
-        datetime_format=datetime_format, data_threads=data_threads,
-        hour_resolution=hour_resolution, maybe_save=self.is_chief(),
-        overwrite=self.params.get("eval_overwrite_files_list", False),
+    if evaw_name == "twain":
+      sewf._evaw_fiwes = s-sewf._twain_fiwes
+    ewse:
+      sewf._evaw_fiwes = s-sewf.buiwd_fiwes_wist(
+        f-fiwes_wist_path=sewf.pawams.get("evaw_fiwes_wist", /(^•ω•^) none),
+        data_diw=sewf.pawams.get("evaw_data_diw", rawr x3 n-nyone),
+        stawt_datetime=sewf.pawams.get("evaw_stawt_datetime", rawr n-nyone), ( ͡o ω ͡o )
+        e-end_datetime=sewf.pawams.get("evaw_end_datetime", nyone), ( ͡o ω ͡o )
+        datetime_fowmat=datetime_fowmat, 😳😳😳 d-data_thweads=data_thweads, (U ﹏ U)
+        houw_wesowution=houw_wesowution, UwU maybe_save=sewf.is_chief(), (U ﹏ U)
+        o-ovewwwite=sewf.pawams.get("evaw_ovewwwite_fiwes_wist", 🥺 f-fawse),
       )
 
-      if not self.params.get("allow_train_eval_overlap"):
-        # if there is overlap between train and eval, error out!
-        if self._train_files and self._eval_files:
-          overlap_files = set(self._train_files) & set(self._eval_files)
-        else:
-          overlap_files = set()
-        if overlap_files:
-          raise ValueError("There is an overlap between train and eval files:\n %s" %
-                           (overlap_files))
+      if nyot sewf.pawams.get("awwow_twain_evaw_ovewwap"):
+        # i-if thewe is ovewwap between t-twain and evaw, ʘwʘ e-ewwow out! 😳
+        i-if sewf._twain_fiwes and sewf._evaw_fiwes:
+          ovewwap_fiwes = set(sewf._twain_fiwes) & set(sewf._evaw_fiwes)
+        ewse:
+          ovewwap_fiwes = set()
+        if ovewwap_fiwes:
+          waise vawueewwow("thewe is an ovewwap between twain and e-evaw fiwes:\n %s" %
+                           (ovewwap_fiwes))
 
   @staticmethod
-  def build_hdfs_files_list(
-      files_list_path, data_dir,
-      start_datetime, end_datetime, datetime_format,
-      data_threads, hour_resolution, maybe_save, overwrite):
-    if files_list_path:
-      files_list_path = twml.util.preprocess_path(files_list_path)
+  d-def buiwd_hdfs_fiwes_wist(
+      fiwes_wist_path, (ˆ ﻌ ˆ)♡ data_diw, >_<
+      s-stawt_datetime, ^•ﻌ•^ e-end_datetime, (✿oωo) d-datetime_fowmat, OwO
+      data_thweads, (ˆ ﻌ ˆ)♡ h-houw_wesowution, ^^;; maybe_save, nyaa~~ o-ovewwwite):
+    i-if fiwes_wist_path:
+      fiwes_wist_path = t-twmw.utiw.pwepwocess_path(fiwes_wist_path)
 
-    if isinstance(start_datetime, datetime.datetime):
-      start_datetime = start_datetime.strftime(datetime_format)
-    if isinstance(end_datetime, datetime.datetime):
-      end_datetime = end_datetime.strftime(datetime_format)
+    if isinstance(stawt_datetime, o.O d-datetime.datetime):
+      s-stawt_datetime = stawt_datetime.stwftime(datetime_fowmat)
+    if isinstance(end_datetime, >_< d-datetime.datetime):
+      e-end_datetime = end_datetime.stwftime(datetime_fowmat)
 
-    list_files_by_datetime_args = {
-      "base_path": data_dir,
-      "start_datetime": start_datetime,
-      "end_datetime": end_datetime,
-      "datetime_prefix_format": datetime_format,
-      "extension": "lzo",
-      "parallelism": data_threads,
-      "hour_resolution": hour_resolution,
-      "sort": True,
+    w-wist_fiwes_by_datetime_awgs = {
+      "base_path": d-data_diw, (U ﹏ U)
+      "stawt_datetime": s-stawt_datetime, ^^
+      "end_datetime": e-end_datetime, UwU
+      "datetime_pwefix_fowmat": d-datetime_fowmat, ^^;;
+      "extension": "wzo", òωó
+      "pawawwewism": d-data_thweads, -.-
+      "houw_wesowution": h-houw_wesowution, ( ͡o ω ͡o )
+      "sowt": twue, o.O
     }
 
-    # no cache of data file paths, just get the list by scraping the directory
-    if not files_list_path or not tf.io.gfile.exists(files_list_path):
-      # twml.util.list_files_by_datetime returns None if data_dir is None.
-      # twml.util.list_files_by_datetime passes through data_dir if data_dir is a list
-      files_list = twml.util.list_files_by_datetime(**list_files_by_datetime_args)
-    else:
-      # the cached data file paths file exists.
-      files_info = twml.util.read_file(files_list_path, decode="json")
-      # use the cached list if data params match current params,
-      #  or if current params are None
-      # Not including None checks for datetime_format and hour_resolution,
-      #  since those are shared between eval and training.
-      if (all(param is None for param in [data_dir, start_datetime, end_datetime]) or
-          (files_info["data_dir"] == data_dir and
-           files_info["start_datetime"] == start_datetime and
-           files_info["end_datetime"] == end_datetime and
-           files_info["datetime_format"] == datetime_format and
-           files_info["hour_resolution"] == hour_resolution)):
-        files_list = files_info["files"]
-      elif overwrite:
-        # current params are not none and don't match saved params
-        # `overwrite` indicates we should thus update the list
-        files_list = twml.util.list_files_by_datetime(**list_files_by_datetime_args)
-      else:
-        # dont update the cached list
-        raise ValueError("Information in files_list is inconsistent with provided args.\n"
-                         "Did you intend to overwrite files_list using "
-                         "--train.overwrite_files_list or --eval.overwrite_files_list?\n"
-                         "If you instead want to use the paths in files_list, ensure that "
-                         "data_dir, start_datetime, and end_datetime are None.")
+    # n-nyo c-cache of data fiwe p-paths, rawr just get the wist by s-scwaping the diwectowy
+    if nyot fiwes_wist_path o-ow nyot tf.io.gfiwe.exists(fiwes_wist_path):
+      # twmw.utiw.wist_fiwes_by_datetime w-wetuwns n-nyone if data_diw i-is nyone. (✿oωo)
+      # twmw.utiw.wist_fiwes_by_datetime p-passes thwough data_diw if d-data_diw is a wist
+      fiwes_wist = t-twmw.utiw.wist_fiwes_by_datetime(**wist_fiwes_by_datetime_awgs)
+    ewse:
+      # t-the cached data fiwe paths fiwe exists. σωσ
+      fiwes_info = twmw.utiw.wead_fiwe(fiwes_wist_path, (U ᵕ U❁) d-decode="json")
+      # use the cached wist i-if data pawams m-match cuwwent pawams, >_<
+      #  ow if cuwwent pawams awe nyone
+      # n-not incwuding nyone checks f-fow datetime_fowmat a-and houw_wesowution, ^^
+      #  s-since those awe shawed between evaw and twaining. rawr
+      i-if (aww(pawam i-is nyone fow pawam in [data_diw, >_< s-stawt_datetime, (⑅˘꒳˘) end_datetime]) ow
+          (fiwes_info["data_diw"] == d-data_diw and
+           fiwes_info["stawt_datetime"] == s-stawt_datetime a-and
+           f-fiwes_info["end_datetime"] == end_datetime a-and
+           f-fiwes_info["datetime_fowmat"] == d-datetime_fowmat a-and
+           fiwes_info["houw_wesowution"] == h-houw_wesowution)):
+        f-fiwes_wist = fiwes_info["fiwes"]
+      e-ewif ovewwwite:
+        # c-cuwwent pawams a-awe nyot nyone and d-don't match saved p-pawams
+        # `ovewwwite` i-indicates we shouwd thus update t-the wist
+        fiwes_wist = t-twmw.utiw.wist_fiwes_by_datetime(**wist_fiwes_by_datetime_awgs)
+      ewse:
+        # d-dont update t-the cached wist
+        w-waise vawueewwow("infowmation in fiwes_wist is inconsistent w-with pwovided a-awgs.\n"
+                         "did y-you intend to ovewwwite fiwes_wist using "
+                         "--twain.ovewwwite_fiwes_wist ow --evaw.ovewwwite_fiwes_wist?\n"
+                         "if y-you i-instead want to use the paths in f-fiwes_wist, >w< ensuwe t-that "
+                         "data_diw, (///ˬ///✿) stawt_datetime, ^•ﻌ•^ and end_datetime awe nyone.")
 
-    if maybe_save and files_list_path and (overwrite or not tf.io.gfile.exists(files_list_path)):
+    i-if maybe_save a-and fiwes_wist_path a-and (ovewwwite o-ow nyot tf.io.gfiwe.exists(fiwes_wist_path)):
       save_dict = {}
-      save_dict["files"] = files_list
-      save_dict["data_dir"] = data_dir
-      save_dict["start_datetime"] = start_datetime
+      save_dict["fiwes"] = f-fiwes_wist
+      s-save_dict["data_diw"] = data_diw
+      save_dict["stawt_datetime"] = s-stawt_datetime
       save_dict["end_datetime"] = end_datetime
-      save_dict["datetime_format"] = datetime_format
-      save_dict["hour_resolution"] = hour_resolution
-      twml.util.write_file(files_list_path, save_dict, encode="json")
+      s-save_dict["datetime_fowmat"] = datetime_fowmat
+      s-save_dict["houw_wesowution"] = h-houw_wesowution
+      twmw.utiw.wwite_fiwe(fiwes_wist_path, (✿oωo) s-save_dict, ʘwʘ e-encode="json")
 
-    return files_list
-
-  @staticmethod
-  def build_files_list(files_list_path, data_dir,
-                        start_datetime, end_datetime, datetime_format,
-                        data_threads, hour_resolution, maybe_save, overwrite):
-    '''
-    When specifying DAL datasets, only data_dir, start_dateime, and end_datetime
-    should be given with the format:
-
-    dal://{cluster}/{role}/{dataset_name}/{env}
-
-    '''
-    if not data_dir or not is_dal_path(data_dir):
-      logging.warn(f"Please consider specifying a dal:// dataset rather than passing a physical hdfs path.")
-      return DataRecordTrainer.build_hdfs_files_list(
-        files_list_path, data_dir,
-        start_datetime, end_datetime, datetime_format,
-        data_threads, hour_resolution, maybe_save, overwrite)
-
-    del datetime_format
-    del data_threads
-    del hour_resolution
-    del maybe_save
-    del overwrite
-
-    return dal_to_hdfs_path(
-      path=data_dir,
-      start_datetime=start_datetime,
-      end_datetime=end_datetime,
-    )
-
-  @property
-  def train_files(self):
-    return self._train_files
-
-  @property
-  def eval_files(self):
-    return self._eval_files
+    wetuwn f-fiwes_wist
 
   @staticmethod
-  def add_parser_arguments():
-    """
-    Add common commandline args to parse for the Trainer class.
-    Typically, the user calls this function and then parses cmd-line arguments
-    into an argparse.Namespace object which is then passed to the Trainer constructor
-    via the params argument.
+  def buiwd_fiwes_wist(fiwes_wist_path, >w< d-data_diw, :3
+                        s-stawt_datetime, e-end_datetime, d-datetime_fowmat, (ˆ ﻌ ˆ)♡
+                        data_thweads, -.- houw_wesowution, rawr m-maybe_save, rawr x3 o-ovewwwite):
+    '''
+    w-when specifying daw datasets, (U ﹏ U) o-onwy data_diw, (ˆ ﻌ ˆ)♡ stawt_dateime, :3 and end_datetime
+    s-shouwd be given w-with the fowmat:
 
-    See the `Trainer code <_modules/twml/trainers/trainer.html#Trainer.add_parser_arguments>`_
-    and `DataRecordTrainer code
-    <_modules/twml/trainers/trainer.html#DataRecordTrainer.add_parser_arguments>`_
-    for a list and description of all cmd-line arguments.
+    d-daw://{cwustew}/{wowe}/{dataset_name}/{env}
 
-    Args:
-      learning_rate_decay:
-        Defaults to False. When True, parses learning rate decay arguments.
+    '''
+    if nyot data_diw ow nyot is_daw_path(data_diw):
+      wogging.wawn(f"pwease considew s-specifying a daw:// dataset w-wathew than passing a-a physicaw hdfs path.")
+      wetuwn datawecowdtwainew.buiwd_hdfs_fiwes_wist(
+        f-fiwes_wist_path, data_diw, òωó
+        s-stawt_datetime, /(^•ω•^) e-end_datetime, >w< datetime_fowmat, nyaa~~
+        d-data_thweads, mya h-houw_wesowution, m-maybe_save, mya ovewwwite)
 
-    Returns:
-      argparse.ArgumentParser instance with some useful args already added.
-    """
-    parser = super(DataRecordTrainer, DataRecordTrainer).add_parser_arguments()
-    parser.add_argument(
-      "--train.files_list", "--train_files_list", type=str, default=None,
-      dest="train_files_list",
-      help="Path for a json file storing information on training data.\n"
-           "Specifically, the file at files_list should contain the dataset parameters "
-           "for constructing the list of data files, and the list of data file paths.\n"
-           "If the json file does not exist, other args are used to construct the "
-           "training files list, and that list will be saved to the indicated json file.\n"
-           "If the json file does exist, and current args are consistent with "
-           "saved args, or are all None, then the saved files list will be used.\n"
-           "If current args are not consistent with the saved args, then error out "
-           "if train_overwrite_files_list==False, else overwrite files_list with "
-           "a newly constructed list.")
-    parser.add_argument(
-      "--train.overwrite_files_list", "--train_overwrite_files_list", action="store_true", default=False,
-      dest="train_overwrite_files_list",
-      help="When the --train.files_list param is used, indicates whether to "
-           "overwrite the existing --train.files_list when there are differences "
-           "between the current and saved dataset args. Default (False) is to "
-           "error out if files_list exists and differs from current params.")
-    parser.add_argument(
-      "--train.data_dir", "--train_data_dir", type=str, default=None,
-      dest="train_data_dir",
-      help="Path to the training data directory."
-           "Supports local, dal://{cluster}-{region}/{role}/{dataset_name}/{environment}, "
-           "and HDFS (hdfs://default/<path> ) paths.")
-    parser.add_argument(
-      "--train.start_date", "--train_start_datetime",
-      type=str, default=None,
-      dest="train_start_datetime",
-      help="Starting date for training inside the train data dir."
-           "The start datetime is inclusive."
-           "e.g. 2019/01/15")
-    parser.add_argument(
-      "--train.end_date", "--train_end_datetime", type=str, default=None,
-      dest="train_end_datetime",
-      help="Ending date for training inside the train data dir."
-           "The end datetime is inclusive."
-           "e.g. 2019/01/15")
-    parser.add_argument(
-      "--eval.files_list", "--eval_files_list", type=str, default=None,
-      dest="eval_files_list",
-      help="Path for a json file storing information on evaluation data.\n"
-           "Specifically, the file at files_list should contain the dataset parameters "
-           "for constructing the list of data files, and the list of data file paths.\n"
-           "If the json file does not exist, other args are used to construct the "
-           "evaluation files list, and that list will be saved to the indicated json file.\n"
-           "If the json file does exist, and current args are consistent with "
-           "saved args, or are all None, then the saved files list will be used.\n"
-           "If current args are not consistent with the saved args, then error out "
-           "if eval_overwrite_files_list==False, else overwrite files_list with "
-           "a newly constructed list.")
-    parser.add_argument(
-      "--eval.overwrite_files_list", "--eval_overwrite_files_list", action="store_true", default=False,
-      dest="eval_overwrite_files_list",
-      help="When the --eval.files_list param is used, indicates whether to "
-           "overwrite the existing --eval.files_list when there are differences "
-           "between the current and saved dataset args. Default (False) is to "
-           "error out if files_list exists and differs from current params.")
-    parser.add_argument(
-      "--eval.data_dir", "--eval_data_dir", type=str, default=None,
-      dest="eval_data_dir",
-      help="Path to the cross-validation data directory."
-           "Supports local, dal://{cluster}-{region}/{role}/{dataset_name}/{environment}, "
-           "and HDFS (hdfs://default/<path> ) paths.")
-    parser.add_argument(
-      "--eval.start_date", "--eval_start_datetime",
-      type=str, default=None,
-      dest="eval_start_datetime",
-      help="Starting date for evaluating inside the eval data dir."
-           "The start datetime is inclusive."
-           "e.g. 2019/01/15")
-    parser.add_argument(
-      "--eval.end_date", "--eval_end_datetime", type=str, default=None,
-      dest="eval_end_datetime",
-      help="Ending date for evaluating inside the eval data dir."
-           "The end datetime is inclusive."
-           "e.g. 2019/01/15")
-    parser.add_argument(
-      "--datetime_format", type=str, default="%Y/%m/%d",
-      help="Date format for training and evaluation datasets."
-           "Has to be a format that is understood by python datetime."
-           "e.g. %%Y/%%m/%%d for 2019/01/15."
-           "Used only if {train/eval}.{start/end}_date are provided.")
-    parser.add_argument(
-      "--hour_resolution", type=int, default=None,
-      help="Specify the hourly resolution of the stored data.")
-    parser.add_argument(
-      "--data_spec", type=str, required=True,
-      help="Path to data specification JSON file. This file is used to decode DataRecords")
-    parser.add_argument(
-      "--train.keep_rate", "--train_keep_rate", type=float, default=None,
-      dest="train_keep_rate",
-      help="A float value in (0.0, 1.0] that indicates to drop records according to the Bernoulli \
-      distribution with p = 1 - keep_rate.")
-    parser.add_argument(
-      "--eval.keep_rate", "--eval_keep_rate", type=float, default=None,
-      dest="eval_keep_rate",
-      help="A float value in (0.0, 1.0] that indicates to drop records according to the Bernoulli \
-      distribution with p = 1 - keep_rate.")
-    parser.add_argument(
-      "--train.parts_downsampling_rate", "--train_parts_downsampling_rate",
-      dest="train_parts_downsampling_rate",
-      type=float, default=None,
-      help="A float value in (0.0, 1.0] that indicates the factor by which to downsample part \
-      files. For example, a value of 0.2 means only 20 percent of part files become part of the \
-      dataset.")
-    parser.add_argument(
-      "--eval.parts_downsampling_rate", "--eval_parts_downsampling_rate",
-      dest="eval_parts_downsampling_rate",
-      type=float, default=None,
-      help="A float value in (0.0, 1.0] that indicates the factor by which to downsample part \
-      files. For example, a value of 0.2 means only 20 percent of part files become part of the \
-      dataset.")
-    parser.add_argument(
-      "--allow_train_eval_overlap",
-      dest="allow_train_eval_overlap",
-      action="store_true",
-      help="Allow overlap between train and eval datasets."
+    dew datetime_fowmat
+    dew data_thweads
+    dew houw_wesowution
+    d-dew maybe_save
+    dew ovewwwite
+
+    w-wetuwn daw_to_hdfs_path(
+      path=data_diw, ʘwʘ
+      stawt_datetime=stawt_datetime,
+      e-end_datetime=end_datetime, rawr
     )
-    parser.add_argument(
-      "--eval_name", type=str, default=None,
-      help="String denoting what we want to name the eval. If this is `train`, then we eval on \
-      the training dataset."
+
+  @pwopewty
+  def twain_fiwes(sewf):
+    wetuwn sewf._twain_fiwes
+
+  @pwopewty
+  def evaw_fiwes(sewf):
+    wetuwn sewf._evaw_fiwes
+
+  @staticmethod
+  d-def a-add_pawsew_awguments():
+    """
+    add common c-commandwine awgs to pawse fow the twainew cwass. (˘ω˘)
+    t-typicawwy, /(^•ω•^) t-the usew cawws this function and t-then pawses cmd-wine awguments
+    i-into an awgpawse.namespace object which is then passed to the twainew constwuctow
+    v-via the pawams awgument. (˘ω˘)
+
+    see the `twainew c-code <_moduwes/twmw/twainews/twainew.htmw#twainew.add_pawsew_awguments>`_
+    a-and `datawecowdtwainew code
+    <_moduwes/twmw/twainews/twainew.htmw#datawecowdtwainew.add_pawsew_awguments>`_
+    f-fow a wist and descwiption of aww cmd-wine a-awguments. (///ˬ///✿)
+
+    awgs:
+      weawning_wate_decay:
+        defauwts to fawse. (˘ω˘) when twue, -.- pawses w-weawning wate d-decay awguments. -.-
+
+    w-wetuwns:
+      a-awgpawse.awgumentpawsew instance with some usefuw awgs awweady a-added. ^^
+    """
+    p-pawsew = supew(datawecowdtwainew, (ˆ ﻌ ˆ)♡ datawecowdtwainew).add_pawsew_awguments()
+    p-pawsew.add_awgument(
+      "--twain.fiwes_wist", UwU "--twain_fiwes_wist", 🥺 type=stw, 🥺 defauwt=none,
+      dest="twain_fiwes_wist", 🥺
+      h-hewp="path fow a json fiwe stowing i-infowmation on twaining d-data.\n"
+           "specificawwy, 🥺 the fiwe a-at fiwes_wist s-shouwd contain t-the dataset pawametews "
+           "fow constwucting the wist o-of data fiwes, :3 and the wist of data fiwe paths.\n"
+           "if t-the json fiwe does nyot exist, (˘ω˘) othew awgs awe used to constwuct t-the "
+           "twaining f-fiwes w-wist, ^^;; and that w-wist wiww be saved t-to the indicated json fiwe.\n"
+           "if t-the json fiwe does exist, (ꈍᴗꈍ) and cuwwent awgs awe c-consistent with "
+           "saved awgs, ʘwʘ ow awe a-aww nyone, :3 then the saved fiwes wist wiww be u-used.\n"
+           "if c-cuwwent awgs awe nyot consistent w-with the saved awgs, XD then e-ewwow out "
+           "if t-twain_ovewwwite_fiwes_wist==fawse, UwU ewse ovewwwite f-fiwes_wist with "
+           "a n-nyewwy constwucted wist.")
+    pawsew.add_awgument(
+      "--twain.ovewwwite_fiwes_wist", "--twain_ovewwwite_fiwes_wist", a-action="stowe_twue", rawr x3 defauwt=fawse, ( ͡o ω ͡o )
+      dest="twain_ovewwwite_fiwes_wist", :3
+      hewp="when the --twain.fiwes_wist pawam i-is used, rawr indicates whethew t-to "
+           "ovewwwite the existing --twain.fiwes_wist when t-thewe awe diffewences "
+           "between t-the c-cuwwent and saved dataset awgs. ^•ﻌ•^ d-defauwt (fawse) i-is to "
+           "ewwow out if f-fiwes_wist exists and diffews fwom c-cuwwent pawams.")
+    pawsew.add_awgument(
+      "--twain.data_diw", 🥺 "--twain_data_diw", (⑅˘꒳˘) t-type=stw, :3 d-defauwt=none, (///ˬ///✿)
+      dest="twain_data_diw",
+      hewp="path to the twaining data diwectowy."
+           "suppowts w-wocaw, d-daw://{cwustew}-{wegion}/{wowe}/{dataset_name}/{enviwonment}, "
+           "and hdfs (hdfs://defauwt/<path> ) paths.")
+    pawsew.add_awgument(
+      "--twain.stawt_date", 😳😳😳 "--twain_stawt_datetime", 😳😳😳
+      t-type=stw, 😳😳😳 defauwt=none, nyaa~~
+      d-dest="twain_stawt_datetime", UwU
+      h-hewp="stawting date fow twaining inside the twain data diw."
+           "the s-stawt datetime is incwusive."
+           "e.g. òωó 2019/01/15")
+    pawsew.add_awgument(
+      "--twain.end_date", òωó "--twain_end_datetime", UwU t-type=stw, (///ˬ///✿) defauwt=none, ( ͡o ω ͡o )
+      dest="twain_end_datetime", rawr
+      hewp="ending date f-fow twaining inside t-the twain data diw."
+           "the e-end datetime i-is incwusive."
+           "e.g. :3 2019/01/15")
+    p-pawsew.add_awgument(
+      "--evaw.fiwes_wist", >w< "--evaw_fiwes_wist", σωσ t-type=stw, d-defauwt=none,
+      d-dest="evaw_fiwes_wist",
+      hewp="path fow a json fiwe stowing infowmation on evawuation data.\n"
+           "specificawwy, σωσ t-the fiwe a-at fiwes_wist s-shouwd contain t-the dataset pawametews "
+           "fow c-constwucting t-the wist of data fiwes, >_< and the wist of data fiwe paths.\n"
+           "if the json fiwe does n-nyot exist, -.- o-othew awgs awe used to constwuct the "
+           "evawuation fiwes w-wist, 😳😳😳 and that w-wist wiww be s-saved to the indicated json fiwe.\n"
+           "if the json fiwe d-does exist, :3 and cuwwent awgs awe consistent with "
+           "saved a-awgs, mya ow a-awe aww nyone, (✿oωo) then the saved fiwes wist wiww be u-used.\n"
+           "if cuwwent a-awgs awe nyot consistent w-with the saved awgs, 😳😳😳 then e-ewwow out "
+           "if evaw_ovewwwite_fiwes_wist==fawse, o.O e-ewse ovewwwite f-fiwes_wist with "
+           "a n-nyewwy constwucted w-wist.")
+    pawsew.add_awgument(
+      "--evaw.ovewwwite_fiwes_wist", (ꈍᴗꈍ) "--evaw_ovewwwite_fiwes_wist", a-action="stowe_twue", (ˆ ﻌ ˆ)♡ defauwt=fawse, -.-
+      d-dest="evaw_ovewwwite_fiwes_wist",
+      h-hewp="when the --evaw.fiwes_wist p-pawam is used, mya indicates whethew to "
+           "ovewwwite t-the existing --evaw.fiwes_wist when thewe a-awe diffewences "
+           "between the cuwwent a-and saved dataset a-awgs. :3 defauwt (fawse) is to "
+           "ewwow out if fiwes_wist e-exists and diffews fwom cuwwent pawams.")
+    p-pawsew.add_awgument(
+      "--evaw.data_diw", σωσ "--evaw_data_diw", 😳😳😳 t-type=stw, defauwt=none, -.-
+      dest="evaw_data_diw", 😳😳😳
+      h-hewp="path to the c-cwoss-vawidation data diwectowy."
+           "suppowts w-wocaw, rawr x3 daw://{cwustew}-{wegion}/{wowe}/{dataset_name}/{enviwonment}, (///ˬ///✿) "
+           "and hdfs (hdfs://defauwt/<path> ) p-paths.")
+    p-pawsew.add_awgument(
+      "--evaw.stawt_date", >w< "--evaw_stawt_datetime", o.O
+      type=stw, (˘ω˘) d-defauwt=none, rawr
+      d-dest="evaw_stawt_datetime",
+      hewp="stawting date fow e-evawuating inside t-the evaw data d-diw."
+           "the s-stawt datetime is incwusive."
+           "e.g. mya 2019/01/15")
+    pawsew.add_awgument(
+      "--evaw.end_date", òωó "--evaw_end_datetime", nyaa~~ type=stw, defauwt=none, òωó
+      dest="evaw_end_datetime", mya
+      hewp="ending d-date fow e-evawuating inside t-the evaw data d-diw."
+           "the e-end datetime i-is incwusive."
+           "e.g. ^^ 2019/01/15")
+    pawsew.add_awgument(
+      "--datetime_fowmat", ^•ﻌ•^ t-type=stw, -.- defauwt="%y/%m/%d", UwU
+      h-hewp="date fowmat fow twaining a-and evawuation d-datasets."
+           "has to be a fowmat that is undewstood b-by python datetime."
+           "e.g. (˘ω˘) %%y/%%m/%%d fow 2019/01/15."
+           "used onwy if {twain/evaw}.{stawt/end}_date a-awe pwovided.")
+    p-pawsew.add_awgument(
+      "--houw_wesowution", t-type=int, UwU defauwt=none, rawr
+      hewp="specify the h-houwwy wesowution o-of the stowed d-data.")
+    pawsew.add_awgument(
+      "--data_spec", :3 type=stw, nyaa~~ w-wequiwed=twue, rawr
+      h-hewp="path to data specification j-json fiwe. (ˆ ﻌ ˆ)♡ this fiwe is u-used to decode datawecowds")
+    p-pawsew.add_awgument(
+      "--twain.keep_wate", (ꈍᴗꈍ) "--twain_keep_wate", (˘ω˘) t-type=fwoat, (U ﹏ U) defauwt=none, >w<
+      d-dest="twain_keep_wate", UwU
+      hewp="a fwoat vawue in (0.0, (ˆ ﻌ ˆ)♡ 1.0] t-that indicates to dwop wecowds accowding to the bewnouwwi \
+      distwibution with p = 1 - keep_wate.")
+    p-pawsew.add_awgument(
+      "--evaw.keep_wate", nyaa~~ "--evaw_keep_wate", 🥺 type=fwoat, >_< defauwt=none, òωó
+      dest="evaw_keep_wate", ʘwʘ
+      hewp="a fwoat vawue in (0.0, mya 1.0] that indicates t-to dwop wecowds accowding to the bewnouwwi \
+      d-distwibution with p = 1 - k-keep_wate.")
+    pawsew.add_awgument(
+      "--twain.pawts_downsampwing_wate", σωσ "--twain_pawts_downsampwing_wate", OwO
+      dest="twain_pawts_downsampwing_wate", (✿oωo)
+      t-type=fwoat, ʘwʘ defauwt=none,
+      h-hewp="a fwoat vawue in (0.0, mya 1.0] t-that indicates t-the factow by which to downsampwe pawt \
+      f-fiwes. -.- fow exampwe, -.- a vawue of 0.2 means onwy 20 pewcent of p-pawt fiwes become pawt of the \
+      d-dataset.")
+    pawsew.add_awgument(
+      "--evaw.pawts_downsampwing_wate", ^^;; "--evaw_pawts_downsampwing_wate", (ꈍᴗꈍ)
+      d-dest="evaw_pawts_downsampwing_wate", rawr
+      type=fwoat, d-defauwt=none,
+      h-hewp="a fwoat vawue in (0.0, ^^ 1.0] that indicates t-the factow by which to downsampwe pawt \
+      f-fiwes. nyaa~~ fow exampwe, a vawue of 0.2 means onwy 20 pewcent of pawt fiwes become p-pawt of the \
+      d-dataset.")
+    pawsew.add_awgument(
+      "--awwow_twain_evaw_ovewwap", (⑅˘꒳˘)
+      d-dest="awwow_twain_evaw_ovewwap", (U ᵕ U❁)
+      a-action="stowe_twue",
+      hewp="awwow o-ovewwap between twain and evaw datasets."
     )
-    return parser
+    pawsew.add_awgument(
+      "--evaw_name", (ꈍᴗꈍ) type=stw, defauwt=none, (✿oωo)
+      h-hewp="stwing denoting n-nyani we want to nyame the e-evaw. UwU if this is `twain`, ^^ t-then we evaw on \
+      t-the twaining dataset."
+    )
+    wetuwn pawsew
 
-  def contrib_run_feature_importances(self, feature_importances_parse_fn=None, write_to_hdfs=True, extra_groups=None, datarecord_filter_fn=None, datarecord_filter_run_name=None):
-    """Compute feature importances on a trained model (this is a contrib feature)
-    Args:
-      feature_importances_parse_fn (fn): The same parse_fn that we use for training/evaluation.
-        Defaults to feature_config.get_parse_fn()
-      write_to_hdfs (bool): Setting this to True writes the feature importance metrics to HDFS
-    extra_groups (dict<str, list<str>>): A dictionary mapping the name of extra feature groups to the list of
-      the names of the features in the group
-    datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
-        and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
+  d-def contwib_wun_featuwe_impowtances(sewf, :3 featuwe_impowtances_pawse_fn=none, ( ͡o ω ͡o ) wwite_to_hdfs=twue, ( ͡o ω ͡o ) extwa_gwoups=none, (U ﹏ U) d-datawecowd_fiwtew_fn=none, -.- d-datawecowd_fiwtew_wun_name=none):
+    """compute featuwe impowtances on a twained m-modew (this is a contwib featuwe)
+    awgs:
+      featuwe_impowtances_pawse_fn (fn): the same pawse_fn that we use fow twaining/evawuation. 😳😳😳
+        defauwts t-to featuwe_config.get_pawse_fn()
+      w-wwite_to_hdfs (boow): setting this to t-twue wwites the f-featuwe impowtance metwics to hdfs
+    e-extwa_gwoups (dict<stw, UwU wist<stw>>): a dictionawy mapping the nyame of extwa featuwe gwoups to the wist of
+      t-the names of the featuwes in the gwoup
+    datawecowd_fiwtew_fn (function): a function takes a-a singwe data s-sampwe in com.twittew.mw.api.ttypes.datawecowd f-fowmat
+        and wetuwn a boowean vawue, >w< to indicate if this d-data wecowd shouwd b-be kept in featuwe i-impowtance moduwe ow not. mya
     """
-    logging.info("Computing feature importance")
-    algorithm = self._params.feature_importance_algorithm
+    w-wogging.info("computing featuwe impowtance")
+    a-awgowithm = sewf._pawams.featuwe_impowtance_awgowithm
 
-    kwargs = {}
-    if algorithm == TREE:
-      kwargs["split_feature_group_on_period"] = self._params.split_feature_group_on_period
-      kwargs["stopping_metric"] = self._params.feature_importance_metric
-      kwargs["sensitivity"] = self._params.feature_importance_sensitivity
-      kwargs["dont_build_tree"] = self._params.dont_build_tree
-      kwargs["extra_groups"] = extra_groups
-      if self._params.feature_importance_is_metric_larger_the_better:
-        # The user has specified that the stopping metric is one where larger values are better (e.g. ROC_AUC)
-        kwargs["is_metric_larger_the_better"] = True
-      elif self._params.feature_importance_is_metric_smaller_the_better:
-        # The user has specified that the stopping metric is one where smaller values are better (e.g. LOSS)
-        kwargs["is_metric_larger_the_better"] = False
-      else:
-        # The user has not specified which direction is better for the stopping metric
-        kwargs["is_metric_larger_the_better"] = None
-      logging.info("Using the tree algorithm with kwargs {}".format(kwargs))
+    k-kwawgs = {}
+    if awgowithm == t-twee:
+      kwawgs["spwit_featuwe_gwoup_on_pewiod"] = sewf._pawams.spwit_featuwe_gwoup_on_pewiod
+      kwawgs["stopping_metwic"] = s-sewf._pawams.featuwe_impowtance_metwic
+      kwawgs["sensitivity"] = s-sewf._pawams.featuwe_impowtance_sensitivity
+      k-kwawgs["dont_buiwd_twee"] = sewf._pawams.dont_buiwd_twee
+      kwawgs["extwa_gwoups"] = e-extwa_gwoups
+      i-if sewf._pawams.featuwe_impowtance_is_metwic_wawgew_the_bettew:
+        # t-the usew has specified that t-the stopping metwic is one whewe w-wawgew vawues a-awe bettew (e.g. :3 woc_auc)
+        kwawgs["is_metwic_wawgew_the_bettew"] = t-twue
+      ewif sewf._pawams.featuwe_impowtance_is_metwic_smowew_the_bettew:
+        # the usew has specified that the stopping metwic is one whewe smowew vawues awe bettew (e.g. (ˆ ﻌ ˆ)♡ w-woss)
+        kwawgs["is_metwic_wawgew_the_bettew"] = fawse
+      ewse:
+        # t-the usew has nyot specified which d-diwection is bettew fow the stopping metwic
+        k-kwawgs["is_metwic_wawgew_the_bettew"] = nyone
+      wogging.info("using the twee awgowithm w-with kwawgs {}".fowmat(kwawgs))
 
-    feature_importances = compute_feature_importances(
-      trainer=self,
-      data_dir=self._params.get('feature_importance_data_dir'),
-      feature_config=self._feature_config,
-      algorithm=algorithm,
-      record_count=self._params.feature_importance_example_count,
-      parse_fn=feature_importances_parse_fn,
-      datarecord_filter_fn=datarecord_filter_fn,
-      **kwargs)
+    featuwe_impowtances = compute_featuwe_impowtances(
+      t-twainew=sewf, (U ﹏ U)
+      data_diw=sewf._pawams.get('featuwe_impowtance_data_diw'), ʘwʘ
+      featuwe_config=sewf._featuwe_config, rawr
+      a-awgowithm=awgowithm, (ꈍᴗꈍ)
+      wecowd_count=sewf._pawams.featuwe_impowtance_exampwe_count, ( ͡o ω ͡o )
+      pawse_fn=featuwe_impowtances_pawse_fn, 😳😳😳
+      d-datawecowd_fiwtew_fn=datawecowd_fiwtew_fn, òωó
+      **kwawgs)
 
-    if not feature_importances:
-      logging.info("Feature importances returned None")
-    else:
-      if write_to_hdfs:
-        logging.info("Writing feature importance to HDFS")
-        write_feature_importances_to_hdfs(
-          trainer=self,
-          feature_importances=feature_importances,
-          output_path=datarecord_filter_run_name,
-          metric=self._params.get('feature_importance_metric'))
-      else:
-        logging.info("Not writing feature importance to HDFS")
+    i-if nyot featuwe_impowtances:
+      wogging.info("featuwe i-impowtances wetuwned n-nyone")
+    ewse:
+      i-if wwite_to_hdfs:
+        w-wogging.info("wwiting featuwe impowtance to hdfs")
+        w-wwite_featuwe_impowtances_to_hdfs(
+          twainew=sewf, mya
+          featuwe_impowtances=featuwe_impowtances, rawr x3
+          output_path=datawecowd_fiwtew_wun_name, XD
+          metwic=sewf._pawams.get('featuwe_impowtance_metwic'))
+      e-ewse:
+        wogging.info("not wwiting featuwe impowtance t-to hdfs")
 
-      logging.info("Writing feature importance to ML Metastore")
-      write_feature_importances_to_ml_dash(
-        trainer=self, feature_importances=feature_importances)
-    return feature_importances
+      w-wogging.info("wwiting f-featuwe impowtance to mw metastowe")
+      wwite_featuwe_impowtances_to_mw_dash(
+        t-twainew=sewf, featuwe_impowtances=featuwe_impowtances)
+    w-wetuwn featuwe_impowtances
 
-  def export_model(self, serving_input_receiver_fn=None,
-                   export_output_fn=None,
-                   export_dir=None, checkpoint_path=None,
-                   feature_spec=None):
+  def expowt_modew(sewf, (ˆ ﻌ ˆ)♡ s-sewving_input_weceivew_fn=none, >w<
+                   e-expowt_output_fn=none, (ꈍᴗꈍ)
+                   expowt_diw=none, (U ﹏ U) checkpoint_path=none, >_<
+                   featuwe_spec=none):
     """
-    Export the model for prediction. Typically, the exported model
-    will later be run in production servers. This method is called
-    by the user to export the PREDICT graph to disk.
+    expowt the modew fow p-pwediction. >_< typicawwy, t-the expowted modew
+    wiww watew be wun i-in pwoduction sewvews. -.- this method is cawwed
+    b-by the usew to e-expowt the pwedict g-gwaph to disk. òωó
 
-    Internally, this method calls `tf.estimator.Estimator.export_savedmodel
-    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#export_savedmodel>`_.
+    i-intewnawwy, o.O t-this method c-cawws `tf.estimatow.estimatow.expowt_savedmodew
+    <https://www.tensowfwow.owg/api_docs/python/tf/estimatow/estimatow#expowt_savedmodew>`_. σωσ
 
-    Args:
-      serving_input_receiver_fn (Function):
-        function preparing the model for inference requests.
-        If not set; defaults to the the serving input receiver fn set by the FeatureConfig.
-      export_output_fn (Function):
-        Function to export the graph_output (output of build_graph) for
-        prediction. Takes a graph_output dict as sole argument and returns
-        the export_output_fns dict.
-        Defaults to ``twml.export_output_fns.batch_prediction_continuous_output_fn``.
-      export_dir:
-        directory to export a SavedModel for prediction servers.
-        Defaults to ``[save_dir]/exported_models``.
+    awgs:
+      sewving_input_weceivew_fn (function):
+        function p-pwepawing t-the modew fow infewence w-wequests. σωσ
+        i-if nyot s-set; defauwts t-to the the sewving input weceivew f-fn set by the f-featuweconfig. mya
+      e-expowt_output_fn (function):
+        function to expowt the g-gwaph_output (output of buiwd_gwaph) fow
+        p-pwediction. o.O takes a gwaph_output dict as sowe a-awgument and wetuwns
+        t-the expowt_output_fns dict. XD
+        defauwts to ``twmw.expowt_output_fns.batch_pwediction_continuous_output_fn``. XD
+      e-expowt_diw:
+        d-diwectowy to expowt a savedmodew f-fow pwediction s-sewvews. (✿oωo)
+        defauwts to ``[save_diw]/expowted_modews``. -.-
       checkpoint_path:
-        the checkpoint path to export. If None (the default), the most recent checkpoint
-        found within the model directory ``save_dir`` is chosen.
+        t-the checkpoint p-path to expowt. (ꈍᴗꈍ) if nyone (the defauwt), ( ͡o ω ͡o ) the m-most wecent checkpoint
+        found w-within the modew diwectowy ``save_diw`` is c-chosen. (///ˬ///✿)
 
-    Returns:
-      The export directory where the PREDICT graph is saved.
+    wetuwns:
+      the expowt diwectowy whewe the pwedict gwaph is saved. 🥺
     """
-    if serving_input_receiver_fn is None:
-      if self._feature_config is None:
-        raise ValueError("`feature_config` was not passed to `DataRecordTrainer`")
-      serving_input_receiver_fn = self._feature_config.get_serving_input_receiver_fn()
+    if sewving_input_weceivew_fn i-is nyone:
+      if sewf._featuwe_config is nyone:
+        w-waise vawueewwow("`featuwe_config` w-was nyot p-passed to `datawecowdtwainew`")
+      sewving_input_weceivew_fn = s-sewf._featuwe_config.get_sewving_input_weceivew_fn()
 
-    if feature_spec is None:
-      if self._feature_config is None:
-        raise ValueError("feature_spec can not be inferred."
-                         "Please pass feature_spec=feature_config.get_feature_spec() to the trainer.export_model method")
-      else:
-        feature_spec = self._feature_config.get_feature_spec()
+    i-if f-featuwe_spec is n-nyone:
+      if s-sewf._featuwe_config is nyone:
+        waise vawueewwow("featuwe_spec c-can nyot b-be infewwed."
+                         "pwease pass f-featuwe_spec=featuwe_config.get_featuwe_spec() to the twainew.expowt_modew method")
+      e-ewse:
+        f-featuwe_spec = s-sewf._featuwe_config.get_featuwe_spec()
 
-    if isinstance(serving_input_receiver_fn, twml.feature_config.FeatureConfig):
-      raise ValueError("Cannot pass FeatureConfig as a parameter to serving_input_receiver_fn")
-    elif not callable(serving_input_receiver_fn):
-      raise ValueError("Expecting Function for serving_input_receiver_fn")
+    if isinstance(sewving_input_weceivew_fn, (ˆ ﻌ ˆ)♡ t-twmw.featuwe_config.featuweconfig):
+      w-waise v-vawueewwow("cannot p-pass featuweconfig a-as a pawametew to sewving_input_weceivew_fn")
+    e-ewif nyot cawwabwe(sewving_input_weceivew_fn):
+      w-waise v-vawueewwow("expecting function fow sewving_input_weceivew_fn")
 
-    if export_output_fn is None:
-      export_output_fn = twml.export_output_fns.batch_prediction_continuous_output_fn
+    if expowt_output_fn i-is nyone:
+      e-expowt_output_fn = twmw.expowt_output_fns.batch_pwediction_continuous_output_fn
 
-    return super(DataRecordTrainer, self).export_model(
-      export_dir=export_dir,
-      serving_input_receiver_fn=serving_input_receiver_fn,
-      checkpoint_path=checkpoint_path,
-      export_output_fn=export_output_fn,
-      feature_spec=feature_spec,
+    wetuwn supew(datawecowdtwainew, ^•ﻌ•^ s-sewf).expowt_modew(
+      e-expowt_diw=expowt_diw, rawr x3
+      sewving_input_weceivew_fn=sewving_input_weceivew_fn, (U ﹏ U)
+      checkpoint_path=checkpoint_path, OwO
+      e-expowt_output_fn=expowt_output_fn, (✿oωo)
+      f-featuwe_spec=featuwe_spec, (⑅˘꒳˘)
     )
 
-  def get_train_input_fn(
-      self, parse_fn=None, repeat=None, shuffle=True, interleave=True, shuffle_files=None,
-      initializable=False, log_tf_data_summaries=False, **kwargs):
+  d-def get_twain_input_fn(
+      s-sewf, UwU pawse_fn=none, (ˆ ﻌ ˆ)♡ w-wepeat=none, /(^•ω•^) s-shuffwe=twue, (˘ω˘) intewweave=twue, XD shuffwe_fiwes=none, òωó
+      i-initiawizabwe=fawse, UwU wog_tf_data_summawies=fawse, -.- **kwawgs):
     """
-    This method is used to create input function used by estimator.train().
+    this method is used to cweate input function u-used by estimatow.twain(). (ꈍᴗꈍ)
 
-    Args:
-      parse_fn:
-        Function to parse a data record into a set of features.
-        Defaults to the parser returned by the FeatureConfig selected
-      repeat (optional):
-        Specifies if the dataset is to be repeated. Defaults to `params.train_steps > 0`.
-        This ensures the training is run for atleast `params.train_steps`.
-        Toggling this to `False` results in training finishing when one of the following happens:
-          - The entire dataset has been trained upon once.
-          - `params.train_steps` has been reached.
-      shuffle (optional):
-        Specifies if the files and records in the files need to be shuffled.
-        When `True`,  files are shuffled, and records of each files are shuffled.
-        When `False`, files are read in alpha-numerical order. Also when `False`
-        the dataset is sharded among workers for Hogwild and distributed training
-        if no sharding configuration is provided in `params.train_dataset_shards`.
-        Defaults to `True`.
-      interleave (optional):
-        Specifies if records from multiple files need to be interleaved in parallel.
-        Defaults to `True`.
-      shuffle_files (optional):
-        Shuffle the list of files. Defaults to 'Shuffle' if not provided.
-      initializable (optional):
-        A boolean indicator. When the parsing function depends on some resource, e.g. a HashTable or
-        a Tensor, i.e. it's an initializable iterator, set it to True. Otherwise, default value
-        (false) is used for most plain iterators.
-      log_tf_data_summaries (optional):
-        A boolean indicator denoting whether to add a `tf.data.experimental.StatsAggregator` to the
-        tf.data pipeline. This adds summaries of pipeline utilization and buffer sizes to the output
-        events files. This requires that `initializable` is `True` above.
+    a-awgs:
+      pawse_fn:
+        function to pawse a data wecowd i-into a set of f-featuwes. (⑅˘꒳˘)
+        defauwts to the pawsew wetuwned b-by the featuweconfig sewected
+      w-wepeat (optionaw):
+        s-specifies if t-the dataset is to be wepeated. 🥺 defauwts to `pawams.twain_steps > 0`. òωó
+        this e-ensuwes the twaining is wun fow a-atweast `pawams.twain_steps`. 😳
+        toggwing t-this to `fawse` wesuwts in twaining finishing when o-one of the fowwowing happens:
+          - t-the entiwe dataset has been twained u-upon once. òωó
+          - `pawams.twain_steps` has b-been weached. 🥺
+      shuffwe (optionaw):
+        specifies if the fiwes and wecowds in the fiwes nyeed to be shuffwed. ( ͡o ω ͡o )
+        when `twue`, UwU  fiwes a-awe shuffwed, 😳😳😳 a-and wecowds of e-each fiwes awe s-shuffwed. ʘwʘ
+        when `fawse`, ^^ fiwes awe wead in a-awpha-numewicaw owdew. >_< awso when `fawse`
+        the dataset is shawded among w-wowkews fow hogwiwd a-and distwibuted t-twaining
+        i-if nyo shawding configuwation is pwovided in `pawams.twain_dataset_shawds`. (ˆ ﻌ ˆ)♡
+        defauwts to `twue`. (ˆ ﻌ ˆ)♡
+      i-intewweave (optionaw):
+        s-specifies if wecowds fwom muwtipwe fiwes nyeed to be intewweaved i-in pawawwew. 🥺
+        defauwts t-to `twue`. ( ͡o ω ͡o )
+      s-shuffwe_fiwes (optionaw):
+        s-shuffwe the wist of fiwes. (ꈍᴗꈍ) defauwts to 'shuffwe' if nyot pwovided. :3
+      initiawizabwe (optionaw):
+        a boowean indicatow. (✿oωo) w-when the pawsing function depends o-on some wesouwce, (U ᵕ U❁) e.g. UwU a hashtabwe ow
+        a tensow, ^^ i.e. i-it's an initiawizabwe itewatow, /(^•ω•^) s-set it to twue. (˘ω˘) othewwise, OwO defauwt vawue
+        (fawse) i-is used f-fow most pwain i-itewatows. (U ᵕ U❁)
+      w-wog_tf_data_summawies (optionaw):
+        a-a boowean indicatow d-denoting whethew t-to add a `tf.data.expewimentaw.statsaggwegatow` to the
+        t-tf.data pipewine. (U ﹏ U) this adds summawies of pipewine u-utiwization and buffew sizes t-to the output
+        e-events fiwes. mya this wequiwes t-that `initiawizabwe` i-is `twue` above. (⑅˘꒳˘)
 
-    Returns:
-      An input_fn that can be consumed by `estimator.train()`.
+    wetuwns:
+      an input_fn that can b-be consumed by `estimatow.twain()`. (U ᵕ U❁)
     """
-    if parse_fn is None:
-      if self._feature_config is None:
-        raise ValueError("`feature_config` was not passed to `DataRecordTrainer`")
-      parse_fn = self._feature_config.get_parse_fn()
+    i-if pawse_fn is n-nyone:
+      if s-sewf._featuwe_config is nyone:
+        waise vawueewwow("`featuwe_config` was nyot p-passed to `datawecowdtwainew`")
+      pawse_fn = sewf._featuwe_config.get_pawse_fn()
 
-    if not callable(parse_fn):
-      raise ValueError("Expecting parse_fn to be a function.")
+    i-if not cawwabwe(pawse_fn):
+      waise vawueewwow("expecting p-pawse_fn to be a function.")
 
-    if log_tf_data_summaries and not initializable:
-      raise ValueError("Require `initializable` if `log_tf_data_summaries`.")
+    if wog_tf_data_summawies a-and nyot initiawizabwe:
+      waise vawueewwow("wequiwe `initiawizabwe` i-if `wog_tf_data_summawies`.")
 
-    if repeat is None:
-      repeat = self.params.train_steps > 0 or self.params.get('distributed', False)
+    i-if wepeat is nyone:
+      w-wepeat = sewf.pawams.twain_steps > 0 o-ow sewf.pawams.get('distwibuted', /(^•ω•^) f-fawse)
 
-    if not shuffle and self.num_workers > 1 and self.params.train_dataset_shards is None:
-      num_shards = self.num_workers
-      shard_index = self.worker_index
-    else:
-      num_shards = self.params.train_dataset_shards
-      shard_index = self.params.train_dataset_shard_index
+    if nyot shuffwe and s-sewf.num_wowkews > 1 a-and sewf.pawams.twain_dataset_shawds i-is nyone:
+      n-nyum_shawds = sewf.num_wowkews
+      s-shawd_index = sewf.wowkew_index
+    e-ewse:
+      n-nyum_shawds = sewf.pawams.twain_dataset_shawds
+      shawd_index = s-sewf.pawams.twain_dataset_shawd_index
 
-    return lambda: twml.input_fns.default_input_fn(
-      files=self._train_files,
-      batch_size=self.params.train_batch_size,
-      parse_fn=parse_fn,
-      num_threads=self.params.num_threads,
-      repeat=repeat,
-      keep_rate=self.params.train_keep_rate,
-      parts_downsampling_rate=self.params.train_parts_downsampling_rate,
-      shards=num_shards,
-      shard_index=shard_index,
-      shuffle=shuffle,
-      shuffle_files=(shuffle if shuffle_files is None else shuffle_files),
-      interleave=interleave,
-      initializable=initializable,
-      log_tf_data_summaries=log_tf_data_summaries,
-      **kwargs)
+    wetuwn wambda: twmw.input_fns.defauwt_input_fn(
+      fiwes=sewf._twain_fiwes, ^•ﻌ•^
+      batch_size=sewf.pawams.twain_batch_size, (///ˬ///✿)
+      pawse_fn=pawse_fn, o.O
+      nyum_thweads=sewf.pawams.num_thweads, (ˆ ﻌ ˆ)♡
+      w-wepeat=wepeat, 😳
+      k-keep_wate=sewf.pawams.twain_keep_wate, òωó
+      pawts_downsampwing_wate=sewf.pawams.twain_pawts_downsampwing_wate, (⑅˘꒳˘)
+      s-shawds=num_shawds, rawr
+      shawd_index=shawd_index, (ꈍᴗꈍ)
+      shuffwe=shuffwe, ^^
+      s-shuffwe_fiwes=(shuffwe i-if shuffwe_fiwes i-is nyone e-ewse shuffwe_fiwes), (ˆ ﻌ ˆ)♡
+      intewweave=intewweave, /(^•ω•^)
+      i-initiawizabwe=initiawizabwe, ^^
+      wog_tf_data_summawies=wog_tf_data_summawies, o.O
+      **kwawgs)
 
-  def get_eval_input_fn(
-      self, parse_fn=None, repeat=None,
-      shuffle=True, interleave=True,
-      shuffle_files=None, initializable=False, log_tf_data_summaries=False, **kwargs):
+  def g-get_evaw_input_fn(
+      s-sewf, 😳😳😳 pawse_fn=none, wepeat=none, XD
+      shuffwe=twue, nyaa~~ i-intewweave=twue, ^•ﻌ•^
+      shuffwe_fiwes=none, :3 i-initiawizabwe=fawse, ^^ wog_tf_data_summawies=fawse, o.O **kwawgs):
     """
-    This method is used to create input function used by estimator.eval().
+    this method i-is used to cweate input function u-used by estimatow.evaw(). ^^
 
-    Args:
-      parse_fn:
-        Function to parse a data record into a set of features.
-        Defaults to twml.parsers.get_sparse_parse_fn(feature_config).
-      repeat (optional):
-        Specifies if the dataset is to be repeated. Defaults to `params.eval_steps > 0`.
-        This ensures the evaluation is run for atleast `params.eval_steps`.
-        Toggling this to `False` results in evaluation finishing when one of the following happens:
-          - The entire dataset has been evaled upon once.
-          - `params.eval_steps` has been reached.
-      shuffle (optional):
-        Specifies if the files and records in the files need to be shuffled.
-        When `False`, files are read in alpha-numerical order.
-        When `True`,  files are shuffled, and records of each files are shuffled.
-        Defaults to `True`.
-      interleave (optional):
-        Specifies if records from multiple files need to be interleaved in parallel.
-        Defaults to `True`.
-      shuffle_files (optional):
-        Shuffles the list of files. Defaults to 'Shuffle' if not provided.
-      initializable (optional):
-        A boolean indicator. When the parsing function depends on some resource, e.g. a HashTable or
-        a Tensor, i.e. it's an initializable iterator, set it to True. Otherwise, default value
-        (false) is used for most plain iterators.
-      log_tf_data_summaries (optional):
-        A boolean indicator denoting whether to add a `tf.data.experimental.StatsAggregator` to the
-        tf.data pipeline. This adds summaries of pipeline utilization and buffer sizes to the output
-        events files. This requires that `initializable` is `True` above.
+    awgs:
+      pawse_fn:
+        function to pawse a-a data wecowd into a set of featuwes. (⑅˘꒳˘)
+        defauwts t-to twmw.pawsews.get_spawse_pawse_fn(featuwe_config). ʘwʘ
+      wepeat (optionaw):
+        s-specifies i-if the dataset is to be wepeated. mya defauwts t-to `pawams.evaw_steps > 0`. >w<
+        this ensuwes the evawuation i-is wun fow atweast `pawams.evaw_steps`. o.O
+        t-toggwing this t-to `fawse` wesuwts in evawuation finishing when one of the fowwowing happens:
+          - the entiwe d-dataset has been evawed upon once. OwO
+          - `pawams.evaw_steps` h-has been w-weached. -.-
+      shuffwe (optionaw):
+        specifies i-if the fiwes a-and wecowds in the fiwes nyeed to be shuffwed. (U ﹏ U)
+        when `fawse`, òωó f-fiwes awe wead in awpha-numewicaw o-owdew. >w<
+        when `twue`, ^•ﻌ•^  fiwes awe s-shuffwed, /(^•ω•^) and w-wecowds of each fiwes awe shuffwed. ʘwʘ
+        d-defauwts t-to `twue`. XD
+      intewweave (optionaw):
+        s-specifies if wecowds fwom muwtipwe f-fiwes nyeed t-to be intewweaved i-in pawawwew. (U ᵕ U❁)
+        d-defauwts t-to `twue`. (ꈍᴗꈍ)
+      shuffwe_fiwes (optionaw):
+        s-shuffwes t-the wist of fiwes. rawr x3 defauwts to 'shuffwe' if nyot p-pwovided. :3
+      initiawizabwe (optionaw):
+        a-a boowean indicatow. (˘ω˘) when the pawsing function depends on some wesouwce, -.- e.g. (ꈍᴗꈍ) a hashtabwe ow
+        a tensow, UwU i-i.e. it's an initiawizabwe itewatow, σωσ s-set it to twue. ^^ othewwise, :3 d-defauwt vawue
+        (fawse) i-is used fow most pwain itewatows. ʘwʘ
+      w-wog_tf_data_summawies (optionaw):
+        a boowean indicatow d-denoting whethew to add a `tf.data.expewimentaw.statsaggwegatow` t-to the
+        tf.data pipewine. 😳 this adds summawies of pipewine utiwization and buffew sizes to the output
+        e-events fiwes. ^^ this wequiwes that `initiawizabwe` i-is `twue` above. σωσ
 
-    Returns:
-      An input_fn that can be consumed by `estimator.eval()`.
+    w-wetuwns:
+      an input_fn that can be consumed by `estimatow.evaw()`. /(^•ω•^)
     """
-    if parse_fn is None:
-      if self._feature_config is None:
-        raise ValueError("`feature_config` was not passed to `DataRecordTrainer`")
-      parse_fn = self._feature_config.get_parse_fn()
+    if pawse_fn is nyone:
+      if sewf._featuwe_config is nyone:
+        waise v-vawueewwow("`featuwe_config` w-was n-nyot passed to `datawecowdtwainew`")
+      pawse_fn = s-sewf._featuwe_config.get_pawse_fn()
 
-    if not self._eval_files:
-      raise ValueError("`eval_files` was not present in `params` passed to `DataRecordTrainer`")
+    i-if nyot sewf._evaw_fiwes:
+      w-waise vawueewwow("`evaw_fiwes` was nyot pwesent in `pawams` passed t-to `datawecowdtwainew`")
 
-    if not callable(parse_fn):
-      raise ValueError("Expecting parse_fn to be a function.")
+    i-if nyot cawwabwe(pawse_fn):
+      waise vawueewwow("expecting p-pawse_fn to be a f-function.")
 
-    if log_tf_data_summaries and not initializable:
-      raise ValueError("Require `initializable` if `log_tf_data_summaries`.")
+    i-if wog_tf_data_summawies a-and nyot i-initiawizabwe:
+      waise vawueewwow("wequiwe `initiawizabwe` i-if `wog_tf_data_summawies`.")
 
-    if repeat is None:
-      repeat = self.params.eval_steps > 0
+    i-if wepeat i-is none:
+      wepeat = s-sewf.pawams.evaw_steps > 0
 
-    return lambda: twml.input_fns.default_input_fn(
-      files=self._eval_files,
-      batch_size=self.params.eval_batch_size,
-      parse_fn=parse_fn,
-      num_threads=self.params.num_threads,
-      repeat=repeat,
-      keep_rate=self.params.eval_keep_rate,
-      parts_downsampling_rate=self.params.eval_parts_downsampling_rate,
-      shuffle=shuffle,
-      shuffle_files=(shuffle if shuffle_files is None else shuffle_files),
-      interleave=interleave,
-      initializable=initializable,
-      log_tf_data_summaries=log_tf_data_summaries,
-      **kwargs
+    w-wetuwn wambda: t-twmw.input_fns.defauwt_input_fn(
+      f-fiwes=sewf._evaw_fiwes, 😳😳😳
+      b-batch_size=sewf.pawams.evaw_batch_size, 😳
+      p-pawse_fn=pawse_fn, OwO
+      n-num_thweads=sewf.pawams.num_thweads, :3
+      wepeat=wepeat, nyaa~~
+      keep_wate=sewf.pawams.evaw_keep_wate, OwO
+      pawts_downsampwing_wate=sewf.pawams.evaw_pawts_downsampwing_wate, o.O
+      shuffwe=shuffwe, (U ﹏ U)
+      s-shuffwe_fiwes=(shuffwe if shuffwe_fiwes i-is nyone ewse shuffwe_fiwes), (⑅˘꒳˘)
+      intewweave=intewweave, OwO
+      i-initiawizabwe=initiawizabwe, 😳
+      w-wog_tf_data_summawies=wog_tf_data_summawies, :3
+      **kwawgs
     )
 
-  def _assert_train_files(self):
-    if not self._train_files:
-      raise ValueError("train.data_dir was not set in params passed to DataRecordTrainer.")
+  def _assewt_twain_fiwes(sewf):
+    i-if nyot sewf._twain_fiwes:
+      waise vawueewwow("twain.data_diw w-was nyot set i-in pawams passed to datawecowdtwainew.")
 
-  def _assert_eval_files(self):
-    if not self._eval_files:
-      raise ValueError("eval.data_dir was not set in params passed to DataRecordTrainer.")
+  def _assewt_evaw_fiwes(sewf):
+    if nyot sewf._evaw_fiwes:
+      waise vawueewwow("evaw.data_diw was nyot set in pawams p-passed to datawecowdtwainew.")
 
-  def train(self, input_fn=None, steps=None, hooks=None):
+  def twain(sewf, ( ͡o ω ͡o ) input_fn=none, 🥺 s-steps=none, /(^•ω•^) h-hooks=none):
     """
-    Makes input functions optional. input_fn defaults to self.get_train_input_fn().
-    See Trainer for more detailed documentation documentation.
+    makes i-input functions o-optionaw. nyaa~~ input_fn d-defauwts to s-sewf.get_twain_input_fn(). (✿oωo)
+    s-see twainew fow m-mowe detaiwed documentation d-documentation. (✿oωo)
     """
-    if input_fn is None:
-      self._assert_train_files()
-    input_fn = input_fn if input_fn else self.get_train_input_fn()
-    super(DataRecordTrainer, self).train(input_fn=input_fn, steps=steps, hooks=hooks)
+    if input_fn is nyone:
+      s-sewf._assewt_twain_fiwes()
+    input_fn = input_fn i-if input_fn ewse sewf.get_twain_input_fn()
+    s-supew(datawecowdtwainew, (ꈍᴗꈍ) s-sewf).twain(input_fn=input_fn, OwO steps=steps, :3 h-hooks=hooks)
 
-  def evaluate(self, input_fn=None, steps=None, hooks=None, name=None):
+  def evawuate(sewf, mya input_fn=none, >_< s-steps=none, (///ˬ///✿) h-hooks=none, (///ˬ///✿) n-nyame=none):
     """
-    Makes input functions optional. input_fn defaults to self.get_eval_input_fn().
-    See Trainer for more detailed documentation.
+    m-makes input functions o-optionaw. 😳😳😳 input_fn d-defauwts to s-sewf.get_evaw_input_fn(). (U ᵕ U❁)
+    see twainew fow m-mowe detaiwed documentation. (///ˬ///✿)
     """
-    if input_fn is None:
-      self._assert_eval_files()
-    input_fn = input_fn if input_fn else self.get_eval_input_fn(repeat=False)
-    return super(DataRecordTrainer, self).evaluate(
-      input_fn=input_fn,
-      steps=steps,
-      hooks=hooks,
-      name=name
+    if input_fn is nyone:
+      sewf._assewt_evaw_fiwes()
+    input_fn = input_fn if input_fn ewse sewf.get_evaw_input_fn(wepeat=fawse)
+    wetuwn supew(datawecowdtwainew, ( ͡o ω ͡o ) sewf).evawuate(
+      i-input_fn=input_fn, (✿oωo)
+      s-steps=steps, òωó
+      hooks=hooks, (ˆ ﻌ ˆ)♡
+      nyame=name
     )
 
-  def learn(self, train_input_fn=None, eval_input_fn=None, **kwargs):
+  def weawn(sewf, :3 twain_input_fn=none, (ˆ ﻌ ˆ)♡ evaw_input_fn=none, (U ᵕ U❁) **kwawgs):
     """
-    Overrides ``Trainer.learn`` to make ``input_fn`` functions optional.
-    Respectively, ``train_input_fn`` and ``eval_input_fn`` default to
-    ``self.train_input_fn`` and ``self.eval_input_fn``.
-    See ``Trainer.learn`` for more detailed documentation.
+    o-ovewwides ``twainew.weawn`` t-to make ``input_fn`` functions optionaw. (U ᵕ U❁)
+    wespectivewy, XD ``twain_input_fn`` a-and ``evaw_input_fn`` d-defauwt to
+    ``sewf.twain_input_fn`` a-and ``sewf.evaw_input_fn``. nyaa~~
+    s-see ``twainew.weawn`` fow mowe d-detaiwed documentation. (ˆ ﻌ ˆ)♡
     """
-    if train_input_fn is None:
-      self._assert_train_files()
-    if eval_input_fn is None:
-      self._assert_eval_files()
-    train_input_fn = train_input_fn if train_input_fn else self.get_train_input_fn()
-    eval_input_fn = eval_input_fn if eval_input_fn else self.get_eval_input_fn()
+    if twain_input_fn i-is nyone:
+      s-sewf._assewt_twain_fiwes()
+    if evaw_input_fn is nyone:
+      sewf._assewt_evaw_fiwes()
+    t-twain_input_fn = t-twain_input_fn i-if twain_input_fn e-ewse sewf.get_twain_input_fn()
+    evaw_input_fn = e-evaw_input_fn i-if evaw_input_fn e-ewse sewf.get_evaw_input_fn()
 
-    super(DataRecordTrainer, self).learn(
-      train_input_fn=train_input_fn,
-      eval_input_fn=eval_input_fn,
-      **kwargs
+    s-supew(datawecowdtwainew, ʘwʘ sewf).weawn(
+      twain_input_fn=twain_input_fn, ^•ﻌ•^
+      e-evaw_input_fn=evaw_input_fn, mya
+      **kwawgs
     )
 
-  def train_and_evaluate(self,
-                         train_input_fn=None, eval_input_fn=None,
-                          **kwargs):
+  d-def twain_and_evawuate(sewf, (ꈍᴗꈍ)
+                         twain_input_fn=none, (ˆ ﻌ ˆ)♡ evaw_input_fn=none, (ˆ ﻌ ˆ)♡
+                          **kwawgs):
     """
-    Overrides ``Trainer.train_and_evaluate`` to make ``input_fn`` functions optional.
-    Respectively, ``train_input_fn`` and ``eval_input_fn`` default to
-    ``self.train_input_fn`` and ``self.eval_input_fn``.
-    See ``Trainer.train_and_evaluate`` for detailed documentation.
+    ovewwides ``twainew.twain_and_evawuate`` to make ``input_fn`` functions o-optionaw. ( ͡o ω ͡o )
+    w-wespectivewy, o.O ``twain_input_fn`` and ``evaw_input_fn`` d-defauwt to
+    ``sewf.twain_input_fn`` and ``sewf.evaw_input_fn``. 😳😳😳
+    see ``twainew.twain_and_evawuate`` f-fow detaiwed d-documentation. ʘwʘ
     """
-    if train_input_fn is None:
-      self._assert_train_files()
-    if eval_input_fn is None:
-      self._assert_eval_files()
-    train_input_fn = train_input_fn if train_input_fn else self.get_train_input_fn()
-    eval_input_fn = eval_input_fn if eval_input_fn else self.get_eval_input_fn()
+    i-if twain_input_fn is nyone:
+      s-sewf._assewt_twain_fiwes()
+    i-if evaw_input_fn is nyone:
+      sewf._assewt_evaw_fiwes()
+    t-twain_input_fn = t-twain_input_fn i-if twain_input_fn e-ewse sewf.get_twain_input_fn()
+    e-evaw_input_fn = e-evaw_input_fn if evaw_input_fn ewse sewf.get_evaw_input_fn()
 
-    super(DataRecordTrainer, self).train_and_evaluate(
-      train_input_fn=train_input_fn,
-      eval_input_fn=eval_input_fn,
-      **kwargs
+    supew(datawecowdtwainew, :3 sewf).twain_and_evawuate(
+      twain_input_fn=twain_input_fn, UwU
+      e-evaw_input_fn=evaw_input_fn, nyaa~~
+      **kwawgs
     )
 
-  def _model_fn(self, features, labels, mode, params, config=None):
+  def _modew_fn(sewf, :3 f-featuwes, nyaa~~ w-wabews, mode, ^^ pawams, config=none):
     """
-    Overrides the _model_fn to correct for the features shape of the sparse features
-    extracted with the contrib.FeatureConfig
+    ovewwides the _modew_fn t-to cowwect fow the f-featuwes shape of the spawse f-featuwes
+    extwacted with the c-contwib.featuweconfig
     """
-    if isinstance(self._feature_config, twml.contrib.feature_config.FeatureConfig):
-      # Fix the shape of the features. The features dictionary will be modified to
-      # contain the shape changes.
-      twml.util.fix_shape_sparse(features, self._feature_config)
-    return super(DataRecordTrainer, self)._model_fn(
-      features=features,
-      labels=labels,
-      mode=mode,
-      params=params,
+    if isinstance(sewf._featuwe_config, nyaa~~ twmw.contwib.featuwe_config.featuweconfig):
+      # fix the s-shape of the featuwes. 😳😳😳 the featuwes dictionawy wiww be modified to
+      # contain t-the shape changes.
+      t-twmw.utiw.fix_shape_spawse(featuwes, ^•ﻌ•^ s-sewf._featuwe_config)
+    w-wetuwn supew(datawecowdtwainew, (⑅˘꒳˘) sewf)._modew_fn(
+      f-featuwes=featuwes, (✿oωo)
+      wabews=wabews, mya
+      m-mode=mode, (///ˬ///✿)
+      pawams=pawams, ʘwʘ
       config=config
     )
 
-  def calibrate(self,
-                calibrator,
-                input_fn=None,
-                steps=None,
-                save_calibrator=True,
-                hooks=None):
+  def c-cawibwate(sewf, >w<
+                c-cawibwatow, o.O
+                input_fn=none, ^^;;
+                s-steps=none, :3
+                save_cawibwatow=twue, (ꈍᴗꈍ)
+                hooks=none):
     """
-    Makes input functions optional. input_fn defaults to self.train_input_fn.
-    See Trainer for more detailed documentation.
+    m-makes input functions optionaw. XD input_fn defauwts to sewf.twain_input_fn. ^^;;
+    see twainew fow mowe detaiwed documentation. (U ﹏ U)
     """
-    if input_fn is None:
-      self._assert_train_files()
-    input_fn = input_fn if input_fn else self.get_train_input_fn()
-    super(DataRecordTrainer, self).calibrate(calibrator=calibrator,
-                                             input_fn=input_fn,
-                                             steps=steps,
-                                             save_calibrator=save_calibrator,
-                                             hooks=hooks)
+    i-if input_fn is nyone:
+      s-sewf._assewt_twain_fiwes()
+    input_fn = input_fn if input_fn ewse sewf.get_twain_input_fn()
+    supew(datawecowdtwainew, (ꈍᴗꈍ) s-sewf).cawibwate(cawibwatow=cawibwatow, 😳
+                                             input_fn=input_fn, rawr
+                                             steps=steps, ( ͡o ω ͡o )
+                                             s-save_cawibwatow=save_cawibwatow, (ˆ ﻌ ˆ)♡
+                                             h-hooks=hooks)
 
-  def save_checkpoints_and_export_model(self,
-                                        serving_input_receiver_fn,
-                                        export_output_fn=None,
-                                        export_dir=None,
-                                        checkpoint_path=None,
-                                        input_fn=None):
+  d-def save_checkpoints_and_expowt_modew(sewf, OwO
+                                        s-sewving_input_weceivew_fn, >_<
+                                        expowt_output_fn=none, XD
+                                        expowt_diw=none, (ˆ ﻌ ˆ)♡
+                                        checkpoint_path=none,
+                                        input_fn=none):
     """
-    Exports saved module after saving checkpoint to save_dir.
-    Please note that to use this method, you need to assign a loss to the output
-    of the build_graph (for the train mode).
-    See export_model for more detailed information.
+    expowts s-saved moduwe a-aftew saving checkpoint t-to save_diw. (ꈍᴗꈍ)
+    p-pwease note that to use t-this method, (✿oωo) you nyeed to assign a-a woss to the output
+    of the buiwd_gwaph (fow the twain mode). UwU
+    s-see expowt_modew f-fow mowe d-detaiwed infowmation. (ꈍᴗꈍ)
     """
-    self.train(input_fn=input_fn, steps=1)
-    self.export_model(serving_input_receiver_fn, export_output_fn, export_dir, checkpoint_path)
+    s-sewf.twain(input_fn=input_fn, (U ﹏ U) steps=1)
+    s-sewf.expowt_modew(sewving_input_weceivew_fn, >w< e-expowt_output_fn, ^•ﻌ•^ expowt_diw, 😳 checkpoint_path)
 
-  def save_checkpoints_and_evaluate(self,
-                                    input_fn=None,
-                                    steps=None,
-                                    hooks=None,
-                                    name=None):
+  def save_checkpoints_and_evawuate(sewf, XD
+                                    input_fn=none, :3
+                                    s-steps=none, rawr x3
+                                    h-hooks=none, (⑅˘꒳˘)
+                                    nyame=none):
     """
-    Evaluates model after saving checkpoint to save_dir.
-    Please note that to use this method, you need to assign a loss to the output
-    of the build_graph (for the train mode).
-    See evaluate for more detailed information.
+    evawuates modew aftew saving c-checkpoint to save_diw. ^^
+    p-pwease nyote that t-to use this method, y-you nyeed to assign a woss to the output
+    of the buiwd_gwaph (fow the twain mode). >w<
+    s-see evawuate fow mowe detaiwed infowmation. 😳
     """
-    self.train(input_fn=input_fn, steps=1)
-    self.evaluate(input_fn, steps, hooks, name)
+    s-sewf.twain(input_fn=input_fn, rawr steps=1)
+    sewf.evawuate(input_fn, rawr x3 s-steps, (ꈍᴗꈍ) hooks, nyame)

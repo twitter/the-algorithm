@@ -1,51 +1,51 @@
-package com.twitter.tweetypie
-package service
-package observer
+package com.twittew.tweetypie
+package s-sewvice
+package o-obsewvew
 
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsRequest
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsResult
+impowt c-com.twittew.tweetypie.thwiftscawa.getstowedtweetswequest
+impowt c-com.twittew.tweetypie.thwiftscawa.getstowedtweetswesuwt
 
-private[service] object GetStoredTweetsObserver extends StoredTweetsObserver {
-  type Type = ObserveExchange[GetStoredTweetsRequest, Seq[GetStoredTweetsResult]]
+pwivate[sewvice] o-object getstowedtweetsobsewvew extends s-stowedtweetsobsewvew {
+  t-type type = obsewveexchange[getstowedtweetswequest, >_< s-seq[getstowedtweetswesuwt]]
 
-  def observeRequest(stats: StatsReceiver): Effect[GetStoredTweetsRequest] = {
-    val requestSizeStat = stats.stat("request_size")
+  def obsewvewequest(stats: statsweceivew): effect[getstowedtweetswequest] = {
+    vaw wequestsizestat = s-stats.stat("wequest_size")
 
-    val optionsScope = stats.scope("options")
-    val bypassVisibilityFilteringCounter = optionsScope.counter("bypass_visibility_filtering")
-    val forUserIdCounter = optionsScope.counter("for_user_id")
-    val additionalFieldsScope = optionsScope.scope("additional_fields")
+    vaw optionsscope = stats.scope("options")
+    v-vaw bypassvisibiwityfiwtewingcountew = optionsscope.countew("bypass_visibiwity_fiwtewing")
+    vaw fowusewidcountew = o-optionsscope.countew("fow_usew_id")
+    vaw additionawfiewdsscope = optionsscope.scope("additionaw_fiewds")
 
-    Effect { request =>
-      requestSizeStat.add(request.tweetIds.size)
+    effect { wequest =>
+      w-wequestsizestat.add(wequest.tweetids.size)
 
-      if (request.options.isDefined) {
-        val options = request.options.get
-        if (options.bypassVisibilityFiltering) bypassVisibilityFilteringCounter.incr()
-        if (options.forUserId.isDefined) forUserIdCounter.incr()
-        options.additionalFieldIds.foreach { id =>
-          additionalFieldsScope.counter(id.toString).incr()
+      if (wequest.options.isdefined) {
+        v-vaw options = w-wequest.options.get
+        if (options.bypassvisibiwityfiwtewing) bypassvisibiwityfiwtewingcountew.incw()
+        if (options.fowusewid.isdefined) fowusewidcountew.incw()
+        o-options.additionawfiewdids.foweach { id =>
+          additionawfiewdsscope.countew(id.tostwing).incw()
         }
       }
     }
   }
 
-  def observeResult(stats: StatsReceiver): Effect[Seq[GetStoredTweetsResult]] = {
-    val resultScope = stats.scope("result")
+  def obsewvewesuwt(stats: s-statsweceivew): effect[seq[getstowedtweetswesuwt]] = {
+    v-vaw wesuwtscope = s-stats.scope("wesuwt")
 
-    Effect { result =>
-      observeStoredTweets(result.map(_.storedTweet), resultScope)
+    e-effect { w-wesuwt =>
+      obsewvestowedtweets(wesuwt.map(_.stowedtweet), (⑅˘꒳˘) wesuwtscope)
     }
   }
 
-  def observeExchange(stats: StatsReceiver): Effect[Type] = {
-    val resultStateStats = ResultStateStats(stats)
+  def o-obsewveexchange(stats: statsweceivew): effect[type] = {
+    vaw w-wesuwtstatestats = wesuwtstatestats(stats)
 
-    Effect {
-      case (request, response) =>
-        response match {
-          case Return(_) => resultStateStats.success(request.tweetIds.size)
-          case Throw(_) => resultStateStats.failed(request.tweetIds.size)
+    effect {
+      case (wequest, /(^•ω•^) wesponse) =>
+        wesponse match {
+          c-case wetuwn(_) => wesuwtstatestats.success(wequest.tweetids.size)
+          c-case t-thwow(_) => wesuwtstatestats.faiwed(wequest.tweetids.size)
         }
     }
   }

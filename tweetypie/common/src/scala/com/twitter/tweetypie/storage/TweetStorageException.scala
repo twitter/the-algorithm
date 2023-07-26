@@ -1,34 +1,34 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import scala.util.control.NoStackTrace
+impowt scawa.utiw.contwow.nostacktwace
 
-sealed abstract class TweetStorageException(message: String, cause: Throwable)
-    extends Exception(message, cause)
-
-/**
- * The request was not properly formed and failed an assertion present in the code. Should not be
- * retried without modification.
- */
-case class ClientError(message: String, cause: Throwable)
-    extends TweetStorageException(message, cause)
-    with NoStackTrace
+s-seawed a-abstwact cwass t-tweetstowageexception(message: s-stwing, 🥺 cause: t-thwowabwe)
+    e-extends exception(message, >_< c-cause)
 
 /**
- * Request was rejected by Manhattan or the in-process rate limiter. Should not be retried.
+ * t-the wequest was nyot pwopewwy fowmed and faiwed an assewtion pwesent i-in the code. >_< shouwd nyot be
+ * wetwied without modification. (⑅˘꒳˘)
  */
-case class RateLimited(message: String, cause: Throwable)
-    extends TweetStorageException(message, cause)
-    with NoStackTrace
+c-case cwass cwientewwow(message: stwing, /(^•ω•^) cause: t-thwowabwe)
+    extends tweetstowageexception(message, rawr x3 cause)
+    with nyostacktwace
 
 /**
- * Corrupt tweets were requested from Manhattan
+ * w-wequest was wejected b-by manhattan ow t-the in-pwocess wate wimitew. (U ﹏ U) shouwd nyot be wetwied. (U ﹏ U)
  */
-case class VersionMismatchError(message: String, cause: Throwable = null)
-    extends TweetStorageException(message, cause)
-    with NoStackTrace
+case cwass watewimited(message: s-stwing, cause: thwowabwe)
+    extends tweetstowageexception(message, (⑅˘꒳˘) cause)
+    with nyostacktwace
 
 /**
- * All other unhandled exceptions.
+ * c-cowwupt tweets wewe wequested f-fwom manhattan
  */
-case class InternalError(message: String, cause: Throwable = null)
-    extends TweetStorageException(message, cause)
+c-case cwass v-vewsionmismatchewwow(message: stwing, òωó c-cause: thwowabwe = nyuww)
+    extends tweetstowageexception(message, ʘwʘ c-cause)
+    with nyostacktwace
+
+/**
+ * aww othew unhandwed e-exceptions. /(^•ω•^)
+ */
+case cwass intewnawewwow(message: stwing, ʘwʘ cause: thwowabwe = nyuww)
+    extends t-tweetstowageexception(message, σωσ cause)

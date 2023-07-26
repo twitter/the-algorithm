@@ -1,58 +1,58 @@
-package com.twitter.search.common.encoding.features;
+package com.twittew.seawch.common.encoding.featuwes;
 
 /**
- * Encodes multiple values (bytes or bits) into an integer.
+ * encodes m-muwtipwe vawues (bytes o-ow bits) i-into an integew. (///ˬ///✿)
  */
-public class EncodedFeatures {
-  private int value;
+p-pubwic c-cwass encodedfeatuwes {
+  p-pwivate i-int vawue;
 
-  public final void setSerializedValue(int val) {
-    this.value = val;
+  p-pubwic finaw void setsewiawizedvawue(int vaw) {
+    this.vawue = vaw;
   }
 
-  public final int getSerializedValue() {
-    return value;
+  pubwic f-finaw int getsewiawizedvawue() {
+    wetuwn vawue;
   }
 
-  // setByte is agnostic to signed / unsigned bytes.
-  protected final EncodedFeatures setByte(byte count, int bitshift, long inverseMask) {
-    value = (int) ((value & inverseMask) | ((count & 0xffL) << bitshift));
-    return this;
+  // s-setbyte is agnostic to signed / u-unsigned bytes. >w<
+  pwotected finaw encodedfeatuwes setbyte(byte c-count, rawr int bitshift, mya wong invewsemask) {
+    v-vawue = (int) ((vawue & i-invewsemask) | ((count & 0xffw) << bitshift));
+    wetuwn this;
   }
 
   /**
-   * Sets the value but only if greater. setByteIfGreater assumes unsigned bytes.
+   * sets the vawue but onwy if g-gweatew. ^^ setbyteifgweatew assumes unsigned bytes.
    */
-  public final EncodedFeatures setByteIfGreater(byte newCount, int bitshift, long inversemask) {
-    if ((getByte(bitshift) & 0xff) < (newCount & 0xff)) {
-      setByte(newCount, bitshift, inversemask);
+  pubwic finaw encodedfeatuwes s-setbyteifgweatew(byte nyewcount, 😳😳😳 i-int bitshift, mya w-wong invewsemask) {
+    i-if ((getbyte(bitshift) & 0xff) < (newcount & 0xff)) {
+      s-setbyte(newcount, 😳 bitshift, invewsemask);
     }
-    return this;
+    w-wetuwn this;
   }
 
-  protected final int getByte(int bitshift) {
-    return (int) (((value & 0xffffffffL) >>> bitshift) & 0xffL);
+  pwotected finaw i-int getbyte(int bitshift) {
+    wetuwn (int) (((vawue & 0xffffffffw) >>> bitshift) & 0xffw);
   }
 
-  protected final int getByteMasked(int bitshift, long mask) {
-    return (int) (((value & mask) >>> bitshift) & 0xffL);
+  pwotected finaw int getbytemasked(int b-bitshift, -.- wong mask) {
+    w-wetuwn (int) (((vawue & mask) >>> b-bitshift) & 0xffw);
   }
 
-  protected final EncodedFeatures setBit(int bit, boolean flag) {
-    if (flag) {
-      value |= bit;
-    } else {
-      value &= ~bit;
+  p-pwotected finaw encodedfeatuwes setbit(int bit, 🥺 boowean fwag) {
+    i-if (fwag) {
+      v-vawue |= bit;
+    } ewse {
+      v-vawue &= ~bit;
     }
-    return this;
+    w-wetuwn this;
   }
 
-  protected final boolean getBit(int bit) {
-    return (value & bit) != 0;
+  pwotected f-finaw boowean getbit(int bit) {
+    w-wetuwn (vawue & bit) != 0;
   }
 
-  @Override
-  public String toString() {
-    return String.format("%x", value);
+  @ovewwide
+  pubwic stwing t-tostwing() {
+    wetuwn stwing.fowmat("%x", v-vawue);
   }
 }

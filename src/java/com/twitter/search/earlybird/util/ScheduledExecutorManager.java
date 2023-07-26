@@ -1,150 +1,150 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+impowt j-java.utiw.concuwwent.scheduwedexecutowsewvice;
+i-impowt java.utiw.concuwwent.scheduwedfutuwe;
+i-impowt j-java.utiw.concuwwent.timeunit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+impowt c-com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt c-com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
 
 /**
- * Base class for classes that run periodic tasks.
+ * base cwass fow cwasses t-that wun pewiodic tasks. o.O
  */
-public abstract class ScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(ScheduledExecutorManager.class);
-  private static final long SHUTDOWN_WAIT_INTERVAL_SEC = 30;
+pubwic a-abstwact cwass scheduwedexecutowmanagew {
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(scheduwedexecutowmanagew.cwass);
+  pwivate static finaw w-wong shutdown_wait_intewvaw_sec = 30;
 
-  public static final String SCHEDULED_EXECUTOR_TASK_PREFIX = "scheduled_executor_task_";
+  p-pubwic static finaw stwing scheduwed_executow_task_pwefix = "scheduwed_executow_task_";
 
-  private final String name;
-  private final ScheduledExecutorService executor;
+  pwivate finaw stwing nyame;
+  p-pwivate finaw scheduwedexecutowsewvice executow;
 
-  private final ShutdownWaitTimeParams shutdownWaitTimeParams;
+  pwivate finaw shutdownwaittimepawams shutdownwaittimepawams;
 
-  private final SearchCounter iterationCounter;
-  private final SearchStatsReceiver searchStatsReceiver;
+  p-pwivate finaw seawchcountew i-itewationcountew;
+  p-pwivate f-finaw seawchstatsweceivew s-seawchstatsweceivew;
 
-  protected final CriticalExceptionHandler criticalExceptionHandler;
-  private final Clock clock;
+  pwotected finaw cwiticawexceptionhandwew c-cwiticawexceptionhandwew;
+  pwivate finaw cwock cwock;
 
-  protected boolean shouldLog = true;
+  p-pwotected boowean shouwdwog = twue;
 
-  public ScheduledExecutorManager(
-      ScheduledExecutorService executor,
-      ShutdownWaitTimeParams shutdownWaitTimeParams,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler,
-      Clock clock) {
-    this(executor, shutdownWaitTimeParams, searchStatsReceiver, null,
-        criticalExceptionHandler, clock);
+  pubwic scheduwedexecutowmanagew(
+      scheduwedexecutowsewvice executow, rawr
+      s-shutdownwaittimepawams shutdownwaittimepawams, ʘwʘ
+      s-seawchstatsweceivew s-seawchstatsweceivew, 😳😳😳
+      c-cwiticawexceptionhandwew cwiticawexceptionhandwew, ^^;;
+      cwock cwock) {
+    this(executow, o.O s-shutdownwaittimepawams, (///ˬ///✿) s-seawchstatsweceivew, σωσ nyuww,
+        c-cwiticawexceptionhandwew, nyaa~~ c-cwock);
   }
 
-  ScheduledExecutorManager(
-      ScheduledExecutorService executor,
-      ShutdownWaitTimeParams shutdownWaitTimeParams,
-      SearchStatsReceiver searchStatsReceiver,
-      SearchCounter iterationCounter,
-      CriticalExceptionHandler criticalExceptionHandler,
-      Clock clock) {
-    this.name = getClass().getSimpleName();
-    this.executor = executor;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.shutdownWaitTimeParams = shutdownWaitTimeParams;
+  scheduwedexecutowmanagew(
+      s-scheduwedexecutowsewvice executow, ^^;;
+      s-shutdownwaittimepawams shutdownwaittimepawams, ^•ﻌ•^
+      seawchstatsweceivew s-seawchstatsweceivew, σωσ
+      seawchcountew itewationcountew, -.-
+      c-cwiticawexceptionhandwew cwiticawexceptionhandwew, ^^;;
+      c-cwock c-cwock) {
+    this.name = getcwass().getsimpwename();
+    this.executow = executow;
+    this.cwiticawexceptionhandwew = cwiticawexceptionhandwew;
+    this.shutdownwaittimepawams = s-shutdownwaittimepawams;
 
-    if (iterationCounter != null) {
-      this.iterationCounter = iterationCounter;
-    } else {
-      this.iterationCounter = searchStatsReceiver.getCounter(SCHEDULED_EXECUTOR_TASK_PREFIX + name);
+    i-if (itewationcountew != nyuww) {
+      t-this.itewationcountew = i-itewationcountew;
+    } e-ewse {
+      this.itewationcountew = seawchstatsweceivew.getcountew(scheduwed_executow_task_pwefix + nyame);
     }
 
-    this.searchStatsReceiver = searchStatsReceiver;
-    this.clock = clock;
-  }
-
-  /**
-   * Schedule a task.
-   */
-  protected final ScheduledFuture scheduleNewTask(
-      ScheduledExecutorTask task,
-      PeriodicActionParams periodicActionParams) {
-    long interval = periodicActionParams.getIntervalDuration();
-    TimeUnit timeUnit = periodicActionParams.getIntervalUnit();
-    long initialDelay = periodicActionParams.getInitialDelayDuration();
-
-    if (interval <= 0) {
-      String message = String.format(
-          "Not scheduling manager %s for wrong interval %d %s", name, interval, timeUnit);
-      LOG.error(message);
-      throw new UnsupportedOperationException(message);
-    }
-
-    if (shouldLog) {
-      LOG.info("Scheduling to run {} every {} {} with {}", name, interval, timeUnit,
-              periodicActionParams.getDelayType());
-    }
-    final ScheduledFuture scheduledFuture;
-    if (periodicActionParams.isFixedDelay()) {
-      scheduledFuture = executor.scheduleWithFixedDelay(task, initialDelay, interval, timeUnit);
-    } else {
-      scheduledFuture = executor.scheduleAtFixedRate(task, initialDelay, interval, timeUnit);
-    }
-    return scheduledFuture;
+    t-this.seawchstatsweceivew = seawchstatsweceivew;
+    this.cwock = cwock;
   }
 
   /**
-   * Shutdown everything that's running with the executor.
+   * scheduwe a-a task. XD
    */
-  public boolean shutdown() throws InterruptedException {
-    LOG.info("Start shutting down {}.", name);
-    executor.shutdownNow();
+  pwotected finaw s-scheduwedfutuwe s-scheduwenewtask(
+      s-scheduwedexecutowtask task, 🥺
+      pewiodicactionpawams p-pewiodicactionpawams) {
+    w-wong i-intewvaw = pewiodicactionpawams.getintewvawduwation();
+    t-timeunit timeunit = pewiodicactionpawams.getintewvawunit();
+    w-wong i-initiawdeway = p-pewiodicactionpawams.getinitiawdewayduwation();
 
-    boolean terminated = false;
-    long waitSeconds = shutdownWaitTimeParams.getWaitUnit().toSeconds(
-        shutdownWaitTimeParams.getWaitDuration()
+    i-if (intewvaw <= 0) {
+      s-stwing message = stwing.fowmat(
+          "not scheduwing managew %s fow wwong i-intewvaw %d %s", òωó nyame, intewvaw, (ˆ ﻌ ˆ)♡ timeunit);
+      wog.ewwow(message);
+      thwow new unsuppowtedopewationexception(message);
+    }
+
+    i-if (shouwdwog) {
+      wog.info("scheduwing to wun {} evewy {} {} with {}", -.- n-nyame, :3 intewvaw, t-timeunit, ʘwʘ
+              p-pewiodicactionpawams.getdewaytype());
+    }
+    finaw scheduwedfutuwe s-scheduwedfutuwe;
+    if (pewiodicactionpawams.isfixeddeway()) {
+      s-scheduwedfutuwe = e-executow.scheduwewithfixeddeway(task, 🥺 initiawdeway, intewvaw, >_< timeunit);
+    } ewse {
+      scheduwedfutuwe = executow.scheduweatfixedwate(task, ʘwʘ initiawdeway, (˘ω˘) i-intewvaw, (✿oωo) timeunit);
+    }
+    w-wetuwn scheduwedfutuwe;
+  }
+
+  /**
+   * s-shutdown evewything t-that's wunning with the executow.
+   */
+  p-pubwic boowean s-shutdown() thwows intewwuptedexception {
+    w-wog.info("stawt s-shutting down {}.", nyame);
+    executow.shutdownnow();
+
+    boowean tewminated = f-fawse;
+    wong w-waitseconds = shutdownwaittimepawams.getwaitunit().toseconds(
+        s-shutdownwaittimepawams.getwaitduwation()
     );
 
-    if (waitSeconds == 0) {
-      LOG.info("Not waiting at all for {}, wait time is set to zero.", name);
-    } else {
-      while (!terminated && waitSeconds > 0) {
-        long waitTime = Math.min(waitSeconds, SHUTDOWN_WAIT_INTERVAL_SEC);
-        terminated = executor.awaitTermination(waitTime, TimeUnit.SECONDS);
-        waitSeconds -= waitTime;
+    if (waitseconds == 0) {
+      w-wog.info("not w-waiting at aww fow {}, (///ˬ///✿) wait t-time is set to zewo.", rawr x3 nyame);
+    } ewse {
+      whiwe (!tewminated && waitseconds > 0) {
+        w-wong waittime = m-math.min(waitseconds, -.- shutdown_wait_intewvaw_sec);
+        tewminated = executow.awaittewmination(waittime, t-timeunit.seconds);
+        w-waitseconds -= waittime;
 
-        if (!terminated) {
-          LOG.info("Still shutting down {} ...", name);
+        if (!tewminated) {
+          wog.info("stiww shutting d-down {} ...", ^^ nyame);
         }
       }
     }
 
-    LOG.info("Done shutting down {}, terminated: {}", name, terminated);
+    wog.info("done shutting down {}, (⑅˘꒳˘) tewminated: {}", nyaa~~ n-nyame, /(^•ω•^) tewminated);
 
-    shutdownComponent();
-    return terminated;
+    shutdowncomponent();
+    w-wetuwn t-tewminated;
   }
 
-  protected ScheduledExecutorService getExecutor() {
-    return executor;
+  pwotected scheduwedexecutowsewvice getexecutow() {
+    w-wetuwn e-executow;
   }
 
-  public final String getName() {
-    return name;
+  pubwic finaw stwing getname() {
+    wetuwn n-nyame;
   }
 
-  public SearchCounter getIterationCounter() {
-    return iterationCounter;
+  pubwic seawchcountew g-getitewationcountew() {
+    wetuwn itewationcountew;
   }
 
-  protected final SearchStatsReceiver getSearchStatsReceiver() {
-    return searchStatsReceiver;
+  pwotected finaw seawchstatsweceivew getseawchstatsweceivew() {
+    w-wetuwn seawchstatsweceivew;
   }
 
-  // Override if you need to shutdown additional services.
-  protected void shutdownComponent() {
+  // ovewwide i-if you nyeed to s-shutdown additionaw sewvices. (U ﹏ U)
+  p-pwotected void shutdowncomponent() {
   }
 }

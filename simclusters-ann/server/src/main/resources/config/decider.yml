@@ -1,95 +1,95 @@
-# SimClusters embedding store enable / disable decider values
+# simcwustews embedding stowe enabwe / d-disabwe decidew v-vawues
 
-# ---------- Dark Traffic Proxy ----------
-dark_traffic_filter:
-  comment: Proportion of the requests that are forwarded as dark traffic to the proxy
-  default_availability: 0
+# ---------- d-dawk t-twaffic pwoxy ----------
+d-dawk_twaffic_fiwtew:
+  c-comment: pwopowtion o-of the wequests t-that awe fowwawded as dawk twaffic to the pwoxy
+  defauwt_avaiwabiwity: 0
 
-# Tweet embeddings
-enable_LogFavBasedTweet_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+# tweet embeddings
+e-enabwe_wogfavbasedtweet_modew20m145k2020:
+  comment: "enabwe the wead twaffic t-to (embeddingtype, σωσ modewvewsion) f-fwom 0% to 100%. -.- 0 means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-enable_LogFavLongestL2EmbeddingTweet_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_wogfavwongestw2embeddingtweet_modew20m145k2020:
+  comment: "enabwe t-the wead twaffic t-to (embeddingtype, ^^;; modewvewsion) fwom 0% to 100%. XD 0 means wetuwn empty fow aww w-wequests."
+  defauwt_avaiwabiwity: 10000
 
-# Entity embeddings
-enable_FavTfgTopic_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+# entity embeddings
+enabwe_favtfgtopic_modew20m145k2020:
+  comment: "enabwe t-the wead twaffic to (embeddingtype, 🥺 m-modewvewsion) f-fwom 0% t-to 100%. òωó 0 means w-wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
 
-enable_LogFavBasedKgoApeTopic_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_wogfavbasedkgoapetopic_modew20m145k2020:
+  comment: "enabwe the wead t-twaffic to (embeddingtype, (ˆ ﻌ ˆ)♡ modewvewsion) fwom 0% to 100%. -.- 0 means wetuwn empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-# KnownFor embeddings
-enable_FavBasedProducer_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+# knownfow embeddings
+e-enabwe_favbasedpwoducew_modew20m145k2020:
+  c-comment: "enabwe t-the wead twaffic to (embeddingtype, :3 modewvewsion) fwom 0% to 100%. ʘwʘ 0 m-means wetuwn e-empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-enable_FollowBasedProducer_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_fowwowbasedpwoducew_modew20m145k2020:
+  comment: "enabwe t-the wead twaffic to (embeddingtype, m-modewvewsion) fwom 0% to 100%. 🥺 0 means wetuwn e-empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-enable_RelaxedAggregatableLogFavBasedProducer_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_wewaxedaggwegatabwewogfavbasedpwoducew_modew20m145k2020:
+  comment: "enabwe t-the wead t-twaffic to (embeddingtype, >_< modewvewsion) fwom 0% to 100%. ʘwʘ 0 means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-# InterestedIn embeddings
-enable_LogFavBasedUserInterestedInFromAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+# intewestedin e-embeddings
+enabwe_wogfavbasedusewintewestedinfwomape_modew20m145k2020:
+  c-comment: "enabwe the w-wead twaffic to (embeddingtype, m-modewvewsion) f-fwom 0% to 100%. (˘ω˘) 0 means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-enable_FollowBasedUserInterestedInFromAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_fowwowbasedusewintewestedinfwomape_modew20m145k2020:
+  comment: "enabwe the wead twaffic to (embeddingtype, (✿oωo) modewvewsion) f-fwom 0% to 100%. 0 means w-wetuwn empty fow a-aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-enable_FavBasedUserInterestedIn_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+enabwe_favbasedusewintewestedin_modew20m145k2020:
+  c-comment: "enabwe t-the wead twaffic t-to (embeddingtype, (///ˬ///✿) m-modewvewsion) fwom 0% to 100%. rawr x3 0 means w-wetuwn empty fow a-aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-enable_FollowBasedUserInterestedIn_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_fowwowbasedusewintewestedin_modew20m145k2020:
+  c-comment: "enabwe the wead twaffic to (embeddingtype, -.- modewvewsion) f-fwom 0% to 100%. ^^ 0 means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-enable_LogFavBasedUserInterestedIn_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+enabwe_wogfavbasedusewintewestedin_modew20m145k2020:
+  c-comment: "enabwe the wead twaffic to (embeddingtype, modewvewsion) f-fwom 0% t-to 100%. (⑅˘꒳˘) 0 means w-wetuwn empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-enable_FilteredUserInterestedIn_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+enabwe_fiwtewedusewintewestedin_modew20m145k2020:
+  c-comment: "enabwe t-the wead twaffic to (embeddingtype, nyaa~~ modewvewsion) fwom 0% to 100%. /(^•ω•^) 0 means wetuwn empty f-fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-enable_UnfilteredUserInterestedIn_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_unfiwtewedusewintewestedin_modew20m145k2020:
+  comment: "enabwe t-the wead t-twaffic to (embeddingtype, (U ﹏ U) modewvewsion) fwom 0% t-to 100%. 😳😳😳 0 means w-wetuwn empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-enable_LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_wogfavbasedusewintewestedmaxpoowingaddwessbookfwomiiape_modew20m145k2020:
+  comment: "enabwe the wead twaffic to (embeddingtype, >w< modewvewsion) f-fwom 0% t-to 100%. XD 0 means w-wetuwn empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-enable_LogFavBasedUserInterestedAverageAddressBookFromIIAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_wogfavbasedusewintewestedavewageaddwessbookfwomiiape_modew20m145k2020:
+  comment: "enabwe t-the wead twaffic to (embeddingtype, o.O modewvewsion) fwom 0% to 100%. 0 means wetuwn e-empty fow aww w-wequests."
+  defauwt_avaiwabiwity: 10000
 
-enable_LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+enabwe_wogfavbasedusewintewestedbooktypemaxpoowingaddwessbookfwomiiape_modew20m145k2020:
+  c-comment: "enabwe t-the wead twaffic to (embeddingtype, mya modewvewsion) fwom 0% t-to 100%. 0 means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-enable_LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+enabwe_wogfavbasedusewintewestedwawgestdimmaxpoowingaddwessbookfwomiiape_modew20m145k2020:
+  c-comment: "enabwe the wead twaffic to (embeddingtype, 🥺 m-modewvewsion) f-fwom 0% to 100%. ^^;; 0 means wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-enable_LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_wogfavbasedusewintewestedwouvainmaxpoowingaddwessbookfwomiiape_modew20m145k2020:
+  c-comment: "enabwe the wead twaffic to (embeddingtype, :3 modewvewsion) f-fwom 0% to 100%. (U ﹏ U) 0 means w-wetuwn empty fow aww wequests."
+  defauwt_avaiwabiwity: 10000
 
-enable_LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+enabwe_wogfavbasedusewintewestedconnectedmaxpoowingaddwessbookfwomiiape_modew20m145k2020:
+  c-comment: "enabwe the w-wead twaffic to (embeddingtype, OwO m-modewvewsion) fwom 0% to 100%. 😳😳😳 0 m-means wetuwn empty fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000
 
-enable_UserNextInterestedIn_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+e-enabwe_usewnextintewestedin_modew20m145k2020:
+  c-comment: "enabwe the wead t-twaffic to (embeddingtype, (ˆ ﻌ ˆ)♡ m-modewvewsion) fwom 0% to 100%. XD 0 means w-wetuwn empty f-fow aww wequests."
+  d-defauwt_avaiwabiwity: 10000

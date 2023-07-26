@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.suggestion
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight.HighlightedSection
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.highwight.highwightedsection
 
 /**
- * Represents text with hit-highlights used for returning search query suggestions.
+ * w-wepwesents t-text with hit-highwights u-used fow w-wetuwning seawch q-quewy suggestions.
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/TextResult.html
+ * u-uwt a-api wefewence: https://docbiwd.twittew.biz/unified_wich_timewines_uwt/gen/com/twittew/timewines/wendew/thwiftscawa/textwesuwt.htmw
  */
-case class TextResult(
-  text: String,
-  hitHighlights: Option[Seq[HighlightedSection]],
-  score: Option[Double],
-  querySource: Option[String])
+c-case cwass textwesuwt(
+  text: stwing, σωσ
+  hithighwights: option[seq[highwightedsection]],
+  scowe: option[doubwe], >_<
+  q-quewysouwce: option[stwing])

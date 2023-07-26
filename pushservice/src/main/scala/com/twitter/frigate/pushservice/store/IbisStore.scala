@@ -1,190 +1,190 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.common.store
-import com.twitter.frigate.common.store.Fail
-import com.twitter.frigate.common.store.IbisRequestInfo
-import com.twitter.frigate.common.store.IbisResponse
-import com.twitter.frigate.common.store.Sent
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.ibis2.service.thriftscala.Flags
-import com.twitter.ibis2.service.thriftscala.FlowControl
-import com.twitter.ibis2.service.thriftscala.Ibis2Request
-import com.twitter.ibis2.service.thriftscala.Ibis2Response
-import com.twitter.ibis2.service.thriftscala.Ibis2ResponseStatus
-import com.twitter.ibis2.service.thriftscala.Ibis2Service
-import com.twitter.ibis2.service.thriftscala.NotificationNotSentCode
-import com.twitter.ibis2.service.thriftscala.TargetFanoutResult.NotSentReason
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.bwoadcaststatsweceivew
+i-impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.woggew.mwwoggew
+i-impowt c-com.twittew.fwigate.common.stowe
+i-impowt com.twittew.fwigate.common.stowe.faiw
+impowt com.twittew.fwigate.common.stowe.ibiswequestinfo
+impowt com.twittew.fwigate.common.stowe.ibiswesponse
+impowt com.twittew.fwigate.common.stowe.sent
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt c-com.twittew.ibis2.sewvice.thwiftscawa.fwags
+impowt com.twittew.ibis2.sewvice.thwiftscawa.fwowcontwow
+impowt com.twittew.ibis2.sewvice.thwiftscawa.ibis2wequest
+i-impowt com.twittew.ibis2.sewvice.thwiftscawa.ibis2wesponse
+impowt com.twittew.ibis2.sewvice.thwiftscawa.ibis2wesponsestatus
+i-impowt com.twittew.ibis2.sewvice.thwiftscawa.ibis2sewvice
+i-impowt com.twittew.ibis2.sewvice.thwiftscawa.notificationnotsentcode
+impowt com.twittew.ibis2.sewvice.thwiftscawa.tawgetfanoutwesuwt.notsentweason
+impowt com.twittew.utiw.futuwe
 
-trait Ibis2Store extends store.Ibis2Store {
-  def send(ibis2Request: Ibis2Request, candidate: PushCandidate): Future[IbisResponse]
+t-twait ibis2stowe extends stowe.ibis2stowe {
+  def send(ibis2wequest: ibis2wequest, (///ˬ///✿) c-candidate: pushcandidate): futuwe[ibiswesponse]
 }
 
-case class PushIbis2Store(
-  ibisClient: Ibis2Service.MethodPerEndpoint
+c-case cwass pushibis2stowe(
+  i-ibiscwient: ibis2sewvice.methodpewendpoint
 )(
-  implicit val statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Ibis2Store {
-  private val log = MRLogger(this.getClass.getSimpleName)
-  private val stats = statsReceiver.scope("ibis_v2_store")
-  private val statsByCrt = stats.scope("byCrt")
-  private val requestsByCrt = statsByCrt.scope("requests")
-  private val failuresByCrt = statsByCrt.scope("failures")
-  private val successByCrt = statsByCrt.scope("success")
+  i-impwicit vaw statsweceivew: s-statsweceivew = nyuwwstatsweceivew)
+    extends ibis2stowe {
+  p-pwivate vaw wog = mwwoggew(this.getcwass.getsimpwename)
+  pwivate vaw s-stats = statsweceivew.scope("ibis_v2_stowe")
+  pwivate vaw statsbycwt = stats.scope("bycwt")
+  pwivate vaw wequestsbycwt = statsbycwt.scope("wequests")
+  pwivate v-vaw faiwuwesbycwt = statsbycwt.scope("faiwuwes")
+  p-pwivate vaw s-successbycwt = s-statsbycwt.scope("success")
 
-  private val statsByIbisModel = stats.scope("byIbisModel")
-  private val requestsByIbisModel = statsByIbisModel.scope("requests")
-  private val failuresByIbisModel = statsByIbisModel.scope("failures")
-  private val successByIbisModel = statsByIbisModel.scope("success")
+  pwivate vaw statsbyibismodew = stats.scope("byibismodew")
+  pwivate vaw wequestsbyibismodew = s-statsbyibismodew.scope("wequests")
+  p-pwivate vaw faiwuwesbyibismodew = statsbyibismodew.scope("faiwuwes")
+  p-pwivate v-vaw successbyibismodew = statsbyibismodew.scope("success")
 
-  private[this] def ibisSend(
-    ibis2Request: Ibis2Request,
-    commonRecommendationType: CommonRecommendationType
-  ): Future[IbisResponse] = {
-    val ibisModel = ibis2Request.modelName
+  p-pwivate[this] def ibissend(
+    i-ibis2wequest: ibis2wequest, rawr x3
+    commonwecommendationtype: commonwecommendationtype
+  ): f-futuwe[ibiswesponse] = {
+    vaw ibismodew = i-ibis2wequest.modewname
 
-    val bStats = if (ibis2Request.flags.getOrElse(Flags()).darkWrite.contains(true)) {
-      BroadcastStatsReceiver(
-        Seq(
-          stats,
-          stats.scope("dark_write")
+    vaw bstats = if (ibis2wequest.fwags.getowewse(fwags()).dawkwwite.contains(twue)) {
+      b-bwoadcaststatsweceivew(
+        s-seq(
+          stats, -.-
+          stats.scope("dawk_wwite")
         )
       )
-    } else BroadcastStatsReceiver(Seq(stats))
+    } ewse bwoadcaststatsweceivew(seq(stats))
 
-    bStats.counter("requests").incr()
-    requestsByCrt.counter(commonRecommendationType.name).incr()
-    requestsByIbisModel.counter(ibisModel).incr()
+    bstats.countew("wequests").incw()
+    wequestsbycwt.countew(commonwecommendationtype.name).incw()
+    wequestsbyibismodew.countew(ibismodew).incw()
 
-    retry(ibisClient, ibis2Request, 3, bStats)
-      .map { response =>
-        bStats.counter(response.status.status.name).incr()
-        successByCrt.counter(response.status.status.name, commonRecommendationType.name).incr()
-        successByIbisModel.counter(response.status.status.name, ibisModel).incr()
-        response.status.status match {
-          case Ibis2ResponseStatus.SuccessWithDeliveries |
-              Ibis2ResponseStatus.SuccessNoDeliveries =>
-            IbisResponse(Sent, Some(response))
-          case _ =>
-            IbisResponse(Fail, Some(response))
+    wetwy(ibiscwient, ^^ i-ibis2wequest, (⑅˘꒳˘) 3, b-bstats)
+      .map { wesponse =>
+        b-bstats.countew(wesponse.status.status.name).incw()
+        s-successbycwt.countew(wesponse.status.status.name, nyaa~~ c-commonwecommendationtype.name).incw()
+        successbyibismodew.countew(wesponse.status.status.name, /(^•ω•^) ibismodew).incw()
+        wesponse.status.status m-match {
+          case ibis2wesponsestatus.successwithdewivewies |
+              ibis2wesponsestatus.successnodewivewies =>
+            ibiswesponse(sent, (U ﹏ U) some(wesponse))
+          c-case _ =>
+            ibiswesponse(faiw, 😳😳😳 s-some(wesponse))
         }
       }
-      .onFailure { ex =>
-        bStats.counter("failures").incr()
-        val exceptionName = ex.getClass.getCanonicalName
-        bStats.scope("failures").counter(exceptionName).incr()
-        failuresByCrt.counter(exceptionName, commonRecommendationType.name).incr()
-        failuresByIbisModel.counter(exceptionName, ibisModel).incr()
+      .onfaiwuwe { e-ex =>
+        b-bstats.countew("faiwuwes").incw()
+        vaw e-exceptionname = e-ex.getcwass.getcanonicawname
+        b-bstats.scope("faiwuwes").countew(exceptionname).incw()
+        f-faiwuwesbycwt.countew(exceptionname, >w< commonwecommendationtype.name).incw()
+        faiwuwesbyibismodew.countew(exceptionname, XD i-ibismodew).incw()
       }
   }
 
-  private def getNotifNotSentReason(
-    ibis2Response: Ibis2Response
-  ): Option[NotificationNotSentCode] = {
-    ibis2Response.status.fanoutResults match {
-      case Some(fanoutResult) =>
-        fanoutResult.pushResult.flatMap { pushResult =>
-          pushResult.results.headOption match {
-            case Some(NotSentReason(notSentInfo)) => Some(notSentInfo.notSentCode)
-            case _ => None
+  p-pwivate def g-getnotifnotsentweason(
+    i-ibis2wesponse: i-ibis2wesponse
+  ): option[notificationnotsentcode] = {
+    ibis2wesponse.status.fanoutwesuwts match {
+      c-case some(fanoutwesuwt) =>
+        fanoutwesuwt.pushwesuwt.fwatmap { pushwesuwt =>
+          pushwesuwt.wesuwts.headoption match {
+            case some(notsentweason(notsentinfo)) => s-some(notsentinfo.notsentcode)
+            case _ => nyone
           }
         }
-      case _ => None
+      case _ => nyone
     }
   }
 
-  def send(ibis2Request: Ibis2Request, candidate: PushCandidate): Future[IbisResponse] = {
-    val requestWithIID = if (ibis2Request.flowControl.exists(_.externalIid.isDefined)) {
-      ibis2Request
-    } else {
-      ibis2Request.copy(
-        flowControl = Some(
-          ibis2Request.flowControl
-            .getOrElse(FlowControl())
-            .copy(externalIid = Some(candidate.impressionId))
+  d-def send(ibis2wequest: i-ibis2wequest, o.O c-candidate: pushcandidate): f-futuwe[ibiswesponse] = {
+    vaw w-wequestwithiid = i-if (ibis2wequest.fwowcontwow.exists(_.extewnawiid.isdefined)) {
+      ibis2wequest
+    } ewse {
+      ibis2wequest.copy(
+        fwowcontwow = some(
+          i-ibis2wequest.fwowcontwow
+            .getowewse(fwowcontwow())
+            .copy(extewnawiid = some(candidate.impwessionid))
         )
       )
     }
 
-    val commonRecommendationType = candidate.frigateNotification.commonRecommendationType
+    v-vaw commonwecommendationtype = c-candidate.fwigatenotification.commonwecommendationtype
 
-    ibisSend(requestWithIID, commonRecommendationType)
-      .onSuccess { response =>
-        response.ibis2Response.foreach { ibis2Response =>
-          getNotifNotSentReason(ibis2Response).foreach { notifNotSentCode =>
-            stats.scope(ibis2Response.status.status.name).counter(s"$notifNotSentCode").incr()
+    i-ibissend(wequestwithiid, mya commonwecommendationtype)
+      .onsuccess { wesponse =>
+        w-wesponse.ibis2wesponse.foweach { i-ibis2wesponse =>
+          getnotifnotsentweason(ibis2wesponse).foweach { n-nyotifnotsentcode =>
+            s-stats.scope(ibis2wesponse.status.status.name).countew(s"$notifnotsentcode").incw()
           }
-          if (ibis2Response.status.status != Ibis2ResponseStatus.SuccessWithDeliveries) {
-            log.warning(
-              s"Request dropped on ibis for ${ibis2Request.recipientSelector.recipientId}: $ibis2Response")
+          if (ibis2wesponse.status.status != ibis2wesponsestatus.successwithdewivewies) {
+            wog.wawning(
+              s"wequest d-dwopped on i-ibis fow ${ibis2wequest.wecipientsewectow.wecipientid}: $ibis2wesponse")
           }
         }
       }
-      .onFailure { ex =>
-        log.warning(
-          s"Ibis Request failure: ${ex.getClass.getCanonicalName} \n For IbisRequest: $ibis2Request")
-        log.error(ex, ex.getMessage)
+      .onfaiwuwe { e-ex =>
+        wog.wawning(
+          s-s"ibis wequest f-faiwuwe: ${ex.getcwass.getcanonicawname} \n fow i-ibiswequest: $ibis2wequest")
+        wog.ewwow(ex, 🥺 ex.getmessage)
       }
   }
 
-  // retry request when Ibis2ResponseStatus is PreFanoutError
-  def retry(
-    ibisClient: Ibis2Service.MethodPerEndpoint,
-    request: Ibis2Request,
-    retryCount: Int,
-    bStats: StatsReceiver
-  ): Future[Ibis2Response] = {
-    ibisClient.sendNotification(request).flatMap { response =>
-      response.status.status match {
-        case Ibis2ResponseStatus.PreFanoutError if retryCount > 0 =>
-          bStats.scope("requests").counter("retry").incr()
-          bStats.counter(response.status.status.name).incr()
-          retry(ibisClient, request, retryCount - 1, bStats)
+  // wetwy wequest when ibis2wesponsestatus i-is pwefanoutewwow
+  def w-wetwy(
+    ibiscwient: ibis2sewvice.methodpewendpoint, ^^;;
+    wequest: i-ibis2wequest, :3
+    w-wetwycount: int, (U ﹏ U)
+    bstats: statsweceivew
+  ): futuwe[ibis2wesponse] = {
+    i-ibiscwient.sendnotification(wequest).fwatmap { wesponse =>
+      wesponse.status.status match {
+        case ibis2wesponsestatus.pwefanoutewwow if wetwycount > 0 =>
+          b-bstats.scope("wequests").countew("wetwy").incw()
+          bstats.countew(wesponse.status.status.name).incw()
+          wetwy(ibiscwient, OwO w-wequest, 😳😳😳 wetwycount - 1, (ˆ ﻌ ˆ)♡ b-bstats)
         case _ =>
-          Future.value(response)
+          futuwe.vawue(wesponse)
       }
     }
   }
 
-  override def send(
-    ibis2Request: Ibis2Request,
-    requestInfo: IbisRequestInfo
-  ): Future[IbisResponse] = {
-    ibisSend(ibis2Request, requestInfo.commonRecommendationType)
+  ovewwide d-def send(
+    i-ibis2wequest: ibis2wequest, XD
+    wequestinfo: ibiswequestinfo
+  ): futuwe[ibiswesponse] = {
+    ibissend(ibis2wequest, (ˆ ﻌ ˆ)♡ wequestinfo.commonwecommendationtype)
   }
 }
 
-case class StagingIbis2Store(remoteIbis2Store: PushIbis2Store) extends Ibis2Store {
+c-case cwass stagingibis2stowe(wemoteibis2stowe: pushibis2stowe) e-extends ibis2stowe {
 
-  final def addDarkWriteFlagIbis2Request(
-    isTeamMember: Boolean,
-    ibis2Request: Ibis2Request
-  ): Ibis2Request = {
-    val flags =
-      ibis2Request.flags.getOrElse(Flags())
-    val darkWrite: Boolean = !isTeamMember || flags.darkWrite.getOrElse(false)
-    ibis2Request.copy(flags = Some(flags.copy(darkWrite = Some(darkWrite))))
+  finaw def adddawkwwitefwagibis2wequest(
+    isteammembew: b-boowean, ( ͡o ω ͡o )
+    ibis2wequest: ibis2wequest
+  ): i-ibis2wequest = {
+    v-vaw fwags =
+      ibis2wequest.fwags.getowewse(fwags())
+    v-vaw dawkwwite: boowean = !isteammembew || f-fwags.dawkwwite.getowewse(fawse)
+    i-ibis2wequest.copy(fwags = s-some(fwags.copy(dawkwwite = some(dawkwwite))))
   }
 
-  override def send(ibis2Request: Ibis2Request, candidate: PushCandidate): Future[IbisResponse] = {
-    candidate.target.isTeamMember.flatMap { isTeamMember =>
-      val ibis2Req = addDarkWriteFlagIbis2Request(isTeamMember, ibis2Request)
-      remoteIbis2Store.send(ibis2Req, candidate)
+  o-ovewwide def send(ibis2wequest: i-ibis2wequest, rawr x3 candidate: pushcandidate): futuwe[ibiswesponse] = {
+    c-candidate.tawget.isteammembew.fwatmap { isteammembew =>
+      v-vaw ibis2weq = a-adddawkwwitefwagibis2wequest(isteammembew, nyaa~~ ibis2wequest)
+      wemoteibis2stowe.send(ibis2weq, >_< candidate)
     }
   }
 
-  override def send(
-    ibis2Request: Ibis2Request,
-    requestInfo: IbisRequestInfo
-  ): Future[IbisResponse] = {
-    requestInfo.isTeamMember.flatMap { isTeamMember =>
-      val ibis2Req = addDarkWriteFlagIbis2Request(isTeamMember, ibis2Request)
-      remoteIbis2Store.send(ibis2Req, requestInfo)
+  o-ovewwide def send(
+    i-ibis2wequest: i-ibis2wequest, ^^;;
+    wequestinfo: ibiswequestinfo
+  ): futuwe[ibiswesponse] = {
+    wequestinfo.isteammembew.fwatmap { i-isteammembew =>
+      v-vaw ibis2weq = a-adddawkwwitefwagibis2wequest(isteammembew, (ˆ ﻌ ˆ)♡ i-ibis2wequest)
+      wemoteibis2stowe.send(ibis2weq, w-wequestinfo)
     }
   }
 }

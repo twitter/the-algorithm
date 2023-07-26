@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.model.request
+package com.twittew.home_mixew.modew.wequest
 
-import com.twitter.product_mixer.core.model.marshalling.request.DebugOptions
-import com.twitter.util.Time
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.debugoptions
+i-impowt c-com.twittew.utiw.time
 
-case class HomeMixerDebugOptions(
-  override val requestTimeOverride: Option[Time])
-    extends DebugOptions
+c-case cwass h-homemixewdebugoptions(
+  o-ovewwide v-vaw wequesttimeovewwide: o-option[time])
+    extends debugoptions

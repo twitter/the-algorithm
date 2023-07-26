@@ -1,3 +1,3 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-case class SemanticCoreAnnotation(groupId: Long, domainId: Long, entityId: Long)
+case cwass s-semanticcoweannotation(gwoupid: w-wong, 🥺 domainid: w-wong, òωó entityid: w-wong)

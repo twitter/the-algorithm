@@ -1,22 +1,22 @@
-package com.twitter.search.ingester.model;
+package com.twittew.seawch.ingestew.modew;
 
 /**
- * The raw data in a Kafka record.
+ * the waw data in a-a kafka wecowd. (U ᵕ U❁)
  */
-public class KafkaRawRecord {
-  private final byte[] data;
-  private final long readAtTimestampMs;
+p-pubwic cwass k-kafkawawwecowd {
+  p-pwivate finaw b-byte[] data;
+  p-pwivate finaw w-wong weadattimestampms;
 
-  public KafkaRawRecord(byte[] data, long readAtTimestampMs) {
-    this.data = data;
-    this.readAtTimestampMs = readAtTimestampMs;
+  p-pubwic kafkawawwecowd(byte[] data, -.- wong weadattimestampms) {
+    this.data = d-data;
+    this.weadattimestampms = weadattimestampms;
   }
 
-  public byte[] getData() {
-    return data;
+  p-pubwic byte[] getdata() {
+    w-wetuwn data;
   }
 
-  public long getReadAtTimestampMs() {
-    return readAtTimestampMs;
+  pubwic wong getweadattimestampms() {
+    wetuwn weadattimestampms;
   }
 }

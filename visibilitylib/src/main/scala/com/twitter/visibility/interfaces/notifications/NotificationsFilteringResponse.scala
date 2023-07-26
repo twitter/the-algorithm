@@ -1,13 +1,13 @@
-package com.twitter.visibility.interfaces.notifications
+package com.twittew.visibiwity.intewfaces.notifications
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.rules.Action
-import scala.collection.immutable.Set
+impowt com.twittew.visibiwity.featuwes.featuwe
+i-impowt com.twittew.visibiwity.wuwes.action
+i-impowt scawa.cowwection.immutabwe.set
 
-sealed trait NotificationsFilteringResponse
+s-seawed t-twait nyotificationsfiwtewingwesponse
 
-case object Allow extends NotificationsFilteringResponse
+c-case object a-awwow extends n-nyotificationsfiwtewingwesponse
 
-case class Filtered(action: Action) extends NotificationsFilteringResponse
+c-case cwass fiwtewed(action: action) extends nyotificationsfiwtewingwesponse
 
-case class Failed(features: Set[Feature[_]]) extends NotificationsFilteringResponse
+case cwass faiwed(featuwes: set[featuwe[_]]) e-extends nyotificationsfiwtewingwesponse

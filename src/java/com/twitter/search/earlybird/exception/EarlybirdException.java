@@ -1,18 +1,18 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
 /**
- * General Earlybird exception class to use instead of the Java exception class.
+ * genewaw eawwybiwd e-exception c-cwass to use i-instead of the java e-exception cwass. (⑅˘꒳˘)
  */
-public class EarlybirdException extends Exception {
-  public EarlybirdException(Throwable cause) {
-    super(cause);
+p-pubwic c-cwass eawwybiwdexception e-extends e-exception {
+  pubwic eawwybiwdexception(thwowabwe cause) {
+    supew(cause);
   }
 
-  public EarlybirdException(String message) {
-    super(message);
+  pubwic eawwybiwdexception(stwing m-message) {
+    supew(message);
   }
 
-  public EarlybirdException(String message, Throwable cause) {
-    super(message, cause);
+  pubwic e-eawwybiwdexception(stwing message, (U ᵕ U❁) t-thwowabwe cause) {
+    supew(message, -.- cause);
   }
 }

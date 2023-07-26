@@ -1,23 +1,23 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-import com.twitter.spam.rtf.{thriftscala => s}
+impowt com.twittew.spam.wtf.{thwiftscawa => s-s}
 
-case class TweetModelMetadata(
-  version: Option[Int] = None,
-  calibratedLanguage: Option[String] = None)
+case cwass t-tweetmodewmetadata(
+  v-vewsion: o-option[int] = nyone, ^^;;
+  c-cawibwatedwanguage: o-option[stwing] = n-nyone)
 
-object TweetModelMetadata {
+o-object tweetmodewmetadata {
 
-  def fromThrift(metadata: s.ModelMetadata): Option[TweetModelMetadata] = {
+  def fwomthwift(metadata: s.modewmetadata): option[tweetmodewmetadata] = {
     metadata match {
-      case s.ModelMetadata.ModelMetadataV1(s.ModelMetadataV1(version, calibratedLanguage)) =>
-        Some(TweetModelMetadata(version, calibratedLanguage))
-      case _ => None
+      c-case s.modewmetadata.modewmetadatav1(s.modewmetadatav1(vewsion, >_< cawibwatedwanguage)) =>
+        some(tweetmodewmetadata(vewsion, mya c-cawibwatedwanguage))
+      case _ => nyone
     }
   }
 
-  def toThrift(metadata: TweetModelMetadata): s.ModelMetadata = {
-    s.ModelMetadata.ModelMetadataV1(
-      s.ModelMetadataV1(metadata.version, metadata.calibratedLanguage))
+  d-def tothwift(metadata: tweetmodewmetadata): s.modewmetadata = {
+    s.modewmetadata.modewmetadatav1(
+      s-s.modewmetadatav1(metadata.vewsion, mya metadata.cawibwatedwanguage))
   }
 }

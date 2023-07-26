@@ -1,385 +1,385 @@
-package com.twitter.product_mixer.core.pipeline.product
+package com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.transport.Transport
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.gate.DenyLoggedOutUsersGate
-import com.twitter.product_mixer.core.gate.ParamGate
-import com.twitter.product_mixer.core.gate.ParamGate.EnabledGateSuffix
-import com.twitter.product_mixer.core.gate.ParamGate.SupportedClientGateSuffix
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.InvalidStepStateException
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineBuilderFactory
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineConfig
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineBuilderFactory
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineConfig
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineResult
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorStatus
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.StoppedGateException
-import com.twitter.product_mixer.core.service.pipeline_execution_logger.PipelineExecutionLogger
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutor
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutorRequest
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutorResult
-import com.twitter.product_mixer.core.service.pipeline_selector_executor.PipelineSelectorExecutor
-import com.twitter.product_mixer.core.service.pipeline_selector_executor.PipelineSelectorExecutorResult
-import com.twitter.product_mixer.core.service.quality_factor_executor.QualityFactorExecutorResult
-import com.twitter.stitch.Arrow
-import com.twitter.stringcenter.client.StringCenterRequestContext
-import com.twitter.stringcenter.client.stitch.StringCenterRequestContextLetter
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.logging.Logging
-import org.slf4j.MDC
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.twacing.twace
+i-impowt com.twittew.finagwe.twanspowt.twanspowt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy.accesspowicy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt com.twittew.pwoduct_mixew.cowe.gate.denywoggedoutusewsgate
+impowt com.twittew.pwoduct_mixew.cowe.gate.pawamgate
+impowt com.twittew.pwoduct_mixew.cowe.gate.pawamgate.enabwedgatesuffix
+i-impowt com.twittew.pwoduct_mixew.cowe.gate.pawamgate.suppowtedcwientgatesuffix
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.component
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiewstack
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductpipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.invawidstepstateexception
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinebuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.mixew.mixewpipewinebuiwdewfactowy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.mixew.mixewpipewineconfig
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.mixew.mixewpipewinewesuwt
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwecwassifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pwoductdisabwed
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.wecommendation.wecommendationpipewinebuiwdewfactowy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.wecommendation.wecommendationpipewineconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.wecommendation.wecommendationpipewinewesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.quawity_factow.hasquawityfactowstatus
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowobsewvew
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowstatus
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutow
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.stoppedgateexception
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_execution_woggew.pipewineexecutionwoggew
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_executow.pipewineexecutow
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_executow.pipewineexecutowwequest
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_executow.pipewineexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_sewectow_executow.pipewinesewectowexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_sewectow_executow.pipewinesewectowexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.quawity_factow_executow.quawityfactowexecutowwesuwt
+i-impowt com.twittew.stitch.awwow
+impowt com.twittew.stwingcentew.cwient.stwingcentewwequestcontext
+i-impowt c-com.twittew.stwingcentew.cwient.stitch.stwingcentewwequestcontextwettew
+impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.utiw.wogging.wogging
+impowt o-owg.swf4j.mdc
 
-class ProductPipelineBuilder[TRequest <: Request, Query <: PipelineQuery, Response](
-  gateExecutor: GateExecutor,
-  pipelineSelectorExecutor: PipelineSelectorExecutor,
-  pipelineExecutor: PipelineExecutor,
-  mixerPipelineBuilderFactory: MixerPipelineBuilderFactory,
-  recommendationPipelineBuilderFactory: RecommendationPipelineBuilderFactory,
-  override val statsReceiver: StatsReceiver,
-  pipelineExecutionLogger: PipelineExecutionLogger)
-    extends PipelineBuilder[ProductPipelineRequest[TRequest]]
-    with Logging { builder =>
+cwass pwoductpipewinebuiwdew[twequest <: wequest, OwO q-quewy <: pipewinequewy, wesponse](
+  g-gateexecutow: gateexecutow, (˘ω˘)
+  p-pipewinesewectowexecutow: p-pipewinesewectowexecutow, òωó
+  pipewineexecutow: pipewineexecutow, ( ͡o ω ͡o )
+  mixewpipewinebuiwdewfactowy: mixewpipewinebuiwdewfactowy, UwU
+  wecommendationpipewinebuiwdewfactowy: wecommendationpipewinebuiwdewfactowy, /(^•ω•^)
+  ovewwide vaw statsweceivew: s-statsweceivew, (ꈍᴗꈍ)
+  p-pipewineexecutionwoggew: pipewineexecutionwoggew)
+    e-extends pipewinebuiwdew[pwoductpipewinewequest[twequest]]
+    w-with wogging { buiwdew =>
 
-  override type UnderlyingResultType = Response
-  override type PipelineResultType = ProductPipelineResult[Response]
+  o-ovewwide type undewwyingwesuwttype = wesponse
+  ovewwide type pipewinewesuwttype = p-pwoductpipewinewesuwt[wesponse]
 
   /**
-   * Query Transformer Step is implemented inline instead of using an executor.
+   * quewy twansfowmew step is impwemented inwine instead o-of using an executow. 😳
    *
-   * It's a simple, synchronous step that executes the query transformer.
+   * it's a simpwe, mya s-synchwonous step t-that exekawaii~s t-the quewy twansfowmew. mya
    *
-   * Since the output of the transformer is used in multiple other steps (Gate, Pipeline Execution),
-   * we've promoted the transformer to a step so that it's outputs can be reused easily.
+   * since the output o-of the twansfowmew i-is used in m-muwtipwe othew s-steps (gate, /(^•ω•^) pipewine execution), ^^;;
+   * we've pwomoted t-the twansfowmew t-to a step s-so that it's outputs c-can be weused e-easiwy. 🥺
    */
-  def pipelineQueryTransformerStep(
-    queryTransformer: (TRequest, Params) => Query,
-    context: Executor.Context
-  ): Step[ProductPipelineRequest[TRequest], Query] =
-    new Step[ProductPipelineRequest[TRequest], Query] {
+  def pipewinequewytwansfowmewstep(
+    quewytwansfowmew: (twequest, ^^ pawams) => q-quewy, ^•ﻌ•^
+    context: executow.context
+  ): step[pwoductpipewinewequest[twequest], /(^•ω•^) quewy] =
+    nyew step[pwoductpipewinewequest[twequest], ^^ quewy] {
 
-      override def identifier: PipelineStepIdentifier =
-        ProductPipelineConfig.pipelineQueryTransformerStep
+      o-ovewwide def identifiew: pipewinestepidentifiew =
+        pwoductpipewineconfig.pipewinequewytwansfowmewstep
 
-      override def executorArrow: Arrow[ProductPipelineRequest[TRequest], Query] = {
-        wrapWithErrorHandling(context, identifier)(
-          Arrow.map[ProductPipelineRequest[TRequest], Query] {
-            case ProductPipelineRequest(request, params) => queryTransformer(request, params)
+      o-ovewwide def executowawwow: a-awwow[pwoductpipewinewequest[twequest], 🥺 q-quewy] = {
+        wwapwithewwowhandwing(context, (U ᵕ U❁) i-identifiew)(
+          awwow.map[pwoductpipewinewequest[twequest], 😳😳😳 q-quewy] {
+            c-case pwoductpipewinewequest(wequest, nyaa~~ pawams) => quewytwansfowmew(wequest, (˘ω˘) pawams)
           }
         )
       }
 
-      override def inputAdaptor(
-        query: ProductPipelineRequest[TRequest],
-        previousResult: ProductPipelineResult[Response]
-      ): ProductPipelineRequest[TRequest] = query
+      ovewwide def inputadaptow(
+        q-quewy: pwoductpipewinewequest[twequest], >_<
+        pweviouswesuwt: p-pwoductpipewinewesuwt[wesponse]
+      ): pwoductpipewinewequest[twequest] = q-quewy
 
-      override def resultUpdater(
-        previousPipelineResult: ProductPipelineResult[Response],
-        executorResult: Query
-      ): ProductPipelineResult[Response] =
-        previousPipelineResult.copy(transformedQuery = Some(executorResult))
+      o-ovewwide def wesuwtupdatew(
+        pweviouspipewinewesuwt: pwoductpipewinewesuwt[wesponse], XD
+        e-executowwesuwt: q-quewy
+      ): pwoductpipewinewesuwt[wesponse] =
+        p-pweviouspipewinewesuwt.copy(twansfowmedquewy = some(executowwesuwt))
     }
 
-  def qualityFactorStep(
-    qualityFactorStatus: QualityFactorStatus
-  ): Step[Query, QualityFactorExecutorResult] = {
-    new Step[Query, QualityFactorExecutorResult] {
-      override def identifier: PipelineStepIdentifier = ProductPipelineConfig.qualityFactorStep
+  d-def quawityfactowstep(
+    quawityfactowstatus: quawityfactowstatus
+  ): step[quewy, rawr x3 q-quawityfactowexecutowwesuwt] = {
+    n-nyew step[quewy, ( ͡o ω ͡o ) q-quawityfactowexecutowwesuwt] {
+      ovewwide d-def identifiew: p-pipewinestepidentifiew = pwoductpipewineconfig.quawityfactowstep
 
-      override def executorArrow: Arrow[Query, QualityFactorExecutorResult] =
-        Arrow
-          .map[Query, QualityFactorExecutorResult] { _ =>
-            QualityFactorExecutorResult(
-              pipelineQualityFactors =
-                qualityFactorStatus.qualityFactorByPipeline.mapValues(_.currentValue)
+      ovewwide d-def executowawwow: awwow[quewy, :3 quawityfactowexecutowwesuwt] =
+        awwow
+          .map[quewy, mya quawityfactowexecutowwesuwt] { _ =>
+            quawityfactowexecutowwesuwt(
+              p-pipewinequawityfactows =
+                quawityfactowstatus.quawityfactowbypipewine.mapvawues(_.cuwwentvawue)
             )
           }
 
-      override def inputAdaptor(
-        query: ProductPipelineRequest[TRequest],
-        previousResult: ProductPipelineResult[Response]
-      ): Query = previousResult.transformedQuery
-        .getOrElse {
-          throw InvalidStepStateException(identifier, "TransformedQuery")
-        }.asInstanceOf[Query]
+      o-ovewwide def inputadaptow(
+        quewy: p-pwoductpipewinewequest[twequest], σωσ
+        p-pweviouswesuwt: pwoductpipewinewesuwt[wesponse]
+      ): quewy = pweviouswesuwt.twansfowmedquewy
+        .getowewse {
+          thwow i-invawidstepstateexception(identifiew, (ꈍᴗꈍ) "twansfowmedquewy")
+        }.asinstanceof[quewy]
 
-      override def resultUpdater(
-        previousPipelineResult: ProductPipelineResult[Response],
-        executorResult: QualityFactorExecutorResult
-      ): ProductPipelineResult[Response] = {
-        previousPipelineResult.copy(
-          transformedQuery = previousPipelineResult.transformedQuery.map {
-            case queryWithQualityFactor: HasQualityFactorStatus =>
-              queryWithQualityFactor
-                .withQualityFactorStatus(qualityFactorStatus).asInstanceOf[Query]
-            case query =>
-              query
-          },
-          qualityFactorResult = Some(executorResult)
+      ovewwide def wesuwtupdatew(
+        pweviouspipewinewesuwt: pwoductpipewinewesuwt[wesponse],
+        executowwesuwt: q-quawityfactowexecutowwesuwt
+      ): pwoductpipewinewesuwt[wesponse] = {
+        pweviouspipewinewesuwt.copy(
+          t-twansfowmedquewy = pweviouspipewinewesuwt.twansfowmedquewy.map {
+            c-case quewywithquawityfactow: hasquawityfactowstatus =>
+              quewywithquawityfactow
+                .withquawityfactowstatus(quawityfactowstatus).asinstanceof[quewy]
+            case quewy =>
+              quewy
+          }, OwO
+          q-quawityfactowwesuwt = s-some(executowwesuwt)
         )
       }
     }
   }
 
-  def gatesStep(
-    gates: Seq[Gate[Query]],
-    context: Executor.Context
-  ): Step[Query, GateExecutorResult] = new Step[Query, GateExecutorResult] {
-    override def identifier: PipelineStepIdentifier = ProductPipelineConfig.gatesStep
+  def gatesstep(
+    gates: seq[gate[quewy]],
+    c-context: executow.context
+  ): step[quewy, o.O g-gateexecutowwesuwt] = nyew step[quewy, 😳😳😳 gateexecutowwesuwt] {
+    ovewwide def identifiew: p-pipewinestepidentifiew = pwoductpipewineconfig.gatesstep
 
-    override def executorArrow: Arrow[Query, GateExecutorResult] = {
-      gateExecutor.arrow(gates, context)
+    o-ovewwide d-def executowawwow: awwow[quewy, /(^•ω•^) g-gateexecutowwesuwt] = {
+      gateexecutow.awwow(gates, OwO c-context)
     }
 
-    override def inputAdaptor(
-      query: ProductPipelineRequest[TRequest],
-      previousResult: ProductPipelineResult[Response]
-    ): Query = previousResult.transformedQuery
-      .getOrElse {
-        throw InvalidStepStateException(identifier, "TransformedQuery")
-      }.asInstanceOf[Query]
+    o-ovewwide d-def inputadaptow(
+      quewy: pwoductpipewinewequest[twequest], ^^
+      p-pweviouswesuwt: p-pwoductpipewinewesuwt[wesponse]
+    ): quewy = pweviouswesuwt.twansfowmedquewy
+      .getowewse {
+        thwow invawidstepstateexception(identifiew, (///ˬ///✿) "twansfowmedquewy")
+      }.asinstanceof[quewy]
 
-    override def resultUpdater(
-      previousPipelineResult: ProductPipelineResult[Response],
-      executorResult: GateExecutorResult
-    ): ProductPipelineResult[Response] =
-      previousPipelineResult.copy(gateResult = Some(executorResult))
+    o-ovewwide d-def wesuwtupdatew(
+      p-pweviouspipewinewesuwt: pwoductpipewinewesuwt[wesponse], (///ˬ///✿)
+      executowwesuwt: g-gateexecutowwesuwt
+    ): pwoductpipewinewesuwt[wesponse] =
+      p-pweviouspipewinewesuwt.copy(gatewesuwt = s-some(executowwesuwt))
   }
 
-  def pipelineSelectorStep(
-    pipelineByIdentifer: Map[ComponentIdentifier, Pipeline[Query, Response]],
-    pipelineSelector: Query => ComponentIdentifier,
-    context: Executor.Context
-  ): Step[Query, PipelineSelectorExecutorResult] =
-    new Step[Query, PipelineSelectorExecutorResult] {
-      override def identifier: PipelineStepIdentifier = ProductPipelineConfig.pipelineSelectorStep
+  def pipewinesewectowstep(
+    pipewinebyidentifew: map[componentidentifiew, (///ˬ///✿) p-pipewine[quewy, w-wesponse]], ʘwʘ
+    p-pipewinesewectow: q-quewy => componentidentifiew, ^•ﻌ•^
+    context: executow.context
+  ): s-step[quewy, OwO pipewinesewectowexecutowwesuwt] =
+    nyew step[quewy, (U ﹏ U) pipewinesewectowexecutowwesuwt] {
+      ovewwide def identifiew: pipewinestepidentifiew = p-pwoductpipewineconfig.pipewinesewectowstep
 
-      override def executorArrow: Arrow[
-        Query,
-        PipelineSelectorExecutorResult
-      ] = pipelineSelectorExecutor.arrow(pipelineByIdentifer, pipelineSelector, context)
+      ovewwide def executowawwow: a-awwow[
+        quewy,
+        p-pipewinesewectowexecutowwesuwt
+      ] = pipewinesewectowexecutow.awwow(pipewinebyidentifew, (ˆ ﻌ ˆ)♡ p-pipewinesewectow, (⑅˘꒳˘) context)
 
-      override def inputAdaptor(
-        query: ProductPipelineRequest[TRequest],
-        previousResult: ProductPipelineResult[Response]
-      ): Query =
-        previousResult.transformedQuery
-          .getOrElse(throw InvalidStepStateException(identifier, "TransformedQuery")).asInstanceOf[
-            Query]
+      o-ovewwide d-def inputadaptow(
+        q-quewy: p-pwoductpipewinewequest[twequest], (U ﹏ U)
+        p-pweviouswesuwt: pwoductpipewinewesuwt[wesponse]
+      ): quewy =
+        pweviouswesuwt.twansfowmedquewy
+          .getowewse(thwow invawidstepstateexception(identifiew, o.O "twansfowmedquewy")).asinstanceof[
+            quewy]
 
-      override def resultUpdater(
-        previousPipelineResult: ProductPipelineResult[Response],
-        executorResult: PipelineSelectorExecutorResult
-      ): ProductPipelineResult[Response] =
-        previousPipelineResult.copy(pipelineSelectorResult = Some(executorResult))
+      ovewwide def w-wesuwtupdatew(
+        p-pweviouspipewinewesuwt: p-pwoductpipewinewesuwt[wesponse], mya
+        executowwesuwt: p-pipewinesewectowexecutowwesuwt
+      ): pwoductpipewinewesuwt[wesponse] =
+        pweviouspipewinewesuwt.copy(pipewinesewectowwesuwt = some(executowwesuwt))
     }
 
-  def pipelineExecutionStep(
-    pipelineByIdentifier: Map[ComponentIdentifier, Pipeline[Query, Response]],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
-    context: Executor.Context
-  ): Step[PipelineExecutorRequest[Query], PipelineExecutorResult[Response]] =
-    new Step[PipelineExecutorRequest[Query], PipelineExecutorResult[Response]] {
-      override def identifier: PipelineStepIdentifier = ProductPipelineConfig.pipelineExecutionStep
+  def p-pipewineexecutionstep(
+    p-pipewinebyidentifiew: map[componentidentifiew, XD p-pipewine[quewy, òωó wesponse]], (˘ω˘)
+    quawityfactowobsewvewbypipewine: m-map[componentidentifiew, :3 q-quawityfactowobsewvew], OwO
+    context: executow.context
+  ): s-step[pipewineexecutowwequest[quewy], mya p-pipewineexecutowwesuwt[wesponse]] =
+    nyew step[pipewineexecutowwequest[quewy], (˘ω˘) pipewineexecutowwesuwt[wesponse]] {
+      ovewwide def identifiew: pipewinestepidentifiew = p-pwoductpipewineconfig.pipewineexecutionstep
 
-      override def executorArrow: Arrow[
-        PipelineExecutorRequest[Query],
-        PipelineExecutorResult[Response]
+      o-ovewwide d-def executowawwow: a-awwow[
+        p-pipewineexecutowwequest[quewy], o.O
+        pipewineexecutowwesuwt[wesponse]
       ] = {
-        pipelineExecutor.arrow(pipelineByIdentifier, qualityFactorObserverByPipeline, context)
+        p-pipewineexecutow.awwow(pipewinebyidentifiew, (✿oωo) q-quawityfactowobsewvewbypipewine, (ˆ ﻌ ˆ)♡ context)
       }
 
-      override def inputAdaptor(
-        request: ProductPipelineRequest[TRequest],
-        previousResult: ProductPipelineResult[Response]
-      ): PipelineExecutorRequest[Query] = {
-        val query = previousResult.transformedQuery
-          .getOrElse {
-            throw InvalidStepStateException(identifier, "TransformedQuery")
-          }.asInstanceOf[Query]
+      o-ovewwide def i-inputadaptow(
+        wequest: p-pwoductpipewinewequest[twequest], ^^;;
+        pweviouswesuwt: pwoductpipewinewesuwt[wesponse]
+      ): p-pipewineexecutowwequest[quewy] = {
+        vaw quewy = pweviouswesuwt.twansfowmedquewy
+          .getowewse {
+            thwow i-invawidstepstateexception(identifiew, OwO "twansfowmedquewy")
+          }.asinstanceof[quewy]
 
-        val pipelineIdentifier = previousResult.pipelineSelectorResult
-          .map(_.pipelineIdentifier).getOrElse {
-            throw InvalidStepStateException(identifier, "PipelineSelectorResult")
+        v-vaw pipewineidentifiew = pweviouswesuwt.pipewinesewectowwesuwt
+          .map(_.pipewineidentifiew).getowewse {
+            t-thwow invawidstepstateexception(identifiew, 🥺 "pipewinesewectowwesuwt")
           }
 
-        PipelineExecutorRequest(query, pipelineIdentifier)
+        pipewineexecutowwequest(quewy, mya pipewineidentifiew)
       }
 
-      override def resultUpdater(
-        previousPipelineResult: ProductPipelineResult[Response],
-        executorResult: PipelineExecutorResult[Response]
-      ): ProductPipelineResult[Response] = {
+      ovewwide def wesuwtupdatew(
+        p-pweviouspipewinewesuwt: p-pwoductpipewinewesuwt[wesponse],
+        e-executowwesuwt: pipewineexecutowwesuwt[wesponse]
+      ): pwoductpipewinewesuwt[wesponse] = {
 
-        val mixerPipelineResult = executorResult.pipelineResult match {
-          case mixerPipelineResult: MixerPipelineResult[Response] @unchecked =>
-            Some(mixerPipelineResult)
-          case _ =>
-            None
+        vaw m-mixewpipewinewesuwt = executowwesuwt.pipewinewesuwt match {
+          c-case mixewpipewinewesuwt: m-mixewpipewinewesuwt[wesponse] @unchecked =>
+            some(mixewpipewinewesuwt)
+          c-case _ =>
+            nyone
         }
 
-        val recommendationPipelineResult = executorResult.pipelineResult match {
-          case recommendationPipelineResult: RecommendationPipelineResult[
-                _,
-                Response
+        v-vaw w-wecommendationpipewinewesuwt = executowwesuwt.pipewinewesuwt match {
+          case wecommendationpipewinewesuwt: w-wecommendationpipewinewesuwt[
+                _, 😳
+                wesponse
               ] @unchecked =>
-            Some(recommendationPipelineResult)
-          case _ =>
-            None
+            some(wecommendationpipewinewesuwt)
+          c-case _ =>
+            n-nyone
         }
 
-        previousPipelineResult.copy(
-          mixerPipelineResult = mixerPipelineResult,
-          recommendationPipelineResult = recommendationPipelineResult,
-          traceId = Trace.idOption.map(_.traceId.toString()),
-          result = executorResult.pipelineResult.result
+        pweviouspipewinewesuwt.copy(
+          m-mixewpipewinewesuwt = mixewpipewinewesuwt, òωó
+          wecommendationpipewinewesuwt = w-wecommendationpipewinewesuwt, /(^•ω•^)
+          t-twaceid = twace.idoption.map(_.twaceid.tostwing()), -.-
+          w-wesuwt = executowwesuwt.pipewinewesuwt.wesuwt
         )
       }
     }
 
-  def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    config: ProductPipelineConfig[TRequest, Query, Response]
-  ): ProductPipeline[TRequest, Response] = {
+  def buiwd(
+    pawentcomponentidentifiewstack: componentidentifiewstack, òωó
+    config: pwoductpipewineconfig[twequest, /(^•ω•^) quewy, /(^•ω•^) wesponse]
+  ): pwoductpipewine[twequest, 😳 wesponse] = {
 
-    val pipelineIdentifier = config.identifier
+    vaw pipewineidentifiew = config.identifiew
 
-    val context = Executor.Context(
-      PipelineFailureClassifier(
-        config.failureClassifier.orElse(StoppedGateException.classifier(ProductDisabled))),
-      parentComponentIdentifierStack.push(pipelineIdentifier)
+    vaw context = executow.context(
+      p-pipewinefaiwuwecwassifiew(
+        c-config.faiwuwecwassifiew.owewse(stoppedgateexception.cwassifiew(pwoductdisabwed))), :3
+      pawentcomponentidentifiewstack.push(pipewineidentifiew)
     )
 
-    val denyLoggedOutUsersGate = if (config.denyLoggedOutUsers) {
-      Some(DenyLoggedOutUsersGate(pipelineIdentifier))
-    } else {
-      None
+    vaw denywoggedoutusewsgate = i-if (config.denywoggedoutusews) {
+      s-some(denywoggedoutusewsgate(pipewineidentifiew))
+    } e-ewse {
+      nyone
     }
-    val enabledGate: ParamGate =
-      ParamGate(pipelineIdentifier + EnabledGateSuffix, config.paramConfig.EnabledDeciderParam)
-    val supportedClientGate =
-      ParamGate(
-        pipelineIdentifier + SupportedClientGateSuffix,
-        config.paramConfig.SupportedClientParam)
+    v-vaw enabwedgate: pawamgate =
+      p-pawamgate(pipewineidentifiew + e-enabwedgatesuffix, (U ᵕ U❁) config.pawamconfig.enabweddecidewpawam)
+    v-vaw suppowtedcwientgate =
+      pawamgate(
+        p-pipewineidentifiew + s-suppowtedcwientgatesuffix, ʘwʘ
+        config.pawamconfig.suppowtedcwientpawam)
 
     /**
-     * Evaluate enabled decider gate first since if it's off, there is no reason to proceed
-     * Next evaluate supported client feature switch gate, followed by customer configured gates
+     * evawuate e-enabwed decidew g-gate fiwst since i-if it's off, o.O thewe i-is no weason t-to pwoceed
+     * n-nyext evawuate s-suppowted cwient f-featuwe switch g-gate, ʘwʘ fowwowed by customew configuwed g-gates
      */
-    val allGates =
-      denyLoggedOutUsersGate.toSeq ++: enabledGate +: supportedClientGate +: config.gates
+    v-vaw awwgates =
+      denywoggedoutusewsgate.toseq ++: e-enabwedgate +: suppowtedcwientgate +: config.gates
 
-    val childPipelines: Seq[Pipeline[Query, Response]] =
-      config.pipelines.map {
-        case mixerConfig: MixerPipelineConfig[Query, _, Response] =>
-          mixerConfig.build(context.componentStack, mixerPipelineBuilderFactory)
-        case recommendationConfig: RecommendationPipelineConfig[Query, _, _, Response] =>
-          recommendationConfig.build(context.componentStack, recommendationPipelineBuilderFactory)
-        case other =>
-          throw new IllegalArgumentException(
-            s"Product Pipelines only support Mixer and Recommendation pipelines, not $other")
+    v-vaw chiwdpipewines: seq[pipewine[quewy, ^^ wesponse]] =
+      c-config.pipewines.map {
+        case mixewconfig: m-mixewpipewineconfig[quewy, ^•ﻌ•^ _, w-wesponse] =>
+          m-mixewconfig.buiwd(context.componentstack, mya mixewpipewinebuiwdewfactowy)
+        c-case wecommendationconfig: wecommendationpipewineconfig[quewy, UwU _, >_< _, w-wesponse] =>
+          wecommendationconfig.buiwd(context.componentstack, /(^•ω•^) w-wecommendationpipewinebuiwdewfactowy)
+        case othew =>
+          t-thwow nyew iwwegawawgumentexception(
+            s"pwoduct pipewines onwy suppowt mixew a-and wecommendation pipewines, òωó n-nyot $othew")
       }
 
-    val pipelineByIdentifier: Map[ComponentIdentifier, Pipeline[Query, Response]] =
-      childPipelines.map { pipeline =>
-        (pipeline.identifier, pipeline)
-      }.toMap
+    v-vaw pipewinebyidentifiew: map[componentidentifiew, σωσ pipewine[quewy, ( ͡o ω ͡o ) w-wesponse]] =
+      chiwdpipewines.map { p-pipewine =>
+        (pipewine.identifiew, nyaa~~ p-pipewine)
+      }.tomap
 
-    val qualityFactorStatus: QualityFactorStatus =
-      QualityFactorStatus.build(config.qualityFactorConfigs)
+    v-vaw quawityfactowstatus: quawityfactowstatus =
+      quawityfactowstatus.buiwd(config.quawityfactowconfigs)
 
-    val qualityFactorObserverByPipeline = qualityFactorStatus.qualityFactorByPipeline.mapValues {
-      qualityFactor =>
-        qualityFactor.buildObserver()
+    v-vaw quawityfactowobsewvewbypipewine = q-quawityfactowstatus.quawityfactowbypipewine.mapvawues {
+      quawityfactow =>
+        q-quawityfactow.buiwdobsewvew()
     }
 
-    buildGaugesForQualityFactor(pipelineIdentifier, qualityFactorStatus, statsReceiver)
+    buiwdgaugesfowquawityfactow(pipewineidentifiew, :3 quawityfactowstatus, UwU s-statsweceivew)
 
     /**
-     * Initialize MDC with access logging with everything we have at request time. We can put
-     * more stuff into MDC later down the pipeline, but at risk of exceptions/errors preventing
-     * them from being added
+     * initiawize m-mdc with access w-wogging with e-evewything we have at wequest t-time. o.O we can put
+     * m-mowe stuff i-into mdc watew d-down the pipewine, (ˆ ﻌ ˆ)♡ but at wisk o-of exceptions/ewwows p-pweventing
+     * t-them fwom b-being added
      */
-    val mdcInitArrow =
-      Arrow.map[ProductPipelineRequest[TRequest], ProductPipelineRequest[TRequest]] { request =>
-        val serviceIdentifier = ServiceIdentifier.fromCertificate(Transport.peerCertificate)
-        MDC.put("product", config.product.identifier.name)
-        MDC.put("serviceIdentifier", ServiceIdentifier.asString(serviceIdentifier))
-        request
+    v-vaw mdcinitawwow =
+      a-awwow.map[pwoductpipewinewequest[twequest], ^^;; p-pwoductpipewinewequest[twequest]] { w-wequest =>
+        vaw sewviceidentifiew = sewviceidentifiew.fwomcewtificate(twanspowt.peewcewtificate)
+        m-mdc.put("pwoduct", ʘwʘ config.pwoduct.identifiew.name)
+        mdc.put("sewviceidentifiew", s-sewviceidentifiew.asstwing(sewviceidentifiew))
+        wequest
       }
 
-    val builtSteps = Seq(
-      pipelineQueryTransformerStep(config.pipelineQueryTransformer, context),
-      qualityFactorStep(qualityFactorStatus),
-      gatesStep(allGates, context),
-      pipelineSelectorStep(pipelineByIdentifier, config.pipelineSelector, context),
-      pipelineExecutionStep(pipelineByIdentifier, qualityFactorObserverByPipeline, context)
+    v-vaw buiwtsteps = s-seq(
+      p-pipewinequewytwansfowmewstep(config.pipewinequewytwansfowmew, σωσ context), ^^;;
+      quawityfactowstep(quawityfactowstatus), ʘwʘ
+      gatesstep(awwgates, c-context), ^^
+      p-pipewinesewectowstep(pipewinebyidentifiew, nyaa~~ config.pipewinesewectow, (///ˬ///✿) c-context), XD
+      pipewineexecutionstep(pipewinebyidentifiew, :3 quawityfactowobsewvewbypipewine, òωó context)
     )
 
-    val underlying: Arrow[ProductPipelineRequest[TRequest], ProductPipelineResult[Response]] =
-      buildCombinedArrowFromSteps(
-        steps = builtSteps,
-        context = context,
-        initialEmptyResult = ProductPipelineResult.empty,
-        stepsInOrderFromConfig = ProductPipelineConfig.stepsInOrder
+    v-vaw undewwying: a-awwow[pwoductpipewinewequest[twequest], ^^ pwoductpipewinewesuwt[wesponse]] =
+      b-buiwdcombinedawwowfwomsteps(
+        steps = b-buiwtsteps, ^•ﻌ•^
+        context = context, σωσ
+        initiawemptywesuwt = p-pwoductpipewinewesuwt.empty, (ˆ ﻌ ˆ)♡
+        s-stepsinowdewfwomconfig = p-pwoductpipewineconfig.stepsinowdew
       )
 
     /**
-     * Unlike other components and pipelines, [[ProductPipeline]] must be observed in the
-     * [[ProductPipelineBuilder]] directly because the resulting [[ProductPipeline.arrow]]
-     * is run directly without an executor so must contain all stats.
+     * u-unwike othew components and pipewines, nyaa~~ [[pwoductpipewine]] must b-be obsewved i-in the
+     * [[pwoductpipewinebuiwdew]] diwectwy because the wesuwting [[pwoductpipewine.awwow]]
+     * i-is wun diwectwy without an executow so m-must contain aww stats. ʘwʘ
      */
-    val observed =
-      wrapProductPipelineWithExecutorBookkeeping[
-        ProductPipelineRequest[TRequest],
-        ProductPipelineResult[Response]
-      ](context, pipelineIdentifier)(underlying)
+    v-vaw obsewved =
+      w-wwappwoductpipewinewithexecutowbookkeeping[
+        pwoductpipewinewequest[twequest], ^•ﻌ•^
+        p-pwoductpipewinewesuwt[wesponse]
+      ](context, rawr x3 p-pipewineidentifiew)(undewwying)
 
-    val finalArrow: Arrow[ProductPipelineRequest[TRequest], ProductPipelineResult[Response]] =
-      Arrow
-        .letWithArg[
-          ProductPipelineRequest[TRequest],
-          ProductPipelineResult[Response],
-          StringCenterRequestContext](StringCenterRequestContextLetter)(request =>
-          StringCenterRequestContext(
-            request.request.clientContext.languageCode,
-            request.request.clientContext.countryCode
+    vaw f-finawawwow: awwow[pwoductpipewinewequest[twequest], 🥺 pwoductpipewinewesuwt[wesponse]] =
+      a-awwow
+        .wetwithawg[
+          p-pwoductpipewinewequest[twequest], ʘwʘ
+          pwoductpipewinewesuwt[wesponse], (˘ω˘)
+          s-stwingcentewwequestcontext](stwingcentewwequestcontextwettew)(wequest =>
+          s-stwingcentewwequestcontext(
+            wequest.wequest.cwientcontext.wanguagecode, o.O
+            w-wequest.wequest.cwientcontext.countwycode
           ))(
-          mdcInitArrow
-            .andThen(observed)
-            .onSuccess(result => result.transformedQuery.map(pipelineExecutionLogger(_, result))))
+          mdcinitawwow
+            .andthen(obsewved)
+            .onsuccess(wesuwt => w-wesuwt.twansfowmedquewy.map(pipewineexecutionwoggew(_, σωσ w-wesuwt))))
 
-    val configFromBuilder = config
-    new ProductPipeline[TRequest, Response] {
-      override private[core] val config: ProductPipelineConfig[TRequest, _, Response] =
-        configFromBuilder
-      override val arrow: Arrow[ProductPipelineRequest[TRequest], ProductPipelineResult[Response]] =
-        finalArrow
-      override val identifier: ProductPipelineIdentifier = pipelineIdentifier
-      override val alerts: Seq[Alert] = config.alerts
-      override val debugAccessPolicies: Set[AccessPolicy] = config.debugAccessPolicies
-      override val children: Seq[Component] = allGates ++ childPipelines
+    vaw configfwombuiwdew = c-config
+    nyew pwoductpipewine[twequest, (ꈍᴗꈍ) wesponse] {
+      o-ovewwide p-pwivate[cowe] vaw c-config: pwoductpipewineconfig[twequest, (ˆ ﻌ ˆ)♡ _, wesponse] =
+        configfwombuiwdew
+      ovewwide vaw awwow: awwow[pwoductpipewinewequest[twequest], o.O p-pwoductpipewinewesuwt[wesponse]] =
+        finawawwow
+      o-ovewwide vaw identifiew: p-pwoductpipewineidentifiew = pipewineidentifiew
+      ovewwide vaw awewts: s-seq[awewt] = config.awewts
+      o-ovewwide vaw d-debugaccesspowicies: s-set[accesspowicy] = c-config.debugaccesspowicies
+      o-ovewwide vaw chiwdwen: seq[component] = awwgates ++ chiwdpipewines
     }
   }
 }

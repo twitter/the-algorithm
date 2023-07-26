@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.color
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow
 
-case class Color(
-  red: Short,
-  green: Short,
-  blue: Short,
-  opacity: Option[Short])
+case c-cwass cowow(
+  w-wed: showt,
+  gween: s-showt, òωó
+  bwue: s-showt, o.O
+  opacity: o-option[showt])

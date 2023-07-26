@@ -1,22 +1,22 @@
-package com.twitter.visibility.util
+package com.twittew.visibiwity.utiw
 
-import com.twitter.abdecider.ABDecider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.finagle.stats.StatsReceiver
+impowt com.twittew.abdecidew.abdecidew
+i-impowt c-com.twittew.featuweswitches.v2.featuweswitches
+i-impowt com.twittew.featuweswitches.v2.buiwdew.featuweswitchesbuiwdew
+i-impowt com.twittew.finagwe.stats.statsweceivew
 
-object FeatureSwitchUtil {
-  private val LibraryFeaturesConfigPath = "/features/visibility/main"
-  private val LimitedActionsFeaturesConfigPath = "/features/visibility-limited-actions/main"
+o-object featuweswitchutiw {
+  p-pwivate vaw wibwawyfeatuwesconfigpath = "/featuwes/visibiwity/main"
+  p-pwivate v-vaw wimitedactionsfeatuwesconfigpath = "/featuwes/visibiwity-wimited-actions/main"
 
-  def mkVisibilityLibraryFeatureSwitches(
-    abDecider: ABDecider,
-    statsReceiver: StatsReceiver
-  ): FeatureSwitches =
-    FeatureSwitchesBuilder
-      .createDefault(LibraryFeaturesConfigPath, abDecider, Some(statsReceiver)).build()
+  def mkvisibiwitywibwawyfeatuweswitches(
+    abdecidew: abdecidew, (⑅˘꒳˘)
+    statsweceivew: statsweceivew
+  ): featuweswitches =
+    f-featuweswitchesbuiwdew
+      .cweatedefauwt(wibwawyfeatuwesconfigpath, (U ᵕ U❁) abdecidew, -.- some(statsweceivew)).buiwd()
 
-  def mkLimitedActionsFeatureSwitches(statsReceiver: StatsReceiver): FeatureSwitches =
-    FeatureSwitchesBuilder
-      .createWithNoExperiments(LimitedActionsFeaturesConfigPath, Some(statsReceiver)).build()
+  d-def mkwimitedactionsfeatuweswitches(statsweceivew: statsweceivew): f-featuweswitches =
+    featuweswitchesbuiwdew
+      .cweatewithnoexpewiments(wimitedactionsfeatuwesconfigpath, ^^;; some(statsweceivew)).buiwd()
 }

@@ -1,18 +1,18 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
 
-object TimelineRange {
-  def fromThrift(range: thrift.TimelineRange): TimelineRange = {
-    range match {
-      case thrift.TimelineRange.TimeRange(r) => TimeRange.fromThrift(r)
-      case thrift.TimelineRange.TweetIdRange(r) => TweetIdRange.fromThrift(r)
-      case _ => throw new IllegalArgumentException(s"Unsupported type: $range")
+o-object timewinewange {
+  d-def f-fwomthwift(wange: t-thwift.timewinewange): t-timewinewange = {
+    w-wange match {
+      case thwift.timewinewange.timewange(w) => timewange.fwomthwift(w)
+      case thwift.timewinewange.tweetidwange(w) => t-tweetidwange.fwomthwift(w)
+      case _ => thwow nyew iwwegawawgumentexception(s"unsuppowted t-type: $wange")
     }
   }
 }
 
-trait TimelineRange {
-  def toTimelineRangeThrift: thrift.TimelineRange
-  def throwIfInvalid(): Unit
+twait timewinewange {
+  d-def totimewinewangethwift: thwift.timewinewange
+  def thwowifinvawid(): u-unit
 }

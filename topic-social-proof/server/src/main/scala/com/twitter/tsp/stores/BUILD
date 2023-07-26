@@ -1,32 +1,32 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], (ꈍᴗꈍ)
     tags = [
-        "bazel-compatible",
+        "bazew-compatibwe", ^•ﻌ•^
     ],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "content-recommender/thrift/src/main/thrift:thrift-scala",
-        "escherbird/src/thrift/com/twitter/escherbird/topicannotation:topicannotation-thrift-scala",
-        "frigate/frigate-common:util",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store/health",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store/interests",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store/strato",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/store/common",
-        "mediaservices/commons/src/main/thrift:thrift-scala",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/scala/com/twitter/simclusters_v2/score",
-        "src/scala/com/twitter/topic_recos/common",
-        "src/scala/com/twitter/topic_recos/stores",
-        "src/thrift/com/twitter/frigate:frigate-common-thrift-scala",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-        "src/thrift/com/twitter/spam/rtf:safety-level-scala",
-        "src/thrift/com/twitter/tweetypie:service-scala",
-        "src/thrift/com/twitter/tweetypie:tweet-scala",
-        "stitch/stitch-storehaus",
-        "stitch/stitch-tweetypie/src/main/scala",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "topic-social-proof/server/src/main/scala/com/twitter/tsp/utils",
-        "topic-social-proof/server/src/main/thrift:thrift-scala",
-        "topiclisting/topiclisting-core/src/main/scala/com/twitter/topiclisting",
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", OwO
+        "content-wecommendew/thwift/swc/main/thwift:thwift-scawa", 🥺
+        "eschewbiwd/swc/thwift/com/twittew/eschewbiwd/topicannotation:topicannotation-thwift-scawa", òωó
+        "fwigate/fwigate-common:utiw", o.O
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/stowe/heawth", (U ᵕ U❁)
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/stowe/intewests", (⑅˘꒳˘)
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/stowe/stwato", ( ͡o ω ͡o )
+        "hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/stowe/common", UwU
+        "mediasewvices/commons/swc/main/thwift:thwift-scawa", rawr x3
+        "swc/scawa/com/twittew/simcwustews_v2/common", rawr
+        "swc/scawa/com/twittew/simcwustews_v2/scowe", σωσ
+        "swc/scawa/com/twittew/topic_wecos/common",
+        "swc/scawa/com/twittew/topic_wecos/stowes", σωσ
+        "swc/thwift/com/twittew/fwigate:fwigate-common-thwift-scawa", >_<
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", :3
+        "swc/thwift/com/twittew/spam/wtf:safety-wevew-scawa", (U ﹏ U)
+        "swc/thwift/com/twittew/tweetypie:sewvice-scawa", -.-
+        "swc/thwift/com/twittew/tweetypie:tweet-scawa", (ˆ ﻌ ˆ)♡
+        "stitch/stitch-stowehaus", (⑅˘꒳˘)
+        "stitch/stitch-tweetypie/swc/main/scawa", (U ᵕ U❁)
+        "stwato/swc/main/scawa/com/twittew/stwato/cwient", -.-
+        "topic-sociaw-pwoof/sewvew/swc/main/scawa/com/twittew/tsp/utiws", ^^;;
+        "topic-sociaw-pwoof/sewvew/swc/main/thwift:thwift-scawa", >_<
+        "topicwisting/topicwisting-cowe/swc/main/scawa/com/twittew/topicwisting", mya
     ],
 )

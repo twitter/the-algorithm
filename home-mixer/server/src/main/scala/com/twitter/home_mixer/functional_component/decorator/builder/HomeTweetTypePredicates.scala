@@ -1,256 +1,256 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.buiwdew
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.timelinemixer.injection.model.candidate.SemanticCoreFeatures
-import com.twitter.tweetypie.{thriftscala => tpt}
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.home_mixew.modew.homefeatuwes._
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.basictopiccontextfunctionawitytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wecommendationtopiccontextfunctionawitytype
+i-impowt com.twittew.timewinemixew.injection.modew.candidate.semanticcowefeatuwes
+i-impowt com.twittew.tweetypie.{thwiftscawa => tpt}
 
-object HomeTweetTypePredicates {
+object hometweettypepwedicates {
 
   /**
-   * IMPORTANT: Please avoid logging tweet types that are tied to sensitive
-   * internal author information / labels (e.g. blink labels, abuse labels, or geo-location).
+   * impowtant: pwease avoid wogging tweet types t-that awe tied to sensitive
+   * intewnaw authow i-infowmation / wabews (e.g. bwink w-wabews, abuse wabews, (ꈍᴗꈍ) ow geo-wocation).
    */
-  private[this] val CandidatePredicates: Seq[(String, FeatureMap => Boolean)] = Seq(
-    ("with_candidate", _ => true),
-    ("retweet", _.getOrElse(IsRetweetFeature, false)),
-    ("reply", _.getOrElse(InReplyToTweetIdFeature, None).nonEmpty),
-    ("image", _.getOrElse(EarlybirdFeature, None).exists(_.hasImage)),
-    ("video", _.getOrElse(EarlybirdFeature, None).exists(_.hasVideo)),
-    ("link", _.getOrElse(EarlybirdFeature, None).exists(_.hasVisibleLink)),
-    ("quote", _.getOrElse(EarlybirdFeature, None).exists(_.hasQuote.contains(true))),
-    ("like_social_context", _.getOrElse(NonSelfFavoritedByUserIdsFeature, Seq.empty).nonEmpty),
-    ("protected", _.getOrElse(EarlybirdFeature, None).exists(_.isProtected)),
+  pwivate[this] vaw candidatepwedicates: s-seq[(stwing, /(^•ω•^) featuwemap => b-boowean)] = s-seq(
+    ("with_candidate", (⑅˘꒳˘) _ => twue), ( ͡o ω ͡o )
+    ("wetweet", òωó _.getowewse(iswetweetfeatuwe, (⑅˘꒳˘) fawse)),
+    ("wepwy", XD _.getowewse(inwepwytotweetidfeatuwe, -.- nyone).nonempty),
+    ("image", :3 _.getowewse(eawwybiwdfeatuwe, nyaa~~ none).exists(_.hasimage)), 😳
+    ("video", (⑅˘꒳˘) _.getowewse(eawwybiwdfeatuwe, nyaa~~ n-nyone).exists(_.hasvideo)), OwO
+    ("wink", _.getowewse(eawwybiwdfeatuwe, rawr x3 nyone).exists(_.hasvisibwewink)), XD
+    ("quote", σωσ _.getowewse(eawwybiwdfeatuwe, (U ᵕ U❁) nyone).exists(_.hasquote.contains(twue))), (U ﹏ U)
+    ("wike_sociaw_context", :3 _.getowewse(nonsewffavowitedbyusewidsfeatuwe, ( ͡o ω ͡o ) seq.empty).nonempty), σωσ
+    ("pwotected", >w< _.getowewse(eawwybiwdfeatuwe, 😳😳😳 nyone).exists(_.ispwotected)), OwO
     (
-      "has_exclusive_conversation_author_id",
-      _.getOrElse(ExclusiveConversationAuthorIdFeature, None).nonEmpty),
-    ("is_eligible_for_connect_boost", _ => false),
-    ("hashtag", _.getOrElse(EarlybirdFeature, None).exists(_.numHashtags > 0)),
-    ("has_scheduled_space", _.getOrElse(AudioSpaceMetaDataFeature, None).exists(_.isScheduled)),
-    ("has_recorded_space", _.getOrElse(AudioSpaceMetaDataFeature, None).exists(_.isRecorded)),
-    ("is_read_from_cache", _.getOrElse(IsReadFromCacheFeature, false)),
-    ("get_initial", _.getOrElse(GetInitialFeature, false)),
-    ("get_newer", _.getOrElse(GetNewerFeature, false)),
-    ("get_middle", _.getOrElse(GetMiddleFeature, false)),
-    ("get_older", _.getOrElse(GetOlderFeature, false)),
-    ("pull_to_refresh", _.getOrElse(PullToRefreshFeature, false)),
-    ("polling", _.getOrElse(PollingFeature, false)),
-    ("near_empty", _.getOrElse(ServedSizeFeature, None).exists(_ < 3)),
-    ("is_request_context_launch", _.getOrElse(IsLaunchRequestFeature, false)),
-    ("mutual_follow", _.getOrElse(EarlybirdFeature, None).exists(_.fromMutualFollow)),
+      "has_excwusive_convewsation_authow_id", 😳
+      _.getowewse(excwusiveconvewsationauthowidfeatuwe, n-nyone).nonempty), 😳😳😳
+    ("is_ewigibwe_fow_connect_boost", (˘ω˘) _ => fawse), ʘwʘ
+    ("hashtag", ( ͡o ω ͡o ) _.getowewse(eawwybiwdfeatuwe, o.O none).exists(_.numhashtags > 0)), >w<
+    ("has_scheduwed_space", 😳 _.getowewse(audiospacemetadatafeatuwe, 🥺 n-nyone).exists(_.isscheduwed)), rawr x3
+    ("has_wecowded_space", o.O _.getowewse(audiospacemetadatafeatuwe, rawr n-nyone).exists(_.iswecowded)), ʘwʘ
+    ("is_wead_fwom_cache", 😳😳😳 _.getowewse(isweadfwomcachefeatuwe, ^^;; f-fawse)), o.O
+    ("get_initiaw", (///ˬ///✿) _.getowewse(getinitiawfeatuwe, σωσ f-fawse)), nyaa~~
+    ("get_newew", ^^;; _.getowewse(getnewewfeatuwe, ^•ﻌ•^ fawse)),
+    ("get_middwe", _.getowewse(getmiddwefeatuwe, σωσ fawse)), -.-
+    ("get_owdew", ^^;; _.getowewse(getowdewfeatuwe, XD f-fawse)), 🥺
+    ("puww_to_wefwesh", òωó _.getowewse(puwwtowefweshfeatuwe, (ˆ ﻌ ˆ)♡ fawse)), -.-
+    ("powwing", :3 _.getowewse(powwingfeatuwe, fawse)), ʘwʘ
+    ("neaw_empty", 🥺 _.getowewse(sewvedsizefeatuwe, >_< n-nyone).exists(_ < 3)), ʘwʘ
+    ("is_wequest_context_waunch", (˘ω˘) _.getowewse(iswaunchwequestfeatuwe, (✿oωo) fawse)), (///ˬ///✿)
+    ("mutuaw_fowwow", rawr x3 _.getowewse(eawwybiwdfeatuwe, -.- nyone).exists(_.fwommutuawfowwow)), ^^
     (
-      "less_than_10_mins_since_lnpt",
-      _.getOrElse(LastNonPollingTimeFeature, None).exists(_.untilNow < 10.minutes)),
-    ("served_in_conversation_module", _.getOrElse(ServedInConversationModuleFeature, false)),
-    ("has_ticketed_space", _.getOrElse(AudioSpaceMetaDataFeature, None).exists(_.hasTickets)),
-    ("in_utis_top5", _.getOrElse(PositionFeature, None).exists(_ < 5)),
+      "wess_than_10_mins_since_wnpt", (⑅˘꒳˘)
+      _.getowewse(wastnonpowwingtimefeatuwe, nyaa~~ nyone).exists(_.untiwnow < 10.minutes)), /(^•ω•^)
+    ("sewved_in_convewsation_moduwe", (U ﹏ U) _.getowewse(sewvedinconvewsationmoduwefeatuwe, 😳😳😳 fawse)),
+    ("has_ticketed_space", >w< _.getowewse(audiospacemetadatafeatuwe, XD nyone).exists(_.hastickets)), o.O
+    ("in_utis_top5", _.getowewse(positionfeatuwe, mya n-nyone).exists(_ < 5)), 🥺
     (
-      "conversation_module_has_2_displayed_tweets",
-      _.getOrElse(ConversationModule2DisplayedTweetsFeature, false)),
-    ("empty_request", _.getOrElse(ServedSizeFeature, None).exists(_ == 0)),
-    ("served_size_less_than_50", _.getOrElse(ServedSizeFeature, None).exists(_ < 50)),
+      "convewsation_moduwe_has_2_dispwayed_tweets",
+      _.getowewse(convewsationmoduwe2dispwayedtweetsfeatuwe, ^^;; fawse)), :3
+    ("empty_wequest", (U ﹏ U) _.getowewse(sewvedsizefeatuwe, OwO nyone).exists(_ == 0)), 😳😳😳
+    ("sewved_size_wess_than_50", (ˆ ﻌ ˆ)♡ _.getowewse(sewvedsizefeatuwe, XD n-nyone).exists(_ < 50)), (ˆ ﻌ ˆ)♡
     (
-      "served_size_between_50_and_100",
-      _.getOrElse(ServedSizeFeature, None).exists(size => size >= 50 && size < 100)),
-    ("authored_by_contextual_user", _.getOrElse(AuthoredByContextualUserFeature, false)),
+      "sewved_size_between_50_and_100", ( ͡o ω ͡o )
+      _.getowewse(sewvedsizefeatuwe, n-nyone).exists(size => s-size >= 50 && size < 100)), rawr x3
+    ("authowed_by_contextuaw_usew", nyaa~~ _.getowewse(authowedbycontextuawusewfeatuwe, >_< fawse)),
     (
-      "is_self_thread_tweet",
-      _.getOrElse(ConversationFeature, None).exists(_.isSelfThreadTweet.contains(true))),
-    ("has_ancestors", _.getOrElse(AncestorsFeature, Seq.empty).nonEmpty),
-    ("full_scoring_succeeded", _.getOrElse(FullScoringSucceededFeature, false)),
-    ("served_size_less_than_20", _.getOrElse(ServedSizeFeature, None).exists(_ < 20)),
-    ("served_size_less_than_10", _.getOrElse(ServedSizeFeature, None).exists(_ < 10)),
-    ("served_size_less_than_5", _.getOrElse(ServedSizeFeature, None).exists(_ < 5)),
+      "is_sewf_thwead_tweet", ^^;;
+      _.getowewse(convewsationfeatuwe, (ˆ ﻌ ˆ)♡ nyone).exists(_.issewfthweadtweet.contains(twue))), ^^;;
+    ("has_ancestows", (⑅˘꒳˘) _.getowewse(ancestowsfeatuwe, rawr x3 seq.empty).nonempty), (///ˬ///✿)
+    ("fuww_scowing_succeeded", 🥺 _.getowewse(fuwwscowingsucceededfeatuwe, >_< f-fawse)),
+    ("sewved_size_wess_than_20", UwU _.getowewse(sewvedsizefeatuwe, >_< n-nyone).exists(_ < 20)), -.-
+    ("sewved_size_wess_than_10", mya _.getowewse(sewvedsizefeatuwe, >w< nyone).exists(_ < 10)), (U ﹏ U)
+    ("sewved_size_wess_than_5", 😳😳😳 _.getowewse(sewvedsizefeatuwe, o.O n-nyone).exists(_ < 5)), òωó
     (
-      "account_age_less_than_30_minutes",
-      _.getOrElse(AccountAgeFeature, None).exists(_.untilNow < 30.minutes)),
-    ("conversation_module_has_gap", _.getOrElse(ConversationModuleHasGapFeature, false)),
+      "account_age_wess_than_30_minutes", 😳😳😳
+      _.getowewse(accountagefeatuwe, σωσ n-nyone).exists(_.untiwnow < 30.minutes)), (⑅˘꒳˘)
+    ("convewsation_moduwe_has_gap", (///ˬ///✿) _.getowewse(convewsationmoduwehasgapfeatuwe, 🥺 fawse)),
     (
-      "directed_at_user_is_in_first_degree",
-      _.getOrElse(EarlybirdFeature, None).exists(_.directedAtUserIdIsInFirstDegree.contains(true))),
+      "diwected_at_usew_is_in_fiwst_degwee", OwO
+      _.getowewse(eawwybiwdfeatuwe, >w< n-nyone).exists(_.diwectedatusewidisinfiwstdegwee.contains(twue))), 🥺
     (
-      "has_semantic_core_annotation",
-      _.getOrElse(EarlybirdFeature, None).exists(_.semanticCoreAnnotations.nonEmpty)),
-    ("is_request_context_foreground", _.getOrElse(IsForegroundRequestFeature, false)),
+      "has_semantic_cowe_annotation", nyaa~~
+      _.getowewse(eawwybiwdfeatuwe, ^^ nyone).exists(_.semanticcoweannotations.nonempty)), >w<
+    ("is_wequest_context_fowegwound", OwO _.getowewse(isfowegwoundwequestfeatuwe, XD fawse)), ^^;;
     (
-      "account_age_less_than_1_day",
-      _.getOrElse(AccountAgeFeature, None).exists(_.untilNow < 1.day)),
+      "account_age_wess_than_1_day", 🥺
+      _.getowewse(accountagefeatuwe, XD n-nyone).exists(_.untiwnow < 1.day)), (U ᵕ U❁)
     (
-      "account_age_less_than_7_days",
-      _.getOrElse(AccountAgeFeature, None).exists(_.untilNow < 7.days)),
+      "account_age_wess_than_7_days", :3
+      _.getowewse(accountagefeatuwe, ( ͡o ω ͡o ) nyone).exists(_.untiwnow < 7.days)), òωó
     (
-      "part_of_utt",
-      _.getOrElse(EarlybirdFeature, None)
-        .exists(_.semanticCoreAnnotations.exists(_.exists(annotation =>
-          annotation.domainId == SemanticCoreFeatures.UnifiedTwitterTaxonomy)))),
+      "pawt_of_utt", σωσ
+      _.getowewse(eawwybiwdfeatuwe, (U ᵕ U❁) nyone)
+        .exists(_.semanticcoweannotations.exists(_.exists(annotation =>
+          a-annotation.domainid == semanticcowefeatuwes.unifiedtwittewtaxonomy)))), (✿oωo)
     (
-      "has_home_latest_request_past_week",
-      _.getOrElse(FollowingLastNonPollingTimeFeature, None).exists(_.untilNow < 7.days)),
-    ("is_utis_pos0", _.getOrElse(PositionFeature, None).exists(_ == 0)),
-    ("is_utis_pos1", _.getOrElse(PositionFeature, None).exists(_ == 1)),
-    ("is_utis_pos2", _.getOrElse(PositionFeature, None).exists(_ == 2)),
-    ("is_utis_pos3", _.getOrElse(PositionFeature, None).exists(_ == 3)),
-    ("is_utis_pos4", _.getOrElse(PositionFeature, None).exists(_ == 4)),
-    ("is_random_tweet", _.getOrElse(IsRandomTweetFeature, false)),
-    ("has_random_tweet_in_response", _.getOrElse(HasRandomTweetFeature, false)),
-    ("is_random_tweet_above_in_utis", _.getOrElse(IsRandomTweetAboveFeature, false)),
+      "has_home_watest_wequest_past_week", ^^
+      _.getowewse(fowwowingwastnonpowwingtimefeatuwe, ^•ﻌ•^ n-none).exists(_.untiwnow < 7.days)), XD
+    ("is_utis_pos0", :3 _.getowewse(positionfeatuwe, (ꈍᴗꈍ) nyone).exists(_ == 0)), :3
+    ("is_utis_pos1", _.getowewse(positionfeatuwe, (U ﹏ U) nyone).exists(_ == 1)), UwU
+    ("is_utis_pos2", 😳😳😳 _.getowewse(positionfeatuwe, XD n-nyone).exists(_ == 2)), o.O
+    ("is_utis_pos3", (⑅˘꒳˘) _.getowewse(positionfeatuwe, 😳😳😳 n-nyone).exists(_ == 3)), nyaa~~
+    ("is_utis_pos4", rawr _.getowewse(positionfeatuwe, -.- nyone).exists(_ == 4)), (✿oωo)
+    ("is_wandom_tweet", /(^•ω•^) _.getowewse(iswandomtweetfeatuwe, 🥺 fawse)),
+    ("has_wandom_tweet_in_wesponse", ʘwʘ _.getowewse(haswandomtweetfeatuwe, UwU fawse)),
+    ("is_wandom_tweet_above_in_utis", XD _.getowewse(iswandomtweetabovefeatuwe, (✿oωo) fawse)), :3
     (
-      "has_ancestor_authored_by_viewer",
+      "has_ancestow_authowed_by_viewew",
       candidate =>
         candidate
-          .getOrElse(AncestorsFeature, Seq.empty).exists(ancestor =>
-            candidate.getOrElse(ViewerIdFeature, 0L) == ancestor.userId)),
-    ("ancestor", _.getOrElse(IsAncestorCandidateFeature, false)),
+          .getowewse(ancestowsfeatuwe, (///ˬ///✿) s-seq.empty).exists(ancestow =>
+            c-candidate.getowewse(viewewidfeatuwe, nyaa~~ 0w) == ancestow.usewid)), >w<
+    ("ancestow", -.- _.getowewse(isancestowcandidatefeatuwe, (✿oωo) f-fawse)),
     (
-      "deep_reply",
+      "deep_wepwy", (˘ω˘)
       candidate =>
-        candidate.getOrElse(InReplyToTweetIdFeature, None).nonEmpty && candidate
-          .getOrElse(AncestorsFeature, Seq.empty).size > 2),
+        c-candidate.getowewse(inwepwytotweetidfeatuwe, rawr n-nyone).nonempty && candidate
+          .getowewse(ancestowsfeatuwe, OwO seq.empty).size > 2), ^•ﻌ•^
     (
-      "has_simcluster_embeddings",
-      _.getOrElse(
-        SimclustersTweetTopKClustersWithScoresFeature,
-        Map.empty[String, Double]).nonEmpty),
+      "has_simcwustew_embeddings", UwU
+      _.getowewse(
+        simcwustewstweettopkcwustewswithscowesfeatuwe,
+        map.empty[stwing, (˘ω˘) d-doubwe]).nonempty),
     (
-      "tweet_age_less_than_15_seconds",
-      _.getOrElse(OriginalTweetCreationTimeFromSnowflakeFeature, None)
-        .exists(_.untilNow <= 15.seconds)),
+      "tweet_age_wess_than_15_seconds", (///ˬ///✿)
+      _.getowewse(owiginawtweetcweationtimefwomsnowfwakefeatuwe, σωσ nyone)
+        .exists(_.untiwnow <= 15.seconds)), /(^•ω•^)
     (
-      "less_than_1_hour_since_lnpt",
-      _.getOrElse(LastNonPollingTimeFeature, None).exists(_.untilNow < 1.hour)),
-    ("has_gte_10_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 10))),
+      "wess_than_1_houw_since_wnpt", 😳
+      _.getowewse(wastnonpowwingtimefeatuwe, 😳 nyone).exists(_.untiwnow < 1.houw)), (⑅˘꒳˘)
+    ("has_gte_10_favs", 😳😳😳 _.getowewse(eawwybiwdfeatuwe, 😳 none).exists(_.favcountv2.exists(_ >= 10))), XD
     (
-      "device_language_matches_tweet_language",
+      "device_wanguage_matches_tweet_wanguage", mya
       candidate =>
-        candidate.getOrElse(TweetLanguageFeature, None) ==
-          candidate.getOrElse(DeviceLanguageFeature, None)),
+        candidate.getowewse(tweetwanguagefeatuwe, ^•ﻌ•^ n-nyone) ==
+          candidate.getowewse(devicewanguagefeatuwe, ʘwʘ n-nyone)), ( ͡o ω ͡o )
     (
-      "root_ancestor",
-      candidate =>
-        candidate.getOrElse(IsAncestorCandidateFeature, false) && candidate
-          .getOrElse(InReplyToTweetIdFeature, None).isEmpty),
-    ("question", _.getOrElse(EarlybirdFeature, None).exists(_.hasQuestion.contains(true))),
-    ("in_network", _.getOrElse(InNetworkFeature, true)),
+      "woot_ancestow", mya
+      c-candidate =>
+        c-candidate.getowewse(isancestowcandidatefeatuwe, o.O fawse) && c-candidate
+          .getowewse(inwepwytotweetidfeatuwe, (✿oωo) n-nyone).isempty), :3
+    ("question", 😳 _.getowewse(eawwybiwdfeatuwe, (U ﹏ U) n-nyone).exists(_.hasquestion.contains(twue))), mya
+    ("in_netwowk", (U ᵕ U❁) _.getowewse(innetwowkfeatuwe, :3 t-twue)), mya
     (
-      "has_political_annotation",
-      _.getOrElse(EarlybirdFeature, None).exists(
-        _.semanticCoreAnnotations.exists(
+      "has_powiticaw_annotation", OwO
+      _.getowewse(eawwybiwdfeatuwe, (ˆ ﻌ ˆ)♡ nyone).exists(
+        _.semanticcoweannotations.exists(
           _.exists(annotation =>
-            SemanticCoreFeatures.PoliticalDomains.contains(annotation.domainId) ||
-              (annotation.domainId == SemanticCoreFeatures.UnifiedTwitterTaxonomy &&
-                annotation.entityId == SemanticCoreFeatures.UttPoliticsEntityId))))),
+            semanticcowefeatuwes.powiticawdomains.contains(annotation.domainid) ||
+              (annotation.domainid == s-semanticcowefeatuwes.unifiedtwittewtaxonomy &&
+                a-annotation.entityid == s-semanticcowefeatuwes.uttpowiticsentityid))))),
     (
-      "is_dont_at_me_by_invitation",
-      _.getOrElse(EarlybirdFeature, None).exists(
-        _.conversationControl.exists(_.isInstanceOf[tpt.ConversationControl.ByInvitation]))),
+      "is_dont_at_me_by_invitation", ʘwʘ
+      _.getowewse(eawwybiwdfeatuwe, o.O n-nyone).exists(
+        _.convewsationcontwow.exists(_.isinstanceof[tpt.convewsationcontwow.byinvitation]))), UwU
     (
-      "is_dont_at_me_community",
-      _.getOrElse(EarlybirdFeature, None)
-        .exists(_.conversationControl.exists(_.isInstanceOf[tpt.ConversationControl.Community]))),
-    ("has_zero_score", _.getOrElse(ScoreFeature, None).exists(_ == 0.0)),
+      "is_dont_at_me_community", rawr x3
+      _.getowewse(eawwybiwdfeatuwe, 🥺 n-nyone)
+        .exists(_.convewsationcontwow.exists(_.isinstanceof[tpt.convewsationcontwow.community]))), :3
+    ("has_zewo_scowe", (ꈍᴗꈍ) _.getowewse(scowefeatuwe, 🥺 none).exists(_ == 0.0)), (✿oωo)
     (
-      "is_followed_topic_tweet",
-      _.getOrElse(TopicContextFunctionalityTypeFeature, None)
-        .exists(_ == BasicTopicContextFunctionalityType)),
+      "is_fowwowed_topic_tweet", (U ﹏ U)
+      _.getowewse(topiccontextfunctionawitytypefeatuwe, :3 nyone)
+        .exists(_ == basictopiccontextfunctionawitytype)),
     (
-      "is_recommended_topic_tweet",
-      _.getOrElse(TopicContextFunctionalityTypeFeature, None)
-        .exists(_ == RecommendationTopicContextFunctionalityType)),
-    ("has_gte_100_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 100))),
-    ("has_gte_1k_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 1000))),
+      "is_wecommended_topic_tweet", ^^;;
+      _.getowewse(topiccontextfunctionawitytypefeatuwe, rawr n-nyone)
+        .exists(_ == wecommendationtopiccontextfunctionawitytype)), 😳😳😳
+    ("has_gte_100_favs", (✿oωo) _.getowewse(eawwybiwdfeatuwe, OwO nyone).exists(_.favcountv2.exists(_ >= 100))), ʘwʘ
+    ("has_gte_1k_favs", (ˆ ﻌ ˆ)♡ _.getowewse(eawwybiwdfeatuwe, (U ﹏ U) none).exists(_.favcountv2.exists(_ >= 1000))), UwU
     (
-      "has_gte_10k_favs",
-      _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 10000))),
+      "has_gte_10k_favs", XD
+      _.getowewse(eawwybiwdfeatuwe, ʘwʘ nyone).exists(_.favcountv2.exists(_ >= 10000))), rawr x3
     (
       "has_gte_100k_favs",
-      _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 100000))),
-    ("has_audio_space", _.getOrElse(AudioSpaceMetaDataFeature, None).exists(_.hasSpace)),
-    ("has_live_audio_space", _.getOrElse(AudioSpaceMetaDataFeature, None).exists(_.isLive)),
+      _.getowewse(eawwybiwdfeatuwe, ^^;; nyone).exists(_.favcountv2.exists(_ >= 100000))), ʘwʘ
+    ("has_audio_space", (U ﹏ U) _.getowewse(audiospacemetadatafeatuwe, (˘ω˘) n-nyone).exists(_.hasspace)), (ꈍᴗꈍ)
+    ("has_wive_audio_space", _.getowewse(audiospacemetadatafeatuwe, /(^•ω•^) nyone).exists(_.iswive)), >_<
     (
-      "has_gte_10_retweets",
-      _.getOrElse(EarlybirdFeature, None).exists(_.retweetCountV2.exists(_ >= 10))),
+      "has_gte_10_wetweets", σωσ
+      _.getowewse(eawwybiwdfeatuwe, ^^;; nyone).exists(_.wetweetcountv2.exists(_ >= 10))), 😳
     (
-      "has_gte_100_retweets",
-      _.getOrElse(EarlybirdFeature, None).exists(_.retweetCountV2.exists(_ >= 100))),
+      "has_gte_100_wetweets", >_<
+      _.getowewse(eawwybiwdfeatuwe, -.- none).exists(_.wetweetcountv2.exists(_ >= 100))), UwU
     (
-      "has_gte_1k_retweets",
-      _.getOrElse(EarlybirdFeature, None).exists(_.retweetCountV2.exists(_ >= 1000))),
+      "has_gte_1k_wetweets", :3
+      _.getowewse(eawwybiwdfeatuwe, σωσ n-nyone).exists(_.wetweetcountv2.exists(_ >= 1000))), >w<
     (
-      "has_us_political_annotation",
-      _.getOrElse(EarlybirdFeature, None)
-        .exists(_.semanticCoreAnnotations.exists(_.exists(annotation =>
-          annotation.domainId == SemanticCoreFeatures.UnifiedTwitterTaxonomy &&
-            annotation.entityId == SemanticCoreFeatures.usPoliticalTweetEntityId &&
-            annotation.groupId == SemanticCoreFeatures.UsPoliticalTweetAnnotationGroupIds.BalancedV0)))),
+      "has_us_powiticaw_annotation", (ˆ ﻌ ˆ)♡
+      _.getowewse(eawwybiwdfeatuwe, n-nyone)
+        .exists(_.semanticcoweannotations.exists(_.exists(annotation =>
+          a-annotation.domainid == semanticcowefeatuwes.unifiedtwittewtaxonomy &&
+            a-annotation.entityid == semanticcowefeatuwes.uspowiticawtweetentityid &&
+            a-annotation.gwoupid == s-semanticcowefeatuwes.uspowiticawtweetannotationgwoupids.bawancedv0)))), ʘwʘ
     (
-      "has_toxicity_score_above_threshold",
-      _.getOrElse(EarlybirdFeature, None).exists(_.toxicityScore.exists(_ > 0.91))),
-    ("is_topic_tweet", _.getOrElse(TopicIdSocialContextFeature, None).isDefined),
+      "has_toxicity_scowe_above_thweshowd", :3
+      _.getowewse(eawwybiwdfeatuwe, (˘ω˘) nyone).exists(_.toxicityscowe.exists(_ > 0.91))), 😳😳😳
+    ("is_topic_tweet", rawr x3 _.getowewse(topicidsociawcontextfeatuwe, (✿oωo) nyone).isdefined), (ˆ ﻌ ˆ)♡
     (
-      "text_only",
+      "text_onwy", :3
       candidate =>
-        candidate.getOrElse(HasDisplayedTextFeature, false) &&
-          !(candidate.getOrElse(EarlybirdFeature, None).exists(_.hasImage) ||
-            candidate.getOrElse(EarlybirdFeature, None).exists(_.hasVideo) ||
-            candidate.getOrElse(EarlybirdFeature, None).exists(_.hasCard))),
+        candidate.getowewse(hasdispwayedtextfeatuwe, (U ᵕ U❁) fawse) &&
+          !(candidate.getowewse(eawwybiwdfeatuwe, ^^;; nyone).exists(_.hasimage) ||
+            c-candidate.getowewse(eawwybiwdfeatuwe, nyone).exists(_.hasvideo) ||
+            c-candidate.getowewse(eawwybiwdfeatuwe, mya nyone).exists(_.hascawd))), 😳😳😳
     (
-      "image_only",
+      "image_onwy", OwO
       candidate =>
-        candidate.getOrElse(EarlybirdFeature, None).exists(_.hasImage) &&
-          !candidate.getOrElse(HasDisplayedTextFeature, false)),
-    ("has_1_image", _.getOrElse(NumImagesFeature, None).exists(_ == 1)),
-    ("has_2_images", _.getOrElse(NumImagesFeature, None).exists(_ == 2)),
-    ("has_3_images", _.getOrElse(NumImagesFeature, None).exists(_ == 3)),
-    ("has_4_images", _.getOrElse(NumImagesFeature, None).exists(_ == 4)),
-    ("has_card", _.getOrElse(EarlybirdFeature, None).exists(_.hasCard)),
-    ("user_follow_count_gte_50", _.getOrElse(UserFollowingCountFeature, None).exists(_ > 50)),
+        c-candidate.getowewse(eawwybiwdfeatuwe, rawr n-nyone).exists(_.hasimage) &&
+          !candidate.getowewse(hasdispwayedtextfeatuwe, XD fawse)),
+    ("has_1_image", (U ﹏ U) _.getowewse(numimagesfeatuwe, (˘ω˘) nyone).exists(_ == 1)), UwU
+    ("has_2_images", >_< _.getowewse(numimagesfeatuwe, σωσ n-nyone).exists(_ == 2)), 🥺
+    ("has_3_images", 🥺 _.getowewse(numimagesfeatuwe, ʘwʘ n-nyone).exists(_ == 3)), :3
+    ("has_4_images", (U ﹏ U) _.getowewse(numimagesfeatuwe, (U ﹏ U) nyone).exists(_ == 4)), ʘwʘ
+    ("has_cawd", >w< _.getowewse(eawwybiwdfeatuwe, rawr x3 n-nyone).exists(_.hascawd)), OwO
+    ("usew_fowwow_count_gte_50", ^•ﻌ•^ _.getowewse(usewfowwowingcountfeatuwe, >_< n-nyone).exists(_ > 50)), OwO
     (
-      "has_liked_by_social_context",
-      candidateFeatures =>
-        candidateFeatures
-          .getOrElse(SGSValidLikedByUserIdsFeature, Seq.empty)
-          .exists(candidateFeatures
-            .getOrElse(PerspectiveFilteredLikedByUserIdsFeature, Seq.empty).toSet.contains)),
+      "has_wiked_by_sociaw_context", >_<
+      candidatefeatuwes =>
+        candidatefeatuwes
+          .getowewse(sgsvawidwikedbyusewidsfeatuwe, (ꈍᴗꈍ) seq.empty)
+          .exists(candidatefeatuwes
+            .getowewse(pewspectivefiwtewedwikedbyusewidsfeatuwe, >w< seq.empty).toset.contains)), (U ﹏ U)
     (
-      "has_followed_by_social_context",
-      _.getOrElse(SGSValidFollowedByUserIdsFeature, Seq.empty).nonEmpty),
+      "has_fowwowed_by_sociaw_context", ^^
+      _.getowewse(sgsvawidfowwowedbyusewidsfeatuwe, (U ﹏ U) s-seq.empty).nonempty), :3
     (
-      "has_topic_social_context",
-      candidateFeatures =>
-        candidateFeatures
-          .getOrElse(TopicIdSocialContextFeature, None)
-          .isDefined &&
-          candidateFeatures.getOrElse(TopicContextFunctionalityTypeFeature, None).isDefined),
-    ("video_lte_10_sec", _.getOrElse(VideoDurationMsFeature, None).exists(_ <= 10000)),
+      "has_topic_sociaw_context", (✿oωo)
+      c-candidatefeatuwes =>
+        c-candidatefeatuwes
+          .getowewse(topicidsociawcontextfeatuwe, XD nyone)
+          .isdefined &&
+          c-candidatefeatuwes.getowewse(topiccontextfunctionawitytypefeatuwe, >w< n-nyone).isdefined), òωó
+    ("video_wte_10_sec", _.getowewse(videoduwationmsfeatuwe, (ꈍᴗꈍ) nyone).exists(_ <= 10000)),
     (
-      "video_bt_10_60_sec",
-      _.getOrElse(VideoDurationMsFeature, None).exists(duration =>
-        duration > 10000 && duration <= 60000)),
-    ("video_gt_60_sec", _.getOrElse(VideoDurationMsFeature, None).exists(_ > 60000)),
+      "video_bt_10_60_sec", rawr x3
+      _.getowewse(videoduwationmsfeatuwe, rawr x3 n-nyone).exists(duwation =>
+        duwation > 10000 && duwation <= 60000)), σωσ
+    ("video_gt_60_sec", (ꈍᴗꈍ) _.getowewse(videoduwationmsfeatuwe, rawr nyone).exists(_ > 60000)),
     (
-      "tweet_age_lte_30_minutes",
-      _.getOrElse(OriginalTweetCreationTimeFromSnowflakeFeature, None)
-        .exists(_.untilNow <= 30.minutes)),
+      "tweet_age_wte_30_minutes", ^^;;
+      _.getowewse(owiginawtweetcweationtimefwomsnowfwakefeatuwe, rawr x3 nyone)
+        .exists(_.untiwnow <= 30.minutes)), (ˆ ﻌ ˆ)♡
     (
-      "tweet_age_lte_1_hour",
-      _.getOrElse(OriginalTweetCreationTimeFromSnowflakeFeature, None)
-        .exists(_.untilNow <= 1.hour)),
+      "tweet_age_wte_1_houw",
+      _.getowewse(owiginawtweetcweationtimefwomsnowfwakefeatuwe, σωσ nyone)
+        .exists(_.untiwnow <= 1.houw)),
     (
-      "tweet_age_lte_6_hours",
-      _.getOrElse(OriginalTweetCreationTimeFromSnowflakeFeature, None)
-        .exists(_.untilNow <= 6.hours)),
+      "tweet_age_wte_6_houws", (U ﹏ U)
+      _.getowewse(owiginawtweetcweationtimefwomsnowfwakefeatuwe, >w< n-nyone)
+        .exists(_.untiwnow <= 6.houws)), σωσ
     (
-      "tweet_age_lte_12_hours",
-      _.getOrElse(OriginalTweetCreationTimeFromSnowflakeFeature, None)
-        .exists(_.untilNow <= 12.hours)),
+      "tweet_age_wte_12_houws", nyaa~~
+      _.getowewse(owiginawtweetcweationtimefwomsnowfwakefeatuwe, 🥺 n-nyone)
+        .exists(_.untiwnow <= 12.houws)), rawr x3
     (
-      "tweet_age_gte_24_hours",
-      _.getOrElse(OriginalTweetCreationTimeFromSnowflakeFeature, None)
-        .exists(_.untilNow >= 24.hours)),
+      "tweet_age_gte_24_houws", σωσ
+      _.getowewse(owiginawtweetcweationtimefwomsnowfwakefeatuwe, (///ˬ///✿) nyone)
+        .exists(_.untiwnow >= 24.houws)), (U ﹏ U)
   )
 
-  val PredicateMap = CandidatePredicates.toMap
+  vaw pwedicatemap = c-candidatepwedicates.tomap
 }

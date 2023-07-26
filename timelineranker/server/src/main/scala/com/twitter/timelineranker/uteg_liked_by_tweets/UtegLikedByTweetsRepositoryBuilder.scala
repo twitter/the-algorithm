@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.twittew.timewinewankew.uteg_wiked_by_tweets
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelineranker.config.RequestScopes
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.parameters.ConfigBuilder
-import com.twitter.timelineranker.repository.CandidatesRepositoryBuilder
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.timewinewankew.config.wequestscopes
+i-impowt c-com.twittew.timewinewankew.config.wuntimeconfiguwation
+i-impowt c-com.twittew.timewinewankew.pawametews.configbuiwdew
+i-impowt com.twittew.timewinewankew.wepositowy.candidateswepositowybuiwdew
+i-impowt c-com.twittew.timewinewankew.visibiwity.sgsfowwowgwaphdatafiewds
+impowt com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdsewvice
+impowt com.twittew.timewines.utiw.stats.wequestscope
+impowt com.twittew.utiw.duwation
 
-class UtegLikedByTweetsRepositoryBuilder(config: RuntimeConfiguration, configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
-  override val clientSubId = "uteg_liked_by_tweets"
-  override val requestScope: RequestScope = RequestScopes.UtegLikedByTweetsSource
-  override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
-    SgsFollowGraphDataFields.ValueSet(
-      SgsFollowGraphDataFields.FollowedUserIds,
-      SgsFollowGraphDataFields.MutuallyFollowingUserIds,
-      SgsFollowGraphDataFields.MutedUserIds
+c-cwass utegwikedbytweetswepositowybuiwdew(config: wuntimeconfiguwation, (⑅˘꒳˘) c-configbuiwdew: configbuiwdew)
+    e-extends candidateswepositowybuiwdew(config) {
+  ovewwide vaw cwientsubid = "uteg_wiked_by_tweets"
+  ovewwide v-vaw wequestscope: wequestscope = w-wequestscopes.utegwikedbytweetssouwce
+  o-ovewwide vaw fowwowgwaphdatafiewdstofetch: sgsfowwowgwaphdatafiewds.vawueset =
+    sgsfowwowgwaphdatafiewds.vawueset(
+      sgsfowwowgwaphdatafiewds.fowwowedusewids, òωó
+      s-sgsfowwowgwaphdatafiewds.mutuawwyfowwowingusewids, ʘwʘ
+      sgsfowwowgwaphdatafiewds.mutedusewids
     )
-  override val searchProcessingTimeout: Duration = 400.milliseconds
-  override def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdClient(
-      scope = scope,
-      requestTimeout = 500.milliseconds,
-      timeout = 900.milliseconds,
-      retryPolicy = config.underlyingClients.DefaultRetryPolicy
-    )
-
-  def apply(): UtegLikedByTweetsRepository = {
-    val utegLikedByTweetsSource = new UtegLikedByTweetsSource(
-      userTweetEntityGraphClient = userTweetEntityGraphClient,
-      gizmoduckClient = gizmoduckClient,
-      searchClient = searchClient,
-      tweetyPieClient = tweetyPieHighQoSClient,
-      userMetadataClient = userMetadataClient,
-      followGraphDataProvider = followGraphDataProvider,
-      contentFeaturesCache = config.underlyingClients.contentFeaturesCache,
-      statsReceiver = config.statsReceiver
+  ovewwide vaw seawchpwocessingtimeout: duwation = 400.miwwiseconds
+  o-ovewwide def eawwybiwdcwient(scope: stwing): eawwybiwdsewvice.methodpewendpoint =
+    c-config.undewwyingcwients.cweateeawwybiwdcwient(
+      s-scope = s-scope, /(^•ω•^)
+      w-wequesttimeout = 500.miwwiseconds, ʘwʘ
+      timeout = 900.miwwiseconds,
+      wetwypowicy = c-config.undewwyingcwients.defauwtwetwypowicy
     )
 
-    new UtegLikedByTweetsRepository(utegLikedByTweetsSource)
+  def appwy(): utegwikedbytweetswepositowy = {
+    vaw utegwikedbytweetssouwce = n-nyew utegwikedbytweetssouwce(
+      usewtweetentitygwaphcwient = usewtweetentitygwaphcwient, σωσ
+      gizmoduckcwient = gizmoduckcwient, OwO
+      seawchcwient = s-seawchcwient, 😳😳😳
+      tweetypiecwient = tweetypiehighqoscwient, 😳😳😳
+      usewmetadatacwient = u-usewmetadatacwient, o.O
+      f-fowwowgwaphdatapwovidew = f-fowwowgwaphdatapwovidew, ( ͡o ω ͡o )
+      contentfeatuwescache = config.undewwyingcwients.contentfeatuwescache, (U ﹏ U)
+      statsweceivew = c-config.statsweceivew
+    )
+
+    n-nyew utegwikedbytweetswepositowy(utegwikedbytweetssouwce)
   }
 }

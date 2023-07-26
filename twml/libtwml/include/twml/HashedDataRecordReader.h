@@ -1,68 +1,68 @@
-#pragma once
-#ifdef __cplusplus
+#pwagma once
+#ifdef __cpwuspwus
 
-#include <twml/common.h>
-#include <twml/defines.h>
-#include <twml/HashedDataRecord.h>
-#include <twml/TensorRecordReader.h>
+#incwude <twmw/common.h>
+#incwude <twmw/defines.h>
+#incwude <twmw/hasheddatawecowd.h>
+#incwude <twmw/tensowwecowdweadew.h>
 
-#include <cstdint>
+#incwude <cstdint>
 
-#include <vector>
-#include <string>
-#include <unordered_map>
+#incwude <vectow>
+#incwude <stwing>
+#incwude <unowdewed_map>
 
-namespace twml {
+nyamespace t-twmw {
 
-enum class DecodeMode: int64_t
+e-enum cwass decodemode: i-int64_t
 {
-  hash_valname = 0,
-  hash_fname_and_valname = 1,
+  h-hash_vawname = 0, >w<
+  h-hash_fname_and_vawname = 1, rawr
 };
 
-class TWMLAPI HashedDataRecordReader : public TensorRecordReader {
-private:
-  typedef Map<int64_t, int64_t> KeyMap_t;
-  KeyMap_t *m_keep_map;
-  KeyMap_t *m_labels_map;
-  KeyMap_t *m_weights_map;
-  DecodeMode m_decode_mode;
+c-cwass twmwapi h-hasheddatawecowdweadew : pubwic t-tensowwecowdweadew {
+pwivate:
+  typedef map<int64_t, mya int64_t> keymap_t;
+  k-keymap_t *m_keep_map;
+  keymap_t *m_wabews_map;
+  keymap_t *m_weights_map;
+  d-decodemode m_decode_mode;
 
-public:
-  bool keepId               (const int64_t &key, int64_t &code);
-  bool isLabel              (const int64_t &key, int64_t &code);
-  bool isWeight             (const int64_t &key, int64_t &code);
-  void readBinary           (const int feature_type , HashedDataRecord *record);
-  void readContinuous       (const int feature_type , HashedDataRecord *record);
-  void readDiscrete         (const int feature_type , HashedDataRecord *record);
-  void readString           (const int feature_type , HashedDataRecord *record);
-  void readSparseBinary     (const int feature_type , HashedDataRecord *record);
-  void readSparseContinuous (const int feature_type , HashedDataRecord *record);
-  void readBlob             (const int feature_type , HashedDataRecord *record);
+p-pubwic:
+  boow keepid               (const int64_t &key, ^^ int64_t &code);
+  b-boow iswabew              (const int64_t &key, 😳😳😳 i-int64_t &code);
+  b-boow isweight             (const int64_t &key, mya int64_t &code);
+  void weadbinawy           (const int featuwe_type , 😳 h-hasheddatawecowd *wecowd);
+  void weadcontinuous       (const int featuwe_type , -.- hasheddatawecowd *wecowd);
+  void weaddiscwete         (const i-int featuwe_type , 🥺 hasheddatawecowd *wecowd);
+  v-void weadstwing           (const i-int featuwe_type , h-hasheddatawecowd *wecowd);
+  v-void weadspawsebinawy     (const int featuwe_type , o.O hasheddatawecowd *wecowd);
+  v-void weadspawsecontinuous (const int featuwe_type , /(^•ω•^) hasheddatawecowd *wecowd);
+  v-void weadbwob             (const int featuwe_type , nyaa~~ hasheddatawecowd *wecowd);
 
-  HashedDataRecordReader() :
-      TensorRecordReader(nullptr),
-      m_keep_map(nullptr),
-      m_labels_map(nullptr),
-      m_weights_map(nullptr),
-      m_decode_mode(DecodeMode::hash_valname)
+  hasheddatawecowdweadew() :
+      tensowwecowdweadew(nuwwptw), nyaa~~
+      m-m_keep_map(nuwwptw), :3
+      m_wabews_map(nuwwptw), 😳😳😳
+      m-m_weights_map(nuwwptw), (˘ω˘)
+      m-m_decode_mode(decodemode::hash_vawname)
       {}
 
-  // Using a template instead of int64_t because tensorflow implements int64 based on compiler.
-  void setKeepMap(KeyMap_t *keep_map) {
-    m_keep_map = keep_map;
+  // u-using a tempwate instead of int64_t because tensowfwow i-impwements i-int64 based on compiwew. ^^
+  void s-setkeepmap(keymap_t *keep_map) {
+    m-m_keep_map = keep_map;
   }
 
-  void setLabelsMap(KeyMap_t *labels_map) {
-    m_labels_map = labels_map;
+  v-void setwabewsmap(keymap_t *wabews_map) {
+    m_wabews_map = w-wabews_map;
   }
 
-  void setWeightsMap(KeyMap_t *weights_map) {
-    m_weights_map = weights_map;
+  void setweightsmap(keymap_t *weights_map) {
+    m_weights_map = w-weights_map;
   }
 
-  void setDecodeMode(int64_t mode) {
-    m_decode_mode = static_cast<DecodeMode>(mode);
+  void setdecodemode(int64_t m-mode) {
+    m_decode_mode = static_cast<decodemode>(mode);
   }
 };
 

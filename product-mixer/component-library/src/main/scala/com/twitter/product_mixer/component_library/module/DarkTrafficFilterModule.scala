@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.component_library.module
+package com.twittew.pwoduct_mixew.component_wibwawy.moduwe
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thrift.service.Filterable
-import com.twitter.finagle.thrift.service.ReqRepServicePerEndpointBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.thrift.modules.ReqRepDarkTrafficFilterModule
-import scala.reflect.ClassTag
+impowt c-com.twittew.decidew.decidew
+i-impowt c-com.twittew.decidew.wandomwecipient
+i-impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.finagwe.thwift.sewvice.fiwtewabwe
+i-impowt c-com.twittew.finagwe.thwift.sewvice.weqwepsewvicepewendpointbuiwdew
+impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+impowt com.twittew.inject.injectow
+impowt com.twittew.inject.annotations.fwags
+impowt com.twittew.inject.thwift.moduwes.weqwepdawktwafficfiwtewmoduwe
+i-impowt scawa.wefwect.cwasstag
 
-class DarkTrafficFilterModule[MethodIface <: Filterable[MethodIface]: ClassTag](
-  implicit serviceBuilder: ReqRepServicePerEndpointBuilder[MethodIface])
-    extends ReqRepDarkTrafficFilterModule
-    with MtlsClient {
+cwass dawktwafficfiwtewmoduwe[methodiface <: fiwtewabwe[methodiface]: c-cwasstag](
+  impwicit s-sewvicebuiwdew: weqwepsewvicepewendpointbuiwdew[methodiface])
+    extends weqwepdawktwafficfiwtewmoduwe
+    with m-mtwscwient {
 
-  override protected def enableSampling(injector: Injector): Any => Boolean = _ => {
-    val decider = injector.instance[Decider]
-    val deciderKey =
-      injector.instance[String](Flags.named("thrift.dark.traffic.filter.decider_key"))
-    val fromProxy = ClientId.current
-      .map(_.name).exists(name => name.contains("diffy") || name.contains("darktraffic"))
-    !fromProxy && decider.isAvailable(deciderKey, recipient = Some(RandomRecipient))
+  ovewwide pwotected d-def enabwesampwing(injectow: i-injectow): any => boowean = _ => {
+    vaw decidew = injectow.instance[decidew]
+    vaw decidewkey =
+      i-injectow.instance[stwing](fwags.named("thwift.dawk.twaffic.fiwtew.decidew_key"))
+    vaw fwompwoxy = cwientid.cuwwent
+      .map(_.name).exists(name => nyame.contains("diffy") || name.contains("dawktwaffic"))
+    !fwompwoxy && d-decidew.isavaiwabwe(decidewkey, wecipient = some(wandomwecipient))
   }
 }

@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.twitter.search.common.caching.filter.QueryCachePredicate;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+impowt com.twittew.seawch.common.caching.fiwtew.quewycachepwedicate;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.eawwybiwd.common.eawwybiwdwequestutiw;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
 
-public class TopTweetsQueryCachePredicate extends QueryCachePredicate<EarlybirdRequestContext> {
-  private final SearchDecider decider;
-  private final String toptweetsCacheEnabledDeciderKey;
+p-pubwic cwass toptweetsquewycachepwedicate e-extends q-quewycachepwedicate<eawwybiwdwequestcontext> {
+  pwivate finaw seawchdecidew decidew;
+  pwivate finaw stwing t-toptweetscacheenabweddecidewkey;
 
-  public TopTweetsQueryCachePredicate(SearchDecider decider, String normalizedSearchRootName) {
-    this.decider = decider;
-    this.toptweetsCacheEnabledDeciderKey = "toptweets_cache_enabled_" + normalizedSearchRootName;
+  pubwic toptweetsquewycachepwedicate(seawchdecidew decidew, mya stwing n-nyowmawizedseawchwootname) {
+    this.decidew = d-decidew;
+    this.toptweetscacheenabweddecidewkey = "toptweets_cache_enabwed_" + nyowmawizedseawchwootname;
   }
 
-  @Override
-  public Boolean shouldQueryCache(EarlybirdRequestContext requestContext) {
-    return EarlybirdRequestType.TOP_TWEETS == requestContext.getEarlybirdRequestType()
-        && EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())
-        && decider.isAvailable(toptweetsCacheEnabledDeciderKey);
+  @ovewwide
+  pubwic boowean s-shouwdquewycache(eawwybiwdwequestcontext wequestcontext) {
+    w-wetuwn eawwybiwdwequesttype.top_tweets == w-wequestcontext.geteawwybiwdwequesttype()
+        && eawwybiwdwequestutiw.iscachingawwowed(wequestcontext.getwequest())
+        && decidew.isavaiwabwe(toptweetscacheenabweddecidewkey);
   }
 }

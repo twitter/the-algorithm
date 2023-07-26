@@ -1,127 +1,127 @@
-package com.twitter.tsp.stores
+package com.twittew.tsp.stowes
 
-import com.twitter.tsp.stores.TopicTweetsCosineSimilarityAggregateStore.ScoreKey
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.storehaus.ReadableStore
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.tsp.stores.SemanticCoreAnnotationStore._
-import com.twitter.tsp.stores.TopicSocialProofStore.TopicSocialProof
-import com.twitter.util.Future
+impowt com.twittew.tsp.stowes.topictweetscosinesimiwawityaggwegatestowe.scowekey
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fwigate.common.utiw.statsutiw
+i-impowt com.twittew.simcwustews_v2.thwiftscawa._
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.simcwustews_v2.common.tweetid
+i-impowt c-com.twittew.tsp.stowes.semanticcoweannotationstowe._
+impowt com.twittew.tsp.stowes.topicsociawpwoofstowe.topicsociawpwoof
+impowt com.twittew.utiw.futuwe
 
 /**
- * Provides a session-less Topic Social Proof information which doesn't rely on any User Info.
- * This store is used by MemCache and In-Memory cache to achieve a higher performance.
- * One Consumer embedding and Producer embedding are used to calculate raw score.
+ * pwovides a session-wess t-topic sociaw pwoof infowmation which d-doesn't wewy on any usew info. /(^•ω•^)
+ * t-this stowe is used by memcache and in-memowy cache to achieve a-a highew pewfowmance. :3
+ * one consumew e-embedding a-and pwoducew embedding awe used to cawcuwate waw scowe. (ꈍᴗꈍ)
  */
-case class TopicSocialProofStore(
-  representationScorerStore: ReadableStore[ScoreId, Score],
-  semanticCoreAnnotationStore: ReadableStore[TweetId, Seq[TopicAnnotation]]
+case cwass topicsociawpwoofstowe(
+  w-wepwesentationscowewstowe: weadabwestowe[scoweid, /(^•ω•^) scowe],
+  semanticcoweannotationstowe: weadabwestowe[tweetid, (⑅˘꒳˘) seq[topicannotation]]
 )(
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[TopicSocialProofStore.Query, Seq[TopicSocialProof]] {
-  import TopicSocialProofStore._
+  s-statsweceivew: statsweceivew)
+    e-extends w-weadabwestowe[topicsociawpwoofstowe.quewy, ( ͡o ω ͡o ) s-seq[topicsociawpwoof]] {
+  i-impowt topicsociawpwoofstowe._
 
-  // Fetches the tweet's topic annotations from SemanticCore's Annotation API
-  override def get(query: TopicSocialProofStore.Query): Future[Option[Seq[TopicSocialProof]]] = {
-    StatsUtil.trackOptionStats(statsReceiver) {
-      for {
-        annotations <-
-          StatsUtil.trackItemsStats(statsReceiver.scope("semanticCoreAnnotationStore")) {
-            semanticCoreAnnotationStore.get(query.cacheableQuery.tweetId).map(_.getOrElse(Nil))
+  // fetches the tweet's t-topic annotations fwom semanticcowe's annotation a-api
+  ovewwide def get(quewy: topicsociawpwoofstowe.quewy): futuwe[option[seq[topicsociawpwoof]]] = {
+    statsutiw.twackoptionstats(statsweceivew) {
+      fow {
+        a-annotations <-
+          statsutiw.twackitemsstats(statsweceivew.scope("semanticcoweannotationstowe")) {
+            s-semanticcoweannotationstowe.get(quewy.cacheabwequewy.tweetid).map(_.getowewse(niw))
           }
 
-        filteredAnnotations = filterAnnotationsByAllowList(annotations, query)
+        f-fiwtewedannotations = f-fiwtewannotationsbyawwowwist(annotations, òωó quewy)
 
-        scoredTopics <-
-          StatsUtil.trackItemMapStats(statsReceiver.scope("scoreTopicTweetsTweetLanguage")) {
-            // de-dup identical topicIds
-            val uniqueTopicIds = filteredAnnotations.map { annotation =>
-              TopicId(annotation.topicId, Some(query.cacheableQuery.tweetLanguage), country = None)
-            }.toSet
+        scowedtopics <-
+          statsutiw.twackitemmapstats(statsweceivew.scope("scowetopictweetstweetwanguage")) {
+            // d-de-dup i-identicaw topicids
+            vaw uniquetopicids = f-fiwtewedannotations.map { a-annotation =>
+              topicid(annotation.topicid, (⑅˘꒳˘) s-some(quewy.cacheabwequewy.tweetwanguage), countwy = nyone)
+            }.toset
 
-            if (query.cacheableQuery.enableCosineSimilarityScoreCalculation) {
-              scoreTopicTweets(query.cacheableQuery.tweetId, uniqueTopicIds)
-            } else {
-              Future.value(uniqueTopicIds.map(id => id -> Map.empty[ScoreKey, Double]).toMap)
+            i-if (quewy.cacheabwequewy.enabwecosinesimiwawityscowecawcuwation) {
+              scowetopictweets(quewy.cacheabwequewy.tweetid, XD uniquetopicids)
+            } e-ewse {
+              futuwe.vawue(uniquetopicids.map(id => i-id -> map.empty[scowekey, -.- d-doubwe]).tomap)
             }
           }
 
-      } yield {
-        if (scoredTopics.nonEmpty) {
-          val versionedTopicProofs = filteredAnnotations.map { annotation =>
-            val topicId =
-              TopicId(annotation.topicId, Some(query.cacheableQuery.tweetLanguage), country = None)
+      } y-yiewd {
+        if (scowedtopics.nonempty) {
+          vaw vewsionedtopicpwoofs = fiwtewedannotations.map { annotation =>
+            vaw topicid =
+              topicid(annotation.topicid, s-some(quewy.cacheabwequewy.tweetwanguage), :3 c-countwy = nyone)
 
-            TopicSocialProof(
-              topicId,
-              scores = scoredTopics.getOrElse(topicId, Map.empty),
-              annotation.ignoreSimClustersFilter,
-              annotation.modelVersionId
+            topicsociawpwoof(
+              t-topicid, nyaa~~
+              s-scowes = s-scowedtopics.getowewse(topicid, 😳 map.empty),
+              annotation.ignowesimcwustewsfiwtew,
+              annotation.modewvewsionid
             )
           }
-          Some(versionedTopicProofs)
-        } else {
-          None
+          s-some(vewsionedtopicpwoofs)
+        } ewse {
+          nyone
         }
       }
     }
   }
 
   /***
-   * When the allowList is not empty (e.g., TSP handler call, CrTopic handler call),
-   * the filter will be enabled and we will only keep annotations that have versionIds existing
-   * in the input allowedSemanticCoreVersionIds set.
-   * But when the allowList is empty (e.g., some debugger calls),
-   * we will not filter anything and pass.
-   * We limit the number of versionIds to be K = MaxNumberVersionIds
+   * when the awwowwist is nyot empty (e.g., tsp handwew c-caww, (⑅˘꒳˘) cwtopic handwew caww), nyaa~~
+   * t-the fiwtew w-wiww be enabwed a-and we wiww onwy keep annotations t-that have vewsionids e-existing
+   * i-in the input a-awwowedsemanticcowevewsionids set. OwO
+   * but when the awwowwist i-is empty (e.g., s-some debuggew cawws), rawr x3
+   * w-we wiww n-nyot fiwtew a-anything and pass. XD
+   * we wimit the nyumbew of vewsionids to be k-k = maxnumbewvewsionids
    */
-  private def filterAnnotationsByAllowList(
-    annotations: Seq[TopicAnnotation],
-    query: TopicSocialProofStore.Query
-  ): Seq[TopicAnnotation] = {
+  pwivate def fiwtewannotationsbyawwowwist(
+    annotations: seq[topicannotation], σωσ
+    quewy: topicsociawpwoofstowe.quewy
+  ): seq[topicannotation] = {
 
-    val trimmedVersionIds = query.allowedSemanticCoreVersionIds.take(MaxNumberVersionIds)
-    annotations.filter { annotation =>
-      trimmedVersionIds.isEmpty || trimmedVersionIds.contains(annotation.modelVersionId)
+    vaw t-twimmedvewsionids = quewy.awwowedsemanticcowevewsionids.take(maxnumbewvewsionids)
+    annotations.fiwtew { annotation =>
+      twimmedvewsionids.isempty || t-twimmedvewsionids.contains(annotation.modewvewsionid)
     }
   }
 
-  private def scoreTopicTweets(
-    tweetId: TweetId,
-    topicIds: Set[TopicId]
-  ): Future[Map[TopicId, Map[ScoreKey, Double]]] = {
-    Future.collect {
-      topicIds.map { topicId =>
-        val scoresFut = TopicTweetsCosineSimilarityAggregateStore.getRawScoresMap(
-          topicId,
-          tweetId,
-          TopicTweetsCosineSimilarityAggregateStore.DefaultScoreKeys,
-          representationScorerStore
+  pwivate d-def scowetopictweets(
+    t-tweetid: tweetid, (U ᵕ U❁)
+    topicids: s-set[topicid]
+  ): futuwe[map[topicid, (U ﹏ U) m-map[scowekey, :3 d-doubwe]]] = {
+    futuwe.cowwect {
+      topicids.map { topicid =>
+        vaw scowesfut = topictweetscosinesimiwawityaggwegatestowe.getwawscowesmap(
+          t-topicid, ( ͡o ω ͡o )
+          tweetid, σωσ
+          t-topictweetscosinesimiwawityaggwegatestowe.defauwtscowekeys, >w<
+          wepwesentationscowewstowe
         )
-        topicId -> scoresFut
-      }.toMap
+        t-topicid -> s-scowesfut
+      }.tomap
     }
   }
 }
 
-object TopicSocialProofStore {
+object topicsociawpwoofstowe {
 
-  private val MaxNumberVersionIds = 9
+  pwivate v-vaw maxnumbewvewsionids = 9
 
-  case class Query(
-    cacheableQuery: CacheableQuery,
-    allowedSemanticCoreVersionIds: Set[Long] = Set.empty) // overridden by FS
+  c-case cwass quewy(
+    cacheabwequewy: c-cacheabwequewy, 😳😳😳
+    a-awwowedsemanticcowevewsionids: set[wong] = set.empty) // ovewwidden by fs
 
-  case class CacheableQuery(
-    tweetId: TweetId,
-    tweetLanguage: String,
-    enableCosineSimilarityScoreCalculation: Boolean = true)
+  case cwass cacheabwequewy(
+    t-tweetid: t-tweetid,
+    t-tweetwanguage: stwing, OwO
+    enabwecosinesimiwawityscowecawcuwation: b-boowean = twue)
 
-  case class TopicSocialProof(
-    topicId: TopicId,
-    scores: Map[ScoreKey, Double],
-    ignoreSimClusterFiltering: Boolean,
-    semanticCoreVersionId: Long)
+  c-case cwass topicsociawpwoof(
+    t-topicid: topicid, 😳
+    scowes: map[scowekey, 😳😳😳 doubwe], (˘ω˘)
+    ignowesimcwustewfiwtewing: b-boowean, ʘwʘ
+    s-semanticcowevewsionid: wong)
 }

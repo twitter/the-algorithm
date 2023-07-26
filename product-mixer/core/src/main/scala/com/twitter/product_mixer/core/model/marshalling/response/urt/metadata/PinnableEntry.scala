@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-trait PinnableEntry {
-  def isPinned: Option[Boolean] = None
+twait pinnabweentwy {
+  d-def ispinned: o-option[boowean] = n-nyone
 }

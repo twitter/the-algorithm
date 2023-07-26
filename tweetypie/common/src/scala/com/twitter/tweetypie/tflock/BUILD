@@ -1,20 +1,25 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-core/src/main",
-        "flock-client/src/main/scala",
-        "flock-client/src/main/thrift:thrift-scala",
-        "tweetypie/servo/util/src/main/scala",
-        "snowflake:id",
-        "src/thrift/com/twitter/gizmoduck:thrift-scala",
-        "src/thrift/com/twitter/servo:servo-exception-java",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:tweet-scala",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/serverutil",
-        "tweetypie/common/src/scala/com/twitter/tweetypie/util",
-        "util/util-core:scala",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    p-pwatfowm = "java8", (U ᵕ U❁)
+    s-stwict_deps = t-twue, (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [
+        "featuweswitches/featuweswitches-cowe/swc/main/scawa", UwU
+        "swc/thwift/com/twittew/spam/wtf:safety-wesuwt-scawa", rawr x3
+        "stitch/stitch-cowe", rawr
+        "visibiwity/common/swc/main/scawa/com/twittew/visibiwity/common", σωσ
+        "visibiwity/common/swc/main/scawa/com/twittew/visibiwity/common/actions", σωσ
+        "visibiwity/common/swc/main/scawa/com/twittew/visibiwity/common/actions/convewtew/scawa",
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity",
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/buiwdew", >_<
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/buiwdew/tweets", :3
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/featuwes",
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/wuwes", (U ﹏ U)
+        "visibiwity/wesuwts/swc/main/scawa/com/twittew/visibiwity/wesuwts/wichtext", -.-
+    ], (ˆ ﻌ ˆ)♡
+    e-expowts = [
+        "featuweswitches/featuweswitches-cowe/swc/main/scawa", (⑅˘꒳˘)
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/buiwdew", (U ᵕ U❁)
+    ], -.-
 )

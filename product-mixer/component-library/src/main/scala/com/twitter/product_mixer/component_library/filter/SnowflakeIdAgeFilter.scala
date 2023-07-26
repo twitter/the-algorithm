@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.component_library.filter
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.pawam
+impowt com.twittew.utiw.duwation
 
 /**
- * @param maxAgeParam Feature Switch configurable for convenience
- * @tparam Candidate The type of the candidates
+ * @pawam maxagepawam featuwe s-switch configuwabwe fow convenience
+ * @tpawam c-candidate the type of the candidates
  */
-case class SnowflakeIdAgeFilter[Candidate <: UniversalNoun[Long]](
-  maxAgeParam: Param[Duration])
-    extends Filter[PipelineQuery, Candidate] {
+case cwass snowfwakeidagefiwtew[candidate <: u-univewsawnoun[wong]](
+  maxagepawam: p-pawam[duwation])
+    e-extends fiwtew[pipewinequewy, candidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("SnowflakeIdAge")
+  ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("snowfwakeidage")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val maxAge = query.params(maxAgeParam)
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, 🥺
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): stitch[fiwtewwesuwt[candidate]] = {
+    v-vaw maxage = quewy.pawams(maxagepawam)
 
-    val (keptCandidates, removedCandidates) = candidates
+    v-vaw (keptcandidates, mya w-wemovedcandidates) = c-candidates
       .map(_.candidate)
-      .partition { filterCandidate =>
-        SnowflakeId.timeFromIdOpt(filterCandidate.id) match {
-          case Some(creationTime) =>
-            query.queryTime.since(creationTime) <= maxAge
-          case _ => false
+      .pawtition { f-fiwtewcandidate =>
+        snowfwakeid.timefwomidopt(fiwtewcandidate.id) match {
+          c-case some(cweationtime) =>
+            quewy.quewytime.since(cweationtime) <= m-maxage
+          case _ => fawse
         }
       }
 
-    Stitch.value(FilterResult(kept = keptCandidates, removed = removedCandidates))
+    stitch.vawue(fiwtewwesuwt(kept = keptcandidates, 🥺 wemoved = wemovedcandidates))
   }
 }

@@ -1,34 +1,34 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.twittew.fowwow_wecommendations.common.pwedicates
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.models.HasPreviousRecommendationsContext
-import com.twitter.stitch.Stitch
-import javax.inject.Singleton
+impowt c-com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.pwedicatewesuwt
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.fiwtewweason
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.haspweviouswecommendationscontext
+impowt com.twittew.stitch.stitch
+impowt javax.inject.singweton
 
-@Singleton
-class PreviouslyRecommendedUserIdsPredicate
-    extends Predicate[(HasPreviousRecommendationsContext, CandidateUser)] {
-  override def apply(
-    pair: (HasPreviousRecommendationsContext, CandidateUser)
-  ): Stitch[PredicateResult] = {
+@singweton
+cwass pweviouswywecommendedusewidspwedicate
+    e-extends pwedicate[(haspweviouswecommendationscontext, nyaa~~ candidateusew)] {
+  ovewwide d-def appwy(
+    paiw: (haspweviouswecommendationscontext, /(^•ω•^) candidateusew)
+  ): s-stitch[pwedicatewesuwt] = {
 
-    val (targetUser, candidate) = pair
+    vaw (tawgetusew, rawr candidate) = paiw
 
-    val previouslyRecommendedUserIDs = targetUser.previouslyRecommendedUserIDs
+    vaw p-pweviouswywecommendedusewids = tawgetusew.pweviouswywecommendedusewids
 
-    if (!previouslyRecommendedUserIDs.contains(candidate.id)) {
-      PreviouslyRecommendedUserIdsPredicate.ValidStitch
-    } else {
-      PreviouslyRecommendedUserIdsPredicate.AlreadyRecommendedStitch
+    if (!pweviouswywecommendedusewids.contains(candidate.id)) {
+      p-pweviouswywecommendedusewidspwedicate.vawidstitch
+    } e-ewse {
+      pweviouswywecommendedusewidspwedicate.awweadywecommendedstitch
     }
   }
 }
 
-object PreviouslyRecommendedUserIdsPredicate {
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
-  val AlreadyRecommendedStitch: Stitch[PredicateResult.Invalid] =
-    Stitch.value(PredicateResult.Invalid(Set(FilterReason.AlreadyRecommended)))
+object pweviouswywecommendedusewidspwedicate {
+  vaw vawidstitch: stitch[pwedicatewesuwt.vawid.type] = s-stitch.vawue(pwedicatewesuwt.vawid)
+  vaw awweadywecommendedstitch: stitch[pwedicatewesuwt.invawid] =
+    stitch.vawue(pwedicatewesuwt.invawid(set(fiwtewweason.awweadywecommended)))
 }

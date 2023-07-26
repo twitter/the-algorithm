@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext
 
-case class RichText(
-  text: String,
-  entities: List[RichTextEntity],
-  rtl: Option[Boolean],
-  alignment: Option[RichTextAlignment])
+case cwass wichtext(
+  t-text: stwing, òωó
+  e-entities: w-wist[wichtextentity], o.O
+  w-wtw: option[boowean], (U ᵕ U❁)
+  a-awignment: option[wichtextawignment])

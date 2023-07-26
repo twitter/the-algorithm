@@ -1,143 +1,143 @@
-package com.twitter.home_mixer.product.for_you
+package com.twittew.home_mixew.pwoduct.fow_you
 
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdCandidateSource
-import com.twitter.home_mixer.functional_component.decorator.urt.builder.HomeFeedbackActionInfoBuilder
-import com.twitter.home_mixer.functional_component.filter.DropMaxCandidatesFilter
-import com.twitter.home_mixer.functional_component.filter.PreviouslyServedTweetPreviewsFilter
-import com.twitter.home_mixer.functional_component.gate.TimelinesPersistenceStoreLastInjectionGate
-import com.twitter.home_mixer.model.HomeFeatures.AuthorEnabledPreviewsFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsHydratedFeature
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.home_mixer.product.for_you.feature_hydrator.AuthorEnabledPreviewsFeatureHydrator
-import com.twitter.home_mixer.product.for_you.feature_hydrator.TweetPreviewTweetypieCandidateFeatureHydrator
-import com.twitter.home_mixer.product.for_you.filter.TweetPreviewTextFilter
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.EnableTweetPreviewsCandidatePipelineParam
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.TweetPreviewsMaxCandidatesParam
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.TweetPreviewsMinInjectionIntervalParam
-import com.twitter.home_mixer.product.for_you.query_transformer.TweetPreviewsQueryTransformer
-import com.twitter.home_mixer.product.for_you.response_transformer.TweetPreviewResponseFeatureTransformer
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.PreviewCreatorsFeature
-import com.twitter.product_mixer.component_library.filter.FeatureFilter
-import com.twitter.product_mixer.component_library.gate.NonEmptySeqFeatureGate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineHomeTweetPreviewHydrationSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+impowt com.twittew.home_mixew.functionaw_component.candidate_souwce.eawwybiwdcandidatesouwce
+i-impowt c-com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew.homefeedbackactioninfobuiwdew
+i-impowt com.twittew.home_mixew.functionaw_component.fiwtew.dwopmaxcandidatesfiwtew
+i-impowt com.twittew.home_mixew.functionaw_component.fiwtew.pweviouswysewvedtweetpweviewsfiwtew
+i-impowt com.twittew.home_mixew.functionaw_component.gate.timewinespewsistencestowewastinjectiongate
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.authowenabwedpweviewsfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.ishydwatedfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.pewsistenceentwiesfeatuwe
+impowt com.twittew.home_mixew.pwoduct.fow_you.featuwe_hydwatow.authowenabwedpweviewsfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.fow_you.featuwe_hydwatow.tweetpweviewtweetypiecandidatefeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.fow_you.fiwtew.tweetpweviewtextfiwtew
+impowt com.twittew.home_mixew.pwoduct.fow_you.modew.fowyouquewy
+impowt c-com.twittew.home_mixew.pwoduct.fow_you.pawam.fowyoupawam.enabwetweetpweviewscandidatepipewinepawam
+impowt com.twittew.home_mixew.pwoduct.fow_you.pawam.fowyoupawam.tweetpweviewsmaxcandidatespawam
+i-impowt com.twittew.home_mixew.pwoduct.fow_you.pawam.fowyoupawam.tweetpweviewsmininjectionintewvawpawam
+i-impowt com.twittew.home_mixew.pwoduct.fow_you.quewy_twansfowmew.tweetpweviewsquewytwansfowmew
+impowt com.twittew.home_mixew.pwoduct.fow_you.wesponse_twansfowmew.tweetpweviewwesponsefeatuwetwansfowmew
+impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.uwtitemcandidatedecowatow
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.contextuaw_wef.contextuawtweetwefbuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.tweet.tweetcandidateuwtitembuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata.cwienteventinfobuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.sociaw_gwaph.pweviewcweatowsfeatuwe
+impowt com.twittew.pwoduct_mixew.component_wibwawy.fiwtew.featuwefiwtew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.gate.nonemptyseqfeatuwegate
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwcewithextwactedfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basecandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.wtf.safety_wevew.timewinehometweetpweviewhydwationsafetywevew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.contextuaw_wef.tweethydwationcontext
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => eb}
+impowt c-com.twittew.timewines.configapi.fspawam
+impowt c-com.twittew.timewines.injection.scwibe.injectionscwibeutiw
+impowt c-com.twittew.timewinesewvice.modew.wich.entityidtype
+i-impowt com.twittew.timewinesewvice.suggests.{thwiftscawa => st}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ForYouTweetPreviewsCandidatePipelineConfig @Inject() (
-  earlybirdCandidateSource: EarlybirdCandidateSource,
-  authorEnabledPreviewsFeatureHydrator: AuthorEnabledPreviewsFeatureHydrator,
-  tweetPreviewsQueryTransformer: TweetPreviewsQueryTransformer,
-  tweetPreviewTweetypieCandidateFeatureHydrator: TweetPreviewTweetypieCandidateFeatureHydrator,
-  homeFeedbackActionInfoBuilder: HomeFeedbackActionInfoBuilder)
-    extends CandidatePipelineConfig[
-      ForYouQuery,
-      eb.EarlybirdRequest,
-      eb.ThriftSearchResult,
-      TweetCandidate
+@singweton
+c-cwass fowyoutweetpweviewscandidatepipewineconfig @inject() (
+  eawwybiwdcandidatesouwce: eawwybiwdcandidatesouwce, ( ͡o ω ͡o )
+  a-authowenabwedpweviewsfeatuwehydwatow: a-authowenabwedpweviewsfeatuwehydwatow, mya
+  tweetpweviewsquewytwansfowmew: t-tweetpweviewsquewytwansfowmew, (///ˬ///✿)
+  tweetpweviewtweetypiecandidatefeatuwehydwatow: t-tweetpweviewtweetypiecandidatefeatuwehydwatow, (˘ω˘)
+  homefeedbackactioninfobuiwdew: homefeedbackactioninfobuiwdew)
+    e-extends candidatepipewineconfig[
+      fowyouquewy, ^^;;
+      eb.eawwybiwdwequest, (✿oωo)
+      e-eb.thwiftseawchwesuwt, (U ﹏ U)
+      tweetcandidate
     ] {
 
-  val identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("ForYouTweetPreviews")
+  v-vaw identifiew: c-candidatepipewineidentifiew = candidatepipewineidentifiew("fowyoutweetpweviews")
 
-  override val supportedClientParam: Option[FSParam[Boolean]] =
-    Some(EnableTweetPreviewsCandidatePipelineParam)
+  ovewwide vaw suppowtedcwientpawam: option[fspawam[boowean]] =
+    some(enabwetweetpweviewscandidatepipewinepawam)
 
-  override val gates: Seq[Gate[ForYouQuery]] = {
-    Seq(
-      TimelinesPersistenceStoreLastInjectionGate(
-        TweetPreviewsMinInjectionIntervalParam,
-        PersistenceEntriesFeature,
-        EntityIdType.TweetPreview
+  ovewwide vaw gates: seq[gate[fowyouquewy]] = {
+    s-seq(
+      t-timewinespewsistencestowewastinjectiongate(
+        tweetpweviewsmininjectionintewvawpawam,
+        p-pewsistenceentwiesfeatuwe, -.-
+        entityidtype.tweetpweview
       ),
-      NonEmptySeqFeatureGate(PreviewCreatorsFeature)
+      n-nyonemptyseqfeatuwegate(pweviewcweatowsfeatuwe)
     )
   }
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    PipelineQuery,
-    eb.EarlybirdRequest
-  ] = tweetPreviewsQueryTransformer
+  o-ovewwide vaw quewytwansfowmew: candidatepipewinequewytwansfowmew[
+    pipewinequewy, ^•ﻌ•^
+    e-eb.eawwybiwdwequest
+  ] = tweetpweviewsquewytwansfowmew
 
-  override val candidateSource: CandidateSourceWithExtractedFeatures[
-    eb.EarlybirdRequest,
-    eb.ThriftSearchResult
-  ] = earlybirdCandidateSource
+  ovewwide vaw candidatesouwce: candidatesouwcewithextwactedfeatuwes[
+    e-eb.eawwybiwdwequest, rawr
+    eb.thwiftseawchwesuwt
+  ] = e-eawwybiwdcandidatesouwce
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[eb.ThriftSearchResult]
-  ] = Seq(TweetPreviewResponseFeatureTransformer)
+  o-ovewwide vaw featuwesfwomcandidatesouwcetwansfowmews: s-seq[
+    candidatefeatuwetwansfowmew[eb.thwiftseawchwesuwt]
+  ] = s-seq(tweetpweviewwesponsefeatuwetwansfowmew)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    eb.ThriftSearchResult,
-    TweetCandidate
-  ] = { tweet => TweetCandidate(tweet.id) }
+  o-ovewwide v-vaw wesuwttwansfowmew: c-candidatepipewinewesuwtstwansfowmew[
+    eb.thwiftseawchwesuwt, (˘ω˘)
+    tweetcandidate
+  ] = { t-tweet => tweetcandidate(tweet.id) }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ForYouQuery, TweetCandidate, _]
-  ] = Seq(
-    authorEnabledPreviewsFeatureHydrator,
-    tweetPreviewTweetypieCandidateFeatureHydrator,
+  o-ovewwide v-vaw pwefiwtewfeatuwehydwationphase1: s-seq[
+    b-basecandidatefeatuwehydwatow[fowyouquewy, nyaa~~ tweetcandidate, UwU _]
+  ] = seq(
+    authowenabwedpweviewsfeatuwehydwatow, :3
+    tweetpweviewtweetypiecandidatefeatuwehydwatow, (⑅˘꒳˘)
   )
 
-  override val filters: Seq[
-    Filter[ForYouQuery, TweetCandidate]
-  ] = Seq(
-    PreviouslyServedTweetPreviewsFilter,
-    FeatureFilter
-      .fromFeature(FilterIdentifier("TweetPreviewVisibilityFiltering"), IsHydratedFeature),
-    FeatureFilter
-      .fromFeature(FilterIdentifier("AuthorEnabledPreviews"), AuthorEnabledPreviewsFeature),
-    TweetPreviewTextFilter,
-    DropMaxCandidatesFilter(TweetPreviewsMaxCandidatesParam)
+  o-ovewwide vaw fiwtews: seq[
+    fiwtew[fowyouquewy, (///ˬ///✿) tweetcandidate]
+  ] = seq(
+    pweviouswysewvedtweetpweviewsfiwtew, ^^;;
+    f-featuwefiwtew
+      .fwomfeatuwe(fiwtewidentifiew("tweetpweviewvisibiwityfiwtewing"), >_< ishydwatedfeatuwe), rawr x3
+    featuwefiwtew
+      .fwomfeatuwe(fiwtewidentifiew("authowenabwedpweviews"), /(^•ω•^) authowenabwedpweviewsfeatuwe), :3
+    tweetpweviewtextfiwtew,
+    d-dwopmaxcandidatesfiwtew(tweetpweviewsmaxcandidatespawam)
   )
 
-  override val decorator: Option[CandidateDecorator[PipelineQuery, TweetCandidate]] = {
-    val component = InjectionScribeUtil.scribeComponent(st.SuggestType.TweetPreview).get
-    val clientEventInfoBuilder = ClientEventInfoBuilder[PipelineQuery, TweetCandidate](component)
+  o-ovewwide vaw decowatow: o-option[candidatedecowatow[pipewinequewy, (ꈍᴗꈍ) tweetcandidate]] = {
+    v-vaw component = injectionscwibeutiw.scwibecomponent(st.suggesttype.tweetpweview).get
+    v-vaw cwienteventinfobuiwdew = c-cwienteventinfobuiwdew[pipewinequewy, /(^•ω•^) tweetcandidate](component)
 
-    val tweetItemBuilder = TweetCandidateUrtItemBuilder[PipelineQuery, TweetCandidate](
-      clientEventInfoBuilder = clientEventInfoBuilder,
-      contextualTweetRefBuilder = Some(
-        ContextualTweetRefBuilder(
-          TweetHydrationContext(
-            safetyLevelOverride = Some(TimelineHomeTweetPreviewHydrationSafetyLevel),
-            outerTweetContext = None
+    vaw tweetitembuiwdew = tweetcandidateuwtitembuiwdew[pipewinequewy, (⑅˘꒳˘) tweetcandidate](
+      cwienteventinfobuiwdew = cwienteventinfobuiwdew, ( ͡o ω ͡o )
+      c-contextuawtweetwefbuiwdew = some(
+        c-contextuawtweetwefbuiwdew(
+          tweethydwationcontext(
+            s-safetywevewuvwwide = s-some(timewinehometweetpweviewhydwationsafetywevew), òωó
+            outewtweetcontext = nyone
           )
         )
-      ),
-      feedbackActionInfoBuilder = Some(homeFeedbackActionInfoBuilder),
+      ), (⑅˘꒳˘)
+      feedbackactioninfobuiwdew = s-some(homefeedbackactioninfobuiwdew), XD
     )
 
-    Some(UrtItemCandidateDecorator(tweetItemBuilder))
+    s-some(uwtitemcandidatedecowatow(tweetitembuiwdew))
   }
 
-  override val alerts: Seq[Alert] = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(95))
+  ovewwide vaw a-awewts: seq[awewt] = s-seq(
+    homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(95))
 }

@@ -1,112 +1,112 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+package com.twittew.simcwustews_v2.scawding.offwine_job
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJob._
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobUtil._
-import com.twitter.simclusters_v2.thriftscala.TweetAndClusterScores
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+impowt com.twittew.scawding._
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt c-com.twittew.simcwustews_v2.hdfs_souwces._
+i-impowt c-com.twittew.simcwustews_v2.scawding.offwine_job.simcwustewsoffwinejob._
+i-impowt c-com.twittew.simcwustews_v2.scawding.offwine_job.simcwustewsoffwinejobutiw._
+impowt com.twittew.simcwustews_v2.thwiftscawa.tweetandcwustewscowes
+impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt java.utiw.timezone
 
 /**
- * The offline job runs every 12 hours, and save these two data sets to HDFS.
+ * t-the offwine job wuns evewy 12 houws, OwO and save t-these two data sets to hdfs. (ꈍᴗꈍ)
  *
- * capesospy-v2 update --build_locally --start_cron \
- * --start_cron offline_tweet_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * c-capesospy-v2 update --buiwd_wocawwy --stawt_cwon \
+ * --stawt_cwon offwine_tweet_job swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object SimClustersOfflineJobScheduledApp extends ScheduledExecutionApp {
-  import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
+o-object simcwustewsoffwinejobscheduwedapp extends s-scheduwedexecutionapp {
+  impowt c-com.twittew.simcwustews_v2.scawding.common.typedwichpipe._
 
-  private val tweetClusterScoresDatasetPath: String =
-    "/user/cassowary/processed/simclusters/tweet_cluster_scores"
-  private val tweetTopKClustersDatasetPath: String =
-    "/user/cassowary/processed/simclusters/tweet_top_k_clusters"
-  private val clusterTopKTweetsDatasetPath: String =
-    "/user/cassowary/processed/simclusters/cluster_top_k_tweets"
+  pwivate vaw tweetcwustewscowesdatasetpath: stwing =
+    "/usew/cassowawy/pwocessed/simcwustews/tweet_cwustew_scowes"
+  pwivate vaw tweettopkcwustewsdatasetpath: s-stwing =
+    "/usew/cassowawy/pwocessed/simcwustews/tweet_top_k_cwustews"
+  pwivate vaw cwustewtopktweetsdatasetpath: stwing =
+    "/usew/cassowawy/pwocessed/simcwustews/cwustew_top_k_tweets"
 
-  override def batchIncrement: Duration = Hours(12)
+  ovewwide def batchincwement: d-duwation = houws(12)
 
-  override def firstTime: RichDate = RichDate("2020-05-25")
+  ovewwide d-def fiwsttime: w-wichdate = w-wichdate("2020-05-25")
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def wunondatewange(
+    awgs: a-awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: datewange, 😳
+    t-timezone: timezone, 😳😳😳
+    uniqueid: uniqueid
+  ): execution[unit] = {
 
-    val previousTweetClusterScores: TypedPipe[TweetAndClusterScores] =
-      if (firstTime.timestamp == dateRange.start.timestamp) { // if it is the first batch
-        TypedPipe.from(Nil)
-      } else {
-        DAL
-          .readMostRecentSnapshot(
-            SimclustersOfflineTweetClusterScoresScalaDataset,
-            dateRange - batchIncrement
+    vaw pwevioustweetcwustewscowes: typedpipe[tweetandcwustewscowes] =
+      i-if (fiwsttime.timestamp == datewange.stawt.timestamp) { // if it is the fiwst b-batch
+        t-typedpipe.fwom(niw)
+      } e-ewse {
+        daw
+          .weadmostwecentsnapshot(
+            simcwustewsoffwinetweetcwustewscowesscawadataset, mya
+            datewange - b-batchincwement
           )
-          .toTypedPipe
-          .count("NumPreviousTweetClusterScores")
+          .totypedpipe
+          .count("numpwevioustweetcwustewscowes")
       }
 
-    // we have to use some way to throw away old tweets, otherwise the data set will be growing
-    // all the time. We only keep the tweets that received at least 1 engagement in the last day.
-    // This parameter can be adjusted
-    val tweetsToKeep = getSubsetOfValidTweets(Days(1))
-      .count("NumTweetsToKeep")
+    // w-we have to use some w-way to thwow away o-owd tweets, mya othewwise the data s-set wiww be gwowing
+    // aww t-the time. (⑅˘꒳˘) we onwy keep the tweets that weceived a-at weast 1 engagement in the wast d-day. (U ﹏ U)
+    // this pawametew can b-be adjusted
+    v-vaw tweetstokeep = getsubsetofvawidtweets(days(1))
+      .count("numtweetstokeep")
 
-    val updatedTweetClusterScores = computeAggregatedTweetClusterScores(
-      dateRange,
-      readInterestedInScalaDataset(dateRange),
-      readTimelineFavoriteData(dateRange),
-      previousTweetClusterScores
-    ).map { tweetClusterScore =>
-        tweetClusterScore.tweetId -> tweetClusterScore
+    vaw updatedtweetcwustewscowes = computeaggwegatedtweetcwustewscowes(
+      datewange, mya
+      weadintewestedinscawadataset(datewange), ʘwʘ
+      weadtimewinefavowitedata(datewange), (˘ω˘)
+      pwevioustweetcwustewscowes
+    ).map { t-tweetcwustewscowe =>
+        t-tweetcwustewscowe.tweetid -> tweetcwustewscowe
       }
-      .count("NumUpdatedTweetClusterScoresBeforeFiltering")
-      .join(tweetsToKeep.asKeys) // filter out invalid tweets
+      .count("numupdatedtweetcwustewscowesbefowefiwtewing")
+      .join(tweetstokeep.askeys) // f-fiwtew o-out invawid tweets
       .map {
-        case (_, (tweetClusterScore, _)) => tweetClusterScore
+        c-case (_, (U ﹏ U) (tweetcwustewscowe, ^•ﻌ•^ _)) => tweetcwustewscowe
       }
-      .count("NumUpdatedTweetClusterScores")
-      .forceToDisk
+      .count("numupdatedtweetcwustewscowes")
+      .fowcetodisk
 
-    val tweetTopKClusters = computeTweetTopKClusters(updatedTweetClusterScores)
-      .count("NumTweetTopKSaved")
-    val clusterTopKTweets = computeClusterTopKTweets(updatedTweetClusterScores)
-      .count("NumClusterTopKSaved")
+    vaw tweettopkcwustews = c-computetweettopkcwustews(updatedtweetcwustewscowes)
+      .count("numtweettopksaved")
+    vaw cwustewtopktweets = computecwustewtopktweets(updatedtweetcwustewscowes)
+      .count("numcwustewtopksaved")
 
-    val writeTweetClusterScoresExec = updatedTweetClusterScores
-      .writeDALSnapshotExecution(
-        SimclustersOfflineTweetClusterScoresScalaDataset,
-        D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
-        D.Suffix(tweetClusterScoresDatasetPath),
-        D.EBLzo(),
-        dateRange.end
+    vaw wwitetweetcwustewscowesexec = u-updatedtweetcwustewscowes
+      .wwitedawsnapshotexecution(
+        simcwustewsoffwinetweetcwustewscowesscawadataset, (˘ω˘)
+        d-d.houwwy, :3 // n-nyote that we use h-houwwy in owdew to make it fwexibwe f-fow houwwy b-batch size
+        d-d.suffix(tweetcwustewscowesdatasetpath), ^^;;
+        d-d.ebwzo(), 🥺
+        datewange.end
       )
 
-    val writeTweetTopKClustersExec = tweetTopKClusters
-      .writeDALSnapshotExecution(
-        SimclustersOfflineTweetTopKClustersScalaDataset,
-        D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
-        D.Suffix(tweetTopKClustersDatasetPath),
-        D.EBLzo(),
-        dateRange.end
+    vaw wwitetweettopkcwustewsexec = t-tweettopkcwustews
+      .wwitedawsnapshotexecution(
+        s-simcwustewsoffwinetweettopkcwustewsscawadataset, (⑅˘꒳˘)
+        d-d.houwwy, nyaa~~ // n-nyote that w-we use houwwy in owdew to make it fwexibwe fow houwwy batch size
+        d-d.suffix(tweettopkcwustewsdatasetpath), :3
+        d.ebwzo(), ( ͡o ω ͡o )
+        datewange.end
       )
 
-    val writeClusterTopKTweetsExec = clusterTopKTweets
-      .writeDALSnapshotExecution(
-        SimclustersOfflineClusterTopKTweetsScalaDataset,
-        D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
-        D.Suffix(clusterTopKTweetsDatasetPath),
-        D.EBLzo(),
-        dateRange.end
+    vaw wwitecwustewtopktweetsexec = cwustewtopktweets
+      .wwitedawsnapshotexecution(
+        simcwustewsoffwinecwustewtopktweetsscawadataset, mya
+        d-d.houwwy, (///ˬ///✿) // nyote that we use houwwy in owdew to m-make it fwexibwe f-fow houwwy batch s-size
+        d.suffix(cwustewtopktweetsdatasetpath), (˘ω˘)
+        d.ebwzo(), ^^;;
+        datewange.end
       )
 
-    Execution
-      .zip(writeTweetClusterScoresExec, writeTweetTopKClustersExec, writeClusterTopKTweetsExec)
+    e-execution
+      .zip(wwitetweetcwustewscowesexec, (✿oωo) wwitetweettopkcwustewsexec, (U ﹏ U) wwitecwustewtopktweetsexec)
       .unit
   }
 

@@ -1,48 +1,48 @@
-package com.twitter.search.earlybird_root.config;
+package com.twittew.seawch.eawwybiwd_woot.config;
 
-import java.util.Date;
+impowt java.utiw.date;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird.config.TierServingBoundaryEndPoint;
+i-impowt c-com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.eawwybiwd.config.sewvingwange;
+i-impowt c-com.twittew.seawch.eawwybiwd.config.tiewsewvingboundawyendpoint;
 
 /**
- * Time boundary information for a root cluster.
- * Used by EarlybirdTimeRangeFilter.
+ * t-time boundawy i-infowmation f-fow a woot cwustew. (⑅˘꒳˘)
+ * used by eawwybiwdtimewangefiwtew. (///ˬ///✿)
  */
-public class RootClusterBoundaryInfo implements ServingRange {
+pubwic cwass wootcwustewboundawyinfo impwements s-sewvingwange {
 
-  private final TierServingBoundaryEndPoint servingRangeSince;
-  private final TierServingBoundaryEndPoint servingRangeMax;
+  pwivate finaw tiewsewvingboundawyendpoint s-sewvingwangesince;
+  pwivate finaw tiewsewvingboundawyendpoint s-sewvingwangemax;
 
   /**
-   * Build a time boundary information
+   * buiwd a time boundawy infowmation
    */
-  public RootClusterBoundaryInfo(
-      Date startDate,
-      Date clusterEndDate,
-      String sinceIdBoundaryString,
-      String maxIdBoundaryString,
-      Clock clock) {
-    this.servingRangeSince = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(sinceIdBoundaryString, startDate, clock);
-    this.servingRangeMax = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(maxIdBoundaryString, clusterEndDate, clock);
+  pubwic wootcwustewboundawyinfo(
+      d-date stawtdate,
+      date c-cwustewenddate, 😳😳😳
+      s-stwing sinceidboundawystwing, 🥺
+      stwing maxidboundawystwing, mya
+      cwock cwock) {
+    t-this.sewvingwangesince = tiewsewvingboundawyendpoint
+        .newtiewsewvingboundawyendpoint(sinceidboundawystwing, 🥺 stawtdate, cwock);
+    this.sewvingwangemax = tiewsewvingboundawyendpoint
+        .newtiewsewvingboundawyendpoint(maxidboundawystwing, >_< c-cwustewenddate, >_< cwock);
   }
 
-  public long getServingRangeSinceId() {
-    return servingRangeSince.getBoundaryTweetId();
+  p-pubwic w-wong getsewvingwangesinceid() {
+    w-wetuwn sewvingwangesince.getboundawytweetid();
   }
 
-  public long getServingRangeMaxId() {
-    return servingRangeMax.getBoundaryTweetId();
+  p-pubwic wong getsewvingwangemaxid() {
+    wetuwn sewvingwangemax.getboundawytweetid();
   }
 
-  public long getServingRangeSinceTimeSecondsFromEpoch() {
-    return servingRangeSince.getBoundaryTimeSecondsFromEpoch();
+  p-pubwic wong getsewvingwangesincetimesecondsfwomepoch() {
+    wetuwn sewvingwangesince.getboundawytimesecondsfwomepoch();
   }
 
-  public long getServingRangeUntilTimeSecondsFromEpoch() {
-    return servingRangeMax.getBoundaryTimeSecondsFromEpoch();
+  p-pubwic wong getsewvingwangeuntiwtimesecondsfwomepoch() {
+    wetuwn sewvingwangemax.getboundawytimesecondsfwomepoch();
   }
 }

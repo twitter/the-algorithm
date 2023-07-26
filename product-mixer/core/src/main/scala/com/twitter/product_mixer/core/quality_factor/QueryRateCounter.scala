@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.twittew.pwoduct_mixew.cowe.quawity_factow
 
-import com.twitter.util.Duration
-import com.twitter.util.Stopwatch
-import com.twitter.util.TokenBucket
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.stopwatch
+i-impowt c-com.twittew.utiw.tokenbucket
 
 /**
- * Query rate counter based on a leaky bucket. For more, see [[com.twitter.util.TokenBucket]].
+ * q-quewy wate c-countew based on a-a weaky bucket. :3 f-fow mowe, 😳😳😳 see [[com.twittew.utiw.tokenbucket]]. -.-
  */
-case class QueryRateCounter private[quality_factor] (
-  queryRateWindow: Duration) {
+c-case cwass quewywatecountew pwivate[quawity_factow] (
+  quewywatewindow: duwation) {
 
-  private val queryRateWindowInSeconds = queryRateWindow.inSeconds
+  p-pwivate vaw quewywatewindowinseconds = quewywatewindow.inseconds
 
-  private val leakyBucket: TokenBucket =
-    TokenBucket.newLeakyBucket(ttl = queryRateWindow, reserve = 0, nowMs = Stopwatch.timeMillis)
+  p-pwivate vaw weakybucket: tokenbucket =
+    t-tokenbucket.newweakybucket(ttw = quewywatewindow, ( ͡o ω ͡o ) wesewve = 0, rawr x3 nyowms = s-stopwatch.timemiwwis)
 
-  def increment(count: Int): Unit = leakyBucket.put(count)
+  def i-incwement(count: i-int): unit = weakybucket.put(count)
 
-  def getRate(): Double = leakyBucket.count / queryRateWindowInSeconds
+  def getwate(): doubwe = weakybucket.count / quewywatewindowinseconds
 }

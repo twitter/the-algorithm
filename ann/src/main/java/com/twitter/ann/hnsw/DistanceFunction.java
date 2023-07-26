@@ -1,8 +1,8 @@
-package com.twitter.ann.hnsw;
+package com.twittew.ann.hnsw;
 
-public interface DistanceFunction<T, Q> {
+pubwic i-intewface distancefunction<t, o.O q-q> {
   /**
-   * Distance between two items.
+   * d-distance between t-two items. (U ᵕ U❁)
    */
-  float distance(T t, Q q);
+  f-fwoat distance(t t-t, (⑅˘꒳˘) q q);
 }

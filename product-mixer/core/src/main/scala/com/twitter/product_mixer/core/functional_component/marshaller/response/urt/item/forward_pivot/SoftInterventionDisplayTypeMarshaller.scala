@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.fowwawd_pivot
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.GetTheLatest
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.GovernmentRequested
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.Misleading
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.SoftInterventionDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.StayInformed
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot.getthewatest
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot.govewnmentwequested
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot.misweading
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot.softintewventiondispwaytype
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot.stayinfowmed
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class SoftInterventionDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass softintewventiondispwaytypemawshawwew @inject() () {
 
-  def apply(
-    softInterventionDisplayType: SoftInterventionDisplayType
-  ): urt.SoftInterventionDisplayType =
-    softInterventionDisplayType match {
-      case GetTheLatest => urt.SoftInterventionDisplayType.GetTheLatest
-      case StayInformed => urt.SoftInterventionDisplayType.StayInformed
-      case Misleading => urt.SoftInterventionDisplayType.Misleading
-      case GovernmentRequested => urt.SoftInterventionDisplayType.GovernmentRequested
+  def appwy(
+    softintewventiondispwaytype: s-softintewventiondispwaytype
+  ): uwt.softintewventiondispwaytype =
+    softintewventiondispwaytype match {
+      c-case getthewatest => u-uwt.softintewventiondispwaytype.getthewatest
+      case stayinfowmed => uwt.softintewventiondispwaytype.stayinfowmed
+      case m-misweading => uwt.softintewventiondispwaytype.misweading
+      c-case govewnmentwequested => u-uwt.softintewventiondispwaytype.govewnmentwequested
     }
 }

@@ -1,151 +1,151 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.adaptews
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmFeatures
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmIdAggregateFeatureGroup
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmTypeAggregateFeatureGroup
-import scala.collection.JavaConverters._
+impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.featuwe.continuous
+i-impowt com.twittew.mw.api.featuwecontext
+i-impowt c-com.twittew.mw.api.iwecowdonetooneadaptew
+i-impowt c-com.twittew.mw.api.utiw.fdsw._
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.customew_jouwney.postnuxawgowithmfeatuwes
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.customew_jouwney.postnuxawgowithmidaggwegatefeatuwegwoup
+impowt com.twittew.mw.featuwestowe.catawog.featuwes.customew_jouwney.postnuxawgowithmtypeaggwegatefeatuwegwoup
+i-impowt scawa.cowwection.javaconvewtews._
 
-object PostNuxAlgorithmIdAdapter extends PostNuxAlgorithmAdapter {
-  override val PostNuxAlgorithmFeatureGroup: PostNuxAlgorithmFeatures =
-    PostNuxAlgorithmIdAggregateFeatureGroup
+object postnuxawgowithmidadaptew e-extends postnuxawgowithmadaptew {
+  ovewwide v-vaw postnuxawgowithmfeatuwegwoup: postnuxawgowithmfeatuwes =
+    postnuxawgowithmidaggwegatefeatuwegwoup
 
-  // To keep the length of feature names reasonable, we remove the prefix added by FeatureStore.
-  override val FeatureStorePrefix: String =
-    "wtf_algorithm_id.customer_journey.post_nux_algorithm_id_aggregate_feature_group."
+  // to keep the wength o-of featuwe nyames weasonabwe, ^^;; w-we wemove the p-pwefix added by featuwestowe. (⑅˘꒳˘)
+  ovewwide vaw featuwestowepwefix: stwing =
+    "wtf_awgowithm_id.customew_jouwney.post_nux_awgowithm_id_aggwegate_featuwe_gwoup."
 }
 
-object PostNuxAlgorithmTypeAdapter extends PostNuxAlgorithmAdapter {
-  override val PostNuxAlgorithmFeatureGroup: PostNuxAlgorithmFeatures =
-    PostNuxAlgorithmTypeAggregateFeatureGroup
+object postnuxawgowithmtypeadaptew e-extends postnuxawgowithmadaptew {
+  ovewwide vaw postnuxawgowithmfeatuwegwoup: postnuxawgowithmfeatuwes =
+    p-postnuxawgowithmtypeaggwegatefeatuwegwoup
 
-  // To keep the length of feature names reasonable, we remove the prefix added by FeatureStore.
-  override val FeatureStorePrefix: String =
-    "wtf_algorithm_type.customer_journey.post_nux_algorithm_type_aggregate_feature_group."
+  // to keep the w-wength of featuwe n-nyames weasonabwe, rawr x3 w-we wemove t-the pwefix added by featuwestowe. (///ˬ///✿)
+  ovewwide vaw f-featuwestowepwefix: stwing =
+    "wtf_awgowithm_type.customew_jouwney.post_nux_awgowithm_type_aggwegate_featuwe_gwoup."
 }
 
-trait PostNuxAlgorithmAdapter extends IRecordOneToOneAdapter[DataRecord] {
+twait p-postnuxawgowithmadaptew extends iwecowdonetooneadaptew[datawecowd] {
 
-  val PostNuxAlgorithmFeatureGroup: PostNuxAlgorithmFeatures
+  vaw postnuxawgowithmfeatuwegwoup: postnuxawgowithmfeatuwes
 
-  // The string that is attached to the feature name when it is fetched from feature store.
-  val FeatureStorePrefix: String
+  // the s-stwing that is attached to the featuwe n-nyame when i-it is fetched f-fwom featuwe stowe. 🥺
+  vaw featuwestowepwefix: stwing
 
   /**
    *
-   * This stores transformed aggregate features for PostNux algorithm aggregate features. The
-   * transformation here is log-ratio, where ratio is the raw value divided by # of impressions.
+   * this stowes t-twansfowmed aggwegate f-featuwes fow postnux awgowithm a-aggwegate f-featuwes. >_< the
+   * twansfowmation h-hewe is wog-watio, UwU whewe watio i-is the waw vawue divided by # of impwessions.
    */
-  case class TransformedAlgorithmFeatures(
-    ratioLog: Continuous) {
-    def getFeatures: Seq[Continuous] = Seq(ratioLog)
+  c-case cwass twansfowmedawgowithmfeatuwes(
+    w-watiowog: continuous) {
+    def getfeatuwes: s-seq[continuous] = s-seq(watiowog)
   }
 
-  private def applyFeatureStorePrefix(feature: Continuous) = new Continuous(
-    s"$FeatureStorePrefix${feature.getFeatureName}")
+  pwivate def appwyfeatuwestowepwefix(featuwe: continuous) = nyew continuous(
+    s"$featuwestowepwefix${featuwe.getfeatuwename}")
 
-  // The list of input features WITH the prefix assigned to them by FeatureStore.
-  lazy val allInputFeatures: Seq[Seq[Continuous]] = Seq(
-    PostNuxAlgorithmFeatureGroup.Aggregate7DayFeatures.map(applyFeatureStorePrefix),
-    PostNuxAlgorithmFeatureGroup.Aggregate30DayFeatures.map(applyFeatureStorePrefix)
+  // the wist of input f-featuwes with t-the pwefix assigned to them by featuwestowe. >_<
+  wazy v-vaw awwinputfeatuwes: s-seq[seq[continuous]] = s-seq(
+    postnuxawgowithmfeatuwegwoup.aggwegate7dayfeatuwes.map(appwyfeatuwestowepwefix), -.-
+    postnuxawgowithmfeatuwegwoup.aggwegate30dayfeatuwes.map(appwyfeatuwestowepwefix)
   )
 
-  // This is a list of the features WITHOUT the prefix assigned to them by FeatureStore.
-  lazy val outputBaseFeatureNames: Seq[Seq[Continuous]] = Seq(
-    PostNuxAlgorithmFeatureGroup.Aggregate7DayFeatures,
-    PostNuxAlgorithmFeatureGroup.Aggregate30DayFeatures
+  // this is a wist of the featuwes without t-the pwefix assigned to them by featuwestowe. mya
+  wazy vaw outputbasefeatuwenames: seq[seq[continuous]] = s-seq(
+    postnuxawgowithmfeatuwegwoup.aggwegate7dayfeatuwes, >w<
+    p-postnuxawgowithmfeatuwegwoup.aggwegate30dayfeatuwes
   )
 
-  // We use backend impression to calculate ratio values.
-  lazy val ratioDenominators: Seq[Continuous] = Seq(
-    applyFeatureStorePrefix(PostNuxAlgorithmFeatureGroup.BackendImpressions7Days),
-    applyFeatureStorePrefix(PostNuxAlgorithmFeatureGroup.BackendImpressions30Days)
+  // w-we use backend i-impwession to cawcuwate watio v-vawues. (U ﹏ U)
+  wazy v-vaw watiodenominatows: s-seq[continuous] = s-seq(
+    appwyfeatuwestowepwefix(postnuxawgowithmfeatuwegwoup.backendimpwessions7days), 😳😳😳
+    appwyfeatuwestowepwefix(postnuxawgowithmfeatuwegwoup.backendimpwessions30days)
   )
 
   /**
-   * A mapping from an original feature's ID to the corresponding set of transformed features.
-   * This is used to compute the transformed features for each of the original ones.
+   * a-a mapping f-fwom an owiginaw f-featuwe's id to t-the cowwesponding s-set of twansfowmed featuwes. o.O
+   * this is used to compute the t-twansfowmed featuwes fow each of the owiginaw ones. òωó
    */
-  private lazy val TransformedFeaturesMap: Map[Continuous, TransformedAlgorithmFeatures] =
-    outputBaseFeatureNames.flatten.map { feature =>
+  pwivate wazy vaw twansfowmedfeatuwesmap: map[continuous, 😳😳😳 t-twansfowmedawgowithmfeatuwes] =
+    outputbasefeatuwenames.fwatten.map { featuwe =>
       (
-        // The input feature would have the FeatureStore prefix attached to it.
-        new Continuous(s"$FeatureStorePrefix${feature.getFeatureName}"),
-        // We don't keep the FeatureStore prefix to keep the length of feature names reasonable.
-        TransformedAlgorithmFeatures(
-          new Continuous(s"${feature.getFeatureName}-ratio-log")
+        // the i-input featuwe w-wouwd have the featuwestowe p-pwefix attached to it. σωσ
+        n-nyew continuous(s"$featuwestowepwefix${featuwe.getfeatuwename}"), (⑅˘꒳˘)
+        // w-we don't k-keep the featuwestowe pwefix to keep the wength of featuwe nyames weasonabwe. (///ˬ///✿)
+        twansfowmedawgowithmfeatuwes(
+          nyew c-continuous(s"${featuwe.getfeatuwename}-watio-wog")
         ))
-    }.toMap
+    }.tomap
 
   /**
-   * Given a denominator, number of impressions, this function returns another function that adds
-   * transformed features (log1p and ratio) of an input feature to a DataRecord.
+   * given a-a denominatow, 🥺 nyumbew of impwessions, OwO t-this function w-wetuwns anothew function that adds
+   * twansfowmed f-featuwes (wog1p a-and watio) of an input f-featuwe to a datawecowd. >w<
    */
-  private def addTransformedFeaturesToDataRecordFunc(
-    originalDr: DataRecord,
-    numImpressions: Double,
-  ): (DataRecord, Continuous) => DataRecord = { (record: DataRecord, feature: Continuous) =>
+  p-pwivate def addtwansfowmedfeatuwestodatawecowdfunc(
+    owiginawdw: datawecowd, 🥺
+    nyumimpwessions: doubwe, nyaa~~
+  ): (datawecowd, ^^ c-continuous) => datawecowd = { (wecowd: d-datawecowd, >w< f-featuwe: continuous) =>
     {
-      Option(originalDr.getFeatureValue(feature)) foreach { featureValue =>
-        TransformedFeaturesMap.get(feature).foreach { transformedFeatures =>
-          record.setFeatureValue(
-            transformedFeatures.ratioLog,
-            // We don't use log1p here since the values are ratios and adding 1 to the _ratio_ would
-            // lead to logarithm of values between 1 and 2, essentially making all values the same.
-            math.log((featureValue + 1) / numImpressions)
+      option(owiginawdw.getfeatuwevawue(featuwe)) f-foweach { featuwevawue =>
+        t-twansfowmedfeatuwesmap.get(featuwe).foweach { twansfowmedfeatuwes =>
+          w-wecowd.setfeatuwevawue(
+            twansfowmedfeatuwes.watiowog,
+            // we don't use wog1p hewe since the vawues awe w-watios and adding 1 t-to the _watio_ wouwd
+            // wead to w-wogawithm of vawues b-between 1 and 2, OwO essentiawwy making aww vawues the same. XD
+            m-math.wog((featuwevawue + 1) / nyumimpwessions)
           )
         }
       }
-      record
+      wecowd
     }
   }
 
   /**
-   * @param record: The input record whose PostNuxAlgorithm aggregates are to be transformed.
-   * @return the input [[DataRecord]] with transformed aggregates added.
+   * @pawam wecowd: the input wecowd whose p-postnuxawgowithm aggwegates awe to be twansfowmed. ^^;;
+   * @wetuwn t-the input [[datawecowd]] w-with twansfowmed aggwegates added. 🥺
    */
-  override def adaptToDataRecord(record: DataRecord): DataRecord = {
-    if (record.continuousFeatures == null) {
-      // There are no base features available, and hence no transformations.
-      record
-    } else {
+  ovewwide def a-adapttodatawecowd(wecowd: d-datawecowd): datawecowd = {
+    if (wecowd.continuousfeatuwes == nyuww) {
+      // thewe a-awe nyo base featuwes avaiwabwe, XD a-and hence nyo twansfowmations. (U ᵕ U❁)
+      wecowd
+    } ewse {
 
       /**
-       * The `foldLeft` below goes through pairs of (1) Feature groups, such as those calculated over
-       * 7 days or 30 days, and (2) the number of impressions for each of these groups, which is the
-       * denominator when ratio is calculated.
+       * t-the `fowdweft` bewow goes thwough p-paiws of (1) f-featuwe gwoups, :3 such as those c-cawcuwated ovew
+       * 7 days o-ow 30 days, ( ͡o ω ͡o ) and (2) t-the nyumbew o-of impwessions fow each of these g-gwoups, òωó which is t-the
+       * denominatow when watio is cawcuwated. σωσ
        */
-      ratioDenominators
-        .zip(allInputFeatures).foldLeft( /* initial empty DataRecord */ record)(
+      w-watiodenominatows
+        .zip(awwinputfeatuwes).fowdweft( /* i-initiaw empty d-datawecowd */ wecowd)(
           (
-            /* DataRecord with transformed features up to here */ transformedRecord,
-            /* A tuple with the denominator (#impressions) and features to be transformed */ numImpressionsAndFeatures
+            /* datawecowd with twansfowmed featuwes u-up to hewe */ twansfowmedwecowd, (U ᵕ U❁)
+            /* a-a tupwe w-with the denominatow (#impwessions) and featuwes to be twansfowmed */ nyumimpwessionsandfeatuwes
           ) => {
-            val (numImpressionsFeature, features) = numImpressionsAndFeatures
-            Option(record.getFeatureValue(numImpressionsFeature)) match {
-              case Some(numImpressions) if numImpressions > 0.0 =>
+            v-vaw (numimpwessionsfeatuwe, (✿oωo) f-featuwes) = n-nyumimpwessionsandfeatuwes
+            o-option(wecowd.getfeatuwevawue(numimpwessionsfeatuwe)) match {
+              c-case some(numimpwessions) if nyumimpwessions > 0.0 =>
                 /**
-                 * With the number of impressions fixed, we generate a function that adds log-ratio
-                 * for each feature in the current [[DataRecord]]. The `foldLeft` goes through all
-                 * such features and applies that function while updating the kept DataRecord.
+                 * with the nyumbew of impwessions fixed, ^^ we genewate a function t-that adds wog-watio
+                 * fow each f-featuwe in the cuwwent [[datawecowd]]. ^•ﻌ•^ t-the `fowdweft` goes thwough a-aww
+                 * such f-featuwes and a-appwies that function w-whiwe updating t-the kept datawecowd. XD
                  */
-                features.foldLeft(transformedRecord)(
-                  addTransformedFeaturesToDataRecordFunc(record, numImpressions))
+                f-featuwes.fowdweft(twansfowmedwecowd)(
+                  addtwansfowmedfeatuwestodatawecowdfunc(wecowd, :3 nyumimpwessions))
               case _ =>
-                transformedRecord
+                twansfowmedwecowd
             }
           })
     }
   }
 
-  def getFeatures: Seq[Feature[_]] = TransformedFeaturesMap.values.flatMap(_.getFeatures).toSeq
+  def getfeatuwes: seq[featuwe[_]] = twansfowmedfeatuwesmap.vawues.fwatmap(_.getfeatuwes).toseq
 
-  override def getFeatureContext: FeatureContext =
-    new FeatureContext()
-      .addFeatures(this.getFeatures.asJava)
+  o-ovewwide d-def getfeatuwecontext: f-featuwecontext =
+    nyew featuwecontext()
+      .addfeatuwes(this.getfeatuwes.asjava)
 }

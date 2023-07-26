@@ -1,27 +1,27 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import org.apache.lucene.search.BoostQuery;
-import org.apache.lucene.search.Query;
+impowt o-owg.apache.wucene.seawch.boostquewy;
+i-impowt owg.apache.wucene.seawch.quewy;
 
 /**
- * A class of utilities related to query boosts.
+ * a-a cwass of utiwities w-wewated t-to quewy boosts. rawr
  */
-public final class BoostUtils {
-  private BoostUtils() {
+p-pubwic finaw c-cwass boostutiws {
+  p-pwivate boostutiws() {
   }
 
   /**
-   * Wraps the given query into a BoostQuery, if {@code boost} is not equal to 1.0f.
+   * wwaps the given quewy into a boostquewy, OwO if {@code b-boost} is nyot equaw to 1.0f. (U ﹏ U)
    *
-   * @param query The query.
-   * @param boost The boost.
-   * @return If {@code boost} is equal to 1.0f, then {@code query} is returned; otherwise,
-   *         {@code query} is wrapped into a {@code BoostQuery} instance with the given boost.
+   * @pawam quewy the quewy. >_<
+   * @pawam b-boost the boost. rawr x3
+   * @wetuwn i-if {@code boost} is equaw to 1.0f, mya then {@code quewy} i-is wetuwned; othewwise, nyaa~~
+   *         {@code quewy} i-is wwapped i-into a {@code boostquewy} instance with the given boost. (⑅˘꒳˘)
    */
-  public static Query maybeWrapInBoostQuery(Query query, float boost) {
+  pubwic static quewy m-maybewwapinboostquewy(quewy quewy, rawr x3 fwoat boost) {
     if (boost == 1.0f) {
-      return query;
+      wetuwn quewy;
     }
-    return new BoostQuery(query, boost);
+    wetuwn n-nyew boostquewy(quewy, (✿oωo) boost);
   }
 }

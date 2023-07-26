@@ -1,72 +1,72 @@
-namespace java com.twitter.tweetypie.geo.thriftjava
-#@namespace scala com.twitter.tweetypie.geo.thriftscala
-#@namespace strato com.twitter.tweetypie.geo
-namespace py gen.twitter.tweetypie.geo
-namespace rb TweetyPie
+namespace java com.twittew.tweetypie.geo.thwiftjava
+#@namespace scawa com.twittew.tweetypie.geo.thwiftscawa
+#@namespace s-stwato com.twittew.tweetypie.geo
+n-nyamespace p-py gen.twittew.tweetypie.geo
+n-namespace wb tweetypie
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                                      //
-//   This file contains type definitions to support the Geo field added to Tweet flexible schema ONLY.                  //
-//   It is unlikely to be re-usable so treat it them as private outside the subpackage defined here.                    //
+//   t-this fiwe contains t-type definitions t-to suppowt t-the geo fiewd added to tweet fwexibwe schema onwy. 🥺                  //
+//   it is unwikewy to b-be we-usabwe so tweat it them as pwivate outside t-the subpackage defined hewe. (⑅˘꒳˘)                    //
 //                                                                                                                      //
-//   In respect to back storage, consider it has limited capacity, provisioned to address particular use cases.         //
-//   There is no free resources outside its current usage plus a future projection (see Storage Capacity below).        //
-//   For example:                                                                                                       //
-//    1- Adding extra fields to TweetLocationInfo will likely require extra storage.                                    //
-//    2- Increase on front-load QPS (read or write) may require extra sharding to not impact delay percentiles.         //
-//   Failure to observe these may impact Tweetypie write-path and read-path.                                            //
+//   i-in wespect to back stowage, nyaa~~ considew it has wimited capacity, :3 p-pwovisioned to addwess pawticuwaw u-use cases. ( ͡o ω ͡o )         //
+//   thewe i-is nyo fwee wesouwces outside its cuwwent usage pwus a futuwe pwojection (see s-stowage capacity bewow). mya        //
+//   fow exampwe:                                                                                                       //
+//    1- adding extwa fiewds to t-tweetwocationinfo wiww wikewy wequiwe e-extwa stowage. (///ˬ///✿)                                    //
+//    2- i-incwease on f-fwont-woad qps (wead o-ow wwite) may wequiwe extwa shawding to nyot i-impact deway pewcentiwes. (˘ω˘)         //
+//   faiwuwe t-to obsewve these may impact tweetypie wwite-path and wead-path. ^^;;                                            //
 //                                                                                                                      //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Flags how a _Place_ is published into a tweet (a.k.a. geotagging).
+ * fwags how a _pwace_ is pubwished i-into a tweet (a.k.a. (✿oωo) geotagging). (U ﹏ U)
  */
-enum GeoTagPlaceSource {
+e-enum geotagpwacesouwce {
   /**
-   * Tweet is tagged to a place but it is impossible to determine its source.
-   * E.g.: created from non-TOO clients or legacy TOO clients
+   * t-tweet i-is tagged to a pwace but it is impossibwe to detewmine its souwce. -.-
+   * e-e.g.: c-cweated fwom nyon-too cwients ow w-wegacy too cwients
    */
-  UNKNOWN     = 0
+  u-unknown     = 0
   /**
-   * Tweet is tagged to a Place by reverse geocoding its coordinates.
+   * tweet is t-tagged to a pwace by wevewse geocoding i-its coowdinates. ^•ﻌ•^
    */
-  COORDINATES = 1
+  coowdinates = 1
   /**
-   * Tweet is tagged to a Place by the client application on user's behalf.
-   * N.B.: COORDINATES is not AUTO because the API request doesn't publish a Place
+   * tweet i-is tagged to a pwace by the cwient a-appwication on usew's behawf. rawr
+   * n-ny.b.: coowdinates i-is nyot auto because the api wequest doesn't pubwish a pwace
    */
-  AUTO        = 2
-  EXPLICIT    = 3
+  auto        = 2
+  expwicit    = 3
 
-  // free to use, added for backwards compatibility on client code.
-  RESERVED_4  = 4
-  RESERVED_5  = 5
-  RESERVED_6  = 6
-  RESERVED_7  = 7
+  // fwee to use, (˘ω˘) a-added fow backwawds c-compatibiwity on cwient c-code. nyaa~~
+  wesewved_4  = 4
+  w-wesewved_5  = 5
+  w-wesewved_6  = 6
+  wesewved_7  = 7
 }
 
 /**
- * Information about Tweet's Location(s).
- * Designed to enable custom consumption experiences of the Tweet's location(s).
- * E.g.: Tweet's perspectival view of a Location entity
+ * infowmation about tweet's w-wocation(s). UwU
+ * designed to enabwe custom consumption expewiences of the tweet's w-wocation(s). :3
+ * e.g.: tweet's p-pewspectivaw view o-of a wocation e-entity
  *
- * To guarantee user's rights of privacy:
+ * to guawantee usew's w-wights of pwivacy:
  *
- * - Only include user's published location data or unpublished location data that
- *   is EXPLICITLY set as publicly available by the user.
+ * - o-onwy i-incwude usew's p-pubwished wocation data ow unpubwished wocation d-data that
+ *   i-is expwicitwy set a-as pubwicwy avaiwabwe b-by the usew. (⑅˘꒳˘)
  *
- * - Never include user's unpublished (aka shared) location data that
- *   is NOT EXPLICITLY set as publicly available by the user.
+ * - n-nyevew incwude usew's unpubwished (aka shawed) wocation d-data that
+ *   is nyot expwicitwy set as pubwicwy avaiwabwe by the usew. (///ˬ///✿)
  *
- *   E.g.: User is asked to share their GPS coordinates with Twitter from mobile client,
- *         under the guarantee it won't be made publicly available.
+ *   e.g.: usew i-is asked to shawe theiw gps coowdinates with twittew fwom mobiwe c-cwient, ^^;;
+ *         u-undew the guawantee i-it won't be made pubwicwy a-avaiwabwe. >_<
  *
- * Design notes:
- * - Tweet's geotagged Place is represented by Tweet.place instead of being a field here.
+ * design nyotes:
+ * - t-tweet's g-geotagged pwace is wepwesented by tweet.pwace instead of being a fiewd hewe. rawr x3
  */
-struct TweetLocationInfo {
+stwuct tweetwocationinfo {
   /**
-   * Represents how the Tweet author published the "from" location in a Tweet (a.k.a geo-tagged).
+   * w-wepwesents how the tweet a-authow pubwished the "fwom" wocation i-in a tweet (a.k.a g-geo-tagged). /(^•ω•^)
    */
-  1: optional GeoTagPlaceSource geotag_place_source
-}(persisted='true', hasPersonalData='false')
+  1: optionaw geotagpwacesouwce geotag_pwace_souwce
+}(pewsisted='twue', :3 h-haspewsonawdata='fawse')

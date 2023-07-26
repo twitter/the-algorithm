@@ -1,63 +1,63 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.twend
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend.TrendCandidateUrtItemBuilder.TrendsClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendDescription
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendDomainContext
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendGroupedTrends
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendNormalizedTrendName
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendTrendName
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendTweetCount
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendUrl
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.TrendItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.twend.twendcandidateuwtitembuiwdew.twendscwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.twenddescwiption
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.twenddomaincontext
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.twendgwoupedtwends
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.twendnowmawizedtwendname
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.twendtwendname
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.twendtweetcount
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.twenduww
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.unifiedtwendcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.pwomoted.basepwomotedmetadatabuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twend.twenditem
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object TrendCandidateUrtItemBuilder {
-  final val TrendsClientEventInfoElement = "trend"
+o-object twendcandidateuwtitembuiwdew {
+  f-finaw vaw twendscwienteventinfoewement = "twend"
 }
 
-case class TrendCandidateUrtItemBuilder[Query <: PipelineQuery](
-  trendMetaDescriptionBuilder: TrendMetaDescriptionBuilder[Query, UnifiedTrendCandidate],
-  promotedMetadataBuilder: BasePromotedMetadataBuilder[Query, UnifiedTrendCandidate],
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, UnifiedTrendCandidate],
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, UnifiedTrendCandidate]] =
-    None)
-    extends CandidateUrtEntryBuilder[Query, UnifiedTrendCandidate, TimelineItem] {
+case cwass twendcandidateuwtitembuiwdew[quewy <: pipewinequewy](
+  twendmetadescwiptionbuiwdew: t-twendmetadescwiptionbuiwdew[quewy, -.- unifiedtwendcandidate], 😳
+  pwomotedmetadatabuiwdew: basepwomotedmetadatabuiwdew[quewy, mya unifiedtwendcandidate], (˘ω˘)
+  c-cwienteventinfobuiwdew: basecwienteventinfobuiwdew[quewy, >_< u-unifiedtwendcandidate], -.-
+  f-feedbackactioninfobuiwdew: o-option[basefeedbackactioninfobuiwdew[quewy, 🥺 u-unifiedtwendcandidate]] =
+    nyone)
+    extends candidateuwtentwybuiwdew[quewy, (U ﹏ U) unifiedtwendcandidate, >w< t-timewineitem] {
 
-  override def apply(
-    query: Query,
-    candidate: UnifiedTrendCandidate,
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    TrendItem(
-      id = candidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
-        query = query,
-        candidate = candidate,
-        candidateFeatures = candidateFeatures,
-        element = Some(TrendsClientEventInfoElement)
-      ),
-      feedbackActionInfo = None,
-      normalizedTrendName = candidateFeatures.get(TrendNormalizedTrendName),
-      trendName = candidateFeatures.get(TrendTrendName),
-      url = candidateFeatures.get(TrendUrl),
-      description = candidateFeatures.getOrElse(TrendDescription, None),
-      metaDescription = trendMetaDescriptionBuilder(query, candidate, candidateFeatures),
-      tweetCount = candidateFeatures.getOrElse(TrendTweetCount, None),
-      domainContext = candidateFeatures.getOrElse(TrendDomainContext, None),
-      promotedMetadata = promotedMetadataBuilder(
-        query = query,
-        candidate = candidate,
-        candidateFeatures = candidateFeatures
-      ),
-      groupedTrends = candidateFeatures.getOrElse(TrendGroupedTrends, None)
+  ovewwide def appwy(
+    q-quewy: quewy, mya
+    candidate: unifiedtwendcandidate, >w<
+    candidatefeatuwes: featuwemap
+  ): timewineitem = {
+    twenditem(
+      i-id = candidate.id, nyaa~~
+      sowtindex = n-nyone, (✿oωo) // s-sowt indexes awe a-automaticawwy set in the domain mawshawwew phase
+      cwienteventinfo = c-cwienteventinfobuiwdew(
+        q-quewy = quewy, ʘwʘ
+        c-candidate = candidate, (ˆ ﻌ ˆ)♡
+        c-candidatefeatuwes = candidatefeatuwes, 😳😳😳
+        e-ewement = some(twendscwienteventinfoewement)
+      ), :3
+      feedbackactioninfo = n-none, OwO
+      nyowmawizedtwendname = candidatefeatuwes.get(twendnowmawizedtwendname), (U ﹏ U)
+      twendname = c-candidatefeatuwes.get(twendtwendname),
+      uww = candidatefeatuwes.get(twenduww), >w<
+      d-descwiption = candidatefeatuwes.getowewse(twenddescwiption, (U ﹏ U) nyone),
+      m-metadescwiption = t-twendmetadescwiptionbuiwdew(quewy, 😳 candidate, (ˆ ﻌ ˆ)♡ candidatefeatuwes), 😳😳😳
+      tweetcount = candidatefeatuwes.getowewse(twendtweetcount, (U ﹏ U) nyone),
+      domaincontext = candidatefeatuwes.getowewse(twenddomaincontext, (///ˬ///✿) nyone),
+      p-pwomotedmetadata = p-pwomotedmetadatabuiwdew(
+        quewy = quewy, 😳
+        c-candidate = c-candidate, 😳
+        c-candidatefeatuwes = candidatefeatuwes
+      ), σωσ
+      gwoupedtwends = candidatefeatuwes.getowewse(twendgwoupedtwends, rawr x3 n-nyone)
     )
   }
 }

@@ -1,12 +1,12 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    strict_deps = False,
-    tags = ["bazel-compatible"],
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    s-stwict_deps = f-fawse, 🥺
+    tags = ["bazew-compatibwe"], òωó
     dependencies = [
-        "3rdparty/jvm/com/twitter/graphjet",
-        "finagle/finagle-stats/src/main/scala",
-        "src/scala/com/twitter/recos/util:recos-util",
-        "src/thrift/com/twitter/recos:recos-common-scala",
+        "3wdpawty/jvm/com/twittew/gwaphjet", o.O
+        "finagwe/finagwe-stats/swc/main/scawa", (U ᵕ U❁)
+        "swc/scawa/com/twittew/wecos/utiw:wecos-utiw", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/wecos:wecos-common-scawa", ( ͡o ω ͡o )
     ],
 )

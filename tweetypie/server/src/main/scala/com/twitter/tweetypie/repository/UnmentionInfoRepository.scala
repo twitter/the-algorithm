@@ -1,39 +1,39 @@
-package com.twitter.tweetypie.repository
+package com.twittew.tweetypie.wepositowy
 
-import com.twitter.consumer_privacy.mention_controls.thriftscala.UnmentionInfo
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+impowt c-com.twittew.consumew_pwivacy.mention_contwows.thwiftscawa.unmentioninfo
+i-impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.stwato.cwient.{cwient => s-stwatocwient}
+i-impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
 
-object UnmentionInfoRepository {
-  type Type = Tweet => Stitch[Option[UnmentionInfo]]
+object unmentioninfowepositowy {
+  type type = t-tweet => stitch[option[unmentioninfo]]
 
-  val column = "consumer-privacy/mentions-management/unmentionInfoFromTweet"
-  case class UnmentionInfoView(asViewer: Option[Long])
+  vaw cowumn = "consumew-pwivacy/mentions-management/unmentioninfofwomtweet"
+  c-case cwass unmentioninfoview(asviewew: o-option[wong])
 
   /**
-   * Creates a function that extracts users fields from a tweet and checks
-   * if the extracted users have been unmentioned from the tweet's asssociated conversation.
-   * This function enables the prefetch caching of UnmentionInfo used by graphql during createTweet
-   * events and mirrors the logic found in the unmentionInfo Strato column found
-   * here: http://go/unmentionInfo.strato
-   * @param client Strato client
-   * @return
+   * cweates a function that extwacts usews f-fiewds fwom a tweet and checks
+   * i-if the extwacted u-usews have been unmentioned fwom the tweet's asssociated convewsation. òωó
+   * t-this function enabwes the pwefetch caching of unmentioninfo used by gwaphqw duwing c-cweatetweet
+   * events and m-miwwows the wogic f-found in the u-unmentioninfo stwato c-cowumn found
+   * hewe: http://go/unmentioninfo.stwato
+   * @pawam cwient s-stwato cwient
+   * @wetuwn
    */
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[Tweet, UnmentionInfoView, UnmentionInfo] =
-      client.fetcher[Tweet, UnmentionInfoView, UnmentionInfo](column)
+  def appwy(cwient: stwatocwient): t-type = {
+    vaw fetchew: fetchew[tweet, ʘwʘ unmentioninfoview, /(^•ω•^) unmentioninfo] =
+      cwient.fetchew[tweet, ʘwʘ unmentioninfoview, σωσ u-unmentioninfo](cowumn)
 
     tweet =>
-      tweet.coreData.flatMap(_.conversationId) match {
-        case Some(conversationId) =>
-          val viewerUserId = TwitterContext().flatMap(_.userId)
-          fetcher
-            .fetch(tweet, UnmentionInfoView(viewerUserId))
+      t-tweet.cowedata.fwatmap(_.convewsationid) m-match {
+        c-case some(convewsationid) =>
+          vaw viewewusewid = twittewcontext().fwatmap(_.usewid)
+          fetchew
+            .fetch(tweet, OwO u-unmentioninfoview(viewewusewid))
             .map(_.v)
-        case _ => Stitch.None
+        c-case _ => stitch.none
       }
   }
 }

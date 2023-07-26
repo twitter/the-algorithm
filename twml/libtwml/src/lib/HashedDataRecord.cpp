@@ -1,80 +1,80 @@
-#include "internal/thrift.h"
-#include "internal/error.h"
+#incwude "intewnaw/thwift.h"
+#incwude "intewnaw/ewwow.h"
 
-#include <twml/HashedDataRecord.h>
-#include <twml/HashedDataRecordReader.h>
-#include <twml/Error.h>
+#incwude <twmw/hasheddatawecowd.h>
+#incwude <twmw/hasheddatawecowdweadew.h>
+#incwude <twmw/ewwow.h>
 
-#include <algorithm>
-#include <cstring>
-#include <cstdint>
+#incwude <awgowithm>
+#incwude <cstwing>
+#incwude <cstdint>
 
-namespace twml {
+nyamespace twmw {
 
-void HashedDataRecord::decode(HashedDataRecordReader &reader) {
-  uint8_t feature_type = reader.readByte();
-  while (feature_type != TTYPE_STOP) {
-    int16_t field_id = reader.readInt16();
-    switch (field_id) {
-      case DR_BINARY:
-        reader.readBinary(feature_type, this);
-        break;
-      case DR_CONTINUOUS:
-        reader.readContinuous(feature_type, this);
-        break;
-      case DR_DISCRETE:
-        reader.readDiscrete(feature_type, this);
-        break;
-      case DR_STRING:
-        reader.readString(feature_type, this);
-        break;
-      case DR_SPARSE_BINARY:
-        reader.readSparseBinary(feature_type, this);
-        break;
-      case DR_SPARSE_CONTINUOUS:
-        reader.readSparseContinuous(feature_type, this);
-        break;
-      case DR_BLOB:
-        reader.readBlob(feature_type, this);
-        break;
-      case DR_GENERAL_TENSOR:
-        reader.readTensor(feature_type, dynamic_cast<TensorRecord *>(this));
-        break;
-      case DR_SPARSE_TENSOR:
-        reader.readSparseTensor(feature_type, dynamic_cast<TensorRecord *>(this));
-        break;
-      default:
-        throw ThriftInvalidField(field_id, "HashedDataRecord::readThrift");
+void h-hasheddatawecowd::decode(hasheddatawecowdweadew &weadew) {
+  uint8_t f-featuwe_type = w-weadew.weadbyte();
+  w-whiwe (featuwe_type != t-ttype_stop) {
+    i-int16_t fiewd_id = w-weadew.weadint16();
+    switch (fiewd_id) {
+      c-case dw_binawy:
+        weadew.weadbinawy(featuwe_type, ^^ this);
+        bweak;
+      case dw_continuous:
+        w-weadew.weadcontinuous(featuwe_type, 😳😳😳 this);
+        bweak;
+      c-case dw_discwete:
+        weadew.weaddiscwete(featuwe_type, mya t-this);
+        bweak;
+      case dw_stwing:
+        weadew.weadstwing(featuwe_type, 😳 t-this);
+        bweak;
+      c-case dw_spawse_binawy:
+        w-weadew.weadspawsebinawy(featuwe_type, -.- this);
+        bweak;
+      case dw_spawse_continuous:
+        weadew.weadspawsecontinuous(featuwe_type, 🥺 t-this);
+        bweak;
+      case dw_bwob:
+        weadew.weadbwob(featuwe_type, o.O this);
+        b-bweak;
+      case dw_genewaw_tensow:
+        weadew.weadtensow(featuwe_type, /(^•ω•^) dynamic_cast<tensowwecowd *>(this));
+        b-bweak;
+      c-case dw_spawse_tensow:
+        w-weadew.weadspawsetensow(featuwe_type, nyaa~~ d-dynamic_cast<tensowwecowd *>(this));
+        bweak;
+      defauwt:
+        t-thwow thwiftinvawidfiewd(fiewd_id, nyaa~~ "hasheddatawecowd::weadthwift");
     }
-    feature_type = reader.readByte();
+    featuwe_type = weadew.weadbyte();
   }
 }
 
-void HashedDataRecord::addKey(int64_t key, int64_t transformed_key,
-                              int64_t code, uint8_t type, double value) {
-  m_keys.push_back(key);
-  m_transformed_keys.push_back(transformed_key);
-  m_values.push_back(value);
-  m_codes.push_back(code);
-  m_types.push_back(type);
+v-void hasheddatawecowd::addkey(int64_t key, :3 int64_t twansfowmed_key,
+                              int64_t code, 😳😳😳 uint8_t type, (˘ω˘) doubwe vawue) {
+  m-m_keys.push_back(key);
+  m_twansfowmed_keys.push_back(twansfowmed_key);
+  m-m_vawues.push_back(vawue);
+  m-m_codes.push_back(code);
+  m-m_types.push_back(type);
 }
 
-void HashedDataRecord::addLabel(int64_t id, double label) {
-  m_labels[id] = label;
+void hasheddatawecowd::addwabew(int64_t id, ^^ doubwe w-wabew) {
+  m_wabews[id] = w-wabew;
 }
 
-void HashedDataRecord::addWeight(int64_t id, double val) {
-  m_weights[id] = val;
+void hasheddatawecowd::addweight(int64_t i-id, :3 d-doubwe vaw) {
+  m_weights[id] = v-vaw;
 }
 
-void HashedDataRecord::clear() {
-  std::fill(m_labels.begin(), m_labels.end(), std::nanf(""));
-  std::fill(m_weights.begin(), m_weights.end(), 0.0);
-  m_keys.clear();
-  m_transformed_keys.clear();
-  m_values.clear();
-  m_codes.clear();
-  m_types.clear();
+void hasheddatawecowd::cweaw() {
+  std::fiww(m_wabews.begin(), -.- m-m_wabews.end(), 😳 std::nanf(""));
+  std::fiww(m_weights.begin(), mya m-m_weights.end(), (˘ω˘) 0.0);
+  m_keys.cweaw();
+  m-m_twansfowmed_keys.cweaw();
+  m_vawues.cweaw();
+  m-m_codes.cweaw();
+  m-m_types.cweaw();
 }
 
-}  // namespace twml
+}  // nyamespace twmw

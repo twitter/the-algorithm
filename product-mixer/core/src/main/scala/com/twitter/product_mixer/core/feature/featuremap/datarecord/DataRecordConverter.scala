@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.core.feature.featuremap.datarecord
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.datawecowd
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.datawecowdmewgew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd._
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
 
-object DataRecordConverter {
-  val merger = new DataRecordMerger
+o-object d-datawecowdconvewtew {
+  vaw mewgew = nyew datawecowdmewgew
 }
 
 /**
- * Constructs a FeatureMap from a DataRecord, given a predefined set of features from a FeaturesScope.
+ * constwucts a featuwemap fwom a-a datawecowd, -.- given a pwedefined set of featuwes f-fwom a featuwesscope. 🥺
  *
- * @param featuresScope scope of predefined set of BaseDataRecordFeatures that should be included in the output FeatureMap.
+ * @pawam featuwesscope s-scope of pwedefined set of basedatawecowdfeatuwes that shouwd b-be incwuded in the output featuwemap. o.O
  */
-class DataRecordConverter[DRFeature <: BaseDataRecordFeature[_, _]](
-  featuresScope: FeaturesScope[DRFeature]) {
-  import DataRecordConverter._
+c-cwass d-datawecowdconvewtew[dwfeatuwe <: basedatawecowdfeatuwe[_, /(^•ω•^) _]](
+  featuwesscope: featuwesscope[dwfeatuwe]) {
+  impowt datawecowdconvewtew._
 
-  def toDataRecord(featureMap: FeatureMap): DataRecord = {
-    // Initialize a DataRecord with the Feature Store features in it and then add all the
-    // non-Feature Store features that support DataRecords to DataRecord. We don't
-    // need to add Feature Store features because they're already in the initial DataRecord.
-    // If there are any pre-built DataRecords, we merge those in.
-    val richDataRecord = featuresScope.getFeatureStoreFeaturesDataRecord(featureMap)
-    val features = featuresScope.getNonFeatureStoreDataRecordFeatures(featureMap)
-    features.foreach {
-      case _: FeatureStoreDataRecordFeature[_, _] =>
-      case requiredFeature: DataRecordFeature[_, _] with DataRecordCompatible[_] =>
-        richDataRecord.setFeatureValue(
-          requiredFeature.mlFeature,
-          requiredFeature.toDataRecordFeatureValue(
-            featureMap.get(requiredFeature).asInstanceOf[requiredFeature.FeatureType]))
-      case optionalFeature: DataRecordOptionalFeature[_, _] with DataRecordCompatible[_] =>
-        featureMap
+  d-def todatawecowd(featuwemap: featuwemap): datawecowd = {
+    // initiawize a datawecowd with the featuwe stowe f-featuwes in it and then add aww t-the
+    // nyon-featuwe s-stowe featuwes t-that suppowt d-datawecowds to datawecowd. nyaa~~ we don't
+    // n-nyeed to add featuwe stowe featuwes because they'we a-awweady in the initiaw datawecowd. nyaa~~
+    // if thewe awe any pwe-buiwt datawecowds, :3 we mewge those i-in. 😳😳😳
+    vaw wichdatawecowd = f-featuwesscope.getfeatuwestowefeatuwesdatawecowd(featuwemap)
+    v-vaw featuwes = f-featuwesscope.getnonfeatuwestowedatawecowdfeatuwes(featuwemap)
+    featuwes.foweach {
+      case _: featuwestowedatawecowdfeatuwe[_, (˘ω˘) _] =>
+      c-case wequiwedfeatuwe: d-datawecowdfeatuwe[_, ^^ _] with datawecowdcompatibwe[_] =>
+        w-wichdatawecowd.setfeatuwevawue(
+          w-wequiwedfeatuwe.mwfeatuwe, :3
+          wequiwedfeatuwe.todatawecowdfeatuwevawue(
+            f-featuwemap.get(wequiwedfeatuwe).asinstanceof[wequiwedfeatuwe.featuwetype]))
+      case optionawfeatuwe: d-datawecowdoptionawfeatuwe[_, -.- _] with datawecowdcompatibwe[_] =>
+        featuwemap
           .get(
-            optionalFeature.asInstanceOf[Feature[_, Option[optionalFeature.FeatureType]]]).foreach {
-            value =>
-              richDataRecord
-                .setFeatureValue(
-                  optionalFeature.mlFeature,
-                  optionalFeature.toDataRecordFeatureValue(value))
+            o-optionawfeatuwe.asinstanceof[featuwe[_, 😳 option[optionawfeatuwe.featuwetype]]]).foweach {
+            v-vawue =>
+              wichdatawecowd
+                .setfeatuwevawue(
+                  o-optionawfeatuwe.mwfeatuwe, mya
+                  o-optionawfeatuwe.todatawecowdfeatuwevawue(vawue))
           }
-      case dataRecordInAFeature: DataRecordInAFeature[_] =>
-        merger.merge(richDataRecord.getRecord, featureMap.get(dataRecordInAFeature))
+      case datawecowdinafeatuwe: datawecowdinafeatuwe[_] =>
+        mewgew.mewge(wichdatawecowd.getwecowd, featuwemap.get(datawecowdinafeatuwe))
     }
-    richDataRecord.getRecord
+    wichdatawecowd.getwecowd
   }
 }

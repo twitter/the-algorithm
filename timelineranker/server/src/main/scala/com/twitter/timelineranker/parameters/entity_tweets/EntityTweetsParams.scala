@@ -1,65 +1,65 @@
-package com.twitter.timelineranker.parameters.entity_tweets
+package com.twittew.timewinewankew.pawametews.entity_tweets
 
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelines.configapi.decider.DeciderParam
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+impowt c-com.twittew.timewinewankew.decidew.decidewkey
+i-impowt com.twittew.timewines.configapi.decidew.decidewpawam
+i-impowt c-com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fspawam
 
-object EntityTweetsParams {
+o-object entitytweetspawams {
 
   /**
-   * Controls limit on the number of followed users fetched from SGS.
+   * c-contwows w-wimit on the nyumbew of fowwowed usews fetched fwom sgs. o.O
    */
-  object MaxFollowedUsersParam
-      extends FSBoundedParam[Int](
-        name = "entity_tweets_max_followed_users",
-        default = 1000,
-        min = 0,
-        max = 5000
+  object maxfowwowedusewspawam
+      e-extends fsboundedpawam[int](
+        nyame = "entity_tweets_max_fowwowed_usews", ( ͡o ω ͡o )
+        d-defauwt = 1000, (U ﹏ U)
+        min = 0, (///ˬ///✿)
+        m-max = 5000
       )
 
   /**
-   * Enables semantic core, penguin, and tweetypie content features in entity tweets source.
+   * enabwes semantic cowe, >w< penguin, and tweetypie c-content featuwes in entity t-tweets souwce. rawr
    */
-  object EnableContentFeaturesHydrationParam
-      extends DeciderParam[Boolean](
-        decider = DeciderKey.EntityTweetsEnableContentFeaturesHydration,
-        default = false
+  o-object enabwecontentfeatuweshydwationpawam
+      extends decidewpawam[boowean](
+        decidew = decidewkey.entitytweetsenabwecontentfeatuweshydwation, mya
+        d-defauwt = fawse
       )
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * additionawwy enabwes tokens when hydwating c-content featuwes. ^^
    */
-  object EnableTokensInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "entity_tweets_enable_tokens_in_content_features_hydration",
-        default = false
+  o-object enabwetokensincontentfeatuweshydwationpawam
+      e-extends f-fspawam(
+        n-nyame = "entity_tweets_enabwe_tokens_in_content_featuwes_hydwation", 😳😳😳
+        defauwt = fawse
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * additionawwy e-enabwes tweet text when hydwating content featuwes. mya
+   * t-this onwy wowks if enabwecontentfeatuweshydwationpawam is set to twue
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "entity_tweets_enable_tweet_text_in_content_features_hydration",
-        default = false
+  object enabwetweettextincontentfeatuweshydwationpawam
+      extends fspawam(
+        nyame = "entity_tweets_enabwe_tweet_text_in_content_featuwes_hydwation", 😳
+        d-defauwt = fawse
       )
 
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * additionawwy e-enabwes convewsationcontwow w-when h-hydwating content featuwes. -.-
+   * this onwy wowks if enabwecontentfeatuweshydwationpawam i-is set t-to twue
    */
-  object EnableConversationControlInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "conversation_control_in_content_features_hydration_entity_enable",
-        default = false
+  object enabweconvewsationcontwowincontentfeatuweshydwationpawam
+      e-extends fspawam(
+        n-nyame = "convewsation_contwow_in_content_featuwes_hydwation_entity_enabwe", 🥺
+        defauwt = fawse
       )
 
-  object EnableTweetMediaHydrationParam
-      extends FSParam(
-        name = "tweet_media_hydration_entity_tweets_enable",
-        default = false
+  object e-enabwetweetmediahydwationpawam
+      extends f-fspawam(
+        name = "tweet_media_hydwation_entity_tweets_enabwe", o.O
+        defauwt = fawse
       )
 
 }

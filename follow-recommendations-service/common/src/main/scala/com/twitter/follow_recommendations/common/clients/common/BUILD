@@ -1,11 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-thrift-client",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
+scawa_wibwawy(
+    souwces = ["*.scawa"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    p-pwatfowm = "java8", òωó
+    t-tags = ["bazew-compatibwe"], o.O
+    d-dependencies = [
+        "cache/cwient", (U ᵕ U❁)
+        "finagwe/finagwe-memcached/swc/main/scawa", (⑅˘꒳˘)
+        "finatwa/inject/inject-cowe/swc/main/scawa", ( ͡o ω ͡o )
+        "finatwa/inject/inject-thwift-cwient/swc/main/scawa", UwU
+        "stitch/stitch-cowe", rawr x3
+        "utiw/utiw-cowe:scawa", rawr
+        "utiw/utiw-thwift", σωσ
     ],
 )

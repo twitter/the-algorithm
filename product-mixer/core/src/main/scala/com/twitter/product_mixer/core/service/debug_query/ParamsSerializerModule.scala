@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.service.debug_query
+package com.twittew.pwoduct_mixew.cowe.sewvice.debug_quewy
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.ser.std.StdSerializer
-import com.twitter.timelines.configapi.Params
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.twitter.timelines.configapi.Config
+impowt c-com.fastewxmw.jackson.cowe.jsongenewatow
+i-impowt c-com.fastewxmw.jackson.databind.sewiawizewpwovidew
+i-impowt com.fastewxmw.jackson.databind.sew.std.stdsewiawizew
+i-impowt com.twittew.timewines.configapi.pawams
+i-impowt c-com.fastewxmw.jackson.databind.moduwe.simpwemoduwe
+i-impowt com.twittew.timewines.configapi.config
 
-object ParamsSerializerModule extends SimpleModule {
-  addSerializer(ParamsConfigSerializer)
-  addSerializer(ParamsStdSerializer)
+object pawamssewiawizewmoduwe extends simpwemoduwe {
+  addsewiawizew(pawamsconfigsewiawizew)
+  addsewiawizew(pawamsstdsewiawizew)
 }
 
-object ParamsStdSerializer extends StdSerializer[Params](classOf[Params]) {
-  override def serialize(
-    value: Params,
-    gen: JsonGenerator,
-    provider: SerializerProvider
-  ): Unit = {
-    gen.writeStartObject()
-    gen.writeObjectField("applied_params", value.allAppliedValues)
-    gen.writeEndObject()
+o-object pawamsstdsewiawizew extends stdsewiawizew[pawams](cwassof[pawams]) {
+  o-ovewwide def sewiawize(
+    v-vawue: pawams, rawr
+    gen: jsongenewatow, OwO
+    pwovidew: sewiawizewpwovidew
+  ): unit = {
+    g-gen.wwitestawtobject()
+    gen.wwiteobjectfiewd("appwied_pawams", (U ﹏ U) v-vawue.awwappwiedvawues)
+    g-gen.wwiteendobject()
   }
 }
 
-object ParamsConfigSerializer extends StdSerializer[Config](classOf[Config]) {
-  override def serialize(
-    value: Config,
-    gen: JsonGenerator,
-    provider: SerializerProvider
-  ): Unit = {
-    gen.writeString(value.simpleName)
+object pawamsconfigsewiawizew extends stdsewiawizew[config](cwassof[config]) {
+  o-ovewwide def sewiawize(
+    vawue: config, >_<
+    gen: jsongenewatow, rawr x3
+    pwovidew: sewiawizewpwovidew
+  ): u-unit = {
+    gen.wwitestwing(vawue.simpwename)
   }
 }

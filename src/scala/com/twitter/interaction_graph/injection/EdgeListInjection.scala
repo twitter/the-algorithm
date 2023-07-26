@@ -1,14 +1,14 @@
-package com.twitter.interaction_graph.injection
+package com.twittew.intewaction_gwaph.injection
 
-import com.twitter.interaction_graph.thriftscala.EdgeList
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
+impowt com.twittew.intewaction_gwaph.thwiftscawa.edgewist
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.wong2bigendian
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.scawacompactthwift
 
-object EdgeListInjection {
-  final val injection: KeyValInjection[Long, EdgeList] =
-    KeyValInjection(
-      Long2BigEndian,
-      ScalaCompactThrift(EdgeList)
+o-object e-edgewistinjection {
+  f-finaw vaw injection: keyvawinjection[wong, rawr edgewist] =
+    keyvawinjection(
+      wong2bigendian, σωσ
+      scawacompactthwift(edgewist)
     )
 }

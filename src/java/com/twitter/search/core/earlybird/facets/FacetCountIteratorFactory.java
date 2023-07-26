@@ -1,23 +1,23 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+impowt c-com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
 /**
- * A factory for {@link FacetCountIterator}s.
+ * a-a f-factowy fow {@wink f-facetcountitewatow}s. (U ﹏ U)
  */
-public abstract class FacetCountIteratorFactory {
+p-pubwic a-abstwact cwass f-facetcountitewatowfactowy {
   /**
-   * For a field that is being faceted on and for which we should use a CSF for facet counting,
-   * return the iterator we should use for counting.
+   * fow a fiewd that is being faceted on and fow which we s-shouwd use a csf fow facet counting, >_<
+   * wetuwn t-the itewatow we shouwd use fow c-counting.
    *
-   * @param reader The reader to use when getting CSF values
-   * @param fieldInfo The Schema.FieldInfo corresponding to the facet we're counting
-   * @return An iterator for this field
+   * @pawam weadew the weadew to use when getting c-csf vawues
+   * @pawam fiewdinfo t-the schema.fiewdinfo c-cowwesponding to the facet we'we counting
+   * @wetuwn an itewatow fow this f-fiewd
    */
-  public abstract FacetCountIterator getFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo fieldInfo) throws IOException;
+  pubwic abstwact facetcountitewatow getfacetcountitewatow(
+      eawwybiwdindexsegmentatomicweadew w-weadew, rawr x3
+      schema.fiewdinfo f-fiewdinfo) thwows i-ioexception;
 }

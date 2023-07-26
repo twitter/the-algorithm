@@ -1,172 +1,172 @@
-package com.twitter.servo.request
+package com.twittew.sewvo.wequest
 
-import com.twitter.servo.gate.RateLimitingGate
-import com.twitter.servo.util.Gate
-import com.twitter.util.Future
+impowt com.twittew.sewvo.gate.watewimitinggate
+i-impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * Collects per-request stats by method-name and client.
+ * c-cowwects p-pew-wequest s-stats by method-name a-and cwient. >_<
  */
-trait ClientRequestAuthorizer extends ((String, Option[String]) => Future[Unit]) { self =>
+t-twait cwientwequestauthowizew e-extends ((stwing, -.- option[stwing]) => futuwe[unit]) { sewf =>
 
   /**
-   * @param methodName the name of the Service method being called
-   * @param clientIdStrOpt an Option of the string value of the originating
-   *   request's ClientId
+   * @pawam methodname the n-nyame of the sewvice method being cawwed
+   * @pawam c-cwientidstwopt an option o-of the stwing vawue of the owiginating
+   *   wequest's cwientid
    */
-  def apply(methodName: String, clientIdStrOpt: Option[String]): Future[Unit]
+  d-def appwy(methodname: stwing, mya cwientidstwopt: o-option[stwing]): f-futuwe[unit]
 
   /**
-   * Compose this authorizer with another so that one is applied after the other.
+   * compose this authowizew with anothew so that one is appwied aftew t-the othew. >w<
    *
-   * The resultant authorizer requires both underlying authorizers to succeed in
-   * order to authorize a request.
+   * the wesuwtant authowizew wequiwes both undewwying authowizews t-to succeed in
+   * owdew to a-authowize a wequest. (U ﹏ U)
    */
-  def andThen(other: ClientRequestAuthorizer) = new ClientRequestAuthorizer {
-    override def apply(methodName: String, clientIdStrOpt: Option[String]): Future[Unit] = {
-      self.apply(methodName, clientIdStrOpt) flatMap { _ =>
-        other(methodName, clientIdStrOpt)
+  def a-andthen(othew: c-cwientwequestauthowizew) = n-nyew cwientwequestauthowizew {
+    ovewwide def appwy(methodname: stwing, 😳😳😳 c-cwientidstwopt: option[stwing]): futuwe[unit] = {
+      sewf.appwy(methodname, c-cwientidstwopt) fwatmap { _ =>
+        othew(methodname, o.O cwientidstwopt)
       }
     }
   }
 }
 
-object ClientRequestAuthorizer {
-  case class UnauthorizedException(msg: String) extends Exception(msg)
+object cwientwequestauthowizew {
+  case cwass unauthowizedexception(msg: s-stwing) extends exception(msg)
 
-  protected[this] val noClientIdException =
-    Future.exception(new UnauthorizedException("No ClientId specified"))
-  protected[this] val unauthorizedException =
-    new UnauthorizedException("Your ClientId is not authorized.")
-  protected[this] val overRateLimitException =
-    new UnauthorizedException("Your ClientId is over the allowed rate limit.")
+  pwotected[this] vaw n-nyocwientidexception =
+    f-futuwe.exception(new u-unauthowizedexception("no cwientid specified"))
+  pwotected[this] v-vaw unauthowizedexception =
+    n-nyew unauthowizedexception("youw cwientid is n-nyot authowized.")
+  p-pwotected[this] vaw ovewwatewimitexception =
+    n-nyew unauthowizedexception("youw cwientid i-is ovew the awwowed wate wimit.")
 
   /**
-   * Increment stats counters for this request.
+   * incwement stats c-countews fow this wequest. òωó
    *
-   * Note that ClientRequestAuthorizer.observed doesn't compose in the same fashion
-   * as other authorizers via `andThen`. In order to observe authorization results,
-   * pass in an underlying authorizer as an argument to observed.
+   * n-note that cwientwequestauthowizew.obsewved doesn't compose i-in the same fashion
+   * a-as othew authowizews via `andthen`. 😳😳😳 in owdew to obsewve authowization wesuwts,
+   * pass in an undewwying a-authowizew as a-an awgument to obsewved. σωσ
    */
-  def observed(
-    underlyingAuthorizer: ClientRequestAuthorizer,
-    observer: ClientRequestObserver
-  ) = new ClientRequestAuthorizer {
-    override def apply(methodName: String, clientIdStrOpt: Option[String]): Future[Unit] = {
-      val clientIdStr = clientIdStrOpt.getOrElse("no_client_id")
+  d-def obsewved(
+    u-undewwyingauthowizew: c-cwientwequestauthowizew, (⑅˘꒳˘)
+    obsewvew: cwientwequestobsewvew
+  ) = nyew c-cwientwequestauthowizew {
+    ovewwide def appwy(methodname: stwing, (///ˬ///✿) cwientidstwopt: option[stwing]): futuwe[unit] = {
+      vaw c-cwientidstw = cwientidstwopt.getowewse("no_cwient_id")
 
-      observer(methodName, clientIdStrOpt map { Seq(_) })
+      o-obsewvew(methodname, 🥺 c-cwientidstwopt m-map { seq(_) })
 
-      underlyingAuthorizer(methodName, clientIdStrOpt) onFailure { _ =>
-        observer.unauthorized(methodName, clientIdStr)
-      } onSuccess { _ =>
-        observer.authorized(methodName, clientIdStr)
+      undewwyingauthowizew(methodname, OwO c-cwientidstwopt) o-onfaiwuwe { _ =>
+        o-obsewvew.unauthowized(methodname, >w< c-cwientidstw)
+      } onsuccess { _ =>
+        obsewvew.authowized(methodname, 🥺 c-cwientidstw)
       }
     }
   }
 
-  def observed(observer: ClientRequestObserver): ClientRequestAuthorizer =
-    observed(ClientRequestAuthorizer.permissive, observer)
+  d-def obsewved(obsewvew: cwientwequestobsewvew): c-cwientwequestauthowizew =
+    o-obsewved(cwientwequestauthowizew.pewmissive, nyaa~~ o-obsewvew)
 
   /**
-   * Lets all requests through.
+   * wets aww wequests thwough. ^^
    */
-  def permissive = new ClientRequestAuthorizer {
-    override def apply(methodName: String, clientIdStrOpt: Option[String]) = Future.Done
+  def pewmissive = n-nyew cwientwequestauthowizew {
+    ovewwide def appwy(methodname: stwing, >w< cwientidstwopt: option[stwing]) = f-futuwe.done
   }
 
   /**
-   * A Generic Authorizer that allows you to pass in your own authorizer function (filter).
-   * The filter should take in methodName and clientId and return a Boolean decision
+   * a genewic authowizew that awwows you to pass i-in youw own authowizew f-function (fiwtew). OwO
+   * t-the fiwtew shouwd take in methodname a-and cwientid and wetuwn a boowean d-decision
    *
-   * Note: Requires requests to have ClientIds.
-   * @param exception return this exception if the request does not pass the filter
+   * n-nyote: wequiwes wequests to have cwientids. XD
+   * @pawam exception wetuwn this exception if the wequest d-does nyot pass the fiwtew
    */
-  def filtered(
-    filter: (String, String) => Boolean,
-    exception: Exception = unauthorizedException
-  ): ClientRequestAuthorizer =
-    new ClientRequestAuthorizer {
-      val futureException = Future.exception(exception)
+  d-def fiwtewed(
+    fiwtew: (stwing, ^^;; s-stwing) => b-boowean,
+    exception: exception = unauthowizedexception
+  ): c-cwientwequestauthowizew =
+    n-nyew cwientwequestauthowizew {
+      v-vaw futuweexception = f-futuwe.exception(exception)
 
-      override def apply(methodName: String, clientIdStrOpt: Option[String]): Future[Unit] = {
-        clientIdStrOpt match {
-          case Some(clientIdStr) =>
-            if (filter(methodName, clientIdStr))
-              Future.Done
-            else
-              futureException
-          case None =>
-            noClientIdException
+      ovewwide def appwy(methodname: stwing, 🥺 cwientidstwopt: o-option[stwing]): f-futuwe[unit] = {
+        c-cwientidstwopt match {
+          c-case s-some(cwientidstw) =>
+            if (fiwtew(methodname, XD c-cwientidstw))
+              futuwe.done
+            ewse
+              futuweexception
+          case nyone =>
+            n-nyocwientidexception
         }
       }
     }
 
   /**
-   * Authorizes client requests based on a allowlist of ClientId strings.
+   * authowizes c-cwient wequests based on a awwowwist of c-cwientid stwings. (U ᵕ U❁)
    */
-  def allowlisted(allowlist: Set[String]): ClientRequestAuthorizer =
-    filtered { (_, clientIdStr) =>
-      allowlist.contains(clientIdStr)
+  d-def awwowwisted(awwowwist: set[stwing]): cwientwequestauthowizew =
+    f-fiwtewed { (_, :3 cwientidstw) =>
+      awwowwist.contains(cwientidstw)
     }
 
   /**
-   * Authorizes requests if and only if they have an associated ClientId.
+   * authowizes wequests if a-and onwy if they have an associated cwientid. ( ͡o ω ͡o )
    */
-  def withClientId: ClientRequestAuthorizer = filtered { (_, _) =>
-    true
+  d-def withcwientid: c-cwientwequestauthowizew = fiwtewed { (_, òωó _) =>
+    twue
   }
 
   /**
-   * Consult a (presumably) Decider-backed predicate to authorize requests by ClientId.
-   * @param exception return this exception if the request does not pass the filter
+   * consuwt a (pwesumabwy) d-decidew-backed p-pwedicate to authowize wequests by cwientid. σωσ
+   * @pawam exception wetuwn t-this exception if the wequest does n-nyot pass the fiwtew
    */
-  def deciderable(
-    isAvailable: String => Boolean,
-    exception: Exception = unauthorizedException
-  ): ClientRequestAuthorizer =
-    filtered(
-      { (_, clientIdStr) =>
-        isAvailable(clientIdStr)
-      },
-      exception
+  def decidewabwe(
+    isavaiwabwe: s-stwing => boowean, (U ᵕ U❁)
+    exception: e-exception = u-unauthowizedexception
+  ): cwientwequestauthowizew =
+    f-fiwtewed(
+      { (_, (✿oωo) cwientidstw) =>
+        i-isavaiwabwe(cwientidstw)
+      }, ^^
+      e-exception
     )
 
   /**
-   * Simple rate limiter for unknown client ids. Useful for letting new clients
-   * send some traffic without the risk of being overrun by requests.
+   * s-simpwe wate wimitew f-fow unknown cwient i-ids. ^•ﻌ•^ usefuw fow wetting nyew cwients
+   * send s-some twaffic without t-the wisk o-of being ovewwun by wequests. XD
    *
-   * @param limitPerSecond Number of calls per second we can tolerate
+   * @pawam wimitpewsecond numbew o-of cawws pew second we can t-towewate
    */
-  def rateLimited(limitPerSecond: Double): ClientRequestAuthorizer = {
-    gated(RateLimitingGate.uniform(limitPerSecond), overRateLimitException)
+  d-def watewimited(wimitpewsecond: doubwe): cwientwequestauthowizew = {
+    gated(watewimitinggate.unifowm(wimitpewsecond), :3 ovewwatewimitexception)
   }
 
   /**
-   * Simple Gate based authorizer, will authorize according to the result of the gate regardless
-   * of the client/method name
+   * s-simpwe gate based a-authowizew, (ꈍᴗꈍ) w-wiww authowize accowding t-to the wesuwt of the gate w-wegawdwess
+   * of the cwient/method nyame
    */
   def gated(
-    gate: Gate[Unit],
-    exception: Exception = unauthorizedException
-  ): ClientRequestAuthorizer = {
-    deciderable(_ => gate(), exception)
+    gate: gate[unit], :3
+    exception: e-exception = unauthowizedexception
+  ): c-cwientwequestauthowizew = {
+    decidewabwe(_ => g-gate(), (U ﹏ U) exception)
   }
 
   /**
-   * @return A ClientRequestAuthorizer that switches between two provided
-   * ClientRequestAuthorizers depending on a decider.
+   * @wetuwn a-a cwientwequestauthowizew that switches b-between two pwovided
+   * c-cwientwequestauthowizews d-depending on a-a decidew. UwU
    */
-  def select(
-    decider: Gate[Unit],
-    ifTrue: ClientRequestAuthorizer,
-    ifFalse: ClientRequestAuthorizer
-  ): ClientRequestAuthorizer =
-    new ClientRequestAuthorizer {
-      override def apply(methodName: String, clientIdStrOpt: Option[String]): Future[Unit] =
-        decider.pick(
-          ifTrue(methodName, clientIdStrOpt),
-          ifFalse(methodName, clientIdStrOpt)
+  d-def sewect(
+    decidew: gate[unit], 😳😳😳
+    iftwue: cwientwequestauthowizew, XD
+    iffawse: cwientwequestauthowizew
+  ): cwientwequestauthowizew =
+    nyew cwientwequestauthowizew {
+      o-ovewwide d-def appwy(methodname: s-stwing, o.O cwientidstwopt: o-option[stwing]): futuwe[unit] =
+        decidew.pick(
+          iftwue(methodname, (⑅˘꒳˘) c-cwientidstwopt), 😳😳😳
+          i-iffawse(methodname, nyaa~~ cwientidstwopt)
         )
     }
 }

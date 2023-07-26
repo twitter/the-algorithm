@@ -1,17 +1,17 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.serving;
+package tensowfwow.sewving;
 
-import "tensorflow/core/protobuf/error_codes.proto";
+impowt "tensowfwow/cowe/pwotobuf/ewwow_codes.pwoto";
 
-option cc_enable_arenas = true;
+o-option cc_enabwe_awenas = t-twue;
 
-// Status that corresponds to Status in
-// third_party/tensorflow/core/lib/core/status.h.
-message StatusProto {
-  // Error code.
-  error.Code error_code = 1 [json_name = "error_code"];
+// status t-that cowwesponds t-to status in
+// t-thiwd_pawty/tensowfwow/cowe/wib/cowe/status.h. σωσ
+m-message statuspwoto {
+  // e-ewwow c-code. >_<
+  ewwow.code ewwow_code = 1 [json_name = "ewwow_code"];
 
-  // Error message. Will only be set if an error was encountered.
-  string error_message = 2 [json_name = "error_message"];
+  // ewwow message. :3 wiww onwy be set if an ewwow w-was encountewed. (U ﹏ U)
+  stwing ewwow_message = 2 [json_name = "ewwow_message"];
 }

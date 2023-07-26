@@ -1,531 +1,531 @@
-package com.twitter.search.earlybird.index;
+package com.twittew.seawch.eawwybiwd.index;
 
-import java.io.IOException;
-import java.util.Arrays;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.awways;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
 
-import it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2LongMap;
-import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
+i-impowt it.unimi.dsi.fastutiw.ints.int2byteopenhashmap;
+i-impowt it.unimi.dsi.fastutiw.ints.int2wongmap;
+impowt it.unimi.dsi.fastutiw.ints.int2wongopenhashmap;
 
 /**
- * A mapper that maps tweet IDs to doc IDs based on the tweet timestamps. This mapper guarantees
- * that if creationTime(A) > creationTime(B), then docId(A) < docId(B), no matter in which order
- * the tweets are added to this mapper. However, if creationTime(A) == creationTime(B), then there
- * is no guarantee on the order between docId(A) and docId(B).
+ * a mappew that maps t-tweet ids to doc ids based on the t-tweet timestamps. 😳😳😳 t-this mappew guawantees
+ * that if cweationtime(a) > cweationtime(b), (ꈍᴗꈍ) then docid(a) < d-docid(b), 🥺 nyo mattew in which owdew
+ * the tweets awe added to this mappew. mya h-howevew, if cweationtime(a) == c-cweationtime(b), (ˆ ﻌ ˆ)♡ t-then thewe
+ * i-is nyo guawantee o-on the owdew between docid(a) and docid(b). (⑅˘꒳˘)
  *
- * Essentially, this mapper guarantees that tweets with a later creation time are mapped to smaller
- * doc IDs, but it does not provide any ordering for tweets with the same timestamp (down to
- * millisecond granularity, which is what Snowflake provides). Our claim is that ordering tweets
- * with the same timestamp is not needed, because for the purposes of realtime search, the only
- * significant part of the tweet ID is the timestamp. So any such ordering would just be an ordering
- * for the Snowflake shards and/or sequence numbers, rather than a time based ordering for tweets.
+ * e-essentiawwy, òωó this mappew guawantees that t-tweets with a watew cweation time awe mapped to smowew
+ * doc ids, o.O but it does nyot pwovide any o-owdewing fow tweets with the same t-timestamp (down t-to
+ * miwwisecond g-gwanuwawity, XD which is nyani snowfwake pwovides). (˘ω˘) ouw cwaim is t-that owdewing t-tweets
+ * with the same timestamp i-is nyot nyeeded, (ꈍᴗꈍ) b-because fow the puwposes of weawtime s-seawch, >w< the onwy
+ * significant p-pawt of the tweet id is the timestamp. XD so a-any such owdewing wouwd just be a-an owdewing
+ * fow the snowfwake s-shawds and/ow s-sequence nyumbews, -.- wathew than a time based owdewing fow tweets. ^^;;
  *
- * The mapper uses the following scheme to assign docIDs to tweets:
+ * the mappew uses the fowwowing scheme to a-assign docids to t-tweets:
  *   +----------+-----------------------------+------------------------------+
- *   | Bit 0    | Bits 1 - 27                 | Bits 28 - 31                 |
+ *   | bit 0    | bits 1 - 27                 | b-bits 28 - 31                 |
  *   + ---------+-----------------------------+------------------------------+
- *   | sign     | tweet ID timestamp -        | Allow 16 tweets to be posted |
- *   | always 0 | segment boundary timestamp  | on the same millisecond      |
+ *   | s-sign     | t-tweet id timestamp -        | awwow 16 tweets to be posted |
+ *   | a-awways 0 | segment boundawy timestamp  | on the same miwwisecond      |
  *   + ---------+-----------------------------+------------------------------+
  *
- * Important assumptions:
- *   * Snowflake IDs have millisecond granularity. Therefore, 27 bits is enough to represent a time
- *     period of 2^27 / (3600 * 100) = ~37 hours, which is more than enough to cover one realtime
- *     segment (our realtime segments currently span ~13 hours).
- *   * At peak times, the tweet posting rate is less than 10,000 tps. Given our current partitioning
- *     scheme (22 partitions), each realtime earlybird should expect to get less than 500 tweets per
- *     second, which comes down to less than 1 tweet per millisecond, assuming the partitioning hash
- *     function distributes the tweets fairly randomly independent of their timestamps. Therefore,
- *     providing space for 16 tweets (4 bits) in every millisecond should be more than enough to
- *     accommodate the current requirements, and any potential future changes (higher tweet rate,
- *     fewer partitions, etc.).
+ * i-impowtant assumptions:
+ *   * s-snowfwake i-ids have miwwisecond g-gwanuwawity. XD thewefowe, :3 27 b-bits is enough t-to wepwesent a time
+ *     p-pewiod o-of 2^27 / (3600 * 100) = ~37 houws, σωσ which is mowe than enough t-to covew one weawtime
+ *     s-segment (ouw w-weawtime s-segments cuwwentwy s-span ~13 houws). XD
+ *   * at peak times, :3 the tweet posting wate i-is wess than 10,000 tps. rawr given ouw cuwwent pawtitioning
+ *     scheme (22 pawtitions), 😳 each weawtime eawwybiwd s-shouwd expect to get wess than 500 tweets pew
+ *     second, 😳😳😳 w-which comes down t-to wess than 1 t-tweet pew miwwisecond, (ꈍᴗꈍ) assuming t-the pawtitioning hash
+ *     function d-distwibutes t-the tweets faiwwy wandomwy independent of theiw timestamps. 🥺 thewefowe, ^•ﻌ•^
+ *     pwoviding space fow 16 tweets (4 b-bits) in evewy miwwisecond shouwd b-be mowe than enough to
+ *     a-accommodate the c-cuwwent wequiwements, XD and any potentiaw futuwe c-changes (highew t-tweet wate, ^•ﻌ•^
+ *     fewew pawtitions, ^^;; e-etc.). ʘwʘ
  *
- * How the mapper works:
- *   * The tweetId -> docId conversion is implicit (using the tweet's timestamp).
- *   * We use a IntToByteMap to store the number of tweets for each timestamp, so that we can
- *     allocate different doc IDs to tweets posted on the same millisecond. The size of this map is:
- *         segmentSize * 2 (load factor) * 1 (size of byte) = 16MB
- *   * The docId -> tweetId mappings are stored in an IntToLongMap. The size of this map is:
- *         segmentSize * 2 (load factor) * 8 (size of long) = 128MB
- *   * The mapper takes the "segment boundary" (the timestamp of the timeslice ID) as a parameter.
- *     This segment boundary determines the earliest tweet that this mapper can correctly index
- *     (it is subtracted from the timestamp of all tweets added to the mapper). Therefore, in order
- *     to correctly handle late tweets, we move back this segment boundary by twelve hour.
- *   * Tweets created before (segment boundary - 12 hours) are stored as if their timestamp was the
- *     segment boundary.
- *   * The largest timestamp that the mapper can store is:
- *         LARGEST_RELATIVE_TIMESTAMP = (1 << TIMESTAMP_BITS) - LUCENE_TIMESTAMP_BUFFER.
- *     Tweets created after (segmentBoundaryTimestamp + LARGEST_RELATIVE_TIMESTAMP) are stored as if
- *     their timestamp was (segmentBoundaryTimestamp + LARGEST_RELATIVE_TIMESTAMP).
- *   * When a tweet is added, we compute its doc ID as:
- *         int relativeTimestamp = tweetTimestamp - segmentBoundaryTimestamp;
- *         int docIdTimestamp = LARGEST_RELATIVE_TIMESTAMP - relativeTimestamp;
- *         int numTweetsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
- *         int docId = (docIdTimestamp << DOC_ID_BITS)
- *             + MAX_DOCS_PER_TIMESTAMP - numTweetsForTimestamp - 1
+ * h-how the mappew wowks:
+ *   * the tweetid -> docid convewsion is impwicit (using t-the tweet's timestamp). OwO
+ *   * w-we use a inttobytemap t-to stowe the nyumbew of tweets f-fow each timestamp, s-so that we can
+ *     a-awwocate diffewent doc ids to tweets posted on the same miwwisecond. 🥺 the size of t-this map is:
+ *         s-segmentsize * 2 (woad factow) * 1 (size of byte) = 16mb
+ *   * the docid -> t-tweetid mappings a-awe stowed in an inttowongmap. (⑅˘꒳˘) the size of this map is:
+ *         s-segmentsize * 2 (woad factow) * 8 (size of wong) = 128mb
+ *   * the mappew takes the "segment boundawy" (the t-timestamp of the timeswice id) as a pawametew. (///ˬ///✿)
+ *     t-this s-segment boundawy detewmines the eawwiest tweet that this mappew c-can cowwectwy index
+ *     (it i-is subtwacted fwom the timestamp of aww tweets added to the mappew). (✿oωo) t-thewefowe, in owdew
+ *     t-to cowwectwy handwe wate tweets, nyaa~~ we move back this segment boundawy b-by twewve houw. >w<
+ *   * tweets c-cweated befowe (segment b-boundawy - 12 houws) awe s-stowed as if theiw timestamp w-was the
+ *     segment b-boundawy. (///ˬ///✿)
+ *   * t-the wawgest timestamp that t-the mappew can s-stowe is:
+ *         wawgest_wewative_timestamp = (1 << timestamp_bits) - w-wucene_timestamp_buffew. rawr
+ *     t-tweets c-cweated aftew (segmentboundawytimestamp + wawgest_wewative_timestamp) awe stowed a-as if
+ *     theiw timestamp w-was (segmentboundawytimestamp + w-wawgest_wewative_timestamp). (U ﹏ U)
+ *   * when a tweet is added, ^•ﻌ•^ we compute its doc id a-as:
+ *         i-int wewativetimestamp = t-tweettimestamp - s-segmentboundawytimestamp;
+ *         int docidtimestamp = w-wawgest_wewative_timestamp - wewativetimestamp;
+ *         int nyumtweetsfowtimestamp = tweetspewtimestamp.get(docidtimestamp);
+ *         int docid = (docidtimestamp << doc_id_bits)
+ *             + m-max_docs_pew_timestamp - nyumtweetsfowtimestamp - 1
  *
- * This doc ID distribution scheme guarantees that tweets created later will be assigned smaller doc
- * IDs (as long as we don't have more than 16 tweets created in the same millisecond). However,
- * there is no ordering guarantee for tweets created at the same timestamp -- they are assigned doc
- * IDs in the order in which they're added to the mapper.
+ * t-this doc id distwibution scheme g-guawantees that tweets cweated w-watew wiww be assigned smowew d-doc
+ * ids (as w-wong as we don't h-have mowe than 16 t-tweets cweated i-in the same miwwisecond). (///ˬ///✿) howevew, o.O
+ * thewe is nyo owdewing guawantee fow tweets cweated at the same timestamp -- t-they awe assigned d-doc
+ * ids i-in the owdew in which they'we a-added to the mappew. >w<
  *
- * If we have more than 16 tweets created at time T, the mapper will still gracefully handle that
- * case: the "extra" tweets will be assigned doc IDs from the pool of doc IDs for timestamp (T + 1).
- * However, the ordering guarantee might no longer hold for those "extra" tweets. Also, the "extra"
- * tweets might be missed by certain since_id/max_id queries (the findDocIdBound() method might not
- * be able to correctly work for these tweet IDs).
+ * if we have mowe than 16 tweets cweated a-at time t, nyaa~~ the m-mappew wiww stiww gwacefuwwy handwe t-that
+ * case: the "extwa" tweets wiww be assigned d-doc ids f-fwom the poow of doc ids fow timestamp (t + 1). òωó
+ * h-howevew, (U ᵕ U❁) the o-owdewing guawantee might nyo wongew howd fow those "extwa" tweets. (///ˬ///✿) awso, the "extwa"
+ * t-tweets might b-be missed by c-cewtain since_id/max_id q-quewies (the f-finddocidbound() method might n-nyot
+ * be a-abwe to cowwectwy wowk fow these t-tweet ids). (✿oωo)
  */
-public class OutOfOrderRealtimeTweetIDMapper extends TweetIDMapper {
-  private static final Logger LOG = LoggerFactory.getLogger(OutOfOrderRealtimeTweetIDMapper.class);
+p-pubwic cwass outofowdewweawtimetweetidmappew extends t-tweetidmappew {
+  pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(outofowdewweawtimetweetidmappew.cwass);
 
-  // The number of bits used to represent the tweet timestamp.
-  private static final int TIMESTAMP_BITS = 27;
+  // the nyumbew of bits u-used to wepwesent t-the tweet timestamp. 😳😳😳
+  pwivate s-static finaw int timestamp_bits = 27;
 
-  // The number of bits used to represent the number of tweets with a certain timestamp.
-  @VisibleForTesting
-  static final int DOC_ID_BITS = Integer.SIZE - TIMESTAMP_BITS - 1;
+  // the nyumbew of b-bits used to wepwesent t-the nyumbew o-of tweets with a cewtain timestamp. (✿oωo)
+  @visibwefowtesting
+  static finaw int doc_id_bits = i-integew.size - timestamp_bits - 1;
 
-  // The maximum number of tweets/docs that we can store per timestamp.
-  @VisibleForTesting
-  static final int MAX_DOCS_PER_TIMESTAMP = 1 << DOC_ID_BITS;
+  // the maximum n-nyumbew of tweets/docs t-that we can stowe pew timestamp. (U ﹏ U)
+  @visibwefowtesting
+  s-static finaw int max_docs_pew_timestamp = 1 << d-doc_id_bits;
 
-  // Lucene has some logic that doesn't deal well with doc IDs close to Integer.MAX_VALUE.
-  // For example, BooleanScorer has a SIZE constant set to 2048, which gets added to the doc IDs
-  // inside the score() method. So when the doc IDs are close to Integer.MAX_VALUE, this causes an
-  // overflow, which can send Lucene into an infinite loop. Therefore, we need to make sure that
-  // we do not assign doc IDs close to Integer.MAX_VALUE.
-  private static final int LUCENE_TIMESTAMP_BUFFER = 1 << 16;
+  // w-wucene has some wogic that doesn't deaw weww w-with doc ids cwose to integew.max_vawue. (˘ω˘)
+  // fow e-exampwe, 😳😳😳 booweanscowew h-has a size constant set t-to 2048, (///ˬ///✿) which gets added to the d-doc ids
+  // inside t-the scowe() m-method. (U ᵕ U❁) so when the doc ids awe cwose to integew.max_vawue, >_< this causes an
+  // ovewfwow, (///ˬ///✿) which can send wucene into an infinite woop. (U ᵕ U❁) thewefowe, >w< we nyeed to make suwe that
+  // we do nyot assign doc ids cwose t-to integew.max_vawue. 😳😳😳
+  p-pwivate static finaw int wucene_timestamp_buffew = 1 << 16;
 
-  @VisibleForTesting
-  public static final int LATE_TWEETS_TIME_BUFFER_MILLIS = 12 * 3600 * 1000;  // 12 hours
+  @visibwefowtesting
+  p-pubwic static finaw i-int wate_tweets_time_buffew_miwwis = 12 * 3600 * 1000;  // 12 h-houws
 
-  // The largest relative timestamp that this mapper can store.
-  @VisibleForTesting
-  static final int LARGEST_RELATIVE_TIMESTAMP = (1 << TIMESTAMP_BITS) - LUCENE_TIMESTAMP_BUFFER;
+  // the wawgest wewative t-timestamp that this mappew can s-stowe. (ˆ ﻌ ˆ)♡
+  @visibwefowtesting
+  s-static finaw int wawgest_wewative_timestamp = (1 << t-timestamp_bits) - wucene_timestamp_buffew;
 
-  private final long segmentBoundaryTimestamp;
-  private final int segmentSize;
+  p-pwivate finaw w-wong segmentboundawytimestamp;
+  pwivate finaw int segmentsize;
 
-  private final Int2LongOpenHashMap tweetIds;
-  private final Int2ByteOpenHashMap tweetsPerTimestamp;
+  p-pwivate finaw i-int2wongopenhashmap t-tweetids;
+  p-pwivate finaw int2byteopenhashmap t-tweetspewtimestamp;
 
-  private static final SearchRateCounter BAD_BUCKET_RATE =
-      SearchRateCounter.export("tweets_assigned_to_bad_timestamp_bucket");
-  private static final SearchRateCounter TWEETS_NOT_ASSIGNED_RATE =
-      SearchRateCounter.export("tweets_not_assigned");
-  private static final SearchRateCounter OLD_TWEETS_DROPPED =
-      SearchRateCounter.export("old_tweets_dropped");
+  p-pwivate s-static finaw seawchwatecountew b-bad_bucket_wate =
+      s-seawchwatecountew.expowt("tweets_assigned_to_bad_timestamp_bucket");
+  pwivate static finaw s-seawchwatecountew t-tweets_not_assigned_wate =
+      s-seawchwatecountew.expowt("tweets_not_assigned");
+  pwivate s-static finaw seawchwatecountew owd_tweets_dwopped =
+      s-seawchwatecountew.expowt("owd_tweets_dwopped");
 
-  public OutOfOrderRealtimeTweetIDMapper(int segmentSize, long timesliceID) {
-    long firstTimestamp = SnowflakeIdParser.getTimestampFromTweetId(timesliceID);
-    // Leave a buffer so that we can handle tweets that are up to twelve hours late.
-    this.segmentBoundaryTimestamp = firstTimestamp - LATE_TWEETS_TIME_BUFFER_MILLIS;
-    this.segmentSize = segmentSize;
+  pubwic outofowdewweawtimetweetidmappew(int s-segmentsize, (ꈍᴗꈍ) w-wong timeswiceid) {
+    w-wong fiwsttimestamp = snowfwakeidpawsew.gettimestampfwomtweetid(timeswiceid);
+    // w-weave a buffew so that we can h-handwe tweets that awe up to t-twewve houws wate. 🥺
+    this.segmentboundawytimestamp = f-fiwsttimestamp - wate_tweets_time_buffew_miwwis;
+    this.segmentsize = segmentsize;
 
-    tweetIds = new Int2LongOpenHashMap(segmentSize);
-    tweetIds.defaultReturnValue(ID_NOT_FOUND);
+    tweetids = nyew int2wongopenhashmap(segmentsize);
+    t-tweetids.defauwtwetuwnvawue(id_not_found);
 
-    tweetsPerTimestamp = new Int2ByteOpenHashMap(segmentSize);
-    tweetsPerTimestamp.defaultReturnValue((byte) ID_NOT_FOUND);
+    tweetspewtimestamp = n-nyew i-int2byteopenhashmap(segmentsize);
+    tweetspewtimestamp.defauwtwetuwnvawue((byte) id_not_found);
   }
 
-  @VisibleForTesting
-  int getDocIdTimestamp(long tweetId) {
-    long tweetTimestamp = SnowflakeIdParser.getTimestampFromTweetId(tweetId);
-    if (tweetTimestamp < segmentBoundaryTimestamp) {
-      return ID_NOT_FOUND;
+  @visibwefowtesting
+  int getdocidtimestamp(wong t-tweetid) {
+    wong tweettimestamp = snowfwakeidpawsew.gettimestampfwomtweetid(tweetid);
+    i-if (tweettimestamp < s-segmentboundawytimestamp) {
+      w-wetuwn id_not_found;
     }
 
-    long relativeTimestamp = tweetTimestamp - segmentBoundaryTimestamp;
-    if (relativeTimestamp > LARGEST_RELATIVE_TIMESTAMP) {
-      relativeTimestamp = LARGEST_RELATIVE_TIMESTAMP;
+    wong w-wewativetimestamp = t-tweettimestamp - segmentboundawytimestamp;
+    i-if (wewativetimestamp > wawgest_wewative_timestamp) {
+      wewativetimestamp = w-wawgest_wewative_timestamp;
     }
 
-    return LARGEST_RELATIVE_TIMESTAMP - (int) relativeTimestamp;
+    wetuwn w-wawgest_wewative_timestamp - (int) w-wewativetimestamp;
   }
 
-  private int getDocIdForTimestamp(int docIdTimestamp, byte docIndexInTimestamp) {
-    return (docIdTimestamp << DOC_ID_BITS) + MAX_DOCS_PER_TIMESTAMP - docIndexInTimestamp;
+  p-pwivate int getdocidfowtimestamp(int docidtimestamp, b-byte docindexintimestamp) {
+    w-wetuwn (docidtimestamp << d-doc_id_bits) + max_docs_pew_timestamp - d-docindexintimestamp;
   }
 
-  @VisibleForTesting
-  long[] getTweetsForDocIdTimestamp(int docIdTimestamp) {
-    byte numDocsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
-    if (numDocsForTimestamp == ID_NOT_FOUND) {
-      // This should never happen in prod, but better to be safe.
-      return new long[0];
+  @visibwefowtesting
+  wong[] g-gettweetsfowdocidtimestamp(int docidtimestamp) {
+    b-byte nyumdocsfowtimestamp = t-tweetspewtimestamp.get(docidtimestamp);
+    i-if (numdocsfowtimestamp == i-id_not_found) {
+      // t-this shouwd nyevew h-happen in pwod, >_< b-but bettew to be safe. OwO
+      w-wetuwn nyew wong[0];
     }
 
-    long[] tweetIdsInBucket = new long[numDocsForTimestamp];
-    int startingDocId = (docIdTimestamp << DOC_ID_BITS) + MAX_DOCS_PER_TIMESTAMP - 1;
-    for (int i = 0; i < numDocsForTimestamp; ++i) {
-      tweetIdsInBucket[i] = tweetIds.get(startingDocId - i);
+    wong[] tweetidsinbucket = n-nyew wong[numdocsfowtimestamp];
+    int s-stawtingdocid = (docidtimestamp << d-doc_id_bits) + m-max_docs_pew_timestamp - 1;
+    fow (int i = 0; i < nyumdocsfowtimestamp; ++i) {
+      tweetidsinbucket[i] = t-tweetids.get(stawtingdocid - i);
     }
-    return tweetIdsInBucket;
+    w-wetuwn t-tweetidsinbucket;
   }
 
-  private int newDocId(long tweetId) {
-    int expectedDocIdTimestamp = getDocIdTimestamp(tweetId);
-    if (expectedDocIdTimestamp == ID_NOT_FOUND) {
-      LOG.info("Dropping tweet {} because it is from before the segment boundary timestamp {}",
-          tweetId,
-          segmentBoundaryTimestamp);
-      OLD_TWEETS_DROPPED.increment();
-      return ID_NOT_FOUND;
+  pwivate int newdocid(wong tweetid) {
+    i-int expecteddocidtimestamp = g-getdocidtimestamp(tweetid);
+    if (expecteddocidtimestamp == i-id_not_found) {
+      w-wog.info("dwopping tweet {} because it is fwom befowe the s-segment boundawy t-timestamp {}", ^^;;
+          t-tweetid, (✿oωo)
+          s-segmentboundawytimestamp);
+      owd_tweets_dwopped.incwement();
+      wetuwn id_not_found;
     }
 
-    int docIdTimestamp = expectedDocIdTimestamp;
-    byte numDocsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
+    int docidtimestamp = e-expecteddocidtimestamp;
+    b-byte nyumdocsfowtimestamp = tweetspewtimestamp.get(docidtimestamp);
 
-    if (numDocsForTimestamp == MAX_DOCS_PER_TIMESTAMP) {
-      BAD_BUCKET_RATE.increment();
+    if (numdocsfowtimestamp == max_docs_pew_timestamp) {
+      b-bad_bucket_wate.incwement();
     }
 
-    while ((docIdTimestamp > 0) && (numDocsForTimestamp == MAX_DOCS_PER_TIMESTAMP)) {
-      --docIdTimestamp;
-      numDocsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
+    whiwe ((docidtimestamp > 0) && (numdocsfowtimestamp == max_docs_pew_timestamp)) {
+      --docidtimestamp;
+      n-nyumdocsfowtimestamp = tweetspewtimestamp.get(docidtimestamp);
     }
 
-    if (numDocsForTimestamp == MAX_DOCS_PER_TIMESTAMP) {
-      // The relative timestamp 0 already has MAX_DOCS_PER_TIMESTAMP. Can't add more docs.
-      LOG.error("Tweet {} could not be assigned a doc ID in any bucket, because the bucket for "
-          + "timestamp 0 is already full: {}",
-          tweetId, Arrays.toString(getTweetsForDocIdTimestamp(0)));
-      TWEETS_NOT_ASSIGNED_RATE.increment();
-      return ID_NOT_FOUND;
+    i-if (numdocsfowtimestamp == m-max_docs_pew_timestamp) {
+      // the wewative t-timestamp 0 a-awweady has max_docs_pew_timestamp. UwU can't add m-mowe docs.
+      wog.ewwow("tweet {} c-couwd nyot b-be assigned a doc i-id in any bucket, ( ͡o ω ͡o ) b-because the bucket fow "
+          + "timestamp 0 i-is awweady f-fuww: {}", (✿oωo)
+          t-tweetid, mya awways.tostwing(gettweetsfowdocidtimestamp(0)));
+      t-tweets_not_assigned_wate.incwement();
+      wetuwn id_not_found;
     }
 
-    if (docIdTimestamp != expectedDocIdTimestamp) {
-      LOG.warn("Tweet {} could not be assigned a doc ID in the bucket for its timestamp {}, "
-               + "because this bucket is full. Instead, it was assigned a doc ID in the bucket for "
-               + "timestamp {}. The tweets in the correct bucket are: {}",
-               tweetId,
-               expectedDocIdTimestamp,
-               docIdTimestamp,
-               Arrays.toString(getTweetsForDocIdTimestamp(expectedDocIdTimestamp)));
+    if (docidtimestamp != e-expecteddocidtimestamp) {
+      w-wog.wawn("tweet {} c-couwd nyot be assigned a doc id in the bucket fow its timestamp {}, ( ͡o ω ͡o ) "
+               + "because t-this bucket is fuww. :3 i-instead, 😳 it was a-assigned a doc id in the bucket fow "
+               + "timestamp {}. (U ﹏ U) t-the tweets in the cowwect b-bucket awe: {}", >w<
+               t-tweetid,
+               e-expecteddocidtimestamp, UwU
+               d-docidtimestamp, 😳
+               awways.tostwing(gettweetsfowdocidtimestamp(expecteddocidtimestamp)));
     }
 
-    if (numDocsForTimestamp == ID_NOT_FOUND) {
-      numDocsForTimestamp = 0;
+    i-if (numdocsfowtimestamp == id_not_found) {
+      nyumdocsfowtimestamp = 0;
     }
-    ++numDocsForTimestamp;
-    tweetsPerTimestamp.put(docIdTimestamp, numDocsForTimestamp);
+    ++numdocsfowtimestamp;
+    tweetspewtimestamp.put(docidtimestamp, XD nyumdocsfowtimestamp);
 
-    return getDocIdForTimestamp(docIdTimestamp, numDocsForTimestamp);
+    w-wetuwn getdocidfowtimestamp(docidtimestamp, (✿oωo) numdocsfowtimestamp);
   }
 
-  @Override
-  public int getDocID(long tweetId) {
-    int docIdTimestamp = getDocIdTimestamp(tweetId);
-    while (docIdTimestamp >= 0) {
-      int numDocsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
-      int startingDocId = (docIdTimestamp << DOC_ID_BITS) + MAX_DOCS_PER_TIMESTAMP - 1;
-      for (int docId = startingDocId; docId > startingDocId - numDocsForTimestamp; --docId) {
-        if (tweetIds.get(docId) == tweetId) {
-          return docId;
+  @ovewwide
+  pubwic int g-getdocid(wong tweetid) {
+    int docidtimestamp = getdocidtimestamp(tweetid);
+    w-whiwe (docidtimestamp >= 0) {
+      int nyumdocsfowtimestamp = tweetspewtimestamp.get(docidtimestamp);
+      int stawtingdocid = (docidtimestamp << doc_id_bits) + m-max_docs_pew_timestamp - 1;
+      f-fow (int docid = stawtingdocid; d-docid > stawtingdocid - nyumdocsfowtimestamp; --docid) {
+        i-if (tweetids.get(docid) == t-tweetid) {
+          wetuwn d-docid;
         }
       }
 
-      // If we have MAX_DOCS_PER_TIMESTAMP docs with this timestamp, then we might've mis-assigned
-      // a tweet to the previous docIdTimestamp bucket. In that case, we need to keep searching.
-      // Otherwise, the tweet is not in the index.
-      if (numDocsForTimestamp < MAX_DOCS_PER_TIMESTAMP) {
-        break;
+      // if we have m-max_docs_pew_timestamp docs with this timestamp, ^•ﻌ•^ then we might've m-mis-assigned
+      // a tweet to the pwevious d-docidtimestamp bucket. mya i-in that case, (˘ω˘) w-we nyeed to keep seawching. nyaa~~
+      // othewwise, :3 t-the tweet is not in the index. (✿oωo)
+      if (numdocsfowtimestamp < max_docs_pew_timestamp) {
+        bweak;
       }
 
-      --docIdTimestamp;
+      --docidtimestamp;
     }
 
-    return ID_NOT_FOUND;
+    w-wetuwn i-id_not_found;
   }
 
-  @Override
-  protected int getNextDocIDInternal(int docId) {
-    // Check if docId + 1 is an assigned doc ID in this mapper. This might be the case when we have
-    // multiple tweets posted on the same millisecond.
-    if (tweetIds.get(docId + 1) != ID_NOT_FOUND) {
-      return docId + 1;
+  @ovewwide
+  p-pwotected int getnextdocidintewnaw(int d-docid) {
+    // check if docid + 1 is an a-assigned doc id i-in this mappew. (U ﹏ U) this might be the case when we h-have
+    // muwtipwe tweets posted on the same miwwisecond. (ꈍᴗꈍ)
+    i-if (tweetids.get(docid + 1) != id_not_found) {
+      wetuwn docid + 1;
     }
 
-    // If (docId + 1) is not assigned, then it means we do not have any more tweets posted at the
-    // timestamp corresponding to docId. We need to find the next relative timestamp for which this
-    // mapper has tweets, and return the first tweet for that timestamp. Note that iterating over
-    // the space of all possible timestamps is faster than iterating over the space of all possible
-    // doc IDs (it's MAX_DOCS_PER_TIMESTAMP times faster).
-    int nextDocIdTimestamp = (docId >> DOC_ID_BITS) + 1;
-    byte numDocsForTimestamp = tweetsPerTimestamp.get(nextDocIdTimestamp);
-    int maxDocIdTimestamp = getMaxDocID() >> DOC_ID_BITS;
-    while ((nextDocIdTimestamp <= maxDocIdTimestamp)
-           && (numDocsForTimestamp == ID_NOT_FOUND)) {
-      ++nextDocIdTimestamp;
-      numDocsForTimestamp = tweetsPerTimestamp.get(nextDocIdTimestamp);
+    // if (docid + 1) i-is nyot assigned, (˘ω˘) t-then it means we do nyot have a-any mowe tweets p-posted at the
+    // t-timestamp cowwesponding to docid. ^^ we nyeed t-to find the nyext wewative timestamp fow which t-this
+    // mappew has tweets, (⑅˘꒳˘) and wetuwn the fiwst tweet fow t-that timestamp. rawr n-nyote that itewating o-ovew
+    // t-the space of aww p-possibwe timestamps is fastew t-than itewating ovew the space of aww possibwe
+    // d-doc ids (it's max_docs_pew_timestamp t-times fastew). :3
+    int nyextdocidtimestamp = (docid >> d-doc_id_bits) + 1;
+    b-byte nyumdocsfowtimestamp = tweetspewtimestamp.get(nextdocidtimestamp);
+    i-int maxdocidtimestamp = getmaxdocid() >> d-doc_id_bits;
+    w-whiwe ((nextdocidtimestamp <= maxdocidtimestamp)
+           && (numdocsfowtimestamp == i-id_not_found)) {
+      ++nextdocidtimestamp;
+      n-nyumdocsfowtimestamp = tweetspewtimestamp.get(nextdocidtimestamp);
     }
 
-    if (numDocsForTimestamp != ID_NOT_FOUND) {
-      return getDocIdForTimestamp(nextDocIdTimestamp, numDocsForTimestamp);
+    if (numdocsfowtimestamp != i-id_not_found) {
+      wetuwn getdocidfowtimestamp(nextdocidtimestamp, OwO nyumdocsfowtimestamp);
     }
 
-    return ID_NOT_FOUND;
+    wetuwn i-id_not_found;
   }
 
-  @Override
-  protected int getPreviousDocIDInternal(int docId) {
-    // Check if docId - 1 is an assigned doc ID in this mapper. This might be the case when we have
-    // multiple tweets posted on the same millisecond.
-    if (tweetIds.get(docId - 1) != ID_NOT_FOUND) {
-      return docId - 1;
+  @ovewwide
+  pwotected int getpweviousdocidintewnaw(int d-docid) {
+    // check if docid - 1 is a-an assigned doc i-id in this mappew. (ˆ ﻌ ˆ)♡ t-this might be the case when w-we have
+    // m-muwtipwe tweets posted on the same m-miwwisecond. :3
+    if (tweetids.get(docid - 1) != i-id_not_found) {
+      wetuwn d-docid - 1;
     }
 
-    // If (docId - 1) is not assigned, then it means we do not have any more tweets posted at the
-    // timestamp corresponding to docId. We need to find the previous relative timestamp for which
-    // this mapper has tweets, and return the first tweet for that timestamp. Note that iterating
-    // over the space of all possible timestamps is faster than iterating over the space of all
-    // possible doc IDs (it's MAX_DOCS_PER_TIMESTAMP times faster).
-    int previousDocIdTimestamp = (docId >> DOC_ID_BITS) - 1;
-    byte numDocsForTimestamp = tweetsPerTimestamp.get(previousDocIdTimestamp);
-    int minDocIdTimestamp = getMinDocID() >> DOC_ID_BITS;
-    while ((previousDocIdTimestamp >= minDocIdTimestamp)
-           && (numDocsForTimestamp == ID_NOT_FOUND)) {
-      --previousDocIdTimestamp;
-      numDocsForTimestamp = tweetsPerTimestamp.get(previousDocIdTimestamp);
+    // i-if (docid - 1) is not assigned, -.- then it means we do nyot have any mowe t-tweets posted at t-the
+    // timestamp cowwesponding to docid. we nyeed to find the p-pwevious wewative timestamp fow w-which
+    // t-this mappew has tweets, and wetuwn the fiwst tweet fow that timestamp. -.- nyote that i-itewating
+    // ovew the space of aww possibwe t-timestamps is fastew than itewating o-ovew the space o-of aww
+    // possibwe doc i-ids (it's max_docs_pew_timestamp t-times fastew). òωó
+    i-int pweviousdocidtimestamp = (docid >> d-doc_id_bits) - 1;
+    b-byte nyumdocsfowtimestamp = t-tweetspewtimestamp.get(pweviousdocidtimestamp);
+    int mindocidtimestamp = getmindocid() >> doc_id_bits;
+    whiwe ((pweviousdocidtimestamp >= mindocidtimestamp)
+           && (numdocsfowtimestamp == i-id_not_found)) {
+      --pweviousdocidtimestamp;
+      n-nyumdocsfowtimestamp = t-tweetspewtimestamp.get(pweviousdocidtimestamp);
     }
 
-    if (numDocsForTimestamp != ID_NOT_FOUND) {
-      return getDocIdForTimestamp(previousDocIdTimestamp, (byte) 1);
+    if (numdocsfowtimestamp != i-id_not_found) {
+      w-wetuwn getdocidfowtimestamp(pweviousdocidtimestamp, 😳 (byte) 1);
     }
 
-    return ID_NOT_FOUND;
+    w-wetuwn id_not_found;
   }
 
-  @Override
-  public long getTweetID(int docId) {
-    return tweetIds.get(docId);
+  @ovewwide
+  pubwic wong gettweetid(int docid) {
+    wetuwn t-tweetids.get(docid);
   }
 
-  @Override
-  protected int addMappingInternal(long tweetId) {
-    int docId = newDocId(tweetId);
-    if (docId == ID_NOT_FOUND) {
-      return ID_NOT_FOUND;
+  @ovewwide
+  p-pwotected int addmappingintewnaw(wong tweetid) {
+    int docid = nyewdocid(tweetid);
+    i-if (docid == id_not_found) {
+      w-wetuwn id_not_found;
     }
 
-    tweetIds.put(docId, tweetId);
-    return docId;
+    t-tweetids.put(docid, nyaa~~ tweetid);
+    wetuwn docid;
   }
 
-  @Override
-  protected int findDocIDBoundInternal(long tweetId, boolean findMaxDocId) {
-    // Note that it would be incorrect to lookup the doc ID for the given tweet ID and return that
-    // doc ID, as we would skip over tweets created in the same millisecond but with a lower doc ID.
-    int docIdTimestamp = getDocIdTimestamp(tweetId);
+  @ovewwide
+  p-pwotected int finddocidboundintewnaw(wong tweetid, (⑅˘꒳˘) boowean f-findmaxdocid) {
+    // n-nyote that it wouwd be incowwect to wookup t-the doc id fow the given tweet i-id and wetuwn t-that
+    // doc id, 😳 as we wouwd s-skip ovew tweets c-cweated in the s-same miwwisecond b-but with a wowew d-doc id. (U ﹏ U)
+    i-int docidtimestamp = getdocidtimestamp(tweetid);
 
-    // The docIdTimestamp is ID_NOT_FOUND only if the tweet is from before the segment boundary and
-    // this should never happen here because TweetIDMapper.findDocIdBound ensures that the tweet id
-    // passed into this method is >= minTweetID which means the tweet is from after the segment
-    // boundary.
-    Preconditions.checkState(
-        docIdTimestamp != ID_NOT_FOUND,
-        "Tried to find doc id bound for tweet %d which is from before the segment boundary %d",
-        tweetId,
-        segmentBoundaryTimestamp);
+    // t-the docidtimestamp i-is id_not_found onwy i-if the tweet is fwom befowe the segment boundawy a-and
+    // this shouwd nyevew h-happen hewe because tweetidmappew.finddocidbound e-ensuwes that the t-tweet id
+    // passed into this method is >= m-mintweetid which means the tweet is fwom aftew the s-segment
+    // b-boundawy. /(^•ω•^)
+    pweconditions.checkstate(
+        docidtimestamp != i-id_not_found, OwO
+        "twied t-to find doc id bound fow tweet %d w-which is fwom befowe the segment boundawy %d", ( ͡o ω ͡o )
+        t-tweetid, XD
+        s-segmentboundawytimestamp);
 
-    // It's OK to return a doc ID that doesn't correspond to any tweet ID in the index,
-    // as the doc ID is simply used as a starting point and ending point for range queries,
-    // not a source of truth.
-    if (findMaxDocId) {
-      // Return the largest possible doc ID for the timestamp.
-      return getDocIdForTimestamp(docIdTimestamp, (byte) 1);
-    } else {
-      // Return the smallest possible doc ID for the timestamp.
-      byte tweetsInTimestamp = tweetsPerTimestamp.getOrDefault(docIdTimestamp, (byte) 0);
-      return getDocIdForTimestamp(docIdTimestamp, tweetsInTimestamp);
+    // it's o-ok to wetuwn a-a doc id that doesn't cowwespond to any tweet id i-in the index, /(^•ω•^)
+    // a-as the doc i-id is simpwy used a-as a stawting point and ending point fow wange quewies, /(^•ω•^)
+    // nyot a souwce of twuth. 😳😳😳
+    if (findmaxdocid) {
+      // wetuwn t-the wawgest possibwe d-doc id fow t-the timestamp. (ˆ ﻌ ˆ)♡
+      w-wetuwn getdocidfowtimestamp(docidtimestamp, :3 (byte) 1);
+    } e-ewse {
+      // w-wetuwn the smowest possibwe d-doc id fow the timestamp. òωó
+      b-byte tweetsintimestamp = tweetspewtimestamp.getowdefauwt(docidtimestamp, 🥺 (byte) 0);
+      w-wetuwn g-getdocidfowtimestamp(docidtimestamp, (U ﹏ U) tweetsintimestamp);
     }
   }
 
   /**
-   * Returns the array of all tweet IDs stored in this mapper in a sorted (descending) order.
-   * Essentially, this method remaps all tweet IDs stored in this mapper to a compressed doc ID
-   * space of [0, numDocs).
+   * wetuwns the awway o-of aww tweet ids stowed in this mappew in a sowted (descending) o-owdew. XD
+   * essentiawwy, ^^ this m-method wemaps aww t-tweet ids stowed in this mappew t-to a compwessed d-doc id
+   * space o-of [0, o.O nyumdocs).
    *
-   * Note that this method is not thread safe, and it's meant to be called only at segment
-   * optimization time. If addMappingInternal() is called during the execution of this method,
-   * the behavior is undefined (it will most likely return bad results or throw an exception).
+   * nyote that this m-method is nyot thwead s-safe, 😳😳😳 and it's meant to be c-cawwed onwy at segment
+   * optimization t-time. /(^•ω•^) i-if addmappingintewnaw() i-is cawwed duwing the execution o-of this method, 😳😳😳
+   * the behaviow is undefined (it w-wiww most wikewy wetuwn bad wesuwts ow thwow an exception). ^•ﻌ•^
    *
-   * @return An array of all tweet IDs stored in this mapper, in a sorted (descending) order.
+   * @wetuwn an awway of aww tweet ids stowed in this m-mappew, 🥺 in a sowted (descending) owdew. o.O
    */
-  public long[] sortTweetIds() {
-    int numDocs = getNumDocs();
-    if (numDocs == 0) {
-      return new long[0];
+  pubwic wong[] sowttweetids() {
+    int nyumdocs = getnumdocs();
+    if (numdocs == 0) {
+      wetuwn nyew wong[0];
     }
 
-    // Add all tweets stored in this mapper to sortTweetIds.
-    long[] sortedTweetIds = new long[numDocs];
-    int sortedTweetIdsIndex = 0;
-    for (int docId = getMinDocID(); docId != ID_NOT_FOUND; docId = getNextDocID(docId)) {
-      sortedTweetIds[sortedTweetIdsIndex++] = getTweetID(docId);
+    // a-add aww tweets stowed in this mappew to sowttweetids. (U ᵕ U❁)
+    w-wong[] sowtedtweetids = n-nyew wong[numdocs];
+    int sowtedtweetidsindex = 0;
+    f-fow (int docid = getmindocid(); d-docid != id_not_found; d-docid = getnextdocid(docid)) {
+      s-sowtedtweetids[sowtedtweetidsindex++] = gettweetid(docid);
     }
-    Preconditions.checkState(sortedTweetIdsIndex == numDocs,
-                             "Could not traverse all documents in the mapper. Expected to find "
-                             + numDocs + " docs, but found only " + sortedTweetIdsIndex);
+    pweconditions.checkstate(sowtedtweetidsindex == n-nyumdocs,
+                             "couwd nyot twavewse aww documents in the mappew. ^^ e-expected to find "
+                             + n-nyumdocs + " docs, (⑅˘꒳˘) but f-found onwy " + sowtedtweetidsindex);
 
-    // Sort sortedTweetIdsIndex in descending order. There's no way to sort a primitive array in
-    // descending order, so we have to sort it in ascending order and then reverse it.
-    Arrays.sort(sortedTweetIds);
-    for (int i = 0; i < numDocs / 2; ++i) {
-      long tmp = sortedTweetIds[i];
-      sortedTweetIds[i] = sortedTweetIds[numDocs - 1 - i];
-      sortedTweetIds[numDocs - 1 - i] = tmp;
+    // sowt s-sowtedtweetidsindex i-in descending owdew. :3 thewe's nyo way to sowt a-a pwimitive awway in
+    // descending owdew, (///ˬ///✿) s-so we have to sowt it in ascending owdew and then wevewse it. :3
+    awways.sowt(sowtedtweetids);
+    f-fow (int i = 0; i-i < nyumdocs / 2; ++i) {
+      wong tmp = sowtedtweetids[i];
+      s-sowtedtweetids[i] = s-sowtedtweetids[numdocs - 1 - i];
+      s-sowtedtweetids[numdocs - 1 - i] = tmp;
     }
 
-    return sortedTweetIds;
+    wetuwn sowtedtweetids;
   }
 
-  @Override
-  public DocIDToTweetIDMapper optimize() throws IOException {
-    return new OptimizedTweetIDMapper(this);
+  @ovewwide
+  pubwic docidtotweetidmappew o-optimize() t-thwows ioexception {
+    wetuwn n-nyew optimizedtweetidmappew(this);
   }
 
   /**
-   * Returns the largest Tweet ID that this doc ID mapper could handle. The returned Tweet ID
-   * would be safe to put into the mapper, but any larger ones would not be correctly handled.
+   * w-wetuwns the wawgest tweet i-id that this doc id mappew couwd handwe. 🥺 the wetuwned t-tweet id
+   * wouwd be safe to put into t-the mappew, mya but a-any wawgew ones wouwd nyot be cowwectwy handwed. XD
    */
-  public static long calculateMaxTweetID(long timesliceID) {
-    long numberOfUsableTimestamps = LARGEST_RELATIVE_TIMESTAMP - LATE_TWEETS_TIME_BUFFER_MILLIS;
-    long firstTimestamp = SnowflakeIdParser.getTimestampFromTweetId(timesliceID);
-    long lastTimestamp = firstTimestamp + numberOfUsableTimestamps;
-    return SnowflakeIdParser.generateValidStatusId(
-        lastTimestamp, SnowflakeIdParser.RESERVED_BITS_MASK);
+  p-pubwic static wong cawcuwatemaxtweetid(wong timeswiceid) {
+    wong nyumbewofusabwetimestamps = wawgest_wewative_timestamp - wate_tweets_time_buffew_miwwis;
+    wong fiwsttimestamp = snowfwakeidpawsew.gettimestampfwomtweetid(timeswiceid);
+    w-wong w-wasttimestamp = fiwsttimestamp + n-numbewofusabwetimestamps;
+    w-wetuwn snowfwakeidpawsew.genewatevawidstatusid(
+        wasttimestamp, -.- s-snowfwakeidpawsew.wesewved_bits_mask);
   }
 
   /**
-   * Evaluates whether two instances of OutOfOrderRealtimeTweetIDMapper are equal by value. It is
-   * slow because it has to check every tweet ID/doc ID in the map.
+   * evawuates whethew two instances of outofowdewweawtimetweetidmappew awe equaw by vawue. o.O i-it is
+   * swow because it has to check evewy tweet id/doc id in the map. (˘ω˘)
    */
-  @VisibleForTesting
-  boolean verySlowEqualsForTests(OutOfOrderRealtimeTweetIDMapper that) {
-    return getMinTweetID() == that.getMinTweetID()
-        && getMaxTweetID() == that.getMaxTweetID()
-        && getMinDocID() == that.getMinDocID()
-        && getMaxDocID() == that.getMaxDocID()
-        && segmentBoundaryTimestamp == that.segmentBoundaryTimestamp
-        && segmentSize == that.segmentSize
-        && tweetsPerTimestamp.equals(that.tweetsPerTimestamp)
-        && tweetIds.equals(that.tweetIds);
+  @visibwefowtesting
+  b-boowean v-vewyswowequawsfowtests(outofowdewweawtimetweetidmappew t-that) {
+    wetuwn getmintweetid() == that.getmintweetid()
+        && getmaxtweetid() == t-that.getmaxtweetid()
+        && g-getmindocid() == t-that.getmindocid()
+        && getmaxdocid() == t-that.getmaxdocid()
+        && segmentboundawytimestamp == t-that.segmentboundawytimestamp
+        && segmentsize == t-that.segmentsize
+        && tweetspewtimestamp.equaws(that.tweetspewtimestamp)
+        && t-tweetids.equaws(that.tweetids);
   }
 
-  @Override
-  public OutOfOrderRealtimeTweetIDMapper.FlushHandler getFlushHandler() {
-    return new OutOfOrderRealtimeTweetIDMapper.FlushHandler(this);
+  @ovewwide
+  pubwic outofowdewweawtimetweetidmappew.fwushhandwew getfwushhandwew() {
+    wetuwn n-nyew outofowdewweawtimetweetidmappew.fwushhandwew(this);
   }
 
-  private OutOfOrderRealtimeTweetIDMapper(
-    long minTweetID,
-    long maxTweetID,
-    int minDocID,
-    int maxDocID,
-    long segmentBoundaryTimestamp,
-    int segmentSize,
-    int[] docIDs,
-    long[] tweetIDList
+  pwivate outofowdewweawtimetweetidmappew(
+    w-wong mintweetid, (U ᵕ U❁)
+    w-wong maxtweetid, rawr
+    int m-mindocid, 🥺
+    int m-maxdocid, rawr x3
+    wong segmentboundawytimestamp, ( ͡o ω ͡o )
+    i-int segmentsize, σωσ
+    int[] docids, rawr x3
+    w-wong[] tweetidwist
   ) {
-    super(minTweetID, maxTweetID, minDocID, maxDocID, docIDs.length);
+    s-supew(mintweetid, (ˆ ﻌ ˆ)♡ m-maxtweetid, rawr mindocid, :3 maxdocid, docids.wength);
 
-    Preconditions.checkState(docIDs.length == tweetIDList.length);
+    pweconditions.checkstate(docids.wength == t-tweetidwist.wength);
 
-    this.segmentBoundaryTimestamp = segmentBoundaryTimestamp;
-    this.segmentSize = segmentSize;
+    this.segmentboundawytimestamp = segmentboundawytimestamp;
+    this.segmentsize = segmentsize;
 
-    tweetIds = new Int2LongOpenHashMap(segmentSize);
-    tweetIds.defaultReturnValue(ID_NOT_FOUND);
+    tweetids = nyew int2wongopenhashmap(segmentsize);
+    tweetids.defauwtwetuwnvawue(id_not_found);
 
-    tweetsPerTimestamp = new Int2ByteOpenHashMap(segmentSize);
-    tweetsPerTimestamp.defaultReturnValue((byte) ID_NOT_FOUND);
+    t-tweetspewtimestamp = nyew int2byteopenhashmap(segmentsize);
+    tweetspewtimestamp.defauwtwetuwnvawue((byte) i-id_not_found);
 
-    for (int i = 0; i < docIDs.length; i++) {
-      int docID = docIDs[i];
-      long tweetID = tweetIDList[i];
-      tweetIds.put(docID, tweetID);
+    fow (int i-i = 0; i < docids.wength; i++) {
+      int d-docid = docids[i];
+      wong tweetid = tweetidwist[i];
+      tweetids.put(docid, rawr t-tweetid);
 
-      int timestampBucket = docID >> DOC_ID_BITS;
-      if (tweetsPerTimestamp.containsKey(timestampBucket)) {
-        tweetsPerTimestamp.addTo(timestampBucket, (byte) 1);
-      } else {
-        tweetsPerTimestamp.put(timestampBucket, (byte) 1);
+      int timestampbucket = docid >> d-doc_id_bits;
+      if (tweetspewtimestamp.containskey(timestampbucket)) {
+        tweetspewtimestamp.addto(timestampbucket, (˘ω˘) (byte) 1);
+      } e-ewse {
+        tweetspewtimestamp.put(timestampbucket, (ˆ ﻌ ˆ)♡ (byte) 1);
       }
     }
   }
 
-  public static class FlushHandler extends Flushable.Handler<OutOfOrderRealtimeTweetIDMapper> {
-    private static final String MIN_TWEET_ID_PROP_NAME = "MinTweetID";
-    private static final String MAX_TWEET_ID_PROP_NAME = "MaxTweetID";
-    private static final String MIN_DOC_ID_PROP_NAME = "MinDocID";
-    private static final String MAX_DOC_ID_PROP_NAME = "MaxDocID";
-    private static final String SEGMENT_BOUNDARY_TIMESTAMP_PROP_NAME = "SegmentBoundaryTimestamp";
-    private static final String SEGMENT_SIZE_PROP_NAME = "SegmentSize";
+  pubwic s-static cwass fwushhandwew e-extends fwushabwe.handwew<outofowdewweawtimetweetidmappew> {
+    pwivate s-static finaw s-stwing min_tweet_id_pwop_name = "mintweetid";
+    pwivate static f-finaw stwing max_tweet_id_pwop_name = "maxtweetid";
+    p-pwivate static finaw stwing min_doc_id_pwop_name = "mindocid";
+    p-pwivate static finaw stwing max_doc_id_pwop_name = "maxdocid";
+    pwivate static finaw s-stwing segment_boundawy_timestamp_pwop_name = "segmentboundawytimestamp";
+    pwivate static finaw stwing segment_size_pwop_name = "segmentsize";
 
-    public FlushHandler() {
-      super();
+    pubwic f-fwushhandwew() {
+      s-supew();
     }
 
-    public FlushHandler(OutOfOrderRealtimeTweetIDMapper objectToFlush) {
-      super(objectToFlush);
+    p-pubwic fwushhandwew(outofowdewweawtimetweetidmappew objecttofwush) {
+      supew(objecttofwush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer serializer) throws IOException {
-      OutOfOrderRealtimeTweetIDMapper mapper = getObjectToFlush();
+    @ovewwide
+    p-pwotected void dofwush(fwushinfo f-fwushinfo, mya datasewiawizew s-sewiawizew) thwows i-ioexception {
+      outofowdewweawtimetweetidmappew mappew = getobjecttofwush();
 
-      flushInfo.addLongProperty(MIN_TWEET_ID_PROP_NAME, mapper.getMinTweetID());
-      flushInfo.addLongProperty(MAX_TWEET_ID_PROP_NAME, mapper.getMaxTweetID());
-      flushInfo.addIntProperty(MIN_DOC_ID_PROP_NAME, mapper.getMinDocID());
-      flushInfo.addIntProperty(MAX_DOC_ID_PROP_NAME, mapper.getMaxDocID());
-      flushInfo.addLongProperty(SEGMENT_BOUNDARY_TIMESTAMP_PROP_NAME,
-          mapper.segmentBoundaryTimestamp);
-      flushInfo.addIntProperty(SEGMENT_SIZE_PROP_NAME, mapper.segmentSize);
+      fwushinfo.addwongpwopewty(min_tweet_id_pwop_name, (U ᵕ U❁) mappew.getmintweetid());
+      fwushinfo.addwongpwopewty(max_tweet_id_pwop_name, mya m-mappew.getmaxtweetid());
+      fwushinfo.addintpwopewty(min_doc_id_pwop_name, ʘwʘ m-mappew.getmindocid());
+      fwushinfo.addintpwopewty(max_doc_id_pwop_name, mappew.getmaxdocid());
+      f-fwushinfo.addwongpwopewty(segment_boundawy_timestamp_pwop_name, (˘ω˘)
+          mappew.segmentboundawytimestamp);
+      fwushinfo.addintpwopewty(segment_size_pwop_name, 😳 m-mappew.segmentsize);
 
-      serializer.writeInt(mapper.tweetIds.size());
-      for (Int2LongMap.Entry entry : mapper.tweetIds.int2LongEntrySet()) {
-        serializer.writeInt(entry.getIntKey());
-        serializer.writeLong(entry.getLongValue());
+      s-sewiawizew.wwiteint(mappew.tweetids.size());
+      f-fow (int2wongmap.entwy e-entwy : mappew.tweetids.int2wongentwyset()) {
+        s-sewiawizew.wwiteint(entwy.getintkey());
+        s-sewiawizew.wwitewong(entwy.getwongvawue());
       }
     }
 
-    @Override
-    protected OutOfOrderRealtimeTweetIDMapper doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
+    @ovewwide
+    pwotected outofowdewweawtimetweetidmappew dowoad(fwushinfo f-fwushinfo, òωó d-datadesewiawizew i-in)
+        t-thwows ioexception {
 
-      int size = in.readInt();
-      int[] docIds = new int[size];
-      long[] tweetIds = new long[size];
-      for (int i = 0; i < size; i++) {
-        docIds[i] = in.readInt();
-        tweetIds[i] = in.readLong();
+      i-int size = in.weadint();
+      i-int[] docids = nyew int[size];
+      w-wong[] tweetids = n-nyew wong[size];
+      fow (int i-i = 0; i < size; i++) {
+        docids[i] = i-in.weadint();
+        tweetids[i] = in.weadwong();
       }
 
-      return new OutOfOrderRealtimeTweetIDMapper(
-          flushInfo.getLongProperty(MIN_TWEET_ID_PROP_NAME),
-          flushInfo.getLongProperty(MAX_TWEET_ID_PROP_NAME),
-          flushInfo.getIntProperty(MIN_DOC_ID_PROP_NAME),
-          flushInfo.getIntProperty(MAX_DOC_ID_PROP_NAME),
-          flushInfo.getLongProperty(SEGMENT_BOUNDARY_TIMESTAMP_PROP_NAME),
-          flushInfo.getIntProperty(SEGMENT_SIZE_PROP_NAME),
-          docIds,
-          tweetIds);
+      w-wetuwn nyew outofowdewweawtimetweetidmappew(
+          fwushinfo.getwongpwopewty(min_tweet_id_pwop_name), nyaa~~
+          f-fwushinfo.getwongpwopewty(max_tweet_id_pwop_name), o.O
+          f-fwushinfo.getintpwopewty(min_doc_id_pwop_name), nyaa~~
+          fwushinfo.getintpwopewty(max_doc_id_pwop_name), (U ᵕ U❁)
+          fwushinfo.getwongpwopewty(segment_boundawy_timestamp_pwop_name), 😳😳😳
+          fwushinfo.getintpwopewty(segment_size_pwop_name), (U ﹏ U)
+          d-docids, ^•ﻌ•^
+          t-tweetids);
     }
   }
 }

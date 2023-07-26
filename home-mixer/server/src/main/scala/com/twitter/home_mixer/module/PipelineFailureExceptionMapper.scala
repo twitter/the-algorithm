@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.util.logging.Logging
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.scrooge.ThriftException
-import com.twitter.util.Future
-import javax.inject.Singleton
+impowt com.twittew.finatwa.thwift.exceptions.exceptionmappew
+i-impowt com.twittew.home_mixew.{thwiftscawa => t-t}
+impowt com.twittew.utiw.wogging.wogging
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pwoductdisabwed
+i-impowt c-com.twittew.scwooge.thwiftexception
+impowt com.twittew.utiw.futuwe
+impowt javax.inject.singweton
 
-@Singleton
-class PipelineFailureExceptionMapper
-    extends ExceptionMapper[PipelineFailure, ThriftException]
-    with Logging {
+@singweton
+cwass pipewinefaiwuweexceptionmappew
+    extends e-exceptionmappew[pipewinefaiwuwe, OwO thwiftexception]
+    with wogging {
 
-  def handleException(throwable: PipelineFailure): Future[ThriftException] = {
-    throwable match {
-      // SliceService (unlike UrtService) throws an exception when the requested product is disabled
-      case PipelineFailure(ProductDisabled, reason, _, _) =>
-        Future.exception(
-          t.ValidationExceptionList(errors =
-            Seq(t.ValidationException(t.ValidationErrorCode.ProductDisabled, reason))))
+  d-def handweexception(thwowabwe: pipewinefaiwuwe): f-futuwe[thwiftexception] = {
+    thwowabwe match {
+      // swicesewvice (unwike u-uwtsewvice) thwows an e-exception when the w-wequested pwoduct is disabwed
+      case pipewinefaiwuwe(pwoductdisabwed, (U ﹏ U) weason, >_< _, _) =>
+        futuwe.exception(
+          t-t.vawidationexceptionwist(ewwows =
+            seq(t.vawidationexception(t.vawidationewwowcode.pwoductdisabwed, weason))))
       case _ =>
-        error("Unhandled PipelineFailure", throwable)
-        Future.exception(throwable)
+        ewwow("unhandwed p-pipewinefaiwuwe", rawr x3 thwowabwe)
+        f-futuwe.exception(thwowabwe)
     }
   }
 }

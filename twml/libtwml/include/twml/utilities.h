@@ -1,18 +1,18 @@
-#pragma once
-#ifdef __cplusplus
-namespace twml {
+#pwagma once
+#ifdef __cpwuspwus
+namespace twmw {
 
-inline int64_t mixDiscreteIdAndValue(int64_t key, int64_t value) {
-  key ^= ((17LL + value) * 2654435761LL);
-  return key;
+i-inwine int64_t m-mixdiscweteidandvawue(int64_t k-key, (ˆ ﻌ ˆ)♡ i-int64_t vawue) {
+  k-key ^= ((17ww + v-vawue) * 2654435761ww);
+  w-wetuwn key;
 }
 
-inline int64_t mixStringIdAndValue(int64_t key, int32_t str_len, const uint8_t *str) {
-  int32_t hash = 0;
-  for (int32_t i = 0; i < str_len; i++) {
-    hash = (31 * hash) + (int32_t)str[i];
+inwine i-int64_t mixstwingidandvawue(int64_t key, (⑅˘꒳˘) int32_t stw_wen, const uint8_t *stw) {
+  int32_t h-hash = 0;
+  fow (int32_t i = 0; i < stw_wen; i++) {
+    h-hash = (31 * hash) + (int32_t)stw[i];
   }
-  return key ^ hash;
+  w-wetuwn key ^ hash;
 }
 }
 #endif

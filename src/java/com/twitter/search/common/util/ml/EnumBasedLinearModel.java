@@ -1,141 +1,141 @@
-package com.twitter.search.common.util.ml;
+package com.twittew.seawch.common.utiw.mw;
 
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.enummap;
+i-impowt java.utiw.enumset;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.set;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.base.pwedicates;
+impowt com.googwe.common.cowwect.immutabwemap;
+impowt com.googwe.common.cowwect.maps;
 
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.util.io.TextFileLoadingUtils;
+impowt com.twittew.seawch.common.fiwe.abstwactfiwe;
+i-impowt com.twittew.seawch.common.utiw.io.textfiwewoadingutiws;
 
 /**
- * Represents a linear model for scoring and classification.
+ * wepwesents a wineaw m-modew fow scowing and cwassification. ^•ﻌ•^
  *
- * The list of features is defined by an Enum class. The model weights and instances are
- * represented as maps that must contain an entry for all the values of the enum.
+ * t-the wist of featuwes is defined by an enum cwass. σωσ the modew weights a-and instances awe
+ * wepwesented a-as maps that m-must contain an entwy fow aww the vawues of the enum. -.-
  *
  */
-public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearModel<K> {
+pubwic cwass enumbasedwineawmodew<k e-extends enum<k>> impwements mapbasedwineawmodew<k> {
 
-  private final EnumSet<K> features;
-  private final EnumMap<K, Float> weights;
+  pwivate finaw enumset<k> f-featuwes;
+  pwivate finaw enummap<k, ^^;; f-fwoat> w-weights;
 
   /**
-   * Creates a model from a map of weights.
+   * c-cweates a m-modew fwom a map of weights. XD
    *
-   * @param enumType Enum used for the keys
-   * @param weights Feature weights.
+   * @pawam enumtype e-enum used fow the keys
+   * @pawam weights f-featuwe weights. 🥺
    */
-  public EnumBasedLinearModel(Class<K> enumType, Map<K, Float> weights) {
-    features = EnumSet.allOf(enumType);
-    EnumMap<K, Float> enumWeights =
-        new EnumMap<>(Maps.filterValues(weights, Predicates.notNull()));
-    Preconditions.checkArgument(features.equals(enumWeights.keySet()),
-        "The model does not include weights for all the available features");
+  pubwic enumbasedwineawmodew(cwass<k> enumtype, òωó map<k, fwoat> weights) {
+    featuwes = e-enumset.awwof(enumtype);
+    enummap<k, (ˆ ﻌ ˆ)♡ fwoat> e-enumweights =
+        n-nyew enummap<>(maps.fiwtewvawues(weights, -.- p-pwedicates.notnuww()));
+    pweconditions.checkawgument(featuwes.equaws(enumweights.keyset()), :3
+        "the modew does nyot incwude w-weights fow a-aww the avaiwabwe featuwes");
 
-    this.weights = enumWeights;
+    t-this.weights = e-enumweights;
   }
 
-  public ImmutableMap<K, Float> getWeights() {
-    return Maps.immutableEnumMap(weights);
+  pubwic immutabwemap<k, ʘwʘ f-fwoat> getweights() {
+    w-wetuwn maps.immutabweenummap(weights);
   }
 
-  @Override
-  public float score(Map<K, Float> instance) {
-    float total = 0;
-    for (Map.Entry<K, Float> weightEntry : weights.entrySet()) {
-      Float feature = instance.get(weightEntry.getKey());
-      if (feature != null) {
-        total += weightEntry.getValue() * feature;
+  @ovewwide
+  pubwic fwoat scowe(map<k, 🥺 fwoat> i-instance) {
+    fwoat totaw = 0;
+    f-fow (map.entwy<k, >_< fwoat> w-weightentwy : weights.entwyset()) {
+      f-fwoat featuwe = instance.get(weightentwy.getkey());
+      if (featuwe != nyuww) {
+        totaw += weightentwy.getvawue() * featuwe;
       }
     }
-    return total;
+    wetuwn totaw;
   }
 
   /**
-   * Determines whether an instance is positive.
+   * d-detewmines whethew a-an instance is positive. ʘwʘ
    */
-  @Override
-  public boolean classify(float threshold, Map<K, Float> instance) {
-    return score(instance) > threshold;
+  @ovewwide
+  p-pubwic boowean cwassify(fwoat t-thweshowd, (˘ω˘) m-map<k, (✿oωo) fwoat> instance) {
+    wetuwn scowe(instance) > thweshowd;
   }
 
-  @Override
-  public boolean classify(Map<K, Float> instance) {
-    return classify(0, instance);
+  @ovewwide
+  p-pubwic boowean cwassify(map<k, (///ˬ///✿) fwoat> instance) {
+    wetuwn cwassify(0, rawr x3 i-instance);
   }
 
-  @Override
-  public String toString() {
-    return String.format("EnumBasedLinearModel[%s]", weights);
+  @ovewwide
+  pubwic stwing t-tostwing() {
+    w-wetuwn stwing.fowmat("enumbasedwineawmodew[%s]", -.- w-weights);
   }
 
   /**
-   * Creates a model where all the features have the same weight.
-   * This method is useful for generating the feature vectors for training a new model.
+   * cweates a modew whewe a-aww the featuwes h-have the same w-weight. ^^
+   * t-this method is usefuw fow genewating the featuwe v-vectows fow twaining a-a nyew modew. (⑅˘꒳˘)
    */
-  public static <T extends Enum<T>> EnumBasedLinearModel<T> createWithEqualWeight(Class<T> enumType,
-                                                                                  Float weight) {
-    EnumSet<T> features = EnumSet.allOf(enumType);
-    EnumMap<T, Float> weights = Maps.newEnumMap(enumType);
-    for (T feature : features) {
-      weights.put(feature, weight);
+  p-pubwic s-static <t extends e-enum<t>> enumbasedwineawmodew<t> cweatewithequawweight(cwass<t> enumtype, nyaa~~
+                                                                                  fwoat weight) {
+    e-enumset<t> featuwes = enumset.awwof(enumtype);
+    enummap<t, /(^•ω•^) fwoat> weights = maps.newenummap(enumtype);
+    fow (t featuwe : f-featuwes) {
+      weights.put(featuwe, (U ﹏ U) weight);
     }
-    return new EnumBasedLinearModel<>(enumType, weights);
+    wetuwn nyew enumbasedwineawmodew<>(enumtype, 😳😳😳 w-weights);
   }
 
   /**
-   * Loads the model from a TSV file with the following format:
+   * w-woads the m-modew fwom a tsv fiwe with the fowwowing f-fowmat:
    *
-   *    feature_name  \t  weight
+   *    featuwe_name  \t  w-weight
    */
-  public static <T extends Enum<T>> EnumBasedLinearModel<T> createFromFile(
-      Class<T> enumType, AbstractFile path) throws IOException {
-    return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, true));
+  pubwic s-static <t extends enum<t>> enumbasedwineawmodew<t> cweatefwomfiwe(
+      cwass<t> enumtype, abstwactfiwe path) t-thwows ioexception {
+    wetuwn n-nyew enumbasedwineawmodew<>(enumtype, >w< woadweights(enumtype, XD p-path, twue));
   }
 
   /**
-   * Loads the model from a TSV file, using a default weight of 0 for missing features.
+   * woads t-the modew fwom a tsv fiwe, o.O using a defauwt w-weight of 0 fow m-missing featuwes. mya
    *
-   * File format:
+   * fiwe f-fowmat:
    *
-   *     feature_name  \t  weight
+   *     f-featuwe_name  \t  weight
    */
-  public static <T extends Enum<T>> EnumBasedLinearModel<T> createFromFileSafe(
-      Class<T> enumType, AbstractFile path) throws IOException {
-    return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, false));
+  pubwic static <t extends enum<t>> enumbasedwineawmodew<t> c-cweatefwomfiwesafe(
+      c-cwass<t> e-enumtype, 🥺 abstwactfiwe path) t-thwows ioexception {
+    w-wetuwn nyew enumbasedwineawmodew<>(enumtype, w-woadweights(enumtype, ^^;; path, fawse));
   }
 
   /**
-   * Creates a map of (feature_name, weight) from a TSV file.
+   * cweates a map of (featuwe_name, :3 w-weight) f-fwom a tsv fiwe. (U ﹏ U)
    *
-   * If strictMode is true, it will throw an exception if the file doesn't contain all the
-   * features declared in the enum. Otherwise, it will use zero as default value.
+   * if stwictmode is t-twue, OwO it wiww thwow a-an exception if the fiwe doesn't contain aww the
+   * featuwes d-decwawed in the enum. 😳😳😳 othewwise, (ˆ ﻌ ˆ)♡ it wiww use zewo as defauwt vawue. XD
    *
    */
-  private static <T extends Enum<T>> EnumMap<T, Float> loadWeights(
-      Class<T> enumType, AbstractFile fileHandle, boolean strictMode) throws IOException {
-    Map<String, Float> weightsFromFile =
-      TextFileLoadingUtils.loadMapFromFile(fileHandle, input -> Float.parseFloat(input));
-    EnumMap<T, Float> weights = Maps.newEnumMap(enumType);
-    Set<T> expectedFeatures = EnumSet.allOf(enumType);
-    if (!strictMode) {
-      for (T feature : expectedFeatures) {
-        weights.put(feature, 0f);
+  p-pwivate static <t extends enum<t>> enummap<t, (ˆ ﻌ ˆ)♡ f-fwoat> woadweights(
+      c-cwass<t> enumtype, ( ͡o ω ͡o ) abstwactfiwe fiwehandwe, rawr x3 boowean s-stwictmode) thwows i-ioexception {
+    map<stwing, fwoat> weightsfwomfiwe =
+      textfiwewoadingutiws.woadmapfwomfiwe(fiwehandwe, i-input -> fwoat.pawsefwoat(input));
+    enummap<t, nyaa~~ f-fwoat> weights = maps.newenummap(enumtype);
+    set<t> expectedfeatuwes = enumset.awwof(enumtype);
+    i-if (!stwictmode) {
+      fow (t featuwe : e-expectedfeatuwes) {
+        w-weights.put(featuwe, >_< 0f);
       }
     }
-    for (String featureName : weightsFromFile.keySet()) {
-      Float weight = weightsFromFile.get(featureName);
-      weights.put(Enum.valueOf(enumType, featureName.toUpperCase()), weight);
+    fow (stwing f-featuwename : weightsfwomfiwe.keyset()) {
+      f-fwoat weight = w-weightsfwomfiwe.get(featuwename);
+      w-weights.put(enum.vawueof(enumtype, ^^;; featuwename.touppewcase()), (ˆ ﻌ ˆ)♡ weight);
     }
-    Preconditions.checkArgument(expectedFeatures.equals(weights.keySet()),
-        "Model does not contain weights for all the features");
-    return weights;
+    p-pweconditions.checkawgument(expectedfeatuwes.equaws(weights.keyset()), ^^;;
+        "modew d-does nyot contain weights fow aww the featuwes");
+    w-wetuwn w-weights;
   }
 }

@@ -1,259 +1,259 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.interests
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twittew.simcwustews_v2.thwiftjava
+nyamespace py g-gen.twittew.simcwustews_v2.intewests
+#@namespace s-scawa com.twittew.simcwustews_v2.thwiftscawa
+#@namespace s-stwato c-com.twittew.simcwustews_v2
 
 /**
- * All of the scores below assume that the knownFor vector for each cluster is already
- * of unit L2 norm i.e. sum of squares is 1. 
+ * a-aww of the s-scowes bewow assume t-that the knownfow v-vectow fow each cwustew is awweady
+ * of unit w2 nyowm i.e. (U ﹏ U) sum of squawes i-is 1. o.O 
  **/
-struct UserToInterestedInClusterScores {
-  // dot product of user's binary follow vector with knownFor vector for this cluster
-  // TIP: By default, use this score or favScore. 
-  1: optional double followScore(personalDataType = 'CountOfFollowersAndFollowees')
+stwuct usewtointewestedincwustewscowes {
+  // dot p-pwoduct of usew's binawy fowwow v-vectow with knownfow vectow fow this cwustew
+  // tip: by defauwt, mya u-use this scowe ow favscowe. XD 
+  1: o-optionaw doubwe f-fowwowscowe(pewsonawdatatype = 'countoffowwowewsandfowwowees')
 
-  // first compute followScore as defined above
-  // then compute L2 norm of the vector of these scores for this cluster
+  // fiwst compute fowwowscowe as defined above
+  // then compute w-w2 nyowm of the vectow of these scowes fow this cwustew
+  // divide by that. òωó
+  // e-essentiawwy the mowe peopwe a-awe intewested i-in this cwustew, (˘ω˘) t-the wowew this s-scowe gets
+  // tip: use this scowe if youw u-use case nyeeds to penawize cwustews that a wot o-of othew 
+  // usews awe awso intewested in
+  2: optionaw doubwe fowwowscowecwustewnowmawizedonwy(pewsonawdatatype = 'countoffowwowewsandfowwowees')
+
+  // dot pwoduct o-of usew's pwoducew nyowmawized f-fowwow vectow a-and knownfow v-vectow fow this cwustew
+  // i.e. :3 i^th entwy in the nyowmawized f-fowwow vectow = 1.0/sqwt(numbew o-of fowwowews of usew i)
+  // tip: u-use this scowe i-if youw use case nyeeds to penawize c-cwustews whewe the usews known f-fow
+  // that cwustew awe popuwaw. OwO 
+  3: optionaw d-doubwe fowwowscowepwoducewnowmawizedonwy(pewsonawdatatype = 'countoffowwowewsandfowwowees')
+
+  // fiwst compute f-fowwowscowepwoducewnowmawizedonwy
+  // then c-compute w2 nyowm o-of the vectow of these scowes fow this cwustew
   // divide by that.
-  // essentially the more people are interested in this cluster, the lower this score gets
-  // TIP: Use this score if your use case needs to penalize clusters that a lot of other 
-  // users are also interested in
-  2: optional double followScoreClusterNormalizedOnly(personalDataType = 'CountOfFollowersAndFollowees')
+  // essentiawwy the mowe peopwe awe intewested i-in this c-cwustew, mya the wowew this scowe gets
+  // t-tip: use t-this scowe if youw u-use case nyeeds to penawize both cwustews that a wot of othew
+  // u-usews awe intewested in, (˘ω˘) as weww as cwustews whewe the usews known fow that c-cwustew awe 
+  // popuwaw. o.O
+  4: o-optionaw doubwe f-fowwowscowecwustewandpwoducewnowmawized(pewsonawdatatype = 'countoffowwowewsandfowwowees')
 
-  // dot product of user's producer normalized follow vector and knownFor vector for this cluster
-  // i.e. i^th entry in the normalized follow vector = 1.0/sqrt(number of followers of user i)
-  // TIP: Use this score if your use case needs to penalize clusters where the users known for
-  // that cluster are popular. 
-  3: optional double followScoreProducerNormalizedOnly(personalDataType = 'CountOfFollowersAndFollowees')
+  // d-dot pwoduct of usew's favscowehawfwife100days v-vectow with knownfow v-vectow fow t-this cwustew 
+  // t-tip: by defauwt, (✿oωo) use this scowe ow fowwowscowe. (ˆ ﻌ ˆ)♡ 
+  5: o-optionaw d-doubwe favscowe(pewsonawdatatype = 'engagementspubwic')
 
-  // first compute followScoreProducerNormalizedOnly
-  // then compute L2 norm of the vector of these scores for this cluster
-  // divide by that.
-  // essentially the more people are interested in this cluster, the lower this score gets
-  // TIP: Use this score if your use case needs to penalize both clusters that a lot of other
-  // users are interested in, as well as clusters where the users known for that cluster are 
-  // popular.
-  4: optional double followScoreClusterAndProducerNormalized(personalDataType = 'CountOfFollowersAndFollowees')
+  // f-fiwst compute f-favscowe as defined a-above
+  // then compute w2 nyowm of the vectow of these scowes f-fow this cwustew
+  // divide by that. ^^;;
+  // essentiawwy the mowe peopwe awe intewested in this c-cwustew, OwO the wowew this scowe gets
+  // tip: use this scowe if y-youw use case nyeeds t-to penawize c-cwustews that a wot of othew 
+  // u-usews awe awso intewested in
+  6: o-optionaw doubwe f-favscowecwustewnowmawizedonwy(pewsonawdatatype = 'engagementspubwic')
 
-  // dot product of user's favScoreHalfLife100Days vector with knownFor vector for this cluster 
-  // TIP: By default, use this score or followScore. 
-  5: optional double favScore(personalDataType = 'EngagementsPublic')
+  // dot pwoduct of usew's favscowehawfwife100daysnowmawizedbyneighbowfavewsw2 vectow with 
+  // knownfow vectow fow t-this cwustew
+  // tip: use this s-scowe if youw use case nyeeds t-to penawize cwustews w-whewe the usews known fow
+  // that cwustew a-awe popuwaw. 🥺 
+  7: o-optionaw doubwe favscowepwoducewnowmawizedonwy(pewsonawdatatype = 'engagementspubwic')
 
-  // first compute favScore as defined above
-  // then compute L2 norm of the vector of these scores for this cluster
-  // divide by that.
-  // essentially the more people are interested in this cluster, the lower this score gets
-  // TIP: Use this score if your use case needs to penalize clusters that a lot of other 
-  // users are also interested in
-  6: optional double favScoreClusterNormalizedOnly(personalDataType = 'EngagementsPublic')
+  // f-fiwst compute favscowepwoducewnowmawizedonwy a-as defined above
+  // then compute w2 nyowm of the vectow of these s-scowes fow this c-cwustew
+  // divide b-by that. mya
+  // essentiawwy the m-mowe peopwe awe i-intewested in this cwustew, 😳 the w-wowew this scowe gets
+  // tip: use this scowe if youw use case nyeeds to penawize b-both cwustews t-that a wot of othew
+  // usews awe intewested i-in, òωó as weww as c-cwustews whewe the usews known fow that cwustew awe 
+  // popuwaw. /(^•ω•^)
+  8: o-optionaw doubwe favscowecwustewandpwoducewnowmawized(pewsonawdatatype = 'engagementspubwic')
 
-  // dot product of user's favScoreHalfLife100DaysNormalizedByNeighborFaversL2 vector with 
-  // knownFor vector for this cluster
-  // TIP: Use this score if your use case needs to penalize clusters where the users known for
-  // that cluster are popular. 
-  7: optional double favScoreProducerNormalizedOnly(personalDataType = 'EngagementsPublic')
-
-  // first compute favScoreProducerNormalizedOnly as defined above
-  // then compute L2 norm of the vector of these scores for this cluster
-  // divide by that.
-  // essentially the more people are interested in this cluster, the lower this score gets
-  // TIP: Use this score if your use case needs to penalize both clusters that a lot of other
-  // users are interested in, as well as clusters where the users known for that cluster are 
-  // popular.
-  8: optional double favScoreClusterAndProducerNormalized(personalDataType = 'EngagementsPublic')
-
-  // list of users who're known for this cluster as well as are being followed by the user.
-  9: optional list<i64> usersBeingFollowed(personalDataType = 'UserId')
+  // wist of usews who'we known fow this c-cwustew as weww as awe being fowwowed by the usew. -.-
+  9: o-optionaw w-wist<i64> usewsbeingfowwowed(pewsonawdatatype = 'usewid')
  
-  // list of users who're known for this cluster as well as were faved at some point by the user. 
-  10: optional list<i64> usersThatWereFaved(personalDataType = 'UserId')
+  // wist of usews who'we known fow this cwustew as w-weww as wewe faved a-at some point by the usew. òωó 
+  10: optionaw wist<i64> usewsthatwewefaved(pewsonawdatatype = 'usewid')
 
-  // A pretty close upper bound on the number of users who are interested in this cluster. 
-  // Useful to know if this is a niche community or a popular topic. 
-  11: optional i32 numUsersInterestedInThisClusterUpperBound
+  // a p-pwetty cwose uppew bound on the n-nyumbew of usews who awe intewested in this cwustew. /(^•ω•^) 
+  // usefuw t-to know if this is a nyiche community o-ow a popuwaw t-topic. /(^•ω•^) 
+  11: optionaw i32 n-nyumusewsintewestedinthiscwustewuppewbound
 
-  // dot product of user's logFavScore vector with knownFor vector for this cluster 
-  // TIP: this score is under experimentations
-  12: optional double logFavScore(personalDataType = 'EngagementsPublic')
+  // dot pwoduct of u-usew's wogfavscowe v-vectow with k-knownfow vectow fow this cwustew 
+  // t-tip: this s-scowe is undew expewimentations
+  12: optionaw d-doubwe wogfavscowe(pewsonawdatatype = 'engagementspubwic')
 
-  // first compute logFavScore as defined above
-  // then compute L2 norm of the vector of these scores for this cluster
-  // divide by that.
-  // essentially the more people are interested in this cluster, the lower this score gets
-  // TIP: this score is under experimentations
-  13: optional double logFavScoreClusterNormalizedOnly(personalDataType = 'EngagementsPublic')
+  // f-fiwst compute wogfavscowe a-as defined above
+  // then compute w2 n-nyowm of the vectow of these scowes f-fow this cwustew
+  // d-divide by that. 😳
+  // essentiawwy the mowe peopwe awe i-intewested in this c-cwustew, the w-wowew this scowe g-gets
+  // tip: this scowe is undew e-expewimentations
+  13: optionaw doubwe wogfavscowecwustewnowmawizedonwy(pewsonawdatatype = 'engagementspubwic')
 
-  // actual count of number of users who're known for this cluster as well as are being followed by the user.
-  14: optional i32 numUsersBeingFollowed
+  // actuaw count of nyumbew of usews who'we k-known fow this cwustew as weww a-as awe being fowwowed by the usew. :3
+  14: o-optionaw i32 nyumusewsbeingfowwowed
 
-  // actual count of number of users who're known for this cluster as well as were faved at some point by the user. 
-  15: optional i32 numUsersThatWereFaved
-}(persisted = 'true', hasPersonalData = 'true')
+  // a-actuaw count of nyumbew of usews w-who'we known f-fow this cwustew a-as weww as wewe f-faved at some p-point by the usew. 
+  15: optionaw i32 nyumusewsthatwewefaved
+}(pewsisted = 'twue', (U ᵕ U❁) haspewsonawdata = 'twue')
 
-struct UserToInterestedInClusters {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required string knownForModelVersion
-  3: required map<i32, UserToInterestedInClusterScores> clusterIdToScores(personalDataTypeKey = 'InferredInterests')
-}(persisted="true", hasPersonalData = 'true')
+stwuct usewtointewestedincwustews {
+  1: wequiwed i64 usewid(pewsonawdatatype = 'usewid')
+  2: wequiwed s-stwing knownfowmodewvewsion
+  3: w-wequiwed m-map<i32, ʘwʘ usewtointewestedincwustewscowes> cwustewidtoscowes(pewsonawdatatypekey = 'infewwedintewests')
+}(pewsisted="twue", o.O h-haspewsonawdata = 'twue')
 
-struct LanguageToClusters {
-  1: required string language
-  2: required string knownForModelVersion
-  3: required map<i32, UserToInterestedInClusterScores> clusterIdToScores(personalDataTypeKey = 'InferredInterests')
-}(persisted="true", hasPersonalData = 'true')
+stwuct wanguagetocwustews {
+  1: wequiwed stwing wanguage
+  2: w-wequiwed s-stwing knownfowmodewvewsion
+  3: wequiwed map<i32, ʘwʘ u-usewtointewestedincwustewscowes> cwustewidtoscowes(pewsonawdatatypekey = 'infewwedintewests')
+}(pewsisted="twue", ^^ haspewsonawdata = 'twue')
 
-struct ClustersUserIsInterestedIn {
-  1: required string knownForModelVersion
-  2: required map<i32, UserToInterestedInClusterScores> clusterIdToScores(personalDataTypeKey = 'InferredInterests')
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct cwustewsusewisintewestedin {
+  1: w-wequiwed stwing knownfowmodewvewsion
+  2: w-wequiwed map<i32, ^•ﻌ•^ u-usewtointewestedincwustewscowes> cwustewidtoscowes(pewsonawdatatypekey = 'infewwedintewests')
+}(pewsisted = 'twue', mya haspewsonawdata = 'twue')
 
-struct UserToKnownForClusters {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required string knownForModelVersion
-  3: required map<i32, UserToKnownForClusterScores> clusterIdToScores(personalDataTypeKey = 'InferredInterests')
-}(persisted="true", hasPersonalData = 'true')
+stwuct usewtoknownfowcwustews {
+  1: wequiwed i-i64 usewid(pewsonawdatatype = 'usewid')
+  2: wequiwed s-stwing knownfowmodewvewsion
+  3: w-wequiwed m-map<i32, UwU usewtoknownfowcwustewscowes> c-cwustewidtoscowes(pewsonawdatatypekey = 'infewwedintewests')
+}(pewsisted="twue", >_< haspewsonawdata = 'twue')
 
-struct UserToKnownForClusterScores {
-  1: optional double knownForScore
-}(persisted = 'true', hasPersonalData = 'false')
+s-stwuct usewtoknownfowcwustewscowes {
+  1: o-optionaw doubwe knownfowscowe
+}(pewsisted = 'twue', /(^•ω•^) h-haspewsonawdata = 'fawse')
 
-struct ClustersUserIsKnownFor {
-  1: required string knownForModelVersion
-  2: required map<i32, UserToKnownForClusterScores> clusterIdToScores(personalDataTypeKey = 'InferredInterests')
-}(persisted = 'true', hasPersonalData = 'true')
+s-stwuct cwustewsusewisknownfow {
+  1: w-wequiwed stwing knownfowmodewvewsion
+  2: wequiwed m-map<i32, òωó usewtoknownfowcwustewscowes> cwustewidtoscowes(pewsonawdatatypekey = 'infewwedintewests')
+}(pewsisted = 'twue', σωσ haspewsonawdata = 'twue')
 
-/** Thrift struct for storing quantile bounds output by QTreeMonoid in Algebird */
-struct QuantileBounds {
-  1: required double lowerBound
-  2: required double upperBound
-}(persisted = 'true', hasPersonalData = 'false')
+/** t-thwift s-stwuct fow stowing quantiwe b-bounds output by qtweemonoid in awgebiwd */
+stwuct q-quantiwebounds {
+  1: w-wequiwed d-doubwe wowewbound
+  2: wequiwed doubwe uppewbound
+}(pewsisted = 'twue', ( ͡o ω ͡o ) haspewsonawdata = 'fawse')
 
-/** Thrift struct giving the details of the distribution of a set of doubles */
-struct DistributionDetails {
-  1: required double mean
-  2: optional double standardDeviation
-  3: optional double min
-  4: optional QuantileBounds p25
-  5: optional QuantileBounds p50
-  6: optional QuantileBounds p75
-  7: optional QuantileBounds p95
-  8: optional double max
-}(persisted = 'true', hasPersonalData = 'false')
+/** t-thwift stwuct giving the detaiws of the d-distwibution o-of a set of doubwes */
+stwuct distwibutiondetaiws {
+  1: w-wequiwed doubwe mean
+  2: o-optionaw doubwe s-standawddeviation
+  3: optionaw doubwe min
+  4: o-optionaw quantiwebounds p25
+  5: optionaw quantiwebounds p-p50
+  6: o-optionaw quantiwebounds p75
+  7: o-optionaw quantiwebounds p95
+  8: o-optionaw d-doubwe max
+}(pewsisted = 'twue', nyaa~~ h-haspewsonawdata = 'fawse')
 
-/** Note that the modelVersion here is specified somewhere outside, specifically, as part of the key */
-struct ClusterNeighbor {
-  1: required i32 clusterId
-  /** Note that followCosineSimilarity is same as dot product over followScoreClusterNormalizedOnly
-   * since those scores form a unit vector **/
-  2: optional double followCosineSimilarity
-  /** Note that favCosineSimilarity is same as dot product over favScoreClusterNormalizedOnly
-   * since those scores form a unit vector **/
-  3: optional double favCosineSimilarity
-  /** Note that logFavCosineSimilarity is same as dot product over logFavScoreClusterNormalizedOnly
-   * since those scores form a unit vector **/
-  4: optional double logFavCosineSimilarity
-}(persisted = 'true', hasPersonalData = 'false')
+/** nyote that the modewvewsion hewe is specified somewhewe outside, specificawwy, :3 as pawt of the key */
+stwuct cwustewneighbow {
+  1: wequiwed i32 cwustewid
+  /** nyote that fowwowcosinesimiwawity is same as dot pwoduct ovew fowwowscowecwustewnowmawizedonwy
+   * s-since those s-scowes fowm a unit vectow **/
+  2: optionaw doubwe f-fowwowcosinesimiwawity
+  /** n-nyote that favcosinesimiwawity i-is same as dot pwoduct ovew favscowecwustewnowmawizedonwy
+   * since t-those scowes fowm a unit vectow **/
+  3: o-optionaw d-doubwe favcosinesimiwawity
+  /** note that w-wogfavcosinesimiwawity is same a-as dot pwoduct o-ovew wogfavscowecwustewnowmawizedonwy
+   * since those scowes fowm a-a unit vectow **/
+  4: o-optionaw d-doubwe wogfavcosinesimiwawity
+}(pewsisted = 'twue', UwU h-haspewsonawdata = 'fawse')
 
-/** Useful for storing the list of users known for a cluster */
-struct UserWithScore {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required double score
-}(persisted="true", hasPersonalData = 'true')
+/** u-usefuw fow s-stowing the wist o-of usews known f-fow a cwustew */
+s-stwuct usewwithscowe {
+  1: wequiwed i64 usewid(pewsonawdatatype = 'usewid')
+  2: w-wequiwed doubwe s-scowe
+}(pewsisted="twue", o.O haspewsonawdata = 'twue')
 
-// deprecated
-struct EdgeCut {
-  1: required double cutEdges
-  2: required double totalVolume
-}(persisted = 'true', hasPersonalData = 'false')
+// d-depwecated
+stwuct edgecut {
+  1: w-wequiwed doubwe kawaii~dges
+  2: wequiwed doubwe totawvowume
+}(pewsisted = 'twue', (ˆ ﻌ ˆ)♡ h-haspewsonawdata = 'fawse')
 
-struct ClusterQuality {
-  // deprecated
-  1: optional EdgeCut deprecated_unweightedEdgeCut
-  // deprecated
-  2: optional EdgeCut deprecated_edgeWeightedCut
-  // deprecated
-  3: optional EdgeCut deprecated_nodeAndEdgeWeightedCut
+stwuct c-cwustewquawity {
+  // d-depwecated
+  1: o-optionaw edgecut depwecated_unweightededgecut
+  // d-depwecated
+  2: optionaw e-edgecut depwecated_edgeweightedcut
+  // depwecated
+  3: o-optionaw edgecut depwecated_nodeandedgeweightedcut
 
-  // correlation of actual weight of (u, v) with I(u & v in same cluster) * score(u) * score(v)
-  4: optional double weightAndProductOfNodeScoresCorrelation
+  // c-cowwewation of actuaw weight of (u, ^^;; v) with i(u & v in same cwustew) * scowe(u) * s-scowe(v)
+  4: optionaw d-doubwe weightandpwoductofnodescowescowwewation
 
-  // fraction of edges staying inside cluster divided by total edges from nodes in the cluster
-  5: optional double unweightedRecall
+  // f-fwaction of edges staying inside cwustew divided by totaw edges f-fwom nyodes in the cwustew
+  5: o-optionaw doubwe u-unweightedwecaww
 
-  // fraction of edge weights staying inside cluster divided by total edge weights from nodes in the cluster
-  6: optional double weightedRecall
+  // f-fwaction of edge weights staying inside c-cwustew divided b-by totaw edge weights fwom nyodes i-in the cwustew
+  6: optionaw doubwe weightedwecaww
 
-  // total edges from nodes in the cluster
-  7: optional double unweightedRecallDenominator
+  // totaw e-edges fwom nyodes in the cwustew
+  7: o-optionaw d-doubwe unweightedwecawwdenominatow
 
-  // total edge weights from nodes in the cluster
-  8: optional double weightedRecallDenominator
+  // t-totaw edge weights f-fwom nyodes in the c-cwustew
+  8: o-optionaw doubwe w-weightedwecawwdenominatow
 
-  // sum of edge weights inside cluster / { #nodes * (#nodes - 1) }
-  9: optional double relativePrecisionNumerator
+  // sum of edge weights i-inside cwustew / { #nodes * (#nodes - 1) }
+  9: o-optionaw doubwe w-wewativepwecisionnumewatow
 
-  // above divided by the sum of edge weights in the total graph / { n * (n - 1) }
-  10: optional double relativePrecision
-}(persisted = 'true', hasPersonalData = 'false')
-
-/**
-* This struct is the value of the ClusterDetails key-value dataset.
-* The key is (modelVersion, clusterId)
-**/
-struct ClusterDetails {
-  1: required i32 numUsersWithAnyNonZeroScore
-  2: required i32 numUsersWithNonZeroFollowScore
-  3: required i32 numUsersWithNonZeroFavScore
-  4: optional DistributionDetails followScoreDistributionDetails
-  5: optional DistributionDetails favScoreDistributionDetails
-  6: optional list<UserWithScore> knownForUsersAndScores
-  7: optional list<ClusterNeighbor> neighborClusters
-  // fraction of users who're known for this cluster who're marked NSFW_User in UserSource
-  8: optional double fractionKnownForMarkedNSFWUser
-  // the major languages that this cluster's known_fors have as their "language" field in
-  // UserSource, and the fractions
-  9: optional map<string, double> languageToFractionDeviceLanguage
-  // the major country codes that this cluster's known_fors have as their "account_country_code"
-  // field in UserSource, and the fractions
-  10: optional map<string, double> countryCodeToFractionKnownForWithCountryCode
-  11: optional ClusterQuality qualityMeasuredOnSimsGraph
-  12: optional DistributionDetails logFavScoreDistributionDetails
-  // fraction of languages this cluster's known_fors produce based on what penguin_user_languages dataset infers
-  13: optional map<string, double> languageToFractionInferredLanguage
-}(persisted="true", hasPersonalData = 'true')
-
-struct SampledEdge {
-  1: required i64 followerId(personalDataType = 'UserId')
-  2: required i64 followeeId(personalDataType = 'UserId')
-  3: optional double favWtIfFollowEdge
-  4: optional double favWtIfFavEdge
-  5: optional double followScoreToCluster
-  6: optional double favScoreToCluster
-  7: optional double predictedFollowScore
-  8: optional double predictedFavScore
-}(persisted="true", hasPersonalData = 'true')
+  // a-above divided b-by the sum of e-edge weights in t-the totaw gwaph / { n-ny * (n - 1) }
+  10: optionaw d-doubwe wewativepwecision
+}(pewsisted = 'twue', ʘwʘ haspewsonawdata = 'fawse')
 
 /**
-* The key here is (modelVersion, clusterId)
+* t-this stwuct is the vawue of t-the cwustewdetaiws k-key-vawue dataset.
+* t-the key is (modewvewsion, σωσ cwustewid)
 **/
-struct BipartiteClusterQuality {
-  1: optional double inClusterFollowEdges
-  2: optional double inClusterFavEdges
-  3: optional double favWtSumOfInClusterFollowEdges
-  4: optional double favWtSumOfInClusterFavEdges
-  5: optional double outgoingFollowEdges
-  6: optional double outgoingFavEdges
-  7: optional double favWtSumOfOutgoingFollowEdges
-  8: optional double favWtSumOfOutgoingFavEdges
-  9: optional double incomingFollowEdges
-  10: optional double incomingFavEdges
-  11: optional double favWtSumOfIncomingFollowEdges
-  12: optional double favWtSumOfIncomingFavEdges
-  13: optional i32 interestedInSize
-  14: optional list<SampledEdge> sampledEdges
-  15: optional i32 knownForSize
-  16: optional double correlationOfFavWtIfFollowWithPredictedFollow
-  17: optional double correlationOfFavWtIfFavWithPredictedFav
-  18: optional double relativePrecisionUsingFavWtIfFav
-  19: optional double averagePrecisionOfWholeGraphUsingFavWtIfFav
-}(persisted="true", hasPersonalData = 'true')
+stwuct cwustewdetaiws {
+  1: w-wequiwed i-i32 nyumusewswithanynonzewoscowe
+  2: w-wequiwed i32 nyumusewswithnonzewofowwowscowe
+  3: wequiwed i32 nyumusewswithnonzewofavscowe
+  4: optionaw d-distwibutiondetaiws f-fowwowscowedistwibutiondetaiws
+  5: optionaw distwibutiondetaiws f-favscowedistwibutiondetaiws
+  6: o-optionaw wist<usewwithscowe> knownfowusewsandscowes
+  7: optionaw wist<cwustewneighbow> n-nyeighbowcwustews
+  // f-fwaction o-of usews who'we k-known fow this cwustew who'we mawked nysfw_usew i-in usewsouwce
+  8: o-optionaw doubwe fwactionknownfowmawkednsfwusew
+  // the m-majow wanguages that this cwustew's known_fows have a-as theiw "wanguage" fiewd in
+  // u-usewsouwce, ^^;; a-and the fwactions
+  9: optionaw m-map<stwing, ʘwʘ doubwe> w-wanguagetofwactiondevicewanguage
+  // the m-majow countwy codes that this cwustew's k-known_fows h-have as theiw "account_countwy_code"
+  // f-fiewd i-in usewsouwce, ^^ and the fwactions
+  10: o-optionaw m-map<stwing, nyaa~~ doubwe> c-countwycodetofwactionknownfowwithcountwycode
+  11: optionaw c-cwustewquawity quawitymeasuwedonsimsgwaph
+  12: optionaw distwibutiondetaiws w-wogfavscowedistwibutiondetaiws
+  // f-fwaction of w-wanguages this cwustew's known_fows pwoduce based on nyani penguin_usew_wanguages dataset infews
+  13: o-optionaw map<stwing, (///ˬ///✿) doubwe> w-wanguagetofwactioninfewwedwanguage
+}(pewsisted="twue", XD h-haspewsonawdata = 'twue')
+
+stwuct sampwededge {
+  1: wequiwed i64 fowwowewid(pewsonawdatatype = 'usewid')
+  2: w-wequiwed i64 fowwoweeid(pewsonawdatatype = 'usewid')
+  3: o-optionaw doubwe f-favwtiffowwowedge
+  4: o-optionaw d-doubwe favwtiffavedge
+  5: optionaw d-doubwe fowwowscowetocwustew
+  6: optionaw doubwe favscowetocwustew
+  7: optionaw doubwe pwedictedfowwowscowe
+  8: o-optionaw doubwe pwedictedfavscowe
+}(pewsisted="twue", :3 h-haspewsonawdata = 'twue')
+
+/**
+* the key hewe is (modewvewsion, cwustewid)
+**/
+stwuct bipawtitecwustewquawity {
+  1: o-optionaw doubwe incwustewfowwowedges
+  2: optionaw doubwe incwustewfavedges
+  3: optionaw doubwe favwtsumofincwustewfowwowedges
+  4: o-optionaw d-doubwe favwtsumofincwustewfavedges
+  5: optionaw d-doubwe outgoingfowwowedges
+  6: optionaw doubwe outgoingfavedges
+  7: o-optionaw d-doubwe favwtsumofoutgoingfowwowedges
+  8: optionaw d-doubwe favwtsumofoutgoingfavedges
+  9: optionaw d-doubwe incomingfowwowedges
+  10: optionaw doubwe incomingfavedges
+  11: optionaw d-doubwe favwtsumofincomingfowwowedges
+  12: optionaw doubwe favwtsumofincomingfavedges
+  13: o-optionaw i32 i-intewestedinsize
+  14: o-optionaw wist<sampwededge> sampwededges
+  15: o-optionaw i32 knownfowsize
+  16: optionaw doubwe cowwewationoffavwtiffowwowwithpwedictedfowwow
+  17: optionaw d-doubwe cowwewationoffavwtiffavwithpwedictedfav
+  18: o-optionaw d-doubwe wewativepwecisionusingfavwtiffav
+  19: o-optionaw doubwe avewagepwecisionofwhowegwaphusingfavwtiffav
+}(pewsisted="twue", haspewsonawdata = 'twue')

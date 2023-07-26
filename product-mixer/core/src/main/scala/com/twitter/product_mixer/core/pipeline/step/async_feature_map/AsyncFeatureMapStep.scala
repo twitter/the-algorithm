@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.core.pipeline.step.async_feature_map
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.async_featuwe_map
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasAsyncFeatureMap
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutorResults
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.asyncfeatuwemap.asyncfeatuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasasyncfeatuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.async_featuwe_map_executow.asyncfeatuwemapexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.async_featuwe_map_executow.asyncfeatuwemapexecutowwesuwts
+i-impowt com.twittew.stitch.awwow
+impowt javax.inject.inject
 
 /**
- * Async Feature Hydrator Step, it takes an existing asyn feature map and executes any hydration
- * needed before the next step. The state object is responsible for keeping the updated query
- * with the updated feature map.
+ * a-async featuwe hydwatow step, -.- it takes an existing asyn featuwe m-map and exekawaii~s any hydwation
+ * n-nyeeded b-befowe the nyext step. 🥺 the state object is wesponsibwe fow keeping the updated q-quewy
+ * with the updated featuwe map. (U ﹏ U)
  *
- * @param asyncFeatureMapExecutor Async feature map executor
+ * @pawam asyncfeatuwemapexecutow async featuwe map e-executow
  *
- * @tparam Query Type of PipelineQuery domain model
- * @tparam State The pipeline state domain model.
+ * @tpawam quewy type o-of pipewinequewy d-domain modew
+ * @tpawam s-state t-the pipewine state domain modew. >w<
  */
-case class AsyncFeatureMapStep[
-  Query <: PipelineQuery,
-  State <: HasQuery[Query, State] with HasAsyncFeatureMap[State]] @Inject() (
-  asyncFeatureMapExecutor: AsyncFeatureMapExecutor)
-    extends Step[
-      State,
-      AsyncFeatureMapStepConfig,
-      AsyncFeatureMap,
-      AsyncFeatureMapExecutorResults
+case cwass a-asyncfeatuwemapstep[
+  quewy <: pipewinequewy, mya
+  s-state <: hasquewy[quewy, >w< state] with hasasyncfeatuwemap[state]] @inject() (
+  asyncfeatuwemapexecutow: asyncfeatuwemapexecutow)
+    extends step[
+      s-state,
+      asyncfeatuwemapstepconfig, nyaa~~
+      a-asyncfeatuwemap, (✿oωo)
+      a-asyncfeatuwemapexecutowwesuwts
     ] {
-  override def isEmpty(config: AsyncFeatureMapStepConfig): Boolean = false
+  o-ovewwide def isempty(config: asyncfeatuwemapstepconfig): boowean = fawse
 
-  override def adaptInput(
-    state: State,
-    config: AsyncFeatureMapStepConfig
-  ): AsyncFeatureMap = state.asyncFeatureMap
+  o-ovewwide def a-adaptinput(
+    state: state, ʘwʘ
+    c-config: asyncfeatuwemapstepconfig
+  ): a-asyncfeatuwemap = state.asyncfeatuwemap
 
-  override def arrow(
-    config: AsyncFeatureMapStepConfig,
-    context: Executor.Context
-  ): Arrow[AsyncFeatureMap, AsyncFeatureMapExecutorResults] =
-    asyncFeatureMapExecutor.arrow(config.stepToHydrateFor, config.currentStep, context)
+  o-ovewwide def awwow(
+    config: a-asyncfeatuwemapstepconfig, (ˆ ﻌ ˆ)♡
+    context: executow.context
+  ): awwow[asyncfeatuwemap, 😳😳😳 a-asyncfeatuwemapexecutowwesuwts] =
+    asyncfeatuwemapexecutow.awwow(config.steptohydwatefow, :3 c-config.cuwwentstep, context)
 
-  override def updateState(
-    state: State,
-    executorResult: AsyncFeatureMapExecutorResults,
-    config: AsyncFeatureMapStepConfig
-  ): State = {
-    val hydratedFeatureMap =
-      executorResult.featureMapsByStep.getOrElse(config.stepToHydrateFor, FeatureMap.empty)
-    if (hydratedFeatureMap.isEmpty) {
-      state
-    } else {
-      val updatedFeatureMap = state.query.features
-        .getOrElse(FeatureMap.empty) ++ hydratedFeatureMap
-      state.updateQuery(
-        state.query
-          .withFeatureMap(updatedFeatureMap).asInstanceOf[Query])
+  o-ovewwide d-def updatestate(
+    state: state, OwO
+    executowwesuwt: asyncfeatuwemapexecutowwesuwts,
+    config: asyncfeatuwemapstepconfig
+  ): state = {
+    v-vaw hydwatedfeatuwemap =
+      e-executowwesuwt.featuwemapsbystep.getowewse(config.steptohydwatefow, featuwemap.empty)
+    i-if (hydwatedfeatuwemap.isempty) {
+      s-state
+    } ewse {
+      v-vaw updatedfeatuwemap = state.quewy.featuwes
+        .getowewse(featuwemap.empty) ++ hydwatedfeatuwemap
+      state.updatequewy(
+        s-state.quewy
+          .withfeatuwemap(updatedfeatuwemap).asinstanceof[quewy])
     }
   }
 }
 
-case class AsyncFeatureMapStepConfig(
-  stepToHydrateFor: PipelineStepIdentifier,
-  currentStep: PipelineStepIdentifier)
+case cwass asyncfeatuwemapstepconfig(
+  steptohydwatefow: pipewinestepidentifiew, (U ﹏ U)
+  cuwwentstep: p-pipewinestepidentifiew)

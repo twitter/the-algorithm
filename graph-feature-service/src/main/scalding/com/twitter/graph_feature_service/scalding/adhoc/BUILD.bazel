@@ -1,27 +1,27 @@
-scala_library(
-    platform = "java8",
-    tags = ["bazel-only"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/constdb_util",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/thrift/com/twitter/ml/api:data-java",
-    ],
+scawa_wibwawy(
+    pwatfowm = "java8", (U ᵕ U❁)
+    tags = ["bazew-onwy"], (⑅˘꒳˘)
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/bijection:cowe", ( ͡o ω ͡o )
+        "3wdpawty/jvm/com/twittew/bijection:scwooge", UwU
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/constdb_utiw", rawr x3
+        "swc/java/com/twittew/mw/api:api-base", rawr
+        "swc/scawa/com/twittew/mw/api:api-base", σωσ
+        "swc/scawa/com/twittew/scawding_intewnaw/job", σωσ
+        "swc/scawa/com/twittew/scawding_intewnaw/job/anawytics_batch", >_<
+        "swc/thwift/com/twittew/mw/api:data-java", :3
+    ], (U ﹏ U)
 )
 
-hadoop_binary(
-    name = "gfs_random_request-adhoc",
-    main = "com.twitter.graph_feature_service.scalding.adhoc.RandomRequestGenerationApp",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":adhoc"],
+h-hadoop_binawy(
+    n-nyame = "gfs_wandom_wequest-adhoc", -.-
+    main = "com.twittew.gwaph_featuwe_sewvice.scawding.adhoc.wandomwequestgenewationapp", (ˆ ﻌ ˆ)♡
+    p-pwatfowm = "java8", (⑅˘꒳˘)
+    w-wuntime_pwatfowm = "java8", (U ᵕ U❁)
+    t-tags = [
+        "bazew-compatibwe", -.-
+        "bazew-compatibwe:migwated", ^^;;
+        "bazew-onwy", >_<
+    ], mya
+    d-dependencies = [":adhoc"], mya
 )

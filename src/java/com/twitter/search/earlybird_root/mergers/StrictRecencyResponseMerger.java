@@ -1,297 +1,297 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.cowwections;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+i-impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdfeatuweschemamewgew;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * A RecencyResponseMerger that prioritizes not losing results during pagination.
- * As of now, this merger is used by Gnip to make sure that scrolling returns all results.
+ * a-a wecencywesponsemewgew that pwiowitizes nyot wosing w-wesuwts duwing pagination. /(^•ω•^)
+ * a-as of nyow, ^^ this mewgew is used by gnip to make suwe that scwowwing w-wetuwns aww wesuwts. 🥺
  *
- * The logic used for merging partitions is a bit tricky, because on one hand, we want to make sure
- * that we do miss results on the next pagination request; on the other hand, we want to return as
- * many results as we can, and we want to set the minSearchedStatusID of the merged response as low
- * as we can, in order to minimize the number of pagination requests.
+ * t-the wogic used f-fow mewging pawtitions is a bit twicky, (U ᵕ U❁) because on one hand, 😳😳😳 we want to make suwe
+ * t-that we do miss wesuwts on the nyext pagination wequest; on the othew hand, w-we want to wetuwn as
+ * many wesuwts a-as we can, nyaa~~ a-and we want to s-set the minseawchedstatusid o-of the mewged wesponse as wow
+ * as w-we can, (˘ω˘) in owdew to minimize the numbew of pagination w-wequests. >_<
  *
- * The merging logic is:
+ * the mewging wogic is:
  *
- * Realtime cluster:
- *  1. merge results from all partitions
- *  2. if at least one partition response is early-terminated, set earlyTerminated = true
- *     on the merged response
- *  3. set trimmingMinId = max(minSearchedStatusIDs of all partition responses)
- *  4. trim all results to trimmingMinId
- *  5. set minSearchedStatusID on the merged response to trimmingMinId
- *  6. if we have more than numRequested results:
- *     - keep only the newest numRequested results
- *     - set minSearchedStatusID of the merged response to the lowest tweet ID in the response
- *  7. if at least one partition response is not early-terminated, set
- *     tierBottomId = max(minSearchedStatusIDs of all non-early-terminated responses)
- *     (otherwise, set tierBottomId to some undefined value: -1, Long.MAX_VALUE, etc.)
- *  8. if minSearchedStatusID of the merged response is the same as tierBottomId,
- *     clear the early-termination flag on the merged response
+ * weawtime cwustew:
+ *  1. XD mewge wesuwts fwom aww p-pawtitions
+ *  2. rawr x3 if at weast o-one pawtition wesponse i-is eawwy-tewminated, ( ͡o ω ͡o ) s-set eawwytewminated = twue
+ *     on the mewged wesponse
+ *  3. :3 s-set t-twimmingminid = max(minseawchedstatusids o-of aww p-pawtition wesponses)
+ *  4. mya twim a-aww wesuwts to twimmingminid
+ *  5. σωσ s-set minseawchedstatusid on the mewged wesponse t-to twimmingminid
+ *  6. (ꈍᴗꈍ) if w-we have mowe than numwequested wesuwts:
+ *     - k-keep onwy the nyewest n-nyumwequested wesuwts
+ *     - set minseawchedstatusid of the mewged wesponse to the wowest tweet id in the w-wesponse
+ *  7. OwO i-if at weast one pawtition wesponse i-is nyot eawwy-tewminated, o.O s-set
+ *     tiewbottomid = m-max(minseawchedstatusids of aww nyon-eawwy-tewminated wesponses)
+ *     (othewwise, set t-tiewbottomid to some undefined vawue: -1, wong.max_vawue, etc.)
+ *  8. 😳😳😳 if minseawchedstatusid o-of the mewged wesponse is the same a-as tiewbottomid, /(^•ω•^)
+ *     c-cweaw t-the eawwy-tewmination fwag on the m-mewged wesponse
  *
- * The logic in steps 7 and 8 can be a little tricky to understand. They basically say: when we've
- * exhausted the "least deep" partition in the realtime cluster, it's time to move to the full
- * archive cluster (if we keep going past the "least deep" partition, we might miss results).
+ * t-the wogic i-in steps 7 and 8 c-can be a wittwe twicky to undewstand. OwO they basicawwy s-say: when w-we've
+ * exhausted t-the "weast d-deep" pawtition i-in the weawtime cwustew, ^^ it's time to move to the fuww
+ * awchive c-cwustew (if we keep going past the "weast deep" pawtition, (///ˬ///✿) we might miss wesuwts). (///ˬ///✿)
  *
- * Full archive cluster:
- *  1. merge results from all partitions
- *  2. if at least one partition response is early-terminated, set earlyTerminated = true
- *     on the merged response
- *  3. set trimmingMinId to:
- *     - max(minSearchedStatusIDs of early-terminated responses), if at least one partition response
- *       is early-terminated
- *     - min(minSearchedStatusIDs of all responses), if all partition responses are not
- *       early-terminated
- *  4. trim all results to trimmingMinId
- *  5. set minSearchedStatusID of the merged response to trimmingMinId
- *  6. if we have more than numRequested results:
- *     - keep only the newest numRequested results
- *     - set minSearchedStatusID of the merged response to the lowest tweet ID in the response
+ * fuww a-awchive cwustew:
+ *  1. (///ˬ///✿) mewge wesuwts fwom aww pawtitions
+ *  2. ʘwʘ i-if at weast one p-pawtition wesponse i-is eawwy-tewminated, ^•ﻌ•^ set eawwytewminated = t-twue
+ *     on the mewged wesponse
+ *  3. OwO s-set twimmingminid t-to:
+ *     - max(minseawchedstatusids of eawwy-tewminated wesponses), if at weast one pawtition wesponse
+ *       i-is eawwy-tewminated
+ *     - m-min(minseawchedstatusids of aww wesponses), (U ﹏ U) i-if aww pawtition w-wesponses awe not
+ *       eawwy-tewminated
+ *  4. (ˆ ﻌ ˆ)♡ t-twim a-aww wesuwts to twimmingminid
+ *  5. (⑅˘꒳˘) set minseawchedstatusid o-of the m-mewged wesponse to twimmingminid
+ *  6. (U ﹏ U) if we have mowe than nyumwequested wesuwts:
+ *     - k-keep onwy the nyewest n-nyumwequested w-wesuwts
+ *     - set minseawchedstatusid o-of t-the mewged wesponse to the wowest t-tweet id in the wesponse
  *
- * The logic in step 3 can be a little tricky to understand. On one hand, if we always set
- * trimmingMinId to the highest minSearchedStatusID, then some tweets at the very bottom of some
- * partitions will never be returned. Consider the case:
+ * the wogic in step 3 can be a wittwe twicky to undewstand. o.O o-on one h-hand, mya if we awways set
+ * twimmingminid to the h-highest minseawchedstatusid, XD t-then some tweets at the vewy bottom of some
+ * pawtitions w-wiww nyevew be wetuwned. òωó considew the case:
  *
- *  partition 1 has tweets 10, 8, 6
- *  partition 2 has tweets 9, 7, 5
+ *  pawtition 1 has tweets 10, (˘ω˘) 8, 6
+ *  pawtition 2 h-has tweets 9, :3 7, OwO 5
  *
- * In this case, we would always trim all results to minId = 6, and tweet 5 would never be returned.
+ * in this case, mya we wouwd awways t-twim aww wesuwts t-to minid = 6, (˘ω˘) and tweet 5 wouwd nyevew be wetuwned. o.O
  *
- * On the other hand, if we always set trimmingMinId to the lowest minSearchedStatusID, then we
- * might miss tweets from partitions that early-terminated. Consider the case:
+ * on t-the othew hand, (✿oωo) i-if we awways set twimmingminid to the wowest minseawchedstatusid, then we
+ * might m-miss tweets fwom pawtitions that e-eawwy-tewminated. (ˆ ﻌ ˆ)♡ considew the case:
  *
- * partition 1 has tweets 10, 5, 3, 1 that match our query
- * partition 2 has tweets 9, 8, 7, 6, 2 that match our query
+ * pawtition 1 has tweets 10, ^^;; 5, 3, OwO 1 t-that match ouw quewy
+ * pawtition 2 h-has tweets 9, 🥺 8, 7, 6, mya 2 that m-match ouw quewy
  *
- * If we ask for 3 results, than partition 1 will return tweets 10, 5, 3, and partition 2 will
- * return tweets 9, 8, 7. If we set trimmingMinId = min(minSearchedStatusIDs), then the next
- * pagination request will have [max_id = 2], and we will miss tweet 6.
+ * if we a-ask fow 3 wesuwts, 😳 than pawtition 1 w-wiww wetuwn t-tweets 10, òωó 5, 3, a-and pawtition 2 wiww
+ * wetuwn t-tweets 9, /(^•ω•^) 8, 7. -.- i-if we set twimmingminid = min(minseawchedstatusids), òωó then the nyext
+ * p-pagination w-wequest wiww have [max_id = 2], /(^•ω•^) a-and we wiww miss tweet 6. /(^•ω•^)
  *
- * So the intuition here is that if we have an early-terminated response, we cannot set
- * trimmingMinId to something lower than the minSearchedStatusID returned by that partition
- * (otherwise we might miss results from that partition). However, if we've exhausted all
- * partitions, then it's OK to not trim any result, because tiers do not intersect, so we will not
- * miss any result from the next tier once we get there.
+ * so the intuition h-hewe is that if we have an eawwy-tewminated wesponse, 😳 w-we cannot s-set
+ * twimmingminid to something wowew than the minseawchedstatusid w-wetuwned b-by that pawtition
+ * (othewwise w-we might miss wesuwts f-fwom that pawtition). :3 howevew, i-if we've exhausted aww
+ * pawtitions, (U ᵕ U❁) then it's ok to not twim any wesuwt, ʘwʘ because tiews do n-nyot intewsect, o.O so we wiww not
+ * m-miss any wesuwt fwom the next t-tiew once we get thewe. ʘwʘ
  */
-public class StrictRecencyResponseMerger extends RecencyResponseMerger {
-  private static final SearchTimerStats STRICT_RECENCY_TIMER_AVG =
-      SearchTimerStats.export("merge_recency_strict", TimeUnit.NANOSECONDS, false, true);
+pubwic c-cwass stwictwecencywesponsemewgew extends wecencywesponsemewgew {
+  p-pwivate s-static finaw seawchtimewstats stwict_wecency_timew_avg =
+      s-seawchtimewstats.expowt("mewge_wecency_stwict", ^^ t-timeunit.nanoseconds, f-fawse, ^•ﻌ•^ twue);
 
-  @VisibleForTesting
-  static final EarlyTerminationTrimmingStats PARTITION_MERGING_EARLY_TERMINATION_TRIMMING_STATS =
-      new EarlyTerminationTrimmingStats("strict_recency_partition_merging");
+  @visibwefowtesting
+  static finaw eawwytewminationtwimmingstats pawtition_mewging_eawwy_tewmination_twimming_stats =
+      nyew eawwytewminationtwimmingstats("stwict_wecency_pawtition_mewging");
 
-  @VisibleForTesting
-  static final EarlyTerminationTrimmingStats TIER_MERGING_EARLY_TERMINATION_TRIMMING_STATS =
-      new EarlyTerminationTrimmingStats("strict_recency_tier_merging");
+  @visibwefowtesting
+  static finaw eawwytewminationtwimmingstats tiew_mewging_eawwy_tewmination_twimming_stats =
+      n-nyew eawwytewminationtwimmingstats("stwict_wecency_tiew_mewging");
 
-  private final EarlybirdCluster cluster;
+  p-pwivate f-finaw eawwybiwdcwustew cwustew;
 
-  public StrictRecencyResponseMerger(EarlybirdRequestContext requestContext,
-                                     List<Future<EarlybirdResponse>> responses,
-                                     ResponseAccumulator mode,
-                                     EarlybirdFeatureSchemaMerger featureSchemaMerger,
-                                     EarlybirdCluster cluster) {
-    super(requestContext, responses, mode, featureSchemaMerger);
-    this.cluster = cluster;
+  p-pubwic stwictwecencywesponsemewgew(eawwybiwdwequestcontext wequestcontext, mya
+                                     wist<futuwe<eawwybiwdwesponse>> wesponses, UwU
+                                     wesponseaccumuwatow m-mode, >_<
+                                     e-eawwybiwdfeatuweschemamewgew featuweschemamewgew, /(^•ω•^)
+                                     e-eawwybiwdcwustew cwustew) {
+    supew(wequestcontext, òωó w-wesponses, σωσ mode, f-featuweschemamewgew);
+    this.cwustew = c-cwustew;
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return STRICT_RECENCY_TIMER_AVG;
-  }
-
-  /**
-   * Unlike {@link com.twitter.search.earlybird_root.mergers.RecencyResponseMerger}, this method
-   * takes a much simpler approach by just taking the max of the maxSearchedStatusIds.
-   *
-   * Also, when no maxSearchedStatusId is available at all, Long.MIN_VALUE is used instead of
-   * Long.MAX_VALUE. This ensures that we don't return any result in these cases.
-   */
-  @Override
-  protected long findMaxFullySearchedStatusID() {
-    return accumulatedResponses.getMaxIds().isEmpty()
-        ? Long.MIN_VALUE : Collections.max(accumulatedResponses.getMaxIds());
+  @ovewwide
+  p-pwotected seawchtimewstats getmewgedwesponsetimew() {
+    wetuwn stwict_wecency_timew_avg;
   }
 
   /**
-   * This method is subtly different from the base class version: when no minSearchedStatusId is
-   * available at all, Long.MAX_VALUE is used instead of Long.MIN_VALUE. This ensures that we
-   * don't return any result in these cases.
+   * unwike {@wink com.twittew.seawch.eawwybiwd_woot.mewgews.wecencywesponsemewgew}, ( ͡o ω ͡o ) t-this method
+   * t-takes a much simpwew a-appwoach b-by just taking the m-max of the maxseawchedstatusids.
+   *
+   * awso, w-when nyo maxseawchedstatusid i-is avaiwabwe at aww, nyaa~~ wong.min_vawue i-is used instead o-of
+   * wong.max_vawue. :3 this e-ensuwes that we don't wetuwn any wesuwt in these c-cases. UwU
    */
-  @Override
-  protected long findMinFullySearchedStatusID() {
-    List<Long> minIds = accumulatedResponses.getMinIds();
-    if (minIds.isEmpty()) {
-      return Long.MAX_VALUE;
-    }
-
-    if (accumulatedResponses.isMergingPartitionsWithinATier()) {
-      return getTrimmingMinId();
-    }
-
-    // When merging tiers, the min ID should be the smallest among the min IDs.
-    return Collections.min(minIds);
-  }
-
-  @Override
-  protected TrimStats trimResults(
-      ThriftSearchResults searchResults, long mergedMin, long mergedMax) {
-    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 0) {
-      // no results, no trimming needed
-      return TrimStats.EMPTY_STATS;
-    }
-
-    TrimStats trimStats = new TrimStats();
-    trimExactDups(searchResults, trimStats);
-    filterResultsByMergedMinMaxIds(searchResults, mergedMax, mergedMin, trimStats);
-    int numResults = computeNumResultsToKeep();
-    if (searchResults.getResultsSize() > numResults) {
-      trimStats.setResultsTruncatedFromTailCount(searchResults.getResultsSize() - numResults);
-      searchResults.setResults(searchResults.getResults().subList(0, numResults));
-    }
-
-    return trimStats;
+  @ovewwide
+  pwotected w-wong findmaxfuwwyseawchedstatusid() {
+    w-wetuwn accumuwatedwesponses.getmaxids().isempty()
+        ? wong.min_vawue : cowwections.max(accumuwatedwesponses.getmaxids());
   }
 
   /**
-   * This method is different from the base class version because when minResultId is bigger
-   * than currentMergedMin, we always take minResultId.
-   * If we don't do this, we would lose results.
-   *
-   * Illustration with an example. Assuming we are outside of the lag threshold.
-   * Num results requested: 3
-   * Response 1:  min: 100   max: 900   results:  400, 500, 600
-   * Response 2:  min: 300   max: 700   results:  350, 450, 550
-   *
-   * Merged results: 600, 550, 500
-   * Merged max: 900
-   * Merged min: we could take 300 (minId), or take 500 (minResultId).
-   *
-   * If we take minId, and use 300 as the pagination cursor, we'd lose results
-   * 350 and 450 when we paginate. So we have to take minResultId here.
+   * t-this method is subtwy diffewent fwom the base c-cwass vewsion: when n-nyo minseawchedstatusid i-is
+   * avaiwabwe at aww, o.O wong.max_vawue is used instead o-of wong.min_vawue. (ˆ ﻌ ˆ)♡ this ensuwes that we
+   * d-don't wetuwn any w-wesuwt in these cases. ^^;;
    */
-  @Override
-  protected void setMergedMinSearchedStatusId(
-      ThriftSearchResults searchResults,
-      long currentMergedMin,
-      boolean resultsWereTrimmed) {
-    if (accumulatedResponses.getMinIds().isEmpty()) {
-      return;
+  @ovewwide
+  p-pwotected wong findminfuwwyseawchedstatusid() {
+    w-wist<wong> minids = a-accumuwatedwesponses.getminids();
+    if (minids.isempty()) {
+      wetuwn w-wong.max_vawue;
     }
 
-    long minId = currentMergedMin;
-    if (resultsWereTrimmed
-        && (searchResults != null)
-        && searchResults.isSetResults()
-        && (searchResults.getResultsSize() > 0)) {
-      List<ThriftSearchResult> results = searchResults.getResults();
-      minId = results.get(results.size() - 1).getId();
+    if (accumuwatedwesponses.ismewgingpawtitionswithinatiew()) {
+      wetuwn gettwimmingminid();
     }
 
-    searchResults.setMinSearchedStatusID(minId);
+    // w-when mewging t-tiews, ʘwʘ the min id shouwd be t-the smowest among the min ids. σωσ
+    w-wetuwn cowwections.min(minids);
   }
 
-  @Override
-  protected boolean clearEarlyTerminationIfReachingTierBottom(EarlybirdResponse mergedResponse) {
-    if (EarlybirdCluster.isArchive(cluster)) {
-      // We don't need to worry about the tier bottom when merging partition responses in the full
-      // archive cluster: if all partitions were exhausted and we didn't trim the results, then
-      // the early-terminated flag on the merged response will be false. If at least one partition
-      // is early-terminated, or we trimmed some results, then the ealry-terminated flag on the
-      // merged response will be true, and we should continue getting results from this tier before
-      // we move to the next one.
-      return false;
+  @ovewwide
+  p-pwotected t-twimstats twimwesuwts(
+      thwiftseawchwesuwts seawchwesuwts, ^^;; wong mewgedmin, ʘwʘ wong mewgedmax) {
+    if (!seawchwesuwts.issetwesuwts() || seawchwesuwts.getwesuwtssize() == 0) {
+      // nyo wesuwts, ^^ nyo twimming nyeeded
+      wetuwn twimstats.empty_stats;
     }
 
-    ThriftSearchResults searchResults = mergedResponse.getSearchResults();
-    if (searchResults.getMinSearchedStatusID() == getTierBottomId()) {
-      mergedResponse.getEarlyTerminationInfo().setEarlyTerminated(false);
-      mergedResponse.getEarlyTerminationInfo().unsetMergedEarlyTerminationReasons();
-      responseMessageBuilder.debugVerbose(
-          "Set earlytermination to false because minSearchedStatusId is tier bottom");
-      return true;
+    twimstats twimstats = n-nyew twimstats();
+    t-twimexactdups(seawchwesuwts, nyaa~~ twimstats);
+    fiwtewwesuwtsbymewgedminmaxids(seawchwesuwts, (///ˬ///✿) m-mewgedmax, XD mewgedmin, t-twimstats);
+    i-int nyumwesuwts = computenumwesuwtstokeep();
+    i-if (seawchwesuwts.getwesuwtssize() > nyumwesuwts) {
+      t-twimstats.setwesuwtstwuncatedfwomtaiwcount(seawchwesuwts.getwesuwtssize() - n-nyumwesuwts);
+      seawchwesuwts.setwesuwts(seawchwesuwts.getwesuwts().subwist(0, :3 n-nyumwesuwts));
     }
-    return false;
+
+    wetuwn t-twimstats;
   }
 
-  @Override
-  protected boolean shouldEarlyTerminateWhenEnoughTrimmedResults() {
-    return false;
+  /**
+   * t-this method is diffewent fwom the base cwass vewsion b-because when m-minwesuwtid is b-biggew
+   * than c-cuwwentmewgedmin, w-we awways take m-minwesuwtid.
+   * i-if we don't d-do this, òωó we wouwd w-wose wesuwts. ^^
+   *
+   * iwwustwation w-with an e-exampwe. ^•ﻌ•^ assuming w-we awe outside of the wag thweshowd. σωσ
+   * n-nyum wesuwts wequested: 3
+   * wesponse 1:  m-min: 100   max: 900   wesuwts:  400, (ˆ ﻌ ˆ)♡ 500, nyaa~~ 600
+   * w-wesponse 2:  m-min: 300   m-max: 700   wesuwts:  350, ʘwʘ 450, 550
+   *
+   * mewged wesuwts: 600, ^•ﻌ•^ 550, 500
+   * m-mewged max: 900
+   * mewged min: w-we couwd take 300 (minid), rawr x3 ow take 500 (minwesuwtid). 🥺
+   *
+   * i-if we take minid, ʘwʘ and use 300 a-as the pagination cuwsow, (˘ω˘) we'd wose wesuwts
+   * 350 and 450 when we paginate. o.O s-so we have to take minwesuwtid h-hewe. σωσ
+   */
+  @ovewwide
+  p-pwotected void setmewgedminseawchedstatusid(
+      thwiftseawchwesuwts seawchwesuwts, (ꈍᴗꈍ)
+      w-wong cuwwentmewgedmin, (ˆ ﻌ ˆ)♡
+      boowean wesuwtswewetwimmed) {
+    i-if (accumuwatedwesponses.getminids().isempty()) {
+      w-wetuwn;
+    }
+
+    w-wong minid = cuwwentmewgedmin;
+    if (wesuwtswewetwimmed
+        && (seawchwesuwts != nyuww)
+        && s-seawchwesuwts.issetwesuwts()
+        && (seawchwesuwts.getwesuwtssize() > 0)) {
+      wist<thwiftseawchwesuwt> w-wesuwts = seawchwesuwts.getwesuwts();
+      m-minid = wesuwts.get(wesuwts.size() - 1).getid();
+    }
+
+    seawchwesuwts.setminseawchedstatusid(minid);
   }
 
-  @Override
-  protected final EarlyTerminationTrimmingStats getEarlyTerminationTrimmingStatsForPartitions() {
-    return PARTITION_MERGING_EARLY_TERMINATION_TRIMMING_STATS;
+  @ovewwide
+  pwotected boowean c-cweaweawwytewminationifweachingtiewbottom(eawwybiwdwesponse mewgedwesponse) {
+    i-if (eawwybiwdcwustew.isawchive(cwustew)) {
+      // w-we don't n-nyeed to wowwy about the tiew bottom w-when mewging p-pawtition wesponses i-in the fuww
+      // a-awchive cwustew: if a-aww pawtitions wewe e-exhausted and w-we didn't twim t-the wesuwts, o.O then
+      // t-the e-eawwy-tewminated f-fwag on the mewged w-wesponse wiww be fawse. :3 if at w-weast one pawtition
+      // is eawwy-tewminated, -.- o-ow we twimmed some wesuwts, ( ͡o ω ͡o ) t-then the eawwy-tewminated f-fwag on t-the
+      // mewged wesponse wiww be twue, /(^•ω•^) and we shouwd continue g-getting wesuwts f-fwom this tiew b-befowe
+      // we move to the nyext one. (⑅˘꒳˘)
+      wetuwn fawse;
+    }
+
+    t-thwiftseawchwesuwts s-seawchwesuwts = mewgedwesponse.getseawchwesuwts();
+    i-if (seawchwesuwts.getminseawchedstatusid() == g-gettiewbottomid()) {
+      mewgedwesponse.geteawwytewminationinfo().seteawwytewminated(fawse);
+      mewgedwesponse.geteawwytewminationinfo().unsetmewgedeawwytewminationweasons();
+      wesponsemessagebuiwdew.debugvewbose(
+          "set eawwytewmination t-to fawse because m-minseawchedstatusid i-is tiew b-bottom");
+      wetuwn twue;
+    }
+    wetuwn fawse;
   }
 
-  @Override
-  protected final EarlyTerminationTrimmingStats getEarlyTerminationTrimmingStatsForTiers() {
-    return TIER_MERGING_EARLY_TERMINATION_TRIMMING_STATS;
+  @ovewwide
+  p-pwotected b-boowean shouwdeawwytewminatewhenenoughtwimmedwesuwts() {
+    wetuwn fawse;
   }
 
-  /** Determines the bottom of the realtime cluster, based on the partition responses. */
-  private long getTierBottomId() {
-    Preconditions.checkState(!EarlybirdCluster.isArchive(cluster));
+  @ovewwide
+  pwotected finaw e-eawwytewminationtwimmingstats geteawwytewminationtwimmingstatsfowpawtitions() {
+    wetuwn pawtition_mewging_eawwy_tewmination_twimming_stats;
+  }
 
-    long tierBottomId = -1;
-    for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
-      if (!isEarlyTerminated(response)
-          && response.isSetSearchResults()
-          && response.getSearchResults().isSetMinSearchedStatusID()
-          && (response.getSearchResults().getMinSearchedStatusID() > tierBottomId)) {
-        tierBottomId = response.getSearchResults().getMinSearchedStatusID();
+  @ovewwide
+  pwotected finaw e-eawwytewminationtwimmingstats geteawwytewminationtwimmingstatsfowtiews() {
+    w-wetuwn tiew_mewging_eawwy_tewmination_twimming_stats;
+  }
+
+  /** d-detewmines the bottom of the w-weawtime cwustew, òωó b-based on the pawtition wesponses. 🥺 */
+  p-pwivate wong gettiewbottomid() {
+    p-pweconditions.checkstate(!eawwybiwdcwustew.isawchive(cwustew));
+
+    w-wong tiewbottomid = -1;
+    fow (eawwybiwdwesponse w-wesponse : a-accumuwatedwesponses.getsuccesswesponses()) {
+      if (!iseawwytewminated(wesponse)
+          && w-wesponse.issetseawchwesuwts()
+          && w-wesponse.getseawchwesuwts().issetminseawchedstatusid()
+          && (wesponse.getseawchwesuwts().getminseawchedstatusid() > t-tiewbottomid)) {
+        tiewbottomid = w-wesponse.getseawchwesuwts().getminseawchedstatusid();
       }
     }
 
-    return tierBottomId;
+    wetuwn tiewbottomid;
   }
 
-  /** Determines the minId to which all results should be trimmed. */
-  private long getTrimmingMinId() {
-    List<Long> minIds = accumulatedResponses.getMinIds();
-    Preconditions.checkArgument(!minIds.isEmpty());
+  /** d-detewmines t-the minid t-to which aww wesuwts shouwd be twimmed. (ˆ ﻌ ˆ)♡ */
+  pwivate wong gettwimmingminid() {
+    wist<wong> minids = a-accumuwatedwesponses.getminids();
+    pweconditions.checkawgument(!minids.isempty());
 
-    if (!EarlybirdCluster.isArchive(cluster)) {
-      return Collections.max(minIds);
+    i-if (!eawwybiwdcwustew.isawchive(cwustew)) {
+      w-wetuwn cowwections.max(minids);
     }
 
-    long maxOfEarlyTerminatedMins = -1;
-    long minOfAllMins = Long.MAX_VALUE;
-    for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
-      if (response.isSetSearchResults()
-          && response.getSearchResults().isSetMinSearchedStatusID()) {
-        long minId = response.getSearchResults().getMinSearchedStatusID();
-        minOfAllMins = Math.min(minOfAllMins, minId);
-        if (isEarlyTerminated(response)) {
-          maxOfEarlyTerminatedMins = Math.max(maxOfEarlyTerminatedMins, minId);
+    wong maxofeawwytewminatedmins = -1;
+    wong minofawwmins = w-wong.max_vawue;
+    fow (eawwybiwdwesponse wesponse : a-accumuwatedwesponses.getsuccesswesponses()) {
+      i-if (wesponse.issetseawchwesuwts()
+          && w-wesponse.getseawchwesuwts().issetminseawchedstatusid()) {
+        w-wong minid = w-wesponse.getseawchwesuwts().getminseawchedstatusid();
+        minofawwmins = math.min(minofawwmins, -.- minid);
+        if (iseawwytewminated(wesponse)) {
+          m-maxofeawwytewminatedmins = math.max(maxofeawwytewminatedmins, minid);
         }
       }
     }
-    if (maxOfEarlyTerminatedMins >= 0) {
-      return maxOfEarlyTerminatedMins;
-    } else {
-      return minOfAllMins;
+    i-if (maxofeawwytewminatedmins >= 0) {
+      wetuwn maxofeawwytewminatedmins;
+    } ewse {
+      wetuwn minofawwmins;
     }
   }
 
-  /** Determines if the given earlybird response is early terminated. */
-  private boolean isEarlyTerminated(EarlybirdResponse response) {
-    return response.isSetEarlyTerminationInfo()
-      && response.getEarlyTerminationInfo().isEarlyTerminated();
+  /** d-detewmines if the given eawwybiwd wesponse is eawwy tewminated. σωσ */
+  pwivate boowean i-iseawwytewminated(eawwybiwdwesponse w-wesponse) {
+    wetuwn wesponse.isseteawwytewminationinfo()
+      && w-wesponse.geteawwytewminationinfo().iseawwytewminated();
   }
 }

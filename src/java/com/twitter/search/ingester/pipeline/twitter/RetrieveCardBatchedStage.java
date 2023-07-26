@@ -1,288 +1,288 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.naming.NamingException;
+impowt java.net.mawfowmeduwwexception;
+i-impowt j-java.utiw.awwaywist;
+i-impowt j-java.utiw.cowwections;
+i-impowt java.utiw.hashmap;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt java.utiw.set;
+impowt javax.naming.namingexception;
 
-import com.google.common.collect.Maps;
+impowt com.googwe.common.cowwect.maps;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.stage.StageTimer;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.commons.pipewine.stageexception;
+impowt owg.apache.commons.pipewine.stage.stagetimew;
+impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+impowt owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.expandodo.thriftjava.Card2;
-import com.twitter.mediaservices.commons.tweetmedia.thrift_java.MediaInfo;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.BatchingClient;
-import com.twitter.search.ingester.pipeline.util.CardFieldUtil;
-import com.twitter.search.ingester.pipeline.util.IngesterStageTimer;
-import com.twitter.search.ingester.pipeline.util.ResponseNotReturnedException;
-import com.twitter.spiderduck.common.URLUtils;
-import com.twitter.tweetypie.thriftjava.GetTweetOptions;
-import com.twitter.tweetypie.thriftjava.GetTweetResult;
-import com.twitter.tweetypie.thriftjava.GetTweetsRequest;
-import com.twitter.tweetypie.thriftjava.MediaEntity;
-import com.twitter.tweetypie.thriftjava.StatusState;
-import com.twitter.tweetypie.thriftjava.Tweet;
-import com.twitter.tweetypie.thriftjava.TweetService;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+impowt com.twittew.common.text.wanguage.wocaweutiw;
+impowt com.twittew.expandodo.thwiftjava.cawd2;
+i-impowt com.twittew.mediasewvices.commons.tweetmedia.thwift_java.mediainfo;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftexpandeduww;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.batchingcwient;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.cawdfiewdutiw;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.ingestewstagetimew;
+impowt c-com.twittew.seawch.ingestew.pipewine.utiw.wesponsenotwetuwnedexception;
+impowt com.twittew.spidewduck.common.uwwutiws;
+impowt com.twittew.tweetypie.thwiftjava.gettweetoptions;
+impowt com.twittew.tweetypie.thwiftjava.gettweetwesuwt;
+i-impowt com.twittew.tweetypie.thwiftjava.gettweetswequest;
+i-impowt com.twittew.tweetypie.thwiftjava.mediaentity;
+i-impowt com.twittew.tweetypie.thwiftjava.statusstate;
+i-impowt c-com.twittew.tweetypie.thwiftjava.tweet;
+impowt com.twittew.tweetypie.thwiftjava.tweetsewvice;
+i-impowt com.twittew.utiw.function;
+impowt com.twittew.utiw.futuwe;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class RetrieveCardBatchedStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private static final Logger LOG = LoggerFactory.getLogger(RetrieveCardBatchedStage.class);
+@consumedtypes(ingestewtwittewmessage.cwass)
+@pwoducesconsumed
+pubwic cwass w-wetwievecawdbatchedstage extends twittewbasestage
+    <ingestewtwittewmessage, (✿oωo) ingestewtwittewmessage> {
+  pwivate static finaw w-woggew wog = woggewfactowy.getwoggew(wetwievecawdbatchedstage.cwass);
 
-  private static final String CARDS_PLATFORM_KEY = "iPhone-13";
-  private int batchSize = 10;
+  pwivate s-static finaw stwing c-cawds_pwatfowm_key = "iphone-13";
+  p-pwivate int batchsize = 10;
 
-  private SearchRateCounter totalTweets;
-  private SearchRateCounter tweetsWithCards;
-  private SearchRateCounter tweetsWithoutCards;
-  private SearchRateCounter tweetsWithAnimatedGifMediaInfo;
-  private SearchRateCounter cardsWithName;
-  private SearchRateCounter cardsWithDomain;
-  private SearchRateCounter cardsWithTitles;
-  private SearchRateCounter cardsWithDescriptions;
-  private SearchRateCounter cardsWithUnknownLanguage;
-  private SearchRateCounter tweetsNotFound;
-  private SearchRateCounter malformedUrls;
-  private SearchRateCounter urlMismatches;
-  private SearchRateCounter cardExceptions;
-  private SearchRateCounter cardExceptionTweets;
-  private StageTimer retrieveCardsTimer;
+  pwivate seawchwatecountew t-totawtweets;
+  p-pwivate seawchwatecountew tweetswithcawds;
+  pwivate s-seawchwatecountew t-tweetswithoutcawds;
+  pwivate seawchwatecountew t-tweetswithanimatedgifmediainfo;
+  pwivate s-seawchwatecountew cawdswithname;
+  pwivate seawchwatecountew c-cawdswithdomain;
+  pwivate seawchwatecountew c-cawdswithtitwes;
+  pwivate seawchwatecountew c-cawdswithdescwiptions;
+  p-pwivate seawchwatecountew cawdswithunknownwanguage;
+  pwivate seawchwatecountew tweetsnotfound;
+  pwivate seawchwatecountew mawfowmeduwws;
+  pwivate seawchwatecountew u-uwwmismatches;
+  p-pwivate seawchwatecountew c-cawdexceptions;
+  p-pwivate seawchwatecountew c-cawdexceptiontweets;
+  pwivate stagetimew wetwievecawdstimew;
 
-  private String cardNamePrefix;
-  // Since there is only one thread executing this stage (although that could potentially be
-  // changed in the pipeline config), no need to be thread safe.
-  private static final Map<String, SearchRateCounter> CARD_NAME_STATS = new HashMap<>();
+  pwivate stwing c-cawdnamepwefix;
+  // since thewe is onwy one thwead executing this stage (awthough t-that couwd potentiawwy be
+  // c-changed in the p-pipewine config), (ˆ ﻌ ˆ)♡ n-nyo nyeed to be thwead safe. :3
+  p-pwivate static f-finaw map<stwing, (U ᵕ U❁) s-seawchwatecountew> c-cawd_name_stats = nyew hashmap<>();
 
-  private static TweetService.ServiceToClient tweetyPieService;
-  private BatchingClient<Long, Card2> cardsClient;
+  pwivate s-static tweetsewvice.sewvicetocwient t-tweetypiesewvice;
+  p-pwivate b-batchingcwient<wong, ^^;; c-cawd2> cawdscwient;
 
-  private String tweetypieClientId = null;
+  pwivate stwing tweetypiecwientid = n-nyuww;
 
-  // Can be overridden in the corresponding pipeline-ingester.*.xml config.
-  // By default protected tweets are filtered out.
-  // Only in the protected ingester pipeline is this set to false.
-  private boolean filterProtected = true;
+  // can be ovewwidden in the cowwesponding pipewine-ingestew.*.xmw config. mya
+  // by defauwt pwotected t-tweets awe fiwtewed out. 😳😳😳
+  // onwy in the pwotected ingestew p-pipewine is this s-set to fawse. OwO
+  p-pwivate boowean fiwtewpwotected = t-twue;
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    cardNamePrefix = getStageNamePrefix() + "_card_name_";
-    totalTweets = SearchRateCounter.export(getStageNamePrefix() + "_total_tweets");
-    tweetsWithCards = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_cards");
-    tweetsWithoutCards = SearchRateCounter.export(getStageNamePrefix() + "_tweets_without_cards");
-    tweetsWithAnimatedGifMediaInfo =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_animated_gif_media_info");
-    cardsWithName = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_name");
-    cardsWithDomain = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_domain");
-    cardsWithTitles = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_titles");
-    cardsWithDescriptions =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_descriptions");
-    cardsWithUnknownLanguage =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_unknown_card_lanuage");
-    tweetsNotFound = SearchRateCounter.export(getStageNamePrefix() + "_tweets_not_found");
-    malformedUrls = SearchRateCounter.export(getStageNamePrefix() + "_malformed_urls");
-    urlMismatches = SearchRateCounter.export(getStageNamePrefix() + "_url_mismatches");
-    cardExceptions = SearchRateCounter.export(getStageNamePrefix() + "_card_exceptions");
-    cardExceptionTweets =
-        SearchRateCounter.export(getStageNamePrefix() + "_card_exception_tweets");
-    retrieveCardsTimer = new IngesterStageTimer(getStageNamePrefix() + "_request_timer");
+  @ovewwide
+  pubwic void i-initstats() {
+    s-supew.initstats();
+    cawdnamepwefix = getstagenamepwefix() + "_cawd_name_";
+    totawtweets = seawchwatecountew.expowt(getstagenamepwefix() + "_totaw_tweets");
+    tweetswithcawds = s-seawchwatecountew.expowt(getstagenamepwefix() + "_tweets_with_cawds");
+    tweetswithoutcawds = s-seawchwatecountew.expowt(getstagenamepwefix() + "_tweets_without_cawds");
+    tweetswithanimatedgifmediainfo =
+        s-seawchwatecountew.expowt(getstagenamepwefix() + "_tweets_with_animated_gif_media_info");
+    c-cawdswithname = seawchwatecountew.expowt(getstagenamepwefix() + "_tweets_with_cawd_name");
+    cawdswithdomain = s-seawchwatecountew.expowt(getstagenamepwefix() + "_tweets_with_cawd_domain");
+    c-cawdswithtitwes = seawchwatecountew.expowt(getstagenamepwefix() + "_tweets_with_cawd_titwes");
+    c-cawdswithdescwiptions =
+        s-seawchwatecountew.expowt(getstagenamepwefix() + "_tweets_with_cawd_descwiptions");
+    cawdswithunknownwanguage =
+        seawchwatecountew.expowt(getstagenamepwefix() + "_tweets_with_unknown_cawd_wanuage");
+    tweetsnotfound = seawchwatecountew.expowt(getstagenamepwefix() + "_tweets_not_found");
+    m-mawfowmeduwws = s-seawchwatecountew.expowt(getstagenamepwefix() + "_mawfowmed_uwws");
+    u-uwwmismatches = seawchwatecountew.expowt(getstagenamepwefix() + "_uww_mismatches");
+    c-cawdexceptions = s-seawchwatecountew.expowt(getstagenamepwefix() + "_cawd_exceptions");
+    cawdexceptiontweets =
+        s-seawchwatecountew.expowt(getstagenamepwefix() + "_cawd_exception_tweets");
+    wetwievecawdstimew = nyew ingestewstagetimew(getstagenamepwefix() + "_wequest_timew");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    tweetyPieService = wireModule.getTweetyPieClient(tweetypieClientId);
-    cardsClient = new BatchingClient<>(this::batchRetrieveURLs, batchSize);
+  @ovewwide
+  pwotected void doinnewpwepwocess() t-thwows s-stageexception, rawr nyamingexception {
+    supew.doinnewpwepwocess();
+    t-tweetypiesewvice = w-wiwemoduwe.gettweetypiecwient(tweetypiecwientid);
+    cawdscwient = nyew batchingcwient<>(this::batchwetwieveuwws, XD batchsize);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this,
-          "Received object of incorrect type: " + obj.getClass().getName());
+  @ovewwide
+  p-pubwic void innewpwocess(object obj) thwows stageexception {
+    if (!(obj i-instanceof ingestewtwittewmessage)) {
+      thwow nyew stageexception(this, (U ﹏ U)
+          "weceived o-object of i-incowwect type: " + obj.getcwass().getname());
     }
 
-    IngesterTwitterMessage message = (IngesterTwitterMessage) obj;
+    ingestewtwittewmessage message = (ingestewtwittewmessage) o-obj;
 
-    cardsClient.call(message.getTweetId())
-        .onSuccess(Function.cons(card -> {
-          updateMessage(message, card);
-          emitAndCount(message);
+    cawdscwient.caww(message.gettweetid())
+        .onsuccess(function.cons(cawd -> {
+          u-updatemessage(message, cawd);
+          emitandcount(message);
         }))
-        .onFailure(Function.cons(exception -> {
-          if (!(exception instanceof ResponseNotReturnedException)) {
-            cardExceptionTweets.increment();
+        .onfaiwuwe(function.cons(exception -> {
+          if (!(exception i-instanceof wesponsenotwetuwnedexception)) {
+            cawdexceptiontweets.incwement();
           }
 
-          emitAndCount(message);
+          e-emitandcount(message);
         }));
   }
 
-  private Future<Map<Long, Card2>> batchRetrieveURLs(Set<Long> keys) {
-    retrieveCardsTimer.start();
-    totalTweets.increment(keys.size());
+  pwivate futuwe<map<wong, (˘ω˘) cawd2>> batchwetwieveuwws(set<wong> k-keys) {
+    wetwievecawdstimew.stawt();
+    t-totawtweets.incwement(keys.size());
 
-    GetTweetOptions options = new GetTweetOptions()
-        .setInclude_cards(true)
-        .setCards_platform_key(CARDS_PLATFORM_KEY)
-        .setBypass_visibility_filtering(!filterProtected);
+    g-gettweetoptions options = n-new gettweetoptions()
+        .setincwude_cawds(twue)
+        .setcawds_pwatfowm_key(cawds_pwatfowm_key)
+        .setbypass_visibiwity_fiwtewing(!fiwtewpwotected);
 
-    GetTweetsRequest request = new GetTweetsRequest()
-        .setOptions(options)
-        .setTweet_ids(new ArrayList<>(keys));
+    gettweetswequest w-wequest = nyew g-gettweetswequest()
+        .setoptions(options)
+        .settweet_ids(new a-awwaywist<>(keys));
 
-    return tweetyPieService.get_tweets(request)
-        .onFailure(throwable -> {
-          cardExceptions.increment();
-          LOG.error("TweetyPie server threw an exception while requesting tweetIds: "
-              + request.getTweet_ids(), throwable);
-          return null;
+    wetuwn tweetypiesewvice.get_tweets(wequest)
+        .onfaiwuwe(thwowabwe -> {
+          c-cawdexceptions.incwement();
+          w-wog.ewwow("tweetypie sewvew thwew an exception w-whiwe wequesting t-tweetids: "
+              + w-wequest.gettweet_ids(), UwU thwowabwe);
+          wetuwn n-nyuww;
         })
-        .map(this::createIdToCardMap);
+        .map(this::cweateidtocawdmap);
   }
 
-  private void updateMessage(IngesterTwitterMessage message, Card2 card) {
-    tweetsWithCards.increment();
+  pwivate void updatemessage(ingestewtwittewmessage m-message, >_< cawd2 c-cawd) {
+    tweetswithcawds.incwement();
 
-    String cardName = card.getName().toLowerCase();
-    addCardNameToStats(cardName);
-    message.setCardName(cardName);
-    cardsWithName.increment();
-    message.setCardUrl(card.getUrl());
+    stwing cawdname = cawd.getname().towowewcase();
+    addcawdnametostats(cawdname);
+    m-message.setcawdname(cawdname);
+    c-cawdswithname.incwement();
+    m-message.setcawduww(cawd.getuww());
 
-    String url = getLastHop(message, card.getUrl());
-    if (url != null) {
-      try {
-        String domain = URLUtils.getDomainFromURL(url);
-        message.setCardDomain(domain.toLowerCase());
-        cardsWithDomain.increment();
-      } catch (MalformedURLException e) {
-        malformedUrls.increment();
-        if (LOG.isDebugEnabled()) {
-          LOG.debug("Tweet ID {} has a malformed card last hop URL: {}", message.getId(), url);
+    s-stwing uww = getwasthop(message, σωσ cawd.getuww());
+    i-if (uww != nyuww) {
+      twy {
+        stwing domain = uwwutiws.getdomainfwomuww(uww);
+        message.setcawddomain(domain.towowewcase());
+        cawdswithdomain.incwement();
+      } c-catch (mawfowmeduwwexception e) {
+        m-mawfowmeduwws.incwement();
+        if (wog.isdebugenabwed()) {
+          w-wog.debug("tweet id {} has a m-mawfowmed cawd wast hop uww: {}", 🥺 m-message.getid(), 🥺 u-uww);
         }
       }
-    } else {
-      // This happens with retweet. Basically when retrieve card for a retweet, we
-      // get a card associated with the original tweet, so the tco won't match.
-      // As of Sep 2014, this seems to be the intended behavior and has been running
-      // like this for over a year.
-      urlMismatches.increment();
+    } e-ewse {
+      // t-this happens with w-wetweet. ʘwʘ basicawwy when wetwieve cawd fow a wetweet, :3 we
+      // get a cawd associated with the owiginaw tweet, (U ﹏ U) s-so the tco won't m-match. (U ﹏ U)
+      // a-as of sep 2014, ʘwʘ this seems to b-be the intended behaviow and has been wunning
+      // wike this f-fow ovew a yeaw. >w<
+      u-uwwmismatches.incwement();
     }
 
-    message.setCardTitle(
-        CardFieldUtil.extractBindingValue(CardFieldUtil.TITLE_BINDING_KEY, card));
-    if (message.getCardTitle() != null) {
-      cardsWithTitles.increment();
+    message.setcawdtitwe(
+        c-cawdfiewdutiw.extwactbindingvawue(cawdfiewdutiw.titwe_binding_key, rawr x3 cawd));
+    if (message.getcawdtitwe() != nyuww) {
+      c-cawdswithtitwes.incwement();
     }
-    message.setCardDescription(
-        CardFieldUtil.extractBindingValue(CardFieldUtil.DESCRIPTION_BINDING_KEY, card));
-    if (message.getCardDescription() != null) {
-      cardsWithDescriptions.increment();
+    m-message.setcawddescwiption(
+        cawdfiewdutiw.extwactbindingvawue(cawdfiewdutiw.descwiption_binding_key, OwO c-cawd));
+    i-if (message.getcawddescwiption() != nyuww) {
+      cawdswithdescwiptions.incwement();
     }
-    CardFieldUtil.deriveCardLang(message);
-    if (LocaleUtil.UNKNOWN.getLanguage().equals(message.getCardLang())) {
-      cardsWithUnknownLanguage.increment();
+    cawdfiewdutiw.dewivecawdwang(message);
+    if (wocaweutiw.unknown.getwanguage().equaws(message.getcawdwang())) {
+      c-cawdswithunknownwanguage.incwement();
     }
   }
 
-  private Map<Long, Card2> createIdToCardMap(List<GetTweetResult> listResult) {
-    Map<Long, Card2> responseMap = Maps.newHashMap();
-    for (GetTweetResult entry : listResult) {
-      if (entry.isSetTweet()
-          && entry.isSetTweet_state()
-          && (entry.getTweet_state() == StatusState.FOUND)) {
-        long id = entry.getTweet_id();
-        if (entry.getTweet().isSetCard2()) {
-          responseMap.put(id, entry.getTweet().getCard2());
-        } else {
-          // Short-term fix for removal of animated GIF cards --
-          // if the tweet contains an animated GIF, create a card based on media entity data
-          Card2 card = createCardForAnimatedGif(entry.getTweet());
-          if (card != null) {
-            responseMap.put(id, card);
-            tweetsWithAnimatedGifMediaInfo.increment();
-          } else {
-            tweetsWithoutCards.increment();
+  p-pwivate map<wong, ^•ﻌ•^ c-cawd2> cweateidtocawdmap(wist<gettweetwesuwt> w-wistwesuwt) {
+    m-map<wong, >_< cawd2> wesponsemap = m-maps.newhashmap();
+    f-fow (gettweetwesuwt entwy : wistwesuwt) {
+      i-if (entwy.issettweet()
+          && e-entwy.issettweet_state()
+          && (entwy.gettweet_state() == statusstate.found)) {
+        wong i-id = entwy.gettweet_id();
+        if (entwy.gettweet().issetcawd2()) {
+          wesponsemap.put(id, OwO e-entwy.gettweet().getcawd2());
+        } ewse {
+          // s-showt-tewm f-fix fow wemovaw of animated gif c-cawds --
+          // if the tweet contains an animated g-gif, >_< cweate a-a cawd based o-on media entity data
+          cawd2 cawd = cweatecawdfowanimatedgif(entwy.gettweet());
+          if (cawd != nyuww) {
+            w-wesponsemap.put(id, (ꈍᴗꈍ) cawd);
+            tweetswithanimatedgifmediainfo.incwement();
+          } e-ewse {
+            t-tweetswithoutcawds.incwement();
           }
         }
-      } else {
-        tweetsNotFound.increment();
+      } ewse {
+        t-tweetsnotfound.incwement();
       }
     }
-    return responseMap;
+    wetuwn wesponsemap;
   }
 
-  private Card2 createCardForAnimatedGif(Tweet tweet) {
-    if (tweet.getMediaSize() > 0) {
-      for (MediaEntity mediaEntity : tweet.getMedia()) {
-        MediaInfo mediaInfo = mediaEntity.getMedia_info();
-        if (mediaInfo != null && mediaInfo.getSetField() == MediaInfo._Fields.ANIMATED_GIF_INFO) {
-          Card2 card = new Card2();
-          card.setName("animated_gif");
-          // Use the original compressed URL for the media entity to match existing card URLs
-          card.setUrl(mediaEntity.getUrl());
-          card.setBinding_values(Collections.emptyList());
+  p-pwivate c-cawd2 cweatecawdfowanimatedgif(tweet tweet) {
+    if (tweet.getmediasize() > 0) {
+      f-fow (mediaentity mediaentity : tweet.getmedia()) {
+        m-mediainfo m-mediainfo = mediaentity.getmedia_info();
+        if (mediainfo != n-nyuww && mediainfo.getsetfiewd() == mediainfo._fiewds.animated_gif_info) {
+          c-cawd2 cawd = n-nyew cawd2();
+          c-cawd.setname("animated_gif");
+          // use the owiginaw compwessed uww fow the media entity to match existing cawd uwws
+          cawd.setuww(mediaentity.getuww());
+          cawd.setbinding_vawues(cowwections.emptywist());
 
-          return card;
+          wetuwn cawd;
         }
       }
     }
-    return null;
+    wetuwn nyuww;
   }
 
-  // Unfortunately the url returned in the card data is not the last hop
-  private String getLastHop(IngesterTwitterMessage message, String url) {
-    if (message.getExpandedUrlMap() != null) {
-      ThriftExpandedUrl expanded = message.getExpandedUrlMap().get(url);
-      if ((expanded != null) && expanded.isSetCanonicalLastHopUrl()) {
-        return expanded.getCanonicalLastHopUrl();
+  // unfowtunatewy t-the uww w-wetuwned in the cawd data is not the wast hop
+  p-pwivate stwing g-getwasthop(ingestewtwittewmessage m-message, >w< stwing uww) {
+    if (message.getexpandeduwwmap() != n-nyuww) {
+      thwiftexpandeduww e-expanded = message.getexpandeduwwmap().get(uww);
+      i-if ((expanded != nyuww) && e-expanded.issetcanonicawwasthopuww()) {
+        wetuwn expanded.getcanonicawwasthopuww();
       }
     }
-    return null;
+    w-wetuwn nyuww;
   }
 
-  // Used by commons-pipeline and set via the xml config
-  public void setFilterProtected(boolean filterProtected) {
-    LOG.info("Filtering protected tweets: {}", filterProtected);
-    this.filterProtected = filterProtected;
+  // u-used by commons-pipewine and set via the x-xmw config
+  pubwic v-void setfiwtewpwotected(boowean f-fiwtewpwotected) {
+    w-wog.info("fiwtewing p-pwotected tweets: {}", (U ﹏ U) f-fiwtewpwotected);
+    t-this.fiwtewpwotected = f-fiwtewpwotected;
   }
 
-  public void setTweetypieClientId(String tweetypieClientId) {
-    LOG.info("Using tweetypieClientId: {}", tweetypieClientId);
-    this.tweetypieClientId = tweetypieClientId;
+  p-pubwic void settweetypiecwientid(stwing t-tweetypiecwientid) {
+    w-wog.info("using t-tweetypiecwientid: {}", ^^ tweetypiecwientid);
+    t-this.tweetypiecwientid = tweetypiecwientid;
   }
 
-  public void setInternalBatchSize(int internalBatchSize) {
-    this.batchSize = internalBatchSize;
+  pubwic void setintewnawbatchsize(int i-intewnawbatchsize) {
+    this.batchsize = intewnawbatchsize;
   }
 
   /**
-   * For each card name, we add a rate counter to observe what kinds of card we're actually
-   * indexing, and with what rate.
+   * f-fow each cawd n-nyame, (U ﹏ U) we add a w-wate countew to obsewve nyani kinds o-of cawd we'we actuawwy
+   * i-indexing, :3 and with nyani wate. (✿oωo)
    */
-  private void addCardNameToStats(String cardName) {
-    SearchRateCounter cardNameCounter = CARD_NAME_STATS.get(cardName);
-    if (cardNameCounter == null) {
-      cardNameCounter = SearchRateCounter.export(cardNamePrefix + cardName);
-      CARD_NAME_STATS.put(cardName, cardNameCounter);
+  p-pwivate void addcawdnametostats(stwing c-cawdname) {
+    seawchwatecountew cawdnamecountew = cawd_name_stats.get(cawdname);
+    if (cawdnamecountew == n-nyuww) {
+      cawdnamecountew = s-seawchwatecountew.expowt(cawdnamepwefix + c-cawdname);
+      cawd_name_stats.put(cawdname, XD cawdnamecountew);
     }
-    cardNameCounter.increment();
+    cawdnamecountew.incwement();
   }
 }

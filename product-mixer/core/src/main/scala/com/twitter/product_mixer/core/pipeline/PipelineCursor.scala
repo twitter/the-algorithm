@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.pipeline
+package com.twittew.pwoduct_mixew.cowe.pipewine
 
 /**
- * PipelineCursor represents any product-specific cursor model. Typically the PipelineCursor will be
- * a de-serialized base 64 thrift struct from initial request.
+ * pipewinecuwsow w-wepwesents a-any pwoduct-specific c-cuwsow modew. (⑅˘꒳˘) t-typicawwy the p-pipewinecuwsow w-wiww be
+ * a de-sewiawized b-base 64 t-thwift stwuct fwom initiaw wequest. /(^•ω•^)
  */
-trait PipelineCursor
+twait pipewinecuwsow
 
 /**
- * HasPipelineCursor indicates that a [[PipelineQuery]] has a cursor
+ * haspipewinecuwsow i-indicates that a [[pipewinequewy]] has a-a cuwsow
  */
-trait HasPipelineCursor[+Cursor <: PipelineCursor] {
-  def pipelineCursor: Option[Cursor]
+twait haspipewinecuwsow[+cuwsow <: p-pipewinecuwsow] {
+  def pipewinecuwsow: option[cuwsow]
 
   /**
-   * If the cursor is not present, this typically means that we are on the first page
+   * if the cuwsow i-is nyot pwesent, rawr x3 this typicawwy m-means that we a-awe on the fiwst page
    */
-  def isFirstPage: Boolean = pipelineCursor.isEmpty
+  def isfiwstpage: boowean = pipewinecuwsow.isempty
 }
 
 /**
- * UrtPipelineCursor represents a URT product-specific cursor model. Typically the UrtPipelineCursor
- * will be a de-serialized base 64 thrift struct from initial request.
+ * uwtpipewinecuwsow w-wepwesents a uwt pwoduct-specific cuwsow modew. (U ﹏ U) typicawwy the uwtpipewinecuwsow
+ * wiww be a de-sewiawized b-base 64 thwift stwuct fwom i-initiaw wequest. (U ﹏ U)
  */
-trait UrtPipelineCursor extends PipelineCursor {
+t-twait uwtpipewinecuwsow e-extends pipewinecuwsow {
 
-  /** See [[UrtCursorBuilder]] for background on building initialSortIndex */
-  def initialSortIndex: Long
+  /** s-see [[uwtcuwsowbuiwdew]] fow backgwound on buiwding i-initiawsowtindex */
+  def initiawsowtindex: wong
 }
 
-object UrtPipelineCursor {
-  def getCursorInitialSortIndex(query: PipelineQuery with HasPipelineCursor[_]): Option[Long] = {
-    query.pipelineCursor match {
-      case Some(cursor: UrtPipelineCursor) => Some(cursor.initialSortIndex)
-      case _ => None
+object uwtpipewinecuwsow {
+  d-def getcuwsowinitiawsowtindex(quewy: pipewinequewy with haspipewinecuwsow[_]): option[wong] = {
+    quewy.pipewinecuwsow match {
+      c-case some(cuwsow: uwtpipewinecuwsow) => s-some(cuwsow.initiawsowtindex)
+      c-case _ => n-nyone
     }
   }
 }

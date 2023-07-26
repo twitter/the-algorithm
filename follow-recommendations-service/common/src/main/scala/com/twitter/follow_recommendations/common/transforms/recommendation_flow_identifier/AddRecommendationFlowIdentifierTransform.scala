@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.transforms.recommendation_flow_identifier
+package com.twittew.fowwow_wecommendations.common.twansfowms.wecommendation_fwow_identifiew
 
-import com.google.inject.Inject
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecommendationFlowIdentifier
-import com.twitter.stitch.Stitch
+impowt c-com.googwe.inject.inject
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.twansfowm
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.haswecommendationfwowidentifiew
+i-impowt c-com.twittew.stitch.stitch
 
-class AddRecommendationFlowIdentifierTransform @Inject()
-    extends Transform[HasRecommendationFlowIdentifier, CandidateUser] {
+cwass addwecommendationfwowidentifiewtwansfowm @inject()
+    extends twansfowm[haswecommendationfwowidentifiew, ^^;; c-candidateusew] {
 
-  override def transform(
-    target: HasRecommendationFlowIdentifier,
-    items: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] = {
-    Stitch.value(items.map { candidateUser =>
-      candidateUser.copy(recommendationFlowIdentifier = target.recommendationFlowIdentifier)
+  ovewwide def twansfowm(
+    tawget: h-haswecommendationfwowidentifiew, >_<
+    items: s-seq[candidateusew]
+  ): stitch[seq[candidateusew]] = {
+    stitch.vawue(items.map { candidateusew =>
+      c-candidateusew.copy(wecommendationfwowidentifiew = tawget.wecommendationfwowidentifiew)
     })
   }
 }

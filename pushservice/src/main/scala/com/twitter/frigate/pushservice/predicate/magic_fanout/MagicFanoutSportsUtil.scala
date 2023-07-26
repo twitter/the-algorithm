@@ -1,231 +1,231 @@
-package com.twitter.frigate.pushservice.predicate.magic_fanout
+package com.twittew.fwigate.pushsewvice.pwedicate.magic_fanout
 
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.NflFootballGameLiveUpdate
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.SoccerMatchLiveUpdate
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.SoccerPeriod
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.SportsEventHomeAwayTeamScore
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.SportsEventStatus
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.SportsEventTeamAlignment.Away
-import com.twitter.datatools.entityservice.entities.sports.thriftscala.SportsEventTeamAlignment.Home
-import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
-import com.twitter.frigate.pushservice.params.SportGameEnum
-import com.twitter.frigate.common.base.GenericGameScore
-import com.twitter.frigate.common.base.NflGameScore
-import com.twitter.frigate.common.base.SoccerGameScore
-import com.twitter.frigate.common.base.TeamInfo
-import com.twitter.frigate.common.base.TeamScore
-import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt com.twittew.datatoows.entitysewvice.entities.spowts.thwiftscawa.nfwfootbawwgamewiveupdate
+i-impowt com.twittew.datatoows.entitysewvice.entities.spowts.thwiftscawa.soccewmatchwiveupdate
+i-impowt c-com.twittew.datatoows.entitysewvice.entities.spowts.thwiftscawa.soccewpewiod
+i-impowt com.twittew.datatoows.entitysewvice.entities.spowts.thwiftscawa.spowtseventhomeawayteamscowe
+i-impowt com.twittew.datatoows.entitysewvice.entities.spowts.thwiftscawa.spowtseventstatus
+i-impowt c-com.twittew.datatoows.entitysewvice.entities.spowts.thwiftscawa.spowtseventteamawignment.away
+i-impowt com.twittew.datatoows.entitysewvice.entities.spowts.thwiftscawa.spowtseventteamawignment.home
+impowt com.twittew.eschewbiwd.metadata.thwiftscawa.entitymegadata
+impowt com.twittew.fwigate.pushsewvice.pawams.spowtgameenum
+impowt com.twittew.fwigate.common.base.genewicgamescowe
+i-impowt com.twittew.fwigate.common.base.nfwgamescowe
+impowt com.twittew.fwigate.common.base.soccewgamescowe
+i-impowt com.twittew.fwigate.common.base.teaminfo
+i-impowt com.twittew.fwigate.common.base.teamscowe
+impowt com.twittew.hewmit.stowe.semantic_cowe.semanticentityfowquewy
+impowt c-com.twittew.stowehaus.weadabwestowe
+impowt c-com.twittew.utiw.futuwe
 
-object MagicFanoutSportsUtil {
+o-object magicfanoutspowtsutiw {
 
-  def transformSoccerGameScore(game: SoccerMatchLiveUpdate): Option[SoccerGameScore] = {
-    require(game.status.isDefined)
-    val gameScore = transformToGameScore(game.score, game.status.get)
-    val _penaltyKicks = transformToGameScore(game.penaltyScore, game.status.get)
-    gameScore.map { score =>
-      val _isGameEnd = game.status.get match {
-        case SportsEventStatus.Completed(_) => true
-        case _ => false
+  def twansfowmsoccewgamescowe(game: soccewmatchwiveupdate): option[soccewgamescowe] = {
+    w-wequiwe(game.status.isdefined)
+    vaw gamescowe = twansfowmtogamescowe(game.scowe, (U ᵕ U❁) game.status.get)
+    vaw _penawtykicks = t-twansfowmtogamescowe(game.penawtyscowe, (✿oωo) game.status.get)
+    g-gamescowe.map { s-scowe =>
+      v-vaw _isgameend = g-game.status.get match {
+        case spowtseventstatus.compweted(_) => t-twue
+        case _ => fawse
       }
 
-      val _isHalfTime = game.period.exists { period =>
-        period match {
-          case SoccerPeriod.Halftime(_) => true
-          case _ => false
+      vaw _ishawftime = g-game.pewiod.exists { pewiod =>
+        pewiod match {
+          case soccewpewiod.hawftime(_) => twue
+          c-case _ => fawse
         }
       }
 
-      val _isOvertime = game.period.exists { period =>
-        period match {
-          case SoccerPeriod.PreOvertime(_) => true
-          case _ => false
+      vaw _isovewtime = g-game.pewiod.exists { p-pewiod =>
+        p-pewiod match {
+          case soccewpewiod.pweovewtime(_) => twue
+          case _ => fawse
         }
       }
 
-      val _isPenaltyKicks = game.period.exists { period =>
-        period match {
-          case SoccerPeriod.PrePenalty(_) => true
-          case SoccerPeriod.Penalty(_) => true
-          case _ => false
+      v-vaw _ispenawtykicks = g-game.pewiod.exists { pewiod =>
+        p-pewiod m-match {
+          case soccewpewiod.pwepenawty(_) => t-twue
+          case soccewpewiod.penawty(_) => t-twue
+          case _ => fawse
         }
       }
 
-      val _gameMinute = game.gameMinute.map { soccerGameMinute =>
-        game.minutesInInjuryTime match {
-          case Some(injuryTime) => s"($soccerGameMinute+$injuryTime′)"
-          case None => s"($soccerGameMinute′)"
+      vaw _gameminute = game.gameminute.map { s-soccewgameminute =>
+        game.minutesininjuwytime m-match {
+          case s-some(injuwytime) => s-s"($soccewgameminute+$injuwytime′)"
+          case nyone => s"($soccewgameminute′)"
         }
       }
 
-      SoccerGameScore(
-        score.home,
-        score.away,
-        isGameOngoing = score.isGameOngoing,
-        penaltyKicks = _penaltyKicks,
-        gameMinute = _gameMinute,
-        isHalfTime = _isHalfTime,
-        isOvertime = _isOvertime,
-        isPenaltyKicks = _isPenaltyKicks,
-        isGameEnd = _isGameEnd
+      soccewgamescowe(
+        scowe.home, ^^
+        scowe.away, ^•ﻌ•^
+        isgameongoing = scowe.isgameongoing, XD
+        p-penawtykicks = _penawtykicks, :3
+        g-gameminute = _gameminute,
+        ishawftime = _ishawftime, (ꈍᴗꈍ)
+        i-isovewtime = _isovewtime, :3
+        i-ispenawtykicks = _ispenawtykicks, (U ﹏ U)
+        i-isgameend = _isgameend
       )
     }
   }
 
-  def transformNFLGameScore(game: NflFootballGameLiveUpdate): Option[NflGameScore] = {
-    require(game.status.isDefined)
+  def twansfowmnfwgamescowe(game: nyfwfootbawwgamewiveupdate): option[nfwgamescowe] = {
+    w-wequiwe(game.status.isdefined)
 
-    val gameScore = transformToGameScore(game.score, game.status.get)
-    gameScore.map { score =>
-      val _isGameEnd = game.status.get match {
-        case SportsEventStatus.Completed(_) => true
-        case _ => false
+    vaw gamescowe = twansfowmtogamescowe(game.scowe, UwU game.status.get)
+    gamescowe.map { s-scowe =>
+      vaw _isgameend = g-game.status.get m-match {
+        c-case spowtseventstatus.compweted(_) => twue
+        case _ => f-fawse
       }
 
-      val _matchTime = (game.quarter, game.remainingSecondsInQuarter) match {
-        case (Some(quarter), Some(remainingSeconds)) if remainingSeconds != 0L =>
-          val m = (remainingSeconds / 60) % 60
-          val s = remainingSeconds % 60
-          val formattedSeconds = "%02d:%02d".format(m, s)
-          s"(Q$quarter - $formattedSeconds)"
-        case (Some(quarter), None) => s"(Q$quarter)"
-        case _ => ""
+      v-vaw _matchtime = (game.quawtew, 😳😳😳 g-game.wemainingsecondsinquawtew) m-match {
+        case (some(quawtew), XD some(wemainingseconds)) i-if wemainingseconds != 0w =>
+          v-vaw m = (wemainingseconds / 60) % 60
+          v-vaw s = wemainingseconds % 60
+          v-vaw fowmattedseconds = "%02d:%02d".fowmat(m, o.O s-s)
+          s"(q$quawtew - $fowmattedseconds)"
+        case (some(quawtew), nyone) => s"(q$quawtew)"
+        c-case _ => ""
       }
 
-      NflGameScore(
-        score.home,
-        score.away,
-        isGameOngoing = score.isGameOngoing,
-        isGameEnd = _isGameEnd,
-        matchTime = _matchTime
+      nyfwgamescowe(
+        scowe.home, (⑅˘꒳˘)
+        scowe.away, 😳😳😳
+        isgameongoing = scowe.isgameongoing, nyaa~~
+        isgameend = _isgameend, rawr
+        m-matchtime = _matchtime
       )
     }
   }
 
   /**
-   Takes a score from Strato columns and turns it into an easier to handle structure (GameScore class)
-   We do this to easily access the home/away scenario for copy setting
+   takes a scowe fwom stwato cowumns a-and tuwns it into a-an easiew to handwe s-stwuctuwe (gamescowe cwass)
+   w-we do this to easiwy access t-the home/away scenawio f-fow copy setting
    */
-  def transformToGameScore(
-    scoreOpt: Option[SportsEventHomeAwayTeamScore],
-    status: SportsEventStatus
-  ): Option[GenericGameScore] = {
-    val isGameOngoing = status match {
-      case SportsEventStatus.InProgress(_) => true
-      case SportsEventStatus.Completed(_) => false
-      case _ => false
+  def twansfowmtogamescowe(
+    scoweopt: option[spowtseventhomeawayteamscowe], -.-
+    status: spowtseventstatus
+  ): option[genewicgamescowe] = {
+    v-vaw isgameongoing = status match {
+      c-case spowtseventstatus.inpwogwess(_) => t-twue
+      case s-spowtseventstatus.compweted(_) => fawse
+      case _ => fawse
     }
 
-    val scoresWithTeam = scoreOpt
-      .map { score =>
-        score.scores.map { score => (score.score, score.participantAlignment, score.participantId) }
-      }.getOrElse(Seq())
+    v-vaw s-scoweswithteam = scoweopt
+      .map { s-scowe =>
+        s-scowe.scowes.map { scowe => (scowe.scowe, (✿oωo) scowe.pawticipantawignment, /(^•ω•^) scowe.pawticipantid) }
+      }.getowewse(seq())
 
-    val tuple = scoresWithTeam match {
-      case Seq(teamOne, teamTwo, _*) => Some((teamOne, teamTwo))
-      case _ => None
+    vaw tupwe = scoweswithteam match {
+      c-case s-seq(teamone, 🥺 teamtwo, _*) => some((teamone, t-teamtwo))
+      case _ => n-nyone
     }
-    tuple.flatMap {
-      case ((Some(teamOneScore), teamOneAlignment, teamOne), (Some(teamTwoScore), _, teamTwo)) =>
-        teamOneAlignment.flatMap {
-          case Home(_) =>
-            val home = TeamScore(teamOneScore, teamOne.entityId, teamOne.domainId)
-            val away = TeamScore(teamTwoScore, teamTwo.entityId, teamTwo.domainId)
-            Some(GenericGameScore(home, away, isGameOngoing))
-          case Away(_) =>
-            val away = TeamScore(teamOneScore, teamOne.entityId, teamOne.domainId)
-            val home = TeamScore(teamTwoScore, teamTwo.entityId, teamTwo.domainId)
-            Some(GenericGameScore(home, away, isGameOngoing))
-          case _ => None
+    t-tupwe.fwatmap {
+      case ((some(teamonescowe), ʘwʘ t-teamoneawignment, UwU teamone), (some(teamtwoscowe), XD _, teamtwo)) =>
+        teamoneawignment.fwatmap {
+          case home(_) =>
+            v-vaw home = teamscowe(teamonescowe, (✿oωo) t-teamone.entityid, :3 teamone.domainid)
+            vaw away = t-teamscowe(teamtwoscowe, (///ˬ///✿) t-teamtwo.entityid, nyaa~~ teamtwo.domainid)
+            some(genewicgamescowe(home, >w< away, isgameongoing))
+          c-case away(_) =>
+            vaw away = teamscowe(teamonescowe, -.- teamone.entityid, (✿oωo) teamone.domainid)
+            vaw home = teamscowe(teamtwoscowe, (˘ω˘) t-teamtwo.entityid, rawr teamtwo.domainid)
+            some(genewicgamescowe(home, OwO a-away, ^•ﻌ•^ isgameongoing))
+          c-case _ => nyone
         }
-      case _ => None
+      case _ => nyone
     }
   }
 
-  def getTeamInfo(
-    team: TeamScore,
-    semanticCoreMegadataStore: ReadableStore[SemanticEntityForQuery, EntityMegadata]
-  ): Future[Option[TeamInfo]] = {
-    semanticCoreMegadataStore
-      .get(SemanticEntityForQuery(team.teamDomainId, team.teamEntityId)).map {
-        _.flatMap {
-          _.basicMetadata.map { metadata =>
-            TeamInfo(
-              name = metadata.name,
-              twitterUserId = metadata.twitter.flatMap(_.preferredTwitterUserId))
+  def getteaminfo(
+    team: teamscowe,
+    s-semanticcowemegadatastowe: w-weadabwestowe[semanticentityfowquewy, UwU entitymegadata]
+  ): futuwe[option[teaminfo]] = {
+    semanticcowemegadatastowe
+      .get(semanticentityfowquewy(team.teamdomainid, (˘ω˘) t-team.teamentityid)).map {
+        _.fwatmap {
+          _.basicmetadata.map { metadata =>
+            t-teaminfo(
+              nyame = metadata.name, (///ˬ///✿)
+              twittewusewid = m-metadata.twittew.fwatmap(_.pwefewwedtwittewusewid))
           }
         }
       }
   }
 
-  def getNFLReadableName(name: String): String = {
-    val teamNames =
-      Seq("")
-    teamNames.find(teamName => name.contains(teamName)).getOrElse(name)
+  def g-getnfwweadabwename(name: s-stwing): stwing = {
+    v-vaw teamnames =
+      seq("")
+    t-teamnames.find(teamname => n-nyame.contains(teamname)).getowewse(name)
   }
 
-  def getSoccerIbisMap(game: SoccerGameScore): Map[String, String] = {
-    val gameMinuteMap = game.gameMinute
-      .map { gameMinute => Map("match_time" -> gameMinute) }
-      .getOrElse(Map.empty)
+  def g-getsoccewibismap(game: soccewgamescowe): m-map[stwing, σωσ s-stwing] = {
+    vaw gameminutemap = game.gameminute
+      .map { g-gameminute => m-map("match_time" -> g-gameminute) }
+      .getowewse(map.empty)
 
-    val updateTypeMap = {
-      if (game.isGameEnd) Map("is_game_end" -> "true")
-      else if (game.isHalfTime) Map("is_half_time" -> "true")
-      else if (game.isOvertime) Map("is_overtime" -> "true")
-      else if (game.isPenaltyKicks) Map("is_penalty_kicks" -> "true")
-      else Map("is_score_update" -> "true")
+    vaw updatetypemap = {
+      if (game.isgameend) m-map("is_game_end" -> "twue")
+      ewse i-if (game.ishawftime) m-map("is_hawf_time" -> "twue")
+      ewse if (game.isovewtime) map("is_ovewtime" -> "twue")
+      e-ewse if (game.ispenawtykicks) m-map("is_penawty_kicks" -> "twue")
+      e-ewse m-map("is_scowe_update" -> "twue")
     }
 
-    val awayScore = game match {
-      case SoccerGameScore(_, away, _, None, _, _, _, _, _) =>
-        away.score.toString
-      case SoccerGameScore(_, away, _, Some(penaltyKick), _, _, _, _, _) =>
-        s"${away.score} (${penaltyKick.away.score}) "
+    vaw awayscowe = game m-match {
+      case soccewgamescowe(_, /(^•ω•^) away, _, nyone, 😳 _, _, _, _, _) =>
+        away.scowe.tostwing
+      case s-soccewgamescowe(_, 😳 away, _, some(penawtykick), (⑅˘꒳˘) _, 😳😳😳 _, _, _, _) =>
+        s-s"${away.scowe} (${penawtykick.away.scowe}) "
       case _ => ""
     }
 
-    val homeScore = game match {
-      case SoccerGameScore(home, _, _, None, _, _, _, _, _) =>
-        home.score.toString
-      case SoccerGameScore(home, _, _, Some(penaltyKick), _, _, _, _, _) =>
-        s"${home.score} (${penaltyKick.home.score}) "
+    v-vaw homescowe = game match {
+      c-case soccewgamescowe(home, 😳 _, _, n-nyone, XD _, _, _, _, mya _) =>
+        h-home.scowe.tostwing
+      c-case soccewgamescowe(home, ^•ﻌ•^ _, _, s-some(penawtykick), ʘwʘ _, _, _, _, ( ͡o ω ͡o ) _) =>
+        s-s"${home.scowe} (${penawtykick.home.scowe}) "
       case _ => ""
     }
 
-    val scoresMap = Map(
-      "away_score" -> awayScore,
-      "home_score" -> homeScore,
+    vaw scowesmap = map(
+      "away_scowe" -> awayscowe, mya
+      "home_scowe" -> homescowe, o.O
     )
 
-    gameType(SportGameEnum.Soccer) ++ updateTypeMap ++ gameMinuteMap ++ scoresMap
+    gametype(spowtgameenum.soccew) ++ u-updatetypemap ++ g-gameminutemap ++ s-scowesmap
   }
 
-  def getNflIbisMap(game: NflGameScore): Map[String, String] = {
-    val gameMinuteMap = Map("match_time" -> game.matchTime)
+  def getnfwibismap(game: n-nyfwgamescowe): map[stwing, stwing] = {
+    vaw gameminutemap = m-map("match_time" -> g-game.matchtime)
 
-    val updateTypeMap = {
-      if (game.isGameEnd) Map("is_game_end" -> "true")
-      else Map("is_score_update" -> "true")
+    vaw updatetypemap = {
+      i-if (game.isgameend) map("is_game_end" -> "twue")
+      ewse m-map("is_scowe_update" -> "twue")
     }
 
-    val awayScore = game.away.score
-    val homeScore = game.home.score
+    v-vaw awayscowe = game.away.scowe
+    v-vaw homescowe = g-game.home.scowe
 
-    val scoresMap = Map(
-      "away_score" -> awayScore.toString,
-      "home_score" -> homeScore.toString,
+    vaw scowesmap = map(
+      "away_scowe" -> awayscowe.tostwing, (✿oωo)
+      "home_scowe" -> homescowe.tostwing, :3
     )
 
-    gameType(SportGameEnum.Nfl) ++ updateTypeMap ++ gameMinuteMap ++ scoresMap
+    g-gametype(spowtgameenum.nfw) ++ u-updatetypemap ++ g-gameminutemap ++ s-scowesmap
   }
 
-  private def gameType(game: SportGameEnum.Value): Map[String, String] = {
-    game match {
-      case SportGameEnum.Soccer => Map("is_soccer_game" -> "true")
-      case SportGameEnum.Nfl => Map("is_nfl_game" -> "true")
-      case _ => Map.empty
+  p-pwivate def gametype(game: s-spowtgameenum.vawue): m-map[stwing, 😳 stwing] = {
+    g-game match {
+      c-case spowtgameenum.soccew => m-map("is_soccew_game" -> "twue")
+      case spowtgameenum.nfw => map("is_nfw_game" -> "twue")
+      c-case _ => map.empty
     }
   }
 }

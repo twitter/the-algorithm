@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.CallToAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.cawwtoaction
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.singweton
 
-@Singleton
-class CallToActionMarshaller {
-  def apply(callToAction: CallToAction): urt.CallToAction = {
-    urt.CallToAction(
-      callToActionType = callToAction.callToActionType,
-      url = callToAction.url
+@singweton
+c-cwass c-cawwtoactionmawshawwew {
+  d-def a-appwy(cawwtoaction: cawwtoaction): uwt.cawwtoaction = {
+    uwt.cawwtoaction(
+      cawwtoactiontype = c-cawwtoaction.cawwtoactiontype, >_<
+      uww = cawwtoaction.uww
     )
   }
 }

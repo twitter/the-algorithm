@@ -1,67 +1,67 @@
-#pragma once
-#include <twml/defines.h>
-#include <stddef.h>
-#include <stdint.h>
+#pwagma once
+#incwude <twmw/defines.h>
+#incwude <stddef.h>
+#incwude <stdint.h>
 
-#ifdef __cplusplus
-namespace twml {
+#ifdef __cpwuspwus
+nyamespace twmw {
 
-    template<typename T> struct Type;
+    t-tempwate<typename t-t> stwuct t-type;
 
-    template<> struct Type<float>
+    t-tempwate<> stwuct t-type<fwoat>
     {
-        enum {
-            type = TWML_TYPE_FLOAT,
+        e-enum {
+            type = t-twmw_type_fwoat, /(^•ω•^)
         };
     };
 
-    template<> struct Type<std::string>
+    t-tempwate<> stwuct type<std::stwing>
     {
         enum {
-            type = TWML_TYPE_STRING,
+            type = twmw_type_stwing, rawr
         };
     };
 
-    template<> struct Type<double>
+    t-tempwate<> stwuct type<doubwe>
     {
         enum {
-            type = TWML_TYPE_DOUBLE,
+            t-type = twmw_type_doubwe,
         };
     };
 
-    template<> struct Type<int64_t>
+    tempwate<> stwuct t-type<int64_t>
     {
         enum {
-            type = TWML_TYPE_INT64,
+            type = twmw_type_int64, OwO
         };
     };
 
-    template<> struct Type<int32_t>
+    tempwate<> stwuct t-type<int32_t>
     {
         enum {
-            type = TWML_TYPE_INT32,
+            t-type = twmw_type_int32, (U ﹏ U)
         };
     };
 
-    template<> struct Type<int8_t>
+    t-tempwate<> stwuct type<int8_t>
     {
         enum {
-            type = TWML_TYPE_INT8,
+            type = twmw_type_int8, >_<
         };
     };
 
-    template<> struct Type<uint8_t>
+    tempwate<> stwuct t-type<uint8_t>
     {
         enum {
-            type = TWML_TYPE_UINT8,
+            type = twmw_type_uint8, rawr x3
         };
     };
 
 
-    template<> struct Type<bool>
+    tempwate<> stwuct type<boow>
     {
         enum {
-            type = TWML_TYPE_BOOL,
+            t-type = twmw_type_boow, mya
         };
     };
 

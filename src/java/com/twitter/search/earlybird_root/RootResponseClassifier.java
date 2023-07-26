@@ -1,69 +1,69 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import scala.PartialFunction;
-import scala.runtime.AbstractPartialFunction;
+impowt s-scawa.pawtiawfunction;
+i-impowt s-scawa.wuntime.abstwactpawtiawfunction;
 
-import com.twitter.finagle.service.ReqRep;
-import com.twitter.finagle.service.ResponseClass;
-import com.twitter.finagle.service.ResponseClasses;
-import com.twitter.finagle.service.ResponseClassifier;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.util.Try;
+i-impowt com.twittew.finagwe.sewvice.weqwep;
+i-impowt com.twittew.finagwe.sewvice.wesponsecwass;
+i-impowt com.twittew.finagwe.sewvice.wesponsecwasses;
+i-impowt c-com.twittew.finagwe.sewvice.wesponsecwassifiew;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
+i-impowt com.twittew.utiw.twy;
 
-public class RootResponseClassifier extends AbstractPartialFunction<ReqRep, ResponseClass> {
-  private static final PartialFunction<ReqRep, ResponseClass> DEFAULT_CLASSIFIER =
-      ResponseClassifier.Default();
+p-pubwic cwass wootwesponsecwassifiew extends abstwactpawtiawfunction<weqwep, :3 w-wesponsecwass> {
+  pwivate static f-finaw pawtiawfunction<weqwep, -.- w-wesponsecwass> defauwt_cwassifiew =
+      wesponsecwassifiew.defauwt();
 
-  private static final SearchRateCounter NOT_EARLYBIRD_REQUEST_COUNTER =
-      SearchRateCounter.export("response_classifier_not_earlybird_request");
-  private static final SearchRateCounter NOT_EARLYBIRD_RESPONSE_COUNTER =
-      SearchRateCounter.export("response_classifier_not_earlybird_response");
-  private static final SearchRateCounter NON_RETRYABLE_FAILURE_COUNTER =
-      SearchRateCounter.export("response_classifier_non_retryable_failure");
-  private static final SearchRateCounter RETRYABLE_FAILURE_COUNTER =
-      SearchRateCounter.export("response_classifier_retryable_failure");
-  private static final SearchRateCounter SUCCESS_COUNTER =
-      SearchRateCounter.export("response_classifier_success");
+  pwivate static finaw s-seawchwatecountew nyot_eawwybiwd_wequest_countew =
+      seawchwatecountew.expowt("wesponse_cwassifiew_not_eawwybiwd_wequest");
+  pwivate static finaw seawchwatecountew n-nyot_eawwybiwd_wesponse_countew =
+      seawchwatecountew.expowt("wesponse_cwassifiew_not_eawwybiwd_wesponse");
+  p-pwivate s-static finaw s-seawchwatecountew n-nyon_wetwyabwe_faiwuwe_countew =
+      seawchwatecountew.expowt("wesponse_cwassifiew_non_wetwyabwe_faiwuwe");
+  pwivate static f-finaw seawchwatecountew wetwyabwe_faiwuwe_countew =
+      seawchwatecountew.expowt("wesponse_cwassifiew_wetwyabwe_faiwuwe");
+  p-pwivate static finaw seawchwatecountew success_countew =
+      seawchwatecountew.expowt("wesponse_cwassifiew_success");
 
-  @Override
-  public boolean isDefinedAt(ReqRep reqRep) {
-    if (!(reqRep.request() instanceof EarlybirdService.search_args)) {
-      NOT_EARLYBIRD_REQUEST_COUNTER.increment();
-      return false;
+  @ovewwide
+  pubwic boowean isdefinedat(weqwep w-weqwep) {
+    if (!(weqwep.wequest() i-instanceof eawwybiwdsewvice.seawch_awgs)) {
+      n-nyot_eawwybiwd_wequest_countew.incwement();
+      w-wetuwn fawse;
     }
 
-    if (!reqRep.response().isThrow() && (!(reqRep.response().get() instanceof EarlybirdResponse))) {
-      NOT_EARLYBIRD_RESPONSE_COUNTER.increment();
-      return false;
+    if (!weqwep.wesponse().isthwow() && (!(weqwep.wesponse().get() instanceof eawwybiwdwesponse))) {
+      n-nyot_eawwybiwd_wesponse_countew.incwement();
+      w-wetuwn fawse;
     }
 
-    return true;
+    wetuwn twue;
   }
 
-  @Override
-  public ResponseClass apply(ReqRep reqRep) {
-    Try<?> responseTry = reqRep.response();
-    if (responseTry.isThrow()) {
-      return DEFAULT_CLASSIFIER.apply(reqRep);
+  @ovewwide
+  p-pubwic wesponsecwass a-appwy(weqwep weqwep) {
+    t-twy<?> wesponsetwy = weqwep.wesponse();
+    i-if (wesponsetwy.isthwow()) {
+      wetuwn defauwt_cwassifiew.appwy(weqwep);
     }
 
-    // isDefinedAt() guarantees that the response is an EarlybirdResponse instance.
-    EarlybirdResponseCode responseCode = ((EarlybirdResponse) responseTry.get()).getResponseCode();
-    switch (responseCode) {
-      case PARTITION_NOT_FOUND:
-      case PARTITION_DISABLED:
-      case PERSISTENT_ERROR:
-        NON_RETRYABLE_FAILURE_COUNTER.increment();
-        return ResponseClasses.NON_RETRYABLE_FAILURE;
-      case TRANSIENT_ERROR:
-        RETRYABLE_FAILURE_COUNTER.increment();
-        return ResponseClasses.RETRYABLE_FAILURE;
-      default:
-        SUCCESS_COUNTER.increment();
-        return ResponseClasses.SUCCESS;
+    // isdefinedat() g-guawantees that the wesponse i-is an eawwybiwdwesponse instance. 😳
+    e-eawwybiwdwesponsecode w-wesponsecode = ((eawwybiwdwesponse) wesponsetwy.get()).getwesponsecode();
+    switch (wesponsecode) {
+      case pawtition_not_found:
+      case pawtition_disabwed:
+      case pewsistent_ewwow:
+        nyon_wetwyabwe_faiwuwe_countew.incwement();
+        w-wetuwn w-wesponsecwasses.non_wetwyabwe_faiwuwe;
+      case twansient_ewwow:
+        w-wetwyabwe_faiwuwe_countew.incwement();
+        w-wetuwn w-wesponsecwasses.wetwyabwe_faiwuwe;
+      defauwt:
+        success_countew.incwement();
+        wetuwn wesponsecwasses.success;
     }
   }
 }

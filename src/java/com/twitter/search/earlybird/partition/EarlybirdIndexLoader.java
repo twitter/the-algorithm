@@ -1,224 +1,224 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.time.Duration;
-import java.util.List;
-import java.util.Optional;
-import java.util.SortedMap;
+impowt java.io.buffewedinputstweam;
+i-impowt java.io.ioexception;
+i-impowt java.time.duwation;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.optionaw;
+i-impowt j-java.utiw.sowtedmap;
 
-import com.google.common.base.Stopwatch;
+i-impowt com.googwe.common.base.stopwatch;
 
-import org.apache.commons.compress.utils.Lists;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.compwess.utiws.wists;
+impowt owg.apache.hadoop.fs.fsdatainputstweam;
+impowt owg.apache.hadoop.fs.fiwesystem;
+i-impowt owg.apache.hadoop.fs.path;
+impowt o-owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.partitioning.base.TimeSlice;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.util.ActionLogger;
-import com.twitter.search.earlybird.util.ParallelUtil;
+i-impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.pawtitioning.base.timeswice;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+i-impowt c-com.twittew.seawch.eawwybiwd.common.nonpagingassewt;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsegmentfactowy;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.actionwoggew;
+impowt com.twittew.seawch.eawwybiwd.utiw.pawawwewutiw;
 
 /**
- * Loads an index from HDFS, if possible, or indexes all tweets from scratch using a
- * FreshStartupHandler.
+ * woads an index fwom hdfs, :3 if possibwe, ^^;; ow i-indexes aww tweets fwom scwatch u-using a
+ * fweshstawtuphandwew. rawr
  */
-public class EarlybirdIndexLoader {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdIndexLoader.class);
+p-pubwic cwass e-eawwybiwdindexwoadew {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(eawwybiwdindexwoadew.cwass);
 
-  public static final String ENV_FOR_TESTS = "test_env";
+  p-pubwic static finaw stwing env_fow_tests = "test_env";
 
-  // To determine whether we should or should not load the most recent index from HDFS if available.
-  public static final long INDEX_FRESHNESS_THRESHOLD_MILLIS = Duration.ofDays(1).toMillis();
+  // to detewmine whethew w-we shouwd ow shouwd nyot woad the most wecent index fwom hdfs if avaiwabwe. 😳😳😳
+  pubwic static f-finaw wong index_fweshness_thweshowd_miwwis = duwation.ofdays(1).tomiwwis();
 
-  private static final NonPagingAssert LOADING_TOO_MANY_NON_OPTIMIZED_SEGMENTS =
-          new NonPagingAssert("loading_too_many_non_optimized_segments");
+  p-pwivate static f-finaw nyonpagingassewt w-woading_too_many_non_optimized_segments =
+          nyew nyonpagingassewt("woading_too_many_non_optimized_segments");
 
-  private final FileSystem fileSystem;
-  private final Path indexPath;
-  private final PartitionConfig partitionConfig;
-  private final EarlybirdSegmentFactory earlybirdSegmentFactory;
-  private final SegmentSyncConfig segmentSyncConfig;
-  private final Clock clock;
-  // Aurora environment we're running in: "prod", "loadtest", "staging2" etc. etc
-  private final String environment;
+  pwivate finaw fiwesystem f-fiwesystem;
+  p-pwivate finaw path indexpath;
+  p-pwivate f-finaw pawtitionconfig pawtitionconfig;
+  p-pwivate finaw eawwybiwdsegmentfactowy eawwybiwdsegmentfactowy;
+  p-pwivate finaw segmentsyncconfig segmentsyncconfig;
+  pwivate f-finaw cwock cwock;
+  // auwowa e-enviwonment we'we wunning i-in: "pwod", (✿oωo) "woadtest", "staging2" e-etc. etc
+  pwivate finaw stwing enviwonment;
 
-  public EarlybirdIndexLoader(
-      FileSystem fileSystem,
-      String indexHDFSPath,
-      String environment,
-      PartitionConfig partitionConfig,
-      EarlybirdSegmentFactory earlybirdSegmentFactory,
-      SegmentSyncConfig segmentSyncConfig,
-      Clock clock
+  pubwic eawwybiwdindexwoadew(
+      fiwesystem fiwesystem, OwO
+      stwing indexhdfspath, ʘwʘ
+      stwing e-enviwonment, (ˆ ﻌ ˆ)♡
+      p-pawtitionconfig pawtitionconfig, (U ﹏ U)
+      e-eawwybiwdsegmentfactowy e-eawwybiwdsegmentfactowy, UwU
+      s-segmentsyncconfig segmentsyncconfig, XD
+      cwock cwock
   ) {
-    this.fileSystem = fileSystem;
-    this.partitionConfig = partitionConfig;
-    this.earlybirdSegmentFactory = earlybirdSegmentFactory;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.indexPath = EarlybirdIndexFlusher.buildPathToIndexes(indexHDFSPath, partitionConfig);
-    this.clock = clock;
-    this.environment = environment;
+    this.fiwesystem = f-fiwesystem;
+    this.pawtitionconfig = pawtitionconfig;
+    this.eawwybiwdsegmentfactowy = eawwybiwdsegmentfactowy;
+    t-this.segmentsyncconfig = segmentsyncconfig;
+    t-this.indexpath = e-eawwybiwdindexfwushew.buiwdpathtoindexes(indexhdfspath, ʘwʘ p-pawtitionconfig);
+    this.cwock = cwock;
+    t-this.enviwonment = e-enviwonment;
   }
 
   /**
-   * Tries to load an index from HDFS for this FlushVersion/Partition/Cluster. Returns an empty
-   * option if there is no index found.
+   * t-twies to w-woad an index fwom hdfs fow this fwushvewsion/pawtition/cwustew. rawr x3 w-wetuwns an empty
+   * o-option i-if thewe is nyo i-index found. ^^;;
    */
-  public Optional<EarlybirdIndex> loadIndex() {
-    try {
-      Optional<EarlybirdIndex> loadedIndex =
-          ActionLogger.call("Load index from HDFS.", this::loadFromHDFS);
+  p-pubwic optionaw<eawwybiwdindex> woadindex() {
+    twy {
+      optionaw<eawwybiwdindex> w-woadedindex =
+          actionwoggew.caww("woad index fwom hdfs.", ʘwʘ this::woadfwomhdfs);
 
-      if (loadedIndex.isPresent()) {
-        EarlybirdIndex index = loadedIndex.get();
-        int numOfNonOptimized = index.numOfNonOptimizedSegments();
-        if (numOfNonOptimized > EarlybirdIndex.MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS) {
-          // We should never have too many unoptimized segments. If this happens we likely have a
-          // bug somewhere that caused another Earlybird to flush too many unoptimized segments.
-          // Use NonPagingAssert to alert the oncall if this happens so they can look into it.
-          LOG.error("Found {} non-optimized segments when loading from disk!", numOfNonOptimized);
-          LOADING_TOO_MANY_NON_OPTIMIZED_SEGMENTS.assertFailed();
+      if (woadedindex.ispwesent()) {
+        eawwybiwdindex i-index = woadedindex.get();
+        int nyumofnonoptimized = index.numofnonoptimizedsegments();
+        if (numofnonoptimized > e-eawwybiwdindex.max_num_of_non_optimized_segments) {
+          // w-we shouwd nyevew h-have too many unoptimized segments. (U ﹏ U) i-if this happens we wikewy h-have a
+          // b-bug somewhewe that caused anothew eawwybiwd to fwush too many unoptimized segments. (˘ω˘)
+          // use nyonpagingassewt t-to awewt the oncaww if t-this happens so they can wook into i-it. (ꈍᴗꈍ)
+          w-wog.ewwow("found {} nyon-optimized segments when w-woading fwom d-disk!", /(^•ω•^) numofnonoptimized);
+          woading_too_many_non_optimized_segments.assewtfaiwed();
 
-          // If there are too many unoptimized segments, optimize the older ones until there are
-          // only MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS left in the unoptimized state. The segment info
-          // list is always in order, so we will never try to optimize the most recent segments
-          // here.
-          int numSegmentsToOptimize =
-              numOfNonOptimized - EarlybirdIndex.MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS;
-          LOG.info("Will try to optimize {} segments", numSegmentsToOptimize);
-          for (SegmentInfo segmentInfo : index.getSegmentInfoList()) {
-            if (numSegmentsToOptimize > 0 && !segmentInfo.isOptimized()) {
-              Stopwatch optimizationStopwatch = Stopwatch.createStarted();
-              LOG.info("Starting to optimize segment: {}", segmentInfo.getSegmentName());
-              segmentInfo.getIndexSegment().optimizeIndexes();
-              numSegmentsToOptimize--;
-              LOG.info("Optimization of segment {} finished in {}.",
-                  segmentInfo.getSegmentName(), optimizationStopwatch);
+          // i-if thewe a-awe too many unoptimized segments, >_< optimize the owdew ones untiw thewe awe
+          // o-onwy m-max_num_of_non_optimized_segments w-weft in the unoptimized state. σωσ t-the segment info
+          // w-wist is awways in owdew, ^^;; so we w-wiww nyevew twy to optimize the most wecent segments
+          // hewe. 😳
+          int nyumsegmentstooptimize =
+              n-nyumofnonoptimized - e-eawwybiwdindex.max_num_of_non_optimized_segments;
+          wog.info("wiww twy t-to optimize {} s-segments", >_< numsegmentstooptimize);
+          fow (segmentinfo segmentinfo : index.getsegmentinfowist()) {
+            i-if (numsegmentstooptimize > 0 && !segmentinfo.isoptimized()) {
+              stopwatch optimizationstopwatch = stopwatch.cweatestawted();
+              wog.info("stawting to optimize segment: {}", -.- s-segmentinfo.getsegmentname());
+              segmentinfo.getindexsegment().optimizeindexes();
+              nyumsegmentstooptimize--;
+              wog.info("optimization o-of segment {} f-finished in {}.",
+                  segmentinfo.getsegmentname(), optimizationstopwatch);
             }
           }
         }
 
-        int newNumOfNonOptimized = index.numOfNonOptimizedSegments();
-        LOG.info("Loaded {} segments. {} are unoptimized.",
-                index.getSegmentInfoList().size(),
-                newNumOfNonOptimized);
+        int nyewnumofnonoptimized = i-index.numofnonoptimizedsegments();
+        w-wog.info("woaded {} segments. UwU {} awe unoptimized.", :3
+                index.getsegmentinfowist().size(), σωσ
+                n-nyewnumofnonoptimized);
 
-        return loadedIndex;
+        wetuwn w-woadedindex;
       }
-    } catch (Throwable e) {
-      LOG.error("Error loading index from HDFS, will index from scratch.", e);
+    } catch (thwowabwe e) {
+      wog.ewwow("ewwow w-woading index fwom hdfs, >w< w-wiww index fwom s-scwatch.", (ˆ ﻌ ˆ)♡ e);
     }
 
-    return Optional.empty();
+    wetuwn o-optionaw.empty();
   }
 
-  private Optional<EarlybirdIndex> loadFromHDFS() throws Exception {
-    SortedMap<Long, Path> pathsByTime =
-        EarlybirdIndexFlusher.getIndexPathsByTime(indexPath, fileSystem);
+  pwivate o-optionaw<eawwybiwdindex> w-woadfwomhdfs() t-thwows exception {
+    s-sowtedmap<wong, ʘwʘ p-path> pathsbytime =
+        eawwybiwdindexfwushew.getindexpathsbytime(indexpath, :3 fiwesystem);
 
-    if (pathsByTime.isEmpty()) {
-      LOG.info("Could not load index from HDFS (path: {}), will index from scratch.", indexPath);
-      return Optional.empty();
+    if (pathsbytime.isempty()) {
+      w-wog.info("couwd n-nyot woad i-index fwom hdfs (path: {}), (˘ω˘) wiww index fwom scwatch.", 😳😳😳 indexpath);
+      w-wetuwn optionaw.empty();
     }
 
-    long mostRecentIndexTimeMillis = pathsByTime.lastKey();
-    Path mostRecentIndexPath = pathsByTime.get(mostRecentIndexTimeMillis);
+    w-wong mostwecentindextimemiwwis = p-pathsbytime.wastkey();
+    path mostwecentindexpath = pathsbytime.get(mostwecentindextimemiwwis);
 
-    if (clock.nowMillis() - mostRecentIndexTimeMillis > INDEX_FRESHNESS_THRESHOLD_MILLIS) {
-      LOG.info("Most recent index in HDFS (path: {}) is old, will do a fresh startup.",
-              mostRecentIndexPath);
-      return Optional.empty();
+    i-if (cwock.nowmiwwis() - m-mostwecentindextimemiwwis > i-index_fweshness_thweshowd_miwwis) {
+      w-wog.info("most wecent index i-in hdfs (path: {}) is owd, rawr x3 wiww do a fwesh stawtup.", (✿oωo)
+              mostwecentindexpath);
+      wetuwn optionaw.empty();
     }
 
-    EarlybirdIndex index = ActionLogger.call(
-        "loading index from " + mostRecentIndexPath,
-        () -> loadIndex(mostRecentIndexPath));
+    eawwybiwdindex i-index = actionwoggew.caww(
+        "woading index fwom " + m-mostwecentindexpath, (ˆ ﻌ ˆ)♡
+        () -> woadindex(mostwecentindexpath));
 
-    return Optional.of(index);
+    w-wetuwn optionaw.of(index);
   }
 
-  private EarlybirdIndex loadIndex(Path flushPath) throws Exception {
-    Path indexInfoPath = flushPath.suffix("/" + EarlybirdIndexFlusher.INDEX_INFO);
+  p-pwivate eawwybiwdindex w-woadindex(path f-fwushpath) thwows e-exception {
+    p-path indexinfopath = f-fwushpath.suffix("/" + eawwybiwdindexfwushew.index_info);
 
-    FlushInfo indexInfo;
-    try (FSDataInputStream infoInputStream = fileSystem.open(indexInfoPath)) {
-      indexInfo = FlushInfo.loadFromYaml(infoInputStream);
+    fwushinfo indexinfo;
+    twy (fsdatainputstweam infoinputstweam = fiwesystem.open(indexinfopath)) {
+      indexinfo = fwushinfo.woadfwomyamw(infoinputstweam);
     }
 
-    FlushInfo segmentsFlushInfo = indexInfo.getSubProperties(EarlybirdIndexFlusher.SEGMENTS);
-    List<String> segmentNames = Lists.newArrayList(segmentsFlushInfo.getKeyIterator());
+    f-fwushinfo segmentsfwushinfo = indexinfo.getsubpwopewties(eawwybiwdindexfwushew.segments);
+    wist<stwing> s-segmentnames = w-wists.newawwaywist(segmentsfwushinfo.getkeyitewatow());
 
-    // This should only happen if you're running in stagingN and loading a prod index through
-    // the read_index_from_prod_location flag. In this case, we point to a directory that has
-    // a lot more than the number of segments we want in staging and we trim this list to the
-    // desired number.
-    if (environment.matches("staging\\d")) {
-      if (segmentNames.size() > partitionConfig.getMaxEnabledLocalSegments()) {
-        LOG.info("Trimming list of loaded segments from size {} to size {}.",
-            segmentNames.size(), partitionConfig.getMaxEnabledLocalSegments());
-        segmentNames = segmentNames.subList(
-            segmentNames.size() - partitionConfig.getMaxEnabledLocalSegments(),
-            segmentNames.size());
+    // this s-shouwd onwy happen if you'we wunning in stagingn and woading a pwod i-index thwough
+    // t-the wead_index_fwom_pwod_wocation fwag. :3 i-in this case, (U ᵕ U❁) we point to a diwectowy that has
+    // a-a wot mowe t-than the nyumbew of segments we w-want in staging a-and we twim this wist to the
+    // desiwed nyumbew. ^^;;
+    if (enviwonment.matches("staging\\d")) {
+      if (segmentnames.size() > p-pawtitionconfig.getmaxenabwedwocawsegments()) {
+        w-wog.info("twimming wist o-of woaded segments f-fwom size {} t-to size {}.", mya
+            segmentnames.size(), 😳😳😳 p-pawtitionconfig.getmaxenabwedwocawsegments());
+        s-segmentnames = segmentnames.subwist(
+            s-segmentnames.size() - p-pawtitionconfig.getmaxenabwedwocawsegments(), OwO
+            segmentnames.size());
       }
     }
 
-    List<SegmentInfo> segmentInfoList = ParallelUtil.parmap("load-index", name -> {
-      FlushInfo subProperties = segmentsFlushInfo.getSubProperties(name);
-      long timesliceID = subProperties.getLongProperty(EarlybirdIndexFlusher.TIMESLICE_ID);
-      return ActionLogger.call(
-          "loading segment " + name,
-          () -> loadSegment(flushPath, name, timesliceID));
-    }, segmentNames);
+    w-wist<segmentinfo> segmentinfowist = pawawwewutiw.pawmap("woad-index", n-nyame -> {
+      fwushinfo s-subpwopewties = s-segmentsfwushinfo.getsubpwopewties(name);
+      wong timeswiceid = s-subpwopewties.getwongpwopewty(eawwybiwdindexfwushew.timeswice_id);
+      wetuwn actionwoggew.caww(
+          "woading segment " + n-nyame, rawr
+          () -> w-woadsegment(fwushpath, XD n-nyame, (U ﹏ U) timeswiceid));
+    }, (˘ω˘) segmentnames);
 
-    return new EarlybirdIndex(
-        segmentInfoList,
-        indexInfo.getLongProperty(EarlybirdIndexFlusher.TWEET_KAFKA_OFFSET),
-        indexInfo.getLongProperty(EarlybirdIndexFlusher.UPDATE_KAFKA_OFFSET));
+    wetuwn nyew eawwybiwdindex(
+        s-segmentinfowist, UwU
+        indexinfo.getwongpwopewty(eawwybiwdindexfwushew.tweet_kafka_offset), >_<
+        indexinfo.getwongpwopewty(eawwybiwdindexfwushew.update_kafka_offset));
   }
 
-  private SegmentInfo loadSegment(
-      Path flushPath,
-      String segmentName,
-      long timesliceID
-  ) throws IOException {
-    Path segmentPrefix = flushPath.suffix("/" + segmentName);
-    Path segmentPath = segmentPrefix.suffix(EarlybirdIndexFlusher.DATA_SUFFIX);
+  p-pwivate segmentinfo w-woadsegment(
+      path fwushpath, σωσ
+      s-stwing segmentname, 🥺
+      w-wong timeswiceid
+  ) t-thwows ioexception {
+    path segmentpwefix = f-fwushpath.suffix("/" + segmentname);
+    path segmentpath = s-segmentpwefix.suffix(eawwybiwdindexfwushew.data_suffix);
 
-    TimeSlice timeSlice = new TimeSlice(
-        timesliceID,
-        EarlybirdConfig.getMaxSegmentSize(),
-        partitionConfig.getIndexingHashPartitionID(),
-        partitionConfig.getNumPartitions());
+    t-timeswice timeswice = nyew t-timeswice(
+        timeswiceid, 🥺
+        e-eawwybiwdconfig.getmaxsegmentsize(), ʘwʘ
+        p-pawtitionconfig.getindexinghashpawtitionid(), :3
+        p-pawtitionconfig.getnumpawtitions());
 
-    SegmentInfo segmentInfo = new SegmentInfo(
-        timeSlice.getSegment(),
-        earlybirdSegmentFactory,
-        segmentSyncConfig);
+    segmentinfo segmentinfo = nyew segmentinfo(
+        timeswice.getsegment(), (U ﹏ U)
+        eawwybiwdsegmentfactowy,
+        segmentsyncconfig);
 
-    Path infoPath = segmentPrefix.suffix(EarlybirdIndexFlusher.INFO_SUFFIX);
-    FlushInfo flushInfo;
-    try (FSDataInputStream infoInputStream = fileSystem.open(infoPath)) {
-      flushInfo = FlushInfo.loadFromYaml(infoInputStream);
+    path infopath = segmentpwefix.suffix(eawwybiwdindexfwushew.info_suffix);
+    fwushinfo fwushinfo;
+    twy (fsdatainputstweam infoinputstweam = fiwesystem.open(infopath)) {
+      f-fwushinfo = f-fwushinfo.woadfwomyamw(infoinputstweam);
     }
 
-    FSDataInputStream inputStream = fileSystem.open(segmentPath);
+    fsdatainputstweam inputstweam = f-fiwesystem.open(segmentpath);
 
-    // It's significantly slower to read from the FSDataInputStream on demand, so we
-    // use a buffered reader to pre-read bigger chunks.
-    int bufferSize = 1 << 22; // 4MB
-    BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream, bufferSize);
+    // i-it's s-significantwy swowew to wead fwom t-the fsdatainputstweam on demand, (U ﹏ U) s-so we
+    // u-use a buffewed weadew to pwe-wead b-biggew chunks. ʘwʘ
+    int buffewsize = 1 << 22; // 4mb
+    b-buffewedinputstweam b-buffewedinputstweam = nyew buffewedinputstweam(inputstweam, >w< buffewsize);
 
-    DataDeserializer in = new DataDeserializer(bufferedInputStream, segmentName);
-    segmentInfo.getIndexSegment().load(in, flushInfo);
+    d-datadesewiawizew i-in = n-nyew datadesewiawizew(buffewedinputstweam, rawr x3 s-segmentname);
+    segmentinfo.getindexsegment().woad(in, OwO f-fwushinfo);
 
-    return segmentInfo;
+    w-wetuwn segmentinfo;
   }
 }

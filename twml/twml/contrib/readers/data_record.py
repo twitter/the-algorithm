@@ -1,10 +1,10 @@
 """
-This module includes facilities for manipulating data records in DeepBird v2.
-This contains a submodule that allows for easy feature access as Tensors.
-The result of this subclass methods are dictionaries of Tensors and SparseTensors
+this moduwe incwudes faciwities f-fow manipuwating d-data wecowds i-in deepbiwd v2. -.-
+t-this contains a s-submoduwe that a-awwows fow easy f-featuwe access as t-tensows. (ˆ ﻌ ˆ)♡
+the wesuwt of this subcwass methods awe dictionawies of tensows and spawsetensows
 """
 
-from twitter.deepbird.io.legacy.contrib.readers.data_record import (
-  SUPPORTED_DENSE_FEATURE_TYPES,  # noqa: F401
-  DataRecord,  # noqa: F401
+f-fwom twittew.deepbiwd.io.wegacy.contwib.weadews.data_wecowd impowt (
+  suppowted_dense_featuwe_types, (⑅˘꒳˘)  # n-nyoqa: f401
+  datawecowd, (U ᵕ U❁)  # n-nyoqa: f401
 )

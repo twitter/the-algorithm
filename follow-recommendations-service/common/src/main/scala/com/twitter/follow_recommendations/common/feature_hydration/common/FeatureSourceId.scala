@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.feature_hydration.common
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common
 
-sealed trait FeatureSourceId
+seawed t-twait featuwesouwceid
 
-object FeatureSourceId {
-  object CandidateAlgorithmSourceId extends FeatureSourceId
-  object ClientContextSourceId extends FeatureSourceId
-  object FeatureStoreSourceId extends FeatureSourceId
-  object FeatureStoreTimelinesAuthorSourceId extends FeatureSourceId
-  object FeatureStoreGizmoduckSourceId extends FeatureSourceId
-  object FeatureStoreUserMetricCountsSourceId extends FeatureSourceId
-  object FeatureStoreNotificationSourceId extends FeatureSourceId
+o-object f-featuwesouwceid {
+  o-object candidateawgowithmsouwceid e-extends featuwesouwceid
+  o-object cwientcontextsouwceid e-extends f-featuwesouwceid
+  object featuwestowesouwceid extends featuwesouwceid
+  object featuwestowetimewinesauthowsouwceid e-extends featuwesouwceid
+  object featuwestowegizmoducksouwceid e-extends featuwesouwceid
+  object featuwestoweusewmetwiccountssouwceid e-extends featuwesouwceid
+  object featuwestowenotificationsouwceid extends featuwesouwceid
 
-  object FeatureStorePrecomputedNotificationSourceId extends FeatureSourceId
-  object FeatureStorePostNuxAlgorithmSourceId extends FeatureSourceId
-  @deprecated object StratoFeatureHydrationSourceId extends FeatureSourceId
-  object PreFetchedFeatureSourceId extends FeatureSourceId
-  object UserScoringFeatureSourceId extends FeatureSourceId
+  o-object featuwestowepwecomputednotificationsouwceid e-extends f-featuwesouwceid
+  object featuwestowepostnuxawgowithmsouwceid extends featuwesouwceid
+  @depwecated object stwatofeatuwehydwationsouwceid extends f-featuwesouwceid
+  object pwefetchedfeatuwesouwceid extends featuwesouwceid
+  o-object usewscowingfeatuwesouwceid extends featuwesouwceid
 }

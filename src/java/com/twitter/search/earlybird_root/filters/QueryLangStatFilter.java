@@ -1,114 +1,114 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+impowt java.utiw.map;
+i-impowt j-java.utiw.concuwwent.concuwwenthashmap;
+i-impowt javax.inject.inject;
+i-impowt javax.inject.singweton;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+i-impowt com.twittew.common.text.wanguage.wocaweutiw;
+impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.utiw.wang.thwiftwanguageutiw;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt c-com.twittew.utiw.futuwe;
 
 /**
- * Export stats for query languages.
+ * expowt stats f-fow quewy wanguages. ( ͡o ω ͡o )
  */
-@Singleton
-public class QueryLangStatFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+@singweton
+p-pubwic cwass quewywangstatfiwtew
+    extends simpwefiwtew<eawwybiwdwequestcontext, >_< eawwybiwdwesponse> {
 
-  public static class Config {
-    // We put a limit here in case an error in the client are sending us random lang codes.
-    private int maxNumberOfLangs;
+  p-pubwic static cwass config {
+    // we put a wimit hewe in case an ewwow in the c-cwient awe sending us wandom wang c-codes. >w<
+    pwivate i-int maxnumbewofwangs;
 
-    public Config(int maxNumberOfLangs) {
-      this.maxNumberOfLangs = maxNumberOfLangs;
+    p-pubwic config(int m-maxnumbewofwangs) {
+      this.maxnumbewofwangs = maxnumbewofwangs;
     }
 
-    public int getMaxNumberOfLangs() {
-      return maxNumberOfLangs;
+    p-pubwic int getmaxnumbewofwangs() {
+      wetuwn maxnumbewofwangs;
     }
   }
 
-  @VisibleForTesting
-  protected static final String LANG_STATS_PREFIX = "num_queries_in_lang_";
+  @visibwefowtesting
+  p-pwotected static finaw stwing wang_stats_pwefix = "num_quewies_in_wang_";
 
-  private final Config config;
-  private final SearchCounter allCountsForLangsOverMaxNumLang =
-      SearchCounter.export(LANG_STATS_PREFIX + "overflow");
+  pwivate finaw config config;
+  pwivate finaw s-seawchcountew awwcountsfowwangsovewmaxnumwang =
+      seawchcountew.expowt(wang_stats_pwefix + "ovewfwow");
 
-  private final ConcurrentHashMap<String, SearchCounter> langCounters =
-      new ConcurrentHashMap<>();
+  pwivate f-finaw concuwwenthashmap<stwing, rawr s-seawchcountew> w-wangcountews =
+      nyew concuwwenthashmap<>();
 
-  @Inject
-  public QueryLangStatFilter(Config config) {
-    this.config = config;
+  @inject
+  pubwic quewywangstatfiwtew(config c-config) {
+    t-this.config = config;
   }
 
-  private SearchCounter getCounter(String lang) {
-    Preconditions.checkNotNull(lang);
+  p-pwivate seawchcountew g-getcountew(stwing wang) {
+    p-pweconditions.checknotnuww(wang);
 
-    SearchCounter counter = langCounters.get(lang);
-    if (counter == null) {
-      if (langCounters.size() >= config.getMaxNumberOfLangs()) {
-        return allCountsForLangsOverMaxNumLang;
+    seawchcountew c-countew = wangcountews.get(wang);
+    if (countew == nyuww) {
+      i-if (wangcountews.size() >= config.getmaxnumbewofwangs()) {
+        w-wetuwn awwcountsfowwangsovewmaxnumwang;
       }
-      synchronized (langCounters) { // This double-checked locking is safe,
-                                    // since we're using a ConcurrentHashMap
-        counter = langCounters.get(lang);
-        if (counter == null) {
-          counter = SearchCounter.export(LANG_STATS_PREFIX + lang);
-          langCounters.put(lang, counter);
+      synchwonized (wangcountews) { // t-this doubwe-checked w-wocking is safe, 😳
+                                    // since we'we using a concuwwenthashmap
+        countew = wangcountews.get(wang);
+        if (countew == nyuww) {
+          c-countew = s-seawchcountew.expowt(wang_stats_pwefix + wang);
+          w-wangcountews.put(wang, >w< c-countew);
         }
       }
     }
 
-    return counter;
+    w-wetuwn countew;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> appwy(
+      eawwybiwdwequestcontext w-wequestcontext, (⑅˘꒳˘)
+      sewvice<eawwybiwdwequestcontext, OwO eawwybiwdwesponse> sewvice) {
 
-    String lang = null;
+    stwing wang = nyuww;
 
-    ThriftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
+    thwiftseawchquewy seawchquewy = w-wequestcontext.getwequest().getseawchquewy();
 
-    lang = searchQuery.getQueryLang();
+    wang = seawchquewy.getquewywang();
 
-    if (lang == null) {
-      // fallback to ui lang
-      lang = searchQuery.getUiLang();
+    i-if (wang == n-nyuww) {
+      // f-fawwback to ui wang
+      w-wang = seawchquewy.getuiwang();
     }
 
-    if (lang == null && searchQuery.isSetUserLangs()) {
-      // fallback to the user lang with the highest confidence
-      double maxConfidence = Double.MIN_VALUE;
+    i-if (wang == n-nyuww && s-seawchquewy.issetusewwangs()) {
+      // fawwback to the usew wang w-with the highest c-confidence
+      d-doubwe maxconfidence = d-doubwe.min_vawue;
 
-      for (Map.Entry<ThriftLanguage, Double> entry : searchQuery.getUserLangs().entrySet()) {
-        if (entry.getValue() > maxConfidence) {
-          lang = ThriftLanguageUtil.getLanguageCodeOf(entry.getKey());
-          maxConfidence = entry.getValue();
+      f-fow (map.entwy<thwiftwanguage, (ꈍᴗꈍ) doubwe> entwy : seawchquewy.getusewwangs().entwyset()) {
+        if (entwy.getvawue() > m-maxconfidence) {
+          wang = thwiftwanguageutiw.getwanguagecodeof(entwy.getkey());
+          maxconfidence = entwy.getvawue();
         }
       }
     }
 
-    if (lang == null) {
-      lang = LocaleUtil.UNDETERMINED_LANGUAGE;
+    if (wang == nyuww) {
+      w-wang = wocaweutiw.undetewmined_wanguage;
     }
 
-    getCounter(lang).increment();
+    getcountew(wang).incwement();
 
-    return service.apply(requestContext);
+    wetuwn sewvice.appwy(wequestcontext);
   }
 }

@@ -1,91 +1,91 @@
-package com.twitter.tweetypie
-package service
+package com.twittew.tweetypie
+package s-sewvice
 
 /**
- * An authorizer for determining if a request to a
- * method should be rejected.
+ * a-an authowizew f-fow detewmining i-if a wequest t-to a
+ * method shouwd b-be wejected. ^^;;
  *
- * This class is in the spirit of servo.request.ClientRequestAuthorizer.
- * The difference is ClientRequestAuthorizer only operates
- * on two pieces of information, clientId and a method name.
+ * t-this cwass i-is in the spiwit of sewvo.wequest.cwientwequestauthowizew. 🥺
+ * the diffewence is cwientwequestauthowizew onwy o-opewates
+ * on two pieces of infowmation, (⑅˘꒳˘) cwientid a-and a method nyame. nyaa~~
  *
- * This class can be used to create a more complex authorizer that
- * operates on the specifics of a request. e.g, an
- * authorizer that disallows certain clients from passing
- * certain optional flags.
+ * this c-cwass can be used to cweate a mowe compwex authowizew that
+ * o-opewates on the specifics of a w-wequest. :3 e.g, an
+ * a-authowizew that disawwows cewtain cwients fwom passing
+ * cewtain optionaw fwags. ( ͡o ω ͡o )
  *
- * Note: With some work, ClientRequestAuthorizer could be
- * generalized to support cases like this. If we end up making
- * more method authorizers it might be worth it to
- * go that route.
+ * n-nyote: with some wowk, mya cwientwequestauthowizew couwd be
+ * genewawized t-to suppowt cases wike this. (///ˬ///✿) if w-we end up making
+ * m-mowe method a-authowizews it m-might be wowth it to
+ * go that woute.
  */
-abstract class MethodAuthorizer[T]() {
-  def apply(request: T, clientId: String): Future[Unit]
+abstwact c-cwass methodauthowizew[t]() {
+  def appwy(wequest: t, (˘ω˘) cwientid: s-stwing): futuwe[unit]
 
   /**
-   * Created decidered MethodAuthorizer
-   * if the decider is off it will execute
-   * MethodAuthorizer.unit, which always succeeds.
+   * cweated decidewed methodauthowizew
+   * if the decidew is off it wiww exekawaii~
+   * methodauthowizew.unit, w-which awways succeeds. ^^;;
    */
-  def enabledBy(decider: Gate[Unit]): MethodAuthorizer[T] =
-    MethodAuthorizer.select(decider, this, MethodAuthorizer.unit)
+  d-def enabwedby(decidew: g-gate[unit]): m-methodauthowizew[t] =
+    methodauthowizew.sewect(decidew, (✿oωo) this, methodauthowizew.unit)
 
   /**
-   * Transform this MethodAuthorizer[T] into a MethodAuthorizer[A]
-   * by providing a function from A => T
+   * twansfowm t-this methodauthowizew[t] i-into a methodauthowizew[a]
+   * b-by p-pwoviding a function fwom a => t-t
    */
-  def contramap[A](f: A => T): MethodAuthorizer[A] =
-    MethodAuthorizer[A] { (request, clientId) => this(f(request), clientId) }
+  def contwamap[a](f: a => t-t): methodauthowizew[a] =
+    methodauthowizew[a] { (wequest, (U ﹏ U) cwientid) => this(f(wequest), -.- cwientid) }
 }
 
-object MethodAuthorizer {
+o-object methodauthowizew {
 
   /**
-   * @param f an authorization function that returns
-   * Future.Unit if the request is authorized, and Future.exception()
-   * if the request is not authorized.
+   * @pawam f-f an authowization function t-that wetuwns
+   * f-futuwe.unit if the wequest is authowized, ^•ﻌ•^ and futuwe.exception()
+   * if the wequest is not authowized. rawr
    *
-   * @return An instance of MethodAuthorizer with an apply method
-   * that returns f
+   * @wetuwn an instance of m-methodauthowizew w-with an appwy method
+   * that w-wetuwns f
    */
-  def apply[T](f: (T, String) => Future[Unit]): MethodAuthorizer[T] =
-    new MethodAuthorizer[T]() {
-      def apply(request: T, clientId: String): Future[Unit] = f(request, clientId)
+  d-def appwy[t](f: (t, (˘ω˘) s-stwing) => futuwe[unit]): methodauthowizew[t] =
+    nyew m-methodauthowizew[t]() {
+      def appwy(wequest: t, nyaa~~ cwientid: stwing): futuwe[unit] = f(wequest, UwU c-cwientid)
     }
 
   /**
-   * @param authorizers A seq of MethodAuthorizers to be
-   * composed into one.
-   * @return A MethodAuthorizer that sequentially executes
-   * all of the authorizers
+   * @pawam authowizews a-a seq of methodauthowizews t-to be
+   * c-composed into one. :3
+   * @wetuwn a-a methodauthowizew t-that sequentiawwy e-exekawaii~s
+   * a-aww of the authowizews
    */
-  def all[T](authorizers: Seq[MethodAuthorizer[T]]): MethodAuthorizer[T] =
-    MethodAuthorizer { (request, clientId) =>
-      authorizers.foldLeft(Future.Unit) {
-        case (f, authorize) => f.before(authorize(request, clientId))
+  def a-aww[t](authowizews: s-seq[methodauthowizew[t]]): methodauthowizew[t] =
+    m-methodauthowizew { (wequest, c-cwientid) =>
+      a-authowizews.fowdweft(futuwe.unit) {
+        case (f, (⑅˘꒳˘) authowize) => f.befowe(authowize(wequest, (///ˬ///✿) cwientid))
       }
     }
 
   /**
-   * @return A MethodAuthorizer that always returns Future.Unit
-   * Useful if you need to decider off your MethodAuthorizer
-   * and replace it with one that always passes.
+   * @wetuwn a-a methodauthowizew that awways wetuwns futuwe.unit
+   * usefuw if you nyeed to decidew off y-youw methodauthowizew
+   * and wepwace it with one that awways passes. ^^;;
    */
-  def unit[T]: MethodAuthorizer[T] = MethodAuthorizer { (request, client) => Future.Unit }
+  def u-unit[t]: methodauthowizew[t] = m-methodauthowizew { (wequest, >_< cwient) => f-futuwe.unit }
 
   /**
-   * @return A MethodAuthorizer that switches between two provided
-   * MethodAuthorizers depending on a decider.
+   * @wetuwn a methodauthowizew that s-switches between two pwovided
+   * m-methodauthowizews d-depending on a decidew. rawr x3
    */
-  def select[T](
-    decider: Gate[Unit],
-    ifTrue: MethodAuthorizer[T],
-    ifFalse: MethodAuthorizer[T]
-  ): MethodAuthorizer[T] =
-    MethodAuthorizer { (request, client) =>
-      decider.pick(
-        ifTrue(request, client),
-        ifFalse(request, client)
+  def sewect[t](
+    decidew: gate[unit], /(^•ω•^)
+    iftwue: methodauthowizew[t],
+    i-iffawse: methodauthowizew[t]
+  ): methodauthowizew[t] =
+    m-methodauthowizew { (wequest, :3 cwient) =>
+      decidew.pick(
+        i-iftwue(wequest, (ꈍᴗꈍ) c-cwient), /(^•ω•^)
+        iffawse(wequest, (⑅˘꒳˘) cwient)
       )
     }
 }

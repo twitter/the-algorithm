@@ -1,6 +1,6 @@
-package com.twitter.home_mixer.product.scored_tweets.model
+package com.twittew.home_mixew.pwoduct.scowed_tweets.modew
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
 
-case class ScoredTweetsResponse(scoredTweets: Seq[CandidateWithDetails]) extends HasMarshalling
+c-case cwass s-scowedtweetswesponse(scowedtweets: s-seq[candidatewithdetaiws]) e-extends hasmawshawwing

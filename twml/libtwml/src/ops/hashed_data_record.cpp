@@ -1,520 +1,520 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
+#incwude "wesouwce_utiws.h"
 
-#include <functional>
+#incwude <functionaw>
 
-REGISTER_OP("DecodeAndHashDataRecord")
-.Attr("InputType: {uint8, string}")
-.Input("input_bytes: InputType")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("label_features: list(int)")
-.Attr("weight_features: list(int) = []")
-.Attr("decode_mode: int = 0")
-.Output("hashed_data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
-.Doc(R"doc(
-A tensorflow OP that creates a handle for the hashed data record.
+wegistew_op("decodeandhashdatawecowd")
+.attw("inputtype: {uint8, rawr stwing}")
+.input("input_bytes: i-inputtype")
+.attw("keep_featuwes: w-wist(int)")
+.attw("keep_codes: w-wist(int)")
+.attw("wabew_featuwes: w-wist(int)")
+.attw("weight_featuwes: w-wist(int) = []")
+.attw("decode_mode: i-int = 0")
+.output("hashed_data_wecowd_handwe: w-wesouwce")
+.setshapefn(shape_infewence::scawawshape)
+.doc(w"doc(
+a-a tensowfwow op that cweates a handwe fow the hashed data wecowd. (ˆ ﻌ ˆ)♡
 
-Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  label_features: list of feature ids representing the labels.
-  weight_features: list of feature ids representing the weights. Defaults to empty list.
-  decode_mode: integer, indicates which decoding method to use. Let a sparse continuous
-    have a feature_name and a dict of {name: value}. 0 indicates feature_ids are computed
-    as hash(name). 1 indicates feature_ids are computed as hash(feature_name, name)
-  shared_name: name used by the resource handle inside the resource manager.
-  container: name used by the container of the resources.
+attw
+  keep_featuwes: a-a wist of int ids to keep. XD
+  keep_codes: t-theiw cowwesponding code. >_<
+  w-wabew_featuwes: wist of featuwe ids wepwesenting the wabews. (˘ω˘)
+  weight_featuwes: w-wist of featuwe ids wepwesenting t-the weights. 😳 defauwts t-to empty wist. o.O
+  decode_mode: integew, (ꈍᴗꈍ) indicates which decoding method to u-use. rawr x3 wet a spawse continuous
+    have a featuwe_name and a dict of {name: vawue}. ^^ 0 i-indicates featuwe_ids awe computed
+    a-as hash(name). OwO 1 i-indicates f-featuwe_ids a-awe computed as hash(featuwe_name, ^^ nyame)
+  shawed_name: n-nyame used by the wesouwce handwe inside t-the wesouwce managew. :3
+  containew: nyame used by the containew of the wesouwces. o.O
 
-Input
-  input_bytes: Input tensor containing the serialized batch of HashedDataRecords.
+input
+  input_bytes: i-input tensow containing t-the sewiawized b-batch of hasheddatawecowds. -.-
 
-Outputs
-  hashed_data_record_handle: A resource handle to batch of HashedDataRecords.
+o-outputs
+  hashed_data_wecowd_handwe: a wesouwce handwe to batch of hasheddatawecowds. (U ﹏ U)
 )doc");
 
-template<typename InputType>
-class DecodeAndHashDataRecord : public OpKernel {
- public:
-  explicit DecodeAndHashDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+tempwate<typename i-inputtype>
+cwass d-decodeandhashdatawecowd : pubwic o-opkewnew {
+ pubwic:
+  e-expwicit decodeandhashdatawecowd(opkewnewconstwuction* c-context)
+      : opkewnew(context) {
+    s-std::vectow<int64> keep_featuwes;
+    std::vectow<int64> keep_codes;
 
-    std::vector<int64> label_features;
-    std::vector<int64> weight_features;
+    s-std::vectow<int64> wabew_featuwes;
+    s-std::vectow<int64> weight_featuwes;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("label_features", &label_features));
-    OP_REQUIRES_OK(context, context->GetAttr("weight_features", &weight_features));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    o-op_wequiwes_ok(context, o.O c-context->getattw("keep_featuwes", OwO &keep_featuwes));
+    op_wequiwes_ok(context, ^•ﻌ•^ context->getattw("keep_codes", ʘwʘ &keep_codes));
+    op_wequiwes_ok(context, :3 context->getattw("wabew_featuwes", &wabew_featuwes));
+    op_wequiwes_ok(context, 😳 context->getattw("weight_featuwes", òωó &weight_featuwes));
+    op_wequiwes_ok(context, 🥺 c-context->getattw("decode_mode", rawr x3 &m_decode_mode));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    o-op_wequiwes(context, ^•ﻌ•^ keep_featuwes.size() == keep_codes.size(), :3
+                e-ewwows::invawidawgument("keep k-keys and vawues m-must have same size."));
 
-#ifdef USE_DENSE_HASH
+#ifdef use_dense_hash
     m_keep_map.set_empty_key(0);
-    m_labels_map.set_empty_key(0);
-    m_weights_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+    m_wabews_map.set_empty_key(0);
+    m-m_weights_map.set_empty_key(0);
+#endif  // use_dense_hash
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    fow (uint64_t i = 0; i < keep_featuwes.size(); i-i++) {
+      m_keep_map[keep_featuwes[i]] = k-keep_codes[i];
     }
 
-    for (uint64_t i = 0; i < label_features.size(); i++) {
-      m_labels_map[label_features[i]] = i;
+    f-fow (uint64_t i-i = 0; i < wabew_featuwes.size(); i-i++) {
+      m-m_wabews_map[wabew_featuwes[i]] = i-i;
     }
 
-    for (uint64_t i = 0; i < weight_features.size(); i++) {
-      m_weights_map[weight_features[i]] = i;
+    f-fow (uint64_t i = 0; i < weight_featuwes.size(); i-i++) {
+      m-m_weights_map[weight_featuwes[i]] = i-i;
     }
   }
 
- private:
-  twml::Map<int64_t, int64_t> m_keep_map;
-  twml::Map<int64_t, int64_t> m_labels_map;
-  twml::Map<int64_t, int64_t> m_weights_map;
+ p-pwivate:
+  t-twmw::map<int64_t, (ˆ ﻌ ˆ)♡ int64_t> m_keep_map;
+  twmw::map<int64_t, int64_t> m_wabews_map;
+  t-twmw::map<int64_t, (U ᵕ U❁) int64_t> m_weights_map;
   int64 m_decode_mode;
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      HashedDataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<HashedDataRecordResource>(context, 0, &resource));
+  void compute(opkewnewcontext* context) o-ovewwide {
+    twy {
+      hasheddatawecowdwesouwce *wesouwce = nyuwwptw;
+      o-op_wequiwes_ok(context, :3 makewesouwcehandwe<hasheddatawecowdwesouwce>(context, ^^;; 0, &wesouwce));
 
-      // Store the input bytes in the resource so it isnt freed before the resource.
-      // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
-      int batch_size = getBatchSize<InputType>(resource->input);
-      int num_labels = static_cast<int>(m_labels_map.size());
-      int num_weights = static_cast<int>(m_weights_map.size());
+      // stowe t-the input bytes i-in the wesouwce so it isnt f-fweed befowe the wesouwce. ( ͡o ω ͡o )
+      // t-this is nyecessawy b-because we awe nyot copying the contents fow tensows. o.O
+      wesouwce->input = context->input(0);
+      i-int batch_size = getbatchsize<inputtype>(wesouwce->input);
+      int n-nyum_wabews = static_cast<int>(m_wabews_map.size());
+      i-int n-nyum_weights = static_cast<int>(m_weights_map.size());
 
-      twml::HashedDataRecordReader reader;
-      reader.setKeepMap(&m_keep_map);
-      reader.setLabelsMap(&m_labels_map);
-      reader.setDecodeMode(m_decode_mode);
+      twmw::hasheddatawecowdweadew w-weadew;
+      w-weadew.setkeepmap(&m_keep_map);
+      weadew.setwabewsmap(&m_wabews_map);
+      w-weadew.setdecodemode(m_decode_mode);
 
-      // Do not set weight map if it is empty. This will take a faster path.
-      if (num_weights != 0) {
-        reader.setWeightsMap(&m_weights_map);
+      // d-do nyot set weight map if it is empty. ^•ﻌ•^ this wiww take a fastew path. XD
+      i-if (num_weights != 0) {
+        w-weadew.setweightsmap(&m_weights_map);
       }
 
-      resource->records.clear();
-      resource->records.reserve(batch_size);
+      w-wesouwce->wecowds.cweaw();
+      wesouwce->wecowds.wesewve(batch_size);
 
-      int64 total_size = 0;
+      i-int64 totaw_size = 0;
 
-      for (int id = 0; id < batch_size; id++) {
-        const uint8_t *input_bytes = getInputBytes<InputType>(resource->input, id);
-        reader.setBuffer(input_bytes);
-        resource->records.emplace_back(num_labels, num_weights);
-        resource->records[id].decode(reader);
-        total_size += static_cast<int64>(resource->records[id].totalSize());
+      f-fow (int id = 0; id < batch_size; i-id++) {
+        const uint8_t *input_bytes = getinputbytes<inputtype>(wesouwce->input, ^^ id);
+        weadew.setbuffew(input_bytes);
+        wesouwce->wecowds.empwace_back(num_wabews, o.O n-nyum_weights);
+        w-wesouwce->wecowds[id].decode(weadew);
+        totaw_size += static_cast<int64>(wesouwce->wecowds[id].totawsize());
       }
 
-      resource->total_size = total_size;
-      resource->num_labels = num_labels;
-      resource->num_weights = num_weights;
+      w-wesouwce->totaw_size = t-totaw_size;
+      wesouwce->num_wabews = nyum_wabews;
+      wesouwce->num_weights = n-nyum_weights;
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetIdsFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("ids: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns unhashed ids from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+wegistew_op("getidsfwomhasheddatawecowd")
+.input("hashed_data_wecowd_handwe: wesouwce")
+.output("ids: i-int64")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow o-op that wetuwns unhashed ids fwom the hashed data wecowd. ( ͡o ω ͡o )
+i-input
+  hashed_data_wecowd_handwe: w-wesouwce handwe to datawecowd
 
-Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
+outputs
+  ids: ids specifies t-the index of the wecowds[id] in t-the batch (int64)
 )doc");
 
-// This Kernel is used for both training and serving once the resource is created.
-class GetIdsFromHashedDataRecord : public OpKernel {
- public:
-  explicit GetIdsFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+// this kewnew is used fow both twaining and sewving o-once the wesouwce is cweated. /(^•ω•^)
+cwass g-getidsfwomhasheddatawecowd : p-pubwic opkewnew {
+ pubwic:
+  expwicit g-getidsfwomhasheddatawecowd(opkewnewconstwuction* context)
+      : o-opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const auto &common = handle->common;
-      const int64 common_size = static_cast<int64>(common.totalSize());
-      const int64 total_size = handle->total_size;
-      TensorShape shape = {total_size};
+  v-void compute(opkewnewcontext* c-context) ovewwide {
+    twy {
+      a-auto handwe = g-gethandwe<hasheddatawecowdwesouwce>(context, 🥺 0);
+      const auto &wecowds = handwe->wecowds;
+      const auto &common = h-handwe->common;
+      c-const int64 common_size = s-static_cast<int64>(common.totawsize());
+      const int64 totaw_size = h-handwe->totaw_size;
+      tensowshape s-shape = {totaw_size};
 
-      Tensor *ids;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
+      t-tensow *ids;
+      op_wequiwes_ok(context, context->awwocate_output(0, nyaa~~ shape, mya &ids));
 
-      int id = 0;
-      int64 offset = 0;
-      auto ids_flat = ids->flat<int64>();
-      for (const auto &record : records) {
-        // Since common features are added to each input, add the common_size to the current size.
-        // For training common_size == 0, for serving it can be a non-zero value.
-        int64 curr_size = static_cast<int64>(record.totalSize()) + common_size;
-        std::fill(ids_flat.data() + offset, ids_flat.data() + offset + curr_size, id);
-        offset += curr_size;
+      i-int id = 0;
+      i-int64 offset = 0;
+      a-auto i-ids_fwat = ids->fwat<int64>();
+      fow (const a-auto &wecowd : wecowds) {
+        // since common featuwes awe added to each input, XD add the common_size t-to the cuwwent size. nyaa~~
+        // f-fow twaining common_size == 0, ʘwʘ f-fow sewving it can be a n-nyon-zewo vawue. (⑅˘꒳˘)
+        int64 cuww_size = s-static_cast<int64>(wecowd.totawsize()) + c-common_size;
+        s-std::fiww(ids_fwat.data() + o-offset, :3 ids_fwat.data() + offset + c-cuww_size, -.- id);
+        offset += cuww_size;
         id++;
       }
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
 
-// OutType: Output Tensor Type. FieldType: The storage type used inside HashedDatarecord.
-template<typename OutType, typename FieldType>
-class GetOutputFromHashedDataRecord : public OpKernel {
- protected:
-  using Getter = std::function<const std::vector<FieldType>&(const twml::HashedDataRecord &)>;
-  Getter getter;
+// outtype: o-output tensow t-type. 😳😳😳 fiewdtype: t-the stowage type used inside h-hasheddatawecowd. (U ﹏ U)
+tempwate<typename outtype, o.O typename fiewdtype>
+c-cwass getoutputfwomhasheddatawecowd : p-pubwic opkewnew {
+ pwotected:
+  u-using gettew = std::function<const std::vectow<fiewdtype>&(const t-twmw::hasheddatawecowd &)>;
+  g-gettew gettew;
 
- public:
-  explicit GetOutputFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+ pubwic:
+  e-expwicit getoutputfwomhasheddatawecowd(opkewnewconstwuction* c-context)
+      : opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const auto &common = handle->common;
-      const int64 total_size = handle->total_size;
-      TensorShape shape = {total_size};
+  void compute(opkewnewcontext* context) ovewwide {
+    t-twy {
+      auto h-handwe = gethandwe<hasheddatawecowdwesouwce>(context, ( ͡o ω ͡o ) 0);
+      c-const auto &wecowds = h-handwe->wecowds;
+      c-const auto &common = h-handwe->common;
+      c-const int64 totaw_size = h-handwe->totaw_size;
+      t-tensowshape shape = {totaw_size};
 
-      Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &output));
+      t-tensow *output;
+      op_wequiwes_ok(context, òωó context->awwocate_output(0, 🥺 shape, &output));
 
-      const auto &common_output = getter(common);
+      c-const auto &common_output = gettew(common);
 
-      auto output_data = output->flat<OutType>().data();
-      for (const auto &record : records) {
-        // This is does not copy anything during training as common_size == 0
-        // It will copy the relevant common features coming from a batch prediction request.
-        output_data = std::copy(common_output.begin(), common_output.end(), output_data);
+      a-auto o-output_data = output->fwat<outtype>().data();
+      fow (const auto &wecowd : w-wecowds) {
+        // this is does nyot copy anything d-duwing twaining a-as common_size == 0
+        // i-it wiww copy the wewevant common featuwes coming fwom a batch p-pwediction wequest. /(^•ω•^)
+        output_data = std::copy(common_output.begin(), 😳😳😳 c-common_output.end(), ^•ﻌ•^ o-output_data);
 
-        // Copy the current record to output.
-        const auto& rec_output = getter(record);
-        output_data = std::copy(rec_output.begin(), rec_output.end(), output_data);
+        // copy t-the cuwwent wecowd to output. nyaa~~
+        c-const auto& w-wec_output = gettew(wecowd);
+        output_data = std::copy(wec_output.begin(), OwO w-wec_output.end(), ^•ﻌ•^ output_data);
       }
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetUKeysFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("ukeys: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns unhashed keys from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+w-wegistew_op("getukeysfwomhasheddatawecowd")
+.input("hashed_data_wecowd_handwe: wesouwce")
+.output("ukeys: i-int64")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    w-wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow o-op that wetuwns unhashed keys fwom the hashed data wecowd.
+input
+  hashed_data_wecowd_handwe: wesouwce handwe to datawecowd
 
-Outputs
-  ukeys: unhased keys / raw feature ids from the original request.
+outputs
+  ukeys: unhased keys / waw featuwe ids fwom the owiginaw wequest. σωσ
 )doc");
 
-class GetUKeysFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, int64_t> {
- public:
-  explicit GetUKeysFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int64, int64_t>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<int64_t> & {
-      return record.keys();
+cwass getukeysfwomhasheddatawecowd : p-pubwic g-getoutputfwomhasheddatawecowd<int64, -.- int64_t> {
+ pubwic:
+  expwicit g-getukeysfwomhasheddatawecowd(opkewnewconstwuction* c-context)
+      : g-getoutputfwomhasheddatawecowd<int64, (˘ω˘) int64_t>(context){
+    g-gettew = [](const twmw::hasheddatawecowd &wecowd) -> c-const s-std::vectow<int64_t> & {
+      wetuwn wecowd.keys();
     };
   }
 };
 
-REGISTER_OP("GetKeysFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("keys: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns keys from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+w-wegistew_op("getkeysfwomhasheddatawecowd")
+.input("hashed_data_wecowd_handwe: wesouwce")
+.output("keys: int64")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    w-wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow op that wetuwns k-keys fwom the h-hashed data wecowd. rawr x3
+i-input
+  hashed_data_wecowd_handwe: w-wesouwce h-handwe to datawecowd
 
-Outputs
-  keys: keys after raw feature ids are hashed with values (int64)
+o-outputs
+  k-keys: keys aftew w-waw featuwe ids a-awe hashed with vawues (int64)
 )doc");
 
-class GetKeysFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, int64_t> {
- public:
-  explicit GetKeysFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int64, int64_t>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<int64_t> & {
-      return record.transformed_keys();
+c-cwass getkeysfwomhasheddatawecowd : p-pubwic g-getoutputfwomhasheddatawecowd<int64, rawr x3 int64_t> {
+ p-pubwic:
+  expwicit getkeysfwomhasheddatawecowd(opkewnewconstwuction* context)
+      : g-getoutputfwomhasheddatawecowd<int64, int64_t>(context){
+    g-gettew = [](const t-twmw::hasheddatawecowd &wecowd) -> c-const std::vectow<int64_t> & {
+      w-wetuwn wecowd.twansfowmed_keys();
     };
   }
 };
 
-REGISTER_OP("GetValuesFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns values from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+wegistew_op("getvawuesfwomhasheddatawecowd")
+.input("hashed_data_wecowd_handwe: w-wesouwce")
+.output("vawues: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow op that wetuwns vawues fwom the hashed data wecowd. σωσ
+input
+  hashed_data_wecowd_handwe: w-wesouwce handwe to datawecowd
 
-Outputs
-  values: feature values.
+o-outputs
+  v-vawues: featuwe vawues. nyaa~~
 )doc");
 
-class GetValuesFromHashedDataRecord : public GetOutputFromHashedDataRecord<float, double> {
- public:
-  explicit GetValuesFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<float, double>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<double> & {
-      return record.values();
+cwass getvawuesfwomhasheddatawecowd : pubwic getoutputfwomhasheddatawecowd<fwoat, (ꈍᴗꈍ) d-doubwe> {
+ pubwic:
+  expwicit g-getvawuesfwomhasheddatawecowd(opkewnewconstwuction* c-context)
+      : g-getoutputfwomhasheddatawecowd<fwoat, ^•ﻌ•^ doubwe>(context){
+    gettew = [](const t-twmw::hasheddatawecowd &wecowd) -> c-const std::vectow<doubwe> & {
+      wetuwn w-wecowd.vawues();
     };
   }
 };
 
-REGISTER_OP("GetCodesFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("codes: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns codes from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+wegistew_op("getcodesfwomhasheddatawecowd")
+.input("hashed_data_wecowd_handwe: wesouwce")
+.output("codes: i-int64")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn s-status::ok();
+  }).doc(w"doc(
+a-a tensowfwow op t-that wetuwns codes fwom the hashed d-data wecowd. >_<
+i-input
+  hashed_data_wecowd_handwe: w-wesouwce handwe t-to datawecowd
 
-Outputs
-  codes: deepbird feature code, usually from A,B,C,D ... in the config.
+outputs
+  codes: d-deepbiwd featuwe c-code, ^^;; usuawwy f-fwom a,b,c,d ... i-in the config. ^^;;
 )doc");
 
-class GetCodesFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, int64_t> {
- public:
-  explicit GetCodesFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int64, int64_t>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<int64_t> & {
-      return record.codes();
+c-cwass g-getcodesfwomhasheddatawecowd : p-pubwic getoutputfwomhasheddatawecowd<int64, /(^•ω•^) i-int64_t> {
+ pubwic:
+  e-expwicit getcodesfwomhasheddatawecowd(opkewnewconstwuction* context)
+      : g-getoutputfwomhasheddatawecowd<int64, nyaa~~ int64_t>(context){
+    g-gettew = [](const twmw::hasheddatawecowd &wecowd) -> c-const std::vectow<int64_t> & {
+      w-wetuwn wecowd.codes();
     };
   }
 };
 
-REGISTER_OP("GetTypesFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("types: int8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns types from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+wegistew_op("gettypesfwomhasheddatawecowd")
+.input("hashed_data_wecowd_handwe: wesouwce")
+.output("types: int8")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    w-wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow op that wetuwns types fwom the hashed data w-wecowd.
+input
+  h-hashed_data_wecowd_handwe: wesouwce handwe to d-datawecowd
 
-Outputs
-  types: feature types corresponding to BINARY, DISCRETE, etc.
+outputs
+  t-types: featuwe types cowwesponding to binawy, discwete, (✿oωo) e-etc. ( ͡o ω ͡o )
 )doc");
 
-class GetTypesFromHashedDataRecord : public GetOutputFromHashedDataRecord<int8, uint8_t> {
- public:
-  explicit GetTypesFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int8, uint8_t>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<uint8_t> & {
-      return record.types();
+cwass g-gettypesfwomhasheddatawecowd : p-pubwic getoutputfwomhasheddatawecowd<int8, (U ᵕ U❁) u-uint8_t> {
+ pubwic:
+  expwicit gettypesfwomhasheddatawecowd(opkewnewconstwuction* c-context)
+      : g-getoutputfwomhasheddatawecowd<int8, òωó uint8_t>(context){
+    gettew = [](const t-twmw::hasheddatawecowd &wecowd) -> const std::vectow<uint8_t> & {
+      wetuwn wecowd.types();
     };
   }
 };
 
-REGISTER_OP("GetBatchSizeFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("batch_size: int64")
-.SetShapeFn(shape_inference::ScalarShape)
-.Doc(R"doc(
-A tensorflow OP that returns batch size from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+w-wegistew_op("getbatchsizefwomhasheddatawecowd")
+.input("hashed_data_wecowd_handwe: wesouwce")
+.output("batch_size: int64")
+.setshapefn(shape_infewence::scawawshape)
+.doc(w"doc(
+a tensowfwow o-op that w-wetuwns batch size fwom the hashed d-data wecowd. σωσ
+i-input
+  hashed_data_wecowd_handwe: wesouwce handwe t-to datawecowd
 
-Outputs
-  batch_size: Number of records held in the handle.
+outputs
+  batch_size: n-nyumbew o-of wecowds hewd i-in the handwe. :3
 )doc");
 
-class GetBatchSizeFromHashedDataRecord : public OpKernel {
- public:
-  explicit GetBatchSizeFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+c-cwass getbatchsizefwomhasheddatawecowd : p-pubwic opkewnew {
+ p-pubwic:
+  e-expwicit getbatchsizefwomhasheddatawecowd(opkewnewconstwuction* context)
+      : o-opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
-      Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output));
-      output->scalar<int64>()() = handle->records.size();
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+  void compute(opkewnewcontext* context) o-ovewwide {
+    twy {
+      a-auto h-handwe = gethandwe<hasheddatawecowdwesouwce>(context, 0);
+      tensow *output;
+      op_wequiwes_ok(context, OwO context->awwocate_output(0, ^^ tensowshape({}), (˘ω˘) &output));
+      o-output->scawaw<int64>()() = handwe->wecowds.size();
+    } c-catch (const s-std::exception &e) {
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetTotalSizeFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("total_size: int64")
-.SetShapeFn(shape_inference::ScalarShape)
-.Doc(R"doc(
-A tensorflow OP that returns total size from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+wegistew_op("gettotawsizefwomhasheddatawecowd")
+.input("hashed_data_wecowd_handwe: wesouwce")
+.output("totaw_size: i-int64")
+.setshapefn(shape_infewence::scawawshape)
+.doc(w"doc(
+a tensowfwow op t-that wetuwns totaw s-size fwom the h-hashed data wecowd. OwO
+i-input
+  hashed_data_wecowd_handwe: w-wesouwce handwe to datawecowd
 
-Outputs
-  total_size: Total number of keys / values in the batch.
+outputs
+  totaw_size: totaw nyumbew of keys / v-vawues in the batch. UwU
 )doc");
 
-class GetTotalSizeFromHashedDataRecord : public OpKernel {
- public:
-  explicit GetTotalSizeFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+c-cwass gettotawsizefwomhasheddatawecowd : pubwic opkewnew {
+ pubwic:
+  expwicit g-gettotawsizefwomhasheddatawecowd(opkewnewconstwuction* context)
+      : opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+  void compute(opkewnewcontext* context) ovewwide {
+    t-twy {
+      a-auto handwe = gethandwe<hasheddatawecowdwesouwce>(context, ^•ﻌ•^ 0);
 
-      Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output));
-      output->scalar<int64>()() = handle->total_size;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      t-tensow *output;
+      op_wequiwes_ok(context, context->awwocate_output(0, (ꈍᴗꈍ) t-tensowshape({}), /(^•ω•^) &output));
+      o-output->scawaw<int64>()() = handwe->totaw_size;
+    } c-catch (const std::exception &e) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetLabelsFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("labels: float")
-.Attr("default_label: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns labels from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+wegistew_op("getwabewsfwomhasheddatawecowd")
+.input("hashed_data_wecowd_handwe: wesouwce")
+.output("wabews: fwoat")
+.attw("defauwt_wabew: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow o-op that wetuwns w-wabews fwom the h-hashed data wecowd. (U ᵕ U❁)
+input
+  hashed_data_wecowd_handwe: wesouwce h-handwe to datawecowd
 
-Outputs
-  labels: A 2D tensor of size [batch_size, num_labels] containing the label values.
+outputs
+  wabews: a 2d tensow of size [batch_size, (✿oωo) nyum_wabews] c-containing t-the wabew vawues. OwO
 )doc");
 
-class GetLabelsFromHashedDataRecord : public OpKernel {
- private:
-  float default_label;
+c-cwass g-getwabewsfwomhasheddatawecowd : pubwic opkewnew {
+ pwivate:
+  f-fwoat defauwt_wabew;
 
- public:
-  explicit GetLabelsFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("default_label", &default_label));
+ p-pubwic:
+  expwicit getwabewsfwomhasheddatawecowd(opkewnewconstwuction* context)
+      : o-opkewnew(context) {
+    op_wequiwes_ok(context, :3 context->getattw("defauwt_wabew", nyaa~~ &defauwt_wabew));
   }
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const int num_labels = static_cast<int>(handle->num_labels);
-      TensorShape shape = {static_cast<int64>(handle->records.size()), num_labels};
+  v-void compute(opkewnewcontext* context) o-ovewwide {
+    t-twy {
+      auto handwe = gethandwe<hasheddatawecowdwesouwce>(context, ^•ﻌ•^ 0);
+      c-const auto &wecowds = h-handwe->wecowds;
+      c-const int nyum_wabews = static_cast<int>(handwe->num_wabews);
+      tensowshape s-shape = {static_cast<int64>(handwe->wecowds.size()), ( ͡o ω ͡o ) nyum_wabews};
 
-      Tensor *labels;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &labels));
+      tensow *wabews;
+      o-op_wequiwes_ok(context, context->awwocate_output(0, ^^;; shape, mya &wabews));
 
-      // The default value of label is not present in data record is std::nanf
-      // For continuous labels, change that to a default_label or label.
-      auto func = [this](float label) -> float {
-        return std::isnan(label) ? default_label : label;
+      // the defauwt vawue o-of wabew is nyot p-pwesent in data w-wecowd is std::nanf
+      // f-fow continuous wabews, (U ᵕ U❁) c-change that to a defauwt_wabew o-ow wabew. ^•ﻌ•^
+      auto func = [this](fwoat wabew) -> fwoat {
+        w-wetuwn std::isnan(wabew) ? d-defauwt_wabew : wabew;
       };
 
-      auto labels_data = labels->flat<float>().data();
-      for (const auto &record : records) {
-        const auto& rec_labels = record.labels();
-        labels_data = std::transform(rec_labels.begin(), rec_labels.end(), labels_data, func);
+      auto w-wabews_data = wabews->fwat<fwoat>().data();
+      f-fow (const auto &wecowd : wecowds) {
+        const a-auto& wec_wabews = wecowd.wabews();
+        w-wabews_data = std::twansfowm(wec_wabews.begin(), (U ﹏ U) w-wec_wabews.end(), /(^•ω•^) wabews_data, ʘwʘ f-func);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } c-catch (const std::exception &e) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("GetWeightsFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("weights: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that returns weights from the hashed data record.
-Input
-  hashed_data_record_handle: Resource handle to DataRecord
+wegistew_op("getweightsfwomhasheddatawecowd")
+.input("hashed_data_wecowd_handwe: wesouwce")
+.output("weights: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn s-status::ok();
+  }).doc(w"doc(
+a tensowfwow o-op that wetuwns weights fwom the hashed data wecowd. XD
+i-input
+  hashed_data_wecowd_handwe: w-wesouwce h-handwe to datawecowd
 
-Outputs
-  weights: A 2D tensor of size [batch_size, num_weights] containing the weight values.
+outputs
+  w-weights: a 2d tensow o-of size [batch_size, (⑅˘꒳˘) nyum_weights] c-containing the weight vawues. nyaa~~
 )doc");
 
-class GetWeightsFromHashedDataRecord : public OpKernel {
- public:
-  explicit GetWeightsFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+c-cwass getweightsfwomhasheddatawecowd : pubwic opkewnew {
+ p-pubwic:
+  e-expwicit getweightsfwomhasheddatawecowd(opkewnewconstwuction* context)
+      : opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const int num_weights = static_cast<int>(handle->num_weights);
-      TensorShape shape = {static_cast<int64>(handle->records.size()), num_weights};
+  void compute(opkewnewcontext* c-context) o-ovewwide {
+    twy {
+      auto handwe = gethandwe<hasheddatawecowdwesouwce>(context, UwU 0);
+      const auto &wecowds = h-handwe->wecowds;
+      const int nyum_weights = s-static_cast<int>(handwe->num_weights);
+      t-tensowshape shape = {static_cast<int64>(handwe->wecowds.size()), (˘ω˘) nyum_weights};
 
-      Tensor *weights;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &weights));
+      tensow *weights;
+      op_wequiwes_ok(context, rawr x3 c-context->awwocate_output(0, (///ˬ///✿) shape, &weights));
 
-      auto weights_data = weights->flat<float>().data();
-      for (const auto &record : records) {
-        const auto& rec_weights = record.weights();
-        weights_data = std::copy(rec_weights.begin(), rec_weights.end(), weights_data);
+      auto weights_data = w-weights->fwat<fwoat>().data();
+      fow (const a-auto &wecowd : w-wecowds) {
+        const auto& w-wec_weights = w-wecowd.weights();
+        w-weights_data = s-std::copy(wec_weights.begin(), 😳😳😳 w-wec_weights.end(), (///ˬ///✿) w-weights_data);
       }
     } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
 
-#define REGISTER_DECODE_AND_HASH(InputType)     \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("DecodeAndHashDataRecord")             \
-    .Device(DEVICE_CPU)                         \
-    .TypeConstraint<InputType>("InputType"),    \
-    DecodeAndHashDataRecord<InputType>);        \
+#define wegistew_decode_and_hash(inputtype)     \
+  wegistew_kewnew_buiwdew(                      \
+    n-nyame("decodeandhashdatawecowd")             \
+    .device(device_cpu)                         \
+    .typeconstwaint<inputtype>("inputtype"), ^^;;    \
+    d-decodeandhashdatawecowd<inputtype>);        \
 
-REGISTER_DECODE_AND_HASH(uint8)
-REGISTER_DECODE_AND_HASH(string)
+w-wegistew_decode_and_hash(uint8)
+w-wegistew_decode_and_hash(stwing)
 
-#define REGISTER_GETTER(FIELD)                  \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("Get" #FIELD "FromHashedDataRecord")   \
-    .Device(DEVICE_CPU),                        \
-    Get##FIELD##FromHashedDataRecord);          \
+#define w-wegistew_gettew(fiewd)                  \
+  w-wegistew_kewnew_buiwdew(                      \
+    nyame("get" #fiewd "fwomhasheddatawecowd")   \
+    .device(device_cpu), ^^                        \
+    get##fiewd##fwomhasheddatawecowd);          \
 
-REGISTER_GETTER(Ids)
-REGISTER_GETTER(UKeys)
-REGISTER_GETTER(Keys)
-REGISTER_GETTER(Values)
-REGISTER_GETTER(Codes)
-REGISTER_GETTER(Types)
-REGISTER_GETTER(BatchSize)
-REGISTER_GETTER(TotalSize)
-REGISTER_GETTER(Labels)
-REGISTER_GETTER(Weights)
+wegistew_gettew(ids)
+wegistew_gettew(ukeys)
+wegistew_gettew(keys)
+w-wegistew_gettew(vawues)
+w-wegistew_gettew(codes)
+wegistew_gettew(types)
+wegistew_gettew(batchsize)
+wegistew_gettew(totawsize)
+w-wegistew_gettew(wabews)
+w-wegistew_gettew(weights)

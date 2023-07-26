@@ -1,230 +1,230 @@
-package com.twitter.tsp.stores
+package com.twittew.tsp.stowes
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.tsp.thriftscala.TspTweetInfo
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.thriftscala.TweetHealthScores
-import com.twitter.frigate.thriftscala.UserAgathaScores
-import com.twitter.logging.Logger
-import com.twitter.mediaservices.commons.thriftscala.MediaCategory
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala.MediaInfo
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala.MediaSizeType
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.storehaus.ReadableStoreOfStitch
-import com.twitter.stitch.tweetypie.TweetyPie
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieException
-import com.twitter.storehaus.ReadableStore
-import com.twitter.topiclisting.AnnotationRuleProvider
-import com.twitter.tsp.utils.HealthSignalsUtils
-import com.twitter.tweetypie.thriftscala.TweetInclude
-import com.twitter.tweetypie.thriftscala.{Tweet => TTweet}
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.TimeoutException
-import com.twitter.util.Timer
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.tsp.thwiftscawa.tsptweetinfo
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.thwiftscawa.tweetheawthscowes
+i-impowt com.twittew.fwigate.thwiftscawa.usewagathascowes
+i-impowt com.twittew.wogging.woggew
+impowt com.twittew.mediasewvices.commons.thwiftscawa.mediacategowy
+impowt com.twittew.mediasewvices.commons.tweetmedia.thwiftscawa.mediainfo
+i-impowt com.twittew.mediasewvices.commons.tweetmedia.thwiftscawa.mediasizetype
+impowt c-com.twittew.simcwustews_v2.common.tweetid
+impowt c-com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.spam.wtf.thwiftscawa.safetywevew
+impowt c-com.twittew.stitch.stitch
+impowt com.twittew.stitch.stowehaus.weadabwestoweofstitch
+i-impowt c-com.twittew.stitch.tweetypie.tweetypie
+impowt com.twittew.stitch.tweetypie.tweetypie.tweetypieexception
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.topicwisting.annotationwuwepwovidew
+impowt c-com.twittew.tsp.utiws.heawthsignawsutiws
+impowt com.twittew.tweetypie.thwiftscawa.tweetincwude
+impowt com.twittew.tweetypie.thwiftscawa.{tweet => ttweet}
+impowt c-com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.timeoutexception
+impowt c-com.twittew.utiw.timew
 
-object TweetyPieFieldsStore {
+o-object tweetypiefiewdsstowe {
 
-  // Tweet fields options. Only fields specified here will be hydrated in the tweet
-  private val CoreTweetFields: Set[TweetInclude] = Set[TweetInclude](
-    TweetInclude.TweetFieldId(TTweet.IdField.id),
-    TweetInclude.TweetFieldId(TTweet.CoreDataField.id), // needed for the authorId
-    TweetInclude.TweetFieldId(TTweet.LanguageField.id),
-    TweetInclude.CountsFieldId(StatusCounts.FavoriteCountField.id),
-    TweetInclude.CountsFieldId(StatusCounts.RetweetCountField.id),
-    TweetInclude.TweetFieldId(TTweet.QuotedTweetField.id),
-    TweetInclude.TweetFieldId(TTweet.MediaKeysField.id),
-    TweetInclude.TweetFieldId(TTweet.EscherbirdEntityAnnotationsField.id),
-    TweetInclude.TweetFieldId(TTweet.MediaField.id),
-    TweetInclude.TweetFieldId(TTweet.UrlsField.id)
+  // tweet fiewds options. o-onwy fiewds specified hewe wiww be hydwated i-in the tweet
+  pwivate vaw cowetweetfiewds: set[tweetincwude] = set[tweetincwude](
+    tweetincwude.tweetfiewdid(ttweet.idfiewd.id), (ꈍᴗꈍ)
+    tweetincwude.tweetfiewdid(ttweet.cowedatafiewd.id), :3 // n-nyeeded fow the authowid
+    t-tweetincwude.tweetfiewdid(ttweet.wanguagefiewd.id), (U ﹏ U)
+    t-tweetincwude.countsfiewdid(statuscounts.favowitecountfiewd.id), UwU
+    t-tweetincwude.countsfiewdid(statuscounts.wetweetcountfiewd.id),
+    tweetincwude.tweetfiewdid(ttweet.quotedtweetfiewd.id), 😳😳😳
+    tweetincwude.tweetfiewdid(ttweet.mediakeysfiewd.id), XD
+    tweetincwude.tweetfiewdid(ttweet.eschewbiwdentityannotationsfiewd.id), o.O
+    tweetincwude.tweetfiewdid(ttweet.mediafiewd.id), (⑅˘꒳˘)
+    t-tweetincwude.tweetfiewdid(ttweet.uwwsfiewd.id)
   )
 
-  private val gtfo: GetTweetFieldsOptions = GetTweetFieldsOptions(
-    tweetIncludes = CoreTweetFields,
-    safetyLevel = Some(SafetyLevel.Recommendations)
+  p-pwivate vaw gtfo: gettweetfiewdsoptions = g-gettweetfiewdsoptions(
+    tweetincwudes = cowetweetfiewds, 😳😳😳
+    s-safetywevew = some(safetywevew.wecommendations)
   )
 
-  def getStoreFromTweetyPie(
-    tweetyPie: TweetyPie,
-    convertExceptionsToNotFound: Boolean = true
-  ): ReadableStore[Long, GetTweetFieldsResult] = {
-    val log = Logger("TweetyPieFieldsStore")
+  d-def getstowefwomtweetypie(
+    tweetypie: t-tweetypie,
+    convewtexceptionstonotfound: boowean = twue
+  ): w-weadabwestowe[wong, nyaa~~ gettweetfiewdswesuwt] = {
+    v-vaw wog = woggew("tweetypiefiewdsstowe")
 
-    ReadableStoreOfStitch { tweetId: Long =>
-      tweetyPie
-        .getTweetFields(tweetId, options = gtfo)
-        .rescue {
-          case ex: TweetyPieException if convertExceptionsToNotFound =>
-            log.error(ex, s"Error while hitting tweetypie ${ex.result}")
-            Stitch.NotFound
+    w-weadabwestoweofstitch { t-tweetid: wong =>
+      tweetypie
+        .gettweetfiewds(tweetid, rawr options = gtfo)
+        .wescue {
+          case ex: tweetypieexception if convewtexceptionstonotfound =>
+            w-wog.ewwow(ex, -.- s-s"ewwow whiwe hitting tweetypie ${ex.wesuwt}")
+            s-stitch.notfound
         }
     }
   }
 }
 
-object TweetInfoStore {
+o-object tweetinfostowe {
 
-  case class IsPassTweetHealthFilters(tweetStrictest: Option[Boolean])
+  c-case cwass ispasstweetheawthfiwtews(tweetstwictest: option[boowean])
 
-  case class IsPassAgathaHealthFilters(agathaStrictest: Option[Boolean])
+  case cwass ispassagathaheawthfiwtews(agathastwictest: o-option[boowean])
 
-  private val HealthStoreTimeout: Duration = 40.milliseconds
-  private val isPassTweetHealthFilters: IsPassTweetHealthFilters = IsPassTweetHealthFilters(None)
-  private val isPassAgathaHealthFilters: IsPassAgathaHealthFilters = IsPassAgathaHealthFilters(None)
+  pwivate vaw heawthstowetimeout: duwation = 40.miwwiseconds
+  pwivate vaw ispasstweetheawthfiwtews: ispasstweetheawthfiwtews = i-ispasstweetheawthfiwtews(none)
+  pwivate vaw ispassagathaheawthfiwtews: i-ispassagathaheawthfiwtews = i-ispassagathaheawthfiwtews(none)
 }
 
-case class TweetInfoStore(
-  tweetFieldsStore: ReadableStore[TweetId, GetTweetFieldsResult],
-  tweetHealthModelStore: ReadableStore[TweetId, TweetHealthScores],
-  userHealthModelStore: ReadableStore[UserId, UserAgathaScores],
-  timer: Timer
+c-case cwass tweetinfostowe(
+  t-tweetfiewdsstowe: w-weadabwestowe[tweetid, (✿oωo) g-gettweetfiewdswesuwt], /(^•ω•^)
+  t-tweetheawthmodewstowe: weadabwestowe[tweetid, 🥺 tweetheawthscowes], ʘwʘ
+  u-usewheawthmodewstowe: w-weadabwestowe[usewid, UwU u-usewagathascowes], XD
+  t-timew: t-timew
 )(
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[TweetId, TspTweetInfo] {
+  statsweceivew: statsweceivew)
+    extends weadabwestowe[tweetid, (✿oωo) tsptweetinfo] {
 
-  import TweetInfoStore._
+  i-impowt tweetinfostowe._
 
-  private[this] def toTweetInfo(
-    tweetFieldsResult: GetTweetFieldsResult
-  ): Future[Option[TspTweetInfo]] = {
-    tweetFieldsResult.tweetResult match {
-      case result: TweetFieldsResultState.Found if result.found.suppressReason.isEmpty =>
-        val tweet = result.found.tweet
+  pwivate[this] def totweetinfo(
+    tweetfiewdswesuwt: gettweetfiewdswesuwt
+  ): futuwe[option[tsptweetinfo]] = {
+    tweetfiewdswesuwt.tweetwesuwt match {
+      c-case wesuwt: tweetfiewdswesuwtstate.found if wesuwt.found.suppwessweason.isempty =>
+        vaw tweet = w-wesuwt.found.tweet
 
-        val authorIdOpt = tweet.coreData.map(_.userId)
-        val favCountOpt = tweet.counts.flatMap(_.favoriteCount)
+        v-vaw authowidopt = t-tweet.cowedata.map(_.usewid)
+        vaw favcountopt = t-tweet.counts.fwatmap(_.favowitecount)
 
-        val languageOpt = tweet.language.map(_.language)
-        val hasImageOpt =
-          tweet.mediaKeys.map(_.map(_.mediaCategory).exists(_ == MediaCategory.TweetImage))
-        val hasGifOpt =
-          tweet.mediaKeys.map(_.map(_.mediaCategory).exists(_ == MediaCategory.TweetGif))
-        val isNsfwAuthorOpt = Some(
-          tweet.coreData.exists(_.nsfwUser) || tweet.coreData.exists(_.nsfwAdmin))
-        val isTweetReplyOpt = tweet.coreData.map(_.reply.isDefined)
-        val hasMultipleMediaOpt =
-          tweet.mediaKeys.map(_.map(_.mediaCategory).size > 1)
+        vaw wanguageopt = t-tweet.wanguage.map(_.wanguage)
+        v-vaw hasimageopt =
+          tweet.mediakeys.map(_.map(_.mediacategowy).exists(_ == mediacategowy.tweetimage))
+        vaw hasgifopt =
+          tweet.mediakeys.map(_.map(_.mediacategowy).exists(_ == mediacategowy.tweetgif))
+        v-vaw isnsfwauthowopt = some(
+          t-tweet.cowedata.exists(_.nsfwusew) || tweet.cowedata.exists(_.nsfwadmin))
+        v-vaw istweetwepwyopt = t-tweet.cowedata.map(_.wepwy.isdefined)
+        vaw hasmuwtipwemediaopt =
+          tweet.mediakeys.map(_.map(_.mediacategowy).size > 1)
 
-        val isKGODenylist = Some(
-          tweet.escherbirdEntityAnnotations
-            .exists(_.entityAnnotations.exists(AnnotationRuleProvider.isSuppressedTopicsDenylist)))
+        v-vaw iskgodenywist = s-some(
+          tweet.eschewbiwdentityannotations
+            .exists(_.entityannotations.exists(annotationwuwepwovidew.issuppwessedtopicsdenywist)))
 
-        val isNullcastOpt = tweet.coreData.map(_.nullcast) // These are Ads. go/nullcast
+        v-vaw isnuwwcastopt = t-tweet.cowedata.map(_.nuwwcast) // these awe ads. :3 go/nuwwcast
 
-        val videoDurationOpt = tweet.media.flatMap(_.flatMap {
-          _.mediaInfo match {
-            case Some(MediaInfo.VideoInfo(info)) =>
-              Some((info.durationMillis + 999) / 1000) // video playtime always round up
-            case _ => None
+        vaw videoduwationopt = tweet.media.fwatmap(_.fwatmap {
+          _.mediainfo match {
+            c-case some(mediainfo.videoinfo(info)) =>
+              s-some((info.duwationmiwwis + 999) / 1000) // v-video pwaytime awways wound u-up
+            c-case _ => nyone
           }
-        }.headOption)
+        }.headoption)
 
-        // There many different types of videos. To be robust to new types being added, we just use
-        // the videoDurationOpt to keep track of whether the item has a video or not.
-        val hasVideo = videoDurationOpt.isDefined
+        // thewe many diffewent t-types of videos. to be wobust to nyew types being added, (///ˬ///✿) we just use
+        // t-the videoduwationopt t-to keep twack of whethew the item has a-a video ow nyot. nyaa~~
+        v-vaw hasvideo = videoduwationopt.isdefined
 
-        val mediaDimensionsOpt =
-          tweet.media.flatMap(_.headOption.flatMap(
-            _.sizes.find(_.sizeType == MediaSizeType.Orig).map(size => (size.width, size.height))))
+        vaw mediadimensionsopt =
+          tweet.media.fwatmap(_.headoption.fwatmap(
+            _.sizes.find(_.sizetype == m-mediasizetype.owig).map(size => (size.width, >w< size.height))))
 
-        val mediaWidth = mediaDimensionsOpt.map(_._1).getOrElse(1)
-        val mediaHeight = mediaDimensionsOpt.map(_._2).getOrElse(1)
-        // high resolution media's width is always greater than 480px and height is always greater than 480px
-        val isHighMediaResolution = mediaHeight > 480 && mediaWidth > 480
-        val isVerticalAspectRatio = mediaHeight >= mediaWidth && mediaWidth > 1
-        val hasUrlOpt = tweet.urls.map(_.nonEmpty)
+        vaw mediawidth = mediadimensionsopt.map(_._1).getowewse(1)
+        vaw mediaheight = m-mediadimensionsopt.map(_._2).getowewse(1)
+        // high wesowution media's width is a-awways gweatew t-than 480px and height is awways gweatew than 480px
+        vaw ishighmediawesowution = m-mediaheight > 480 && m-mediawidth > 480
+        vaw isvewticawaspectwatio = mediaheight >= mediawidth && mediawidth > 1
+        v-vaw hasuwwopt = tweet.uwws.map(_.nonempty)
 
-        (authorIdOpt, favCountOpt) match {
-          case (Some(authorId), Some(favCount)) =>
-            hydrateHealthScores(tweet.id, authorId).map {
-              case (isPassAgathaHealthFilters, isPassTweetHealthFilters) =>
-                Some(
-                  TspTweetInfo(
-                    authorId = authorId,
-                    favCount = favCount,
-                    language = languageOpt,
-                    hasImage = hasImageOpt,
-                    hasVideo = Some(hasVideo),
-                    hasGif = hasGifOpt,
-                    isNsfwAuthor = isNsfwAuthorOpt,
-                    isKGODenylist = isKGODenylist,
-                    isNullcast = isNullcastOpt,
-                    videoDurationSeconds = videoDurationOpt,
-                    isHighMediaResolution = Some(isHighMediaResolution),
-                    isVerticalAspectRatio = Some(isVerticalAspectRatio),
-                    isPassAgathaHealthFilterStrictest = isPassAgathaHealthFilters.agathaStrictest,
-                    isPassTweetHealthFilterStrictest = isPassTweetHealthFilters.tweetStrictest,
-                    isReply = isTweetReplyOpt,
-                    hasMultipleMedia = hasMultipleMediaOpt,
-                    hasUrl = hasUrlOpt
+        (authowidopt, -.- f-favcountopt) match {
+          case (some(authowid), (✿oωo) some(favcount)) =>
+            h-hydwateheawthscowes(tweet.id, (˘ω˘) authowid).map {
+              c-case (ispassagathaheawthfiwtews, rawr i-ispasstweetheawthfiwtews) =>
+                some(
+                  t-tsptweetinfo(
+                    authowid = authowid, OwO
+                    f-favcount = f-favcount, ^•ﻌ•^
+                    w-wanguage = wanguageopt, UwU
+                    hasimage = h-hasimageopt, (˘ω˘)
+                    h-hasvideo = some(hasvideo), (///ˬ///✿)
+                    hasgif = h-hasgifopt, σωσ
+                    i-isnsfwauthow = isnsfwauthowopt, /(^•ω•^)
+                    i-iskgodenywist = iskgodenywist, 😳
+                    isnuwwcast = i-isnuwwcastopt, 😳
+                    videoduwationseconds = v-videoduwationopt, (⑅˘꒳˘)
+                    i-ishighmediawesowution = some(ishighmediawesowution), 😳😳😳
+                    isvewticawaspectwatio = some(isvewticawaspectwatio), 😳
+                    i-ispassagathaheawthfiwtewstwictest = i-ispassagathaheawthfiwtews.agathastwictest, XD
+                    i-ispasstweetheawthfiwtewstwictest = i-ispasstweetheawthfiwtews.tweetstwictest, mya
+                    iswepwy = i-istweetwepwyopt, ^•ﻌ•^
+                    hasmuwtipwemedia = hasmuwtipwemediaopt, ʘwʘ
+                    hasuww = hasuwwopt
                   ))
             }
           case _ =>
-            statsReceiver.counter("missingFields").incr()
-            Future.None // These values should always exist.
+            statsweceivew.countew("missingfiewds").incw()
+            f-futuwe.none // these vawues s-shouwd awways exist. ( ͡o ω ͡o )
         }
-      case _: TweetFieldsResultState.NotFound =>
-        statsReceiver.counter("notFound").incr()
-        Future.None
-      case _: TweetFieldsResultState.Failed =>
-        statsReceiver.counter("failed").incr()
-        Future.None
-      case _: TweetFieldsResultState.Filtered =>
-        statsReceiver.counter("filtered").incr()
-        Future.None
+      case _: tweetfiewdswesuwtstate.notfound =>
+        s-statsweceivew.countew("notfound").incw()
+        futuwe.none
+      c-case _: tweetfiewdswesuwtstate.faiwed =>
+        s-statsweceivew.countew("faiwed").incw()
+        f-futuwe.none
+      c-case _: t-tweetfiewdswesuwtstate.fiwtewed =>
+        s-statsweceivew.countew("fiwtewed").incw()
+        futuwe.none
       case _ =>
-        statsReceiver.counter("unknown").incr()
-        Future.None
+        statsweceivew.countew("unknown").incw()
+        futuwe.none
     }
   }
 
-  private[this] def hydrateHealthScores(
-    tweetId: TweetId,
-    authorId: Long
-  ): Future[(IsPassAgathaHealthFilters, IsPassTweetHealthFilters)] = {
-    Future
+  pwivate[this] def h-hydwateheawthscowes(
+    t-tweetid: t-tweetid, mya
+    authowid: wong
+  ): f-futuwe[(ispassagathaheawthfiwtews, o.O ispasstweetheawthfiwtews)] = {
+    futuwe
       .join(
-        tweetHealthModelStore
-          .multiGet(Set(tweetId))(tweetId),
-        userHealthModelStore
-          .multiGet(Set(authorId))(authorId)
+        tweetheawthmodewstowe
+          .muwtiget(set(tweetid))(tweetid), (✿oωo)
+        usewheawthmodewstowe
+          .muwtiget(set(authowid))(authowid)
       ).map {
-        case (tweetHealthScoresOpt, userAgathaScoresOpt) =>
-          // This stats help us understand empty rate for AgathaCalibratedNsfw / NsfwTextUserScore
-          statsReceiver.counter("totalCountAgathaScore").incr()
-          if (userAgathaScoresOpt.getOrElse(UserAgathaScores()).agathaCalibratedNsfw.isEmpty)
-            statsReceiver.counter("emptyCountAgathaCalibratedNsfw").incr()
-          if (userAgathaScoresOpt.getOrElse(UserAgathaScores()).nsfwTextUserScore.isEmpty)
-            statsReceiver.counter("emptyCountNsfwTextUserScore").incr()
+        c-case (tweetheawthscowesopt, :3 u-usewagathascowesopt) =>
+          // this stats h-hewp us undewstand empty wate fow agathacawibwatednsfw / n-nysfwtextusewscowe
+          s-statsweceivew.countew("totawcountagathascowe").incw()
+          if (usewagathascowesopt.getowewse(usewagathascowes()).agathacawibwatednsfw.isempty)
+            s-statsweceivew.countew("emptycountagathacawibwatednsfw").incw()
+          i-if (usewagathascowesopt.getowewse(usewagathascowes()).nsfwtextusewscowe.isempty)
+            statsweceivew.countew("emptycountnsfwtextusewscowe").incw()
 
-          val isPassAgathaHealthFilters = IsPassAgathaHealthFilters(
-            agathaStrictest =
-              Some(HealthSignalsUtils.isTweetAgathaModelQualified(userAgathaScoresOpt)),
+          vaw ispassagathaheawthfiwtews = ispassagathaheawthfiwtews(
+            agathastwictest =
+              some(heawthsignawsutiws.istweetagathamodewquawified(usewagathascowesopt)), 😳
           )
 
-          val isPassTweetHealthFilters = IsPassTweetHealthFilters(
-            tweetStrictest =
-              Some(HealthSignalsUtils.isTweetHealthModelQualified(tweetHealthScoresOpt))
+          vaw i-ispasstweetheawthfiwtews = i-ispasstweetheawthfiwtews(
+            t-tweetstwictest =
+              s-some(heawthsignawsutiws.istweetheawthmodewquawified(tweetheawthscowesopt))
           )
 
-          (isPassAgathaHealthFilters, isPassTweetHealthFilters)
-      }.raiseWithin(HealthStoreTimeout)(timer).rescue {
-        case _: TimeoutException =>
-          statsReceiver.counter("hydrateHealthScoreTimeout").incr()
-          Future.value((isPassAgathaHealthFilters, isPassTweetHealthFilters))
-        case _ =>
-          statsReceiver.counter("hydrateHealthScoreFailure").incr()
-          Future.value((isPassAgathaHealthFilters, isPassTweetHealthFilters))
+          (ispassagathaheawthfiwtews, (U ﹏ U) i-ispasstweetheawthfiwtews)
+      }.waisewithin(heawthstowetimeout)(timew).wescue {
+        case _: t-timeoutexception =>
+          s-statsweceivew.countew("hydwateheawthscowetimeout").incw()
+          futuwe.vawue((ispassagathaheawthfiwtews, mya i-ispasstweetheawthfiwtews))
+        c-case _ =>
+          statsweceivew.countew("hydwateheawthscowefaiwuwe").incw()
+          f-futuwe.vawue((ispassagathaheawthfiwtews, (U ᵕ U❁) ispasstweetheawthfiwtews))
       }
   }
 
-  override def multiGet[K1 <: TweetId](ks: Set[K1]): Map[K1, Future[Option[TspTweetInfo]]] = {
-    statsReceiver.counter("tweetFieldsStore").incr(ks.size)
-    tweetFieldsStore
-      .multiGet(ks).mapValues(_.flatMap { _.map { v => toTweetInfo(v) }.getOrElse(Future.None) })
+  ovewwide d-def muwtiget[k1 <: tweetid](ks: s-set[k1]): map[k1, :3 f-futuwe[option[tsptweetinfo]]] = {
+    statsweceivew.countew("tweetfiewdsstowe").incw(ks.size)
+    t-tweetfiewdsstowe
+      .muwtiget(ks).mapvawues(_.fwatmap { _.map { v => totweetinfo(v) }.getowewse(futuwe.none) })
   }
 }

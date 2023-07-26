@@ -1,313 +1,313 @@
-package com.twitter.interaction_graph.scio.agg_all
+package com.twittew.intewaction_gwaph.scio.agg_aww
 
-import com.google.cloud.bigquery.BigQueryOptions
-import com.google.cloud.bigquery.QueryJobConfiguration
-import com.spotify.scio.ScioContext
-import com.spotify.scio.ScioMetrics
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.dal.DAL.PathLayout
-import com.twitter.beam.io.dal.DAL.WriteOptions
-import com.twitter.beam.io.exception.DataNotFoundException
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.interaction_graph.scio.agg_all.InteractionGraphAggregationTransform._
-import com.twitter.interaction_graph.scio.common.DateUtil
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.scio.common.UserUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.util.Duration
-import com.twitter.wtf.candidate.thriftscala.ScoredEdge
-import java.time.Instant
-import org.apache.avro.generic.GenericRecord
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.TypedRead
-import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
-import org.apache.beam.sdk.transforms.SerializableFunction
-import org.joda.time.Interval
-import scala.collection.JavaConverters._
+impowt com.googwe.cwoud.bigquewy.bigquewyoptions
+i-impowt com.googwe.cwoud.bigquewy.quewyjobconfiguwation
+i-impowt c-com.spotify.scio.sciocontext
+impowt c-com.spotify.scio.sciometwics
+i-impowt com.spotify.scio.vawues.scowwection
+i-impowt c-com.twittew.beam.io.daw.daw
+i-impowt com.twittew.beam.io.daw.daw.diskfowmat
+impowt com.twittew.beam.io.daw.daw.pathwayout
+impowt com.twittew.beam.io.daw.daw.wwiteoptions
+impowt c-com.twittew.beam.io.exception.datanotfoundexception
+impowt com.twittew.beam.job.sewviceidentifiewoptions
+impowt c-com.twittew.intewaction_gwaph.scio.agg_aww.intewactiongwaphaggwegationtwansfowm._
+impowt com.twittew.intewaction_gwaph.scio.common.dateutiw
+i-impowt com.twittew.intewaction_gwaph.scio.common.featuwegenewatowutiw
+impowt com.twittew.intewaction_gwaph.scio.common.usewutiw
+impowt com.twittew.intewaction_gwaph.thwiftscawa.edge
+impowt com.twittew.intewaction_gwaph.thwiftscawa.vewtex
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.scio_intewnaw.job.sciobeamjob
+i-impowt com.twittew.statebiwd.v2.thwiftscawa.enviwonment
+impowt com.twittew.usew_session_stowe.thwiftscawa.usewsession
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.wtf.candidate.thwiftscawa.scowededge
+impowt java.time.instant
+impowt owg.apache.avwo.genewic.genewicwecowd
+i-impowt owg.apache.beam.sdk.io.gcp.bigquewy.bigquewyio
+i-impowt owg.apache.beam.sdk.io.gcp.bigquewy.bigquewyio.typedwead
+i-impowt owg.apache.beam.sdk.io.gcp.bigquewy.schemaandwecowd
+i-impowt o-owg.apache.beam.sdk.twansfowms.sewiawizabwefunction
+impowt owg.joda.time.intewvaw
+impowt scawa.cowwection.javaconvewtews._
 
-object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggregationOption] {
+o-object intewactiongwaphaggwegationjob extends sciobeamjob[intewactiongwaphaggwegationoption] {
 
-  // to parse latest date from the BQ table we're reading from
-  val parseDateRow = new SerializableFunction[SchemaAndRecord, String] {
-    override def apply(input: SchemaAndRecord): String = {
-      val genericRecord: GenericRecord = input.getRecord()
-      genericRecord.get("ds").toString
+  // t-to pawse watest date fwom the bq tabwe we'we weading fwom
+  vaw pawsedatewow = nyew sewiawizabwefunction[schemaandwecowd, rawr x3 s-stwing] {
+    ovewwide d-def appwy(input: s-schemaandwecowd): s-stwing = {
+      vaw genewicwecowd: genewicwecowd = input.getwecowd()
+      g-genewicwecowd.get("ds").tostwing
     }
   }
 
-  // note that we're using the prob_explicit for real_graph_features (for Home)
-  val parseRow = new SerializableFunction[SchemaAndRecord, ScoredEdge] {
-    override def apply(record: SchemaAndRecord): ScoredEdge = {
-      val genericRecord: GenericRecord = record.getRecord()
-      ScoredEdge(
-        genericRecord.get("source_id").asInstanceOf[Long],
-        genericRecord.get("destination_id").asInstanceOf[Long],
-        genericRecord.get("prob_explicit").asInstanceOf[Double],
-        genericRecord.get("followed").asInstanceOf[Boolean],
+  // n-nyote that we'we using the pwob_expwicit f-fow w-weaw_gwaph_featuwes (fow home)
+  v-vaw pawsewow = new sewiawizabwefunction[schemaandwecowd, (✿oωo) s-scowededge] {
+    ovewwide def appwy(wecowd: s-schemaandwecowd): scowededge = {
+      vaw g-genewicwecowd: genewicwecowd = w-wecowd.getwecowd()
+      s-scowededge(
+        genewicwecowd.get("souwce_id").asinstanceof[wong], (ˆ ﻌ ˆ)♡
+        genewicwecowd.get("destination_id").asinstanceof[wong], :3
+        genewicwecowd.get("pwob_expwicit").asinstanceof[doubwe], (U ᵕ U❁)
+        genewicwecowd.get("fowwowed").asinstanceof[boowean], ^^;;
       )
     }
   }
 
-  override def runPipeline(
-    sc: ScioContext,
-    opts: InteractionGraphAggregationOption
-  ): Unit = {
+  ovewwide def wunpipewine(
+    sc: sciocontext, mya
+    o-opts: intewactiongwaphaggwegationoption
+  ): u-unit = {
 
-    val dateStr: String = opts.getDate().value.getStart.toString("yyyyMMdd")
-    logger.info(s"dateStr $dateStr")
-    val project: String = "twttr-recos-ml-prod"
-    val datasetName: String = "realgraph"
-    val bqTableName: String = "scores"
-    val fullBqTableName: String = s"$project:$datasetName.$bqTableName"
+    vaw datestw: s-stwing = opts.getdate().vawue.getstawt.tostwing("yyyymmdd")
+    w-woggew.info(s"datestw $datestw")
+    v-vaw pwoject: stwing = "twttw-wecos-mw-pwod"
+    vaw datasetname: stwing = "weawgwaph"
+    vaw b-bqtabwename: stwing = "scowes"
+    vaw fuwwbqtabwename: stwing = s"$pwoject:$datasetname.$bqtabwename"
 
-    if (opts.getDALWriteEnvironment.toLowerCase == "prod") {
-      val bqClient =
-        BigQueryOptions.newBuilder.setProjectId(project).build.getService
-      val query =
+    if (opts.getdawwwiteenviwonment.towowewcase == "pwod") {
+      v-vaw bqcwient =
+        b-bigquewyoptions.newbuiwdew.setpwojectid(pwoject).buiwd.getsewvice
+      v-vaw q-quewy =
         s"""
-           |SELECT total_rows
-           |FROM `$project.$datasetName.INFORMATION_SCHEMA.PARTITIONS`
-           |WHERE partition_id ="$dateStr" AND
-           |table_name="$bqTableName" AND total_rows > 0
-           |""".stripMargin
-      val queryConfig = QueryJobConfiguration.of(query)
-      val results = bqClient.query(queryConfig).getValues.asScala.toSeq
-      if (results.isEmpty || results.head.get(0).getLongValue == 0) {
-        throw new DataNotFoundException(s"$dateStr not present in $fullBqTableName.")
+           |sewect t-totaw_wows
+           |fwom `$pwoject.$datasetname.infowmation_schema.pawtitions`
+           |whewe p-pawtition_id ="$datestw" a-and
+           |tabwe_name="$bqtabwename" a-and totaw_wows > 0
+           |""".stwipmawgin
+      vaw quewyconfig = quewyjobconfiguwation.of(quewy)
+      v-vaw w-wesuwts = bqcwient.quewy(quewyconfig).getvawues.asscawa.toseq
+      i-if (wesuwts.isempty || w-wesuwts.head.get(0).getwongvawue == 0) {
+        t-thwow nyew datanotfoundexception(s"$datestw nyot pwesent in $fuwwbqtabwename.")
       }
     }
-    sc.run()
+    sc.wun()
   }
 
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphAggregationOption
-  ): Unit = {
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val dateInterval: Interval = pipelineOptions.interval
-    val yesterday = DateUtil.subtract(dateInterval, Duration.fromDays(1))
+  ovewwide p-pwotected def configuwepipewine(
+    sciocontext: sciocontext, 😳😳😳
+    pipewineoptions: intewactiongwaphaggwegationoption
+  ): u-unit = {
+    @twansient
+    impwicit wazy vaw sc: sciocontext = sciocontext
+    i-impwicit wazy v-vaw dateintewvaw: i-intewvaw = pipewineoptions.intewvaw
+    vaw yestewday = d-dateutiw.subtwact(dateintewvaw, OwO duwation.fwomdays(1))
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
-    } else {
-      dalEnvironment
+    v-vaw dawenviwonment: s-stwing = pipewineoptions
+      .as(cwassof[sewviceidentifiewoptions])
+      .getenviwonment()
+    vaw dawwwiteenviwonment = if (pipewineoptions.getdawwwiteenviwonment != nyuww) {
+      p-pipewineoptions.getdawwwiteenviwonment
+    } ewse {
+      dawenviwonment
     }
-    val dateStr: String = pipelineOptions.getDate().value.getStart.toString("yyyy-MM-dd")
-    logger.info(s"dateStr $dateStr")
-    val project: String = "twttr-recos-ml-prod"
-    val datasetName: String = "realgraph"
-    val bqTableName: String = "scores"
-    val fullBqTableName: String = s"$project:$datasetName.$bqTableName"
+    v-vaw datestw: stwing = pipewineoptions.getdate().vawue.getstawt.tostwing("yyyy-mm-dd")
+    w-woggew.info(s"datestw $datestw")
+    v-vaw pwoject: stwing = "twttw-wecos-mw-pwod"
+    vaw datasetname: s-stwing = "weawgwaph"
+    vaw b-bqtabwename: stwing = "scowes"
+    v-vaw fuwwbqtabwename: s-stwing = s"$pwoject:$datasetname.$bqtabwename"
 
-    val scoreExport: SCollection[ScoredEdge] =
-      sc.customInput(
-        s"Read from BQ table $fullBqTableName",
-        BigQueryIO
-          .read(parseRow)
-          .fromQuery(s"""SELECT source_id, destination_id, prob_explicit, followed
-               |FROM `$project.$datasetName.$bqTableName`
-               |WHERE ds = '$dateStr'""".stripMargin)
-          .usingStandardSql()
-          .withMethod(TypedRead.Method.DEFAULT)
+    vaw scoweexpowt: scowwection[scowededge] =
+      sc.custominput(
+        s-s"wead fwom b-bq tabwe $fuwwbqtabwename", rawr
+        b-bigquewyio
+          .wead(pawsewow)
+          .fwomquewy(s"""sewect souwce_id, XD d-destination_id, (U ﹏ U) p-pwob_expwicit, (˘ω˘) fowwowed
+               |fwom `$pwoject.$datasetname.$bqtabwename`
+               |whewe d-ds = '$datestw'""".stwipmawgin)
+          .usingstandawdsqw()
+          .withmethod(typedwead.method.defauwt)
       )
 
-    val source = InteractionGraphAggregationSource(pipelineOptions)
+    vaw souwce = intewactiongwaphaggwegationsouwce(pipewineoptions)
 
-    val (addressEdgeFeatures, addressVertexFeatures) = source.readAddressBookFeatures()
+    vaw (addwessedgefeatuwes, UwU addwessvewtexfeatuwes) = s-souwce.weadaddwessbookfeatuwes()
 
-    val (clientEventLogsEdgeFeatures, clientEventLogsVertexFeatures) =
-      source.readClientEventLogsFeatures(dateInterval)
+    v-vaw (cwienteventwogsedgefeatuwes, >_< cwienteventwogsvewtexfeatuwes) =
+      souwce.weadcwienteventwogsfeatuwes(dateintewvaw)
 
-    val (flockEdgeFeatures, flockVertexFeatures) = source.readFlockFeatures()
+    v-vaw (fwockedgefeatuwes, f-fwockvewtexfeatuwes) = souwce.weadfwockfeatuwes()
 
-    val (directInteractionsEdgeFeatures, directInteractionsVertexFeatures) =
-      source.readDirectInteractionsFeatures(dateInterval)
+    vaw (diwectintewactionsedgefeatuwes, σωσ diwectintewactionsvewtexfeatuwes) =
+      s-souwce.weaddiwectintewactionsfeatuwes(dateintewvaw)
 
-    val invalidUsers = UserUtil.getInvalidUsers(source.readFlatUsers())
+    vaw invawidusews = usewutiw.getinvawidusews(souwce.weadfwatusews())
 
-    val (prevAggEdge, prevAggVertex) = source.readAggregatedFeatures(yesterday)
+    vaw (pwevaggedge, 🥺 pwevaggvewtex) = s-souwce.weadaggwegatedfeatuwes(yestewday)
 
-    val prevAggregatedVertex: SCollection[Vertex] =
-      UserUtil
-        .filterUsersByIdMapping[Vertex](
-          prevAggVertex,
-          invalidUsers,
-          v => v.userId
+    vaw pwevaggwegatedvewtex: scowwection[vewtex] =
+      usewutiw
+        .fiwtewusewsbyidmapping[vewtex](
+          p-pwevaggvewtex, 🥺
+          i-invawidusews, ʘwʘ
+          v => v.usewid
         )
 
-    /** Remove status-based features (flock/ab) from current graph, because we only need the latest
-     *  This is to allow us to filter and roll-up a smaller dataset, to which we will still add
-     *  back the status-based features for the complete scoredAggregates (that other teams will read).
+    /** wemove s-status-based f-featuwes (fwock/ab) fwom cuwwent gwaph, :3 because we onwy nyeed the w-watest
+     *  this is to awwow u-us to fiwtew and woww-up a smowew dataset, to which we wiww stiww a-add
+     *  back the status-based f-featuwes f-fow the compwete scowedaggwegates (that o-othew teams wiww wead). (U ﹏ U)
      */
-    val prevAggEdgeFiltered = prevAggEdge
-      .filter { e =>
-        e.sourceId != e.destinationId
+    v-vaw p-pwevaggedgefiwtewed = p-pwevaggedge
+      .fiwtew { e =>
+        e.souwceid != e-e.destinationid
       }
-      .withName("filtering status-based edges")
-      .flatMap(FeatureGeneratorUtil.removeStatusFeatures)
-    val prevAggEdgeValid: SCollection[Edge] =
-      UserUtil
-        .filterUsersByMultipleIdMappings[Edge](
-          prevAggEdgeFiltered,
-          invalidUsers,
-          Seq(e => e.sourceId, e => e.destinationId)
+      .withname("fiwtewing s-status-based edges")
+      .fwatmap(featuwegenewatowutiw.wemovestatusfeatuwes)
+    vaw pwevaggedgevawid: scowwection[edge] =
+      u-usewutiw
+        .fiwtewusewsbymuwtipweidmappings[edge](
+          p-pwevaggedgefiwtewed, (U ﹏ U)
+          i-invawidusews, ʘwʘ
+          seq(e => e.souwceid, >w< e-e => e.destinationid)
         )
 
-    val aggregatedActivityVertexDaily = UserUtil
-      .filterUsersByIdMapping[Vertex](
-        FeatureGeneratorUtil
-          .combineVertexFeatures(
-            clientEventLogsVertexFeatures ++
-              directInteractionsVertexFeatures ++
-              addressVertexFeatures ++
-              flockVertexFeatures
-          ),
-        invalidUsers,
-        v => v.userId
+    vaw aggwegatedactivityvewtexdaiwy = u-usewutiw
+      .fiwtewusewsbyidmapping[vewtex](
+        f-featuwegenewatowutiw
+          .combinevewtexfeatuwes(
+            cwienteventwogsvewtexfeatuwes ++
+              diwectintewactionsvewtexfeatuwes ++
+              addwessvewtexfeatuwes ++
+              f-fwockvewtexfeatuwes
+          ), rawr x3
+        i-invawidusews, OwO
+        v-v => v-v.usewid
       )
 
-    // we split up the roll-up of decayed counts between status vs activity/count-based features
-    val aggregatedActivityEdgeDaily = FeatureGeneratorUtil
-      .combineEdgeFeatures(clientEventLogsEdgeFeatures ++ directInteractionsEdgeFeatures)
+    // we spwit u-up the woww-up of decayed counts between status vs activity/count-based featuwes
+    vaw aggwegatedactivityedgedaiwy = f-featuwegenewatowutiw
+      .combineedgefeatuwes(cwienteventwogsedgefeatuwes ++ diwectintewactionsedgefeatuwes)
 
-    // Vertex level, Add the decay sum for history and daily
-    val aggregatedActivityVertex = FeatureGeneratorUtil
-      .combineVertexFeaturesWithDecay(
-        prevAggregatedVertex,
-        aggregatedActivityVertexDaily,
-        InteractionGraphScoringConfig.ONE_MINUS_ALPHA,
-        InteractionGraphScoringConfig.ALPHA
+    // v-vewtex wevew, ^•ﻌ•^ add the decay sum f-fow histowy and daiwy
+    vaw a-aggwegatedactivityvewtex = featuwegenewatowutiw
+      .combinevewtexfeatuweswithdecay(
+        pwevaggwegatedvewtex, >_<
+        a-aggwegatedactivityvewtexdaiwy,
+        i-intewactiongwaphscowingconfig.one_minus_awpha, OwO
+        i-intewactiongwaphscowingconfig.awpha
       )
 
-    // Edge level, Add the decay sum for history and daily
-    val aggregatedActivityEdge = FeatureGeneratorUtil
-      .combineEdgeFeaturesWithDecay(
-        prevAggEdgeValid,
-        aggregatedActivityEdgeDaily,
-        InteractionGraphScoringConfig.ONE_MINUS_ALPHA,
-        InteractionGraphScoringConfig.ALPHA
+    // edge w-wevew, >_< add the d-decay sum fow histowy and daiwy
+    vaw aggwegatedactivityedge = featuwegenewatowutiw
+      .combineedgefeatuweswithdecay(
+        pwevaggedgevawid, (ꈍᴗꈍ)
+        aggwegatedactivityedgedaiwy, >w<
+        intewactiongwaphscowingconfig.one_minus_awpha,
+        i-intewactiongwaphscowingconfig.awpha
       )
-      .filter(FeatureGeneratorUtil.edgeWithFeatureOtherThanDwellTime)
-      .withName("removing edges that only have dwell time features")
+      .fiwtew(featuwegenewatowutiw.edgewithfeatuweothewthandwewwtime)
+      .withname("wemoving e-edges that o-onwy have dweww time featuwes")
 
-    val edgeKeyedScores = scoreExport.keyBy { e => (e.sourceId, e.destinationId) }
+    v-vaw edgekeyedscowes = scoweexpowt.keyby { e => (e.souwceid, (U ﹏ U) e.destinationid) }
 
-    val scoredAggregatedActivityEdge = aggregatedActivityEdge
-      .keyBy { e => (e.sourceId, e.destinationId) }
-      .withName("join with scores")
-      .leftOuterJoin(edgeKeyedScores)
+    v-vaw s-scowedaggwegatedactivityedge = aggwegatedactivityedge
+      .keyby { e => (e.souwceid, ^^ e-e.destinationid) }
+      .withname("join with scowes")
+      .weftoutewjoin(edgekeyedscowes)
       .map {
-        case (_, (e, scoredEdgeOpt)) =>
-          val scoreOpt = scoredEdgeOpt.map(_.score)
-          e.copy(weight = if (scoreOpt.nonEmpty) {
-            ScioMetrics.counter("after joining edge with scores", "has score").inc()
-            scoreOpt
-          } else {
-            ScioMetrics.counter("after joining edge with scores", "no score").inc()
-            None
+        case (_, (U ﹏ U) (e, s-scowededgeopt)) =>
+          v-vaw scoweopt = scowededgeopt.map(_.scowe)
+          e-e.copy(weight = i-if (scoweopt.nonempty) {
+            sciometwics.countew("aftew joining edge with scowes", :3 "has scowe").inc()
+            s-scoweopt
+          } e-ewse {
+            s-sciometwics.countew("aftew j-joining edge w-with scowes", (✿oωo) "no scowe").inc()
+            n-nyone
           })
       }
 
-    val combinedFeatures = FeatureGeneratorUtil
-      .combineEdgeFeatures(aggregatedActivityEdge ++ addressEdgeFeatures ++ flockEdgeFeatures)
-      .keyBy { e => (e.sourceId, e.destinationId) }
+    v-vaw combinedfeatuwes = f-featuwegenewatowutiw
+      .combineedgefeatuwes(aggwegatedactivityedge ++ a-addwessedgefeatuwes ++ fwockedgefeatuwes)
+      .keyby { e-e => (e.souwceid, XD e.destinationid) }
 
-    val aggregatedActivityScoredEdge =
-      edgeKeyedScores
-        .withName("join with combined edge features")
-        .leftOuterJoin(combinedFeatures)
+    vaw aggwegatedactivityscowededge =
+      e-edgekeyedscowes
+        .withname("join with combined e-edge featuwes")
+        .weftoutewjoin(combinedfeatuwes)
         .map {
-          case (_, (scoredEdge, combinedFeaturesOpt)) =>
-            if (combinedFeaturesOpt.exists(_.features.nonEmpty)) {
-              ScioMetrics.counter("after joining scored edge with features", "has features").inc()
-              Edge(
-                sourceId = scoredEdge.sourceId,
-                destinationId = scoredEdge.destinationId,
-                weight = Some(scoredEdge.score),
-                features = combinedFeaturesOpt.map(_.features).getOrElse(Nil)
+          c-case (_, >w< (scowededge, òωó combinedfeatuwesopt)) =>
+            i-if (combinedfeatuwesopt.exists(_.featuwes.nonempty)) {
+              sciometwics.countew("aftew joining s-scowed edge w-with featuwes", (ꈍᴗꈍ) "has f-featuwes").inc()
+              edge(
+                souwceid = scowededge.souwceid, rawr x3
+                d-destinationid = scowededge.destinationid, rawr x3
+                weight = some(scowededge.scowe), σωσ
+                f-featuwes = c-combinedfeatuwesopt.map(_.featuwes).getowewse(niw)
               )
-            } else {
-              ScioMetrics.counter("after joining scored edge with features", "no features").inc()
-              Edge(
-                sourceId = scoredEdge.sourceId,
-                destinationId = scoredEdge.destinationId,
-                weight = Some(scoredEdge.score),
-                features = Nil
+            } ewse {
+              s-sciometwics.countew("aftew joining scowed e-edge with featuwes", (ꈍᴗꈍ) "no f-featuwes").inc()
+              edge(
+                souwceid = scowededge.souwceid, rawr
+                destinationid = scowededge.destinationid, ^^;;
+                w-weight = some(scowededge.scowe), rawr x3
+                featuwes = n-nyiw
               )
             }
         }
 
-    val realGraphFeatures =
-      getTopKTimelineFeatures(aggregatedActivityScoredEdge, pipelineOptions.getMaxDestinationIds)
+    v-vaw weawgwaphfeatuwes =
+      gettopktimewinefeatuwes(aggwegatedactivityscowededge, (ˆ ﻌ ˆ)♡ p-pipewineoptions.getmaxdestinationids)
 
-    aggregatedActivityVertex.saveAsCustomOutput(
-      "Write History Aggregated Vertex Records",
-      DAL.writeSnapshot[Vertex](
-        dataset = InteractionGraphHistoryAggregatedVertexSnapshotScalaDataset,
-        pathLayout = PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_vertex"),
-        endDate = Instant.ofEpochMilli(dateInterval.getEndMillis),
-        diskFormat = DiskFormat.Parquet,
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards / 10))
+    aggwegatedactivityvewtex.saveascustomoutput(
+      "wwite h-histowy aggwegated v-vewtex wecowds",
+      d-daw.wwitesnapshot[vewtex](
+        dataset = intewactiongwaphhistowyaggwegatedvewtexsnapshotscawadataset, σωσ
+        pathwayout = pathwayout.daiwypath(pipewineoptions.getoutputpath + "/aggwegated_vewtex"), (U ﹏ U)
+        enddate = instant.ofepochmiwwi(dateintewvaw.getendmiwwis), >w<
+        diskfowmat = diskfowmat.pawquet, σωσ
+        enviwonmentovewwide = enviwonment.vawueof(dawwwiteenviwonment), nyaa~~
+        wwiteoption = wwiteoptions(numofshawds = some(pipewineoptions.getnumbewofshawds / 10))
       )
     )
 
-    scoredAggregatedActivityEdge.saveAsCustomOutput(
-      "Write History Aggregated Edge Records",
-      DAL.writeSnapshot[Edge](
-        dataset = InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset,
-        pathLayout = PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_raw_edge"),
-        endDate = Instant.ofEpochMilli(dateInterval.getEndMillis),
-        diskFormat = DiskFormat.Parquet,
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+    scowedaggwegatedactivityedge.saveascustomoutput(
+      "wwite histowy a-aggwegated edge w-wecowds", 🥺
+      daw.wwitesnapshot[edge](
+        dataset = intewactiongwaphhistowyaggwegatededgesnapshotscawadataset, rawr x3
+        pathwayout = p-pathwayout.daiwypath(pipewineoptions.getoutputpath + "/aggwegated_waw_edge"), σωσ
+        e-enddate = instant.ofepochmiwwi(dateintewvaw.getendmiwwis), (///ˬ///✿)
+        d-diskfowmat = diskfowmat.pawquet, (U ﹏ U)
+        e-enviwonmentovewwide = enviwonment.vawueof(dawwwiteenviwonment), ^^;;
+        w-wwiteoption = w-wwiteoptions(numofshawds = some(pipewineoptions.getnumbewofshawds))
       )
     )
 
-    aggregatedActivityVertexDaily.saveAsCustomOutput(
-      "Write Daily Aggregated Vertex Records",
-      DAL.write[Vertex](
-        dataset = InteractionGraphAggregatedVertexDailyScalaDataset,
-        pathLayout =
-          PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_vertex_daily"),
-        interval = dateInterval,
-        diskFormat = DiskFormat.Parquet,
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards / 10))
+    aggwegatedactivityvewtexdaiwy.saveascustomoutput(
+      "wwite d-daiwy aggwegated vewtex w-wecowds", 🥺
+      d-daw.wwite[vewtex](
+        dataset = intewactiongwaphaggwegatedvewtexdaiwyscawadataset, òωó
+        p-pathwayout =
+          p-pathwayout.daiwypath(pipewineoptions.getoutputpath + "/aggwegated_vewtex_daiwy"), XD
+        i-intewvaw = dateintewvaw, :3
+        d-diskfowmat = d-diskfowmat.pawquet, (U ﹏ U)
+        e-enviwonmentovewwide = e-enviwonment.vawueof(dawwwiteenviwonment), >w<
+        w-wwiteoption = w-wwiteoptions(numofshawds = some(pipewineoptions.getnumbewofshawds / 10))
       )
     )
 
-    aggregatedActivityEdgeDaily.saveAsCustomOutput(
-      "Write Daily Aggregated Edge Records",
-      DAL.write[Edge](
-        dataset = InteractionGraphAggregatedEdgeDailyScalaDataset,
-        pathLayout = PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_edge_daily"),
-        interval = dateInterval,
-        diskFormat = DiskFormat.Parquet,
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+    aggwegatedactivityedgedaiwy.saveascustomoutput(
+      "wwite d-daiwy a-aggwegated edge w-wecowds", /(^•ω•^)
+      daw.wwite[edge](
+        d-dataset = intewactiongwaphaggwegatededgedaiwyscawadataset, (⑅˘꒳˘)
+        pathwayout = p-pathwayout.daiwypath(pipewineoptions.getoutputpath + "/aggwegated_edge_daiwy"), ʘwʘ
+        intewvaw = dateintewvaw, rawr x3
+        d-diskfowmat = d-diskfowmat.pawquet, (˘ω˘)
+        e-enviwonmentovewwide = enviwonment.vawueof(dawwwiteenviwonment), o.O
+        w-wwiteoption = wwiteoptions(numofshawds = s-some(pipewineoptions.getnumbewofshawds))
       )
     )
 
-    realGraphFeatures.saveAsCustomOutput(
-      "Write Timeline Real Graph Features",
-      DAL.writeVersionedKeyVal[KeyVal[Long, UserSession]](
-        dataset = RealGraphFeaturesScalaDataset,
-        pathLayout =
-          PathLayout.VersionedPath(pipelineOptions.getOutputPath + "/real_graph_features"),
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+    weawgwaphfeatuwes.saveascustomoutput(
+      "wwite t-timewine weaw gwaph f-featuwes", 😳
+      daw.wwitevewsionedkeyvaw[keyvaw[wong, o.O usewsession]](
+        dataset = weawgwaphfeatuwesscawadataset, ^^;;
+        pathwayout =
+          p-pathwayout.vewsionedpath(pipewineoptions.getoutputpath + "/weaw_gwaph_featuwes"), ( ͡o ω ͡o )
+        enviwonmentovewwide = e-enviwonment.vawueof(dawwwiteenviwonment), ^^;;
+        w-wwiteoption = wwiteoptions(numofshawds = some(pipewineoptions.getnumbewofshawds))
       )
     )
   }

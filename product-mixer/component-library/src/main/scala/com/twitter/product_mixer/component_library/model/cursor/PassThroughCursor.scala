@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.component_library.model.cursor
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.{
-  CursorType => UrtCursorType
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.cuwsowtype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinecuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.uwtpipewinecuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.{
+  cuwsowtype => uwtcuwsowtype
 }
 
-case object PreviousCursorFeature
-    extends Feature[PipelineQuery with HasPipelineCursor[UrtPassThroughCursor], String]
+case object pweviouscuwsowfeatuwe
+    e-extends featuwe[pipewinequewy with h-haspipewinecuwsow[uwtpassthwoughcuwsow], (˘ω˘) stwing]
 
-case object NextCursorFeature
-    extends Feature[PipelineQuery with HasPipelineCursor[UrtPassThroughCursor], String]
+c-case object nextcuwsowfeatuwe
+    extends featuwe[pipewinequewy with haspipewinecuwsow[uwtpassthwoughcuwsow], (⑅˘꒳˘) stwing]
 
 /**
- * Cursor model that may be used when we want to pass through the cursor value from and back to
- * a downstream as-is.
+ * c-cuwsow modew that may be used when w-we want to pass t-thwough the cuwsow vawue fwom and back to
+ * a downstweam as-is. (///ˬ///✿)
  *
- * @param initialSortIndex See [[UrtPipelineCursor]]
- * @param cursorValue the pass through cursor
+ * @pawam initiawsowtindex s-see [[uwtpipewinecuwsow]]
+ * @pawam cuwsowvawue the pass thwough cuwsow
  */
-case class UrtPassThroughCursor(
-  override val initialSortIndex: Long,
-  cursorValue: String,
-  cursorType: Option[UrtCursorType] = None)
-    extends UrtPipelineCursor
+case cwass uwtpassthwoughcuwsow(
+  o-ovewwide vaw initiawsowtindex: wong, 😳😳😳
+  cuwsowvawue: s-stwing,
+  c-cuwsowtype: option[uwtcuwsowtype] = n-nyone)
+    extends u-uwtpipewinecuwsow
 
-case class PassThroughCursor(
-  cursorValue: String,
-  cursorType: Option[CursorType] = None)
-    extends PipelineCursor
+case cwass passthwoughcuwsow(
+  c-cuwsowvawue: stwing, 🥺
+  cuwsowtype: option[cuwsowtype] = n-nyone)
+    extends pipewinecuwsow

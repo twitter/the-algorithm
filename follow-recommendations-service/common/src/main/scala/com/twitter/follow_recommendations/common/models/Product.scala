@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.{Product => ProductMixerProduct}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.{pwoduct => p-pwoductmixewpwoduct}
 
-object Product {
-  case object MagicRecs extends ProductMixerProduct {
-    override val identifier: ProductIdentifier = ProductIdentifier("MagicRecs")
-    override val stringCenterProject: Option[String] = Some("people-discovery")
+o-object p-pwoduct {
+  case o-object magicwecs e-extends pwoductmixewpwoduct {
+    ovewwide vaw identifiew: pwoductidentifiew = pwoductidentifiew("magicwecs")
+    ovewwide vaw s-stwingcentewpwoject: option[stwing] = some("peopwe-discovewy")
   }
 
-  case object PlaceholderProductMixerProduct extends ProductMixerProduct {
-    override val identifier: ProductIdentifier = ProductIdentifier("PlaceholderProductMixerProduct")
+  c-case object pwacehowdewpwoductmixewpwoduct e-extends pwoductmixewpwoduct {
+    ovewwide vaw identifiew: pwoductidentifiew = pwoductidentifiew("pwacehowdewpwoductmixewpwoduct")
   }
 }

@@ -1,38 +1,38 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namespace java com.twittew.fowwow_wecommendations.wogging.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.wogging.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations.wogging
 
-include "com/twitter/ml/api/data.thrift"
+i-incwude "com/twittew/mw/api/data.thwift"
 
-struct CandidateSourceDetails {
-  1: optional map<string, double> candidateSourceScores
-  2: optional i32 primarySource
-}(persisted='true', hasPersonalData='false')
+s-stwuct candidatesouwcedetaiws {
+  1: o-optionaw m-map<stwing, ( ͡o ω ͡o ) d-doubwe> candidatesouwcescowes
+  2: o-optionaw i32 pwimawysouwce
+}(pewsisted='twue', (U ﹏ U) haspewsonawdata='fawse')
 
-struct Score {
-  1: required double value
-  2: optional string rankerId
-  3: optional string scoreType
-}(persisted='true', hasPersonalData='false') // scoring and ranking info per ranking stage
+stwuct scowe {
+  1: w-wequiwed doubwe vawue
+  2: optionaw stwing wankewid
+  3: o-optionaw stwing scowetype
+}(pewsisted='twue', (///ˬ///✿) h-haspewsonawdata='fawse') // scowing and wanking info pew wanking stage
 
-// Contains (1) the ML-based heavy ranker and score (2) scores and rankers in producer experiment framework
-struct Scores {
-  1: required list<Score> scores
-  2: optional string selectedRankerId
-  3: required bool isInProducerScoringExperiment
-}(persisted='true', hasPersonalData='false')
+// c-contains (1) the mw-based heavy w-wankew and scowe (2) s-scowes and wankews in pwoducew expewiment fwamewowk
+stwuct scowes {
+  1: w-wequiwed wist<scowe> scowes
+  2: optionaw stwing sewectedwankewid
+  3: wequiwed b-boow isinpwoducewscowingexpewiment
+}(pewsisted='twue', >w< haspewsonawdata='fawse')
 
-struct RankingInfo {
-  1: optional Scores scores
-  2: optional i32 rank
-}(persisted='true', hasPersonalData='false')
+s-stwuct wankinginfo {
+  1: o-optionaw s-scowes scowes
+  2: o-optionaw i32 wank
+}(pewsisted='twue', rawr haspewsonawdata='fawse')
 
-// this encapsulates all information related to the ranking process from generation to scoring
-struct ScoringDetails {
-    1: optional CandidateSourceDetails candidateSourceDetails
-    2: optional double score  // The ML-based heavy ranker score
-    3: optional data.DataRecord dataRecord
-    4: optional list<string> rankerIds  // all ranker ids, including (1) ML-based heavy ranker (2) non-ML adhoc rankers
-    5: optional map<string, RankingInfo> infoPerRankingStage  // scoring and ranking info per ranking stage
-}(persisted='true', hasPersonalData='true')
+// t-this encapsuwates aww infowmation wewated t-to the wanking pwocess fwom genewation to scowing
+stwuct scowingdetaiws {
+    1: optionaw candidatesouwcedetaiws candidatesouwcedetaiws
+    2: o-optionaw doubwe scowe  // the m-mw-based heavy w-wankew scowe
+    3: o-optionaw data.datawecowd datawecowd
+    4: optionaw wist<stwing> wankewids  // a-aww wankew ids, mya i-incwuding (1) mw-based heavy w-wankew (2) nyon-mw a-adhoc wankews
+    5: optionaw m-map<stwing, ^^ wankinginfo> infopewwankingstage  // s-scowing and wanking info pew wanking stage
+}(pewsisted='twue', 😳😳😳 h-haspewsonawdata='twue')
 

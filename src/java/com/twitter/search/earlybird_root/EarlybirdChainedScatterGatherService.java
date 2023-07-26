@@ -1,58 +1,58 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.List;
+impowt j-java.utiw.wist;
 
-import javax.inject.Inject;
+i-impowt javax.inject.inject;
 
-import com.google.common.collect.Lists;
+i-impowt com.googwe.common.cowwect.wists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.seawch.common.woot.pawtitionwoggingsuppowt;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * A chain of scatter gather services.
- * Regular roots use ScatterGatherService directly. This class is only used by multi-tier roots.
+ * a-a chain of scattew gathew sewvices. ʘwʘ
+ * weguwaw w-woots use scattewgathewsewvice diwectwy. σωσ this c-cwass is onwy used by muwti-tiew woots.
  */
-public class EarlybirdChainedScatterGatherService extends
-    Service<EarlybirdRequestContext, List<Future<EarlybirdResponse>>> {
+pubwic cwass eawwybiwdchainedscattewgathewsewvice e-extends
+    sewvice<eawwybiwdwequestcontext, OwO wist<futuwe<eawwybiwdwesponse>>> {
 
-  private static final Logger LOG =
-    LoggerFactory.getLogger(EarlybirdChainedScatterGatherService.class);
+  p-pwivate static f-finaw woggew wog =
+    woggewfactowy.getwoggew(eawwybiwdchainedscattewgathewsewvice.cwass);
 
-  private final List<Service<EarlybirdRequestContext, EarlybirdResponse>> serviceChain;
+  pwivate finaw wist<sewvice<eawwybiwdwequestcontext, 😳😳😳 eawwybiwdwesponse>> sewvicechain;
 
   /**
-   * Construct a ScatterGatherServiceChain, by loading configurations from earlybird-tiers.yml.
+   * c-constwuct a scattewgathewsewvicechain, 😳😳😳 by woading configuwations fwom eawwybiwd-tiews.ymw. o.O
    */
-  @Inject
-  public EarlybirdChainedScatterGatherService(
-      EarlybirdServiceChainBuilder serviceChainBuilder,
-      EarlybirdServiceScatterGatherSupport scatterGatherSupport,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport) {
+  @inject
+  pubwic eawwybiwdchainedscattewgathewsewvice(
+      e-eawwybiwdsewvicechainbuiwdew sewvicechainbuiwdew, ( ͡o ω ͡o )
+      e-eawwybiwdsewvicescattewgathewsuppowt s-scattewgathewsuppowt, (U ﹏ U)
+      p-pawtitionwoggingsuppowt<eawwybiwdwequestcontext> p-pawtitionwoggingsuppowt) {
 
-    serviceChain =
-        serviceChainBuilder.buildServiceChain(scatterGatherSupport, partitionLoggingSupport);
+    sewvicechain =
+        sewvicechainbuiwdew.buiwdsewvicechain(scattewgathewsuppowt, (///ˬ///✿) p-pawtitionwoggingsuppowt);
 
-    if (serviceChain.isEmpty()) {
-      LOG.error("At least one tier has to be enabled.");
-      throw new RuntimeException("Root does not work with all tiers disabled.");
+    if (sewvicechain.isempty()) {
+      wog.ewwow("at weast one tiew h-has to be enabwed.");
+      thwow nyew wuntimeexception("woot does nyot wowk with aww tiews disabwed.");
     }
   }
 
-  @Override
-  public Future<List<Future<EarlybirdResponse>>> apply(EarlybirdRequestContext requestContext) {
-    // Hit all tiers in parallel.
-    List<Future<EarlybirdResponse>> resultList =
-        Lists.newArrayListWithCapacity(serviceChain.size());
-    for (final Service<EarlybirdRequestContext, EarlybirdResponse> service : serviceChain) {
-      resultList.add(service.apply(requestContext));
+  @ovewwide
+  p-pubwic futuwe<wist<futuwe<eawwybiwdwesponse>>> appwy(eawwybiwdwequestcontext wequestcontext) {
+    // h-hit aww t-tiews in pawawwew. >w<
+    w-wist<futuwe<eawwybiwdwesponse>> wesuwtwist =
+        wists.newawwaywistwithcapacity(sewvicechain.size());
+    fow (finaw s-sewvice<eawwybiwdwequestcontext, rawr e-eawwybiwdwesponse> sewvice : sewvicechain) {
+      w-wesuwtwist.add(sewvice.appwy(wequestcontext));
     }
-    return Future.value(resultList);
+    w-wetuwn futuwe.vawue(wesuwtwist);
   }
 }

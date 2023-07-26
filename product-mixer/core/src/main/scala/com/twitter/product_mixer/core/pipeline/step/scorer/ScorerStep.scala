@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.core.pipeline.step.scorer
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.scowew
 
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hascandidateswithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutowwesuwt
+impowt com.twittew.stitch.awwow
+i-impowt javax.inject.inject
 
 /**
- * A scoring step, it takes the input list of candidates and the given
- * scorers and executes them. The [[State]] object is responsible for merging the resulting
- * feature maps with the scored ones in its updateCandidatesWithFeatures.
+ * a scowing step, (U ﹏ U) it t-takes the input wist of candidates a-and the given
+ * scowews and exekawaii~s them. >w< the [[state]] o-object is wesponsibwe fow mewging t-the wesuwting
+ * f-featuwe maps with the scowed ones in its updatecandidateswithfeatuwes. mya
  *
- * @param candidateFeatureHydratorExecutor Hydrator Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to hydrate features for.
- * @tparam State The pipeline state domain model.
+ * @pawam candidatefeatuwehydwatowexecutow hydwatow e-executow
+ * @tpawam quewy type of pipewinequewy domain modew
+ * @tpawam candidate t-type of candidates to hydwate f-featuwes fow. >w<
+ * @tpawam s-state t-the pipewine state d-domain modew. nyaa~~
  */
-case class ScorerStep[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithFeatures[
-    Candidate,
-    State
-  ]] @Inject() (
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor)
-    extends Step[State, Seq[
-      Scorer[Query, Candidate]
-    ], CandidateFeatureHydratorExecutor.Inputs[
-      Query,
-      Candidate
-    ], CandidateFeatureHydratorExecutorResult[Candidate]] {
+case cwass scowewstep[
+  q-quewy <: pipewinequewy, (✿oωo)
+  candidate <: univewsawnoun[any], ʘwʘ
+  s-state <: hasquewy[quewy, (ˆ ﻌ ˆ)♡ state] with hascandidateswithfeatuwes[
+    candidate, 😳😳😳
+    state
+  ]] @inject() (
+  c-candidatefeatuwehydwatowexecutow: candidatefeatuwehydwatowexecutow)
+    e-extends step[state, :3 s-seq[
+      s-scowew[quewy, OwO candidate]
+    ], (U ﹏ U) candidatefeatuwehydwatowexecutow.inputs[
+      quewy, >w<
+      candidate
+    ], (U ﹏ U) candidatefeatuwehydwatowexecutowwesuwt[candidate]] {
 
-  override def adaptInput(
-    state: State,
-    config: Seq[Scorer[Query, Candidate]]
-  ): CandidateFeatureHydratorExecutor.Inputs[Query, Candidate] =
-    CandidateFeatureHydratorExecutor.Inputs(state.query, state.candidatesWithFeatures)
+  o-ovewwide def a-adaptinput(
+    state: state, 😳
+    c-config: seq[scowew[quewy, (ˆ ﻌ ˆ)♡ c-candidate]]
+  ): candidatefeatuwehydwatowexecutow.inputs[quewy, 😳😳😳 candidate] =
+    candidatefeatuwehydwatowexecutow.inputs(state.quewy, s-state.candidateswithfeatuwes)
 
-  override def arrow(
-    config: Seq[Scorer[Query, Candidate]],
-    context: Executor.Context
-  ): Arrow[
-    CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-    CandidateFeatureHydratorExecutorResult[Candidate]
-  ] = candidateFeatureHydratorExecutor.arrow(config, context)
+  ovewwide def a-awwow(
+    config: seq[scowew[quewy, (U ﹏ U) candidate]], (///ˬ///✿)
+    c-context: executow.context
+  ): a-awwow[
+    candidatefeatuwehydwatowexecutow.inputs[quewy, 😳 c-candidate], 😳
+    c-candidatefeatuwehydwatowexecutowwesuwt[candidate]
+  ] = candidatefeatuwehydwatowexecutow.awwow(config, context)
 
-  override def updateState(
-    input: State,
-    executorResult: CandidateFeatureHydratorExecutorResult[Candidate],
-    config: Seq[Scorer[Query, Candidate]]
-  ): State = {
-    val resultCandidates = executorResult.results
-    if (resultCandidates.isEmpty) {
+  ovewwide def updatestate(
+    input: state, σωσ
+    executowwesuwt: c-candidatefeatuwehydwatowexecutowwesuwt[candidate], rawr x3
+    c-config: seq[scowew[quewy, OwO c-candidate]]
+  ): s-state = {
+    v-vaw wesuwtcandidates = executowwesuwt.wesuwts
+    if (wesuwtcandidates.isempty) {
       input
-    } else {
-      input.updateCandidatesWithFeatures(resultCandidates)
+    } e-ewse {
+      input.updatecandidateswithfeatuwes(wesuwtcandidates)
     }
   }
 
-  override def isEmpty(config: Seq[Scorer[Query, Candidate]]): Boolean =
-    config.isEmpty
+  ovewwide def isempty(config: seq[scowew[quewy, /(^•ω•^) c-candidate]]): boowean =
+    c-config.isempty
 }

@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet
 
-sealed trait TweetDisplayType
+seawed twait tweetdispwaytype
 
-case object Tweet extends TweetDisplayType
-case object TweetFollowOnly extends TweetDisplayType
-case object Media extends TweetDisplayType
-case object MomentTimelineTweet extends TweetDisplayType
-case object EmphasizedPromotedTweet extends TweetDisplayType
-case object QuotedTweet extends TweetDisplayType
-case object SelfThread extends TweetDisplayType
-case object CompactPromotedTweet extends TweetDisplayType
-case object TweetWithoutCard extends TweetDisplayType
-case object ReaderModeRoot extends TweetDisplayType
-case object ReaderMode extends TweetDisplayType
-case object CondensedTweet extends TweetDisplayType
+c-case object tweet e-extends tweetdispwaytype
+c-case o-object tweetfowwowonwy e-extends tweetdispwaytype
+c-case object media e-extends tweetdispwaytype
+c-case object momenttimewinetweet extends tweetdispwaytype
+case object e-emphasizedpwomotedtweet extends tweetdispwaytype
+c-case object quotedtweet extends t-tweetdispwaytype
+case object sewfthwead extends tweetdispwaytype
+c-case object compactpwomotedtweet extends tweetdispwaytype
+c-case o-object tweetwithoutcawd extends tweetdispwaytype
+case object weadewmodewoot extends t-tweetdispwaytype
+case object weadewmode extends tweetdispwaytype
+case object c-condensedtweet extends tweetdispwaytype

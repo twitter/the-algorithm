@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.addentwiestimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Iterates over all the [[TimelineEntry]] passed it and creates `addEntry` entries in the URT for
- * any entries which are not pinned and not replaceable(cursors are replaceable)
+ * i-itewates o-ovew aww the [[timewineentwy]] p-passed it and cweates `addentwy` e-entwies in the u-uwt fow
+ * any entwies which awe nyot pinned and nyot wepwaceabwe(cuwsows awe wepwaceabwe)
  *
- * This is because pinned entries always show up in the `pinEntry` section, and replaceable entries
- * will show up in the `replaceEntry` section.
+ * t-this is because pinned entwies awways show up i-in the `pinentwy` section, (✿oωo) and wepwaceabwe e-entwies
+ * wiww show up in the `wepwaceentwy` section. (ˆ ﻌ ˆ)♡
  */
-case class AddEntriesWithPinnedAndReplaceInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
+c-case cwass addentwieswithpinnedandwepwaceinstwuctionbuiwdew[quewy <: p-pipewinequewy](
+  o-ovewwide vaw incwudeinstwuction: incwudeinstwuction[quewy] = awwaysincwude)
+    extends u-uwtinstwuctionbuiwdew[quewy, addentwiestimewineinstwuction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val entriesToAdd = entries
-        .filterNot(_.isPinned.getOrElse(false))
-        .filter(_.entryIdToReplace.isEmpty)
-      if (entriesToAdd.nonEmpty) Seq(AddEntriesTimelineInstruction(entriesToAdd))
-      else Seq.empty
-    } else
-      Seq.empty
+  ovewwide def buiwd(
+    quewy: quewy, (˘ω˘)
+    e-entwies: seq[timewineentwy]
+  ): seq[addentwiestimewineinstwuction] = {
+    i-if (incwudeinstwuction(quewy, (⑅˘꒳˘) e-entwies)) {
+      v-vaw e-entwiestoadd = entwies
+        .fiwtewnot(_.ispinned.getowewse(fawse))
+        .fiwtew(_.entwyidtowepwace.isempty)
+      if (entwiestoadd.nonempty) seq(addentwiestimewineinstwuction(entwiestoadd))
+      e-ewse seq.empty
+    } ewse
+      seq.empty
   }
 }

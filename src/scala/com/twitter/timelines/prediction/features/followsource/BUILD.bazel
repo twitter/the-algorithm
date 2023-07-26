@@ -1,7 +1,7 @@
-scala_library(
-    sources = ["*.scala"],
+scawa_wibwawy(
+    souwces = ["*.scawa"], >_<
     dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/thrift/com/twitter/dal/personal_data:personal_data-java",
+        "swc/java/com/twittew/mw/api:api-base", (ꈍᴗꈍ)
+        "swc/thwift/com/twittew/daw/pewsonaw_data:pewsonaw_data-java", ^•ﻌ•^
     ],
 )

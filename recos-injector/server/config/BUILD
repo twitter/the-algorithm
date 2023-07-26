@@ -1,20 +1,20 @@
-resources(
-    sources = [
-        "!*.pyc",
-        "!BUILD*",
-        "*",
-    ],
-    tags = ["bazel-compatible"],
+wesouwces(
+    souwces = [
+        "!*.pyc", rawr
+        "!buiwd*", σωσ
+        "*", σωσ
+    ], >_<
+    tags = ["bazew-compatibwe"], :3
 )
 
-# Created for Bazel compatibility.
-# In Bazel, loose files must be part of a target to be included into a bundle.
-# See also http://go/bazel-compatibility/bundle_does_not_match_any_files
-files(
-    name = "files",
-    sources = [
-        "!BUILD",
+# c-cweated f-fow bazew compatibiwity. (U ﹏ U)
+# i-in bazew, -.- w-woose fiwes m-must be pawt of a-a tawget to be i-incwuded into a b-bundwe. (ˆ ﻌ ˆ)♡
+# see awso http://go/bazew-compatibiwity/bundwe_does_not_match_any_fiwes
+fiwes(
+    nyame = "fiwes", (⑅˘꒳˘)
+    souwces = [
+        "!buiwd",
         "**/*",
-    ],
-    tags = ["bazel-compatible"],
+    ], (U ᵕ U❁)
+    tags = ["bazew-compatibwe"], -.-
 )

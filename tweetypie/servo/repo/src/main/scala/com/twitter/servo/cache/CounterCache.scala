@@ -1,20 +1,20 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.util.{Duration, Future}
+impowt com.twittew.utiw.{duwation, nyaa~~ f-futuwe}
 
-trait CounterCache[K] extends Cache[K, Long] {
-  def incr(key: K, delta: Int = 1): Future[Option[Long]]
-  def decr(key: K, delta: Int = 1): Future[Option[Long]]
+twait c-countewcache[k] e-extends cache[k, /(^•ω•^) w-wong] {
+  def i-incw(key: k, rawr dewta: i-int = 1): futuwe[option[wong]]
+  d-def decw(key: k-k, OwO dewta: int = 1): futuwe[option[wong]]
 }
 
-class MemcacheCounterCache[K](
-  memcache: Memcache,
-  ttl: Duration,
-  transformKey: KeyTransformer[K] = ((k: K) => k.toString): (K => java.lang.String))
-    extends MemcacheCache[K, Long](memcache, ttl, CounterSerializer, transformKey)
-    with CounterCache[K]
+cwass memcachecountewcache[k](
+  memcache: memcache, (U ﹏ U)
+  ttw: duwation, >_<
+  t-twansfowmkey: keytwansfowmew[k] = ((k: k) => k.tostwing): (k => j-java.wang.stwing))
+    extends memcachecache[k, rawr x3 w-wong](memcache, mya ttw, nyaa~~ countewsewiawizew, (⑅˘꒳˘) twansfowmkey)
+    with countewcache[k]
 
-class NullCounterCache[K] extends NullCache[K, Long] with CounterCache[K] {
-  override def incr(key: K, delta: Int = 1): Future[Option[Long]] = Future.value(Some(0L))
-  override def decr(key: K, delta: Int = 1): Future[Option[Long]] = Future.value(Some(0L))
+c-cwass nyuwwcountewcache[k] extends nyuwwcache[k, rawr x3 w-wong] with c-countewcache[k] {
+  ovewwide def incw(key: k, (✿oωo) dewta: int = 1): futuwe[option[wong]] = f-futuwe.vawue(some(0w))
+  ovewwide def decw(key: k, (ˆ ﻌ ˆ)♡ dewta: int = 1): futuwe[option[wong]] = futuwe.vawue(some(0w))
 }

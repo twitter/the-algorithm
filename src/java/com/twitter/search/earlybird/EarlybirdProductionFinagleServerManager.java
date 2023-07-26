@@ -1,151 +1,151 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.atomic.AtomicReference;
+impowt java.net.inetsocketaddwess;
+i-impowt j-java.utiw.concuwwent.atomic.atomicwefewence;
 
-import org.apache.thrift.protocol.TCompactProtocol;
-import org.apache.thrift.protocol.TProtocolFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.apache.thwift.pwotocow.tcompactpwotocow;
+i-impowt owg.apache.thwift.pwotocow.tpwotocowfactowy;
+i-impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.ListeningServer;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SslException;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.mtls.server.MtlsThriftMuxServer;
-import com.twitter.finagle.mux.transport.OpportunisticTls;
-import com.twitter.finagle.stats.MetricsStatsReceiver;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.finagle.util.ExitGuard;
-import com.twitter.finagle.zipkin.thrift.ZipkinTracer;
-import com.twitter.search.common.dark.DarkProxy;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdFinagleServerMonitor;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.server.filter.AdmissionControl;
-import com.twitter.server.filter.cpuAdmissionControl;
-import com.twitter.util.Await;
-import com.twitter.util.Duration;
-import com.twitter.util.TimeoutException;
+i-impowt com.twittew.finagwe.wisteningsewvew;
+impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.sswexception;
+impowt c-com.twittew.finagwe.thwiftmux;
+impowt com.twittew.finagwe.mtws.sewvew.mtwsthwiftmuxsewvew;
+impowt c-com.twittew.finagwe.mux.twanspowt.oppowtunistictws;
+impowt com.twittew.finagwe.stats.metwicsstatsweceivew;
+i-impowt com.twittew.finagwe.thwift.thwiftcwientwequest;
+impowt com.twittew.finagwe.utiw.exitguawd;
+impowt com.twittew.finagwe.zipkin.thwift.zipkintwacew;
+i-impowt com.twittew.seawch.common.dawk.dawkpwoxy;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
+i-impowt c-com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+impowt com.twittew.seawch.eawwybiwd.exception.eawwybiwdfinagwesewvewmonitow;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
+impowt com.twittew.sewvew.fiwtew.admissioncontwow;
+i-impowt com.twittew.sewvew.fiwtew.cpuadmissioncontwow;
+impowt com.twittew.utiw.await;
+impowt com.twittew.utiw.duwation;
+impowt com.twittew.utiw.timeoutexception;
 
-public class EarlybirdProductionFinagleServerManager implements EarlybirdFinagleServerManager {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdProductionFinagleServerManager.class);
+pubwic cwass e-eawwybiwdpwoductionfinagwesewvewmanagew impwements e-eawwybiwdfinagwesewvewmanagew {
+  p-pwivate static f-finaw woggew w-wog =
+      woggewfactowy.getwoggew(eawwybiwdpwoductionfinagwesewvewmanagew.cwass);
 
-  private final AtomicReference<ListeningServer> warmUpFinagleServer = new AtomicReference<>();
-  private final AtomicReference<ListeningServer> productionFinagleServer = new AtomicReference<>();
-  private final EarlybirdFinagleServerMonitor unhandledExceptionMonitor;
+  pwivate finaw atomicwefewence<wisteningsewvew> w-wawmupfinagwesewvew = nyew atomicwefewence<>();
+  p-pwivate finaw atomicwefewence<wisteningsewvew> pwoductionfinagwesewvew = nyew atomicwefewence<>();
+  pwivate finaw eawwybiwdfinagwesewvewmonitow u-unhandwedexceptionmonitow;
 
-  public EarlybirdProductionFinagleServerManager(
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this.unhandledExceptionMonitor =
-        new EarlybirdFinagleServerMonitor(criticalExceptionHandler);
+  pubwic eawwybiwdpwoductionfinagwesewvewmanagew(
+      c-cwiticawexceptionhandwew c-cwiticawexceptionhandwew) {
+    t-this.unhandwedexceptionmonitow =
+        nyew eawwybiwdfinagwesewvewmonitow(cwiticawexceptionhandwew);
   }
 
-  @Override
-  public boolean isWarmUpServerRunning() {
-    return warmUpFinagleServer.get() != null;
+  @ovewwide
+  pubwic boowean iswawmupsewvewwunning() {
+    w-wetuwn w-wawmupfinagwesewvew.get() != nuww;
   }
 
-  @Override
-  public void startWarmUpFinagleServer(EarlybirdService.ServiceIface serviceIface,
-                                       String serviceName,
-                                       int port) {
-    TProtocolFactory protocolFactory = new TCompactProtocol.Factory();
-    startFinagleServer(warmUpFinagleServer, "warmup",
-      new EarlybirdService.Service(serviceIface, protocolFactory),
-      protocolFactory, serviceName, port);
+  @ovewwide
+  p-pubwic v-void stawtwawmupfinagwesewvew(eawwybiwdsewvice.sewviceiface sewviceiface, (˘ω˘)
+                                       s-stwing sewvicename, (✿oωo)
+                                       int p-powt) {
+    tpwotocowfactowy pwotocowfactowy = nyew tcompactpwotocow.factowy();
+    stawtfinagwesewvew(wawmupfinagwesewvew, (///ˬ///✿) "wawmup", rawr x3
+      n-nyew eawwybiwdsewvice.sewvice(sewviceiface, -.- p-pwotocowfactowy),
+      pwotocowfactowy, ^^ s-sewvicename, (⑅˘꒳˘) p-powt);
   }
 
-  @Override
-  public void stopWarmUpFinagleServer(Duration serverCloseWaitTime) throws InterruptedException {
-    stopFinagleServer(warmUpFinagleServer, serverCloseWaitTime, "Warm up");
+  @ovewwide
+  pubwic void stopwawmupfinagwesewvew(duwation sewvewcwosewaittime) thwows intewwuptedexception {
+    stopfinagwesewvew(wawmupfinagwesewvew, nyaa~~ s-sewvewcwosewaittime, /(^•ω•^) "wawm u-up");
   }
 
-  @Override
-  public boolean isProductionServerRunning() {
-    return productionFinagleServer.get() != null;
+  @ovewwide
+  pubwic b-boowean ispwoductionsewvewwunning() {
+    w-wetuwn p-pwoductionfinagwesewvew.get() != nyuww;
   }
 
-  @Override
-  public void startProductionFinagleServer(DarkProxy<ThriftClientRequest, byte[]> darkProxy,
-                                           EarlybirdService.ServiceIface serviceIface,
-                                           String serviceName,
-                                           int port) {
-    TProtocolFactory protocolFactory = new TCompactProtocol.Factory();
-    startFinagleServer(productionFinagleServer, "production",
-      darkProxy.toFilter().andThen(new EarlybirdService.Service(serviceIface, protocolFactory)),
-      protocolFactory, serviceName, port);
+  @ovewwide
+  pubwic void stawtpwoductionfinagwesewvew(dawkpwoxy<thwiftcwientwequest, (U ﹏ U) b-byte[]> dawkpwoxy, 😳😳😳
+                                           eawwybiwdsewvice.sewviceiface sewviceiface, >w<
+                                           stwing sewvicename, XD
+                                           i-int powt) {
+    tpwotocowfactowy p-pwotocowfactowy = n-nyew t-tcompactpwotocow.factowy();
+    stawtfinagwesewvew(pwoductionfinagwesewvew, o.O "pwoduction", mya
+      d-dawkpwoxy.tofiwtew().andthen(new e-eawwybiwdsewvice.sewvice(sewviceiface, 🥺 p-pwotocowfactowy)), ^^;;
+      p-pwotocowfactowy, :3 sewvicename, (U ﹏ U) powt);
   }
 
-  @Override
-  public void stopProductionFinagleServer(Duration serverCloseWaitTime)
-      throws InterruptedException {
-    stopFinagleServer(productionFinagleServer, serverCloseWaitTime, "Production");
+  @ovewwide
+  pubwic v-void stoppwoductionfinagwesewvew(duwation s-sewvewcwosewaittime)
+      t-thwows intewwuptedexception {
+    s-stopfinagwesewvew(pwoductionfinagwesewvew, OwO s-sewvewcwosewaittime, 😳😳😳 "pwoduction");
   }
 
-  private void startFinagleServer(AtomicReference target, String serverDescription,
-      Service<byte[], byte[]> service, TProtocolFactory protocolFactory, String serviceName,
-      int port) {
-    target.set(getServer(service, serviceName, port, protocolFactory));
-    LOG.info("Started EarlybirdServer " + serverDescription + " finagle server on port " + port);
+  pwivate void stawtfinagwesewvew(atomicwefewence tawget, (ˆ ﻌ ˆ)♡ s-stwing sewvewdescwiption, XD
+      sewvice<byte[], (ˆ ﻌ ˆ)♡ byte[]> sewvice, ( ͡o ω ͡o ) tpwotocowfactowy pwotocowfactowy, rawr x3 stwing sewvicename, nyaa~~
+      i-int powt) {
+    tawget.set(getsewvew(sewvice, >_< sewvicename, powt, ^^;; pwotocowfactowy));
+    w-wog.info("stawted e-eawwybiwdsewvew " + s-sewvewdescwiption + " finagwe sewvew o-on powt " + powt);
   }
 
-  private ListeningServer getServer(
-      Service<byte[], byte[]> service, String serviceName, int port,
-      TProtocolFactory protocolFactory) {
-    MetricsStatsReceiver statsReceiver = new MetricsStatsReceiver();
-    ThriftMux.Server server = new MtlsThriftMuxServer(ThriftMux.server())
-        .withMutualTls(EarlybirdProperty.getServiceIdentifier())
-        .withServiceClass(EarlybirdService.class)
-        .withOpportunisticTls(OpportunisticTls.Required())
-        .withLabel(serviceName)
-        .withStatsReceiver(statsReceiver)
-        .withTracer(ZipkinTracer.mk(statsReceiver))
-        .withMonitor(unhandledExceptionMonitor)
-        .withProtocolFactory(protocolFactory);
+  pwivate w-wisteningsewvew g-getsewvew(
+      sewvice<byte[], (ˆ ﻌ ˆ)♡ byte[]> sewvice, ^^;; stwing sewvicename, (⑅˘꒳˘) int powt, rawr x3
+      tpwotocowfactowy p-pwotocowfactowy) {
+    metwicsstatsweceivew s-statsweceivew = nyew metwicsstatsweceivew();
+    t-thwiftmux.sewvew s-sewvew = nyew mtwsthwiftmuxsewvew(thwiftmux.sewvew())
+        .withmutuawtws(eawwybiwdpwopewty.getsewviceidentifiew())
+        .withsewvicecwass(eawwybiwdsewvice.cwass)
+        .withoppowtunistictws(oppowtunistictws.wequiwed())
+        .withwabew(sewvicename)
+        .withstatsweceivew(statsweceivew)
+        .withtwacew(zipkintwacew.mk(statsweceivew))
+        .withmonitow(unhandwedexceptionmonitow)
+        .withpwotocowfactowy(pwotocowfactowy);
 
-    if (cpuAdmissionControl.isDefined()) {
-      LOG.info("cpuAdmissionControl flag is set, replacing AuroraThrottlingAdmissionFilter"
-          + " with LinuxCpuAdmissionFilter");
-      server = server
-          .configured(AdmissionControl.auroraThrottling().off().mk())
-          .configured(AdmissionControl.linuxCpu().useGlobalFlag().mk());
+    if (cpuadmissioncontwow.isdefined()) {
+      wog.info("cpuadmissioncontwow f-fwag i-is set, (///ˬ///✿) wepwacing auwowathwottwingadmissionfiwtew"
+          + " w-with winuxcpuadmissionfiwtew");
+      s-sewvew = sewvew
+          .configuwed(admissioncontwow.auwowathwottwing().off().mk())
+          .configuwed(admissioncontwow.winuxcpu().usegwobawfwag().mk());
     }
 
-    return server.serve(new InetSocketAddress(port), service);
+    wetuwn sewvew.sewve(new inetsocketaddwess(powt), 🥺 sewvice);
   }
 
-  private void stopFinagleServer(AtomicReference<ListeningServer> finagleServer,
-                                 Duration serverCloseWaitTime,
-                                 String serverDescription) throws InterruptedException {
-    try {
-      LOG.info("Waiting for " + serverDescription + " finagle server to close. "
-               + "Current time is " + System.currentTimeMillis());
-      Await.result(finagleServer.get().close(), serverCloseWaitTime);
-      LOG.info("Stopped " + serverDescription + " finagle server. Current time is "
-               + System.currentTimeMillis());
-      finagleServer.set(null);
-    } catch (TimeoutException e) {
-      LOG.warn(serverDescription + " finagle server did not shutdown cleanly.", e);
-    } catch (SslException e) {
-      // Closing the Thrift port seems to throw an SSLException (SSLEngine closed already).
-      // See SEARCH-29449. Log the exception and reset finagleServer, so that future calls to
-      // startProductionFinagleServer() succeed.
-      LOG.warn("Got a SSLException while trying to close the Thrift port.", e);
-      finagleServer.set(null);
-    } catch (InterruptedException e) {
-      // If we catch an InterruptedException here, it means that we're probably shutting down.
-      // We should propagate this exception, and rely on EarlybirdServer.stopThriftService()
-      // to do the right thing.
-      throw e;
-    } catch (Exception e) {
-      LOG.error(e.getMessage(), e);
-    } finally {
-      // If the finagle server does not close cleanly, this line prints details about
-      // the ExitGuards.
-      LOG.info(serverDescription + " server ExitGuard explanation: " + ExitGuard.explainGuards());
+  p-pwivate void s-stopfinagwesewvew(atomicwefewence<wisteningsewvew> f-finagwesewvew, >_<
+                                 duwation sewvewcwosewaittime, UwU
+                                 s-stwing sewvewdescwiption) t-thwows intewwuptedexception {
+    t-twy {
+      wog.info("waiting fow " + sewvewdescwiption + " finagwe sewvew to cwose. >_< "
+               + "cuwwent t-time is " + system.cuwwenttimemiwwis());
+      a-await.wesuwt(finagwesewvew.get().cwose(), -.- sewvewcwosewaittime);
+      wog.info("stopped " + s-sewvewdescwiption + " f-finagwe sewvew. mya cuwwent time is "
+               + system.cuwwenttimemiwwis());
+      finagwesewvew.set(nuww);
+    } c-catch (timeoutexception e) {
+      wog.wawn(sewvewdescwiption + " finagwe sewvew did nyot shutdown cweanwy.", >w< e-e);
+    } catch (sswexception e) {
+      // cwosing the thwift p-powt seems to t-thwow an sswexception (sswengine cwosed awweady). (U ﹏ U)
+      // see seawch-29449. 😳😳😳 wog t-the exception a-and weset finagwesewvew, o.O so that futuwe cawws to
+      // stawtpwoductionfinagwesewvew() s-succeed. òωó
+      wog.wawn("got a-a sswexception whiwe twying to cwose the thwift powt.", 😳😳😳 e);
+      f-finagwesewvew.set(nuww);
+    } catch (intewwuptedexception e-e) {
+      // i-if we catch an intewwuptedexception h-hewe, σωσ it means that we'we p-pwobabwy shutting d-down. (⑅˘꒳˘)
+      // w-we shouwd pwopagate this exception, (///ˬ///✿) a-and wewy on e-eawwybiwdsewvew.stopthwiftsewvice()
+      // to do the wight thing. 🥺
+      t-thwow e-e;
+    } catch (exception e-e) {
+      wog.ewwow(e.getmessage(), OwO e);
+    } finawwy {
+      // i-if the finagwe sewvew d-does nyot cwose c-cweanwy, >w< this wine pwints detaiws about
+      // the exitguawds. 🥺
+      w-wog.info(sewvewdescwiption + " s-sewvew e-exitguawd expwanation: " + e-exitguawd.expwainguawds());
     }
   }
 }

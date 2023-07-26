@@ -1,332 +1,332 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableDownrankSpamReplySectioningRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableNotGraduatedSearchDropRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableNsfwTextSectioningRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.NotGraduatedUserLabelRuleHoldbackExperimentParam
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.LoggedOutOrViewerNotFollowingAuthor
-import com.twitter.visibility.rules.Condition.LoggedOutOrViewerOptInFiltering
-import com.twitter.visibility.rules.Condition.NonAuthorViewer
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.TweetComposedBefore
-import com.twitter.visibility.rules.Condition.ViewerDoesFollowAuthor
-import com.twitter.visibility.rules.Condition.ViewerOptInFilteringOnSearch
-import com.twitter.visibility.rules.Reason.Nsfw
-import com.twitter.visibility.rules.Reason.Unspecified
-import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
+impowt com.twittew.visibiwity.configapi.pawams.wuwepawam
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams.enabwedownwankspamwepwysectioningwuwepawam
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.enabwenotgwaduatedseawchdwopwuwepawam
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.enabwensfwtextsectioningwuwepawam
+impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams.notgwaduatedusewwabewwuwehowdbackexpewimentpawam
+i-impowt c-com.twittew.visibiwity.modews.tweetsafetywabewtype
+i-impowt com.twittew.visibiwity.modews.usewwabewvawue
+impowt com.twittew.visibiwity.wuwes.condition.and
+impowt com.twittew.visibiwity.wuwes.condition.woggedoutowviewewnotfowwowingauthow
+impowt c-com.twittew.visibiwity.wuwes.condition.woggedoutowviewewoptinfiwtewing
+impowt com.twittew.visibiwity.wuwes.condition.nonauthowviewew
+i-impowt com.twittew.visibiwity.wuwes.condition.not
+impowt c-com.twittew.visibiwity.wuwes.condition.tweetcomposedbefowe
+impowt com.twittew.visibiwity.wuwes.condition.viewewdoesfowwowauthow
+impowt com.twittew.visibiwity.wuwes.condition.viewewoptinfiwtewingonseawch
+i-impowt com.twittew.visibiwity.wuwes.weason.nsfw
+i-impowt c-com.twittew.visibiwity.wuwes.weason.unspecified
+impowt com.twittew.visibiwity.wuwes.wuweactionsouwcebuiwdew.tweetsafetywabewsouwcebuiwdew
 
-case object SafeSearchTweetRules {
+case object safeseawchtweetwuwes {
 
-  object SafeSearchAbusiveTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Unspecified),
-        TweetSafetyLabelType.Abusive
+  object safeseawchabusivetweetwabewwuwe
+      e-extends nyonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+        dwop(unspecified), (///ˬ///✿)
+        tweetsafetywabewtype.abusive
       )
-      with DoesLogVerdict {
-    override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-      TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.Abusive))
+      with doeswogvewdict {
+    ovewwide def a-actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+      t-tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.abusive))
   }
 
-  object SafeSearchNsfwHighPrecisionTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Nsfw),
-        TweetSafetyLabelType.NsfwHighPrecision
+  o-object safeseawchnsfwhighpwecisiontweetwabewwuwe
+      e-extends nyonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+        dwop(nsfw), 🥺
+        t-tweetsafetywabewtype.nsfwhighpwecision
       )
 
-  object SafeSearchGoreAndViolenceHighPrecisionTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Nsfw),
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
+  object safeseawchgoweandviowencehighpwecisiontweetwabewwuwe
+      extends n-nyonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+        dwop(nsfw), OwO
+        tweetsafetywabewtype.goweandviowencehighpwecision
       )
 
-  object SafeSearchNsfwReportedHeuristicsTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Nsfw),
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  object safeseawchnsfwwepowtedheuwisticstweetwabewwuwe
+      extends nyonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+        d-dwop(nsfw), >w<
+        tweetsafetywabewtype.nsfwwepowtedheuwistics
       )
 
-  object SafeSearchGoreAndViolenceReportedHeuristicsTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Nsfw),
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  o-object safeseawchgoweandviowencewepowtedheuwisticstweetwabewwuwe
+      e-extends n-nonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+        dwop(nsfw), 🥺
+        tweetsafetywabewtype.goweandviowencewepowtedheuwistics
       )
 
-  object SafeSearchNsfwCardImageTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Nsfw),
-        TweetSafetyLabelType.NsfwCardImage
+  object safeseawchnsfwcawdimagetweetwabewwuwe
+      e-extends nyonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+        d-dwop(nsfw), nyaa~~
+        tweetsafetywabewtype.nsfwcawdimage
       )
 
-  object SafeSearchNsfwHighRecallTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Nsfw),
-        TweetSafetyLabelType.NsfwHighRecall
+  o-object s-safeseawchnsfwhighwecawwtweetwabewwuwe
+      extends n-nyonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+        dwop(nsfw), ^^
+        tweetsafetywabewtype.nsfwhighwecaww
       )
 
-  object SafeSearchNsfwVideoTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Nsfw),
-        TweetSafetyLabelType.NsfwVideo
+  o-object safeseawchnsfwvideotweetwabewwuwe
+      extends nyonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+        dwop(nsfw), >w<
+        t-tweetsafetywabewtype.nsfwvideo
       )
 
-  object SafeSearchNsfwTextTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Nsfw),
-        TweetSafetyLabelType.NsfwText
+  object safeseawchnsfwtexttweetwabewwuwe
+      extends n-nyonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+        dwop(nsfw), OwO
+        t-tweetsafetywabewtype.nsfwtext
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
+    o-ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(enabwensfwtextsectioningwuwepawam)
   }
 
-  object SafeSearchNsfwTextAuthorLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Nsfw),
-        UserLabelValue.DownrankSpamReply
+  object safeseawchnsfwtextauthowwabewwuwe
+      extends viewewoptinfiwtewingonseawchusewwabewwuwe(
+        dwop(nsfw), XD
+        u-usewwabewvawue.downwankspamwepwy
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
+    o-ovewwide def enabwed: s-seq[wuwepawam[boowean]] = s-seq(enabwensfwtextsectioningwuwepawam)
   }
 
-  object SafeSearchGoreAndViolenceTweetLabelRule
-      extends ConditionWithTweetLabelRule(
-        Drop(Unspecified),
-        And(
-          NonAuthorViewer,
-          TweetComposedBefore(TweetSafetyLabelType.GoreAndViolence.DeprecatedAt),
-          LoggedOutOrViewerOptInFiltering
-        ),
-        TweetSafetyLabelType.GoreAndViolence
+  o-object safeseawchgoweandviowencetweetwabewwuwe
+      extends conditionwithtweetwabewwuwe(
+        dwop(unspecified), ^^;;
+        a-and(
+          nyonauthowviewew, 🥺
+          tweetcomposedbefowe(tweetsafetywabewtype.goweandviowence.depwecatedat), XD
+          woggedoutowviewewoptinfiwtewing
+        ), (U ᵕ U❁)
+        tweetsafetywabewtype.goweandviowence
       )
 
-  object SafeSearchUntrustedUrlTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Unspecified),
-        TweetSafetyLabelType.UntrustedUrl
+  o-object safeseawchuntwusteduwwtweetwabewwuwe
+      extends n-nyonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+        d-dwop(unspecified), :3
+        t-tweetsafetywabewtype.untwusteduww
       )
 
-  object SafeSearchDownrankSpamReplyTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Unspecified),
-        TweetSafetyLabelType.DownrankSpamReply
+  object safeseawchdownwankspamwepwytweetwabewwuwe
+      e-extends n-nyonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+        d-dwop(unspecified), ( ͡o ω ͡o )
+        t-tweetsafetywabewtype.downwankspamwepwy
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableDownrankSpamReplySectioningRuleParam)
+    ovewwide def enabwed: s-seq[wuwepawam[boowean]] =
+      s-seq(enabwedownwankspamwepwysectioningwuwepawam)
   }
 
-  object SafeSearchDownrankSpamReplyAuthorLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.DownrankSpamReply
+  o-object s-safeseawchdownwankspamwepwyauthowwabewwuwe
+      e-extends viewewoptinfiwtewingonseawchusewwabewwuwe(
+        dwop(unspecified), òωó
+        usewwabewvawue.downwankspamwepwy
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableDownrankSpamReplySectioningRuleParam)
+    ovewwide def e-enabwed: seq[wuwepawam[boowean]] =
+      seq(enabwedownwankspamwepwysectioningwuwepawam)
   }
 
-  object SafeSearchAutomationNonFollowerTweetLabelRule
-      extends NonFollowerViewerOptInFilteringWithTweetLabelRule(
-        Drop(Unspecified),
-        TweetSafetyLabelType.Automation
+  object safeseawchautomationnonfowwowewtweetwabewwuwe
+      extends nyonfowwowewviewewoptinfiwtewingwithtweetwabewwuwe(
+        dwop(unspecified), σωσ
+        t-tweetsafetywabewtype.automation
       )
 
-  object SafeSearchDuplicateMentionNonFollowerTweetLabelRule
-      extends NonFollowerViewerOptInFilteringWithTweetLabelRule(
-        Drop(Unspecified),
-        TweetSafetyLabelType.DuplicateMention
+  object safeseawchdupwicatementionnonfowwowewtweetwabewwuwe
+      extends nyonfowwowewviewewoptinfiwtewingwithtweetwabewwuwe(
+        d-dwop(unspecified), (U ᵕ U❁)
+        t-tweetsafetywabewtype.dupwicatemention
       )
 
-  object SafeSearchBystanderAbusiveTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Unspecified),
-        TweetSafetyLabelType.BystanderAbusive
+  o-object safeseawchbystandewabusivetweetwabewwuwe
+      extends n-nyonauthowviewewoptinfiwtewingwithtweetwabewwuwe(
+        dwop(unspecified), (✿oωo)
+        t-tweetsafetywabewtype.bystandewabusive
       )
 }
 
-case object UnsafeSearchTweetRules {
+c-case object unsafeseawchtweetwuwes {
 
-  object UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
-        Interstitial(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.NsfwHighPrecision
+  object unsafeseawchnsfwhighpwecisionintewstitiawawwusewstweetwabewwuwe
+      extends conditionwithtweetwabewwuwe(
+        intewstitiaw(nsfw), ^^
+        nyot(viewewoptinfiwtewingonseawch), ^•ﻌ•^
+        tweetsafetywabewtype.nsfwhighpwecision
       )
 
-  object UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
-        Interstitial(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
+  o-object unsafeseawchgoweandviowencehighpwecisionawwusewstweetwabewwuwe
+      e-extends conditionwithtweetwabewwuwe(
+        intewstitiaw(nsfw), XD
+        n-not(viewewoptinfiwtewingonseawch), :3
+        t-tweetsafetywabewtype.goweandviowencehighpwecision
       )
 
-  object UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
-        Drop(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
+  object unsafeseawchgoweandviowencehighpwecisionawwusewstweetwabewdwopwuwe
+      extends conditionwithtweetwabewwuwe(
+        d-dwop(nsfw), (ꈍᴗꈍ)
+        n-nyot(viewewoptinfiwtewingonseawch), :3
+        tweetsafetywabewtype.goweandviowencehighpwecision
       )
 
-  object UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
-        Interstitial(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  o-object unsafeseawchnsfwwepowtedheuwisticsawwusewstweetwabewwuwe
+      e-extends conditionwithtweetwabewwuwe(
+        intewstitiaw(nsfw), (U ﹏ U)
+        not(viewewoptinfiwtewingonseawch),
+        tweetsafetywabewtype.nsfwwepowtedheuwistics
       )
 
-  object UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
-        Drop(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  object unsafeseawchnsfwwepowtedheuwisticsawwusewstweetwabewdwopwuwe
+      extends c-conditionwithtweetwabewwuwe(
+        d-dwop(nsfw), UwU
+        n-nyot(viewewoptinfiwtewingonseawch), 😳😳😳
+        tweetsafetywabewtype.nsfwwepowtedheuwistics
       )
 
-  object UnsafeSearchNsfwHighPrecisionAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
-        Drop(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.NsfwHighPrecision
+  object u-unsafeseawchnsfwhighpwecisionawwusewstweetwabewdwopwuwe
+      e-extends conditionwithtweetwabewwuwe(
+        dwop(nsfw), XD
+        n-nyot(viewewoptinfiwtewingonseawch), o.O
+        tweetsafetywabewtype.nsfwhighpwecision
       )
 
-  object UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
-        Interstitial(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  object unsafeseawchgoweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe
+      extends conditionwithtweetwabewwuwe(
+        intewstitiaw(nsfw), (⑅˘꒳˘)
+        n-nyot(viewewoptinfiwtewingonseawch), 😳😳😳
+        t-tweetsafetywabewtype.goweandviowencewepowtedheuwistics
       )
 
-  object UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
-        Drop(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  object unsafeseawchgoweandviowencewepowtedheuwisticsawwusewstweetwabewdwopwuwe
+      e-extends conditionwithtweetwabewwuwe(
+        d-dwop(nsfw), nyaa~~
+        nyot(viewewoptinfiwtewingonseawch), rawr
+        tweetsafetywabewtype.goweandviowencewepowtedheuwistics
       )
 
-  object UnsafeSearchNsfwCardImageAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
-        Interstitial(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.NsfwCardImage
+  object unsafeseawchnsfwcawdimageawwusewstweetwabewwuwe
+      e-extends conditionwithtweetwabewwuwe(
+        intewstitiaw(nsfw), -.-
+        nyot(viewewoptinfiwtewingonseawch), (✿oωo)
+        tweetsafetywabewtype.nsfwcawdimage
       )
 
-  object UnsafeSearchNsfwCardImageAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
-        Drop(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.NsfwCardImage
+  object u-unsafeseawchnsfwcawdimageawwusewstweetwabewdwopwuwe
+      extends conditionwithtweetwabewwuwe(
+        dwop(nsfw), /(^•ω•^)
+        n-nyot(viewewoptinfiwtewingonseawch), 🥺
+        t-tweetsafetywabewtype.nsfwcawdimage
       )
 
 }
 
-case object SafeSearchUserRules {
+case object safeseawchusewwuwes {
 
-  object SafeSearchAbusiveUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.Abusive
+  object safeseawchabusiveusewwabewwuwe
+      e-extends v-viewewoptinfiwtewingonseawchusewwabewwuwe(
+        dwop(unspecified), ʘwʘ
+        usewwabewvawue.abusive
       )
 
-  object SafeSearchAbusiveHighRecallUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.AbusiveHighRecall,
-        LoggedOutOrViewerNotFollowingAuthor
+  object safeseawchabusivehighwecawwusewwabewwuwe
+      e-extends viewewoptinfiwtewingonseawchusewwabewwuwe(
+        d-dwop(unspecified), UwU
+        usewwabewvawue.abusivehighwecaww, XD
+        woggedoutowviewewnotfowwowingauthow
       )
 
-  object SafeSearchHighRecallUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Nsfw),
-        UserLabelValue.NsfwHighRecall,
-        LoggedOutOrViewerNotFollowingAuthor
+  object s-safeseawchhighwecawwusewwabewwuwe
+      extends v-viewewoptinfiwtewingonseawchusewwabewwuwe(
+        d-dwop(nsfw), (✿oωo)
+        usewwabewvawue.nsfwhighwecaww, :3
+        woggedoutowviewewnotfowwowingauthow
       )
 
-  object SafeSearchCompromisedUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.Compromised
+  o-object safeseawchcompwomisedusewwabewwuwe
+      e-extends v-viewewoptinfiwtewingonseawchusewwabewwuwe(
+        d-dwop(unspecified), (///ˬ///✿)
+        usewwabewvawue.compwomised
       )
 
-  object SafeSearchDuplicateContentUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.DuplicateContent
+  o-object s-safeseawchdupwicatecontentusewwabewwuwe
+      extends viewewoptinfiwtewingonseawchusewwabewwuwe(
+        dwop(unspecified), nyaa~~
+        u-usewwabewvawue.dupwicatecontent
       )
 
-  object SafeSearchLowQualityUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.LowQuality
+  o-object safeseawchwowquawityusewwabewwuwe
+      extends v-viewewoptinfiwtewingonseawchusewwabewwuwe(
+        dwop(unspecified), >w<
+        usewwabewvawue.wowquawity
       )
 
-  object SafeSearchNsfwHighPrecisionUserLabelRule
-      extends ConditionWithUserLabelRule(
-        Drop(Nsfw),
-        LoggedOutOrViewerOptInFiltering,
-        UserLabelValue.NsfwHighPrecision
+  o-object safeseawchnsfwhighpwecisionusewwabewwuwe
+      e-extends conditionwithusewwabewwuwe(
+        d-dwop(nsfw), -.-
+        woggedoutowviewewoptinfiwtewing, (✿oωo)
+        usewwabewvawue.nsfwhighpwecision
       )
 
-  object SafeSearchNsfwAvatarImageUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Nsfw),
-        UserLabelValue.NsfwAvatarImage
+  object safeseawchnsfwavatawimageusewwabewwuwe
+      e-extends v-viewewoptinfiwtewingonseawchusewwabewwuwe(
+        d-dwop(nsfw), (˘ω˘)
+        u-usewwabewvawue.nsfwavatawimage
       )
 
-  object SafeSearchNsfwBannerImageUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Nsfw),
-        UserLabelValue.NsfwBannerImage
+  object safeseawchnsfwbannewimageusewwabewwuwe
+      e-extends viewewoptinfiwtewingonseawchusewwabewwuwe(
+        dwop(nsfw), rawr
+        usewwabewvawue.nsfwbannewimage
       )
 
-  object SafeSearchNsfwNearPerfectAuthorRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Nsfw),
-        UserLabelValue.NsfwNearPerfect
+  object safeseawchnsfwneawpewfectauthowwuwe
+      extends viewewoptinfiwtewingonseawchusewwabewwuwe(
+        dwop(nsfw), OwO
+        usewwabewvawue.nsfwneawpewfect
       )
 
-  object SafeSearchReadOnlyUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.ReadOnly
+  o-object safeseawchweadonwyusewwabewwuwe
+      e-extends viewewoptinfiwtewingonseawchusewwabewwuwe(
+        dwop(unspecified), ^•ﻌ•^
+        u-usewwabewvawue.weadonwy
       )
 
-  object SafeSearchSpamHighRecallUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.SpamHighRecall
+  object safeseawchspamhighwecawwusewwabewwuwe
+      e-extends viewewoptinfiwtewingonseawchusewwabewwuwe(
+        dwop(unspecified), UwU
+        u-usewwabewvawue.spamhighwecaww
       )
 
-  object SafeSearchSearchBlacklistUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.SearchBlacklist
+  o-object safeseawchseawchbwackwistusewwabewwuwe
+      e-extends viewewoptinfiwtewingonseawchusewwabewwuwe(
+        d-dwop(unspecified), (˘ω˘)
+        u-usewwabewvawue.seawchbwackwist
       )
 
-  object SafeSearchNsfwTextUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.NsfwText
+  object safeseawchnsfwtextusewwabewwuwe
+      extends viewewoptinfiwtewingonseawchusewwabewwuwe(
+        dwop(unspecified), (///ˬ///✿)
+        usewwabewvawue.nsfwtext
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableNsfwTextSectioningRuleParam)
+    ovewwide def enabwed: s-seq[wuwepawam[boowean]] =
+      s-seq(enabwensfwtextsectioningwuwepawam)
   }
 
-  object SafeSearchDoNotAmplifyNonFollowersUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.DoNotAmplify,
-        prerequisiteCondition = Not(ViewerDoesFollowAuthor)
+  o-object safeseawchdonotampwifynonfowwowewsusewwabewwuwe
+      extends viewewoptinfiwtewingonseawchusewwabewwuwe(
+        d-dwop(unspecified), σωσ
+        usewwabewvawue.donotampwify, /(^•ω•^)
+        pwewequisitecondition = nyot(viewewdoesfowwowauthow)
       )
 
-  object SafeSearchNotGraduatedNonFollowersUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.NotGraduated,
-        prerequisiteCondition = Not(ViewerDoesFollowAuthor)
+  o-object s-safeseawchnotgwaduatednonfowwowewsusewwabewwuwe
+      extends viewewoptinfiwtewingonseawchusewwabewwuwe(
+        d-dwop(unspecified), 😳
+        usewwabewvawue.notgwaduated, 😳
+        pwewequisitecondition = n-nyot(viewewdoesfowwowauthow)
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableNotGraduatedSearchDropRuleParam)
+    o-ovewwide def enabwed: seq[wuwepawam[boowean]] =
+      s-seq(enabwenotgwaduatedseawchdwopwuwepawam)
 
-    override def holdbacks: Seq[RuleParam[Boolean]] =
-      Seq(NotGraduatedUserLabelRuleHoldbackExperimentParam)
+    o-ovewwide def howdbacks: seq[wuwepawam[boowean]] =
+      seq(notgwaduatedusewwabewwuwehowdbackexpewimentpawam)
 
   }
 }

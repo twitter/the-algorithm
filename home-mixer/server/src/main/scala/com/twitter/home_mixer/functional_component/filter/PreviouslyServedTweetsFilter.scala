@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.twittew.home_mixew.functionaw_component.fiwtew
 
-import com.twitter.home_mixer.model.HomeFeatures.GetOlderFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.getowdewfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.sewvedtweetidsfeatuwe
+i-impowt com.twittew.home_mixew.utiw.candidatesutiw
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-object PreviouslyServedTweetsFilter
-    extends Filter[PipelineQuery, TweetCandidate]
-    with Filter.Conditionally[PipelineQuery, TweetCandidate] {
+object pweviouswysewvedtweetsfiwtew
+    e-extends fiwtew[pipewinequewy, (⑅˘꒳˘) tweetcandidate]
+    w-with fiwtew.conditionawwy[pipewinequewy, (///ˬ///✿) tweetcandidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("PreviouslyServedTweets")
+  o-ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("pweviouswysewvedtweets")
 
-  override def onlyIf(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Boolean = {
-    query.features.exists(_.getOrElse(GetOlderFeature, false))
+  o-ovewwide def onwyif(
+    q-quewy: pipewinequewy, 😳😳😳
+    c-candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): boowean = {
+    quewy.featuwes.exists(_.getowewse(getowdewfeatuwe, 🥺 fawse))
   }
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, mya
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[fiwtewwesuwt[tweetcandidate]] = {
 
-    val servedTweetIds =
-      query.features.map(_.getOrElse(ServedTweetIdsFeature, Seq.empty)).toSeq.flatten.toSet
+    vaw sewvedtweetids =
+      q-quewy.featuwes.map(_.getowewse(sewvedtweetidsfeatuwe, 🥺 s-seq.empty)).toseq.fwatten.toset
 
-    val (removed, kept) = candidates.partition { candidate =>
-      val tweetIdAndSourceId = CandidatesUtil.getTweetIdAndSourceId(candidate)
-      tweetIdAndSourceId.exists(servedTweetIds.contains)
+    v-vaw (wemoved, >_< k-kept) = candidates.pawtition { candidate =>
+      v-vaw tweetidandsouwceid = candidatesutiw.gettweetidandsouwceid(candidate)
+      tweetidandsouwceid.exists(sewvedtweetids.contains)
     }
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    s-stitch.vawue(fiwtewwesuwt(kept = kept.map(_.candidate), >_< wemoved = wemoved.map(_.candidate)))
   }
 }

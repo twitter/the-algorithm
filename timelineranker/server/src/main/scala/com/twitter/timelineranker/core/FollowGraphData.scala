@@ -1,34 +1,34 @@
-package com.twitter.timelineranker.core
+package com.twittew.timewinewankew.cowe
 
-import com.twitter.timelines.model.UserId
+impowt com.twittew.timewines.modew.usewid
 
 /**
- * Follow graph details of a given user. Includes users followed, but also followed users in various
- * states of mute.
+ * f-fowwow g-gwaph detaiws of a-a given usew. rawr x3 i-incwudes usews fowwowed, (U ﹏ U) b-but awso f-fowwowed usews i-in vawious
+ * states o-of mute. (U ﹏ U)
  *
- * @param userId ID of a given user.
- * @param followedUserIds IDs of users who the given user follows.
- * @param mutuallyFollowingUserIds A subset of followedUserIds where followed users follow back the given user.
- * @param mutedUserIds A subset of followedUserIds that the given user has muted.
- * @param retweetsMutedUserIds A subset of followedUserIds whose retweets are muted by the given user.
+ * @pawam usewid id of a given usew. (⑅˘꒳˘)
+ * @pawam fowwowedusewids i-ids of usews who the given usew fowwows. òωó
+ * @pawam m-mutuawwyfowwowingusewids a subset o-of fowwowedusewids whewe fowwowed usews fowwow back the given u-usew. ʘwʘ
+ * @pawam mutedusewids a-a subset of fowwowedusewids t-that the given usew has muted. /(^•ω•^)
+ * @pawam wetweetsmutedusewids a subset o-of fowwowedusewids whose wetweets awe muted by the given usew. ʘwʘ
  */
-case class FollowGraphData(
-  userId: UserId,
-  followedUserIds: Seq[UserId],
-  mutuallyFollowingUserIds: Set[UserId],
-  mutedUserIds: Set[UserId],
-  retweetsMutedUserIds: Set[UserId]) {
-  val filteredFollowedUserIds: Seq[UserId] = followedUserIds.filterNot(mutedUserIds)
-  val allUserIds: Seq[UserId] = filteredFollowedUserIds :+ userId
-  val inNetworkUserIds: Seq[UserId] = followedUserIds :+ userId
+case cwass f-fowwowgwaphdata(
+  usewid: usewid, σωσ
+  f-fowwowedusewids: s-seq[usewid], OwO
+  m-mutuawwyfowwowingusewids: s-set[usewid], 😳😳😳
+  mutedusewids: set[usewid], 😳😳😳
+  wetweetsmutedusewids: s-set[usewid]) {
+  vaw fiwtewedfowwowedusewids: seq[usewid] = fowwowedusewids.fiwtewnot(mutedusewids)
+  v-vaw awwusewids: seq[usewid] = fiwtewedfowwowedusewids :+ usewid
+  vaw innetwowkusewids: seq[usewid] = fowwowedusewids :+ usewid
 }
 
-object FollowGraphData {
-  val Empty: FollowGraphData = FollowGraphData(
-    0L,
-    Seq.empty[UserId],
-    Set.empty[UserId],
-    Set.empty[UserId],
-    Set.empty[UserId]
+object f-fowwowgwaphdata {
+  vaw empty: f-fowwowgwaphdata = f-fowwowgwaphdata(
+    0w, o.O
+    s-seq.empty[usewid], ( ͡o ω ͡o )
+    set.empty[usewid], (U ﹏ U)
+    set.empty[usewid], (///ˬ///✿)
+    set.empty[usewid]
   )
 }

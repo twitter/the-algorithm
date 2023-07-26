@@ -1,9 +1,9 @@
-# Description
+# descwiption
 
-The ManhattanEmbeddingProducer is an EmbeddingProducer that is backed by a static manhattan dataset.
+the manhattanembeddingpwoducew i-is a-an embeddingpwoducew t-that is backed b-by a static m-manhattan dataset. -.-
 
-# Setting up Data
+# s-setting up d-data
 
-Data needs to be setup correctly in manhattan in order to be able to read the data using the
-ManhattanEmbeddingProducer. You can use the EmbeddingSamplingJob to do this. The job can reads
-embedding data from HDFS and re-writes it in the manhattan data format on HDFS.
+data nyeeds t-to be setup cowwectwy in manhattan in owdew to be abwe to wead the data using t-the
+manhattanembeddingpwoducew. ^^;; you can use the embeddingsampwingjob t-to do this. >_< the job can weads
+e-embedding data fwom hdfs and we-wwites it in the manhattan data f-fowmat on hdfs.

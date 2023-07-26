@@ -1,201 +1,201 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.twittew.fowwow_wecommendations.fwows.content_wecommendew_fwow
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource
-import com.twitter.follow_recommendations.common.base.GatedPredicateBase
-import com.twitter.follow_recommendations.common.base.ParamPredicate
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.RecommendationFlow
-import com.twitter.follow_recommendations.common.base.RecommendationResultsConfig
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.predicates.ExcludedUserIdPredicate
-import com.twitter.follow_recommendations.common.predicates.InactivePredicate
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.InvalidRelationshipPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.InvalidTargetCandidateRelationshipTypesPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.RecentFollowingPredicate
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.WeightedCandidateSourceRanker
-import com.twitter.follow_recommendations.common.transforms.dedup.DedupTransform
-import com.twitter.follow_recommendations.common.transforms.tracking_token.TrackingTokenTransform
-import com.twitter.follow_recommendations.utils.CandidateSourceHoldbackUtil
-import com.twitter.follow_recommendations.utils.RecommendationFlowBaseSideEffectsUtil
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.quality_factor.BoundsWithDefault
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactor
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorConfig
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorObserver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.base.enwichedcandidatesouwce
+i-impowt com.twittew.fowwow_wecommendations.common.base.gatedpwedicatebase
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.pawampwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.base.wankew
+impowt com.twittew.fowwow_wecommendations.common.base.wecommendationfwow
+impowt com.twittew.fowwow_wecommendations.common.base.wecommendationwesuwtsconfig
+impowt com.twittew.fowwow_wecommendations.common.base.twansfowm
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.excwudedusewidpwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.pwedicates.inactivepwedicate
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.gizmoduck.gizmoduckpwedicate
+i-impowt com.twittew.fowwow_wecommendations.common.pwedicates.sgs.invawidwewationshippwedicate
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.sgs.invawidtawgetcandidatewewationshiptypespwedicate
+impowt c-com.twittew.fowwow_wecommendations.common.pwedicates.sgs.wecentfowwowingpwedicate
+impowt com.twittew.fowwow_wecommendations.common.wankews.weighted_candidate_souwce_wankew.weightedcandidatesouwcewankew
+i-impowt c-com.twittew.fowwow_wecommendations.common.twansfowms.dedup.deduptwansfowm
+impowt com.twittew.fowwow_wecommendations.common.twansfowms.twacking_token.twackingtokentwansfowm
+impowt com.twittew.fowwow_wecommendations.utiws.candidatesouwcehowdbackutiw
+i-impowt com.twittew.fowwow_wecommendations.utiws.wecommendationfwowbasesideeffectsutiw
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.boundswithdefauwt
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.wineawwatencyquawityfactow
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.wineawwatencyquawityfactowconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.wineawwatencyquawityfactowobsewvew
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowobsewvew
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ContentRecommenderFlow @Inject() (
-  contentRecommenderFlowCandidateSourceRegistry: ContentRecommenderFlowCandidateSourceRegistry,
-  recentFollowingPredicate: RecentFollowingPredicate,
-  gizmoduckPredicate: GizmoduckPredicate,
-  inactivePredicate: InactivePredicate,
-  sgsPredicate: InvalidTargetCandidateRelationshipTypesPredicate,
-  invalidRelationshipPredicate: InvalidRelationshipPredicate,
-  trackingTokenTransform: TrackingTokenTransform,
-  baseStatsReceiver: StatsReceiver)
-    extends RecommendationFlow[ContentRecommenderRequest, CandidateUser]
-    with RecommendationFlowBaseSideEffectsUtil[ContentRecommenderRequest, CandidateUser]
-    with CandidateSourceHoldbackUtil {
+@singweton
+cwass contentwecommendewfwow @inject() (
+  c-contentwecommendewfwowcandidatesouwcewegistwy: contentwecommendewfwowcandidatesouwcewegistwy, (ˆ ﻌ ˆ)♡
+  wecentfowwowingpwedicate: w-wecentfowwowingpwedicate, -.-
+  gizmoduckpwedicate: gizmoduckpwedicate, :3
+  inactivepwedicate: inactivepwedicate, ʘwʘ
+  sgspwedicate: invawidtawgetcandidatewewationshiptypespwedicate,
+  i-invawidwewationshippwedicate: invawidwewationshippwedicate,
+  t-twackingtokentwansfowm: t-twackingtokentwansfowm, 🥺
+  b-basestatsweceivew: statsweceivew)
+    extends wecommendationfwow[contentwecommendewwequest, >_< c-candidateusew]
+    w-with wecommendationfwowbasesideeffectsutiw[contentwecommendewwequest, ʘwʘ candidateusew]
+    w-with c-candidatesouwcehowdbackutiw {
 
-  override val statsReceiver: StatsReceiver = baseStatsReceiver.scope("content_recommender_flow")
+  ovewwide vaw s-statsweceivew: statsweceivew = b-basestatsweceivew.scope("content_wecommendew_fwow")
 
-  override val qualityFactorObserver: Option[QualityFactorObserver] = {
-    val config = LinearLatencyQualityFactorConfig(
-      qualityFactorBounds =
-        BoundsWithDefault(minInclusive = 0.1, maxInclusive = 1.0, default = 1.0),
-      initialDelay = 60.seconds,
-      targetLatency = 100.milliseconds,
-      targetLatencyPercentile = 95.0,
-      delta = 0.001
+  ovewwide vaw quawityfactowobsewvew: o-option[quawityfactowobsewvew] = {
+    vaw config = wineawwatencyquawityfactowconfig(
+      q-quawityfactowbounds =
+        boundswithdefauwt(minincwusive = 0.1, (˘ω˘) m-maxincwusive = 1.0, (✿oωo) d-defauwt = 1.0), (///ˬ///✿)
+      initiawdeway = 60.seconds, rawr x3
+      tawgetwatency = 100.miwwiseconds, -.-
+      tawgetwatencypewcentiwe = 95.0, ^^
+      dewta = 0.001
     )
-    val qualityFactor = LinearLatencyQualityFactor(config)
-    val observer = LinearLatencyQualityFactorObserver(qualityFactor)
-    statsReceiver.provideGauge("quality_factor")(qualityFactor.currentValue.toFloat)
-    Some(observer)
+    vaw quawityfactow = wineawwatencyquawityfactow(config)
+    vaw obsewvew = w-wineawwatencyquawityfactowobsewvew(quawityfactow)
+    s-statsweceivew.pwovidegauge("quawity_factow")(quawityfactow.cuwwentvawue.tofwoat)
+    some(obsewvew)
   }
 
-  protected override def targetEligibility: Predicate[ContentRecommenderRequest] =
-    new ParamPredicate[ContentRecommenderRequest](
-      ContentRecommenderParams.TargetEligibility
+  p-pwotected o-ovewwide def tawgetewigibiwity: p-pwedicate[contentwecommendewwequest] =
+    nyew pawampwedicate[contentwecommendewwequest](
+      contentwecommendewpawams.tawgetewigibiwity
     )
 
-  protected override def candidateSources(
-    target: ContentRecommenderRequest
-  ): Seq[CandidateSource[ContentRecommenderRequest, CandidateUser]] = {
-    import EnrichedCandidateSource._
-    val identifiers = ContentRecommenderFlowCandidateSourceWeights.getWeights(target.params).keySet
-    val selected = contentRecommenderFlowCandidateSourceRegistry.select(identifiers)
-    val budget =
-      target.params(ContentRecommenderParams.FetchCandidateSourceBudgetInMillisecond).millisecond
-    filterCandidateSources(target, selected.map(c => c.failOpenWithin(budget, statsReceiver)).toSeq)
+  p-pwotected ovewwide def candidatesouwces(
+    tawget: contentwecommendewwequest
+  ): seq[candidatesouwce[contentwecommendewwequest, (⑅˘꒳˘) candidateusew]] = {
+    i-impowt enwichedcandidatesouwce._
+    vaw identifiews = c-contentwecommendewfwowcandidatesouwceweights.getweights(tawget.pawams).keyset
+    v-vaw sewected = c-contentwecommendewfwowcandidatesouwcewegistwy.sewect(identifiews)
+    vaw b-budget =
+      t-tawget.pawams(contentwecommendewpawams.fetchcandidatesouwcebudgetinmiwwisecond).miwwisecond
+    f-fiwtewcandidatesouwces(tawget, nyaa~~ s-sewected.map(c => c.faiwopenwithin(budget, /(^•ω•^) statsweceivew)).toseq)
   }
 
-  protected override val preRankerCandidateFilter: Predicate[
-    (ContentRecommenderRequest, CandidateUser)
+  p-pwotected o-ovewwide vaw p-pwewankewcandidatefiwtew: p-pwedicate[
+    (contentwecommendewwequest, (U ﹏ U) c-candidateusew)
   ] = {
-    val preRankerFilterStats = statsReceiver.scope("pre_ranker")
-    val recentFollowingPredicateStats = preRankerFilterStats.scope("recent_following_predicate")
-    val invalidRelationshipPredicateStats =
-      preRankerFilterStats.scope("invalid_relationship_predicate")
+    vaw pwewankewfiwtewstats = statsweceivew.scope("pwe_wankew")
+    vaw wecentfowwowingpwedicatestats = p-pwewankewfiwtewstats.scope("wecent_fowwowing_pwedicate")
+    vaw invawidwewationshippwedicatestats =
+      pwewankewfiwtewstats.scope("invawid_wewationship_pwedicate")
 
-    object recentFollowingGatedPredicate
-        extends GatedPredicateBase[(ContentRecommenderRequest, CandidateUser)](
-          recentFollowingPredicate,
-          recentFollowingPredicateStats
+    object wecentfowwowinggatedpwedicate
+        extends gatedpwedicatebase[(contentwecommendewwequest, 😳😳😳 candidateusew)](
+          w-wecentfowwowingpwedicate, >w<
+          wecentfowwowingpwedicatestats
         ) {
-      override def gate(item: (ContentRecommenderRequest, CandidateUser)): Boolean =
-        item._1.params(ContentRecommenderParams.EnableRecentFollowingPredicate)
+      ovewwide def gate(item: (contentwecommendewwequest, XD c-candidateusew)): b-boowean =
+        i-item._1.pawams(contentwecommendewpawams.enabwewecentfowwowingpwedicate)
     }
 
-    object invalidRelationshipGatedPredicate
-        extends GatedPredicateBase[(ContentRecommenderRequest, CandidateUser)](
-          invalidRelationshipPredicate,
-          invalidRelationshipPredicateStats
+    object invawidwewationshipgatedpwedicate
+        e-extends gatedpwedicatebase[(contentwecommendewwequest, o.O candidateusew)](
+          i-invawidwewationshippwedicate, mya
+          i-invawidwewationshippwedicatestats
         ) {
-      override def gate(item: (ContentRecommenderRequest, CandidateUser)): Boolean =
-        item._1.params(ContentRecommenderParams.EnableInvalidRelationshipPredicate)
+      ovewwide def gate(item: (contentwecommendewwequest, candidateusew)): boowean =
+        item._1.pawams(contentwecommendewpawams.enabweinvawidwewationshippwedicate)
     }
 
-    ExcludedUserIdPredicate
-      .observe(preRankerFilterStats.scope("exclude_user_id_predicate"))
-      .andThen(recentFollowingGatedPredicate.observe(recentFollowingPredicateStats))
-      .andThen(invalidRelationshipGatedPredicate.observe(invalidRelationshipPredicateStats))
+    e-excwudedusewidpwedicate
+      .obsewve(pwewankewfiwtewstats.scope("excwude_usew_id_pwedicate"))
+      .andthen(wecentfowwowinggatedpwedicate.obsewve(wecentfowwowingpwedicatestats))
+      .andthen(invawidwewationshipgatedpwedicate.obsewve(invawidwewationshippwedicatestats))
   }
 
   /**
-   * rank the candidates
+   * wank t-the candidates
    */
-  protected override def selectRanker(
-    target: ContentRecommenderRequest
-  ): Ranker[ContentRecommenderRequest, CandidateUser] = {
-    val rankersStatsReceiver = statsReceiver.scope("rankers")
-    WeightedCandidateSourceRanker
-      .build[ContentRecommenderRequest](
-        ContentRecommenderFlowCandidateSourceWeights.getWeights(target.params),
-        randomSeed = target.getRandomizationSeed
-      ).observe(rankersStatsReceiver.scope("weighted_candidate_source_ranker"))
+  pwotected o-ovewwide def s-sewectwankew(
+    tawget: contentwecommendewwequest
+  ): wankew[contentwecommendewwequest, 🥺 c-candidateusew] = {
+    v-vaw wankewsstatsweceivew = statsweceivew.scope("wankews")
+    w-weightedcandidatesouwcewankew
+      .buiwd[contentwecommendewwequest](
+        c-contentwecommendewfwowcandidatesouwceweights.getweights(tawget.pawams), ^^;;
+        wandomseed = tawget.getwandomizationseed
+      ).obsewve(wankewsstatsweceivew.scope("weighted_candidate_souwce_wankew"))
   }
 
   /**
-   * transform the candidates after ranking
+   * twansfowm the candidates aftew wanking
    */
-  protected override def postRankerTransform: Transform[
-    ContentRecommenderRequest,
-    CandidateUser
+  p-pwotected o-ovewwide def postwankewtwansfowm: t-twansfowm[
+    contentwecommendewwequest, :3
+    c-candidateusew
   ] = {
-    new DedupTransform[ContentRecommenderRequest, CandidateUser]
-      .observe(statsReceiver.scope("dedupping"))
+    n-nyew deduptwansfowm[contentwecommendewwequest, (U ﹏ U) c-candidateusew]
+      .obsewve(statsweceivew.scope("dedupping"))
   }
 
-  protected override def validateCandidates: Predicate[
-    (ContentRecommenderRequest, CandidateUser)
+  pwotected ovewwide def vawidatecandidates: pwedicate[
+    (contentwecommendewwequest, OwO candidateusew)
   ] = {
-    val stats = statsReceiver.scope("validate_candidates")
-    val gizmoduckPredicateStats = stats.scope("gizmoduck_predicate")
-    val inactivePredicateStats = stats.scope("inactive_predicate")
-    val sgsPredicateStats = stats.scope("sgs_predicate")
+    v-vaw stats = statsweceivew.scope("vawidate_candidates")
+    v-vaw gizmoduckpwedicatestats = stats.scope("gizmoduck_pwedicate")
+    v-vaw inactivepwedicatestats = s-stats.scope("inactive_pwedicate")
+    vaw sgspwedicatestats = stats.scope("sgs_pwedicate")
 
-    val includeGizmoduckPredicate =
-      new ParamPredicate[ContentRecommenderRequest](
-        ContentRecommenderParams.EnableGizmoduckPredicate)
-        .map[(ContentRecommenderRequest, CandidateUser)] {
-          case (request: ContentRecommenderRequest, _) =>
-            request
+    vaw incwudegizmoduckpwedicate =
+      n-nyew pawampwedicate[contentwecommendewwequest](
+        contentwecommendewpawams.enabwegizmoduckpwedicate)
+        .map[(contentwecommendewwequest, 😳😳😳 candidateusew)] {
+          case (wequest: contentwecommendewwequest, (ˆ ﻌ ˆ)♡ _) =>
+            w-wequest
         }
 
-    val includeInactivePredicate =
-      new ParamPredicate[ContentRecommenderRequest](
-        ContentRecommenderParams.EnableInactivePredicate)
-        .map[(ContentRecommenderRequest, CandidateUser)] {
-          case (request: ContentRecommenderRequest, _) =>
-            request
+    vaw incwudeinactivepwedicate =
+      nyew p-pawampwedicate[contentwecommendewwequest](
+        c-contentwecommendewpawams.enabweinactivepwedicate)
+        .map[(contentwecommendewwequest, XD candidateusew)] {
+          case (wequest: contentwecommendewwequest, (ˆ ﻌ ˆ)♡ _) =>
+            w-wequest
         }
 
-    val includeInvalidTargetCandidateRelationshipTypesPredicate =
-      new ParamPredicate[ContentRecommenderRequest](
-        ContentRecommenderParams.EnableInvalidTargetCandidateRelationshipPredicate)
-        .map[(ContentRecommenderRequest, CandidateUser)] {
-          case (request: ContentRecommenderRequest, _) =>
-            request
+    v-vaw incwudeinvawidtawgetcandidatewewationshiptypespwedicate =
+      nyew pawampwedicate[contentwecommendewwequest](
+        contentwecommendewpawams.enabweinvawidtawgetcandidatewewationshippwedicate)
+        .map[(contentwecommendewwequest, ( ͡o ω ͡o ) candidateusew)] {
+          c-case (wequest: contentwecommendewwequest, rawr x3 _) =>
+            w-wequest
         }
 
-    Predicate
-      .andConcurrently[(ContentRecommenderRequest, CandidateUser)](
-        Seq(
-          gizmoduckPredicate.observe(gizmoduckPredicateStats).gate(includeGizmoduckPredicate),
-          inactivePredicate.observe(inactivePredicateStats).gate(includeInactivePredicate),
-          sgsPredicate
-            .observe(sgsPredicateStats).gate(
-              includeInvalidTargetCandidateRelationshipTypesPredicate),
+    pwedicate
+      .andconcuwwentwy[(contentwecommendewwequest, nyaa~~ candidateusew)](
+        seq(
+          g-gizmoduckpwedicate.obsewve(gizmoduckpwedicatestats).gate(incwudegizmoduckpwedicate), >_<
+          inactivepwedicate.obsewve(inactivepwedicatestats).gate(incwudeinactivepwedicate), ^^;;
+          s-sgspwedicate
+            .obsewve(sgspwedicatestats).gate(
+              i-incwudeinvawidtawgetcandidatewewationshiptypespwedicate), (ˆ ﻌ ˆ)♡
         )
       )
   }
 
   /**
-   * transform the candidates into results and return
+   * twansfowm the c-candidates into wesuwts and wetuwn
    */
-  protected override def transformResults: Transform[ContentRecommenderRequest, CandidateUser] = {
-    trackingTokenTransform
+  p-pwotected o-ovewwide d-def twansfowmwesuwts: twansfowm[contentwecommendewwequest, ^^;; c-candidateusew] = {
+    t-twackingtokentwansfowm
   }
 
   /**
-   *  configuration for recommendation results
+   *  configuwation fow wecommendation w-wesuwts
    */
-  protected override def resultsConfig(
-    target: ContentRecommenderRequest
-  ): RecommendationResultsConfig = {
-    RecommendationResultsConfig(
-      target.maxResults.getOrElse(target.params(ContentRecommenderParams.ResultSizeParam)),
-      target.params(ContentRecommenderParams.BatchSizeParam)
+  p-pwotected o-ovewwide def wesuwtsconfig(
+    tawget: contentwecommendewwequest
+  ): w-wecommendationwesuwtsconfig = {
+    wecommendationwesuwtsconfig(
+      t-tawget.maxwesuwts.getowewse(tawget.pawams(contentwecommendewpawams.wesuwtsizepawam)), (⑅˘꒳˘)
+      t-tawget.pawams(contentwecommendewpawams.batchsizepawam)
     )
   }
 

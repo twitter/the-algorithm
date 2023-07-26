@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.button
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.CtaButton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.IconCtaButton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.TextCtaButton
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.ctabutton
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.iconctabutton
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.textctabutton
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class CtaButtonMarshaller @Inject() (
-  iconCtaButtonMarshaller: IconCtaButtonMarshaller,
-  textCtaButtonMarshaller: TextCtaButtonMarshaller) {
+@singweton
+cwass ctabuttonmawshawwew @inject() (
+  iconctabuttonmawshawwew: iconctabuttonmawshawwew, ^^;;
+  textctabuttonmawshawwew: t-textctabuttonmawshawwew) {
 
-  def apply(ctaButton: CtaButton): urt.CtaButton = ctaButton match {
-    case button: TextCtaButton => urt.CtaButton.Text(textCtaButtonMarshaller(button))
-    case button: IconCtaButton => urt.CtaButton.Icon(iconCtaButtonMarshaller(button))
+  def appwy(ctabutton: ctabutton): u-uwt.ctabutton = ctabutton m-match {
+    case button: textctabutton => uwt.ctabutton.text(textctabuttonmawshawwew(button))
+    case button: i-iconctabutton => uwt.ctabutton.icon(iconctabuttonmawshawwew(button))
   }
 }

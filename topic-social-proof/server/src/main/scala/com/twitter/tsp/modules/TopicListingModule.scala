@@ -1,17 +1,17 @@
-package com.twitter.tsp.modules
+package com.twittew.tsp.moduwes
 
-import com.google.inject.Provides
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.topiclisting.TopicListing
-import com.twitter.topiclisting.TopicListingBuilder
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.topicwisting.topicwisting
+i-impowt com.twittew.topicwisting.topicwistingbuiwdew
+i-impowt j-javax.inject.singweton
 
-object TopicListingModule extends TwitterModule {
+o-object topicwistingmoduwe extends twittewmoduwe {
 
-  @Provides
-  @Singleton
-  def providesTopicListing(statsReceiver: StatsReceiver): TopicListing = {
-    new TopicListingBuilder(statsReceiver.scope(namespace = "TopicListingBuilder")).build
+  @pwovides
+  @singweton
+  def pwovidestopicwisting(statsweceivew: statsweceivew): topicwisting = {
+    nyew topicwistingbuiwdew(statsweceivew.scope(namespace = "topicwistingbuiwdew")).buiwd
   }
 }

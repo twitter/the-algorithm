@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted
 
-sealed trait DynamicPrerollType
+seawed twait dynamicpwewowwtype
 
-object Amplify extends DynamicPrerollType
-object Marketplace extends DynamicPrerollType
-object LiveTvEvent extends DynamicPrerollType
+o-object ampwify extends d-dynamicpwewowwtype
+o-object m-mawketpwace extends d-dynamicpwewowwtype
+o-object wivetvevent e-extends d-dynamicpwewowwtype

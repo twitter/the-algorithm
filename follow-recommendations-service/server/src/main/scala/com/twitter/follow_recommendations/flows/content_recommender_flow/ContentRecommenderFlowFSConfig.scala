@@ -1,60 +1,60 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.twittew.fowwow_wecommendations.fwows.content_wecommendew_fwow
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt c-com.twittew.timewines.configapi.fsboundedpawam
+impowt c-com.twittew.timewines.configapi.fsname
+i-impowt c-com.twittew.timewines.configapi.pawam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ContentRecommenderFlowFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
-    Seq(
-      ContentRecommenderParams.IncludeActivityBasedCandidateSource,
-      ContentRecommenderParams.IncludeSocialBasedCandidateSource,
-      ContentRecommenderParams.IncludeGeoBasedCandidateSource,
-      ContentRecommenderParams.IncludeHomeTimelineTweetRecsCandidateSource,
-      ContentRecommenderParams.IncludeSocialProofEnforcedCandidateSource,
-      ContentRecommenderParams.EnableRecentFollowingPredicate,
-      ContentRecommenderParams.EnableGizmoduckPredicate,
-      ContentRecommenderParams.EnableInactivePredicate,
-      ContentRecommenderParams.EnableInvalidTargetCandidateRelationshipPredicate,
-      ContentRecommenderParams.IncludeNewFollowingNewFollowingExpansionCandidateSource,
-      ContentRecommenderParams.IncludeMoreGeoBasedCandidateSource,
-      ContentRecommenderParams.TargetEligibility,
-      ContentRecommenderParams.GetFollowersFromSgs,
-      ContentRecommenderParams.EnableInvalidRelationshipPredicate,
+@singweton
+cwass contentwecommendewfwowfsconfig @inject() () extends featuweswitchconfig {
+  ovewwide vaw booweanfspawams: s-seq[pawam[boowean] with fsname] =
+    seq(
+      c-contentwecommendewpawams.incwudeactivitybasedcandidatesouwce, (⑅˘꒳˘)
+      contentwecommendewpawams.incwudesociawbasedcandidatesouwce, /(^•ω•^)
+      c-contentwecommendewpawams.incwudegeobasedcandidatesouwce, rawr x3
+      contentwecommendewpawams.incwudehometimewinetweetwecscandidatesouwce, (U ﹏ U)
+      contentwecommendewpawams.incwudesociawpwoofenfowcedcandidatesouwce, (U ﹏ U)
+      contentwecommendewpawams.enabwewecentfowwowingpwedicate, (⑅˘꒳˘)
+      c-contentwecommendewpawams.enabwegizmoduckpwedicate, òωó
+      contentwecommendewpawams.enabweinactivepwedicate, ʘwʘ
+      c-contentwecommendewpawams.enabweinvawidtawgetcandidatewewationshippwedicate, /(^•ω•^)
+      c-contentwecommendewpawams.incwudenewfowwowingnewfowwowingexpansioncandidatesouwce, ʘwʘ
+      contentwecommendewpawams.incwudemowegeobasedcandidatesouwce, σωσ
+      contentwecommendewpawams.tawgetewigibiwity, OwO
+      contentwecommendewpawams.getfowwowewsfwomsgs, 😳😳😳
+      contentwecommendewpawams.enabweinvawidwewationshippwedicate, 😳😳😳
     )
 
-  override val intFSParams: Seq[FSBoundedParam[Int]] =
-    Seq(
-      ContentRecommenderParams.ResultSizeParam,
-      ContentRecommenderParams.BatchSizeParam,
-      ContentRecommenderParams.FetchCandidateSourceBudgetInMillisecond,
-      ContentRecommenderParams.RecentFollowingPredicateBudgetInMillisecond,
+  ovewwide vaw i-intfspawams: seq[fsboundedpawam[int]] =
+    seq(
+      contentwecommendewpawams.wesuwtsizepawam, o.O
+      contentwecommendewpawams.batchsizepawam,
+      contentwecommendewpawams.fetchcandidatesouwcebudgetinmiwwisecond, ( ͡o ω ͡o )
+      c-contentwecommendewpawams.wecentfowwowingpwedicatebudgetinmiwwisecond, (U ﹏ U)
     )
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] =
-    Seq(
-      ContentRecommenderFlowCandidateSourceWeightsParams.ForwardPhoneBookSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.ForwardEmailBookSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.ReversePhoneBookSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.ReverseEmailBookSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.OfflineStrongTiePredictionSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.TriangularLoopsSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.UserUserGraphSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.NewFollowingNewFollowingExpansionSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.NewFollowingSimilarUserSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.RecentEngagementSimilarUserSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.RepeatedProfileVisitsSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.RealGraphOonSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.PopCountrySourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.PopGeohashSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.PopCountryBackfillSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.PPMILocaleFollowSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.TopOrganicFollowsAccountsSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.CrowdSearchAccountSourceWeight,
+  ovewwide vaw doubwefspawams: s-seq[fsboundedpawam[doubwe]] =
+    s-seq(
+      c-contentwecommendewfwowcandidatesouwceweightspawams.fowwawdphonebooksouwceweight,
+      c-contentwecommendewfwowcandidatesouwceweightspawams.fowwawdemaiwbooksouwceweight, (///ˬ///✿)
+      contentwecommendewfwowcandidatesouwceweightspawams.wevewsephonebooksouwceweight,
+      contentwecommendewfwowcandidatesouwceweightspawams.wevewseemaiwbooksouwceweight, >w<
+      c-contentwecommendewfwowcandidatesouwceweightspawams.offwinestwongtiepwedictionsouwceweight, rawr
+      contentwecommendewfwowcandidatesouwceweightspawams.twianguwawwoopssouwceweight,
+      contentwecommendewfwowcandidatesouwceweightspawams.usewusewgwaphsouwceweight, mya
+      c-contentwecommendewfwowcandidatesouwceweightspawams.newfowwowingnewfowwowingexpansionsouwceweight, ^^
+      contentwecommendewfwowcandidatesouwceweightspawams.newfowwowingsimiwawusewsouwceweight, 😳😳😳
+      contentwecommendewfwowcandidatesouwceweightspawams.wecentengagementsimiwawusewsouwceweight, mya
+      contentwecommendewfwowcandidatesouwceweightspawams.wepeatedpwofiwevisitssouwceweight, 😳
+      contentwecommendewfwowcandidatesouwceweightspawams.weawgwaphoonsouwceweight, -.-
+      contentwecommendewfwowcandidatesouwceweightspawams.popcountwysouwceweight, 🥺
+      c-contentwecommendewfwowcandidatesouwceweightspawams.popgeohashsouwceweight, o.O
+      contentwecommendewfwowcandidatesouwceweightspawams.popcountwybackfiwwsouwceweight, /(^•ω•^)
+      c-contentwecommendewfwowcandidatesouwceweightspawams.ppmiwocawefowwowsouwceweight, nyaa~~
+      c-contentwecommendewfwowcandidatesouwceweightspawams.topowganicfowwowsaccountssouwceweight, nyaa~~
+      c-contentwecommendewfwowcandidatesouwceweightspawams.cwowdseawchaccountsouwceweight,
     )
 }

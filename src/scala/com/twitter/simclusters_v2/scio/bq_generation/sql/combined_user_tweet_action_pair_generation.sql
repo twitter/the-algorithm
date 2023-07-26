@@ -1,68 +1,68 @@
-WITH
-  vars AS (
-    SELECT
-      TIMESTAMP("{START_TIME}") AS start_date,
-      TIMESTAMP("{END_TIME}") AS end_date,
-      TIMESTAMP("{NO_OLDER_TWEETS_THAN_DATE}") AS no_older_tweets_than_date
-  ),
+with
+  vaws as (
+    sewect
+      t-timestamp("{stawt_time}") a-as stawt_date, OwO
+      t-timestamp("{end_time}") a-as end_date, /(^•ω•^)
+      t-timestamp("{no_owdew_tweets_than_date}") a-as nyo_owdew_tweets_than_date
+  ), 😳😳😳
 
-  -- Get raw user-tweet interaction events from UUA
-  actions_unioned AS (
-    SELECT
-      userIdentifier.userId AS userId,
-      item.tweetInfo.actionTweetId AS tweetId,
-      eventMetadata.sourceTimestampMs AS tsMillis,
-      CASE
-          WHEN actionType = "ServerTweetFav" THEN 1
-          WHEN actionType = "ServerTweetUnfav" THEN -1
-      END AS favAction,
-      CASE
-          WHEN actionType = "ServerTweetReply" THEN 1
-          WHEN actionType = "ServerTweetDelete" THEN -1
-      END AS replyAction,
-      CASE
-          WHEN actionType = "ServerTweetRetweet" THEN 1
-          WHEN actionType = "ServerTweetUnretweet" THEN -1
-      END AS retweetAction,
-      IF(actionType = "ClientTweetVideoPlayback50", 1, NULL) AS videoPlayback50Action
-    FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
-    WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
-      AND eventMetadata.sourceTimestampMs >= UNIX_MILLIS(vars.start_date) 
-      AND eventMetadata.sourceTimestampMs <= UNIX_MILLIS(vars.end_date)
-      AND (actionType = "ServerTweetReply"
-              OR actionType = "ServerTweetRetweet"
-              OR actionType = "ServerTweetFav"
-              OR actionType = "ServerTweetUnfav"
-              OR actionType = "ClientTweetVideoPlayback50"
+  -- g-get w-waw usew-tweet intewaction events fwom uua
+  actions_unioned as (
+    sewect
+      u-usewidentifiew.usewid as usewid, ( ͡o ω ͡o )
+      item.tweetinfo.actiontweetid a-as tweetid, >_<
+      eventmetadata.souwcetimestampms a-as tsmiwwis, >w<
+      case
+          when actiontype = "sewvewtweetfav" then 1
+          w-when actiontype = "sewvewtweetunfav" then -1
+      e-end as favaction, rawr
+      c-case
+          when actiontype = "sewvewtweetwepwy" then 1
+          when actiontype = "sewvewtweetdewete" then -1
+      end as wepwyaction, 😳
+      c-case
+          when actiontype = "sewvewtweetwetweet" then 1
+          when actiontype = "sewvewtweetunwetweet" t-then -1
+      end a-as wetweetaction, >w<
+      i-if(actiontype = "cwienttweetvideopwayback50", (⑅˘꒳˘) 1, n-nyuww) a-as videopwayback50action
+    fwom `twttw-bqw-unified-pwod.unified_usew_actions_engagements.stweaming_unified_usew_actions_engagements`, vaws
+    w-whewe (date(datehouw) >= date(vaws.stawt_date) and date(datehouw) <= d-date(vaws.end_date))
+      and eventmetadata.souwcetimestampms >= unix_miwwis(vaws.stawt_date) 
+      and eventmetadata.souwcetimestampms <= unix_miwwis(vaws.end_date)
+      a-and (actiontype = "sewvewtweetwepwy"
+              ow actiontype = "sewvewtweetwetweet"
+              o-ow actiontype = "sewvewtweetfav"
+              o-ow actiontype = "sewvewtweetunfav"
+              o-ow actiontype = "cwienttweetvideopwayback50"
            )
-  ),
+  ), OwO
 
-  user_tweet_action_pairs AS (
-    SELECT
-      userId,
-      tweetId,
-      -- Get the most recent fav event
-      ARRAY_AGG(IF(favAction IS NOT NULL, STRUCT(favAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ServerTweetFav,
-      -- Get the most recent reply / unreply event
-      ARRAY_AGG(IF(replyAction IS NOT NULL,STRUCT(replyAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ServerTweetReply,
-      -- Get the most recent retweet / unretweet event
-      ARRAY_AGG(IF(retweetAction IS NOT NULL, STRUCT(retweetAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ServerTweetRetweet,
-      -- Get the most recent video view event
-      ARRAY_AGG(IF(videoPlayback50Action IS NOT NULL, STRUCT(videoPlayback50Action AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ClientTweetVideoPlayback50
-    FROM actions_unioned
-    GROUP BY userId, tweetId
+  usew_tweet_action_paiws as (
+    sewect
+      usewid, (ꈍᴗꈍ)
+      t-tweetid, 😳
+      -- g-get the most wecent fav e-event
+      awway_agg(if(favaction i-is nyot nyuww, stwuct(favaction a-as engaged, 😳😳😳 tsmiwwis), mya nyuww) i-ignowe nyuwws owdew by tsmiwwis desc wimit 1)[offset(0)] a-as sewvewtweetfav, mya
+      -- get the m-most wecent wepwy / unwepwy event
+      a-awway_agg(if(wepwyaction i-is nyot nyuww,stwuct(wepwyaction as engaged, (⑅˘꒳˘) tsmiwwis), (U ﹏ U) nyuww) ignowe nyuwws owdew by tsmiwwis desc wimit 1)[offset(0)] as sewvewtweetwepwy, mya
+      -- g-get the most w-wecent wetweet / unwetweet event
+      a-awway_agg(if(wetweetaction i-is not nyuww, ʘwʘ s-stwuct(wetweetaction as engaged, (˘ω˘) tsmiwwis), (U ﹏ U) nyuww) ignowe nyuwws o-owdew by tsmiwwis desc wimit 1)[offset(0)] as sewvewtweetwetweet, ^•ﻌ•^
+      -- get the most wecent video view event
+      a-awway_agg(if(videopwayback50action is n-nyot nyuww, (˘ω˘) stwuct(videopwayback50action a-as engaged, t-tsmiwwis), :3 nyuww) ignowe nuwws o-owdew by tsmiwwis d-desc wimit 1)[offset(0)] a-as cwienttweetvideopwayback50
+    f-fwom actions_unioned
+    gwoup by usewid, tweetid
   )
 
--- Combine signals
--- Apply age filter in this step
-SELECT
-  userId,
-  tweetId,
-  CAST({CONTRIBUTING_ACTION_TYPE_STR}.tsMillis AS FLOAT64) AS tsMillis
-FROM user_tweet_action_pairs, vars
-WHERE
-    {CONTRIBUTING_ACTION_TYPE_STR}.engaged = 1
-   AND
-    ({SUPPLEMENTAL_ACTION_TYPES_ENGAGEMENT_STR})
-   AND timestamp_millis((1288834974657 +
-            ((tweetId  & 9223372036850581504) >> 22))) >= vars.no_older_tweets_than_date
+-- c-combine s-signaws
+-- appwy a-age fiwtew i-in this step
+sewect
+  u-usewid, ^^;;
+  tweetid, 🥺
+  cast({contwibuting_action_type_stw}.tsmiwwis as fwoat64) as tsmiwwis
+f-fwom usew_tweet_action_paiws, (⑅˘꒳˘) vaws
+whewe
+    {contwibuting_action_type_stw}.engaged = 1
+   and
+    ({suppwementaw_action_types_engagement_stw})
+   and timestamp_miwwis((1288834974657 +
+            ((tweetid  & 9223372036850581504) >> 22))) >= vaws.no_owdew_tweets_than_date

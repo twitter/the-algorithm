@@ -1,75 +1,75 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.concurrent.CompletableFuture;
-import javax.naming.NamingException;
+impowt java.utiw.concuwwent.compwetabwefutuwe;
+i-impowt javax.naming.namingexception;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+i-impowt o-owg.apache.commons.pipewine.stageexception;
+i-impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+i-impowt o-owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
 
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.util.Function;
+i-impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+impowt com.twittew.utiw.function;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class RetrieveNamedEntitiesSingleTweetStage extends TwitterBaseStage
-    <IngesterTwitterMessage, CompletableFuture<IngesterTwitterMessage>> {
+@consumedtypes(ingestewtwittewmessage.cwass)
+@pwoducesconsumed
+pubwic cwass wetwievenamedentitiessingwetweetstage e-extends twittewbasestage
+    <ingestewtwittewmessage, (U ﹏ U) compwetabwefutuwe<ingestewtwittewmessage>> {
 
-  private NamedEntityHandler namedEntityHandler;
+  pwivate n-nyamedentityhandwew nyamedentityhandwew;
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    innerSetup();
+  @ovewwide
+  p-pwotected void doinnewpwepwocess() thwows stageexception, (U ﹏ U) n-nyamingexception {
+    innewsetup();
   }
 
-  @Override
-  protected void innerSetup() {
-    namedEntityHandler = new NamedEntityHandler(
-        wireModule.getNamedEntityFetcher(), decider, getStageNamePrefix(),
-        "single_tweet");
+  @ovewwide
+  p-pwotected v-void innewsetup() {
+    nyamedentityhandwew = nyew nyamedentityhandwew(
+        wiwemoduwe.getnamedentityfetchew(), (⑅˘꒳˘) decidew, g-getstagenamepwefix(), òωó
+        "singwe_tweet");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a IngesterTwitterMessage object: " + obj);
+  @ovewwide
+  pubwic void innewpwocess(object obj) thwows stageexception {
+    if (!(obj instanceof ingestewtwittewmessage)) {
+      t-thwow nyew stageexception(this, ʘwʘ "object i-is nyot a ingestewtwittewmessage o-object: " + obj);
     }
-    IngesterTwitterMessage twitterMessage = (IngesterTwitterMessage) obj;
+    ingestewtwittewmessage t-twittewmessage = (ingestewtwittewmessage) o-obj;
 
-    if (namedEntityHandler.shouldRetrieve(twitterMessage)) {
-      namedEntityHandler.retrieve(twitterMessage)
-          .onSuccess(Function.cons(result -> {
-            namedEntityHandler.addEntitiesToMessage(twitterMessage, result);
-            emitAndCount(twitterMessage);
+    if (namedentityhandwew.shouwdwetwieve(twittewmessage)) {
+      nyamedentityhandwew.wetwieve(twittewmessage)
+          .onsuccess(function.cons(wesuwt -> {
+            nyamedentityhandwew.addentitiestomessage(twittewmessage, /(^•ω•^) w-wesuwt);
+            emitandcount(twittewmessage);
           }))
-          .onFailure(Function.cons(throwable -> {
-            namedEntityHandler.incrementErrorCount();
-            emitAndCount(twitterMessage);
+          .onfaiwuwe(function.cons(thwowabwe -> {
+            namedentityhandwew.incwementewwowcount();
+            emitandcount(twittewmessage);
           }));
-    } else {
-      emitAndCount(twitterMessage);
+    } ewse {
+      emitandcount(twittewmessage);
     }
   }
 
-  @Override
-  protected CompletableFuture<IngesterTwitterMessage> innerRunStageV2(IngesterTwitterMessage
+  @ovewwide
+  p-pwotected compwetabwefutuwe<ingestewtwittewmessage> innewwunstagev2(ingestewtwittewmessage
                                                                       message) {
-    CompletableFuture<IngesterTwitterMessage> cf = new CompletableFuture<>();
+    compwetabwefutuwe<ingestewtwittewmessage> cf = nyew compwetabwefutuwe<>();
 
-    if (namedEntityHandler.shouldRetrieve(message)) {
-      namedEntityHandler.retrieve(message)
-          .onSuccess(Function.cons(result -> {
-            namedEntityHandler.addEntitiesToMessage(message, result);
-            cf.complete(message);
+    i-if (namedentityhandwew.shouwdwetwieve(message)) {
+      nyamedentityhandwew.wetwieve(message)
+          .onsuccess(function.cons(wesuwt -> {
+            nyamedentityhandwew.addentitiestomessage(message, ʘwʘ w-wesuwt);
+            c-cf.compwete(message);
           }))
-          .onFailure(Function.cons(throwable -> {
-            namedEntityHandler.incrementErrorCount();
-            cf.complete(message);
+          .onfaiwuwe(function.cons(thwowabwe -> {
+            n-nyamedentityhandwew.incwementewwowcount();
+            cf.compwete(message);
           }));
-    } else {
-      cf.complete(message);
+    } ewse {
+      cf.compwete(message);
     }
 
-    return cf;
+    wetuwn cf;
   }
 }

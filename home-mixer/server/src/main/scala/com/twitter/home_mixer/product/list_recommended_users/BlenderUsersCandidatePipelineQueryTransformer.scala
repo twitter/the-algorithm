@@ -1,47 +1,47 @@
-package com.twitter.home_mixer.product.list_recommended_users
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews
 
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.search.adaptive.adaptive_results.thriftscala.ResultType
-import com.twitter.search.blender.adaptive_search.thriftscala.AdaptiveSearchRequest
-import com.twitter.search.blender.thriftscala.ThriftBlenderRequest
-import com.twitter.search.blender.thriftscala.ThriftBlenderTweetypieOptions
-import com.twitter.search.blender.thriftscala.ThriftBlenderWorkflowID
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
+impowt c-com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsquewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
+i-impowt com.twittew.seawch.adaptive.adaptive_wesuwts.thwiftscawa.wesuwttype
+i-impowt com.twittew.seawch.bwendew.adaptive_seawch.thwiftscawa.adaptiveseawchwequest
+i-impowt com.twittew.seawch.bwendew.thwiftscawa.thwiftbwendewwequest
+i-impowt com.twittew.seawch.bwendew.thwiftscawa.thwiftbwendewtweetypieoptions
+impowt com.twittew.seawch.bwendew.thwiftscawa.thwiftbwendewwowkfwowid
+impowt com.twittew.seawch.common.constants.thwiftscawa.thwiftquewysouwce
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywevew
 
-object BlenderUsersCandidatePipelineQueryTransformer
-    extends CandidatePipelineQueryTransformer[ListRecommendedUsersQuery, ThriftBlenderRequest] {
+object bwendewusewscandidatepipewinequewytwansfowmew
+    e-extends candidatepipewinequewytwansfowmew[wistwecommendedusewsquewy, /(^•ω•^) thwiftbwendewwequest] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("BlenderUsers")
+  o-ovewwide vaw identifiew: twansfowmewidentifiew = twansfowmewidentifiew("bwendewusews")
 
   /**
-   * This is a user-defined descriptor used by Blender to track the source of traffic, and it
-   * is different from a client id, which is set during Finagle client construction.
+   * this is a u-usew-defined descwiptow used by b-bwendew to twack t-the souwce of twaffic, ʘwʘ and it
+   * is diffewent fwom a cwient id, σωσ which is set d-duwing finagwe cwient constwuction. OwO
    */
-  private val ClientAppName = "timelinemixer.list_recommended_users"
+  pwivate vaw cwientappname = "timewinemixew.wist_wecommended_usews"
 
-  override def transform(query: ListRecommendedUsersQuery): ThriftBlenderRequest = {
+  ovewwide def twansfowm(quewy: w-wistwecommendedusewsquewy): thwiftbwendewwequest = {
 
-    ThriftBlenderRequest(
-      workflowID = Some(ThriftBlenderWorkflowID.AdaptiveSearch),
-      userID = Some(query.getRequiredUserId), // perspectival
-      uiLang = query.clientContext.languageCode, // perspectival
-      clientAppName = Some(ClientAppName),
-      adaptiveSearchRequest = Some(
-        AdaptiveSearchRequest(
-          rawQuery = query.listName,
-          numResults = 40,
-          getPromotedContent = false,
-          resultFilter = Some(ResultType.User),
+    t-thwiftbwendewwequest(
+      w-wowkfwowid = s-some(thwiftbwendewwowkfwowid.adaptiveseawch), 😳😳😳
+      u-usewid = some(quewy.getwequiwedusewid), 😳😳😳 // pewspectivaw
+      u-uiwang = quewy.cwientcontext.wanguagecode, o.O // pewspectivaw
+      cwientappname = s-some(cwientappname), ( ͡o ω ͡o )
+      adaptiveseawchwequest = some(
+        adaptiveseawchwequest(
+          wawquewy = quewy.wistname, (U ﹏ U)
+          n-nyumwesuwts = 40, (///ˬ///✿)
+          getpwomotedcontent = f-fawse, >w<
+          wesuwtfiwtew = s-some(wesuwttype.usew), rawr
         )
-      ),
-      querySource = Some(ThriftQuerySource.TypedQuery),
-      getCorrections = true,
-      tweetypieOptions = Some(
-        ThriftBlenderTweetypieOptions(
-          safetyLevel = Some(SafetyLevel.Recommendations)
+      ), mya
+      q-quewysouwce = some(thwiftquewysouwce.typedquewy), ^^
+      getcowwections = twue, 😳😳😳
+      t-tweetypieoptions = s-some(
+        thwiftbwendewtweetypieoptions(
+          s-safetywevew = s-some(safetywevew.wecommendations)
         )
       )
     )

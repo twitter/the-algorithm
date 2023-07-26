@@ -1,89 +1,89 @@
-package com.twitter.servo.repository
+package com.twittew.sewvo.wepositowy
 
-import com.twitter.finagle.stats.{StatsReceiver, Stat}
-import com.twitter.servo.util.{ExceptionCounter, LogarithmicallyBucketedTimer}
-import com.twitter.util.{Future, Return, Throw, Try}
+impowt com.twittew.finagwe.stats.{statsweceivew, ( ͡o ω ͡o ) s-stat}
+impowt c-com.twittew.sewvo.utiw.{exceptioncountew, >_< w-wogawithmicawwybucketedtimew}
+i-impowt c-com.twittew.utiw.{futuwe, >w< w-wetuwn, t-thwow, rawr twy}
 
-class RepositoryObserver(
-  statsReceiver: StatsReceiver,
-  bucketBySize: Boolean,
-  exceptionCounter: ExceptionCounter) {
-  protected[this] lazy val timer = new LogarithmicallyBucketedTimer(statsReceiver)
-  protected[this] val sizeStat = statsReceiver.stat("size")
-  protected[this] val foundStat = statsReceiver.counter("found")
-  protected[this] val notFoundStat = statsReceiver.counter("not_found")
-  protected[this] val total = statsReceiver.counter("total")
-  private[this] val timeStat = statsReceiver.stat(LogarithmicallyBucketedTimer.LatencyStatName)
+c-cwass wepositowyobsewvew(
+  statsweceivew: statsweceivew, 😳
+  bucketbysize: boowean, >w<
+  e-exceptioncountew: exceptioncountew) {
+  pwotected[this] w-wazy vaw timew = new w-wogawithmicawwybucketedtimew(statsweceivew)
+  pwotected[this] vaw sizestat = statsweceivew.stat("size")
+  p-pwotected[this] vaw f-foundstat = statsweceivew.countew("found")
+  p-pwotected[this] vaw nyotfoundstat = statsweceivew.countew("not_found")
+  pwotected[this] v-vaw totaw = statsweceivew.countew("totaw")
+  pwivate[this] vaw timestat = statsweceivew.stat(wogawithmicawwybucketedtimew.watencystatname)
 
-  def this(statsReceiver: StatsReceiver, bucketBySize: Boolean = true) =
-    this(statsReceiver, bucketBySize, new ExceptionCounter(statsReceiver))
+  d-def this(statsweceivew: statsweceivew, (⑅˘꒳˘) b-bucketbysize: b-boowean = t-twue) =
+    t-this(statsweceivew, OwO bucketbysize, (ꈍᴗꈍ) nyew exceptioncountew(statsweceivew))
 
-  def time[T](size: Int = 1)(f: => Future[T]) = {
-    sizeStat.add(size)
-    if (bucketBySize)
-      timer(size)(f)
-    else
-      Stat.timeFuture(timeStat)(f)
+  d-def time[t](size: int = 1)(f: => futuwe[t]) = {
+    sizestat.add(size)
+    i-if (bucketbysize)
+      timew(size)(f)
+    ewse
+      stat.timefutuwe(timestat)(f)
   }
 
-  private[this] def total(size: Int = 1): Unit = total.incr(size)
+  pwivate[this] def totaw(size: int = 1): unit = totaw.incw(size)
 
-  def found(size: Int = 1): Unit = {
-    foundStat.incr(size)
-    total(size)
+  d-def found(size: int = 1): unit = {
+    f-foundstat.incw(size)
+    t-totaw(size)
   }
 
-  def notFound(size: Int = 1): Unit = {
-    notFoundStat.incr(size)
-    total(size)
+  d-def nyotfound(size: int = 1): unit = {
+    nyotfoundstat.incw(size)
+    t-totaw(size)
   }
 
-  def exception(ts: Throwable*): Unit = {
-    exceptionCounter(ts)
-    total(ts.size)
+  d-def exception(ts: thwowabwe*): u-unit = {
+    exceptioncountew(ts)
+    t-totaw(ts.size)
   }
 
-  def exceptions(ts: Seq[Throwable]): Unit = {
+  def e-exceptions(ts: seq[thwowabwe]): unit = {
     exception(ts: _*)
   }
 
-  def observeTry[V](tryObj: Try[V]): Unit = {
-    tryObj.respond {
-      case Return(_) => found()
-      case Throw(t) => exception(t)
+  d-def obsewvetwy[v](twyobj: twy[v]): unit = {
+    twyobj.wespond {
+      c-case wetuwn(_) => found()
+      c-case thwow(t) => exception(t)
     }
   }
 
-  def observeOption[V](optionTry: Try[Option[V]]): Unit = {
-    optionTry.respond {
-      case Return(Some(_)) => found()
-      case Return(None) => notFound()
-      case Throw(t) => exception(t)
+  d-def obsewveoption[v](optiontwy: t-twy[option[v]]): unit = {
+    optiontwy.wespond {
+      case wetuwn(some(_)) => found()
+      case wetuwn(none) => nyotfound()
+      c-case t-thwow(t) => exception(t)
     }
   }
 
-  def observeKeyValueResult[K, V](resultTry: Try[KeyValueResult[K, V]]): Unit = {
-    resultTry.respond {
-      case Return(result) =>
-        found(result.found.size)
-        notFound(result.notFound.size)
-        exceptions(result.failed.values.toSeq)
-      case Throw(t) =>
+  def obsewvekeyvawuewesuwt[k, 😳 v-v](wesuwttwy: t-twy[keyvawuewesuwt[k, 😳😳😳 v-v]]): unit = {
+    wesuwttwy.wespond {
+      case wetuwn(wesuwt) =>
+        found(wesuwt.found.size)
+        n-nyotfound(wesuwt.notfound.size)
+        exceptions(wesuwt.faiwed.vawues.toseq)
+      case thwow(t) =>
         exception(t)
     }
   }
 
   /**
-   * observeSeq observes the result of a fetch against a key-value repository
-   * when the returned value is a Seq of type V. When the fetch is completed,
-   * observes whether or not the returned Seq is empty, contains some number of
-   * items, or has failed in some way.
+   * o-obsewveseq obsewves the wesuwt o-of a fetch a-against a key-vawue w-wepositowy
+   * when the wetuwned v-vawue is a-a seq of type v. mya w-when the fetch i-is compweted, mya
+   * obsewves whethew ow nyot the w-wetuwned seq is e-empty, (⑅˘꒳˘) contains s-some nyumbew of
+   * i-items, (U ﹏ U) ow has f-faiwed in some way. mya
    */
-  def observeSeq[V](seqTry: Try[Seq[V]]): Unit = {
-    seqTry.respond {
-      case Return(seq) if seq.isEmpty => notFound()
-      case Return(seq) => found(seq.length)
-      case Throw(t) => exception(t)
+  def obsewveseq[v](seqtwy: twy[seq[v]]): u-unit = {
+    seqtwy.wespond {
+      case wetuwn(seq) if seq.isempty => nyotfound()
+      case wetuwn(seq) => f-found(seq.wength)
+      case thwow(t) => exception(t)
     }
   }
 }

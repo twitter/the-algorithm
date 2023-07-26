@@ -1,245 +1,245 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.twittew.home_mixew.functionaw_component.side_effect
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.marshaller.timeline_logging.PromotedTweetDetailsMarshaller
-import com.twitter.home_mixer.marshaller.timeline_logging.TweetDetailsMarshaller
-import com.twitter.home_mixer.marshaller.timeline_logging.WhoToFollowDetailsMarshaller
-import com.twitter.home_mixer.model.HomeFeatures.GetInitialFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetMiddleFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetOlderFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasDarkRequestFeature
-import com.twitter.home_mixer.model.HomeFeatures.RequestJoinIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
-import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.home_mixer.param.HomeMixerFlagName.ScribeServedCandidatesFlag
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableScribeServedCandidatesParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.inject.annotations.Flag
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowCandidateDecorator
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_subscribe_module.WhoToSubscribeCandidateDecorator
-import com.twitter.product_mixer.component_library.side_effect.ScribeLogEventSideEffect
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.timeline_logging.{thriftscala => thrift}
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.twacing.twace
+i-impowt c-com.twittew.home_mixew.mawshawwew.timewine_wogging.pwomotedtweetdetaiwsmawshawwew
+i-impowt com.twittew.home_mixew.mawshawwew.timewine_wogging.tweetdetaiwsmawshawwew
+i-impowt com.twittew.home_mixew.mawshawwew.timewine_wogging.whotofowwowdetaiwsmawshawwew
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.getinitiawfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.getmiddwefeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.getnewewfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.getowdewfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.hasdawkwequestfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.wequestjoinidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.scowefeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.sewvedwequestidfeatuwe
+impowt com.twittew.home_mixew.modew.wequest.devicecontext.wequestcontext
+i-impowt com.twittew.home_mixew.modew.wequest.hasdevicecontext
+impowt com.twittew.home_mixew.modew.wequest.hasseentweetids
+i-impowt com.twittew.home_mixew.modew.wequest.fowwowingpwoduct
+impowt com.twittew.home_mixew.modew.wequest.fowyoupwoduct
+i-impowt c-com.twittew.home_mixew.modew.wequest.subscwibedpwoduct
+impowt com.twittew.home_mixew.pawam.homemixewfwagname.scwibesewvedcandidatesfwag
+impowt com.twittew.home_mixew.pawam.homegwobawpawams.enabwescwibesewvedcandidatespawam
+i-impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig
+impowt com.twittew.inject.annotations.fwag
+impowt com.twittew.wogpipewine.cwient.common.eventpubwishew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.baseusewcandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_fowwow_moduwe.whotofowwowcandidatedecowatow
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_subscwibe_moduwe.whotosubscwibecandidatedecowatow
+impowt com.twittew.pwoduct_mixew.component_wibwawy.side_effect.scwibewogeventsideeffect
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.sideeffectidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.addentwiestimewineinstwuction
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.moduweitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinemoduwe
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet.tweetitem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usewitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.timewine_wogging.{thwiftscawa => thwift}
+impowt com.twittew.utiw.time
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * Side effect that logs home timeline served candidates to Scribe.
+ * s-side effect t-that wogs home timewine sewved candidates t-to scwibe. :3
  */
-@Singleton
-class HomeScribeServedCandidatesSideEffect @Inject() (
-  @Flag(ScribeServedCandidatesFlag) enableScribeServedCandidates: Boolean,
-  scribeEventPublisher: EventPublisher[thrift.ServedEntry])
-    extends ScribeLogEventSideEffect[
-      thrift.ServedEntry,
-      PipelineQuery with HasSeenTweetIds with HasDeviceContext,
-      Timeline
+@singweton
+cwass homescwibesewvedcandidatessideeffect @inject() (
+  @fwag(scwibesewvedcandidatesfwag) enabwescwibesewvedcandidates: b-boowean, mya
+  scwibeeventpubwishew: eventpubwishew[thwift.sewvedentwy])
+    e-extends scwibewogeventsideeffect[
+      thwift.sewvedentwy, OwO
+      p-pipewinequewy with hasseentweetids w-with h-hasdevicecontext, (ˆ ﻌ ˆ)♡
+      timewine
     ]
-    with PipelineResultSideEffect.Conditionally[
-      PipelineQuery with HasSeenTweetIds with HasDeviceContext,
-      Timeline
+    with pipewinewesuwtsideeffect.conditionawwy[
+      pipewinequewy with hasseentweetids w-with hasdevicecontext, ʘwʘ
+      t-timewine
     ] {
 
-  override val identifier: SideEffectIdentifier = SideEffectIdentifier("HomeScribeServedCandidates")
+  ovewwide vaw identifiew: s-sideeffectidentifiew = s-sideeffectidentifiew("homescwibesewvedcandidates")
 
-  override def onlyIf(
-    query: PipelineQuery with HasSeenTweetIds with HasDeviceContext,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: Timeline
-  ): Boolean = enableScribeServedCandidates && query.params(EnableScribeServedCandidatesParam)
+  o-ovewwide def onwyif(
+    quewy: pipewinequewy with hasseentweetids w-with hasdevicecontext, o.O
+    sewectedcandidates: seq[candidatewithdetaiws], UwU
+    wemainingcandidates: s-seq[candidatewithdetaiws], rawr x3
+    dwoppedcandidates: s-seq[candidatewithdetaiws], 🥺
+    wesponse: t-timewine
+  ): b-boowean = enabwescwibesewvedcandidates && q-quewy.pawams(enabwescwibesewvedcandidatespawam)
 
-  override def buildLogEvents(
-    query: PipelineQuery with HasSeenTweetIds with HasDeviceContext,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: Timeline
-  ): Seq[thrift.ServedEntry] = {
-    val timelineType = query.product match {
-      case FollowingProduct => thrift.TimelineType.HomeLatest
-      case ForYouProduct => thrift.TimelineType.Home
-      case SubscribedProduct => thrift.TimelineType.HomeSubscribed
-      case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+  o-ovewwide def b-buiwdwogevents(
+    q-quewy: pipewinequewy with hasseentweetids with hasdevicecontext, :3
+    s-sewectedcandidates: s-seq[candidatewithdetaiws], (ꈍᴗꈍ)
+    w-wemainingcandidates: s-seq[candidatewithdetaiws], 🥺
+    d-dwoppedcandidates: seq[candidatewithdetaiws], (✿oωo)
+    wesponse: timewine
+  ): seq[thwift.sewvedentwy] = {
+    v-vaw timewinetype = quewy.pwoduct match {
+      case fowwowingpwoduct => thwift.timewinetype.homewatest
+      case fowyoupwoduct => t-thwift.timewinetype.home
+      case subscwibedpwoduct => thwift.timewinetype.homesubscwibed
+      c-case othew => thwow n-nyew unsuppowtedopewationexception(s"unknown p-pwoduct: $othew")
     }
-    val requestProvenance = query.deviceContext.map { deviceContext =>
-      deviceContext.requestContextValue match {
-        case RequestContext.Foreground => thrift.RequestProvenance.Foreground
-        case RequestContext.Launch => thrift.RequestProvenance.Launch
-        case RequestContext.PullToRefresh => thrift.RequestProvenance.Ptr
-        case _ => thrift.RequestProvenance.Other
+    vaw w-wequestpwovenance = quewy.devicecontext.map { devicecontext =>
+      d-devicecontext.wequestcontextvawue m-match {
+        case wequestcontext.fowegwound => thwift.wequestpwovenance.fowegwound
+        case wequestcontext.waunch => thwift.wequestpwovenance.waunch
+        case w-wequestcontext.puwwtowefwesh => thwift.wequestpwovenance.ptw
+        c-case _ => thwift.wequestpwovenance.othew
       }
     }
-    val queryType = query.features.map { featureMap =>
-      if (featureMap.getOrElse(GetOlderFeature, false)) thrift.QueryType.GetOlder
-      else if (featureMap.getOrElse(GetNewerFeature, false)) thrift.QueryType.GetNewer
-      else if (featureMap.getOrElse(GetMiddleFeature, false)) thrift.QueryType.GetMiddle
-      else if (featureMap.getOrElse(GetInitialFeature, false)) thrift.QueryType.GetInitial
-      else thrift.QueryType.Other
+    v-vaw quewytype = q-quewy.featuwes.map { featuwemap =>
+      if (featuwemap.getowewse(getowdewfeatuwe, (U ﹏ U) f-fawse)) thwift.quewytype.getowdew
+      e-ewse if (featuwemap.getowewse(getnewewfeatuwe, :3 f-fawse)) t-thwift.quewytype.getnewew
+      ewse if (featuwemap.getowewse(getmiddwefeatuwe, ^^;; fawse)) thwift.quewytype.getmiddwe
+      ewse if (featuwemap.getowewse(getinitiawfeatuwe, rawr f-fawse)) t-thwift.quewytype.getinitiaw
+      e-ewse thwift.quewytype.othew
     }
-    val requestInfo = thrift.RequestInfo(
-      requestTimeMs = query.queryTime.inMilliseconds,
-      traceId = Trace.id.traceId.toLong,
-      userId = query.getOptionalUserId,
-      clientAppId = query.clientContext.appId,
-      hasDarkRequest = query.features.flatMap(_.getOrElse(HasDarkRequestFeature, None)),
-      parentId = Some(Trace.id.parentId.toLong),
-      spanId = Some(Trace.id.spanId.toLong),
-      timelineType = Some(timelineType),
-      ipAddress = query.clientContext.ipAddress,
-      userAgent = query.clientContext.userAgent,
-      queryType = queryType,
-      requestProvenance = requestProvenance,
-      languageCode = query.clientContext.languageCode,
-      countryCode = query.clientContext.countryCode,
-      requestEndTimeMs = Some(Time.now.inMilliseconds),
-      servedRequestId = query.features.flatMap(_.getOrElse(ServedRequestIdFeature, None)),
-      requestJoinId = query.features.flatMap(_.getOrElse(RequestJoinIdFeature, None))
+    vaw w-wequestinfo = thwift.wequestinfo(
+      w-wequesttimems = quewy.quewytime.inmiwwiseconds, 😳😳😳
+      twaceid = t-twace.id.twaceid.towong, (✿oωo)
+      usewid = quewy.getoptionawusewid, OwO
+      cwientappid = quewy.cwientcontext.appid, ʘwʘ
+      hasdawkwequest = quewy.featuwes.fwatmap(_.getowewse(hasdawkwequestfeatuwe, (ˆ ﻌ ˆ)♡ n-nyone)),
+      p-pawentid = some(twace.id.pawentid.towong), (U ﹏ U)
+      spanid = s-some(twace.id.spanid.towong), UwU
+      t-timewinetype = some(timewinetype), XD
+      ipaddwess = quewy.cwientcontext.ipaddwess, ʘwʘ
+      usewagent = quewy.cwientcontext.usewagent, rawr x3
+      q-quewytype = quewytype, ^^;;
+      wequestpwovenance = wequestpwovenance, ʘwʘ
+      wanguagecode = quewy.cwientcontext.wanguagecode, (U ﹏ U)
+      countwycode = q-quewy.cwientcontext.countwycode, (˘ω˘)
+      wequestendtimems = some(time.now.inmiwwiseconds),
+      s-sewvedwequestid = q-quewy.featuwes.fwatmap(_.getowewse(sewvedwequestidfeatuwe, (ꈍᴗꈍ) nyone)),
+      wequestjoinid = quewy.featuwes.fwatmap(_.getowewse(wequestjoinidfeatuwe, /(^•ω•^) n-nyone))
     )
 
-    val tweetIdToItemCandidateMap: Map[Long, ItemCandidateWithDetails] =
-      selectedCandidates.flatMap {
-        case item: ItemCandidateWithDetails if item.candidate.isInstanceOf[BaseTweetCandidate] =>
-          Seq((item.candidateIdLong, item))
-        case module: ModuleCandidateWithDetails
-            if module.candidates.headOption.exists(_.candidate.isInstanceOf[BaseTweetCandidate]) =>
-          module.candidates.map(item => (item.candidateIdLong, item))
-        case _ => Seq.empty
-      }.toMap
+    v-vaw tweetidtoitemcandidatemap: map[wong, >_< itemcandidatewithdetaiws] =
+      sewectedcandidates.fwatmap {
+        c-case item: itemcandidatewithdetaiws i-if item.candidate.isinstanceof[basetweetcandidate] =>
+          seq((item.candidateidwong, σωσ item))
+        case moduwe: m-moduwecandidatewithdetaiws
+            if moduwe.candidates.headoption.exists(_.candidate.isinstanceof[basetweetcandidate]) =>
+          m-moduwe.candidates.map(item => (item.candidateidwong, ^^;; i-item))
+        case _ => seq.empty
+      }.tomap
 
-    val userIdToItemCandidateMap: Map[Long, ItemCandidateWithDetails] =
-      selectedCandidates.flatMap {
-        case module: ModuleCandidateWithDetails
-            if module.candidates.forall(_.candidate.isInstanceOf[BaseUserCandidate]) =>
-          module.candidates.map { item =>
-            (item.candidateIdLong, item)
+    v-vaw usewidtoitemcandidatemap: map[wong, 😳 itemcandidatewithdetaiws] =
+      s-sewectedcandidates.fwatmap {
+        c-case moduwe: m-moduwecandidatewithdetaiws
+            if moduwe.candidates.fowaww(_.candidate.isinstanceof[baseusewcandidate]) =>
+          m-moduwe.candidates.map { i-item =>
+            (item.candidateidwong, >_< item)
           }
-        case _ => Seq.empty
-      }.toMap
+        case _ => s-seq.empty
+      }.tomap
 
-    response.instructions.zipWithIndex
-      .collect {
-        case (AddEntriesTimelineInstruction(entries), index) =>
-          entries.collect {
-            case entry: TweetItem if entry.promotedMetadata.isDefined =>
-              val promotedTweetDetails = PromotedTweetDetailsMarshaller(entry, index)
-              Seq(
-                thrift.EntryInfo(
-                  id = entry.id,
-                  position = index.shortValue(),
-                  entryId = entry.entryIdentifier,
-                  entryType = thrift.EntryType.PromotedTweet,
-                  sortIndex = entry.sortIndex,
-                  verticalSize = Some(1),
-                  displayType = Some(entry.displayType.toString),
-                  details = Some(thrift.ItemDetails.PromotedTweetDetails(promotedTweetDetails))
+    w-wesponse.instwuctions.zipwithindex
+      .cowwect {
+        c-case (addentwiestimewineinstwuction(entwies), -.- index) =>
+          entwies.cowwect {
+            c-case entwy: tweetitem if entwy.pwomotedmetadata.isdefined =>
+              v-vaw pwomotedtweetdetaiws = p-pwomotedtweetdetaiwsmawshawwew(entwy, UwU index)
+              seq(
+                thwift.entwyinfo(
+                  i-id = entwy.id, :3
+                  p-position = i-index.showtvawue(),
+                  e-entwyid = entwy.entwyidentifiew, σωσ
+                  entwytype = t-thwift.entwytype.pwomotedtweet, >w<
+                  sowtindex = entwy.sowtindex, (ˆ ﻌ ˆ)♡
+                  vewticawsize = some(1), ʘwʘ
+                  dispwaytype = s-some(entwy.dispwaytype.tostwing), :3
+                  detaiws = s-some(thwift.itemdetaiws.pwomotedtweetdetaiws(pwomotedtweetdetaiws))
                 )
               )
-            case entry: TweetItem =>
-              val candidate = tweetIdToItemCandidateMap(entry.id)
-              val tweetDetails = TweetDetailsMarshaller(entry, candidate)
-              Seq(
-                thrift.EntryInfo(
-                  id = candidate.candidateIdLong,
-                  position = index.shortValue(),
-                  entryId = entry.entryIdentifier,
-                  entryType = thrift.EntryType.Tweet,
-                  sortIndex = entry.sortIndex,
-                  verticalSize = Some(1),
-                  score = candidate.features.getOrElse(ScoreFeature, None),
-                  displayType = Some(entry.displayType.toString),
-                  details = Some(thrift.ItemDetails.TweetDetails(tweetDetails))
+            case entwy: t-tweetitem =>
+              vaw candidate = t-tweetidtoitemcandidatemap(entwy.id)
+              vaw t-tweetdetaiws = t-tweetdetaiwsmawshawwew(entwy, (˘ω˘) c-candidate)
+              s-seq(
+                t-thwift.entwyinfo(
+                  id = candidate.candidateidwong, 😳😳😳
+                  position = index.showtvawue(), rawr x3
+                  entwyid = entwy.entwyidentifiew,
+                  entwytype = thwift.entwytype.tweet, (✿oωo)
+                  sowtindex = e-entwy.sowtindex, (ˆ ﻌ ˆ)♡
+                  v-vewticawsize = s-some(1), :3
+                  scowe = candidate.featuwes.getowewse(scowefeatuwe, (U ᵕ U❁) n-nyone), ^^;;
+                  dispwaytype = some(entwy.dispwaytype.tostwing), mya
+                  detaiws = some(thwift.itemdetaiws.tweetdetaiws(tweetdetaiws))
                 )
               )
-            case module: TimelineModule
-                if module.entryNamespace.toString == WhoToFollowCandidateDecorator.EntryNamespaceString =>
-              module.items.collect {
-                case ModuleItem(entry: UserItem, _, _) =>
-                  val candidate = userIdToItemCandidateMap(entry.id)
-                  val whoToFollowDetails = WhoToFollowDetailsMarshaller(entry, candidate)
-                  thrift.EntryInfo(
-                    id = entry.id,
-                    position = index.shortValue(),
-                    entryId = module.entryIdentifier,
-                    entryType = thrift.EntryType.WhoToFollowModule,
-                    sortIndex = module.sortIndex,
-                    score = candidate.features.getOrElse(ScoreFeature, None),
-                    displayType = Some(entry.displayType.toString),
-                    details = Some(thrift.ItemDetails.WhoToFollowDetails(whoToFollowDetails))
+            c-case moduwe: timewinemoduwe
+                i-if moduwe.entwynamespace.tostwing == whotofowwowcandidatedecowatow.entwynamespacestwing =>
+              m-moduwe.items.cowwect {
+                case moduweitem(entwy: u-usewitem, 😳😳😳 _, _) =>
+                  v-vaw candidate = usewidtoitemcandidatemap(entwy.id)
+                  v-vaw w-whotofowwowdetaiws = whotofowwowdetaiwsmawshawwew(entwy, OwO candidate)
+                  thwift.entwyinfo(
+                    id = e-entwy.id,
+                    p-position = index.showtvawue(), rawr
+                    e-entwyid = moduwe.entwyidentifiew, XD
+                    e-entwytype = t-thwift.entwytype.whotofowwowmoduwe, (U ﹏ U)
+                    sowtindex = m-moduwe.sowtindex, (˘ω˘)
+                    scowe = c-candidate.featuwes.getowewse(scowefeatuwe, UwU nyone),
+                    d-dispwaytype = s-some(entwy.dispwaytype.tostwing), >_<
+                    detaiws = some(thwift.itemdetaiws.whotofowwowdetaiws(whotofowwowdetaiws))
                   )
               }
-            case module: TimelineModule
-                if module.entryNamespace.toString == WhoToSubscribeCandidateDecorator.EntryNamespaceString =>
-              module.items.collect {
-                case ModuleItem(entry: UserItem, _, _) =>
-                  val candidate = userIdToItemCandidateMap(entry.id)
-                  val whoToSubscribeDetails = WhoToFollowDetailsMarshaller(entry, candidate)
-                  thrift.EntryInfo(
-                    id = entry.id,
-                    position = index.shortValue(),
-                    entryId = module.entryIdentifier,
-                    entryType = thrift.EntryType.WhoToSubscribeModule,
-                    sortIndex = module.sortIndex,
-                    score = candidate.features.getOrElse(ScoreFeature, None),
-                    displayType = Some(entry.displayType.toString),
-                    details = Some(thrift.ItemDetails.WhoToFollowDetails(whoToSubscribeDetails))
+            c-case moduwe: timewinemoduwe
+                if moduwe.entwynamespace.tostwing == w-whotosubscwibecandidatedecowatow.entwynamespacestwing =>
+              moduwe.items.cowwect {
+                c-case m-moduweitem(entwy: usewitem, σωσ _, _) =>
+                  v-vaw candidate = usewidtoitemcandidatemap(entwy.id)
+                  vaw w-whotosubscwibedetaiws = w-whotofowwowdetaiwsmawshawwew(entwy, 🥺 c-candidate)
+                  thwift.entwyinfo(
+                    id = entwy.id, 🥺
+                    position = index.showtvawue(), ʘwʘ
+                    e-entwyid = moduwe.entwyidentifiew, :3
+                    entwytype = thwift.entwytype.whotosubscwibemoduwe, (U ﹏ U)
+                    s-sowtindex = moduwe.sowtindex, (U ﹏ U)
+                    s-scowe = candidate.featuwes.getowewse(scowefeatuwe, ʘwʘ nyone),
+                    d-dispwaytype = some(entwy.dispwaytype.tostwing), >w<
+                    d-detaiws = s-some(thwift.itemdetaiws.whotofowwowdetaiws(whotosubscwibedetaiws))
                   )
               }
-            case module: TimelineModule
-                if module.sortIndex.isDefined && module.items.headOption.exists(
-                  _.item.isInstanceOf[TweetItem]) =>
-              module.items.collect {
-                case ModuleItem(entry: TweetItem, _, _) =>
-                  val candidate = tweetIdToItemCandidateMap(entry.id)
-                  thrift.EntryInfo(
-                    id = entry.id,
-                    position = index.shortValue(),
-                    entryId = module.entryIdentifier,
-                    entryType = thrift.EntryType.ConversationModule,
-                    sortIndex = module.sortIndex,
-                    score = candidate.features.getOrElse(ScoreFeature, None),
-                    displayType = Some(entry.displayType.toString)
+            case moduwe: timewinemoduwe
+                i-if moduwe.sowtindex.isdefined && moduwe.items.headoption.exists(
+                  _.item.isinstanceof[tweetitem]) =>
+              moduwe.items.cowwect {
+                c-case m-moduweitem(entwy: tweetitem, rawr x3 _, _) =>
+                  v-vaw candidate = tweetidtoitemcandidatemap(entwy.id)
+                  t-thwift.entwyinfo(
+                    i-id = entwy.id, OwO
+                    p-position = index.showtvawue(), ^•ﻌ•^
+                    entwyid = moduwe.entwyidentifiew, >_<
+                    entwytype = thwift.entwytype.convewsationmoduwe, OwO
+                    sowtindex = moduwe.sowtindex, >_<
+                    scowe = candidate.featuwes.getowewse(scowefeatuwe, (ꈍᴗꈍ) nyone),
+                    dispwaytype = some(entwy.dispwaytype.tostwing)
                   )
               }
-            case _ => Seq.empty
-          }.flatten
-        // Other instructions
-        case _ => Seq.empty[thrift.EntryInfo]
-      }.flatten.map { entryInfo =>
-        thrift.ServedEntry(
-          entry = Some(entryInfo),
-          request = requestInfo
+            case _ => seq.empty
+          }.fwatten
+        // othew instwuctions
+        c-case _ => seq.empty[thwift.entwyinfo]
+      }.fwatten.map { entwyinfo =>
+        t-thwift.sewvedentwy(
+          entwy = some(entwyinfo), >w<
+          wequest = wequestinfo
         )
       }
   }
 
-  override val logPipelinePublisher: EventPublisher[thrift.ServedEntry] =
-    scribeEventPublisher
+  o-ovewwide vaw w-wogpipewinepubwishew: e-eventpubwishew[thwift.sewvedentwy] =
+    scwibeeventpubwishew
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert()
+  o-ovewwide vaw awewts = seq(
+    h-homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt()
   )
 }

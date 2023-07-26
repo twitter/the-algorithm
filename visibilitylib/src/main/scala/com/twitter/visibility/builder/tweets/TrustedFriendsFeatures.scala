@@ -1,57 +1,57 @@
-package com.twitter.visibility.builder.tweets
+package com.twittew.visibiwity.buiwdew.tweets
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TrustedFriendsListId
-import com.twitter.visibility.common.TrustedFriendsSource
-import com.twitter.visibility.features.TweetIsTrustedFriendTweet
-import com.twitter.visibility.features.ViewerIsTrustedFriendOfTweetAuthor
-import com.twitter.visibility.features.ViewerIsTrustedFriendTweetAuthor
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt c-com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.common.twustedfwiendswistid
+i-impowt com.twittew.visibiwity.common.twustedfwiendssouwce
+i-impowt c-com.twittew.visibiwity.featuwes.tweetistwustedfwiendtweet
+impowt com.twittew.visibiwity.featuwes.viewewistwustedfwiendoftweetauthow
+impowt com.twittew.visibiwity.featuwes.viewewistwustedfwiendtweetauthow
 
-class TrustedFriendsFeatures(trustedFriendsSource: TrustedFriendsSource) {
+cwass t-twustedfwiendsfeatuwes(twustedfwiendssouwce: twustedfwiendssouwce) {
 
-  private[builder] def viewerIsTrustedFriend(
-    tweet: Tweet,
-    viewerId: Option[Long]
-  ): Stitch[Boolean] =
-    (trustedFriendsListId(tweet), viewerId) match {
-      case (Some(tfListId), Some(userId)) =>
-        trustedFriendsSource.isTrustedFriend(tfListId, userId)
-      case _ => Stitch.False
+  pwivate[buiwdew] d-def viewewistwustedfwiend(
+    t-tweet: tweet,
+    viewewid: option[wong]
+  ): stitch[boowean] =
+    (twustedfwiendswistid(tweet), (⑅˘꒳˘) v-viewewid) match {
+      c-case (some(tfwistid), òωó s-some(usewid)) =>
+        twustedfwiendssouwce.istwustedfwiend(tfwistid, usewid)
+      case _ => stitch.fawse
     }
 
-  private[builder] def viewerIsTrustedFriendListOwner(
-    tweet: Tweet,
-    viewerId: Option[Long]
-  ): Stitch[Boolean] =
-    (trustedFriendsListId(tweet), viewerId) match {
-      case (Some(tfListId), Some(userId)) =>
-        trustedFriendsSource.isTrustedFriendListOwner(tfListId, userId)
-      case _ => Stitch.False
+  pwivate[buiwdew] d-def viewewistwustedfwiendwistownew(
+    tweet: tweet, ʘwʘ
+    viewewid: option[wong]
+  ): stitch[boowean] =
+    (twustedfwiendswistid(tweet), /(^•ω•^) v-viewewid) match {
+      c-case (some(tfwistid), ʘwʘ s-some(usewid)) =>
+        t-twustedfwiendssouwce.istwustedfwiendwistownew(tfwistid, σωσ u-usewid)
+      case _ => stitch.fawse
     }
 
-  private[builder] def trustedFriendsListId(tweet: Tweet): Option[TrustedFriendsListId] =
-    tweet.trustedFriendsControl.map(_.trustedFriendsListId)
+  p-pwivate[buiwdew] def twustedfwiendswistid(tweet: tweet): o-option[twustedfwiendswistid] =
+    tweet.twustedfwiendscontwow.map(_.twustedfwiendswistid)
 
-  def forTweet(
-    tweet: Tweet,
-    viewerId: Option[Long]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(
-      TweetIsTrustedFriendTweet,
-      tweet.trustedFriendsControl.isDefined
-    ).withFeature(
-        ViewerIsTrustedFriendTweetAuthor,
-        viewerIsTrustedFriendListOwner(tweet, viewerId)
-      ).withFeature(
-        ViewerIsTrustedFriendOfTweetAuthor,
-        viewerIsTrustedFriend(tweet, viewerId)
+  def fowtweet(
+    tweet: tweet, OwO
+    viewewid: option[wong]
+  ): featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    _.withconstantfeatuwe(
+      tweetistwustedfwiendtweet, 😳😳😳
+      t-tweet.twustedfwiendscontwow.isdefined
+    ).withfeatuwe(
+        viewewistwustedfwiendtweetauthow, 😳😳😳
+        v-viewewistwustedfwiendwistownew(tweet, o.O viewewid)
+      ).withfeatuwe(
+        v-viewewistwustedfwiendoftweetauthow, ( ͡o ω ͡o )
+        viewewistwustedfwiend(tweet, (U ﹏ U) viewewid)
       )
   }
 
-  def forTweetOnly(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(TweetIsTrustedFriendTweet, tweet.trustedFriendsControl.isDefined)
+  def fowtweetonwy(tweet: tweet): featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    _.withconstantfeatuwe(tweetistwustedfwiendtweet, (///ˬ///✿) t-tweet.twustedfwiendscontwow.isdefined)
   }
 
 }

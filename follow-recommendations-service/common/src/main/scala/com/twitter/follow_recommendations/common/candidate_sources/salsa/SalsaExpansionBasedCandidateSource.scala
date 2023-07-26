@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.common.candidate_sources.salsa
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sawsa
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt c-com.twittew.stitch.stitch
 
-abstract class SalsaExpansionBasedCandidateSource[Target](salsaExpander: SalsaExpander)
-    extends CandidateSource[Target, CandidateUser] {
+a-abstwact c-cwass sawsaexpansionbasedcandidatesouwce[tawget](sawsaexpandew: s-sawsaexpandew)
+    e-extends candidatesouwce[tawget, 😳😳😳 candidateusew] {
 
-  // Define first/second degree as empty sequences in cases of subclasses
-  // that don't implement one or the other.
-  // Example: MagicRecs only uses first degree nodes, and can ignore implementing secondDegreeNodes
+  // define fiwst/second degwee as empty s-sequences in cases of subcwasses
+  // that d-don't impwement one ow the othew. 🥺
+  // e-exampwe: magicwecs onwy uses fiwst degwee nyodes, mya and can i-ignowe impwementing seconddegweenodes
   //
-  // This allows apply(target) to combine both in the base class
-  def firstDegreeNodes(target: Target): Stitch[Seq[Long]] = Stitch.value(Seq())
+  // t-this awwows appwy(tawget) t-to combine both in the base cwass
+  def fiwstdegweenodes(tawget: tawget): s-stitch[seq[wong]] = stitch.vawue(seq())
 
-  def secondDegreeNodes(target: Target): Stitch[Seq[Long]] = Stitch.value(Seq())
+  def seconddegweenodes(tawget: tawget): stitch[seq[wong]] = s-stitch.vawue(seq())
 
-  // max number output results
-  def maxResults(target: Target): Int
+  // max nyumbew o-output wesuwts
+  d-def maxwesuwts(tawget: t-tawget): i-int
 
-  override def apply(target: Target): Stitch[Seq[CandidateUser]] = {
-    val nodes = Stitch.join(firstDegreeNodes(target), secondDegreeNodes(target))
+  ovewwide def appwy(tawget: tawget): stitch[seq[candidateusew]] = {
+    v-vaw nyodes = stitch.join(fiwstdegweenodes(tawget), 🥺 seconddegweenodes(tawget))
 
-    nodes.flatMap {
-      case (firstDegreeCandidates, secondDegreeCandidates) => {
-        salsaExpander(firstDegreeCandidates, secondDegreeCandidates, maxResults(target))
-          .map(_.map(_.withCandidateSource(identifier)).sortBy(-_.score.getOrElse(0.0)))
+    nyodes.fwatmap {
+      c-case (fiwstdegweecandidates, >_< seconddegweecandidates) => {
+        sawsaexpandew(fiwstdegweecandidates, >_< seconddegweecandidates, (⑅˘꒳˘) maxwesuwts(tawget))
+          .map(_.map(_.withcandidatesouwce(identifiew)).sowtby(-_.scowe.getowewse(0.0)))
       }
     }
   }

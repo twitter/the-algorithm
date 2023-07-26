@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest
 
-import com.twitter.timelines.configapi.{FeatureValue => ConfigApiFeatureValue}
+impowt com.twittew.timewines.configapi.{featuwevawue => c-configapifeatuwevawue}
 
-case class DebugParams(
-  featureOverrides: Option[Map[String, ConfigApiFeatureValue]],
-  override val debugOptions: Option[DebugOptions])
-    extends HasDebugOptions
+c-case cwass debugpawams(
+  f-featuweovewwides: o-option[map[stwing, ( ͡o ω ͡o ) c-configapifeatuwevawue]], UwU
+  o-ovewwide v-vaw debugoptions: o-option[debugoptions])
+    extends hasdebugoptions

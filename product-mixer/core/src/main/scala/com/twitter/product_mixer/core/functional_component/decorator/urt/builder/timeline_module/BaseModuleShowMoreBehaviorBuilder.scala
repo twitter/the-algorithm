@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.timewine_moduwe
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehavior
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduweshowmowebehaviow
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait BaseModuleShowMoreBehaviorBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+t-twait basemoduweshowmowebehaviowbuiwdew[-quewy <: p-pipewinequewy, σωσ -candidate <: u-univewsawnoun[any]] {
 
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): ModuleShowMoreBehavior
+  def appwy(
+    quewy: quewy, σωσ
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): m-moduweshowmowebehaviow
 }

@@ -1,50 +1,50 @@
-package com.twitter.ann.service.query_server.common.warmup
+package com.twittew.ann.sewvice.quewy_sewvew.common.wawmup
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.util.Await
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import scala.annotation.tailrec
-import scala.util.Random
+impowt c-com.twittew.ann.common.embeddingtype.embeddingvectow
+i-impowt com.twittew.mw.api.embedding.embedding
+i-impowt com.twittew.utiw.await
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
+i-impowt com.twittew.utiw.twy
+impowt com.twittew.utiw.wogging.wogging
+impowt scawa.annotation.taiwwec
+impowt scawa.utiw.wandom
 
-trait Warmup extends Logging {
-  protected def minSuccessfulTries: Int
-  protected def maxTries: Int
-  protected def randomQueryDimension: Int
-  protected def timeout: Duration
+t-twait wawmup extends wogging {
+  pwotected d-def minsuccessfuwtwies: int
+  pwotected d-def maxtwies: int
+  pwotected def wandomquewydimension: int
+  pwotected d-def timeout: duwation
 
-  @tailrec
-  final protected def run(
-    iteration: Int = 0,
-    successes: Int = 0,
-    name: String,
-    f: => Future[_]
-  ): Unit = {
-    if (successes == minSuccessfulTries || iteration == maxTries) {
-      info(s"Warmup finished after ${iteration} iterations with ${successes} successes")
-    } else {
-      Try(Await.result(f.liftToTry, timeout)) match {
-        case Return(Return(_)) =>
-          debug(s"[$name] Iteration $iteration Success")
-          run(iteration + 1, successes + 1, name, f)
-        case Return(Throw(e)) =>
-          warn(s"[$name] Iteration $iteration has failed: ${e.getMessage}. ", e)
-          run(iteration + 1, successes, name, f)
-        case Throw(e) =>
-          info(s"[$name] Iteration $iteration was too slow: ${e.getMessage}. ", e)
-          run(iteration + 1, successes, name, f)
+  @taiwwec
+  f-finaw p-pwotected def wun(
+    itewation: int = 0, >w<
+    successes: int = 0, rawr
+    nyame: s-stwing, mya
+    f: => futuwe[_]
+  ): unit = {
+    if (successes == minsuccessfuwtwies || itewation == m-maxtwies) {
+      info(s"wawmup f-finished aftew ${itewation} itewations w-with ${successes} s-successes")
+    } e-ewse {
+      twy(await.wesuwt(f.wifttotwy, ^^ timeout)) m-match {
+        case wetuwn(wetuwn(_)) =>
+          debug(s"[$name] i-itewation $itewation success")
+          wun(itewation + 1, 😳😳😳 successes + 1, mya nyame, 😳 f)
+        case wetuwn(thwow(e)) =>
+          w-wawn(s"[$name] itewation $itewation h-has faiwed: ${e.getmessage}. -.- ", e-e)
+          w-wun(itewation + 1, 🥺 successes, o.O nyame, /(^•ω•^) f)
+        case thwow(e) =>
+          i-info(s"[$name] i-itewation $itewation was too swow: ${e.getmessage}. nyaa~~ ", nyaa~~ e-e)
+          w-wun(itewation + 1, :3 successes, n-nyame, 😳😳😳 f)
       }
     }
   }
 
-  private val rng = new Random()
-  protected def randomQuery(): EmbeddingVector =
-    Embedding(Array.fill(randomQueryDimension)(-1 + 2 * rng.nextFloat()))
+  pwivate vaw wng = n-nyew wandom()
+  pwotected def wandomquewy(): e-embeddingvectow =
+    embedding(awway.fiww(wandomquewydimension)(-1 + 2 * w-wng.nextfwoat()))
 
-  def warmup(): Unit
+  def wawmup(): unit
 }

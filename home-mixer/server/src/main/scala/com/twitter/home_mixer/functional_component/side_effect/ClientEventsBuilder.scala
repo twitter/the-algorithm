@@ -1,185 +1,185 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.twittew.home_mixew.functionaw_component.side_effect
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.functional_component.decorator.HomeQueryTypePredicates
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeTweetTypePredicates
-import com.twitter.home_mixer.model.HomeFeatures.AccountAgeFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.VideoDurationMsFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect.ClientEvent
-import com.twitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect.EventNamespace
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.home_mixew.functionaw_component.decowatow.homequewytypepwedicates
+i-impowt com.twittew.home_mixew.functionaw_component.decowatow.buiwdew.hometweettypepwedicates
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.accountagefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.videoduwationmsfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.wequest.fowwowingpwoduct
+impowt com.twittew.home_mixew.modew.wequest.fowyoupwoduct
+impowt com.twittew.home_mixew.modew.wequest.wisttweetspwoduct
+impowt com.twittew.home_mixew.modew.wequest.subscwibedpwoduct
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.side_effect.scwibecwienteventsideeffect.cwientevent
+impowt com.twittew.pwoduct_mixew.component_wibwawy.side_effect.scwibecwienteventsideeffect.eventnamespace
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.injection.scwibe.injectionscwibeutiw
 
-private[side_effect] sealed trait ClientEventsBuilder {
-  private val FollowingSection = Some("latest")
-  private val ForYouSection = Some("home")
-  private val ListTweetsSection = Some("list")
-  private val SubscribedSection = Some("subscribed")
+pwivate[side_effect] s-seawed twait cwienteventsbuiwdew {
+  p-pwivate v-vaw fowwowingsection = some("watest")
+  pwivate vaw fowyousection = some("home")
+  p-pwivate vaw wisttweetssection = some("wist")
+  pwivate vaw subscwibedsection = s-some("subscwibed")
 
-  protected def section(query: PipelineQuery): Option[String] = {
-    query.product match {
-      case FollowingProduct => FollowingSection
-      case ForYouProduct => ForYouSection
-      case ListTweetsProduct => ListTweetsSection
-      case SubscribedProduct => SubscribedSection
-      case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+  pwotected d-def section(quewy: p-pipewinequewy): o-option[stwing] = {
+    q-quewy.pwoduct match {
+      case fowwowingpwoduct => f-fowwowingsection
+      case fowyoupwoduct => f-fowyousection
+      case wisttweetspwoduct => wisttweetssection
+      case subscwibedpwoduct => subscwibedsection
+      case o-othew => thwow nyew unsuppowtedopewationexception(s"unknown p-pwoduct: $othew")
     }
   }
 
-  protected def count(
-    candidates: Seq[CandidateWithDetails],
-    predicate: FeatureMap => Boolean = _ => true,
-    queryFeatures: FeatureMap = FeatureMap.empty
-  ): Option[Long] = Some(candidates.view.count(item => predicate(item.features ++ queryFeatures)))
+  p-pwotected d-def count(
+    candidates: seq[candidatewithdetaiws],
+    pwedicate: featuwemap => b-boowean = _ => t-twue, >_<
+    quewyfeatuwes: f-featuwemap = featuwemap.empty
+  ): o-option[wong] = some(candidates.view.count(item => p-pwedicate(item.featuwes ++ quewyfeatuwes)))
 
-  protected def sum(
-    candidates: Seq[CandidateWithDetails],
-    predicate: FeatureMap => Option[Int],
-    queryFeatures: FeatureMap = FeatureMap.empty
-  ): Option[Long] =
-    Some(candidates.view.flatMap(item => predicate(item.features ++ queryFeatures)).sum)
+  p-pwotected def sum(
+    candidates: seq[candidatewithdetaiws], UwU
+    p-pwedicate: featuwemap => o-option[int], >_<
+    quewyfeatuwes: f-featuwemap = featuwemap.empty
+  ): o-option[wong] =
+    some(candidates.view.fwatmap(item => pwedicate(item.featuwes ++ quewyfeatuwes)).sum)
 }
 
-private[side_effect] object ServedEventsBuilder extends ClientEventsBuilder {
+pwivate[side_effect] object sewvedeventsbuiwdew extends c-cwienteventsbuiwdew {
 
-  private val ServedTweetsAction = Some("served_tweets")
-  private val ServedUsersAction = Some("served_users")
-  private val InjectedComponent = Some("injected")
-  private val PromotedComponent = Some("promoted")
-  private val WhoToFollowComponent = Some("who_to_follow")
-  private val WhoToSubscribeComponent = Some("who_to_subscribe")
-  private val WithVideoDurationComponent = Some("with_video_duration")
-  private val VideoDurationSumElement = Some("video_duration_sum")
-  private val NumVideosElement = Some("num_videos")
+  pwivate v-vaw sewvedtweetsaction = some("sewved_tweets")
+  p-pwivate v-vaw sewvedusewsaction = s-some("sewved_usews")
+  pwivate vaw injectedcomponent = some("injected")
+  pwivate vaw pwomotedcomponent = some("pwomoted")
+  p-pwivate vaw whotofowwowcomponent = some("who_to_fowwow")
+  pwivate vaw whotosubscwibecomponent = some("who_to_subscwibe")
+  p-pwivate vaw withvideoduwationcomponent = some("with_video_duwation")
+  p-pwivate v-vaw videoduwationsumewement = s-some("video_duwation_sum")
+  pwivate v-vaw nyumvideosewement = s-some("num_videos")
 
-  def build(
-    query: PipelineQuery,
-    injectedTweets: Seq[ItemCandidateWithDetails],
-    promotedTweets: Seq[ItemCandidateWithDetails],
-    whoToFollowUsers: Seq[ItemCandidateWithDetails],
-    whoToSubscribeUsers: Seq[ItemCandidateWithDetails]
-  ): Seq[ClientEvent] = {
-    val baseEventNamespace = EventNamespace(
-      section = section(query),
-      action = ServedTweetsAction
+  d-def buiwd(
+    q-quewy: pipewinequewy, -.-
+    injectedtweets: seq[itemcandidatewithdetaiws], mya
+    p-pwomotedtweets: s-seq[itemcandidatewithdetaiws], >w<
+    w-whotofowwowusews: s-seq[itemcandidatewithdetaiws], (U ﹏ U)
+    w-whotosubscwibeusews: seq[itemcandidatewithdetaiws]
+  ): seq[cwientevent] = {
+    vaw baseeventnamespace = eventnamespace(
+      s-section = section(quewy), 😳😳😳
+      action = sewvedtweetsaction
     )
-    val overallServedEvents = Seq(
-      ClientEvent(baseEventNamespace, eventValue = count(injectedTweets ++ promotedTweets)),
-      ClientEvent(
-        baseEventNamespace.copy(component = InjectedComponent),
-        eventValue = count(injectedTweets)),
-      ClientEvent(
-        baseEventNamespace.copy(component = PromotedComponent),
-        eventValue = count(promotedTweets)),
-      ClientEvent(
-        baseEventNamespace.copy(component = WhoToFollowComponent, action = ServedUsersAction),
-        eventValue = count(whoToFollowUsers)),
-      ClientEvent(
-        baseEventNamespace.copy(component = WhoToSubscribeComponent, action = ServedUsersAction),
-        eventValue = count(whoToSubscribeUsers)),
+    vaw ovewawwsewvedevents = seq(
+      cwientevent(baseeventnamespace, eventvawue = count(injectedtweets ++ p-pwomotedtweets)), o.O
+      cwientevent(
+        baseeventnamespace.copy(component = injectedcomponent), òωó
+        e-eventvawue = count(injectedtweets)), 😳😳😳
+      c-cwientevent(
+        b-baseeventnamespace.copy(component = pwomotedcomponent), σωσ
+        e-eventvawue = count(pwomotedtweets)), (⑅˘꒳˘)
+      cwientevent(
+        b-baseeventnamespace.copy(component = w-whotofowwowcomponent, (///ˬ///✿) action = sewvedusewsaction), 🥺
+        eventvawue = count(whotofowwowusews)), OwO
+      cwientevent(
+        baseeventnamespace.copy(component = w-whotosubscwibecomponent, action = sewvedusewsaction), >w<
+        e-eventvawue = count(whotosubscwibeusews)), 🥺
     )
 
-    val tweetTypeServedEvents = HomeTweetTypePredicates.PredicateMap.map {
-      case (tweetType, predicate) =>
-        ClientEvent(
-          baseEventNamespace.copy(component = InjectedComponent, element = Some(tweetType)),
-          eventValue = count(injectedTweets, predicate, query.features.getOrElse(FeatureMap.empty))
+    v-vaw tweettypesewvedevents = h-hometweettypepwedicates.pwedicatemap.map {
+      case (tweettype, nyaa~~ pwedicate) =>
+        c-cwientevent(
+          b-baseeventnamespace.copy(component = injectedcomponent, ^^ e-ewement = s-some(tweettype)), >w<
+          eventvawue = count(injectedtweets, OwO pwedicate, quewy.featuwes.getowewse(featuwemap.empty))
         )
-    }.toSeq
+    }.toseq
 
-    val suggestTypeServedEvents = injectedTweets
-      .flatMap(_.features.getOrElse(SuggestTypeFeature, None))
+    vaw suggesttypesewvedevents = i-injectedtweets
+      .fwatmap(_.featuwes.getowewse(suggesttypefeatuwe, XD n-nyone))
       .map {
-        InjectionScribeUtil.scribeComponent
+        i-injectionscwibeutiw.scwibecomponent
       }
-      .groupBy(identity).map {
-        case (suggestType, group) =>
-          ClientEvent(
-            baseEventNamespace.copy(component = suggestType),
-            eventValue = Some(group.size.toLong))
-      }.toSeq
+      .gwoupby(identity).map {
+        case (suggesttype, ^^;; gwoup) =>
+          c-cwientevent(
+            b-baseeventnamespace.copy(component = suggesttype), 🥺
+            e-eventvawue = some(gwoup.size.towong))
+      }.toseq
 
-    // Video duration events
-    val numVideosEvent = ClientEvent(
-      baseEventNamespace.copy(component = WithVideoDurationComponent, element = NumVideosElement),
-      eventValue = count(injectedTweets, _.getOrElse(VideoDurationMsFeature, None).nonEmpty)
+    // video duwation events
+    vaw nyumvideosevent = c-cwientevent(
+      b-baseeventnamespace.copy(component = withvideoduwationcomponent, XD ewement = n-numvideosewement), (U ᵕ U❁)
+      e-eventvawue = count(injectedtweets, :3 _.getowewse(videoduwationmsfeatuwe, ( ͡o ω ͡o ) none).nonempty)
     )
-    val videoDurationSumEvent = ClientEvent(
-      baseEventNamespace
-        .copy(component = WithVideoDurationComponent, element = VideoDurationSumElement),
-      eventValue = sum(injectedTweets, _.getOrElse(VideoDurationMsFeature, None))
+    vaw v-videoduwationsumevent = cwientevent(
+      baseeventnamespace
+        .copy(component = withvideoduwationcomponent, òωó ewement = videoduwationsumewement), σωσ
+      eventvawue = s-sum(injectedtweets, (U ᵕ U❁) _.getowewse(videoduwationmsfeatuwe, (✿oωo) nyone))
     )
-    val videoEvents = Seq(numVideosEvent, videoDurationSumEvent)
+    vaw videoevents = s-seq(numvideosevent, ^^ v-videoduwationsumevent)
 
-    overallServedEvents ++ tweetTypeServedEvents ++ suggestTypeServedEvents ++ videoEvents
+    ovewawwsewvedevents ++ tweettypesewvedevents ++ suggesttypesewvedevents ++ videoevents
   }
 }
 
-private[side_effect] object EmptyTimelineEventsBuilder extends ClientEventsBuilder {
-  private val EmptyAction = Some("empty")
-  private val AccountAgeLessThan30MinutesComponent = Some("account_age_less_than_30_minutes")
-  private val ServedNonPromotedTweetElement = Some("served_non_promoted_tweet")
+p-pwivate[side_effect] o-object emptytimewineeventsbuiwdew extends cwienteventsbuiwdew {
+  p-pwivate vaw emptyaction = s-some("empty")
+  pwivate vaw accountagewessthan30minutescomponent = some("account_age_wess_than_30_minutes")
+  p-pwivate vaw sewvednonpwomotedtweetewement = s-some("sewved_non_pwomoted_tweet")
 
-  def build(
-    query: PipelineQuery,
-    injectedTweets: Seq[ItemCandidateWithDetails]
-  ): Seq[ClientEvent] = {
-    val baseEventNamespace = EventNamespace(
-      section = section(query),
-      action = EmptyAction
+  d-def buiwd(
+    quewy: pipewinequewy, ^•ﻌ•^
+    injectedtweets: seq[itemcandidatewithdetaiws]
+  ): s-seq[cwientevent] = {
+    vaw baseeventnamespace = e-eventnamespace(
+      s-section = s-section(quewy), XD
+      action = e-emptyaction
     )
 
-    // Empty timeline events
-    val accountAgeLessThan30Minutes = query.features
-      .flatMap(_.getOrElse(AccountAgeFeature, None))
-      .exists(_.untilNow < 30.minutes)
-    val isEmptyTimeline = count(injectedTweets).contains(0L)
-    val predicates = Seq(
-      None -> isEmptyTimeline,
-      AccountAgeLessThan30MinutesComponent -> (isEmptyTimeline && accountAgeLessThan30Minutes)
+    // e-empty timewine events
+    vaw accountagewessthan30minutes = q-quewy.featuwes
+      .fwatmap(_.getowewse(accountagefeatuwe, :3 n-nyone))
+      .exists(_.untiwnow < 30.minutes)
+    v-vaw isemptytimewine = count(injectedtweets).contains(0w)
+    vaw pwedicates = seq(
+      n-nyone -> isemptytimewine, (ꈍᴗꈍ)
+      accountagewessthan30minutescomponent -> (isemptytimewine && a-accountagewessthan30minutes)
     )
-    for {
-      (component, predicate) <- predicates
-      if predicate
-    } yield ClientEvent(
-      baseEventNamespace.copy(component = component, element = ServedNonPromotedTweetElement))
+    f-fow {
+      (component, :3 pwedicate) <- pwedicates
+      if pwedicate
+    } yiewd c-cwientevent(
+      b-baseeventnamespace.copy(component = c-component, (U ﹏ U) e-ewement = sewvednonpwomotedtweetewement))
   }
 }
 
-private[side_effect] object QueryEventsBuilder extends ClientEventsBuilder {
+p-pwivate[side_effect] object quewyeventsbuiwdew extends cwienteventsbuiwdew {
 
-  private val ServedSizePredicateMap: Map[String, Int => Boolean] = Map(
-    ("size_is_empty", _ <= 0),
-    ("size_at_most_5", _ <= 5),
-    ("size_at_most_10", _ <= 10),
-    ("size_at_most_35", _ <= 35)
+  pwivate vaw sewvedsizepwedicatemap: m-map[stwing, UwU int => boowean] = m-map(
+    ("size_is_empty", 😳😳😳 _ <= 0),
+    ("size_at_most_5", XD _ <= 5),
+    ("size_at_most_10", o.O _ <= 10),
+    ("size_at_most_35", (⑅˘꒳˘) _ <= 35)
   )
 
-  def build(
-    query: PipelineQuery,
-    injectedTweets: Seq[ItemCandidateWithDetails]
-  ): Seq[ClientEvent] = {
-    val baseEventNamespace = EventNamespace(
-      section = section(query)
+  def buiwd(
+    q-quewy: pipewinequewy, 😳😳😳
+    injectedtweets: s-seq[itemcandidatewithdetaiws]
+  ): seq[cwientevent] = {
+    v-vaw b-baseeventnamespace = e-eventnamespace(
+      s-section = s-section(quewy)
     )
-    val queryFeatureMap = query.features.getOrElse(FeatureMap.empty)
-    val servedSizeQueryEvents =
-      for {
-        (queryPredicateName, queryPredicate) <- HomeQueryTypePredicates.PredicateMap
-        if queryPredicate(queryFeatureMap)
-        (servedSizePredicateName, servedSizePredicate) <- ServedSizePredicateMap
-        if servedSizePredicate(injectedTweets.size)
-      } yield ClientEvent(
-        baseEventNamespace
-          .copy(component = Some(servedSizePredicateName), action = Some(queryPredicateName)))
-    servedSizeQueryEvents.toSeq
+    vaw quewyfeatuwemap = quewy.featuwes.getowewse(featuwemap.empty)
+    vaw sewvedsizequewyevents =
+      fow {
+        (quewypwedicatename, nyaa~~ quewypwedicate) <- homequewytypepwedicates.pwedicatemap
+        i-if quewypwedicate(quewyfeatuwemap)
+        (sewvedsizepwedicatename, rawr s-sewvedsizepwedicate) <- s-sewvedsizepwedicatemap
+        if sewvedsizepwedicate(injectedtweets.size)
+      } y-yiewd cwientevent(
+        baseeventnamespace
+          .copy(component = some(sewvedsizepwedicatename), -.- action = some(quewypwedicatename)))
+    s-sewvedsizequewyevents.toseq
   }
 }

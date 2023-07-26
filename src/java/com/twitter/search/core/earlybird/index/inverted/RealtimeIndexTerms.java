@@ -1,365 +1,365 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.util.Iterator;
-import java.util.TreeSet;
+impowt j-java.utiw.itewatow;
+i-impowt java.utiw.tweeset;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.BaseTermsEnum;
-import org.apache.lucene.index.ImpactsEnum;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.SlowImpactsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
+i-impowt o-owg.apache.wucene.index.basetewmsenum;
+i-impowt o-owg.apache.wucene.index.impactsenum;
+i-impowt owg.apache.wucene.index.postingsenum;
+impowt owg.apache.wucene.index.swowimpactsenum;
+impowt owg.apache.wucene.index.tewms;
+impowt owg.apache.wucene.index.tewmsenum;
+i-impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.common.hashtable.HashTable;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.hash.KeysSource;
+impowt com.twittew.seawch.common.hashtabwe.hashtabwe;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt c-com.twittew.seawch.common.utiw.hash.keyssouwce;
 
-public class RealtimeIndexTerms extends Terms {
-  // Calling InMemoryTermsEnum.next() creates a full copy of the entire term dictionary, and can
-  // be quite expensive. We don't expect these calls to happen, and they shpould not happen on the
-  // regular read path. We stat them here just in case to see if there is any unexpected usage.
-  private static final SearchCounter TERMS_ENUM_NEXT_CALLS =
-      SearchCounter.export("in_memory_terms_enum_next_calls");
-  private static final SearchCounter TERMS_ENUM_CREATE_TERM_SET =
-      SearchCounter.export("in_memory_terms_enum_next_create_term_set");
-  private static final SearchCounter TERMS_ENUM_CREATE_TERM_SET_SIZE =
-      SearchCounter.export("in_memory_terms_enum_next_create_term_set_size");
+pubwic cwass weawtimeindextewms extends tewms {
+  // c-cawwing inmemowytewmsenum.next() c-cweates a-a fuww copy of the entiwe tewm dictionawy, σωσ and can
+  // be quite expensive. nyaa~~ we d-don't expect these cawws to happen, 🥺 and they shpouwd nyot happen on the
+  // weguwaw w-wead path. rawr x3 we stat them hewe j-just in case t-to see if thewe i-is any unexpected u-usage. σωσ
+  pwivate static finaw seawchcountew tewms_enum_next_cawws =
+      s-seawchcountew.expowt("in_memowy_tewms_enum_next_cawws");
+  pwivate static finaw seawchcountew t-tewms_enum_cweate_tewm_set =
+      seawchcountew.expowt("in_memowy_tewms_enum_next_cweate_tewm_set");
+  pwivate static finaw seawchcountew tewms_enum_cweate_tewm_set_size =
+      seawchcountew.expowt("in_memowy_tewms_enum_next_cweate_tewm_set_size");
 
-  private final InvertedRealtimeIndex index;
-  private final int maxPublishedPointer;
+  p-pwivate finaw invewtedweawtimeindex i-index;
+  p-pwivate finaw i-int maxpubwishedpointew;
 
-  public RealtimeIndexTerms(InvertedRealtimeIndex index, int maxPublishedPointer) {
-    this.index = index;
-    this.maxPublishedPointer = maxPublishedPointer;
+  pubwic weawtimeindextewms(invewtedweawtimeindex index, (///ˬ///✿) int maxpubwishedpointew) {
+    this.index = i-index;
+    this.maxpubwishedpointew = m-maxpubwishedpointew;
   }
 
-  @Override
-  public long size() {
-    return index.getNumTerms();
+  @ovewwide
+  pubwic wong size() {
+    w-wetuwn i-index.getnumtewms();
   }
 
-  @Override
-  public TermsEnum iterator() {
-    return index.createTermsEnum(maxPublishedPointer);
+  @ovewwide
+  pubwic tewmsenum i-itewatow() {
+    wetuwn i-index.cweatetewmsenum(maxpubwishedpointew);
   }
 
   /**
-   * This TermsEnum use a tree set to support {@link TermsEnum#next()} method. However, this is not
-   * efficient enough to support realtime operation. {@link TermsEnum#seekCeil} is not fully
-   * supported in this termEnum.
+   * this tewmsenum use a-a twee set to suppowt {@wink tewmsenum#next()} method. (U ﹏ U) h-howevew, ^^;; this is nyot
+   * e-efficient enough t-to suppowt weawtime opewation. 🥺 {@wink tewmsenum#seekceiw} is nyot fuwwy
+   * suppowted in this tewmenum. òωó
    */
-  public static class InMemoryTermsEnum extends BaseTermsEnum {
-    private final InvertedRealtimeIndex index;
-    private final int maxPublishedPointer;
-    private int termID = -1;
-    private BytesRef bytesRef = new BytesRef();
-    private Iterator<BytesRef> termIter;
-    private TreeSet<BytesRef> termSet;
+  p-pubwic static c-cwass inmemowytewmsenum extends b-basetewmsenum {
+    p-pwivate finaw i-invewtedweawtimeindex index;
+    pwivate finaw int maxpubwishedpointew;
+    p-pwivate int tewmid = -1;
+    pwivate byteswef byteswef = nyew byteswef();
+    pwivate i-itewatow<byteswef> tewmitew;
+    p-pwivate tweeset<byteswef> t-tewmset;
 
-    public InMemoryTermsEnum(InvertedRealtimeIndex index, int maxPublishedPointer) {
-      this.index = index;
-      this.maxPublishedPointer = maxPublishedPointer;
-      termIter = null;
+    pubwic i-inmemowytewmsenum(invewtedweawtimeindex index, XD i-int maxpubwishedpointew) {
+      t-this.index = i-index;
+      t-this.maxpubwishedpointew = maxpubwishedpointew;
+      tewmitew = n-nyuww;
     }
 
-    @Override
-    public int docFreq() {
-      return index.getDF(termID);
+    @ovewwide
+    p-pubwic int docfweq() {
+      w-wetuwn i-index.getdf(tewmid);
     }
 
-    @Override
-    public PostingsEnum postings(PostingsEnum reuse, int flags) {
-      int postingsPointer = index.getPostingListPointer(termID);
-      return index.getPostingList().postings(postingsPointer, docFreq(), maxPublishedPointer);
+    @ovewwide
+    p-pubwic postingsenum postings(postingsenum weuse, :3 int fwags) {
+      i-int postingspointew = index.getpostingwistpointew(tewmid);
+      wetuwn index.getpostingwist().postings(postingspointew, docfweq(), (U ﹏ U) maxpubwishedpointew);
     }
 
-    @Override
-    public ImpactsEnum impacts(int flags) {
-      return new SlowImpactsEnum(postings(null, flags));
+    @ovewwide
+    pubwic impactsenum impacts(int f-fwags) {
+      wetuwn nyew swowimpactsenum(postings(nuww, >w< fwags));
     }
 
-    @Override
-    public SeekStatus seekCeil(BytesRef text) {
-      // Nullify termIter.
-      termIter = null;
+    @ovewwide
+    p-pubwic seekstatus s-seekceiw(byteswef t-text) {
+      // nyuwwify t-tewmitew. /(^•ω•^)
+      tewmitew = nyuww;
 
-      termID = index.lookupTerm(text);
+      t-tewmid = i-index.wookuptewm(text);
 
-      if (termID == -1) {
-        return SeekStatus.END;
-      } else {
-        index.getTerm(termID, bytesRef);
-        return SeekStatus.FOUND;
+      if (tewmid == -1) {
+        wetuwn seekstatus.end;
+      } ewse {
+        index.gettewm(tewmid, (⑅˘꒳˘) byteswef);
+        wetuwn seekstatus.found;
       }
     }
 
-    @Override
-    public BytesRef next() {
-      TERMS_ENUM_NEXT_CALLS.increment();
-      if (termSet == null) {
-        termSet = new TreeSet<>();
-        KeysSource keysource = index.getKeysSource();
-        keysource.rewind();
-        int numTerms = keysource.getNumberOfKeys();
-        for (int i = 0; i < numTerms; ++i) {
-          BytesRef ref = keysource.nextKey();
-          // we need to clone the ref since the keysource is reusing the returned BytesRef
-          // instance and we are storing it
-          termSet.add(ref.clone());
+    @ovewwide
+    p-pubwic byteswef nyext() {
+      t-tewms_enum_next_cawws.incwement();
+      if (tewmset == n-nyuww) {
+        t-tewmset = nyew tweeset<>();
+        keyssouwce k-keysouwce = i-index.getkeyssouwce();
+        keysouwce.wewind();
+        i-int nyumtewms = k-keysouwce.getnumbewofkeys();
+        fow (int i = 0; i < nyumtewms; ++i) {
+          byteswef wef = keysouwce.nextkey();
+          // w-we nyeed to c-cwone the wef s-since the keysouwce is weusing the w-wetuwned byteswef
+          // i-instance and we awe stowing it
+          t-tewmset.add(wef.cwone());
         }
-        TERMS_ENUM_CREATE_TERM_SET.increment();
-        TERMS_ENUM_CREATE_TERM_SET_SIZE.add(numTerms);
+        tewms_enum_cweate_tewm_set.incwement();
+        tewms_enum_cweate_tewm_set_size.add(numtewms);
       }
 
-      // Construct termIter from the subset.
-      if (termIter == null) {
-        termIter = termSet.tailSet(bytesRef, true).iterator();
+      // constwuct tewmitew fwom t-the subset. ʘwʘ
+      i-if (tewmitew == nyuww) {
+        tewmitew = tewmset.taiwset(byteswef, rawr x3 t-twue).itewatow();
       }
 
-      if (termIter.hasNext()) {
-        bytesRef = termIter.next();
-        termID = index.lookupTerm(bytesRef);
-      } else {
-        termID = -1;
-        bytesRef = null;
+      i-if (tewmitew.hasnext()) {
+        byteswef = tewmitew.next();
+        tewmid = index.wookuptewm(byteswef);
+      } e-ewse {
+        tewmid = -1;
+        byteswef = nyuww;
       }
-      return bytesRef;
+      wetuwn byteswef;
     }
 
-    @Override
-    public long ord() {
-      return termID;
+    @ovewwide
+    pubwic w-wong owd() {
+      wetuwn tewmid;
     }
 
-    @Override
-    public void seekExact(long ord) {
-      // Nullify termIter.
-      termIter = null;
+    @ovewwide
+    pubwic v-void seekexact(wong o-owd) {
+      // nyuwwify tewmitew. (˘ω˘)
+      tewmitew = nyuww;
 
-      if (ord < index.getNumTerms()) {
-        termID = (int) ord;
-        index.getTerm(termID, bytesRef);
+      i-if (owd < i-index.getnumtewms()) {
+        tewmid = (int) owd;
+        index.gettewm(tewmid, o.O byteswef);
       }
     }
 
-    @Override
-    public BytesRef term() {
-      return bytesRef;
+    @ovewwide
+    p-pubwic byteswef tewm() {
+      wetuwn b-byteswef;
     }
 
-    @Override
-    public long totalTermFreq() {
-      return docFreq();
+    @ovewwide
+    pubwic wong totawtewmfweq() {
+      wetuwn d-docfweq();
     }
   }
 
   /**
-   * This TermsEnum use a {@link SkipListContainer} backed termsSkipList provided by
-   * {@link InvertedRealtimeIndex} to supported ordered terms operations like
-   * {@link TermsEnum#next()} and {@link TermsEnum#seekCeil}.
+   * this tewmsenum u-use a {@wink s-skipwistcontainew} backed tewmsskipwist p-pwovided by
+   * {@wink i-invewtedweawtimeindex} t-to suppowted o-owdewed tewms opewations wike
+   * {@wink tewmsenum#next()} a-and {@wink tewmsenum#seekceiw}. 😳
    */
-  public static class SkipListInMemoryTermsEnum extends BaseTermsEnum {
-    private final InvertedRealtimeIndex index;
+  p-pubwic static cwass skipwistinmemowytewmsenum extends basetewmsenum {
+    p-pwivate finaw i-invewtedweawtimeindex i-index;
 
-    private int termID = -1;
-    private BytesRef bytesRef = new BytesRef();
-    private int nextTermIDPointer;
-
-    /**
-     * {@link #nextTermIDPointer} is used to record pointer to next termsID to accelerate
-     * {@link #next}. However, {@link #seekCeil} and {@link #seekExact} may jump to an arbitrary
-     * term so the {@link #nextTermIDPointer} may not be correct, and this flag is used to check if
-     * this happens. If this flag is false, {@link #correctNextTermIDPointer} should be called to
-     * correct the value.
-     */
-    private boolean isNextTermIDPointerCorrect;
-
-    private final SkipListContainer<BytesRef> termsSkipList;
-    private final InvertedRealtimeIndex.TermsSkipListComparator termsSkipListComparator;
-    private final int maxPublishedPointer;
+    pwivate int tewmid = -1;
+    pwivate byteswef b-byteswef = nyew byteswef();
+    p-pwivate int nyexttewmidpointew;
 
     /**
-     * Creates a new {@link TermsEnum} for a skip list-based sorted real-time term dictionary.
+     * {@wink #nexttewmidpointew} i-is used to wecowd pointew to nyext tewmsid to accewewate
+     * {@wink #next}. o.O h-howevew, ^^;; {@wink #seekceiw} a-and {@wink #seekexact} m-may j-jump to an awbitwawy
+     * tewm s-so the {@wink #nexttewmidpointew} may nyot be cowwect, ( ͡o ω ͡o ) and this fwag is used to check if
+     * this happens. ^^;; i-if this fwag is fawse, ^^;; {@wink #cowwectnexttewmidpointew} s-shouwd be cawwed to
+     * c-cowwect the vawue. XD
      */
-    public SkipListInMemoryTermsEnum(InvertedRealtimeIndex index, int maxPublishedPointer) {
-      Preconditions.checkNotNull(index.getTermsSkipList());
+    p-pwivate boowean isnexttewmidpointewcowwect;
+
+    p-pwivate finaw s-skipwistcontainew<byteswef> t-tewmsskipwist;
+    p-pwivate finaw invewtedweawtimeindex.tewmsskipwistcompawatow t-tewmsskipwistcompawatow;
+    pwivate finaw int maxpubwishedpointew;
+
+    /**
+     * cweates a nyew {@wink tewmsenum} fow a skip wist-based sowted weaw-time t-tewm dictionawy. 🥺
+     */
+    p-pubwic skipwistinmemowytewmsenum(invewtedweawtimeindex i-index, (///ˬ///✿) int maxpubwishedpointew) {
+      p-pweconditions.checknotnuww(index.gettewmsskipwist());
 
       this.index = index;
-      this.termsSkipList = index.getTermsSkipList();
+      this.tewmsskipwist = index.gettewmsskipwist();
 
-      // Each Terms Enum shall have their own comparators to be thread safe.
-      this.termsSkipListComparator =
-          new InvertedRealtimeIndex.TermsSkipListComparator(index);
-      this.nextTermIDPointer =
-          termsSkipList.getNextPointer(SkipListContainer.FIRST_LIST_HEAD);
-      this.isNextTermIDPointerCorrect = true;
-      this.maxPublishedPointer = maxPublishedPointer;
+      // e-each tewms e-enum shaww have theiw own compawatows t-to be thwead safe. (U ᵕ U❁)
+      this.tewmsskipwistcompawatow =
+          nyew invewtedweawtimeindex.tewmsskipwistcompawatow(index);
+      t-this.nexttewmidpointew =
+          t-tewmsskipwist.getnextpointew(skipwistcontainew.fiwst_wist_head);
+      this.isnexttewmidpointewcowwect = t-twue;
+      t-this.maxpubwishedpointew = maxpubwishedpointew;
     }
 
-    @Override
-    public int docFreq() {
-      return index.getDF(termID);
+    @ovewwide
+    pubwic int docfweq() {
+      wetuwn index.getdf(tewmid);
     }
 
-    @Override
-    public PostingsEnum postings(PostingsEnum reuse, int flags) {
-      int postingsPointer = index.getPostingListPointer(termID);
-      return index.getPostingList().postings(postingsPointer, docFreq(), maxPublishedPointer);
+    @ovewwide
+    p-pubwic p-postingsenum p-postings(postingsenum w-weuse, ^^;; int f-fwags) {
+      int postingspointew = i-index.getpostingwistpointew(tewmid);
+      w-wetuwn index.getpostingwist().postings(postingspointew, ^^;; docfweq(), rawr m-maxpubwishedpointew);
     }
 
-    @Override
-    public ImpactsEnum impacts(int flags) {
-      return new SlowImpactsEnum(postings(null, flags));
+    @ovewwide
+    p-pubwic impactsenum impacts(int f-fwags) {
+      wetuwn nyew swowimpactsenum(postings(nuww, (˘ω˘) fwags));
     }
 
-    @Override
-    public SeekStatus seekCeil(BytesRef text) {
-      // Next term pointer is not correct anymore since seek ceil
-      //   will jump to an arbitrary term.
-      isNextTermIDPointerCorrect = false;
+    @ovewwide
+    p-pubwic seekstatus s-seekceiw(byteswef t-text) {
+      // nyext tewm pointew i-is not cowwect anymowe since seek ceiw
+      //   w-wiww jump t-to an awbitwawy t-tewm. 🥺
+      isnexttewmidpointewcowwect = fawse;
 
-      // Doing precise lookup first.
-      termID = index.lookupTerm(text);
+      // doing pwecise wookup f-fiwst. nyaa~~
+      tewmid = index.wookuptewm(text);
 
-      // Doing ceil lookup if not found, otherwise we are good.
-      if (termID == -1) {
-        return seekCeilWithSkipList(text);
-      } else {
-        index.getTerm(termID, bytesRef);
-        return SeekStatus.FOUND;
+      // doing ceiw w-wookup if nyot f-found, :3 othewwise we awe good. /(^•ω•^)
+      i-if (tewmid == -1) {
+        wetuwn seekceiwwithskipwist(text);
+      } e-ewse {
+        i-index.gettewm(tewmid, ^•ﻌ•^ byteswef);
+        wetuwn seekstatus.found;
       }
     }
 
     /**
-     * Doing ceil terms search with terms skip list.
+     * d-doing ceiw tewms seawch with tewms s-skip wist. UwU
      */
-    private SeekStatus seekCeilWithSkipList(BytesRef text) {
-      int termIDPointer = termsSkipList.searchCeil(text,
-          SkipListContainer.FIRST_LIST_HEAD,
-          termsSkipListComparator,
-          null);
+    p-pwivate seekstatus seekceiwwithskipwist(byteswef t-text) {
+      int tewmidpointew = t-tewmsskipwist.seawchceiw(text, 😳😳😳
+          s-skipwistcontainew.fiwst_wist_head, OwO
+          t-tewmsskipwistcompawatow, ^•ﻌ•^
+          nyuww);
 
-      // End reached but still cannot found a ceil term.
-      if (termIDPointer == SkipListContainer.FIRST_LIST_HEAD) {
-        termID = HashTable.EMPTY_SLOT;
-        return SeekStatus.END;
+      // end weached but stiww cannot found a ceiw tewm. (ꈍᴗꈍ)
+      if (tewmidpointew == skipwistcontainew.fiwst_wist_head) {
+        tewmid = hashtabwe.empty_swot;
+        wetuwn seekstatus.end;
       }
 
-      termID = termsSkipList.getValue(termIDPointer);
+      tewmid = tewmsskipwist.getvawue(tewmidpointew);
 
-      // Set next termID pointer and is correct flag.
-      nextTermIDPointer = termsSkipList.getNextPointer(termIDPointer);
-      isNextTermIDPointerCorrect = true;
+      // set nyext tewmid p-pointew and i-is cowwect fwag. (⑅˘꒳˘)
+      nyexttewmidpointew = tewmsskipwist.getnextpointew(tewmidpointew);
+      i-isnexttewmidpointewcowwect = t-twue;
 
-      // Found a ceil term but not the precise match.
-      index.getTerm(termID, bytesRef);
-      return SeekStatus.NOT_FOUND;
+      // f-found a ceiw tewm but n-nyot the pwecise match. (⑅˘꒳˘)
+      i-index.gettewm(tewmid, (ˆ ﻌ ˆ)♡ b-byteswef);
+      wetuwn seekstatus.not_found;
     }
 
     /**
-     * {@link #nextTermIDPointer} is used to record the pointer to next termID. This method is used
-     * to correct {@link #nextTermIDPointer} to correct value after {@link #seekCeil} or
-     * {@link #seekExact} dropped current term to arbitrary point.
+     * {@wink #nexttewmidpointew} i-is used to wecowd the pointew t-to nyext tewmid. /(^•ω•^) t-this method is used
+     * to cowwect {@wink #nexttewmidpointew} t-to cowwect v-vawue aftew {@wink #seekceiw} ow
+     * {@wink #seekexact} d-dwopped c-cuwwent tewm t-to awbitwawy point. òωó
      */
-    private void correctNextTermIDPointer() {
-      final int curTermIDPointer = termsSkipList.search(
-          bytesRef,
-          SkipListContainer.FIRST_LIST_HEAD,
-          termsSkipListComparator,
-          null);
-      // Must be able to find the exact term.
-      assert termID == HashTable.EMPTY_SLOT
-          || termID == termsSkipList.getValue(curTermIDPointer);
+    p-pwivate void cowwectnexttewmidpointew() {
+      f-finaw int cuwtewmidpointew = t-tewmsskipwist.seawch(
+          b-byteswef, (⑅˘꒳˘)
+          skipwistcontainew.fiwst_wist_head, (U ᵕ U❁)
+          tewmsskipwistcompawatow, >w<
+          n-nyuww);
+      // m-must be abwe t-to find the exact tewm. σωσ
+      assewt t-tewmid == hashtabwe.empty_swot
+          || tewmid == tewmsskipwist.getvawue(cuwtewmidpointew);
 
-      nextTermIDPointer = termsSkipList.getNextPointer(curTermIDPointer);
-      isNextTermIDPointerCorrect = true;
+      nyexttewmidpointew = t-tewmsskipwist.getnextpointew(cuwtewmidpointew);
+      isnexttewmidpointewcowwect = t-twue;
     }
 
-    @Override
-    public BytesRef next() {
-      // Correct nextTermIDPointer first if not correct due to seekExact or seekCeil.
-      if (!isNextTermIDPointerCorrect) {
-        correctNextTermIDPointer();
+    @ovewwide
+    p-pubwic byteswef n-nyext() {
+      // cowwect nyexttewmidpointew f-fiwst if nyot cowwect due to seekexact o-ow seekceiw. -.-
+      if (!isnexttewmidpointewcowwect) {
+        c-cowwectnexttewmidpointew();
       }
 
-      // Skip list is exhausted.
-      if (nextTermIDPointer == SkipListContainer.FIRST_LIST_HEAD) {
-        termID = HashTable.EMPTY_SLOT;
-        return null;
+      // skip wist is e-exhausted. o.O
+      if (nexttewmidpointew == skipwistcontainew.fiwst_wist_head) {
+        tewmid = hashtabwe.empty_swot;
+        wetuwn n-nyuww;
       }
 
-      termID = termsSkipList.getValue(nextTermIDPointer);
+      tewmid = t-tewmsskipwist.getvawue(nexttewmidpointew);
 
-      index.getTerm(termID, bytesRef);
+      i-index.gettewm(tewmid, ^^ byteswef);
 
-      // Set next termID Pointer.
-      nextTermIDPointer = termsSkipList.getNextPointer(nextTermIDPointer);
-      return bytesRef;
+      // set nyext tewmid pointew.
+      n-nyexttewmidpointew = tewmsskipwist.getnextpointew(nexttewmidpointew);
+      w-wetuwn b-byteswef;
     }
 
-    @Override
-    public long ord() {
-      return termID;
+    @ovewwide
+    p-pubwic wong owd() {
+      wetuwn tewmid;
     }
 
-    @Override
-    public void seekExact(long ord) {
-      if (ord < index.getNumTerms()) {
-        termID = (int) ord;
-        index.getTerm(termID, bytesRef);
+    @ovewwide
+    p-pubwic v-void seekexact(wong owd) {
+      i-if (owd < index.getnumtewms()) {
+        tewmid = (int) owd;
+        i-index.gettewm(tewmid, >_< byteswef);
 
-        // Next term pointer is not correct anymore since seek exact
-        //   just jump to an arbitrary term.
-        isNextTermIDPointerCorrect = false;
+        // n-nyext tewm pointew i-is nyot cowwect a-anymowe since seek exact
+        //   j-just j-jump to an awbitwawy t-tewm. >w<
+        i-isnexttewmidpointewcowwect = fawse;
       }
     }
 
-    @Override
-    public BytesRef term() {
-      return bytesRef;
+    @ovewwide
+    p-pubwic b-byteswef tewm() {
+      w-wetuwn b-byteswef;
     }
 
-    @Override
-    public long totalTermFreq() {
-      return docFreq();
+    @ovewwide
+    p-pubwic wong totawtewmfweq() {
+      w-wetuwn docfweq();
     }
   }
 
-  @Override
-  public long getSumTotalTermFreq() {
-    return index.getSumTotalTermFreq();
+  @ovewwide
+  p-pubwic wong getsumtotawtewmfweq() {
+    w-wetuwn index.getsumtotawtewmfweq();
   }
 
-  @Override
-  public long getSumDocFreq() {
-    return index.getSumTermDocFreq();
+  @ovewwide
+  p-pubwic wong getsumdocfweq() {
+    wetuwn index.getsumtewmdocfweq();
   }
 
-  @Override
-  public int getDocCount() {
-    return index.getNumDocs();
+  @ovewwide
+  p-pubwic int getdoccount() {
+    w-wetuwn index.getnumdocs();
   }
 
-  @Override
-  public boolean hasFreqs() {
-    return true;
+  @ovewwide
+  p-pubwic boowean h-hasfweqs() {
+    wetuwn twue;
   }
 
-  @Override
-  public boolean hasOffsets() {
-    return false;
+  @ovewwide
+  pubwic boowean hasoffsets() {
+    w-wetuwn fawse;
   }
 
-  @Override
-  public boolean hasPositions() {
-    return true;
+  @ovewwide
+  p-pubwic boowean h-haspositions() {
+    wetuwn twue;
   }
 
-  @Override
-  public boolean hasPayloads() {
-    return true;
+  @ovewwide
+  pubwic b-boowean haspaywoads() {
+    wetuwn t-twue;
   }
 }

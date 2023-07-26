@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.offwine_aggwegates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.IRecordOneToOneAdapter
+impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.iwecowdonetooneadaptew
 
-object PassThroughAdapter extends IRecordOneToOneAdapter[Seq[DataRecord]] {
-  override def adaptToDataRecord(record: Seq[DataRecord]): DataRecord =
-    record.headOption.getOrElse(new DataRecord)
+o-object p-passthwoughadaptew e-extends iwecowdonetooneadaptew[seq[datawecowd]] {
+  o-ovewwide d-def adapttodatawecowd(wecowd: s-seq[datawecowd]): d-datawecowd =
+    wecowd.headoption.getowewse(new datawecowd)
 
-  // This is not necessary and should not be used.
-  override def getFeatureContext = ???
+  // this is nyot necessawy and shouwd n-nyot be used. >_<
+  ovewwide def getfeatuwecontext = ???
 }

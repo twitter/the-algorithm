@@ -1,210 +1,210 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FSParams}
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.ContinuousFunction
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.ContinuousFunctionParam
-import com.twitter.frigate.pushservice.util.OverrideNotificationUtil
-import com.twitter.frigate.pushservice.util.PushCapUtil
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.thriftscala.CommonRecommendationType.MagicFanoutSportsEvent
-import com.twitter.ibis2.lib.util.JsonMarshal
-import com.twitter.util.Future
+impowt com.twittew.fwigate.common.wec_types.wectypes
+i-impowt com.twittew.fwigate.common.stowe.deviceinfo.deviceinfo
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt c-com.twittew.fwigate.pushsewvice.pawams.{pushfeatuweswitchpawams => f-fspawams}
+impowt com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue.continuousfunction
+impowt com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue.continuousfunctionpawam
+impowt com.twittew.fwigate.pushsewvice.utiw.ovewwidenotificationutiw
+i-impowt com.twittew.fwigate.pushsewvice.utiw.pushcaputiw
+impowt com.twittew.fwigate.pushsewvice.utiw.pushdeviceutiw
+i-impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype.magicfanoutspowtsevent
+i-impowt com.twittew.ibis2.wib.utiw.jsonmawshaw
+impowt com.twittew.utiw.futuwe
 
-trait OverrideForIbis2Request {
-  self: PushCandidate =>
+twait ovewwidefowibis2wequest {
+  sewf: pushcandidate =>
 
-  private lazy val overrideStats = self.statsReceiver.scope("override_for_ibis2")
+  pwivate w-wazy vaw ovewwidestats = s-sewf.statsweceivew.scope("ovewwide_fow_ibis2")
 
-  private lazy val addedOverrideAndroidCounter =
-    overrideStats.scope("android").counter("added_override_for_ibis2_request")
-  private lazy val addedSmartPushConfigAndroidCounter =
-    overrideStats.scope("android").counter("added_smart_push_config_for_ibis2_request")
-  private lazy val addedOverrideIosCounter =
-    overrideStats.scope("ios").counter("added_override_for_ibis2_request")
-  private lazy val noOverrideCounter = overrideStats.counter("no_override_for_ibis2_request")
-  private lazy val noOverrideDueToDeviceInfoCounter =
-    overrideStats.counter("no_override_due_to_device_info")
-  private lazy val addedMlScoreToPayloadAndroid =
-    overrideStats.scope("android").counter("added_ml_score")
-  private lazy val noMlScoreAddedToPayload =
-    overrideStats.counter("no_ml_score")
-  private lazy val addedNSlotsToPayload =
-    overrideStats.counter("added_n_slots")
-  private lazy val noNSlotsAddedToPayload =
-    overrideStats.counter("no_n_slots")
-  private lazy val addedCustomThreadIdToPayload =
-    overrideStats.counter("added_custom_thread_id")
-  private lazy val noCustomThreadIdAddedToPayload =
-    overrideStats.counter("no_custom_thread_id")
-  private lazy val enableTargetIdOverrideForMagicFanoutSportsEventCounter =
-    overrideStats.counter("enable_target_id_override_for_mf_sports_event")
+  p-pwivate wazy vaw addedovewwideandwoidcountew =
+    ovewwidestats.scope("andwoid").countew("added_ovewwide_fow_ibis2_wequest")
+  pwivate wazy vaw addedsmawtpushconfigandwoidcountew =
+    o-ovewwidestats.scope("andwoid").countew("added_smawt_push_config_fow_ibis2_wequest")
+  pwivate wazy vaw addedovewwideioscountew =
+    ovewwidestats.scope("ios").countew("added_ovewwide_fow_ibis2_wequest")
+  pwivate w-wazy vaw nyoovewwidecountew = ovewwidestats.countew("no_ovewwide_fow_ibis2_wequest")
+  p-pwivate w-wazy vaw nyoovewwideduetodeviceinfocountew =
+    o-ovewwidestats.countew("no_ovewwide_due_to_device_info")
+  p-pwivate wazy vaw addedmwscowetopaywoadandwoid =
+    ovewwidestats.scope("andwoid").countew("added_mw_scowe")
+  p-pwivate wazy vaw nyomwscoweaddedtopaywoad =
+    ovewwidestats.countew("no_mw_scowe")
+  p-pwivate wazy vaw addednswotstopaywoad =
+    ovewwidestats.countew("added_n_swots")
+  pwivate wazy vaw nyonswotsaddedtopaywoad =
+    ovewwidestats.countew("no_n_swots")
+  p-pwivate wazy vaw addedcustomthweadidtopaywoad =
+    o-ovewwidestats.countew("added_custom_thwead_id")
+  p-pwivate wazy vaw n-nocustomthweadidaddedtopaywoad =
+    ovewwidestats.countew("no_custom_thwead_id")
+  pwivate wazy vaw enabwetawgetidovewwidefowmagicfanoutspowtseventcountew =
+    o-ovewwidestats.countew("enabwe_tawget_id_ovewwide_fow_mf_spowts_event")
 
-  lazy val candidateModelScoreFut: Future[Option[Double]] = {
-    if (RecTypes.notEligibleForModelScoreTracking(commonRecType)) Future.None
-    else mrWeightedOpenOrNtabClickRankingProbability
+  wazy v-vaw candidatemodewscowefut: futuwe[option[doubwe]] = {
+    if (wectypes.notewigibwefowmodewscowetwacking(commonwectype)) f-futuwe.none
+    e-ewse mwweightedopenowntabcwickwankingpwobabiwity
   }
 
-  lazy val overrideModelValueFut: Future[Map[String, String]] = {
-    if (self.target.isLoggedOutUser) {
-      Future.value(Map.empty[String, String])
-    } else {
-      Future
+  w-wazy vaw ovewwidemodewvawuefut: futuwe[map[stwing, (ˆ ﻌ ˆ)♡ s-stwing]] = {
+    if (sewf.tawget.iswoggedoutusew) {
+      futuwe.vawue(map.empty[stwing, ( ͡o ω ͡o ) s-stwing])
+    } ewse {
+      futuwe
         .join(
-          target.deviceInfo,
-          target.accountCountryCode,
-          OverrideNotificationUtil.getCollapseAndImpressionIdForOverride(self),
-          candidateModelScoreFut,
-          target.dynamicPushcap,
-          target.optoutAdjustedPushcap,
-          PushCapUtil.getDefaultPushCap(target)
+          t-tawget.deviceinfo, rawr x3
+          tawget.accountcountwycode, nyaa~~
+          ovewwidenotificationutiw.getcowwapseandimpwessionidfowovewwide(sewf), >_<
+          candidatemodewscowefut, ^^;;
+          t-tawget.dynamicpushcap, (ˆ ﻌ ˆ)♡
+          t-tawget.optoutadjustedpushcap, ^^;;
+          pushcaputiw.getdefauwtpushcap(tawget)
         ).map {
           case (
-                deviceInfoOpt,
-                countryCodeOpt,
-                Some((collapseId, impressionIds)),
-                mlScore,
-                dynamicPushcapOpt,
-                optoutAdjustedPushcapOpt,
-                defaultPushCap) =>
-            val pushCap: Int = (dynamicPushcapOpt, optoutAdjustedPushcapOpt) match {
-              case (_, Some(optoutAdjustedPushcap)) => optoutAdjustedPushcap
-              case (Some(pushcapInfo), _) => pushcapInfo.pushcap
-              case _ => defaultPushCap
+                deviceinfoopt, (⑅˘꒳˘)
+                countwycodeopt, rawr x3
+                some((cowwapseid, (///ˬ///✿) impwessionids)), 🥺
+                m-mwscowe, >_<
+                d-dynamicpushcapopt, UwU
+                optoutadjustedpushcapopt, >_<
+                defauwtpushcap) =>
+            v-vaw pushcap: i-int = (dynamicpushcapopt, -.- optoutadjustedpushcapopt) m-match {
+              case (_, mya some(optoutadjustedpushcap)) => optoutadjustedpushcap
+              case (some(pushcapinfo), >w< _) => p-pushcapinfo.pushcap
+              case _ => defauwtpushcap
             }
-            getClientSpecificOverrideModelValues(
-              target,
-              deviceInfoOpt,
-              countryCodeOpt,
-              collapseId,
-              impressionIds,
-              mlScore,
-              pushCap)
+            getcwientspecificovewwidemodewvawues(
+              tawget,
+              d-deviceinfoopt, (U ﹏ U)
+              countwycodeopt, 😳😳😳
+              c-cowwapseid, o.O
+              impwessionids, òωó
+              m-mwscowe, 😳😳😳
+              p-pushcap)
           case _ =>
-            noOverrideCounter.incr()
-            Map.empty[String, String]
+            n-nyoovewwidecountew.incw()
+            m-map.empty[stwing, σωσ s-stwing]
         }
     }
   }
 
   /**
-   * Determines the appropriate Override Notification model values based on the client
-   * @param target          Target that will be receiving the push recommendation
-   * @param deviceInfoOpt   Target's Device Info
-   * @param collapseId      Collapse ID determined by OverrideNotificationUtil
-   * @param impressionIds   Impression IDs of previously sent Override Notifications
-   * @param mlScore         Open/NTab click ranking score of the current push candidate
-   * @param pushCap         Push cap for the target
-   * @return                Map consisting of the model values that need to be added to the Ibis2 Request
+   * d-detewmines the appwopwiate ovewwide n-nyotification modew v-vawues based o-on the cwient
+   * @pawam t-tawget          t-tawget that wiww be weceiving the push wecommendation
+   * @pawam d-deviceinfoopt   tawget's device info
+   * @pawam cowwapseid      cowwapse id detewmined b-by ovewwidenotificationutiw
+   * @pawam impwessionids   impwession ids of pweviouswy s-sent ovewwide n-nyotifications
+   * @pawam m-mwscowe         open/ntab cwick w-wanking scowe of the cuwwent p-push candidate
+   * @pawam p-pushcap         push cap fow the tawget
+   * @wetuwn                map consisting of the modew vawues that nyeed to b-be added to the ibis2 wequest
    */
-  def getClientSpecificOverrideModelValues(
-    target: Target,
-    deviceInfoOpt: Option[DeviceInfo],
-    countryCodeOpt: Option[String],
-    collapseId: String,
-    impressionIds: Seq[String],
-    mlScoreOpt: Option[Double],
-    pushCap: Int
-  ): Map[String, String] = {
+  d-def getcwientspecificovewwidemodewvawues(
+    tawget: tawget, (⑅˘꒳˘)
+    d-deviceinfoopt: o-option[deviceinfo], (///ˬ///✿)
+    countwycodeopt: option[stwing], 🥺
+    cowwapseid: stwing, OwO
+    impwessionids: s-seq[stwing], >w<
+    m-mwscoweopt: option[doubwe], 🥺
+    p-pushcap: i-int
+  ): map[stwing, nyaa~~ stwing] = {
 
-    val primaryDeviceIos = PushDeviceUtil.isPrimaryDeviceIOS(deviceInfoOpt)
-    val primaryDeviceAndroid = PushDeviceUtil.isPrimaryDeviceAndroid(deviceInfoOpt)
+    vaw pwimawydeviceios = pushdeviceutiw.ispwimawydeviceios(deviceinfoopt)
+    vaw pwimawydeviceandwoid = p-pushdeviceutiw.ispwimawydeviceandwoid(deviceinfoopt)
 
-    if (primaryDeviceIos ||
-      (primaryDeviceAndroid &&
-      target.params(FSParams.EnableOverrideNotificationsSmartPushConfigForAndroid))) {
+    i-if (pwimawydeviceios ||
+      (pwimawydeviceandwoid &&
+      t-tawget.pawams(fspawams.enabweovewwidenotificationssmawtpushconfigfowandwoid))) {
 
-      if (primaryDeviceIos) addedOverrideIosCounter.incr()
-      else addedSmartPushConfigAndroidCounter.incr()
+      if (pwimawydeviceios) a-addedovewwideioscountew.incw()
+      e-ewse addedsmawtpushconfigandwoidcountew.incw()
 
-      val impressionIdsSeq = {
-        if (target.params(FSParams.EnableTargetIdsInSmartPushPayload)) {
-          if (target.params(FSParams.EnableOverrideNotificationsMultipleTargetIds))
-            impressionIds
-          else Seq(impressionIds.head)
+      v-vaw impwessionidsseq = {
+        if (tawget.pawams(fspawams.enabwetawgetidsinsmawtpushpaywoad)) {
+          if (tawget.pawams(fspawams.enabweovewwidenotificationsmuwtipwetawgetids))
+            impwessionids
+          ewse s-seq(impwessionids.head)
         }
-        // Explicitly enable targetId-based override for MagicFanoutSportsEvent candidates (live sport update notifications)
-        else if (self.commonRecType == MagicFanoutSportsEvent && target.params(
-            FSParams.EnableTargetIdInSmartPushPayloadForMagicFanoutSportsEvent)) {
-          enableTargetIdOverrideForMagicFanoutSportsEventCounter.incr()
-          Seq(impressionIds.head)
-        } else Seq.empty[String]
+        // e-expwicitwy enabwe tawgetid-based ovewwide f-fow magicfanoutspowtsevent c-candidates (wive spowt update nyotifications)
+        ewse if (sewf.commonwectype == m-magicfanoutspowtsevent && tawget.pawams(
+            fspawams.enabwetawgetidinsmawtpushpaywoadfowmagicfanoutspowtsevent)) {
+          enabwetawgetidovewwidefowmagicfanoutspowtseventcountew.incw()
+          seq(impwessionids.head)
+        } e-ewse seq.empty[stwing]
       }
 
-      val mlScoreMap = mlScoreOpt match {
-        case Some(mlScore)
-            if target.params(FSParams.EnableOverrideNotificationsScoreBasedOverride) =>
-          addedMlScoreToPayloadAndroid.incr()
-          Map("score" -> mlScore)
-        case _ =>
-          noMlScoreAddedToPayload.incr()
-          Map.empty
+      vaw mwscowemap = mwscoweopt m-match {
+        c-case some(mwscowe)
+            if tawget.pawams(fspawams.enabweovewwidenotificationsscowebasedovewwide) =>
+          addedmwscowetopaywoadandwoid.incw()
+          map("scowe" -> m-mwscowe)
+        c-case _ =>
+          nyomwscoweaddedtopaywoad.incw()
+          map.empty
       }
 
-      val nSlotsMap = {
-        if (target.params(FSParams.EnableOverrideNotificationsNSlots)) {
-          if (target.params(FSParams.EnableOverrideMaxSlotFn)) {
-            val nslotFnParam = ContinuousFunctionParam(
-              target
-                .params(PushFeatureSwitchParams.OverrideMaxSlotFnPushCapKnobs),
-              target
-                .params(PushFeatureSwitchParams.OverrideMaxSlotFnNSlotKnobs),
-              target
-                .params(PushFeatureSwitchParams.OverrideMaxSlotFnPowerKnobs),
-              target
-                .params(PushFeatureSwitchParams.OverrideMaxSlotFnWeight),
-              target.params(FSParams.OverrideNotificationsMaxNumOfSlots)
+      vaw nyswotsmap = {
+        i-if (tawget.pawams(fspawams.enabweovewwidenotificationsnswots)) {
+          if (tawget.pawams(fspawams.enabweovewwidemaxswotfn)) {
+            v-vaw nyswotfnpawam = continuousfunctionpawam(
+              tawget
+                .pawams(pushfeatuweswitchpawams.ovewwidemaxswotfnpushcapknobs),
+              t-tawget
+                .pawams(pushfeatuweswitchpawams.ovewwidemaxswotfnnswotknobs), ^^
+              tawget
+                .pawams(pushfeatuweswitchpawams.ovewwidemaxswotfnpowewknobs), >w<
+              tawget
+                .pawams(pushfeatuweswitchpawams.ovewwidemaxswotfnweight), OwO
+              t-tawget.pawams(fspawams.ovewwidenotificationsmaxnumofswots)
             )
-            val numOfSlots = ContinuousFunction.safeEvaluateFn(
-              pushCap,
-              nslotFnParam,
-              overrideStats.scope("max_nslot_fn"))
-            overrideStats.counter("max_notification_slots_num_" + numOfSlots.toString).incr()
-            addedNSlotsToPayload.incr()
-            Map("max_notification_slots" -> numOfSlots)
-          } else {
-            addedNSlotsToPayload.incr()
-            val numOfSlots = target.params(FSParams.OverrideNotificationsMaxNumOfSlots)
-            Map("max_notification_slots" -> numOfSlots)
+            v-vaw nyumofswots = continuousfunction.safeevawuatefn(
+              p-pushcap, XD
+              nyswotfnpawam, ^^;;
+              o-ovewwidestats.scope("max_nswot_fn"))
+            o-ovewwidestats.countew("max_notification_swots_num_" + n-nyumofswots.tostwing).incw()
+            addednswotstopaywoad.incw()
+            m-map("max_notification_swots" -> n-nyumofswots)
+          } ewse {
+            addednswotstopaywoad.incw()
+            v-vaw nyumofswots = t-tawget.pawams(fspawams.ovewwidenotificationsmaxnumofswots)
+            m-map("max_notification_swots" -> nyumofswots)
           }
-        } else {
-          noNSlotsAddedToPayload.incr()
-          Map.empty
+        } ewse {
+          n-nyonswotsaddedtopaywoad.incw()
+          map.empty
         }
       }
 
-      val baseActionDetailsMap = Map("target_ids" -> impressionIdsSeq)
+      vaw baseactiondetaiwsmap = m-map("tawget_ids" -> i-impwessionidsseq)
 
-      val actionDetailsMap =
-        Map("action_details" -> (baseActionDetailsMap ++ nSlotsMap))
+      vaw actiondetaiwsmap =
+        map("action_detaiws" -> (baseactiondetaiwsmap ++ nyswotsmap))
 
-      val baseSmartPushConfigMap = Map("notification_action" -> "REPLACE")
+      v-vaw b-basesmawtpushconfigmap = m-map("notification_action" -> "wepwace")
 
-      val customThreadId = {
-        if (target.params(FSParams.EnableCustomThreadIdForOverride)) {
-          addedCustomThreadIdToPayload.incr()
-          Map("custom_thread_id" -> impressionId)
-        } else {
-          noCustomThreadIdAddedToPayload.incr()
-          Map.empty
+      v-vaw customthweadid = {
+        if (tawget.pawams(fspawams.enabwecustomthweadidfowovewwide)) {
+          a-addedcustomthweadidtopaywoad.incw()
+          map("custom_thwead_id" -> impwessionid)
+        } ewse {
+          nocustomthweadidaddedtopaywoad.incw()
+          map.empty
         }
       }
 
-      val smartPushConfigMap =
-        JsonMarshal.toJson(
-          baseSmartPushConfigMap ++ actionDetailsMap ++ mlScoreMap ++ customThreadId)
+      v-vaw smawtpushconfigmap =
+        jsonmawshaw.tojson(
+          b-basesmawtpushconfigmap ++ actiondetaiwsmap ++ mwscowemap ++ c-customthweadid)
 
-      Map("smart_notification_configuration" -> smartPushConfigMap)
-    } else if (primaryDeviceAndroid) {
-      addedOverrideAndroidCounter.incr()
-      Map("notification_id" -> collapseId, "overriding_impression_id" -> impressionIds.head)
-    } else {
-      noOverrideDueToDeviceInfoCounter.incr()
-      Map.empty[String, String]
+      map("smawt_notification_configuwation" -> s-smawtpushconfigmap)
+    } ewse i-if (pwimawydeviceandwoid) {
+      a-addedovewwideandwoidcountew.incw()
+      m-map("notification_id" -> c-cowwapseid, 🥺 "ovewwiding_impwession_id" -> impwessionids.head)
+    } e-ewse {
+      nyoovewwideduetodeviceinfocountew.incw()
+      map.empty[stwing, XD stwing]
     }
   }
 }

@@ -1,31 +1,31 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import com.google.common.base.Predicate;
+impowt com.googwe.common.base.pwedicate;
 
-import com.twitter.search.common.util.hash.EarlybirdPartitioningFunction;
-import com.twitter.search.common.util.hash.GeneralEarlybirdPartitioningFunction;
+i-impowt c-com.twittew.seawch.common.utiw.hash.eawwybiwdpawtitioningfunction;
+i-impowt com.twittew.seawch.common.utiw.hash.genewaweawwybiwdpawtitioningfunction;
 
-public final class UserPartitionUtil {
-  private UserPartitionUtil() {
+p-pubwic finaw c-cwass usewpawtitionutiw {
+  pwivate u-usewpawtitionutiw() {
   }
 
   /**
-   * Filter out the users that are not present in this partition.
+   * f-fiwtew o-out the usews that awe nyot pwesent in this pawtition. mya
    */
-  public static Predicate<Long> filterUsersByPartitionPredicate(final PartitionConfig config) {
-    return new Predicate<Long>() {
+  pubwic static p-pwedicate<wong> fiwtewusewsbypawtitionpwedicate(finaw pawtitionconfig c-config) {
+    wetuwn nyew p-pwedicate<wong>() {
 
-      private final int partitionID = config.getIndexingHashPartitionID();
-      private final int numPartitions = config.getNumPartitions();
-      private final EarlybirdPartitioningFunction partitioner =
-          new GeneralEarlybirdPartitioningFunction();
+      pwivate finaw int pawtitionid = config.getindexinghashpawtitionid();
+      p-pwivate finaw int nyumpawtitions = c-config.getnumpawtitions();
+      p-pwivate finaw eawwybiwdpawtitioningfunction pawtitionew =
+          nyew genewaweawwybiwdpawtitioningfunction();
 
-      @Override
-      public boolean apply(Long userId) {
-        // See SEARCH-6675
-        // Right now if the partitioning logic changes in ArchivePartitioning this logic
-        // needs to be updated too.
-        return partitioner.getPartition(userId, numPartitions) == partitionID;
+      @ovewwide
+      pubwic boowean a-appwy(wong usewid) {
+        // see seawch-6675
+        // wight now if the pawtitioning wogic c-changes in awchivepawtitioning this wogic
+        // n-nyeeds to b-be updated too. nyaa~~
+        w-wetuwn pawtitionew.getpawtition(usewid, (⑅˘꒳˘) n-nyumpawtitions) == pawtitionid;
       }
     };
   }

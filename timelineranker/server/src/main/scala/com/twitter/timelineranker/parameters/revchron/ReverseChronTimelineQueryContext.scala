@@ -1,114 +1,114 @@
-package com.twitter.timelineranker.parameters.revchron
+package com.twittew.timewinewankew.pawametews.wevchwon
 
-import com.twitter.timelineranker.model.ReverseChronTimelineQuery
-import com.twitter.timelines.util.bounds.BoundsWithDefault
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineservice.model.core.TimelineLimits
+impowt com.twittew.timewinewankew.modew.wevewsechwontimewinequewy
+i-impowt c-com.twittew.timewines.utiw.bounds.boundswithdefauwt
+i-impowt com.twittew.timewinesewvice.modew.cowe.timewinekind
+impowt c-com.twittew.timewinesewvice.modew.cowe.timewinewimits
 
-object ReverseChronTimelineQueryContext {
-  val MaxCountLimit: Int = TimelineLimits.default.lengthLimit(TimelineKind.home)
-  val MaxCount: BoundsWithDefault[Int] = BoundsWithDefault[Int](0, MaxCountLimit, MaxCountLimit)
-  val MaxCountMultiplier: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.5, 2.0, 1.0)
-  val MaxFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](1, 15000, 5000)
-  val TweetsFilteringLossageThresholdPercent: BoundsWithDefault[Int] =
-    BoundsWithDefault[Int](10, 100, 20)
-  val TweetsFilteringLossageLimitPercent: BoundsWithDefault[Int] =
-    BoundsWithDefault[Int](40, 65, 60)
+o-object w-wevewsechwontimewinequewycontext {
+  v-vaw maxcountwimit: i-int = timewinewimits.defauwt.wengthwimit(timewinekind.home)
+  vaw maxcount: boundswithdefauwt[int] = boundswithdefauwt[int](0, XD m-maxcountwimit, 🥺 maxcountwimit)
+  vaw maxcountmuwtipwiew: b-boundswithdefauwt[doubwe] = boundswithdefauwt[doubwe](0.5, òωó 2.0, 1.0)
+  vaw maxfowwowedusews: b-boundswithdefauwt[int] = boundswithdefauwt[int](1, (ˆ ﻌ ˆ)♡ 15000, 5000)
+  vaw tweetsfiwtewingwossagethweshowdpewcent: boundswithdefauwt[int] =
+    b-boundswithdefauwt[int](10, -.- 100, :3 20)
+  vaw tweetsfiwtewingwossagewimitpewcent: b-boundswithdefauwt[int] =
+    b-boundswithdefauwt[int](40, ʘwʘ 65, 🥺 60)
 
-  def getDefaultContext(query: ReverseChronTimelineQuery): ReverseChronTimelineQueryContext = {
-    new ReverseChronTimelineQueryContextImpl(
-      query,
-      getMaxCount = () => MaxCount.default,
-      getMaxCountMultiplier = () => MaxCountMultiplier.default,
-      getMaxFollowedUsers = () => MaxFollowedUsers.default,
-      getReturnEmptyWhenOverMaxFollows = () => true,
-      getDirectedAtNarrowastingViaSearch = () => false,
-      getPostFilteringBasedOnSearchMetadataEnabled = () => true,
-      getBackfillFilteredEntries = () => false,
-      getTweetsFilteringLossageThresholdPercent = () =>
-        TweetsFilteringLossageThresholdPercent.default,
-      getTweetsFilteringLossageLimitPercent = () => TweetsFilteringLossageLimitPercent.default
+  def getdefauwtcontext(quewy: wevewsechwontimewinequewy): wevewsechwontimewinequewycontext = {
+    n-nyew wevewsechwontimewinequewycontextimpw(
+      quewy, >_<
+      getmaxcount = () => maxcount.defauwt,
+      getmaxcountmuwtipwiew = () => m-maxcountmuwtipwiew.defauwt, ʘwʘ
+      getmaxfowwowedusews = () => m-maxfowwowedusews.defauwt,
+      g-getwetuwnemptywhenovewmaxfowwows = () => t-twue, (˘ω˘)
+      g-getdiwectedatnawwowastingviaseawch = () => fawse, (✿oωo)
+      getpostfiwtewingbasedonseawchmetadataenabwed = () => t-twue, (///ˬ///✿)
+      getbackfiwwfiwtewedentwies = () => fawse, rawr x3
+      g-gettweetsfiwtewingwossagethweshowdpewcent = () =>
+        tweetsfiwtewingwossagethweshowdpewcent.defauwt, -.-
+      gettweetsfiwtewingwossagewimitpewcent = () => tweetsfiwtewingwossagewimitpewcent.defauwt
     )
   }
 }
 
-// Note that methods that return parameter value always use () to indicate that
-// side effects may be involved in their invocation.
-// for example, A likely side effect is to cause experiment impression.
-trait ReverseChronTimelineQueryContext {
-  def query: ReverseChronTimelineQuery
+// nyote that methods that w-wetuwn pawametew vawue awways u-use () to indicate t-that
+// side e-effects may be invowved in theiw invocation. ^^
+// fow exampwe, (⑅˘꒳˘) a w-wikewy side effect i-is to cause expewiment impwession. nyaa~~
+t-twait wevewsechwontimewinequewycontext {
+  d-def quewy: wevewsechwontimewinequewy
 
-  // Maximum number of tweets to be returned to caller.
-  def maxCount(): Int
+  // maximum n-nyumbew of tweets to be wetuwned t-to cawwew.
+  def maxcount(): int
 
-  // Multiplier applied to the number of tweets fetched from search expressed as percentage.
-  // It can be used to fetch more than the number tweets requested by a caller (to improve similarity)
-  // or to fetch less than requested to reduce load.
-  def maxCountMultiplier(): Double
+  // muwtipwiew a-appwied to the nyumbew of t-tweets fetched fwom seawch expwessed a-as pewcentage. /(^•ω•^)
+  // i-it can be used to fetch mowe than the nyumbew tweets wequested by a cawwew (to impwove simiwawity)
+  // o-ow to fetch wess t-than wequested to weduce woad. (U ﹏ U)
+  d-def maxcountmuwtipwiew(): d-doubwe
 
-  // Maximum number of followed user accounts to use when materializing home timelines.
-  def maxFollowedUsers(): Int
+  // m-maximum nyumbew of fowwowed usew accounts to use when m-matewiawizing home timewines. 😳😳😳
+  def maxfowwowedusews(): int
 
-  // When true, if the user follows more than maxFollowedUsers, return an empty timeline.
-  def returnEmptyWhenOverMaxFollows(): Boolean
+  // when twue, >w< if t-the usew fowwows mowe than maxfowwowedusews, XD w-wetuwn a-an empty timewine. o.O
+  d-def wetuwnemptywhenovewmaxfowwows(): boowean
 
-  // When true, appends an operator for directed-at narrowcasting to the home materialization
-  // search request
-  def directedAtNarrowcastingViaSearch(): Boolean
+  // when t-twue, mya appends a-an opewatow fow d-diwected-at nyawwowcasting t-to the home matewiawization
+  // seawch w-wequest
+  def d-diwectedatnawwowcastingviaseawch(): b-boowean
 
-  // When true, requests additional metadata from search and use this metadata for post filtering.
-  def postFilteringBasedOnSearchMetadataEnabled(): Boolean
+  // w-when twue, 🥺 wequests a-additionaw metadata fwom seawch and use this metadata fow p-post fiwtewing. ^^;;
+  def postfiwtewingbasedonseawchmetadataenabwed(): boowean
 
-  // Controls whether to back-fill timeline entries that get filtered out by TweetsPostFilter
-  // during home timeline materialization.
-  def backfillFilteredEntries(): Boolean
+  // contwows whethew to back-fiww timewine entwies t-that get fiwtewed out by tweetspostfiwtew
+  // duwing home timewine matewiawization. :3
+  d-def backfiwwfiwtewedentwies(): b-boowean
 
-  // If back-filling filtered entries is enabled and if number of tweets that get filtered out
-  // exceed this percentage then we will issue a second call to get more tweets.
-  def tweetsFilteringLossageThresholdPercent(): Int
+  // i-if back-fiwwing fiwtewed entwies i-is enabwed and if nyumbew o-of tweets that get f-fiwtewed out
+  // exceed this pewcentage then we wiww issue a second caww to get mowe tweets. (U ﹏ U)
+  d-def tweetsfiwtewingwossagethweshowdpewcent(): int
 
-  // We need to ensure that the number of tweets requested by the second call
-  // are not unbounded (for example, if everything is filtered out in the first call)
-  // therefore we adjust the actual filtered out percentage to be no greater than
-  // the value below.
-  def tweetsFilteringLossageLimitPercent(): Int
+  // we nyeed t-to ensuwe that the nyumbew of t-tweets wequested b-by the second caww
+  // awe nyot unbounded (fow e-exampwe, OwO if evewything i-is fiwtewed out in the f-fiwst caww)
+  // t-thewefowe we adjust the actuaw fiwtewed out pewcentage to be nyo gweatew than
+  // t-the vawue bewow. 😳😳😳
+  d-def tweetsfiwtewingwossagewimitpewcent(): i-int
 
-  // We need to indicate to search if we should use the archive cluster
-  // this option will come from ReverseChronTimelineQueryOptions and
-  // will be `true` by default if the options are not present.
-  def getTweetsFromArchiveIndex(): Boolean =
-    query.options.map(_.getTweetsFromArchiveIndex).getOrElse(true)
+  // we nyeed to indicate t-to seawch if we s-shouwd use the awchive cwustew
+  // t-this option wiww come fwom wevewsechwontimewinequewyoptions and
+  // wiww be `twue` by defauwt i-if the options a-awe nyot pwesent. (ˆ ﻌ ˆ)♡
+  def gettweetsfwomawchiveindex(): boowean =
+    q-quewy.options.map(_.gettweetsfwomawchiveindex).getowewse(twue)
 }
 
-class ReverseChronTimelineQueryContextImpl(
-  override val query: ReverseChronTimelineQuery,
-  getMaxCount: () => Int,
-  getMaxCountMultiplier: () => Double,
-  getMaxFollowedUsers: () => Int,
-  getReturnEmptyWhenOverMaxFollows: () => Boolean,
-  getDirectedAtNarrowastingViaSearch: () => Boolean,
-  getPostFilteringBasedOnSearchMetadataEnabled: () => Boolean,
-  getBackfillFilteredEntries: () => Boolean,
-  getTweetsFilteringLossageThresholdPercent: () => Int,
-  getTweetsFilteringLossageLimitPercent: () => Int)
-    extends ReverseChronTimelineQueryContext {
-  override def maxCount(): Int = { getMaxCount() }
-  override def maxCountMultiplier(): Double = { getMaxCountMultiplier() }
-  override def maxFollowedUsers(): Int = { getMaxFollowedUsers() }
-  override def backfillFilteredEntries(): Boolean = { getBackfillFilteredEntries() }
-  override def tweetsFilteringLossageThresholdPercent(): Int = {
-    getTweetsFilteringLossageThresholdPercent()
+c-cwass wevewsechwontimewinequewycontextimpw(
+  ovewwide vaw quewy: wevewsechwontimewinequewy, XD
+  getmaxcount: () => i-int, (ˆ ﻌ ˆ)♡
+  getmaxcountmuwtipwiew: () => doubwe, ( ͡o ω ͡o )
+  getmaxfowwowedusews: () => int, rawr x3
+  getwetuwnemptywhenovewmaxfowwows: () => b-boowean, nyaa~~
+  getdiwectedatnawwowastingviaseawch: () => boowean, >_<
+  getpostfiwtewingbasedonseawchmetadataenabwed: () => b-boowean, ^^;;
+  g-getbackfiwwfiwtewedentwies: () => boowean, (ˆ ﻌ ˆ)♡
+  gettweetsfiwtewingwossagethweshowdpewcent: () => int, ^^;;
+  gettweetsfiwtewingwossagewimitpewcent: () => int)
+    extends w-wevewsechwontimewinequewycontext {
+  o-ovewwide def maxcount(): int = { getmaxcount() }
+  ovewwide d-def maxcountmuwtipwiew(): doubwe = { getmaxcountmuwtipwiew() }
+  o-ovewwide def maxfowwowedusews(): int = { getmaxfowwowedusews() }
+  ovewwide d-def backfiwwfiwtewedentwies(): boowean = { getbackfiwwfiwtewedentwies() }
+  o-ovewwide d-def tweetsfiwtewingwossagethweshowdpewcent(): int = {
+    g-gettweetsfiwtewingwossagethweshowdpewcent()
   }
-  override def tweetsFilteringLossageLimitPercent(): Int = {
-    getTweetsFilteringLossageLimitPercent()
+  ovewwide def t-tweetsfiwtewingwossagewimitpewcent(): i-int = {
+    g-gettweetsfiwtewingwossagewimitpewcent()
   }
-  override def returnEmptyWhenOverMaxFollows(): Boolean = {
-    getReturnEmptyWhenOverMaxFollows()
+  ovewwide def wetuwnemptywhenovewmaxfowwows(): b-boowean = {
+    g-getwetuwnemptywhenovewmaxfowwows()
   }
-  override def directedAtNarrowcastingViaSearch(): Boolean = {
-    getDirectedAtNarrowastingViaSearch()
+  ovewwide def diwectedatnawwowcastingviaseawch(): b-boowean = {
+    g-getdiwectedatnawwowastingviaseawch()
   }
-  override def postFilteringBasedOnSearchMetadataEnabled(): Boolean = {
-    getPostFilteringBasedOnSearchMetadataEnabled()
+  o-ovewwide def postfiwtewingbasedonseawchmetadataenabwed(): boowean = {
+    g-getpostfiwtewingbasedonseawchmetadataenabwed()
   }
 }

@@ -1,18 +1,18 @@
-package com.twitter.interaction_graph.scio.agg_negative
+package com.twittew.intewaction_gwaph.scio.agg_negative
 
-import com.twitter.beam.io.dal.DALOptions
-import com.twitter.beam.job.DateRangeOptions
-import org.apache.beam.sdk.options.Description
-import org.apache.beam.sdk.options.Validation.Required
+impowt com.twittew.beam.io.daw.dawoptions
+i-impowt com.twittew.beam.job.datewangeoptions
+impowt o-owg.apache.beam.sdk.options.descwiption
+i-impowt o-owg.apache.beam.sdk.options.vawidation.wequiwed
 
-trait InteractionGraphNegativeOption extends DALOptions with DateRangeOptions {
-  @Required
-  @Description("Output path for storing the final dataset")
-  def getOutputPath: String
-  def setOutputPath(value: String): Unit
+t-twait intewactiongwaphnegativeoption e-extends d-dawoptions with d-datewangeoptions {
+  @wequiwed
+  @descwiption("output path fow stowing the finaw dataset")
+  def getoutputpath: s-stwing
+  def setoutputpath(vawue: stwing): unit
 
-  @Description("BQ dataset prefix")
-  def getBqDataset: String
-  def setBqDataset(value: String): Unit
+  @descwiption("bq d-dataset pwefix")
+  def getbqdataset: s-stwing
+  def setbqdataset(vawue: stwing): unit
 
 }

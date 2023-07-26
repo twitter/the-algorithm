@@ -1,273 +1,273 @@
-package com.twitter.simclusters_v2.scalding
+package com.twittew.simcwustews_v2.scawding
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.logging.Logger
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
-  BatchDescription,
-  BatchFirstTime,
-  BatchIncrement,
-  TwitterScheduledExecutionApp
+impowt c-com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.scawding._
+i-impowt com.twittew.scawding.typed.typedpipe
+impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.{expwicitwocation, pwocatwa}
+impowt com.twittew.scawding_intewnaw.job.anawytics_batch.{
+  anawyticsbatchexecution,
+  anawyticsbatchexecutionawgs, UwU
+  b-batchdescwiption, XD
+  batchfiwsttime, (✿oωo)
+  batchincwement, :3
+  t-twittewscheduwedexecutionapp
 }
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.{ClustersUserIsKnownFor, UserToKnownForClusterScores}
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
-import java.util.TimeZone
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions
+impowt com.twittew.simcwustews_v2.hdfs_souwces._
+impowt com.twittew.simcwustews_v2.scawding.common.utiw
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{cwustewsusewisknownfow, (///ˬ///✿) u-usewtoknownfowcwustewscowes}
+i-impowt com.twittew.usewsouwce.snapshot.fwat.usewsouwcefwatscawadataset
+impowt com.twittew.usewsouwce.snapshot.fwat.thwiftscawa.fwatusew
+impowt java.utiw.timezone
 
-object KnownForSources {
-  implicit val tz: TimeZone = DateOps.UTC
-  implicit val parser: DateParser = DateParser.default
+object knownfowsouwces {
+  impwicit v-vaw tz: timezone = dateops.utc
+  impwicit vaw pawsew: datepawsew = datepawsew.defauwt
 
-  def readDALDataset(
-    d: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]],
-    noOlderThan: Duration,
-    modelVersionToKeep: String
-  ): TypedPipe[(Long, Array[(Int, Float)])] = {
-    fromKeyVal(
-      DAL
-        .readMostRecentSnapshotNoOlderThan(d, noOlderThan)
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-        .toTypedPipe,
-      modelVersionToKeep
+  d-def weaddawdataset(
+    d: keyvawdawdataset[keyvaw[wong, nyaa~~ c-cwustewsusewisknownfow]], >w<
+    n-nyoowdewthan: d-duwation, -.-
+    m-modewvewsiontokeep: stwing
+  ): typedpipe[(wong, (✿oωo) a-awway[(int, (˘ω˘) fwoat)])] = {
+    fwomkeyvaw(
+      d-daw
+        .weadmostwecentsnapshotnoowdewthan(d, rawr nyoowdewthan)
+        .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+        .totypedpipe, OwO
+      modewvewsiontokeep
     )
   }
 
-  def fromKeyVal(
-    in: TypedPipe[KeyVal[Long, ClustersUserIsKnownFor]],
-    modelVersionToKeep: String
-  ): TypedPipe[(Long, Array[(Int, Float)])] = {
-    in.collect {
-      case KeyVal(userId, knownForClusters)
-          if knownForClusters.knownForModelVersion == modelVersionToKeep =>
+  def fwomkeyvaw(
+    in: typedpipe[keyvaw[wong, ^•ﻌ•^ cwustewsusewisknownfow]],
+    m-modewvewsiontokeep: stwing
+  ): t-typedpipe[(wong, UwU a-awway[(int, (˘ω˘) f-fwoat)])] = {
+    in.cowwect {
+      case keyvaw(usewid, (///ˬ///✿) knownfowcwustews)
+          i-if knownfowcwustews.knownfowmodewvewsion == m-modewvewsiontokeep =>
         (
-          userId,
-          knownForClusters.clusterIdToScores.toArray
+          usewid,
+          k-knownfowcwustews.cwustewidtoscowes.toawway
             .map {
-              case (clusterId, scores) =>
-                (clusterId, scores.knownForScore.getOrElse(0.0).toFloat)
+              c-case (cwustewid, σωσ scowes) =>
+                (cwustewid, /(^•ω•^) scowes.knownfowscowe.getowewse(0.0).tofwoat)
             }
-            .sortBy(-_._2))
+            .sowtby(-_._2))
     }
   }
 
-  def toKeyVal(
-    in: TypedPipe[(Long, Array[(Int, Float)])],
-    modelVersion: String
-  ): TypedPipe[KeyVal[Long, ClustersUserIsKnownFor]] = {
+  d-def tokeyvaw(
+    in: t-typedpipe[(wong, 😳 awway[(int, fwoat)])], 😳
+    modewvewsion: s-stwing
+  ): typedpipe[keyvaw[wong, (⑅˘꒳˘) c-cwustewsusewisknownfow]] = {
     in.map {
-      case (userId, clustersArray) =>
-        val mappedClusters = clustersArray.map {
-          case (clusterId, score) =>
-            (clusterId, UserToKnownForClusterScores(Some(score)))
-        }.toMap
-        KeyVal(userId, ClustersUserIsKnownFor(modelVersion, mappedClusters))
+      c-case (usewid, 😳😳😳 c-cwustewsawway) =>
+        vaw mappedcwustews = cwustewsawway.map {
+          case (cwustewid, 😳 scowe) =>
+            (cwustewid, XD usewtoknownfowcwustewscowes(some(scowe)))
+        }.tomap
+        keyvaw(usewid, mya c-cwustewsusewisknownfow(modewvewsion, ^•ﻌ•^ m-mappedcwustews))
     }
   }
 
-  val knownFor_20M_Dec11_145K: TypedPipe[(Long, Array[(Int, Float)])] = readDALDataset(
-    SimclustersV2KnownFor20M145KDec11ScalaDataset,
-    Days(30),
-    ModelVersions.Model20M145KDec11
+  vaw knownfow_20m_dec11_145k: t-typedpipe[(wong, ʘwʘ a-awway[(int, ( ͡o ω ͡o ) f-fwoat)])] = weaddawdataset(
+    simcwustewsv2knownfow20m145kdec11scawadataset, mya
+    days(30), o.O
+    m-modewvewsions.modew20m145kdec11
   )
 
-  val knownFor_20M_145K_updated: TypedPipe[(Long, Array[(Int, Float)])] = readDALDataset(
-    SimclustersV2KnownFor20M145KUpdatedScalaDataset,
-    Days(30),
-    ModelVersions.Model20M145KUpdated
+  vaw knownfow_20m_145k_updated: typedpipe[(wong, (✿oωo) awway[(int, :3 fwoat)])] = weaddawdataset(
+    s-simcwustewsv2knownfow20m145kupdatedscawadataset, 😳
+    days(30), (U ﹏ U)
+    m-modewvewsions.modew20m145kupdated
   )
 
-  val clusterToKnownFor_20M_Dec11_145K: TypedPipe[(Int, List[(Long, Float)])] =
-    transpose(
-      knownFor_20M_Dec11_145K
+  v-vaw cwustewtoknownfow_20m_dec11_145k: typedpipe[(int, mya wist[(wong, (U ᵕ U❁) f-fwoat)])] =
+    twanspose(
+      k-knownfow_20m_dec11_145k
     )
 
-  val clusterToKnownFor_20M_145K_updated: TypedPipe[(Int, List[(Long, Float)])] =
-    transpose(
-      knownFor_20M_145K_updated
+  v-vaw c-cwustewtoknownfow_20m_145k_updated: t-typedpipe[(int, :3 wist[(wong, mya fwoat)])] =
+    t-twanspose(
+      k-knownfow_20m_145k_updated
     )
 
-  private val log = Logger()
+  p-pwivate vaw w-wog = woggew()
 
-  def readKnownFor(textFile: String): TypedPipe[(Long, Array[(Int, Float)])] = {
-    TypedPipe
-      .from(TextLine(textFile))
-      .flatMap { str =>
-        if (!str.startsWith("#")) {
-          try {
-            val tokens = str.trim.split("\\s+")
-            val res = Array.newBuilder[(Int, Float)]
-            val userId = tokens(0).toLong
-            for (i <- 1 until tokens.length) {
-              val Array(cIdStr, scoreStr) = tokens(i).split(":")
-              val clusterId = cIdStr.toInt
-              val score = scoreStr.toFloat
-              val newEntry = (clusterId, score)
-              res += newEntry
+  d-def weadknownfow(textfiwe: stwing): typedpipe[(wong, OwO awway[(int, (ˆ ﻌ ˆ)♡ f-fwoat)])] = {
+    typedpipe
+      .fwom(textwine(textfiwe))
+      .fwatmap { stw =>
+        if (!stw.stawtswith("#")) {
+          twy {
+            vaw tokens = s-stw.twim.spwit("\\s+")
+            vaw wes = awway.newbuiwdew[(int, ʘwʘ fwoat)]
+            v-vaw u-usewid = tokens(0).towong
+            f-fow (i <- 1 untiw tokens.wength) {
+              v-vaw awway(cidstw, o.O scowestw) = t-tokens(i).spwit(":")
+              v-vaw cwustewid = cidstw.toint
+              vaw scowe = scowestw.tofwoat
+              vaw nyewentwy = (cwustewid, UwU scowe)
+              w-wes += nyewentwy
             }
-            val result = res.result
-            if (result.nonEmpty) {
-              Some((userId, res.result()))
-            } else None
+            vaw wesuwt = w-wes.wesuwt
+            if (wesuwt.nonempty) {
+              some((usewid, rawr x3 w-wes.wesuwt()))
+            } ewse n-nyone
           } catch {
-            case ex: Throwable =>
-              log.warning(
-                s"Error while loading knownFor from $textFile for line <$str>: " +
-                  ex.getMessage
+            case ex: t-thwowabwe =>
+              w-wog.wawning(
+                s"ewwow w-whiwe woading k-knownfow fwom $textfiwe fow wine <$stw>: " +
+                  ex.getmessage
               )
-              None
+              nyone
           }
-        } else None
+        } ewse nyone
       }
   }
 
-  def stringifyKnownFor(
-    input: TypedPipe[(Long, Array[(Int, Float)])]
-  ): TypedPipe[(Long, String)] = {
-    input.mapValues { arr =>
-      arr.map { case (clusterId, score) => "%d:%.2g".format(clusterId, score) }.mkString("\t")
+  d-def stwingifyknownfow(
+    i-input: t-typedpipe[(wong, 🥺 awway[(int, :3 f-fwoat)])]
+  ): t-typedpipe[(wong, (ꈍᴗꈍ) stwing)] = {
+    i-input.mapvawues { aww =>
+      aww.map { case (cwustewid, 🥺 scowe) => "%d:%.2g".fowmat(cwustewid, (✿oωo) scowe) }.mkstwing("\t")
     }
   }
 
-  def writeKnownForTypedTsv(
-    input: TypedPipe[(Long, Array[(Int, Float)])],
-    outputDir: String
-  ): Execution[Unit] = {
-    stringifyKnownFor(input).writeExecution(TypedTsv(outputDir))
+  d-def wwiteknownfowtypedtsv(
+    i-input: typedpipe[(wong, (U ﹏ U) awway[(int, :3 fwoat)])], ^^;;
+    o-outputdiw: s-stwing
+  ): execution[unit] = {
+    stwingifyknownfow(input).wwiteexecution(typedtsv(outputdiw))
   }
 
-  def makeKnownForTypedTsv(
-    input: TypedPipe[(Long, Array[(Int, Float)])],
-    outputDir: String
-  ): Execution[TypedPipe[(Long, Array[(Int, Float)])]] = {
-    Execution.getMode.flatMap { mode =>
-      try {
-        val dest = TextLine(outputDir)
-        dest.validateTaps(mode)
-        Execution.from(KnownForSources.readKnownFor(outputDir))
+  def m-makeknownfowtypedtsv(
+    input: typedpipe[(wong, rawr awway[(int, 😳😳😳 fwoat)])],
+    outputdiw: s-stwing
+  ): execution[typedpipe[(wong, (✿oωo) awway[(int, OwO fwoat)])]] = {
+    e-execution.getmode.fwatmap { m-mode =>
+      twy {
+        vaw dest = textwine(outputdiw)
+        d-dest.vawidatetaps(mode)
+        e-execution.fwom(knownfowsouwces.weadknownfow(outputdiw))
       } catch {
-        case ivs: InvalidSourceException =>
-          writeKnownForTypedTsv(input, outputDir).map { _ => input }
+        case ivs: invawidsouwceexception =>
+          w-wwiteknownfowtypedtsv(input, ʘwʘ outputdiw).map { _ => i-input }
       }
     }
 
   }
 
-  def transpose(
-    userToCluster: TypedPipe[(Long, Array[(Int, Float)])]
-  ): TypedPipe[(Int, List[(Long, Float)])] = {
-    userToCluster
-      .flatMap {
-        case (userId, clusterWeightPairs) =>
-          clusterWeightPairs.map {
-            case (clusterId, weight) =>
-              (clusterId, List(userId -> weight))
+  def twanspose(
+    usewtocwustew: typedpipe[(wong, (ˆ ﻌ ˆ)♡ awway[(int, f-fwoat)])]
+  ): typedpipe[(int, (U ﹏ U) w-wist[(wong, UwU f-fwoat)])] = {
+    usewtocwustew
+      .fwatmap {
+        case (usewid, XD c-cwustewweightpaiws) =>
+          cwustewweightpaiws.map {
+            c-case (cwustewid, w-weight) =>
+              (cwustewid, ʘwʘ w-wist(usewid -> weight))
           }
       }
-      .sumByKey
-      .toTypedPipe
+      .sumbykey
+      .totypedpipe
   }
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron known_for_to_mh \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+c-capesospy-v2 u-update --buiwd_wocawwy --stawt_cwon known_fow_to_mh \
+ swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
-object KnownForToMHBatch extends TwitterScheduledExecutionApp {
+o-object k-knownfowtomhbatch e-extends twittewscheduwedexecutionapp {
 
-  import KnownForSources._
+  impowt knownfowsouwces._
 
   /**
-   * A simple update function which updates the source by removing deactivated and suspended users.
-   * This will be eventually replaced by a regular cluster updating method.
+   * a simpwe update f-function which updates the s-souwce by wemoving d-deactivated and suspended usews. rawr x3
+   * this wiww be eventuawwy w-wepwaced by a w-weguwaw cwustew u-updating method. ^^;;
    */
-  def updateKnownForSource(
-    knownForSource: TypedPipe[(Long, ClustersUserIsKnownFor)],
-    userSource: TypedPipe[FlatUser]
+  d-def updateknownfowsouwce(
+    knownfowsouwce: t-typedpipe[(wong, ʘwʘ cwustewsusewisknownfow)], (U ﹏ U)
+    usewsouwce: typedpipe[fwatusew]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Long, ClustersUserIsKnownFor)] = {
-    val numValidUsers = Stat("num_valid_users")
-    val numInvalidUsers = Stat("num_invalid_users")
-    val numKnownForUsersLeft = Stat("num_known_for_users_left")
-    val numRemovedKnownForUsers = Stat("num_removed_known_for_users")
+    impwicit uniqueid: uniqueid
+  ): t-typedpipe[(wong, (˘ω˘) cwustewsusewisknownfow)] = {
+    v-vaw numvawidusews = stat("num_vawid_usews")
+    v-vaw numinvawidusews = stat("num_invawid_usews")
+    v-vaw nyumknownfowusewsweft = stat("num_known_fow_usews_weft")
+    v-vaw nyumwemovedknownfowusews = s-stat("num_wemoved_known_fow_usews")
 
-    val validUsers =
-      userSource.flatMap {
-        case flatUser
-            if !flatUser.deactivated.contains(true) && !flatUser.suspended
-              .contains(true)
-              && flatUser.id.nonEmpty =>
-          numValidUsers.inc()
-          flatUser.id
+    vaw v-vawidusews =
+      u-usewsouwce.fwatmap {
+        c-case fwatusew
+            if !fwatusew.deactivated.contains(twue) && !fwatusew.suspended
+              .contains(twue)
+              && fwatusew.id.nonempty =>
+          nyumvawidusews.inc()
+          fwatusew.id
         case _ =>
-          numInvalidUsers.inc()
-          None
+          nyuminvawidusews.inc()
+          n-nyone
       }
 
-    knownForSource.leftJoin(validUsers.asKeys).flatMap {
-      case (userId, (clustersWithScore, Some(_))) =>
-        numKnownForUsersLeft.inc()
-        Some((userId, clustersWithScore))
+    k-knownfowsouwce.weftjoin(vawidusews.askeys).fwatmap {
+      c-case (usewid, (ꈍᴗꈍ) (cwustewswithscowe, /(^•ω•^) some(_))) =>
+        n-nyumknownfowusewsweft.inc()
+        some((usewid, cwustewswithscowe))
       case _ =>
-        numRemovedKnownForUsers.inc()
-        None
+        n-nyumwemovedknownfowusews.inc()
+        nyone
     }
   }
 
-  // this should happen before InterestedInFromKnownForBatch
-  private val firstTime: String = "2019-03-22"
+  // t-this shouwd happen befowe intewestedinfwomknownfowbatch
+  pwivate v-vaw fiwsttime: stwing = "2019-03-22"
 
-  private val batchIncrement: Duration = Days(7)
+  pwivate vaw batchincwement: d-duwation = d-days(7)
 
-  private val outputPath: String = InternalDataPaths.RawKnownForDec11Path
+  pwivate vaw outputpath: s-stwing = i-intewnawdatapaths.wawknownfowdec11path
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pwivate vaw execawgs = anawyticsbatchexecutionawgs(
+    batchdesc = b-batchdescwiption(this.getcwass.getname.wepwace("$", >_< "")),
+    f-fiwsttime = b-batchfiwsttime(wichdate(fiwsttime)), σωσ
+    w-wasttime = none, ^^;;
+    b-batchincwement = batchincwement(batchincwement)
   )
 
-  override def scheduledJob: Execution[Unit] =
-    AnalyticsBatchExecution(execArgs) { implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        val numKnownForUsers = Stat("num_known_for_users")
+  ovewwide d-def scheduwedjob: e-execution[unit] =
+    anawyticsbatchexecution(execawgs) { i-impwicit datewange =>
+      e-execution.withid { impwicit uniqueid =>
+        v-vaw nyumknownfowusews = stat("num_known_fow_usews")
 
-        val userSource =
-          DAL
-            .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7))
-            .toTypedPipe
+        vaw u-usewsouwce =
+          daw
+            .weadmostwecentsnapshotnoowdewthan(usewsouwcefwatscawadataset, 😳 d-days(7))
+            .totypedpipe
 
-        val knownForData = DAL
-          .readMostRecentSnapshotNoOlderThan(
-            SimclustersV2RawKnownFor20M145KDec11ScalaDataset,
-            Days(30))
-          .toTypedPipe
+        v-vaw knownfowdata = daw
+          .weadmostwecentsnapshotnoowdewthan(
+            s-simcwustewsv2wawknownfow20m145kdec11scawadataset, >_<
+            days(30))
+          .totypedpipe
           .map {
-            case KeyVal(userId, knownForClusters) =>
-              numKnownForUsers.inc()
-              (userId, knownForClusters)
+            case keyvaw(usewid, -.- k-knownfowcwustews) =>
+              n-nyumknownfowusews.inc()
+              (usewid, UwU k-knownfowcwustews)
           }
 
-        val result = updateKnownForSource(knownForData, userSource).map {
-          case (userId, knownForClusters) =>
-            KeyVal(userId, knownForClusters)
+        vaw wesuwt = updateknownfowsouwce(knownfowdata, usewsouwce).map {
+          c-case (usewid, :3 knownfowcwustews) =>
+            keyvaw(usewid, σωσ k-knownfowcwustews)
         }
 
-        Util.printCounters(
-          result.writeDALVersionedKeyValExecution(
-            dataset = SimclustersV2RawKnownFor20M145KDec11ScalaDataset,
-            pathLayout = D.Suffix(outputPath)
+        u-utiw.pwintcountews(
+          wesuwt.wwitedawvewsionedkeyvawexecution(
+            d-dataset = simcwustewsv2wawknownfow20m145kdec11scawadataset, >w<
+            p-pathwayout = d-d.suffix(outputpath)
           )
         )
       }

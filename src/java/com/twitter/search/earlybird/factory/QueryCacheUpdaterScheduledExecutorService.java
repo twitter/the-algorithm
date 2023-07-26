@@ -1,57 +1,57 @@
-package com.twitter.search.earlybird.factory;
+package com.twittew.seawch.eawwybiwd.factowy;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+impowt j-java.utiw.concuwwent.cawwabwe;
+i-impowt java.utiw.concuwwent.scheduwedexecutowsewvice;
+i-impowt j-java.utiw.concuwwent.scheduwedfutuwe;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
 
-import com.twitter.common.util.concurrent.ForwardingExecutorService;
+i-impowt com.twittew.common.utiw.concuwwent.fowwawdingexecutowsewvice;
 
 /**
- * This delegate type is intended for QueryCacheUpdater because it uses multiple threads to
- * create query cache during startup and then switch later to use single thread to update the
- * cache.
+ * this dewegate type is intended fow quewycacheupdatew because i-it uses muwtipwe thweads to
+ * cweate quewy cache d-duwing stawtup and then switch w-watew to use singwe thwead to update the
+ * cache. (˘ω˘)
  */
-public abstract class QueryCacheUpdaterScheduledExecutorService<T extends ScheduledExecutorService>
-  extends ForwardingExecutorService<T> implements ScheduledExecutorService {
-  public QueryCacheUpdaterScheduledExecutorService(T executor) {
-    super(executor);
+pubwic a-abstwact cwass quewycacheupdatewscheduwedexecutowsewvice<t extends s-scheduwedexecutowsewvice>
+  extends f-fowwawdingexecutowsewvice<t> impwements scheduwedexecutowsewvice {
+  pubwic quewycacheupdatewscheduwedexecutowsewvice(t executow) {
+    supew(executow);
   }
 
   /**
-   * Sets the number of worker threads in this executor service to an appropriate value after the
-   * earlybird startup has finished. While earlybird is starting up, we might want this executor
-   * service to have more threads, in order to parallelize more some start up tasks. But once
-   * earlybird is up, it might make sense to lower the number of worker threads.
+   * sets the nyumbew o-of wowkew thweads in this executow sewvice to an appwopwiate vawue aftew the
+   * e-eawwybiwd stawtup has finished. >_< w-whiwe eawwybiwd i-is stawting up, -.- w-we might want t-this executow
+   * sewvice to have mowe thweads, 🥺 i-in owdew to pawawwewize mowe some stawt up tasks. (U ﹏ U) b-but once
+   * eawwybiwd is up, >w< it might make sense to wowew the nyumbew of wowkew thweads. mya
    */
-  public abstract void setWorkerPoolSizeAfterStartup();
+  p-pubwic abstwact void setwowkewpoowsizeaftewstawtup();
 
-  @Override
-  public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-    return delegate.schedule(command, delay, unit);
+  @ovewwide
+  p-pubwic s-scheduwedfutuwe<?> s-scheduwe(wunnabwe command, >w< wong deway, nyaa~~ timeunit unit) {
+    w-wetuwn dewegate.scheduwe(command, (✿oωo) d-deway, ʘwʘ unit);
   }
 
-  @Override
-  public ScheduledFuture<?> scheduleAtFixedRate(
-      Runnable command, long initialDelay, long period, TimeUnit unit) {
-    return delegate.scheduleAtFixedRate(command, initialDelay, period, unit);
+  @ovewwide
+  pubwic scheduwedfutuwe<?> scheduweatfixedwate(
+      w-wunnabwe c-command, (ˆ ﻌ ˆ)♡ wong initiawdeway, 😳😳😳 wong p-pewiod, :3 timeunit unit) {
+    w-wetuwn dewegate.scheduweatfixedwate(command, OwO initiawdeway, (U ﹏ U) pewiod, >w< u-unit);
   }
 
-  @Override
-  public ScheduledFuture<?> scheduleWithFixedDelay(
-      Runnable command, long initialDelay, long delay, TimeUnit unit) {
-    return delegate.scheduleWithFixedDelay(command, initialDelay, delay, unit);
+  @ovewwide
+  pubwic s-scheduwedfutuwe<?> scheduwewithfixeddeway(
+      w-wunnabwe command, (U ﹏ U) w-wong initiawdeway, 😳 wong deway, timeunit unit) {
+    wetuwn dewegate.scheduwewithfixeddeway(command, (ˆ ﻌ ˆ)♡ initiawdeway, 😳😳😳 deway, u-unit);
   }
 
-  @Override
-  public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-    return delegate.schedule(callable, delay, unit);
+  @ovewwide
+  p-pubwic <v> scheduwedfutuwe<v> s-scheduwe(cawwabwe<v> c-cawwabwe, (U ﹏ U) w-wong deway, (///ˬ///✿) timeunit unit) {
+    wetuwn dewegate.scheduwe(cawwabwe, 😳 d-deway, 😳 unit);
   }
 
-  @VisibleForTesting
-  public T getDelegate() {
-    return delegate;
+  @visibwefowtesting
+  pubwic t getdewegate() {
+    wetuwn dewegate;
   }
 }

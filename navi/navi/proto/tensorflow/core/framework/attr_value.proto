@@ -1,64 +1,64 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+impowt "tensowfwow/cowe/fwamewowk/tensow.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/tensow_shape.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/types.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "AttrValueProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/attr_value_go_proto";
+o-option cc_enabwe_awenas = t-twue;
+o-option java_outew_cwassname = "attwvawuepwotos";
+o-option java_muwtipwe_fiwes = twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/attw_vawue_go_pwoto";
 
-// Protocol buffer representing the value for an attr used to configure an Op.
-// Comment indicates the corresponding attr type.  Only the field matching the
-// attr type may be filled.
-message AttrValue {
-  // LINT.IfChange
-  message ListValue {
-    repeated bytes s = 2;                        // "list(string)"
-    repeated int64 i = 3 [packed = true];        // "list(int)"
-    repeated float f = 4 [packed = true];        // "list(float)"
-    repeated bool b = 5 [packed = true];         // "list(bool)"
-    repeated DataType type = 6 [packed = true];  // "list(type)"
-    repeated TensorShapeProto shape = 7;         // "list(shape)"
-    repeated TensorProto tensor = 8;             // "list(tensor)"
-    repeated NameAttrList func = 9;              // "list(attr)"
+// pwotocow buffew wepwesenting the vawue fow an attw used to configuwe a-an op. (U ﹏ U)
+// comment indicates the cowwesponding a-attw type. >w<  onwy the fiewd m-matching the
+// attw type may be fiwwed. (U ﹏ U)
+message attwvawue {
+  // w-wint.ifchange
+  message wistvawue {
+    w-wepeated b-bytes s = 2;                        // "wist(stwing)"
+    wepeated int64 i = 3 [packed = twue];        // "wist(int)"
+    wepeated fwoat f = 4 [packed = twue];        // "wist(fwoat)"
+    w-wepeated boow b = 5 [packed = twue];         // "wist(boow)"
+    wepeated datatype type = 6 [packed = twue];  // "wist(type)"
+    wepeated tensowshapepwoto s-shape = 7;         // "wist(shape)"
+    wepeated tensowpwoto t-tensow = 8;             // "wist(tensow)"
+    w-wepeated n-nyameattwwist func = 9;              // "wist(attw)"
   }
-  // LINT.ThenChange(https://www.tensorflow.org/code/tensorflow/c/c_api.cc)
+  // wint.thenchange(https://www.tensowfwow.owg/code/tensowfwow/c/c_api.cc)
 
-  oneof value {
-    bytes s = 2;                 // "string"
-    int64 i = 3;                 // "int"
-    float f = 4;                 // "float"
-    bool b = 5;                  // "bool"
-    DataType type = 6;           // "type"
-    TensorShapeProto shape = 7;  // "shape"
-    TensorProto tensor = 8;      // "tensor"
-    ListValue list = 1;          // any "list(...)"
+  o-oneof vawue {
+    bytes s = 2;                 // "stwing"
+    i-int64 i = 3;                 // "int"
+    fwoat f = 4;                 // "fwoat"
+    boow b-b = 5;                  // "boow"
+    datatype type = 6;           // "type"
+    tensowshapepwoto shape = 7;  // "shape"
+    tensowpwoto tensow = 8;      // "tensow"
+    w-wistvawue wist = 1;          // a-any "wist(...)"
 
-    // "func" represents a function. func.name is a function's name or
-    // a primitive op's name. func.attr.first is the name of an attr
-    // defined for that function. func.attr.second is the value for
-    // that attr in the instantiation.
-    NameAttrList func = 10;
+    // "func" w-wepwesents a-a function. 😳 func.name is a function's nyame ow
+    // a pwimitive o-op's nyame. (ˆ ﻌ ˆ)♡ f-func.attw.fiwst is the nyame o-of an attw
+    // d-defined fow that function. 😳😳😳 func.attw.second i-is the vawue fow
+    // that attw i-in the instantiation. (U ﹏ U)
+    nyameattwwist func = 10;
 
-    // This is a placeholder only used in nodes defined inside a
-    // function.  It indicates the attr value will be supplied when
-    // the function is instantiated.  For example, let us suppose a
-    // node "N" in function "FN". "N" has an attr "A" with value
-    // placeholder = "foo". When FN is instantiated with attr "foo"
-    // set to "bar", the instantiated node N's attr A will have been
-    // given the value "bar".
-    string placeholder = 9;
+    // t-this is a pwacehowdew o-onwy used in nyodes defined inside a-a
+    // function. (///ˬ///✿)  i-it indicates the attw vawue wiww be suppwied when
+    // the function is instantiated. 😳  fow exampwe, 😳 wet u-us suppose a
+    // n-nyode "n" in function "fn". σωσ "n" h-has an attw "a" w-with vawue
+    // p-pwacehowdew = "foo". when fn is instantiated with attw "foo"
+    // s-set to "baw", rawr x3 the instantiated nyode ny's attw a wiww have been
+    // g-given the vawue "baw". OwO
+    stwing pwacehowdew = 9;
   }
 }
 
-// A list of attr names and their values. The whole list is attached
-// with a string name.  E.g., MatMul[T=float].
-message NameAttrList {
-  string name = 1;
-  map<string, AttrValue> attr = 2;
+// a-a wist of attw n-nyames and theiw v-vawues. /(^•ω•^) the whowe wist is attached
+// w-with a stwing n-nyame. 😳😳😳  e.g., m-matmuw[t=fwoat]. ( ͡o ω ͡o )
+m-message nyameattwwist {
+  stwing nyame = 1;
+  m-map<stwing, >_< attwvawue> a-attw = 2;
 }

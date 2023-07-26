@@ -1,313 +1,313 @@
-stratofed_forward_dark_traffic:
+stwatofed_fowwawd_dawk_twaffic:
   comment:
-    Forward Federated Strato traffic to DarkTrafficProxy (DTP).
-    Note, this decider is not overrideable via Tweetypie tooling,
-    as it is only used by the StratoFedServer frameworkDecider instance.
-    Note, you cannot use this decider as a TweetypieDeciderGates.
-  default_availability: 0
+    fowwawd fedewated s-stwato twaffic to d-dawktwafficpwoxy (dtp). o.O
+    n-nyote, ʘwʘ t-this decidew i-is nyot ovewwideabwe v-via tweetypie t-toowing, ^^
+    a-as it is onwy used by the stwatofedsewvew fwamewowkdecidew instance. ^•ﻌ•^
+    nyote, mya y-you cannot use this decidew as a tweetypiedecidewgates. UwU
+  d-defauwt_avaiwabiwity: 0
 
-tweetypie_enable_community_tweet_creates:
-  comment: When enable, it allows the creation of community tweets
-  default_availability: 10000
+tweetypie_enabwe_community_tweet_cweates:
+  c-comment: when enabwe, >_< it awwows the cweation of community tweets
+  d-defauwt_avaiwabiwity: 10000
 
-tweetypie_hydrate_scrub_engagements:
-  comment: Redact Tweet engagement related data (StatusCounts) from Interstital Public Interest (IPI) Tweets.
-  default_availability: 10000
+tweetypie_hydwate_scwub_engagements:
+  c-comment: w-wedact tweet engagement wewated data (statuscounts) fwom intewstitaw pubwic intewest (ipi) t-tweets. /(^•ω•^)
+  defauwt_avaiwabiwity: 10000
 
-tweetypie_check_spam_on_retweet:
-  comment: Enable Scarecrow spam check during retweet creation
-  default_availability: 10000
+tweetypie_check_spam_on_wetweet:
+  comment: enabwe scawecwow s-spam check duwing wetweet cweation
+  d-defauwt_avaiwabiwity: 10000
 
-tweetypie_check_spam_on_tweet:
-  comment: Enable Scarecrow spam check during tweet creation
-  default_availability: 10000
+t-tweetypie_check_spam_on_tweet:
+  c-comment: enabwe s-scawecwow spam check duwing tweet cweation
+  d-defauwt_avaiwabiwity: 10000
 
-tweetypie_conversation_control_use_feature_switch_results:
+tweetypie_convewsation_contwow_use_featuwe_switch_wesuwts:
   comment:
-    Controls whether Tweetypie uses feature switch results during conversation control parameter validation. This decider supports migration of feature switches from macaw-tweets to tweetypie.
-  default_availability: 0
+    c-contwows whethew tweetypie uses featuwe switch wesuwts duwing convewsation contwow pawametew v-vawidation. òωó this decidew suppowts m-migwation o-of featuwe switches f-fwom macaw-tweets to tweetypie. σωσ
+  defauwt_avaiwabiwity: 0
 
-tweetypie_conversation_control_tweet_create_enabled:
+tweetypie_convewsation_contwow_tweet_cweate_enabwed:
   comment:
-    Controls whether we will enforce conversation control policy on tweet create. http://go/dont-at-me-backend-tdd
-  default_availability: 0
+    c-contwows whethew w-we wiww enfowce convewsation c-contwow powicy o-on tweet cweate. ( ͡o ω ͡o ) http://go/dont-at-me-backend-tdd
+  d-defauwt_avaiwabiwity: 0
 
-tweetypie_enable_exclusive_tweet_control_validation:
+tweetypie_enabwe_excwusive_tweet_contwow_vawidation:
+  c-comment:
+    contwows whethew we wiww westwict t-the excwusivetweetcontwowoptions pawametew to o-onwy be usabwe by cweatows. nyaa~~ http://go/supewfowwows
+  d-defauwt_avaiwabiwity: 0
+
+tweetypie_deway_ewase_usew_tweets:
+  c-comment: sweep fow a fixed nyumbew of seconds befowe deweting a page of tweets duwing usew ewasuwe. used as a-a wate wimiting m-mechanism. :3
+  defauwt_avaiwabiwity: 5000
+
+tweetypie_deny_non_tweet_pewmawinks:
+  c-comment:
+    wight n-now we wouwd c-cweate a quote-tweet which wouwd contain a nyon-wowking pewmawink
+    w-wheweas with watest qt + media changes we'we bwocking the tweet cweation. UwU i-if tweet
+    fwom pewmawink is nyot f-found, o.O we wouwd t-thwow an exception i-if this decidew is on ewse
+    w-wetuwn a defauwt p-pass-thwough w-wesponse.
+  d-defauwt_avaiwabiwity: 0
+
+tweetypie_enabwe_twusted_fwiends_contwow_vawidation:
+  comment: contwows w-whethew we wiww e-enfowce twusted f-fwiends contwow p-powicy on wepwies
+  d-defauwt_avaiwabiwity: 0
+
+tweetypie_enfowce_wate_wimited_cwients:
   comment:
-    Controls whether we will restrict the exclusiveTweetControlOptions parameter to only be usable by creators. http://go/superfollows
-  default_availability: 0
+    contwows whethew we wiww wate-wimit w-wow-pwiowity cwients based on pew-instance wequests pew sec. (ˆ ﻌ ˆ)♡
+    we enabwe cwients fow w-wate-wimiting by setting the wate_wimit to twue in cwients.ymw
+  d-defauwt_avaiwabiwity: 10000
 
-tweetypie_delay_erase_user_tweets:
-  comment: sleep for a fixed number of seconds before deleting a page of tweets during user erasure. Used as a rate limiting mechanism.
-  default_availability: 5000
+tweetypie_faiw_cwosed_in_vf:
+  c-comment: p-pwopagate faiwuwe fwom backends s-such as stwato when wunning v-visibiwity fiwtewing
+  d-defauwt_avaiwabiwity: 0
 
-tweetypie_deny_non_tweet_permalinks:
+tweetypie_fowk_dawk_twaffic:
+  comment: fowks twaffic to dawkhub
+  defauwt_avaiwabiwity: 0
+
+tweetypie_hydwate_convewsation_muted:
+  comment: h-hydwates the convewsationmuted fiewd if wequested. ^^;; t-this cawws timewinesewvice. ʘwʘ
+  defauwt_avaiwabiwity: 10000
+
+t-tweetypie_hydwate_counts:
+  c-comment: hydwate status counts, if asked f-fow.  this cawws t-tfwock. σωσ
+  defauwt_avaiwabiwity: 10000
+
+tweetypie_hydwate_pwevious_counts:
+  c-comment: hydwate p-pwevious engagements on a tweet in an edit chain
+  defauwt_avaiwabiwity: 0
+
+tweetypie_hydwate_device_souwces:
+  c-comment: hydwate d-device souwces. ^^;;  t-this weads fwom dbs. ʘwʘ
+  defauwt_avaiwabiwity: 10000
+
+t-tweetypie_hydwate_eschewbiwd_annotations:
+  c-comment: hydwate the eschewbiwdentityannotations a-additionaw fiewd on tweet cweate.  this cawws the eschewbiwd annotation sewvice. ^^
+  d-defauwt_avaiwabiwity: 10000
+
+t-tweetypie_hydwate_gnip_pwofiwe_geo_enwichment:
+  comment: hydwates each tweet w-with the pwofiwe g-geo enwichment. nyaa~~
+  defauwt_avaiwabiwity: 10000
+
+tweetypie_hydwate_has_media:
+  comment: hydwate t-the hasmedia fiewd based on whethew the tweet has a media entity, (///ˬ///✿) a media cawd, XD o-ow a uww that matches pawtnew media wegexes
+  d-defauwt_avaiwabiwity: 10000
+
+t-tweetypie_hydwate_media:
+  comment: hydwate media entities. :3 this cawws m-mediainfo sewvice. òωó
+  d-defauwt_avaiwabiwity: 10000
+
+tweetypie_hydwate_media_wefs:
+  comment: hydwate mediawefs. c-cawws tweetypie fow pasted media. ^^
+  d-defauwt_avaiwabiwity: 0
+
+tweetypie_hydwate_media_tags:
+  comment: hydwate media tags. ^•ﻌ•^ this cawws gizmoduck f-fow usew view. σωσ
+  defauwt_avaiwabiwity: 10000
+
+tweetypie_hydwate_pasted_media:
+  c-comment: copies m-media entities and media cawds f-fwom tweets wefewenced by a media p-pewmawink uww e-entity. (ˆ ﻌ ˆ)♡
+  defauwt_avaiwabiwity: 10000
+
+t-tweetypie_hydwate_pewspectives:
+  comment: h-hydwate pewspectivaw a-attwibutes, nyaa~~ if asked fow. ʘwʘ  this cawws tws, ^•ﻌ•^ w-which may caww t-tfwock if items a-awe not in cache. rawr x3
+  defauwt_avaiwabiwity: 10000
+
+tweetypie_hydwate_pewspectives_edits_fow_timewines:
+  c-comment:
+    hydwated pewspectivaw a-attwibutes a-acwoss vewsions of tweet edit, 🥺
+    fow timewines safety wevews i-if asked fow. ʘwʘ
+    t-this wesuwts i-in mowe tws c-cawws (one fow each vewsion of tweet). (˘ω˘)
+  d-defauwt_avaiwabiwity: 0
+
+tweetypie_hydwate_pewspectives_edits_fow_tweet_detaiws:
   comment:
-    Right now we would create a quote-tweet which would contain a non-working permalink
-    whereas with latest QT + media changes we're blocking the tweet creation. If tweet
-    from permalink is not found, we would throw an exception if this decider is on else
-    return a default pass-through response.
-  default_availability: 0
+    hydwated pewspectivaw attwibutes acwoss v-vewsions of tweet edit, o.O
+    fow t-tweet detaiw safety wevews if asked f-fow. σωσ
+    this wesuwts in mowe t-tws cawws (one fow each vewsion o-of tweet). (ꈍᴗꈍ)
+  d-defauwt_avaiwabiwity: 0
 
-tweetypie_enable_trusted_friends_control_validation:
-  comment: Controls whether we will enforce trusted friends control policy on replies
-  default_availability: 0
+t-tweetypie_hydwate_pewspectives_edits_fow_othew_wevews:
+  c-comment:
+    hydwated p-pewspectivaw attwibutes acwoss vewsions of tweet edit, (ˆ ﻌ ˆ)♡
+    fow safety wevews not mentioned in othew decidews, o.O i-if asked fow. :3
+    t-this wesuwts i-in mowe tws cawws (one fow e-each vewsion of tweet). -.-
+  defauwt_avaiwabiwity: 0
 
-tweetypie_enforce_rate_limited_clients:
+tweetypie_hydwate_pwaces:
+  comment: hydwate p-pwace data, ( ͡o ω ͡o ) if asked f-fow. /(^•ω•^) this cawws geoduck. (⑅˘꒳˘)
+  d-defauwt_avaiwabiwity: 10000
+
+tweetypie_jiminy_dawk_wequests:
+  comment: enabwes d-dawk wequests to t-the jiminy backend fow the specified % o-of twaffic
+  d-defauwt_avaiwabiwity: 0
+
+tweetypie_wog_cache_exceptions:
+  comment: enabwes wogging of cache exceptions to w-wogwens. òωó
+  defauwt_avaiwabiwity: 0
+
+t-tweetypie_wog_weads:
+  c-comment: e-enabwes wogging o-of weads. 🥺
+  defauwt_avaiwabiwity: 50
+
+t-tweetypie_wog_tweet_cache_wwites:
+  c-comment: scwibe a w-wecowd fow each c-cache wwite fow tweets that pass t-this decidew. (ˆ ﻌ ˆ)♡
+  defauwt_avaiwabiwity: 0
+
+tweetypie_wog_wwites:
+  c-comment: enabwes wogging of status w-wwites. -.-
+  defauwt_avaiwabiwity: 10000
+
+t-tweetypie_wog_young_tweet_cache_wwites:
   comment:
-    Controls whether we will rate-limit low-priority clients based on per-instance requests per sec.
-    We enable clients for rate-limiting by setting the rate_limit to true in clients.yml
-  default_availability: 10000
+    s-scwibe a wecowd of cache wwites fow wecentwy-cweated t-tweets that
+    p-pass this d-decidew. σωσ
+  defauwt_avaiwabiwity: 0
 
-tweetypie_fail_closed_in_vf:
-  comment: Propagate failure from backends such as Strato when running Visibility Filtering
-  default_availability: 0
+tweetypie_wog_vf_dawk_wead_mismatches:
+  comment: wog mismatches fwom the t-tweetypie_dawk_wead_safety_wabews_fwom_stwato code path. >_<
+  defauwt_avaiwabiwity: 0
 
-tweetypie_fork_dark_traffic:
-  comment: Forks traffic to Darkhub
-  default_availability: 0
+t-tweetypie_max_wequest_width_enabwed:
+  c-comment:
+    contwows w-whethew the max wequest width wimit i-is enabwed o-ow nyot. :3
+    0 means the wimit is disabwed, OwO 10000 m-means it is tuwned on and
+    wequest widths > m-maxsize wiww be w-wejected. rawr
+  defauwt_avaiwabiwity: 0
 
-tweetypie_hydrate_conversation_muted:
-  comment: Hydrates the conversationMuted field if requested. This calls timelineservice.
-  default_availability: 10000
+tweetypie_media_wefs_hydwatow_incwude_pasted_media:
+  c-comment:
+    fow debugging m-mediawefshydwatow - d-detewmine i-if extwa cawws to pasted media awe causing the gc issues. (///ˬ///✿)
+  defauwt_avaiwabiwity: 0
 
-tweetypie_hydrate_counts:
-  comment: Hydrate status counts, if asked for.  This calls TFlock.
-  default_availability: 10000
+tweetypie_pwefew_fowwawded_sewvice_identifiew_fow_cwient_id:
+  comment: effective cwient id wogic pwefews fowwawded sewvice identifiew to sewvice identifiew if avaiwabwe. ^^
+  d-defauwt_avaiwabiwity: 0
 
-tweetypie_hydrate_previous_counts:
-  comment: Hydrate previous engagements on a tweet in an edit chain
-  default_availability: 0
-
-tweetypie_hydrate_device_sources:
-  comment: Hydrate device sources.  This reads from DBs.
-  default_availability: 10000
-
-tweetypie_hydrate_escherbird_annotations:
-  comment: Hydrate the escherbirdEntityAnnotations additional field on tweet create.  This calls the Escherbird Annotation Service.
-  default_availability: 10000
-
-tweetypie_hydrate_gnip_profile_geo_enrichment:
-  comment: Hydrates each tweet with the profile geo enrichment.
-  default_availability: 10000
-
-tweetypie_hydrate_has_media:
-  comment: Hydrate the hasMedia field based on whether the tweet has a media entity, a media card, or a URL that matches partner media regexes
-  default_availability: 10000
-
-tweetypie_hydrate_media:
-  comment: Hydrate media entities. This calls MediaInfo Service.
-  default_availability: 10000
-
-tweetypie_hydrate_media_refs:
-  comment: Hydrate MediaRefs. Calls Tweetypie for pasted media.
-  default_availability: 0
-
-tweetypie_hydrate_media_tags:
-  comment: Hydrate media tags. This calls Gizmoduck for user view.
-  default_availability: 10000
-
-tweetypie_hydrate_pasted_media:
-  comment: Copies media entities and media cards from tweets referenced by a media permalink url entity.
-  default_availability: 10000
-
-tweetypie_hydrate_perspectives:
-  comment: Hydrate perspectival attributes, if asked for.  This calls TLS, which may call TFlock if items are not in cache.
-  default_availability: 10000
-
-tweetypie_hydrate_perspectives_edits_for_timelines:
+t-tweetypie_wate_wimit_by_wimitew_sewvice:
   comment:
-    Hydrated perspectival attributes across versions of tweet edit,
-    for timelines safety levels if asked for.
-    This results in more TLS calls (one for each version of tweet).
-  default_availability: 0
+    contwows w-whethew we wiww c-consuwt wimitew s-sewvice to see whethew a
+    usew i-is awwowed to cweate mowe tweets. XD
+  d-defauwt_avaiwabiwity: 10000
 
-tweetypie_hydrate_perspectives_edits_for_tweet_details:
+t-tweetypie_wate_wimit_tweet_cweation_faiwuwe:
   comment:
-    Hydrated perspectival attributes across versions of tweet edit,
-    for tweet detail safety levels if asked for.
-    This results in more TLS calls (one for each version of tweet).
-  default_availability: 0
+    c-contwows whethew we wate wimit tweet c-cweation based o-on faiwed
+    attempts to cweate tweets via w-wimitew sewvice. UwU t-this is sepawate
+    f-fwom the wimit o-of cweated t-tweets. o.O it is intended t-to pwevent
+    u-unfoweseen a-abuse by faiwing t-tweet cweation attempts immediatewy i-if
+    the u-usew has had too m-many wecent tweet cweation
+    f-faiwuwes. 😳 disabwing this decidew wiww weduce twaffic t-to wimitew
+    sewvice, (˘ω˘) but w-wiww wemove the p-pew-usew abuse p-pwotection. 🥺
+  defauwt_avaiwabiwity: 10000
 
-tweetypie_hydrate_perspectives_edits_for_other_levels:
+tweetypie_wepwicate_weads_to_atwa:
+  c-comment: send weads to defewwedwpc f-fow wepwication to atwa. ^^ we c-can use this to wawm caches in atwa. >w<
+  d-defauwt_avaiwabiwity: 0
+
+tweetypie_wepwicate_weads_to_pdxa:
+  comment: send weads to defewwedwpc fow wepwication t-to pdxa. ^^;; we can use this t-to wawm caches i-in pdxa. (˘ω˘)
+  defauwt_avaiwabiwity: 0
+
+tweetypie_disabwe_invite_via_mention:
   comment:
-    Hydrated perspectival attributes across versions of tweet edit,
-    for safety levels not mentioned in other deciders, if asked for.
-    This results in more TLS calls (one for each version of tweet).
-  default_availability: 0
+    disabwes i-invite via mention fiewd in the c-convewsation contwow s-stwuct of
+    w-woot tweets + wepwy tweets. OwO
+  defauwt_avaiwabiwity: 0
 
-tweetypie_hydrate_places:
-  comment: Hydrate place data, if asked for. This calls geoduck.
-  default_availability: 10000
+t-tweetypie_shed_wead_twaffic_vowuntawiwy:
+  c-comment:
+    pwefewwed way t-to weject wead wequests duwing an incident fwom a-a subset of cwients that have
+    v-vowunteewed t-to shed woad. (ꈍᴗꈍ)  these c-cwients have woad_shed_envs s-set in cwients.ymw, òωó o-often fow
+    s-staging enviwonments. ʘwʘ  a-awthough this decidew i-is avaiwabwe and c-cwients have vowunteewed, ʘwʘ s-shouwd
+    s-stiww onwy b-be used in an emewgency. nyaa~~
+  d-defauwt_avaiwabiwity: 0
 
-tweetypie_jiminy_dark_requests:
-  comment: Enables dark requests to the Jiminy backend for the specified % of traffic
-  default_availability: 0
+t-tweetypie_vawidate_cawd_wef_attachment_andwoid:
+  c-comment:
+    when enabwed t-tweet cweates fwom andwoid considew c-cawdwefewence fow the toomanyattachmenttypes e-ewwow when cweating t-tweets with m-mowe than one attachment type. UwU
+  defauwt_avaiwabiwity: 0
 
-tweetypie_log_cache_exceptions:
-  comment: Enables logging of cache exceptions to loglens.
-  default_availability: 0
+tweetypie_vawidate_cawd_wef_attachment_non_andwoid:
+  c-comment:
+    when e-enabwed tweet c-cweates fwom nyon-andwoid considew cawdwefewence fow the toomanyattachmenttypes e-ewwow when cweating t-tweets with mowe than one a-attachment type
+  d-defauwt_avaiwabiwity: 0
 
-tweetypie_log_reads:
-  comment: Enables logging of reads.
-  default_availability: 50
+# additionaw fiewds
 
-tweetypie_log_tweet_cache_writes:
-  comment: Scribe a record for each cache write for tweets that pass this decider.
-  default_availability: 0
+tweetypie_showt_ciwcuit_wikewy_pawtiaw_tweet_weads_ms:
+  c-comment:
+    s-specifies a-a nyumbew of miwwiseconds b-befowe which, (⑅˘꒳˘) we showt ciwcuit wikewy
+    p-pawtiaw weads f-fwom mh and wetuwn nyotfound tweet wesponse state. (˘ω˘)
+    a-aftew expewimenting decided to go with 1500 m-ms. :3
+  defauwt_avaiwabiwity: 0
 
-tweetypie_log_writes:
-  comment: Enables logging of status writes.
-  default_availability: 10000
+tweetypie_popuwate_quoted_tweet_wesuwts_as_contextuaw_tweet_wef:
+  c-comment:
+    c-cweatetweet and cweatewetweet c-cowumn to wetuwn t-the 'quoted_tweet_wesuwts' pwefetcheditem a-as
+    contextuawtweetwef t-type instead o-of just tweetid. (˘ω˘)
+    t-this wiww b-be used duwing the quotedtweet.tweet c-cowumn migwation (see h-http://go/qt-cow-migwation)
+    p-post-migwation, this w-wiww be wemoved. nyaa~~
+  defauwt_avaiwabiwity: 0
+tweetypie_enabwe_unmentions_timewine_wawmup:
+  c-comment:
+    w-when enabwed, w-wead-path cawws exekawaii~ an async caww to the getunmentionedusewsfwomconvewstion
+    stwato cowumn to w-wawm the unmentioned nyh/hapwowite c-cache. (U ﹏ U)
+    http://go/unmention-me-onepagew
+  d-defauwt_avaiwabiwity: 0
 
-tweetypie_log_young_tweet_cache_writes:
+tweetypie_tweet_visibiwity_wibwawy_enabwe_pawity_test:
+  comment: measuwe t-tvw pawity against vf fedewated s-sewvice, fow a-a fwaction of twaffic
+  d-defauwt_avaiwabiwity: 0
+
+t-tweetypie_enabwe_vf_featuwe_hydwation_in_quoted_tweet_visibiwity_wibwawy_shim:
+  c-comment: when enabwed, nyaa~~ aww featuwes awe hydwated in quotedtweetvisibiwitywibwawy shim
+  defauwt_avaiwabiwity: 0
+
+t-tweetypie_enabwe_wemove_unmentioned_impwicit_mentions:
   comment:
-    Scribe a record of cache writes for recently-created tweets that
-    pass this decider.
-  default_availability: 0
+    w-when enabwed, ^^;; impwicit mentions awe fiwtewed based on usews t-that have unmentioned themsewves
+    fwom the tweet's convewsation. OwO  http://go/unmention-me-onepagew
+  d-defauwt_avaiwabiwity: 0
 
-tweetypie_log_vf_dark_read_mismatches:
-  comment: Log mismatches from the tweetypie_dark_read_safety_labels_from_strato code path.
-  default_availability: 0
+t-tweetypie_enabwe_stawe_tweet_vawidation:
+  comment: contwows w-whethew we wiww enfowce stawe tweet powicy on w-wepwies and qt
+  d-defauwt_avaiwabiwity: 0
 
-tweetypie_max_request_width_enabled:
+tweetypie_disabwe_pwomoted_tweet_edit:
+  c-comment:
+    contwows whethew w-we wiww disabwe edits on pwomoted tweets
+  defauwt_avaiwabiwity: 0
+
+tweetypie_shouwd_matewiawize_containews:
+  c-comment:
+    when enabwed, nyaa~~ cweatives containew sewvice w-wiww be cawwed t-to matewiawize c-containew-backed tweets. UwU
+    othewwise, 😳 tp w-wiww nyot caww ccs and wetuwn a statusstate of nyotfound. 😳
+  defauwt_avaiwabiwity: 0
+
+tweetypie_check_twittew_bwue_subscwiption_fow_edit:
+  c-comment:
+    c-contwows w-whethew we check i-if the usew is subscwibed to twittew bwue when e-editing a tweet. (ˆ ﻌ ˆ)♡
+  d-defauwt_avaiwabiwity: 0
+
+tweetypie_hydwate_bookmawks_count:
   comment:
-    Controls whether the max request width limit is enabled or not.
-    0 means the limit is disabled, 10000 means it is turned on and
-    request widths > maxSize will be rejected.
-  default_availability: 0
+    contwows w-whethew we hydwate bookmawks count fow a t-tweet
+  defauwt_avaiwabiwity: 0
 
-tweetypie_media_refs_hydrator_include_pasted_media:
+tweetypie_hydwate_bookmawks_pewspective:
   comment:
-    For debugging MediaRefsHydrator - determine if extra calls to pasted media are causing the GC issues.
-  default_availability: 0
+    c-contwows w-whethew we wequest the bookmawked p-pewspective f-fwom tws
+  defauwt_avaiwabiwity: 0
 
-tweetypie_prefer_forwarded_service_identifier_for_client_id:
-  comment: Effective client ID logic prefers forwarded service identifier to service identifier if available.
-  default_availability: 0
-
-tweetypie_rate_limit_by_limiter_service:
+t-tweetypie_set_edit_time_window_to_sixty_minutes:
   comment:
-    Controls whether we will consult limiter service to see whether a
-    user is allowed to create more tweets.
-  default_availability: 10000
+    set time window i-in which tweets awe editabwe to 60 minutes
+  d-defauwt_avaiwabiwity: 0
 
-tweetypie_rate_limit_tweet_creation_failure:
+tweetypie_enabwe_fedewated_cowumn_dawk_twaffic:
   comment:
-    Controls whether we rate limit tweet creation based on failed
-    attempts to create tweets via limiter service. This is separate
-    from the limit of created tweets. It is intended to prevent
-    unforeseen abuse by failing tweet creation attempts immediately if
-    the user has had too many recent tweet creation
-    failures. Disabling this decider will reduce traffic to limiter
-    service, but will remove the per-user abuse protection.
-  default_availability: 10000
-
-tweetypie_replicate_reads_to_atla:
-  comment: Send reads to deferredrpc for replication to atla. We can use this to warm caches in atla.
-  default_availability: 0
-
-tweetypie_replicate_reads_to_pdxa:
-  comment: Send reads to deferredrpc for replication to pdxa. We can use this to warm caches in pdxa.
-  default_availability: 0
-
-tweetypie_disable_invite_via_mention:
-  comment:
-    Disables invite via mention field in the conversation control struct of
-    root tweets + reply tweets.
-  default_availability: 0
-
-tweetypie_shed_read_traffic_voluntarily:
-  comment:
-    Preferred way to reject read requests during an incident from a subset of clients that have
-    volunteered to shed load.  These clients have load_shed_envs set in clients.yml, often for
-    staging environments.  Although this decider is available and clients have volunteered, should
-    still only be used in an emergency.
-  default_availability: 0
-
-tweetypie_validate_card_ref_attachment_android:
-  comment:
-    When enabled tweet creates from Android consider CardReference for the TooManyAttachmentTypes error when creating tweets with more than one attachment type.
-  default_availability: 0
-
-tweetypie_validate_card_ref_attachment_non_android:
-  comment:
-    When enabled tweet creates from non-Android consider CardReference for the TooManyAttachmentTypes error when creating tweets with more than one attachment type
-  default_availability: 0
-
-# Additional Fields
-
-tweetypie_short_circuit_likely_partial_tweet_reads_ms:
-  comment:
-    Specifies a number of milliseconds before which, we short circuit likely
-    partial reads from MH and return NotFound tweet response state.
-    After experimenting decided to go with 1500 ms.
-  default_availability: 0
-
-tweetypie_populate_quoted_tweet_results_as_contextual_tweet_ref:
-  comment:
-    CreateTweet and CreateReTweet column to return the 'quoted_tweet_results' PrefetchedItem as
-    ContextualTweetRef type instead of just tweetId.
-    This will be used during the quotedTweet.Tweet column migration (see http://go/qt-col-migration)
-    Post-migration, this will be removed.
-  default_availability: 0
-tweetypie_enable_unmentions_timeline_warmup:
-  comment:
-    When enabled, read-path calls execute an async call to the getUnmentionedUsersFromConverstion
-    strato column to warm the unmentioned NH/haplolite cache.
-    http://go/unmention-me-onepager
-  default_availability: 0
-
-tweetypie_tweet_visibility_library_enable_parity_test:
-  comment: measure TVL parity against VF federated service, for a fraction of traffic
-  default_availability: 0
-
-tweetypie_enable_vf_feature_hydration_in_quoted_tweet_visibility_library_shim:
-  comment: when enabled, all features are hydrated in QuotedTweetVisibilityLibrary shim
-  default_availability: 0
-
-tweetypie_enable_remove_unmentioned_implicit_mentions:
-  comment:
-    When enabled, implicit mentions are filtered based on users that have unmentioned themselves
-    from the tweet's conversation.  http://go/unmention-me-onepager
-  default_availability: 0
-
-tweetypie_enable_stale_tweet_validation:
-  comment: Controls whether we will enforce stale tweet policy on replies and QT
-  default_availability: 0
-
-tweetypie_disable_promoted_tweet_edit:
-  comment:
-    Controls whether we will disable edits on promoted tweets
-  default_availability: 0
-
-tweetypie_should_materialize_containers:
-  comment:
-    When enabled, Creatives Container Service will be called to materialize container-backed tweets.
-    Otherwise, TP will not call CCS and return a StatusState of NotFound.
-  default_availability: 0
-
-tweetypie_check_twitter_blue_subscription_for_edit:
-  comment:
-    Controls whether we check if the User is subscribed to Twitter Blue when editing a Tweet.
-  default_availability: 0
-
-tweetypie_hydrate_bookmarks_count:
-  comment:
-    Controls whether we hydrate bookmarks count for a Tweet
-  default_availability: 0
-
-tweetypie_hydrate_bookmarks_perspective:
-  comment:
-    Controls whether we request the Bookmarked perspective from TLS
-  default_availability: 0
-
-tweetypie_set_edit_time_window_to_sixty_minutes:
-  comment:
-    Set time window in which Tweets are editable to 60 minutes
-  default_availability: 0
-
-tweetypie_enable_federated_column_dark_traffic:
-  comment:
-    Enable dark traffic for federated column.
-  default_availability: 0
+    enabwe d-dawk twaffic fow f-fedewated cowumn.
+  d-defauwt_avaiwabiwity: 0

@@ -1,102 +1,102 @@
-package com.twitter.product_mixer.core.pipeline.step.side_effect
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.side_effect
 
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.iwwegawstatefaiwuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasexecutowwesuwts
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.domain_mawshawwew_executow.domainmawshawwewexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_wesuwt_side_effect_executow.pipewinewesuwtsideeffectexecutow
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.sewectow_executow.sewectowexecutowwesuwt
+impowt com.twittew.stitch.awwow
+impowt javax.inject.inject
 
 /**
- * A side effect step, it takes the input list of side effects and and executes them.
+ * a side effect s-step, it takes the input wist o-of side effects a-and and exekawaii~s them. (✿oωo)
  *
- * @param sideEffectExecutor Side Effect Executor
+ * @pawam sideeffectexecutow side effect executow
  *
- * @tparam Query Type of PipelineQuery domain model
- * @tparam DomainResultType Domain Marshaller result type
- * @tparam State The pipeline state domain model.
+ * @tpawam q-quewy type of pipewinequewy domain modew
+ * @tpawam domainwesuwttype d-domain mawshawwew wesuwt type
+ * @tpawam s-state t-the pipewine state d-domain modew. (U ﹏ U)
  */
-case class SideEffectStep[
-  Query <: PipelineQuery,
-  DomainResultType <: HasMarshalling,
-  State <: HasQuery[Query, State] with HasExecutorResults[State]] @Inject() (
-  sideEffectExecutor: PipelineResultSideEffectExecutor)
-    extends Step[
-      State,
-      PipelineStepConfig[Query, DomainResultType],
-      PipelineResultSideEffect.Inputs[
-        Query,
-        DomainResultType
-      ],
-      PipelineResultSideEffectExecutor.Result
+c-case cwass sideeffectstep[
+  quewy <: pipewinequewy, -.-
+  d-domainwesuwttype <: hasmawshawwing, ^•ﻌ•^
+  state <: hasquewy[quewy, rawr s-state] with hasexecutowwesuwts[state]] @inject() (
+  sideeffectexecutow: pipewinewesuwtsideeffectexecutow)
+    extends step[
+      state, (˘ω˘)
+      p-pipewinestepconfig[quewy, nyaa~~ domainwesuwttype], UwU
+      pipewinewesuwtsideeffect.inputs[
+        q-quewy, :3
+        d-domainwesuwttype
+      ], (⑅˘꒳˘)
+      p-pipewinewesuwtsideeffectexecutow.wesuwt
     ] {
-  override def isEmpty(config: PipelineStepConfig[Query, DomainResultType]): Boolean =
-    config.sideEffects.isEmpty
+  ovewwide def isempty(config: pipewinestepconfig[quewy, (///ˬ///✿) d-domainwesuwttype]): b-boowean =
+    config.sideeffects.isempty
 
-  override def adaptInput(
-    state: State,
-    config: PipelineStepConfig[Query, DomainResultType]
-  ): PipelineResultSideEffect.Inputs[Query, DomainResultType] = {
-    val selectorResults = state.executorResultsByPipelineStep
-      .getOrElse(
-        config.selectorStepIdentifier,
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Missing Selector Result in Side Effect Step")).asInstanceOf[SelectorExecutorResult]
+  o-ovewwide def adaptinput(
+    s-state: state, ^^;;
+    config: p-pipewinestepconfig[quewy, >_< domainwesuwttype]
+  ): p-pipewinewesuwtsideeffect.inputs[quewy, rawr x3 domainwesuwttype] = {
+    vaw sewectowwesuwts = state.executowwesuwtsbypipewinestep
+      .getowewse(
+        config.sewectowstepidentifiew, /(^•ω•^)
+        t-thwow pipewinefaiwuwe(
+          iwwegawstatefaiwuwe, :3
+          "missing s-sewectow wesuwt in s-side effect step")).asinstanceof[sewectowexecutowwesuwt]
 
-    val domainMarshallerResult = state.executorResultsByPipelineStep
-      .getOrElse(
-        config.domainMarshallerStepIdentifier,
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Missing Domain Marshaller Result in Side Effect Step")).asInstanceOf[
-        DomainMarshallerExecutor.Result[DomainResultType]]
+    v-vaw domainmawshawwewwesuwt = state.executowwesuwtsbypipewinestep
+      .getowewse(
+        config.domainmawshawwewstepidentifiew, (ꈍᴗꈍ)
+        thwow pipewinefaiwuwe(
+          iwwegawstatefaiwuwe, /(^•ω•^)
+          "missing domain mawshawwew w-wesuwt in side e-effect step")).asinstanceof[
+        domainmawshawwewexecutow.wesuwt[domainwesuwttype]]
 
-    PipelineResultSideEffect.Inputs(
-      query = state.query,
-      selectedCandidates = selectorResults.selectedCandidates,
-      remainingCandidates = selectorResults.remainingCandidates,
-      droppedCandidates = selectorResults.droppedCandidates,
-      response = domainMarshallerResult.result
+    pipewinewesuwtsideeffect.inputs(
+      q-quewy = state.quewy, (⑅˘꒳˘)
+      s-sewectedcandidates = s-sewectowwesuwts.sewectedcandidates, ( ͡o ω ͡o )
+      wemainingcandidates = sewectowwesuwts.wemainingcandidates, òωó
+      dwoppedcandidates = s-sewectowwesuwts.dwoppedcandidates, (⑅˘꒳˘)
+      wesponse = domainmawshawwewwesuwt.wesuwt
     )
   }
 
-  override def arrow(
-    config: PipelineStepConfig[Query, DomainResultType],
-    context: Executor.Context
-  ): Arrow[
-    PipelineResultSideEffect.Inputs[Query, DomainResultType],
-    PipelineResultSideEffectExecutor.Result
-  ] = sideEffectExecutor.arrow(config.sideEffects, context)
+  ovewwide def awwow(
+    config: p-pipewinestepconfig[quewy, XD domainwesuwttype], -.-
+    c-context: executow.context
+  ): a-awwow[
+    pipewinewesuwtsideeffect.inputs[quewy, d-domainwesuwttype], :3
+    pipewinewesuwtsideeffectexecutow.wesuwt
+  ] = s-sideeffectexecutow.awwow(config.sideeffects, nyaa~~ c-context)
 
-  override def updateState(
-    state: State,
-    executorResult: PipelineResultSideEffectExecutor.Result,
-    config: PipelineStepConfig[Query, DomainResultType]
-  ): State = state
+  o-ovewwide def u-updatestate(
+    state: state, 😳
+    executowwesuwt: p-pipewinewesuwtsideeffectexecutow.wesuwt, (⑅˘꒳˘)
+    c-config: pipewinestepconfig[quewy, nyaa~~ d-domainwesuwttype]
+  ): s-state = s-state
 }
 
 /**
- * Wrapper case class containing side effects to be executed and other information needed to execute
- * @param sideEffects The side effects to execute.
- * @param selectorStepIdentifier The identifier of the selector step in the parent
- *                               pipeline to get selection results from.
- * @param domainMarshallerStepIdentifier The identifier of the domain marshaller step in the parent
- *                                       pipeline to get domain marshalled results from.
+ * wwappew case cwass containing side effects to b-be exekawaii~d and othew infowmation nyeeded to exekawaii~
+ * @pawam sideeffects the side effects t-to exekawaii~. OwO
+ * @pawam sewectowstepidentifiew the identifiew of the sewectow s-step in the pawent
+ *                               p-pipewine to g-get sewection wesuwts fwom. rawr x3
+ * @pawam d-domainmawshawwewstepidentifiew the identifiew o-of the domain m-mawshawwew step in the pawent
+ *                                       pipewine to get domain mawshawwed wesuwts fwom. XD
  *
- * @tparam Query Type of PipelineQuery domain model
- * @tparam DomainResultType Domain Marshaller result type
+ * @tpawam q-quewy type of pipewinequewy d-domain modew
+ * @tpawam domainwesuwttype d-domain m-mawshawwew wesuwt type
  */
-case class PipelineStepConfig[Query <: PipelineQuery, DomainResultType <: HasMarshalling](
-  sideEffects: Seq[PipelineResultSideEffect[Query, DomainResultType]],
-  selectorStepIdentifier: PipelineStepIdentifier,
-  domainMarshallerStepIdentifier: PipelineStepIdentifier)
+case cwass pipewinestepconfig[quewy <: p-pipewinequewy, σωσ d-domainwesuwttype <: hasmawshawwing](
+  s-sideeffects: s-seq[pipewinewesuwtsideeffect[quewy, (U ᵕ U❁) domainwesuwttype]], (U ﹏ U)
+  sewectowstepidentifiew: pipewinestepidentifiew, :3
+  domainmawshawwewstepidentifiew: p-pipewinestepidentifiew)

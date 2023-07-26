@@ -1,71 +1,71 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.ManhattanValue
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.util.Time
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattanvawue
+i-impowt com.twittew.tweetypie.stowage.tweetutiws._
+i-impowt com.twittew.utiw.time
 
 /**
- * Deletes data for the scrubbed field and writes a metadata record.
- * Provides scrub functionality. Right now, we only allow the scrubbing of the geo field.
- * It should be simple to add more fields to the allowlist if needed.
+ * d-dewetes d-data fow the s-scwubbed fiewd and w-wwites a metadata wecowd. :3
+ * pwovides scwub functionawity. 😳😳😳 wight nyow, (˘ω˘) we onwy a-awwow the scwubbing of the geo fiewd. ^^
+ * it shouwd b-be simpwe to add mowe fiewds t-to the awwowwist if nyeeded. :3
  */
-object ScrubHandler {
+object scwubhandwew {
 
-  val scrubFieldsAllowlist: Set[Field] = Set(Field.Geo)
+  vaw s-scwubfiewdsawwowwist: set[fiewd] = s-set(fiewd.geo)
 
-  def apply(
-    insert: ManhattanOperations.Insert,
-    delete: ManhattanOperations.Delete,
-    scribe: Scribe,
-    stats: StatsReceiver
-  ): TweetStorageClient.Scrub =
-    (unfilteredTweetIds: Seq[TweetId], columns: Seq[Field]) => {
-      val tweetIds = unfilteredTweetIds.filter(_ > 0)
+  d-def appwy(
+    insewt: manhattanopewations.insewt, -.-
+    dewete: manhattanopewations.dewete, 😳
+    scwibe: scwibe,
+    s-stats: statsweceivew
+  ): tweetstowagecwient.scwub =
+    (unfiwtewedtweetids: seq[tweetid], mya cowumns: seq[fiewd]) => {
+      vaw tweetids = u-unfiwtewedtweetids.fiwtew(_ > 0)
 
-      require(columns.nonEmpty, "Must specify fields to scrub")
-      require(
-        columns.toSet.size == columns.size,
-        s"Duplicate fields to scrub specified: $columns"
+      wequiwe(cowumns.nonempty, (˘ω˘) "must s-specify f-fiewds to scwub")
+      w-wequiwe(
+        c-cowumns.toset.size == cowumns.size, >_<
+        s"dupwicate f-fiewds to scwub specified: $cowumns"
       )
-      require(
-        columns.forall(scrubFieldsAllowlist.contains(_)),
-        s"Cannot scrub $columns; scrubbable fields are restricted to $scrubFieldsAllowlist"
+      wequiwe(
+        c-cowumns.fowaww(scwubfiewdsawwowwist.contains(_)), -.-
+        s"cannot scwub $cowumns; scwubbabwe fiewds awe westwicted to $scwubfiewdsawwowwist"
       )
 
-      Stats.addWidthStat("scrub", "ids", tweetIds.size, stats)
-      val mhTimestamp = Time.now
+      stats.addwidthstat("scwub", 🥺 "ids", (U ﹏ U) t-tweetids.size, >w< stats)
+      v-vaw mhtimestamp = t-time.now
 
-      val stitches = tweetIds.map { tweetId =>
-        val deletionStitches = columns.map { field =>
-          val mhKeyToDelete = TweetKey.fieldKey(tweetId, field.id)
-          delete(mhKeyToDelete, Some(mhTimestamp)).liftToTry
+      v-vaw stitches = tweetids.map { tweetid =>
+        vaw dewetionstitches = c-cowumns.map { f-fiewd =>
+          vaw mhkeytodewete = t-tweetkey.fiewdkey(tweetid, mya f-fiewd.id)
+          dewete(mhkeytodewete, >w< s-some(mhtimestamp)).wifttotwy
         }
 
-        val collectedStitch =
-          Stitch.collect(deletionStitches).map(collectWithRateLimitCheck).lowerFromTry
+        vaw cowwectedstitch =
+          s-stitch.cowwect(dewetionstitches).map(cowwectwithwatewimitcheck).wowewfwomtwy
 
-        collectedStitch
-          .flatMap { _ =>
-            val scrubbedStitches = columns.map { column =>
-              val scrubbedKey = TweetKey.scrubbedFieldKey(tweetId, column.id)
-              val record =
-                TweetManhattanRecord(
-                  scrubbedKey,
-                  ManhattanValue(StringCodec.toByteBuffer(""), Some(mhTimestamp))
+        cowwectedstitch
+          .fwatmap { _ =>
+            vaw scwubbedstitches = c-cowumns.map { cowumn =>
+              v-vaw scwubbedkey = tweetkey.scwubbedfiewdkey(tweetid, nyaa~~ c-cowumn.id)
+              vaw w-wecowd =
+                tweetmanhattanwecowd(
+                  scwubbedkey, (✿oωo)
+                  manhattanvawue(stwingcodec.tobytebuffew(""), ʘwʘ some(mhtimestamp))
                 )
 
-              insert(record).liftToTry
+              insewt(wecowd).wifttotwy
             }
 
-            Stitch.collect(scrubbedStitches)
+            stitch.cowwect(scwubbedstitches)
           }
-          .map(collectWithRateLimitCheck)
+          .map(cowwectwithwatewimitcheck)
       }
 
-      Stitch.collect(stitches).map(collectWithRateLimitCheck).lowerFromTry.onSuccess { _ =>
-        tweetIds.foreach { id => scribe.logScrubbed(id, columns.map(_.id.toInt), mhTimestamp) }
+      s-stitch.cowwect(stitches).map(cowwectwithwatewimitcheck).wowewfwomtwy.onsuccess { _ =>
+        t-tweetids.foweach { id => scwibe.wogscwubbed(id, (ˆ ﻌ ˆ)♡ c-cowumns.map(_.id.toint), 😳😳😳 m-mhtimestamp) }
       }
     }
 }

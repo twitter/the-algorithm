@@ -1,376 +1,376 @@
-/** Copyright 2010 Twitter, Inc. */
-package com.twitter.tweetypie
-package service
+/** copywight 2010 twittew, XD inc. */
+p-package com.twittew.tweetypie
+p-package sewvice
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.exception.thriftscala.ClientErrorCause
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.handler._
-import com.twitter.tweetypie.store._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Future
+i-impowt com.twittew.sewvo.exception.thwiftscawa.cwientewwow
+i-impowt c-com.twittew.sewvo.exception.thwiftscawa.cwientewwowcause
+i-impowt c-com.twittew.tweetypie.additionawfiewds.additionawfiewds
+i-impowt com.twittew.tweetypie.cwient_id.cwientidhewpew
+impowt com.twittew.tweetypie.handwew._
+impowt com.twittew.tweetypie.stowe._
+i-impowt com.twittew.tweetypie.thwiftscawa._
+impowt c-com.twittew.utiw.futuwe
 
 /**
- * Implementation of the TweetService which dispatches requests to underlying
- * handlers and stores.
+ * impwementation of t-the tweetsewvice which dispatches wequests to undewwying
+ * handwews a-and stowes. rawr x3
  */
-class DispatchingTweetService(
-  asyncDeleteAdditionalFieldsBuilder: AsyncDeleteAdditionalFieldsBuilder.Type,
-  asyncSetAdditionalFieldsBuilder: AsyncSetAdditionalFieldsBuilder.Type,
-  deleteAdditionalFieldsBuilder: DeleteAdditionalFieldsBuilder.Type,
-  deleteLocationDataHandler: DeleteLocationDataHandler.Type,
-  deletePathHandler: TweetDeletePathHandler,
-  eraseUserTweetsHandler: EraseUserTweetsHandler,
-  getDeletedTweetsHandler: GetDeletedTweetsHandler.Type,
-  getStoredTweetsHandler: GetStoredTweetsHandler.Type,
-  getStoredTweetsByUserHandler: GetStoredTweetsByUserHandler.Type,
-  getTweetCountsHandler: GetTweetCountsHandler.Type,
-  getTweetsHandler: GetTweetsHandler.Type,
-  getTweetFieldsHandler: GetTweetFieldsHandler.Type,
-  postTweetHandler: PostTweet.Type[PostTweetRequest],
-  postRetweetHandler: PostTweet.Type[RetweetRequest],
-  quotedTweetDeleteBuilder: QuotedTweetDeleteEventBuilder.Type,
-  quotedTweetTakedownBuilder: QuotedTweetTakedownEventBuilder.Type,
-  scrubGeoScrubTweetsBuilder: ScrubGeoEventBuilder.ScrubTweets.Type,
-  scrubGeoUpdateUserTimestampBuilder: ScrubGeoEventBuilder.UpdateUserTimestamp.Type,
-  setAdditionalFieldsBuilder: SetAdditionalFieldsBuilder.Type,
-  setRetweetVisibilityHandler: SetRetweetVisibilityHandler.Type,
-  statsReceiver: StatsReceiver,
-  takedownHandler: TakedownHandler.Type,
-  tweetStore: TotalTweetStore,
-  undeleteTweetHandler: UndeleteTweetHandler.Type,
-  unretweetHandler: UnretweetHandler.Type,
-  updatePossiblySensitiveTweetHandler: UpdatePossiblySensitiveTweetHandler.Type,
-  userTakedownHandler: UserTakedownHandler.Type,
-  clientIdHelper: ClientIdHelper)
-    extends ThriftTweetService {
-  import AdditionalFields._
+cwass dispatchingtweetsewvice(
+  a-asyncdeweteadditionawfiewdsbuiwdew: a-asyncdeweteadditionawfiewdsbuiwdew.type, ( ͡o ω ͡o )
+  asyncsetadditionawfiewdsbuiwdew: asyncsetadditionawfiewdsbuiwdew.type, :3
+  deweteadditionawfiewdsbuiwdew: deweteadditionawfiewdsbuiwdew.type, mya
+  dewetewocationdatahandwew: d-dewetewocationdatahandwew.type, σωσ
+  dewetepathhandwew: tweetdewetepathhandwew, (ꈍᴗꈍ)
+  ewaseusewtweetshandwew: ewaseusewtweetshandwew, OwO
+  getdewetedtweetshandwew: g-getdewetedtweetshandwew.type, o.O
+  getstowedtweetshandwew: g-getstowedtweetshandwew.type, 😳😳😳
+  g-getstowedtweetsbyusewhandwew: getstowedtweetsbyusewhandwew.type, /(^•ω•^)
+  g-gettweetcountshandwew: g-gettweetcountshandwew.type, OwO
+  gettweetshandwew: gettweetshandwew.type, ^^
+  g-gettweetfiewdshandwew: gettweetfiewdshandwew.type, (///ˬ///✿)
+  posttweethandwew: p-posttweet.type[posttweetwequest], (///ˬ///✿)
+  postwetweethandwew: posttweet.type[wetweetwequest], (///ˬ///✿)
+  quotedtweetdewetebuiwdew: quotedtweetdeweteeventbuiwdew.type, ʘwʘ
+  quotedtweettakedownbuiwdew: quotedtweettakedowneventbuiwdew.type, ^•ﻌ•^
+  scwubgeoscwubtweetsbuiwdew: s-scwubgeoeventbuiwdew.scwubtweets.type, OwO
+  scwubgeoupdateusewtimestampbuiwdew: s-scwubgeoeventbuiwdew.updateusewtimestamp.type, (U ﹏ U)
+  s-setadditionawfiewdsbuiwdew: setadditionawfiewdsbuiwdew.type, (ˆ ﻌ ˆ)♡
+  s-setwetweetvisibiwityhandwew: setwetweetvisibiwityhandwew.type, (⑅˘꒳˘)
+  statsweceivew: statsweceivew, (U ﹏ U)
+  takedownhandwew: t-takedownhandwew.type,
+  t-tweetstowe: totawtweetstowe, o.O
+  u-undewetetweethandwew: u-undewetetweethandwew.type, mya
+  unwetweethandwew: u-unwetweethandwew.type, XD
+  updatepossibwysensitivetweethandwew: u-updatepossibwysensitivetweethandwew.type, òωó
+  usewtakedownhandwew: usewtakedownhandwew.type, (˘ω˘)
+  cwientidhewpew: c-cwientidhewpew)
+    extends thwifttweetsewvice {
+  i-impowt additionawfiewds._
 
-  // Incoming reads
+  // i-incoming w-weads
 
-  override def getTweets(request: GetTweetsRequest): Future[Seq[GetTweetResult]] =
-    getTweetsHandler(request)
+  ovewwide def gettweets(wequest: gettweetswequest): futuwe[seq[gettweetwesuwt]] =
+    gettweetshandwew(wequest)
 
-  override def getTweetFields(request: GetTweetFieldsRequest): Future[Seq[GetTweetFieldsResult]] =
-    getTweetFieldsHandler(request)
+  ovewwide def gettweetfiewds(wequest: gettweetfiewdswequest): futuwe[seq[gettweetfiewdswesuwt]] =
+    g-gettweetfiewdshandwew(wequest)
 
-  override def getTweetCounts(request: GetTweetCountsRequest): Future[Seq[GetTweetCountsResult]] =
-    getTweetCountsHandler(request)
+  o-ovewwide def gettweetcounts(wequest: g-gettweetcountswequest): f-futuwe[seq[gettweetcountswesuwt]] =
+    g-gettweetcountshandwew(wequest)
 
-  // Incoming deletes
+  // incoming dewetes
 
-  override def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit] =
-    deletePathHandler.cascadedDeleteTweet(request)
+  ovewwide def cascadeddewetetweet(wequest: c-cascadeddewetetweetwequest): futuwe[unit] =
+    dewetepathhandwew.cascadeddewetetweet(wequest)
 
-  override def deleteTweets(request: DeleteTweetsRequest): Future[Seq[DeleteTweetResult]] =
-    deletePathHandler.deleteTweets(request)
+  ovewwide def dewetetweets(wequest: d-dewetetweetswequest): futuwe[seq[dewetetweetwesuwt]] =
+    d-dewetepathhandwew.dewetetweets(wequest)
 
-  // Incoming writes
+  // incoming w-wwites
 
-  override def postTweet(request: PostTweetRequest): Future[PostTweetResult] =
-    postTweetHandler(request)
+  o-ovewwide def posttweet(wequest: posttweetwequest): f-futuwe[posttweetwesuwt] =
+    p-posttweethandwew(wequest)
 
-  override def postRetweet(request: RetweetRequest): Future[PostTweetResult] =
-    postRetweetHandler(request)
+  o-ovewwide def postwetweet(wequest: w-wetweetwequest): futuwe[posttweetwesuwt] =
+    postwetweethandwew(wequest)
 
-  override def setAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] = {
-    val setFields = AdditionalFields.nonEmptyAdditionalFieldIds(request.additionalFields)
-    if (setFields.isEmpty) {
-      Future.exception(
-        ClientError(
-          ClientErrorCause.BadRequest,
-          s"${SetAdditionalFieldsRequest.AdditionalFieldsField.name} is empty, there must be at least one field to set"
+  o-ovewwide def setadditionawfiewds(wequest: s-setadditionawfiewdswequest): f-futuwe[unit] = {
+    v-vaw s-setfiewds = additionawfiewds.nonemptyadditionawfiewdids(wequest.additionawfiewds)
+    if (setfiewds.isempty) {
+      futuwe.exception(
+        cwientewwow(
+          cwientewwowcause.badwequest, :3
+          s-s"${setadditionawfiewdswequest.additionawfiewdsfiewd.name} is empty, OwO thewe must be at weast one fiewd to set"
         )
       )
-    } else {
+    } ewse {
 
-      unsettableAdditionalFieldIds(request.additionalFields) match {
-        case Nil =>
-          setAdditionalFieldsBuilder(request).flatMap(tweetStore.setAdditionalFields)
-        case unsettableFieldIds =>
-          Future.exception(
-            ClientError(
-              ClientErrorCause.BadRequest,
-              unsettableAdditionalFieldIdsErrorMessage(unsettableFieldIds)
+      u-unsettabweadditionawfiewdids(wequest.additionawfiewds) match {
+        case nyiw =>
+          setadditionawfiewdsbuiwdew(wequest).fwatmap(tweetstowe.setadditionawfiewds)
+        case unsettabwefiewdids =>
+          f-futuwe.exception(
+            c-cwientewwow(
+              c-cwientewwowcause.badwequest, mya
+              unsettabweadditionawfiewdidsewwowmessage(unsettabwefiewdids)
             )
           )
       }
     }
   }
 
-  override def deleteAdditionalFields(request: DeleteAdditionalFieldsRequest): Future[Unit] =
-    if (request.tweetIds.isEmpty || request.fieldIds.isEmpty) {
-      Future.exception(
-        ClientError(ClientErrorCause.BadRequest, "request contains empty tweet ids or field ids")
+  o-ovewwide def deweteadditionawfiewds(wequest: d-deweteadditionawfiewdswequest): f-futuwe[unit] =
+    if (wequest.tweetids.isempty || wequest.fiewdids.isempty) {
+      futuwe.exception(
+        cwientewwow(cwientewwowcause.badwequest, (˘ω˘) "wequest contains empty t-tweet ids ow fiewd ids")
       )
-    } else if (request.fieldIds.exists(!isAdditionalFieldId(_))) {
-      Future.exception(
-        ClientError(ClientErrorCause.BadRequest, "cannot delete non-additional fields")
+    } e-ewse if (wequest.fiewdids.exists(!isadditionawfiewdid(_))) {
+      futuwe.exception(
+        c-cwientewwow(cwientewwowcause.badwequest, o.O "cannot d-dewete nyon-additionaw fiewds")
       )
-    } else {
-      deleteAdditionalFieldsBuilder(request).flatMap { events =>
-        Future.join(events.map(tweetStore.deleteAdditionalFields))
+    } e-ewse {
+      d-deweteadditionawfiewdsbuiwdew(wequest).fwatmap { events =>
+        f-futuwe.join(events.map(tweetstowe.deweteadditionawfiewds))
       }
     }
 
-  override def asyncInsert(request: AsyncInsertRequest): Future[Unit] =
-    AsyncInsertTweet.Event.fromAsyncRequest(request) match {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncInsertTweet(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncInsertTweet(e)
+  o-ovewwide def asyncinsewt(wequest: asyncinsewtwequest): futuwe[unit] =
+    asyncinsewttweet.event.fwomasyncwequest(wequest) match {
+      c-case t-tweetstoweeventowwetwy.fiwst(e) => t-tweetstowe.asyncinsewttweet(e)
+      case tweetstoweeventowwetwy.wetwy(e) => t-tweetstowe.wetwyasyncinsewttweet(e)
     }
 
-  override def asyncSetAdditionalFields(request: AsyncSetAdditionalFieldsRequest): Future[Unit] =
-    asyncSetAdditionalFieldsBuilder(request).map {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncSetAdditionalFields(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncSetAdditionalFields(e)
-    }
-
-  /**
-   * Set if a retweet should be included in its source tweet's retweet count.
-   *
-   * This is called by our RetweetVisibility daemon when a user enter/exit
-   * suspended or read-only state and all their retweets visibility need to
-   * be modified.
-   *
-   * @see [[SetRetweetVisibilityHandler]] for more implementation details
-   */
-  override def setRetweetVisibility(request: SetRetweetVisibilityRequest): Future[Unit] =
-    setRetweetVisibilityHandler(request)
-
-  override def asyncSetRetweetVisibility(request: AsyncSetRetweetVisibilityRequest): Future[Unit] =
-    AsyncSetRetweetVisibility.Event.fromAsyncRequest(request) match {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncSetRetweetVisibility(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncSetRetweetVisibility(e)
+  ovewwide d-def asyncsetadditionawfiewds(wequest: asyncsetadditionawfiewdswequest): f-futuwe[unit] =
+    asyncsetadditionawfiewdsbuiwdew(wequest).map {
+      case tweetstoweeventowwetwy.fiwst(e) => tweetstowe.asyncsetadditionawfiewds(e)
+      case t-tweetstoweeventowwetwy.wetwy(e) => t-tweetstowe.wetwyasyncsetadditionawfiewds(e)
     }
 
   /**
-   * When a tweet has been successfully undeleted from storage in Manhattan this endpoint will
-   * enqueue requests to three related endpoints via deferredRPC:
+   * set if a wetweet shouwd be incwuded i-in its souwce t-tweet's wetweet count. (✿oωo)
    *
-   *   1. asyncUndeleteTweet: Asynchronously handle aspects of the undelete not required for the response.
-   *   2. replicatedUndeleteTweet2: Send the undeleted tweet to other clusters for cache caching.
+   * this is cawwed by ouw wetweetvisibiwity d-daemon when a usew entew/exit
+   * suspended ow wead-onwy state and a-aww theiw wetweets visibiwity nyeed to
+   * be m-modified. (ˆ ﻌ ˆ)♡
    *
-   * @see [[UndeleteTweetHandler]] for the core undelete implementation
+   * @see [[setwetweetvisibiwityhandwew]] f-fow mowe impwementation detaiws
    */
-  override def undeleteTweet(request: UndeleteTweetRequest): Future[UndeleteTweetResponse] =
-    undeleteTweetHandler(request)
+  ovewwide def setwetweetvisibiwity(wequest: s-setwetweetvisibiwitywequest): f-futuwe[unit] =
+    setwetweetvisibiwityhandwew(wequest)
 
-  /**
-   * The async method that undeleteTweet calls to handle notifiying other services of the undelete
-   * See [[TweetStores.asyncUndeleteTweetStore]] for all the stores that handle this event.
-   */
-  override def asyncUndeleteTweet(request: AsyncUndeleteTweetRequest): Future[Unit] =
-    AsyncUndeleteTweet.Event.fromAsyncRequest(request) match {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncUndeleteTweet(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncUndeleteTweet(e)
+  ovewwide def asyncsetwetweetvisibiwity(wequest: a-asyncsetwetweetvisibiwitywequest): futuwe[unit] =
+    a-asyncsetwetweetvisibiwity.event.fwomasyncwequest(wequest) match {
+      case tweetstoweeventowwetwy.fiwst(e) => tweetstowe.asyncsetwetweetvisibiwity(e)
+      c-case tweetstoweeventowwetwy.wetwy(e) => tweetstowe.wetwyasyncsetwetweetvisibiwity(e)
     }
 
-  override def getDeletedTweets(
-    request: GetDeletedTweetsRequest
-  ): Future[Seq[GetDeletedTweetResult]] =
-    getDeletedTweetsHandler(request)
+  /**
+   * w-when a tweet has b-been successfuwwy undeweted fwom s-stowage in manhattan this endpoint w-wiww
+   * e-enqueue wequests t-to thwee wewated endpoints via d-defewwedwpc:
+   *
+   *   1. ^^;; a-asyncundewetetweet: asynchwonouswy handwe aspects of t-the undewete nyot w-wequiwed fow t-the wesponse. OwO
+   *   2. 🥺 wepwicatedundewetetweet2: send the undeweted t-tweet to othew cwustews fow c-cache caching. mya
+   *
+   * @see [[undewetetweethandwew]] f-fow the cowe undewete impwementation
+   */
+  ovewwide def undewetetweet(wequest: u-undewetetweetwequest): f-futuwe[undewetetweetwesponse] =
+    u-undewetetweethandwew(wequest)
 
   /**
-   * Triggers the deletion of all of a users tweets. Used by Gizmoduck when erasing a user
-   * after they have been deactived for some number of days.
+   * t-the async method that u-undewetetweet cawws to handwe nyotifiying othew sewvices of the undewete
+   * see [[tweetstowes.asyncundewetetweetstowe]] f-fow aww the stowes t-that handwe this event. 😳
    */
-  override def eraseUserTweets(request: EraseUserTweetsRequest): Future[Unit] =
-    eraseUserTweetsHandler.eraseUserTweetsRequest(request)
+  o-ovewwide def asyncundewetetweet(wequest: asyncundewetetweetwequest): f-futuwe[unit] =
+    asyncundewetetweet.event.fwomasyncwequest(wequest) m-match {
+      c-case tweetstoweeventowwetwy.fiwst(e) => t-tweetstowe.asyncundewetetweet(e)
+      c-case tweetstoweeventowwetwy.wetwy(e) => t-tweetstowe.wetwyasyncundewetetweet(e)
+    }
 
-  override def asyncEraseUserTweets(request: AsyncEraseUserTweetsRequest): Future[Unit] =
-    eraseUserTweetsHandler.asyncEraseUserTweetsRequest(request)
+  ovewwide def getdewetedtweets(
+    wequest: getdewetedtweetswequest
+  ): futuwe[seq[getdewetedtweetwesuwt]] =
+    getdewetedtweetshandwew(wequest)
 
-  override def asyncDelete(request: AsyncDeleteRequest): Future[Unit] =
-    AsyncDeleteTweet.Event.fromAsyncRequest(request) match {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncDeleteTweet(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncDeleteTweet(e)
+  /**
+   * twiggews the dewetion of aww of a u-usews tweets. òωó used b-by gizmoduck w-when ewasing a usew
+   * aftew t-they have been deactived fow some nyumbew of days. /(^•ω•^)
+   */
+  ovewwide d-def ewaseusewtweets(wequest: e-ewaseusewtweetswequest): futuwe[unit] =
+    e-ewaseusewtweetshandwew.ewaseusewtweetswequest(wequest)
+
+  ovewwide def asyncewaseusewtweets(wequest: a-asyncewaseusewtweetswequest): f-futuwe[unit] =
+    ewaseusewtweetshandwew.asyncewaseusewtweetswequest(wequest)
+
+  o-ovewwide def asyncdewete(wequest: a-asyncdewetewequest): futuwe[unit] =
+    asyncdewetetweet.event.fwomasyncwequest(wequest) match {
+      case t-tweetstoweeventowwetwy.fiwst(e) => t-tweetstowe.asyncdewetetweet(e)
+      c-case tweetstoweeventowwetwy.wetwy(e) => t-tweetstowe.wetwyasyncdewetetweet(e)
     }
 
   /*
-   * unretweet a tweet.
+   * u-unwetweet a tweet. -.-
    *
-   * There are two ways to unretweet:
-   *  - call deleteTweets() with the retweetId
-   *  - call unretweet() with the retweeter userId and sourceTweetId
+   * t-thewe awe two w-ways to unwetweet:
+   *  - caww d-dewetetweets() with t-the wetweetid
+   *  - caww unwetweet() w-with the wetweetew usewid and souwcetweetid
    *
-   * This is useful if you want to be able to undo a retweet without having to
-   * keep track of a retweetId
+   * t-this is usefuw if you want to be a-abwe to undo a w-wetweet without having to
+   * k-keep twack of a wetweetid
    *
-   * Returns DeleteTweetResult for any deleted retweets.
+   * wetuwns dewetetweetwesuwt f-fow a-any deweted wetweets. òωó
    */
-  override def unretweet(request: UnretweetRequest): Future[UnretweetResult] =
-    unretweetHandler(request)
+  o-ovewwide def unwetweet(wequest: unwetweetwequest): futuwe[unwetweetwesuwt] =
+    unwetweethandwew(wequest)
 
-  override def asyncDeleteAdditionalFields(
-    request: AsyncDeleteAdditionalFieldsRequest
-  ): Future[Unit] =
-    asyncDeleteAdditionalFieldsBuilder(request).map {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncDeleteAdditionalFields(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncDeleteAdditionalFields(e)
+  o-ovewwide def asyncdeweteadditionawfiewds(
+    wequest: a-asyncdeweteadditionawfiewdswequest
+  ): f-futuwe[unit] =
+    asyncdeweteadditionawfiewdsbuiwdew(wequest).map {
+      c-case tweetstoweeventowwetwy.fiwst(e) => tweetstowe.asyncdeweteadditionawfiewds(e)
+      c-case tweetstoweeventowwetwy.wetwy(e) => t-tweetstowe.wetwyasyncdeweteadditionawfiewds(e)
     }
 
-  override def incrTweetFavCount(request: IncrTweetFavCountRequest): Future[Unit] =
-    tweetStore.incrFavCount(IncrFavCount.Event(request.tweetId, request.delta, Time.now))
+  ovewwide def incwtweetfavcount(wequest: incwtweetfavcountwequest): f-futuwe[unit] =
+    tweetstowe.incwfavcount(incwfavcount.event(wequest.tweetid, /(^•ω•^) wequest.dewta, /(^•ω•^) t-time.now))
 
-  override def asyncIncrFavCount(request: AsyncIncrFavCountRequest): Future[Unit] =
-    tweetStore.asyncIncrFavCount(AsyncIncrFavCount.Event(request.tweetId, request.delta, Time.now))
+  ovewwide d-def asyncincwfavcount(wequest: asyncincwfavcountwequest): f-futuwe[unit] =
+    tweetstowe.asyncincwfavcount(asyncincwfavcount.event(wequest.tweetid, 😳 w-wequest.dewta, :3 t-time.now))
 
-  override def incrTweetBookmarkCount(request: IncrTweetBookmarkCountRequest): Future[Unit] =
-    tweetStore.incrBookmarkCount(IncrBookmarkCount.Event(request.tweetId, request.delta, Time.now))
+  o-ovewwide def incwtweetbookmawkcount(wequest: incwtweetbookmawkcountwequest): futuwe[unit] =
+    tweetstowe.incwbookmawkcount(incwbookmawkcount.event(wequest.tweetid, (U ᵕ U❁) wequest.dewta, ʘwʘ time.now))
 
-  override def asyncIncrBookmarkCount(request: AsyncIncrBookmarkCountRequest): Future[Unit] =
-    tweetStore.asyncIncrBookmarkCount(
-      AsyncIncrBookmarkCount.Event(request.tweetId, request.delta, Time.now))
+  ovewwide def asyncincwbookmawkcount(wequest: asyncincwbookmawkcountwequest): futuwe[unit] =
+    tweetstowe.asyncincwbookmawkcount(
+      asyncincwbookmawkcount.event(wequest.tweetid, w-wequest.dewta, o.O t-time.now))
 
-  override def scrubGeoUpdateUserTimestamp(request: DeleteLocationData): Future[Unit] =
-    scrubGeoUpdateUserTimestampBuilder(request).flatMap(tweetStore.scrubGeoUpdateUserTimestamp)
+  ovewwide def scwubgeoupdateusewtimestamp(wequest: dewetewocationdata): f-futuwe[unit] =
+    s-scwubgeoupdateusewtimestampbuiwdew(wequest).fwatmap(tweetstowe.scwubgeoupdateusewtimestamp)
 
-  override def deleteLocationData(request: DeleteLocationDataRequest): Future[Unit] =
-    deleteLocationDataHandler(request)
+  o-ovewwide def dewetewocationdata(wequest: d-dewetewocationdatawequest): futuwe[unit] =
+    d-dewetewocationdatahandwew(wequest)
 
-  override def scrubGeo(request: GeoScrub): Future[Unit] =
-    scrubGeoScrubTweetsBuilder(request).flatMap(tweetStore.scrubGeo)
+  o-ovewwide def scwubgeo(wequest: g-geoscwub): futuwe[unit] =
+    s-scwubgeoscwubtweetsbuiwdew(wequest).fwatmap(tweetstowe.scwubgeo)
 
-  override def takedown(request: TakedownRequest): Future[Unit] =
-    takedownHandler(request)
+  o-ovewwide def takedown(wequest: takedownwequest): f-futuwe[unit] =
+    t-takedownhandwew(wequest)
 
-  override def quotedTweetDelete(request: QuotedTweetDeleteRequest): Future[Unit] =
-    quotedTweetDeleteBuilder(request).flatMap {
-      case Some(event) => tweetStore.quotedTweetDelete(event)
-      case None => Future.Unit
+  o-ovewwide d-def quotedtweetdewete(wequest: quotedtweetdewetewequest): f-futuwe[unit] =
+    q-quotedtweetdewetebuiwdew(wequest).fwatmap {
+      case s-some(event) => t-tweetstowe.quotedtweetdewete(event)
+      c-case nyone => futuwe.unit
     }
 
-  override def quotedTweetTakedown(request: QuotedTweetTakedownRequest): Future[Unit] =
-    quotedTweetTakedownBuilder(request).flatMap {
-      case Some(event) => tweetStore.quotedTweetTakedown(event)
-      case None => Future.Unit
+  o-ovewwide def quotedtweettakedown(wequest: q-quotedtweettakedownwequest): f-futuwe[unit] =
+    quotedtweettakedownbuiwdew(wequest).fwatmap {
+      c-case some(event) => tweetstowe.quotedtweettakedown(event)
+      c-case nyone => futuwe.unit
     }
 
-  override def asyncTakedown(request: AsyncTakedownRequest): Future[Unit] =
-    AsyncTakedown.Event.fromAsyncRequest(request) match {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncTakedown(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncTakedown(e)
+  o-ovewwide def asynctakedown(wequest: a-asynctakedownwequest): f-futuwe[unit] =
+    asynctakedown.event.fwomasyncwequest(wequest) match {
+      c-case tweetstoweeventowwetwy.fiwst(e) => t-tweetstowe.asynctakedown(e)
+      case tweetstoweeventowwetwy.wetwy(e) => t-tweetstowe.wetwyasynctakedown(e)
     }
 
-  override def setTweetUserTakedown(request: SetTweetUserTakedownRequest): Future[Unit] =
-    userTakedownHandler(request)
+  ovewwide d-def settweetusewtakedown(wequest: settweetusewtakedownwequest): futuwe[unit] =
+    usewtakedownhandwew(wequest)
 
-  override def asyncUpdatePossiblySensitiveTweet(
-    request: AsyncUpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] = {
-    AsyncUpdatePossiblySensitiveTweet.Event.fromAsyncRequest(request) match {
-      case TweetStoreEventOrRetry.First(event) =>
-        tweetStore.asyncUpdatePossiblySensitiveTweet(event)
-      case TweetStoreEventOrRetry.Retry(event) =>
-        tweetStore.retryAsyncUpdatePossiblySensitiveTweet(event)
+  ovewwide def a-asyncupdatepossibwysensitivetweet(
+    wequest: a-asyncupdatepossibwysensitivetweetwequest
+  ): f-futuwe[unit] = {
+    asyncupdatepossibwysensitivetweet.event.fwomasyncwequest(wequest) match {
+      case tweetstoweeventowwetwy.fiwst(event) =>
+        t-tweetstowe.asyncupdatepossibwysensitivetweet(event)
+      case tweetstoweeventowwetwy.wetwy(event) =>
+        t-tweetstowe.wetwyasyncupdatepossibwysensitivetweet(event)
     }
   }
 
-  override def flush(request: FlushRequest): Future[Unit] = {
-    // The logged "previous Tweet" value is intended to be used when interactively debugging an
-    // issue and an engineer flushes the tweet manually, e.g. from tweetypie.cmdline console.
-    // Don't log automated flushes originating from tweetypie-daemons to cut down noise.
-    val logExisting = !clientIdHelper.effectiveClientIdRoot.exists(_ == "tweetypie-daemons")
-    tweetStore.flush(
-      Flush.Event(request.tweetIds, request.flushTweets, request.flushCounts, logExisting)
+  o-ovewwide d-def fwush(wequest: fwushwequest): futuwe[unit] = {
+    // t-the w-wogged "pwevious tweet" vawue i-is intended to be used when intewactivewy debugging a-an
+    // issue and an engineew f-fwushes the t-tweet manuawwy, ʘwʘ e-e.g. fwom tweetypie.cmdwine consowe. ^^
+    // d-don't w-wog automated f-fwushes owiginating f-fwom tweetypie-daemons to cut d-down noise. ^•ﻌ•^
+    v-vaw wogexisting = !cwientidhewpew.effectivecwientidwoot.exists(_ == "tweetypie-daemons")
+    tweetstowe.fwush(
+      f-fwush.event(wequest.tweetids, mya w-wequest.fwushtweets, UwU w-wequest.fwushcounts, >_< wogexisting)
     )
   }
 
-  // Incoming replication events
+  // i-incoming w-wepwication e-events
 
-  override def replicatedGetTweetCounts(request: GetTweetCountsRequest): Future[Unit] =
-    getTweetCounts(request).unit
+  ovewwide def wepwicatedgettweetcounts(wequest: g-gettweetcountswequest): futuwe[unit] =
+    g-gettweetcounts(wequest).unit
 
-  override def replicatedGetTweetFields(request: GetTweetFieldsRequest): Future[Unit] =
-    getTweetFields(request).unit
+  ovewwide def w-wepwicatedgettweetfiewds(wequest: g-gettweetfiewdswequest): f-futuwe[unit] =
+    gettweetfiewds(wequest).unit
 
-  override def replicatedGetTweets(request: GetTweetsRequest): Future[Unit] =
-    getTweets(request).unit
+  ovewwide def wepwicatedgettweets(wequest: gettweetswequest): futuwe[unit] =
+    gettweets(wequest).unit
 
-  override def replicatedInsertTweet2(request: ReplicatedInsertTweet2Request): Future[Unit] =
-    tweetStore.replicatedInsertTweet(
-      ReplicatedInsertTweet
-        .Event(
-          request.cachedTweet.tweet,
-          request.cachedTweet,
-          request.quoterHasAlreadyQuotedTweet.getOrElse(false),
-          request.initialTweetUpdateRequest
+  o-ovewwide d-def wepwicatedinsewttweet2(wequest: w-wepwicatedinsewttweet2wequest): futuwe[unit] =
+    tweetstowe.wepwicatedinsewttweet(
+      wepwicatedinsewttweet
+        .event(
+          w-wequest.cachedtweet.tweet, /(^•ω•^)
+          w-wequest.cachedtweet, òωó
+          wequest.quotewhasawweadyquotedtweet.getowewse(fawse), σωσ
+          w-wequest.initiawtweetupdatewequest
         )
     )
 
-  override def replicatedDeleteTweet2(request: ReplicatedDeleteTweet2Request): Future[Unit] =
-    tweetStore.replicatedDeleteTweet(
-      ReplicatedDeleteTweet.Event(
-        tweet = request.tweet,
-        isErasure = request.isErasure,
-        isBounceDelete = request.isBounceDelete,
-        isLastQuoteOfQuoter = request.isLastQuoteOfQuoter.getOrElse(false)
+  o-ovewwide def wepwicateddewetetweet2(wequest: wepwicateddewetetweet2wequest): futuwe[unit] =
+    t-tweetstowe.wepwicateddewetetweet(
+      w-wepwicateddewetetweet.event(
+        t-tweet = w-wequest.tweet, ( ͡o ω ͡o )
+        isewasuwe = wequest.isewasuwe, nyaa~~
+        i-isbouncedewete = wequest.isbouncedewete, :3
+        iswastquoteofquotew = w-wequest.iswastquoteofquotew.getowewse(fawse)
       )
     )
 
-  override def replicatedIncrFavCount(tweetId: TweetId, delta: Int): Future[Unit] =
-    tweetStore.replicatedIncrFavCount(ReplicatedIncrFavCount.Event(tweetId, delta))
+  ovewwide def wepwicatedincwfavcount(tweetid: t-tweetid, UwU dewta: int): futuwe[unit] =
+    tweetstowe.wepwicatedincwfavcount(wepwicatedincwfavcount.event(tweetid, o.O d-dewta))
 
-  override def replicatedIncrBookmarkCount(tweetId: TweetId, delta: Int): Future[Unit] =
-    tweetStore.replicatedIncrBookmarkCount(ReplicatedIncrBookmarkCount.Event(tweetId, delta))
+  ovewwide def wepwicatedincwbookmawkcount(tweetid: t-tweetid, (ˆ ﻌ ˆ)♡ d-dewta: int): futuwe[unit] =
+    t-tweetstowe.wepwicatedincwbookmawkcount(wepwicatedincwbookmawkcount.event(tweetid, ^^;; d-dewta))
 
-  override def replicatedScrubGeo(tweetIds: Seq[TweetId]): Future[Unit] =
-    tweetStore.replicatedScrubGeo(ReplicatedScrubGeo.Event(tweetIds))
+  ovewwide def w-wepwicatedscwubgeo(tweetids: seq[tweetid]): f-futuwe[unit] =
+    t-tweetstowe.wepwicatedscwubgeo(wepwicatedscwubgeo.event(tweetids))
 
-  override def replicatedSetAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] =
-    tweetStore.replicatedSetAdditionalFields(
-      ReplicatedSetAdditionalFields.Event(request.additionalFields)
+  o-ovewwide def w-wepwicatedsetadditionawfiewds(wequest: setadditionawfiewdswequest): f-futuwe[unit] =
+    t-tweetstowe.wepwicatedsetadditionawfiewds(
+      w-wepwicatedsetadditionawfiewds.event(wequest.additionawfiewds)
     )
 
-  override def replicatedSetRetweetVisibility(
-    request: ReplicatedSetRetweetVisibilityRequest
-  ): Future[Unit] =
-    tweetStore.replicatedSetRetweetVisibility(
-      ReplicatedSetRetweetVisibility.Event(request.srcId, request.visible)
+  ovewwide def wepwicatedsetwetweetvisibiwity(
+    w-wequest: wepwicatedsetwetweetvisibiwitywequest
+  ): futuwe[unit] =
+    tweetstowe.wepwicatedsetwetweetvisibiwity(
+      w-wepwicatedsetwetweetvisibiwity.event(wequest.swcid, ʘwʘ w-wequest.visibwe)
     )
 
-  override def replicatedDeleteAdditionalFields(
-    request: ReplicatedDeleteAdditionalFieldsRequest
-  ): Future[Unit] =
-    Future.join(
-      request.fieldsMap.map {
-        case (tweetId, fieldIds) =>
-          tweetStore.replicatedDeleteAdditionalFields(
-            ReplicatedDeleteAdditionalFields.Event(tweetId, fieldIds)
+  o-ovewwide def wepwicateddeweteadditionawfiewds(
+    wequest: wepwicateddeweteadditionawfiewdswequest
+  ): futuwe[unit] =
+    f-futuwe.join(
+      wequest.fiewdsmap.map {
+        c-case (tweetid, σωσ f-fiewdids) =>
+          tweetstowe.wepwicateddeweteadditionawfiewds(
+            wepwicateddeweteadditionawfiewds.event(tweetid, ^^;; f-fiewdids)
           )
-      }.toSeq
+      }.toseq
     )
 
-  override def replicatedUndeleteTweet2(request: ReplicatedUndeleteTweet2Request): Future[Unit] =
-    tweetStore.replicatedUndeleteTweet(
-      ReplicatedUndeleteTweet
-        .Event(
-          request.cachedTweet.tweet,
-          request.cachedTweet,
-          request.quoterHasAlreadyQuotedTweet.getOrElse(false)
+  ovewwide def wepwicatedundewetetweet2(wequest: w-wepwicatedundewetetweet2wequest): f-futuwe[unit] =
+    t-tweetstowe.wepwicatedundewetetweet(
+      w-wepwicatedundewetetweet
+        .event(
+          w-wequest.cachedtweet.tweet, ʘwʘ
+          wequest.cachedtweet, ^^
+          wequest.quotewhasawweadyquotedtweet.getowewse(fawse)
         ))
 
-  override def replicatedTakedown(tweet: Tweet): Future[Unit] =
-    tweetStore.replicatedTakedown(ReplicatedTakedown.Event(tweet))
+  ovewwide def wepwicatedtakedown(tweet: t-tweet): futuwe[unit] =
+    tweetstowe.wepwicatedtakedown(wepwicatedtakedown.event(tweet))
 
-  override def updatePossiblySensitiveTweet(
-    request: UpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] =
-    updatePossiblySensitiveTweetHandler(request)
+  o-ovewwide def updatepossibwysensitivetweet(
+    wequest: updatepossibwysensitivetweetwequest
+  ): f-futuwe[unit] =
+    updatepossibwysensitivetweethandwew(wequest)
 
-  override def replicatedUpdatePossiblySensitiveTweet(tweet: Tweet): Future[Unit] =
-    tweetStore.replicatedUpdatePossiblySensitiveTweet(
-      ReplicatedUpdatePossiblySensitiveTweet.Event(tweet)
+  ovewwide def wepwicatedupdatepossibwysensitivetweet(tweet: tweet): futuwe[unit] =
+    t-tweetstowe.wepwicatedupdatepossibwysensitivetweet(
+      w-wepwicatedupdatepossibwysensitivetweet.event(tweet)
     )
 
-  override def getStoredTweets(
-    request: GetStoredTweetsRequest
-  ): Future[Seq[GetStoredTweetsResult]] =
-    getStoredTweetsHandler(request)
+  ovewwide d-def getstowedtweets(
+    wequest: getstowedtweetswequest
+  ): futuwe[seq[getstowedtweetswesuwt]] =
+    g-getstowedtweetshandwew(wequest)
 
-  override def getStoredTweetsByUser(
-    request: GetStoredTweetsByUserRequest
-  ): Future[GetStoredTweetsByUserResult] =
-    getStoredTweetsByUserHandler(request)
+  o-ovewwide def getstowedtweetsbyusew(
+    wequest: g-getstowedtweetsbyusewwequest
+  ): futuwe[getstowedtweetsbyusewwesuwt] =
+    g-getstowedtweetsbyusewhandwew(wequest)
 }

@@ -1,17 +1,17 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.content_mixer.thriftscala.ContentMixer
-import com.twitter.content_mixer.thriftscala.ContentMixerRequest
-import com.twitter.content_mixer.thriftscala.ContentMixerResponse
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.content_mixew.thwiftscawa.contentmixew
+i-impowt com.twittew.content_mixew.thwiftscawa.contentmixewwequest
+i-impowt c-com.twittew.content_mixew.thwiftscawa.contentmixewwesponse
+i-impowt c-com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
 
-case class ContentMixerStore(contentMixer: ContentMixer.MethodPerEndpoint)
-    extends ReadableStore[ContentMixerRequest, ContentMixerResponse] {
+c-case cwass contentmixewstowe(contentmixew: contentmixew.methodpewendpoint)
+    extends weadabwestowe[contentmixewwequest, contentmixewwesponse] {
 
-  override def get(request: ContentMixerRequest): Future[Option[ContentMixerResponse]] = {
-    contentMixer.getCandidates(request).map { response =>
-      Some(response)
+  o-ovewwide def get(wequest: contentmixewwequest): f-futuwe[option[contentmixewwesponse]] = {
+    contentmixew.getcandidates(wequest).map { w-wesponse =>
+      some(wesponse)
     }
   }
 }

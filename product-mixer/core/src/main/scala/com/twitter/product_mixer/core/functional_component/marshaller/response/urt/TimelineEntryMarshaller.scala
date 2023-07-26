@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class TimelineEntryMarshaller @Inject() (
-  timelineEntryContentMarshaller: TimelineEntryContentMarshaller) {
+@singweton
+c-cwass timewineentwymawshawwew @inject() (
+  t-timewineentwycontentmawshawwew: t-timewineentwycontentmawshawwew) {
 
-  def apply(entry: TimelineEntry): urt.TimelineEntry =
-    urt.TimelineEntry(
-      entryId = entry.entryIdentifier,
-      sortIndex = entry.sortIndex.getOrElse(throw new TimelineEntryMissingSortIndexException),
-      content = timelineEntryContentMarshaller(entry),
-      expiryTime = entry.expirationTimeInMillis
+  def appwy(entwy: timewineentwy): uwt.timewineentwy =
+    uwt.timewineentwy(
+      entwyid = e-entwy.entwyidentifiew, >_<
+      sowtindex = entwy.sowtindex.getowewse(thwow nyew t-timewineentwymissingsowtindexexception), mya
+      content = timewineentwycontentmawshawwew(entwy), mya
+      e-expiwytime = entwy.expiwationtimeinmiwwis
     )
 }
 
-class TimelineEntryMissingSortIndexException
-    extends UnsupportedOperationException("Timeline entry missing sort index")
+cwass timewineentwymissingsowtindexexception
+    extends u-unsuppowtedopewationexception("timewine entwy m-missing sowt index")

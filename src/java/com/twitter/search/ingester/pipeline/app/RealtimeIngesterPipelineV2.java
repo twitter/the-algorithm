@@ -1,111 +1,111 @@
-package com.twitter.search.ingester.pipeline.app;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.twittew.seawch.ingestew.pipewine.app;
+impowt java.utiw.wist;
+i-impowt java.utiw.concuwwent.compwetabwefutuwe;
+i-impowt java.utiw.concuwwent.executowsewvice;
+i-impowt java.utiw.concuwwent.synchwonousqueue;
+i-impowt java.utiw.concuwwent.thweadpoowexecutow;
+i-impowt java.utiw.concuwwent.timeunit;
+i-impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.ingester.model.IngesterTweetEvent;
-import com.twitter.search.ingester.model.KafkaRawRecord;
-import com.twitter.search.ingester.pipeline.twitter.TweetEventDeserializerStage;
-import com.twitter.search.ingester.pipeline.twitter.kafka.KafkaConsumerStage;
-import com.twitter.search.ingester.pipeline.twitter.kafka.KafkaRawRecordConsumerStage;
-import com.twitter.search.ingester.pipeline.util.PipelineV2CreationException;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.ingestew.modew.ingestewtweetevent;
+impowt com.twittew.seawch.ingestew.modew.kafkawawwecowd;
+impowt com.twittew.seawch.ingestew.pipewine.twittew.tweeteventdesewiawizewstage;
+i-impowt com.twittew.seawch.ingestew.pipewine.twittew.kafka.kafkaconsumewstage;
+impowt com.twittew.seawch.ingestew.pipewine.twittew.kafka.kafkawawwecowdconsumewstage;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinev2cweationexception;
+i-impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestageexception;
 
-public class RealtimeIngesterPipelineV2 {
-  private static final Logger LOG = LoggerFactory.getLogger(RealtimeIngesterPipelineV2.class);
-  private static final String PROD_ENV =  "prod";
-  private static final String STAGING_ENV = "staging";
-  private static final String STAGING1_ENV = "staging1";
-  private static final String REALTIME_CLUSTER = "realtime";
-  private static final String PROTECTED_CLUSTER = "protected";
-  private static final String REALTIME_CG_CLUSTER = "realtime_cg";
-  private static final String KAFKA_CLIENT_ID = "";
-  private static final String KAFKA_TOPIC_NAME = "";
-  private static final String KAFKA_CONSUMER_GROUP_ID = "";
-  private static final String KAFKA_CLUSTER_PATH = "";
-  private static final String KAFKA_DECIDER_KEY = "ingester_tweets_consume_from_kafka";
-  private static final String STATS_PREFIX = "realtimeingesterpipelinev2";
-  private SearchCounter kafkaErrorCount = SearchCounter.create(STATS_PREFIX
-      + "_kafka_error_count");
-  private Boolean running;
-  private String environment;
-  private String cluster;
-  private ExecutorService threadPool;
-  private KafkaConsumerStage<KafkaRawRecord> kafkaConsumer;
-  private TweetEventDeserializerStage tweetEventDeserializerStage;
+pubwic c-cwass weawtimeingestewpipewinev2 {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(weawtimeingestewpipewinev2.cwass);
+  p-pwivate static finaw stwing p-pwod_env =  "pwod";
+  p-pwivate static finaw stwing staging_env = "staging";
+  pwivate static finaw stwing staging1_env = "staging1";
+  p-pwivate static finaw stwing weawtime_cwustew = "weawtime";
+  pwivate static finaw stwing p-pwotected_cwustew = "pwotected";
+  pwivate static f-finaw stwing w-weawtime_cg_cwustew = "weawtime_cg";
+  p-pwivate s-static finaw stwing kafka_cwient_id = "";
+  pwivate s-static finaw stwing kafka_topic_name = "";
+  pwivate static f-finaw stwing kafka_consumew_gwoup_id = "";
+  pwivate static finaw stwing kafka_cwustew_path = "";
+  pwivate static finaw stwing kafka_decidew_key = "ingestew_tweets_consume_fwom_kafka";
+  p-pwivate static finaw s-stwing stats_pwefix = "weawtimeingestewpipewinev2";
+  p-pwivate s-seawchcountew kafkaewwowcount = seawchcountew.cweate(stats_pwefix
+      + "_kafka_ewwow_count");
+  pwivate boowean wunning;
+  pwivate s-stwing enviwonment;
+  p-pwivate stwing cwustew;
+  p-pwivate executowsewvice thweadpoow;
+  p-pwivate kafkaconsumewstage<kafkawawwecowd> k-kafkaconsumew;
+  pwivate t-tweeteventdesewiawizewstage tweeteventdesewiawizewstage;
 
-  public RealtimeIngesterPipelineV2(String environment, String cluster, int threadsToSpawn) throws
-      PipelineV2CreationException, PipelineStageException {
-    if (!environment.equals(PROD_ENV) && !environment.equals(STAGING_ENV)
-        && !environment.equals(STAGING1_ENV)) {
-      throw new PipelineV2CreationException("invalid value for environment");
+  pubwic w-weawtimeingestewpipewinev2(stwing enviwonment, rawr s-stwing cwustew, (˘ω˘) int thweadstospawn) t-thwows
+      p-pipewinev2cweationexception, nyaa~~ pipewinestageexception {
+    if (!enviwonment.equaws(pwod_env) && !enviwonment.equaws(staging_env)
+        && !enviwonment.equaws(staging1_env)) {
+      thwow nyew pipewinev2cweationexception("invawid vawue fow enviwonment");
     }
 
-    if (!cluster.equals(REALTIME_CLUSTER)
-        && !cluster.equals(PROTECTED_CLUSTER) && !cluster.equals(REALTIME_CG_CLUSTER)) {
-      throw new PipelineV2CreationException("invalid value for cluster.");
+    i-if (!cwustew.equaws(weawtime_cwustew)
+        && !cwustew.equaws(pwotected_cwustew) && !cwustew.equaws(weawtime_cg_cwustew)) {
+      t-thwow nyew pipewinev2cweationexception("invawid vawue fow cwustew.");
     }
 
-    int numberOfThreads = Math.max(1, threadsToSpawn);
-    this.environment = environment;
-    this.cluster = cluster;
-    this.threadPool = new ThreadPoolExecutor(numberOfThreads, numberOfThreads, 0L,
-        TimeUnit.MILLISECONDS, new SynchronousQueue<>(), new ThreadPoolExecutor.CallerRunsPolicy());
-    initStages();
+    i-int nyumbewofthweads = m-math.max(1, UwU t-thweadstospawn);
+    this.enviwonment = enviwonment;
+    this.cwustew = cwustew;
+    this.thweadpoow = n-nyew thweadpoowexecutow(numbewofthweads, :3 nyumbewofthweads, (⑅˘꒳˘) 0w, (///ˬ///✿)
+        timeunit.miwwiseconds, nyew s-synchwonousqueue<>(), ^^;; nyew thweadpoowexecutow.cawwewwunspowicy());
+    i-initstages();
   }
 
-  private void initStages() throws PipelineStageException {
-    kafkaConsumer = new KafkaRawRecordConsumerStage(KAFKA_CLIENT_ID, KAFKA_TOPIC_NAME,
-        KAFKA_CONSUMER_GROUP_ID, KAFKA_CLUSTER_PATH, KAFKA_DECIDER_KEY);
-    kafkaConsumer.setupStageV2();
-    tweetEventDeserializerStage = new TweetEventDeserializerStage();
-    tweetEventDeserializerStage.setupStageV2();
+  p-pwivate v-void initstages() thwows pipewinestageexception {
+    k-kafkaconsumew = n-nyew k-kafkawawwecowdconsumewstage(kafka_cwient_id, >_< k-kafka_topic_name, rawr x3
+        kafka_consumew_gwoup_id, /(^•ω•^) kafka_cwustew_path, :3 k-kafka_decidew_key);
+    k-kafkaconsumew.setupstagev2();
+    t-tweeteventdesewiawizewstage = n-nyew t-tweeteventdesewiawizewstage();
+    tweeteventdesewiawizewstage.setupstagev2();
   }
 
   /***
-   * Starts the pipeline by starting the polling from Kafka and passing the events to the first
-   * stage of the pipeline.
+   * stawts the pipewine by stawting t-the powwing fwom kafka and passing the events to the fiwst
+   * stage of the pipewine. (ꈍᴗꈍ)
    */
-  public void run() {
-    running = true;
-    while (running) {
-      pollFromKafkaAndSendToPipeline();
+  pubwic void wun() {
+    w-wunning = twue;
+    whiwe (wunning) {
+      powwfwomkafkaandsendtopipewine();
     }
   }
 
-  private void pollFromKafkaAndSendToPipeline() {
-    try  {
-      List<KafkaRawRecord> records = kafkaConsumer.pollFromTopic();
-      for (KafkaRawRecord record : records) {
-        processKafkaRecord(record);
+  pwivate void p-powwfwomkafkaandsendtopipewine() {
+    t-twy  {
+      w-wist<kafkawawwecowd> wecowds = k-kafkaconsumew.powwfwomtopic();
+      fow (kafkawawwecowd w-wecowd : w-wecowds) {
+        pwocesskafkawecowd(wecowd);
       }
-    } catch (PipelineStageException e) {
-      kafkaErrorCount.increment();
-      LOG.error("Error polling from Kafka", e);
+    } catch (pipewinestageexception e) {
+      kafkaewwowcount.incwement();
+      wog.ewwow("ewwow powwing fwom kafka", /(^•ω•^) e-e);
     }
   }
 
-  private void processKafkaRecord(KafkaRawRecord record) {
-    CompletableFuture<KafkaRawRecord> stage1 = CompletableFuture.supplyAsync(() -> record,
-        threadPool);
+  pwivate void p-pwocesskafkawecowd(kafkawawwecowd wecowd) {
+    c-compwetabwefutuwe<kafkawawwecowd> s-stage1 = compwetabwefutuwe.suppwyasync(() -> wecowd, (⑅˘꒳˘)
+        thweadpoow);
 
-    CompletableFuture<IngesterTweetEvent> stage2 = stage1.thenApplyAsync((KafkaRawRecord r) ->
-      tweetEventDeserializerStage.runStageV2(r), threadPool);
+    c-compwetabwefutuwe<ingestewtweetevent> s-stage2 = stage1.thenappwyasync((kafkawawwecowd w-w) ->
+      t-tweeteventdesewiawizewstage.wunstagev2(w), ( ͡o ω ͡o ) thweadpoow);
 
   }
 
   /***
-   * Stop the pipeline from processing any further events.
+   * stop the pipewine fwom pwocessing any fuwthew events. òωó
    */
-  public void shutdown() {
-    running = false;
-    kafkaConsumer.cleanupStageV2();
-    tweetEventDeserializerStage.cleanupStageV2();
+  p-pubwic v-void shutdown() {
+    w-wunning = fawse;
+    kafkaconsumew.cweanupstagev2();
+    t-tweeteventdesewiawizewstage.cweanupstagev2();
   }
 }

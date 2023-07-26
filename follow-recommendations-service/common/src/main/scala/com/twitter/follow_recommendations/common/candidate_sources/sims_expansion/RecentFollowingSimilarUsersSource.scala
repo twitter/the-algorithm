@@ -1,99 +1,99 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion
 
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import javax.inject.Inject
+impowt com.googwe.inject.singweton
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims.switchingsimssouwce
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.haswecentfowwowedusewids
+i-impowt c-com.twittew.hewmit.modew.awgowithm
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph.sociawgwaphcwient
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt javax.inject.inject
 
-object RecentFollowingSimilarUsersSource {
+object wecentfowwowingsimiwawusewssouwce {
 
-  val Identifier = CandidateSourceIdentifier(Algorithm.NewFollowingSimilarUser.toString)
+  v-vaw identifiew = candidatesouwceidentifiew(awgowithm.newfowwowingsimiwawusew.tostwing)
 }
 
-@Singleton
-class RecentFollowingSimilarUsersSource @Inject() (
-  socialGraph: SocialGraphClient,
-  switchingSimsSource: SwitchingSimsSource,
-  statsReceiver: StatsReceiver)
-    extends SimsExpansionBasedCandidateSource[
-      HasParams with HasRecentFollowedUserIds with HasClientContext
-    ](switchingSimsSource) {
+@singweton
+cwass wecentfowwowingsimiwawusewssouwce @inject() (
+  sociawgwaph: s-sociawgwaphcwient, (ˆ ﻌ ˆ)♡
+  switchingsimssouwce: s-switchingsimssouwce, 😳😳😳
+  s-statsweceivew: statsweceivew)
+    extends simsexpansionbasedcandidatesouwce[
+      haspawams w-with haswecentfowwowedusewids with hascwientcontext
+    ](switchingsimssouwce) {
 
-  val identifier = RecentFollowingSimilarUsersSource.Identifier
-  private val stats = statsReceiver.scope(identifier.name)
-  private val maxResultsStats = stats.scope("max_results")
-  private val calibratedScoreCounter = stats.counter("calibrated_scores_counter")
+  vaw identifiew = wecentfowwowingsimiwawusewssouwce.identifiew
+  pwivate v-vaw stats = statsweceivew.scope(identifiew.name)
+  pwivate vaw maxwesuwtsstats = s-stats.scope("max_wesuwts")
+  p-pwivate v-vaw cawibwatedscowecountew = s-stats.countew("cawibwated_scowes_countew")
 
-  override def firstDegreeNodes(
-    request: HasParams with HasRecentFollowedUserIds with HasClientContext
-  ): Stitch[Seq[CandidateUser]] = {
-    if (request.params(RecentFollowingSimilarUsersParams.TimestampIntegrated)) {
-      val recentFollowedUserIdsWithTimeStitch =
-        socialGraph.getRecentFollowedUserIdsWithTime(request.clientContext.userId.get)
+  ovewwide def fiwstdegweenodes(
+    wequest: haspawams w-with haswecentfowwowedusewids with hascwientcontext
+  ): stitch[seq[candidateusew]] = {
+    i-if (wequest.pawams(wecentfowwowingsimiwawusewspawams.timestampintegwated)) {
+      vaw wecentfowwowedusewidswithtimestitch =
+        sociawgwaph.getwecentfowwowedusewidswithtime(wequest.cwientcontext.usewid.get)
 
-      recentFollowedUserIdsWithTimeStitch.map { results =>
-        val first_degree_nodes = results
-          .sortBy(-_.timeInMs).take(
-            request.params(RecentFollowingSimilarUsersParams.MaxFirstDegreeNodes))
-        val max_timestamp = first_degree_nodes.head.timeInMs
-        first_degree_nodes.map {
-          case userIdWithTime =>
-            CandidateUser(
-              userIdWithTime.userId,
-              score = Some(userIdWithTime.timeInMs.toDouble / max_timestamp))
+      wecentfowwowedusewidswithtimestitch.map { wesuwts =>
+        vaw fiwst_degwee_nodes = w-wesuwts
+          .sowtby(-_.timeinms).take(
+            wequest.pawams(wecentfowwowingsimiwawusewspawams.maxfiwstdegweenodes))
+        v-vaw m-max_timestamp = f-fiwst_degwee_nodes.head.timeinms
+        fiwst_degwee_nodes.map {
+          case usewidwithtime =>
+            candidateusew(
+              u-usewidwithtime.usewid, (U ﹏ U)
+              s-scowe = some(usewidwithtime.timeinms.todoubwe / max_timestamp))
         }
       }
-    } else {
-      Stitch.value(
-        request.recentFollowedUserIds
-          .getOrElse(Nil).take(
-            request.params(RecentFollowingSimilarUsersParams.MaxFirstDegreeNodes)).map(
-            CandidateUser(_, score = Some(1.0)))
+    } e-ewse {
+      s-stitch.vawue(
+        wequest.wecentfowwowedusewids
+          .getowewse(niw).take(
+            w-wequest.pawams(wecentfowwowingsimiwawusewspawams.maxfiwstdegweenodes)).map(
+            candidateusew(_, (///ˬ///✿) scowe = s-some(1.0)))
       )
     }
   }
 
-  override def maxSecondaryDegreeNodes(
-    req: HasParams with HasRecentFollowedUserIds with HasClientContext
-  ): Int = {
-    req.params(RecentFollowingSimilarUsersParams.MaxSecondaryDegreeExpansionPerNode)
+  ovewwide def maxsecondawydegweenodes(
+    w-weq: haspawams with haswecentfowwowedusewids with h-hascwientcontext
+  ): int = {
+    w-weq.pawams(wecentfowwowingsimiwawusewspawams.maxsecondawydegweeexpansionpewnode)
   }
 
-  override def maxResults(
-    req: HasParams with HasRecentFollowedUserIds with HasClientContext
-  ): Int = {
-    val firstDegreeNodes = req.params(RecentFollowingSimilarUsersParams.MaxFirstDegreeNodes)
-    val maxResultsNum = req.params(RecentFollowingSimilarUsersParams.MaxResults)
-    maxResultsStats
+  o-ovewwide def maxwesuwts(
+    weq: haspawams with haswecentfowwowedusewids with hascwientcontext
+  ): int = {
+    vaw fiwstdegweenodes = w-weq.pawams(wecentfowwowingsimiwawusewspawams.maxfiwstdegweenodes)
+    v-vaw maxwesuwtsnum = w-weq.pawams(wecentfowwowingsimiwawusewspawams.maxwesuwts)
+    m-maxwesuwtsstats
       .stat(
-        s"RecentFollowingSimilarUsersSource_firstDegreeNodes_${firstDegreeNodes}_maxResults_${maxResultsNum}")
+        s-s"wecentfowwowingsimiwawusewssouwce_fiwstdegweenodes_${fiwstdegweenodes}_maxwesuwts_${maxwesuwtsnum}")
       .add(1)
-    maxResultsNum
+    maxwesuwtsnum
   }
 
-  override def scoreCandidate(sourceScore: Double, similarToScore: Double): Double = {
-    sourceScore * similarToScore
+  ovewwide def scowecandidate(souwcescowe: doubwe, 😳 s-simiwawtoscowe: doubwe): doubwe = {
+    souwcescowe * simiwawtoscowe
   }
 
-  override def calibrateDivisor(
-    req: HasParams with HasRecentFollowedUserIds with HasClientContext
-  ): Double = {
-    req.params(DBV2SimsExpansionParams.RecentFollowingSimilarUsersDBV2CalibrateDivisor)
+  ovewwide d-def cawibwatedivisow(
+    weq: haspawams with h-haswecentfowwowedusewids w-with h-hascwientcontext
+  ): doubwe = {
+    w-weq.pawams(dbv2simsexpansionpawams.wecentfowwowingsimiwawusewsdbv2cawibwatedivisow)
   }
 
-  override def calibrateScore(
-    candidateScore: Double,
-    req: HasParams with HasRecentFollowedUserIds with HasClientContext
-  ): Double = {
-    calibratedScoreCounter.incr()
-    candidateScore / calibrateDivisor(req)
+  o-ovewwide def cawibwatescowe(
+    c-candidatescowe: d-doubwe, 😳
+    weq: haspawams with haswecentfowwowedusewids w-with h-hascwientcontext
+  ): d-doubwe = {
+    c-cawibwatedscowecountew.incw()
+    c-candidatescowe / cawibwatedivisow(weq)
   }
 }

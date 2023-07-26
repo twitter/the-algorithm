@@ -1,53 +1,53 @@
-package com.twitter.timelineranker.parameters.recap_author
+package com.twittew.timewinewankew.pawametews.wecap_authow
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt c-com.twittew.timewines.configapi.pawam
 
-object RecapAuthorParams {
-
-  /**
-   * Enables semantic core, penguin, and tweetypie content features in recap author source.
-   */
-  object EnableContentFeaturesHydrationParam extends Param(false)
+o-object wecapauthowpawams {
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * enabwes s-semantic c-cowe, (⑅˘꒳˘) penguin, and t-tweetypie content f-featuwes in wecap authow souwce. òωó
    */
-  object EnableTokensInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recap_author_enable_tokens_in_content_features_hydration",
-        default = false
+  object enabwecontentfeatuweshydwationpawam extends p-pawam(fawse)
+
+  /**
+   * additionawwy enabwes tokens w-when hydwating content featuwes. ʘwʘ
+   */
+  object e-enabwetokensincontentfeatuweshydwationpawam
+      extends fspawam(
+        nyame = "wecap_authow_enabwe_tokens_in_content_featuwes_hydwation", /(^•ω•^)
+        d-defauwt = fawse
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * a-additionawwy enabwes t-tweet text when hydwating content featuwes. ʘwʘ
+   * this onwy wowks if enabwecontentfeatuweshydwationpawam i-is set to twue
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recap_author_enable_tweet_text_in_content_features_hydration",
-        default = false
+  object enabwetweettextincontentfeatuweshydwationpawam
+      extends fspawam(
+        nyame = "wecap_authow_enabwe_tweet_text_in_content_featuwes_hydwation",
+        d-defauwt = fawse
       )
 
-  object EnableEarlybirdRealtimeCgMigrationParam
-      extends FSParam(
-        name = "recap_author_enable_earlybird_realtime_cg_migration",
-        default = false
+  o-object enabweeawwybiwdweawtimecgmigwationpawam
+      e-extends f-fspawam(
+        n-nyame = "wecap_authow_enabwe_eawwybiwd_weawtime_cg_migwation", σωσ
+        defauwt = fawse
       )
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * a-additionawwy enabwes convewsationcontwow w-when hydwating content featuwes. OwO
+   * this onwy wowks if enabwecontentfeatuweshydwationpawam is set to twue
    */
-  object EnableConversationControlInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "conversation_control_in_content_features_hydration_recap_author_enable",
-        default = false
+  object e-enabweconvewsationcontwowincontentfeatuweshydwationpawam
+      extends fspawam(
+        n-nyame = "convewsation_contwow_in_content_featuwes_hydwation_wecap_authow_enabwe", 😳😳😳
+        d-defauwt = fawse
       )
 
-  object EnableTweetMediaHydrationParam
-      extends FSParam(
-        name = "tweet_media_hydration_recap_author_enable",
-        default = false
+  o-object enabwetweetmediahydwationpawam
+      extends fspawam(
+        n-name = "tweet_media_hydwation_wecap_authow_enabwe", 😳😳😳
+        defauwt = f-fawse
       )
 
 }

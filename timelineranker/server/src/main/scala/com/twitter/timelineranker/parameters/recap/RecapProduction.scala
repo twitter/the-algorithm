@@ -1,115 +1,115 @@
-package com.twitter.timelineranker.parameters.recap
+package com.twittew.timewinewankew.pawametews.wecap
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelineranker.parameters.recap.RecapParams._
-import com.twitter.timelineranker.parameters.util.ConfigHelper
-import com.twitter.timelines.configapi._
-import com.twitter.servo.decider.DeciderKeyEnum
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.sewvo.decidew.decidewgatebuiwdew
+i-impowt com.twittew.sewvo.decidew.decidewkeyname
+i-impowt com.twittew.timewinewankew.decidew.decidewkey
+i-impowt c-com.twittew.timewinewankew.pawametews.wecap.wecappawams._
+i-impowt c-com.twittew.timewinewankew.pawametews.utiw.confighewpew
+i-impowt com.twittew.timewines.configapi._
+impowt com.twittew.sewvo.decidew.decidewkeyenum
 
-object RecapProduction {
-  val deciderByParam: Map[Param[_], DeciderKeyEnum#Value] = Map[Param[_], DeciderKeyName](
-    EnableRealGraphUsersParam -> DeciderKey.EnableRealGraphUsers,
-    MaxRealGraphAndFollowedUsersParam -> DeciderKey.MaxRealGraphAndFollowedUsers,
-    EnableContentFeaturesHydrationParam -> DeciderKey.RecapEnableContentFeaturesHydration,
-    MaxCountMultiplierParam -> DeciderKey.RecapMaxCountMultiplier,
-    EnableNewRecapAuthorPipeline -> DeciderKey.RecapAuthorEnableNewPipeline,
-    RecapParams.EnableExtraSortingInSearchResultParam -> DeciderKey.RecapEnableExtraSortingInResults
+object wecappwoduction {
+  vaw decidewbypawam: m-map[pawam[_], ʘwʘ decidewkeyenum#vawue] = map[pawam[_], (ˆ ﻌ ˆ)♡ d-decidewkeyname](
+    enabweweawgwaphusewspawam -> d-decidewkey.enabweweawgwaphusews, 😳😳😳
+    maxweawgwaphandfowwowedusewspawam -> decidewkey.maxweawgwaphandfowwowedusews, :3
+    enabwecontentfeatuweshydwationpawam -> d-decidewkey.wecapenabwecontentfeatuweshydwation, OwO
+    maxcountmuwtipwiewpawam -> d-decidewkey.wecapmaxcountmuwtipwiew, (U ﹏ U)
+    e-enabwenewwecapauthowpipewine -> decidewkey.wecapauthowenabwenewpipewine, >w<
+    wecappawams.enabweextwasowtinginseawchwesuwtpawam -> decidewkey.wecapenabweextwasowtinginwesuwts
   )
 
-  val intParams: Seq[MaxRealGraphAndFollowedUsersParam.type] = Seq(
-    MaxRealGraphAndFollowedUsersParam
+  vaw intpawams: s-seq[maxweawgwaphandfowwowedusewspawam.type] = seq(
+    maxweawgwaphandfowwowedusewspawam
   )
 
-  val doubleParams: Seq[MaxCountMultiplierParam.type] = Seq(
-    MaxCountMultiplierParam
+  vaw doubwepawams: seq[maxcountmuwtipwiewpawam.type] = seq(
+    m-maxcountmuwtipwiewpawam
   )
 
-  val boundedDoubleFeatureSwitchParams: Seq[FSBoundedParam[Double]] = Seq(
-    RecapParams.ProbabilityRandomTweetParam
+  vaw boundeddoubwefeatuweswitchpawams: s-seq[fsboundedpawam[doubwe]] = s-seq(
+    wecappawams.pwobabiwitywandomtweetpawam
   )
 
-  val booleanParams: Seq[Param[Boolean]] = Seq(
-    EnableRealGraphUsersParam,
-    EnableContentFeaturesHydrationParam,
-    EnableNewRecapAuthorPipeline,
-    RecapParams.EnableExtraSortingInSearchResultParam
+  v-vaw b-booweanpawams: seq[pawam[boowean]] = seq(
+    e-enabweweawgwaphusewspawam, (U ﹏ U)
+    enabwecontentfeatuweshydwationpawam, 😳
+    enabwenewwecapauthowpipewine,
+    wecappawams.enabweextwasowtinginseawchwesuwtpawam
   )
 
-  val booleanFeatureSwitchParams: Seq[FSParam[Boolean]] = Seq(
-    RecapParams.EnableReturnAllResultsParam,
-    RecapParams.IncludeRandomTweetParam,
-    RecapParams.IncludeSingleRandomTweetParam,
-    RecapParams.EnableInNetworkInReplyToTweetFeaturesHydrationParam,
-    RecapParams.EnableReplyRootTweetHydrationParam,
-    RecapParams.EnableSettingTweetTypesWithTweetKindOption,
-    RecapParams.EnableRelevanceSearchParam,
-    EnableTokensInContentFeaturesHydrationParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
-    EnableExpandedExtendedRepliesFilterParam,
-    EnableConversationControlInContentFeaturesHydrationParam,
-    EnableTweetMediaHydrationParam,
-    ImputeRealGraphAuthorWeightsParam,
-    EnableExcludeSourceTweetIdsQueryParam
+  v-vaw booweanfeatuweswitchpawams: seq[fspawam[boowean]] = seq(
+    wecappawams.enabwewetuwnawwwesuwtspawam, (ˆ ﻌ ˆ)♡
+    wecappawams.incwudewandomtweetpawam, 😳😳😳
+    wecappawams.incwudesingwewandomtweetpawam, (U ﹏ U)
+    w-wecappawams.enabweinnetwowkinwepwytotweetfeatuweshydwationpawam, (///ˬ///✿)
+    wecappawams.enabwewepwywoottweethydwationpawam, 😳
+    w-wecappawams.enabwesettingtweettypeswithtweetkindoption, 😳
+    w-wecappawams.enabwewewevanceseawchpawam, σωσ
+    e-enabwetokensincontentfeatuweshydwationpawam, rawr x3
+    enabwetweettextincontentfeatuweshydwationpawam, OwO
+    enabweexpandedextendedwepwiesfiwtewpawam, /(^•ω•^)
+    enabweconvewsationcontwowincontentfeatuweshydwationpawam, 😳😳😳
+    enabwetweetmediahydwationpawam, ( ͡o ω ͡o )
+    imputeweawgwaphauthowweightspawam, >_<
+    e-enabweexcwudesouwcetweetidsquewypawam
   )
 
-  val boundedIntFeatureSwitchParams: Seq[FSBoundedParam[Int]] = Seq(
-    RecapParams.MaxFollowedUsersParam,
-    ImputeRealGraphAuthorWeightsPercentileParam,
-    RecapParams.RelevanceOptionsMaxHitsToProcessParam
+  v-vaw boundedintfeatuweswitchpawams: seq[fsboundedpawam[int]] = s-seq(
+    wecappawams.maxfowwowedusewspawam, >w<
+    i-imputeweawgwaphauthowweightspewcentiwepawam, rawr
+    wecappawams.wewevanceoptionsmaxhitstopwocesspawam
   )
 }
 
-class RecapProduction(deciderGateBuilder: DeciderGateBuilder, statsReceiver: StatsReceiver) {
+c-cwass wecappwoduction(decidewgatebuiwdew: d-decidewgatebuiwdew, 😳 statsweceivew: statsweceivew) {
 
-  val configHelper: ConfigHelper =
-    new ConfigHelper(RecapProduction.deciderByParam, deciderGateBuilder)
-  val intOverrides: Seq[OptionalOverride[Int]] =
-    configHelper.createDeciderBasedOverrides(RecapProduction.intParams)
-  val optionalBoundedIntFeatureSwitchOverrides: Seq[OptionalOverride[Option[Int]]] =
-    FeatureSwitchOverrideUtil.getBoundedOptionalIntOverrides(
+  v-vaw confighewpew: confighewpew =
+    n-nyew confighewpew(wecappwoduction.decidewbypawam, >w< decidewgatebuiwdew)
+  v-vaw intovewwides: s-seq[optionawuvwwide[int]] =
+    confighewpew.cweatedecidewbasedovewwides(wecappwoduction.intpawams)
+  vaw optionawboundedintfeatuweswitchovewwides: seq[optionawuvwwide[option[int]]] =
+    featuweswitchovewwideutiw.getboundedoptionawintovewwides(
       (
-        MaxRealGraphAndFollowedUsersFSOverrideParam,
-        "max_real_graph_and_followers_users_fs_override_defined",
-        "max_real_graph_and_followers_users_fs_override_value"
+        maxweawgwaphandfowwowedusewsfsovewwidepawam, (⑅˘꒳˘)
+        "max_weaw_gwaph_and_fowwowews_usews_fs_ovewwide_defined", OwO
+        "max_weaw_gwaph_and_fowwowews_usews_fs_ovewwide_vawue"
       )
     )
-  val doubleOverrides: Seq[OptionalOverride[Double]] =
-    configHelper.createDeciderBasedOverrides(RecapProduction.doubleParams)
-  val booleanOverrides: Seq[OptionalOverride[Boolean]] =
-    configHelper.createDeciderBasedBooleanOverrides(RecapProduction.booleanParams)
-  val booleanFeatureSwitchOverrides: Seq[OptionalOverride[Boolean]] =
-    FeatureSwitchOverrideUtil.getBooleanFSOverrides(RecapProduction.booleanFeatureSwitchParams: _*)
-  val boundedDoubleFeatureSwitchOverrides: Seq[OptionalOverride[Double]] =
-    FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-      RecapProduction.boundedDoubleFeatureSwitchParams: _*)
-  val boundedIntFeatureSwitchOverrides: Seq[OptionalOverride[Int]] =
-    FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      RecapProduction.boundedIntFeatureSwitchParams: _*)
+  vaw doubweovewwides: seq[optionawuvwwide[doubwe]] =
+    c-confighewpew.cweatedecidewbasedovewwides(wecappwoduction.doubwepawams)
+  v-vaw booweanovewwides: seq[optionawuvwwide[boowean]] =
+    c-confighewpew.cweatedecidewbasedbooweanovewwides(wecappwoduction.booweanpawams)
+  v-vaw booweanfeatuweswitchovewwides: s-seq[optionawuvwwide[boowean]] =
+    featuweswitchovewwideutiw.getbooweanfsovewwides(wecappwoduction.booweanfeatuweswitchpawams: _*)
+  vaw boundeddoubwefeatuweswitchovewwides: seq[optionawuvwwide[doubwe]] =
+    f-featuweswitchovewwideutiw.getboundeddoubwefsovewwides(
+      wecappwoduction.boundeddoubwefeatuweswitchpawams: _*)
+  vaw boundedintfeatuweswitchovewwides: seq[optionawuvwwide[int]] =
+    featuweswitchovewwideutiw.getboundedintfsovewwides(
+      w-wecappwoduction.boundedintfeatuweswitchpawams: _*)
 
-  val config: BaseConfig = new BaseConfigBuilder()
+  vaw config: b-baseconfig = n-nyew baseconfigbuiwdew()
     .set(
-      intOverrides: _*
+      i-intovewwides: _*
     )
     .set(
-      booleanOverrides: _*
+      booweanovewwides: _*
     )
     .set(
-      doubleOverrides: _*
+      doubweovewwides: _*
     )
     .set(
-      booleanFeatureSwitchOverrides: _*
+      b-booweanfeatuweswitchovewwides: _*
     )
     .set(
-      boundedIntFeatureSwitchOverrides: _*
+      b-boundedintfeatuweswitchovewwides: _*
     )
     .set(
-      optionalBoundedIntFeatureSwitchOverrides: _*
+      o-optionawboundedintfeatuweswitchovewwides: _*
     )
     .set(
-      boundedDoubleFeatureSwitchOverrides: _*
+      boundeddoubwefeatuweswitchovewwides: _*
     )
-    .build(RecapProduction.getClass.getSimpleName)
+    .buiwd(wecappwoduction.getcwass.getsimpwename)
 }

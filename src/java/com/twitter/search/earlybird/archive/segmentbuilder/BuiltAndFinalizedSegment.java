@@ -1,29 +1,29 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.twittew.seawch.eawwybiwd.awchive.segmentbuiwdew;
 
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+impowt c-com.twittew.seawch.eawwybiwd.index.eawwybiwdsegmentfactowy;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
+i-impowt c-com.twittew.seawch.eawwybiwd.pawtition.segmentsyncconfig;
 
-public class BuiltAndFinalizedSegment extends SegmentBuilderSegment {
-  public BuiltAndFinalizedSegment(
-      SegmentInfo segmentInfo,
-      SegmentConfig segmentConfig,
-      EarlybirdSegmentFactory earlybirdSegmentFactory,
-      int alreadyRetriedCount,
-      SegmentSyncConfig sync) {
+p-pubwic c-cwass buiwtandfinawizedsegment e-extends segmentbuiwdewsegment {
+  p-pubwic buiwtandfinawizedsegment(
+      segmentinfo segmentinfo, rawr x3
+      segmentconfig segmentconfig, nyaa~~
+      e-eawwybiwdsegmentfactowy eawwybiwdsegmentfactowy, /(^•ω•^)
+      int awweadywetwiedcount,
+      s-segmentsyncconfig sync) {
 
-    super(segmentInfo, segmentConfig, earlybirdSegmentFactory, alreadyRetriedCount, sync);
+    s-supew(segmentinfo, rawr segmentconfig, OwO eawwybiwdsegmentfactowy, (U ﹏ U) awweadywetwiedcount, >_< s-sync);
   }
 
-  @Override
-  public SegmentBuilderSegment handle() throws SegmentInfoConstructionException,
-      SegmentUpdaterException {
+  @ovewwide
+  pubwic s-segmentbuiwdewsegment h-handwe() thwows segmentinfoconstwuctionexception, rawr x3
+      segmentupdatewexception {
 
-    throw new IllegalStateException("Should not handle a BuildAndFinalizedSegment.");
+    thwow nyew iwwegawstateexception("shouwd nyot handwe a-a buiwdandfinawizedsegment.");
   }
 
-  @Override
-  public boolean isBuilt() {
-    return true;
+  @ovewwide
+  pubwic boowean isbuiwt() {
+    wetuwn twue;
   }
 }

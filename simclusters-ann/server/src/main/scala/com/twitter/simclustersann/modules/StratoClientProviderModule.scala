@@ -1,20 +1,20 @@
-package com.twitter.simclustersann.modules
+package com.twittew.simcwustewsann.moduwes
 
-import com.google.inject.Provides
-import javax.inject.Singleton
-import com.twitter.inject.TwitterModule
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.Strato
+impowt c-com.googwe.inject.pwovides
+i-impowt j-javax.inject.singweton
+i-impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.stwato.cwient.cwient
+i-impowt com.twittew.stwato.cwient.stwato
 
-object StratoClientProviderModule extends TwitterModule {
+object stwatocwientpwovidewmoduwe extends twittewmoduwe {
 
-  @Singleton
-  @Provides
-  def providesCache(
-    serviceIdentifier: ServiceIdentifier,
-  ): Client = Strato.client
-    .withMutualTls(serviceIdentifier)
-    .build()
+  @singweton
+  @pwovides
+  def pwovidescache(
+    s-sewviceidentifiew: sewviceidentifiew, :3
+  ): cwient = s-stwato.cwient
+    .withmutuawtws(sewviceidentifiew)
+    .buiwd()
 
 }

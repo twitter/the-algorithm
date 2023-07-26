@@ -1,53 +1,53 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion
 
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+impowt com.googwe.inject.singweton
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims.switchingsimssouwce
+i-impowt com.twittew.fowwow_wecommendations.common.cwients.weaw_time_weaw_gwaph.weawtimeweawgwaphcwient
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.hewmit.modew.awgowithm
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
 
-import javax.inject.Inject
+impowt javax.inject.inject
 
-@Singleton
-class RecentStrongEngagementDirectFollowSimilarUsersSource @Inject() (
-  realTimeRealGraphClient: RealTimeRealGraphClient,
-  switchingSimsSource: SwitchingSimsSource)
-    extends SimsExpansionBasedCandidateSource[HasClientContext with HasParams](
-      switchingSimsSource) {
+@singweton
+cwass wecentstwongengagementdiwectfowwowsimiwawusewssouwce @inject() (
+  w-weawtimeweawgwaphcwient: weawtimeweawgwaphcwient, (U ﹏ U)
+  switchingsimssouwce: s-switchingsimssouwce)
+    extends simsexpansionbasedcandidatesouwce[hascwientcontext w-with haspawams](
+      switchingsimssouwce) {
 
-  val identifier = RecentStrongEngagementDirectFollowSimilarUsersSource.Identifier
+  vaw identifiew = wecentstwongengagementdiwectfowwowsimiwawusewssouwce.identifiew
 
-  override def firstDegreeNodes(
-    request: HasClientContext with HasParams
-  ): Stitch[Seq[CandidateUser]] = request.getOptionalUserId
-    .map { userId =>
-      realTimeRealGraphClient
-        .getUsersRecentlyEngagedWith(
-          userId,
-          RealTimeRealGraphClient.StrongEngagementScoreMap,
-          includeDirectFollowCandidates = true,
-          includeNonDirectFollowCandidates = false
-        ).map(_.take(RecentStrongEngagementDirectFollowSimilarUsersSource.MaxFirstDegreeNodes))
-    }.getOrElse(Stitch.Nil)
+  o-ovewwide def fiwstdegweenodes(
+    w-wequest: h-hascwientcontext with haspawams
+  ): stitch[seq[candidateusew]] = wequest.getoptionawusewid
+    .map { usewid =>
+      w-weawtimeweawgwaphcwient
+        .getusewswecentwyengagedwith(
+          usewid, (⑅˘꒳˘)
+          weawtimeweawgwaphcwient.stwongengagementscowemap, òωó
+          incwudediwectfowwowcandidates = twue, ʘwʘ
+          incwudenondiwectfowwowcandidates = fawse
+        ).map(_.take(wecentstwongengagementdiwectfowwowsimiwawusewssouwce.maxfiwstdegweenodes))
+    }.getowewse(stitch.niw)
 
-  override def maxSecondaryDegreeNodes(request: HasClientContext with HasParams): Int = Int.MaxValue
+  ovewwide d-def maxsecondawydegweenodes(wequest: hascwientcontext w-with haspawams): i-int = int.maxvawue
 
-  override def maxResults(request: HasClientContext with HasParams): Int =
-    RecentStrongEngagementDirectFollowSimilarUsersSource.MaxResults
+  o-ovewwide d-def maxwesuwts(wequest: hascwientcontext with haspawams): i-int =
+    wecentstwongengagementdiwectfowwowsimiwawusewssouwce.maxwesuwts
 
-  override def scoreCandidate(sourceScore: Double, similarToScore: Double): Double = {
-    sourceScore * similarToScore
+  ovewwide def scowecandidate(souwcescowe: d-doubwe, /(^•ω•^) simiwawtoscowe: doubwe): doubwe = {
+    souwcescowe * simiwawtoscowe
   }
 
-  override def calibrateDivisor(req: HasClientContext with HasParams): Double = 1.0d
+  ovewwide d-def cawibwatedivisow(weq: hascwientcontext w-with h-haspawams): doubwe = 1.0d
 }
 
-object RecentStrongEngagementDirectFollowSimilarUsersSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.RecentStrongEngagementSimilarUser.toString)
-  val MaxFirstDegreeNodes = 10
-  val MaxResults = 200
+o-object wecentstwongengagementdiwectfowwowsimiwawusewssouwce {
+  vaw identifiew = candidatesouwceidentifiew(awgowithm.wecentstwongengagementsimiwawusew.tostwing)
+  vaw maxfiwstdegweenodes = 10
+  v-vaw maxwesuwts = 200
 }

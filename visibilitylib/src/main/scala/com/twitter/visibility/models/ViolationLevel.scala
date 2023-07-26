@@ -1,51 +1,51 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-sealed trait ViolationLevel extends Product with Serializable {
-  val level: Int
+seawed twait v-viowationwevew e-extends pwoduct w-with sewiawizabwe {
+  v-vaw wevew: i-int
 }
 
-object ViolationLevel {
+object v-viowationwevew {
 
-  case object DefaultLevel extends ViolationLevel {
-    override val level: Int = 0
+  c-case object d-defauwtwevew extends viowationwevew {
+    ovewwide vaw wevew: int = 0
   }
 
-  case object Level1 extends ViolationLevel {
-    override val level: Int = 1
+  case o-object wevew1 extends viowationwevew {
+    ovewwide v-vaw wevew: int = 1
   }
 
-  case object Level2 extends ViolationLevel {
-    override val level: Int = 2
+  c-case object wevew2 extends viowationwevew {
+    ovewwide vaw wevew: int = 2
   }
 
-  case object Level3 extends ViolationLevel {
-    override val level: Int = 3
+  c-case object wevew3 extends viowationwevew {
+    o-ovewwide vaw w-wevew: int = 3
   }
 
-  case object Level4 extends ViolationLevel {
-    override val level: Int = 4
+  case object wevew4 extends viowationwevew {
+    ovewwide v-vaw wevew: int = 4
   }
 
-  private val safetyLabelToViolationLevel: Map[TweetSafetyLabelType, ViolationLevel] = Map(
-    TweetSafetyLabelType.FosnrHatefulConduct -> Level3,
-    TweetSafetyLabelType.FosnrHatefulConductLowSeveritySlur -> Level1,
+  pwivate vaw safetywabewtoviowationwevew: map[tweetsafetywabewtype, /(^•ω•^) viowationwevew] = map(
+    t-tweetsafetywabewtype.fosnwhatefuwconduct -> wevew3, rawr x3
+    t-tweetsafetywabewtype.fosnwhatefuwconductwowsevewityswuw -> w-wevew1, (U ﹏ U)
   )
 
-  val violationLevelToSafetyLabels: Map[ViolationLevel, Set[TweetSafetyLabelType]] =
-    safetyLabelToViolationLevel.groupBy { case (_, violationLevel) => violationLevel }.map {
-      case (violationLevel, collection) => (violationLevel, collection.keySet)
+  v-vaw viowationwevewtosafetywabews: m-map[viowationwevew, (U ﹏ U) set[tweetsafetywabewtype]] =
+    safetywabewtoviowationwevew.gwoupby { c-case (_, (⑅˘꒳˘) viowationwevew) => viowationwevew }.map {
+      c-case (viowationwevew, òωó cowwection) => (viowationwevew, ʘwʘ cowwection.keyset)
     }
 
-  def fromTweetSafetyLabel(
-    tweetSafetyLabel: TweetSafetyLabel
-  ): ViolationLevel = {
-    safetyLabelToViolationLevel.getOrElse(tweetSafetyLabel.labelType, DefaultLevel)
+  def fwomtweetsafetywabew(
+    tweetsafetywabew: tweetsafetywabew
+  ): v-viowationwevew = {
+    safetywabewtoviowationwevew.getowewse(tweetsafetywabew.wabewtype, /(^•ω•^) defauwtwevew)
   }
 
-  def fromTweetSafetyLabelOpt(
-    tweetSafetyLabel: TweetSafetyLabel
-  ): Option[ViolationLevel] = {
-    safetyLabelToViolationLevel.get(tweetSafetyLabel.labelType)
+  d-def fwomtweetsafetywabewopt(
+    t-tweetsafetywabew: t-tweetsafetywabew
+  ): option[viowationwevew] = {
+    safetywabewtoviowationwevew.get(tweetsafetywabew.wabewtype)
   }
 
 }

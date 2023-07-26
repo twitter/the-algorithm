@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.configapi.pawam
 
-object InsertFixedPositionResults {
-  def apply(
-    candidatePipeline: CandidatePipelineIdentifier,
-    positionParam: Param[Int],
-  ): InsertFixedPositionResults =
-    new InsertFixedPositionResults(SpecificPipeline(candidatePipeline), positionParam)
+object insewtfixedpositionwesuwts {
+  def appwy(
+    c-candidatepipewine: candidatepipewineidentifiew, (U ﹏ U)
+    positionpawam: p-pawam[int], (U ﹏ U)
+  ): insewtfixedpositionwesuwts =
+    n-nyew insewtfixedpositionwesuwts(specificpipewine(candidatepipewine), (⑅˘꒳˘) positionpawam)
 
-  def apply(
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    positionParam: Param[Int]
-  ): InsertFixedPositionResults =
-    new InsertFixedPositionResults(SpecificPipelines(candidatePipelines), positionParam)
+  def appwy(
+    candidatepipewines: set[candidatepipewineidentifiew], òωó
+    p-positionpawam: pawam[int]
+  ): i-insewtfixedpositionwesuwts =
+    n-nyew insewtfixedpositionwesuwts(specificpipewines(candidatepipewines), ʘwʘ positionpawam)
 }
 
 /**
- * Insert all candidates in a pipeline scope at a 0-indexed fixed position. If the current
- * results are a shorter length than the requested position, then the candidates will be appended
- * to the results.
+ * insewt aww candidates in a pipewine scope a-at a 0-indexed fixed position. if the cuwwent
+ * wesuwts awe a showtew wength t-than the wequested position, /(^•ω•^) then t-the candidates w-wiww be appended
+ * t-to the wesuwts. ʘwʘ
  */
-case class InsertFixedPositionResults(
-  override val pipelineScope: CandidateScope,
-  positionParam: Param[Int])
-    extends Selector[PipelineQuery] {
+c-case cwass insewtfixedpositionwesuwts(
+  ovewwide vaw p-pipewinescope: candidatescope, σωσ
+  positionpawam: pawam[int])
+    e-extends sewectow[pipewinequewy] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = InsertSelector.insertIntoResultsAtPosition(
-    position = query.params(positionParam),
-    pipelineScope = pipelineScope,
-    remainingCandidates = remainingCandidates,
-    result = result)
+  ovewwide def appwy(
+    quewy: pipewinequewy, OwO
+    wemainingcandidates: seq[candidatewithdetaiws], 😳😳😳
+    w-wesuwt: seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = i-insewtsewectow.insewtintowesuwtsatposition(
+    p-position = quewy.pawams(positionpawam), 😳😳😳
+    pipewinescope = pipewinescope, o.O
+    wemainingcandidates = wemainingcandidates, ( ͡o ω ͡o )
+    wesuwt = wesuwt)
 }

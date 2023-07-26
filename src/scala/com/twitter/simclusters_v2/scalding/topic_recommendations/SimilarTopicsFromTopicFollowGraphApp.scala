@@ -1,222 +1,222 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
+package com.twittew.simcwustews_v2.scawding.topic_wecommendations
 
-import com.twitter.escherbird.scalding.source.FullMetadataSource
-import com.twitter.interests_ds.jobs.interests_service.UserTopicRelationSnapshotScalaDataset
-import com.twitter.interests.thriftscala.InterestRelationType
-import com.twitter.interests.thriftscala.UserInterestsRelationSnapshot
-import com.twitter.recos.entities.thriftscala.SemanticCoreEntity
-import com.twitter.recos.entities.thriftscala.SemanticCoreEntityScoreList
-import com.twitter.recos.entities.thriftscala.SemanticEntityScore
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.SimilarTopicsFromTopicFollowGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseRowMatrix
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+impowt com.twittew.eschewbiwd.scawding.souwce.fuwwmetadatasouwce
+i-impowt com.twittew.intewests_ds.jobs.intewests_sewvice.usewtopicwewationsnapshotscawadataset
+i-impowt com.twittew.intewests.thwiftscawa.intewestwewationtype
+i-impowt c-com.twittew.intewests.thwiftscawa.usewintewestswewationsnapshot
+i-impowt com.twittew.wecos.entities.thwiftscawa.semanticcoweentity
+i-impowt com.twittew.wecos.entities.thwiftscawa.semanticcoweentityscowewist
+i-impowt com.twittew.wecos.entities.thwiftscawa.semanticentityscowe
+i-impowt com.twittew.scawding._
+impowt com.twittew.scawding_intewnaw.dawv2.daw
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.expwicitwocation
+impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.pwocatwa
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.semanticcoweentityid
+impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.simiwawtopicsfwomtopicfowwowgwaphscawadataset
+impowt com.twittew.simcwustews_v2.scawding.common.matwix.spawsewowmatwix
+i-impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+i-impowt java.utiw.timezone
 
 /**
- * In this file, we compute the similarities between topics based on how often they are co-followed
- * by users.
+ * i-in t-this fiwe, 🥺 we compute the simiwawities between topics based on how often they awe c-co-fowwowed
+ * by usews. OwO
  *
-  * Similarity(i, j) = #co-follow(i,j) / sqrt(#follow(i) * #follow(j))
+  * simiwawity(i, >w< j) = #co-fowwow(i,j) / sqwt(#fowwow(i) * #fowwow(j))
  *
-  * It works as follows:
+  * i-it wowks as fowwows:
  *
-  *  1. it first reads the data set of user to topics follow graph, and construct a sparse matrix M with
- *    N rows and K columns, where N is the number of users, and K is the number of topics.
- *    In the matrix, M(u,i) = 1 if user u follows topic i; otherwise it is 0. In the sparse matrix,
- *    we only save non-zero elements.
+  *  1. 🥺 i-it fiwst w-weads the data s-set of usew t-to topics fowwow gwaph, and constwuct a spawse matwix m-m with
+ *    ny wows and k cowumns, nyaa~~ whewe n-n is the nyumbew of usews, ^^ and k is the nyumbew of topics. >w<
+ *    in the matwix, OwO m(u,i) = 1 if usew u-u fowwows topic i; othewwise i-it is 0. XD in the s-spawse matwix, ^^;;
+ *    w-we onwy save non-zewo ewements. 🥺
  *
-  *  2. we do l2-normalization for each column of the matrix M, to get a normalized version M'.
+  *  2. XD we do w2-nowmawization fow each c-cowumn of the matwix m-m, to get a nyowmawized vewsion m-m'. (U ᵕ U❁)
  *
-  *  3. we get topic-topic similarity matrix S = M'.transpose.multiply(M'). The resulting matrix will
- *    contain the similarities between all topics, i.e., S(i,j) is the similarity we mentioned above.
+  *  3. w-we get topic-topic simiwawity m-matwix s = m'.twanspose.muwtipwy(m'). :3 the wesuwting m-matwix wiww
+ *    contain the simiwawities b-between aww topics, ( ͡o ω ͡o ) i.e., s(i,j) i-is the simiwawity we mentioned a-above. òωó
  *
-  *  4. for each topic, we only keep its K similar topics with largest similarity scores, while not
- *   including those with scores lower than a threshold.
+  *  4. σωσ f-fow each topic, (U ᵕ U❁) we onwy keep its k simiwaw topics with wawgest simiwawity scowes, (✿oωo) whiwe nyot
+ *   incwuding those w-with scowes w-wowew than a thweshowd. ^^
  *
   */
 /**
- * capesospy-v2 update --build_locally \
- * --start_cron similar_topics_from_topic_follow_graph \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * capesospy-v2 u-update --buiwd_wocawwy \
+ * --stawt_cwon s-simiwaw_topics_fwom_topic_fowwow_gwaph \
+ * s-swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object SimilarTopicsFromTopicFollowGraphScheduledApp extends ScheduledExecutionApp {
-  import SimilarTopics._
+object simiwawtopicsfwomtopicfowwowgwaphscheduwedapp extends scheduwedexecutionapp {
+  impowt s-simiwawtopics._
 
-  private val outputPath: String =
-    "/user/cassowary/manhattan_sequence_files/similar_topics_from_topics_follow_graph"
+  pwivate vaw outputpath: stwing =
+    "/usew/cassowawy/manhattan_sequence_fiwes/simiwaw_topics_fwom_topics_fowwow_gwaph"
 
-  override def firstTime: RichDate = RichDate("2020-05-07")
+  ovewwide def fiwsttime: w-wichdate = wichdate("2020-05-07")
 
-  override def batchIncrement: Duration = Days(7)
+  o-ovewwide d-def batchincwement: d-duwation = days(7)
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide d-def wunondatewange(
+    awgs: a-awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val numSimilarTopics = args.int("numSimilarTopics", default = 100)
-    val scoreThreshold = args.double("scoreThreshold", default = 0.01)
+    i-impwicit datewange: d-datewange, ^•ﻌ•^
+    timezone: timezone, XD
+    uniqueid: u-uniqueid
+  ): e-execution[unit] = {
+    v-vaw n-nyumsimiwawtopics = a-awgs.int("numsimiwawtopics", :3 defauwt = 100)
+    vaw scowethweshowd = awgs.doubwe("scowethweshowd", (ꈍᴗꈍ) d-defauwt = 0.01)
 
-    val numOutputTopics = Stat("NumOutputTopics")
+    vaw nyumoutputtopics = stat("numoutputtopics")
 
-    computeSimilarTopics(
-      getExplicitFollowedTopics,
-      getFollowableTopics,
-      numSimilarTopics,
-      scoreThreshold)
+    computesimiwawtopics(
+      getexpwicitfowwowedtopics, :3
+      getfowwowabwetopics, (U ﹏ U)
+      n-nyumsimiwawtopics, UwU
+      scowethweshowd)
       .map {
-        case (topicId, similarTopics) =>
-          numOutputTopics.inc()
-          KeyVal(
-            topicId,
-            SemanticCoreEntityScoreList(similarTopics.map {
-              case (similarTopicId, score) =>
-                SemanticEntityScore(SemanticCoreEntity(similarTopicId), score)
+        case (topicid, 😳😳😳 simiwawtopics) =>
+          n-nyumoutputtopics.inc()
+          k-keyvaw(
+            t-topicid, XD
+            semanticcoweentityscowewist(simiwawtopics.map {
+              c-case (simiwawtopicid, o.O scowe) =>
+                s-semanticentityscowe(semanticcoweentity(simiwawtopicid), (⑅˘꒳˘) s-scowe)
             }))
       }
-      .writeDALVersionedKeyValExecution(
-        SimilarTopicsFromTopicFollowGraphScalaDataset,
-        D.Suffix(outputPath),
-        version = ExplicitEndTime(dateRange.end)
+      .wwitedawvewsionedkeyvawexecution(
+        simiwawtopicsfwomtopicfowwowgwaphscawadataset,
+        d.suffix(outputpath), 😳😳😳
+        vewsion = expwicitendtime(datewange.end)
       )
   }
 
 }
 
 /**
- scalding remote run --user cassowary --reducers 2000 \
- --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations:similar_topics_from_topic_follow_graph-adhoc \
- --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.SimilarTopicsFromTopicFollowGraphAdhocApp \
- --submitter  hadoopnest1.atla.twitter.com  \
+ scawding wemote w-wun --usew cassowawy --weducews 2000 \
+ --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/topic_wecommendations:simiwaw_topics_fwom_topic_fowwow_gwaph-adhoc \
+ --main-cwass com.twittew.simcwustews_v2.scawding.topic_wecommendations.simiwawtopicsfwomtopicfowwowgwaphadhocapp \
+ --submittew  h-hadoopnest1.atwa.twittew.com  \
  --  --date 2020-04-28
  */
-object SimilarTopicsFromTopicFollowGraphAdhocApp extends AdhocExecutionApp {
-  import SimilarTopics._
+o-object simiwawtopicsfwomtopicfowwowgwaphadhocapp extends adhocexecutionapp {
+  i-impowt simiwawtopics._
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val numSimilarTopics = args.int("numSimilarTopics", default = 100)
-    val scoreThreshold = args.double("scoreThreshold", default = 0.01)
+    i-impwicit datewange: d-datewange, nyaa~~
+    timezone: timezone, rawr
+    uniqueid: uniqueid
+  ): execution[unit] = {
+    v-vaw nyumsimiwawtopics = a-awgs.int("numsimiwawtopics", -.- d-defauwt = 100)
+    vaw scowethweshowd = a-awgs.doubwe("scowethweshowd", (✿oωo) d-defauwt = 0.01)
 
-    val numOutputTopics = Stat("NumOutputTopics")
+    vaw nyumoutputtopics = s-stat("numoutputtopics")
 
-    computeSimilarTopics(
-      getExplicitFollowedTopics,
-      getFollowableTopics,
-      numSimilarTopics,
-      scoreThreshold)
+    computesimiwawtopics(
+      getexpwicitfowwowedtopics, /(^•ω•^)
+      getfowwowabwetopics,
+      nyumsimiwawtopics, 🥺
+      s-scowethweshowd)
       .map {
-        case (topicId, similarTopics) =>
-          numOutputTopics.inc()
-          topicId -> similarTopics
-            .collect {
-              case (similarTopic, score) if similarTopic != topicId =>
-                s"$similarTopic:$score"
+        c-case (topicid, ʘwʘ simiwawtopics) =>
+          nyumoutputtopics.inc()
+          t-topicid -> s-simiwawtopics
+            .cowwect {
+              case (simiwawtopic, UwU scowe) if simiwawtopic != t-topicid =>
+                s"$simiwawtopic:$scowe"
             }
-            .mkString(",")
+            .mkstwing(",")
       }
-      .writeExecution(
-        TypedTsv("/user/cassowary/adhoc/topic_recos/similar_topics")
+      .wwiteexecution(
+        typedtsv("/usew/cassowawy/adhoc/topic_wecos/simiwaw_topics")
       )
   }
 
 }
 
-object SimilarTopics {
+object simiwawtopics {
 
-  val UTTDomain: Long = 131L
+  vaw u-uttdomain: wong = 131w
 
-  val FollowableTag: String = "utt:followable_topic"
+  vaw fowwowabwetag: stwing = "utt:fowwowabwe_topic"
 
-  def getFollowableTopics(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[SemanticCoreEntityId] = {
-    val NumFollowableTopics = Stat("NumFollowableTopics")
+  d-def getfowwowabwetopics(
+    i-impwicit datewange: datewange, XD
+    timezone: timezone, (✿oωo)
+    u-uniqueid: u-uniqueid
+  ): typedpipe[semanticcoweentityid] = {
+    vaw numfowwowabwetopics = stat("numfowwowabwetopics")
 
-    TypedPipe
-      .from(
-        new FullMetadataSource("/atla/proc" + FullMetadataSource.DefaultHdfsPath)()(
-          dateRange.embiggen(Days(7))))
-      .flatMap {
-        case fullMetadata if fullMetadata.domainId == UTTDomain =>
-          for {
-            basicMetadata <- fullMetadata.basicMetadata
-            indexableFields <- basicMetadata.indexableFields
-            tags <- indexableFields.tags
-            if tags.contains(FollowableTag)
-          } yield {
-            NumFollowableTopics.inc()
-            fullMetadata.entityId
+    t-typedpipe
+      .fwom(
+        nyew fuwwmetadatasouwce("/atwa/pwoc" + f-fuwwmetadatasouwce.defauwthdfspath)()(
+          datewange.embiggen(days(7))))
+      .fwatmap {
+        case fuwwmetadata if fuwwmetadata.domainid == uttdomain =>
+          f-fow {
+            basicmetadata <- f-fuwwmetadata.basicmetadata
+            i-indexabwefiewds <- basicmetadata.indexabwefiewds
+            t-tags <- indexabwefiewds.tags
+            i-if tags.contains(fowwowabwetag)
+          } y-yiewd {
+            n-nyumfowwowabwetopics.inc()
+            fuwwmetadata.entityid
           }
-        case _ => None
+        c-case _ => n-nyone
       }
-      .forceToDisk
+      .fowcetodisk
   }
 
-  def getExplicitFollowedTopics(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(UserId, Map[SemanticCoreEntityId, Double])] = {
+  def getexpwicitfowwowedtopics(
+    impwicit d-datewange: d-datewange, :3
+    timezone: t-timezone, (///ˬ///✿)
+    uniqueid: uniqueid
+  ): typedpipe[(usewid, nyaa~~ m-map[semanticcoweentityid, >w< doubwe])] = {
 
-    DAL
-      .readMostRecentSnapshotNoOlderThan(UserTopicRelationSnapshotScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .collect {
-        case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
-            if userInterestsRelationSnapshot.interestType == "UTT" &&
-              userInterestsRelationSnapshot.relation == InterestRelationType.Followed =>
+    daw
+      .weadmostwecentsnapshotnoowdewthan(usewtopicwewationsnapshotscawadataset, -.- d-days(7))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
+      .cowwect {
+        c-case usewintewestswewationsnapshot: usewintewestswewationsnapshot
+            if usewintewestswewationsnapshot.intewesttype == "utt" &&
+              u-usewintewestswewationsnapshot.wewation == i-intewestwewationtype.fowwowed =>
           (
-            userInterestsRelationSnapshot.userId,
-            Map(userInterestsRelationSnapshot.interestId -> 1.0))
+            u-usewintewestswewationsnapshot.usewid, (✿oωo)
+            m-map(usewintewestswewationsnapshot.intewestid -> 1.0))
       }
-      .sumByKey
+      .sumbykey
   }
 
-  def computeSimilarTopics(
-    userTopicsFollowGraph: TypedPipe[(UserId, Map[SemanticCoreEntityId, Double])],
-    followableTopics: TypedPipe[SemanticCoreEntityId],
-    numSimilarTopics: Int,
-    scoreThreshold: Double
-  ): TypedPipe[(SemanticCoreEntityId, Seq[(SemanticCoreEntityId, Double)])] = {
-    val userTopicFollowGraph =
-      SparseRowMatrix[UserId, SemanticCoreEntityId, Double](
-        userTopicsFollowGraph,
-        isSkinnyMatrix = true)
-        .filterCols(followableTopics) // filter out unfollowable topics
-        .colL2Normalize // normalization
-        // due to the small number of the topics,
-        // Scalding only allocates 1-2 mappers for the next step which makes it take unnecessarily long time.
-        // Changing it to 10 to make it a bit faster
-        .forceToDisk(numShardsOpt = Some(10))
+  def computesimiwawtopics(
+    u-usewtopicsfowwowgwaph: typedpipe[(usewid, (˘ω˘) map[semanticcoweentityid, rawr doubwe])], OwO
+    fowwowabwetopics: typedpipe[semanticcoweentityid], ^•ﻌ•^
+    n-nyumsimiwawtopics: int, UwU
+    s-scowethweshowd: doubwe
+  ): t-typedpipe[(semanticcoweentityid, (˘ω˘) seq[(semanticcoweentityid, (///ˬ///✿) d-doubwe)])] = {
+    vaw usewtopicfowwowgwaph =
+      s-spawsewowmatwix[usewid, σωσ s-semanticcoweentityid, /(^•ω•^) d-doubwe](
+        usewtopicsfowwowgwaph, 😳
+        i-isskinnymatwix = twue)
+        .fiwtewcows(fowwowabwetopics) // f-fiwtew out unfowwowabwe topics
+        .coww2nowmawize // nyowmawization
+        // due to the smow nyumbew of the topics, 😳
+        // s-scawding onwy a-awwocates 1-2 m-mappews fow the nyext step which m-makes it take unnecessawiwy wong time. (⑅˘꒳˘)
+        // changing it to 10 t-to make it a-a bit fastew
+        .fowcetodisk(numshawdsopt = some(10))
 
-    userTopicFollowGraph
-      .transposeAndMultiplySkinnySparseRowMatrix(userTopicFollowGraph)
-      .filter { (i, j, v) =>
-        // exclude topic itself from being considered as similar; also the similarity score should
-        // be larger than a threshold
-        i != j && v > scoreThreshold
+    u-usewtopicfowwowgwaph
+      .twansposeandmuwtipwyskinnyspawsewowmatwix(usewtopicfowwowgwaph)
+      .fiwtew { (i, 😳😳😳 j, v) =>
+        // excwude topic i-itsewf fwom being c-considewed as simiwaw; awso t-the simiwawity scowe s-shouwd
+        // be wawgew than a thweshowd
+        i != j && v > scowethweshowd
       }
-      .sortWithTakePerRow(numSimilarTopics)(Ordering.by(-_._2))
+      .sowtwithtakepewwow(numsimiwawtopics)(owdewing.by(-_._2))
   }
 
 }

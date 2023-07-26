@@ -1,51 +1,51 @@
-package com.twitter.search.common.search;
+package com.twittew.seawch.common.seawch;
 
-import javax.annotation.Nonnull;
+impowt j-javax.annotation.nonnuww;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.metrics.SearchCounter;
+i-impowt c-com.twittew.seawch.common.metwics.seawchcountew;
 
 /**
- * This is not an enum to allow different clusters to define their own EarlyTerminationStates.
+ * t-this is n-nyot an enum to a-awwow diffewent cwustews to define theiw own eawwytewminationstates. rawr
  */
-public final class EarlyTerminationState {
-  private static final String STATS_PREFIX = "early_termination_";
+pubwic finaw cwass eawwytewminationstate {
+  p-pwivate static finaw stwing stats_pwefix = "eawwy_tewmination_";
 
-  public static final EarlyTerminationState COLLECTING =
-      new EarlyTerminationState("no_early_termination", false);
-  public static final EarlyTerminationState TERMINATED_TIME_OUT_EXCEEDED =
-      new EarlyTerminationState("terminated_timeout_exceeded", true);
-  public static final EarlyTerminationState TERMINATED_MAX_QUERY_COST_EXCEEDED =
-      new EarlyTerminationState("terminated_max_query_cost_exceeded", true);
-  public static final EarlyTerminationState TERMINATED_MAX_HITS_EXCEEDED =
-      new EarlyTerminationState("terminated_max_hits_exceeded", true);
-  public static final EarlyTerminationState TERMINATED_NUM_RESULTS_EXCEEDED =
-      new EarlyTerminationState("terminated_num_results_exceeded", true);
+  p-pubwic static finaw e-eawwytewminationstate cowwecting =
+      nyew eawwytewminationstate("no_eawwy_tewmination", mya fawse);
+  p-pubwic static finaw eawwytewminationstate t-tewminated_time_out_exceeded =
+      n-nyew eawwytewminationstate("tewminated_timeout_exceeded", ^^ twue);
+  pubwic static finaw eawwytewminationstate tewminated_max_quewy_cost_exceeded =
+      nyew e-eawwytewminationstate("tewminated_max_quewy_cost_exceeded", 😳😳😳 twue);
+  pubwic static finaw eawwytewminationstate tewminated_max_hits_exceeded =
+      n-nyew eawwytewminationstate("tewminated_max_hits_exceeded", mya twue);
+  pubwic s-static finaw eawwytewminationstate t-tewminated_num_wesuwts_exceeded =
+      n-nyew e-eawwytewminationstate("tewminated_num_wesuwts_exceeded", 😳 twue);
 
 
-  // This string can be returned as a part of a search response, to tell the searcher
-  // why the search got early terminated.
-  private final String terminationReason;
-  private final boolean terminated;
-  private final SearchCounter count;
+  // this stwing c-can be wetuwned as a pawt of a seawch wesponse, -.- t-to teww the seawchew
+  // why the seawch got eawwy tewminated. 🥺
+  pwivate finaw stwing tewminationweason;
+  pwivate f-finaw boowean tewminated;
+  p-pwivate finaw s-seawchcountew count;
 
-  public EarlyTerminationState(@Nonnull String terminationReason, boolean terminated) {
-    this.terminationReason = Preconditions.checkNotNull(terminationReason);
-    this.terminated = terminated;
-    count = SearchCounter.export(STATS_PREFIX + terminationReason + "_count");
+  p-pubwic eawwytewminationstate(@nonnuww stwing tewminationweason, o.O boowean t-tewminated) {
+    t-this.tewminationweason = pweconditions.checknotnuww(tewminationweason);
+    this.tewminated = t-tewminated;
+    c-count = seawchcountew.expowt(stats_pwefix + tewminationweason + "_count");
 
   }
 
-  public boolean isTerminated() {
-    return terminated;
+  p-pubwic boowean istewminated() {
+    w-wetuwn tewminated;
   }
 
-  public String getTerminationReason() {
-    return terminationReason;
+  pubwic stwing gettewminationweason() {
+    w-wetuwn tewminationweason;
   }
 
-  public void incrementCount() {
-    count.increment();
+  p-pubwic void incwementcount() {
+    c-count.incwement();
   }
 }

@@ -1,466 +1,466 @@
-import kerastuner as kt
-import math
-import numpy as np
-import pandas as pd
-import random
-import sklearn.metrics
-import tensorflow as tf
-import os
-import glob
+impowt kewastunew as kt
+impowt math
+i-impowt nyumpy a-as nyp
+impowt pandas a-as pd
+impowt w-wandom
+impowt s-skweawn.metwics
+i-impowt tensowfwow a-as tf
+impowt o-os
+impowt gwob
 
-from tqdm import tqdm
-from matplotlib import pyplot as plt
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from google.cloud import storage
+fwom tqdm impowt tqdm
+fwom matpwotwib impowt pypwot as pwt
+fwom t-tensowfwow.kewas.modews impowt sequentiaw
+fwom tensowfwow.kewas.wayews i-impowt dense
+fwom googwe.cwoud i-impowt stowage
 
-physical_devices = tf.config.list_physical_devices('GPU')
-physical_devices
+physicaw_devices = tf.config.wist_physicaw_devices('gpu')
+physicaw_devices
 
-tf.config.set_visible_devices([tf.config.PhysicalDevice(name='/physical_device:GPU:1', device_type='GPU')], 'GPU')
-tf.config.get_visible_devices('GPU')
+t-tf.config.set_visibwe_devices([tf.config.physicawdevice(name='/physicaw_device:gpu:1', ( ͡o ω ͡o ) device_type='gpu')], (˘ω˘) 'gpu')
+t-tf.config.get_visibwe_devices('gpu')
 
-def decode_fn_embedding(example_proto):
+d-def decode_fn_embedding(exampwe_pwoto):
   
-  feature_description = {
-    "embedding": tf.io.FixedLenFeature([256], dtype=tf.float32),
-    "labels": tf.io.FixedLenFeature([], dtype=tf.int64),
+  featuwe_descwiption = {
+    "embedding": tf.io.fixedwenfeatuwe([256], 😳 dtype=tf.fwoat32), OwO
+    "wabews": tf.io.fixedwenfeatuwe([], (˘ω˘) dtype=tf.int64), òωó
   }
   
-  example = tf.io.parse_single_example(
-      example_proto,
-      feature_description
+  e-exampwe = tf.io.pawse_singwe_exampwe(
+      exampwe_pwoto, ( ͡o ω ͡o )
+      featuwe_descwiption
   )
 
-  return example
+  wetuwn exampwe
 
-def preprocess_embedding_example(example_dict, positive_label=1, features_as_dict=False):
-  labels = example_dict["labels"]
-  label = tf.math.reduce_any(labels == positive_label)
-  label = tf.cast(label, tf.int32)
-  embedding = example_dict["embedding"]
+def pwepwocess_embedding_exampwe(exampwe_dict, UwU positive_wabew=1, /(^•ω•^) f-featuwes_as_dict=fawse):
+  wabews = e-exampwe_dict["wabews"]
+  w-wabew = t-tf.math.weduce_any(wabews == p-positive_wabew)
+  wabew = tf.cast(wabew, (ꈍᴗꈍ) tf.int32)
+  e-embedding = exampwe_dict["embedding"]
   
-  if features_as_dict:
-    features = {"embedding": embedding}
-  else:
-    features = embedding
+  if featuwes_as_dict:
+    f-featuwes = {"embedding": embedding}
+  ewse:
+    featuwes = embedding
     
-  return features, label
-input_root = ...
-sens_prev_input_root = ...
+  wetuwn featuwes, 😳 wabew
+input_woot = ...
+sens_pwev_input_woot = ...
 
-use_sens_prev_data = True
-has_validation_data = True
-positive_label = 1
+u-use_sens_pwev_data = twue
+has_vawidation_data = t-twue
+p-positive_wabew = 1
 
-train_batch_size = 256
+t-twain_batch_size = 256
 test_batch_size = 256
-validation_batch_size = 256
+vawidation_batch_size = 256
 
-do_resample = False
-def class_func(features, label):
-  return label
+do_wesampwe = f-fawse
+d-def cwass_func(featuwes, mya wabew):
+  w-wetuwn wabew
 
-resample_fn = tf.data.experimental.rejection_resample(
-    class_func, target_dist = [0.5, 0.5], seed=0
+w-wesampwe_fn = tf.data.expewimentaw.wejection_wesampwe(
+    c-cwass_func, mya tawget_dist = [0.5, /(^•ω•^) 0.5], ^^;; s-seed=0
 )
-train_glob = f"{input_root}/train/tfrecord/*.tfrecord"
-train_files = tf.io.gfile.glob(train_glob)
+twain_gwob = f"{input_woot}/twain/tfwecowd/*.tfwecowd"
+twain_fiwes = t-tf.io.gfiwe.gwob(twain_gwob)
 
-if use_sens_prev_data:
-  train_sens_prev_glob = f"{sens_prev_input_root}/train/tfrecord/*.tfrecord"
-  train_sens_prev_files = tf.io.gfile.glob(train_sens_prev_glob)
-  train_files = train_files + train_sens_prev_files
+if use_sens_pwev_data:
+  t-twain_sens_pwev_gwob = f"{sens_pwev_input_woot}/twain/tfwecowd/*.tfwecowd"
+  t-twain_sens_pwev_fiwes = t-tf.io.gfiwe.gwob(twain_sens_pwev_gwob)
+  twain_fiwes = twain_fiwes + twain_sens_pwev_fiwes
   
-random.shuffle(train_files)
+wandom.shuffwe(twain_fiwes)
 
-if not len(train_files):
-  raise ValueError(f"Did not find any train files matching {train_glob}")
+if nyot wen(twain_fiwes):
+  w-waise vawueewwow(f"did n-nyot find any twain f-fiwes matching {twain_gwob}")
 
 
-test_glob = f"{input_root}/test/tfrecord/*.tfrecord"
-test_files =  tf.io.gfile.glob(test_glob)
+t-test_gwob = f"{input_woot}/test/tfwecowd/*.tfwecowd"
+t-test_fiwes =  tf.io.gfiwe.gwob(test_gwob)
 
-if not len(test_files):
-  raise ValueError(f"Did not find any eval files matching {test_glob}")
+if not wen(test_fiwes):
+  waise v-vawueewwow(f"did nyot find any evaw fiwes matching {test_gwob}")
   
-test_ds = tf.data.TFRecordDataset(test_files).map(decode_fn_embedding)
-test_ds = test_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=test_batch_size)
+test_ds = tf.data.tfwecowddataset(test_fiwes).map(decode_fn_embedding)
+test_ds = t-test_ds.map(wambda x: pwepwocess_embedding_exampwe(x, 🥺 p-positive_wabew=positive_wabew)).batch(batch_size=test_batch_size)
   
-if use_sens_prev_data:
-  test_sens_prev_glob = f"{sens_prev_input_root}/test/tfrecord/*.tfrecord"
-  test_sens_prev_files =  tf.io.gfile.glob(test_sens_prev_glob)
+i-if use_sens_pwev_data:
+  t-test_sens_pwev_gwob = f"{sens_pwev_input_woot}/test/tfwecowd/*.tfwecowd"
+  test_sens_pwev_fiwes =  t-tf.io.gfiwe.gwob(test_sens_pwev_gwob)
   
-  if not len(test_sens_prev_files):
-    raise ValueError(f"Did not find any eval files matching {test_sens_prev_glob}")
+  i-if nyot wen(test_sens_pwev_fiwes):
+    w-waise v-vawueewwow(f"did not find any evaw fiwes matching {test_sens_pwev_gwob}")
   
-  test_sens_prev_ds = tf.data.TFRecordDataset(test_sens_prev_files).map(decode_fn_embedding)
-  test_sens_prev_ds = test_sens_prev_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=test_batch_size)
+  t-test_sens_pwev_ds = t-tf.data.tfwecowddataset(test_sens_pwev_fiwes).map(decode_fn_embedding)
+  t-test_sens_pwev_ds = t-test_sens_pwev_ds.map(wambda x-x: pwepwocess_embedding_exampwe(x, ^^ positive_wabew=positive_wabew)).batch(batch_size=test_batch_size)
 
-train_ds = tf.data.TFRecordDataset(train_files).map(decode_fn_embedding)
-train_ds = train_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label))
+twain_ds = tf.data.tfwecowddataset(twain_fiwes).map(decode_fn_embedding)
+t-twain_ds = twain_ds.map(wambda x: pwepwocess_embedding_exampwe(x, ^•ﻌ•^ positive_wabew=positive_wabew))
 
-if do_resample:
-  train_ds = train_ds.apply(resample_fn).map(lambda _,b:(b))
+if do_wesampwe:
+  twain_ds = twain_ds.appwy(wesampwe_fn).map(wambda _,b:(b))
 
-train_ds = train_ds.batch(batch_size=256).shuffle(buffer_size=10)
-train_ds = train_ds.repeat()
+t-twain_ds = twain_ds.batch(batch_size=256).shuffwe(buffew_size=10)
+twain_ds = twain_ds.wepeat()
   
 
-if has_validation_data: 
-  eval_glob = f"{input_root}/validation/tfrecord/*.tfrecord"
-  eval_files =  tf.io.gfile.glob(eval_glob)
+if has_vawidation_data: 
+  evaw_gwob = f"{input_woot}/vawidation/tfwecowd/*.tfwecowd"
+  e-evaw_fiwes =  t-tf.io.gfiwe.gwob(evaw_gwob)
     
-  if use_sens_prev_data:
-    eval_sens_prev_glob = f"{sens_prev_input_root}/validation/tfrecord/*.tfrecord"
-    eval_sens_prev_files = tf.io.gfile.glob(eval_sens_prev_glob)
-    eval_files =  eval_files + eval_sens_prev_files
+  i-if use_sens_pwev_data:
+    e-evaw_sens_pwev_gwob = f"{sens_pwev_input_woot}/vawidation/tfwecowd/*.tfwecowd"
+    e-evaw_sens_pwev_fiwes = t-tf.io.gfiwe.gwob(evaw_sens_pwev_gwob)
+    evaw_fiwes =  evaw_fiwes + evaw_sens_pwev_fiwes
     
     
-  if not len(eval_files):
-    raise ValueError(f"Did not find any eval files matching {eval_glob}")
+  if nyot wen(evaw_fiwes):
+    w-waise vawueewwow(f"did nyot f-find any evaw fiwes matching {evaw_gwob}")
   
-  eval_ds = tf.data.TFRecordDataset(eval_files).map(decode_fn_embedding)
-  eval_ds = eval_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=validation_batch_size)
+  e-evaw_ds = tf.data.tfwecowddataset(evaw_fiwes).map(decode_fn_embedding)
+  e-evaw_ds = evaw_ds.map(wambda x: pwepwocess_embedding_exampwe(x, p-positive_wabew=positive_wabew)).batch(batch_size=vawidation_batch_size)
 
-else:
+e-ewse:
   
-  eval_ds = tf.data.TFRecordDataset(test_files).map(decode_fn_embedding)
-  eval_ds = eval_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=validation_batch_size)
-check_ds = tf.data.TFRecordDataset(train_files).map(decode_fn_embedding)
+  evaw_ds = tf.data.tfwecowddataset(test_fiwes).map(decode_fn_embedding)
+  e-evaw_ds = e-evaw_ds.map(wambda x: pwepwocess_embedding_exampwe(x, /(^•ω•^) positive_wabew=positive_wabew)).batch(batch_size=vawidation_batch_size)
+check_ds = tf.data.tfwecowddataset(twain_fiwes).map(decode_fn_embedding)
 cnt = 0
-pos_cnt = 0
-for example in tqdm(check_ds):
-  label = example['labels']
-  if label == 1:
-    pos_cnt += 1
+p-pos_cnt = 0
+fow e-exampwe in tqdm(check_ds):
+  w-wabew = exampwe['wabews']
+  i-if wabew == 1:
+    p-pos_cnt += 1
   cnt += 1
-print(f'{cnt} train entries with {pos_cnt} positive')
+p-pwint(f'{cnt} twain entwies with {pos_cnt} positive')
 
-metrics = []
+metwics = []
 
-metrics.append(
-  tf.keras.metrics.PrecisionAtRecall(
-    recall=0.9, num_thresholds=200, class_id=None, name=None, dtype=None
+metwics.append(
+  t-tf.kewas.metwics.pwecisionatwecaww(
+    w-wecaww=0.9, ^^ nyum_thweshowds=200, 🥺 cwass_id=none, (U ᵕ U❁) nyame=none, dtype=none
   )
 )
 
-metrics.append(
-  tf.keras.metrics.AUC(
-    num_thresholds=200,
-    curve="PR",
+m-metwics.append(
+  t-tf.kewas.metwics.auc(
+    nyum_thweshowds=200, 😳😳😳
+    cuwve="pw", nyaa~~
   )
 )
-def build_model(hp):
-  model = Sequential()
+def buiwd_modew(hp):
+  modew = s-sequentiaw()
 
-  optimizer = tf.keras.optimizers.Adam(
-    learning_rate=0.001,
-    beta_1=0.9,
-    beta_2=0.999,
-    epsilon=1e-08,
-    amsgrad=False,
-    name="Adam",
+  optimizew = tf.kewas.optimizews.adam(
+    weawning_wate=0.001, (˘ω˘)
+    beta_1=0.9, >_<
+    b-beta_2=0.999, XD
+    epsiwon=1e-08, rawr x3
+    amsgwad=fawse, ( ͡o ω ͡o )
+    nyame="adam", :3
   )
   
-  activation=hp.Choice("activation", ["tanh", "gelu"])
-  kernel_initializer=hp.Choice("kernel_initializer", ["he_uniform", "glorot_uniform"])
-  for i in range(hp.Int("num_layers", 1, 2)):
-    model.add(tf.keras.layers.BatchNormalization())
+  a-activation=hp.choice("activation", mya ["tanh", "gewu"])
+  k-kewnew_initiawizew=hp.choice("kewnew_initiawizew", σωσ ["he_unifowm", (ꈍᴗꈍ) "gwowot_unifowm"])
+  fow i in wange(hp.int("num_wayews", OwO 1, 2)):
+    modew.add(tf.kewas.wayews.batchnowmawization())
 
-    units=hp.Int("units", min_value=128, max_value=256, step=128)
+    u-units=hp.int("units", o.O m-min_vawue=128, 😳😳😳 max_vawue=256, /(^•ω•^) step=128)
     
     if i == 0:
-      model.add(
-        Dense(
-          units=units,
-          activation=activation,
-          kernel_initializer=kernel_initializer,
-          input_shape=(None, 256)
+      m-modew.add(
+        dense(
+          u-units=units, OwO
+          activation=activation, ^^
+          kewnew_initiawizew=kewnew_initiawizew, (///ˬ///✿)
+          input_shape=(none, (///ˬ///✿) 256)
         )
       )
-    else:
-      model.add(
-        Dense(
+    ewse:
+      modew.add(
+        d-dense(
           units=units,
-          activation=activation,
-          kernel_initializer=kernel_initializer,
+          activation=activation, (///ˬ///✿)
+          k-kewnew_initiawizew=kewnew_initiawizew, ʘwʘ
         )
       )
     
-  model.add(Dense(1, activation='sigmoid', kernel_initializer=kernel_initializer))
-  model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=metrics)
+  m-modew.add(dense(1, ^•ﻌ•^ activation='sigmoid', OwO k-kewnew_initiawizew=kewnew_initiawizew))
+  modew.compiwe(optimizew=optimizew, (U ﹏ U) w-woss='binawy_cwossentwopy', (ˆ ﻌ ˆ)♡ m-metwics=metwics)
 
-  return model
+  w-wetuwn modew
 
-tuner = kt.tuners.BayesianOptimization(
-  build_model,
-  objective=kt.Objective('val_loss', direction="min"),
-  max_trials=30,
-  directory='tuner_dir',
-  project_name='with_twitter_clip')
+tunew = k-kt.tunews.bayesianoptimization(
+  b-buiwd_modew, (⑅˘꒳˘)
+  objective=kt.objective('vaw_woss', (U ﹏ U) diwection="min"), o.O
+  m-max_twiaws=30,
+  d-diwectowy='tunew_diw', mya
+  p-pwoject_name='with_twittew_cwip')
 
-callbacks = [tf.keras.callbacks.EarlyStopping(
-    monitor='val_loss', min_delta=0, patience=5, verbose=0,
-    mode='auto', baseline=None, restore_best_weights=True
+cawwbacks = [tf.kewas.cawwbacks.eawwystopping(
+    monitow='vaw_woss', XD min_dewta=0, òωó p-patience=5, (˘ω˘) vewbose=0,
+    m-mode='auto', :3 b-basewine=none, OwO westowe_best_weights=twue
 )]
 
-steps_per_epoch = 400
-tuner.search(train_ds,
-             epochs=100,
-             batch_size=256,
-             steps_per_epoch=steps_per_epoch,
-             verbose=2,
-             validation_data=eval_ds,
-             callbacks=callbacks)
+steps_pew_epoch = 400
+tunew.seawch(twain_ds, mya
+             e-epochs=100, (˘ω˘)
+             b-batch_size=256, o.O
+             s-steps_pew_epoch=steps_pew_epoch, (✿oωo)
+             vewbose=2,
+             v-vawidation_data=evaw_ds, (ˆ ﻌ ˆ)♡
+             cawwbacks=cawwbacks)
 
-tuner.results_summary()
-models = tuner.get_best_models(num_models=2)
-best_model = models[0]
+t-tunew.wesuwts_summawy()
+modews = tunew.get_best_modews(num_modews=2)
+best_modew = modews[0]
 
-best_model.build(input_shape=(None, 256))
-best_model.summary()
+best_modew.buiwd(input_shape=(none, ^^;; 256))
+b-best_modew.summawy()
 
-tuner.get_best_hyperparameters()[0].values
+tunew.get_best_hypewpawametews()[0].vawues
 
-optimizer = tf.keras.optimizers.Adam(
-    learning_rate=0.001,
-    beta_1=0.9,
-    beta_2=0.999,
-    epsilon=1e-08,
-    amsgrad=False,
-    name="Adam",
+o-optimizew = tf.kewas.optimizews.adam(
+    w-weawning_wate=0.001, OwO
+    beta_1=0.9, 🥺
+    beta_2=0.999, mya
+    epsiwon=1e-08,
+    a-amsgwad=fawse, 😳
+    nyame="adam", òωó
   )
-best_model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=metrics)
-best_model.summary()
+b-best_modew.compiwe(optimizew=optimizew, /(^•ω•^) w-woss='binawy_cwossentwopy', -.- m-metwics=metwics)
+b-best_modew.summawy()
 
-callbacks = [tf.keras.callbacks.EarlyStopping(
-    monitor='val_loss', min_delta=0, patience=10, verbose=0,
-    mode='auto', baseline=None, restore_best_weights=True
+c-cawwbacks = [tf.kewas.cawwbacks.eawwystopping(
+    monitow='vaw_woss', òωó min_dewta=0, /(^•ω•^) patience=10, /(^•ω•^) vewbose=0,
+    mode='auto', 😳 basewine=none, :3 w-westowe_best_weights=twue
 )]
-history = best_model.fit(train_ds, epochs=100, validation_data=eval_ds, steps_per_epoch=steps_per_epoch, callbacks=callbacks)
+h-histowy = b-best_modew.fit(twain_ds, (U ᵕ U❁) epochs=100, vawidation_data=evaw_ds, ʘwʘ s-steps_pew_epoch=steps_pew_epoch, o.O cawwbacks=cawwbacks)
 
-model_name = 'twitter_hypertuned'
-model_path = f'models/nsfw_Keras_with_CLIP_{model_name}'
-tf.keras.models.save_model(best_model, model_path)
+modew_name = 'twittew_hypewtuned'
+modew_path = f-f'modews/nsfw_kewas_with_cwip_{modew_name}'
+t-tf.kewas.modews.save_modew(best_modew, ʘwʘ modew_path)
 
-def copy_local_directory_to_gcs(local_path, bucket, gcs_path):
-    """Recursively copy a directory of files to GCS.
+d-def copy_wocaw_diwectowy_to_gcs(wocaw_path, ^^ bucket, gcs_path):
+    """wecuwsivewy copy a-a diwectowy of f-fiwes to gcs. ^•ﻌ•^
 
-    local_path should be a directory and not have a trailing slash.
+    wocaw_path shouwd b-be a diwectowy a-and nyot have a twaiwing swash. mya
     """
-    assert os.path.isdir(local_path)
-    for local_file in glob.glob(local_path + '/**'):
-        if not os.path.isfile(local_file):
-            dir_name = os.path.basename(os.path.normpath(local_file))
-            copy_local_directory_to_gcs(local_file, bucket, f"{gcs_path}/{dir_name}")
-        else:
-          remote_path = os.path.join(gcs_path, local_file[1 + len(local_path) :])
-          blob = bucket.blob(remote_path)
-          blob.upload_from_filename(local_file)
+    assewt os.path.isdiw(wocaw_path)
+    fow wocaw_fiwe in gwob.gwob(wocaw_path + '/**'):
+        if n-nyot os.path.isfiwe(wocaw_fiwe):
+            diw_name = o-os.path.basename(os.path.nowmpath(wocaw_fiwe))
+            c-copy_wocaw_diwectowy_to_gcs(wocaw_fiwe, UwU b-bucket, f-f"{gcs_path}/{diw_name}")
+        ewse:
+          w-wemote_path = o-os.path.join(gcs_path, >_< wocaw_fiwe[1 + w-wen(wocaw_path) :])
+          b-bwob = bucket.bwob(wemote_path)
+          b-bwob.upwoad_fwom_fiwename(wocaw_fiwe)
 
-client = storage.Client(project=...)
-bucket = client.get_bucket(...)
-copy_local_directory_to_gcs(model_path, bucket, model_path)
-copy_local_directory_to_gcs('tuner_dir', bucket, 'tuner_dir')
-loaded_model = tf.keras.models.load_model(model_path)
-print(history.history.keys())
+cwient = stowage.cwient(pwoject=...)
+bucket = c-cwient.get_bucket(...)
+copy_wocaw_diwectowy_to_gcs(modew_path, /(^•ω•^) bucket, òωó modew_path)
+c-copy_wocaw_diwectowy_to_gcs('tunew_diw', σωσ b-bucket, ( ͡o ω ͡o ) 'tunew_diw')
+woaded_modew = t-tf.kewas.modews.woad_modew(modew_path)
+pwint(histowy.histowy.keys())
 
-plt.figure(figsize = (20, 5))
+pwt.figuwe(figsize = (20, nyaa~~ 5))
 
-plt.subplot(1, 3, 1)
-plt.plot(history.history['auc'])
-plt.plot(history.history['val_auc'])
-plt.title('model auc')
-plt.ylabel('auc')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+pwt.subpwot(1, :3 3, 1)
+p-pwt.pwot(histowy.histowy['auc'])
+p-pwt.pwot(histowy.histowy['vaw_auc'])
+p-pwt.titwe('modew auc')
+pwt.ywabew('auc')
+pwt.xwabew('epoch')
+pwt.wegend(['twain', UwU 'test'], o.O w-woc='uppew weft')
 
-plt.subplot(1, 3, 2)
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+pwt.subpwot(1, (ˆ ﻌ ˆ)♡ 3, 2)
+pwt.pwot(histowy.histowy['woss'])
+p-pwt.pwot(histowy.histowy['vaw_woss'])
+p-pwt.titwe('modew woss')
+pwt.ywabew('woss')
+p-pwt.xwabew('epoch')
+pwt.wegend(['twain', ^^;; 'test'], w-woc='uppew weft')
 
-plt.subplot(1, 3, 3)
-plt.plot(history.history['precision_at_recall'])
-plt.plot(history.history['val_precision_at_recall'])
-plt.title('model precision at 0.9 recall')
-plt.ylabel('precision_at_recall')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+p-pwt.subpwot(1, ʘwʘ 3, 3)
+pwt.pwot(histowy.histowy['pwecision_at_wecaww'])
+pwt.pwot(histowy.histowy['vaw_pwecision_at_wecaww'])
+p-pwt.titwe('modew pwecision at 0.9 wecaww')
+pwt.ywabew('pwecision_at_wecaww')
+p-pwt.xwabew('epoch')
+pwt.wegend(['twain', σωσ 'test'], ^^;; w-woc='uppew weft')
 
-plt.savefig('history_with_twitter_clip.pdf')
+p-pwt.savefig('histowy_with_twittew_cwip.pdf')
 
-test_labels = []
-test_preds = []
+test_wabews = []
+test_pweds = []
 
-for batch_features, batch_labels in tqdm(test_ds):
-  test_preds.extend(loaded_model.predict_proba(batch_features))
-  test_labels.extend(batch_labels.numpy())
+f-fow batch_featuwes, ʘwʘ b-batch_wabews i-in tqdm(test_ds):
+  test_pweds.extend(woaded_modew.pwedict_pwoba(batch_featuwes))
+  test_wabews.extend(batch_wabews.numpy())
   
-test_sens_prev_labels = []
-test_sens_prev_preds = []
+test_sens_pwev_wabews = []
+test_sens_pwev_pweds = []
 
-for batch_features, batch_labels in tqdm(test_sens_prev_ds):
-  test_sens_prev_preds.extend(loaded_model.predict_proba(batch_features))
-  test_sens_prev_labels.extend(batch_labels.numpy())
+fow batch_featuwes, ^^ batch_wabews in tqdm(test_sens_pwev_ds):
+  test_sens_pwev_pweds.extend(woaded_modew.pwedict_pwoba(batch_featuwes))
+  test_sens_pwev_wabews.extend(batch_wabews.numpy())
   
-n_test_pos = 0
-n_test_neg = 0
-n_test = 0
+ny_test_pos = 0
+ny_test_neg = 0
+ny_test = 0
 
-for label in test_labels:
-  n_test +=1
-  if label == 1:
-    n_test_pos +=1
-  else:
-    n_test_neg +=1
+f-fow wabew in t-test_wabews:
+  ny_test +=1
+  if wabew == 1:
+    n-ny_test_pos +=1
+  e-ewse:
+    ny_test_neg +=1
 
-print(f'n_test = {n_test}, n_pos = {n_test_pos}, n_neg = {n_test_neg}')
+p-pwint(f'n_test = {n_test}, ny_pos = {n_test_pos}, nyaa~~ ny_neg = {n_test_neg}')
 
-n_test_sens_prev_pos = 0
-n_test_sens_prev_neg = 0
-n_test_sens_prev = 0
+n-ny_test_sens_pwev_pos = 0
+ny_test_sens_pwev_neg = 0
+n-ny_test_sens_pwev = 0
 
-for label in test_sens_prev_labels:
-  n_test_sens_prev +=1
-  if label == 1:
-    n_test_sens_prev_pos +=1
-  else:
-    n_test_sens_prev_neg +=1
+f-fow wabew in test_sens_pwev_wabews:
+  n-n_test_sens_pwev +=1
+  if wabew == 1:
+    n-ny_test_sens_pwev_pos +=1
+  ewse:
+    n-ny_test_sens_pwev_neg +=1
 
-print(f'n_test_sens_prev = {n_test_sens_prev}, n_pos_sens_prev = {n_test_sens_prev_pos}, n_neg = {n_test_sens_prev_neg}')
+pwint(f'n_test_sens_pwev = {n_test_sens_pwev}, (///ˬ///✿) ny_pos_sens_pwev = {n_test_sens_pwev_pos}, XD n-ny_neg = {n_test_sens_pwev_neg}')
 
-test_weights = np.ones(np.asarray(test_preds).shape)
+t-test_weights = n-nyp.ones(np.asawway(test_pweds).shape)
 
-test_labels = np.asarray(test_labels)
-test_preds = np.asarray(test_preds)
-test_weights = np.asarray(test_weights)
+t-test_wabews = n-nyp.asawway(test_wabews)
+test_pweds = n-nyp.asawway(test_pweds)
+t-test_weights = n-nyp.asawway(test_weights)
 
-pr = sklearn.metrics.precision_recall_curve(
-  test_labels, 
-  test_preds)
+p-pw = skweawn.metwics.pwecision_wecaww_cuwve(
+  t-test_wabews, :3 
+  t-test_pweds)
 
-auc = sklearn.metrics.auc(pr[1], pr[0])
-plt.plot(pr[1], pr[0])
-plt.title("nsfw (MU test set)")
+a-auc = skweawn.metwics.auc(pw[1], òωó p-pw[0])
+pwt.pwot(pw[1], pw[0])
+pwt.titwe("nsfw (mu t-test set)")
 
-test_sens_prev_weights = np.ones(np.asarray(test_sens_prev_preds).shape)
+test_sens_pwev_weights = n-nyp.ones(np.asawway(test_sens_pwev_pweds).shape)
 
-test_sens_prev_labels = np.asarray(test_sens_prev_labels)
-test_sens_prev_preds = np.asarray(test_sens_prev_preds)
-test_sens_prev_weights = np.asarray(test_sens_prev_weights)
+t-test_sens_pwev_wabews = n-nyp.asawway(test_sens_pwev_wabews)
+test_sens_pwev_pweds = n-nyp.asawway(test_sens_pwev_pweds)
+test_sens_pwev_weights = n-nyp.asawway(test_sens_pwev_weights)
 
-pr_sens_prev = sklearn.metrics.precision_recall_curve(
-  test_sens_prev_labels, 
-  test_sens_prev_preds)
+pw_sens_pwev = s-skweawn.metwics.pwecision_wecaww_cuwve(
+  test_sens_pwev_wabews, ^^ 
+  t-test_sens_pwev_pweds)
 
-auc_sens_prev = sklearn.metrics.auc(pr_sens_prev[1], pr_sens_prev[0])
-plt.plot(pr_sens_prev[1], pr_sens_prev[0])
-plt.title("nsfw (sens prev test set)")
+auc_sens_pwev = skweawn.metwics.auc(pw_sens_pwev[1], ^•ﻌ•^ pw_sens_pwev[0])
+pwt.pwot(pw_sens_pwev[1], σωσ p-pw_sens_pwev[0])
+pwt.titwe("nsfw (sens p-pwev test s-set)")
 
-df = pd.DataFrame(
+df = pd.datafwame(
   {
-    "label": test_labels.squeeze(), 
-    "preds_keras": np.asarray(test_preds).flatten(),
+    "wabew": test_wabews.squeeze(), (ˆ ﻌ ˆ)♡ 
+    "pweds_kewas": nyp.asawway(test_pweds).fwatten(),
   })
-plt.figure(figsize=(15, 10))
-df["preds_keras"].hist()
-plt.title("Keras predictions", size=20)
-plt.xlabel('score')
-plt.ylabel("freq")
+pwt.figuwe(figsize=(15, nyaa~~ 10))
+d-df["pweds_kewas"].hist()
+pwt.titwe("kewas p-pwedictions", ʘwʘ s-size=20)
+pwt.xwabew('scowe')
+p-pwt.ywabew("fweq")
 
-plt.figure(figsize = (20, 5))
-plt.subplot(1, 3, 1)
+pwt.figuwe(figsize = (20, ^•ﻌ•^ 5))
+pwt.subpwot(1, 3, rawr x3 1)
 
-plt.plot(pr[2], pr[0][0:-1])
-plt.xlabel("threshold")
-plt.ylabel("precision")
+p-pwt.pwot(pw[2], 🥺 p-pw[0][0:-1])
+pwt.xwabew("thweshowd")
+p-pwt.ywabew("pwecision")
 
-plt.subplot(1, 3, 2)
+pwt.subpwot(1, ʘwʘ 3, 2)
 
-plt.plot(pr[2], pr[1][0:-1])
-plt.xlabel("threshold")
-plt.ylabel("recall")
-plt.title("Keras", size=20)
+pwt.pwot(pw[2], (˘ω˘) pw[1][0:-1])
+pwt.xwabew("thweshowd")
+p-pwt.ywabew("wecaww")
+pwt.titwe("kewas", s-size=20)
 
-plt.subplot(1, 3, 3)
+p-pwt.subpwot(1, o.O 3, 3)
 
-plt.plot(pr[1], pr[0])
-plt.xlabel("recall")
-plt.ylabel("precision")
+p-pwt.pwot(pw[1], σωσ pw[0])
+p-pwt.xwabew("wecaww")
+p-pwt.ywabew("pwecision")
 
-plt.savefig('with_twitter_clip.pdf')
+p-pwt.savefig('with_twittew_cwip.pdf')
 
-def get_point_for_recall(recall_value, recall, precision):
-  idx = np.argmin(np.abs(recall - recall_value))
-  return (recall[idx], precision[idx])
+d-def get_point_fow_wecaww(wecaww_vawue, wecaww, (ꈍᴗꈍ) p-pwecision):
+  i-idx = nyp.awgmin(np.abs(wecaww - w-wecaww_vawue))
+  w-wetuwn (wecaww[idx], (ˆ ﻌ ˆ)♡ p-pwecision[idx])
 
-def get_point_for_precision(precision_value, recall, precision):
-  idx = np.argmin(np.abs(precision - precision_value))
-  return (recall[idx], precision[idx])
-precision, recall, thresholds = pr
+d-def g-get_point_fow_pwecision(pwecision_vawue, o.O w-wecaww, :3 pwecision):
+  idx = n-nyp.awgmin(np.abs(pwecision - pwecision_vawue))
+  w-wetuwn (wecaww[idx], -.- pwecision[idx])
+p-pwecision, ( ͡o ω ͡o ) w-wecaww, /(^•ω•^) thweshowds = p-pw
 
-auc_precision_recall = sklearn.metrics.auc(recall, precision)
+auc_pwecision_wecaww = skweawn.metwics.auc(wecaww, (⑅˘꒳˘) pwecision)
 
-print(auc_precision_recall)
+pwint(auc_pwecision_wecaww)
 
-plt.figure(figsize=(15, 10))
-plt.plot(recall, precision)
+p-pwt.figuwe(figsize=(15, òωó 10))
+p-pwt.pwot(wecaww, 🥺 p-pwecision)
 
-plt.xlabel("recall")
-plt.ylabel("precision")
+pwt.xwabew("wecaww")
+pwt.ywabew("pwecision")
 
-ptAt50 = get_point_for_recall(0.5, recall, precision)
-print(ptAt50)
-plt.plot( [ptAt50[0],ptAt50[0]], [0,ptAt50[1]], 'r')
-plt.plot([0, ptAt50[0]], [ptAt50[1], ptAt50[1]], 'r')
+ptat50 = get_point_fow_wecaww(0.5, (ˆ ﻌ ˆ)♡ w-wecaww, -.- pwecision)
+p-pwint(ptat50)
+pwt.pwot( [ptat50[0],ptat50[0]], σωσ [0,ptat50[1]], >_< 'w')
+p-pwt.pwot([0, :3 p-ptat50[0]], [ptat50[1], OwO ptat50[1]], rawr 'w')
 
-ptAt90 = get_point_for_recall(0.9, recall, precision)
-print(ptAt90)
-plt.plot( [ptAt90[0],ptAt90[0]], [0,ptAt90[1]], 'b')
-plt.plot([0, ptAt90[0]], [ptAt90[1], ptAt90[1]], 'b')
+ptat90 = get_point_fow_wecaww(0.9, (///ˬ///✿) wecaww, pwecision)
+p-pwint(ptat90)
+p-pwt.pwot( [ptat90[0],ptat90[0]], ^^ [0,ptat90[1]], XD 'b')
+p-pwt.pwot([0, UwU p-ptat90[0]], o.O [ptat90[1], 😳 ptat90[1]], 'b')
 
-ptAt50fmt = "%.4f" % ptAt50[1]
-ptAt90fmt = "%.4f" % ptAt90[1]
-aucFmt = "%.4f" % auc_precision_recall
-plt.title(
-  f"Keras (nsfw MU test)\nAUC={aucFmt}\np={ptAt50fmt} @ r=0.5\np={ptAt90fmt} @ r=0.9\nN_train={...}} ({...} pos), N_test={n_test} ({n_test_pos} pos)",
+ptat50fmt = "%.4f" % p-ptat50[1]
+p-ptat90fmt = "%.4f" % ptat90[1]
+aucfmt = "%.4f" % a-auc_pwecision_wecaww
+pwt.titwe(
+  f"kewas (nsfw m-mu test)\nauc={aucfmt}\np={ptat50fmt} @ w=0.5\np={ptat90fmt} @ w-w=0.9\nn_twain={...}} ({...} p-pos), (˘ω˘) ny_test={n_test} ({n_test_pos} pos)", 🥺
   size=20
 )
-plt.subplots_adjust(top=0.72)
-plt.savefig('recall_precision_nsfw_Keras_with_twitter_CLIP_MU_test.pdf')
+p-pwt.subpwots_adjust(top=0.72)
+p-pwt.savefig('wecaww_pwecision_nsfw_kewas_with_twittew_cwip_mu_test.pdf')
 
-precision, recall, thresholds = pr_sens_prev
+pwecision, ^^ wecaww, >w< t-thweshowds = pw_sens_pwev
 
-auc_precision_recall = sklearn.metrics.auc(recall, precision)
-print(auc_precision_recall)
-plt.figure(figsize=(15, 10))
+auc_pwecision_wecaww = s-skweawn.metwics.auc(wecaww, ^^;; p-pwecision)
+pwint(auc_pwecision_wecaww)
+p-pwt.figuwe(figsize=(15, (˘ω˘) 10))
 
-plt.plot(recall, precision)
+p-pwt.pwot(wecaww, OwO pwecision)
 
-plt.xlabel("recall")
-plt.ylabel("precision")
+p-pwt.xwabew("wecaww")
+p-pwt.ywabew("pwecision")
 
-ptAt50 = get_point_for_recall(0.5, recall, precision)
-print(ptAt50)
-plt.plot( [ptAt50[0],ptAt50[0]], [0,ptAt50[1]], 'r')
-plt.plot([0, ptAt50[0]], [ptAt50[1], ptAt50[1]], 'r')
+p-ptat50 = get_point_fow_wecaww(0.5, (ꈍᴗꈍ) wecaww, pwecision)
+p-pwint(ptat50)
+pwt.pwot( [ptat50[0],ptat50[0]], òωó [0,ptat50[1]], ʘwʘ 'w')
+pwt.pwot([0, ʘwʘ p-ptat50[0]], nyaa~~ [ptat50[1], UwU ptat50[1]], (⑅˘꒳˘) 'w')
 
-ptAt90 = get_point_for_recall(0.9, recall, precision)
-print(ptAt90)
-plt.plot( [ptAt90[0],ptAt90[0]], [0,ptAt90[1]], 'b')
-plt.plot([0, ptAt90[0]], [ptAt90[1], ptAt90[1]], 'b')
+p-ptat90 = get_point_fow_wecaww(0.9, (˘ω˘) w-wecaww, :3 pwecision)
+pwint(ptat90)
+pwt.pwot( [ptat90[0],ptat90[0]], [0,ptat90[1]], (˘ω˘) 'b')
+pwt.pwot([0, nyaa~~ ptat90[0]], [ptat90[1], (U ﹏ U) ptat90[1]], nyaa~~ 'b')
 
-ptAt50fmt = "%.4f" % ptAt50[1]
-ptAt90fmt = "%.4f" % ptAt90[1]
-aucFmt = "%.4f" % auc_precision_recall
-plt.title(
-  f"Keras (nsfw sens prev test)\nAUC={aucFmt}\np={ptAt50fmt} @ r=0.5\np={ptAt90fmt} @ r=0.9\nN_train={...} ({...} pos), N_test={n_test_sens_prev} ({n_test_sens_prev_pos} pos)",
-  size=20
+p-ptat50fmt = "%.4f" % ptat50[1]
+p-ptat90fmt = "%.4f" % p-ptat90[1]
+aucfmt = "%.4f" % auc_pwecision_wecaww
+pwt.titwe(
+  f-f"kewas (nsfw sens pwev test)\nauc={aucfmt}\np={ptat50fmt} @ w-w=0.5\np={ptat90fmt} @ w-w=0.9\nn_twain={...} ({...} p-pos), ^^;; n_test={n_test_sens_pwev} ({n_test_sens_pwev_pos} p-pos)", OwO
+  s-size=20
 )
-plt.subplots_adjust(top=0.72)
-plt.savefig('recall_precision_nsfw_Keras_with_twitter_CLIP_sens_prev_test.pdf')
+pwt.subpwots_adjust(top=0.72)
+pwt.savefig('wecaww_pwecision_nsfw_kewas_with_twittew_cwip_sens_pwev_test.pdf')

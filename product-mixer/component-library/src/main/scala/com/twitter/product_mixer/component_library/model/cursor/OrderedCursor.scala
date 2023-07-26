@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.component_library.model.cursor
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow
 
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.{
-  CursorType => UrtCursorType
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinecuwsow
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.uwtpipewinecuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.cuwsowtype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.{
+  c-cuwsowtype => u-uwtcuwsowtype
 }
 
 /**
- * Cursor model that may be used when cursoring over an ordered candidate source.
+ * c-cuwsow m-modew that may b-be used when cuwsowing ovew an owdewed candidate souwce. >_<
  *
- * @param initialSortIndex See [[UrtPipelineCursor]]
- * @param id represents the ID of the element, typically the top element for a top cursor or the
- *           bottom element for a bottom cursor, in an ordered candidate list
- * @param gapBoundaryId represents the ID of the gap boundary element, which in gap cursors is the
- *                      opposite bound of the gap to be filled with the cursor
+ * @pawam initiawsowtindex s-see [[uwtpipewinecuwsow]]
+ * @pawam id wepwesents the id o-of the ewement, >_< typicawwy the top e-ewement fow a top cuwsow ow the
+ *           bottom ewement fow a bottom cuwsow, (⑅˘꒳˘) i-in an owdewed candidate wist
+ * @pawam g-gapboundawyid w-wepwesents the id of the gap boundawy ewement, /(^•ω•^) which in gap cuwsows is t-the
+ *                      opposite bound of the gap to be fiwwed with the cuwsow
  */
-case class UrtOrderedCursor(
-  override val initialSortIndex: Long,
-  id: Option[Long],
-  cursorType: Option[UrtCursorType],
-  gapBoundaryId: Option[Long] = None)
-    extends UrtPipelineCursor
+c-case cwass uwtowdewedcuwsow(
+  o-ovewwide vaw i-initiawsowtindex: w-wong, rawr x3
+  id: o-option[wong], (U ﹏ U)
+  cuwsowtype: option[uwtcuwsowtype], (U ﹏ U)
+  gapboundawyid: o-option[wong] = nyone)
+    extends uwtpipewinecuwsow
 
-case class OrderedCursor(
-  id: Option[Long],
-  cursorType: Option[CursorType],
-  gapBoundaryId: Option[Long] = None)
-    extends PipelineCursor
+c-case cwass owdewedcuwsow(
+  id: option[wong], (⑅˘꒳˘)
+  cuwsowtype: option[cuwsowtype], òωó
+  gapboundawyid: o-option[wong] = nyone)
+    e-extends pipewinecuwsow

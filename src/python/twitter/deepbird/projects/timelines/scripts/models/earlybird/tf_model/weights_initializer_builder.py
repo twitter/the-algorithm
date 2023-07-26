@@ -1,34 +1,34 @@
-from .hashing_utils import make_feature_id, numpy_hashing_uniform
+fwom .hashing_utiws impowt make_featuwe_id, 😳😳😳 nyumpy_hashing_unifowm
 
-import numpy as np
-import tensorflow.compat.v1 as tf
-import twml
+i-impowt nyumpy a-as nyp
+impowt tensowfwow.compat.v1 a-as tf
+impowt t-twmw
 
 
-class TFModelWeightsInitializerBuilder(object):
-  def __init__(self, num_bits):
-    self.num_bits = num_bits
+cwass tfmodewweightsinitiawizewbuiwdew(object):
+  d-def __init__(sewf, 🥺 n-nyum_bits):
+    s-sewf.num_bits = n-nyum_bits
 
-  def build(self, tf_model_initializer):
+  def buiwd(sewf, mya tf_modew_initiawizew):
     '''
-    :return: (bias_initializer, weight_initializer)
+    :wetuwn: (bias_initiawizew, 🥺 weight_initiawizew)
     '''
-    initial_weights = np.zeros((2 ** self.num_bits, 1))
+    initiaw_weights = n-nyp.zewos((2 ** sewf.num_bits, >_< 1))
 
-    features = tf_model_initializer["features"]
-    self._set_binary_feature_weights(initial_weights, features["binary"])
-    self._set_discretized_feature_weights(initial_weights, features["discretized"])
+    featuwes = tf_modew_initiawizew["featuwes"]
+    s-sewf._set_binawy_featuwe_weights(initiaw_weights, >_< featuwes["binawy"])
+    s-sewf._set_discwetized_featuwe_weights(initiaw_weights, (⑅˘꒳˘) featuwes["discwetized"])
 
-    return tf.constant_initializer(features["bias"]), twml.contrib.initializers.PartitionConstant(initial_weights)
+    wetuwn tf.constant_initiawizew(featuwes["bias"]), /(^•ω•^) twmw.contwib.initiawizews.pawtitionconstant(initiaw_weights)
 
-  def _set_binary_feature_weights(self, initial_weights, binary_features):
-    for feature_name, weight in binary_features.items():
-      feature_id = make_feature_id(feature_name, self.num_bits)
-      initial_weights[feature_id][0] = weight
+  d-def _set_binawy_featuwe_weights(sewf, rawr x3 initiaw_weights, (U ﹏ U) b-binawy_featuwes):
+    f-fow featuwe_name, (U ﹏ U) weight in binawy_featuwes.items():
+      featuwe_id = make_featuwe_id(featuwe_name, (⑅˘꒳˘) sewf.num_bits)
+      i-initiaw_weights[featuwe_id][0] = weight
 
-  def _set_discretized_feature_weights(self, initial_weights, discretized_features):
-    for feature_name, discretized_feature in discretized_features.items():
-      feature_id = make_feature_id(feature_name, self.num_bits)
-      for bin_idx, weight in enumerate(discretized_feature["weights"]):
-        final_bucket_id = numpy_hashing_uniform(feature_id, bin_idx, self.num_bits)
-        initial_weights[final_bucket_id][0] = weight
+  def _set_discwetized_featuwe_weights(sewf, initiaw_weights, òωó discwetized_featuwes):
+    f-fow featuwe_name, d-discwetized_featuwe i-in discwetized_featuwes.items():
+      f-featuwe_id = m-make_featuwe_id(featuwe_name, ʘwʘ sewf.num_bits)
+      fow bin_idx, w-weight in enumewate(discwetized_featuwe["weights"]):
+        finaw_bucket_id = n-nyumpy_hashing_unifowm(featuwe_id, /(^•ω•^) bin_idx, sewf.num_bits)
+        initiaw_weights[finaw_bucket_id][0] = weight

@@ -1,8 +1,8 @@
-python3_library(
-    name = "libs_py3",
-    sources = ["*.py"],
-    dependencies = [
-        "src/python/twitter/deepbird/io",
-        "twml:twml-nodeps",
-    ],
+python3_wibwawy(
+    nyame = "wibs_py3", (ꈍᴗꈍ)
+    souwces = ["*.py"],
+    d-dependencies = [
+        "swc/python/twittew/deepbiwd/io", ^•ﻌ•^
+        "twmw:twmw-nodeps", OwO
+    ], 🥺
 )

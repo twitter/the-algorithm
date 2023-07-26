@@ -1,20 +1,21 @@
-scala_library(
-    platform = "java11",
-    strict_deps = False,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "finagle/finagle-memcached/src/main/scala",
-        "finagle/finagle-stats",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/base",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/util",
-        "servo/repo/src/main/scala",
-        "src/thrift/com/twitter/gizmoduck:thrift-scala",
-        "src/thrift/com/twitter/gizmoduck:user-thrift-scala",
-        "src/thrift/com/twitter/recos:recos-internal-scala",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
-        "src/thrift/com/twitter/tweetypie:service-scala",
-        "stitch/stitch-tweetypie/src/main/scala",
-        "util/util-logging/src/main/scala",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "finagwe-intewnaw/mtws/swc/main/scawa/com/twittew/finagwe/mtws/authentication", òωó
+        "finagwe/finagwe-stats", o.O
+        "finatwa/inject/inject-cowe/swc/main/scawa", (U ᵕ U❁)
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/utiw", (⑅˘꒳˘)
+        "intewests-sewvice/thwift/swc/main/thwift:thwift-scawa", ( ͡o ω ͡o )
+        "wepwesentation-managew/sewvew/swc/main/scawa/com/twittew/wepwesentation_managew/common", UwU
+        "sewvo/utiw", rawr x3
+        "swc/scawa/com/twittew/stowehaus_intewnaw/manhattan", rawr
+        "swc/scawa/com/twittew/stowehaus_intewnaw/memcache", σωσ
+        "swc/scawa/com/twittew/stowehaus_intewnaw/utiw", σωσ
+        "stwato/swc/main/scawa/com/twittew/stwato/cwient", >_<
+    ],
+)
+ng/swc/main/scawa", -.-
     ],
 )

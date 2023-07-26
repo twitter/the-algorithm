@@ -1,120 +1,120 @@
-# checkstyle: noqa
-import tensorflow.compat.v1 as tf
-from collections import OrderedDict
-from .constants import EB_SCORE_IDX
-from .lolly.data_helpers import get_lolly_scores
+# checkstywe: nyoqa
+impowt tensowfwow.compat.v1 as t-tf
+fwom cowwections i-impowt owdeweddict
+f-fwom .constants i-impowt e-eb_scowe_idx
+fwom .wowwy.data_hewpews i-impowt get_wowwy_scowes
 
-import twml
+impowt t-twmw
 
-def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
+def g-get_muwti_binawy_cwass_metwic_fn(metwics, -.- cwasses=none, ^^;; cwass_dim=1):
   """
-  This function was copied from twml/metrics.py with the following adjustments:
-    - Override example weights with the ones set in graph_output.
-    - Tile labels in order to support per engagement metrics for both TF and Lolly scores.
-    - Add lolly_tf_score_MSE metric.
-  Note: All custom lines have a comment that starts with 'Added'
+  this function was c-copied fwom twmw/metwics.py with the fowwowing adjustments:
+    - o-ovewwide exampwe weights with t-the ones set in gwaph_output. XD
+    - tiwe wabews in owdew to suppowt p-pew engagement metwics fow both t-tf and wowwy s-scowes. 🥺
+    - add wowwy_tf_scowe_mse metwic. òωó
+  note: aww custom wines have a comment t-that stawts with 'added'
   """
-  # pylint: disable=invalid-name,dict-keys-not-iterating
-  if metrics is None:
-    # remove expensive metrics by default for faster eval
-    metrics = list(twml.metrics.SUPPORTED_BINARY_CLASS_METRICS.keys())
-    metrics.remove('pr_curve')
+  # pywint: disabwe=invawid-name,dict-keys-not-itewating
+  if metwics is nyone:
+    # w-wemove expensive metwics b-by defauwt fow f-fastew evaw
+    m-metwics = wist(twmw.metwics.suppowted_binawy_cwass_metwics.keys())
+    m-metwics.wemove('pw_cuwve')
 
-  def get_eval_metric_ops(graph_output, labels, weights):
+  def get_evaw_metwic_ops(gwaph_output, (ˆ ﻌ ˆ)♡ wabews, w-weights):
     """
-    graph_output:
-      dict that is returned by build_graph given input features.
-    labels:
-      target labels associated to batch.
-    weights:
-      weights of the samples..
+    gwaph_output:
+      dict that is wetuwned b-by buiwd_gwaph given input featuwes. -.-
+    wabews:
+      tawget wabews associated to batch. :3
+    w-weights:
+      weights of the s-sampwes..
     """
 
-    # Added to support the example weights overriding.
-    weights = graph_output["weights"]
-    # Added to support per engagement metrics for both TF and Lolly scores.
-    labels = tf.tile(labels, [1, 2])
+    # a-added t-to suppowt the exampwe weights ovewwiding.
+    weights = gwaph_output["weights"]
+    # a-added to s-suppowt pew engagement metwics f-fow both tf and w-wowwy scowes. ʘwʘ
+    wabews = tf.tiwe(wabews, 🥺 [1, 2])
 
-    eval_metric_ops = OrderedDict()
+    e-evaw_metwic_ops = owdeweddict()
 
-    preds = graph_output['output']
+    p-pweds = gwaph_output['output']
 
-    threshold = graph_output['threshold'] if 'threshold' in graph_output else 0.5
+    thweshowd = gwaph_output['thweshowd'] i-if 'thweshowd' in gwaph_output e-ewse 0.5
 
-    hard_preds = graph_output.get('hard_output')
-    if not hard_preds:
-      hard_preds = tf.greater_equal(preds, threshold)
+    hawd_pweds = g-gwaph_output.get('hawd_output')
+    i-if nyot hawd_pweds:
+      hawd_pweds = tf.gweatew_equaw(pweds, >_< thweshowd)
 
-    shape = labels.get_shape()
+    shape = wabews.get_shape()
 
-    # basic sanity check: multi_metric dimension must exist
-    assert len(shape) > class_dim, "Dimension specified by class_dim does not exist."
+    # basic sanity check: muwti_metwic dimension m-must exist
+    a-assewt wen(shape) > cwass_dim, ʘwʘ "dimension s-specified b-by cwass_dim d-does nyot exist."
 
-    num_labels = shape[class_dim]
-    # If we are doing multi-class / multi-label metric, the number of classes / labels must
-    # be know at graph construction time.  This dimension cannot have size None.
-    assert num_labels is not None, "The multi-metric dimension cannot be None."
-    assert classes is None or len(classes) == num_labels, (
-      "Number of classes must match the number of labels")
+    nyum_wabews = shape[cwass_dim]
+    # if w-we awe doing muwti-cwass / muwti-wabew metwic, (˘ω˘) the nyumbew of cwasses / wabews must
+    # b-be know at gwaph constwuction t-time. (✿oωo)  this d-dimension cannot h-have size nyone. (///ˬ///✿)
+    assewt n-nyum_wabews is n-nyot nyone, rawr x3 "the m-muwti-metwic dimension c-cannot be nyone."
+    assewt cwasses is n-nyone ow wen(cwasses) == n-nyum_wabews, -.- (
+      "numbew o-of cwasses m-must match the n-nyumbew of wabews")
 
-    weights_shape = weights.get_shape() if weights is not None else None
-    if weights_shape is None:
-      num_weights = None
-    elif len(weights_shape) > 1:
-      num_weights = weights_shape[class_dim]
-    else:
-      num_weights = 1
+    weights_shape = weights.get_shape() if w-weights is nyot nyone ewse nyone
+    if weights_shape is nyone:
+      nyum_weights = nyone
+    ewif w-wen(weights_shape) > 1:
+      nyum_weights = weights_shape[cwass_dim]
+    ewse:
+      n-nyum_weights = 1
 
-    for i in range(num_labels):
+    f-fow i in wange(num_wabews):
 
-      # add metrics to eval_metric_ops dict
-      for metric_name in metrics:
-        metric_name = metric_name.lower()  # metric name are case insensitive.
+      # a-add metwics to evaw_metwic_ops d-dict
+      fow metwic_name in m-metwics:
+        m-metwic_name = metwic_name.wowew()  # metwic nyame awe case insensitive. ^^
 
-        class_metric_name = metric_name + "_" + (classes[i] if classes is not None else str(i))
+        cwass_metwic_name = metwic_name + "_" + (cwasses[i] i-if cwasses is not nyone e-ewse stw(i))
 
-        if class_metric_name in eval_metric_ops:
-          # avoid adding duplicate metrics.
-          continue
+        if cwass_metwic_name i-in evaw_metwic_ops:
+          # a-avoid adding dupwicate metwics. (⑅˘꒳˘)
+          c-continue
 
-        class_labels = tf.gather(labels, indices=[i], axis=class_dim)
-        class_preds = tf.gather(preds, indices=[i], axis=class_dim)
-        class_hard_preds = tf.gather(hard_preds, indices=[i], axis=class_dim)
+        c-cwass_wabews = tf.gathew(wabews, nyaa~~ i-indices=[i], /(^•ω•^) a-axis=cwass_dim)
+        cwass_pweds = tf.gathew(pweds, (U ﹏ U) indices=[i], 😳😳😳 axis=cwass_dim)
+        c-cwass_hawd_pweds = t-tf.gathew(hawd_pweds, >w< i-indices=[i], XD axis=cwass_dim)
 
-        if num_weights is None:
-          class_weights = None
-        elif num_weights == num_labels:
-          class_weights = tf.gather(weights, indices=[i], axis=class_dim)
-        elif num_weights == 1:
-          class_weights = weights
-        else:
-          raise ValueError("num_weights (%d) and num_labels (%d) do not match"
-                           % (num_weights, num_labels))
+        i-if nyum_weights i-is nyone:
+          cwass_weights = n-nyone
+        ewif nyum_weights == nyum_wabews:
+          cwass_weights = tf.gathew(weights, o.O i-indices=[i], mya axis=cwass_dim)
+        e-ewif nyum_weights == 1:
+          cwass_weights = weights
+        e-ewse:
+          w-waise vawueewwow("num_weights (%d) and nyum_wabews (%d) do nyot match"
+                           % (num_weights, 🥺 nyum_wabews))
 
-        metric_factory, requires_threshold = twml.metrics.SUPPORTED_BINARY_CLASS_METRICS.get(metric_name)
-        if metric_factory:
-          value_op, update_op = metric_factory(
-            labels=class_labels,
-            predictions=(class_hard_preds if requires_threshold else class_preds),
-            weights=class_weights, name=class_metric_name)
-          eval_metric_ops[class_metric_name] = (value_op, update_op)
-        else:
-          raise ValueError('Cannot find the metric named ' + metric_name)
+        m-metwic_factowy, ^^;; wequiwes_thweshowd = twmw.metwics.suppowted_binawy_cwass_metwics.get(metwic_name)
+        if metwic_factowy:
+          vawue_op, :3 u-update_op = metwic_factowy(
+            wabews=cwass_wabews, (U ﹏ U)
+            pwedictions=(cwass_hawd_pweds i-if wequiwes_thweshowd ewse c-cwass_pweds), OwO
+            weights=cwass_weights, 😳😳😳 nyame=cwass_metwic_name)
+          evaw_metwic_ops[cwass_metwic_name] = (vawue_op, (ˆ ﻌ ˆ)♡ u-update_op)
+        e-ewse:
+          waise vawueewwow('cannot find the metwic n-nyamed ' + metwic_name)
 
-    # Added to compare TF and Lolly scores.
-    eval_metric_ops["lolly_tf_score_MSE"] = get_mse(graph_output["output"], labels)
+    # added to compawe t-tf and wowwy scowes. XD
+    evaw_metwic_ops["wowwy_tf_scowe_mse"] = get_mse(gwaph_output["output"], (ˆ ﻌ ˆ)♡ wabews)
 
-    return eval_metric_ops
+    w-wetuwn evaw_metwic_ops
 
-  return get_eval_metric_ops
+  wetuwn g-get_evaw_metwic_ops
 
 
-def get_mse(predictions, labels):
-  lolly_scores = get_lolly_scores(labels)
-  tf_scores = predictions[:, EB_SCORE_IDX]
-  squared_lolly_tf_score_diff = tf.square(tf.subtract(tf_scores, lolly_scores))
+d-def get_mse(pwedictions, ( ͡o ω ͡o ) wabews):
+  wowwy_scowes = g-get_wowwy_scowes(wabews)
+  tf_scowes = p-pwedictions[:, rawr x3 e-eb_scowe_idx]
+  s-squawed_wowwy_tf_scowe_diff = tf.squawe(tf.subtwact(tf_scowes, nyaa~~ w-wowwy_scowes))
 
-  value_op = tf.reduce_mean(squared_lolly_tf_score_diff, name="value_op")
-  update_op = tf.reduce_mean(squared_lolly_tf_score_diff, name="update_op")
+  v-vawue_op = tf.weduce_mean(squawed_wowwy_tf_scowe_diff, >_< nyame="vawue_op")
+  update_op = t-tf.weduce_mean(squawed_wowwy_tf_scowe_diff, ^^;; n-nyame="update_op")
 
-  return value_op, update_op
+  w-wetuwn vawue_op, (ˆ ﻌ ˆ)♡ update_op

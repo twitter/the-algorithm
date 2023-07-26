@@ -1,19 +1,19 @@
-package com.twitter.search.earlybird.factory;
+package com.twittew.seawch.eawwybiwd.factowy;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+impowt o-owg.apache.kafka.cwients.consumew.kafkaconsumew;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
 
-public interface EarlybirdKafkaConsumersFactory {
+p-pubwic intewface e-eawwybiwdkafkaconsumewsfactowy {
   /**
-   * Create a kafka consumer with default records to be polled.
+   * c-cweate a kafka c-consumew with defauwt w-wecowds to b-be powwed. (U ᵕ U❁)
    */
-  KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(
-      String clientID);
+  kafkaconsumew<wong, -.- thwiftvewsionedevents> cweatekafkaconsumew(
+      stwing cwientid);
 
   /**
-   * Create a kafka consumer with a set number of records to be polled.
+   * c-cweate a kafka consumew with a set nyumbew o-of wecowds to be powwed.
    */
-  KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(
-      String clientID, int maxPollRecords);
+  k-kafkaconsumew<wong, ^^;; thwiftvewsionedevents> cweatekafkaconsumew(
+      stwing cwientid, >_< int maxpowwwecowds);
 }

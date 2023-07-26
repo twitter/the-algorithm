@@ -1,16 +1,16 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TargetUser
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.tawgetusew
 
-object MrUserStateUtil {
-  def updateMrUserStateStats(target: TargetUser)(implicit statsReceiver: StatsReceiver) = {
-    statsReceiver.counter("AllUserStates").incr()
-    target.targetMrUserState.map {
-      case Some(state) =>
-        statsReceiver.counter(state.name).incr()
-      case _ =>
-        statsReceiver.counter("UnknownUserState").incr()
+object m-mwusewstateutiw {
+  d-def updatemwusewstatestats(tawget: t-tawgetusew)(impwicit s-statsweceivew: s-statsweceivew) = {
+    statsweceivew.countew("awwusewstates").incw()
+    tawget.tawgetmwusewstate.map {
+      case some(state) =>
+        statsweceivew.countew(state.name).incw()
+      c-case _ =>
+        statsweceivew.countew("unknownusewstate").incw()
     }
   }
 }

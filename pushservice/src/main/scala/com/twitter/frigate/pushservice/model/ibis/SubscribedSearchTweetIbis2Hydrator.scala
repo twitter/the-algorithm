@@ -1,33 +1,33 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.frigate.pushservice.model.SubscribedSearchTweetPushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.InlineActionUtil
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.subscwibedseawchtweetpushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt c-com.twittew.fwigate.pushsewvice.utiw.inwineactionutiw
+i-impowt com.twittew.utiw.futuwe
 
-trait SubscribedSearchTweetIbis2Hydrator extends TweetCandidateIbis2Hydrator {
-  self: SubscribedSearchTweetPushCandidate =>
+t-twait subscwibedseawchtweetibis2hydwatow extends t-tweetcandidateibis2hydwatow {
+  s-sewf: subscwibedseawchtweetpushcandidate =>
 
-  override lazy val tweetDynamicInlineActionsModelValues = {
-    if (target.params(PushFeatureSwitchParams.EnableOONGeneratedInlineActions)) {
-      val actions = target.params(PushFeatureSwitchParams.TweetDynamicInlineActionsList)
-      InlineActionUtil.getGeneratedTweetInlineActions(target, statsReceiver, actions)
-    } else Map.empty[String, String]
+  o-ovewwide wazy vaw tweetdynamicinwineactionsmodewvawues = {
+    if (tawget.pawams(pushfeatuweswitchpawams.enabweoongenewatedinwineactions)) {
+      vaw actions = tawget.pawams(pushfeatuweswitchpawams.tweetdynamicinwineactionswist)
+      i-inwineactionutiw.getgenewatedtweetinwineactions(tawget, rawr x3 statsweceivew, mya actions)
+    } e-ewse map.empty[stwing, nyaa~~ stwing]
   }
 
-  private lazy val searchTermValue: Map[String, String] =
-    Map(
-      "search_term" -> searchTerm,
-      "search_url" -> pushLandingUrl
+  pwivate w-wazy vaw seawchtewmvawue: map[stwing, (⑅˘꒳˘) stwing] =
+    map(
+      "seawch_tewm" -> seawchtewm, rawr x3
+      "seawch_uww" -> p-pushwandinguww
     )
 
-  private lazy val searchModelValues = searchTermValue ++ tweetDynamicInlineActionsModelValues
+  pwivate wazy vaw s-seawchmodewvawues = s-seawchtewmvawue ++ tweetdynamicinwineactionsmodewvawues
 
-  override lazy val tweetModelValues: Future[Map[String, String]] =
-    for {
-      superModelValues <- super.tweetModelValues
-      tweetInlineModelValues <- tweetInlineActionModelValue
-    } yield {
-      superModelValues ++ mediaModelValue ++ searchModelValues ++ tweetInlineModelValues ++ inlineVideoMediaMap
+  ovewwide wazy vaw tweetmodewvawues: futuwe[map[stwing, (✿oωo) s-stwing]] =
+    fow {
+      supewmodewvawues <- supew.tweetmodewvawues
+      tweetinwinemodewvawues <- t-tweetinwineactionmodewvawue
+    } yiewd {
+      supewmodewvawues ++ m-mediamodewvawue ++ s-seawchmodewvawues ++ t-tweetinwinemodewvawues ++ i-inwinevideomediamap
     }
 }

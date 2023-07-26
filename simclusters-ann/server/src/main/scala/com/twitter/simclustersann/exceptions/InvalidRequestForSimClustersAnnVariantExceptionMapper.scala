@@ -1,27 +1,27 @@
-package com.twitter.simclustersann.exceptions
+package com.twittew.simcwustewsann.exceptions
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.finatra.thrift.thriftscala.ClientError
-import com.twitter.finatra.thrift.thriftscala.ClientErrorCause
-import com.twitter.util.Future
-import com.twitter.util.logging.Logging
-import javax.inject.Singleton
+impowt c-com.twittew.finatwa.thwift.exceptions.exceptionmappew
+i-impowt c-com.twittew.finatwa.thwift.thwiftscawa.cwientewwow
+i-impowt com.twittew.finatwa.thwift.thwiftscawa.cwientewwowcause
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.wogging.wogging
+i-impowt j-javax.inject.singweton
 
 /**
- * An exception mapper designed to handle
- * [[com.twitter.simclustersann.exceptions.InvalidRequestForSimClustersAnnVariantException]]
- * by returning a Thrift IDL defined Client Error.
+ * an exception mappew designed to handwe
+ * [[com.twittew.simcwustewsann.exceptions.invawidwequestfowsimcwustewsannvawiantexception]]
+ * by wetuwning a-a thwift idw defined cwient ewwow. :3
  */
-@Singleton
-class InvalidRequestForSimClustersAnnVariantExceptionMapper
-    extends ExceptionMapper[InvalidRequestForSimClustersAnnVariantException, Nothing]
-    with Logging {
+@singweton
+c-cwass invawidwequestfowsimcwustewsannvawiantexceptionmappew
+    extends exceptionmappew[invawidwequestfowsimcwustewsannvawiantexception, 😳😳😳 n-nyothing]
+    with wogging {
 
-  override def handleException(
-    throwable: InvalidRequestForSimClustersAnnVariantException
-  ): Future[Nothing] = {
-    error("Invalid Request For SimClusters Ann Variant Exception", throwable)
+  ovewwide def handweexception(
+    thwowabwe: invawidwequestfowsimcwustewsannvawiantexception
+  ): f-futuwe[nothing] = {
+    ewwow("invawid w-wequest f-fow simcwustews ann vawiant exception", -.- thwowabwe)
 
-    Future.exception(ClientError(ClientErrorCause.BadRequest, throwable.getMessage()))
+    futuwe.exception(cwientewwow(cwientewwowcause.badwequest, ( ͡o ω ͡o ) thwowabwe.getmessage()))
   }
 }

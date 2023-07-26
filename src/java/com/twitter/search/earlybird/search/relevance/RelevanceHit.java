@@ -1,104 +1,104 @@
-package com.twitter.search.earlybird.search.relevance;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance;
 
-import java.util.Comparator;
+impowt java.utiw.compawatow;
 
-import javax.annotation.Nullable;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.common_internal.collections.RandomAccessPriorityQueue;
-import com.twitter.search.common.relevance.features.TweetIntegerShingleSignature;
-import com.twitter.search.earlybird.search.Hit;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+i-impowt com.twittew.common_intewnaw.cowwections.wandomaccesspwiowityqueue;
+i-impowt com.twittew.seawch.common.wewevance.featuwes.tweetintegewshingwesignatuwe;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.hit;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing.scowingfunction;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
 
-public class RelevanceHit extends Hit
-    implements RandomAccessPriorityQueue.SignatureProvider<TweetIntegerShingleSignature> {
-  @Nullable
-  private TweetIntegerShingleSignature signature;
+p-pubwic cwass wewevancehit extends hit
+    impwements wandomaccesspwiowityqueue.signatuwepwovidew<tweetintegewshingwesignatuwe> {
+  @nuwwabwe
+  pwivate tweetintegewshingwesignatuwe s-signatuwe;
 
-  public RelevanceHit() {
-    super(Long.MAX_VALUE, Long.MAX_VALUE);
+  pubwic wewevancehit() {
+    s-supew(wong.max_vawue, wong.max_vawue);
   }
 
-  public RelevanceHit(long timeSliceID, long statusID,
-                      TweetIntegerShingleSignature signature,
-                      ThriftSearchResultMetadata metadata) {
-    super(timeSliceID, statusID);
-    update(timeSliceID, statusID, signature, metadata);
+  p-pubwic wewevancehit(wong timeswiceid, wong statusid, 🥺
+                      tweetintegewshingwesignatuwe signatuwe, (⑅˘꒳˘)
+                      t-thwiftseawchwesuwtmetadata metadata) {
+    s-supew(timeswiceid, nyaa~~ s-statusid);
+    update(timeswiceid, :3 statusid, ( ͡o ω ͡o ) signatuwe, metadata);
   }
 
   /**
-   * Updates the data for this relevance hit.
+   * u-updates the data fow this wewevance hit. mya
    *
-   * @param timeSliceID The timeslice ID of the segment that the segment came from.
-   * @param statusID The hit's tweet ID.
-   * @param tweetSignature The tweet signature generated for this hit.
-   * @param metadata The metadata associated with this hit.
+   * @pawam timeswiceid t-the timeswice id of the segment t-that the segment c-came fwom. (///ˬ///✿)
+   * @pawam s-statusid t-the hit's tweet id. (˘ω˘)
+   * @pawam tweetsignatuwe t-the tweet signatuwe genewated fow this hit. ^^;;
+   * @pawam m-metadata the metadata associated with this hit. (✿oωo)
    */
-  public void update(long timeSliceID, long statusID, TweetIntegerShingleSignature tweetSignature,
-      ThriftSearchResultMetadata metadata) {
-    this.statusID = statusID;
-    this.timeSliceID = timeSliceID;
-    this.metadata = Preconditions.checkNotNull(metadata);
-    this.signature = Preconditions.checkNotNull(tweetSignature);
+  pubwic void update(wong timeswiceid, (U ﹏ U) w-wong statusid, -.- tweetintegewshingwesignatuwe t-tweetsignatuwe, ^•ﻌ•^
+      t-thwiftseawchwesuwtmetadata m-metadata) {
+    this.statusid = statusid;
+    this.timeswiceid = t-timeswiceid;
+    t-this.metadata = pweconditions.checknotnuww(metadata);
+    t-this.signatuwe = p-pweconditions.checknotnuww(tweetsignatuwe);
   }
 
   /**
-   * Returns the computed score for this hit.
+   * wetuwns the computed s-scowe fow this hit. rawr
    */
-  public float getScore() {
-    if (metadata != null) {
-      return (float) metadata.getScore();
-    } else {
-      return ScoringFunction.SKIP_HIT;
+  p-pubwic fwoat getscowe() {
+    if (metadata != nyuww) {
+      w-wetuwn (fwoat) metadata.getscowe();
+    } e-ewse {
+      wetuwn scowingfunction.skip_hit;
     }
   }
 
-  // We want the score as a double (and not cast to a float) for COMPARATOR_BY_SCORE and
-  // PQ_COMPARATOR_BY_SCORE so that the results returned from Earlybirds will be sorted based on the
-  // scores in the ThriftSearchResultMetadata objects (and will not lose precision by being cast to
-  // floats). Thus, the sorted order on Earlybirds and Earlybird Roots will be consistent.
-  private double getScoreDouble() {
-    if (metadata != null) {
-      return metadata.getScore();
-    } else {
-      return (double) ScoringFunction.SKIP_HIT;
+  // w-we want the s-scowe as a doubwe (and nyot cast to a fwoat) fow compawatow_by_scowe and
+  // pq_compawatow_by_scowe so that the wesuwts wetuwned f-fwom eawwybiwds w-wiww be sowted based on the
+  // s-scowes in the t-thwiftseawchwesuwtmetadata o-objects (and wiww nyot wose pwecision by being cast t-to
+  // fwoats). (˘ω˘) thus, the sowted owdew on eawwybiwds and eawwybiwd woots wiww b-be consistent. nyaa~~
+  pwivate doubwe g-getscowedoubwe() {
+    i-if (metadata != n-nyuww) {
+      wetuwn metadata.getscowe();
+    } e-ewse {
+      w-wetuwn (doubwe) s-scowingfunction.skip_hit;
     }
   }
 
-  @Override @Nullable
-  public TweetIntegerShingleSignature getSignature() {
-    return signature;
+  @ovewwide @nuwwabwe
+  p-pubwic tweetintegewshingwesignatuwe getsignatuwe() {
+    wetuwn s-signatuwe;
   }
 
-  @Override
-  public String toString() {
-    return "RelevanceHit[tweetID=" + statusID + ",timeSliceID=" + timeSliceID
-        + ",score=" + (metadata == null ? "null" : metadata.getScore())
-        + ",signature=" + (signature == null ? "null" : signature) + "]";
+  @ovewwide
+  p-pubwic stwing tostwing() {
+    wetuwn "wewevancehit[tweetid=" + s-statusid + ",timeswiceid=" + t-timeswiceid
+        + ",scowe=" + (metadata == n-nyuww ? "nuww" : metadata.getscowe())
+        + ",signatuwe=" + (signatuwe == nyuww ? "nuww" : signatuwe) + "]";
   }
 
-  public static final Comparator<RelevanceHit> COMPARATOR_BY_SCORE =
-      (d1, d2) -> {
-        // if two docs have the same score, then the first one (most recent) wins
-        if (d1.getScore() == d2.getScore()) {
-          return Long.compare(d2.getStatusID(), d1.getStatusID());
+  p-pubwic static finaw compawatow<wewevancehit> compawatow_by_scowe =
+      (d1, UwU d2) -> {
+        // if two docs have the same s-scowe, :3 then the fiwst one (most wecent) wins
+        if (d1.getscowe() == d-d2.getscowe()) {
+          w-wetuwn wong.compawe(d2.getstatusid(), (⑅˘꒳˘) d-d1.getstatusid());
         }
-        return Double.compare(d2.getScoreDouble(), d1.getScoreDouble());
+        wetuwn doubwe.compawe(d2.getscowedoubwe(), (///ˬ///✿) d-d1.getscowedoubwe());
       };
 
-  public static final Comparator<RelevanceHit> PQ_COMPARATOR_BY_SCORE =
-      (d1, d2) -> {
-        // Reverse the order
-        return COMPARATOR_BY_SCORE.compare(d2, d1);
+  pubwic s-static finaw c-compawatow<wewevancehit> pq_compawatow_by_scowe =
+      (d1, ^^;; d2) -> {
+        // wevewse the owdew
+        wetuwn compawatow_by_scowe.compawe(d2, >_< d-d1);
       };
 
-  @Override
-  public void clear() {
-    timeSliceID = Long.MAX_VALUE;
-    statusID = Long.MAX_VALUE;
-    metadata = null;
-    signature = null;
+  @ovewwide
+  pubwic void cweaw() {
+    t-timeswiceid = wong.max_vawue;
+    s-statusid = w-wong.max_vawue;
+    metadata = nyuww;
+    s-signatuwe = nyuww;
   }
 }

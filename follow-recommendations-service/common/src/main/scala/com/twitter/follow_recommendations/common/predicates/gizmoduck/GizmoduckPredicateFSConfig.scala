@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.predicates.gizmoduck
+package com.twittew.fowwow_wecommendations.common.pwedicates.gizmoduck
 
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicateParams._
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.gizmoduck.gizmoduckpwedicatepawams._
+i-impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt c-com.twittew.utiw.duwation
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class GizmoduckPredicateFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    GizmoduckGetTimeout
+@singweton
+cwass gizmoduckpwedicatefsconfig @inject() () extends featuweswitchconfig {
+  ovewwide vaw duwationfspawams: s-seq[fsboundedpawam[duwation] with hasduwationconvewsion] = s-seq(
+    gizmoduckgettimeout
   )
 }

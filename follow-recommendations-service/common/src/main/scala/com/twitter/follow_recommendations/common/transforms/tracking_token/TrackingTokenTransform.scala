@@ -1,76 +1,76 @@
-package com.twitter.follow_recommendations.common.transforms.tracking_token
+package com.twittew.fowwow_wecommendations.common.twansfowms.twacking_token
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.Session
-import com.twitter.follow_recommendations.common.models.TrackingToken
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.util.logging.Logging
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.twansfowm
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.hasdispwaywocation
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.session
+impowt com.twittew.fowwow_wecommendations.common.modews.twackingtoken
+impowt com.twittew.hewmit.constants.awgowithmfeedbacktokens.awgowithmtofeedbacktokenmap
+impowt c-com.twittew.hewmit.modew.awgowithm
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt c-com.twittew.stitch.stitch
+impowt com.twittew.utiw.wogging.wogging
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * This transform adds the tracking token for all candidates
- * Since this happens in the same request, we use the same trace-id for all candidates
- * There are no RPC calls in this transform so it's safe to chain it with `andThen` at the end of
- * all other product-specific transforms
+ * this twansfowm a-adds the t-twacking token fow aww candidates
+ * since this happens in the same wequest, -.- we u-use the same twace-id fow aww candidates
+ * thewe awe nyo wpc cawws in this twansfowm s-so it's safe to chain it with `andthen` a-at t-the end of
+ * aww o-othew pwoduct-specific t-twansfowms
  */
-@Singleton
-class TrackingTokenTransform @Inject() (baseStatsReceiver: StatsReceiver)
-    extends Transform[HasDisplayLocation with HasClientContext, CandidateUser]
-    with Logging {
+@singweton
+cwass twackingtokentwansfowm @inject() (basestatsweceivew: statsweceivew)
+    extends twansfowm[hasdispwaywocation w-with hascwientcontext, 🥺 candidateusew]
+    with wogging {
 
-  def profileResults(
-    target: HasDisplayLocation with HasClientContext,
-    candidates: Seq[CandidateUser]
+  d-def pwofiwewesuwts(
+    tawget: hasdispwaywocation with hascwientcontext, (U ﹏ U)
+    candidates: seq[candidateusew]
   ) = {
-    // Metrics to track # results per candidate source
-    val stats = baseStatsReceiver.scope(target.displayLocation.toString + "/final_results")
-    stats.stat("total").add(candidates.size)
+    // metwics to twack # w-wesuwts pew candidate souwce
+    v-vaw stats = basestatsweceivew.scope(tawget.dispwaywocation.tostwing + "/finaw_wesuwts")
+    stats.stat("totaw").add(candidates.size)
 
-    stats.counter(target.displayLocation.toString).incr()
+    s-stats.countew(tawget.dispwaywocation.tostwing).incw()
 
-    val flattenedCandidates: Seq[(CandidateSourceIdentifier, CandidateUser)] = for {
-      candidate <- candidates
-      identifier <- candidate.getPrimaryCandidateSource
-    } yield (identifier, candidate)
-    val candidatesGroupedBySource: Map[CandidateSourceIdentifier, Seq[CandidateUser]] =
-      flattenedCandidates.groupBy(_._1).mapValues(_.map(_._2))
-    candidatesGroupedBySource map {
-      case (source, candidates) => stats.stat(source.name).add(candidates.size)
+    v-vaw fwattenedcandidates: seq[(candidatesouwceidentifiew, >w< candidateusew)] = fow {
+      candidate <- c-candidates
+      i-identifiew <- candidate.getpwimawycandidatesouwce
+    } y-yiewd (identifiew, mya c-candidate)
+    vaw candidatesgwoupedbysouwce: m-map[candidatesouwceidentifiew, >w< seq[candidateusew]] =
+      f-fwattenedcandidates.gwoupby(_._1).mapvawues(_.map(_._2))
+    candidatesgwoupedbysouwce map {
+      c-case (souwce, nyaa~~ candidates) => s-stats.stat(souwce.name).add(candidates.size)
     }
   }
 
-  override def transform(
-    target: HasDisplayLocation with HasClientContext,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] = {
-    profileResults(target, candidates)
+  ovewwide d-def twansfowm(
+    t-tawget: hasdispwaywocation with hascwientcontext, (✿oωo)
+    candidates: seq[candidateusew]
+  ): stitch[seq[candidateusew]] = {
+    pwofiwewesuwts(tawget, ʘwʘ candidates)
 
-    Stitch.value(
-      target.getOptionalUserId
+    s-stitch.vawue(
+      t-tawget.getoptionawusewid
         .map { _ =>
           candidates.map {
-            candidate =>
-              val token = Some(TrackingToken(
-                sessionId = Session.getSessionId,
-                displayLocation = Some(target.displayLocation),
-                controllerData = None,
-                algorithmId = candidate.userCandidateSourceDetails.flatMap(_.primaryCandidateSource
-                  .flatMap { identifier =>
-                    Algorithm.withNameOpt(identifier.name).flatMap(AlgorithmToFeedbackTokenMap.get)
+            c-candidate =>
+              vaw t-token = some(twackingtoken(
+                sessionid = s-session.getsessionid, (ˆ ﻌ ˆ)♡
+                dispwaywocation = some(tawget.dispwaywocation), 😳😳😳
+                contwowwewdata = n-nyone, :3
+                awgowithmid = candidate.usewcandidatesouwcedetaiws.fwatmap(_.pwimawycandidatesouwce
+                  .fwatmap { identifiew =>
+                    awgowithm.withnameopt(identifiew.name).fwatmap(awgowithmtofeedbacktokenmap.get)
                   })
               ))
-              candidate.copy(trackingToken = token)
+              c-candidate.copy(twackingtoken = token)
           }
-        }.getOrElse(candidates))
+        }.getowewse(candidates))
 
   }
 }

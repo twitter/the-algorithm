@@ -1,25 +1,25 @@
-package com.twitter.follow_recommendations.controllers
+package com.twittew.fowwow_wecommendations.contwowwews
 
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.follow_recommendations.configapi.ParamsFactory
-import com.twitter.follow_recommendations.models.CandidateUserDebugParams
-import com.twitter.follow_recommendations.models.FeatureValue
-import com.twitter.follow_recommendations.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.modews._
+i-impowt com.twittew.fowwow_wecommendations.configapi.pawamsfactowy
+i-impowt com.twittew.fowwow_wecommendations.modews.candidateusewdebugpawams
+i-impowt c-com.twittew.fowwow_wecommendations.modews.featuwevawue
+i-impowt c-com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class CandidateUserDebugParamsBuilder @Inject() (paramsFactory: ParamsFactory) {
-  def fromThrift(req: t.ScoringUserRequest): CandidateUserDebugParams = {
-    val clientContext = ClientContextConverter.fromThrift(req.clientContext)
-    val displayLocation = DisplayLocation.fromThrift(req.displayLocation)
+@singweton
+cwass candidateusewdebugpawamsbuiwdew @inject() (pawamsfactowy: pawamsfactowy) {
+  def fwomthwift(weq: t-t.scowingusewwequest): candidateusewdebugpawams = {
+    vaw c-cwientcontext = cwientcontextconvewtew.fwomthwift(weq.cwientcontext)
+    v-vaw dispwaywocation = dispwaywocation.fwomthwift(weq.dispwaywocation)
 
-    CandidateUserDebugParams(req.candidates.map { candidate =>
-      candidate.userId -> paramsFactory(
-        clientContext,
-        displayLocation,
-        candidate.featureOverrides
-          .map(_.mapValues(FeatureValue.fromThrift).toMap).getOrElse(Map.empty))
-    }.toMap)
+    candidateusewdebugpawams(weq.candidates.map { candidate =>
+      candidate.usewid -> p-pawamsfactowy(
+        cwientcontext, mya
+        d-dispwaywocation, mya
+        c-candidate.featuweovewwides
+          .map(_.mapvawues(featuwevawue.fwomthwift).tomap).getowewse(map.empty))
+    }.tomap)
   }
 }

@@ -1,18 +1,18 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "finatra/inject/inject-core/src/main/scala",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/configapi/params",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/models",
-        "follow-recommendations-service/thrift/src/main/thrift:thrift-scala",
-        "scribelib/marshallers/src/main/scala/com/twitter/scribelib/marshallers",
-        "util/util-slf4j-api/src/main/scala",
-    ],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", òωó
+        "3wdpawty/jvm/com/googwe/inject/extensions:guice-assistedinject", o.O
+        "3wdpawty/jvm/net/codingweww:scawa-guice", (U ᵕ U❁)
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", (⑅˘꒳˘)
+        "finatwa/inject/inject-cowe/swc/main/scawa", ( ͡o ω ͡o )
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/constants", UwU
+        "fowwow-wecommendations-sewvice/sewvew/swc/main/scawa/com/twittew/fowwow_wecommendations/configapi/pawams", rawr x3
+        "fowwow-wecommendations-sewvice/sewvew/swc/main/scawa/com/twittew/fowwow_wecommendations/modews", rawr
+        "fowwow-wecommendations-sewvice/thwift/swc/main/thwift:thwift-scawa", σωσ
+        "scwibewib/mawshawwews/swc/main/scawa/com/twittew/scwibewib/mawshawwews", σωσ
+        "utiw/utiw-swf4j-api/swc/main/scawa", >_<
+    ], :3
 )

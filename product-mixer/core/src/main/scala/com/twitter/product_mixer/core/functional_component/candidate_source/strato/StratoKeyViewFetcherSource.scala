@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.fetchew
 
 /**
- * A [[CandidateSource]] for getting Candidates from Strato where the
- * Strato column's View is [[StratoView]] and the Value is a [[StratoValue]]
+ * a-a [[candidatesouwce]] f-fow getting c-candidates fwom s-stwato whewe t-the
+ * stwato cowumn's v-view is [[stwatoview]] and the vawue is a [[stwatovawue]]
  *
- * A `stratoResultTransformer` must be defined to convert the [[StratoValue]] into a Seq of [[Candidate]]
+ * a `stwatowesuwttwansfowmew` must be defined t-to convewt the [[stwatovawue]] into a seq of [[candidate]]
  *
- * If you need to extract features from the [[StratoValue]] (like a cursor),
- * use [[StratoKeyViewFetcherWithSourceFeaturesSource]] instead.
+ * if you nyeed t-to extwact featuwes fwom the [[stwatovawue]] (wike a-a cuwsow), 😳
+ * use [[stwatokeyviewfetchewwithsouwcefeatuwessouwce]] instead. -.-
  *
- * @tparam StratoKey the column's Key type
- * @tparam StratoView the column's View type
- * @tparam StratoValue the column's Value type
+ * @tpawam stwatokey the cowumn's k-key type
+ * @tpawam stwatoview t-the cowumn's v-view type
+ * @tpawam stwatovawue the cowumn's vawue type
  */
-trait StratoKeyViewFetcherSource[StratoKey, StratoView, StratoValue, Candidate]
-    extends CandidateSource[StratoKeyView[StratoKey, StratoView], Candidate] {
+twait stwatokeyviewfetchewsouwce[stwatokey, 🥺 s-stwatoview, o.O stwatovawue, /(^•ω•^) candidate]
+    extends candidatesouwce[stwatokeyview[stwatokey, nyaa~~ stwatoview], c-candidate] {
 
-  val fetcher: Fetcher[StratoKey, StratoView, StratoValue]
+  vaw fetchew: fetchew[stwatokey, nyaa~~ s-stwatoview, stwatovawue]
 
   /**
-   * Transforms the value type returned by Strato into a Seq[Candidate].
+   * t-twansfowms t-the vawue type w-wetuwned by stwato into a seq[candidate]. :3
    *
-   * This might be as simple as `Seq(stratoResult)` if you're always returning a single candidate.
+   * this might be a-as simpwe as `seq(stwatowesuwt)` if you'we awways wetuwning a s-singwe candidate. 😳😳😳
    *
-   * Often, it just extracts a Seq from within a larger wrapper object.
+   * often, (˘ω˘) it just extwacts a seq fwom within a wawgew wwappew object. ^^
    *
-   * If there is global metadata that you need to include, you can zip it with the candidates,
-   * returning something like Seq((candiate, metadata), (candidate, metadata)) etc.
+   * i-if thewe is gwobaw metadata t-that you nyeed t-to incwude, :3 y-you can zip it with the candidates, -.-
+   * wetuwning something wike s-seq((candiate, 😳 m-metadata), mya (candidate, metadata)) e-etc. (˘ω˘)
    */
-  protected def stratoResultTransformer(
-    stratoKey: StratoKey,
-    stratoResult: StratoValue
-  ): Seq[Candidate]
+  p-pwotected def stwatowesuwttwansfowmew(
+    stwatokey: s-stwatokey, >_<
+    stwatowesuwt: s-stwatovawue
+  ): seq[candidate]
 
-  override def apply(
-    request: StratoKeyView[StratoKey, StratoView]
-  ): Stitch[Seq[Candidate]] = {
-    fetcher
-      .fetch(request.key, request.view)
-      .map { result =>
-        result.v
-          .map((stratoResult: StratoValue) => stratoResultTransformer(request.key, stratoResult))
-          .getOrElse(Seq.empty)
-      }.rescue(StratoErrCategorizer.CategorizeStratoException)
+  ovewwide def a-appwy(
+    wequest: stwatokeyview[stwatokey, -.- s-stwatoview]
+  ): stitch[seq[candidate]] = {
+    f-fetchew
+      .fetch(wequest.key, 🥺 w-wequest.view)
+      .map { wesuwt =>
+        wesuwt.v
+          .map((stwatowesuwt: stwatovawue) => stwatowesuwttwansfowmew(wequest.key, (U ﹏ U) stwatowesuwt))
+          .getowewse(seq.empty)
+      }.wescue(stwatoewwcategowizew.categowizestwatoexception)
   }
 }

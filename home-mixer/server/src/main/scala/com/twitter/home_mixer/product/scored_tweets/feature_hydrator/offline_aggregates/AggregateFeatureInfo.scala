@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates
 
-import com.twitter.ml.api.FeatureContext
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType.AggregateType
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import scala.jdk.CollectionConverters.asJavaIterableConverter
+impowt c-com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegategwoup
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegatetype.aggwegatetype
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup
+i-impowt scawa.jdk.cowwectionconvewtews.asjavaitewabweconvewtew
 
-// A helper class deriving aggregate feature info from the given configuration parameters.
-class AggregateFeatureInfo(
-  val aggregateGroups: Set[AggregateGroup],
-  val aggregateType: AggregateType) {
+// a-a hewpew cwass d-dewiving aggwegate featuwe info fwom the given configuwation pawametews. >_<
+cwass a-aggwegatefeatuweinfo(
+  vaw aggwegategwoups: set[aggwegategwoup], rawr x3
+  vaw aggwegatetype: a-aggwegatetype) {
 
-  private val typedAggregateGroups = aggregateGroups.flatMap(_.buildTypedAggregateGroups()).toList
+  pwivate v-vaw typedaggwegategwoups = aggwegategwoups.fwatmap(_.buiwdtypedaggwegategwoups()).towist
 
-  val featureContext: FeatureContext =
-    new FeatureContext(
-      (typedAggregateGroups.flatMap(_.allOutputFeatures) ++
-        typedAggregateGroups.flatMap(_.allOutputKeys) ++
-        Seq(TypedAggregateGroup.timestampFeature)).asJava)
+  vaw featuwecontext: featuwecontext =
+    n-nyew featuwecontext(
+      (typedaggwegategwoups.fwatmap(_.awwoutputfeatuwes) ++
+        typedaggwegategwoups.fwatmap(_.awwoutputkeys) ++
+        s-seq(typedaggwegategwoup.timestampfeatuwe)).asjava)
 
-  val feature: BaseAggregateRootFeature =
-    AggregateFeatureInfo.pickFeature(aggregateType)
+  v-vaw featuwe: baseaggwegatewootfeatuwe =
+    aggwegatefeatuweinfo.pickfeatuwe(aggwegatetype)
 }
 
-object AggregateFeatureInfo {
-  val features: Set[BaseAggregateRootFeature] =
-    Set(PartAAggregateRootFeature, PartBAggregateRootFeature)
+object aggwegatefeatuweinfo {
+  vaw featuwes: set[baseaggwegatewootfeatuwe] =
+    set(pawtaaggwegatewootfeatuwe, mya p-pawtbaggwegatewootfeatuwe)
 
-  def pickFeature(aggregateType: AggregateType): BaseAggregateRootFeature = {
-    val filtered = features.filter(_.aggregateTypes.contains(aggregateType))
-    require(
-      filtered.size == 1,
-      "requested AggregateType must be backed by exactly one physical store.")
-    filtered.head
+  def pickfeatuwe(aggwegatetype: aggwegatetype): baseaggwegatewootfeatuwe = {
+    vaw fiwtewed = featuwes.fiwtew(_.aggwegatetypes.contains(aggwegatetype))
+    wequiwe(
+      fiwtewed.size == 1, nyaa~~
+      "wequested a-aggwegatetype must be backed by e-exactwy one physicaw s-stowe.")
+    f-fiwtewed.head
   }
 }

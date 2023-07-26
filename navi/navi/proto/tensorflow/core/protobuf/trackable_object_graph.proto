@@ -1,80 +1,80 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "google/protobuf/wrappers.proto";
+impowt "googwe/pwotobuf/wwappews.pwoto";
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option cc_enabwe_awenas = t-twue;
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// A TensorBundle addition which saves extra information about the objects which
-// own variables, allowing for more robust checkpoint loading into modified
-// programs.
+// a-a tensowbundwe a-addition which s-saves extwa infowmation a-about the o-objects which
+// own vawiabwes, :3 awwowing fow mowe wobust checkpoint woading into m-modified
+// pwogwams. ( ͡o ω ͡o )
 
-message TrackableObjectGraph {
-  message TrackableObject {
-    message ObjectReference {
-      // An index into `TrackableObjectGraph.nodes`, indicating the object
-      // being referenced.
-      int32 node_id = 1;
-      // A user-provided name for the edge.
-      string local_name = 2;
+message twackabweobjectgwaph {
+  m-message twackabweobject {
+    m-message objectwefewence {
+      // an index into `twackabweobjectgwaph.nodes`, mya i-indicating the object
+      // b-being wefewenced. (///ˬ///✿)
+      i-int32 nyode_id = 1;
+      // a usew-pwovided nyame fow the edge. (˘ω˘)
+      stwing wocaw_name = 2;
     }
 
-    message SerializedTensor {
-      // A name for the Tensor. Simple variables have only one
-      // `SerializedTensor` named "VARIABLE_VALUE" by convention. This value may
-      // be restored on object creation as an optimization.
-      string name = 1;
-      // The full name of the variable/tensor, if applicable. Used to allow
-      // name-based loading of checkpoints which were saved using an
-      // object-based API. Should match the checkpoint key which would have been
-      // assigned by tf.train.Saver.
-      string full_name = 2;
-      // The generated name of the Tensor in the checkpoint.
-      string checkpoint_key = 3;
-      // Deprecated bool field for optional restore. This field has never been
-      // set to True.
-      reserved "optional_restore";
-      reserved 4;
+    m-message sewiawizedtensow {
+      // a nyame fow the tensow. ^^;; simpwe vawiabwes h-have onwy one
+      // `sewiawizedtensow` n-nyamed "vawiabwe_vawue" b-by convention. (✿oωo) t-this vawue m-may
+      // be westowed on object cweation as a-an optimization. (U ﹏ U)
+      stwing nyame = 1;
+      // the fuww nyame o-of the vawiabwe/tensow, -.- if appwicabwe. ^•ﻌ•^ used to awwow
+      // nyame-based woading of checkpoints w-which wewe saved using an
+      // o-object-based a-api. rawr shouwd match t-the checkpoint key which wouwd have been
+      // assigned b-by tf.twain.savew. (˘ω˘)
+      s-stwing fuww_name = 2;
+      // t-the genewated n-name of the tensow in the c-checkpoint. nyaa~~
+      stwing checkpoint_key = 3;
+      // d-depwecated boow fiewd fow optionaw westowe. UwU t-this fiewd has nyevew been
+      // s-set to twue. :3
+      wesewved "optionaw_westowe";
+      w-wesewved 4;
     }
 
-    message SlotVariableReference {
-      // An index into `TrackableObjectGraph.nodes`, indicating the
-      // variable object this slot was created for.
-      int32 original_variable_node_id = 1;
-      // The name of the slot (e.g. "m"/"v").
-      string slot_name = 2;
-      // An index into `TrackableObjectGraph.nodes`, indicating the
-      // `Object` with the value of the slot variable.
-      int32 slot_variable_node_id = 3;
+    m-message swotvawiabwewefewence {
+      // an index into `twackabweobjectgwaph.nodes`, indicating the
+      // vawiabwe object this swot was cweated f-fow. (⑅˘꒳˘)
+      i-int32 owiginaw_vawiabwe_node_id = 1;
+      // the nyame of the s-swot (e.g. (///ˬ///✿) "m"/"v"). ^^;;
+      s-stwing s-swot_name = 2;
+      // an index into `twackabweobjectgwaph.nodes`, >_< indicating t-the
+      // `object` with the vawue of the swot vawiabwe.
+      int32 swot_vawiabwe_node_id = 3;
     }
 
-    // Objects which this object depends on.
-    repeated ObjectReference children = 1;
-    // Serialized data specific to this object.
-    repeated SerializedTensor attributes = 2;
-    // Slot variables owned by this object.
-    repeated SlotVariableReference slot_variables = 3;
+    // o-objects which this object depends o-on. rawr x3
+    wepeated o-objectwefewence c-chiwdwen = 1;
+    // sewiawized d-data specific t-to this object. /(^•ω•^)
+    w-wepeated sewiawizedtensow a-attwibutes = 2;
+    // swot vawiabwes owned by this o-object. :3
+    w-wepeated swotvawiabwewefewence swot_vawiabwes = 3;
 
-    // The registered saver used to save this object. If this saver is not
-    // present when loading the checkpoint, then loading will fail.
-    RegisteredSaver registered_saver = 4;
+    // t-the wegistewed s-savew u-used to save this object. (ꈍᴗꈍ) if this savew is nyot
+    // pwesent when w-woading the checkpoint, /(^•ω•^) then woading wiww faiw. (⑅˘꒳˘)
+    wegistewedsavew wegistewed_savew = 4;
 
-    // Whether this object has checkpoint values or descendants with checkpoint
-    // values. This is computed at save time to avoid traversing the entire
-    // object graph proto when restoring (which also has to traverse the live
-    // object graph).
-    google.protobuf.BoolValue has_checkpoint_values = 5;
+    // whethew this o-object has checkpoint vawues ow descendants with checkpoint
+    // v-vawues. ( ͡o ω ͡o ) this i-is computed at s-save time to avoid twavewsing t-the entiwe
+    // object gwaph pwoto w-when westowing (which a-awso has to twavewse the wive
+    // object gwaph). òωó
+    googwe.pwotobuf.boowvawue has_checkpoint_vawues = 5;
   }
 
-  repeated TrackableObject nodes = 1;
+  wepeated t-twackabweobject nyodes = 1;
 }
 
-message RegisteredSaver {
-  // The name of the registered saver/restore function.
-  string name = 1;
+m-message wegistewedsavew {
+  // the name of t-the wegistewed s-savew/westowe function. (⑅˘꒳˘)
+  stwing nyame = 1;
 
-  // Unique auto-generated name of the object.
-  string object_name = 2;
+  // u-unique auto-genewated n-nyame of the object. XD
+  s-stwing object_name = 2;
 }

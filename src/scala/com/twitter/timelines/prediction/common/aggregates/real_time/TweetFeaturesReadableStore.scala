@@ -1,53 +1,53 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.featurestore.lib.TweetId
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.online.{FeatureStoreClient, FeatureStoreRequest}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.prediction.common.adapters.TimelinesAdapterBase
-import com.twitter.util.Future
-import scala.collection.JavaConverters._
+impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.featuwestowe.wib.tweetid
+i-impowt c-com.twittew.mw.featuwestowe.wib.data.pwedictionwecowd
+i-impowt com.twittew.mw.featuwestowe.wib.entity.entity
+i-impowt c-com.twittew.mw.featuwestowe.wib.onwine.{featuwestowecwient, (U ﹏ U) f-featuwestowewequest}
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.timewines.pwediction.common.adaptews.timewinesadaptewbase
+impowt c-com.twittew.utiw.futuwe
+impowt scawa.cowwection.javaconvewtews._
 
-class TweetFeaturesReadableStore(
-  featureStoreClient: FeatureStoreClient,
-  tweetEntity: Entity[TweetId],
-  tweetFeaturesAdapter: TimelinesAdapterBase[PredictionRecord])
-    extends ReadableStore[Set[Long], DataRecord] {
+c-cwass tweetfeatuwesweadabwestowe(
+  featuwestowecwient: f-featuwestowecwient, (///ˬ///✿)
+  tweetentity: entity[tweetid], >w<
+  tweetfeatuwesadaptew: timewinesadaptewbase[pwedictionwecowd])
+    e-extends weadabwestowe[set[wong], rawr datawecowd] {
 
-  override def multiGet[K <: Set[Long]](keys: Set[K]): Map[K, Future[Option[DataRecord]]] = {
-    val orderedKeys: Seq[K] = keys.toSeq
-    val featureStoreRequests: Seq[FeatureStoreRequest] = getFeatureStoreRequests(orderedKeys)
-    val predictionRecordsFut: Future[Seq[PredictionRecord]] = featureStoreClient(
-      featureStoreRequests)
+  o-ovewwide def m-muwtiget[k <: set[wong]](keys: set[k]): map[k, mya futuwe[option[datawecowd]]] = {
+    vaw owdewedkeys: s-seq[k] = keys.toseq
+    vaw featuwestowewequests: seq[featuwestowewequest] = getfeatuwestowewequests(owdewedkeys)
+    v-vaw pwedictionwecowdsfut: f-futuwe[seq[pwedictionwecowd]] = f-featuwestowecwient(
+      f-featuwestowewequests)
 
-    getDataRecordMap(orderedKeys, predictionRecordsFut)
+    g-getdatawecowdmap(owdewedkeys, ^^ pwedictionwecowdsfut)
   }
 
-  private def getFeatureStoreRequests[K <: Set[Long]](
-    orderedKeys: Seq[K]
-  ): Seq[FeatureStoreRequest] = {
-    orderedKeys.map { key: Set[Long] =>
-      FeatureStoreRequest(
-        entityIds = key.map { tweetId => tweetEntity.withId(TweetId(tweetId)) }.toSeq
+  pwivate def g-getfeatuwestowewequests[k <: set[wong]](
+    owdewedkeys: seq[k]
+  ): s-seq[featuwestowewequest] = {
+    owdewedkeys.map { key: set[wong] =>
+      featuwestowewequest(
+        entityids = key.map { t-tweetid => tweetentity.withid(tweetid(tweetid)) }.toseq
       )
     }
   }
 
-  private def getDataRecordMap[K <: Set[Long]](
-    orderedKeys: Seq[K],
-    predictionRecordsFut: Future[Seq[PredictionRecord]]
-  ): Map[K, Future[Option[DataRecord]]] = {
-    orderedKeys.zipWithIndex.map {
-      case (tweetIdSet, index) =>
-        val dataRecordFutOpt: Future[Option[DataRecord]] = predictionRecordsFut.map {
-          predictionRecords =>
-            predictionRecords.lift(index).flatMap { predictionRecordAtIndex: PredictionRecord =>
-              tweetFeaturesAdapter.adaptToDataRecords(predictionRecordAtIndex).asScala.headOption
+  p-pwivate def g-getdatawecowdmap[k <: s-set[wong]](
+    owdewedkeys: seq[k], 😳😳😳
+    pwedictionwecowdsfut: futuwe[seq[pwedictionwecowd]]
+  ): m-map[k, mya futuwe[option[datawecowd]]] = {
+    o-owdewedkeys.zipwithindex.map {
+      case (tweetidset, 😳 i-index) =>
+        v-vaw datawecowdfutopt: f-futuwe[option[datawecowd]] = pwedictionwecowdsfut.map {
+          pwedictionwecowds =>
+            p-pwedictionwecowds.wift(index).fwatmap { pwedictionwecowdatindex: pwedictionwecowd =>
+              t-tweetfeatuwesadaptew.adapttodatawecowds(pwedictionwecowdatindex).asscawa.headoption
             }
         }
-        (tweetIdSet, dataRecordFutOpt)
-    }.toMap
+        (tweetidset, -.- datawecowdfutopt)
+    }.tomap
   }
 }

@@ -1,32 +1,32 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.twittew.simcwustews_v2.common.cwustewing
 
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+impowt com.twittew.simcwustews_v2.common.simcwustewsembedding
 
 /**
- * SimilarityFunctions provide commonly used similarity functions that this clustering library needs.
+ * s-simiwawityfunctions pwovide c-commonwy u-used simiwawity f-functions that this c-cwustewing wibwawy n-nyeeds. XD
  */
-object SimilarityFunctions {
-  def simClustersCosineSimilarity: (SimClustersEmbedding, SimClustersEmbedding) => Double =
-    (e1, e2) => e1.cosineSimilarity(e2)
+o-object simiwawityfunctions {
+  d-def simcwustewscosinesimiwawity: (simcwustewsembedding, :3 simcwustewsembedding) => doubwe =
+    (e1, 😳😳😳 e2) => e1.cosinesimiwawity(e2)
 
-  def simClustersMatchingLargestDimension: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double = (e1, e2) => {
-    val doesMatchLargestDimension: Boolean = e1
-      .topClusterIds(1)
+  def simcwustewsmatchingwawgestdimension: (
+    s-simcwustewsembedding, -.-
+    simcwustewsembedding
+  ) => doubwe = (e1, ( ͡o ω ͡o ) e-e2) => {
+    vaw doesmatchwawgestdimension: b-boowean = e1
+      .topcwustewids(1)
       .exists { id1 =>
-        e2.topClusterIds(1).contains(id1)
+        e2.topcwustewids(1).contains(id1)
       }
 
-    if (doesMatchLargestDimension) 1.0
-    else 0.0
+    i-if (doesmatchwawgestdimension) 1.0
+    ewse 0.0
   }
 
-  def simClustersFuzzyJaccardSimilarity: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double = (e1, e2) => {
-    e1.fuzzyJaccardSimilarity(e2)
+  d-def simcwustewsfuzzyjaccawdsimiwawity: (
+    s-simcwustewsembedding, rawr x3
+    simcwustewsembedding
+  ) => doubwe = (e1, nyaa~~ e2) => {
+    e1.fuzzyjaccawdsimiwawity(e2)
   }
 }

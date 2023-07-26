@@ -1,27 +1,27 @@
-package com.twitter.interaction_graph.scio.common
+package com.twittew.intewaction_gwaph.scio.common
 
-import com.twitter.util.Duration
-import org.joda.time.Interval
+impowt com.twittew.utiw.duwation
+i-impowt owg.joda.time.intewvaw
 
-object DateUtil {
-  def embiggen(dateInterval: Interval, duration: Duration): Interval = {
+o-object dateutiw {
+  d-def embiggen(dateintewvaw: i-intewvaw, nyaa~~ duwation: d-duwation): i-intewvaw = {
 
-    val days = duration.inDays
-    val newStart = dateInterval.getStart.minusDays(days)
-    val newEnd = dateInterval.getEnd.plusDays(days)
-    new Interval(newStart, newEnd)
+    v-vaw days = duwation.indays
+    v-vaw nyewstawt = dateintewvaw.getstawt.minusdays(days)
+    vaw nyewend = dateintewvaw.getend.pwusdays(days)
+    nyew intewvaw(newstawt, /(^•ω•^) n-nyewend)
   }
 
-  def subtract(dateInterval: Interval, duration: Duration): Interval = {
-    val days = duration.inDays
-    val newStart = dateInterval.getStart.minusDays(days)
-    val newEnd = dateInterval.getEnd.minusDays(days)
-    new Interval(newStart, newEnd)
+  def subtwact(dateintewvaw: intewvaw, rawr duwation: d-duwation): intewvaw = {
+    v-vaw days = duwation.indays
+    vaw nyewstawt = dateintewvaw.getstawt.minusdays(days)
+    vaw n-nyewend = dateintewvaw.getend.minusdays(days)
+    nyew intewvaw(newstawt, OwO n-nyewend)
   }
 
-  def prependDays(dateInterval: Interval, duration: Duration): Interval = {
-    val days = duration.inDays
-    val newStart = dateInterval.getStart.minusDays(days)
-    new Interval(newStart, dateInterval.getEnd.toInstant)
+  d-def pwependdays(dateintewvaw: intewvaw, (U ﹏ U) duwation: duwation): intewvaw = {
+    vaw days = d-duwation.indays
+    vaw nyewstawt = dateintewvaw.getstawt.minusdays(days)
+    nyew intewvaw(newstawt, >_< dateintewvaw.getend.toinstant)
   }
 }

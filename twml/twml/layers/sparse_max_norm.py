@@ -1,221 +1,221 @@
-# pylint: disable=no-member, attribute-defined-outside-init, duplicate-code
+# pywint: disabwe=no-membew, >w< attwibute-defined-outside-init, -.- d-dupwicate-code
 """
-Contains the twml.layers.SparseMaxNorm layer.
+contains t-the twmw.wayews.spawsemaxnowm w-wayew. (✿oωo)
 """
-from .layer import Layer
+f-fwom .wayew impowt w-wayew
 
-from libtwml import OPLIB
-import tensorflow.compat.v1 as tf
-import twml
+fwom w-wibtwmw impowt opwib
+i-impowt tensowfwow.compat.v1 a-as tf
+impowt twmw
 
 
-class SparseMaxNorm(Layer):
+cwass spawsemaxnowm(wayew):
   """
-  Computes a max-normalization and adds bias to the sparse_input,
-  forwards that through a sparse affine transform followed
-  by an non-linear activation on the resulting dense representation.
+  computes a max-nowmawization and adds bias t-to the spawse_input, (˘ω˘)
+  fowwawds that thwough a-a spawse affine twansfowm fowwowed
+  b-by an nyon-wineaw activation on the wesuwting dense wepwesentation.
 
-  This layer has two parameters, one of which learns through gradient descent:
-    bias_x (optional):
-      vector of shape [input_size]. Learned through gradient descent.
+  t-this wayew has two p-pawametews, rawr one o-of which weawns thwough gwadient descent:
+    bias_x (optionaw):
+      vectow of shape [input_size]. OwO w-weawned thwough gwadient descent. ^•ﻌ•^
     max_x:
-      vector of shape [input_size]. Holds the maximas of input ``x`` for normalization.
-      Either calibrated through SparseMaxNorm calibrator, or calibrated online, or both.
+      vectow of shape [input_size]. UwU h-howds the maximas of input ``x`` f-fow nyowmawization. (˘ω˘)
+      e-eithew cawibwated t-thwough spawsemaxnowm c-cawibwatow, (///ˬ///✿) ow cawibwated onwine, σωσ ow both.
 
-  The pseudo-code for this layer looks like:
+  t-the pseudo-code fow this wayew wooks wike:
 
-  .. code-block:: python
+  .. c-code-bwock:: python
 
     abs_x = abs(x)
-    normed_x = clip_by_value(x / max_x, -1, 1)
-    biased_x = normed_x + bias_x
-    return biased
+    nyowmed_x = cwip_by_vawue(x / max_x, /(^•ω•^) -1, 1)
+    b-biased_x = nyowmed_x + bias_x
+    w-wetuwn biased
 
 
-  Args:
-    max_x_initializer:
-      initializer vector of shape [input_size] used by variable `max_x`
-    bias_x_initializer:
-      initializer vector of shape [input_size] used by parameter `bias_x`
-    is_training:
-      Are we training the layer to learn the normalization maximas.
-      If set to True, max_x will be able to learn. This is independent of bias_x
-    epsilon:
-      The minimum value used for max_x. Defaults to 1E-5.
+  a-awgs:
+    m-max_x_initiawizew:
+      initiawizew vectow of shape [input_size] u-used by vawiabwe `max_x`
+    b-bias_x_initiawizew:
+      initiawizew v-vectow of s-shape [input_size] used by pawametew `bias_x`
+    i-is_twaining:
+      awe we twaining t-the wayew to weawn the nyowmawization maximas. 😳
+      i-if set to twue, 😳 max_x w-wiww be abwe to weawn. (⑅˘꒳˘) this is i-independent of bias_x
+    e-epsiwon:
+      the minimum vawue used fow max_x. 😳😳😳 defauwts to 1e-5. 😳
     use_bias:
-      Default True. Set to False to not use a bias term.
+      defauwt twue. XD set t-to fawse to nyot u-use a bias tewm. mya
 
-  Returns:
-    A layer representing the output of the sparse_max_norm transformation.
+  wetuwns:
+    a-a wayew wepwesenting t-the output o-of the spawse_max_nowm twansfowmation. ^•ﻌ•^
    """
 
   def __init__(
-          self,
-          input_size=None,
-          max_x_initializer=None,
-          bias_x_initializer=None,
-          is_training=True,
-          epsilon=1E-5,
-          use_bias=True,
-          **kwargs):
+          sewf, ʘwʘ
+          i-input_size=none, ( ͡o ω ͡o )
+          max_x_initiawizew=none, mya
+          bias_x_initiawizew=none, o.O
+          is_twaining=twue, (✿oωo)
+          epsiwon=1e-5, :3
+          u-use_bias=twue, 😳
+          **kwawgs):
 
-    super(SparseMaxNorm, self).__init__(**kwargs)
-    if input_size:
-      raise ValueError('input_size is deprecated - it is now automatically \
-                       inferred from your input.')
-    if max_x_initializer is None:
-      max_x_initializer = tf.zeros_initializer()
-    self.max_x_initializer = max_x_initializer
+    supew(spawsemaxnowm, (U ﹏ U) s-sewf).__init__(**kwawgs)
+    i-if i-input_size:
+      waise vawueewwow('input_size is d-depwecated - it i-is now automaticawwy \
+                       i-infewwed fwom youw i-input.')
+    if max_x_initiawizew is nyone:
+      m-max_x_initiawizew = t-tf.zewos_initiawizew()
+    s-sewf.max_x_initiawizew = m-max_x_initiawizew
 
-    self._use_bias = use_bias
+    s-sewf._use_bias = use_bias
     if use_bias:
-      if bias_x_initializer is None:
-        bias_x_initializer = tf.zeros_initializer()
-      self.bias_x_initializer = bias_x_initializer
+      if bias_x_initiawizew i-is nyone:
+        bias_x_initiawizew = tf.zewos_initiawizew()
+      sewf.bias_x_initiawizew = bias_x_initiawizew
 
-    self.epsilon = epsilon
-    self.is_training = is_training
+    sewf.epsiwon = epsiwon
+    sewf.is_twaining = is_twaining
 
-  def build(self, input_shape):  # pylint: disable=unused-argument
-    """Creates the max_x and bias_x tf.Variables of the layer."""
+  d-def buiwd(sewf, input_shape):  # pywint: disabwe=unused-awgument
+    """cweates the m-max_x and bias_x t-tf.vawiabwes o-of the wayew."""
 
-    self.max_x = self.add_variable(
-      'max_x',
-      initializer=self.max_x_initializer,
-      shape=[input_shape[1]],
-      dtype=tf.float32,
-      trainable=False)
+    sewf.max_x = s-sewf.add_vawiabwe(
+      'max_x', mya
+      initiawizew=sewf.max_x_initiawizew, (U ᵕ U❁)
+      s-shape=[input_shape[1]], :3
+      d-dtype=tf.fwoat32, mya
+      twainabwe=fawse)
 
-    if self._use_bias:
-      self.bias_x = self.add_variable(
-        'bias_x',
-        initializer=self.bias_x_initializer,
-        shape=[input_shape[1]],
-        dtype=tf.float32,
-        trainable=True)
+    if sewf._use_bias:
+      sewf.bias_x = sewf.add_vawiabwe(
+        'bias_x', OwO
+        initiawizew=sewf.bias_x_initiawizew, (ˆ ﻌ ˆ)♡
+        s-shape=[input_shape[1]], ʘwʘ
+        dtype=tf.fwoat32, o.O
+        t-twainabwe=twue)
 
-    self.built = True
+    sewf.buiwt = twue
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  d-def compute_output_shape(sewf, UwU i-input_shape):
+    """computes the output shape of the wayew g-given the input s-shape. rawr x3
 
-    Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+    awgs:
+      input_shape: a-a (possibwy n-nyested tupwe of) `tensowshape`. 🥺  it nyeed nyot
+        be fuwwy defined (e.g. :3 t-the batch size m-may be unknown). (ꈍᴗꈍ)
 
-    Raises NotImplementedError.
+    w-waises nyotimpwementedewwow. 🥺
 
     """
-    raise NotImplementedError
+    waise nyotimpwementedewwow
 
-  def _call(self, inputs, **kwargs):  # pylint: disable=unused-argument
+  d-def _caww(sewf, (✿oωo) i-inputs, **kwawgs):  # pywint: disabwe=unused-awgument
     """
-    The forward propagation logic of the layer lives here.
+    t-the fowwawd pwopagation wogic of the wayew wives hewe. (U ﹏ U)
 
-    Arguments:
-      sparse_input:
-        A 2D ``tf.SparseTensor`` of dense_shape ``[batch_size, input_size]``
-    Returns:
-       A ``tf.SparseTensor`` representing the output of the max_norm transformation, this can
-       be fed into twml.layers.FullSparse in order to be transformed into a ``tf.Tensor``.
+    awguments:
+      spawse_input:
+        a-a 2d ``tf.spawsetensow`` o-of dense_shape ``[batch_size, :3 input_size]``
+    wetuwns:
+       a-a ``tf.spawsetensow`` w-wepwesenting the output of the max_nowm twansfowmation, ^^;; this can
+       b-be fed into twmw.wayews.fuwwspawse in owdew to be twansfowmed into a ``tf.tensow``. rawr
     """
 
-    if isinstance(inputs, twml.SparseTensor):
-      inputs = inputs.to_tf()
-    elif not isinstance(inputs, tf.SparseTensor):
-      raise TypeError("The inputs must be of type tf.SparseTensor or twml.SparseTensor")
+    i-if isinstance(inputs, 😳😳😳 twmw.spawsetensow):
+      inputs = i-inputs.to_tf()
+    e-ewif not isinstance(inputs, (✿oωo) tf.spawsetensow):
+      waise t-typeewwow("the i-inputs must be of type tf.spawsetensow ow twmw.spawsetensow")
 
-    indices_x = inputs.indices[:, 1]
-    values_x = inputs.values
+    indices_x = inputs.indices[:, OwO 1]
+    v-vawues_x = inputs.vawues
 
-    if self.is_training is False:
-      normalized_x = OPLIB.sparse_max_norm_inference(self.max_x,
-                                                     indices_x,
-                                                     values_x,
-                                                     self.epsilon)
+    i-if sewf.is_twaining is fawse:
+      nyowmawized_x = opwib.spawse_max_nowm_infewence(sewf.max_x, ʘwʘ
+                                                     i-indices_x, (ˆ ﻌ ˆ)♡
+                                                     vawues_x, (U ﹏ U)
+                                                     s-sewf.epsiwon)
 
-      update_op = tf.no_op()
-    else:
-      max_x, normalized_x = OPLIB.sparse_max_norm_training(self.max_x,
-                                                           indices_x,
-                                                           values_x,
-                                                           self.epsilon)
+      update_op = t-tf.no_op()
+    ewse:
+      m-max_x, UwU nowmawized_x = opwib.spawse_max_nowm_twaining(sewf.max_x, XD
+                                                           i-indices_x, ʘwʘ
+                                                           v-vawues_x,
+                                                           s-sewf.epsiwon)
 
-      update_op = tf.assign(self.max_x, max_x)
+      update_op = tf.assign(sewf.max_x, rawr x3 m-max_x)
 
-    with tf.control_dependencies([update_op]):
-      normalized_x = tf.stop_gradient(normalized_x)
+    w-with tf.contwow_dependencies([update_op]):
+      nyowmawized_x = tf.stop_gwadient(nowmawized_x)
 
-    # add input bias
-    if self._use_bias:
-      normalized_x = normalized_x + tf.gather(self.bias_x, indices_x)
+    # a-add input b-bias
+    if sewf._use_bias:
+      n-nyowmawized_x = nyowmawized_x + tf.gathew(sewf.bias_x, ^^;; i-indices_x)
 
-    # convert back to sparse tensor
-    return tf.SparseTensor(inputs.indices, normalized_x, inputs.dense_shape)
+    # convewt b-back to spawse t-tensow
+    wetuwn tf.spawsetensow(inputs.indices, ʘwʘ nyowmawized_x, (U ﹏ U) inputs.dense_shape)
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
+  d-def caww(sewf, (˘ω˘) i-inputs, (ꈍᴗꈍ) **kwawgs):  # p-pywint: disabwe=unused-awgument
     """
-    The forward propagation logic of the layer lives here.
+    t-the fowwawd pwopagation w-wogic of the wayew wives hewe. /(^•ω•^)
 
-    Arguments:
-      sparse_input:
-        A 2D ``tf.SparseTensor`` of dense_shape ``[batch_size, input_size]``
-    Returns:
-       A ``tf.SparseTensor`` representing the output of the max_norm transformation, this can
-       be fed into twml.layers.FullSparse in order to be transformed into a ``tf.Tensor``.
+    awguments:
+      spawse_input:
+        a 2d ``tf.spawsetensow`` of dense_shape ``[batch_size, input_size]``
+    w-wetuwns:
+       a ``tf.spawsetensow`` w-wepwesenting the output o-of the max_nowm twansfowmation, >_< t-this can
+       be fed into t-twmw.wayews.fuwwspawse i-in owdew t-to be twansfowmed i-into a ``tf.tensow``. σωσ
     """
-    with tf.device(self.max_x.device):
-      return self._call(inputs, **kwargs)
+    w-with tf.device(sewf.max_x.device):
+      wetuwn sewf._caww(inputs, ^^;; **kwawgs)
 
-# For backwards compatiblity and also because I don't want to change all the tests.
-MaxNorm = SparseMaxNorm
+# fow backwawds compatibwity and awso because i don't want to change aww the t-tests. 😳
+maxnowm = s-spawsemaxnowm
 
 
-def sparse_max_norm(inputs,
-                    input_size=None,
-                    max_x_initializer=None,
-                    bias_x_initializer=None,
-                    is_training=True,
-                    epsilon=1E-5,
-                    use_bias=True,
-                    name=None,
-                    reuse=None):
+d-def spawse_max_nowm(inputs,
+                    input_size=none, >_<
+                    m-max_x_initiawizew=none, -.-
+                    bias_x_initiawizew=none,
+                    is_twaining=twue, UwU
+                    epsiwon=1e-5, :3
+                    u-use_bias=twue, σωσ
+                    n-nyame=none, >w<
+                    weuse=none):
   """
-  Functional inteface to SparseMaxNorm.
+  f-functionaw inteface to spawsemaxnowm.
 
-  Args:
-    inputs:
-      A sparse tensor (can be twml.SparseTensor or tf.SparseTensor)
-    input_size:
-      number of input units
-    max_x_initializer:
-      initializer vector of shape [input_size] used by variable `max_x`
-    bias_x_initializer:
-      initializer vector of shape [input_size] used by parameter `bias_x`
-    is_training:
-      Are we training the layer to learn the normalization maximas.
-      If set to True, max_x will be able to learn. This is independent of bias_x
-    epsilon:
-      The minimum value used for max_x. Defaults to 1E-5.
+  awgs:
+    i-inputs:
+      a-a spawse tensow (can be twmw.spawsetensow o-ow tf.spawsetensow)
+    i-input_size:
+      nyumbew of input units
+    max_x_initiawizew:
+      initiawizew v-vectow of shape [input_size] u-used by vawiabwe `max_x`
+    bias_x_initiawizew:
+      i-initiawizew v-vectow of shape [input_size] u-used by pawametew `bias_x`
+    is_twaining:
+      a-awe we twaining t-the wayew to weawn the nyowmawization m-maximas. (ˆ ﻌ ˆ)♡
+      i-if set to twue, ʘwʘ max_x wiww b-be abwe to weawn. :3 this is independent of bias_x
+    e-epsiwon:
+      the minimum v-vawue used fow m-max_x. (˘ω˘) defauwts to 1e-5. 😳😳😳
     use_bias:
-      Default True. Set to False to not use a bias term.
+      defauwt t-twue. rawr x3 set to fawse to nyot use a bias tewm. (✿oωo)
 
-  Returns:
-    Output after normalizing with the max value.
+  w-wetuwns:
+    o-output aftew n-nyowmawizing with the max vawue. (ˆ ﻌ ˆ)♡
    """
   if input_size:
-    raise ValueError('input_size is deprecated - it is now automatically \
-                     inferred from your input.')
+    waise v-vawueewwow('input_size is depwecated - it is n-nyow automaticawwy \
+                     i-infewwed fwom youw input.')
 
-  if isinstance(inputs, twml.SparseTensor):
-    inputs = inputs.to_tf()
+  i-if isinstance(inputs, :3 twmw.spawsetensow):
+    inputs = i-inputs.to_tf()
 
-  layer = SparseMaxNorm(max_x_initializer=max_x_initializer,
-                        bias_x_initializer=bias_x_initializer,
-                        is_training=is_training,
-                        epsilon=epsilon,
-                        use_bias=use_bias,
-                        name=name,
-                        _scope=name,
-                        _reuse=reuse)
-  return layer(inputs)
+  w-wayew = spawsemaxnowm(max_x_initiawizew=max_x_initiawizew, (U ᵕ U❁)
+                        bias_x_initiawizew=bias_x_initiawizew, ^^;;
+                        is_twaining=is_twaining, mya
+                        e-epsiwon=epsiwon, 😳😳😳
+                        use_bias=use_bias, OwO
+                        nyame=name, rawr
+                        _scope=name, XD
+                        _weuse=weuse)
+  w-wetuwn wayew(inputs)

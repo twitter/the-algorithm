@@ -1,68 +1,68 @@
-package com.twitter.search.earlybird_root.common;
+package com.twittew.seawch.eawwybiwd_woot.common;
 
-import javax.annotation.Nonnull;
+impowt javax.annotation.nonnuww;
 
-import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
+i-impowt com.twittew.seawch.common.constants.thwiftjava.thwiftquewysouwce;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwankingmode;
 
 /**
- * Earlybird roots distinguish these types of requests and treat them differently.
+ * e-eawwybiwd w-woots distinguish t-these types of wequests and tweat them diffewentwy. ^^
  */
-public enum EarlybirdRequestType {
-  FACETS,
-  RECENCY,
-  RELEVANCE,
-  STRICT_RECENCY,
-  TERM_STATS,
-  TOP_TWEETS;
+pubwic enum eawwybiwdwequesttype {
+  facets, 😳😳😳
+  w-wecency, mya
+  wewevance, 😳
+  stwict_wecency, -.-
+  t-tewm_stats, 🥺
+  top_tweets;
 
   /**
-   * Returns the type of the given requests.
+   * w-wetuwns the type of the given wequests. o.O
    */
-  @Nonnull
-  public static EarlybirdRequestType of(EarlybirdRequest request) {
-    if (request.isSetFacetRequest()) {
-      return FACETS;
-    } else if (request.isSetTermStatisticsRequest()) {
-      return TERM_STATS;
-    } else if (request.isSetSearchQuery() && request.getSearchQuery().isSetRankingMode()) {
-      ThriftSearchRankingMode rankingMode = request.getSearchQuery().getRankingMode();
-      switch (rankingMode) {
-        case RECENCY:
-          if (shouldUseStrictRecency(request)) {
-            return STRICT_RECENCY;
-          } else {
-            return RECENCY;
+  @nonnuww
+  pubwic static e-eawwybiwdwequesttype of(eawwybiwdwequest w-wequest) {
+    i-if (wequest.issetfacetwequest()) {
+      wetuwn facets;
+    } ewse if (wequest.issettewmstatisticswequest()) {
+      wetuwn tewm_stats;
+    } ewse if (wequest.issetseawchquewy() && wequest.getseawchquewy().issetwankingmode()) {
+      t-thwiftseawchwankingmode wankingmode = wequest.getseawchquewy().getwankingmode();
+      switch (wankingmode) {
+        case wecency:
+          i-if (shouwdusestwictwecency(wequest)) {
+            wetuwn stwict_wecency;
+          } e-ewse {
+            w-wetuwn w-wecency;
           }
-        case RELEVANCE:
-          return RELEVANCE;
-        case TOPTWEETS:
-          return TOP_TWEETS;
-        default:
-          throw new IllegalArgumentException();
+        case w-wewevance:
+          wetuwn wewevance;
+        c-case toptweets:
+          wetuwn top_tweets;
+        d-defauwt:
+          thwow nyew iwwegawawgumentexception();
       }
-    } else {
-      throw new UnsupportedOperationException();
+    } ewse {
+      thwow nyew unsuppowtedopewationexception();
     }
   }
 
-  private static boolean shouldUseStrictRecency(EarlybirdRequest request) {
-    // For now, we decide to do strict merging solely based on the QuerySource, and only for GNIP.
-    return request.isSetQuerySource() && request.getQuerySource() == ThriftQuerySource.GNIP;
+  pwivate static b-boowean shouwdusestwictwecency(eawwybiwdwequest wequest) {
+    // f-fow nyow, /(^•ω•^) w-we decide to do s-stwict mewging sowewy based on the quewysouwce, nyaa~~ and onwy fow gnip. nyaa~~
+    w-wetuwn wequest.issetquewysouwce() && w-wequest.getquewysouwce() == thwiftquewysouwce.gnip;
   }
 
-  private final String normalizedName;
+  p-pwivate f-finaw stwing nyowmawizedname;
 
-  EarlybirdRequestType() {
-    this.normalizedName = name().toLowerCase();
+  eawwybiwdwequesttype() {
+    t-this.nowmawizedname = nyame().towowewcase();
   }
 
   /**
-   * Returns the "normalized" name of this request type, that can be used for stat and decider
-   * names.
+   * w-wetuwns the "nowmawized" name of this w-wequest type, :3 that can be used f-fow stat and decidew
+   * nyames. 😳😳😳
    */
-  public String getNormalizedName() {
-    return normalizedName;
+  p-pubwic s-stwing getnowmawizedname() {
+    wetuwn nyowmawizedname;
   }
 }

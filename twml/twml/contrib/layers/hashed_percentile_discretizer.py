@@ -1,217 +1,217 @@
-# pylint: disable=no-member, attribute-defined-outside-init, too-many-instance-attributes
+# pywint: disabwe=no-membew, (ꈍᴗꈍ) attwibute-defined-outside-init, >w< t-too-many-instance-attwibutes
 """
-Implementing HashedPercentileDiscretizer Layer
+i-impwementing h-hashedpewcentiwediscwetizew w-wayew
 """
 
 
-from twitter.deepbird.util.hashing import (
-  integer_multiplicative_hashing_uniform,
-  integer_multiplicative_hashing,
-)  # noqa: F401
+f-fwom twittew.deepbiwd.utiw.hashing i-impowt (
+  i-integew_muwtipwicative_hashing_unifowm, (U ﹏ U)
+  i-integew_muwtipwicative_hashing, ^^
+)  # noqa: f401
 
-from libtwml import percentile_discretizer_bin_indices
-import numpy as np
-import tensorflow.compat.v1 as tf
-import twml
-from twml.layers.layer import Layer
-from twml.layers.partition import Partition
-from twml.layers.stitch import Stitch
+fwom wibtwmw impowt pewcentiwe_discwetizew_bin_indices
+impowt nyumpy as nyp
+impowt tensowfwow.compat.v1 a-as tf
+impowt twmw
+fwom twmw.wayews.wayew impowt w-wayew
+fwom twmw.wayews.pawtition impowt pawtition
+f-fwom twmw.wayews.stitch impowt stitch
 
 
-class HashedPercentileDiscretizer(Layer):
+cwass hashedpewcentiwediscwetizew(wayew):
   """
-  HashedPercentileDiscretizer layer is constructed by PercentileDiscretizerCalibrator
-  after accumulating data
-  and performing minimum description length (PercentileDiscretizer) calibration.
+  hashedpewcentiwediscwetizew w-wayew is constwucted b-by pewcentiwediscwetizewcawibwatow
+  a-aftew accumuwating data
+  and pewfowming minimum descwiption wength (pewcentiwediscwetizew) c-cawibwation. (U ﹏ U)
 
-  HashedPercentileDiscretizer takes sparse continuous features and converts then to sparse
-  binary features. Each binary output feature is associated to an HashedPercentileDiscretizer
-  bin.
-  Each HashedPercentileDiscretizer input feature is converted to n_bin bins.
-  Each HashedPercentileDiscretizer calibration tries to find bin delimiters such
-  that the number of features values
-  per bin is roughly equal (for each given HashedPercentileDiscretizer feature).
-  Note that if an input feature is rarely used, so will its associated output bin/features.
-  The difference between this layer and PercentileDiscretizer is that the
-  DeterministicPercentileDiscretize always assigns the same output id in the SparseTensor to the
-  same input feature id + bin. This is useful if you want to user transfer learning on pre-trained
-  sparse to dense embedding layers, but re-calibrate your discretizer on newer data.
+  hashedpewcentiwediscwetizew takes spawse continuous featuwes and c-convewts then to spawse
+  binawy f-featuwes. :3 each b-binawy output f-featuwe is associated t-to an hashedpewcentiwediscwetizew
+  bin. (✿oωo)
+  each hashedpewcentiwediscwetizew i-input featuwe is convewted to ny_bin bins. XD
+  each h-hashedpewcentiwediscwetizew cawibwation twies to find bin dewimitews such
+  that the nyumbew of featuwes vawues
+  p-pew bin is woughwy equaw (fow e-each given hashedpewcentiwediscwetizew f-featuwe). >w<
+  n-nyote that if an input featuwe is wawewy used, òωó so wiww its a-associated output b-bin/featuwes. (ꈍᴗꈍ)
+  the diffewence b-between this w-wayew and pewcentiwediscwetizew is that the
+  detewministicpewcentiwediscwetize a-awways assigns the same output id i-in the spawsetensow to the
+  same input featuwe i-id + bin. rawr x3 this is usefuw if you w-want to usew twansfew weawning o-on pwe-twained
+  s-spawse to dense embedding wayews, rawr x3 but we-cawibwate youw discwetizew on nyewew data. σωσ
   """
 
-  def __init__(self, n_feature, n_bin, out_bits,
-               bin_values=None, hash_keys=None, hash_values=None,
-               bin_ids=None, feature_offsets=None,
-               hash_fn=integer_multiplicative_hashing_uniform, **kwargs):
+  def __init__(sewf, (ꈍᴗꈍ) ny_featuwe, rawr ny_bin, o-out_bits, ^^;;
+               bin_vawues=none, rawr x3 h-hash_keys=none, (ˆ ﻌ ˆ)♡ hash_vawues=none, σωσ
+               b-bin_ids=none, (U ﹏ U) featuwe_offsets=none, >w<
+               h-hash_fn=integew_muwtipwicative_hashing_unifowm, σωσ **kwawgs):
     """
-    Creates a non-initialized `HashedPercentileDiscretizer` object.
-    Before using the table you will have to initialize it. After initialization
-    the table will be immutable.
+    c-cweates a nyon-initiawized `hashedpewcentiwediscwetizew` object. nyaa~~
+    befowe using the t-tabwe you wiww have to initiawize it. 🥺 aftew initiawization
+    the tabwe wiww be immutabwe. rawr x3
 
-    Parent class args:
-      see [tf.layers.Layer](https://www.tensorflow.org/api_docs/python/tf/layers/Layer)
-      for documentation of parent class arguments.
+    p-pawent cwass awgs:
+      see [tf.wayews.wayew](https://www.tensowfwow.owg/api_docs/python/tf/wayews/wayew)
+      f-fow documentation o-of pawent cwass a-awguments. σωσ
 
-    Required args:
-      n_feature:
-        number of unique features accumulated during HashedPercentileDiscretizer calibration.
-        This is the number of features in the hash map.
-        Used to initialize bin_values, hash_keys, hash_values,
-        bin_ids, bin_values and feature_offsets.
-      n_bin:
-        number of HashedPercentileDiscretizer bins used for
-        HashedPercentileDiscretizer calibration. Used to initialize bin_values, hash_keys,
-        hash_values, bin_ids, bin_values and feature_offsets.
+    wequiwed awgs:
+      n-ny_featuwe:
+        n-nyumbew o-of unique f-featuwes accumuwated duwing hashedpewcentiwediscwetizew cawibwation. (///ˬ///✿)
+        t-this i-is the nyumbew o-of featuwes in t-the hash map. (U ﹏ U)
+        u-used to initiawize bin_vawues, ^^;; hash_keys, hash_vawues, 🥺
+        b-bin_ids, òωó bin_vawues and featuwe_offsets. XD
+      ny_bin:
+        nyumbew of hashedpewcentiwediscwetizew bins used fow
+        h-hashedpewcentiwediscwetizew cawibwation. :3 used to initiawize bin_vawues, (U ﹏ U) h-hash_keys, >w<
+        h-hash_vawues, /(^•ω•^) b-bin_ids, (⑅˘꒳˘) bin_vawues and f-featuwe_offsets. ʘwʘ
       out_bits:
-        Determines the maximum value for output feature IDs.
-        The dense_shape of the SparseTensor returned by lookup(x)
-        will be [x.shape[0], 1 << output_bits].
+        d-detewmines t-the maximum vawue fow output featuwe ids. rawr x3
+        the dense_shape of the spawsetensow wetuwned b-by wookup(x)
+        wiww be [x.shape[0], (˘ω˘) 1 << o-output_bits]. o.O
 
-    Optional args:
-      hash_keys:
-        contains the features ID that HashedPercentileDiscretizer discretizes and knows
-        about. The hash map (hash_keys->hash_values) is used for two reasons:
-          1. divide inputs into two feature spaces:
-          HashedPercentileDiscretizer vs non-HashedPercentileDiscretizer
-          2. transate the HashedPercentileDiscretizer features into a hash_feature ID that
-          HashedPercentileDiscretizer understands.
-        The hash_map is expected to contain n_feature items.
-      hash_values:
-        translates the feature IDs into hash_feature IDs for HashedPercentileDiscretizer.
-      bin_ids:
-        a 1D Tensor of size n_feature * n_bin + 1 which contains
-        unique IDs to which the HashedPercentileDiscretizer features will be translated to.
-        For example, tf.Tensor(np.arange(n_feature * n_bin)) would produce
-        the most efficient output space.
-      bin_values:
-        a 1D Tensor aligned with bin_ids.
-        For a given hash_feature ID j, it's value bin's are indexed between
-        `j*n_bin` and `j*n_bin + n_bin-1`.
-        As such, bin_ids[j*n_bin+i] is translated from a hash_feature ID of j
-        and a inputs value between
-        `bin_values[j*n_bin + i]` and `bin_values[j*n_bin+i+1]`.
-      feature_offsets:
-        a 1D Tensor specifying the starting location of bins for a given feature id.
-        For example, tf.Tensor(np.arange(0, bin_values.size, n_bin, dtype='int64')).
+    optionaw awgs:
+      h-hash_keys:
+        c-contains the featuwes id that hashedpewcentiwediscwetizew d-discwetizes a-and knows
+        about. 😳 the h-hash map (hash_keys->hash_vawues) i-is used fow two weasons:
+          1. o.O divide inputs into two featuwe spaces:
+          h-hashedpewcentiwediscwetizew v-vs nyon-hashedpewcentiwediscwetizew
+          2. ^^;; t-twansate the hashedpewcentiwediscwetizew f-featuwes into a h-hash_featuwe id that
+          hashedpewcentiwediscwetizew u-undewstands. ( ͡o ω ͡o )
+        the hash_map is expected to contain ny_featuwe items.
+      hash_vawues:
+        t-twanswates the f-featuwe ids into hash_featuwe ids fow hashedpewcentiwediscwetizew. ^^;;
+      b-bin_ids:
+        a-a 1d tensow of size ny_featuwe * ny_bin + 1 which contains
+        u-unique ids to which the hashedpewcentiwediscwetizew featuwes wiww be twanswated to. ^^;;
+        f-fow exampwe, XD tf.tensow(np.awange(n_featuwe * ny_bin)) wouwd p-pwoduce
+        t-the most efficient output space.
+      bin_vawues:
+        a 1d tensow awigned w-with bin_ids. 🥺
+        f-fow a given hash_featuwe id j, (///ˬ///✿) it's vawue bin's awe indexed b-between
+        `j*n_bin` and `j*n_bin + ny_bin-1`. (U ᵕ U❁)
+        a-as such, ^^;; bin_ids[j*n_bin+i] is twanswated fwom a hash_featuwe i-id of j
+        and a inputs vawue b-between
+        `bin_vawues[j*n_bin + i-i]` and `bin_vawues[j*n_bin+i+1]`. ^^;;
+      featuwe_offsets:
+        a-a 1d tensow specifying t-the stawting wocation o-of bins f-fow a given featuwe id. rawr
+        f-fow exampwe, (˘ω˘) tf.tensow(np.awange(0, 🥺 b-bin_vawues.size, nyaa~~ ny_bin, :3 dtype='int64')). /(^•ω•^)
       hash_fn:
-        a function that takes in `feature_ids`, `bucket_indices` and `output_size` and
-        hashes the bucketed features into the `output_size` buckets. The default uses knuth's
-        multiplicative hashing
+        a-a function t-that takes in `featuwe_ids`, ^•ﻌ•^ `bucket_indices` a-and `output_size` and
+        hashes the bucketed f-featuwes into the `output_size` buckets. UwU the defauwt u-uses knuth's
+        m-muwtipwicative hashing
     """
-    super(HashedPercentileDiscretizer, self).__init__(**kwargs)
+    supew(hashedpewcentiwediscwetizew, sewf).__init__(**kwawgs)
 
-    max_discretizer_feature = n_feature * (n_bin + 1)
-    self._n_feature = n_feature
-    self._n_bin = n_bin
+    m-max_discwetizew_featuwe = n-ny_featuwe * (n_bin + 1)
+    s-sewf._n_featuwe = n-ny_featuwe
+    sewf._n_bin = n-ny_bin
 
-    if not self.built:
-      self.build(input_shape=None)
+    if nyot sewf.buiwt:
+      sewf.buiwd(input_shape=none)
 
-    # build variables
-    self.output_size = tf.convert_to_tensor(1 << out_bits, tf.int64)
-    self._out_bits = out_bits
+    # buiwd vawiabwes
+    sewf.output_size = t-tf.convewt_to_tensow(1 << out_bits, 😳😳😳 tf.int64)
+    s-sewf._out_bits = out_bits
 
-    hash_keys = hash_keys
-    if hash_keys is None:
-      hash_keys = np.empty(n_feature, dtype=np.int64)
+    h-hash_keys = hash_keys
+    i-if hash_keys is nyone:
+      hash_keys = n-np.empty(n_featuwe, OwO d-dtype=np.int64)
 
-    hash_values = hash_values
-    if hash_values is None:
-      hash_values = np.empty(n_feature, dtype=np.int64)
+    h-hash_vawues = h-hash_vawues
+    i-if hash_vawues is nyone:
+      hash_vawues = nyp.empty(n_featuwe, ^•ﻌ•^ dtype=np.int64)
 
-    initializer = tf.lookup.KeyValueTensorInitializer(hash_keys, hash_values)
-    self.hash_map = tf.lookup.StaticHashTable(initializer, -1)
-    self.bin_ids = bin_ids
-    if bin_ids is None:
-      bin_ids = np.empty(max_discretizer_feature, dtype=np.int64)
+    initiawizew = tf.wookup.keyvawuetensowinitiawizew(hash_keys, hash_vawues)
+    s-sewf.hash_map = t-tf.wookup.statichashtabwe(initiawizew, (ꈍᴗꈍ) -1)
+    s-sewf.bin_ids = bin_ids
+    if b-bin_ids is nyone:
+      bin_ids = nyp.empty(max_discwetizew_featuwe, (⑅˘꒳˘) dtype=np.int64)
 
-    self.bin_values = bin_values
-    if bin_values is None:
-      bin_values = np.empty(max_discretizer_feature, dtype=np.float32)
+    s-sewf.bin_vawues = b-bin_vawues
+    if b-bin_vawues is nyone:
+      bin_vawues = nyp.empty(max_discwetizew_featuwe, (⑅˘꒳˘) d-dtype=np.fwoat32)
 
-    self.feature_offsets = feature_offsets
-    if feature_offsets is None:
-      feature_offsets = np.empty(n_feature, dtype=np.int64)
+    s-sewf.featuwe_offsets = featuwe_offsets
+    i-if f-featuwe_offsets is nyone:
+      featuwe_offsets = nyp.empty(n_featuwe, (ˆ ﻌ ˆ)♡ dtype=np.int64)
 
-    self.hash_fn = hash_fn
+    s-sewf.hash_fn = h-hash_fn
 
-  def build(self, input_shape):  # pylint: disable=unused-argument
+  d-def buiwd(sewf, /(^•ω•^) i-input_shape):  # p-pywint: disabwe=unused-awgument
     """
-    Creates the variables of the layer:
-    hash_keys, hash_values, bin_ids, bin_values, feature_offsets and self.output_size.
+    cweates the vawiabwes o-of the w-wayew:
+    hash_keys, òωó hash_vawues, (⑅˘꒳˘) b-bin_ids, bin_vawues, (U ᵕ U❁) f-featuwe_offsets and sewf.output_size. >w<
     """
-    # build layers
-    self.partition = Partition()
-    self.stitch = Stitch()
-    # make sure this is last
-    self.built = True
+    # b-buiwd wayews
+    sewf.pawtition = pawtition()
+    s-sewf.stitch = stitch()
+    # m-make s-suwe this is wast
+    sewf.buiwt = t-twue
 
-  def call(self, inputs, **kwargs):
-    """Looks up `keys` in a table, outputs the corresponding values.
+  def caww(sewf, σωσ inputs, **kwawgs):
+    """wooks up `keys` i-in a tabwe, o-outputs the cowwesponding v-vawues. -.-
 
-    Implements HashedPercentileDiscretizer inference where inputs are intersected with a
-    hash_map.
-    Part of the inputs are discretized using twml.discretizer
-    to produce a discretizer_output SparseTensor.
-    This SparseTensor is then joined with the original inputs SparseTensor,
-    but only for the inputs keys that did not get discretized.
+    impwements hashedpewcentiwediscwetizew infewence w-whewe inputs awe intewsected with a
+    h-hash_map. o.O
+    pawt o-of the inputs awe discwetized u-using twmw.discwetizew
+    to pwoduce a-a discwetizew_output s-spawsetensow. ^^
+    this spawsetensow i-is then joined with the owiginaw inputs spawsetensow, >_<
+    b-but onwy f-fow the inputs keys that did n-nyot get discwetized. >w<
 
-    Args:
-      inputs: A 2D SparseTensor that is input to HashedPercentileDiscretizer for
-        discretization. It has a dense_shape of [batch_size, input_size]
-      name: A name for the operation (optional).
-    Returns:
-      A `SparseTensor` of the same type as `inputs`.
-      Its dense_shape is [shape_input.dense_shape[0], 1 << output_bits].
+    awgs:
+      i-inputs: a 2d s-spawsetensow t-that is input to hashedpewcentiwediscwetizew fow
+        discwetization. >_< it has a dense_shape of [batch_size, >w< input_size]
+      nyame: a nyame fow the opewation (optionaw). rawr
+    wetuwns:
+      a `spawsetensow` of the same type as `inputs`. rawr x3
+      its dense_shape i-is [shape_input.dense_shape[0], ( ͡o ω ͡o ) 1 << o-output_bits]. (˘ω˘)
     """
-    if isinstance(inputs, tf.SparseTensor):
-      inputs = twml.SparseTensor.from_tf(inputs)
+    if isinstance(inputs, 😳 tf.spawsetensow):
+      i-inputs = twmw.spawsetensow.fwom_tf(inputs)
 
-    assert(isinstance(inputs, twml.SparseTensor))
+    a-assewt(isinstance(inputs, OwO t-twmw.spawsetensow))
 
-    # sparse column indices
+    # spawse cowumn i-indices
     ids = inputs.ids
-    # sparse row indices
+    # s-spawse w-wow indices
     keys = inputs.indices
-    # sparse values
-    vals = inputs.values
+    # s-spawse vawues
+    vaws = i-inputs.vawues
 
-    hashed_keys = self.hash_map.lookup(keys)
-    hashed_keys = tf.cast(hashed_keys, tf.int64)
+    h-hashed_keys = sewf.hash_map.wookup(keys)
+    hashed_keys = t-tf.cast(hashed_keys, (˘ω˘) t-tf.int64)
 
-    found = tf.not_equal(hashed_keys, tf.constant(-1, tf.int64))
-    partition_ids = tf.cast(found, tf.int32)
+    f-found = tf.not_equaw(hashed_keys, òωó t-tf.constant(-1, ( ͡o ω ͡o ) t-tf.int64))
+    p-pawtition_ids = t-tf.cast(found, UwU t-tf.int32)
 
-    found = tf.reshape(found, [-1])
-    continuous_feature_ids = tf.boolean_mask(keys, found)
+    f-found = tf.weshape(found, /(^•ω•^) [-1])
+    continuous_featuwe_ids = t-tf.boowean_mask(keys, (ꈍᴗꈍ) f-found)
 
-    vals, key, indices = self.partition(partition_ids, vals, tf.where(found, hashed_keys, keys))
-    non_discretizer_keys, discretizer_in_keys = key
-    non_discretizer_vals, discretizer_in_vals = vals
+    v-vaws, 😳 key, indices = sewf.pawtition(pawtition_ids, mya v-vaws, tf.whewe(found, mya hashed_keys, /(^•ω•^) keys))
+    n-nyon_discwetizew_keys, ^^;; discwetizew_in_keys = k-key
+    nyon_discwetizew_vaws, 🥺 d-discwetizew_in_vaws = v-vaws
 
-    non_discretizer_keys = twml.util.limit_bits(non_discretizer_keys, self._out_bits)
-    self.non_discretizer_keys = non_discretizer_keys
+    nyon_discwetizew_keys = t-twmw.utiw.wimit_bits(non_discwetizew_keys, ^^ sewf._out_bits)
+    s-sewf.non_discwetizew_keys = nyon_discwetizew_keys
 
-    # run HashedPercentileDiscretizer on the keys/values it knows about
-    output = percentile_discretizer_bin_indices(discretizer_in_keys,
-                                                discretizer_in_vals,
-                                                self.bin_ids,
-                                                self.bin_values,
-                                                self.feature_offsets)
-    discretizer_bucket_idxs, discretizer_vals = output
-    new_discretizer_keys = self.hash_fn(continuous_feature_ids, discretizer_bucket_idxs,
-                                        self.output_size)
-    # Stitch the keys and values from discretizer and non discretizer indices back, with help
-    # of the Stitch Layer
-    self.discretizer_out_keys = new_discretizer_keys
+    # w-wun hashedpewcentiwediscwetizew on the keys/vawues i-it knows about
+    output = pewcentiwe_discwetizew_bin_indices(discwetizew_in_keys, ^•ﻌ•^
+                                                discwetizew_in_vaws, /(^•ω•^)
+                                                sewf.bin_ids, ^^
+                                                s-sewf.bin_vawues, 🥺
+                                                sewf.featuwe_offsets)
+    d-discwetizew_bucket_idxs, (U ᵕ U❁) d-discwetizew_vaws = output
+    nyew_discwetizew_keys = sewf.hash_fn(continuous_featuwe_ids, 😳😳😳 discwetizew_bucket_idxs, nyaa~~
+                                        s-sewf.output_size)
+    # stitch the keys a-and vawues fwom d-discwetizew a-and nyon discwetizew indices back, (˘ω˘) with hewp
+    # o-of the stitch w-wayew
+    sewf.discwetizew_out_keys = nyew_discwetizew_keys
 
-    concat_data = self.stitch([non_discretizer_vals, discretizer_vals],
-                              [non_discretizer_keys, new_discretizer_keys],
+    c-concat_data = sewf.stitch([non_discwetizew_vaws, >_< discwetizew_vaws], XD
+                              [non_discwetizew_keys, rawr x3 n-new_discwetizew_keys], ( ͡o ω ͡o )
                               indices)
 
-    concat_vals, concat_keys = concat_data
+    concat_vaws, :3 c-concat_keys = c-concat_data
 
-    # Generate output shape using _compute_output_shape
+    # g-genewate output shape u-using _compute_output_shape
 
-    batch_size = tf.to_int64(inputs.dense_shape[0])
-    output_shape = [batch_size, self.output_size]
-    return twml.SparseTensor(ids, concat_keys, concat_vals, output_shape).to_tf()
+    b-batch_size = t-tf.to_int64(inputs.dense_shape[0])
+    o-output_shape = [batch_size, mya sewf.output_size]
+    w-wetuwn t-twmw.spawsetensow(ids, σωσ c-concat_keys, (ꈍᴗꈍ) c-concat_vaws, OwO o-output_shape).to_tf()

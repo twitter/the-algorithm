@@ -1,85 +1,85 @@
-package com.twitter.interaction_graph.scio.agg_notifications
+package com.twittew.intewaction_gwaph.scio.agg_notifications
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.DiskFormat
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.io.fs.multiformat.ReadOptions
-import com.twitter.beam.io.fs.multiformat.WriteOptions
-import com.twitter.client_event_filtering.FrigateFilteredClientEventsDataflowScalaDataset
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.thriftscala._
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.tweetsource.public_tweets.PublicTweetsScalaDataset
+impowt c-com.spotify.scio.sciocontext
+i-impowt com.spotify.scio.vawues.scowwection
+i-impowt c-com.twittew.beam.io.daw.daw
+impowt c-com.twittew.beam.io.fs.muwtifowmat.diskfowmat
+i-impowt com.twittew.beam.io.fs.muwtifowmat.pathwayout
+i-impowt c-com.twittew.beam.io.fs.muwtifowmat.weadoptions
+impowt com.twittew.beam.io.fs.muwtifowmat.wwiteoptions
+impowt com.twittew.cwient_event_fiwtewing.fwigatefiwtewedcwienteventsdatafwowscawadataset
+impowt com.twittew.cwientapp.thwiftscawa.wogevent
+impowt com.twittew.intewaction_gwaph.scio.common.featuwegenewatowutiw
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa._
+impowt com.twittew.scio_intewnaw.job.sciobeamjob
+i-impowt com.twittew.statebiwd.v2.thwiftscawa.enviwonment
+i-impowt com.twittew.tweetsouwce.pubwic_tweets.pubwictweetsscawadataset
 
-object InteractionGraphNotificationsJob extends ScioBeamJob[InteractionGraphNotificationsOption] {
-  override protected def configurePipeline(
-    sc: ScioContext,
-    opts: InteractionGraphNotificationsOption
-  ): Unit = {
+object intewactiongwaphnotificationsjob extends sciobeamjob[intewactiongwaphnotificationsoption] {
+  o-ovewwide pwotected def configuwepipewine(
+    s-sc: s-sciocontext, (U ﹏ U)
+    opts: intewactiongwaphnotificationsoption
+  ): unit = {
 
-    val pushClientEvents: SCollection[LogEvent] = sc
-      .customInput(
-        name = "Read Push Client Events",
-        DAL
-          .read(
-            FrigateFilteredClientEventsDataflowScalaDataset,
-            opts.interval,
-            DAL.Environment.Prod,
+    vaw pushcwientevents: scowwection[wogevent] = s-sc
+      .custominput(
+        nyame = "wead push cwient events", >w<
+        daw
+          .wead(
+            f-fwigatefiwtewedcwienteventsdatafwowscawadataset, mya
+            opts.intewvaw, >w<
+            d-daw.enviwonment.pwod, nyaa~~
           )
       )
-    val pushNtabEvents =
-      pushClientEvents.flatMap(InteractionGraphNotificationUtil.getPushNtabEvents)
+    vaw p-pushntabevents =
+      p-pushcwientevents.fwatmap(intewactiongwaphnotificationutiw.getpushntabevents)
 
-    // look back tweets for 2 days because MR gets tweets from 2 days ago.
-    // Allow a grace period of 24 hours to reduce oncall workload
-    val graceHours = 24
-    val interval2DaysBefore =
-      opts.interval.withStart(opts.interval.getStart.minusDays(2).plusHours(graceHours))
-    val tweetAuthors: SCollection[(Long, Long)] = sc
-      .customInput(
-        name = "Read Tweets",
-        DAL
-          .read(
-            dataset = PublicTweetsScalaDataset,
-            interval = interval2DaysBefore,
-            environmentOverride = DAL.Environment.Prod,
-            readOptions = ReadOptions(projections = Some(Seq("tweetId", "userId")))
+    // wook b-back tweets fow 2 days because mw gets tweets f-fwom 2 days ago. (✿oωo)
+    // awwow a gwace pewiod of 24 h-houws to weduce oncaww wowkwoad
+    vaw gwacehouws = 24
+    vaw intewvaw2daysbefowe =
+      opts.intewvaw.withstawt(opts.intewvaw.getstawt.minusdays(2).pwushouws(gwacehouws))
+    vaw tweetauthows: s-scowwection[(wong, ʘwʘ wong)] = s-sc
+      .custominput(
+        n-nyame = "wead t-tweets",
+        daw
+          .wead(
+            dataset = pubwictweetsscawadataset, (ˆ ﻌ ˆ)♡
+            intewvaw = i-intewvaw2daysbefowe, 😳😳😳
+            e-enviwonmentovewwide = daw.enviwonment.pwod, :3
+            w-weadoptions = w-weadoptions(pwojections = some(seq("tweetid", OwO "usewid")))
           )
-      ).map { t => (t.tweetId, t.userId) }
+      ).map { t-t => (t.tweetid, (U ﹏ U) t.usewid) }
 
-    val pushNtabEdgeCounts = pushNtabEvents
-      .join(tweetAuthors)
+    v-vaw pushntabedgecounts = pushntabevents
+      .join(tweetauthows)
       .map {
-        case (_, ((srcId, feature), destId)) => ((srcId, destId, feature), 1L)
+        c-case (_, >w< ((swcid, (U ﹏ U) featuwe), 😳 d-destid)) => ((swcid, (ˆ ﻌ ˆ)♡ destid, 😳😳😳 featuwe), 1w)
       }
-      .withName("summing edge feature counts")
-      .sumByKey
+      .withname("summing e-edge f-featuwe counts")
+      .sumbykey
 
-    val aggPushEdges = pushNtabEdgeCounts
+    vaw aggpushedges = pushntabedgecounts
       .map {
-        case ((srcId, destId, featureName), count) =>
-          (srcId, destId) -> Seq(
-            EdgeFeature(featureName, FeatureGeneratorUtil.initializeTSS(count)))
+        case ((swcid, (U ﹏ U) destid, featuwename), (///ˬ///✿) count) =>
+          (swcid, 😳 destid) -> seq(
+            e-edgefeatuwe(featuwename, 😳 f-featuwegenewatowutiw.initiawizetss(count)))
       }
-      .sumByKey
+      .sumbykey
       .map {
-        case ((srcId, destId), edgeFeatures) =>
-          Edge(srcId, destId, None, edgeFeatures.sortBy(_.name.value))
+        case ((swcid, σωσ destid), rawr x3 e-edgefeatuwes) =>
+          e-edge(swcid, OwO destid, /(^•ω•^) n-nyone, edgefeatuwes.sowtby(_.name.vawue))
       }
 
-    aggPushEdges.saveAsCustomOutput(
-      "Write Edge Records",
-      DAL.write[Edge](
-        InteractionGraphAggNotificationsEdgeDailyScalaDataset,
-        PathLayout.DailyPath(opts.getOutputPath + "/aggregated_notifications_edge_daily"),
-        opts.interval,
-        DiskFormat.Parquet,
-        Environment.valueOf(opts.getDALWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(opts.getNumberOfShards))
+    aggpushedges.saveascustomoutput(
+      "wwite edge wecowds", 😳😳😳
+      d-daw.wwite[edge](
+        intewactiongwaphaggnotificationsedgedaiwyscawadataset, ( ͡o ω ͡o )
+        pathwayout.daiwypath(opts.getoutputpath + "/aggwegated_notifications_edge_daiwy"), >_<
+        opts.intewvaw, >w<
+        diskfowmat.pawquet, rawr
+        e-enviwonment.vawueof(opts.getdawwwiteenviwonment), 😳
+        wwiteoption = wwiteoptions(numofshawds = s-some(opts.getnumbewofshawds))
       )
     )
   }

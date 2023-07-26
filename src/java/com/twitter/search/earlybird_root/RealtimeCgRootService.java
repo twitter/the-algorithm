@@ -1,132 +1,132 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+impowt j-javax.inject.inject;
+i-impowt javax.inject.named;
+i-impowt javax.inject.singweton;
 
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.mtls.authorization.server.MtlsServerSessionTrackerFilter;
-import com.twitter.search.common.clientstats.FinagleClientStatsFilter;
-import com.twitter.search.common.root.LoggingFilter;
-import com.twitter.search.common.root.RequestValidationFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusResponse;
-import com.twitter.search.earlybird_root.caching.FacetsCacheFilter;
-import com.twitter.search.earlybird_root.caching.RecencyCacheFilter;
-import com.twitter.search.earlybird_root.caching.RelevanceCacheFilter;
-import com.twitter.search.earlybird_root.caching.RelevanceZeroResultsCacheFilter;
-import com.twitter.search.earlybird_root.caching.StrictRecencyCacheFilter;
-import com.twitter.search.earlybird_root.caching.TermStatsCacheFilter;
-import com.twitter.search.earlybird_root.caching.TopTweetsCacheFilter;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.ClientIdQuotaFilter;
-import com.twitter.search.earlybird_root.filters.ClientIdTrackingFilter;
-import com.twitter.search.earlybird_root.filters.ClientRequestTimeFilter;
-import com.twitter.search.earlybird_root.filters.DeadlineTimeoutStatsFilter;
-import com.twitter.search.earlybird_root.filters.DropAllProtectedOperatorFilter;
-import com.twitter.search.earlybird_root.filters.EarlybirdFeatureSchemaAnnotateFilter;
-import com.twitter.search.earlybird_root.filters.InitializeRequestContextFilter;
-import com.twitter.search.earlybird_root.filters.MetadataTrackingFilter;
-import com.twitter.search.earlybird_root.filters.NullcastTrackingFilter;
-import com.twitter.search.earlybird_root.filters.PostCacheRequestTypeCountFilter;
-import com.twitter.search.earlybird_root.filters.PreCacheRequestTypeCountFilter;
-import com.twitter.search.earlybird_root.filters.QueryLangStatFilter;
-import com.twitter.search.earlybird_root.filters.QueryOperatorStatFilter;
-import com.twitter.search.earlybird_root.filters.RequestResultStatsFilter;
-import com.twitter.search.earlybird_root.filters.ResponseCodeStatFilter;
-import com.twitter.search.earlybird_root.filters.SearchPayloadSizeLocalContextFilter;
-import com.twitter.search.earlybird_root.filters.StratoAttributionClientIdFilter;
-import com.twitter.search.earlybird_root.filters.TopLevelExceptionHandlingFilter;
-import com.twitter.util.Future;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.mtws.authowization.sewvew.mtwssewvewsessiontwackewfiwtew;
+i-impowt c-com.twittew.seawch.common.cwientstats.finagwecwientstatsfiwtew;
+i-impowt com.twittew.seawch.common.woot.woggingfiwtew;
+impowt com.twittew.seawch.common.woot.wequestvawidationfiwtew;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdstatuswesponse;
+impowt com.twittew.seawch.eawwybiwd_woot.caching.facetscachefiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.caching.wecencycachefiwtew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.caching.wewevancecachefiwtew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.caching.wewevancezewowesuwtscachefiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.caching.stwictwecencycachefiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.caching.tewmstatscachefiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.caching.toptweetscachefiwtew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.cwientidquotafiwtew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.cwientidtwackingfiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.cwientwequesttimefiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.deadwinetimeoutstatsfiwtew;
+impowt c-com.twittew.seawch.eawwybiwd_woot.fiwtews.dwopawwpwotectedopewatowfiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.eawwybiwdfeatuweschemaannotatefiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.initiawizewequestcontextfiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.metadatatwackingfiwtew;
+impowt c-com.twittew.seawch.eawwybiwd_woot.fiwtews.nuwwcasttwackingfiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.postcachewequesttypecountfiwtew;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.fiwtews.pwecachewequesttypecountfiwtew;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.fiwtews.quewywangstatfiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.quewyopewatowstatfiwtew;
+impowt c-com.twittew.seawch.eawwybiwd_woot.fiwtews.wequestwesuwtstatsfiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.wesponsecodestatfiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.seawchpaywoadsizewocawcontextfiwtew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.stwatoattwibutioncwientidfiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.topwevewexceptionhandwingfiwtew;
+impowt com.twittew.utiw.futuwe;
 
-@Singleton
-public class RealtimeCgRootService implements EarlybirdService.ServiceIface {
+@singweton
+pubwic cwass weawtimecgwootsewvice i-impwements eawwybiwdsewvice.sewviceiface {
 
-  private final Service<EarlybirdRequest, EarlybirdResponse> allFiltersAndService;
+  p-pwivate finaw s-sewvice<eawwybiwdwequest, e-eawwybiwdwesponse> awwfiwtewsandsewvice;
 
-  @Inject
-  public RealtimeCgRootService(
-      TopLevelExceptionHandlingFilter topLevelExceptionHandlingFilter,
-      ResponseCodeStatFilter responseCodeStatFilter,
-      LoggingFilter<EarlybirdRequest, EarlybirdResponse> loggingFilter,
-      RequestValidationFilter<EarlybirdRequest, EarlybirdResponse> validationFilter,
-      MtlsServerSessionTrackerFilter<EarlybirdRequest, EarlybirdResponse> mtlsFilter,
-      FinagleClientStatsFilter<EarlybirdRequest, EarlybirdResponse> finagleStatsFilter,
-      InitializeFilter initializeFilter,
-      InitializeRequestContextFilter initializeRequestContextFilter,
-      QueryLangStatFilter queryLangStatFilter,
-      DropAllProtectedOperatorFilter dropAllProtectedOperatorFilter,
-      QueryOperatorStatFilter queryOperatorStatFilter,
-      RequestResultStatsFilter requestResultStatsFilter,
-      PreCacheRequestTypeCountFilter preCacheCountFilter,
-      RecencyCacheFilter recencyCacheFilter,
-      RelevanceCacheFilter relevanceCacheFilter,
-      RelevanceZeroResultsCacheFilter relevanceZeroResultsCacheFilter,
-      StrictRecencyCacheFilter strictRecencyCacheFilter,
-      FacetsCacheFilter facetsCacheFilter,
-      TermStatsCacheFilter termStatsCacheFilter,
-      TopTweetsCacheFilter topTweetsCacheFilter,
-      PostCacheRequestTypeCountFilter postCacheCountFilter,
-      ClientIdTrackingFilter clientIdTrackingFilter,
-      ClientIdQuotaFilter quotaFilter,
-      MetadataTrackingFilter metadataTrackingFilter,
-      NullcastTrackingFilter nullcastTrackingFilter,
-      ClientRequestTimeFilter clientRequestTimeFilter,
-      DeadlineTimeoutStatsFilter deadlineTimeoutStatsFilter,
-      EarlybirdFeatureSchemaAnnotateFilter featureSchemaAnnotateFilter,
-      SearchPayloadSizeLocalContextFilter searchPayloadSizeLocalContextFilter,
-      @Named(ProtectedScatterGatherModule.NAMED_SCATTER_GATHER_SERVICE)
-          Service<EarlybirdRequestContext, EarlybirdResponse> scatterGatherService,
-      StratoAttributionClientIdFilter stratoAttributionClientIdFilter) {
-    this.allFiltersAndService =
-        loggingFilter
-            .andThen(topLevelExceptionHandlingFilter)
-            .andThen(stratoAttributionClientIdFilter)
-            .andThen(clientRequestTimeFilter)
-            .andThen(searchPayloadSizeLocalContextFilter)
-            .andThen(responseCodeStatFilter)
-            .andThen(requestResultStatsFilter)
-            .andThen(validationFilter)
-            .andThen(mtlsFilter)
-            .andThen(finagleStatsFilter)
-            .andThen(clientIdTrackingFilter)
-            .andThen(quotaFilter)
-            .andThen(metadataTrackingFilter)
-            .andThen(initializeFilter)
-            .andThen(initializeRequestContextFilter)
-            .andThen(deadlineTimeoutStatsFilter)
-            .andThen(queryLangStatFilter)
-            .andThen(nullcastTrackingFilter)
-            .andThen(dropAllProtectedOperatorFilter)
-            .andThen(queryOperatorStatFilter)
-            .andThen(preCacheCountFilter)
-            .andThen(recencyCacheFilter)
-            .andThen(relevanceCacheFilter)
-            .andThen(relevanceZeroResultsCacheFilter)
-            .andThen(strictRecencyCacheFilter)
-            .andThen(facetsCacheFilter)
-            .andThen(termStatsCacheFilter)
-            .andThen(topTweetsCacheFilter)
-            .andThen(postCacheCountFilter)
-            .andThen(featureSchemaAnnotateFilter)
-            .andThen(scatterGatherService);
+  @inject
+  pubwic weawtimecgwootsewvice(
+      topwevewexceptionhandwingfiwtew t-topwevewexceptionhandwingfiwtew, ʘwʘ
+      wesponsecodestatfiwtew w-wesponsecodestatfiwtew, (˘ω˘)
+      woggingfiwtew<eawwybiwdwequest, (U ﹏ U) e-eawwybiwdwesponse> w-woggingfiwtew, ^•ﻌ•^
+      wequestvawidationfiwtew<eawwybiwdwequest, (˘ω˘) e-eawwybiwdwesponse> vawidationfiwtew, :3
+      m-mtwssewvewsessiontwackewfiwtew<eawwybiwdwequest, ^^;; eawwybiwdwesponse> mtwsfiwtew, 🥺
+      f-finagwecwientstatsfiwtew<eawwybiwdwequest, (⑅˘꒳˘) eawwybiwdwesponse> f-finagwestatsfiwtew, nyaa~~
+      initiawizefiwtew initiawizefiwtew, :3
+      i-initiawizewequestcontextfiwtew i-initiawizewequestcontextfiwtew, ( ͡o ω ͡o )
+      quewywangstatfiwtew quewywangstatfiwtew, mya
+      dwopawwpwotectedopewatowfiwtew dwopawwpwotectedopewatowfiwtew, (///ˬ///✿)
+      quewyopewatowstatfiwtew quewyopewatowstatfiwtew, (˘ω˘)
+      w-wequestwesuwtstatsfiwtew w-wequestwesuwtstatsfiwtew, ^^;;
+      pwecachewequesttypecountfiwtew p-pwecachecountfiwtew, (✿oωo)
+      w-wecencycachefiwtew w-wecencycachefiwtew, (U ﹏ U)
+      wewevancecachefiwtew wewevancecachefiwtew, -.-
+      wewevancezewowesuwtscachefiwtew w-wewevancezewowesuwtscachefiwtew, ^•ﻌ•^
+      stwictwecencycachefiwtew stwictwecencycachefiwtew, rawr
+      facetscachefiwtew facetscachefiwtew, (˘ω˘)
+      t-tewmstatscachefiwtew tewmstatscachefiwtew, nyaa~~
+      t-toptweetscachefiwtew t-toptweetscachefiwtew, UwU
+      p-postcachewequesttypecountfiwtew postcachecountfiwtew, :3
+      c-cwientidtwackingfiwtew c-cwientidtwackingfiwtew, (⑅˘꒳˘)
+      c-cwientidquotafiwtew q-quotafiwtew, (///ˬ///✿)
+      metadatatwackingfiwtew metadatatwackingfiwtew, ^^;;
+      n-nyuwwcasttwackingfiwtew n-nyuwwcasttwackingfiwtew, >_<
+      c-cwientwequesttimefiwtew c-cwientwequesttimefiwtew, rawr x3
+      d-deadwinetimeoutstatsfiwtew deadwinetimeoutstatsfiwtew, /(^•ω•^)
+      eawwybiwdfeatuweschemaannotatefiwtew featuweschemaannotatefiwtew, :3
+      s-seawchpaywoadsizewocawcontextfiwtew seawchpaywoadsizewocawcontextfiwtew, (ꈍᴗꈍ)
+      @named(pwotectedscattewgathewmoduwe.named_scattew_gathew_sewvice)
+          sewvice<eawwybiwdwequestcontext, /(^•ω•^) eawwybiwdwesponse> scattewgathewsewvice, (⑅˘꒳˘)
+      stwatoattwibutioncwientidfiwtew s-stwatoattwibutioncwientidfiwtew) {
+    this.awwfiwtewsandsewvice =
+        woggingfiwtew
+            .andthen(topwevewexceptionhandwingfiwtew)
+            .andthen(stwatoattwibutioncwientidfiwtew)
+            .andthen(cwientwequesttimefiwtew)
+            .andthen(seawchpaywoadsizewocawcontextfiwtew)
+            .andthen(wesponsecodestatfiwtew)
+            .andthen(wequestwesuwtstatsfiwtew)
+            .andthen(vawidationfiwtew)
+            .andthen(mtwsfiwtew)
+            .andthen(finagwestatsfiwtew)
+            .andthen(cwientidtwackingfiwtew)
+            .andthen(quotafiwtew)
+            .andthen(metadatatwackingfiwtew)
+            .andthen(initiawizefiwtew)
+            .andthen(initiawizewequestcontextfiwtew)
+            .andthen(deadwinetimeoutstatsfiwtew)
+            .andthen(quewywangstatfiwtew)
+            .andthen(nuwwcasttwackingfiwtew)
+            .andthen(dwopawwpwotectedopewatowfiwtew)
+            .andthen(quewyopewatowstatfiwtew)
+            .andthen(pwecachecountfiwtew)
+            .andthen(wecencycachefiwtew)
+            .andthen(wewevancecachefiwtew)
+            .andthen(wewevancezewowesuwtscachefiwtew)
+            .andthen(stwictwecencycachefiwtew)
+            .andthen(facetscachefiwtew)
+            .andthen(tewmstatscachefiwtew)
+            .andthen(toptweetscachefiwtew)
+            .andthen(postcachecountfiwtew)
+            .andthen(featuweschemaannotatefiwtew)
+            .andthen(scattewgathewsewvice);
   }
 
-  @Override
-  public Future<String> getName() {
-    return Future.value("realtime_cg root");
+  @ovewwide
+  pubwic f-futuwe<stwing> g-getname() {
+    w-wetuwn futuwe.vawue("weawtime_cg woot");
   }
 
-  @Override
-  public Future<EarlybirdStatusResponse> getStatus() {
-    throw new UnsupportedOperationException("not supported");
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdstatuswesponse> g-getstatus() {
+    t-thwow nyew unsuppowtedopewationexception("not suppowted");
   }
 
-  @Override
-  public Future<EarlybirdResponse> search(EarlybirdRequest request) {
-    return allFiltersAndService.apply(request);
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> seawch(eawwybiwdwequest wequest) {
+    w-wetuwn awwfiwtewsandsewvice.appwy(wequest);
   }
 }

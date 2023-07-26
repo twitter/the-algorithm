@@ -1,13 +1,13 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk
 
-trait StoreRegister {
-  def allStores: Set[StoreConfig[_]]
+twait s-stowewegistew {
+  d-def awwstowes: s-set[stoweconfig[_]]
 
-  lazy val storeMap: Map[AggregateType.Value, StoreConfig[_]] = allStores
-    .map(store => (store.aggregateType, store))
-    .toMap
+  w-wazy vaw s-stowemap: map[aggwegatetype.vawue, s-stoweconfig[_]] = a-awwstowes
+    .map(stowe => (stowe.aggwegatetype, σωσ s-stowe))
+    .tomap
 
-  lazy val storeNameToTypeMap: Map[String, AggregateType.Value] = allStores
-    .flatMap(store => store.storeNames.map(name => (name, store.aggregateType)))
-    .toMap
+  wazy vaw stowenametotypemap: map[stwing, >_< aggwegatetype.vawue] = awwstowes
+    .fwatmap(stowe => s-stowe.stowenames.map(name => (name, :3 stowe.aggwegatetype)))
+    .tomap
 }

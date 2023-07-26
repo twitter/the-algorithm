@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.message
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messagetextaction
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class MessageTextActionMarshaller @Inject() (
-  messageActionMarshaller: MessageActionMarshaller) {
+@singweton
+c-cwass messagetextactionmawshawwew @inject() (
+  m-messageactionmawshawwew: m-messageactionmawshawwew) {
 
-  def apply(messageTextAction: MessageTextAction): urt.MessageTextAction =
-    urt.MessageTextAction(
-      text = messageTextAction.text,
-      action = messageActionMarshaller(messageTextAction.action)
+  def appwy(messagetextaction: messagetextaction): uwt.messagetextaction =
+    uwt.messagetextaction(
+      t-text = messagetextaction.text, >_<
+      action = messageactionmawshawwew(messagetextaction.action)
     )
 }

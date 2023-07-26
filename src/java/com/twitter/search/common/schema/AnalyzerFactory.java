@@ -1,142 +1,142 @@
-package com.twitter.search.common.schema;
+package com.twittew.seawch.common.schema;
 
-import java.io.Reader;
-import java.text.ParseException;
-import java.util.Map;
+impowt j-java.io.weadew;
+i-impowt java.text.pawseexception;
+i-impowt java.utiw.map;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+i-impowt c-com.googwe.common.base.spwittew;
+i-impowt com.googwe.common.cowwect.wists;
+i-impowt c-com.googwe.common.cowwect.sets;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.CharArraySet;
-import org.apache.lucene.analysis.CharFilter;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.Tokenizer;
-import org.apache.lucene.analysis.charfilter.HTMLStripCharFilter;
-import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
-import org.apache.lucene.analysis.fa.PersianCharFilter;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.util.Version;
+impowt o-owg.apache.wucene.anawysis.anawyzew;
+impowt owg.apache.wucene.anawysis.chawawwayset;
+impowt owg.apache.wucene.anawysis.chawfiwtew;
+i-impowt owg.apache.wucene.anawysis.tokenstweam;
+impowt owg.apache.wucene.anawysis.tokenizew;
+i-impowt owg.apache.wucene.anawysis.chawfiwtew.htmwstwipchawfiwtew;
+impowt owg.apache.wucene.anawysis.cowe.whitespaceanawyzew;
+impowt owg.apache.wucene.anawysis.fa.pewsianchawfiwtew;
+i-impowt owg.apache.wucene.anawysis.standawd.standawdanawyzew;
+impowt owg.apache.wucene.utiw.vewsion;
 
-import com.twitter.search.common.schema.thriftjava.ThriftAnalyzer;
-import com.twitter.search.common.schema.thriftjava.ThriftClassInstantiater;
-import com.twitter.search.common.schema.thriftjava.ThriftCustomAnalyzer;
+i-impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftanawyzew;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcwassinstantiatew;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcustomanawyzew;
 
-public class AnalyzerFactory {
-  private static final Logger LOG = LoggerFactory.getLogger(AnalyzerFactory.class);
+p-pubwic cwass anawyzewfactowy {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(anawyzewfactowy.cwass);
 
-  private static final String MATCH_VERSION_ARG_NAME = "matchVersion";
-  private static final String STANDARD_ANALYZER = "StandardAnalyzer";
-  private static final String WHITESPACE_ANALYZER = "WhitespaceAnalyzer";
-  private static final String SEARCH_WHITESPACE_ANALYZER = "SearchWhitespaceAnalyzer";
-  private static final String HTML_STRIP_CHAR_FILTER = "HTMLStripCharFilter";
-  private static final String PERSIAN_CHAR_FILTER = "PersianCharFilter";
+  p-pwivate static finaw stwing m-match_vewsion_awg_name = "matchvewsion";
+  p-pwivate static f-finaw stwing standawd_anawyzew = "standawdanawyzew";
+  p-pwivate static finaw stwing whitespace_anawyzew = "whitespaceanawyzew";
+  p-pwivate static finaw stwing seawch_whitespace_anawyzew = "seawchwhitespaceanawyzew";
+  pwivate s-static finaw stwing htmw_stwip_chaw_fiwtew = "htmwstwipchawfiwtew";
+  pwivate static finaw stwing pewsian_chaw_fiwtew = "pewsianchawfiwtew";
 
   /**
-   * Return a Lucene Analyzer based on the given ThriftAnalyzer.
+   * wetuwn a-a wucene anawyzew based on the given t-thwiftanawyzew. XD
    */
-  public Analyzer getAnalyzer(ThriftAnalyzer analyzer) {
-    if (analyzer.isSetAnalyzer()) {
-      return resolveAnalyzerClass(analyzer.getAnalyzer());
-    } else if (analyzer.isSetCustomAnalyzer()) {
-      return buildCustomAnalyzer(analyzer.getCustomAnalyzer());
+  p-pubwic a-anawyzew getanawyzew(thwiftanawyzew anawyzew) {
+    if (anawyzew.issetanawyzew()) {
+      wetuwn w-wesowveanawyzewcwass(anawyzew.getanawyzew());
+    } e-ewse if (anawyzew.issetcustomanawyzew()) {
+      wetuwn b-buiwdcustomanawyzew(anawyzew.getcustomanawyzew());
     }
-    return new SearchWhitespaceAnalyzer();
+    w-wetuwn nyew seawchwhitespaceanawyzew();
   }
 
-  private Analyzer resolveAnalyzerClass(ThriftClassInstantiater classDef) {
-    Map<String, String> params = classDef.getParams();
-    Version matchVersion = Version.LUCENE_8_5_2;
+  p-pwivate anawyzew wesowveanawyzewcwass(thwiftcwassinstantiatew c-cwassdef) {
+    map<stwing, σωσ stwing> pawams = c-cwassdef.getpawams();
+    vewsion matchvewsion = v-vewsion.wucene_8_5_2;
 
-    String matchVersionName = getArg(params, MATCH_VERSION_ARG_NAME);
-    if (matchVersionName != null) {
-      try {
-        matchVersion = Version.parse(matchVersionName);
-      } catch (ParseException e) {
-        // ignore and use default version
-        LOG.warn("Unable to parse match version: " + matchVersionName
-                + ". Will use default version of 8.5.2.");
+    stwing matchvewsionname = g-getawg(pawams, (U ᵕ U❁) m-match_vewsion_awg_name);
+    if (matchvewsionname != nyuww) {
+      twy {
+        matchvewsion = vewsion.pawse(matchvewsionname);
+      } catch (pawseexception e) {
+        // i-ignowe a-and use defauwt vewsion
+        w-wog.wawn("unabwe t-to pawse match v-vewsion: " + matchvewsionname
+                + ". (U ﹏ U) wiww use defauwt vewsion o-of 8.5.2.");
       }
     }
 
-    if (classDef.getClassName().equals(STANDARD_ANALYZER)) {
-      String stopwords = getArg(params, "stopwords");
-      if (stopwords != null) {
+    if (cwassdef.getcwassname().equaws(standawd_anawyzew)) {
+      stwing stopwowds = getawg(pawams, :3 "stopwowds");
+      if (stopwowds != n-nyuww) {
 
-        CharArraySet stopwordSet = new CharArraySet(
-                Lists.newLinkedList(Splitter.on(",").split(stopwords)),
-                false);
-        return new StandardAnalyzer(stopwordSet);
-      } else {
-        return new StandardAnalyzer();
+        chawawwayset s-stopwowdset = n-nyew chawawwayset(
+                w-wists.newwinkedwist(spwittew.on(",").spwit(stopwowds)), ( ͡o ω ͡o )
+                fawse);
+        w-wetuwn n-nyew standawdanawyzew(stopwowdset);
+      } e-ewse {
+        w-wetuwn nyew standawdanawyzew();
       }
-    } else if (classDef.getClassName().equals(WHITESPACE_ANALYZER)) {
-      return new WhitespaceAnalyzer();
-    } else if (classDef.getClassName().equals(SEARCH_WHITESPACE_ANALYZER)) {
-      return new SearchWhitespaceAnalyzer();
+    } ewse if (cwassdef.getcwassname().equaws(whitespace_anawyzew)) {
+      w-wetuwn nyew w-whitespaceanawyzew();
+    } e-ewse i-if (cwassdef.getcwassname().equaws(seawch_whitespace_anawyzew)) {
+      w-wetuwn nyew seawchwhitespaceanawyzew();
     }
 
-    return null;
+    wetuwn nyuww;
   }
 
-  private Analyzer buildCustomAnalyzer(final ThriftCustomAnalyzer customAnalyzer) {
-    return new Analyzer() {
-      @Override
-      protected TokenStreamComponents createComponents(String fieldName) {
-        final Tokenizer tokenizer = resolveTokenizerClass(customAnalyzer.getTokenizer());
+  p-pwivate anawyzew buiwdcustomanawyzew(finaw thwiftcustomanawyzew customanawyzew) {
+    wetuwn nyew anawyzew() {
+      @ovewwide
+      p-pwotected tokenstweamcomponents cweatecomponents(stwing fiewdname) {
+        f-finaw tokenizew t-tokenizew = wesowvetokenizewcwass(customanawyzew.gettokenizew());
 
-        TokenStream filter = tokenizer;
+        t-tokenstweam fiwtew = t-tokenizew;
 
-        if (customAnalyzer.isSetFilters()) {
-          for (ThriftClassInstantiater filterClass : customAnalyzer.getFilters()) {
-            filter = resolveTokenFilterClass(filterClass, filter);
+        if (customanawyzew.issetfiwtews()) {
+          f-fow (thwiftcwassinstantiatew f-fiwtewcwass : customanawyzew.getfiwtews()) {
+            fiwtew = wesowvetokenfiwtewcwass(fiwtewcwass, σωσ fiwtew);
           }
         }
 
-        return new TokenStreamComponents(tokenizer, filter);
+        wetuwn new tokenstweamcomponents(tokenizew, >w< f-fiwtew);
       }
     };
   }
 
-  private Tokenizer resolveTokenizerClass(ThriftClassInstantiater classDef) {
-    return null;
+  pwivate t-tokenizew wesowvetokenizewcwass(thwiftcwassinstantiatew cwassdef) {
+    w-wetuwn n-nyuww;
   }
 
-  private TokenStream resolveTokenFilterClass(ThriftClassInstantiater classDef, TokenStream input) {
-    return null;
+  pwivate tokenstweam wesowvetokenfiwtewcwass(thwiftcwassinstantiatew c-cwassdef, 😳😳😳 t-tokenstweam input) {
+    wetuwn n-nyuww;
   }
 
-  private CharFilter resolveCharFilterClass(ThriftClassInstantiater classDef, Reader input) {
-    if (classDef.getClassName().equals(HTML_STRIP_CHAR_FILTER)) {
-      String escapedTags = getArg(classDef.getParams(), "excapedTags");
-      if (escapedTags != null) {
-        return new HTMLStripCharFilter(input, Sets.newHashSet(Splitter.on(",").split(escapedTags)));
-      } else {
-        return new HTMLStripCharFilter(input);
+  pwivate c-chawfiwtew wesowvechawfiwtewcwass(thwiftcwassinstantiatew cwassdef, OwO weadew input) {
+    if (cwassdef.getcwassname().equaws(htmw_stwip_chaw_fiwtew)) {
+      stwing escapedtags = g-getawg(cwassdef.getpawams(), 😳 "excapedtags");
+      i-if (escapedtags != n-nyuww) {
+        wetuwn n-nyew htmwstwipchawfiwtew(input, 😳😳😳 s-sets.newhashset(spwittew.on(",").spwit(escapedtags)));
+      } ewse {
+        w-wetuwn nyew htmwstwipchawfiwtew(input);
       }
-    } else if (classDef.getClassName().equals(PERSIAN_CHAR_FILTER)) {
-      return new PersianCharFilter(input);
+    } ewse if (cwassdef.getcwassname().equaws(pewsian_chaw_fiwtew)) {
+      wetuwn nyew pewsianchawfiwtew(input);
     }
 
 
-    throw new ClassNotSupportedException("CharFilter", classDef);
+    thwow nyew cwassnotsuppowtedexception("chawfiwtew", (˘ω˘) cwassdef);
   }
 
-  private String getArg(Map<String, String> args, String arg) {
-    if (args == null) {
-      return null;
+  p-pwivate stwing g-getawg(map<stwing, ʘwʘ stwing> awgs, ( ͡o ω ͡o ) stwing awg) {
+    i-if (awgs == n-nyuww) {
+      wetuwn nyuww;
     }
 
-    return args.get(arg);
+    wetuwn awgs.get(awg);
   }
 
-  public final class ClassNotSupportedException extends RuntimeException {
-    private ClassNotSupportedException(String type, ThriftClassInstantiater classDef) {
-      super(type + " class with name " + classDef.getClassName() + " currently not supported.");
+  p-pubwic finaw cwass cwassnotsuppowtedexception extends wuntimeexception {
+    pwivate cwassnotsuppowtedexception(stwing t-type, o.O thwiftcwassinstantiatew cwassdef) {
+      supew(type + " cwass with nyame " + c-cwassdef.getcwassname() + " c-cuwwentwy nyot suppowted.");
     }
   }
 }

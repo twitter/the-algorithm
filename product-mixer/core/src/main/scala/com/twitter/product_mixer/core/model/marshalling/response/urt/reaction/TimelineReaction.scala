@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.reaction
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.weaction
 
-case class TimelineReaction(
-  execution: TimelineReactionExecution,
-  maxExecutionCount: Option[Short])
+case cwass timewineweaction(
+  e-execution: t-timewineweactionexecution, 🥺
+  m-maxexecutioncount: o-option[showt])

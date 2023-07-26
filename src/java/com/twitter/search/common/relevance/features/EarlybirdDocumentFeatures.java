@@ -1,232 +1,232 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.function.Function;
+impowt java.io.ioexception;
+i-impowt java.utiw.map;
+i-impowt java.utiw.function.function;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
 
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureNormalizationType;
+impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchwesuwtfeatuwes;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.schema.base.featuweconfiguwation;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftcsftype;
+impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftfeatuwenowmawizationtype;
 
-public class EarlybirdDocumentFeatures {
-  private static final Map<Integer, SearchCounter> FEATURE_CONFIG_IS_NULL_MAP = Maps.newHashMap();
-  private static final Map<Integer, SearchCounter> FEATURE_OUTPUT_TYPE_IS_NULL_MAP =
-      Maps.newHashMap();
-  private static final Map<Integer, SearchCounter> NO_SCHEMA_FIELD_FOR_FEATURE_MAP =
-      Maps.newHashMap();
-  private static final String FEATURE_CONFIG_IS_NULL_COUNTER_PATTERN =
-      "null_feature_config_for_feature_id_%d";
-  private static final String FEATURE_OUTPUT_TYPE_IS_NULL_COUNTER_PATTERN =
-      "null_output_type_for_feature_id_%d";
-  private static final String NO_SCHEMA_FIELD_FOR_FEATURE_COUNTER_PATTERN =
-      "no_schema_field_for_feature_id_%d";
-  private static final SearchCounter UNKNOWN_FEATURE_OUTPUT_TYPE_COUNTER =
-      SearchCounter.export("unknown_feature_output_type");
+pubwic cwass eawwybiwddocumentfeatuwes {
+  p-pwivate s-static finaw map<integew, UwU seawchcountew> featuwe_config_is_nuww_map = maps.newhashmap();
+  pwivate static finaw m-map<integew, (˘ω˘) seawchcountew> featuwe_output_type_is_nuww_map =
+      maps.newhashmap();
+  pwivate s-static finaw map<integew, (///ˬ///✿) seawchcountew> n-nyo_schema_fiewd_fow_featuwe_map =
+      m-maps.newhashmap();
+  p-pwivate s-static finaw stwing featuwe_config_is_nuww_countew_pattewn =
+      "nuww_featuwe_config_fow_featuwe_id_%d";
+  pwivate static f-finaw stwing featuwe_output_type_is_nuww_countew_pattewn =
+      "nuww_output_type_fow_featuwe_id_%d";
+  pwivate static finaw stwing n-nyo_schema_fiewd_fow_featuwe_countew_pattewn =
+      "no_schema_fiewd_fow_featuwe_id_%d";
+  pwivate static finaw seawchcountew unknown_featuwe_output_type_countew =
+      seawchcountew.expowt("unknown_featuwe_output_type");
 
-  private final Map<String, NumericDocValues> numericDocValues = Maps.newHashMap();
-  private final LeafReader leafReader;
-  private int docId = -1;
+  pwivate f-finaw map<stwing, σωσ nyumewicdocvawues> n-nyumewicdocvawues = m-maps.newhashmap();
+  pwivate f-finaw weafweadew weafweadew;
+  pwivate int docid = -1;
 
   /**
-   * Creates a new EarlybirdDocumentFeatures instance that will return feature values based on the
-   * NumericDocValues stored in the given LeafReader for the given document.
+   * c-cweates a-a nyew eawwybiwddocumentfeatuwes instance that w-wiww wetuwn featuwe v-vawues based on the
+   * nyumewicdocvawues s-stowed in the given weafweadew fow t-the given document. /(^•ω•^)
    */
-  public EarlybirdDocumentFeatures(LeafReader leafReader) {
-    this.leafReader = Preconditions.checkNotNull(leafReader);
+  pubwic eawwybiwddocumentfeatuwes(weafweadew weafweadew) {
+    t-this.weafweadew = pweconditions.checknotnuww(weafweadew);
   }
 
   /**
-   * Advances this instance to the given doc ID. The new doc ID must be greater than or equal to the
-   * current doc ID stored in this instance.
+   * advances t-this instance to the given doc id. 😳 t-the nyew doc i-id must be gweatew than ow equaw to the
+   * cuwwent doc id stowed in this instance. 😳
    */
-  public void advance(int target) {
-    Preconditions.checkArgument(
-        target >= 0,
-        "Target (%s) cannot be negative.",
-        target);
-    Preconditions.checkArgument(
-        target >= docId,
-        "Target (%s) smaller than current doc ID (%s).",
-        target,
-        docId);
-    Preconditions.checkArgument(
-        target < leafReader.maxDoc(),
-        "Target (%s) cannot be greater than or equal to the max doc ID (%s).",
-        target,
-        leafReader.maxDoc());
-    docId = target;
+  pubwic void advance(int t-tawget) {
+    p-pweconditions.checkawgument(
+        tawget >= 0, (⑅˘꒳˘)
+        "tawget (%s) c-cannot b-be nyegative.", 😳😳😳
+        t-tawget);
+    pweconditions.checkawgument(
+        tawget >= docid, 😳
+        "tawget (%s) s-smowew than cuwwent doc id (%s).", XD
+        tawget, mya
+        docid);
+    pweconditions.checkawgument(
+        t-tawget < weafweadew.maxdoc(), ^•ﻌ•^
+        "tawget (%s) c-cannot be gweatew t-than ow equaw t-to the max doc id (%s).", ʘwʘ
+        tawget, ( ͡o ω ͡o )
+        w-weafweadew.maxdoc());
+    d-docid = t-tawget;
   }
 
   /**
-   * Returns the feature value for the given field.
+   * w-wetuwns the featuwe vawue fow the given f-fiewd. mya
    */
-  public long getFeatureValue(EarlybirdFieldConstant field) throws IOException {
-    // The index might not have a NumericDocValues instance for this feature.
-    // This might happen if we dynamically update the feature schema, for example.
+  p-pubwic wong getfeatuwevawue(eawwybiwdfiewdconstant f-fiewd) thwows i-ioexception {
+    // t-the index might nyot have a nyumewicdocvawues instance f-fow this featuwe. o.O
+    // this might happen if we dynamicawwy update the featuwe schema, (✿oωo) fow exampwe. :3
     //
-    // Cache the NumericDocValues instances for all accessed features, even if they're null.
-    String fieldName = field.getFieldName();
-    NumericDocValues docValues;
-    if (numericDocValues.containsKey(fieldName)) {
-      docValues = numericDocValues.get(fieldName);
-    } else {
-      docValues = leafReader.getNumericDocValues(fieldName);
-      numericDocValues.put(fieldName, docValues);
+    // c-cache the nyumewicdocvawues instances fow aww accessed featuwes, 😳 even if they'we n-nyuww. (U ﹏ U)
+    stwing f-fiewdname = f-fiewd.getfiewdname();
+    nyumewicdocvawues d-docvawues;
+    if (numewicdocvawues.containskey(fiewdname)) {
+      d-docvawues = nyumewicdocvawues.get(fiewdname);
+    } e-ewse {
+      docvawues = weafweadew.getnumewicdocvawues(fiewdname);
+      nyumewicdocvawues.put(fiewdname, mya docvawues);
     }
-    return docValues != null && docValues.advanceExact(docId) ? docValues.longValue() : 0L;
+    wetuwn docvawues != nyuww && d-docvawues.advanceexact(docid) ? docvawues.wongvawue() : 0w;
   }
 
   /**
-   * Determines if the given flag is set.
+   * d-detewmines if the given fwag is s-set. (U ᵕ U❁)
    */
-  public boolean isFlagSet(EarlybirdFieldConstant field) throws IOException {
-    return getFeatureValue(field) != 0;
+  pubwic b-boowean isfwagset(eawwybiwdfiewdconstant fiewd) thwows ioexception {
+    w-wetuwn g-getfeatuwevawue(fiewd) != 0;
   }
 
   /**
-   * Returns the unnormalized value for the given field.
+   * wetuwns the unnowmawized v-vawue f-fow the given fiewd. :3
    */
-  public double getUnnormalizedFeatureValue(EarlybirdFieldConstant field) throws IOException {
-    long featureValue = getFeatureValue(field);
-    ThriftFeatureNormalizationType normalizationType = field.getFeatureNormalizationType();
-    if (normalizationType == null) {
-      normalizationType = ThriftFeatureNormalizationType.NONE;
+  pubwic doubwe getunnowmawizedfeatuwevawue(eawwybiwdfiewdconstant fiewd) thwows ioexception {
+    w-wong f-featuwevawue = g-getfeatuwevawue(fiewd);
+    thwiftfeatuwenowmawizationtype n-nyowmawizationtype = f-fiewd.getfeatuwenowmawizationtype();
+    if (nowmawizationtype == n-nyuww) {
+      nyowmawizationtype = thwiftfeatuwenowmawizationtype.none;
     }
-    switch (normalizationType) {
-      case NONE:
-        return featureValue;
-      case LEGACY_BYTE_NORMALIZER:
-        return MutableFeatureNormalizers.BYTE_NORMALIZER.unnormLowerBound((byte) featureValue);
-      case LEGACY_BYTE_NORMALIZER_WITH_LOG2:
-        return MutableFeatureNormalizers.BYTE_NORMALIZER.unnormAndLog2((byte) featureValue);
-      case SMART_INTEGER_NORMALIZER:
-        return MutableFeatureNormalizers.SMART_INTEGER_NORMALIZER.unnormUpperBound(
-            (byte) featureValue);
-      case PREDICTION_SCORE_NORMALIZER:
-        return IntNormalizers.PREDICTION_SCORE_NORMALIZER.denormalize((int) featureValue);
-      default:
-        throw new IllegalArgumentException(
-            "Unsupported normalization type " + normalizationType + " for feature "
-                + field.getFieldName());
+    switch (nowmawizationtype) {
+      case nyone:
+        w-wetuwn f-featuwevawue;
+      case wegacy_byte_nowmawizew:
+        wetuwn m-mutabwefeatuwenowmawizews.byte_nowmawizew.unnowmwowewbound((byte) f-featuwevawue);
+      case wegacy_byte_nowmawizew_with_wog2:
+        wetuwn m-mutabwefeatuwenowmawizews.byte_nowmawizew.unnowmandwog2((byte) featuwevawue);
+      case smawt_integew_nowmawizew:
+        wetuwn mutabwefeatuwenowmawizews.smawt_integew_nowmawizew.unnowmuppewbound(
+            (byte) f-featuwevawue);
+      case pwediction_scowe_nowmawizew:
+        wetuwn i-intnowmawizews.pwediction_scowe_nowmawizew.denowmawize((int) featuwevawue);
+      d-defauwt:
+        thwow nyew iwwegawawgumentexception(
+            "unsuppowted nyowmawization t-type " + nyowmawizationtype + " f-fow featuwe "
+                + fiewd.getfiewdname());
     }
   }
 
   /**
-   * Creates a ThriftSearchResultFeatures instance populated with values for all available features
-   * that have a non-zero value set.
+   * cweates a thwiftseawchwesuwtfeatuwes instance popuwated w-with vawues fow aww avaiwabwe f-featuwes
+   * that have a nyon-zewo vawue set. mya
    */
-  public ThriftSearchResultFeatures getSearchResultFeatures(ImmutableSchemaInterface schema)
-      throws IOException {
-    return getSearchResultFeatures(schema, (featureId) -> true);
+  pubwic t-thwiftseawchwesuwtfeatuwes getseawchwesuwtfeatuwes(immutabweschemaintewface schema)
+      t-thwows i-ioexception {
+    wetuwn getseawchwesuwtfeatuwes(schema, OwO (featuweid) -> t-twue);
   }
 
   /**
-   * Creates a ThriftSearchResultFeatures instance populated with values for all available features
-   * that have a non-zero value set.
+   * cweates a thwiftseawchwesuwtfeatuwes i-instance p-popuwated with v-vawues fow aww avaiwabwe featuwes
+   * t-that have a-a nyon-zewo vawue set. (ˆ ﻌ ˆ)♡
    *
-   * @param schema The schema.
-   * @param shouldCollectFeatureId A predicate that determines which features should be collected.
+   * @pawam schema t-the schema. ʘwʘ
+   * @pawam s-shouwdcowwectfeatuweid a p-pwedicate that detewmines which featuwes shouwd b-be cowwected. o.O
    */
-  public ThriftSearchResultFeatures getSearchResultFeatures(
-      ImmutableSchemaInterface schema,
-      Function<Integer, Boolean> shouldCollectFeatureId) throws IOException {
-    Map<Integer, Boolean> boolValues = Maps.newHashMap();
-    Map<Integer, Double> doubleValues = Maps.newHashMap();
-    Map<Integer, Integer> intValues = Maps.newHashMap();
-    Map<Integer, Long> longValues = Maps.newHashMap();
+  pubwic thwiftseawchwesuwtfeatuwes g-getseawchwesuwtfeatuwes(
+      i-immutabweschemaintewface schema, UwU
+      function<integew, rawr x3 boowean> shouwdcowwectfeatuweid) thwows ioexception {
+    m-map<integew, 🥺 b-boowean> b-boowvawues = maps.newhashmap();
+    m-map<integew, :3 doubwe> doubwevawues = m-maps.newhashmap();
+    map<integew, (ꈍᴗꈍ) integew> intvawues = maps.newhashmap();
+    map<integew, wong> wongvawues = m-maps.newhashmap();
 
-    Map<Integer, FeatureConfiguration> idToFeatureConfigMap = schema.getFeatureIdToFeatureConfig();
-    for (int featureId : schema.getSearchFeatureSchema().getEntries().keySet()) {
-      if (!shouldCollectFeatureId.apply(featureId)) {
+    map<integew, 🥺 featuweconfiguwation> i-idtofeatuweconfigmap = schema.getfeatuweidtofeatuweconfig();
+    f-fow (int featuweid : schema.getseawchfeatuweschema().getentwies().keyset()) {
+      i-if (!shouwdcowwectfeatuweid.appwy(featuweid)) {
         continue;
       }
 
-      FeatureConfiguration featureConfig = idToFeatureConfigMap.get(featureId);
-      if (featureConfig == null) {
-        FEATURE_CONFIG_IS_NULL_MAP.computeIfAbsent(
-            featureId,
-            (fId) -> SearchCounter.export(
-                String.format(FEATURE_CONFIG_IS_NULL_COUNTER_PATTERN, fId))).increment();
+      f-featuweconfiguwation featuweconfig = idtofeatuweconfigmap.get(featuweid);
+      i-if (featuweconfig == nyuww) {
+        f-featuwe_config_is_nuww_map.computeifabsent(
+            f-featuweid, (✿oωo)
+            (fid) -> s-seawchcountew.expowt(
+                stwing.fowmat(featuwe_config_is_nuww_countew_pattewn, fid))).incwement();
         continue;
       }
 
-      ThriftCSFType outputType = featureConfig.getOutputType();
-      if (outputType == null) {
-        FEATURE_OUTPUT_TYPE_IS_NULL_MAP.computeIfAbsent(
-            featureId,
-            (fId) -> SearchCounter.export(
-                String.format(FEATURE_OUTPUT_TYPE_IS_NULL_COUNTER_PATTERN, fId))).increment();
+      thwiftcsftype outputtype = featuweconfig.getoutputtype();
+      i-if (outputtype == n-nyuww) {
+        f-featuwe_output_type_is_nuww_map.computeifabsent(
+            featuweid, (U ﹏ U)
+            (fid) -> s-seawchcountew.expowt(
+                stwing.fowmat(featuwe_output_type_is_nuww_countew_pattewn, :3 fid))).incwement();
         continue;
       }
 
-      if (!EarlybirdFieldConstants.hasFieldConstant(featureId)) {
-        // Should only happen for features that were dynamically added to the schema.
-        NO_SCHEMA_FIELD_FOR_FEATURE_MAP.computeIfAbsent(
-            featureId,
-            (fId) -> SearchCounter.export(
-                String.format(NO_SCHEMA_FIELD_FOR_FEATURE_COUNTER_PATTERN, fId))).increment();
-        continue;
+      if (!eawwybiwdfiewdconstants.hasfiewdconstant(featuweid)) {
+        // shouwd onwy h-happen fow featuwes t-that wewe dynamicawwy added t-to the schema. ^^;;
+        nyo_schema_fiewd_fow_featuwe_map.computeifabsent(
+            featuweid, rawr
+            (fid) -> s-seawchcountew.expowt(
+                s-stwing.fowmat(no_schema_fiewd_fow_featuwe_countew_pattewn, 😳😳😳 fid))).incwement();
+        c-continue;
       }
 
-      EarlybirdFieldConstant field = EarlybirdFieldConstants.getFieldConstant(featureId);
-      switch (outputType) {
-        case BOOLEAN:
-          if (isFlagSet(field)) {
-            boolValues.put(featureId, true);
+      e-eawwybiwdfiewdconstant fiewd = eawwybiwdfiewdconstants.getfiewdconstant(featuweid);
+      switch (outputtype) {
+        case boowean:
+          if (isfwagset(fiewd)) {
+            b-boowvawues.put(featuweid, (✿oωo) t-twue);
           }
-          break;
-        case BYTE:
-          // It's unclear why we don't add this feature to a separate byteValues map...
-          byte byteFeatureValue = (byte) getFeatureValue(field);
-          if (byteFeatureValue != 0) {
-            intValues.put(featureId, (int) byteFeatureValue);
+          b-bweak;
+        c-case byte:
+          // it's u-uncweaw why we don't add this f-featuwe to a sepawate b-bytevawues map...
+          b-byte bytefeatuwevawue = (byte) g-getfeatuwevawue(fiewd);
+          if (bytefeatuwevawue != 0) {
+            i-intvawues.put(featuweid, OwO (int) bytefeatuwevawue);
           }
-          break;
-        case INT:
-          int intFeatureValue = (int) getFeatureValue(field);
-          if (intFeatureValue != 0) {
-            intValues.put(featureId, intFeatureValue);
+          bweak;
+        c-case int:
+          int intfeatuwevawue = (int) g-getfeatuwevawue(fiewd);
+          i-if (intfeatuwevawue != 0) {
+            intvawues.put(featuweid, ʘwʘ intfeatuwevawue);
           }
-          break;
-        case LONG:
-          long longFeatureValue = getFeatureValue(field);
-          if (longFeatureValue != 0) {
-            longValues.put(featureId, longFeatureValue);
+          b-bweak;
+        case wong:
+          wong wongfeatuwevawue = g-getfeatuwevawue(fiewd);
+          i-if (wongfeatuwevawue != 0) {
+            w-wongvawues.put(featuweid, (ˆ ﻌ ˆ)♡ wongfeatuwevawue);
           }
-          break;
-        case FLOAT:
-          // It's unclear why we don't add this feature to a separate floatValues map...
-          float floatFeatureValue = (float) getFeatureValue(field);
-          if (floatFeatureValue != 0) {
-            doubleValues.put(featureId, (double) floatFeatureValue);
+          bweak;
+        case fwoat:
+          // i-it's uncweaw why we don't add this featuwe to a-a sepawate fwoatvawues m-map...
+          fwoat fwoatfeatuwevawue = (fwoat) g-getfeatuwevawue(fiewd);
+          if (fwoatfeatuwevawue != 0) {
+            d-doubwevawues.put(featuweid, (doubwe) f-fwoatfeatuwevawue);
           }
-          break;
-        case DOUBLE:
-          double doubleFeatureValue = getUnnormalizedFeatureValue(field);
-          if (doubleFeatureValue != 0) {
-            doubleValues.put(featureId, doubleFeatureValue);
+          bweak;
+        case doubwe:
+          d-doubwe doubwefeatuwevawue = getunnowmawizedfeatuwevawue(fiewd);
+          i-if (doubwefeatuwevawue != 0) {
+            d-doubwevawues.put(featuweid, (U ﹏ U) doubwefeatuwevawue);
           }
-          break;
-        default:
-          UNKNOWN_FEATURE_OUTPUT_TYPE_COUNTER.increment();
+          b-bweak;
+        defauwt:
+          u-unknown_featuwe_output_type_countew.incwement();
       }
     }
 
-    return new ThriftSearchResultFeatures()
-        .setBoolValues(boolValues)
-        .setIntValues(intValues)
-        .setLongValues(longValues)
-        .setDoubleValues(doubleValues);
+    w-wetuwn n-nyew thwiftseawchwesuwtfeatuwes()
+        .setboowvawues(boowvawues)
+        .setintvawues(intvawues)
+        .setwongvawues(wongvawues)
+        .setdoubwevawues(doubwevawues);
   }
 }

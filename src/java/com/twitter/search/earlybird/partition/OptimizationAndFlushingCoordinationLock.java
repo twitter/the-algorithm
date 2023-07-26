@@ -1,46 +1,46 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.util.concurrent.locks.ReentrantLock;
+impowt java.utiw.concuwwent.wocks.weentwantwock;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
 /**
- * Lock used to ensure that flushing does not occur concurrently with the gc_before_optimization
- * and post_optimization_rebuilds actions - see where we call the "lock" method of this class.
+ * w-wock used to ensuwe t-that fwushing d-does nyot occuw c-concuwwentwy w-with the gc_befowe_optimization
+ * a-and post_optimization_webuiwds a-actions - see whewe we caww the "wock" method of this cwass.
  *
- * Both coordinated actions include a full GC in them, for reasons described in that part
- * of the code. After the GC, they wait until indexing has caught up before rejoining the serverset.
+ * both coowdinated a-actions incwude a fuww gc in them, mya fow weasons d-descwibed in that pawt
+ * o-of the code. 😳 aftew the gc, -.- they wait untiw indexing has caught up b-befowe wejoining the sewvewset. 🥺
  *
- * If we flush concurrently with these actions, we can pause indexing for a while and waiting
- * until we're caught up can take some time, which can affect the memory state negatively.
- * For example, the first GC (before optimization) we do so that we have a clean state of memory
- * before optimization.
+ * i-if we fwush c-concuwwentwy with these actions, o.O we can pause indexing fow a whiwe and waiting
+ * u-untiw we'we caught up can take some time, /(^•ω•^) which can affect the memowy state n-nyegativewy. nyaa~~
+ * fow exampwe, nyaa~~ the f-fiwst gc (befowe o-optimization) w-we do so that w-we have a cwean state of memowy
+ * befowe optimization.
  *
- * The other reason we lock before executing the actions is because if we have flushing that's
- * currently running, once it finishes, we will rejoin the serverset and that can be followed by
- * a stop-the-world GC from the actions, which will affect our success rate.
+ * t-the othew weason we wock befowe executing t-the actions is because if we have fwushing that's
+ * cuwwentwy wunning, :3 once it finishes, 😳😳😳 w-we wiww wejoin the sewvewset and t-that can be fowwowed b-by
+ * a s-stop-the-wowwd gc fwom the actions, (˘ω˘) which wiww affect ouw success w-wate. ^^
  */
-public class OptimizationAndFlushingCoordinationLock {
-  private final ReentrantLock lock;
+pubwic c-cwass optimizationandfwushingcoowdinationwock {
+  pwivate finaw w-weentwantwock w-wock;
 
-  public OptimizationAndFlushingCoordinationLock() {
-    this.lock = new ReentrantLock();
+  pubwic optimizationandfwushingcoowdinationwock() {
+    t-this.wock = nyew weentwantwock();
   }
 
-  public void lock() {
-    lock.lock();
+  p-pubwic void wock() {
+    wock.wock();
   }
 
-  public void unlock() {
-    lock.unlock();
+  p-pubwic void unwock() {
+    w-wock.unwock();
   }
 
-  public boolean tryLock() {
-    return lock.tryLock();
+  pubwic boowean t-twywock() {
+    w-wetuwn wock.twywock();
   }
 
-  @VisibleForTesting
-  public boolean hasQueuedThreads() {
-    return lock.hasQueuedThreads();
+  @visibwefowtesting
+  pubwic boowean hasqueuedthweads() {
+    wetuwn wock.hasqueuedthweads();
   }
 }

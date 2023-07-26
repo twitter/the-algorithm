@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.products.explore_tab
+package com.twittew.fowwow_wecommendations.pwoducts.expwowe_tab
 
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
-import com.twitter.follow_recommendations.products.common.Product
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.follow_recommendations.products.explore_tab.configapi.ExploreTabParams
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.base.basewecommendationfwow
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.identitytwansfowm
+i-impowt com.twittew.fowwow_wecommendations.common.base.twansfowm
+i-impowt com.twittew.fowwow_wecommendations.common.modews.dispwaywocation
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.wecommendation
+i-impowt com.twittew.fowwow_wecommendations.fwows.post_nux_mw.postnuxmwfwow
+i-impowt com.twittew.fowwow_wecommendations.fwows.post_nux_mw.postnuxmwwequestbuiwdew
+impowt com.twittew.fowwow_wecommendations.pwoducts.common.pwoduct
+impowt com.twittew.fowwow_wecommendations.pwoducts.common.pwoductwequest
+impowt c-com.twittew.fowwow_wecommendations.pwoducts.expwowe_tab.configapi.expwowetabpawams
+impowt com.twittew.stitch.stitch
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ExploreTabProduct @Inject() (
-  postNuxMlFlow: PostNuxMlFlow,
-  postNuxMlRequestBuilder: PostNuxMlRequestBuilder)
-    extends Product {
-  override val name: String = "Explore Tab"
+@singweton
+cwass e-expwowetabpwoduct @inject() (
+  postnuxmwfwow: postnuxmwfwow, (///ˬ///✿)
+  postnuxmwwequestbuiwdew: p-postnuxmwwequestbuiwdew)
+    extends p-pwoduct {
+  ovewwide v-vaw nyame: stwing = "expwowe tab"
 
-  override val identifier: String = "explore-tab"
+  ovewwide vaw identifiew: stwing = "expwowe-tab"
 
-  override val displayLocation: DisplayLocation = DisplayLocation.ExploreTab
+  o-ovewwide vaw dispwaywocation: dispwaywocation = dispwaywocation.expwowetab
 
-  override def selectWorkflows(
-    request: ProductRequest
-  ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
-    postNuxMlRequestBuilder.build(request).map { postNuxMlRequest =>
-      Seq(postNuxMlFlow.mapKey({ _: ProductRequest => postNuxMlRequest }))
+  ovewwide d-def sewectwowkfwows(
+    wequest: p-pwoductwequest
+  ): s-stitch[seq[basewecommendationfwow[pwoductwequest, >w< _ <: w-wecommendation]]] = {
+    p-postnuxmwwequestbuiwdew.buiwd(wequest).map { postnuxmwwequest =>
+      seq(postnuxmwfwow.mapkey({ _: p-pwoductwequest => postnuxmwwequest }))
     }
   }
 
-  override val blender: Transform[ProductRequest, Recommendation] =
-    new IdentityTransform[ProductRequest, Recommendation]
+  ovewwide vaw b-bwendew: twansfowm[pwoductwequest, rawr wecommendation] =
+    nyew identitytwansfowm[pwoductwequest, mya wecommendation]
 
-  override def resultsTransformer(
-    request: ProductRequest
-  ): Stitch[Transform[ProductRequest, Recommendation]] =
-    Stitch.value(new IdentityTransform[ProductRequest, Recommendation])
+  ovewwide def w-wesuwtstwansfowmew(
+    wequest: p-pwoductwequest
+  ): s-stitch[twansfowm[pwoductwequest, ^^ w-wecommendation]] =
+    stitch.vawue(new identitytwansfowm[pwoductwequest, 😳😳😳 wecommendation])
 
-  override def enabled(request: ProductRequest): Stitch[Boolean] = {
-    // Ideally we should hook up is_soft_user as custom FS field and disable the product through FS
-    val enabledForUserType = !request.recommendationRequest.isSoftUser || request.params(
-      ExploreTabParams.EnableProductForSoftUser)
-    Stitch.value(request.params(ExploreTabParams.EnableProduct) && enabledForUserType)
+  ovewwide def e-enabwed(wequest: p-pwoductwequest): stitch[boowean] = {
+    // i-ideawwy we shouwd h-hook up is_soft_usew as custom f-fs fiewd and disabwe the pwoduct t-thwough fs
+    vaw enabwedfowusewtype = !wequest.wecommendationwequest.issoftusew || wequest.pawams(
+      e-expwowetabpawams.enabwepwoductfowsoftusew)
+    stitch.vawue(wequest.pawams(expwowetabpawams.enabwepwoduct) && e-enabwedfowusewtype)
   }
 }

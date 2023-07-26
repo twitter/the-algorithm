@@ -1,46 +1,46 @@
-package com.twitter.cr_mixer.param
+package com.twittew.cw_mixew.pawam
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.baseconfig
+i-impowt com.twittew.timewines.configapi.baseconfigbuiwdew
+i-impowt c-com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.featuweswitchovewwideutiw
+i-impowt com.twittew.timewines.configapi.pawam
 
-object ConsumerEmbeddingBasedTripParams {
-  object SourceIdParam
-      extends FSParam[String](
-        name = "consumer_embedding_based_trip_source_id",
-        default = "EXPLR_TOPK_VID_48H_V3")
+o-object consumewembeddingbasedtwippawams {
+  object souwceidpawam
+      extends fspawam[stwing](
+        nyame = "consumew_embedding_based_twip_souwce_id", nyaa~~
+        d-defauwt = "expww_topk_vid_48h_v3")
 
-  object MaxNumCandidatesParam
-      extends FSBoundedParam[Int](
-        name = "consumer_embedding_based_trip_max_num_candidates",
-        default = 80,
-        min = 0,
+  object maxnumcandidatespawam
+      e-extends fsboundedpawam[int](
+        n-nyame = "consumew_embedding_based_twip_max_num_candidates", /(^•ω•^)
+        defauwt = 80, rawr
+        min = 0, OwO
         max = 200
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    SourceIdParam,
-    MaxNumCandidatesParam
+  v-vaw awwpawams: seq[pawam[_] with f-fsname] = seq(
+    s-souwceidpawam,
+    maxnumcandidatespawam
   )
 
-  lazy val config: BaseConfig = {
-    val stringFSOverrides =
-      FeatureSwitchOverrideUtil.getStringFSOverrides(
-        SourceIdParam
+  wazy vaw config: baseconfig = {
+    vaw stwingfsovewwides =
+      f-featuweswitchovewwideutiw.getstwingfsovewwides(
+        souwceidpawam
       )
 
-    val intFSOverrides =
-      FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-        MaxNumCandidatesParam
+    vaw intfsovewwides =
+      featuweswitchovewwideutiw.getboundedintfsovewwides(
+        maxnumcandidatespawam
       )
 
-    BaseConfigBuilder()
-      .set(stringFSOverrides: _*)
-      .set(intFSOverrides: _*)
-      .build()
+    baseconfigbuiwdew()
+      .set(stwingfsovewwides: _*)
+      .set(intfsovewwides: _*)
+      .buiwd()
   }
 }

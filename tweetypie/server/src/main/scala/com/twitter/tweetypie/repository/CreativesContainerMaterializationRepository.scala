@@ -1,62 +1,62 @@
-package com.twitter.tweetypie.repository
+package com.twittew.tweetypie.wepositowy
 
-import com.twitter.container.thriftscala.MaterializeAsTweetFieldsRequest
-import com.twitter.container.thriftscala.MaterializeAsTweetRequest
-import com.twitter.container.{thriftscala => ccs}
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.Return
-import com.twitter.tweetypie.{thriftscala => tp}
-import com.twitter.tweetypie.backends
-import com.twitter.tweetypie.thriftscala.GetTweetFieldsResult
-import com.twitter.tweetypie.thriftscala.GetTweetResult
-import com.twitter.util.Future
-import com.twitter.util.Try
+impowt c-com.twittew.containew.thwiftscawa.matewiawizeastweetfiewdswequest
+i-impowt com.twittew.containew.thwiftscawa.matewiawizeastweetwequest
+i-impowt com.twittew.containew.{thwiftscawa => c-ccs}
+impowt com.twittew.stitch.seqgwoup
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.wetuwn
+impowt com.twittew.tweetypie.{thwiftscawa => tp}
+impowt com.twittew.tweetypie.backends
+impowt com.twittew.tweetypie.thwiftscawa.gettweetfiewdswesuwt
+i-impowt com.twittew.tweetypie.thwiftscawa.gettweetwesuwt
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.twy
 
 /**
- * A special kind of tweet is that, when [[tp.Tweet.underlyingCreativesContainerId]] is presented.
- * tweetypie will delegate hydration of this tweet to creatives container service.
+ * a s-speciaw kind of tweet is that, mya when [[tp.tweet.undewwyingcweativescontainewid]] is pwesented. ^^
+ * t-tweetypie wiww dewegate hydwation o-of this tweet t-to cweatives containew sewvice. 😳😳😳
  */
-object CreativesContainerMaterializationRepository {
+object cweativescontainewmatewiawizationwepositowy {
 
-  type GetTweetType =
-    (ccs.MaterializeAsTweetRequest, Option[tp.GetTweetOptions]) => Stitch[tp.GetTweetResult]
+  type gettweettype =
+    (ccs.matewiawizeastweetwequest, mya o-option[tp.gettweetoptions]) => stitch[tp.gettweetwesuwt]
 
-  type GetTweetFieldsType =
+  type gettweetfiewdstype =
     (
-      ccs.MaterializeAsTweetFieldsRequest,
-      tp.GetTweetFieldsOptions
-    ) => Stitch[tp.GetTweetFieldsResult]
+      ccs.matewiawizeastweetfiewdswequest, 😳
+      tp.gettweetfiewdsoptions
+    ) => s-stitch[tp.gettweetfiewdswesuwt]
 
-  def apply(
-    materializeAsTweet: backends.CreativesContainerService.MaterializeAsTweet
-  ): GetTweetType = {
-    case class RequestGroup(opts: Option[tp.GetTweetOptions])
-        extends SeqGroup[ccs.MaterializeAsTweetRequest, tp.GetTweetResult] {
-      override protected def run(
-        keys: Seq[MaterializeAsTweetRequest]
-      ): Future[Seq[Try[GetTweetResult]]] =
-        materializeAsTweet(ccs.MaterializeAsTweetRequests(keys, opts)).map {
-          res: Seq[GetTweetResult] => res.map(Return(_))
+  def appwy(
+    m-matewiawizeastweet: b-backends.cweativescontainewsewvice.matewiawizeastweet
+  ): g-gettweettype = {
+    c-case cwass wequestgwoup(opts: option[tp.gettweetoptions])
+        e-extends seqgwoup[ccs.matewiawizeastweetwequest, -.- tp.gettweetwesuwt] {
+      o-ovewwide pwotected def wun(
+        keys: seq[matewiawizeastweetwequest]
+      ): futuwe[seq[twy[gettweetwesuwt]]] =
+        matewiawizeastweet(ccs.matewiawizeastweetwequests(keys, 🥺 o-opts)).map {
+          wes: seq[gettweetwesuwt] => w-wes.map(wetuwn(_))
         }
     }
 
-    (request, options) => Stitch.call(request, RequestGroup(options))
+    (wequest, o.O o-options) => stitch.caww(wequest, /(^•ω•^) w-wequestgwoup(options))
   }
 
-  def materializeAsTweetFields(
-    materializeAsTweetFields: backends.CreativesContainerService.MaterializeAsTweetFields
-  ): GetTweetFieldsType = {
-    case class RequestGroup(opts: tp.GetTweetFieldsOptions)
-        extends SeqGroup[ccs.MaterializeAsTweetFieldsRequest, tp.GetTweetFieldsResult] {
-      override protected def run(
-        keys: Seq[MaterializeAsTweetFieldsRequest]
-      ): Future[Seq[Try[GetTweetFieldsResult]]] =
-        materializeAsTweetFields(ccs.MaterializeAsTweetFieldsRequests(keys, opts)).map {
-          res: Seq[GetTweetFieldsResult] => res.map(Return(_))
+  def matewiawizeastweetfiewds(
+    matewiawizeastweetfiewds: backends.cweativescontainewsewvice.matewiawizeastweetfiewds
+  ): g-gettweetfiewdstype = {
+    c-case cwass wequestgwoup(opts: t-tp.gettweetfiewdsoptions)
+        e-extends seqgwoup[ccs.matewiawizeastweetfiewdswequest, nyaa~~ tp.gettweetfiewdswesuwt] {
+      o-ovewwide pwotected def wun(
+        k-keys: seq[matewiawizeastweetfiewdswequest]
+      ): futuwe[seq[twy[gettweetfiewdswesuwt]]] =
+        matewiawizeastweetfiewds(ccs.matewiawizeastweetfiewdswequests(keys, nyaa~~ o-opts)).map {
+          wes: seq[gettweetfiewdswesuwt] => w-wes.map(wetuwn(_))
         }
     }
 
-    (request, options) => Stitch.call(request, RequestGroup(options))
+    (wequest, :3 options) => s-stitch.caww(wequest, 😳😳😳 w-wequestgwoup(options))
   }
 }

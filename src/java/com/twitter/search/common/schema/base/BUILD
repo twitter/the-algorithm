@@ -1,25 +1,25 @@
-# Library for Schema.java and other utilities with minimal dependencies.
-java_library(
-    name = "base",
-    sources = ["*.java"],
-    platform = "java8",
-    provides = artifact(
-        org = "com.twitter.search.common",
-        name = "schema-base",
-        repo = artifactory,
-    ),
-    tags = ["bazel-compatible"],
+# wibwawy fow schema.java and othew u-utiwities with m-minimaw dependencies. rawr
+j-java_wibwawy(
+    n-nyame = "base", σωσ
+    s-souwces = ["*.java"], σωσ
+    p-pwatfowm = "java8", >_<
+    p-pwovides = awtifact(
+        o-owg = "com.twittew.seawch.common",
+        nyame = "schema-base", :3
+        wepo = awtifactowy, (U ﹏ U)
+    ), -.-
+    tags = ["bazew-compatibwe"], (ˆ ﻌ ˆ)♡
     dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/commons-lang",
-        "3rdparty/jvm/org/apache/lucene:lucene-analyzers-common",
-        "3rdparty/jvm/org/apache/lucene:lucene-core",
-        "3rdparty/jvm/org/apache/lucene:lucene-facet",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common/text/util:token-util",
-        "src/thrift/com/twitter/search/common:features-java",
-        "src/thrift/com/twitter/search/common:schema-java",
+        "3wdpawty/jvm/com/googwe/code/findbugs:jsw305",
+        "3wdpawty/jvm/com/googwe/guava", (⑅˘꒳˘)
+        "3wdpawty/jvm/commons-wang", (U ᵕ U❁)
+        "3wdpawty/jvm/owg/apache/wucene:wucene-anawyzews-common",
+        "3wdpawty/jvm/owg/apache/wucene:wucene-cowe", -.-
+        "3wdpawty/jvm/owg/apache/wucene:wucene-facet", ^^;;
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", >_<
+        "swc/java/com/twittew/common/base", mya
+        "swc/java/com/twittew/common/text/utiw:token-utiw", mya
+        "swc/thwift/com/twittew/seawch/common:featuwes-java", 😳
+        "swc/thwift/com/twittew/seawch/common:schema-java", XD
     ],
 )

@@ -1,116 +1,116 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import javax.annotation.Nullable;
+impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.itewabwes;
 
-import org.apache.commons.lang.StringUtils;
+i-impowt owg.apache.commons.wang.stwingutiws;
 
-import com.twitter.pink_floyd.thrift.FetchStatusCode;
-import com.twitter.pink_floyd.thrift.HtmlBasics;
-import com.twitter.pink_floyd.thrift.Resolution;
-import com.twitter.pink_floyd.thrift.UrlData;
-import com.twitter.service.spiderduck.gen.LinkCategory;
-import com.twitter.service.spiderduck.gen.MediaTypes;
-import com.twitter.spiderduck.common.URLUtils;
+i-impowt com.twittew.pink_fwoyd.thwift.fetchstatuscode;
+i-impowt com.twittew.pink_fwoyd.thwift.htmwbasics;
+i-impowt com.twittew.pink_fwoyd.thwift.wesowution;
+i-impowt com.twittew.pink_fwoyd.thwift.uwwdata;
+impowt com.twittew.sewvice.spidewduck.gen.winkcategowy;
+impowt com.twittew.sewvice.spidewduck.gen.mediatypes;
+impowt com.twittew.spidewduck.common.uwwutiws;
 
-// Helper class with UrlInfo helper functions
-public final class ResolveCompressedUrlsUtils {
+// h-hewpew cwass with uwwinfo hewpew functions
+p-pubwic finaw cwass wesowvecompwesseduwwsutiws {
 
-  private ResolveCompressedUrlsUtils() { }
-  static class UrlInfo {
-    public String originalUrl;
-    @Nullable public String resolvedUrl;
-    @Nullable public String language;
-    @Nullable public MediaTypes mediaType;
-    @Nullable public LinkCategory linkCategory;
-    @Nullable public String description;
-    @Nullable public String title;
+  p-pwivate wesowvecompwesseduwwsutiws() { }
+  static cwass uwwinfo {
+    pubwic stwing owiginawuww;
+    @nuwwabwe p-pubwic stwing wesowveduww;
+    @nuwwabwe p-pubwic s-stwing wanguage;
+    @nuwwabwe pubwic mediatypes mediatype;
+    @nuwwabwe pubwic winkcategowy w-winkcategowy;
+    @nuwwabwe pubwic stwing descwiption;
+    @nuwwabwe pubwic stwing titwe;
   }
 
   /**
-   * Determines if the given UrlData instance is fully resolved.
+   * d-detewmines if the given u-uwwdata instance i-is fuwwy wesowved. 😳😳😳
    *
-   * Based on discussions with the URL services team, we decided that the most correct way to
-   * determine that a URL was fully resolved is to look at a few response fields:
-   *  - urlDirectInfo: both the media type and link category must be set.
-   *  - htmlBasics: Pink has successfully parsed the resolved link's metadata.
-   *  - resolution: Pink was able to successfully get to the last hop in the redirect chain.
-   *                This is especially important, because some sites have a robots.txt file, which
-   *                prevents Pink from following the redirect chain once it gets to that site.
-   *                In that case, we end up with a "last hop" URL, but the FetchStatusCode is not
-   *                set to OK. We need to ignore these URLs because we don't know if they're really
-   *                the last hop URLs.
-   *                Also, Pink has some restrictions on the page size. For example, it does not
-   *                parse text pages that are larger than 2MB. So if the redirect chain leads Pink
-   *                to one of these pages, it will stop there. And again, we don't know if this is
-   *                the last hop URL or not, so we have to ignore that URL.
+   * b-based on discussions w-with the uww sewvices team, ^^;; we decided that t-the most cowwect way to
+   * detewmine that a u-uww was fuwwy wesowved is to wook at a few wesponse fiewds:
+   *  - uwwdiwectinfo: both the media t-type and wink categowy must be s-set. o.O
+   *  - htmwbasics: p-pink h-has successfuwwy pawsed the wesowved wink's metadata. (///ˬ///✿)
+   *  - wesowution: p-pink was a-abwe to successfuwwy get to the w-wast hop in the w-wediwect chain. σωσ
+   *                this is especiawwy i-impowtant, nyaa~~ because some s-sites have a wobots.txt fiwe, which
+   *                p-pwevents pink fwom fowwowing t-the wediwect chain once it g-gets to that site. ^^;;
+   *                i-in that case, ^•ﻌ•^ we end up with a "wast hop" uww, but the fetchstatuscode is nyot
+   *                set t-to ok. σωσ we nyeed t-to ignowe these uwws because we d-don't know if they'we w-weawwy
+   *                t-the wast hop uwws. -.-
+   *                awso, pink has some westwictions on the p-page size. ^^;; fow exampwe, XD it does nyot
+   *                pawse text pages that awe w-wawgew than 2mb. 🥺 so if the wediwect c-chain weads p-pink
+   *                t-to one of these pages, òωó i-it wiww stop t-thewe. (ˆ ﻌ ˆ)♡ and again, -.- w-we don't know i-if this is
+   *                the wast hop uww ow nyot, :3 so we have t-to ignowe that u-uww.
    *
-   * @param urlData The UrlData instance.
-   * @return true if the URL data is fully resolved; false otherwise.
+   * @pawam u-uwwdata t-the uwwdata instance. ʘwʘ
+   * @wetuwn t-twue if the uww data is fuwwy wesowved; fawse othewwise. 🥺
    */
-  public static boolean isResolved(UrlData urlData) {
-    // Make sure the mediaType and linkCategory fields are set.
-    boolean isInfoReady = urlData.isSetUrlDirectInfo()
-        && urlData.getUrlDirectInfo().isSetMediaType()
-        && urlData.getUrlDirectInfo().isSetLinkCategory();
+  p-pubwic static boowean iswesowved(uwwdata uwwdata) {
+    // make suwe the mediatype and winkcategowy fiewds a-awe set. >_<
+    boowean isinfoweady = uwwdata.issetuwwdiwectinfo()
+        && uwwdata.getuwwdiwectinfo().issetmediatype()
+        && u-uwwdata.getuwwdiwectinfo().issetwinkcategowy();
 
-    // The individual HtmlBasics fields might or might not be set, depending on each website.
-    // However, all fields should be set at the same time, if they are present. Consider the
-    // resolution complete if at least one of the title, description or language fields is set.
-    boolean isHtmlReady = urlData.isSetHtmlBasics()
-        && (StringUtils.isNotEmpty(urlData.getHtmlBasics().getTitle())
-            || StringUtils.isNotEmpty(urlData.getHtmlBasics().getDescription())
-            || StringUtils.isNotEmpty(urlData.getHtmlBasics().getLang()));
+    // t-the individuaw h-htmwbasics fiewds might o-ow might nyot be set, ʘwʘ depending o-on each website. (˘ω˘)
+    // h-howevew, aww fiewds shouwd be set at the same time, (✿oωo) if they awe pwesent. considew the
+    // w-wesowution compwete if at w-weast one of the titwe, (///ˬ///✿) descwiption o-ow wanguage f-fiewds is set. rawr x3
+    boowean ishtmwweady = uwwdata.issethtmwbasics()
+        && (stwingutiws.isnotempty(uwwdata.gethtmwbasics().gettitwe())
+            || s-stwingutiws.isnotempty(uwwdata.gethtmwbasics().getdescwiption())
+            || s-stwingutiws.isnotempty(uwwdata.gethtmwbasics().getwang()));
 
-    Resolution resolution = urlData.getResolution();
-    boolean isResolutionReady = urlData.isSetResolution()
-        && StringUtils.isNotEmpty(resolution.getLastHopCanonicalUrl())
-        && resolution.getStatus() == FetchStatusCode.OK
-        && resolution.getLastHopHttpResponseStatusCode() == 200;
+    wesowution w-wesowution = u-uwwdata.getwesowution();
+    boowean iswesowutionweady = uwwdata.issetwesowution()
+        && stwingutiws.isnotempty(wesowution.getwasthopcanonicawuww())
+        && wesowution.getstatus() == f-fetchstatuscode.ok
+        && wesowution.getwasthophttpwesponsestatuscode() == 200;
 
-    return isHtmlReady && isInfoReady && isResolutionReady;
+    w-wetuwn i-ishtmwweady && isinfoweady && iswesowutionweady;
   }
 
   /**
-   * Creates a UrlInfo instance from the given URL data.
+   * c-cweates a uwwinfo i-instance fwom the given uww d-data.
    *
-   * @param urlData urlData from a resolver response.
-   * @return the UrlInfo instance.
+   * @pawam uwwdata uwwdata fwom a wesowvew wesponse. -.-
+   * @wetuwn the u-uwwinfo instance.
    */
-  public static UrlInfo getUrlInfo(UrlData urlData) {
-    Preconditions.checkArgument(urlData.isSetResolution());
+  p-pubwic static uwwinfo getuwwinfo(uwwdata u-uwwdata) {
+    p-pweconditions.checkawgument(uwwdata.issetwesowution());
 
-    UrlInfo urlInfo = new UrlInfo();
-    urlInfo.originalUrl = urlData.url;
-    Resolution resolution = urlData.getResolution();
-    if (resolution.isSetLastHopCanonicalUrl()) {
-      urlInfo.resolvedUrl = resolution.lastHopCanonicalUrl;
-    } else {
-      // Just in case lastHopCanonicalUrl is not available (which shouldn't happen)
-      if (resolution.isSetRedirectionChain()) {
-        urlInfo.resolvedUrl = Iterables.getLast(resolution.redirectionChain);
-      } else {
-        urlInfo.resolvedUrl = urlData.url;
+    uwwinfo uwwinfo = nyew uwwinfo();
+    uwwinfo.owiginawuww = u-uwwdata.uww;
+    wesowution wesowution = uwwdata.getwesowution();
+    if (wesowution.issetwasthopcanonicawuww()) {
+      u-uwwinfo.wesowveduww = wesowution.wasthopcanonicawuww;
+    } ewse {
+      // j-just in case wasthopcanonicawuww i-is nyot avaiwabwe (which shouwdn't happen)
+      if (wesowution.issetwediwectionchain()) {
+        u-uwwinfo.wesowveduww = i-itewabwes.getwast(wesowution.wediwectionchain);
+      } ewse {
+        uwwinfo.wesowveduww = uwwdata.uww;
       }
-      urlInfo.resolvedUrl = URLUtils.canonicalizeUrl(urlInfo.resolvedUrl);
+      u-uwwinfo.wesowveduww = uwwutiws.canonicawizeuww(uwwinfo.wesowveduww);
     }
-    if (urlData.isSetUrlDirectInfo()) {
-      urlInfo.mediaType = urlData.urlDirectInfo.mediaType;
-      urlInfo.linkCategory = urlData.urlDirectInfo.linkCategory;
+    i-if (uwwdata.issetuwwdiwectinfo()) {
+      uwwinfo.mediatype = uwwdata.uwwdiwectinfo.mediatype;
+      uwwinfo.winkcategowy = uwwdata.uwwdiwectinfo.winkcategowy;
     }
-    if (urlData.isSetHtmlBasics()) {
-      HtmlBasics htmlBasics = urlData.getHtmlBasics();
-      urlInfo.language = htmlBasics.getLang();
-      if (htmlBasics.isSetDescription()) {
-        urlInfo.description = htmlBasics.getDescription();
+    i-if (uwwdata.issethtmwbasics()) {
+      htmwbasics htmwbasics = u-uwwdata.gethtmwbasics();
+      u-uwwinfo.wanguage = htmwbasics.getwang();
+      i-if (htmwbasics.issetdescwiption()) {
+        uwwinfo.descwiption = h-htmwbasics.getdescwiption();
       }
-      if (htmlBasics.isSetTitle()) {
-        urlInfo.title = htmlBasics.getTitle();
+      i-if (htmwbasics.issettitwe()) {
+        uwwinfo.titwe = htmwbasics.gettitwe();
       }
     }
-    return urlInfo;
+    w-wetuwn uwwinfo;
   }
 }
 

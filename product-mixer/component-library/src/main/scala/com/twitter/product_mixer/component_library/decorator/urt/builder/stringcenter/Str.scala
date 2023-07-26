@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.stwingcentew
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.stringcenter.BaseStringCenterPlaceholderBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basestw
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.stwingcentew.basestwingcentewpwacehowdewbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stwingcentew.cwient.stwingcentew
+impowt com.twittew.stwingcentew.cwient.cowe.extewnawstwing
 
-case class StrStatic(
-  text: String)
-    extends BaseStr[PipelineQuery, UniversalNoun[Any]] {
-  def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): String = text
+case cwass stwstatic(
+  t-text: stwing)
+    extends basestw[pipewinequewy, 🥺 univewsawnoun[any]] {
+  d-def appwy(
+    quewy: p-pipewinequewy, mya
+    candidate: univewsawnoun[any], 🥺
+    candidatefeatuwes: f-featuwemap
+  ): stwing = t-text
 }
 
-case class Str[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  text: ExternalString,
-  stringCenter: StringCenter,
-  stringCenterPlaceholderBuilder: Option[BaseStringCenterPlaceholderBuilder[Query, Candidate]] =
-    None)
-    extends BaseStr[Query, Candidate] {
+case c-cwass stw[-quewy <: pipewinequewy, >_< -candidate <: univewsawnoun[any]](
+  text: extewnawstwing, >_<
+  s-stwingcentew: stwingcentew, (⑅˘꒳˘)
+  stwingcentewpwacehowdewbuiwdew: option[basestwingcentewpwacehowdewbuiwdew[quewy, /(^•ω•^) candidate]] =
+    n-nyone)
+    extends basestw[quewy, rawr x3 c-candidate] {
 
-  def apply(query: Query, candidate: Candidate, candidateFeatures: FeatureMap): String = {
-    val placeholderMapOpt =
-      stringCenterPlaceholderBuilder.map(_.apply(query, candidate, candidateFeatures))
-    stringCenter.prepare(
-      externalString = text,
-      placeholders = placeholderMapOpt.getOrElse(Map.empty[String, Any])
+  d-def appwy(quewy: q-quewy, (U ﹏ U) candidate: c-candidate, (U ﹏ U) candidatefeatuwes: featuwemap): s-stwing = {
+    vaw pwacehowdewmapopt =
+      stwingcentewpwacehowdewbuiwdew.map(_.appwy(quewy, (⑅˘꒳˘) c-candidate, òωó candidatefeatuwes))
+    stwingcentew.pwepawe(
+      extewnawstwing = text, ʘwʘ
+      pwacehowdews = pwacehowdewmapopt.getowewse(map.empty[stwing, /(^•ω•^) any])
     )
   }
 }

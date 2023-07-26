@@ -1,73 +1,73 @@
-package com.twitter.interaction_graph.scio.agg_client_event_logs
+package com.twittew.intewaction_gwaph.scio.agg_cwient_event_wogs
 
-import com.spotify.scio.ScioContext
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.dal.DAL.WriteOptions
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.interaction_graph.scio.common.UserUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import org.joda.time.Interval
+impowt com.spotify.scio.sciocontext
+i-impowt com.twittew.beam.io.daw.daw
+i-impowt com.twittew.beam.io.daw.daw.diskfowmat
+i-impowt com.twittew.beam.io.daw.daw.wwiteoptions
+i-impowt com.twittew.beam.io.fs.muwtifowmat.pathwayout
+i-impowt c-com.twittew.beam.job.sewviceidentifiewoptions
+i-impowt com.twittew.intewaction_gwaph.scio.common.usewutiw
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.edge
+impowt com.twittew.intewaction_gwaph.thwiftscawa.vewtex
+impowt com.twittew.scio_intewnaw.job.sciobeamjob
+impowt c-com.twittew.statebiwd.v2.thwiftscawa.enviwonment
+impowt owg.joda.time.intewvaw
 
-object InteractionGraphClientEventLogsJob
-    extends ScioBeamJob[InteractionGraphClientEventLogsOption] {
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphClientEventLogsOption
-  ): Unit = {
+object intewactiongwaphcwienteventwogsjob
+    e-extends sciobeamjob[intewactiongwaphcwienteventwogsoption] {
+  o-ovewwide pwotected def configuwepipewine(
+    sciocontext: s-sciocontext, 😳
+    pipewineoptions: i-intewactiongwaphcwienteventwogsoption
+  ): u-unit = {
 
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val jobCounters: InteractionGraphClientEventLogsCountersTrait =
-      InteractionGraphClientEventLogsCounters
+    @twansient
+    impwicit wazy vaw sc: sciocontext = sciocontext
+    impwicit wazy v-vaw jobcountews: intewactiongwaphcwienteventwogscountewstwait =
+      intewactiongwaphcwienteventwogscountews
 
-    lazy val dateInterval: Interval = pipelineOptions.interval
+    wazy vaw dateintewvaw: intewvaw = p-pipewineoptions.intewvaw
 
-    val sources = InteractionGraphClientEventLogsSource(pipelineOptions)
+    vaw souwces = i-intewactiongwaphcwienteventwogssouwce(pipewineoptions)
 
-    val userInteractions = sources.readUserInteractions(dateInterval)
-    val rawUsers = sources.readCombinedUsers()
-    val safeUsers = UserUtil.getValidUsers(rawUsers)
+    v-vaw usewintewactions = s-souwces.weadusewintewactions(dateintewvaw)
+    v-vaw wawusews = souwces.weadcombinedusews()
+    vaw safeusews = u-usewutiw.getvawidusews(wawusews)
 
-    val (vertex, edges) = InteractionGraphClientEventLogsUtil.process(userInteractions, safeUsers)
+    vaw (vewtex, -.- edges) = i-intewactiongwaphcwienteventwogsutiw.pwocess(usewintewactions, 🥺 safeusews)
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
-    } else {
-      dalEnvironment
+    vaw dawenviwonment: stwing = pipewineoptions
+      .as(cwassof[sewviceidentifiewoptions])
+      .getenviwonment()
+    vaw dawwwiteenviwonment = if (pipewineoptions.getdawwwiteenviwonment != n-nyuww) {
+      pipewineoptions.getdawwwiteenviwonment
+    } e-ewse {
+      d-dawenviwonment
     }
 
-    vertex.saveAsCustomOutput(
-      "Write Vertex Records",
-      DAL.write[Vertex](
-        InteractionGraphAggClientEventLogsVertexDailyScalaDataset,
-        PathLayout.DailyPath(
-          pipelineOptions.getOutputPath + "/aggregated_client_event_logs_vertex_daily"),
-        dateInterval,
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 32.0).ceil.toInt))
+    v-vewtex.saveascustomoutput(
+      "wwite vewtex wecowds", o.O
+      daw.wwite[vewtex](
+        i-intewactiongwaphaggcwienteventwogsvewtexdaiwyscawadataset, /(^•ω•^)
+        p-pathwayout.daiwypath(
+          pipewineoptions.getoutputpath + "/aggwegated_cwient_event_wogs_vewtex_daiwy"), nyaa~~
+        d-dateintewvaw, nyaa~~
+        d-diskfowmat.pawquet, :3
+        enviwonment.vawueof(dawwwiteenviwonment), 😳😳😳
+        w-wwiteoption =
+          wwiteoptions(numofshawds = s-some((pipewineoptions.getnumbewofshawds / 32.0).ceiw.toint))
       )
     )
 
-    edges.saveAsCustomOutput(
-      "Write Edge Records",
-      DAL.write[Edge](
-        InteractionGraphAggClientEventLogsEdgeDailyScalaDataset,
-        PathLayout.DailyPath(
-          pipelineOptions.getOutputPath + "/aggregated_client_event_logs_edge_daily"),
-        dateInterval,
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+    edges.saveascustomoutput(
+      "wwite edge wecowds", (˘ω˘)
+      d-daw.wwite[edge](
+        intewactiongwaphaggcwienteventwogsedgedaiwyscawadataset, ^^
+        p-pathwayout.daiwypath(
+          pipewineoptions.getoutputpath + "/aggwegated_cwient_event_wogs_edge_daiwy"), :3
+        d-dateintewvaw, -.-
+        d-diskfowmat.pawquet, 😳
+        enviwonment.vawueof(dawwwiteenviwonment), mya
+        wwiteoption = wwiteoptions(numofshawds = some(pipewineoptions.getnumbewofshawds))
       )
     )
   }

@@ -1,138 +1,138 @@
-package com.twitter.timelineranker.adapter
+package com.twittew.timewinewankew.adaptew
 
-import com.twitter.timelineranker.model._
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelineservice.model.TimelineId
-import com.twitter.timelineservice.model.core
-import com.twitter.timelineservice.{model => tls}
-import com.twitter.timelineservice.{thriftscala => tlsthrift}
-import com.twitter.timelineservice.model.core._
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+impowt c-com.twittew.timewinewankew.modew._
+i-impowt com.twittew.timewines.modew.tweet.hydwatedtweet
+i-impowt c-com.twittew.timewines.modew.tweetid
+i-impowt com.twittew.timewinesewvice.modew.timewineid
+i-impowt c-com.twittew.timewinesewvice.modew.cowe
+i-impowt com.twittew.timewinesewvice.{modew => tws}
+impowt com.twittew.timewinesewvice.{thwiftscawa => twsthwift}
+i-impowt com.twittew.timewinesewvice.modew.cowe._
+impowt c-com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+i-impowt com.twittew.utiw.twy
 
 /**
- * Enables TLR model objects to be converted to/from TLS model/thrift objects.
+ * enabwes tww modew objects to be convewted t-to/fwom tws modew/thwift objects. ʘwʘ
  */
-object TimelineServiceAdapter {
-  def toTlrQuery(
-    id: Long,
-    tlsRange: tls.TimelineRange,
-    getTweetsFromArchiveIndex: Boolean = true
-  ): ReverseChronTimelineQuery = {
-    val timelineId = TimelineId(id, TimelineKind.home)
-    val maxCount = tlsRange.maxCount
-    val tweetIdRange = tlsRange.cursor.map { cursor =>
-      TweetIdRange(
-        fromId = cursor.tweetIdBounds.bottom,
-        toId = cursor.tweetIdBounds.top
+o-object t-timewinesewviceadaptew {
+  def totwwquewy(
+    id: wong, ( ͡o ω ͡o )
+    twswange: tws.timewinewange, o.O
+    gettweetsfwomawchiveindex: b-boowean = twue
+  ): wevewsechwontimewinequewy = {
+    vaw timewineid = timewineid(id, >w< timewinekind.home)
+    v-vaw maxcount = twswange.maxcount
+    v-vaw t-tweetidwange = twswange.cuwsow.map { c-cuwsow =>
+      t-tweetidwange(
+        fwomid = cuwsow.tweetidbounds.bottom, 😳
+        t-toid = cuwsow.tweetidbounds.top
       )
     }
-    val options = ReverseChronTimelineQueryOptions(
-      getTweetsFromArchiveIndex = getTweetsFromArchiveIndex
+    vaw options = w-wevewsechwontimewinequewyoptions(
+      gettweetsfwomawchiveindex = gettweetsfwomawchiveindex
     )
-    ReverseChronTimelineQuery(timelineId, Some(maxCount), tweetIdRange, Some(options))
+    wevewsechwontimewinequewy(timewineid, 🥺 some(maxcount), rawr x3 tweetidwange, o.O s-some(options))
   }
 
-  def toTlsQuery(query: ReverseChronTimelineQuery): tls.TimelineQuery = {
-    val tlsRange = toTlsRange(query.range, query.maxCount)
-    tls.TimelineQuery(
-      id = query.id.id,
-      kind = query.id.kind,
-      range = tlsRange
+  def totwsquewy(quewy: w-wevewsechwontimewinequewy): t-tws.timewinequewy = {
+    v-vaw twswange = totwswange(quewy.wange, rawr quewy.maxcount)
+    tws.timewinequewy(
+      i-id = q-quewy.id.id, ʘwʘ
+      kind = quewy.id.kind, 😳😳😳
+      wange = t-twswange
     )
   }
 
-  def toTlsRange(range: Option[TimelineRange], maxCount: Option[Int]): tls.TimelineRange = {
-    val cursor = range.map {
-      case tweetIdRange: TweetIdRange =>
-        RequestCursor(
-          top = tweetIdRange.toId.map(CursorState.fromTweetId),
-          bottom = tweetIdRange.fromId.map(core.CursorState.fromTweetId)
+  d-def totwswange(wange: o-option[timewinewange], ^^;; maxcount: o-option[int]): tws.timewinewange = {
+    vaw c-cuwsow = wange.map {
+      case t-tweetidwange: tweetidwange =>
+        wequestcuwsow(
+          top = t-tweetidwange.toid.map(cuwsowstate.fwomtweetid), o.O
+          bottom = t-tweetidwange.fwomid.map(cowe.cuwsowstate.fwomtweetid)
         )
       case _ =>
-        throw new IllegalArgumentException(s"Only TweetIdRange is supported. Found: $range")
+        thwow nyew iwwegawawgumentexception(s"onwy tweetidwange is suppowted. (///ˬ///✿) found: $wange")
     }
-    maxCount
-      .map { count => tls.TimelineRange(cursor, count) }
-      .getOrElse(tls.TimelineRange(cursor))
+    maxcount
+      .map { c-count => tws.timewinewange(cuwsow, σωσ c-count) }
+      .getowewse(tws.timewinewange(cuwsow))
   }
 
   /**
-   * Converts TLS timeline to a Try of TLR timeline.
+   * convewts t-tws timewine t-to a twy of t-tww timewine.
    *
-   * TLS timeline not only contains timeline entries/attributes but also the retrieval state;
-   * whereas TLR timeline only has entries/attributes. Therefore, the TLS timeline is
-   * mapped to a Try[Timeline] where the Try part captures retrieval state and
-   * Timeline captures entries/attributes.
+   * tws timewine nyot onwy contains timewine e-entwies/attwibutes but awso the wetwievaw state;
+   * wheweas tww timewine onwy h-has entwies/attwibutes. nyaa~~ thewefowe, ^^;; t-the tws timewine i-is
+   * mapped t-to a twy[timewine] whewe the t-twy pawt captuwes w-wetwievaw state a-and
+   * timewine c-captuwes entwies/attwibutes. ^•ﻌ•^
    */
-  def toTlrTimelineTry(tlsTimeline: tls.Timeline[tls.TimelineEntry]): Try[Timeline] = {
-    require(
-      tlsTimeline.kind == TimelineKind.home,
-      s"Only home timelines are supported. Found: ${tlsTimeline.kind}"
+  def totwwtimewinetwy(twstimewine: tws.timewine[tws.timewineentwy]): t-twy[timewine] = {
+    w-wequiwe(
+      t-twstimewine.kind == t-timewinekind.home, σωσ
+      s-s"onwy home timewines awe suppowted. -.- found: ${twstimewine.kind}"
     )
 
-    tlsTimeline.state match {
-      case Some(TimelineHit) | None =>
-        val tweetEnvelopes = tlsTimeline.entries.map {
-          case tweet: tls.Tweet =>
-            TimelineEntryEnvelope(Tweet(tweet.tweetId))
-          case entry =>
-            throw new Exception(s"Only tweet timelines are supported. Found: $entry")
+    twstimewine.state m-match {
+      case some(timewinehit) | nyone =>
+        vaw tweetenvewopes = twstimewine.entwies.map {
+          case t-tweet: tws.tweet =>
+            timewineentwyenvewope(tweet(tweet.tweetid))
+          case entwy =>
+            thwow nyew exception(s"onwy t-tweet timewines a-awe suppowted. ^^;; found: $entwy")
         }
-        Return(Timeline(TimelineId(tlsTimeline.id, tlsTimeline.kind), tweetEnvelopes))
-      case Some(TimelineNotFound) | Some(TimelineUnavailable) =>
-        Throw(new tls.core.TimelineUnavailableException(tlsTimeline.id, Some(tlsTimeline.kind)))
+        w-wetuwn(timewine(timewineid(twstimewine.id, XD twstimewine.kind), 🥺 tweetenvewopes))
+      c-case some(timewinenotfound) | some(timewineunavaiwabwe) =>
+        t-thwow(new t-tws.cowe.timewineunavaiwabweexception(twstimewine.id, òωó some(twstimewine.kind)))
     }
   }
 
-  def toTlsTimeline(timeline: Timeline): tls.Timeline[tls.Tweet] = {
-    val entries = timeline.entries.map { entry =>
-      entry.entry match {
-        case tweet: Tweet => tls.Tweet(tweet.id)
-        case entry: HydratedTweetEntry => tls.Tweet.fromThrift(entry.tweet)
-        case _ =>
-          throw new IllegalArgumentException(
-            s"Only tweet timelines are supported. Found: ${entry.entry}"
+  def totwstimewine(timewine: timewine): tws.timewine[tws.tweet] = {
+    vaw entwies = t-timewine.entwies.map { entwy =>
+      e-entwy.entwy match {
+        c-case tweet: t-tweet => tws.tweet(tweet.id)
+        case entwy: hydwatedtweetentwy => t-tws.tweet.fwomthwift(entwy.tweet)
+        c-case _ =>
+          thwow nyew i-iwwegawawgumentexception(
+            s-s"onwy tweet timewines awe suppowted. (ˆ ﻌ ˆ)♡ found: ${entwy.entwy}"
           )
       }
     }
-    tls.Timeline(
-      id = timeline.id.id,
-      kind = timeline.id.kind,
-      entries = entries
+    tws.timewine(
+      id = timewine.id.id, -.-
+      k-kind = timewine.id.kind, :3
+      e-entwies = entwies
     )
   }
 
-  def toTweetIds(timeline: tlsthrift.Timeline): Seq[TweetId] = {
-    timeline.entries.map {
-      case tlsthrift.TimelineEntry.Tweet(tweet) =>
-        tweet.statusId
-      case entry =>
-        throw new IllegalArgumentException(s"Only tweet timelines are supported. Found: ${entry}")
+  d-def totweetids(timewine: twsthwift.timewine): s-seq[tweetid] = {
+    t-timewine.entwies.map {
+      case twsthwift.timewineentwy.tweet(tweet) =>
+        t-tweet.statusid
+      case entwy =>
+        thwow nyew iwwegawawgumentexception(s"onwy tweet timewines awe suppowted. ʘwʘ f-found: ${entwy}")
     }
   }
 
-  def toTweetIds(timeline: Timeline): Seq[TweetId] = {
-    timeline.entries.map { entry =>
-      entry.entry match {
-        case tweet: Tweet => tweet.id
-        case entry: HydratedTweetEntry => entry.tweet.id
+  d-def totweetids(timewine: timewine): seq[tweetid] = {
+    timewine.entwies.map { e-entwy =>
+      e-entwy.entwy match {
+        case tweet: tweet => tweet.id
+        c-case entwy: hydwatedtweetentwy => entwy.tweet.id
         case _ =>
-          throw new IllegalArgumentException(
-            s"Only tweet timelines are supported. Found: ${entry.entry}"
+          thwow nyew i-iwwegawawgumentexception(
+            s"onwy tweet timewines awe s-suppowted. 🥺 found: ${entwy.entwy}"
           )
       }
     }
   }
 
-  def toHydratedTweets(timeline: Timeline): Seq[HydratedTweet] = {
-    timeline.entries.map { entry =>
-      entry.entry match {
-        case hydratedTweet: HydratedTweet => hydratedTweet
+  d-def tohydwatedtweets(timewine: timewine): seq[hydwatedtweet] = {
+    timewine.entwies.map { e-entwy =>
+      e-entwy.entwy match {
+        case hydwatedtweet: hydwatedtweet => h-hydwatedtweet
         case _ =>
-          throw new IllegalArgumentException(s"Expected hydrated tweet. Found: ${entry.entry}")
+          t-thwow nyew iwwegawawgumentexception(s"expected hydwated tweet. >_< found: ${entwy.entwy}")
       }
     }
   }

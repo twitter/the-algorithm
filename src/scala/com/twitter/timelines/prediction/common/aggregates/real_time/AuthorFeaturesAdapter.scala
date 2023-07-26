@@ -1,70 +1,70 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType.UserState
-import com.twitter.ml.api.Feature.Binary
-import com.twitter.ml.api.{DataRecord, Feature, FeatureContext, RichDataRecord}
-import com.twitter.ml.featurestore.catalog.entities.core.Author
-import com.twitter.ml.featurestore.catalog.features.magicrecs.UserActivity
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.feature.{BoundFeature, BoundFeatureSet}
-import com.twitter.ml.featurestore.lib.{UserId, Discrete => FSDiscrete}
-import com.twitter.timelines.prediction.common.adapters.TimelinesAdapterBase
-import java.lang.{Boolean => JBoolean}
-import java.util
-import scala.collection.JavaConverters._
+impowt com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype.usewstate
+i-impowt com.twittew.mw.api.featuwe.binawy
+i-impowt c-com.twittew.mw.api.{datawecowd, (˘ω˘) f-featuwe, >_< featuwecontext, -.- w-wichdatawecowd}
+i-impowt c-com.twittew.mw.featuwestowe.catawog.entities.cowe.authow
+i-impowt com.twittew.mw.featuwestowe.catawog.featuwes.magicwecs.usewactivity
+impowt com.twittew.mw.featuwestowe.wib.data.pwedictionwecowd
+impowt com.twittew.mw.featuwestowe.wib.featuwe.{boundfeatuwe, 🥺 boundfeatuweset}
+impowt com.twittew.mw.featuwestowe.wib.{usewid, d-discwete => fsdiscwete}
+impowt com.twittew.timewines.pwediction.common.adaptews.timewinesadaptewbase
+impowt java.wang.{boowean => j-jboowean}
+impowt java.utiw
+impowt s-scawa.cowwection.javaconvewtews._
 
-object AuthorFeaturesAdapter extends TimelinesAdapterBase[PredictionRecord] {
-  val UserStateBoundFeature: BoundFeature[UserId, FSDiscrete] = UserActivity.UserState.bind(Author)
-  val UserFeaturesSet: BoundFeatureSet = BoundFeatureSet(UserStateBoundFeature)
+object authowfeatuwesadaptew extends timewinesadaptewbase[pwedictionwecowd] {
+  vaw usewstateboundfeatuwe: b-boundfeatuwe[usewid, (U ﹏ U) fsdiscwete] = u-usewactivity.usewstate.bind(authow)
+  v-vaw usewfeatuwesset: boundfeatuweset = boundfeatuweset(usewstateboundfeatuwe)
 
   /**
-   * Boolean features about viewer's user state. 
-   * enum UserState {
-   *   NEW = 0,
-   *   NEAR_ZERO = 1,
-   *   VERY_LIGHT = 2,
-   *   LIGHT = 3,
-   *   MEDIUM_TWEETER = 4,
-   *   MEDIUM_NON_TWEETER = 5,
-   *   HEAVY_NON_TWEETER = 6,
-   *   HEAVY_TWEETER = 7
-   * }(persisted='true')
+   * boowean featuwes about viewew's u-usew state. >w< 
+   * enum usewstate {
+   *   new = 0, mya
+   *   neaw_zewo = 1, >w<
+   *   vewy_wight = 2, nyaa~~
+   *   wight = 3, (✿oωo)
+   *   medium_tweetew = 4,
+   *   m-medium_non_tweetew = 5, ʘwʘ
+   *   heavy_non_tweetew = 6, (ˆ ﻌ ˆ)♡
+   *   h-heavy_tweetew = 7
+   * }(pewsisted='twue')
    */
-  val IS_USER_NEW = new Binary("timelines.author.user_state.is_user_new", Set(UserState).asJava)
-  val IS_USER_LIGHT = new Binary("timelines.author.user_state.is_user_light", Set(UserState).asJava)
-  val IS_USER_MEDIUM_TWEETER =
-    new Binary("timelines.author.user_state.is_user_medium_tweeter", Set(UserState).asJava)
-  val IS_USER_MEDIUM_NON_TWEETER =
-    new Binary("timelines.author.user_state.is_user_medium_non_tweeter", Set(UserState).asJava)
-  val IS_USER_HEAVY_NON_TWEETER =
-    new Binary("timelines.author.user_state.is_user_heavy_non_tweeter", Set(UserState).asJava)
-  val IS_USER_HEAVY_TWEETER =
-    new Binary("timelines.author.user_state.is_user_heavy_tweeter", Set(UserState).asJava)
-  val userStateToFeatureMap: Map[Long, Binary] = Map(
-    0L -> IS_USER_NEW,
-    1L -> IS_USER_LIGHT,
-    2L -> IS_USER_LIGHT,
-    3L -> IS_USER_LIGHT,
-    4L -> IS_USER_MEDIUM_TWEETER,
-    5L -> IS_USER_MEDIUM_NON_TWEETER,
-    6L -> IS_USER_HEAVY_NON_TWEETER,
-    7L -> IS_USER_HEAVY_TWEETER
+  v-vaw is_usew_new = n-nyew b-binawy("timewines.authow.usew_state.is_usew_new", 😳😳😳 set(usewstate).asjava)
+  vaw is_usew_wight = nyew b-binawy("timewines.authow.usew_state.is_usew_wight", :3 set(usewstate).asjava)
+  vaw is_usew_medium_tweetew =
+    n-nyew binawy("timewines.authow.usew_state.is_usew_medium_tweetew", set(usewstate).asjava)
+  vaw is_usew_medium_non_tweetew =
+    new binawy("timewines.authow.usew_state.is_usew_medium_non_tweetew", OwO set(usewstate).asjava)
+  v-vaw is_usew_heavy_non_tweetew =
+    nyew binawy("timewines.authow.usew_state.is_usew_heavy_non_tweetew", (U ﹏ U) s-set(usewstate).asjava)
+  v-vaw is_usew_heavy_tweetew =
+    n-nyew binawy("timewines.authow.usew_state.is_usew_heavy_tweetew", >w< set(usewstate).asjava)
+  vaw usewstatetofeatuwemap: m-map[wong, (U ﹏ U) b-binawy] = map(
+    0w -> is_usew_new, 😳
+    1w -> i-is_usew_wight, (ˆ ﻌ ˆ)♡
+    2w -> i-is_usew_wight, 😳😳😳
+    3w -> is_usew_wight, (U ﹏ U)
+    4w -> i-is_usew_medium_tweetew, (///ˬ///✿)
+    5w -> is_usew_medium_non_tweetew, 😳
+    6w -> i-is_usew_heavy_non_tweetew, 😳
+    7w -> is_usew_heavy_tweetew
   )
 
-  val UserStateBooleanFeatures: Set[Feature[_]] = userStateToFeatureMap.values.toSet
+  vaw usewstatebooweanfeatuwes: s-set[featuwe[_]] = usewstatetofeatuwemap.vawues.toset
 
-  private val allFeatures: Seq[Feature[_]] = UserStateBooleanFeatures.toSeq
-  override def getFeatureContext: FeatureContext = new FeatureContext(allFeatures: _*)
-  override def commonFeatures: Set[Feature[_]] = Set.empty
+  p-pwivate vaw awwfeatuwes: s-seq[featuwe[_]] = u-usewstatebooweanfeatuwes.toseq
+  ovewwide def getfeatuwecontext: featuwecontext = nyew featuwecontext(awwfeatuwes: _*)
+  ovewwide def commonfeatuwes: set[featuwe[_]] = set.empty
 
-  override def adaptToDataRecords(record: PredictionRecord): util.List[DataRecord] = {
-    val newRecord = new RichDataRecord(new DataRecord)
-    record
-      .getFeatureValue(UserStateBoundFeature)
-      .flatMap { userState => userStateToFeatureMap.get(userState.value) }.foreach {
-        booleanFeature => newRecord.setFeatureValue[JBoolean](booleanFeature, true)
+  o-ovewwide d-def adapttodatawecowds(wecowd: pwedictionwecowd): u-utiw.wist[datawecowd] = {
+    v-vaw nyewwecowd = n-new wichdatawecowd(new datawecowd)
+    wecowd
+      .getfeatuwevawue(usewstateboundfeatuwe)
+      .fwatmap { usewstate => u-usewstatetofeatuwemap.get(usewstate.vawue) }.foweach {
+        booweanfeatuwe => nyewwecowd.setfeatuwevawue[jboowean](booweanfeatuwe, σωσ twue)
       }
 
-    List(newRecord.getRecord).asJava
+    wist(newwecowd.getwecowd).asjava
   }
 }

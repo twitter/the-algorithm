@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.request
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wequest
 
-import com.twitter.product_mixer.core.{thriftscala => t}
-import com.twitter.timelines.configapi.BooleanFeatureValue
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.NumberFeatureValue
-import com.twitter.timelines.configapi.StringFeatureValue
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.{thwiftscawa => t-t}
+impowt com.twittew.timewines.configapi.booweanfeatuwevawue
+i-impowt com.twittew.timewines.configapi.featuwevawue
+i-impowt com.twittew.timewines.configapi.numbewfeatuwevawue
+i-impowt com.twittew.timewines.configapi.stwingfeatuwevawue
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class FeatureValueUnmarshaller @Inject() () {
+@singweton
+c-cwass featuwevawueunmawshawwew @inject() () {
 
-  def apply(featureValue: t.FeatureValue): FeatureValue = featureValue match {
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.BoolValue(bool)) =>
-      BooleanFeatureValue(bool)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.StrValue(string)) =>
-      StringFeatureValue(string)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.IntValue(int)) =>
-      NumberFeatureValue(int)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.LongValue(long)) =>
-      NumberFeatureValue(long)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.DoubleValue(double)) =>
-      NumberFeatureValue(double)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.UnknownUnionField(field)) =>
-      throw new UnsupportedOperationException(
-        s"Unknown feature value primitive: ${field.field.name}")
-    case t.FeatureValue.UnknownUnionField(field) =>
-      throw new UnsupportedOperationException(s"Unknown feature value: ${field.field.name}")
+  def appwy(featuwevawue: t.featuwevawue): featuwevawue = featuwevawue m-match {
+    case t.featuwevawue.pwimitivevawue(t.pwimitivefeatuwevawue.boowvawue(boow)) =>
+      booweanfeatuwevawue(boow)
+    c-case t.featuwevawue.pwimitivevawue(t.pwimitivefeatuwevawue.stwvawue(stwing)) =>
+      stwingfeatuwevawue(stwing)
+    c-case t.featuwevawue.pwimitivevawue(t.pwimitivefeatuwevawue.intvawue(int)) =>
+      nyumbewfeatuwevawue(int)
+    case t.featuwevawue.pwimitivevawue(t.pwimitivefeatuwevawue.wongvawue(wong)) =>
+      nyumbewfeatuwevawue(wong)
+    case t-t.featuwevawue.pwimitivevawue(t.pwimitivefeatuwevawue.doubwevawue(doubwe)) =>
+      nyumbewfeatuwevawue(doubwe)
+    c-case t.featuwevawue.pwimitivevawue(t.pwimitivefeatuwevawue.unknownunionfiewd(fiewd)) =>
+      t-thwow nyew unsuppowtedopewationexception(
+        s"unknown featuwe vawue pwimitive: ${fiewd.fiewd.name}")
+    case t.featuwevawue.unknownunionfiewd(fiewd) =>
+      thwow nyew u-unsuppowtedopewationexception(s"unknown featuwe vawue: ${fiewd.fiewd.name}")
   }
 }

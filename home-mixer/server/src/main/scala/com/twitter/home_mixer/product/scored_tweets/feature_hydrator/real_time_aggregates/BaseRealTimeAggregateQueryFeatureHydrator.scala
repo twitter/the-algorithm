@@ -1,36 +1,36 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.weaw_time_aggwegates
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.stitch.stitch
 
-trait BaseRealTimeAggregateQueryFeatureHydrator[K]
-    extends QueryFeatureHydrator[PipelineQuery]
-    with BaseRealtimeAggregateHydrator[K] {
+twait b-baseweawtimeaggwegatequewyfeatuwehydwatow[k]
+    extends quewyfeatuwehydwatow[pipewinequewy]
+    with baseweawtimeaggwegatehydwatow[k] {
 
-  val outputFeature: DataRecordInAFeature[PipelineQuery]
+  v-vaw outputfeatuwe: d-datawecowdinafeatuwe[pipewinequewy]
 
-  override def features: Set[Feature[_, _]] = Set(outputFeature)
+  ovewwide def featuwes: set[featuwe[_, rawr x3 _]] = set(outputfeatuwe)
 
-  override lazy val statScope: String = identifier.toString
+  o-ovewwide wazy vaw statscope: s-stwing = i-identifiew.tostwing
 
-  def keysFromQueryAndCandidates(
-    query: PipelineQuery
-  ): Option[K]
+  def keysfwomquewyandcandidates(
+    quewy: pipewinequewy
+  ): option[k]
 
-  override def hydrate(
-    query: PipelineQuery
-  ): Stitch[FeatureMap] = OffloadFuturePools.offloadFuture {
-    val possiblyKeys = keysFromQueryAndCandidates(query)
-    fetchAndConstructDataRecords(Seq(possiblyKeys)).map { dataRecords =>
-      FeatureMapBuilder()
-        .add(outputFeature, dataRecords.head)
-        .build()
+  o-ovewwide def hydwate(
+    quewy: pipewinequewy
+  ): stitch[featuwemap] = offwoadfutuwepoows.offwoadfutuwe {
+    v-vaw possibwykeys = keysfwomquewyandcandidates(quewy)
+    f-fetchandconstwuctdatawecowds(seq(possibwykeys)).map { d-datawecowds =>
+      f-featuwemapbuiwdew()
+        .add(outputfeatuwe, mya d-datawecowds.head)
+        .buiwd()
     }
   }
 }

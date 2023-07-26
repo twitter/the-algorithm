@@ -1,88 +1,88 @@
-package com.twitter.visibility.interfaces.media
+package com.twittew.visibiwity.intewfaces.media
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.util.Stopwatch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.builder.media.MediaFeatures
-import com.twitter.visibility.builder.media.MediaMetadataFeatures
-import com.twitter.visibility.builder.media.StratoMediaLabelMaps
-import com.twitter.visibility.common.MediaMetadataSource
-import com.twitter.visibility.common.MediaSafetyLabelMapSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.generators.TombstoneGenerator
-import com.twitter.visibility.models.ContentId.MediaId
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.utils.ShimUtils
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.cwient.{cwient => s-stwatocwient}
+i-impowt c-com.twittew.utiw.stopwatch
+i-impowt c-com.twittew.visibiwity.visibiwitywibwawy
+i-impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+impowt com.twittew.visibiwity.buiwdew.usews.viewewfeatuwes
+impowt com.twittew.visibiwity.buiwdew.media.mediafeatuwes
+impowt com.twittew.visibiwity.buiwdew.media.mediametadatafeatuwes
+i-impowt com.twittew.visibiwity.buiwdew.media.stwatomediawabewmaps
+impowt c-com.twittew.visibiwity.common.mediametadatasouwce
+impowt com.twittew.visibiwity.common.mediasafetywabewmapsouwce
+i-impowt com.twittew.visibiwity.common.usewsouwce
+impowt com.twittew.visibiwity.featuwes.featuwemap
+impowt com.twittew.visibiwity.genewatows.tombstonegenewatow
+impowt com.twittew.visibiwity.modews.contentid.mediaid
+i-impowt com.twittew.visibiwity.wuwes.evawuationcontext
+impowt c-com.twittew.visibiwity.wuwes.pwovidews.pwovidedevawuationcontext
+i-impowt com.twittew.visibiwity.wuwes.utiws.shimutiws
 
-object MediaVisibilityLibrary {
-  type Type = MediaVisibilityRequest => Stitch[VisibilityResult]
+object mediavisibiwitywibwawy {
+  type type = mediavisibiwitywequest => s-stitch[visibiwitywesuwt]
 
-  def apply(
-    visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource,
-    tombstoneGenerator: TombstoneGenerator,
-    stratoClient: StratoClient,
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
-    val vfLatencyOverallStat = libraryStatsReceiver.stat("vf_latency_overall")
-    val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
+  def appwy(
+    visibiwitywibwawy: visibiwitywibwawy, mya
+    usewsouwce: usewsouwce, >w<
+    t-tombstonegenewatow: tombstonegenewatow, nyaa~~
+    s-stwatocwient: stwatocwient, (✿oωo)
+  ): t-type = {
+    vaw w-wibwawystatsweceivew = v-visibiwitywibwawy.statsweceivew
+    vaw vfenginecountew = w-wibwawystatsweceivew.countew("vf_engine_wequests")
+    vaw vfwatencyovewawwstat = wibwawystatsweceivew.stat("vf_watency_ovewaww")
+    v-vaw vfwatencystitchwunstat = wibwawystatsweceivew.stat("vf_watency_stitch_wun")
 
-    val stratoClientStatsReceiver = libraryStatsReceiver.scope("strato")
+    vaw stwatocwientstatsweceivew = wibwawystatsweceivew.scope("stwato")
 
-    val mediaMetadataFeatures = new MediaMetadataFeatures(
-      MediaMetadataSource.fromStrato(stratoClient, stratoClientStatsReceiver),
-      libraryStatsReceiver)
+    vaw mediametadatafeatuwes = nyew mediametadatafeatuwes(
+      mediametadatasouwce.fwomstwato(stwatocwient, s-stwatocwientstatsweceivew), ʘwʘ
+      wibwawystatsweceivew)
 
-    val mediaLabelMaps = new StratoMediaLabelMaps(
-      MediaSafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver))
-    val mediaFeatures = new MediaFeatures(mediaLabelMaps, libraryStatsReceiver)
+    v-vaw mediawabewmaps = n-nyew stwatomediawabewmaps(
+      m-mediasafetywabewmapsouwce.fwomstwato(stwatocwient, (ˆ ﻌ ˆ)♡ stwatocwientstatsweceivew))
+    vaw mediafeatuwes = nyew m-mediafeatuwes(mediawabewmaps, 😳😳😳 w-wibwawystatsweceivew)
 
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
+    vaw v-viewewfeatuwes = n-nyew viewewfeatuwes(usewsouwce, :3 wibwawystatsweceivew)
 
-    { r: MediaVisibilityRequest =>
-      vfEngineCounter.incr()
+    { w-w: mediavisibiwitywequest =>
+      v-vfenginecountew.incw()
 
-      val contentId = MediaId(r.mediaKey.toStringKey)
-      val languageCode = r.viewerContext.requestLanguageCode.getOrElse("en")
+      vaw contentid = mediaid(w.mediakey.tostwingkey)
+      vaw wanguagecode = w-w.viewewcontext.wequestwanguagecode.getowewse("en")
 
-      val featureMap = visibilityLibrary.featureMapBuilder(
-        Seq(
-          viewerFeatures.forViewerContext(r.viewerContext),
-          mediaFeatures.forGenericMediaKey(r.mediaKey),
-          mediaMetadataFeatures.forGenericMediaKey(r.mediaKey),
+      vaw featuwemap = v-visibiwitywibwawy.featuwemapbuiwdew(
+        seq(
+          v-viewewfeatuwes.fowviewewcontext(w.viewewcontext), OwO
+          m-mediafeatuwes.fowgenewicmediakey(w.mediakey), (U ﹏ U)
+          mediametadatafeatuwes.fowgenewicmediakey(w.mediakey), >w<
         )
       )
 
-      val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-        evaluationContext = EvaluationContext(
-          r.safetyLevel,
-          visibilityLibrary.getParams(r.viewerContext, r.safetyLevel),
-          visibilityLibrary.statsReceiver)
+      vaw evawuationcontext = pwovidedevawuationcontext.injectwuntimewuwesintoevawuationcontext(
+        evawuationcontext = evawuationcontext(
+          w.safetywevew, (U ﹏ U)
+          v-visibiwitywibwawy.getpawams(w.viewewcontext, 😳 w-w.safetywevew), (ˆ ﻌ ˆ)♡
+          visibiwitywibwawy.statsweceivew)
       )
 
-      val preFilteredFeatureMap =
-        ShimUtils.preFilterFeatureMap(featureMap, r.safetyLevel, contentId, evaluationContext)
+      v-vaw pwefiwtewedfeatuwemap =
+        s-shimutiws.pwefiwtewfeatuwemap(featuwemap, 😳😳😳 w-w.safetywevew, (U ﹏ U) contentid, (///ˬ///✿) evawuationcontext)
 
-      val elapsed = Stopwatch.start()
-      FeatureMap.resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap {
-        resolvedFeatureMap =>
-          vfLatencyStitchRunStat.add(elapsed().inMilliseconds)
+      vaw ewapsed = stopwatch.stawt()
+      featuwemap.wesowve(pwefiwtewedfeatuwemap, 😳 w-wibwawystatsweceivew).fwatmap {
+        wesowvedfeatuwemap =>
+          vfwatencystitchwunstat.add(ewapsed().inmiwwiseconds)
 
-          visibilityLibrary
-            .runRuleEngine(
-              contentId,
-              resolvedFeatureMap,
-              r.viewerContext,
-              r.safetyLevel
+          visibiwitywibwawy
+            .wunwuweengine(
+              contentid, 😳
+              w-wesowvedfeatuwemap,
+              w.viewewcontext, σωσ
+              w-w.safetywevew
             )
-            .map(tombstoneGenerator(_, languageCode))
-            .onSuccess(_ => vfLatencyOverallStat.add(elapsed().inMilliseconds))
+            .map(tombstonegenewatow(_, rawr x3 w-wanguagecode))
+            .onsuccess(_ => v-vfwatencyovewawwstat.add(ewapsed().inmiwwiseconds))
       }
     }
   }

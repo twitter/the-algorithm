@@ -1,531 +1,531 @@
-package com.twitter.search.common.converter.earlybird;
+package com.twittew.seawch.common.convewtew.eawwybiwd;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+impowt java.io.ioexception;
+i-impowt java.utiw.hashset;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.wocawe;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.optionaw;
+i-impowt java.utiw.set;
+impowt java.utiw.wegex.matchew;
+impowt java.utiw.wegex.pattewn;
+impowt java.utiw.stweam.cowwectows;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.base.joinew;
+impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.wists;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.wang.stwingutiws;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.text.token.TokenizedCharSequence;
-import com.twitter.common.text.token.TokenizedCharSequenceStream;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.Place;
-import com.twitter.search.common.indexing.thriftjava.PotentialLocation;
-import com.twitter.search.common.indexing.thriftjava.ProfileGeoEnrichment;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.indexing.thriftjava.VersionedTweetFeatures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.relevance.entities.PotentialLocationObject;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.FeatureSink;
-import com.twitter.search.common.relevance.features.MutableFeatureNormalizers;
-import com.twitter.search.common.relevance.features.RelevanceSignalConstants;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
-import com.twitter.search.common.relevance.features.TweetUserFeatures;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.common.util.text.LanguageIdentifierHelper;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.SourceNormalizer;
-import com.twitter.search.common.util.text.TokenizerHelper;
-import com.twitter.search.common.util.text.TokenizerResult;
-import com.twitter.search.common.util.text.TweetTokenStreamSerializer;
-import com.twitter.search.common.util.url.LinkVisibilityUtils;
-import com.twitter.search.common.util.url.NativeVideoClassificationUtils;
-import com.twitter.search.ingester.model.VisibleTokenRatioUtil;
+impowt com.twittew.common.text.token.tokenizedchawsequence;
+i-impowt c-com.twittew.common.text.token.tokenizedchawsequencestweam;
+impowt com.twittew.common.text.utiw.tokenstweamsewiawizew;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt c-com.twittew.seawch.common.indexing.thwiftjava.pwace;
+impowt com.twittew.seawch.common.indexing.thwiftjava.potentiawwocation;
+impowt com.twittew.seawch.common.indexing.thwiftjava.pwofiwegeoenwichment;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftexpandeduww;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.vewsionedtweetfeatuwes;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.wewevance.entities.potentiawwocationobject;
+i-impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+i-impowt com.twittew.seawch.common.wewevance.featuwes.featuwesink;
+i-impowt com.twittew.seawch.common.wewevance.featuwes.mutabwefeatuwenowmawizews;
+impowt com.twittew.seawch.common.wewevance.featuwes.wewevancesignawconstants;
+i-impowt com.twittew.seawch.common.wewevance.featuwes.tweettextfeatuwes;
+impowt com.twittew.seawch.common.wewevance.featuwes.tweettextquawity;
+i-impowt com.twittew.seawch.common.wewevance.featuwes.tweetusewfeatuwes;
+impowt com.twittew.seawch.common.schema.base.featuweconfiguwation;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdencodedfeatuwes;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.common.utiw.wang.thwiftwanguageutiw;
+i-impowt com.twittew.seawch.common.utiw.text.wanguageidentifiewhewpew;
+i-impowt com.twittew.seawch.common.utiw.text.nowmawizewhewpew;
+i-impowt com.twittew.seawch.common.utiw.text.souwcenowmawizew;
+impowt com.twittew.seawch.common.utiw.text.tokenizewhewpew;
+impowt com.twittew.seawch.common.utiw.text.tokenizewwesuwt;
+i-impowt com.twittew.seawch.common.utiw.text.tweettokenstweamsewiawizew;
+impowt c-com.twittew.seawch.common.utiw.uww.winkvisibiwityutiws;
+impowt c-com.twittew.seawch.common.utiw.uww.nativevideocwassificationutiws;
+i-impowt com.twittew.seawch.ingestew.modew.visibwetokenwatioutiw;
 
 /**
- * EncodedFeatureBuilder helps to build encoded features for TwitterMessage.
+ * encodedfeatuwebuiwdew h-hewps to buiwd encoded featuwes f-fow twittewmessage. (U ﹏ U)
  *
- * This is stateful so should only be used one tweet at a time
+ * this is statefuw so shouwd onwy b-be used one tweet at a time
  */
-public class EncodedFeatureBuilder {
-  private static final Logger LOG = LoggerFactory.getLogger(EncodedFeatureBuilder.class);
+p-pubwic cwass encodedfeatuwebuiwdew {
+  pwivate static f-finaw woggew w-wog = woggewfactowy.getwoggew(encodedfeatuwebuiwdew.cwass);
 
-  private static final SearchCounter NUM_TWEETS_WITH_INVALID_TWEET_ID_IN_PHOTO_URL =
-      SearchCounter.export("tweets_with_invalid_tweet_id_in_photo_url");
+  pwivate static finaw seawchcountew nyum_tweets_with_invawid_tweet_id_in_photo_uww =
+      seawchcountew.expowt("tweets_with_invawid_tweet_id_in_photo_uww");
 
-  // TwitterTokenStream for converting TokenizedCharSequence into a stream for serialization
-  // This is stateful so should only be used one tweet at a time
-  private final TokenizedCharSequenceStream tokenSeqStream = new TokenizedCharSequenceStream();
+  // twittewtokenstweam fow convewting t-tokenizedchawsequence i-into a stweam fow sewiawization
+  // t-this is statefuw s-so shouwd onwy b-be used one tweet at a time
+  pwivate finaw tokenizedchawsequencestweam tokenseqstweam = n-nyew tokenizedchawsequencestweam();
 
-  // SUPPRESS CHECKSTYLE:OFF LineLength
-  private static final Pattern TWITTER_PHOTO_PERMA_LINK_PATTERN =
-          Pattern.compile("(?i:^(?:(?:https?\\:\\/\\/)?(?:www\\.)?)?twitter\\.com\\/(?:\\?[^#]+)?(?:#!?\\/?)?\\w{1,20}\\/status\\/(\\d+)\\/photo\\/\\d*$)");
+  // suppwess checkstywe:off winewength
+  pwivate s-static finaw pattewn twittew_photo_pewma_wink_pattewn =
+          p-pattewn.compiwe("(?i:^(?:(?:https?\\:\\/\\/)?(?:www\\.)?)?twittew\\.com\\/(?:\\?[^#]+)?(?:#!?\\/?)?\\w{1,20}\\/status\\/(\\d+)\\/photo\\/\\d*$)");
 
-  private static final Pattern TWITTER_PHOTO_COPY_PASTE_LINK_PATTERN =
-          Pattern.compile("(?i:^(?:(?:https?\\:\\/\\/)?(?:www\\.)?)?twitter\\.com\\/(?:#!?\\/)?\\w{1,20}\\/status\\/(\\d+)\\/photo\\/\\d*$)");
-  // SUPPRESS CHECKSTYLE:ON LineLength
+  p-pwivate s-static finaw pattewn twittew_photo_copy_paste_wink_pattewn =
+          p-pattewn.compiwe("(?i:^(?:(?:https?\\:\\/\\/)?(?:www\\.)?)?twittew\\.com\\/(?:#!?\\/)?\\w{1,20}\\/status\\/(\\d+)\\/photo\\/\\d*$)");
+  // s-suppwess checkstywe:on w-winewength
 
-  private static final VisibleTokenRatioUtil VISIBLE_TOKEN_RATIO = new VisibleTokenRatioUtil();
+  p-pwivate static finaw visibwetokenwatioutiw visibwe_token_watio = n-nyew visibwetokenwatioutiw();
 
-  private static final Map<PenguinVersion, SearchCounter> SERIALIZE_FAILURE_COUNTERS_MAP =
-      Maps.newEnumMap(PenguinVersion.class);
+  p-pwivate s-static finaw map<penguinvewsion, o.O s-seawchcountew> s-sewiawize_faiwuwe_countews_map =
+      maps.newenummap(penguinvewsion.cwass);
   static {
-    for (PenguinVersion penguinVersion : PenguinVersion.values()) {
-      SERIALIZE_FAILURE_COUNTERS_MAP.put(
-          penguinVersion,
-          SearchCounter.export(
-              "tokenstream_serialization_failure_" + penguinVersion.name().toLowerCase()));
+    fow (penguinvewsion penguinvewsion : p-penguinvewsion.vawues()) {
+      sewiawize_faiwuwe_countews_map.put(
+          penguinvewsion, OwO
+          seawchcountew.expowt(
+              "tokenstweam_sewiawization_faiwuwe_" + penguinvewsion.name().towowewcase()));
     }
   }
 
-  public static class TweetFeatureWithEncodeFeatures {
-    public final VersionedTweetFeatures versionedFeatures;
-    public final EarlybirdEncodedFeatures encodedFeatures;
-    public final EarlybirdEncodedFeatures extendedEncodedFeatures;
+  pubwic s-static cwass tweetfeatuwewithencodefeatuwes {
+    pubwic finaw vewsionedtweetfeatuwes v-vewsionedfeatuwes;
+    p-pubwic finaw eawwybiwdencodedfeatuwes e-encodedfeatuwes;
+    pubwic f-finaw eawwybiwdencodedfeatuwes extendedencodedfeatuwes;
 
-    public TweetFeatureWithEncodeFeatures(
-        VersionedTweetFeatures versionedFeatures,
-        EarlybirdEncodedFeatures encodedFeatures,
-        EarlybirdEncodedFeatures extendedEncodedFeatures) {
-      this.versionedFeatures = versionedFeatures;
-      this.encodedFeatures = encodedFeatures;
-      this.extendedEncodedFeatures = extendedEncodedFeatures;
+    pubwic t-tweetfeatuwewithencodefeatuwes(
+        v-vewsionedtweetfeatuwes vewsionedfeatuwes, ^•ﻌ•^
+        eawwybiwdencodedfeatuwes encodedfeatuwes, ʘwʘ
+        eawwybiwdencodedfeatuwes extendedencodedfeatuwes) {
+      t-this.vewsionedfeatuwes = vewsionedfeatuwes;
+      t-this.encodedfeatuwes = encodedfeatuwes;
+      t-this.extendedencodedfeatuwes = e-extendedencodedfeatuwes;
     }
   }
 
   /**
-   * Create tweet text features and the encoded features.
+   * cweate tweet text featuwes a-and the encoded f-featuwes. :3
    *
-   * @param message the tweet message
-   * @param penguinVersion the based penguin version to create the features
-   * @param schemaSnapshot the schema associated with the features
-   * @return the text features and the encoded features
+   * @pawam message the tweet m-message
+   * @pawam p-penguinvewsion the based penguin vewsion to cweate the featuwes
+   * @pawam schemasnapshot t-the schema associated w-with the f-featuwes
+   * @wetuwn the text featuwes a-and the e-encoded featuwes
    */
-  public TweetFeatureWithEncodeFeatures createTweetFeaturesFromTwitterMessage(
-      TwitterMessage message,
-      PenguinVersion penguinVersion,
-      ImmutableSchemaInterface schemaSnapshot) {
-    VersionedTweetFeatures versionedTweetFeatures = new VersionedTweetFeatures();
+  pubwic t-tweetfeatuwewithencodefeatuwes cweatetweetfeatuwesfwomtwittewmessage(
+      twittewmessage message, 😳
+      penguinvewsion penguinvewsion, òωó
+      immutabweschemaintewface s-schemasnapshot) {
+    v-vewsionedtweetfeatuwes vewsionedtweetfeatuwes = nyew v-vewsionedtweetfeatuwes();
 
-    // Write extendedPackedFeatures.
-    EarlybirdEncodedFeatures extendedEncodedFeatures =
-        createExtendedEncodedFeaturesFromTwitterMessage(message, penguinVersion, schemaSnapshot);
-    if (extendedEncodedFeatures != null) {
-      extendedEncodedFeatures
-          .writeExtendedFeaturesToVersionedTweetFeatures(versionedTweetFeatures);
+    // w-wwite extendedpackedfeatuwes. 🥺
+    eawwybiwdencodedfeatuwes extendedencodedfeatuwes =
+        cweateextendedencodedfeatuwesfwomtwittewmessage(message, rawr x3 p-penguinvewsion, ^•ﻌ•^ schemasnapshot);
+    if (extendedencodedfeatuwes != nyuww) {
+      extendedencodedfeatuwes
+          .wwiteextendedfeatuwestovewsionedtweetfeatuwes(vewsionedtweetfeatuwes);
     }
 
-    setSourceAndNormalizedSource(
-        message.getStrippedSource(), versionedTweetFeatures, penguinVersion);
+    setsouwceandnowmawizedsouwce(
+        m-message.getstwippedsouwce(), :3 vewsionedtweetfeatuwes, (ˆ ﻌ ˆ)♡ penguinvewsion);
 
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
-
-    ///////////////////////////////
-    // Add hashtags and mentions
-    textFeatures.getHashtags().forEach(versionedTweetFeatures::addToHashtags);
-    textFeatures.getMentions().forEach(versionedTweetFeatures::addToMentions);
+    t-tweettextfeatuwes t-textfeatuwes = message.gettweettextfeatuwes(penguinvewsion);
 
     ///////////////////////////////
-    // Extract some extra information from the message text.
-    // Index stock symbols with $ prepended
-    textFeatures.getStocks().stream()
-        .filter(stock -> stock != null)
-        .forEach(stock -> versionedTweetFeatures.addToStocks(stock.toLowerCase()));
+    // add hashtags and mentions
+    textfeatuwes.gethashtags().foweach(vewsionedtweetfeatuwes::addtohashtags);
+    t-textfeatuwes.getmentions().foweach(vewsionedtweetfeatuwes::addtomentions);
 
-    // Question marks
-    versionedTweetFeatures.setHasQuestionMark(textFeatures.hasQuestionMark());
-    // Smileys
-    versionedTweetFeatures.setHasPositiveSmiley(textFeatures.hasPositiveSmiley());
-    versionedTweetFeatures.setHasNegativeSmiley(textFeatures.hasNegativeSmiley());
+    ///////////////////////////////
+    // e-extwact some extwa infowmation fwom the message text. (U ᵕ U❁)
+    // i-index stock symbows with $ pwepended
+    t-textfeatuwes.getstocks().stweam()
+        .fiwtew(stock -> stock != nyuww)
+        .foweach(stock -> vewsionedtweetfeatuwes.addtostocks(stock.towowewcase()));
 
-    TokenStreamSerializer streamSerializer =
-        TweetTokenStreamSerializer.getTweetTokenStreamSerializer();
-    TokenizedCharSequence tokenSeq = textFeatures.getTokenSequence();
-    tokenSeqStream.reset(tokenSeq);
-    int tokenPercent = VISIBLE_TOKEN_RATIO.extractAndNormalizeTokenPercentage(tokenSeqStream);
-    tokenSeqStream.reset(tokenSeq);
+    // question mawks
+    v-vewsionedtweetfeatuwes.sethasquestionmawk(textfeatuwes.hasquestionmawk());
+    // smiweys
+    v-vewsionedtweetfeatuwes.sethaspositivesmiwey(textfeatuwes.haspositivesmiwey());
+    v-vewsionedtweetfeatuwes.sethasnegativesmiwey(textfeatuwes.hasnegativesmiwey());
 
-    // Write packedFeatures.
-    EarlybirdEncodedFeatures encodedFeatures = createEncodedFeaturesFromTwitterMessage(
-        message, penguinVersion, schemaSnapshot, tokenPercent);
-    encodedFeatures.writeFeaturesToVersionedTweetFeatures(versionedTweetFeatures);
+    tokenstweamsewiawizew s-stweamsewiawizew =
+        tweettokenstweamsewiawizew.gettweettokenstweamsewiawizew();
+    t-tokenizedchawsequence tokenseq = t-textfeatuwes.gettokensequence();
+    tokenseqstweam.weset(tokenseq);
+    i-int tokenpewcent = visibwe_token_watio.extwactandnowmawizetokenpewcentage(tokenseqstweam);
+    t-tokenseqstweam.weset(tokenseq);
 
-    try {
-      versionedTweetFeatures.setTweetTokenStream(streamSerializer.serialize(tokenSeqStream));
-      versionedTweetFeatures.setTweetTokenStreamText(tokenSeq.toString());
-    } catch (IOException e) {
-      LOG.error("TwitterTokenStream serialization error! Could not serialize: "
-          + tokenSeq.toString());
-      SERIALIZE_FAILURE_COUNTERS_MAP.get(penguinVersion).increment();
-      versionedTweetFeatures.unsetTweetTokenStream();
-      versionedTweetFeatures.unsetTweetTokenStreamText();
+    // w-wwite packedfeatuwes. :3
+    eawwybiwdencodedfeatuwes e-encodedfeatuwes = cweateencodedfeatuwesfwomtwittewmessage(
+        m-message, ^^;; penguinvewsion, ( ͡o ω ͡o ) s-schemasnapshot, o.O tokenpewcent);
+    encodedfeatuwes.wwitefeatuwestovewsionedtweetfeatuwes(vewsionedtweetfeatuwes);
+
+    t-twy {
+      vewsionedtweetfeatuwes.settweettokenstweam(stweamsewiawizew.sewiawize(tokenseqstweam));
+      vewsionedtweetfeatuwes.settweettokenstweamtext(tokenseq.tostwing());
+    } c-catch (ioexception e-e) {
+      wog.ewwow("twittewtokenstweam sewiawization ewwow! ^•ﻌ•^ couwd nyot s-sewiawize: "
+          + t-tokenseq.tostwing());
+      s-sewiawize_faiwuwe_countews_map.get(penguinvewsion).incwement();
+      v-vewsionedtweetfeatuwes.unsettweettokenstweam();
+      vewsionedtweetfeatuwes.unsettweettokenstweamtext();
     }
 
-    // User name features
-    if (message.getFromUserDisplayName().isPresent()) {
-      Locale locale = LanguageIdentifierHelper
-          .identifyLanguage(message.getFromUserDisplayName().get());
-      String normalizedDisplayName = NormalizerHelper.normalize(
-          message.getFromUserDisplayName().get(), locale, penguinVersion);
-      TokenizerResult result = TokenizerHelper
-          .tokenizeTweet(normalizedDisplayName, locale, penguinVersion);
-      tokenSeqStream.reset(result.tokenSequence);
-      try {
-        versionedTweetFeatures.setUserDisplayNameTokenStream(
-            streamSerializer.serialize(tokenSeqStream));
-        versionedTweetFeatures.setUserDisplayNameTokenStreamText(result.tokenSequence.toString());
-      } catch (IOException e) {
-        LOG.error("TwitterTokenStream serialization error! Could not serialize: "
-            + message.getFromUserDisplayName().get());
-        SERIALIZE_FAILURE_COUNTERS_MAP.get(penguinVersion).increment();
-        versionedTweetFeatures.unsetUserDisplayNameTokenStream();
-        versionedTweetFeatures.unsetUserDisplayNameTokenStreamText();
+    // u-usew nyame featuwes
+    if (message.getfwomusewdispwayname().ispwesent()) {
+      wocawe wocawe = wanguageidentifiewhewpew
+          .identifywanguage(message.getfwomusewdispwayname().get());
+      stwing nyowmawizeddispwayname = n-nyowmawizewhewpew.nowmawize(
+          message.getfwomusewdispwayname().get(), XD w-wocawe, penguinvewsion);
+      t-tokenizewwesuwt wesuwt = t-tokenizewhewpew
+          .tokenizetweet(nowmawizeddispwayname, ^^ wocawe, penguinvewsion);
+      t-tokenseqstweam.weset(wesuwt.tokensequence);
+      t-twy {
+        v-vewsionedtweetfeatuwes.setusewdispwaynametokenstweam(
+            s-stweamsewiawizew.sewiawize(tokenseqstweam));
+        v-vewsionedtweetfeatuwes.setusewdispwaynametokenstweamtext(wesuwt.tokensequence.tostwing());
+      } catch (ioexception e) {
+        wog.ewwow("twittewtokenstweam sewiawization ewwow! o.O couwd nyot sewiawize: "
+            + m-message.getfwomusewdispwayname().get());
+        s-sewiawize_faiwuwe_countews_map.get(penguinvewsion).incwement();
+        v-vewsionedtweetfeatuwes.unsetusewdispwaynametokenstweam();
+        vewsionedtweetfeatuwes.unsetusewdispwaynametokenstweamtext();
       }
     }
 
-    String resolvedUrlsText = Joiner.on(" ").skipNulls().join(textFeatures.getResolvedUrlTokens());
-    versionedTweetFeatures.setNormalizedResolvedUrlText(resolvedUrlsText);
+    stwing w-wesowveduwwstext = joinew.on(" ").skipnuwws().join(textfeatuwes.getwesowveduwwtokens());
+    vewsionedtweetfeatuwes.setnowmawizedwesowveduwwtext(wesowveduwwstext);
 
-    addPlace(message, versionedTweetFeatures, penguinVersion);
-    addProfileGeoEnrichment(message, versionedTweetFeatures, penguinVersion);
+    addpwace(message, ( ͡o ω ͡o ) vewsionedtweetfeatuwes, /(^•ω•^) p-penguinvewsion);
+    a-addpwofiwegeoenwichment(message, 🥺 vewsionedtweetfeatuwes, nyaa~~ penguinvewsion);
 
-    versionedTweetFeatures.setTweetSignature(message.getTweetSignature(penguinVersion));
+    v-vewsionedtweetfeatuwes.settweetsignatuwe(message.gettweetsignatuwe(penguinvewsion));
 
-    return new TweetFeatureWithEncodeFeatures(
-        versionedTweetFeatures, encodedFeatures, extendedEncodedFeatures);
+    wetuwn nyew tweetfeatuwewithencodefeatuwes(
+        v-vewsionedtweetfeatuwes, mya e-encodedfeatuwes, XD extendedencodedfeatuwes);
   }
 
 
-  protected static void setSourceAndNormalizedSource(
-      String strippedSource,
-      VersionedTweetFeatures versionedTweetFeatures,
-      PenguinVersion penguinVersion) {
+  p-pwotected s-static void setsouwceandnowmawizedsouwce(
+      stwing stwippedsouwce, nyaa~~
+      vewsionedtweetfeatuwes vewsionedtweetfeatuwes, ʘwʘ
+      penguinvewsion p-penguinvewsion) {
 
-    if (strippedSource != null && !strippedSource.isEmpty()) {
-      // normalize source for searchable field - replaces whitespace with underscores (???).
-      versionedTweetFeatures.setNormalizedSource(
-          SourceNormalizer.normalize(strippedSource, penguinVersion));
+    i-if (stwippedsouwce != n-nyuww && !stwippedsouwce.isempty()) {
+      // n-nyowmawize s-souwce fow seawchabwe fiewd - w-wepwaces whitespace w-with undewscowes (???). (⑅˘꒳˘)
+      vewsionedtweetfeatuwes.setnowmawizedsouwce(
+          s-souwcenowmawizew.nowmawize(stwippedsouwce, :3 p-penguinvewsion));
 
-      // source facet has simpler normalization.
-      Locale locale = LanguageIdentifierHelper.identifyLanguage(strippedSource);
-      versionedTweetFeatures.setSource(NormalizerHelper.normalizeKeepCase(
-          strippedSource, locale, penguinVersion));
+      // souwce facet h-has simpwew nyowmawization. -.-
+      wocawe wocawe = wanguageidentifiewhewpew.identifywanguage(stwippedsouwce);
+      v-vewsionedtweetfeatuwes.setsouwce(nowmawizewhewpew.nowmawizekeepcase(
+          stwippedsouwce, 😳😳😳 w-wocawe, (U ﹏ U) penguinvewsion));
     }
   }
 
   /**
-   * Adds the given photo url to the thrift status if it is a twitter photo permalink.
-   * Returns true, if this was indeed a twitter photo, false otherwise.
+   * a-adds the given photo uww to t-the thwift status if it is a twittew photo pewmawink. o.O
+   * w-wetuwns t-twue, ( ͡o ω ͡o ) if this w-was indeed a twittew photo, òωó fawse othewwise. 🥺
    */
-  public static boolean addPhotoUrl(TwitterMessage message, String photoPermalink) {
-    Matcher matcher = TWITTER_PHOTO_COPY_PASTE_LINK_PATTERN.matcher(photoPermalink);
-    if (!matcher.matches() || matcher.groupCount() < 1) {
-      matcher = TWITTER_PHOTO_PERMA_LINK_PATTERN.matcher(photoPermalink);
+  pubwic static b-boowean addphotouww(twittewmessage message, /(^•ω•^) stwing photopewmawink) {
+    m-matchew m-matchew = twittew_photo_copy_paste_wink_pattewn.matchew(photopewmawink);
+    if (!matchew.matches() || m-matchew.gwoupcount() < 1) {
+      matchew = t-twittew_photo_pewma_wink_pattewn.matchew(photopewmawink);
     }
 
-    if (matcher.matches() && matcher.groupCount() == 1) {
-      // this is a native photo url which we need to store in a separate field
-      String idStr = matcher.group(1);
-      if (idStr != null) {
-        // idStr should be a valid tweet ID (and therefore, should fit into a Long), but we have
-        // tweets for which idStr is a long sequence of digits that does not fit into a Long.
-        try {
-          long photoStatusId = Long.parseLong(idStr);
-          message.addPhotoUrl(photoStatusId, null);
-        } catch (NumberFormatException e) {
-          LOG.warn("Found a tweet with a photo URL with an invalid tweet ID: " + message);
-          NUM_TWEETS_WITH_INVALID_TWEET_ID_IN_PHOTO_URL.increment();
+    i-if (matchew.matches() && matchew.gwoupcount() == 1) {
+      // this i-is a nyative photo uww which we nyeed to stowe i-in a sepawate fiewd
+      s-stwing idstw = matchew.gwoup(1);
+      i-if (idstw != nyuww) {
+        // idstw shouwd be a-a vawid tweet i-id (and thewefowe, 😳😳😳 s-shouwd fit into a wong), ^•ﻌ•^ but we have
+        // tweets fow which idstw is a wong sequence of digits that does not fit into a wong. nyaa~~
+        twy {
+          wong photostatusid = wong.pawsewong(idstw);
+          message.addphotouww(photostatusid, OwO n-nyuww);
+        } c-catch (numbewfowmatexception e) {
+          wog.wawn("found a-a tweet with a-a photo uww with a-an invawid tweet id: " + message);
+          n-nyum_tweets_with_invawid_tweet_id_in_photo_uww.incwement();
         }
       }
-      return true;
+      wetuwn twue;
     }
-    return false;
+    w-wetuwn f-fawse;
   }
 
-  private void addPlace(TwitterMessage message,
-                        VersionedTweetFeatures versionedTweetFeatures,
-                        PenguinVersion penguinVersion) {
-    String placeId = message.getPlaceId();
-    if (placeId == null) {
-      return;
+  pwivate void addpwace(twittewmessage m-message, ^•ﻌ•^
+                        vewsionedtweetfeatuwes v-vewsionedtweetfeatuwes, σωσ
+                        p-penguinvewsion penguinvewsion) {
+    stwing pwaceid = m-message.getpwaceid();
+    i-if (pwaceid == n-nyuww) {
+      w-wetuwn;
     }
 
-    // Tweet.Place.id and Tweet.Place.full_name are both required fields.
-    String placeFullName = message.getPlaceFullName();
-    Preconditions.checkNotNull(placeFullName, "Tweet.Place without full_name.");
+    // t-tweet.pwace.id a-and tweet.pwace.fuww_name a-awe both w-wequiwed fiewds. -.-
+    s-stwing pwacefuwwname = message.getpwacefuwwname();
+    pweconditions.checknotnuww(pwacefuwwname, (˘ω˘) "tweet.pwace without fuww_name.");
 
-    Locale placeFullNameLocale = LanguageIdentifierHelper.identifyLanguage(placeFullName);
-    String normalizedPlaceFullName =
-        NormalizerHelper.normalize(placeFullName, placeFullNameLocale, penguinVersion);
-    String tokenizedPlaceFullName = StringUtils.join(
-        TokenizerHelper.tokenizeQuery(normalizedPlaceFullName, placeFullNameLocale, penguinVersion),
+    w-wocawe pwacefuwwnamewocawe = w-wanguageidentifiewhewpew.identifywanguage(pwacefuwwname);
+    s-stwing nyowmawizedpwacefuwwname =
+        n-nyowmawizewhewpew.nowmawize(pwacefuwwname, rawr x3 pwacefuwwnamewocawe, rawr x3 penguinvewsion);
+    s-stwing tokenizedpwacefuwwname = s-stwingutiws.join(
+        t-tokenizewhewpew.tokenizequewy(nowmawizedpwacefuwwname, p-pwacefuwwnamewocawe, σωσ penguinvewsion), nyaa~~
         " ");
 
-    Place place = new Place(placeId, tokenizedPlaceFullName);
-    String placeCountryCode = message.getPlaceCountryCode();
-    if (placeCountryCode != null) {
-      Locale placeCountryCodeLocale = LanguageIdentifierHelper.identifyLanguage(placeCountryCode);
-      place.setCountryCode(
-          NormalizerHelper.normalize(placeCountryCode, placeCountryCodeLocale, penguinVersion));
+    p-pwace pwace = nyew pwace(pwaceid, (ꈍᴗꈍ) t-tokenizedpwacefuwwname);
+    stwing pwacecountwycode = m-message.getpwacecountwycode();
+    if (pwacecountwycode != n-nyuww) {
+      wocawe pwacecountwycodewocawe = wanguageidentifiewhewpew.identifywanguage(pwacecountwycode);
+      pwace.setcountwycode(
+          nyowmawizewhewpew.nowmawize(pwacecountwycode, ^•ﻌ•^ p-pwacecountwycodewocawe, >_< penguinvewsion));
     }
 
-    versionedTweetFeatures.setTokenizedPlace(place);
+    v-vewsionedtweetfeatuwes.settokenizedpwace(pwace);
   }
 
-  private void addProfileGeoEnrichment(TwitterMessage message,
-                                       VersionedTweetFeatures versionedTweetFeatures,
-                                       PenguinVersion penguinVersion) {
-    List<PotentialLocationObject> potentialLocations = message.getPotentialLocations();
-    if (potentialLocations.isEmpty()) {
-      return;
+  p-pwivate void addpwofiwegeoenwichment(twittewmessage message, ^^;;
+                                       vewsionedtweetfeatuwes v-vewsionedtweetfeatuwes, ^^;;
+                                       penguinvewsion penguinvewsion) {
+    w-wist<potentiawwocationobject> p-potentiawwocations = m-message.getpotentiawwocations();
+    if (potentiawwocations.isempty()) {
+      wetuwn;
     }
 
-    List<PotentialLocation> thriftPotentialLocations = Lists.newArrayList();
-    for (PotentialLocationObject potentialLocation : potentialLocations) {
-      thriftPotentialLocations.add(potentialLocation.toThriftPotentialLocation(penguinVersion));
+    w-wist<potentiawwocation> t-thwiftpotentiawwocations = wists.newawwaywist();
+    f-fow (potentiawwocationobject potentiawwocation : potentiawwocations) {
+      t-thwiftpotentiawwocations.add(potentiawwocation.tothwiftpotentiawwocation(penguinvewsion));
     }
-    versionedTweetFeatures.setTokenizedProfileGeoEnrichment(
-        new ProfileGeoEnrichment(thriftPotentialLocations));
+    vewsionedtweetfeatuwes.settokenizedpwofiwegeoenwichment(
+        n-nyew pwofiwegeoenwichment(thwiftpotentiawwocations));
   }
 
-  /** Returns the encoded features. */
-  public static EarlybirdEncodedFeatures createEncodedFeaturesFromTwitterMessage(
-      TwitterMessage message,
-      PenguinVersion penguinVersion,
-      ImmutableSchemaInterface schema,
-      int normalizedTokenPercentBucket) {
-    FeatureSink sink = new FeatureSink(schema);
+  /** w-wetuwns t-the encoded featuwes. /(^•ω•^) */
+  pubwic s-static eawwybiwdencodedfeatuwes c-cweateencodedfeatuwesfwomtwittewmessage(
+      t-twittewmessage m-message, nyaa~~
+      penguinvewsion p-penguinvewsion, (✿oωo)
+      i-immutabweschemaintewface s-schema,
+      int n-nyowmawizedtokenpewcentbucket) {
+    f-featuwesink s-sink = nyew featuwesink(schema);
 
-    // Static features
-    sink.setBooleanValue(EarlybirdFieldConstant.IS_RETWEET_FLAG, message.isRetweet())
-        .setBooleanValue(EarlybirdFieldConstant.IS_REPLY_FLAG, message.isReply())
-        .setBooleanValue(
-            EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG, message.isUserVerified())
-        .setBooleanValue(
-            EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG, message.isUserBlueVerified())
-        .setBooleanValue(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT, message.isSensitiveContent());
+    // s-static f-featuwes
+    sink.setbooweanvawue(eawwybiwdfiewdconstant.is_wetweet_fwag, ( ͡o ω ͡o ) m-message.iswetweet())
+        .setbooweanvawue(eawwybiwdfiewdconstant.is_wepwy_fwag, (U ᵕ U❁) message.iswepwy())
+        .setbooweanvawue(
+            e-eawwybiwdfiewdconstant.fwom_vewified_account_fwag, òωó message.isusewvewified())
+        .setbooweanvawue(
+            e-eawwybiwdfiewdconstant.fwom_bwue_vewified_account_fwag, σωσ m-message.isusewbwuevewified())
+        .setbooweanvawue(eawwybiwdfiewdconstant.is_sensitive_content, :3 m-message.issensitivecontent());
 
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
-    if (textFeatures != null) {
-      final FeatureConfiguration featureConfigNumHashtags = schema.getFeatureConfigurationByName(
-          EarlybirdFieldConstant.NUM_HASHTAGS.getFieldName());
-      final FeatureConfiguration featureConfigNumMentions = schema.getFeatureConfigurationByName(
-          EarlybirdFieldConstant.NUM_MENTIONS.getFieldName());
+    tweettextfeatuwes textfeatuwes = message.gettweettextfeatuwes(penguinvewsion);
+    if (textfeatuwes != n-nyuww) {
+      f-finaw featuweconfiguwation f-featuweconfignumhashtags = schema.getfeatuweconfiguwationbyname(
+          eawwybiwdfiewdconstant.num_hashtags.getfiewdname());
+      finaw featuweconfiguwation featuweconfignummentions = s-schema.getfeatuweconfiguwationbyname(
+          e-eawwybiwdfiewdconstant.num_mentions.getfiewdname());
 
-      sink.setNumericValue(
-              EarlybirdFieldConstant.NUM_HASHTAGS,
-              Math.min(textFeatures.getHashtagsSize(), featureConfigNumHashtags.getMaxValue()))
-          .setNumericValue(
-              EarlybirdFieldConstant.NUM_MENTIONS,
-              Math.min(textFeatures.getMentionsSize(), featureConfigNumMentions.getMaxValue()))
-          .setBooleanValue(
-              EarlybirdFieldConstant.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG,
-              TwitterMessage.hasMultipleHashtagsOrTrends(textFeatures))
-          .setBooleanValue(
-              EarlybirdFieldConstant.HAS_TREND_FLAG,
-              textFeatures.getTrendingTermsSize() > 0);
+      sink.setnumewicvawue(
+              e-eawwybiwdfiewdconstant.num_hashtags, OwO
+              m-math.min(textfeatuwes.gethashtagssize(), featuweconfignumhashtags.getmaxvawue()))
+          .setnumewicvawue(
+              eawwybiwdfiewdconstant.num_mentions, ^^
+              math.min(textfeatuwes.getmentionssize(), (˘ω˘) f-featuweconfignummentions.getmaxvawue()))
+          .setbooweanvawue(
+              e-eawwybiwdfiewdconstant.has_muwtipwe_hashtags_ow_twends_fwag, OwO
+              t-twittewmessage.hasmuwtipwehashtagsowtwends(textfeatuwes))
+          .setbooweanvawue(
+              e-eawwybiwdfiewdconstant.has_twend_fwag,
+              textfeatuwes.gettwendingtewmssize() > 0);
     }
 
-    TweetTextQuality textQuality = message.getTweetTextQuality(penguinVersion);
-    if (textQuality != null) {
-      sink.setNumericValue(EarlybirdFieldConstant.TEXT_SCORE, textQuality.getTextScore());
-      sink.setBooleanValue(
-          EarlybirdFieldConstant.IS_OFFENSIVE_FLAG,
-          textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE)
-              || textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE_USER)
-              // Note: if json message "possibly_sensitive" flag is set, we consider the tweet
-              // sensitive and is currently filtered out in safe search mode via a hacky setup:
-              // earlybird does not create _filter_sensitive_content field, only
-              // _is_offensive field is created, and used in filter:safe operator
-              || textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.SENSITIVE));
-      if (textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.SENSITIVE)) {
-        sink.setBooleanValue(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT, true);
+    tweettextquawity t-textquawity = m-message.gettweettextquawity(penguinvewsion);
+    if (textquawity != nyuww) {
+      s-sink.setnumewicvawue(eawwybiwdfiewdconstant.text_scowe, UwU textquawity.gettextscowe());
+      sink.setbooweanvawue(
+          e-eawwybiwdfiewdconstant.is_offensive_fwag, ^•ﻌ•^
+          textquawity.hasboowquawity(tweettextquawity.booweanquawitytype.offensive)
+              || t-textquawity.hasboowquawity(tweettextquawity.booweanquawitytype.offensive_usew)
+              // n-nyote: if json message "possibwy_sensitive" f-fwag is s-set, (ꈍᴗꈍ) we considew the tweet
+              // s-sensitive and is cuwwentwy f-fiwtewed o-out in safe seawch m-mode via a hacky s-setup:
+              // eawwybiwd d-does nyot c-cweate _fiwtew_sensitive_content f-fiewd, /(^•ω•^) onwy
+              // _is_offensive fiewd i-is cweated, (U ᵕ U❁) and used in fiwtew:safe opewatow
+              || t-textquawity.hasboowquawity(tweettextquawity.booweanquawitytype.sensitive));
+      i-if (textquawity.hasboowquawity(tweettextquawity.booweanquawitytype.sensitive)) {
+        s-sink.setbooweanvawue(eawwybiwdfiewdconstant.is_sensitive_content, (✿oωo) twue);
       }
-    } else {
-      // we don't have text score, for whatever reason, set to sentinel value so we won't be
-      // skipped by scoring function
-      sink.setNumericValue(EarlybirdFieldConstant.TEXT_SCORE,
-          RelevanceSignalConstants.UNSET_TEXT_SCORE_SENTINEL);
+    } ewse {
+      // we don't have text scowe, OwO fow n-nyanievew weason, :3 set to sentinew v-vawue so we won't b-be
+      // skipped by scowing function
+      s-sink.setnumewicvawue(eawwybiwdfiewdconstant.text_scowe, nyaa~~
+          wewevancesignawconstants.unset_text_scowe_sentinew);
     }
 
-    if (message.isSetLocale()) {
-      sink.setNumericValue(EarlybirdFieldConstant.LANGUAGE,
-          ThriftLanguageUtil.getThriftLanguageOf(message.getLocale()).getValue());
+    i-if (message.issetwocawe()) {
+      s-sink.setnumewicvawue(eawwybiwdfiewdconstant.wanguage, ^•ﻌ•^
+          t-thwiftwanguageutiw.getthwiftwanguageof(message.getwocawe()).getvawue());
     }
 
-    // User features
-    TweetUserFeatures userFeatures = message.getTweetUserFeatures(penguinVersion);
-    if (userFeatures != null) {
-      sink.setBooleanValue(EarlybirdFieldConstant.IS_USER_SPAM_FLAG, userFeatures.isSpam())
-          .setBooleanValue(EarlybirdFieldConstant.IS_USER_NSFW_FLAG, userFeatures.isNsfw())
-          .setBooleanValue(EarlybirdFieldConstant.IS_USER_BOT_FLAG, userFeatures.isBot());
+    // usew f-featuwes
+    t-tweetusewfeatuwes usewfeatuwes = message.gettweetusewfeatuwes(penguinvewsion);
+    if (usewfeatuwes != nyuww) {
+      s-sink.setbooweanvawue(eawwybiwdfiewdconstant.is_usew_spam_fwag, ( ͡o ω ͡o ) usewfeatuwes.isspam())
+          .setbooweanvawue(eawwybiwdfiewdconstant.is_usew_nsfw_fwag, u-usewfeatuwes.isnsfw())
+          .setbooweanvawue(eawwybiwdfiewdconstant.is_usew_bot_fwag, ^^;; usewfeatuwes.isbot());
     }
-    if (message.getUserReputation() != TwitterMessage.DOUBLE_FIELD_NOT_PRESENT) {
-      sink.setNumericValue(EarlybirdFieldConstant.USER_REPUTATION,
-          (byte) message.getUserReputation());
-    } else {
-      sink.setNumericValue(EarlybirdFieldConstant.USER_REPUTATION,
-          RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL);
-    }
-
-    sink.setBooleanValue(EarlybirdFieldConstant.IS_NULLCAST_FLAG, message.getNullcast());
-
-    // Realtime Ingestion does not write engagement features. Updater does that.
-    if (message.getNumFavorites() > 0) {
-      sink.setNumericValue(EarlybirdFieldConstant.FAVORITE_COUNT,
-          MutableFeatureNormalizers.BYTE_NORMALIZER.normalize(message.getNumFavorites()));
-    }
-    if (message.getNumRetweets() > 0) {
-      sink.setNumericValue(EarlybirdFieldConstant.RETWEET_COUNT,
-          MutableFeatureNormalizers.BYTE_NORMALIZER.normalize(message.getNumRetweets()));
-    }
-    if (message.getNumReplies() > 0) {
-      sink.setNumericValue(EarlybirdFieldConstant.REPLY_COUNT,
-          MutableFeatureNormalizers.BYTE_NORMALIZER.normalize(message.getNumReplies()));
+    if (message.getusewweputation() != twittewmessage.doubwe_fiewd_not_pwesent) {
+      s-sink.setnumewicvawue(eawwybiwdfiewdconstant.usew_weputation, mya
+          (byte) message.getusewweputation());
+    } ewse {
+      sink.setnumewicvawue(eawwybiwdfiewdconstant.usew_weputation,
+          wewevancesignawconstants.unset_weputation_sentinew);
     }
 
-    sink.setNumericValue(EarlybirdFieldConstant.VISIBLE_TOKEN_RATIO, normalizedTokenPercentBucket);
+    s-sink.setbooweanvawue(eawwybiwdfiewdconstant.is_nuwwcast_fwag, (U ᵕ U❁) m-message.getnuwwcast());
 
-    EarlybirdEncodedFeatures encodedFeatures =
-        (EarlybirdEncodedFeatures) sink.getFeaturesForBaseField(
-            EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldName());
-    updateLinkEncodedFeatures(encodedFeatures, message);
-    return encodedFeatures;
+    // weawtime ingestion d-does nyot wwite engagement featuwes. ^•ﻌ•^ updatew d-does that. (U ﹏ U)
+    i-if (message.getnumfavowites() > 0) {
+      sink.setnumewicvawue(eawwybiwdfiewdconstant.favowite_count, /(^•ω•^)
+          m-mutabwefeatuwenowmawizews.byte_nowmawizew.nowmawize(message.getnumfavowites()));
+    }
+    if (message.getnumwetweets() > 0) {
+      s-sink.setnumewicvawue(eawwybiwdfiewdconstant.wetweet_count, ʘwʘ
+          mutabwefeatuwenowmawizews.byte_nowmawizew.nowmawize(message.getnumwetweets()));
+    }
+    if (message.getnumwepwies() > 0) {
+      sink.setnumewicvawue(eawwybiwdfiewdconstant.wepwy_count, XD
+          m-mutabwefeatuwenowmawizews.byte_nowmawizew.nowmawize(message.getnumwepwies()));
+    }
+
+    sink.setnumewicvawue(eawwybiwdfiewdconstant.visibwe_token_watio, (⑅˘꒳˘) nyowmawizedtokenpewcentbucket);
+
+    e-eawwybiwdencodedfeatuwes encodedfeatuwes =
+        (eawwybiwdencodedfeatuwes) s-sink.getfeatuwesfowbasefiewd(
+            e-eawwybiwdfiewdconstant.encoded_tweet_featuwes_fiewd.getfiewdname());
+    updatewinkencodedfeatuwes(encodedfeatuwes, nyaa~~ message);
+    w-wetuwn encodedfeatuwes;
   }
 
   /**
-   * Returns the extended encoded features.
+   * wetuwns the extended encoded featuwes. UwU
    */
-  public static EarlybirdEncodedFeatures createExtendedEncodedFeaturesFromTwitterMessage(
-    TwitterMessage message,
-    PenguinVersion penguinVersion,
-    ImmutableSchemaInterface schema) {
-    FeatureSink sink = new FeatureSink(schema);
+  pubwic static e-eawwybiwdencodedfeatuwes c-cweateextendedencodedfeatuwesfwomtwittewmessage(
+    t-twittewmessage m-message, (˘ω˘)
+    penguinvewsion penguinvewsion,
+    immutabweschemaintewface s-schema) {
+    f-featuwesink sink = nyew featuwesink(schema);
 
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
+    t-tweettextfeatuwes textfeatuwes = message.gettweettextfeatuwes(penguinvewsion);
 
-    if (textFeatures != null) {
-      setExtendedEncodedFeatureIntValue(sink, schema,
-          EarlybirdFieldConstant.NUM_HASHTAGS_V2, textFeatures.getHashtagsSize());
-      setExtendedEncodedFeatureIntValue(sink, schema,
-          EarlybirdFieldConstant.NUM_MENTIONS_V2, textFeatures.getMentionsSize());
-      setExtendedEncodedFeatureIntValue(sink, schema,
-          EarlybirdFieldConstant.NUM_STOCKS, textFeatures.getStocksSize());
+    if (textfeatuwes != n-nyuww) {
+      setextendedencodedfeatuweintvawue(sink, rawr x3 schema,
+          e-eawwybiwdfiewdconstant.num_hashtags_v2, t-textfeatuwes.gethashtagssize());
+      setextendedencodedfeatuweintvawue(sink, (///ˬ///✿) s-schema,
+          e-eawwybiwdfiewdconstant.num_mentions_v2, 😳😳😳 t-textfeatuwes.getmentionssize());
+      setextendedencodedfeatuweintvawue(sink, schema, (///ˬ///✿)
+          e-eawwybiwdfiewdconstant.num_stocks, ^^;; textfeatuwes.getstockssize());
     }
 
-    Optional<Long> referenceAuthorId = message.getReferenceAuthorId();
-    if (referenceAuthorId.isPresent()) {
-      setEncodedReferenceAuthorId(sink, referenceAuthorId.get());
+    optionaw<wong> w-wefewenceauthowid = message.getwefewenceauthowid();
+    if (wefewenceauthowid.ispwesent()) {
+      setencodedwefewenceauthowid(sink, ^^ wefewenceauthowid.get());
     }
 
-    return (EarlybirdEncodedFeatures) sink.getFeaturesForBaseField(
-        EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName());
+    w-wetuwn (eawwybiwdencodedfeatuwes) s-sink.getfeatuwesfowbasefiewd(
+        e-eawwybiwdfiewdconstant.extended_encoded_tweet_featuwes_fiewd.getfiewdname());
   }
 
   /**
-   * Updates all URL-related features, based on the values stored in the given message.
+   * u-updates a-aww uww-wewated featuwes, (///ˬ///✿) based o-on the vawues stowed in the given message. -.-
    *
-   * @param encodedFeatures The features to be updated.
-   * @param message The message.
+   * @pawam e-encodedfeatuwes the f-featuwes to be updated. /(^•ω•^)
+   * @pawam message the m-message. UwU
    */
-  public static void updateLinkEncodedFeatures(
-      EarlybirdEncodedFeatures encodedFeatures, TwitterMessage message) {
-    if (message.getLinkLocale() != null) {
-      encodedFeatures.setFeatureValue(
-          EarlybirdFieldConstant.LINK_LANGUAGE,
-          ThriftLanguageUtil.getThriftLanguageOf(message.getLinkLocale()).getValue());
+  p-pubwic static void updatewinkencodedfeatuwes(
+      e-eawwybiwdencodedfeatuwes encodedfeatuwes, (⑅˘꒳˘) t-twittewmessage m-message) {
+    if (message.getwinkwocawe() != nyuww) {
+      e-encodedfeatuwes.setfeatuwevawue(
+          e-eawwybiwdfiewdconstant.wink_wanguage, ʘwʘ
+          thwiftwanguageutiw.getthwiftwanguageof(message.getwinkwocawe()).getvawue());
     }
 
-    if (message.hasCard()) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_CARD_FLAG);
+    i-if (message.hascawd()) {
+      encodedfeatuwes.setfwag(eawwybiwdfiewdconstant.has_cawd_fwag);
     }
 
-    // Set HAS_IMAGE HAS_NEWS HAS_VIDEO etc. flags for expanded urls.
-    if (message.getExpandedUrlMapSize() > 0) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_LINK_FLAG);
+    // set has_image has_news has_video etc. σωσ f-fwags fow expanded uwws. ^^
+    if (message.getexpandeduwwmapsize() > 0) {
+      e-encodedfeatuwes.setfwag(eawwybiwdfiewdconstant.has_wink_fwag);
 
-      for (ThriftExpandedUrl url : message.getExpandedUrlMap().values()) {
-        if (url.isSetMediaType()) {
-          switch (url.getMediaType()) {
-            case NATIVE_IMAGE:
-              encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
-              encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_NATIVE_IMAGE_FLAG);
-              break;
-            case IMAGE:
-              encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
-              break;
-            case VIDEO:
-              encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG);
-              break;
-            case NEWS:
-              encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_NEWS_URL_FLAG);
-              break;
-            case UNKNOWN:
-              break;
-            default:
-              throw new IllegalStateException("Unexpected enum value: " + url.getMediaType());
+      fow (thwiftexpandeduww uww : m-message.getexpandeduwwmap().vawues()) {
+        i-if (uww.issetmediatype()) {
+          s-switch (uww.getmediatype()) {
+            case nyative_image:
+              e-encodedfeatuwes.setfwag(eawwybiwdfiewdconstant.has_image_uww_fwag);
+              e-encodedfeatuwes.setfwag(eawwybiwdfiewdconstant.has_native_image_fwag);
+              bweak;
+            case i-image:
+              encodedfeatuwes.setfwag(eawwybiwdfiewdconstant.has_image_uww_fwag);
+              b-bweak;
+            case v-video:
+              e-encodedfeatuwes.setfwag(eawwybiwdfiewdconstant.has_video_uww_fwag);
+              bweak;
+            case nyews:
+              encodedfeatuwes.setfwag(eawwybiwdfiewdconstant.has_news_uww_fwag);
+              b-bweak;
+            c-case unknown:
+              bweak;
+            defauwt:
+              t-thwow nyew iwwegawstateexception("unexpected enum v-vawue: " + uww.getmediatype());
           }
         }
       }
     }
 
-    Set<String> canonicalLastHopUrlsStrings = message.getCanonicalLastHopUrls();
-    Set<String> expandedUrlsStrings = message.getExpandedUrls()
-        .stream()
-        .map(ThriftExpandedUrl::getExpandedUrl)
-        .collect(Collectors.toSet());
-    Set<String> expandedAndLastHopUrlsStrings = new HashSet<>();
-    expandedAndLastHopUrlsStrings.addAll(expandedUrlsStrings);
-    expandedAndLastHopUrlsStrings.addAll(canonicalLastHopUrlsStrings);
-    // Check both expanded and last hop url for consumer videos as consumer video urls are
-    // sometimes redirected to the url of the tweets containing the videos (SEARCH-42612).
-    if (NativeVideoClassificationUtils.hasConsumerVideo(expandedAndLastHopUrlsStrings)) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG);
+    s-set<stwing> canonicawwasthopuwwsstwings = message.getcanonicawwasthopuwws();
+    set<stwing> expandeduwwsstwings = message.getexpandeduwws()
+        .stweam()
+        .map(thwiftexpandeduww::getexpandeduww)
+        .cowwect(cowwectows.toset());
+    s-set<stwing> expandedandwasthopuwwsstwings = nyew hashset<>();
+    e-expandedandwasthopuwwsstwings.addaww(expandeduwwsstwings);
+    expandedandwasthopuwwsstwings.addaww(canonicawwasthopuwwsstwings);
+    // c-check both expanded a-and wast hop uww fow consumew v-videos as consumew v-video uwws a-awe
+    // sometimes w-wediwected t-to the uww of the t-tweets containing the videos (seawch-42612). OwO
+    if (nativevideocwassificationutiws.hasconsumewvideo(expandedandwasthopuwwsstwings)) {
+      encodedfeatuwes.setfwag(eawwybiwdfiewdconstant.has_consumew_video_fwag);
     }
-    if (NativeVideoClassificationUtils.hasProVideo(canonicalLastHopUrlsStrings)) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_PRO_VIDEO_FLAG);
+    if (nativevideocwassificationutiws.haspwovideo(canonicawwasthopuwwsstwings)) {
+      encodedfeatuwes.setfwag(eawwybiwdfiewdconstant.has_pwo_video_fwag);
     }
-    if (NativeVideoClassificationUtils.hasVine(canonicalLastHopUrlsStrings)) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_VINE_FLAG);
+    if (nativevideocwassificationutiws.hasvine(canonicawwasthopuwwsstwings)) {
+      e-encodedfeatuwes.setfwag(eawwybiwdfiewdconstant.has_vine_fwag);
     }
-    if (NativeVideoClassificationUtils.hasPeriscope(canonicalLastHopUrlsStrings)) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_PERISCOPE_FLAG);
+    if (nativevideocwassificationutiws.haspewiscope(canonicawwasthopuwwsstwings)) {
+      e-encodedfeatuwes.setfwag(eawwybiwdfiewdconstant.has_pewiscope_fwag);
     }
-    if (LinkVisibilityUtils.hasVisibleLink(message.getExpandedUrls())) {
-      encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_VISIBLE_LINK_FLAG);
-    }
-  }
-
-  private static void setExtendedEncodedFeatureIntValue(
-      FeatureSink sink,
-      ImmutableSchemaInterface schema,
-      EarlybirdFieldConstant field,
-      int value) {
-    boolean fieldInSchema = schema.hasField(field.getFieldName());
-    if (fieldInSchema) {
-      FeatureConfiguration featureConfig =
-          schema.getFeatureConfigurationByName(field.getFieldName());
-      sink.setNumericValue(field, Math.min(value, featureConfig.getMaxValue()));
+    i-if (winkvisibiwityutiws.hasvisibwewink(message.getexpandeduwws())) {
+      e-encodedfeatuwes.setfwag(eawwybiwdfiewdconstant.has_visibwe_wink_fwag);
     }
   }
 
-  private static void setEncodedReferenceAuthorId(FeatureSink sink, long referenceAuthorId) {
-    LongIntConverter.IntegerRepresentation ints =
-        LongIntConverter.convertOneLongToTwoInt(referenceAuthorId);
-    sink.setNumericValue(
-        EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT, ints.leastSignificantInt);
-    sink.setNumericValue(
-        EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT, ints.mostSignificantInt);
+  p-pwivate static v-void setextendedencodedfeatuweintvawue(
+      featuwesink sink, (ˆ ﻌ ˆ)♡
+      immutabweschemaintewface schema,
+      eawwybiwdfiewdconstant fiewd, o.O
+      i-int vawue) {
+    b-boowean fiewdinschema = schema.hasfiewd(fiewd.getfiewdname());
+    if (fiewdinschema) {
+      featuweconfiguwation f-featuweconfig =
+          s-schema.getfeatuweconfiguwationbyname(fiewd.getfiewdname());
+      s-sink.setnumewicvawue(fiewd, math.min(vawue, featuweconfig.getmaxvawue()));
+    }
+  }
+
+  p-pwivate static void setencodedwefewenceauthowid(featuwesink sink, wong w-wefewenceauthowid) {
+    w-wongintconvewtew.integewwepwesentation ints =
+        wongintconvewtew.convewtonewongtotwoint(wefewenceauthowid);
+    s-sink.setnumewicvawue(
+        eawwybiwdfiewdconstant.wefewence_authow_id_weast_significant_int, (˘ω˘) i-ints.weastsignificantint);
+    sink.setnumewicvawue(
+        e-eawwybiwdfiewdconstant.wefewence_authow_id_most_significant_int, 😳 ints.mostsignificantint);
   }
 }

@@ -1,101 +1,101 @@
-Home Mixer
+home mixew
 ==========
 
-Home Mixer is the main service used to construct and serve Twitter's Home Timelines. It currently
-powers:
-- For you - best Tweets from people you follow + recommended out-of-network content
-- Following - reverse chronological Tweets from people you follow
-- Lists - reverse chronological Tweets from List members
+home mixew i-is the main sewvice u-used to constwuct a-and sewve t-twittew's home t-timewines. (///ˬ///✿) it cuwwentwy
+p-powews:
+- f-fow you - best t-tweets fwom peopwe you fowwow + wecommended out-of-netwowk content
+- fowwowing - w-wevewse chwonowogicaw tweets fwom peopwe you fowwow
+- w-wists - wevewse chwonowogicaw t-tweets fwom wist membews
 
-Home Mixer is built on Product Mixer, our custom Scala framework that facilitates building
-feeds of content.
+home mixew is buiwt on pwoduct mixew, σωσ o-ouw custom scawa fwamewowk t-that faciwitates b-buiwding
+feeds of content. nyaa~~
 
-## Overview
+## ovewview
 
-The For You recommendation algorithm in Home Mixer involves the following stages:
+the fow you wecommendation awgowithm i-in home mixew invowves the fowwowing stages:
 
-- Candidate Generation - fetch Tweets from various Candidate Sources. For example:
-    - Earlybird Search Index
-    - User Tweet Entity Graph
-    - Cr Mixer
-    - Follow Recommendations Service
-- Feature Hydration
-    - Fetch the ~6000 features needed for ranking
-- Scoring and Ranking using ML model
-- Filters and Heuristics. For example:
-    - Author Diversity
-    - Content Balance (In network vs Out of Network)
-    - Feedback fatigue
-    - Deduplication / previously seen Tweets removal
-    - Visibility Filtering (blocked, muted authors/tweets, NSFW settings)
-- Mixing - integrate Tweets with non-Tweet content
-    - Ads
-    - Who-to-follow modules
-    - Prompts
-- Product Features and Serving
-    - Conversation Modules for replies
-    - Social Context
-    - Timeline Navigation
-    - Edited Tweets
-    - Feedback options
-    - Pagination and cursoring
-    - Observability and logging
-    - Client instructions and content marshalling
+- candidate genewation - fetch tweets f-fwom vawious candidate souwces. ^^;; f-fow exampwe:
+    - e-eawwybiwd s-seawch index
+    - u-usew tweet entity gwaph
+    - cw mixew
+    - f-fowwow wecommendations sewvice
+- featuwe hydwation
+    - f-fetch the ~6000 featuwes nyeeded fow wanking
+- scowing and wanking using mw modew
+- fiwtews a-and heuwistics. ^•ﻌ•^ fow exampwe:
+    - a-authow d-divewsity
+    - c-content bawance (in nyetwowk vs out of nyetwowk)
+    - feedback f-fatigue
+    - dedupwication / p-pweviouswy seen tweets w-wemovaw
+    - v-visibiwity fiwtewing (bwocked, σωσ muted authows/tweets, -.- n-nysfw settings)
+- mixing - i-integwate tweets with nyon-tweet content
+    - a-ads
+    - who-to-fowwow moduwes
+    - p-pwompts
+- pwoduct featuwes a-and sewving
+    - c-convewsation moduwes fow wepwies
+    - sociaw context
+    - timewine nyavigation
+    - edited tweets
+    - f-feedback options
+    - p-pagination and cuwsowing
+    - o-obsewvabiwity a-and wogging
+    - c-cwient instwuctions and content mawshawwing
 
-## Pipeline Structure
+## pipewine stwuctuwe
 
-### General
+### g-genewaw
 
-Product Mixer services like Home Mixer are structured around Pipelines that split the execution
-into transparent and structured steps.
+pwoduct mixew sewvices wike home mixew awe stwuctuwed awound p-pipewines that spwit the execution
+i-into twanspawent a-and stwuctuwed s-steps. ^^;;
 
-Requests first go to Product Pipelines, which are used to select which Mixer Pipeline or
-Recommendation Pipeline to run for a given request. Each Mixer or Recommendation
-Pipeline may run multiple Candidate Pipelines to fetch candidates to include in the response.
+wequests fiwst go t-to pwoduct pipewines, XD w-which awe u-used to sewect w-which mixew pipewine ow
+wecommendation pipewine t-to wun fow a given w-wequest. 🥺 each m-mixew ow wecommendation
+p-pipewine m-may wun muwtipwe candidate pipewines to fetch candidates to incwude i-in the wesponse. òωó
 
-Mixer Pipelines combine the results of multiple heterogeneous Candidate Pipelines together
-(e.g. ads, tweets, users) while Recommendation Pipelines are used to score (via Scoring Pipelines)
-and rank the results of homogenous Candidate Pipelines so that the top ranked ones can be returned.
-These pipelines also marshall candidates into a domain object and then into a transport object
-to return to the caller.
+mixew pipewines combine the wesuwts of muwtipwe hetewogeneous candidate p-pipewines togethew
+(e.g. (ˆ ﻌ ˆ)♡ ads, tweets, -.- usews) whiwe wecommendation p-pipewines awe u-used to scowe (via s-scowing pipewines)
+and wank the w-wesuwts of homogenous candidate p-pipewines so t-that the top wanked ones can be wetuwned. :3
+these pipewines awso mawshaww candidates into a domain o-object and then into a twanspowt o-object
+to wetuwn to the cawwew. ʘwʘ
 
-Candidate Pipelines fetch candidates from underlying Candidate Sources and perform some basic
-operations on the Candidates, such as filtering out unwanted candidates, applying decorations,
-and hydrating features.
+c-candidate pipewines f-fetch candidates fwom undewwying candidate s-souwces and pewfowm s-some basic
+opewations on the c-candidates, 🥺 such a-as fiwtewing out unwanted candidates, >_< appwying decowations, ʘwʘ
+and hydwating featuwes. (˘ω˘)
 
-The sections below describe the high level pipeline structure (non-exhaustive) for the main Home
-Timeline tabs powered by Home Mixer.
+t-the sections b-bewow descwibe t-the high wevew pipewine stwuctuwe (non-exhaustive) f-fow the m-main home
+timewine tabs powewed b-by home mixew. (✿oωo)
 
-### For You
+### fow you
 
-- ForYouProductPipelineConfig
-    - ForYouScoredTweetsMixerPipelineConfig (main orchestration layer - mixes Tweets with ads and users)
-        - ForYouScoredTweetsCandidatePipelineConfig (fetch Tweets)
-            - ScoredTweetsRecommendationPipelineConfig (main Tweet recommendation layer)
-                - Fetch Tweet Candidates
-                    - ScoredTweetsInNetworkCandidatePipelineConfig
-                    - ScoredTweetsTweetMixerCandidatePipelineConfig
-                    - ScoredTweetsUtegCandidatePipelineConfig
-                    - ScoredTweetsFrsCandidatePipelineConfig
-                - Feature Hydration and Scoring
-                    - ScoredTweetsScoringPipelineConfig
-        - ForYouConversationServiceCandidatePipelineConfig (backup reverse chron pipeline in case Scored Tweets fails)
-        - ForYouAdsCandidatePipelineConfig (fetch ads)
-        - ForYouWhoToFollowCandidatePipelineConfig (fetch users to recommend)
+- fowyoupwoductpipewineconfig
+    - fowyouscowedtweetsmixewpipewineconfig (main owchestwation wayew - m-mixes tweets w-with ads and usews)
+        - fowyouscowedtweetscandidatepipewineconfig (fetch tweets)
+            - scowedtweetswecommendationpipewineconfig (main t-tweet wecommendation w-wayew)
+                - fetch tweet candidates
+                    - scowedtweetsinnetwowkcandidatepipewineconfig
+                    - scowedtweetstweetmixewcandidatepipewineconfig
+                    - scowedtweetsutegcandidatepipewineconfig
+                    - s-scowedtweetsfwscandidatepipewineconfig
+                - featuwe hydwation and scowing
+                    - scowedtweetsscowingpipewineconfig
+        - f-fowyouconvewsationsewvicecandidatepipewineconfig (backup wevewse chwon pipewine in c-case scowed tweets f-faiws)
+        - fowyouadscandidatepipewineconfig (fetch ads)
+        - fowyouwhotofowwowcandidatepipewineconfig (fetch u-usews t-to wecommend)
 
-### Following
+### fowwowing
 
-- FollowingProductPipelineConfig
-    - FollowingMixerPipelineConfig
-        - FollowingEarlybirdCandidatePipelineConfig (fetch tweets from Search Index)
-        - ConversationServiceCandidatePipelineConfig (fetch ancestors for conversation modules)
-        - FollowingAdsCandidatePipelineConfig (fetch ads)
-        - FollowingWhoToFollowCandidatePipelineConfig (fetch users to recommend)
+- fowwowingpwoductpipewineconfig
+    - fowwowingmixewpipewineconfig
+        - f-fowwowingeawwybiwdcandidatepipewineconfig (fetch tweets f-fwom seawch index)
+        - convewsationsewvicecandidatepipewineconfig (fetch ancestows fow c-convewsation moduwes)
+        - fowwowingadscandidatepipewineconfig (fetch a-ads)
+        - f-fowwowingwhotofowwowcandidatepipewineconfig (fetch usews to wecommend)
 
-### Lists
+### w-wists
 
-- ListTweetsProductPipelineConfig
-    - ListTweetsMixerPipelineConfig
-        - ListTweetsTimelineServiceCandidatePipelineConfig (fetch tweets from timeline service)
-        - ConversationServiceCandidatePipelineConfig (fetch ancestors for conversation modules)
-        - ListTweetsAdsCandidatePipelineConfig (fetch ads)
+- wisttweetspwoductpipewineconfig
+    - w-wisttweetsmixewpipewineconfig
+        - wisttweetstimewinesewvicecandidatepipewineconfig (fetch t-tweets fwom t-timewine sewvice)
+        - convewsationsewvicecandidatepipewineconfig (fetch ancestows fow convewsation m-moduwes)
+        - wisttweetsadscandidatepipewineconfig (fetch a-ads)

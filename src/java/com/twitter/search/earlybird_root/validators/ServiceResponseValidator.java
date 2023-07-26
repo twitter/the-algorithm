@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird_root.validators;
+package com.twittew.seawch.eawwybiwd_woot.vawidatows;
 
-import com.twitter.util.Future;
+impowt com.twittew.utiw.futuwe;
 
-public interface ServiceResponseValidator<R> {
+p-pubwic intewface s-sewvicewesponsevawidatow<w> {
   /**
-   * Interface for validating Service responses
+   * i-intewface fow vawidating s-sewvice w-wesponses
    */
-  Future<R> validate(R response);
+  f-futuwe<w> vawidate(w w-wesponse);
 }

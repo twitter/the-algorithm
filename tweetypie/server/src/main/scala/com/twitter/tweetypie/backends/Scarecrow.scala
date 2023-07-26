@@ -1,73 +1,73 @@
-package com.twitter.tweetypie
-package backends
+package com.twittew.tweetypie
+package b-backends
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.service.gen.scarecrow.thriftscala.CheckTweetResponse
-import com.twitter.service.gen.scarecrow.thriftscala.Retweet
-import com.twitter.service.gen.scarecrow.thriftscala.TieredAction
-import com.twitter.service.gen.scarecrow.thriftscala.TweetContext
-import com.twitter.service.gen.scarecrow.thriftscala.TweetNew
-import com.twitter.service.gen.scarecrow.{thriftscala => scarecrow}
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.util.RetryPolicyBuilder
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.backoff
+impowt c-com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt c-com.twittew.sewvice.gen.scawecwow.thwiftscawa.checktweetwesponse
+i-impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.wetweet
+impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.tiewedaction
+impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.tweetcontext
+impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.tweetnew
+impowt com.twittew.sewvice.gen.scawecwow.{thwiftscawa => s-scawecwow}
+impowt com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.tweetypie.utiw.wetwypowicybuiwdew
 
-object Scarecrow {
-  import Backend._
+object s-scawecwow {
+  impowt backend._
 
-  type CheckTweet2 =
-    FutureArrow[(scarecrow.TweetNew, scarecrow.TweetContext), scarecrow.CheckTweetResponse]
-  type CheckRetweet = FutureArrow[scarecrow.Retweet, scarecrow.TieredAction]
+  type checktweet2 =
+    futuweawwow[(scawecwow.tweetnew, s-scawecwow.tweetcontext), (U ﹏ U) scawecwow.checktweetwesponse]
+  t-type checkwetweet = f-futuweawwow[scawecwow.wetweet, 😳 scawecwow.tiewedaction]
 
-  def fromClient(client: scarecrow.ScarecrowService.MethodPerEndpoint): Scarecrow =
-    new Scarecrow {
-      val checkTweet2 = FutureArrow((client.checkTweet2 _).tupled)
-      val checkRetweet = FutureArrow(client.checkRetweet _)
-      def ping(): Future[Unit] = client.ping()
+  def fwomcwient(cwient: scawecwow.scawecwowsewvice.methodpewendpoint): scawecwow =
+    n-nyew scawecwow {
+      vaw checktweet2 = futuweawwow((cwient.checktweet2 _).tupwed)
+      vaw checkwetweet = f-futuweawwow(cwient.checkwetweet _)
+      def p-ping(): futuwe[unit] = c-cwient.ping()
     }
 
-  case class Config(
-    readTimeout: Duration,
-    writeTimeout: Duration,
-    timeoutBackoffs: Stream[Duration],
-    scarecrowExceptionBackoffs: Stream[Duration]) {
-    def apply(svc: Scarecrow, ctx: Backend.Context): Scarecrow =
-      new Scarecrow {
-        val checkTweet2: FutureArrow[(TweetNew, TweetContext), CheckTweetResponse] =
-          writePolicy("checkTweet2", ctx)(svc.checkTweet2)
-        val checkRetweet: FutureArrow[Retweet, TieredAction] =
-          writePolicy("checkRetweet", ctx)(svc.checkRetweet)
-        def ping(): Future[Unit] = svc.ping()
+  case c-cwass config(
+    w-weadtimeout: duwation, (ˆ ﻌ ˆ)♡
+    wwitetimeout: duwation, 😳😳😳
+    t-timeoutbackoffs: stweam[duwation], (U ﹏ U)
+    scawecwowexceptionbackoffs: s-stweam[duwation]) {
+    def appwy(svc: scawecwow, (///ˬ///✿) ctx: backend.context): scawecwow =
+      nyew s-scawecwow {
+        vaw checktweet2: f-futuweawwow[(tweetnew, 😳 t-tweetcontext), 😳 c-checktweetwesponse] =
+          wwitepowicy("checktweet2", σωσ ctx)(svc.checktweet2)
+        vaw checkwetweet: f-futuweawwow[wetweet, rawr x3 t-tiewedaction] =
+          wwitepowicy("checkwetweet", OwO c-ctx)(svc.checkwetweet)
+        d-def ping(): futuwe[unit] = svc.ping()
       }
 
-    private[this] def readPolicy[A, B](name: String, ctx: Context): Builder[A, B] =
-      defaultPolicy(name, readTimeout, readRetryPolicy, ctx)
+    p-pwivate[this] def weadpowicy[a, /(^•ω•^) b-b](name: stwing, 😳😳😳 ctx: context): buiwdew[a, ( ͡o ω ͡o ) b] =
+      d-defauwtpowicy(name, >_< weadtimeout, >w< w-weadwetwypowicy, rawr ctx)
 
-    private[this] def writePolicy[A, B](name: String, ctx: Context): Builder[A, B] =
-      defaultPolicy(name, writeTimeout, nullRetryPolicy, ctx)
+    p-pwivate[this] d-def wwitepowicy[a, 😳 b](name: stwing, >w< ctx: context): buiwdew[a, (⑅˘꒳˘) b] =
+      defauwtpowicy(name, OwO wwitetimeout, (ꈍᴗꈍ) nyuwwwetwypowicy, 😳 ctx)
 
-    private[this] def readRetryPolicy[B]: RetryPolicy[Try[B]] =
-      RetryPolicy.combine[Try[B]](
-        RetryPolicyBuilder.timeouts[B](timeoutBackoffs),
-        RetryPolicy.backoff(Backoff.fromStream(scarecrowExceptionBackoffs)) {
-          case Throw(ex: scarecrow.InternalServerError) => true
+    pwivate[this] d-def weadwetwypowicy[b]: w-wetwypowicy[twy[b]] =
+      wetwypowicy.combine[twy[b]](
+        w-wetwypowicybuiwdew.timeouts[b](timeoutbackoffs),
+        w-wetwypowicy.backoff(backoff.fwomstweam(scawecwowexceptionbackoffs)) {
+          c-case thwow(ex: scawecwow.intewnawsewvewewwow) => twue
         }
       )
 
-    private[this] def nullRetryPolicy[B]: RetryPolicy[Try[B]] =
-      // retry policy that runs once, and will not retry on any exception
-      RetryPolicy.backoff(Backoff.fromStream(Stream(0.milliseconds))) {
-        case Throw(_) => false
+    pwivate[this] d-def nyuwwwetwypowicy[b]: wetwypowicy[twy[b]] =
+      // wetwy powicy that wuns once, 😳😳😳 and wiww n-not wetwy on any exception
+      w-wetwypowicy.backoff(backoff.fwomstweam(stweam(0.miwwiseconds))) {
+        c-case t-thwow(_) => fawse
       }
   }
 
-  implicit val warmup: Warmup[Scarecrow] = Warmup[Scarecrow]("scarecrow")(_.ping())
+  impwicit vaw w-wawmup: wawmup[scawecwow] = w-wawmup[scawecwow]("scawecwow")(_.ping())
 }
 
-trait Scarecrow {
-  import Scarecrow._
-  val checkTweet2: CheckTweet2
-  val checkRetweet: CheckRetweet
-  def ping(): Future[Unit]
+t-twait scawecwow {
+  i-impowt scawecwow._
+  vaw checktweet2: c-checktweet2
+  v-vaw checkwetweet: c-checkwetweet
+  d-def ping(): futuwe[unit]
 }

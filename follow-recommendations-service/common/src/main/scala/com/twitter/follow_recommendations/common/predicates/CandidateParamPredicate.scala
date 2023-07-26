@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.twittew.fowwow_wecommendations.common.pwedicates
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.pwedicatewesuwt
+i-impowt com.twittew.fowwow_wecommendations.common.modews.fiwtewweason
+i-impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.timewines.configapi.haspawams
+i-impowt com.twittew.timewines.configapi.pawam
 
-class CandidateParamPredicate[A <: HasParams](
-  param: Param[Boolean],
-  reason: FilterReason)
-    extends Predicate[A] {
-  override def apply(candidate: A): Stitch[PredicateResult] = {
-    if (candidate.params(param)) {
-      Stitch.value(PredicateResult.Valid)
-    } else {
-      Stitch.value(PredicateResult.Invalid(Set(reason)))
+cwass candidatepawampwedicate[a <: haspawams](
+  pawam: p-pawam[boowean], ^^;;
+  weason: fiwtewweason)
+    extends p-pwedicate[a] {
+  ovewwide def a-appwy(candidate: a): stitch[pwedicatewesuwt] = {
+    if (candidate.pawams(pawam)) {
+      stitch.vawue(pwedicatewesuwt.vawid)
+    } e-ewse {
+      stitch.vawue(pwedicatewesuwt.invawid(set(weason)))
     }
   }
 }

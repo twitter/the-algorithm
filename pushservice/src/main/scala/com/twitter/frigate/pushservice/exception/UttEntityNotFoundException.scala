@@ -1,12 +1,12 @@
-package com.twitter.frigate.pushservice.exception
+package com.twittew.fwigate.pushsewvice.exception
 
-import scala.util.control.NoStackTrace
+impowt scawa.utiw.contwow.nostacktwace
 
 /**
- * Throw exception if UttEntity is not found where it might be a required data field
+ * t-thwow exception i-if uttentity is n-nyot found whewe i-it might be a w-wequiwed data fiewd
  *
- * @param message Exception message
+ * @pawam m-message exception m-message
  */
-class UttEntityNotFoundException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+cwass u-uttentitynotfoundexception(pwivate vaw message: stwing)
+    extends exception(message)
+    with nyostacktwace

@@ -1,53 +1,53 @@
-package com.twitter.timelineranker.core
+package com.twittew.timewinewankew.cowe
 
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Future
+impowt com.twittew.timewines.modew.usewid
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * Similar to FollowGraphData but makes available its fields as separate futures.
+ * s-simiwaw t-to fowwowgwaphdata b-but makes avaiwabwe i-its fiewds a-as sepawate futuwes. /(^•ω•^)
  */
-case class FollowGraphDataFuture(
-  userId: UserId,
-  followedUserIdsFuture: Future[Seq[UserId]],
-  mutuallyFollowingUserIdsFuture: Future[Set[UserId]],
-  mutedUserIdsFuture: Future[Set[UserId]],
-  retweetsMutedUserIdsFuture: Future[Set[UserId]]) {
+c-case c-cwass fowwowgwaphdatafutuwe(
+  usewid: usewid,
+  fowwowedusewidsfutuwe: futuwe[seq[usewid]], rawr x3
+  mutuawwyfowwowingusewidsfutuwe: f-futuwe[set[usewid]], (U ﹏ U)
+  mutedusewidsfutuwe: futuwe[set[usewid]], (U ﹏ U)
+  w-wetweetsmutedusewidsfutuwe: futuwe[set[usewid]]) {
 
-  def inNetworkUserIdsFuture: Future[Seq[UserId]] = followedUserIdsFuture.map(_ :+ userId)
+  d-def innetwowkusewidsfutuwe: futuwe[seq[usewid]] = fowwowedusewidsfutuwe.map(_ :+ usewid)
 
-  def get(): Future[FollowGraphData] = {
-    Future
+  d-def get(): futuwe[fowwowgwaphdata] = {
+    futuwe
       .join(
-        followedUserIdsFuture,
-        mutuallyFollowingUserIdsFuture,
-        mutedUserIdsFuture,
-        retweetsMutedUserIdsFuture
+        fowwowedusewidsfutuwe, (⑅˘꒳˘)
+        m-mutuawwyfowwowingusewidsfutuwe, òωó
+        m-mutedusewidsfutuwe, ʘwʘ
+        wetweetsmutedusewidsfutuwe
       )
       .map {
-        case (followedUserIds, mutuallyFollowingUserIds, mutedUserIds, retweetsMutedUserIds) =>
-          FollowGraphData(
-            userId,
-            followedUserIds,
-            mutuallyFollowingUserIds,
-            mutedUserIds,
-            retweetsMutedUserIds
+        case (fowwowedusewids, /(^•ω•^) mutuawwyfowwowingusewids, ʘwʘ mutedusewids, σωσ w-wetweetsmutedusewids) =>
+          fowwowgwaphdata(
+            usewid, OwO
+            fowwowedusewids, 😳😳😳
+            mutuawwyfowwowingusewids, 😳😳😳
+            m-mutedusewids, o.O
+            wetweetsmutedusewids
           )
       }
   }
 }
 
-object FollowGraphDataFuture {
-  private def mkEmptyFuture(field: String) = {
-    Future.exception(
-      new IllegalStateException(s"FollowGraphDataFuture field $field accessed without being set")
+o-object fowwowgwaphdatafutuwe {
+  p-pwivate def m-mkemptyfutuwe(fiewd: s-stwing) = {
+    futuwe.exception(
+      nyew iwwegawstateexception(s"fowwowgwaphdatafutuwe f-fiewd $fiewd accessed without being set")
     )
   }
 
-  val EmptyFollowGraphDataFuture: FollowGraphDataFuture = FollowGraphDataFuture(
-    userId = 0L,
-    followedUserIdsFuture = mkEmptyFuture("followedUserIdsFuture"),
-    mutuallyFollowingUserIdsFuture = mkEmptyFuture("mutuallyFollowingUserIdsFuture"),
-    mutedUserIdsFuture = mkEmptyFuture("mutedUserIdsFuture"),
-    retweetsMutedUserIdsFuture = mkEmptyFuture("retweetsMutedUserIdsFuture")
+  v-vaw emptyfowwowgwaphdatafutuwe: fowwowgwaphdatafutuwe = fowwowgwaphdatafutuwe(
+    usewid = 0w, ( ͡o ω ͡o )
+    fowwowedusewidsfutuwe = mkemptyfutuwe("fowwowedusewidsfutuwe"), (U ﹏ U)
+    m-mutuawwyfowwowingusewidsfutuwe = mkemptyfutuwe("mutuawwyfowwowingusewidsfutuwe"), (///ˬ///✿)
+    m-mutedusewidsfutuwe = m-mkemptyfutuwe("mutedusewidsfutuwe"), >w<
+    w-wetweetsmutedusewidsfutuwe = mkemptyfutuwe("wetweetsmutedusewidsfutuwe")
   )
 }

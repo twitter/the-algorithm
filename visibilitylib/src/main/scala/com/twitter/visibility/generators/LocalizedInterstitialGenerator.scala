@@ -1,151 +1,151 @@
-package com.twitter.visibility.generators
+package com.twittew.visibiwity.genewatows
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common.actions.LocalizedMessage
-import com.twitter.visibility.common.actions.MessageLink
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.results.richtext.PublicInterestReasonToRichText
-import com.twitter.visibility.results.translation.LearnMoreLink
-import com.twitter.visibility.results.translation.Resource
-import com.twitter.visibility.results.translation.SafetyResultReasonToResource
-import com.twitter.visibility.results.translation.Translator
-import com.twitter.visibility.rules.EmergencyDynamicInterstitial
-import com.twitter.visibility.rules.Interstitial
-import com.twitter.visibility.rules.InterstitialLimitedEngagements
-import com.twitter.visibility.rules.PublicInterest
-import com.twitter.visibility.rules.Reason
-import com.twitter.visibility.rules.TweetInterstitial
+impowt c-com.twittew.decidew.decidew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt com.twittew.visibiwity.common.actions.wocawizedmessage
+i-impowt com.twittew.visibiwity.common.actions.messagewink
+i-impowt com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+impowt com.twittew.visibiwity.wesuwts.wichtext.pubwicintewestweasontowichtext
+impowt com.twittew.visibiwity.wesuwts.twanswation.weawnmowewink
+impowt com.twittew.visibiwity.wesuwts.twanswation.wesouwce
+i-impowt com.twittew.visibiwity.wesuwts.twanswation.safetywesuwtweasontowesouwce
+impowt c-com.twittew.visibiwity.wesuwts.twanswation.twanswatow
+impowt com.twittew.visibiwity.wuwes.emewgencydynamicintewstitiaw
+i-impowt com.twittew.visibiwity.wuwes.intewstitiaw
+impowt com.twittew.visibiwity.wuwes.intewstitiawwimitedengagements
+impowt com.twittew.visibiwity.wuwes.pubwicintewest
+i-impowt com.twittew.visibiwity.wuwes.weason
+i-impowt c-com.twittew.visibiwity.wuwes.tweetintewstitiaw
 
-object LocalizedInterstitialGenerator {
-  def apply(
-    visibilityDecider: Decider,
-    baseStatsReceiver: StatsReceiver,
-  ): LocalizedInterstitialGenerator = {
-    new LocalizedInterstitialGenerator(visibilityDecider, baseStatsReceiver)
+object wocawizedintewstitiawgenewatow {
+  def appwy(
+    visibiwitydecidew: decidew, nyaa~~
+    b-basestatsweceivew: statsweceivew, OwO
+  ): wocawizedintewstitiawgenewatow = {
+    nyew wocawizedintewstitiawgenewatow(visibiwitydecidew, rawr x3 basestatsweceivew)
   }
 }
 
-class LocalizedInterstitialGenerator private (
-  val visibilityDecider: Decider,
-  val baseStatsReceiver: StatsReceiver) {
+c-cwass wocawizedintewstitiawgenewatow pwivate (
+  v-vaw visibiwitydecidew: d-decidew, XD
+  vaw basestatsweceivew: s-statsweceivew) {
 
-  private val visibilityDeciderGates = VisibilityDeciderGates(visibilityDecider)
-  private val localizationStatsReceiver = baseStatsReceiver.scope("interstitial_localization")
-  private val publicInterestInterstitialStats =
-    localizationStatsReceiver.scope("public_interest_copy")
-  private val emergencyDynamicInterstitialStats =
-    localizationStatsReceiver.scope("emergency_dynamic_copy")
-  private val regularInterstitialStats = localizationStatsReceiver.scope("interstitial_copy")
+  p-pwivate vaw visibiwitydecidewgates = visibiwitydecidewgates(visibiwitydecidew)
+  p-pwivate vaw wocawizationstatsweceivew = basestatsweceivew.scope("intewstitiaw_wocawization")
+  pwivate vaw p-pubwicintewestintewstitiawstats =
+    wocawizationstatsweceivew.scope("pubwic_intewest_copy")
+  pwivate vaw emewgencydynamicintewstitiawstats =
+    wocawizationstatsweceivew.scope("emewgency_dynamic_copy")
+  pwivate vaw weguwawintewstitiawstats = wocawizationstatsweceivew.scope("intewstitiaw_copy")
 
-  def apply(visibilityResult: VisibilityResult, languageTag: String): VisibilityResult = {
-    if (!visibilityDeciderGates.enableLocalizedInterstitialGenerator()) {
-      return visibilityResult
+  d-def appwy(visibiwitywesuwt: visibiwitywesuwt, σωσ wanguagetag: s-stwing): v-visibiwitywesuwt = {
+    i-if (!visibiwitydecidewgates.enabwewocawizedintewstitiawgenewatow()) {
+      wetuwn visibiwitywesuwt
     }
 
-    visibilityResult.verdict match {
-      case ipi: InterstitialLimitedEngagements if PublicInterest.Reasons.contains(ipi.reason) =>
-        visibilityResult.copy(
-          verdict = ipi.copy(
-            localizedMessage = Some(localizePublicInterestCopyInResult(ipi, languageTag))
+    visibiwitywesuwt.vewdict m-match {
+      c-case ipi: intewstitiawwimitedengagements if p-pubwicintewest.weasons.contains(ipi.weason) =>
+        v-visibiwitywesuwt.copy(
+          vewdict = i-ipi.copy(
+            wocawizedmessage = s-some(wocawizepubwicintewestcopyinwesuwt(ipi, (U ᵕ U❁) wanguagetag))
           ))
-      case edi: EmergencyDynamicInterstitial =>
-        visibilityResult.copy(
-          verdict = EmergencyDynamicInterstitial(
-            edi.copy,
-            edi.linkOpt,
-            Some(localizeEmergencyDynamicCopyInResult(edi, languageTag))
+      case edi: e-emewgencydynamicintewstitiaw =>
+        visibiwitywesuwt.copy(
+          v-vewdict = emewgencydynamicintewstitiaw(
+            e-edi.copy,
+            e-edi.winkopt, (U ﹏ U)
+            some(wocawizeemewgencydynamiccopyinwesuwt(edi, :3 wanguagetag))
           ))
-      case interstitial: Interstitial =>
-        visibilityResult.copy(
-          verdict = interstitial.copy(
-            localizedMessage = localizeInterstitialCopyInResult(interstitial, languageTag)
+      case intewstitiaw: intewstitiaw =>
+        visibiwitywesuwt.copy(
+          vewdict = intewstitiaw.copy(
+            w-wocawizedmessage = w-wocawizeintewstitiawcopyinwesuwt(intewstitiaw, ( ͡o ω ͡o ) wanguagetag)
           ))
-      case tweetInterstitial: TweetInterstitial if tweetInterstitial.interstitial.isDefined =>
-        tweetInterstitial.interstitial.get match {
-          case ipi: InterstitialLimitedEngagements if PublicInterest.Reasons.contains(ipi.reason) =>
-            visibilityResult.copy(
-              verdict = tweetInterstitial.copy(
-                interstitial = Some(
-                  ipi.copy(
-                    localizedMessage = Some(localizePublicInterestCopyInResult(ipi, languageTag))
+      c-case tweetintewstitiaw: t-tweetintewstitiaw i-if tweetintewstitiaw.intewstitiaw.isdefined =>
+        tweetintewstitiaw.intewstitiaw.get match {
+          case i-ipi: intewstitiawwimitedengagements if pubwicintewest.weasons.contains(ipi.weason) =>
+            visibiwitywesuwt.copy(
+              vewdict = tweetintewstitiaw.copy(
+                i-intewstitiaw = some(
+                  i-ipi.copy(
+                    wocawizedmessage = s-some(wocawizepubwicintewestcopyinwesuwt(ipi, σωσ wanguagetag))
                   ))
               ))
-          case edi: EmergencyDynamicInterstitial =>
-            visibilityResult.copy(
-              verdict = tweetInterstitial.copy(
-                interstitial = Some(
-                  EmergencyDynamicInterstitial(
-                    edi.copy,
-                    edi.linkOpt,
-                    Some(localizeEmergencyDynamicCopyInResult(edi, languageTag))
+          c-case edi: emewgencydynamicintewstitiaw =>
+            v-visibiwitywesuwt.copy(
+              v-vewdict = t-tweetintewstitiaw.copy(
+                i-intewstitiaw = some(
+                  emewgencydynamicintewstitiaw(
+                    e-edi.copy, >w<
+                    e-edi.winkopt, 😳😳😳
+                    s-some(wocawizeemewgencydynamiccopyinwesuwt(edi, OwO w-wanguagetag))
                   ))
               ))
-          case interstitial: Interstitial =>
-            visibilityResult.copy(
-              verdict = tweetInterstitial.copy(
-                interstitial = Some(
-                  interstitial.copy(
-                    localizedMessage = localizeInterstitialCopyInResult(interstitial, languageTag)
+          case i-intewstitiaw: intewstitiaw =>
+            visibiwitywesuwt.copy(
+              vewdict = tweetintewstitiaw.copy(
+                i-intewstitiaw = some(
+                  intewstitiaw.copy(
+                    wocawizedmessage = wocawizeintewstitiawcopyinwesuwt(intewstitiaw, 😳 wanguagetag)
                   ))
               ))
-          case _ => visibilityResult
+          c-case _ => visibiwitywesuwt
         }
-      case _ => visibilityResult
+      case _ => visibiwitywesuwt
     }
   }
 
-  private def localizeEmergencyDynamicCopyInResult(
-    edi: EmergencyDynamicInterstitial,
-    languageTag: String
-  ): LocalizedMessage = {
-    val text = edi.linkOpt
-      .map(_ => s"${edi.copy} {${Resource.LearnMorePlaceholder}}")
-      .getOrElse(edi.copy)
+  pwivate def w-wocawizeemewgencydynamiccopyinwesuwt(
+    e-edi: e-emewgencydynamicintewstitiaw, 😳😳😳
+    wanguagetag: stwing
+  ): w-wocawizedmessage = {
+    vaw text = edi.winkopt
+      .map(_ => s-s"${edi.copy} {${wesouwce.weawnmowepwacehowdew}}")
+      .getowewse(edi.copy)
 
-    val messageLinks = edi.linkOpt
-      .map { link =>
-        val learnMoreText = Translator.translate(LearnMoreLink, languageTag)
-        Seq(MessageLink(Resource.LearnMorePlaceholder, learnMoreText, link))
-      }.getOrElse(Seq.empty)
+    v-vaw messagewinks = edi.winkopt
+      .map { wink =>
+        vaw weawnmowetext = twanswatow.twanswate(weawnmowewink, w-wanguagetag)
+        seq(messagewink(wesouwce.weawnmowepwacehowdew, (˘ω˘) w-weawnmowetext, ʘwʘ wink))
+      }.getowewse(seq.empty)
 
-    emergencyDynamicInterstitialStats.counter("localized").incr()
-    LocalizedMessage(text, languageTag, messageLinks)
+    e-emewgencydynamicintewstitiawstats.countew("wocawized").incw()
+    w-wocawizedmessage(text, ( ͡o ω ͡o ) wanguagetag, o.O messagewinks)
   }
 
-  private def localizePublicInterestCopyInResult(
-    ipi: InterstitialLimitedEngagements,
-    languageTag: String
-  ): LocalizedMessage = {
-    val safetyResultReason = PublicInterest.ReasonToSafetyResultReason(ipi.reason)
-    val text = Translator.translate(
-      SafetyResultReasonToResource.resource(safetyResultReason),
-      languageTag,
+  p-pwivate d-def wocawizepubwicintewestcopyinwesuwt(
+    ipi: i-intewstitiawwimitedengagements, >w<
+    w-wanguagetag: stwing
+  ): wocawizedmessage = {
+    vaw safetywesuwtweason = pubwicintewest.weasontosafetywesuwtweason(ipi.weason)
+    vaw text = t-twanswatow.twanswate(
+      s-safetywesuwtweasontowesouwce.wesouwce(safetywesuwtweason), 😳
+      w-wanguagetag, 🥺
     )
 
-    val learnMoreLink = PublicInterestReasonToRichText.toLearnMoreLink(safetyResultReason)
-    val learnMoreText = Translator.translate(LearnMoreLink, languageTag)
-    val messageLinks = Seq(MessageLink(Resource.LearnMorePlaceholder, learnMoreText, learnMoreLink))
+    vaw weawnmowewink = pubwicintewestweasontowichtext.toweawnmowewink(safetywesuwtweason)
+    v-vaw weawnmowetext = t-twanswatow.twanswate(weawnmowewink, rawr x3 wanguagetag)
+    vaw m-messagewinks = seq(messagewink(wesouwce.weawnmowepwacehowdew, o.O weawnmowetext, rawr weawnmowewink))
 
-    publicInterestInterstitialStats.counter("localized").incr()
-    LocalizedMessage(text, languageTag, messageLinks)
+    pubwicintewestintewstitiawstats.countew("wocawized").incw()
+    w-wocawizedmessage(text, ʘwʘ w-wanguagetag, 😳😳😳 messagewinks)
   }
 
-  private def localizeInterstitialCopyInResult(
-    interstitial: Interstitial,
-    languageTag: String
-  ): Option[LocalizedMessage] = {
-    val localizedMessageOpt = Reason
-      .toInterstitialReason(interstitial.reason)
-      .flatMap(InterstitialReasonToLocalizedMessage(_, languageTag))
+  pwivate d-def wocawizeintewstitiawcopyinwesuwt(
+    i-intewstitiaw: intewstitiaw, ^^;;
+    wanguagetag: stwing
+  ): option[wocawizedmessage] = {
+    vaw wocawizedmessageopt = w-weason
+      .tointewstitiawweason(intewstitiaw.weason)
+      .fwatmap(intewstitiawweasontowocawizedmessage(_, o.O wanguagetag))
 
-    if (localizedMessageOpt.isDefined) {
-      regularInterstitialStats.counter("localized").incr()
-      localizedMessageOpt
-    } else {
-      regularInterstitialStats.counter("empty").incr()
-      None
+    if (wocawizedmessageopt.isdefined) {
+      weguwawintewstitiawstats.countew("wocawized").incw()
+      wocawizedmessageopt
+    } e-ewse {
+      weguwawintewstitiawstats.countew("empty").incw()
+      nyone
     }
   }
 }

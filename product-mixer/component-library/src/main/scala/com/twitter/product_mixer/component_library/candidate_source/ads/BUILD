@@ -1,18 +1,18 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
-        "src/thrift/com/twitter/ads/adserver:adserver_common-scala",
-        "src/thrift/com/twitter/ads/adserver:adserver_rpc-scala",
-        "strato/config/columns/ads/admixer:admixer-strato-client",
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    t-tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "3wdpawty/jvm/javax/inject:javax.inject",
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/candidate_souwce/stwato", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/ads/adsewvew:adsewvew_common-scawa", UwU
+        "swc/thwift/com/twittew/ads/adsewvew:adsewvew_wpc-scawa",
+        "stwato/config/cowumns/ads/admixew:admixew-stwato-cwient", rawr x3
     ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
-        "src/thrift/com/twitter/ads/adserver:adserver_common-scala",
-        "src/thrift/com/twitter/ads/adserver:adserver_rpc-scala",
-    ],
+    e-expowts = [
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/candidate_souwce/stwato", rawr
+        "swc/thwift/com/twittew/ads/adsewvew:adsewvew_common-scawa", σωσ
+        "swc/thwift/com/twittew/ads/adsewvew:adsewvew_wpc-scawa", σωσ
+    ], >_<
 )

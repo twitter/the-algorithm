@@ -1,74 +1,74 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.FatiguePredicate._
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.{NotificationDisplayLocation => DisplayLocation}
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.util.Duration
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.pwedicate.fatiguepwedicate._
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+i-impowt com.twittew.fwigate.thwiftscawa.{notificationdispwaywocation => d-dispwaywocation}
+i-impowt c-com.twittew.hewmit.pwedicate.namedpwedicate
+i-impowt com.twittew.utiw.duwation
 
-object FatiguePredicate {
+object fatiguepwedicate {
 
   /**
-   * Predicate that operates on a candidate, and applies custom fatigue rules for the slice of history only
-   * corresponding to a given rec type.
+   * pwedicate that opewates on a candidate, a-and appwies custom fatigue wuwes fow the swice of h-histowy onwy
+   * cowwesponding t-to a given wec type. :3
    *
-   * @param interval
-   * @param maxInInterval
-   * @param minInterval
-   * @param recommendationType
-   * @param statsReceiver
-   * @return
+   * @pawam intewvaw
+   * @pawam maxinintewvaw
+   * @pawam m-minintewvaw
+   * @pawam wecommendationtype
+   * @pawam statsweceivew
+   * @wetuwn
    */
-  def recTypeOnly(
-    interval: Duration,
-    maxInInterval: Int,
-    minInterval: Duration,
-    recommendationType: CommonRecommendationType,
-    notificationDisplayLocation: DisplayLocation = DisplayLocation.PushToMobileDevice
+  d-def wectypeonwy(
+    i-intewvaw: duwation, 😳😳😳
+    maxinintewvaw: int, (˘ω˘)
+    minintewvaw: duwation, ^^
+    w-wecommendationtype: commonwecommendationtype, :3
+    nyotificationdispwaywocation: dispwaywocation = dispwaywocation.pushtomobiwedevice
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    build(
-      interval = interval,
-      maxInInterval = maxInInterval,
-      minInterval = minInterval,
-      filterHistory = recOnlyFilter(recommendationType),
-      notificationDisplayLocation = notificationDisplayLocation
-    ).flatContraMap { candidate: PushCandidate => candidate.target.history }
-      .withStats(statsReceiver.scope(s"predicate_${recTypeOnlyFatigue}"))
-      .withName(recTypeOnlyFatigue)
+    impwicit s-statsweceivew: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate] = {
+    b-buiwd(
+      intewvaw = i-intewvaw, -.-
+      m-maxinintewvaw = maxinintewvaw,
+      minintewvaw = m-minintewvaw, 😳
+      fiwtewhistowy = weconwyfiwtew(wecommendationtype), mya
+      nyotificationdispwaywocation = nyotificationdispwaywocation
+    ).fwatcontwamap { c-candidate: pushcandidate => candidate.tawget.histowy }
+      .withstats(statsweceivew.scope(s"pwedicate_${wectypeonwyfatigue}"))
+      .withname(wectypeonwyfatigue)
   }
 
   /**
-   * Predicate that operates on a candidate, and applies custom fatigue rules for the slice of history only
-   * corresponding to specified rec types
+   * pwedicate that opewates on a candidate, (˘ω˘) and appwies c-custom fatigue wuwes fow the s-swice of histowy o-onwy
+   * cowwesponding t-to specified wec types
    *
-   * @param interval
-   * @param maxInInterval
-   * @param minInterval
-   * @param statsReceiver
-   * @return
+   * @pawam intewvaw
+   * @pawam maxinintewvaw
+   * @pawam m-minintewvaw
+   * @pawam s-statsweceivew
+   * @wetuwn
    */
-  def recTypeSetOnly(
-    interval: Duration,
-    maxInInterval: Int,
-    minInterval: Duration,
-    recTypes: Set[CommonRecommendationType],
-    notificationDisplayLocation: DisplayLocation = DisplayLocation.PushToMobileDevice
+  def wectypesetonwy(
+    i-intewvaw: duwation, >_<
+    m-maxinintewvaw: int, -.-
+    m-minintewvaw: duwation, 🥺
+    wectypes: s-set[commonwecommendationtype], (U ﹏ U)
+    nyotificationdispwaywocation: dispwaywocation = d-dispwaywocation.pushtomobiwedevice
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "rec_type_set_fatigue"
-    build(
-      interval = interval,
-      maxInInterval = maxInInterval,
-      minInterval = minInterval,
-      filterHistory = recTypesOnlyFilter(recTypes),
-      notificationDisplayLocation = notificationDisplayLocation
-    ).flatContraMap { candidate: PushCandidate => candidate.target.history }
-      .withStats(statsReceiver.scope(s"${name}_predicate"))
-      .withName(name)
+    impwicit s-statsweceivew: statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    v-vaw nyame = "wec_type_set_fatigue"
+    b-buiwd(
+      intewvaw = intewvaw, >w<
+      maxinintewvaw = maxinintewvaw, mya
+      minintewvaw = minintewvaw,
+      fiwtewhistowy = w-wectypesonwyfiwtew(wectypes), >w<
+      n-nyotificationdispwaywocation = nyotificationdispwaywocation
+    ).fwatcontwamap { c-candidate: pushcandidate => c-candidate.tawget.histowy }
+      .withstats(statsweceivew.scope(s"${name}_pwedicate"))
+      .withname(name)
   }
 }

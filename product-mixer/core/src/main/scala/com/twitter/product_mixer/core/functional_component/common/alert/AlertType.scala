@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt
 
 /**
- * [[AlertType]] is used to indicate which metric an alert is for
+ * [[awewttype]] is u-used to indicate w-which metwic an a-awewt is fow
  *
- * @note adding new [[AlertType]]s requires updating the dashboard generation code
+ * @note a-adding n-nyew [[awewttype]]s w-wequiwes updating t-the dashboawd g-genewation code
  */
-sealed trait AlertType { val metricType: String }
+seawed twait awewttype { vaw metwictype: stwing }
 
-/** Monitors the latency */
-case object Latency extends AlertType { override val metricType: String = "Latency" }
+/** m-monitows the watency */
+case object watency extends a-awewttype { ovewwide vaw metwictype: s-stwing = "watency" }
 
-/** Monitors the success rate __excluding__ client failures */
-case object SuccessRate extends AlertType { override val metricType: String = "SuccessRate" }
+/** monitows the success wate __excwuding__ cwient f-faiwuwes */
+case object successwate e-extends awewttype { o-ovewwide vaw metwictype: stwing = "successwate" }
 
-/** Monitors the throughput */
-case object Throughput extends AlertType { override val metricType: String = "Throughput" }
+/** monitows the thwoughput */
+case o-object thwoughput extends awewttype { ovewwide vaw metwictype: stwing = "thwoughput" }
 
-/** Monitors the empty response rate */
-case object EmptyResponseRate extends AlertType {
-  override val metricType: String = "EmptyResponseRate"
+/** m-monitows the empty w-wesponse wate */
+c-case object emptywesponsewate e-extends awewttype {
+  o-ovewwide vaw metwictype: stwing = "emptywesponsewate"
 }
 
-/** Monitors the empty response size */
-case object ResponseSize extends AlertType { override val metricType: String = "ResponseSize" }
+/** monitows the e-empty wesponse size */
+case object wesponsesize e-extends awewttype { ovewwide vaw metwictype: stwing = "wesponsesize" }

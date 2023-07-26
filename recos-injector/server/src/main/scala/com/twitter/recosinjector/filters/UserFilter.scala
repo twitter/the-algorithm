@@ -1,69 +1,69 @@
-package com.twitter.recosinjector.filters
+package com.twittew.wecosinjectow.fiwtews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.{LabelValue, User}
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.{wabewvawue, >_< usew}
+i-impowt com.twittew.wecosinjectow.cwients.gizmoduck
+i-impowt com.twittew.utiw.futuwe
 
-class UserFilter(
-  gizmoduck: Gizmoduck
+c-cwass usewfiwtew(
+  g-gizmoduck: g-gizmoduck
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val requests = stats.counter("requests")
-  private val filtered = stats.counter("filtered")
+  impwicit statsweceivew: statsweceivew) {
+  pwivate vaw stats = statsweceivew.scope(this.getcwass.getsimpwename)
+  p-pwivate vaw wequests = stats.countew("wequests")
+  pwivate v-vaw fiwtewed = stats.countew("fiwtewed")
 
-  private def isUnsafe(user: User): Boolean =
-    user.safety.exists { s =>
-      s.deactivated || s.suspended || s.restricted || s.nsfwUser || s.nsfwAdmin || s.isProtected
+  pwivate d-def isunsafe(usew: usew): boowean =
+    usew.safety.exists { s =>
+      s.deactivated || s-s.suspended || s.westwicted || s.nsfwusew || s.nsfwadmin || s-s.ispwotected
     }
 
-  private def hasNsfwHighPrecisionLabel(user: User): Boolean =
-    user.labels.exists {
-      _.labels.exists(_.labelValue == LabelValue.NsfwHighPrecision)
+  p-pwivate def hasnsfwhighpwecisionwabew(usew: usew): boowean =
+    usew.wabews.exists {
+      _.wabews.exists(_.wabewvawue == wabewvawue.nsfwhighpwecision)
     }
 
   /**
-   * NOTE: This will by-pass Gizmoduck's safety level, and might allow invalid users to pass filter.
-   * Consider using filterByUserId instead.
-   * Return true if the user is valid, otherwise return false.
-   * It will first attempt to use the user object provided by the caller, and will call Gizmoduck
-   * to back fill if the caller does not provide it. This helps reduce Gizmoduck traffic.
+   * note: this wiww by-pass gizmoduck's s-safety wevew, -.- and might awwow invawid usews to pass fiwtew. 🥺
+   * considew using f-fiwtewbyusewid instead. (U ﹏ U)
+   * w-wetuwn twue if the u-usew is vawid, >w< o-othewwise wetuwn f-fawse. mya
+   * it wiww fiwst attempt to use the u-usew object pwovided by the cawwew, >w< and wiww caww g-gizmoduck
+   * to back fiww if the cawwew does nyot pwovide it. nyaa~~ this hewps weduce gizmoduck twaffic. (✿oωo)
    */
-  def filterByUser(
-    userId: Long,
-    userOpt: Option[User] = None
-  ): Future[Boolean] = {
-    requests.incr()
-    val userFut = userOpt match {
-      case Some(user) => Future(Some(user))
-      case _ => gizmoduck.getUser(userId)
+  def f-fiwtewbyusew(
+    usewid: wong, ʘwʘ
+    u-usewopt: o-option[usew] = nyone
+  ): f-futuwe[boowean] = {
+    wequests.incw()
+    vaw usewfut = usewopt match {
+      c-case some(usew) => f-futuwe(some(usew))
+      case _ => g-gizmoduck.getusew(usewid)
     }
 
-    userFut.map(_.exists { user =>
-      val isValidUser = !isUnsafe(user) && !hasNsfwHighPrecisionLabel(user)
-      if (!isValidUser) filtered.incr()
-      isValidUser
+    u-usewfut.map(_.exists { usew =>
+      v-vaw isvawidusew = !isunsafe(usew) && !hasnsfwhighpwecisionwabew(usew)
+      if (!isvawidusew) f-fiwtewed.incw()
+      isvawidusew
     })
   }
 
   /**
-   * Given a userId, return true if the user is valid. This id done in 2 steps:
-   * 1. Applying Gizmoduck's safety level while querying for the user from Gizmoduck
-   * 2. If a user passes Gizmoduck's safety level, check its specific user status
+   * given a usewid, (ˆ ﻌ ˆ)♡ w-wetuwn twue if the usew is vawid. 😳😳😳 t-this id done in 2 steps:
+   * 1. :3 a-appwying gizmoduck's s-safety wevew whiwe quewying fow the usew fwom gizmoduck
+   * 2. OwO if a usew passes gizmoduck's safety wevew, (U ﹏ U) c-check its specific u-usew status
    */
-  def filterByUserId(userId: Long): Future[Boolean] = {
-    requests.incr()
-    gizmoduck
-      .getUser(userId)
-      .map { userOpt =>
-        val isValidUser = userOpt.exists { user =>
-          !(isUnsafe(user) || hasNsfwHighPrecisionLabel(user))
+  def fiwtewbyusewid(usewid: w-wong): futuwe[boowean] = {
+    w-wequests.incw()
+    g-gizmoduck
+      .getusew(usewid)
+      .map { usewopt =>
+        vaw isvawidusew = usewopt.exists { u-usew =>
+          !(isunsafe(usew) || hasnsfwhighpwecisionwabew(usew))
         }
-        if (!isValidUser) {
-          filtered.incr()
+        if (!isvawidusew) {
+          fiwtewed.incw()
         }
-        isValidUser
+        isvawidusew
       }
   }
 }

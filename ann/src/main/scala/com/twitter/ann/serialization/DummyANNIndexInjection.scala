@@ -1,12 +1,12 @@
-package com.twitter.ann.serialization
+package com.twittew.ann.sewiawization
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.wong2bigendian
 
 /**
-Dummy injection required to writeup dummy dal dataset to ANN folder.
+d-dummy injection w-wequiwed t-to wwiteup dummy d-daw dataset to a-ann fowdew. σωσ
 **/
-object DummyANNIndexInjection {
-  val injection: KeyValInjection[Long, Long] =
-    KeyValInjection[Long, Long](Long2BigEndian, Long2BigEndian)
+o-object dummyannindexinjection {
+  v-vaw injection: keyvawinjection[wong, σωσ wong] =
+    keyvawinjection[wong, >_< wong](wong2bigendian, w-wong2bigendian)
 }

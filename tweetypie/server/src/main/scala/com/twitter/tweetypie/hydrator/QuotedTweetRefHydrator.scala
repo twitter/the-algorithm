@@ -1,129 +1,129 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetutil.TweetPermalink
-import com.twitter.tweetypie.core.FilteredState
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetutiw.tweetpewmawink
+impowt c-com.twittew.tweetypie.cowe.fiwtewedstate
+impowt c-com.twittew.tweetypie.cowe.vawuestate
+i-impowt c-com.twittew.tweetypie.wepositowy._
+impowt com.twittew.tweetypie.thwiftscawa._
 
 /**
- * Adds QuotedTweet structs to tweets that contain a tweet permalink url at the end of the
- * tweet text. After introduction of QT + Media, we stopped storing inner tweet permalinks
- * in the outer tweet text. So this hydrator would run only for below cases:
+ * adds quotedtweet stwucts to tweets that c-contain a tweet pewmawink uww at the end of the
+ * t-tweet text. ^^ aftew intwoduction o-of qt + media, (⑅˘꒳˘) we stopped stowing innew tweet pewmawinks
+ * in t-the outew tweet text. so this h-hydwatow wouwd wun o-onwy fow bewow cases:
  *
- * - historical quote tweets which have inner tweet url in the tweet text and url entities.
- * - new quote tweets created with pasted tweet permalinks, going forward we want to persist
- *   quoted_tweet struct in MH for these tweets
+ * - histowicaw quote tweets which have innew tweet u-uww in the tweet text and uww entities. nyaa~~
+ * - nyew quote tweets cweated with pasted t-tweet pewmawinks, /(^•ω•^) going fowwawd w-we want to pewsist
+ *   q-quoted_tweet s-stwuct in m-mh fow these tweets
  */
-object QuotedTweetRefHydrator {
-  type Type = ValueHydrator[Option[QuotedTweet], Ctx]
+object quotedtweetwefhydwatow {
+  t-type type = vawuehydwatow[option[quotedtweet], (U ﹏ U) ctx]
 
-  case class Ctx(urlEntities: Seq[UrlEntity], underlyingTweetCtx: TweetCtx) extends TweetCtx.Proxy
+  c-case cwass ctx(uwwentities: seq[uwwentity], 😳😳😳 undewwyingtweetctx: tweetctx) extends tweetctx.pwoxy
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.QuotedTweetField)
+  vaw hydwatedfiewd: fiewdbypath = fiewdbypath(tweet.quotedtweetfiewd)
 
-  private val partial = ValueState.partial(None, hydratedField)
+  pwivate v-vaw pawtiaw = vawuestate.pawtiaw(none, >w< h-hydwatedfiewd)
 
-  val queryOptions: TweetQuery.Options =
-    TweetQuery.Options(
-      include = TweetQuery.Include(Set(Tweet.CoreDataField.id)),
-      // Don't enforce visibility filtering when loading the QuotedTweet struct because it is
-      // cacheable. The filtering happens in QuoteTweetVisibilityHydrator.
-      enforceVisibilityFiltering = false,
-      forUserId = None
+  v-vaw quewyoptions: t-tweetquewy.options =
+    tweetquewy.options(
+      incwude = tweetquewy.incwude(set(tweet.cowedatafiewd.id)), XD
+      // don't enfowce v-visibiwity f-fiwtewing when woading the quotedtweet s-stwuct b-because it is
+      // cacheabwe. o.O t-the fiwtewing happens in quotetweetvisibiwityhydwatow. mya
+      enfowcevisibiwityfiwtewing = f-fawse, 🥺
+      fowusewid = nyone
     )
 
-  def once(h: Type): Type =
-    TweetHydration.completeOnlyOnce(
-      queryFilter = queryFilter,
-      hydrationType = HydrationType.QuotedTweetRef,
-      dependsOn = Set(HydrationType.Urls),
-      hydrator = h
+  d-def once(h: type): type =
+    t-tweethydwation.compweteonwyonce(
+      quewyfiwtew = q-quewyfiwtew, ^^;;
+      h-hydwationtype = hydwationtype.quotedtweetwef,
+      dependson = set(hydwationtype.uwws), :3
+      hydwatow = h
     )
 
-  case class UrlHydrationFailed(url: String) extends Exception
+  case cwass uwwhydwationfaiwed(uww: s-stwing) extends e-exception
 
   /**
-   * Iterate through UrlEntity objects in reverse to identify a quoted-tweet ID
-   * to hydrate. Quoted tweets are indicated by a TweetPermalink in the tweet text
-   * that references an older tweet ID. If a quoted tweet permalink is found, also
-   * return the corresponding UrlEntity.
+   * itewate t-thwough uwwentity o-objects in wevewse t-to identify a quoted-tweet id
+   * to hydwate. (U ﹏ U) quoted tweets a-awe indicated by a tweetpewmawink in the tweet text
+   * that wefewences an owdew t-tweet id. OwO if a quoted tweet p-pewmawink is found, 😳😳😳 a-awso
+   * wetuwn t-the cowwesponding uwwentity. (ˆ ﻌ ˆ)♡
    *
-   * @throws UrlHydrationFailed if we encounter a partial URL entity before
-   *   finding a tweet permalink URL.
+   * @thwows u-uwwhydwationfaiwed i-if we encountew a-a pawtiaw u-uww entity befowe
+   *   finding a tweet pewmawink u-uww. XD
    */
-  def quotedTweetId(ctx: Ctx): Option[(UrlEntity, TweetId)] =
-    ctx.urlEntities.reverseIterator // we want the rightmost tweet permalink
-      .map { e: UrlEntity =>
-        if (UrlEntityHydrator.hydrationFailed(e)) throw UrlHydrationFailed(e.url)
-        else (e, e.expanded)
+  d-def quotedtweetid(ctx: c-ctx): option[(uwwentity, (ˆ ﻌ ˆ)♡ t-tweetid)] =
+    c-ctx.uwwentities.wevewseitewatow // we want the wightmost tweet pewmawink
+      .map { e-e: uwwentity =>
+        if (uwwentityhydwatow.hydwationfaiwed(e)) thwow uwwhydwationfaiwed(e.uww)
+        ewse (e, ( ͡o ω ͡o ) e.expanded)
       }
-      .collectFirst {
-        case (e, Some(TweetPermalink(_, quotedTweetId))) => (e, quotedTweetId)
+      .cowwectfiwst {
+        case (e, rawr x3 some(tweetpewmawink(_, nyaa~~ quotedtweetid))) => (e, >_< q-quotedtweetid)
       }
-      // Prevent tweet-quoting cycles
-      .filter { case (_, quotedTweetId) => ctx.tweetId > quotedTweetId }
+      // pwevent tweet-quoting cycwes
+      .fiwtew { case (_, ^^;; quotedtweetid) => c-ctx.tweetid > q-quotedtweetid }
 
-  def buildShortenedUrl(e: UrlEntity): ShortenedUrl =
-    ShortenedUrl(
-      shortUrl = e.url,
-      // Reading from MH will also default the following to "".
-      // QuotedTweetRefUrlsHydrator will hydrate these cases
-      longUrl = e.expanded.getOrElse(""),
-      displayText = e.display.getOrElse("")
+  d-def buiwdshowteneduww(e: u-uwwentity): showteneduww =
+    s-showteneduww(
+      s-showtuww = e.uww, (ˆ ﻌ ˆ)♡
+      // weading fwom mh wiww awso defauwt the fowwowing to "". ^^;;
+      // q-quotedtweetwefuwwshydwatow wiww hydwate these c-cases
+      wonguww = e.expanded.getowewse(""), (⑅˘꒳˘)
+      d-dispwaytext = e-e.dispway.getowewse("")
     )
 
   /**
-   * We run this hydrator only if:
+   * we wun this hydwatow onwy if:
    *
-   * - quoted_tweet struct is empty
-   * - quoted_tweet is present but permalink is not
-   * - url entities is present. QT hydration depends on urls - long term goal
-   *   is to entirely rely on persisted quoted_tweet struct in MH
-   * - requested tweet is not a retweet
+   * - q-quoted_tweet s-stwuct is empty
+   * - quoted_tweet i-is pwesent b-but pewmawink is nyot
+   * - uww entities is pwesent. rawr x3 qt hydwation depends o-on uwws - wong t-tewm goaw
+   *   i-is to entiwewy wewy on pewsisted q-quoted_tweet stwuct i-in mh
+   * - wequested tweet i-is nyot a wetweet
    *
-   * Hydration steps:
-   * - We determine the last tweet permalink from url entities
-   * - Extract the inner tweet Id from the permalink
-   * - Query tweet repo with inner tweet Id
-   * - Construct quoted_tweet struct from hydrated tweet object and last permalink
+   * hydwation steps:
+   * - we detewmine the wast tweet pewmawink fwom u-uww entities
+   * - e-extwact the innew tweet id fwom the pewmawink
+   * - q-quewy t-tweet wepo with innew tweet id
+   * - constwuct quoted_tweet stwuct f-fwom hydwated tweet object and wast pewmawink
    */
-  def apply(repo: TweetRepository.Type): Type =
-    ValueHydrator[Option[QuotedTweet], Ctx] { (_, ctx) =>
-      // propagate errors from quotedTweetId in Stitch
-      Stitch(quotedTweetId(ctx)).liftToTry.flatMap {
-        case Return(Some((lastPermalinkEntity, quotedTweetId))) =>
-          repo(quotedTweetId, queryOptions).liftToTry.map {
-            case Return(tweet) =>
-              ValueState.modified(
-                Some(asQuotedTweet(tweet, lastPermalinkEntity))
+  def appwy(wepo: tweetwepositowy.type): t-type =
+    vawuehydwatow[option[quotedtweet], (///ˬ///✿) ctx] { (_, 🥺 ctx) =>
+      // pwopagate e-ewwows fwom q-quotedtweetid in stitch
+      stitch(quotedtweetid(ctx)).wifttotwy.fwatmap {
+        case wetuwn(some((wastpewmawinkentity, >_< q-quotedtweetid))) =>
+          w-wepo(quotedtweetid, UwU quewyoptions).wifttotwy.map {
+            case wetuwn(tweet) =>
+              vawuestate.modified(
+                s-some(asquotedtweet(tweet, >_< wastpewmawinkentity))
               )
-            case Throw(NotFound | _: FilteredState) => ValueState.UnmodifiedNone
-            case Throw(_) => partial
+            case t-thwow(notfound | _: fiwtewedstate) => vawuestate.unmodifiednone
+            case thwow(_) => p-pawtiaw
           }
-        case Return(None) => Stitch(ValueState.UnmodifiedNone)
-        case Throw(_) => Stitch(partial)
+        case w-wetuwn(none) => s-stitch(vawuestate.unmodifiednone)
+        case t-thwow(_) => stitch(pawtiaw)
       }
-    }.onlyIf { (curr, ctx) =>
-      (curr.isEmpty || curr.exists(_.permalink.isEmpty)) &&
-      !ctx.isRetweet && ctx.urlEntities.nonEmpty
+    }.onwyif { (cuww, -.- ctx) =>
+      (cuww.isempty || c-cuww.exists(_.pewmawink.isempty)) &&
+      !ctx.iswetweet && c-ctx.uwwentities.nonempty
     }
 
-  def queryFilter(opts: TweetQuery.Options): Boolean =
-    opts.include.tweetFields(Tweet.QuotedTweetField.id)
+  d-def quewyfiwtew(opts: tweetquewy.options): boowean =
+    o-opts.incwude.tweetfiewds(tweet.quotedtweetfiewd.id)
 
   /**
-   * We construct Tweet.quoted_tweet from hydrated inner tweet.
-   * Note: if the inner tweet is a Retweet, we populate the quoted_tweet struct from source tweet.
+   * w-we constwuct tweet.quoted_tweet fwom hydwated innew tweet. mya
+   * n-nyote: if the i-innew tweet is a w-wetweet, >w< we popuwate the quoted_tweet stwuct fwom s-souwce tweet. (U ﹏ U)
    */
-  def asQuotedTweet(tweet: Tweet, entity: UrlEntity): QuotedTweet = {
-    val shortenedUrl = Some(buildShortenedUrl(entity))
-    getShare(tweet) match {
-      case None => QuotedTweet(tweet.id, getUserId(tweet), shortenedUrl)
-      case Some(share) => QuotedTweet(share.sourceStatusId, share.sourceUserId, shortenedUrl)
+  def asquotedtweet(tweet: t-tweet, 😳😳😳 entity: u-uwwentity): quotedtweet = {
+    vaw showteneduww = some(buiwdshowteneduww(entity))
+    getshawe(tweet) m-match {
+      c-case nyone => q-quotedtweet(tweet.id, g-getusewid(tweet), o.O showteneduww)
+      c-case some(shawe) => quotedtweet(shawe.souwcestatusid, shawe.souwceusewid, òωó showteneduww)
     }
   }
 }

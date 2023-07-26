@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.geo
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
 
-object PopGeoSourceParams {
-  case object PopGeoSourceGeoHashMinPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_source_geo_hash_min_precision",
-        default = 2,
-        min = 0,
+o-object p-popgeosouwcepawams {
+  c-case o-object popgeosouwcegeohashminpwecision
+      e-extends f-fsboundedpawam[int](
+        "pop_geo_souwce_geo_hash_min_pwecision", 😳
+        defauwt = 2, XD
+        min = 0, :3
         max = 10)
 
-  case object PopGeoSourceGeoHashMaxPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_source_geo_hash_max_precision",
-        default = 4,
-        min = 0,
+  case object p-popgeosouwcegeohashmaxpwecision
+      extends fsboundedpawam[int](
+        "pop_geo_souwce_geo_hash_max_pwecision", 😳😳😳
+        defauwt = 4, -.-
+        m-min = 0, ( ͡o ω ͡o )
         max = 10)
 
-  case object PopGeoSourceReturnFromAllPrecisions
-      extends FSParam[Boolean]("pop_geo_source_return_from_all_precisions", default = false)
+  c-case object popgeosouwcewetuwnfwomawwpwecisions
+      extends fspawam[boowean]("pop_geo_souwce_wetuwn_fwom_aww_pwecisions", rawr x3 defauwt = f-fawse)
 
-  case object PopGeoSourceMaxResultsPerPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_source_max_results_per_precision",
-        default = 200,
-        min = 0,
+  case object popgeosouwcemaxwesuwtspewpwecision
+      e-extends fsboundedpawam[int](
+        "pop_geo_souwce_max_wesuwts_pew_pwecision", nyaa~~
+        d-defauwt = 200, /(^•ω•^)
+        min = 0, rawr
         max = 1000)
 }

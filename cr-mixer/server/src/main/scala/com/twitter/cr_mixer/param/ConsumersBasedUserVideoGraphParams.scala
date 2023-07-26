@@ -1,65 +1,65 @@
-package com.twitter.cr_mixer.param
+package com.twittew.cw_mixew.pawam
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.baseconfig
+i-impowt com.twittew.timewines.configapi.baseconfigbuiwdew
+i-impowt c-com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.featuweswitchovewwideutiw
+i-impowt com.twittew.timewines.configapi.pawam
 
 /**
- * ConsumersBasedUserVideoGraph Params: there are multiple ways (e.g. FRS, RealGraphIn) to generate consumersSeedSet for ConsumersBasedUserTweetGraph
- * for now we allow flexibility in tuning UVG params for different consumersSeedSet generation algo by giving the param name {consumerSeedSetAlgo}{ParamName}
+ * c-consumewsbasedusewvideogwaph pawams: thewe awe muwtipwe ways (e.g. /(^•ω•^) fws, weawgwaphin) to genewate c-consumewsseedset fow consumewsbasedusewtweetgwaph
+ * fow n-nyow we awwow fwexibiwity in tuning u-uvg pawams fow diffewent consumewsseedset genewation awgo by giving the pawam n-nyame {consumewseedsetawgo}{pawamname}
  */
 
-object ConsumersBasedUserVideoGraphParams {
+object consumewsbasedusewvideogwaphpawams {
 
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "consumers_based_user_video_graph_enable_source",
-        default = false
+  o-object e-enabwesouwcepawam
+      extends fspawam[boowean](
+        nyame = "consumews_based_usew_video_gwaph_enabwe_souwce", rawr x3
+        defauwt = fawse
       )
 
-  // UTG-RealGraphIN
-  object RealGraphInMinCoOccurrenceParam
-      extends FSBoundedParam[Int](
-        name = "consumers_based_user_video_graph_real_graph_in_min_co_occurrence",
-        default = 3,
-        min = 0,
-        max = 500
+  // utg-weawgwaphin
+  object weawgwaphinmincooccuwwencepawam
+      e-extends fsboundedpawam[int](
+        nyame = "consumews_based_usew_video_gwaph_weaw_gwaph_in_min_co_occuwwence", (U ﹏ U)
+        defauwt = 3, (U ﹏ U)
+        min = 0, (⑅˘꒳˘)
+        m-max = 500
       )
 
-  object RealGraphInMinScoreParam
-      extends FSBoundedParam[Double](
-        name = "consumers_based_user_video_graph_real_graph_in_min_score",
-        default = 2.0,
-        min = 0.0,
+  object weawgwaphinminscowepawam
+      e-extends f-fsboundedpawam[doubwe](
+        n-nyame = "consumews_based_usew_video_gwaph_weaw_gwaph_in_min_scowe", òωó
+        d-defauwt = 2.0, ʘwʘ
+        min = 0.0, /(^•ω•^)
         max = 10.0
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
-    RealGraphInMinCoOccurrenceParam,
-    RealGraphInMinScoreParam
+  v-vaw awwpawams: seq[pawam[_] with fsname] = s-seq(
+    enabwesouwcepawam, ʘwʘ
+    weawgwaphinmincooccuwwencepawam, σωσ
+    weawgwaphinminscowepawam
   )
 
-  lazy val config: BaseConfig = {
+  wazy vaw config: baseconfig = {
 
-    val intOverrides =
-      FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(RealGraphInMinCoOccurrenceParam)
+    v-vaw intovewwides =
+      featuweswitchovewwideutiw.getboundedintfsovewwides(weawgwaphinmincooccuwwencepawam)
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(RealGraphInMinScoreParam)
+    v-vaw doubweovewwides =
+      featuweswitchovewwideutiw.getboundeddoubwefsovewwides(weawgwaphinminscowepawam)
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam
+    v-vaw booweanovewwides = f-featuweswitchovewwideutiw.getbooweanfsovewwides(
+      enabwesouwcepawam
     )
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .build()
+    baseconfigbuiwdew()
+      .set(intovewwides: _*)
+      .set(booweanovewwides: _*)
+      .set(doubweovewwides: _*)
+      .buiwd()
   }
 }

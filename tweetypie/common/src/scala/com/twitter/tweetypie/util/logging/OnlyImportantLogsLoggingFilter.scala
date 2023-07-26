@@ -1,30 +1,30 @@
-package com.twitter.tweetypie.util.logging
+package com.twittew.tweetypie.utiw.wogging
 
-import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.filter.Filter
-import ch.qos.logback.core.spi.FilterReply
+impowt c-ch.qos.wogback.cwassic.wevew
+impowt c-ch.qos.wogback.cwassic.spi.iwoggingevent
+impowt c-ch.qos.wogback.cowe.fiwtew.fiwtew
+i-impowt ch.qos.wogback.cowe.spi.fiwtewwepwy
 
 /**
- * This class is currently being used by logback to log statements from tweetypie at one level and
- * log statements from other packages at another.
+ * t-this c-cwass is cuwwentwy b-being used by w-wogback to wog statements fwom tweetypie at one wevew and
+ * wog statements fwom o-othew packages at anothew. rawr x3
  *
- * Filters do not change the log levels of individual loggers. Filters filter out specific messages
- * for specific appenders. This allows us to have a log file with lots of information you will
- * mostly not need and a log file with only important information. This type of filtering cannot be
- * accomplished by changing the log levels of loggers, because the logger levels are global. We want
- * to change the semantics for specific destinations (appenders).
+ * fiwtews do nyot c-change the wog wevews of individuaw w-woggews. (U ﹏ U) fiwtews fiwtew out specific messages
+ * fow specific a-appendews. (U ﹏ U) this awwows us to h-have a wog fiwe w-with wots of infowmation you wiww
+ * mostwy nyot nyeed and a wog fiwe with onwy i-impowtant infowmation. (⑅˘꒳˘) this type of fiwtewing cannot be
+ * accompwished by changing t-the wog wevews of woggews, òωó b-because the woggew w-wevews awe gwobaw. ʘwʘ w-we want
+ * t-to change the semantics fow specific destinations (appendews). /(^•ω•^)
  */
-class OnlyImportantLogsLoggingFilter extends Filter[ILoggingEvent] {
-  private[this] def notImportant(loggerName: String): Boolean =
-    !loggerName.startsWith("com.twitter.tweetypie")
+c-cwass onwyimpowtantwogswoggingfiwtew extends fiwtew[iwoggingevent] {
+  p-pwivate[this] def nyotimpowtant(woggewname: stwing): boowean =
+    !woggewname.stawtswith("com.twittew.tweetypie")
 
-  override def decide(event: ILoggingEvent): FilterReply =
-    if (!isStarted || event.getLevel.isGreaterOrEqual(Level.WARN)) {
-      FilterReply.NEUTRAL
-    } else if (notImportant(event.getLoggerName())) {
-      FilterReply.DENY
-    } else {
-      FilterReply.NEUTRAL
+  ovewwide def decide(event: iwoggingevent): f-fiwtewwepwy =
+    if (!isstawted || event.getwevew.isgweatewowequaw(wevew.wawn)) {
+      f-fiwtewwepwy.neutwaw
+    } e-ewse if (notimpowtant(event.getwoggewname())) {
+      f-fiwtewwepwy.deny
+    } ewse {
+      fiwtewwepwy.neutwaw
     }
 }

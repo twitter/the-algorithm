@@ -1,15 +1,15 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.FutureOps
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+i-impowt c-com.twittew.stowehaus.futuweops
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.utiw.futuwe
 
-object AdaptorUtils {
-  def getTweetyPieResults(
-    tweetIds: Set[Long],
-    tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  ): Future[Map[Long, Option[TweetyPieResult]]] =
-    FutureOps
-      .mapCollect(tweetyPieStore.multiGet(tweetIds))
+o-object a-adaptowutiws {
+  def gettweetypiewesuwts(
+    tweetids: set[wong], >_<
+    tweetypiestowe: weadabwestowe[wong, :3 tweetypiewesuwt], (U ﹏ U)
+  ): f-futuwe[map[wong, -.- option[tweetypiewesuwt]]] =
+    futuweops
+      .mapcowwect(tweetypiestowe.muwtiget(tweetids))
 }

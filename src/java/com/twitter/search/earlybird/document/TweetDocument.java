@@ -1,52 +1,52 @@
-package com.twitter.search.earlybird.document;
+package com.twittew.seawch.eawwybiwd.document;
 
-import org.apache.lucene.document.Document;
+impowt owg.apache.wucene.document.document;
 
 /**
- * TweetDocument is a record produced by DocumentReader and TweetIndexUpdateReader
- * for consumption by the partition indexer.
+ * t-tweetdocument i-is a wecowd pwoduced b-by documentweadew a-and tweetindexupdateweadew
+ * f-fow consumption b-by the pawtition i-indexew. 🥺
  */
-public final class TweetDocument {
-  private final long tweetID;
-  private final long timeSliceID;
-  private final long eventTimeMs;
-  private final Document document;
+p-pubwic finaw cwass tweetdocument {
+  pwivate finaw wong tweetid;
+  pwivate finaw w-wong timeswiceid;
+  pwivate finaw wong eventtimems;
+  p-pwivate finaw document d-document;
 
-  public TweetDocument(
-      long tweetID,
-      long timeSliceID,
-      long eventTimeMs,
-      Document document
+  pubwic tweetdocument(
+      wong tweetid, mya
+      wong t-timeswiceid, 🥺
+      wong eventtimems, >_<
+      document d-document
   ) {
-    this.tweetID = tweetID;
-    this.timeSliceID = timeSliceID;
-    this.eventTimeMs = eventTimeMs;
+    t-this.tweetid = tweetid;
+    this.timeswiceid = timeswiceid;
+    this.eventtimems = e-eventtimems;
     this.document = document;
   }
 
-  public long getTweetID() {
-    return tweetID;
+  pubwic wong gettweetid() {
+    wetuwn tweetid;
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  pubwic wong gettimeswiceid() {
+    w-wetuwn timeswiceid;
   }
 
-  public long getEventTimeMs() {
-    return eventTimeMs;
+  p-pubwic wong g-geteventtimems() {
+    w-wetuwn eventtimems;
   }
 
-  public Document getDocument() {
-    return document;
+  p-pubwic document getdocument() {
+    wetuwn document;
   }
 
-  @Override
-  public String toString() {
-    return "TweetDocument{"
-        + "tweetID=" + tweetID
-        + ", timeSliceID=" + timeSliceID
-        + ", eventTimeMs=" + eventTimeMs
-        + ", document=" + document
+  @ovewwide
+  p-pubwic stwing tostwing() {
+    wetuwn "tweetdocument{"
+        + "tweetid=" + t-tweetid
+        + ", >_< timeswiceid=" + timeswiceid
+        + ", (⑅˘꒳˘) eventtimems=" + eventtimems
+        + ", /(^•ω•^) document=" + document
         + '}';
   }
 }

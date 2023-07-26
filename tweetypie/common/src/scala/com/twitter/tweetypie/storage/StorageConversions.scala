@@ -1,346 +1,346 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
-import com.twitter.scrooge.TFieldBlob
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.storage_internal.thriftscala._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.util.TweetLenses
+impowt com.twittew.mediasewvices.commons.tweetmedia.thwiftscawa._
+i-impowt com.twittew.scwooge.tfiewdbwob
+i-impowt c-com.twittew.tweetypie.additionawfiewds.additionawfiewds
+i-impowt c-com.twittew.tweetypie.stowage_intewnaw.thwiftscawa._
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
+i-impowt com.twittew.tweetypie.utiw.tweetwenses
 
-object StorageConversions {
-  private val tbTweetCompiledAdditionalFieldIds =
-    StoredTweet.metaData.fields.map(_.id).filter(AdditionalFields.isAdditionalFieldId)
+object stowageconvewsions {
+  pwivate vaw tbtweetcompiwedadditionawfiewdids =
+    stowedtweet.metadata.fiewds.map(_.id).fiwtew(additionawfiewds.isadditionawfiewdid)
 
-  def toStoredReply(reply: Reply, conversationId: Option[TweetId]): StoredReply =
-    StoredReply(
-      inReplyToStatusId = reply.inReplyToStatusId.getOrElse(0),
-      inReplyToUserId = reply.inReplyToUserId,
-      conversationId = conversationId
+  def tostowedwepwy(wepwy: w-wepwy, rawr x3 convewsationid: option[tweetid]): stowedwepwy =
+    stowedwepwy(
+      i-inwepwytostatusid = wepwy.inwepwytostatusid.getowewse(0),
+      i-inwepwytousewid = wepwy.inwepwytousewid, (ˆ ﻌ ˆ)♡
+      convewsationid = convewsationid
     )
 
-  def toStoredShare(share: Share): StoredShare =
-    StoredShare(
-      share.sourceStatusId,
-      share.sourceUserId,
-      share.parentStatusId
+  d-def tostowedshawe(shawe: shawe): stowedshawe =
+    s-stowedshawe(
+      s-shawe.souwcestatusid, σωσ
+      shawe.souwceusewid, (U ﹏ U)
+      shawe.pawentstatusid
     )
 
-  def toStoredQuotedTweet(qt: QuotedTweet, text: String): Option[StoredQuotedTweet] =
-    qt.permalink
-      .filterNot { p =>
-        text.contains(p.shortUrl)
-      } // omit StoredQuotedTweet when url already in text
-      .map { p =>
-        StoredQuotedTweet(
-          qt.tweetId,
-          qt.userId,
-          p.shortUrl
+  def tostowedquotedtweet(qt: quotedtweet, >w< text: s-stwing): option[stowedquotedtweet] =
+    qt.pewmawink
+      .fiwtewnot { p =>
+        text.contains(p.showtuww)
+      } // omit s-stowedquotedtweet when uww awweady i-in text
+      .map { p-p =>
+        s-stowedquotedtweet(
+          q-qt.tweetid, σωσ
+          qt.usewid, nyaa~~
+          p.showtuww
         )
       }
 
-  def toStoredGeo(tweet: Tweet): Option[StoredGeo] =
-    TweetLenses.geoCoordinates.get(tweet) match {
-      case None =>
-        TweetLenses.placeId.get(tweet) match {
-          case None => None
-          case Some(placeId) =>
-            Some(
-              StoredGeo(
-                latitude = 0.0,
-                longitude = 0.0,
-                geoPrecision = 0,
-                entityId = 0,
-                name = Some(placeId)
+  d-def tostowedgeo(tweet: tweet): option[stowedgeo] =
+    tweetwenses.geocoowdinates.get(tweet) m-match {
+      case nyone =>
+        tweetwenses.pwaceid.get(tweet) match {
+          case nyone => n-nyone
+          case some(pwaceid) =>
+            s-some(
+              s-stowedgeo(
+                w-watitude = 0.0, 🥺
+                wongitude = 0.0, rawr x3
+                geopwecision = 0, σωσ
+                entityid = 0, (///ˬ///✿)
+                n-name = some(pwaceid)
               )
             )
         }
-      case Some(coords) =>
-        Some(
-          StoredGeo(
-            latitude = coords.latitude,
-            longitude = coords.longitude,
-            geoPrecision = coords.geoPrecision,
-            entityId = if (coords.display) 2 else 0,
-            name = TweetLenses.placeId.get(tweet)
+      c-case some(coowds) =>
+        some(
+          s-stowedgeo(
+            w-watitude = coowds.watitude, (U ﹏ U)
+            w-wongitude = coowds.wongitude, ^^;;
+            geopwecision = c-coowds.geopwecision, 🥺
+            entityid = if (coowds.dispway) 2 e-ewse 0, òωó
+            nyame = tweetwenses.pwaceid.get(tweet)
           )
         )
     }
 
-  def toStoredMedia(mediaList: Seq[MediaEntity]): Seq[StoredMediaEntity] =
-    mediaList.filter(_.sourceStatusId.isEmpty).flatMap(toStoredMediaEntity)
+  d-def tostowedmedia(mediawist: seq[mediaentity]): s-seq[stowedmediaentity] =
+    m-mediawist.fiwtew(_.souwcestatusid.isempty).fwatmap(tostowedmediaentity)
 
-  def toStoredMediaEntity(media: MediaEntity): Option[StoredMediaEntity] =
-    media.sizes.find(_.sizeType == MediaSizeType.Orig).map { origSize =>
-      StoredMediaEntity(
-        id = media.mediaId,
-        mediaType = origSize.deprecatedContentType.value.toByte,
-        width = origSize.width.toShort,
-        height = origSize.height.toShort
+  def tostowedmediaentity(media: mediaentity): option[stowedmediaentity] =
+    media.sizes.find(_.sizetype == mediasizetype.owig).map { o-owigsize =>
+      s-stowedmediaentity(
+        id = media.mediaid, XD
+        m-mediatype = o-owigsize.depwecatedcontenttype.vawue.tobyte, :3
+        w-width = owigsize.width.toshowt,
+        height = owigsize.height.toshowt
       )
     }
 
-  // The language and ids fields are for compatibility with existing tweets stored in manhattan.
-  def toStoredNarrowcast(narrowcast: Narrowcast): StoredNarrowcast =
-    StoredNarrowcast(
-      language = Some(Seq.empty),
-      location = Some(narrowcast.location),
-      ids = Some(Seq.empty)
+  // the wanguage a-and ids fiewds awe fow compatibiwity with existing tweets stowed in manhattan. (U ﹏ U)
+  d-def tostowednawwowcast(nawwowcast: nyawwowcast): s-stowednawwowcast =
+    s-stowednawwowcast(
+      w-wanguage = some(seq.empty), >w<
+      w-wocation = s-some(nawwowcast.wocation), /(^•ω•^)
+      i-ids = some(seq.empty)
     )
 
-  def toStoredAdditionalFields(from: Seq[TFieldBlob], to: StoredTweet): StoredTweet =
-    from.foldLeft(to) { case (t, f) => t.setField(f) }
+  d-def tostowedadditionawfiewds(fwom: seq[tfiewdbwob], (⑅˘꒳˘) to: stowedtweet): s-stowedtweet =
+    f-fwom.fowdweft(to) { c-case (t, ʘwʘ f) => t-t.setfiewd(f) }
 
-  def toStoredAdditionalFields(from: Tweet, to: StoredTweet): StoredTweet =
-    toStoredAdditionalFields(AdditionalFields.additionalFields(from), to)
+  d-def tostowedadditionawfiewds(fwom: tweet, rawr x3 to: stowedtweet): stowedtweet =
+    t-tostowedadditionawfiewds(additionawfiewds.additionawfiewds(fwom), (˘ω˘) to)
 
-  def toStoredTweet(tweet: Tweet): StoredTweet = {
-    val storedTweet =
-      StoredTweet(
-        id = tweet.id,
-        userId = Some(TweetLenses.userId(tweet)),
-        text = Some(TweetLenses.text(tweet)),
-        createdVia = Some(TweetLenses.createdVia(tweet)),
-        createdAtSec = Some(TweetLenses.createdAt(tweet)),
-        reply =
-          TweetLenses.reply(tweet).map { r => toStoredReply(r, TweetLenses.conversationId(tweet)) },
-        share = TweetLenses.share(tweet).map(toStoredShare),
-        contributorId = tweet.contributor.map(_.userId),
-        geo = toStoredGeo(tweet),
-        hasTakedown = Some(TweetLenses.hasTakedown(tweet)),
-        nsfwUser = Some(TweetLenses.nsfwUser(tweet)),
-        nsfwAdmin = Some(TweetLenses.nsfwAdmin(tweet)),
-        media = tweet.media.map(toStoredMedia),
-        narrowcast = TweetLenses.narrowcast(tweet).map(toStoredNarrowcast),
-        nullcast = Some(TweetLenses.nullcast(tweet)),
-        trackingId = TweetLenses.trackingId(tweet),
-        quotedTweet = TweetLenses.quotedTweet(tweet).flatMap { qt =>
-          toStoredQuotedTweet(qt, TweetLenses.text(tweet))
+  def tostowedtweet(tweet: tweet): stowedtweet = {
+    vaw stowedtweet =
+      stowedtweet(
+        id = t-tweet.id, o.O
+        usewid = some(tweetwenses.usewid(tweet)),
+        text = some(tweetwenses.text(tweet)), 😳
+        cweatedvia = s-some(tweetwenses.cweatedvia(tweet)), o.O
+        c-cweatedatsec = s-some(tweetwenses.cweatedat(tweet)), ^^;;
+        wepwy =
+          t-tweetwenses.wepwy(tweet).map { w => tostowedwepwy(w, ( ͡o ω ͡o ) t-tweetwenses.convewsationid(tweet)) }, ^^;;
+        s-shawe = tweetwenses.shawe(tweet).map(tostowedshawe), ^^;;
+        contwibutowid = tweet.contwibutow.map(_.usewid), XD
+        geo = tostowedgeo(tweet), 🥺
+        hastakedown = s-some(tweetwenses.hastakedown(tweet)), (///ˬ///✿)
+        nysfwusew = some(tweetwenses.nsfwusew(tweet)), (U ᵕ U❁)
+        n-nysfwadmin = some(tweetwenses.nsfwadmin(tweet)), ^^;;
+        m-media = tweet.media.map(tostowedmedia), ^^;;
+        n-nyawwowcast = tweetwenses.nawwowcast(tweet).map(tostowednawwowcast), rawr
+        nyuwwcast = some(tweetwenses.nuwwcast(tweet)), (˘ω˘)
+        t-twackingid = t-tweetwenses.twackingid(tweet), 🥺
+        quotedtweet = t-tweetwenses.quotedtweet(tweet).fwatmap { q-qt =>
+          tostowedquotedtweet(qt, nyaa~~ tweetwenses.text(tweet))
         }
       )
-    toStoredAdditionalFields(tweet, storedTweet)
+    tostowedadditionawfiewds(tweet, :3 stowedtweet)
   }
 
   /**
-   * Does not need core data to be set. Constructs on disk tweet by avoiding the TweetLenses object
-   * and only extracting the specified fields.
+   * d-does nyot nyeed c-cowe data to b-be set. /(^•ω•^) constwucts on disk tweet b-by avoiding the t-tweetwenses object
+   * and onwy e-extwacting the specified fiewds. ^•ﻌ•^
    *
-   * NOTE: Assumes that specified fields are set in the tweet.
+   * nyote: assumes that specified fiewds awe set in the t-tweet. UwU
    *
-   * @param tpTweet Tweetypie Tweet to be converted
-   * @param fields the fields to be populated in the on disk Tweet
+   * @pawam t-tptweet tweetypie tweet to be convewted
+   * @pawam fiewds t-the fiewds t-to be popuwated in the on disk tweet
    *
-   * @return an on disk Tweet which has only the specified fields set
+   * @wetuwn an on disk t-tweet which has onwy the specified fiewds set
    */
-  def toStoredTweetForFields(tpTweet: Tweet, fields: Set[Field]): StoredTweet = {
+  def tostowedtweetfowfiewds(tptweet: tweet, 😳😳😳 f-fiewds: set[fiewd]): stowedtweet = {
 
-    // Make sure all the passed in fields are known or additional fields
-    require(
-      (fields -- Field.AllUpdatableCompiledFields)
-        .forall(field => AdditionalFields.isAdditionalFieldId(field.id))
+    // make suwe aww the p-passed in fiewds a-awe known ow additionaw fiewds
+    wequiwe(
+      (fiewds -- fiewd.awwupdatabwecompiwedfiewds)
+        .fowaww(fiewd => a-additionawfiewds.isadditionawfiewdid(fiewd.id))
     )
 
-    val storedTweet =
-      StoredTweet(
-        id = tpTweet.id,
-        geo = if (fields.contains(Field.Geo)) {
-          tpTweet.coreData.get.coordinates match {
-            case None =>
-              tpTweet.coreData.get.placeId match {
-                case None => None
-                case Some(placeId) =>
-                  Some(
-                    StoredGeo(
-                      latitude = 0.0,
-                      longitude = 0.0,
-                      geoPrecision = 0,
-                      entityId = 0,
-                      name = Some(placeId)
+    v-vaw stowedtweet =
+      stowedtweet(
+        id = tptweet.id, OwO
+        geo = if (fiewds.contains(fiewd.geo)) {
+          tptweet.cowedata.get.coowdinates m-match {
+            case nyone =>
+              t-tptweet.cowedata.get.pwaceid match {
+                case nyone => nyone
+                c-case some(pwaceid) =>
+                  some(
+                    s-stowedgeo(
+                      w-watitude = 0.0, ^•ﻌ•^
+                      wongitude = 0.0, (ꈍᴗꈍ)
+                      g-geopwecision = 0, (⑅˘꒳˘)
+                      entityid = 0, (⑅˘꒳˘)
+                      n-nyame = some(pwaceid)
                     )
                   )
               }
-            case Some(coords) =>
-              Some(
-                StoredGeo(
-                  latitude = coords.latitude,
-                  longitude = coords.longitude,
-                  geoPrecision = coords.geoPrecision,
-                  entityId = if (coords.display) 2 else 0,
-                  name = tpTweet.coreData.get.placeId
+            c-case some(coowds) =>
+              s-some(
+                stowedgeo(
+                  w-watitude = c-coowds.watitude, (ˆ ﻌ ˆ)♡
+                  wongitude = coowds.wongitude, /(^•ω•^)
+                  g-geopwecision = c-coowds.geopwecision, òωó
+                  e-entityid = if (coowds.dispway) 2 ewse 0, (⑅˘꒳˘)
+                  n-nyame = tptweet.cowedata.get.pwaceid
                 )
               )
           }
-        } else {
-          None
-        },
-        hasTakedown =
-          if (fields.contains(Field.HasTakedown))
-            Some(tpTweet.coreData.get.hasTakedown)
-          else
-            None,
-        nsfwUser =
-          if (fields.contains(Field.NsfwUser))
-            Some(tpTweet.coreData.get.nsfwUser)
-          else
-            None,
-        nsfwAdmin =
-          if (fields.contains(Field.NsfwAdmin))
-            Some(tpTweet.coreData.get.nsfwAdmin)
-          else
-            None
+        } ewse {
+          n-nyone
+        }, (U ᵕ U❁)
+        h-hastakedown =
+          if (fiewds.contains(fiewd.hastakedown))
+            some(tptweet.cowedata.get.hastakedown)
+          ewse
+            n-nyone, >w<
+        n-nysfwusew =
+          i-if (fiewds.contains(fiewd.nsfwusew))
+            s-some(tptweet.cowedata.get.nsfwusew)
+          ewse
+            nyone, σωσ
+        nysfwadmin =
+          i-if (fiewds.contains(fiewd.nsfwadmin))
+            some(tptweet.cowedata.get.nsfwadmin)
+          ewse
+            nyone
       )
 
-    if (fields.map(_.id).exists(AdditionalFields.isAdditionalFieldId))
-      toStoredAdditionalFields(tpTweet, storedTweet)
-    else
-      storedTweet
+    if (fiewds.map(_.id).exists(additionawfiewds.isadditionawfiewdid))
+      tostowedadditionawfiewds(tptweet, s-stowedtweet)
+    ewse
+      s-stowedtweet
   }
 
-  def fromStoredReply(reply: StoredReply): Reply =
-    Reply(
-      Some(reply.inReplyToStatusId).filter(_ > 0),
-      reply.inReplyToUserId
+  def fwomstowedwepwy(wepwy: s-stowedwepwy): wepwy =
+    wepwy(
+      s-some(wepwy.inwepwytostatusid).fiwtew(_ > 0), -.-
+      wepwy.inwepwytousewid
     )
 
-  def fromStoredShare(share: StoredShare): Share =
-    Share(
-      share.sourceStatusId,
-      share.sourceUserId,
-      share.parentStatusId
+  d-def fwomstowedshawe(shawe: s-stowedshawe): s-shawe =
+    shawe(
+      s-shawe.souwcestatusid, o.O
+      s-shawe.souwceusewid, ^^
+      shawe.pawentstatusid
     )
 
-  def fromStoredQuotedTweet(qt: StoredQuotedTweet): QuotedTweet =
-    QuotedTweet(
-      qt.tweetId,
-      qt.userId,
-      Some(
-        ShortenedUrl(
-          shortUrl = qt.shortUrl,
-          longUrl = "", // will be hydrated later via tweetypie's QuotedTweetRefUrlsHydrator
-          displayText = "" //will be hydrated later via tweetypie's QuotedTweetRefUrlsHydrator
+  def fwomstowedquotedtweet(qt: stowedquotedtweet): quotedtweet =
+    quotedtweet(
+      qt.tweetid, >_<
+      q-qt.usewid, >w<
+      s-some(
+        s-showteneduww(
+          showtuww = qt.showtuww, >_<
+          w-wonguww = "", >w< // wiww be hydwated watew via tweetypie's quotedtweetwefuwwshydwatow
+          d-dispwaytext = "" //wiww b-be hydwated watew via tweetypie's q-quotedtweetwefuwwshydwatow
         )
       )
     )
 
-  def fromStoredGeo(geo: StoredGeo): GeoCoordinates =
-    GeoCoordinates(
-      latitude = geo.latitude,
-      longitude = geo.longitude,
-      geoPrecision = geo.geoPrecision,
-      display = geo.entityId == 2
+  def fwomstowedgeo(geo: s-stowedgeo): g-geocoowdinates =
+    geocoowdinates(
+      w-watitude = g-geo.watitude, rawr
+      wongitude = geo.wongitude, rawr x3
+      geopwecision = geo.geopwecision, ( ͡o ω ͡o )
+      d-dispway = geo.entityid == 2
     )
 
-  def fromStoredMediaEntity(media: StoredMediaEntity): MediaEntity =
-    MediaEntity(
-      fromIndex = -1, // will get filled in later
-      toIndex = -1, // will get filled in later
-      url = null, // will get filled in later
-      mediaPath = "", // field is obsolete
-      mediaUrl = null, // will get filled in later
-      mediaUrlHttps = null, // will get filled in later
-      displayUrl = null, // will get filled in later
-      expandedUrl = null, // will get filled in later
-      mediaId = media.id,
-      nsfw = false,
-      sizes = Set(
-        MediaSize(
-          sizeType = MediaSizeType.Orig,
-          resizeMethod = MediaResizeMethod.Fit,
-          deprecatedContentType = MediaContentType(media.mediaType),
-          width = media.width,
-          height = media.height
+  d-def fwomstowedmediaentity(media: s-stowedmediaentity): m-mediaentity =
+    mediaentity(
+      f-fwomindex = -1, (˘ω˘) // wiww get fiwwed i-in watew
+      t-toindex = -1, 😳 // wiww get fiwwed i-in watew
+      u-uww = nyuww, OwO // wiww get fiwwed i-in watew
+      mediapath = "", (˘ω˘) // fiewd is obsowete
+      m-mediauww = nyuww, òωó // w-wiww get fiwwed i-in watew
+      mediauwwhttps = n-nyuww, ( ͡o ω ͡o ) // wiww get fiwwed in watew
+      dispwayuww = n-nyuww, UwU // w-wiww get fiwwed i-in watew
+      expandeduww = nyuww, /(^•ω•^) // wiww get fiwwed in watew
+      m-mediaid = media.id, (ꈍᴗꈍ)
+      nysfw = fawse, 😳
+      s-sizes = set(
+        m-mediasize(
+          sizetype = mediasizetype.owig, mya
+          w-wesizemethod = mediawesizemethod.fit, mya
+          d-depwecatedcontenttype = m-mediacontenttype(media.mediatype), /(^•ω•^)
+          width = media.width, ^^;;
+          height = m-media.height
         )
       )
     )
 
-  def fromStoredNarrowcast(narrowcast: StoredNarrowcast): Narrowcast =
-    Narrowcast(
-      location = narrowcast.location.getOrElse(Seq())
+  def fwomstowednawwowcast(nawwowcast: stowednawwowcast): n-nyawwowcast =
+    n-nyawwowcast(
+      wocation = n-nyawwowcast.wocation.getowewse(seq())
     )
 
-  def fromStoredTweet(storedTweet: StoredTweet): Tweet = {
-    val coreData =
-      TweetCoreData(
-        userId = storedTweet.userId.get,
-        text = storedTweet.text.get,
-        createdVia = storedTweet.createdVia.get,
-        createdAtSecs = storedTweet.createdAtSec.get,
-        reply = storedTweet.reply.map(fromStoredReply),
-        share = storedTweet.share.map(fromStoredShare),
-        hasTakedown = storedTweet.hasTakedown.getOrElse(false),
-        nsfwUser = storedTweet.nsfwUser.getOrElse(false),
-        nsfwAdmin = storedTweet.nsfwAdmin.getOrElse(false),
-        narrowcast = storedTweet.narrowcast.map(fromStoredNarrowcast),
-        nullcast = storedTweet.nullcast.getOrElse(false),
-        trackingId = storedTweet.trackingId,
-        conversationId = storedTweet.reply.flatMap(_.conversationId),
-        placeId = storedTweet.geo.flatMap(_.name),
-        coordinates = storedTweet.geo.map(fromStoredGeo),
-        hasMedia = if (storedTweet.media.exists(_.nonEmpty)) Some(true) else None
+  def fwomstowedtweet(stowedtweet: s-stowedtweet): t-tweet = {
+    v-vaw cowedata =
+      tweetcowedata(
+        usewid = stowedtweet.usewid.get, 🥺
+        text = stowedtweet.text.get, ^^
+        cweatedvia = stowedtweet.cweatedvia.get, ^•ﻌ•^
+        cweatedatsecs = stowedtweet.cweatedatsec.get, /(^•ω•^)
+        wepwy = stowedtweet.wepwy.map(fwomstowedwepwy), ^^
+        shawe = stowedtweet.shawe.map(fwomstowedshawe), 🥺
+        hastakedown = stowedtweet.hastakedown.getowewse(fawse), (U ᵕ U❁)
+        n-nysfwusew = s-stowedtweet.nsfwusew.getowewse(fawse), 😳😳😳
+        nysfwadmin = stowedtweet.nsfwadmin.getowewse(fawse), nyaa~~
+        nyawwowcast = s-stowedtweet.nawwowcast.map(fwomstowednawwowcast),
+        n-nyuwwcast = s-stowedtweet.nuwwcast.getowewse(fawse), (˘ω˘)
+        twackingid = stowedtweet.twackingid, >_<
+        c-convewsationid = stowedtweet.wepwy.fwatmap(_.convewsationid), XD
+        p-pwaceid = stowedtweet.geo.fwatmap(_.name), rawr x3
+        c-coowdinates = stowedtweet.geo.map(fwomstowedgeo), ( ͡o ω ͡o )
+        hasmedia = i-if (stowedtweet.media.exists(_.nonempty)) some(twue) ewse n-nyone
       )
 
-    // retweets should never have their media, but some tweets incorrectly do.
-    val storedMedia = if (coreData.share.isDefined) Nil else storedTweet.media.toSeq
+    // w-wetweets shouwd nyevew have theiw media, :3 b-but some tweets i-incowwectwy do. mya
+    v-vaw stowedmedia = i-if (cowedata.shawe.isdefined) n-nyiw ewse s-stowedtweet.media.toseq
 
-    val tpTweet =
-      Tweet(
-        id = storedTweet.id,
-        coreData = Some(coreData),
-        contributor = storedTweet.contributorId.map(Contributor(_)),
-        media = Some(storedMedia.flatten.map(fromStoredMediaEntity)),
-        mentions = Some(Seq.empty),
-        urls = Some(Seq.empty),
-        cashtags = Some(Seq.empty),
-        hashtags = Some(Seq.empty),
-        quotedTweet = storedTweet.quotedTweet.map(fromStoredQuotedTweet)
+    v-vaw t-tptweet =
+      t-tweet(
+        id = stowedtweet.id, σωσ
+        c-cowedata = s-some(cowedata), (ꈍᴗꈍ)
+        c-contwibutow = stowedtweet.contwibutowid.map(contwibutow(_)), OwO
+        media = some(stowedmedia.fwatten.map(fwomstowedmediaentity)),
+        m-mentions = some(seq.empty), o.O
+        uwws = some(seq.empty), 😳😳😳
+        c-cashtags = some(seq.empty), /(^•ω•^)
+        hashtags = some(seq.empty),
+        q-quotedtweet = s-stowedtweet.quotedtweet.map(fwomstowedquotedtweet)
       )
-    fromStoredAdditionalFields(storedTweet, tpTweet)
+    f-fwomstowedadditionawfiewds(stowedtweet, OwO tptweet)
   }
 
-  def fromStoredTweetAllowInvalid(storedTweet: StoredTweet): Tweet = {
-    fromStoredTweet(
-      storedTweet.copy(
-        userId = storedTweet.userId.orElse(Some(-1L)),
-        text = storedTweet.text.orElse(Some("")),
-        createdVia = storedTweet.createdVia.orElse(Some("")),
-        createdAtSec = storedTweet.createdAtSec.orElse(Some(-1L))
+  d-def fwomstowedtweetawwowinvawid(stowedtweet: s-stowedtweet): tweet = {
+    f-fwomstowedtweet(
+      stowedtweet.copy(
+        u-usewid = stowedtweet.usewid.owewse(some(-1w)), ^^
+        text = stowedtweet.text.owewse(some("")), (///ˬ///✿)
+        cweatedvia = stowedtweet.cweatedvia.owewse(some("")), (///ˬ///✿)
+        c-cweatedatsec = stowedtweet.cweatedatsec.owewse(some(-1w))
       ))
   }
 
-  def fromStoredAdditionalFields(from: StoredTweet, to: Tweet): Tweet = {
-    val passThroughAdditionalFields =
-      from._passthroughFields.filterKeys(AdditionalFields.isAdditionalFieldId)
-    val allAdditionalFields =
-      from.getFieldBlobs(tbTweetCompiledAdditionalFieldIds) ++ passThroughAdditionalFields
-    allAdditionalFields.values.foldLeft(to) { case (t, f) => t.setField(f) }
+  d-def fwomstowedadditionawfiewds(fwom: s-stowedtweet, (///ˬ///✿) to: tweet): tweet = {
+    vaw passthwoughadditionawfiewds =
+      f-fwom._passthwoughfiewds.fiwtewkeys(additionawfiewds.isadditionawfiewdid)
+    vaw awwadditionawfiewds =
+      f-fwom.getfiewdbwobs(tbtweetcompiwedadditionawfiewdids) ++ p-passthwoughadditionawfiewds
+    a-awwadditionawfiewds.vawues.fowdweft(to) { case (t, ʘwʘ f) => t.setfiewd(f) }
   }
 
-  def toDeletedTweet(storedTweet: StoredTweet): DeletedTweet = {
-    val noteTweetBlob = storedTweet.getFieldBlob(Tweet.NoteTweetField.id)
-    val noteTweetOption = noteTweetBlob.map(blob => NoteTweet.decode(blob.read))
-    DeletedTweet(
-      id = storedTweet.id,
-      userId = storedTweet.userId,
-      text = storedTweet.text,
-      createdAtSecs = storedTweet.createdAtSec,
-      share = storedTweet.share.map(toDeletedShare),
-      media = storedTweet.media.map(_.map(toDeletedMediaEntity)),
-      noteTweetId = noteTweetOption.map(_.id),
-      isExpandable = noteTweetOption.flatMap(_.isExpandable)
+  d-def todewetedtweet(stowedtweet: s-stowedtweet): dewetedtweet = {
+    v-vaw nyotetweetbwob = stowedtweet.getfiewdbwob(tweet.notetweetfiewd.id)
+    vaw nyotetweetoption = n-nyotetweetbwob.map(bwob => nyotetweet.decode(bwob.wead))
+    d-dewetedtweet(
+      i-id = stowedtweet.id, ^•ﻌ•^
+      u-usewid = stowedtweet.usewid, OwO
+      text = stowedtweet.text, (U ﹏ U)
+      c-cweatedatsecs = s-stowedtweet.cweatedatsec, (ˆ ﻌ ˆ)♡
+      s-shawe = stowedtweet.shawe.map(todewetedshawe), (⑅˘꒳˘)
+      m-media = stowedtweet.media.map(_.map(todewetedmediaentity)), (U ﹏ U)
+      n-nyotetweetid = n-notetweetoption.map(_.id), o.O
+      i-isexpandabwe = n-notetweetoption.fwatmap(_.isexpandabwe)
     )
   }
 
-  def toDeletedShare(storedShare: StoredShare): DeletedTweetShare =
-    DeletedTweetShare(
-      sourceStatusId = storedShare.sourceStatusId,
-      sourceUserId = storedShare.sourceUserId,
-      parentStatusId = storedShare.parentStatusId
+  d-def todewetedshawe(stowedshawe: s-stowedshawe): dewetedtweetshawe =
+    d-dewetedtweetshawe(
+      souwcestatusid = s-stowedshawe.souwcestatusid, mya
+      souwceusewid = s-stowedshawe.souwceusewid, XD
+      pawentstatusid = s-stowedshawe.pawentstatusid
     )
 
-  def toDeletedMediaEntity(storedMediaEntity: StoredMediaEntity): DeletedTweetMediaEntity =
-    DeletedTweetMediaEntity(
-      id = storedMediaEntity.id,
-      mediaType = storedMediaEntity.mediaType,
-      width = storedMediaEntity.width,
-      height = storedMediaEntity.height
+  def todewetedmediaentity(stowedmediaentity: s-stowedmediaentity): d-dewetedtweetmediaentity =
+    d-dewetedtweetmediaentity(
+      id = stowedmediaentity.id, òωó
+      mediatype = stowedmediaentity.mediatype, (˘ω˘)
+      w-width = stowedmediaentity.width, :3
+      h-height = s-stowedmediaentity.height
     )
 }

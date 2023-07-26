@@ -1,10 +1,10 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.data;
+package tensowfwow.data;
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/dataset_metadata_go_proto";
+option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/dataset_metadata_go_pwoto";
 
-// next: 2
-message Metadata {
-  bytes name = 1;
+// n-nyext: 2
+message m-metadata {
+  bytes n-nyame = 1;
 }

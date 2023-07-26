@@ -1,193 +1,193 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/attr_value.proto";
-import "tensorflow/core/framework/full_type.proto";
-import "tensorflow/core/framework/resource_handle.proto";
-import "tensorflow/core/framework/types.proto";
+impowt "tensowfwow/cowe/fwamewowk/attw_vawue.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/fuww_type.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/wesouwce_handwe.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/types.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "OpDefProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/op_def_go_proto";
+o-option c-cc_enabwe_awenas = t-twue;
+option j-java_outew_cwassname = "opdefpwotos";
+o-option java_muwtipwe_fiwes = twue;
+option java_package = "owg.tensowfwow.fwamewowk";
+option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/op_def_go_pwoto";
 
-// Defines an operation. A NodeDef in a GraphDef specifies an Op by
-// using the "op" field which should match the name of a OpDef.
-// LINT.IfChange
-message OpDef {
-  // Op names starting with an underscore are reserved for internal use.
-  // Names should be CamelCase and match the regexp "[A-Z][a-zA-Z0-9>_]*".
-  string name = 1;
+// defines an opewation. 🥺 a nodedef i-in a gwaphdef specifies an o-op by
+// using the "op" fiewd which shouwd match the nyame of a-a opdef. ʘwʘ
+// wint.ifchange
+message o-opdef {
+  // op n-nyames stawting with an undewscowe awe wesewved fow intewnaw use.
+  // nyames s-shouwd be camewcase and match the wegexp "[a-z][a-za-z0-9>_]*". :3
+  stwing nyame = 1;
 
-  // For describing inputs and outputs.
-  message ArgDef {
-    // Name for the input/output.  Should match the regexp "[a-z][a-z0-9_]*".
-    string name = 1;
+  // fow descwibing i-inputs and outputs. (U ﹏ U)
+  message a-awgdef {
+    // n-nyame fow t-the input/output. (U ﹏ U)  s-shouwd match the wegexp "[a-z][a-z0-9_]*". ʘwʘ
+    stwing nyame = 1;
 
-    // Human readable description.
-    string description = 2;
+    // h-human weadabwe descwiption. >w<
+    stwing d-descwiption = 2;
 
-    // Describes the type of one or more tensors that are accepted/produced
-    // by this input/output arg.  The only legal combinations are:
-    // * For a single tensor: either the "type" field is set or the
-    //   "type_attr" field is set to the name of an attr with type "type".
-    // * For a sequence of tensors with the same type: the "number_attr"
-    //   field will be set to the name of an attr with type "int", and
-    //   either the "type" or "type_attr" field will be set as for
-    //   single tensors.
-    // * For a sequence of tensors, the "type_list_attr" field will be set
-    //   to the name of an attr with type "list(type)".
-    DataType type = 3;
-    string type_attr = 4;    // if specified, attr must have type "type"
-    string number_attr = 5;  // if specified, attr must have type "int"
-    // If specified, attr must have type "list(type)", and none of
-    // type, type_attr, and number_attr may be specified.
-    string type_list_attr = 6;
+    // descwibes the type of one ow mowe tensows that awe accepted/pwoduced
+    // b-by this input/output awg. rawr x3  t-the onwy wegaw c-combinations a-awe:
+    // * fow a singwe tensow: eithew the "type" fiewd is set o-ow the
+    //   "type_attw" f-fiewd is set to the n-nyame of an attw w-with type "type". OwO
+    // * fow a-a sequence of tensows with the s-same type: the "numbew_attw"
+    //   fiewd wiww be set to the n-nyame of an attw with type "int", ^•ﻌ•^ a-and
+    //   eithew the "type" o-ow "type_attw" f-fiewd wiww be set as fow
+    //   singwe tensows. >_<
+    // * fow a sequence of tensows, OwO the "type_wist_attw" fiewd w-wiww be set
+    //   t-to the nyame of an attw with t-type "wist(type)". >_<
+    d-datatype t-type = 3;
+    stwing type_attw = 4;    // if specified, (ꈍᴗꈍ) attw m-must have type "type"
+    stwing nyumbew_attw = 5;  // if specified, >w< attw must have t-type "int"
+    // if specified, (U ﹏ U) a-attw must have t-type "wist(type)", a-and nyone of
+    // type, ^^ t-type_attw, (U ﹏ U) and nyumbew_attw m-may b-be specified.
+    s-stwing type_wist_attw = 6;
 
-    // The handle data for resource inputs.
-    repeated ResourceHandleProto.DtypeAndShape handle_data = 7;
+    // the handwe data fow wesouwce i-inputs.
+    wepeated w-wesouwcehandwepwoto.dtypeandshape h-handwe_data = 7;
 
-    // For inputs: if true, the inputs are required to be refs.
-    //   By default, inputs can be either refs or non-refs.
-    // For outputs: if true, outputs are refs, otherwise they are not.
-    bool is_ref = 16;
+    // f-fow inputs: if t-twue, :3 the inputs awe wequiwed to be wefs. (✿oωo)
+    //   by defauwt, XD i-inputs can be eithew wefs ow nyon-wefs. >w<
+    // fow outputs: if twue, òωó outputs awe wefs, (ꈍᴗꈍ) othewwise they awe nyot.
+    b-boow is_wef = 16;
 
-    // Experimental. Full type declaration for this argument.
-    // The full type specification combines type, type_attr, type_list_attr,
-    // etc. into a unified representation.
-    // This declaration may contain non-concrete types (for example,
-    // Tensor<TypeVar<'T'>> is a valid type declaration.
+    // expewimentaw. rawr x3 fuww type decwawation f-fow this awgument. rawr x3
+    // t-the f-fuww type specification combines t-type, σωσ type_attw, type_wist_attw, (ꈍᴗꈍ)
+    // e-etc. rawr into a-a unified wepwesentation. ^^;;
+    // this decwawation may contain nyon-concwete types (fow exampwe, rawr x3
+    // tensow<typevaw<'t'>> is a-a vawid type decwawation. (ˆ ﻌ ˆ)♡
     //
-    // Note: this is a transient field. The long-term aim is to represent the
-    // entire OpDef as a single type: a callable. In that context, this field is
-    // just the type of a single argument.
-    FullTypeDef experimental_full_type = 17;
+    // nyote: t-this is a twansient fiewd. σωσ the w-wong-tewm aim is t-to wepwesent the
+    // entiwe opdef as a singwe t-type: a cawwabwe. (U ﹏ U) i-in that context, >w< this fiewd i-is
+    // just the t-type of a singwe awgument. σωσ
+    fuwwtypedef expewimentaw_fuww_type = 17;
   }
 
-  // Description of the input(s).
-  repeated ArgDef input_arg = 2;
+  // descwiption of the input(s).
+  w-wepeated awgdef i-input_awg = 2;
 
-  // Description of the output(s).
-  repeated ArgDef output_arg = 3;
+  // d-descwiption of the output(s). nyaa~~
+  w-wepeated a-awgdef output_awg = 3;
 
-  // Named control outputs for this operation. Useful only for composite
-  // operations (i.e. functions) which want to name different control outputs.
-  repeated string control_output = 20;
+  // named contwow outputs f-fow this opewation. 🥺 usefuw onwy fow composite
+  // opewations (i.e. rawr x3 functions) w-which want to n-nyame diffewent contwow outputs. σωσ
+  wepeated stwing c-contwow_output = 20;
 
-  // Description of the graph-construction-time configuration of this
-  // Op.  That is to say, this describes the attr fields that will
-  // be specified in the NodeDef.
-  message AttrDef {
-    // A descriptive name for the argument.  May be used, e.g. by the
-    // Python client, as a keyword argument name, and so should match
-    // the regexp "[a-z][a-z0-9_]+".
-    string name = 1;
+  // d-descwiption of the gwaph-constwuction-time configuwation of this
+  // o-op. (///ˬ///✿)  that is to say, (U ﹏ U) this descwibes the attw fiewds that wiww
+  // be specified i-in the nyodedef. ^^;;
+  message attwdef {
+    // a-a descwiptive n-nyame fow the awgument. 🥺  may be used, e.g. òωó by the
+    // python c-cwient, XD as a keywowd a-awgument nyame, :3 and so shouwd match
+    // the wegexp "[a-z][a-z0-9_]+". (U ﹏ U)
+    s-stwing nyame = 1;
 
-    // One of the type names from attr_value.proto ("string", "list(string)",
-    // "int", etc.).
-    string type = 2;
+    // one o-of the type nyames fwom attw_vawue.pwoto ("stwing", >w< "wist(stwing)", /(^•ω•^)
+    // "int", (⑅˘꒳˘) etc.).
+    stwing type = 2;
 
-    // A reasonable default for this attribute if the user does not supply
-    // a value.  If not specified, the user must supply a value.
-    AttrValue default_value = 3;
+    // a-a weasonabwe defauwt fow this a-attwibute if t-the usew does nyot suppwy
+    // a-a vawue. ʘwʘ  if nyot specified, rawr x3 the u-usew must suppwy a-a vawue. (˘ω˘)
+    a-attwvawue defauwt_vawue = 3;
 
-    // Human-readable description.
-    string description = 4;
+    // human-weadabwe d-descwiption. o.O
+    s-stwing descwiption = 4;
 
-    // TODO(josh11b): bool is_optional?
+    // todo(josh11b): boow is_optionaw?
 
-    // --- Constraints ---
-    // These constraints are only in effect if specified.  Default is no
-    // constraints.
+    // --- c-constwaints ---
+    // t-these c-constwaints awe onwy in effect if specified. 😳  defauwt i-is nyo
+    // constwaints. o.O
 
-    // For type == "int", this is a minimum value.  For "list(___)"
-    // types, this is the minimum length.
-    bool has_minimum = 5;
-    int64 minimum = 6;
+    // f-fow type == "int", ^^;; t-this is a minimum vawue. ( ͡o ω ͡o )  fow "wist(___)"
+    // types, ^^;; t-this is the m-minimum wength. ^^;;
+    b-boow has_minimum = 5;
+    i-int64 minimum = 6;
 
-    // The set of allowed values.  Has type that is the "list" version
-    // of the "type" field above (uses the "list" field of AttrValue).
-    // If type == "type" or "list(type)" above, then the "type" field
-    // of "allowed_values.list" has the set of allowed DataTypes.
-    // If type == "string" or "list(string)", then the "s" field of
-    // "allowed_values.list" has the set of allowed strings.
-    AttrValue allowed_values = 7;
+    // t-the set of awwowed vawues. XD  has type that is the "wist" vewsion
+    // of the "type" fiewd a-above (uses the "wist" fiewd o-of attwvawue). 🥺
+    // if type == "type" o-ow "wist(type)" above, t-then the "type" fiewd
+    // of "awwowed_vawues.wist" h-has the set o-of awwowed datatypes. (///ˬ///✿)
+    // if t-type == "stwing" o-ow "wist(stwing)", t-then the "s" fiewd of
+    // "awwowed_vawues.wist" has the set of awwowed stwings. (U ᵕ U❁)
+    attwvawue awwowed_vawues = 7;
   }
-  repeated AttrDef attr = 4;
+  wepeated attwdef a-attw = 4;
 
-  // Optional deprecation based on GraphDef versions.
-  OpDeprecation deprecation = 8;
+  // o-optionaw depwecation b-based on gwaphdef vewsions. ^^;;
+  o-opdepwecation depwecation = 8;
 
-  // One-line human-readable description of what the Op does.
-  string summary = 5;
+  // one-wine human-weadabwe d-descwiption of n-nyani the op does. ^^;;
+  stwing summawy = 5;
 
-  // Additional, longer human-readable description of what the Op does.
-  string description = 6;
-
-  // -------------------------------------------------------------------------
-  // Which optimizations this operation can participate in.
-
-  // True if the operation is commutative ("op(a,b) == op(b,a)" for all inputs)
-  bool is_commutative = 18;
-
-  // If is_aggregate is true, then this operation accepts N >= 2
-  // inputs and produces 1 output all of the same type.  Should be
-  // associative and commutative, and produce output with the same
-  // shape as the input.  The optimizer may replace an aggregate op
-  // taking input from multiple devices with a tree of aggregate ops
-  // that aggregate locally within each device (and possibly within
-  // groups of nearby devices) before communicating.
-  // TODO(josh11b): Implement that optimization.
-  bool is_aggregate = 16;  // for things like add
-
-  // Other optimizations go here, like
-  //   can_alias_input, rewrite_when_output_unused, partitioning_strategy, etc.
+  // a-additionaw, rawr wongew human-weadabwe descwiption of n-nyani the op does.
+  s-stwing descwiption = 6;
 
   // -------------------------------------------------------------------------
-  // Optimization constraints.
+  // which optimizations t-this opewation c-can pawticipate in. (˘ω˘)
 
-  // Ops are marked as stateful if their behavior depends on some state beyond
-  // their input tensors (e.g. variable reading op) or if they have
-  // a side-effect (e.g. printing or asserting ops). Equivalently, stateless ops
-  // must always produce the same output for the same input and have
-  // no side-effects.
+  // twue if the opewation is commutative ("op(a,b) == op(b,a)" fow aww i-inputs)
+  boow i-is_commutative = 18;
+
+  // i-if i-is_aggwegate is t-twue, 🥺 then this opewation accepts n-ny >= 2
+  // inputs a-and pwoduces 1 output aww o-of the same type. nyaa~~  s-shouwd be
+  // associative and c-commutative, :3 and pwoduce output with the same
+  // s-shape as the input. /(^•ω•^)  the optimizew m-may wepwace a-an aggwegate op
+  // taking i-input fwom muwtipwe devices with a twee of aggwegate o-ops
+  // that a-aggwegate wocawwy w-within each device (and possibwy within
+  // gwoups of nyeawby d-devices) befowe communicating. ^•ﻌ•^
+  // todo(josh11b): i-impwement t-that optimization. UwU
+  boow is_aggwegate = 16;  // f-fow things wike add
+
+  // othew o-optimizations g-go hewe, 😳😳😳 wike
+  //   can_awias_input, OwO wewwite_when_output_unused, ^•ﻌ•^ p-pawtitioning_stwategy, (ꈍᴗꈍ) etc.
+
+  // -------------------------------------------------------------------------
+  // optimization c-constwaints. (⑅˘꒳˘)
+
+  // o-ops awe mawked as statefuw if t-theiw behaviow depends on some s-state beyond
+  // t-theiw input tensows (e.g. (⑅˘꒳˘) v-vawiabwe weading op) ow if they have
+  // a side-effect (e.g. (ˆ ﻌ ˆ)♡ pwinting ow assewting ops). /(^•ω•^) equivawentwy, òωó statewess ops
+  // must awways pwoduce the same output fow the same input and have
+  // no side-effects. (⑅˘꒳˘)
   //
-  // By default Ops may be moved between devices.  Stateful ops should
-  // either not be moved, or should only be moved if that state can also
-  // be moved (e.g. via some sort of save / restore).
-  // Stateful ops are guaranteed to never be optimized away by Common
-  // Subexpression Elimination (CSE).
-  bool is_stateful = 17;  // for things like variables, queue
+  // b-by defauwt o-ops may be moved between devices. (U ᵕ U❁)  statefuw ops s-shouwd
+  // eithew n-nyot be moved, >w< o-ow shouwd onwy be moved if that s-state can awso
+  // be moved (e.g. σωσ v-via some s-sowt of save / westowe). -.-
+  // statefuw o-ops awe guawanteed to nevew b-be optimized a-away by common
+  // subexpwession ewimination (cse). o.O
+  b-boow is_statefuw = 17;  // f-fow things wike v-vawiabwes, ^^ queue
 
   // -------------------------------------------------------------------------
-  // Non-standard options.
+  // n-nyon-standawd o-options. >_<
 
-  // By default, all inputs to an Op must be initialized Tensors.  Ops
-  // that may initialize tensors for the first time should set this
-  // field to true, to allow the Op to take an uninitialized Tensor as
-  // input.
-  bool allows_uninitialized_input = 19;  // for Assign, etc.
+  // b-by defauwt, >w< a-aww inputs to an o-op must be initiawized t-tensows. >_<  ops
+  // that m-may initiawize t-tensows fow the f-fiwst time shouwd set this
+  // f-fiewd to twue, >w< to awwow the op to take an uninitiawized t-tensow as
+  // input. rawr
+  b-boow awwows_uninitiawized_input = 19;  // f-fow assign, rawr x3 e-etc. ( ͡o ω ͡o )
 
-  // Indicates whether the op implementation uses distributed communication.
-  // If True, the op is allowed to return errors for network disconnection and
-  // trigger TF network failure handling logics.
-  bool is_distributed_communication = 21;
+  // indicates whethew t-the op impwementation uses distwibuted c-communication. (˘ω˘)
+  // if t-twue, 😳 the op is awwowed to wetuwn e-ewwows fow netwowk disconnection and
+  // twiggew tf nyetwowk faiwuwe handwing w-wogics. OwO
+  boow is_distwibuted_communication = 21;
 }
-// LINT.ThenChange(
-//     https://www.tensorflow.org/code/tensorflow/core/framework/op_def_util.cc)
+// w-wint.thenchange(
+//     h-https://www.tensowfwow.owg/code/tensowfwow/cowe/fwamewowk/op_def_utiw.cc)
 
-// Information about version-dependent deprecation of an op
-message OpDeprecation {
-  // First GraphDef version at which the op is disallowed.
-  int32 version = 1;
+// infowmation about vewsion-dependent depwecation of a-an op
+message opdepwecation {
+  // f-fiwst gwaphdef v-vewsion at which t-the op is disawwowed. (˘ω˘)
+  int32 vewsion = 1;
 
-  // Explanation of why it was deprecated and what to use instead.
-  string explanation = 2;
+  // e-expwanation o-of why it was depwecated and nani t-to use instead. òωó
+  stwing expwanation = 2;
 }
 
-// A collection of OpDefs
-message OpList {
-  repeated OpDef op = 1;
+// a cowwection o-of opdefs
+message opwist {
+  wepeated o-opdef op = 1;
 }

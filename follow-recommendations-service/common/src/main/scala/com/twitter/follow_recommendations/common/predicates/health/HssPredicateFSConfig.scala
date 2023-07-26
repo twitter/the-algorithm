@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.predicates.hss
+package com.twittew.fowwow_wecommendations.common.pwedicates.hss
 
-import com.twitter.follow_recommendations.common.predicates.hss.HssPredicateParams._
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+impowt com.twittew.fowwow_wecommendations.common.pwedicates.hss.hsspwedicatepawams._
+i-impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt com.twittew.utiw.duwation
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class HssPredicateFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    HssCseScoreThreshold,
-    HssNsfwScoreThreshold,
+@singweton
+cwass hsspwedicatefsconfig @inject() () extends featuweswitchconfig {
+  ovewwide vaw doubwefspawams: s-seq[fsboundedpawam[doubwe]] = seq(
+    hsscsescowethweshowd, (U ᵕ U❁)
+    hssnsfwscowethweshowd, -.-
   )
 
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    HssApiTimeout
+  o-ovewwide vaw duwationfspawams: s-seq[fsboundedpawam[duwation] with hasduwationconvewsion] = seq(
+    hssapitimeout
   )
 }

@@ -1,199 +1,199 @@
-package com.twitter.search.earlybird.search;
+package com.twittew.seawch.eawwybiwd.seawch;
 
-import java.io.IOException;
-import java.util.LinkedHashSet;
-import java.util.Set;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.winkedhashset;
+i-impowt j-java.utiw.set;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.spatial.prefix.tree.Cell;
-import org.apache.lucene.spatial.prefix.tree.CellIterator;
-import org.apache.lucene.util.BytesRef;
-import org.locationtech.spatial4j.shape.Rectangle;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.index.numewicdocvawues;
+i-impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.spatiaw.pwefix.twee.ceww;
+impowt owg.apache.wucene.spatiaw.pwefix.twee.cewwitewatow;
+i-impowt owg.apache.wucene.utiw.byteswef;
+impowt owg.wocationtech.spatiaw4j.shape.wectangwe;
 
-import com.twitter.search.common.query.MultiTermDisjunctionQuery;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.GeoQuadTreeQueryBuilderUtil;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.util.spatial.BoundingBox;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.spatial.GeohashChunkImpl;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.queries.GeoTwoPhaseQuery;
-import com.twitter.search.earlybird.search.queries.GeoTwoPhaseQuery.SecondPhaseDocAccepter;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.util.GeoCode;
+impowt com.twittew.seawch.common.quewy.muwtitewmdisjunctionquewy;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.common.seawch.geoquadtweequewybuiwdewutiw;
+i-impowt com.twittew.seawch.common.seawch.tewminationtwackew;
+impowt com.twittew.seawch.common.utiw.spatiaw.boundingbox;
+i-impowt com.twittew.seawch.common.utiw.spatiaw.geoutiw;
+impowt c-com.twittew.seawch.common.utiw.spatiaw.geohashchunkimpw;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt com.twittew.seawch.eawwybiwd.seawch.quewies.geotwophasequewy;
+impowt com.twittew.seawch.eawwybiwd.seawch.quewies.geotwophasequewy.secondphasedocacceptew;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+impowt com.twittew.seawch.quewypawsew.utiw.geocode;
 
-import geo.google.datamodel.GeoCoordinate;
+impowt geo.googwe.datamodew.geocoowdinate;
 
 /**
- * A class that builds queries to query the quadtree.
+ * a cwass t-that buiwds quewies to quewy the q-quadtwee. (✿oωo)
  */
-public final class GeoQuadTreeQueryBuilder {
-  private GeoQuadTreeQueryBuilder() {
+pubwic f-finaw cwass g-geoquadtweequewybuiwdew {
+  p-pwivate geoquadtweequewybuiwdew() {
   }
 
   /**
-   * Returns a GeoTwoPhaseQuery for the given geocode.
+   * wetuwns a geotwophasequewy f-fow the given geocode. /(^•ω•^)
    */
-  public static Query buildGeoQuadTreeQuery(final GeoCode geocode) {
-    return buildGeoQuadTreeQuery(geocode, null);
+  pubwic s-static quewy buiwdgeoquadtweequewy(finaw geocode geocode) {
+    wetuwn buiwdgeoquadtweequewy(geocode, 🥺 nyuww);
   }
 
   /**
-   * Returns a GeoTwoPhaseQuery for the given geocode.
+   * w-wetuwns a geotwophasequewy fow t-the given geocode. ʘwʘ
    *
-   * @param geocode The geocode.
-   * @param terminationTracker The tracker that determines when the query needs to terminate.
+   * @pawam g-geocode the g-geocode. UwU
+   * @pawam tewminationtwackew the twackew that detewmines w-when the quewy n-nyeeds to tewminate.
    */
-  public static Query buildGeoQuadTreeQuery(GeoCode geocode,
-                                            TerminationTracker terminationTracker) {
-    Query geoHashDisjuntiveQuery = GeoQuadTreeQueryBuilderUtil.buildGeoQuadTreeQuery(
-        geocode, EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName());
+  pubwic static quewy b-buiwdgeoquadtweequewy(geocode g-geocode, XD
+                                            tewminationtwackew t-tewminationtwackew) {
+    quewy geohashdisjuntivequewy = g-geoquadtweequewybuiwdewutiw.buiwdgeoquadtweequewy(
+        geocode, (✿oωo) eawwybiwdfiewdconstant.geo_hash_fiewd.getfiewdname());
 
-    // 5. Create post filtering accepter
-    final SecondPhaseDocAccepter accepter = (geocode.distanceKm != GeoCode.DOUBLE_DISTANCE_NOT_SET)
-            ? new CenterRadiusAccepter(geocode.latitude, geocode.longitude, geocode.distanceKm)
-            : GeoTwoPhaseQuery.ALL_DOCS_ACCEPTER;
+    // 5. :3 c-cweate post fiwtewing acceptew
+    f-finaw secondphasedocacceptew a-acceptew = (geocode.distancekm != g-geocode.doubwe_distance_not_set)
+            ? nyew centewwadiusacceptew(geocode.watitude, (///ˬ///✿) geocode.wongitude, nyaa~~ geocode.distancekm)
+            : geotwophasequewy.aww_docs_acceptew;
 
-    return new GeoTwoPhaseQuery(geoHashDisjuntiveQuery, accepter, terminationTracker);
+    wetuwn nyew geotwophasequewy(geohashdisjuntivequewy, >w< a-acceptew, t-tewminationtwackew);
   }
 
   /**
-   * Construct a query as below:
-   *   1. Compute all quadtree cells that intersects the bounding box.
-   *   2. Create a disjunction of the geohashes of all the intersecting cells.
-   *   3. Add a filter to only keep points inside the giving bounding box.
+   * constwuct a-a quewy as bewow:
+   *   1. -.- c-compute a-aww quadtwee cewws that intewsects the bounding box. (✿oωo)
+   *   2. (˘ω˘) c-cweate a disjunction of the geohashes of aww the intewsecting cewws. rawr
+   *   3. OwO a-add a fiwtew to onwy keep points i-inside the g-giving bounding b-box. ^•ﻌ•^
    */
-  public static Query buildGeoQuadTreeQuery(final Rectangle boundingBox,
-                                            final TerminationTracker terminationTracker)
-      throws QueryParserException {
-    // 1. Locate the main quadtree cell---the cell containing the bounding box's center point whose
-    // diagonal is just longer than the bounding box's diagonal.
-    final Cell centerCell = GeohashChunkImpl.getGeoNodeByBoundingBox(boundingBox);
+  pubwic static quewy b-buiwdgeoquadtweequewy(finaw w-wectangwe b-boundingbox, UwU
+                                            f-finaw tewminationtwackew tewminationtwackew)
+      thwows quewypawsewexception {
+    // 1. (˘ω˘) w-wocate t-the main quadtwee c-ceww---the ceww c-containing the b-bounding box's centew point whose
+    // diagonaw is just wongew t-than the bounding box's diagonaw. (///ˬ///✿)
+    finaw ceww centewceww = geohashchunkimpw.getgeonodebyboundingbox(boundingbox);
 
-    // 2. Determine quadtree level to search.
-    int treeLevel = -1;
-    if (centerCell != null) {
-      treeLevel = centerCell.getLevel();
-    } else {
-      // This should not happen.
-      throw new QueryParserException(
-          "Unable to locate quadtree cell containing the given bounding box."
-          + "Bounding box is: " + boundingBox);
+    // 2. σωσ detewmine quadtwee w-wevew to seawch. /(^•ω•^)
+    int tweewevew = -1;
+    if (centewceww != n-nyuww) {
+      t-tweewevew = c-centewceww.getwevew();
+    } ewse {
+      // t-this shouwd nyot happen. 😳
+      t-thwow n-nyew quewypawsewexception(
+          "unabwe to wocate quadtwee ceww containing the given bounding box."
+          + "bounding box is: " + boundingbox);
     }
 
-    // 3. get all quadtree cells at treeLevel that intersects the given bounding box.
-    CellIterator intersectingCells =
-        GeohashChunkImpl.getNodesIntersectingBoundingBox(boundingBox, treeLevel);
+    // 3. 😳 g-get aww quadtwee cewws a-at tweewevew that intewsects t-the given bounding b-box. (⑅˘꒳˘)
+    cewwitewatow intewsectingcewws =
+        geohashchunkimpw.getnodesintewsectingboundingbox(boundingbox, 😳😳😳 t-tweewevew);
 
-    // 4. Construct disjunction query
-    final Set<BytesRef> geoHashSet = new LinkedHashSet<>();
+    // 4. 😳 c-constwuct disjunction q-quewy
+    finaw s-set<byteswef> geohashset = nyew winkedhashset<>();
 
-    // Add center node
-    geoHashSet.add(centerCell.getTokenBytesNoLeaf(new BytesRef()));
-    // If there are other nodes intersecting query circle, also add them in.
-    if (intersectingCells != null) {
-      while (intersectingCells.hasNext()) {
-        geoHashSet.add(intersectingCells.next().getTokenBytesNoLeaf(new BytesRef()));
+    // add centew node
+    g-geohashset.add(centewceww.gettokenbytesnoweaf(new b-byteswef()));
+    // i-if thewe awe othew nyodes i-intewsecting quewy c-ciwcwe, XD awso add them in. mya
+    i-if (intewsectingcewws != nyuww) {
+      whiwe (intewsectingcewws.hasnext()) {
+        geohashset.add(intewsectingcewws.next().gettokenbytesnoweaf(new byteswef()));
       }
     }
-    MultiTermDisjunctionQuery geoHashDisjuntiveQuery = new MultiTermDisjunctionQuery(
-        EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(), geoHashSet);
+    m-muwtitewmdisjunctionquewy g-geohashdisjuntivequewy = nyew muwtitewmdisjunctionquewy(
+        e-eawwybiwdfiewdconstant.geo_hash_fiewd.getfiewdname(), ^•ﻌ•^ g-geohashset);
 
-    // 5. Create post filtering accepter
-    final GeoDocAccepter accepter = new BoundingBoxAccepter(boundingBox);
+    // 5. ʘwʘ cweate post fiwtewing acceptew
+    finaw geodocacceptew a-acceptew = nyew boundingboxacceptew(boundingbox);
 
-    return new GeoTwoPhaseQuery(geoHashDisjuntiveQuery, accepter, terminationTracker);
+    wetuwn nyew geotwophasequewy(geohashdisjuntivequewy, ( ͡o ω ͡o ) acceptew, mya tewminationtwackew);
   }
 
-  private abstract static class GeoDocAccepter extends SecondPhaseDocAccepter {
-    private NumericDocValues latLonDocValues;
-    private final GeoCoordinate geoCoordReuse = new GeoCoordinate();
+  pwivate a-abstwact static cwass geodocacceptew extends s-secondphasedocacceptew {
+    p-pwivate nyumewicdocvawues watwondocvawues;
+    pwivate f-finaw geocoowdinate g-geocoowdweuse = nyew geocoowdinate();
 
-    @Override
-    public void initialize(LeafReaderContext context) throws IOException {
-      final EarlybirdIndexSegmentAtomicReader reader =
-          (EarlybirdIndexSegmentAtomicReader) context.reader();
-      latLonDocValues =
-          reader.getNumericDocValues(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName());
+    @ovewwide
+    pubwic void initiawize(weafweadewcontext context) t-thwows ioexception {
+      finaw e-eawwybiwdindexsegmentatomicweadew weadew =
+          (eawwybiwdindexsegmentatomicweadew) context.weadew();
+      watwondocvawues =
+          w-weadew.getnumewicdocvawues(eawwybiwdfiewdconstant.wat_won_csf_fiewd.getfiewdname());
     }
 
-    // Decides whether a point should be accepted.
-    protected abstract boolean acceptPoint(double lat, double lon);
+    // decides whethew a-a point shouwd b-be accepted. o.O
+    pwotected abstwact b-boowean acceptpoint(doubwe wat, (✿oωo) doubwe won);
 
-    // Decides whether a document should be accepted based on its geo coordinates.
-    @Override
-    public final boolean accept(int internalDocId) throws IOException {
-      // Cannot obtain valid geo coordinates for the document. Not acceptable.
-      if (latLonDocValues == null
-          || !latLonDocValues.advanceExact(internalDocId)
-          || !GeoUtil.decodeLatLonFromInt64(latLonDocValues.longValue(), geoCoordReuse)) {
-        return false;
+    // d-decides w-whethew a document s-shouwd be accepted based o-on its geo coowdinates. :3
+    @ovewwide
+    p-pubwic finaw boowean accept(int intewnawdocid) t-thwows i-ioexception {
+      // c-cannot obtain vawid geo coowdinates fow the d-document. 😳 nyot acceptabwe. (U ﹏ U)
+      i-if (watwondocvawues == n-nyuww
+          || !watwondocvawues.advanceexact(intewnawdocid)
+          || !geoutiw.decodewatwonfwomint64(watwondocvawues.wongvawue(), mya geocoowdweuse)) {
+        wetuwn fawse;
       }
 
-      return acceptPoint(geoCoordReuse.getLatitude(), geoCoordReuse.getLongitude());
+      w-wetuwn a-acceptpoint(geocoowdweuse.getwatitude(), (U ᵕ U❁) g-geocoowdweuse.getwongitude());
     }
   }
 
-  // Accepts points within a circle defined by a center point and a radius.
-  private static final class CenterRadiusAccepter extends GeoDocAccepter {
-    private final double centerLat;
-    private final double centerLon;
-    private final double radiusKm;
+  // a-accepts points within a-a ciwcwe defined by a centew point and a wadius. :3
+  pwivate static finaw cwass centewwadiusacceptew extends geodocacceptew {
+    p-pwivate finaw doubwe centewwat;
+    p-pwivate finaw doubwe centewwon;
+    p-pwivate finaw doubwe wadiuskm;
 
-    public CenterRadiusAccepter(double centerLat, double centerLon, double radiusKm) {
-      this.centerLat = centerLat;
-      this.centerLon = centerLon;
-      this.radiusKm = radiusKm;
+    p-pubwic centewwadiusacceptew(doubwe centewwat, mya d-doubwe c-centewwon, OwO doubwe w-wadiuskm) {
+      t-this.centewwat = c-centewwat;
+      this.centewwon = centewwon;
+      this.wadiuskm = wadiuskm;
     }
 
-    @Override
-    protected boolean acceptPoint(double lat, double lon) {
-      double actualDistance =
-          BoundingBox.approxDistanceC(centerLat, centerLon, lat, lon);
-      if (actualDistance < radiusKm) {
-        return true;
-      } else if (Double.isNaN(actualDistance)) {
-        // There seems to be a rare bug in GeoUtils that computes NaN
-        // for two identical lat/lon pairs on occasion. Check for that here.
-        if (lat == centerLat && lon == centerLon) {
-          return true;
+    @ovewwide
+    pwotected boowean acceptpoint(doubwe w-wat, (ˆ ﻌ ˆ)♡ doubwe won) {
+      d-doubwe a-actuawdistance =
+          boundingbox.appwoxdistancec(centewwat, ʘwʘ c-centewwon, o.O wat, won);
+      if (actuawdistance < wadiuskm) {
+        wetuwn twue;
+      } e-ewse i-if (doubwe.isnan(actuawdistance)) {
+        // thewe seems to b-be a wawe bug in geoutiws that computes nyan
+        // f-fow two i-identicaw wat/won paiws on occasion. UwU c-check fow that h-hewe. rawr x3
+        if (wat == centewwat && won == centewwon) {
+          wetuwn twue;
         }
       }
 
-      return false;
+      w-wetuwn f-fawse;
     }
 
-    @Override
-    public String toString() {
-      return String.format("CenterRadiusAccepter(Center: %.4f, %.4f Radius (km): %.4f)",
-              centerLat, centerLon, radiusKm);
+    @ovewwide
+    p-pubwic stwing t-tostwing() {
+      w-wetuwn stwing.fowmat("centewwadiusacceptew(centew: %.4f, 🥺 %.4f wadius (km): %.4f)", :3
+              c-centewwat, c-centewwon, (ꈍᴗꈍ) wadiuskm);
     }
   }
 
-  // Accepts points within a BoundingBox
-  private static final class BoundingBoxAccepter extends GeoDocAccepter {
-    private final Rectangle boundingBox;
+  // accepts p-points within a b-boundingbox
+  pwivate static finaw c-cwass boundingboxacceptew extends geodocacceptew {
+    p-pwivate finaw wectangwe b-boundingbox;
 
-    public BoundingBoxAccepter(Rectangle boundingBox)  {
-      this.boundingBox = boundingBox;
+    p-pubwic boundingboxacceptew(wectangwe boundingbox)  {
+      this.boundingbox = b-boundingbox;
     }
 
-    @Override
-    protected boolean acceptPoint(double lat, double lon) {
-      return GeohashChunkImpl.isPointInBoundingBox(lat, lon, boundingBox);
+    @ovewwide
+    pwotected boowean acceptpoint(doubwe w-wat, 🥺 d-doubwe won) {
+      w-wetuwn geohashchunkimpw.ispointinboundingbox(wat, (✿oωo) won, (U ﹏ U) boundingbox);
 
     }
 
-    @Override
-    public String toString() {
-      return String.format("PointInBoundingBoxAccepter((%.4f, %.4f), (%.4f, %.4f), "
-              + "crossesDateLine=%b)",
-              boundingBox.getMinY(), boundingBox.getMinX(),
-              boundingBox.getMaxY(), boundingBox.getMaxX(),
-              boundingBox.getCrossesDateLine());
+    @ovewwide
+    pubwic stwing tostwing() {
+      w-wetuwn stwing.fowmat("pointinboundingboxacceptew((%.4f, :3 %.4f), (%.4f, ^^;; %.4f), "
+              + "cwossesdatewine=%b)", rawr
+              boundingbox.getminy(), 😳😳😳 boundingbox.getminx(), (✿oωo)
+              b-boundingbox.getmaxy(), OwO b-boundingbox.getmaxx(), ʘwʘ
+              boundingbox.getcwossesdatewine());
     }
   }
 }

@@ -1,21 +1,21 @@
-# Search Index (Earlybird) core classes 
+# seawch index (eawwybiwd) cowe cwasses 
 
-> **TL;DR** Earlybird (Search Index) find tweets from people you follow, rank them, and serve tweets to Home.
+> **tw;dw** e-eawwybiwd (seawch i-index) find t-tweets fwom peopwe y-you fowwow, :3 w-wank them, ^^;; and s-sewve tweets to h-home. 🥺
 
-## What is Earlybird (Search Index)
+## nyani i-is eawwybiwd (seawch index)
 
-[Earlybird](http://notes.stephenholiday.com/Earlybird.pdf) is a **real-time search system** based on [Apache Lucene](https://lucene.apache.org/) to support the high volume of queries and content updates. The major use cases are Relevance Search (specifically, Text search) and Timeline In-network Tweet retrieval (or UserID based search). It is designed to enable the efficient indexing and querying of billions of tweets, and to provide low-latency search results, even with heavy query loads. 
+[eawwybiwd](http://notes.stephenhowiday.com/eawwybiwd.pdf) is a **weaw-time seawch system** based o-on [apache wucene](https://wucene.apache.owg/) to suppowt the high vowume of quewies a-and content updates. (⑅˘꒳˘) the majow u-use cases awe wewevance seawch (specificawwy, nyaa~~ text seawch) and timewine in-netwowk t-tweet wetwievaw (ow usewid b-based seawch). :3 i-it is designed to enabwe the efficient indexing and quewying of biwwions of tweets, ( ͡o ω ͡o ) a-and to pwovide wow-watency seawch wesuwts, mya even with heavy quewy woads. (///ˬ///✿) 
 
-## Directory Structure
-The project consists of several packages and files, which can be summarized as follows:
+## d-diwectowy stwuctuwe
+the pwoject c-consists of sevewaw p-packages and f-fiwes, which c-can be summawized as fowwows:
 
 
-* `facets/`: This subdirectory contains classes responsible for facet counting and processing. Some key classes include EarlybirdFacets, EarlybirdFacetsFactory, FacetAccumulator, and FacetCountAggregator. The classes handle facet counting, facet iterators, facet label providers, and facet response rewriting.
-* `index/`: This directory contains the indexing and search infra files, with several subdirectories for specific components.
-  * `column/`: This subdirectory contains classes related to column-stride field indexes, including ColumnStrideByteIndex, ColumnStrideIntIndex, ColumnStrideLongIndex, and various optimized versions of these indexes. These classes deal with managing and updating doc values.
-  * `extensions/`: This subdirectory contains classes for index extensions, including EarlybirdIndexExtensionsData, EarlybirdIndexExtensionsFactory, and EarlybirdRealtimeIndexExtensionsData.
-  * `inverted/`: This subdirectory focuses on the inverted index and its components, such as InMemoryFields, IndexOptimizer, InvertedIndex, and InvertedRealtimeIndex. It also contains classes for managing and processing posting lists and term dictionaries, like EarlybirdPostingsEnum, FSTTermDictionary, and MPHTermDictionary.
-  * `util/`: This subdirectory contains utility classes for managing search iterators and filters, such as AllDocsIterator, RangeDISI, RangeFilterDISI, and SearchSortUtils. The system appears to be designed to handle search indexing and facet counting efficiently. Key components include an inverted index, various types of posting lists, and term dictionaries. Facet counting and processing is handled by specialized classes within the facets subdirectory. The overall structure indicates a well-organized and modular search indexing system that can be maintained and extended as needed.
+* `facets/`: this s-subdiwectowy contains cwasses wesponsibwe fow f-facet counting and pwocessing. (˘ω˘) some key cwasses incwude eawwybiwdfacets, ^^;; eawwybiwdfacetsfactowy, (✿oωo) facetaccumuwatow, (U ﹏ U) a-and facetcountaggwegatow. -.- the c-cwasses handwe f-facet counting, ^•ﻌ•^ f-facet itewatows, rawr facet wabew pwovidews, (˘ω˘) and facet wesponse wewwiting. nyaa~~
+* `index/`: t-this diwectowy c-contains the indexing and seawch i-infwa fiwes, UwU with s-sevewaw subdiwectowies fow specific c-components. :3
+  * `cowumn/`: this subdiwectowy c-contains cwasses wewated to cowumn-stwide fiewd i-indexes, incwuding cowumnstwidebyteindex, (⑅˘꒳˘) cowumnstwideintindex, (///ˬ///✿) c-cowumnstwidewongindex, and v-vawious optimized v-vewsions of these indexes. ^^;; these cwasses deaw with managing and updating doc vawues. >_<
+  * `extensions/`: this subdiwectowy contains c-cwasses fow i-index extensions, rawr x3 incwuding eawwybiwdindexextensionsdata, /(^•ω•^) e-eawwybiwdindexextensionsfactowy, :3 a-and e-eawwybiwdweawtimeindexextensionsdata. (ꈍᴗꈍ)
+  * `invewted/`: this subdiwectowy focuses on the invewted i-index and its components, /(^•ω•^) such as inmemowyfiewds, (⑅˘꒳˘) indexoptimizew, ( ͡o ω ͡o ) invewtedindex, òωó a-and invewtedweawtimeindex. (⑅˘꒳˘) it a-awso contains cwasses f-fow managing a-and pwocessing posting wists a-and tewm dictionawies, XD w-wike eawwybiwdpostingsenum, -.- f-fsttewmdictionawy, :3 a-and mphtewmdictionawy. nyaa~~
+  * `utiw/`: this subdiwectowy contains u-utiwity cwasses f-fow managing s-seawch itewatows a-and fiwtews, 😳 s-such as awwdocsitewatow, (⑅˘꒳˘) wangedisi, nyaa~~ wangefiwtewdisi, OwO and seawchsowtutiws. rawr x3 t-the system appeaws to be designed to handwe seawch indexing and facet counting efficientwy. XD k-key components incwude an invewted index, σωσ vawious types of p-posting wists, (U ᵕ U❁) a-and tewm dictionawies. (U ﹏ U) f-facet counting and pwocessing i-is handwed by speciawized cwasses w-within the f-facets subdiwectowy. :3 the ovewaww stwuctuwe indicates a weww-owganized and moduwaw seawch indexing s-system that can be maintained a-and extended as nyeeded. ( ͡o ω ͡o )
 
-## Related Services
-* The Earlybirds main classes. See `src/java/com/twitter/search/earlybird/`
+## wewated s-sewvices
+* t-the eawwybiwds main cwasses. σωσ see `swc/java/com/twittew/seawch/eawwybiwd/`

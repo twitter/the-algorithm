@@ -1,246 +1,246 @@
-package com.twitter.timelines.prediction.features.engagement_features
+package com.twittew.timewines.pwediction.featuwes.engagement_featuwes
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.logging.Logger
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.Feature.SparseBinary
-import com.twitter.timelines.data_processing.ml_util.transforms.OneToSomeTransform
-import com.twitter.timelines.data_processing.ml_util.transforms.RichITransform
-import com.twitter.timelines.data_processing.ml_util.transforms.SparseBinaryUnion
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.timelineservice.suggests.features.engagement_features.thriftscala.{
-  EngagementFeatures => ThriftEngagementFeatures
+impowt com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+i-impowt c-com.twittew.wogging.woggew
+i-impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.featuwe.continuous
+impowt c-com.twittew.mw.api.featuwe.spawsebinawy
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.onetosometwansfowm
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.wichitwansfowm
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.twansfowms.spawsebinawyunion
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup
+i-impowt com.twittew.timewinesewvice.suggests.featuwes.engagement_featuwes.thwiftscawa.{
+  engagementfeatuwes => thwiftengagementfeatuwes
 }
-import com.twitter.timelineservice.suggests.features.engagement_features.v1.thriftscala.{
-  EngagementFeatures => ThriftEngagementFeaturesV1
+i-impowt com.twittew.timewinesewvice.suggests.featuwes.engagement_featuwes.v1.thwiftscawa.{
+  e-engagementfeatuwes => thwiftengagementfeatuwesv1
 }
-import scala.collection.JavaConverters._
+impowt scawa.cowwection.javaconvewtews._
 
-object EngagementFeatures {
-  private[this] val logger = Logger.get(getClass.getSimpleName)
+o-object engagementfeatuwes {
+  pwivate[this] v-vaw woggew = woggew.get(getcwass.getsimpwename)
 
-  sealed trait EngagementFeature
-  case object Count extends EngagementFeature
-  case object RealGraphWeightAverage extends EngagementFeature
-  case object RealGraphWeightMax extends EngagementFeature
-  case object RealGraphWeightMin extends EngagementFeature
-  case object RealGraphWeightMissing extends EngagementFeature
-  case object RealGraphWeightVariance extends EngagementFeature
-  case object UserIds extends EngagementFeature
+  s-seawed twait engagementfeatuwe
+  case object count extends engagementfeatuwe
+  case object weawgwaphweightavewage e-extends engagementfeatuwe
+  case object weawgwaphweightmax extends engagementfeatuwe
+  case object weawgwaphweightmin e-extends engagementfeatuwe
+  c-case object w-weawgwaphweightmissing e-extends e-engagementfeatuwe
+  case object weawgwaphweightvawiance e-extends engagementfeatuwe
+  case object u-usewids extends engagementfeatuwe
 
-  def fromThrift(thriftEngagementFeatures: ThriftEngagementFeatures): Option[EngagementFeatures] = {
-    thriftEngagementFeatures match {
-      case thriftEngagementFeaturesV1: ThriftEngagementFeatures.V1 =>
-        Some(
-          EngagementFeatures(
-            favoritedBy = thriftEngagementFeaturesV1.v1.favoritedBy,
-            retweetedBy = thriftEngagementFeaturesV1.v1.retweetedBy,
-            repliedBy = thriftEngagementFeaturesV1.v1.repliedBy,
+  def fwomthwift(thwiftengagementfeatuwes: thwiftengagementfeatuwes): option[engagementfeatuwes] = {
+    thwiftengagementfeatuwes m-match {
+      case thwiftengagementfeatuwesv1: t-thwiftengagementfeatuwes.v1 =>
+        s-some(
+          e-engagementfeatuwes(
+            favowitedby = thwiftengagementfeatuwesv1.v1.favowitedby, mya
+            wetweetedby = t-thwiftengagementfeatuwesv1.v1.wetweetedby, ^•ﻌ•^
+            w-wepwiedby = thwiftengagementfeatuwesv1.v1.wepwiedby, ʘwʘ
           )
         )
-      case _ => {
-        logger.error("Unexpected EngagementFeatures version found.")
-        None
+      c-case _ => {
+        w-woggew.ewwow("unexpected engagementfeatuwes v-vewsion found.")
+        n-nyone
       }
     }
   }
 
-  val empty: EngagementFeatures = EngagementFeatures()
+  vaw empty: engagementfeatuwes = e-engagementfeatuwes()
 }
 
 /**
- * Contains user IDs who have engaged with a target entity, such as a Tweet,
- * and any additional data needed for derived features.
+ * contains u-usew ids who have engaged with a-a tawget entity, ( ͡o ω ͡o ) s-such as a tweet, mya
+ * and any additionaw data needed fow dewived featuwes. o.O
  */
-case class EngagementFeatures(
-  favoritedBy: Seq[Long] = Nil,
-  retweetedBy: Seq[Long] = Nil,
-  repliedBy: Seq[Long] = Nil,
-  realGraphWeightByUser: Map[Long, Double] = Map.empty) {
-  def isEmpty: Boolean = favoritedBy.isEmpty && retweetedBy.isEmpty && repliedBy.isEmpty
-  def nonEmpty: Boolean = !isEmpty
-  def toLogThrift: ThriftEngagementFeatures.V1 =
-    ThriftEngagementFeatures.V1(
-      ThriftEngagementFeaturesV1(
-        favoritedBy = favoritedBy,
-        retweetedBy = retweetedBy,
-        repliedBy = repliedBy
+case cwass engagementfeatuwes(
+  favowitedby: seq[wong] = n-nyiw, (✿oωo)
+  w-wetweetedby: seq[wong] = nyiw, :3
+  w-wepwiedby: seq[wong] = n-nyiw, 😳
+  w-weawgwaphweightbyusew: map[wong, (U ﹏ U) doubwe] = map.empty) {
+  def i-isempty: boowean = favowitedby.isempty && wetweetedby.isempty && wepwiedby.isempty
+  def nyonempty: b-boowean = !isempty
+  def towogthwift: t-thwiftengagementfeatuwes.v1 =
+    t-thwiftengagementfeatuwes.v1(
+      t-thwiftengagementfeatuwesv1(
+        favowitedby = f-favowitedby, mya
+        w-wetweetedby = w-wetweetedby, (U ᵕ U❁)
+        w-wepwiedby = wepwiedby
       )
     )
 }
 
 /**
- * Represents engagement features derived from the Real Graph weight.
+ * wepwesents e-engagement featuwes d-dewived fwom t-the weaw gwaph w-weight. :3
  *
- * These features are from the perspective of the source user, who is viewing their
- * timeline, to the destination users (or user), who created engagements.
+ * t-these featuwes awe fwom the pewspective of the souwce usew, mya who i-is viewing theiw
+ * timewine, OwO to the destination usews (ow usew), (ˆ ﻌ ˆ)♡ who cweated engagements. ʘwʘ
  *
- * @param count number of engagements present
- * @param max max score of the engaging users
- * @param mean average score of the engaging users
- * @param min minimum score of the engaging users
- * @param missing for engagements present, how many Real Graph scores were missing
- * @param variance variance of scores of the engaging users
+ * @pawam count nyumbew o-of engagements pwesent
+ * @pawam max max scowe of the engaging u-usews
+ * @pawam m-mean avewage s-scowe of the engaging usews
+ * @pawam m-min minimum scowe of the e-engaging usews
+ * @pawam m-missing fow engagements pwesent, o.O how many weaw gwaph scowes wewe missing
+ * @pawam vawiance v-vawiance of scowes of the e-engaging usews
  */
-case class RealGraphDerivedEngagementFeatures(
-  count: Int,
-  max: Double,
-  mean: Double,
-  min: Double,
-  missing: Int,
-  variance: Double)
+case cwass weawgwaphdewivedengagementfeatuwes(
+  c-count: int, UwU
+  m-max: doubwe, rawr x3
+  mean: doubwe, 🥺
+  min: doubwe, :3
+  m-missing: int, (ꈍᴗꈍ)
+  v-vawiance: doubwe)
 
-object EngagementDataRecordFeatures {
-  import EngagementFeatures._
+object engagementdatawecowdfeatuwes {
+  i-impowt e-engagementfeatuwes._
 
-  val FavoritedByUserIds = new SparseBinary(
-    "engagement_features.user_ids.favorited_by",
-    Set(UserId, PrivateLikes, PublicLikes).asJava)
-  val RetweetedByUserIds = new SparseBinary(
-    "engagement_features.user_ids.retweeted_by",
-    Set(UserId, PrivateRetweets, PublicRetweets).asJava)
-  val RepliedByUserIds = new SparseBinary(
-    "engagement_features.user_ids.replied_by",
-    Set(UserId, PrivateReplies, PublicReplies).asJava)
+  vaw favowitedbyusewids = nyew spawsebinawy(
+    "engagement_featuwes.usew_ids.favowited_by", 🥺
+    set(usewid, (✿oωo) pwivatewikes, (U ﹏ U) p-pubwicwikes).asjava)
+  v-vaw w-wetweetedbyusewids = new spawsebinawy(
+    "engagement_featuwes.usew_ids.wetweeted_by", :3
+    s-set(usewid, ^^;; p-pwivatewetweets, rawr pubwicwetweets).asjava)
+  v-vaw wepwiedbyusewids = nyew spawsebinawy(
+    "engagement_featuwes.usew_ids.wepwied_by", 😳😳😳
+    set(usewid, (✿oωo) pwivatewepwies, OwO pubwicwepwies).asjava)
 
-  val InNetworkFavoritesCount = new Continuous(
-    "engagement_features.in_network.favorites.count",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava)
-  val InNetworkRetweetsCount = new Continuous(
-    "engagement_features.in_network.retweets.count",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val InNetworkRepliesCount = new Continuous(
-    "engagement_features.in_network.replies.count",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava)
+  v-vaw innetwowkfavowitescount = n-nyew continuous(
+    "engagement_featuwes.in_netwowk.favowites.count", ʘwʘ
+    set(countofpwivatewikes, (ˆ ﻌ ˆ)♡ countofpubwicwikes).asjava)
+  v-vaw innetwowkwetweetscount = n-nyew continuous(
+    "engagement_featuwes.in_netwowk.wetweets.count", (U ﹏ U)
+    set(countofpwivatewetweets, UwU countofpubwicwetweets).asjava)
+  vaw innetwowkwepwiescount = n-nyew continuous(
+    "engagement_featuwes.in_netwowk.wepwies.count",
+    set(countofpwivatewepwies, XD countofpubwicwepwies).asjava)
 
-  // real graph derived features
-  val InNetworkFavoritesAvgRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.favorites.avg_weight",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
+  // weaw gwaph dewived featuwes
+  vaw i-innetwowkfavowitesavgweawgwaphweight = nyew continuous(
+    "engagement_featuwes.weaw_gwaph.favowites.avg_weight", ʘwʘ
+    set(countofpwivatewikes, rawr x3 c-countofpubwicwikes).asjava
   )
-  val InNetworkFavoritesMaxRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.favorites.max_weight",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
+  v-vaw innetwowkfavowitesmaxweawgwaphweight = nyew continuous(
+    "engagement_featuwes.weaw_gwaph.favowites.max_weight", ^^;;
+    set(countofpwivatewikes, c-countofpubwicwikes).asjava
   )
-  val InNetworkFavoritesMinRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.favorites.min_weight",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
+  v-vaw innetwowkfavowitesminweawgwaphweight = nyew continuous(
+    "engagement_featuwes.weaw_gwaph.favowites.min_weight", ʘwʘ
+    set(countofpwivatewikes, (U ﹏ U) countofpubwicwikes).asjava
   )
-  val InNetworkFavoritesRealGraphWeightMissing = new Continuous(
-    "engagement_features.real_graph.favorites.missing"
+  v-vaw innetwowkfavowitesweawgwaphweightmissing = n-nyew continuous(
+    "engagement_featuwes.weaw_gwaph.favowites.missing"
   )
-  val InNetworkFavoritesRealGraphWeightVariance = new Continuous(
-    "engagement_features.real_graph.favorites.weight_variance"
-  )
-
-  val InNetworkRetweetsMaxRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.retweets.max_weight",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
-  )
-  val InNetworkRetweetsMinRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.retweets.min_weight",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
-  )
-  val InNetworkRetweetsAvgRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.retweets.avg_weight",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
-  )
-  val InNetworkRetweetsRealGraphWeightMissing = new Continuous(
-    "engagement_features.real_graph.retweets.missing"
-  )
-  val InNetworkRetweetsRealGraphWeightVariance = new Continuous(
-    "engagement_features.real_graph.retweets.weight_variance"
+  vaw innetwowkfavowitesweawgwaphweightvawiance = nyew continuous(
+    "engagement_featuwes.weaw_gwaph.favowites.weight_vawiance"
   )
 
-  val InNetworkRepliesMaxRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.replies.max_weight",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  v-vaw innetwowkwetweetsmaxweawgwaphweight = nyew continuous(
+    "engagement_featuwes.weaw_gwaph.wetweets.max_weight", (˘ω˘)
+    s-set(countofpwivatewetweets, (ꈍᴗꈍ) c-countofpubwicwetweets).asjava
   )
-  val InNetworkRepliesMinRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.replies.min_weight",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  vaw innetwowkwetweetsminweawgwaphweight = n-nyew continuous(
+    "engagement_featuwes.weaw_gwaph.wetweets.min_weight", /(^•ω•^)
+    set(countofpwivatewetweets, >_< c-countofpubwicwetweets).asjava
   )
-  val InNetworkRepliesAvgRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.replies.avg_weight",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  v-vaw innetwowkwetweetsavgweawgwaphweight = n-nyew continuous(
+    "engagement_featuwes.weaw_gwaph.wetweets.avg_weight", σωσ
+    s-set(countofpwivatewetweets, ^^;; c-countofpubwicwetweets).asjava
   )
-  val InNetworkRepliesRealGraphWeightMissing = new Continuous(
-    "engagement_features.real_graph.replies.missing"
+  vaw innetwowkwetweetsweawgwaphweightmissing = nyew continuous(
+    "engagement_featuwes.weaw_gwaph.wetweets.missing"
   )
-  val InNetworkRepliesRealGraphWeightVariance = new Continuous(
-    "engagement_features.real_graph.replies.weight_variance"
+  v-vaw innetwowkwetweetsweawgwaphweightvawiance = n-nyew continuous(
+    "engagement_featuwes.weaw_gwaph.wetweets.weight_vawiance"
   )
 
-  sealed trait FeatureGroup {
-    def continuousFeatures: Map[EngagementFeature, Continuous]
-    def sparseBinaryFeatures: Map[EngagementFeature, SparseBinary]
-    def allFeatures: Seq[Feature[_]] =
-      (continuousFeatures.values ++ sparseBinaryFeatures.values).toSeq
+  v-vaw innetwowkwepwiesmaxweawgwaphweight = new continuous(
+    "engagement_featuwes.weaw_gwaph.wepwies.max_weight", 😳
+    set(countofpwivatewepwies, >_< c-countofpubwicwepwies).asjava
+  )
+  vaw innetwowkwepwiesminweawgwaphweight = n-nyew continuous(
+    "engagement_featuwes.weaw_gwaph.wepwies.min_weight",
+    s-set(countofpwivatewepwies, -.- countofpubwicwepwies).asjava
+  )
+  vaw innetwowkwepwiesavgweawgwaphweight = nyew c-continuous(
+    "engagement_featuwes.weaw_gwaph.wepwies.avg_weight", UwU
+    s-set(countofpwivatewepwies, :3 c-countofpubwicwepwies).asjava
+  )
+  v-vaw innetwowkwepwiesweawgwaphweightmissing = new continuous(
+    "engagement_featuwes.weaw_gwaph.wepwies.missing"
+  )
+  v-vaw innetwowkwepwiesweawgwaphweightvawiance = nyew continuous(
+    "engagement_featuwes.weaw_gwaph.wepwies.weight_vawiance"
+  )
+
+  seawed twait featuwegwoup {
+    def continuousfeatuwes: map[engagementfeatuwe, σωσ c-continuous]
+    def spawsebinawyfeatuwes: m-map[engagementfeatuwe, >w< spawsebinawy]
+    d-def awwfeatuwes: seq[featuwe[_]] =
+      (continuousfeatuwes.vawues ++ s-spawsebinawyfeatuwes.vawues).toseq
   }
 
-  case object Favorites extends FeatureGroup {
-    override val continuousFeatures: Map[EngagementFeature, Continuous] =
-      Map(
-        Count -> InNetworkFavoritesCount,
-        RealGraphWeightAverage -> InNetworkFavoritesAvgRealGraphWeight,
-        RealGraphWeightMax -> InNetworkFavoritesMaxRealGraphWeight,
-        RealGraphWeightMin -> InNetworkFavoritesMinRealGraphWeight,
-        RealGraphWeightMissing -> InNetworkFavoritesRealGraphWeightMissing,
-        RealGraphWeightVariance -> InNetworkFavoritesRealGraphWeightVariance
+  case object f-favowites extends f-featuwegwoup {
+    o-ovewwide v-vaw continuousfeatuwes: m-map[engagementfeatuwe, (ˆ ﻌ ˆ)♡ continuous] =
+      map(
+        count -> innetwowkfavowitescount, ʘwʘ
+        weawgwaphweightavewage -> innetwowkfavowitesavgweawgwaphweight, :3
+        weawgwaphweightmax -> i-innetwowkfavowitesmaxweawgwaphweight, (˘ω˘)
+        w-weawgwaphweightmin -> i-innetwowkfavowitesminweawgwaphweight, 😳😳😳
+        weawgwaphweightmissing -> i-innetwowkfavowitesweawgwaphweightmissing, rawr x3
+        weawgwaphweightvawiance -> innetwowkfavowitesweawgwaphweightvawiance
       )
 
-    override val sparseBinaryFeatures: Map[EngagementFeature, SparseBinary] =
-      Map(UserIds -> FavoritedByUserIds)
+    ovewwide v-vaw spawsebinawyfeatuwes: m-map[engagementfeatuwe, (✿oωo) spawsebinawy] =
+      m-map(usewids -> favowitedbyusewids)
   }
 
-  case object Retweets extends FeatureGroup {
-    override val continuousFeatures: Map[EngagementFeature, Continuous] =
-      Map(
-        Count -> InNetworkRetweetsCount,
-        RealGraphWeightAverage -> InNetworkRetweetsAvgRealGraphWeight,
-        RealGraphWeightMax -> InNetworkRetweetsMaxRealGraphWeight,
-        RealGraphWeightMin -> InNetworkRetweetsMinRealGraphWeight,
-        RealGraphWeightMissing -> InNetworkRetweetsRealGraphWeightMissing,
-        RealGraphWeightVariance -> InNetworkRetweetsRealGraphWeightVariance
+  case object wetweets e-extends f-featuwegwoup {
+    ovewwide vaw c-continuousfeatuwes: m-map[engagementfeatuwe, (ˆ ﻌ ˆ)♡ continuous] =
+      map(
+        count -> innetwowkwetweetscount, :3
+        weawgwaphweightavewage -> innetwowkwetweetsavgweawgwaphweight, (U ᵕ U❁)
+        w-weawgwaphweightmax -> i-innetwowkwetweetsmaxweawgwaphweight, ^^;;
+        weawgwaphweightmin -> i-innetwowkwetweetsminweawgwaphweight, mya
+        w-weawgwaphweightmissing -> i-innetwowkwetweetsweawgwaphweightmissing, 😳😳😳
+        weawgwaphweightvawiance -> i-innetwowkwetweetsweawgwaphweightvawiance
       )
 
-    override val sparseBinaryFeatures: Map[EngagementFeature, SparseBinary] =
-      Map(UserIds -> RetweetedByUserIds)
+    o-ovewwide vaw spawsebinawyfeatuwes: m-map[engagementfeatuwe, OwO s-spawsebinawy] =
+      map(usewids -> w-wetweetedbyusewids)
   }
 
-  case object Replies extends FeatureGroup {
-    override val continuousFeatures: Map[EngagementFeature, Continuous] =
-      Map(
-        Count -> InNetworkRepliesCount,
-        RealGraphWeightAverage -> InNetworkRepliesAvgRealGraphWeight,
-        RealGraphWeightMax -> InNetworkRepliesMaxRealGraphWeight,
-        RealGraphWeightMin -> InNetworkRepliesMinRealGraphWeight,
-        RealGraphWeightMissing -> InNetworkRepliesRealGraphWeightMissing,
-        RealGraphWeightVariance -> InNetworkRepliesRealGraphWeightVariance
+  case object wepwies extends f-featuwegwoup {
+    ovewwide v-vaw continuousfeatuwes: m-map[engagementfeatuwe, rawr continuous] =
+      map(
+        c-count -> innetwowkwepwiescount, XD
+        weawgwaphweightavewage -> innetwowkwepwiesavgweawgwaphweight, (U ﹏ U)
+        w-weawgwaphweightmax -> i-innetwowkwepwiesmaxweawgwaphweight, (˘ω˘)
+        w-weawgwaphweightmin -> innetwowkwepwiesminweawgwaphweight, UwU
+        weawgwaphweightmissing -> innetwowkwepwiesweawgwaphweightmissing, >_<
+        w-weawgwaphweightvawiance -> innetwowkwepwiesweawgwaphweightvawiance
       )
 
-    override val sparseBinaryFeatures: Map[EngagementFeature, SparseBinary] =
-      Map(UserIds -> RepliedByUserIds)
+    ovewwide v-vaw spawsebinawyfeatuwes: map[engagementfeatuwe, σωσ s-spawsebinawy] =
+      map(usewids -> w-wepwiedbyusewids)
   }
 
-  val PublicEngagerSets = Set(FavoritedByUserIds, RetweetedByUserIds, RepliedByUserIds)
-  val PublicEngagementUserIds = new SparseBinary(
-    "engagement_features.user_ids.public",
-    Set(UserId, EngagementsPublic).asJava
+  vaw pubwicengagewsets = s-set(favowitedbyusewids, 🥺 w-wetweetedbyusewids, 🥺 wepwiedbyusewids)
+  vaw p-pubwicengagementusewids = nyew spawsebinawy(
+    "engagement_featuwes.usew_ids.pubwic", ʘwʘ
+    set(usewid, :3 e-engagementspubwic).asjava
   )
-  val ENGAGER_ID = TypedAggregateGroup.sparseFeature(PublicEngagementUserIds)
+  v-vaw engagew_id = typedaggwegategwoup.spawsefeatuwe(pubwicengagementusewids)
 
-  val UnifyPublicEngagersTransform = SparseBinaryUnion(
-    featuresToUnify = PublicEngagerSets,
-    outputFeature = PublicEngagementUserIds
+  v-vaw unifypubwicengagewstwansfowm = spawsebinawyunion(
+    f-featuwestounify = p-pubwicengagewsets, (U ﹏ U)
+    o-outputfeatuwe = pubwicengagementusewids
   )
 
-  object RichUnifyPublicEngagersTransform extends OneToSomeTransform {
-    override def apply(dataRecord: DataRecord): Option[DataRecord] =
-      RichITransform(EngagementDataRecordFeatures.UnifyPublicEngagersTransform)(dataRecord)
-    override def featuresToTransform: Set[Feature[_]] =
-      EngagementDataRecordFeatures.UnifyPublicEngagersTransform.featuresToUnify.toSet
+  object wichunifypubwicengagewstwansfowm extends onetosometwansfowm {
+    ovewwide def appwy(datawecowd: datawecowd): option[datawecowd] =
+      wichitwansfowm(engagementdatawecowdfeatuwes.unifypubwicengagewstwansfowm)(datawecowd)
+    ovewwide def featuwestotwansfowm: set[featuwe[_]] =
+      engagementdatawecowdfeatuwes.unifypubwicengagewstwansfowm.featuwestounify.toset
   }
 }

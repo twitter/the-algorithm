@@ -1,141 +1,141 @@
-package com.twitter.recos.user_tweet_entity_graph
+package com.twittew.wecos.usew_tweet_entity_gwaph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms.{
-  RecommendationInfo,
-  RecommendationType => JavaRecommendationType
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.gwaphjet.awgowithms.{
+  w-wecommendationinfo, /(^•ω•^)
+  w-wecommendationtype => j-javawecommendationtype
 }
-import com.twitter.graphjet.algorithms.socialproof.{
-  NodeMetadataSocialProofResult => EntitySocialProofJavaResult,
-  SocialProofResult => SocialProofJavaResult
+i-impowt com.twittew.gwaphjet.awgowithms.sociawpwoof.{
+  n-nyodemetadatasociawpwoofwesuwt => e-entitysociawpwoofjavawesuwt, (⑅˘꒳˘)
+  s-sociawpwoofwesuwt => sociawpwoofjavawesuwt
 }
-import com.twitter.recos.decider.UserTweetEntityGraphDecider
-import com.twitter.recos.util.Stats
-import com.twitter.recos.util.Stats._
-import com.twitter.recos.recos_common.thriftscala.{SocialProofType => SocialProofThriftType}
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  HashtagRecommendation,
-  TweetRecommendation,
-  UrlRecommendation,
-  UserTweetEntityRecommendationUnion,
-  RecommendationSocialProofRequest => SocialProofThriftRequest,
-  RecommendationSocialProofResponse => SocialProofThriftResponse,
-  RecommendationType => ThriftRecommendationType
+impowt com.twittew.wecos.decidew.usewtweetentitygwaphdecidew
+impowt com.twittew.wecos.utiw.stats
+impowt com.twittew.wecos.utiw.stats._
+i-impowt com.twittew.wecos.wecos_common.thwiftscawa.{sociawpwooftype => sociawpwoofthwifttype}
+i-impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.{
+  h-hashtagwecommendation, ( ͡o ω ͡o )
+  tweetwecommendation, òωó
+  uwwwecommendation, (⑅˘꒳˘)
+  usewtweetentitywecommendationunion, XD
+  w-wecommendationsociawpwoofwequest => sociawpwoofthwiftwequest, -.-
+  w-wecommendationsociawpwoofwesponse => s-sociawpwoofthwiftwesponse, :3
+  wecommendationtype => thwiftwecommendationtype
 }
-import com.twitter.servo.request.RequestHandler
-import com.twitter.util.{Future, Try}
-import scala.collection.JavaConverters._
+impowt com.twittew.sewvo.wequest.wequesthandwew
+i-impowt com.twittew.utiw.{futuwe, nyaa~~ twy}
+impowt scawa.cowwection.javaconvewtews._
 
-class SocialProofHandler(
-  tweetSocialProofRunner: TweetSocialProofRunner,
-  entitySocialProofRunner: EntitySocialProofRunner,
-  decider: UserTweetEntityGraphDecider,
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[SocialProofThriftRequest, SocialProofThriftResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+cwass sociawpwoofhandwew(
+  t-tweetsociawpwoofwunnew: tweetsociawpwoofwunnew, 😳
+  e-entitysociawpwoofwunnew: e-entitysociawpwoofwunnew, (⑅˘꒳˘)
+  d-decidew: u-usewtweetentitygwaphdecidew, nyaa~~
+  statsweceivew: statsweceivew)
+    e-extends wequesthandwew[sociawpwoofthwiftwequest, sociawpwoofthwiftwesponse] {
+  pwivate vaw s-stats = statsweceivew.scope(this.getcwass.getsimpwename)
 
-  private def getThriftSocialProof(
-    entitySocialProof: EntitySocialProofJavaResult
-  ): Map[SocialProofThriftType, Map[Long, Seq[Long]]] = {
-    val socialProofAttempt = Try(entitySocialProof.getSocialProof)
-      .onFailure { e =>
-        stats.counter(e.getClass.getSimpleName).incr()
+  pwivate def getthwiftsociawpwoof(
+    entitysociawpwoof: entitysociawpwoofjavawesuwt
+  ): map[sociawpwoofthwifttype, OwO m-map[wong, rawr x3 seq[wong]]] = {
+    vaw sociawpwoofattempt = t-twy(entitysociawpwoof.getsociawpwoof)
+      .onfaiwuwe { e-e =>
+        stats.countew(e.getcwass.getsimpwename).incw()
       }
 
-    socialProofAttempt.toOption match {
-      case Some(socialProof) if socialProof.isEmpty =>
-        stats.counter(Stats.EmptyResult).incr()
-        Map.empty[SocialProofThriftType, Map[Long, Seq[Long]]]
-      case Some(socialProof) if !socialProof.isEmpty =>
-        socialProof.asScala.map {
-          case (socialProofType, socialProofUserToTweetsMap) =>
-            val userToTweetsSocialProof = socialProofUserToTweetsMap.asScala.map {
-              case (socialProofUser, connectingTweets) =>
-                (socialProofUser.toLong, connectingTweets.asScala.map(Long2long).toSeq)
-            }.toMap
-            (SocialProofThriftType(socialProofType.toInt), userToTweetsSocialProof)
-        }.toMap
-      case _ =>
-        Map.empty[SocialProofThriftType, Map[Long, Seq[Long]]]
+    s-sociawpwoofattempt.tooption match {
+      case some(sociawpwoof) if sociawpwoof.isempty =>
+        s-stats.countew(stats.emptywesuwt).incw()
+        m-map.empty[sociawpwoofthwifttype, XD map[wong, σωσ seq[wong]]]
+      c-case s-some(sociawpwoof) if !sociawpwoof.isempty =>
+        s-sociawpwoof.asscawa.map {
+          case (sociawpwooftype, (U ᵕ U❁) s-sociawpwoofusewtotweetsmap) =>
+            vaw usewtotweetssociawpwoof = sociawpwoofusewtotweetsmap.asscawa.map {
+              c-case (sociawpwoofusew, (U ﹏ U) connectingtweets) =>
+                (sociawpwoofusew.towong, :3 c-connectingtweets.asscawa.map(wong2wong).toseq)
+            }.tomap
+            (sociawpwoofthwifttype(sociawpwooftype.toint), ( ͡o ω ͡o ) usewtotweetssociawpwoof)
+        }.tomap
+      c-case _ =>
+        m-map.empty[sociawpwoofthwifttype, σωσ map[wong, >w< seq[wong]]]
     }
   }
 
-  private def getThriftSocialProof(
-    tweetSocialProof: SocialProofJavaResult
-  ): Map[SocialProofThriftType, Seq[Long]] = {
-    val socialProofAttempt = Try(tweetSocialProof.getSocialProof)
-      .onFailure { e =>
-        stats.counter(e.getClass.getSimpleName).incr()
+  pwivate def getthwiftsociawpwoof(
+    tweetsociawpwoof: sociawpwoofjavawesuwt
+  ): map[sociawpwoofthwifttype, 😳😳😳 s-seq[wong]] = {
+    v-vaw sociawpwoofattempt = twy(tweetsociawpwoof.getsociawpwoof)
+      .onfaiwuwe { e-e =>
+        s-stats.countew(e.getcwass.getsimpwename).incw()
       }
 
-    socialProofAttempt.toOption match {
-      case Some(socialProof) if socialProof.isEmpty =>
-        stats.counter(Stats.EmptyResult).incr()
-        Map.empty[SocialProofThriftType, Seq[Long]]
-      case Some(socialProof) if !socialProof.isEmpty =>
-        socialProof.asScala.map {
-          case (socialProofType, connectingUsers) =>
+    s-sociawpwoofattempt.tooption match {
+      case some(sociawpwoof) if sociawpwoof.isempty =>
+        s-stats.countew(stats.emptywesuwt).incw()
+        map.empty[sociawpwoofthwifttype, OwO seq[wong]]
+      case some(sociawpwoof) if !sociawpwoof.isempty =>
+        sociawpwoof.asscawa.map {
+          c-case (sociawpwooftype, 😳 connectingusews) =>
             (
-              SocialProofThriftType(socialProofType.toInt),
-              connectingUsers.asScala.map { Long2long }.toSeq)
-        }.toMap
+              s-sociawpwoofthwifttype(sociawpwooftype.toint), 😳😳😳
+              c-connectingusews.asscawa.map { w-wong2wong }.toseq)
+        }.tomap
       case _ =>
-        Map.empty[SocialProofThriftType, Seq[Long]]
+        m-map.empty[sociawpwoofthwifttype, (˘ω˘) s-seq[wong]]
     }
   }
 
-  private def getEntitySocialProof(
-    request: SocialProofThriftRequest
-  ): Future[Seq[UserTweetEntityRecommendationUnion]] = {
-    val socialProofsFuture = entitySocialProofRunner(request)
+  p-pwivate d-def getentitysociawpwoof(
+    wequest: sociawpwoofthwiftwequest
+  ): futuwe[seq[usewtweetentitywecommendationunion]] = {
+    v-vaw sociawpwoofsfutuwe = e-entitysociawpwoofwunnew(wequest)
 
-    socialProofsFuture.map { socialProofs: Seq[RecommendationInfo] =>
-      stats.counter(Stats.Served).incr(socialProofs.size)
-      socialProofs.flatMap { entitySocialProof: RecommendationInfo =>
-        val entitySocialProofJavaResult =
-          entitySocialProof.asInstanceOf[EntitySocialProofJavaResult]
-        if (entitySocialProofJavaResult.getRecommendationType == JavaRecommendationType.URL) {
-          Some(
-            UserTweetEntityRecommendationUnion.UrlRec(
-              UrlRecommendation(
-                entitySocialProofJavaResult.getNodeMetadataId,
-                entitySocialProofJavaResult.getWeight,
-                getThriftSocialProof(entitySocialProofJavaResult)
+    sociawpwoofsfutuwe.map { s-sociawpwoofs: s-seq[wecommendationinfo] =>
+      s-stats.countew(stats.sewved).incw(sociawpwoofs.size)
+      sociawpwoofs.fwatmap { entitysociawpwoof: wecommendationinfo =>
+        v-vaw entitysociawpwoofjavawesuwt =
+          entitysociawpwoof.asinstanceof[entitysociawpwoofjavawesuwt]
+        if (entitysociawpwoofjavawesuwt.getwecommendationtype == javawecommendationtype.uww) {
+          some(
+            usewtweetentitywecommendationunion.uwwwec(
+              u-uwwwecommendation(
+                entitysociawpwoofjavawesuwt.getnodemetadataid, ʘwʘ
+                entitysociawpwoofjavawesuwt.getweight,
+                getthwiftsociawpwoof(entitysociawpwoofjavawesuwt)
               )
             )
           )
-        } else if (entitySocialProofJavaResult.getRecommendationType == JavaRecommendationType.HASHTAG) {
-          Some(
-            UserTweetEntityRecommendationUnion.HashtagRec(
-              HashtagRecommendation(
-                entitySocialProofJavaResult.getNodeMetadataId,
-                entitySocialProofJavaResult.getWeight,
-                getThriftSocialProof(entitySocialProofJavaResult)
+        } e-ewse if (entitysociawpwoofjavawesuwt.getwecommendationtype == j-javawecommendationtype.hashtag) {
+          s-some(
+            usewtweetentitywecommendationunion.hashtagwec(
+              h-hashtagwecommendation(
+                entitysociawpwoofjavawesuwt.getnodemetadataid, ( ͡o ω ͡o )
+                e-entitysociawpwoofjavawesuwt.getweight, o.O
+                g-getthwiftsociawpwoof(entitysociawpwoofjavawesuwt)
               )
             )
           )
-        } else {
-          None
+        } ewse {
+          nyone
         }
       }
     }
   }
 
-  private def getTweetSocialProof(
-    request: SocialProofThriftRequest
-  ): Future[Seq[UserTweetEntityRecommendationUnion]] = {
-    val socialProofsFuture = tweetSocialProofRunner(request)
+  pwivate def gettweetsociawpwoof(
+    wequest: s-sociawpwoofthwiftwequest
+  ): futuwe[seq[usewtweetentitywecommendationunion]] = {
+    v-vaw sociawpwoofsfutuwe = tweetsociawpwoofwunnew(wequest)
 
-    socialProofsFuture.map { socialProofs: Seq[RecommendationInfo] =>
-      stats.counter(Stats.Served).incr(socialProofs.size)
-      socialProofs.flatMap { tweetSocialProof: RecommendationInfo =>
-        val tweetSocialProofJavaResult = tweetSocialProof.asInstanceOf[SocialProofJavaResult]
-        Some(
-          UserTweetEntityRecommendationUnion.TweetRec(
-            TweetRecommendation(
-              tweetSocialProofJavaResult.getNode,
-              tweetSocialProofJavaResult.getWeight,
-              getThriftSocialProof(tweetSocialProofJavaResult)
+    s-sociawpwoofsfutuwe.map { s-sociawpwoofs: seq[wecommendationinfo] =>
+      stats.countew(stats.sewved).incw(sociawpwoofs.size)
+      sociawpwoofs.fwatmap { t-tweetsociawpwoof: w-wecommendationinfo =>
+        vaw tweetsociawpwoofjavawesuwt = t-tweetsociawpwoof.asinstanceof[sociawpwoofjavawesuwt]
+        some(
+          usewtweetentitywecommendationunion.tweetwec(
+            t-tweetwecommendation(
+              tweetsociawpwoofjavawesuwt.getnode, >w<
+              tweetsociawpwoofjavawesuwt.getweight, 😳
+              getthwiftsociawpwoof(tweetsociawpwoofjavawesuwt)
             )
           )
         )
@@ -143,22 +143,22 @@ class SocialProofHandler(
     }
   }
 
-  def apply(request: SocialProofThriftRequest): Future[SocialProofThriftResponse] = {
-    trackFutureBlockStats(stats) {
-      val recommendationsWithSocialProofFut = Future
-        .collect {
-          request.recommendationIdsForSocialProof.keys.map {
-            case ThriftRecommendationType.Tweet if decider.tweetSocialProof =>
-              getTweetSocialProof(request)
-            case (ThriftRecommendationType.Url | ThriftRecommendationType.Hashtag)
-                if decider.entitySocialProof =>
-              getEntitySocialProof(request)
-            case _ =>
-              Future.Nil
-          }.toSeq
-        }.map(_.flatten)
-      recommendationsWithSocialProofFut.map { recommendationsWithSocialProof =>
-        SocialProofThriftResponse(recommendationsWithSocialProof)
+  def appwy(wequest: s-sociawpwoofthwiftwequest): f-futuwe[sociawpwoofthwiftwesponse] = {
+    t-twackfutuwebwockstats(stats) {
+      vaw wecommendationswithsociawpwooffut = f-futuwe
+        .cowwect {
+          w-wequest.wecommendationidsfowsociawpwoof.keys.map {
+            case thwiftwecommendationtype.tweet i-if decidew.tweetsociawpwoof =>
+              gettweetsociawpwoof(wequest)
+            case (thwiftwecommendationtype.uww | thwiftwecommendationtype.hashtag)
+                if decidew.entitysociawpwoof =>
+              g-getentitysociawpwoof(wequest)
+            c-case _ =>
+              futuwe.niw
+          }.toseq
+        }.map(_.fwatten)
+      wecommendationswithsociawpwooffut.map { w-wecommendationswithsociawpwoof =>
+        s-sociawpwoofthwiftwesponse(wecommendationswithsociawpwoof)
       }
     }
   }

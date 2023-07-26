@@ -1,82 +1,82 @@
-#pragma once
-#include <twml/defines.h>
+#pwagma once
+#incwude <twmw/defines.h>
 
-#include <cstddef>
-#include <vector>
-#include <string>
+#incwude <cstddef>
+#incwude <vectow>
+#incwude <stwing>
 
-#ifdef __cplusplus
-extern "C" {
+#ifdef __cpwuspwus
+extewn "c" {
 #endif
 
-  struct twml_tensor__;
-  typedef twml_tensor__ * twml_tensor;
+  s-stwuct t-twmw_tensow__;
+  t-typedef twmw_tensow__ * t-twmw_tensow;
 
-#ifdef __cplusplus
+#ifdef __cpwuspwus
 }
 #endif
 
-#ifdef __cplusplus
-namespace twml {
+#ifdef __cpwuspwus
+n-nyamespace t-twmw {
 
-class TWMLAPI Tensor
+cwass t-twmwapi tensow
 {
-private:
-  twml_type m_type;
+p-pwivate:
+  twmw_type m_type;
   void *m_data;
-  std::vector<uint64_t> m_dims;
-  std::vector<uint64_t> m_strides;
+  std::vectow<uint64_t> m_dims;
+  s-std::vectow<uint64_t> m_stwides;
 
-public:
-  Tensor() {}
-  Tensor(void *data, int ndims, const uint64_t *dims, const uint64_t *strides, twml_type type);
-  Tensor(void *data, const std::vector<uint64_t> &dims, const std::vector<uint64_t> &strides, twml_type type);
+pubwic:
+  tensow() {}
+  t-tensow(void *data, >_< int n-nydims, const uint64_t *dims, -.- const uint64_t *stwides, 🥺 twmw_type type);
+  tensow(void *data, (U ﹏ U) c-const std::vectow<uint64_t> &dims, >w< c-const std::vectow<uint64_t> &stwides, mya t-twmw_type type);
 
-  const std::vector<uint64_t>& getDims() const {
-    return m_dims;
+  const std::vectow<uint64_t>& getdims() const {
+    wetuwn m-m_dims;
   }
 
-  int getNumDims() const;
-  uint64_t getDim(int dim) const;
-  uint64_t getStride(int dim) const;
-  uint64_t getNumElements() const;
-  twml_type getType() const;
+  int getnumdims() const;
+  uint64_t getdim(int dim) const;
+  u-uint64_t getstwide(int dim) const;
+  u-uint64_t getnumewements() const;
+  t-twmw_type g-gettype() const;
 
-  twml_tensor getHandle();
-  const twml_tensor getHandle() const;
+  t-twmw_tensow gethandwe();
+  const twmw_tensow g-gethandwe() const;
 
-  template<typename T> T *getData();
-  template<typename T> const T *getData() const;
+  tempwate<typename t> t *getdata();
+  t-tempwate<typename t> const t *getdata() const;
 };
 
-TWMLAPI std::string getTypeName(twml_type type);
-TWMLAPI const Tensor *getConstTensor(const twml_tensor t);
-TWMLAPI Tensor *getTensor(twml_tensor t);
-TWMLAPI uint64_t getSizeOf(twml_type type);
+twmwapi std::stwing gettypename(twmw_type type);
+t-twmwapi const tensow *getconsttensow(const t-twmw_tensow t-t);
+twmwapi t-tensow *gettensow(twmw_tensow t);
+twmwapi uint64_t getsizeof(twmw_type type);
 
 }
 #endif
 
-#ifdef __cplusplus
-extern "C" {
+#ifdef __cpwuspwus
+e-extewn "c" {
 #endif
-    TWMLAPI twml_err twml_tensor_create(twml_tensor *tensor, void *data,
-                                        int ndims, uint64_t *dims,
-                                        uint64_t *strides, twml_type type);
+    t-twmwapi twmw_eww twmw_tensow_cweate(twmw_tensow *tensow, >w< v-void *data, nyaa~~
+                                        i-int nydims, (✿oωo) uint64_t *dims, ʘwʘ
+                                        u-uint64_t *stwides, (ˆ ﻌ ˆ)♡ twmw_type t-type);
 
-    TWMLAPI twml_err twml_tensor_delete(const twml_tensor tensor);
+    twmwapi twmw_eww twmw_tensow_dewete(const t-twmw_tensow tensow);
 
-    TWMLAPI twml_err twml_tensor_get_type(twml_type *type, const twml_tensor tensor);
+    t-twmwapi twmw_eww twmw_tensow_get_type(twmw_type *type, 😳😳😳 c-const t-twmw_tensow tensow);
 
-    TWMLAPI twml_err twml_tensor_get_data(void **data, const twml_tensor tensor);
+    twmwapi twmw_eww twmw_tensow_get_data(void **data, :3 const twmw_tensow tensow);
 
-    TWMLAPI twml_err twml_tensor_get_dim(uint64_t *dim, const twml_tensor tensor, int id);
+    twmwapi twmw_eww twmw_tensow_get_dim(uint64_t *dim, OwO c-const twmw_tensow t-tensow, (U ﹏ U) int id);
 
-    TWMLAPI twml_err twml_tensor_get_num_dims(int *ndims, const twml_tensor tensor);
+    twmwapi t-twmw_eww twmw_tensow_get_num_dims(int *ndims, >w< c-const twmw_tensow t-tensow);
 
-    TWMLAPI twml_err twml_tensor_get_num_elements(uint64_t *nelements, const twml_tensor tensor);
+    twmwapi twmw_eww twmw_tensow_get_num_ewements(uint64_t *newements, (U ﹏ U) const twmw_tensow t-tensow);
 
-    TWMLAPI twml_err twml_tensor_get_stride(uint64_t *stride, const twml_tensor tensor, int id);
-#ifdef __cplusplus
+    twmwapi twmw_eww twmw_tensow_get_stwide(uint64_t *stwide, 😳 const twmw_tensow tensow, (ˆ ﻌ ˆ)♡ int id);
+#ifdef __cpwuspwus
 }
 #endif

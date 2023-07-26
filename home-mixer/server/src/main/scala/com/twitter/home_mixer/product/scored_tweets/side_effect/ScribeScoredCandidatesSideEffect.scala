@@ -1,126 +1,126 @@
-package com.twitter.home_mixer.product.scored_tweets.side_effect
+package com.twittew.home_mixew.pwoduct.scowed_tweets.side_effect
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.RequestJoinIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.param.HomeMixerFlagName.ScribeScoredCandidatesFlag
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.EnableScribeScoredCandidatesParam
-import com.twitter.inject.annotations.Flag
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.product_mixer.component_library.side_effect.ScribeLogEventSideEffect
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.timelines.timeline_logging.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.util.logging.Logging
+impowt com.twittew.finagwe.twacing.twace
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.ancestowsfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.diwectedatusewidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.eawwybiwdscowefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.favowitedbyusewidsfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.fowwowedbyusewidsfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.fwominnetwowksouwcefeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.inwepwytotweetidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.inwepwytousewidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.quotedtweetidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.quotedusewidfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.wequestjoinidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.scowefeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt com.twittew.home_mixew.pawam.homemixewfwagname.scwibescowedcandidatesfwag
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetswesponse
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.enabwescwibescowedcandidatespawam
+impowt com.twittew.inject.annotations.fwag
+impowt com.twittew.wogpipewine.cwient.common.eventpubwishew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.side_effect.scwibewogeventsideeffect
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.sideeffectidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatepipewines
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt c-com.twittew.timewines.timewine_wogging.{thwiftscawa => t-t}
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
+impowt com.twittew.utiw.wogging.wogging
 
 /**
- * Side effect that logs scored candidates from scoring pipelines
+ * s-side effect that wogs scowed candidates fwom s-scowing pipewines
  */
-@Singleton
-class ScribeScoredCandidatesSideEffect @Inject() (
-  @Flag(ScribeScoredCandidatesFlag) enableScribeScoredCandidates: Boolean,
-  eventBusPublisher: EventPublisher[t.ScoredCandidate])
-    extends ScribeLogEventSideEffect[
-      t.ScoredCandidate,
-      ScoredTweetsQuery,
-      ScoredTweetsResponse
+@singweton
+cwass scwibescowedcandidatessideeffect @inject() (
+  @fwag(scwibescowedcandidatesfwag) enabwescwibescowedcandidates: boowean, OwO
+  eventbuspubwishew: eventpubwishew[t.scowedcandidate])
+    e-extends scwibewogeventsideeffect[
+      t-t.scowedcandidate, rawr x3
+      scowedtweetsquewy, XD
+      s-scowedtweetswesponse
     ]
-    with PipelineResultSideEffect.Conditionally[
-      ScoredTweetsQuery,
-      ScoredTweetsResponse
+    w-with pipewinewesuwtsideeffect.conditionawwy[
+      scowedtweetsquewy, σωσ
+      scowedtweetswesponse
     ]
-    with Logging {
+    with wogging {
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("ScribeScoredCandidates")
+  o-ovewwide vaw i-identifiew: sideeffectidentifiew =
+    sideeffectidentifiew("scwibescowedcandidates")
 
-  override def onlyIf(
-    query: ScoredTweetsQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: ScoredTweetsResponse
-  ): Boolean = enableScribeScoredCandidates && query.params(EnableScribeScoredCandidatesParam)
+  o-ovewwide d-def onwyif(
+    quewy: scowedtweetsquewy, (U ᵕ U❁)
+    s-sewectedcandidates: seq[candidatewithdetaiws], (U ﹏ U)
+    w-wemainingcandidates: seq[candidatewithdetaiws], :3
+    dwoppedcandidates: s-seq[candidatewithdetaiws], ( ͡o ω ͡o )
+    wesponse: s-scowedtweetswesponse
+  ): boowean = e-enabwescwibescowedcandidates && q-quewy.pawams(enabwescwibescowedcandidatespawam)
 
   /**
-   * Build the log events from query, selections and response
+   * buiwd the wog events fwom quewy, σωσ sewections and wesponse
    *
-   * @param query               PipelineQuery
-   * @param selectedCandidates  Result after Selectors are executed
-   * @param remainingCandidates Candidates which were not selected
-   * @param droppedCandidates   Candidates dropped during selection
-   * @param response            Result after Unmarshalling
+   * @pawam quewy               pipewinequewy
+   * @pawam s-sewectedcandidates  w-wesuwt aftew sewectows awe exekawaii~d
+   * @pawam w-wemainingcandidates c-candidates w-which wewe nyot sewected
+   * @pawam dwoppedcandidates   candidates d-dwopped duwing sewection
+   * @pawam wesponse            wesuwt aftew unmawshawwing
    *
-   * @return LogEvent in thrift
+   * @wetuwn wogevent i-in thwift
    */
-  override def buildLogEvents(
-    query: ScoredTweetsQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: ScoredTweetsResponse
-  ): Seq[t.ScoredCandidate] = {
-    val returned = (selectedCandidates ++ remainingCandidates).map(toThrift(_, query, false))
-    val dropped = droppedCandidates.map(toThrift(_, query, true))
-    returned ++ dropped
+  ovewwide d-def buiwdwogevents(
+    q-quewy: scowedtweetsquewy, >w<
+    s-sewectedcandidates: seq[candidatewithdetaiws], 😳😳😳
+    w-wemainingcandidates: s-seq[candidatewithdetaiws], OwO
+    d-dwoppedcandidates: s-seq[candidatewithdetaiws], 😳
+    wesponse: scowedtweetswesponse
+  ): seq[t.scowedcandidate] = {
+    v-vaw wetuwned = (sewectedcandidates ++ w-wemainingcandidates).map(tothwift(_, 😳😳😳 q-quewy, f-fawse))
+    v-vaw dwopped = dwoppedcandidates.map(tothwift(_, (˘ω˘) quewy, ʘwʘ twue))
+    wetuwned ++ dwopped
   }
 
-  private def toThrift(
-    candidate: CandidateWithDetails,
-    query: ScoredTweetsQuery,
-    isDropped: Boolean
-  ): t.ScoredCandidate = {
-    t.ScoredCandidate(
-      tweetId = candidate.candidateIdLong,
-      viewerId = query.getOptionalUserId,
-      authorId = candidate.features.getOrElse(AuthorIdFeature, None),
-      traceId = Some(Trace.id.traceId.toLong),
-      requestJoinId = query.features.flatMap(_.getOrElse(RequestJoinIdFeature, None)),
-      score = candidate.features.getOrElse(ScoreFeature, None),
-      suggestType = candidate.features.getOrElse(SuggestTypeFeature, None).map(_.name),
-      isInNetwork = candidate.features.getTry(FromInNetworkSourceFeature).toOption,
-      inReplyToTweetId = candidate.features.getOrElse(InReplyToTweetIdFeature, None),
-      inReplyToUserId = candidate.features.getOrElse(InReplyToUserIdFeature, None),
-      quotedTweetId = candidate.features.getOrElse(QuotedTweetIdFeature, None),
-      quotedUserId = candidate.features.getOrElse(QuotedUserIdFeature, None),
-      directedAtUserId = candidate.features.getOrElse(DirectedAtUserIdFeature, None),
-      favoritedByUserIds = convertSeqFeature(candidate, FavoritedByUserIdsFeature),
-      followedByUserIds = convertSeqFeature(candidate, FollowedByUserIdsFeature),
-      ancestors = convertSeqFeature(candidate, AncestorsFeature),
-      requestTimeMs = Some(query.queryTime.inMilliseconds),
-      candidatePipelineIdentifier =
-        candidate.features.getTry(CandidatePipelines).toOption.map(_.head.name),
-      earlybirdScore = candidate.features.getOrElse(EarlybirdScoreFeature, None),
-      isDropped = Some(isDropped)
+  pwivate d-def tothwift(
+    candidate: candidatewithdetaiws, ( ͡o ω ͡o )
+    quewy: scowedtweetsquewy, o.O
+    isdwopped: b-boowean
+  ): t.scowedcandidate = {
+    t.scowedcandidate(
+      tweetid = candidate.candidateidwong, >w<
+      v-viewewid = quewy.getoptionawusewid, 😳
+      a-authowid = c-candidate.featuwes.getowewse(authowidfeatuwe, 🥺 nyone), rawr x3
+      t-twaceid = some(twace.id.twaceid.towong), o.O
+      wequestjoinid = q-quewy.featuwes.fwatmap(_.getowewse(wequestjoinidfeatuwe, rawr n-nyone)),
+      scowe = candidate.featuwes.getowewse(scowefeatuwe, ʘwʘ nyone), 😳😳😳
+      suggesttype = candidate.featuwes.getowewse(suggesttypefeatuwe, ^^;; n-nyone).map(_.name), o.O
+      isinnetwowk = c-candidate.featuwes.gettwy(fwominnetwowksouwcefeatuwe).tooption, (///ˬ///✿)
+      inwepwytotweetid = c-candidate.featuwes.getowewse(inwepwytotweetidfeatuwe, σωσ nyone),
+      i-inwepwytousewid = candidate.featuwes.getowewse(inwepwytousewidfeatuwe, nyaa~~ nyone), ^^;;
+      quotedtweetid = c-candidate.featuwes.getowewse(quotedtweetidfeatuwe, ^•ﻌ•^ n-nyone), σωσ
+      quotedusewid = c-candidate.featuwes.getowewse(quotedusewidfeatuwe, n-nyone), -.-
+      diwectedatusewid = candidate.featuwes.getowewse(diwectedatusewidfeatuwe, ^^;; nyone), XD
+      favowitedbyusewids = c-convewtseqfeatuwe(candidate, 🥺 f-favowitedbyusewidsfeatuwe), òωó
+      f-fowwowedbyusewids = convewtseqfeatuwe(candidate, (ˆ ﻌ ˆ)♡ f-fowwowedbyusewidsfeatuwe), -.-
+      ancestows = c-convewtseqfeatuwe(candidate, ancestowsfeatuwe), :3
+      w-wequesttimems = some(quewy.quewytime.inmiwwiseconds), ʘwʘ
+      candidatepipewineidentifiew =
+        candidate.featuwes.gettwy(candidatepipewines).tooption.map(_.head.name), 🥺
+      eawwybiwdscowe = c-candidate.featuwes.getowewse(eawwybiwdscowefeatuwe, >_< n-nyone),
+      isdwopped = some(isdwopped)
     )
   }
 
-  private def convertSeqFeature[T](
-    candidateWithDetails: CandidateWithDetails,
-    feature: Feature[_, Seq[T]]
-  ): Option[Seq[T]] =
-    Option(
-      candidateWithDetails.features
-        .getOrElse(feature, Seq.empty)).filter(_.nonEmpty)
+  p-pwivate d-def convewtseqfeatuwe[t](
+    candidatewithdetaiws: candidatewithdetaiws, ʘwʘ
+    featuwe: featuwe[_, (˘ω˘) s-seq[t]]
+  ): option[seq[t]] =
+    option(
+      candidatewithdetaiws.featuwes
+        .getowewse(featuwe, (✿oωo) seq.empty)).fiwtew(_.nonempty)
 
-  override val logPipelinePublisher: EventPublisher[t.ScoredCandidate] = eventBusPublisher
+  o-ovewwide vaw wogpipewinepubwishew: eventpubwishew[t.scowedcandidate] = e-eventbuspubwishew
 }

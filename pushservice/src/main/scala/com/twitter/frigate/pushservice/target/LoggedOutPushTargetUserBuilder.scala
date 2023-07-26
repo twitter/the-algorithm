@@ -1,180 +1,180 @@
-package com.twitter.frigate.pushservice.target
+package com.twittew.fwigate.pushsewvice.tawget
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.conversions.DurationOps._
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.FeatureMap
-import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.history.HistoryStoreKeyContext
-import com.twitter.frigate.common.history.MagicFanoutReasonHistory
-import com.twitter.frigate.common.history.PushServiceHistoryStore
-import com.twitter.frigate.common.history.RecItems
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.common.util.ABDeciderWithOverride
-import com.twitter.frigate.common.util.LanguageLocaleUtil
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
-import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryValue
-import com.twitter.frigate.dau_model.thriftscala.DauProbability
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.thriftscala.PushContext
-import com.twitter.frigate.thriftscala.UserForPushTargeting
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.nrel.hydration.push.HydrationContext
-import com.twitter.permissions_storage.thriftscala.AppPermission
-import com.twitter.service.metastore.gen.thriftscala.Location
-import com.twitter.service.metastore.gen.thriftscala.UserLanguages
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.columns.frigate.logged_out_web_notifications.thriftscala.LOWebNotificationMetadata
-import com.twitter.timelines.configapi
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.real_graph.v1.thriftscala.RealGraphFeatures
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.wtf.scalding.common.thriftscala.UserFeatures
+impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.decidew.decidew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.featuwemap
+impowt com.twittew.fwigate.common.histowy.histowy
+impowt com.twittew.fwigate.common.histowy.histowystowekeycontext
+impowt com.twittew.fwigate.common.histowy.magicfanoutweasonhistowy
+i-impowt com.twittew.fwigate.common.histowy.pushsewvicehistowystowe
+impowt com.twittew.fwigate.common.histowy.wecitems
+impowt c-com.twittew.fwigate.common.stowe.deviceinfo.deviceinfo
+impowt com.twittew.fwigate.common.utiw.abdecidewwithovewwide
+i-impowt com.twittew.fwigate.common.utiw.wanguagewocaweutiw
+impowt com.twittew.fwigate.data_pipewine.featuwes_common.mwwequestcontextfowfeatuwestowe
+impowt com.twittew.fwigate.data_pipewine.thwiftscawa.usewhistowyvawue
+i-impowt com.twittew.fwigate.dau_modew.thwiftscawa.daupwobabiwity
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushcontext
+impowt com.twittew.fwigate.thwiftscawa.usewfowpushtawgeting
+i-impowt com.twittew.gizmoduck.thwiftscawa.usew
+impowt com.twittew.hewmit.stp.thwiftscawa.stpwesuwt
+impowt com.twittew.intewests.thwiftscawa.intewestid
+impowt com.twittew.notificationsewvice.genewicfeedbackstowe.feedbackpwomptvawue
+i-impowt com.twittew.notificationsewvice.thwiftscawa.cawetfeedbackdetaiws
+i-impowt com.twittew.nwew.hydwation.push.hydwationcontext
+i-impowt c-com.twittew.pewmissions_stowage.thwiftscawa.apppewmission
+i-impowt com.twittew.sewvice.metastowe.gen.thwiftscawa.wocation
+impowt c-com.twittew.sewvice.metastowe.gen.thwiftscawa.usewwanguages
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.stwato.cowumns.fwigate.wogged_out_web_notifications.thwiftscawa.wowebnotificationmetadata
+impowt com.twittew.timewines.configapi
+impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.timewines.weaw_gwaph.v1.thwiftscawa.weawgwaphfeatuwes
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.wtf.scawding.common.thwiftscawa.usewfeatuwes
 
-case class LoggedOutPushTargetUserBuilder(
-  historyStore: PushServiceHistoryStore,
-  inputDecider: Decider,
-  inputAbDecider: LoggingABDecider,
-  loggedOutPushInfoStore: ReadableStore[Long, LOWebNotificationMetadata]
+case cwass woggedoutpushtawgetusewbuiwdew(
+  histowystowe: p-pushsewvicehistowystowe,
+  i-inputdecidew: decidew, UwU
+  i-inputabdecidew: w-woggingabdecidew, (˘ω˘)
+  woggedoutpushinfostowe: w-weadabwestowe[wong, (///ˬ///✿) wowebnotificationmetadata]
 )(
-  globalStatsReceiver: StatsReceiver) {
-  private val stats = globalStatsReceiver.scope("LORefreshForPushHandler")
-  private val noHistoryCounter = stats.counter("no_logged_out_history")
-  private val historyFoundCounter = stats.counter("logged_out_history_counter")
-  private val noLoggedOutUserCounter = stats.counter("no_logged_out_user")
-  private val countryCodeCounter = stats.counter("country_counter")
-  private val noCountryCodeCounter = stats.counter("no_country_counter")
-  private val noLanguageCodeCounter = stats.counter("no_language_counter")
+  g-gwobawstatsweceivew: statsweceivew) {
+  pwivate v-vaw stats = gwobawstatsweceivew.scope("wowefweshfowpushhandwew")
+  p-pwivate vaw nyohistowycountew = s-stats.countew("no_wogged_out_histowy")
+  p-pwivate vaw histowyfoundcountew = stats.countew("wogged_out_histowy_countew")
+  pwivate vaw nyowoggedoutusewcountew = stats.countew("no_wogged_out_usew")
+  pwivate vaw countwycodecountew = stats.countew("countwy_countew")
+  p-pwivate vaw nyocountwycodecountew = s-stats.countew("no_countwy_countew")
+  pwivate v-vaw nyowanguagecodecountew = s-stats.countew("no_wanguage_countew")
 
-  def buildTarget(
-    guestId: Long,
-    inputPushContext: Option[PushContext]
-  ): Future[Target] = {
+  d-def buiwdtawget(
+    guestid: wong, σωσ
+    inputpushcontext: o-option[pushcontext]
+  ): futuwe[tawget] = {
 
-    val historyStoreKeyContext = HistoryStoreKeyContext(
-      guestId,
-      inputPushContext.flatMap(_.useMemcacheForHistory).getOrElse(false)
+    vaw histowystowekeycontext = histowystowekeycontext(
+      guestid, /(^•ω•^)
+      i-inputpushcontext.fwatmap(_.usememcachefowhistowy).getowewse(fawse)
     )
-    if (historyStore.get(historyStoreKeyContext, Some(30.days)) == Future.None) {
-      noHistoryCounter.incr()
-    } else {
-      historyFoundCounter.incr()
+    if (histowystowe.get(histowystowekeycontext, 😳 s-some(30.days)) == f-futuwe.none) {
+      n-nyohistowycountew.incw()
+    } ewse {
+      h-histowyfoundcountew.incw()
 
     }
-    if (loggedOutPushInfoStore.get(guestId) == Future.None) {
-      noLoggedOutUserCounter.incr()
+    i-if (woggedoutpushinfostowe.get(guestid) == f-futuwe.none) {
+      n-nyowoggedoutusewcountew.incw()
     }
-    Future
+    futuwe
       .join(
-        historyStore.get(historyStoreKeyContext, Some(30.days)),
-        loggedOutPushInfoStore.get(guestId)
+        histowystowe.get(histowystowekeycontext, 😳 s-some(30.days)), (⑅˘꒳˘)
+        w-woggedoutpushinfostowe.get(guestid)
       ).map {
-        case (loNotifHistory, loggedOutUserPushInfo) =>
-          new Target {
-            override lazy val stats: StatsReceiver = globalStatsReceiver
-            override val targetId: Long = guestId
-            override val targetGuestId = Some(guestId)
-            override lazy val decider: Decider = inputDecider
-            override lazy val loggedOutMetadata = Future.value(loggedOutUserPushInfo)
-            val rawLanguageFut = loggedOutMetadata.map { metadata => metadata.map(_.language) }
-            override val targetLanguage: Future[Option[String]] = rawLanguageFut.map { rawLang =>
-              if (rawLang.isDefined) {
-                val lang = LanguageLocaleUtil.getStandardLanguageCode(rawLang.get)
-                if (lang.isEmpty) {
-                  noLanguageCodeCounter.incr()
-                  None
-                } else {
-                  Option(lang)
+        c-case (wonotifhistowy, w-woggedoutusewpushinfo) =>
+          n-nyew tawget {
+            ovewwide wazy vaw stats: statsweceivew = gwobawstatsweceivew
+            o-ovewwide vaw tawgetid: wong = guestid
+            ovewwide vaw tawgetguestid = some(guestid)
+            ovewwide wazy v-vaw decidew: decidew = inputdecidew
+            ovewwide wazy vaw woggedoutmetadata = f-futuwe.vawue(woggedoutusewpushinfo)
+            v-vaw wawwanguagefut = woggedoutmetadata.map { m-metadata => metadata.map(_.wanguage) }
+            o-ovewwide vaw tawgetwanguage: f-futuwe[option[stwing]] = w-wawwanguagefut.map { wawwang =>
+              if (wawwang.isdefined) {
+                vaw wang = wanguagewocaweutiw.getstandawdwanguagecode(wawwang.get)
+                if (wang.isempty) {
+                  n-nyowanguagecodecountew.incw()
+                  nyone
+                } e-ewse {
+                  option(wang)
                 }
-              } else None
+              } e-ewse nyone
             }
-            val country = loggedOutMetadata.map(_.map(_.countryCode))
-            if (country.isDefined) {
-              countryCodeCounter.incr()
-            } else {
-              noCountryCodeCounter.incr()
+            v-vaw countwy = woggedoutmetadata.map(_.map(_.countwycode))
+            if (countwy.isdefined) {
+              c-countwycodecountew.incw()
+            } e-ewse {
+              nyocountwycodecountew.incw()
             }
-            if (loNotifHistory == null) {
-              noHistoryCounter.incr()
-            } else {
-              historyFoundCounter.incr()
+            if (wonotifhistowy == n-nyuww) {
+              n-nyohistowycountew.incw()
+            } ewse {
+              histowyfoundcountew.incw()
             }
-            override lazy val location: Future[Option[Location]] = country.map {
-              case Some(code) =>
-                Some(
-                  Location(
-                    city = "",
-                    region = "",
-                    countryCode = code,
-                    confidence = 0.0,
-                    lat = None,
-                    lon = None,
-                    metro = None,
-                    placeIds = None,
-                    weightedLocations = None,
-                    createdAtMsec = None,
-                    ip = None,
-                    isSignupIp = None,
-                    placeMap = None
+            ovewwide wazy vaw wocation: futuwe[option[wocation]] = c-countwy.map {
+              c-case some(code) =>
+                s-some(
+                  wocation(
+                    c-city = "", 😳😳😳
+                    wegion = "", 😳
+                    c-countwycode = code, XD
+                    confidence = 0.0, mya
+                    w-wat = nyone, ^•ﻌ•^
+                    won = nyone, ʘwʘ
+                    metwo = nyone, ( ͡o ω ͡o )
+                    pwaceids = nyone, mya
+                    w-weightedwocations = n-nyone, o.O
+                    cweatedatmsec = nyone, (✿oωo)
+                    i-ip = nyone, :3
+                    i-issignupip = nyone, 😳
+                    pwacemap = nyone
                   ))
-              case _ => None
+              case _ => n-nyone
             }
 
-            override lazy val pushContext: Option[PushContext] = inputPushContext
-            override lazy val history: Future[History] = Future.value(loNotifHistory)
-            override lazy val magicFanoutReasonHistory30Days: Future[MagicFanoutReasonHistory] =
-              Future.value(null)
-            override lazy val globalStats: StatsReceiver = globalStatsReceiver
-            override lazy val pushTargeting: Future[Option[UserForPushTargeting]] = Future.None
-            override lazy val appPermissions: Future[Option[AppPermission]] = Future.None
-            override lazy val lastHTLVisitTimestamp: Future[Option[Long]] = Future.None
-            override lazy val pushRecItems: Future[RecItems] = Future.value(null)
+            ovewwide wazy vaw pushcontext: option[pushcontext] = inputpushcontext
+            ovewwide w-wazy vaw histowy: futuwe[histowy] = futuwe.vawue(wonotifhistowy)
+            o-ovewwide wazy v-vaw magicfanoutweasonhistowy30days: futuwe[magicfanoutweasonhistowy] =
+              futuwe.vawue(nuww)
+            ovewwide wazy v-vaw gwobawstats: s-statsweceivew = gwobawstatsweceivew
+            ovewwide wazy vaw pushtawgeting: f-futuwe[option[usewfowpushtawgeting]] = futuwe.none
+            o-ovewwide wazy vaw apppewmissions: futuwe[option[apppewmission]] = futuwe.none
+            o-ovewwide wazy vaw wasthtwvisittimestamp: f-futuwe[option[wong]] = f-futuwe.none
+            ovewwide wazy v-vaw pushwecitems: futuwe[wecitems] = f-futuwe.vawue(nuww)
 
-            override lazy val isNewSignup: Boolean = false
-            override lazy val metastoreLanguages: Future[Option[UserLanguages]] = Future.None
-            override lazy val optOutUserInterests: Future[Option[Seq[InterestId]]] = Future.None
-            override lazy val mrRequestContextForFeatureStore: MrRequestContextForFeatureStore =
-              null
-            override lazy val targetUser: Future[Option[User]] = Future.None
-            override lazy val notificationFeedbacks: Future[Option[Seq[FeedbackPromptValue]]] =
-              Future.None
-            override lazy val promptFeedbacks: Stitch[Seq[FeedbackPromptValue]] = null
-            override lazy val seedsWithWeight: Future[Option[Map[Long, Double]]] = Future.None
-            override lazy val tweetImpressionResults: Future[Seq[Long]] = Future.Nil
-            override lazy val params: configapi.Params = Params.Empty
-            override lazy val deviceInfo: Future[Option[DeviceInfo]] = Future.None
-            override lazy val userFeatures: Future[Option[UserFeatures]] = Future.None
-            override lazy val isOpenAppExperimentUser: Future[Boolean] = Future.False
-            override lazy val featureMap: Future[FeatureMap] = Future.value(null)
-            override lazy val dauProbability: Future[Option[DauProbability]] = Future.None
-            override lazy val labeledPushRecsHydrated: Future[Option[UserHistoryValue]] =
-              Future.None
-            override lazy val onlineLabeledPushRecs: Future[Option[UserHistoryValue]] = Future.None
-            override lazy val realGraphFeatures: Future[Option[RealGraphFeatures]] = Future.None
-            override lazy val stpResult: Future[Option[STPResult]] = Future.None
-            override lazy val globalOptoutProbabilities: Seq[Future[Option[Double]]] = Seq.empty
-            override lazy val bucketOptoutProbability: Future[Option[Double]] = Future.None
-            override lazy val utcOffset: Future[Option[Duration]] = Future.None
-            override lazy val abDecider: ABDeciderWithOverride =
-              ABDeciderWithOverride(inputAbDecider, ddgOverrideOption)(globalStatsReceiver)
-            override lazy val resurrectionDate: Future[Option[String]] = Future.None
-            override lazy val isResurrectedUser: Boolean = false
-            override lazy val timeSinceResurrection: Option[Duration] = None
-            override lazy val inlineActionHistory: Future[Seq[(Long, String)]] = Future.Nil
-            override lazy val caretFeedbacks: Future[Option[Seq[CaretFeedbackDetails]]] =
-              Future.None
+            o-ovewwide w-wazy vaw isnewsignup: boowean = f-fawse
+            o-ovewwide wazy vaw metastowewanguages: futuwe[option[usewwanguages]] = f-futuwe.none
+            o-ovewwide wazy vaw o-optoutusewintewests: futuwe[option[seq[intewestid]]] = futuwe.none
+            o-ovewwide wazy vaw mwwequestcontextfowfeatuwestowe: m-mwwequestcontextfowfeatuwestowe =
+              n-nyuww
+            ovewwide wazy vaw tawgetusew: futuwe[option[usew]] = f-futuwe.none
+            o-ovewwide wazy v-vaw nyotificationfeedbacks: f-futuwe[option[seq[feedbackpwomptvawue]]] =
+              futuwe.none
+            ovewwide w-wazy vaw pwomptfeedbacks: stitch[seq[feedbackpwomptvawue]] = nyuww
+            ovewwide wazy vaw seedswithweight: f-futuwe[option[map[wong, (U ﹏ U) doubwe]]] = futuwe.none
+            o-ovewwide wazy vaw tweetimpwessionwesuwts: f-futuwe[seq[wong]] = futuwe.niw
+            o-ovewwide wazy vaw pawams: c-configapi.pawams = p-pawams.empty
+            o-ovewwide wazy vaw d-deviceinfo: futuwe[option[deviceinfo]] = f-futuwe.none
+            ovewwide wazy vaw usewfeatuwes: futuwe[option[usewfeatuwes]] = futuwe.none
+            ovewwide wazy vaw isopenappexpewimentusew: f-futuwe[boowean] = f-futuwe.fawse
+            o-ovewwide wazy vaw featuwemap: futuwe[featuwemap] = f-futuwe.vawue(nuww)
+            ovewwide wazy vaw daupwobabiwity: futuwe[option[daupwobabiwity]] = f-futuwe.none
+            o-ovewwide wazy vaw w-wabewedpushwecshydwated: futuwe[option[usewhistowyvawue]] =
+              futuwe.none
+            o-ovewwide wazy v-vaw onwinewabewedpushwecs: futuwe[option[usewhistowyvawue]] = f-futuwe.none
+            o-ovewwide wazy vaw weawgwaphfeatuwes: futuwe[option[weawgwaphfeatuwes]] = futuwe.none
+            ovewwide wazy vaw stpwesuwt: f-futuwe[option[stpwesuwt]] = f-futuwe.none
+            o-ovewwide w-wazy vaw gwobawoptoutpwobabiwities: s-seq[futuwe[option[doubwe]]] = seq.empty
+            o-ovewwide w-wazy vaw bucketoptoutpwobabiwity: futuwe[option[doubwe]] = f-futuwe.none
+            o-ovewwide wazy vaw utcoffset: f-futuwe[option[duwation]] = futuwe.none
+            ovewwide wazy v-vaw abdecidew: abdecidewwithovewwide =
+              a-abdecidewwithovewwide(inputabdecidew, mya d-ddgovewwideoption)(gwobawstatsweceivew)
+            ovewwide wazy v-vaw wesuwwectiondate: futuwe[option[stwing]] = futuwe.none
+            ovewwide w-wazy vaw iswesuwwectedusew: b-boowean = f-fawse
+            ovewwide wazy vaw timesincewesuwwection: option[duwation] = n-nyone
+            ovewwide wazy vaw inwineactionhistowy: f-futuwe[seq[(wong, (U ᵕ U❁) stwing)]] = f-futuwe.niw
+            ovewwide wazy v-vaw cawetfeedbacks: futuwe[option[seq[cawetfeedbackdetaiws]]] =
+              f-futuwe.none
 
-            override def targetHydrationContext: Future[HydrationContext] = Future.value(null)
-            override def isBlueVerified: Future[Option[Boolean]] = Future.None
-            override def isVerified: Future[Option[Boolean]] = Future.None
-            override def isSuperFollowCreator: Future[Option[Boolean]] = Future.None
+            o-ovewwide def tawgethydwationcontext: futuwe[hydwationcontext] = f-futuwe.vawue(nuww)
+            ovewwide def isbwuevewified: f-futuwe[option[boowean]] = f-futuwe.none
+            ovewwide def i-isvewified: futuwe[option[boowean]] = futuwe.none
+            o-ovewwide def issupewfowwowcweatow: f-futuwe[option[boowean]] = f-futuwe.none
           }
       }
   }

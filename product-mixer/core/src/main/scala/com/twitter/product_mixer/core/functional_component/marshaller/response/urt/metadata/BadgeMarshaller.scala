@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.cowow.wosettacowowmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.badge
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class BadgeMarshaller @Inject() (
-  rosettaColorMarshaller: RosettaColorMarshaller) {
+@singweton
+cwass b-badgemawshawwew @inject() (
+  wosettacowowmawshawwew: wosettacowowmawshawwew) {
 
-  def apply(badge: Badge): urt.Badge = urt.Badge(
-    text = badge.text,
-    textColorName = badge.textColorName.map(rosettaColorMarshaller(_)),
-    backgroundColorName = badge.backgroundColorName.map(rosettaColorMarshaller(_))
+  def appwy(badge: badge): u-uwt.badge = uwt.badge(
+    text = badge.text, (ˆ ﻌ ˆ)♡
+    t-textcowowname = badge.textcowowname.map(wosettacowowmawshawwew(_)), (⑅˘꒳˘)
+    b-backgwoundcowowname = badge.backgwoundcowowname.map(wosettacowowmawshawwew(_))
   )
 }

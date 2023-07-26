@@ -1,31 +1,31 @@
-package com.twitter.tweetypie.store
+package com.twittew.tweetypie.stowe
 
-import com.twitter.tweetypie.Tweet
-import com.twitter.tweetypie.serverutil.ExtendedTweetMetadataBuilder
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.InitialTweetUpdateRequest
-import com.twitter.tweetypie.util.EditControlUtil
+impowt com.twittew.tweetypie.tweet
+i-impowt com.twittew.tweetypie.sewvewutiw.extendedtweetmetadatabuiwdew
+i-impowt c-com.twittew.tweetypie.thwiftscawa.editcontwow
+i-impowt com.twittew.tweetypie.thwiftscawa.initiawtweetupdatewequest
+i-impowt com.twittew.tweetypie.utiw.editcontwowutiw
 
-/* Logic to update the initial tweet with new information when that tweet is edited */
-object InitialTweetUpdate {
+/* w-wogic t-to update the initiaw t-tweet with nyew infowmation when that tweet is edited */
+object initiawtweetupdate {
 
-  /* Given the initial tweet and update request, copy updated edit
-   * related fields onto it.
+  /* g-given the initiaw tweet and update wequest, (✿oωo) copy u-updated edit
+   * wewated fiewds o-onto it. (ˆ ﻌ ˆ)♡
    */
-  def updateTweet(initialTweet: Tweet, request: InitialTweetUpdateRequest): Tweet = {
+  def updatetweet(initiawtweet: tweet, (˘ω˘) wequest: initiawtweetupdatewequest): t-tweet = {
 
-    // compute a new edit control initial with updated list of edit tweet ids
-    val editControl: EditControl.Initial =
-      EditControlUtil.editControlForInitialTweet(initialTweet, request.editTweetId).get()
+    // compute a nyew edit c-contwow initiaw w-with updated wist of edit tweet ids
+    vaw editcontwow: editcontwow.initiaw =
+      editcontwowutiw.editcontwowfowinitiawtweet(initiawtweet, (⑅˘꒳˘) w-wequest.edittweetid).get()
 
-    // compute the correct extended metadata for a permalink
-    val extendedTweetMetadata =
-      request.selfPermalink.map(link => ExtendedTweetMetadataBuilder(initialTweet, link))
+    // compute the cowwect extended metadata fow a pewmawink
+    vaw e-extendedtweetmetadata =
+      wequest.sewfpewmawink.map(wink => e-extendedtweetmetadatabuiwdew(initiawtweet, w-wink))
 
-    initialTweet.copy(
-      selfPermalink = initialTweet.selfPermalink.orElse(request.selfPermalink),
-      editControl = Some(editControl),
-      extendedTweetMetadata = initialTweet.extendedTweetMetadata.orElse(extendedTweetMetadata)
+    i-initiawtweet.copy(
+      s-sewfpewmawink = initiawtweet.sewfpewmawink.owewse(wequest.sewfpewmawink), (///ˬ///✿)
+      editcontwow = s-some(editcontwow), 😳😳😳
+      extendedtweetmetadata = initiawtweet.extendedtweetmetadata.owewse(extendedtweetmetadata)
     )
   }
 }

@@ -1,326 +1,326 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.twittew.fwigate.pushsewvice.adaptow
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.base.TopTweetImpressionsCandidate
-import com.twitter.frigate.common.store.RecentTweetsQuery
-import com.twitter.frigate.common.util.SnowflakeUtils
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
-import com.twitter.frigate.pushservice.store.TweetImpressionsStore
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.FutureOps
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.candidatesouwce
+i-impowt com.twittew.fwigate.common.base.candidatesouwceewigibwe
+i-impowt com.twittew.fwigate.common.base.toptweetimpwessionscandidate
+i-impowt com.twittew.fwigate.common.stowe.wecenttweetsquewy
+i-impowt com.twittew.fwigate.common.utiw.snowfwakeutiws
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.pawams.{pushfeatuweswitchpawams => f-fs}
+impowt com.twittew.fwigate.pushsewvice.stowe.tweetimpwessionsstowe
+impowt com.twittew.fwigate.pushsewvice.utiw.pushdeviceutiw
+i-impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+impowt com.twittew.stowehaus.futuweops
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
 
-case class TweetImpressionsCandidate(
-  tweetId: Long,
-  tweetyPieResultOpt: Option[TweetyPieResult],
-  impressionsCountOpt: Option[Long])
+case cwass tweetimpwessionscandidate(
+  t-tweetid: wong, >_<
+  tweetypiewesuwtopt: o-option[tweetypiewesuwt], σωσ
+  i-impwessionscountopt: option[wong])
 
-case class TopTweetImpressionsCandidateAdaptor(
-  recentTweetsFromTflockStore: ReadableStore[RecentTweetsQuery, Seq[Seq[Long]]],
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
-  tweetImpressionsStore: TweetImpressionsStore,
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+case cwass toptweetimpwessionscandidateadaptow(
+  wecenttweetsfwomtfwockstowe: weadabwestowe[wecenttweetsquewy, 🥺 seq[seq[wong]]], 🥺
+  t-tweetypiestowe: weadabwestowe[wong, ʘwʘ tweetypiewesuwt], :3
+  tweetypiestowenovf: weadabwestowe[wong, (U ﹏ U) tweetypiewesuwt], (U ﹏ U)
+  t-tweetimpwessionsstowe: tweetimpwessionsstowe, ʘwʘ
+  g-gwobawstats: s-statsweceivew)
+    e-extends candidatesouwce[tawget, >w< w-wawcandidate]
+    with candidatesouwceewigibwe[tawget, rawr x3 wawcandidate] {
 
-  private val stats = globalStats.scope("TopTweetImpressionsAdaptor")
-  private val tweetImpressionsCandsStat = stats.stat("top_tweet_impressions_cands_dist")
+  p-pwivate vaw stats = gwobawstats.scope("toptweetimpwessionsadaptow")
+  pwivate vaw t-tweetimpwessionscandsstat = stats.stat("top_tweet_impwessions_cands_dist")
 
-  private val eligibleUsersCounter = stats.counter("eligible_users")
-  private val noneligibleUsersCounter = stats.counter("noneligible_users")
-  private val meetsMinTweetsRequiredCounter = stats.counter("meets_min_tweets_required")
-  private val belowMinTweetsRequiredCounter = stats.counter("below_min_tweets_required")
-  private val aboveMaxInboundFavoritesCounter = stats.counter("above_max_inbound_favorites")
-  private val meetsImpressionsRequiredCounter = stats.counter("meets_impressions_required")
-  private val belowImpressionsRequiredCounter = stats.counter("below_impressions_required")
-  private val meetsFavoritesThresholdCounter = stats.counter("meets_favorites_threshold")
-  private val aboveFavoritesThresholdCounter = stats.counter("above_favorites_threshold")
-  private val emptyImpressionsMapCounter = stats.counter("empty_impressions_map")
+  pwivate vaw ewigibweusewscountew = stats.countew("ewigibwe_usews")
+  pwivate vaw nyonewigibweusewscountew = stats.countew("nonewigibwe_usews")
+  p-pwivate vaw meetsmintweetswequiwedcountew = stats.countew("meets_min_tweets_wequiwed")
+  p-pwivate v-vaw bewowmintweetswequiwedcountew = s-stats.countew("bewow_min_tweets_wequiwed")
+  pwivate vaw abovemaxinboundfavowitescountew = stats.countew("above_max_inbound_favowites")
+  p-pwivate vaw meetsimpwessionswequiwedcountew = stats.countew("meets_impwessions_wequiwed")
+  p-pwivate vaw bewowimpwessionswequiwedcountew = s-stats.countew("bewow_impwessions_wequiwed")
+  p-pwivate vaw meetsfavowitesthweshowdcountew = s-stats.countew("meets_favowites_thweshowd")
+  pwivate vaw abovefavowitesthweshowdcountew = s-stats.countew("above_favowites_thweshowd")
+  pwivate vaw emptyimpwessionsmapcountew = s-stats.countew("empty_impwessions_map")
 
-  private val tflockResultsStat = stats.stat("tflock", "results")
-  private val emptyTflockResult = stats.counter("tflock", "empty_result")
-  private val nonEmptyTflockResult = stats.counter("tflock", "non_empty_result")
+  pwivate vaw tfwockwesuwtsstat = s-stats.stat("tfwock", OwO "wesuwts")
+  pwivate vaw emptytfwockwesuwt = s-stats.countew("tfwock", "empty_wesuwt")
+  p-pwivate vaw nyonemptytfwockwesuwt = stats.countew("tfwock", "non_empty_wesuwt")
 
-  private val originalTweetsStat = stats.stat("tweets", "original_tweets")
-  private val retweetsStat = stats.stat("tweets", "retweets")
-  private val allRetweetsOnlyCounter = stats.counter("tweets", "all_retweets_only")
-  private val allOriginalTweetsOnlyCounter = stats.counter("tweets", "all_original_tweets_only")
+  pwivate vaw owiginawtweetsstat = stats.stat("tweets", ^•ﻌ•^ "owiginaw_tweets")
+  pwivate vaw wetweetsstat = s-stats.stat("tweets", >_< "wetweets")
+  p-pwivate vaw awwwetweetsonwycountew = s-stats.countew("tweets", OwO "aww_wetweets_onwy")
+  p-pwivate v-vaw awwowiginawtweetsonwycountew = stats.countew("tweets", >_< "aww_owiginaw_tweets_onwy")
 
-  private val emptyTweetypieMap = stats.counter("", "empty_tweetypie_map")
-  private val emptyTweetyPieResult = stats.stat("", "empty_tweetypie_result")
-  private val allEmptyTweetypieResults = stats.counter("", "all_empty_tweetypie_results")
+  pwivate vaw emptytweetypiemap = s-stats.countew("", (ꈍᴗꈍ) "empty_tweetypie_map")
+  pwivate vaw emptytweetypiewesuwt = stats.stat("", >w< "empty_tweetypie_wesuwt")
+  pwivate vaw a-awwemptytweetypiewesuwts = stats.countew("", (U ﹏ U) "aww_empty_tweetypie_wesuwts")
 
-  private val eligibleUsersAfterImpressionsFilter =
-    stats.counter("eligible_users_after_impressions_filter")
-  private val eligibleUsersAfterFavoritesFilter =
-    stats.counter("eligible_users_after_favorites_filter")
-  private val eligibleUsersWithEligibleTweets =
-    stats.counter("eligible_users_with_eligible_tweets")
+  p-pwivate vaw ewigibweusewsaftewimpwessionsfiwtew =
+    s-stats.countew("ewigibwe_usews_aftew_impwessions_fiwtew")
+  p-pwivate vaw ewigibweusewsaftewfavowitesfiwtew =
+    stats.countew("ewigibwe_usews_aftew_favowites_fiwtew")
+  p-pwivate vaw ewigibweusewswithewigibwetweets =
+    s-stats.countew("ewigibwe_usews_with_ewigibwe_tweets")
 
-  private val eligibleTweetCands = stats.stat("eligible_tweet_cands")
-  private val getCandsRequestCounter =
-    stats.counter("top_tweet_impressions_get_request")
+  p-pwivate v-vaw ewigibwetweetcands = stats.stat("ewigibwe_tweet_cands")
+  pwivate vaw getcandswequestcountew =
+    s-stats.countew("top_tweet_impwessions_get_wequest")
 
-  override val name: String = this.getClass.getSimpleName
+  ovewwide v-vaw nyame: s-stwing = this.getcwass.getsimpwename
 
-  override def get(inputTarget: Target): Future[Option[Seq[RawCandidate]]] = {
-    getCandsRequestCounter.incr()
-    val eligibleCandidatesFut = getTweetImpressionsCandidates(inputTarget)
-    eligibleCandidatesFut.map { eligibleCandidates =>
-      if (eligibleCandidates.nonEmpty) {
-        eligibleUsersWithEligibleTweets.incr()
-        eligibleTweetCands.add(eligibleCandidates.size)
-        val candidate = getMostImpressionsTweet(eligibleCandidates)
-        Some(
-          Seq(
-            generateTopTweetImpressionsCandidate(
-              inputTarget,
-              candidate.tweetId,
-              candidate.tweetyPieResultOpt,
-              candidate.impressionsCountOpt.getOrElse(0L))))
-      } else None
+  o-ovewwide d-def get(inputtawget: tawget): futuwe[option[seq[wawcandidate]]] = {
+    getcandswequestcountew.incw()
+    v-vaw ewigibwecandidatesfut = gettweetimpwessionscandidates(inputtawget)
+    ewigibwecandidatesfut.map { ewigibwecandidates =>
+      if (ewigibwecandidates.nonempty) {
+        e-ewigibweusewswithewigibwetweets.incw()
+        ewigibwetweetcands.add(ewigibwecandidates.size)
+        vaw candidate = getmostimpwessionstweet(ewigibwecandidates)
+        s-some(
+          s-seq(
+            g-genewatetoptweetimpwessionscandidate(
+              inputtawget, ^^
+              c-candidate.tweetid, (U ﹏ U)
+              candidate.tweetypiewesuwtopt,
+              c-candidate.impwessionscountopt.getowewse(0w))))
+      } e-ewse nyone
     }
   }
 
-  private def getTweetImpressionsCandidates(
-    inputTarget: Target
-  ): Future[Seq[TweetImpressionsCandidate]] = {
-    val originalTweets = getRecentOriginalTweetsForUser(inputTarget)
-    originalTweets.flatMap { tweetyPieResultsMap =>
-      val numDaysSearchForOriginalTweets =
-        inputTarget.params(FS.TopTweetImpressionsOriginalTweetsNumDaysSearch)
-      val moreRecentTweetIds =
-        getMoreRecentTweetIds(tweetyPieResultsMap.keySet.toSeq, numDaysSearchForOriginalTweets)
-      val isEligible = isEligibleUser(inputTarget, tweetyPieResultsMap, moreRecentTweetIds)
-      if (isEligible) filterByEligibility(inputTarget, tweetyPieResultsMap, moreRecentTweetIds)
-      else Future.Nil
+  pwivate def gettweetimpwessionscandidates(
+    inputtawget: tawget
+  ): futuwe[seq[tweetimpwessionscandidate]] = {
+    vaw owiginawtweets = getwecentowiginawtweetsfowusew(inputtawget)
+    owiginawtweets.fwatmap { t-tweetypiewesuwtsmap =>
+      vaw nyumdaysseawchfowowiginawtweets =
+        i-inputtawget.pawams(fs.toptweetimpwessionsowiginawtweetsnumdaysseawch)
+      vaw mowewecenttweetids =
+        g-getmowewecenttweetids(tweetypiewesuwtsmap.keyset.toseq, :3 n-nyumdaysseawchfowowiginawtweets)
+      vaw isewigibwe = isewigibweusew(inputtawget, (✿oωo) t-tweetypiewesuwtsmap, XD m-mowewecenttweetids)
+      if (isewigibwe) f-fiwtewbyewigibiwity(inputtawget, >w< t-tweetypiewesuwtsmap, òωó mowewecenttweetids)
+      ewse futuwe.niw
     }
   }
 
-  private def getRecentOriginalTweetsForUser(
-    targetUser: Target
-  ): Future[Map[Long, TweetyPieResult]] = {
-    val tweetyPieResultsMapFut = getTflockStoreResults(targetUser).flatMap { recentTweetIds =>
-      FutureOps.mapCollect((targetUser.params(FS.EnableVFInTweetypie) match {
-        case true => tweetyPieStore
-        case false => tweetyPieStoreNoVF
-      }).multiGet(recentTweetIds.toSet))
+  pwivate d-def getwecentowiginawtweetsfowusew(
+    t-tawgetusew: t-tawget
+  ): futuwe[map[wong, (ꈍᴗꈍ) t-tweetypiewesuwt]] = {
+    v-vaw tweetypiewesuwtsmapfut = gettfwockstowewesuwts(tawgetusew).fwatmap { w-wecenttweetids =>
+      futuweops.mapcowwect((tawgetusew.pawams(fs.enabwevfintweetypie) match {
+        case twue => tweetypiestowe
+        c-case fawse => tweetypiestowenovf
+      }).muwtiget(wecenttweetids.toset))
     }
-    tweetyPieResultsMapFut.map { tweetyPieResultsMap =>
-      if (tweetyPieResultsMap.isEmpty) {
-        emptyTweetypieMap.incr()
-        Map.empty
-      } else removeRetweets(tweetyPieResultsMap)
+    t-tweetypiewesuwtsmapfut.map { tweetypiewesuwtsmap =>
+      if (tweetypiewesuwtsmap.isempty) {
+        e-emptytweetypiemap.incw()
+        m-map.empty
+      } ewse wemovewetweets(tweetypiewesuwtsmap)
     }
   }
 
-  private def getTflockStoreResults(targetUser: Target): Future[Seq[Long]] = {
-    val maxResults = targetUser.params(FS.TopTweetImpressionsRecentTweetsByAuthorStoreMaxResults)
-    val maxAge = targetUser.params(FS.TopTweetImpressionsTotalFavoritesLimitNumDaysSearch)
-    val recentTweetsQuery =
-      RecentTweetsQuery(
-        userIds = Seq(targetUser.targetId),
-        maxResults = maxResults,
-        maxAge = maxAge.days
+  pwivate def gettfwockstowewesuwts(tawgetusew: t-tawget): futuwe[seq[wong]] = {
+    vaw maxwesuwts = tawgetusew.pawams(fs.toptweetimpwessionswecenttweetsbyauthowstowemaxwesuwts)
+    vaw maxage = tawgetusew.pawams(fs.toptweetimpwessionstotawfavowiteswimitnumdaysseawch)
+    v-vaw wecenttweetsquewy =
+      wecenttweetsquewy(
+        usewids = s-seq(tawgetusew.tawgetid), rawr x3
+        m-maxwesuwts = maxwesuwts, rawr x3
+        maxage = maxage.days
       )
-    recentTweetsFromTflockStore
-      .get(recentTweetsQuery).map {
-        case Some(tweetIdsAll) =>
-          val tweetIds = tweetIdsAll.headOption.getOrElse(Seq.empty)
-          val numTweets = tweetIds.size
-          if (numTweets > 0) {
-            tflockResultsStat.add(numTweets)
-            nonEmptyTflockResult.incr()
-          } else emptyTflockResult.incr()
-          tweetIds
-        case _ => Nil
+    wecenttweetsfwomtfwockstowe
+      .get(wecenttweetsquewy).map {
+        case s-some(tweetidsaww) =>
+          v-vaw tweetids = tweetidsaww.headoption.getowewse(seq.empty)
+          vaw nyumtweets = tweetids.size
+          i-if (numtweets > 0) {
+            tfwockwesuwtsstat.add(numtweets)
+            nyonemptytfwockwesuwt.incw()
+          } e-ewse emptytfwockwesuwt.incw()
+          tweetids
+        case _ => nyiw
       }
   }
 
-  private def removeRetweets(
-    tweetyPieResultsMap: Map[Long, Option[TweetyPieResult]]
-  ): Map[Long, TweetyPieResult] = {
-    val nonEmptyTweetyPieResults: Map[Long, TweetyPieResult] = tweetyPieResultsMap.collect {
-      case (key, Some(value)) => (key, value)
+  pwivate def wemovewetweets(
+    tweetypiewesuwtsmap: m-map[wong, σωσ option[tweetypiewesuwt]]
+  ): map[wong, (ꈍᴗꈍ) t-tweetypiewesuwt] = {
+    vaw n-nyonemptytweetypiewesuwts: map[wong, t-tweetypiewesuwt] = tweetypiewesuwtsmap.cowwect {
+      case (key, rawr s-some(vawue)) => (key, ^^;; v-vawue)
     }
-    emptyTweetyPieResult.add(tweetyPieResultsMap.size - nonEmptyTweetyPieResults.size)
+    e-emptytweetypiewesuwt.add(tweetypiewesuwtsmap.size - nyonemptytweetypiewesuwts.size)
 
-    if (nonEmptyTweetyPieResults.nonEmpty) {
-      val originalTweets = nonEmptyTweetyPieResults.filter {
-        case (_, tweetyPieResult) =>
-          tweetyPieResult.sourceTweet.isEmpty
+    i-if (nonemptytweetypiewesuwts.nonempty) {
+      v-vaw owiginawtweets = nyonemptytweetypiewesuwts.fiwtew {
+        case (_, rawr x3 t-tweetypiewesuwt) =>
+          t-tweetypiewesuwt.souwcetweet.isempty
       }
-      val numOriginalTweets = originalTweets.size
-      val numRetweets = nonEmptyTweetyPieResults.size - originalTweets.size
-      originalTweetsStat.add(numOriginalTweets)
-      retweetsStat.add(numRetweets)
-      if (numRetweets == 0) allOriginalTweetsOnlyCounter.incr()
-      if (numOriginalTweets == 0) allRetweetsOnlyCounter.incr()
-      originalTweets
-    } else {
-      allEmptyTweetypieResults.incr()
-      Map.empty
+      v-vaw nyumowiginawtweets = owiginawtweets.size
+      vaw nyumwetweets = n-nyonemptytweetypiewesuwts.size - owiginawtweets.size
+      o-owiginawtweetsstat.add(numowiginawtweets)
+      w-wetweetsstat.add(numwetweets)
+      if (numwetweets == 0) awwowiginawtweetsonwycountew.incw()
+      if (numowiginawtweets == 0) a-awwwetweetsonwycountew.incw()
+      o-owiginawtweets
+    } e-ewse {
+      a-awwemptytweetypiewesuwts.incw()
+      map.empty
     }
   }
 
-  private def getMoreRecentTweetIds(
-    tweetIds: Seq[Long],
-    numDays: Int
-  ): Seq[Long] = {
-    tweetIds.filter { tweetId =>
-      SnowflakeUtils.isRecent(tweetId, numDays.days)
+  pwivate def g-getmowewecenttweetids(
+    tweetids: seq[wong], (ˆ ﻌ ˆ)♡
+    nyumdays: int
+  ): seq[wong] = {
+    tweetids.fiwtew { t-tweetid =>
+      snowfwakeutiws.iswecent(tweetid, σωσ numdays.days)
     }
   }
 
-  private def isEligibleUser(
-    inputTarget: Target,
-    tweetyPieResults: Map[Long, TweetyPieResult],
-    recentTweetIds: Seq[Long]
-  ): Boolean = {
-    val minNumTweets = inputTarget.params(FS.TopTweetImpressionsMinNumOriginalTweets)
-    lazy val totalFavoritesLimit =
-      inputTarget.params(FS.TopTweetImpressionsTotalInboundFavoritesLimit)
-    if (recentTweetIds.size >= minNumTweets) {
-      meetsMinTweetsRequiredCounter.incr()
-      val isUnderLimit = isUnderTotalInboundFavoritesLimit(tweetyPieResults, totalFavoritesLimit)
-      if (isUnderLimit) eligibleUsersCounter.incr()
-      else {
-        aboveMaxInboundFavoritesCounter.incr()
-        noneligibleUsersCounter.incr()
+  p-pwivate def isewigibweusew(
+    i-inputtawget: tawget, (U ﹏ U)
+    t-tweetypiewesuwts: map[wong, >w< tweetypiewesuwt], σωσ
+    w-wecenttweetids: s-seq[wong]
+  ): b-boowean = {
+    v-vaw minnumtweets = i-inputtawget.pawams(fs.toptweetimpwessionsminnumowiginawtweets)
+    wazy vaw totawfavowiteswimit =
+      inputtawget.pawams(fs.toptweetimpwessionstotawinboundfavowiteswimit)
+    if (wecenttweetids.size >= minnumtweets) {
+      meetsmintweetswequiwedcountew.incw()
+      vaw isundewwimit = i-isundewtotawinboundfavowiteswimit(tweetypiewesuwts, nyaa~~ t-totawfavowiteswimit)
+      i-if (isundewwimit) ewigibweusewscountew.incw()
+      e-ewse {
+        abovemaxinboundfavowitescountew.incw()
+        nyonewigibweusewscountew.incw()
       }
-      isUnderLimit
-    } else {
-      belowMinTweetsRequiredCounter.incr()
-      noneligibleUsersCounter.incr()
-      false
+      isundewwimit
+    } e-ewse {
+      b-bewowmintweetswequiwedcountew.incw()
+      nyonewigibweusewscountew.incw()
+      f-fawse
     }
   }
 
-  private def getFavoriteCounts(
-    tweetyPieResult: TweetyPieResult
-  ): Long = tweetyPieResult.tweet.counts.flatMap(_.favoriteCount).getOrElse(0L)
+  pwivate def getfavowitecounts(
+    t-tweetypiewesuwt: t-tweetypiewesuwt
+  ): wong = tweetypiewesuwt.tweet.counts.fwatmap(_.favowitecount).getowewse(0w)
 
-  private def isUnderTotalInboundFavoritesLimit(
-    tweetyPieResults: Map[Long, TweetyPieResult],
-    totalFavoritesLimit: Long
-  ): Boolean = {
-    val favoritesIterator = tweetyPieResults.valuesIterator.map(getFavoriteCounts)
-    val totalInboundFavorites = favoritesIterator.sum
-    totalInboundFavorites <= totalFavoritesLimit
+  p-pwivate def isundewtotawinboundfavowiteswimit(
+    t-tweetypiewesuwts: map[wong, 🥺 tweetypiewesuwt], rawr x3
+    totawfavowiteswimit: wong
+  ): b-boowean = {
+    v-vaw favowitesitewatow = t-tweetypiewesuwts.vawuesitewatow.map(getfavowitecounts)
+    v-vaw totawinboundfavowites = f-favowitesitewatow.sum
+    totawinboundfavowites <= t-totawfavowiteswimit
   }
 
-  def filterByEligibility(
-    inputTarget: Target,
-    tweetyPieResults: Map[Long, TweetyPieResult],
-    tweetIds: Seq[Long]
-  ): Future[Seq[TweetImpressionsCandidate]] = {
-    lazy val minNumImpressions: Long = inputTarget.params(FS.TopTweetImpressionsMinRequired)
-    lazy val maxNumLikes: Long = inputTarget.params(FS.TopTweetImpressionsMaxFavoritesPerTweet)
-    for {
-      filteredImpressionsMap <- getFilteredImpressionsMap(tweetIds, minNumImpressions)
-      tweetIdsFilteredByFavorites <-
-        getTweetIdsFilteredByFavorites(filteredImpressionsMap.keySet, tweetyPieResults, maxNumLikes)
-    } yield {
-      if (filteredImpressionsMap.nonEmpty) eligibleUsersAfterImpressionsFilter.incr()
-      if (tweetIdsFilteredByFavorites.nonEmpty) eligibleUsersAfterFavoritesFilter.incr()
+  d-def fiwtewbyewigibiwity(
+    inputtawget: tawget, σωσ
+    t-tweetypiewesuwts: m-map[wong, (///ˬ///✿) tweetypiewesuwt], (U ﹏ U)
+    t-tweetids: seq[wong]
+  ): futuwe[seq[tweetimpwessionscandidate]] = {
+    w-wazy vaw minnumimpwessions: wong = i-inputtawget.pawams(fs.toptweetimpwessionsminwequiwed)
+    wazy v-vaw maxnumwikes: wong = inputtawget.pawams(fs.toptweetimpwessionsmaxfavowitespewtweet)
+    fow {
+      f-fiwtewedimpwessionsmap <- getfiwtewedimpwessionsmap(tweetids, ^^;; minnumimpwessions)
+      t-tweetidsfiwtewedbyfavowites <-
+        g-gettweetidsfiwtewedbyfavowites(fiwtewedimpwessionsmap.keyset, 🥺 t-tweetypiewesuwts, òωó maxnumwikes)
+    } yiewd {
+      if (fiwtewedimpwessionsmap.nonempty) ewigibweusewsaftewimpwessionsfiwtew.incw()
+      i-if (tweetidsfiwtewedbyfavowites.nonempty) ewigibweusewsaftewfavowitesfiwtew.incw()
 
-      val candidates = tweetIdsFilteredByFavorites.map { tweetId =>
-        TweetImpressionsCandidate(
-          tweetId,
-          tweetyPieResults.get(tweetId),
-          filteredImpressionsMap.get(tweetId))
+      vaw candidates = t-tweetidsfiwtewedbyfavowites.map { t-tweetid =>
+        tweetimpwessionscandidate(
+          t-tweetid, XD
+          tweetypiewesuwts.get(tweetid), :3
+          f-fiwtewedimpwessionsmap.get(tweetid))
       }
-      tweetImpressionsCandsStat.add(candidates.length)
+      t-tweetimpwessionscandsstat.add(candidates.wength)
       candidates
     }
   }
 
-  private def getFilteredImpressionsMap(
-    tweetIds: Seq[Long],
-    minNumImpressions: Long
-  ): Future[Map[Long, Long]] = {
-    getImpressionsCounts(tweetIds).map { impressionsMap =>
-      if (impressionsMap.isEmpty) emptyImpressionsMapCounter.incr()
-      impressionsMap.filter {
-        case (_, numImpressions) =>
-          val isValid = numImpressions >= minNumImpressions
-          if (isValid) {
-            meetsImpressionsRequiredCounter.incr()
-          } else {
-            belowImpressionsRequiredCounter.incr()
+  pwivate def getfiwtewedimpwessionsmap(
+    t-tweetids: seq[wong], (U ﹏ U)
+    minnumimpwessions: w-wong
+  ): f-futuwe[map[wong, >w< wong]] = {
+    g-getimpwessionscounts(tweetids).map { impwessionsmap =>
+      i-if (impwessionsmap.isempty) e-emptyimpwessionsmapcountew.incw()
+      i-impwessionsmap.fiwtew {
+        case (_, /(^•ω•^) nyumimpwessions) =>
+          vaw isvawid = nyumimpwessions >= minnumimpwessions
+          if (isvawid) {
+            meetsimpwessionswequiwedcountew.incw()
+          } ewse {
+            bewowimpwessionswequiwedcountew.incw()
           }
-          isValid
+          isvawid
       }
     }
   }
 
-  private def getTweetIdsFilteredByFavorites(
-    filteredTweetIds: Set[Long],
-    tweetyPieResults: Map[Long, TweetyPieResult],
-    maxNumLikes: Long
-  ): Future[Seq[Long]] = {
-    val filteredByFavoritesTweetIds = filteredTweetIds.filter { tweetId =>
-      val tweetyPieResultOpt = tweetyPieResults.get(tweetId)
-      val isValid = tweetyPieResultOpt.exists { tweetyPieResult =>
-        getFavoriteCounts(tweetyPieResult) <= maxNumLikes
+  pwivate def gettweetidsfiwtewedbyfavowites(
+    fiwtewedtweetids: s-set[wong], (⑅˘꒳˘)
+    t-tweetypiewesuwts: map[wong, ʘwʘ tweetypiewesuwt], rawr x3
+    m-maxnumwikes: w-wong
+  ): futuwe[seq[wong]] = {
+    v-vaw fiwtewedbyfavowitestweetids = fiwtewedtweetids.fiwtew { t-tweetid =>
+      vaw tweetypiewesuwtopt = t-tweetypiewesuwts.get(tweetid)
+      v-vaw isvawid = tweetypiewesuwtopt.exists { t-tweetypiewesuwt =>
+        getfavowitecounts(tweetypiewesuwt) <= m-maxnumwikes
       }
-      if (isValid) meetsFavoritesThresholdCounter.incr()
-      else aboveFavoritesThresholdCounter.incr()
-      isValid
+      i-if (isvawid) meetsfavowitesthweshowdcountew.incw()
+      ewse abovefavowitesthweshowdcountew.incw()
+      i-isvawid
     }
-    Future(filteredByFavoritesTweetIds.toSeq)
+    f-futuwe(fiwtewedbyfavowitestweetids.toseq)
   }
 
-  private def getMostImpressionsTweet(
-    filteredResults: Seq[TweetImpressionsCandidate]
-  ): TweetImpressionsCandidate = {
-    val maxImpressions: Long = filteredResults.map {
-      _.impressionsCountOpt.getOrElse(0L)
+  p-pwivate def g-getmostimpwessionstweet(
+    f-fiwtewedwesuwts: s-seq[tweetimpwessionscandidate]
+  ): t-tweetimpwessionscandidate = {
+    v-vaw maximpwessions: w-wong = fiwtewedwesuwts.map {
+      _.impwessionscountopt.getowewse(0w)
     }.max
 
-    val mostImpressionsCandidates: Seq[TweetImpressionsCandidate] =
-      filteredResults.filter(_.impressionsCountOpt.getOrElse(0L) == maxImpressions)
+    vaw m-mostimpwessionscandidates: s-seq[tweetimpwessionscandidate] =
+      f-fiwtewedwesuwts.fiwtew(_.impwessionscountopt.getowewse(0w) == maximpwessions)
 
-    mostImpressionsCandidates.maxBy(_.tweetId)
+    m-mostimpwessionscandidates.maxby(_.tweetid)
   }
 
-  private def getImpressionsCounts(
-    tweetIds: Seq[Long]
-  ): Future[Map[Long, Long]] = {
-    val impressionCountMap = tweetIds.map { tweetId =>
-      tweetId -> tweetImpressionsStore
-        .getCounts(tweetId).map(_.getOrElse(0L))
-    }.toMap
-    Future.collect(impressionCountMap)
+  pwivate def getimpwessionscounts(
+    tweetids: s-seq[wong]
+  ): futuwe[map[wong, (˘ω˘) w-wong]] = {
+    v-vaw impwessioncountmap = t-tweetids.map { tweetid =>
+      t-tweetid -> tweetimpwessionsstowe
+        .getcounts(tweetid).map(_.getowewse(0w))
+    }.tomap
+    futuwe.cowwect(impwessioncountmap)
   }
 
-  private def generateTopTweetImpressionsCandidate(
-    inputTarget: Target,
-    _tweetId: Long,
-    result: Option[TweetyPieResult],
-    _impressionsCount: Long
-  ): RawCandidate = {
-    new RawCandidate with TopTweetImpressionsCandidate {
-      override val target: Target = inputTarget
-      override val tweetId: Long = _tweetId
-      override val tweetyPieResult: Option[TweetyPieResult] = result
-      override val impressionsCount: Long = _impressionsCount
+  p-pwivate def genewatetoptweetimpwessionscandidate(
+    i-inputtawget: tawget, o.O
+    _tweetid: w-wong, 😳
+    wesuwt: option[tweetypiewesuwt], o.O
+    _impwessionscount: wong
+  ): wawcandidate = {
+    nyew wawcandidate w-with toptweetimpwessionscandidate {
+      ovewwide vaw t-tawget: tawget = i-inputtawget
+      ovewwide vaw tweetid: wong = _tweetid
+      ovewwide vaw tweetypiewesuwt: o-option[tweetypiewesuwt] = wesuwt
+      o-ovewwide vaw i-impwessionscount: w-wong = _impwessionscount
     }
   }
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    val enabledTopTweetImpressionsNotification =
-      target.params(FS.EnableTopTweetImpressionsNotification)
+  ovewwide def iscandidatesouwceavaiwabwe(tawget: t-tawget): f-futuwe[boowean] = {
+    vaw enabwedtoptweetimpwessionsnotification =
+      t-tawget.pawams(fs.enabwetoptweetimpwessionsnotification)
 
-    PushDeviceUtil
-      .isRecommendationsEligible(target).map(_ && enabledTopTweetImpressionsNotification)
+    pushdeviceutiw
+      .iswecommendationsewigibwe(tawget).map(_ && enabwedtoptweetimpwessionsnotification)
   }
 }

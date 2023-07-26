@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.cwowd_seawch_accounts
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt c-com.twittew.timewines.configapi.fsboundedpawam
+impowt c-com.twittew.timewines.configapi.fsname
+i-impowt c-com.twittew.timewines.configapi.pawam
+i-impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class CrowdSearchAccountsFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    CrowdSearchAccountsParams.CandidateSourceEnabled,
+@singweton
+cwass cwowdseawchaccountsfsconfig @inject() () extends featuweswitchconfig {
+  o-ovewwide vaw booweanfspawams: seq[pawam[boowean] with f-fsname] = seq(
+    cwowdseawchaccountspawams.candidatesouwceenabwed, (U ᵕ U❁)
   )
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    CrowdSearchAccountsParams.CandidateSourceWeight,
+  ovewwide v-vaw doubwefspawams: seq[fsboundedpawam[doubwe]] = seq(
+    cwowdseawchaccountspawams.candidatesouwceweight, -.-
   )
 }

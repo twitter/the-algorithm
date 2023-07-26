@@ -1,70 +1,70 @@
-package com.twitter.unified_user_actions.enricher.driver
+package com.twittew.unified_usew_actions.enwichew.dwivew
 
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentPlan
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStage
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageStatus.Completion
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageStatus.Initialized
+impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentpwan
+i-impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentstage
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentstagestatus.compwetion
+i-impowt c-com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentstagestatus.initiawized
 
-object EnrichmentPlanUtils {
-  implicit class EnrichmentPlanStatus(plan: EnrichmentPlan) {
+o-object enwichmentpwanutiws {
+  i-impwicit cwass enwichmentpwanstatus(pwan: enwichmentpwan) {
 
     /**
-     * Check each stage of the plan to know if we are done
+     * check each stage of the pwan to know i-if we awe done
      */
-    def isEnrichmentComplete: Boolean = {
-      plan.stages.forall(stage => stage.status == Completion)
+    def isenwichmentcompwete: boowean = {
+      p-pwan.stages.fowaww(stage => stage.status == c-compwetion)
     }
 
     /**
-     * Get the next stage in the enrichment process. Note, if there is none this will throw
-     * an exception.
+     * get the nyext stage in the enwichment pwocess. >_< n-nyote, -.- if thewe is nyone t-this wiww thwow
+     * a-an exception. 🥺
      */
-    def getCurrentStage: EnrichmentStage = {
-      val next = plan.stages.find(stage => stage.status == Initialized)
-      next match {
-        case Some(stage) => stage
-        case None => throw new IllegalStateException("check for plan completion first")
+    def getcuwwentstage: enwichmentstage = {
+      vaw nyext = pwan.stages.find(stage => stage.status == i-initiawized)
+      nyext match {
+        case some(stage) => stage
+        c-case nyone => thwow nyew iwwegawstateexception("check f-fow pwan c-compwetion fiwst")
       }
     }
-    def getLastCompletedStage: EnrichmentStage = {
-      val completed = plan.stages.reverse.find(stage => stage.status == Completion)
-      completed match {
-        case Some(stage) => stage
-        case None => throw new IllegalStateException("check for plan completion first")
+    d-def getwastcompwetedstage: e-enwichmentstage = {
+      vaw compweted = pwan.stages.wevewse.find(stage => s-stage.status == compwetion)
+      compweted match {
+        c-case some(stage) => stage
+        case nyone => thwow nyew iwwegawstateexception("check fow pwan compwetion f-fiwst")
       }
     }
 
     /**
-     * Copy the current plan with the requested stage marked as complete
+     * copy t-the cuwwent pwan w-with the wequested s-stage mawked as compwete
      */
-    def markStageCompletedWithOutputTopic(
-      stage: EnrichmentStage,
-      outputTopic: String
-    ): EnrichmentPlan = {
-      plan.copy(
-        stages = plan.stages.map(s =>
-          if (s == stage) s.copy(status = Completion, outputTopic = Some(outputTopic)) else s)
+    def mawkstagecompwetedwithoutputtopic(
+      stage: enwichmentstage, (U ﹏ U)
+      o-outputtopic: s-stwing
+    ): enwichmentpwan = {
+      pwan.copy(
+        s-stages = p-pwan.stages.map(s =>
+          if (s == stage) s-s.copy(status = compwetion, >w< outputtopic = s-some(outputtopic)) ewse s)
       )
     }
 
-    def markStageCompleted(
-      stage: EnrichmentStage
-    ): EnrichmentPlan = {
-      plan.copy(
-        stages = plan.stages.map(s => if (s == stage) s.copy(status = Completion) else s)
+    def mawkstagecompweted(
+      s-stage: enwichmentstage
+    ): e-enwichmentpwan = {
+      pwan.copy(
+        s-stages = pwan.stages.map(s => i-if (s == stage) s.copy(status = compwetion) ewse s)
       )
     }
 
     /**
-     * Copy the current plan with the last stage marked as necessary
+     * copy the cuwwent pwan with the wast stage mawked a-as nyecessawy
      */
-    def markLastStageCompletedWithOutputTopic(
-      outputTopic: String
-    ): EnrichmentPlan = {
-      val last = plan.stages.last
-      plan.copy(
-        stages = plan.stages.map(s =>
-          if (s == last) s.copy(status = Completion, outputTopic = Some(outputTopic)) else s)
+    d-def mawkwaststagecompwetedwithoutputtopic(
+      outputtopic: s-stwing
+    ): e-enwichmentpwan = {
+      v-vaw wast = pwan.stages.wast
+      pwan.copy(
+        stages = pwan.stages.map(s =>
+          i-if (s == wast) s.copy(status = compwetion, mya outputtopic = some(outputtopic)) ewse s)
       )
     }
   }

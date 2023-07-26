@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twittew_wist
 
-sealed trait TwitterListDisplayType
+seawed twait t-twittewwistdispwaytype
 
-case object List extends TwitterListDisplayType
-case object ListTile extends TwitterListDisplayType
-case object ListWithPin extends TwitterListDisplayType
-case object ListWithSubscribe extends TwitterListDisplayType
+c-case o-object wist extends t-twittewwistdispwaytype
+c-case o-object wisttiwe e-extends twittewwistdispwaytype
+c-case object wistwithpin extends twittewwistdispwaytype
+case object wistwithsubscwibe e-extends twittewwistdispwaytype

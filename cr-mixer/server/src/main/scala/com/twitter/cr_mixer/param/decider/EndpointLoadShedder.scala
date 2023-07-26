@@ -1,57 +1,57 @@
-package com.twitter.cr_mixer.param.decider
+package com.twittew.cw_mixew.pawam.decidew
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import javax.inject.Inject
-import scala.util.control.NoStackTrace
+impowt c-com.twittew.decidew.decidew
+i-impowt c-com.twittew.decidew.wandomwecipient
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.utiw.futuwe
+i-impowt javax.inject.inject
+i-impowt scawa.utiw.contwow.nostacktwace
 
 /*
-  Provides deciders-controlled load shedding for a given Product from a given endpoint.
-  The format of the decider keys is:
+  pwovides decidews-contwowwed woad shedding fow a given pwoduct fwom a-a given endpoint. nyaa~~
+  the fowmat of the decidew k-keys is:
 
-    enable_loadshedding_<endpoint name>_<product name>
-  E.g.:
-    enable_loadshedding_getTweetRecommendations_Notifications
+    enabwe_woadshedding_<endpoint nyame>_<pwoduct n-nyame>
+  e.g.:
+    enabwe_woadshedding_gettweetwecommendations_notifications
 
-  Deciders are fractional, so a value of 50.00 will drop 50% of responses. If a decider key is not
-  defined for a particular endpoint/product combination, those requests will always be
-  served.
+  decidews a-awe fwactionaw, (✿oωo) so a vawue o-of 50.00 wiww dwop 50% o-of wesponses. ʘwʘ if a decidew key is nyot
+  defined fow a pawticuwaw endpoint/pwoduct c-combination, (ˆ ﻌ ˆ)♡ those wequests wiww awways be
+  sewved. 😳😳😳
 
-  We should therefore aim to define keys for the endpoints/product we care most about in decider.yml,
-  so that we can control them during incidents.
+  we shouwd thewefowe a-aim to define keys fow the e-endpoints/pwoduct w-we cawe most a-about in decidew.ymw, :3
+  s-so that we can contwow them duwing incidents. OwO
  */
-case class EndpointLoadShedder @Inject() (
-  decider: Decider,
-  statsReceiver: StatsReceiver) {
-  import EndpointLoadShedder._
+c-case cwass endpointwoadsheddew @inject() (
+  decidew: d-decidew, (U ﹏ U)
+  statsweceivew: statsweceivew) {
+  impowt endpointwoadsheddew._
 
-  // Fall back to False for any undefined key
-  private val deciderWithFalseFallback: Decider = decider.orElse(Decider.False)
-  private val keyPrefix = "enable_loadshedding"
-  private val scopedStats = statsReceiver.scope("EndpointLoadShedder")
+  // faww back to fawse fow any undefined k-key
+  pwivate vaw decidewwithfawsefawwback: d-decidew = decidew.owewse(decidew.fawse)
+  p-pwivate v-vaw keypwefix = "enabwe_woadshedding"
+  pwivate vaw scopedstats = statsweceivew.scope("endpointwoadsheddew")
 
-  def apply[T](endpointName: String, product: String)(serve: => Future[T]): Future[T] = {
+  d-def appwy[t](endpointname: stwing, >w< p-pwoduct: stwing)(sewve: => f-futuwe[t]): futuwe[t] = {
     /*
-    Checks if either per-product or top-level load shedding is enabled
-    If both are enabled at different percentages, load shedding will not be perfectly calculable due
-    to salting of hash (i.e. 25% load shed for Product x + 25% load shed for overall does not
-    result in 50% load shed for x)
+    c-checks if eithew pew-pwoduct o-ow top-wevew woad shedding is e-enabwed
+    if both awe enabwed at diffewent pewcentages, (U ﹏ U) w-woad shedding wiww nyot b-be pewfectwy cawcuwabwe due
+    t-to sawting of h-hash (i.e. 😳 25% woad shed fow pwoduct x + 25% woad shed fow ovewaww does nyot
+    wesuwt in 50% woad shed fow x)
      */
-    val keyTyped = s"${keyPrefix}_${endpointName}_$product"
-    val keyTopLevel = s"${keyPrefix}_${endpointName}"
+    v-vaw k-keytyped = s"${keypwefix}_${endpointname}_$pwoduct"
+    vaw keytopwevew = s-s"${keypwefix}_${endpointname}"
 
-    if (deciderWithFalseFallback.isAvailable(keyTopLevel, recipient = Some(RandomRecipient))) {
-      scopedStats.counter(keyTopLevel).incr
-      Future.exception(LoadSheddingException)
-    } else if (deciderWithFalseFallback.isAvailable(keyTyped, recipient = Some(RandomRecipient))) {
-      scopedStats.counter(keyTyped).incr
-      Future.exception(LoadSheddingException)
-    } else serve
+    i-if (decidewwithfawsefawwback.isavaiwabwe(keytopwevew, (ˆ ﻌ ˆ)♡ w-wecipient = some(wandomwecipient))) {
+      scopedstats.countew(keytopwevew).incw
+      futuwe.exception(woadsheddingexception)
+    } ewse i-if (decidewwithfawsefawwback.isavaiwabwe(keytyped, 😳😳😳 wecipient = some(wandomwecipient))) {
+      scopedstats.countew(keytyped).incw
+      futuwe.exception(woadsheddingexception)
+    } e-ewse sewve
   }
 }
 
-object EndpointLoadShedder {
-  object LoadSheddingException extends Exception with NoStackTrace
+object e-endpointwoadsheddew {
+  o-object w-woadsheddingexception extends exception w-with nyostacktwace
 }

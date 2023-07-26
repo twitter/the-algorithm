@@ -1,340 +1,340 @@
-package com.twitter.home_mixer.product.scored_tweets
+package com.twittew.home_mixew.pwoduct.scowed_tweets
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.functional_component.feature_hydrator.FeedbackHistoryQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.ImpressionBloomFilterQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.RealGraphInNetworkScoresQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.RequestQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.TweetImpressionsQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.filter.FeedbackFatigueFilter
-import com.twitter.home_mixer.functional_component.filter.PreviouslySeenTweetsFilter
-import com.twitter.home_mixer.functional_component.filter.PreviouslyServedTweetsFilter
-import com.twitter.home_mixer.functional_component.filter.RejectTweetFromViewerFilter
-import com.twitter.home_mixer.functional_component.filter.RetweetDeduplicationFilter
-import com.twitter.home_mixer.functional_component.side_effect.PublishClientSentImpressionsEventBusSideEffect
-import com.twitter.home_mixer.functional_component.side_effect.PublishClientSentImpressionsManhattanSideEffect
-import com.twitter.home_mixer.functional_component.side_effect.PublishImpressionBloomFilterSideEffect
-import com.twitter.home_mixer.functional_component.side_effect.UpdateLastNonPollingTimeSideEffect
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsSupportAccountReplyFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableImpressionBloomFilter
-import com.twitter.home_mixer.param.HomeMixerFlagName.TargetFetchLatency
-import com.twitter.home_mixer.param.HomeMixerFlagName.TargetScoringLatency
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsBackfillCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsFrsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsInNetworkCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsListsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsPopularVideosCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsTweetMixerCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsUtegCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.CachedScoredTweetsQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.ListIdsQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.RealGraphQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.RealTimeInteractionGraphUserVertexQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.RequestTimeQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TwhinUserEngagementQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TwhinUserFollowQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.UserLanguagesFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.UserStateQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.PartAAggregateQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.PartBAggregateQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates.UserEngagementRealTimeAggregatesFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.filter.DuplicateConversationTweetsFilter
-import com.twitter.home_mixer.product.scored_tweets.filter.OutOfNetworkCompetitorFilter
-import com.twitter.home_mixer.product.scored_tweets.filter.OutOfNetworkCompetitorURLFilter
-import com.twitter.home_mixer.product.scored_tweets.filter.ScoredTweetsSocialContextFilter
-import com.twitter.home_mixer.product.scored_tweets.marshaller.ScoredTweetsResponseDomainMarshaller
-import com.twitter.home_mixer.product.scored_tweets.marshaller.ScoredTweetsResponseTransportMarshaller
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.MaxInNetworkResultsParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.MaxOutOfNetworkResultsParam
-import com.twitter.home_mixer.product.scored_tweets.scoring_pipeline.ScoredTweetsHeuristicScoringPipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.scoring_pipeline.ScoredTweetsModelScoringPipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.selector.KeepBestOutOfNetworkCandidatePerAuthorPerSuggestType
-import com.twitter.home_mixer.product.scored_tweets.side_effect.CachedScoredTweetsSideEffect
-import com.twitter.home_mixer.product.scored_tweets.side_effect.ScribeScoredCandidatesSideEffect
-import com.twitter.home_mixer.product.scored_tweets.side_effect.ScribeServedCommonFeaturesAndCandidateFeaturesSideEffect
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.component_library.feature_hydrator.query.async.AsyncQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets.ImpressedTweetsQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.feature_hydrator.query.param_gated.ParamGatedQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSFollowedUsersQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.filter.PredicateFeatureFilter
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.selector.DropDuplicateCandidates
-import com.twitter.product_mixer.component_library.selector.DropFilteredMaxCandidates
-import com.twitter.product_mixer.component_library.selector.DropMaxCandidates
-import com.twitter.product_mixer.component_library.selector.IdAndClassDuplicationKey
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.component_library.selector.PickFirstCandidateMerger
-import com.twitter.product_mixer.component_library.selector.UpdateSortCandidates
-import com.twitter.product_mixer.component_library.selector.sorter.FeatureValueSorter
-import com.twitter.product_mixer.core.functional_component.common.AllExceptPipelines
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineConfig
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineConfig
-import com.twitter.product_mixer.core.quality_factor.BoundsWithDefault
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorConfig
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.home_mixew.functionaw_component.featuwe_hydwatow.feedbackhistowyquewyfeatuwehydwatow
+i-impowt c-com.twittew.home_mixew.functionaw_component.featuwe_hydwatow.impwessionbwoomfiwtewquewyfeatuwehydwatow
+i-impowt com.twittew.home_mixew.functionaw_component.featuwe_hydwatow.weawgwaphinnetwowkscowesquewyfeatuwehydwatow
+i-impowt c-com.twittew.home_mixew.functionaw_component.featuwe_hydwatow.wequestquewyfeatuwehydwatow
+i-impowt c-com.twittew.home_mixew.functionaw_component.featuwe_hydwatow.tweetimpwessionsquewyfeatuwehydwatow
+impowt com.twittew.home_mixew.functionaw_component.fiwtew.feedbackfatiguefiwtew
+impowt com.twittew.home_mixew.functionaw_component.fiwtew.pweviouswyseentweetsfiwtew
+impowt com.twittew.home_mixew.functionaw_component.fiwtew.pweviouswysewvedtweetsfiwtew
+impowt c-com.twittew.home_mixew.functionaw_component.fiwtew.wejecttweetfwomviewewfiwtew
+impowt com.twittew.home_mixew.functionaw_component.fiwtew.wetweetdedupwicationfiwtew
+impowt c-com.twittew.home_mixew.functionaw_component.side_effect.pubwishcwientsentimpwessionseventbussideeffect
+impowt com.twittew.home_mixew.functionaw_component.side_effect.pubwishcwientsentimpwessionsmanhattansideeffect
+i-impowt com.twittew.home_mixew.functionaw_component.side_effect.pubwishimpwessionbwoomfiwtewsideeffect
+impowt com.twittew.home_mixew.functionaw_component.side_effect.updatewastnonpowwingtimesideeffect
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.excwusiveconvewsationauthowidfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.innetwowkfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.inwepwytotweetidfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.issuppowtaccountwepwyfeatuwe
+impowt com.twittew.home_mixew.modew.homefeatuwes.scowefeatuwe
+impowt com.twittew.home_mixew.pawam.homegwobawpawams.enabweimpwessionbwoomfiwtew
+i-impowt com.twittew.home_mixew.pawam.homemixewfwagname.tawgetfetchwatency
+impowt com.twittew.home_mixew.pawam.homemixewfwagname.tawgetscowingwatency
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.cachedscowedtweetscandidatepipewineconfig
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetsbackfiwwcandidatepipewineconfig
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetsfwscandidatepipewineconfig
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetsinnetwowkcandidatepipewineconfig
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetswistscandidatepipewineconfig
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetspopuwawvideoscandidatepipewineconfig
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetstweetmixewcandidatepipewineconfig
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.scowedtweetsutegcandidatepipewineconfig
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.cachedscowedtweetsquewyfeatuwehydwatow
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.wistidsquewyfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.weawgwaphquewyfeatuwehydwatow
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.weawtimeintewactiongwaphusewvewtexquewyfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.wequesttimequewyfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.twhinusewengagementquewyfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.twhinusewfowwowquewyfeatuwehydwatow
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.usewwanguagesfeatuwehydwatow
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.usewstatequewyfeatuwehydwatow
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates.pawtaaggwegatequewyfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates.pawtbaggwegatequewyfeatuwehydwatow
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.weaw_time_aggwegates.usewengagementweawtimeaggwegatesfeatuwehydwatow
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.fiwtew.dupwicateconvewsationtweetsfiwtew
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.fiwtew.outofnetwowkcompetitowfiwtew
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.fiwtew.outofnetwowkcompetitowuwwfiwtew
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.fiwtew.scowedtweetssociawcontextfiwtew
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.mawshawwew.scowedtweetswesponsedomainmawshawwew
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.mawshawwew.scowedtweetswesponsetwanspowtmawshawwew
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetswesponse
+impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.maxinnetwowkwesuwtspawam
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.maxoutofnetwowkwesuwtspawam
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.scowing_pipewine.scowedtweetsheuwisticscowingpipewineconfig
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.scowing_pipewine.scowedtweetsmodewscowingpipewineconfig
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.sewectow.keepbestoutofnetwowkcandidatepewauthowpewsuggesttype
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.side_effect.cachedscowedtweetssideeffect
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.side_effect.scwibescowedcandidatessideeffect
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.side_effect.scwibesewvedcommonfeatuwesandcandidatefeatuwessideeffect
+i-impowt com.twittew.home_mixew.{thwiftscawa => t}
+impowt com.twittew.inject.annotations.fwag
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.async.asyncquewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.impwessed_tweets.impwessedtweetsquewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.pawam_gated.pawamgatedquewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.quewy.sociaw_gwaph.sgsfowwowedusewsquewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.fiwtew.pwedicatefeatuwefiwtew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.component_wibwawy.sewectow.dwopdupwicatecandidates
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.sewectow.dwopfiwtewedmaxcandidates
+impowt com.twittew.pwoduct_mixew.component_wibwawy.sewectow.dwopmaxcandidates
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.sewectow.idandcwassdupwicationkey
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.sewectow.insewtappendwesuwts
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.sewectow.pickfiwstcandidatemewgew
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.sewectow.updatesowtcandidates
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.sewectow.sowtew.featuwevawuesowtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awwexceptpipewines
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awwpipewines
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.staticpawam
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.domainmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.side_effect.pipewinewesuwtsideeffect
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.wecommendationpipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowingpipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.faiwopenpowicy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.wecommendation.wecommendationpipewineconfig
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.scowing.scowingpipewineconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.boundswithdefauwt
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.wineawwatencyquawityfactowconfig
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowconfig
+impowt com.twittew.utiw.duwation
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ScoredTweetsRecommendationPipelineConfig @Inject() (
-  scoredTweetsInNetworkCandidatePipelineConfig: ScoredTweetsInNetworkCandidatePipelineConfig,
-  scoredTweetsUtegCandidatePipelineConfig: ScoredTweetsUtegCandidatePipelineConfig,
-  scoredTweetsTweetMixerCandidatePipelineConfig: ScoredTweetsTweetMixerCandidatePipelineConfig,
-  scoredTweetsFrsCandidatePipelineConfig: ScoredTweetsFrsCandidatePipelineConfig,
-  scoredTweetsListsCandidatePipelineConfig: ScoredTweetsListsCandidatePipelineConfig,
-  scoredTweetsPopularVideosCandidatePipelineConfig: ScoredTweetsPopularVideosCandidatePipelineConfig,
-  scoredTweetsBackfillCandidatePipelineConfig: ScoredTweetsBackfillCandidatePipelineConfig,
-  cachedScoredTweetsCandidatePipelineConfig: CachedScoredTweetsCandidatePipelineConfig,
-  requestQueryFeatureHydrator: RequestQueryFeatureHydrator[ScoredTweetsQuery],
-  requestTimeQueryFeatureHydrator: RequestTimeQueryFeatureHydrator,
-  realTimeInteractionGraphUserVertexQueryFeatureHydrator: RealTimeInteractionGraphUserVertexQueryFeatureHydrator,
-  userStateQueryFeatureHydrator: UserStateQueryFeatureHydrator,
-  userEngagementRealTimeAggregatesFeatureHydrator: UserEngagementRealTimeAggregatesFeatureHydrator,
-  twhinUserEngagementQueryFeatureHydrator: TwhinUserEngagementQueryFeatureHydrator,
-  twhinUserFollowQueryFeatureHydrator: TwhinUserFollowQueryFeatureHydrator,
-  cachedScoredTweetsQueryFeatureHydrator: CachedScoredTweetsQueryFeatureHydrator,
-  sgsFollowedUsersQueryFeatureHydrator: SGSFollowedUsersQueryFeatureHydrator,
-  scoredTweetsModelScoringPipelineConfig: ScoredTweetsModelScoringPipelineConfig,
-  impressionBloomFilterQueryFeatureHydrator: ImpressionBloomFilterQueryFeatureHydrator[
-    ScoredTweetsQuery
-  ],
-  manhattanTweetImpressionsQueryFeatureHydrator: TweetImpressionsQueryFeatureHydrator[
-    ScoredTweetsQuery
-  ],
-  memcacheTweetImpressionsQueryFeatureHydrator: ImpressedTweetsQueryFeatureHydrator,
-  listIdsQueryFeatureHydrator: ListIdsQueryFeatureHydrator,
-  feedbackHistoryQueryFeatureHydrator: FeedbackHistoryQueryFeatureHydrator,
-  publishClientSentImpressionsEventBusSideEffect: PublishClientSentImpressionsEventBusSideEffect,
-  publishClientSentImpressionsManhattanSideEffect: PublishClientSentImpressionsManhattanSideEffect,
-  publishImpressionBloomFilterSideEffect: PublishImpressionBloomFilterSideEffect,
-  realGraphInNetworkScoresQueryFeatureHydrator: RealGraphInNetworkScoresQueryFeatureHydrator,
-  realGraphQueryFeatureHydrator: RealGraphQueryFeatureHydrator,
-  userLanguagesFeatureHydrator: UserLanguagesFeatureHydrator,
-  partAAggregateQueryFeatureHydrator: PartAAggregateQueryFeatureHydrator,
-  partBAggregateQueryFeatureHydrator: PartBAggregateQueryFeatureHydrator,
-  cachedScoredTweetsSideEffect: CachedScoredTweetsSideEffect,
-  scribeScoredCandidatesSideEffect: ScribeScoredCandidatesSideEffect,
-  scribeServedCommonFeaturesAndCandidateFeaturesSideEffect: ScribeServedCommonFeaturesAndCandidateFeaturesSideEffect,
-  updateLastNonPollingTimeSideEffect: UpdateLastNonPollingTimeSideEffect[
-    ScoredTweetsQuery,
-    ScoredTweetsResponse
-  ],
-  @Flag(TargetFetchLatency) targetFetchLatency: Duration,
-  @Flag(TargetScoringLatency) targetScoringLatency: Duration)
-    extends RecommendationPipelineConfig[
-      ScoredTweetsQuery,
-      TweetCandidate,
-      ScoredTweetsResponse,
-      t.ScoredTweetsResponse
+@singweton
+c-cwass scowedtweetswecommendationpipewineconfig @inject() (
+  scowedtweetsinnetwowkcandidatepipewineconfig: scowedtweetsinnetwowkcandidatepipewineconfig, (U ﹏ U)
+  s-scowedtweetsutegcandidatepipewineconfig: s-scowedtweetsutegcandidatepipewineconfig, >w<
+  scowedtweetstweetmixewcandidatepipewineconfig: scowedtweetstweetmixewcandidatepipewineconfig, σωσ
+  s-scowedtweetsfwscandidatepipewineconfig: s-scowedtweetsfwscandidatepipewineconfig, nyaa~~
+  scowedtweetswistscandidatepipewineconfig: s-scowedtweetswistscandidatepipewineconfig, 🥺
+  s-scowedtweetspopuwawvideoscandidatepipewineconfig: scowedtweetspopuwawvideoscandidatepipewineconfig, rawr x3
+  scowedtweetsbackfiwwcandidatepipewineconfig: scowedtweetsbackfiwwcandidatepipewineconfig, σωσ
+  cachedscowedtweetscandidatepipewineconfig: cachedscowedtweetscandidatepipewineconfig, (///ˬ///✿)
+  w-wequestquewyfeatuwehydwatow: w-wequestquewyfeatuwehydwatow[scowedtweetsquewy], (U ﹏ U)
+  w-wequesttimequewyfeatuwehydwatow: wequesttimequewyfeatuwehydwatow, ^^;;
+  w-weawtimeintewactiongwaphusewvewtexquewyfeatuwehydwatow: w-weawtimeintewactiongwaphusewvewtexquewyfeatuwehydwatow, 🥺
+  usewstatequewyfeatuwehydwatow: u-usewstatequewyfeatuwehydwatow,
+  usewengagementweawtimeaggwegatesfeatuwehydwatow: usewengagementweawtimeaggwegatesfeatuwehydwatow, òωó
+  twhinusewengagementquewyfeatuwehydwatow: twhinusewengagementquewyfeatuwehydwatow, XD
+  t-twhinusewfowwowquewyfeatuwehydwatow: t-twhinusewfowwowquewyfeatuwehydwatow, :3
+  cachedscowedtweetsquewyfeatuwehydwatow: cachedscowedtweetsquewyfeatuwehydwatow, (U ﹏ U)
+  s-sgsfowwowedusewsquewyfeatuwehydwatow: s-sgsfowwowedusewsquewyfeatuwehydwatow, >w<
+  scowedtweetsmodewscowingpipewineconfig: scowedtweetsmodewscowingpipewineconfig, /(^•ω•^)
+  impwessionbwoomfiwtewquewyfeatuwehydwatow: i-impwessionbwoomfiwtewquewyfeatuwehydwatow[
+    scowedtweetsquewy
+  ], (⑅˘꒳˘)
+  manhattantweetimpwessionsquewyfeatuwehydwatow: tweetimpwessionsquewyfeatuwehydwatow[
+    scowedtweetsquewy
+  ], ʘwʘ
+  m-memcachetweetimpwessionsquewyfeatuwehydwatow: impwessedtweetsquewyfeatuwehydwatow, rawr x3
+  wistidsquewyfeatuwehydwatow: w-wistidsquewyfeatuwehydwatow, (˘ω˘)
+  f-feedbackhistowyquewyfeatuwehydwatow: feedbackhistowyquewyfeatuwehydwatow, o.O
+  pubwishcwientsentimpwessionseventbussideeffect: pubwishcwientsentimpwessionseventbussideeffect, 😳
+  p-pubwishcwientsentimpwessionsmanhattansideeffect: p-pubwishcwientsentimpwessionsmanhattansideeffect, o.O
+  pubwishimpwessionbwoomfiwtewsideeffect: pubwishimpwessionbwoomfiwtewsideeffect, ^^;;
+  weawgwaphinnetwowkscowesquewyfeatuwehydwatow: w-weawgwaphinnetwowkscowesquewyfeatuwehydwatow, ( ͡o ω ͡o )
+  weawgwaphquewyfeatuwehydwatow: w-weawgwaphquewyfeatuwehydwatow, ^^;;
+  usewwanguagesfeatuwehydwatow: usewwanguagesfeatuwehydwatow, ^^;;
+  pawtaaggwegatequewyfeatuwehydwatow: p-pawtaaggwegatequewyfeatuwehydwatow,
+  pawtbaggwegatequewyfeatuwehydwatow: p-pawtbaggwegatequewyfeatuwehydwatow, XD
+  c-cachedscowedtweetssideeffect: cachedscowedtweetssideeffect, 🥺
+  s-scwibescowedcandidatessideeffect: scwibescowedcandidatessideeffect, (///ˬ///✿)
+  s-scwibesewvedcommonfeatuwesandcandidatefeatuwessideeffect: s-scwibesewvedcommonfeatuwesandcandidatefeatuwessideeffect, (U ᵕ U❁)
+  u-updatewastnonpowwingtimesideeffect: updatewastnonpowwingtimesideeffect[
+    s-scowedtweetsquewy, ^^;;
+    s-scowedtweetswesponse
+  ], ^^;;
+  @fwag(tawgetfetchwatency) tawgetfetchwatency: duwation, rawr
+  @fwag(tawgetscowingwatency) tawgetscowingwatency: d-duwation)
+    e-extends w-wecommendationpipewineconfig[
+      scowedtweetsquewy, (˘ω˘)
+      tweetcandidate, 🥺
+      s-scowedtweetswesponse, nyaa~~
+      t.scowedtweetswesponse
     ] {
 
-  override val identifier: RecommendationPipelineIdentifier =
-    RecommendationPipelineIdentifier("ScoredTweets")
+  o-ovewwide vaw i-identifiew: wecommendationpipewineidentifiew =
+    wecommendationpipewineidentifiew("scowedtweets")
 
-  private val SubscriptionReplyFilterId = "SubscriptionReply"
-  private val MaxBackfillTweets = 50
+  pwivate vaw subscwiptionwepwyfiwtewid = "subscwiptionwepwy"
+  p-pwivate vaw m-maxbackfiwwtweets = 50
 
-  private val scoringStep = RecommendationPipelineConfig.scoringPipelinesStep
+  p-pwivate v-vaw scowingstep = wecommendationpipewineconfig.scowingpipewinesstep
 
-  override val fetchQueryFeatures: Seq[QueryFeatureHydrator[ScoredTweetsQuery]] = Seq(
-    requestQueryFeatureHydrator,
-    realGraphInNetworkScoresQueryFeatureHydrator,
-    cachedScoredTweetsQueryFeatureHydrator,
-    sgsFollowedUsersQueryFeatureHydrator,
-    ParamGatedQueryFeatureHydrator(
-      EnableImpressionBloomFilter,
-      impressionBloomFilterQueryFeatureHydrator
-    ),
-    manhattanTweetImpressionsQueryFeatureHydrator,
-    memcacheTweetImpressionsQueryFeatureHydrator,
-    listIdsQueryFeatureHydrator,
-    userStateQueryFeatureHydrator,
-    AsyncQueryFeatureHydrator(scoringStep, feedbackHistoryQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, realGraphQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, requestTimeQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, userLanguagesFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, userEngagementRealTimeAggregatesFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, realTimeInteractionGraphUserVertexQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, twhinUserFollowQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, twhinUserEngagementQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, partAAggregateQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, partBAggregateQueryFeatureHydrator),
+  o-ovewwide vaw fetchquewyfeatuwes: seq[quewyfeatuwehydwatow[scowedtweetsquewy]] = seq(
+    wequestquewyfeatuwehydwatow, :3
+    weawgwaphinnetwowkscowesquewyfeatuwehydwatow, /(^•ω•^)
+    c-cachedscowedtweetsquewyfeatuwehydwatow, ^•ﻌ•^
+    sgsfowwowedusewsquewyfeatuwehydwatow, UwU
+    p-pawamgatedquewyfeatuwehydwatow(
+      enabweimpwessionbwoomfiwtew, 😳😳😳
+      i-impwessionbwoomfiwtewquewyfeatuwehydwatow
+    ), OwO
+    manhattantweetimpwessionsquewyfeatuwehydwatow, ^•ﻌ•^
+    m-memcachetweetimpwessionsquewyfeatuwehydwatow, (ꈍᴗꈍ)
+    wistidsquewyfeatuwehydwatow, (⑅˘꒳˘)
+    u-usewstatequewyfeatuwehydwatow, (⑅˘꒳˘)
+    a-asyncquewyfeatuwehydwatow(scowingstep, (ˆ ﻌ ˆ)♡ f-feedbackhistowyquewyfeatuwehydwatow), /(^•ω•^)
+    a-asyncquewyfeatuwehydwatow(scowingstep, òωó w-weawgwaphquewyfeatuwehydwatow), (⑅˘꒳˘)
+    asyncquewyfeatuwehydwatow(scowingstep, (U ᵕ U❁) wequesttimequewyfeatuwehydwatow), >w<
+    asyncquewyfeatuwehydwatow(scowingstep, usewwanguagesfeatuwehydwatow), σωσ
+    asyncquewyfeatuwehydwatow(scowingstep, -.- usewengagementweawtimeaggwegatesfeatuwehydwatow), o.O
+    a-asyncquewyfeatuwehydwatow(scowingstep, ^^ w-weawtimeintewactiongwaphusewvewtexquewyfeatuwehydwatow), >_<
+    a-asyncquewyfeatuwehydwatow(scowingstep, >w< twhinusewfowwowquewyfeatuwehydwatow), >_<
+    asyncquewyfeatuwehydwatow(scowingstep, >w< t-twhinusewengagementquewyfeatuwehydwatow), rawr
+    asyncquewyfeatuwehydwatow(scowingstep, rawr x3 pawtaaggwegatequewyfeatuwehydwatow), ( ͡o ω ͡o )
+    asyncquewyfeatuwehydwatow(scowingstep, (˘ω˘) p-pawtbaggwegatequewyfeatuwehydwatow),
   )
 
-  override val candidatePipelines: Seq[
-    CandidatePipelineConfig[ScoredTweetsQuery, _, _, TweetCandidate]
-  ] = Seq(
-    cachedScoredTweetsCandidatePipelineConfig,
-    scoredTweetsInNetworkCandidatePipelineConfig,
-    scoredTweetsUtegCandidatePipelineConfig,
-    scoredTweetsTweetMixerCandidatePipelineConfig,
-    scoredTweetsFrsCandidatePipelineConfig,
-    scoredTweetsListsCandidatePipelineConfig,
-    scoredTweetsPopularVideosCandidatePipelineConfig,
-    scoredTweetsBackfillCandidatePipelineConfig
+  o-ovewwide vaw candidatepipewines: seq[
+    candidatepipewineconfig[scowedtweetsquewy, 😳 _, OwO _, t-tweetcandidate]
+  ] = seq(
+    cachedscowedtweetscandidatepipewineconfig,
+    scowedtweetsinnetwowkcandidatepipewineconfig, (˘ω˘)
+    s-scowedtweetsutegcandidatepipewineconfig, òωó
+    s-scowedtweetstweetmixewcandidatepipewineconfig, ( ͡o ω ͡o )
+    scowedtweetsfwscandidatepipewineconfig, UwU
+    s-scowedtweetswistscandidatepipewineconfig, /(^•ω•^)
+    s-scowedtweetspopuwawvideoscandidatepipewineconfig, (ꈍᴗꈍ)
+    scowedtweetsbackfiwwcandidatepipewineconfig
   )
 
-  override val postCandidatePipelinesSelectors: Seq[Selector[ScoredTweetsQuery]] = Seq(
-    DropDuplicateCandidates(
-      pipelineScope = AllPipelines,
-      duplicationKey = IdAndClassDuplicationKey,
-      mergeStrategy = PickFirstCandidateMerger
-    ),
-    InsertAppendResults(AllPipelines)
+  ovewwide vaw postcandidatepipewinessewectows: seq[sewectow[scowedtweetsquewy]] = seq(
+    dwopdupwicatecandidates(
+      p-pipewinescope = a-awwpipewines, 😳
+      d-dupwicationkey = i-idandcwassdupwicationkey, mya
+      m-mewgestwategy = pickfiwstcandidatemewgew
+    ), mya
+    i-insewtappendwesuwts(awwpipewines)
   )
 
-  override val globalFilters: Seq[Filter[ScoredTweetsQuery, TweetCandidate]] = Seq(
-    // sort these to have the "cheaper" filters run first
-    RejectTweetFromViewerFilter,
-    RetweetDeduplicationFilter,
-    PreviouslySeenTweetsFilter,
-    PreviouslyServedTweetsFilter,
-    PredicateFeatureFilter.fromPredicate(
-      FilterIdentifier(SubscriptionReplyFilterId),
-      shouldKeepCandidate = { features =>
-        features.getOrElse(InReplyToTweetIdFeature, None).isEmpty ||
-        features.getOrElse(ExclusiveConversationAuthorIdFeature, None).isEmpty
+  o-ovewwide vaw gwobawfiwtews: s-seq[fiwtew[scowedtweetsquewy, /(^•ω•^) t-tweetcandidate]] = seq(
+    // s-sowt these to have the "cheapew" fiwtews wun f-fiwst
+    wejecttweetfwomviewewfiwtew, ^^;;
+    wetweetdedupwicationfiwtew, 🥺
+    p-pweviouswyseentweetsfiwtew, ^^
+    p-pweviouswysewvedtweetsfiwtew, ^•ﻌ•^
+    pwedicatefeatuwefiwtew.fwompwedicate(
+      f-fiwtewidentifiew(subscwiptionwepwyfiwtewid), /(^•ω•^)
+      shouwdkeepcandidate = { featuwes =>
+        f-featuwes.getowewse(inwepwytotweetidfeatuwe, ^^ n-nyone).isempty ||
+        f-featuwes.getowewse(excwusiveconvewsationauthowidfeatuwe, 🥺 nyone).isempty
       }
-    ),
-    FeedbackFatigueFilter
+    ), (U ᵕ U❁)
+    feedbackfatiguefiwtew
   )
 
-  override val candidatePipelineFailOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy] =
-    Map(
-      cachedScoredTweetsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsInNetworkCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsUtegCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsTweetMixerCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsFrsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsListsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsPopularVideosCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsBackfillCandidatePipelineConfig.identifier -> FailOpenPolicy.Always
+  ovewwide vaw c-candidatepipewinefaiwopenpowicies: map[candidatepipewineidentifiew, 😳😳😳 faiwopenpowicy] =
+    m-map(
+      c-cachedscowedtweetscandidatepipewineconfig.identifiew -> faiwopenpowicy.awways, nyaa~~
+      s-scowedtweetsinnetwowkcandidatepipewineconfig.identifiew -> faiwopenpowicy.awways, (˘ω˘)
+      s-scowedtweetsutegcandidatepipewineconfig.identifiew -> f-faiwopenpowicy.awways, >_<
+      scowedtweetstweetmixewcandidatepipewineconfig.identifiew -> faiwopenpowicy.awways, XD
+      s-scowedtweetsfwscandidatepipewineconfig.identifiew -> faiwopenpowicy.awways, rawr x3
+      scowedtweetswistscandidatepipewineconfig.identifiew -> f-faiwopenpowicy.awways, ( ͡o ω ͡o )
+      s-scowedtweetspopuwawvideoscandidatepipewineconfig.identifiew -> faiwopenpowicy.awways, :3
+      s-scowedtweetsbackfiwwcandidatepipewineconfig.identifiew -> faiwopenpowicy.awways
     )
 
-  override val scoringPipelineFailOpenPolicies: Map[ScoringPipelineIdentifier, FailOpenPolicy] =
-    Map(
-      ScoredTweetsHeuristicScoringPipelineConfig.identifier -> FailOpenPolicy.Always
+  o-ovewwide v-vaw scowingpipewinefaiwopenpowicies: m-map[scowingpipewineidentifiew, mya faiwopenpowicy] =
+    map(
+      scowedtweetsheuwisticscowingpipewineconfig.identifiew -> faiwopenpowicy.awways
     )
 
-  private val candidatePipelineQualityFactorConfig = LinearLatencyQualityFactorConfig(
-    qualityFactorBounds = BoundsWithDefault(minInclusive = 0.1, maxInclusive = 1.0, default = 0.95),
-    initialDelay = 60.seconds,
-    targetLatency = targetFetchLatency,
-    targetLatencyPercentile = 95.0,
-    delta = 0.00125
+  pwivate vaw candidatepipewinequawityfactowconfig = wineawwatencyquawityfactowconfig(
+    quawityfactowbounds = boundswithdefauwt(minincwusive = 0.1, σωσ maxincwusive = 1.0, (ꈍᴗꈍ) defauwt = 0.95), OwO
+    initiawdeway = 60.seconds, o.O
+    tawgetwatency = tawgetfetchwatency, 😳😳😳
+    tawgetwatencypewcentiwe = 95.0, /(^•ω•^)
+    dewta = 0.00125
   )
 
-  private val scoringPipelineQualityFactorConfig =
-    candidatePipelineQualityFactorConfig.copy(targetLatency = targetScoringLatency)
+  p-pwivate vaw scowingpipewinequawityfactowconfig =
+    c-candidatepipewinequawityfactowconfig.copy(tawgetwatency = tawgetscowingwatency)
 
-  override val qualityFactorConfigs: Map[ComponentIdentifier, QualityFactorConfig] = Map(
-    // candidate pipelines
-    scoredTweetsInNetworkCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsUtegCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsTweetMixerCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsFrsCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsListsCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsPopularVideosCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsBackfillCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    // scoring pipelines
-    scoredTweetsModelScoringPipelineConfig.identifier -> scoringPipelineQualityFactorConfig,
+  ovewwide v-vaw quawityfactowconfigs: m-map[componentidentifiew, OwO q-quawityfactowconfig] = map(
+    // c-candidate pipewines
+    s-scowedtweetsinnetwowkcandidatepipewineconfig.identifiew -> c-candidatepipewinequawityfactowconfig,
+    scowedtweetsutegcandidatepipewineconfig.identifiew -> c-candidatepipewinequawityfactowconfig, ^^
+    scowedtweetstweetmixewcandidatepipewineconfig.identifiew -> c-candidatepipewinequawityfactowconfig, (///ˬ///✿)
+    s-scowedtweetsfwscandidatepipewineconfig.identifiew -> candidatepipewinequawityfactowconfig, (///ˬ///✿)
+    scowedtweetswistscandidatepipewineconfig.identifiew -> c-candidatepipewinequawityfactowconfig, (///ˬ///✿)
+    s-scowedtweetspopuwawvideoscandidatepipewineconfig.identifiew -> c-candidatepipewinequawityfactowconfig, ʘwʘ
+    s-scowedtweetsbackfiwwcandidatepipewineconfig.identifiew -> candidatepipewinequawityfactowconfig, ^•ﻌ•^
+    // s-scowing p-pipewines
+    s-scowedtweetsmodewscowingpipewineconfig.identifiew -> s-scowingpipewinequawityfactowconfig, OwO
   )
 
-  override val scoringPipelines: Seq[ScoringPipelineConfig[ScoredTweetsQuery, TweetCandidate]] =
-    Seq(
-      // scoring pipeline - run on non-cached candidates only since cached ones are already scored
-      scoredTweetsModelScoringPipelineConfig,
-      // re-scoring pipeline - run on all candidates since these are request specific
-      ScoredTweetsHeuristicScoringPipelineConfig
+  o-ovewwide vaw scowingpipewines: seq[scowingpipewineconfig[scowedtweetsquewy, (U ﹏ U) t-tweetcandidate]] =
+    s-seq(
+      // s-scowing pipewine - wun on nyon-cached c-candidates onwy since cached ones awe awweady s-scowed
+      scowedtweetsmodewscowingpipewineconfig, (ˆ ﻌ ˆ)♡
+      // w-we-scowing p-pipewine - wun on a-aww candidates since these awe w-wequest specific
+      scowedtweetsheuwisticscowingpipewineconfig
     )
 
-  override val postScoringFilters = Seq(
-    ScoredTweetsSocialContextFilter,
-    OutOfNetworkCompetitorFilter,
-    OutOfNetworkCompetitorURLFilter,
-    DuplicateConversationTweetsFilter,
-    PredicateFeatureFilter.fromPredicate(
-      FilterIdentifier("IsSupportAccountReply"),
-      shouldKeepCandidate = { features =>
-        !features.getOrElse(IsSupportAccountReplyFeature, false)
+  o-ovewwide vaw postscowingfiwtews = s-seq(
+    scowedtweetssociawcontextfiwtew, (⑅˘꒳˘)
+    o-outofnetwowkcompetitowfiwtew, (U ﹏ U)
+    outofnetwowkcompetitowuwwfiwtew, o.O
+    dupwicateconvewsationtweetsfiwtew, mya
+    pwedicatefeatuwefiwtew.fwompwedicate(
+      fiwtewidentifiew("issuppowtaccountwepwy"), XD
+      s-shouwdkeepcandidate = { featuwes =>
+        !featuwes.getowewse(issuppowtaccountwepwyfeatuwe, òωó fawse)
       })
   )
 
-  override val resultSelectors: Seq[Selector[ScoredTweetsQuery]] = Seq(
-    KeepBestOutOfNetworkCandidatePerAuthorPerSuggestType(AllPipelines),
-    UpdateSortCandidates(AllPipelines, FeatureValueSorter.descending(ScoreFeature)),
-    DropFilteredMaxCandidates(
-      pipelineScope =
-        AllExceptPipelines(Set(scoredTweetsBackfillCandidatePipelineConfig.identifier)),
-      filter = {
-        case ItemCandidateWithDetails(_, _, features) =>
-          features.getOrElse(InNetworkFeature, false)
-        case _ => false
+  o-ovewwide v-vaw wesuwtsewectows: seq[sewectow[scowedtweetsquewy]] = seq(
+    keepbestoutofnetwowkcandidatepewauthowpewsuggesttype(awwpipewines), (˘ω˘)
+    u-updatesowtcandidates(awwpipewines, :3 featuwevawuesowtew.descending(scowefeatuwe)), OwO
+    d-dwopfiwtewedmaxcandidates(
+      p-pipewinescope =
+        a-awwexceptpipewines(set(scowedtweetsbackfiwwcandidatepipewineconfig.identifiew)), mya
+      fiwtew = {
+        case itemcandidatewithdetaiws(_, (˘ω˘) _, f-featuwes) =>
+          f-featuwes.getowewse(innetwowkfeatuwe, o.O fawse)
+        c-case _ => fawse
       },
-      maxSelectionsParam = MaxInNetworkResultsParam
+      maxsewectionspawam = maxinnetwowkwesuwtspawam
+    ), (✿oωo)
+    d-dwopfiwtewedmaxcandidates(
+      pipewinescope = a-awwpipewines, (ˆ ﻌ ˆ)♡
+      f-fiwtew = {
+        c-case itemcandidatewithdetaiws(_, _, ^^;; featuwes) =>
+          !featuwes.getowewse(innetwowkfeatuwe, f-fawse)
+        c-case _ => fawse
+      }, OwO
+      m-maxsewectionspawam = m-maxoutofnetwowkwesuwtspawam
+    ), 🥺
+    dwopmaxcandidates(
+      c-candidatepipewine = s-scowedtweetsbackfiwwcandidatepipewineconfig.identifiew, mya
+      m-maxsewectionspawam = s-staticpawam(maxbackfiwwtweets)
     ),
-    DropFilteredMaxCandidates(
-      pipelineScope = AllPipelines,
-      filter = {
-        case ItemCandidateWithDetails(_, _, features) =>
-          !features.getOrElse(InNetworkFeature, false)
-        case _ => false
-      },
-      maxSelectionsParam = MaxOutOfNetworkResultsParam
-    ),
-    DropMaxCandidates(
-      candidatePipeline = scoredTweetsBackfillCandidatePipelineConfig.identifier,
-      maxSelectionsParam = StaticParam(MaxBackfillTweets)
-    ),
-    InsertAppendResults(AllPipelines)
+    i-insewtappendwesuwts(awwpipewines)
   )
 
-  override val resultSideEffects: Seq[
-    PipelineResultSideEffect[ScoredTweetsQuery, ScoredTweetsResponse]
-  ] = Seq(
-    cachedScoredTweetsSideEffect,
-    publishClientSentImpressionsEventBusSideEffect,
-    publishClientSentImpressionsManhattanSideEffect,
-    publishImpressionBloomFilterSideEffect,
-    scribeScoredCandidatesSideEffect,
-    scribeServedCommonFeaturesAndCandidateFeaturesSideEffect,
-    updateLastNonPollingTimeSideEffect
+  o-ovewwide vaw w-wesuwtsideeffects: s-seq[
+    pipewinewesuwtsideeffect[scowedtweetsquewy, 😳 scowedtweetswesponse]
+  ] = s-seq(
+    cachedscowedtweetssideeffect, òωó
+    pubwishcwientsentimpwessionseventbussideeffect, /(^•ω•^)
+    pubwishcwientsentimpwessionsmanhattansideeffect, -.-
+    p-pubwishimpwessionbwoomfiwtewsideeffect, òωó
+    scwibescowedcandidatessideeffect, /(^•ω•^)
+    s-scwibesewvedcommonfeatuwesandcandidatefeatuwessideeffect, /(^•ω•^)
+    u-updatewastnonpowwingtimesideeffect
   )
 
-  override val domainMarshaller: DomainMarshaller[
-    ScoredTweetsQuery,
-    ScoredTweetsResponse
-  ] = ScoredTweetsResponseDomainMarshaller
+  o-ovewwide vaw domainmawshawwew: domainmawshawwew[
+    scowedtweetsquewy, 😳
+    scowedtweetswesponse
+  ] = s-scowedtweetswesponsedomainmawshawwew
 
-  override val transportMarshaller: TransportMarshaller[
-    ScoredTweetsResponse,
-    t.ScoredTweetsResponse
-  ] = ScoredTweetsResponseTransportMarshaller
+  o-ovewwide vaw twanspowtmawshawwew: t-twanspowtmawshawwew[
+    scowedtweetswesponse, :3
+    t.scowedtweetswesponse
+  ] = scowedtweetswesponsetwanspowtmawshawwew
 }

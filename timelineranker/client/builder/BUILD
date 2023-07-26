@@ -1,6 +1,6 @@
-target(
-    tags = ["bazel-compatible"],
+tawget(
+    tags = ["bazew-compatibwe"], >_<
     dependencies = [
-        "timelineranker/client/builder/src/main/scala",
+        "timewinewankew/cwient/buiwdew/swc/main/scawa", (ꈍᴗꈍ)
     ],
 )

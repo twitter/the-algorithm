@@ -1,49 +1,49 @@
-package com.twitter.unified_user_actions.enricher.hydrator
+package com.twittew.unified_usew_actions.enwichew.hydwatow
 
-import com.google.common.cache.CacheBuilder
-import com.twitter.dynmap.DynMap
-import com.twitter.graphql.thriftscala.GraphQlRequest
-import com.twitter.graphql.thriftscala.GraphQlResponse
-import com.twitter.graphql.thriftscala.GraphqlExecutionService
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.enricher.EnricherFixture
-import com.twitter.unified_user_actions.enricher.FatalException
-import com.twitter.unified_user_actions.enricher.hcache.LocalCache
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentIdType
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.unified_user_actions.thriftscala.AuthorInfo
-import com.twitter.util.Await
-import com.twitter.util.Future
-import org.mockito.ArgumentMatchers
-import org.mockito.MockitoSugar
+impowt c-com.googwe.common.cache.cachebuiwdew
+i-impowt com.twittew.dynmap.dynmap
+i-impowt com.twittew.gwaphqw.thwiftscawa.gwaphqwwequest
+i-impowt c-com.twittew.gwaphqw.thwiftscawa.gwaphqwwesponse
+i-impowt com.twittew.gwaphqw.thwiftscawa.gwaphqwexecutionsewvice
+i-impowt com.twittew.inject.test
+i-impowt com.twittew.unified_usew_actions.enwichew.enwichewfixtuwe
+impowt com.twittew.unified_usew_actions.enwichew.fatawexception
+impowt com.twittew.unified_usew_actions.enwichew.hcache.wocawcache
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentenvewop
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentidtype
+i-impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentinstwuction
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentkey
+impowt com.twittew.unified_usew_actions.thwiftscawa.authowinfo
+i-impowt com.twittew.utiw.await
+impowt com.twittew.utiw.futuwe
+i-impowt owg.mockito.awgumentmatchews
+impowt owg.mockito.mockitosugaw
 
-class DefaultHydratorTest extends Test with MockitoSugar {
+cwass defauwthydwatowtest extends test with m-mockitosugaw {
 
-  trait Fixtures extends EnricherFixture {
-    val cache = new LocalCache[EnrichmentKey, DynMap](
-      underlying = CacheBuilder
-        .newBuilder()
-        .maximumSize(10)
-        .build[EnrichmentKey, Future[DynMap]]())
+  twait fixtuwes e-extends enwichewfixtuwe {
+    v-vaw cache = nyew wocawcache[enwichmentkey, OwO dynmap](
+      undewwying = cachebuiwdew
+        .newbuiwdew()
+        .maximumsize(10)
+        .buiwd[enwichmentkey, /(^•ω•^) f-futuwe[dynmap]]())
 
-    val client = mock[GraphqlExecutionService.FinagledClient]
-    val key = EnrichmentKey(EnrichmentIdType.TweetId, 1L)
-    val envelop = EnrichmentEnvelop(123L, mkUUATweetEvent(1L), tweetInfoEnrichmentPlan)
+    vaw cwient = mock[gwaphqwexecutionsewvice.finagwedcwient]
+    vaw key = enwichmentkey(enwichmentidtype.tweetid, 😳😳😳 1w)
+    v-vaw envewop = enwichmentenvewop(123w, ( ͡o ω ͡o ) m-mkuuatweetevent(1w), t-tweetinfoenwichmentpwan)
 
-    def mkGraphQLResponse(authorId: Long): GraphQlResponse =
-      GraphQlResponse(
-        Some(
+    d-def m-mkgwaphqwwesponse(authowid: wong): gwaphqwwesponse =
+      g-gwaphqwwesponse(
+        some(
           s"""
            |{
            |  "data": {
-           |    "tweet_result_by_rest_id": {
-           |      "result": {
-           |        "core": {
-           |          "user": {
-           |            "legacy": {
-           |              "id_str": "$authorId"
+           |    "tweet_wesuwt_by_west_id": {
+           |      "wesuwt": {
+           |        "cowe": {
+           |          "usew": {
+           |            "wegacy": {
+           |              "id_stw": "$authowid"
            |            }
            |          }
            |        }
@@ -51,68 +51,68 @@ class DefaultHydratorTest extends Test with MockitoSugar {
            |    }
            |  }
            |}
-           |""".stripMargin
+           |""".stwipmawgin
         ))
   }
 
-  test("non-fatal errors should proceed as normal") {
-    new Fixtures {
-      val hydrator = new DefaultHydrator(cache, client)
+  t-test("non-fataw ewwows shouwd pwoceed as nyowmaw") {
+    nyew fixtuwes {
+      vaw hydwatow = nyew defauwthydwatow(cache, >_< c-cwient)
 
-      // when graphql client encounter any exception
-      when(client.graphql(ArgumentMatchers.any[GraphQlRequest]))
-        .thenReturn(Future.exception(new IllegalStateException("any exception")))
+      // when gwaphqw cwient e-encountew a-any exception
+      w-when(cwient.gwaphqw(awgumentmatchews.any[gwaphqwwequest]))
+        .thenwetuwn(futuwe.exception(new iwwegawstateexception("any exception")))
 
-      val actual =
-        Await.result(hydrator.hydrate(EnrichmentInstruction.TweetEnrichment, Some(key), envelop))
+      vaw actuaw =
+        a-await.wesuwt(hydwatow.hydwate(enwichmentinstwuction.tweetenwichment, >w< s-some(key), rawr envewop))
 
-      // then the original envelop is expected
-      assert(envelop == actual)
+      // then the owiginaw e-envewop is expected
+      a-assewt(envewop == actuaw)
     }
   }
 
-  test("fatal errors should return a future exception") {
-    new Fixtures {
-      val hydrator = new DefaultHydrator(cache, client)
+  test("fataw e-ewwows shouwd wetuwn a futuwe exception") {
+    n-nyew fixtuwes {
+      vaw hydwatow = nyew defauwthydwatow(cache, 😳 c-cwient)
 
-      // when graphql client encounter a fatal exception
-      when(client.graphql(ArgumentMatchers.any[GraphQlRequest]))
-        .thenReturn(Future.exception(new FatalException("fatal exception") {}))
+      // when gwaphqw c-cwient encountew a fataw exception
+      w-when(cwient.gwaphqw(awgumentmatchews.any[gwaphqwwequest]))
+        .thenwetuwn(futuwe.exception(new f-fatawexception("fataw exception") {}))
 
-      val actual = hydrator.hydrate(EnrichmentInstruction.TweetEnrichment, Some(key), envelop)
+      vaw actuaw = hydwatow.hydwate(enwichmentinstwuction.tweetenwichment, >w< some(key), (⑅˘꒳˘) envewop)
 
-      // then a failed future is expected
-      assertFailedFuture[FatalException](actual)
+      // then a faiwed futuwe i-is expected
+      a-assewtfaiwedfutuwe[fatawexception](actuaw)
     }
   }
 
-  test("author_id should be hydrated from graphql respond") {
-    new Fixtures {
-      val hydrator = new DefaultHydrator(cache, client)
+  test("authow_id s-shouwd b-be hydwated f-fwom gwaphqw wespond") {
+    nyew fixtuwes {
+      vaw hydwatow = n-nyew defauwthydwatow(cache, OwO cwient)
 
-      when(client.graphql(ArgumentMatchers.any[GraphQlRequest]))
-        .thenReturn(Future.value(mkGraphQLResponse(888L)))
+      when(cwient.gwaphqw(awgumentmatchews.any[gwaphqwwequest]))
+        .thenwetuwn(futuwe.vawue(mkgwaphqwwesponse(888w)))
 
-      val actual = hydrator.hydrate(EnrichmentInstruction.TweetEnrichment, Some(key), envelop)
+      vaw actuaw = hydwatow.hydwate(enwichmentinstwuction.tweetenwichment, (ꈍᴗꈍ) some(key), e-envewop)
 
-      assertFutureValue(
-        actual,
-        envelop.copy(uua = mkUUATweetEvent(1L, Some(AuthorInfo(Some(888L))))))
+      assewtfutuwevawue(
+        a-actuaw, 😳
+        e-envewop.copy(uua = m-mkuuatweetevent(1w, 😳😳😳 some(authowinfo(some(888w))))))
     }
   }
 
-  test("when AuthorInfo is populated, there should be no hydration") {
-    new Fixtures {
-      val hydrator = new DefaultHydrator(cache, client)
+  t-test("when a-authowinfo is p-popuwated, mya thewe s-shouwd be nyo hydwation") {
+    nyew fixtuwes {
+      v-vaw hydwatow = n-nyew defauwthydwatow(cache, mya c-cwient)
 
-      when(client.graphql(ArgumentMatchers.any[GraphQlRequest]))
-        .thenReturn(Future.value(mkGraphQLResponse(333L)))
+      w-when(cwient.gwaphqw(awgumentmatchews.any[gwaphqwwequest]))
+        .thenwetuwn(futuwe.vawue(mkgwaphqwwesponse(333w)))
 
-      val expected = envelop.copy(uua =
-        mkUUATweetEvent(tweetId = 3L, author = Some(AuthorInfo(authorId = Some(222)))))
-      val actual = hydrator.hydrate(EnrichmentInstruction.TweetEnrichment, Some(key), expected)
+      v-vaw expected = envewop.copy(uua =
+        mkuuatweetevent(tweetid = 3w, (⑅˘꒳˘) authow = some(authowinfo(authowid = s-some(222)))))
+      vaw actuaw = hydwatow.hydwate(enwichmentinstwuction.tweetenwichment, (U ﹏ U) some(key), expected)
 
-      assertFutureValue(actual, expected)
+      assewtfutuwevawue(actuaw, mya expected)
     }
   }
 }

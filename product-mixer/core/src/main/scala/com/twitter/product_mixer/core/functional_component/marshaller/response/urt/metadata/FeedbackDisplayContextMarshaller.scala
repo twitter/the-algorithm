@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackDisplayContext
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackdispwaycontext
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class FeedbackDisplayContextMarshaller @Inject() () {
+@singweton
+c-cwass feedbackdispwaycontextmawshawwew @inject() () {
 
-  def apply(displayContext: FeedbackDisplayContext): urt.FeedbackDisplayContext =
-    urt.FeedbackDisplayContext(
-      reason = displayContext.reason
+  d-def appwy(dispwaycontext: f-feedbackdispwaycontext): uwt.feedbackdispwaycontext =
+    uwt.feedbackdispwaycontext(
+      weason = dispwaycontext.weason
     )
 }

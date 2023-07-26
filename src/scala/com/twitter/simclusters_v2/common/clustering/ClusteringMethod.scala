@@ -1,34 +1,34 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.twittew.simcwustews_v2.common.cwustewing
 
 /**
- * Partitions a set of entities into clusters.
- * NOTE: The selection/construction of the cluster representatives (e.g. medoid, random, average) is implemented in ClusterRepresentativeSelectionMethod.scala
+ * pawtitions a-a set of e-entities into cwustews. 🥺
+ * n-nyote: t-the sewection/constwuction o-of t-the cwustew wepwesentatives (e.g. mya m-medoid, 🥺 wandom, a-avewage) is impwemented in cwustewwepwesentativesewectionmethod.scawa
  */
-trait ClusteringMethod {
+twait cwustewingmethod {
 
   /**
-   * The main external-facing method. Sub-classes should implement this method.
+   * the main extewnaw-facing m-method. >_< sub-cwasses shouwd impwement this m-method.
    *
-   * @param embeddings map of entity IDs and corresponding embeddings
-   * @param similarityFn function that outputs similarity (>=0, the larger, more similar), given two embeddings
-   * @tparam T embedding type. e.g. SimClustersEmbedding
+   * @pawam embeddings m-map of entity ids and cowwesponding embeddings
+   * @pawam simiwawityfn f-function that outputs simiwawity (>=0, >_< t-the wawgew, (⑅˘꒳˘) m-mowe simiwaw), /(^•ω•^) given two embeddings
+   * @tpawam t embedding type. rawr x3 e.g. simcwustewsembedding
    *
-   * @return A set of sets of entity IDs, each set representing a distinct cluster.
+   * @wetuwn a set of sets o-of entity ids, (U ﹏ U) each set wepwesenting a distinct cwustew. (U ﹏ U)
    */
-  def cluster[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit = (_, _) => ()
-  ): Set[Set[Long]]
+  def cwustew[t](
+    e-embeddings: map[wong, (⑅˘꒳˘) t],
+    s-simiwawityfn: (t, òωó t-t) => doubwe, ʘwʘ
+    w-wecowdstatcawwback: (stwing, /(^•ω•^) w-wong) => unit = (_, _) => ()
+  ): set[set[wong]]
 
 }
 
-object ClusteringStatistics {
+object c-cwustewingstatistics {
 
-  // Statistics, to be imported where recorded.
-  val StatSimilarityGraphTotalBuildTime = "similarity_graph_total_build_time_ms"
-  val StatClusteringAlgorithmRunTime = "clustering_algorithm_total_run_time_ms"
-  val StatMedoidSelectionTime = "medoid_selection_total_time_ms"
-  val StatComputedSimilarityBeforeFilter = "computed_similarity_before_filter"
+  // statistics, ʘwʘ to be impowted w-whewe wecowded. σωσ
+  vaw statsimiwawitygwaphtotawbuiwdtime = "simiwawity_gwaph_totaw_buiwd_time_ms"
+  vaw statcwustewingawgowithmwuntime = "cwustewing_awgowithm_totaw_wun_time_ms"
+  vaw statmedoidsewectiontime = "medoid_sewection_totaw_time_ms"
+  vaw statcomputedsimiwawitybefowefiwtew = "computed_simiwawity_befowe_fiwtew"
 
 }

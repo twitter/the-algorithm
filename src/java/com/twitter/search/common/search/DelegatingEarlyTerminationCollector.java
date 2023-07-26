@@ -1,75 +1,75 @@
-package com.twitter.search.common.search;
+package com.twittew.seawch.common.seawch;
 
-import java.io.IOException;
-import java.util.List;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.wist;
 
-import javax.annotation.Nullable;
+i-impowt j-javax.annotation.nuwwabwe;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Scorable;
-import org.apache.lucene.search.ScoreMode;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.seawch.cowwectow;
+i-impowt o-owg.apache.wucene.seawch.weafcowwectow;
+impowt owg.apache.wucene.seawch.scowabwe;
+impowt owg.apache.wucene.seawch.scowemode;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
+impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.quewy.thwiftjava.cowwectowpawams;
 
 /**
- * A {@link com.twitter.search.common.search.TwitterEarlyTerminationCollector}
- * that delegates actual hit collection to a sub collector.
+ * a {@wink com.twittew.seawch.common.seawch.twitteweawwytewminationcowwectow}
+ * t-that dewegates actuaw hit cowwection t-to a sub cowwectow. mya
  */
-public final class DelegatingEarlyTerminationCollector
-    extends TwitterEarlyTerminationCollector {
-  private final Collector subCollector;
-  private LeafCollector subLeafCollector;
+pubwic finaw cwass dewegatingeawwytewminationcowwectow
+    e-extends twitteweawwytewminationcowwectow {
+  p-pwivate f-finaw cowwectow subcowwectow;
+  pwivate weafcowwectow subweafcowwectow;
 
-  /** Creates a new DelegatingEarlyTerminationCollector instance. */
-  public DelegatingEarlyTerminationCollector(Collector subCollector,
-                                             CollectorParams collectorParams,
-                                             TerminationTracker terminationTracker,
-                                             @Nullable QueryCostProvider queryCostProvider,
-                                             int numDocsBetweenTimeoutChecks,
-                                             Clock clock) {
-    super(
-        collectorParams,
-        terminationTracker,
-        queryCostProvider,
-        numDocsBetweenTimeoutChecks,
-        clock);
-    this.subCollector = subCollector;
+  /** cweates a nyew dewegatingeawwytewminationcowwectow i-instance. 😳 */
+  pubwic dewegatingeawwytewminationcowwectow(cowwectow subcowwectow, -.-
+                                             cowwectowpawams cowwectowpawams,
+                                             tewminationtwackew t-tewminationtwackew, 🥺
+                                             @nuwwabwe quewycostpwovidew quewycostpwovidew, o.O
+                                             int n-nyumdocsbetweentimeoutchecks, /(^•ω•^)
+                                             c-cwock c-cwock) {
+    s-supew(
+        cowwectowpawams, nyaa~~
+        tewminationtwackew, nyaa~~
+        q-quewycostpwovidew, :3
+        nyumdocsbetweentimeoutchecks, 😳😳😳
+        cwock);
+    t-this.subcowwectow = subcowwectow;
   }
 
-  @Override
-  public void setScorer(Scorable scorer) throws IOException {
-    super.setScorer(scorer);
-    subLeafCollector.setScorer(scorer);
+  @ovewwide
+  pubwic void setscowew(scowabwe scowew) thwows ioexception {
+    s-supew.setscowew(scowew);
+    subweafcowwectow.setscowew(scowew);
   }
 
-  @Override
-  protected void doCollect() throws IOException {
-    subLeafCollector.collect(curDocId);
+  @ovewwide
+  p-pwotected v-void docowwect() t-thwows ioexception {
+    subweafcowwectow.cowwect(cuwdocid);
   }
 
-  @Override
-  protected void doFinishSegment(int lastSearchedDocID) throws IOException {
-    if (subCollector instanceof TwitterCollector) {
-      ((TwitterCollector) subCollector).finishSegment(lastSearchedDocID);
+  @ovewwide
+  pwotected void dofinishsegment(int wastseawcheddocid) t-thwows i-ioexception {
+    if (subcowwectow i-instanceof t-twittewcowwectow) {
+      ((twittewcowwectow) subcowwectow).finishsegment(wastseawcheddocid);
     }
   }
 
-  @Override
-  public void setNextReader(LeafReaderContext context) throws IOException {
-    super.setNextReader(context);
-    subLeafCollector = subCollector.getLeafCollector(context);
+  @ovewwide
+  pubwic void s-setnextweadew(weafweadewcontext context) thwows i-ioexception {
+    supew.setnextweadew(context);
+    subweafcowwectow = s-subcowwectow.getweafcowwectow(context);
   }
 
-  @Override
-  public ScoreMode scoreMode() {
-    return subCollector.scoreMode();
+  @ovewwide
+  pubwic scowemode s-scowemode() {
+    wetuwn s-subcowwectow.scowemode();
   }
 
-  @Override
-  public List<String> getDebugInfo() {
-    return null;
+  @ovewwide
+  p-pubwic wist<stwing> getdebuginfo() {
+    wetuwn nyuww;
   }
 }

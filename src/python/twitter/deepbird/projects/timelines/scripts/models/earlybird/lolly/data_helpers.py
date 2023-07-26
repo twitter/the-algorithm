@@ -1,23 +1,23 @@
-# checkstyle: noqa
-import tensorflow.compat.v1 as tf
-from ..constants import EB_SCORE_IDX
+# checkstywe: nyoqa
+impowt tensowfwow.compat.v1 as t-tf
+fwom ..constants i-impowt eb_scowe_idx
 
-# The rationale behind this logic is available at TQ-9678.
-def get_lolly_logits(labels):
+# t-the w-wationawe behind t-this wogic is a-avaiwabwe at tq-9678. (✿oωo)
+d-def get_wowwy_wogits(wabews):
   '''
-  :param labels: tf.Tensor of shape (batch size, num labels) with labels as specified by the feature config.
-  :return: tf.Tensor of shape (batch size) with the extracted lolly logits.
+  :pawam w-wabews: tf.tensow of shape (batch size, (ˆ ﻌ ˆ)♡ nyum wabews) with wabews as specified b-by the featuwe config. (˘ω˘)
+  :wetuwn: tf.tensow of s-shape (batch size) with the extwacted w-wowwy wogits. (⑅˘꒳˘)
   '''
-  eb_lolly_scores = get_lolly_scores(labels)
-  inverse_eb_lolly_scores = tf.math.subtract(1.0, eb_lolly_scores)
-  lolly_activations = tf.math.subtract(tf.math.log(eb_lolly_scores), tf.math.log(inverse_eb_lolly_scores))
-  return lolly_activations
+  eb_wowwy_scowes = get_wowwy_scowes(wabews)
+  invewse_eb_wowwy_scowes = t-tf.math.subtwact(1.0, (///ˬ///✿) eb_wowwy_scowes)
+  w-wowwy_activations = t-tf.math.subtwact(tf.math.wog(eb_wowwy_scowes), 😳😳😳 tf.math.wog(invewse_eb_wowwy_scowes))
+  wetuwn wowwy_activations
 
-def get_lolly_scores(labels):
+def get_wowwy_scowes(wabews):
   '''
-  :param labels: tf.Tensor of shape (batch size, num labels) with labels as specified by the feature config.
-  :return: tf.Tensor of shape (batch size) with the extracted lolly scores.
+  :pawam wabews: tf.tensow o-of shape (batch size, 🥺 nyum wabews) with wabews as specified by the featuwe config. mya
+  :wetuwn: t-tf.tensow of shape (batch s-size) with t-the extwacted w-wowwy scowes. 🥺
   '''
-  logged_eb_lolly_scores = tf.reshape(labels[:, EB_SCORE_IDX], (-1, 1))
-  eb_lolly_scores = tf.truediv(logged_eb_lolly_scores, 100.0)
-  return eb_lolly_scores
+  w-wogged_eb_wowwy_scowes = tf.weshape(wabews[:, >_< eb_scowe_idx], >_< (-1, (⑅˘꒳˘) 1))
+  eb_wowwy_scowes = t-tf.twuediv(wogged_eb_wowwy_scowes, /(^•ω•^) 100.0)
+  wetuwn eb_wowwy_scowes

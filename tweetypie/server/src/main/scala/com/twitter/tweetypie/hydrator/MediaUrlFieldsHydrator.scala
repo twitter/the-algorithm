@@ -1,25 +1,25 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.media.Media
-import com.twitter.tweetypie.media.MediaUrl
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.media.media
+i-impowt c-com.twittew.tweetypie.media.mediauww
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object MediaUrlFieldsHydrator {
-  type Ctx = MediaEntityHydrator.Cacheable.Ctx
-  type Type = MediaEntityHydrator.Cacheable.Type
+o-object mediauwwfiewdshydwatow {
+  t-type ctx = mediaentityhydwatow.cacheabwe.ctx
+  type type = mediaentityhydwatow.cacheabwe.type
 
-  def mediaPermalink(ctx: Ctx): Option[UrlEntity] =
-    ctx.urlEntities.view.reverse.find(MediaUrl.Permalink.hasTweetId(_, ctx.tweetId))
+  def mediapewmawink(ctx: ctx): o-option[uwwentity] =
+    ctx.uwwentities.view.wevewse.find(mediauww.pewmawink.hastweetid(_, 😳 ctx.tweetid))
 
-  def apply(): Type =
-    ValueHydrator
-      .map[MediaEntity, Ctx] { (curr, ctx) =>
-        mediaPermalink(ctx) match {
-          case None => ValueState.unmodified(curr)
-          case Some(urlEntity) => ValueState.modified(Media.copyFromUrlEntity(curr, urlEntity))
+  d-def appwy(): type =
+    vawuehydwatow
+      .map[mediaentity, XD ctx] { (cuww, :3 c-ctx) =>
+        mediapewmawink(ctx) match {
+          case nyone => v-vawuestate.unmodified(cuww)
+          case some(uwwentity) => vawuestate.modified(media.copyfwomuwwentity(cuww, 😳😳😳 u-uwwentity))
         }
       }
-      .onlyIf((curr, ctx) => curr.url == null && Media.isOwnMedia(ctx.tweetId, curr))
+      .onwyif((cuww, -.- c-ctx) => cuww.uww == nyuww && media.isownmedia(ctx.tweetid, ( ͡o ω ͡o ) cuww))
 }

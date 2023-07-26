@@ -1,9 +1,8 @@
-scala_library(
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-stats",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/store/common",
-        "src/scala/com/twitter/simclusters_v2/stores",
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "swc/scawa/com/twittew/scawding_intewnaw/job/anawytics_batch", òωó
     ],
 )

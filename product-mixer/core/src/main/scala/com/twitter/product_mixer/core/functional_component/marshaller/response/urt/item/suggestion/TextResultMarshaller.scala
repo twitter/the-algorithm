@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.suggestion
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.highlight.HighlightedSectionMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight.HighlightedSection
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion.TextResult
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.highwight.highwightedsectionmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.highwight.highwightedsection
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.suggestion.textwesuwt
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TextResultMarshaller @Inject() (highlightedSectionMarshaller: HighlightedSectionMarshaller) {
+@singweton
+cwass textwesuwtmawshawwew @inject() (highwightedsectionmawshawwew: highwightedsectionmawshawwew) {
 
-  def apply(textResult: TextResult): urt.TextResult = {
-    val hitHighlights = textResult.hitHighlights.map {
-      highlightedSections: Seq[HighlightedSection] =>
-        highlightedSections.map(highlightedSectionMarshaller(_))
+  def appwy(textwesuwt: t-textwesuwt): uwt.textwesuwt = {
+    vaw hithighwights = t-textwesuwt.hithighwights.map {
+      highwightedsections: s-seq[highwightedsection] =>
+        highwightedsections.map(highwightedsectionmawshawwew(_))
     }
 
-    urt.TextResult(
-      text = textResult.text,
-      hitHighlights = hitHighlights,
-      score = textResult.score,
-      querySource = textResult.querySource)
+    uwt.textwesuwt(
+      text = textwesuwt.text, mya
+      h-hithighwights = hithighwights, 😳
+      s-scowe = textwesuwt.scowe, XD
+      q-quewysouwce = textwesuwt.quewysouwce)
   }
 }

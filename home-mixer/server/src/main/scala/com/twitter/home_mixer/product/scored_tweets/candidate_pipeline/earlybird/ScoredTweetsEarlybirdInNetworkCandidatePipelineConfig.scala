@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.earlybird
+package com.twittew.home_mixew.pwoduct.scowed_tweets.candidate_pipewine.eawwybiwd
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdCandidateSource
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.earlybird.EarlybirdInNetworkQueryTransformer
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.earlybird.ScoredTweetsEarlybirdInNetworkResponseFeatureTransformer
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.search.earlybird.{thriftscala => eb}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.thwift.cwientid
+i-impowt c-com.twittew.home_mixew.functionaw_component.candidate_souwce.eawwybiwdcandidatesouwce
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.gate.mincachedtweetsgate
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.cachedscowedtweets
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.quewy_twansfowmew.eawwybiwd.eawwybiwdinnetwowkquewytwansfowmew
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew.eawwybiwd.scowedtweetseawwybiwdinnetwowkwesponsefeatuwetwansfowmew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => eb}
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
 /**
- * Candidate Pipeline Config that fetches tweets from the earlybird InNetwork Candidate Source
+ * c-candidate pipewine config that fetches tweets fwom the eawwybiwd innetwowk candidate s-souwce
  */
-@Singleton
-class ScoredTweetsEarlybirdInNetworkCandidatePipelineConfig @Inject() (
-  earlybirdCandidateSource: EarlybirdCandidateSource,
-  clientId: ClientId)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
-      eb.EarlybirdRequest,
-      eb.ThriftSearchResult,
-      TweetCandidate
+@singweton
+cwass scowedtweetseawwybiwdinnetwowkcandidatepipewineconfig @inject() (
+  eawwybiwdcandidatesouwce: eawwybiwdcandidatesouwce, ( ͡o ω ͡o )
+  c-cwientid: cwientid)
+    e-extends candidatepipewineconfig[
+      s-scowedtweetsquewy, (U ﹏ U)
+      e-eb.eawwybiwdwequest, (///ˬ///✿)
+      e-eb.thwiftseawchwesuwt,
+      tweetcandidate
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ScoredTweetsEarlybirdInNetwork")
+  ovewwide v-vaw identifiew: candidatepipewineidentifiew =
+    candidatepipewineidentifiew("scowedtweetseawwybiwdinnetwowk")
 
-  override val gates: Seq[Gate[ScoredTweetsQuery]] = Seq(
-    MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam)
+  o-ovewwide vaw gates: seq[gate[scowedtweetsquewy]] = seq(
+    mincachedtweetsgate(identifiew, >w< cachedscowedtweets.mincachedtweetspawam)
   )
 
-  override val candidateSource: BaseCandidateSource[eb.EarlybirdRequest, eb.ThriftSearchResult] =
-    earlybirdCandidateSource
+  ovewwide vaw candidatesouwce: b-basecandidatesouwce[eb.eawwybiwdwequest, rawr eb.thwiftseawchwesuwt] =
+    e-eawwybiwdcandidatesouwce
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
-    eb.EarlybirdRequest
-  ] = EarlybirdInNetworkQueryTransformer(identifier, clientId = Some(clientId.name))
+  o-ovewwide vaw quewytwansfowmew: candidatepipewinequewytwansfowmew[
+    s-scowedtweetsquewy, mya
+    eb.eawwybiwdwequest
+  ] = eawwybiwdinnetwowkquewytwansfowmew(identifiew, ^^ cwientid = s-some(cwientid.name))
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[eb.ThriftSearchResult]
-  ] = Seq(ScoredTweetsEarlybirdInNetworkResponseFeatureTransformer)
+  o-ovewwide vaw featuwesfwomcandidatesouwcetwansfowmews: seq[
+    c-candidatefeatuwetwansfowmew[eb.thwiftseawchwesuwt]
+  ] = s-seq(scowedtweetseawwybiwdinnetwowkwesponsefeatuwetwansfowmew)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    eb.ThriftSearchResult,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.id) }
+  ovewwide vaw wesuwttwansfowmew: c-candidatepipewinewesuwtstwansfowmew[
+    eb.thwiftseawchwesuwt,
+    t-tweetcandidate
+  ] = { souwcewesuwt => tweetcandidate(id = s-souwcewesuwt.id) }
 }

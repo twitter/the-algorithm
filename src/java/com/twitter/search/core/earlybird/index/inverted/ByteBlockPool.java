@@ -1,58 +1,58 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
 
-public class ByteBlockPool extends BaseByteBlockPool implements Flushable {
+p-pubwic cwass bytebwockpoow extends basebytebwockpoow impwements fwushabwe {
 
-  public ByteBlockPool() {
+  pubwic b-bytebwockpoow() {
   }
 
   /**
-   * Used for loading flushed pool.
+   * used fow woading fwushed poow. 😳😳😳
    */
-  private ByteBlockPool(Pool pool, int bufferUpto, int byteUpTo, int byteOffset) {
-    super(pool, bufferUpto, byteUpTo, byteOffset);
+  p-pwivate bytebwockpoow(poow p-poow, o.O int buffewupto, ( ͡o ω ͡o ) int byteupto, int byteoffset) {
+    supew(poow, (U ﹏ U) buffewupto, b-byteupto, (///ˬ///✿) byteoffset);
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @ovewwide
+  p-pubwic fwushhandwew g-getfwushhandwew() {
+    wetuwn nyew fwushhandwew(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<ByteBlockPool> {
-    private static final String BUFFER_UP_TO_PROP_NAME = "bufferUpto";
-    private static final String BYTE_UP_TO_PROP_NAME = "byteUpto";
-    private static final String BYTE_OFFSET_PROP_NAME = "byteOffset";
+  pubwic static cwass fwushhandwew e-extends fwushabwe.handwew<bytebwockpoow> {
+    pwivate static finaw stwing buffew_up_to_pwop_name = "buffewupto";
+    pwivate s-static finaw stwing byte_up_to_pwop_name = "byteupto";
+    pwivate s-static finaw s-stwing byte_offset_pwop_name = "byteoffset";
 
-    public FlushHandler(ByteBlockPool objectToFlush) {
-      super(objectToFlush);
+    p-pubwic fwushhandwew(bytebwockpoow o-objecttofwush) {
+      supew(objecttofwush);
     }
 
-    public FlushHandler() {
+    pubwic fwushhandwew() {
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      ByteBlockPool objectToFlush = getObjectToFlush();
-      out.writeByteArray2D(objectToFlush.pool.buffers, objectToFlush.bufferUpto + 1);
-      flushInfo.addIntProperty(BUFFER_UP_TO_PROP_NAME, objectToFlush.bufferUpto);
-      flushInfo.addIntProperty(BYTE_UP_TO_PROP_NAME, objectToFlush.byteUpto);
-      flushInfo.addIntProperty(BYTE_OFFSET_PROP_NAME, objectToFlush.byteOffset);
+    @ovewwide
+    pwotected void d-dofwush(fwushinfo fwushinfo, >w< datasewiawizew out) t-thwows ioexception {
+      bytebwockpoow objecttofwush = getobjecttofwush();
+      out.wwitebyteawway2d(objecttofwush.poow.buffews, rawr objecttofwush.buffewupto + 1);
+      f-fwushinfo.addintpwopewty(buffew_up_to_pwop_name, mya objecttofwush.buffewupto);
+      f-fwushinfo.addintpwopewty(byte_up_to_pwop_name, ^^ o-objecttofwush.byteupto);
+      f-fwushinfo.addintpwopewty(byte_offset_pwop_name, 😳😳😳 objecttofwush.byteoffset);
     }
 
-    @Override
-    protected ByteBlockPool doLoad(FlushInfo flushInfo,
-                                   DataDeserializer in) throws IOException {
-      return new ByteBlockPool(
-              new BaseByteBlockPool.Pool(in.readByteArray2D()),
-              flushInfo.getIntProperty(BUFFER_UP_TO_PROP_NAME),
-              flushInfo.getIntProperty(BYTE_UP_TO_PROP_NAME),
-              flushInfo.getIntProperty(BYTE_OFFSET_PROP_NAME));
+    @ovewwide
+    pwotected bytebwockpoow d-dowoad(fwushinfo f-fwushinfo, mya
+                                   datadesewiawizew i-in) thwows i-ioexception {
+      wetuwn nyew b-bytebwockpoow(
+              nyew b-basebytebwockpoow.poow(in.weadbyteawway2d()), 😳
+              fwushinfo.getintpwopewty(buffew_up_to_pwop_name), -.-
+              fwushinfo.getintpwopewty(byte_up_to_pwop_name), 🥺
+              fwushinfo.getintpwopewty(byte_offset_pwop_name));
     }
   }
 }

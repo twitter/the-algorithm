@@ -1,12 +1,12 @@
-package com.twitter.search.common.search;
+package com.twittew.seawch.common.seawch;
 
 /**
- * Provide an accessor for a doc ID. This is useful for classes that iterate through doc IDs
- * and maintain a "last seen" doc ID.
+ * pwovide an accessow f-fow a doc id. rawr t-this is usefuw f-fow cwasses that i-itewate thwough d-doc ids
+ * and m-maintain a "wast s-seen" doc id. σωσ
  */
-public interface DocIdTracker {
+p-pubwic intewface docidtwackew {
   /**
-   * Retrieve current doc ID
+   * wetwieve cuwwent doc id
    */
-  int getCurrentDocId();
+  int getcuwwentdocid();
 }

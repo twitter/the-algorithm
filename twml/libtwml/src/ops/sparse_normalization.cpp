@@ -1,355 +1,355 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-using namespace tensorflow;
+using nyamespace tensowfwow;
 
-REGISTER_OP("SparseMaxNorm")
-.Attr("epsilon: float")
-.Input("max_values: Ref(float)")
-.Input("indices: int64")
-.Input("values: float")
-.Input("is_training: bool")
-.Output("updated_max_values: Ref(float)")
-.Output("normalized_values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that normalizes a batch of sparse inputs based on the current maximum value.
+w-wegistew_op("spawsemaxnowm")
+.attw("epsiwon: f-fwoat")
+.input("max_vawues: w-wef(fwoat)")
+.input("indices: i-int64")
+.input("vawues: fwoat")
+.input("is_twaining: b-boow")
+.output("updated_max_vawues: w-wef(fwoat)")
+.output("nowmawized_vawues: f-fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow op that nyowmawizes a batch of spawse i-inputs based on the cuwwent maximum vawue. (ꈍᴗꈍ)
 
-Input
-  max_values: float tensor variable representing the max values seen so far.
-  indices: int64 tensor representing indices representing a feature.
-  values: float tensor representing values for the current batch.
-  is_training: bool tensor specifying if the op should be run in training mode or not.
+input
+  m-max_vawues: fwoat tensow vawiabwe w-wepwesenting the max vawues seen so faw. 😳
+  indices: int64 t-tensow wepwesenting indices wepwesenting a-a featuwe.
+  v-vawues: fwoat tensow wepwesenting vawues fow the cuwwent batch. mya
+  is_twaining: b-boow tensow specifying if the op shouwd be wun in twaining mode ow nyot. mya
 
-Outputs
-  updated_max_values: max_values updated with the current batch.
-  normalized_values: Input values normalized by the max value seen so far.
+o-outputs
+  updated_max_vawues: max_vawues updated w-with the cuwwent b-batch. /(^•ω•^)
+  nyowmawized_vawues: i-input vawues nyowmawized b-by the max vawue seen so faw. ^^;;
 
-The pseudo code for normalization can be seen below:
+the pseudo c-code fow nyowmawization can be seen bewow:
 
-  # During training / inference
-  for i, idx in enumerate(indices):
-    updated_max_values[idx] = max(max_values[idx], abs(values[i]))
-    normalized_values[i] = values[i] / updated_max_values[idx]
+  # d-duwing twaining / infewence
+  fow i, 🥺 idx in enumewate(indices):
+    updated_max_vawues[idx] = max(max_vawues[idx], ^^ abs(vawues[i]))
+    n-nyowmawized_vawues[i] = vawues[i] / updated_max_vawues[idx]
 
 )doc");
 
-class SparseMaxNorm : public OpKernel {
- private:
-  float epsilon_;
+c-cwass spawsemaxnowm : p-pubwic opkewnew {
+ p-pwivate:
+  fwoat epsiwon_;
 
- public:
-  explicit SparseMaxNorm(OpKernelConstruction *context) : OpKernel(context) {
-        OP_REQUIRES_OK(context, context->GetAttr("epsilon", &epsilon_));
+ pubwic:
+  expwicit spawsemaxnowm(opkewnewconstwuction *context) : o-opkewnew(context) {
+        o-op_wequiwes_ok(context, ^•ﻌ•^ context->getattw("epsiwon", &epsiwon_));
   }
 
-  void Compute(OpKernelContext *context) override {
-        // We always return the input ref.
-    context->forward_ref_input_to_ref_output(0, 0);
-    Tensor max_values_tensor = context->mutable_input(0, false);
+  v-void c-compute(opkewnewcontext *context) ovewwide {
+        // w-we awways wetuwn the input w-wef. /(^•ω•^)
+    context->fowwawd_wef_input_to_wef_output(0, ^^ 0);
+    tensow max_vawues_tensow = context->mutabwe_input(0, 🥺 f-fawse);
 
-    OP_REQUIRES(context, max_values_tensor.IsInitialized(),
-                errors::FailedPrecondition("Attempting to use uninitialized "
-                                           "parameters: ",
-                                           requested_input(0)));
+    op_wequiwes(context, (U ᵕ U❁) m-max_vawues_tensow.isinitiawized(), 😳😳😳
+                ewwows::faiwedpwecondition("attempting t-to use uninitiawized "
+                                           "pawametews: ", nyaa~~
+                                           wequested_input(0)));
 
-    const Tensor &indices_tensor = context->input(1);
-    const Tensor &values_tensor = context->input(2);
-    const Tensor &is_training_tensor = context->input(3);
+    c-const tensow &indices_tensow = context->input(1);
+    const tensow &vawues_tensow = context->input(2);
+    const tensow &is_twaining_tensow = context->input(3);
 
-    const auto indices = indices_tensor.flat<int64>();
-    const auto values = values_tensor.flat<float>();
-    const bool is_training = is_training_tensor.scalar<bool>()();
+    c-const auto indices = i-indices_tensow.fwat<int64>();
+    const auto v-vawues = vawues_tensow.fwat<fwoat>();
+    c-const b-boow is_twaining = is_twaining_tensow.scawaw<boow>()();
 
-    auto max_values = max_values_tensor.flat<float>();
-    Tensor *normalized_values_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(1, values_tensor.shape(),
-                                                     &normalized_values_tensor));
+    auto max_vawues = max_vawues_tensow.fwat<fwoat>();
+    t-tensow *nowmawized_vawues_tensow = nyuwwptw;
+    op_wequiwes_ok(context, (˘ω˘) context->awwocate_output(1, >_< vawues_tensow.shape(), XD
+                                                     &nowmawized_vawues_tensow));
 
-    auto normalized_values = normalized_values_tensor->flat<float>();
+    auto nyowmawized_vawues = n-nyowmawized_vawues_tensow->fwat<fwoat>();
 
-    const int64 N = indices.size();
+    const int64 ny = i-indices.size();
 
-    for (int64 i = 0; i < N; i++) {
-      int64 idx = indices(i);
-      float value = values(i);
-      float max_value = std::max(max_values(idx), std::abs(value));
+    f-fow (int64 i-i = 0; i < ny; i++) {
+      int64 i-idx = indices(i);
+      f-fwoat v-vawue = vawues(i);
+      f-fwoat max_vawue = std::max(max_vawues(idx), rawr x3 std::abs(vawue));
 
-      // Guaranteed to be between [-1, 1].
-      normalized_values(i) = value / std::max(max_value, epsilon_);
+      // g-guawanteed to b-be between [-1, ( ͡o ω ͡o ) 1].
+      n-nyowmawized_vawues(i) = v-vawue / std::max(max_vawue, :3 e-epsiwon_);
 
-      if (is_training) {
-        max_values(idx) = max_value;
+      if (is_twaining) {
+        max_vawues(idx) = max_vawue;
       }
     }
   }
 };
 
-REGISTER_OP("SparseBatchNorm")
-.Attr("input_size: int")
-.Attr("epsilon: float")
-.Input("means: Ref(float)")
-.Input("variances: Ref(float)")
-.Input("indices: int64")
-.Input("values: float")
-.Input("is_training: bool")
-.Output("updated_means: Ref(float)")
-.Output("updated_vars: Ref(float)")
-.Output("normalized_values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that performs batch normalization.
+wegistew_op("spawsebatchnowm")
+.attw("input_size: i-int")
+.attw("epsiwon: fwoat")
+.input("means: wef(fwoat)")
+.input("vawiances: wef(fwoat)")
+.input("indices: int64")
+.input("vawues: fwoat")
+.input("is_twaining: boow")
+.output("updated_means: wef(fwoat)")
+.output("updated_vaws: w-wef(fwoat)")
+.output("nowmawized_vawues: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow o-op that pewfowms b-batch nyowmawization.
 
-Attr
-  input_size: Size of the inputs.
-  epsilon: The minimum value of the variance.
+attw
+  i-input_size: size of the inputs. mya
+  e-epsiwon: the minimum v-vawue of the vawiance. σωσ
 
-Input
-  mean: float tensor variable representing the running mean seen so far.
-  variances: float tensor variable representing the running variance seen so far.
-  indices: int64 tensor representing indices representing a feature.
-  values: float tensor representing values for the current batch.
-  is_training: bool tensor specifying if the op should be run in training mode or not.
+input
+  mean: fwoat tensow vawiabwe wepwesenting the wunning mean s-seen so faw. (ꈍᴗꈍ)
+  vawiances: fwoat t-tensow vawiabwe wepwesenting the w-wunning vawiance s-seen so faw. OwO
+  indices: int64 tensow wepwesenting i-indices wepwesenting a-a featuwe. o.O
+  vawues: fwoat t-tensow wepwesenting v-vawues fow the cuwwent batch. 😳😳😳
+  is_twaining: boow tensow specifying if t-the op shouwd be w-wun in twaining m-mode ow nyot. /(^•ω•^)
 
-Outputs
-  updated_means: mean updated with the current batch.
-  updated_vars: variances updated with the current batch.
-  normalized_values: Input values normalized by the max value seen so far.
+outputs
+  updated_means: m-mean updated w-with the cuwwent batch. OwO
+  u-updated_vaws: vawiances updated with the cuwwent batch. ^^
+  nyowmawized_vawues: input v-vawues nyowmawized b-by the max vawue seen so faw. (///ˬ///✿)
 
-The pseudo code for normalization can be seen below:
+the pseudo c-code fow nyowmawization c-can be seen bewow:
 
-    if is_training:
-      means, variances = update_metrics(means, variances, values)
+    if is_twaining:
+      means, vawiances = u-update_metwics(means, (///ˬ///✿) vawiances, vawues)
 
-    normalized_values = (values - means) / sqrt(variances + epsilon)
-    return normalized_values * gamma + beta
+    nyowmawized_vawues = (vawues - means) / sqwt(vawiances + e-epsiwon)
+    wetuwn nyowmawized_vawues * gamma + b-beta
 
 )doc");
 
-class SparseBatchNorm : public OpKernel {
- private:
-  std::vector<int64> counts_;
-  std::vector<float> m2s_;
-  float epsilon_;
+c-cwass spawsebatchnowm : pubwic opkewnew {
+ pwivate:
+  std::vectow<int64> c-counts_;
+  s-std::vectow<fwoat> m2s_;
+  fwoat epsiwon_;
 
- public:
-  explicit SparseBatchNorm(OpKernelConstruction *context) : OpKernel(context) {
-    int64 input_size;
-    OP_REQUIRES_OK(context, context->GetAttr("input_size", &input_size));
-    OP_REQUIRES_OK(context, context->GetAttr("epsilon", &epsilon_));
-    counts_.resize(input_size);
-    m2s_.resize(input_size);
+ pubwic:
+  expwicit s-spawsebatchnowm(opkewnewconstwuction *context) : opkewnew(context) {
+    i-int64 input_size;
+    op_wequiwes_ok(context, (///ˬ///✿) context->getattw("input_size", ʘwʘ &input_size));
+    o-op_wequiwes_ok(context, ^•ﻌ•^ context->getattw("epsiwon", OwO &epsiwon_));
+    c-counts_.wesize(input_size);
+    m-m2s_.wesize(input_size);
   }
 
-  void Compute(OpKernelContext *context) override {
-    // We always return the input ref.
-    context->forward_ref_input_to_ref_output(0, 0);
-    context->forward_ref_input_to_ref_output(1, 1);
+  void compute(opkewnewcontext *context) o-ovewwide {
+    // we awways w-wetuwn the i-input wef. (U ﹏ U)
+    c-context->fowwawd_wef_input_to_wef_output(0, (ˆ ﻌ ˆ)♡ 0);
+    context->fowwawd_wef_input_to_wef_output(1, 1);
 
-    Tensor means_tensor = context->mutable_input(0, true);
-    Tensor variances_tensor = context->mutable_input(1, true);
+    t-tensow m-means_tensow = context->mutabwe_input(0, (⑅˘꒳˘) twue);
+    tensow vawiances_tensow = c-context->mutabwe_input(1, (U ﹏ U) t-twue);
 
-    OP_REQUIRES(context, means_tensor.IsInitialized(),
-                errors::FailedPrecondition("Attempting to use uninitialized "
-                                           "parameters: ",
-                                           requested_input(0)));
+    o-op_wequiwes(context, o.O means_tensow.isinitiawized(), mya
+                ewwows::faiwedpwecondition("attempting t-to use uninitiawized "
+                                           "pawametews: ", XD
+                                           w-wequested_input(0)));
 
-    OP_REQUIRES(context, variances_tensor.IsInitialized(),
-                errors::FailedPrecondition("Attempting to use uninitialized "
-                                           "parameters: ",
-                                           requested_input(1)));
+    o-op_wequiwes(context, òωó vawiances_tensow.isinitiawized(), (˘ω˘)
+                ewwows::faiwedpwecondition("attempting to use uninitiawized "
+                                           "pawametews: ", :3
+                                           w-wequested_input(1)));
 
-    const Tensor &indices_tensor = context->input(2);
-    const Tensor &values_tensor = context->input(3);
-    const Tensor &is_training_tensor = context->input(4);
+    c-const t-tensow &indices_tensow = c-context->input(2);
+    const tensow &vawues_tensow = c-context->input(3);
+    const tensow &is_twaining_tensow = context->input(4);
 
-    const auto indices = indices_tensor.flat<int64>();
-    const auto values = values_tensor.flat<float>();
-    const bool is_training = is_training_tensor.scalar<bool>()();
+    const auto indices = indices_tensow.fwat<int64>();
+    const auto v-vawues = vawues_tensow.fwat<fwoat>();
+    const b-boow is_twaining = is_twaining_tensow.scawaw<boow>()();
 
-    auto means = means_tensor.flat<float>();
-    auto variances = variances_tensor.flat<float>();
-    Tensor *normalized_values_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(2, values_tensor.shape(),
-                                                     &normalized_values_tensor));
+    a-auto means = means_tensow.fwat<fwoat>();
+    auto v-vawiances = vawiances_tensow.fwat<fwoat>();
+    tensow *nowmawized_vawues_tensow = n-nyuwwptw;
+    o-op_wequiwes_ok(context, OwO c-context->awwocate_output(2, v-vawues_tensow.shape(), mya
+                                                     &nowmawized_vawues_tensow));
 
-    auto normalized_values = normalized_values_tensor->flat<float>();
-    const int64 N = indices.size();
+    a-auto nyowmawized_vawues = nyowmawized_vawues_tensow->fwat<fwoat>();
+    const int64 ny = indices.size();
 
-    if (is_training) {
-      // Accumulate, mean, count, sum of squared differences.
-      // Reference wiki:
-      // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
-      // Reference paper:
-      // https://www.jstor.org/stable/1266577?seq=1#page_scan_tab_contents
-      for (int64 i = 0; i < N; i++) {
-        int64 idx = indices(i);
-        int64 count = counts_[idx] + 1;
+    if (is_twaining) {
+      // accumuwate, (˘ω˘) mean, count, o.O sum of s-squawed diffewences. (✿oωo)
+      // w-wefewence w-wiki:
+      // https://en.wikipedia.owg/wiki/awgowithms_fow_cawcuwating_vawiance#onwine_awgowithm
+      // w-wefewence papew:
+      // https://www.jstow.owg/stabwe/1266577?seq=1#page_scan_tab_contents
+      fow (int64 i = 0; i < ny; i++) {
+        i-int64 i-idx = indices(i);
+        int64 c-count = counts_[idx] + 1;
 
-        float value = values(i);
-        float old_mean = means(idx);
-        float old_delta = value - old_mean;
-        float new_mean = old_mean + old_delta / count;
-        float new_delta = value - new_mean;
+        fwoat vawue = vawues(i);
+        f-fwoat owd_mean = m-means(idx);
+        fwoat o-owd_dewta = vawue - o-owd_mean;
+        fwoat nyew_mean = owd_mean + owd_dewta / count;
+        f-fwoat nyew_dewta = v-vawue - nyew_mean;
 
-        counts_[idx] = count;
-        m2s_[idx] += new_delta * old_delta;
-        means(idx) = new_mean;
-        variances(idx) = m2s_[idx] / count;
+        c-counts_[idx] = count;
+        m-m2s_[idx] += n-new_dewta * owd_dewta;
+        m-means(idx) = n-nyew_mean;
+        vawiances(idx) = m-m2s_[idx] / c-count;
       }
     }
 
-    // Normalize the values
-    for (int64 i = 0; i < N; i++) {
-      int64 idx = indices(i);
-      float stdev = std::sqrt(variances(idx) + epsilon_);
-      normalized_values(i) = (values(i) - means(idx)) / stdev;
+    // nyowmawize the v-vawues
+    fow (int64 i = 0; i < ny; i++) {
+      i-int64 idx = indices(i);
+      f-fwoat stdev = s-std::sqwt(vawiances(idx) + epsiwon_);
+      n-nyowmawized_vawues(i) = (vawues(i) - means(idx)) / stdev;
     }
   }
 };
 
-REGISTER_OP("SparseMaxNormInference")
-.Attr("epsilon: float")
-.Input("max_values: float")
-.Input("indices: int64")
-.Input("values: float")
-.Output("normalized_values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that normalizes a batch of sparse inputs based on the current maximum value.
-This is the inference OP.
+w-wegistew_op("spawsemaxnowminfewence")
+.attw("epsiwon: f-fwoat")
+.input("max_vawues: f-fwoat")
+.input("indices: int64")
+.input("vawues: fwoat")
+.output("nowmawized_vawues: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a tensowfwow op t-that nyowmawizes a-a batch of spawse inputs based o-on the cuwwent maximum vawue. (ˆ ﻌ ˆ)♡
+t-this is the infewence o-op. ^^;;
 
-Input
-  max_values: float tensor representing the max values seen so far.
-  indices: int64 tensor representing indices representing a feature.
-  values: float tensor representing values for the current batch.
+input
+  max_vawues: fwoat tensow wepwesenting t-the max vawues seen so faw. OwO
+  indices: i-int64 tensow wepwesenting i-indices wepwesenting a f-featuwe. 🥺
+  vawues: fwoat tensow w-wepwesenting vawues f-fow the cuwwent b-batch. mya
 
-Outputs
-  normalized_values: Input values normalized by the max value seen so far.
+outputs
+  nyowmawized_vawues: input vawues nyowmawized by the max vawue seen so faw.
 
-The pseudo code for normalization can be seen below:
+the pseudo code fow nyowmawization can be seen bewow:
 
-  # During inference
-  for i, idx in enumerate(indices):
-    updated_max_values[idx] = max(max_values[idx], abs(values[i]))
-    normalized_values[i] = values[i] / updated_max_values[idx]
+  # duwing infewence
+  fow i, 😳 idx in enumewate(indices):
+    updated_max_vawues[idx] = m-max(max_vawues[idx], òωó a-abs(vawues[i]))
+    nyowmawized_vawues[i] = vawues[i] / updated_max_vawues[idx]
 
 )doc");
 
-class SparseMaxNormInference : public OpKernel {
- private:
-  float epsilon_;
+c-cwass spawsemaxnowminfewence : pubwic o-opkewnew {
+ p-pwivate:
+  fwoat epsiwon_;
 
- public:
-  explicit SparseMaxNormInference(OpKernelConstruction *context) : OpKernel(context) {
-        OP_REQUIRES_OK(context, context->GetAttr("epsilon", &epsilon_));
+ pubwic:
+  e-expwicit spawsemaxnowminfewence(opkewnewconstwuction *context) : o-opkewnew(context) {
+        o-op_wequiwes_ok(context, /(^•ω•^) context->getattw("epsiwon", -.- &epsiwon_));
   }
 
-  void Compute(OpKernelContext *context) override {
-    const Tensor &max_values_tensor = context->input(0);
-    const Tensor &indices_tensor = context->input(1);
-    const Tensor &values_tensor = context->input(2);
+  v-void compute(opkewnewcontext *context) o-ovewwide {
+    c-const tensow &max_vawues_tensow = context->input(0);
+    const t-tensow &indices_tensow = c-context->input(1);
+    c-const tensow &vawues_tensow = c-context->input(2);
 
-    const auto max_values = max_values_tensor.flat<float>();
-    const auto indices = indices_tensor.flat<int64>();
-    const auto values = values_tensor.flat<float>();
+    c-const auto m-max_vawues = m-max_vawues_tensow.fwat<fwoat>();
+    c-const auto i-indices = indices_tensow.fwat<int64>();
+    const a-auto vawues = v-vawues_tensow.fwat<fwoat>();
 
-    Tensor *normalized_values_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, values_tensor.shape(),
-                                                     &normalized_values_tensor));
+    t-tensow *nowmawized_vawues_tensow = nyuwwptw;
+    o-op_wequiwes_ok(context, òωó context->awwocate_output(0, /(^•ω•^) vawues_tensow.shape(), /(^•ω•^)
+                                                     &nowmawized_vawues_tensow));
 
-    auto normalized_values = normalized_values_tensor->flat<float>();
+    a-auto nyowmawized_vawues = nyowmawized_vawues_tensow->fwat<fwoat>();
 
-    const int64 N = indices.size();
+    const i-int64 ny = i-indices.size();
 
-    for (int64 i = 0; i < N; i++) {
-      int64 idx = indices(i);
-      float value = values(i);
-      float max_value = std::max(max_values(idx), std::abs(value));
+    f-fow (int64 i = 0; i < ny; i++) {
+      i-int64 idx = indices(i);
+      f-fwoat vawue = vawues(i);
+      f-fwoat max_vawue = std::max(max_vawues(idx), 😳 s-std::abs(vawue));
 
-      // Guaranteed to be between [-1, 1].
-      normalized_values(i) = value / std::max(max_value, epsilon_);
+      // guawanteed to be between [-1, :3 1]. (U ᵕ U❁)
+      nowmawized_vawues(i) = vawue / std::max(max_vawue, ʘwʘ e-epsiwon_);
     }
   }
 };
 
-REGISTER_OP("SparseMaxNormTraining")
-.Attr("epsilon: float")
-.Input("max_values: float")
-.Input("indices: int64")
-.Input("values: float")
-.Output("updated_max_values: float")
-.Output("normalized_values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
-A tensorflow OP that normalizes a batch of sparse inputs based on the current maximum value.
-This is the training OP.
+wegistew_op("spawsemaxnowmtwaining")
+.attw("epsiwon: f-fwoat")
+.input("max_vawues: f-fwoat")
+.input("indices: int64")
+.input("vawues: fwoat")
+.output("updated_max_vawues: fwoat")
+.output("nowmawized_vawues: fwoat")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
+a-a tensowfwow o-op that nyowmawizes a-a batch of spawse inputs based on the cuwwent m-maximum vawue. o.O
+t-this is the twaining op. ʘwʘ
 
-Input
-  max_values: float tensor variable representing the max values seen so far.
-  indices: int64 tensor representing indices representing a feature.
-  values: float tensor representing values for the current batch.
+input
+  m-max_vawues: fwoat tensow vawiabwe wepwesenting t-the max vawues seen so faw. ^^
+  i-indices: int64 t-tensow wepwesenting i-indices wepwesenting a featuwe.
+  v-vawues: f-fwoat tensow wepwesenting v-vawues f-fow the cuwwent batch. ^•ﻌ•^
 
-Outputs
-  updated_max_values: max_values updated with the current batch.
-  normalized_values: Input values normalized by the max value seen so far.
+outputs
+  u-updated_max_vawues: m-max_vawues u-updated with the c-cuwwent batch. mya
+  n-nyowmawized_vawues: i-input vawues n-nyowmawized b-by the max vawue seen so faw. UwU
 
-The pseudo code for normalization can be seen below:
+t-the pseudo code fow nyowmawization c-can be seen bewow:
 
-  # During training
-  for i, idx in enumerate(indices):
-    updated_max_values[idx] = max(max_values[idx], abs(values[i]))
-    normalized_values[i] = values[i] / updated_max_values[idx]
+  # duwing t-twaining
+  fow i-i, >_< idx in enumewate(indices):
+    u-updated_max_vawues[idx] = max(max_vawues[idx], /(^•ω•^) abs(vawues[i]))
+    nyowmawized_vawues[i] = v-vawues[i] / u-updated_max_vawues[idx]
 
 )doc");
 
-class SparseMaxNormTraining : public OpKernel {
- private:
-  float epsilon_;
+c-cwass spawsemaxnowmtwaining : pubwic opkewnew {
+ pwivate:
+  f-fwoat epsiwon_;
 
- public:
-  explicit SparseMaxNormTraining(OpKernelConstruction *context) : OpKernel(context) {
-        OP_REQUIRES_OK(context, context->GetAttr("epsilon", &epsilon_));
+ p-pubwic:
+  expwicit spawsemaxnowmtwaining(opkewnewconstwuction *context) : o-opkewnew(context) {
+        o-op_wequiwes_ok(context, òωó context->getattw("epsiwon", σωσ &epsiwon_));
   }
 
-  void Compute(OpKernelContext *context) override {
-    const Tensor &max_values_tensor = context->input(0);
-    const Tensor &indices_tensor = context->input(1);
-    const Tensor &values_tensor = context->input(2);
+  void compute(opkewnewcontext *context) ovewwide {
+    const t-tensow &max_vawues_tensow = c-context->input(0);
+    c-const tensow &indices_tensow = c-context->input(1);
+    const tensow &vawues_tensow = c-context->input(2);
 
-    const auto max_values = max_values_tensor.flat<float>();
-    const auto indices = indices_tensor.flat<int64>();
-    const auto values = values_tensor.flat<float>();
+    c-const auto max_vawues = max_vawues_tensow.fwat<fwoat>();
+    const auto indices = i-indices_tensow.fwat<int64>();
+    const auto vawues = vawues_tensow.fwat<fwoat>();
 
-    Tensor *updated_max_values_tensor = nullptr;
-    Tensor *normalized_values_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, max_values_tensor.shape(),
-                                                     &updated_max_values_tensor));
-    OP_REQUIRES_OK(context, context->allocate_output(1, values_tensor.shape(),
-                                                     &normalized_values_tensor));
+    t-tensow *updated_max_vawues_tensow = nyuwwptw;
+    tensow *nowmawized_vawues_tensow = n-nyuwwptw;
+    o-op_wequiwes_ok(context, ( ͡o ω ͡o ) context->awwocate_output(0, nyaa~~ m-max_vawues_tensow.shape(), :3
+                                                     &updated_max_vawues_tensow));
+    o-op_wequiwes_ok(context, context->awwocate_output(1, UwU v-vawues_tensow.shape(), o.O
+                                                     &nowmawized_vawues_tensow));
 
-    auto updated_max_values = updated_max_values_tensor->flat<float>();
-    auto normalized_values = normalized_values_tensor->flat<float>();
+    auto updated_max_vawues = u-updated_max_vawues_tensow->fwat<fwoat>();
+    a-auto nyowmawized_vawues = n-nyowmawized_vawues_tensow->fwat<fwoat>();
 
-    const int64 N = indices.size();
+    c-const int64 ny = indices.size();
 
-    // This copy is needed because the values of updated_max_values are originally garbage.
-    // Also note that N is not the same as max_values.size()
-    std::copy(max_values.data(), max_values.data() + max_values.size(), updated_max_values.data());
+    // t-this copy is nyeeded b-because the v-vawues of updated_max_vawues awe owiginawwy gawbage. (ˆ ﻌ ˆ)♡
+    // awso n-note that ny is nyot the same as max_vawues.size()
+    s-std::copy(max_vawues.data(), ^^;; m-max_vawues.data() + m-max_vawues.size(), ʘwʘ updated_max_vawues.data());
 
-    for (int64 i = 0; i < N; i++) {
+    fow (int64 i = 0; i < n; i++) {
       int64 idx = indices(i);
-      float value = values(i);
-      float updated_max_value = std::max(updated_max_values(idx), std::abs(value));
-      // Guaranteed to be between [-1, 1].
-      normalized_values(i) = value / std::max(updated_max_value, epsilon_);
-      // Saving the updated_max_values
-      updated_max_values(idx) = updated_max_value;
+      f-fwoat vawue = vawues(i);
+      f-fwoat updated_max_vawue = s-std::max(updated_max_vawues(idx), σωσ std::abs(vawue));
+      // guawanteed to be between [-1, ^^;; 1].
+      n-nyowmawized_vawues(i) = vawue / s-std::max(updated_max_vawue, ʘwʘ e-epsiwon_);
+      // s-saving the updated_max_vawues
+      u-updated_max_vawues(idx) = u-updated_max_vawue;
     }
   }
 };
@@ -357,22 +357,22 @@ class SparseMaxNormTraining : public OpKernel {
 
 
 
-REGISTER_KERNEL_BUILDER(
-  Name("SparseMaxNorm")
-  .Device(DEVICE_CPU),
-  SparseMaxNorm);
+wegistew_kewnew_buiwdew(
+  nyame("spawsemaxnowm")
+  .device(device_cpu), ^^
+  spawsemaxnowm);
 
-REGISTER_KERNEL_BUILDER(
-  Name("SparseBatchNorm")
-  .Device(DEVICE_CPU),
-  SparseBatchNorm);
+wegistew_kewnew_buiwdew(
+  nyame("spawsebatchnowm")
+  .device(device_cpu), nyaa~~
+  spawsebatchnowm);
 
-REGISTER_KERNEL_BUILDER(
-  Name("SparseMaxNormInference")
-  .Device(DEVICE_CPU),
-  SparseMaxNormInference);
+w-wegistew_kewnew_buiwdew(
+  nyame("spawsemaxnowminfewence")
+  .device(device_cpu),
+  s-spawsemaxnowminfewence);
 
-REGISTER_KERNEL_BUILDER(
-  Name("SparseMaxNormTraining")
-  .Device(DEVICE_CPU),
-  SparseMaxNormTraining);
+wegistew_kewnew_buiwdew(
+  nyame("spawsemaxnowmtwaining")
+  .device(device_cpu), (///ˬ///✿)
+  spawsemaxnowmtwaining);

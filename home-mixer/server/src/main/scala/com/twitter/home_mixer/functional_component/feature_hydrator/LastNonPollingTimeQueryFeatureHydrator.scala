@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.twittew.home_mixew.functionaw_component.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.FollowingLastNonPollingTimeFeature
-import com.twitter.home_mixer.model.HomeFeatures.LastNonPollingTimeFeature
-import com.twitter.home_mixer.model.HomeFeatures.NonPollingTimesFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.user_session_store.ReadRequest
-import com.twitter.user_session_store.ReadWriteUserSessionStore
-import com.twitter.user_session_store.UserSessionDataset
-import com.twitter.user_session_store.UserSessionDataset.UserSessionDataset
-import com.twitter.util.Time
+impowt com.twittew.home_mixew.modew.homefeatuwes.fowwowingwastnonpowwingtimefeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.wastnonpowwingtimefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.nonpowwingtimesfeatuwe
+i-impowt c-com.twittew.home_mixew.sewvice.homemixewawewtconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.usew_session_stowe.weadwequest
+impowt com.twittew.usew_session_stowe.weadwwiteusewsessionstowe
+i-impowt com.twittew.usew_session_stowe.usewsessiondataset
+impowt com.twittew.usew_session_stowe.usewsessiondataset.usewsessiondataset
+impowt c-com.twittew.utiw.time
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-case class LastNonPollingTimeQueryFeatureHydrator @Inject() (
-  userSessionStore: ReadWriteUserSessionStore)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@singweton
+c-case cwass wastnonpowwingtimequewyfeatuwehydwatow @inject() (
+  usewsessionstowe: weadwwiteusewsessionstowe)
+    extends quewyfeatuwehydwatow[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("LastNonPollingTime")
+  ovewwide v-vaw identifiew: featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("wastnonpowwingtime")
 
-  override val features: Set[Feature[_, _]] = Set(
-    FollowingLastNonPollingTimeFeature,
-    LastNonPollingTimeFeature,
-    NonPollingTimesFeature
+  ovewwide vaw featuwes: s-set[featuwe[_, ʘwʘ _]] = set(
+    f-fowwowingwastnonpowwingtimefeatuwe, /(^•ω•^)
+    w-wastnonpowwingtimefeatuwe, ʘwʘ
+    n-nyonpowwingtimesfeatuwe
   )
 
-  private val datasets: Set[UserSessionDataset] = Set(UserSessionDataset.NonPollingTimes)
+  p-pwivate vaw datasets: set[usewsessiondataset] = set(usewsessiondataset.nonpowwingtimes)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    userSessionStore
-      .read(ReadRequest(query.getRequiredUserId, datasets))
-      .map { userSession =>
-        val nonPollingTimestamps = userSession.flatMap(_.nonPollingTimestamps)
+  o-ovewwide def hydwate(quewy: pipewinequewy): stitch[featuwemap] = {
+    u-usewsessionstowe
+      .wead(weadwequest(quewy.getwequiwedusewid, σωσ datasets))
+      .map { usewsession =>
+        vaw nyonpowwingtimestamps = usewsession.fwatmap(_.nonpowwingtimestamps)
 
-        val lastNonPollingTime = nonPollingTimestamps
-          .flatMap(_.nonPollingTimestampsMs.headOption)
-          .map(Time.fromMilliseconds)
+        vaw wastnonpowwingtime = n-nyonpowwingtimestamps
+          .fwatmap(_.nonpowwingtimestampsms.headoption)
+          .map(time.fwommiwwiseconds)
 
-        val followingLastNonPollingTime = nonPollingTimestamps
-          .flatMap(_.mostRecentHomeLatestNonPollingTimestampMs)
-          .map(Time.fromMilliseconds)
+        vaw fowwowingwastnonpowwingtime = n-nonpowwingtimestamps
+          .fwatmap(_.mostwecenthomewatestnonpowwingtimestampms)
+          .map(time.fwommiwwiseconds)
 
-        val nonPollingTimes = nonPollingTimestamps
-          .map(_.nonPollingTimestampsMs)
-          .getOrElse(Seq.empty)
+        v-vaw nyonpowwingtimes = n-nyonpowwingtimestamps
+          .map(_.nonpowwingtimestampsms)
+          .getowewse(seq.empty)
 
-        FeatureMapBuilder()
-          .add(FollowingLastNonPollingTimeFeature, followingLastNonPollingTime)
-          .add(LastNonPollingTimeFeature, lastNonPollingTime)
-          .add(NonPollingTimesFeature, nonPollingTimes)
-          .build()
+        featuwemapbuiwdew()
+          .add(fowwowingwastnonpowwingtimefeatuwe, fowwowingwastnonpowwingtime)
+          .add(wastnonpowwingtimefeatuwe, OwO wastnonpowwingtime)
+          .add(nonpowwingtimesfeatuwe, 😳😳😳 n-nyonpowwingtimes)
+          .buiwd()
       }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9)
+  o-ovewwide vaw awewts = seq(
+    h-homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(99.9)
   )
 }

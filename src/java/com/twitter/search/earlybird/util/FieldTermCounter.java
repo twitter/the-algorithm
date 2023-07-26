@@ -1,304 +1,304 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.concurrent.atomic.AtomicInteger;
+impowt j-java.utiw.cawendaw;
+i-impowt java.utiw.cowwections;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.timezone;
+i-impowt java.utiw.concuwwent.atomic.atomicintegew;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.maps;
 
-import org.apache.commons.lang.mutable.MutableInt;
-import org.apache.commons.lang.mutable.MutableLong;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.wang.mutabwe.mutabweint;
+impowt owg.apache.commons.wang.mutabwe.mutabwewong;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
+i-impowt com.twittew.seawch.common.metwics.seawchwonggauge;
 
 /**
- * This class is used to count how many times a field happens in hourly and daily stats.
- * It is used by TermCountMonitor for iterating all fields in the index.
+ * this cwass i-is used to count how many times a fiewd happens in houwwy and d-daiwy stats. ʘwʘ
+ * it is used by tewmcountmonitow f-fow itewating aww f-fiewds in the index. rawr x3
  *
- * There is one exception that this class is also used to count the number of tweets in the index.
- * Under the situation, the passed in fieldName would be empty string (as TWEET_COUNT_KEY).
+ * thewe is one exception that this cwass is awso used t-to count the nyumbew of tweets in the index. (˘ω˘)
+ * undew the situation, o.O the passed i-in fiewdname wouwd be empty stwing (as t-tweet_count_key). 😳
  */
-public class FieldTermCounter {
-  private static final Logger LOG = LoggerFactory.getLogger(FieldTermCounter.class);
+p-pubwic c-cwass fiewdtewmcountew {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(fiewdtewmcountew.cwass);
 
-  static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT");
-  static final String TWEET_COUNT_KEY = "";
+  s-static finaw timezone time_zone = timezone.gettimezone("gmt");
+  s-static finaw stwing tweet_count_key = "";
 
-  private final String fieldName;
-  private final int instanceCounter;
+  pwivate finaw stwing fiewdname;
+  pwivate finaw int instancecountew;
 
-  // The first date in format "YYYYMMDDHH" that we want to check counts for.
-  private final int startCheckHour;
-  // The last date in format "YYYYMMDDHH" that we want to check counts for.
-  private final int endCheckHour;
-  // Smallest number of docs we expect to have for each hour.
-  private final int hourlyMinCount;
-  //Smallest number of docs we expect to have for each day.
-  private final int dailyMinCount;
+  // the f-fiwst date in fowmat "yyyymmddhh" t-that we want t-to check counts f-fow. o.O
+  pwivate finaw int stawtcheckhouw;
+  // the wast date in fowmat "yyyymmddhh" t-that we want t-to check counts fow. ^^;;
+  pwivate f-finaw int endcheckhouw;
+  // s-smowest nyumbew of d-docs we expect to have fow each h-houw. ( ͡o ω ͡o )
+  pwivate finaw int houwwymincount;
+  //smowest nyumbew of d-docs we expect to have fow each d-day. ^^;;
+  pwivate finaw int daiwymincount;
 
-  // Count of tweets for each day, keyed of by the hour in the format "YYYYMMDD".
-  private final Map<Integer, AtomicInteger> exportedHourlyCounts;
+  // c-count of tweets f-fow each day, ^^;; keyed of by the houw in the fowmat "yyyymmdd". XD
+  pwivate finaw map<integew, 🥺 atomicintegew> expowtedhouwwycounts;
 
-  // Count of tweets for each day, keyed of by the day in the format "YYYYMMDD".
-  private final Map<Integer, MutableLong> dailyCounts;
+  // count of tweets f-fow each day, (///ˬ///✿) k-keyed of by the day in the fowmat "yyyymmdd". (U ᵕ U❁)
+  p-pwivate finaw m-map<integew, ^^;; mutabwewong> d-daiwycounts;
 
-  // Only export hourly stats that are below minimum threshold.
-  private final Map<String, SearchLongGauge> exportedStats;
+  // onwy expowt houwwy stats that awe b-bewow minimum thweshowd. ^^;;
+  pwivate finaw map<stwing, rawr seawchwonggauge> expowtedstats;
 
-  private final SearchLongGauge hoursWithNoTweetsStat;
-  private final SearchLongGauge daysWithNoTweetsStat;
+  p-pwivate finaw seawchwonggauge h-houwswithnotweetsstat;
+  pwivate f-finaw seawchwonggauge d-dayswithnotweetsstat;
 
-  public FieldTermCounter(
-      String fieldName,
-      int instanceCounter,
-      int startCheckHour,
-      int endCheckHour,
-      int hourlyMinCount,
-      int dailyMinCount) {
-    this.fieldName = fieldName;
-    this.instanceCounter = instanceCounter;
-    this.startCheckHour = startCheckHour;
-    this.endCheckHour = endCheckHour;
-    this.hourlyMinCount = hourlyMinCount;
-    this.dailyMinCount = dailyMinCount;
-    this.exportedHourlyCounts = Maps.newHashMap();
-    this.dailyCounts = Maps.newHashMap();
-    this.exportedStats = Maps.newHashMap();
+  pubwic fiewdtewmcountew(
+      s-stwing fiewdname, (˘ω˘)
+      i-int i-instancecountew, 🥺
+      i-int stawtcheckhouw,
+      int endcheckhouw, nyaa~~
+      int houwwymincount, :3
+      i-int daiwymincount) {
+    t-this.fiewdname = f-fiewdname;
+    t-this.instancecountew = i-instancecountew;
+    this.stawtcheckhouw = stawtcheckhouw;
+    this.endcheckhouw = endcheckhouw;
+    t-this.houwwymincount = houwwymincount;
+    this.daiwymincount = daiwymincount;
+    this.expowtedhouwwycounts = maps.newhashmap();
+    this.daiwycounts = m-maps.newhashmap();
+    this.expowtedstats = maps.newhashmap();
 
-    this.hoursWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(true));
-    this.daysWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(false));
+    this.houwswithnotweetsstat = s-seawchwonggauge.expowt(getaggwegatednotweetstatname(twue));
+    t-this.dayswithnotweetsstat = s-seawchwonggauge.expowt(getaggwegatednotweetstatname(fawse));
   }
 
   /**
-   * Updates the stats exported by this class based on the new counts provided in the given map.
+   * updates t-the stats expowted by this cwass b-based on the n-nyew counts pwovided in the given map. /(^•ω•^)
    */
-  public void runWithNewCounts(Map<Integer, MutableInt> newCounts) {
-    dailyCounts.clear();
+  pubwic void wunwithnewcounts(map<integew, ^•ﻌ•^ mutabweint> nyewcounts) {
+    d-daiwycounts.cweaw();
 
-    // See go/rb/813442/#comment2566569
-    // 1. Update all existing hours
-    updateExistingHourlyCounts(newCounts);
+    // see go/wb/813442/#comment2566569
+    // 1. u-update aww existing houws
+    updateexistinghouwwycounts(newcounts);
 
-    // 2. Add and export all new hours
-    addAndExportNewHourlyCounts(newCounts);
+    // 2. UwU a-add and expowt aww n-nyew houws
+    addandexpowtnewhouwwycounts(newcounts);
 
-    // 3. fill in all the missing hours between know min and max days.
-    fillMissingHourlyCounts();
+    // 3. 😳😳😳 fiww in aww t-the missing houws b-between know min and max days. OwO
+    f-fiwwmissinghouwwycounts();
 
-    // 4. Export as a stat, how many hours don't have any tweets (i.e. <= 0)
-    exportMissingTweetStats();
+    // 4. ^•ﻌ•^ e-expowt as a stat, (ꈍᴗꈍ) how many houws don't have any tweets (i.e. (⑅˘꒳˘) <= 0)
+    expowtmissingtweetstats();
   }
 
-  // Input:
-  // . the new hourly count map in the current iteration
-  // . the existing hourly count map before the current iteration
-  // If the hourly key matches from the new hourly map to the existing hourly count map, update
-  // the value of the existing hourly count map to the value from the new hourly count map.
-  private void updateExistingHourlyCounts(Map<Integer, MutableInt> newCounts) {
-    for (Map.Entry<Integer, AtomicInteger> exportedCount : exportedHourlyCounts.entrySet()) {
-      Integer date = exportedCount.getKey();
-      AtomicInteger exportedCountValue = exportedCount.getValue();
+  // i-input:
+  // . (⑅˘꒳˘) t-the nyew houwwy c-count map in the cuwwent itewation
+  // . (ˆ ﻌ ˆ)♡ t-the existing houwwy c-count map befowe the cuwwent i-itewation
+  // if the houwwy key matches fwom the nyew houwwy map to the existing h-houwwy count m-map, /(^•ω•^) update
+  // the vawue of the existing houwwy c-count map to the v-vawue fwom the nyew houwwy count map. òωó
+  pwivate void updateexistinghouwwycounts(map<integew, (⑅˘꒳˘) m-mutabweint> nyewcounts) {
+    fow (map.entwy<integew, (U ᵕ U❁) atomicintegew> expowtedcount : expowtedhouwwycounts.entwyset()) {
+      i-integew date = expowtedcount.getkey();
+      atomicintegew e-expowtedcountvawue = e-expowtedcount.getvawue();
 
-      MutableInt newCount = newCounts.get(date);
-      if (newCount == null) {
-        exportedCountValue.set(0);
-      } else {
-        exportedCountValue.set(newCount.intValue());
-        // clean up so that we don't check this date again when we look for new hours
-        newCounts.remove(date);
+      mutabweint nyewcount = nyewcounts.get(date);
+      if (newcount == n-nyuww) {
+        e-expowtedcountvawue.set(0);
+      } ewse {
+        expowtedcountvawue.set(newcount.intvawue());
+        // cwean u-up so that we don't check this d-date again when we wook fow nyew houws
+        nyewcounts.wemove(date);
       }
     }
   }
 
-  // Input:
-  // . the new hourly count map in the current iteration
-  // . the existing hourly count map before the current iteration
-  // This function is called after the above function of updateExistingHourlyCounts() so that all
-  // matching key value pairs have been removed from the new hourly count map.
-  // Move all remaining valid values from the new hourly count map to the existing hourly count
-  // map.
-  private void addAndExportNewHourlyCounts(Map<Integer, MutableInt> newCounts) {
-    for (Map.Entry<Integer, MutableInt> newCount : newCounts.entrySet()) {
-      Integer hour = newCount.getKey();
-      MutableInt newCountValue = newCount.getValue();
-      Preconditions.checkState(!exportedHourlyCounts.containsKey(hour),
-          "Should have already processed and removed existing hours: " + hour);
+  // i-input:
+  // . >w< the nyew houwwy c-count map in the c-cuwwent itewation
+  // . σωσ the existing h-houwwy count map befowe the c-cuwwent itewation
+  // t-this function i-is cawwed aftew the above f-function of updateexistinghouwwycounts() s-so that aww
+  // matching key vawue paiws h-have been wemoved f-fwom the n-nyew houwwy count map. -.-
+  // move aww wemaining vawid v-vawues fwom the nyew houwwy c-count map to the e-existing houwwy count
+  // map. o.O
+  pwivate void addandexpowtnewhouwwycounts(map<integew, ^^ m-mutabweint> n-nyewcounts) {
+    f-fow (map.entwy<integew, >_< m-mutabweint> nyewcount : nyewcounts.entwyset()) {
+      i-integew houw = nyewcount.getkey();
+      mutabweint nyewcountvawue = nyewcount.getvawue();
+      pweconditions.checkstate(!expowtedhouwwycounts.containskey(houw), >w<
+          "shouwd have a-awweady pwocessed and wemoved existing h-houws: " + houw);
 
-      AtomicInteger newStat = new AtomicInteger(newCountValue.intValue());
-      exportedHourlyCounts.put(hour, newStat);
+      a-atomicintegew nyewstat = nyew atomicintegew(newcountvawue.intvawue());
+      e-expowtedhouwwycounts.put(houw, >_< nyewstat);
     }
   }
 
-  // Find whether the existing hourly count map has hourly holes.  If such holes exist, fill 0
-  // values so that they can be exported.
-  private void fillMissingHourlyCounts() {
-    // Figure out the time range for which we should have tweets in the index. At the very least,
-    // this range should cover [startCheckHour, endCheckHour) if endCheckHour is set, or
-    // [startCheckHour, latestHourInTheIndexWithTweets] if endCheckHour is not set (latest tier or
-    // realtime cluster).
-    int startHour = startCheckHour;
-    int endHour = endCheckHour < getHourValue(Calendar.getInstance(TIME_ZONE)) ? endCheckHour : -1;
-    for (int next : exportedHourlyCounts.keySet()) {
-      if (next < startHour) {
-        startHour = next;
+  // f-find whethew t-the existing h-houwwy count map h-has houwwy howes. >w<  i-if such howes exist, rawr fiww 0
+  // vawues so that they can be expowted. rawr x3
+  pwivate void fiwwmissinghouwwycounts() {
+    // figuwe o-out the time w-wange fow which w-we shouwd have tweets in the index. ( ͡o ω ͡o ) a-at the vewy weast, (˘ω˘)
+    // this wange shouwd covew [stawtcheckhouw, 😳 e-endcheckhouw) i-if endcheckhouw is set, OwO ow
+    // [stawtcheckhouw, (˘ω˘) w-watesthouwintheindexwithtweets] if endcheckhouw is nyot s-set (watest tiew o-ow
+    // weawtime cwustew). òωó
+    i-int stawthouw = s-stawtcheckhouw;
+    int endhouw = endcheckhouw < gethouwvawue(cawendaw.getinstance(time_zone)) ? endcheckhouw : -1;
+    f-fow (int n-nyext : expowtedhouwwycounts.keyset()) {
+      i-if (next < stawthouw) {
+        s-stawthouw = n-nyext;
       }
-      if (next > endHour) {
-        endHour = next;
+      if (next > e-endhouw) {
+        e-endhouw = next;
       }
     }
 
-    Calendar endHourCal = getCalendarValue(endHour);
-    Calendar hour = getCalendarValue(startHour);
-    for (; hour.before(endHourCal); hour.add(Calendar.HOUR_OF_DAY, 1)) {
-      int hourValue = getHourValue(hour);
-      if (!exportedHourlyCounts.containsKey(hourValue)) {
-        exportedHourlyCounts.put(hourValue, new AtomicInteger(0));
+    cawendaw endhouwcaw = g-getcawendawvawue(endhouw);
+    c-cawendaw houw = getcawendawvawue(stawthouw);
+    f-fow (; houw.befowe(endhouwcaw); houw.add(cawendaw.houw_of_day, ( ͡o ω ͡o ) 1)) {
+      i-int houwvawue = gethouwvawue(houw);
+      i-if (!expowtedhouwwycounts.containskey(houwvawue)) {
+        e-expowtedhouwwycounts.put(houwvawue, UwU nyew atomicintegew(0));
       }
     }
   }
 
-  private void exportMissingTweetStats() {
-    int hoursWithNoTweets = 0;
-    int daysWithNoTweets = 0;
+  p-pwivate void expowtmissingtweetstats() {
+    int houwswithnotweets = 0;
+    i-int dayswithnotweets = 0;
 
-    for (Map.Entry<Integer, AtomicInteger> hourlyCount : exportedHourlyCounts.entrySet()) {
-      int hour = hourlyCount.getKey();
-      if ((hour < startCheckHour) || (hour >= endCheckHour)) {
+    f-fow (map.entwy<integew, /(^•ω•^) a-atomicintegew> houwwycount : expowtedhouwwycounts.entwyset()) {
+      int houw = houwwycount.getkey();
+      i-if ((houw < stawtcheckhouw) || (houw >= endcheckhouw)) {
         continue;
       }
 
-      // roll up the days
-      int day = hour / 100;
-      MutableLong dayCount = dailyCounts.get(day);
-      if (dayCount == null) {
-        dailyCounts.put(day, new MutableLong(hourlyCount.getValue().get()));
-      } else {
-        dayCount.setValue(dayCount.longValue() + hourlyCount.getValue().get());
+      // w-woww u-up the days
+      int day = houw / 100;
+      m-mutabwewong daycount = d-daiwycounts.get(day);
+      i-if (daycount == nyuww) {
+        daiwycounts.put(day, (ꈍᴗꈍ) n-nyew mutabwewong(houwwycount.getvawue().get()));
+      } ewse {
+        daycount.setvawue(daycount.wongvawue() + houwwycount.getvawue().get());
       }
-      AtomicInteger exportedCountValue = hourlyCount.getValue();
-      if (exportedCountValue.get() <= hourlyMinCount) {
-        // We do not export hourly too few tweets for index fields as it can 10x the existing
-        // exported stats.
-        // We might consider whitelisting some high frequency fields later.
-        if (isFieldForTweet()) {
-          String statsName = getStatName(hourlyCount.getKey());
-          SearchLongGauge stat = SearchLongGauge.export(statsName);
-          stat.set(exportedCountValue.longValue());
-          exportedStats.put(statsName, stat);
+      a-atomicintegew e-expowtedcountvawue = houwwycount.getvawue();
+      i-if (expowtedcountvawue.get() <= houwwymincount) {
+        // w-we do nyot expowt h-houwwy too f-few tweets fow index fiewds as it can 10x the existing
+        // expowted stats.
+        // we might considew whitewisting some high fwequency fiewds watew. 😳
+        if (isfiewdfowtweet()) {
+          stwing statsname = getstatname(houwwycount.getkey());
+          seawchwonggauge s-stat = s-seawchwonggauge.expowt(statsname);
+          stat.set(expowtedcountvawue.wongvawue());
+          expowtedstats.put(statsname, s-stat);
         }
-        LOG.warn("Found an hour with too few tweets. Field: <{}> Hour: {} count: {}",
-            fieldName, hour, exportedCountValue);
-        hoursWithNoTweets++;
+        w-wog.wawn("found a-an houw with too few tweets. mya f-fiewd: <{}> houw: {} count: {}", mya
+            f-fiewdname, /(^•ω•^) houw, e-expowtedcountvawue);
+        houwswithnotweets++;
       }
     }
 
-    for (Map.Entry<Integer, MutableLong> dailyCount : dailyCounts.entrySet()) {
-      if (dailyCount.getValue().longValue() <= dailyMinCount) {
-        LOG.warn("Found a day with too few tweets. Field: <{}> Day: {} count: {}",
-            fieldName, dailyCount.getKey(), dailyCount.getValue());
-        daysWithNoTweets++;
+    fow (map.entwy<integew, ^^;; mutabwewong> d-daiwycount : daiwycounts.entwyset()) {
+      i-if (daiwycount.getvawue().wongvawue() <= d-daiwymincount) {
+        wog.wawn("found a day w-with too few tweets. 🥺 f-fiewd: <{}> d-day: {} count: {}",
+            f-fiewdname, ^^ daiwycount.getkey(), ^•ﻌ•^ d-daiwycount.getvawue());
+        d-dayswithnotweets++;
       }
     }
 
-    hoursWithNoTweetsStat.set(hoursWithNoTweets);
-    daysWithNoTweetsStat.set(daysWithNoTweets);
+    h-houwswithnotweetsstat.set(houwswithnotweets);
+    d-dayswithnotweetsstat.set(dayswithnotweets);
   }
 
-  // When the fieldName is empty string (as TWEET_COUNT_KEY), it means that we are counting the
-  // number of tweets for the index, not for some specific fields.
-  private boolean isFieldForTweet() {
-    return TWEET_COUNT_KEY.equals(fieldName);
+  // w-when the fiewdname is empty stwing (as t-tweet_count_key), /(^•ω•^) i-it means t-that we awe counting the
+  // n-numbew of tweets fow the index, ^^ not fow some specific f-fiewds. 🥺
+  pwivate boowean i-isfiewdfowtweet() {
+    w-wetuwn t-tweet_count_key.equaws(fiewdname);
   }
 
-  private String getAggregatedNoTweetStatName(boolean hourly) {
-    if (isFieldForTweet()) {
-      if (hourly) {
-        return "hours_with_no_indexed_tweets_v_" + instanceCounter;
-      } else {
-        return "days_with_no_indexed_tweets_v_" + instanceCounter;
+  pwivate s-stwing getaggwegatednotweetstatname(boowean houwwy) {
+    i-if (isfiewdfowtweet()) {
+      if (houwwy) {
+        w-wetuwn "houws_with_no_indexed_tweets_v_" + instancecountew;
+      } e-ewse {
+        wetuwn "days_with_no_indexed_tweets_v_" + instancecountew;
       }
-    } else {
-      if (hourly) {
-        return "hours_with_no_indexed_fields_v_" + fieldName + "_" + instanceCounter;
-      } else {
-        return "days_with_no_indexed_fields_v_" + fieldName + "_" + instanceCounter;
+    } ewse {
+      if (houwwy) {
+        w-wetuwn "houws_with_no_indexed_fiewds_v_" + fiewdname + "_" + i-instancecountew;
+      } e-ewse {
+        wetuwn "days_with_no_indexed_fiewds_v_" + fiewdname + "_" + instancecountew;
       }
     }
   }
 
-  @VisibleForTesting
-  String getStatName(Integer date) {
-    return getStatName(fieldName, instanceCounter, date);
+  @visibwefowtesting
+  stwing g-getstatname(integew date) {
+    w-wetuwn getstatname(fiewdname, (U ᵕ U❁) i-instancecountew, 😳😳😳 d-date);
   }
 
-  @VisibleForTesting
-  static String getStatName(String field, int instance, Integer date) {
-    if (TWEET_COUNT_KEY.equals(field)) {
-      return "tweets_indexed_on_hour_v_" + instance + "_" + date;
-    } else {
-      return "tweets_indexed_on_hour_v_" + instance + "_" + field + "_" + date;
+  @visibwefowtesting
+  static stwing getstatname(stwing f-fiewd, nyaa~~ int i-instance, (˘ω˘) integew date) {
+    if (tweet_count_key.equaws(fiewd)) {
+      w-wetuwn "tweets_indexed_on_houw_v_" + instance + "_" + date;
+    } ewse {
+      wetuwn "tweets_indexed_on_houw_v_" + i-instance + "_" + fiewd + "_" + date;
     }
   }
 
-  @VisibleForTesting
-  Map<Integer, AtomicInteger> getExportedCounts() {
-    return Collections.unmodifiableMap(exportedHourlyCounts);
+  @visibwefowtesting
+  m-map<integew, >_< a-atomicintegew> g-getexpowtedcounts() {
+    wetuwn c-cowwections.unmodifiabwemap(expowtedhouwwycounts);
   }
 
-  @VisibleForTesting
-  Map<Integer, MutableLong> getDailyCounts() {
-    return Collections.unmodifiableMap(dailyCounts);
+  @visibwefowtesting
+  m-map<integew, XD mutabwewong> g-getdaiwycounts() {
+    w-wetuwn cowwections.unmodifiabwemap(daiwycounts);
   }
 
-  @VisibleForTesting
-  long getHoursWithNoTweets() {
-    return hoursWithNoTweetsStat.get();
+  @visibwefowtesting
+  wong gethouwswithnotweets() {
+    w-wetuwn houwswithnotweetsstat.get();
   }
 
-  @VisibleForTesting
-  long getDaysWithNoTweets() {
-    return daysWithNoTweetsStat.get();
+  @visibwefowtesting
+  w-wong getdayswithnotweets() {
+    w-wetuwn dayswithnotweetsstat.get();
   }
 
-  @VisibleForTesting
-  Map<String, SearchLongGauge> getExportedHourlyCountStats() {
-    return exportedStats;
+  @visibwefowtesting
+  m-map<stwing, rawr x3 seawchwonggauge> g-getexpowtedhouwwycountstats() {
+    w-wetuwn expowtedstats;
   }
 
   /**
-   * Given a unit time in seconds since epoch UTC, will return the day in format "YYYYMMDDHH"
-   * as an int.
+   * g-given a u-unit time in seconds since epoch u-utc, ( ͡o ω ͡o ) wiww wetuwn the day in fowmat "yyyymmddhh"
+   * a-as an int. :3
    */
-  @VisibleForTesting
-  static int getHourValue(Calendar cal, int timeSecs) {
-    cal.setTimeInMillis(timeSecs * 1000L);
-    return getHourValue(cal);
+  @visibwefowtesting
+  static i-int gethouwvawue(cawendaw caw, mya i-int timesecs) {
+    c-caw.settimeinmiwwis(timesecs * 1000w);
+    wetuwn gethouwvawue(caw);
   }
 
-  static int getHourValue(Calendar cal) {
-    int year = cal.get(Calendar.YEAR) * 1000000;
-    int month = (cal.get(Calendar.MONTH) + 1) * 10000; // month is 0-based
-    int day = cal.get(Calendar.DAY_OF_MONTH) * 100;
-    int hour = cal.get(Calendar.HOUR_OF_DAY);
-    return year + month + day + hour;
+  static int gethouwvawue(cawendaw caw) {
+    i-int yeaw = caw.get(cawendaw.yeaw) * 1000000;
+    i-int month = (caw.get(cawendaw.month) + 1) * 10000; // m-month is 0-based
+    int day = caw.get(cawendaw.day_of_month) * 100;
+    int houw = caw.get(cawendaw.houw_of_day);
+    w-wetuwn y-yeaw + month + day + houw;
   }
 
-  @VisibleForTesting
-  static Calendar getCalendarValue(int hour) {
-    Calendar cal = Calendar.getInstance(TIME_ZONE);
+  @visibwefowtesting
+  s-static c-cawendaw getcawendawvawue(int houw) {
+    cawendaw caw = cawendaw.getinstance(time_zone);
 
-    int year = hour / 1000000;
-    int month = ((hour / 10000) % 100) - 1; // 0-based
-    int day = (hour / 100) % 100;
-    int hr = hour % 100;
-    cal.setTimeInMillis(0);  // reset all time fields
-    cal.set(year, month, day, hr, 0);
-    return cal;
+    int yeaw = houw / 1000000;
+    i-int month = ((houw / 10000) % 100) - 1; // 0-based
+    i-int day = (houw / 100) % 100;
+    i-int hw = h-houw % 100;
+    caw.settimeinmiwwis(0);  // weset aww time fiewds
+    c-caw.set(yeaw, σωσ m-month, (ꈍᴗꈍ) day, hw, 0);
+    wetuwn caw;
   }
 }

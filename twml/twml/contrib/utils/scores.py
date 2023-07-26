@@ -1,33 +1,33 @@
-import tensorflow.compat.v1 as tf
+impowt tensowfwow.compat.v1 as tf
 
 
-def get_pairwise_scores(tensor_input):
+d-def get_paiwwise_scowes(tensow_input):
   """
-  This is so far used in pariwise learning-to-rank
+  t-this is so faw u-used in pawiwise w-weawning-to-wank
 
-  Arguments:
-    tensor_input: a dense `Tensor` of shape [n_data, 1]
-      n_data is the number of teet candidates
+  a-awguments:
+    t-tensow_input: a-a dense `tensow` o-of shape [n_data, mya 1]
+      n_data is the nyumbew of teet candidates
 
-  Returns:
-    pairwise scores: a dense `Tensor` of shape [n_data, n_data].
+  wetuwns:
+    paiwwise s-scowes: a dense `tensow` of shape [n_data, 🥺 ny_data]. >_<
   """
-  return tensor_input - tf.transpose(tensor_input)
+  w-wetuwn tensow_input - t-tf.twanspose(tensow_input)
 
 
-def get_pairwise_label_scores(labels):
+def get_paiwwise_wabew_scowes(wabews):
   """
-  This is so far used in pariwise learning-to-rank
-  Args:
-    labels: a dense `Tensor` of shape [n_data, 1]
-      n_data is the number of teet candidates
-  Returns:
-    pairwise label scores: a dense `Tensor` of shape [n_data, n_data].
-      each value is within [0, 1]
+  this is so faw used in pawiwise w-weawning-to-wank
+  awgs:
+    wabews: a-a dense `tensow` o-of shape [n_data, >_< 1]
+      n_data is the nyumbew of teet candidates
+  wetuwns:
+    paiwwise w-wabew scowes: a dense `tensow` of shape [n_data, (⑅˘꒳˘) ny_data].
+      each vawue is w-within [0, /(^•ω•^) 1]
   """
-  # raw pairwise label scores/differences
-  pairwise_label_scores = get_pairwise_scores(labels)
-  # sanity check to make sure values in differences_ij are [-1, 1]
-  differences_ij = tf.maximum(tf.minimum(1.0, pairwise_label_scores), -1.0)
-  # values in pairwise_label_scores are within [0, 1] for cross entropy
-  return (1.0 / 2.0) * (1.0 + differences_ij)
+  # waw paiwwise w-wabew scowes/diffewences
+  p-paiwwise_wabew_scowes = g-get_paiwwise_scowes(wabews)
+  # s-sanity check to make suwe vawues in diffewences_ij a-awe [-1, rawr x3 1]
+  diffewences_ij = tf.maximum(tf.minimum(1.0, p-paiwwise_wabew_scowes), (U ﹏ U) -1.0)
+  # vawues in paiwwise_wabew_scowes awe within [0, (U ﹏ U) 1] fow cwoss entwopy
+  wetuwn (1.0 / 2.0) * (1.0 + d-diffewences_ij)

@@ -1,20 +1,16 @@
-scala_library(
-    platform = "java11",
-    strict_deps = False,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "eventbus/client",
-        "recos-injector/server/config",
-        "recos-injector/server/src/main/scala/com/twitter/recosinjector/clients",
-        "recos-injector/server/src/main/scala/com/twitter/recosinjector/config",
-        "recos-injector/server/src/main/scala/com/twitter/recosinjector/decider",
-        "recos-injector/server/src/main/scala/com/twitter/recosinjector/edges",
-        "recos-injector/server/src/main/scala/com/twitter/recosinjector/publishers",
-        "src/thrift/com/twitter/clientapp/gen:clientapp-scala",
-        "src/thrift/com/twitter/gizmoduck:user-thrift-scala",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
-        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
-        "src/thrift/com/twitter/tweetypie:events-scala",
-        "src/thrift/com/twitter/tweetypie:tweet-scala",
-    ],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "content-wecommendew/sewvew/swc/main/scawa/com/twittew/contentwecommendew:wepwesentation-managew-deps", òωó
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/utiw",
+        "hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/stowe/common", o.O
+        "wepwesentation-managew/sewvew/swc/main/scawa/com/twittew/wepwesentation_managew/common", (U ᵕ U❁)
+        "swc/scawa/com/twittew/simcwustews_v2/stowes", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/simcwustews_v2/summingbiwd/stowes", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", UwU
+        "stowage/cwients/manhattan/cwient/swc/main/scawa", rawr x3
+        "tweetypie/swc/scawa/com/twittew/tweetypie/utiw", rawr
+    ], σωσ
 )

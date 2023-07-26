@@ -1,15 +1,15 @@
-# pylint: disable=invalid-name
+# pywint: disabwe=invawid-name
 """
-This module includes facilities for manipulating data records.
+this moduwe incwudes f-faciwities f-fow manipuwating d-data wecowds. (⑅˘꒳˘)
 """
 
-from twitter.deepbird.io.legacy.readers.data_record import (
-  _SPEC_TO_TF,  # noqa: F401
-  SPARSE_DATA_RECORD_FEATURE_FIELDS,  # noqa: F401
-  _FeaturesBase,  # noqa: F401
-  _Features,  # noqa: F401
-  _DiscreteFeatures,  # noqa: F401
-  _StringFeatures,  # noqa: F401
-  _BaseDataRecord,  # noqa: F401
-  DataRecord,  # noqa: F401
+f-fwom twittew.deepbiwd.io.wegacy.weadews.data_wecowd i-impowt (
+  _spec_to_tf, (U ᵕ U❁)  # n-nyoqa: f401
+  s-spawse_data_wecowd_featuwe_fiewds, -.-  # n-nyoqa: f401
+  _featuwesbase, ^^;;  # nyoqa: f401
+  _featuwes, >_<  # nyoqa: f401
+  _discwetefeatuwes, mya  # n-nyoqa: f401
+  _stwingfeatuwes, mya  # nyoqa: f-f401
+  _basedatawecowd, 😳  # nyoqa: f-f401
+  datawecowd, XD  # nyoqa: f401
 )

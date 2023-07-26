@@ -1,312 +1,312 @@
-package com.twitter.product_mixer.core.feature.featurestorev1
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.transform.FeatureRenameTransform
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.dynamic.BaseGatedFeatures
-import com.twitter.ml.featurestore.lib.feature.BoundFeature
-import com.twitter.ml.featurestore.lib.feature.BoundFeatureSet
-import com.twitter.ml.featurestore.lib.feature.TimelinesAggregationFrameworkFeatureGroup
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.core.feature.ModelFeatureName
-import com.twitter.product_mixer.core.feature.datarecord.FeatureStoreDataRecordFeature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.util.{Gate => ServoGate}
-import com.twitter.timelines.configapi.FSParam
-import scala.reflect.ClassTag
+impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.twansfowm.featuwewenametwansfowm
+i-impowt c-com.twittew.mw.featuwestowe.wib.entityid
+i-impowt c-com.twittew.mw.featuwestowe.wib.dynamic.basegatedfeatuwes
+impowt c-com.twittew.mw.featuwestowe.wib.featuwe.boundfeatuwe
+i-impowt com.twittew.mw.featuwestowe.wib.featuwe.boundfeatuweset
+impowt com.twittew.mw.featuwestowe.wib.featuwe.timewinesaggwegationfwamewowkfeatuwegwoup
+impowt com.twittew.mw.featuwestowe.wib.featuwe.{featuwe => f-fsv1featuwe}
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.modewfeatuwename
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.featuwestowedatawecowdfeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.sewvo.utiw.{gate => sewvogate}
+i-impowt com.twittew.timewines.configapi.fspawam
+impowt scawa.wefwect.cwasstag
 
 /**
- * The base trait for all feature store features on ProMix. This should not be constructed directly
- * and should instead be used through the other implementations below
- * @tparam Query Product Mixer Query Type
- * @tparam Input The input type the feature should be keyed on, this is same as Query for query
- *               features and
- * @tparam FeatureStoreEntityId Feature Store Entity Type
- * @tparam Value The type of the value of this feature.
+ * t-the base twait f-fow aww featuwe stowe featuwes on pwomix. òωó this shouwd nyot be constwucted diwectwy
+ * a-and shouwd instead be used thwough the othew impwementations bewow
+ * @tpawam q-quewy pwoduct mixew quewy t-type
+ * @tpawam i-input the input t-type the featuwe s-shouwd be keyed on, this is same as quewy fow q-quewy
+ *               featuwes and
+ * @tpawam f-featuwestoweentityid featuwe stowe entity type
+ * @tpawam vawue the type of the vawue of this featuwe. /(^•ω•^)
  */
-sealed trait BaseFeatureStoreV1Feature[
-  -Query <: PipelineQuery,
-  -Input,
-  FeatureStoreEntityId <: EntityId,
-  Value]
-    extends FeatureStoreDataRecordFeature[Input, Value]
-    with BaseGatedFeatures[Query] {
-  val fsv1Feature: FSv1Feature[FeatureStoreEntityId, Value]
+s-seawed twait basefeatuwestowev1featuwe[
+  -quewy <: p-pipewinequewy, -.-
+  -input, òωó
+  f-featuwestoweentityid <: e-entityid, /(^•ω•^)
+  vawue]
+    extends featuwestowedatawecowdfeatuwe[input, /(^•ω•^) vawue]
+    w-with basegatedfeatuwes[quewy] {
+  v-vaw fsv1featuwe: fsv1featuwe[featuwestoweentityid, 😳 v-vawue]
 
-  val entity: FeatureStoreV1Entity[Query, Input, FeatureStoreEntityId]
+  v-vaw entity: featuwestowev1entity[quewy, :3 input, f-featuwestoweentityid]
 
-  val enabledParam: Option[FSParam[Boolean]]
+  vaw enabwedpawam: o-option[fspawam[boowean]]
 
-  override final lazy val gate: ServoGate[Query] = enabledParam
-    .map { param =>
-      new ServoGate[PipelineQuery] {
-        override def apply[U](query: U)(implicit asT: <:<[U, PipelineQuery]): Boolean = {
-          query.params(param)
+  ovewwide finaw wazy vaw gate: s-sewvogate[quewy] = enabwedpawam
+    .map { p-pawam =>
+      nyew sewvogate[pipewinequewy] {
+        o-ovewwide d-def appwy[u](quewy: u)(impwicit ast: <:<[u, (U ᵕ U❁) pipewinequewy]): boowean = {
+          quewy.pawams(pawam)
         }
       }
-    }.getOrElse(ServoGate.True)
+    }.getowewse(sewvogate.twue)
 
-  override final lazy val boundFeatureSet: BoundFeatureSet = new BoundFeatureSet(Set(boundFeature))
+  ovewwide finaw wazy v-vaw boundfeatuweset: b-boundfeatuweset = nyew boundfeatuweset(set(boundfeatuwe))
 
-  val boundFeature: BoundFeature[FeatureStoreEntityId, Value]
+  v-vaw boundfeatuwe: b-boundfeatuwe[featuwestoweentityid, ʘwʘ v-vawue]
 
   /**
-   * Since this trait is normally constructed inline, avoid the anonymous toString and use the bounded feature name.
+   * since this twait is nyowmawwy constwucted i-inwine, avoid the anonymous tostwing and use the bounded featuwe nyame.
    */
-  override lazy val toString: String = boundFeature.name
+  o-ovewwide wazy vaw tostwing: s-stwing = boundfeatuwe.name
 }
 
 /**
- * A unitary (non-aggregate group) feature store feature in ProMix. This should be constructed using
- * [[FeatureStoreV1CandidateFeature]] or [[FeatureStoreV1QueryFeature]].
- * @tparam Query Product Mixer Query Type
- * @tparam Input The input type the feature should be keyed on, this is same as Query for query
- *               features and
- * @tparam FeatureStoreEntityId Feature Store Entity Type
- * @tparam Value The type of the value of this feature.
+ * a-a unitawy (non-aggwegate g-gwoup) featuwe stowe f-featuwe in pwomix. o.O t-this shouwd b-be constwucted u-using
+ * [[featuwestowev1candidatefeatuwe]] ow [[featuwestowev1quewyfeatuwe]]. ʘwʘ
+ * @tpawam quewy p-pwoduct mixew quewy t-type
+ * @tpawam i-input the input t-type the featuwe s-shouwd be keyed on, ^^ this is same as quewy fow quewy
+ *               f-featuwes and
+ * @tpawam featuwestoweentityid featuwe stowe entity type
+ * @tpawam vawue t-the type of the vawue of this featuwe. ^•ﻌ•^
  */
-sealed trait FeatureStoreV1Feature[
-  -Query <: PipelineQuery,
-  -Input,
-  FeatureStoreEntityId <: EntityId,
-  Value]
-    extends BaseFeatureStoreV1Feature[Query, Input, FeatureStoreEntityId, Value]
-    with ModelFeatureName {
+seawed twait featuwestowev1featuwe[
+  -quewy <: p-pipewinequewy, mya
+  -input,
+  f-featuwestoweentityid <: e-entityid, UwU
+  vawue]
+    extends b-basefeatuwestowev1featuwe[quewy, >_< input, /(^•ω•^) featuwestoweentityid, òωó v-vawue]
+    w-with modewfeatuwename {
 
-  val legacyName: Option[String]
-  val defaultValue: Option[Value]
+  vaw wegacyname: option[stwing]
+  vaw defauwtvawue: option[vawue]
 
-  override lazy val featureName: String = boundFeature.name
+  ovewwide w-wazy vaw featuwename: stwing = b-boundfeatuwe.name
 
-  override final lazy val boundFeature = (legacyName, defaultValue) match {
-    case (Some(legacyName), Some(defaultValue)) =>
-      fsv1Feature.bind(entity.entity).withLegacyName(legacyName).withDefault(defaultValue)
-    case (Some(legacyName), _) =>
-      fsv1Feature.bind(entity.entity).withLegacyName(legacyName)
-    case (_, Some(defaultValue)) =>
-      fsv1Feature.bind(entity.entity).withDefault(defaultValue)
+  ovewwide finaw w-wazy vaw boundfeatuwe = (wegacyname, σωσ d-defauwtvawue) match {
+    case (some(wegacyname), ( ͡o ω ͡o ) s-some(defauwtvawue)) =>
+      f-fsv1featuwe.bind(entity.entity).withwegacyname(wegacyname).withdefauwt(defauwtvawue)
+    case (some(wegacyname), nyaa~~ _) =>
+      f-fsv1featuwe.bind(entity.entity).withwegacyname(wegacyname)
+    c-case (_, :3 some(defauwtvawue)) =>
+      fsv1featuwe.bind(entity.entity).withdefauwt(defauwtvawue)
     case _ =>
-      fsv1Feature.bind(entity.entity)
+      fsv1featuwe.bind(entity.entity)
   }
 
-  def fromDataRecordValue(recordValue: boundFeature.feature.mfc.V): Value =
-    boundFeature.feature.mfc.fromDataRecordValue(recordValue)
+  def fwomdatawecowdvawue(wecowdvawue: b-boundfeatuwe.featuwe.mfc.v): v-vawue =
+    boundfeatuwe.featuwe.mfc.fwomdatawecowdvawue(wecowdvawue)
 }
 
 /**
- * A feature store aggregated group feature in ProMix. This should be constructed using
- * [[FeatureStoreV1CandidateFeatureGroup]] or [[FeatureStoreV1QueryFeatureGroup]].
+ * a-a featuwe stowe aggwegated gwoup f-featuwe in pwomix. UwU t-this shouwd be constwucted u-using
+ * [[featuwestowev1candidatefeatuwegwoup]] ow [[featuwestowev1quewyfeatuwegwoup]]. o.O
  *
- * @tparam Query Product Mixer Query Type
- * @tparam Input The input type the feature should be keyed on, this is same as Query for query
- *               features and
- * @tparam FeatureStoreEntityId Feature Store Entity Type
+ * @tpawam quewy pwoduct mixew quewy type
+ * @tpawam i-input the input t-type the featuwe shouwd be keyed on, (ˆ ﻌ ˆ)♡ this is same a-as quewy fow q-quewy
+ *               featuwes and
+ * @tpawam featuwestoweentityid featuwe stowe e-entity type
  */
-abstract class FeatureStoreV1FeatureGroup[
-  -Query <: PipelineQuery,
-  -Input,
-  FeatureStoreEntityId <: EntityId: ClassTag]
-    extends BaseFeatureStoreV1Feature[Query, Input, FeatureStoreEntityId, DataRecord] {
-  val keepLegacyNames: Boolean
-  val featureNameTransform: Option[FeatureRenameTransform]
+abstwact cwass featuwestowev1featuwegwoup[
+  -quewy <: pipewinequewy, ^^;;
+  -input, ʘwʘ
+  featuwestoweentityid <: e-entityid: cwasstag]
+    extends basefeatuwestowev1featuwe[quewy, σωσ i-input, f-featuwestoweentityid, ^^;; datawecowd] {
+  vaw keepwegacynames: boowean
+  vaw featuwenametwansfowm: o-option[featuwewenametwansfowm]
 
-  val featureGroup: TimelinesAggregationFrameworkFeatureGroup[FeatureStoreEntityId]
+  v-vaw featuwegwoup: timewinesaggwegationfwamewowkfeatuwegwoup[featuwestoweentityid]
 
-  override lazy val fsv1Feature: FSv1Feature[FeatureStoreEntityId, DataRecord] =
-    featureGroup.FeaturesAsDataRecord
+  ovewwide wazy vaw fsv1featuwe: f-fsv1featuwe[featuwestoweentityid, ʘwʘ datawecowd] =
+    f-featuwegwoup.featuwesasdatawecowd
 
-  override final lazy val boundFeature = (keepLegacyNames, featureNameTransform) match {
-    case (_, Some(transform)) =>
-      fsv1Feature.bind(entity.entity).withLegacyIndividualFeatureNames(transform)
-    case (true, _) =>
-      fsv1Feature.bind(entity.entity).keepLegacyNames
-    case _ =>
-      fsv1Feature.bind(entity.entity)
+  ovewwide finaw wazy vaw boundfeatuwe = (keepwegacynames, ^^ featuwenametwansfowm) m-match {
+    case (_, nyaa~~ some(twansfowm)) =>
+      f-fsv1featuwe.bind(entity.entity).withwegacyindividuawfeatuwenames(twansfowm)
+    c-case (twue, (///ˬ///✿) _) =>
+      fsv1featuwe.bind(entity.entity).keepwegacynames
+    c-case _ =>
+      fsv1featuwe.bind(entity.entity)
   }
 }
 
-sealed trait BaseFeatureStoreV1QueryFeature[
-  -Query <: PipelineQuery,
-  FeatureStoreEntityId <: EntityId,
-  Value]
-    extends BaseFeatureStoreV1Feature[Query, Query, FeatureStoreEntityId, Value] {
+s-seawed twait b-basefeatuwestowev1quewyfeatuwe[
+  -quewy <: p-pipewinequewy, XD
+  featuwestoweentityid <: e-entityid, :3
+  v-vawue]
+    extends basefeatuwestowev1featuwe[quewy, òωó quewy, featuwestoweentityid, ^^ v-vawue] {
 
-  override val entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId]
+  ovewwide v-vaw entity: f-featuwestowev1quewyentity[quewy, ^•ﻌ•^ featuwestoweentityid]
 }
 
-trait FeatureStoreV1QueryFeature[-Query <: PipelineQuery, FeatureStoreEntityId <: EntityId, Value]
-    extends FeatureStoreV1Feature[Query, Query, FeatureStoreEntityId, Value]
-    with BaseFeatureStoreV1QueryFeature[Query, FeatureStoreEntityId, Value]
+twait f-featuwestowev1quewyfeatuwe[-quewy <: pipewinequewy, σωσ f-featuwestoweentityid <: entityid, (ˆ ﻌ ˆ)♡ v-vawue]
+    extends featuwestowev1featuwe[quewy, nyaa~~ quewy, featuwestoweentityid, ʘwʘ v-vawue]
+    w-with basefeatuwestowev1quewyfeatuwe[quewy, f-featuwestoweentityid, ^•ﻌ•^ v-vawue]
 
-trait FeatureStoreV1QueryFeatureGroup[-Query <: PipelineQuery, FeatureStoreEntityId <: EntityId]
-    extends FeatureStoreV1FeatureGroup[Query, Query, FeatureStoreEntityId]
-    with BaseFeatureStoreV1QueryFeature[Query, FeatureStoreEntityId, DataRecord]
+twait featuwestowev1quewyfeatuwegwoup[-quewy <: p-pipewinequewy, rawr x3 featuwestoweentityid <: entityid]
+    extends featuwestowev1featuwegwoup[quewy, 🥺 quewy, featuwestoweentityid]
+    w-with basefeatuwestowev1quewyfeatuwe[quewy, ʘwʘ featuwestoweentityid, (˘ω˘) d-datawecowd]
 
-object FeatureStoreV1QueryFeature {
+object featuwestowev1quewyfeatuwe {
 
   /**
-   * Query-based Feature Store backed feature
-   * @param feature The underling feature store feature this represents.
-   * @param _entity The entity for binding the Feature Store features
-   * @param _legacyName Feature Store legacy name if required
-   * @param _defaultValue The default value to return for this feature if not hydrated.
-   * @param _enabledParam The Feature Switch Param to gate this feature, always enabled if none.
-   * @tparam Query The Product Mixer query type this feature is keyed on.
-   * @tparam FeatureStoreEntityId Feature Store Entity ID
-   * @tparam Value The type of the value this feature contains.
-   * @return Product Mixer Feature
+   * q-quewy-based featuwe stowe b-backed featuwe
+   * @pawam featuwe t-the undewwing f-featuwe stowe f-featuwe this wepwesents. o.O
+   * @pawam _entity t-the e-entity fow binding the featuwe stowe featuwes
+   * @pawam _wegacyname featuwe stowe wegacy nyame if wequiwed
+   * @pawam _defauwtvawue the defauwt v-vawue to wetuwn f-fow this featuwe i-if nyot hydwated. σωσ
+   * @pawam _enabwedpawam the featuwe switch p-pawam to gate this featuwe, (ꈍᴗꈍ) awways enabwed if nyone. (ˆ ﻌ ˆ)♡
+   * @tpawam q-quewy the p-pwoduct mixew quewy type this featuwe i-is keyed on. o.O
+   * @tpawam featuwestoweentityid f-featuwe stowe e-entity id
+   * @tpawam vawue t-the type of the v-vawue this featuwe contains.
+   * @wetuwn pwoduct mixew featuwe
    */
-  def apply[Query <: PipelineQuery, FeatureStoreEntityId <: EntityId, Value](
-    feature: FSv1Feature[FeatureStoreEntityId, Value],
-    _entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId],
-    _legacyName: Option[String] = None,
-    _defaultValue: Option[Value] = None,
-    _enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1QueryFeature[Query, FeatureStoreEntityId, Value] =
-    new FeatureStoreV1QueryFeature[Query, FeatureStoreEntityId, Value] {
-      override val fsv1Feature: FSv1Feature[FeatureStoreEntityId, Value] = feature
-      override val entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId] = _entity
-      override val legacyName: Option[String] = _legacyName
-      override val defaultValue: Option[Value] = _defaultValue
-      override val enabledParam: Option[FSParam[Boolean]] = _enabledParam
+  def appwy[quewy <: p-pipewinequewy, :3 f-featuwestoweentityid <: e-entityid, -.- vawue](
+    f-featuwe: f-fsv1featuwe[featuwestoweentityid, vawue], ( ͡o ω ͡o )
+    _entity: f-featuwestowev1quewyentity[quewy, /(^•ω•^) f-featuwestoweentityid], (⑅˘꒳˘)
+    _wegacyname: option[stwing] = n-nyone, òωó
+    _defauwtvawue: o-option[vawue] = nyone, 🥺
+    _enabwedpawam: o-option[fspawam[boowean]] = nyone
+  ): featuwestowev1quewyfeatuwe[quewy, (ˆ ﻌ ˆ)♡ featuwestoweentityid, -.- vawue] =
+    n-nyew featuwestowev1quewyfeatuwe[quewy, σωσ featuwestoweentityid, >_< vawue] {
+      o-ovewwide v-vaw fsv1featuwe: fsv1featuwe[featuwestoweentityid, :3 v-vawue] = featuwe
+      ovewwide vaw entity: f-featuwestowev1quewyentity[quewy, OwO f-featuwestoweentityid] = _entity
+      o-ovewwide vaw wegacyname: option[stwing] = _wegacyname
+      ovewwide v-vaw defauwtvawue: option[vawue] = _defauwtvawue
+      ovewwide v-vaw enabwedpawam: o-option[fspawam[boowean]] = _enabwedpawam
     }
 }
 
-object FeatureStoreV1QueryFeatureGroup {
+object featuwestowev1quewyfeatuwegwoup {
 
   /**
-   * Query-based Feature Store Aggregated group backed feature
+   * q-quewy-based featuwe stowe a-aggwegated gwoup b-backed featuwe
    *
-   * @param featureGroup  The underling aggregation group feature this represents.
-   * @param _entity       The entity for binding the Feature Store features
-   * @param _enabledParam The Feature Switch Param to gate this feature, always enabled if none.
-   * @param _keepLegacyNames Whether to keep the legacy names as is for the entire group
-   * @param _featureNameTransform Rename the entire group's legacy names using the [[FeatureRenameTransform]]
-   * @tparam Query                The Product Mixer query type this feature is keyed on.
-   * @tparam FeatureStoreEntityId Feature Store Entity ID
+   * @pawam featuwegwoup  the undewwing a-aggwegation gwoup featuwe this wepwesents. rawr
+   * @pawam _entity       t-the entity f-fow binding the featuwe stowe featuwes
+   * @pawam _enabwedpawam t-the featuwe switch pawam to gate t-this featuwe, (///ˬ///✿) a-awways enabwed i-if nyone. ^^
+   * @pawam _keepwegacynames whethew to keep the wegacy nyames as is fow the entiwe gwoup
+   * @pawam _featuwenametwansfowm wename the entiwe gwoup's wegacy nyames using the [[featuwewenametwansfowm]]
+   * @tpawam quewy                the pwoduct mixew quewy type this featuwe is k-keyed on. XD
+   * @tpawam f-featuwestoweentityid featuwe stowe entity i-id
    *
-   * @return Product Mixer Feature
+   * @wetuwn p-pwoduct m-mixew featuwe
    */
-  def apply[Query <: PipelineQuery, FeatureStoreEntityId <: EntityId: ClassTag](
-    _featureGroup: TimelinesAggregationFrameworkFeatureGroup[FeatureStoreEntityId],
-    _entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId],
-    _enabledParam: Option[FSParam[Boolean]] = None,
-    _keepLegacyNames: Boolean = false,
-    _featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1QueryFeatureGroup[Query, FeatureStoreEntityId] =
-    new FeatureStoreV1QueryFeatureGroup[Query, FeatureStoreEntityId] {
-      override val entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId] = _entity
-      override val featureGroup: TimelinesAggregationFrameworkFeatureGroup[
-        FeatureStoreEntityId
-      ] = _featureGroup
+  def appwy[quewy <: p-pipewinequewy, UwU featuwestoweentityid <: e-entityid: cwasstag](
+    _featuwegwoup: t-timewinesaggwegationfwamewowkfeatuwegwoup[featuwestoweentityid], o.O
+    _entity: featuwestowev1quewyentity[quewy, 😳 f-featuwestoweentityid], (˘ω˘)
+    _enabwedpawam: option[fspawam[boowean]] = n-nyone, 🥺
+    _keepwegacynames: b-boowean = fawse, ^^
+    _featuwenametwansfowm: option[featuwewenametwansfowm] = n-nyone
+  ): f-featuwestowev1quewyfeatuwegwoup[quewy, f-featuwestoweentityid] =
+    n-nyew featuwestowev1quewyfeatuwegwoup[quewy, >w< f-featuwestoweentityid] {
+      o-ovewwide v-vaw entity: f-featuwestowev1quewyentity[quewy, ^^;; f-featuwestoweentityid] = _entity
+      ovewwide v-vaw featuwegwoup: t-timewinesaggwegationfwamewowkfeatuwegwoup[
+        f-featuwestoweentityid
+      ] = _featuwegwoup
 
-      override val enabledParam: Option[FSParam[Boolean]] = _enabledParam
+      ovewwide v-vaw enabwedpawam: option[fspawam[boowean]] = _enabwedpawam
 
-      override val keepLegacyNames: Boolean = _keepLegacyNames
-      override val featureNameTransform: Option[FeatureRenameTransform] = _featureNameTransform
+      ovewwide v-vaw keepwegacynames: boowean = _keepwegacynames
+      o-ovewwide vaw f-featuwenametwansfowm: o-option[featuwewenametwansfowm] = _featuwenametwansfowm
     }
 }
 
-sealed trait BaseFeatureStoreV1CandidateFeature[
-  -Query <: PipelineQuery,
-  -Input <: UniversalNoun[Any],
-  FeatureStoreEntityId <: EntityId,
-  Value]
-    extends BaseFeatureStoreV1Feature[Query, Input, FeatureStoreEntityId, Value] {
+seawed t-twait basefeatuwestowev1candidatefeatuwe[
+  -quewy <: pipewinequewy, (˘ω˘)
+  -input <: u-univewsawnoun[any], OwO
+  featuwestoweentityid <: entityid, (ꈍᴗꈍ)
+  v-vawue]
+    extends basefeatuwestowev1featuwe[quewy, òωó input, ʘwʘ f-featuwestoweentityid, ʘwʘ vawue] {
 
-  override val entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId]
+  ovewwide vaw entity: featuwestowev1candidateentity[quewy, input, nyaa~~ featuwestoweentityid]
 }
 
-trait FeatureStoreV1CandidateFeature[
-  -Query <: PipelineQuery,
-  -Input <: UniversalNoun[Any],
-  FeatureStoreEntityId <: EntityId,
-  Value]
-    extends FeatureStoreV1Feature[Query, Input, FeatureStoreEntityId, Value]
-    with BaseFeatureStoreV1CandidateFeature[Query, Input, FeatureStoreEntityId, Value]
+t-twait featuwestowev1candidatefeatuwe[
+  -quewy <: pipewinequewy, UwU
+  -input <: univewsawnoun[any], (⑅˘꒳˘)
+  f-featuwestoweentityid <: e-entityid, (˘ω˘)
+  vawue]
+    extends featuwestowev1featuwe[quewy, :3 input, (˘ω˘) f-featuwestoweentityid, nyaa~~ vawue]
+    w-with basefeatuwestowev1candidatefeatuwe[quewy, (U ﹏ U) i-input, nyaa~~ featuwestoweentityid, ^^;; v-vawue]
 
-trait FeatureStoreV1CandidateFeatureGroup[
-  -Query <: PipelineQuery,
-  -Input <: UniversalNoun[Any],
-  FeatureStoreEntityId <: EntityId]
-    extends FeatureStoreV1FeatureGroup[Query, Input, FeatureStoreEntityId]
-    with BaseFeatureStoreV1CandidateFeature[Query, Input, FeatureStoreEntityId, DataRecord]
+twait featuwestowev1candidatefeatuwegwoup[
+  -quewy <: pipewinequewy, OwO
+  -input <: u-univewsawnoun[any], nyaa~~
+  f-featuwestoweentityid <: entityid]
+    e-extends featuwestowev1featuwegwoup[quewy, UwU input, 😳 featuwestoweentityid]
+    w-with basefeatuwestowev1candidatefeatuwe[quewy, 😳 i-input, f-featuwestoweentityid, (ˆ ﻌ ˆ)♡ d-datawecowd]
 
-object FeatureStoreV1CandidateFeature {
+object featuwestowev1candidatefeatuwe {
 
   /**
-   * Candidate-based Feature Store backed feature
-   * @param feature The underling feature store feature this represents.
-   * @param _entity The entity for binding the Feature Store features
-   * @param _legacyName Feature Store legacy name if required
-   * @param _defaultValue The default value to return for this feature if not hydrated.
-   * @param _enabledParam The Feature Switch Param to gate this feature, always enabled if none.
-   * @tparam Query The Product Mixer query type this feature is keyed on.
-   * @tparam FeatureStoreEntityId The feature store entity type
-   * @tparam Input The type of the candidate this feature is keyed on
-   * @tparam Value The type of value this feature contains.
-   * @return Product Mixer Feature
+   * c-candidate-based f-featuwe s-stowe backed f-featuwe
+   * @pawam featuwe the u-undewwing featuwe s-stowe featuwe t-this wepwesents. (✿oωo)
+   * @pawam _entity t-the entity f-fow binding the f-featuwe stowe featuwes
+   * @pawam _wegacyname featuwe s-stowe wegacy n-nyame if wequiwed
+   * @pawam _defauwtvawue the defauwt vawue t-to wetuwn fow this featuwe if n-nyot hydwated. nyaa~~
+   * @pawam _enabwedpawam the featuwe s-switch pawam t-to gate this featuwe, ^^ a-awways enabwed if nyone. (///ˬ///✿)
+   * @tpawam quewy the pwoduct m-mixew quewy type t-this featuwe is k-keyed on. 😳
+   * @tpawam featuwestoweentityid the featuwe stowe entity t-type
+   * @tpawam i-input the type of the candidate t-this featuwe i-is keyed on
+   * @tpawam vawue the type of vawue this featuwe c-contains. òωó
+   * @wetuwn p-pwoduct m-mixew featuwe
    */
-  def apply[
-    Query <: PipelineQuery,
-    Input <: UniversalNoun[Any],
-    FeatureStoreEntityId <: EntityId,
-    Value
+  d-def appwy[
+    quewy <: pipewinequewy, ^^;;
+    i-input <: univewsawnoun[any], rawr
+    f-featuwestoweentityid <: entityid, (ˆ ﻌ ˆ)♡
+    vawue
   ](
-    feature: FSv1Feature[FeatureStoreEntityId, Value],
-    _entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId],
-    _legacyName: Option[String] = None,
-    _defaultValue: Option[Value] = None,
-    _enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1CandidateFeature[Query, Input, FeatureStoreEntityId, Value] =
-    new FeatureStoreV1CandidateFeature[Query, Input, FeatureStoreEntityId, Value] {
-      override val fsv1Feature: FSv1Feature[FeatureStoreEntityId, Value] = feature
-      override val entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId] =
+    f-featuwe: fsv1featuwe[featuwestoweentityid, XD vawue], >_<
+    _entity: f-featuwestowev1candidateentity[quewy, (˘ω˘) input, f-featuwestoweentityid], 😳
+    _wegacyname: o-option[stwing] = nyone, o.O
+    _defauwtvawue: o-option[vawue] = n-nyone, (ꈍᴗꈍ)
+    _enabwedpawam: option[fspawam[boowean]] = n-nyone
+  ): featuwestowev1candidatefeatuwe[quewy, rawr x3 i-input, f-featuwestoweentityid, ^^ v-vawue] =
+    n-nyew featuwestowev1candidatefeatuwe[quewy, OwO input, ^^ featuwestoweentityid, :3 v-vawue] {
+      ovewwide v-vaw fsv1featuwe: f-fsv1featuwe[featuwestoweentityid, o.O vawue] = f-featuwe
+      ovewwide vaw entity: featuwestowev1candidateentity[quewy, i-input, -.- f-featuwestoweentityid] =
         _entity
-      override val legacyName: Option[String] = _legacyName
-      override val defaultValue: Option[Value] = _defaultValue
-      override val enabledParam: Option[FSParam[Boolean]] = _enabledParam
+      o-ovewwide vaw wegacyname: option[stwing] = _wegacyname
+      ovewwide vaw defauwtvawue: option[vawue] = _defauwtvawue
+      o-ovewwide vaw enabwedpawam: o-option[fspawam[boowean]] = _enabwedpawam
     }
 }
 
-object FeatureStoreV1CandidateFeatureGroup {
+o-object featuwestowev1candidatefeatuwegwoup {
 
   /**
-   * Candidate-based Feature Store Aggregated group backed feature
+   * candidate-based f-featuwe stowe aggwegated gwoup b-backed featuwe
    *
-   * @param featureGroup          The underling aggregation group feature this represents.
-   * @param _entity               The entity for binding the Feature Store features
-   * @param _enabledParam         The Feature Switch Param to gate this feature, always enabled if none.
-   * @param _keepLegacyNames      Whether to keep the legacy names as is for the entire group
-   * @param _featureNameTransform Rename the entire group's legacy names using the [[FeatureRenameTransform]]
-   * @tparam Query                The Product Mixer query type this feature is keyed on.
-   * @tparam Input The type of the candidate this feature is keyed on
-   * @tparam FeatureStoreEntityId Feature Store Entity ID
+   * @pawam f-featuwegwoup          t-the undewwing a-aggwegation g-gwoup featuwe this wepwesents. (U ﹏ U)
+   * @pawam _entity               the entity fow binding the featuwe stowe featuwes
+   * @pawam _enabwedpawam         t-the featuwe switch pawam to g-gate this featuwe, o.O awways enabwed if nyone. OwO
+   * @pawam _keepwegacynames      whethew to keep t-the wegacy nyames as is fow the entiwe gwoup
+   * @pawam _featuwenametwansfowm wename the entiwe gwoup's wegacy n-nyames using the [[featuwewenametwansfowm]]
+   * @tpawam q-quewy                the p-pwoduct mixew quewy type this featuwe is keyed o-on. ^•ﻌ•^
+   * @tpawam i-input the type of the candidate t-this featuwe is keyed on
+   * @tpawam f-featuwestoweentityid featuwe stowe entity id
    *
-   * @return Product Mixer Feature
+   * @wetuwn p-pwoduct mixew featuwe
    */
-  def apply[
-    Query <: PipelineQuery,
-    Input <: UniversalNoun[Any],
-    FeatureStoreEntityId <: EntityId: ClassTag,
+  def appwy[
+    q-quewy <: pipewinequewy,
+    i-input <: univewsawnoun[any], ʘwʘ
+    f-featuwestoweentityid <: entityid: cwasstag, :3
   ](
-    _featureGroup: TimelinesAggregationFrameworkFeatureGroup[FeatureStoreEntityId],
-    _entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId],
-    _enabledParam: Option[FSParam[Boolean]] = None,
-    _keepLegacyNames: Boolean = false,
-    _featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1CandidateFeatureGroup[Query, Input, FeatureStoreEntityId] =
-    new FeatureStoreV1CandidateFeatureGroup[Query, Input, FeatureStoreEntityId] {
-      override val entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId] =
+    _featuwegwoup: t-timewinesaggwegationfwamewowkfeatuwegwoup[featuwestoweentityid],
+    _entity: featuwestowev1candidateentity[quewy, 😳 input, featuwestoweentityid],
+    _enabwedpawam: option[fspawam[boowean]] = nyone, òωó
+    _keepwegacynames: b-boowean = fawse, 🥺
+    _featuwenametwansfowm: o-option[featuwewenametwansfowm] = n-nyone
+  ): f-featuwestowev1candidatefeatuwegwoup[quewy, rawr x3 input, featuwestoweentityid] =
+    nyew featuwestowev1candidatefeatuwegwoup[quewy, ^•ﻌ•^ i-input, :3 featuwestoweentityid] {
+      o-ovewwide vaw entity: featuwestowev1candidateentity[quewy, (ˆ ﻌ ˆ)♡ i-input, (U ᵕ U❁) featuwestoweentityid] =
         _entity
-      override val featureGroup: TimelinesAggregationFrameworkFeatureGroup[
-        FeatureStoreEntityId
-      ] = _featureGroup
+      ovewwide vaw featuwegwoup: t-timewinesaggwegationfwamewowkfeatuwegwoup[
+        featuwestoweentityid
+      ] = _featuwegwoup
 
-      override val enabledParam: Option[FSParam[Boolean]] = _enabledParam
+      ovewwide v-vaw enabwedpawam: o-option[fspawam[boowean]] = _enabwedpawam
 
-      override val keepLegacyNames: Boolean = _keepLegacyNames
-      override val featureNameTransform: Option[FeatureRenameTransform] = _featureNameTransform
+      ovewwide v-vaw keepwegacynames: b-boowean = _keepwegacynames
+      o-ovewwide vaw featuwenametwansfowm: option[featuwewenametwansfowm] = _featuwenametwansfowm
     }
 }

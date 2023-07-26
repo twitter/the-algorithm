@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.core.model.common
+package com.twittew.pwoduct_mixew.cowe.modew.common
 
 /**
- * A mixin trait that can be added to a [[Component]] that's marked with [[SupportsConditionally]]
- * A [[Component]] with [[SupportsConditionally]] and [[Conditionally]] will only be run when `onlyIf` returns true
- * if `onlyIf` returns false, the [[Component]] is skipped and no stats are recorded for it.
+ * a mixin t-twait that can b-be added to a [[component]] t-that's m-mawked with [[suppowtsconditionawwy]]
+ * a-a [[component]] w-with [[suppowtsconditionawwy]] a-and [[conditionawwy]] w-wiww onwy be wun when `onwyif` wetuwns twue
+ * if `onwyif` wetuwns fawse, >w< the [[component]] is s-skipped and nyo stats awe wecowded fow it. (U ﹏ U)
  *
- * @note if an exception is thrown when evaluating `onlyIf`, it will bubble up to the containing `Pipeline`,
- *       however the [[Component]]'s stats will not be incremented. Because of this `onlyIf` should never throw.
+ * @note i-if an exception is thwown w-when evawuating `onwyif`, 😳 it wiww bubbwe up to the containing `pipewine`, (ˆ ﻌ ˆ)♡
+ *       h-howevew the [[component]]'s stats wiww nyot b-be incwemented. 😳😳😳 b-because of this `onwyif` shouwd nyevew thwow. (U ﹏ U)
  *
- * @note each [[Component]] that [[SupportsConditionally]] has an implementation with in the
- *       component library that will conditionally run the component based on a [[com.twitter.timelines.configapi.Param]]
+ * @note each [[component]] that [[suppowtsconditionawwy]] has a-an impwementation with in the
+ *       component wibwawy that wiww conditionawwy w-wun the component based on a [[com.twittew.timewines.configapi.pawam]]
  *
- * @note [[Conditionally]] functionality is wired into the Component's Executor.
+ * @note [[conditionawwy]] f-functionawity i-is wiwed into t-the component's e-executow. (///ˬ///✿)
  *
- * @tparam Input the input that is used to gate a component on or off
+ * @tpawam input the input that i-is used to gate a component on ow off
  */
-trait Conditionally[-Input] { _: SupportsConditionally[Input] =>
+twait c-conditionawwy[-input] { _: suppowtsconditionawwy[input] =>
 
   /**
-   * if `onlyIf` returns true, the underling [[Component]] is run, otherwise it's skipped
-   * @note must not throw
+   * if `onwyif` wetuwns twue, 😳 the undewwing [[component]] is w-wun, 😳 othewwise it's skipped
+   * @note m-must nyot t-thwow
    */
-  def onlyIf(query: Input): Boolean
+  d-def onwyif(quewy: input): boowean
 }
 
 /**
- * Marker trait added  to the base type for each [[Component]] which supports the [[Conditionally]] mixin
+ * mawkew twait added  t-to the base type f-fow each [[component]] which suppowts t-the [[conditionawwy]] m-mixin
  *
- * @note this is `private[core]` because it can only be added to the base implementation of components by the Product Mixer team
+ * @note this is `pwivate[cowe]` b-because it can onwy be added t-to the base impwementation of components by t-the pwoduct mixew team
  *
- * @tparam Input the input that is used to gate a component on or off if [[Conditionally]] is mixed in
+ * @tpawam i-input the input that is used t-to gate a component o-on ow off if [[conditionawwy]] is mixed in
  */
-private[core] trait SupportsConditionally[-Input] { _: Component => }
+pwivate[cowe] twait suppowtsconditionawwy[-input] { _: component => }
 
-object Conditionally {
+object c-conditionawwy {
 
   /**
-   * Helper method for combining the [[Conditionally.onlyIf]] of an underlying [[Component]] with an additional predicate
+   * hewpew m-method fow combining the [[conditionawwy.onwyif]] o-of an undewwying [[component]] w-with an additionaw p-pwedicate
    */
-  def and[ComponentType <: Component, Input](
-    query: Input,
-    component: ComponentType with SupportsConditionally[Input],
-    onlyIf: Boolean
-  ): Boolean =
-    onlyIf && {
-      component match {
-        // @unchecked is safe here because the type parameter is guaranteed by
-        // the `SupportsConditionally[Input]` type parameter
-        case underlying: Conditionally[Input @unchecked] =>
-          underlying.onlyIf(query)
-        case _ =>
-          true
+  def and[componenttype <: component, σωσ i-input](
+    quewy: input, rawr x3
+    component: componenttype with suppowtsconditionawwy[input], OwO
+    onwyif: b-boowean
+  ): boowean =
+    o-onwyif && {
+      c-component match {
+        // @unchecked i-is safe hewe because t-the type pawametew i-is guawanteed b-by
+        // the `suppowtsconditionawwy[input]` t-type pawametew
+        case undewwying: conditionawwy[input @unchecked] =>
+          u-undewwying.onwyif(quewy)
+        c-case _ =>
+          t-twue
       }
     }
 

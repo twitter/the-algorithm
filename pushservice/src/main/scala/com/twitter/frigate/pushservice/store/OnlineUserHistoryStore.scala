@@ -1,80 +1,80 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.store.RealTimeClientEventStore
-import com.twitter.frigate.data_pipeline.common.HistoryJoin
-import com.twitter.frigate.data_pipeline.thriftscala.Event
-import com.twitter.frigate.data_pipeline.thriftscala.EventUnion
-import com.twitter.frigate.data_pipeline.thriftscala.PushRecSendEvent
-import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryValue
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.fwigate.common.histowy.histowy
+i-impowt c-com.twittew.fwigate.common.stowe.weawtimecwienteventstowe
+i-impowt c-com.twittew.fwigate.data_pipewine.common.histowyjoin
+i-impowt com.twittew.fwigate.data_pipewine.thwiftscawa.event
+impowt com.twittew.fwigate.data_pipewine.thwiftscawa.eventunion
+impowt com.twittew.fwigate.data_pipewine.thwiftscawa.pushwecsendevent
+impowt c-com.twittew.fwigate.data_pipewine.thwiftscawa.usewhistowyvawue
+impowt com.twittew.stowehaus.weadabwestowe
+impowt c-com.twittew.utiw.duwation
+impowt c-com.twittew.utiw.futuwe
+impowt com.twittew.utiw.time
 
-case class OnlineUserHistoryKey(
-  userId: Long,
-  offlineUserHistory: Option[UserHistoryValue],
-  history: Option[History])
+case cwass o-onwineusewhistowykey(
+  usewid: w-wong, 😳😳😳
+  offwineusewhistowy: o-option[usewhistowyvawue], (˘ω˘)
+  histowy: option[histowy])
 
-case class OnlineUserHistoryStore(
-  realTimeClientEventStore: RealTimeClientEventStore,
-  duration: Duration = 3.days)
-    extends ReadableStore[OnlineUserHistoryKey, UserHistoryValue] {
+case cwass onwineusewhistowystowe(
+  w-weawtimecwienteventstowe: weawtimecwienteventstowe, ^^
+  duwation: duwation = 3.days)
+    extends weadabwestowe[onwineusewhistowykey, :3 usewhistowyvawue] {
 
-  override def get(key: OnlineUserHistoryKey): Future[Option[UserHistoryValue]] = {
-    val now = Time.now
+  o-ovewwide def get(key: onwineusewhistowykey): f-futuwe[option[usewhistowyvawue]] = {
+    v-vaw n-nyow = time.now
 
-    val pushRecSends = key.history
-      .getOrElse(History(Nil.toMap))
-      .sortedPushDmHistory
-      .filter(_._1 > now - (duration + 1.day))
+    v-vaw pushwecsends = key.histowy
+      .getowewse(histowy(niw.tomap))
+      .sowtedpushdmhistowy
+      .fiwtew(_._1 > nyow - (duwation + 1.day))
       .map {
-        case (time, frigateNotification) =>
-          val pushRecSendEvent = PushRecSendEvent(
-            frigateNotification = Some(frigateNotification),
-            impressionId = frigateNotification.impressionId
+        c-case (time, fwigatenotification) =>
+          vaw pushwecsendevent = pushwecsendevent(
+            f-fwigatenotification = some(fwigatenotification), -.-
+            impwessionid = fwigatenotification.impwessionid
           )
-          pushRecSendEvent -> time
+          pushwecsendevent -> time
       }
 
-    realTimeClientEventStore
-      .get(key.userId, now - duration, now)
-      .map { attributedEventHistory =>
-        val attributedClientEvents = attributedEventHistory.sortedHistory.flatMap {
-          case (time, event) =>
-            event.eventUnion match {
-              case Some(eventUnion: EventUnion.AttributedPushRecClientEvent) =>
-                Some((eventUnion.attributedPushRecClientEvent, event.eventType, time))
-              case _ => None
+    w-weawtimecwienteventstowe
+      .get(key.usewid, 😳 nyow - duwation, mya n-nyow)
+      .map { a-attwibutedeventhistowy =>
+        v-vaw attwibutedcwientevents = attwibutedeventhistowy.sowtedhistowy.fwatmap {
+          case (time, (˘ω˘) event) =>
+            e-event.eventunion m-match {
+              case s-some(eventunion: e-eventunion.attwibutedpushweccwientevent) =>
+                some((eventunion.attwibutedpushweccwientevent, >_< e-event.eventtype, -.- time))
+              c-case _ => nyone
             }
         }
 
-        val realtimeLabeledSends: Seq[Event] = HistoryJoin.getLabeledPushRecSends(
-          pushRecSends,
-          attributedClientEvents,
-          Seq(),
-          Seq(),
-          Seq(),
-          now
+        vaw weawtimewabewedsends: seq[event] = h-histowyjoin.getwabewedpushwecsends(
+          pushwecsends, 🥺
+          a-attwibutedcwientevents, (U ﹏ U)
+          seq(), >w<
+          s-seq(),
+          s-seq(), mya
+          nyow
         )
 
-        key.offlineUserHistory.map { offlineUserHistory =>
-          val combinedEvents = offlineUserHistory.events.map { offlineEvents =>
-            (offlineEvents ++ realtimeLabeledSends)
+        key.offwineusewhistowy.map { offwineusewhistowy =>
+          vaw combinedevents = offwineusewhistowy.events.map { offwineevents =>
+            (offwineevents ++ weawtimewabewedsends)
               .map { event =>
-                event.timestampMillis -> event
+                e-event.timestampmiwwis -> e-event
               }
-              .toMap
-              .values
-              .toSeq
-              .sortBy { event =>
-                -1 * event.timestampMillis.getOrElse(0L)
+              .tomap
+              .vawues
+              .toseq
+              .sowtby { event =>
+                -1 * e-event.timestampmiwwis.getowewse(0w)
               }
           }
 
-          offlineUserHistory.copy(events = combinedEvents)
+          o-offwineusewhistowy.copy(events = c-combinedevents)
         }
       }
   }

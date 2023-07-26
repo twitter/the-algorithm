@@ -1,13 +1,13 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "common-internal/analytics/twitter-client-user-agent-parser/src/main/scala",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/transformer",
-        "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/store/persistence",
-        "timelineservice/common:model",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "common-intewnaw/anawytics/twittew-cwient-usew-agent-pawsew/swc/main/scawa", (⑅˘꒳˘)
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew", ( ͡o ω ͡o )
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/twansfowmew", UwU
+        "timewinemixew/sewvew/swc/main/scawa/com/twittew/timewinemixew/injection/stowe/pewsistence", rawr x3
+        "timewinesewvice/common:modew", rawr
     ],
 )

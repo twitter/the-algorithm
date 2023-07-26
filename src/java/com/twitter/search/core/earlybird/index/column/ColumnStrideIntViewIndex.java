@@ -1,71 +1,71 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.twittew.seawch.cowe.eawwybiwd.index.cowumn;
 
-import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+impowt com.twittew.seawch.common.encoding.featuwes.integewencodedfeatuwes;
+i-impowt com.twittew.seawch.common.schema.base.featuweconfiguwation;
+i-impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
 
 /**
- * An Int CSF view on top of an {@link AbstractColumnStrideMultiIntIndex}.
+ * a-an int csf v-view on top of a-an {@wink abstwactcowumnstwidemuwtiintindex}. :3
  *
- * Used for decoding encoded packed features and exposing them as
- * {@link org.apache.lucene.index.NumericDocValues}.
+ * u-used fow decoding encoded packed featuwes and exposing them as
+ * {@wink owg.apache.wucene.index.numewicdocvawues}. 😳😳😳
  */
-public class ColumnStrideIntViewIndex extends ColumnStrideFieldIndex {
-  private static class IntViewIntegerEncodedFeatures extends IntegerEncodedFeatures {
-    private final AbstractColumnStrideMultiIntIndex baseIndex;
-    private final int docID;
+p-pubwic cwass cowumnstwideintviewindex extends cowumnstwidefiewdindex {
+  p-pwivate static cwass intviewintegewencodedfeatuwes e-extends integewencodedfeatuwes {
+    pwivate finaw abstwactcowumnstwidemuwtiintindex baseindex;
+    pwivate f-finaw int docid;
 
-    public IntViewIntegerEncodedFeatures(AbstractColumnStrideMultiIntIndex baseIndex, int docID) {
-      this.baseIndex = baseIndex;
-      this.docID = docID;
+    pubwic i-intviewintegewencodedfeatuwes(abstwactcowumnstwidemuwtiintindex b-baseindex, (˘ω˘) int docid) {
+      this.baseindex = baseindex;
+      this.docid = d-docid;
     }
 
-    @Override
-    public int getInt(int pos) {
-      return baseIndex.get(docID, pos);
+    @ovewwide
+    pubwic int getint(int pos) {
+      wetuwn baseindex.get(docid, ^^ pos);
     }
 
-    @Override
-    public void setInt(int pos, int value) {
-      baseIndex.setValue(docID, pos, value);
+    @ovewwide
+    pubwic v-void setint(int pos, :3 int vawue) {
+      b-baseindex.setvawue(docid, -.- p-pos, vawue);
     }
 
-    @Override
-    public int getNumInts() {
-      return baseIndex.getNumIntsPerField();
+    @ovewwide
+    p-pubwic i-int getnumints() {
+      wetuwn baseindex.getnumintspewfiewd();
     }
   }
 
-  private final AbstractColumnStrideMultiIntIndex baseIndex;
-  private final FeatureConfiguration featureConfiguration;
+  p-pwivate finaw abstwactcowumnstwidemuwtiintindex baseindex;
+  pwivate finaw featuweconfiguwation f-featuweconfiguwation;
 
   /**
-   * Creates a new ColumnStrideIntViewIndex on top of an existing AbstractColumnStrideMultiIntIndex.
+   * cweates a nyew cowumnstwideintviewindex on top of an existing abstwactcowumnstwidemuwtiintindex.
    */
-  public ColumnStrideIntViewIndex(Schema.FieldInfo info,
-                                  AbstractColumnStrideMultiIntIndex baseIndex) {
-    super(info.getName());
-    this.baseIndex = baseIndex;
-    this.featureConfiguration = info.getFieldType().getCsfViewFeatureConfiguration();
+  p-pubwic cowumnstwideintviewindex(schema.fiewdinfo i-info, 😳
+                                  a-abstwactcowumnstwidemuwtiintindex b-baseindex) {
+    supew(info.getname());
+    this.baseindex = baseindex;
+    t-this.featuweconfiguwation = info.getfiewdtype().getcsfviewfeatuweconfiguwation();
   }
 
-  @Override
-  public long get(int docID) {
-    IntegerEncodedFeatures encodedFeatures = new IntViewIntegerEncodedFeatures(baseIndex, docID);
-    return encodedFeatures.getFeatureValue(featureConfiguration);
+  @ovewwide
+  p-pubwic wong get(int docid) {
+    i-integewencodedfeatuwes e-encodedfeatuwes = nyew intviewintegewencodedfeatuwes(baseindex, mya d-docid);
+    wetuwn encodedfeatuwes.getfeatuwevawue(featuweconfiguwation);
   }
 
-  @Override
-  public void setValue(int docID, long value) {
-    IntegerEncodedFeatures encodedFeatures = new IntViewIntegerEncodedFeatures(baseIndex, docID);
-    encodedFeatures.setFeatureValue(featureConfiguration, (int) value);
+  @ovewwide
+  p-pubwic void setvawue(int docid, (˘ω˘) wong v-vawue) {
+    integewencodedfeatuwes encodedfeatuwes = n-nyew intviewintegewencodedfeatuwes(baseindex, >_< docid);
+    e-encodedfeatuwes.setfeatuwevawue(featuweconfiguwation, -.- (int) v-vawue);
   }
 
-  @Override
-  public ColumnStrideFieldIndex optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper, DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    throw new UnsupportedOperationException(
-        "ColumnStrideIntViewIndex instances do not support optimization");
+  @ovewwide
+  pubwic cowumnstwidefiewdindex optimize(
+      docidtotweetidmappew owiginawtweetidmappew, 🥺 docidtotweetidmappew o-optimizedtweetidmappew) {
+    t-thwow nyew unsuppowtedopewationexception(
+        "cowumnstwideintviewindex i-instances do nyot s-suppowt optimization");
   }
 }

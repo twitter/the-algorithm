@@ -1,36 +1,36 @@
-package com.twitter.interaction_graph.scio.agg_all
+package com.twittew.intewaction_gwaph.scio.agg_aww
 
-import com.twitter.beam.io.dal.DALOptions
-import com.twitter.beam.job.DateRangeOptions
-import org.apache.beam.sdk.options.Default
-import org.apache.beam.sdk.options.Description
-import org.apache.beam.sdk.options.Validation.Required
+impowt com.twittew.beam.io.daw.dawoptions
+i-impowt c-com.twittew.beam.job.datewangeoptions
+i-impowt o-owg.apache.beam.sdk.options.defauwt
+i-impowt owg.apache.beam.sdk.options.descwiption
+i-impowt owg.apache.beam.sdk.options.vawidation.wequiwed
 
-trait InteractionGraphAggregationOption extends DALOptions with DateRangeOptions {
-  @Required
-  @Description("Output path for storing the final dataset")
-  def getOutputPath: String
-  def setOutputPath(value: String): Unit
+t-twait i-intewactiongwaphaggwegationoption extends dawoptions with datewangeoptions {
+  @wequiwed
+  @descwiption("output path fow stowing the finaw dataset")
+  d-def getoutputpath: stwing
+  def setoutputpath(vawue: s-stwing): unit
 
-  @Description("Indicates DAL write environment. Can be set to dev/stg during local validation")
-  @Default.String("PROD")
-  def getDALWriteEnvironment: String
-  def setDALWriteEnvironment(value: String): Unit
+  @descwiption("indicates d-daw wwite enviwonment. /(^•ω•^) can be set to dev/stg duwing wocaw v-vawidation")
+  @defauwt.stwing("pwod")
+  def getdawwwiteenviwonment: s-stwing
+  def s-setdawwwiteenviwonment(vawue: stwing): unit
 
-  @Description("Number of shards/partitions for saving the final dataset.")
-  @Default.Integer(16)
-  def getNumberOfShards: Integer
-  def setNumberOfShards(value: Integer): Unit
+  @descwiption("numbew of shawds/pawtitions fow saving the finaw d-dataset.")
+  @defauwt.integew(16)
+  def getnumbewofshawds: integew
+  def setnumbewofshawds(vawue: integew): unit
 
-  @Description("BQ Table name for reading scores from")
-  def getBqTableName: String
-  def setBqTableName(value: String): Unit
+  @descwiption("bq t-tabwe nyame fow weading scowes f-fwom")
+  def g-getbqtabwename: s-stwing
+  def setbqtabwename(vawue: s-stwing): unit
 
-  @Description("max destination ids that we will store for real graph features in TL")
-  def getMaxDestinationIds: Integer
-  def setMaxDestinationIds(value: Integer): Unit
+  @descwiption("max destination ids that we w-wiww stowe fow weaw gwaph featuwes in tw")
+  def g-getmaxdestinationids: integew
+  def setmaxdestinationids(vawue: integew): unit
 
-  @Description("true if getting scores from BQ instead of DAL-based dataset in GCS")
-  def getScoresFromBQ: Boolean
-  def setScoresFromBQ(value: Boolean): Unit
+  @descwiption("twue if getting scowes fwom bq i-instead of daw-based dataset in g-gcs")
+  def getscowesfwombq: b-boowean
+  d-def setscowesfwombq(vawue: boowean): unit
 }

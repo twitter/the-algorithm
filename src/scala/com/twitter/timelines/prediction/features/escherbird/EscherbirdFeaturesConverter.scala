@@ -1,19 +1,19 @@
-package com.twitter.timelines.prediction.features.escherbird
+package com.twittew.timewines.pwediction.featuwes.eschewbiwd
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import scala.collection.JavaConverters._
+impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt s-scawa.cowwection.javaconvewtews._
 
-object EscherbirdFeaturesConverter {
-  val DeprecatedOrTestDomains = Set(1L, 5L, 7L, 9L, 14L, 19L, 20L, 31L)
+o-object eschewbiwdfeatuwesconvewtew {
+  v-vaw d-depwecatedowtestdomains = s-set(1w, :3 5w, 7w, 9w, 14w, 😳😳😳 19w, 20w, 31w)
 
-  def fromTweet(tweet: Tweet): Option[EscherbirdFeatures] = tweet.escherbirdEntityAnnotations.map {
-    escherbirdEntityAnnotations =>
-      val annotations = escherbirdEntityAnnotations.entityAnnotations
-        .filterNot(annotation => DeprecatedOrTestDomains.contains(annotation.domainId))
-      val tweetGroupIds = annotations.map(_.groupId.toString).toSet.asJava
-      val tweetDomainIds = annotations.map(_.domainId.toString).toSet.asJava
-      // An entity is only unique within a given domain
-      val tweetEntityIds = annotations.map(a => s"${a.domainId}.${a.entityId}").toSet.asJava
-      EscherbirdFeatures(tweet.id, tweetGroupIds, tweetDomainIds, tweetEntityIds)
+  d-def fwomtweet(tweet: tweet): option[eschewbiwdfeatuwes] = tweet.eschewbiwdentityannotations.map {
+    eschewbiwdentityannotations =>
+      v-vaw annotations = eschewbiwdentityannotations.entityannotations
+        .fiwtewnot(annotation => depwecatedowtestdomains.contains(annotation.domainid))
+      vaw t-tweetgwoupids = annotations.map(_.gwoupid.tostwing).toset.asjava
+      v-vaw tweetdomainids = annotations.map(_.domainid.tostwing).toset.asjava
+      // an entity is onwy unique within a given d-domain
+      vaw tweetentityids = a-annotations.map(a => s-s"${a.domainid}.${a.entityid}").toset.asjava
+      eschewbiwdfeatuwes(tweet.id, -.- tweetgwoupids, ( ͡o ω ͡o ) tweetdomainids, rawr x3 tweetentityids)
   }
 }

@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.wichtext
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrlType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basestw
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.wichtext.basewichtextbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uwwtype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextawignment
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class RichTextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  textBuilder: BaseStr[Query, Candidate],
-  linkMap: Map[String, String],
-  rtl: Option[Boolean],
-  alignment: Option[RichTextAlignment],
-  linkTypeMap: Map[String, UrlType] = Map.empty)
-    extends BaseRichTextBuilder[Query, Candidate] {
+case cwass wichtextbuiwdew[-quewy <: pipewinequewy, mya -candidate <: univewsawnoun[any]](
+  t-textbuiwdew: basestw[quewy, nyaa~~ candidate], (⑅˘꒳˘)
+  w-winkmap: map[stwing, rawr x3 stwing], (✿oωo)
+  w-wtw: option[boowean], (ˆ ﻌ ˆ)♡
+  awignment: option[wichtextawignment], (˘ω˘)
+  winktypemap: m-map[stwing, (⑅˘꒳˘) uwwtype] = map.empty)
+    e-extends b-basewichtextbuiwdew[quewy, (///ˬ///✿) candidate] {
 
-  def apply(query: Query, candidate: Candidate, candidateFeatures: FeatureMap): RichText = {
-    RichTextMarkupUtil.richTextFromMarkup(
-      text = textBuilder(query, candidate, candidateFeatures),
-      linkMap = linkMap,
-      rtl = rtl,
-      alignment = alignment,
-      linkTypeMap = linkTypeMap)
+  def appwy(quewy: quewy, candidate: candidate, 😳😳😳 c-candidatefeatuwes: featuwemap): wichtext = {
+    wichtextmawkuputiw.wichtextfwommawkup(
+      text = textbuiwdew(quewy, c-candidate, 🥺 candidatefeatuwes), mya
+      winkmap = w-winkmap, 🥺
+      w-wtw = wtw, >_<
+      a-awignment = awignment, >_<
+      w-winktypemap = winktypemap)
   }
 }

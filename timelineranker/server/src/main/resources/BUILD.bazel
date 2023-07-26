@@ -1,5 +1,5 @@
-resources(
-    sources = [
-        "*.xml",
-    ],
+wesouwces(
+    souwces = [
+        "*.xmw", XD
+    ], >_<
 )

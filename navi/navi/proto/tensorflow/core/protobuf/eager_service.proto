@@ -1,344 +1,344 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.eager;
+package tensowfwow.eagew;
 
-import "tensorflow/core/framework/attr_value.proto";
-import "tensorflow/core/framework/device_attributes.proto";
-import "tensorflow/core/framework/function.proto";
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/versions.proto";
-import "tensorflow/core/protobuf/remote_tensor_handle.proto";
-import "tensorflow/core/protobuf/tensorflow_server.proto";
+impowt "tensowfwow/cowe/fwamewowk/attw_vawue.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/device_attwibutes.pwoto";
+impowt "tensowfwow/cowe/fwamewowk/function.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/tensow.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/tensow_shape.pwoto";
+i-impowt "tensowfwow/cowe/fwamewowk/vewsions.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/wemote_tensow_handwe.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/tensowfwow_sewvew.pwoto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// A proto representation of an eager operation.
-message Operation {
-  // A unique identifier for the operation. Set by the client so that the client
-  // can uniquely identify the outputs of the scheduled operation.
+// a-a pwoto wepwesentation of an eagew opewation. rawr x3
+message opewation {
+  // a unique identifiew f-fow the opewation. ^^ set by the cwient so that t-the cwient
+  // can uniquewy identify t-the outputs of the scheduwed opewation. OwO
   //
-  // In the initial implementation, sending duplicate IDs has undefined
-  // behaviour, but additional constraints may be placed upon this in the
-  // future.
+  // in the initiaw i-impwementation, ^^ sending dupwicate i-ids has u-undefined
+  // behaviouw, :3 but additionaw constwaints may be pwaced upon this in t-the
+  // futuwe.
   int64 id = 1;
-  string name = 2;
+  stwing nyame = 2;
 
-  message Input {
-    oneof item {
-      RemoteTensorHandle remote_handle = 1;
-      TensorProto tensor = 2;
+  message input {
+    oneof i-item {
+      wemotetensowhandwe w-wemote_handwe = 1;
+      t-tensowpwoto t-tensow = 2;
     }
   }
 
-  repeated Input op_inputs = 10;
+  w-wepeated input op_inputs = 10;
 
-  // Control Operation IDs that will be respected when ops are re-ordered by
-  // async execution. If async execution (+ op re-ordering) is not enabled, this
-  // should have no effect.
-  repeated int64 control_op_ids = 4;
-  map<string, AttrValue> attrs = 5;
-  string device = 6;
+  // contwow opewation i-ids that wiww be wespected when ops awe w-we-owdewed by
+  // async execution. if async execution (+ op we-owdewing) is nyot enabwed, o.O this
+  // s-shouwd have no effect. -.-
+  wepeated i-int64 contwow_op_ids = 4;
+  m-map<stwing, (U ﹏ U) attwvawue> a-attws = 5;
+  stwing device = 6;
 
-  // Indicates whether the op is a component of a multi-device function.
-  bool is_component_function = 7;
-  // Set when is_component_function is true. It's initially generated
-  // when we create an FunctionLibraryRuntime::Options (negative value) and used
-  // to create Rendezvous for function execution. All components of a
-  // multi-device function should use the same step id to make sure that they
-  // can communicate through Send/Recv ops.
-  int64 func_step_id = 8;
-  // Indicates whether the op is a function.
-  bool is_function = 9;
+  // indicates whethew the op is a component o-of a muwti-device f-function. o.O
+  boow is_component_function = 7;
+  // s-set when i-is_component_function is twue. OwO i-it's initiawwy genewated
+  // w-when we cweate an functionwibwawywuntime::options (negative vawue) a-and used
+  // to cweate wendezvous f-fow function execution. ^•ﻌ•^ aww c-components of a-a
+  // muwti-device function shouwd use the same step id to make suwe that they
+  // can communicate thwough send/wecv o-ops. ʘwʘ
+  int64 f-func_step_id = 8;
+  // indicates w-whethew the o-op is a function. :3
+  b-boow is_function = 9;
 
-  reserved 3;
+  wesewved 3;
 }
 
-message QueueItem {
-  // The remote executor should be able to handle either executing ops directly,
-  // or releasing any unused tensor handles, since the tensor lifetime is
-  // maintained by the client.
-  oneof item {
-    RemoteTensorHandle handle_to_decref = 1;
-    Operation operation = 2;
-    SendTensorOp send_tensor = 3;
-    // Takes a FunctionDef and makes it enqueable on the remote worker.
-    RegisterFunctionOp register_function = 4;
-    CleanupFunctionOp cleanup_function = 5;
-    // A remote executor is created to execute ops/functions asynchronously
-    // enqueued in streaming call. Request with this item type waits for pending
-    // nodes to finish on the remote executor and report status.
-    SyncRemoteExecutorForStream sync_remote_executor_for_stream = 6;
-    SendPackedHandleOp send_packed_handle = 7;
+message queueitem {
+  // the wemote e-executow shouwd be abwe to handwe eithew executing ops diwectwy, 😳
+  // ow weweasing a-any unused tensow handwes, òωó s-since the tensow w-wifetime is
+  // m-maintained by the cwient. 🥺
+  oneof i-item {
+    wemotetensowhandwe h-handwe_to_decwef = 1;
+    o-opewation o-opewation = 2;
+    sendtensowop send_tensow = 3;
+    // t-takes a-a functiondef a-and makes it enqueabwe o-on the w-wemote wowkew. rawr x3
+    wegistewfunctionop wegistew_function = 4;
+    cweanupfunctionop c-cweanup_function = 5;
+    // a wemote executow is cweated to exekawaii~ ops/functions asynchwonouswy
+    // enqueued in stweaming c-caww. ^•ﻌ•^ wequest with this item type waits fow pending
+    // n-nyodes to finish o-on the wemote executow a-and wepowt status. :3
+    syncwemoteexecutowfowstweam s-sync_wemote_executow_fow_stweam = 6;
+    sendpackedhandweop s-send_packed_handwe = 7;
   }
 }
 
-message QueueResponse {
-  // `shape` and `tensor` cannot be set in the same response.
-  // Shapes of output tensors for creating remote TensorHandles.
-  repeated TensorShapeProto shape = 1;
-  // Optional. If set, represents the output devices of a function.
-  repeated string device = 3;
+m-message queuewesponse {
+  // `shape` and `tensow` cannot be set in the same wesponse. (ˆ ﻌ ˆ)♡
+  // shapes of output t-tensows fow cweating wemote tensowhandwes. (U ᵕ U❁)
+  wepeated t-tensowshapepwoto shape = 1;
+  // o-optionaw. :3 i-if set, ^^;; wepwesents the output devices of a function. ( ͡o ω ͡o )
+  w-wepeated s-stwing device = 3;
 
-  // Output tensors of a remote function. Set when Operation.id is invalid.
-  repeated TensorProto tensor = 2;
+  // output t-tensows of a w-wemote function. o.O set when opewation.id is invawid. ^•ﻌ•^
+  wepeated tensowpwoto tensow = 2;
 }
 
-message CreateContextRequest {
-  // Identifies the full cluster, and this particular worker's position within.
-  ServerDef server_def = 1;
+m-message c-cweatecontextwequest {
+  // i-identifies the fuww c-cwustew, and this p-pawticuwaw wowkew's position w-within. XD
+  sewvewdef sewvew_def = 1;
 
-  // Whether the ops on the worker should be executed synchronously or
-  // asynchronously. By default, ops are executed synchronously.
-  bool async = 2;
+  // whethew the ops on the wowkew shouwd be e-exekawaii~d synchwonouswy o-ow
+  // asynchwonouswy. ^^ by defauwt, o-ops awe exekawaii~d s-synchwonouswy. o.O
+  boow async = 2;
 
-  // Number of seconds to keep the context alive. If more than keep_alive_secs
-  // has passed since a particular context has been communicated with, it will
-  // be garbage collected.
-  int64 keep_alive_secs = 3;
+  // nyumbew of seconds to k-keep the context awive. ( ͡o ω ͡o ) if mowe than keep_awive_secs
+  // has passed since a pawticuwaw c-context has been communicated with, /(^•ω•^) it w-wiww
+  // be gawbage c-cowwected. 🥺
+  int64 keep_awive_secs = 3;
 
-  // This is the version for all the ops that will be enqueued by the client.
-  VersionDef version_def = 4;
+  // this is the vewsion fow aww the o-ops that wiww b-be enqueued by the cwient. nyaa~~
+  vewsiondef vewsion_def = 4;
 
-  // Device attributes in the cluster
-  repeated DeviceAttributes cluster_device_attributes = 6;
+  // device attwibutes i-in the cwustew
+  wepeated deviceattwibutes c-cwustew_device_attwibutes = 6;
 
-  // The ID of the created context. This is usually a randomly generated number,
-  // that will be used to identify the context in future requests to the
-  // service. Contexts are not persisted through server restarts.
-  // This ID will be used for all future communications as well. It is essential
-  // that both ends use this ID for selecting a rendezvous to get everything to
-  // match.
-  fixed64 context_id = 7;
+  // the id of the cweated context. mya this is usuawwy a-a wandomwy genewated nyumbew, XD
+  // t-that wiww be u-used to identify the context in f-futuwe wequests to the
+  // sewvice. c-contexts awe n-nyot pewsisted t-thwough sewvew westawts. nyaa~~
+  // t-this id wiww be u-used fow aww futuwe communications as weww. it is e-essentiaw
+  // t-that both ends u-use this id fow sewecting a wendezvous to get evewything t-to
+  // match. ʘwʘ
+  fixed64 c-context_id = 7;
 
-  // The view ID of the context.
+  // t-the view id of the context. (⑅˘꒳˘)
   fixed64 context_view_id = 8;
 
-  // For a multi device function, if false, eagerly copy all remote inputs to
-  // the default function device; if true, lazily copy remote inputs to their
-  // target devices after function instantiation to avoid redundant copies.
-  bool lazy_copy_remote_function_inputs = 9;
+  // fow a muwti d-device function, :3 i-if fawse, -.- e-eagewwy copy aww w-wemote inputs to
+  // the defauwt f-function device; if twue, 😳😳😳 waziwy copy wemote inputs to theiw
+  // tawget devices aftew function i-instantiation to avoid wedundant c-copies. (U ﹏ U)
+  boow wazy_copy_wemote_function_inputs = 9;
 
-  reserved 5;
+  w-wesewved 5;
 }
 
-message CreateContextResponse {
-  // List of devices that are locally accessible to the worker.
-  repeated DeviceAttributes device_attributes = 2;
+message c-cweatecontextwesponse {
+  // wist of devices t-that awe wocawwy a-accessibwe to the w-wowkew. o.O
+  wepeated d-deviceattwibutes d-device_attwibutes = 2;
 
-  reserved 1;
+  wesewved 1;
 }
 
-message UpdateContextRequest {
-  // Identifies the full cluster, and this particular worker's position within.
-  ServerDef server_def = 1;
+message updatecontextwequest {
+  // identifies the fuww cwustew, ( ͡o ω ͡o ) and this pawticuwaw wowkew's position w-within. òωó
+  s-sewvewdef sewvew_def = 1;
 
-  // Device attributes in the cluster.
-  // If this field is empty, it indicates that this is a simple update request
-  // that only increments the cluster view ID and does not require changes to
-  // the workers it connects to.
-  repeated DeviceAttributes cluster_device_attributes = 2;
+  // d-device attwibutes in the cwustew. 🥺
+  // i-if this fiewd is empty, /(^•ω•^) it indicates that this is a simpwe u-update wequest
+  // t-that onwy incwements the c-cwustew view id and does nyot wequiwe changes to
+  // t-the wowkews i-it connects to.
+  wepeated deviceattwibutes c-cwustew_device_attwibutes = 2;
 
-  // The ID of the context to be updated. A context with the specified ID must
-  // already exist on the recepient server of this request.
-  fixed64 context_id = 3;
+  // t-the id of the context to be updated. 😳😳😳 a context with the specified id must
+  // a-awweady exist o-on the wecepient s-sewvew of this w-wequest. ^•ﻌ•^
+  fixed64 c-context_id = 3;
 
-  // The view ID of the context, which should be contiguously incremented when
-  // updating the same context.
-  fixed64 context_view_id = 4;
+  // the view i-id of the context, nyaa~~ w-which shouwd be contiguouswy i-incwemented when
+  // u-updating the same context. OwO
+  f-fixed64 context_view_id = 4;
 }
 
-message UpdateContextResponse {
-  // List of devices that are locally accessible to the worker.
-  repeated DeviceAttributes device_attributes = 1;
+message updatecontextwesponse {
+  // wist of d-devices that awe wocawwy accessibwe t-to the wowkew. ^•ﻌ•^
+  w-wepeated deviceattwibutes d-device_attwibutes = 1;
 }
 
-message EnqueueRequest {
-  fixed64 context_id = 1;
+message enqueuewequest {
+  f-fixed64 context_id = 1;
 
-  repeated QueueItem queue = 3;
+  w-wepeated queueitem q-queue = 3;
 }
 
-message EnqueueResponse {
-  // A single operation response for every item in the request.
-  repeated QueueResponse queue_response = 1;
+message enqueuewesponse {
+  // a singwe opewation wesponse fow e-evewy item in the wequest. σωσ
+  wepeated queuewesponse q-queue_wesponse = 1;
 }
 
-message WaitQueueDoneRequest {
-  fixed64 context_id = 1;
+m-message waitqueuedonewequest {
+  f-fixed64 context_id = 1;
 
-  // Ids to wait on. If empty, wait on everything currently pending.
-  repeated int64 op_id = 2;
+  // i-ids to w-wait on. -.- if empty, (˘ω˘) wait on evewything cuwwentwy p-pending. rawr x3
+  wepeated int64 op_id = 2;
 }
 
-message WaitQueueDoneResponse {
-  // TODO(nareshmodi): Consider adding NodeExecStats here to be able to
-  // propagate some stats.
+message w-waitqueuedonewesponse {
+  // todo(naweshmodi): c-considew adding nyodeexecstats h-hewe to be abwe to
+  // pwopagate s-some stats. rawr x3
 }
 
-message RunComponentFunctionRequest {
-  fixed64 context_id = 1;
+m-message wuncomponentfunctionwequest {
+  f-fixed64 context_id = 1;
 
-  Operation operation = 2;
+  opewation opewation = 2;
 
-  // The output indices of its parent function.
-  repeated int32 output_num = 3;
+  // the output indices of its pawent function. σωσ
+  wepeated int32 output_num = 3;
 }
 
-message RunComponentFunctionResponse {
-  repeated TensorShapeProto shape = 1;
+message wuncomponentfunctionwesponse {
+  wepeated tensowshapepwoto shape = 1;
 
-  repeated TensorProto tensor = 2;
+  wepeated tensowpwoto tensow = 2;
 }
 
-message KeepAliveRequest {
-  fixed64 context_id = 1;
+m-message keepawivewequest {
+  f-fixed64 context_id = 1;
 }
 
-message KeepAliveResponse {
-  // If the requested context_id is on the remote host, set the context view ID.
-  fixed64 context_view_id = 1;
+message keepawivewesponse {
+  // if the wequested c-context_id is on t-the wemote host, nyaa~~ s-set the context view id. (ꈍᴗꈍ)
+  fixed64 c-context_view_id = 1;
 }
 
-message CloseContextRequest {
-  fixed64 context_id = 1;
-  fixed64 context_view_id = 2;
+message c-cwosecontextwequest {
+  f-fixed64 context_id = 1;
+  f-fixed64 context_view_id = 2;
 }
 
-message CloseContextResponse {}
+m-message c-cwosecontextwesponse {}
 
-message RegisterFunctionOp {
-  FunctionDef function_def = 1;
+message wegistewfunctionop {
+  f-functiondef f-function_def = 1;
 
-  // If true, it means that function_def is produced by graph partition during
-  // multi-device function instantiation.
-  bool is_component_function = 2;
+  // i-if twue, ^•ﻌ•^ i-it means that f-function_def i-is pwoduced by gwaph p-pawtition duwing
+  // m-muwti-device f-function instantiation. >_<
+  b-boow is_component_function = 2;
 
-  // All necessary FunctionDefs and GradientDefs to expand `function_def`.
-  // When is_component_function is true, `function_def` could be a nested
-  // function, since some nodes in its parent's function body could be
-  // replaced with a new function by the graph optimization passes. No need to
-  // add FunctionDefs here to the function cache in EagerContext since they
-  // won't be executed as KernelAndDevices.
-  FunctionDefLibrary library = 3;
+  // a-aww nyecessawy f-functiondefs and gwadientdefs t-to expand `function_def`. ^^;;
+  // when is_component_function is twue, ^^;; `function_def` c-couwd be a nyested
+  // function, /(^•ω•^) s-since some n-nyodes in its p-pawent's function body couwd be
+  // w-wepwaced with a nyew function b-by the gwaph optimization passes. nyaa~~ n-nyo nyeed to
+  // add functiondefs h-hewe to the function cache in eagewcontext since they
+  // won't be exekawaii~d a-as kewnewanddevices. (✿oωo)
+  functiondefwibwawy w-wibwawy = 3;
 }
 
-// Cleanup the step state of a multi-device function (e.g. tensors buffered by
-// a `Send` op but not picked up by its corresponding `Recv` op).
-message CleanupFunctionOp {
+// c-cweanup the step state of a muwti-device function (e.g. ( ͡o ω ͡o ) tensows b-buffewed by
+// a `send` op b-but nyot picked u-up by its cowwesponding `wecv` o-op). (U ᵕ U❁)
+message cweanupfunctionop {
   int64 step_id = 1;
 }
 
-message SyncRemoteExecutorForStream {}
+message s-syncwemoteexecutowfowstweam {}
 
-message SendTensorOp {
-  // All remote tensors are identified by <Op ID, Output num>. To mimic this
-  // situation when directly sending tensors, we include an "artificial" op ID
-  // (which would have corresponded to the _Recv op when not using SendTensor).
-  int64 op_id = 1;
-  // The index within the repeated field is the output number that will help
-  // uniquely identify (along with the above op_id) the particular tensor.
-  repeated TensorProto tensors = 2;
+m-message sendtensowop {
+  // aww w-wemote tensows awe identified by <op id, òωó output n-nyum>. σωσ to mimic this
+  // situation w-when diwectwy s-sending tensows, :3 w-we incwude an "awtificiaw" o-op id
+  // (which w-wouwd have cowwesponded t-to the _wecv o-op when not using sendtensow). OwO
+  i-int64 op_id = 1;
+  // t-the i-index within the w-wepeated fiewd i-is the output n-nyumbew that wiww h-hewp
+  // uniquewy i-identify (awong with the above o-op_id) the pawticuwaw tensow. ^^
+  w-wepeated tensowpwoto tensows = 2;
 
-  // The device on which the tensors should be resident.
-  string device_name = 3;
+  // t-the d-device on which t-the tensows shouwd be wesident. (˘ω˘)
+  stwing device_name = 3;
 }
 
-// Send a packed TensorHandle to a remote worker.
-message SendPackedHandleOp {
-  // Op id of the remote packed TensorHandle.
-  int64 op_id = 1;
+// send a packed tensowhandwe t-to a w-wemote wowkew. OwO
+message s-sendpackedhandweop {
+  // op id of the wemote packed tensowhandwe. UwU
+  int64 o-op_id = 1;
 
-  message LocalTensorHandle {
-    TensorProto tensor = 1;
-    // Device where the tensor is produced.
-    string device = 2;
+  m-message wocawtensowhandwe {
+    tensowpwoto tensow = 1;
+    // device w-whewe the t-tensow is pwoduced. ^•ﻌ•^
+    stwing device = 2;
   }
 
-  message Handle {
+  message handwe {
     oneof item {
-      LocalTensorHandle local_handle = 1;
-      RemoteTensorHandle remote_handle = 2;
+      w-wocawtensowhandwe w-wocaw_handwe = 1;
+      w-wemotetensowhandwe w-wemote_handwe = 2;
     }
   }
 
-  repeated Handle handles = 2;
+  wepeated handwe handwes = 2;
 
-  string device_name = 3;
+  s-stwing device_name = 3;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Eager Service defines a TensorFlow service that executes operations eagerly
-// on a set of local devices, on behalf of a remote Eager executor.
+// e-eagew sewvice defines a tensowfwow sewvice t-that exekawaii~s opewations eagewwy
+// on a s-set of wocaw devices, on behawf o-of a wemote eagew e-executow. (ꈍᴗꈍ)
 //
-// The service impl will keep track of the various clients and devices it has
-// access to and allows the client to enqueue ops on any devices that it is able
-// to access and schedule data transfers from/to any of the peers.
+// the sewvice impw w-wiww keep twack o-of the vawious cwients and devices i-it has
+// access to and awwows t-the cwient t-to enqueue ops on a-any devices that i-it is abwe
+// to access and scheduwe d-data twansfews f-fwom/to any o-of the peews. /(^•ω•^)
 //
-// A client can generate multiple contexts to be able to independently execute
-// operations, but cannot share data between the two contexts.
+// a cwient c-can genewate muwtipwe contexts to be abwe to independentwy e-exekawaii~
+// o-opewations, (U ᵕ U❁) b-but cannot shawe data between the two contexts. (✿oωo)
 //
-// NOTE: Even though contexts generated by clients should be independent, the
-// lower level tensorflow execution engine is not, so they might share some data
-// (e.g. a Device's ResourceMgr).
+// nyote: even though contexts g-genewated by cwients shouwd b-be independent, OwO t-the
+// wowew wevew tensowfwow execution engine i-is nyot, :3 so they might shawe some d-data
+// (e.g. nyaa~~ a-a device's wesouwcemgw). ^•ﻌ•^
 //
 ////////////////////////////////////////////////////////////////////////////////
-service EagerService {
-  // This initializes the worker, informing it about the other workers in the
-  // cluster and exchanging authentication tokens which will be used in all
-  // other RPCs to detect whether the worker has restarted.
-  rpc CreateContext(CreateContextRequest) returns (CreateContextResponse);
+sewvice e-eagewsewvice {
+  // t-this i-initiawizes the wowkew, ( ͡o ω ͡o ) infowming it about the othew wowkews in the
+  // cwustew a-and exchanging authentication tokens w-which wiww be used in aww
+  // othew wpcs to detect whethew t-the wowkew has westawted. ^^;;
+  wpc cweatecontext(cweatecontextwequest) wetuwns (cweatecontextwesponse);
 
-  // This updates the eager context on an existing worker when updating the set
-  // of servers in a distributed eager cluster.
-  rpc UpdateContext(UpdateContextRequest) returns (UpdateContextResponse);
+  // this u-updates the eagew c-context on an existing wowkew w-when updating the set
+  // of sewvews in a distwibuted e-eagew cwustew. mya
+  w-wpc updatecontext(updatecontextwequest) wetuwns (updatecontextwesponse);
 
-  // This takes a list of Execute and DeleteTensorHandle operations and enqueues
-  // (in async mode) or executes (in sync mode) them on the remote server.
-  // All outputs of ops which were not explicitly deleted with
-  // DeleteTensorHandle entries will be assumed to be alive and are usable by
-  // future calls to Enqueue.
-  rpc Enqueue(EnqueueRequest) returns (EnqueueResponse);
+  // t-this takes a wist of exekawaii~ a-and dewetetensowhandwe opewations and enqueues
+  // (in async mode) ow exekawaii~s (in s-sync mode) them on the wemote sewvew. (U ᵕ U❁)
+  // aww outputs o-of ops which w-wewe nyot expwicitwy d-deweted with
+  // dewetetensowhandwe entwies w-wiww be assumed to be awive and awe usabwe by
+  // futuwe cawws to enqueue. ^•ﻌ•^
+  w-wpc enqueue(enqueuewequest) w-wetuwns (enqueuewesponse);
 
-  // A streaming version of Enqueue.
-  // Current server implementation sends one response per received request.
-  // The benefit for using a streaming version is that subsequent requests
-  // can be sent without waiting for a response to the previous request. This
-  // synchronization is required in the regular Enqueue call because gRPC does
-  // not guarantee to preserve request order.
-  rpc StreamingEnqueue(stream EnqueueRequest) returns (stream EnqueueResponse);
+  // a-a stweaming vewsion o-of enqueue. (U ﹏ U)
+  // cuwwent sewvew impwementation s-sends one wesponse p-pew weceived wequest. /(^•ω•^)
+  // the benefit fow u-using a stweaming vewsion is that subsequent wequests
+  // c-can be sent without waiting fow a wesponse t-to the pwevious w-wequest. ʘwʘ this
+  // synchwonization i-is wequiwed i-in the weguwaw e-enqueue caww because gwpc does
+  // nyot guawantee t-to pwesewve wequest owdew. XD
+  wpc stweamingenqueue(stweam e-enqueuewequest) wetuwns (stweam enqueuewesponse);
 
-  // Takes a set of op IDs and waits until those ops are done. Returns any error
-  // in the stream so far.
-  rpc WaitQueueDone(WaitQueueDoneRequest) returns (WaitQueueDoneResponse);
+  // takes a-a set of op ids a-and waits untiw t-those ops awe done. (⑅˘꒳˘) w-wetuwns any e-ewwow
+  // in the stweam so faw. nyaa~~
+  w-wpc waitqueuedone(waitqueuedonewequest) wetuwns (waitqueuedonewesponse);
 
-  // This takes an Eager operation and executes it in async mode on the remote
-  // server. Different from EnqueueRequest, ops/functions sent through this
-  // type of requests are allowed to execute in parallel and no ordering is
-  // preserved by RPC stream or executor.
-  // This request type should only be used for executing component functions.
-  // Ordering of component functions should be enforced by their corresponding
-  // main functions. The runtime ensures the following invarients for component
-  // functions (CFs) and their main functions (MFs):
-  // (1) MF1 -> MF2 ==> CF1 -> CF2 ("->" indicates order of execution);
-  // (2) MF1 || MF2 ==> CF1 || CF2 ("||" indicates possible parallel execution);
-  // (3) For CF1 and CF2 that come from the same MF, CF1 || CF2
-  // For executing ops/main functions, use Enqueue or StreamingEnqueue instead
-  // for correct ordering.
-  rpc RunComponentFunction(RunComponentFunctionRequest)
-      returns (RunComponentFunctionResponse);
+  // this takes an e-eagew opewation and exekawaii~s i-it in async mode on the wemote
+  // sewvew. UwU diffewent f-fwom enqueuewequest, (˘ω˘) o-ops/functions sent thwough t-this
+  // type of wequests a-awe awwowed to e-exekawaii~ in pawawwew and nyo owdewing i-is
+  // p-pwesewved by wpc stweam ow executow. rawr x3
+  // t-this wequest type shouwd onwy be used fow executing component f-functions. (///ˬ///✿)
+  // owdewing o-of component functions shouwd be enfowced by theiw c-cowwesponding
+  // m-main functions. 😳😳😳 t-the wuntime ensuwes the fowwowing i-invawients f-fow component
+  // functions (cfs) a-and theiw main functions (mfs):
+  // (1) m-mf1 -> mf2 ==> cf1 -> cf2 ("->" i-indicates owdew o-of execution);
+  // (2) mf1 || mf2 ==> cf1 || cf2 ("||" indicates possibwe pawawwew e-execution);
+  // (3) f-fow cf1 and cf2 that come fwom the same mf, (///ˬ///✿) cf1 || cf2
+  // f-fow executing ops/main functions, ^^;; u-use enqueue o-ow stweamingenqueue instead
+  // fow cowwect owdewing. ^^
+  wpc wuncomponentfunction(wuncomponentfunctionwequest)
+      w-wetuwns (wuncomponentfunctionwesponse);
 
-  // Contexts are always created with a deadline and no RPCs within a deadline
-  // will trigger a context garbage collection. KeepAlive calls can be used to
-  // delay this. It can also be used to validate the existence of a context ID
-  // on remote eager worker. If the context is on remote worker, return the same
-  // ID and the current context view ID. This is useful for checking if the
-  // remote worker (potentially with the same task name and hostname / port) is
-  // replaced with a new process.
-  rpc KeepAlive(KeepAliveRequest) returns (KeepAliveResponse);
+  // contexts awe awways cweated w-with a deadwine and nyo wpcs within a-a deadwine
+  // w-wiww twiggew a context gawbage c-cowwection. (///ˬ///✿) k-keepawive cawws c-can be used to
+  // d-deway this. -.- i-it can awso be u-used to vawidate the existence of a context id
+  // on wemote eagew wowkew. /(^•ω•^) if the context is on w-wemote wowkew, UwU w-wetuwn the same
+  // i-id and the c-cuwwent context v-view id. (⑅˘꒳˘) this is u-usefuw fow checking if the
+  // wemote wowkew (potentiawwy with the same task nyame a-and hostname / p-powt) is
+  // wepwaced with a nyew pwocess. ʘwʘ
+  wpc keepawive(keepawivewequest) w-wetuwns (keepawivewesponse);
 
-  // Closes the context. No calls to other methods using the existing context ID
-  // are valid after this.
-  rpc CloseContext(CloseContextRequest) returns (CloseContextResponse);
+  // c-cwoses the c-context. σωσ nyo cawws to othew methods using the existing c-context id
+  // awe vawid aftew this. ^^
+  wpc c-cwosecontext(cwosecontextwequest) w-wetuwns (cwosecontextwesponse);
 }

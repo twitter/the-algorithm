@@ -1,40 +1,40 @@
-package com.twitter.follow_recommendations.modules
+package com.twittew.fowwow_wecommendations.moduwes
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance.ep_model.common.CommonConstants
-import com.twitter.relevance.ep_model.scorer.EPScorer
-import com.twitter.relevance.ep_model.scorer.EPScorerBuilder
-import java.io.File
-import java.io.FileOutputStream
-import scala.language.postfixOps
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.singweton
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.wewevance.ep_modew.common.commonconstants
+i-impowt c-com.twittew.wewevance.ep_modew.scowew.epscowew
+i-impowt com.twittew.wewevance.ep_modew.scowew.epscowewbuiwdew
+i-impowt java.io.fiwe
+i-impowt java.io.fiweoutputstweam
+impowt scawa.wanguage.postfixops
 
-object ScorerModule extends TwitterModule {
-  private val STPScorerPath = "/quality/stp_models/20141223"
+object scowewmoduwe extends twittewmoduwe {
+  p-pwivate vaw stpscowewpath = "/quawity/stp_modews/20141223"
 
-  private def fileFromResource(resource: String): File = {
-    val inputStream = getClass.getResourceAsStream(resource)
-    val file = File.createTempFile(resource, "temp")
-    val fos = new FileOutputStream(file)
-    Iterator
-      .continually(inputStream.read)
-      .takeWhile(-1 !=)
-      .foreach(fos.write)
-    file
+  pwivate def fiwefwomwesouwce(wesouwce: s-stwing): fiwe = {
+    vaw i-inputstweam = getcwass.getwesouwceasstweam(wesouwce)
+    vaw fiwe = fiwe.cweatetempfiwe(wesouwce, /(^•ω•^) "temp")
+    v-vaw fos = nyew fiweoutputstweam(fiwe)
+    i-itewatow
+      .continuawwy(inputstweam.wead)
+      .takewhiwe(-1 !=)
+      .foweach(fos.wwite)
+    fiwe
   }
 
-  @Provides
-  @Singleton
-  def provideEpScorer: EPScorer = {
-    val modelPath =
-      fileFromResource(STPScorerPath + "/" + CommonConstants.EP_MODEL_FILE_NAME).getAbsolutePath
-    val trainingConfigPath =
-      fileFromResource(STPScorerPath + "/" + CommonConstants.TRAINING_CONFIG).getAbsolutePath
-    val epScorer = new EPScorerBuilder
-    epScorer
-      .withModelPath(modelPath)
-      .withTrainingConfig(trainingConfigPath)
-      .build()
+  @pwovides
+  @singweton
+  d-def pwovideepscowew: epscowew = {
+    vaw modewpath =
+      fiwefwomwesouwce(stpscowewpath + "/" + commonconstants.ep_modew_fiwe_name).getabsowutepath
+    vaw t-twainingconfigpath =
+      fiwefwomwesouwce(stpscowewpath + "/" + commonconstants.twaining_config).getabsowutepath
+    vaw epscowew = nyew epscowewbuiwdew
+    e-epscowew
+      .withmodewpath(modewpath)
+      .withtwainingconfig(twainingconfigpath)
+      .buiwd()
   }
 }

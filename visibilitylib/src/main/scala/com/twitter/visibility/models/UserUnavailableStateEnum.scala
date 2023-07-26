@@ -1,22 +1,22 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-import com.twitter.visibility.thriftscala.UserVisibilityResult
-import com.twitter.visibility.util.NamingUtils
+impowt com.twittew.visibiwity.thwiftscawa.usewvisibiwitywesuwt
+i-impowt com.twittew.visibiwity.utiw.namingutiws
 
-sealed trait UserUnavailableStateEnum {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+s-seawed twait u-usewunavaiwabwestateenum {
+  wazy v-vaw nyame: stwing = n-nyamingutiws.getfwiendwyname(this)
 }
-object UserUnavailableStateEnum {
-  case object Deleted extends UserUnavailableStateEnum
-  case object BounceDeleted extends UserUnavailableStateEnum
-  case object Deactivated extends UserUnavailableStateEnum
-  case object Offboarded extends UserUnavailableStateEnum
-  case object Erased extends UserUnavailableStateEnum
-  case object Suspended extends UserUnavailableStateEnum
-  case object Protected extends UserUnavailableStateEnum
-  case object AuthorBlocksViewer extends UserUnavailableStateEnum
-  case object ViewerBlocksAuthor extends UserUnavailableStateEnum
-  case object ViewerMutesAuthor extends UserUnavailableStateEnum
-  case class Filtered(result: UserVisibilityResult) extends UserUnavailableStateEnum
-  case object Unavailable extends UserUnavailableStateEnum
+o-object u-usewunavaiwabwestateenum {
+  c-case object deweted extends usewunavaiwabwestateenum
+  case object bouncedeweted extends usewunavaiwabwestateenum
+  c-case object deactivated extends usewunavaiwabwestateenum
+  c-case object offboawded extends usewunavaiwabwestateenum
+  c-case object ewased extends usewunavaiwabwestateenum
+  case object suspended e-extends usewunavaiwabwestateenum
+  case object p-pwotected extends u-usewunavaiwabwestateenum
+  case object authowbwocksviewew extends usewunavaiwabwestateenum
+  case object viewewbwocksauthow e-extends usewunavaiwabwestateenum
+  case object viewewmutesauthow extends usewunavaiwabwestateenum
+  case cwass f-fiwtewed(wesuwt: usewvisibiwitywesuwt) e-extends u-usewunavaiwabwestateenum
+  c-case o-object unavaiwabwe extends usewunavaiwabwestateenum
 }

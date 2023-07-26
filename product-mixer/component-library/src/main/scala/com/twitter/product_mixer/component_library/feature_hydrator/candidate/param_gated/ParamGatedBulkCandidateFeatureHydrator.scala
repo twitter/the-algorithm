@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.pawam_gated
 
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.ParamGatedBulkCandidateFeatureHydrator.IdentifierPrefix
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.pawam_gated.pawamgatedbuwkcandidatefeatuwehydwatow.identifiewpwefix
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.timewines.configapi.pawam
 
 /**
- * A [[BulkCandidateFeatureHydrator]] with [[Conditionally]] based on a [[Param]]
+ * a [[buwkcandidatefeatuwehydwatow]] w-with [[conditionawwy]] based on a [[pawam]]
  *
- * @param enabledParam the param to turn this [[BulkCandidateFeatureHydrator]] on and off
- * @param bulkCandidateFeatureHydrator the underlying [[BulkCandidateFeatureHydrator]] to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
- * @tparam Result The type of the candidates
+ * @pawam enabwedpawam the p-pawam to tuwn this [[buwkcandidatefeatuwehydwatow]] on and off
+ * @pawam b-buwkcandidatefeatuwehydwatow t-the undewwying [[buwkcandidatefeatuwehydwatow]] to wun when `enabwedpawam` is twue
+ * @tpawam quewy the domain modew fow t-the quewy ow wequest
+ * @tpawam wesuwt the type of the candidates
  */
-case class ParamGatedBulkCandidateFeatureHydrator[
-  -Query <: PipelineQuery,
-  Result <: UniversalNoun[Any]
+case cwass pawamgatedbuwkcandidatefeatuwehydwatow[
+  -quewy <: p-pipewinequewy, (///ˬ///✿)
+  wesuwt <: u-univewsawnoun[any]
 ](
-  enabledParam: Param[Boolean],
-  bulkCandidateFeatureHydrator: BulkCandidateFeatureHydrator[Query, Result])
-    extends BulkCandidateFeatureHydrator[Query, Result]
-    with Conditionally[Query] {
+  e-enabwedpawam: p-pawam[boowean], >w<
+  b-buwkcandidatefeatuwehydwatow: buwkcandidatefeatuwehydwatow[quewy, rawr wesuwt])
+    e-extends buwkcandidatefeatuwehydwatow[quewy, mya wesuwt]
+    with conditionawwy[quewy] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    IdentifierPrefix + bulkCandidateFeatureHydrator.identifier.name)
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew = featuwehydwatowidentifiew(
+    identifiewpwefix + buwkcandidatefeatuwehydwatow.identifiew.name)
 
-  override val alerts: Seq[Alert] = bulkCandidateFeatureHydrator.alerts
+  o-ovewwide vaw awewts: seq[awewt] = b-buwkcandidatefeatuwehydwatow.awewts
 
-  override val features: Set[Feature[_, _]] = bulkCandidateFeatureHydrator.features
+  ovewwide v-vaw featuwes: s-set[featuwe[_, ^^ _]] = buwkcandidatefeatuwehydwatow.featuwes
 
-  override def onlyIf(query: Query): Boolean =
-    Conditionally.and(query, bulkCandidateFeatureHydrator, query.params(enabledParam))
+  ovewwide def onwyif(quewy: quewy): b-boowean =
+    c-conditionawwy.and(quewy, 😳😳😳 buwkcandidatefeatuwehydwatow, mya q-quewy.pawams(enabwedpawam))
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Result]]
-  ): Stitch[Seq[FeatureMap]] = bulkCandidateFeatureHydrator(query, candidates)
+  o-ovewwide def appwy(
+    q-quewy: quewy, 😳
+    candidates: s-seq[candidatewithfeatuwes[wesuwt]]
+  ): stitch[seq[featuwemap]] = buwkcandidatefeatuwehydwatow(quewy, -.- c-candidates)
 }
 
-object ParamGatedBulkCandidateFeatureHydrator {
-  val IdentifierPrefix = "ParamGated"
+object pawamgatedbuwkcandidatefeatuwehydwatow {
+  v-vaw identifiewpwefix = "pawamgated"
 }

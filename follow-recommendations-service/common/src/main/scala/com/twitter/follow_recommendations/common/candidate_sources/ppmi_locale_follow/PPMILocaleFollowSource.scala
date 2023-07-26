@@ -1,84 +1,84 @@
-package com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.ppmi_wocawe_fowwow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceParams.CandidateSourceEnabled
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceParams.LocaleToExcludeFromRecommendation
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.ppmi_wocawe_fowwow.ppmiwocawefowwowsouwcepawams.candidatesouwceenabwed
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.ppmi_wocawe_fowwow.ppmiwocawefowwowsouwcepawams.wocawetoexcwudefwomwecommendation
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.hewmit.modew.awgowithm
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.stitch.stitch
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.strato.generated.client.onboarding.UserPreferredLanguagesOnUserClientColumn
-import com.twitter.strato.generated.client.onboarding.userrecs.LocaleFollowPpmiClientColumn
-import com.twitter.timelines.configapi.HasParams
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
+impowt com.twittew.stwato.genewated.cwient.onboawding.usewpwefewwedwanguagesonusewcwientcowumn
+i-impowt com.twittew.stwato.genewated.cwient.onboawding.usewwecs.wocawefowwowppmicwientcowumn
+impowt com.twittew.timewines.configapi.haspawams
 
 /**
- * Fetches candidates based on the Positive Pointwise Mutual Information (PPMI) statistic
- * for a set of locales
+ * f-fetches candidates based on the positive pointwise mutuaw i-infowmation (ppmi) statistic
+ * f-fow a set of w-wocawes
  * */
-@Singleton
-class PPMILocaleFollowSource @Inject() (
-  userPreferredLanguagesOnUserClientColumn: UserPreferredLanguagesOnUserClientColumn,
-  localeFollowPpmiClientColumn: LocaleFollowPpmiClientColumn,
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[HasClientContext with HasParams, CandidateUser] {
+@singweton
+cwass ppmiwocawefowwowsouwce @inject() (
+  usewpwefewwedwanguagesonusewcwientcowumn: usewpwefewwedwanguagesonusewcwientcowumn, :3
+  wocawefowwowppmicwientcowumn: w-wocawefowwowppmicwientcowumn, -.-
+  statsweceivew: statsweceivew)
+    extends candidatesouwce[hascwientcontext w-with haspawams, 😳 candidateusew] {
 
-  override val identifier: CandidateSourceIdentifier = PPMILocaleFollowSource.Identifier
-  private val stats = statsReceiver.scope("PPMILocaleFollowSource")
+  o-ovewwide v-vaw identifiew: c-candidatesouwceidentifiew = p-ppmiwocawefowwowsouwce.identifiew
+  pwivate vaw stats = statsweceivew.scope("ppmiwocawefowwowsouwce")
 
-  override def apply(target: HasClientContext with HasParams): Stitch[Seq[CandidateUser]] = {
-    (for {
-      countryCode <- target.getCountryCode
-      userId <- target.getOptionalUserId
-    } yield {
-      getPreferredLocales(userId, countryCode.toLowerCase())
-        .flatMap { locale =>
-          stats.addGauge("allLocale") {
-            locale.length
+  o-ovewwide def appwy(tawget: hascwientcontext w-with haspawams): stitch[seq[candidateusew]] = {
+    (fow {
+      countwycode <- tawget.getcountwycode
+      usewid <- tawget.getoptionawusewid
+    } y-yiewd {
+      getpwefewwedwocawes(usewid, mya c-countwycode.towowewcase())
+        .fwatmap { w-wocawe =>
+          s-stats.addgauge("awwwocawe") {
+            wocawe.wength
           }
-          val filteredLocale =
-            locale.filter(!target.params(LocaleToExcludeFromRecommendation).contains(_))
-          stats.addGauge("postFilterLocale") {
-            filteredLocale.length
+          vaw fiwtewedwocawe =
+            wocawe.fiwtew(!tawget.pawams(wocawetoexcwudefwomwecommendation).contains(_))
+          s-stats.addgauge("postfiwtewwocawe") {
+            f-fiwtewedwocawe.wength
           }
-          if (target.params(CandidateSourceEnabled)) {
-            getPPMILocaleFollowCandidates(filteredLocale)
-          } else Stitch(Seq.empty)
+          if (tawget.pawams(candidatesouwceenabwed)) {
+            g-getppmiwocawefowwowcandidates(fiwtewedwocawe)
+          } e-ewse stitch(seq.empty)
         }
-        .map(_.sortBy(_.score)(Ordering[Option[Double]].reverse)
-          .take(PPMILocaleFollowSource.DefaultMaxCandidatesToReturn))
-    }).getOrElse(Stitch.Nil)
+        .map(_.sowtby(_.scowe)(owdewing[option[doubwe]].wevewse)
+          .take(ppmiwocawefowwowsouwce.defauwtmaxcandidatestowetuwn))
+    }).getowewse(stitch.niw)
   }
 
-  private def getPPMILocaleFollowCandidates(
-    locales: Seq[String]
-  ): Stitch[Seq[CandidateUser]] = {
-    Stitch
-      .traverse(locales) { locale =>
-        // Get PPMI candidates for each locale
-        localeFollowPpmiClientColumn.fetcher
-          .fetch(locale)
+  pwivate def g-getppmiwocawefowwowcandidates(
+    wocawes: seq[stwing]
+  ): s-stitch[seq[candidateusew]] = {
+    stitch
+      .twavewse(wocawes) { wocawe =>
+        // g-get ppmi candidates fow each w-wocawe
+        wocawefowwowppmicwientcowumn.fetchew
+          .fetch(wocawe)
           .map(_.v
-            .map(_.candidates).getOrElse(Nil).map { candidate =>
-              CandidateUser(id = candidate.userId, score = Some(candidate.score))
-            }.map(_.withCandidateSource(identifier)))
-      }.map(_.flatten)
+            .map(_.candidates).getowewse(niw).map { c-candidate =>
+              c-candidateusew(id = candidate.usewid, scowe = some(candidate.scowe))
+            }.map(_.withcandidatesouwce(identifiew)))
+      }.map(_.fwatten)
   }
 
-  private def getPreferredLocales(userId: Long, countryCode: String): Stitch[Seq[String]] = {
-    userPreferredLanguagesOnUserClientColumn.fetcher
-      .fetch(userId)
-      .map(_.v.map(_.languages).getOrElse(Nil).map { lang =>
-        s"$countryCode-$lang".toLowerCase
+  pwivate def getpwefewwedwocawes(usewid: wong, (˘ω˘) countwycode: s-stwing): stitch[seq[stwing]] = {
+    u-usewpwefewwedwanguagesonusewcwientcowumn.fetchew
+      .fetch(usewid)
+      .map(_.v.map(_.wanguages).getowewse(niw).map { wang =>
+        s-s"$countwycode-$wang".towowewcase
       })
   }
 }
 
-object PPMILocaleFollowSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.PPMILocaleFollow.toString)
-  val DefaultMaxCandidatesToReturn = 100
+o-object ppmiwocawefowwowsouwce {
+  v-vaw identifiew = candidatesouwceidentifiew(awgowithm.ppmiwocawefowwow.tostwing)
+  vaw defauwtmaxcandidatestowetuwn = 100
 }

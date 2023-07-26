@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.twittew.fowwow_wecommendations.assembwew.modews
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+impowt c-com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
 
-case class Header(title: Title) {
-  lazy val toThrift: t.Header = {
-    t.Header(title.toThrift)
+case cwass h-headew(titwe: t-titwe) {
+  wazy v-vaw tothwift: t-t.headew = {
+    t-t.headew(titwe.tothwift)
   }
 }

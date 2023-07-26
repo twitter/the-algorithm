@@ -1,19 +1,19 @@
-package com.twitter.tweetypie.util
+package com.twittew.tweetypie.utiw
 
-import com.twitter.tweetypie.thriftscala.Communities
+impowt com.twittew.tweetypie.thwiftscawa.communities
 
-object CommunityUtil {
+o-object c-communityutiw {
 
-  def communityIds(maybeCommunities: Option[Communities]): Seq[Long] = {
-    maybeCommunities match {
-      case None =>
-        Nil
-      case Some(Communities(seq)) =>
+  d-def communityids(maybecommunities: o-option[communities]): s-seq[wong] = {
+    m-maybecommunities match {
+      c-case n-nyone =>
+        nyiw
+      case some(communities(seq)) =>
         seq
     }
   }
 
-  def hasCommunity(maybeCommunities: Option[Communities]): Boolean = {
-    maybeCommunities.exists(_.communityIds.nonEmpty)
+  def hascommunity(maybecommunities: o-option[communities]): boowean = {
+    maybecommunities.exists(_.communityids.nonempty)
   }
 }

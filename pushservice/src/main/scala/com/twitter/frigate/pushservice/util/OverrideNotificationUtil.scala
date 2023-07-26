@@ -1,230 +1,230 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.MagicFanoutEventCandidate
-import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes
-import com.twitter.frigate.pushservice.model.ibis.PushOverrideInfo
-import com.twitter.frigate.pushservice.params.PushConstants
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FSParams}
-import com.twitter.frigate.thriftscala.CollapseInfo
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.CommonRecommendationType.MagicFanoutSportsEvent
-import com.twitter.frigate.thriftscala.OverrideInfo
-import com.twitter.util.Future
-import java.util.UUID
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.magicfanouteventcandidate
+i-impowt c-com.twittew.fwigate.common.histowy.histowy
+impowt c-com.twittew.fwigate.common.wec_types.wectypes
+i-impowt com.twittew.fwigate.common.stowe.deviceinfo.deviceinfo
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes
+impowt com.twittew.fwigate.pushsewvice.modew.ibis.pushovewwideinfo
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushconstants
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt com.twittew.fwigate.pushsewvice.pawams.{pushfeatuweswitchpawams => f-fspawams}
+impowt com.twittew.fwigate.thwiftscawa.cowwapseinfo
+impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype.magicfanoutspowtsevent
+impowt com.twittew.fwigate.thwiftscawa.ovewwideinfo
+impowt c-com.twittew.utiw.futuwe
+impowt j-java.utiw.uuid
 
-object OverrideNotificationUtil {
-
-  /**
-   * Gets Override Info for the current notification.
-   * @param candidate [[PushCandidate]] object representing the recommendation candidate
-   * @param stats     StatsReceiver to track stats for this function as well as the subsequent funcs. called
-   * @return          Returns OverrideInfo if CollapseInfo exists, else None
-   */
-
-  def getOverrideInfo(
-    candidate: PushCandidate,
-    stats: StatsReceiver
-  ): Future[Option[OverrideInfo]] = {
-    if (candidate.target.isLoggedOutUser) {
-      Future.None
-    } else if (isOverrideEnabledForCandidate(candidate))
-      getCollapseInfo(candidate, stats).map(_.map(OverrideInfo(_)))
-    else Future.None
-  }
-
-  private def getCollapseInfo(
-    candidate: PushCandidate,
-    stats: StatsReceiver
-  ): Future[Option[CollapseInfo]] = {
-    val target = candidate.target
-    for {
-      targetHistory <- target.history
-      deviceInfo <- target.deviceInfo
-    } yield getCollapseInfo(target, targetHistory, deviceInfo, stats)
-  }
+o-object ovewwidenotificationutiw {
 
   /**
-   * Get Collapse Info for the current notification.
-   * @param target          Push Target - recipient of the notification
-   * @param targetHistory   Target's History
-   * @param deviceInfoOpt   `Option` of the Target's Device Info
-   * @param stats           StatsReceiver to track stats for this function as well as the subsequent funcs. called
-   * @return                Returns CollapseInfo if the Target is eligible for Override Notifs, else None
+   * gets ovewwide info fow the cuwwent nyotification. ʘwʘ
+   * @pawam c-candidate [[pushcandidate]] object wepwesenting the wecommendation candidate
+   * @pawam stats     statsweceivew t-to twack stats fow t-this function as w-weww as the subsequent f-funcs. ( ͡o ω ͡o ) cawwed
+   * @wetuwn          w-wetuwns ovewwideinfo if cowwapseinfo e-exists, mya ewse nyone
    */
-  def getCollapseInfo(
-    target: PushTypes.Target,
-    targetHistory: History,
-    deviceInfoOpt: Option[DeviceInfo],
-    stats: StatsReceiver
-  ): Option[CollapseInfo] = {
-    val overrideInfoOfLastNotif =
-      PushOverrideInfo.getOverrideInfoOfLastEligiblePushNotif(
-        targetHistory,
-        target.params(FSParams.OverrideNotificationsLookbackDurationForOverrideInfo),
-        stats)
-    overrideInfoOfLastNotif match {
-      case Some(prevOverrideInfo) if isOverrideEnabled(target, deviceInfoOpt, stats) =>
-        val notifsInLastOverrideChain =
-          PushOverrideInfo.getMrPushNotificationsInOverrideChain(
-            targetHistory,
-            prevOverrideInfo.collapseInfo.overrideChainId,
+
+  def getovewwideinfo(
+    c-candidate: pushcandidate, o.O
+    stats: statsweceivew
+  ): futuwe[option[ovewwideinfo]] = {
+    if (candidate.tawget.iswoggedoutusew) {
+      futuwe.none
+    } e-ewse if (isovewwideenabwedfowcandidate(candidate))
+      getcowwapseinfo(candidate, (✿oωo) s-stats).map(_.map(ovewwideinfo(_)))
+    e-ewse f-futuwe.none
+  }
+
+  pwivate def getcowwapseinfo(
+    candidate: p-pushcandidate, :3
+    s-stats: statsweceivew
+  ): futuwe[option[cowwapseinfo]] = {
+    vaw tawget = c-candidate.tawget
+    f-fow {
+      tawgethistowy <- t-tawget.histowy
+      deviceinfo <- t-tawget.deviceinfo
+    } yiewd getcowwapseinfo(tawget, 😳 t-tawgethistowy, (U ﹏ U) deviceinfo, mya s-stats)
+  }
+
+  /**
+   * get c-cowwapse info f-fow the cuwwent nyotification. (U ᵕ U❁)
+   * @pawam tawget          push tawget - wecipient of the nyotification
+   * @pawam tawgethistowy   t-tawget's histowy
+   * @pawam d-deviceinfoopt   `option` of the t-tawget's device i-info
+   * @pawam s-stats           statsweceivew to twack stats fow this function a-as weww as the subsequent funcs. :3 cawwed
+   * @wetuwn                wetuwns cowwapseinfo if the t-tawget is ewigibwe fow ovewwide n-nyotifs, mya ewse nyone
+   */
+  d-def g-getcowwapseinfo(
+    tawget: pushtypes.tawget, OwO
+    t-tawgethistowy: h-histowy, (ˆ ﻌ ˆ)♡
+    d-deviceinfoopt: option[deviceinfo], ʘwʘ
+    s-stats: statsweceivew
+  ): option[cowwapseinfo] = {
+    vaw o-ovewwideinfoofwastnotif =
+      p-pushovewwideinfo.getovewwideinfoofwastewigibwepushnotif(
+        t-tawgethistowy, o.O
+        t-tawget.pawams(fspawams.ovewwidenotificationswookbackduwationfowovewwideinfo), UwU
+        s-stats)
+    ovewwideinfoofwastnotif match {
+      case some(pwevovewwideinfo) if i-isovewwideenabwed(tawget, rawr x3 deviceinfoopt, 🥺 stats) =>
+        vaw nyotifsinwastovewwidechain =
+          pushovewwideinfo.getmwpushnotificationsinovewwidechain(
+            tawgethistowy, :3
+            p-pwevovewwideinfo.cowwapseinfo.ovewwidechainid, (ꈍᴗꈍ)
             stats)
-        val numNotifsInLastOverrideChain = notifsInLastOverrideChain.size
-        val timestampOfFirstNotifInOverrideChain =
-          PushOverrideInfo
-            .getTimestampInMillisForFrigateNotification(
-              notifsInLastOverrideChain.last,
-              targetHistory,
-              stats).getOrElse(PushConstants.DefaultLookBackForHistory.ago.inMilliseconds)
-        if (numNotifsInLastOverrideChain < target.params(FSParams.MaxMrPushSends24HoursParam) &&
-          timestampOfFirstNotifInOverrideChain > PushConstants.DefaultLookBackForHistory.ago.inMilliseconds) {
-          Some(prevOverrideInfo.collapseInfo)
-        } else {
-          val prevCollapseId = prevOverrideInfo.collapseInfo.collapseId
-          val newOverrideChainId = UUID.randomUUID.toString.replaceAll("-", "")
-          Some(CollapseInfo(prevCollapseId, newOverrideChainId))
+        vaw nyumnotifsinwastovewwidechain = nyotifsinwastovewwidechain.size
+        v-vaw timestampoffiwstnotifinovewwidechain =
+          p-pushovewwideinfo
+            .gettimestampinmiwwisfowfwigatenotification(
+              n-notifsinwastovewwidechain.wast,
+              tawgethistowy, 🥺
+              s-stats).getowewse(pushconstants.defauwtwookbackfowhistowy.ago.inmiwwiseconds)
+        if (numnotifsinwastovewwidechain < t-tawget.pawams(fspawams.maxmwpushsends24houwspawam) &&
+          t-timestampoffiwstnotifinovewwidechain > pushconstants.defauwtwookbackfowhistowy.ago.inmiwwiseconds) {
+          some(pwevovewwideinfo.cowwapseinfo)
+        } ewse {
+          vaw pwevcowwapseid = pwevovewwideinfo.cowwapseinfo.cowwapseid
+          v-vaw nyewovewwidechainid = uuid.wandomuuid.tostwing.wepwaceaww("-", (✿oωo) "")
+          s-some(cowwapseinfo(pwevcowwapseid, (U ﹏ U) nyewovewwidechainid))
         }
-      case None if isOverrideEnabled(target, deviceInfoOpt, stats) =>
-        val newOverrideChainId = UUID.randomUUID.toString.replaceAll("-", "")
-        Some(CollapseInfo("", newOverrideChainId))
-      case _ => None // Override is disabled for everything else
+      c-case nyone i-if isovewwideenabwed(tawget, :3 deviceinfoopt, ^^;; stats) =>
+        v-vaw nyewovewwidechainid = u-uuid.wandomuuid.tostwing.wepwaceaww("-", "")
+        some(cowwapseinfo("", rawr n-nyewovewwidechainid))
+      c-case _ => nyone // ovewwide is disabwed fow evewything ewse
     }
   }
 
   /**
-   * Gets the collapse and impression identifier for the current override notification
-   * @param target  Push Target - recipient of the notification
-   * @param stats   StatsReceiver to track stats for this function as well as the subsequent funcs. called
-   * @return        A Future of Collapse ID as well as the Impression ID.
+   * gets the cowwapse a-and impwession i-identifiew f-fow the cuwwent ovewwide nyotification
+   * @pawam t-tawget  push t-tawget - wecipient of the nyotification
+   * @pawam s-stats   statsweceivew to twack stats fow this function as weww as the subsequent f-funcs. 😳😳😳 cawwed
+   * @wetuwn        a-a futuwe of cowwapse id as weww as the i-impwession id. (✿oωo)
    */
-  def getCollapseAndImpressionIdForOverride(
-    candidate: PushCandidate
-  ): Future[Option[(String, Seq[String])]] = {
-    if (isOverrideEnabledForCandidate(candidate)) {
-      val target = candidate.target
-      val stats = candidate.statsReceiver
-      Future.join(target.history, target.deviceInfo).map {
-        case (targetHistory, deviceInfoOpt) =>
-          val collapseInfoOpt = getCollapseInfo(target, targetHistory, deviceInfoOpt, stats)
+  d-def getcowwapseandimpwessionidfowovewwide(
+    candidate: pushcandidate
+  ): futuwe[option[(stwing, OwO s-seq[stwing])]] = {
+    if (isovewwideenabwedfowcandidate(candidate)) {
+      vaw tawget = candidate.tawget
+      vaw s-stats = candidate.statsweceivew
+      futuwe.join(tawget.histowy, ʘwʘ tawget.deviceinfo).map {
+        c-case (tawgethistowy, d-deviceinfoopt) =>
+          vaw cowwapseinfoopt = getcowwapseinfo(tawget, (ˆ ﻌ ˆ)♡ tawgethistowy, (U ﹏ U) d-deviceinfoopt, UwU s-stats)
 
-          val impressionIds = candidate.commonRecType match {
-            case MagicFanoutSportsEvent
-                if target.params(FSParams.EnableEventIdBasedOverrideForSportsCandidates) =>
-              PushOverrideInfo.getImpressionIdsForPrevEligibleMagicFanoutEventCandidates(
-                targetHistory,
-                target.params(FSParams.OverrideNotificationsLookbackDurationForImpressionId),
-                stats,
-                MagicFanoutSportsEvent,
-                candidate
-                  .asInstanceOf[RawCandidate with MagicFanoutEventCandidate].eventId
+          vaw impwessionids = candidate.commonwectype match {
+            c-case magicfanoutspowtsevent
+                if t-tawget.pawams(fspawams.enabweeventidbasedovewwidefowspowtscandidates) =>
+              pushovewwideinfo.getimpwessionidsfowpwevewigibwemagicfanouteventcandidates(
+                tawgethistowy, XD
+                tawget.pawams(fspawams.ovewwidenotificationswookbackduwationfowimpwessionid), ʘwʘ
+                s-stats, rawr x3
+                magicfanoutspowtsevent, ^^;;
+                c-candidate
+                  .asinstanceof[wawcandidate w-with magicfanouteventcandidate].eventid
               )
             case _ =>
-              PushOverrideInfo.getImpressionIdsOfPrevEligiblePushNotif(
-                targetHistory,
-                target.params(FSParams.OverrideNotificationsLookbackDurationForImpressionId),
-                stats)
+              p-pushovewwideinfo.getimpwessionidsofpwevewigibwepushnotif(
+                tawgethistowy, ʘwʘ
+                t-tawget.pawams(fspawams.ovewwidenotificationswookbackduwationfowimpwessionid), (U ﹏ U)
+                s-stats)
           }
 
-          collapseInfoOpt match {
-            case Some(collapseInfo) if impressionIds.nonEmpty =>
-              val notifsInLastOverrideChain =
-                PushOverrideInfo.getMrPushNotificationsInOverrideChain(
-                  targetHistory,
-                  collapseInfo.overrideChainId,
+          c-cowwapseinfoopt match {
+            c-case s-some(cowwapseinfo) if impwessionids.nonempty =>
+              vaw nyotifsinwastovewwidechain =
+                p-pushovewwideinfo.getmwpushnotificationsinovewwidechain(
+                  t-tawgethistowy, (˘ω˘)
+                  c-cowwapseinfo.ovewwidechainid, (ꈍᴗꈍ)
                   stats)
               stats
-                .scope("OverrideNotificationUtil").stat("number_of_notifications_sent").add(
-                  notifsInLastOverrideChain.size + 1)
-              Some((collapseInfo.collapseId, impressionIds))
-            case _ => None
+                .scope("ovewwidenotificationutiw").stat("numbew_of_notifications_sent").add(
+                  n-nyotifsinwastovewwidechain.size + 1)
+              some((cowwapseinfo.cowwapseid, /(^•ω•^) i-impwessionids))
+            c-case _ => nyone
           }
-        case _ => None
+        case _ => nyone
       }
-    } else Future.None
+    } ewse futuwe.none
   }
 
   /**
-   * Checks to see if override notifications are enabled based on the Target's Device Info and Params
-   * @param target          Push Target - recipient of the notification
-   * @param deviceInfoOpt   `Option` of the Target's Device Info
-   * @param stats           StatsReceiver to track stats for this function
-   * @return                Returns True if Override Notifications are enabled for the provided
-   *                        Target, else False.
+   * c-checks to s-see if ovewwide n-nyotifications awe e-enabwed based on the tawget's d-device info and pawams
+   * @pawam tawget          push tawget - wecipient of the nyotification
+   * @pawam d-deviceinfoopt   `option` of the tawget's d-device info
+   * @pawam stats           s-statsweceivew to twack s-stats fow this function
+   * @wetuwn                w-wetuwns t-twue if ovewwide n-nyotifications a-awe enabwed fow t-the pwovided
+   *                        tawget, >_< ewse fawse. σωσ
    */
-  private def isOverrideEnabled(
-    target: PushTypes.Target,
-    deviceInfoOpt: Option[DeviceInfo],
-    stats: StatsReceiver
-  ): Boolean = {
-    val scopedStats = stats.scope("OverrideNotificationUtil").scope("isOverrideEnabled")
-    val enabledForAndroidCounter = scopedStats.counter("android_enabled")
-    val disabledForAndroidCounter = scopedStats.counter("android_disabled")
-    val enabledForIosCounter = scopedStats.counter("ios_enabled")
-    val disabledForIosCounter = scopedStats.counter("ios_disabled")
-    val disabledForOtherDevicesCounter = scopedStats.counter("other_disabled")
+  pwivate def isovewwideenabwed(
+    tawget: pushtypes.tawget, ^^;;
+    d-deviceinfoopt: o-option[deviceinfo], 😳
+    s-stats: statsweceivew
+  ): b-boowean = {
+    vaw scopedstats = stats.scope("ovewwidenotificationutiw").scope("isovewwideenabwed")
+    vaw enabwedfowandwoidcountew = s-scopedstats.countew("andwoid_enabwed")
+    v-vaw disabwedfowandwoidcountew = scopedstats.countew("andwoid_disabwed")
+    v-vaw enabwedfowioscountew = scopedstats.countew("ios_enabwed")
+    vaw disabwedfowioscountew = s-scopedstats.countew("ios_disabwed")
+    v-vaw disabwedfowothewdevicescountew = s-scopedstats.countew("othew_disabwed")
 
-    val isPrimaryDeviceAndroid = PushDeviceUtil.isPrimaryDeviceAndroid(deviceInfoOpt)
-    val isPrimaryDeviceIos = PushDeviceUtil.isPrimaryDeviceIOS(deviceInfoOpt)
+    v-vaw ispwimawydeviceandwoid = pushdeviceutiw.ispwimawydeviceandwoid(deviceinfoopt)
+    vaw ispwimawydeviceios = pushdeviceutiw.ispwimawydeviceios(deviceinfoopt)
 
-    lazy val validAndroidDevice =
-      isPrimaryDeviceAndroid && target.params(FSParams.EnableOverrideNotificationsForAndroid)
-    lazy val validIosDevice =
-      isPrimaryDeviceIos && target.params(FSParams.EnableOverrideNotificationsForIos)
+    w-wazy vaw vawidandwoiddevice =
+      i-ispwimawydeviceandwoid && t-tawget.pawams(fspawams.enabweovewwidenotificationsfowandwoid)
+    w-wazy vaw vawidiosdevice =
+      i-ispwimawydeviceios && tawget.pawams(fspawams.enabweovewwidenotificationsfowios)
 
-    if (isPrimaryDeviceAndroid) {
-      if (validAndroidDevice) enabledForAndroidCounter.incr() else disabledForAndroidCounter.incr()
-    } else if (isPrimaryDeviceIos) {
-      if (validIosDevice) enabledForIosCounter.incr() else disabledForIosCounter.incr()
-    } else {
-      disabledForOtherDevicesCounter.incr()
+    i-if (ispwimawydeviceandwoid) {
+      i-if (vawidandwoiddevice) enabwedfowandwoidcountew.incw() e-ewse disabwedfowandwoidcountew.incw()
+    } ewse i-if (ispwimawydeviceios) {
+      if (vawidiosdevice) e-enabwedfowioscountew.incw() ewse disabwedfowioscountew.incw()
+    } ewse {
+      d-disabwedfowothewdevicescountew.incw()
     }
 
-    validAndroidDevice || validIosDevice
+    vawidandwoiddevice || v-vawidiosdevice
   }
 
   /**
-   * Checks if override is enabled for the currently supported types for SendHandler or not.
-   * This method is package private for unit testing.
-   * @param candidate [[PushCandidate]]
-   * @param stats StatsReceiver to track statistics for this function
-   * @return      Returns True if override notifications are enabled for the current type, otherwise False.
+   * checks i-if ovewwide is enabwed fow t-the cuwwentwy suppowted types fow sendhandwew ow n-nyot. >_<
+   * this m-method is package p-pwivate fow unit testing. -.-
+   * @pawam candidate [[pushcandidate]]
+   * @pawam stats statsweceivew t-to twack statistics fow this function
+   * @wetuwn      w-wetuwns t-twue if ovewwide nyotifications a-awe enabwed fow the cuwwent t-type, UwU othewwise f-fawse. :3
    */
-  private def isOverrideEnabledForSendHandlerCandidate(
-    candidate: PushCandidate
-  ): Boolean = {
-    val scopedStats = candidate.statsReceiver
-      .scope("OverrideNotificationUtil").scope("isOverrideEnabledForSendHandlerType")
+  pwivate def isovewwideenabwedfowsendhandwewcandidate(
+    candidate: p-pushcandidate
+  ): boowean = {
+    vaw scopedstats = c-candidate.statsweceivew
+      .scope("ovewwidenotificationutiw").scope("isovewwideenabwedfowsendhandwewtype")
 
-    val overrideSupportedTypesForSpaces: Set[CommonRecommendationType] = Set(
-      CommonRecommendationType.SpaceSpeaker,
-      CommonRecommendationType.SpaceHost
+    v-vaw ovewwidesuppowtedtypesfowspaces: s-set[commonwecommendationtype] = set(
+      commonwecommendationtype.spacespeakew, σωσ
+      c-commonwecommendationtype.spacehost
     )
 
-    val isOverrideSupportedForSpaces = {
-      overrideSupportedTypesForSpaces.contains(candidate.commonRecType) &&
-      candidate.target.params(FSParams.EnableOverrideForSpaces)
+    v-vaw isovewwidesuppowtedfowspaces = {
+      o-ovewwidesuppowtedtypesfowspaces.contains(candidate.commonwectype) &&
+      candidate.tawget.pawams(fspawams.enabweovewwidefowspaces)
     }
 
-    val isOverrideSupportedForSports = {
-      candidate.commonRecType == CommonRecommendationType.MagicFanoutSportsEvent &&
-      candidate.target
-        .params(PushFeatureSwitchParams.EnableOverrideForSportsCandidates)
+    vaw isovewwidesuppowtedfowspowts = {
+      candidate.commonwectype == commonwecommendationtype.magicfanoutspowtsevent &&
+      candidate.tawget
+        .pawams(pushfeatuweswitchpawams.enabweovewwidefowspowtscandidates)
     }
 
-    val isOverrideSupported = isOverrideSupportedForSpaces || isOverrideSupportedForSports
+    vaw isovewwidesuppowted = isovewwidesuppowtedfowspaces || isovewwidesuppowtedfowspowts
 
-    scopedStats.counter(s"$isOverrideSupported").incr()
-    isOverrideSupported
+    scopedstats.countew(s"$isovewwidesuppowted").incw()
+    isovewwidesuppowted
   }
 
-  private[util] def isOverrideEnabledForCandidate(candidate: PushCandidate) =
-    !RecTypes.isSendHandlerType(
-      candidate.commonRecType) || isOverrideEnabledForSendHandlerCandidate(candidate)
+  pwivate[utiw] def isovewwideenabwedfowcandidate(candidate: pushcandidate) =
+    !wectypes.issendhandwewtype(
+      candidate.commonwectype) || i-isovewwideenabwedfowsendhandwewcandidate(candidate)
 }

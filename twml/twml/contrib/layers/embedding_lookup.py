@@ -1,419 +1,419 @@
-import os
-import re
-import time
+impowt os
+impowt we
+impowt time
 
-from collections import OrderedDict
+f-fwom cowwections i-impowt owdeweddict
 
-from absl import logging
-import numpy as np
-import tensorflow.compat.v1 as tf
-from tensorflow.python.ops.lookup_ops import index_table_from_tensor
+f-fwom absw impowt w-wogging
+impowt n-nyumpy as nyp
+i-impowt tensowfwow.compat.v1 as t-tf
+fwom tensowfwow.python.ops.wookup_ops i-impowt index_tabwe_fwom_tensow
 
-import twml
+impowt twmw
 
-# Padding is 0, UNK is 1:
-PAD_WORD_ID = 0
-OOV_WORD_ID = 1
+# padding is 0, ^•ﻌ•^ unk is 1:
+p-pad_wowd_id = 0
+oov_wowd_id = 1
 
 
-def load_initializers_from_csv(
-  embedding_path, vocab_size=-1, embedding_size=None, separator=None, vocab=None
+def woad_initiawizews_fwom_csv(
+  e-embedding_path, σωσ vocab_size=-1, -.- e-embedding_size=none, sepawatow=none, vocab=none
 ):
   """
-  Loads embeddings saved in the `glove format <https://nlp.stanford.edu/projects/glove/>`_.
-  The glove format is a txt file separated by spaces.
-  Each line looks like: "word 0.00001 0.2334 ...".
+  woads embeddings s-saved in the `gwuv fowmat <https://nwp.stanfowd.edu/pwojects/gwuv/>`_.
+  t-the gwuv f-fowmat is a txt fiwe sepawated by spaces. (˘ω˘)
+  each wine wooks wike: "wowd 0.00001 0.2334 ...". rawr x3
 
-  Arguments:
-    embedding_path:
-      path to the embeddings file on HDFS (hdfs://default/...)
-      or its local_path (/path/to/...).
-      The embedding_path may also specify a pattern. In which case, the embeddings
-      are read in the lexical order of the filenames that match the order.
+  awguments:
+    e-embedding_path:
+      path to the embeddings fiwe on hdfs (hdfs://defauwt/...)
+      ow its wocaw_path (/path/to/...). rawr x3
+      the e-embedding_path may awso specify a-a pattewn. in w-which case, σωσ the e-embeddings
+      a-awe wead in the wexicaw owdew of the fiwenames t-that match the owdew. nyaa~~
     vocab_size:
-      the maximum size of the vocabulary. The top ``vocab_size`` words in the file
-      are included in the vocabulary. If you specify a positive vocab_size,
-      the words are expected to be in descending order of frequency.
-      This allows the embeddings to be easily filtered to top vocab_size words.
-      Reducing the vocab_size acts as a regularizer, preventing the model to overfit on rarer words.
-      A negative vocab_size loads all embeddings.
-      Reducing the vocab_size may also help with memory issues,
-      allowing the embedding initializers to fit inside the graph.
+      the m-maximum size of the vocabuwawy. (ꈍᴗꈍ) the top ``vocab_size`` wowds in the fiwe
+      awe incwuded in t-the vocabuwawy. ^•ﻌ•^ if you specify a p-positive vocab_size, >_<
+      t-the w-wowds awe expected to be in descending owdew of fwequency. ^^;;
+      t-this awwows the e-embeddings to be easiwy fiwtewed t-to top vocab_size w-wowds. ^^;;
+      weducing the vocab_size a-acts as a weguwawizew, /(^•ω•^) p-pweventing the modew to ovewfit on wawew wowds.
+      a-a nyegative vocab_size woads a-aww embeddings. nyaa~~
+      weducing t-the vocab_size m-may awso hewp with memowy issues, (✿oωo)
+      awwowing the embedding initiawizews to fit inside the gwaph. ( ͡o ω ͡o )
     embedding_size:
-      Defaults to None. If None, the embedding size is infered from the file name.
-      For example, ``glove.300d.txt`` and ``glove300d200.txt`` will both infrered
-      as ``embedding_size=300``. If this can't be done, the ``embedding_size`` is
-      inferred from the first line in the file. If ``embedding_size`` is provided,
-      only the last ``embedding_size`` values of each line are considered. This
-      allows the line parser to recover from partial word parsing errors.
-    separator:
-      Specifies the separator to use when splitting each line into values.
-      Default value is a whitespace (same as glove format).
+      d-defauwts to nyone. (U ᵕ U❁) i-if nyone, òωó the embedding size i-is infewed fwom t-the fiwe nyame.
+      f-fow exampwe, σωσ ``gwuv.300d.txt`` and ``gwuv300d200.txt`` wiww both infwewed
+      a-as ``embedding_size=300``. :3 if this can't be done, OwO the ``embedding_size`` is
+      infewwed fwom the fiwst w-wine in the fiwe. ^^ if ``embedding_size`` i-is pwovided, (˘ω˘)
+      o-onwy t-the wast ``embedding_size`` vawues o-of each wine a-awe considewed. t-this
+      awwows t-the wine pawsew to wecovew fwom pawtiaw wowd pawsing e-ewwows. OwO
+    s-sepawatow:
+      s-specifies the s-sepawatow to use w-when spwitting each wine into vawues. UwU
+      defauwt vawue is a-a whitespace (same as gwuv fowmat). ^•ﻌ•^
     vocab:
-      OrderedDict mapping words to np.array embedding vectors. Initializes the vocabulary.
-      Duplicate words found in the file are ignored.
-      Defaults to a vocabulary of two words::
+      owdeweddict mapping wowds to nyp.awway embedding v-vectows. (ꈍᴗꈍ) initiawizes the vocabuwawy. /(^•ω•^)
+      dupwicate wowds found in the fiwe a-awe ignowed. (U ᵕ U❁)
+      d-defauwts to a-a vocabuwawy of two wowds::
 
-        vocab = OrderedDict()
-        vocab[''] = np.random.randn(embedding_size)
-        vocab['<UNK>'] = np.random.randn(embedding_size)
+        v-vocab = owdeweddict()
+        vocab[''] = n-nyp.wandom.wandn(embedding_size)
+        v-vocab['<unk>'] = nyp.wandom.wandn(embedding_size)
 
-  Returns:
-    tuple of (vocab_initializer, weight_initializer, shape)
+  wetuwns:
+    tupwe of (vocab_initiawizew, (✿oωo) weight_initiawizew, OwO shape)
 
-    vocab_initializer:
-      A tf.constant_initializer containing a vector of word strings of size vocab_size.
-    weight_initializer:
-      A twml.contrib.initializers.partition_constant_initializer containing
-      the weight matrix of embeddings of size vocab_size x embedding_size.
+    v-vocab_initiawizew:
+      a tf.constant_initiawizew c-containing a vectow o-of wowd stwings o-of size vocab_size. :3
+    weight_initiawizew:
+      a twmw.contwib.initiawizews.pawtition_constant_initiawizew c-containing
+      t-the weight matwix o-of embeddings of s-size vocab_size x embedding_size. nyaa~~
     shape:
-      A tuple containing of (vocab_size, embedding_size).
+      a tupwe containing of (vocab_size, ^•ﻌ•^ e-embedding_size). ( ͡o ω ͡o )
 
   """
 
-  start = time.time()
+  s-stawt = time.time()
 
-  embedding_path = twml.util.sanitize_hdfs_path(embedding_path)
+  e-embedding_path = twmw.utiw.sanitize_hdfs_path(embedding_path)
 
-  is_user_vocab = True
-  if vocab is None:
-    vocab = OrderedDict()
-    vocab[''] = True
-    vocab['<UNK>'] = True
-    is_user_vocab = False
-  elif not isinstance(vocab, OrderedDict):
-    raise RuntimeError(
-      "Expecting vocab argument of type OrderedDict or None. "
-      "Got type %s instead." % type(vocab).__name__
+  i-is_usew_vocab = t-twue
+  if vocab is nyone:
+    v-vocab = owdeweddict()
+    vocab[''] = twue
+    vocab['<unk>'] = twue
+    i-is_usew_vocab = f-fawse
+  ewif nyot isinstance(vocab, ^^;; owdeweddict):
+    w-waise wuntimeewwow(
+      "expecting v-vocab awgument of type owdeweddict ow nyone. mya "
+      "got t-type %s instead." % type(vocab).__name__
     )
 
-  if embedding_size is None:
-    embedding_file = os.path.basename(embedding_path)
-    match = re.search(r"[^\d]([\d]+)d", embedding_file)
-    if match is not None:
-      embedding_size = int(match.group(1))
+  if embedding_size is nyone:
+    embedding_fiwe = o-os.path.basename(embedding_path)
+    match = we.seawch(w"[^\d]([\d]+)d", (U ᵕ U❁) e-embedding_fiwe)
+    i-if match is nyot nyone:
+      embedding_size = int(match.gwoup(1))
 
-  if embedding_size is not None and not isinstance(embedding_size, int):
-    raise RuntimeError(
-      "Expecting embedding_size argument of type int or None. "
-      "Got type %s, instead." % type(embedding_size).__name__
+  i-if embedding_size i-is nyot nyone and not isinstance(embedding_size, ^•ﻌ•^ int):
+    waise wuntimeewwow(
+      "expecting e-embedding_size awgument o-of type int ow nyone. (U ﹏ U) "
+      "got type %s, /(^•ω•^) instead." % type(embedding_size).__name__
     )
 
-  embedding_paths = sorted(tf.io.gfile.glob(embedding_path))
+  e-embedding_paths = sowted(tf.io.gfiwe.gwob(embedding_path))
 
-  if len(embedding_paths) > 1:
-    raise ValueError(
-      "You are most likely using a the wrong --embedding.path"
+  i-if wen(embedding_paths) > 1:
+    w-waise vawueewwow(
+      "you awe most wikewy u-using a the wwong --embedding.path"
     )
 
   embedding_path = embedding_paths[0]
-  logging.info("Reading embeddings file from path %s.." % embedding_path)
+  w-wogging.info("weading e-embeddings f-fiwe fwom path %s.." % embedding_path)
 
-  with tf.io.gfile.GFile(embedding_path) as f:
-    lines = f.readlines()
+  with t-tf.io.gfiwe.gfiwe(embedding_path) a-as f:
+    wines = f.weadwines()
 
-  logging.info("Done reading embeddings file from path %s." % embedding_path)
+  wogging.info("done w-weading e-embeddings fiwe f-fwom path %s." % embedding_path)
 
-  logging.info("Parsing vocbulary and embeddings...")
+  wogging.info("pawsing v-vocbuwawy and embeddings...")
 
-  for line in lines:
-    # Word and weights separated by space
-    values = line.strip().split(separator)
-    # Word is first symbol on each line
-    word = values[0]
+  fow w-wine in wines:
+    # w-wowd and weights sepawated by space
+    vawues = wine.stwip().spwit(sepawatow)
+    # w-wowd i-is fiwst symbow o-on each wine
+    w-wowd = vawues[0]
 
-    if word not in vocab:
-      if embedding_size is None or embedding_size <= 0:
-        # get all elements after the first one.
-        word_weights = values[1:]
-        embedding_size = len(word_weights)
-      else:
-        # get the last embedding_size elements
-        word_weights = values[-min(embedding_size, len(values) - 1) :]
+    if wowd n-not in vocab:
+      if embedding_size is nyone ow embedding_size <= 0:
+        # get aww ewements aftew the fiwst o-one. ʘwʘ
+        wowd_weights = vawues[1:]
+        e-embedding_size = wen(wowd_weights)
+      e-ewse:
+        # get the w-wast embedding_size ewements
+        w-wowd_weights = v-vawues[-min(embedding_size, XD w-wen(vawues) - 1) :]
 
-      try:
-        if len(word_weights) != embedding_size:
-          raise ValueError
+      t-twy:
+        i-if wen(wowd_weights) != embedding_size:
+          waise vawueewwow
 
-        word_weights = np.asarray(word_weights, dtype=np.float32)
-        vocab[word] = word_weights
-      except ValueError:
-        logging.info("Wasn't able to load embeddings for word '%s'. Ignoring it" % word)
+        wowd_weights = nyp.asawway(wowd_weights, (⑅˘꒳˘) dtype=np.fwoat32)
+        v-vocab[wowd] = w-wowd_weights
+      e-except vawueewwow:
+        w-wogging.info("wasn't abwe to woad embeddings fow wowd '%s'. nyaa~~ i-ignowing it" % w-wowd)
 
-      vocab_len = len(vocab)
-      if vocab_size > 0 and vocab_len == vocab_size:
-        # Limit vocabulary to top terms
-        break
-      elif (vocab_len % 1000) == 0:
-        logging.info("Loaded %d words into vocab" % vocab_len)
+      vocab_wen = wen(vocab)
+      i-if vocab_size > 0 and vocab_wen == vocab_size:
+        # w-wimit vocabuwawy t-to top tewms
+        bweak
+      e-ewif (vocab_wen % 1000) == 0:
+        w-wogging.info("woaded %d wowds into vocab" % vocab_wen)
 
-    else:
-      logging.info("found duplicate word: %s" % word)
+    ewse:
+      wogging.info("found d-dupwicate w-wowd: %s" % wowd)
 
-  if not is_user_vocab:
-    vocab[''] = np.random.randn(embedding_size)
-    vocab['<UNK>'] = np.random.randn(embedding_size)
+  i-if nyot is_usew_vocab:
+    v-vocab[''] = nyp.wandom.wandn(embedding_size)
+    v-vocab['<unk>'] = nyp.wandom.wandn(embedding_size)
 
-  words = list(vocab.keys())
-  weights = list(vocab.values())
+  w-wowds = w-wist(vocab.keys())
+  weights = wist(vocab.vawues())
 
-  weights = np.asarray(weights, dtype=np.float32)
-  assert weights.shape[0] == len(vocab)
-  assert weights.shape[1] == embedding_size
+  w-weights = n-nyp.asawway(weights, UwU dtype=np.fwoat32)
+  a-assewt weights.shape[0] == wen(vocab)
+  a-assewt weights.shape[1] == embedding_size
 
-  vocab_initializer = tf.constant_initializer(words, tf.string)
-  weight_initializer = twml.contrib.initializers.PartitionConstant(weights, tf.float32)
+  vocab_initiawizew = t-tf.constant_initiawizew(wowds, (˘ω˘) t-tf.stwing)
+  weight_initiawizew = twmw.contwib.initiawizews.pawtitionconstant(weights, rawr x3 t-tf.fwoat32)
 
-  logging.info("Loaded %d embeddings in %d seconds." % (len(vocab), time.time() - start))
-  return vocab_initializer, weight_initializer, weights.shape
+  wogging.info("woaded %d embeddings in %d s-seconds." % (wen(vocab), (///ˬ///✿) t-time.time() - s-stawt))
+  wetuwn vocab_initiawizew, weight_initiawizew, 😳😳😳 weights.shape
 
 
-def add_parser_arguments(parser):
+d-def add_pawsew_awguments(pawsew):
   """
-  Adds the embedding.path and embedding.vocab_size command-line arguments to the parser.
-  These can be used to call an initializer loader function like
-  the ``load_initializers_from_csv`` function.
+  adds the embedding.path a-and embedding.vocab_size c-command-wine awguments t-to the pawsew. (///ˬ///✿)
+  these can be u-used to caww an i-initiawizew woadew function wike
+  the ``woad_initiawizews_fwom_csv`` f-function. ^^;;
 
-  Arguments:
-    parser: argparse.ArgumentParser instance obtained from Trainer.get_trainer_parser
+  awguments:
+    pawsew: awgpawse.awgumentpawsew i-instance obtained f-fwom twainew.get_twainew_pawsew
 
-  Returns:
-    argparse.ArgumentParser instance with discretizer-specific arguments added
+  wetuwns:
+    a-awgpawse.awgumentpawsew instance w-with discwetizew-specific awguments a-added
   """
 
-  parser.add_argument(
-    "--embedding.path",
-    "--embedding_path",
-    dest="embedding_path",
-    type=str,
-    default=None,
-    help="When specified, loads glove embeddings from .txt glove file",
+  p-pawsew.add_awgument(
+    "--embedding.path", ^^
+    "--embedding_path", (///ˬ///✿)
+    dest="embedding_path", -.-
+    type=stw, /(^•ω•^)
+    defauwt=none, UwU
+    hewp="when specified, woads gwuv embeddings fwom .txt gwuv fiwe", (⑅˘꒳˘)
   )
-  parser.add_argument(
-    "--embedding.vocab_size",
-    "--embedding_vocab_size",
-    dest="embedding_vocab_size",
-    type=int,
-    default=-1,
-    help="Size of vocabulary. Uses this many of the most frequent terms. Defaults to -1 (use full vocab).",
+  pawsew.add_awgument(
+    "--embedding.vocab_size", ʘwʘ
+    "--embedding_vocab_size", σωσ
+    dest="embedding_vocab_size", ^^
+    type=int, OwO
+    defauwt=-1, (ˆ ﻌ ˆ)♡
+    h-hewp="size o-of vocabuwawy. o.O uses this many of the most fwequent t-tewms. (˘ω˘) defauwts t-to -1 (use f-fuww vocab).", 😳
   )
 
-  return parser
+  wetuwn pawsew
 
 
-class EmbeddingLookup(twml.layers.Layer):
-  """Layer for looking up embeddings.
-  Transforms a sequence of strings to a sequence of embeddings.
+c-cwass embeddingwookup(twmw.wayews.wayew):
+  """wayew fow w-wooking up embeddings. (U ᵕ U❁)
+  t-twansfowms a sequence of s-stwings to a sequence of embeddings. :3
 
-  Arguments:
-    vocab_size:
-      The number of word strings and embeddings in the vocabulary.
-    output_size:
-      Long or Integer, dimensionality of the output space. The embedding vector size.
-    vocab_initializer:
-      Initializer function for the vocabulary. Required. The initializer should
-      return a list of strings of size vocab_size.
-    weight_initializer:
-      Initializer function for the weight matrix of size vocab_size x output_size.
-      This argument defaults to zeros_initializer().
-      This is valid when the EmbeddingLookup is the first layer of
-      parameters but should be changed otherwise.
-    trainable:
-      Boolean, if `True` adds variables to the graph collection
-      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable
-      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).
-      Defaults to True: trains the embeddings.
-    num_oov_buckets:
-      The number of buckets to use for OOV strings. These bucket ids occur after the vocab bucket
-      ids. Hashing is used to assign OOV strings to these buckets. If `num_oov_buckets` is not
-      specified, index `OOV_WORD_ID` is used for OOV strings.
-    name:
-      String, the name of the layer. Layers with the same name will
-      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
-    num_partitions:
-      Number of partitions to use for the weight variable. Defaults to 1.
-    partition_axis:
-      If num_partitions is specified, the partition axis for the weight variable
-      Defaults to 0 (partition by row).
-      Must be 0 (row) or 1 (column, does not support yet)
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
+  a-awguments:
+    v-vocab_size:
+      the nyumbew of wowd stwings a-and embeddings i-in the vocabuwawy. o.O
+    o-output_size:
+      w-wong ow integew, (///ˬ///✿) d-dimensionawity o-of the output space. OwO t-the embedding v-vectow size. >w<
+    v-vocab_initiawizew:
+      initiawizew f-function f-fow the vocabuwawy. w-wequiwed. ^^ the initiawizew s-shouwd
+      wetuwn a wist of stwings of size vocab_size. (⑅˘꒳˘)
+    w-weight_initiawizew:
+      initiawizew f-function fow t-the weight matwix o-of size vocab_size x output_size. ʘwʘ
+      t-this awgument defauwts t-to zewos_initiawizew(). (///ˬ///✿)
+      this is vawid when t-the embeddingwookup is the fiwst w-wayew of
+      pawametews but shouwd be changed othewwise. XD
+    twainabwe:
+      b-boowean, 😳 if `twue` adds vawiabwes t-to the gwaph c-cowwection
+      ``gwaphkeys.twainabwe_vawiabwes`` (see `tf.vawiabwe
+      <https://www.tensowfwow.owg/vewsions/mastew/api_docs/python/tf/vawiabwe>`_). >w<
+      defauwts to twue: twains the embeddings. (˘ω˘)
+    nyum_oov_buckets:
+      t-the nyumbew of buckets to u-use fow oov stwings. nyaa~~ t-these bucket i-ids occuw aftew the vocab bucket
+      ids. 😳😳😳 hashing i-is used to a-assign oov stwings to these buckets. (U ﹏ U) i-if `num_oov_buckets` is nyot
+      specified, (˘ω˘) i-index `oov_wowd_id` is used f-fow oov stwings. :3
+    n-nyame:
+      s-stwing, >w< the nyame of the wayew. ^^ w-wayews with the s-same nyame wiww
+      s-shawe weights, 😳😳😳 b-but to avoid mistakes we w-wequiwe ``weuse=twue`` i-in such cases. nyaa~~
+    n-nyum_pawtitions:
+      n-nyumbew of pawtitions t-to use fow t-the weight vawiabwe. (⑅˘꒳˘) d-defauwts t-to 1. :3
+    pawtition_axis:
+      if nyum_pawtitions i-is specified, ʘwʘ the pawtition axis f-fow the weight vawiabwe
+      d-defauwts to 0 (pawtition b-by wow). rawr x3
+      m-must be 0 (wow) ow 1 (cowumn, (///ˬ///✿) does nyot suppowt yet)
+    w-weight_weguwawizew:
+      w-weguwawizew f-function fow the weight matwix. 😳😳😳
+      ensuwe to add tf.wosses.get_weguwawization_woss() t-to youw woss fow t-this to take effect. XD
     dtype:
-      Defaults to tf.float32. Specifies the dtype of the weights.
-    use_placeholder:
-      Defaults to True.
-      If set to `True`, the initializer is passed via a placeholder. The initializer in this case needs to be of type `keras.initializers.Constant`.
-      If set to `False`, the initializer becomes part of the graph. This can sometimes be beyond what protobuf clients support.
-    checkpoint_dir:
-      Default to None.
-      If set to the path of a checkpoint, load embedding from the checkpoint.
-    convert_to_lowercase:
-      Default to True.
-      Converting all string inputs to lowercase.
+      d-defauwts t-to tf.fwoat32. >_< specifies the dtype of the weights. >w<
+    use_pwacehowdew:
+      defauwts t-to twue. /(^•ω•^)
+      i-if set to `twue`, :3 t-the initiawizew i-is passed via a pwacehowdew. ʘwʘ the initiawizew i-in this case n-nyeeds to be of type `kewas.initiawizews.constant`. (˘ω˘)
+      if s-set to `fawse`, (ꈍᴗꈍ) the initiawizew becomes pawt of t-the gwaph. ^^ this can sometimes be b-beyond nyani pwotobuf c-cwients suppowt. ^^
+    checkpoint_diw:
+      d-defauwt to nyone. ( ͡o ω ͡o )
+      i-if set to the path of a-a checkpoint, -.- woad embedding fwom t-the checkpoint. ^^;;
+    c-convewt_to_wowewcase:
+      d-defauwt to twue. ^•ﻌ•^
+      c-convewting aww stwing inputs t-to wowewcase. (˘ω˘)
 
-  Notes: If `use_placeholder` is set to `True`, the feed dictionary can be accessed by calling `twml.contrib.initializers.get_init_feed_dict()`.
+  n-nyotes: if `use_pwacehowdew` i-is set to `twue`, o.O the feed dictionawy c-can be accessed by cawwing `twmw.contwib.initiawizews.get_init_feed_dict()`. (✿oωo)
   """
 
   def __init__(
-    self,
-    vocab_size,
-    output_size,
-    vocab_initializer,
-    weight_initializer=None,
-    trainable=True,
-    num_oov_buckets=None,
-    oov_word_id=None,
-    name=None,
-    num_partitions=1,
-    partition_axis=0,
-    weight_regularizer=None,
-    dtype=None,
-    use_placeholder=True,
-    checkpoint_dir=None,
-    convert_to_lowercase=True,
-    **kwargs,
+    s-sewf, 😳😳😳
+    vocab_size, (ꈍᴗꈍ)
+    o-output_size, σωσ
+    v-vocab_initiawizew, UwU
+    weight_initiawizew=none, ^•ﻌ•^
+    twainabwe=twue, mya
+    nyum_oov_buckets=none, /(^•ω•^)
+    oov_wowd_id=none, rawr
+    n-nyame=none, nyaa~~
+    nyum_pawtitions=1, ( ͡o ω ͡o )
+    p-pawtition_axis=0, σωσ
+    w-weight_weguwawizew=none, (✿oωo)
+    dtype=none, (///ˬ///✿)
+    use_pwacehowdew=twue, σωσ
+    c-checkpoint_diw=none, UwU
+    convewt_to_wowewcase=twue,
+    **kwawgs, (⑅˘꒳˘)
   ):
-    if dtype is None:
-      # prevents a bug where the parent class defaults to the type of the first input tensor.
-      dtype = tf.float32
-    super().__init__(trainable=trainable, name=name, dtype=dtype, **kwargs)
-    # Weights initialization is set to 0s. This is safe for full sparse layers because
-    # you are supposed to learn your embedding from the label.
+    i-if dtype is n-nyone:
+      # p-pwevents a bug whewe t-the pawent c-cwass defauwts to the type of the fiwst input tensow. /(^•ω•^)
+      dtype = tf.fwoat32
+    s-supew().__init__(twainabwe=twainabwe, -.- nyame=name, (ˆ ﻌ ˆ)♡ d-dtype=dtype, nyaa~~ **kwawgs)
+    # weights initiawization is set to 0s. ʘwʘ this is safe f-fow fuww spawse wayews because
+    # you awe supposed to weawn youw embedding f-fwom the wabew. :3
 
-    is_constant_init = isinstance(weight_initializer, tf.keras.initializers.Constant)
-    if use_placeholder and (not is_constant_init) and (weight_initializer is not None):
-      raise ValueError("Weight initializer should be a `Constant` or `None`.")
+    i-is_constant_init = isinstance(weight_initiawizew, (U ᵕ U❁) t-tf.kewas.initiawizews.constant)
+    if use_pwacehowdew a-and (not is_constant_init) a-and (weight_initiawizew is nyot nyone):
+      w-waise vawueewwow("weight initiawizew shouwd b-be a `constant` ow `none`.")
 
-    if weight_initializer is None:
-      self.weight_initializer = tf.zeros_initializer()
-    else:
-      self.weight_initializer = weight_initializer
-    self.use_placeholder = use_placeholder
-    self.checkpoint_dir = checkpoint_dir
-    self.convert_to_lowercase = convert_to_lowercase
+    if weight_initiawizew is n-nyone:
+      sewf.weight_initiawizew = tf.zewos_initiawizew()
+    ewse:
+      sewf.weight_initiawizew = w-weight_initiawizew
+    sewf.use_pwacehowdew = u-use_pwacehowdew
+    s-sewf.checkpoint_diw = checkpoint_diw
+    sewf.convewt_to_wowewcase = convewt_to_wowewcase
 
-    self.vocab_initializer = vocab_initializer
-    self.vocab_size = vocab_size
-    self.output_size = output_size
-    self.num_partitions = num_partitions
-    self.partition_axis = partition_axis
-    self.weight_regularizer = weight_regularizer
-    self.trainable = trainable
-    self.oov_word_id = oov_word_id
-    self.num_oov_buckets = num_oov_buckets
+    s-sewf.vocab_initiawizew = vocab_initiawizew
+    sewf.vocab_size = vocab_size
+    sewf.output_size = o-output_size
+    s-sewf.num_pawtitions = n-nyum_pawtitions
+    s-sewf.pawtition_axis = pawtition_axis
+    sewf.weight_weguwawizew = weight_weguwawizew
+    s-sewf.twainabwe = t-twainabwe
+    sewf.oov_wowd_id = oov_wowd_id
+    sewf.num_oov_buckets = n-nyum_oov_buckets
 
-    if self.oov_word_id is not None and self.num_oov_buckets is not None:
-      raise ValueError("At most one of oov_word_id or num_oov_buckets should be specified")
-    elif self.oov_word_id is None and self.num_oov_buckets is None:
-      self.oov_word_id = OOV_WORD_ID  # use the default OOV word id
+    if sewf.oov_wowd_id is nyot nyone a-and sewf.num_oov_buckets is nyot nyone:
+      waise v-vawueewwow("at m-most one of oov_wowd_id ow nyum_oov_buckets s-shouwd be specified")
+    e-ewif sewf.oov_wowd_id i-is nyone and sewf.num_oov_buckets is nyone:
+      sewf.oov_wowd_id = o-oov_wowd_id  # use the defauwt oov wowd id
 
-    if partition_axis != 0:
-      raise NotImplementedError("embedding_lookup only supports partition_axis = 0")
+    i-if pawtition_axis != 0:
+      waise nyotimpwementedewwow("embedding_wookup onwy suppowts pawtition_axis = 0")
 
-  def build(self, input_shapes):
+  def buiwd(sewf, (U ﹏ U) i-input_shapes):
     """
-    creates the ``vocab`` and ``weight`` Variables
-    of shape ``[vocab_size]`` and ``[vocab_size, output_size]`` respectively.
+    c-cweates the ``vocab`` a-and ``weight`` v-vawiabwes
+    o-of shape ``[vocab_size]`` and ``[vocab_size, ^^ o-output_size]`` wespectivewy. òωó
     """
-    partitioner = None
+    pawtitionew = n-none
 
-    additional_buckets_for_oov = self.num_oov_buckets if self.num_oov_buckets is not None else 0
-    shape = [self.vocab_size + additional_buckets_for_oov, self.output_size]
+    additionaw_buckets_fow_oov = sewf.num_oov_buckets i-if sewf.num_oov_buckets is nyot nyone ewse 0
+    s-shape = [sewf.vocab_size + a-additionaw_buckets_fow_oov, /(^•ω•^) sewf.output_size]
 
-    if self.use_placeholder:
-      embedding_weight_initializer = twml.contrib.initializers.PlaceholderInitializer(
-        shape, self.dtype
+    i-if sewf.use_pwacehowdew:
+      embedding_weight_initiawizew = t-twmw.contwib.initiawizews.pwacehowdewinitiawizew(
+        s-shape, 😳😳😳 sewf.dtype
       )
-      tf.add_to_collection(
-        twml.contrib.initializers.TWML_INIT_FEED_KEY,
-        {embedding_weight_initializer.value: self.weight_initializer.value},
+      t-tf.add_to_cowwection(
+        t-twmw.contwib.initiawizews.twmw_init_feed_key, :3
+        {embedding_weight_initiawizew.vawue: sewf.weight_initiawizew.vawue}, (///ˬ///✿)
       )
-    else:
-      embedding_weight_initializer = self.weight_initializer
+    e-ewse:
+      embedding_weight_initiawizew = sewf.weight_initiawizew
 
-    if self.num_partitions:
-      partition_axis = int(self.partition_axis)
-      partitioner = tf.fixed_size_partitioner(self.num_partitions, axis=partition_axis)
-    else:
-      # Regular variables do not like it when you pass both constant tensors and shape
-      if not callable(self.weight_initializer):
-        shape = None
+    if sewf.num_pawtitions:
+      pawtition_axis = i-int(sewf.pawtition_axis)
+      pawtitionew = t-tf.fixed_size_pawtitionew(sewf.num_pawtitions, rawr x3 axis=pawtition_axis)
+    ewse:
+      # w-weguwaw v-vawiabwes do nyot w-wike it when you pass both constant t-tensows a-and shape
+      if nyot cawwabwe(sewf.weight_initiawizew):
+        s-shape = nyone
 
-    self.vocab = self.add_variable(
-      'vocab',
-      initializer=self.vocab_initializer,
-      shape=[self.vocab_size],
-      dtype=tf.string,
-      trainable=False,
+    sewf.vocab = s-sewf.add_vawiabwe(
+      'vocab', (U ᵕ U❁)
+      initiawizew=sewf.vocab_initiawizew, (⑅˘꒳˘)
+      s-shape=[sewf.vocab_size], (˘ω˘)
+      d-dtype=tf.stwing, :3
+      twainabwe=fawse, XD
     )
 
-    self.weight = self.add_variable(
-      'weight',
-      initializer=None if self.checkpoint_dir is not None else embedding_weight_initializer,
-      regularizer=self.weight_regularizer,
-      shape=shape,
-      dtype=self.dtype,
-      trainable=self.trainable,
-      partitioner=partitioner,
+    sewf.weight = sewf.add_vawiabwe(
+      'weight', >_<
+      initiawizew=none if s-sewf.checkpoint_diw i-is nyot none ewse embedding_weight_initiawizew, (✿oωo)
+      weguwawizew=sewf.weight_weguwawizew, (ꈍᴗꈍ)
+      shape=shape, XD
+      d-dtype=sewf.dtype,
+      twainabwe=sewf.twainabwe,
+      p-pawtitionew=pawtitionew, :3
     )
-    if self.checkpoint_dir is not None:
-      twml.trainers.trainer.init_from_checkpoint(self.checkpoint_dir, {'weight': self.weight.name})
+    i-if sewf.checkpoint_diw is nyot nyone:
+      twmw.twainews.twainew.init_fwom_checkpoint(sewf.checkpoint_diw, mya {'weight': sewf.weight.name})
 
-    self.built = True
+    s-sewf.buiwt = twue
 
-  def call(
-    self, inputs, debug=False, oov_summaries=False, **kwargs
-  ):  # pylint: disable=unused-argument
-    """Converts word strings to word ids using the vocabulary lookup table.
-    Then converts the word ids to their commensurate embedding vector.
+  def caww(
+    sewf, òωó inputs, d-debug=fawse, nyaa~~ oov_summawies=fawse, 🥺 **kwawgs
+  ):  # p-pywint: d-disabwe=unused-awgument
+    """convewts wowd stwings t-to wowd ids u-using the vocabuwawy w-wookup tabwe. -.-
+    t-then convewts t-the wowd ids t-to theiw commensuwate embedding vectow. 🥺
 
-    Arguments:
+    awguments:
       inputs:
-        A tensor of word strings. Typically, of size batch_size x seq_len.
-      debug:
-        When True, prints the input strings and their commensurate input_ids.
-        Defaults to False.
-      oov_summaries:
-        When True, log the out-of-vocabulary (OOV) rate to TensorBoard
-        Defaults to False.
+        a tensow of wowd s-stwings. (˘ω˘) typicawwy, òωó o-of size batch_size x-x seq_wen. UwU
+      d-debug:
+        w-when twue, ^•ﻌ•^ p-pwints the input stwings and theiw commensuwate input_ids. mya
+        defauwts t-to fawse. (✿oωo)
+      o-oov_summawies:
+        when twue, XD wog the out-of-vocabuwawy (oov) wate to tensowboawd
+        d-defauwts t-to fawse. :3
 
-    Returns:
-      The mapping of input word strings to output embedding vectors.
-      Given an input of shape ``batch_size x seq_len``, the output has shape
-      ``batch_size x seq_len x embedding_size``.
+    w-wetuwns:
+      the mapping of input wowd stwings t-to output embedding vectows. (U ﹏ U)
+      given a-an input of shape ``batch_size x s-seq_wen``, UwU the output has shape
+      ``batch_size x seq_wen x e-embedding_size``. ʘwʘ
     """
-    if self.convert_to_lowercase:
-      inputs = tf.strings.lower(inputs)
-    if self.num_oov_buckets is None:
-      lookup_table = index_table_from_tensor(self.vocab, default_value=self.oov_word_id)
-    else:
-      lookup_table = index_table_from_tensor(self.vocab, num_oov_buckets=self.num_oov_buckets)
-    input_ids = lookup_table.lookup(inputs)
+    if s-sewf.convewt_to_wowewcase:
+      i-inputs = tf.stwings.wowew(inputs)
+    if sewf.num_oov_buckets i-is nyone:
+      w-wookup_tabwe = index_tabwe_fwom_tensow(sewf.vocab, >w< d-defauwt_vawue=sewf.oov_wowd_id)
+    e-ewse:
+      w-wookup_tabwe = i-index_tabwe_fwom_tensow(sewf.vocab, nyum_oov_buckets=sewf.num_oov_buckets)
+    i-input_ids = wookup_tabwe.wookup(inputs)
 
-    if oov_summaries:
-      oov_count = tf.reduce_sum(
-        tf.cast(tf.math.equal(input_ids, self.oov_word_id), tf.dtypes.float32)
+    i-if oov_summawies:
+      o-oov_count = tf.weduce_sum(
+        tf.cast(tf.math.equaw(input_ids, 😳😳😳 s-sewf.oov_wowd_id), rawr tf.dtypes.fwoat32)
       )
-      valid_count = tf.reduce_sum(
-        tf.cast(tf.math.not_equal(input_ids, PAD_WORD_ID), tf.dtypes.float32)
+      v-vawid_count = tf.weduce_sum(
+        t-tf.cast(tf.math.not_equaw(input_ids, ^•ﻌ•^ p-pad_wowd_id), σωσ tf.dtypes.fwoat32)
       )
-      oov_rate = oov_count / valid_count
-      tf.summary.scalar('OOV_rate', oov_rate)
+      oov_wate = o-oov_count / vawid_count
+      tf.summawy.scawaw('oov_wate', :3 oov_wate)
 
-    if debug:
+    i-if d-debug:
 
-      def print_debug():
-        return tf.print("input_strings:", inputs, "\ninput_ids: ", input_ids, summarize=140)
+      def pwint_debug():
+        wetuwn t-tf.pwint("input_stwings:", rawr x3 i-inputs, nyaa~~ "\ninput_ids: ", :3 input_ids, >w< summawize=140)
 
-      with tf.control_dependencies([twml.util.do_every_n_steps(print_debug, 1000)]):
+      w-with tf.contwow_dependencies([twmw.utiw.do_evewy_n_steps(pwint_debug, rawr 1000)]):
         input_ids = tf.identity(input_ids)
 
-    output_embeddings = tf.nn.embedding_lookup(
-      params=self.weight, ids=input_ids, partition_strategy='div'
+    o-output_embeddings = t-tf.nn.embedding_wookup(
+      pawams=sewf.weight, 😳 i-ids=input_ids, 😳 p-pawtition_stwategy='div'
     )
 
-    output_shape = inputs.shape.concatenate(tf.TensorShape([self.output_size]))
-    output_embeddings.set_shape(output_shape)
+    output_shape = inputs.shape.concatenate(tf.tensowshape([sewf.output_size]))
+    o-output_embeddings.set_shape(output_shape)
 
-    return output_embeddings
+    w-wetuwn o-output_embeddings

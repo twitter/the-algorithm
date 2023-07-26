@@ -1,31 +1,31 @@
-package com.twitter.cr_mixer.param
+package com.twittew.cw_mixew.pawam
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.baseconfig
+i-impowt com.twittew.timewines.configapi.baseconfigbuiwdew
+i-impowt c-com.twittew.timewines.configapi.featuweswitchovewwideutiw
+impowt c-com.twittew.timewines.configapi.fsname
+i-impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt c-com.twittew.timewines.configapi.pawam
 
-object VideoTweetFilterParams {
+object videotweetfiwtewpawams {
 
-  object EnableVideoTweetFilterParam
-      extends FSParam[Boolean](
-        name = "video_tweet_filter_enable_filter",
-        default = false
+  object enabwevideotweetfiwtewpawam
+      e-extends fspawam[boowean](
+        nyame = "video_tweet_fiwtew_enabwe_fiwtew", mya
+        defauwt = f-fawse
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableVideoTweetFilterParam
+  vaw awwpawams: s-seq[pawam[_] with fsname] = seq(
+    enabwevideotweetfiwtewpawam
   )
 
-  lazy val config: BaseConfig = {
+  wazy v-vaw config: baseconfig = {
 
-    val booleanOverrides =
-      FeatureSwitchOverrideUtil.getBooleanFSOverrides(EnableVideoTweetFilterParam)
+    vaw booweanovewwides =
+      f-featuweswitchovewwideutiw.getbooweanfsovewwides(enabwevideotweetfiwtewpawam)
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .build()
+    b-baseconfigbuiwdew()
+      .set(booweanovewwides: _*)
+      .buiwd()
   }
 }

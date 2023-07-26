@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.component_library.scorer.param_gated
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.pawam_gated
 
-import com.twitter.product_mixer.component_library.scorer.param_gated.ParamGatedScorer.IdentifierPrefix
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.pwoduct_mixew.component_wibwawy.scowew.pawam_gated.pawamgatedscowew.identifiewpwefix
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.pawam
 
 /**
- * A [[scorer]] with [[Conditionally]] based on a [[Param]]
+ * a [[scowew]] w-with [[conditionawwy]] based on a [[pawam]]
  *
- * @param enabledParam the param to turn this [[scorer]] on and off
- * @param scorer the underlying [[scorer]] to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
- * @tparam Result The type of the candidates
+ * @pawam enabwedpawam the pawam to tuwn t-this [[scowew]] on and off
+ * @pawam s-scowew the u-undewwying [[scowew]] to wun when `enabwedpawam` is twue
+ * @tpawam quewy the domain modew fow t-the quewy ow wequest
+ * @tpawam wesuwt the type of the candidates
  */
-case class ParamGatedScorer[-Query <: PipelineQuery, Result <: UniversalNoun[Any]](
-  enabledParam: Param[Boolean],
-  scorer: Scorer[Query, Result])
-    extends Scorer[Query, Result]
-    with Conditionally[Query] {
-  override val identifier: ScorerIdentifier = ScorerIdentifier(
-    IdentifierPrefix + scorer.identifier.name)
-  override val alerts: Seq[Alert] = scorer.alerts
-  override val features: Set[Feature[_, _]] = scorer.features
-  override def onlyIf(query: Query): Boolean =
-    Conditionally.and(query, scorer, query.params(enabledParam))
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Result]]
-  ): Stitch[Seq[FeatureMap]] = scorer(query, candidates)
+case cwass pawamgatedscowew[-quewy <: p-pipewinequewy, ( ͡o ω ͡o ) wesuwt <: u-univewsawnoun[any]](
+  e-enabwedpawam: p-pawam[boowean], (U ﹏ U)
+  s-scowew: scowew[quewy, (///ˬ///✿) wesuwt])
+    e-extends scowew[quewy, wesuwt]
+    with conditionawwy[quewy] {
+  o-ovewwide vaw identifiew: scowewidentifiew = scowewidentifiew(
+    identifiewpwefix + scowew.identifiew.name)
+  ovewwide vaw awewts: s-seq[awewt] = scowew.awewts
+  o-ovewwide vaw featuwes: s-set[featuwe[_, >w< _]] = s-scowew.featuwes
+  ovewwide def onwyif(quewy: quewy): boowean =
+    c-conditionawwy.and(quewy, rawr s-scowew, mya quewy.pawams(enabwedpawam))
+  ovewwide d-def appwy(
+    q-quewy: quewy, ^^
+    candidates: s-seq[candidatewithfeatuwes[wesuwt]]
+  ): stitch[seq[featuwemap]] = s-scowew(quewy, 😳😳😳 candidates)
 }
 
-object ParamGatedScorer {
-  val IdentifierPrefix = "ParamGated"
+object pawamgatedscowew {
+  v-vaw identifiewpwefix = "pawamgated"
 }

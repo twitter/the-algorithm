@@ -1,32 +1,32 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.logbase.thriftscala.LogBase
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.unified_user_actions.thriftscala.Item.TweetInfo
+impowt c-com.twittew.cwientapp.thwiftscawa.eventnamespace
+i-impowt com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt com.twittew.cwientapp.thwiftscawa.{item => w-wogeventitem}
+i-impowt com.twittew.wogbase.thwiftscawa.wogbase
+i-impowt com.twittew.unified_usew_actions.thwiftscawa._
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.item.tweetinfo
 
-object ClientEventImpression {
-  object TweetLingerImpression extends BaseClientEvent(ActionType.ClientTweetLingerImpression) {
-    override def getUuaItem(
-      ceItem: LogEventItem,
-      logEvent: LogEvent
-    ): Option[Item] = {
-      for {
-        actionTweetId <- ceItem.id
-        impressionDetails <- ceItem.impressionDetails
-        lingerStartTimestampMs <- impressionDetails.visibilityStart
-        lingerEndTimestampMs <- impressionDetails.visibilityEnd
-      } yield {
-        Item.TweetInfo(
-          ClientEventCommonUtils
-            .getBasicTweetInfo(actionTweetId, ceItem, logEvent.eventNamespace)
-            .copy(tweetActionInfo = Some(
-              TweetActionInfo.ClientTweetLingerImpression(
-                ClientTweetLingerImpression(
-                  lingerStartTimestampMs = lingerStartTimestampMs,
-                  lingerEndTimestampMs = lingerEndTimestampMs
+object cwienteventimpwession {
+  object tweetwingewimpwession extends basecwientevent(actiontype.cwienttweetwingewimpwession) {
+    ovewwide def g-getuuaitem(
+      ceitem: wogeventitem, mya
+      wogevent: wogevent
+    ): o-option[item] = {
+      fow {
+        actiontweetid <- c-ceitem.id
+        impwessiondetaiws <- ceitem.impwessiondetaiws
+        wingewstawttimestampms <- i-impwessiondetaiws.visibiwitystawt
+        wingewendtimestampms <- i-impwessiondetaiws.visibiwityend
+      } y-yiewd {
+        item.tweetinfo(
+          cwienteventcommonutiws
+            .getbasictweetinfo(actiontweetid, 🥺 ceitem, wogevent.eventnamespace)
+            .copy(tweetactioninfo = s-some(
+              tweetactioninfo.cwienttweetwingewimpwession(
+                cwienttweetwingewimpwession(
+                  wingewstawttimestampms = wingewstawttimestampms, ^^;;
+                  w-wingewendtimestampms = wingewendtimestampms
                 )
               ))))
       }
@@ -34,174 +34,174 @@ object ClientEventImpression {
   }
 
   /**
-   * To make parity with iesource's definition, render impression for quoted Tweets would emit
-   * 2 events: 1 for the quoting Tweet and 1 for the original Tweet!!!
+   * t-to make pawity w-with iesouwce's d-definition, :3 wendew i-impwession fow quoted tweets wouwd emit
+   * 2 e-events: 1 fow the quoting tweet and 1 fow the o-owiginaw tweet!!!
    */
-  object TweetRenderImpression extends BaseClientEvent(ActionType.ClientTweetRenderImpression) {
-    override def toUnifiedUserAction(logEvent: LogEvent): Seq[UnifiedUserAction] = {
+  object tweetwendewimpwession extends basecwientevent(actiontype.cwienttweetwendewimpwession) {
+    ovewwide d-def tounifiedusewaction(wogevent: wogevent): s-seq[unifiedusewaction] = {
 
-      val logBase: Option[LogBase] = logEvent.logBase
+      v-vaw wogbase: o-option[wogbase] = wogevent.wogbase
 
-      val raw = for {
-        ed <- logEvent.eventDetails.toSeq
-        items <- ed.items.toSeq
-        ceItem <- items
-        eventTimestamp <- logBase.flatMap(getSourceTimestamp)
-        uuaItem <- getUuaItem(ceItem, logEvent)
-        if isItemTypeValid(ceItem.itemType)
-      } yield {
-        val userIdentifier: UserIdentifier = UserIdentifier(
-          userId = logBase.flatMap(_.userId),
-          guestIdMarketing = logBase.flatMap(_.guestIdMarketing))
+      vaw waw = fow {
+        e-ed <- wogevent.eventdetaiws.toseq
+        items <- e-ed.items.toseq
+        ceitem <- items
+        e-eventtimestamp <- w-wogbase.fwatmap(getsouwcetimestamp)
+        uuaitem <- g-getuuaitem(ceitem, (U ﹏ U) wogevent)
+        i-if isitemtypevawid(ceitem.itemtype)
+      } yiewd {
+        vaw usewidentifiew: u-usewidentifiew = usewidentifiew(
+          u-usewid = wogbase.fwatmap(_.usewid), OwO
+          guestidmawketing = w-wogbase.fwatmap(_.guestidmawketing))
 
-        val productSurface: Option[ProductSurface] = ProductSurfaceUtils
-          .getProductSurface(logEvent.eventNamespace)
+        vaw p-pwoductsuwface: option[pwoductsuwface] = pwoductsuwfaceutiws
+          .getpwoductsuwface(wogevent.eventnamespace)
 
-        val eventMetaData: EventMetadata = ClientEventCommonUtils
-          .getEventMetadata(
-            eventTimestamp = eventTimestamp,
-            logEvent = logEvent,
-            ceItem = ceItem,
-            productSurface = productSurface
+        vaw eventmetadata: eventmetadata = cwienteventcommonutiws
+          .geteventmetadata(
+            eventtimestamp = e-eventtimestamp, 😳😳😳
+            wogevent = w-wogevent,
+            ceitem = ceitem, (ˆ ﻌ ˆ)♡
+            p-pwoductsuwface = p-pwoductsuwface
           )
 
-        UnifiedUserAction(
-          userIdentifier = userIdentifier,
-          item = uuaItem,
-          actionType = ActionType.ClientTweetRenderImpression,
-          eventMetadata = eventMetaData,
-          productSurface = productSurface,
-          productSurfaceInfo =
-            ProductSurfaceUtils.getProductSurfaceInfo(productSurface, ceItem, logEvent)
+        u-unifiedusewaction(
+          usewidentifiew = usewidentifiew, XD
+          item = uuaitem, (ˆ ﻌ ˆ)♡
+          a-actiontype = actiontype.cwienttweetwendewimpwession, ( ͡o ω ͡o )
+          eventmetadata = eventmetadata, rawr x3
+          pwoductsuwface = p-pwoductsuwface, nyaa~~
+          pwoductsuwfaceinfo =
+            p-pwoductsuwfaceutiws.getpwoductsuwfaceinfo(pwoductsuwface, >_< c-ceitem, ^^;; wogevent)
         )
       }
 
-      raw.flatMap { e =>
-        e.item match {
-          case TweetInfo(t) =>
-            // If it is an impression toward quoted Tweet we emit 2 impressions, 1 for quoting Tweet
-            // and 1 for the original Tweet.
-            if (t.quotedTweetId.isDefined) {
-              val originalItem = t.copy(
-                actionTweetId = t.quotedTweetId.get,
-                actionTweetAuthorInfo = t.quotedAuthorId.map(id => AuthorInfo(authorId = Some(id))),
-                quotingTweetId = Some(t.actionTweetId),
-                quotedTweetId = None,
-                inReplyToTweetId = None,
-                replyingTweetId = None,
-                retweetingTweetId = None,
-                retweetedTweetId = None,
-                quotedAuthorId = None,
-                retweetingAuthorId = None,
-                inReplyToAuthorId = None
+      w-waw.fwatmap { e =>
+        e-e.item match {
+          c-case tweetinfo(t) =>
+            // i-if it is an i-impwession towawd quoted tweet we emit 2 impwessions, (ˆ ﻌ ˆ)♡ 1 f-fow quoting t-tweet
+            // a-and 1 f-fow the owiginaw t-tweet. ^^;;
+            if (t.quotedtweetid.isdefined) {
+              vaw owiginawitem = t.copy(
+                a-actiontweetid = t.quotedtweetid.get, (⑅˘꒳˘)
+                actiontweetauthowinfo = t.quotedauthowid.map(id => authowinfo(authowid = some(id))), rawr x3
+                q-quotingtweetid = some(t.actiontweetid), (///ˬ///✿)
+                quotedtweetid = nyone, 🥺
+                i-inwepwytotweetid = n-nyone, >_<
+                w-wepwyingtweetid = nyone, UwU
+                w-wetweetingtweetid = nyone, >_<
+                w-wetweetedtweetid = n-nyone, -.-
+                quotedauthowid = nyone, mya
+                wetweetingauthowid = nyone, >w<
+                inwepwytoauthowid = nyone
               )
-              val original = e.copy(item = TweetInfo(originalItem))
-              Seq(original, e)
-            } else Seq(e)
-          case _ => Nil
+              v-vaw owiginaw = e.copy(item = t-tweetinfo(owiginawitem))
+              seq(owiginaw, (U ﹏ U) e)
+            } e-ewse s-seq(e)
+          case _ => nyiw
         }
       }
     }
   }
 
-  object TweetGalleryImpression extends BaseClientEvent(ActionType.ClientTweetGalleryImpression)
+  object tweetgawwewyimpwession e-extends basecwientevent(actiontype.cwienttweetgawwewyimpwession)
 
-  object TweetDetailsImpression extends BaseClientEvent(ActionType.ClientTweetDetailsImpression) {
+  o-object tweetdetaiwsimpwession extends basecwientevent(actiontype.cwienttweetdetaiwsimpwession) {
 
-    case class EventNamespaceInternal(
-      client: String,
-      page: String,
-      section: String,
-      component: String,
-      element: String,
-      action: String)
+    c-case cwass e-eventnamespaceintewnaw(
+      cwient: stwing, 😳😳😳
+      page: stwing, o.O
+      section: stwing, òωó
+      c-component: stwing, 😳😳😳
+      e-ewement: s-stwing, σωσ
+      action: stwing)
 
-    def isTweetDetailsImpression(eventNamespaceOpt: Option[EventNamespace]): Boolean =
-      eventNamespaceOpt.exists { eventNamespace =>
-        val eventNamespaceInternal = EventNamespaceInternal(
-          client = eventNamespace.client.getOrElse(""),
-          page = eventNamespace.page.getOrElse(""),
-          section = eventNamespace.section.getOrElse(""),
-          component = eventNamespace.component.getOrElse(""),
-          element = eventNamespace.element.getOrElse(""),
-          action = eventNamespace.action.getOrElse(""),
+    d-def istweetdetaiwsimpwession(eventnamespaceopt: o-option[eventnamespace]): boowean =
+      e-eventnamespaceopt.exists { eventnamespace =>
+        vaw eventnamespaceintewnaw = eventnamespaceintewnaw(
+          cwient = eventnamespace.cwient.getowewse(""), (⑅˘꒳˘)
+          p-page = e-eventnamespace.page.getowewse(""), (///ˬ///✿)
+          section = eventnamespace.section.getowewse(""),
+          component = e-eventnamespace.component.getowewse(""),
+          e-ewement = eventnamespace.ewement.getowewse(""), 🥺
+          action = eventnamespace.action.getowewse(""), OwO
         )
 
-        isIphoneAppOrMacAppOrIpadAppClientTweetDetailsImpression(
-          eventNamespaceInternal) || isAndroidAppClientTweetDetailsImpression(
-          eventNamespaceInternal) || isWebClientTweetDetailImpression(
-          eventNamespaceInternal) || isTweetDeckAppClientTweetDetailsImpression(
-          eventNamespaceInternal) || isOtherAppClientTweetDetailsImpression(eventNamespaceInternal)
+        isiphoneappowmacappowipadappcwienttweetdetaiwsimpwession(
+          e-eventnamespaceintewnaw) || isandwoidappcwienttweetdetaiwsimpwession(
+          eventnamespaceintewnaw) || iswebcwienttweetdetaiwimpwession(
+          eventnamespaceintewnaw) || istweetdeckappcwienttweetdetaiwsimpwession(
+          e-eventnamespaceintewnaw) || isothewappcwienttweetdetaiwsimpwession(eventnamespaceintewnaw)
       }
 
-    private def isWebClientTweetDetailImpression(
-      eventNamespace: EventNamespaceInternal
-    ): Boolean = {
-      val eventNameSpaceStr =
-        eventNamespace.client + ":" + eventNamespace.page + ":" + eventNamespace.section + ":" + eventNamespace.component + ":" + eventNamespace.element + ":" + eventNamespace.action
-      eventNameSpaceStr.equalsIgnoreCase("m5:tweet::::show") || eventNameSpaceStr.equalsIgnoreCase(
-        "m5:tweet:landing:::show") || eventNameSpaceStr
-        .equalsIgnoreCase("m2:tweet::::impression") || eventNameSpaceStr.equalsIgnoreCase(
-        "m2:tweet::tweet::impression") || eventNameSpaceStr
-        .equalsIgnoreCase("LiteNativeWrapper:tweet::::show") || eventNameSpaceStr.equalsIgnoreCase(
-        "LiteNativeWrapper:tweet:landing:::show")
+    pwivate def i-iswebcwienttweetdetaiwimpwession(
+      e-eventnamespace: eventnamespaceintewnaw
+    ): boowean = {
+      vaw eventnamespacestw =
+        e-eventnamespace.cwient + ":" + e-eventnamespace.page + ":" + eventnamespace.section + ":" + eventnamespace.component + ":" + eventnamespace.ewement + ":" + e-eventnamespace.action
+      eventnamespacestw.equawsignowecase("m5:tweet::::show") || e-eventnamespacestw.equawsignowecase(
+        "m5:tweet:wanding:::show") || eventnamespacestw
+        .equawsignowecase("m2:tweet::::impwession") || eventnamespacestw.equawsignowecase(
+        "m2:tweet::tweet::impwession") || eventnamespacestw
+        .equawsignowecase("witenativewwappew:tweet::::show") || e-eventnamespacestw.equawsignowecase(
+        "witenativewwappew:tweet:wanding:::show")
     }
 
-    private def isOtherAppClientTweetDetailsImpression(
-      eventNamespace: EventNamespaceInternal
-    ): Boolean = {
-      val excludedClients = Set(
-        "web",
-        "m5",
-        "m2",
-        "LiteNativeWrapper",
-        "iphone",
-        "ipad",
-        "mac",
-        "android",
-        "android_tablet",
+    pwivate d-def isothewappcwienttweetdetaiwsimpwession(
+      e-eventnamespace: eventnamespaceintewnaw
+    ): b-boowean = {
+      vaw excwudedcwients = s-set(
+        "web", >w<
+        "m5", 🥺
+        "m2", nyaa~~
+        "witenativewwappew", ^^
+        "iphone", >w<
+        "ipad", OwO
+        "mac", XD
+        "andwoid", ^^;;
+        "andwoid_tabwet", 🥺
         "deck")
-      (!excludedClients.contains(eventNamespace.client)) && eventNamespace.page
-        .equalsIgnoreCase("tweet") && eventNamespace.section
-        .equalsIgnoreCase("") && eventNamespace.component
-        .equalsIgnoreCase("tweet") && eventNamespace.element
-        .equalsIgnoreCase("") && eventNamespace.action.equalsIgnoreCase("impression")
+      (!excwudedcwients.contains(eventnamespace.cwient)) && e-eventnamespace.page
+        .equawsignowecase("tweet") && eventnamespace.section
+        .equawsignowecase("") && e-eventnamespace.component
+        .equawsignowecase("tweet") && eventnamespace.ewement
+        .equawsignowecase("") && e-eventnamespace.action.equawsignowecase("impwession")
     }
 
-    private def isTweetDeckAppClientTweetDetailsImpression(
-      eventNamespace: EventNamespaceInternal
-    ): Boolean =
-      eventNamespace.client
-        .equalsIgnoreCase("deck") && eventNamespace.page
-        .equalsIgnoreCase("tweet") && eventNamespace.section
-        .equalsIgnoreCase("") && eventNamespace.component
-        .equalsIgnoreCase("tweet") && eventNamespace.element
-        .equalsIgnoreCase("") && eventNamespace.action.equalsIgnoreCase("impression")
+    p-pwivate def istweetdeckappcwienttweetdetaiwsimpwession(
+      eventnamespace: e-eventnamespaceintewnaw
+    ): b-boowean =
+      e-eventnamespace.cwient
+        .equawsignowecase("deck") && eventnamespace.page
+        .equawsignowecase("tweet") && eventnamespace.section
+        .equawsignowecase("") && eventnamespace.component
+        .equawsignowecase("tweet") && e-eventnamespace.ewement
+        .equawsignowecase("") && eventnamespace.action.equawsignowecase("impwession")
 
-    private def isAndroidAppClientTweetDetailsImpression(
-      eventNamespace: EventNamespaceInternal
-    ): Boolean =
-      (eventNamespace.client
-        .equalsIgnoreCase("android") || eventNamespace.client
-        .equalsIgnoreCase("android_tablet")) && eventNamespace.page
-        .equalsIgnoreCase("tweet") && eventNamespace.section.equalsIgnoreCase(
-        "") && (eventNamespace.component
-        .equalsIgnoreCase("tweet") || eventNamespace.component
-        .matches("^suggest.*_tweet.*$") || eventNamespace.component
-        .equalsIgnoreCase("")) && eventNamespace.element
-        .equalsIgnoreCase("") && eventNamespace.action.equalsIgnoreCase("impression")
+    p-pwivate d-def isandwoidappcwienttweetdetaiwsimpwession(
+      eventnamespace: eventnamespaceintewnaw
+    ): boowean =
+      (eventnamespace.cwient
+        .equawsignowecase("andwoid") || e-eventnamespace.cwient
+        .equawsignowecase("andwoid_tabwet")) && e-eventnamespace.page
+        .equawsignowecase("tweet") && e-eventnamespace.section.equawsignowecase(
+        "") && (eventnamespace.component
+        .equawsignowecase("tweet") || e-eventnamespace.component
+        .matches("^suggest.*_tweet.*$") || eventnamespace.component
+        .equawsignowecase("")) && e-eventnamespace.ewement
+        .equawsignowecase("") && eventnamespace.action.equawsignowecase("impwession")
 
-    private def isIphoneAppOrMacAppOrIpadAppClientTweetDetailsImpression(
-      eventNamespace: EventNamespaceInternal
-    ): Boolean =
-      (eventNamespace.client
-        .equalsIgnoreCase("iphone") || eventNamespace.client
-        .equalsIgnoreCase("ipad") || eventNamespace.client
-        .equalsIgnoreCase("mac")) && eventNamespace.page.equalsIgnoreCase(
-        "tweet") && eventNamespace.section
-        .equalsIgnoreCase("") && (eventNamespace.component
-        .equalsIgnoreCase("tweet") || eventNamespace.component
-        .matches("^suggest.*_tweet.*$")) && eventNamespace.element
-        .equalsIgnoreCase("") && eventNamespace.action.equalsIgnoreCase("impression")
+    pwivate def isiphoneappowmacappowipadappcwienttweetdetaiwsimpwession(
+      eventnamespace: eventnamespaceintewnaw
+    ): b-boowean =
+      (eventnamespace.cwient
+        .equawsignowecase("iphone") || eventnamespace.cwient
+        .equawsignowecase("ipad") || e-eventnamespace.cwient
+        .equawsignowecase("mac")) && eventnamespace.page.equawsignowecase(
+        "tweet") && e-eventnamespace.section
+        .equawsignowecase("") && (eventnamespace.component
+        .equawsignowecase("tweet") || eventnamespace.component
+        .matches("^suggest.*_tweet.*$")) && eventnamespace.ewement
+        .equawsignowecase("") && e-eventnamespace.action.equawsignowecase("impwession")
   }
 }

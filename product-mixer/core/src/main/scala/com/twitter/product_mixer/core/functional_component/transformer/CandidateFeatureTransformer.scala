@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew
 
 /**
- * Populates a [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]] with Features
- * that are available in the [[CandidateSourceResult]]
+ * popuwates a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]] w-with f-featuwes
+ * that a-awe avaiwabwe i-in the [[candidatesouwcewesuwt]]
  */
-trait CandidateFeatureTransformer[-CandidateSourceResult]
-    extends FeatureTransformer[CandidateSourceResult]
+t-twait candidatefeatuwetwansfowmew[-candidatesouwcewesuwt]
+    e-extends featuwetwansfowmew[candidatesouwcewesuwt]

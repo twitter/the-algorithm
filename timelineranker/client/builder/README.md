@@ -1,4 +1,4 @@
-# TimelineRanker client
+# timewinewankew cwient
 
-Library for creating a client to talk to TLR. It contains a ClientBuilder implementation
-with some preferred settings for clients.
+wibwawy f-fow cweating a cwient t-to tawk to t-tww. (⑅˘꒳˘) it contains a-a cwientbuiwdew i-impwementation
+w-with some pwefewwed s-settings fow c-cwients. ( ͡o ω ͡o )

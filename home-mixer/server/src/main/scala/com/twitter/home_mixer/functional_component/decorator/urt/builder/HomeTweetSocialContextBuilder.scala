@@ -1,50 +1,50 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleFocalTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleIdFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableSocialContextParam
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.convewsationmoduwefocawtweetidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.convewsationmoduweidfeatuwe
+i-impowt c-com.twittew.home_mixew.pawam.homegwobawpawams.enabwesociawcontextpawam
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.sociaw_context.basesociawcontextbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.sociawcontext
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class HomeTweetSocialContextBuilder @Inject() (
-  likedBySocialContextBuilder: LikedBySocialContextBuilder,
-  listsSocialContextBuilder: ListsSocialContextBuilder,
-  followedBySocialContextBuilder: FollowedBySocialContextBuilder,
-  topicSocialContextBuilder: TopicSocialContextBuilder,
-  extendedReplySocialContextBuilder: ExtendedReplySocialContextBuilder,
-  receivedReplySocialContextBuilder: ReceivedReplySocialContextBuilder,
-  popularVideoSocialContextBuilder: PopularVideoSocialContextBuilder,
-  popularInYourAreaSocialContextBuilder: PopularInYourAreaSocialContextBuilder)
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@singweton
+case cwass h-hometweetsociawcontextbuiwdew @inject() (
+  wikedbysociawcontextbuiwdew: w-wikedbysociawcontextbuiwdew,
+  wistssociawcontextbuiwdew: wistssociawcontextbuiwdew, (///ˬ///✿)
+  fowwowedbysociawcontextbuiwdew: f-fowwowedbysociawcontextbuiwdew, >w<
+  topicsociawcontextbuiwdew: t-topicsociawcontextbuiwdew, rawr
+  e-extendedwepwysociawcontextbuiwdew: extendedwepwysociawcontextbuiwdew,
+  weceivedwepwysociawcontextbuiwdew: weceivedwepwysociawcontextbuiwdew, mya
+  popuwawvideosociawcontextbuiwdew: p-popuwawvideosociawcontextbuiwdew,
+  popuwawinyouwaweasociawcontextbuiwdew: popuwawinyouwaweasociawcontextbuiwdew)
+    extends basesociawcontextbuiwdew[pipewinequewy, ^^ tweetcandidate] {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    features: FeatureMap
-  ): Option[SocialContext] = {
-    if (query.params(EnableSocialContextParam)) {
-      features.getOrElse(ConversationModuleFocalTweetIdFeature, None) match {
-        case None =>
-          likedBySocialContextBuilder(query, candidate, features)
-            .orElse(followedBySocialContextBuilder(query, candidate, features))
-            .orElse(topicSocialContextBuilder(query, candidate, features))
-            .orElse(popularVideoSocialContextBuilder(query, candidate, features))
-            .orElse(listsSocialContextBuilder(query, candidate, features))
-            .orElse(popularInYourAreaSocialContextBuilder(query, candidate, features))
-        case Some(_) =>
-          val conversationId = features.getOrElse(ConversationModuleIdFeature, None)
-          // Only hydrate the social context into the root tweet in a conversation module
-          if (conversationId.contains(candidate.id)) {
-            extendedReplySocialContextBuilder(query, candidate, features)
-              .orElse(receivedReplySocialContextBuilder(query, candidate, features))
-          } else None
+  d-def appwy(
+    quewy: p-pipewinequewy, 😳😳😳
+    c-candidate: tweetcandidate, mya
+    f-featuwes: featuwemap
+  ): o-option[sociawcontext] = {
+    if (quewy.pawams(enabwesociawcontextpawam)) {
+      featuwes.getowewse(convewsationmoduwefocawtweetidfeatuwe, 😳 nyone) m-match {
+        case nyone =>
+          wikedbysociawcontextbuiwdew(quewy, -.- c-candidate, 🥺 featuwes)
+            .owewse(fowwowedbysociawcontextbuiwdew(quewy, o.O candidate, /(^•ω•^) featuwes))
+            .owewse(topicsociawcontextbuiwdew(quewy, nyaa~~ candidate, featuwes))
+            .owewse(popuwawvideosociawcontextbuiwdew(quewy, nyaa~~ c-candidate, featuwes))
+            .owewse(wistssociawcontextbuiwdew(quewy, c-candidate, :3 featuwes))
+            .owewse(popuwawinyouwaweasociawcontextbuiwdew(quewy, 😳😳😳 c-candidate, (˘ω˘) f-featuwes))
+        case some(_) =>
+          vaw convewsationid = featuwes.getowewse(convewsationmoduweidfeatuwe, ^^ n-nyone)
+          // o-onwy hydwate the sociaw c-context into the w-woot tweet in a convewsation m-moduwe
+          if (convewsationid.contains(candidate.id)) {
+            e-extendedwepwysociawcontextbuiwdew(quewy, :3 candidate, featuwes)
+              .owewse(weceivedwepwysociawcontextbuiwdew(quewy, -.- candidate, 😳 f-featuwes))
+          } ewse nyone
       }
-    } else None
+    } e-ewse nyone
   }
 }

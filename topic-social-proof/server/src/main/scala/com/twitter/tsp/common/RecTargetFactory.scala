@@ -1,65 +1,65 @@
-package com.twitter.tsp.common
+package com.twittew.tsp.common
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.util.ABDeciderWithOverride
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.util.Future
+impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.tawgetusew
+i-impowt c-com.twittew.fwigate.common.candidate.tawgetabdecidew
+i-impowt c-com.twittew.fwigate.common.utiw.abdecidewwithovewwide
+impowt com.twittew.gizmoduck.thwiftscawa.usew
+impowt com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.tsp.thwiftscawa.topicsociawpwoofwequest
+impowt c-com.twittew.utiw.futuwe
 
-case class DefaultRecTopicSocialProofTarget(
-  topicSocialProofRequest: TopicSocialProofRequest,
-  targetId: UserId,
-  user: Option[User],
-  abDecider: ABDeciderWithOverride,
-  params: Params
+case cwass d-defauwtwectopicsociawpwooftawget(
+  topicsociawpwoofwequest: topicsociawpwoofwequest,
+  tawgetid: u-usewid, 🥺
+  usew: option[usew], o.O
+  a-abdecidew: a-abdecidewwithovewwide, /(^•ω•^)
+  pawams: pawams
 )(
-  implicit statsReceiver: StatsReceiver)
-    extends TargetUser
-    with TopicSocialProofRecRequest
-    with TargetABDecider {
-  override def globalStats: StatsReceiver = statsReceiver
-  override val targetUser: Future[Option[User]] = Future.value(user)
+  impwicit statsweceivew: statsweceivew)
+    e-extends tawgetusew
+    with topicsociawpwoofwecwequest
+    with tawgetabdecidew {
+  ovewwide d-def gwobawstats: statsweceivew = s-statsweceivew
+  o-ovewwide v-vaw tawgetusew: f-futuwe[option[usew]] = futuwe.vawue(usew)
 }
 
-trait TopicSocialProofRecRequest {
-  tuc: TargetUser =>
+twait t-topicsociawpwoofwecwequest {
+  tuc: tawgetusew =>
 
-  val topicSocialProofRequest: TopicSocialProofRequest
+  vaw topicsociawpwoofwequest: t-topicsociawpwoofwequest
 }
 
-case class RecTargetFactory(
-  abDecider: LoggingABDecider,
-  userStore: ReadableStore[UserId, User],
-  paramBuilder: ParamsBuilder,
-  statsReceiver: StatsReceiver) {
+case cwass wectawgetfactowy(
+  abdecidew: woggingabdecidew, nyaa~~
+  usewstowe: weadabwestowe[usewid, nyaa~~ usew], :3
+  pawambuiwdew: p-pawamsbuiwdew, 😳😳😳
+  statsweceivew: s-statsweceivew) {
 
-  type RecTopicSocialProofTarget = DefaultRecTopicSocialProofTarget
+  t-type wectopicsociawpwooftawget = d-defauwtwectopicsociawpwooftawget
 
-  def buildRecTopicSocialProofTarget(
-    request: TopicSocialProofRequest
-  ): Future[RecTopicSocialProofTarget] = {
-    val userId = request.userId
-    userStore.get(userId).map { userOpt =>
-      val userRoles = userOpt.flatMap(_.roles.map(_.roles.toSet))
+  def buiwdwectopicsociawpwooftawget(
+    wequest: topicsociawpwoofwequest
+  ): f-futuwe[wectopicsociawpwooftawget] = {
+    v-vaw usewid = wequest.usewid
+    u-usewstowe.get(usewid).map { u-usewopt =>
+      vaw usewwowes = u-usewopt.fwatmap(_.wowes.map(_.wowes.toset))
 
-      val context = request.context.copy(userId = Some(request.userId)) // override to make sure
+      vaw context = w-wequest.context.copy(usewid = some(wequest.usewid)) // ovewwide t-to make suwe
 
-      val params = paramBuilder
-        .buildFromTopicListingViewerContext(Some(context), request.displayLocation, userRoles)
+      vaw pawams = p-pawambuiwdew
+        .buiwdfwomtopicwistingviewewcontext(some(context), (˘ω˘) wequest.dispwaywocation, ^^ u-usewwowes)
 
-      DefaultRecTopicSocialProofTarget(
-        request,
-        userId,
-        userOpt,
-        ABDeciderWithOverride(abDecider, None)(statsReceiver),
-        params
-      )(statsReceiver)
+      d-defauwtwectopicsociawpwooftawget(
+        wequest, :3
+        usewid, -.-
+        usewopt, 😳
+        abdecidewwithovewwide(abdecidew, mya nyone)(statsweceivew), (˘ω˘)
+        pawams
+      )(statsweceivew)
     }
   }
 }

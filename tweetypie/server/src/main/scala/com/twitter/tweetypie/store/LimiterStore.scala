@@ -1,41 +1,41 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.tweetypie.backends.LimiterService
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.backends.wimitewsewvice
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-trait LimiterStore extends TweetStoreBase[LimiterStore] with InsertTweet.Store {
-  def wrap(w: TweetStore.Wrap): LimiterStore =
-    new TweetStoreWrapper(w, this) with LimiterStore with InsertTweet.StoreWrapper
+t-twait w-wimitewstowe e-extends tweetstowebase[wimitewstowe] w-with insewttweet.stowe {
+  d-def wwap(w: tweetstowe.wwap): wimitewstowe =
+    nyew tweetstowewwappew(w, 😳😳😳 this) with wimitewstowe w-with insewttweet.stowewwappew
 }
 
-object LimiterStore {
-  def apply(
-    incrementCreateSuccess: LimiterService.IncrementByOne,
-    incrementMediaTags: LimiterService.Increment
-  ): LimiterStore =
-    new LimiterStore {
-      override val insertTweet: FutureEffect[InsertTweet.Event] =
-        FutureEffect[InsertTweet.Event] { event =>
-          Future.when(!event.dark) {
-            val userId = event.user.id
-            val contributorUserId: Option[UserId] = event.tweet.contributor.map(_.userId)
+object wimitewstowe {
+  def a-appwy(
+    incwementcweatesuccess: wimitewsewvice.incwementbyone, 🥺
+    i-incwementmediatags: wimitewsewvice.incwement
+  ): wimitewstowe =
+    nyew w-wimitewstowe {
+      ovewwide vaw i-insewttweet: futuweeffect[insewttweet.event] =
+        f-futuweeffect[insewttweet.event] { event =>
+          futuwe.when(!event.dawk) {
+            vaw usewid = event.usew.id
+            v-vaw contwibutowusewid: option[usewid] = event.tweet.contwibutow.map(_.usewid)
 
-            val mediaTags = getMediaTagMap(event.tweet)
-            val mediaTagCount = countDistinctUserMediaTags(mediaTags)
-            Future
+            vaw mediatags = g-getmediatagmap(event.tweet)
+            vaw mediatagcount = c-countdistinctusewmediatags(mediatags)
+            f-futuwe
               .join(
-                incrementCreateSuccess(userId, contributorUserId),
-                incrementMediaTags(userId, contributorUserId, mediaTagCount)
+                i-incwementcweatesuccess(usewid, mya c-contwibutowusewid), 🥺
+                incwementmediatags(usewid, >_< contwibutowusewid, >_< mediatagcount)
               )
               .unit
           }
         }
     }
 
-  def countDistinctUserMediaTags(mediaTags: Map[MediaId, Seq[MediaTag]]): Int =
-    mediaTags.values.flatten.toSeq
-      .collect { case MediaTag(MediaTagType.User, Some(userId), _, _) => userId }
+  d-def countdistinctusewmediatags(mediatags: map[mediaid, (⑅˘꒳˘) seq[mediatag]]): i-int =
+    mediatags.vawues.fwatten.toseq
+      .cowwect { case mediatag(mediatagtype.usew, /(^•ω•^) some(usewid), rawr x3 _, _) => usewid }
       .distinct
       .size
 }

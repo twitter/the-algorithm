@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasRecentlyEngagedUserIds {
-  val recentlyEngagedUserIds: Option[Seq[RecentlyEngagedUserId]]
+twait haswecentwyengagedusewids {
+  v-vaw w-wecentwyengagedusewids: o-option[seq[wecentwyengagedusewid]]
 }

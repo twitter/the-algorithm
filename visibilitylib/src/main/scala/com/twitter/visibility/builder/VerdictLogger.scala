@@ -1,168 +1,168 @@
-package com.twitter.visibility.builder
+package com.twittew.visibiwity.buiwdew
 
-import com.twitter.datatools.entityservice.entities.thriftscala.FleetInterstitial
-import com.twitter.decider.Decider
-import com.twitter.decider.Decider.NullDecider
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.logpipeline.client.EventPublisherManager
-import com.twitter.logpipeline.client.serializers.EventLogMsgThriftStructSerializer
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.visibility.builder.VerdictLogger.FailureCounterName
-import com.twitter.visibility.builder.VerdictLogger.SuccessCounterName
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.logging.thriftscala.ActionSource
-import com.twitter.visibility.logging.thriftscala.EntityId
-import com.twitter.visibility.logging.thriftscala.EntityIdType
-import com.twitter.visibility.logging.thriftscala.EntityIdValue
-import com.twitter.visibility.logging.thriftscala.HealthActionType
-import com.twitter.visibility.logging.thriftscala.MisinfoPolicyCategory
-import com.twitter.visibility.logging.thriftscala.VFLibType
-import com.twitter.visibility.logging.thriftscala.VFVerdictLogEntry
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.rules._
+impowt com.twittew.datatoows.entitysewvice.entities.thwiftscawa.fweetintewstitiaw
+i-impowt c-com.twittew.decidew.decidew
+i-impowt c-com.twittew.decidew.decidew.nuwwdecidew
+i-impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.wogpipewine.cwient.common.eventpubwishew
+impowt com.twittew.wogpipewine.cwient.eventpubwishewmanagew
+i-impowt com.twittew.wogpipewine.cwient.sewiawizews.eventwogmsgthwiftstwuctsewiawizew
+impowt com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt com.twittew.visibiwity.buiwdew.vewdictwoggew.faiwuwecountewname
+i-impowt com.twittew.visibiwity.buiwdew.vewdictwoggew.successcountewname
+impowt com.twittew.visibiwity.featuwes.featuwe
+impowt c-com.twittew.visibiwity.wogging.thwiftscawa.actionsouwce
+impowt c-com.twittew.visibiwity.wogging.thwiftscawa.entityid
+i-impowt com.twittew.visibiwity.wogging.thwiftscawa.entityidtype
+impowt com.twittew.visibiwity.wogging.thwiftscawa.entityidvawue
+impowt com.twittew.visibiwity.wogging.thwiftscawa.heawthactiontype
+impowt com.twittew.visibiwity.wogging.thwiftscawa.misinfopowicycategowy
+impowt c-com.twittew.visibiwity.wogging.thwiftscawa.vfwibtype
+impowt com.twittew.visibiwity.wogging.thwiftscawa.vfvewdictwogentwy
+impowt com.twittew.visibiwity.modews.contentid
+i-impowt com.twittew.visibiwity.wuwes._
 
-object VerdictLogger {
+o-object vewdictwoggew {
 
-  private val BaseStatsNamespace = "vf_verdict_logger"
-  private val FailureCounterName = "failures"
-  private val SuccessCounterName = "successes"
-  val LogCategoryName: String = "visibility_filtering_verdicts"
+  p-pwivate v-vaw basestatsnamespace = "vf_vewdict_woggew"
+  p-pwivate vaw faiwuwecountewname = "faiwuwes"
+  pwivate vaw successcountewname = "successes"
+  v-vaw wogcategowyname: stwing = "visibiwity_fiwtewing_vewdicts"
 
-  val Empty: VerdictLogger = new VerdictLogger(NullStatsReceiver, NullDecider, None)
+  vaw empty: vewdictwoggew = n-nyew vewdictwoggew(nuwwstatsweceivew, nyuwwdecidew, 🥺 nyone)
 
-  def apply(
-    statsReceiver: StatsReceiver,
-    decider: Decider
-  ): VerdictLogger = {
-    val eventPublisher: EventPublisher[VFVerdictLogEntry] =
-      EventPublisherManager
-        .newScribePublisherBuilder(
-          LogCategoryName,
-          EventLogMsgThriftStructSerializer.getNewSerializer[VFVerdictLogEntry]()).build()
-    new VerdictLogger(statsReceiver.scope(BaseStatsNamespace), decider, Some(eventPublisher))
+  def appwy(
+    statsweceivew: statsweceivew, >_<
+    d-decidew: decidew
+  ): v-vewdictwoggew = {
+    v-vaw eventpubwishew: e-eventpubwishew[vfvewdictwogentwy] =
+      eventpubwishewmanagew
+        .newscwibepubwishewbuiwdew(
+          wogcategowyname,
+          eventwogmsgthwiftstwuctsewiawizew.getnewsewiawizew[vfvewdictwogentwy]()).buiwd()
+    n-nyew v-vewdictwoggew(statsweceivew.scope(basestatsnamespace), ʘwʘ decidew, (˘ω˘) s-some(eventpubwishew))
   }
 }
 
-class VerdictLogger(
-  statsReceiver: StatsReceiver,
-  decider: Decider,
-  publisherOpt: Option[EventPublisher[VFVerdictLogEntry]]) {
+c-cwass vewdictwoggew(
+  s-statsweceivew: statsweceivew,
+  d-decidew: decidew, (✿oωo)
+  pubwishewopt: option[eventpubwishew[vfvewdictwogentwy]]) {
 
-  def log(
-    verdictLogEntry: VFVerdictLogEntry,
-    publisher: EventPublisher[VFVerdictLogEntry]
-  ): Unit = {
-    publisher
-      .publish(verdictLogEntry)
-      .onSuccess(_ => statsReceiver.counter(SuccessCounterName).incr())
-      .onFailure { e =>
-        statsReceiver.counter(FailureCounterName).incr()
-        statsReceiver.scope(FailureCounterName).counter(e.getClass.getName).incr()
+  d-def wog(
+    vewdictwogentwy: v-vfvewdictwogentwy, (///ˬ///✿)
+    pubwishew: e-eventpubwishew[vfvewdictwogentwy]
+  ): u-unit = {
+    pubwishew
+      .pubwish(vewdictwogentwy)
+      .onsuccess(_ => statsweceivew.countew(successcountewname).incw())
+      .onfaiwuwe { e =>
+        statsweceivew.countew(faiwuwecountewname).incw()
+        statsweceivew.scope(faiwuwecountewname).countew(e.getcwass.getname).incw()
       }
   }
 
-  private def toEntityId(contentId: ContentId): Option[EntityId] = {
-    contentId match {
-      case ContentId.TweetId(id) => Some(EntityId(EntityIdType.TweetId, EntityIdValue.EntityId(id)))
-      case ContentId.UserId(id) => Some(EntityId(EntityIdType.UserId, EntityIdValue.EntityId(id)))
-      case ContentId.QuotedTweetRelationship(outerTweetId, _) =>
-        Some(EntityId(EntityIdType.TweetId, EntityIdValue.EntityId(outerTweetId)))
-      case ContentId.NotificationId(Some(id)) =>
-        Some(EntityId(EntityIdType.NotificationId, EntityIdValue.EntityId(id)))
-      case ContentId.DmId(id) => Some(EntityId(EntityIdType.DmId, EntityIdValue.EntityId(id)))
-      case ContentId.BlenderTweetId(id) =>
-        Some(EntityId(EntityIdType.TweetId, EntityIdValue.EntityId(id)))
-      case ContentId.SpacePlusUserId(_) =>
+  pwivate def toentityid(contentid: contentid): option[entityid] = {
+    c-contentid m-match {
+      case contentid.tweetid(id) => s-some(entityid(entityidtype.tweetid, rawr x3 e-entityidvawue.entityid(id)))
+      c-case contentid.usewid(id) => some(entityid(entityidtype.usewid, -.- entityidvawue.entityid(id)))
+      case contentid.quotedtweetwewationship(outewtweetid, ^^ _) =>
+        s-some(entityid(entityidtype.tweetid, (⑅˘꒳˘) entityidvawue.entityid(outewtweetid)))
+      case contentid.notificationid(some(id)) =>
+        some(entityid(entityidtype.notificationid, nyaa~~ entityidvawue.entityid(id)))
+      c-case contentid.dmid(id) => s-some(entityid(entityidtype.dmid, /(^•ω•^) e-entityidvawue.entityid(id)))
+      c-case contentid.bwendewtweetid(id) =>
+        some(entityid(entityidtype.tweetid, (U ﹏ U) e-entityidvawue.entityid(id)))
+      c-case c-contentid.spacepwususewid(_) =>
     }
   }
 
-  private def getLogEntryData(
-    actingRule: Option[Rule],
-    secondaryActingRules: Seq[Rule],
-    verdict: Action,
-    secondaryVerdicts: Seq[Action],
-    resolvedFeatureMap: Map[Feature[_], Any]
-  ): (Seq[String], Seq[ActionSource], Seq[HealthActionType], Option[FleetInterstitial]) = {
-    actingRule
-      .filter {
-        case decideredRule: DoesLogVerdictDecidered =>
-          decider.isAvailable(decideredRule.verdictLogDeciderKey.toString)
-        case rule: DoesLogVerdict => true
-        case _ => false
+  p-pwivate def getwogentwydata(
+    actingwuwe: option[wuwe], 😳😳😳
+    secondawyactingwuwes: seq[wuwe], >w<
+    v-vewdict: action, XD
+    s-secondawyvewdicts: s-seq[action], o.O
+    w-wesowvedfeatuwemap: m-map[featuwe[_], mya any]
+  ): (seq[stwing], 🥺 seq[actionsouwce], ^^;; seq[heawthactiontype], :3 o-option[fweetintewstitiaw]) = {
+    actingwuwe
+      .fiwtew {
+        case decidewedwuwe: doeswogvewdictdecidewed =>
+          decidew.isavaiwabwe(decidewedwuwe.vewdictwogdecidewkey.tostwing)
+        case w-wuwe: doeswogvewdict => twue
+        case _ => fawse
       }
-      .map { primaryRule =>
-        val secondaryRulesAndVerdicts = secondaryActingRules zip secondaryVerdicts
-        var actingRules: Seq[Rule] = Seq(primaryRule)
-        var actingRuleNames: Seq[String] = Seq(primaryRule.name)
-        var actionSources: Seq[ActionSource] = Seq()
-        var healthActionTypes: Seq[HealthActionType] = Seq(verdict.toHealthActionTypeThrift.get)
+      .map { pwimawywuwe =>
+        v-vaw secondawywuwesandvewdicts = s-secondawyactingwuwes z-zip secondawyvewdicts
+        vaw actingwuwes: s-seq[wuwe] = seq(pwimawywuwe)
+        v-vaw actingwuwenames: seq[stwing] = s-seq(pwimawywuwe.name)
+        vaw actionsouwces: seq[actionsouwce] = seq()
+        vaw heawthactiontypes: seq[heawthactiontype] = seq(vewdict.toheawthactiontypethwift.get)
 
-        val misinfoPolicyCategory: Option[FleetInterstitial] = {
-          verdict match {
-            case softIntervention: SoftIntervention =>
-              softIntervention.fleetInterstitial
-            case tweetInterstitial: TweetInterstitial =>
-              tweetInterstitial.softIntervention.flatMap(_.fleetInterstitial)
-            case _ => None
+        v-vaw misinfopowicycategowy: option[fweetintewstitiaw] = {
+          v-vewdict match {
+            case softintewvention: s-softintewvention =>
+              s-softintewvention.fweetintewstitiaw
+            case tweetintewstitiaw: tweetintewstitiaw =>
+              t-tweetintewstitiaw.softintewvention.fwatmap(_.fweetintewstitiaw)
+            c-case _ => nyone
           }
         }
 
-        secondaryRulesAndVerdicts.foreach(ruleAndVerdict => {
-          if (ruleAndVerdict._1.isInstanceOf[DoesLogVerdict]) {
-            actingRules = actingRules :+ ruleAndVerdict._1
-            actingRuleNames = actingRuleNames :+ ruleAndVerdict._1.name
-            healthActionTypes = healthActionTypes :+ ruleAndVerdict._2.toHealthActionTypeThrift.get
+        secondawywuwesandvewdicts.foweach(wuweandvewdict => {
+          if (wuweandvewdict._1.isinstanceof[doeswogvewdict]) {
+            actingwuwes = actingwuwes :+ w-wuweandvewdict._1
+            a-actingwuwenames = actingwuwenames :+ wuweandvewdict._1.name
+            heawthactiontypes = heawthactiontypes :+ w-wuweandvewdict._2.toheawthactiontypethwift.get
           }
         })
 
-        actingRules.foreach(rule => {
-          rule.actionSourceBuilder
-            .flatMap(_.build(resolvedFeatureMap, verdict))
-            .map(actionSource => {
-              actionSources = actionSources :+ actionSource
+        a-actingwuwes.foweach(wuwe => {
+          w-wuwe.actionsouwcebuiwdew
+            .fwatmap(_.buiwd(wesowvedfeatuwemap, (U ﹏ U) vewdict))
+            .map(actionsouwce => {
+              a-actionsouwces = a-actionsouwces :+ actionsouwce
             })
         })
-        (actingRuleNames, actionSources, healthActionTypes, misinfoPolicyCategory)
+        (actingwuwenames, OwO a-actionsouwces, 😳😳😳 heawthactiontypes, (ˆ ﻌ ˆ)♡ misinfopowicycategowy)
       }
-      .getOrElse((Seq.empty[String], Seq.empty[ActionSource], Seq.empty[HealthActionType], None))
+      .getowewse((seq.empty[stwing], XD seq.empty[actionsouwce], (ˆ ﻌ ˆ)♡ seq.empty[heawthactiontype], ( ͡o ω ͡o ) n-nyone))
   }
 
-  def scribeVerdict(
-    visibilityResult: VisibilityResult,
-    safetyLevel: SafetyLevel,
-    vfLibType: VFLibType,
-    viewerId: Option[Long] = None
-  ): Unit = {
-    publisherOpt.foreach { publisher =>
-      toEntityId(visibilityResult.contentId).foreach { entityId =>
-        visibilityResult.verdict.toHealthActionTypeThrift.foreach { healthActionType =>
-          val (actioningRules, actionSources, healthActionTypes, misinfoPolicyCategory) =
-            getLogEntryData(
-              actingRule = visibilityResult.actingRule,
-              secondaryActingRules = visibilityResult.secondaryActingRules,
-              verdict = visibilityResult.verdict,
-              secondaryVerdicts = visibilityResult.secondaryVerdicts,
-              resolvedFeatureMap = visibilityResult.resolvedFeatureMap
+  d-def scwibevewdict(
+    visibiwitywesuwt: visibiwitywesuwt, rawr x3
+    safetywevew: s-safetywevew, nyaa~~
+    v-vfwibtype: vfwibtype, >_<
+    viewewid: option[wong] = nyone
+  ): u-unit = {
+    pubwishewopt.foweach { pubwishew =>
+      toentityid(visibiwitywesuwt.contentid).foweach { entityid =>
+        visibiwitywesuwt.vewdict.toheawthactiontypethwift.foweach { h-heawthactiontype =>
+          vaw (actioningwuwes, ^^;; actionsouwces, (ˆ ﻌ ˆ)♡ h-heawthactiontypes, ^^;; m-misinfopowicycategowy) =
+            getwogentwydata(
+              actingwuwe = visibiwitywesuwt.actingwuwe, (⑅˘꒳˘)
+              secondawyactingwuwes = v-visibiwitywesuwt.secondawyactingwuwes, rawr x3
+              v-vewdict = visibiwitywesuwt.vewdict, (///ˬ///✿)
+              secondawyvewdicts = visibiwitywesuwt.secondawyvewdicts, 🥺
+              w-wesowvedfeatuwemap = visibiwitywesuwt.wesowvedfeatuwemap
             )
 
-          if (actioningRules.nonEmpty) {
-            log(
-              VFVerdictLogEntry(
-                entityId = entityId,
-                viewerId = viewerId,
-                timestampMsec = System.currentTimeMillis(),
-                vfLibType = vfLibType,
-                healthActionType = healthActionType,
-                safetyLevel = safetyLevel,
-                actioningRules = actioningRules,
-                actionSources = actionSources,
-                healthActionTypes = healthActionTypes,
-                misinfoPolicyCategory =
-                  fleetInterstitialToMisinfoPolicyCategory(misinfoPolicyCategory)
-              ),
-              publisher
+          i-if (actioningwuwes.nonempty) {
+            wog(
+              vfvewdictwogentwy(
+                entityid = entityid, >_<
+                v-viewewid = viewewid, UwU
+                t-timestampmsec = s-system.cuwwenttimemiwwis(), >_<
+                vfwibtype = v-vfwibtype, -.-
+                heawthactiontype = h-heawthactiontype, mya
+                s-safetywevew = s-safetywevew, >w<
+                actioningwuwes = actioningwuwes, (U ﹏ U)
+                actionsouwces = actionsouwces, 😳😳😳
+                h-heawthactiontypes = h-heawthactiontypes, o.O
+                misinfopowicycategowy =
+                  fweetintewstitiawtomisinfopowicycategowy(misinfopowicycategowy)
+              ), òωó
+              pubwishew
             )
           }
         }
@@ -170,17 +170,17 @@ class VerdictLogger(
     }
   }
 
-  def fleetInterstitialToMisinfoPolicyCategory(
-    fleetInterstitialOption: Option[FleetInterstitial]
-  ): Option[MisinfoPolicyCategory] = {
-    fleetInterstitialOption.map {
-      case FleetInterstitial.Generic =>
-        MisinfoPolicyCategory.Generic
-      case FleetInterstitial.Samm =>
-        MisinfoPolicyCategory.Samm
-      case FleetInterstitial.CivicIntegrity =>
-        MisinfoPolicyCategory.CivicIntegrity
-      case _ => MisinfoPolicyCategory.Unknown
+  d-def fweetintewstitiawtomisinfopowicycategowy(
+    f-fweetintewstitiawoption: o-option[fweetintewstitiaw]
+  ): option[misinfopowicycategowy] = {
+    fweetintewstitiawoption.map {
+      c-case fweetintewstitiaw.genewic =>
+        misinfopowicycategowy.genewic
+      case fweetintewstitiaw.samm =>
+        m-misinfopowicycategowy.samm
+      c-case fweetintewstitiaw.civicintegwity =>
+        misinfopowicycategowy.civicintegwity
+      case _ => m-misinfopowicycategowy.unknown
     }
   }
 

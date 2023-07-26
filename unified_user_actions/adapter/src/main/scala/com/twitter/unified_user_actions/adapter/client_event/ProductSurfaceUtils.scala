@@ -1,107 +1,107 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.suggests.controller_data.home_tweets.thriftscala.HomeTweetsControllerDataAliases.V1Alias
-import com.twitter.unified_user_actions.thriftscala._
+impowt c-com.twittew.cwientapp.thwiftscawa.eventnamespace
+i-impowt com.twittew.cwientapp.thwiftscawa.wogevent
+i-impowt com.twittew.cwientapp.thwiftscawa.{item => w-wogeventitem}
+i-impowt com.twittew.suggests.contwowwew_data.home_tweets.thwiftscawa.hometweetscontwowwewdataawiases.v1awias
+i-impowt com.twittew.unified_usew_actions.thwiftscawa._
 
-object ProductSurfaceUtils {
+o-object p-pwoductsuwfaceutiws {
 
-  def getProductSurface(eventNamespace: Option[EventNamespace]): Option[ProductSurface] = {
+  def getpwoductsuwface(eventnamespace: option[eventnamespace]): option[pwoductsuwface] = {
     (
-      eventNamespace.flatMap(_.page),
-      eventNamespace.flatMap(_.section),
-      eventNamespace.flatMap(_.element)) match {
-      case (Some("home") | Some("home_latest"), _, _) => Some(ProductSurface.HomeTimeline)
-      case (Some("ntab"), _, _) => Some(ProductSurface.NotificationTab)
-      case (Some(page), Some(section), _) if isPushNotification(page, section) =>
-        Some(ProductSurface.PushNotification)
-      case (Some("search"), _, _) => Some(ProductSurface.SearchResultsPage)
-      case (_, _, Some("typeahead")) => Some(ProductSurface.SearchTypeahead)
-      case _ => None
+      eventnamespace.fwatmap(_.page), (˘ω˘)
+      e-eventnamespace.fwatmap(_.section), (U ﹏ U)
+      eventnamespace.fwatmap(_.ewement)) match {
+      c-case (some("home") | some("home_watest"), ^•ﻌ•^ _, (˘ω˘) _) => s-some(pwoductsuwface.hometimewine)
+      case (some("ntab"), :3 _, _) => some(pwoductsuwface.notificationtab)
+      case (some(page), ^^;; s-some(section), 🥺 _) if ispushnotification(page, (⑅˘꒳˘) s-section) =>
+        s-some(pwoductsuwface.pushnotification)
+      case (some("seawch"), nyaa~~ _, _) => some(pwoductsuwface.seawchwesuwtspage)
+      case (_, :3 _, some("typeahead")) => some(pwoductsuwface.seawchtypeahead)
+      c-case _ => nyone
     }
   }
 
-  private def isPushNotification(page: String, section: String): Boolean = {
-    Seq[String]("notification", "toasts").contains(page) ||
-    (page == "app" && section == "push")
+  pwivate def ispushnotification(page: stwing, ( ͡o ω ͡o ) section: s-stwing): boowean = {
+    seq[stwing]("notification", mya "toasts").contains(page) ||
+    (page == "app" && s-section == "push")
   }
 
-  def getProductSurfaceInfo(
-    productSurface: Option[ProductSurface],
-    ceItem: LogEventItem,
-    logEvent: LogEvent
-  ): Option[ProductSurfaceInfo] = {
-    productSurface match {
-      case Some(ProductSurface.HomeTimeline) => createHomeTimelineInfo(ceItem)
-      case Some(ProductSurface.NotificationTab) => createNotificationTabInfo(ceItem)
-      case Some(ProductSurface.PushNotification) => createPushNotificationInfo(logEvent)
-      case Some(ProductSurface.SearchResultsPage) => createSearchResultPageInfo(ceItem, logEvent)
-      case Some(ProductSurface.SearchTypeahead) => createSearchTypeaheadInfo(ceItem, logEvent)
-      case _ => None
+  d-def getpwoductsuwfaceinfo(
+    p-pwoductsuwface: o-option[pwoductsuwface],
+    ceitem: wogeventitem, (///ˬ///✿)
+    w-wogevent: wogevent
+  ): option[pwoductsuwfaceinfo] = {
+    pwoductsuwface m-match {
+      case some(pwoductsuwface.hometimewine) => cweatehometimewineinfo(ceitem)
+      case some(pwoductsuwface.notificationtab) => cweatenotificationtabinfo(ceitem)
+      c-case some(pwoductsuwface.pushnotification) => cweatepushnotificationinfo(wogevent)
+      c-case s-some(pwoductsuwface.seawchwesuwtspage) => c-cweateseawchwesuwtpageinfo(ceitem, (˘ω˘) wogevent)
+      case some(pwoductsuwface.seawchtypeahead) => c-cweateseawchtypeaheadinfo(ceitem, ^^;; w-wogevent)
+      case _ => n-nyone
     }
   }
 
-  private def createPushNotificationInfo(logEvent: LogEvent): Option[ProductSurfaceInfo] =
-    NotificationClientEventUtils.getNotificationIdForPushNotification(logEvent) match {
-      case Some(notificationId) =>
-        Some(
-          ProductSurfaceInfo.PushNotificationInfo(
-            PushNotificationInfo(notificationId = notificationId)))
-      case _ => None
+  p-pwivate def cweatepushnotificationinfo(wogevent: w-wogevent): option[pwoductsuwfaceinfo] =
+    n-nyotificationcwienteventutiws.getnotificationidfowpushnotification(wogevent) match {
+      case some(notificationid) =>
+        s-some(
+          pwoductsuwfaceinfo.pushnotificationinfo(
+            p-pushnotificationinfo(notificationid = nyotificationid)))
+      c-case _ => n-nyone
     }
 
-  private def createNotificationTabInfo(ceItem: LogEventItem): Option[ProductSurfaceInfo] =
-    NotificationClientEventUtils.getNotificationIdForNotificationTab(ceItem) match {
-      case Some(notificationId) =>
-        Some(
-          ProductSurfaceInfo.NotificationTabInfo(
-            NotificationTabInfo(notificationId = notificationId)))
-      case _ => None
+  pwivate def cweatenotificationtabinfo(ceitem: wogeventitem): option[pwoductsuwfaceinfo] =
+    nyotificationcwienteventutiws.getnotificationidfownotificationtab(ceitem) match {
+      case some(notificationid) =>
+        s-some(
+          p-pwoductsuwfaceinfo.notificationtabinfo(
+            nyotificationtabinfo(notificationid = n-nyotificationid)))
+      c-case _ => nyone
     }
 
-  private def createHomeTimelineInfo(ceItem: LogEventItem): Option[ProductSurfaceInfo] = {
-    def suggestType: Option[String] = HomeInfoUtils.getSuggestType(ceItem)
-    def controllerData: Option[V1Alias] = HomeInfoUtils.getHomeTweetControllerDataV1(ceItem)
+  p-pwivate def cweatehometimewineinfo(ceitem: wogeventitem): option[pwoductsuwfaceinfo] = {
+    d-def suggesttype: option[stwing] = homeinfoutiws.getsuggesttype(ceitem)
+    def contwowwewdata: option[v1awias] = h-homeinfoutiws.gethometweetcontwowwewdatav1(ceitem)
 
-    if (suggestType.isDefined || controllerData.isDefined) {
-      Some(
-        ProductSurfaceInfo.HomeTimelineInfo(
-          HomeTimelineInfo(
-            suggestionType = suggestType,
-            injectedPosition = controllerData.flatMap(_.injectedPosition)
+    if (suggesttype.isdefined || c-contwowwewdata.isdefined) {
+      some(
+        p-pwoductsuwfaceinfo.hometimewineinfo(
+          h-hometimewineinfo(
+            suggestiontype = s-suggesttype, (✿oωo)
+            i-injectedposition = c-contwowwewdata.fwatmap(_.injectedposition)
           )))
-    } else None
+    } e-ewse nyone
   }
 
-  private def createSearchResultPageInfo(
-    ceItem: LogEventItem,
-    logEvent: LogEvent
-  ): Option[ProductSurfaceInfo] = {
-    val searchInfoUtil = new SearchInfoUtils(ceItem)
-    searchInfoUtil.getQueryOptFromItem(logEvent).map { query =>
-      ProductSurfaceInfo.SearchResultsPageInfo(
-        SearchResultsPageInfo(
-          query = query,
-          querySource = searchInfoUtil.getQuerySourceOptFromControllerDataFromItem,
-          itemPosition = ceItem.position,
-          tweetResultSources = searchInfoUtil.getTweetResultSources,
-          userResultSources = searchInfoUtil.getUserResultSources,
-          queryFilterType = searchInfoUtil.getQueryFilterType(logEvent)
+  pwivate def cweateseawchwesuwtpageinfo(
+    c-ceitem: wogeventitem,
+    w-wogevent: w-wogevent
+  ): o-option[pwoductsuwfaceinfo] = {
+    v-vaw seawchinfoutiw = nyew seawchinfoutiws(ceitem)
+    seawchinfoutiw.getquewyoptfwomitem(wogevent).map { quewy =>
+      p-pwoductsuwfaceinfo.seawchwesuwtspageinfo(
+        seawchwesuwtspageinfo(
+          quewy = quewy, (U ﹏ U)
+          quewysouwce = seawchinfoutiw.getquewysouwceoptfwomcontwowwewdatafwomitem, -.-
+          itemposition = c-ceitem.position, ^•ﻌ•^
+          tweetwesuwtsouwces = seawchinfoutiw.gettweetwesuwtsouwces, rawr
+          usewwesuwtsouwces = s-seawchinfoutiw.getusewwesuwtsouwces, (˘ω˘)
+          q-quewyfiwtewtype = s-seawchinfoutiw.getquewyfiwtewtype(wogevent)
         ))
     }
   }
 
-  private def createSearchTypeaheadInfo(
-    ceItem: LogEventItem,
-    logEvent: LogEvent
-  ): Option[ProductSurfaceInfo] = {
-    logEvent.searchDetails.flatMap(_.query).map { query =>
-      ProductSurfaceInfo.SearchTypeaheadInfo(
-        SearchTypeaheadInfo(
-          query = query,
-          itemPosition = ceItem.position
+  pwivate d-def cweateseawchtypeaheadinfo(
+    ceitem: wogeventitem, nyaa~~
+    w-wogevent: w-wogevent
+  ): option[pwoductsuwfaceinfo] = {
+    wogevent.seawchdetaiws.fwatmap(_.quewy).map { quewy =>
+      pwoductsuwfaceinfo.seawchtypeaheadinfo(
+        seawchtypeaheadinfo(
+          q-quewy = quewy, UwU
+          itemposition = c-ceitem.position
         )
       )
     }

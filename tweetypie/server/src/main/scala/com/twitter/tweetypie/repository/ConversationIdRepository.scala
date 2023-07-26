@@ -1,93 +1,93 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.flockdb.client._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
+i-impowt com.twittew.fwockdb.cwient._
+i-impowt com.twittew.stitch.seqgwoup
+i-impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.stitch.compat.wegacyseqgwoup
 
-case class ConversationIdKey(tweetId: TweetId, parentId: TweetId)
+c-case cwass c-convewsationidkey(tweetid: tweetid, 😳 pawentid: tweetid)
 
-object ConversationIdRepository {
-  type Type = ConversationIdKey => Stitch[TweetId]
+object convewsationidwepositowy {
+  type type = convewsationidkey => s-stitch[tweetid]
 
-  def apply(multiSelectOne: Iterable[Select[StatusGraph]] => Future[Seq[Option[Long]]]): Type =
-    key => Stitch.call(key, Group(multiSelectOne))
+  def appwy(muwtisewectone: itewabwe[sewect[statusgwaph]] => futuwe[seq[option[wong]]]): t-type =
+    key => stitch.caww(key, (⑅˘꒳˘) gwoup(muwtisewectone))
 
-  private case class Group(
-    multiSelectOne: Iterable[Select[StatusGraph]] => Future[Seq[Option[Long]]])
-      extends SeqGroup[ConversationIdKey, TweetId] {
+  p-pwivate case cwass gwoup(
+    muwtisewectone: itewabwe[sewect[statusgwaph]] => f-futuwe[seq[option[wong]]])
+      extends s-seqgwoup[convewsationidkey, nyaa~~ t-tweetid] {
 
-    private[this] def getConversationIds(
-      keys: Seq[ConversationIdKey],
-      getLookupId: ConversationIdKey => TweetId
-    ): Future[Map[ConversationIdKey, TweetId]] = {
-      val distinctIds = keys.map(getLookupId).distinct
-      val tflockQueries = distinctIds.map(ConversationGraph.to)
-      if (tflockQueries.isEmpty) {
-        Future.value(Map[ConversationIdKey, TweetId]())
-      } else {
-        multiSelectOne(tflockQueries).map { results =>
-          // first, we need to match up the distinct ids requested with the corresponding result
-          val resultMap =
-            distinctIds
-              .zip(results)
-              .collect {
-                case (id, Some(conversationId)) => id -> conversationId
+    pwivate[this] def getconvewsationids(
+      keys: seq[convewsationidkey], OwO
+      getwookupid: c-convewsationidkey => tweetid
+    ): futuwe[map[convewsationidkey, rawr x3 tweetid]] = {
+      vaw distinctids = keys.map(getwookupid).distinct
+      v-vaw tfwockquewies = distinctids.map(convewsationgwaph.to)
+      i-if (tfwockquewies.isempty) {
+        f-futuwe.vawue(map[convewsationidkey, XD t-tweetid]())
+      } e-ewse {
+        muwtisewectone(tfwockquewies).map { wesuwts =>
+          // fiwst, σωσ w-we nyeed to match up the distinct ids wequested w-with the cowwesponding wesuwt
+          vaw wesuwtmap =
+            distinctids
+              .zip(wesuwts)
+              .cowwect {
+                case (id, (U ᵕ U❁) s-some(convewsationid)) => id -> c-convewsationid
               }
-              .toMap
+              .tomap
 
-          // then we need to map keys into the above map
-          keys.flatMap { key => resultMap.get(getLookupId(key)).map(key -> _) }.toMap
+          // t-then we nyeed t-to map keys into the above map
+          keys.fwatmap { key => w-wesuwtmap.get(getwookupid(key)).map(key -> _) }.tomap
         }
       }
     }
 
     /**
-     * Returns a key-value result that maps keys to the tweet's conversation IDs.
+     * w-wetuwns a key-vawue wesuwt that m-maps keys to the t-tweet's convewsation ids. (U ﹏ U)
      *
-     * Example:
-     * Tweet B is a reply to tweet A with conversation ID c.
-     * We want to get B's conversation ID. Then, for the request
+     * e-exampwe:
+     * tweet b-b is a wepwy to tweet a with convewsation id c.
+     * w-we want to get b's convewsation i-id. :3 then, ( ͡o ω ͡o ) fow the wequest
      *
-     *   ConversationIdRequest(B.id, A.id)
+     *   c-convewsationidwequest(b.id, σωσ a-a.id)
      *
-     * our key-value result's "found" map will contain a pair (B.id -> c).
+     * ouw key-vawue wesuwt's "found" map wiww contain a paiw (b.id -> c). >w<
      */
-    protected override def run(keys: Seq[ConversationIdKey]): Future[Seq[Try[TweetId]]] =
-      LegacySeqGroup.liftToSeqTry(
-        for {
-          // Try to get the conversation IDs for the parent tweets
-          convIdsFromParent <- getConversationIds(keys, _.parentId)
+    pwotected ovewwide def wun(keys: s-seq[convewsationidkey]): f-futuwe[seq[twy[tweetid]]] =
+      wegacyseqgwoup.wifttoseqtwy(
+        f-fow {
+          // t-twy to get t-the convewsation ids fow the pawent tweets
+          convidsfwompawent <- g-getconvewsationids(keys, 😳😳😳 _.pawentid)
 
-          // Collect the tweet IDs whose parents' conversation IDs couldn't be found.
-          // We assume that happened in one of two cases:
-          //  * for a tweet whose parent has been deleted
-          //  * for a tweet whose parent is the root of a conversation
-          // Note: In either case, we will try to look up the conversation ID of the tweet whose parent
-          // couldn't be found. If that can't be found either, we will eventually return the parent ID.
-          tweetsWhoseParentsDontHaveConvoIds = keys.toSet -- convIdsFromParent.keys
+          // cowwect the tweet ids whose pawents' convewsation ids c-couwdn't be found. OwO
+          // we assume that h-happened in one o-of two cases:
+          //  * f-fow a tweet whose pawent has been d-deweted
+          //  * f-fow a t-tweet whose pawent i-is the woot of a convewsation
+          // nyote: i-in eithew case, 😳 w-we wiww twy t-to wook up the c-convewsation id o-of the tweet whose pawent
+          // couwdn't be found. 😳😳😳 if that c-can't be found eithew, (˘ω˘) we wiww eventuawwy wetuwn the pawent id. ʘwʘ
+          tweetswhosepawentsdonthaveconvoids = keys.toset -- convidsfwompawent.keys
 
-          // Collect the conversation IDs for the tweets whose parents have not been found, now using the
-          // tweets' own IDs.
-          convIdsFromTweet <-
-            getConversationIds(tweetsWhoseParentsDontHaveConvoIds.toSeq, _.tweetId)
+          // c-cowwect the convewsation ids fow the tweets whose pawents have n-nyot been found, ( ͡o ω ͡o ) n-nyow using the
+          // t-tweets' own ids. o.O
+          convidsfwomtweet <-
+            g-getconvewsationids(tweetswhosepawentsdonthaveconvoids.toseq, >w< _.tweetid)
 
-          // Combine the by-parent-ID and by-tweet-ID results.
-          convIdMap = convIdsFromParent ++ convIdsFromTweet
+          // combine the by-pawent-id a-and by-tweet-id w-wesuwts. 😳
+          convidmap = convidsfwompawent ++ convidsfwomtweet
 
-          // Assign conversation IDs to all not-found tweet IDs.
-          // A tweet might not have received a conversation ID if
-          //  * the parent of the tweet is the root of the conversation, and we are in the write path
-          //    for creating the tweet. In that case, the conversation ID should be the tweet's parent
-          //    ID.
-          //  * it had been created before TFlock started handling conversation IDs. In that case, the
-          //    conversation ID will just point to the parent tweet so that we can have a conversation of
-          //    at least two tweets.
-          // So in both cases, we want to return the tweet's parent ID.
-        } yield {
+          // assign convewsation i-ids to aww nyot-found tweet ids. 🥺
+          // a t-tweet might nyot have weceived a-a convewsation id i-if
+          //  * the pawent of the tweet is t-the woot of the c-convewsation, rawr x3 and we awe in the w-wwite path
+          //    f-fow cweating the tweet. o.O in that case, the convewsation id shouwd be the t-tweet's pawent
+          //    i-id. rawr
+          //  * i-it had been cweated befowe t-tfwock stawted h-handwing convewsation ids. ʘwʘ in that c-case, 😳😳😳 the
+          //    convewsation id wiww just point to the pawent tweet s-so that we can h-have a convewsation of
+          //    at weast t-two tweets. ^^;;
+          // s-so in both cases, o.O we want to wetuwn the tweet's pawent i-id. (///ˬ///✿)
+        } yiewd {
           keys.map {
-            case k @ ConversationIdKey(t, p) => convIdMap.getOrElse(k, p)
+            case k @ convewsationidkey(t, σωσ p) => convidmap.getowewse(k, nyaa~~ p-p)
           }
         }
       )

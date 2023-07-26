@@ -1,13 +1,13 @@
-package com.twitter.servo.store
+package com.twittew.sewvo.stowe
 
-import com.twitter.util.Future
+impowt com.twittew.utiw.futuwe
 
-trait KeyValueStore[C, K, V, R] {
-  def put(ctx: C, key: K, value: Option[V]): Future[R] = multiPut(ctx, Seq((key -> value)))
-  def multiPut(ctx: C, kvs: Seq[(K, Option[V])]): Future[R]
+t-twait keyvawuestowe[c, 😳 k-k, v, XD w] {
+  d-def put(ctx: c-c, :3 key: k, 😳😳😳 vawue: o-option[v]): futuwe[w] = m-muwtiput(ctx, -.- s-seq((key -> v-vawue)))
+  def muwtiput(ctx: c, ( ͡o ω ͡o ) kvs: seq[(k, rawr x3 option[v])]): futuwe[w]
 }
 
-trait SimpleKeyValueStore[K, V] extends KeyValueStore[Unit, K, V, Unit] {
-  def put(key: K, value: Option[V]): Future[Unit] = multiPut((), Seq(key -> value))
-  def multiPut(kvs: Seq[(K, Option[V])]): Future[Unit] = multiPut((), kvs)
+twait s-simpwekeyvawuestowe[k, nyaa~~ v] extends keyvawuestowe[unit, /(^•ω•^) k-k, v, rawr unit] {
+  def put(key: k-k, OwO vawue: option[v]): futuwe[unit] = muwtiput((), (U ﹏ U) seq(key -> v-vawue))
+  def muwtiput(kvs: seq[(k, >_< o-option[v])]): f-futuwe[unit] = muwtiput((), rawr x3 kvs)
 }

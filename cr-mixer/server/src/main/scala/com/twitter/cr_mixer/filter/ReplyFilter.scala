@@ -1,40 +1,40 @@
-package com.twitter.cr_mixer.filter
+package com.twittew.cw_mixew.fiwtew
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.util.Future
+impowt com.twittew.cw_mixew.modew.candidategenewatowquewy
+i-impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.utiw.futuwe
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
 /***
- * Filters candidates that are replies
+ * f-fiwtews candidates t-that awe wepwies
  */
-@Singleton
-case class ReplyFilter @Inject() () extends FilterBase {
-  override def name: String = this.getClass.getCanonicalName
-  override type ConfigType = Boolean
+@singweton
+case cwass wepwyfiwtew @inject() () extends fiwtewbase {
+  o-ovewwide def nyame: stwing = this.getcwass.getcanonicawname
+  ovewwide type configtype = b-boowean
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: ConfigType
-  ): Future[Seq[Seq[InitialCandidate]]] = {
+  ovewwide def f-fiwtew(
+    candidates: seq[seq[initiawcandidate]], OwO
+    config: configtype
+  ): f-futuwe[seq[seq[initiawcandidate]]] = {
     if (config) {
-      Future.value(
-        candidates.map { candidateSeq =>
-          candidateSeq.filterNot { candidate =>
-            candidate.tweetInfo.isReply.getOrElse(false)
+      f-futuwe.vawue(
+        c-candidates.map { candidateseq =>
+          candidateseq.fiwtewnot { candidate =>
+            candidate.tweetinfo.iswepwy.getowewse(fawse)
           }
         }
       )
-    } else {
-      Future.value(candidates)
+    } e-ewse {
+      futuwe.vawue(candidates)
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
-    query: CGQueryType
-  ): ConfigType = {
-    true
+  ovewwide def wequesttoconfig[cgquewytype <: candidategenewatowquewy](
+    q-quewy: cgquewytype
+  ): configtype = {
+    t-twue
   }
 }

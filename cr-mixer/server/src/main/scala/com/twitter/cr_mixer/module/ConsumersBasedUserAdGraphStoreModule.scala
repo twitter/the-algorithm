@@ -1,29 +1,29 @@
-package com.twitter.cr_mixer.module
+package com.twittew.cw_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.inject.TwitterModule
-import com.twitter.recos.user_ad_graph.thriftscala.ConsumersBasedRelatedAdRequest
-import com.twitter.recos.user_ad_graph.thriftscala.RelatedAdResponse
-import com.twitter.recos.user_ad_graph.thriftscala.UserAdGraph
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.cw_mixew.modew.moduwenames
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.wecos.usew_ad_gwaph.thwiftscawa.consumewsbasedwewatedadwequest
+i-impowt c-com.twittew.wecos.usew_ad_gwaph.thwiftscawa.wewatedadwesponse
+i-impowt com.twittew.wecos.usew_ad_gwaph.thwiftscawa.usewadgwaph
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
+impowt javax.inject.named
+i-impowt javax.inject.singweton
 
-object ConsumersBasedUserAdGraphStoreModule extends TwitterModule {
+object consumewsbasedusewadgwaphstowemoduwe extends twittewmoduwe {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.ConsumerBasedUserAdGraphStore)
-  def providesConsumerBasedUserAdGraphStore(
-    userAdGraphService: UserAdGraph.MethodPerEndpoint
-  ): ReadableStore[ConsumersBasedRelatedAdRequest, RelatedAdResponse] = {
-    new ReadableStore[ConsumersBasedRelatedAdRequest, RelatedAdResponse] {
-      override def get(
-        k: ConsumersBasedRelatedAdRequest
-      ): Future[Option[RelatedAdResponse]] = {
-        userAdGraphService.consumersBasedRelatedAds(k).map(Some(_))
+  @pwovides
+  @singweton
+  @named(moduwenames.consumewbasedusewadgwaphstowe)
+  d-def pwovidesconsumewbasedusewadgwaphstowe(
+    usewadgwaphsewvice: u-usewadgwaph.methodpewendpoint
+  ): weadabwestowe[consumewsbasedwewatedadwequest, mya wewatedadwesponse] = {
+    nyew weadabwestowe[consumewsbasedwewatedadwequest, 😳 wewatedadwesponse] {
+      o-ovewwide def get(
+        k-k: consumewsbasedwewatedadwequest
+      ): f-futuwe[option[wewatedadwesponse]] = {
+        usewadgwaphsewvice.consumewsbasedwewatedads(k).map(some(_))
       }
     }
   }

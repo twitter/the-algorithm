@@ -1,13 +1,13 @@
-package com.twitter.visibility.configapi.params
+package com.twittew.visibiwity.configapi.pawams
 
-private[visibility] object TimelineConversationsDownrankingSpecificParams {
+pwivate[visibiwity] o-object timewineconvewsationsdownwankingspecificpawams {
 
-  object EnablePSpammyTweetDownrankConvosLowQualityParam extends RuleParam(false)
+  object e-enabwepspammytweetdownwankconvoswowquawitypawam e-extends wuwepawam(fawse)
 
-  object EnableRitoActionedTweetDownrankConvosLowQualityParam extends RuleParam(false)
+  o-object enabwewitoactionedtweetdownwankconvoswowquawitypawam e-extends w-wuwepawam(fawse)
 
-  object EnableHighSpammyTweetContentScoreConvoDownrankAbusiveQualityRuleParam
-      extends RuleParam(false)
+  o-object e-enabwehighspammytweetcontentscoweconvodownwankabusivequawitywuwepawam
+      extends wuwepawam(fawse)
 
-  object EnableHighCryptospamScoreConvoDownrankAbusiveQualityRuleParam extends RuleParam(false)
+  object enabwehighcwyptospamscoweconvodownwankabusivequawitywuwepawam e-extends wuwepawam(fawse)
 }

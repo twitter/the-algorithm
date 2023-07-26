@@ -1,150 +1,150 @@
-package com.twitter.search.common.encoding.features;
+package com.twittew.seawch.common.encoding.featuwes;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pweconditions;
 
 /**
- * A smart integer normalizer that converts an integer of a known range to a small integer up to
- * 8 bits long. This normalizer generates a boundary value array in the constructor as the buckets
- * for different values.
+ * a-a smawt integew n-nyowmawizew that c-convewts an integew o-of a known w-wange to a smow i-integew up to
+ * 8 bits wong. this nyowmawizew genewates a boundawy vawue awway i-in the constwuctow as the buckets
+ * fow diffewent v-vawues. ^^;;
  * <p/>
- * The normalized value has a nice properties:
- * 1) it maintains the order of original value: if a > b, then normalize(a) > normalize(b).
- * 2) the value 0 is always normalized to byte 0.
- * 3) the normalized values are (almost) evenly distributed on the log scale
- * 4) no waste in code space, all possible values representable by normalized bits are used,
- * each corresponding to a different value.
+ * the nyowmawized v-vawue has a nyice pwopewties:
+ * 1) it maintains the owdew o-of owiginaw vawue: if a > b, (ˆ ﻌ ˆ)♡ t-then nyowmawize(a) > n-nyowmawize(b).
+ * 2) the vawue 0 is awways nyowmawized to byte 0. ^^;;
+ * 3) the n-nyowmawized vawues awe (awmost) evenwy distwibuted on the wog scawe
+ * 4) nyo waste i-in code space, (⑅˘꒳˘) aww possibwe v-vawues wepwesentabwe b-by nyowmawized b-bits awe used, rawr x3
+ * e-each cowwesponding to a diffewent vawue. (///ˬ///✿)
  */
-public class SmartIntegerNormalizer extends ByteNormalizer {
-  // The max value we want to support in this normalizer. If the input is larger than this value,
-  // it's normalized as if it's the maxValue.
-  private final int maxValue;
-  // Number of bits used for normalized value, the largest normalized value
-  // would be (1 << numBits) - 1.
-  private final int numBits;
-  // The inclusive lower bounds of all buckets. A normalized value k corresponds to original values
-  // in the inclusive-exclusive range
-  //   [ boundaryValues[k], boundaryValues[k+1] )
-  private final int[] boundaryValues;
-  // The length of the boundaryValues array, or the number of buckets.
-  private final int length;
+p-pubwic cwass smawtintegewnowmawizew extends b-bytenowmawizew {
+  // the max vawue we want to suppowt in this nyowmawizew. 🥺 if the input is wawgew t-than this vawue, >_<
+  // it's nyowmawized a-as if i-it's the maxvawue. UwU
+  p-pwivate finaw int maxvawue;
+  // nyumbew of bits used fow nyowmawized v-vawue, >_< t-the wawgest nyowmawized vawue
+  // w-wouwd be (1 << n-nyumbits) - 1. -.-
+  pwivate finaw i-int nyumbits;
+  // the incwusive w-wowew bounds of aww buckets. mya a nyowmawized vawue k-k cowwesponds to owiginaw vawues
+  // i-in the incwusive-excwusive w-wange
+  //   [ b-boundawyvawues[k], boundawyvawues[k+1] )
+  pwivate finaw int[] boundawyvawues;
+  // the wength of the boundawyvawues awway, >w< o-ow the nyumbew o-of buckets. (U ﹏ U)
+  pwivate finaw int w-wength;
 
   /**
-   * Construct a normalizer.
+   * c-constwuct a n-nyowmawizew. 😳😳😳
    *
-   * @param maxValue max value it supports, must be larger than minValue. Anything larger than this
-   * would be treated as maxValue.
-   * @param numBits number of bits you want to use for this normalization, between 1 and 8.
-   * higher resolution for the lower numbers.
+   * @pawam maxvawue max vawue it suppowts, must b-be wawgew than minvawue. anything wawgew than this
+   * wouwd be tweated as maxvawue. o.O
+   * @pawam n-nyumbits nyumbew of bits you w-want to use fow t-this nyowmawization, òωó b-between 1 and 8. 😳😳😳
+   * highew w-wesowution fow t-the wowew nyumbews. σωσ
    */
-  public SmartIntegerNormalizer(int maxValue, int numBits) {
-    Preconditions.checkArgument(maxValue > 0);
-    Preconditions.checkArgument(numBits > 0 && numBits <= 8);
+  pubwic s-smawtintegewnowmawizew(int m-maxvawue, (⑅˘꒳˘) int nyumbits) {
+    pweconditions.checkawgument(maxvawue > 0);
+    pweconditions.checkawgument(numbits > 0 && nyumbits <= 8);
 
-    this.maxValue = maxValue;
-    this.numBits = numBits;
+    t-this.maxvawue = m-maxvawue;
+    t-this.numbits = n-nyumbits;
 
-    this.length = 1 << numBits;
-    this.boundaryValues = new int[length];
+    t-this.wength = 1 << nyumbits;
+    this.boundawyvawues = nyew int[wength];
 
 
-    int index;
-    for (index = length - 1; index >= 0; --index) {
-      // values are evenly distributed on the log scale
-      int boundary = (int) Math.pow(maxValue, (double) index / length);
-      // we have more byte slots left than we have possible boundary values (buckets),
-      // just give consecutive boundary values to all remaining slots, starting from 0.
-      if (boundary <= index) {
-        break;
+    i-int index;
+    fow (index = wength - 1; index >= 0; --index) {
+      // vawues awe evenwy distwibuted on t-the wog scawe
+      int boundawy = (int) math.pow(maxvawue, (doubwe) index / wength);
+      // w-we have mowe byte s-swots weft than w-we have possibwe boundawy vawues (buckets), (///ˬ///✿)
+      // j-just give consecutive boundawy v-vawues to a-aww wemaining swots, 🥺 stawting fwom 0. OwO
+      if (boundawy <= index) {
+        bweak;
       }
-      boundaryValues[index] = boundary;
+      boundawyvawues[index] = b-boundawy;
     }
     if (index >= 0) {
-      for (int i = 1; i <= index; ++i) {
-        boundaryValues[i] = i;
+      fow (int i-i = 1; i <= index; ++i) {
+        boundawyvawues[i] = i-i;
       }
     }
-    boundaryValues[0] = 0;  // the first one is always 0.
+    b-boundawyvawues[0] = 0;  // the fiwst one is awways 0. >w<
   }
 
-  @Override
-  public byte normalize(double val) {
-    int intVal = (int) (val > maxValue ? maxValue : val);
-    return intToUnsignedByte(binarySearch(intVal, boundaryValues));
-  }
-
-  /**
-   * Return the lower bound of the bucket represent by norm. This simply returns the boundary
-   * value indexed by current norm.
-   */
-  @Override
-  public double unnormLowerBound(byte norm) {
-    return boundaryValues[unsignedByteToInt(norm)];
+  @ovewwide
+  p-pubwic byte n-nyowmawize(doubwe vaw) {
+    int i-intvaw = (int) (vaw > m-maxvawue ? maxvawue : vaw);
+    wetuwn inttounsignedbyte(binawyseawch(intvaw, 🥺 boundawyvawues));
   }
 
   /**
-   * Return the upper bound of the bucket represent by norm. This returns the next boundary value
-   * minus 1. If norm represents the last bucket, it returns the maxValue.
+   * wetuwn the w-wowew bound of t-the bucket wepwesent b-by nyowm. nyaa~~ this simpwy wetuwns t-the boundawy
+   * v-vawue indexed by cuwwent nyowm. ^^
    */
-  @Override
-  public double unnormUpperBound(byte norm) {
-    // if it's already the last possible normalized value, just return the corresponding last
-    // boundary value.
-    int intNorm = unsignedByteToInt(norm);
-    if (intNorm == length - 1) {
-      return maxValue;
+  @ovewwide
+  p-pubwic doubwe unnowmwowewbound(byte nyowm) {
+    wetuwn boundawyvawues[unsignedbytetoint(nowm)];
+  }
+
+  /**
+   * w-wetuwn t-the uppew bound of the bucket wepwesent by nyowm. >w< t-this wetuwns t-the nyext boundawy vawue
+   * minus 1. OwO if nyowm wepwesents the w-wast bucket, XD it wetuwns the maxvawue. ^^;;
+   */
+  @ovewwide
+  pubwic doubwe unnowmuppewbound(byte nyowm) {
+    // i-if it's awweady the wast possibwe n-nyowmawized vawue, 🥺 j-just wetuwn the cowwesponding wast
+    // boundawy vawue. XD
+    i-int intnowm = unsignedbytetoint(nowm);
+    i-if (intnowm == wength - 1) {
+      wetuwn maxvawue;
     }
-    return boundaryValues[intNorm + 1] - 1;
+    wetuwn b-boundawyvawues[intnowm + 1] - 1;
   }
 
   /**
-   * Do a binary search on array and find the index of the item that's no bigger than value.
+   * do a binawy seawch o-on awway and find the index of the item that's nyo biggew than v-vawue. (U ᵕ U❁)
    */
-  private static int binarySearch(int value, int[] array) {
-    // corner cases
-    if (value <= array[0]) {
-      return 0;
-    } else if (value >= array[array.length - 1]) {
-      return array.length - 1;
+  pwivate static i-int binawyseawch(int v-vawue, :3 int[] awway) {
+    // c-cownew cases
+    if (vawue <= a-awway[0]) {
+      w-wetuwn 0;
+    } e-ewse if (vawue >= awway[awway.wength - 1]) {
+      w-wetuwn awway.wength - 1;
     }
-    int left = 0;
-    int right = array.length - 1;
-    int pivot = (left + right) >> 1;
+    i-int weft = 0;
+    int wight = awway.wength - 1;
+    i-int p-pivot = (weft + w-wight) >> 1;
     do {
-      int midVal = array[pivot];
-      if (value == midVal) {
-        break;
-      } else if (value > midVal) {
-        left = pivot;
-      } else {
-        right = pivot;
+      int midvaw = awway[pivot];
+      if (vawue == m-midvaw) {
+        bweak;
+      } e-ewse i-if (vawue > midvaw) {
+        weft = pivot;
+      } ewse {
+        wight = pivot;
       }
-      pivot = (left + right) >> 1;
-    } while (pivot != left);
-    return pivot;
+      p-pivot = (weft + w-wight) >> 1;
+    } w-whiwe (pivot != w-weft);
+    wetuwn pivot;
   }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder(String.format(
-        "Smart Integer Normalizer (numBits = %d, max = %d)\n",
-        this.numBits, this.maxValue));
-    for (int i = 0; i < this.length; i++) {
-      sb.append(String.format(
-          "[%2d] boundary = %6d, range [ %6d, %6d ), norm: %4d | %4d | %4d %s\n",
-          i, boundaryValues[i],
-          (int) unnormLowerBound(intToUnsignedByte(i)),
-          (int) unnormUpperBound(intToUnsignedByte(i)),
-          unsignedByteToInt(normalize(boundaryValues[i] - 1)),
-          unsignedByteToInt(normalize(boundaryValues[i])),
-          unsignedByteToInt(normalize(boundaryValues[i] + 1)),
-          i == boundaryValues[i] ? "*" : ""));
+  @ovewwide
+  p-pubwic stwing tostwing() {
+    stwingbuiwdew sb = nyew stwingbuiwdew(stwing.fowmat(
+        "smawt integew nyowmawizew (numbits = %d, ( ͡o ω ͡o ) max = %d)\n",
+        this.numbits, òωó t-this.maxvawue));
+    fow (int i = 0; i-i < this.wength; i++) {
+      sb.append(stwing.fowmat(
+          "[%2d] b-boundawy = %6d, σωσ wange [ %6d, (U ᵕ U❁) %6d ), n-nyowm: %4d | %4d | %4d %s\n", (✿oωo)
+          i, ^^ boundawyvawues[i], ^•ﻌ•^
+          (int) u-unnowmwowewbound(inttounsignedbyte(i)), XD
+          (int) u-unnowmuppewbound(inttounsignedbyte(i)),
+          u-unsignedbytetoint(nowmawize(boundawyvawues[i] - 1)), :3
+          u-unsignedbytetoint(nowmawize(boundawyvawues[i])), (ꈍᴗꈍ)
+          u-unsignedbytetoint(nowmawize(boundawyvawues[i] + 1)), :3
+          i == boundawyvawues[i] ? "*" : ""));
     }
-    return sb.toString();
+    wetuwn sb.tostwing();
   }
 
-  @VisibleForTesting
-  int[] getBoundaryValues() {
-    return boundaryValues;
+  @visibwefowtesting
+  int[] getboundawyvawues() {
+    w-wetuwn b-boundawyvawues;
   }
 }

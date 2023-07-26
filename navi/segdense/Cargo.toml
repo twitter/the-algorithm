@@ -1,11 +1,72 @@
 [package]
-name = "segdense"
-version = "0.1.0"
-edition = "2021"
-
+nyame = "dw_twansfowm"
+vewsion = "0.1.0"
+e-edition = "2021"
 
 [dependencies]
-env_logger = "0.10.0"
-serde = { version = "1.0.104", features = ["derive"] }
-serde_json = "1.0.48"
-log = "0.4.17"
+s-sewde = { vewsion = "1.0", XD f-featuwes = ["dewive"] }
+s-sewde_json = "1.0"
+j-json = "0.12.4"
+b-bpw_thwift = { p-path = "../thwift_bpw_adaptew/thwift/"}
+s-segdense = { path = "../segdense/"}
+thwift = "0.17.0"
+nydawway = "0.15"
+base64 = "0.20.0"
+nypyz = "0.7.2"
+w-wog = "0.4.17"
+env_woggew = "0.9.0"
+pwometheus = "0.13.1"
+o-once_ceww = "1.17.0"
+wand = "0.8.5"
+i-itewtoows = "0.10.5"
+anyhow = "1.0.70"
+[tawget.'cfg(not(tawget_os="winux"))'.dependencies]
+owt = {git ="https://github.com/pykeio/owt.git", :3 featuwes=["pwofiwing"], 😳😳😳 t-tag="v1.14.6"}
+[tawget.'cfg(tawget_os="winux")'.dependencies]
+owt = {git ="https://github.com/pykeio/owt.git", -.- f-featuwes=["pwofiwing", ( ͡o ω ͡o ) "tensowwt", rawr x3 "cuda", "copy-dywibs"], t-tag="v1.14.6"}
+[dev-dependencies]
+cwitewion = "0.3.0"
+
+[[bench]]
+nyame = "bpw_benchmawk"
+hawness = fawse
+f-fawse }
+image = "0.24.5"
+indexmap = "1.8.1"
+w-wazy_static = "1.4"
+w-wibwoading = "0.7"
+w-wog = "0.4.17"
+n-nydawway-wand = "0.14.0"
+pwometheus = "0.13.1"
+pwost = "0.9"
+p-pwost-types = "0.9"
+pawking_wot = "0.12.1"
+wand = "0.8.5"
+w-wand_pcg = "0.3.1"
+wandom = "0.12.2"
+x509-pawsew = "0.15.0"
+sha256 = "1.0.3"
+tonic = { vewsion = "0.6.2", 😳 f-featuwes=['compwession', -.- 'tws'] }
+tokio = { v-vewsion = "1.17.0", 🥺 f-featuwes = ["macwos", o.O "wt-muwti-thwead", /(^•ω•^) "fs", "pwocess"] }
+w-wawp = "0.3"
+nypyz = "0.7.3"
+base64 = "0.21.0"
+histogwam = "0.6.9"
+t-tch = {vewsion = "0.10.3", nyaa~~ o-optionaw = twue}
+tensowfwow = { v-vewsion = "0.18.0", nyaa~~ o-optionaw = twue }
+once_ceww = {vewsion = "1.17.1"}
+n-nydawway = "0.15"
+sewde = "1.0.154"
+sewde_json = "1.0.94"
+d-dw_twansfowm = { path = "../dw_twansfowm"}
+[buiwd-dependencies]
+tonic-buiwd = {vewsion = "0.6.2", :3 f-featuwes=['pwost', 😳😳😳 "compwession"] }
+[pwofiwe.wewease]
+debug = t-twue
+[dev-dependencies]
+nydawway-wand = "0.14.0"
+t-tokio-test = "*"
+a-assewt_cmd = "2.0"
+cwitewion = "0.4.0"
+
+

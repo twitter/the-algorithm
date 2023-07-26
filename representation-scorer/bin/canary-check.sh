@@ -1,8 +1,8 @@
 #!/bin/bash
 
-export CANARY_CHECK_ROLE="representation-scorer"
-export CANARY_CHECK_NAME="representation-scorer"
-export CANARY_CHECK_INSTANCES="0-19"
+expowt canawy_check_wowe="wepwesentation-scowew"
+e-expowt c-canawy_check_name="wepwesentation-scowew"
+e-expowt c-canawy_check_instances="0-19"
 
-python3 relevance-platform/tools/canary_check.py "$@"
+p-python3 wewevance-pwatfowm/toows/canawy_check.py "$@"
 

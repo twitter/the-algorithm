@@ -1,330 +1,330 @@
-/* Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+/* copywight 2015 the tensowfwow a-authows. mya aww wights w-wesewved. mya
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+wicensed u-undew the a-apache wicense, /(^•ω•^) v-vewsion 2.0 (the "wicense");
+you m-may nyot use t-this fiwe except i-in compwiance with the wicense. ^^;;
+you may obtain a copy of the wicense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.owg/wicenses/wicense-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+u-unwess wequiwed by appwicabwe waw ow agweed t-to in wwiting, 🥺 softwawe
+distwibuted u-undew the wicense is distwibuted on an "as is" basis, ^^
+w-without wawwanties ow conditions o-of any kind, ^•ﻌ•^ eithew e-expwess ow impwied. /(^•ω•^)
+see the wicense fow the specific wanguage govewning pewmissions a-and
+wimitations undew the wicense. ^^
 ==============================================================================*/
 
-// TWML modified to optimize binary features:
-// - Sparse tensor values are assumed to be binary, so only add operation is done
-//   rather than mul-add;
-// - In house version of vectorization is used instead of Eigen;
-// - Enable sharding and multithreading.
+// twmw modified to optimize binawy f-featuwes:
+// - spawse tensow vawues a-awe assumed t-to be binawy, 🥺 s-so onwy add opewation i-is done
+//   wathew than muw-add;
+// - in h-house vewsion of vectowization is used instead of e-eigen;
+// - enabwe shawding and muwtithweading. (U ᵕ U❁)
 
-#define EIGEN_USE_THREADS
+#define eigen_use_thweads
 
-#include "binary_sparse_dense_matmul.h"
-#include "binary_sparse_dense_matmul_impl.h"
+#incwude "binawy_spawse_dense_matmuw.h"
+#incwude "binawy_spawse_dense_matmuw_impw.h"
 
-#include "tensorflow/core/framework/bounds_check.h"
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/framework/common_shape_fns.h"
-#include "tensorflow/core/framework/shape_inference.h"
+#incwude "tensowfwow/cowe/fwamewowk/bounds_check.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
+#incwude "tensowfwow/cowe/fwamewowk/common_shape_fns.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
 
-namespace tensorflow {
+nyamespace tensowfwow {
 
-namespace shape_inference {
-// TODO: The `a_value` is supposed to be all ones.
-// Users should not call this op directly but to use it from `sparse_op` python library. 
-// To make it consistent with original op, the signature remains the same currently,
-//  we will think a better way to contrain correct use of this op.
-// CX-18174
-REGISTER_OP("BinarySparseTensorDenseMatMul")
-    .Input("a_indices: Tindices")
-    .Input("a_values: T")
-    .Input("a_shape: int64")
-    .Input("b: T")
-    .Output("product: T")
-    .Attr("T: type")
-    .Attr("Tindices: {int32,int64} = DT_INT64")
-    .Attr("adjoint_a: bool = false")
-    .Attr("adjoint_b: bool = false")
-    .SetShapeFn([](InferenceContext* c) {
-      DimensionHandle unused_dim;
-      ShapeHandle unused;
-      ShapeHandle b;
-      ShapeHandle a_shape;
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 2, &unused));  // a_indices
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(1), 1, &unused));  // a_values
-      TF_RETURN_IF_ERROR(c->MakeShapeFromShapeTensor(2, &a_shape));
-      TF_RETURN_IF_ERROR(c->WithRank(a_shape, 2, &a_shape));
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(3), 2, &b));
+nyamespace s-shape_infewence {
+// todo: t-the `a_vawue` i-is supposed to be a-aww ones.
+// usews shouwd nyot caww this op diwectwy but to use i-it fwom `spawse_op` p-python wibwawy. 😳😳😳 
+// to make i-it consistent w-with owiginaw op, nyaa~~ the signatuwe w-wemains the same cuwwentwy, (˘ω˘)
+//  w-we wiww think a bettew way to contwain cowwect use o-of this op. >_<
+// cx-18174
+wegistew_op("binawyspawsetensowdensematmuw")
+    .input("a_indices: tindices")
+    .input("a_vawues: t-t")
+    .input("a_shape: int64")
+    .input("b: t-t")
+    .output("pwoduct: t-t")
+    .attw("t: type")
+    .attw("tindices: {int32,int64} = dt_int64")
+    .attw("adjoint_a: boow = fawse")
+    .attw("adjoint_b: boow = fawse")
+    .setshapefn([](infewencecontext* c-c) {
+      dimensionhandwe u-unused_dim;
+      shapehandwe unused;
+      s-shapehandwe b-b;
+      shapehandwe a-a_shape;
+      tf_wetuwn_if_ewwow(c->withwank(c->input(0), XD 2, &unused));  // a_indices
+      tf_wetuwn_if_ewwow(c->withwank(c->input(1), rawr x3 1, &unused));  // a-a_vawues
+      tf_wetuwn_if_ewwow(c->makeshapefwomshapetensow(2, ( ͡o ω ͡o ) &a_shape));
+      tf_wetuwn_if_ewwow(c->withwank(a_shape, :3 2, &a_shape));
+      tf_wetuwn_if_ewwow(c->withwank(c->input(3), mya 2, &b));
 
-      bool adjoint_a;
-      bool adjoint_b;
-      TF_RETURN_IF_ERROR(c->GetAttr("adjoint_a", &adjoint_a));
-      TF_RETURN_IF_ERROR(c->GetAttr("adjoint_b", &adjoint_b));
+      boow adjoint_a;
+      b-boow adjoint_b;
+      tf_wetuwn_if_ewwow(c->getattw("adjoint_a", σωσ &adjoint_a));
+      t-tf_wetuwn_if_ewwow(c->getattw("adjoint_b", (ꈍᴗꈍ) &adjoint_b));
 
-      DimensionHandle output_right = c->Dim(b, adjoint_b ? 0 : 1);
-      DimensionHandle output_left = c->Dim(a_shape, adjoint_a ? 1 : 0);
-      DimensionHandle inner_left = c->Dim(a_shape, adjoint_a ? 0 : 1);
-      DimensionHandle inner_right = c->Dim(b, adjoint_b ? 1 : 0);
-      TF_RETURN_IF_ERROR(c->Merge(inner_left, inner_right, &unused_dim));
-      c->set_output(0, c->Matrix(output_left, output_right));
-      return Status::OK();
+      d-dimensionhandwe o-output_wight = c->dim(b, OwO a-adjoint_b ? 0 : 1);
+      dimensionhandwe output_weft = c-c->dim(a_shape, o.O a-adjoint_a ? 1 : 0);
+      d-dimensionhandwe innew_weft = c->dim(a_shape, 😳😳😳 a-adjoint_a ? 0 : 1);
+      d-dimensionhandwe i-innew_wight = c-c->dim(b, /(^•ω•^) a-adjoint_b ? 1 : 0);
+      tf_wetuwn_if_ewwow(c->mewge(innew_weft, OwO innew_wight, ^^ &unused_dim));
+      c->set_output(0, (///ˬ///✿) c-c->matwix(output_weft, (///ˬ///✿) output_wight));
+      wetuwn status::ok();
     });
-}  // namespace shape_inference
+}  // nyamespace shape_infewence
 
 
-typedef Eigen::ThreadPoolDevice CPUDevice;
+typedef e-eigen::thweadpoowdevice cpudevice;
 
-template <typename Device, typename T, typename Tindices>
-class BinarySparseTensorDenseMatMulOp : public OpKernel {
- public:
-  explicit BinarySparseTensorDenseMatMulOp(OpKernelConstruction* ctx)
-      : OpKernel(ctx) {
-    OP_REQUIRES_OK(ctx, ctx->GetAttr("adjoint_a", &adjoint_a_));
-    OP_REQUIRES_OK(ctx, ctx->GetAttr("adjoint_b", &adjoint_b_));
+tempwate <typename device, (///ˬ///✿) typename t-t, typename t-tindices>
+cwass b-binawyspawsetensowdensematmuwop : pubwic opkewnew {
+ p-pubwic:
+  expwicit binawyspawsetensowdensematmuwop(opkewnewconstwuction* c-ctx)
+      : opkewnew(ctx) {
+    o-op_wequiwes_ok(ctx, ʘwʘ ctx->getattw("adjoint_a", ^•ﻌ•^ &adjoint_a_));
+    op_wequiwes_ok(ctx, OwO ctx->getattw("adjoint_b", &adjoint_b_));
   }
 
-  void Compute(OpKernelContext* ctx) override {
-    const Tensor* a_indices;
-    const Tensor* a_values;
-    const Tensor* a_shape;
-    const Tensor* b;
-    OP_REQUIRES_OK(ctx, ctx->input("a_indices", &a_indices));
-    OP_REQUIRES_OK(ctx, ctx->input("a_values", &a_values));
-    OP_REQUIRES_OK(ctx, ctx->input("a_shape", &a_shape));
-    OP_REQUIRES_OK(ctx, ctx->input("b", &b));
+  void compute(opkewnewcontext* ctx) ovewwide {
+    c-const tensow* a_indices;
+    c-const tensow* a_vawues;
+    c-const tensow* a-a_shape;
+    const tensow* b;
+    op_wequiwes_ok(ctx, (U ﹏ U) c-ctx->input("a_indices", (ˆ ﻌ ˆ)♡ &a_indices));
+    o-op_wequiwes_ok(ctx, (⑅˘꒳˘) ctx->input("a_vawues", (U ﹏ U) &a_vawues));
+    o-op_wequiwes_ok(ctx, o.O c-ctx->input("a_shape", mya &a_shape));
+    op_wequiwes_ok(ctx, XD ctx->input("b", òωó &b));
 
-    // Check that the dimensions of the two matrices are valid.
-    OP_REQUIRES(ctx, TensorShapeUtils::IsMatrix(b->shape()),
-                errors::InvalidArgument("Tensor 'b' is not a matrix"));
+    // check that the dimensions o-of the two matwices a-awe vawid. (˘ω˘)
+    o-op_wequiwes(ctx, :3 tensowshapeutiws::ismatwix(b->shape()), OwO
+                ewwows::invawidawgument("tensow 'b' i-is nyot a matwix"));
 
-    OP_REQUIRES(ctx, TensorShapeUtils::IsVector(a_shape->shape()),
-                errors::InvalidArgument("Tensor 'a_shape' is not a vector"));
+    o-op_wequiwes(ctx, mya tensowshapeutiws::isvectow(a_shape->shape()), (˘ω˘)
+                e-ewwows::invawidawgument("tensow 'a_shape' is nyot a vectow"));
 
-    OP_REQUIRES(
-        ctx, a_shape->NumElements() == 2,
-        errors::InvalidArgument("Tensor 'a_shape' must have 2 elements"));
+    op_wequiwes(
+        ctx, o.O a_shape->numewements() == 2, (✿oωo)
+        ewwows::invawidawgument("tensow 'a_shape' m-must have 2 e-ewements"));
 
-    OP_REQUIRES(ctx, TensorShapeUtils::IsVector(a_values->shape()),
-                errors::InvalidArgument("Tensor 'a_values' is not a vector"));
+    op_wequiwes(ctx, (ˆ ﻌ ˆ)♡ tensowshapeutiws::isvectow(a_vawues->shape()), ^^;;
+                e-ewwows::invawidawgument("tensow 'a_vawues' i-is nyot a vectow"));
 
-    OP_REQUIRES(ctx, TensorShapeUtils::IsMatrix(a_indices->shape()),
-                errors::InvalidArgument("Tensor 'a_indices' is not a matrix"));
+    op_wequiwes(ctx, OwO tensowshapeutiws::ismatwix(a_indices->shape()), 🥺
+                ewwows::invawidawgument("tensow 'a_indices' i-is nyot a matwix"));
 
-    const int64 nnz = a_indices->shape().dim_size(0);
-    OP_REQUIRES(ctx, nnz == a_values->NumElements(),
-                errors::InvalidArgument("Number of rows of a_indices does not "
-                                        "match number of entries in a_values"));
+    const int64 nynz = a_indices->shape().dim_size(0);
+    op_wequiwes(ctx, mya n-nynz == a_vawues->numewements(), 😳
+                ewwows::invawidawgument("numbew o-of wows o-of a_indices does nyot "
+                                        "match nyumbew of entwies in a-a_vawues"));
 
-    OP_REQUIRES(
-        ctx, a_indices->shape().dim_size(1) == a_shape->NumElements(),
-        errors::InvalidArgument("Number of columns of a_indices does not match "
-                                "number of entries in a_shape"));
+    o-op_wequiwes(
+        ctx, òωó a_indices->shape().dim_size(1) == a_shape->numewements(), /(^•ω•^)
+        ewwows::invawidawgument("numbew o-of cowumns of a_indices does nyot m-match "
+                                "numbew of entwies in a_shape"));
 
-    auto a_shape_t = a_shape->vec<int64>();
-    const int64 outer_left = (adjoint_a_) ? a_shape_t(1) : a_shape_t(0);
-    const int64 outer_right =
-        (adjoint_b_) ? b->shape().dim_size(0) : b->shape().dim_size(1);
-    const int64 inner_left = (adjoint_a_) ? a_shape_t(0) : a_shape_t(1);
-    const int64 inner_right =
-        (adjoint_b_) ? b->shape().dim_size(1) : b->shape().dim_size(0);
+    auto a_shape_t = a-a_shape->vec<int64>();
+    const i-int64 outew_weft = (adjoint_a_) ? a-a_shape_t(1) : a_shape_t(0);
+    c-const int64 outew_wight =
+        (adjoint_b_) ? b-b->shape().dim_size(0) : b-b->shape().dim_size(1);
+    c-const int64 innew_weft = (adjoint_a_) ? a-a_shape_t(0) : a-a_shape_t(1);
+    const int64 innew_wight =
+        (adjoint_b_) ? b-b->shape().dim_size(1) : b->shape().dim_size(0);
 
-    OP_REQUIRES(
-        ctx, inner_right == inner_left,
-        errors::InvalidArgument(
-            "Cannot multiply A and B because inner dimension does not match: ",
-            inner_left, " vs. ", inner_right,
-            ".  Did you forget a transpose?  "
-            "Dimensions of A: [",
-            a_shape_t(0), ", ", a_shape_t(1),
-            ").  Dimensions of B: ", b->shape().DebugString()));
+    o-op_wequiwes(
+        c-ctx, innew_wight == innew_weft, -.-
+        ewwows::invawidawgument(
+            "cannot m-muwtipwy a and b because innew d-dimension does n-nyot match: ", òωó
+            innew_weft, /(^•ω•^) " vs. /(^•ω•^) ", innew_wight, 😳
+            ".  did you fowget a-a twanspose?  "
+            "dimensions o-of a: [", :3
+            a-a_shape_t(0), (U ᵕ U❁) ", ", a-a_shape_t(1), ʘwʘ
+            "). o.O  dimensions of b: ", ʘwʘ b-b->shape().debugstwing()));
 
-    TensorShape out_shape({outer_left, outer_right});
-    Tensor* out = nullptr;
-    OP_REQUIRES_OK(ctx, ctx->allocate_output(0, out_shape, &out));
+    tensowshape out_shape({outew_weft, ^^ outew_wight});
+    tensow* out = nyuwwptw;
+    o-op_wequiwes_ok(ctx, ^•ﻌ•^ ctx->awwocate_output(0, o-out_shape, mya &out));
 
-    if (out->NumElements() == 0) {
-      // If a has shape [0, x] or b has shape [x, 0], the output shape
-      // is a 0-element matrix, so there is nothing to do.
-      return;
+    if (out->numewements() == 0) {
+      // i-if a has shape [0, UwU x] ow b has s-shape [x, >_< 0], /(^•ω•^) the output shape
+      // i-is a 0-ewement m-matwix, òωó s-so thewe is nyothing t-to do. σωσ
+      w-wetuwn;
     }
 
-    if (a_values->NumElements() == 0 || b->NumElements() == 0) {
-      // If a has shape [x, 0] and b has shape [0, y], the
-      // output shape is [x, y] where x and y are non-zero, so we fill
-      // the output with zeros.
-      out->flat<T>().device(ctx->eigen_device<Device>()) = 
-          out->flat<T>().constant(T(0));
-      return;
+    if (a_vawues->numewements() == 0 || b->numewements() == 0) {
+      // if a has shape [x, ( ͡o ω ͡o ) 0] and b has shape [0, nyaa~~ y], the
+      // o-output shape i-is [x, :3 y] whewe x-x and y awe nyon-zewo, UwU so we f-fiww
+      // the output with zewos. o.O
+      out->fwat<t>().device(ctx->eigen_device<device>()) = 
+          out->fwat<t>().constant(t(0));
+      w-wetuwn;
     }
 
-#define MAYBE_ADJOINT(ADJ_A, ADJ_B)                                        \
-  if (adjoint_a_ == ADJ_A && adjoint_b_ == ADJ_B) {                        \
-    Status functor_status = functor::SparseTensorDenseMatMulFunctor<       \
-        Device, T, Tindices, ADJ_A,                                        \
-        ADJ_B>::Compute(ctx, a_indices, a_values, a_shape, b, out);        \
-    OP_REQUIRES_OK(ctx, functor_status);                                   \
+#define m-maybe_adjoint(adj_a, (ˆ ﻌ ˆ)♡ adj_b)                                        \
+  i-if (adjoint_a_ == adj_a && adjoint_b_ == adj_b) {                        \
+    status f-functow_status = f-functow::spawsetensowdensematmuwfunctow<       \
+        device, ^^;; t, tindices, ʘwʘ a-adj_a,                                        \
+        a-adj_b>::compute(ctx, σωσ a_indices, a_vawues, ^^;; a_shape, ʘwʘ b, out);        \
+    op_wequiwes_ok(ctx, ^^ f-functow_status);                                   \
   }
 
-    MAYBE_ADJOINT(false, false);
-    MAYBE_ADJOINT(false, true);
-    MAYBE_ADJOINT(true, false);
-    MAYBE_ADJOINT(true, true);
+    m-maybe_adjoint(fawse, nyaa~~ f-fawse);
+    m-maybe_adjoint(fawse, (///ˬ///✿) t-twue);
+    maybe_adjoint(twue, XD f-fawse);
+    m-maybe_adjoint(twue, :3 twue);
 
-#undef MAYBE_ADJOINT
+#undef m-maybe_adjoint
   }
 
- private:
-  bool adjoint_a_;
-  bool adjoint_b_;
+ p-pwivate:
+  boow adjoint_a_;
+  boow a-adjoint_b_;
 };
 
-#define REGISTER_CPU(TypeT, TypeIndex)           \
-  REGISTER_KERNEL_BUILDER(                       \
-      Name("BinarySparseTensorDenseMatMul")      \
-          .Device(DEVICE_CPU)                    \
-          .TypeConstraint<TypeT>("T")            \
-          .TypeConstraint<TypeIndex>("Tindices") \
-          .HostMemory("a_shape"),                \
-      BinarySparseTensorDenseMatMulOp<CPUDevice, TypeT, TypeIndex>);
+#define wegistew_cpu(typet, òωó typeindex)           \
+  wegistew_kewnew_buiwdew(                       \
+      nyame("binawyspawsetensowdensematmuw")      \
+          .device(device_cpu)                    \
+          .typeconstwaint<typet>("t")            \
+          .typeconstwaint<typeindex>("tindices") \
+          .hostmemowy("a_shape"), ^^                \
+      binawyspawsetensowdensematmuwop<cpudevice, t-typet, ^•ﻌ•^ typeindex>);
 
-#define REGISTER_KERNELS_CPU(T) \
-  REGISTER_CPU(T, int64);       \
-  REGISTER_CPU(T, int32)
+#define w-wegistew_kewnews_cpu(t) \
+  w-wegistew_cpu(t, σωσ int64);       \
+  w-wegistew_cpu(t, (ˆ ﻌ ˆ)♡ int32)
 
-REGISTER_KERNELS_CPU(float);
-REGISTER_KERNELS_CPU(double);
-REGISTER_KERNELS_CPU(int32);
-REGISTER_KERNELS_CPU(complex64);
-REGISTER_KERNELS_CPU(complex128);
+wegistew_kewnews_cpu(fwoat);
+wegistew_kewnews_cpu(doubwe);
+w-wegistew_kewnews_cpu(int32);
+w-wegistew_kewnews_cpu(compwex64);
+w-wegistew_kewnews_cpu(compwex128);
 
-namespace functor {
+nyamespace functow {
 
-namespace {
-Status KOutOfBoundsError(int64 k, std::size_t i, int rhs_index_a,
-                         std::size_t lhs_right) {
-  return errors::InvalidArgument("k (", k, ") from index[", i, ",", rhs_index_a,
-                                 "] out of bounds (>=", lhs_right, ")");
+nyamespace {
+status k-koutofboundsewwow(int64 k, nyaa~~ std::size_t i, ʘwʘ int w-whs_index_a, ^•ﻌ•^
+                         s-std::size_t whs_wight) {
+  w-wetuwn ewwows::invawidawgument("k (", rawr x3 k, ") fwom i-index[", 🥺 i, ",", ʘwʘ w-whs_index_a, (˘ω˘)
+                                 "] out of bounds (>=", o.O whs_wight, σωσ ")");
 }
 
-Status MOutOfBoundsError(int64 m, std::size_t i, int lhs_index_a,
+s-status moutofboundsewwow(int64 m, (ꈍᴗꈍ) std::size_t i-i, (ˆ ﻌ ˆ)♡ int w-whs_index_a, o.O
                          int64 out_dim0) {
-  return errors::InvalidArgument("m (", m, ") from index[", i, ",", lhs_index_a,
-                                 "] out of bounds (>=", out_dim0, ")");
+  w-wetuwn ewwows::invawidawgument("m (", :3 m-m, ") fwom index[", i-i, -.- ",", whs_index_a, ( ͡o ω ͡o )
+                                 "] out o-of bounds (>=", /(^•ω•^) out_dim0, ")");
 }
 
-}  // namespace
+}  // nyamespace
 
 
-// The general functor just borrows the code from tf except that add is computed 
-// instead of mul-add.
-template <typename T, typename Tindices, bool ADJ_A, bool ADJ_B>
-struct SparseTensorDenseMatMulFunctor<CPUDevice, T, Tindices, ADJ_A, ADJ_B> {
-  // Vectorize certain operations above this size.
-  static const std::size_t kNumVectorize = 32;
+// the genewaw functow just bowwows the code fwom tf except that add is computed 
+// instead of muw-add.
+tempwate <typename t, (⑅˘꒳˘) typename tindices, òωó boow a-adj_a, 🥺 boow adj_b>
+s-stwuct spawsetensowdensematmuwfunctow<cpudevice, (ˆ ﻌ ˆ)♡ t, tindices, -.- adj_a, adj_b> {
+  // v-vectowize c-cewtain opewations a-above this size. σωσ
+  static const s-std::size_t knumvectowize = 32;
 
-  static Status Compute(OpKernelContext* ctx,
-                        const Tensor *a_indices,
-                        const Tensor *a_values,
-                        const Tensor *a_shape,
-                        const Tensor *b,
-                        Tensor *out) {
-    return EigenCompute(ctx->eigen_device<CPUDevice>(), out->matrix<T>(),
-                        a_indices->matrix<Tindices>(), a_values->vec<T>(),
-                        b->matrix<T>());
+  static status c-compute(opkewnewcontext* c-ctx,
+                        const t-tensow *a_indices, >_<
+                        const t-tensow *a_vawues, :3
+                        c-const tensow *a_shape, OwO
+                        const t-tensow *b, rawr
+                        t-tensow *out) {
+    w-wetuwn eigencompute(ctx->eigen_device<cpudevice>(), (///ˬ///✿) o-out->matwix<t>(), ^^
+                        a-a_indices->matwix<tindices>(), XD a-a_vawues->vec<t>(), UwU
+                        b->matwix<t>());
   }
 
-  static Status EigenCompute(const CPUDevice& d, typename TTypes<T>::Matrix out,
-                             typename TTypes<Tindices>::ConstMatrix a_indices,
-                             typename TTypes<T>::ConstVec a_values,
-                             typename TTypes<T>::ConstMatrix b) {
-    const std::size_t nnz = a_values.size();
-    const std::size_t rhs_right = (ADJ_B ? b.dimension(0) : b.dimension(1));
-    const std::size_t lhs_right = (ADJ_B ? b.dimension(1) : b.dimension(0));
-    const int lhs_index_a = ADJ_A ? 1 : 0;
-    const int rhs_index_a = ADJ_A ? 0 : 1;
+  s-static status e-eigencompute(const c-cpudevice& d, o.O typename ttypes<t>::matwix o-out, 😳
+                             t-typename ttypes<tindices>::constmatwix a-a_indices, (˘ω˘)
+                             typename ttypes<t>::constvec a_vawues, 🥺
+                             t-typename ttypes<t>::constmatwix b) {
+    const std::size_t n-nynz = a_vawues.size();
+    const s-std::size_t whs_wight = (adj_b ? b-b.dimension(0) : b-b.dimension(1));
+    const s-std::size_t whs_wight = (adj_b ? b.dimension(1) : b-b.dimension(0));
+    const int w-whs_index_a = adj_a ? 1 : 0;
+    const int whs_index_a = a-adj_a ? 0 : 1;
 
-    out.setZero();
+    out.setzewo();
 
-    if (rhs_right < kNumVectorize) {
-      // Disable vectorization if the RHS of output is too small
-      auto maybe_adjoint_b = MaybeAdjoint<decltype(b), ADJ_B>(b);
+    if (whs_wight < knumvectowize) {
+      // disabwe v-vectowization if the whs of o-output is too smow
+      a-auto maybe_adjoint_b = maybeadjoint<decwtype(b), ^^ adj_b>(b);
 
-      for (std::size_t i = 0; i < nnz; ++i) {
-        const Tindices m = internal::SubtleMustCopy(a_indices(i, lhs_index_a));
-        const Tindices k = internal::SubtleMustCopy(a_indices(i, rhs_index_a));
-        if (!FastBoundsCheck(k, lhs_right)) {
-          return KOutOfBoundsError(k, i, rhs_index_a, lhs_right);
+      fow (std::size_t i-i = 0; i < nynz; ++i) {
+        c-const t-tindices m = i-intewnaw::subtwemustcopy(a_indices(i, >w< whs_index_a));
+        const t-tindices k = i-intewnaw::subtwemustcopy(a_indices(i, ^^;; whs_index_a));
+        i-if (!fastboundscheck(k, (˘ω˘) whs_wight)) {
+          wetuwn k-koutofboundsewwow(k, OwO i, whs_index_a, (ꈍᴗꈍ) w-whs_wight);
         }
-        if (!FastBoundsCheck(m, out.dimension(0))) {
-          return MOutOfBoundsError(m, i, lhs_index_a, out.dimension(0));
+        i-if (!fastboundscheck(m, òωó out.dimension(0))) {
+          w-wetuwn moutofboundsewwow(m, ʘwʘ i-i, whs_index_a, ʘwʘ o-out.dimension(0));
         }
-        for (std::size_t n = 0; n < rhs_right; ++n) {
-          const T b_value = maybe_adjoint_b(k, n);
-          out(m, n) += b_value;
+        fow (std::size_t n-ny = 0; n < whs_wight; ++n) {
+          c-const t b_vawue = maybe_adjoint_b(k, nyaa~~ n-ny);
+          o-out(m, UwU n-ny) += b_vawue;
         }
       }
-    } else {
-      // Vectorization via Eigen.
-      const int b_chip_index = ADJ_B ? 1 : 0;
+    } e-ewse {
+      // v-vectowization v-via eigen. (⑅˘꒳˘)
+      c-const i-int b_chip_index = adj_b ? 1 : 0;
 
-#define LOOP_NNZ(b_passed)                                                  \
-  for (std::size_t i = 0; i < nnz; ++i) {                                   \
-    const Tindices m = internal::SubtleMustCopy(a_indices(i, lhs_index_a)); \
-    const Tindices k = internal::SubtleMustCopy(a_indices(i, rhs_index_a)); \
-    if (!FastBoundsCheck(k, lhs_right)) {                                   \
-      return KOutOfBoundsError(k, i, rhs_index_a, lhs_right);               \
+#define w-woop_nnz(b_passed)                                                  \
+  fow (std::size_t i-i = 0; i < nynz; ++i) {                                   \
+    const tindices m-m = intewnaw::subtwemustcopy(a_indices(i, (˘ω˘) w-whs_index_a)); \
+    c-const tindices k = intewnaw::subtwemustcopy(a_indices(i, :3 whs_index_a)); \
+    if (!fastboundscheck(k, (˘ω˘) w-whs_wight)) {                                   \
+      w-wetuwn koutofboundsewwow(k, nyaa~~ i-i, (U ﹏ U) whs_index_a, whs_wight);               \
     }                                                                       \
-    if (!FastBoundsCheck(m, out.dimension(0))) {                            \
-      return MOutOfBoundsError(m, i, lhs_index_a, out.dimension(0));        \
+    if (!fastboundscheck(m, nyaa~~ out.dimension(0))) {                            \
+      w-wetuwn m-moutofboundsewwow(m, ^^;; i, whs_index_a, OwO o-out.dimension(0));        \
     }                                                                       \
-    out.template chip<0>(m) += b_passed.template chip<b_chip_index>(k);     \
+    o-out.tempwate chip<0>(m) += b_passed.tempwate chip<b_chip_index>(k);     \
   }
 
 
-      if (ADJ_B) {
-        // Perform transpose and conjugation on B once, since we chip out B's
-        // columns in the nnz loop.
-        Eigen::array<int, 2> shuffle;  // preserve dimension order
-        shuffle[0] = 1; shuffle[1] = 0;
-        Eigen::Tensor<T, 2, Eigen::ColMajor> col_major_conj_b =
-            b.swap_layout().shuffle(shuffle).conjugate();
-        LOOP_NNZ(col_major_conj_b);
-      } else {
-        LOOP_NNZ(b);
+      if (adj_b) {
+        // p-pewfowm twanspose a-and conjugation o-on b once, nyaa~~ since w-we chip out b's
+        // cowumns in the nynz w-woop. UwU
+        e-eigen::awway<int, 😳 2> shuffwe;  // pwesewve dimension o-owdew
+        shuffwe[0] = 1; shuffwe[1] = 0;
+        e-eigen::tensow<t, 😳 2, eigen::cowmajow> c-cow_majow_conj_b =
+            b-b.swap_wayout().shuffwe(shuffwe).conjugate();
+        woop_nnz(cow_majow_conj_b);
+      } e-ewse {
+        w-woop_nnz(b);
       }
-#undef LOOP_NNZ
+#undef woop_nnz
     }
-    return Status::OK();
+    w-wetuwn status::ok();
   }
 };
 
 
-// We have only specified and optimised the case with no matrix transpose, 
-// since it is the most typical usage in productions.
-template <typename Tindices>
-struct SparseTensorDenseMatMulFunctor<CPUDevice, 
-                                      float, Tindices, false, false> {
-  static Status Compute(OpKernelContext* ctx,
-                        const Tensor *a_indices,
-                        const Tensor *a_values,
-                        const Tensor *a_shape,
-                        const Tensor *b,
-                        Tensor *out) {
-    auto a_indices_ptr = a_indices->flat<Tindices>().data();     
-    auto b_ptr = b->flat<float>().data();
-    auto out_ptr = out->flat<float>().data();
-    const int64 nnz = a_indices->shape().dim_size(0);
-    const int64 outer_left = a_shape->vec<int64>()(0);
-    const int64 outer_right = b->shape().dim_size(1);
-    ParallelLookupAndSegmentSum<Tindices>(ctx, a_indices_ptr, b_ptr, nnz,
-                                outer_left, outer_right, out_ptr);
-    return Status::OK();
+// w-we have o-onwy specified a-and optimised the c-case with nyo matwix twanspose, (ˆ ﻌ ˆ)♡ 
+// s-since it i-is the most typicaw u-usage in pwoductions. (✿oωo)
+tempwate <typename t-tindices>
+stwuct spawsetensowdensematmuwfunctow<cpudevice, nyaa~~ 
+                                      fwoat, ^^ tindices, (///ˬ///✿) f-fawse, fawse> {
+  s-static status c-compute(opkewnewcontext* ctx, 😳
+                        const tensow *a_indices, òωó
+                        const tensow *a_vawues, ^^;;
+                        const tensow *a_shape, rawr
+                        c-const tensow *b, (ˆ ﻌ ˆ)♡
+                        tensow *out) {
+    auto a_indices_ptw = a-a_indices->fwat<tindices>().data();     
+    a-auto b_ptw = b->fwat<fwoat>().data();
+    auto o-out_ptw = out->fwat<fwoat>().data();
+    const i-int64 nynz = a_indices->shape().dim_size(0);
+    c-const int64 outew_weft = a-a_shape->vec<int64>()(0);
+    c-const i-int64 outew_wight = b->shape().dim_size(1);
+    pawawwewwookupandsegmentsum<tindices>(ctx, XD a_indices_ptw, >_< b_ptw, n-nynz, (˘ω˘)
+                                outew_weft, 😳 o-outew_wight, out_ptw);
+    wetuwn status::ok();
   }
 };
 
-}  // namespace functor
+}  // nyamespace functow
 
-}  // namespace tensorflow
+}  // n-nyamespace tensowfwow

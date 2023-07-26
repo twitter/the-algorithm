@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.products.home_timeline_tweet_recs
+package com.twittew.fowwow_wecommendations.pwoducts.home_timewine_tweet_wecs
 
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.content_recommender_flow.ContentRecommenderFlow
-import com.twitter.follow_recommendations.flows.content_recommender_flow.ContentRecommenderRequestBuilder
-import com.twitter.follow_recommendations.products.common.Product
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.configapi.HomeTimelineTweetRecsParams._
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.fowwow_wecommendations.common.base.basewecommendationfwow
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.identitytwansfowm
+i-impowt com.twittew.fowwow_wecommendations.common.base.twansfowm
+i-impowt com.twittew.fowwow_wecommendations.common.modews.dispwaywocation
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.wecommendation
+i-impowt com.twittew.fowwow_wecommendations.fwows.content_wecommendew_fwow.contentwecommendewfwow
+impowt com.twittew.fowwow_wecommendations.fwows.content_wecommendew_fwow.contentwecommendewwequestbuiwdew
+impowt com.twittew.fowwow_wecommendations.pwoducts.common.pwoduct
+impowt c-com.twittew.fowwow_wecommendations.pwoducts.common.pwoductwequest
+impowt com.twittew.fowwow_wecommendations.pwoducts.home_timewine_tweet_wecs.configapi.hometimewinetweetwecspawams._
+impowt c-com.twittew.stitch.stitch
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
 /*
- * This "DisplayLocation" is used to generate user recommendations using the ContentRecommenderFlow. These recommendations are later used downstream
- * to generate recommended tweets on Home Timeline.
+ * this "dispwaywocation" is used to genewate u-usew wecommendations using t-the contentwecommendewfwow. 😳😳😳 t-these wecommendations awe watew used downstweam
+ * to genewate wecommended t-tweets on home timewine. mya
  */
-@Singleton
-class HomeTimelineTweetRecsProduct @Inject() (
-  contentRecommenderFlow: ContentRecommenderFlow,
-  contentRecommenderRequestBuilder: ContentRecommenderRequestBuilder)
-    extends Product {
-  override val name: String = "Home Timeline Tweet Recs"
+@singweton
+cwass hometimewinetweetwecspwoduct @inject() (
+  contentwecommendewfwow: contentwecommendewfwow, 😳
+  c-contentwecommendewwequestbuiwdew: contentwecommendewwequestbuiwdew)
+    e-extends p-pwoduct {
+  ovewwide v-vaw nyame: s-stwing = "home timewine tweet wecs"
 
-  override val identifier: String = "home-timeline-tweet-recs"
+  ovewwide v-vaw identifiew: stwing = "home-timewine-tweet-wecs"
 
-  override val displayLocation: DisplayLocation = DisplayLocation.HomeTimelineTweetRecs
+  ovewwide v-vaw dispwaywocation: dispwaywocation = dispwaywocation.hometimewinetweetwecs
 
-  override def selectWorkflows(
-    request: ProductRequest
-  ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
-    contentRecommenderRequestBuilder.build(request).map { contentRecommenderRequest =>
-      Seq(contentRecommenderFlow.mapKey({ request: ProductRequest => contentRecommenderRequest }))
+  ovewwide def sewectwowkfwows(
+    wequest: pwoductwequest
+  ): s-stitch[seq[basewecommendationfwow[pwoductwequest, -.- _ <: wecommendation]]] = {
+    c-contentwecommendewwequestbuiwdew.buiwd(wequest).map { c-contentwecommendewwequest =>
+      s-seq(contentwecommendewfwow.mapkey({ wequest: pwoductwequest => contentwecommendewwequest }))
     }
   }
 
-  override val blender: Transform[ProductRequest, Recommendation] =
-    new IdentityTransform[ProductRequest, Recommendation]
+  ovewwide vaw b-bwendew: twansfowm[pwoductwequest, 🥺 w-wecommendation] =
+    nyew i-identitytwansfowm[pwoductwequest, o.O w-wecommendation]
 
-  override def resultsTransformer(
-    request: ProductRequest
-  ): Stitch[Transform[ProductRequest, Recommendation]] =
-    Stitch.value(new IdentityTransform[ProductRequest, Recommendation])
+  ovewwide def w-wesuwtstwansfowmew(
+    wequest: p-pwoductwequest
+  ): stitch[twansfowm[pwoductwequest, /(^•ω•^) wecommendation]] =
+    s-stitch.vawue(new identitytwansfowm[pwoductwequest, nyaa~~ w-wecommendation])
 
-  override def enabled(request: ProductRequest): Stitch[Boolean] =
-    Stitch.value(request.params(EnableProduct))
+  ovewwide d-def enabwed(wequest: p-pwoductwequest): stitch[boowean] =
+    stitch.vawue(wequest.pawams(enabwepwoduct))
 }

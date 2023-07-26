@@ -1,277 +1,277 @@
-package com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseBulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.HydratorCandidateResult
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.Executor._
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor.Inputs
-import com.twitter.product_mixer.core.service.feature_hydrator_observer.FeatureHydratorObserver
-import com.twitter.stitch.Arrow
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basebuwkcandidatefeatuwehydwatow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basecandidatefeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.hydwatowcandidatewesuwt
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwestowev1.featuwestowev1candidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.misconfiguwedfeatuwemapfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow._
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutow.inputs
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.featuwe_hydwatow_obsewvew.featuwehydwatowobsewvew
+i-impowt c-com.twittew.stitch.awwow
+impowt com.twittew.utiw.twy
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class CandidateFeatureHydratorExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
-  def arrow[Query <: PipelineQuery, Result <: UniversalNoun[Any]](
-    hydrators: Seq[BaseCandidateFeatureHydrator[Query, Result, _]],
-    context: Executor.Context
-  ): Arrow[
-    Inputs[Query, Result],
-    CandidateFeatureHydratorExecutorResult[
-      Result
+@singweton
+cwass candidatefeatuwehydwatowexecutow @inject() (ovewwide vaw statsweceivew: statsweceivew)
+    extends executow {
+  d-def awwow[quewy <: pipewinequewy, (˘ω˘) w-wesuwt <: u-univewsawnoun[any]](
+    h-hydwatows: s-seq[basecandidatefeatuwehydwatow[quewy, 😳😳😳 wesuwt, _]], rawr x3
+    context: e-executow.context
+  ): awwow[
+    inputs[quewy, w-wesuwt], (✿oωo)
+    candidatefeatuwehydwatowexecutowwesuwt[
+      wesuwt
     ]
   ] = {
 
-    val observer = new FeatureHydratorObserver(statsReceiver, hydrators, context)
+    vaw obsewvew = nyew featuwehydwatowobsewvew(statsweceivew, (ˆ ﻌ ˆ)♡ hydwatows, c-context)
 
-    val candidateFeatureHydratorExecutorResults: Seq[Arrow[
-      Inputs[Query, Result],
-      CandidateFeatureHydratorExecutorResult[Result]
-    ]] = hydrators.map(getCandidateHydratorArrow(_, context, observer))
+    vaw candidatefeatuwehydwatowexecutowwesuwts: s-seq[awwow[
+      i-inputs[quewy, :3 w-wesuwt], (U ᵕ U❁)
+      candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
+    ]] = hydwatows.map(getcandidatehydwatowawwow(_, ^^;; context, o-obsewvew))
 
-    val runHydrators = Arrow.collect(candidateFeatureHydratorExecutorResults).map {
-      candidateFeatureHydratorExecutorResult: Seq[CandidateFeatureHydratorExecutorResult[Result]] =>
-        candidateFeatureHydratorExecutorResult.foldLeft(
-          CandidateFeatureHydratorExecutorResult[Result](
-            Seq.empty,
-            Map.empty
+    v-vaw wunhydwatows = awwow.cowwect(candidatefeatuwehydwatowexecutowwesuwts).map {
+      c-candidatefeatuwehydwatowexecutowwesuwt: s-seq[candidatefeatuwehydwatowexecutowwesuwt[wesuwt]] =>
+        candidatefeatuwehydwatowexecutowwesuwt.fowdweft(
+          c-candidatefeatuwehydwatowexecutowwesuwt[wesuwt](
+            seq.empty, mya
+            m-map.empty
           )
-        ) { (accumulator, additionalResult) =>
-          // accumulator.results and additionalResults.results are either the same length or one may be empty
-          // checks in each Hydrator's Arrow implementation ensure the ordering and length are correct
-          val mergedFeatureMaps =
-            if (accumulator.results.length == additionalResult.results.length) {
-              // merge if there are results for both and they are the same size
-              // also handles both being empty
-              accumulator.results.zip(additionalResult.results).map {
-                case (accumulatedScoredCandidate, resultScoredCandidate) =>
-                  val updatedFeatureMap =
-                    accumulatedScoredCandidate.features ++ resultScoredCandidate.features
-                  HydratorCandidateResult(resultScoredCandidate.candidate, updatedFeatureMap)
+        ) { (accumuwatow, 😳😳😳 additionawwesuwt) =>
+          // accumuwatow.wesuwts a-and additionawwesuwts.wesuwts awe eithew t-the same wength ow one may be empty
+          // c-checks in each h-hydwatow's awwow impwementation ensuwe the owdewing and wength awe cowwect
+          vaw mewgedfeatuwemaps =
+            if (accumuwatow.wesuwts.wength == a-additionawwesuwt.wesuwts.wength) {
+              // mewge i-if thewe awe wesuwts fow both a-and they awe t-the same size
+              // awso h-handwes both being empty
+              accumuwatow.wesuwts.zip(additionawwesuwt.wesuwts).map {
+                case (accumuwatedscowedcandidate, OwO w-wesuwtscowedcandidate) =>
+                  vaw updatedfeatuwemap =
+                    accumuwatedscowedcandidate.featuwes ++ wesuwtscowedcandidate.featuwes
+                  hydwatowcandidatewesuwt(wesuwtscowedcandidate.candidate, rawr u-updatedfeatuwemap)
               }
-            } else if (accumulator.results.isEmpty) {
-              // accumulator is empty (the initial case) so use additional results
-              additionalResult.results
-            } else {
-              // empty results but non-empty accumulator due to Hydrator being turned off so use accumulator results
-              accumulator.results
+            } ewse if (accumuwatow.wesuwts.isempty) {
+              // a-accumuwatow i-is empty (the i-initiaw case) so use additionaw w-wesuwts
+              a-additionawwesuwt.wesuwts
+            } ewse {
+              // e-empty wesuwts b-but nyon-empty accumuwatow due to hydwatow b-being tuwned off s-so use accumuwatow w-wesuwts
+              a-accumuwatow.wesuwts
             }
 
-          CandidateFeatureHydratorExecutorResult(
-            mergedFeatureMaps,
-            accumulator.individualFeatureHydratorResults ++ additionalResult.individualFeatureHydratorResults
+          c-candidatefeatuwehydwatowexecutowwesuwt(
+            mewgedfeatuwemaps, XD
+            accumuwatow.individuawfeatuwehydwatowwesuwts ++ additionawwesuwt.individuawfeatuwehydwatowwesuwts
           )
         }
     }
 
-    Arrow.ifelse[Inputs[Query, Result], CandidateFeatureHydratorExecutorResult[Result]](
-      _.candidates.nonEmpty,
-      runHydrators,
-      Arrow.value(CandidateFeatureHydratorExecutorResult(Seq.empty, Map.empty)))
+    a-awwow.ifewse[inputs[quewy, (U ﹏ U) wesuwt], (˘ω˘) candidatefeatuwehydwatowexecutowwesuwt[wesuwt]](
+      _.candidates.nonempty, UwU
+      wunhydwatows, >_<
+      awwow.vawue(candidatefeatuwehydwatowexecutowwesuwt(seq.empty, σωσ map.empty)))
   }
 
-  /** @note the returned [[Arrow]] must have a result for every candidate passed into it in the same order OR a completely empty result */
-  private def getCandidateHydratorArrow[Query <: PipelineQuery, Result <: UniversalNoun[Any]](
-    hydrator: BaseCandidateFeatureHydrator[Query, Result, _],
-    context: Executor.Context,
-    candidateFeatureHydratorObserver: FeatureHydratorObserver
-  ): Arrow[
-    Inputs[Query, Result],
-    CandidateFeatureHydratorExecutorResult[Result]
+  /** @note t-the wetuwned [[awwow]] must have a wesuwt fow evewy candidate p-passed into it i-in the same owdew o-ow a compwetewy empty wesuwt */
+  p-pwivate def getcandidatehydwatowawwow[quewy <: p-pipewinequewy, w-wesuwt <: univewsawnoun[any]](
+    hydwatow: basecandidatefeatuwehydwatow[quewy, 🥺 wesuwt, _],
+    context: executow.context, 🥺
+    candidatefeatuwehydwatowobsewvew: f-featuwehydwatowobsewvew
+  ): awwow[
+    inputs[quewy, ʘwʘ w-wesuwt], :3
+    candidatefeatuwehydwatowexecutowwesuwt[wesuwt]
   ] = {
-    val componentExecutorContext = context.pushToComponentStack(hydrator.identifier)
+    v-vaw componentexecutowcontext = c-context.pushtocomponentstack(hydwatow.identifiew)
 
-    val validateFeatureMapFn: FeatureMap => FeatureMap =
-      hydrator match {
-        // Feature store candidate hydrators store the resulting PredictionRecords and
-        // not the features, so we cannot validate the same way
-        case _: FeatureStoreV1CandidateFeatureHydrator[Query, Result] =>
-          identity
-        case _ =>
-          validateFeatureMap(
-            hydrator.features.asInstanceOf[Set[Feature[_, _]]],
-            _,
-            componentExecutorContext)
+    vaw vawidatefeatuwemapfn: featuwemap => f-featuwemap =
+      h-hydwatow match {
+        // featuwe stowe candidate h-hydwatows s-stowe the wesuwting pwedictionwecowds and
+        // nyot the featuwes, (U ﹏ U) so we c-cannot vawidate t-the same way
+        c-case _: featuwestowev1candidatefeatuwehydwatow[quewy, wesuwt] =>
+          i-identity
+        c-case _ =>
+          vawidatefeatuwemap(
+            h-hydwatow.featuwes.asinstanceof[set[featuwe[_, (U ﹏ U) _]]], ʘwʘ
+            _, >w<
+            componentexecutowcontext)
       }
 
-    val hydratorBaseArrow = hydrator match {
-      case hydrator: CandidateFeatureHydrator[Query, Result] =>
-        singleCandidateHydratorArrow(
-          hydrator,
-          validateFeatureMapFn,
-          componentExecutorContext,
-          parentContext = context)
+    vaw hydwatowbaseawwow = hydwatow match {
+      c-case h-hydwatow: candidatefeatuwehydwatow[quewy, rawr x3 wesuwt] =>
+        singwecandidatehydwatowawwow(
+          h-hydwatow, OwO
+          v-vawidatefeatuwemapfn, ^•ﻌ•^
+          componentexecutowcontext, >_<
+          pawentcontext = context)
 
-      case hydrator: BaseBulkCandidateFeatureHydrator[Query, Result, _] =>
-        bulkCandidateHydratorArrow(
-          hydrator,
-          validateFeatureMapFn,
-          componentExecutorContext,
-          parentContext = context)
+      c-case hydwatow: basebuwkcandidatefeatuwehydwatow[quewy, OwO wesuwt, _] =>
+        buwkcandidatehydwatowawwow(
+          hydwatow, >_<
+          v-vawidatefeatuwemapfn,
+          componentexecutowcontext, (ꈍᴗꈍ)
+          pawentcontext = c-context)
     }
 
-    val candidateFeatureHydratorArrow =
-      Arrow
-        .zipWithArg(hydratorBaseArrow)
+    v-vaw candidatefeatuwehydwatowawwow =
+      awwow
+        .zipwithawg(hydwatowbaseawwow)
         .map {
           case (
-                arg: CandidateFeatureHydratorExecutor.Inputs[Query, Result],
-                featureMapSeq: Seq[FeatureMap]) =>
-            val candidates = arg.candidates.map(_.candidate)
+                a-awg: candidatefeatuwehydwatowexecutow.inputs[quewy, >w< w-wesuwt],
+                featuwemapseq: seq[featuwemap]) =>
+            vaw candidates = awg.candidates.map(_.candidate)
 
-            candidateFeatureHydratorObserver.observeFeatureSuccessAndFailures(
-              hydrator,
-              featureMapSeq)
+            c-candidatefeatuwehydwatowobsewvew.obsewvefeatuwesuccessandfaiwuwes(
+              hydwatow, (U ﹏ U)
+              f-featuwemapseq)
 
-            // Build a map from candidate to FeatureMap
-            val candidateAndFeatureMaps = if (candidates.size == featureMapSeq.size) {
-              candidates.zip(featureMapSeq).map {
-                case (candidate, featureMap) => HydratorCandidateResult(candidate, featureMap)
+            // buiwd a map fwom candidate to featuwemap
+            v-vaw candidateandfeatuwemaps = if (candidates.size == featuwemapseq.size) {
+              c-candidates.zip(featuwemapseq).map {
+                c-case (candidate, featuwemap) => h-hydwatowcandidatewesuwt(candidate, ^^ featuwemap)
               }
-            } else {
-              throw PipelineFailure(
-                MisconfiguredFeatureMapFailure,
-                s"Unexpected response length from ${hydrator.identifier}, ensure hydrator returns feature map for all candidates")
+            } e-ewse {
+              t-thwow pipewinefaiwuwe(
+                m-misconfiguwedfeatuwemapfaiwuwe,
+                s"unexpected wesponse w-wength fwom ${hydwatow.identifiew}, (U ﹏ U) e-ensuwe hydwatow wetuwns featuwe map fow a-aww candidates")
             }
-            val individualFeatureHydratorFeatureMaps =
-              Map(hydrator.identifier -> IndividualFeatureHydratorResult(candidateAndFeatureMaps))
-            CandidateFeatureHydratorExecutorResult(
-              candidateAndFeatureMaps,
-              individualFeatureHydratorFeatureMaps)
+            v-vaw i-individuawfeatuwehydwatowfeatuwemaps =
+              map(hydwatow.identifiew -> individuawfeatuwehydwatowwesuwt(candidateandfeatuwemaps))
+            c-candidatefeatuwehydwatowexecutowwesuwt(
+              candidateandfeatuwemaps, :3
+              i-individuawfeatuwehydwatowfeatuwemaps)
         }
 
-    val conditionallyRunArrow = hydrator match {
-      case hydrator: BaseCandidateFeatureHydrator[Query, Result, _] with Conditionally[
-            Query @unchecked
+    v-vaw conditionawwywunawwow = hydwatow match {
+      case hydwatow: basecandidatefeatuwehydwatow[quewy, (✿oωo) wesuwt, XD _] w-with conditionawwy[
+            q-quewy @unchecked
           ] =>
-        Arrow.ifelse[Inputs[Query, Result], CandidateFeatureHydratorExecutorResult[Result]](
-          { case Inputs(query: Query @unchecked, _) => hydrator.onlyIf(query) },
-          candidateFeatureHydratorArrow,
-          Arrow.value(
-            CandidateFeatureHydratorExecutorResult(
-              Seq.empty,
-              Map(hydrator.identifier -> FeatureHydratorDisabled[Result]())
+        a-awwow.ifewse[inputs[quewy, >w< w-wesuwt], candidatefeatuwehydwatowexecutowwesuwt[wesuwt]](
+          { c-case inputs(quewy: quewy @unchecked, òωó _) => hydwatow.onwyif(quewy) }, (ꈍᴗꈍ)
+          candidatefeatuwehydwatowawwow, rawr x3
+          awwow.vawue(
+            candidatefeatuwehydwatowexecutowwesuwt(
+              s-seq.empty, rawr x3
+              map(hydwatow.identifiew -> f-featuwehydwatowdisabwed[wesuwt]())
             ))
         )
-      case _ => candidateFeatureHydratorArrow
+      case _ => candidatefeatuwehydwatowawwow
     }
 
-    wrapWithErrorHandling(context, hydrator.identifier)(conditionallyRunArrow)
+    w-wwapwithewwowhandwing(context, σωσ hydwatow.identifiew)(conditionawwywunawwow)
   }
 
-  private def singleCandidateHydratorArrow[Query <: PipelineQuery, Result <: UniversalNoun[Any]](
-    hydrator: CandidateFeatureHydrator[Query, Result],
-    validateFeatureMap: FeatureMap => FeatureMap,
-    componentContext: Context,
-    parentContext: Context
-  ): Arrow[Inputs[Query, Result], Seq[FeatureMap]] = {
-    val inputTransformer = Arrow
-      .map { inputs: Inputs[Query, Result] =>
-        inputs.candidates.map { candidate =>
-          (inputs.query, candidate.candidate, candidate.features)
+  p-pwivate def singwecandidatehydwatowawwow[quewy <: p-pipewinequewy, (ꈍᴗꈍ) w-wesuwt <: u-univewsawnoun[any]](
+    h-hydwatow: c-candidatefeatuwehydwatow[quewy, rawr wesuwt], ^^;;
+    vawidatefeatuwemap: featuwemap => featuwemap, rawr x3
+    componentcontext: context, (ˆ ﻌ ˆ)♡
+    p-pawentcontext: c-context
+  ): awwow[inputs[quewy, σωσ w-wesuwt], seq[featuwemap]] = {
+    vaw inputtwansfowmew = a-awwow
+      .map { inputs: inputs[quewy, (U ﹏ U) wesuwt] =>
+        i-inputs.candidates.map { c-candidate =>
+          (inputs.quewy, >w< candidate.candidate, σωσ c-candidate.featuwes)
         }
       }
 
-    val hydratorArrow = Arrow
-      .flatMap[(Query, Result, FeatureMap), FeatureMap] {
-        case (query, candidate, featureMap) =>
-          hydrator.apply(query, candidate, featureMap)
+    vaw hydwatowawwow = awwow
+      .fwatmap[(quewy, nyaa~~ w-wesuwt, 🥺 featuwemap), rawr x3 f-featuwemap] {
+        case (quewy, σωσ candidate, (///ˬ///✿) f-featuwemap) =>
+          h-hydwatow.appwy(quewy, (U ﹏ U) candidate, ^^;; featuwemap)
       }
 
-    // validate before observing so validation failures are caught in the metrics
-    val hydratorArrowWithValidation = hydratorArrow.map(validateFeatureMap)
+    // vawidate befowe obsewving s-so vawidation f-faiwuwes awe c-caught in the m-metwics
+    vaw h-hydwatowawwowwithvawidation = hydwatowawwow.map(vawidatefeatuwemap)
 
-    // no tracing here since per-Component spans is overkill
-    val observedArrow =
-      wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing(
-        parentContext,
-        hydrator.identifier
-      )(hydratorArrowWithValidation)
+    // nyo t-twacing hewe since p-pew-component spans is ovewkiww
+    v-vaw obsewvedawwow =
+      w-wwappewcandidatecomponentwithexecutowbookkeepingwithouttwacing(
+        pawentcontext, 🥺
+        h-hydwatow.identifiew
+      )(hydwatowawwowwithvawidation)
 
-    // only handle non-validation failures
-    val liftNonValidationFailuresToFailedFeatures = Arrow.handle[FeatureMap, FeatureMap] {
-      case NotAMisconfiguredFeatureMapFailure(e) =>
-        featureMapWithFailuresForFeatures(hydrator.features, e, componentContext)
+    // onwy handwe nyon-vawidation faiwuwes
+    v-vaw wiftnonvawidationfaiwuwestofaiwedfeatuwes = awwow.handwe[featuwemap, òωó f-featuwemap] {
+      c-case nyotamisconfiguwedfeatuwemapfaiwuwe(e) =>
+        featuwemapwithfaiwuwesfowfeatuwes(hydwatow.featuwes, e, XD componentcontext)
     }
 
-    wrapComponentsWithTracingOnly(parentContext, hydrator.identifier)(
-      inputTransformer.andThen(
-        Arrow.sequence(observedArrow.andThen(liftNonValidationFailuresToFailedFeatures))
+    w-wwapcomponentswithtwacingonwy(pawentcontext, :3 hydwatow.identifiew)(
+      inputtwansfowmew.andthen(
+        awwow.sequence(obsewvedawwow.andthen(wiftnonvawidationfaiwuwestofaiwedfeatuwes))
       )
     )
   }
 
-  private def bulkCandidateHydratorArrow[Query <: PipelineQuery, Result <: UniversalNoun[Any]](
-    hydrator: BaseBulkCandidateFeatureHydrator[Query, Result, _],
-    validateFeatureMap: FeatureMap => FeatureMap,
-    componentContext: Context,
-    parentContext: Context
-  ): Arrow[Inputs[Query, Result], Seq[FeatureMap]] = {
-    val hydratorArrow: Arrow[Inputs[Query, Result], Seq[FeatureMap]] =
-      Arrow.flatMap { inputs =>
-        hydrator.apply(inputs.query, inputs.candidates)
+  p-pwivate def b-buwkcandidatehydwatowawwow[quewy <: p-pipewinequewy, (U ﹏ U) wesuwt <: univewsawnoun[any]](
+    hydwatow: basebuwkcandidatefeatuwehydwatow[quewy, >w< w-wesuwt, /(^•ω•^) _],
+    vawidatefeatuwemap: featuwemap => f-featuwemap, (⑅˘꒳˘)
+    c-componentcontext: context,
+    p-pawentcontext: context
+  ): a-awwow[inputs[quewy, ʘwʘ w-wesuwt], rawr x3 seq[featuwemap]] = {
+    vaw h-hydwatowawwow: awwow[inputs[quewy, (˘ω˘) wesuwt], seq[featuwemap]] =
+      awwow.fwatmap { i-inputs =>
+        h-hydwatow.appwy(inputs.quewy, o.O inputs.candidates)
       }
 
-    val validationArrow: Arrow[(Inputs[Query, Result], Seq[FeatureMap]), Seq[FeatureMap]] = Arrow
-      .map[(Inputs[Query, Result], Seq[FeatureMap]), Seq[FeatureMap]] {
-        case (inputs, results) =>
-          // For bulk APIs, this ensures no candidates are omitted and also ensures the order is preserved.
-          if (inputs.candidates.length != results.length) {
-            throw PipelineFailure(
-              MisconfiguredFeatureMapFailure,
-              s"Unexpected response from ${hydrator.identifier}, ensure hydrator returns features for all candidates. Missing results for ${inputs.candidates.length - results.length} candidates"
+    v-vaw vawidationawwow: awwow[(inputs[quewy, 😳 w-wesuwt], o.O s-seq[featuwemap]), ^^;; s-seq[featuwemap]] = awwow
+      .map[(inputs[quewy, ( ͡o ω ͡o ) wesuwt], ^^;; seq[featuwemap]), ^^;; seq[featuwemap]] {
+        case (inputs, XD wesuwts) =>
+          // fow buwk apis, 🥺 this ensuwes no candidates awe omitted and awso ensuwes the owdew is pwesewved. (///ˬ///✿)
+          i-if (inputs.candidates.wength != w-wesuwts.wength) {
+            thwow pipewinefaiwuwe(
+              misconfiguwedfeatuwemapfaiwuwe, (U ᵕ U❁)
+              s-s"unexpected w-wesponse fwom ${hydwatow.identifiew}, ^^;; e-ensuwe hydwatow wetuwns featuwes f-fow aww candidates. ^^;; missing w-wesuwts fow ${inputs.candidates.wength - w-wesuwts.wength} candidates"
             )
           }
 
-          results.map(validateFeatureMap)
+          w-wesuwts.map(vawidatefeatuwemap)
       }
 
-    // validate before observing so validation failures are caught in the metrics
-    val hydratorArrowWithValidation: Arrow[Inputs[Query, Result], Seq[FeatureMap]] =
-      Arrow.zipWithArg(hydratorArrow).andThen(validationArrow)
+    // vawidate b-befowe obsewving s-so vawidation faiwuwes awe caught in the m-metwics
+    vaw h-hydwatowawwowwithvawidation: a-awwow[inputs[quewy, rawr w-wesuwt], (˘ω˘) seq[featuwemap]] =
+      a-awwow.zipwithawg(hydwatowawwow).andthen(vawidationawwow)
 
-    val observedArrow =
-      wrapComponentWithExecutorBookkeeping(parentContext, hydrator.identifier)(
-        hydratorArrowWithValidation)
+    v-vaw obsewvedawwow =
+      w-wwapcomponentwithexecutowbookkeeping(pawentcontext, 🥺 hydwatow.identifiew)(
+        h-hydwatowawwowwithvawidation)
 
-    // only handle non-validation failures
-    val liftNonValidationFailuresToFailedFeatures =
-      Arrow.map[(Inputs[Query, Result], Try[Seq[FeatureMap]]), Try[Seq[FeatureMap]]] {
-        case (inputs, resultTry) =>
-          resultTry.handle {
-            case NotAMisconfiguredFeatureMapFailure(e) =>
-              val errorFeatureMap =
-                featureMapWithFailuresForFeatures(
-                  hydrator.features.asInstanceOf[Set[Feature[_, _]]],
-                  e,
-                  componentContext)
-              inputs.candidates.map(_ => errorFeatureMap)
+    // o-onwy handwe nyon-vawidation faiwuwes
+    v-vaw wiftnonvawidationfaiwuwestofaiwedfeatuwes =
+      a-awwow.map[(inputs[quewy, nyaa~~ w-wesuwt], twy[seq[featuwemap]]), :3 t-twy[seq[featuwemap]]] {
+        case (inputs, /(^•ω•^) wesuwttwy) =>
+          w-wesuwttwy.handwe {
+            case nyotamisconfiguwedfeatuwemapfaiwuwe(e) =>
+              v-vaw e-ewwowfeatuwemap =
+                f-featuwemapwithfaiwuwesfowfeatuwes(
+                  hydwatow.featuwes.asinstanceof[set[featuwe[_, ^•ﻌ•^ _]]], UwU
+                  e-e, 😳😳😳
+                  componentcontext)
+              i-inputs.candidates.map(_ => ewwowfeatuwemap)
           }
       }
 
-    Arrow
-      .zipWithArg(observedArrow.liftToTry)
-      .andThen(liftNonValidationFailuresToFailedFeatures)
-      .lowerFromTry
+    a-awwow
+      .zipwithawg(obsewvedawwow.wifttotwy)
+      .andthen(wiftnonvawidationfaiwuwestofaiwedfeatuwes)
+      .wowewfwomtwy
   }
 }
 
-object CandidateFeatureHydratorExecutor {
-  case class Inputs[+Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]])
+object c-candidatefeatuwehydwatowexecutow {
+  case cwass inputs[+quewy <: pipewinequewy, OwO candidate <: u-univewsawnoun[any]](
+    quewy: q-quewy, ^•ﻌ•^
+    candidates: s-seq[candidatewithfeatuwes[candidate]])
 }

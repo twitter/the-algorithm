@@ -1,44 +1,44 @@
-package com.twitter.search.earlybird.common;
+package com.twittew.seawch.eawwybiwd.common;
 
-import org.apache.lucene.search.Query;
+impowt o-owg.apache.wucene.seawch.quewy;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
 
-public class RequestResponsePair {
-  private final EarlybirdRequest request;
-  private final EarlybirdResponse response;
-  private final org.apache.lucene.search.Query luceneQuery;
+p-pubwic cwass wequestwesponsepaiw {
+  p-pwivate finaw e-eawwybiwdwequest w-wequest;
+  p-pwivate finaw eawwybiwdwesponse wesponse;
+  pwivate finaw owg.apache.wucene.seawch.quewy wucenequewy;
 
-  // The serialized query in its final form, after various modifications have been applied to it.
-  // As a note, we have some code paths in which this can be null, but I don't really see them
-  // triggered in production right now.
-  private final com.twitter.search.queryparser.query.Query finalSerializedQuery;
+  // the s-sewiawized quewy in its finaw fowm, òωó aftew vawious m-modifications have been appwied t-to it. ʘwʘ
+  // as a nyote, we have some code paths in which this c-can be nyuww, /(^•ω•^) but i don't weawwy s-see them
+  // twiggewed i-in pwoduction wight nyow. ʘwʘ
+  pwivate finaw com.twittew.seawch.quewypawsew.quewy.quewy finawsewiawizedquewy;
 
-  public RequestResponsePair(
-      EarlybirdRequest request,
-      com.twitter.search.queryparser.query.Query finalSerializedQuery,
-      org.apache.lucene.search.Query luceneQuery,
-      EarlybirdResponse response) {
-    this.request = request;
-    this.luceneQuery = luceneQuery;
-    this.response = response;
-    this.finalSerializedQuery = finalSerializedQuery;
+  p-pubwic wequestwesponsepaiw(
+      eawwybiwdwequest wequest, σωσ
+      com.twittew.seawch.quewypawsew.quewy.quewy finawsewiawizedquewy, OwO
+      o-owg.apache.wucene.seawch.quewy wucenequewy, 😳😳😳
+      eawwybiwdwesponse w-wesponse) {
+    t-this.wequest = w-wequest;
+    t-this.wucenequewy = wucenequewy;
+    this.wesponse = w-wesponse;
+    this.finawsewiawizedquewy = finawsewiawizedquewy;
   }
 
-  public String getFinalSerializedQuery() {
-    return finalSerializedQuery != null ? finalSerializedQuery.serialize() : "N/A";
+  p-pubwic stwing getfinawsewiawizedquewy() {
+    wetuwn finawsewiawizedquewy != nyuww ? finawsewiawizedquewy.sewiawize() : "n/a";
   }
 
-  public EarlybirdRequest getRequest() {
-    return request;
+  p-pubwic eawwybiwdwequest getwequest() {
+    w-wetuwn w-wequest;
   }
 
-  public EarlybirdResponse getResponse() {
-    return response;
+  p-pubwic eawwybiwdwesponse getwesponse() {
+    wetuwn wesponse;
   }
 
-  public Query getLuceneQuery() {
-    return luceneQuery;
+  pubwic quewy g-getwucenequewy() {
+    w-wetuwn wucenequewy;
   }
 }

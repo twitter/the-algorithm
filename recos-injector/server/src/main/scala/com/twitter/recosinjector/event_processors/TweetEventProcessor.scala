@@ -1,256 +1,256 @@
-package com.twitter.recosinjector.event_processors
+package com.twittew.wecosinjectow.event_pwocessows
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.SnowflakeUtils
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.recos.util.Action
-import com.twitter.recos.util.Action.Action
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.recosinjector.clients.SocialGraph
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.recosinjector.edges.TweetEventToUserTweetEntityGraphBuilder
-import com.twitter.recosinjector.edges.TweetEventToUserUserGraphBuilder
-import com.twitter.recosinjector.filters.TweetFilter
-import com.twitter.recosinjector.filters.UserFilter
-import com.twitter.recosinjector.publishers.KafkaEventPublisher
-import com.twitter.recosinjector.util.TweetCreateEventDetails
-import com.twitter.recosinjector.util.TweetDetails
-import com.twitter.recosinjector.util.UserTweetEngagement
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.thriftscala.TweetCreateEvent
-import com.twitter.tweetypie.thriftscala.TweetEvent
-import com.twitter.tweetypie.thriftscala.TweetEventData
-import com.twitter.util.Future
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.utiw.snowfwakeutiws
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.wecos.utiw.action
+i-impowt c-com.twittew.wecos.utiw.action.action
+i-impowt com.twittew.wecosinjectow.cwients.gizmoduck
+impowt com.twittew.wecosinjectow.cwients.sociawgwaph
+impowt com.twittew.wecosinjectow.cwients.tweetypie
+impowt com.twittew.wecosinjectow.edges.tweeteventtousewtweetentitygwaphbuiwdew
+i-impowt com.twittew.wecosinjectow.edges.tweeteventtousewusewgwaphbuiwdew
+impowt com.twittew.wecosinjectow.fiwtews.tweetfiwtew
+impowt c-com.twittew.wecosinjectow.fiwtews.usewfiwtew
+impowt com.twittew.wecosinjectow.pubwishews.kafkaeventpubwishew
+i-impowt com.twittew.wecosinjectow.utiw.tweetcweateeventdetaiws
+impowt com.twittew.wecosinjectow.utiw.tweetdetaiws
+impowt com.twittew.wecosinjectow.utiw.usewtweetengagement
+impowt c-com.twittew.scwooge.thwiftstwuctcodec
+impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetcweateevent
+impowt com.twittew.tweetypie.thwiftscawa.tweetevent
+impowt com.twittew.tweetypie.thwiftscawa.tweeteventdata
+impowt com.twittew.utiw.futuwe
 
 /**
- * Event processor for tweet_events EventBus stream from Tweetypie. This stream provides all the
- * key events related to a new tweet, like Creation, Retweet, Quote Tweet, and Replying.
- * It also carries the entities/metadata information in a tweet, including
- * @ Mention, HashTag, MediaTag, URL, etc.
+ * e-event pwocessow fow tweet_events eventbus stweam fwom tweetypie. 😳 this stweam p-pwovides aww the
+ * key events w-wewated to a n-nyew tweet, wike c-cweation, (U ﹏ U) wetweet, q-quote tweet, mya and wepwying. (U ᵕ U❁)
+ * it awso cawwies t-the entities/metadata infowmation in a tweet, :3 i-incwuding
+ * @ mention, mya hashtag, mediatag, OwO uww, etc. (ˆ ﻌ ˆ)♡
  */
-class TweetEventProcessor(
-  override val eventBusStreamName: String,
-  override val thriftStruct: ThriftStructCodec[TweetEvent],
-  override val serviceIdentifier: ServiceIdentifier,
-  userUserGraphMessageBuilder: TweetEventToUserUserGraphBuilder,
-  userUserGraphTopic: String,
-  userTweetEntityGraphMessageBuilder: TweetEventToUserTweetEntityGraphBuilder,
-  userTweetEntityGraphTopic: String,
-  kafkaEventPublisher: KafkaEventPublisher,
-  socialGraph: SocialGraph,
-  gizmoduck: Gizmoduck,
-  tweetypie: Tweetypie
+cwass tweeteventpwocessow(
+  ovewwide vaw eventbusstweamname: s-stwing, ʘwʘ
+  ovewwide vaw thwiftstwuct: t-thwiftstwuctcodec[tweetevent], o.O
+  o-ovewwide v-vaw sewviceidentifiew: sewviceidentifiew, UwU
+  usewusewgwaphmessagebuiwdew: tweeteventtousewusewgwaphbuiwdew, rawr x3
+  usewusewgwaphtopic: s-stwing, 🥺
+  u-usewtweetentitygwaphmessagebuiwdew: tweeteventtousewtweetentitygwaphbuiwdew, :3
+  u-usewtweetentitygwaphtopic: s-stwing, (ꈍᴗꈍ)
+  kafkaeventpubwishew: k-kafkaeventpubwishew, 🥺
+  sociawgwaph: sociawgwaph, (✿oωo)
+  g-gizmoduck: gizmoduck, (U ﹏ U)
+  tweetypie: t-tweetypie
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventBusProcessor[TweetEvent] {
+  ovewwide impwicit v-vaw statsweceivew: statsweceivew)
+    e-extends eventbuspwocessow[tweetevent] {
 
-  private val tweetCreateEventCounter = statsReceiver.counter("num_tweet_create_events")
-  private val nonTweetCreateEventCounter = statsReceiver.counter("num_non_tweet_create_events")
+  p-pwivate vaw tweetcweateeventcountew = statsweceivew.countew("num_tweet_cweate_events")
+  pwivate vaw nyontweetcweateeventcountew = statsweceivew.countew("num_non_tweet_cweate_events")
 
-  private val tweetActionStats = statsReceiver.scope("tweet_action")
-  private val numUrlCounter = statsReceiver.counter("num_tweet_url")
-  private val numMediaUrlCounter = statsReceiver.counter("num_tweet_media_url")
-  private val numHashTagCounter = statsReceiver.counter("num_tweet_hashtag")
+  pwivate vaw tweetactionstats = s-statsweceivew.scope("tweet_action")
+  p-pwivate vaw nyumuwwcountew = statsweceivew.countew("num_tweet_uww")
+  pwivate v-vaw nyummediauwwcountew = s-statsweceivew.countew("num_tweet_media_uww")
+  p-pwivate vaw nyumhashtagcountew = statsweceivew.countew("num_tweet_hashtag")
 
-  private val numMentionsCounter = statsReceiver.counter("num_tweet_mention")
-  private val numMediatagCounter = statsReceiver.counter("num_tweet_mediatag")
-  private val numValidMentionsCounter = statsReceiver.counter("num_tweet_valid_mention")
-  private val numValidMediatagCounter = statsReceiver.counter("num_tweet_valid_mediatag")
+  pwivate v-vaw nummentionscountew = statsweceivew.countew("num_tweet_mention")
+  pwivate vaw nyummediatagcountew = statsweceivew.countew("num_tweet_mediatag")
+  p-pwivate vaw nyumvawidmentionscountew = s-statsweceivew.countew("num_tweet_vawid_mention")
+  p-pwivate vaw nyumvawidmediatagcountew = s-statsweceivew.countew("num_tweet_vawid_mediatag")
 
-  private val numNullCastTweetCounter = statsReceiver.counter("num_null_cast_tweet")
-  private val numNullCastSourceTweetCounter = statsReceiver.counter("num_null_cast_source_tweet")
-  private val numTweetFailSafetyLevelCounter = statsReceiver.counter("num_fail_tweetypie_safety")
-  private val numAuthorUnsafeCounter = statsReceiver.counter("num_author_unsafe")
-  private val numProcessTweetCounter = statsReceiver.counter("num_process_tweet")
-  private val numNoProcessTweetCounter = statsReceiver.counter("num_no_process_tweet")
+  pwivate v-vaw nyumnuwwcasttweetcountew = s-statsweceivew.countew("num_nuww_cast_tweet")
+  p-pwivate vaw nyumnuwwcastsouwcetweetcountew = statsweceivew.countew("num_nuww_cast_souwce_tweet")
+  p-pwivate vaw nyumtweetfaiwsafetywevewcountew = statsweceivew.countew("num_faiw_tweetypie_safety")
+  p-pwivate v-vaw nyumauthowunsafecountew = s-statsweceivew.countew("num_authow_unsafe")
+  p-pwivate v-vaw nyumpwocesstweetcountew = statsweceivew.countew("num_pwocess_tweet")
+  pwivate vaw nyumnopwocesstweetcountew = s-statsweceivew.countew("num_no_pwocess_tweet")
 
-  private val selfRetweetCounter = statsReceiver.counter("num_retweets_self")
+  pwivate vaw sewfwetweetcountew = statsweceivew.countew("num_wetweets_sewf")
 
-  private val engageUserFilter = new UserFilter(gizmoduck)(statsReceiver.scope("author_user"))
-  private val tweetFilter = new TweetFilter(tweetypie)
+  pwivate vaw engageusewfiwtew = n-nyew usewfiwtew(gizmoduck)(statsweceivew.scope("authow_usew"))
+  pwivate vaw tweetfiwtew = nyew tweetfiwtew(tweetypie)
 
-  private def trackTweetCreateEventStats(details: TweetCreateEventDetails): Unit = {
-    tweetActionStats.counter(details.userTweetEngagement.action.toString).incr()
+  pwivate d-def twacktweetcweateeventstats(detaiws: tweetcweateeventdetaiws): u-unit = {
+    t-tweetactionstats.countew(detaiws.usewtweetengagement.action.tostwing).incw()
 
-    details.userTweetEngagement.tweetDetails.foreach { tweetDetails =>
-      tweetDetails.mentionUserIds.foreach(mention => numMentionsCounter.incr(mention.size))
-      tweetDetails.mediatagUserIds.foreach(mediatag => numMediatagCounter.incr(mediatag.size))
-      tweetDetails.urls.foreach(urls => numUrlCounter.incr(urls.size))
-      tweetDetails.mediaUrls.foreach(mediaUrls => numMediaUrlCounter.incr(mediaUrls.size))
-      tweetDetails.hashtags.foreach(hashtags => numHashTagCounter.incr(hashtags.size))
+    detaiws.usewtweetengagement.tweetdetaiws.foweach { t-tweetdetaiws =>
+      tweetdetaiws.mentionusewids.foweach(mention => n-nyummentionscountew.incw(mention.size))
+      t-tweetdetaiws.mediatagusewids.foweach(mediatag => nyummediatagcountew.incw(mediatag.size))
+      tweetdetaiws.uwws.foweach(uwws => nyumuwwcountew.incw(uwws.size))
+      tweetdetaiws.mediauwws.foweach(mediauwws => nummediauwwcountew.incw(mediauwws.size))
+      tweetdetaiws.hashtags.foweach(hashtags => n-nyumhashtagcountew.incw(hashtags.size))
     }
 
-    details.validMentionUserIds.foreach(mentions => numValidMentionsCounter.incr(mentions.size))
-    details.validMediatagUserIds.foreach(mediatags => numValidMediatagCounter.incr(mediatags.size))
+    detaiws.vawidmentionusewids.foweach(mentions => n-nyumvawidmentionscountew.incw(mentions.size))
+    detaiws.vawidmediatagusewids.foweach(mediatags => n-nyumvawidmediatagcountew.incw(mediatags.size))
   }
 
   /**
-   * Given a created tweet, return what type of tweet it is, i.e. Tweet, Retweet, Quote, or Reply。
-   * Retweet, Quote, or Reply are responsive actions to a source tweet, so for these tweets,
-   * we also return the tweet id and author of the source tweet (ex. the tweet being retweeted).
+   * g-given a cweated tweet, :3 wetuwn nyani type of tweet i-it is, ^^;; i.e. tweet, w-wetweet, rawr quote, ow wepwy。
+   * w-wetweet, 😳😳😳 q-quote, (✿oωo) ow wepwy awe wesponsive actions to a souwce tweet, OwO so fow these tweets, ʘwʘ
+   * w-we awso wetuwn t-the tweet id a-and authow of the souwce tweet (ex. (ˆ ﻌ ˆ)♡ t-the tweet being w-wetweeted). (U ﹏ U)
    */
-  private def getTweetAction(tweetDetails: TweetDetails): Action = {
-    (tweetDetails.replySourceId, tweetDetails.retweetSourceId, tweetDetails.quoteSourceId) match {
-      case (Some(_), _, _) =>
-        Action.Reply
-      case (_, Some(_), _) =>
-        Action.Retweet
-      case (_, _, Some(_)) =>
-        Action.Quote
+  pwivate d-def gettweetaction(tweetdetaiws: tweetdetaiws): action = {
+    (tweetdetaiws.wepwysouwceid, UwU tweetdetaiws.wetweetsouwceid, XD tweetdetaiws.quotesouwceid) m-match {
+      c-case (some(_), ʘwʘ _, _) =>
+        action.wepwy
+      case (_, rawr x3 s-some(_), ^^;; _) =>
+        a-action.wetweet
+      case (_, ʘwʘ _, some(_)) =>
+        action.quote
       case _ =>
-        Action.Tweet
+        a-action.tweet
     }
   }
 
   /**
-   * Given a list of mentioned users and mediatagged users in the tweet, return the users who
-   * actually follow the source user.
+   * given a wist of mentioned usews and mediatagged usews in the t-tweet, (U ﹏ U) wetuwn the usews who
+   * actuawwy fowwow t-the souwce usew. (˘ω˘)
    */
-  private def getFollowedByIds(
-    sourceUserId: Long,
-    mentionUserIds: Option[Seq[Long]],
-    mediatagUserIds: Option[Seq[Long]]
-  ): Future[Seq[Long]] = {
-    val uniqueEntityUserIds =
-      (mentionUserIds.getOrElse(Nil) ++ mediatagUserIds.getOrElse(Nil)).distinct
-    if (uniqueEntityUserIds.isEmpty) {
-      Future.Nil
-    } else {
-      socialGraph.followedByNotMutedBy(sourceUserId, uniqueEntityUserIds)
+  p-pwivate def getfowwowedbyids(
+    souwceusewid: wong, (ꈍᴗꈍ)
+    m-mentionusewids: o-option[seq[wong]], /(^•ω•^)
+    mediatagusewids: option[seq[wong]]
+  ): futuwe[seq[wong]] = {
+    v-vaw uniqueentityusewids =
+      (mentionusewids.getowewse(niw) ++ m-mediatagusewids.getowewse(niw)).distinct
+    if (uniqueentityusewids.isempty) {
+      futuwe.niw
+    } ewse {
+      s-sociawgwaph.fowwowedbynotmutedby(souwceusewid, >_< uniqueentityusewids)
     }
   }
 
-  private def getSourceTweet(tweetDetails: TweetDetails): Future[Option[Tweet]] = {
-    tweetDetails.sourceTweetId match {
-      case Some(sourceTweetId) =>
-        tweetypie.getTweet(sourceTweetId)
+  p-pwivate def g-getsouwcetweet(tweetdetaiws: tweetdetaiws): f-futuwe[option[tweet]] = {
+    tweetdetaiws.souwcetweetid m-match {
+      c-case some(souwcetweetid) =>
+        t-tweetypie.gettweet(souwcetweetid)
       case _ =>
-        Future.None
+        f-futuwe.none
     }
   }
 
   /**
-   * Extract and return the details when the source user created a new tweet.
+   * e-extwact and wetuwn the detaiws when the souwce u-usew cweated a-a nyew tweet. σωσ
    */
-  private def getTweetDetails(
-    tweet: Tweet,
-    engageUser: User
-  ): Future[TweetCreateEventDetails] = {
-    val tweetDetails = TweetDetails(tweet)
+  p-pwivate def gettweetdetaiws(
+    tweet: tweet, ^^;;
+    e-engageusew: usew
+  ): futuwe[tweetcweateeventdetaiws] = {
+    v-vaw tweetdetaiws = t-tweetdetaiws(tweet)
 
-    val action = getTweetAction(tweetDetails)
-    val tweetCreationTimeMillis = SnowflakeUtils.tweetCreationTime(tweet.id).map(_.inMilliseconds)
-    val engageUserId = engageUser.id
-    val userTweetEngagement = UserTweetEngagement(
-      engageUserId = engageUserId,
-      engageUser = Some(engageUser),
-      action = action,
-      engagementTimeMillis = tweetCreationTimeMillis,
-      tweetId = tweet.id,
-      tweetDetails = Some(tweetDetails)
+    vaw action = gettweetaction(tweetdetaiws)
+    vaw tweetcweationtimemiwwis = snowfwakeutiws.tweetcweationtime(tweet.id).map(_.inmiwwiseconds)
+    v-vaw engageusewid = e-engageusew.id
+    v-vaw usewtweetengagement = u-usewtweetengagement(
+      engageusewid = e-engageusewid, 😳
+      engageusew = some(engageusew), >_<
+      action = action, -.-
+      engagementtimemiwwis = tweetcweationtimemiwwis, UwU
+      tweetid = tweet.id, :3
+      t-tweetdetaiws = some(tweetdetaiws)
     )
 
-    val sourceTweetFut = getSourceTweet(tweetDetails)
-    val followedByIdsFut = getFollowedByIds(
-      engageUserId,
-      tweetDetails.mentionUserIds,
-      tweetDetails.mediatagUserIds
+    v-vaw souwcetweetfut = getsouwcetweet(tweetdetaiws)
+    vaw fowwowedbyidsfut = g-getfowwowedbyids(
+      engageusewid, σωσ
+      tweetdetaiws.mentionusewids,
+      t-tweetdetaiws.mediatagusewids
     )
 
-    Future.join(followedByIdsFut, sourceTweetFut).map {
-      case (followedByIds, sourceTweet) =>
-        TweetCreateEventDetails(
-          userTweetEngagement = userTweetEngagement,
-          validEntityUserIds = followedByIds,
-          sourceTweetDetails = sourceTweet.map(TweetDetails)
+    futuwe.join(fowwowedbyidsfut, >w< s-souwcetweetfut).map {
+      c-case (fowwowedbyids, (ˆ ﻌ ˆ)♡ s-souwcetweet) =>
+        t-tweetcweateeventdetaiws(
+          u-usewtweetengagement = usewtweetengagement, ʘwʘ
+          vawidentityusewids = fowwowedbyids, :3
+          souwcetweetdetaiws = souwcetweet.map(tweetdetaiws)
         )
     }
   }
 
   /**
-   * Exclude any Retweets of one's own tweets
+   * excwude a-any wetweets o-of one's own t-tweets
    */
-  private def isEventSelfRetweet(tweetEvent: TweetCreateEventDetails): Boolean = {
-    (tweetEvent.userTweetEngagement.action == Action.Retweet) &&
-    tweetEvent.userTweetEngagement.tweetDetails.exists(
-      _.sourceTweetUserId.contains(
-        tweetEvent.userTweetEngagement.engageUserId
+  pwivate def iseventsewfwetweet(tweetevent: t-tweetcweateeventdetaiws): boowean = {
+    (tweetevent.usewtweetengagement.action == action.wetweet) &&
+    tweetevent.usewtweetengagement.tweetdetaiws.exists(
+      _.souwcetweetusewid.contains(
+        t-tweetevent.usewtweetengagement.engageusewid
       ))
   }
 
-  private def isTweetPassSafetyFilter(tweetEvent: TweetCreateEventDetails): Future[Boolean] = {
-    tweetEvent.userTweetEngagement.action match {
-      case Action.Reply | Action.Retweet | Action.Quote =>
-        tweetEvent.userTweetEngagement.tweetDetails
-          .flatMap(_.sourceTweetId).map { sourceTweetId =>
-            tweetFilter.filterForTweetypieSafetyLevel(sourceTweetId)
-          }.getOrElse(Future(false))
-      case Action.Tweet =>
-        tweetFilter.filterForTweetypieSafetyLevel(tweetEvent.userTweetEngagement.tweetId)
+  p-pwivate def istweetpasssafetyfiwtew(tweetevent: tweetcweateeventdetaiws): f-futuwe[boowean] = {
+    tweetevent.usewtweetengagement.action match {
+      c-case action.wepwy | a-action.wetweet | action.quote =>
+        t-tweetevent.usewtweetengagement.tweetdetaiws
+          .fwatmap(_.souwcetweetid).map { s-souwcetweetid =>
+            tweetfiwtew.fiwtewfowtweetypiesafetywevew(souwcetweetid)
+          }.getowewse(futuwe(fawse))
+      case action.tweet =>
+        tweetfiwtew.fiwtewfowtweetypiesafetywevew(tweetevent.usewtweetengagement.tweetid)
     }
   }
 
-  private def shouldProcessTweetEvent(event: TweetCreateEventDetails): Future[Boolean] = {
-    val engagement = event.userTweetEngagement
-    val engageUserId = engagement.engageUserId
+  p-pwivate def s-shouwdpwocesstweetevent(event: t-tweetcweateeventdetaiws): f-futuwe[boowean] = {
+    v-vaw engagement = event.usewtweetengagement
+    v-vaw engageusewid = e-engagement.engageusewid
 
-    val isNullCastTweet = engagement.tweetDetails.forall(_.isNullCastTweet)
-    val isNullCastSourceTweet = event.sourceTweetDetails.exists(_.isNullCastTweet)
-    val isSelfRetweet = isEventSelfRetweet(event)
-    val isEngageUserSafeFut = engageUserFilter.filterByUserId(engageUserId)
-    val isTweetPassSafetyFut = isTweetPassSafetyFilter(event)
+    vaw isnuwwcasttweet = e-engagement.tweetdetaiws.fowaww(_.isnuwwcasttweet)
+    vaw i-isnuwwcastsouwcetweet = event.souwcetweetdetaiws.exists(_.isnuwwcasttweet)
+    v-vaw issewfwetweet = iseventsewfwetweet(event)
+    vaw isengageusewsafefut = e-engageusewfiwtew.fiwtewbyusewid(engageusewid)
+    vaw istweetpasssafetyfut = i-istweetpasssafetyfiwtew(event)
 
-    Future.join(isEngageUserSafeFut, isTweetPassSafetyFut).map {
-      case (isEngageUserSafe, isTweetPassSafety) =>
-        if (isNullCastTweet) numNullCastTweetCounter.incr()
-        if (isNullCastSourceTweet) numNullCastSourceTweetCounter.incr()
-        if (!isEngageUserSafe) numAuthorUnsafeCounter.incr()
-        if (isSelfRetweet) selfRetweetCounter.incr()
-        if (!isTweetPassSafety) numTweetFailSafetyLevelCounter.incr()
+    futuwe.join(isengageusewsafefut, (˘ω˘) i-istweetpasssafetyfut).map {
+      case (isengageusewsafe, 😳😳😳 i-istweetpasssafety) =>
+        if (isnuwwcasttweet) nyumnuwwcasttweetcountew.incw()
+        i-if (isnuwwcastsouwcetweet) n-nyumnuwwcastsouwcetweetcountew.incw()
+        i-if (!isengageusewsafe) nyumauthowunsafecountew.incw()
+        if (issewfwetweet) sewfwetweetcountew.incw()
+        if (!istweetpasssafety) n-nyumtweetfaiwsafetywevewcountew.incw()
 
-        !isNullCastTweet &&
-        !isNullCastSourceTweet &&
-        !isSelfRetweet &&
-        isEngageUserSafe &&
-        isTweetPassSafety
+        !isnuwwcasttweet &&
+        !isnuwwcastsouwcetweet &&
+        !issewfwetweet &&
+        isengageusewsafe &&
+        istweetpasssafety
     }
   }
 
-  override def processEvent(event: TweetEvent): Future[Unit] = {
+  o-ovewwide d-def pwocessevent(event: tweetevent): f-futuwe[unit] = {
     event.data match {
-      case TweetEventData.TweetCreateEvent(event: TweetCreateEvent) =>
-        getTweetDetails(
-          tweet = event.tweet,
-          engageUser = event.user
-        ).flatMap { eventWithDetails =>
-          tweetCreateEventCounter.incr()
+      c-case tweeteventdata.tweetcweateevent(event: t-tweetcweateevent) =>
+        gettweetdetaiws(
+          tweet = e-event.tweet, rawr x3
+          engageusew = event.usew
+        ).fwatmap { e-eventwithdetaiws =>
+          t-tweetcweateeventcountew.incw()
 
-          shouldProcessTweetEvent(eventWithDetails).map {
-            case true =>
-              numProcessTweetCounter.incr()
-              trackTweetCreateEventStats(eventWithDetails)
-              // Convert the event for UserUserGraph
-              userUserGraphMessageBuilder.processEvent(eventWithDetails).map { edges =>
-                edges.foreach { edge =>
-                  kafkaEventPublisher.publish(edge.convertToRecosHoseMessage, userUserGraphTopic)
+          shouwdpwocesstweetevent(eventwithdetaiws).map {
+            case t-twue =>
+              nyumpwocesstweetcountew.incw()
+              t-twacktweetcweateeventstats(eventwithdetaiws)
+              // c-convewt the event f-fow usewusewgwaph
+              usewusewgwaphmessagebuiwdew.pwocessevent(eventwithdetaiws).map { edges =>
+                edges.foweach { edge =>
+                  kafkaeventpubwishew.pubwish(edge.convewttowecoshosemessage, (✿oωo) usewusewgwaphtopic)
                 }
               }
-              // Convert the event for UserTweetEntityGraph
-              userTweetEntityGraphMessageBuilder.processEvent(eventWithDetails).map { edges =>
-                edges.foreach { edge =>
-                  kafkaEventPublisher
-                    .publish(edge.convertToRecosHoseMessage, userTweetEntityGraphTopic)
+              // convewt the event fow usewtweetentitygwaph
+              usewtweetentitygwaphmessagebuiwdew.pwocessevent(eventwithdetaiws).map { edges =>
+                edges.foweach { e-edge =>
+                  k-kafkaeventpubwishew
+                    .pubwish(edge.convewttowecoshosemessage, (ˆ ﻌ ˆ)♡ usewtweetentitygwaphtopic)
                 }
               }
-            case false =>
-              numNoProcessTweetCounter.incr()
+            case fawse =>
+              nyumnopwocesstweetcountew.incw()
           }
         }
-      case _ =>
-        nonTweetCreateEventCounter.incr()
-        Future.Unit
+      c-case _ =>
+        n-nyontweetcweateeventcountew.incw()
+        f-futuwe.unit
     }
   }
 }

@@ -1,38 +1,38 @@
-class Profile(Struct):
-  project = Required(String)
-  date = Required(String)
-  environment = Default(String, 'dev')
-  job_name = Default(String, 'iikf-hl-0-el-15-tweets-ann-batch-job')
-  machine = Default(String, 'n2-highmem-4')
+cwass pwofiwe(stwuct):
+  pwoject = w-wequiwed(stwing)
+  d-date = wequiwed(stwing)
+  enviwonment = d-defauwt(stwing, XD 'dev')
+  j-job_name = d-defauwt(stwing, :3 'iikf-hw-0-ew-15-tweets-ann-batch-job')
+  m-machine = d-defauwt(stwing, 😳😳😳 'n2-highmem-4')
 
-job = Job(
-   name='{{profile.job_name}}',
-   project='{{profile.project}}',
-   staging_bucket='{{profile.project}}',
-   service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-   region='us-central1',
-   worker_config=WorkerConfig(
-       num_workers=2,
-       worker_machine_type='{{profile.machine}}',
-       worker_disk_type=WorkerDiskType('HDD'),
-   ),
-   extra_args={
-     "date": '{{profile.date}}'
-   },
-   service_identifier='twtr:svc:{{profile.user_name}}:{{profile.job_name}}:{{profile.environment}}:{{profile.cluster}}',
-   deployment_config=BatchDeploymentConfig(
-     role='{{profile.user_name}}',
-     environment='prod',
-     build_target='src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann:iikf-hl-0-el-15-tweets-ann-batch-job',
-     gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-     statebird_config=StatebirdConfig(
-       batch_width='PT4H',
-       first_time='{{profile.date}}',
-     ),
-     workflow_config=WorkflowConfig(
-      play=True,
-     ),
-     timeout='PT24H'
+j-job = job(
+   nyame='{{pwofiwe.job_name}}', -.-
+   pwoject='{{pwofiwe.pwoject}}', ( ͡o ω ͡o )
+   staging_bucket='{{pwofiwe.pwoject}}', rawr x3
+   sewvice_account='{{pwofiwe.usew_name}}-shdw@twttw-dp-svc-accounts.iam.gsewviceaccount.com', nyaa~~
+   wegion='us-centwaw1', /(^•ω•^)
+   w-wowkew_config=wowkewconfig(
+       nyum_wowkews=2, rawr
+       wowkew_machine_type='{{pwofiwe.machine}}', OwO
+       w-wowkew_disk_type=wowkewdisktype('hdd'),
+   ), (U ﹏ U)
+   extwa_awgs={
+     "date": '{{pwofiwe.date}}'
+   }, >_<
+   s-sewvice_identifiew='twtw:svc:{{pwofiwe.usew_name}}:{{pwofiwe.job_name}}:{{pwofiwe.enviwonment}}:{{pwofiwe.cwustew}}', rawr x3
+   depwoyment_config=batchdepwoymentconfig(
+     wowe='{{pwofiwe.usew_name}}', mya
+     enviwonment='pwod', nyaa~~
+     b-buiwd_tawget='swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/tweets_ann:iikf-hw-0-ew-15-tweets-ann-batch-job', (⑅˘꒳˘)
+     gcp_depwoyment_cwedentiaws='/vaw/wib/tss/keys/{{pwofiwe.usew_name}}/cwoud/gcp/dp/shadow.json', rawr x3
+     statebiwd_config=statebiwdconfig(
+       b-batch_width='pt4h', (✿oωo)
+       f-fiwst_time='{{pwofiwe.date}}', (ˆ ﻌ ˆ)♡
+     ), (˘ω˘)
+     wowkfwow_config=wowkfwowconfig(
+      pway=twue, (⑅˘꒳˘)
+     ), (///ˬ///✿)
+     timeout='pt24h'
    )
 )
 

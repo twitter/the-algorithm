@@ -1,121 +1,121 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.twittew.timewines.pwediction.common.aggwegates
 
-import com.twitter.ml.api.matcher.FeatureMatcher
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import scala.collection.JavaConverters._
+impowt c-com.twittew.mw.api.matchew.featuwematchew
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup
+i-impowt s-scawa.cowwection.javaconvewtews._
 
-object FeatureSelectorConfig {
-  val BasePairsToStore = Seq(
-    ("twitter_wide_user_aggregate.pair", "*"),
-    ("twitter_wide_user_author_aggregate.pair", "*"),
-    ("user_aggregate_v5.continuous.pair", "*"),
-    ("user_aggregate_v7.pair", "*"),
-    ("user_author_aggregate_v2.pair", "recap.earlybird.*"),
-    ("user_author_aggregate_v2.pair", "recap.searchfeature.*"),
-    ("user_author_aggregate_v2.pair", "recap.tweetfeature.embeds*"),
-    ("user_author_aggregate_v2.pair", "recap.tweetfeature.link_count*"),
-    ("user_author_aggregate_v2.pair", "engagement_features.in_network.*"),
-    ("user_author_aggregate_v2.pair", "recap.tweetfeature.is_reply.*"),
-    ("user_author_aggregate_v2.pair", "recap.tweetfeature.is_retweet.*"),
-    ("user_author_aggregate_v2.pair", "recap.tweetfeature.num_mentions.*"),
-    ("user_author_aggregate_v5.pair", "*"),
-    ("user_author_aggregate_tweetsource_v1.pair", "*"),
-    ("user_engager_aggregate.pair", "*"),
-    ("user_mention_aggregate.pair", "*"),
-    ("user_request_context_aggregate.dow.pair", "*"),
-    ("user_request_context_aggregate.hour.pair", "*"),
-    ("user_aggregate_v6.pair", "*"),
-    ("user_original_author_aggregate_v1.pair", "*"),
-    ("user_original_author_aggregate_v2.pair", "*"),
-    ("original_author_aggregate_v1.pair", "*"),
-    ("original_author_aggregate_v2.pair", "*"),
-    ("author_topic_aggregate.pair", "*"),
-    ("user_list_aggregate.pair", "*"),
-    ("user_topic_aggregate.pair", "*"),
-    ("user_topic_aggregate_v2.pair", "*"),
-    ("user_inferred_topic_aggregate.pair", "*"),
-    ("user_inferred_topic_aggregate_v2.pair", "*"),
-    ("user_media_annotation_aggregate.pair", "*"),
-    ("user_media_annotation_aggregate.pair", "*"),
-    ("user_author_good_click_aggregate.pair", "*"),
-    ("user_engager_good_click_aggregate.pair", "*")
+o-object featuwesewectowconfig {
+  v-vaw basepaiwstostowe = s-seq(
+    ("twittew_wide_usew_aggwegate.paiw", >_< "*"), >_<
+    ("twittew_wide_usew_authow_aggwegate.paiw", (⑅˘꒳˘) "*"),
+    ("usew_aggwegate_v5.continuous.paiw", /(^•ω•^) "*"),
+    ("usew_aggwegate_v7.paiw", rawr x3 "*"),
+    ("usew_authow_aggwegate_v2.paiw", (U ﹏ U) "wecap.eawwybiwd.*"), (U ﹏ U)
+    ("usew_authow_aggwegate_v2.paiw", (⑅˘꒳˘) "wecap.seawchfeatuwe.*"), òωó
+    ("usew_authow_aggwegate_v2.paiw", ʘwʘ "wecap.tweetfeatuwe.embeds*"), /(^•ω•^)
+    ("usew_authow_aggwegate_v2.paiw", ʘwʘ "wecap.tweetfeatuwe.wink_count*"), σωσ
+    ("usew_authow_aggwegate_v2.paiw", OwO "engagement_featuwes.in_netwowk.*"), 😳😳😳
+    ("usew_authow_aggwegate_v2.paiw", 😳😳😳 "wecap.tweetfeatuwe.is_wepwy.*"), o.O
+    ("usew_authow_aggwegate_v2.paiw", ( ͡o ω ͡o ) "wecap.tweetfeatuwe.is_wetweet.*"), (U ﹏ U)
+    ("usew_authow_aggwegate_v2.paiw", (///ˬ///✿) "wecap.tweetfeatuwe.num_mentions.*"), >w<
+    ("usew_authow_aggwegate_v5.paiw", rawr "*"),
+    ("usew_authow_aggwegate_tweetsouwce_v1.paiw", mya "*"), ^^
+    ("usew_engagew_aggwegate.paiw", 😳😳😳 "*"),
+    ("usew_mention_aggwegate.paiw", mya "*"),
+    ("usew_wequest_context_aggwegate.dow.paiw", 😳 "*"),
+    ("usew_wequest_context_aggwegate.houw.paiw", -.- "*"), 🥺
+    ("usew_aggwegate_v6.paiw", o.O "*"),
+    ("usew_owiginaw_authow_aggwegate_v1.paiw", /(^•ω•^) "*"),
+    ("usew_owiginaw_authow_aggwegate_v2.paiw", nyaa~~ "*"), nyaa~~
+    ("owiginaw_authow_aggwegate_v1.paiw", :3 "*"), 😳😳😳
+    ("owiginaw_authow_aggwegate_v2.paiw", (˘ω˘) "*"), ^^
+    ("authow_topic_aggwegate.paiw", :3 "*"),
+    ("usew_wist_aggwegate.paiw", -.- "*"), 😳
+    ("usew_topic_aggwegate.paiw", mya "*"),
+    ("usew_topic_aggwegate_v2.paiw", (˘ω˘) "*"),
+    ("usew_infewwed_topic_aggwegate.paiw", >_< "*"),
+    ("usew_infewwed_topic_aggwegate_v2.paiw", -.- "*"),
+    ("usew_media_annotation_aggwegate.paiw", 🥺 "*"),
+    ("usew_media_annotation_aggwegate.paiw", (U ﹏ U) "*"), >w<
+    ("usew_authow_good_cwick_aggwegate.paiw", "*"), mya
+    ("usew_engagew_good_cwick_aggwegate.paiw", >w< "*")
   )
-  val PairsToStore = BasePairsToStore ++ Seq(
-    ("user_aggregate_v2.pair", "*"),
-    ("user_aggregate_v5.boolean.pair", "*"),
-    ("user_aggregate_tweetsource_v1.pair", "*"),
-  )
-
-
-  val LabelsToStore = Seq(
-    "any_label",
-    "recap.engagement.is_favorited",
-    "recap.engagement.is_retweeted",
-    "recap.engagement.is_replied",
-    "recap.engagement.is_open_linked",
-    "recap.engagement.is_profile_clicked",
-    "recap.engagement.is_clicked",
-    "recap.engagement.is_photo_expanded",
-    "recap.engagement.is_video_playback_50",
-    "recap.engagement.is_video_quality_viewed",
-    "recap.engagement.is_replied_reply_impressed_by_author",
-    "recap.engagement.is_replied_reply_favorited_by_author",
-    "recap.engagement.is_replied_reply_replied_by_author",
-    "recap.engagement.is_report_tweet_clicked",
-    "recap.engagement.is_block_clicked",
-    "recap.engagement.is_mute_clicked",
-    "recap.engagement.is_dont_like",
-    "recap.engagement.is_good_clicked_convo_desc_favorited_or_replied",
-    "recap.engagement.is_good_clicked_convo_desc_v2",
-    "itl.engagement.is_favorited",
-    "itl.engagement.is_retweeted",
-    "itl.engagement.is_replied",
-    "itl.engagement.is_open_linked",
-    "itl.engagement.is_profile_clicked",
-    "itl.engagement.is_clicked",
-    "itl.engagement.is_photo_expanded",
-    "itl.engagement.is_video_playback_50"
+  vaw paiwstostowe = basepaiwstostowe ++ seq(
+    ("usew_aggwegate_v2.paiw", nyaa~~ "*"), (✿oωo)
+    ("usew_aggwegate_v5.boowean.paiw", ʘwʘ "*"),
+    ("usew_aggwegate_tweetsouwce_v1.paiw", (ˆ ﻌ ˆ)♡ "*"),
   )
 
-  val PairGlobsToStore = for {
-    (prefix, suffix) <- PairsToStore
-    label <- LabelsToStore
-  } yield FeatureMatcher.glob(prefix + "." + label + "." + suffix)
 
-  val BaseAggregateV2FeatureSelector = FeatureMatcher
+  vaw wabewstostowe = s-seq(
+    "any_wabew", 😳😳😳
+    "wecap.engagement.is_favowited", :3
+    "wecap.engagement.is_wetweeted", OwO
+    "wecap.engagement.is_wepwied",
+    "wecap.engagement.is_open_winked", (U ﹏ U)
+    "wecap.engagement.is_pwofiwe_cwicked", >w<
+    "wecap.engagement.is_cwicked", (U ﹏ U)
+    "wecap.engagement.is_photo_expanded", 😳
+    "wecap.engagement.is_video_pwayback_50", (ˆ ﻌ ˆ)♡
+    "wecap.engagement.is_video_quawity_viewed", 😳😳😳
+    "wecap.engagement.is_wepwied_wepwy_impwessed_by_authow", (U ﹏ U)
+    "wecap.engagement.is_wepwied_wepwy_favowited_by_authow", (///ˬ///✿)
+    "wecap.engagement.is_wepwied_wepwy_wepwied_by_authow", 😳
+    "wecap.engagement.is_wepowt_tweet_cwicked", 😳
+    "wecap.engagement.is_bwock_cwicked", σωσ
+    "wecap.engagement.is_mute_cwicked", rawr x3
+    "wecap.engagement.is_dont_wike", OwO
+    "wecap.engagement.is_good_cwicked_convo_desc_favowited_ow_wepwied", /(^•ω•^)
+    "wecap.engagement.is_good_cwicked_convo_desc_v2", 😳😳😳
+    "itw.engagement.is_favowited", ( ͡o ω ͡o )
+    "itw.engagement.is_wetweeted", >_<
+    "itw.engagement.is_wepwied", >w<
+    "itw.engagement.is_open_winked", rawr
+    "itw.engagement.is_pwofiwe_cwicked", 😳
+    "itw.engagement.is_cwicked", >w<
+    "itw.engagement.is_photo_expanded", (⑅˘꒳˘)
+    "itw.engagement.is_video_pwayback_50"
+  )
+
+  vaw paiwgwobstostowe = fow {
+    (pwefix, OwO s-suffix) <- paiwstostowe
+    w-wabew <- wabewstostowe
+  } yiewd featuwematchew.gwob(pwefix + "." + wabew + "." + s-suffix)
+
+  vaw baseaggwegatev2featuwesewectow = f-featuwematchew
     .none()
-    .or(
-      FeatureMatcher.glob("meta.user_id"),
-      FeatureMatcher.glob("meta.author_id"),
-      FeatureMatcher.glob("entities.original_author_id"),
-      FeatureMatcher.glob("entities.topic_id"),
-      FeatureMatcher
-        .glob("entities.inferred_topic_ids" + TypedAggregateGroup.SparseFeatureSuffix),
-      FeatureMatcher.glob("timelines.meta.list_id"),
-      FeatureMatcher.glob("list.id"),
-      FeatureMatcher
-        .glob("engagement_features.user_ids.public" + TypedAggregateGroup.SparseFeatureSuffix),
-      FeatureMatcher
-        .glob("entities.users.mentioned_screen_names" + TypedAggregateGroup.SparseFeatureSuffix),
-      FeatureMatcher.glob("user_aggregate_v2.pair.recap.engagement.is_dont_like.*"),
-      FeatureMatcher.glob("user_author_aggregate_v2.pair.any_label.recap.tweetfeature.has_*"),
-      FeatureMatcher.glob("request_context.country_code"),
-      FeatureMatcher.glob("request_context.timestamp_gmt_dow"),
-      FeatureMatcher.glob("request_context.timestamp_gmt_hour"),
-      FeatureMatcher.glob(
-        "semantic_core.media_understanding.high_recall.non_sensitive.entity_ids" + TypedAggregateGroup.SparseFeatureSuffix)
+    .ow(
+      f-featuwematchew.gwob("meta.usew_id"), (ꈍᴗꈍ)
+      featuwematchew.gwob("meta.authow_id"), 😳
+      featuwematchew.gwob("entities.owiginaw_authow_id"), 😳😳😳
+      featuwematchew.gwob("entities.topic_id"), mya
+      featuwematchew
+        .gwob("entities.infewwed_topic_ids" + typedaggwegategwoup.spawsefeatuwesuffix), mya
+      f-featuwematchew.gwob("timewines.meta.wist_id"),
+      featuwematchew.gwob("wist.id"), (⑅˘꒳˘)
+      featuwematchew
+        .gwob("engagement_featuwes.usew_ids.pubwic" + typedaggwegategwoup.spawsefeatuwesuffix), (U ﹏ U)
+      featuwematchew
+        .gwob("entities.usews.mentioned_scween_names" + t-typedaggwegategwoup.spawsefeatuwesuffix), mya
+      featuwematchew.gwob("usew_aggwegate_v2.paiw.wecap.engagement.is_dont_wike.*"), ʘwʘ
+      featuwematchew.gwob("usew_authow_aggwegate_v2.paiw.any_wabew.wecap.tweetfeatuwe.has_*"), (˘ω˘)
+      f-featuwematchew.gwob("wequest_context.countwy_code"), (U ﹏ U)
+      f-featuwematchew.gwob("wequest_context.timestamp_gmt_dow"), ^•ﻌ•^
+      f-featuwematchew.gwob("wequest_context.timestamp_gmt_houw"), (˘ω˘)
+      f-featuwematchew.gwob(
+        "semantic_cowe.media_undewstanding.high_wecaww.non_sensitive.entity_ids" + typedaggwegategwoup.spawsefeatuwesuffix)
     )
 
-  val AggregatesV2ProdFeatureSelector = BaseAggregateV2FeatureSelector
-    .orList(PairGlobsToStore.asJava)
+  vaw aggwegatesv2pwodfeatuwesewectow = b-baseaggwegatev2featuwesewectow
+    .owwist(paiwgwobstostowe.asjava)
 
-  val ReducedPairGlobsToStore = (for {
-    (prefix, suffix) <- BasePairsToStore
-    label <- LabelsToStore
-  } yield FeatureMatcher.glob(prefix + "." + label + "." + suffix)) ++ Seq(
-    FeatureMatcher.glob("user_aggregate_v2.pair.any_label.*"),
-    FeatureMatcher.glob("user_aggregate_v2.pair.recap.engagement.is_favorited.*"),
-    FeatureMatcher.glob("user_aggregate_v2.pair.recap.engagement.is_photo_expanded.*"),
-    FeatureMatcher.glob("user_aggregate_v2.pair.recap.engagement.is_profile_clicked.*")
+  vaw weducedpaiwgwobstostowe = (fow {
+    (pwefix, :3 suffix) <- basepaiwstostowe
+    w-wabew <- wabewstostowe
+  } yiewd featuwematchew.gwob(pwefix + "." + wabew + "." + suffix)) ++ seq(
+    featuwematchew.gwob("usew_aggwegate_v2.paiw.any_wabew.*"), ^^;;
+    f-featuwematchew.gwob("usew_aggwegate_v2.paiw.wecap.engagement.is_favowited.*"), 🥺
+    featuwematchew.gwob("usew_aggwegate_v2.paiw.wecap.engagement.is_photo_expanded.*"), (⑅˘꒳˘)
+    f-featuwematchew.gwob("usew_aggwegate_v2.paiw.wecap.engagement.is_pwofiwe_cwicked.*")
   )
 }

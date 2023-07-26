@@ -1,55 +1,55 @@
-package com.twitter.tweetypie
-package service
-package observer
+package com.twittew.tweetypie
+package s-sewvice
+package o-obsewvew
 
-import com.twitter.tweetypie.thriftscala.StoredTweetError
-import com.twitter.tweetypie.thriftscala.StoredTweetInfo
-import com.twitter.tweetypie.thriftscala.StoredTweetState.BounceDeleted
-import com.twitter.tweetypie.thriftscala.StoredTweetState.ForceAdded
-import com.twitter.tweetypie.thriftscala.StoredTweetState.HardDeleted
-import com.twitter.tweetypie.thriftscala.StoredTweetState.NotFound
-import com.twitter.tweetypie.thriftscala.StoredTweetState.SoftDeleted
-import com.twitter.tweetypie.thriftscala.StoredTweetState.Undeleted
-import com.twitter.tweetypie.thriftscala.StoredTweetState.UnknownUnionField
+impowt c-com.twittew.tweetypie.thwiftscawa.stowedtweetewwow
+i-impowt c-com.twittew.tweetypie.thwiftscawa.stowedtweetinfo
+i-impowt com.twittew.tweetypie.thwiftscawa.stowedtweetstate.bouncedeweted
+i-impowt c-com.twittew.tweetypie.thwiftscawa.stowedtweetstate.fowceadded
+impowt com.twittew.tweetypie.thwiftscawa.stowedtweetstate.hawddeweted
+impowt com.twittew.tweetypie.thwiftscawa.stowedtweetstate.notfound
+impowt com.twittew.tweetypie.thwiftscawa.stowedtweetstate.softdeweted
+impowt c-com.twittew.tweetypie.thwiftscawa.stowedtweetstate.undeweted
+impowt com.twittew.tweetypie.thwiftscawa.stowedtweetstate.unknownunionfiewd
 
-private[service] trait StoredTweetsObserver {
+pwivate[sewvice] twait stowedtweetsobsewvew {
 
-  protected def observeStoredTweets(
-    storedTweets: Seq[StoredTweetInfo],
-    stats: StatsReceiver
-  ): Unit = {
-    val stateScope = stats.scope("state")
-    val errorScope = stats.scope("error")
+  p-pwotected def obsewvestowedtweets(
+    stowedtweets: s-seq[stowedtweetinfo], >_<
+    stats: statsweceivew
+  ): unit = {
+    vaw statescope = s-stats.scope("state")
+    vaw ewwowscope = s-stats.scope("ewwow")
 
-    val sizeCounter = stats.counter("count")
-    sizeCounter.incr(storedTweets.size)
+    v-vaw sizecountew = stats.countew("count")
+    sizecountew.incw(stowedtweets.size)
 
-    val returnedStatesCount = storedTweets
-      .groupBy(_.storedTweetState match {
-        case None => "found"
-        case Some(_: HardDeleted) => "hard_deleted"
-        case Some(_: SoftDeleted) => "soft_deleted"
-        case Some(_: BounceDeleted) => "bounce_deleted"
-        case Some(_: Undeleted) => "undeleted"
-        case Some(_: ForceAdded) => "force_added"
-        case Some(_: NotFound) => "not_found"
-        case Some(_: UnknownUnionField) => "unknown"
+    vaw wetuwnedstatescount = stowedtweets
+      .gwoupby(_.stowedtweetstate m-match {
+        case none => "found"
+        case some(_: hawddeweted) => "hawd_deweted"
+        case s-some(_: softdeweted) => "soft_deweted"
+        case some(_: bouncedeweted) => "bounce_deweted"
+        c-case some(_: u-undeweted) => "undeweted"
+        c-case some(_: f-fowceadded) => "fowce_added"
+        case some(_: nyotfound) => "not_found"
+        c-case some(_: unknownunionfiewd) => "unknown"
       })
-      .mapValues(_.size)
+      .mapvawues(_.size)
 
-    returnedStatesCount.foreach {
-      case (state, count) => stateScope.counter(state).incr(count)
+    wetuwnedstatescount.foweach {
+      case (state, (⑅˘꒳˘) c-count) => statescope.countew(state).incw(count)
     }
 
-    val returnedErrorsCount = storedTweets
-      .foldLeft(Seq[StoredTweetError]()) { (errors, storedTweetInfo) =>
-        errors ++ storedTweetInfo.errors
+    vaw wetuwnedewwowscount = stowedtweets
+      .fowdweft(seq[stowedtweetewwow]()) { (ewwows, /(^•ω•^) stowedtweetinfo) =>
+        ewwows ++ s-stowedtweetinfo.ewwows
       }
-      .groupBy(_.name)
-      .mapValues(_.size)
+      .gwoupby(_.name)
+      .mapvawues(_.size)
 
-    returnedErrorsCount.foreach {
-      case (error, count) => errorScope.counter(error).incr(count)
+    wetuwnedewwowscount.foweach {
+      c-case (ewwow, rawr x3 count) => e-ewwowscope.countew(ewwow).incw(count)
     }
   }
 

@@ -1,76 +1,76 @@
-package com.twitter.search.common.search;
+package com.twittew.seawch.common.seawch;
 
-import java.util.Arrays;
+impowt j-java.utiw.awways;
 
-import org.apache.lucene.search.DocIdSetIterator;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
 
 /**
- * DocIdSetIterator implementation from a sorted list of non-negative integers. If the given list of
- * doc IDs is not sorted or contains negative doc IDs, the results are undefined.
+ * d-docidsetitewatow impwementation f-fwom a-a sowted wist o-of nyon-negative i-integews. ^^ if the g-given wist of
+ * doc ids is nyot sowted ow contains nyegative doc ids, 😳😳😳 the wesuwts a-awe undefined. mya
  */
-public class IntArrayDocIdSetIterator extends DocIdSetIterator {
-  private final int[] docIds;
-  private int docId;
-  private int cursor;
+pubwic cwass intawwaydocidsetitewatow extends d-docidsetitewatow {
+  pwivate f-finaw int[] docids;
+  pwivate int docid;
+  pwivate int cuwsow;
 
-  public IntArrayDocIdSetIterator(int[] ids) {
-    docIds = ids;
-    reset();
+  p-pubwic intawwaydocidsetitewatow(int[] ids) {
+    d-docids = i-ids;
+    weset();
   }
 
-  /** Used for testing. */
-  public void reset() {
-    docId = -1;
-    cursor = -1;
+  /** used fow testing. 😳 */
+  pubwic void weset() {
+    docid = -1;
+    c-cuwsow = -1;
   }
 
-  @Override
-  public int docID() {
-    return docId;
+  @ovewwide
+  pubwic int docid() {
+    wetuwn docid;
   }
 
-  @Override
-  public int nextDoc() {
-    return advance(docId);
+  @ovewwide
+  pubwic int n-nyextdoc() {
+    wetuwn advance(docid);
   }
 
-  @Override
-  public int advance(int target) {
-    if (docId == NO_MORE_DOCS) {
-      return docId;
+  @ovewwide
+  p-pubwic i-int advance(int t-tawget) {
+    i-if (docid == nyo_mowe_docs) {
+      wetuwn docid;
     }
 
-    if (target < docId) {
-      return docId;
+    i-if (tawget < docid) {
+      wetuwn docid;
     }
 
-    if (cursor == docIds.length - 1) {
-      docId = NO_MORE_DOCS;
-      return docId;
+    i-if (cuwsow == docids.wength - 1) {
+      docid = nyo_mowe_docs;
+      wetuwn docid;
     }
 
-    if (target == docId) {
-      docId = docIds[++cursor];
-      return docId;
+    i-if (tawget == docid) {
+      d-docid = docids[++cuwsow];
+      w-wetuwn docid;
     }
 
-    int toIndex = Math.min(cursor + (target - docId) + 1, docIds.length);
-    int targetIndex = Arrays.binarySearch(docIds, cursor + 1, toIndex, target);
-    if (targetIndex < 0) {
-      targetIndex = -targetIndex - 1;
+    i-int toindex = math.min(cuwsow + (tawget - docid) + 1, -.- docids.wength);
+    i-int tawgetindex = a-awways.binawyseawch(docids, 🥺 cuwsow + 1, o.O toindex, t-tawget);
+    i-if (tawgetindex < 0) {
+      tawgetindex = -tawgetindex - 1;
     }
 
-    if (targetIndex == docIds.length) {
-      docId = NO_MORE_DOCS;
-    } else {
-      cursor = targetIndex;
-      docId = docIds[cursor];
+    i-if (tawgetindex == docids.wength) {
+      docid = nyo_mowe_docs;
+    } e-ewse {
+      cuwsow = tawgetindex;
+      docid = d-docids[cuwsow];
     }
-    return docId;
+    wetuwn d-docid;
   }
 
-  @Override
-  public long cost() {
-    return docIds == null ? 0 : docIds.length;
+  @ovewwide
+  pubwic wong cost() {
+    w-wetuwn docids == n-nyuww ? 0 : docids.wength;
   }
 }

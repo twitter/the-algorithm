@@ -1,7 +1,7 @@
-resources(
-    sources = [
-        "*.xml",
-        "*.yml",
-        "config/*.yml",
+wesouwces(
+    souwces = [
+        "*.xmw", XD
+        "*.ymw", >_<
+        "config/*.ymw", (ꈍᴗꈍ)
     ],
 )

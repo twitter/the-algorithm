@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.addentwiestimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class AddEntriesInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
+c-case cwass addentwiesinstwuctionbuiwdew[quewy <: p-pipewinequewy](
+  o-ovewwide vaw i-incwudeinstwuction: i-incwudeinstwuction[quewy] = awwaysincwude)
+    extends uwtinstwuctionbuiwdew[quewy, -.- addentwiestimewineinstwuction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (entries.nonEmpty && includeInstruction(query, entries))
-      Seq(AddEntriesTimelineInstruction(entries))
-    else Seq.empty
+  ovewwide d-def buiwd(
+    quewy: quewy, ^^;;
+    entwies: s-seq[timewineentwy]
+  ): seq[addentwiestimewineinstwuction] = {
+    i-if (entwies.nonempty && incwudeinstwuction(quewy, >_< entwies))
+      seq(addentwiestimewineinstwuction(entwies))
+    e-ewse seq.empty
   }
 }

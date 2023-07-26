@@ -1,138 +1,138 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <algorithm>    // std::fill_n
+#incwude <awgowithm>    // std::fiww_n
 
-using namespace tensorflow;
+using n-nyamespace tensowfwow;
 
-REGISTER_OP("CompressSampleIds")
-.Attr("T: {int32}")
-.Input("input: T")
-.Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->Vector(c->kUnknownDim));
-    return Status::OK();
+w-wegistew_op("compwesssampweids")
+.attw("t: {int32}")
+.input("input: t-t")
+.output("output: t-t")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    c->set_output(0, mya c->vectow(c->kunknowndim));
+    wetuwn s-status::ok();
   });
 
 
-template<typename T>
-class CompressSampleIds : public OpKernel {
- public:
-  explicit CompressSampleIds(OpKernelConstruction* context) : OpKernel(context) {}
+t-tempwate<typename t-t>
+cwass compwesssampweids : pubwic opkewnew {
+ pubwic:
+  expwicit c-compwesssampweids(opkewnewconstwuction* context) : opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
-    auto input = input_tensor.flat<T>();
-    const int N = input.size();
+  v-void compute(opkewnewcontext* c-context) ovewwide {
+    // gwab the input tensow
+    const t-tensow& input_tensow = context->input(0);
+    a-auto input = i-input_tensow.fwat<t>();
+    const int ny = input.size();
 
-    // Check for improper input
-    bool error = (N > 0 && input(0) < 0);
-    for (int i = 1; !error && i < N; i++) {
-      error = input(i - 1) > input(i);
+    // check fow impwopew input
+    boow e-ewwow = (n > 0 && input(0) < 0);
+    fow (int i = 1; !ewwow && i < ny; i++) {
+      e-ewwow = input(i - 1) > input(i);
     }
 
-    OP_REQUIRES(
-      context, !error,
-      errors::InvalidArgument(
-        "Error in CompressSampleIds. SampleIds must be non-negative and non-decreasing"
+    o-op_wequiwes(
+      c-context, ʘwʘ !ewwow,
+      e-ewwows::invawidawgument(
+        "ewwow i-in compwesssampweids. (˘ω˘) sampweids must be nyon-negative a-and nyon-decweasing"
       )
     );
 
-    // choose output size, either last input element + 1, or 0
+    // choose output size, (U ﹏ U) eithew w-wast input ewement + 1, ^•ﻌ•^ ow 0
     int output_size = 0;
-    if (N > 0) {
-      output_size = input(N - 1) + 1;
+    if (n > 0) {
+      output_size = input(n - 1) + 1;
     }
 
-    // Create an output tensor
-    Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(
-      context,
-      context->allocate_output(0, TensorShape({output_size}), &output_tensor)
+    // cweate a-an output tensow
+    tensow* o-output_tensow = n-nyuwwptw;
+    op_wequiwes_ok(
+      c-context, (˘ω˘)
+      context->awwocate_output(0, :3 tensowshape({output_size}), &output_tensow)
     );
-    auto output_flat = output_tensor->flat<T>();
+    auto output_fwat = o-output_tensow->fwat<t>();
 
-    // Zero-initialize output
-    for (int i = 0; i < output_size; i++) {
-      output_flat(i) = 0;
+    // z-zewo-initiawize output
+    f-fow (int i-i = 0; i < output_size; i++) {
+      o-output_fwat(i) = 0;
     }
 
-    // count how many of each input element
-    for (int i = 0; i < N; i++) {
-      output_flat(input(i)) ++;
+    // count how m-many of each input ewement
+    fow (int i = 0; i-i < ny; i++) {
+      output_fwat(input(i)) ++;
     }
   }
 };
 
-REGISTER_OP("DecompressSampleIds")
-.Attr("T: {int32}")
-.Input("input: T")
-.Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->Vector(c->kUnknownDim));
-    return Status::OK();
+w-wegistew_op("decompwesssampweids")
+.attw("t: {int32}")
+.input("input: t")
+.output("output: t-t")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    c->set_output(0, ^^;; c->vectow(c->kunknowndim));
+    wetuwn status::ok();
   });
 
 
-template<typename T>
-class DecompressSampleIds : public OpKernel {
- public:
-  explicit DecompressSampleIds(OpKernelConstruction* context) : OpKernel(context) {}
+tempwate<typename t>
+cwass decompwesssampweids : pubwic opkewnew {
+ p-pubwic:
+  e-expwicit decompwesssampweids(opkewnewconstwuction* context) : opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
-    auto input = input_tensor.flat<T>();
-    const int N = input.size();
+  v-void compute(opkewnewcontext* c-context) ovewwide {
+    // g-gwab the input tensow
+    const tensow& input_tensow = context->input(0);
+    a-auto input = input_tensow.fwat<t>();
+    const int ny = input.size();
 
-    // Check for improper input
-    bool error = false;
-    int output_size = 0;
-    for (int i = 0; !error && i < N; i++) {
-      error = input(i) < 0;
-      output_size += input(i);
+    // check f-fow impwopew input
+    boow ewwow = f-fawse;
+    i-int output_size = 0;
+    f-fow (int i = 0; !ewwow && i-i < ny; i++) {
+      e-ewwow = i-input(i) < 0;
+      o-output_size += input(i);
     }
 
-    OP_REQUIRES(
-      context, !error,
-      errors::InvalidArgument(
-        "Error in DecompressSampleIds. Inputs must be non-negative."
+    op_wequiwes(
+      c-context, 🥺 !ewwow, (⑅˘꒳˘)
+      e-ewwows::invawidawgument(
+        "ewwow i-in decompwesssampweids. nyaa~~ i-inputs must be n-nyon-negative."
       )
     );
 
-    // Create an output tensor
-    Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(
-      context,
-      context->allocate_output(0, TensorShape({output_size}),&output_tensor)
+    // cweate an output tensow
+    tensow* output_tensow = n-nyuwwptw;
+    op_wequiwes_ok(
+      context, :3
+      context->awwocate_output(0, ( ͡o ω ͡o ) tensowshape({output_size}),&output_tensow)
     );
-    auto output_flat = output_tensor->flat<T>();
+    auto output_fwat = o-output_tensow->fwat<t>();
 
-    T *output_data = output_flat.data();
-    for (int current_sample = 0; current_sample < N; current_sample++) {
-      std::fill_n(output_data, input(current_sample), current_sample);
-      output_data += input(current_sample);
+    t *output_data = output_fwat.data();
+    fow (int c-cuwwent_sampwe = 0; c-cuwwent_sampwe < n-ny; cuwwent_sampwe++) {
+      std::fiww_n(output_data, mya i-input(cuwwent_sampwe), (///ˬ///✿) cuwwent_sampwe);
+      o-output_data += input(cuwwent_sampwe);
     }
   }
 };
 
 
 
-#define REGISTER(Type)              \
+#define w-wegistew(type)              \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("CompressSampleIds")       \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    CompressSampleIds<Type>);       \
+  wegistew_kewnew_buiwdew(          \
+    nyame("compwesssampweids")       \
+    .device(device_cpu)             \
+    .typeconstwaint<type>("t"), (˘ω˘)     \
+    compwesssampweids<type>);       \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("DecompressSampleIds")     \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    DecompressSampleIds<Type>);     \
+  wegistew_kewnew_buiwdew(          \
+    nyame("decompwesssampweids")     \
+    .device(device_cpu)             \
+    .typeconstwaint<type>("t"), ^^;;     \
+    decompwesssampweids<type>);     \
                                     \
 
-REGISTER(int32);
+w-wegistew(int32);

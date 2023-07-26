@@ -1,302 +1,302 @@
-package com.twitter.search.earlybird.querycache;
+package com.twittew.seawch.eawwybiwd.quewycache;
 
-import java.util.List;
-import java.util.TreeMap;
+impowt java.utiw.wist;
+i-impowt java.utiw.tweemap;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.search.Query;
+i-impowt owg.apache.wucene.seawch.quewy;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.util.text.regex.Regex;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.queryparser.EarlybirdLuceneQueryVisitor;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.queryparser.parser.SerializedQueryParser;
-import com.twitter.search.queryparser.query.QueryParserException;
+i-impowt c-com.twittew.common.cowwections.paiw;
+i-impowt com.twittew.common.quantity.amount;
+i-impowt com.twittew.common.quantity.time;
+i-impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt com.twittew.seawch.common.quewy.thwiftjava.cowwectowpawams;
+i-impowt com.twittew.seawch.common.quewy.thwiftjava.cowwectowtewminationpawams;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt c-com.twittew.seawch.common.seawch.tewminationtwackew;
+impowt com.twittew.seawch.common.utiw.text.wegex.wegex;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+impowt com.twittew.seawch.eawwybiwd.quewypawsew.eawwybiwdwucenequewyvisitow;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.seawchwequestinfo;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+i-impowt com.twittew.seawch.quewypawsew.pawsew.sewiawizedquewypawsew;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
 
 /**
- * The definition of a QueryCache filter/entry, like the name of the filter, the query used
- * to populate the cache, update schedule, etc..
+ * the definition of a quewycache f-fiwtew/entwy, rawr x3 wike the nyame of the fiwtew, rawr x3 the quewy used
+ * to popuwate t-the cache, σωσ update scheduwe, (ꈍᴗꈍ) etc..
  *
- * Instances of this class are created by the YAML loader when loading the config file. Most
- * members are populated by YAML using setters through reflection.
+ * i-instances o-of this cwass a-awe cweated by t-the yamw woadew when woading the config fiwe. rawr m-most
+ * membews awe popuwated by yamw using settews t-thwough wefwection. ^^;;
  */
-public class QueryCacheFilter {
-  // Data structure type supported as cache result holder
-  public enum ResultSetType {
-    FixedBitSet,
-    SparseFixedBitSet
+pubwic cwass quewycachefiwtew {
+  // data stwuctuwe type suppowted as cache wesuwt howdew
+  p-pubwic enum wesuwtsettype {
+    f-fixedbitset, rawr x3
+    s-spawsefixedbitset
   }
 
-  // Fields set directly from YML config file.
-  private String filterName;           // unique name for cached filter
-  private String query;                // serialized query string
-  private ResultSetType resultType;
-  private boolean cacheModeOnly;
-  private List<UpdateInterval> schedule;
-  private SearchCounter queries;
+  // f-fiewds set diwectwy fwom ymw config fiwe. (ˆ ﻌ ˆ)♡
+  pwivate stwing f-fiwtewname;           // u-unique name fow cached f-fiwtew
+  pwivate s-stwing quewy;                // sewiawized quewy s-stwing
+  pwivate wesuwtsettype w-wesuwttype;
+  pwivate boowean cachemodeonwy;
+  pwivate wist<updateintewvaw> s-scheduwe;
+  pwivate s-seawchcountew quewies;
 
-  // Fields generated based on config (but not directly).
-  private volatile Pair<ThriftSearchQuery, Query> queryPair;
-  private TreeMap<Integer, UpdateInterval> scheduleMap;  // tree map from index to interval
+  // fiewds g-genewated based o-on config (but nyot diwectwy). σωσ
+  pwivate vowatiwe paiw<thwiftseawchquewy, (U ﹏ U) quewy> quewypaiw;
+  pwivate tweemap<integew, >w< updateintewvaw> s-scheduwemap;  // t-twee map fwom index t-to intewvaw
 
-  public class InvalidEntryException extends Exception {
-    public InvalidEntryException(String message) {
-      super("Filter [" + filterName + "]: " + message);
+  p-pubwic cwass invawidentwyexception e-extends exception {
+    pubwic invawidentwyexception(stwing message) {
+      supew("fiwtew [" + f-fiwtewname + "]: " + message);
     }
   }
 
-  public static class UpdateInterval {
-    // Overrides *all* query cache update frequencies to be this value, in seconds.
-    private final int overrideSecondsForTests = EarlybirdConfig.getInt(
-        "override_query_cache_update_frequency", -1);
+  pubwic static cwass updateintewvaw {
+    // ovewwides *aww* q-quewy cache update fwequencies t-to be t-this vawue, σωσ in seconds. nyaa~~
+    p-pwivate finaw int ovewwidesecondsfowtests = e-eawwybiwdconfig.getint(
+        "ovewwide_quewy_cache_update_fwequency", 🥺 -1);
 
-    // Fields set directly from YML config file.
-    private int segment;
-    private long seconds;
+    // f-fiewds s-set diwectwy f-fwom ymw config fiwe. rawr x3
+    pwivate int segment;
+    p-pwivate wong s-seconds;
 
-    public void setSegment(int segment) {
-      this.segment = segment;
+    p-pubwic void setsegment(int s-segment) {
+      t-this.segment = segment;
     }
 
     /**
-     * Sets the update period in seconds. If the override_query_cache_update_frequency parameter is
-     * specified in the earlybird configuration, its value is used instead (the value passed to this
-     * method is ignored).
+     * sets the update pewiod i-in seconds. σωσ if the ovewwide_quewy_cache_update_fwequency pawametew is
+     * specified in the eawwybiwd configuwation, (///ˬ///✿) i-its vawue is used instead (the vawue passed to this
+     * m-method is ignowed). (U ﹏ U)
      */
-    public void setSeconds(long seconds) {
-      if (overrideSecondsForTests != -1) {
-        this.seconds = overrideSecondsForTests;
-      } else {
-        this.seconds = seconds;
+    p-pubwic void setseconds(wong seconds) {
+      i-if (ovewwidesecondsfowtests != -1) {
+        this.seconds = o-ovewwidesecondsfowtests;
+      } ewse {
+        t-this.seconds = s-seconds;
       }
     }
 
-    public int getSegment() {
-      return segment;
+    pubwic int getsegment() {
+      wetuwn segment;
     }
 
-    public long getSeconds() {
-      return seconds;
+    pubwic wong getseconds() {
+      wetuwn seconds;
     }
   }
 
-  public void setFilterName(String filterName) throws InvalidEntryException {
-    sanityCheckFilterName(filterName);
-    this.filterName = filterName;
+  p-pubwic void setfiwtewname(stwing fiwtewname) thwows i-invawidentwyexception {
+    sanitycheckfiwtewname(fiwtewname);
+    t-this.fiwtewname = f-fiwtewname;
   }
 
   /**
-   * Sets the driving query for this query cache filter.
+   * sets the dwiving quewy fow t-this quewy cache f-fiwtew. ^^;;
    */
-  public void setQuery(String query) throws InvalidEntryException {
-    if (query == null || query.isEmpty()) {
-      throw new InvalidEntryException("Empty query string");
+  pubwic void setquewy(stwing q-quewy) t-thwows invawidentwyexception {
+    if (quewy == nyuww || quewy.isempty()) {
+      thwow nyew invawidentwyexception("empty q-quewy s-stwing");
     }
 
-    this.query = query;
+    t-this.quewy = quewy;
   }
 
   /**
-   * Sets the type of the results that will be generated by this query cache filter.
+   * s-sets t-the type of the wesuwts that wiww b-be genewated by this quewy cache fiwtew. 🥺
    */
-  public void setResultType(String resultType) throws InvalidEntryException {
-    if (ResultSetType.FixedBitSet.toString().equalsIgnoreCase(resultType)) {
-      this.resultType = ResultSetType.FixedBitSet;
-    } else if (ResultSetType.SparseFixedBitSet.toString().equalsIgnoreCase(resultType)) {
-      this.resultType = ResultSetType.SparseFixedBitSet;
-    } else {
-      throw new InvalidEntryException("Unregconized result type [" + resultType + "]");
+  pubwic void setwesuwttype(stwing w-wesuwttype) t-thwows invawidentwyexception {
+    if (wesuwtsettype.fixedbitset.tostwing().equawsignowecase(wesuwttype)) {
+      this.wesuwttype = w-wesuwtsettype.fixedbitset;
+    } e-ewse if (wesuwtsettype.spawsefixedbitset.tostwing().equawsignowecase(wesuwttype)) {
+      this.wesuwttype = wesuwtsettype.spawsefixedbitset;
+    } ewse {
+      t-thwow nyew invawidentwyexception("unwegconized wesuwt type [" + wesuwttype + "]");
     }
   }
 
-  public void setCacheModeOnly(boolean cacheModeOnly) {
-    this.cacheModeOnly = cacheModeOnly;
+  pubwic void s-setcachemodeonwy(boowean cachemodeonwy) {
+    this.cachemodeonwy = c-cachemodeonwy;
   }
 
-  public void setSchedule(List<UpdateInterval> schedule)
-      throws QueryCacheFilter.InvalidEntryException {
-    sanityCheckSchedule(schedule);
-    this.schedule = schedule;
-    this.scheduleMap = createScheduleMap(schedule);
+  p-pubwic void setscheduwe(wist<updateintewvaw> scheduwe)
+      thwows q-quewycachefiwtew.invawidentwyexception {
+    s-sanitycheckscheduwe(scheduwe);
+    this.scheduwe = scheduwe;
+    this.scheduwemap = cweatescheduwemap(scheduwe);
   }
 
-  public void createQueryCounter(SearchStatsReceiver statsReceiver) {
-    queries = statsReceiver.getCounter("cached_filter_" + filterName + "_queries");
+  p-pubwic void cweatequewycountew(seawchstatsweceivew s-statsweceivew) {
+    quewies = statsweceivew.getcountew("cached_fiwtew_" + fiwtewname + "_quewies");
   }
 
-  public void incrementUsageStat() {
-    queries.increment();
+  p-pubwic void incwementusagestat() {
+    q-quewies.incwement();
   }
 
-  public String getFilterName() {
-    return filterName;
+  p-pubwic stwing getfiwtewname() {
+    w-wetuwn fiwtewname;
   }
 
-  public String getQueryString() {
-    return query;
+  p-pubwic stwing g-getquewystwing() {
+    w-wetuwn quewy;
   }
 
-  // snakeyaml does not like a getter named getResultType() that does not return a string
-  public ResultSetType getResultSetType() {
-    return resultType;
+  // s-snakeyamw does n-nyot wike a gettew nyamed getwesuwttype() that d-does nyot wetuwn a-a stwing
+  pubwic w-wesuwtsettype getwesuwtsettype() {
+    wetuwn w-wesuwttype;
   }
 
-  public boolean getCacheModeOnly() {
-    return cacheModeOnly;
+  pubwic boowean g-getcachemodeonwy() {
+    w-wetuwn cachemodeonwy;
   }
 
-  public Query getLuceneQuery() {
-    return queryPair.getSecond();
+  pubwic quewy getwucenequewy() {
+    w-wetuwn q-quewypaiw.getsecond();
   }
 
-  public ThriftSearchQuery getSearchQuery() {
-    return queryPair.getFirst();
+  p-pubwic thwiftseawchquewy g-getseawchquewy() {
+    wetuwn quewypaiw.getfiwst();
   }
 
   /**
-   * Create a new {@link SearchRequestInfo} using {@link #queryPair}.
+   * cweate a-a nyew {@wink seawchwequestinfo} using {@wink #quewypaiw}. òωó
    *
-   * @return a new {@link SearchRequestInfo}
+   * @wetuwn a nyew {@wink seawchwequestinfo}
    */
-  public SearchRequestInfo createSearchRequestInfo() {
-    ThriftSearchQuery searchQuery = Preconditions.checkNotNull(queryPair.getFirst());
-    Query luceneQuery = Preconditions.checkNotNull(queryPair.getSecond());
+  pubwic s-seawchwequestinfo cweateseawchwequestinfo() {
+    t-thwiftseawchquewy seawchquewy = p-pweconditions.checknotnuww(quewypaiw.getfiwst());
+    quewy w-wucenequewy = pweconditions.checknotnuww(quewypaiw.getsecond());
 
-    return new SearchRequestInfo(
-        searchQuery, luceneQuery, new TerminationTracker(Clock.SYSTEM_CLOCK));
+    wetuwn nyew s-seawchwequestinfo(
+        s-seawchquewy, XD w-wucenequewy, n-nyew tewminationtwackew(cwock.system_cwock));
   }
 
-  public void setup(
-      QueryCacheManager queryCacheManager,
-      UserTable userTable,
-      EarlybirdCluster earlybirdCluster) throws QueryParserException {
-    createQuery(queryCacheManager, userTable, earlybirdCluster);
+  p-pubwic void setup(
+      quewycachemanagew quewycachemanagew, :3
+      usewtabwe usewtabwe, (U ﹏ U)
+      eawwybiwdcwustew eawwybiwdcwustew) thwows q-quewypawsewexception {
+    c-cweatequewy(quewycachemanagew, u-usewtabwe, >w< eawwybiwdcwustew);
   }
 
-  // index corresponds to 'segment' from the config file.  this is the index of the
-  // segment, starting with the current segment (0) and counting backwards in time.
-  public Amount<Long, Time> getUpdateInterval(int index) {
-    long seconds = scheduleMap.floorEntry(index).getValue().getSeconds();
-    return Amount.of(seconds, Time.SECONDS);
+  // index cowwesponds t-to 'segment' fwom the config fiwe. /(^•ω•^)  this is the index o-of the
+  // segment, (⑅˘꒳˘) s-stawting with the cuwwent segment (0) a-and counting backwawds in time. ʘwʘ
+  pubwic a-amount<wong, rawr x3 t-time> getupdateintewvaw(int index) {
+    w-wong seconds = s-scheduwemap.fwoowentwy(index).getvawue().getseconds();
+    wetuwn amount.of(seconds, time.seconds);
   }
 
-  private TreeMap<Integer, UpdateInterval> createScheduleMap(List<UpdateInterval> scheduleToUse) {
-    TreeMap<Integer, UpdateInterval> map = new TreeMap<>();
-    for (UpdateInterval interval : scheduleToUse) {
-      map.put(interval.segment, interval);
+  pwivate tweemap<integew, (˘ω˘) updateintewvaw> c-cweatescheduwemap(wist<updateintewvaw> s-scheduwetouse) {
+    t-tweemap<integew, o.O u-updateintewvaw> m-map = nyew tweemap<>();
+    f-fow (updateintewvaw i-intewvaw : scheduwetouse) {
+      m-map.put(intewvaw.segment, 😳 i-intewvaw);
     }
-    return map;
+    wetuwn m-map;
   }
 
-  private void createQuery(
-      QueryCacheManager queryCacheManager,
-      UserTable userTable,
-      EarlybirdCluster earlybirdCluster) throws QueryParserException {
+  pwivate void cweatequewy(
+      quewycachemanagew q-quewycachemanagew, o.O
+      usewtabwe u-usewtabwe, ^^;;
+      e-eawwybiwdcwustew eawwybiwdcwustew) t-thwows quewypawsewexception {
 
-    int maxSegmentSize = EarlybirdConfig.getMaxSegmentSize();
-    CollectorParams collectionParams = new CollectorParams();
-    collectionParams.setNumResultsToReturn(maxSegmentSize);
-    CollectorTerminationParams terminationParams = new CollectorTerminationParams();
-    terminationParams.setMaxHitsToProcess(maxSegmentSize);
-    collectionParams.setTerminationParams(terminationParams);
+    int maxsegmentsize = eawwybiwdconfig.getmaxsegmentsize();
+    cowwectowpawams c-cowwectionpawams = n-nyew c-cowwectowpawams();
+    cowwectionpawams.setnumwesuwtstowetuwn(maxsegmentsize);
+    cowwectowtewminationpawams tewminationpawams = n-nyew cowwectowtewminationpawams();
+    tewminationpawams.setmaxhitstopwocess(maxsegmentsize);
+    cowwectionpawams.settewminationpawams(tewminationpawams);
 
-    ThriftSearchQuery searchQuery = new ThriftSearchQuery();
-    searchQuery.setMaxHitsPerUser(maxSegmentSize);
-    searchQuery.setCollectorParams(collectionParams);
-    searchQuery.setSerializedQuery(query);
+    t-thwiftseawchquewy s-seawchquewy = nyew thwiftseawchquewy();
+    s-seawchquewy.setmaxhitspewusew(maxsegmentsize);
+    seawchquewy.setcowwectowpawams(cowwectionpawams);
+    s-seawchquewy.setsewiawizedquewy(quewy);
 
-    final SerializedQueryParser parser = new SerializedQueryParser(
-        EarlybirdConfig.getPenguinVersion());
+    f-finaw sewiawizedquewypawsew pawsew = nyew sewiawizedquewypawsew(
+        eawwybiwdconfig.getpenguinvewsion());
 
-    Query luceneQuery = parser.parse(query).simplify().accept(
-        new EarlybirdLuceneQueryVisitor(
-            queryCacheManager.getIndexConfig().getSchema().getSchemaSnapshot(),
-            queryCacheManager,
-            userTable,
-            queryCacheManager.getUserScrubGeoMap(),
-            earlybirdCluster,
-            queryCacheManager.getDecider()));
-    if (luceneQuery == null) {
-      throw new QueryParserException("Unable to create lucene query from " + query);
+    q-quewy wucenequewy = pawsew.pawse(quewy).simpwify().accept(
+        nyew e-eawwybiwdwucenequewyvisitow(
+            q-quewycachemanagew.getindexconfig().getschema().getschemasnapshot(), ( ͡o ω ͡o )
+            quewycachemanagew, ^^;;
+            u-usewtabwe, ^^;;
+            quewycachemanagew.getusewscwubgeomap(), XD
+            e-eawwybiwdcwustew, 🥺
+            q-quewycachemanagew.getdecidew()));
+    i-if (wucenequewy == nyuww) {
+      thwow nyew quewypawsewexception("unabwe to cweate wucene quewy fwom " + quewy);
     }
 
-    queryPair = new Pair<>(searchQuery, luceneQuery);
+    quewypaiw = nyew paiw<>(seawchquewy, (///ˬ///✿) wucenequewy);
   }
 
-  private void sanityCheckFilterName(String filter) throws InvalidEntryException {
-    if (filter == null || filter.isEmpty()) {
-      throw new InvalidEntryException("Missing filter name");
+  pwivate void sanitycheckfiwtewname(stwing fiwtew) thwows invawidentwyexception {
+    i-if (fiwtew == n-nyuww || fiwtew.isempty()) {
+      thwow nyew invawidentwyexception("missing f-fiwtew nyame");
     }
-    if (Regex.FILTER_NAME_CHECK.matcher(filter).find()) {
-      throw new InvalidEntryException(
-          "Invalid character in filter name. Chars allowed [a-zA-Z_0-9]");
+    i-if (wegex.fiwtew_name_check.matchew(fiwtew).find()) {
+      t-thwow nyew invawidentwyexception(
+          "invawid c-chawactew in fiwtew nyame. c-chaws awwowed [a-za-z_0-9]");
     }
   }
 
-  private void sanityCheckSchedule(List<UpdateInterval> intervals)
-      throws InvalidEntryException {
-    // Make sure there's at least 1 interval defined
-    if (intervals == null || intervals.isEmpty()) {
-      throw new InvalidEntryException("No schedule defined");
+  p-pwivate void sanitycheckscheduwe(wist<updateintewvaw> intewvaws)
+      t-thwows invawidentwyexception {
+    // make s-suwe thewe's a-at weast 1 intewvaw defined
+    if (intewvaws == n-nyuww || intewvaws.isempty()) {
+      t-thwow nyew i-invawidentwyexception("no s-scheduwe d-defined");
     }
 
-    // Make sure the first interval starts with segment 0
-    if (intervals.get(0).getSegment() != 0) {
-      throw new InvalidEntryException(
-          "The first interval in the schedule must start from segment 0");
+    // m-make s-suwe the fiwst i-intewvaw stawts w-with segment 0
+    if (intewvaws.get(0).getsegment() != 0) {
+      t-thwow new invawidentwyexception(
+          "the f-fiwst intewvaw i-in the scheduwe must stawt fwom s-segment 0");
     }
 
-    // Make sure segments are defined in order, and no segment is defined more than twice
-    int prevSegment = intervals.get(0).getSegment();
-    for (int i = 1; i < intervals.size(); ++i) {
-      int currentSegment = intervals.get(i).getSegment();
-      if (prevSegment > currentSegment) {
-        throw new InvalidEntryException("Segment intervals out of order. Segment " + prevSegment
-            + " is defined before segment " + currentSegment);
+    // make suwe segments awe defined in o-owdew, (U ᵕ U❁) and nyo segment is defined m-mowe than twice
+    i-int pwevsegment = i-intewvaws.get(0).getsegment();
+    fow (int i-i = 1; i < intewvaws.size(); ++i) {
+      int c-cuwwentsegment = intewvaws.get(i).getsegment();
+      i-if (pwevsegment > cuwwentsegment) {
+        t-thwow nyew invawidentwyexception("segment intewvaws out of owdew. ^^;; segment " + pwevsegment
+            + " is d-defined befowe segment " + cuwwentsegment);
       }
 
-      if (prevSegment == intervals.get(i).getSegment()) {
-        throw new InvalidEntryException("Segment " + prevSegment + " is defined twice");
+      i-if (pwevsegment == i-intewvaws.get(i).getsegment()) {
+        thwow nyew invawidentwyexception("segment " + pwevsegment + " i-is defined twice");
       }
 
-      prevSegment = currentSegment;
+      p-pwevsegment = c-cuwwentsegment;
     }
   }
 
-  protected void sanityCheck() throws InvalidEntryException {
-    sanityCheckFilterName(filterName);
-    if (query == null || query.isEmpty()) {
-      throw new InvalidEntryException("Missing query");
+  p-pwotected void sanitycheck() thwows invawidentwyexception {
+    s-sanitycheckfiwtewname(fiwtewname);
+    i-if (quewy == nyuww || q-quewy.isempty()) {
+      thwow nyew invawidentwyexception("missing q-quewy");
     }
-    if (resultType == null) {
-      throw new InvalidEntryException("Missing result type");
+    if (wesuwttype == n-nyuww) {
+      t-thwow nyew i-invawidentwyexception("missing wesuwt type");
     }
-    if (schedule == null || schedule.size() == 0) {
-      throw new InvalidEntryException("Missing update schedule");
+    i-if (scheduwe == n-nyuww || s-scheduwe.size() == 0) {
+      t-thwow nyew invawidentwyexception("missing update s-scheduwe");
     }
-    if (scheduleMap == null || scheduleMap.size() == 0) {
-      throw new InvalidEntryException("Missing update schedule map");
+    i-if (scheduwemap == n-nyuww || s-scheduwemap.size() == 0) {
+      t-thwow nyew i-invawidentwyexception("missing u-update scheduwe m-map");
     }
   }
 
-  @Override
-  public String toString() {
-    return "filterName: [" + getFilterName()
-        + "] query: [" + getQueryString()
-        + "] result type [" + getResultSetType()
-        + "] schedule: " + schedule;
+  @ovewwide
+  pubwic stwing tostwing() {
+    w-wetuwn "fiwtewname: [" + getfiwtewname()
+        + "] q-quewy: [" + getquewystwing()
+        + "] w-wesuwt type [" + g-getwesuwtsettype()
+        + "] s-scheduwe: " + scheduwe;
   }
 }

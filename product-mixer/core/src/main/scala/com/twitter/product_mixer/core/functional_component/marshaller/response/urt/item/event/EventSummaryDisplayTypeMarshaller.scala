@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.event
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.CellEventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.HeroEventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.CellWithProminentSocialContextEventSummaryDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.event.eventsummawydispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.event.cewweventsummawydispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.event.hewoeventsummawydispwaytype
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.event.cewwwithpwominentsociawcontexteventsummawydispwaytype
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class EventSummaryDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass eventsummawydispwaytypemawshawwew @inject() () {
 
-  def apply(
-    eventSummaryDisplayType: EventSummaryDisplayType
-  ): urt.EventSummaryDisplayType = eventSummaryDisplayType match {
-    case CellEventSummaryDisplayType =>
-      urt.EventSummaryDisplayType.Cell
-    case HeroEventSummaryDisplayType =>
-      urt.EventSummaryDisplayType.Hero
-    case CellWithProminentSocialContextEventSummaryDisplayType =>
-      urt.EventSummaryDisplayType.CellWithProminentSocialContext
+  def appwy(
+    eventsummawydispwaytype: eventsummawydispwaytype
+  ): u-uwt.eventsummawydispwaytype = eventsummawydispwaytype match {
+    c-case cewweventsummawydispwaytype =>
+      uwt.eventsummawydispwaytype.ceww
+    c-case hewoeventsummawydispwaytype =>
+      uwt.eventsummawydispwaytype.hewo
+    case cewwwithpwominentsociawcontexteventsummawydispwaytype =>
+      uwt.eventsummawydispwaytype.cewwwithpwominentsociawcontext
   }
 }

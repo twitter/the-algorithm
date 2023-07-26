@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.component_library.candidate_source.earlybird
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.eawwybiwd
 
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.seawch.eawwybiwd.{thwiftscawa => t-t}
+impowt com.twittew.inject.wogging
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class EarlybirdTweetCandidateSource @Inject() (
-  earlybirdService: t.EarlybirdService.MethodPerEndpoint)
-    extends CandidateSource[t.EarlybirdRequest, t.ThriftSearchResult]
-    with Logging {
+@singweton
+cwass eawwybiwdtweetcandidatesouwce @inject() (
+  eawwybiwdsewvice: t.eawwybiwdsewvice.methodpewendpoint)
+    extends candidatesouwce[t.eawwybiwdwequest, mya t-t.thwiftseawchwesuwt]
+    with wogging {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("EarlybirdTweets")
+  ovewwide v-vaw identifiew: candidatesouwceidentifiew = c-candidatesouwceidentifiew("eawwybiwdtweets")
 
-  override def apply(request: t.EarlybirdRequest): Stitch[Seq[t.ThriftSearchResult]] = {
-    Stitch
-      .callFuture(earlybirdService.search(request))
-      .map { response: t.EarlybirdResponse =>
-        response.searchResults.map(_.results).getOrElse(Seq.empty)
+  ovewwide def appwy(wequest: t.eawwybiwdwequest): s-stitch[seq[t.thwiftseawchwesuwt]] = {
+    stitch
+      .cawwfutuwe(eawwybiwdsewvice.seawch(wequest))
+      .map { w-wesponse: t.eawwybiwdwesponse =>
+        w-wesponse.seawchwesuwts.map(_.wesuwts).getowewse(seq.empty)
       }
   }
 }

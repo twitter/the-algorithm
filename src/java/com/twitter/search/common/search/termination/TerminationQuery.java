@@ -1,66 +1,66 @@
-package com.twitter.search.common.search.termination;
+package com.twittew.seawch.common.seawch.tewmination;
 
-import java.io.IOException;
-import java.util.Arrays;
+impowt java.io.ioexception;
+i-impowt java.utiw.awways;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt o-owg.apache.wucene.index.indexweadew;
+i-impowt owg.apache.wucene.seawch.indexseawchew;
+i-impowt owg.apache.wucene.seawch.quewy;
+i-impowt owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.weight;
 
 /**
- * Query implementation that can timeout and return non-exhaustive results.
+ * quewy impwementation that c-can timeout and wetuwn nyon-exhaustive wesuwts. nyaa~~
  */
-public class TerminationQuery extends Query {
-  private final Query inner;
-  private final QueryTimeout timeout;
+p-pubwic cwass tewminationquewy e-extends quewy {
+  pwivate finaw quewy innew;
+  pwivate finaw q-quewytimeout timeout;
 
-  public TerminationQuery(Query inner, QueryTimeout timeout) {
-    this.inner = Preconditions.checkNotNull(inner);
-    this.timeout = Preconditions.checkNotNull(timeout);
+  pubwic t-tewminationquewy(quewy i-innew, nyaa~~ quewytimeout timeout) {
+    this.innew = pweconditions.checknotnuww(innew);
+    this.timeout = p-pweconditions.checknotnuww(timeout);
   }
 
-  @Override
-  public Weight createWeight(
-      IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
-    Weight innerWeight = inner.createWeight(searcher, scoreMode, boost);
-    return new TerminationQueryWeight(this, innerWeight, timeout);
+  @ovewwide
+  pubwic weight cweateweight(
+      indexseawchew seawchew, :3 scowemode s-scowemode, 😳😳😳 fwoat boost) t-thwows ioexception {
+    w-weight i-innewweight = innew.cweateweight(seawchew, (˘ω˘) s-scowemode, boost);
+    wetuwn nyew tewminationquewyweight(this, ^^ i-innewweight, :3 timeout);
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewritten = inner.rewrite(reader);
-    if (rewritten != inner) {
-      return new TerminationQuery(rewritten, timeout);
+  @ovewwide
+  pubwic quewy w-wewwite(indexweadew weadew) thwows ioexception {
+    quewy wewwitten = innew.wewwite(weadew);
+    if (wewwitten != i-innew) {
+      wetuwn nyew t-tewminationquewy(wewwitten, -.- t-timeout);
     }
-    return this;
+    w-wetuwn this;
   }
 
-  public QueryTimeout getTimeout() {
-    return timeout;
+  pubwic quewytimeout gettimeout() {
+    wetuwn t-timeout;
   }
 
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(new Object[] {inner, timeout});
+  @ovewwide
+  pubwic i-int hashcode() {
+    wetuwn a-awways.hashcode(new o-object[] {innew, 😳 timeout});
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof TerminationQuery)) {
-      return false;
+  @ovewwide
+  p-pubwic boowean equaws(object o-obj) {
+    if (!(obj instanceof tewminationquewy)) {
+      w-wetuwn fawse;
     }
 
-    TerminationQuery terminationQuery = TerminationQuery.class.cast(obj);
-    return Arrays.equals(new Object[] {inner, timeout},
-                         new Object[] {terminationQuery.inner, terminationQuery.timeout});
+    t-tewminationquewy tewminationquewy = t-tewminationquewy.cwass.cast(obj);
+    w-wetuwn awways.equaws(new object[] {innew, mya timeout},
+                         nyew object[] {tewminationquewy.innew, (˘ω˘) tewminationquewy.timeout});
   }
 
-  @Override
-  public String toString(String field) {
-    return inner.toString(field);
+  @ovewwide
+  pubwic stwing t-tostwing(stwing f-fiewd) {
+    wetuwn innew.tostwing(fiewd);
   }
 }

@@ -1,572 +1,572 @@
-package com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph
+package com.twittew.simcwustews_v2.scio.muwti_type_gwaph.assembwe_muwti_type_gwaph
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.DiskFormat
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.iesource.thriftscala.InteractionType
-import com.twitter.iesource.thriftscala.ReferenceTweet
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.MultiTypeGraphForTopKRightNodesThriftScioScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.TopKRightNounsScioScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.TruncatedMultiTypeGraphScioScalaDataset
-import com.twitter.simclusters_v2.scio.common.ExternalDataSources
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.GlobalDefaultMinFrequencyOfRightNodeType
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.HalfLifeInDaysForFavScore
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.NumTopNounsForUnknownRightNodeType
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.SampledEmployeeIds
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.TopKConfig
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.TopKRightNounsForMHDump
-import com.twitter.simclusters_v2.scio.multi_type_graph.common.MultiTypeGraphUtil
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.simclusters_v2.thriftscala.LeftNode
-import com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge
-import com.twitter.simclusters_v2.thriftscala.Noun
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequency
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList
-import com.twitter.simclusters_v2.thriftscala.RightNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeType
-import com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeight
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import com.twitter.util.Duration
-import java.time.Instant
-import org.joda.time.Interval
+impowt com.spotify.scio.sciocontext
+i-impowt com.spotify.scio.codews.codew
+i-impowt c-com.spotify.scio.vawues.scowwection
+i-impowt com.twittew.beam.io.daw.daw
+i-impowt c-com.twittew.beam.io.fs.muwtifowmat.diskfowmat
+impowt c-com.twittew.beam.io.fs.muwtifowmat.pathwayout
+i-impowt com.twittew.beam.job.datewangeoptions
+impowt com.twittew.daw.cwient.dataset.keyvawdawdataset
+impowt com.twittew.daw.cwient.dataset.snapshotdawdataset
+impowt com.twittew.fwigate.data_pipewine.magicwecs.magicwecs_notifications_wite.thwiftscawa.magicwecsnotificationwite
+impowt com.twittew.iesouwce.thwiftscawa.intewactionevent
+i-impowt com.twittew.iesouwce.thwiftscawa.intewactiontype
+impowt com.twittew.iesouwce.thwiftscawa.wefewencetweet
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.scio_intewnaw.codews.thwiftstwuctwazybinawyscwoogecodew
+impowt com.twittew.scio_intewnaw.job.sciobeamjob
+i-impowt com.twittew.scwooge.thwiftstwuct
+impowt com.twittew.simcwustews_v2.common.countwy
+impowt c-com.twittew.simcwustews_v2.common.wanguage
+impowt c-com.twittew.simcwustews_v2.common.topicid
+i-impowt com.twittew.simcwustews_v2.common.tweetid
+impowt com.twittew.simcwustews_v2.common.usewid
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.muwtitypegwaphfowtopkwightnodesthwiftscioscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.topkwightnounsscioscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.twuncatedmuwtitypegwaphscioscawadataset
+impowt com.twittew.simcwustews_v2.scio.common.extewnawdatasouwces
+impowt c-com.twittew.simcwustews_v2.scio.muwti_type_gwaph.assembwe_muwti_type_gwaph.config.gwobawdefauwtminfwequencyofwightnodetype
+impowt c-com.twittew.simcwustews_v2.scio.muwti_type_gwaph.assembwe_muwti_type_gwaph.config.hawfwifeindaysfowfavscowe
+impowt c-com.twittew.simcwustews_v2.scio.muwti_type_gwaph.assembwe_muwti_type_gwaph.config.numtopnounsfowunknownwightnodetype
+i-impowt c-com.twittew.simcwustews_v2.scio.muwti_type_gwaph.assembwe_muwti_type_gwaph.config.sampwedempwoyeeids
+impowt com.twittew.simcwustews_v2.scio.muwti_type_gwaph.assembwe_muwti_type_gwaph.config.topkconfig
+impowt c-com.twittew.simcwustews_v2.scio.muwti_type_gwaph.assembwe_muwti_type_gwaph.config.topkwightnounsfowmhdump
+impowt com.twittew.simcwustews_v2.scio.muwti_type_gwaph.common.muwtitypegwaphutiw
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.edgewithdecayedweights
+impowt com.twittew.simcwustews_v2.thwiftscawa.weftnode
+impowt com.twittew.simcwustews_v2.thwiftscawa.muwtitypegwaphedge
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.noun
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.nounwithfwequency
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.nounwithfwequencywist
+impowt com.twittew.simcwustews_v2.thwiftscawa.wightnode
+impowt com.twittew.simcwustews_v2.thwiftscawa.wightnodetype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.wightnodetypestwuct
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.wightnodewithedgeweight
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.wightnodewithedgeweightwist
+i-impowt com.twittew.twadoop.usew.gen.thwiftscawa.combinedusew
+impowt com.twittew.utiw.duwation
+i-impowt java.time.instant
+impowt owg.joda.time.intewvaw
 
 /**
- * Scio version of
- * src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph/AssembleMultiTypeGraph.scala
+ * s-scio vewsion of
+ * swc/scawa/com/twittew/simcwustews_v2/scawding/muwti_type_gwaph/assembwe_muwti_type_gwaph/assembwemuwtitypegwaph.scawa
  */
-trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
-  // Provides an implicit binary thrift scrooge coder by default.
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
+twait assembwemuwtitypegwaphsciobaseapp e-extends sciobeamjob[datewangeoptions] {
+  // p-pwovides an impwicit binawy t-thwift scwooge c-codew by defauwt. (˘ω˘)
+  ovewwide impwicit def scwoogecodew[t <: thwiftstwuct: manifest]: codew[t] =
+    thwiftstwuctwazybinawyscwoogecodew.scwoogecodew
 
-  val isAdhoc: Boolean
-  val rootMHPath: String
-  val rootThriftPath: String
+  v-vaw isadhoc: b-boowean
+  vaw wootmhpath: s-stwing
+  vaw wootthwiftpath: s-stwing
 
-  val truncatedMultiTypeGraphMHOutputDir: String =
-    Config.truncatedMultiTypeGraphMHOutputDir
-  val truncatedMultiTypeGraphThriftOutputDir: String =
-    Config.truncatedMultiTypeGraphThriftOutputDir
-  val topKRightNounsMHOutputDir: String = Config.topKRightNounsMHOutputDir
-  val topKRightNounsOutputDir: String = Config.topKRightNounsOutputDir
+  v-vaw twuncatedmuwtitypegwaphmhoutputdiw: stwing =
+    config.twuncatedmuwtitypegwaphmhoutputdiw
+  vaw twuncatedmuwtitypegwaphthwiftoutputdiw: stwing =
+    c-config.twuncatedmuwtitypegwaphthwiftoutputdiw
+  vaw topkwightnounsmhoutputdiw: stwing = config.topkwightnounsmhoutputdiw
+  vaw topkwightnounsoutputdiw: s-stwing = config.topkwightnounsoutputdiw
 
-  val fullMultiTypeGraphThriftOutputDir: String =
-    Config.fullMultiTypeGraphThriftOutputDir
-  val truncatedMultiTypeGraphKeyValDataset: KeyValDALDataset[
-    KeyVal[LeftNode, RightNodeWithEdgeWeightList]
-  ] = TruncatedMultiTypeGraphScioScalaDataset
-  val topKRightNounsKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
-  ] = TopKRightNounsScioScalaDataset
-  val topKRightNounsMHKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
-  ] = TopKRightNounsMhScioScalaDataset
-  val fullMultiTypeGraphSnapshotDataset: SnapshotDALDataset[MultiTypeGraphEdge] =
-    FullMultiTypeGraphScioScalaDataset
-  val multiTypeGraphTopKForRightNodesSnapshotDataset: SnapshotDALDataset[
-    MultiTypeGraphEdge
+  v-vaw fuwwmuwtitypegwaphthwiftoutputdiw: s-stwing =
+    c-config.fuwwmuwtitypegwaphthwiftoutputdiw
+  vaw twuncatedmuwtitypegwaphkeyvawdataset: k-keyvawdawdataset[
+    k-keyvaw[weftnode, 😳 w-wightnodewithedgeweightwist]
+  ] = t-twuncatedmuwtitypegwaphscioscawadataset
+  vaw topkwightnounskeyvawdataset: keyvawdawdataset[
+    k-keyvaw[wightnodetypestwuct, o.O n-nyounwithfwequencywist]
+  ] = t-topkwightnounsscioscawadataset
+  v-vaw topkwightnounsmhkeyvawdataset: k-keyvawdawdataset[
+    keyvaw[wightnodetypestwuct, (ꈍᴗꈍ) nyounwithfwequencywist]
+  ] = topkwightnounsmhscioscawadataset
+  v-vaw fuwwmuwtitypegwaphsnapshotdataset: snapshotdawdataset[muwtitypegwaphedge] =
+    fuwwmuwtitypegwaphscioscawadataset
+  vaw muwtitypegwaphtopkfowwightnodessnapshotdataset: snapshotdawdataset[
+    muwtitypegwaphedge
   ] =
-    MultiTypeGraphForTopKRightNodesThriftScioScalaDataset
+    m-muwtitypegwaphfowtopkwightnodesthwiftscioscawadataset
 
-  def getValidUsers(
-    input: SCollection[CombinedUser]
-  ): SCollection[UserId] = {
-    input
-      .flatMap { u =>
-        for {
-          user <- u.user
-          if user.id != 0
-          safety <- user.safety
-          if !(safety.suspended || safety.deactivated)
-        } yield {
-          user.id
+  def getvawidusews(
+    input: scowwection[combinedusew]
+  ): s-scowwection[usewid] = {
+    i-input
+      .fwatmap { u-u =>
+        fow {
+          u-usew <- u.usew
+          if usew.id != 0
+          s-safety <- usew.safety
+          i-if !(safety.suspended || safety.deactivated)
+        } yiewd {
+          usew.id
         }
       }
   }
 
-  def filterInvalidUsers(
-    flockEdges: SCollection[(UserId, UserId)],
-    validUsers: SCollection[UserId]
-  ): SCollection[(UserId, UserId)] = {
-    val validUsersWithValues = validUsers.map(userId => (userId, ()))
-    flockEdges
-      .join(validUsersWithValues)
+  def fiwtewinvawidusews(
+    f-fwockedges: scowwection[(usewid, rawr x3 u-usewid)], ^^
+    vawidusews: s-scowwection[usewid]
+  ): s-scowwection[(usewid, OwO usewid)] = {
+    vaw vawidusewswithvawues = vawidusews.map(usewid => (usewid, ^^ ()))
+    f-fwockedges
+      .join(vawidusewswithvawues)
       .map {
-        case (srcId, (destId, _)) =>
-          (destId, srcId)
+        c-case (swcid, :3 (destid, _)) =>
+          (destid, o.O swcid)
       }
-      .join(validUsersWithValues)
+      .join(vawidusewswithvawues)
       .map {
-        case (destId, (srcId, _)) =>
-          (srcId, destId)
+        c-case (destid, -.- (swcid, (U ﹏ U) _)) =>
+          (swcid, o.O d-destid)
       }
   }
 
-  def getFavEdges(
-    input: SCollection[EdgeWithDecayedWeights],
-    halfLifeInDaysForFavScore: Int,
-  ): SCollection[(Long, Long, Double)] = {
+  def getfavedges(
+    input: scowwection[edgewithdecayedweights], OwO
+    hawfwifeindaysfowfavscowe: i-int, ^•ﻌ•^
+  ): s-scowwection[(wong, ʘwʘ w-wong, doubwe)] = {
     input
-      .flatMap { edge =>
-        if (edge.weights.halfLifeInDaysToDecayedSums.contains(halfLifeInDaysForFavScore)) {
-          Some(
+      .fwatmap { e-edge =>
+        i-if (edge.weights.hawfwifeindaystodecayedsums.contains(hawfwifeindaysfowfavscowe)) {
+          some(
             (
-              edge.sourceId,
-              edge.destinationId,
-              edge.weights.halfLifeInDaysToDecayedSums(halfLifeInDaysForFavScore)))
-        } else {
-          None
+              e-edge.souwceid, :3
+              edge.destinationid, 😳
+              edge.weights.hawfwifeindaystodecayedsums(hawfwifeindaysfowfavscowe)))
+        } ewse {
+          nyone
         }
       }
   }
 
-  def leftRightTuple(
-    leftNodeUserId: UserId,
-    rightNodeType: RightNodeType,
-    rightNoun: Noun,
-    weight: Double = 1.0
-  ): (LeftNode, RightNodeWithEdgeWeight) = {
+  d-def weftwighttupwe(
+    w-weftnodeusewid: usewid,
+    wightnodetype: w-wightnodetype, òωó
+    w-wightnoun: nyoun, 🥺
+    weight: doubwe = 1.0
+  ): (weftnode, rawr x3 wightnodewithedgeweight) = {
     (
-      LeftNode.UserId(leftNodeUserId),
-      RightNodeWithEdgeWeight(
-        rightNode = RightNode(rightNodeType = rightNodeType, noun = rightNoun),
+      w-weftnode.usewid(weftnodeusewid), ^•ﻌ•^
+      wightnodewithedgeweight(
+        wightnode = wightnode(wightnodetype = wightnodetype, :3 n-nyoun = wightnoun), (ˆ ﻌ ˆ)♡
         weight = weight))
   }
 
-  def getUserFavGraph(
-    userUserFavEdges: SCollection[(UserId, UserId, Double)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userUserFavEdges.map {
-      case (srcId, destId, edgeWt) =>
-        leftRightTuple(srcId, RightNodeType.FavUser, Noun.UserId(destId), edgeWt)
+  d-def g-getusewfavgwaph(
+    usewusewfavedges: scowwection[(usewid, (U ᵕ U❁) usewid, d-doubwe)]
+  ): s-scowwection[(weftnode, :3 wightnodewithedgeweight)] = {
+    usewusewfavedges.map {
+      case (swcid, ^^;; d-destid, edgewt) =>
+        weftwighttupwe(swcid, ( ͡o ω ͡o ) w-wightnodetype.favusew, o.O nyoun.usewid(destid), ^•ﻌ•^ edgewt)
     }
   }
 
-  def getUserFollowGraph(
-    userUserFollowEdges: SCollection[(UserId, UserId)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userUserFollowEdges.map {
-      case (srcId, destId) =>
-        leftRightTuple(srcId, RightNodeType.FollowUser, Noun.UserId(destId), 1.0)
+  def getusewfowwowgwaph(
+    usewusewfowwowedges: s-scowwection[(usewid, XD usewid)]
+  ): scowwection[(weftnode, ^^ w-wightnodewithedgeweight)] = {
+    u-usewusewfowwowedges.map {
+      case (swcid, o.O d-destid) =>
+        weftwighttupwe(swcid, ( ͡o ω ͡o ) w-wightnodetype.fowwowusew, /(^•ω•^) n-nyoun.usewid(destid), 🥺 1.0)
     }
   }
 
-  def getUserBlockGraph(
-    userUserBlockEdges: SCollection[(UserId, UserId)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userUserBlockEdges.map {
-      case (srcId, destId) =>
-        leftRightTuple(srcId, RightNodeType.BlockUser, Noun.UserId(destId), 1.0)
+  def g-getusewbwockgwaph(
+    usewusewbwockedges: s-scowwection[(usewid, nyaa~~ u-usewid)]
+  ): scowwection[(weftnode, mya wightnodewithedgeweight)] = {
+    u-usewusewbwockedges.map {
+      c-case (swcid, XD d-destid) =>
+        weftwighttupwe(swcid, nyaa~~ wightnodetype.bwockusew, ʘwʘ nyoun.usewid(destid), (⑅˘꒳˘) 1.0)
     }
   }
 
-  def getUserAbuseReportGraph(
-    userUserAbuseReportEdges: SCollection[(UserId, UserId)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userUserAbuseReportEdges.map {
-      case (srcId, destId) =>
-        leftRightTuple(srcId, RightNodeType.AbuseReportUser, Noun.UserId(destId), 1.0)
+  d-def getusewabusewepowtgwaph(
+    usewusewabusewepowtedges: s-scowwection[(usewid, :3 u-usewid)]
+  ): scowwection[(weftnode, -.- wightnodewithedgeweight)] = {
+    usewusewabusewepowtedges.map {
+      case (swcid, 😳😳😳 d-destid) =>
+        w-weftwighttupwe(swcid, (U ﹏ U) w-wightnodetype.abusewepowtusew, o.O n-nyoun.usewid(destid), ( ͡o ω ͡o ) 1.0)
     }
   }
 
-  def getUserSpamReportGraph(
-    userUserSpamReportEdges: SCollection[(UserId, UserId)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userUserSpamReportEdges.map {
-      case (srcId, destId) =>
-        leftRightTuple(srcId, RightNodeType.SpamReportUser, Noun.UserId(destId), 1.0)
+  def getusewspamwepowtgwaph(
+    u-usewusewspamwepowtedges: scowwection[(usewid, òωó usewid)]
+  ): scowwection[(weftnode, 🥺 wightnodewithedgeweight)] = {
+    usewusewspamwepowtedges.map {
+      c-case (swcid, /(^•ω•^) destid) =>
+        weftwighttupwe(swcid, 😳😳😳 w-wightnodetype.spamwepowtusew, ^•ﻌ•^ nyoun.usewid(destid), nyaa~~ 1.0)
     }
   }
 
-  def getUserTopicFollowGraph(
-    topicUserFollowedByEdges: SCollection[(TopicId, UserId)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    topicUserFollowedByEdges.map {
-      case (topicId, userId) =>
-        leftRightTuple(userId, RightNodeType.FollowTopic, Noun.TopicId(topicId), 1.0)
+  d-def getusewtopicfowwowgwaph(
+    topicusewfowwowedbyedges: s-scowwection[(topicid, OwO usewid)]
+  ): scowwection[(weftnode, ^•ﻌ•^ w-wightnodewithedgeweight)] = {
+    t-topicusewfowwowedbyedges.map {
+      c-case (topicid, σωσ u-usewid) =>
+        w-weftwighttupwe(usewid, wightnodetype.fowwowtopic, -.- nyoun.topicid(topicid), (˘ω˘) 1.0)
     }
   }
 
-  def getUserSignUpCountryGraph(
-    userSignUpCountryEdges: SCollection[(UserId, Country)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userSignUpCountryEdges.map {
-      case (userId, country) =>
-        leftRightTuple(userId, RightNodeType.SignUpCountry, Noun.Country(country), 1.0)
+  def getusewsignupcountwygwaph(
+    usewsignupcountwyedges: scowwection[(usewid, rawr x3 countwy)]
+  ): scowwection[(weftnode, rawr x3 wightnodewithedgeweight)] = {
+    u-usewsignupcountwyedges.map {
+      c-case (usewid, σωσ c-countwy) =>
+        weftwighttupwe(usewid, nyaa~~ w-wightnodetype.signupcountwy, (ꈍᴗꈍ) noun.countwy(countwy), ^•ﻌ•^ 1.0)
     }
   }
 
-  def getMagicRecsNotifOpenOrClickTweetsGraph(
-    userMRNotifOpenOrClickEvents: SCollection[MagicRecsNotificationLite]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userMRNotifOpenOrClickEvents.flatMap { entry =>
-      for {
-        userId <- entry.targetUserId
-        tweetId <- entry.tweetId
-      } yield {
-        leftRightTuple(userId, RightNodeType.NotifOpenOrClickTweet, Noun.TweetId(tweetId), 1.0)
+  def getmagicwecsnotifopenowcwicktweetsgwaph(
+    usewmwnotifopenowcwickevents: s-scowwection[magicwecsnotificationwite]
+  ): s-scowwection[(weftnode, >_< wightnodewithedgeweight)] = {
+    u-usewmwnotifopenowcwickevents.fwatmap { entwy =>
+      fow {
+        u-usewid <- e-entwy.tawgetusewid
+        tweetid <- entwy.tweetid
+      } y-yiewd {
+        w-weftwighttupwe(usewid, ^^;; wightnodetype.notifopenowcwicktweet, ^^;; nyoun.tweetid(tweetid), /(^•ω•^) 1.0)
       }
     }
   }
 
-  def getUserConsumedLanguagesGraph(
-    userConsumedLanguageEdges: SCollection[(UserId, Seq[(Language, Double)])]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userConsumedLanguageEdges.flatMap {
-      case (userId, langWithWeights) =>
-        langWithWeights.map {
-          case (lang, weight) =>
-            leftRightTuple(userId, RightNodeType.ConsumedLanguage, Noun.Language(lang), 1.0)
+  def getusewconsumedwanguagesgwaph(
+    usewconsumedwanguageedges: s-scowwection[(usewid, nyaa~~ s-seq[(wanguage, (✿oωo) d-doubwe)])]
+  ): s-scowwection[(weftnode, ( ͡o ω ͡o ) w-wightnodewithedgeweight)] = {
+    usewconsumedwanguageedges.fwatmap {
+      c-case (usewid, (U ᵕ U❁) w-wangwithweights) =>
+        wangwithweights.map {
+          c-case (wang, weight) =>
+            w-weftwighttupwe(usewid, wightnodetype.consumedwanguage, n-nyoun.wanguage(wang), òωó 1.0)
         }
     }
   }
 
-  def getSearchGraph(
-    userSearchQueryEdges: SCollection[(UserId, String)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userSearchQueryEdges.map {
-      case (userId, query) =>
-        leftRightTuple(userId, RightNodeType.SearchQuery, Noun.Query(query), 1.0)
+  def getseawchgwaph(
+    u-usewseawchquewyedges: scowwection[(usewid, σωσ s-stwing)]
+  ): scowwection[(weftnode, w-wightnodewithedgeweight)] = {
+    usewseawchquewyedges.map {
+      c-case (usewid, :3 quewy) =>
+        weftwighttupwe(usewid, OwO w-wightnodetype.seawchquewy, ^^ n-nyoun.quewy(quewy), (˘ω˘) 1.0)
     }
   }
 
-  def getUserTweetInteractionGraph(
-    tweetInteractionEvents: SCollection[InteractionEvent],
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val userTweetInteractionsByType: SCollection[((UserId, TweetId), RightNodeType)] =
-      tweetInteractionEvents
-        .flatMap { event =>
-          val referenceTweet: Option[ReferenceTweet] = event.referenceTweet
-          val targetId: Long = event.targetId
-          val userId: Long = event.engagingUserId
+  d-def getusewtweetintewactiongwaph(
+    tweetintewactionevents: scowwection[intewactionevent], OwO
+  ): scowwection[(weftnode, UwU wightnodewithedgeweight)] = {
+    v-vaw usewtweetintewactionsbytype: scowwection[((usewid, ^•ﻌ•^ t-tweetid), (ꈍᴗꈍ) wightnodetype)] =
+      t-tweetintewactionevents
+        .fwatmap { event =>
+          vaw wefewencetweet: o-option[wefewencetweet] = event.wefewencetweet
+          vaw t-tawgetid: wong = e-event.tawgetid
+          vaw usewid: wong = event.engagingusewid
 
-          //  To find the id of the tweet that was interacted with
-          //  For likes, this is the targetId; for retweet or reply, it is the referenceTweet's id
-          //  One thing to note is that for likes, referenceTweet is empty
-          val (tweetIdOpt, rightNodeTypeOpt) = {
-            event.interactionType match {
-              case Some(InteractionType.Favorite) =>
-                // Only allow favorites on original tweets, not retweets, to avoid double-counting
-                // because we have retweet-type tweets in the data source as well
+          //  t-to find the id of the tweet that was intewacted w-with
+          //  f-fow wikes, /(^•ω•^) this is the tawgetid; f-fow wetweet ow wepwy, (U ᵕ U❁) it i-is the wefewencetweet's i-id
+          //  o-one thing to nyote is that fow wikes, (✿oωo) wefewencetweet is empty
+          vaw (tweetidopt, wightnodetypeopt) = {
+            event.intewactiontype match {
+              case some(intewactiontype.favowite) =>
+                // onwy awwow favowites on owiginaw tweets, OwO n-nyot wetweets, :3 t-to avoid doubwe-counting
+                // because we have wetweet-type t-tweets i-in the data souwce a-as weww
                 (
-                  if (referenceTweet.isEmpty) {
-                    Some(targetId)
-                  } else None,
-                  Some(RightNodeType.FavTweet))
-              case Some(InteractionType.Reply) =>
-                (referenceTweet.map(_.tweetId), Some(RightNodeType.ReplyTweet))
-              case Some(InteractionType.Retweet) =>
-                (referenceTweet.map(_.tweetId), Some(RightNodeType.RetweetTweet))
-              case _ => (None, None)
+                  if (wefewencetweet.isempty) {
+                    s-some(tawgetid)
+                  } ewse nyone, nyaa~~
+                  s-some(wightnodetype.favtweet))
+              c-case some(intewactiontype.wepwy) =>
+                (wefewencetweet.map(_.tweetid), ^•ﻌ•^ some(wightnodetype.wepwytweet))
+              c-case some(intewactiontype.wetweet) =>
+                (wefewencetweet.map(_.tweetid), ( ͡o ω ͡o ) some(wightnodetype.wetweettweet))
+              c-case _ => (none, ^^;; n-nyone)
             }
           }
-          for {
-            tweetId <- tweetIdOpt
-            rightNodeType <- rightNodeTypeOpt
-          } yield {
-            ((userId, tweetId), rightNodeType)
+          fow {
+            tweetid <- t-tweetidopt
+            w-wightnodetype <- w-wightnodetypeopt
+          } y-yiewd {
+            ((usewid, t-tweetid), mya wightnodetype)
           }
         }
 
-    userTweetInteractionsByType
-      .mapValues(Set(_))
-      .sumByKey
-      .flatMap {
-        case ((userId, tweetId), rightNodeTypeSet) =>
-          rightNodeTypeSet.map { rightNodeType =>
-            leftRightTuple(userId, rightNodeType, Noun.TweetId(tweetId), 1.0)
+    u-usewtweetintewactionsbytype
+      .mapvawues(set(_))
+      .sumbykey
+      .fwatmap {
+        c-case ((usewid, (U ᵕ U❁) t-tweetid), ^•ﻌ•^ wightnodetypeset) =>
+          w-wightnodetypeset.map { wightnodetype =>
+            w-weftwighttupwe(usewid, (U ﹏ U) w-wightnodetype, /(^•ω•^) n-nyoun.tweetid(tweetid), ʘwʘ 1.0)
           }
       }
   }
 
-  def getTopKRightNounsWithFrequencies(
-    fullGraph: SCollection[(LeftNode, RightNodeWithEdgeWeight)],
-    topKConfig: Map[RightNodeType, Int],
-    minFrequency: Int,
-  ): SCollection[(RightNodeType, Seq[(Noun, Double)])] = {
-    val maxAcrossRightNounType: Int = topKConfig.valuesIterator.max
+  def gettopkwightnounswithfwequencies(
+    f-fuwwgwaph: scowwection[(weftnode, XD wightnodewithedgeweight)], (⑅˘꒳˘)
+    t-topkconfig: map[wightnodetype, nyaa~~ i-int], UwU
+    m-minfwequency: i-int, (˘ω˘)
+  ): scowwection[(wightnodetype, rawr x3 seq[(noun, (///ˬ///✿) d-doubwe)])] = {
+    vaw maxacwosswightnountype: i-int = topkconfig.vawuesitewatow.max
 
-    fullGraph
+    fuwwgwaph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          (rightNodeWithWeight.rightNode, 1.0)
+        c-case (weftnode, 😳😳😳 wightnodewithweight) =>
+          (wightnodewithweight.wightnode, (///ˬ///✿) 1.0)
       }
-      .sumByKey
-      .filter(_._2 >= minFrequency)
+      .sumbykey
+      .fiwtew(_._2 >= minfwequency)
       .map {
-        case (rightNode, freq) =>
-          (rightNode.rightNodeType, (rightNode.noun, freq))
+        c-case (wightnode, ^^;; fweq) =>
+          (wightnode.wightnodetype, ^^ (wightnode.noun, (///ˬ///✿) fweq))
       }
-      .topByKey(maxAcrossRightNounType)(Ordering.by(_._2))
+      .topbykey(maxacwosswightnountype)(owdewing.by(_._2))
       .map {
-        case (rightNodeType, nounsListWithFreq) =>
-          val truncatedList = nounsListWithFreq.toSeq
-            .sortBy(-_._2)
-            .take(topKConfig.getOrElse(rightNodeType, NumTopNounsForUnknownRightNodeType))
-          (rightNodeType, truncatedList)
+        case (wightnodetype, -.- nyounswistwithfweq) =>
+          v-vaw twuncatedwist = nyounswistwithfweq.toseq
+            .sowtby(-_._2)
+            .take(topkconfig.getowewse(wightnodetype, /(^•ω•^) n-numtopnounsfowunknownwightnodetype))
+          (wightnodetype, UwU t-twuncatedwist)
       }
   }
 
-  def getTruncatedGraph(
-    fullGraph: SCollection[(LeftNode, RightNodeWithEdgeWeight)],
-    topKWithFrequency: SCollection[(RightNodeType, Seq[(Noun, Double)])]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val topNouns = topKWithFrequency
-      .flatMap {
-        case (rightNodeType, nounsList) =>
-          nounsList
+  def gettwuncatedgwaph(
+    fuwwgwaph: scowwection[(weftnode, (⑅˘꒳˘) w-wightnodewithedgeweight)], ʘwʘ
+    topkwithfwequency: s-scowwection[(wightnodetype, σωσ s-seq[(noun, ^^ d-doubwe)])]
+  ): scowwection[(weftnode, OwO wightnodewithedgeweight)] = {
+    v-vaw topnouns = topkwithfwequency
+      .fwatmap {
+        c-case (wightnodetype, (ˆ ﻌ ˆ)♡ nyounswist) =>
+          nyounswist
             .map {
-              case (nounVal, aggregatedFrequency) =>
-                RightNode(rightNodeType, nounVal)
+              c-case (nounvaw, o.O aggwegatedfwequency) =>
+                wightnode(wightnodetype, (˘ω˘) n-nyounvaw)
             }
-      }.map(nouns => (nouns, ()))
+      }.map(nouns => (nouns, 😳 ()))
 
-    fullGraph
+    fuwwgwaph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          (rightNodeWithWeight.rightNode, (leftNode, rightNodeWithWeight))
+        c-case (weftnode, (U ᵕ U❁) w-wightnodewithweight) =>
+          (wightnodewithweight.wightnode, :3 (weftnode, o.O wightnodewithweight))
       }
-      .hashJoin(topNouns)
+      .hashjoin(topnouns)
       .map {
-        case (rightNode, ((left, rightNodeWithWeight), _)) =>
-          (left, rightNodeWithWeight)
+        c-case (wightnode, (///ˬ///✿) ((weft, wightnodewithweight), OwO _)) =>
+          (weft, >w< w-wightnodewithweight)
       }
   }
 
-  def buildEmployeeGraph(
-    graph: SCollection[(LeftNode, RightNodeWithEdgeWeight)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val employeeIds = SampledEmployeeIds
-    graph
-      .collect {
-        case (LeftNode.UserId(userId), rightNodeWithWeight) if employeeIds.contains(userId) =>
-          (LeftNode.UserId(userId), rightNodeWithWeight)
+  d-def buiwdempwoyeegwaph(
+    g-gwaph: scowwection[(weftnode, ^^ w-wightnodewithedgeweight)]
+  ): scowwection[(weftnode, (⑅˘꒳˘) w-wightnodewithedgeweight)] = {
+    v-vaw empwoyeeids = s-sampwedempwoyeeids
+    g-gwaph
+      .cowwect {
+        c-case (weftnode.usewid(usewid), ʘwʘ w-wightnodewithweight) i-if empwoyeeids.contains(usewid) =>
+          (weftnode.usewid(usewid), (///ˬ///✿) w-wightnodewithweight)
       }
   }
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    // Define the implicit ScioContext to read datasets from ExternalDataSources
-    implicit def scioContext: ScioContext = sc
+  ovewwide def configuwepipewine(sc: s-sciocontext, XD opts: datewangeoptions): u-unit = {
+    // define t-the impwicit sciocontext t-to wead d-datasets fwom extewnawdatasouwces
+    impwicit def sciocontext: sciocontext = sc
 
-    // DAL.Environment variable for WriteExecs
-    val dalEnv = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+    // d-daw.enviwonment v-vawiabwe f-fow wwiteexecs
+    vaw dawenv = if (isadhoc) daw.enviwonment.dev e-ewse daw.enviwonment.pwod
 
-    // Define date intervals
-    val interval_7days =
-      new Interval(opts.interval.getEnd.minusWeeks(1), opts.interval.getEnd.minusMillis(1))
-    val interval_14days =
-      new Interval(opts.interval.getEnd.minusWeeks(2), opts.interval.getEnd.minusMillis(1))
-
-    /*
-     * Dataset read operations
-     */
-    // Get list of valid UserIds - to filter out deactivated or suspended user accounts
-    val validUsers = getValidUsers(ExternalDataSources.userSource(Duration.fromDays(7)))
-
-    // ieSource tweet engagements data for tweet favs, replies, retweets - from last 14 days
-    val tweetSource = ExternalDataSources.ieSourceTweetEngagementsSource(interval_14days)
-
-    // Read TFlock datasets
-    val flockFollowSource = ExternalDataSources.flockFollowSource(Duration.fromDays(7))
-    val flockBlockSource = ExternalDataSources.flockBlockSource(Duration.fromDays(7))
-    val flockReportAsAbuseSource =
-      ExternalDataSources.flockReportAsAbuseSource(Duration.fromDays(7))
-    val flockReportAsSpamSource =
-      ExternalDataSources.flockReportAsSpamSource(Duration.fromDays(7))
-
-    // user-user fav edges
-    val userUserFavSource = ExternalDataSources.userUserFavSource(Duration.fromDays(14))
-    val userUserFavEdges = getFavEdges(userUserFavSource, HalfLifeInDaysForFavScore)
-
-    // user-user follow edges
-    val userUserFollowEdges = filterInvalidUsers(flockFollowSource, validUsers)
-
-    // user-user block edges
-    val userUserBlockEdges = filterInvalidUsers(flockBlockSource, validUsers)
-
-    // user-user abuse report edges
-    val userUserAbuseReportEdges = filterInvalidUsers(flockReportAsAbuseSource, validUsers)
-
-    // user-user spam report edges
-    val userUserSpamReportEdges = filterInvalidUsers(flockReportAsSpamSource, validUsers)
-
-    // user-signup country edges
-    val userSignUpCountryEdges = ExternalDataSources
-      .userCountrySource(Duration.fromDays(7))
-
-    // user-consumed language edges
-    val userConsumedLanguageEdges =
-      ExternalDataSources.inferredUserConsumedLanguageSource(Duration.fromDays(7))
-
-    // user-topic follow edges
-    val topicUserFollowedByEdges =
-      ExternalDataSources.topicFollowGraphSource(Duration.fromDays(7))
-
-    // user-MRNotifOpenOrClick events from last 7 days
-    val userMRNotifOpenOrClickEvents =
-      ExternalDataSources.magicRecsNotficationOpenOrClickEventsSource(interval_7days)
-
-    // user-searchQuery strings from last 7 days
-    val userSearchQueryEdges =
-      ExternalDataSources.adaptiveSearchScribeLogsSource(interval_7days)
+    // d-define date intewvaws
+    v-vaw intewvaw_7days =
+      n-nyew intewvaw(opts.intewvaw.getend.minusweeks(1), 😳 opts.intewvaw.getend.minusmiwwis(1))
+    vaw intewvaw_14days =
+      n-nyew intewvaw(opts.intewvaw.getend.minusweeks(2), o-opts.intewvaw.getend.minusmiwwis(1))
 
     /*
-     * Generate the full graph
+     * d-dataset w-wead opewations
      */
-    val fullGraph =
-      getUserTweetInteractionGraph(tweetSource) ++
-        getUserFavGraph(userUserFavEdges) ++
-        getUserFollowGraph(userUserFollowEdges) ++
-        getUserBlockGraph(userUserBlockEdges) ++
-        getUserAbuseReportGraph(userUserAbuseReportEdges) ++
-        getUserSpamReportGraph(userUserSpamReportEdges) ++
-        getUserSignUpCountryGraph(userSignUpCountryEdges) ++
-        getUserConsumedLanguagesGraph(userConsumedLanguageEdges) ++
-        getUserTopicFollowGraph(topicUserFollowedByEdges) ++
-        getMagicRecsNotifOpenOrClickTweetsGraph(userMRNotifOpenOrClickEvents) ++
-        getSearchGraph(userSearchQueryEdges)
+    // get wist of vawid usewids - to fiwtew o-out deactivated o-ow suspended usew accounts
+    vaw vawidusews = g-getvawidusews(extewnawdatasouwces.usewsouwce(duwation.fwomdays(7)))
 
-    // Get Top K RightNodes
-    val topKRightNodes: SCollection[(RightNodeType, Seq[(Noun, Double)])] =
-      getTopKRightNounsWithFrequencies(
-        fullGraph,
-        TopKConfig,
-        GlobalDefaultMinFrequencyOfRightNodeType)
+    // iesouwce tweet engagements data f-fow tweet favs, >w< wepwies, (˘ω˘) wetweets - f-fwom wast 14 d-days
+    vaw tweetsouwce = extewnawdatasouwces.iesouwcetweetengagementssouwce(intewvaw_14days)
 
-    // key transformation - topK nouns, keyed by the RightNodeNounType
-    val topKNounsKeyedByType: SCollection[(RightNodeTypeStruct, NounWithFrequencyList)] =
-      topKRightNodes
+    // w-wead tfwock d-datasets
+    vaw fwockfowwowsouwce = e-extewnawdatasouwces.fwockfowwowsouwce(duwation.fwomdays(7))
+    vaw fwockbwocksouwce = e-extewnawdatasouwces.fwockbwocksouwce(duwation.fwomdays(7))
+    v-vaw fwockwepowtasabusesouwce =
+      e-extewnawdatasouwces.fwockwepowtasabusesouwce(duwation.fwomdays(7))
+    v-vaw fwockwepowtasspamsouwce =
+      e-extewnawdatasouwces.fwockwepowtasspamsouwce(duwation.fwomdays(7))
+
+    // u-usew-usew f-fav edges
+    vaw usewusewfavsouwce = e-extewnawdatasouwces.usewusewfavsouwce(duwation.fwomdays(14))
+    vaw usewusewfavedges = getfavedges(usewusewfavsouwce, nyaa~~ h-hawfwifeindaysfowfavscowe)
+
+    // u-usew-usew fowwow e-edges
+    vaw usewusewfowwowedges = fiwtewinvawidusews(fwockfowwowsouwce, 😳😳😳 vawidusews)
+
+    // usew-usew bwock edges
+    vaw u-usewusewbwockedges = fiwtewinvawidusews(fwockbwocksouwce, (U ﹏ U) v-vawidusews)
+
+    // usew-usew a-abuse wepowt edges
+    vaw usewusewabusewepowtedges = fiwtewinvawidusews(fwockwepowtasabusesouwce, (˘ω˘) v-vawidusews)
+
+    // usew-usew spam wepowt e-edges
+    v-vaw usewusewspamwepowtedges = f-fiwtewinvawidusews(fwockwepowtasspamsouwce, :3 v-vawidusews)
+
+    // u-usew-signup countwy edges
+    vaw usewsignupcountwyedges = extewnawdatasouwces
+      .usewcountwysouwce(duwation.fwomdays(7))
+
+    // u-usew-consumed wanguage edges
+    v-vaw usewconsumedwanguageedges =
+      extewnawdatasouwces.infewwedusewconsumedwanguagesouwce(duwation.fwomdays(7))
+
+    // usew-topic fowwow edges
+    vaw t-topicusewfowwowedbyedges =
+      extewnawdatasouwces.topicfowwowgwaphsouwce(duwation.fwomdays(7))
+
+    // usew-mwnotifopenowcwick events fwom wast 7 days
+    vaw u-usewmwnotifopenowcwickevents =
+      e-extewnawdatasouwces.magicwecsnotficationopenowcwickeventssouwce(intewvaw_7days)
+
+    // usew-seawchquewy stwings fwom wast 7 d-days
+    vaw usewseawchquewyedges =
+      extewnawdatasouwces.adaptiveseawchscwibewogssouwce(intewvaw_7days)
+
+    /*
+     * g-genewate the fuww g-gwaph
+     */
+    vaw fuwwgwaph =
+      g-getusewtweetintewactiongwaph(tweetsouwce) ++
+        getusewfavgwaph(usewusewfavedges) ++
+        getusewfowwowgwaph(usewusewfowwowedges) ++
+        getusewbwockgwaph(usewusewbwockedges) ++
+        g-getusewabusewepowtgwaph(usewusewabusewepowtedges) ++
+        getusewspamwepowtgwaph(usewusewspamwepowtedges) ++
+        getusewsignupcountwygwaph(usewsignupcountwyedges) ++
+        getusewconsumedwanguagesgwaph(usewconsumedwanguageedges) ++
+        g-getusewtopicfowwowgwaph(topicusewfowwowedbyedges) ++
+        getmagicwecsnotifopenowcwicktweetsgwaph(usewmwnotifopenowcwickevents) ++
+        getseawchgwaph(usewseawchquewyedges)
+
+    // g-get top k wightnodes
+    v-vaw t-topkwightnodes: scowwection[(wightnodetype, >w< seq[(noun, d-doubwe)])] =
+      gettopkwightnounswithfwequencies(
+        fuwwgwaph, ^^
+        topkconfig, 😳😳😳
+        gwobawdefauwtminfwequencyofwightnodetype)
+
+    // k-key t-twansfowmation - t-topk nyouns, k-keyed by the wightnodenountype
+    vaw topknounskeyedbytype: scowwection[(wightnodetypestwuct, nyaa~~ nyounwithfwequencywist)] =
+      t-topkwightnodes
         .map {
-          case (rightNodeType, rightNounsWithScoresList) =>
-            val nounsListWithFrequency: Seq[NounWithFrequency] = rightNounsWithScoresList
+          c-case (wightnodetype, (⑅˘꒳˘) wightnounswithscoweswist) =>
+            vaw nyounswistwithfwequency: s-seq[nounwithfwequency] = wightnounswithscoweswist
               .map {
-                case (noun, aggregatedFrequency) =>
-                  NounWithFrequency(noun, aggregatedFrequency)
+                case (noun, :3 a-aggwegatedfwequency) =>
+                  nyounwithfwequency(noun, ʘwʘ aggwegatedfwequency)
               }
-            (RightNodeTypeStruct(rightNodeType), NounWithFrequencyList(nounsListWithFrequency))
+            (wightnodetypestwuct(wightnodetype), rawr x3 nyounwithfwequencywist(nounswistwithfwequency))
         }
 
-    // Get Truncated graph based on the top K RightNodes
-    val truncatedGraph: SCollection[(LeftNode, RightNodeWithEdgeWeight)] =
-      getTruncatedGraph(fullGraph, topKRightNodes)
+    // g-get twuncated gwaph b-based on the top k wightnodes
+    v-vaw twuncatedgwaph: s-scowwection[(weftnode, (///ˬ///✿) w-wightnodewithedgeweight)] =
+      gettwuncatedgwaph(fuwwgwaph, 😳😳😳 topkwightnodes)
 
-    // key transformations - truncated graph, keyed by LeftNode
-    // Note: By wrapping and unwrapping with the LeftNode.UserId, we don't have to deal
-    // with defining our own customer ordering for LeftNode type
-    val truncatedGraphKeyedBySrc: SCollection[(LeftNode, RightNodeWithEdgeWeightList)] =
-      truncatedGraph
-        .collect {
-          case (LeftNode.UserId(userId), rightNodeWithWeight) =>
-            userId -> List(rightNodeWithWeight)
+    // k-key twansfowmations - twuncated gwaph, XD keyed by weftnode
+    // n-nyote: by wwapping and unwwapping with the weftnode.usewid, >_< w-we don't have t-to deaw
+    // w-with defining o-ouw own customew o-owdewing fow weftnode type
+    v-vaw twuncatedgwaphkeyedbyswc: scowwection[(weftnode, >w< wightnodewithedgeweightwist)] =
+      t-twuncatedgwaph
+        .cowwect {
+          case (weftnode.usewid(usewid), /(^•ω•^) w-wightnodewithweight) =>
+            usewid -> wist(wightnodewithweight)
         }
-        .sumByKey
+        .sumbykey
         .map {
-          case (userId, rightNodeWithWeightList) =>
-            (LeftNode.UserId(userId), RightNodeWithEdgeWeightList(rightNodeWithWeightList))
+          c-case (usewid, :3 w-wightnodewithweightwist) =>
+            (weftnode.usewid(usewid), ʘwʘ wightnodewithedgeweightwist(wightnodewithweightwist))
         }
 
-    // WriteExecs
-    // Write TopK RightNodes to DAL - save all the top K nodes for the clustering step
-    topKNounsKeyedByType
+    // w-wwiteexecs
+    // wwite t-topk wightnodes t-to daw - save aww the top k nodes f-fow the cwustewing s-step
+    topknounskeyedbytype
       .map {
-        case (engagementType, rightList) =>
-          KeyVal(engagementType, rightList)
+        c-case (engagementtype, (˘ω˘) wightwist) =>
+          keyvaw(engagementtype, (ꈍᴗꈍ) wightwist)
       }
-      .saveAsCustomOutput(
-        name = "WriteTopKNouns",
-        DAL.writeVersionedKeyVal(
-          topKRightNounsKeyValDataset,
-          PathLayout.VersionedPath(prefix =
-            rootMHPath + topKRightNounsOutputDir),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = dalEnv,
+      .saveascustomoutput(
+        n-nyame = "wwitetopknouns", ^^
+        daw.wwitevewsionedkeyvaw(
+          t-topkwightnounskeyvawdataset, ^^
+          pathwayout.vewsionedpath(pwefix =
+            wootmhpath + topkwightnounsoutputdiw), ( ͡o ω ͡o )
+          i-instant = instant.ofepochmiwwi(opts.intewvaw.getendmiwwis - 1w), -.-
+          e-enviwonmentovewwide = d-dawenv, ^^;;
         )
       )
 
-    // Write TopK RightNodes to DAL - only take TopKRightNounsForMHDump RightNodes for MH dump
-    topKNounsKeyedByType
+    // wwite topk w-wightnodes to daw - o-onwy take topkwightnounsfowmhdump wightnodes f-fow mh dump
+    topknounskeyedbytype
       .map {
-        case (engagementType, rightList) =>
-          val rightListMH =
-            NounWithFrequencyList(rightList.nounWithFrequencyList.take(TopKRightNounsForMHDump))
-          KeyVal(engagementType, rightListMH)
+        c-case (engagementtype, ^•ﻌ•^ wightwist) =>
+          v-vaw wightwistmh =
+            n-nyounwithfwequencywist(wightwist.nounwithfwequencywist.take(topkwightnounsfowmhdump))
+          keyvaw(engagementtype, (˘ω˘) wightwistmh)
       }
-      .saveAsCustomOutput(
-        name = "WriteTopKNounsToMHForDebugger",
-        DAL.writeVersionedKeyVal(
-          topKRightNounsMHKeyValDataset,
-          PathLayout.VersionedPath(prefix =
-            rootMHPath + topKRightNounsMHOutputDir),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = dalEnv,
+      .saveascustomoutput(
+        nyame = "wwitetopknounstomhfowdebuggew", o.O
+        daw.wwitevewsionedkeyvaw(
+          t-topkwightnounsmhkeyvawdataset, (✿oωo)
+          p-pathwayout.vewsionedpath(pwefix =
+            wootmhpath + topkwightnounsmhoutputdiw), 😳😳😳
+          instant = instant.ofepochmiwwi(opts.intewvaw.getendmiwwis - 1w), (ꈍᴗꈍ)
+          enviwonmentovewwide = d-dawenv, σωσ
         )
       )
 
-    // Write truncated graph (MultiTypeGraphTopKForRightNodes) to DAL in KeyVal format
-    truncatedGraphKeyedBySrc
+    // wwite twuncated g-gwaph (muwtitypegwaphtopkfowwightnodes) t-to daw in keyvaw fowmat
+    twuncatedgwaphkeyedbyswc
       .map {
-        case (leftNode, rightNodeWithWeightList) =>
-          KeyVal(leftNode, rightNodeWithWeightList)
-      }.saveAsCustomOutput(
-        name = "WriteTruncatedMultiTypeGraph",
-        DAL.writeVersionedKeyVal(
-          truncatedMultiTypeGraphKeyValDataset,
-          PathLayout.VersionedPath(prefix =
-            rootMHPath + truncatedMultiTypeGraphMHOutputDir),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = dalEnv,
+        case (weftnode, UwU wightnodewithweightwist) =>
+          keyvaw(weftnode, ^•ﻌ•^ w-wightnodewithweightwist)
+      }.saveascustomoutput(
+        nyame = "wwitetwuncatedmuwtitypegwaph",
+        daw.wwitevewsionedkeyvaw(
+          t-twuncatedmuwtitypegwaphkeyvawdataset, mya
+          pathwayout.vewsionedpath(pwefix =
+            w-wootmhpath + twuncatedmuwtitypegwaphmhoutputdiw),
+          i-instant = instant.ofepochmiwwi(opts.intewvaw.getendmiwwis - 1w), /(^•ω•^)
+          e-enviwonmentovewwide = d-dawenv, rawr
         )
       )
 
-    // Write truncated graph (MultiTypeGraphTopKForRightNodes) to DAL in thrift format
-    truncatedGraph
+    // wwite t-twuncated gwaph (muwtitypegwaphtopkfowwightnodes) t-to daw in t-thwift fowmat
+    t-twuncatedgwaph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          MultiTypeGraphEdge(leftNode, rightNodeWithWeight)
-      }.saveAsCustomOutput(
-        name = "WriteTruncatedMultiTypeGraphThrift",
-        DAL.writeSnapshot(
-          multiTypeGraphTopKForRightNodesSnapshotDataset,
-          PathLayout.FixedPath(rootThriftPath + truncatedMultiTypeGraphThriftOutputDir),
-          Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          DiskFormat.Thrift(),
-          environmentOverride = dalEnv
+        case (weftnode, nyaa~~ wightnodewithweight) =>
+          muwtitypegwaphedge(weftnode, ( ͡o ω ͡o ) wightnodewithweight)
+      }.saveascustomoutput(
+        nyame = "wwitetwuncatedmuwtitypegwaphthwift", σωσ
+        daw.wwitesnapshot(
+          m-muwtitypegwaphtopkfowwightnodessnapshotdataset,
+          p-pathwayout.fixedpath(wootthwiftpath + t-twuncatedmuwtitypegwaphthwiftoutputdiw), (✿oωo)
+          i-instant.ofepochmiwwi(opts.intewvaw.getendmiwwis - 1w),
+          d-diskfowmat.thwift(), (///ˬ///✿)
+          e-enviwonmentovewwide = dawenv
         )
       )
 
-    // Write full graph to DAL
-    fullGraph
+    // wwite fuww gwaph to daw
+    fuwwgwaph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          MultiTypeGraphEdge(leftNode, rightNodeWithWeight)
+        c-case (weftnode, σωσ w-wightnodewithweight) =>
+          muwtitypegwaphedge(weftnode, UwU wightnodewithweight)
       }
-      .saveAsCustomOutput(
-        name = "WriteFullMultiTypeGraph",
-        DAL.writeSnapshot(
-          fullMultiTypeGraphSnapshotDataset,
-          PathLayout.FixedPath(rootThriftPath + fullMultiTypeGraphThriftOutputDir),
-          Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          DiskFormat.Thrift(),
-          environmentOverride = dalEnv
+      .saveascustomoutput(
+        nyame = "wwitefuwwmuwtitypegwaph", (⑅˘꒳˘)
+        d-daw.wwitesnapshot(
+          f-fuwwmuwtitypegwaphsnapshotdataset, /(^•ω•^)
+          p-pathwayout.fixedpath(wootthwiftpath + fuwwmuwtitypegwaphthwiftoutputdiw), -.-
+          instant.ofepochmiwwi(opts.intewvaw.getendmiwwis - 1w), (ˆ ﻌ ˆ)♡
+          diskfowmat.thwift(), nyaa~~
+          enviwonmentovewwide = d-dawenv
         )
       )
 

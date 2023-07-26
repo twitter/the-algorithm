@@ -1,10 +1,10 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationRequest
-import com.twitter.util.Future
+impowt com.twittew.notificationsewvice.thwiftscawa.cweategenewicnotificationwequest
+i-impowt com.twittew.utiw.futuwe
 
-trait NTabRequest {
+t-twait nytabwequest {
 
-  def ntabRequest: Future[Option[CreateGenericNotificationRequest]]
+  def n-nytabwequest: f-futuwe[option[cweategenewicnotificationwequest]]
 
 }

@@ -1,80 +1,80 @@
-package com.twitter.home_mixer.functional_component.selector
+package com.twittew.home_mixew.functionaw_component.sewectow
 
-import com.twitter.home_mixer.functional_component.selector.UpdateNewTweetsPillDecoration.NumAvatars
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableNewTweetsPillAvatarsParam
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlert
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+impowt c-com.twittew.home_mixew.functionaw_component.sewectow.updatenewtweetspiwwdecowation.numavataws
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+i-impowt com.twittew.home_mixew.modew.wequest.hasdevicecontext
+i-impowt com.twittew.home_mixew.pawam.homegwobawpawams.enabwenewtweetspiwwavatawspawam
+i-impowt com.twittew.home_mixew.utiw.candidatesutiw
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.showawewtcandidate
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.pwesentation.uwt.uwtitempwesentation
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.showawewt
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stwingcentew.cwient.stwingcentew
+impowt com.twittew.stwingcentew.cwient.cowe.extewnawstwing
 
-object UpdateNewTweetsPillDecoration {
-  val NumAvatars = 3
+o-object updatenewtweetspiwwdecowation {
+  v-vaw nyumavataws = 3
 }
 
-case class UpdateNewTweetsPillDecoration[Query <: PipelineQuery with HasDeviceContext](
-  override val pipelineScope: CandidateScope,
-  stringCenter: StringCenter,
-  seeNewTweetsString: ExternalString,
-  tweetedString: ExternalString)
-    extends Selector[Query] {
+case cwass updatenewtweetspiwwdecowation[quewy <: pipewinequewy with hasdevicecontext](
+  ovewwide v-vaw pipewinescope: candidatescope, (ˆ ﻌ ˆ)♡
+  stwingcentew: stwingcentew, 😳😳😳
+  seenewtweetsstwing: e-extewnawstwing, :3
+  tweetedstwing: e-extewnawstwing)
+    e-extends sewectow[quewy] {
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val (alerts, otherCandidates) =
-      remainingCandidates.partition(candidate =>
-        candidate.isCandidateType[ShowAlertCandidate]() && pipelineScope.contains(candidate))
-    val updatedCandidates = alerts
-      .collectFirst {
-        case newTweetsPill: ItemCandidateWithDetails =>
-          val userIds = CandidatesUtil
-            .getItemCandidatesWithOnlyModuleLast(result)
-            .filter(candidate =>
-              candidate.isCandidateType[TweetCandidate]() && pipelineScope.contains(candidate))
-            .filterNot(_.features.getOrElse(IsRetweetFeature, false))
-            .flatMap(_.features.getOrElse(AuthorIdFeature, None))
-            .filterNot(_ == query.getRequiredUserId)
+  o-ovewwide d-def appwy(
+    quewy: quewy, OwO
+    wemainingcandidates: s-seq[candidatewithdetaiws], (U ﹏ U)
+    wesuwt: seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    vaw (awewts, >w< othewcandidates) =
+      wemainingcandidates.pawtition(candidate =>
+        candidate.iscandidatetype[showawewtcandidate]() && pipewinescope.contains(candidate))
+    vaw u-updatedcandidates = awewts
+      .cowwectfiwst {
+        c-case nyewtweetspiww: i-itemcandidatewithdetaiws =>
+          v-vaw usewids = candidatesutiw
+            .getitemcandidateswithonwymoduwewast(wesuwt)
+            .fiwtew(candidate =>
+              candidate.iscandidatetype[tweetcandidate]() && pipewinescope.contains(candidate))
+            .fiwtewnot(_.featuwes.getowewse(iswetweetfeatuwe, (U ﹏ U) f-fawse))
+            .fwatmap(_.featuwes.getowewse(authowidfeatuwe, 😳 n-nyone))
+            .fiwtewnot(_ == quewy.getwequiwedusewid)
             .distinct
 
-          val updatedPresentation = newTweetsPill.presentation.map {
-            case presentation: UrtItemPresentation =>
-              presentation.timelineItem match {
-                case alert: ShowAlert =>
-                  val text = if (useAvatars(query, userIds)) tweetedString else seeNewTweetsString
-                  val richText = RichText(
-                    text = stringCenter.prepare(text),
-                    entities = List.empty,
-                    rtl = None,
-                    alignment = None)
+          v-vaw updatedpwesentation = n-nyewtweetspiww.pwesentation.map {
+            case pwesentation: u-uwtitempwesentation =>
+              pwesentation.timewineitem m-match {
+                case awewt: showawewt =>
+                  v-vaw text = if (useavataws(quewy, (ˆ ﻌ ˆ)♡ u-usewids)) tweetedstwing e-ewse seenewtweetsstwing
+                  v-vaw wichtext = wichtext(
+                    text = stwingcentew.pwepawe(text), 😳😳😳
+                    entities = wist.empty, (U ﹏ U)
+                    wtw = nyone, (///ˬ///✿)
+                    awignment = n-nyone)
 
-                  val updatedAlert =
-                    alert.copy(userIds = Some(userIds.take(NumAvatars)), richText = Some(richText))
-                  presentation.copy(timelineItem = updatedAlert)
+                  v-vaw updatedawewt =
+                    awewt.copy(usewids = s-some(usewids.take(numavataws)), 😳 w-wichtext = s-some(wichtext))
+                  pwesentation.copy(timewineitem = updatedawewt)
               }
           }
-          otherCandidates :+ newTweetsPill.copy(presentation = updatedPresentation)
-      }.getOrElse(remainingCandidates)
+          othewcandidates :+ n-nyewtweetspiww.copy(pwesentation = updatedpwesentation)
+      }.getowewse(wemainingcandidates)
 
-    SelectorResult(remainingCandidates = updatedCandidates, result = result)
+    sewectowwesuwt(wemainingcandidates = updatedcandidates, 😳 wesuwt = w-wesuwt)
   }
 
-  private def useAvatars(query: Query, userIds: Seq[Long]): Boolean = {
-    val enableAvatars = query.params(EnableNewTweetsPillAvatarsParam)
-    enableAvatars && userIds.size >= NumAvatars
+  pwivate def u-useavataws(quewy: q-quewy, σωσ usewids: s-seq[wong]): boowean = {
+    vaw enabweavataws = q-quewy.pawams(enabwenewtweetspiwwavatawspawam)
+    e-enabweavataws && u-usewids.size >= n-numavataws
   }
 }

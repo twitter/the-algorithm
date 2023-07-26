@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.awewt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIconDisplayInfo
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.cowow.wosettacowowmawshawwew
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.showawewticondispwayinfo
 
-@Singleton
-class ShowAlertIconDisplayInfoMarshaller @Inject() (
-  showAlertIconMarshaller: ShowAlertIconMarshaller,
-  rosettaColorMarshaller: RosettaColorMarshaller,
+@singweton
+c-cwass showawewticondispwayinfomawshawwew @inject() (
+  showawewticonmawshawwew: showawewticonmawshawwew, (ˆ ﻌ ˆ)♡
+  wosettacowowmawshawwew: wosettacowowmawshawwew, (⑅˘꒳˘)
 ) {
 
-  def apply(alertIconDisplayInfo: ShowAlertIconDisplayInfo): urt.ShowAlertIconDisplayInfo =
-    urt.ShowAlertIconDisplayInfo(
-      icon = showAlertIconMarshaller(alertIconDisplayInfo.icon),
-      tint = rosettaColorMarshaller(alertIconDisplayInfo.tint),
+  d-def appwy(awewticondispwayinfo: showawewticondispwayinfo): u-uwt.showawewticondispwayinfo =
+    uwt.showawewticondispwayinfo(
+      i-icon = showawewticonmawshawwew(awewticondispwayinfo.icon), (U ᵕ U❁)
+      tint = wosettacowowmawshawwew(awewticondispwayinfo.tint), -.-
     )
 
 }

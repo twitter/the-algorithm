@@ -1,98 +1,98 @@
-package com.twitter.recos.user_tweet_graph
+package com.twittew.wecos.usew_tweet_gwaph
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.tracing.TraceId
-import com.twitter.recos.decider.EndpointLoadShedder
-import com.twitter.recos.recos_common.thriftscala._
-import com.twitter.recos.user_tweet_graph.thriftscala._
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import scala.concurrent.duration.MILLISECONDS
-import com.twitter.logging.Logger
-import com.twitter.recos.user_tweet_graph.relatedTweetHandlers.TweetBasedRelatedTweetsHandler
-import com.twitter.recos.user_tweet_graph.relatedTweetHandlers.ProducerBasedRelatedTweetsHandler
-import com.twitter.recos.user_tweet_graph.relatedTweetHandlers.ConsumersBasedRelatedTweetsHandler
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
+impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.finagwe.twacing.twace
+impowt c-com.twittew.finagwe.twacing.twaceid
+i-impowt c-com.twittew.wecos.decidew.endpointwoadsheddew
+impowt c-com.twittew.wecos.wecos_common.thwiftscawa._
+i-impowt com.twittew.wecos.usew_tweet_gwaph.thwiftscawa._
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
+impowt c-com.twittew.utiw.timew
+impowt scawa.concuwwent.duwation.miwwiseconds
+i-impowt com.twittew.wogging.woggew
+impowt c-com.twittew.wecos.usew_tweet_gwaph.wewatedtweethandwews.tweetbasedwewatedtweetshandwew
+impowt com.twittew.wecos.usew_tweet_gwaph.wewatedtweethandwews.pwoducewbasedwewatedtweetshandwew
+impowt com.twittew.wecos.usew_tweet_gwaph.wewatedtweethandwews.consumewsbasedwewatedtweetshandwew
+impowt c-com.twittew.simcwustews_v2.common.tweetid
+impowt c-com.twittew.simcwustews_v2.common.usewid
 
-object UserTweetGraph {
-  def traceId: TraceId = Trace.id
-  def clientId: Option[ClientId] = ClientId.current
+o-object usewtweetgwaph {
+  def twaceid: twaceid = twace.id
+  def cwientid: o-option[cwientid] = cwientid.cuwwent
 }
 
-class UserTweetGraph(
-  tweetBasedRelatedTweetsHandler: TweetBasedRelatedTweetsHandler,
-  producerBasedRelatedTweetsHandler: ProducerBasedRelatedTweetsHandler,
-  consumersBasedRelatedTweetsHandler: ConsumersBasedRelatedTweetsHandler,
-  endpointLoadShedder: EndpointLoadShedder
+cwass usewtweetgwaph(
+  tweetbasedwewatedtweetshandwew: t-tweetbasedwewatedtweetshandwew, >w<
+  pwoducewbasedwewatedtweetshandwew: p-pwoducewbasedwewatedtweetshandwew, (U ﹏ U)
+  consumewsbasedwewatedtweetshandwew: c-consumewsbasedwewatedtweetshandwew, 😳
+  e-endpointwoadsheddew: e-endpointwoadsheddew
 )(
-  implicit timer: Timer)
-    extends thriftscala.UserTweetGraph.MethodPerEndpoint {
+  impwicit timew: timew)
+    e-extends thwiftscawa.usewtweetgwaph.methodpewendpoint {
 
-  private val defaultTimeout: Duration = Duration(50, MILLISECONDS)
-  private val EmptyResponse = Future.value(RelatedTweetResponse())
-  private val EmptyFeatureResponse = Future.value(UserTweetFeatureResponse())
+  pwivate vaw defauwttimeout: d-duwation = duwation(50, (ˆ ﻌ ˆ)♡ miwwiseconds)
+  pwivate vaw emptywesponse = futuwe.vawue(wewatedtweetwesponse())
+  pwivate vaw emptyfeatuwewesponse = f-futuwe.vawue(usewtweetfeatuwewesponse())
 
-  private val log = Logger()
+  pwivate vaw wog = w-woggew()
 
-  override def recommendTweets(request: RecommendTweetRequest): Future[RecommendTweetResponse] =
-    Future.value(RecommendTweetResponse())
+  o-ovewwide def wecommendtweets(wequest: w-wecommendtweetwequest): futuwe[wecommendtweetwesponse] =
+    futuwe.vawue(wecommendtweetwesponse())
 
-  override def getLeftNodeEdges(request: GetRecentEdgesRequest): Future[GetRecentEdgesResponse] =
-    Future.value(GetRecentEdgesResponse())
+  ovewwide d-def getweftnodeedges(wequest: g-getwecentedgeswequest): futuwe[getwecentedgeswesponse] =
+    f-futuwe.vawue(getwecentedgeswesponse())
 
-  override def getRightNode(tweet: Long): Future[NodeInfo] = Future.value(NodeInfo())
+  o-ovewwide def getwightnode(tweet: w-wong): futuwe[nodeinfo] = f-futuwe.vawue(nodeinfo())
 
-  // deprecated
-  override def relatedTweets(request: RelatedTweetRequest): Future[RelatedTweetResponse] =
-    EmptyResponse
+  // depwecated
+  ovewwide def wewatedtweets(wequest: w-wewatedtweetwequest): futuwe[wewatedtweetwesponse] =
+    emptywesponse
 
-  override def tweetBasedRelatedTweets(
-    request: TweetBasedRelatedTweetRequest
-  ): Future[RelatedTweetResponse] =
-    endpointLoadShedder("tweetBasedRelatedTweets") {
-      tweetBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
-    }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
-        EmptyResponse
+  o-ovewwide def tweetbasedwewatedtweets(
+    wequest: t-tweetbasedwewatedtweetwequest
+  ): f-futuwe[wewatedtweetwesponse] =
+    endpointwoadsheddew("tweetbasedwewatedtweets") {
+      tweetbasedwewatedtweetshandwew(wequest).waisewithin(defauwttimeout)
+    }.wescue {
+      case endpointwoadsheddew.woadsheddingexception =>
+        emptywesponse
       case e =>
-        log.info("user-tweet-graph_tweetBasedRelatedTweets" + e)
-        EmptyResponse
+        wog.info("usew-tweet-gwaph_tweetbasedwewatedtweets" + e)
+        e-emptywesponse
     }
 
-  override def producerBasedRelatedTweets(
-    request: ProducerBasedRelatedTweetRequest
-  ): Future[RelatedTweetResponse] =
-    endpointLoadShedder("producerBasedRelatedTweets") {
-      producerBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
-    }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
-        EmptyResponse
-      case e =>
-        log.info("user-tweet-graph_producerBasedRelatedTweets" + e)
-        EmptyResponse
+  o-ovewwide def pwoducewbasedwewatedtweets(
+    wequest: p-pwoducewbasedwewatedtweetwequest
+  ): f-futuwe[wewatedtweetwesponse] =
+    e-endpointwoadsheddew("pwoducewbasedwewatedtweets") {
+      pwoducewbasedwewatedtweetshandwew(wequest).waisewithin(defauwttimeout)
+    }.wescue {
+      case endpointwoadsheddew.woadsheddingexception =>
+        emptywesponse
+      c-case e =>
+        wog.info("usew-tweet-gwaph_pwoducewbasedwewatedtweets" + e)
+        emptywesponse
     }
 
-  override def consumersBasedRelatedTweets(
-    request: ConsumersBasedRelatedTweetRequest
-  ): Future[RelatedTweetResponse] =
-    endpointLoadShedder("consumersBasedRelatedTweets") {
-      consumersBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
-    }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
-        EmptyResponse
-      case e =>
-        log.info("user-tweet-graph_consumersBasedRelatedTweets" + e)
-        EmptyResponse
+  ovewwide def consumewsbasedwewatedtweets(
+    wequest: consumewsbasedwewatedtweetwequest
+  ): futuwe[wewatedtweetwesponse] =
+    e-endpointwoadsheddew("consumewsbasedwewatedtweets") {
+      consumewsbasedwewatedtweetshandwew(wequest).waisewithin(defauwttimeout)
+    }.wescue {
+      c-case endpointwoadsheddew.woadsheddingexception =>
+        e-emptywesponse
+      c-case e =>
+        wog.info("usew-tweet-gwaph_consumewsbasedwewatedtweets" + e-e)
+        emptywesponse
     }
 
-  // deprecated
-  override def userTweetFeatures(
-    userId: UserId,
-    tweetId: TweetId
-  ): Future[UserTweetFeatureResponse] =
-    EmptyFeatureResponse
+  // d-depwecated
+  o-ovewwide def u-usewtweetfeatuwes(
+    usewid: usewid, 😳😳😳
+    tweetid: t-tweetid
+  ): f-futuwe[usewtweetfeatuwewesponse] =
+    e-emptyfeatuwewesponse
 
 }

@@ -1,21 +1,21 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    provides = scala_artifact(
-        org = "com.twitter",
-        name = "servo-json",
-        repo = artifactory,
+scawa_wibwawy(
+    souwces = ["*.scawa"], (⑅˘꒳˘)
+    pwatfowm = "java8", ( ͡o ω ͡o )
+    p-pwovides = s-scawa_awtifact(
+        o-owg = "com.twittew", UwU
+        n-nyame = "sewvo-json", rawr x3
+        w-wepo = awtifactowy, rawr
     ),
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "//:scala-reflect",
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-core",
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-databind",
-        "3rdparty/jvm/com/googlecode/java-diff-utils:diffutils",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "scrooge/scrooge-core",
-        "scrooge/scrooge-serializer",
-        "util/util-codec/src/main/scala",
+    s-stwict_deps = t-twue, σωσ
+    tags = ["bazew-compatibwe"], σωσ
+    d-dependencies = [
+        "//:scawa-wefwect", >_<
+        "3wdpawty/jvm/com/fastewxmw/jackson/cowe:jackson-cowe", :3
+        "3wdpawty/jvm/com/fastewxmw/jackson/cowe:jackson-databind", (U ﹏ U)
+        "3wdpawty/jvm/com/googwecode/java-diff-utiws:diffutiws", -.-
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", (ˆ ﻌ ˆ)♡
+        "scwooge/scwooge-cowe", (⑅˘꒳˘)
+        "scwooge/scwooge-sewiawizew", (U ᵕ U❁)
+        "utiw/utiw-codec/swc/main/scawa", -.-
     ],
 )

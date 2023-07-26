@@ -1,47 +1,47 @@
-package com.twitter.search.common.util.earlybird;
+package com.twittew.seawch.common.utiw.eawwybiwd;
 
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.concuwwent.timeunit;
 
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.thwifthistogwamsettings;
 
 /**
- * A utility class to provide some functions for TermStatistics request processing
+ * a-a utiwity cwass t-to pwovide s-some functions fow t-tewmstatistics w-wequest pwocessing
  */
-public final class TermStatisticsUtil {
+p-pubwic finaw cwass tewmstatisticsutiw {
 
-  private static final org.slf4j.Logger LOG =
-      org.slf4j.LoggerFactory.getLogger(TermStatisticsUtil.class);
+  pwivate static finaw owg.swf4j.woggew wog =
+      o-owg.swf4j.woggewfactowy.getwoggew(tewmstatisticsutiw.cwass);
 
-  private TermStatisticsUtil() {
+  pwivate tewmstatisticsutiw() {
   }
 
   /**
-   * Determine the binsize base on settings in ThriftHistogramSettings.granularity
+   * detewmine the b-binsize base on settings in thwifthistogwamsettings.gwanuwawity
    */
-  public static int determineBinSize(ThriftHistogramSettings histogramSettings) {
-    final int DEFAULT_BINSIZE = (int) TimeUnit.HOURS.toSeconds(1);
-    int binSize;
-    switch (histogramSettings.getGranularity()) {
-      case DAYS:
-        binSize = (int) TimeUnit.DAYS.toSeconds(1);
-        break;
-      case HOURS:
-        binSize = (int) TimeUnit.HOURS.toSeconds(1);
-        break;
-      case MINUTES:
-        binSize = (int) TimeUnit.MINUTES.toSeconds(1);
-        break;
-      case CUSTOM:
-        binSize = histogramSettings.isSetBinSizeInSeconds()
-                      ? histogramSettings.getBinSizeInSeconds()
-                      : DEFAULT_BINSIZE;
-        break;
-      default:
-        binSize = DEFAULT_BINSIZE;
-        LOG.warn("Unknown ThriftHistogramGranularityType {} using default binsize: {}",
-                 histogramSettings.getGranularity(), DEFAULT_BINSIZE);
+  p-pubwic static int detewminebinsize(thwifthistogwamsettings histogwamsettings) {
+    finaw int defauwt_binsize = (int) t-timeunit.houws.toseconds(1);
+    int binsize;
+    s-switch (histogwamsettings.getgwanuwawity()) {
+      c-case days:
+        binsize = (int) timeunit.days.toseconds(1);
+        bweak;
+      case h-houws:
+        binsize = (int) timeunit.houws.toseconds(1);
+        bweak;
+      case minutes:
+        binsize = (int) timeunit.minutes.toseconds(1);
+        b-bweak;
+      case c-custom:
+        b-binsize = histogwamsettings.issetbinsizeinseconds()
+                      ? h-histogwamsettings.getbinsizeinseconds()
+                      : d-defauwt_binsize;
+        bweak;
+      defauwt:
+        b-binsize = defauwt_binsize;
+        wog.wawn("unknown thwifthistogwamgwanuwawitytype {} u-using defauwt binsize: {}", 😳😳😳
+                 histogwamsettings.getgwanuwawity(), 🥺 defauwt_binsize);
     }
 
-    return binSize;
+    wetuwn binsize;
   }
 }

@@ -1,157 +1,157 @@
-package com.twitter.product_mixer.core.feature.featuremap.datarecord
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.datawecowd
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.SRichDataRecord
-import scala.collection.JavaConverters._
-import com.twitter.product_mixer.core.feature.datarecord.BaseDataRecordFeature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordCompatible
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1Feature
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1ResponseFeature
+impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt scawa.cowwection.javaconvewtews._
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.basedatawecowdfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdcompatibwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwestowev1featuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwevawue.featuwestowev1wesponsefeatuwe
 
 /**
- * FeaturesScope for defining what features should be included in a DataRecord from a FeatureMap.
- * Where possible, prefer [[SpecificFeatures]]. It fails loudly on missing features which can help
- * identify programmer error, but can be complex to manage for multi-phase hydrators.
+ * featuwesscope f-fow defining nyani featuwes shouwd b-be incwuded in a datawecowd fwom a-a featuwemap. >w<
+ * whewe possibwe, (U ﹏ U) pwefew [[specificfeatuwes]]. 😳😳😳 it faiws woudwy on m-missing featuwes which can hewp
+ * i-identify pwogwammew e-ewwow, o.O but can be compwex to manage fow muwti-phase hydwatows. òωó
  */
-sealed trait FeaturesScope[+DRFeature <: BaseDataRecordFeature[_, _]] {
-  def getNonFeatureStoreDataRecordFeatures(featureMap: FeatureMap): Seq[DRFeature]
+seawed t-twait featuwesscope[+dwfeatuwe <: basedatawecowdfeatuwe[_, 😳😳😳 _]] {
+  def getnonfeatuwestowedatawecowdfeatuwes(featuwemap: featuwemap): seq[dwfeatuwe]
 
   /**
-   * Because Feature Store features aren't direct features in the FeatureMap and instead live
-   * aggregated in a DataRecord in our Feature Map, we need to interface with the underlying Data
-   * Record instead. e.g. for the `AllFeatures` case, we won't know what all FStore ProMix Features
-   * we have in a FeatureMap just by looping through features & need to just return the DataRecord.
+   * b-because featuwe stowe featuwes a-awen't diwect f-featuwes in the f-featuwemap and instead w-wive
+   * aggwegated in a datawecowd in ouw f-featuwe map, σωσ we nyeed to intewface with the undewwying d-data
+   * wecowd instead. e.g. (⑅˘꒳˘) fow the `awwfeatuwes` case, (///ˬ///✿) we won't know nyani aww fstowe pwomix featuwes
+   * w-we have in a featuwemap j-just by wooping t-thwough featuwes & n-nyeed to just wetuwn the datawecowd. 🥺
    */
-  def getFeatureStoreFeaturesDataRecord(featureMap: FeatureMap): SRichDataRecord
+  def getfeatuwestowefeatuwesdatawecowd(featuwemap: featuwemap): s-swichdatawecowd
 }
 
 /**
- * Use all DataRecord features on a FeatureMap to output a DataRecord.
+ * u-use aww datawecowd featuwes o-on a featuwemap t-to output a datawecowd. OwO
  */
-case class AllFeatures[-Entity]() extends FeaturesScope[BaseDataRecordFeature[Entity, _]] {
-  override def getNonFeatureStoreDataRecordFeatures(
-    featureMap: FeatureMap
-  ): Seq[BaseDataRecordFeature[Entity, _]] = {
+c-case cwass awwfeatuwes[-entity]() extends featuwesscope[basedatawecowdfeatuwe[entity, >w< _]] {
+  o-ovewwide def getnonfeatuwestowedatawecowdfeatuwes(
+    featuwemap: featuwemap
+  ): s-seq[basedatawecowdfeatuwe[entity, 🥺 _]] = {
 
     /**
-     * See [[com.twitter.product_mixer.core.benchmark.FeatureMapBenchmark]]
+     * see [[com.twittew.pwoduct_mixew.cowe.benchmawk.featuwemapbenchmawk]]
      *
-     * `toSeq`` is a no-op, `view`` makes later compositions lazy. Currently we only perform a `forEach`
-     * on the result but `view` here has no performance impact but protects us if we accidentally add
-     * more compositions in the middle.
+     * `toseq`` i-is a nyo-op, nyaa~~ `view`` makes w-watew compositions w-wazy. ^^ cuwwentwy we onwy pewfowm a `foweach`
+     * on the wesuwt but `view` hewe has nyo pewfowmance impact b-but pwotects u-us if we accidentawwy add
+     * m-mowe compositions i-in the middwe. >w<
      *
-     * Feature Store features aren't in the FeatureMap so this will only ever return the non-FStore Features.
+     * f-featuwe stowe featuwes awen't in the featuwemap so this wiww onwy e-evew wetuwn the nyon-fstowe featuwes. OwO
      */
-    featureMap.getFeatures.toSeq.view.collect {
-      case feature: BaseDataRecordFeature[Entity, _] => feature
+    featuwemap.getfeatuwes.toseq.view.cowwect {
+      case featuwe: basedatawecowdfeatuwe[entity, XD _] => f-featuwe
     }
   }
 
-  // Get the entire underlying DataRecord if available.
-  override def getFeatureStoreFeaturesDataRecord(
-    featureMap: FeatureMap
-  ): SRichDataRecord = if (featureMap.getFeatures.contains(FeatureStoreV1ResponseFeature)) {
-    // Note, we do not copy over the feature context because JRichDataRecord will enforce that
-    // all features are in the FeatureContext which we do not know at init time, and it's pricey
-    // to compute at run time.
-    SRichDataRecord(featureMap.get(FeatureStoreV1ResponseFeature).richDataRecord.getRecord)
-  } else {
-    SRichDataRecord(new DataRecord())
+  // get the entiwe undewwying d-datawecowd i-if avaiwabwe. ^^;;
+  o-ovewwide def getfeatuwestowefeatuwesdatawecowd(
+    f-featuwemap: f-featuwemap
+  ): s-swichdatawecowd = i-if (featuwemap.getfeatuwes.contains(featuwestowev1wesponsefeatuwe)) {
+    // nyote, 🥺 we do nyot copy ovew t-the featuwe context b-because jwichdatawecowd w-wiww e-enfowce that
+    // a-aww featuwes awe in the featuwecontext which we do not know a-at init time, XD and it's pwicey
+    // to compute at wun time. (U ᵕ U❁)
+    swichdatawecowd(featuwemap.get(featuwestowev1wesponsefeatuwe).wichdatawecowd.getwecowd)
+  } ewse {
+    s-swichdatawecowd(new datawecowd())
   }
 }
 
 /**
- * Build a DataRecord with only the given features from the FeatureMap used. Missing features
- * will fail loudly.
- * @param features the specific features to include in the DataRecord.
+ * buiwd a datawecowd with o-onwy the given f-featuwes fwom the f-featuwemap used. :3 missing featuwes
+ * w-wiww faiw woudwy. ( ͡o ω ͡o )
+ * @pawam f-featuwes the s-specific featuwes to incwude in the datawecowd. òωó
  */
-case class SpecificFeatures[DRFeature <: BaseDataRecordFeature[_, _]](
-  features: Set[DRFeature])
-    extends FeaturesScope[DRFeature] {
+case cwass specificfeatuwes[dwfeatuwe <: basedatawecowdfeatuwe[_, σωσ _]](
+  featuwes: s-set[dwfeatuwe])
+    extends f-featuwesscope[dwfeatuwe] {
 
-  private val featuresForContext = features.collect {
-    case featureStoreFeatures: FeatureStoreV1Feature[_, _, _, _] =>
-      featureStoreFeatures.boundFeature.mlApiFeature
-    case dataRecordCompatible: DataRecordCompatible[_] => dataRecordCompatible.mlFeature
-  }.asJava
+  pwivate vaw featuwesfowcontext = f-featuwes.cowwect {
+    c-case featuwestowefeatuwes: featuwestowev1featuwe[_, (U ᵕ U❁) _, _, _] =>
+      featuwestowefeatuwes.boundfeatuwe.mwapifeatuwe
+    case datawecowdcompatibwe: d-datawecowdcompatibwe[_] => d-datawecowdcompatibwe.mwfeatuwe
+  }.asjava
 
-  private val featureContext = new FeatureContext(featuresForContext)
+  pwivate vaw f-featuwecontext = n-nyew featuwecontext(featuwesfowcontext)
 
-  private val fsFeatures = features
-    .collect {
-      case featureStoreV1Feature: FeatureStoreV1Feature[_, _, _, _] =>
-        featureStoreV1Feature
+  pwivate vaw fsfeatuwes = featuwes
+    .cowwect {
+      case featuwestowev1featuwe: f-featuwestowev1featuwe[_, (✿oωo) _, _, _] =>
+        f-featuwestowev1featuwe
     }
 
-  // Since it's possible a customer will pass feature store features in the DR Feature list, let's
-  // partition them out to only return non-FS ones in getFeatures. See [[FeaturesScope]] comment.
-  private val nonFsFeatures: Seq[DRFeature] = features.flatMap {
-    case _: FeatureStoreV1Feature[_, _, _, _] =>
-      None
-    case otherFeature => Some(otherFeature)
-  }.toSeq
+  // since i-it's possibwe a customew wiww p-pass featuwe s-stowe featuwes in the dw featuwe w-wist, ^^ wet's
+  // pawtition them out to onwy wetuwn nyon-fs ones in getfeatuwes. ^•ﻌ•^ s-see [[featuwesscope]] c-comment. XD
+  pwivate vaw nyonfsfeatuwes: seq[dwfeatuwe] = featuwes.fwatmap {
+    c-case _: featuwestowev1featuwe[_, :3 _, _, _] =>
+      n-nyone
+    case othewfeatuwe => some(othewfeatuwe)
+  }.toseq
 
-  override def getNonFeatureStoreDataRecordFeatures(
-    featureMap: FeatureMap
-  ): Seq[DRFeature] = nonFsFeatures
+  ovewwide d-def getnonfeatuwestowedatawecowdfeatuwes(
+    featuwemap: featuwemap
+  ): seq[dwfeatuwe] = nonfsfeatuwes
 
-  override def getFeatureStoreFeaturesDataRecord(
-    featureMap: FeatureMap
-  ): SRichDataRecord =
-    if (fsFeatures.nonEmpty && featureMap.getFeatures.contains(FeatureStoreV1ResponseFeature)) {
-      // Return a DataRecord only with the explicitly requested features set.
-      val richDataRecord = SRichDataRecord(new DataRecord(), featureContext)
-      val existingDataRecord = featureMap.get(FeatureStoreV1ResponseFeature).richDataRecord
-      fsFeatures.foreach { feature =>
-        richDataRecord.setFeatureValue(
-          feature.boundFeature.mlApiFeature,
-          existingDataRecord.getFeatureValue(feature.boundFeature.mlApiFeature))
+  ovewwide d-def getfeatuwestowefeatuwesdatawecowd(
+    featuwemap: featuwemap
+  ): swichdatawecowd =
+    i-if (fsfeatuwes.nonempty && f-featuwemap.getfeatuwes.contains(featuwestowev1wesponsefeatuwe)) {
+      // wetuwn a datawecowd onwy with the expwicitwy w-wequested f-featuwes set. (ꈍᴗꈍ)
+      vaw wichdatawecowd = swichdatawecowd(new datawecowd(), :3 f-featuwecontext)
+      vaw existingdatawecowd = f-featuwemap.get(featuwestowev1wesponsefeatuwe).wichdatawecowd
+      fsfeatuwes.foweach { featuwe =>
+        wichdatawecowd.setfeatuwevawue(
+          featuwe.boundfeatuwe.mwapifeatuwe, (U ﹏ U)
+          e-existingdatawecowd.getfeatuwevawue(featuwe.boundfeatuwe.mwapifeatuwe))
       }
-      richDataRecord
-    } else {
-      SRichDataRecord(new DataRecord())
+      wichdatawecowd
+    } e-ewse {
+      s-swichdatawecowd(new datawecowd())
     }
 }
 
 /**
- * Build a DataRecord with every feature available in a FeatureMap except for the ones provided.
- * @param featuresToExclude the features to be excluded in the DataRecord.
+ * b-buiwd a datawecowd with evewy f-featuwe avaiwabwe i-in a featuwemap e-except fow the ones pwovided. UwU
+ * @pawam f-featuwestoexcwude the f-featuwes to be excwuded in the datawecowd. 😳😳😳
  */
-case class AllExceptFeatures(
-  featuresToExclude: Set[BaseDataRecordFeature[_, _]])
-    extends FeaturesScope[BaseDataRecordFeature[_, _]] {
+c-case cwass awwexceptfeatuwes(
+  f-featuwestoexcwude: s-set[basedatawecowdfeatuwe[_, XD _]])
+    extends featuwesscope[basedatawecowdfeatuwe[_, o.O _]] {
 
-  private val fsFeatures = featuresToExclude
-    .collect {
-      case featureStoreV1Feature: FeatureStoreV1Feature[_, _, _, _] =>
-        featureStoreV1Feature
+  p-pwivate vaw fsfeatuwes = featuwestoexcwude
+    .cowwect {
+      c-case featuwestowev1featuwe: featuwestowev1featuwe[_, (⑅˘꒳˘) _, _, _] =>
+        f-featuwestowev1featuwe
     }
 
-  override def getNonFeatureStoreDataRecordFeatures(
-    featureMap: FeatureMap
-  ): Seq[BaseDataRecordFeature[_, _]] =
-    featureMap.getFeatures
-      .collect {
-        case feature: BaseDataRecordFeature[_, _] => feature
-      }.filterNot(featuresToExclude.contains).toSeq
+  ovewwide def getnonfeatuwestowedatawecowdfeatuwes(
+    featuwemap: featuwemap
+  ): s-seq[basedatawecowdfeatuwe[_, 😳😳😳 _]] =
+    f-featuwemap.getfeatuwes
+      .cowwect {
+        c-case featuwe: b-basedatawecowdfeatuwe[_, nyaa~~ _] => featuwe
+      }.fiwtewnot(featuwestoexcwude.contains).toseq
 
-  override def getFeatureStoreFeaturesDataRecord(
-    featureMap: FeatureMap
-  ): SRichDataRecord = if (featureMap.getFeatures.contains(FeatureStoreV1ResponseFeature)) {
-    // Return a data record only with the explicitly requested features set. Do this by copying
-    // the existing one and removing the features in the denylist.
-    // Note, we do not copy over the feature context because JRichDataRecord will enforce that
-    // all features are in the FeatureContext which we do not know at init time, and it's pricey
-    // to compute at run time.
-    val richDataRecord = SRichDataRecord(
-      featureMap.get(FeatureStoreV1ResponseFeature).richDataRecord.getRecord.deepCopy())
-    fsFeatures.foreach { feature =>
-      richDataRecord.clearFeature(feature.boundFeature.mlApiFeature)
+  o-ovewwide def getfeatuwestowefeatuwesdatawecowd(
+    featuwemap: featuwemap
+  ): swichdatawecowd = if (featuwemap.getfeatuwes.contains(featuwestowev1wesponsefeatuwe)) {
+    // wetuwn a data wecowd o-onwy with the expwicitwy wequested f-featuwes set. rawr do this by c-copying
+    // the existing one a-and wemoving the featuwes in the d-denywist.
+    // n-nyote, we do n-nyot copy ovew the f-featuwe context b-because jwichdatawecowd wiww enfowce that
+    // aww featuwes awe in the featuwecontext which we do nyot know a-at init time, -.- and i-it's pwicey
+    // t-to compute at wun time.
+    v-vaw wichdatawecowd = swichdatawecowd(
+      featuwemap.get(featuwestowev1wesponsefeatuwe).wichdatawecowd.getwecowd.deepcopy())
+    fsfeatuwes.foweach { f-featuwe =>
+      w-wichdatawecowd.cweawfeatuwe(featuwe.boundfeatuwe.mwapifeatuwe)
     }
-    richDataRecord
-  } else {
-    SRichDataRecord(new DataRecord())
+    wichdatawecowd
+  } e-ewse {
+    swichdatawecowd(new datawecowd())
   }
 }

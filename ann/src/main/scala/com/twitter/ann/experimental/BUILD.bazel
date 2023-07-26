@@ -1,29 +1,29 @@
-scala_library(
-    name = "server",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-only"],
-    dependencies = [
-        "ann/src/main/scala/com/twitter/ann/annoy",
-        "ann/src/main/scala/com/twitter/ann/brute_force",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
+scawa_wibwawy(
+    nyame = "sewvew", rawr
+    souwces = ["*.scawa"], σωσ
+    c-compiwew_option_sets = ["fataw_wawnings"],
+    p-pwatfowm = "java8", σωσ
+    t-tags = ["bazew-onwy"], >_<
+    d-dependencies = [
+        "ann/swc/main/scawa/com/twittew/ann/annoy", :3
+        "ann/swc/main/scawa/com/twittew/ann/bwute_fowce", (U ﹏ U)
+        "ann/swc/main/scawa/com/twittew/ann/common", -.-
+        "ann/swc/main/scawa/com/twittew/ann/hnsw", (ˆ ﻌ ˆ)♡
     ],
 )
 
-hadoop_binary(
-    name = "benchmarking",
-    basename = "benchmarking",
-    main = "com.twitter.ann.experimental.Runner",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    n-nyame = "benchmawking", (⑅˘꒳˘)
+    b-basename = "benchmawking", (U ᵕ U❁)
+    m-main = "com.twittew.ann.expewimentaw.wunnew", -.-
+    pwatfowm = "java8", ^^;;
+    wuntime_pwatfowm = "java8", >_<
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+        "bazew-compatibwe", mya
+        "bazew-compatibwe:migwated", mya
+        "bazew-onwy", 😳
+    ], XD
     dependencies = [
-        ":server",
-    ],
+        ":sewvew", :3
+    ], 😳😳😳
 )

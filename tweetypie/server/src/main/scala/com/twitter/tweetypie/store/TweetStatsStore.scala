@@ -1,63 +1,63 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.finagle.stats.RollupStatsReceiver
-import com.twitter.servo.util.MemoizingStatsReceiver
+impowt c-com.twittew.finagwe.stats.wowwupstatsweceivew
+i-impowt com.twittew.sewvo.utiw.memoizingstatsweceivew
 
 /**
- * Records some stats about inserted tweets.  Tweets are currently classified by three criteria:
+ * w-wecowds s-some stats a-about insewted t-tweets. (///ˬ///✿)  tweets a-awe cuwwentwy cwassified by thwee cwitewia:
  *
- *     - tweet type: "tweet" or "retweet"
- *     - user type: "stresstest", "protected", "restricted", or "public"
- *     - fanout type: "nullcast", "narrowcast", or "usertimeline"
+ *     - tweet type: "tweet" ow "wetweet"
+ *     - u-usew type: "stwesstest", >w< "pwotected", rawr "westwicted", mya ow "pubwic"
+ *     - fanout t-type: "nuwwcast", ^^ "nawwowcast", 😳😳😳 ow "usewtimewine"
  *
- * A counter is incremented for a tweet using those three criteria in order.  Counters are
- * created with a RollupStatsReceiver, so counts are aggregated at each level.  Some
- * example counters are:
+ * a-a countew is incwemented fow a tweet using those thwee c-cwitewia in owdew. mya  countews awe
+ * c-cweated with a-a wowwupstatsweceivew, 😳 so counts awe aggwegated at each wevew. -.-  some
+ * exampwe c-countews awe:
  *
- *    ./insert
- *    ./insert/tweet
- *    ./insert/tweet/public
- *    ./insert/tweet/protected/usertimeline
- *    ./insert/retweet/stresstest
- *    ./insert/retweet/public/nullcast
+ *    ./insewt
+ *    ./insewt/tweet
+ *    ./insewt/tweet/pubwic
+ *    ./insewt/tweet/pwotected/usewtimewine
+ *    ./insewt/wetweet/stwesstest
+ *    ./insewt/wetweet/pubwic/nuwwcast
  */
-trait TweetStatsStore extends TweetStoreBase[TweetStatsStore] with InsertTweet.Store {
-  def wrap(w: TweetStore.Wrap): TweetStatsStore =
-    new TweetStoreWrapper(w, this) with TweetStatsStore with InsertTweet.StoreWrapper
+twait tweetstatsstowe extends tweetstowebase[tweetstatsstowe] with insewttweet.stowe {
+  d-def wwap(w: tweetstowe.wwap): t-tweetstatsstowe =
+    n-nyew tweetstowewwappew(w, 🥺 t-this) with tweetstatsstowe w-with insewttweet.stowewwappew
 }
 
-object TweetStatsStore {
-  def apply(stats: StatsReceiver): TweetStatsStore = {
-    val rollup = new MemoizingStatsReceiver(new RollupStatsReceiver(stats))
-    val inserts = rollup.scope("insert")
+object tweetstatsstowe {
+  d-def appwy(stats: statsweceivew): tweetstatsstowe = {
+    v-vaw wowwup = new memoizingstatsweceivew(new wowwupstatsweceivew(stats))
+    vaw insewts = wowwup.scope("insewt")
 
-    def tweetType(tweet: Tweet) =
-      if (getShare(tweet).isDefined) "retweet" else "tweet"
+    def tweettype(tweet: tweet) =
+      if (getshawe(tweet).isdefined) "wetweet" e-ewse "tweet"
 
-    def userType(user: User) =
-      if (user.roles.exists(_.roles.contains("stresstest"))) "stresstest"
-      else if (user.safety.exists(_.isProtected)) "protected"
-      else if (user.safety.exists(_.suspended)) "restricted"
-      else "public"
+    def usewtype(usew: u-usew) =
+      i-if (usew.wowes.exists(_.wowes.contains("stwesstest"))) "stwesstest"
+      e-ewse if (usew.safety.exists(_.ispwotected)) "pwotected"
+      ewse if (usew.safety.exists(_.suspended)) "westwicted"
+      ewse "pubwic"
 
-    def fanoutType(tweet: Tweet) =
-      if (TweetLenses.nullcast(tweet)) "nullcast"
-      else if (TweetLenses.narrowcast(tweet).isDefined) "narrowcast"
-      else "usertimeline"
+    def fanouttype(tweet: t-tweet) =
+      i-if (tweetwenses.nuwwcast(tweet)) "nuwwcast"
+      ewse if (tweetwenses.nawwowcast(tweet).isdefined) "nawwowcast"
+      e-ewse "usewtimewine"
 
-    new TweetStatsStore {
-      override val insertTweet: FutureEffect[InsertTweet.Event] =
-        FutureEffect[InsertTweet.Event] { event =>
-          inserts
-            .counter(
-              tweetType(event.tweet),
-              userType(event.user),
-              fanoutType(event.tweet)
+    n-nyew tweetstatsstowe {
+      ovewwide vaw i-insewttweet: futuweeffect[insewttweet.event] =
+        futuweeffect[insewttweet.event] { e-event =>
+          insewts
+            .countew(
+              tweettype(event.tweet),
+              u-usewtype(event.usew), o.O
+              fanouttype(event.tweet)
             )
-            .incr()
+            .incw()
 
-          Future.Unit
+          f-futuwe.unit
         }
     }
   }

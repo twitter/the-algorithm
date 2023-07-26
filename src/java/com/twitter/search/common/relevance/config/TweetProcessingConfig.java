@@ -1,114 +1,114 @@
-package com.twitter.search.common.relevance.config;
+package com.twittew.seawch.common.wewevance.config;
 
-import java.io.InputStream;
+impowt java.io.inputstweam;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.config.ConfigFile;
+i-impowt c-com.twittew.seawch.common.config.configfiwe;
 
 /**
- * Config file for relevance computation.
+ * c-config fiwe f-fow wewevance c-computation. -.-
  */
-public final class TweetProcessingConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetProcessingConfig.class);
-  private static final String SCORER_CONFIG_DIR = "common/relevance/config";
-  public static final String DEFAULT_CONFIG_FILE = "relevance.yml";
-  private static ConfigFile relevanceConfig = null;
+pubwic finaw cwass tweetpwocessingconfig {
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(tweetpwocessingconfig.cwass);
+  pwivate static finaw stwing s-scowew_config_diw = "common/wewevance/config";
+  pubwic static f-finaw stwing defauwt_config_fiwe = "wewevance.ymw";
+  pwivate static configfiwe w-wewevanceconfig = nyuww;
 
-  private TweetProcessingConfig() {
+  p-pwivate tweetpwocessingconfig() {
   }
 
-  /** Initializes this instance from the given config file. */
-  public static void init(String configFile) {
-    if (relevanceConfig == null) {
-      synchronized (TweetProcessingConfig.class) {
-        if (relevanceConfig == null) {
-          String file = configFile == null ? DEFAULT_CONFIG_FILE : configFile;
-          relevanceConfig = new ConfigFile(SCORER_CONFIG_DIR, file);
+  /** i-initiawizes this instance fwom the given config fiwe. :3 */
+  pubwic static v-void init(stwing configfiwe) {
+    if (wewevanceconfig == nuww) {
+      synchwonized (tweetpwocessingconfig.cwass) {
+        if (wewevanceconfig == n-nyuww) {
+          stwing f-fiwe = configfiwe == n-nyuww ? d-defauwt_config_fiwe : c-configfiwe;
+          wewevanceconfig = nyew configfiwe(scowew_config_diw, nyaa~~ f-fiwe);
         }
       }
     }
   }
 
-  /** Initializes this instance from the given input stream. */
-  public static void init(InputStream inputStream, String configType) {
-    if (relevanceConfig == null) {
-      synchronized (TweetProcessingConfig.class) {
-        if (relevanceConfig == null) {
-          relevanceConfig = new ConfigFile(inputStream, configType);
+  /** initiawizes this instance f-fwom the given input stweam. 😳 */
+  pubwic static void init(inputstweam inputstweam, (⑅˘꒳˘) stwing c-configtype) {
+    if (wewevanceconfig == n-nyuww) {
+      s-synchwonized (tweetpwocessingconfig.cwass) {
+        i-if (wewevanceconfig == nuww) {
+          wewevanceconfig = nyew configfiwe(inputstweam, nyaa~~ c-configtype);
         }
       }
     }
   }
 
-  /** Initializes this instance. */
-  public static void init() {
-    init(null);
+  /** i-initiawizes this instance. OwO */
+  p-pubwic static v-void init() {
+    init(nuww);
   }
 
   /**
-   * Returns the value of the given property as a double value.
+   * w-wetuwns the vawue of the given p-pwopewty as a doubwe vawue. rawr x3
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @pawam pwopewty t-the pwopewty. XD
+   * @pawam defauwtvawue the d-defauwt vawue to wetuwn if the p-pwopewty is nyot p-pwesent in the config.
    */
-  public static double getDouble(String property, double defaultValue) {
-    return relevanceConfig.getDouble(property, defaultValue);
+  pubwic static doubwe getdoubwe(stwing pwopewty, σωσ doubwe defauwtvawue) {
+    wetuwn w-wewevanceconfig.getdoubwe(pwopewty, d-defauwtvawue);
   }
 
   /**
-   * Returns the value of the given property as a string value.
+   * wetuwns the v-vawue of the given p-pwopewty as a-a stwing vawue. (U ᵕ U❁)
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @pawam pwopewty the pwopewty. (U ﹏ U)
+   * @pawam defauwtvawue the defauwt vawue t-to wetuwn if the pwopewty is nyot pwesent in the config.
    */
-  public static String getString(String property, String defaultValue) {
-    return relevanceConfig.getString(property, defaultValue);
+  pubwic static s-stwing getstwing(stwing pwopewty, :3 s-stwing defauwtvawue) {
+    wetuwn w-wewevanceconfig.getstwing(pwopewty, ( ͡o ω ͡o ) d-defauwtvawue);
   }
 
   /**
-   * Returns the value of the given property as an integer value.
+   * wetuwns t-the vawue of the g-given pwopewty a-as an integew vawue. σωσ
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @pawam p-pwopewty the pwopewty. >w<
+   * @pawam defauwtvawue t-the defauwt v-vawue to wetuwn i-if the pwopewty i-is nyot pwesent i-in the config.
    */
-  public static int getInt(String property, int defaultValue) {
-    return relevanceConfig.getInt(property, defaultValue);
+  pubwic static int getint(stwing pwopewty, 😳😳😳 i-int defauwtvawue) {
+    wetuwn wewevanceconfig.getint(pwopewty, OwO defauwtvawue);
   }
 
   /**
-   * Returns the value of the given property as a long value.
+   * wetuwns the vawue of the given p-pwopewty as a wong vawue. 😳
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @pawam pwopewty the pwopewty. 😳😳😳
+   * @pawam d-defauwtvawue the d-defauwt vawue to w-wetuwn if the pwopewty is nyot p-pwesent in the config. (˘ω˘)
    */
-  public static long getLong(String property, long defaultValue) {
-    return relevanceConfig.getLong(property, defaultValue);
+  p-pubwic static wong g-getwong(stwing pwopewty, ʘwʘ wong defauwtvawue) {
+    wetuwn wewevanceconfig.getwong(pwopewty, ( ͡o ω ͡o ) defauwtvawue);
   }
 
   /**
-   * Returns the value of the given property as a boolean value.
+   * wetuwns t-the vawue of the given pwopewty a-as a boowean vawue. o.O
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @pawam p-pwopewty t-the pwopewty. >w<
+   * @pawam defauwtvawue the defauwt v-vawue to wetuwn i-if the pwopewty is not pwesent i-in the config.
    */
-  public static boolean getBool(String property, boolean defaultValue) {
-    return relevanceConfig.getBool(property, defaultValue);
+  p-pubwic static boowean getboow(stwing pwopewty, 😳 boowean defauwtvawue) {
+    w-wetuwn wewevanceconfig.getboow(pwopewty, d-defauwtvawue);
   }
 
   /**
-   * Returns the value of the given property as a string.
+   * wetuwns t-the vawue of the given pwopewty a-as a stwing. 🥺
    *
-   * @param property The property.
-   * @throws ConfigurationException If the given property is not found in the config.
+   * @pawam p-pwopewty the pwopewty. rawr x3
+   * @thwows c-configuwationexception if the given pwopewty is not found in the config. o.O
    */
-  public static String getString(String property) {
-    try {
-      return relevanceConfig.getString(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config string " + property, e);
-      throw new RuntimeException(e);
+  pubwic s-static stwing getstwing(stwing p-pwopewty) {
+    twy {
+      wetuwn wewevanceconfig.getstwing(pwopewty);
+    } c-catch (configuwationexception e-e) {
+      wog.ewwow("fataw ewwow: couwd nyot get config s-stwing " + pwopewty, rawr e);
+      thwow new wuntimeexception(e);
     }
   }
 }

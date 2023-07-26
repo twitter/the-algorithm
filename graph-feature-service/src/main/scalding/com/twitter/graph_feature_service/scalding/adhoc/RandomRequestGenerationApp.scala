@@ -1,76 +1,76 @@
-package com.twitter.graph_feature_service.scalding.adhoc
+package com.twittew.gwaph_featuwe_sewvice.scawding.adhoc
 
-import com.twitter.bijection.Injection
-import com.twitter.frigate.common.constdb_util.Injections
-import com.twitter.ml.api.Feature.Discrete
-import com.twitter.ml.api.{DailySuffixFeatureSource, DataSetPipe, RichDataRecord}
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import java.nio.ByteBuffer
-import java.util.TimeZone
+impowt c-com.twittew.bijection.injection
+i-impowt com.twittew.fwigate.common.constdb_utiw.injections
+i-impowt c-com.twittew.mw.api.featuwe.discwete
+i-impowt com.twittew.mw.api.{daiwysuffixfeatuwesouwce, nyaa~~ d-datasetpipe, :3 w-wichdatawecowd}
+i-impowt com.twittew.scawding._
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+impowt java.nio.bytebuffew
+impowt java.utiw.timezone
 
-object RandomRequestGenerationJob {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+o-object wandomwequestgenewationjob {
+  impwicit vaw timezone: t-timezone = dateops.utc
+  impwicit v-vaw datepawsew: datepawsew = datepawsew.defauwt
 
-  val timelineRecapDataSetPath: String =
-    "/atla/proc2/user/timelines/processed/suggests/recap/data_records"
+  vaw timewinewecapdatasetpath: s-stwing =
+    "/atwa/pwoc2/usew/timewines/pwocessed/suggests/wecap/data_wecowds"
 
-  val USER_ID = new Discrete("meta.user_id")
-  val AUTHOR_ID = new Discrete("meta.author_id")
+  vaw usew_id = n-nyew discwete("meta.usew_id")
+  v-vaw authow_id = nyew discwete("meta.authow_id")
 
-  val timelineRecapOutPutPath: String = "/user/cassowary/gfs/adhoc/timeline_data"
+  vaw timewinewecapoutputpath: stwing = "/usew/cassowawy/gfs/adhoc/timewine_data"
 
-  implicit val inj: Injection[Long, ByteBuffer] = Injections.long2Varint
+  impwicit v-vaw inj: injection[wong, 😳😳😳 bytebuffew] = injections.wong2vawint
 
-  def run(
-    dataSetPath: String,
-    outPutPath: String,
-    numOfPairsToTake: Int
+  def wun(
+    datasetpath: s-stwing, (˘ω˘)
+    outputpath: stwing, ^^
+    n-nyumofpaiwstotake: i-int
   )(
-    implicit dateRange: DateRange,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit d-datewange: datewange, :3
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
 
-    val NumUserAuthorPairs = Stat("NumUserAuthorPairs")
+    vaw nyumusewauthowpaiws = stat("numusewauthowpaiws")
 
-    val dataSet: DataSetPipe = DailySuffixFeatureSource(dataSetPath).read
+    v-vaw dataset: datasetpipe = daiwysuffixfeatuwesouwce(datasetpath).wead
 
-    val userAuthorPairs: TypedPipe[(Long, Long)] = dataSet.records.map { record =>
-      val richRecord = new RichDataRecord(record, dataSet.featureContext)
+    vaw usewauthowpaiws: typedpipe[(wong, -.- wong)] = dataset.wecowds.map { w-wecowd =>
+      vaw wichwecowd = n-nyew wichdatawecowd(wecowd, 😳 d-dataset.featuwecontext)
 
-      val userId = richRecord.getFeatureValue(USER_ID)
-      val authorId = richRecord.getFeatureValue(AUTHOR_ID)
-      NumUserAuthorPairs.inc()
-      (userId, authorId)
+      v-vaw usewid = wichwecowd.getfeatuwevawue(usew_id)
+      vaw authowid = wichwecowd.getfeatuwevawue(authow_id)
+      nyumusewauthowpaiws.inc()
+      (usewid, a-authowid)
     }
 
-    userAuthorPairs
-      .limit(numOfPairsToTake)
-      .writeExecution(
-        TypedTsv[(Long, Long)](outPutPath)
+    u-usewauthowpaiws
+      .wimit(numofpaiwstotake)
+      .wwiteexecution(
+        typedtsv[(wong, mya wong)](outputpath)
       )
   }
 }
 
 /**
- * ./bazel bundle graph-feature-service/src/main/scalding/com/twitter/graph_feature_service/scalding/adhoc:all
+ * ./bazew bundwe gwaph-featuwe-sewvice/swc/main/scawding/com/twittew/gwaph_featuwe_sewvice/scawding/adhoc:aww
  *
- * oscar hdfs --screen --user cassowary --tee gfs_log --bundle gfs_random_request-adhoc \
-      --tool com.twitter.graph_feature_service.scalding.adhoc.RandomRequestGenerationApp \
+ * o-oscaw h-hdfs --scween --usew cassowawy --tee g-gfs_wog --bundwe gfs_wandom_wequest-adhoc \
+      --toow c-com.twittew.gwaph_featuwe_sewvice.scawding.adhoc.wandomwequestgenewationapp \
       -- --date 2018-08-11  \
-      --input /atla/proc2/user/timelines/processed/suggests/recap/data_records \
-      --output /user/cassowary/gfs/adhoc/timeline_data
+      --input /atwa/pwoc2/usew/timewines/pwocessed/suggests/wecap/data_wecowds \
+      --output /usew/cassowawy/gfs/adhoc/timewine_data
  */
-object RandomRequestGenerationApp extends TwitterExecutionApp {
-  import RandomRequestGenerationJob._
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
-      implicit val dateRange: DateRange = DateRange.parse(args.list("date"))(timeZone, dateParser)
-      run(
-        args.optional("input").getOrElse(timelineRecapDataSetPath),
-        args.optional("output").getOrElse(timelineRecapOutPutPath),
-        args.int("num_pairs", 3000)
+object wandomwequestgenewationapp extends t-twittewexecutionapp {
+  impowt wandomwequestgenewationjob._
+  o-ovewwide def job: e-execution[unit] = e-execution.withid { impwicit uniqueid =>
+    execution.getawgs.fwatmap { awgs: awgs =>
+      impwicit vaw datewange: datewange = d-datewange.pawse(awgs.wist("date"))(timezone, (˘ω˘) datepawsew)
+      w-wun(
+        awgs.optionaw("input").getowewse(timewinewecapdatasetpath), >_<
+        awgs.optionaw("output").getowewse(timewinewecapoutputpath), -.-
+        a-awgs.int("num_paiws", 🥺 3000)
       )
     }
   }

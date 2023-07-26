@@ -1,86 +1,86 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.component_library.selector.sorter.SorterFromOrdering
-import com.twitter.product_mixer.component_library.selector.sorter.SorterProvider
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector._
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.sewectow.sowtew.sowtewfwomowdewing
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.sewectow.sowtew.sowtewpwovidew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope.pawtitionedcandidates
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow._
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object UpdateSortCandidates {
-  def apply(
-    candidatePipeline: CandidatePipelineIdentifier,
-    sorterProvider: SorterProvider,
-  ) = new UpdateSortCandidates(SpecificPipeline(candidatePipeline), sorterProvider)
+object updatesowtcandidates {
+  def appwy(
+    c-candidatepipewine: candidatepipewineidentifiew, (U ﹏ U)
+    s-sowtewpwovidew: sowtewpwovidew,
+  ) = nyew updatesowtcandidates(specificpipewine(candidatepipewine), 😳 sowtewpwovidew)
 
-  def apply(
-    candidatePipeline: CandidatePipelineIdentifier,
-    ordering: Ordering[CandidateWithDetails]
+  def appwy(
+    c-candidatepipewine: candidatepipewineidentifiew, (ˆ ﻌ ˆ)♡
+    o-owdewing: owdewing[candidatewithdetaiws]
   ) =
-    new UpdateSortCandidates(SpecificPipeline(candidatePipeline), SorterFromOrdering(ordering))
+    n-nyew updatesowtcandidates(specificpipewine(candidatepipewine), 😳😳😳 sowtewfwomowdewing(owdewing))
 
-  def apply(
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    ordering: Ordering[CandidateWithDetails]
+  def appwy(
+    candidatepipewines: set[candidatepipewineidentifiew], (U ﹏ U)
+    o-owdewing: owdewing[candidatewithdetaiws]
   ) =
-    new UpdateSortCandidates(SpecificPipelines(candidatePipelines), SorterFromOrdering(ordering))
+    nyew updatesowtcandidates(specificpipewines(candidatepipewines), (///ˬ///✿) sowtewfwomowdewing(owdewing))
 
-  def apply(
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    sorterProvider: SorterProvider,
-  ) = new UpdateSortCandidates(SpecificPipelines(candidatePipelines), sorterProvider)
+  def appwy(
+    candidatepipewines: s-set[candidatepipewineidentifiew], 😳
+    sowtewpwovidew: sowtewpwovidew, 😳
+  ) = nyew updatesowtcandidates(specificpipewines(candidatepipewines), σωσ s-sowtewpwovidew)
 
-  def apply(
-    pipelineScope: CandidateScope,
-    ordering: Ordering[CandidateWithDetails]
-  ) = new UpdateSortCandidates(pipelineScope, SorterFromOrdering(ordering))
+  d-def appwy(
+    p-pipewinescope: c-candidatescope, rawr x3
+    owdewing: owdewing[candidatewithdetaiws]
+  ) = n-nyew updatesowtcandidates(pipewinescope, OwO sowtewfwomowdewing(owdewing))
 }
 
 /**
- * Sort item and module (not items inside modules) candidates in a pipeline scope.
- * Note that if sorting across multiple candidate sources, the candidates will be grouped together
- * in sorted order, starting from the position of the first candidate.
+ * sowt i-item and moduwe (not items inside moduwes) candidates in a pipewine scope. /(^•ω•^)
+ * nyote that if sowting a-acwoss muwtipwe candidate souwces, 😳😳😳 t-the candidates w-wiww be gwouped t-togethew
+ * in sowted owdew, ( ͡o ω ͡o ) stawting fwom the position of t-the fiwst candidate. >_<
  *
- * For example, we could specify the following ordering to sort by score descending:
- * Ordering
- *   .by[CandidateWithDetails, Double](_.features.get(ScoreFeature) match {
- *     case Scored(score) => score
- *     case _ => Double.MinValue
- *   }).reverse
+ * f-fow exampwe, >w< we couwd s-specify the fowwowing o-owdewing to sowt by scowe d-descending:
+ * owdewing
+ *   .by[candidatewithdetaiws, rawr d-doubwe](_.featuwes.get(scowefeatuwe) match {
+ *     case s-scowed(scowe) => scowe
+ *     c-case _ => doubwe.minvawue
+ *   }).wevewse
  */
-case class UpdateSortCandidates(
-  override val pipelineScope: CandidateScope,
-  sorterProvider: SorterProvider)
-    extends Selector[PipelineQuery] {
+case c-cwass updatesowtcandidates(
+  o-ovewwide vaw pipewinescope: candidatescope, 😳
+  sowtewpwovidew: sowtewpwovidew)
+    extends sewectow[pipewinequewy] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
+  ovewwide def appwy(
+    quewy: pipewinequewy, >w<
+    wemainingcandidates: seq[candidatewithdetaiws], (⑅˘꒳˘)
+    w-wesuwt: s-seq[candidatewithdetaiws]
+  ): sewectowwesuwt = {
+    v-vaw p-pawtitionedcandidates(sewectedcandidates, OwO o-othewcandidates) =
+      pipewinescope.pawtition(wemainingcandidates)
 
-    val updatedRemainingCandidates = if (selectedCandidates.nonEmpty) {
-      // Safe .head due to nonEmpty check
-      val position = remainingCandidates.indexOf(selectedCandidates.head)
-      val orderedSelectedCandidates =
-        sorterProvider.sorter(query, remainingCandidates, result).sort(selectedCandidates)
+    vaw updatedwemainingcandidates = if (sewectedcandidates.nonempty) {
+      // s-safe .head due to nyonempty check
+      vaw position = wemainingcandidates.indexof(sewectedcandidates.head)
+      vaw owdewedsewectedcandidates =
+        s-sowtewpwovidew.sowtew(quewy, (ꈍᴗꈍ) wemainingcandidates, 😳 w-wesuwt).sowt(sewectedcandidates)
 
-      if (position < otherCandidates.length) {
-        val (left, right) = otherCandidates.splitAt(position)
-        left ++ orderedSelectedCandidates ++ right
-      } else {
-        otherCandidates ++ orderedSelectedCandidates
+      i-if (position < o-othewcandidates.wength) {
+        vaw (weft, 😳😳😳 w-wight) = othewcandidates.spwitat(position)
+        w-weft ++ owdewedsewectedcandidates ++ w-wight
+      } e-ewse {
+        othewcandidates ++ owdewedsewectedcandidates
       }
-    } else {
-      remainingCandidates
+    } e-ewse {
+      wemainingcandidates
     }
 
-    SelectorResult(remainingCandidates = updatedRemainingCandidates, result = result)
+    s-sewectowwesuwt(wemainingcandidates = u-updatedwemainingcandidates, mya wesuwt = w-wesuwt)
   }
 }

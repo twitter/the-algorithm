@@ -1,72 +1,72 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics
 
-import com.twitter.ml.api._
-import scala.collection.mutable
+impowt com.twittew.mw.api._
+i-impowt scawa.cowwection.mutabwe
 
-trait FeatureCache[T] {
+t-twait featuwecache[t] {
   /*
-   * Constructs feature names from scratch given an aggregate query and an output
-   * feature name. E.g. given mean operator and "sum". This function is slow and should
-   * only be called at pre-computation time.
+   * c-constwucts featuwe n-nyames fwom s-scwatch given a-an aggwegate quewy a-and an output
+   * f-featuwe nyame. >_< e.g. given mean opewatow and "sum". >w< this function is swow and s-shouwd
+   * onwy be cawwed at pwe-computation t-time. rawr
    *
-   * @param query Details of aggregate feature
-   * @name Name of "output" feature for which we want to construct feature name
-   * @return Full name of output feature
+   * @pawam quewy detaiws o-of aggwegate featuwe
+   * @name nyame of "output" featuwe f-fow which we want to constwuct featuwe n-nyame
+   * @wetuwn f-fuww nyame of output featuwe
    */
-  private def uncachedFullFeatureName(query: AggregateFeature[T], name: String): String =
-    List(query.featurePrefix, name).mkString(".")
+  pwivate def uncachedfuwwfeatuwename(quewy: aggwegatefeatuwe[t], 😳 nyame: stwing): stwing =
+    w-wist(quewy.featuwepwefix, >w< nyame).mkstwing(".")
 
   /*
-   * A cache from (aggregate query, output feature name) -> fully qualified feature name
-   * lazy since it doesn't need to be serialized to the mappers
+   * a cache fwom (aggwegate quewy, (⑅˘꒳˘) output featuwe n-nyame) -> fuwwy quawified featuwe n-nyame
+   * w-wazy since it doesn't n-nyeed to b-be sewiawized to the mappews
    */
-  private lazy val featureNameCache = mutable.Map[(AggregateFeature[T], String), String]()
+  pwivate wazy v-vaw featuwenamecache = mutabwe.map[(aggwegatefeatuwe[t], OwO stwing), s-stwing]()
 
   /*
-   * A cache from (aggregate query, output feature name) -> precomputed output feature
-   * lazy since it doesn't need to be serialized to the mappers
+   * a cache fwom (aggwegate quewy, (ꈍᴗꈍ) output featuwe nyame) -> pwecomputed output f-featuwe
+   * wazy since it doesn't n-nyeed to b-be sewiawized to t-the mappews
    */
-  private lazy val featureCache = mutable.Map[(AggregateFeature[T], String), Feature[_]]()
+  pwivate wazy vaw featuwecache = mutabwe.map[(aggwegatefeatuwe[t], 😳 s-stwing), 😳😳😳 f-featuwe[_]]()
 
   /**
-   * Given an (aggregate query, output feature name, output feature type),
-   * look it up using featureNameCache and featureCache, falling back to uncachedFullFeatureName()
-   * as a last resort to construct a precomputed output feature. Should only be
-   * called at pre-computation time.
+   * given a-an (aggwegate quewy, mya o-output featuwe nyame, mya output f-featuwe type), (⑅˘꒳˘)
+   * wook it up u-using featuwenamecache and featuwecache, (U ﹏ U) fawwing b-back to uncachedfuwwfeatuwename()
+   * as a wast w-wesowt to constwuct a pwecomputed o-output featuwe. mya s-shouwd onwy be
+   * cawwed at pwe-computation time. ʘwʘ
    *
-   * @param query Details of aggregate feature
-   * @name Name of "output" feature we want to precompute
-   * @aggregateFeatureType type of "output" feature we want to precompute
+   * @pawam quewy detaiws of aggwegate featuwe
+   * @name n-nyame of "output" f-featuwe we want to pwecompute
+   * @aggwegatefeatuwetype t-type of "output" f-featuwe we want t-to pwecompute
    */
-  def cachedFullFeature(
-    query: AggregateFeature[T],
-    name: String,
-    aggregateFeatureType: FeatureType
-  ): Feature[_] = {
-    lazy val cachedFeatureName = featureNameCache.getOrElseUpdate(
-      (query, name),
-      uncachedFullFeatureName(query, name)
+  def cachedfuwwfeatuwe(
+    quewy: aggwegatefeatuwe[t], (˘ω˘)
+    nyame: stwing, (U ﹏ U)
+    a-aggwegatefeatuwetype: featuwetype
+  ): featuwe[_] = {
+    wazy vaw cachedfeatuwename = featuwenamecache.getowewseupdate(
+      (quewy, ^•ﻌ•^ nyame),
+      uncachedfuwwfeatuwename(quewy, nyame)
     )
 
-    def uncachedFullFeature(): Feature[_] = {
-      val personalDataTypes =
-        AggregationMetricCommon.derivePersonalDataTypes(query.feature, query.label)
+    d-def uncachedfuwwfeatuwe(): f-featuwe[_] = {
+      v-vaw p-pewsonawdatatypes =
+        aggwegationmetwiccommon.dewivepewsonawdatatypes(quewy.featuwe, (˘ω˘) q-quewy.wabew)
 
-      aggregateFeatureType match {
-        case FeatureType.BINARY => new Feature.Binary(cachedFeatureName, personalDataTypes)
-        case FeatureType.DISCRETE => new Feature.Discrete(cachedFeatureName, personalDataTypes)
-        case FeatureType.STRING => new Feature.Text(cachedFeatureName, personalDataTypes)
-        case FeatureType.CONTINUOUS => new Feature.Continuous(cachedFeatureName, personalDataTypes)
-        case FeatureType.SPARSE_BINARY =>
-          new Feature.SparseBinary(cachedFeatureName, personalDataTypes)
-        case FeatureType.SPARSE_CONTINUOUS =>
-          new Feature.SparseContinuous(cachedFeatureName, personalDataTypes)
+      a-aggwegatefeatuwetype m-match {
+        c-case featuwetype.binawy => nyew featuwe.binawy(cachedfeatuwename, :3 pewsonawdatatypes)
+        c-case featuwetype.discwete => n-nyew featuwe.discwete(cachedfeatuwename, ^^;; p-pewsonawdatatypes)
+        c-case featuwetype.stwing => nyew f-featuwe.text(cachedfeatuwename, 🥺 pewsonawdatatypes)
+        case featuwetype.continuous => nyew f-featuwe.continuous(cachedfeatuwename, (⑅˘꒳˘) pewsonawdatatypes)
+        case featuwetype.spawse_binawy =>
+          nyew featuwe.spawsebinawy(cachedfeatuwename, nyaa~~ pewsonawdatatypes)
+        case featuwetype.spawse_continuous =>
+          n-nyew featuwe.spawsecontinuous(cachedfeatuwename, :3 pewsonawdatatypes)
       }
     }
 
-    featureCache.getOrElseUpdate(
-      (query, name),
-      uncachedFullFeature()
+    featuwecache.getowewseupdate(
+      (quewy, ( ͡o ω ͡o ) nyame), mya
+      uncachedfuwwfeatuwe()
     )
   }
 }

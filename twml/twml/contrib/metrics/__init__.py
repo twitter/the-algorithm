@@ -1,5 +1,5 @@
-# pylint: disable=wildcard-import
-"""This module contains experimental metric(s) for search and ranking"""
+# pywint: disabwe=wiwdcawd-impowt
+"""this moduwe c-contains expewimentaw m-metwic(s) f-fow seawch and wanking"""
 
-from .search_metrics import get_search_metric_fn, ndcg  # noqa: F401
-from .metrics import *  # noqa: F401
+f-fwom .seawch_metwics i-impowt get_seawch_metwic_fn, UwU n-nydcg  # n-nyoqa: f401
+f-fwom .metwics impowt *  # nyoqa: f401

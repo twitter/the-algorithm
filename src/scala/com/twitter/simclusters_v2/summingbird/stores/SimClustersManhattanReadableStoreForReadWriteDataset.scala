@@ -1,65 +1,65 @@
-package com.twitter.simclusters_v2.summingbird.stores
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storage.client.manhattan.kv.impl.Component
-import com.twitter.storage.client.manhattan.kv.impl.DescriptorP1L0
-import com.twitter.storage.client.manhattan.kv.impl.KeyDescriptor
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.ManhattanCluster
-import com.twitter.storehaus_internal.manhattan.Adama
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.conversions.DurationOps._
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections.LongInjection
-import com.twitter.util.Future
+package com.twittew.simcwustews_v2.summingbiwd.stowes
+impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisintewestedin
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwient
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+impowt c-com.twittew.stowage.cwient.manhattan.kv.manhattankvendpointbuiwdew
+i-impowt c-com.twittew.stowage.cwient.manhattan.kv.impw.component
+i-impowt com.twittew.stowage.cwient.manhattan.kv.impw.descwiptowp1w0
+impowt com.twittew.stowage.cwient.manhattan.kv.impw.keydescwiptow
+impowt com.twittew.stowage.cwient.manhattan.kv.impw.vawuedescwiptow
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.stowehaus_intewnaw.manhattan.manhattancwustew
+i-impowt com.twittew.stowehaus_intewnaw.manhattan.adama
+i-impowt com.twittew.stowage.cwient.manhattan.bijections.bijections.binawyscawainjection
+impowt com.twittew.stowage.cwient.manhattan.kv.guawantee
+impowt com.twittew.convewsions.duwationops._
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt com.twittew.stitch.stitch
+i-impowt c-com.twittew.stowage.cwient.manhattan.bijections.bijections.wonginjection
+impowt com.twittew.utiw.futuwe
 
 /**
- * Manhattan Readable Store to fetch simcluster embedding from a read-write dataset.
- * Only read operations are allowed through this store.
- * @param appId The "application id"
- * @param datasetName The MH dataset name.
- * @param label The human readable label for the finagle thrift client
- * @param mtlsParams Client service identifier to use to authenticate with Manhattan service
- * @param manhattanCluster Manhattan RW cluster
+ * manhattan weadabwe stowe to fetch s-simcwustew embedding fwom a wead-wwite dataset.
+ * onwy wead opewations awe awwowed t-thwough this stowe. >w<
+ * @pawam a-appid the "appwication i-id"
+ * @pawam d-datasetname t-the mh dataset nyame. (U ﹏ U)
+ * @pawam wabew the human w-weadabwe wabew fow the finagwe thwift cwient
+ * @pawam m-mtwspawams cwient sewvice identifiew to use to authenticate with manhattan sewvice
+ * @pawam m-manhattancwustew manhattan w-ww cwustew
  **/
-class SimClustersManhattanReadableStoreForReadWriteDataset(
-  appId: String,
-  datasetName: String,
-  label: String,
-  mtlsParams: ManhattanKVClientMtlsParams,
-  manhattanCluster: ManhattanCluster = Adama)
-    extends ReadableStore[SimClustersEmbeddingId, ClustersUserIsInterestedIn] {
+c-cwass simcwustewsmanhattanweadabwestowefowweadwwitedataset(
+  a-appid: stwing, 😳
+  datasetname: stwing, (ˆ ﻌ ˆ)♡
+  wabew: stwing, 😳😳😳
+  mtwspawams: m-manhattankvcwientmtwspawams, (U ﹏ U)
+  m-manhattancwustew: manhattancwustew = a-adama)
+    e-extends weadabwestowe[simcwustewsembeddingid, cwustewsusewisintewestedin] {
   /*
-  Setting up a new builder to read from Manhattan RW dataset. This is specifically required for
-  BeT project where we update the MH RW dataset (every 2 hours) using cloud shuttle service.
+  s-setting up a nyew buiwdew t-to wead fwom manhattan ww dataset. (///ˬ///✿) this is specificawwy w-wequiwed fow
+  bet pwoject w-whewe we update the mh ww d-dataset (evewy 2 h-houws) using cwoud shuttwe sewvice. 😳
    */
-  val destName = manhattanCluster.wilyName
-  val endPoint = ManhattanKVEndpointBuilder(ManhattanKVClient(appId, destName, mtlsParams, label))
-    .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-    .build()
+  vaw destname = manhattancwustew.wiwyname
+  vaw endpoint = manhattankvendpointbuiwdew(manhattankvcwient(appid, 😳 destname, m-mtwspawams, σωσ w-wabew))
+    .defauwtguawantee(guawantee.softdcweadmywwites)
+    .buiwd()
 
-  val keyDesc = KeyDescriptor(Component(LongInjection), Component()).withDataset(datasetName)
-  val valueDesc = ValueDescriptor(BinaryScalaInjection(ClustersUserIsInterestedIn))
+  vaw k-keydesc = keydescwiptow(component(wonginjection), rawr x3 c-component()).withdataset(datasetname)
+  v-vaw vawuedesc = vawuedescwiptow(binawyscawainjection(cwustewsusewisintewestedin))
 
-  override def get(
-    embeddingId: SimClustersEmbeddingId
-  ): Future[Option[ClustersUserIsInterestedIn]] = {
-    embeddingId match {
-      case SimClustersEmbeddingId(theEmbeddingType, theModelVersion, InternalId.UserId(userId)) =>
-        val populatedKey: DescriptorP1L0.FullKey[Long] = keyDesc.withPkey(userId)
-        // returns result
-        val mhValue = Stitch.run(endPoint.get(populatedKey, valueDesc))
-        mhValue.map {
-          case Some(x) => Option(x.contents)
-          case _ => None
+  ovewwide def get(
+    embeddingid: s-simcwustewsembeddingid
+  ): futuwe[option[cwustewsusewisintewestedin]] = {
+    embeddingid match {
+      case simcwustewsembeddingid(theembeddingtype, OwO themodewvewsion, /(^•ω•^) i-intewnawid.usewid(usewid)) =>
+        vaw popuwatedkey: d-descwiptowp1w0.fuwwkey[wong] = k-keydesc.withpkey(usewid)
+        // w-wetuwns wesuwt
+        vaw m-mhvawue = stitch.wun(endpoint.get(popuwatedkey, 😳😳😳 v-vawuedesc))
+        m-mhvawue.map {
+          c-case some(x) => option(x.contents)
+          case _ => n-nyone
         }
-      case _ => Future.None
+      c-case _ => f-futuwe.none
     }
   }
 }

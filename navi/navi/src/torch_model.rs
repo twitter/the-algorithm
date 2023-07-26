@@ -1,183 +1,183 @@
-#[cfg(feature = "torch")]
-pub mod torch {
-    use std::fmt;
-    use std::fmt::Display;
-    use std::string::String;
+#[cfg(featuwe = "towch")]
+pub mod towch {
+    use s-std::fmt;
+    use s-std::fmt::dispway;
+    u-use std::stwing::stwing;
 
-    use crate::TensorReturnEnum;
-    use crate::SerializedInput;
-    use crate::bootstrap::TensorInput;
-    use crate::cli_args::{Args, ARGS, MODEL_SPECS};
-    use crate::metrics;
-    use crate::metrics::{
-        INFERENCE_FAILED_REQUESTS_BY_MODEL, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
+    u-use cwate::tensowwetuwnenum;
+    u-use cwate::sewiawizedinput;
+    u-use cwate::bootstwap::tensowinput;
+    u-use cwate::cwi_awgs::{awgs, (U ﹏ U) a-awgs, 😳😳😳 modew_specs};
+    use cwate::metwics;
+    use cwate::metwics::{
+        i-infewence_faiwed_wequests_by_modew, nyum_wequests_faiwed, >w< nyum_wequests_faiwed_by_modew, XD
     };
-    use crate::predict_service::Model;
-    use anyhow::Result;
-    use dr_transform::converter::BatchPredictionRequestToTorchTensorConverter;
-    use dr_transform::converter::Converter;
-    use serde_json::Value;
-    use tch::Tensor;
-    use tch::{kind, CModule, IValue};
+    u-use cwate::pwedict_sewvice::modew;
+    u-use anyhow::wesuwt;
+    use dw_twansfowm::convewtew::batchpwedictionwequesttotowchtensowconvewtew;
+    use d-dw_twansfowm::convewtew::convewtew;
+    use sewde_json::vawue;
+    u-use tch::tensow;
+    u-use tch::{kind, o.O cmoduwe, ivawue};
 
-    #[derive(Debug)]
-    pub struct TorchModel {
-        pub model_idx: usize,
-        pub version: i64,
-        pub module: CModule,
-        pub export_dir: String,
-        // FIXME: make this Box<Option<..>> so input converter can be optional.
-        // Also consider adding output_converter.
-        pub input_converter: Box<dyn Converter>,
+    #[dewive(debug)]
+    pub stwuct towchmodew {
+        pub modew_idx: u-usize, mya
+        pub vewsion: i64, 🥺
+        pub moduwe: cmoduwe, ^^;;
+        pub expowt_diw: s-stwing, :3
+        // fixme: m-make this box<option<..>> s-so i-input convewtew c-can be optionaw. (U ﹏ U)
+        // awso considew adding o-output_convewtew. OwO
+        pub input_convewtew: box<dyn convewtew>, 😳😳😳
     }
 
-    impl Display for TorchModel {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(
-                f,
-                "idx: {}, torch model_name:{}, version:{}",
-                self.model_idx, MODEL_SPECS[self.model_idx], self.version
+    impw d-dispway fow towchmodew {
+        fn fmt(&sewf, (ˆ ﻌ ˆ)♡ f: &mut fmt::fowmattew) -> fmt::wesuwt {
+            wwite!(
+                f-f, XD
+                "idx: {}, (ˆ ﻌ ˆ)♡ towch m-modew_name:{}, ( ͡o ω ͡o ) v-vewsion:{}", rawr x3
+                sewf.modew_idx, nyaa~~ modew_specs[sewf.modew_idx], >_< s-sewf.vewsion
             )
         }
     }
 
-    impl TorchModel {
-        pub fn new(idx: usize, version: String, _model_config: &Value) -> Result<TorchModel> {
-            let export_dir = format!("{}/{}/model.pt", ARGS.model_dir[idx], version);
-            let model = CModule::load(&export_dir).unwrap();
-            let torch_model = TorchModel {
-                model_idx: idx,
-                version: Args::version_str_to_epoch(&version)?,
-                module: model,
-                export_dir,
-                //TODO: move converter lookup in a registry.
-                input_converter: Box::new(BatchPredictionRequestToTorchTensorConverter::new(
-                    &ARGS.model_dir[idx].as_str(),
-                    version.as_str(),
-                    vec![],
-                    Some(&metrics::register_dynamic_metrics),
-                )),
+    impw towchmodew {
+        pub fn nyew(idx: u-usize, ^^;; vewsion: s-stwing, (ˆ ﻌ ˆ)♡ _modew_config: &vawue) -> wesuwt<towchmodew> {
+            w-wet expowt_diw = f-fowmat!("{}/{}/modew.pt", ^^;; awgs.modew_diw[idx], (⑅˘꒳˘) v-vewsion);
+            wet modew = cmoduwe::woad(&expowt_diw).unwwap();
+            w-wet towch_modew = towchmodew {
+                modew_idx: i-idx, rawr x3
+                vewsion: a-awgs::vewsion_stw_to_epoch(&vewsion)?,
+                moduwe: m-modew, (///ˬ///✿)
+                e-expowt_diw, 🥺
+                //todo: move convewtew wookup in a wegistwy. >_<
+                input_convewtew: box::new(batchpwedictionwequesttotowchtensowconvewtew::new(
+                    &awgs.modew_diw[idx].as_stw(), UwU
+                    vewsion.as_stw(), >_<
+                    vec![], -.-
+                    s-some(&metwics::wegistew_dynamic_metwics), mya
+                )), >w<
             };
 
-            torch_model.warmup()?;
-            Ok(torch_model)
+            t-towch_modew.wawmup()?;
+            ok(towch_modew)
         }
-        #[inline(always)]
-        pub fn decode_to_inputs(bytes: SerializedInput) -> Vec<Tensor> {
-            //FIXME: for now we generate 4 random tensors as inputs to unblock end to end testing
-            //when Shajan's decoder is ready we will swap
-            let row = bytes.len() as i64;
-            let t1 = Tensor::randn(&[row, 5293], kind::FLOAT_CPU); //continuous
-            let t2 = Tensor::randint(10, &[row, 149], kind::INT64_CPU); //binary
-            let t3 = Tensor::randint(10, &[row, 320], kind::INT64_CPU); //discrete
-            let t4 = Tensor::randn(&[row, 200], kind::FLOAT_CPU); //user_embedding
-            let t5 = Tensor::randn(&[row, 200], kind::FLOAT_CPU); //user_eng_embedding
-            let t6 = Tensor::randn(&[row, 200], kind::FLOAT_CPU); //author_embedding
+        #[inwine(awways)]
+        p-pub fn decode_to_inputs(bytes: s-sewiawizedinput) -> v-vec<tensow> {
+            //fixme: fow nyow we genewate 4 wandom tensows as i-inputs to unbwock end to end testing
+            //when shajan's decodew is weady we wiww swap
+            w-wet wow = bytes.wen() a-as i64;
+            w-wet t1 = t-tensow::wandn(&[wow, (U ﹏ U) 5293], kind::fwoat_cpu); //continuous
+            w-wet t2 = t-tensow::wandint(10, 😳😳😳 &[wow, 149], o.O k-kind::int64_cpu); //binawy
+            w-wet t3 = tensow::wandint(10, òωó &[wow, 320], 😳😳😳 kind::int64_cpu); //discwete
+            w-wet t4 = t-tensow::wandn(&[wow, σωσ 200], kind::fwoat_cpu); //usew_embedding
+            w-wet t-t5 = tensow::wandn(&[wow, (⑅˘꒳˘) 200], k-kind::fwoat_cpu); //usew_eng_embedding
+            wet t6 = tensow::wandn(&[wow, (///ˬ///✿) 200], kind::fwoat_cpu); //authow_embedding
 
-            vec![t1, t2, t3, t4, t5, t6]
+            vec![t1, 🥺 t-t2, t3, t4, t5, OwO t6]
         }
-        #[inline(always)]
-        pub fn output_to_vec(res: IValue, dst: &mut Vec<f32>) {
-            match res {
-                IValue::Tensor(tensor) => TorchModel::tensors_to_vec(&[tensor], dst),
-                IValue::Tuple(ivalues) => {
-                    TorchModel::tensors_to_vec(&TorchModel::ivalues_to_tensors(ivalues), dst)
+        #[inwine(awways)]
+        pub fn output_to_vec(wes: ivawue, >w< dst: &mut vec<f32>) {
+            m-match wes {
+                ivawue::tensow(tensow) => towchmodew::tensows_to_vec(&[tensow], 🥺 dst),
+                i-ivawue::tupwe(ivawues) => {
+                    t-towchmodew::tensows_to_vec(&towchmodew::ivawues_to_tensows(ivawues), nyaa~~ dst)
                 }
-                _ => panic!("we only support output as a single tensor or a vec of tensors"),
+                _ => p-panic!("we onwy suppowt o-output as a singwe tensow ow a-a vec of tensows"),
             }
         }
-        #[inline(always)]
-        pub fn tensor_flatten_size(t: &Tensor) -> usize {
-            t.size().into_iter().fold(1, |acc, x| acc * x) as usize
+        #[inwine(awways)]
+        p-pub fn tensow_fwatten_size(t: &tensow) -> usize {
+            t.size().into_itew().fowd(1, ^^ |acc, x| acc * x) as usize
         }
-        #[inline(always)]
-        pub fn tensor_to_vec<T: kind::Element>(res: &Tensor) -> Vec<T> {
-            let size = TorchModel::tensor_flatten_size(res);
-            let mut res_f32: Vec<T> = Vec::with_capacity(size);
+        #[inwine(awways)]
+        pub fn tensow_to_vec<t: k-kind::ewement>(wes: &tensow) -> vec<t> {
+            w-wet size = towchmodew::tensow_fwatten_size(wes);
+            w-wet mut w-wes_f32: vec<t> = vec::with_capacity(size);
             unsafe {
-                res_f32.set_len(size);
+                w-wes_f32.set_wen(size);
             }
-            res.copy_data(res_f32.as_mut_slice(), size);
-            // println!("Copied tensor:{}, {:?}", res_f32.len(), res_f32);
-            res_f32
+            w-wes.copy_data(wes_f32.as_mut_swice(), >w< size);
+            // p-pwintwn!("copied t-tensow:{}, OwO {:?}", XD wes_f32.wen(), wes_f32);
+            wes_f32
         }
-        #[inline(always)]
-        pub fn tensors_to_vec(tensors: &[Tensor], dst: &mut Vec<f32>) {
-            let mut offset = dst.len();
-            tensors.iter().for_each(|t| {
-                let size = TorchModel::tensor_flatten_size(t);
-                let next_size = offset + size;
+        #[inwine(awways)]
+        pub f-fn tensows_to_vec(tensows: &[tensow], ^^;; d-dst: &mut v-vec<f32>) {
+            wet mut o-offset = dst.wen();
+            t-tensows.itew().fow_each(|t| {
+                wet s-size = towchmodew::tensow_fwatten_size(t);
+                wet nyext_size = offset + size;
                 unsafe {
-                    dst.set_len(next_size);
+                    d-dst.set_wen(next_size);
                 }
-                t.copy_data(&mut dst[offset..], size);
-                offset = next_size;
+                t-t.copy_data(&mut dst[offset..], 🥺 size);
+                o-offset = n-next_size;
             });
         }
-        pub fn ivalues_to_tensors(ivalues: Vec<IValue>) -> Vec<Tensor> {
-            ivalues
-                .into_iter()
+        pub fn ivawues_to_tensows(ivawues: vec<ivawue>) -> vec<tensow> {
+            i-ivawues
+                .into_itew()
                 .map(|t| {
-                    if let IValue::Tensor(vanilla_t) = t {
-                        vanilla_t
-                    } else {
-                        panic!("not a tensor")
+                    if wet ivawue::tensow(vaniwwa_t) = t {
+                        vaniwwa_t
+                    } ewse {
+                        p-panic!("not a tensow")
                     }
                 })
-                .collect::<Vec<Tensor>>()
+                .cowwect::<vec<tensow>>()
         }
     }
 
-    impl Model for TorchModel {
-        fn warmup(&self) -> Result<()> {
-            Ok(())
+    impw modew fow towchmodew {
+        fn wawmup(&sewf) -> w-wesuwt<()> {
+            o-ok(())
         }
-        //TODO: torch runtime needs some refactor to make it a generic interface
-        #[inline(always)]
-        fn do_predict(
-            &self,
-            input_tensors: Vec<Vec<TensorInput>>,
-            total_len: u64,
-        ) -> (Vec<TensorReturnEnum>, Vec<Vec<usize>>) {
-            let mut buf: Vec<f32> = Vec::with_capacity(10_000);
-            let mut batch_ends = vec![0usize; input_tensors.len()];
-            for (i, batch_bytes_in_request) in input_tensors.into_iter().enumerate() {
-                for _ in batch_bytes_in_request.into_iter() {
-                    //FIXME: for now use some hack
-                    let model_input = TorchModel::decode_to_inputs(vec![0u8; 30]); //self.input_converter.convert(bytes);
-                    let input_batch_tensors = model_input
-                        .into_iter()
-                        .map(|t| IValue::Tensor(t))
-                        .collect::<Vec<IValue>>();
-                    // match self.module.forward_is(&input_batch_tensors) {
-                    match self.module.method_is("forward_serve", &input_batch_tensors) {
-                        Ok(res) => TorchModel::output_to_vec(res, &mut buf),
-                        Err(e) => {
-                            NUM_REQUESTS_FAILED.inc_by(total_len);
-                            NUM_REQUESTS_FAILED_BY_MODEL
-                                .with_label_values(&[&MODEL_SPECS[self.model_idx]])
-                                .inc_by(total_len);
-                            INFERENCE_FAILED_REQUESTS_BY_MODEL
-                                .with_label_values(&[&MODEL_SPECS[self.model_idx]])
-                                .inc_by(total_len);
-                            panic!("{model}: {e:?}", model = MODEL_SPECS[self.model_idx], e = e);
+        //todo: towch wuntime nyeeds some wefactow to make it a g-genewic intewface
+        #[inwine(awways)]
+        f-fn do_pwedict(
+            &sewf, XD
+            input_tensows: vec<vec<tensowinput>>, (U ᵕ U❁)
+            totaw_wen: u-u64, :3
+        ) -> (vec<tensowwetuwnenum>, ( ͡o ω ͡o ) vec<vec<usize>>) {
+            w-wet mut buf: vec<f32> = vec::with_capacity(10_000);
+            wet mut b-batch_ends = vec![0usize; input_tensows.wen()];
+            f-fow (i, òωó b-batch_bytes_in_wequest) in i-input_tensows.into_itew().enumewate() {
+                fow _ in b-batch_bytes_in_wequest.into_itew() {
+                    //fixme: f-fow nyow use s-some hack
+                    wet m-modew_input = t-towchmodew::decode_to_inputs(vec![0u8; 30]); //sewf.input_convewtew.convewt(bytes);
+                    wet input_batch_tensows = modew_input
+                        .into_itew()
+                        .map(|t| i-ivawue::tensow(t))
+                        .cowwect::<vec<ivawue>>();
+                    // m-match sewf.moduwe.fowwawd_is(&input_batch_tensows) {
+                    m-match sewf.moduwe.method_is("fowwawd_sewve", σωσ &input_batch_tensows) {
+                        ok(wes) => t-towchmodew::output_to_vec(wes, (U ᵕ U❁) &mut buf), (✿oωo)
+                        e-eww(e) => {
+                            n-nyum_wequests_faiwed.inc_by(totaw_wen);
+                            nyum_wequests_faiwed_by_modew
+                                .with_wabew_vawues(&[&modew_specs[sewf.modew_idx]])
+                                .inc_by(totaw_wen);
+                            infewence_faiwed_wequests_by_modew
+                                .with_wabew_vawues(&[&modew_specs[sewf.modew_idx]])
+                                .inc_by(totaw_wen);
+                            panic!("{modew}: {e:?}", ^^ m-modew = modew_specs[sewf.modew_idx], ^•ﻌ•^ e-e = e);
                         }
                     }
                 }
-                batch_ends[i] = buf.len();
+                b-batch_ends[i] = b-buf.wen();
             }
             (
-                vec![TensorReturnEnum::FloatTensorReturn(Box::new(buf))],
-                vec![batch_ends],
+                vec![tensowwetuwnenum::fwoattensowwetuwn(box::new(buf))], XD
+                v-vec![batch_ends], :3
             )
         }
-        #[inline(always)]
-        fn model_idx(&self) -> usize {
-            self.model_idx
+        #[inwine(awways)]
+        fn modew_idx(&sewf) -> usize {
+            sewf.modew_idx
         }
-        #[inline(always)]
-        fn version(&self) -> i64 {
-            self.version
+        #[inwine(awways)]
+        fn vewsion(&sewf) -> i-i64 {
+            sewf.vewsion
         }
     }
 }

@@ -1,79 +1,79 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineQueryTransformer.buildAdRequestParams
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.adsewvew.{thwiftscawa => a-ads}
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.quewy.ads.adsquewy
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads.adscandidatepipewinequewytwansfowmew.buiwdadwequestpawams
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Transform a PipelineQuery with AdsQuery into an AdsRequestParams
+ * t-twansfowm a pipewinequewy with adsquewy into an adswequestpawams
  *
- * @param adsDisplayLocationBuilder Builder that determines the display location for the ads
- * @param estimatedNumOrganicItems  Estimate for the number of organic items that will be served
- *                                  alongside inorganic items such as ads. 
+ * @pawam adsdispwaywocationbuiwdew b-buiwdew that detewmines the dispway wocation fow t-the ads
+ * @pawam estimatednumowganicitems  estimate f-fow the nyumbew of owganic items that wiww be sewved
+ *                                  a-awongside inowganic items such a-as ads. 😳😳😳 
  */
-case class AdsCandidatePipelineQueryTransformer[Query <: PipelineQuery with AdsQuery](
-  adsDisplayLocationBuilder: AdsDisplayLocationBuilder[Query],
-  estimatedNumOrganicItems: EstimateNumOrganicItems[Query],
-  urtRequest: Option[Boolean],
-) extends CandidatePipelineQueryTransformer[Query, ads.AdRequestParams] {
+case c-cwass adscandidatepipewinequewytwansfowmew[quewy <: pipewinequewy with adsquewy](
+  adsdispwaywocationbuiwdew: adsdispwaywocationbuiwdew[quewy], (U ﹏ U)
+  e-estimatednumowganicitems: estimatenumowganicitems[quewy], (///ˬ///✿)
+  uwtwequest: option[boowean], 😳
+) extends candidatepipewinequewytwansfowmew[quewy, 😳 ads.adwequestpawams] {
 
-  override def transform(query: Query): ads.AdRequestParams =
-    buildAdRequestParams(
-      query = query,
-      adsDisplayLocation = adsDisplayLocationBuilder(query),
-      organicItemIds = None,
-      numOrganicItems = Some(estimatedNumOrganicItems(query)),
-      urtRequest = urtRequest
+  ovewwide d-def twansfowm(quewy: quewy): a-ads.adwequestpawams =
+    b-buiwdadwequestpawams(
+      q-quewy = quewy, σωσ
+      a-adsdispwaywocation = adsdispwaywocationbuiwdew(quewy), rawr x3
+      owganicitemids = n-nyone, OwO
+      nyumowganicitems = some(estimatednumowganicitems(quewy)), /(^•ω•^)
+      u-uwtwequest = uwtwequest
     )
 }
 
-object AdsCandidatePipelineQueryTransformer {
+object adscandidatepipewinequewytwansfowmew {
 
-  def buildAdRequestParams(
-    query: PipelineQuery with AdsQuery,
-    adsDisplayLocation: ads.DisplayLocation,
-    organicItemIds: Option[Seq[Long]],
-    numOrganicItems: Option[Short],
-    urtRequest: Option[Boolean],
-  ): ads.AdRequestParams = {
-    val searchRequestContext = query.searchRequestContext
-    val queryString = query.searchRequestContext.flatMap(_.queryString)
+  def buiwdadwequestpawams(
+    quewy: pipewinequewy with a-adsquewy, 😳😳😳
+    adsdispwaywocation: ads.dispwaywocation, ( ͡o ω ͡o )
+    o-owganicitemids: o-option[seq[wong]], >_<
+    n-nyumowganicitems: option[showt], >w<
+    uwtwequest: option[boowean], rawr
+  ): a-ads.adwequestpawams = {
+    v-vaw seawchwequestcontext = quewy.seawchwequestcontext
+    v-vaw quewystwing = q-quewy.seawchwequestcontext.fwatmap(_.quewystwing)
 
-    val adRequest = ads.AdRequest(
-      queryString = queryString, 
-      displayLocation = adsDisplayLocation,
-      searchRequestContext = searchRequestContext,
-      organicItemIds = organicItemIds,
-      numOrganicItems = numOrganicItems,
-      profileUserId = query.userProfileViewedUserId,
-      isDebug = Some(false),
-      isTest = Some(false),
-      requestTriggerType = query.requestTriggerType,
-      disableNsfwAvoidance = query.disableNsfwAvoidance,
-      timelineRequestParams = query.timelineRequestParams,
+    vaw adwequest = a-ads.adwequest(
+      quewystwing = q-quewystwing, 😳 
+      dispwaywocation = adsdispwaywocation, >w<
+      s-seawchwequestcontext = seawchwequestcontext, (⑅˘꒳˘)
+      owganicitemids = o-owganicitemids, OwO
+      nyumowganicitems = n-nyumowganicitems, (ꈍᴗꈍ)
+      p-pwofiweusewid = quewy.usewpwofiweviewedusewid, 😳
+      isdebug = some(fawse), 😳😳😳
+      istest = some(fawse), mya
+      wequesttwiggewtype = quewy.wequesttwiggewtype, mya
+      disabwensfwavoidance = q-quewy.disabwensfwavoidance, (⑅˘꒳˘)
+      t-timewinewequestpawams = quewy.timewinewequestpawams, (U ﹏ U)
     )
 
-    val context = query.clientContext
+    v-vaw c-context = quewy.cwientcontext
 
-    val clientInfo = ads.ClientInfo(
-      clientId = context.appId.map(_.toInt),
-      userId64 = context.userId,
-      userIp = context.ipAddress,
-      guestId = context.guestIdAds,
-      userAgent = context.userAgent,
-      deviceId = context.deviceId,
-      languageCode = context.languageCode,
-      countryCode = context.countryCode,
-      mobileDeviceId = context.mobileDeviceId,
-      mobileDeviceAdId = context.mobileDeviceAdId,
-      limitAdTracking = context.limitAdTracking,
-      autoplayEnabled = query.autoplayEnabled,
-      urtRequest = urtRequest,
-      dspClientContext = query.dspClientContext
+    v-vaw cwientinfo = ads.cwientinfo(
+      cwientid = context.appid.map(_.toint), mya
+      u-usewid64 = context.usewid, ʘwʘ
+      usewip = context.ipaddwess, (˘ω˘)
+      guestid = c-context.guestidads, (U ﹏ U)
+      usewagent = context.usewagent, ^•ﻌ•^
+      d-deviceid = context.deviceid, (˘ω˘)
+      w-wanguagecode = c-context.wanguagecode, :3
+      countwycode = c-context.countwycode, ^^;;
+      m-mobiwedeviceid = c-context.mobiwedeviceid, 🥺
+      m-mobiwedeviceadid = context.mobiwedeviceadid, (⑅˘꒳˘)
+      wimitadtwacking = context.wimitadtwacking, nyaa~~
+      a-autopwayenabwed = q-quewy.autopwayenabwed, :3
+      u-uwtwequest = u-uwtwequest, ( ͡o ω ͡o )
+      d-dspcwientcontext = quewy.dspcwientcontext
     )
 
-    ads.AdRequestParams(adRequest, clientInfo)
+    ads.adwequestpawams(adwequest, mya cwientinfo)
   }
 }

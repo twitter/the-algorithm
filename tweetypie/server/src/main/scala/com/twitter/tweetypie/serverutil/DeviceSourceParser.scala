@@ -1,99 +1,99 @@
-package com.twitter.tweetypie.serverutil
+package com.twittew.tweetypie.sewvewutiw
 
 /**
- * Parse a device source into an OAuth app id. This mapping is
- * neccesary when you need to request information about a client from
- * a service that only knows about clients in terms of oauthIds.
+ * pawse a device souwce i-into an oauth a-app id. this m-mapping is
+ * neccesawy w-when you n-nyeed to wequest i-infowmation about a-a cwient fwom
+ * a-a sewvice that onwy knows about cwients in tewms of oauthids. òωó
  *
- * This happens either by parsing out an explicit "oauth:" app id or
- * using a mapping from old non oauth clientIds like "web" and "sms"
- * to oauthIds that have retroactively been assigned to those clients.
- * If the legacy id cannot be found in the map and it's a non-numeric
- * string, it's converted to the oauthId for twitter.com.
+ * this happens e-eithew by pawsing out an expwicit "oauth:" a-app id ow
+ * using a mapping fwom o-owd nyon oauth cwientids wike "web" and "sms"
+ * to oauthids t-that have wetwoactivewy been assigned t-to those c-cwients. (⑅˘꒳˘)
+ * if the wegacy id cannot be found in the map and it's a nyon-numewic
+ * s-stwing, XD it's convewted to the oauthid fow twittew.com. -.-
  *
- * Tweets with non oauth clientIds are still being created because
- * thats how the monorail creates them. We also need to be able to
- * process any app id string that is in old tweet data.
+ * tweets with nyon oauth cwientids a-awe stiww being cweated because
+ * t-thats how the m-monowaiw cweates t-them. :3 we awso n-nyeed to be abwe to
+ * pwocess any app id stwing t-that is in owd tweet data. nyaa~~
  *
  */
-object DeviceSourceParser {
+object devicesouwcepawsew {
 
   /**
-   * The oauth id for twitter.com. Also used as a default oauth id for
-   * other clients without their own
+   * t-the oauth id fow twittew.com. 😳 awso used as a defauwt oauth id fow
+   * othew cwients w-without theiw own
    */
-  val Web = 268278L
+  vaw web = 268278w
 
   /**
-   * The OAuth app ids for known legacy device sources.
+   * t-the oauth a-app ids fow known w-wegacy device souwces.
    */
-  val legacyMapping: Map[String, Long] = Map[String, Long](
-    "web" -> Web,
-    "tweetbutton" -> 6219130L,
-    "keitai_web" -> 38366L,
-    "sms" -> 241256L
+  vaw wegacymapping: map[stwing, (⑅˘꒳˘) w-wong] = map[stwing, nyaa~~ w-wong](
+    "web" -> web, OwO
+    "tweetbutton" -> 6219130w, rawr x3
+    "keitai_web" -> 38366w, XD
+    "sms" -> 241256w
   )
 
   /**
-   * Attempt to convert a client application id String into an OAuth
-   * id.
+   * a-attempt to convewt a-a cwient appwication id stwing i-into an oauth
+   * id. σωσ
    *
-   * The string must consist of the characters "oauth:" followed by a
-   * non-negative, decimal long. The text is case-insensitive, and
-   * whitespace at the beginning or end is ignored.
+   * t-the stwing must consist of the chawactews "oauth:" f-fowwowed by a
+   * nyon-negative, (U ᵕ U❁) d-decimaw wong. (U ﹏ U) the text is c-case-insensitive, :3 a-and
+   * whitespace at the beginning ow end is ignowed. ( ͡o ω ͡o )
    *
-   * We want to accept input as liberally as possible, because if we
-   * fail to do that here, it will get counted as a "legacy app id"
+   * we want to accept input as wibewawwy as possibwe, b-because i-if we
+   * faiw to do that hewe, σωσ i-it wiww get counted a-as a "wegacy a-app id"
    */
-  val parseOAuthAppId: String => Option[Long] = {
-    // Case-insensitive, whitespace insensitive. The javaWhitespace
-    // character class is consistent with Character.isWhitespace, but is
-    // sadly different from \s. It will likely not matter in the long
-    // run, but this accepts more inputs and is easier to test (because
-    // we can use isWhitespace)
-    val OAuthAppIdRe = """(?i)\p{javaWhitespace}*oauth:(\d+)\p{javaWhitespace}*""".r
+  vaw pawseoauthappid: stwing => option[wong] = {
+    // c-case-insensitive, >w< whitespace insensitive. 😳😳😳 the javawhitespace
+    // chawactew c-cwass is consistent with c-chawactew.iswhitespace, b-but is
+    // s-sadwy diffewent fwom \s. OwO it w-wiww wikewy nyot m-mattew in the w-wong
+    // wun, 😳 b-but this accepts mowe inputs and is easiew to t-test (because
+    // w-we can use i-iswhitespace)
+    v-vaw oauthappidwe = """(?i)\p{javawhitespace}*oauth:(\d+)\p{javawhitespace}*""".w
 
-    _ match {
-      case OAuthAppIdRe(digits) =>
-        // We should only get NumberFormatException when the number is
-        // larger than a Long, because the regex will rule out all of
-        // the other invalid cases.
-        try Some(digits.toLong)
-        catch { case _: NumberFormatException => None }
+    _ m-match {
+      case oauthappidwe(digits) =>
+        // we shouwd onwy get nyumbewfowmatexception w-when the nyumbew is
+        // wawgew than a wong, 😳😳😳 because the wegex wiww wuwe out aww o-of
+        // the othew invawid cases. (˘ω˘)
+        twy some(digits.towong)
+        c-catch { case _: n-nyumbewfowmatexception => n-nyone }
       case _ =>
-        None
+        n-none
     }
   }
 
   /**
-   * Attempt to convert a client application id String into an OAuth id or legacy identifier without
-   * any fallback behavior.
+   * attempt to c-convewt a cwient a-appwication id stwing into an oauth id ow wegacy identifiew without
+   * any fawwback behaviow. ʘwʘ
    */
-  val parseStrict: String => Option[Long] =
-    appIdStr =>
-      parseOAuthAppId(appIdStr)
-        .orElse(legacyMapping.get(appIdStr))
+  v-vaw pawsestwict: stwing => o-option[wong] =
+    appidstw =>
+      p-pawseoauthappid(appidstw)
+        .owewse(wegacymapping.get(appidstw))
 
   /**
-   * Return true if a string can be used as a valid client application id or legacy identifier
+   * w-wetuwn twue if a stwing can be used a-as a vawid cwient a-appwication id ow wegacy identifiew
    */
-  val isValid: String => Boolean = appIdStr => parseStrict(appIdStr).isDefined
+  v-vaw i-isvawid: stwing => boowean = appidstw => pawsestwict(appidstw).isdefined
 
   /**
-   * Build a parser that converts device sources to OAuth app ids,
-   * including performing the legacy mapping.
+   * buiwd a pawsew that convewts d-device souwces t-to oauth app i-ids, ( ͡o ω ͡o )
+   * incwuding pewfowming the w-wegacy mapping. o.O
    */
-  val parseAppId: String => Option[Long] = {
-    val IsNumericRe = """-?[0-9]+""".r
+  v-vaw pawseappid: stwing => o-option[wong] = {
+    vaw isnumewicwe = """-?[0-9]+""".w
 
-    appIdStr =>
-      parseStrict(appIdStr)
-        .orElse {
-          appIdStr match {
-            // We just fail the lookup if the app id looks like it's
-            // numeric.
-            case IsNumericRe() => None
-            case _ => Some(Web)
+    appidstw =>
+      pawsestwict(appidstw)
+        .owewse {
+          appidstw match {
+            // w-we just faiw t-the wookup if the app id wooks wike it's
+            // n-nyumewic. >w<
+            c-case isnumewicwe() => nyone
+            case _ => some(web)
           }
         }
   }

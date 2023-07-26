@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.ppmi_wocawe_fowwow
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fsname
+i-impowt c-com.twittew.timewines.configapi.pawam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class PPMILocaleFollowSourceFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    PPMILocaleFollowSourceParams.CandidateSourceEnabled,
+@singweton
+c-cwass ppmiwocawefowwowsouwcefsconfig @inject() () extends featuweswitchconfig {
+  ovewwide vaw booweanfspawams: seq[pawam[boowean] w-with fsname] = seq(
+    ppmiwocawefowwowsouwcepawams.candidatesouwceenabwed, >_<
   )
 
-  override val stringSeqFSParams: Seq[Param[Seq[String]] with FSName] = Seq(
-    PPMILocaleFollowSourceParams.LocaleToExcludeFromRecommendation,
+  ovewwide vaw s-stwingseqfspawams: seq[pawam[seq[stwing]] w-with fsname] = seq(
+    ppmiwocawefowwowsouwcepawams.wocawetoexcwudefwomwecommendation, mya
   )
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    PPMILocaleFollowSourceParams.CandidateSourceWeight,
+  ovewwide v-vaw doubwefspawams: seq[fsboundedpawam[doubwe]] = s-seq(
+    ppmiwocawefowwowsouwcepawams.candidatesouwceweight, mya
   )
 }

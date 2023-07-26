@@ -1,75 +1,75 @@
-package com.twitter.product_mixer.component_library.model.candidate
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
 
 /**
- * Canonical AudioSpaceCandidate model. Always prefer this version over all other variants.
+ * c-canonicaw a-audiospacecandidate m-modew. :3 a-awways pwefew t-this vewsion ovew a-aww othew vawiants. (⑅˘꒳˘)
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note a-any additionaw f-fiewds shouwd be added as a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
+ *       on the candidate's [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. (///ˬ///✿) if t-the
+ *       featuwes come fwom the candidate souwce i-itsewf (as opposed to hydwated v-via a
+ *       [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow]]), ^^;;
+ *       then [[com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig.featuwesfwomcandidatesouwcetwansfowmews]]
+ *       can be used to extwact featuwes f-fwom the candidate souwce wesponse. >_<
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note t-this cwass s-shouwd awways wemain `finaw`. rawr x3 if fow any weason the `finaw` modifiew is wemoved, /(^•ω•^)
+ *       t-the equaws() impwementation must be updated in owdew to handwe cwass inhewitow e-equawity
+ *       (see nyote on the equaws m-method bewow)
  */
-final class AudioSpaceCandidate private (
-  override val id: String)
-    extends UniversalNoun[String] {
+f-finaw cwass a-audiospacecandidate p-pwivate (
+  ovewwide vaw id: stwing)
+    extends u-univewsawnoun[stwing] {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[AudioSpaceCandidate]
+  ovewwide def canequaw(that: any): b-boowean = that.isinstanceof[audiospacecandidate]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance impwementation of equaws method that wevewages:
+   *  - w-wefewentiaw equawity showt c-ciwcuit
+   *  - c-cached hashcode e-equawity showt ciwcuit
+   *  - fiewd vawues awe onwy checked if t-the hashcodes a-awe equaw to handwe the unwikewy c-case
+   *    of a-a hashcode cowwision
+   *  - wemovaw o-of check fow `that` being a-an equaws-compatibwe descendant since this cwass i-is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` is nyot nyecessawy b-because this cwass is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw p-pwogwamming in s-scawa, :3
+   *      chaptew 28]] fow discussion and design. (ꈍᴗꈍ)
    */
-  override def equals(that: Any): Boolean =
-    that match {
-      case candidate: AudioSpaceCandidate =>
+  ovewwide def equaws(that: any): boowean =
+    t-that match {
+      c-case candidate: audiospacecandidate =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id))
+          (this e-eq candidate)
+            || ((hashcode == c-candidate.hashcode)
+              && (id == c-candidate.id))
         )
       case _ =>
-        false
+        fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * wevewage domain-specific c-constwaints (see nyotes bewow) to safewy constwuct and cache the
+   * hashcode as a-a vaw, /(^•ω•^) such that it is instantiated o-once on object c-constwuction. (⑅˘꒳˘) t-this pwevents the
+   * nyeed to w-wecompute the hashcode o-on each h-hashcode() invocation, ( ͡o ω ͡o ) w-which is the behaviow of the
+   * scawa compiwew c-case cwass-genewated h-hashcode() s-since it c-cannot make assumptions w-wegawding fiewd
+   * object mutabiwity and hashcode impwementations. òωó
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note c-caching the hashcode is onwy safe if aww of the fiewds used to constwuct the hashcode
+   *       awe i-immutabwe. this incwudes:
+   *       - inabiwity to mutate the o-object wefewence o-on fow an existing i-instantiated candidate
+   *       (i.e. (⑅˘꒳˘) e-each fiewd is a vaw)
+   *       - i-inabiwity to mutate t-the fiewd object instance itsewf (i.e. XD each fiewd is an immutabwe
+   *       - inabiwity to mutate the fiewd o-object instance itsewf (i.e. -.- each f-fiewd is an immutabwe
+   *       data stwuctuwe), :3 a-assuming stabwe h-hashcode impwementations fow these objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note i-in owdew fow the h-hashcode to be consistent with o-object equawity, nyaa~~ `##` m-must be used fow
+   *       boxed nyumewic types and nyuww. as such, 😳 awways p-pwefew `.##` ovew `.hashcode()`. (⑅˘꒳˘)
    */
-  override val hashCode: Int = id.##
+  o-ovewwide v-vaw hashcode: int = id.##
 }
 
-object AudioSpaceCandidate {
-  def apply(id: String): AudioSpaceCandidate = new AudioSpaceCandidate(id)
+o-object audiospacecandidate {
+  d-def appwy(id: stwing): audiospacecandidate = n-nyew audiospacecandidate(id)
 }

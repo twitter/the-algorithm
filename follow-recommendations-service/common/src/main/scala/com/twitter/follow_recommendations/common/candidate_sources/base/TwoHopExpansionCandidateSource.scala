@@ -1,46 +1,46 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.base
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.stitch.stitch
 
 /**
- * base trait for two-hop expansion based algorithms, e.g. online_stp, phonebook_prediction,
- * recent following sims, recent engagement sims, ...
+ * b-base t-twait fow two-hop e-expansion based a-awgowithms, o.O e-e.g. ( ͡o ω ͡o ) onwine_stp, p-phonebook_pwediction, (U ﹏ U)
+ * wecent fowwowing sims, (///ˬ///✿) wecent engagement sims, >w< ...
  *
- * @tparam Target target type
- * @tparam FirstDegree type of first degree nodes
- * @tparam SecondaryDegree type of secondary degree nodes
- * @tparam Candidate output candidate types
+ * @tpawam t-tawget tawget type
+ * @tpawam fiwstdegwee t-type of fiwst degwee nyodes
+ * @tpawam s-secondawydegwee type of secondawy degwee nyodes
+ * @tpawam c-candidate output candidate t-types
  */
-trait TwoHopExpansionCandidateSource[-Target, FirstDegree, SecondaryDegree, +Candidate]
-    extends CandidateSource[Target, Candidate] {
+twait t-twohopexpansioncandidatesouwce[-tawget, rawr fiwstdegwee, mya secondawydegwee, ^^ +candidate]
+    extends candidatesouwce[tawget, 😳😳😳 c-candidate] {
 
   /**
-   * fetch first degree nodes given request
+   * fetch fiwst degwee nyodes given wequest
    */
-  def firstDegreeNodes(req: Target): Stitch[Seq[FirstDegree]]
+  def fiwstdegweenodes(weq: t-tawget): stitch[seq[fiwstdegwee]]
 
   /**
-   * fetch secondary degree nodes given request and first degree nodes
+   * f-fetch s-secondawy degwee n-nyodes given wequest a-and fiwst degwee nyodes
    */
-  def secondaryDegreeNodes(req: Target, node: FirstDegree): Stitch[Seq[SecondaryDegree]]
+  def secondawydegweenodes(weq: t-tawget, mya nyode: fiwstdegwee): stitch[seq[secondawydegwee]]
 
   /**
-   * aggregate and score the candidates to generate final results
+   * a-aggwegate and scowe the candidates to genewate finaw wesuwts
    */
-  def aggregateAndScore(
-    req: Target,
-    firstDegreeToSecondDegreeNodesMap: Map[FirstDegree, Seq[SecondaryDegree]]
-  ): Stitch[Seq[Candidate]]
+  def aggwegateandscowe(
+    weq: tawget, 😳
+    f-fiwstdegweetoseconddegweenodesmap: map[fiwstdegwee, -.- seq[secondawydegwee]]
+  ): s-stitch[seq[candidate]]
 
   /**
-   * Generate a list of candidates for the target
+   * g-genewate a-a wist of candidates fow the tawget
    */
-  def apply(target: Target): Stitch[Seq[Candidate]] = {
-    for {
-      firstDegreeNodes <- firstDegreeNodes(target)
-      secondaryDegreeNodes <- Stitch.traverse(firstDegreeNodes)(secondaryDegreeNodes(target, _))
-      aggregated <- aggregateAndScore(target, firstDegreeNodes.zip(secondaryDegreeNodes).toMap)
-    } yield aggregated
+  def appwy(tawget: t-tawget): stitch[seq[candidate]] = {
+    f-fow {
+      fiwstdegweenodes <- f-fiwstdegweenodes(tawget)
+      s-secondawydegweenodes <- stitch.twavewse(fiwstdegweenodes)(secondawydegweenodes(tawget, 🥺 _))
+      a-aggwegated <- aggwegateandscowe(tawget, o.O f-fiwstdegweenodes.zip(secondawydegweenodes).tomap)
+    } yiewd aggwegated
   }
 }

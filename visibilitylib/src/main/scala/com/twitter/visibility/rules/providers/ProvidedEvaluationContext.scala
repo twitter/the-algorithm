@@ -1,50 +1,50 @@
-package com.twitter.visibility.rules.providers
+package com.twittew.visibiwity.wuwes.pwovidews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.VisibilityPolicy
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.timewines.configapi.pawams
+i-impowt c-com.twittew.visibiwity.modews.safetywevew
+i-impowt c-com.twittew.visibiwity.wuwes.evawuationcontext
+i-impowt com.twittew.visibiwity.wuwes.visibiwitypowicy
 
-sealed abstract class ProvidedEvaluationContext(
-  visibilityPolicy: VisibilityPolicy,
-  params: Params,
-  statsReceiver: StatsReceiver)
-    extends EvaluationContext(
-      visibilityPolicy = visibilityPolicy,
-      params = params,
-      statsReceiver = statsReceiver)
+s-seawed abstwact cwass pwovidedevawuationcontext(
+  visibiwitypowicy: visibiwitypowicy,
+  pawams: pawams, /(^•ω•^)
+  s-statsweceivew: statsweceivew)
+    extends evawuationcontext(
+      v-visibiwitypowicy = visibiwitypowicy,
+      p-pawams = pawams, ʘwʘ
+      statsweceivew = statsweceivew)
 
-object ProvidedEvaluationContext {
+object p-pwovidedevawuationcontext {
 
-  def injectRuntimeRulesIntoEvaluationContext(
-    evaluationContext: EvaluationContext,
-    safetyLevel: Option[SafetyLevel] = None,
-    policyProviderOpt: Option[PolicyProvider] = None
-  ): ProvidedEvaluationContext = {
-    (policyProviderOpt, safetyLevel) match {
-      case (Some(policyProvider), Some(safetyLevel)) =>
-        new InjectedEvaluationContext(
-          evaluationContext = evaluationContext,
-          safetyLevel = safetyLevel,
-          policyProvider = policyProvider)
-      case (_, _) => new StaticEvaluationContext(evaluationContext)
+  def injectwuntimewuwesintoevawuationcontext(
+    e-evawuationcontext: e-evawuationcontext, σωσ
+    safetywevew: option[safetywevew] = nyone,
+    powicypwovidewopt: o-option[powicypwovidew] = nyone
+  ): pwovidedevawuationcontext = {
+    (powicypwovidewopt, OwO safetywevew) match {
+      case (some(powicypwovidew), 😳😳😳 s-some(safetywevew)) =>
+        nyew injectedevawuationcontext(
+          e-evawuationcontext = e-evawuationcontext, 😳😳😳
+          s-safetywevew = s-safetywevew, o.O
+          powicypwovidew = powicypwovidew)
+      c-case (_, ( ͡o ω ͡o ) _) => nyew staticevawuationcontext(evawuationcontext)
     }
   }
 }
 
-private class StaticEvaluationContext(
-  evaluationContext: EvaluationContext)
-    extends ProvidedEvaluationContext(
-      visibilityPolicy = evaluationContext.visibilityPolicy,
-      params = evaluationContext.params,
-      statsReceiver = evaluationContext.statsReceiver)
+pwivate c-cwass staticevawuationcontext(
+  evawuationcontext: evawuationcontext)
+    extends pwovidedevawuationcontext(
+      visibiwitypowicy = evawuationcontext.visibiwitypowicy, (U ﹏ U)
+      p-pawams = evawuationcontext.pawams, (///ˬ///✿)
+      statsweceivew = evawuationcontext.statsweceivew)
 
-private class InjectedEvaluationContext(
-  evaluationContext: EvaluationContext,
-  safetyLevel: SafetyLevel,
-  policyProvider: PolicyProvider)
-    extends ProvidedEvaluationContext(
-      visibilityPolicy = policyProvider.policyForSurface(safetyLevel),
-      params = evaluationContext.params,
-      statsReceiver = evaluationContext.statsReceiver)
+pwivate cwass injectedevawuationcontext(
+  e-evawuationcontext: evawuationcontext, >w<
+  s-safetywevew: s-safetywevew, rawr
+  powicypwovidew: powicypwovidew)
+    extends pwovidedevawuationcontext(
+      v-visibiwitypowicy = p-powicypwovidew.powicyfowsuwface(safetywevew), mya
+      pawams = evawuationcontext.pawams, ^^
+      s-statsweceivew = e-evawuationcontext.statsweceivew)

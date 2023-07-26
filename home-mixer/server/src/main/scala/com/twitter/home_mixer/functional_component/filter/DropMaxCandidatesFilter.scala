@@ -1,27 +1,27 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.twittew.home_mixew.functionaw_component.fiwtew
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.FSBoundedParam
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.timewines.configapi.fsboundedpawam
 
-case class DropMaxCandidatesFilter[Candidate <: UniversalNoun[Any]](
-  maxCandidatesParam: FSBoundedParam[Int])
-    extends Filter[PipelineQuery, Candidate] {
+case cwass dwopmaxcandidatesfiwtew[candidate <: univewsawnoun[any]](
+  m-maxcandidatespawam: fsboundedpawam[int])
+    e-extends fiwtew[pipewinequewy, rawr x3 candidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("DropMaxCandidates")
+  ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("dwopmaxcandidates")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val maxCandidates = query.params(maxCandidatesParam)
-    val (kept, removed) = candidates.map(_.candidate).splitAt(maxCandidates)
+  o-ovewwide def appwy(
+    q-quewy: pipewinequewy,
+    c-candidates: seq[candidatewithfeatuwes[candidate]]
+  ): stitch[fiwtewwesuwt[candidate]] = {
+    vaw maxcandidates = quewy.pawams(maxcandidatespawam)
+    v-vaw (kept, nyaa~~ wemoved) = candidates.map(_.candidate).spwitat(maxcandidates)
 
-    Stitch.value(FilterResult(kept, removed))
+    stitch.vawue(fiwtewwesuwt(kept, /(^•ω•^) wemoved))
   }
 }

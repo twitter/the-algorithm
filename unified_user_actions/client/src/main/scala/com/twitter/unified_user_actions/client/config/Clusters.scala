@@ -1,24 +1,24 @@
-package com.twitter.unified_user_actions.client.config
+package com.twittew.unified_usew_actions.cwient.config
 
-sealed trait ClusterConfig {
-  val name: String
-  val environment: EnvironmentConfig
+seawed twait c-cwustewconfig {
+  v-vaw nyame: s-stwing
+  vaw enviwonment: e-enviwonmentconfig
 }
 
-object Clusters {
+o-object cwustews {
   /*
-   * Our production cluster for external consumption. Our SLAs are enforced.
+   * o-ouw p-pwoduction cwustew f-fow extewnaw consumption. rawr x3 ouw swas awe enfowced. nyaa~~
    */
-  case object ProdCluster extends ClusterConfig {
-    override val name: String = Constants.UuaKafkaProdClusterName
-    override val environment: EnvironmentConfig = Environments.Prod
+  case object pwodcwustew e-extends cwustewconfig {
+    ovewwide vaw nyame: stwing = constants.uuakafkapwodcwustewname
+    o-ovewwide vaw enviwonment: enviwonmentconfig = e-enviwonments.pwod
   }
 
   /*
-   * Our staging cluster for external development and pre-releases. No SLAs are enforced.
+   * ouw staging cwustew fow extewnaw devewopment and p-pwe-weweases. /(^•ω•^) no swas awe enfowced. rawr
    */
-  case object StagingCluster extends ClusterConfig {
-    override val name: String = Constants.UuaKafkaStagingClusterName
-    override val environment: EnvironmentConfig = Environments.Staging
+  case o-object stagingcwustew e-extends cwustewconfig {
+    ovewwide vaw nyame: stwing = constants.uuakafkastagingcwustewname
+    o-ovewwide vaw enviwonment: enviwonmentconfig = enviwonments.staging
   }
 }

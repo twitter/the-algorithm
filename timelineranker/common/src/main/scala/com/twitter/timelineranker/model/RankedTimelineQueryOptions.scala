@@ -1,29 +1,29 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
 
-object RankedTimelineQueryOptions {
-  def fromThrift(options: thrift.RankedTimelineQueryOptions): RankedTimelineQueryOptions = {
-    RankedTimelineQueryOptions(
-      seenEntries = options.seenEntries.map(PriorSeenEntries.fromThrift)
+o-object wankedtimewinequewyoptions {
+  d-def fwomthwift(options: t-thwift.wankedtimewinequewyoptions): w-wankedtimewinequewyoptions = {
+    w-wankedtimewinequewyoptions(
+      s-seenentwies = options.seenentwies.map(pwiowseenentwies.fwomthwift)
     )
   }
 }
 
-case class RankedTimelineQueryOptions(seenEntries: Option[PriorSeenEntries])
-    extends TimelineQueryOptions {
+case cwass wankedtimewinequewyoptions(seenentwies: option[pwiowseenentwies])
+    e-extends timewinequewyoptions {
 
-  throwIfInvalid()
+  thwowifinvawid()
 
-  def toThrift: thrift.RankedTimelineQueryOptions = {
-    thrift.RankedTimelineQueryOptions(seenEntries = seenEntries.map(_.toThrift))
+  d-def tothwift: thwift.wankedtimewinequewyoptions = {
+    t-thwift.wankedtimewinequewyoptions(seenentwies = seenentwies.map(_.tothwift))
   }
 
-  def toTimelineQueryOptionsThrift: thrift.TimelineQueryOptions = {
-    thrift.TimelineQueryOptions.RankedTimelineQueryOptions(toThrift)
+  def totimewinequewyoptionsthwift: t-thwift.timewinequewyoptions = {
+    thwift.timewinequewyoptions.wankedtimewinequewyoptions(tothwift)
   }
 
-  def throwIfInvalid(): Unit = {
-    seenEntries.foreach(_.throwIfInvalid)
+  d-def t-thwowifinvawid(): unit = {
+    seenentwies.foweach(_.thwowifinvawid)
   }
 }

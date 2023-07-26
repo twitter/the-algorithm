@@ -1,238 +1,238 @@
-package com.twitter.simclusters_v2.scalding
+package com.twittew.simcwustews_v2.scawding
 
-import com.twitter.algebird.Aggregator
-import com.twitter.algebird.Monoid
-import com.twitter.scalding._
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.NormsAndCountsFixedPathSource
-import com.twitter.simclusters_v2.hdfs_sources.ProducerNormsAndCountsScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedInScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserAndNeighborsFixedPathSource
-import com.twitter.simclusters_v2.hdfs_sources.UserUserNormalizedGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.BipartiteClusterEvaluationClasses._
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.BipartiteClusterQuality
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
-import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import scala.collection.JavaConverters._
+impowt c-com.twittew.awgebiwd.aggwegatow
+i-impowt com.twittew.awgebiwd.monoid
+i-impowt com.twittew.scawding._
+i-impowt com.twittew.scawding.commons.souwce.vewsionedkeyvawsouwce
+i-impowt com.twittew.scawding.typed.typedpipe
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.expwicitwocation
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.pwocatwa
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.hdfs_souwces.adhockeyvawsouwces
+impowt com.twittew.simcwustews_v2.hdfs_souwces.nowmsandcountsfixedpathsouwce
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.pwoducewnowmsandcountsscawadataset
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.simcwustewsv2intewestedinscawadataset
+impowt com.twittew.simcwustews_v2.hdfs_souwces.usewandneighbowsfixedpathsouwce
+impowt com.twittew.simcwustews_v2.hdfs_souwces.usewusewnowmawizedgwaphscawadataset
+impowt com.twittew.simcwustews_v2.scawding.bipawtitecwustewevawuationcwasses._
+i-impowt com.twittew.simcwustews_v2.scawding.common.typedwichpipe._
+impowt com.twittew.simcwustews_v2.scawding.common.utiw
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.bipawtitecwustewquawity
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisintewestedin
+impowt com.twittew.simcwustews_v2.thwiftscawa.neighbowwithweights
+impowt com.twittew.simcwustews_v2.thwiftscawa.nowmsandcounts
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.usewandneighbows
+impowt scawa.cowwection.javaconvewtews._
 
-object BipartiteClusterEvaluation extends TwitterExecutionApp {
+object bipawtitecwustewevawuation extends t-twittewexecutionapp {
 
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+  impwicit v-vaw tz: java.utiw.timezone = dateops.utc
+  i-impwicit v-vaw dp = datepawsew.defauwt
 
-  private def getClusterL2Norms(
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])]
-  ): Execution[Map[Int, Float]] = {
-    knownFor
-      .flatMap {
-        case (_, clusterArray) =>
-          clusterArray.map {
-            case (clusterId, score) =>
-              Map(clusterId -> score * score)
+  p-pwivate def getcwusteww2nowms(
+    knownfow: t-typedpipe[(wong, (˘ω˘) awway[(int, :3 fwoat)])]
+  ): execution[map[int, OwO f-fwoat]] = {
+    knownfow
+      .fwatmap {
+        case (_, mya cwustewawway) =>
+          cwustewawway.map {
+            case (cwustewid, (˘ω˘) scowe) =>
+              map(cwustewid -> s-scowe * scowe)
           }
       }
       .sum
-      .getExecution
-      .map(_.mapValues { x => math.sqrt(x).toFloat })
+      .getexecution
+      .map(_.mapvawues { x => m-math.sqwt(x).tofwoat })
   }
 
-  def l2NormalizeKnownFor(
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])]
-  ): Execution[TypedPipe[(Long, Array[(Int, Float)])]] = {
-    getClusterL2Norms(knownFor).map { clusterToNorms =>
-      knownFor.mapValues { clusterScoresArray =>
-        clusterScoresArray.map {
-          case (clusterId, score) =>
-            (clusterId, score / clusterToNorms(clusterId))
+  def w-w2nowmawizeknownfow(
+    k-knownfow: typedpipe[(wong, o.O awway[(int, (✿oωo) fwoat)])]
+  ): e-execution[typedpipe[(wong, (ˆ ﻌ ˆ)♡ a-awway[(int, ^^;; fwoat)])]] = {
+    g-getcwusteww2nowms(knownfow).map { c-cwustewtonowms =>
+      knownfow.mapvawues { c-cwustewscowesawway =>
+        cwustewscowesawway.map {
+          c-case (cwustewid, OwO scowe) =>
+            (cwustewid, 🥺 scowe / cwustewtonowms(cwustewid))
         }
       }
     }
   }
 
   /**
-   * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:bp_cluster_evaluation && \
-   * oscar hdfs --user frigate --host hadoopnest2.atla.twitter.com --bundle bp_cluster_evaluation \
-   * --tool com.twitter.simclusters_v2.scalding.BipartiteClusterEvaluation --screen --screen-detached \
-   * --tee logs/newBpQuality_updateUnnormalizedScores_interestedInUsing20190329Graph_evaluatedOn20190329Graph_run2 \
-   * -- --normsAndCountsDir /user/frigate/your_ldap/producerNormsAndCounts_20190330 \
-   * --graphInputDir /user/frigate/your_ldap/user_user_normalized_graph_copiedFromAtlaProc_20190329 \
-   * --knownForDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/knownFor \
-   * --interestedInDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/interestedInUsing20190329Graph \
-   * --outgoingVolumesResultsDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/bpQualityForInterestedInUsing20190329On20190329Graph_outgoingVolumes \
-   * --incomingVolumesResultsDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/bpQualityForInterestedInUsing20190329On20190329Graph_incomingVolumes \
-   * --outputDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/bpQualityForInterestedInUsing20190329On20190329Graph_perCluster \
-   * --toEmailAddress your_ldap@twitter.com --modelVersion 20M_145K_updated
+   * ./bazew b-bundwe swc/scawa/com/twittew/simcwustews_v2/scawding:bp_cwustew_evawuation && \
+   * oscaw hdfs --usew f-fwigate --host hadoopnest2.atwa.twittew.com --bundwe b-bp_cwustew_evawuation \
+   * --toow c-com.twittew.simcwustews_v2.scawding.bipawtitecwustewevawuation --scween --scween-detached \
+   * --tee wogs/newbpquawity_updateunnowmawizedscowes_intewestedinusing20190329gwaph_evawuatedon20190329gwaph_wun2 \
+   * -- --nowmsandcountsdiw /usew/fwigate/youw_wdap/pwoducewnowmsandcounts_20190330 \
+   * --gwaphinputdiw /usew/fwigate/youw_wdap/usew_usew_nowmawized_gwaph_copiedfwomatwapwoc_20190329 \
+   * --knownfowdiw /usew/fwigate/youw_wdap/diwfow_updatedknownfow20m_145k_dec11_usingsims20190127_unnowmawizedinputscowes/knownfow \
+   * --intewestedindiw /usew/fwigate/youw_wdap/diwfow_updatedknownfow20m_145k_dec11_usingsims20190127_unnowmawizedinputscowes/intewestedinusing20190329gwaph \
+   * --outgoingvowumeswesuwtsdiw /usew/fwigate/youw_wdap/diwfow_updatedknownfow20m_145k_dec11_usingsims20190127_unnowmawizedinputscowes/bpquawityfowintewestedinusing20190329on20190329gwaph_outgoingvowumes \
+   * --incomingvowumeswesuwtsdiw /usew/fwigate/youw_wdap/diwfow_updatedknownfow20m_145k_dec11_usingsims20190127_unnowmawizedinputscowes/bpquawityfowintewestedinusing20190329on20190329gwaph_incomingvowumes \
+   * --outputdiw /usew/fwigate/youw_wdap/diwfow_updatedknownfow20m_145k_dec11_usingsims20190127_unnowmawizedinputscowes/bpquawityfowintewestedinusing20190329on20190329gwaph_pewcwustew \
+   * --toemaiwaddwess youw_wdap@twittew.com --modewvewsion 20m_145k_updated
    */
-  override def job: Execution[Unit] = Execution.getConfigMode.flatMap {
-    case (config, mode) =>
-      Execution.withId { implicit uniqueId =>
-        val args = config.getArgs
+  ovewwide def job: execution[unit] = execution.getconfigmode.fwatmap {
+    case (config, mya m-mode) =>
+      e-execution.withid { impwicit u-uniqueid =>
+        v-vaw awgs = c-config.getawgs
 
-        val interestedIn = args.optional("interestedInDir") match {
-          case Some(dir) =>
-            TypedPipe
-              .from(AdhocKeyValSources.interestedInSource(args("interestedInDir")))
-          case None =>
-            DAL
-              .readMostRecentSnapshotNoOlderThan(
-                SimclustersV2InterestedInScalaDataset,
-                Days(20)
+        vaw intewestedin = awgs.optionaw("intewestedindiw") match {
+          case s-some(diw) =>
+            typedpipe
+              .fwom(adhockeyvawsouwces.intewestedinsouwce(awgs("intewestedindiw")))
+          case nyone =>
+            daw
+              .weadmostwecentsnapshotnoowdewthan(
+                simcwustewsv2intewestedinscawadataset,
+                days(20)
               )
-              .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-              .toTypedPipe
+              .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+              .totypedpipe
               .map {
-                case KeyVal(key, value) => (key, value)
+                c-case keyvaw(key, 😳 vawue) => (key, òωó v-vawue)
               }
         }
 
-        val inputKnownFor = args
-          .optional("knownForDir")
-          .map { location => KnownForSources.readKnownFor(location) }
-          .getOrElse(KnownForSources.knownFor_20M_Dec11_145K)
+        v-vaw inputknownfow = a-awgs
+          .optionaw("knownfowdiw")
+          .map { wocation => k-knownfowsouwces.weadknownfow(wocation) }
+          .getowewse(knownfowsouwces.knownfow_20m_dec11_145k)
 
-        val modelVersion =
-          args.optional("modelVersion").getOrElse("20M_145K_dec11")
+        v-vaw modewvewsion =
+          a-awgs.optionaw("modewvewsion").getowewse("20m_145k_dec11")
 
-        val useLogFavWeights = args.boolean("useLogFavWeights")
+        v-vaw usewogfavweights = awgs.boowean("usewogfavweights")
 
-        val shouldL2NormalizeKnownFor = args.boolean("l2NormalizeKnownFor")
+        vaw shouwdw2nowmawizeknownfow = a-awgs.boowean("w2nowmawizeknownfow")
 
-        val toEmailAddressOpt = args.optional("toEmailAddress")
+        v-vaw toemaiwaddwessopt = awgs.optionaw("toemaiwaddwess")
 
-        val knownForExec = if (shouldL2NormalizeKnownFor) {
-          l2NormalizeKnownFor(inputKnownFor)
-        } else {
-          Execution.from(inputKnownFor)
+        v-vaw knownfowexec = i-if (shouwdw2nowmawizeknownfow) {
+          w-w2nowmawizeknownfow(inputknownfow)
+        } ewse {
+          execution.fwom(inputknownfow)
         }
 
-        val finalExec = knownForExec.flatMap { knownFor =>
-          val graph = args.optional("graphInputDir") match {
-            case Some(dir) =>
-              TypedPipe.from(UserAndNeighborsFixedPathSource(dir))
-            case None =>
-              DAL
-                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(20))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-                .toTypedPipe
+        vaw finawexec = k-knownfowexec.fwatmap { knownfow =>
+          vaw gwaph = awgs.optionaw("gwaphinputdiw") match {
+            case some(diw) =>
+              typedpipe.fwom(usewandneighbowsfixedpathsouwce(diw))
+            c-case nyone =>
+              daw
+                .weadmostwecentsnapshotnoowdewthan(usewusewnowmawizedgwaphscawadataset, /(^•ω•^) days(20))
+                .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+                .totypedpipe
           }
 
-          val producerNormsAndCounts = args.optional("normsAndCountsDir") match {
-            case Some(dir) =>
-              TypedPipe.from(NormsAndCountsFixedPathSource(args(dir)))
-            case None =>
-              DAL
-                .readMostRecentSnapshotNoOlderThan(ProducerNormsAndCountsScalaDataset, Days(20))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-                .toTypedPipe
+          vaw pwoducewnowmsandcounts = a-awgs.optionaw("nowmsandcountsdiw") m-match {
+            c-case some(diw) =>
+              t-typedpipe.fwom(nowmsandcountsfixedpathsouwce(awgs(diw)))
+            case nyone =>
+              daw
+                .weadmostwecentsnapshotnoowdewthan(pwoducewnowmsandcountsscawadataset, -.- d-days(20))
+                .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+                .totypedpipe
           }
 
-          val clusterIncomingVolumesExec = loadOrMake(
-            computeClusterIncomingVolumes(knownFor, producerNormsAndCounts, useLogFavWeights),
-            modelVersion,
-            args("incomingVolumesResultsDir")
+          v-vaw cwustewincomingvowumesexec = woadowmake(
+            computecwustewincomingvowumes(knownfow, òωó pwoducewnowmsandcounts, /(^•ω•^) usewogfavweights), /(^•ω•^)
+            modewvewsion, 😳
+            a-awgs("incomingvowumeswesuwtsdiw")
           )
 
-          val resultsWithOutgoingVolumesExec = loadOrMake(
-            getResultsWithOutgoingVolumes(graph, interestedIn, useLogFavWeights),
-            modelVersion,
-            args("outgoingVolumesResultsDir")
+          vaw wesuwtswithoutgoingvowumesexec = w-woadowmake(
+            getwesuwtswithoutgoingvowumes(gwaph, :3 i-intewestedin, (U ᵕ U❁) u-usewogfavweights), ʘwʘ
+            modewvewsion, o.O
+            awgs("outgoingvowumeswesuwtsdiw")
           )
 
-          val finalPerClusterResultsExec =
-            finalPerClusterResults(
-              knownFor,
-              interestedIn,
-              resultsWithOutgoingVolumesExec,
-              clusterIncomingVolumesExec)
-              .flatMap { pipe => loadOrMake(pipe, modelVersion, args("outputDir")) }
+          v-vaw finawpewcwustewwesuwtsexec =
+            f-finawpewcwustewwesuwts(
+              knownfow, ʘwʘ
+              i-intewestedin, ^^
+              w-wesuwtswithoutgoingvowumesexec, ^•ﻌ•^
+              cwustewincomingvowumesexec)
+              .fwatmap { pipe => woadowmake(pipe, mya modewvewsion, UwU awgs("outputdiw")) }
 
-          finalPerClusterResultsExec.flatMap { finalPerClusterResults =>
-            val perClusterResults = finalPerClusterResults.values
-            val distributionResultsExec = getClusterResultsSummary(perClusterResults).map {
-              case Some(summary) =>
-                "Summary of results across clusters: \n" +
-                  Util.prettyJsonMapper.writeValueAsString(summary)
+          f-finawpewcwustewwesuwtsexec.fwatmap { f-finawpewcwustewwesuwts =>
+            v-vaw pewcwustewwesuwts = finawpewcwustewwesuwts.vawues
+            v-vaw distwibutionwesuwtsexec = g-getcwustewwesuwtssummawy(pewcwustewwesuwts).map {
+              case some(summawy) =>
+                "summawy o-of wesuwts acwoss cwustews: \n" +
+                  utiw.pwettyjsonmappew.wwitevawueasstwing(summawy)
               case _ =>
-                "No summary of results! The cluster level results pipe must be empty!"
+                "no summawy of wesuwts! >_< t-the cwustew w-wevew wesuwts pipe must be empty!"
             }
 
-            val overallResultsExec = perClusterResults.sum.toOptionExecution.map {
-              case Some(overallQuality) =>
-                "Overall Quality: \n" +
-                  Util.prettyJsonMapper.writeValueAsString(
-                    printableBipartiteQuality(overallQuality)
+            vaw ovewawwwesuwtsexec = p-pewcwustewwesuwts.sum.tooptionexecution.map {
+              c-case some(ovewawwquawity) =>
+                "ovewaww quawity: \n" +
+                  utiw.pwettyjsonmappew.wwitevawueasstwing(
+                    pwintabwebipawtitequawity(ovewawwquawity)
                   )
-              case _ =>
-                "No overall quality! The cluster level results pipe must be empty!"
+              c-case _ =>
+                "no ovewaww quawity! /(^•ω•^) the cwustew wevew wesuwts pipe must be empty!"
             }
 
-            Execution.zip(distributionResultsExec, overallResultsExec).map {
-              case (distResults, overallResults) =>
-                toEmailAddressOpt.foreach { address =>
-                  Util.sendEmail(
-                    distResults + "\n" + overallResults,
-                    "Bipartite cluster quality for " + modelVersion,
-                    address
+            e-execution.zip(distwibutionwesuwtsexec, òωó ovewawwwesuwtsexec).map {
+              case (distwesuwts, σωσ o-ovewawwwesuwts) =>
+                t-toemaiwaddwessopt.foweach { addwess =>
+                  utiw.sendemaiw(
+                    distwesuwts + "\n" + ovewawwwesuwts, ( ͡o ω ͡o )
+                    "bipawtite c-cwustew quawity f-fow " + modewvewsion, nyaa~~
+                    addwess
                   )
                 }
-                println(distResults + "\n" + overallResults)
+                pwintwn(distwesuwts + "\n" + ovewawwwesuwts)
             }
           }
         }
-        Util.printCounters(finalExec)
+        utiw.pwintcountews(finawexec)
       }
   }
 
-  def getResultsWithOutgoingVolumes(
-    graph: TypedPipe[UserAndNeighbors],
-    interestedIn: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    useLogFavWeights: Boolean
-  ): TypedPipe[(Int, BipartiteClusterQuality)] = {
-    graph
-      .map { un => (un.userId, un.neighbors) }
-      // should this be a leftJoin? For now, leaving it as an inner join. If in the future,
-      // we want to compare two approaches with very different coverages on interestedIn, this
-      // could become a problem.
-      .join(interestedIn)
-      .withReducers(4000)
-      .flatMap {
-        case (userId, (neighbors, clusters)) =>
-          getBIResultsFromSingleUser(userId, neighbors, clusters, useLogFavWeights)
+  d-def getwesuwtswithoutgoingvowumes(
+    gwaph: t-typedpipe[usewandneighbows], :3
+    intewestedin: typedpipe[(wong, UwU cwustewsusewisintewestedin)], o.O
+    u-usewogfavweights: boowean
+  ): t-typedpipe[(int, (ˆ ﻌ ˆ)♡ b-bipawtitecwustewquawity)] = {
+    gwaph
+      .map { u-un => (un.usewid, ^^;; un.neighbows) }
+      // s-shouwd this b-be a weftjoin? fow n-nyow, ʘwʘ weaving it as an innew j-join. σωσ if in the f-futuwe, ^^;;
+      // we want to compawe two appwoaches w-with vewy diffewent c-covewages o-on intewestedin, ʘwʘ this
+      // couwd become a pwobwem. ^^
+      .join(intewestedin)
+      .withweducews(4000)
+      .fwatmap {
+        c-case (usewid, nyaa~~ (neighbows, (///ˬ///✿) cwustews)) =>
+          getbiwesuwtsfwomsingweusew(usewid, XD n-nyeighbows, :3 c-cwustews, usewogfavweights)
       }
-      .sumByKey
-      .withReducers(600)
+      .sumbykey
+      .withweducews(600)
       .map {
-        case (clusterId, bir) =>
+        case (cwustewid, òωó biw) =>
           (
-            clusterId,
-            BipartiteClusterQuality(
-              inClusterFollowEdges = Some(bir.inClusterWeights.isFollowEdge),
-              inClusterFavEdges = Some(bir.inClusterWeights.isFavEdge),
-              favWtSumOfInClusterFollowEdges = Some(bir.inClusterWeights.favWtIfFollowEdge),
-              favWtSumOfInClusterFavEdges = Some(bir.inClusterWeights.favWtIfFavEdge),
-              outgoingFollowEdges = Some(bir.totalOutgoingVolumes.isFollowEdge),
-              outgoingFavEdges = Some(bir.totalOutgoingVolumes.isFavEdge),
-              favWtSumOfOutgoingFollowEdges = Some(bir.totalOutgoingVolumes.favWtIfFollowEdge),
-              favWtSumOfOutgoingFavEdges = Some(bir.totalOutgoingVolumes.favWtIfFavEdge),
-              interestedInSize = Some(bir.interestedInSize),
-              sampledEdges = Some(
-                bir.edgeSample
-                  .iterator()
-                  .asScala
-                  .toSeq
+            c-cwustewid, ^^
+            b-bipawtitecwustewquawity(
+              i-incwustewfowwowedges = s-some(biw.incwustewweights.isfowwowedge), ^•ﻌ•^
+              incwustewfavedges = s-some(biw.incwustewweights.isfavedge), σωσ
+              favwtsumofincwustewfowwowedges = some(biw.incwustewweights.favwtiffowwowedge), (ˆ ﻌ ˆ)♡
+              favwtsumofincwustewfavedges = some(biw.incwustewweights.favwtiffavedge), nyaa~~
+              outgoingfowwowedges = s-some(biw.totawoutgoingvowumes.isfowwowedge),
+              outgoingfavedges = s-some(biw.totawoutgoingvowumes.isfavedge), ʘwʘ
+              favwtsumofoutgoingfowwowedges = s-some(biw.totawoutgoingvowumes.favwtiffowwowedge), ^•ﻌ•^
+              favwtsumofoutgoingfavedges = s-some(biw.totawoutgoingvowumes.favwtiffavedge), rawr x3
+              intewestedinsize = s-some(biw.intewestedinsize), 🥺
+              s-sampwededges = s-some(
+                b-biw.edgesampwe
+                  .itewatow()
+                  .asscawa
+                  .toseq
                   .map {
-                    case (edge, data) => makeThriftSampledEdge(edge, data)
+                    c-case (edge, ʘwʘ data) => makethwiftsampwededge(edge, (˘ω˘) data)
                   }
               )
             )
@@ -240,273 +240,273 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
       }
   }
 
-  def getBIResultsFromSingleUser(
-    userId: Long,
-    neighbors: Seq[NeighborWithWeights],
-    clusters: ClustersUserIsInterestedIn,
-    useLogFavScores: Boolean
-  ): List[(Int, BipartiteIntermediateResults)] = {
-    val neighborsToWeights = neighbors.map { neighborAndWeights =>
-      val isFollowEdge = neighborAndWeights.isFollowed match {
-        case Some(true) => 1.0
+  def getbiwesuwtsfwomsingweusew(
+    usewid: wong, o.O
+    nyeighbows: seq[neighbowwithweights], σωσ
+    cwustews: c-cwustewsusewisintewestedin, (ꈍᴗꈍ)
+    u-usewogfavscowes: b-boowean
+  ): wist[(int, bipawtiteintewmediatewesuwts)] = {
+    v-vaw nyeighbowstoweights = nyeighbows.map { nyeighbowandweights =>
+      vaw isfowwowedge = n-nyeighbowandweights.isfowwowed match {
+        case s-some(twue) => 1.0
         case _ => 0.0
       }
-      val favScore = if (useLogFavScores) {
-        neighborAndWeights.logFavScore.getOrElse(0.0)
-      } else neighborAndWeights.favScoreHalfLife100Days.getOrElse(0.0)
-      val isFavEdge = math.min(1, math.ceil(favScore))
-      neighborAndWeights.neighborId -> Weights(
-        isFollowEdge,
-        isFavEdge,
-        favScore * isFollowEdge,
-        favScore
+      v-vaw favscowe = if (usewogfavscowes) {
+        nyeighbowandweights.wogfavscowe.getowewse(0.0)
+      } ewse n-nyeighbowandweights.favscowehawfwife100days.getowewse(0.0)
+      v-vaw isfavedge = math.min(1, (ˆ ﻌ ˆ)♡ m-math.ceiw(favscowe))
+      n-nyeighbowandweights.neighbowid -> weights(
+        isfowwowedge, o.O
+        isfavedge, :3
+        favscowe * isfowwowedge, -.-
+        f-favscowe
       )
-    }.toMap
+    }.tomap
 
-    val outgoingVolumes = Monoid.sum(neighborsToWeights.values)(WeightsMonoid)
+    v-vaw outgoingvowumes = m-monoid.sum(neighbowstoweights.vawues)(weightsmonoid)
 
-    clusters.clusterIdToScores.toList.map {
-      case (clusterId, scoresStruct) =>
-        val inClusterNeighbors =
-          (scoresStruct.usersBeingFollowed.getOrElse(Nil) ++
-            scoresStruct.usersThatWereFaved.getOrElse(Nil)).toSet
-        val edgesForSampling = inClusterNeighbors.flatMap { neighborId =>
-          if (neighborsToWeights.contains(neighborId)) {
-            Some(
-              (userId, neighborId),
-              SampledEdgeData(
-                neighborsToWeights(neighborId).favWtIfFollowEdge,
-                neighborsToWeights(neighborId).favWtIfFavEdge,
-                scoresStruct.followScore.getOrElse(0.0),
-                scoresStruct.favScore.getOrElse(0.0)
+    c-cwustews.cwustewidtoscowes.towist.map {
+      c-case (cwustewid, ( ͡o ω ͡o ) scowesstwuct) =>
+        v-vaw incwustewneighbows =
+          (scowesstwuct.usewsbeingfowwowed.getowewse(niw) ++
+            s-scowesstwuct.usewsthatwewefaved.getowewse(niw)).toset
+        vaw edgesfowsampwing = i-incwustewneighbows.fwatmap { n-nyeighbowid =>
+          if (neighbowstoweights.contains(neighbowid)) {
+            s-some(
+              (usewid, /(^•ω•^) nyeighbowid), (⑅˘꒳˘)
+              sampwededgedata(
+                n-nyeighbowstoweights(neighbowid).favwtiffowwowedge,
+                nyeighbowstoweights(neighbowid).favwtiffavedge,
+                s-scowesstwuct.fowwowscowe.getowewse(0.0), òωó
+                s-scowesstwuct.favscowe.getowewse(0.0)
               )
             )
-          } else {
-            None
+          } ewse {
+            n-nyone
           }
         }
 
-        val inClusterWeights =
-          Monoid.sum(neighborsToWeights.filterKeys(inClusterNeighbors).values)(WeightsMonoid)
+        vaw incwustewweights =
+          monoid.sum(neighbowstoweights.fiwtewkeys(incwustewneighbows).vawues)(weightsmonoid)
 
         (
-          clusterId,
-          BipartiteIntermediateResults(
-            inClusterWeights,
-            outgoingVolumes,
-            1,
-            samplerMonoid.build(edgesForSampling)
+          c-cwustewid, 🥺
+          b-bipawtiteintewmediatewesuwts(
+            i-incwustewweights, (ˆ ﻌ ˆ)♡
+            outgoingvowumes, -.-
+            1, σωσ
+            sampwewmonoid.buiwd(edgesfowsampwing)
           ))
     }
   }
 
-  def computeClusterIncomingVolumes(
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    producerNormsAndCounts: TypedPipe[NormsAndCounts],
-    useLogFavWeights: Boolean
-  ): TypedPipe[(Int, BipartiteClusterQuality)] = {
-    producerNormsAndCounts
-      .map { x => (x.userId, x) }
-      .join(knownFor)
-      .withReducers(100)
-      .flatMap {
-        case (userId, (normsAndCounts, clusters)) =>
-          clusters.map {
-            case (clusterId, _) =>
-              val followerCount =
-                normsAndCounts.followerCount.getOrElse(0L).toDouble
-              val faverCount = normsAndCounts.faverCount.getOrElse(0L).toDouble
-              val favWtSumOfIncomingFollows = if (useLogFavWeights) {
-                normsAndCounts.logFavWeightsOnFollowEdgesSum.getOrElse(0.0)
-              } else {
-                normsAndCounts.favWeightsOnFollowEdgesSum.getOrElse(0.0)
+  def computecwustewincomingvowumes(
+    knownfow: typedpipe[(wong, >_< a-awway[(int, fwoat)])], :3
+    pwoducewnowmsandcounts: t-typedpipe[nowmsandcounts], OwO
+    usewogfavweights: b-boowean
+  ): typedpipe[(int, rawr bipawtitecwustewquawity)] = {
+    p-pwoducewnowmsandcounts
+      .map { x => (x.usewid, x-x) }
+      .join(knownfow)
+      .withweducews(100)
+      .fwatmap {
+        c-case (usewid, (///ˬ///✿) (nowmsandcounts, cwustews)) =>
+          cwustews.map {
+            c-case (cwustewid, ^^ _) =>
+              vaw fowwowewcount =
+                nyowmsandcounts.fowwowewcount.getowewse(0w).todoubwe
+              vaw f-favewcount = n-nyowmsandcounts.favewcount.getowewse(0w).todoubwe
+              vaw favwtsumofincomingfowwows = i-if (usewogfavweights) {
+                nyowmsandcounts.wogfavweightsonfowwowedgessum.getowewse(0.0)
+              } e-ewse {
+                n-nyowmsandcounts.favweightsonfowwowedgessum.getowewse(0.0)
               }
-              val favWtSumOfIncomingFavs = if (useLogFavWeights) {
-                normsAndCounts.logFavWeightsOnFavEdgesSum.getOrElse(0.0)
-              } else {
-                normsAndCounts.favWeightsOnFavEdgesSum.getOrElse(0.0)
+              v-vaw favwtsumofincomingfavs = if (usewogfavweights) {
+                nyowmsandcounts.wogfavweightsonfavedgessum.getowewse(0.0)
+              } ewse {
+                nyowmsandcounts.favweightsonfavedgessum.getowewse(0.0)
               }
               (
-                clusterId,
-                BipartiteClusterQuality(
-                  incomingFollowEdges = Some(followerCount),
-                  incomingFavEdges = Some(faverCount),
-                  favWtSumOfIncomingFollowEdges = Some(favWtSumOfIncomingFollows),
-                  favWtSumOfIncomingFavEdges = Some(favWtSumOfIncomingFavs)
+                cwustewid, XD
+                bipawtitecwustewquawity(
+                  incomingfowwowedges = some(fowwowewcount),
+                  incomingfavedges = some(favewcount), UwU
+                  favwtsumofincomingfowwowedges = some(favwtsumofincomingfowwows), o.O
+                  f-favwtsumofincomingfavedges = s-some(favwtsumofincomingfavs)
                 ))
           }
       }
-      .sumByKey
-      .toTypedPipe
+      .sumbykey
+      .totypedpipe
   }
 
-  def loadOrMake(
-    pipe: TypedPipe[(Int, BipartiteClusterQuality)],
-    modelVersion: String,
-    path: String
-  ): Execution[TypedPipe[(Int, BipartiteClusterQuality)]] = {
-    val mapped = pipe.map {
-      case (clusterId, struct) => ((modelVersion, clusterId), struct)
+  def woadowmake(
+    pipe: t-typedpipe[(int, 😳 b-bipawtitecwustewquawity)], (˘ω˘)
+    m-modewvewsion: stwing,
+    path: s-stwing
+  ): execution[typedpipe[(int, 🥺 bipawtitecwustewquawity)]] = {
+    v-vaw mapped = p-pipe.map {
+      case (cwustewid, ^^ s-stwuct) => ((modewvewsion, >w< cwustewid), ^^;; s-stwuct)
     }
-    makeForKeyValSource(mapped, AdhocKeyValSources.bipartiteQualitySource(path), path).map { pipe =>
-      // discard model version
-      pipe.map { case ((_, clusterId), struct) => (clusterId, struct) }
+    m-makefowkeyvawsouwce(mapped, (˘ω˘) adhockeyvawsouwces.bipawtitequawitysouwce(path), OwO path).map { pipe =>
+      // discawd m-modew vewsion
+      p-pipe.map { c-case ((_, (ꈍᴗꈍ) cwustewid), òωó s-stwuct) => (cwustewid, ʘwʘ s-stwuct) }
     }
   }
 
-  def makeForKeyValSource[K, V](
-    pipe: TypedPipe[(K, V)],
-    dest: VersionedKeyValSource[K, V],
-    path: String
-  ): Execution[TypedPipe[(K, V)]] =
-    Execution.getMode.flatMap { mode =>
-      if (dest.resourceExists(mode)) {
-        println(s"validated path $path")
-        Execution.from(TypedPipe.from(dest))
-      } else {
-        println(s"Could not load from $path")
-        pipe.writeThrough(dest)
+  d-def makefowkeyvawsouwce[k, ʘwʘ v-v](
+    pipe: t-typedpipe[(k, nyaa~~ v)],
+    d-dest: vewsionedkeyvawsouwce[k, UwU v], (⑅˘꒳˘)
+    path: s-stwing
+  ): e-execution[typedpipe[(k, (˘ω˘) v-v)]] =
+    execution.getmode.fwatmap { m-mode =>
+      if (dest.wesouwceexists(mode)) {
+        pwintwn(s"vawidated path $path")
+        e-execution.fwom(typedpipe.fwom(dest))
+      } ewse {
+        p-pwintwn(s"couwd n-nyot w-woad fwom $path")
+        pipe.wwitethwough(dest)
       }
     }
 
-  def precisionOfWholeGraph(
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    interestedIn: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    clusterIncomingVolumesExec: Execution[TypedPipe[(Int, BipartiteClusterQuality)]]
-  ): Execution[Option[Double]] = {
-    val knownForSizeExec = knownFor.aggregate(Aggregator.size).toOptionExecution
-    val interestedInSizeExec =
-      interestedIn.aggregate(Aggregator.size).toOptionExecution
-    val numExec = clusterIncomingVolumesExec.flatMap { volumes =>
-      volumes.values.flatMap(_.favWtSumOfIncomingFavEdges).sum.toOptionExecution
+  d-def pwecisionofwhowegwaph(
+    knownfow: typedpipe[(wong, :3 a-awway[(int, (˘ω˘) fwoat)])],
+    i-intewestedin: typedpipe[(wong, nyaa~~ c-cwustewsusewisintewestedin)], (U ﹏ U)
+    cwustewincomingvowumesexec: execution[typedpipe[(int, nyaa~~ bipawtitecwustewquawity)]]
+  ): execution[option[doubwe]] = {
+    v-vaw knownfowsizeexec = knownfow.aggwegate(aggwegatow.size).tooptionexecution
+    v-vaw intewestedinsizeexec =
+      i-intewestedin.aggwegate(aggwegatow.size).tooptionexecution
+    vaw nyumexec = cwustewincomingvowumesexec.fwatmap { vowumes =>
+      v-vowumes.vawues.fwatmap(_.favwtsumofincomingfavedges).sum.tooptionexecution
     }
-    Execution.zip(numExec, interestedInSizeExec, knownForSizeExec).map {
-      case (Some(num), Some(interestedInSize), Some(knownForSize)) =>
-        Some(num / interestedInSize / knownForSize)
+    execution.zip(numexec, ^^;; i-intewestedinsizeexec, OwO k-knownfowsizeexec).map {
+      c-case (some(num), nyaa~~ some(intewestedinsize), UwU some(knownfowsize)) =>
+        some(num / i-intewestedinsize / k-knownfowsize)
       case x @ _ =>
-        println("Precision of whole graph zip: " + x)
-        None
+        p-pwintwn("pwecision of whowe gwaph zip: " + x-x)
+        nyone
     }
   }
 
-  def finalPerClusterResults(
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    interestedIn: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    resultsWithOutgoingVolumesExec: Execution[TypedPipe[(Int, BipartiteClusterQuality)]],
-    incomingVolumesExec: Execution[TypedPipe[(Int, BipartiteClusterQuality)]]
-  ): Execution[TypedPipe[(Int, BipartiteClusterQuality)]] = {
-    val knownForTranspose = KnownForSources.transpose(knownFor)
+  def finawpewcwustewwesuwts(
+    k-knownfow: typedpipe[(wong, 😳 a-awway[(int, f-fwoat)])], 😳
+    intewestedin: t-typedpipe[(wong, (ˆ ﻌ ˆ)♡ c-cwustewsusewisintewestedin)], (✿oωo)
+    w-wesuwtswithoutgoingvowumesexec: e-execution[typedpipe[(int, nyaa~~ bipawtitecwustewquawity)]], ^^
+    i-incomingvowumesexec: e-execution[typedpipe[(int, (///ˬ///✿) b-bipawtitecwustewquawity)]]
+  ): e-execution[typedpipe[(int, 😳 b-bipawtitecwustewquawity)]] = {
+    v-vaw k-knownfowtwanspose = k-knownfowsouwces.twanspose(knownfow)
 
-    val precisionOfWholeGraphExec =
-      precisionOfWholeGraph(knownFor, interestedIn, incomingVolumesExec)
+    vaw p-pwecisionofwhowegwaphexec =
+      pwecisionofwhowegwaph(knownfow, òωó i-intewestedin, ^^;; incomingvowumesexec)
 
-    Execution
-      .zip(resultsWithOutgoingVolumesExec, incomingVolumesExec, precisionOfWholeGraphExec)
+    e-execution
+      .zip(wesuwtswithoutgoingvowumesexec, rawr i-incomingvowumesexec, p-pwecisionofwhowegwaphexec)
       .map {
-        case (resultsWithOutgoingVolumes, clusterIncomingVolumes, precisionOfWholeGraph) =>
-          println("Precision of whole graph " + precisionOfWholeGraph)
-          resultsWithOutgoingVolumes
-            .join(knownForTranspose)
-            .leftJoin(clusterIncomingVolumes)
-            .withReducers(500)
+        case (wesuwtswithoutgoingvowumes, (ˆ ﻌ ˆ)♡ cwustewincomingvowumes, XD pwecisionofwhowegwaph) =>
+          p-pwintwn("pwecision o-of whowe g-gwaph " + pwecisionofwhowegwaph)
+          wesuwtswithoutgoingvowumes
+            .join(knownfowtwanspose)
+            .weftjoin(cwustewincomingvowumes)
+            .withweducews(500)
             .map {
-              case (clusterId, ((outgoingVolumeQuality, knownForList), incomingVolumesOpt)) =>
-                val incomingVolumes =
-                  incomingVolumesOpt.getOrElse(BipartiteClusterQuality())
-                val knownForMap = knownForList.toMap
+              case (cwustewid, >_< ((outgoingvowumequawity, (˘ω˘) knownfowwist), 😳 i-incomingvowumesopt)) =>
+                v-vaw incomingvowumes =
+                  incomingvowumesopt.getowewse(bipawtitecwustewquawity())
+                v-vaw knownfowmap = k-knownfowwist.tomap
                 (
-                  clusterId,
-                  getFullQuality(
-                    outgoingVolumeQuality,
-                    incomingVolumes,
-                    knownForMap,
-                    precisionOfWholeGraph))
+                  cwustewid, o.O
+                  getfuwwquawity(
+                    outgoingvowumequawity, (ꈍᴗꈍ)
+                    incomingvowumes, rawr x3
+                    k-knownfowmap, ^^
+                    p-pwecisionofwhowegwaph))
             }
       }
   }
 
-  def getFullQuality(
-    qualityWithOutgoingVolumes: BipartiteClusterQuality,
-    incomingVolumes: BipartiteClusterQuality,
-    knownFor: Map[Long, Float],
-    precisionOfWholeGraph: Option[Double]
-  ): BipartiteClusterQuality = {
-    val newSampledEdges = qualityWithOutgoingVolumes.sampledEdges.map { sampledEdges =>
-      sampledEdges.map { sampledEdge =>
-        val knownForScore = knownFor.getOrElse(sampledEdge.followeeId, 0.0f)
-        sampledEdge.copy(
-          predictedFollowScore = sampledEdge.followScoreToCluster.map { x => x * knownForScore },
-          predictedFavScore = sampledEdge.favScoreToCluster.map { x => x * knownForScore }
+  d-def getfuwwquawity(
+    q-quawitywithoutgoingvowumes: bipawtitecwustewquawity, OwO
+    incomingvowumes: b-bipawtitecwustewquawity, ^^
+    k-knownfow: map[wong, :3 fwoat],
+    pwecisionofwhowegwaph: o-option[doubwe]
+  ): bipawtitecwustewquawity = {
+    vaw nyewsampwededges = q-quawitywithoutgoingvowumes.sampwededges.map { sampwededges =>
+      sampwededges.map { s-sampwededge =>
+        v-vaw knownfowscowe = knownfow.getowewse(sampwededge.fowwoweeid, o.O 0.0f)
+        s-sampwededge.copy(
+          p-pwedictedfowwowscowe = sampwededge.fowwowscowetocwustew.map { x-x => x * knownfowscowe }, -.-
+          pwedictedfavscowe = s-sampwededge.favscowetocwustew.map { x-x => x-x * knownfowscowe }
         )
       }
     }
-    val correlationOfFavWtIfFollow = newSampledEdges.map { samples =>
-      val pairs = samples.map { s =>
-        (s.predictedFollowScore.getOrElse(0.0), s.favWtIfFollowEdge.getOrElse(0.0))
+    v-vaw cowwewationoffavwtiffowwow = nyewsampwededges.map { s-sampwes =>
+      v-vaw paiws = s-sampwes.map { s =>
+        (s.pwedictedfowwowscowe.getowewse(0.0), (U ﹏ U) s-s.favwtiffowwowedge.getowewse(0.0))
       }
-      Util.computeCorrelation(pairs.iterator)
+      utiw.computecowwewation(paiws.itewatow)
     }
-    val correlationOfFavWtIfFav = newSampledEdges.map { samples =>
-      val pairs = samples.map { s =>
-        (s.predictedFavScore.getOrElse(0.0), s.favWtIfFavEdge.getOrElse(0.0))
+    vaw c-cowwewationoffavwtiffav = n-nyewsampwededges.map { s-sampwes =>
+      vaw paiws = sampwes.map { s =>
+        (s.pwedictedfavscowe.getowewse(0.0), o.O s.favwtiffavedge.getowewse(0.0))
       }
-      Util.computeCorrelation(pairs.iterator)
+      utiw.computecowwewation(paiws.itewatow)
     }
-    val relativePrecisionNum = {
-      if (qualityWithOutgoingVolumes.interestedInSize.exists(_ > 0) && knownFor.nonEmpty) {
-        qualityWithOutgoingVolumes.favWtSumOfInClusterFavEdges
-          .getOrElse(0.0) / qualityWithOutgoingVolumes.interestedInSize.get / knownFor.size
-      } else 0.0
+    vaw wewativepwecisionnum = {
+      i-if (quawitywithoutgoingvowumes.intewestedinsize.exists(_ > 0) && knownfow.nonempty) {
+        q-quawitywithoutgoingvowumes.favwtsumofincwustewfavedges
+          .getowewse(0.0) / q-quawitywithoutgoingvowumes.intewestedinsize.get / knownfow.size
+      } ewse 0.0
     }
-    val relativePrecision = if (precisionOfWholeGraph.exists(_ > 0.0)) {
-      Some(relativePrecisionNum / precisionOfWholeGraph.get)
-    } else None
-    qualityWithOutgoingVolumes.copy(
-      incomingFollowEdges = incomingVolumes.incomingFollowEdges,
-      incomingFavEdges = incomingVolumes.incomingFavEdges,
-      favWtSumOfIncomingFollowEdges = incomingVolumes.favWtSumOfIncomingFollowEdges,
-      favWtSumOfIncomingFavEdges = incomingVolumes.favWtSumOfIncomingFavEdges,
-      knownForSize = Some(knownFor.size),
-      correlationOfFavWtIfFollowWithPredictedFollow = correlationOfFavWtIfFollow,
-      correlationOfFavWtIfFavWithPredictedFav = correlationOfFavWtIfFav,
-      sampledEdges = newSampledEdges,
-      relativePrecisionUsingFavWtIfFav = relativePrecision,
-      averagePrecisionOfWholeGraphUsingFavWtIfFav = precisionOfWholeGraph
+    vaw w-wewativepwecision = if (pwecisionofwhowegwaph.exists(_ > 0.0)) {
+      s-some(wewativepwecisionnum / p-pwecisionofwhowegwaph.get)
+    } e-ewse nyone
+    q-quawitywithoutgoingvowumes.copy(
+      i-incomingfowwowedges = incomingvowumes.incomingfowwowedges, OwO
+      incomingfavedges = incomingvowumes.incomingfavedges, ^•ﻌ•^
+      favwtsumofincomingfowwowedges = i-incomingvowumes.favwtsumofincomingfowwowedges, ʘwʘ
+      favwtsumofincomingfavedges = i-incomingvowumes.favwtsumofincomingfavedges, :3
+      knownfowsize = some(knownfow.size), 😳
+      cowwewationoffavwtiffowwowwithpwedictedfowwow = c-cowwewationoffavwtiffowwow, òωó
+      cowwewationoffavwtiffavwithpwedictedfav = cowwewationoffavwtiffav, 🥺
+      sampwededges = nyewsampwededges, rawr x3
+      w-wewativepwecisionusingfavwtiffav = w-wewativepwecision, ^•ﻌ•^
+      avewagepwecisionofwhowegwaphusingfavwtiffav = p-pwecisionofwhowegwaph
     )
   }
 }
 
-object DumpBpQuality extends TwitterExecutionApp {
-  def job: Execution[Unit] = Execution.getConfigMode.flatMap {
-    case (config, mode) =>
-      Execution.withId { implicit uniqueId =>
-        val args = config.getArgs
-        val inputDir = args("inputDir")
+object dumpbpquawity extends t-twittewexecutionapp {
+  d-def job: execution[unit] = e-execution.getconfigmode.fwatmap {
+    case (config, :3 m-mode) =>
+      execution.withid { impwicit uniqueid =>
+        v-vaw awgs = config.getawgs
+        vaw inputdiw = a-awgs("inputdiw")
 
-        val clusters = args.list("clusters").map(_.toInt).toSet
-        val input =
-          TypedPipe
-            .from(AdhocKeyValSources.bipartiteQualitySource(inputDir))
+        v-vaw cwustews = a-awgs.wist("cwustews").map(_.toint).toset
+        vaw input =
+          typedpipe
+            .fwom(adhockeyvawsouwces.bipawtitequawitysouwce(inputdiw))
             .map {
-              case ((modelVersion, clusterId), quality) =>
+              c-case ((modewvewsion, (ˆ ﻌ ˆ)♡ cwustewid), (U ᵕ U❁) quawity) =>
                 (
-                  (modelVersion, clusterId),
-                  BipartiteClusterEvaluationClasses
-                    .printableBipartiteQuality(quality))
+                  (modewvewsion, :3 cwustewid), ^^;;
+                  bipawtitecwustewevawuationcwasses
+                    .pwintabwebipawtitequawity(quawity))
             }
 
-        if (clusters.isEmpty) {
-          input.printSummary("Bipartite quality")
-        } else {
-          input
-            .collect {
-              case rec @ ((_, clusterId), quality) if clusters(clusterId) =>
-                Util.prettyJsonMapper
-                  .writeValueAsString(rec)
-                  .replaceAll("\n", " ")
+        if (cwustews.isempty) {
+          i-input.pwintsummawy("bipawtite q-quawity")
+        } e-ewse {
+          i-input
+            .cowwect {
+              case wec @ ((_, ( ͡o ω ͡o ) cwustewid), o.O q-quawity) i-if cwustews(cwustewid) =>
+                utiw.pwettyjsonmappew
+                  .wwitevawueasstwing(wec)
+                  .wepwaceaww("\n", ^•ﻌ•^ " ")
             }
-            .toIterableExecution
-            .map { strings => println(strings.mkString("\n")) }
+            .toitewabweexecution
+            .map { stwings => p-pwintwn(stwings.mkstwing("\n")) }
         }
       }
   }

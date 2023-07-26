@@ -1,45 +1,45 @@
-<configuration>
+<configuwation>
     <!-- ===================================================== -->
-    <!-- Console appender for local debugging and testing -->
+    <!-- consowe appendew fow w-wocaw debugging a-and testing -->
     <!-- ===================================================== -->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
-        </encoder>
-    </appender>
+    <appendew n-nyame="stdout" c-cwass="ch.qos.wogback.cowe.consoweappendew">
+        <encodew>
+            <pattewn>%d{hh:mm:ss.sss} [%thwead] %-5wevew %woggew{50} - %msg%n</pattewn>
+        </encodew>
+    </appendew>
 
     <!-- ===================================================== -->
-    <!-- Package Config -->
+    <!-- p-package config -->
     <!-- ===================================================== -->
 
-    <!-- Root Config -->
-    <root level="info">
-        <appender-ref ref="STDOUT"/>
-    </root>
+    <!-- w-woot config -->
+    <woot w-wevew="info">
+        <appendew-wef w-wef="stdout"/>
+    </woot>
 
-    <!-- Per-Package Config -->
-    <logger name="com.twitter" level="info"/>
-    <logger name="com.twitter.zookeeper.client.internal" level="warn"/>
-    <logger name="com.twitter.zookeeper.client.internal.ClientCnxnSocket" level="error"/>
-    <logger name="com.twitter.logging.ScribeHandler" level="warn"/>
-    <logger name="com.twitter.finatra" level="info"/>
+    <!-- pew-package config -->
+    <woggew nyame="com.twittew" wevew="info"/>
+    <woggew n-nyame="com.twittew.zookeepew.cwient.intewnaw" wevew="wawn"/>
+    <woggew nyame="com.twittew.zookeepew.cwient.intewnaw.cwientcnxnsocket" w-wevew="ewwow"/>
+    <woggew nyame="com.twittew.wogging.scwibehandwew" w-wevew="wawn"/>
+    <woggew nyame="com.twittew.finatwa" wevew="info"/>
 
-    <logger name="org.apache.kafka" level="debug"/>
-    <logger name="org.apache.kafka.clients" level="info"/>
-    <logger name="org.apache.kafka.clients.NetworkClient" level="warn"/>
-    <logger name="org.apache.kafka.clients.consumer.internals" level="info"/>
-    <logger name="org.apache.kafka.common.network" level="warn" />
-    <logger name="org.apache.kafka.common.security.authenticator" level="info" />
-    <logger name="kafka.server.KafkaConfig" level="off" />
-    <logger name="org.apache.kafka.clients.producer.ProducerConfig" level="off" />
-    <logger name="org.apache.kafka.clients.consumer.ConsumerConfig" level="off" />
-    <logger name="org.apache.kafka.clients.admin.AdminClientConfig" level="off" />
-    <logger name="org.apache.kafka.common.utils.AppInfoParser" level="off" />
-    <logger name="org.apache.zookeeper" level="off" />
+    <woggew nyame="owg.apache.kafka" w-wevew="debug"/>
+    <woggew nyame="owg.apache.kafka.cwients" w-wevew="info"/>
+    <woggew n-nyame="owg.apache.kafka.cwients.netwowkcwient" wevew="wawn"/>
+    <woggew name="owg.apache.kafka.cwients.consumew.intewnaws" wevew="info"/>
+    <woggew nyame="owg.apache.kafka.common.netwowk" w-wevew="wawn" />
+    <woggew nyame="owg.apache.kafka.common.secuwity.authenticatow" wevew="info" />
+    <woggew nyame="kafka.sewvew.kafkaconfig" wevew="off" />
+    <woggew n-nyame="owg.apache.kafka.cwients.pwoducew.pwoducewconfig" wevew="off" />
+    <woggew n-nyame="owg.apache.kafka.cwients.consumew.consumewconfig" w-wevew="off" />
+    <woggew n-nyame="owg.apache.kafka.cwients.admin.admincwientconfig" w-wevew="off" />
+    <woggew nyame="owg.apache.kafka.common.utiws.appinfopawsew" wevew="off" />
+    <woggew n-nyame="owg.apache.zookeepew" wevew="off" />
 
 
-    <logger name="com.google.inject" level="info"/>
-    <logger name="io.netty" level="info"/>
-    <logger name="jdk.event" level="info"/>
-    <logger name="javax.security" level="info"/>
-</configuration>
+    <woggew nyame="com.googwe.inject" w-wevew="info"/>
+    <woggew nyame="io.netty" wevew="info"/>
+    <woggew nyame="jdk.event" wevew="info"/>
+    <woggew nyame="javax.secuwity" wevew="info"/>
+</configuwation>

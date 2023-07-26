@@ -1,314 +1,314 @@
-scala_library(
-    sources = [
-        "*.scala",
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", (///ˬ///✿)
     ],
-    platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+    pwatfowm = "java8",
+    t-tags = [
+        "bazew-compatibwe", 😳
+        "bazew-compatibwe:migwated",
+        "bazew-onwy", 😳
     ],
     dependencies = [
-        "3rdparty/jvm/com/twitter/algebird:core",
-        "3rdparty/jvm/com/twitter/algebird:util",
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "3rdparty/src/jvm/com/twitter/scalding:args",
-        "3rdparty/src/jvm/com/twitter/scalding:commons",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "3rdparty/src/jvm/com/twitter/scalding:date",
-        "3rdparty/src/jvm/com/twitter/scalding:db",
-        "3rdparty/src/jvm/com/twitter/scalding:parquet",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
-        "ann/src/main/scala/com/twitter/ann/scalding/offline",
-        "ann/src/main/scala/com/twitter/ann/util",
-        "geoduck/hadoop/scalding/datasets:userlocation-scala",
-        "iesource/common/src/main/scala/com/twitter/iesource/common/util",
-        "iesource/processing/events/src/main/scala/com/twitter/iesource/processing/events/batch" +
-        ":server_engagements-scala",
-        "iesource/thrift",
-        "src/java/com/twitter/ml/api/constant",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/ml/featurestore/catalog/entities/core",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/geo",
-        "src/scala/com/twitter/ml/featurestore/lib/batch",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/dalv2/dataset",
-        "src/scala/com/twitter/scalding_internal/db",
-        "src/scala/com/twitter/scalding_internal/db/jdbc",
-        "src/scala/com/twitter/scalding_internal/error_handling",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/multiformat",
-        "src/scala/com/twitter/scalding_internal/source",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/scalding_internal/typed",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "src/thrift/com/twitter/ml/api:interpretable-model-java",
-        "tweetsource/public_tweets/src/main/scala/com/twitter/tweetsource/public_tweets:public_tweets-scala",
-        "twml/runtime/src/main/scala/com/twitter/twml/runtime/scalding",
-        "util/util-core:scala",
-        "util/util-stats/src/main/scala",
+        "3wdpawty/jvm/com/twittew/awgebiwd:cowe", σωσ
+        "3wdpawty/jvm/com/twittew/awgebiwd:utiw", rawr x3
+        "3wdpawty/jvm/com/twittew/stowehaus:awgebwa", OwO
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", /(^•ω•^)
+        "3wdpawty/swc/jvm/com/twittew/scawding:awgs", 😳😳😳
+        "3wdpawty/swc/jvm/com/twittew/scawding:commons", ( ͡o ω ͡o )
+        "3wdpawty/swc/jvm/com/twittew/scawding:cowe", >_<
+        "3wdpawty/swc/jvm/com/twittew/scawding:date", >w<
+        "3wdpawty/swc/jvm/com/twittew/scawding:db", rawr
+        "3wdpawty/swc/jvm/com/twittew/scawding:pawquet", 😳
+        "ann/swc/main/scawa/com/twittew/ann/hnsw", >w<
+        "ann/swc/main/scawa/com/twittew/ann/scawding/offwine", (⑅˘꒳˘)
+        "ann/swc/main/scawa/com/twittew/ann/utiw", OwO
+        "geoduck/hadoop/scawding/datasets:usewwocation-scawa", (ꈍᴗꈍ)
+        "iesouwce/common/swc/main/scawa/com/twittew/iesouwce/common/utiw", 😳
+        "iesouwce/pwocessing/events/swc/main/scawa/com/twittew/iesouwce/pwocessing/events/batch" +
+        ":sewvew_engagements-scawa", 😳😳😳
+        "iesouwce/thwift", mya
+        "swc/java/com/twittew/mw/api/constant", mya
+        "swc/scawa/com/twittew/mw/api/utiw", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/entities/cowe", (U ﹏ U)
+        "swc/scawa/com/twittew/mw/featuwestowe/catawog/featuwes/geo", mya
+        "swc/scawa/com/twittew/mw/featuwestowe/wib/batch", ʘwʘ
+        "swc/scawa/com/twittew/scawding_intewnaw/dawv2", (˘ω˘)
+        "swc/scawa/com/twittew/scawding_intewnaw/dawv2/dataset", (U ﹏ U)
+        "swc/scawa/com/twittew/scawding_intewnaw/db", ^•ﻌ•^
+        "swc/scawa/com/twittew/scawding_intewnaw/db/jdbc", (˘ω˘)
+        "swc/scawa/com/twittew/scawding_intewnaw/ewwow_handwing", :3
+        "swc/scawa/com/twittew/scawding_intewnaw/job", ^^;;
+        "swc/scawa/com/twittew/scawding_intewnaw/job/anawytics_batch", 🥺
+        "swc/scawa/com/twittew/scawding_intewnaw/muwtifowmat", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/scawding_intewnaw/souwce", nyaa~~
+        "swc/scawa/com/twittew/scawding_intewnaw/souwce/wzo_scwooge", :3
+        "swc/scawa/com/twittew/scawding_intewnaw/typed", ( ͡o ω ͡o )
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces", mya
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/common", (///ˬ///✿)
+        "swc/thwift/com/twittew/mw/api:data-java", (˘ω˘)
+        "swc/thwift/com/twittew/mw/api:intewpwetabwe-modew-java", ^^;;
+        "tweetsouwce/pubwic_tweets/swc/main/scawa/com/twittew/tweetsouwce/pubwic_tweets:pubwic_tweets-scawa", (✿oωo)
+        "twmw/wuntime/swc/main/scawa/com/twittew/twmw/wuntime/scawding", (U ﹏ U)
+        "utiw/utiw-cowe:scawa", -.-
+        "utiw/utiw-stats/swc/main/scawa", ^•ﻌ•^
     ],
 )
 
-scalding_job(
-    name = "tweet-embedding-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scalding.mbcg.TweetEmbeddingGenerationAdhocJob",
-    args = [
-        "--dateRange 2021-10-30T00 2021-10-30T01",
-        "--model_name model",
-        "--model_path hdfs:///atla/proc/user/cassowary/explore_mbcg/models/tfx_model_1104/1635973177/tweet_tower_with_signature",
-        "--concurrency_level 60",
-        "--embedding_dimension 128",
-        "--expected_elements 30000000",
-        "--max_M 20",
-        "--ef_construction 200",
+s-scawding_job(
+    n-nyame = "tweet-embedding-genewation-adhoc-job", rawr
+    m-main = "com.twittew.simcwustews_v2.scawding.mbcg.tweetembeddinggenewationadhocjob", (˘ω˘)
+    a-awgs = [
+        "--datewange 2021-10-30t00 2021-10-30t01",
+        "--modew_name m-modew",
+        "--modew_path h-hdfs:///atwa/pwoc/usew/cassowawy/expwowe_mbcg/modews/tfx_modew_1104/1635973177/tweet_towew_with_signatuwe", nyaa~~
+        "--concuwwency_wevew 60", UwU
+        "--embedding_dimension 128", :3
+        "--expected_ewements 30000000", (⑅˘꒳˘)
+        "--max_m 20", (///ˬ///✿)
+        "--ef_constwuction 200", ^^;;
+        "--tweet_embedding_name o-output", >_<
+        "--ann_output_path hdfs:///atwa/pwoc/usew/cassowawy/expwowe_mbcg/ann_index/test_11_04_adhoc", rawr x3
+    ], /(^•ω•^)
+    config = [
+        ("hadoop.submittew.cpu", :3 60),
+        ("hadoop.submittew.jvm.totaw-memowy", (ꈍᴗꈍ) "256g"),
+        ("submittew.tiew", /(^•ω•^) "pweemptibwe"), (⑅˘꒳˘)
+        ("hadoop.map.jvm.totaw-memowy", ( ͡o ω ͡o ) "6144m"),
+    ], òωó
+    hadoop_cwustew = "atwa-pwoc3", (⑅˘꒳˘)
+    pwatfowm = "java8", XD
+    w-wowe = "cassowawy", -.-
+    wuntime_pwatfowm = "java8", :3
+    tags = [
+        "bazew-compatibwe:migwated", nyaa~~
+        "bazew-onwy", 😳
+    ], (⑅˘꒳˘)
+    d-dependencies = [":mbcg"], nyaa~~
+)
+
+scawding_job(
+    n-nyame = "tweet-embedding-genewation-batch-job", OwO
+    main = "com.twittew.simcwustews_v2.scawding.mbcg.tweetembeddinggenewationbatchjob", rawr x3
+    awgs = [
+        "--modew_name modew",
+        "--modew_path h-hdfs:///atwa/pwoc/usew/cassowawy/expwowe_mbcg/modews/tfx_0119_1day_0110_3w_5e_f2v_gpu_wesave/tweet_towew_with_signatuwe", XD
+        "--concuwwency_wevew 60", σωσ
+        "--embedding_dimension 128", (U ᵕ U❁)
+        "--expected_ewements 5000000",
+        "--max_m 40", (U ﹏ U)
+        "--ef_constwuction 800", :3
         "--tweet_embedding_name output",
-        "--ann_output_path hdfs:///atla/proc/user/cassowary/explore_mbcg/ann_index/test_11_04_adhoc",
+        "--f2v_input.featuwe_stowe_embedding fowwow2vecpwoducewembedding200dataset", ( ͡o ω ͡o )
+        "--f2v_input.featuwe_stowe_majow_vewsion 20210708", σωσ
+        "--minfavcount 32", >w<
+        "--ann_output_path h-hdfs:///atwa/pwoc/usew/cassowawy/expwowe_mbcg/ann_index/0125_batch_index_f2v_minfav",
+    ], 😳😳😳
+    c-config = [
+        ("hadoop.submittew.cpu", OwO 60),
+        ("hadoop.submittew.jvm.totaw-memowy", 😳 "256g"), 😳😳😳
+        ("hadoop.map.jvm.totaw-memowy", (˘ω˘) "6144m"), ʘwʘ
+        ("hadoop.submittew.disk", ( ͡o ω ͡o ) "100g"), o.O
     ],
-    config = [
-        ("hadoop.submitter.cpu", 60),
-        ("hadoop.submitter.jvm.total-memory", "256g"),
-        ("submitter.tier", "preemptible"),
-        ("hadoop.map.jvm.total-memory", "6144m"),
-    ],
-    hadoop_cluster = "atla-proc3",
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
+    cwon = "*/5 * * * *", >w<
+    hadoop_cwustew = "atwa-pwoc3", 😳
+    pwatfowm = "java8", 🥺
+    wowe = "cassowawy", rawr x3
+    w-wuntime_pwatfowm = "java8", o.O
     tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":mbcg"],
+        "bazew-compatibwe:migwated", rawr
+        "bazew-onwy",
+    ], ʘwʘ
+    dependencies = [":mbcg"], 😳😳😳
 )
 
-scalding_job(
-    name = "tweet-embedding-generation-batch-job",
-    main = "com.twitter.simclusters_v2.scalding.mbcg.TweetEmbeddingGenerationBatchJob",
-    args = [
-        "--model_name model",
-        "--model_path hdfs:///atla/proc/user/cassowary/explore_mbcg/models/tfx_0119_1day_0110_3l_5e_f2v_gpu_resave/tweet_tower_with_signature",
-        "--concurrency_level 60",
-        "--embedding_dimension 128",
-        "--expected_elements 5000000",
-        "--max_M 40",
-        "--ef_construction 800",
-        "--tweet_embedding_name output",
-        "--f2v_input.feature_store_embedding Follow2VecProducerEmbedding200Dataset",
-        "--f2v_input.feature_store_major_version 20210708",
-        "--minFavCount 32",
-        "--ann_output_path hdfs:///atla/proc/user/cassowary/explore_mbcg/ann_index/0125_batch_index_f2v_minfav",
-    ],
+scawding_job(
+    nyame = "tweet-embedding-genewation-batch-job-awtewnate", ^^;;
+    m-main = "com.twittew.simcwustews_v2.scawding.mbcg.tweetembeddinggenewationbatchjobawtewnate", o.O
+    awgs = [
+        "--modew_name m-modew", (///ˬ///✿)
+        "--modew_path h-hdfs:///atwa/pwoc/usew/cassowawy/expwowe_mbcg/modews/tfx_331_329_1e_128em_b128_hn10_aww_gpu/tweet_towew_with_signatuwe", σωσ
+        "--concuwwency_wevew 60", nyaa~~
+        "--embedding_dimension 128", ^^;;
+        "--expected_ewements 5000000", ^•ﻌ•^
+        "--max_m 40", σωσ
+        "--ef_constwuction 800", -.-
+        "--tweet_embedding_name o-output", ^^;;
+        "--f2v_input.featuwe_stowe_embedding f-fowwow2vecpwoducewembedding200dataset", XD
+        "--f2v_input.featuwe_stowe_majow_vewsion 20210708", 🥺
+        "--minfavcount 100", òωó
+        "--indexawwtweets", (ˆ ﻌ ˆ)♡
+        "--ann_output_path hdfs:///atwa/pwoc/usew/cassowawy/expwowe_mbcg/ann_index/0401_batch_index_f2v_cosine_aww_tweets", -.-
+    ], :3
     config = [
-        ("hadoop.submitter.cpu", 60),
-        ("hadoop.submitter.jvm.total-memory", "256g"),
-        ("hadoop.map.jvm.total-memory", "6144m"),
-        ("hadoop.submitter.disk", "100g"),
-    ],
-    cron = "*/5 * * * *",
-    hadoop_cluster = "atla-proc3",
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
+        ("hadoop.submittew.cpu", ʘwʘ 60),
+        ("hadoop.submittew.jvm.totaw-memowy", 🥺 "256g"),
+        ("hadoop.map.jvm.totaw-memowy", >_< "6144m"), ʘwʘ
+        ("hadoop.submittew.disk", (˘ω˘) "100g"),
+    ], (✿oωo)
+    c-contact = "no-wepwy@twittew.com", (///ˬ///✿)
+    cwon = "*/5 * * * *", rawr x3
+    hadoop_cwustew = "atwa-pwoc3", -.-
+    p-pwatfowm = "java8", ^^
+    wowe = "cassowawy", (⑅˘꒳˘)
+    wuntime_pwatfowm = "java8", nyaa~~
     tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe:migwated", /(^•ω•^)
+        "bazew-onwy", (U ﹏ U)
     ],
-    dependencies = [":mbcg"],
+    dependencies = [":mbcg"], 😳😳😳
 )
 
-scalding_job(
-    name = "tweet-embedding-generation-batch-job-alternate",
-    main = "com.twitter.simclusters_v2.scalding.mbcg.TweetEmbeddingGenerationBatchJobAlternate",
-    args = [
-        "--model_name model",
-        "--model_path hdfs:///atla/proc/user/cassowary/explore_mbcg/models/tfx_331_329_1e_128em_b128_hn10_all_gpu/tweet_tower_with_signature",
-        "--concurrency_level 60",
-        "--embedding_dimension 128",
-        "--expected_elements 5000000",
-        "--max_M 40",
-        "--ef_construction 800",
-        "--tweet_embedding_name output",
-        "--f2v_input.feature_store_embedding Follow2VecProducerEmbedding200Dataset",
-        "--f2v_input.feature_store_major_version 20210708",
-        "--minFavCount 100",
-        "--indexAllTweets",
-        "--ann_output_path hdfs:///atla/proc/user/cassowary/explore_mbcg/ann_index/0401_batch_index_f2v_cosine_all_tweets",
+scawding_job(
+    nyame = "tweet-embedding-genewation-batch-job-expewimentaw", >w<
+    m-main = "com.twittew.simcwustews_v2.scawding.mbcg.tweetembeddinggenewationbatchjobexpewimentaw",
+    awgs = [
+        "--modew_name m-modew", XD
+        "--modew_path h-hdfs:///atwa/pwoc/usew/cassowawy/expwowe_mbcg/modews/tfx_0127_1day_0110_3w_10e_128e_nowmf2v_nocosine_gpu/tweet_towew_with_signatuwe", o.O
+        "--concuwwency_wevew 60", mya
+        "--embedding_dimension 128", 🥺
+        "--expected_ewements 5000000", ^^;;
+        "--max_m 40", :3
+        "--ef_constwuction 800",
+        "--tweet_embedding_name o-output", (U ﹏ U)
+        "--f2v_input.featuwe_stowe_embedding fowwow2vecpwoducewembedding200dataset",
+        "--f2v_input.featuwe_stowe_majow_vewsion 20210708", OwO
+        "--minfavcount 32", 😳😳😳
+        "--ann_output_path hdfs:///atwa/pwoc/usew/cassowawy/expwowe_mbcg/ann_index/0128_f2v_1week_batch_index", (ˆ ﻌ ˆ)♡
     ],
     config = [
-        ("hadoop.submitter.cpu", 60),
-        ("hadoop.submitter.jvm.total-memory", "256g"),
-        ("hadoop.map.jvm.total-memory", "6144m"),
-        ("hadoop.submitter.disk", "100g"),
+        ("hadoop.submittew.cpu", XD 60), (ˆ ﻌ ˆ)♡
+        ("hadoop.submittew.jvm.totaw-memowy", ( ͡o ω ͡o ) "256g"),
+        ("hadoop.map.jvm.totaw-memowy", rawr x3 "6144m"),
+        ("hadoop.submittew.disk", nyaa~~ "100g"), >_<
     ],
-    contact = "no-reply@twitter.com",
-    cron = "*/5 * * * *",
-    hadoop_cluster = "atla-proc3",
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
+    contact = "no-wepwy@twittew.com", ^^;;
+    cwon = "*/5 * * * *", (ˆ ﻌ ˆ)♡
+    hadoop_cwustew = "atwa-pwoc3", ^^;;
+    pwatfowm = "java8", (⑅˘꒳˘)
+    w-wowe = "cassowawy", rawr x3
+    w-wuntime_pwatfowm = "java8", (///ˬ///✿)
     tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":mbcg"],
+        "bazew-compatibwe:migwated", 🥺
+        "bazew-onwy", >_<
+    ], UwU
+    d-dependencies = [":mbcg"], >_<
 )
 
-scalding_job(
-    name = "tweet-embedding-generation-batch-job-experimental",
-    main = "com.twitter.simclusters_v2.scalding.mbcg.TweetEmbeddingGenerationBatchJobExperimental",
-    args = [
-        "--model_name model",
-        "--model_path hdfs:///atla/proc/user/cassowary/explore_mbcg/models/tfx_0127_1day_0110_3l_10e_128e_normf2v_nocosine_gpu/tweet_tower_with_signature",
-        "--concurrency_level 60",
-        "--embedding_dimension 128",
-        "--expected_elements 5000000",
-        "--max_M 40",
-        "--ef_construction 800",
-        "--tweet_embedding_name output",
-        "--f2v_input.feature_store_embedding Follow2VecProducerEmbedding200Dataset",
-        "--f2v_input.feature_store_major_version 20210708",
-        "--minFavCount 32",
-        "--ann_output_path hdfs:///atla/proc/user/cassowary/explore_mbcg/ann_index/0128_f2v_1week_batch_index",
-    ],
+s-scawding_job(
+    nyame = "usew-embedding-genewation-adhoc-job", -.-
+    m-main = "com.twittew.simcwustews_v2.scawding.mbcg.usewembeddinggenewationadhocjob", mya
+    awgs = [
+        "--datewange 2021-12-01t00 2021-12-01t01", >w<
+        "--modew_path h-hdfs:///atwa/pwoc/usew/cassowawy/expwowe_mbcg/modews/tfx_1202_wogs_100m_b64_hn10_1127_video_pewsistent/usew_towew_with_signatuwe", (U ﹏ U)
+        "--embedding_dimension 128", 😳😳😳
+        "--usew_embedding_name output", o.O
+        "--kvs_output_path /usew/cassowawy/expwowe_mbcg/usew_kvs_stowe/1207_adhoc_modew_stowe", òωó
+    ], 😳😳😳
     config = [
-        ("hadoop.submitter.cpu", 60),
-        ("hadoop.submitter.jvm.total-memory", "256g"),
-        ("hadoop.map.jvm.total-memory", "6144m"),
-        ("hadoop.submitter.disk", "100g"),
+        ("hadoop.submittew.cpu", σωσ 60),
+        ("hadoop.submittew.jvm.totaw-memowy", (⑅˘꒳˘) "256g"),
+        ("submittew.tiew", (///ˬ///✿) "pweemptibwe"), 🥺
+        ("hadoop.map.jvm.totaw-memowy", OwO "6144m"),
+    ], >w<
+    c-contact = "no-wepwy@twittew.com", 🥺
+    hadoop_cwustew = "atwa-pwoc3", nyaa~~
+    p-pwatfowm = "java8", ^^
+    wowe = "cassowawy",
+    w-wuntime_pwatfowm = "java8", >w<
+    t-tags = [
+        "bazew-compatibwe:migwated", OwO
+        "bazew-onwy", XD
+        "known-to-faiw-jiwa:sd-20253", ^^;;
     ],
-    contact = "no-reply@twitter.com",
-    cron = "*/5 * * * *",
-    hadoop_cluster = "atla-proc3",
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":mbcg"],
+    dependencies = [":mbcg"], 🥺
 )
 
-scalding_job(
-    name = "user-embedding-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scalding.mbcg.UserEmbeddingGenerationAdhocJob",
-    args = [
-        "--dateRange 2021-12-01T00 2021-12-01T01",
-        "--model_path hdfs:///atla/proc/user/cassowary/explore_mbcg/models/tfx_1202_logs_100m_b64_hn10_1127_video_persistent/user_tower_with_signature",
-        "--embedding_dimension 128",
-        "--user_embedding_name output",
-        "--kvs_output_path /user/cassowary/explore_mbcg/user_kvs_store/1207_adhoc_model_store",
+scawding_job(
+    nyame = "usew-embedding-genewation-batch-job", XD
+    main = "com.twittew.simcwustews_v2.scawding.mbcg.usewembeddinggenewationbatchjob", (U ᵕ U❁)
+    awgs = [
+        "--modew_path hdfs:///atwa/pwoc/usew/cassowawy/expwowe_mbcg/modews/tfx_0119_1day_0110_3w_5e_f2v_gpu_wesave/usew_towew_with_signatuwe", :3
+        "--embedding_dimension 128", ( ͡o ω ͡o )
+        "--usew_embedding_name output", òωó
+        "--f2v_input.featuwe_stowe_embedding f-fowwowbasedconsumewfowwow2vecavgembedding200dataset", σωσ
+        "--f2v_input.featuwe_stowe_majow_vewsion 20210708", (U ᵕ U❁)
+        "--kvs_output_path /usew/cassowawy/expwowe_mbcg/usew_kvs_stowe/0125_wefweshed_modew_stowe_f2v", (✿oωo)
     ],
-    config = [
-        ("hadoop.submitter.cpu", 60),
-        ("hadoop.submitter.jvm.total-memory", "256g"),
-        ("submitter.tier", "preemptible"),
-        ("hadoop.map.jvm.total-memory", "6144m"),
+    c-config = [
+        ("hadoop.submittew.cpu", ^^ 60), ^•ﻌ•^
+        ("hadoop.submittew.jvm.totaw-memowy", XD "256g"),
+        ("submittew.tiew", :3 "pweemptibwe"), (ꈍᴗꈍ)
+        ("hadoop.map.jvm.totaw-memowy", :3 "6144m"), (U ﹏ U)
     ],
-    contact = "no-reply@twitter.com",
-    hadoop_cluster = "atla-proc3",
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
+    contact = "no-wepwy@twittew.com", UwU
+    c-cwon = "*/30 * * * *", 😳😳😳
+    h-hadoop_cwustew = "atwa-pwoc3", XD
+    p-pwatfowm = "java8",
+    wowe = "cassowawy", o.O
+    wuntime_pwatfowm = "java8", (⑅˘꒳˘)
     tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
-        "known-to-fail-jira:SD-20253",
-    ],
-    dependencies = [":mbcg"],
+        "bazew-compatibwe:migwated", 😳😳😳
+        "bazew-onwy",
+    ], nyaa~~
+    d-dependencies = [":mbcg"], rawr
 )
 
-scalding_job(
-    name = "user-embedding-generation-batch-job",
-    main = "com.twitter.simclusters_v2.scalding.mbcg.UserEmbeddingGenerationBatchJob",
-    args = [
-        "--model_path hdfs:///atla/proc/user/cassowary/explore_mbcg/models/tfx_0119_1day_0110_3l_5e_f2v_gpu_resave/user_tower_with_signature",
-        "--embedding_dimension 128",
-        "--user_embedding_name output",
-        "--f2v_input.feature_store_embedding FollowBasedConsumerFollow2VecAvgEmbedding200Dataset",
-        "--f2v_input.feature_store_major_version 20210708",
-        "--kvs_output_path /user/cassowary/explore_mbcg/user_kvs_store/0125_refreshed_model_store_f2v",
+scawding_job(
+    nyame = "usew-embedding-genewation-batch-job-awtewnate", -.-
+    main = "com.twittew.simcwustews_v2.scawding.mbcg.usewembeddinggenewationbatchjobawtewnate", (✿oωo)
+    awgs = [
+        "--modew_path h-hdfs:///atwa/pwoc/usew/cassowawy/expwowe_mbcg/modews/tfx_331_329_1e_128em_b128_hn10_aww_gpu/usew_towew_with_signatuwe", /(^•ω•^)
+        "--embedding_dimension 128", 🥺
+        "--usew_embedding_name output", ʘwʘ
+        "--f2v_input.featuwe_stowe_embedding f-fowwowbasedconsumewfowwow2vecavgembedding200dataset", UwU
+        "--f2v_input.featuwe_stowe_majow_vewsion 20210708",
+        "--kvs_output_path /usew/cassowawy/expwowe_mbcg/usew_kvs_stowe/0401_wefweshed_modew_stowe_aww", XD
     ],
-    config = [
-        ("hadoop.submitter.cpu", 60),
-        ("hadoop.submitter.jvm.total-memory", "256g"),
-        ("submitter.tier", "preemptible"),
-        ("hadoop.map.jvm.total-memory", "6144m"),
-    ],
-    contact = "no-reply@twitter.com",
-    cron = "*/30 * * * *",
-    hadoop_cluster = "atla-proc3",
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
+    c-config = [
+        ("hadoop.submittew.cpu", (✿oωo) 60),
+        ("hadoop.submittew.jvm.totaw-memowy", :3 "256g"),
+        ("submittew.tiew", (///ˬ///✿) "pweemptibwe"), nyaa~~
+        ("hadoop.map.jvm.totaw-memowy", "6144m"), >w<
+    ], -.-
+    c-contact = "no-wepwy@twittew.com", (✿oωo)
+    cwon = "*/30 * * * *", (˘ω˘)
+    h-hadoop_cwustew = "atwa-pwoc3", rawr
+    pwatfowm = "java8", OwO
+    w-wowe = "cassowawy", ^•ﻌ•^
+    wuntime_pwatfowm = "java8", UwU
     tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe:migwated", (˘ω˘)
+        "bazew-onwy", (///ˬ///✿)
     ],
-    dependencies = [":mbcg"],
+    d-dependencies = [":mbcg"], σωσ
 )
 
-scalding_job(
-    name = "user-embedding-generation-batch-job-alternate",
-    main = "com.twitter.simclusters_v2.scalding.mbcg.UserEmbeddingGenerationBatchJobAlternate",
-    args = [
-        "--model_path hdfs:///atla/proc/user/cassowary/explore_mbcg/models/tfx_331_329_1e_128em_b128_hn10_all_gpu/user_tower_with_signature",
-        "--embedding_dimension 128",
-        "--user_embedding_name output",
-        "--f2v_input.feature_store_embedding FollowBasedConsumerFollow2VecAvgEmbedding200Dataset",
-        "--f2v_input.feature_store_major_version 20210708",
-        "--kvs_output_path /user/cassowary/explore_mbcg/user_kvs_store/0401_refreshed_model_store_all",
-    ],
-    config = [
-        ("hadoop.submitter.cpu", 60),
-        ("hadoop.submitter.jvm.total-memory", "256g"),
-        ("submitter.tier", "preemptible"),
-        ("hadoop.map.jvm.total-memory", "6144m"),
-    ],
-    contact = "no-reply@twitter.com",
-    cron = "*/30 * * * *",
-    hadoop_cluster = "atla-proc3",
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
+s-scawding_job(
+    nyame = "usew-embedding-genewation-batch-job-expewimentaw", /(^•ω•^)
+    main = "com.twittew.simcwustews_v2.scawding.mbcg.usewembeddinggenewationbatchjobexpewimentaw",
+    a-awgs = [
+        "--modew_path hdfs:///atwa/pwoc/usew/cassowawy/expwowe_mbcg/modews/tfx_0127_1day_0110_3w_10e_128e_nowmf2v_nocosine_gpu/usew_towew_with_signatuwe", 😳
+        "--embedding_dimension 128", 😳
+        "--usew_embedding_name o-output", (⑅˘꒳˘)
+        "--f2v_input.featuwe_stowe_embedding f-fowwowbasedconsumewfowwow2vecavgembedding200dataset", 😳😳😳
+        "--f2v_input.featuwe_stowe_majow_vewsion 20210708", 😳
+        "--kvs_output_path /usew/cassowawy/expwowe_mbcg/usew_kvs_stowe/0328_f2v_cosine_aww_tweets_modew_stowe", XD
+    ], mya
+    c-config = [
+        ("hadoop.submittew.cpu", ^•ﻌ•^ 60),
+        ("hadoop.submittew.jvm.totaw-memowy", ʘwʘ "256g"),
+        ("submittew.tiew", ( ͡o ω ͡o ) "pweemptibwe"), mya
+        ("hadoop.map.jvm.totaw-memowy", o.O "6144m"),
+    ], (✿oωo)
+    c-contact = "no-wepwy@twittew.com", :3
+    cwon = "*/30 * * * *", 😳
+    hadoop_cwustew = "atwa-pwoc3", (U ﹏ U)
+    pwatfowm = "java8", mya
+    wowe = "cassowawy", (U ᵕ U❁)
+    wuntime_pwatfowm = "java8", :3
     tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe:migwated", mya
+        "bazew-onwy", OwO
     ],
-    dependencies = [":mbcg"],
-)
-
-scalding_job(
-    name = "user-embedding-generation-batch-job-experimental",
-    main = "com.twitter.simclusters_v2.scalding.mbcg.UserEmbeddingGenerationBatchJobExperimental",
-    args = [
-        "--model_path hdfs:///atla/proc/user/cassowary/explore_mbcg/models/tfx_0127_1day_0110_3l_10e_128e_normf2v_nocosine_gpu/user_tower_with_signature",
-        "--embedding_dimension 128",
-        "--user_embedding_name output",
-        "--f2v_input.feature_store_embedding FollowBasedConsumerFollow2VecAvgEmbedding200Dataset",
-        "--f2v_input.feature_store_major_version 20210708",
-        "--kvs_output_path /user/cassowary/explore_mbcg/user_kvs_store/0328_f2v_cosine_all_tweets_model_store",
-    ],
-    config = [
-        ("hadoop.submitter.cpu", 60),
-        ("hadoop.submitter.jvm.total-memory", "256g"),
-        ("submitter.tier", "preemptible"),
-        ("hadoop.map.jvm.total-memory", "6144m"),
-    ],
-    contact = "no-reply@twitter.com",
-    cron = "*/30 * * * *",
-    hadoop_cluster = "atla-proc3",
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [":mbcg"],
+    d-dependencies = [":mbcg"], (ˆ ﻌ ˆ)♡
 )

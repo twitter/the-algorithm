@@ -1,188 +1,188 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces
 
-import com.github.benmanes.caffeine.cache.Caffeine
-import com.google.inject.Inject
-import com.twitter.finagle.TimeoutException
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.adaptAdditionalFeaturesToDataRecord
-import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.randomizedTTL
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.featurestore.catalog.datasets.core.UsersourceEntityDataset
-import com.twitter.ml.featurestore.catalog.entities.core.{Author => AuthorEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{AuthorTopic => AuthorTopicEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{CandidateUser => CandidateUserEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{User => UserEntity}
-import com.twitter.ml.featurestore.lib.EdgeEntityId
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.TopicId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.data.PredictionRecordAdapter
-import com.twitter.ml.featurestore.lib.dataset.DatasetId
-import com.twitter.ml.featurestore.lib.dataset.online.Hydrator.HydrationResponse
-import com.twitter.ml.featurestore.lib.dataset.online.OnlineAccessDataset
-import com.twitter.ml.featurestore.lib.dynamic.ClientConfig
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.ml.featurestore.lib.dynamic.DynamicHydrationConfig
-import com.twitter.ml.featurestore.lib.dynamic.FeatureStoreParamsConfig
-import com.twitter.ml.featurestore.lib.dynamic.GatedFeatures
-import com.twitter.ml.featurestore.lib.feature.BoundFeature
-import com.twitter.ml.featurestore.lib.feature.BoundFeatureSet
-import com.twitter.ml.featurestore.lib.online.DatasetValuesCache
-import com.twitter.ml.featurestore.lib.online.FeatureStoreRequest
-import com.twitter.ml.featurestore.lib.online.OnlineFeatureGenerationStats
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import java.util.concurrent.TimeUnit
-import com.twitter.conversions.DurationOps._
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+impowt c-com.github.benmanes.caffeine.cache.caffeine
+impowt c-com.googwe.inject.inject
+impowt c-com.twittew.finagwe.timeoutexception
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.featuwesouwce
+impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.featuwesouwceid
+impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common.haspwefetchedfeatuwe
+i-impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces.utiws.adaptadditionawfeatuwestodatawecowd
+impowt com.twittew.fowwow_wecommendations.common.featuwe_hydwation.souwces.utiws.wandomizedttw
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.modews.hassimiwawtocontext
+i-impowt com.twittew.mw.api.datawecowd
+impowt com.twittew.mw.api.featuwecontext
+impowt com.twittew.mw.api.iwecowdonetooneadaptew
+impowt com.twittew.mw.featuwestowe.catawog.datasets.cowe.usewsouwceentitydataset
+i-impowt com.twittew.mw.featuwestowe.catawog.entities.cowe.{authow => authowentity}
+i-impowt com.twittew.mw.featuwestowe.catawog.entities.cowe.{authowtopic => a-authowtopicentity}
+impowt com.twittew.mw.featuwestowe.catawog.entities.cowe.{candidateusew => candidateusewentity}
+impowt com.twittew.mw.featuwestowe.catawog.entities.cowe.{usew => usewentity}
+impowt c-com.twittew.mw.featuwestowe.wib.edgeentityid
+impowt com.twittew.mw.featuwestowe.wib.entityid
+impowt com.twittew.mw.featuwestowe.wib.topicid
+impowt com.twittew.mw.featuwestowe.wib.usewid
+impowt com.twittew.mw.featuwestowe.wib.data.pwedictionwecowd
+i-impowt com.twittew.mw.featuwestowe.wib.data.pwedictionwecowdadaptew
+i-impowt com.twittew.mw.featuwestowe.wib.dataset.datasetid
+i-impowt c-com.twittew.mw.featuwestowe.wib.dataset.onwine.hydwatow.hydwationwesponse
+i-impowt com.twittew.mw.featuwestowe.wib.dataset.onwine.onwineaccessdataset
+impowt com.twittew.mw.featuwestowe.wib.dynamic.cwientconfig
+i-impowt com.twittew.mw.featuwestowe.wib.dynamic.dynamicfeatuwestowecwient
+impowt com.twittew.mw.featuwestowe.wib.dynamic.dynamichydwationconfig
+impowt c-com.twittew.mw.featuwestowe.wib.dynamic.featuwestowepawamsconfig
+impowt com.twittew.mw.featuwestowe.wib.dynamic.gatedfeatuwes
+impowt com.twittew.mw.featuwestowe.wib.featuwe.boundfeatuwe
+impowt com.twittew.mw.featuwestowe.wib.featuwe.boundfeatuweset
+impowt com.twittew.mw.featuwestowe.wib.onwine.datasetvawuescache
+impowt com.twittew.mw.featuwestowe.wib.onwine.featuwestowewequest
+i-impowt com.twittew.mw.featuwestowe.wib.onwine.onwinefeatuwegenewationstats
+impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.timewines.configapi.haspawams
+impowt java.utiw.concuwwent.timeunit
+impowt com.twittew.convewsions.duwationops._
+impowt com.twittew.fowwow_wecommendations.common.modews.hasdispwaywocation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
 
-class FeatureStoreGizmoduckSource @Inject() (
-  serviceIdentifier: ServiceIdentifier,
-  stats: StatsReceiver)
-    extends FeatureSource {
-  import FeatureStoreGizmoduckSource._
+cwass f-featuwestowegizmoducksouwce @inject() (
+  s-sewviceidentifiew: sewviceidentifiew,
+  s-stats: statsweceivew)
+    extends featuwesouwce {
+  i-impowt featuwestowegizmoducksouwce._
 
-  val backupSourceStats = stats.scope("feature_store_hydration_gizmoduck")
-  val adapterStats = backupSourceStats.scope("adapters")
-  override def id: FeatureSourceId = FeatureSourceId.FeatureStoreGizmoduckSourceId
-  override def featureContext: FeatureContext = getFeatureContext
+  vaw backupsouwcestats = s-stats.scope("featuwe_stowe_hydwation_gizmoduck")
+  vaw a-adaptewstats = backupsouwcestats.scope("adaptews")
+  o-ovewwide def i-id: featuwesouwceid = featuwesouwceid.featuwestowegizmoducksouwceid
+  ovewwide def featuwecontext: featuwecontext = getfeatuwecontext
 
-  val clientConfig: ClientConfig[HasParams] = ClientConfig(
-    dynamicHydrationConfig = dynamicHydrationConfig,
-    featureStoreParamsConfig =
-      FeatureStoreParamsConfig(FeatureStoreParameters.featureStoreParams, Map.empty),
+  vaw c-cwientconfig: cwientconfig[haspawams] = c-cwientconfig(
+    dynamichydwationconfig = d-dynamichydwationconfig, -.-
+    featuwestowepawamsconfig =
+      f-featuwestowepawamsconfig(featuwestowepawametews.featuwestowepawams, :3 m-map.empty), ʘwʘ
     /**
-     * The smaller one between `timeoutProvider` and `FeatureStoreSourceParams.GlobalFetchTimeout`
-     * used below takes effect.
+     * the smowew one between `timeoutpwovidew` and `featuwestowesouwcepawams.gwobawfetchtimeout`
+     * used bewow takes e-effect. 🥺
      */
-    timeoutProvider = Function.const(800.millis),
-    serviceIdentifier = serviceIdentifier
+    timeoutpwovidew = function.const(800.miwwis), >_<
+    sewviceidentifiew = sewviceidentifiew
   )
 
-  private val datasetsToCache = Set(
-    UsersourceEntityDataset
-  ).asInstanceOf[Set[OnlineAccessDataset[_ <: EntityId, _]]]
+  p-pwivate vaw datasetstocache = s-set(
+    usewsouwceentitydataset
+  ).asinstanceof[set[onwineaccessdataset[_ <: e-entityid, ʘwʘ _]]]
 
-  private val datasetValuesCache: DatasetValuesCache =
-    DatasetValuesCache(
-      Caffeine
-        .newBuilder()
-        .expireAfterWrite(randomizedTTL(12.hours.inSeconds), TimeUnit.SECONDS)
-        .maximumSize(DefaultCacheMaxKeys)
-        .build[(_ <: EntityId, DatasetId), Stitch[HydrationResponse[_]]]
-        .asMap,
-      datasetsToCache,
-      DatasetCacheScope
+  p-pwivate vaw datasetvawuescache: d-datasetvawuescache =
+    d-datasetvawuescache(
+      c-caffeine
+        .newbuiwdew()
+        .expiweaftewwwite(wandomizedttw(12.houws.inseconds), (˘ω˘) t-timeunit.seconds)
+        .maximumsize(defauwtcachemaxkeys)
+        .buiwd[(_ <: entityid, (✿oωo) datasetid), stitch[hydwationwesponse[_]]]
+        .asmap, (///ˬ///✿)
+      d-datasetstocache, rawr x3
+      d-datasetcachescope
     )
 
-  private val dynamicFeatureStoreClient = DynamicFeatureStoreClient(
-    clientConfig,
-    backupSourceStats,
-    Set(datasetValuesCache)
+  p-pwivate vaw dynamicfeatuwestowecwient = d-dynamicfeatuwestowecwient(
+    c-cwientconfig, -.-
+    backupsouwcestats, ^^
+    set(datasetvawuescache)
   )
 
-  private val adapter: IRecordOneToOneAdapter[PredictionRecord] =
-    PredictionRecordAdapter.oneToOne(
-      BoundFeatureSet(allFeatures),
-      OnlineFeatureGenerationStats(backupSourceStats)
+  pwivate vaw adaptew: i-iwecowdonetooneadaptew[pwedictionwecowd] =
+    pwedictionwecowdadaptew.onetoone(
+      boundfeatuweset(awwfeatuwes), (⑅˘꒳˘)
+      onwinefeatuwegenewationstats(backupsouwcestats)
     )
 
-  override def hydrateFeatures(
-    target: HasClientContext
-      with HasPreFetchedFeature
-      with HasParams
-      with HasSimilarToContext
-      with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    target.getOptionalUserId
-      .map { targetUserId =>
-        val featureRequests = candidates.map { candidate =>
-          val userEntityId = UserEntity.withId(UserId(targetUserId))
-          val candidateEntityId = CandidateUserEntity.withId(UserId(candidate.id))
-          val similarToUserId = target.similarToUserIds.map(id => AuthorEntity.withId(UserId(id)))
-          val topicProof = candidate.reason.flatMap(_.accountProof.flatMap(_.topicProof))
-          val authorTopicEntity = if (topicProof.isDefined) {
-            backupSourceStats.counter("candidates_with_topic_proof").incr()
-            Set(
-              AuthorTopicEntity.withId(
-                EdgeEntityId(UserId(candidate.id), TopicId(topicProof.get.topicId))))
-          } else Nil
+  ovewwide def hydwatefeatuwes(
+    tawget: h-hascwientcontext
+      with haspwefetchedfeatuwe
+      with haspawams
+      with h-hassimiwawtocontext
+      w-with h-hasdispwaywocation, nyaa~~
+    candidates: s-seq[candidateusew]
+  ): stitch[map[candidateusew, /(^•ω•^) d-datawecowd]] = {
+    t-tawget.getoptionawusewid
+      .map { tawgetusewid =>
+        vaw featuwewequests = candidates.map { candidate =>
+          vaw usewentityid = u-usewentity.withid(usewid(tawgetusewid))
+          vaw c-candidateentityid = candidateusewentity.withid(usewid(candidate.id))
+          v-vaw simiwawtousewid = t-tawget.simiwawtousewids.map(id => authowentity.withid(usewid(id)))
+          vaw topicpwoof = c-candidate.weason.fwatmap(_.accountpwoof.fwatmap(_.topicpwoof))
+          v-vaw authowtopicentity = i-if (topicpwoof.isdefined) {
+            b-backupsouwcestats.countew("candidates_with_topic_pwoof").incw()
+            set(
+              authowtopicentity.withid(
+                edgeentityid(usewid(candidate.id), (U ﹏ U) topicid(topicpwoof.get.topicid))))
+          } e-ewse nyiw
 
-          val entities =
-            Seq(userEntityId, candidateEntityId) ++ similarToUserId ++ authorTopicEntity
-          FeatureStoreRequest(entities)
+          v-vaw e-entities =
+            seq(usewentityid, 😳😳😳 c-candidateentityid) ++ s-simiwawtousewid ++ authowtopicentity
+          f-featuwestowewequest(entities)
         }
 
-        val predictionRecordsFut = dynamicFeatureStoreClient(featureRequests, target)
-        val candidateFeatureMap = predictionRecordsFut.map { predictionRecords =>
-          // we can zip predictionRecords with candidates as the order is preserved in the client
+        vaw pwedictionwecowdsfut = dynamicfeatuwestowecwient(featuwewequests, >w< tawget)
+        vaw candidatefeatuwemap = p-pwedictionwecowdsfut.map { p-pwedictionwecowds =>
+          // we can zip pwedictionwecowds w-with c-candidates as the owdew is pwesewved in the cwient
           candidates
-            .zip(predictionRecords).map {
-              case (candidate, predictionRecord) =>
-                candidate -> adaptAdditionalFeaturesToDataRecord(
-                  adapter.adaptToDataRecord(predictionRecord),
-                  adapterStats,
-                  FeatureStoreSource.featureAdapters)
-            }.toMap
+            .zip(pwedictionwecowds).map {
+              c-case (candidate, XD pwedictionwecowd) =>
+                candidate -> adaptadditionawfeatuwestodatawecowd(
+                  adaptew.adapttodatawecowd(pwedictionwecowd), o.O
+                  a-adaptewstats, mya
+                  featuwestowesouwce.featuweadaptews)
+            }.tomap
         }
-        Stitch
-          .callFuture(candidateFeatureMap)
-          .within(target.params(FeatureStoreSourceParams.GlobalFetchTimeout))(
-            com.twitter.finagle.util.DefaultTimer)
-          .rescue {
-            case _: TimeoutException =>
-              Stitch.value(Map.empty[CandidateUser, DataRecord])
+        stitch
+          .cawwfutuwe(candidatefeatuwemap)
+          .within(tawget.pawams(featuwestowesouwcepawams.gwobawfetchtimeout))(
+            c-com.twittew.finagwe.utiw.defauwttimew)
+          .wescue {
+            c-case _: timeoutexception =>
+              stitch.vawue(map.empty[candidateusew, 🥺 datawecowd])
           }
-      }.getOrElse(Stitch.value(Map.empty[CandidateUser, DataRecord]))
+      }.getowewse(stitch.vawue(map.empty[candidateusew, ^^;; datawecowd]))
   }
 }
 
-object FeatureStoreGizmoduckSource {
-  private val DatasetCacheScope = "feature_store_local_cache_gizmoduck"
-  private val DefaultCacheMaxKeys = 20000
+o-object f-featuwestowegizmoducksouwce {
+  pwivate vaw datasetcachescope = "featuwe_stowe_wocaw_cache_gizmoduck"
+  pwivate v-vaw defauwtcachemaxkeys = 20000
 
-  val allFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    FeatureStoreFeatures.candidateUserStatusFeatures ++
-      FeatureStoreFeatures.similarToUserStatusFeatures ++
-      FeatureStoreFeatures.targetUserStatusFeatures
+  vaw awwfeatuwes: s-set[boundfeatuwe[_ <: entityid, :3 _]] =
+    featuwestowefeatuwes.candidateusewstatusfeatuwes ++
+      featuwestowefeatuwes.simiwawtousewstatusfeatuwes ++
+      f-featuwestowefeatuwes.tawgetusewstatusfeatuwes
 
-  val getFeatureContext: FeatureContext =
-    BoundFeatureSet(allFeatures).toFeatureContext
+  vaw getfeatuwecontext: f-featuwecontext =
+    b-boundfeatuweset(awwfeatuwes).tofeatuwecontext
 
-  val dynamicHydrationConfig: DynamicHydrationConfig[HasParams] =
-    DynamicHydrationConfig(
-      Set(
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(FeatureStoreFeatures.targetUserStatusFeatures),
-          gate = HasParams
-            .paramGate(FeatureStoreSourceParams.EnableSeparateClientForGizmoduck) &
-            HasParams.paramGate(FeatureStoreSourceParams.EnableTargetUserFeatures)
-        ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(FeatureStoreFeatures.candidateUserStatusFeatures),
-          gate =
-            HasParams
-              .paramGate(FeatureStoreSourceParams.EnableSeparateClientForGizmoduck) &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableCandidateUserFeatures)
-        ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(FeatureStoreFeatures.similarToUserStatusFeatures),
-          gate =
-            HasParams
-              .paramGate(FeatureStoreSourceParams.EnableSeparateClientForGizmoduck) &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableSimilarToUserFeatures)
-        ),
+  vaw dynamichydwationconfig: d-dynamichydwationconfig[haspawams] =
+    dynamichydwationconfig(
+      s-set(
+        g-gatedfeatuwes(
+          b-boundfeatuweset = boundfeatuweset(featuwestowefeatuwes.tawgetusewstatusfeatuwes), (U ﹏ U)
+          g-gate = haspawams
+            .pawamgate(featuwestowesouwcepawams.enabwesepawatecwientfowgizmoduck) &
+            h-haspawams.pawamgate(featuwestowesouwcepawams.enabwetawgetusewfeatuwes)
+        ), OwO
+        gatedfeatuwes(
+          boundfeatuweset = b-boundfeatuweset(featuwestowefeatuwes.candidateusewstatusfeatuwes), 😳😳😳
+          g-gate =
+            h-haspawams
+              .pawamgate(featuwestowesouwcepawams.enabwesepawatecwientfowgizmoduck) &
+              haspawams.pawamgate(featuwestowesouwcepawams.enabwecandidateusewfeatuwes)
+        ), (ˆ ﻌ ˆ)♡
+        gatedfeatuwes(
+          b-boundfeatuweset = boundfeatuweset(featuwestowefeatuwes.simiwawtousewstatusfeatuwes), XD
+          g-gate =
+            h-haspawams
+              .pawamgate(featuwestowesouwcepawams.enabwesepawatecwientfowgizmoduck) &
+              haspawams.pawamgate(featuwestowesouwcepawams.enabwesimiwawtousewfeatuwes)
+        ), (ˆ ﻌ ˆ)♡
       ))
 
 }

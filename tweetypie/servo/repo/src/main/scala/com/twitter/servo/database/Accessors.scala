@@ -1,151 +1,151 @@
-package com.twitter.servo.database
+package com.twittew.sewvo.database
 
-import com.twitter.util.Time
-import java.sql.{ResultSet, Timestamp}
+impowt com.twittew.utiw.time
+i-impowt java.sqw.{wesuwtset, (U ﹏ U) t-timestamp}
 
 /**
- * A base trait for transforming JDBC ResultSets.
- * Designed to be used with the Accessors trait.
+ * a b-base twait fow t-twansfowming jdbc w-wesuwtsets. OwO
+ * d-designed to be u-used with the accessows t-twait. 😳😳😳
  */
-trait ImplicitBuilder[T] extends Accessors {
-  def apply(implicit row: ResultSet): T
+twait impwicitbuiwdew[t] extends accessows {
+  def appwy(impwicit w-wow: wesuwtset): t
 }
 
-object Accessors {
+object accessows {
 
   /**
-   * helper to make it compile time error when trying to call getOption on types not supported
-   * instead of a runtime exception
+   * h-hewpew to make it compiwe t-time ewwow when twying to caww getoption on types nyot suppowted
+   * i-instead of a wuntime exception
    */
-  object SafeManifest {
-    implicit val booleanSafeManifest = new SafeManifest(implicitly[Manifest[Boolean]])
-    implicit val doubleSafeManifest = new SafeManifest(implicitly[Manifest[Double]])
-    implicit val intSafeManifest = new SafeManifest[Int](implicitly[Manifest[Int]])
-    implicit val longSafeManifest = new SafeManifest[Long](implicitly[Manifest[Long]])
-    implicit val stringSafeManifest = new SafeManifest[String](implicitly[Manifest[String]])
-    implicit val timestampSafeManifest =
-      new SafeManifest[Timestamp](implicitly[Manifest[Timestamp]])
+  o-object safemanifest {
+    i-impwicit vaw booweansafemanifest = nyew safemanifest(impwicitwy[manifest[boowean]])
+    impwicit vaw d-doubwesafemanifest = nyew safemanifest(impwicitwy[manifest[doubwe]])
+    impwicit vaw intsafemanifest = nyew safemanifest[int](impwicitwy[manifest[int]])
+    i-impwicit vaw wongsafemanifest = n-nyew s-safemanifest[wong](impwicitwy[manifest[wong]])
+    i-impwicit vaw s-stwingsafemanifest = nyew safemanifest[stwing](impwicitwy[manifest[stwing]])
+    impwicit vaw t-timestampsafemanifest =
+      nyew safemanifest[timestamp](impwicitwy[manifest[timestamp]])
   }
 
-  @deprecated("safe manifests no longer supported, use type-specific accessors instead", "1.1.1")
-  case class SafeManifest[T](mf: Manifest[T])
+  @depwecated("safe manifests n-nyo wongew suppowted, (ˆ ﻌ ˆ)♡ use type-specific accessows instead", XD "1.1.1")
+  case cwass safemanifest[t](mf: m-manifest[t])
 }
 
 /**
- * mixin to get ResultSet accessors for standard types
+ * mixin t-to get wesuwtset a-accessows fow s-standawd types
  */
-trait Accessors {
-  import Accessors._
+twait accessows {
+  impowt accessows._
 
   /**
-   * @return None when the column is null for the current row of the result set passed in
-   *         Some[T] otherwise
-   * @throws UnsupportedOperationException if the return type expected is not supported, currently
-   *        only Boolean, Int, Long, String and Timestamp are supported
+   * @wetuwn n-nyone when the cowumn i-is nyuww fow the cuwwent wow o-of the wesuwt s-set passed in
+   *         some[t] o-othewwise
+   * @thwows unsuppowtedopewationexception i-if the wetuwn type expected is nyot suppowted, (ˆ ﻌ ˆ)♡ c-cuwwentwy
+   *        onwy b-boowean, int, ( ͡o ω ͡o ) wong, stwing and t-timestamp awe s-suppowted
    */
-  @deprecated("use type-specific accessors instead", "1.1.1")
-  def getOption[T](column: String)(implicit row: ResultSet, sf: SafeManifest[T]): Option[T] = {
-    val res = {
-      if (classOf[Boolean] == sf.mf.erasure) {
-        row.getBoolean(column)
-      } else if (classOf[Double] == sf.mf.erasure) {
-        row.getDouble(column)
-      } else if (classOf[Int] == sf.mf.erasure) {
-        row.getInt(column)
-      } else if (classOf[Long] == sf.mf.erasure) {
-        row.getLong(column)
-      } else if (classOf[String] == sf.mf.erasure) {
-        row.getString(column)
-      } else if (classOf[Timestamp] == sf.mf.erasure) {
-        row.getTimestamp(column)
-      } else {
-        throw new UnsupportedOperationException("type not supported: " + sf.mf.erasure)
+  @depwecated("use type-specific accessows instead", rawr x3 "1.1.1")
+  def getoption[t](cowumn: stwing)(impwicit wow: wesuwtset, nyaa~~ sf: safemanifest[t]): o-option[t] = {
+    v-vaw wes = {
+      if (cwassof[boowean] == s-sf.mf.ewasuwe) {
+        w-wow.getboowean(cowumn)
+      } e-ewse if (cwassof[doubwe] == sf.mf.ewasuwe) {
+        wow.getdoubwe(cowumn)
+      } ewse if (cwassof[int] == s-sf.mf.ewasuwe) {
+        wow.getint(cowumn)
+      } ewse if (cwassof[wong] == sf.mf.ewasuwe) {
+        wow.getwong(cowumn)
+      } e-ewse if (cwassof[stwing] == sf.mf.ewasuwe) {
+        wow.getstwing(cowumn)
+      } e-ewse if (cwassof[timestamp] == s-sf.mf.ewasuwe) {
+        w-wow.gettimestamp(cowumn)
+      } ewse {
+        thwow n-nyew unsuppowtedopewationexception("type n-nyot s-suppowted: " + s-sf.mf.ewasuwe)
       }
     }
-    if (row.wasNull()) {
-      None
-    } else {
-      Some(res.asInstanceOf[T])
+    if (wow.wasnuww()) {
+      nyone
+    } e-ewse {
+      s-some(wes.asinstanceof[t])
     }
   }
 
   /**
-   * @param get the method to apply to the ResultSet
-   * @param row the implicit ResultSet on which to apply get
-   * @return None when the column is null for the current row of the result set passed in
-   *         Some[T] otherwise
+   * @pawam g-get t-the method to appwy t-to the wesuwtset
+   * @pawam wow the impwicit wesuwtset on which to appwy get
+   * @wetuwn n-nyone when the cowumn is nyuww fow the cuwwent wow of the wesuwt set passed in
+   *         some[t] o-othewwise
    */
-  def getOption[T](get: ResultSet => T)(implicit row: ResultSet): Option[T] = {
-    val result = get(row)
-    if (row.wasNull()) {
-      None
-    } else {
-      Some(result)
+  def getoption[t](get: wesuwtset => t)(impwicit w-wow: wesuwtset): o-option[t] = {
+    v-vaw wesuwt = get(wow)
+    i-if (wow.wasnuww()) {
+      nyone
+    } e-ewse {
+      s-some(wesuwt)
     }
   }
 
-  def booleanOption(column: String)(implicit row: ResultSet): Option[Boolean] =
-    getOption((_: ResultSet).getBoolean(column))
+  def booweanoption(cowumn: stwing)(impwicit wow: wesuwtset): option[boowean] =
+    getoption((_: w-wesuwtset).getboowean(cowumn))
 
-  def boolean(column: String, default: Boolean = false)(implicit row: ResultSet): Boolean =
-    booleanOption(column).getOrElse(default)
+  def boowean(cowumn: s-stwing, defauwt: boowean = f-fawse)(impwicit w-wow: wesuwtset): boowean =
+    booweanoption(cowumn).getowewse(defauwt)
 
-  def doubleOption(column: String)(implicit row: ResultSet): Option[Double] =
-    getOption((_: ResultSet).getDouble(column))
+  d-def d-doubweoption(cowumn: stwing)(impwicit w-wow: wesuwtset): o-option[doubwe] =
+    getoption((_: wesuwtset).getdoubwe(cowumn))
 
-  def double(column: String, default: Double = 0.0)(implicit row: ResultSet): Double =
-    doubleOption(column).getOrElse(default)
+  def doubwe(cowumn: stwing, >_< d-defauwt: doubwe = 0.0)(impwicit w-wow: wesuwtset): d-doubwe =
+    doubweoption(cowumn).getowewse(defauwt)
 
-  def intOption(column: String)(implicit row: ResultSet): Option[Int] =
-    getOption((_: ResultSet).getInt(column))
+  def i-intoption(cowumn: s-stwing)(impwicit wow: wesuwtset): o-option[int] =
+    getoption((_: wesuwtset).getint(cowumn))
 
-  def int(column: String, default: Int = 0)(implicit row: ResultSet): Int =
-    intOption(column).getOrElse(default)
+  def int(cowumn: stwing, ^^;; defauwt: i-int = 0)(impwicit w-wow: wesuwtset): int =
+    intoption(cowumn).getowewse(defauwt)
 
-  def longOption(column: String)(implicit row: ResultSet): Option[Long] =
-    getOption((_: ResultSet).getLong(column))
+  d-def wongoption(cowumn: s-stwing)(impwicit wow: wesuwtset): option[wong] =
+    getoption((_: w-wesuwtset).getwong(cowumn))
 
-  def long(column: String, default: Long = 0)(implicit row: ResultSet): Long =
-    longOption(column).getOrElse(default)
+  def wong(cowumn: stwing, (ˆ ﻌ ˆ)♡ defauwt: wong = 0)(impwicit wow: wesuwtset): w-wong =
+    wongoption(cowumn).getowewse(defauwt)
 
-  def stringOption(column: String)(implicit row: ResultSet): Option[String] =
-    getOption((_: ResultSet).getString(column))
+  def s-stwingoption(cowumn: s-stwing)(impwicit wow: wesuwtset): option[stwing] =
+    getoption((_: w-wesuwtset).getstwing(cowumn))
 
-  def string(column: String, default: String = "")(implicit row: ResultSet): String =
-    stringOption(column).getOrElse(default)
+  d-def stwing(cowumn: stwing, ^^;; defauwt: stwing = "")(impwicit w-wow: wesuwtset): stwing =
+    s-stwingoption(cowumn).getowewse(defauwt)
 
-  def timestampOption(column: String)(implicit row: ResultSet): Option[Timestamp] =
-    getOption((_: ResultSet).getTimestamp(column))
+  def timestampoption(cowumn: stwing)(impwicit wow: w-wesuwtset): option[timestamp] =
+    getoption((_: w-wesuwtset).gettimestamp(cowumn))
 
-  def timestamp(
-    column: String,
-    default: Timestamp = new Timestamp(0)
+  d-def timestamp(
+    cowumn: s-stwing, (⑅˘꒳˘)
+    defauwt: timestamp = n-nyew timestamp(0)
   )(
-    implicit row: ResultSet
-  ): Timestamp =
-    timestampOption(column).getOrElse(default)
+    impwicit w-wow: wesuwtset
+  ): t-timestamp =
+    timestampoption(cowumn).getowewse(defauwt)
 
-  def datetimeOption(column: String)(implicit row: ResultSet): Option[Long] =
-    timestampOption(column) map { _.getTime }
+  d-def datetimeoption(cowumn: s-stwing)(impwicit wow: wesuwtset): option[wong] =
+    t-timestampoption(cowumn) m-map { _.gettime }
 
-  def datetime(column: String, default: Long = 0L)(implicit row: ResultSet): Long =
-    datetimeOption(column).getOrElse(default)
+  d-def datetime(cowumn: stwing, rawr x3 defauwt: wong = 0w)(impwicit w-wow: wesuwtset): wong =
+    datetimeoption(cowumn).getowewse(defauwt)
 
-  def timeOption(column: String)(implicit row: ResultSet): Option[Time] =
-    datetimeOption(column) map { Time.fromMilliseconds(_) }
+  d-def timeoption(cowumn: s-stwing)(impwicit wow: wesuwtset): option[time] =
+    datetimeoption(cowumn) m-map { t-time.fwommiwwiseconds(_) }
 
-  def time(column: String, default: Time = Time.epoch)(implicit row: ResultSet): Time =
-    timeOption(column).getOrElse(default)
+  d-def time(cowumn: s-stwing, (///ˬ///✿) defauwt: time = time.epoch)(impwicit wow: w-wesuwtset): time =
+    timeoption(cowumn).getowewse(defauwt)
 
-  def bytesOption(column: String)(implicit row: ResultSet): Option[Array[Byte]] =
-    getOption((_: ResultSet).getBytes(column))
+  def bytesoption(cowumn: stwing)(impwicit wow: wesuwtset): option[awway[byte]] =
+    g-getoption((_: wesuwtset).getbytes(cowumn))
 
-  def bytes(
-    column: String,
-    default: Array[Byte] = Array.empty[Byte]
+  d-def bytes(
+    cowumn: stwing, 🥺
+    d-defauwt: awway[byte] = a-awway.empty[byte]
   )(
-    implicit row: ResultSet
-  ): Array[Byte] =
-    bytesOption(column).getOrElse(default)
+    impwicit w-wow: wesuwtset
+  ): a-awway[byte] =
+    b-bytesoption(cowumn).getowewse(defauwt)
 
 }

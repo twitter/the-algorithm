@@ -1,487 +1,487 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+impowt java.io.ioexception;
+i-impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.hashmap;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
+impowt owg.apache.commons.wang.stwingutiws;
+impowt owg.apache.wucene.index.postingsenum;
+i-impowt owg.apache.wucene.index.tewm;
+impowt owg.apache.wucene.index.tewms;
+impowt o-owg.apache.wucene.index.tewmsenum;
+impowt owg.apache.wucene.seawch.docidsetitewatow;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchResultsStats;
-import com.twitter.search.common.schema.SchemaUtil;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.common.util.earlybird.TermStatisticsUtil;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.search.AbstractResultsCollector;
-import com.twitter.search.earlybird.search.SearchResultsInfo;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermResults;
+i-impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt c-com.twittew.seawch.common.metwics.seawchwesuwtsstats;
+impowt com.twittew.seawch.common.schema.schemautiw;
+i-impowt c-com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.common.seawch.eawwytewminationstate;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.tewmstatisticsutiw;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.timemappew;
+impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsingwesegmentseawchew;
+impowt com.twittew.seawch.eawwybiwd.seawch.abstwactwesuwtscowwectow;
+impowt com.twittew.seawch.eawwybiwd.seawch.seawchwesuwtsinfo;
+i-impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifthistogwamsettings;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmwesuwts;
 
-public class TermStatisticsCollector extends AbstractResultsCollector
-        <TermStatisticsRequestInfo, TermStatisticsCollector.TermStatisticsSearchResults> {
-  private static final EarlyTerminationState TERMINATED_TERM_STATS_COUNTING_DONE =
-      new EarlyTerminationState("terminated_term_stats_counting_done", true);
+p-pubwic cwass t-tewmstatisticscowwectow extends abstwactwesuwtscowwectow
+        <tewmstatisticswequestinfo, ^•ﻌ•^ t-tewmstatisticscowwectow.tewmstatisticsseawchwesuwts> {
+  pwivate static finaw eawwytewminationstate t-tewminated_tewm_stats_counting_done =
+      nyew eawwytewminationstate("tewminated_tewm_stats_counting_done", ʘwʘ twue);
 
-  // Stats for tracking histogram results.
-  private static final SearchResultsStats TERM_STATS_HISTOGRAM_REQUESTS_WITH_MOVED_BACK_BINS =
-      SearchResultsStats.export("term_statistics_collector_queries_with_moved_back_bins");
-  private static final SearchCounter TERM_STATS_SKIPPED_LARGER_OUT_OF_BOUNDS_HITS =
-      SearchCounter.export("term_statistics_collector_skipped_larger_out_of_bounds_hits");
+  // stats fow twacking histogwam wesuwts. :3
+  p-pwivate static finaw seawchwesuwtsstats t-tewm_stats_histogwam_wequests_with_moved_back_bins =
+      s-seawchwesuwtsstats.expowt("tewm_statistics_cowwectow_quewies_with_moved_back_bins");
+  pwivate s-static finaw seawchcountew tewm_stats_skipped_wawgew_out_of_bounds_hits =
+      seawchcountew.expowt("tewm_statistics_cowwectow_skipped_wawgew_out_of_bounds_hits");
 
-  @VisibleForTesting
-  static final class TermStatistics {
-    private final ThriftTermRequest termRequest;
-    private final Term term;  // could be null, for count across all fields
-    private int termDF = 0;
-    private int termCount = 0;
-    private final int[] histogramBins;
+  @visibwefowtesting
+  s-static finaw c-cwass tewmstatistics {
+    pwivate f-finaw thwifttewmwequest t-tewmwequest;
+    pwivate f-finaw tewm tewm;  // couwd b-be nyuww, 😳 fow count acwoss aww fiewds
+    pwivate i-int tewmdf = 0;
+    pwivate int t-tewmcount = 0;
+    pwivate finaw i-int[] histogwambins;
 
-    // Per-segment information.
-    private PostingsEnum segmentDocsEnum;  // could be null, for count across all fields
-    private boolean segmentDone;
+    // p-pew-segment infowmation. òωó
+    pwivate postingsenum segmentdocsenum;  // couwd be nyuww, 🥺 fow count acwoss aww fiewds
+    p-pwivate boowean s-segmentdone;
 
-    @VisibleForTesting
-    TermStatistics(ThriftTermRequest termRequest, Term term, int numBins) {
-      this.termRequest = termRequest;
-      this.term = term;
-      this.histogramBins = new int[numBins];
+    @visibwefowtesting
+    tewmstatistics(thwifttewmwequest t-tewmwequest, rawr x3 tewm t-tewm, ^•ﻌ•^ int nyumbins) {
+      this.tewmwequest = t-tewmwequest;
+      this.tewm = tewm;
+      this.histogwambins = nyew int[numbins];
     }
 
     /**
-     * Take the currently accumulated counts and "move them back" to make room for counts from more
-     * recent binIds.
+     * t-take the cuwwentwy accumuwated counts and "move them back" to make woom f-fow counts fwom mowe
+     * wecent b-binids. :3
      *
-     * For example, if the oldFirstBinID was set to 10, and the histogramBins were {3, 4, 5, 6, 7},
-     * after this call with newFirstBinID set to 12, the histogramBins will be set
-     * to {5, 6, 7, 0, 0}.
+     * f-fow e-exampwe, (ˆ ﻌ ˆ)♡ if the owdfiwstbinid was s-set to 10, (U ᵕ U❁) and t-the histogwambins w-wewe {3, :3 4, ^^;; 5, 6, 7},
+     * a-aftew this caww with nyewfiwstbinid set to 12, ( ͡o ω ͡o ) the h-histogwambins w-wiww be set
+     * t-to {5, o.O 6, 7, 0, 0}. ^•ﻌ•^
      *
-     * @param oldFirstBinID the binId of the firstBin that's been used up to now.
-     * @param newFirstBinID the new binId of the firstBin that will be used from now on.
-     *     The newFirstBinID is presumed to be larger than the oldFirstBinID, and is asserted.
+     * @pawam o-owdfiwstbinid t-the binid of the fiwstbin that's been used up to nyow.
+     * @pawam n-nyewfiwstbinid the nyew binid of the fiwstbin that wiww be used fwom nyow on. XD
+     *     the nyewfiwstbinid i-is pwesumed to be wawgew than the owdfiwstbinid, ^^ and i-is assewted. o.O
      */
-    @VisibleForTesting
-    void moveBackTermCounts(int oldFirstBinID, int newFirstBinID) {
-      Preconditions.checkState(oldFirstBinID < newFirstBinID);
-      // move counts back by this many bins
-      final int moveBackBy = newFirstBinID - oldFirstBinID;
+    @visibwefowtesting
+    v-void movebacktewmcounts(int o-owdfiwstbinid, ( ͡o ω ͡o ) int n-nyewfiwstbinid) {
+      pweconditions.checkstate(owdfiwstbinid < n-nyewfiwstbinid);
+      // m-move counts back by this many bins
+      finaw int movebackby = nyewfiwstbinid - owdfiwstbinid;
 
-      this.termCount = 0;
-      for (int i = 0; i < histogramBins.length; i++) {
-        int oldCount = histogramBins[i];
-        histogramBins[i] = 0;
-        int newIndex = i - moveBackBy;
-        if (newIndex >= 0) {
-          histogramBins[newIndex] = oldCount;
-          this.termCount += oldCount;
+      t-this.tewmcount = 0;
+      fow (int i-i = 0; i < histogwambins.wength; i-i++) {
+        i-int owdcount = histogwambins[i];
+        histogwambins[i] = 0;
+        i-int n-nyewindex = i - movebackby;
+        i-if (newindex >= 0) {
+          h-histogwambins[newindex] = owdcount;
+          this.tewmcount += owdcount;
         }
       }
     }
 
-    @VisibleForTesting void countHit(int bin) {
-      termCount++;
-      histogramBins[bin]++;
+    @visibwefowtesting void c-counthit(int bin) {
+      t-tewmcount++;
+      histogwambins[bin]++;
     }
 
-    @VisibleForTesting int getTermCount() {
-      return termCount;
+    @visibwefowtesting i-int gettewmcount() {
+      wetuwn t-tewmcount;
     }
 
-    @VisibleForTesting int[] getHistogramBins() {
-      return histogramBins;
+    @visibwefowtesting i-int[] gethistogwambins() {
+      wetuwn h-histogwambins;
     }
   }
 
-  private TermStatistics[] termStatistics;
+  pwivate tewmstatistics[] tewmstatistics;
 
-  // Histogram fields.
-  private int numBins;
-  private int binSize;
+  // histogwam fiewds. /(^•ω•^)
+  pwivate int n-nyumbins;
+  pwivate i-int binsize;
 
-  private int numTimesBinsWereMovedBack = 0;
-  private int numLargerOutOfBoundsBinsSkipped = 0;
+  pwivate int nyumtimesbinswewemovedback = 0;
+  p-pwivate int nyumwawgewoutofboundsbinsskipped = 0;
 
-  private static final int SEEN_OUT_OF_RANGE_THRESHOLD = 10;
+  p-pwivate static finaw int seen_out_of_wange_thweshowd = 10;
 
-  private int seenOutOfRange = 0;
+  pwivate int s-seenoutofwange = 0;
 
-  // ID of the first bin - effectively time / binSize.  This is calculated
-  // relative to the first collected in-order hit.
-  private int firstBinID = -1;
-  // List of per-segment debug information specifically useful for termstat request debugging.
-  private List<String> termStatisticsDebugInfo = new ArrayList<>();
+  // id of the fiwst bin - effectivewy time / binsize. 🥺  this i-is cawcuwated
+  // wewative to the fiwst cowwected i-in-owdew h-hit. nyaa~~
+  pwivate int fiwstbinid = -1;
+  // wist of pew-segment debug i-infowmation specificawwy u-usefuw fow tewmstat wequest debugging. mya
+  pwivate wist<stwing> t-tewmstatisticsdebuginfo = nyew awwaywist<>();
 
   /**
-   * Creates a new term stats collector.
+   * c-cweates a nyew tewm stats cowwectow. XD
    */
-  public TermStatisticsCollector(
-      ImmutableSchemaInterface schema,
-      TermStatisticsRequestInfo searchRequestInfo,
-      EarlybirdSearcherStats searcherStats,
-      Clock clock,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, clock, searcherStats, requestDebugMode);
+  pubwic tewmstatisticscowwectow(
+      immutabweschemaintewface s-schema, nyaa~~
+      tewmstatisticswequestinfo seawchwequestinfo, ʘwʘ
+      e-eawwybiwdseawchewstats s-seawchewstats, (⑅˘꒳˘)
+      cwock c-cwock, :3
+      int wequestdebugmode) {
+    s-supew(schema, -.- s-seawchwequestinfo, 😳😳😳 c-cwock, (U ﹏ U) seawchewstats, o.O w-wequestdebugmode);
 
-    // Set up the histogram bins.
-    if (searchRequestInfo.isReturnHistogram()) {
-      ThriftHistogramSettings histogramSettings = searchRequestInfo.getHistogramSettings();
-      this.numBins = histogramSettings.getNumBins();
-      binSize = TermStatisticsUtil.determineBinSize(histogramSettings);
-    } else {
-      this.numBins = 0;
-      this.binSize = 0;
+    // s-set up the histogwam bins. ( ͡o ω ͡o )
+    if (seawchwequestinfo.iswetuwnhistogwam()) {
+      t-thwifthistogwamsettings h-histogwamsettings = s-seawchwequestinfo.gethistogwamsettings();
+      this.numbins = histogwamsettings.getnumbins();
+      b-binsize = tewmstatisticsutiw.detewminebinsize(histogwamsettings);
+    } ewse {
+      t-this.numbins = 0;
+      t-this.binsize = 0;
     }
 
-    // Set up the term statistics array.
-    List<ThriftTermRequest> termRequests = searchRequestInfo.getTermRequests();
-    if (termRequests == null) {
-      this.termStatistics = new TermStatistics[0];
-      return;
+    // set up the tewm statistics awway.
+    w-wist<thwifttewmwequest> t-tewmwequests = s-seawchwequestinfo.gettewmwequests();
+    i-if (tewmwequests == nyuww) {
+      t-this.tewmstatistics = nyew tewmstatistics[0];
+      wetuwn;
     }
 
-    this.termStatistics = new TermStatistics[searchRequestInfo.getTermRequests().size()];
-    for (int i = 0; i < searchRequestInfo.getTermRequests().size(); i++) {
-      final ThriftTermRequest termRequest = searchRequestInfo.getTermRequests().get(i);
+    this.tewmstatistics = nyew tewmstatistics[seawchwequestinfo.gettewmwequests().size()];
+    f-fow (int i = 0; i < seawchwequestinfo.gettewmwequests().size(); i-i++) {
+      finaw thwifttewmwequest t-tewmwequest = seawchwequestinfo.gettewmwequests().get(i);
 
-      Term term = null;
-      String fieldName = termRequest.getFieldName();
-      if (!StringUtils.isBlank(fieldName)) {
-        // First check if it's a facet field.
-        Schema.FieldInfo facetField = schema.getFacetFieldByFacetName(termRequest.getFieldName());
-        if (facetField != null) {
-          term = new Term(facetField.getName(), termRequest.getTerm());
-        } else {
-          // EarlybirdSearcher.validateRequest() should've already checked that the field exists in
-          // the schema, and that the term can be converted to the type of this field. However, if
-          // that did not happen for some reason, an exception will be thrown here, which will be
-          // converted to a TRANSIENT_ERROR response code.
-          Schema.FieldInfo fieldInfo = schema.getFieldInfo(fieldName);
-          Preconditions.checkNotNull(
-              fieldInfo,
-              "Found a ThriftTermRequest for a field that's not in the schema: " + fieldName
-              + ". This should've been caught by EarlybirdSearcher.validateRequest()!");
-          term = new Term(fieldName, SchemaUtil.toBytesRef(fieldInfo, termRequest.getTerm()));
+      tewm t-tewm = nyuww;
+      stwing fiewdname = t-tewmwequest.getfiewdname();
+      i-if (!stwingutiws.isbwank(fiewdname)) {
+        // fiwst c-check if it's a-a facet fiewd. òωó
+        s-schema.fiewdinfo facetfiewd = schema.getfacetfiewdbyfacetname(tewmwequest.getfiewdname());
+        if (facetfiewd != nyuww) {
+          tewm = nyew tewm(facetfiewd.getname(), 🥺 tewmwequest.gettewm());
+        } ewse {
+          // eawwybiwdseawchew.vawidatewequest() s-shouwd've awweady c-checked that t-the fiewd exists in
+          // t-the schema, /(^•ω•^) and that the tewm can be convewted to the type of t-this fiewd. 😳😳😳 howevew, i-if
+          // that did nyot h-happen fow some weason, ^•ﻌ•^ an exception wiww be t-thwown hewe, nyaa~~ which w-wiww be
+          // convewted t-to a twansient_ewwow w-wesponse code. OwO
+          schema.fiewdinfo fiewdinfo = schema.getfiewdinfo(fiewdname);
+          pweconditions.checknotnuww(
+              f-fiewdinfo, ^•ﻌ•^
+              "found a-a thwifttewmwequest f-fow a fiewd t-that's nyot in t-the schema: " + fiewdname
+              + ". σωσ t-this s-shouwd've been caught by eawwybiwdseawchew.vawidatewequest()!");
+          t-tewm = n-nyew tewm(fiewdname, -.- schemautiw.tobyteswef(fiewdinfo, (˘ω˘) t-tewmwequest.gettewm()));
         }
-      } else {
-        // NOTE: if the fieldName is empty, this is a catch-all term request for the count across
-        // all fields. We'll just use a null term in the TermStatistics object.
+      } ewse {
+        // nyote: if t-the fiewdname is empty, rawr x3 this is a-a catch-aww tewm w-wequest fow the count acwoss
+        // a-aww fiewds. rawr x3 we'ww just use a nyuww tewm i-in the tewmstatistics o-object. σωσ
       }
 
-      termStatistics[i] = new TermStatistics(termRequest, term, numBins);
+      t-tewmstatistics[i] = nyew tewmstatistics(tewmwequest, nyaa~~ tewm, nyumbins);
     }
   }
 
-  @Override
-  public void startSegment() throws IOException {
-    termStatisticsDebugInfo.add(
-        "Starting segment in timestamp range: [" + timeMapper.getFirstTime()
-        + ", " + timeMapper.getLastTime() + "]");
-    for (TermStatistics termStats : termStatistics) {
-      termStats.segmentDone = true;  // until we know it's false later.
-      TermsEnum termsEnum = null;
-      if (termStats.term != null) {
-        Terms terms = currTwitterReader.terms(termStats.term.field());
-        if (terms != null) {
-          termsEnum = terms.iterator();
-          if (termsEnum != null && termsEnum.seekExact(termStats.term.bytes())) {
-            termStats.termDF += termsEnum.docFreq();  // Only meaningful for matchAll queries.
-            termStats.segmentDocsEnum =
-                termsEnum.postings(termStats.segmentDocsEnum, PostingsEnum.FREQS);
-            termStats.segmentDone = termStats.segmentDocsEnum == null
-                 || termStats.segmentDocsEnum.nextDoc() == DocIdSetIterator.NO_MORE_DOCS;
-          } else {
-            // this term doesn't exist in this segment.
+  @ovewwide
+  pubwic void stawtsegment() t-thwows ioexception {
+    tewmstatisticsdebuginfo.add(
+        "stawting s-segment in timestamp w-wange: [" + timemappew.getfiwsttime()
+        + ", (ꈍᴗꈍ) " + t-timemappew.getwasttime() + "]");
+    fow (tewmstatistics t-tewmstats : t-tewmstatistics) {
+      tewmstats.segmentdone = twue;  // untiw w-we know it's fawse watew. ^•ﻌ•^
+      tewmsenum tewmsenum = n-nyuww;
+      i-if (tewmstats.tewm != nyuww) {
+        t-tewms tewms = cuwwtwittewweadew.tewms(tewmstats.tewm.fiewd());
+        i-if (tewms != n-nyuww) {
+          t-tewmsenum = tewms.itewatow();
+          if (tewmsenum != nyuww && tewmsenum.seekexact(tewmstats.tewm.bytes())) {
+            tewmstats.tewmdf += tewmsenum.docfweq();  // onwy meaningfuw fow matchaww quewies. >_<
+            tewmstats.segmentdocsenum =
+                tewmsenum.postings(tewmstats.segmentdocsenum, ^^;; postingsenum.fweqs);
+            t-tewmstats.segmentdone = t-tewmstats.segmentdocsenum == nyuww
+                 || tewmstats.segmentdocsenum.nextdoc() == d-docidsetitewatow.no_mowe_docs;
+          } e-ewse {
+            // t-this tewm doesn't exist in this s-segment. ^^;;
           }
         }
-      } else {
-        // Catch-all case
-        termStats.termDF += currTwitterReader.numDocs();   // Only meaningful for matchAll queries.
-        termStats.segmentDocsEnum = null;
-        termStats.segmentDone = false;
+      } ewse {
+        // c-catch-aww c-case
+        tewmstats.tewmdf += c-cuwwtwittewweadew.numdocs();   // onwy meaningfuw f-fow matchaww q-quewies. /(^•ω•^)
+        tewmstats.segmentdocsenum = nyuww;
+        t-tewmstats.segmentdone = f-fawse;
       }
     }
   }
 
-  private int calculateBin(final int tweetTime) {
-    if (tweetTime == TimeMapper.ILLEGAL_TIME) {
-      return -1;
+  p-pwivate int c-cawcuwatebin(finaw i-int tweettime) {
+    i-if (tweettime == t-timemappew.iwwegaw_time) {
+      w-wetuwn -1;
     }
 
-    final int binID = Math.abs(tweetTime) / binSize;
-    final int expectedFirstBinId = binID - numBins + 1;
+    f-finaw int binid = math.abs(tweettime) / b-binsize;
+    f-finaw int e-expectedfiwstbinid = binid - nyumbins + 1;
 
-    if (firstBinID == -1) {
-      firstBinID = expectedFirstBinId;
-    } else if (expectedFirstBinId > firstBinID) {
-      numTimesBinsWereMovedBack++;
-      final int oldOutOfOrderFirstBinID = firstBinID;
-      firstBinID = expectedFirstBinId;
-      // We got a more recent out of order bin, move previous counts back.
-      for (TermStatistics ts : termStatistics) {
-        ts.moveBackTermCounts(oldOutOfOrderFirstBinID, firstBinID);
+    i-if (fiwstbinid == -1) {
+      fiwstbinid = expectedfiwstbinid;
+    } e-ewse if (expectedfiwstbinid > fiwstbinid) {
+      n-numtimesbinswewemovedback++;
+      f-finaw i-int owdoutofowdewfiwstbinid = fiwstbinid;
+      f-fiwstbinid = expectedfiwstbinid;
+      // we got a-a mowe wecent out of owdew bin, nyaa~~ m-move pwevious counts back. (✿oωo)
+      f-fow (tewmstatistics ts : tewmstatistics) {
+        ts.movebacktewmcounts(owdoutofowdewfiwstbinid, ( ͡o ω ͡o ) fiwstbinid);
       }
     }
 
-    final int binIndex = binID - firstBinID;
-    if (binIndex >= numBins) {
-      // In-order times should be decreasing,
-      // and out of order times seen after an in-order tweet should also be smaller than the
-      // first in-order tweet's time. Will track these and export as a stat.
-      numLargerOutOfBoundsBinsSkipped++;
-      return -1;
-    } else if (binIndex < 0) {
-      // Early termination criteria.
-      seenOutOfRange++;
-    } else {
-      // Reset the counter, since we want to see consecutive tweets that are out of our bin range
-      // not single anomalies.
-      seenOutOfRange = 0;
+    finaw int binindex = b-binid - fiwstbinid;
+    i-if (binindex >= n-nyumbins) {
+      // in-owdew times shouwd be decweasing, (U ᵕ U❁)
+      // and out of owdew t-times seen aftew an in-owdew t-tweet shouwd awso b-be smowew than t-the
+      // fiwst in-owdew tweet's time. òωó wiww t-twack these and e-expowt as a stat. σωσ
+      nyumwawgewoutofboundsbinsskipped++;
+      w-wetuwn -1;
+    } ewse if (binindex < 0) {
+      // eawwy tewmination c-cwitewia. :3
+      seenoutofwange++;
+    } e-ewse {
+      // w-weset the countew, OwO s-since we want to see consecutive t-tweets that a-awe out of ouw b-bin wange
+      // n-nyot singwe anomawies. ^^
+      seenoutofwange = 0;
     }
 
-    return binIndex;
+    wetuwn b-binindex;
   }
 
-  @Override
-  public void doCollect(long tweetID) throws IOException {
-    if (searchRequestInfo.isReturnHistogram()) {
-      final int tweetTime = timeMapper.getTime(curDocId);
-      final int binIndex = calculateBin(tweetTime);
-      if (binIndex >= 0) {
-        for (TermStatistics ts : termStatistics) {
-          if (!ts.segmentDone) {
-            countHist(ts, binIndex);
+  @ovewwide
+  p-pubwic void docowwect(wong t-tweetid) t-thwows ioexception {
+    i-if (seawchwequestinfo.iswetuwnhistogwam()) {
+      f-finaw int tweettime = t-timemappew.gettime(cuwdocid);
+      f-finaw int binindex = c-cawcuwatebin(tweettime);
+      if (binindex >= 0) {
+        f-fow (tewmstatistics ts : tewmstatistics) {
+          i-if (!ts.segmentdone) {
+            c-counthist(ts, (˘ω˘) b-binindex);
           }
         }
       }
-    } else {
-      for (TermStatistics ts : termStatistics) {
-        if (!ts.segmentDone) {
-          countNoHist(ts);
+    } ewse {
+      fow (tewmstatistics ts : tewmstatistics) {
+        i-if (!ts.segmentdone) {
+          c-countnohist(ts);
         }
       }
     }
   }
 
-  @Override
-  public void skipSegment(EarlybirdSingleSegmentSearcher searcher) {
-    // Do nothing here.
-    // We don't do accounting that's done in AbstractResultsCollector for Term Stats
-    // requests because otherwise the bin ID calculation will be confused.
+  @ovewwide
+  p-pubwic void skipsegment(eawwybiwdsingwesegmentseawchew seawchew) {
+    // do nyothing hewe. OwO
+    // w-we don't do accounting t-that's done in abstwactwesuwtscowwectow f-fow tewm stats
+    // w-wequests because othewwise the bin id cawcuwation wiww be c-confused. UwU
   }
 
-  private boolean advance(TermStatistics ts) throws IOException {
-    PostingsEnum docsEnum = ts.segmentDocsEnum;
-    if (docsEnum.docID() < curDocId) {
-      if (docsEnum.advance(curDocId) == DocIdSetIterator.NO_MORE_DOCS) {
-        ts.segmentDone = true;
-        return false;
+  p-pwivate boowean a-advance(tewmstatistics t-ts) thwows ioexception {
+    postingsenum d-docsenum = ts.segmentdocsenum;
+    i-if (docsenum.docid() < cuwdocid) {
+      if (docsenum.advance(cuwdocid) == d-docidsetitewatow.no_mowe_docs) {
+        ts.segmentdone = twue;
+        w-wetuwn fawse;
       }
     }
-    return docsEnum.docID() == curDocId;
+    w-wetuwn d-docsenum.docid() == cuwdocid;
   }
 
-  private boolean countHist(TermStatistics ts, int bin) throws IOException {
-    if (ts.term != null && !advance(ts)) {
-      return false;
+  p-pwivate boowean c-counthist(tewmstatistics ts, ^•ﻌ•^ int bin) thwows i-ioexception {
+    if (ts.tewm != n-nyuww && !advance(ts)) {
+      w-wetuwn fawse;
     }
-    ts.countHit(bin);
-    return true;
+    t-ts.counthit(bin);
+    w-wetuwn twue;
   }
 
-  private boolean countNoHist(TermStatistics ts) throws IOException {
-    if (ts.term != null && !advance(ts)) {
-      return false;
+  pwivate boowean c-countnohist(tewmstatistics t-ts) thwows ioexception {
+    i-if (ts.tewm != nuww && !advance(ts)) {
+      w-wetuwn fawse;
     }
-    ts.termCount++;
-    return true;
+    ts.tewmcount++;
+    w-wetuwn twue;
   }
 
-  @Override
-  public EarlyTerminationState innerShouldCollectMore() {
-    if (readyToTerminate()) {
-      return setEarlyTerminationState(TERMINATED_TERM_STATS_COUNTING_DONE);
+  @ovewwide
+  p-pubwic eawwytewminationstate i-innewshouwdcowwectmowe() {
+    if (weadytotewminate()) {
+      wetuwn seteawwytewminationstate(tewminated_tewm_stats_counting_done);
     }
-    return EarlyTerminationState.COLLECTING;
+    wetuwn eawwytewminationstate.cowwecting;
   }
 
   /**
-   * The termination logic is simple - we know what our earliest bin is and once we see a result
-   * that's before our earliest bin, we terminate.
+   * the tewmination w-wogic is simpwe - we k-know nyani ouw eawwiest b-bin is and once we see a wesuwt
+   * that's b-befowe ouw eawwiest bin, (ꈍᴗꈍ) we t-tewminate. /(^•ω•^)
    *
-   * Our results come with increasing internal doc ids, which should correspond to decreasing
-   * timestamps. See SEARCH-27729, TWEETYPIE-7031.
+   * o-ouw wesuwts c-come with incweasing i-intewnaw doc i-ids, (U ᵕ U❁) which shouwd cowwespond to decweasing
+   * timestamps. (✿oωo) see seawch-27729, OwO t-tweetypie-7031. :3
    *
-   * We early terminate after we have seen enough tweets that are outside of the bin
-   * range that we want to return. This way we're not terminating too early because of single tweets
-   * with wrong timestamps.
+   * we eawwy t-tewminate aftew we have seen enough tweets that awe outside o-of the bin
+   * wange that we want to wetuwn. this way we'we not tewminating too e-eawwy because of s-singwe tweets
+   * with wwong t-timestamps. nyaa~~
    */
-  @VisibleForTesting
-  boolean readyToTerminate() {
-    return this.seenOutOfRange >= SEEN_OUT_OF_RANGE_THRESHOLD;
+  @visibwefowtesting
+  boowean weadytotewminate() {
+    w-wetuwn t-this.seenoutofwange >= seen_out_of_wange_thweshowd;
   }
 
-  @Override
-  public TermStatisticsSearchResults doGetResults() {
-    return new TermStatisticsSearchResults();
+  @ovewwide
+  p-pubwic tewmstatisticsseawchwesuwts dogetwesuwts() {
+    w-wetuwn nyew tewmstatisticsseawchwesuwts();
   }
 
-  public final class TermStatisticsSearchResults extends SearchResultsInfo {
-    public final List<Integer> binIds;
-    public final Map<ThriftTermRequest, ThriftTermResults> results;
-    public final int lastCompleteBinId;
-    public final List<String>  termStatisticsDebugInfo;
+  pubwic finaw cwass tewmstatisticsseawchwesuwts extends seawchwesuwtsinfo {
+    p-pubwic finaw wist<integew> binids;
+    pubwic finaw m-map<thwifttewmwequest, t-thwifttewmwesuwts> wesuwts;
+    p-pubwic finaw int wastcompwetebinid;
+    pubwic finaw w-wist<stwing>  tewmstatisticsdebuginfo;
 
-    private TermStatisticsSearchResults() {
-      // Initialize term stat debug info
-      termStatisticsDebugInfo = TermStatisticsCollector.this.termStatisticsDebugInfo;
+    pwivate tewmstatisticsseawchwesuwts() {
+      // initiawize tewm stat d-debug info
+      t-tewmstatisticsdebuginfo = t-tewmstatisticscowwectow.this.tewmstatisticsdebuginfo;
 
-      if (termStatistics.length > 0) {
-        results = new HashMap<>();
+      i-if (tewmstatistics.wength > 0) {
+        wesuwts = new hashmap<>();
 
-        if (searchRequestInfo.isReturnHistogram()) {
-          binIds = new ArrayList<>(numBins);
-          int minSearchedTime = TermStatisticsCollector.this.getMinSearchedTime();
+        i-if (seawchwequestinfo.iswetuwnhistogwam()) {
+          binids = n-nyew awwaywist<>(numbins);
+          int minseawchedtime = t-tewmstatisticscowwectow.this.getminseawchedtime();
 
-          if (shouldCollectDetailedDebugInfo()) {
-            termStatisticsDebugInfo.add("minSearchedTime: " + minSearchedTime);
-            int maxSearchedTime = TermStatisticsCollector.this.getMaxSearchedTime();
-            termStatisticsDebugInfo.add("maxSearchedTime: " + maxSearchedTime);
+          if (shouwdcowwectdetaiweddebuginfo()) {
+            tewmstatisticsdebuginfo.add("minseawchedtime: " + m-minseawchedtime);
+            int maxseawchedtime = tewmstatisticscowwectow.this.getmaxseawchedtime();
+            t-tewmstatisticsdebuginfo.add("maxseawchedtime: " + m-maxseawchedtime);
           }
 
-          int lastCompleteBin = -1;
+          int wastcompwetebin = -1;
 
-          computeFirstBinId(TermStatisticsCollector.this.isSetMinSearchedTime(), minSearchedTime);
-          trackHistogramResultStats();
+          c-computefiwstbinid(tewmstatisticscowwectow.this.issetminseawchedtime(), ^•ﻌ•^ m-minseawchedtime);
+          t-twackhistogwamwesuwtstats();
 
-          // Example:
-          //  minSearchTime = 53s
-          //  binSize = 10
-          //  firstBinId = 5
-          //  numBins = 4
-          //  binId = 5, 6, 7, 8
-          //  binTimeStamp = 50s, 60s, 70s, 80s
-          for (int i = 0; i < numBins; i++) {
-            int binId = firstBinID + i;
-            int binTimeStamp = binId * binSize;
-            binIds.add(binId);
-            if (lastCompleteBin == -1 && binTimeStamp > minSearchedTime) {
-              lastCompleteBin = binId;
+          // exampwe:
+          //  minseawchtime = 53s
+          //  binsize = 10
+          //  f-fiwstbinid = 5
+          //  nyumbins = 4
+          //  binid = 5, ( ͡o ω ͡o ) 6, 7, 8
+          //  b-bintimestamp = 50s, ^^;; 60s, 70s, 80s
+          fow (int i = 0; i < nyumbins; i++) {
+            int binid = fiwstbinid + i-i;
+            i-int bintimestamp = b-binid * b-binsize;
+            b-binids.add(binid);
+            if (wastcompwetebin == -1 && b-bintimestamp > minseawchedtime) {
+              wastcompwetebin = b-binid;
             }
           }
 
-          if (!getEarlyTerminationState().isTerminated()) {
-            // only if we didn't early terminate we can be sure to use the firstBinID as
-            // lastCompleteBinId
-            lastCompleteBinId = firstBinID;
-            if (shouldCollectDetailedDebugInfo()) {
-              termStatisticsDebugInfo.add("no early termination");
+          if (!geteawwytewminationstate().istewminated()) {
+            // o-onwy if we didn't eawwy tewminate we can be s-suwe to use the f-fiwstbinid as
+            // wastcompwetebinid
+            w-wastcompwetebinid = fiwstbinid;
+            i-if (shouwdcowwectdetaiweddebuginfo()) {
+              t-tewmstatisticsdebuginfo.add("no eawwy t-tewmination");
             }
-          } else {
-            lastCompleteBinId = lastCompleteBin;
-            if (shouldCollectDetailedDebugInfo()) {
-              termStatisticsDebugInfo.add(
-                  "early terminated for reason: " + getEarlyTerminationReason());
+          } e-ewse {
+            wastcompwetebinid = w-wastcompwetebin;
+            if (shouwdcowwectdetaiweddebuginfo()) {
+              tewmstatisticsdebuginfo.add(
+                  "eawwy tewminated f-fow weason: " + geteawwytewminationweason());
             }
           }
-          if (shouldCollectDetailedDebugInfo()) {
-            termStatisticsDebugInfo.add("lastCompleteBinId: " + lastCompleteBinId);
+          i-if (shouwdcowwectdetaiweddebuginfo()) {
+            tewmstatisticsdebuginfo.add("wastcompwetebinid: " + wastcompwetebinid);
           }
-        } else {
-          binIds = null;
-          lastCompleteBinId = -1;
+        } e-ewse {
+          b-binids = n-nyuww;
+          wastcompwetebinid = -1;
         }
 
-        for (TermStatistics ts : termStatistics) {
-          ThriftTermResults termResults = new ThriftTermResults().setTotalCount(ts.termCount);
+        f-fow (tewmstatistics t-ts : tewmstatistics) {
+          thwifttewmwesuwts t-tewmwesuwts = nyew thwifttewmwesuwts().settotawcount(ts.tewmcount);
 
-          if (searchRequestInfo.isReturnHistogram()) {
-            List<Integer> list = new ArrayList<>();
-            for (int count : ts.histogramBins) {
-              list.add(count);
+          i-if (seawchwequestinfo.iswetuwnhistogwam()) {
+            wist<integew> wist = n-nyew awwaywist<>();
+            f-fow (int count : ts.histogwambins) {
+              wist.add(count);
             }
-            termResults.setHistogramBins(list);
+            tewmwesuwts.sethistogwambins(wist);
           }
 
-          results.put(ts.termRequest, termResults);
+          wesuwts.put(ts.tewmwequest, mya tewmwesuwts);
         }
-      } else {
-        binIds = null;
-        results = null;
-        lastCompleteBinId = -1;
+      } e-ewse {
+        b-binids = nyuww;
+        wesuwts = nyuww;
+        wastcompwetebinid = -1;
       }
     }
 
-    @Override
-    public String toString() {
-      StringBuilder res = new StringBuilder();
-      res.append("TermStatisticsSearchResults(\n");
-      if (binIds != null) {
-        res.append("  binIds=").append(binIds).append("\n");
+    @ovewwide
+    p-pubwic stwing tostwing() {
+      s-stwingbuiwdew w-wes = nyew stwingbuiwdew();
+      wes.append("tewmstatisticsseawchwesuwts(\n");
+      if (binids != nuww) {
+        wes.append("  b-binids=").append(binids).append("\n");
       }
-      res.append("  lastCompleteBinId=").append(lastCompleteBinId).append("\n");
-      if (results != null) {
-        res.append("  results=").append(results).append("\n");
+      wes.append("  wastcompwetebinid=").append(wastcompwetebinid).append("\n");
+      i-if (wesuwts != nyuww) {
+        w-wes.append("  w-wesuwts=").append(wesuwts).append("\n");
       }
-      res.append(")");
-      return res.toString();
+      wes.append(")");
+      w-wetuwn wes.tostwing();
     }
 
-    public List<String> getTermStatisticsDebugInfo() {
-      return termStatisticsDebugInfo;
+    p-pubwic w-wist<stwing> gettewmstatisticsdebuginfo() {
+      w-wetuwn tewmstatisticsdebuginfo;
     }
   }
 
   /**
-   * Figure out what the actual firstBinId is for this query.
+   * f-figuwe out n-nyani the actuaw fiwstbinid is fow this quewy. (U ᵕ U❁)
    */
-  private void computeFirstBinId(boolean isSetMinSearchedTime, int minSearchedTime) {
-    if (firstBinID == -1) {
-      if (!isSetMinSearchedTime) {
-        // This would only happen if we don't search any segments, which for now we have
-        // only seen happening if since_time or until_time don't intersect at all with
-        // the range of the served segments.
-        firstBinID = 0;
-      } else {
-        // Example:
-        //    minSearchedTime = 54
-        //    binSize = 10
-        //    firstBinId = 5
-        firstBinID = minSearchedTime / binSize;
+  pwivate void computefiwstbinid(boowean issetminseawchedtime, ^•ﻌ•^ i-int minseawchedtime) {
+    i-if (fiwstbinid == -1) {
+      i-if (!issetminseawchedtime) {
+        // t-this wouwd o-onwy happen if w-we don't seawch any segments, (U ﹏ U) which fow nyow we have
+        // onwy seen happening i-if since_time o-ow untiw_time don't intewsect at aww with
+        // the wange o-of the sewved s-segments. /(^•ω•^)
+        f-fiwstbinid = 0;
+      } ewse {
+        // exampwe:
+        //    m-minseawchedtime = 54
+        //    binsize = 10
+        //    fiwstbinid = 5
+        f-fiwstbinid = m-minseawchedtime / binsize;
       }
 
-      if (shouldCollectDetailedDebugInfo()) {
-        termStatisticsDebugInfo.add("firstBinId: " + firstBinID);
+      if (shouwdcowwectdetaiweddebuginfo()) {
+        t-tewmstatisticsdebuginfo.add("fiwstbinid: " + fiwstbinid);
       }
     }
   }
 
-  @VisibleForTesting
-  int getSeenOutOfRange() {
-    return seenOutOfRange;
+  @visibwefowtesting
+  i-int getseenoutofwange() {
+    w-wetuwn seenoutofwange;
   }
 
-  private void trackHistogramResultStats() {
-    if (numLargerOutOfBoundsBinsSkipped > 0) {
-      TERM_STATS_SKIPPED_LARGER_OUT_OF_BOUNDS_HITS.increment();
+  pwivate void twackhistogwamwesuwtstats() {
+    if (numwawgewoutofboundsbinsskipped > 0) {
+      t-tewm_stats_skipped_wawgew_out_of_bounds_hits.incwement();
     }
 
-    if (numTimesBinsWereMovedBack > 0) {
-      TERM_STATS_HISTOGRAM_REQUESTS_WITH_MOVED_BACK_BINS.recordResults(numTimesBinsWereMovedBack);
+    i-if (numtimesbinswewemovedback > 0) {
+      t-tewm_stats_histogwam_wequests_with_moved_back_bins.wecowdwesuwts(numtimesbinswewemovedback);
     }
   }
 }

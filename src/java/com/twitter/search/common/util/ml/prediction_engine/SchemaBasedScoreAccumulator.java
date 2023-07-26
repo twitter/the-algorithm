@@ -1,62 +1,62 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.twittew.seawch.common.utiw.mw.pwediction_engine;
 
-import java.util.Map;
+impowt j-java.utiw.map;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.modeling.common.TweetFeaturesUtils;
+i-impowt com.twittew.seawch.common.featuwes.thwift.thwiftseawchwesuwtfeatuwes;
+impowt c-com.twittew.seawch.modewing.common.tweetfeatuwesutiws;
 
 /**
- * Score accumulator for schema-based features.
+ * s-scowe accumuwatow f-fow schema-based f-featuwes.
  */
-public class SchemaBasedScoreAccumulator extends BaseScoreAccumulator<ThriftSearchResultFeatures> {
+p-pubwic cwass schemabasedscoweaccumuwatow extends basescoweaccumuwatow<thwiftseawchwesuwtfeatuwes> {
 
-  public SchemaBasedScoreAccumulator(LightweightLinearModel model) {
-    super(model);
-    Preconditions.checkState(model.isSchemaBased(),
-        "Cannot create SchemaBasedScoreAccumulator with a non-schema-based model: %s",
-        model.getName());
+  pubwic schemabasedscoweaccumuwatow(wightweightwineawmodew m-modew) {
+    supew(modew);
+    pweconditions.checkstate(modew.isschemabased(), /(^•ω•^)
+        "cannot c-cweate schemabasedscoweaccumuwatow with a n-nyon-schema-based modew: %s", nyaa~~
+        modew.getname());
   }
 
-  @Override
-  protected final void updateScoreWithFeatures(ThriftSearchResultFeatures featureData) {
-    // go through all features available and apply all those available in the model
-    addSchemaBooleanFeatures(featureData.getBoolValues());
-    addSchemaContinuousFeatures(featureData.getIntValues());
-    addSchemaContinuousFeatures(featureData.getLongValues());
-    addSchemaContinuousFeatures(featureData.getDoubleValues());
+  @ovewwide
+  pwotected f-finaw void updatescowewithfeatuwes(thwiftseawchwesuwtfeatuwes f-featuwedata) {
+    // g-go thwough aww featuwes avaiwabwe and appwy aww those avaiwabwe in the m-modew
+    addschemabooweanfeatuwes(featuwedata.getboowvawues());
+    addschemacontinuousfeatuwes(featuwedata.getintvawues());
+    addschemacontinuousfeatuwes(featuwedata.getwongvawues());
+    addschemacontinuousfeatuwes(featuwedata.getdoubwevawues());
   }
 
-  private void addSchemaBooleanFeatures(Map<Integer, Boolean> booleanMap) {
-    if (booleanMap == null || booleanMap.isEmpty()) {
-      return;
+  pwivate void a-addschemabooweanfeatuwes(map<integew, nyaa~~ boowean> booweanmap) {
+    i-if (booweanmap == n-nyuww || booweanmap.isempty()) {
+      w-wetuwn;
     }
-    for (Map.Entry<Integer, Boolean> entry : booleanMap.entrySet()) {
-      if (entry.getValue()) {
-        score += model.binaryFeaturesById.getOrDefault(entry.getKey(), 0.0);
+    f-fow (map.entwy<integew, :3 boowean> entwy : booweanmap.entwyset()) {
+      i-if (entwy.getvawue()) {
+        scowe += modew.binawyfeatuwesbyid.getowdefauwt(entwy.getkey(), 😳😳😳 0.0);
       }
     }
   }
 
-  private void addSchemaContinuousFeatures(Map<Integer, ? extends Number> valueMap) {
-    if (valueMap == null || valueMap.isEmpty()) {
-      return;
+  pwivate v-void addschemacontinuousfeatuwes(map<integew, ? extends nyumbew> vawuemap) {
+    if (vawuemap == nyuww || vawuemap.isempty()) {
+      w-wetuwn;
     }
-    for (Map.Entry<Integer, ? extends Number> entry : valueMap.entrySet()) {
-      Integer id = entry.getKey();
-      if (TweetFeaturesUtils.isFeatureDiscrete(id)) {
-        continue;  // we don't process any discrete features now
+    fow (map.entwy<integew, (˘ω˘) ? e-extends n-nyumbew> entwy : v-vawuemap.entwyset()) {
+      integew id = entwy.getkey();
+      if (tweetfeatuwesutiws.isfeatuwediscwete(id)) {
+        c-continue;  // w-we don't pwocess any discwete f-featuwes nyow
       }
-      Double weight = model.continuousFeaturesById.get(id);
-      if (weight != null) {
-        // found non-discretized entry
-        score += weight * entry.getValue().doubleValue();
-      } else {
-        DiscretizedFeature discretizedFeature = model.discretizedFeaturesById.get(id);
-        if (discretizedFeature != null) {
-          // Use only the weight of the discretized feature (there's no need to multiply it)
-          score += discretizedFeature.getWeight(entry.getValue().doubleValue());
+      d-doubwe weight = modew.continuousfeatuwesbyid.get(id);
+      i-if (weight != nyuww) {
+        // found n-nyon-discwetized entwy
+        scowe += weight * e-entwy.getvawue().doubwevawue();
+      } ewse {
+        d-discwetizedfeatuwe discwetizedfeatuwe = m-modew.discwetizedfeatuwesbyid.get(id);
+        i-if (discwetizedfeatuwe != nyuww) {
+          // use onwy the weight of the discwetized featuwe (thewe's nyo nyeed to muwtipwy i-it)
+          s-scowe += discwetizedfeatuwe.getweight(entwy.getvawue().doubwevawue());
         }
       }
     }

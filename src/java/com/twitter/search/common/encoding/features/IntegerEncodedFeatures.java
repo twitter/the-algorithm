@@ -1,158 +1,158 @@
-package com.twitter.search.common.encoding.features;
+package com.twittew.seawch.common.encoding.featuwes;
 
-import java.util.List;
+impowt java.utiw.wist;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.cowwect.wists;
 
-import com.twitter.search.common.indexing.thriftjava.PackedFeatures;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.packedfeatuwes;
+i-impowt com.twittew.seawch.common.schema.base.featuweconfiguwation;
 
 /**
- * Class used to read/write integers encoded according to
- * {@link com.twitter.search.common.schema.base.FeatureConfiguration}
+ * c-cwass used to w-wead/wwite integews encoded accowding to
+ * {@wink com.twittew.seawch.common.schema.base.featuweconfiguwation}
  *
- * Implementations must override {@link #getInt(int pos)} and {@link #setInt(int pos, int value)}.
+ * impwementations m-must ovewwide {@wink #getint(int pos)} and {@wink #setint(int pos, 🥺 int vawue)}. rawr x3
  */
-public abstract class IntegerEncodedFeatures {
+p-pubwic abstwact cwass i-integewencodedfeatuwes {
   /**
-   * Returns the value at the given position.
+   * wetuwns the vawue at the given position. o.O
    */
-  public abstract int getInt(int pos);
+  p-pubwic abstwact int getint(int p-pos);
 
   /**
-   * Sets the given value at the given position.
+   * s-sets the given vawue at the given position. rawr
    */
-  public abstract void setInt(int pos, int value);
+  pubwic abstwact void setint(int p-pos, ʘwʘ int vawue);
 
   /**
-   * Get the maximum number of integers to hold features.
-   * @return the number of integers to represent all features.
+   * get the maximum nyumbew of integews to howd f-featuwes. 😳😳😳
+   * @wetuwn the nyumbew o-of integews t-to wepwesent aww f-featuwes. ^^;;
    */
-  public abstract int getNumInts();
+  p-pubwic abstwact int getnumints();
 
   /**
-   * Test to see if the given feature is true or non-zero. Useful for one bit features.
-   * @param feature feature to examine
-   * @return true if feature is non-zero
+   * test to see if t-the given featuwe is twue ow nyon-zewo. o.O usefuw f-fow one bit featuwes. (///ˬ///✿)
+   * @pawam featuwe featuwe to examine
+   * @wetuwn twue if featuwe is nyon-zewo
    */
-  public boolean isFlagSet(FeatureConfiguration feature) {
-    return (getInt(feature.getValueIndex()) & feature.getBitMask()) != 0;
+  pubwic boowean isfwagset(featuweconfiguwation f-featuwe) {
+    wetuwn (getint(featuwe.getvawueindex()) & f-featuwe.getbitmask()) != 0;
   }
 
-  public IntegerEncodedFeatures setFlag(FeatureConfiguration feature) {
-    setInt(feature.getValueIndex(), getInt(feature.getValueIndex()) | feature.getBitMask());
-    return this;
+  p-pubwic i-integewencodedfeatuwes setfwag(featuweconfiguwation featuwe) {
+    setint(featuwe.getvawueindex(), σωσ g-getint(featuwe.getvawueindex()) | f-featuwe.getbitmask());
+    wetuwn this;
   }
 
-  public IntegerEncodedFeatures clearFlag(FeatureConfiguration feature) {
-    setInt(feature.getValueIndex(), getInt(feature.getValueIndex()) & feature.getInverseBitMask());
-    return this;
+  p-pubwic integewencodedfeatuwes c-cweawfwag(featuweconfiguwation featuwe) {
+    s-setint(featuwe.getvawueindex(), nyaa~~ getint(featuwe.getvawueindex()) & f-featuwe.getinvewsebitmask());
+    wetuwn this;
   }
 
   /**
-   * Sets a boolean flag.
+   * sets a boowean f-fwag. ^^;;
    */
-  public IntegerEncodedFeatures setFlagValue(FeatureConfiguration feature, boolean value) {
-    if (value) {
-      setFlag(feature);
-    } else {
-      clearFlag(feature);
+  pubwic integewencodedfeatuwes s-setfwagvawue(featuweconfiguwation featuwe, ^•ﻌ•^ boowean v-vawue) {
+    if (vawue) {
+      s-setfwag(featuwe);
+    } ewse {
+      cweawfwag(featuwe);
     }
-    return this;
+    wetuwn this;
   }
 
   /**
-   * Get feature value
-   * @param feature feature to get
-   * @return the value of the feature
+   * get featuwe vawue
+   * @pawam featuwe featuwe to g-get
+   * @wetuwn t-the vawue of the featuwe
    */
-  public int getFeatureValue(FeatureConfiguration feature) {
-    return (getInt(feature.getValueIndex()) & feature.getBitMask())
-            >>> feature.getBitStartPosition();
+  p-pubwic int getfeatuwevawue(featuweconfiguwation f-featuwe) {
+    w-wetuwn (getint(featuwe.getvawueindex()) & featuwe.getbitmask())
+            >>> featuwe.getbitstawtposition();
   }
 
   /**
-   * Set feature value
-   * @param feature feature to modify
-   * @param value value to set.
+   * set featuwe vawue
+   * @pawam featuwe f-featuwe to modify
+   * @pawam vawue vawue to set. σωσ
    */
-  public IntegerEncodedFeatures setFeatureValue(FeatureConfiguration feature, int value) {
-    Preconditions.checkState(
-        value <= feature.getMaxValue(),
-        "Feature value, %s, is greater than the max value allowed for this feature. "
-            + "Feature: %s, Max value: %s",
-        value, feature.getName(), feature.getMaxValue());
+  pubwic integewencodedfeatuwes setfeatuwevawue(featuweconfiguwation f-featuwe, -.- int vawue) {
+    pweconditions.checkstate(
+        v-vawue <= featuwe.getmaxvawue(), ^^;;
+        "featuwe v-vawue, XD %s, is gweatew t-than the max vawue awwowed f-fow this featuwe. 🥺 "
+            + "featuwe: %s, m-max vawue: %s", òωó
+        v-vawue, (ˆ ﻌ ˆ)♡ f-featuwe.getname(), -.- featuwe.getmaxvawue());
 
-    // Clear the value of the given feature in its int.
-    int temp = getInt(feature.getValueIndex()) & feature.getInverseBitMask();
+    // cweaw the vawue o-of the given f-featuwe in its i-int. :3
+    int temp = g-getint(featuwe.getvawueindex()) & f-featuwe.getinvewsebitmask();
 
-    // Set the new feature value. Applying the bit mask here ensures that other features in the
-    // same int are not modified by mistake.
-    temp |= (value << feature.getBitStartPosition()) & feature.getBitMask();
+    // set the new featuwe vawue. ʘwʘ appwying the b-bit mask hewe ensuwes that othew featuwes in the
+    // same int awe nyot modified by mistake. 🥺
+    t-temp |= (vawue << featuwe.getbitstawtposition()) & featuwe.getbitmask();
 
-    setInt(feature.getValueIndex(), temp);
-    return this;
+    setint(featuwe.getvawueindex(), >_< t-temp);
+    wetuwn t-this;
   }
 
   /**
-   * Sets feature value if greater than current value
-   * @param feature feature to modify
-   * @param value new value
+   * s-sets featuwe vawue if g-gweatew than cuwwent vawue
+   * @pawam f-featuwe f-featuwe to modify
+   * @pawam vawue nyew vawue
    */
-  public IntegerEncodedFeatures setFeatureValueIfGreater(FeatureConfiguration feature, int value) {
-    if (value > getFeatureValue(feature)) {
-      setFeatureValue(feature, value);
+  pubwic integewencodedfeatuwes setfeatuwevawueifgweatew(featuweconfiguwation featuwe, ʘwʘ int vawue) {
+    if (vawue > g-getfeatuwevawue(featuwe)) {
+      setfeatuwevawue(featuwe, (˘ω˘) v-vawue);
     }
-    return this;
+    wetuwn this;
   }
 
   /**
-   * Increment a feature if its not at its maximum value.
-   * @return whether the feature is incremented.
+   * i-incwement a f-featuwe if its nyot at its maximum vawue.
+   * @wetuwn w-whethew the f-featuwe is incwemented. (✿oωo)
    */
-  public boolean incrementIfNotMaximum(FeatureConfiguration feature) {
-    int newValue = getFeatureValue(feature) + 1;
-    if (newValue <= feature.getMaxValue()) {
-      setFeatureValue(feature, newValue);
-      return true;
-    } else {
-      return false;
+  pubwic boowean i-incwementifnotmaximum(featuweconfiguwation f-featuwe) {
+    int nyewvawue = getfeatuwevawue(featuwe) + 1;
+    if (newvawue <= featuwe.getmaxvawue()) {
+      s-setfeatuwevawue(featuwe, (///ˬ///✿) n-nyewvawue);
+      w-wetuwn twue;
+    } ewse {
+      w-wetuwn fawse;
     }
   }
 
   /**
-   * Copy these encoded features to a new PackedFeatures thrift struct.
+   * c-copy these encoded featuwes t-to a nyew packedfeatuwes thwift stwuct. rawr x3
    */
-  public PackedFeatures copyToPackedFeatures() {
-    return copyToPackedFeatures(new PackedFeatures());
+  pubwic packedfeatuwes copytopackedfeatuwes() {
+    w-wetuwn c-copytopackedfeatuwes(new packedfeatuwes());
   }
 
   /**
-    * Copy these encoded features to a PackedFeatures thrift struct.
+    * copy these encoded f-featuwes to a p-packedfeatuwes thwift stwuct.
     */
-  public PackedFeatures copyToPackedFeatures(PackedFeatures packedFeatures) {
-    Preconditions.checkNotNull(packedFeatures);
-    final List<Integer> integers = Lists.newArrayListWithCapacity(getNumInts());
-    for (int i = 0; i < getNumInts(); i++) {
-      integers.add(getInt(i));
+  pubwic packedfeatuwes copytopackedfeatuwes(packedfeatuwes p-packedfeatuwes) {
+    pweconditions.checknotnuww(packedfeatuwes);
+    finaw wist<integew> integews = wists.newawwaywistwithcapacity(getnumints());
+    f-fow (int i = 0; i < getnumints(); i++) {
+      i-integews.add(getint(i));
     }
-    packedFeatures.setDeprecated_featureConfigurationVersion(0);
-    packedFeatures.setFeatures(integers);
-    return packedFeatures;
+    p-packedfeatuwes.setdepwecated_featuweconfiguwationvewsion(0);
+    packedfeatuwes.setfeatuwes(integews);
+    wetuwn packedfeatuwes;
   }
 
   /**
-   * Copy features from a packed features struct.
+   * copy f-featuwes fwom a p-packed featuwes stwuct. -.-
    */
-  public void readFromPackedFeatures(PackedFeatures packedFeatures) {
-    Preconditions.checkNotNull(packedFeatures);
-    List<Integer> ints = packedFeatures.getFeatures();
-    for (int i = 0; i < getNumInts(); i++) {
-      if (i < ints.size()) {
-        setInt(i, ints.get(i));
-      } else {
-        setInt(i, 0);
+  pubwic void weadfwompackedfeatuwes(packedfeatuwes packedfeatuwes) {
+    p-pweconditions.checknotnuww(packedfeatuwes);
+    wist<integew> i-ints = packedfeatuwes.getfeatuwes();
+    fow (int i = 0; i < getnumints(); i++) {
+      if (i < i-ints.size()) {
+        setint(i, ^^ i-ints.get(i));
+      } e-ewse {
+        setint(i, (⑅˘꒳˘) 0);
       }
     }
   }

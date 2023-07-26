@@ -1,103 +1,103 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.bijection.Injection
-import com.twitter.io.Buf
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections.BufInjection
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.impl.DescriptorP1L1
-import com.twitter.storage.client.manhattan.kv.impl.Component
-import com.twitter.storage.client.manhattan.kv.{impl => mh}
-import com.twitter.storage.client.manhattan.bijections.Bijections.StringInjection
-import com.twitter.util.Time
-import java.nio.ByteBuffer
-import scala.util.control.NonFatal
+impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.io.buf
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stowage.cwient.manhattan.bijections.bijections.bufinjection
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvendpoint
+i-impowt c-com.twittew.stowage.cwient.manhattan.kv.impw.descwiptowp1w1
+i-impowt com.twittew.stowage.cwient.manhattan.kv.impw.component
+impowt com.twittew.stowage.cwient.manhattan.kv.{impw => mh}
+impowt com.twittew.stowage.cwient.manhattan.bijections.bijections.stwinginjection
+i-impowt com.twittew.utiw.time
+impowt java.nio.bytebuffew
+i-impowt scawa.utiw.contwow.nonfataw
 
-case class TweetManhattanRecord(key: TweetKey, value: TweetManhattanValue) {
-  def pkey: TweetId = key.tweetId
-  def lkey: TweetKey.LKey = key.lKey
+case cwass t-tweetmanhattanwecowd(key: tweetkey, (˘ω˘) vawue: tweetmanhattanvawue) {
+  def pkey: tweetid = k-key.tweetid
+  def wkey: t-tweetkey.wkey = k-key.wkey
 
   /**
-   * Produces a representation that is human-readable, but contains
-   * all of the information from the record. It is not intended for
-   * producing machine-readable values.
+   * pwoduces a wepwesentation that is human-weadabwe, :3 but contains
+   * a-aww of the infowmation fwom the wecowd. ^^;; it is nyot intended fow
+   * pwoducing m-machine-weadabwe vawues. 🥺
    *
-   * This conversion is relatively expensive, so beware of using it in
-   * hot code paths.
+   * t-this c-convewsion is wewativewy e-expensive, (⑅˘꒳˘) s-so bewawe of using it in
+   * hot code paths. nyaa~~
    */
-  override def toString: String = {
-    val valueString =
-      try {
-        key.lKey match {
-          case _: TweetKey.LKey.MetadataKey =>
-            StringCodec.fromByteBuffer(value.contents)
+  o-ovewwide def tostwing: stwing = {
+    v-vaw vawuestwing =
+      twy {
+        key.wkey match {
+          case _: tweetkey.wkey.metadatakey =>
+            stwingcodec.fwombytebuffew(vawue.contents)
 
-          case _: TweetKey.LKey.FieldKey =>
-            val tFieldBlob = TFieldBlobCodec.fromByteBuffer(value.contents)
-            s"TFieldBlob(${tFieldBlob.field}, 0x${Buf.slowHexString(tFieldBlob.content)})"
+          case _: t-tweetkey.wkey.fiewdkey =>
+            vaw tfiewdbwob = t-tfiewdbwobcodec.fwombytebuffew(vawue.contents)
+            s-s"tfiewdbwob(${tfiewdbwob.fiewd}, :3 0x${buf.swowhexstwing(tfiewdbwob.content)})"
 
-          case TweetKey.LKey.Unknown(_) =>
-            "0x" + Buf.slowHexString(Buf.ByteBuffer.Shared(value.contents))
+          c-case tweetkey.wkey.unknown(_) =>
+            "0x" + buf.swowhexstwing(buf.bytebuffew.shawed(vawue.contents))
         }
       } catch {
-        case NonFatal(e) =>
-          val hexValue = Buf.slowHexString(Buf.ByteBuffer.Shared(value.contents))
-          s"0x$hexValue (failed to decode due to $e)"
+        c-case n-nonfataw(e) =>
+          vaw hexvawue = b-buf.swowhexstwing(buf.bytebuffew.shawed(vawue.contents))
+          s-s"0x$hexvawue (faiwed to decode due to $e)"
       }
 
-    s"$key => ${value.copy(contents = valueString)}"
+    s-s"$key => ${vawue.copy(contents = vawuestwing)}"
   }
 }
 
-object ManhattanOperations {
-  type Read = TweetId => Stitch[Seq[TweetManhattanRecord]]
-  type Insert = TweetManhattanRecord => Stitch[Unit]
-  type Delete = (TweetKey, Option[Time]) => Stitch[Unit]
-  type DeleteRange = TweetId => Stitch[Unit]
+o-object manhattanopewations {
+  type w-wead = tweetid => stitch[seq[tweetmanhattanwecowd]]
+  t-type insewt = tweetmanhattanwecowd => s-stitch[unit]
+  t-type dewete = (tweetkey, ( ͡o ω ͡o ) option[time]) => stitch[unit]
+  type dewetewange = tweetid => stitch[unit]
 
-  object PkeyInjection extends Injection[TweetId, String] {
-    override def apply(tweetId: TweetId): String = TweetKey.padTweetIdStr(tweetId)
-    override def invert(str: String): scala.util.Try[TweetId] = scala.util.Try(str.toLong)
+  o-object pkeyinjection e-extends injection[tweetid, mya stwing] {
+    o-ovewwide def appwy(tweetid: t-tweetid): s-stwing = tweetkey.padtweetidstw(tweetid)
+    ovewwide def invewt(stw: stwing): scawa.utiw.twy[tweetid] = scawa.utiw.twy(stw.towong)
   }
 
-  case class InvalidLkey(lkeyStr: String) extends Exception
+  c-case cwass invawidwkey(wkeystw: stwing) extends exception
 
-  object LkeyInjection extends Injection[TweetKey.LKey, String] {
-    override def apply(lkey: TweetKey.LKey): String = lkey.toString
-    override def invert(str: String): scala.util.Try[TweetKey.LKey] =
-      scala.util.Success(TweetKey.LKey.fromString(str))
+  object wkeyinjection extends injection[tweetkey.wkey, (///ˬ///✿) s-stwing] {
+    ovewwide def appwy(wkey: t-tweetkey.wkey): s-stwing = w-wkey.tostwing
+    ovewwide def i-invewt(stw: stwing): s-scawa.utiw.twy[tweetkey.wkey] =
+      s-scawa.utiw.success(tweetkey.wkey.fwomstwing(stw))
   }
 
-  val KeyDescriptor: DescriptorP1L1.EmptyKey[TweetId, TweetKey.LKey] =
-    mh.KeyDescriptor(
-      Component(PkeyInjection.andThen(StringInjection)),
-      Component(LkeyInjection.andThen(StringInjection))
+  v-vaw keydescwiptow: descwiptowp1w1.emptykey[tweetid, (˘ω˘) tweetkey.wkey] =
+    m-mh.keydescwiptow(
+      c-component(pkeyinjection.andthen(stwinginjection)), ^^;;
+      c-component(wkeyinjection.andthen(stwinginjection))
     )
 
-  val ValueDescriptor: mh.ValueDescriptor.EmptyValue[ByteBuffer] = mh.ValueDescriptor(BufInjection)
+  v-vaw v-vawuedescwiptow: mh.vawuedescwiptow.emptyvawue[bytebuffew] = mh.vawuedescwiptow(bufinjection)
 }
 
-class ManhattanOperations(dataset: String, mhEndpoint: ManhattanKVEndpoint) {
-  import ManhattanOperations._
+cwass manhattanopewations(dataset: s-stwing, (✿oωo) mhendpoint: manhattankvendpoint) {
+  impowt manhattanopewations._
 
-  private[this] def pkey(tweetId: TweetId) = KeyDescriptor.withDataset(dataset).withPkey(tweetId)
+  pwivate[this] def pkey(tweetid: tweetid) = keydescwiptow.withdataset(dataset).withpkey(tweetid)
 
-  def read: Read = { tweetId =>
-    mhEndpoint.slice(pkey(tweetId).under(), ValueDescriptor).map { mhData =>
-      mhData.map {
-        case (key, value) => TweetManhattanRecord(TweetKey(key.pkey, key.lkey), value)
+  d-def wead: wead = { tweetid =>
+    mhendpoint.swice(pkey(tweetid).undew(), vawuedescwiptow).map { m-mhdata =>
+      m-mhdata.map {
+        c-case (key, (U ﹏ U) vawue) => tweetmanhattanwecowd(tweetkey(key.pkey, -.- k-key.wkey), ^•ﻌ•^ vawue)
       }
     }
   }
 
-  def insert: Insert =
-    record => {
-      val mhKey = pkey(record.key.tweetId).withLkey(record.key.lKey)
-      mhEndpoint.insert(mhKey, ValueDescriptor.withValue(record.value))
+  d-def i-insewt: insewt =
+    wecowd => {
+      vaw mhkey = pkey(wecowd.key.tweetid).withwkey(wecowd.key.wkey)
+      mhendpoint.insewt(mhkey, rawr vawuedescwiptow.withvawue(wecowd.vawue))
     }
 
-  def delete: Delete = (key, time) => mhEndpoint.delete(pkey(key.tweetId).withLkey(key.lKey), time)
+  d-def dewete: dewete = (key, (˘ω˘) t-time) => mhendpoint.dewete(pkey(key.tweetid).withwkey(key.wkey), nyaa~~ time)
 
-  def deleteRange: DeleteRange =
-    tweetId => mhEndpoint.deleteRange(KeyDescriptor.withDataset(dataset).withPkey(tweetId).under())
+  def d-dewetewange: dewetewange =
+    t-tweetid => mhendpoint.dewetewange(keydescwiptow.withdataset(dataset).withpkey(tweetid).undew())
 }

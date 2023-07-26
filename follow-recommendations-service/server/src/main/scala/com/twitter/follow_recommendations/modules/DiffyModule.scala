@@ -1,71 +1,71 @@
-package com.twitter.follow_recommendations.modules
+package com.twittew.fowwow_wecommendations.moduwes
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.inject.annotations.Flag
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.annotations.DarkTrafficService
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.thrift.filters.DarkTrafficFilter
-import com.twitter.servo.decider.DeciderGateBuilder
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.singweton
+i-impowt com.twittew.inject.annotations.fwag
+i-impowt com.twittew.decidew.wandomwecipient
+i-impowt c-com.twittew.finagwe.thwiftmux
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.mtws.cwient.mtwsstackcwient.mtwsthwiftmuxcwientsyntax
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finagwe.thwift.cwientid
+impowt com.twittew.finatwa.annotations.dawktwafficsewvice
+impowt com.twittew.fowwow_wecommendations.configapi.decidews.decidewkey
+i-impowt com.twittew.fowwow_wecommendations.thwiftscawa.fowwowwecommendationsthwiftsewvice
+impowt com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.inject.thwift.fiwtews.dawktwafficfiwtew
+impowt c-com.twittew.sewvo.decidew.decidewgatebuiwdew
 
-object DiffyModule extends TwitterModule {
-  // diffy.dest is defined in the Follow Recommendations Service aurora file
-  // and points to the Dark Traffic Proxy server
-  private val destFlag =
-    flag[String]("diffy.dest", "/$/nil", "Resolvable name of diffy-service or proxy")
+object diffymoduwe extends twittewmoduwe {
+  // diffy.dest is d-defined in the fowwow wecommendations s-sewvice auwowa f-fiwe
+  // and points to the dawk twaffic pwoxy sewvew
+  pwivate vaw destfwag =
+    f-fwag[stwing]("diffy.dest", -.- "/$/niw", "wesowvabwe nyame of diffy-sewvice ow pwoxy")
 
-  @Provides
-  @Singleton
-  @DarkTrafficService
-  def provideDarkTrafficService(
-    serviceIdentifier: ServiceIdentifier
-  ): FollowRecommendationsThriftService.ReqRepServicePerEndpoint = {
-    ThriftMux.client
-      .withClientId(ClientId("follow_recos_service_darktraffic_proxy_client"))
-      .withMutualTls(serviceIdentifier)
-      .servicePerEndpoint[FollowRecommendationsThriftService.ReqRepServicePerEndpoint](
-        dest = destFlag(),
-        label = "darktrafficproxy"
+  @pwovides
+  @singweton
+  @dawktwafficsewvice
+  def p-pwovidedawktwafficsewvice(
+    sewviceidentifiew: s-sewviceidentifiew
+  ): f-fowwowwecommendationsthwiftsewvice.weqwepsewvicepewendpoint = {
+    t-thwiftmux.cwient
+      .withcwientid(cwientid("fowwow_wecos_sewvice_dawktwaffic_pwoxy_cwient"))
+      .withmutuawtws(sewviceidentifiew)
+      .sewvicepewendpoint[fowwowwecommendationsthwiftsewvice.weqwepsewvicepewendpoint](
+        d-dest = destfwag(), 🥺
+        wabew = "dawktwafficpwoxy"
       )
   }
 
-  @Provides
-  @Singleton
-  def provideDarkTrafficFilter(
-    @DarkTrafficService darkService: FollowRecommendationsThriftService.ReqRepServicePerEndpoint,
-    deciderGateBuilder: DeciderGateBuilder,
-    statsReceiver: StatsReceiver,
-    @Flag("environment") env: String
-  ): DarkTrafficFilter[FollowRecommendationsThriftService.ReqRepServicePerEndpoint] = {
-    // sampleFunction is used to determine which requests should get replicated
-    // to the dark traffic proxy server
-    val sampleFunction: Any => Boolean = { _ =>
-      // check whether the current FRS instance is deployed in production
-      env match {
-        case "prod" =>
-          statsReceiver.scope("provideDarkTrafficFilter").counter("prod").incr()
-          destFlag.isDefined && deciderGateBuilder
-            .keyToFeature(DeciderKey.EnableTrafficDarkReading).isAvailable(RandomRecipient)
+  @pwovides
+  @singweton
+  def pwovidedawktwafficfiwtew(
+    @dawktwafficsewvice d-dawksewvice: fowwowwecommendationsthwiftsewvice.weqwepsewvicepewendpoint, o.O
+    decidewgatebuiwdew: d-decidewgatebuiwdew, /(^•ω•^)
+    statsweceivew: statsweceivew, nyaa~~
+    @fwag("enviwonment") env: stwing
+  ): dawktwafficfiwtew[fowwowwecommendationsthwiftsewvice.weqwepsewvicepewendpoint] = {
+    // sampwefunction i-is used to detewmine which w-wequests shouwd g-get wepwicated
+    // t-to the dawk twaffic pwoxy sewvew
+    vaw sampwefunction: any => boowean = { _ =>
+      // c-check whethew the c-cuwwent fws instance is depwoyed i-in pwoduction
+      e-env match {
+        case "pwod" =>
+          s-statsweceivew.scope("pwovidedawktwafficfiwtew").countew("pwod").incw()
+          destfwag.isdefined && d-decidewgatebuiwdew
+            .keytofeatuwe(decidewkey.enabwetwafficdawkweading).isavaiwabwe(wandomwecipient)
         case _ =>
-          statsReceiver.scope("provideDarkTrafficFilter").counter("devel").incr()
-          // replicate zero requests if in non-production environment
-          false
+          statsweceivew.scope("pwovidedawktwafficfiwtew").countew("devew").incw()
+          // w-wepwicate zewo wequests i-if in nyon-pwoduction enviwonment
+          fawse
       }
     }
-    new DarkTrafficFilter[FollowRecommendationsThriftService.ReqRepServicePerEndpoint](
-      darkService,
-      sampleFunction,
-      forwardAfterService = true,
-      statsReceiver.scope("DarkTrafficFilter"),
-      lookupByMethod = true
+    n-nyew dawktwafficfiwtew[fowwowwecommendationsthwiftsewvice.weqwepsewvicepewendpoint](
+      d-dawksewvice, nyaa~~
+      sampwefunction, :3
+      fowwawdaftewsewvice = twue, 😳😳😳
+      statsweceivew.scope("dawktwafficfiwtew"), (˘ω˘)
+      wookupbymethod = twue
     )
   }
 }

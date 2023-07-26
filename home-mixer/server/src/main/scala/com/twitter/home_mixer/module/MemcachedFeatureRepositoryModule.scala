@@ -1,117 +1,117 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.HomeAuthorFeaturesCacheClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelinesRealTimeAggregateClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwhinAuthorFollowFeatureCacheClient
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import com.twitter.servo.cache.FinagleMemcacheFactory
-import com.twitter.servo.cache.Memcache
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.memcached
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.home_mixew.pawam.homemixewinjectionnames.homeauthowfeatuwescachecwient
+impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.weawtimeintewactiongwaphusewvewtexcwient
+impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.timewinesweawtimeaggwegatecwient
+impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.twhinauthowfowwowfeatuwecachecwient
+i-impowt com.twittew.inject.twittewmoduwe
+impowt com.twittew.pwoduct_mixew.shawed_wibwawy.memcached_cwient.memcachedcwientbuiwdew
+i-impowt com.twittew.sewvo.cache.finagwememcachefactowy
+impowt c-com.twittew.sewvo.cache.memcache
+impowt javax.inject.named
+impowt javax.inject.singweton
 
-object MemcachedFeatureRepositoryModule extends TwitterModule {
+o-object memcachedfeatuwewepositowymoduwe e-extends twittewmoduwe {
 
-  // This must match the respective parameter on the write path. Note that servo sets a different
-  // hasher by default. See [[com.twitter.hashing.KeyHasher]] for the list of other available
-  // hashers.
-  private val memcacheKeyHasher = "ketama"
+  // t-this must match the wespective pawametew on the wwite path. 😳😳😳 note that sewvo sets a-a diffewent
+  // hashew by defauwt. ( ͡o ω ͡o ) see [[com.twittew.hashing.keyhashew]] fow the wist of othew a-avaiwabwe
+  // hashews. >_<
+  pwivate v-vaw memcachekeyhashew = "ketama"
 
-  @Provides
-  @Singleton
-  @Named(TimelinesRealTimeAggregateClient)
-  def providesTimelinesRealTimeAggregateClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Memcache = {
-    val rawClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 3,
-      numConnections = 1,
-      requestTimeout = 100.milliseconds,
-      globalTimeout = 300.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @pwovides
+  @singweton
+  @named(timewinesweawtimeaggwegatecwient)
+  d-def p-pwovidestimewinesweawtimeaggwegatecwient(
+    s-sewviceidentifiew: sewviceidentifiew, >w<
+    statsweceivew: s-statsweceivew
+  ): memcache = {
+    vaw w-wawcwient = memcachedcwientbuiwdew.buiwdwawmemcachedcwient(
+      nyumtwies = 3, rawr
+      nyumconnections = 1, 😳
+      wequesttimeout = 100.miwwiseconds, >w<
+      gwobawtimeout = 300.miwwiseconds, (⑅˘꒳˘)
+      connecttimeout = 200.miwwiseconds, OwO
+      a-acquisitiontimeout = 200.miwwiseconds, (ꈍᴗꈍ)
+      sewviceidentifiew = s-sewviceidentifiew, 😳
+      s-statsweceivew = s-statsweceivew
     )
 
-    buildMemcacheClient(rawClient, "/s/cache/timelines_real_time_aggregates:twemcaches")
+    buiwdmemcachecwient(wawcwient, 😳😳😳 "/s/cache/timewines_weaw_time_aggwegates:twemcaches")
   }
 
-  @Provides
-  @Singleton
-  @Named(HomeAuthorFeaturesCacheClient)
-  def providesHomeAuthorFeaturesCacheClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Memcache = {
-    val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 2,
-      numConnections = 1,
-      requestTimeout = 150.milliseconds,
-      globalTimeout = 300.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @pwovides
+  @singweton
+  @named(homeauthowfeatuwescachecwient)
+  def pwovideshomeauthowfeatuwescachecwient(
+    s-sewviceidentifiew: sewviceidentifiew, mya
+    s-statsweceivew: statsweceivew
+  ): m-memcache = {
+    v-vaw cachecwient = memcachedcwientbuiwdew.buiwdwawmemcachedcwient(
+      n-numtwies = 2, mya
+      nyumconnections = 1, (⑅˘꒳˘)
+      w-wequesttimeout = 150.miwwiseconds, (U ﹏ U)
+      gwobawtimeout = 300.miwwiseconds, mya
+      connecttimeout = 200.miwwiseconds, ʘwʘ
+      a-acquisitiontimeout = 200.miwwiseconds, (˘ω˘)
+      sewviceidentifiew = s-sewviceidentifiew, (U ﹏ U)
+      statsweceivew = s-statsweceivew
     )
 
-    buildMemcacheClient(cacheClient, "/s/cache/timelines_author_features:twemcaches")
+    b-buiwdmemcachecwient(cachecwient, ^•ﻌ•^ "/s/cache/timewines_authow_featuwes:twemcaches")
   }
 
-  @Provides
-  @Singleton
-  @Named(TwhinAuthorFollowFeatureCacheClient)
-  def providesTwhinAuthorFollowFeatureCacheClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Memcache = {
-    val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 2,
-      numConnections = 1,
-      requestTimeout = 150.milliseconds,
-      globalTimeout = 300.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @pwovides
+  @singweton
+  @named(twhinauthowfowwowfeatuwecachecwient)
+  def pwovidestwhinauthowfowwowfeatuwecachecwient(
+    sewviceidentifiew: sewviceidentifiew,
+    statsweceivew: statsweceivew
+  ): m-memcache = {
+    vaw c-cachecwient = memcachedcwientbuiwdew.buiwdwawmemcachedcwient(
+      n-nyumtwies = 2, (˘ω˘)
+      n-nyumconnections = 1, :3
+      w-wequesttimeout = 150.miwwiseconds, ^^;;
+      gwobawtimeout = 300.miwwiseconds, 🥺
+      connecttimeout = 200.miwwiseconds, (⑅˘꒳˘)
+      acquisitiontimeout = 200.miwwiseconds, nyaa~~
+      s-sewviceidentifiew = sewviceidentifiew, :3
+      statsweceivew = statsweceivew
     )
 
-    buildMemcacheClient(cacheClient, "/s/cache/home_twhin_author_features:twemcaches")
+    buiwdmemcachecwient(cachecwient, ( ͡o ω ͡o ) "/s/cache/home_twhin_authow_featuwes:twemcaches")
   }
 
-  @Provides
-  @Singleton
-  @Named(RealTimeInteractionGraphUserVertexClient)
-  def providesRealTimeInteractionGraphUserVertexClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Memcache = {
-    val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 2,
-      numConnections = 1,
-      requestTimeout = 150.milliseconds,
-      globalTimeout = 300.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @pwovides
+  @singweton
+  @named(weawtimeintewactiongwaphusewvewtexcwient)
+  d-def pwovidesweawtimeintewactiongwaphusewvewtexcwient(
+    sewviceidentifiew: s-sewviceidentifiew, mya
+    s-statsweceivew: s-statsweceivew
+  ): memcache = {
+    v-vaw cachecwient = m-memcachedcwientbuiwdew.buiwdwawmemcachedcwient(
+      n-nyumtwies = 2, (///ˬ///✿)
+      n-nyumconnections = 1, (˘ω˘)
+      wequesttimeout = 150.miwwiseconds,
+      gwobawtimeout = 300.miwwiseconds, ^^;;
+      c-connecttimeout = 200.miwwiseconds, (✿oωo)
+      a-acquisitiontimeout = 200.miwwiseconds, (U ﹏ U)
+      s-sewviceidentifiew = s-sewviceidentifiew, -.-
+      s-statsweceivew = statsweceivew
     )
 
-    buildMemcacheClient(cacheClient, "/s/cache/realtime_interactive_graph_prod_v2:twemcaches")
+    buiwdmemcachecwient(cachecwient, ^•ﻌ•^ "/s/cache/weawtime_intewactive_gwaph_pwod_v2:twemcaches")
   }
 
-  private def buildMemcacheClient(cacheClient: Memcached.Client, dest: String): Memcache =
-    FinagleMemcacheFactory(
-      client = cacheClient,
-      dest = dest,
-      hashName = memcacheKeyHasher
+  pwivate d-def buiwdmemcachecwient(cachecwient: memcached.cwient, rawr dest: stwing): memcache =
+    finagwememcachefactowy(
+      cwient = cachecwient, (˘ω˘)
+      dest = d-dest, nyaa~~
+      hashname = memcachekeyhashew
     )()
 
 }

@@ -1,11 +1,11 @@
-package com.twitter.visibility.configapi.params
+package com.twittew.visibiwity.configapi.pawams
 
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.pawam
 
-abstract class GlobalParam[T](override val default: T) extends Param(default) {
-  override val statName: String = s"GlobalParam/${this.getClass.getSimpleName}"
+a-abstwact c-cwass gwobawpawam[t](ovewwide v-vaw defauwt: t-t) extends pawam(defauwt) {
+  o-ovewwide vaw statname: s-stwing = s-s"gwobawpawam/${this.getcwass.getsimpwename}"
 }
 
-private[visibility] object GlobalParams {
-  object EnableFetchingLabelMap extends GlobalParam(false)
+p-pwivate[visibiwity] object gwobawpawams {
+  object enabwefetchingwabewmap extends g-gwobawpawam(fawse)
 }

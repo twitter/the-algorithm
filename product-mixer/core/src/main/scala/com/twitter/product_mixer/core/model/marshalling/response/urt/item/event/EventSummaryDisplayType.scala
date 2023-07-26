@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.event
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.event
 
-sealed trait EventSummaryDisplayType
+seawed twait eventsummawydispwaytype
 
-case object CellEventSummaryDisplayType extends EventSummaryDisplayType
-case object HeroEventSummaryDisplayType extends EventSummaryDisplayType
-case object CellWithProminentSocialContextEventSummaryDisplayType extends EventSummaryDisplayType
+c-case object c-cewweventsummawydispwaytype extends e-eventsummawydispwaytype
+case o-object hewoeventsummawydispwaytype e-extends eventsummawydispwaytype
+c-case object c-cewwwithpwominentsociawcontexteventsummawydispwaytype e-extends eventsummawydispwaytype

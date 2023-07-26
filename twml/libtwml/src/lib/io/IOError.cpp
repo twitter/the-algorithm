@@ -1,61 +1,61 @@
-#include <twml/io/IOError.h>
+#incwude <twmw/io/ioewwow.h>
 
 
-namespace twml {
-namespace io {
+nyamespace twmw {
+n-namespace io {
 
-namespace {
-  std::string messageFromStatus(IOError::Status status) {
-    switch (status) {
-      case IOError::OUT_OF_RANGE:
-        return "failed to read enough input";
-      case IOError::WRONG_MAGIC:
-        return "wrong magic in stream";
-      case IOError::WRONG_HEADER:
-        return "wrong header in stream";
-      case IOError::ERROR_HEADER_CHECKSUM:
-        return "header checksum doesn't match";
-      case IOError::INVALID_METHOD:
-        return "using invalid method";
-      case IOError::USING_RESERVED:
-        return "using reserved flag";
-      case IOError::ERROR_HEADER_EXTRA_FIELD_CHECKSUM:
-        return "extra header field checksum doesn't match";
-      case IOError::CANT_FIT_OUTPUT:
-        return "can't fit output in the given space";
-      case IOError::SPLIT_FILE:
-        return "split files aren't supported";
-      case IOError::BLOCK_SIZE_TOO_LARGE:
-        return "block size is too large";
-      case IOError::SOURCE_LARGER_THAN_DESTINATION:
-        return "source is larger than destination";
-      case IOError::DESTINATION_LARGER_THAN_CAPACITY:
-        return "destination buffer is too small to fit uncompressed result";
-      case IOError::HEADER_FLAG_MISMATCH:
-        return "failed to match flags for compressed and decompressed data";
-      case IOError::NOT_ENOUGH_INPUT:
-        return "not enough input to proceed with decompression";
-      case IOError::ERROR_SOURCE_BLOCK_CHECKSUM:
-        return "source block checksum doesn't match";
-      case IOError::COMPRESSED_DATA_VIOLATION:
-        return "error occurred while decompressing the data";
-      case IOError::ERROR_DESTINATION_BLOCK_CHECKSUM:
-        return "destination block checksum doesn't match";
-      case IOError::EMPTY_RECORD:
-        return "can't write an empty record";
-      case IOError::MALFORMED_MEMORY_RECORD:
-        return "can't write malformed record";
-      case IOError::UNSUPPORTED_OUTPUT_TYPE:
-        return "output data type is not supported";
-      case IOError::OTHER_ERROR:
-      default:
-        return "unknown error occurred";
+n-namespace {
+  std::stwing m-messagefwomstatus(ioewwow::status s-status) {
+    s-switch (status) {
+      c-case ioewwow::out_of_wange:
+        w-wetuwn "faiwed t-to wead enough input";
+      case ioewwow::wwong_magic:
+        wetuwn "wwong magic in stweam";
+      c-case ioewwow::wwong_headew:
+        wetuwn "wwong headew i-in stweam";
+      case ioewwow::ewwow_headew_checksum:
+        w-wetuwn "headew checksum doesn't match";
+      case ioewwow::invawid_method:
+        w-wetuwn "using invawid method";
+      c-case i-ioewwow::using_wesewved:
+        wetuwn "using wesewved fwag";
+      case ioewwow::ewwow_headew_extwa_fiewd_checksum:
+        wetuwn "extwa headew f-fiewd checksum doesn't match";
+      case ioewwow::cant_fit_output:
+        wetuwn "can't fit output in the g-given space";
+      case ioewwow::spwit_fiwe:
+        w-wetuwn "spwit f-fiwes awen't s-suppowted";
+      c-case ioewwow::bwock_size_too_wawge:
+        wetuwn "bwock size is too wawge";
+      c-case ioewwow::souwce_wawgew_than_destination:
+        wetuwn "souwce is wawgew t-than destination";
+      case ioewwow::destination_wawgew_than_capacity:
+        wetuwn "destination buffew is too smow to fit uncompwessed w-wesuwt";
+      case ioewwow::headew_fwag_mismatch:
+        w-wetuwn "faiwed t-to match f-fwags fow compwessed and decompwessed data";
+      case ioewwow::not_enough_input:
+        w-wetuwn "not enough i-input to pwoceed with decompwession";
+      case i-ioewwow::ewwow_souwce_bwock_checksum:
+        w-wetuwn "souwce bwock checksum d-doesn't match";
+      case ioewwow::compwessed_data_viowation:
+        w-wetuwn "ewwow occuwwed whiwe decompwessing t-the data";
+      case ioewwow::ewwow_destination_bwock_checksum:
+        w-wetuwn "destination bwock checksum doesn't m-match";
+      c-case ioewwow::empty_wecowd:
+        wetuwn "can't wwite an empty wecowd";
+      case ioewwow::mawfowmed_memowy_wecowd:
+        wetuwn "can't wwite mawfowmed w-wecowd";
+      c-case ioewwow::unsuppowted_output_type:
+        wetuwn "output data t-type is nyot s-suppowted";
+      c-case ioewwow::othew_ewwow:
+      defauwt:
+        wetuwn "unknown ewwow occuwwed";
     }
   }
-}  // namespace
+}  // n-nyamespace
 
-IOError::IOError(Status status): twml::Error(TWML_ERR_IO, "Found error while processing stream: " +
-    messageFromStatus(status)), m_status(status) {}
+ioewwow::ioewwow(status status): twmw::ewwow(twmw_eww_io, mya "found ewwow whiwe pwocessing s-stweam: " +
+    messagefwomstatus(status)), >w< m-m_status(status) {}
 
-}  // namespace io
-}  // namespace twml
+}  // n-nyamespace io
+}  // n-nyamespace twmw

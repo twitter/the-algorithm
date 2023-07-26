@@ -1,42 +1,42 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.usersignalservice.thriftscala.Signal
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.usewsignawsewvice.thwiftscawa.signawtype
+i-impowt c-com.twittew.usewsignawsewvice.thwiftscawa.signaw
 
-trait SignalData {
-  val userId: Long
-  val signalType: SignalType
+t-twait signawdata {
+  v-vaw u-usewid: wong
+  vaw s-signawtype: signawtype
 }
 
-case class RecentFollowsSignal(
-  override val userId: Long,
-  override val signalType: SignalType,
-  followedUserId: Long,
-  timestamp: Long)
-    extends SignalData
+case cwass wecentfowwowssignaw(
+  ovewwide vaw usewid: wong, 😳😳😳
+  ovewwide v-vaw signawtype: signawtype, 🥺
+  fowwowedusewid: w-wong, mya
+  timestamp: wong)
+    e-extends signawdata
 
-object RecentFollowsSignal {
+object wecentfowwowssignaw {
 
-  def fromUssSignal(targetUserId: Long, signal: Signal): RecentFollowsSignal = {
-    val InternalId.UserId(followedUserId) = signal.targetInternalId.getOrElse(
-      throw new IllegalArgumentException("RecentFollow Signal does not have internalId"))
+  def fwomusssignaw(tawgetusewid: wong, signaw: s-signaw): wecentfowwowssignaw = {
+    vaw intewnawid.usewid(fowwowedusewid) = signaw.tawgetintewnawid.getowewse(
+      t-thwow nyew i-iwwegawawgumentexception("wecentfowwow signaw does nyot have intewnawid"))
 
-    RecentFollowsSignal(
-      userId = targetUserId,
-      followedUserId = followedUserId,
-      timestamp = signal.timestamp,
-      signalType = signal.signalType
+    wecentfowwowssignaw(
+      u-usewid = tawgetusewid, 🥺
+      fowwowedusewid = fowwowedusewid, >_<
+      timestamp = signaw.timestamp, >_<
+      s-signawtype = signaw.signawtype
     )
   }
 
-  def getRecentFollowedUserIds(
-    signalDataMap: Option[Map[SignalType, Seq[SignalData]]]
-  ): Option[Seq[Long]] = {
-    signalDataMap.map(_.getOrElse(SignalType.AccountFollow, default = Seq.empty).flatMap {
-      case RecentFollowsSignal(userId, signalType, followedUserId, timestamp) =>
-        Some(followedUserId)
-      case _ => None
+  d-def getwecentfowwowedusewids(
+    s-signawdatamap: o-option[map[signawtype, s-seq[signawdata]]]
+  ): option[seq[wong]] = {
+    signawdatamap.map(_.getowewse(signawtype.accountfowwow, (⑅˘꒳˘) d-defauwt = seq.empty).fwatmap {
+      case wecentfowwowssignaw(usewid, /(^•ω•^) signawtype, f-fowwowedusewid, rawr x3 timestamp) =>
+        some(fowwowedusewid)
+      case _ => nyone
     })
   }
 }

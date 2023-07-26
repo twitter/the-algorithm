@@ -1,42 +1,42 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.thriftscala.PushResponse
-import com.twitter.frigate.pushservice.thriftscala.PushStatus
-import com.twitter.frigate.thriftscala.CommonRecommendationType
+impowt c-com.twittew.finagwe.stats.bwoadcaststatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+i-impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushwesponse
+i-impowt com.twittew.fwigate.pushsewvice.thwiftscawa.pushstatus
+i-impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
 
-object ResponseStatsTrackUtils {
-  def trackStatsForResponseToRequest(
-    crt: CommonRecommendationType,
-    target: Target,
-    response: PushResponse,
-    receivers: Seq[StatsReceiver]
+o-object wesponsestatstwackutiws {
+  d-def twackstatsfowwesponsetowequest(
+    cwt: commonwecommendationtype, -.-
+    tawget: tawget, ( ͡o ω ͡o )
+    wesponse: pushwesponse, rawr x3
+    weceivews: s-seq[statsweceivew]
   )(
-    originalStats: StatsReceiver
-  ): Unit = {
-    val newReceivers = Seq(
-      originalStats
-        .scope("is_model_training_data")
-        .scope(target.isModelTrainingData.toString),
-      originalStats.scope("scribe_target").scope(IbisScribeTargets.crtToScribeTarget(crt))
+    owiginawstats: statsweceivew
+  ): u-unit = {
+    vaw nyewweceivews = s-seq(
+      owiginawstats
+        .scope("is_modew_twaining_data")
+        .scope(tawget.ismodewtwainingdata.tostwing), nyaa~~
+      owiginawstats.scope("scwibe_tawget").scope(ibisscwibetawgets.cwttoscwibetawget(cwt))
     )
 
-    val broadcastStats = BroadcastStatsReceiver(receivers)
-    val broadcastStatsWithExpts = BroadcastStatsReceiver(newReceivers ++ receivers)
+    vaw bwoadcaststats = b-bwoadcaststatsweceivew(weceivews)
+    vaw bwoadcaststatswithexpts = bwoadcaststatsweceivew(newweceivews ++ w-weceivews)
 
-    if (response.status == PushStatus.Sent) {
-      if (target.isModelTrainingData) {
-        broadcastStats.counter("num_training_data_recs_sent").incr()
+    i-if (wesponse.status == pushstatus.sent) {
+      if (tawget.ismodewtwainingdata) {
+        bwoadcaststats.countew("num_twaining_data_wecs_sent").incw()
       }
     }
-    broadcastStatsWithExpts.counter(response.status.toString).incr()
-    if (response.status == PushStatus.Filtered) {
-      broadcastStats
-        .scope(response.status.toString)
-        .counter(response.filteredBy.getOrElse("None"))
-        .incr()
+    bwoadcaststatswithexpts.countew(wesponse.status.tostwing).incw()
+    if (wesponse.status == p-pushstatus.fiwtewed) {
+      bwoadcaststats
+        .scope(wesponse.status.tostwing)
+        .countew(wesponse.fiwtewedby.getowewse("none"))
+        .incw()
     }
   }
 }

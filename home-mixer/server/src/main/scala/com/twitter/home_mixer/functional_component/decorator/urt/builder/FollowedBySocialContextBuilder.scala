@@ -1,53 +1,53 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.innetwowkfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.sgsvawidfowwowedbyusewidsfeatuwe
+i-impowt c-com.twittew.home_mixew.pwoduct.fowwowing.modew.homemixewextewnawstwings
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.sociaw_context.basesociawcontextbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata._
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope.pwoductscoped
+i-impowt com.twittew.stwingcentew.cwient.stwingcentew
+impowt javax.inject.inject
+i-impowt javax.inject.pwovidew
+impowt javax.inject.singweton
 
-@Singleton
-case class FollowedBySocialContextBuilder @Inject() (
-  externalStrings: HomeMixerExternalStrings,
-  @ProductScoped stringCenterProvider: Provider[StringCenter])
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@singweton
+case cwass f-fowwowedbysociawcontextbuiwdew @inject() (
+  extewnawstwings: homemixewextewnawstwings, OwO
+  @pwoductscoped s-stwingcentewpwovidew: p-pwovidew[stwingcentew])
+    extends basesociawcontextbuiwdew[pipewinequewy, 😳😳😳 tweetcandidate] {
 
-  private val stringCenter = stringCenterProvider.get()
+  pwivate vaw stwingcentew = s-stwingcentewpwovidew.get()
 
-  private val engagerSocialContextBuilder = EngagerSocialContextBuilder(
-    contextType = FollowGeneralContextType,
-    stringCenter = stringCenter,
-    oneUserString = externalStrings.socialContextOneUserFollowsString,
-    twoUsersString = externalStrings.socialContextTwoUsersFollowString,
-    moreUsersString = externalStrings.socialContextMoreUsersFollowString,
-    timelineTitle = externalStrings.socialContextFollowedByTimelineTitle
+  pwivate vaw engagewsociawcontextbuiwdew = engagewsociawcontextbuiwdew(
+    contexttype = f-fowwowgenewawcontexttype, 😳😳😳
+    stwingcentew = s-stwingcentew, o.O
+    o-oneusewstwing = e-extewnawstwings.sociawcontextoneusewfowwowsstwing, ( ͡o ω ͡o )
+    t-twousewsstwing = extewnawstwings.sociawcontexttwousewsfowwowstwing, (U ﹏ U)
+    moweusewsstwing = e-extewnawstwings.sociawcontextmoweusewsfowwowstwing, (///ˬ///✿)
+    timewinetitwe = extewnawstwings.sociawcontextfowwowedbytimewinetitwe
   )
 
-  def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
-    // Only apply followed-by social context for OON Tweets
-    val inNetwork = candidateFeatures.getOrElse(InNetworkFeature, true)
-    if (!inNetwork) {
-      val validFollowedByUserIds =
-        candidateFeatures.getOrElse(SGSValidFollowedByUserIdsFeature, Nil)
-      engagerSocialContextBuilder(
-        socialContextIds = validFollowedByUserIds,
-        query = query,
-        candidateFeatures = candidateFeatures
+  d-def appwy(
+    quewy: pipewinequewy, >w<
+    candidate: tweetcandidate, rawr
+    candidatefeatuwes: featuwemap
+  ): option[sociawcontext] = {
+    // o-onwy appwy fowwowed-by sociaw c-context fow oon t-tweets
+    vaw i-innetwowk = candidatefeatuwes.getowewse(innetwowkfeatuwe, mya twue)
+    if (!innetwowk) {
+      vaw v-vawidfowwowedbyusewids =
+        c-candidatefeatuwes.getowewse(sgsvawidfowwowedbyusewidsfeatuwe, ^^ nyiw)
+      engagewsociawcontextbuiwdew(
+        s-sociawcontextids = v-vawidfowwowedbyusewids, 😳😳😳
+        quewy = quewy, mya
+        c-candidatefeatuwes = candidatefeatuwes
       )
-    } else {
-      None
+    } ewse {
+      nyone
     }
   }
 }

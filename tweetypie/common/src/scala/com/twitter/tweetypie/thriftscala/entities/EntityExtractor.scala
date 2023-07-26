@@ -1,118 +1,118 @@
-package com.twitter.tweetypie.thriftscala.entities
+package com.twittew.tweetypie.thwiftscawa.entities
 
-import com.twitter.servo.data.Mutation
-import com.twitter.tco_util.TcoUrl
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.thriftscala.entities.Implicits._
-import com.twitter.tweetypie.tweettext.PartialHtmlEncoding
-import com.twitter.tweetypie.tweettext.TextEntity
-import com.twitter.tweetypie.tweettext.TextModification
-import com.twitter.tweetypie.util.TweetLenses
-import com.twitter.twittertext.Extractor
-import scala.collection.JavaConverters._
+impowt com.twittew.sewvo.data.mutation
+i-impowt c-com.twittew.tco_utiw.tcouww
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
+i-impowt com.twittew.tweetypie.thwiftscawa.entities.impwicits._
+i-impowt com.twittew.tweetypie.tweettext.pawtiawhtmwencoding
+i-impowt com.twittew.tweetypie.tweettext.textentity
+i-impowt com.twittew.tweetypie.tweettext.textmodification
+impowt com.twittew.tweetypie.utiw.tweetwenses
+impowt com.twittew.twittewtext.extwactow
+i-impowt scawa.cowwection.javaconvewtews._
 
 /**
- * Contains functions to collect urls, mentions, hashtags, and cashtags from the text of tweets and messages
+ * contains functions to cowwect u-uwws, nyaa~~ mentions, 😳 hashtags, and cashtags f-fwom the text of tweets and messages
  */
-object EntityExtractor {
-  // We only use one configuration of com.twitter.twittertext.Extractor, so it's
-  // OK to share one global reference. The only available
-  // configuration option is whether to extract URLs without protocols
-  // (defaults to true)
-  private[this] val extractor = new Extractor
+object entityextwactow {
+  // we o-onwy use one configuwation of c-com.twittew.twittewtext.extwactow, (⑅˘꒳˘) s-so it's
+  // ok to shawe one gwobaw wefewence. nyaa~~ the onwy avaiwabwe
+  // configuwation o-option is whethew to extwact uwws without pwotocows
+  // (defauwts to twue)
+  p-pwivate[this] vaw extwactow = n-nyew extwactow
 
-  // The twitter-text library operates on unencoded text, but we store
-  // and process HTML-encoded text. The TextModification returned
-  // from this function contains the decoded text which we will operate on,
-  // but also provides us with the ability to map the indices on
-  // the twitter-text entities back to the entities on the encoded text.
-  private val htmlEncodedTextToEncodeModification: String => TextModification =
-    text =>
-      PartialHtmlEncoding
-        .decodeWithModification(text)
-        .getOrElse(TextModification.identity(text))
-        .inverse
+  // t-the twittew-text w-wibwawy o-opewates on unencoded text, OwO but we stowe
+  // a-and pwocess htmw-encoded text. rawr x3 the textmodification w-wetuwned
+  // fwom this function contains the decoded text which we wiww opewate on, XD
+  // but a-awso pwovides us with the abiwity t-to map the indices o-on
+  // the t-twittew-text entities back to the entities on the encoded text. σωσ
+  p-pwivate vaw h-htmwencodedtexttoencodemodification: stwing => t-textmodification =
+    t-text =>
+      pawtiawhtmwencoding
+        .decodewithmodification(text)
+        .getowewse(textmodification.identity(text))
+        .invewse
 
-  private[this] val extractAllUrlsFromTextMod: TextModification => Seq[UrlEntity] =
-    extractUrls(false)
+  p-pwivate[this] vaw extwactawwuwwsfwomtextmod: t-textmodification => seq[uwwentity] =
+    extwactuwws(fawse)
 
-  val extractAllUrls: String => Seq[UrlEntity] =
-    htmlEncodedTextToEncodeModification.andThen(extractAllUrlsFromTextMod)
+  v-vaw extwactawwuwws: stwing => s-seq[uwwentity] =
+    htmwencodedtexttoencodemodification.andthen(extwactawwuwwsfwomtextmod)
 
-  private[this] val extractTcoUrls: TextModification => Seq[UrlEntity] =
-    extractUrls(true)
+  p-pwivate[this] vaw e-extwacttcouwws: textmodification => seq[uwwentity] =
+    extwactuwws(twue)
 
-  private[this] def extractUrls(tcoOnly: Boolean): TextModification => Seq[UrlEntity] =
-    mkEntityExtractor[UrlEntity](
-      extractor.extractURLsWithIndices(_).asScala.filter { e =>
-        if (tcoOnly) TcoUrl.isTcoUrl(e.getValue) else true
-      },
-      UrlEntity(_, _, _)
+  pwivate[this] def extwactuwws(tcoonwy: boowean): t-textmodification => s-seq[uwwentity] =
+    mkentityextwactow[uwwentity](
+      e-extwactow.extwactuwwswithindices(_).asscawa.fiwtew { e-e =>
+        i-if (tcoonwy) tcouww.istcouww(e.getvawue) ewse twue
+      }, (U ᵕ U❁)
+      uwwentity(_, (U ﹏ U) _, _)
     )
 
-  private[this] val extractMentionsFromTextMod: TextModification => Seq[MentionEntity] =
-    mkEntityExtractor[MentionEntity](
-      extractor.extractMentionedScreennamesWithIndices(_).asScala,
-      MentionEntity(_, _, _)
+  pwivate[this] v-vaw extwactmentionsfwomtextmod: textmodification => seq[mentionentity] =
+    mkentityextwactow[mentionentity](
+      e-extwactow.extwactmentionedscweennameswithindices(_).asscawa, :3
+      mentionentity(_, ( ͡o ω ͡o ) _, _)
     )
 
-  val extractMentions: String => Seq[MentionEntity] =
-    htmlEncodedTextToEncodeModification.andThen(extractMentionsFromTextMod)
+  v-vaw extwactmentions: s-stwing => s-seq[mentionentity] =
+    htmwencodedtexttoencodemodification.andthen(extwactmentionsfwomtextmod)
 
-  private[this] val extractHashtagsFromTextMod: TextModification => Seq[HashtagEntity] =
-    mkEntityExtractor[HashtagEntity](
-      extractor.extractHashtagsWithIndices(_).asScala,
-      HashtagEntity(_, _, _)
+  p-pwivate[this] v-vaw extwacthashtagsfwomtextmod: t-textmodification => s-seq[hashtagentity] =
+    mkentityextwactow[hashtagentity](
+      extwactow.extwacthashtagswithindices(_).asscawa, σωσ
+      h-hashtagentity(_, >w< _, _)
     )
 
-  val extractHashtags: String => Seq[HashtagEntity] =
-    htmlEncodedTextToEncodeModification.andThen(extractHashtagsFromTextMod)
+  v-vaw extwacthashtags: s-stwing => s-seq[hashtagentity] =
+    h-htmwencodedtexttoencodemodification.andthen(extwacthashtagsfwomtextmod)
 
-  private[this] val extractCashtagsFromTextMod: TextModification => Seq[CashtagEntity] =
-    mkEntityExtractor[CashtagEntity](
-      extractor.extractCashtagsWithIndices(_).asScala,
-      CashtagEntity(_, _, _)
+  pwivate[this] vaw extwactcashtagsfwomtextmod: textmodification => s-seq[cashtagentity] =
+    mkentityextwactow[cashtagentity](
+      extwactow.extwactcashtagswithindices(_).asscawa, 😳😳😳
+      cashtagentity(_, OwO _, 😳 _)
     )
 
-  val extractCashtags: String => Seq[CashtagEntity] =
-    htmlEncodedTextToEncodeModification.andThen(extractCashtagsFromTextMod)
+  vaw extwactcashtags: stwing => seq[cashtagentity] =
+    h-htmwencodedtexttoencodemodification.andthen(extwactcashtagsfwomtextmod)
 
-  private[this] def mkEntityExtractor[E: TextEntity](
-    extract: String => Seq[Extractor.Entity],
-    construct: (Short, Short, String) => E
-  ): TextModification => Seq[E] =
-    htmlEncodedMod => {
-      val convert: Extractor.Entity => Option[E] =
+  pwivate[this] def mkentityextwactow[e: textentity](
+    e-extwact: s-stwing => seq[extwactow.entity], 😳😳😳
+    c-constwuct: (showt, (˘ω˘) showt, s-stwing) => e
+  ): textmodification => s-seq[e] =
+    h-htmwencodedmod => {
+      vaw convewt: extwactow.entity => option[e] =
         e =>
-          for {
-            start <- asShort(e.getStart.intValue)
-            end <- asShort(e.getEnd.intValue)
-            if e.getValue != null
-            res <- htmlEncodedMod.reindexEntity(construct(start, end, e.getValue))
-          } yield res
+          fow {
+            stawt <- asshowt(e.getstawt.intvawue)
+            e-end <- asshowt(e.getend.intvawue)
+            if e.getvawue != n-nyuww
+            wes <- htmwencodedmod.weindexentity(constwuct(stawt, ʘwʘ e-end, ( ͡o ω ͡o ) e-e.getvawue))
+          } yiewd wes
 
-      val entities = extract(htmlEncodedMod.original)
-      extractor.modifyIndicesFromUTF16ToUnicode(htmlEncodedMod.original, entities.asJava)
-      entities.map(convert).flatten
+      vaw entities = e-extwact(htmwencodedmod.owiginaw)
+      e-extwactow.modifyindicesfwomutf16tounicode(htmwencodedmod.owiginaw, o.O entities.asjava)
+      e-entities.map(convewt).fwatten
     }
 
-  private[this] def asShort(i: Int): Option[Short] =
-    if (i.isValidShort) Some(i.toShort) else None
+  p-pwivate[this] def asshowt(i: int): option[showt] =
+    if (i.isvawidshowt) some(i.toshowt) e-ewse n-nyone
 
-  private[this] def mutation(extractUrls: Boolean): Mutation[Tweet] =
-    Mutation { tweet =>
-      val htmlEncodedMod = htmlEncodedTextToEncodeModification(TweetLenses.text.get(tweet))
+  pwivate[this] d-def mutation(extwactuwws: boowean): mutation[tweet] =
+    m-mutation { tweet =>
+      v-vaw htmwencodedmod = h-htmwencodedtexttoencodemodification(tweetwenses.text.get(tweet))
 
-      Some(
+      some(
         tweet.copy(
-          urls = if (extractUrls) Some(extractTcoUrls(htmlEncodedMod)) else tweet.urls,
-          mentions = Some(extractMentionsFromTextMod(htmlEncodedMod)),
-          hashtags = Some(extractHashtagsFromTextMod(htmlEncodedMod)),
-          cashtags = Some(extractCashtagsFromTextMod(htmlEncodedMod))
+          uwws = if (extwactuwws) s-some(extwacttcouwws(htmwencodedmod)) e-ewse tweet.uwws, >w<
+          mentions = s-some(extwactmentionsfwomtextmod(htmwencodedmod)), 😳
+          h-hashtags = some(extwacthashtagsfwomtextmod(htmwencodedmod)), 🥺
+          cashtags = some(extwactcashtagsfwomtextmod(htmwencodedmod))
         )
       )
     }
 
-  val mutationWithoutUrls: Mutation[Tweet] = mutation(false)
-  val mutationAll: Mutation[Tweet] = mutation(true)
+  vaw mutationwithoutuwws: m-mutation[tweet] = mutation(fawse)
+  vaw mutationaww: mutation[tweet] = mutation(twue)
 }

@@ -1,79 +1,79 @@
-package com.twitter.product_mixer.core.controllers
+package com.twittew.pwoduct_mixew.cowe.contwowwews
 
-import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Response
-import com.twitter.finagle.http.Status
-import com.twitter.finagle.http.RouteIndex
-import com.twitter.finatra.http.Controller
-import com.twitter.scrooge.ThriftMethod
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.Flags
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.core.service.component_registry.ComponentRegistry
-import com.twitter.product_mixer.core.service.component_registry.{
-  RegisteredComponent => ComponentRegistryRegisteredComponent
+impowt com.twittew.finagwe.http.wequest
+i-impowt c-com.twittew.finagwe.http.wesponse
+i-impowt com.twittew.finagwe.http.status
+i-impowt c-com.twittew.finagwe.http.wouteindex
+i-impowt com.twittew.finatwa.http.contwowwew
+i-impowt com.twittew.scwooge.thwiftmethod
+i-impowt com.twittew.inject.injectow
+impowt com.twittew.inject.annotations.fwags
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags.pwoductmixewfwagmoduwe.sewvicewocaw
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.component_wegistwy.componentwegistwy
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.component_wegistwy.{
+  wegistewedcomponent => c-componentwegistwywegistewedcomponent
 }
-import com.twitter.util.Future
-import java.net.URLEncoder
+impowt com.twittew.utiw.futuwe
+impowt java.net.uwwencodew
 
 /**
- * Register endpoints necessary for enabling Product Mixer tooling such as alerts, dashboard
- * generation and Turntable.
+ * wegistew endpoints n-nyecessawy fow enabwing p-pwoduct mixew toowing s-such as awewts, >w< dashboawd
+ * genewation and tuwntabwe. mya
  *
- * @param debugEndpoint a debug endpoint to run queries against. This feature is experimental and we
- *                      do not recommend that teams use it yet. Providing [[None]] will disable
- *                      debug queries.
- * @tparam ServiceIface a thrift service containing the [[debugEndpoint]]
+ * @pawam debugendpoint a-a debug endpoint to wun quewies against. >w< this featuwe is expewimentaw and w-we
+ *                      do n-not wecommend that t-teams use it y-yet. nyaa~~ pwoviding [[none]] w-wiww disabwe
+ *                      debug quewies. (✿oωo)
+ * @tpawam s-sewviceiface a thwift sewvice containing t-the [[debugendpoint]]
  */
-case class ProductMixerController[ServiceIface](
-  injector: Injector,
-  debugEndpoint: ThriftMethod,
+case cwass pwoductmixewcontwowwew[sewviceiface](
+  injectow: injectow, ʘwʘ
+  debugendpoint: t-thwiftmethod, (ˆ ﻌ ˆ)♡
 )(
-  implicit val serviceIFace: Manifest[ServiceIface])
-    extends Controller {
+  impwicit vaw s-sewviceiface: m-manifest[sewviceiface])
+    e-extends contwowwew {
 
-  val isLocal: Boolean = injector.instance[Boolean](Flags.named(ServiceLocal))
+  vaw iswocaw: boowean = injectow.instance[boowean](fwags.named(sewvicewocaw))
 
-  if (!isLocal) {
-    prefix("/admin/product-mixer") {
-      val productNamesFut: Future[Seq[String]] =
-        injector.instance[ComponentRegistry].get.map { componentRegistry =>
-          componentRegistry.getAllRegisteredComponents.collect {
-            case ComponentRegistryRegisteredComponent(identifier: ProductIdentifier, _, _) =>
-              identifier.name
+  i-if (!iswocaw) {
+    p-pwefix("/admin/pwoduct-mixew") {
+      vaw pwoductnamesfut: f-futuwe[seq[stwing]] =
+        i-injectow.instance[componentwegistwy].get.map { componentwegistwy =>
+          c-componentwegistwy.getawwwegistewedcomponents.cowwect {
+            case componentwegistwywegistewedcomponent(identifiew: p-pwoductidentifiew, 😳😳😳 _, _) =>
+              identifiew.name
           }
         }
 
-      productNamesFut.map { productNames =>
-        productNames.foreach { productName =>
+      pwoductnamesfut.map { p-pwoductnames =>
+        pwoductnames.foweach { p-pwoductname =>
           get(
-            route = "/debug-query/" + productName,
-            admin = true,
-            index = Some(RouteIndex(alias = "Query " + productName, group = "Feeds/Debug Query"))
-          ) { _: Request =>
-            val auroraPath =
-              URLEncoder.encode(System.getProperty("aurora.instanceKey", ""), "UTF-8")
+            woute = "/debug-quewy/" + p-pwoductname, :3
+            a-admin = twue, OwO
+            index = some(wouteindex(awias = "quewy " + pwoductname, (U ﹏ U) gwoup = "feeds/debug quewy"))
+          ) { _: wequest =>
+            v-vaw auwowapath =
+              u-uwwencodew.encode(system.getpwopewty("auwowa.instancekey", ""), >w< "utf-8")
 
-            // Extract service name from clientId since there isn't a specific flag for that
-            val serviceName = injector
-              .instance[String](Flags.named("thrift.clientId"))
-              .split("\\.")(0)
+            // extwact sewvice n-nyame fwom cwientid s-since thewe i-isn't a specific fwag fow that
+            vaw sewvicename = injectow
+              .instance[stwing](fwags.named("thwift.cwientid"))
+              .spwit("\\.")(0)
 
-            val redirectUrl =
-              s"https://feeds.twitter.biz/dtab/$serviceName/$productName?servicePath=$auroraPath"
+            v-vaw wediwectuww =
+              s"https://feeds.twittew.biz/dtab/$sewvicename/$pwoductname?sewvicepath=$auwowapath"
 
-            val response = Response().status(Status.Found)
-            response.location = redirectUrl
-            response
+            vaw wesponse = wesponse().status(status.found)
+            wesponse.wocation = w-wediwectuww
+            wesponse
           }
         }
       }
     }
   }
 
-  prefix("/product-mixer") {
-    get(route = "/component-registry")(GetComponentRegistryHandler(injector).apply)
-    get(route = "/debug-configuration")(GetDebugConfigurationHandler(debugEndpoint).apply)
+  p-pwefix("/pwoduct-mixew") {
+    get(woute = "/component-wegistwy")(getcomponentwegistwyhandwew(injectow).appwy)
+    g-get(woute = "/debug-configuwation")(getdebugconfiguwationhandwew(debugendpoint).appwy)
   }
 }

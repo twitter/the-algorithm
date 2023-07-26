@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-trait HasFeedbackInfo {
-  def feedbackInfo: Option[FeedbackInfo]
+twait hasfeedbackinfo {
+  d-def feedbackinfo: o-option[feedbackinfo]
 }
 
-case class FeedbackDisplayContext(reason: String)
+c-case cwass feedbackdispwaycontext(weason: s-stwing)
 
-case class FeedbackInfo(
-  feedbackKeys: Seq[String],
-  feedbackMetadata: Option[String],
-  displayContext: Option[FeedbackDisplayContext],
-  clientEventInfo: Option[ClientEventInfo])
+c-case cwass f-feedbackinfo(
+  f-feedbackkeys: seq[stwing], σωσ
+  f-feedbackmetadata: option[stwing],
+  dispwaycontext: option[feedbackdispwaycontext], σωσ
+  cwienteventinfo: o-option[cwienteventinfo])

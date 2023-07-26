@@ -1,43 +1,43 @@
-package com.twitter.unified_user_actions.client.summingbird
+package com.twittew.unified_usew_actions.cwient.summingbiwd
 
-import com.twitter.summingbird.TimeExtractor
-import com.twitter.summingbird.storm.Storm
-import com.twitter.summingbird_internal.sources.AppId
-import com.twitter.summingbird_internal.sources.SourceFactory
-import com.twitter.tormenta_internal.spout.Kafka2ScroogeSpoutWrapper
-import com.twitter.unified_user_actions.client.config.ClientConfig
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.client.config.KafkaConfigs
+impowt c-com.twittew.summingbiwd.timeextwactow
+i-impowt c-com.twittew.summingbiwd.stowm.stowm
+i-impowt com.twittew.summingbiwd_intewnaw.souwces.appid
+i-impowt c-com.twittew.summingbiwd_intewnaw.souwces.souwcefactowy
+i-impowt com.twittew.towmenta_intewnaw.spout.kafka2scwoogespoutwwappew
+i-impowt com.twittew.unified_usew_actions.cwient.config.cwientconfig
+impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+impowt com.twittew.unified_usew_actions.cwient.config.kafkaconfigs
 
-case class UnifiedUserActionsSourceScrooge(
-  appId: AppId,
-  parallelism: Int,
-  kafkaConfig: ClientConfig = KafkaConfigs.ProdUnifiedUserActions,
-  skipToLatest: Boolean = false,
-  enableTls: Boolean = true)
-    extends SourceFactory[Storm, UnifiedUserAction] {
+case cwass u-unifiedusewactionssouwcescwooge(
+  appid: appid, (⑅˘꒳˘)
+  pawawwewism: i-int, òωó
+  kafkaconfig: cwientconfig = k-kafkaconfigs.pwodunifiedusewactions, ʘwʘ
+  skiptowatest: boowean = fawse, /(^•ω•^)
+  enabwetws: boowean = t-twue)
+    extends souwcefactowy[stowm, ʘwʘ u-unifiedusewaction] {
 
-  override def name: String = "UnifiedUserActionsSource"
-  override def description: String = "Unified User Actions (UUA) events"
+  o-ovewwide def nyame: stwing = "unifiedusewactionssouwce"
+  ovewwide def descwiption: stwing = "unified u-usew actions (uua) events"
 
-  // The event timestamps from summingbird's perspective (client), is our internally
-  // outputted timestamps (producer). This ensures time-continuity between the client and the
-  // producer.
-  val timeExtractor: TimeExtractor[UnifiedUserAction] = TimeExtractor { e =>
-    e.eventMetadata.receivedTimestampMs
+  // the event timestamps fwom summingbiwd's p-pewspective (cwient), σωσ is ouw i-intewnawwy
+  // o-outputted timestamps (pwoducew). OwO t-this ensuwes time-continuity b-between the cwient and the
+  // pwoducew.
+  v-vaw timeextwactow: timeextwactow[unifiedusewaction] = timeextwactow { e-e =>
+    e.eventmetadata.weceivedtimestampms
   }
 
-  override def source = {
-    Storm.source(
-      Kafka2ScroogeSpoutWrapper(
-        codec = UnifiedUserAction,
-        cluster = kafkaConfig.cluster.name,
-        topic = kafkaConfig.topic,
-        appId = appId.get,
-        skipToLatest = skipToLatest,
-        enableTls = enableTls
-      ),
-      Some(parallelism)
-    )(timeExtractor)
+  ovewwide def souwce = {
+    stowm.souwce(
+      kafka2scwoogespoutwwappew(
+        codec = unifiedusewaction, 😳😳😳
+        c-cwustew = kafkaconfig.cwustew.name, 😳😳😳
+        t-topic = kafkaconfig.topic, o.O
+        a-appid = a-appid.get,
+        skiptowatest = skiptowatest, ( ͡o ω ͡o )
+        enabwetws = e-enabwetws
+      ), (U ﹏ U)
+      s-some(pawawwewism)
+    )(timeextwactow)
   }
 }

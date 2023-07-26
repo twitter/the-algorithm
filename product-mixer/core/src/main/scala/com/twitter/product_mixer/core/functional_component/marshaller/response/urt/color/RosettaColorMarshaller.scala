@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.cowow
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow._
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class RosettaColorMarshaller @Inject() () {
+@singweton
+c-cwass wosettacowowmawshawwew @inject() () {
 
-  def apply(rosettaColor: RosettaColor): urt.RosettaColor = rosettaColor match {
-    case WhiteRosettaColor => urt.RosettaColor.White
-    case BlackRosettaColor => urt.RosettaColor.Black
-    case ClearRosettaColor => urt.RosettaColor.Clear
-    case TextBlackRosettaColor => urt.RosettaColor.TextBlack
-    case TextBlueRosettaColor => urt.RosettaColor.TextBlue
-    case DeepGrayRosettaColor => urt.RosettaColor.DeepGray
-    case MediumGrayRosettaColor => urt.RosettaColor.MediumGray
-    case LightGrayRosettaColor => urt.RosettaColor.LightGray
-    case FadedGrayRosettaColor => urt.RosettaColor.FadedGray
-    case FaintGrayRosettaColor => urt.RosettaColor.FaintGray
-    case DeepOrangeRosettaColor => urt.RosettaColor.DeepOrange
-    case MediumOrangeRosettaColor => urt.RosettaColor.MediumOrange
-    case LightOrangeRosettaColor => urt.RosettaColor.LightOrange
-    case FadedOrangeRosettaColor => urt.RosettaColor.FadedOrange
-    case DeepYellowRosettaColor => urt.RosettaColor.DeepYellow
-    case MediumYellowRosettaColor => urt.RosettaColor.MediumYellow
-    case LightYellowRosettaColor => urt.RosettaColor.LightYellow
-    case FadedYellowRosettaColor => urt.RosettaColor.FadedYellow
-    case DeepGreenRosettaColor => urt.RosettaColor.DeepGreen
-    case MediumGreenRosettaColor => urt.RosettaColor.MediumGreen
-    case LightGreenRosettaColor => urt.RosettaColor.LightGreen
-    case FadedGreenRosettaColor => urt.RosettaColor.FadedGreen
-    case DeepBlueRosettaColor => urt.RosettaColor.DeepBlue
-    case TwitterBlueRosettaColor => urt.RosettaColor.TwitterBlue
-    case LightBlueRosettaColor => urt.RosettaColor.LightBlue
-    case FadedBlueRosettaColor => urt.RosettaColor.FadedBlue
-    case FaintBlueRosettaColor => urt.RosettaColor.FaintBlue
-    case DeepPurpleRosettaColor => urt.RosettaColor.DeepPurple
-    case MediumPurpleRosettaColor => urt.RosettaColor.MediumPurple
-    case LightPurpleRosettaColor => urt.RosettaColor.LightPurple
-    case FadedPurpleRosettaColor => urt.RosettaColor.FadedPurple
-    case DeepRedRosettaColor => urt.RosettaColor.DeepRed
-    case MediumRedRosettaColor => urt.RosettaColor.MediumRed
-    case LightRedRosettaColor => urt.RosettaColor.LightRed
-    case FadedRedRosettaColor => urt.RosettaColor.FadedRed
+  d-def appwy(wosettacowow: wosettacowow): uwt.wosettacowow = wosettacowow match {
+    c-case whitewosettacowow => uwt.wosettacowow.white
+    case b-bwackwosettacowow => uwt.wosettacowow.bwack
+    c-case cweawwosettacowow => uwt.wosettacowow.cweaw
+    case textbwackwosettacowow => uwt.wosettacowow.textbwack
+    c-case textbwuewosettacowow => uwt.wosettacowow.textbwue
+    c-case d-deepgwaywosettacowow => uwt.wosettacowow.deepgway
+    case mediumgwaywosettacowow => uwt.wosettacowow.mediumgway
+    case wightgwaywosettacowow => u-uwt.wosettacowow.wightgway
+    case fadedgwaywosettacowow => uwt.wosettacowow.fadedgway
+    case faintgwaywosettacowow => uwt.wosettacowow.faintgway
+    case d-deepowangewosettacowow => uwt.wosettacowow.deepowange
+    c-case m-mediumowangewosettacowow => uwt.wosettacowow.mediumowange
+    c-case wightowangewosettacowow => u-uwt.wosettacowow.wightowange
+    case fadedowangewosettacowow => uwt.wosettacowow.fadedowange
+    c-case deepyewwowwosettacowow => uwt.wosettacowow.deepyewwow
+    case mediumyewwowwosettacowow => u-uwt.wosettacowow.mediumyewwow
+    case wightyewwowwosettacowow => uwt.wosettacowow.wightyewwow
+    case fadedyewwowwosettacowow => uwt.wosettacowow.fadedyewwow
+    case deepgweenwosettacowow => u-uwt.wosettacowow.deepgween
+    case mediumgweenwosettacowow => u-uwt.wosettacowow.mediumgween
+    c-case wightgweenwosettacowow => u-uwt.wosettacowow.wightgween
+    case fadedgweenwosettacowow => uwt.wosettacowow.fadedgween
+    case deepbwuewosettacowow => u-uwt.wosettacowow.deepbwue
+    c-case twittewbwuewosettacowow => u-uwt.wosettacowow.twittewbwue
+    case w-wightbwuewosettacowow => uwt.wosettacowow.wightbwue
+    c-case fadedbwuewosettacowow => u-uwt.wosettacowow.fadedbwue
+    case faintbwuewosettacowow => uwt.wosettacowow.faintbwue
+    c-case deeppuwpwewosettacowow => uwt.wosettacowow.deeppuwpwe
+    c-case mediumpuwpwewosettacowow => uwt.wosettacowow.mediumpuwpwe
+    c-case wightpuwpwewosettacowow => u-uwt.wosettacowow.wightpuwpwe
+    case fadedpuwpwewosettacowow => uwt.wosettacowow.fadedpuwpwe
+    case deepwedwosettacowow => uwt.wosettacowow.deepwed
+    case mediumwedwosettacowow => uwt.wosettacowow.mediumwed
+    c-case wightwedwosettacowow => u-uwt.wosettacowow.wightwed
+    case f-fadedwedwosettacowow => u-uwt.wosettacowow.fadedwed
   }
 }

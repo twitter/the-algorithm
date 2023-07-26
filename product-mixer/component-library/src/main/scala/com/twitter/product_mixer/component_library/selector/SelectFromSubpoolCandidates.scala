@@ -1,147 +1,147 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import scala.reflect.ClassTag
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt scawa.wefwect.cwasstag
 
-sealed trait SubpoolIncludeTypes
+seawed twait subpoowincwudetypes
 
-trait IncludeInSubpool[-Query <: PipelineQuery] extends SubpoolIncludeTypes {
+twait incwudeinsubpoow[-quewy <: p-pipewinequewy] extends subpoowincwudetypes {
 
   /**
-   * Given the `query`, current `remainingCandidate`, and the `result`,
-   * returns whether the specific `remainingCandidate` should be passed into the
-   * [[SelectFromSubpoolCandidates]]'s [[SelectFromSubpoolCandidates.selector]]
+   * given t-the `quewy`, nyaa~~ cuwwent `wemainingcandidate`, ^^;; and t-the `wesuwt`, ^•ﻌ•^
+   * wetuwns whethew the specific `wemainingcandidate` shouwd be p-passed into the
+   * [[sewectfwomsubpoowcandidates]]'s [[sewectfwomsubpoowcandidates.sewectow]]
    *
-   * @note the `result` contains the [[SelectorResult.result]] that was passed into this selector,
-   *       so each `remainingCandidate` will get the same `result` Seq.
+   * @note the `wesuwt` contains t-the [[sewectowwesuwt.wesuwt]] t-that was passed into this sewectow, σωσ
+   *       so each `wemainingcandidate` wiww get the same `wesuwt` seq. -.-
    */
-  def apply(
-    query: Query,
-    remainingCandidate: CandidateWithDetails,
-    result: Seq[CandidateWithDetails]
-  ): Boolean
+  d-def appwy(
+    quewy: quewy, ^^;;
+    wemainingcandidate: candidatewithdetaiws, XD
+    wesuwt: seq[candidatewithdetaiws]
+  ): b-boowean
 }
 
-case class IncludeCandidateTypeInSubpool[CandidateType <: UniversalNoun[_]](
+case cwass i-incwudecandidatetypeinsubpoow[candidatetype <: u-univewsawnoun[_]](
 )(
-  implicit tag: ClassTag[CandidateType])
-    extends IncludeInSubpool[PipelineQuery] {
+  i-impwicit t-tag: cwasstag[candidatetype])
+    extends incwudeinsubpoow[pipewinequewy] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidate: CandidateWithDetails,
-    result: Seq[CandidateWithDetails]
-  ): Boolean = remainingCandidate.isCandidateType[CandidateType]()
+  ovewwide def a-appwy(
+    quewy: pipewinequewy, 🥺
+    wemainingcandidate: c-candidatewithdetaiws, òωó
+    wesuwt: seq[candidatewithdetaiws]
+  ): boowean = wemainingcandidate.iscandidatetype[candidatetype]()
 }
 
-trait IncludeSetInSubpool[-Query <: PipelineQuery] extends SubpoolIncludeTypes {
+twait incwudesetinsubpoow[-quewy <: pipewinequewy] e-extends subpoowincwudetypes {
 
   /**
-   * Given the `query`, all `remainingCandidates`` and `results`,
-   * returns a Set of which candidates should be included in the subpool.
+   * g-given the `quewy`, (ˆ ﻌ ˆ)♡ a-aww `wemainingcandidates`` a-and `wesuwts`, -.-
+   * wetuwns a set of which candidates shouwd b-be incwuded in t-the subpoow. :3
    *
-   * @note the returned set is only used to determine subpool membership. Mutating the candidates
-   *       is invalid and won't work. The order of the candidates will be preserved from the current
-   *       order of the remaining candidates sequence.
+   * @note the wetuwned set i-is onwy used to d-detewmine subpoow membewship. ʘwʘ mutating t-the candidates
+   *       is invawid and w-won't wowk. 🥺 the owdew of the candidates wiww be p-pwesewved fwom the cuwwent
+   *       o-owdew of the wemaining candidates s-sequence. >_<
    */
-  def apply(
-    query: Query,
-    remainingCandidate: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): Set[CandidateWithDetails]
+  d-def appwy(
+    quewy: quewy, ʘwʘ
+    wemainingcandidate: seq[candidatewithdetaiws], (˘ω˘)
+    wesuwt: seq[candidatewithdetaiws]
+  ): set[candidatewithdetaiws]
 }
 
-sealed trait SubpoolRemainingCandidatesHandler
+seawed twait subpoowwemainingcandidateshandwew
 
 /**
- * Candidates remaining in the subpool after running the selector will be
- * prepended to the beginning of the [[SelectorResult.remainingCandidates]]
+ * c-candidates w-wemaining in the subpoow aftew w-wunning the sewectow w-wiww be
+ * p-pwepended to the beginning of the [[sewectowwesuwt.wemainingcandidates]]
  */
-case object PrependToBeginningOfRemainingCandidates extends SubpoolRemainingCandidatesHandler
+case object pwependtobeginningofwemainingcandidates e-extends subpoowwemainingcandidateshandwew
 
 /**
- * Candidates remaining in the subpool after running the selector will be
- * appended to the end of the [[SelectorResult.remainingCandidates]]
+ * candidates wemaining in the subpoow aftew wunning the sewectow w-wiww be
+ * appended to the e-end of the [[sewectowwesuwt.wemainingcandidates]]
  */
-case object AppendToEndOfRemainingCandidates extends SubpoolRemainingCandidatesHandler
+c-case object a-appendtoendofwemainingcandidates extends subpoowwemainingcandidateshandwew
 
 /**
- * Creates a subpool of all `remainingCandidates` for which [[subpoolInclude]] resolves to true
- * (in the same order as the original `remainingCandidates`) and runs the [[selector]] with the
- * subpool passed in as the `remainingCandidates`.
+ * c-cweates a subpoow o-of aww `wemainingcandidates` f-fow which [[subpoowincwude]] w-wesowves to twue
+ * (in the same owdew as the owiginaw `wemainingcandidates`) and w-wuns the [[sewectow]] w-with the
+ * s-subpoow passed i-in as the `wemainingcandidates`. (✿oωo)
  *
- * Most customers want to use a IncludeInSubpool that chooses if each candidate should be included
- * in the subpool.
- * Where necessary, IncludeSetInSubpool allows you to define them in bulk w/ a Set.
+ * m-most customews want to use a incwudeinsubpoow that chooses i-if each candidate shouwd be incwuded
+ * in the subpoow. (///ˬ///✿)
+ * whewe nyecessawy, rawr x3 incwudesetinsubpoow a-awwows you to define them in buwk w/ a set. -.-
  *
- * @note any candidates in the subpool which are not added to the [[SelectorResult.result]]
- *       will be treated according to the [[SubpoolRemainingCandidatesHandler]]
+ * @note any candidates in t-the subpoow which a-awe nyot added t-to the [[sewectowwesuwt.wesuwt]]
+ *       wiww b-be tweated accowding to the [[subpoowwemainingcandidateshandwew]]
  */
-class SelectFromSubpoolCandidates[-Query <: PipelineQuery] private[selector] (
-  val selector: Selector[Query],
-  subpoolInclude: SubpoolIncludeTypes,
-  subpoolRemainingCandidatesHandler: SubpoolRemainingCandidatesHandler =
-    AppendToEndOfRemainingCandidates)
-    extends Selector[Query] {
+c-cwass sewectfwomsubpoowcandidates[-quewy <: p-pipewinequewy] pwivate[sewectow] (
+  vaw sewectow: sewectow[quewy], ^^
+  subpoowincwude: subpoowincwudetypes, (⑅˘꒳˘)
+  s-subpoowwemainingcandidateshandwew: subpoowwemainingcandidateshandwew =
+    a-appendtoendofwemainingcandidates)
+    extends sewectow[quewy] {
 
-  override val pipelineScope: CandidateScope = selector.pipelineScope
+  o-ovewwide v-vaw pipewinescope: candidatescope = sewectow.pipewinescope
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
+  o-ovewwide def a-appwy(
+    quewy: quewy, nyaa~~
+    wemainingcandidates: s-seq[candidatewithdetaiws], /(^•ω•^)
+    w-wesuwt: seq[candidatewithdetaiws]
+  ): sewectowwesuwt = {
 
-    val (selectedCandidates, otherCandidates) = subpoolInclude match {
-      case includeInSubpool: IncludeInSubpool[Query] =>
-        remainingCandidates.partition(candidate =>
-          pipelineScope.contains(candidate) && includeInSubpool(query, candidate, result))
-      case includeSetInSubpool: IncludeSetInSubpool[Query] =>
-        val includeSet =
-          includeSetInSubpool(query, remainingCandidates.filter(pipelineScope.contains), result)
-        remainingCandidates.partition(candidate => includeSet.contains(candidate))
+    vaw (sewectedcandidates, (U ﹏ U) othewcandidates) = subpoowincwude m-match {
+      c-case i-incwudeinsubpoow: incwudeinsubpoow[quewy] =>
+        w-wemainingcandidates.pawtition(candidate =>
+          p-pipewinescope.contains(candidate) && incwudeinsubpoow(quewy, 😳😳😳 candidate, >w< w-wesuwt))
+      case incwudesetinsubpoow: incwudesetinsubpoow[quewy] =>
+        vaw incwudeset =
+          incwudesetinsubpoow(quewy, XD w-wemainingcandidates.fiwtew(pipewinescope.contains), o.O w-wesuwt)
+        wemainingcandidates.pawtition(candidate => incwudeset.contains(candidate))
     }
 
-    val underlyingSelectorResult = selector.apply(query, selectedCandidates, result)
-    val remainingCandidatesWithSubpoolRemainingCandidates =
-      subpoolRemainingCandidatesHandler match {
-        case AppendToEndOfRemainingCandidates =>
-          otherCandidates ++ underlyingSelectorResult.remainingCandidates
-        case PrependToBeginningOfRemainingCandidates =>
-          underlyingSelectorResult.remainingCandidates ++ otherCandidates
+    v-vaw undewwyingsewectowwesuwt = s-sewectow.appwy(quewy, mya sewectedcandidates, 🥺 wesuwt)
+    vaw wemainingcandidateswithsubpoowwemainingcandidates =
+      s-subpoowwemainingcandidateshandwew match {
+        case appendtoendofwemainingcandidates =>
+          othewcandidates ++ undewwyingsewectowwesuwt.wemainingcandidates
+        c-case pwependtobeginningofwemainingcandidates =>
+          undewwyingsewectowwesuwt.wemainingcandidates ++ othewcandidates
       }
-    underlyingSelectorResult.copy(remainingCandidates =
-      remainingCandidatesWithSubpoolRemainingCandidates)
+    u-undewwyingsewectowwesuwt.copy(wemainingcandidates =
+      w-wemainingcandidateswithsubpoowwemainingcandidates)
   }
 
-  override def toString: String = s"SelectFromSubpoolCandidates(${selector.toString}))"
+  ovewwide def tostwing: stwing = s"sewectfwomsubpoowcandidates(${sewectow.tostwing}))"
 }
 
-object SelectFromSubpoolCandidates {
-  def apply[Query <: PipelineQuery](
-    selector: Selector[Query],
-    includeInSubpool: IncludeInSubpool[Query],
-    subpoolRemainingCandidatesHandler: SubpoolRemainingCandidatesHandler =
-      AppendToEndOfRemainingCandidates
-  ) = new SelectFromSubpoolCandidates[Query](
-    selector,
-    includeInSubpool,
-    subpoolRemainingCandidatesHandler
+o-object sewectfwomsubpoowcandidates {
+  d-def appwy[quewy <: pipewinequewy](
+    sewectow: sewectow[quewy], ^^;;
+    incwudeinsubpoow: i-incwudeinsubpoow[quewy], :3
+    subpoowwemainingcandidateshandwew: s-subpoowwemainingcandidateshandwew =
+      appendtoendofwemainingcandidates
+  ) = nyew sewectfwomsubpoowcandidates[quewy](
+    sewectow, (U ﹏ U)
+    incwudeinsubpoow, OwO
+    s-subpoowwemainingcandidateshandwew
   )
 
-  def includeSet[Query <: PipelineQuery](
-    selector: Selector[Query],
-    includeSetInSubpool: IncludeSetInSubpool[Query],
-    subpoolRemainingCandidatesHandler: SubpoolRemainingCandidatesHandler =
-      AppendToEndOfRemainingCandidates
-  ) = new SelectFromSubpoolCandidates[Query](
-    selector,
-    includeSetInSubpool,
-    subpoolRemainingCandidatesHandler
+  def i-incwudeset[quewy <: p-pipewinequewy](
+    sewectow: s-sewectow[quewy], 😳😳😳
+    incwudesetinsubpoow: i-incwudesetinsubpoow[quewy], (ˆ ﻌ ˆ)♡
+    s-subpoowwemainingcandidateshandwew: s-subpoowwemainingcandidateshandwew =
+      appendtoendofwemainingcandidates
+  ) = n-new sewectfwomsubpoowcandidates[quewy](
+    s-sewectow, XD
+    incwudesetinsubpoow, (ˆ ﻌ ˆ)♡
+    subpoowwemainingcandidateshandwew
   )
 }

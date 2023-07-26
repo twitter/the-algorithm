@@ -1,58 +1,58 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.twittew.seawch.eawwybiwd.awchive.segmentbuiwdew;
 
-import java.io.File;
+impowt j-java.io.fiwe;
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+i-impowt com.googwe.inject.pwovides;
+i-impowt com.googwe.inject.singweton;
 
-import com.twitter.app.Flaggable;
-import com.twitter.decider.Decider;
-import com.twitter.inject.TwitterModule;
-import com.twitter.inject.annotations.Flag;
-import com.twitter.search.common.config.LoggerConfiguration;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.util.EarlybirdDecider;
+i-impowt c-com.twittew.app.fwaggabwe;
+i-impowt c-com.twittew.decidew.decidew;
+i-impowt com.twittew.inject.twittewmoduwe;
+impowt com.twittew.inject.annotations.fwag;
+impowt com.twittew.seawch.common.config.woggewconfiguwation;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.eawwybiwddecidew;
 
-public class SegmentBuilderModule extends TwitterModule {
+pubwic cwass segmentbuiwdewmoduwe extends twittewmoduwe {
 
-  private static final String CONFIG_FILE_FLAG_NAME = "config_file";
-  private static final String SEGMENT_LOG_DIR_FLAG_NAME = "segment_log_dir";
+  pwivate s-static finaw stwing config_fiwe_fwag_name = "config_fiwe";
+  p-pwivate static finaw stwing segment_wog_diw_fwag_name = "segment_wog_diw";
 
-  public SegmentBuilderModule() {
-    createFlag(CONFIG_FILE_FLAG_NAME,
-            new File("earlybird-search.yml"),
-            "specify config file",
-            Flaggable.ofFile());
+  pubwic segmentbuiwdewmoduwe() {
+    c-cweatefwag(config_fiwe_fwag_name,
+            nyew fiwe("eawwybiwd-seawch.ymw"), -.-
+            "specify c-config f-fiwe", 🥺
+            fwaggabwe.offiwe());
 
-    createFlag(SEGMENT_LOG_DIR_FLAG_NAME,
-            "",
-            "override log dir from config file",
-            Flaggable.ofString());
+    cweatefwag(segment_wog_diw_fwag_name, o.O
+            "", /(^•ω•^)
+            "ovewwide wog diw fwom config f-fiwe", nyaa~~
+            fwaggabwe.ofstwing());
   }
 
   /**
-   * Initializes the Earlybird config and the log configuration, and returns an EarlybirdDecider
-   * object, which will be injected into the SegmentBuilder instance.
+   * initiawizes the eawwybiwd config and the w-wog configuwation, nyaa~~ and wetuwns a-an eawwybiwddecidew
+   * o-object, :3 w-which wiww be i-injected into the segmentbuiwdew instance. 😳😳😳
    *
-   * @param configFile The config file to use to initialize EarlybirdConfig
-   * @param segmentLogDir If not empty, used to override the log directory from the config file
-   * @return An initialized EarlybirdDecider
+   * @pawam c-configfiwe the config fiwe to use to i-initiawize eawwybiwdconfig
+   * @pawam segmentwogdiw if nyot empty, (˘ω˘) used to ovewwide the wog diwectowy fwom the c-config fiwe
+   * @wetuwn an initiawized e-eawwybiwddecidew
    */
-  @Provides
-  @Singleton
-  public Decider provideDecider(@Flag(CONFIG_FILE_FLAG_NAME) File configFile,
-                                @Flag(SEGMENT_LOG_DIR_FLAG_NAME) String segmentLogDir) {
-    // By default Guice will build singletons eagerly:
-    //    https://github.com/google/guice/wiki/Scopes#eager-singletons
-    // So in order to ensure that the EarlybirdConfig and LoggerConfiguration initializations occur
-    // before the EarlybirdDecider initialization, we place them here.
-    EarlybirdConfig.init(configFile.getName());
-    if (!segmentLogDir.isEmpty()) {
-      EarlybirdConfig.overrideLogDir(segmentLogDir);
+  @pwovides
+  @singweton
+  p-pubwic d-decidew pwovidedecidew(@fwag(config_fiwe_fwag_name) fiwe configfiwe, ^^
+                                @fwag(segment_wog_diw_fwag_name) stwing segmentwogdiw) {
+    // b-by defauwt g-guice wiww buiwd singwetons eagewwy:
+    //    h-https://github.com/googwe/guice/wiki/scopes#eagew-singwetons
+    // s-so in owdew to ensuwe that t-the eawwybiwdconfig and woggewconfiguwation i-initiawizations occuw
+    // befowe t-the eawwybiwddecidew initiawization, :3 w-we pwace them hewe. -.-
+    eawwybiwdconfig.init(configfiwe.getname());
+    i-if (!segmentwogdiw.isempty()) {
+      e-eawwybiwdconfig.ovewwidewogdiw(segmentwogdiw);
     }
-    new LoggerConfiguration(EarlybirdConfig.getLogPropertiesFile(), EarlybirdConfig.getLogDir())
-            .configure();
+    nyew woggewconfiguwation(eawwybiwdconfig.getwogpwopewtiesfiwe(), 😳 eawwybiwdconfig.getwogdiw())
+            .configuwe();
 
-    return EarlybirdDecider.initialize();
+    wetuwn eawwybiwddecidew.initiawize();
   }
 }

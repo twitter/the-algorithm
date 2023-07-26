@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.CoverContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCover
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew.covewcontentmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.cwienteventinfomawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.fuwwcovew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.hawfcovew
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => uwt}
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class CoverMarshaller @Inject() (
-  coverContentMarshaller: CoverContentMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller) {
+@singweton
+cwass covewmawshawwew @inject() (
+  covewcontentmawshawwew: c-covewcontentmawshawwew, nyaa~~
+  cwienteventinfomawshawwew: c-cwienteventinfomawshawwew) {
 
-  def apply(cover: Cover): urt.ShowCover = cover match {
-    case halfCover: HalfCover =>
-      urt.ShowCover(
-        cover = coverContentMarshaller(halfCover.content),
-        clientEventInfo = cover.clientEventInfo.map(clientEventInfoMarshaller(_)))
-    case fullCover: FullCover =>
-      urt.ShowCover(
-        cover = coverContentMarshaller(fullCover.content),
-        clientEventInfo = cover.clientEventInfo.map(clientEventInfoMarshaller(_)))
+  def appwy(covew: covew): uwt.showcovew = c-covew match {
+    case hawfcovew: h-hawfcovew =>
+      u-uwt.showcovew(
+        covew = covewcontentmawshawwew(hawfcovew.content), (⑅˘꒳˘)
+        cwienteventinfo = covew.cwienteventinfo.map(cwienteventinfomawshawwew(_)))
+    c-case fuwwcovew: fuwwcovew =>
+      uwt.showcovew(
+        covew = covewcontentmawshawwew(fuwwcovew.content), rawr x3
+        cwienteventinfo = c-covew.cwienteventinfo.map(cwienteventinfomawshawwew(_)))
   }
 }
 
-class UnsupportedTimelineCoverException(cover: Cover)
-    extends UnsupportedOperationException(
-      "Unsupported timeline cover " + TransportMarshaller.getSimpleName(cover.getClass))
+cwass u-unsuppowtedtimewinecovewexception(covew: c-covew)
+    e-extends u-unsuppowtedopewationexception(
+      "unsuppowted timewine covew " + twanspowtmawshawwew.getsimpwename(covew.getcwass))

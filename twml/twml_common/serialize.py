@@ -1,16 +1,16 @@
-from thrift.protocol import TBinaryProtocol
-from thrift.transport import TTransport
+fwom thwift.pwotocow impowt tbinawypwotocow
+f-fwom t-thwift.twanspowt i-impowt ttwanspowt
 
 
-def serialize(obj):
-  tbuf = TTransport.TMemoryBuffer()
-  iproto = TBinaryProtocol.TBinaryProtocol(tbuf)
-  obj.write(iproto)
-  return tbuf.getvalue()
+d-def sewiawize(obj):
+  t-tbuf = t-ttwanspowt.tmemowybuffew()
+  ipwoto = t-tbinawypwotocow.tbinawypwotocow(tbuf)
+  o-obj.wwite(ipwoto)
+  wetuwn tbuf.getvawue()
 
 
-def deserialize(record, bytes):
-  tbuf = TTransport.TMemoryBuffer(bytes)
-  iproto = TBinaryProtocol.TBinaryProtocol(tbuf)
-  record.read(iproto)
-  return record
+def desewiawize(wecowd, (U ﹏ U) bytes):
+  tbuf = t-ttwanspowt.tmemowybuffew(bytes)
+  ipwoto = tbinawypwotocow.tbinawypwotocow(tbuf)
+  w-wecowd.wead(ipwoto)
+  wetuwn wecowd

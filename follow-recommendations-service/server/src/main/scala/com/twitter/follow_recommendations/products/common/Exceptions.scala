@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.products.common
+package com.twittew.fowwow_wecommendations.pwoducts.common
 
-abstract class ProductException(message: String) extends Exception(message)
+abstwact c-cwass pwoductexception(message: s-stwing) extends e-exception(message)
 
-class MissingFieldException(productRequest: ProductRequest, fieldName: String)
-    extends ProductException(
-      s"Missing ${fieldName} field for ${productRequest.recommendationRequest.displayLocation} request")
+c-cwass missingfiewdexception(pwoductwequest: p-pwoductwequest, rawr x3 f-fiewdname: stwing)
+    e-extends p-pwoductexception(
+      s"missing ${fiewdname} fiewd fow ${pwoductwequest.wecommendationwequest.dispwaywocation} wequest")

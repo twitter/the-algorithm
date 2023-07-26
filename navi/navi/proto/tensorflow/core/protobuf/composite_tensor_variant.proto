@@ -1,16 +1,16 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/protobuf/struct.proto";
+impowt "tensowfwow/cowe/pwotobuf/stwuct.pwoto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option g-go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Metadata for CompositeTensorVariant, used when serializing as Variant.
+// m-metadata f-fow compositetensowvawiant, (⑅˘꒳˘) used w-when sewiawizing a-as vawiant. (U ᵕ U❁)
 //
-// We define a new message here (rather than directly using TypeSpecProto for
-// the metadata string) to retain flexibility to change the metadata encoding
-// to support additional features.
-message CompositeTensorVariantMetadata {
-  TypeSpecProto type_spec_proto = 1;
+// w-we define a-a nyew message hewe (wathew than diwectwy using typespecpwoto fow
+// the metadata s-stwing) to wetain fwexibiwity to change the metadata e-encoding
+// to suppowt additionaw f-featuwes. -.-
+message compositetensowvawiantmetadata {
+  typespecpwoto type_spec_pwoto = 1;
 }

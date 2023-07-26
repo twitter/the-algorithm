@@ -1,24 +1,24 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core",
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "configapi/configapi-decider",
-        "decider/src/main/scala",
-        "servo/decider",
-        "servo/util/src/main/scala",
-        "timelineranker/common:model",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/config",
-        "timelines/src/main/scala/com/twitter/timelines/common/model",
-        "timelines/src/main/scala/com/twitter/timelines/config",
-        "timelines/src/main/scala/com/twitter/timelines/config/configapi",
-        "timelines/src/main/scala/com/twitter/timelines/earlybird/common/utils",
-        "timelines/src/main/scala/com/twitter/timelines/model/candidate",
-        "timelines/src/main/scala/com/twitter/timelines/util",
-        "timelineservice/common/src/main/scala/com/twitter/timelineservice/model",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "configapi/configapi-cowe", (⑅˘꒳˘)
+        "configapi/configapi-cowe/swc/main/scawa/com/twittew/timewines/configapi", ( ͡o ω ͡o )
+        "configapi/configapi-decidew", UwU
+        "decidew/swc/main/scawa", rawr x3
+        "sewvo/decidew", rawr
+        "sewvo/utiw/swc/main/scawa", σωσ
+        "timewinewankew/common:modew", σωσ
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/config", >_<
+        "timewines/swc/main/scawa/com/twittew/timewines/common/modew", :3
+        "timewines/swc/main/scawa/com/twittew/timewines/config", (U ﹏ U)
+        "timewines/swc/main/scawa/com/twittew/timewines/config/configapi", -.-
+        "timewines/swc/main/scawa/com/twittew/timewines/eawwybiwd/common/utiws", (ˆ ﻌ ˆ)♡
+        "timewines/swc/main/scawa/com/twittew/timewines/modew/candidate", (⑅˘꒳˘)
+        "timewines/swc/main/scawa/com/twittew/timewines/utiw", (U ᵕ U❁)
+        "timewinesewvice/common/swc/main/scawa/com/twittew/timewinesewvice/modew", -.-
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", ^^;;
     ],
 )

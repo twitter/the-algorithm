@@ -1,219 +1,219 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.tweetypie.store.TweetEventDataScrubber.scrub
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.stowe.tweeteventdatascwubbew.scwub
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object DeleteTweet extends TweetStore.SyncModule {
-  case class Event(
-    tweet: Tweet,
-    timestamp: Time,
-    user: Option[User] = None,
-    byUserId: Option[UserId] = None,
-    auditPassthrough: Option[AuditDeleteTweet] = None,
-    cascadedFromTweetId: Option[TweetId] = None,
-    isUserErasure: Boolean = false,
-    isBounceDelete: Boolean = false,
-    isLastQuoteOfQuoter: Boolean = false,
-    isAdminDelete: Boolean)
-      extends SyncTweetStoreEvent("delete_tweet") {
+o-object dewetetweet e-extends t-tweetstowe.syncmoduwe {
+  c-case cwass event(
+    tweet: tweet, ^^
+    timestamp: time, ^•ﻌ•^
+    usew: o-option[usew] = none, XD
+    byusewid: option[usewid] = n-nyone, :3
+    auditpassthwough: option[auditdewetetweet] = n-nyone, (ꈍᴗꈍ)
+    cascadedfwomtweetid: option[tweetid] = nyone, :3
+    i-isusewewasuwe: boowean = f-fawse, (U ﹏ U)
+    isbouncedewete: b-boowean = fawse, UwU
+    iswastquoteofquotew: boowean = fawse, 😳😳😳
+    isadmindewete: b-boowean)
+      extends synctweetstoweevent("dewete_tweet") {
 
-    def toAsyncRequest: AsyncDeleteRequest =
-      AsyncDeleteRequest(
-        tweet = tweet,
-        user = user,
-        byUserId = byUserId,
-        timestamp = timestamp.inMillis,
-        auditPassthrough = auditPassthrough,
-        cascadedFromTweetId = cascadedFromTweetId,
-        isUserErasure = isUserErasure,
-        isBounceDelete = isBounceDelete,
-        isLastQuoteOfQuoter = Some(isLastQuoteOfQuoter),
-        isAdminDelete = Some(isAdminDelete)
+    def toasyncwequest: a-asyncdewetewequest =
+      asyncdewetewequest(
+        t-tweet = t-tweet, XD
+        usew = u-usew, o.O
+        b-byusewid = byusewid, (⑅˘꒳˘)
+        timestamp = timestamp.inmiwwis, 😳😳😳
+        auditpassthwough = a-auditpassthwough, nyaa~~
+        cascadedfwomtweetid = cascadedfwomtweetid, rawr
+        i-isusewewasuwe = isusewewasuwe, -.-
+        isbouncedewete = isbouncedewete, (✿oωo)
+        iswastquoteofquotew = some(iswastquoteofquotew), /(^•ω•^)
+        isadmindewete = s-some(isadmindewete)
       )
   }
 
-  trait Store {
-    val deleteTweet: FutureEffect[Event]
+  twait stowe {
+    v-vaw dewetetweet: f-futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val deleteTweet: FutureEffect[Event] = wrap(underlying.deleteTweet)
+  t-twait stowewwappew extends stowe { sewf: tweetstowewwappew[stowe] =>
+    ovewwide v-vaw dewetetweet: f-futuweeffect[event] = wwap(undewwying.dewetetweet)
   }
 
-  object Store {
-    def apply(
-      cachingTweetStore: CachingTweetStore,
-      asyncEnqueueStore: AsyncEnqueueStore,
-      userCountsUpdatingStore: GizmoduckUserCountsUpdatingStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore,
-      logLensStore: LogLensStore
-    ): Store =
-      new Store {
-        override val deleteTweet: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            cachingTweetStore.ignoreFailures.deleteTweet,
-            asyncEnqueueStore.deleteTweet,
-            userCountsUpdatingStore.deleteTweet,
-            tweetCountsUpdatingStore.deleteTweet,
-            logLensStore.deleteTweet
+  o-object stowe {
+    d-def appwy(
+      cachingtweetstowe: c-cachingtweetstowe, 🥺
+      asyncenqueuestowe: a-asyncenqueuestowe, ʘwʘ
+      usewcountsupdatingstowe: gizmoduckusewcountsupdatingstowe, UwU
+      t-tweetcountsupdatingstowe: tweetcountscacheupdatingstowe, XD
+      w-wogwensstowe: wogwensstowe
+    ): s-stowe =
+      n-nyew stowe {
+        ovewwide vaw dewetetweet: futuweeffect[event] =
+          futuweeffect.inpawawwew(
+            cachingtweetstowe.ignowefaiwuwes.dewetetweet, (✿oωo)
+            asyncenqueuestowe.dewetetweet, :3
+            u-usewcountsupdatingstowe.dewetetweet, (///ˬ///✿)
+            t-tweetcountsupdatingstowe.dewetetweet, nyaa~~
+            wogwensstowe.dewetetweet
           )
       }
   }
 }
 
-object AsyncDeleteTweet extends TweetStore.AsyncModule {
+o-object a-asyncdewetetweet e-extends tweetstowe.asyncmoduwe {
 
-  object Event {
-    def fromAsyncRequest(request: AsyncDeleteRequest): TweetStoreEventOrRetry[Event] =
-      TweetStoreEventOrRetry(
-        AsyncDeleteTweet.Event(
-          tweet = request.tweet,
-          timestamp = Time.fromMilliseconds(request.timestamp),
-          optUser = request.user,
-          byUserId = request.byUserId,
-          auditPassthrough = request.auditPassthrough,
-          cascadedFromTweetId = request.cascadedFromTweetId,
-          isUserErasure = request.isUserErasure,
-          isBounceDelete = request.isBounceDelete,
-          isLastQuoteOfQuoter = request.isLastQuoteOfQuoter.getOrElse(false),
-          isAdminDelete = request.isAdminDelete.getOrElse(false)
-        ),
-        request.retryAction,
-        RetryEvent
+  object event {
+    def fwomasyncwequest(wequest: asyncdewetewequest): t-tweetstoweeventowwetwy[event] =
+      tweetstoweeventowwetwy(
+        asyncdewetetweet.event(
+          tweet = wequest.tweet, >w<
+          timestamp = t-time.fwommiwwiseconds(wequest.timestamp), -.-
+          optusew = w-wequest.usew, (✿oωo)
+          b-byusewid = w-wequest.byusewid, (˘ω˘)
+          auditpassthwough = w-wequest.auditpassthwough, rawr
+          c-cascadedfwomtweetid = w-wequest.cascadedfwomtweetid, OwO
+          i-isusewewasuwe = wequest.isusewewasuwe, ^•ﻌ•^
+          isbouncedewete = w-wequest.isbouncedewete, UwU
+          i-iswastquoteofquotew = w-wequest.iswastquoteofquotew.getowewse(fawse), (˘ω˘)
+          i-isadmindewete = w-wequest.isadmindewete.getowewse(fawse)
+        ), (///ˬ///✿)
+        wequest.wetwyaction, σωσ
+        wetwyevent
       )
   }
 
-  case class Event(
-    tweet: Tweet,
-    timestamp: Time,
-    optUser: Option[User] = None,
-    byUserId: Option[UserId] = None,
-    auditPassthrough: Option[AuditDeleteTweet] = None,
-    cascadedFromTweetId: Option[TweetId] = None,
-    isUserErasure: Boolean = false,
-    isBounceDelete: Boolean,
-    isLastQuoteOfQuoter: Boolean = false,
-    isAdminDelete: Boolean)
-      extends AsyncTweetStoreEvent("async_delete_tweet")
-      with TweetStoreTweetEvent {
-    val tweetEventTweetId: TweetId = tweet.id
+  case cwass e-event(
+    tweet: tweet, /(^•ω•^)
+    timestamp: time,
+    optusew: option[usew] = nyone, 😳
+    byusewid: o-option[usewid] = nyone, 😳
+    auditpassthwough: option[auditdewetetweet] = nyone, (⑅˘꒳˘)
+    cascadedfwomtweetid: o-option[tweetid] = n-nyone, 😳😳😳
+    i-isusewewasuwe: boowean = f-fawse, 😳
+    isbouncedewete: boowean, XD
+    i-iswastquoteofquotew: b-boowean = fawse, mya
+    isadmindewete: boowean)
+      extends asynctweetstoweevent("async_dewete_tweet")
+      with tweetstowetweetevent {
+    v-vaw tweeteventtweetid: tweetid = tweet.id
 
-    def toAsyncRequest(action: Option[AsyncWriteAction] = None): AsyncDeleteRequest =
-      AsyncDeleteRequest(
-        tweet = tweet,
-        user = optUser,
-        byUserId = byUserId,
-        timestamp = timestamp.inMillis,
-        auditPassthrough = auditPassthrough,
-        cascadedFromTweetId = cascadedFromTweetId,
-        retryAction = action,
-        isUserErasure = isUserErasure,
-        isBounceDelete = isBounceDelete,
-        isLastQuoteOfQuoter = Some(isLastQuoteOfQuoter),
-        isAdminDelete = Some(isAdminDelete)
+    d-def toasyncwequest(action: option[asyncwwiteaction] = n-nyone): a-asyncdewetewequest =
+      asyncdewetewequest(
+        tweet = t-tweet, ^•ﻌ•^
+        u-usew = optusew, ʘwʘ
+        byusewid = b-byusewid, ( ͡o ω ͡o )
+        t-timestamp = timestamp.inmiwwis, mya
+        auditpassthwough = auditpassthwough, o.O
+        cascadedfwomtweetid = c-cascadedfwomtweetid, (✿oωo)
+        w-wetwyaction = action, :3
+        isusewewasuwe = isusewewasuwe,
+        i-isbouncedewete = isbouncedewete, 😳
+        iswastquoteofquotew = s-some(iswastquoteofquotew), (U ﹏ U)
+        i-isadmindewete = some(isadmindewete)
       )
 
-    override def toTweetEventData: Seq[TweetEventData] =
-      Seq(
-        TweetEventData.TweetDeleteEvent(
-          TweetDeleteEvent(
-            tweet = scrub(tweet),
-            user = optUser,
-            isUserErasure = Some(isUserErasure),
-            audit = auditPassthrough,
-            byUserId = byUserId,
-            isAdminDelete = Some(isAdminDelete)
+    o-ovewwide def totweeteventdata: seq[tweeteventdata] =
+      seq(
+        tweeteventdata.tweetdeweteevent(
+          t-tweetdeweteevent(
+            t-tweet = scwub(tweet), mya
+            usew = o-optusew, (U ᵕ U❁)
+            i-isusewewasuwe = some(isusewewasuwe), :3
+            audit = auditpassthwough, mya
+            byusewid = b-byusewid, OwO
+            isadmindewete = some(isadmindewete)
           )
         )
       )
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      service.asyncDelete(toAsyncRequest(Some(action)))
+    ovewwide def enqueuewetwy(sewvice: t-thwifttweetsewvice, (ˆ ﻌ ˆ)♡ action: asyncwwiteaction): f-futuwe[unit] =
+      s-sewvice.asyncdewete(toasyncwequest(some(action)))
   }
 
-  case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+  case cwass wetwyevent(action: asyncwwiteaction, ʘwʘ e-event: event)
+      e-extends tweetstowewetwyevent[event] {
 
-    override val eventType: AsyncWriteEventType.Delete.type = AsyncWriteEventType.Delete
-    override val scribedTweetOnFailure: Option[Tweet] = Some(event.tweet)
+    ovewwide vaw eventtype: asyncwwiteeventtype.dewete.type = a-asyncwwiteeventtype.dewete
+    ovewwide vaw scwibedtweetonfaiwuwe: o-option[tweet] = some(event.tweet)
   }
 
-  trait Store {
-    val asyncDeleteTweet: FutureEffect[Event]
-    val retryAsyncDeleteTweet: FutureEffect[TweetStoreRetryEvent[Event]]
+  twait stowe {
+    vaw a-asyncdewetetweet: futuweeffect[event]
+    v-vaw w-wetwyasyncdewetetweet: futuweeffect[tweetstowewetwyevent[event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncDeleteTweet: FutureEffect[Event] = wrap(underlying.asyncDeleteTweet)
-    override val retryAsyncDeleteTweet: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
-      underlying.retryAsyncDeleteTweet)
+  t-twait stowewwappew extends s-stowe { sewf: t-tweetstowewwappew[stowe] =>
+    o-ovewwide vaw asyncdewetetweet: futuweeffect[event] = w-wwap(undewwying.asyncdewetetweet)
+    o-ovewwide vaw wetwyasyncdewetetweet: futuweeffect[tweetstowewetwyevent[event]] = w-wwap(
+      u-undewwying.wetwyasyncdewetetweet)
   }
 
-  object Store {
-    def apply(
-      manhattanStore: ManhattanTweetStore,
-      cachingTweetStore: CachingTweetStore,
-      replicatingStore: ReplicatingTweetStore,
-      indexingStore: TweetIndexingStore,
-      eventBusEnqueueStore: TweetEventBusStore,
-      timelineUpdatingStore: TlsTimelineUpdatingStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore,
-      guanoServiceStore: GuanoServiceStore,
-      mediaServiceStore: MediaServiceStore
-    ): Store = {
-      val stores: Seq[Store] =
-        Seq(
-          manhattanStore,
-          cachingTweetStore,
-          replicatingStore,
-          indexingStore,
-          eventBusEnqueueStore,
-          timelineUpdatingStore,
-          tweetCountsUpdatingStore,
-          guanoServiceStore,
-          mediaServiceStore
+  o-object stowe {
+    def appwy(
+      manhattanstowe: m-manhattantweetstowe, o.O
+      cachingtweetstowe: c-cachingtweetstowe, UwU
+      w-wepwicatingstowe: wepwicatingtweetstowe, rawr x3
+      indexingstowe: tweetindexingstowe, 🥺
+      e-eventbusenqueuestowe: t-tweeteventbusstowe, :3
+      t-timewineupdatingstowe: t-twstimewineupdatingstowe, (ꈍᴗꈍ)
+      tweetcountsupdatingstowe: t-tweetcountscacheupdatingstowe, 🥺
+      guanosewvicestowe: guanosewvicestowe, (✿oωo)
+      mediasewvicestowe: mediasewvicestowe
+    ): stowe = {
+      v-vaw stowes: seq[stowe] =
+        seq(
+          m-manhattanstowe,
+          cachingtweetstowe, (U ﹏ U)
+          w-wepwicatingstowe, :3
+          indexingstowe, ^^;;
+          e-eventbusenqueuestowe, rawr
+          timewineupdatingstowe, 😳😳😳
+          tweetcountsupdatingstowe, (✿oωo)
+          g-guanosewvicestowe, OwO
+          m-mediasewvicestowe
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      d-def buiwd[e <: t-tweetstoweevent](extwact: s-stowe => futuweeffect[e]): futuweeffect[e] =
+        futuweeffect.inpawawwew[e](stowes.map(extwact): _*)
 
-      new Store {
-        override val asyncDeleteTweet: FutureEffect[Event] = build(_.asyncDeleteTweet)
-        override val retryAsyncDeleteTweet: FutureEffect[TweetStoreRetryEvent[Event]] = build(
-          _.retryAsyncDeleteTweet)
+      nyew stowe {
+        ovewwide vaw asyncdewetetweet: f-futuweeffect[event] = b-buiwd(_.asyncdewetetweet)
+        o-ovewwide vaw wetwyasyncdewetetweet: f-futuweeffect[tweetstowewetwyevent[event]] = buiwd(
+          _.wetwyasyncdewetetweet)
       }
     }
   }
 }
 
-object ReplicatedDeleteTweet extends TweetStore.ReplicatedModule {
+object wepwicateddewetetweet extends tweetstowe.wepwicatedmoduwe {
 
-  case class Event(
-    tweet: Tweet,
-    isErasure: Boolean,
-    isBounceDelete: Boolean,
-    isLastQuoteOfQuoter: Boolean = false)
-      extends ReplicatedTweetStoreEvent("replicated_delete_tweet")
+  c-case c-cwass event(
+    tweet: tweet, ʘwʘ
+    i-isewasuwe: boowean, (ˆ ﻌ ˆ)♡
+    isbouncedewete: boowean,
+    i-iswastquoteofquotew: boowean = f-fawse)
+      extends wepwicatedtweetstoweevent("wepwicated_dewete_tweet")
 
-  trait Store {
-    val replicatedDeleteTweet: FutureEffect[Event]
+  t-twait stowe {
+    v-vaw wepwicateddewetetweet: futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedDeleteTweet: FutureEffect[Event] = wrap(underlying.replicatedDeleteTweet)
+  twait stowewwappew extends stowe { s-sewf: tweetstowewwappew[stowe] =>
+    o-ovewwide v-vaw wepwicateddewetetweet: f-futuweeffect[event] = w-wwap(undewwying.wepwicateddewetetweet)
   }
 
-  object Store {
-    def apply(
-      cachingTweetStore: CachingTweetStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore
-    ): Store = {
-      new Store {
-        override val replicatedDeleteTweet: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            cachingTweetStore.replicatedDeleteTweet,
-            tweetCountsUpdatingStore.replicatedDeleteTweet.ignoreFailures
+  object stowe {
+    d-def appwy(
+      c-cachingtweetstowe: cachingtweetstowe, (U ﹏ U)
+      tweetcountsupdatingstowe: t-tweetcountscacheupdatingstowe
+    ): s-stowe = {
+      nyew s-stowe {
+        ovewwide vaw wepwicateddewetetweet: f-futuweeffect[event] =
+          futuweeffect.inpawawwew(
+            c-cachingtweetstowe.wepwicateddewetetweet, UwU
+            t-tweetcountsupdatingstowe.wepwicateddewetetweet.ignowefaiwuwes
           )
       }
     }

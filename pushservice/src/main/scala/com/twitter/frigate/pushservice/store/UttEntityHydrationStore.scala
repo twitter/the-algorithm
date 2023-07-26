@@ -1,77 +1,77 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.escherbird.util.uttclient.CachedUttClientV2
-import com.twitter.escherbird.util.uttclient.InvalidUttEntityException
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.stitch.Stitch
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.topiclisting.utt.LocalizedEntity
-import com.twitter.topiclisting.utt.LocalizedEntityFactory
-import com.twitter.util.Future
-
-/**
- *
- * @param viewerContext: [[TopicListingViewerContext]] for filtering topic
- * @param semanticCoreEntityIds: list of semantic core entities to hydrate
- */
-case class UttEntityHydrationQuery(
-  viewerContext: TopicListingViewerContext,
-  semanticCoreEntityIds: Seq[Long])
+impowt c-com.twittew.eschewbiwd.utiw.uttcwient.cacheduttcwientv2
+i-impowt c-com.twittew.eschewbiwd.utiw.uttcwient.invawiduttentityexception
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.topicwisting.topicwistingviewewcontext
+i-impowt com.twittew.topicwisting.utt.wocawizedentity
+impowt com.twittew.topicwisting.utt.wocawizedentityfactowy
+impowt com.twittew.utiw.futuwe
 
 /**
  *
- * @param cachedUttClientV2
- * @param statsReceiver
+ * @pawam viewewcontext: [[topicwistingviewewcontext]] fow f-fiwtewing topic
+ * @pawam semanticcoweentityids: wist of semantic c-cowe entities to hydwate
  */
-class UttEntityHydrationStore(
-  cachedUttClientV2: CachedUttClientV2,
-  statsReceiver: StatsReceiver,
-  log: Logger) {
+c-case cwass uttentityhydwationquewy(
+  viewewcontext: topicwistingviewewcontext, 😳
+  semanticcoweentityids: s-seq[wong])
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val uttEntityNotFound = stats.counter("invalid_utt_entity")
-  private val deviceLanguageMismatch = stats.counter("language_mismatch")
+/**
+ *
+ * @pawam cacheduttcwientv2
+ * @pawam s-statsweceivew
+ */
+c-cwass uttentityhydwationstowe(
+  cacheduttcwientv2: cacheduttcwientv2, mya
+  statsweceivew: statsweceivew, (˘ω˘)
+  w-wog: woggew) {
+
+  pwivate vaw stats = statsweceivew.scope(this.getcwass.getsimpwename)
+  pwivate vaw u-uttentitynotfound = stats.countew("invawid_utt_entity")
+  p-pwivate v-vaw devicewanguagemismatch = s-stats.countew("wanguage_mismatch")
 
   /**
-   * SemanticCore recommends setting language and country code to None to fetch all localized topic
-   * names and apply filtering for locales on our end
+   * s-semanticcowe wecommends setting wanguage and countwy c-code to nyone to fetch aww wocawized topic
+   * n-nyames and appwy fiwtewing fow wocawes on ouw end
    *
-   * We use [[LocalizedEntityFactory]] from [[Topiclisting]] library to filter out topic name based
-   * on user locale
+   * we use [[wocawizedentityfactowy]] fwom [[topicwisting]] w-wibwawy to fiwtew out topic n-nyame based
+   * o-on usew wocawe
    *
-   * Some(LocalizedEntity) - LocalizedUttEntity found
-   * None - LocalizedUttEntity not found
+   * some(wocawizedentity) - w-wocawizeduttentity found
+   * nyone - wocawizeduttentity nyot found
    */
-  def getLocalizedTopicEntities(
-    query: UttEntityHydrationQuery
-  ): Future[Seq[Option[LocalizedEntity]]] = Stitch.run {
-    Stitch.collect {
-      query.semanticCoreEntityIds.map { semanticCoreEntityId =>
-        val uttEntity = cachedUttClientV2.cachedGetUttEntity(
-          language = None,
-          country = None,
-          version = None,
-          entityId = semanticCoreEntityId)
+  d-def getwocawizedtopicentities(
+    q-quewy: uttentityhydwationquewy
+  ): futuwe[seq[option[wocawizedentity]]] = s-stitch.wun {
+    s-stitch.cowwect {
+      quewy.semanticcoweentityids.map { s-semanticcoweentityid =>
+        vaw uttentity = c-cacheduttcwientv2.cachedgetuttentity(
+          wanguage = nyone, >_<
+          c-countwy = nyone, -.-
+          v-vewsion = nyone, 🥺
+          entityid = s-semanticcoweentityid)
 
-        uttEntity
-          .map { uttEntityMetadata =>
-            val localizedEntity = LocalizedEntityFactory.getLocalizedEntity(
-              uttEntityMetadata,
-              query.viewerContext,
-              enableInternationalTopics = true,
-              enableTopicDescription = true)
-            // update counter
-            localizedEntity.foreach { entity =>
-              if (!entity.nameMatchesDeviceLanguage) deviceLanguageMismatch.incr()
+        u-uttentity
+          .map { uttentitymetadata =>
+            vaw wocawizedentity = wocawizedentityfactowy.getwocawizedentity(
+              uttentitymetadata, (U ﹏ U)
+              quewy.viewewcontext,
+              enabweintewnationawtopics = t-twue, >w<
+              e-enabwetopicdescwiption = twue)
+            // update countew
+            wocawizedentity.foweach { e-entity =>
+              i-if (!entity.namematchesdevicewanguage) d-devicewanguagemismatch.incw()
             }
 
-            localizedEntity
-          }.handle {
-            case e: InvalidUttEntityException =>
-              log.error(e.getMessage)
-              uttEntityNotFound.incr()
-              None
+            wocawizedentity
+          }.handwe {
+            case e: invawiduttentityexception =>
+              wog.ewwow(e.getmessage)
+              u-uttentitynotfound.incw()
+              nyone
           }
       }
     }

@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.base.SocialProofEnforcedCandidateSource
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProof
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import javax.inject.Inject
+impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.base.sociawpwoofenfowcedcandidatesouwce
+i-impowt com.twittew.fowwow_wecommendations.common.twansfowms.modify_sociaw_pwoof.modifysociawpwoof
+i-impowt com.twittew.hewmit.modew.awgowithm
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt javax.inject.inject
 
-@Singleton
-class SocialProofEnforcedOfflineStrongTiePredictionSource @Inject() (
-  offlineStrongTiePredictionSource: OfflineStrongTiePredictionSource,
-  modifySocialProof: ModifySocialProof,
-  statsReceiver: StatsReceiver)
-    extends SocialProofEnforcedCandidateSource(
-      offlineStrongTiePredictionSource,
-      modifySocialProof,
-      SocialProofEnforcedOfflineStrongTiePredictionSource.MinNumSocialProofsRequired,
-      SocialProofEnforcedOfflineStrongTiePredictionSource.Identifier,
-      statsReceiver)
+@singweton
+cwass sociawpwoofenfowcedoffwinestwongtiepwedictionsouwce @inject() (
+  offwinestwongtiepwedictionsouwce: offwinestwongtiepwedictionsouwce, XD
+  m-modifysociawpwoof: modifysociawpwoof, :3
+  statsweceivew: s-statsweceivew)
+    extends s-sociawpwoofenfowcedcandidatesouwce(
+      offwinestwongtiepwedictionsouwce, 😳😳😳
+      modifysociawpwoof, -.-
+      sociawpwoofenfowcedoffwinestwongtiepwedictionsouwce.minnumsociawpwoofswequiwed, ( ͡o ω ͡o )
+      s-sociawpwoofenfowcedoffwinestwongtiepwedictionsouwce.identifiew, rawr x3
+      statsweceivew)
 
-object SocialProofEnforcedOfflineStrongTiePredictionSource {
-  val Identifier = CandidateSourceIdentifier(
-    Algorithm.StrongTiePredictionRecWithSocialProof.toString)
+o-object sociawpwoofenfowcedoffwinestwongtiepwedictionsouwce {
+  v-vaw identifiew = candidatesouwceidentifiew(
+    awgowithm.stwongtiepwedictionwecwithsociawpwoof.tostwing)
 
-  val MinNumSocialProofsRequired = 1
+  vaw minnumsociawpwoofswequiwed = 1
 }

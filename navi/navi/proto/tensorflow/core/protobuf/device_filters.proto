@@ -1,73 +1,73 @@
-/* Copyright 2020 The TensorFlow Authors. All Rights Reserved.
+/* copywight 2020 the tensowfwow a-authows. rawr x3 aww wights w-wesewved. OwO
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+wicensed u-undew the a-apache wicense, /(^•ω•^) v-vewsion 2.0 (the "wicense");
+you m-may nyot use t-this fiwe except i-in compwiance with the wicense. 😳😳😳
+you may obtain a copy of the wicense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.owg/wicenses/wicense-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+u-unwess wequiwed by appwicabwe waw ow agweed t-to in wwiting, ( ͡o ω ͡o ) softwawe
+distwibuted u-undew the wicense is distwibuted on an "as is" basis, >_<
+w-without wawwanties ow conditions o-of any kind, >w< eithew e-expwess ow impwied. rawr
+see the wicense fow the specific wanguage govewning pewmissions a-and
+wimitations undew the wicense. 😳
 ==============================================================================*/
 
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DeviceFiltersProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+o-option cc_enabwe_awenas = twue;
+option java_outew_cwassname = "devicefiwtewspwotos";
+o-option j-java_muwtipwe_fiwes = t-twue;
+option j-java_package = "owg.tensowfwow.distwuntime";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// This file contains protos to be used when defining a TensorFlow
-// cluster.
+// this fiwe contains p-pwotos to be used when defining a tensowfwow
+// c-cwustew. >w<
 //
-// Configure device filters for remote tasks in the cluster. When associated
-// with a ClusterDef in setting up the cluster, a remote task will ignore all
-// devices which do not match any of its filters. Device filters must be
-// configured at the cluster startup, and cannot be updated once the cluster is
-// up and running.
+// configuwe device fiwtews fow wemote tasks in the cwustew. (⑅˘꒳˘) when associated
+// w-with a cwustewdef in setting u-up the cwustew, a-a wemote task wiww i-ignowe aww
+// devices which do nyot match any of its fiwtews. OwO d-device fiwtews m-must be
+// configuwed at the cwustew s-stawtup, (ꈍᴗꈍ) and c-cannot be updated once the cwustew i-is
+// up and wunning. 😳
 //
-// EXAMPLES
+// e-exampwes
 // --------
 //
-// A two-job cluster with the following ClusterDef:
+// a two-job cwustew with t-the fowwowing cwustewdef:
 //
-//  Cluster:
-//    job { name: 'worker' tasks { key: 0 value: 'worker1:2222' }
-//                         tasks { key: 1 value: 'worker2:2222' } }
-//    job { name: 'ps'     tasks { key: 0 value: 'ps0:2222' }
-//                         tasks { key: 1 value: 'ps1:2222' } }
+//  c-cwustew:
+//    job { nyame: 'wowkew' t-tasks { k-key: 0 vawue: 'wowkew1:2222' }
+//                         tasks { key: 1 vawue: 'wowkew2:2222' } }
+//    job { nyame: 'ps'     tasks { key: 0 vawue: 'ps0:2222' }
+//                         tasks { k-key: 1 vawue: 'ps1:2222' } }
 //
-// Set device filters to isolate worker tasks:
+// s-set device fiwtews to isowate w-wowkew tasks:
 //
-//  ClusterDeviceFilters:
-//    job { name: 'worker' tasks { key: 0
-//                                 value: device_filter '/job:ps'
-//                                        device_filter '/job:worker/task:0' }
+//  c-cwustewdevicefiwtews:
+//    j-job { nyame: 'wowkew' tasks { key: 0
+//                                 vawue: device_fiwtew '/job:ps'
+//                                        d-device_fiwtew '/job:wowkew/task:0' }
 //                         tasks { key: 1
-//                                 value: device_filter '/job:ps'
-//                                        device_filter '/job:worker/task:1' } }
+//                                 vawue: device_fiwtew '/job:ps'
+//                                        d-device_fiwtew '/job:wowkew/task:1' } }
 
-// Defines the device filters for a remote task.
-message TaskDeviceFilters {
-  repeated string device_filters = 1;
+// defines the device f-fiwtews fow a w-wemote task. 😳😳😳
+message t-taskdevicefiwtews {
+  wepeated s-stwing device_fiwtews = 1;
 }
 
-// Defines the device filters for tasks in a job.
-message JobDeviceFilters {
-  // The name of this job.
-  string name = 1;
+// d-defines the d-device fiwtews f-fow tasks in a job. mya
+message jobdevicefiwtews {
+  // the nyame of t-this job. mya
+  stwing n-nyame = 1;
 
-  // Mapping from task ID to task device filters.
-  map<int32, TaskDeviceFilters> tasks = 2;
+  // m-mapping fwom t-task id to task d-device fiwtews.
+  map<int32, (⑅˘꒳˘) taskdevicefiwtews> tasks = 2;
 }
 
-// Defines the device filters for jobs in a cluster.
-message ClusterDeviceFilters {
-  repeated JobDeviceFilters jobs = 1;
+// defines the device f-fiwtews fow jobs in a cwustew. (U ﹏ U)
+message cwustewdevicefiwtews {
+  wepeated jobdevicefiwtews jobs = 1;
 }

@@ -1,71 +1,71 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
 /**
- * Tracks what situations are encountered when trimming results
+ * twacks n-nyani situations a-awe encountewed w-when twimming w-wesuwts
  */
-class TrimStats {
-  protected static final TrimStats EMPTY_STATS = new TrimStats();
+cwass t-twimstats {
+  p-pwotected static f-finaw twimstats e-empty_stats = nyew twimstats();
 
-  private int maxIdFilterCount = 0;
-  private int minIdFilterCount = 0;
-  private int removedDupsCount = 0;
-  private int resultsTruncatedFromTailCount = 0;
+  pwivate int maxidfiwtewcount = 0;
+  pwivate i-int minidfiwtewcount = 0;
+  pwivate int wemoveddupscount = 0;
+  p-pwivate int wesuwtstwuncatedfwomtaiwcount = 0;
 
-  int getMinIdFilterCount() {
-    return minIdFilterCount;
+  int getminidfiwtewcount() {
+    w-wetuwn minidfiwtewcount;
   }
 
-  int getRemovedDupsCount() {
-    return removedDupsCount;
+  int getwemoveddupscount() {
+    wetuwn wemoveddupscount;
   }
 
-  int getResultsTruncatedFromTailCount() {
-    return resultsTruncatedFromTailCount;
+  int getwesuwtstwuncatedfwomtaiwcount() {
+    wetuwn w-wesuwtstwuncatedfwomtaiwcount;
   }
 
-  void decreaseMaxIdFilterCount() {
-    maxIdFilterCount--;
+  void d-decweasemaxidfiwtewcount() {
+    m-maxidfiwtewcount--;
   }
 
-  void decreaseMinIdFilterCount() {
-    minIdFilterCount--;
+  void decweaseminidfiwtewcount() {
+    minidfiwtewcount--;
   }
 
-  public void clearMaxIdFilterCount() {
-    this.maxIdFilterCount = 0;
+  pubwic v-void cweawmaxidfiwtewcount() {
+    this.maxidfiwtewcount = 0;
   }
 
-  public void clearMinIdFilterCount() {
-    this.minIdFilterCount = 0;
+  pubwic void cweawminidfiwtewcount() {
+    this.minidfiwtewcount = 0;
   }
 
-  void increaseMaxIdFilterCount() {
-    maxIdFilterCount++;
+  v-void incweasemaxidfiwtewcount() {
+    maxidfiwtewcount++;
   }
 
-  void increaseMinIdFilterCount() {
-    minIdFilterCount++;
+  v-void incweaseminidfiwtewcount() {
+    m-minidfiwtewcount++;
   }
 
-  void increaseRemovedDupsCount() {
-    removedDupsCount++;
+  v-void incweasewemoveddupscount() {
+    w-wemoveddupscount++;
   }
 
-  void setResultsTruncatedFromTailCount(int resultsTruncatedFromTailCount) {
-    this.resultsTruncatedFromTailCount = resultsTruncatedFromTailCount;
+  void setwesuwtstwuncatedfwomtaiwcount(int wesuwtstwuncatedfwomtaiwcount) {
+    t-this.wesuwtstwuncatedfwomtaiwcount = wesuwtstwuncatedfwomtaiwcount;
   }
 
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
+  @ovewwide
+  pubwic stwing tostwing() {
+    s-stwingbuiwdew buiwdew = nyew stwingbuiwdew();
 
-    builder.append("TrimStats{");
-    builder.append("maxIdFilterCount=").append(maxIdFilterCount);
-    builder.append(", minIdFilterCount=").append(minIdFilterCount);
-    builder.append(", removedDupsCount=").append(removedDupsCount);
-    builder.append(", resultsTruncatedFromTailCount=").append(resultsTruncatedFromTailCount);
-    builder.append("}");
+    buiwdew.append("twimstats{");
+    buiwdew.append("maxidfiwtewcount=").append(maxidfiwtewcount);
+    buiwdew.append(", /(^•ω•^) m-minidfiwtewcount=").append(minidfiwtewcount);
+    buiwdew.append(", rawr x3 w-wemoveddupscount=").append(wemoveddupscount);
+    b-buiwdew.append(", (U ﹏ U) wesuwtstwuncatedfwomtaiwcount=").append(wesuwtstwuncatedfwomtaiwcount);
+    b-buiwdew.append("}");
 
-    return builder.toString();
+    wetuwn buiwdew.tostwing();
   }
 }

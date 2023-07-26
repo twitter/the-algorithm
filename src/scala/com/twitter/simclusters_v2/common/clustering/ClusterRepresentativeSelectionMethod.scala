@@ -1,30 +1,30 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.twittew.simcwustews_v2.common.cwustewing
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
+impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.neighbowwithweights
 
 /**
- * Select a cluster member as cluster representative.
+ * sewect a-a cwustew m-membew as cwustew w-wepwesentative. XD
  */
-trait ClusterRepresentativeSelectionMethod[T] {
+t-twait cwustewwepwesentativesewectionmethod[t] {
 
   /**
-   * The main external-facing method. Sub-classes should implement this method.
+   * t-the main extewnaw-facing m-method. :3 s-sub-cwasses shouwd impwement this method. 😳😳😳
    *
-   * @param cluster A set of NeighborWithWeights.
-   * @param embeddings A map of producer ID -> embedding.
+   * @pawam cwustew a set of neighbowwithweights. -.-
+   * @pawam e-embeddings a map of pwoducew id -> embedding.
    *
-   * @return UserId of the member chosen as representative.
+   * @wetuwn u-usewid of the membew chosen as wepwesentative. ( ͡o ω ͡o )
    */
-  def selectClusterRepresentative(
-    cluster: Set[NeighborWithWeights],
-    embeddings: Map[UserId, T]
-  ): UserId
+  d-def sewectcwustewwepwesentative(
+    cwustew: set[neighbowwithweights], rawr x3
+    embeddings: map[usewid, nyaa~~ t-t]
+  ): usewid
 
 }
 
-object ClusterRepresentativeSelectionStatistics {
+object c-cwustewwepwesentativesewectionstatistics {
 
-  // Statistics, to be imported where recorded.
-  val StatClusterRepresentativeSelectionTime = "cluster_representative_selection_total_time_ms"
+  // s-statistics, /(^•ω•^) to be impowted whewe wecowded. rawr
+  vaw statcwustewwepwesentativesewectiontime = "cwustew_wepwesentative_sewection_totaw_time_ms"
 }

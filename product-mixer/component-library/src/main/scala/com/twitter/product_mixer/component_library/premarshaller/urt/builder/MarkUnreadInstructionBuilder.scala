@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.MarkEntriesUnreadInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.MarkUnreadableEntry
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.mawkentwiesunweadinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.mawkunweadabweentwy
 
 /**
- * Build a MarkUnreadEntries instruction
+ * b-buiwd a-a mawkunweadentwies i-instwuction
  *
- * Note that this implementation currently supports top-level entries, but not module item entries.
+ * n-nyote that this impwementation cuwwentwy suppowts top-wevew entwies, >_< but nyot m-moduwe item entwies. rawr x3
  */
-case class MarkUnreadInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, MarkEntriesUnreadInstruction] {
+case cwass mawkunweadinstwuctionbuiwdew[quewy <: p-pipewinequewy](
+  ovewwide vaw incwudeinstwuction: i-incwudeinstwuction[quewy] = awwaysincwude)
+    extends uwtinstwuctionbuiwdew[quewy, mya mawkentwiesunweadinstwuction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[MarkEntriesUnreadInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val filteredEntries = entries.collect {
-        case entry: MarkUnreadableEntry if entry.isMarkUnread.contains(true) =>
-          entry.entryIdentifier
+  o-ovewwide def buiwd(
+    q-quewy: quewy, nyaa~~
+    e-entwies: seq[timewineentwy]
+  ): seq[mawkentwiesunweadinstwuction] = {
+    if (incwudeinstwuction(quewy, (⑅˘꒳˘) entwies)) {
+      vaw f-fiwtewedentwies = entwies.cowwect {
+        case entwy: mawkunweadabweentwy if e-entwy.ismawkunwead.contains(twue) =>
+          entwy.entwyidentifiew
       }
-      if (filteredEntries.nonEmpty) Seq(MarkEntriesUnreadInstruction(filteredEntries))
-      else Seq.empty
-    } else {
-      Seq.empty
+      if (fiwtewedentwies.nonempty) s-seq(mawkentwiesunweadinstwuction(fiwtewedentwies))
+      e-ewse seq.empty
+    } ewse {
+      s-seq.empty
     }
   }
 }

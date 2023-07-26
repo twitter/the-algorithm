@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.service.candidate_source_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.candidate_souwce_executow
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.service.ExecutorResult
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
 
-case class CandidateSourceExecutorResult[Candidate <: UniversalNoun[Any]](
-  candidates: Seq[FetchedCandidateWithFeatures[Candidate]],
-  candidateSourceFeatureMap: FeatureMap)
-    extends ExecutorResult
+c-case c-cwass candidatesouwceexecutowwesuwt[candidate <: u-univewsawnoun[any]](
+  candidates: seq[fetchedcandidatewithfeatuwes[candidate]], σωσ
+  candidatesouwcefeatuwemap: featuwemap)
+    e-extends executowwesuwt

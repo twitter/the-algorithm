@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
+impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class UrlMarshaller @Inject() (
-  urlTypeMarshaller: UrlTypeMarshaller,
-  urtEndpointOptionsMarshaller: UrtEndpointOptionsMarshaller) {
+@singweton
+c-cwass u-uwwmawshawwew @inject() (
+  uwwtypemawshawwew: u-uwwtypemawshawwew, :3
+  u-uwtendpointoptionsmawshawwew: uwtendpointoptionsmawshawwew) {
 
-  def apply(url: Url): urt.Url = urt.Url(
-    urlType = urlTypeMarshaller(url.urlType),
-    url = url.url,
-    urtEndpointOptions = url.urtEndpointOptions.map(urtEndpointOptionsMarshaller(_))
+  def appwy(uww: uww): uwt.uww = uwt.uww(
+    u-uwwtype = uwwtypemawshawwew(uww.uwwtype),
+    uww = uww.uww, (U ﹏ U)
+    uwtendpointoptions = u-uww.uwtendpointoptions.map(uwtendpointoptionsmawshawwew(_))
   )
 }

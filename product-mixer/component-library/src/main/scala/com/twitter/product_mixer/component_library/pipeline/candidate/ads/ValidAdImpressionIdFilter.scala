@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads
 
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.ads.adscandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt c-com.twittew.stitch.stitch
 
-object ValidAdImpressionIdFilter extends Filter[PipelineQuery, AdsCandidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("ValidAdImpressionId")
+object vawidadimpwessionidfiwtew extends fiwtew[pipewinequewy, mya adscandidate] {
+  ovewwide v-vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("vawidadimpwessionid")
 
-  override def apply(
-    query: PipelineQuery,
-    candidatesWithFeatures: Seq[CandidateWithFeatures[AdsCandidate]]
-  ): Stitch[FilterResult[AdsCandidate]] = {
-    val (kept, removed) = candidatesWithFeatures
+  o-ovewwide def appwy(
+    quewy: p-pipewinequewy, 😳
+    candidateswithfeatuwes: seq[candidatewithfeatuwes[adscandidate]]
+  ): stitch[fiwtewwesuwt[adscandidate]] = {
+    v-vaw (kept, XD wemoved) = candidateswithfeatuwes
       .map(_.candidate)
-      .partition(candidate => candidate.adImpression.impressionString.exists(_.nonEmpty))
+      .pawtition(candidate => c-candidate.adimpwession.impwessionstwing.exists(_.nonempty))
 
-    Stitch.value(FilterResult(kept, removed))
+    s-stitch.vawue(fiwtewwesuwt(kept, :3 wemoved))
   }
 }

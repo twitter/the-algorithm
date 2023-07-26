@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.TimelineScribeConfigMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urp.SegmentedTimeline
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pages.wendew.{thwiftscawa => u-uwp}
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.timewinescwibeconfigmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.segmentedtimewine
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class SegmentedTimelineMarshaller @Inject() (
-  timelineKeyMarshaller: TimelineKeyMarshaller,
-  timelineScribeConfigMarshaller: TimelineScribeConfigMarshaller) {
+@singweton
+c-cwass segmentedtimewinemawshawwew @inject() (
+  timewinekeymawshawwew: timewinekeymawshawwew, mya
+  timewinescwibeconfigmawshawwew: timewinescwibeconfigmawshawwew) {
 
-  def apply(segmentedTimeline: SegmentedTimeline): urp.SegmentedTimeline = urp.SegmentedTimeline(
-    id = segmentedTimeline.id,
-    labelText = segmentedTimeline.labelText,
-    timeline = timelineKeyMarshaller(segmentedTimeline.timeline),
-    scribeConfig = segmentedTimeline.scribeConfig.map(timelineScribeConfigMarshaller(_)),
-    refreshIntervalSec = segmentedTimeline.refreshIntervalSec
+  d-def appwy(segmentedtimewine: segmentedtimewine): u-uwp.segmentedtimewine = uwp.segmentedtimewine(
+    i-id = segmentedtimewine.id, mya
+    wabewtext = segmentedtimewine.wabewtext, 😳
+    timewine = timewinekeymawshawwew(segmentedtimewine.timewine),
+    s-scwibeconfig = segmentedtimewine.scwibeconfig.map(timewinescwibeconfigmawshawwew(_)), XD
+    w-wefweshintewvawsec = s-segmentedtimewine.wefweshintewvawsec
   )
 }

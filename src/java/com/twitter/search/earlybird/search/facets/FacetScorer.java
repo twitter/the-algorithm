@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.twitter.search.core.earlybird.facets.FacetAccumulator;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.facets.FacetResultsCollector.Accumulator;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetaccumuwatow;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+i-impowt c-com.twittew.seawch.eawwybiwd.seawch.facets.facetwesuwtscowwectow.accumuwatow;
 
-public abstract class FacetScorer {
-  protected abstract void startSegment(EarlybirdIndexSegmentAtomicReader reader) throws IOException;
-
-  /**
-   * Increments facet counts for the given document.
-   */
-  public abstract void incrementCounts(Accumulator accumulator, int internalDocID)
-      throws IOException;
+pubwic a-abstwact cwass f-facetscowew {
+  p-pwotected abstwact void stawtsegment(eawwybiwdindexsegmentatomicweadew weadew) thwows ioexception;
 
   /**
-   * Returns a FacetAccumulator for counting facets. It will use the given FacetLabelProvider
-   * for facet result labeling.
+   * incwements facet c-counts fow the given document. 😳😳😳
    */
-  public abstract FacetAccumulator<?> getFacetAccumulator(FacetLabelProvider labelProvider);
+  pubwic a-abstwact void incwementcounts(accumuwatow a-accumuwatow, int intewnawdocid)
+      thwows ioexception;
+
+  /**
+   * wetuwns a facetaccumuwatow f-fow counting facets. -.- i-it wiww use the g-given facetwabewpwovidew
+   * fow facet wesuwt wabewing. ( ͡o ω ͡o )
+   */
+  pubwic abstwact facetaccumuwatow<?> g-getfacetaccumuwatow(facetwabewpwovidew wabewpwovidew);
 }

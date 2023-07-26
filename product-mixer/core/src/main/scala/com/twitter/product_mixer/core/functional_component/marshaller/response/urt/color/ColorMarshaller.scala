@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.cowow
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.Color
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.cowow
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => uwt}
+i-impowt javax.inject.singweton
 
-@Singleton
-class ColorMarshaller {
+@singweton
+c-cwass c-cowowmawshawwew {
 
-  def apply(color: Color): urt.Color = urt.Color(
-    red = color.red,
-    green = color.green,
-    blue = color.blue,
-    opacity = color.opacity
+  d-def appwy(cowow: c-cowow): uwt.cowow = uwt.cowow(
+    wed = cowow.wed, >_<
+    gween = cowow.gween, :3
+    b-bwue = cowow.bwue,
+    opacity = cowow.opacity
   )
 }

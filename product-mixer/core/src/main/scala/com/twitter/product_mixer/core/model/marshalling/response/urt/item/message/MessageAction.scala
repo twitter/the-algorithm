@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cawwback
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
 
-case class MessageAction(
-  dismissOnClick: Boolean,
-  url: Option[String],
-  clientEventInfo: Option[ClientEventInfo],
-  onClickCallbacks: Option[Seq[Callback]])
+c-case cwass m-messageaction(
+  d-dismissoncwick: b-boowean, rawr x3
+  u-uww: option[stwing], rawr
+  c-cwienteventinfo: option[cwienteventinfo], σωσ
+  oncwickcawwbacks: option[seq[cawwback]])

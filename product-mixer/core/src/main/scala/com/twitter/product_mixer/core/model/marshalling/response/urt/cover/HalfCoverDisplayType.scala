@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew
 
-sealed trait HalfCoverDisplayType
+seawed t-twait hawfcovewdispwaytype
 
-case object CoverHalfCoverDisplayType extends HalfCoverDisplayType
-case object CenterCoverHalfCoverDisplayType extends HalfCoverDisplayType
+case o-object covewhawfcovewdispwaytype e-extends hawfcovewdispwaytype
+c-case object centewcovewhawfcovewdispwaytype e-extends h-hawfcovewdispwaytype

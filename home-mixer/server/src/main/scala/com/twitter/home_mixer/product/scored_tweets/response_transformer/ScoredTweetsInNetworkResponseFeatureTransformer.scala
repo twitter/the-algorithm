@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.wesponse_twansfowmew
 
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineranker.{thriftscala => tlr}
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => cts}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.candidatesouwceidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.fwominnetwowksouwcefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.twansfowmewidentifiew
+i-impowt com.twittew.timewinewankew.{thwiftscawa => tww}
+impowt com.twittew.timewinesewvice.suggests.wogging.candidate_tweet_souwce_id.{thwiftscawa => cts}
+impowt c-com.twittew.timewinesewvice.suggests.{thwiftscawa => st}
 
-object ScoredTweetsInNetworkResponseFeatureTransformer
-    extends CandidateFeatureTransformer[tlr.CandidateTweet] {
+object s-scowedtweetsinnetwowkwesponsefeatuwetwansfowmew
+    extends candidatefeatuwetwansfowmew[tww.candidatetweet] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ScoredTweetsInNetworkResponse")
+  ovewwide vaw identifiew: twansfowmewidentifiew =
+    t-twansfowmewidentifiew("scowedtweetsinnetwowkwesponse")
 
-  override val features: Set[Feature[_, _]] = TimelineRankerResponseTransformer.features
+  ovewwide vaw featuwes: s-set[featuwe[_, (U ﹏ U) _]] = t-timewinewankewwesponsetwansfowmew.featuwes
 
-  override def transform(candidate: tlr.CandidateTweet): FeatureMap = {
-    val baseFeatures = TimelineRankerResponseTransformer.transform(candidate)
+  ovewwide def twansfowm(candidate: tww.candidatetweet): featuwemap = {
+    v-vaw basefeatuwes = timewinewankewwesponsetwansfowmew.twansfowm(candidate)
 
-    val features = FeatureMapBuilder()
-      .add(CandidateSourceIdFeature, Some(cts.CandidateTweetSourceId.RecycledTweet))
-      .add(FromInNetworkSourceFeature, true)
-      .add(SuggestTypeFeature, Some(st.SuggestType.RankedTimelineTweet))
-      .build()
+    vaw featuwes = featuwemapbuiwdew()
+      .add(candidatesouwceidfeatuwe, >_< some(cts.candidatetweetsouwceid.wecycwedtweet))
+      .add(fwominnetwowksouwcefeatuwe, rawr x3 t-twue)
+      .add(suggesttypefeatuwe, mya some(st.suggesttype.wankedtimewinetweet))
+      .buiwd()
 
-    baseFeatures ++ features
+    b-basefeatuwes ++ f-featuwes
   }
 }

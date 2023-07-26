@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.filter
+package com.twittew.pwoduct_mixew.component_wibwawy.fiwtew
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
 /**
- * A [[filter]] that filters candidates based on a country code feature
+ * a [[fiwtew]] that fiwtews candidates based on a countwy c-code featuwe
  *
- * @param countryCodeFeature the feature to filter candidates on
+ * @pawam countwycodefeatuwe the featuwe to fiwtew candidates o-on
  */
-case class TweetAuthorCountryFilter[Candidate <: BaseTweetCandidate](
-  countryCodeFeature: Feature[Candidate, Option[String]])
-    extends Filter[PipelineQuery, Candidate] {
+case cwass tweetauthowcountwyfiwtew[candidate <: b-basetweetcandidate](
+  countwycodefeatuwe: featuwe[candidate, >_< option[stwing]])
+    e-extends fiwtew[pipewinequewy, >_< c-candidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetAuthorCountry")
+  o-ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("tweetauthowcountwy")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  ovewwide def appwy(
+    q-quewy: pipewinequewy, (⑅˘꒳˘)
+    candidates: seq[candidatewithfeatuwes[candidate]]
+  ): stitch[fiwtewwesuwt[candidate]] = {
 
-    val userCountry = query.getCountryCode
+    v-vaw usewcountwy = quewy.getcountwycode
 
-    val (keptCandidates, removedCandidates) = candidates.partition { filteredCandidate =>
-      val authorCountry = filteredCandidate.features.get(countryCodeFeature)
+    v-vaw (keptcandidates, /(^•ω•^) w-wemovedcandidates) = c-candidates.pawtition { f-fiwtewedcandidate =>
+      vaw authowcountwy = f-fiwtewedcandidate.featuwes.get(countwycodefeatuwe)
 
-      (authorCountry, userCountry) match {
-        case (Some(authorCountryCode), Some(userCountryCode)) =>
-          authorCountryCode.equalsIgnoreCase(userCountryCode)
-        case _ => true
+      (authowcountwy, rawr x3 usewcountwy) match {
+        c-case (some(authowcountwycode), (U ﹏ U) some(usewcountwycode)) =>
+          authowcountwycode.equawsignowecase(usewcountwycode)
+        case _ => twue
       }
     }
 
-    Stitch.value(
-      FilterResult(
-        kept = keptCandidates.map(_.candidate),
-        removed = removedCandidates.map(_.candidate)
+    stitch.vawue(
+      f-fiwtewwesuwt(
+        kept = keptcandidates.map(_.candidate), (U ﹏ U)
+        w-wemoved = wemovedcandidates.map(_.candidate)
       )
     )
   }

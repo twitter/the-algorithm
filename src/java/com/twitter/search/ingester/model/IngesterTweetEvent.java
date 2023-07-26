@@ -1,19 +1,19 @@
-package com.twitter.search.ingester.model;
+package com.twittew.seawch.ingestew.modew;
 
-import com.twitter.search.common.debug.DebugEventAccumulator;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.tweetypie.thriftjava.TweetEvent;
+impowt c-com.twittew.seawch.common.debug.debugeventaccumuwatow;
+i-impowt c-com.twittew.seawch.common.debug.thwiftjava.debugevents;
+i-impowt com.twittew.tweetypie.thwiftjava.tweetevent;
 
-public class IngesterTweetEvent extends TweetEvent implements DebugEventAccumulator {
-  // Used for propagating DebugEvents through the ingester stages.
-  private final DebugEvents debugEvents;
+p-pubwic c-cwass ingestewtweetevent e-extends t-tweetevent impwements debugeventaccumuwatow {
+  // used fow pwopagating debugevents thwough t-the ingestew stages. ^^;;
+  pwivate finaw debugevents d-debugevents;
 
-  public IngesterTweetEvent() {
-    this.debugEvents = new DebugEvents();
+  pubwic ingestewtweetevent() {
+    t-this.debugevents = nyew debugevents();
   }
 
-  @Override
-  public DebugEvents getDebugEvents() {
-    return debugEvents;
+  @ovewwide
+  pubwic debugevents g-getdebugevents() {
+    wetuwn debugevents;
   }
 }

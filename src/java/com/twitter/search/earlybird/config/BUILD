@@ -1,21 +1,21 @@
-java_library(
-    sources = ["**/*.java"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/jvm/org/apache/zookeeper:zookeeper-client",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common/util:system-mocks",
-        "src/java/com/twitter/search/common/config",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/partitioning/snowflakeparser",
-        "src/java/com/twitter/search/common/util/date",
-        "src/java/com/twitter/search/common/util/zookeeper",
-        "src/java/com/twitter/search/earlybird/common/config",
-    ],
+java_wibwawy(
+    souwces = ["**/*.java"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/code/findbugs:jsw305", òωó
+        "3wdpawty/jvm/com/googwe/guava", o.O
+        "3wdpawty/jvm/com/googwe/inject:guice", (U ᵕ U❁)
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", (⑅˘꒳˘)
+        "3wdpawty/jvm/owg/apache/zookeepew:zookeepew-cwient", ( ͡o ω ͡o )
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", UwU
+        "swc/java/com/twittew/common/base", rawr x3
+        "swc/java/com/twittew/common/utiw:system-mocks",
+        "swc/java/com/twittew/seawch/common/config", rawr
+        "swc/java/com/twittew/seawch/common/metwics", σωσ
+        "swc/java/com/twittew/seawch/common/pawtitioning/snowfwakepawsew", σωσ
+        "swc/java/com/twittew/seawch/common/utiw/date", >_<
+        "swc/java/com/twittew/seawch/common/utiw/zookeepew", :3
+        "swc/java/com/twittew/seawch/eawwybiwd/common/config", (U ﹏ U)
+    ], -.-
 )

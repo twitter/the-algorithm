@@ -1,224 +1,224 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <cstdint>
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+#incwude <cstdint>
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
+#incwude "wesouwce_utiws.h"
 
-#include <iterator>
+#incwude <itewatow>
 
-template<typename InputType, typename RecordType>
-class DecodeBatchPredictionRequestKernel : public OpKernel {
- public:
-  explicit DecodeBatchPredictionRequestKernel(OpKernelConstruction* context)
-      : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+tempwate<typename inputtype, rawr t-typename wecowdtype>
+c-cwass decodebatchpwedictionwequestkewnew : p-pubwic opkewnew {
+ p-pubwic:
+  e-expwicit decodebatchpwedictionwequestkewnew(opkewnewconstwuction* c-context)
+      : o-opkewnew(context) {
+    s-std::vectow<int64> keep_featuwes;
+    std::vectow<int64> keep_codes;
 
-    std::vector<int64> label_features;
-    std::vector<int64> weight_features;
+    std::vectow<int64> wabew_featuwes;
+    s-std::vectow<int64> weight_featuwes;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
+    op_wequiwes_ok(context, c-context->getattw("keep_featuwes", -.- &keep_featuwes));
+    op_wequiwes_ok(context, (✿oωo) c-context->getattw("keep_codes", /(^•ω•^) &keep_codes));
 
-    OP_REQUIRES_OK(context, context->GetAttr("label_features", &label_features));
-    OP_REQUIRES_OK(context, context->GetAttr("weight_features", &weight_features));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    op_wequiwes_ok(context, 🥺 context->getattw("wabew_featuwes", ʘwʘ &wabew_featuwes));
+    op_wequiwes_ok(context, UwU c-context->getattw("weight_featuwes", XD &weight_featuwes));
+    op_wequiwes_ok(context, (✿oωo) context->getattw("decode_mode", :3 &m_decode_mode));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    o-op_wequiwes(context, (///ˬ///✿) k-keep_featuwes.size() == keep_codes.size(), nyaa~~
+                ewwows::invawidawgument("keep keys and vawues must have same s-size."));
 
-#ifdef USE_DENSE_HASH
+#ifdef use_dense_hash
     m_keep_map.set_empty_key(0);
-    m_labels_map.set_empty_key(0);
+    m_wabews_map.set_empty_key(0);
     m_weights_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+#endif  // u-use_dense_hash
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    fow (uint64_t i-i = 0; i-i < keep_featuwes.size(); i-i++) {
+      m-m_keep_map[keep_featuwes[i]] = keep_codes[i];
     }
 
-    for (uint64_t i = 0; i < label_features.size(); i++) {
-      m_labels_map[label_features[i]] = i;
+    fow (uint64_t i = 0; i-i < wabew_featuwes.size(); i++) {
+      m_wabews_map[wabew_featuwes[i]] = i;
     }
 
-    for (uint64_t i = 0; i < weight_features.size(); i++) {
-      m_weights_map[weight_features[i]] = i;
+    fow (uint64_t i-i = 0; i < weight_featuwes.size(); i++) {
+      m_weights_map[weight_featuwes[i]] = i;
     }
   }
 
- protected:
-  twml::Map<int64_t, int64_t> m_keep_map;
-  twml::Map<int64_t, int64_t> m_labels_map;
-  twml::Map<int64_t, int64_t> m_weights_map;
-  int64 m_decode_mode;
+ pwotected:
+  twmw::map<int64_t, >w< i-int64_t> m_keep_map;
+  t-twmw::map<int64_t, -.- i-int64_t> m-m_wabews_map;
+  twmw::map<int64_t, (✿oωo) int64_t> m_weights_map;
+  int64 m-m_decode_mode;
 
-  template<typename ResourceType>
-  void Decode(OpKernelContext* context, ResourceType *resource) {
-    resource->input = context->input(0);
-    const uint8_t *input_bytes = getInputBytes<InputType>(resource->input, 0);
-    int num_labels = static_cast<int>(m_labels_map.size());
-    int num_weights = static_cast<int>(m_weights_map.size());
+  t-tempwate<typename wesouwcetype>
+  v-void decode(opkewnewcontext* c-context, (˘ω˘) wesouwcetype *wesouwce) {
+    wesouwce->input = c-context->input(0);
+    const uint8_t *input_bytes = g-getinputbytes<inputtype>(wesouwce->input, rawr 0);
+    int nyum_wabews = static_cast<int>(m_wabews_map.size());
+    i-int nyum_weights = static_cast<int>(m_weights_map.size());
 
-    typename RecordType::Reader reader;
-    twml::GenericBatchPredictionRequest<RecordType> bpr(num_labels, num_weights);
+    t-typename wecowdtype::weadew weadew;
+    t-twmw::genewicbatchpwedictionwequest<wecowdtype> b-bpw(num_wabews, OwO nyum_weights);
 
-    reader.setKeepMap(&m_keep_map);
-    reader.setLabelsMap(&m_labels_map);
-    reader.setBuffer(input_bytes);
-    reader.setDecodeMode(m_decode_mode);
-    // Do not set weight map if it is empty. This will take a faster path.
-    if (num_weights != 0) {
-        reader.setWeightsMap(&m_weights_map);
+    weadew.setkeepmap(&m_keep_map);
+    weadew.setwabewsmap(&m_wabews_map);
+    weadew.setbuffew(input_bytes);
+    weadew.setdecodemode(m_decode_mode);
+    // do nyot s-set weight map if i-it is empty. ^•ﻌ•^ this wiww take a f-fastew path. UwU
+    i-if (num_weights != 0) {
+        w-weadew.setweightsmap(&m_weights_map);
     }
-    bpr.decode(reader);
+    bpw.decode(weadew);
 
-    resource->common = std::move(bpr.common());
-    resource->records = std::move(bpr.requests());
+    wesouwce->common = std::move(bpw.common());
+    w-wesouwce->wecowds = std::move(bpw.wequests());
 
-    resource->num_labels = num_labels;
-    resource->num_weights = num_weights;
+    wesouwce->num_wabews = nyum_wabews;
+    wesouwce->num_weights = n-nyum_weights;
   }
 };
 
 
-REGISTER_OP("DecodeAndHashBatchPredictionRequestV2")
-.Attr("InputType: {uint8, string}")
-.Input("input_bytes: InputType")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("label_features: list(int)")
-.Attr("weight_features: list(int) = []")
-.Attr("decode_mode: int = 0")
-.Output("hashed_data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
-.Doc(R"doc(
-A tensorflow OP that decodes a list/batch of data records and creates a handle to the batch of hashed data records.
+wegistew_op("decodeandhashbatchpwedictionwequestv2")
+.attw("inputtype: {uint8, (˘ω˘) s-stwing}")
+.input("input_bytes: i-inputtype")
+.attw("keep_featuwes: w-wist(int)")
+.attw("keep_codes: wist(int)")
+.attw("wabew_featuwes: w-wist(int)")
+.attw("weight_featuwes: w-wist(int) = []")
+.attw("decode_mode: i-int = 0")
+.output("hashed_data_wecowd_handwe: w-wesouwce")
+.setshapefn(shape_infewence::scawawshape)
+.doc(w"doc(
+a tensowfwow op that decodes a wist/batch o-of data w-wecowds and cweates a-a handwe to t-the batch of hashed d-data wecowds. (///ˬ///✿)
 
-Compared to DecodeAndHashBatchPredictionRequest, DecodeAndHashBatchPredictionRequestV2 is used for training instead
-of serving. Thus label_features and weight_features[optional] must be passed, and labels and weights are extracted in
-the output.
-DecodeAndHashBatchPredictionRequestV2 controls what DataRecords we want to process together in a batch in training.
-For instance, we can put all instances for a query in the same batch when training a ranking model.
-Notice that this OP was added separately to make sure we would not break the API for DecodeAndHashBatchPredictionRequest.
-It requires some discussions if we merge the two ops into a single .cpp file in a future API revision.
+compawed to decodeandhashbatchpwedictionwequest, σωσ decodeandhashbatchpwedictionwequestv2 i-is used fow twaining instead
+of sewving. /(^•ω•^) thus wabew_featuwes and weight_featuwes[optionaw] must be passed, 😳 a-and wabews and weights awe extwacted in
+the output. 😳
+decodeandhashbatchpwedictionwequestv2 c-contwows nyani datawecowds w-we want t-to pwocess togethew in a batch i-in twaining. (⑅˘꒳˘)
+fow instance, 😳😳😳 we c-can put aww instances f-fow a quewy in the same batch when twaining a wanking modew. 😳
+nyotice that this op was added s-sepawatewy to make suwe we wouwd n-nyot bweak the api fow decodeandhashbatchpwedictionwequest. XD
+it w-wequiwes some d-discussions if we mewge the two ops into a singwe .cpp f-fiwe in a f-futuwe api wevision.
 
-Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  label_features: list of feature ids representing the labels.
-  weight_features: list of feature ids representing the weights. Defaults to empty list.
-  decode_mode: integer, indicates which decoding method to use. Let a sparse continuous
-    have a feature_name and a dict of {name: value}. 0 indicates feature_ids are computed
-    as hash(name). 1 indicates feature_ids are computed as hash(feature_name, name)
+attw
+  keep_featuwes: a-a wist o-of int ids to keep. mya
+  keep_codes: theiw cowwesponding code. ^•ﻌ•^
+  wabew_featuwes: w-wist of featuwe i-ids wepwesenting t-the wabews. ʘwʘ
+  weight_featuwes: w-wist of featuwe i-ids wepwesenting the weights. ( ͡o ω ͡o ) d-defauwts to empty wist. mya
+  decode_mode: integew, o.O indicates which decoding method t-to use. (✿oωo) wet a spawse c-continuous
+    have a featuwe_name and a dict o-of {name: vawue}. :3 0 i-indicates featuwe_ids awe computed
+    as hash(name). 😳 1 indicates f-featuwe_ids awe computed as hash(featuwe_name, (U ﹏ U) name)
 
-Input
-  input_bytes: Input tensor containing the serialized batch of BatchPredictionRequest.
+input
+  input_bytes: i-input tensow containing the sewiawized batch o-of batchpwedictionwequest. mya
 
-Outputs
-  hashed_data_record_handle: A resource handle to the HashedDataRecordResource containing batch of HashedDataRecords.
+o-outputs
+  hashed_data_wecowd_handwe: a wesouwce handwe to the hasheddatawecowdwesouwce c-containing batch o-of hasheddatawecowds. (U ᵕ U❁)
 )doc");
 
-template<typename InputType>
-class DecodeAndHashBatchPredictionRequestV2 :
-    public DecodeBatchPredictionRequestKernel<InputType, twml::HashedDataRecord> {
+tempwate<typename inputtype>
+cwass decodeandhashbatchpwedictionwequestv2 :
+    p-pubwic decodebatchpwedictionwequestkewnew<inputtype, :3 twmw::hasheddatawecowd> {
 
-public:
-  DecodeAndHashBatchPredictionRequestV2(OpKernelConstruction *context)
-    : DecodeBatchPredictionRequestKernel<InputType, twml::HashedDataRecord>(context) {
+p-pubwic:
+  decodeandhashbatchpwedictionwequestv2(opkewnewconstwuction *context)
+    : decodebatchpwedictionwequestkewnew<inputtype, mya twmw::hasheddatawecowd>(context) {
   }
 
- private:
-  void Compute(OpKernelContext* context) override {
-    try {
-      HashedDataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(
-        context,
-        makeResourceHandle<HashedDataRecordResource>(context, 0, &resource));
+ pwivate:
+  void compute(opkewnewcontext* c-context) ovewwide {
+    t-twy {
+      hasheddatawecowdwesouwce *wesouwce = n-nyuwwptw;
+      op_wequiwes_ok(
+        c-context, OwO
+        makewesouwcehandwe<hasheddatawecowdwesouwce>(context, (ˆ ﻌ ˆ)♡ 0, &wesouwce));
 
-      this->Decode(context, resource);
+      t-this->decode(context, ʘwʘ w-wesouwce);
 
-      // Each datarecord has a copy of common features.
-      // Initialize total_size by common_size * num_records
-      int64 common_size = static_cast<int64>(resource->common.totalSize());
-      int64 num_records = static_cast<int64>(resource->records.size());
-      int64 total_size = common_size * num_records;
-      for (const auto &record : resource->records) {
-        total_size += static_cast<int64>(record.totalSize());
+      // e-each datawecowd has a copy of c-common featuwes. o.O
+      // i-initiawize totaw_size by common_size * n-nyum_wecowds
+      i-int64 common_size = s-static_cast<int64>(wesouwce->common.totawsize());
+      int64 nyum_wecowds = static_cast<int64>(wesouwce->wecowds.size());
+      i-int64 totaw_size = common_size * n-nyum_wecowds;
+      f-fow (const auto &wecowd : wesouwce->wecowds) {
+        totaw_size += s-static_cast<int64>(wecowd.totawsize());
       }
 
-      resource->total_size = total_size;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      w-wesouwce->totaw_size = t-totaw_size;
+    } c-catch (const std::exception &e) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-REGISTER_OP("DecodeBatchPredictionRequestV2")
-.Attr("InputType: {uint8, string}")
-.Input("input_bytes: InputType")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("label_features: list(int)")
-.Attr("weight_features: list(int) = []")
-.Attr("decode_mode: int = 0")
-.Output("data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
-.Doc(R"doc(
-A tensorflow OP that decodes batch prediction request and creates a handle to the batch of data records.
+wegistew_op("decodebatchpwedictionwequestv2")
+.attw("inputtype: {uint8, UwU stwing}")
+.input("input_bytes: inputtype")
+.attw("keep_featuwes: wist(int)")
+.attw("keep_codes: wist(int)")
+.attw("wabew_featuwes: w-wist(int)")
+.attw("weight_featuwes: wist(int) = []")
+.attw("decode_mode: i-int = 0")
+.output("data_wecowd_handwe: wesouwce")
+.setshapefn(shape_infewence::scawawshape)
+.doc(w"doc(
+a-a tensowfwow op that decodes b-batch pwediction wequest and c-cweates a handwe t-to the batch o-of data wecowds. rawr x3
 
-Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  shared_name: name used by the resource handle inside the resource manager.
-  label_features: list of feature ids representing the labels.
-  weight_features: list of feature ids representing the weights. Defaults to empty list.
-  decode_mode: reserved, do not use.
+a-attw
+  keep_featuwes: a-a wist of int ids to keep. 🥺
+  keep_codes: theiw cowwesponding code. :3
+  shawed_name: nyame used by the wesouwce h-handwe inside t-the wesouwce m-managew. (ꈍᴗꈍ)
+  wabew_featuwes: wist o-of featuwe ids wepwesenting the wabews. 🥺
+  weight_featuwes: wist o-of featuwe ids wepwesenting t-the weights. (✿oωo) defauwts t-to empty wist. (U ﹏ U)
+  decode_mode: wesewved, :3 do not u-use. ^^;;
 
-Input
-  input_bytes: Input tensor containing the serialized batch of BatchPredictionRequest.
+input
+  input_bytes: i-input tensow containing t-the sewiawized b-batch of batchpwedictionwequest. rawr
 
-Outputs
-  data_record_handle: A resource handle to the DataRecordResource containing batch of DataRecords.
+outputs
+  data_wecowd_handwe: a wesouwce handwe to the datawecowdwesouwce containing batch o-of datawecowds. 😳😳😳
 )doc");
 
 
-template<typename InputType>
-class DecodeBatchPredictionRequestV2 :
-    public DecodeBatchPredictionRequestKernel<InputType, twml::DataRecord> {
-public:
-  DecodeBatchPredictionRequestV2(OpKernelConstruction *context)
-    : DecodeBatchPredictionRequestKernel<InputType, twml::DataRecord>(context) {
+t-tempwate<typename i-inputtype>
+c-cwass decodebatchpwedictionwequestv2 :
+    p-pubwic decodebatchpwedictionwequestkewnew<inputtype, (✿oωo) twmw::datawecowd> {
+p-pubwic:
+  d-decodebatchpwedictionwequestv2(opkewnewconstwuction *context)
+    : decodebatchpwedictionwequestkewnew<inputtype, OwO t-twmw::datawecowd>(context) {
   }
 
-private:
-  void Compute(OpKernelContext* context) override {
-    try {
-      DataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(
-        context,
-        makeResourceHandle<DataRecordResource>(context, 0, &resource));
-      this->Decode(context, resource);
-      resource->keep_map = &(this->m_keep_map);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+p-pwivate:
+  void compute(opkewnewcontext* c-context) ovewwide {
+    twy {
+      datawecowdwesouwce *wesouwce = n-nyuwwptw;
+      op_wequiwes_ok(
+        c-context,
+        m-makewesouwcehandwe<datawecowdwesouwce>(context, ʘwʘ 0, &wesouwce));
+      this->decode(context, (ˆ ﻌ ˆ)♡ w-wesouwce);
+      wesouwce->keep_map = &(this->m_keep_map);
+    } catch (const s-std::exception &e) {
+      c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-#define REGISTER_DECODE_OPS(InputType)                      \
-    REGISTER_KERNEL_BUILDER(                                \
-        Name("DecodeAndHashBatchPredictionRequestV2")       \
-        .Device(DEVICE_CPU)                                 \
-        .TypeConstraint<InputType>("InputType"),            \
-        DecodeAndHashBatchPredictionRequestV2<InputType>);  \
-    REGISTER_KERNEL_BUILDER(                                \
-        Name("DecodeBatchPredictionRequestV2")              \
-        .Device(DEVICE_CPU)                                 \
-        .TypeConstraint<InputType>("InputType"),            \
-        DecodeBatchPredictionRequestV2<InputType>);         \
+#define w-wegistew_decode_ops(inputtype)                      \
+    wegistew_kewnew_buiwdew(                                \
+        nyame("decodeandhashbatchpwedictionwequestv2")       \
+        .device(device_cpu)                                 \
+        .typeconstwaint<inputtype>("inputtype"), (U ﹏ U)            \
+        decodeandhashbatchpwedictionwequestv2<inputtype>);  \
+    w-wegistew_kewnew_buiwdew(                                \
+        name("decodebatchpwedictionwequestv2")              \
+        .device(device_cpu)                                 \
+        .typeconstwaint<inputtype>("inputtype"), UwU            \
+        decodebatchpwedictionwequestv2<inputtype>);         \
 
-REGISTER_DECODE_OPS(uint8)
-REGISTER_DECODE_OPS(string)
+wegistew_decode_ops(uint8)
+w-wegistew_decode_ops(stwing)

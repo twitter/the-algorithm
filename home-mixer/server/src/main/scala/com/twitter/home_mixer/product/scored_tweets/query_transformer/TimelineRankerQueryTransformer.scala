@@ -1,108 +1,108 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.quewy_twansfowmew
 
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerQueryTransformer._
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.home_mixer.util.earlybird.EarlybirdRequestUtil
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.timelineranker.{model => tlr}
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.earlybird.common.options.EarlybirdOptions
-import com.twitter.timelines.earlybird.common.options.EarlybirdScoringModelConfig
-import com.twitter.timelines.earlybird.common.utils.SearchOperator
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
-import com.twitter.timelines.util.SnowflakeSortIndexHelper
-import com.twitter.util.Duration
-import com.twitter.util.Time
+impowt com.twittew.home_mixew.modew.homefeatuwes.weawgwaphinnetwowkscowesfeatuwe
+i-impowt com.twittew.home_mixew.modew.wequest.hasdevicecontext
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.quewy_twansfowmew.timewinewankewquewytwansfowmew._
+i-impowt c-com.twittew.home_mixew.utiw.cachedscowedtweetshewpew
+i-impowt com.twittew.home_mixew.utiw.eawwybiwd.eawwybiwdwequestutiw
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.hasquawityfactowstatus
+impowt com.twittew.timewinewankew.{modew => tww}
+impowt c-com.twittew.timewines.common.modew.tweetkindoption
+impowt com.twittew.timewines.eawwybiwd.common.options.eawwybiwdoptions
+impowt com.twittew.timewines.eawwybiwd.common.options.eawwybiwdscowingmodewconfig
+i-impowt com.twittew.timewines.eawwybiwd.common.utiws.seawchopewatow
+impowt com.twittew.timewines.modew.usewid
+i-impowt com.twittew.timewines.modew.candidate.candidatetweetsouwceid
+impowt com.twittew.timewines.utiw.snowfwakesowtindexhewpew
+impowt c-com.twittew.utiw.duwation
+impowt c-com.twittew.utiw.time
 
-object TimelineRankerQueryTransformer {
-
-  /**
-   * Specifies the maximum number of excluded tweet ids to include in the search index query.
-   * Earlybird's named multi term disjunction map feature supports up to 1500 tweet ids.
-   */
-  private val EarlybirdMaxExcludedTweets = 1500
+o-object timewinewankewquewytwansfowmew {
 
   /**
-   * Maximum number of query hits each earlybird shard is allowed to accumulate before
-   * early-terminating the query and reducing the hits to MaxNumEarlybirdResults.
+   * specifies the maximum nyumbew of excwuded tweet i-ids to incwude in the seawch index quewy. 🥺
+   * eawwybiwd's nyamed muwti tewm disjunction m-map featuwe suppowts up t-to 1500 tweet ids. (⑅˘꒳˘)
    */
-  private val EarlybirdMaxHits = 1000
+  p-pwivate v-vaw eawwybiwdmaxexcwudedtweets = 1500
 
   /**
-   * Maximum number of results TLR should retrieve from each earlybird shard.
+   * m-maximum nyumbew of quewy hits each eawwybiwd s-shawd is awwowed to accumuwate befowe
+   * eawwy-tewminating t-the quewy and weducing the hits to maxnumeawwybiwdwesuwts. nyaa~~
    */
-  private val EarlybirdMaxResults = 300
+  pwivate vaw eawwybiwdmaxhits = 1000
+
+  /**
+   * maximum nyumbew of wesuwts tww s-shouwd wetwieve fwom each eawwybiwd s-shawd. :3
+   */
+  p-pwivate vaw e-eawwybiwdmaxwesuwts = 300
 }
 
-trait TimelineRankerQueryTransformer[
-  Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext] {
-  def maxTweetsToFetch: Int
-  def options: TweetKindOption.ValueSet = TweetKindOption.Default
-  def candidateTweetSourceId: CandidateTweetSourceId.Value
-  def utegLikedByTweetsOptions(query: Query): Option[tlr.UtegLikedByTweetsOptions] = None
-  def seedAuthorIds(query: Query): Option[Seq[Long]] = None
-  def candidatePipelineIdentifier: CandidatePipelineIdentifier
-  def earlybirdModels: Seq[EarlybirdScoringModelConfig] =
-    EarlybirdRequestUtil.EarlybirdScoringModels.UnifiedEngagementProd
-  def getTensorflowModel(query: Query): Option[String] = None
+twait timewinewankewquewytwansfowmew[
+  quewy <: pipewinequewy w-with h-hasquawityfactowstatus with hasdevicecontext] {
+  d-def maxtweetstofetch: i-int
+  def options: tweetkindoption.vawueset = t-tweetkindoption.defauwt
+  def candidatetweetsouwceid: c-candidatetweetsouwceid.vawue
+  def utegwikedbytweetsoptions(quewy: q-quewy): option[tww.utegwikedbytweetsoptions] = nyone
+  def seedauthowids(quewy: q-quewy): option[seq[wong]] = nyone
+  d-def candidatepipewineidentifiew: c-candidatepipewineidentifiew
+  def eawwybiwdmodews: seq[eawwybiwdscowingmodewconfig] =
+    eawwybiwdwequestutiw.eawwybiwdscowingmodews.unifiedengagementpwod
+  def gettensowfwowmodew(quewy: quewy): option[stwing] = nyone
 
-  def buildTimelineRankerQuery(query: Query, sinceDuration: Duration): tlr.RecapQuery = {
-    val sinceTime: Time = sinceDuration.ago
-    val untilTime: Time = Time.now
+  d-def buiwdtimewinewankewquewy(quewy: q-quewy, ( ͡o ω ͡o ) sinceduwation: duwation): t-tww.wecapquewy = {
+    v-vaw sincetime: time = s-sinceduwation.ago
+    vaw untiwtime: time = time.now
 
-    val fromTweetIdExclusive = SnowflakeSortIndexHelper.timestampToFakeId(sinceTime)
-    val toTweetIdExclusive = SnowflakeSortIndexHelper.timestampToFakeId(untilTime)
-    val range = tlr.TweetIdRange(Some(fromTweetIdExclusive), Some(toTweetIdExclusive))
+    v-vaw fwomtweetidexcwusive = snowfwakesowtindexhewpew.timestamptofakeid(sincetime)
+    vaw totweetidexcwusive = snowfwakesowtindexhewpew.timestamptofakeid(untiwtime)
+    vaw wange = t-tww.tweetidwange(some(fwomtweetidexcwusive), mya some(totweetidexcwusive))
 
-    val excludedTweetIds = query.features.map { featureMap =>
-      CachedScoredTweetsHelper.tweetImpressionsAndCachedScoredTweetsInRange(
-        featureMap,
-        candidatePipelineIdentifier,
-        EarlybirdMaxExcludedTweets,
-        sinceTime,
-        untilTime)
+    v-vaw excwudedtweetids = q-quewy.featuwes.map { f-featuwemap =>
+      cachedscowedtweetshewpew.tweetimpwessionsandcachedscowedtweetsinwange(
+        featuwemap, (///ˬ///✿)
+        c-candidatepipewineidentifiew, (˘ω˘)
+        e-eawwybiwdmaxexcwudedtweets, ^^;;
+        s-sincetime, (✿oωo)
+        untiwtime)
     }
 
-    val maxCount =
-      (query.getQualityFactorCurrentValue(candidatePipelineIdentifier) * maxTweetsToFetch).toInt
+    v-vaw maxcount =
+      (quewy.getquawityfactowcuwwentvawue(candidatepipewineidentifiew) * maxtweetstofetch).toint
 
-    val authorScoreMap = query.features
-      .map(_.getOrElse(RealGraphInNetworkScoresFeature, Map.empty[UserId, Double]))
-      .getOrElse(Map.empty)
+    vaw authowscowemap = quewy.featuwes
+      .map(_.getowewse(weawgwaphinnetwowkscowesfeatuwe, (U ﹏ U) m-map.empty[usewid, -.- d-doubwe]))
+      .getowewse(map.empty)
 
-    val deviceContext =
-      query.deviceContext.map(_.toTimelineServiceDeviceContext(query.clientContext))
+    v-vaw devicecontext =
+      q-quewy.devicecontext.map(_.totimewinesewvicedevicecontext(quewy.cwientcontext))
 
-    val tensorflowModel = getTensorflowModel(query)
+    v-vaw tensowfwowmodew = gettensowfwowmodew(quewy)
 
-    val earlyBirdOptions = EarlybirdOptions(
-      maxNumHitsPerShard = EarlybirdMaxHits,
-      maxNumResultsPerShard = EarlybirdMaxResults,
-      models = earlybirdModels,
-      authorScoreMap = authorScoreMap,
-      skipVeryRecentTweets = true,
-      tensorflowModel = tensorflowModel
+    vaw eawwybiwdoptions = eawwybiwdoptions(
+      m-maxnumhitspewshawd = eawwybiwdmaxhits, ^•ﻌ•^
+      maxnumwesuwtspewshawd = eawwybiwdmaxwesuwts, rawr
+      modews = eawwybiwdmodews, (˘ω˘)
+      authowscowemap = a-authowscowemap, nyaa~~
+      skipvewywecenttweets = twue, UwU
+      tensowfwowmodew = tensowfwowmodew
     )
 
-    tlr.RecapQuery(
-      userId = query.getRequiredUserId,
-      maxCount = Some(maxCount),
-      range = Some(range),
-      options = options,
-      searchOperator = SearchOperator.Exclude,
-      earlybirdOptions = Some(earlyBirdOptions),
-      deviceContext = deviceContext,
-      authorIds = seedAuthorIds(query),
-      excludedTweetIds = excludedTweetIds,
-      utegLikedByTweetsOptions = utegLikedByTweetsOptions(query),
-      searchClientSubId = None,
-      candidateTweetSourceId = Some(candidateTweetSourceId),
-      hydratesContentFeatures = Some(false)
+    t-tww.wecapquewy(
+      u-usewid = quewy.getwequiwedusewid, :3
+      m-maxcount = some(maxcount), (⑅˘꒳˘)
+      w-wange = some(wange), (///ˬ///✿)
+      o-options = o-options, ^^;;
+      seawchopewatow = seawchopewatow.excwude, >_<
+      eawwybiwdoptions = some(eawwybiwdoptions), rawr x3
+      devicecontext = devicecontext, /(^•ω•^)
+      authowids = seedauthowids(quewy), :3
+      e-excwudedtweetids = excwudedtweetids, (ꈍᴗꈍ)
+      utegwikedbytweetsoptions = u-utegwikedbytweetsoptions(quewy), /(^•ω•^)
+      seawchcwientsubid = n-nyone, (⑅˘꒳˘)
+      c-candidatetweetsouwceid = some(candidatetweetsouwceid), ( ͡o ω ͡o )
+      hydwatescontentfeatuwes = s-some(fawse)
     )
   }
 }

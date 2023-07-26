@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.modules
+package com.twittew.fowwow_wecommendations.moduwes
 
-import com.twitter.follow_recommendations.products.ProdProductRegistry
-import com.twitter.follow_recommendations.products.common.ProductRegistry
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.pwoducts.pwodpwoductwegistwy
+i-impowt c-com.twittew.fowwow_wecommendations.pwoducts.common.pwoductwegistwy
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt j-javax.inject.singweton
 
-object ProductRegistryModule extends TwitterModule {
-  override protected def configure(): Unit = {
-    bind[ProductRegistry].to[ProdProductRegistry].in[Singleton]
+o-object p-pwoductwegistwymoduwe e-extends twittewmoduwe {
+  ovewwide pwotected def configuwe(): unit = {
+    b-bind[pwoductwegistwy].to[pwodpwoductwegistwy].in[singweton]
   }
 }

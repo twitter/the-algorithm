@@ -1,132 +1,132 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.geoduck.common.{thriftscala => Geoduck}
-import com.twitter.geoduck.service.thriftscala.GeoContext
-import com.twitter.geoduck.service.thriftscala.Key
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.geoduck.util.service.GeoduckLocate
-import com.twitter.geoduck.util.service.LocationResponseExtractors
-import com.twitter.geoduck.util.{primitives => GDPrimitive}
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.{thriftscala => TP}
+i-impowt com.twittew.geoduck.common.{thwiftscawa => g-geoduck}
+impowt c-com.twittew.geoduck.sewvice.thwiftscawa.geocontext
+i-impowt com.twittew.geoduck.sewvice.thwiftscawa.key
+i-impowt c-com.twittew.geoduck.sewvice.thwiftscawa.wocationwesponse
+i-impowt com.twittew.geoduck.utiw.sewvice.geoduckwocate
+impowt com.twittew.geoduck.utiw.sewvice.wocationwesponseextwactows
+impowt com.twittew.geoduck.utiw.{pwimitives => gdpwimitive}
+impowt c-com.twittew.stitch.notfound
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stitch.compat.wegacyseqgwoup
+i-impowt com.twittew.tweetypie.{thwiftscawa => tp}
 
-object GeoduckPlaceConverter {
+object geoduckpwaceconvewtew {
 
-  def LocationResponseToTPPlace(lang: String, lr: LocationResponse): Option[TP.Place] =
-    GDPrimitive.Place
-      .fromLocationResponse(lr)
-      .headOption
-      .map(apply(lang, _))
+  d-def wocationwesponsetotppwace(wang: stwing, ^•ﻌ•^ ww: wocationwesponse): option[tp.pwace] =
+    g-gdpwimitive.pwace
+      .fwomwocationwesponse(ww)
+      .headoption
+      .map(appwy(wang, rawr _))
 
-  def convertPlaceType(pt: Geoduck.PlaceType): TP.PlaceType = pt match {
-    case Geoduck.PlaceType.Unknown => TP.PlaceType.Unknown
-    case Geoduck.PlaceType.Country => TP.PlaceType.Country
-    case Geoduck.PlaceType.Admin => TP.PlaceType.Admin
-    case Geoduck.PlaceType.City => TP.PlaceType.City
-    case Geoduck.PlaceType.Neighborhood => TP.PlaceType.Neighborhood
-    case Geoduck.PlaceType.Poi => TP.PlaceType.Poi
-    case Geoduck.PlaceType.ZipCode => TP.PlaceType.Admin
-    case Geoduck.PlaceType.Metro => TP.PlaceType.Admin
-    case Geoduck.PlaceType.Admin0 => TP.PlaceType.Admin
-    case Geoduck.PlaceType.Admin1 => TP.PlaceType.Admin
-    case _ =>
-      throw new IllegalStateException(s"Invalid place type: $pt")
+  def convewtpwacetype(pt: g-geoduck.pwacetype): tp.pwacetype = p-pt match {
+    case geoduck.pwacetype.unknown => tp.pwacetype.unknown
+    case geoduck.pwacetype.countwy => tp.pwacetype.countwy
+    c-case geoduck.pwacetype.admin => tp.pwacetype.admin
+    case geoduck.pwacetype.city => tp.pwacetype.city
+    case geoduck.pwacetype.neighbowhood => t-tp.pwacetype.neighbowhood
+    case geoduck.pwacetype.poi => t-tp.pwacetype.poi
+    c-case geoduck.pwacetype.zipcode => t-tp.pwacetype.admin
+    c-case geoduck.pwacetype.metwo => tp.pwacetype.admin
+    case geoduck.pwacetype.admin0 => t-tp.pwacetype.admin
+    case geoduck.pwacetype.admin1 => tp.pwacetype.admin
+    c-case _ =>
+      thwow nyew iwwegawstateexception(s"invawid pwace type: $pt")
   }
 
-  def convertPlaceName(gd: Geoduck.PlaceName): TP.PlaceName =
-    TP.PlaceName(
-      name = gd.name,
-      language = gd.language.getOrElse("en"),
-      `type` = convertPlaceNameType(gd.nameType),
-      preferred = gd.preferred
+  def convewtpwacename(gd: geoduck.pwacename): t-tp.pwacename =
+    tp.pwacename(
+      nyame = g-gd.name,
+      w-wanguage = g-gd.wanguage.getowewse("en"), (˘ω˘)
+      `type` = convewtpwacenametype(gd.nametype), nyaa~~
+      pwefewwed = gd.pwefewwed
     )
 
-  def convertPlaceNameType(pt: Geoduck.PlaceNameType): TP.PlaceNameType = pt match {
-    case Geoduck.PlaceNameType.Normal => TP.PlaceNameType.Normal
-    case Geoduck.PlaceNameType.Abbreviation => TP.PlaceNameType.Abbreviation
-    case Geoduck.PlaceNameType.Synonym => TP.PlaceNameType.Synonym
-    case _ =>
-      throw new IllegalStateException(s"Invalid place name type: $pt")
+  d-def convewtpwacenametype(pt: g-geoduck.pwacenametype): tp.pwacenametype = p-pt match {
+    case g-geoduck.pwacenametype.nowmaw => tp.pwacenametype.nowmaw
+    c-case geoduck.pwacenametype.abbweviation => tp.pwacenametype.abbweviation
+    c-case geoduck.pwacenametype.synonym => tp.pwacenametype.synonym
+    c-case _ =>
+      thwow nyew iwwegawstateexception(s"invawid p-pwace nyame type: $pt")
   }
 
-  def convertAttributes(attrs: collection.Set[Geoduck.PlaceAttribute]): Map[String, String] =
-    attrs.map(attr => attr.key -> attr.value.getOrElse("")).toMap
+  d-def convewtattwibutes(attws: c-cowwection.set[geoduck.pwaceattwibute]): map[stwing, UwU stwing] =
+    attws.map(attw => attw.key -> attw.vawue.getowewse("")).tomap
 
-  def convertBoundingBox(geom: GDPrimitive.Geometry): Seq[TP.GeoCoordinates] =
-    geom.coordinates.map { coord =>
-      TP.GeoCoordinates(
-        latitude = coord.lat,
-        longitude = coord.lon
+  def convewtboundingbox(geom: gdpwimitive.geometwy): seq[tp.geocoowdinates] =
+    g-geom.coowdinates.map { c-coowd =>
+      tp.geocoowdinates(
+        w-watitude = c-coowd.wat, :3
+        w-wongitude = coowd.won
       )
     }
 
-  def apply(queryLang: String, geoplace: GDPrimitive.Place): TP.Place = {
-    val bestname = geoplace.bestName(queryLang).getOrElse(geoplace.hexId)
-    TP.Place(
-      id = geoplace.hexId,
-      `type` = convertPlaceType(geoplace.placeType),
-      name = bestname,
-      fullName = geoplace.fullName(queryLang).getOrElse(bestname),
-      attributes = convertAttributes(geoplace.attributes),
-      boundingBox = geoplace.boundingBox.map(convertBoundingBox),
-      countryCode = geoplace.countryCode,
-      containers = Some(geoplace.cone.map(_.hexId).toSet + geoplace.hexId),
-      countryName = geoplace.countryName(queryLang)
+  def appwy(quewywang: stwing, (⑅˘꒳˘) geopwace: g-gdpwimitive.pwace): tp.pwace = {
+    vaw bestname = geopwace.bestname(quewywang).getowewse(geopwace.hexid)
+    tp.pwace(
+      i-id = geopwace.hexid, (///ˬ///✿)
+      `type` = convewtpwacetype(geopwace.pwacetype), ^^;;
+      n-nyame = b-bestname, >_<
+      f-fuwwname = geopwace.fuwwname(quewywang).getowewse(bestname), rawr x3
+      attwibutes = c-convewtattwibutes(geopwace.attwibutes), /(^•ω•^)
+      b-boundingbox = g-geopwace.boundingbox.map(convewtboundingbox), :3
+      c-countwycode = geopwace.countwycode, (ꈍᴗꈍ)
+      containews = some(geopwace.cone.map(_.hexid).toset + geopwace.hexid), /(^•ω•^)
+      c-countwyname = g-geopwace.countwyname(quewywang)
     )
   }
 
-  def convertGDKey(key: Key, lang: String): PlaceKey = {
-    val Key.PlaceId(pid) = key
-    PlaceKey("%016x".format(pid), lang)
+  d-def convewtgdkey(key: k-key, (⑅˘꒳˘) wang: s-stwing): pwacekey = {
+    vaw key.pwaceid(pid) = key
+    pwacekey("%016x".fowmat(pid), ( ͡o ω ͡o ) w-wang)
   }
 }
 
-object GeoduckPlaceRepository {
-  val context: GeoContext =
-    GeoContext(
-      placeFields = Set(
-        Geoduck.PlaceQueryFields.Attributes,
-        Geoduck.PlaceQueryFields.BoundingBox,
-        Geoduck.PlaceQueryFields.PlaceNames,
-        Geoduck.PlaceQueryFields.Cone
-      ),
-      placeTypes = Set(
-        Geoduck.PlaceType.Country,
-        Geoduck.PlaceType.Admin0,
-        Geoduck.PlaceType.Admin1,
-        Geoduck.PlaceType.City,
-        Geoduck.PlaceType.Neighborhood
-      ),
-      includeCountryCode = true,
-      hydrateCone = true
+object geoduckpwacewepositowy {
+  vaw context: geocontext =
+    geocontext(
+      pwacefiewds = s-set(
+        geoduck.pwacequewyfiewds.attwibutes, òωó
+        geoduck.pwacequewyfiewds.boundingbox, (⑅˘꒳˘)
+        geoduck.pwacequewyfiewds.pwacenames, XD
+        g-geoduck.pwacequewyfiewds.cone
+      ), -.-
+      p-pwacetypes = s-set(
+        geoduck.pwacetype.countwy, :3
+        g-geoduck.pwacetype.admin0, nyaa~~
+        geoduck.pwacetype.admin1, 😳
+        g-geoduck.pwacetype.city, (⑅˘꒳˘)
+        g-geoduck.pwacetype.neighbowhood
+      ), nyaa~~
+      incwudecountwycode = twue,
+      hydwatecone = twue
     )
 
-  def apply(geoduck: GeoduckLocate): PlaceRepository.Type = {
-    val geoduckGroup = LegacySeqGroup((ids: Seq[Key.PlaceId]) => geoduck(context, ids))
+  def appwy(geoduck: g-geoduckwocate): pwacewepositowy.type = {
+    v-vaw geoduckgwoup = wegacyseqgwoup((ids: s-seq[key.pwaceid]) => g-geoduck(context, OwO ids))
 
-    placeKey =>
-      val placeId =
-        try {
-          Stitch.value(
-            Key.PlaceId(java.lang.Long.parseUnsignedLong(placeKey.placeId, 16))
+    pwacekey =>
+      vaw pwaceid =
+        t-twy {
+          s-stitch.vawue(
+            key.pwaceid(java.wang.wong.pawseunsignedwong(pwacekey.pwaceid, rawr x3 16))
           )
         } catch {
-          case _: NumberFormatException => Stitch.exception(NotFound)
+          c-case _: n-nyumbewfowmatexception => stitch.exception(notfound)
         }
 
-      placeId
-        .flatMap(id => Stitch.call(id, geoduckGroup))
-        .rescue { case LocationResponseExtractors.Failure(ex) => Stitch.exception(ex) }
-        .map { resp =>
-          GDPrimitive.Place
-            .fromLocationResponse(resp)
-            .headOption
-            .map(GeoduckPlaceConverter(placeKey.language, _))
+      pwaceid
+        .fwatmap(id => stitch.caww(id, XD geoduckgwoup))
+        .wescue { c-case wocationwesponseextwactows.faiwuwe(ex) => s-stitch.exception(ex) }
+        .map { w-wesp =>
+          gdpwimitive.pwace
+            .fwomwocationwesponse(wesp)
+            .headoption
+            .map(geoduckpwaceconvewtew(pwacekey.wanguage, _))
         }
-        .lowerFromOption()
+        .wowewfwomoption()
   }
 
 }

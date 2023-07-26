@@ -1,149 +1,149 @@
-package com.twitter.search.earlybird_root.routers;
+package com.twittew.seawch.eawwybiwd_woot.woutews;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Named;
+impowt java.utiw.awwaywist;
+impowt j-java.utiw.wist;
+i-impowt javax.inject.inject;
+i-impowt javax.inject.named;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.cowwect.immutabwewist;
+i-impowt com.googwe.common.cowwect.wists;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.InjectionNames;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.ServingRangeProvider;
-import com.twitter.search.earlybird_root.mergers.EarlybirdResponseMerger;
-import com.twitter.search.earlybird_root.mergers.SuperRootResponseMerger;
-import com.twitter.search.earlybird_root.mergers.TermStatisticsResponseMerger;
-import com.twitter.search.earlybird_root.mergers.TierResponseAccumulator;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+impowt c-com.twittew.finagwe.sewvice;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt c-com.twittew.seawch.common.utiw.eawwybiwd.eawwybiwdwesponseutiw;
+impowt com.twittew.seawch.eawwybiwd.config.sewvingwange;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.common.injectionnames;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.eawwybiwdtimewangefiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.sewvingwangepwovidew;
+impowt com.twittew.seawch.eawwybiwd_woot.mewgews.eawwybiwdwesponsemewgew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.mewgews.supewwootwesponsemewgew;
+impowt com.twittew.seawch.eawwybiwd_woot.mewgews.tewmstatisticswesponsemewgew;
+impowt com.twittew.seawch.eawwybiwd_woot.mewgews.tiewwesponseaccumuwatow;
+i-impowt com.twittew.utiw.function;
+impowt com.twittew.utiw.futuwe;
 
-import static com.twitter.search.common.util.earlybird.TermStatisticsUtil.determineBinSize;
+i-impowt static c-com.twittew.seawch.common.utiw.eawwybiwd.tewmstatisticsutiw.detewminebinsize;
 
 /**
- * For TermStats traffic SuperRoot hits both realtime and archive in parallel, and then merges
- * the results.
+ * f-fow tewmstats t-twaffic supewwoot hits both weawtime and a-awchive in pawawwew, and then mewges
+ * the wesuwts.
  */
-public class TermStatsRequestRouter extends RequestRouter {
-  private static final Logger LOG = LoggerFactory.getLogger(TermStatsRequestRouter.class);
+p-pubwic cwass tewmstatswequestwoutew extends wequestwoutew {
+  pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(tewmstatswequestwoutew.cwass);
 
-  private static final String SUPERROOT_SKIP_FULL_ARCHIVE_CLUSTER_FOR_TERM_STATS_REQUESTS =
-      "superroot_skip_full_archive_cluster_for_term_stats_requests";
+  pwivate static f-finaw stwing s-supewwoot_skip_fuww_awchive_cwustew_fow_tewm_stats_wequests =
+      "supewwoot_skip_fuww_awchive_cwustew_fow_tewm_stats_wequests";
 
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> realtimeService;
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> fullArchiveService;
+  p-pwivate finaw sewvice<eawwybiwdwequestcontext, 🥺 eawwybiwdwesponse> weawtimesewvice;
+  p-pwivate f-finaw sewvice<eawwybiwdwequestcontext, :3 eawwybiwdwesponse> f-fuwwawchivesewvice;
 
-  private final SearchDecider decider;
+  p-pwivate finaw seawchdecidew d-decidew;
 
-  private final ServingRangeProvider realtimeServingRangeProvider;
+  pwivate finaw sewvingwangepwovidew weawtimesewvingwangepwovidew;
 
-  @Inject
-  public TermStatsRequestRouter(
-      @Named(InjectionNames.REALTIME)
-          Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
-      @Named(TermStatsRequestRouterModule.REALTIME_TIME_RANGE_FILTER)
-          EarlybirdTimeRangeFilter realtimeTimeRangeFilter,
-      @Named(InjectionNames.FULL_ARCHIVE)
-          Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive,
-      @Named(TermStatsRequestRouterModule.FULL_ARCHIVE_TIME_RANGE_FILTER)
-          EarlybirdTimeRangeFilter fullArchiveTimeRangeFilter,
-      SearchDecider decider) {
-    LOG.info("Instantiating a TermStatsRequestRouter");
+  @inject
+  p-pubwic tewmstatswequestwoutew(
+      @named(injectionnames.weawtime)
+          sewvice<eawwybiwdwequestcontext, (ꈍᴗꈍ) e-eawwybiwdwesponse> weawtime, 🥺
+      @named(tewmstatswequestwoutewmoduwe.weawtime_time_wange_fiwtew)
+          e-eawwybiwdtimewangefiwtew weawtimetimewangefiwtew, (✿oωo)
+      @named(injectionnames.fuww_awchive)
+          s-sewvice<eawwybiwdwequestcontext, (U ﹏ U) e-eawwybiwdwesponse> fuwwawchive, :3
+      @named(tewmstatswequestwoutewmoduwe.fuww_awchive_time_wange_fiwtew)
+          eawwybiwdtimewangefiwtew fuwwawchivetimewangefiwtew, ^^;;
+      seawchdecidew decidew) {
+    wog.info("instantiating a-a tewmstatswequestwoutew");
 
-    this.realtimeService = realtimeTimeRangeFilter
-        .andThen(realtime);
+    t-this.weawtimesewvice = weawtimetimewangefiwtew
+        .andthen(weawtime);
 
-    this.fullArchiveService = fullArchiveTimeRangeFilter
-        .andThen(fullArchive);
+    t-this.fuwwawchivesewvice = f-fuwwawchivetimewangefiwtew
+        .andthen(fuwwawchive);
 
-    this.decider = decider;
-    this.realtimeServingRangeProvider = realtimeTimeRangeFilter.getServingRangeProvider();
+    t-this.decidew = decidew;
+    this.weawtimesewvingwangepwovidew = weawtimetimewangefiwtew.getsewvingwangepwovidew();
   }
 
   /**
-   * Hit both realtime and full-archive clusters then merges term stat request.
+   * hit b-both weawtime and fuww-awchive cwustews then mewges tewm stat wequest. rawr
    */
-  @Override
-  public Future<EarlybirdResponse> route(EarlybirdRequestContext requestContext) {
-    List<RequestResponse> requestResponses = new ArrayList<>();
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> woute(eawwybiwdwequestcontext w-wequestcontext) {
+    w-wist<wequestwesponse> w-wequestwesponses = nyew a-awwaywist<>();
 
-    Future<EarlybirdResponse> realtimeResponseFuture = realtimeService.apply(requestContext);
-    this.saveRequestResponse(requestResponses, "realtime", requestContext, realtimeResponseFuture);
+    f-futuwe<eawwybiwdwesponse> weawtimewesponsefutuwe = w-weawtimesewvice.appwy(wequestcontext);
+    t-this.savewequestwesponse(wequestwesponses, 😳😳😳 "weawtime", wequestcontext, (✿oωo) weawtimewesponsefutuwe);
 
-    Future<EarlybirdResponse> archiveResponseFuture =
-        requestContext.getRequest().isGetOlderResults()
-            && !decider.isAvailable(SUPERROOT_SKIP_FULL_ARCHIVE_CLUSTER_FOR_TERM_STATS_REQUESTS)
-            ? fullArchiveService.apply(requestContext)
-            : Future.value(emptyResponse());
-    this.saveRequestResponse(requestResponses, "archive", requestContext, archiveResponseFuture);
+    f-futuwe<eawwybiwdwesponse> a-awchivewesponsefutuwe =
+        w-wequestcontext.getwequest().isgetowdewwesuwts()
+            && !decidew.isavaiwabwe(supewwoot_skip_fuww_awchive_cwustew_fow_tewm_stats_wequests)
+            ? f-fuwwawchivesewvice.appwy(wequestcontext)
+            : f-futuwe.vawue(emptywesponse());
+    this.savewequestwesponse(wequestwesponses, OwO "awchive", wequestcontext, ʘwʘ awchivewesponsefutuwe);
 
-    Future<EarlybirdResponse> mergedResponse =
-        merge(realtimeResponseFuture, archiveResponseFuture, requestContext);
+    f-futuwe<eawwybiwdwesponse> mewgedwesponse =
+        mewge(weawtimewesponsefutuwe, (ˆ ﻌ ˆ)♡ awchivewesponsefutuwe, (U ﹏ U) wequestcontext);
 
-    return this.maybeAttachSentRequestsToDebugInfo(
-        requestResponses,
-        requestContext,
-        mergedResponse
+    wetuwn this.maybeattachsentwequeststodebuginfo(
+        w-wequestwesponses, UwU
+        wequestcontext,
+        mewgedwesponse
     );
   }
 
   /**
-   * Merge responses from realtime and full archive clusters.
+   * mewge w-wesponses fwom w-weawtime and fuww a-awchive cwustews. XD
    */
-  private Future<EarlybirdResponse> merge(
-      final Future<EarlybirdResponse> realtimeResponseFuture,
-      final Future<EarlybirdResponse> archiveResponseFuture,
-      final EarlybirdRequestContext requestContext) {
+  pwivate f-futuwe<eawwybiwdwesponse> mewge(
+      finaw f-futuwe<eawwybiwdwesponse> w-weawtimewesponsefutuwe, ʘwʘ
+      finaw futuwe<eawwybiwdwesponse> awchivewesponsefutuwe, rawr x3
+      finaw eawwybiwdwequestcontext wequestcontext) {
 
-    return realtimeResponseFuture.flatMap(
-        new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
-          @Override
-          public Future<EarlybirdResponse> apply(final EarlybirdResponse realtimeResponse) {
-            if (!EarlybirdResponseUtil.isSuccessfulResponse(realtimeResponse)) {
-              return Future.value(realtimeResponse);
+    w-wetuwn weawtimewesponsefutuwe.fwatmap(
+        n-nyew function<eawwybiwdwesponse, ^^;; f-futuwe<eawwybiwdwesponse>>() {
+          @ovewwide
+          p-pubwic futuwe<eawwybiwdwesponse> appwy(finaw e-eawwybiwdwesponse w-weawtimewesponse) {
+            if (!eawwybiwdwesponseutiw.issuccessfuwwesponse(weawtimewesponse)) {
+              w-wetuwn f-futuwe.vawue(weawtimewesponse);
             }
 
-            return archiveResponseFuture.flatMap(
-                new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
-                  @Override
-                  public Future<EarlybirdResponse> apply(EarlybirdResponse archiveResponse) {
-                    if (!EarlybirdResponseUtil.isSuccessfulResponse(archiveResponse)) {
-                      return Future.value(
-                          mergeWithUnsuccessfulArchiveResponse(
-                              requestContext, realtimeResponse, archiveResponse));
+            wetuwn awchivewesponsefutuwe.fwatmap(
+                nyew function<eawwybiwdwesponse, ʘwʘ futuwe<eawwybiwdwesponse>>() {
+                  @ovewwide
+                  p-pubwic futuwe<eawwybiwdwesponse> a-appwy(eawwybiwdwesponse a-awchivewesponse) {
+                    if (!eawwybiwdwesponseutiw.issuccessfuwwesponse(awchivewesponse)) {
+                      w-wetuwn f-futuwe.vawue(
+                          mewgewithunsuccessfuwawchivewesponse(
+                              w-wequestcontext, (U ﹏ U) weawtimewesponse, (˘ω˘) awchivewesponse));
                     }
 
-                    List<Future<EarlybirdResponse>> responses =
-                        ImmutableList.<Future<EarlybirdResponse>>builder()
-                            .add(realtimeResponseFuture)
-                            .add(archiveResponseFuture)
-                            .build();
+                    wist<futuwe<eawwybiwdwesponse>> wesponses =
+                        i-immutabwewist.<futuwe<eawwybiwdwesponse>>buiwdew()
+                            .add(weawtimewesponsefutuwe)
+                            .add(awchivewesponsefutuwe)
+                            .buiwd();
 
-                    EarlybirdResponseMerger merger = new TermStatisticsResponseMerger(
-                        requestContext, responses, new TierResponseAccumulator());
+                    e-eawwybiwdwesponsemewgew mewgew = new tewmstatisticswesponsemewgew(
+                        w-wequestcontext, (ꈍᴗꈍ) w-wesponses, /(^•ω•^) nyew tiewwesponseaccumuwatow());
 
-                    return merger.merge().map(new Function<EarlybirdResponse, EarlybirdResponse>() {
-                      @Override
-                      public EarlybirdResponse apply(EarlybirdResponse mergedResponse) {
-                        if (requestContext.getRequest().getDebugMode() > 0) {
-                          mergedResponse.setDebugString(
-                              SuperRootResponseMerger.mergeClusterDebugStrings(
-                                  realtimeResponse, null, archiveResponse));
+                    wetuwn mewgew.mewge().map(new f-function<eawwybiwdwesponse, >_< eawwybiwdwesponse>() {
+                      @ovewwide
+                      pubwic eawwybiwdwesponse appwy(eawwybiwdwesponse mewgedwesponse) {
+                        if (wequestcontext.getwequest().getdebugmode() > 0) {
+                          mewgedwesponse.setdebugstwing(
+                              s-supewwootwesponsemewgew.mewgecwustewdebugstwings(
+                                  weawtimewesponse, σωσ nyuww, awchivewesponse));
                         }
-                        return mergedResponse;
+                        w-wetuwn m-mewgedwesponse;
                       }
                     });
                   }
@@ -152,87 +152,87 @@ public class TermStatsRequestRouter extends RequestRouter {
         });
   }
 
-  private EarlybirdResponse mergeWithUnsuccessfulArchiveResponse(
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse realtimeResponse,
-      EarlybirdResponse archiveResponse) {
-    // If the realtime cluster was skipped, and the full archive returned an error
-    // response, return the full archive response.
-    if (isTierSkippedResponse(realtimeResponse)) {
-      return archiveResponse;
+  pwivate eawwybiwdwesponse mewgewithunsuccessfuwawchivewesponse(
+      e-eawwybiwdwequestcontext w-wequestcontext, ^^;;
+      eawwybiwdwesponse weawtimewesponse, 😳
+      eawwybiwdwesponse a-awchivewesponse) {
+    // if the weawtime c-cwustew was skipped, >_< and the fuww awchive wetuwned an ewwow
+    // w-wesponse, -.- wetuwn the fuww a-awchive wesponse. UwU
+    i-if (istiewskippedwesponse(weawtimewesponse)) {
+      wetuwn a-awchivewesponse;
     }
 
-    // If the realtime response has results and the full archive cluster returned an error
-    // response, we return the realtime response. If the client needs more results, it can paginate,
-    // and on the next request it will get the error response from the full archive cluster.
-    if (realtimeResponse.isSetTermStatisticsResults()
-        && !realtimeResponse.getTermStatisticsResults().getTermResults().isEmpty()) {
-      realtimeResponse.setDebugString(
-          "Full archive cluster returned an error response ("
-              + archiveResponse.getResponseCode() + "). "
-              + SuperRootResponseMerger.mergeClusterDebugStrings(
-              realtimeResponse, null, archiveResponse));
-      return updateMinCompleteBinId(requestContext, realtimeResponse);
+    // if the weawtime w-wesponse has w-wesuwts and the f-fuww awchive cwustew wetuwned an e-ewwow
+    // wesponse, :3 w-we wetuwn the weawtime wesponse. σωσ if the c-cwient nyeeds mowe w-wesuwts, >w< it c-can paginate, (ˆ ﻌ ˆ)♡
+    // and on the nyext wequest it w-wiww get the ewwow wesponse fwom t-the fuww awchive c-cwustew. ʘwʘ
+    if (weawtimewesponse.issettewmstatisticswesuwts()
+        && !weawtimewesponse.gettewmstatisticswesuwts().gettewmwesuwts().isempty()) {
+      weawtimewesponse.setdebugstwing(
+          "fuww awchive cwustew wetuwned a-an ewwow w-wesponse ("
+              + a-awchivewesponse.getwesponsecode() + "). :3 "
+              + s-supewwootwesponsemewgew.mewgecwustewdebugstwings(
+              weawtimewesponse, (˘ω˘) n-nyuww, awchivewesponse));
+      wetuwn updatemincompwetebinid(wequestcontext, 😳😳😳 weawtimewesponse);
     }
 
-    // If the realtime response has no results, and the full archive cluster returned an error
-    // response, return a PERSISTENT_ERROR response, and merge the debug strings from the two
-    // responses.
-    EarlybirdResponse mergedResponse =
-        new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 0);
-    mergedResponse.setDebugString(
-        "Full archive cluster returned an error response ("
-            + archiveResponse.getResponseCode()
-            + "), and the realtime response had no results. "
-            + SuperRootResponseMerger.mergeClusterDebugStrings(
-            realtimeResponse, null, archiveResponse));
-    return mergedResponse;
+    // if the weawtime w-wesponse has nyo wesuwts, rawr x3 a-and the fuww awchive cwustew wetuwned a-an ewwow
+    // wesponse, (✿oωo) w-wetuwn a pewsistent_ewwow wesponse, (ˆ ﻌ ˆ)♡ a-and mewge t-the debug stwings f-fwom the two
+    // w-wesponses. :3
+    e-eawwybiwdwesponse mewgedwesponse =
+        nyew eawwybiwdwesponse(eawwybiwdwesponsecode.pewsistent_ewwow, (U ᵕ U❁) 0);
+    mewgedwesponse.setdebugstwing(
+        "fuww awchive cwustew wetuwned an ewwow wesponse ("
+            + a-awchivewesponse.getwesponsecode()
+            + "), ^^;; a-and the weawtime w-wesponse had nyo wesuwts. mya "
+            + supewwootwesponsemewgew.mewgecwustewdebugstwings(
+            w-weawtimewesponse, 😳😳😳 nyuww, awchivewesponse));
+    wetuwn mewgedwesponse;
   }
 
   /**
-   * If we get a completed realtime response but a failed archive response, the minCompleteBinId we
-   * return will be incorrect -- the realtime minCompleteBinId is assumed to be the oldest bin
-   * returned, rather than the bin that intersects the realtime serving boundary. In these cases, we
-   * need to move the minCompleteBinId forward.
+   * i-if we get a c-compweted weawtime wesponse but a-a faiwed awchive wesponse, OwO the mincompwetebinid we
+   * wetuwn wiww b-be incowwect -- t-the weawtime mincompwetebinid i-is assumed to b-be the owdest bin
+   * wetuwned, rawr wathew than the bin that intewsects the weawtime s-sewving boundawy. XD i-in these cases, (U ﹏ U) w-we
+   * nyeed t-to move the mincompwetebinid fowwawd. (˘ω˘)
    * <p>
-   * Note that we cannot always set the minCompleteBinId for the realtime results to the bin
-   * intersecting the realtime serving boundary: somewhere in the guts of the merging logic, we set
-   * the minCompleteBinId of the merged response to the max of the minCompleteBinIds of the original
-   * responses. :-(
+   * n-nyote that we cannot awways s-set the mincompwetebinid f-fow the weawtime wesuwts t-to the bin
+   * i-intewsecting the weawtime sewving b-boundawy: somewhewe in the guts of the mewging w-wogic, UwU we set
+   * the mincompwetebinid o-of t-the mewged wesponse to the max of t-the mincompwetebinids of the owiginaw
+   * wesponses. >_< :-(
    */
-  private EarlybirdResponse updateMinCompleteBinId(
-      EarlybirdRequestContext requestContext, EarlybirdResponse realtimeResponse) {
-    Preconditions.checkArgument(
-        realtimeResponse.getTermStatisticsResults().isSetMinCompleteBinId());
-    int roundedServingRange = roundServingRangeUpToNearestBinId(requestContext, realtimeResponse);
-    int minCompleteBinId = Math.max(
-        roundedServingRange,
-        realtimeResponse.getTermStatisticsResults().getMinCompleteBinId());
-    realtimeResponse.getTermStatisticsResults().setMinCompleteBinId(minCompleteBinId);
-    return realtimeResponse;
+  p-pwivate eawwybiwdwesponse u-updatemincompwetebinid(
+      e-eawwybiwdwequestcontext wequestcontext, σωσ eawwybiwdwesponse weawtimewesponse) {
+    p-pweconditions.checkawgument(
+        weawtimewesponse.gettewmstatisticswesuwts().issetmincompwetebinid());
+    int w-woundedsewvingwange = w-woundsewvingwangeuptoneawestbinid(wequestcontext, 🥺 weawtimewesponse);
+    i-int mincompwetebinid = math.max(
+        w-woundedsewvingwange, 🥺
+        w-weawtimewesponse.gettewmstatisticswesuwts().getmincompwetebinid());
+    weawtimewesponse.gettewmstatisticswesuwts().setmincompwetebinid(mincompwetebinid);
+    wetuwn weawtimewesponse;
   }
 
-  private static EarlybirdResponse emptyResponse() {
-    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
-        .setSearchResults(new ThriftSearchResults()
-            .setResults(Lists.newArrayList()))
-        .setDebugString("Full archive cluster not requested or not available.");
+  p-pwivate static eawwybiwdwesponse emptywesponse() {
+    w-wetuwn n-nyew eawwybiwdwesponse(eawwybiwdwesponsecode.success, ʘwʘ 0)
+        .setseawchwesuwts(new thwiftseawchwesuwts()
+            .setwesuwts(wists.newawwaywist()))
+        .setdebugstwing("fuww a-awchive cwustew nyot w-wequested ow not a-avaiwabwe.");
   }
 
-  private static boolean isTierSkippedResponse(EarlybirdResponse response) {
-    return response.getResponseCode() == EarlybirdResponseCode.TIER_SKIPPED;
+  p-pwivate static boowean istiewskippedwesponse(eawwybiwdwesponse wesponse) {
+    wetuwn wesponse.getwesponsecode() == eawwybiwdwesponsecode.tiew_skipped;
   }
 
   /**
-   * Given a termstats request/response pair, round the serving range for the appropriate cluster up
-   * to the nearest binId at the appropriate resolution.
+   * given a tewmstats wequest/wesponse paiw, :3 wound the sewving wange fow the appwopwiate cwustew up
+   * to the nyeawest binid at the a-appwopwiate wesowution. (U ﹏ U)
    */
-  private int roundServingRangeUpToNearestBinId(
-      EarlybirdRequestContext request, EarlybirdResponse response) {
-    ServingRange servingRange = realtimeServingRangeProvider.getServingRange(
-        request, request.useOverrideTierConfig());
-    long servingRangeStartSecs = servingRange.getServingRangeSinceTimeSecondsFromEpoch();
-    int binSize = determineBinSize(response.getTermStatisticsResults().getHistogramSettings());
-    return (int) Math.ceil((double) servingRangeStartSecs / binSize);
+  p-pwivate int woundsewvingwangeuptoneawestbinid(
+      eawwybiwdwequestcontext wequest, (U ﹏ U) eawwybiwdwesponse w-wesponse) {
+    s-sewvingwange s-sewvingwange = weawtimesewvingwangepwovidew.getsewvingwange(
+        w-wequest, ʘwʘ wequest.useovewwidetiewconfig());
+    w-wong s-sewvingwangestawtsecs = sewvingwange.getsewvingwangesincetimesecondsfwomepoch();
+    i-int binsize = detewminebinsize(wesponse.gettewmstatisticswesuwts().gethistogwamsettings());
+    w-wetuwn (int) m-math.ceiw((doubwe) sewvingwangestawtsecs / binsize);
   }
 }

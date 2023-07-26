@@ -1,37 +1,37 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing;
 
-import org.apache.lucene.search.Explanation;
+impowt owg.apache.wucene.seawch.expwanation;
 
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+i-impowt c-com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtswewevancestats;
 
 /*
- * A sample scorer, doesn't really do anything, returns the same score for every document.
+ * a-a sampwe s-scowew, rawr x3 doesn't w-weawwy do anything, mya w-wetuwns the s-same scowe fow evewy document. nyaa~~
  */
-public class DefaultScoringFunction extends ScoringFunction {
-  private float score;
+pubwic cwass defauwtscowingfunction extends s-scowingfunction {
+  pwivate fwoat scowe;
 
-  public DefaultScoringFunction(ImmutableSchemaInterface schema) {
-    super(schema);
+  pubwic d-defauwtscowingfunction(immutabweschemaintewface schema) {
+    s-supew(schema);
   }
 
-  @Override
-  protected float score(float luceneQueryScore) {
-    score = luceneQueryScore;
-    return luceneQueryScore;
+  @ovewwide
+  pwotected fwoat scowe(fwoat wucenequewyscowe) {
+    s-scowe = wucenequewyscowe;
+    w-wetuwn wucenequewyscowe;
   }
 
-  @Override
-  protected Explanation doExplain(float luceneScore) {
-    // just an example - this scoring function will go away soon
-    return Explanation.match(luceneScore, "luceneScore=" + luceneScore);
+  @ovewwide
+  p-pwotected expwanation doexpwain(fwoat wucenescowe) {
+    // just an exampwe - t-this scowing function wiww go away soon
+    wetuwn expwanation.match(wucenescowe, "wucenescowe=" + wucenescowe);
   }
 
-  @Override
-  public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
-    relevanceStats.setNumScored(relevanceStats.getNumScored() + 1);
-    if (score == ScoringFunction.SKIP_HIT) {
-      relevanceStats.setNumSkipped(relevanceStats.getNumSkipped() + 1);
+  @ovewwide
+  p-pubwic void updatewewevancestats(thwiftseawchwesuwtswewevancestats w-wewevancestats) {
+    w-wewevancestats.setnumscowed(wewevancestats.getnumscowed() + 1);
+    i-if (scowe == scowingfunction.skip_hit) {
+      w-wewevancestats.setnumskipped(wewevancestats.getnumskipped() + 1);
     }
   }
 }

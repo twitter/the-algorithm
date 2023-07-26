@@ -1,144 +1,144 @@
-package com.twitter.search.earlybird_root.routers;
+package com.twittew.seawch.eawwybiwd_woot.woutews;
 
-import java.util.ArrayList;
-import java.util.List;
+impowt java.utiw.awwaywist;
+impowt j-java.utiw.wist;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.futures.Futures;
-import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdRequestResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
-import com.twitter.util.Try;
+i-impowt com.twittew.seawch.common.futuwes.futuwes;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwddebuginfo;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequestwesponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.utiw.futuwe;
+impowt com.twittew.utiw.twy;
 
 /**
- * Responsible for handling requests in superroot.
+ * w-wesponsibwe fow handwing wequests in supewwoot. (⑅˘꒳˘)
  */
-public abstract class RequestRouter {
-  private static final Logger LOG = LoggerFactory.getLogger(RequestRouter.class);
+p-pubwic abstwact cwass wequestwoutew {
+  pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(wequestwoutew.cwass);
 
   /**
-   * Saved request and response, to be included in debug info.
+   * saved w-wequest and wesponse, (///ˬ///✿) to be incwuded i-in debug info. ^^;;
    */
-  class RequestResponse {
-    // Where is this request sent to. Freeform text like "realtime", "archive", etc.
-    private String sentTo;
-    private EarlybirdRequestContext requestContext;
-    private Future<EarlybirdResponse> earlybirdResponseFuture;
+  c-cwass wequestwesponse {
+    // whewe is this wequest sent to. >_< fweefowm t-text wike "weawtime", rawr x3 "awchive", /(^•ω•^) etc.
+    pwivate stwing sentto;
+    pwivate eawwybiwdwequestcontext w-wequestcontext;
+    pwivate f-futuwe<eawwybiwdwesponse> eawwybiwdwesponsefutuwe;
 
-    RequestResponse(String sentTo,
-                           EarlybirdRequestContext requestContext,
-                           Future<EarlybirdResponse> earlybirdResponseFuture) {
-      this.sentTo = sentTo;
-      this.requestContext = requestContext;
-      this.earlybirdResponseFuture = earlybirdResponseFuture;
+    w-wequestwesponse(stwing s-sentto, :3
+                           e-eawwybiwdwequestcontext wequestcontext, (ꈍᴗꈍ)
+                           futuwe<eawwybiwdwesponse> eawwybiwdwesponsefutuwe) {
+      t-this.sentto = sentto;
+      this.wequestcontext = w-wequestcontext;
+      this.eawwybiwdwesponsefutuwe = eawwybiwdwesponsefutuwe;
     }
 
-    String getSentTo() {
-      return sentTo;
+    stwing getsentto() {
+      wetuwn sentto;
     }
 
-    public EarlybirdRequestContext getRequestContext() {
-      return requestContext;
+    p-pubwic eawwybiwdwequestcontext getwequestcontext() {
+      w-wetuwn wequestcontext;
     }
 
-    Future<EarlybirdResponse> getEarlybirdResponseFuture() {
-      return earlybirdResponseFuture;
+    f-futuwe<eawwybiwdwesponse> g-geteawwybiwdwesponsefutuwe() {
+      wetuwn eawwybiwdwesponsefutuwe;
     }
   }
 
   /**
-   * Forward a request to different clusters and merge the responses back into one response.
-   * @param requestContext
+   * fowwawd a wequest to diffewent c-cwustews and m-mewge the wesponses back into o-one wesponse. /(^•ω•^)
+   * @pawam w-wequestcontext
    */
-  public abstract Future<EarlybirdResponse> route(EarlybirdRequestContext requestContext);
+  pubwic abstwact f-futuwe<eawwybiwdwesponse> woute(eawwybiwdwequestcontext w-wequestcontext);
 
   /**
-   * Save a request (and its response future) to be included in debug info.
+   * save a wequest (and its wesponse f-futuwe) to be incwuded in d-debug info. (⑅˘꒳˘)
    */
-  void saveRequestResponse(
-      List<RequestResponse> requestResponses,
-      String sentTo,
-      EarlybirdRequestContext earlybirdRequestContext,
-      Future<EarlybirdResponse> earlybirdResponseFuture
+  void savewequestwesponse(
+      w-wist<wequestwesponse> w-wequestwesponses, ( ͡o ω ͡o )
+      stwing sentto, òωó
+      eawwybiwdwequestcontext eawwybiwdwequestcontext, (⑅˘꒳˘)
+      futuwe<eawwybiwdwesponse> eawwybiwdwesponsefutuwe
   ) {
-    requestResponses.add(
-        new RequestResponse(
-            sentTo,
-            earlybirdRequestContext,
-            earlybirdResponseFuture
+    wequestwesponses.add(
+        n-nyew wequestwesponse(
+            s-sentto,
+            eawwybiwdwequestcontext, XD
+            e-eawwybiwdwesponsefutuwe
         )
     );
   }
 
-  Future<EarlybirdResponse> maybeAttachSentRequestsToDebugInfo(
-      List<RequestResponse> requestResponses,
-      EarlybirdRequestContext requestContext,
-      Future<EarlybirdResponse> response
+  f-futuwe<eawwybiwdwesponse> maybeattachsentwequeststodebuginfo(
+      w-wist<wequestwesponse> wequestwesponses, -.-
+      eawwybiwdwequestcontext wequestcontext, :3
+      futuwe<eawwybiwdwesponse> wesponse
   ) {
-    if (requestContext.getRequest().getDebugMode() >= 4) {
-      return this.attachSentRequestsToDebugInfo(
-          response,
-          requestResponses
+    if (wequestcontext.getwequest().getdebugmode() >= 4) {
+      wetuwn t-this.attachsentwequeststodebuginfo(
+          wesponse, nyaa~~
+          wequestwesponses
       );
-    } else {
-      return response;
+    } ewse {
+      wetuwn wesponse;
     }
   }
 
   /**
-   * Attaches saved client requests and their responses to the debug info within the
-   * main EarlybirdResponse.
+   * a-attaches saved cwient w-wequests and theiw w-wesponses to t-the debug info within the
+   * m-main eawwybiwdwesponse. 😳
    */
-  Future<EarlybirdResponse> attachSentRequestsToDebugInfo(
-      Future<EarlybirdResponse> currentResponse,
-      List<RequestResponse> requestResponses) {
+  f-futuwe<eawwybiwdwesponse> a-attachsentwequeststodebuginfo(
+      f-futuwe<eawwybiwdwesponse> cuwwentwesponse, (⑅˘꒳˘)
+      wist<wequestwesponse> w-wequestwesponses) {
 
-    // Get all the response futures that we're waiting on.
-    List<Future<EarlybirdResponse>> allResponseFutures = new ArrayList<>();
-    for (RequestResponse rr : requestResponses) {
-      allResponseFutures.add(rr.getEarlybirdResponseFuture());
+    // g-get aww the wesponse f-futuwes t-that we'we waiting o-on. nyaa~~
+    wist<futuwe<eawwybiwdwesponse>> awwwesponsefutuwes = new awwaywist<>();
+    fow (wequestwesponse w-ww : wequestwesponses) {
+      awwwesponsefutuwes.add(ww.geteawwybiwdwesponsefutuwe());
     }
 
-    // Pack all the futures into a single future.
-    Future<List<Try<EarlybirdResponse>>> allResponsesFuture =
-        Futures.collectAll(allResponseFutures);
+    // pack aww the futuwes into a singwe futuwe. OwO
+    f-futuwe<wist<twy<eawwybiwdwesponse>>> awwwesponsesfutuwe =
+        futuwes.cowwectaww(awwwesponsefutuwes);
 
-    return currentResponse.flatMap(mainResponse -> {
-      if (!mainResponse.isSetDebugInfo()) {
-        mainResponse.setDebugInfo(new EarlybirdDebugInfo());
+    wetuwn cuwwentwesponse.fwatmap(mainwesponse -> {
+      i-if (!mainwesponse.issetdebuginfo()) {
+        m-mainwesponse.setdebuginfo(new e-eawwybiwddebuginfo());
       }
 
-      Future<EarlybirdResponse> responseWithRequests = allResponsesFuture.map(allResponses -> {
-        // Get all individual response "Trys" and see if we can extract something from them
-        // that we can attach to the debugInfo.
-        for (int i = 0; i < allResponses.size(); i++) {
+      futuwe<eawwybiwdwesponse> w-wesponsewithwequests = awwwesponsesfutuwe.map(awwwesponses -> {
+        // g-get a-aww individuaw wesponse "twys" and see if we can extwact something fwom them
+        // that we c-can attach to the debuginfo. rawr x3
+        f-fow (int i = 0; i < awwwesponses.size(); i-i++) {
 
-          Try<EarlybirdResponse> responseTry = allResponses.get(i);
+          t-twy<eawwybiwdwesponse> wesponsetwy = awwwesponses.get(i);
 
-          if (responseTry.isReturn()) {
-            EarlybirdResponse attachedResponse = responseTry.get();
+          i-if (wesponsetwy.iswetuwn()) {
+            e-eawwybiwdwesponse attachedwesponse = w-wesponsetwy.get();
 
-            // Don't include the debug string, it's already a part of the main response's
-            // debug string.
-            attachedResponse.unsetDebugString();
+            // d-don't incwude the debug stwing, XD it's awweady a pawt of the main wesponse's
+            // d-debug stwing. σωσ
+            a-attachedwesponse.unsetdebugstwing();
 
-            EarlybirdRequestResponse reqResp = new EarlybirdRequestResponse();
-            reqResp.setSentTo(requestResponses.get(i).getSentTo());
-            reqResp.setRequest(requestResponses.get(i).getRequestContext().getRequest());
-            reqResp.setResponse(attachedResponse.toString());
+            eawwybiwdwequestwesponse w-weqwesp = nyew eawwybiwdwequestwesponse();
+            weqwesp.setsentto(wequestwesponses.get(i).getsentto());
+            w-weqwesp.setwequest(wequestwesponses.get(i).getwequestcontext().getwequest());
+            w-weqwesp.setwesponse(attachedwesponse.tostwing());
 
-            mainResponse.debugInfo.addToSentRequests(reqResp);
+            mainwesponse.debuginfo.addtosentwequests(weqwesp);
           }
         }
 
-        return mainResponse;
+        w-wetuwn mainwesponse;
       });
 
-      return responseWithRequests;
+      wetuwn wesponsewithwequests;
     });
   }
 }

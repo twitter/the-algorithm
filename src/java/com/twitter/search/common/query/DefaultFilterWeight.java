@@ -1,60 +1,60 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.io.IOException;
-import java.util.Set;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.set;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt o-owg.apache.wucene.index.weafweadewcontext;
+i-impowt o-owg.apache.wucene.index.tewm;
+i-impowt owg.apache.wucene.seawch.constantscowescowew;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.expwanation;
+impowt owg.apache.wucene.seawch.quewy;
+impowt o-owg.apache.wucene.seawch.scowew;
+impowt owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.weight;
 
 /**
- * An abstract Weight implementation that can be used by all "filter" classes (Query instances that
- * should not contribute to the overall query score).
+ * a-an abstwact weight impwementation t-that can be used by aww "fiwtew" cwasses (quewy instances that
+ * s-shouwd nyot contwibute to the o-ovewaww quewy s-scowe). /(^•ω•^)
  */
-public abstract class DefaultFilterWeight extends Weight {
-  public DefaultFilterWeight(Query query) {
-    super(query);
+pubwic abstwact cwass defauwtfiwtewweight extends weight {
+  pubwic d-defauwtfiwtewweight(quewy quewy) {
+    supew(quewy);
   }
 
-  @Override
-  public void extractTerms(Set<Term> terms) {
+  @ovewwide
+  pubwic void extwacttewms(set<tewm> t-tewms) {
   }
 
-  @Override
-  public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-    Scorer scorer = scorer(context);
-    if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-      return Explanation.match(0f, "Match on id " + doc);
+  @ovewwide
+  pubwic expwanation e-expwain(weafweadewcontext c-context, nyaa~~ int d-doc) thwows ioexception {
+    s-scowew scowew = scowew(context);
+    if ((scowew != n-nyuww) && (scowew.itewatow().advance(doc) == doc)) {
+      wetuwn expwanation.match(0f, nyaa~~ "match o-on id " + doc);
     }
-    return Explanation.match(0f, "No match on id " + doc);
+    wetuwn expwanation.match(0f, :3 "no match on id " + doc);
   }
 
-  @Override
-  public Scorer scorer(LeafReaderContext context) throws IOException {
-    DocIdSetIterator disi = getDocIdSetIterator(context);
-    if (disi == null) {
-      return null;
+  @ovewwide
+  pubwic scowew s-scowew(weafweadewcontext context) t-thwows ioexception {
+    d-docidsetitewatow d-disi = getdocidsetitewatow(context);
+    if (disi == nyuww) {
+      wetuwn nyuww;
     }
 
-    return new ConstantScoreScorer(this, 0.0f, ScoreMode.COMPLETE_NO_SCORES, disi);
+    w-wetuwn n-nyew constantscowescowew(this, 😳😳😳 0.0f, (˘ω˘) scowemode.compwete_no_scowes, d-disi);
   }
 
-  @Override
-  public boolean isCacheable(LeafReaderContext ctx) {
-    return false;
+  @ovewwide
+  p-pubwic boowean iscacheabwe(weafweadewcontext ctx) {
+    w-wetuwn fawse;
   }
 
   /**
-   * Returns the DocIdSetIterator over which the scorers created by this weight need to iterate.
+   * w-wetuwns the docidsetitewatow ovew which t-the scowews cweated by this weight n-nyeed to itewate. ^^
    *
-   * @param context The LeafReaderContext instance used to create the scorer.
+   * @pawam context the w-weafweadewcontext i-instance used to cweate the scowew.
    */
-  protected abstract DocIdSetIterator getDocIdSetIterator(LeafReaderContext context)
-      throws IOException;
+  pwotected abstwact docidsetitewatow getdocidsetitewatow(weafweadewcontext context)
+      t-thwows i-ioexception;
 }

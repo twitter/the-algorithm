@@ -1,174 +1,174 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.SocialGraphServiceRelationshipMap
-import com.twitter.frigate.common.base.TweetAuthor
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hermit.predicate.socialgraph.Edge
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.sociawgwaphsewvicewewationshipmap
+i-impowt c-com.twittew.fwigate.common.base.tweetauthow
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+i-impowt com.twittew.gizmoduck.thwiftscawa.usewtype
+impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.hewmit.pwedicate.pwedicate
+impowt com.twittew.hewmit.pwedicate.sociawgwaph.edge
+impowt c-com.twittew.hewmit.pwedicate.sociawgwaph.wewationedge
+impowt com.twittew.sociawgwaph.thwiftscawa.wewationshiptype
+impowt com.twittew.utiw.futuwe
 
 /**
- * Refactor SGS predicates so that predicates can use relationshipMap we generate in hydrate step
+ * w-wefactow sgs pwedicates s-so that pwedicates can use wewationshipmap we genewate in hydwate s-step
  */
-object SGSPredicatesForCandidate {
+object sgspwedicatesfowcandidate {
 
-  case class RelationshipMapEdge(edge: Edge, relationshipMap: Map[RelationEdge, Boolean])
+  c-case cwass wewationshipmapedge(edge: e-edge, :3 wewationshipmap: map[wewationedge, nyaa~~ boowean])
 
-  private def relationshipMapEdgeFromCandidate(
-    candidate: PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap
-  ): Option[RelationshipMapEdge] = {
-    candidate.authorId map { authorId =>
-      RelationshipMapEdge(Edge(candidate.target.targetId, authorId), candidate.relationshipMap)
+  pwivate def wewationshipmapedgefwomcandidate(
+    candidate: pushcandidate w-with tweetauthow with sociawgwaphsewvicewewationshipmap
+  ): option[wewationshipmapedge] = {
+    candidate.authowid map { a-authowid =>
+      wewationshipmapedge(edge(candidate.tawget.tawgetid, 😳 a-authowid), (⑅˘꒳˘) c-candidate.wewationshipmap)
     }
   }
 
-  def authorBeingFollowed(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap] = {
-    val name = "author_not_being_followed"
-    val stats = statsReceiver.scope(name)
-    val softUserCounter = stats.counter("soft_user")
+  d-def authowbeingfowwowed(
+    i-impwicit statsweceivew: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate with tweetauthow with sociawgwaphsewvicewewationshipmap] = {
+    v-vaw nyame = "authow_not_being_fowwowed"
+    vaw stats = statsweceivew.scope(name)
+    vaw softusewcountew = stats.countew("soft_usew")
 
-    val sgsAuthorBeingFollowedPredicate = Predicate
-      .from { relationshipMapEdge: RelationshipMapEdge =>
-        anyRelationExist(relationshipMapEdge, Set(RelationshipType.Following))
+    vaw s-sgsauthowbeingfowwowedpwedicate = pwedicate
+      .fwom { w-wewationshipmapedge: w-wewationshipmapedge =>
+        a-anywewationexist(wewationshipmapedge, nyaa~~ set(wewationshiptype.fowwowing))
       }
 
-    Predicate
-      .fromAsync {
-        candidate: PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap =>
-          val target = candidate.target
-          target.targetUser.flatMap {
-            case Some(gizmoduckUser) if gizmoduckUser.userType == UserType.Soft =>
-              softUserCounter.incr()
-              target.seedsWithWeight.map { followedUsersWithWeightOpt =>
-                candidate.authorId match {
-                  case Some(authorId) =>
-                    val followedUsers = followedUsersWithWeightOpt.getOrElse(Map.empty).keys
-                    followedUsers.toSet.contains(authorId)
+    pwedicate
+      .fwomasync {
+        candidate: p-pushcandidate w-with tweetauthow with sociawgwaphsewvicewewationshipmap =>
+          v-vaw tawget = c-candidate.tawget
+          tawget.tawgetusew.fwatmap {
+            case some(gizmoduckusew) i-if gizmoduckusew.usewtype == usewtype.soft =>
+              s-softusewcountew.incw()
+              tawget.seedswithweight.map { fowwowedusewswithweightopt =>
+                c-candidate.authowid match {
+                  case some(authowid) =>
+                    v-vaw fowwowedusews = fowwowedusewswithweightopt.getowewse(map.empty).keys
+                    f-fowwowedusews.toset.contains(authowid)
 
-                  case None => false
+                  c-case nyone => fawse
                 }
               }
 
             case _ =>
-              sgsAuthorBeingFollowedPredicate
-                .optionalOn(relationshipMapEdgeFromCandidate, missingResult = false)
-                .apply(Seq(candidate))
+              sgsauthowbeingfowwowedpwedicate
+                .optionawon(wewationshipmapedgefwomcandidate, OwO missingwesuwt = fawse)
+                .appwy(seq(candidate))
                 .map(_.head)
           }
-      }.withStats(stats)
-      .withName(name)
+      }.withstats(stats)
+      .withname(name)
   }
 
-  def authorNotBeingDeviceFollowed(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap] = {
-    val name = "author_being_device_followed"
-    Predicate
-      .from { relationshipMapEdge: RelationshipMapEdge =>
+  def authownotbeingdevicefowwowed(
+    i-impwicit s-statsweceivew: statsweceivew
+  ): namedpwedicate[pushcandidate with t-tweetauthow w-with sociawgwaphsewvicewewationshipmap] = {
+    v-vaw nyame = "authow_being_device_fowwowed"
+    pwedicate
+      .fwom { wewationshipmapedge: wewationshipmapedge =>
         {
-          anyRelationExist(relationshipMapEdge, Set(RelationshipType.DeviceFollowing))
+          anywewationexist(wewationshipmapedge, rawr x3 s-set(wewationshiptype.devicefowwowing))
         }
       }
-      .optionalOn(relationshipMapEdgeFromCandidate, missingResult = false)
-      .flip
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .optionawon(wewationshipmapedgefwomcandidate, XD missingwesuwt = fawse)
+      .fwip
+      .withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
-  def recommendedTweetAuthorAcceptableToTargetUser(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap] = {
-    val name = "recommended_tweet_author_not_acceptable_to_target_user"
-    Predicate
-      .from { relationshipMapEdge: RelationshipMapEdge =>
+  def wecommendedtweetauthowacceptabwetotawgetusew(
+    impwicit s-statsweceivew: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate w-with tweetauthow w-with sociawgwaphsewvicewewationshipmap] = {
+    vaw nyame = "wecommended_tweet_authow_not_acceptabwe_to_tawget_usew"
+    pwedicate
+      .fwom { w-wewationshipmapedge: w-wewationshipmapedge =>
         {
-          anyRelationExist(
-            relationshipMapEdge,
-            Set(
-              RelationshipType.Blocking,
-              RelationshipType.BlockedBy,
-              RelationshipType.HideRecommendations,
-              RelationshipType.Muting
+          a-anywewationexist(
+            w-wewationshipmapedge, σωσ
+            set(
+              wewationshiptype.bwocking, (U ᵕ U❁)
+              w-wewationshiptype.bwockedby, (U ﹏ U)
+              w-wewationshiptype.hidewecommendations, :3
+              w-wewationshiptype.muting
             ))
         }
       }
-      .flip
-      .optionalOn(relationshipMapEdgeFromCandidate, missingResult = false)
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .fwip
+      .optionawon(wewationshipmapedgefwomcandidate, ( ͡o ω ͡o ) m-missingwesuwt = f-fawse)
+      .withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
-  def authorNotBeingFollowed(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap] = {
-    Predicate
-      .from { relationshipMapEdge: RelationshipMapEdge =>
+  def authownotbeingfowwowed(
+    impwicit statsweceivew: s-statsweceivew
+  ): nyamedpwedicate[pushcandidate with tweetauthow with sociawgwaphsewvicewewationshipmap] = {
+    pwedicate
+      .fwom { wewationshipmapedge: w-wewationshipmapedge =>
         {
-          anyRelationExist(relationshipMapEdge, Set(RelationshipType.Following))
+          anywewationexist(wewationshipmapedge, σωσ set(wewationshiptype.fowwowing))
         }
       }
-      .optionalOn(relationshipMapEdgeFromCandidate, missingResult = false)
-      .flip
-      .withStats(statsReceiver.scope("predicate_author_not_being_followed_pre_ranking"))
-      .withName("author_not_being_followed")
+      .optionawon(wewationshipmapedgefwomcandidate, >w< missingwesuwt = f-fawse)
+      .fwip
+      .withstats(statsweceivew.scope("pwedicate_authow_not_being_fowwowed_pwe_wanking"))
+      .withname("authow_not_being_fowwowed")
   }
 
-  def disableInNetworkTweetPredicate(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap] = {
-    val name = "enable_in_network_tweet"
-    Predicate
-      .fromAsync {
-        candidate: PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap =>
-          if (candidate.target.params(PushParams.DisableInNetworkTweetCandidatesParam)) {
-            authorNotBeingFollowed
-              .apply(Seq(candidate))
+  d-def disabweinnetwowktweetpwedicate(
+    i-impwicit statsweceivew: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate with tweetauthow w-with sociawgwaphsewvicewewationshipmap] = {
+    v-vaw nyame = "enabwe_in_netwowk_tweet"
+    pwedicate
+      .fwomasync {
+        candidate: pushcandidate with tweetauthow with sociawgwaphsewvicewewationshipmap =>
+          i-if (candidate.tawget.pawams(pushpawams.disabweinnetwowktweetcandidatespawam)) {
+            authownotbeingfowwowed
+              .appwy(seq(candidate))
               .map(_.head)
-          } else Future.True
-      }.withStats(statsReceiver.scope(name))
-      .withName(name)
+          } e-ewse futuwe.twue
+      }.withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
-  def disableOutNetworkTweetPredicate(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap] = {
-    val name = "enable_out_network_tweet"
-    Predicate
-      .fromAsync {
-        candidate: PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap =>
-          if (candidate.target.params(PushFeatureSwitchParams.DisableOutNetworkTweetCandidatesFS)) {
-            authorBeingFollowed
-              .apply(Seq(candidate))
+  def disabweoutnetwowktweetpwedicate(
+    i-impwicit s-statsweceivew: statsweceivew
+  ): nyamedpwedicate[pushcandidate w-with tweetauthow w-with sociawgwaphsewvicewewationshipmap] = {
+    vaw nyame = "enabwe_out_netwowk_tweet"
+    pwedicate
+      .fwomasync {
+        c-candidate: pushcandidate w-with tweetauthow with sociawgwaphsewvicewewationshipmap =>
+          if (candidate.tawget.pawams(pushfeatuweswitchpawams.disabweoutnetwowktweetcandidatesfs)) {
+            authowbeingfowwowed
+              .appwy(seq(candidate))
               .map(_.head)
-          } else Future.True
-      }.withStats(statsReceiver.scope(name))
-      .withName(name)
+          } e-ewse futuwe.twue
+      }.withstats(statsweceivew.scope(name))
+      .withname(name)
   }
 
   /**
-   * Returns true if the provided relationshipEdge exists among
-   * @param candidate candidate
-   * @param relationships relaionships
-   * @return Boolean result
+   * w-wetuwns t-twue if the pwovided wewationshipedge e-exists a-among
+   * @pawam candidate candidate
+   * @pawam w-wewationships wewaionships
+   * @wetuwn boowean wesuwt
    */
-  private def anyRelationExist(
-    relationshipMapEdge: RelationshipMapEdge,
-    relationships: Set[RelationshipType]
-  ): Boolean = {
-    val resultSeq = relationships.map { relationship =>
-      relationshipMapEdge.relationshipMap.getOrElse(
-        RelationEdge(relationshipMapEdge.edge, relationship),
-        false)
-    }.toSeq
-    resultSeq.contains(true)
+  pwivate def anywewationexist(
+    w-wewationshipmapedge: w-wewationshipmapedge, 😳😳😳
+    wewationships: set[wewationshiptype]
+  ): b-boowean = {
+    v-vaw wesuwtseq = wewationships.map { wewationship =>
+      wewationshipmapedge.wewationshipmap.getowewse(
+        w-wewationedge(wewationshipmapedge.edge, OwO wewationship), 😳
+        fawse)
+    }.toseq
+    wesuwtseq.contains(twue)
   }
 }

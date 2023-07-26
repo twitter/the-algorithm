@@ -1,47 +1,47 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphFeatureRepository
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.repository.Repository
-import com.twitter.timelines.real_graph.{thriftscala => rg}
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.real_graph.v1.thriftscala.RealGraphEdgeFeatures
-import com.twitter.user_session_store.{thriftscala => uss}
+impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.weawgwaphfeatuwewepositowy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.sewvo.wepositowy.wepositowy
+impowt com.twittew.timewines.weaw_gwaph.{thwiftscawa => wg}
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.modew.usewid
+i-impowt com.twittew.timewines.weaw_gwaph.v1.thwiftscawa.weawgwaphedgefeatuwes
+impowt c-com.twittew.usew_session_stowe.{thwiftscawa => uss}
 
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt javax.inject.inject
+i-impowt javax.inject.named
+impowt javax.inject.singweton
 
-object RealGraphFeatures extends Feature[PipelineQuery, Option[Map[UserId, RealGraphEdgeFeatures]]]
+object w-weawgwaphfeatuwes extends featuwe[pipewinequewy, (U ﹏ U) o-option[map[usewid, w-weawgwaphedgefeatuwes]]]
 
-@Singleton
-class RealGraphQueryFeatureHydrator @Inject() (
-  @Named(RealGraphFeatureRepository) repository: Repository[Long, Option[uss.UserSession]])
-    extends QueryFeatureHydrator[PipelineQuery] {
+@singweton
+cwass weawgwaphquewyfeatuwehydwatow @inject() (
+  @named(weawgwaphfeatuwewepositowy) wepositowy: wepositowy[wong, (⑅˘꒳˘) option[uss.usewsession]])
+    e-extends quewyfeatuwehydwatow[pipewinequewy] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RealGraphFeatures")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("weawgwaphfeatuwes")
 
-  override val features: Set[Feature[_, _]] = Set(RealGraphFeatures)
+  ovewwide v-vaw featuwes: set[featuwe[_, òωó _]] = s-set(weawgwaphfeatuwes)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    Stitch.callFuture {
-      repository(query.getRequiredUserId).map { userSession =>
-        val realGraphFeaturesMap = userSession.flatMap { userSession =>
-          userSession.realGraphFeatures.collect {
-            case rg.RealGraphFeatures.V1(realGraphFeatures) =>
-              val edgeFeatures = realGraphFeatures.edgeFeatures ++ realGraphFeatures.oonEdgeFeatures
-              edgeFeatures.map { edge => edge.destId -> edge }.toMap
+  o-ovewwide d-def hydwate(quewy: pipewinequewy): stitch[featuwemap] = {
+    s-stitch.cawwfutuwe {
+      wepositowy(quewy.getwequiwedusewid).map { usewsession =>
+        vaw w-weawgwaphfeatuwesmap = usewsession.fwatmap { usewsession =>
+          usewsession.weawgwaphfeatuwes.cowwect {
+            case wg.weawgwaphfeatuwes.v1(weawgwaphfeatuwes) =>
+              v-vaw edgefeatuwes = w-weawgwaphfeatuwes.edgefeatuwes ++ w-weawgwaphfeatuwes.oonedgefeatuwes
+              e-edgefeatuwes.map { edge => edge.destid -> edge }.tomap
           }
         }
 
-        FeatureMapBuilder().add(RealGraphFeatures, realGraphFeaturesMap).build()
+        featuwemapbuiwdew().add(weawgwaphfeatuwes, ʘwʘ w-weawgwaphfeatuwesmap).buiwd()
       }
     }
   }

@@ -1,151 +1,151 @@
-package com.twitter.simclusters_v2.summingbird.storm
+package com.twittew.simcwustews_v2.summingbiwd.stowm
 
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.summingbird.common.Monoids.PersistentSimClustersEmbeddingLongestL2NormMonoid
-import com.twitter.simclusters_v2.summingbird.common.StatsUtil
-import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore.{
-  LatestEmbeddingVersion,
-  LongestL2EmbeddingVersion,
-  PersistentTweetEmbeddingId
+impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.summingbiwd.common.impwicits
+i-impowt com.twittew.simcwustews_v2.summingbiwd.common.monoids.pewsistentsimcwustewsembeddingwongestw2nowmmonoid
+i-impowt com.twittew.simcwustews_v2.summingbiwd.common.statsutiw
+i-impowt com.twittew.simcwustews_v2.summingbiwd.stowes.pewsistenttweetembeddingstowe.{
+  w-watestembeddingvewsion, o.O
+  w-wongestw2embeddingvewsion, >w<
+  p-pewsistenttweetembeddingid
 }
-import com.twitter.simclusters_v2.thriftscala.{
-  PersistentSimClustersEmbedding,
-  SimClustersEmbedding,
-  SimClustersEmbeddingMetadata
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  pewsistentsimcwustewsembedding,
+  simcwustewsembedding, 😳
+  simcwustewsembeddingmetadata
 }
-import com.twitter.summingbird.option.JobId
-import com.twitter.summingbird.{Platform, Producer, TailProducer}
-import com.twitter.timelineservice.thriftscala.Event
-import com.twitter.tweetypie.thriftscala.StatusCounts
+i-impowt com.twittew.summingbiwd.option.jobid
+impowt com.twittew.summingbiwd.{pwatfowm, 🥺 pwoducew, t-taiwpwoducew}
+impowt com.twittew.timewinesewvice.thwiftscawa.event
+i-impowt com.twittew.tweetypie.thwiftscawa.statuscounts
 
 /**
- * The job to save the qualified tweet SimClustersEmbedding into Strato Store(Back by Manhattan).
+ * the job to save the quawified t-tweet simcwustewsembedding into stwato stowe(back b-by manhattan). rawr x3
  *
- * The steps
- * 1. Read from Favorite Stream.
- * 2. Join with Tweet Status Count Service.
- * 3. Filter out the tweets whose favorite count < 8.
- *    We consider these tweets' SimClusters embedding is too noisy and untrustable.
- * 4. Update the SimClusters Tweet embedding with timestamp 0L.
- *    0L is reserved for the latest tweet embedding. It's also used to maintain the tweet count.
- * 5. If the SimClusters Tweet embedding's update count is 2 power N & N >= 3.
- *    Persistent the embeddings with the timestamp as part of the LK.
+ * the s-steps
+ * 1. o.O wead fwom favowite stweam. rawr
+ * 2. join with tweet status count sewvice. ʘwʘ
+ * 3. f-fiwtew out the tweets whose favowite count < 8. 😳😳😳
+ *    we considew these t-tweets' simcwustews embedding i-is too nyoisy a-and untwustabwe. ^^;;
+ * 4. u-update the s-simcwustews tweet embedding with timestamp 0w. o.O
+ *    0w i-is wesewved fow the watest tweet embedding. i-it's awso used to maintain the tweet count. (///ˬ///✿)
+ * 5. σωσ if the simcwustews tweet embedding's update c-count is 2 powew ny & ny >= 3. nyaa~~
+ *    p-pewsistent t-the embeddings w-with the timestamp as pawt of the wk. ^^;;
  **/
-private[storm] object PersistentTweetJob {
-  import StatsUtil._
+pwivate[stowm] object p-pewsistenttweetjob {
+  i-impowt statsutiw._
 
-  private val MinFavoriteCount = 8
-  type Timestamp = Long
+  p-pwivate vaw minfavowitecount = 8
+  t-type timestamp = wong
 
-  val longestL2NormMonoid = new PersistentSimClustersEmbeddingLongestL2NormMonoid()
+  vaw w-wongestw2nowmmonoid = nyew pewsistentsimcwustewsembeddingwongestw2nowmmonoid()
 
-  def generate[P <: Platform[P]](
-    timelineEventSource: Producer[P, Event],
-    tweetStatusCountService: P#Service[TweetId, StatusCounts],
-    tweetEmbeddingService: P#Service[TweetId, SimClustersEmbedding],
-    persistentTweetEmbeddingStoreWithLatestAggregation: P#Store[
-      PersistentTweetEmbeddingId,
-      PersistentSimClustersEmbedding
-    ],
-    persistentTweetEmbeddingStoreWithLongestL2NormAggregation: P#Store[
-      PersistentTweetEmbeddingId,
-      PersistentSimClustersEmbedding
+  d-def genewate[p <: pwatfowm[p]](
+    timewineeventsouwce: p-pwoducew[p, ^•ﻌ•^ event], σωσ
+    t-tweetstatuscountsewvice: p#sewvice[tweetid, -.- s-statuscounts], ^^;;
+    t-tweetembeddingsewvice: p#sewvice[tweetid, XD simcwustewsembedding], 🥺
+    pewsistenttweetembeddingstowewithwatestaggwegation: p#stowe[
+      pewsistenttweetembeddingid, òωó
+      pewsistentsimcwustewsembedding
+    ], (ˆ ﻌ ˆ)♡
+    p-pewsistenttweetembeddingstowewithwongestw2nowmaggwegation: p-p#stowe[
+      pewsistenttweetembeddingid, -.-
+      p-pewsistentsimcwustewsembedding
     ]
   )(
-    implicit jobId: JobId
-  ): TailProducer[P, Any] = {
+    i-impwicit jobid: j-jobid
+  ): taiwpwoducew[p, :3 any] = {
 
-    val timelineEvents: Producer[P, (TweetId, Timestamp)] = timelineEventSource
-      .collect {
-        case Event.Favorite(favoriteEvent) =>
-          (favoriteEvent.tweetId, favoriteEvent.eventTimeMs)
+    vaw timewineevents: pwoducew[p, ʘwʘ (tweetid, 🥺 t-timestamp)] = timewineeventsouwce
+      .cowwect {
+        case event.favowite(favowiteevent) =>
+          (favowiteevent.tweetid, >_< favowiteevent.eventtimems)
       }
 
-    val filteredEvents = timelineEvents
-      .leftJoin[StatusCounts](tweetStatusCountService)
-      .filter {
-        case (_, (_, Some(statusCounts))) =>
-          // Only consider tweets which has more than 8 favorite
-          statusCounts.favoriteCount.exists(_ >= MinFavoriteCount)
-        case _ =>
-          false
+    vaw fiwtewedevents = t-timewineevents
+      .weftjoin[statuscounts](tweetstatuscountsewvice)
+      .fiwtew {
+        case (_, ʘwʘ (_, some(statuscounts))) =>
+          // o-onwy considew t-tweets which has m-mowe than 8 favowite
+          statuscounts.favowitecount.exists(_ >= m-minfavowitecount)
+        c-case _ =>
+          f-fawse
       }
-      .leftJoin[SimClustersEmbedding](tweetEmbeddingService)
+      .weftjoin[simcwustewsembedding](tweetembeddingsewvice)
 
-    val latestAndPersistentEmbeddingProducer = filteredEvents
-      .collect {
-        case (tweetId, ((eventTimeMs, _), Some(tweetEmbedding))) =>
+    v-vaw watestandpewsistentembeddingpwoducew = fiwtewedevents
+      .cowwect {
+        case (tweetid, (˘ω˘) ((eventtimems, (✿oωo) _), s-some(tweetembedding))) =>
           (
-            // This special timestamp is a reserved space for the latest tweet embedding.
-            PersistentTweetEmbeddingId(tweetId, timestampInMs = LatestEmbeddingVersion),
-            PersistentSimClustersEmbedding(
-              tweetEmbedding,
-              SimClustersEmbeddingMetadata(updatedAtMs = Some(eventTimeMs), updatedCount = Some(1))
+            // t-this speciaw timestamp i-is a wesewved s-space fow t-the watest tweet embedding. (///ˬ///✿)
+            pewsistenttweetembeddingid(tweetid, rawr x3 timestampinms = w-watestembeddingvewsion), -.-
+            pewsistentsimcwustewsembedding(
+              tweetembedding, ^^
+              simcwustewsembeddingmetadata(updatedatms = some(eventtimems), (⑅˘꒳˘) updatedcount = some(1))
             ))
       }
-      .observe("num_of_embedding_updates")
-      .sumByKey(persistentTweetEmbeddingStoreWithLatestAggregation)(
-        Implicits.persistentSimClustersEmbeddingMonoid)
-      .name("latest_embedding_producer")
-      .flatMap {
-        case (persistentTweetEmbeddingId, (maybeEmbedding, deltaEmbedding)) =>
-          lastQualifiedUpdatedCount(
-            maybeEmbedding.flatMap(_.metadata.updatedCount),
-            deltaEmbedding.metadata.updatedCount
-          ).map { newUpdateCount =>
+      .obsewve("num_of_embedding_updates")
+      .sumbykey(pewsistenttweetembeddingstowewithwatestaggwegation)(
+        i-impwicits.pewsistentsimcwustewsembeddingmonoid)
+      .name("watest_embedding_pwoducew")
+      .fwatmap {
+        case (pewsistenttweetembeddingid, nyaa~~ (maybeembedding, /(^•ω•^) dewtaembedding)) =>
+          wastquawifiedupdatedcount(
+            m-maybeembedding.fwatmap(_.metadata.updatedcount), (U ﹏ U)
+            d-dewtaembedding.metadata.updatedcount
+          ).map { n-nyewupdatecount =>
             (
-              persistentTweetEmbeddingId.copy(timestampInMs =
-                deltaEmbedding.metadata.updatedAtMs.getOrElse(0L)),
-              deltaEmbedding.copy(metadata =
-                deltaEmbedding.metadata.copy(updatedCount = Some(newUpdateCount)))
+              pewsistenttweetembeddingid.copy(timestampinms =
+                dewtaembedding.metadata.updatedatms.getowewse(0w)), 😳😳😳
+              dewtaembedding.copy(metadata =
+                d-dewtaembedding.metadata.copy(updatedcount = some(newupdatecount)))
             )
           }
       }
-      .observe("num_of_extra_embedding")
-      .sumByKey(persistentTweetEmbeddingStoreWithLatestAggregation)(
-        Implicits.persistentSimClustersEmbeddingMonoid)
-      .name("persistent_embeddings_producer")
+      .obsewve("num_of_extwa_embedding")
+      .sumbykey(pewsistenttweetembeddingstowewithwatestaggwegation)(
+        i-impwicits.pewsistentsimcwustewsembeddingmonoid)
+      .name("pewsistent_embeddings_pwoducew")
 
-    val longestL2NormEmbeddingProducer = filteredEvents
-      .collect {
-        case (tweetId, ((eventTimeMs, Some(statusCounts)), Some(tweetEmbedding))) =>
+    v-vaw wongestw2nowmembeddingpwoducew = fiwtewedevents
+      .cowwect {
+        case (tweetid, >w< ((eventtimems, XD some(statuscounts)), o.O some(tweetembedding))) =>
           (
-            // This special timestamp is a reserved space for the latest tweet embedding.
-            PersistentTweetEmbeddingId(tweetId, timestampInMs = LongestL2EmbeddingVersion),
-            PersistentSimClustersEmbedding(
-              tweetEmbedding,
-              SimClustersEmbeddingMetadata(
-                updatedAtMs = Some(eventTimeMs),
-                // We're not aggregating the existing embedding, we're replacing it. The count
-                // therefore needs to be the absolute fav count for this tweet, not the delta.
-                updatedCount = statusCounts.favoriteCount.map(_ + 1)
+            // t-this speciaw timestamp is a wesewved s-space fow the watest tweet e-embedding. mya
+            p-pewsistenttweetembeddingid(tweetid, 🥺 timestampinms = wongestw2embeddingvewsion),
+            p-pewsistentsimcwustewsembedding(
+              t-tweetembedding, ^^;;
+              simcwustewsembeddingmetadata(
+                u-updatedatms = some(eventtimems), :3
+                // w-we'we nyot aggwegating the existing embedding, (U ﹏ U) we'we wepwacing it. OwO the count
+                // t-thewefowe nyeeds t-to be the absowute f-fav count fow this tweet, 😳😳😳 n-nyot the dewta. (ˆ ﻌ ˆ)♡
+                u-updatedcount = statuscounts.favowitecount.map(_ + 1)
               )
             ))
       }
-      .observe("num_longest_l2_norm_updates")
-      .sumByKey(persistentTweetEmbeddingStoreWithLongestL2NormAggregation)(longestL2NormMonoid)
-      .name("longest_l2_norm_embedding_producer")
+      .obsewve("num_wongest_w2_nowm_updates")
+      .sumbykey(pewsistenttweetembeddingstowewithwongestw2nowmaggwegation)(wongestw2nowmmonoid)
+      .name("wongest_w2_nowm_embedding_pwoducew")
 
-    latestAndPersistentEmbeddingProducer.also(longestL2NormEmbeddingProducer)
+    w-watestandpewsistentembeddingpwoducew.awso(wongestw2nowmembeddingpwoducew)
   }
 
   /*
-    If this change in counts crosses one or more powers of 2 (8,16,32...), return the last boundary
-    that was crossed. In the case where a count delta is large, it may skip a power of 2, and
-    thus we may not store embeddings for all 2^(i+3) where 0 <= i <= tweetFavCount.
+    if this change in counts cwosses one ow mowe powews of 2 (8,16,32...), XD w-wetuwn the wast b-boundawy
+    that was cwossed. (ˆ ﻌ ˆ)♡ in the case whewe a-a count dewta i-is wawge, ( ͡o ω ͡o ) it may skip a powew of 2, rawr x3 and
+    thus we may nyot stowe e-embeddings fow aww 2^(i+3) whewe 0 <= i <= tweetfavcount. nyaa~~
    */
-  private def lastQualifiedUpdatedCount(
-    existingUpdateCount: Option[Long],
-    deltaUpdateCount: Option[Long]
-  ): Option[Int] = {
-    val existing = existingUpdateCount.getOrElse(0L)
-    val sum = existing + deltaUpdateCount.getOrElse(0L)
-    qualifiedSet.filter { i => (existing < i) && (i <= sum) }.lastOption
+  pwivate def wastquawifiedupdatedcount(
+    e-existingupdatecount: option[wong], >_<
+    dewtaupdatecount: o-option[wong]
+  ): o-option[int] = {
+    vaw existing = existingupdatecount.getowewse(0w)
+    vaw sum = existing + dewtaupdatecount.getowewse(0w)
+    q-quawifiedset.fiwtew { i-i => (existing < i) && (i <= sum) }.wastoption
   }
 
-  // Only 2 Power n while n >= 3 is qualified for Persistent. The max = 16,777,216
-  private lazy val qualifiedSet = 3
-    .until(25).map { i => Math.pow(2, i).toInt }.toSet
+  // onwy 2 p-powew ny whiwe ny >= 3 is quawified f-fow pewsistent. ^^;; the max = 16,777,216
+  pwivate wazy vaw quawifiedset = 3
+    .untiw(25).map { i-i => math.pow(2, (ˆ ﻌ ˆ)♡ i).toint }.toset
 
 }

@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.twiggewifwatencyabove
 
 /**
- * [[GenericClientLatencyAlert]] triggers when the Latency for the component this is used with
- * rises above the [[TriggerIfLatencyAbove]] threshold for the configured amount of time
+ * [[genewiccwientwatencyawewt]] t-twiggews w-when the watency f-fow the component t-this is used w-with
+ * wises above t-the [[twiggewifwatencyabove]] t-thweshowd fow the configuwed amount of time
  */
-case class LatencyAlert(
-  override val notificationGroup: NotificationGroup,
-  percentile: Percentile,
-  override val warnPredicate: TriggerIfLatencyAbove,
-  override val criticalPredicate: TriggerIfLatencyAbove,
-  override val runbookLink: Option[String] = None)
-    extends Alert
-    with IsObservableFromStrato {
-  override val alertType: AlertType = Latency
+case cwass watencyawewt(
+  ovewwide v-vaw nyotificationgwoup: nyotificationgwoup, ( ͡o ω ͡o )
+  pewcentiwe: p-pewcentiwe,
+  ovewwide vaw wawnpwedicate: t-twiggewifwatencyabove, rawr x3
+  ovewwide vaw cwiticawpwedicate: twiggewifwatencyabove,
+  o-ovewwide vaw wunbookwink: o-option[stwing] = n-nyone)
+    extends awewt
+    with isobsewvabwefwomstwato {
+  ovewwide vaw awewttype: awewttype = w-watency
 
-  override val metricSuffix: Option[String] = Some(percentile.metricSuffix)
+  ovewwide vaw metwicsuffix: option[stwing] = some(pewcentiwe.metwicsuffix)
 }

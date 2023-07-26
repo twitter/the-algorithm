@@ -1,131 +1,131 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+package com.twittew.simcwustews_v2.scawding.evawuation
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.candidate_source.ClusterRanker
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.ClusterTopKTweetsHourlySuffixSource
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedInScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.TweetEvaluationTimelinesReferenceSetScalaDataset
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.CandidateTweet
-import com.twitter.simclusters_v2.thriftscala.CandidateTweets
-import com.twitter.simclusters_v2.thriftscala.ClusterTopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.DisplayLocation
-import com.twitter.simclusters_v2.thriftscala.ReferenceTweets
-import com.twitter.simclusters_v2.scalding.offline_job.OfflineRecConfig
-import com.twitter.simclusters_v2.scalding.offline_job.OfflineTweetRecommendation
-import java.util.TimeZone
+impowt com.twittew.scawding._
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.expwicitwocation
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.wemote_access.pwocatwa
+i-impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.simcwustews_v2.candidate_souwce.cwustewwankew
+impowt com.twittew.simcwustews_v2.hdfs_souwces.adhockeyvawsouwces
+impowt com.twittew.simcwustews_v2.hdfs_souwces.cwustewtopktweetshouwwysuffixsouwce
+impowt com.twittew.simcwustews_v2.hdfs_souwces.simcwustewsv2intewestedinscawadataset
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.tweetevawuationtimewineswefewencesetscawadataset
+impowt c-com.twittew.simcwustews_v2.scawding.common.utiw
+impowt com.twittew.simcwustews_v2.thwiftscawa.candidatetweet
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.candidatetweets
+impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewtopktweetswithscowes
+impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisintewestedin
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.dispwaywocation
+impowt com.twittew.simcwustews_v2.thwiftscawa.wefewencetweets
+impowt c-com.twittew.simcwustews_v2.scawding.offwine_job.offwinewecconfig
+i-impowt com.twittew.simcwustews_v2.scawding.offwine_job.offwinetweetwecommendation
+impowt java.utiw.timezone
 
 /**
- * Do evaluations for SimClusters' tweet recommendations by using offline datasets.
- * The job does the following:
- *   1. Take in a test date range, for which the offline simclusters rec will be evaluated
- *   2. For all users that had tweet impressions in timelines during the period, generate offline
- *      SimClusters candidate tweets for these users
- *   3. Run offline evaluation and return metrics
+ * do evawuations fow simcwustews' t-tweet wecommendations by using offwine datasets. (✿oωo)
+ * the job does the f-fowwowing:
+ *   1. ^^ take in a test d-date wange, fow w-which the offwine s-simcwustews w-wec wiww be evawuated
+ *   2. ^•ﻌ•^ fow aww usews that h-had tweet impwessions in timewines duwing the pewiod, XD g-genewate offwine
+ *      simcwustews candidate tweets fow these usews
+ *   3. :3 wun offwine e-evawuation and wetuwn metwics
 
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/evaluation:simcluster_offline_eval_adhoc
+./bazew b-bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/evawuation:simcwustew_offwine_evaw_adhoc
 
-Note: Never specify reference date range across more than 1 day!
-oscar hdfs --user cassowary --screen --screen-detached --tee your_ldap/prod_percentile \
- --bundle simcluster_offline_eval_adhoc \
- --tool com.twitter.simclusters_v2.scalding.evaluation.SimClustersEvaluationAdhocApp \
- -- --cand_tweet_date 2019-03-04T00 2019-03-04T23 \
- --ref_tweet_date 2019-03-05T00 2019-03-05T01 \
- --timeline_tweet rectweet \
- --sample_rate 0.05 \
+n-nyote: nyevew s-specify wefewence date wange acwoss mowe than 1 day! (ꈍᴗꈍ)
+oscaw h-hdfs --usew cassowawy --scween --scween-detached --tee y-youw_wdap/pwod_pewcentiwe \
+ --bundwe simcwustew_offwine_evaw_adhoc \
+ --toow c-com.twittew.simcwustews_v2.scawding.evawuation.simcwustewsevawuationadhocapp \
+ -- --cand_tweet_date 2019-03-04t00 2019-03-04t23 \
+ --wef_tweet_date 2019-03-05t00 2019-03-05t01 \
+ --timewine_tweet w-wectweet \
+ --sampwe_wate 0.05 \
  --max_cand_tweets 16000000 \
- --min_tweet_score 0.0 \
- --user_interested_in_dir /user/frigate/your_ldap/interested_in_copiedFromAtlaProc_20190228 \
- --cluster_top_k_dir /user/cassowary/your_ldap/offline_simcluster_20190304/cluster_top_k_tweets \
- --output_dir /user/cassowary/your_ldap/prod_percentile \
- --toEmailAddress your_ldap@twitter.com \
- --testRunName TestingProdOn0305Data
+ --min_tweet_scowe 0.0 \
+ --usew_intewested_in_diw /usew/fwigate/youw_wdap/intewested_in_copiedfwomatwapwoc_20190228 \
+ --cwustew_top_k_diw /usew/cassowawy/youw_wdap/offwine_simcwustew_20190304/cwustew_top_k_tweets \
+ --output_diw /usew/cassowawy/youw_wdap/pwod_pewcentiwe \
+ --toemaiwaddwess youw_wdap@twittew.com \
+ --testwunname t-testingpwodon0305data
  */
-object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
-  private val maxTweetResults = 40
-  private val maxClustersToQuery = 20
+object simcwustewsevawuationadhocapp e-extends twittewexecutionapp {
+  pwivate vaw maxtweetwesuwts = 40
+  p-pwivate vaw maxcwustewstoquewy = 20
 
-  @Override
-  def job: Execution[Unit] = {
-    Execution.withArgs { args =>
-      Execution.withId { implicit uniqueId =>
-        implicit val tz: TimeZone = DateOps.UTC
-        implicit val dateParser: DateParser = DateParser.default
+  @ovewwide
+  d-def job: execution[unit] = {
+    e-execution.withawgs { a-awgs =>
+      execution.withid { impwicit uniqueid =>
+        impwicit vaw tz: timezone = dateops.utc
+        impwicit vaw datepawsew: d-datepawsew = d-datepawsew.defauwt
 
-        val candTweetDateRange = DateRange.parse(args.list("cand_tweet_date"))
-        val refTweetDateRange = DateRange.parse(args.list("ref_tweet_date"))
-        val toEmailAddressOpt = args.optional("toEmailAddress")
-        val testRunName = args.optional("testRunName")
+        vaw candtweetdatewange = d-datewange.pawse(awgs.wist("cand_tweet_date"))
+        vaw w-weftweetdatewange = d-datewange.pawse(awgs.wist("wef_tweet_date"))
+        vaw toemaiwaddwessopt = awgs.optionaw("toemaiwaddwess")
+        v-vaw testwunname = awgs.optionaw("testwunname")
 
-        println(
-          s"Using SimClusters tweets from ${candTweetDateRange.start} to ${candTweetDateRange.end}")
-        println(s"Using Timelines tweets on the day of ${refTweetDateRange.start}")
+        pwintwn(
+          s"using simcwustews tweets f-fwom ${candtweetdatewange.stawt} to ${candtweetdatewange.end}")
+        p-pwintwn(s"using t-timewines t-tweets on the day of ${weftweetdatewange.stawt}")
 
-        // separate tweets from different display locations for now
-        val tweetType = args("timeline_tweet") match {
-          case "rectweet" => DisplayLocation.TimelinesRectweet
-          case "recap" => DisplayLocation.TimelinesRecap
+        // s-sepawate tweets f-fwom diffewent d-dispway wocations f-fow nyow
+        vaw tweettype = awgs("timewine_tweet") m-match {
+          c-case "wectweet" => d-dispwaywocation.timewineswectweet
+          c-case "wecap" => d-dispwaywocation.timewineswecap
           case e =>
-            throw new IllegalArgumentException(s"$e isn't a valid timeline display location")
+            thwow nyew iwwegawawgumentexception(s"$e i-isn't a vawid timewine dispway wocation")
         }
 
-        val sampleRate = args.double("sample_rate", 1.0)
-        val validRefPipe = getProdTimelineReference(tweetType, refTweetDateRange, sampleRate)
-        val targetUserPipe = validRefPipe.map { _.targetUserId }
+        vaw sampwewate = awgs.doubwe("sampwe_wate", :3 1.0)
+        vaw vawidwefpipe = g-getpwodtimewinewefewence(tweettype, (U ﹏ U) weftweetdatewange, UwU sampwewate)
+        vaw tawgetusewpipe = v-vawidwefpipe.map { _.tawgetusewid }
 
-        // Read a fixed-path in atla if provided, otherwise read prod data from atla for date range
-        val userInterestInPipe = args.optional("user_interested_in_dir") match {
-          case Some(fixedPath) =>
-            println(s"user_interested_in_dir is provided at: $fixedPath. Reading fixed path data.")
-            TypedPipe.from(AdhocKeyValSources.interestedInSource(fixedPath))
-          case _ =>
-            println(s"user_interested_in_dir isn't provided. Reading prod data.")
-            interestedInProdSource(candTweetDateRange)
+        // w-wead a-a fixed-path in atwa if pwovided, 😳😳😳 o-othewwise wead pwod data fwom a-atwa fow date w-wange
+        vaw usewintewestinpipe = awgs.optionaw("usew_intewested_in_diw") match {
+          case some(fixedpath) =>
+            pwintwn(s"usew_intewested_in_diw is pwovided a-at: $fixedpath. XD weading fixed p-path data.")
+            typedpipe.fwom(adhockeyvawsouwces.intewestedinsouwce(fixedpath))
+          c-case _ =>
+            p-pwintwn(s"usew_intewested_in_diw isn't pwovided. o.O weading p-pwod data.")
+            i-intewestedinpwodsouwce(candtweetdatewange)
         }
 
-        // Offline simulation of this dataset
-        val clusterTopKDir = args("cluster_top_k_dir")
-        println(s"cluster_top_k_dir is defined at: $clusterTopKDir")
-        val clusterTopKPipe = TypedPipe.from(
-          ClusterTopKTweetsHourlySuffixSource(clusterTopKDir, candTweetDateRange)
+        // offwine s-simuwation o-of this dataset
+        vaw cwustewtopkdiw = awgs("cwustew_top_k_diw")
+        pwintwn(s"cwustew_top_k_diw is defined at: $cwustewtopkdiw")
+        v-vaw cwustewtopkpipe = t-typedpipe.fwom(
+          c-cwustewtopktweetshouwwysuffixsouwce(cwustewtopkdiw, (⑅˘꒳˘) candtweetdatewange)
         )
 
-        // Configs for offline simcluster tweet recommendation
-        val maxTweetRecs = args.int("max_cand_tweets", 30000000)
-        val minTweetScoreThreshold = args.double("min_tweet_score", 0.0)
+        // c-configs fow offwine s-simcwustew tweet wecommendation
+        v-vaw maxtweetwecs = awgs.int("max_cand_tweets", 😳😳😳 30000000)
+        vaw mintweetscowethweshowd = awgs.doubwe("min_tweet_scowe", nyaa~~ 0.0)
 
-        val offlineRecConfig = OfflineRecConfig(
-          maxTweetRecs,
-          maxTweetResults,
-          maxClustersToQuery,
-          minTweetScoreThreshold,
-          ClusterRanker.RankByNormalizedFavScore
+        v-vaw offwinewecconfig = o-offwinewecconfig(
+          maxtweetwecs, rawr
+          maxtweetwesuwts, -.-
+          maxcwustewstoquewy, (✿oωo)
+          m-mintweetscowethweshowd, /(^•ω•^)
+          cwustewwankew.wankbynowmawizedfavscowe
         )
-        println("SimClusters offline config: " + offlineRecConfig)
+        p-pwintwn("simcwustews offwine config: " + offwinewecconfig)
 
-        getValidCandidate(
-          targetUserPipe,
-          userInterestInPipe,
-          clusterTopKPipe,
-          offlineRecConfig,
-          candTweetDateRange
-        ).flatMap { validCandPipe =>
-          val outputDir = args("output_dir")
-          EvaluationMetricHelper.runAllEvaluations(validRefPipe, validCandPipe).map { results =>
-            toEmailAddressOpt.foreach { address =>
-              Util.sendEmail(
-                results,
-                "Results from tweet evaluation test bed " + testRunName.getOrElse(""),
-                address)
+        g-getvawidcandidate(
+          tawgetusewpipe, 🥺
+          usewintewestinpipe, ʘwʘ
+          cwustewtopkpipe, UwU
+          offwinewecconfig, XD
+          c-candtweetdatewange
+        ).fwatmap { vawidcandpipe =>
+          vaw outputdiw = awgs("output_diw")
+          e-evawuationmetwichewpew.wunawwevawuations(vawidwefpipe, (✿oωo) v-vawidcandpipe).map { wesuwts =>
+            toemaiwaddwessopt.foweach { addwess =>
+              utiw.sendemaiw(
+                wesuwts, :3
+                "wesuwts f-fwom tweet evawuation t-test bed " + testwunname.getowewse(""), (///ˬ///✿)
+                addwess)
             }
-            TypedPipe.from(Seq((results, ""))).writeExecution(TypedTsv[(String, String)](outputDir))
+            typedpipe.fwom(seq((wesuwts, nyaa~~ ""))).wwiteexecution(typedtsv[(stwing, >w< stwing)](outputdiw))
           }
         }
       }
@@ -133,78 +133,78 @@ object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
   }
 
   /**
-   * Given a pipe of raw timelines reference engagement data, collect the engagements that took
-   * place during the given date range, then sample these engagements
+   * given a-a pipe of waw timewines wefewence e-engagement data, -.- cowwect the engagements that took
+   * pwace d-duwing the given date wange, (✿oωo) t-then sampwe these e-engagements
    */
-  private def getProdTimelineReference(
-    displayLocation: DisplayLocation,
-    batchDateRange: DateRange,
-    sampleRate: Double
+  pwivate d-def getpwodtimewinewefewence(
+    dispwaywocation: d-dispwaywocation,
+    b-batchdatewange: d-datewange, (˘ω˘)
+    sampwewate: d-doubwe
   )(
-    implicit tz: TimeZone
-  ): TypedPipe[ReferenceTweets] = {
-    // Snapshot data timestamps itself with the last possible time of the day. +1 day to cover it
-    val snapshotRange = DateRange(batchDateRange.start, batchDateRange.start + Days(1))
-    val timelinesRefPipe = DAL
-      .readMostRecentSnapshot(TweetEvaluationTimelinesReferenceSetScalaDataset, snapshotRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+    i-impwicit tz: timezone
+  ): typedpipe[wefewencetweets] = {
+    // snapshot data t-timestamps itsewf w-with the wast p-possibwe time of the day. rawr +1 day to covew it
+    v-vaw snapshotwange = datewange(batchdatewange.stawt, OwO b-batchdatewange.stawt + d-days(1))
+    vaw timewineswefpipe = daw
+      .weadmostwecentsnapshot(tweetevawuationtimewineswefewencesetscawadataset, ^•ﻌ•^ snapshotwange)
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
 
-    timelinesRefPipe
-      .flatMap { refTweets =>
-        val tweets = refTweets.impressedTweets
-          .filter { refTweet =>
-            refTweet.timestamp >= batchDateRange.start.timestamp &&
-            refTweet.timestamp <= batchDateRange.end.timestamp &&
-            refTweet.displayLocation == displayLocation
+    t-timewineswefpipe
+      .fwatmap { w-weftweets =>
+        v-vaw t-tweets = weftweets.impwessedtweets
+          .fiwtew { weftweet =>
+            weftweet.timestamp >= b-batchdatewange.stawt.timestamp &&
+            weftweet.timestamp <= batchdatewange.end.timestamp &&
+            weftweet.dispwaywocation == dispwaywocation
           }
-        if (tweets.nonEmpty) {
-          Some(ReferenceTweets(refTweets.targetUserId, tweets))
-        } else {
-          None
+        if (tweets.nonempty) {
+          s-some(wefewencetweets(weftweets.tawgetusewid, UwU tweets))
+        } e-ewse {
+          nyone
         }
       }
-      .sample(sampleRate)
+      .sampwe(sampwewate)
   }
 
   /**
-   * Given a list of target users, simulate SimCluster's online serving logic offline for these
-   * users, then convert them into [[CandidateTweets]]
+   * g-given a wist of tawget u-usews, (˘ω˘) simuwate simcwustew's onwine s-sewving wogic o-offwine fow these
+   * u-usews, (///ˬ///✿) t-then convewt them i-into [[candidatetweets]]
    */
-  private def getValidCandidate(
-    targetUserPipe: TypedPipe[Long],
-    userIsInterestedInPipe: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    clusterTopKTweetsPipe: TypedPipe[ClusterTopKTweetsWithScores],
-    offlineConfig: OfflineRecConfig,
-    batchDateRange: DateRange
+  pwivate def getvawidcandidate(
+    tawgetusewpipe: typedpipe[wong], σωσ
+    usewisintewestedinpipe: typedpipe[(wong, cwustewsusewisintewestedin)], /(^•ω•^)
+    c-cwustewtopktweetspipe: t-typedpipe[cwustewtopktweetswithscowes], 😳
+    o-offwineconfig: offwinewecconfig, 😳
+    b-batchdatewange: datewange
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[TypedPipe[CandidateTweets]] = {
-    OfflineTweetRecommendation
-      .getTopTweets(offlineConfig, targetUserPipe, userIsInterestedInPipe, clusterTopKTweetsPipe)
+    impwicit uniqueid: uniqueid
+  ): e-execution[typedpipe[candidatetweets]] = {
+    o-offwinetweetwecommendation
+      .gettoptweets(offwineconfig, (⑅˘꒳˘) tawgetusewpipe, 😳😳😳 u-usewisintewestedinpipe, cwustewtopktweetspipe)
       .map(_.map {
-        case (userId, scoredTweets) =>
-          val tweets = scoredTweets.map { tweet =>
-            CandidateTweet(tweet.tweetId, Some(tweet.score), Some(batchDateRange.start.timestamp))
+        case (usewid, s-scowedtweets) =>
+          v-vaw tweets = scowedtweets.map { tweet =>
+            c-candidatetweet(tweet.tweetid, 😳 s-some(tweet.scowe), XD some(batchdatewange.stawt.timestamp))
           }
-          CandidateTweets(userId, tweets)
+          candidatetweets(usewid, mya tweets)
       })
   }
 
   /**
-   * Read interested in key-val store from atla-proc from the given date range
+   * wead i-intewested in key-vaw s-stowe fwom a-atwa-pwoc fwom t-the given date w-wange
    */
-  private def interestedInProdSource(
-    dateRange: DateRange
-  ): TypedPipe[(Long, ClustersUserIsInterestedIn)] = {
-    implicit val timeZone: TimeZone = DateOps.UTC
+  pwivate def intewestedinpwodsouwce(
+    d-datewange: d-datewange
+  ): typedpipe[(wong, ^•ﻌ•^ c-cwustewsusewisintewestedin)] = {
+    i-impwicit vaw timezone: timezone = d-dateops.utc
 
-    DAL
-      .readMostRecentSnapshot(SimclustersV2InterestedInScalaDataset, dateRange.embiggen(Weeks(1)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+    daw
+      .weadmostwecentsnapshot(simcwustewsv2intewestedinscawadataset, ʘwʘ datewange.embiggen(weeks(1)))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
       .map {
-        case KeyVal(key, value) => (key, value)
+        c-case keyvaw(key, ( ͡o ω ͡o ) vawue) => (key, mya v-vawue)
       }
   }
 }

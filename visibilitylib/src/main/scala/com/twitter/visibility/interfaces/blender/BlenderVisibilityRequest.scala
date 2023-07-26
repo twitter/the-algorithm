@@ -1,41 +1,41 @@
-package com.twitter.visibility.interfaces.blender
+package com.twittew.visibiwity.intewfaces.bwendew
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.interfaces.common.blender.BlenderVFRequestContext
+impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.modews.viewewcontext
+i-impowt com.twittew.visibiwity.intewfaces.common.bwendew.bwendewvfwequestcontext
 
-case class BlenderVisibilityRequest(
-  tweet: Tweet,
-  quotedTweet: Option[Tweet],
-  retweetSourceTweet: Option[Tweet] = None,
-  isRetweet: Boolean,
-  safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext,
-  blenderVFRequestContext: BlenderVFRequestContext) {
+c-case cwass b-bwendewvisibiwitywequest(
+  t-tweet: t-tweet, (U ﹏ U)
+  quotedtweet: o-option[tweet], >_<
+  wetweetsouwcetweet: option[tweet] = none, rawr x3
+  iswetweet: boowean, mya
+  safetywevew: safetywevew, nyaa~~
+  v-viewewcontext: viewewcontext, (⑅˘꒳˘)
+  bwendewvfwequestcontext: b-bwendewvfwequestcontext) {
 
-  def getTweetID: Long = tweet.id
+  def gettweetid: w-wong = tweet.id
 
-  def hasQuotedTweet: Boolean = {
-    quotedTweet.nonEmpty
+  def hasquotedtweet: boowean = {
+    quotedtweet.nonempty
   }
-  def hasSourceTweet: Boolean = {
-    retweetSourceTweet.nonEmpty
+  d-def hassouwcetweet: boowean = {
+    w-wetweetsouwcetweet.nonempty
   }
 
-  def getQuotedTweetId: Long = {
-    quotedTweet match {
-      case Some(qTweet) =>
-        qTweet.id
-      case None =>
+  d-def getquotedtweetid: wong = {
+    quotedtweet match {
+      case some(qtweet) =>
+        qtweet.id
+      c-case nyone =>
         -1
     }
   }
-  def getSourceTweetId: Long = {
-    retweetSourceTweet match {
-      case Some(sourceTweet) =>
-        sourceTweet.id
-      case None =>
+  def getsouwcetweetid: wong = {
+    wetweetsouwcetweet match {
+      c-case some(souwcetweet) =>
+        s-souwcetweet.id
+      c-case nyone =>
         -1
     }
   }

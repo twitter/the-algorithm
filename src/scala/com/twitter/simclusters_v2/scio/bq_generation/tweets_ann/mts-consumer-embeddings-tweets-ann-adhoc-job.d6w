@@ -1,34 +1,34 @@
-class Profile(Struct):
-  project = Required(String)
-  date = Required(String)
-  environment = Default(String, 'dev')
-  job_name = Default(String, 'mts-consumer-embeddings-tweets-ann-adhoc-job')
-  machine = Default(String, 'n2-highmem-4')
+cwass pwofiwe(stwuct):
+  pwoject = w-wequiwed(stwing)
+  d-date = wequiwed(stwing)
+  enviwonment = d-defauwt(stwing, >_< 'dev')
+  j-job_name = d-defauwt(stwing, mya 'mts-consumew-embeddings-tweets-ann-adhoc-job')
+  m-machine = defauwt(stwing, mya 'n2-highmem-4')
 
-job = Job(
-   name='{{profile.job_name}}',
-   project='{{profile.project}}',
-   staging_bucket='{{profile.project}}',
-   service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-   region='us-central1',
-   worker_config=WorkerConfig(
-       num_workers=2,
-       worker_machine_type='{{profile.machine}}',
-       worker_disk_type=WorkerDiskType('HDD'),
+j-job = j-job(
+   nyame='{{pwofiwe.job_name}}', 😳
+   pwoject='{{pwofiwe.pwoject}}', XD
+   staging_bucket='{{pwofiwe.pwoject}}', :3
+   sewvice_account='{{pwofiwe.usew_name}}-shdw@twttw-dp-svc-accounts.iam.gsewviceaccount.com', 😳😳😳
+   wegion='us-centwaw1', -.-
+   wowkew_config=wowkewconfig(
+       n-nyum_wowkews=2, ( ͡o ω ͡o )
+       wowkew_machine_type='{{pwofiwe.machine}}', rawr x3
+       wowkew_disk_type=wowkewdisktype('hdd'), nyaa~~
    ),
-   extra_args={
-     "date": '{{profile.date}}'
-   },
-   service_identifier='twtr:svc:{{profile.user_name}}:{{profile.job_name}}:{{profile.environment}}:{{profile.cluster}}',
-   deployment_config=BatchDeploymentConfig(
-     role='{{profile.user_name}}',
-     build_target='src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann:mts-consumer-embeddings-tweets-ann-adhoc-job',
-     gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-     statebird_config=StatebirdConfig(
-       batch_width='PT2H',
-       first_time='{{profile.date}}',
+   e-extwa_awgs={
+     "date": '{{pwofiwe.date}}'
+   }, /(^•ω•^)
+   sewvice_identifiew='twtw:svc:{{pwofiwe.usew_name}}:{{pwofiwe.job_name}}:{{pwofiwe.enviwonment}}:{{pwofiwe.cwustew}}', rawr
+   d-depwoyment_config=batchdepwoymentconfig(
+     wowe='{{pwofiwe.usew_name}}', OwO
+     buiwd_tawget='swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/tweets_ann:mts-consumew-embeddings-tweets-ann-adhoc-job', (U ﹏ U)
+     gcp_depwoyment_cwedentiaws='/vaw/wib/tss/keys/{{pwofiwe.usew_name}}/cwoud/gcp/dp/shadow.json', >_<
+     s-statebiwd_config=statebiwdconfig(
+       batch_width='pt2h', rawr x3
+       fiwst_time='{{pwofiwe.date}}', mya
      ),
    )
 )
 
-jobs=[job]
+j-jobs=[job]

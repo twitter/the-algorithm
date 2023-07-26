@@ -1,170 +1,170 @@
-package com.twitter.search.earlybird.document;
+package com.twittew.seawch.eawwybiwd.document;
 
-import java.io.IOException;
-import java.util.List;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.wist;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTruthTableCounter;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeaturesUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
+i-impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchtwuthtabwecountew;
+impowt com.twittew.seawch.common.schema.base.fiewdnametoidmapping;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.base.thwiftdocumentutiw;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdencodedfeatuwes;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdencodedfeatuwesutiw;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdthwiftdocumentutiw;
+i-impowt c-com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewd;
 
-import geo.google.datamodel.GeoAddressAccuracy;
+impowt geo.googwe.datamodew.geoaddwessaccuwacy;
 
 /**
- * Used to preprocess a ThriftDocument before indexing.
+ * u-used to pwepwocess a thwiftdocument befowe indexing. -.-
  */
-public final class ThriftDocumentPreprocessor {
-  private static final FieldNameToIdMapping ID_MAP = new EarlybirdFieldConstants();
-  private static final String FILTER_LINK_VALUE = EarlybirdThriftDocumentUtil.formatFilter(
-      EarlybirdFieldConstant.LINKS_FIELD.getFieldName());
-  private static final String HAS_LINK_VALUE = EarlybirdFieldConstant.getFacetSkipFieldName(
-      EarlybirdFieldConstant.LINKS_FIELD.getFieldName());
+pubwic finaw cwass t-thwiftdocumentpwepwocessow {
+  pwivate static f-finaw fiewdnametoidmapping i-id_map = n-nyew eawwybiwdfiewdconstants();
+  p-pwivate static finaw stwing fiwtew_wink_vawue = e-eawwybiwdthwiftdocumentutiw.fowmatfiwtew(
+      eawwybiwdfiewdconstant.winks_fiewd.getfiewdname());
+  pwivate s-static finaw stwing has_wink_vawue = eawwybiwdfiewdconstant.getfacetskipfiewdname(
+      eawwybiwdfiewdconstant.winks_fiewd.getfiewdname());
 
-  private ThriftDocumentPreprocessor() {
+  pwivate thwiftdocumentpwepwocessow() {
   }
 
   /**
-   * Processes the given document.
+   * pwocesses t-the given document. ^^;;
    */
-  public static ThriftDocument preprocess(
-      ThriftDocument doc, EarlybirdCluster cluster, ImmutableSchemaInterface schema)
-      throws IOException {
-    patchArchiveThriftDocumentAccuracy(doc, cluster);
-    patchArchiveHasLinks(doc, cluster);
-    addAllMissingMinEngagementFields(doc, cluster, schema);
-    return doc;
+  pubwic static thwiftdocument p-pwepwocess(
+      t-thwiftdocument doc, XD e-eawwybiwdcwustew cwustew, 🥺 immutabweschemaintewface schema)
+      thwows ioexception {
+    p-patchawchivethwiftdocumentaccuwacy(doc, òωó c-cwustew);
+    patchawchivehaswinks(doc, (ˆ ﻌ ˆ)♡ c-cwustew);
+    a-addawwmissingminengagementfiewds(doc, -.- cwustew, :3 schema);
+    w-wetuwn doc;
   }
 
-  private static final SearchCounter GEO_SCRUBBED_COUNT =
-      SearchCounter.export("geo_scrubbed_count");
-  private static final SearchCounter GEO_ARCHIVE_PATCHED_ACCURACY_COUNT =
-      SearchCounter.export("geo_archive_patched_accuracy_count");
-  private static final SearchCounter GEO_MISSING_COORDINATE_COUNT =
-      SearchCounter.export("geo_missing_coordinate_count");
-  private static final SearchCounter ARCHIVED_LINKS_FIELD_PATCHED_COUNT =
-      SearchCounter.export("links_field_patched_count");
+  pwivate s-static finaw seawchcountew geo_scwubbed_count =
+      seawchcountew.expowt("geo_scwubbed_count");
+  p-pwivate static finaw seawchcountew g-geo_awchive_patched_accuwacy_count =
+      seawchcountew.expowt("geo_awchive_patched_accuwacy_count");
+  p-pwivate static f-finaw seawchcountew geo_missing_coowdinate_count =
+      seawchcountew.expowt("geo_missing_coowdinate_count");
+  pwivate static finaw seawchcountew awchived_winks_fiewd_patched_count =
+      seawchcountew.expowt("winks_fiewd_patched_count");
 
   /**
-   * Counter for all the combinations of nullcast bit set and nullcast filter set.
+   * c-countew fow aww t-the combinations of nyuwwcast bit s-set and nyuwwcast f-fiwtew set.
    *
-   * Sum over `ThriftDocumentPreprocessor_nullcast_doc_stats__nullcastBitSet_true_*` to get all docs
-   * with nullcast bit set to true.
+   * s-sum ovew `thwiftdocumentpwepwocessow_nuwwcast_doc_stats__nuwwcastbitset_twue_*` to get aww docs
+   * with nyuwwcast bit s-set to twue. ʘwʘ
    */
-  private static final SearchTruthTableCounter NULLCAST_DOC_STATS =
-      SearchTruthTableCounter.export(
-          "ThriftDocumentPreprocessor_nullcast_doc_stats",
-          "nullcastBitSet",
-          "nullcastFilterSet");
+  pwivate static finaw seawchtwuthtabwecountew nyuwwcast_doc_stats =
+      seawchtwuthtabwecountew.expowt(
+          "thwiftdocumentpwepwocessow_nuwwcast_doc_stats", 🥺
+          "nuwwcastbitset", >_<
+          "nuwwcastfiwtewset");
 
   /***
-   * See JIRA SEARCH-7329
+   * s-see jiwa seawch-7329
    */
-  private static void patchArchiveThriftDocumentAccuracy(ThriftDocument doc,
-                                                         EarlybirdCluster cluster) {
-    ThriftField geoField = ThriftDocumentUtil.getField(
-        doc,
-        EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(),
-        ID_MAP);
-    if (geoField != null) {
-      if (!geoField.getFieldData().isSetGeoCoordinate()) {
-        GEO_MISSING_COORDINATE_COUNT.increment();
-        return;
+  pwivate static v-void patchawchivethwiftdocumentaccuwacy(thwiftdocument d-doc, ʘwʘ
+                                                         e-eawwybiwdcwustew cwustew) {
+    t-thwiftfiewd g-geofiewd = thwiftdocumentutiw.getfiewd(
+        d-doc, (˘ω˘)
+        eawwybiwdfiewdconstant.geo_hash_fiewd.getfiewdname(), (✿oωo)
+        i-id_map);
+    if (geofiewd != nyuww) {
+      i-if (!geofiewd.getfiewddata().issetgeocoowdinate()) {
+        g-geo_missing_coowdinate_count.incwement();
+        w-wetuwn;
       }
 
-      // -1 means that the data is geo scrubbed.
-      if (geoField.getFieldData().getGeoCoordinate().getAccuracy() == -1) {
-        doc.getFields().remove(geoField);
-        GEO_SCRUBBED_COUNT.increment();
-      } else if (EarlybirdCluster.isArchive(cluster)) {
-        // In archive indexing, we base precision on SearchArchiveStatus.getPrecision, which is not
-        // in the scale we want.  We always use POINT_LEVEL scale for now.
-        geoField.getFieldData().getGeoCoordinate().setAccuracy(
-            GeoAddressAccuracy.POINT_LEVEL.getCode());
-        GEO_ARCHIVE_PATCHED_ACCURACY_COUNT.increment();
-      }
-    }
-  }
-
-  /**
-   * See SEARCH-9635
-   * This patch is used to replace
-   *   ("field":"internal","term":"__filter_links") with
-   *   ("field":"internal","term":"__has_links").
-   */
-  private static void patchArchiveHasLinks(ThriftDocument doc, EarlybirdCluster cluster) {
-    if (!EarlybirdCluster.isArchive(cluster)) {
-      return;
-    }
-
-    List<ThriftField> fieldList = ThriftDocumentUtil.getFields(doc,
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        ID_MAP);
-    for (ThriftField field : fieldList) {
-      if (field.getFieldData().getStringValue().equals(FILTER_LINK_VALUE)) {
-        field.getFieldData().setStringValue(HAS_LINK_VALUE);
-        ARCHIVED_LINKS_FIELD_PATCHED_COUNT.increment();
-        break;
+      // -1 m-means that the d-data is geo scwubbed. (///ˬ///✿)
+      if (geofiewd.getfiewddata().getgeocoowdinate().getaccuwacy() == -1) {
+        doc.getfiewds().wemove(geofiewd);
+        geo_scwubbed_count.incwement();
+      } ewse if (eawwybiwdcwustew.isawchive(cwustew)) {
+        // i-in awchive indexing, rawr x3 we base pwecision on seawchawchivestatus.getpwecision, -.- which is nyot
+        // in the scawe we want. ^^  w-we awways use point_wevew scawe fow nyow. (⑅˘꒳˘)
+        geofiewd.getfiewddata().getgeocoowdinate().setaccuwacy(
+            g-geoaddwessaccuwacy.point_wevew.getcode());
+        geo_awchive_patched_accuwacy_count.incwement();
       }
     }
   }
 
   /**
-   * Check whether the nullcast bit and nullcast filter are consistent in the given doc.
+   * s-see s-seawch-9635
+   * this patch is u-used to wepwace
+   *   ("fiewd":"intewnaw","tewm":"__fiwtew_winks") with
+   *   ("fiewd":"intewnaw","tewm":"__has_winks"). nyaa~~
    */
-  public static boolean isNullcastBitAndFilterConsistent(ThriftDocument doc,
-                                                         ImmutableSchemaInterface schema) {
-    return isNullcastBitAndFilterConsistent(doc, schema, NULLCAST_DOC_STATS);
+  p-pwivate static v-void patchawchivehaswinks(thwiftdocument doc, /(^•ω•^) eawwybiwdcwustew cwustew) {
+    if (!eawwybiwdcwustew.isawchive(cwustew)) {
+      wetuwn;
+    }
+
+    w-wist<thwiftfiewd> fiewdwist = t-thwiftdocumentutiw.getfiewds(doc, (U ﹏ U)
+        eawwybiwdfiewdconstant.intewnaw_fiewd.getfiewdname(), 😳😳😳
+        i-id_map);
+    f-fow (thwiftfiewd fiewd : fiewdwist) {
+      i-if (fiewd.getfiewddata().getstwingvawue().equaws(fiwtew_wink_vawue)) {
+        f-fiewd.getfiewddata().setstwingvawue(has_wink_vawue);
+        awchived_winks_fiewd_patched_count.incwement();
+        b-bweak;
+      }
+    }
   }
 
-  @VisibleForTesting
-  static boolean isNullcastBitAndFilterConsistent(
-      ThriftDocument doc, ImmutableSchemaInterface schema, SearchTruthTableCounter nullCastStats) {
-    final boolean isNullcastBitSet = EarlybirdThriftDocumentUtil.isNullcastBitSet(schema, doc);
-    final boolean isNullcastFilterSet = EarlybirdThriftDocumentUtil.isNullcastFilterSet(doc);
-
-    // Track stats.
-    nullCastStats.record(isNullcastBitSet, isNullcastFilterSet);
-
-    return isNullcastBitSet == isNullcastFilterSet;
+  /**
+   * c-check whethew the nyuwwcast bit and nyuwwcast fiwtew awe consistent i-in the given doc. >w<
+   */
+  p-pubwic s-static boowean isnuwwcastbitandfiwtewconsistent(thwiftdocument d-doc, XD
+                                                         immutabweschemaintewface s-schema) {
+    wetuwn isnuwwcastbitandfiwtewconsistent(doc, o.O s-schema, mya nyuwwcast_doc_stats);
   }
 
-  @VisibleForTesting
-  static void addAllMissingMinEngagementFields(
-      ThriftDocument doc, EarlybirdCluster cluster, ImmutableSchemaInterface schema
-  ) throws IOException {
-    if (!EarlybirdCluster.isArchive(cluster)) {
-      return;
+  @visibwefowtesting
+  static boowean isnuwwcastbitandfiwtewconsistent(
+      thwiftdocument doc, 🥺 immutabweschemaintewface s-schema, ^^;; seawchtwuthtabwecountew n-nyuwwcaststats) {
+    finaw boowean isnuwwcastbitset = e-eawwybiwdthwiftdocumentutiw.isnuwwcastbitset(schema, :3 d-doc);
+    finaw boowean isnuwwcastfiwtewset = eawwybiwdthwiftdocumentutiw.isnuwwcastfiwtewset(doc);
+
+    // t-twack stats. (U ﹏ U)
+    nyuwwcaststats.wecowd(isnuwwcastbitset, OwO isnuwwcastfiwtewset);
+
+    wetuwn isnuwwcastbitset == i-isnuwwcastfiwtewset;
+  }
+
+  @visibwefowtesting
+  static void addawwmissingminengagementfiewds(
+      t-thwiftdocument d-doc, 😳😳😳 eawwybiwdcwustew cwustew, (ˆ ﻌ ˆ)♡ immutabweschemaintewface schema
+  ) thwows i-ioexception {
+    i-if (!eawwybiwdcwustew.isawchive(cwustew)) {
+      wetuwn;
     }
-    EarlybirdFieldConstants.EarlybirdFieldConstant encodedFeatureFieldConstant =
-        EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD;
-    byte[] encodedFeaturesBytes = ThriftDocumentUtil.getBytesValue(doc,
-        encodedFeatureFieldConstant.getFieldName(), ID_MAP);
-    if (encodedFeaturesBytes == null) {
-      return;
+    eawwybiwdfiewdconstants.eawwybiwdfiewdconstant encodedfeatuwefiewdconstant =
+        e-eawwybiwdfiewdconstant.encoded_tweet_featuwes_fiewd;
+    byte[] e-encodedfeatuwesbytes = thwiftdocumentutiw.getbytesvawue(doc,
+        encodedfeatuwefiewdconstant.getfiewdname(), XD id_map);
+    if (encodedfeatuwesbytes == n-nyuww) {
+      wetuwn;
     }
-    EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-        schema,
-        EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD,
-        encodedFeaturesBytes,
+    e-eawwybiwdencodedfeatuwes e-encodedfeatuwes = eawwybiwdencodedfeatuwesutiw.fwombytes(
+        s-schema, (ˆ ﻌ ˆ)♡
+        eawwybiwdfiewdconstant.encoded_tweet_featuwes_fiewd, ( ͡o ω ͡o )
+        e-encodedfeatuwesbytes, rawr x3
         0);
-    for (String field: EarlybirdFieldConstants.MIN_ENGAGEMENT_FIELD_TO_CSF_NAME_MAP.keySet()) {
-      EarlybirdFieldConstant csfEngagementField = EarlybirdFieldConstants
-          .MIN_ENGAGEMENT_FIELD_TO_CSF_NAME_MAP.get(field);
-      Preconditions.checkState(csfEngagementField != null);
-      int engagementCounter = encodedFeatures.getFeatureValue(csfEngagementField);
-      EarlybirdThriftDocumentUtil.addNormalizedMinEngagementField(doc, field, engagementCounter);
+    f-fow (stwing f-fiewd: eawwybiwdfiewdconstants.min_engagement_fiewd_to_csf_name_map.keyset()) {
+      eawwybiwdfiewdconstant c-csfengagementfiewd = e-eawwybiwdfiewdconstants
+          .min_engagement_fiewd_to_csf_name_map.get(fiewd);
+      pweconditions.checkstate(csfengagementfiewd != nyuww);
+      int e-engagementcountew = e-encodedfeatuwes.getfeatuwevawue(csfengagementfiewd);
+      e-eawwybiwdthwiftdocumentutiw.addnowmawizedminengagementfiewd(doc, nyaa~~ fiewd, >_< engagementcountew);
     }
   }
 }

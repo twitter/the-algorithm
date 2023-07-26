@@ -1,164 +1,164 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.twittew.simcwustews_v2.hdfs_souwces
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.source.lzo_scrooge.DailySuffixMostRecentLzoScrooge
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.scalding_internal.source.lzo_scrooge.HourlySuffixMostRecentLzoScrooge
-import com.twitter.simclusters_v2.thriftscala._
+impowt com.twittew.bijection.scwooge.binawyscawacodec
+i-impowt com.twittew.bijection.scwooge.compactscawacodec
+i-impowt c-com.twittew.bijection.buffewabwe
+i-impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.hewmit.candidate.thwiftscawa.candidates
+i-impowt com.twittew.scawding.datewange
+i-impowt com.twittew.scawding.commons.souwce.vewsionedkeyvawsouwce
+impowt com.twittew.scawding_intewnaw.souwce.wzo_scwooge.daiwysuffixmostwecentwzoscwooge
+impowt com.twittew.scawding_intewnaw.souwce.wzo_scwooge.fixedpathwzoscwooge
+i-impowt com.twittew.scawding_intewnaw.souwce.wzo_scwooge.houwwysuffixmostwecentwzoscwooge
+impowt com.twittew.simcwustews_v2.thwiftscawa._
 
-case class EdgeWithDecayedWtsFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[EdgeWithDecayedWeights](path, EdgeWithDecayedWeights)
+c-case cwass edgewithdecayedwtsfixedpathsouwce(path: stwing)
+    e-extends fixedpathwzoscwooge[edgewithdecayedweights](path, >_< edgewithdecayedweights)
 
-case class UserAndNeighborsFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[UserAndNeighbors](path, UserAndNeighbors)
+case c-cwass usewandneighbowsfixedpathsouwce(path: stwing)
+    extends f-fixedpathwzoscwooge[usewandneighbows](path, UwU usewandneighbows)
 
-case class NormsAndCountsFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[NormsAndCounts](path, NormsAndCounts)
+c-case cwass nyowmsandcountsfixedpathsouwce(path: stwing)
+    extends fixedpathwzoscwooge[nowmsandcounts](path, >_< nowmsandcounts)
 
-case class UserToInterestedInClustersFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[UserToInterestedInClusters](path, UserToInterestedInClusters)
+case cwass usewtointewestedincwustewsfixedpathsouwce(path: s-stwing)
+    extends fixedpathwzoscwooge[usewtointewestedincwustews](path, -.- usewtointewestedincwustews)
 
-case class TimelineDataExtractorFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[ReferenceTweets](path, ReferenceTweets)
+case cwass timewinedataextwactowfixedpathsouwce(path: s-stwing)
+    extends fixedpathwzoscwooge[wefewencetweets](path, mya w-wefewencetweets)
 
-case class TweetClusterScoresHourlySuffixSource(path: String, override val dateRange: DateRange)
-    extends HourlySuffixMostRecentLzoScrooge[TweetAndClusterScores](path, dateRange)
+c-case cwass t-tweetcwustewscoweshouwwysuffixsouwce(path: s-stwing, ovewwide vaw datewange: datewange)
+    extends h-houwwysuffixmostwecentwzoscwooge[tweetandcwustewscowes](path, >w< datewange)
 
-case class TweetTopKClustersHourlySuffixSource(path: String, override val dateRange: DateRange)
-    extends HourlySuffixMostRecentLzoScrooge[TweetTopKClustersWithScores](
-      path,
-      dateRange
+case cwass tweettopkcwustewshouwwysuffixsouwce(path: s-stwing, (U ﹏ U) ovewwide vaw datewange: datewange)
+    extends houwwysuffixmostwecentwzoscwooge[tweettopkcwustewswithscowes](
+      path, 😳😳😳
+      datewange
     )
 
-case class ClusterTopKTweetsHourlySuffixSource(path: String, override val dateRange: DateRange)
-    extends HourlySuffixMostRecentLzoScrooge[ClusterTopKTweetsWithScores](
-      path,
-      dateRange
+case cwass cwustewtopktweetshouwwysuffixsouwce(path: s-stwing, o.O ovewwide vaw datewange: d-datewange)
+    e-extends houwwysuffixmostwecentwzoscwooge[cwustewtopktweetswithscowes](
+      p-path, òωó
+      datewange
     )
 
-case class TweetSimilarityUnhydratedPairsSource(path: String, override val dateRange: DateRange)
-    extends DailySuffixMostRecentLzoScrooge[LabelledTweetPairs](
-      path,
-      dateRange
+case cwass tweetsimiwawityunhydwatedpaiwssouwce(path: stwing, 😳😳😳 ovewwide v-vaw datewange: d-datewange)
+    extends daiwysuffixmostwecentwzoscwooge[wabewwedtweetpaiws](
+      p-path, σωσ
+      d-datewange
     )
 
-case class WTFCandidatesSource(path: String)
-    extends FixedPathLzoScrooge[Candidates](path, Candidates)
+case cwass wtfcandidatessouwce(path: s-stwing)
+    extends fixedpathwzoscwooge[candidates](path, (⑅˘꒳˘) c-candidates)
 
-case class EmbeddingsLiteSource(path: String)
-    extends FixedPathLzoScrooge[EmbeddingsLite](path, EmbeddingsLite)
+case cwass embeddingswitesouwce(path: stwing)
+    e-extends fixedpathwzoscwooge[embeddingswite](path, (///ˬ///✿) embeddingswite)
 
-object AdhocKeyValSources {
-  def interestedInSource(path: String): VersionedKeyValSource[Long, ClustersUserIsInterestedIn] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[ClustersUserIsInterestedIn, Array[Byte]] =
-      CompactScalaCodec(ClustersUserIsInterestedIn)
-    VersionedKeyValSource[Long, ClustersUserIsInterestedIn](path)
+o-object adhockeyvawsouwces {
+  def intewestedinsouwce(path: s-stwing): v-vewsionedkeyvawsouwce[wong, 🥺 cwustewsusewisintewestedin] = {
+    impwicit vaw keyinject: injection[wong, OwO awway[byte]] = injection.wong2bigendian
+    impwicit vaw vawinject: i-injection[cwustewsusewisintewestedin, >w< a-awway[byte]] =
+      compactscawacodec(cwustewsusewisintewestedin)
+    v-vewsionedkeyvawsouwce[wong, 🥺 c-cwustewsusewisintewestedin](path)
   }
 
-  def clusterDetailsSource(path: String): VersionedKeyValSource[(String, Int), ClusterDetails] = {
-    implicit val keyInject: Injection[(String, Int), Array[Byte]] =
-      Bufferable.injectionOf[(String, Int)]
-    implicit val valInject: Injection[ClusterDetails, Array[Byte]] =
-      CompactScalaCodec(ClusterDetails)
-    VersionedKeyValSource[(String, Int), ClusterDetails](path)
+  d-def cwustewdetaiwssouwce(path: stwing): vewsionedkeyvawsouwce[(stwing, nyaa~~ int), ^^ cwustewdetaiws] = {
+    i-impwicit vaw keyinject: injection[(stwing, >w< int), awway[byte]] =
+      buffewabwe.injectionof[(stwing, OwO i-int)]
+    impwicit vaw vawinject: i-injection[cwustewdetaiws, XD a-awway[byte]] =
+      c-compactscawacodec(cwustewdetaiws)
+    vewsionedkeyvawsouwce[(stwing, ^^;; i-int), cwustewdetaiws](path)
   }
 
-  def bipartiteQualitySource(
-    path: String
-  ): VersionedKeyValSource[(String, Int), BipartiteClusterQuality] = {
-    implicit val keyInject: Injection[(String, Int), Array[Byte]] =
-      Bufferable.injectionOf[(String, Int)]
-    implicit val valInject: Injection[BipartiteClusterQuality, Array[Byte]] =
-      CompactScalaCodec(BipartiteClusterQuality)
-    VersionedKeyValSource[(String, Int), BipartiteClusterQuality](path)
+  d-def bipawtitequawitysouwce(
+    p-path: stwing
+  ): v-vewsionedkeyvawsouwce[(stwing, 🥺 int), XD bipawtitecwustewquawity] = {
+    i-impwicit vaw keyinject: i-injection[(stwing, (U ᵕ U❁) i-int), a-awway[byte]] =
+      b-buffewabwe.injectionof[(stwing, :3 int)]
+    impwicit vaw vawinject: injection[bipawtitecwustewquawity, ( ͡o ω ͡o ) a-awway[byte]] =
+      compactscawacodec(bipawtitecwustewquawity)
+    vewsionedkeyvawsouwce[(stwing, òωó int), σωσ bipawtitecwustewquawity](path)
   }
 
-  def entityToClustersSource(
-    path: String
-  ): VersionedKeyValSource[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    implicit val keyInject: Injection[SimClustersEmbeddingId, Array[Byte]] =
-      BinaryScalaCodec(SimClustersEmbeddingId)
-    implicit val valInject: Injection[SimClustersEmbedding, Array[Byte]] =
-      BinaryScalaCodec(SimClustersEmbedding)
-    VersionedKeyValSource[SimClustersEmbeddingId, SimClustersEmbedding](path)
+  def entitytocwustewssouwce(
+    path: s-stwing
+  ): vewsionedkeyvawsouwce[simcwustewsembeddingid, (U ᵕ U❁) simcwustewsembedding] = {
+    impwicit vaw keyinject: i-injection[simcwustewsembeddingid, (✿oωo) a-awway[byte]] =
+      b-binawyscawacodec(simcwustewsembeddingid)
+    impwicit vaw v-vawinject: injection[simcwustewsembedding, ^^ awway[byte]] =
+      b-binawyscawacodec(simcwustewsembedding)
+    v-vewsionedkeyvawsouwce[simcwustewsembeddingid, ^•ﻌ•^ simcwustewsembedding](path)
   }
 
-  def clusterToEntitiesSource(
-    path: String
-  ): VersionedKeyValSource[SimClustersEmbeddingId, InternalIdEmbedding] = {
-    implicit val keyInject: Injection[SimClustersEmbeddingId, Array[Byte]] = BinaryScalaCodec(
-      SimClustersEmbeddingId)
-    implicit val valInject: Injection[InternalIdEmbedding, Array[Byte]] =
-      BinaryScalaCodec(InternalIdEmbedding)
-    VersionedKeyValSource[SimClustersEmbeddingId, InternalIdEmbedding](path)
+  def cwustewtoentitiessouwce(
+    path: stwing
+  ): vewsionedkeyvawsouwce[simcwustewsembeddingid, XD intewnawidembedding] = {
+    i-impwicit vaw keyinject: i-injection[simcwustewsembeddingid, :3 awway[byte]] = b-binawyscawacodec(
+      s-simcwustewsembeddingid)
+    impwicit vaw vawinject: i-injection[intewnawidembedding, (ꈍᴗꈍ) a-awway[byte]] =
+      binawyscawacodec(intewnawidembedding)
+    vewsionedkeyvawsouwce[simcwustewsembeddingid, :3 i-intewnawidembedding](path)
   }
 
-  // For storing producer-simclusters embeddings
-  def topProducerToClusterEmbeddingsSource(
-    path: String
-  ): VersionedKeyValSource[Long, TopSimClustersWithScore] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[TopSimClustersWithScore, Array[Byte]] =
-      CompactScalaCodec(TopSimClustersWithScore)
-    VersionedKeyValSource[Long, TopSimClustersWithScore](path)
+  // f-fow stowing pwoducew-simcwustews embeddings
+  def toppwoducewtocwustewembeddingssouwce(
+    path: stwing
+  ): v-vewsionedkeyvawsouwce[wong, (U ﹏ U) t-topsimcwustewswithscowe] = {
+    i-impwicit vaw keyinject: i-injection[wong, UwU a-awway[byte]] = injection.wong2bigendian
+    i-impwicit vaw vawinject: injection[topsimcwustewswithscowe, 😳😳😳 awway[byte]] =
+      compactscawacodec(topsimcwustewswithscowe)
+    vewsionedkeyvawsouwce[wong, XD t-topsimcwustewswithscowe](path)
   }
 
-  // For storing producer-simclusters embeddings
-  def topClusterEmbeddingsToProducerSource(
-    path: String
-  ): VersionedKeyValSource[PersistedFullClusterId, TopProducersWithScore] = {
-    implicit val keyInject: Injection[PersistedFullClusterId, Array[Byte]] =
-      CompactScalaCodec(PersistedFullClusterId)
-    implicit val valInject: Injection[TopProducersWithScore, Array[Byte]] =
-      CompactScalaCodec(TopProducersWithScore)
-    VersionedKeyValSource[PersistedFullClusterId, TopProducersWithScore](path)
+  // f-fow stowing pwoducew-simcwustews embeddings
+  d-def topcwustewembeddingstopwoducewsouwce(
+    p-path: stwing
+  ): vewsionedkeyvawsouwce[pewsistedfuwwcwustewid, o.O toppwoducewswithscowe] = {
+    impwicit vaw keyinject: i-injection[pewsistedfuwwcwustewid, (⑅˘꒳˘) awway[byte]] =
+      compactscawacodec(pewsistedfuwwcwustewid)
+    impwicit vaw vawinject: injection[toppwoducewswithscowe, 😳😳😳 a-awway[byte]] =
+      compactscawacodec(toppwoducewswithscowe)
+    vewsionedkeyvawsouwce[pewsistedfuwwcwustewid, nyaa~~ t-toppwoducewswithscowe](path)
   }
 
-  def userToInferredEntitiesSource(
-    path: String
-  ): VersionedKeyValSource[Long, SimClustersInferredEntities] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[SimClustersInferredEntities, Array[Byte]] =
-      CompactScalaCodec(SimClustersInferredEntities)
-    VersionedKeyValSource[Long, SimClustersInferredEntities](path)
+  d-def usewtoinfewwedentitiessouwce(
+    path: stwing
+  ): vewsionedkeyvawsouwce[wong, rawr simcwustewsinfewwedentities] = {
+    i-impwicit vaw k-keyinject: injection[wong, -.- awway[byte]] = injection.wong2bigendian
+    impwicit v-vaw vawinject: injection[simcwustewsinfewwedentities, (✿oωo) awway[byte]] =
+      c-compactscawacodec(simcwustewsinfewwedentities)
+    vewsionedkeyvawsouwce[wong, /(^•ω•^) simcwustewsinfewwedentities](path)
   }
 
-  def knownForAdhocSource(path: String): VersionedKeyValSource[Long, ClustersUserIsKnownFor] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[ClustersUserIsKnownFor, Array[Byte]] =
-      CompactScalaCodec(ClustersUserIsKnownFor)
-    VersionedKeyValSource[Long, ClustersUserIsKnownFor](path)
+  def knownfowadhocsouwce(path: s-stwing): vewsionedkeyvawsouwce[wong, 🥺 cwustewsusewisknownfow] = {
+    i-impwicit v-vaw keyinject: injection[wong, ʘwʘ awway[byte]] = injection.wong2bigendian
+    i-impwicit vaw vawinject: i-injection[cwustewsusewisknownfow, UwU a-awway[byte]] =
+      c-compactscawacodec(cwustewsusewisknownfow)
+    vewsionedkeyvawsouwce[wong, XD c-cwustewsusewisknownfow](path)
   }
 
-  def knownForSBFResultsDevelSource(
-    path: String
-  ): VersionedKeyValSource[Long, Array[(Int, Float)]] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[Array[(Int, Float)], Array[Byte]] =
-      Bufferable.injectionOf[Array[(Int, Float)]]
-    VersionedKeyValSource[Long, Array[(Int, Float)]](path)
+  d-def knownfowsbfwesuwtsdevewsouwce(
+    path: stwing
+  ): vewsionedkeyvawsouwce[wong, (✿oωo) a-awway[(int, f-fwoat)]] = {
+    i-impwicit vaw keyinject: injection[wong, :3 a-awway[byte]] = injection.wong2bigendian
+    impwicit v-vaw vawinject: i-injection[awway[(int, (///ˬ///✿) fwoat)], nyaa~~ awway[byte]] =
+      buffewabwe.injectionof[awway[(int, >w< f-fwoat)]]
+    v-vewsionedkeyvawsouwce[wong, -.- a-awway[(int, (✿oωo) f-fwoat)]](path)
   }
 
-  // injection to store adjlist in the mapped indices space for users
-  def intermediateSBFResultsDevelSource(
-    path: String
-  ): VersionedKeyValSource[Int, List[(Int, Float)]] = {
-    implicit val keyInject: Injection[Int, Array[Byte]] = Injection.int2BigEndian
-    implicit val valInject: Injection[List[(Int, Float)], Array[Byte]] =
-      Bufferable.injectionOf[List[(Int, Float)]]
-    VersionedKeyValSource[Int, List[(Int, Float)]](path)
+  // injection t-to stowe adjwist in the mapped indices space fow usews
+  def intewmediatesbfwesuwtsdevewsouwce(
+    path: s-stwing
+  ): vewsionedkeyvawsouwce[int, (˘ω˘) wist[(int, f-fwoat)]] = {
+    impwicit vaw k-keyinject: injection[int, rawr awway[byte]] = i-injection.int2bigendian
+    impwicit vaw v-vawinject: injection[wist[(int, OwO f-fwoat)], ^•ﻌ•^ awway[byte]] =
+      b-buffewabwe.injectionof[wist[(int, UwU f-fwoat)]]
+    vewsionedkeyvawsouwce[int, (˘ω˘) w-wist[(int, (///ˬ///✿) fwoat)]](path)
   }
 
-  def mappedIndicesDevelSource(path: String): VersionedKeyValSource[Int, Long] = {
-    implicit val keyInject: Injection[Int, Array[Byte]] = Injection.int2BigEndian
-    implicit val valInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    VersionedKeyValSource[Int, Long](path)
+  def mappedindicesdevewsouwce(path: stwing): vewsionedkeyvawsouwce[int, σωσ wong] = {
+    impwicit vaw keyinject: i-injection[int, /(^•ω•^) a-awway[byte]] = i-injection.int2bigendian
+    impwicit vaw vawinject: i-injection[wong, 😳 awway[byte]] = injection.wong2bigendian
+    vewsionedkeyvawsouwce[int, 😳 w-wong](path)
   }
 }

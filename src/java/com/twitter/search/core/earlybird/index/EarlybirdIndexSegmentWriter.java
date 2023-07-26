@@ -1,130 +1,130 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
-import java.io.Closeable;
-import java.io.IOException;
+impowt java.io.cwoseabwe;
+i-impowt j-java.io.ioexception;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorable;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.store.Directory;
+i-impowt owg.apache.wucene.document.document;
+i-impowt owg.apache.wucene.index.indexweadew;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.seawch.cowwectow;
+i-impowt o-owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.weafcowwectow;
+impowt owg.apache.wucene.seawch.quewy;
+i-impowt owg.apache.wucene.seawch.scowabwe;
+impowt owg.apache.wucene.seawch.scowemode;
+i-impowt owg.apache.wucene.stowe.diwectowy;
 
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.column.DocValuesUpdate;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.cowumnstwidefiewdindex;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.docvawuesupdate;
 
 /**
- * IndexSegmentWriter combines some common functionality between the Lucene and Realtime index
- * segment writers.
+ * indexsegmentwwitew combines some common functionawity between the w-wucene and weawtime index
+ * segment w-wwitews. :3
  */
-public abstract class EarlybirdIndexSegmentWriter implements Closeable {
+p-pubwic abstwact cwass eawwybiwdindexsegmentwwitew impwements cwoseabwe {
 
-  public EarlybirdIndexSegmentWriter() {
+  pubwic eawwybiwdindexsegmentwwitew() {
   }
 
   /**
-   * Gets the segment data this segment write is associated with.
-   * @return
+   * g-gets the segment data this segment wwite is associated with. nyaa~~
+   * @wetuwn
    */
-  public abstract EarlybirdIndexSegmentData getSegmentData();
+  pubwic abstwact e-eawwybiwdindexsegmentdata getsegmentdata();
 
   /**
-   * Appends terms from the document to the document matching the query. Does not replace a field or
-   * document, actually adds to the the field in the segment.
+   * a-appends tewms fwom t-the document t-to the document m-matching the quewy. 😳 does nyot wepwace a fiewd ow
+   * d-document, (⑅˘꒳˘) actuawwy adds to the the fiewd in t-the segment. nyaa~~
    */
-  public final void appendOutOfOrder(Query query, Document doc) throws IOException {
-    runQuery(query, docID -> appendOutOfOrder(doc, docID));
+  pubwic finaw void appendoutofowdew(quewy quewy, OwO document doc) thwows ioexception {
+    wunquewy(quewy, rawr x3 d-docid -> appendoutofowdew(doc, XD d-docid));
   }
 
-  protected abstract void appendOutOfOrder(Document doc, int docId) throws IOException;
+  p-pwotected a-abstwact void appendoutofowdew(document doc, σωσ int docid) thwows ioexception;
 
   /**
-   * Deletes a document in this segment that matches this query.
+   * dewetes a-a document i-in this segment that matches this q-quewy. (U ᵕ U❁)
    */
-  public void deleteDocuments(Query query) throws IOException {
-    runQuery(query, docID -> getSegmentData().getDeletedDocs().deleteDoc(docID));
+  p-pubwic void dewetedocuments(quewy quewy) thwows i-ioexception {
+    wunquewy(quewy, (U ﹏ U) d-docid -> getsegmentdata().getdeweteddocs().dewetedoc(docid));
   }
 
   /**
-   * Updates the docvalues of a document in this segment that matches this query.
+   * updates the docvawues of a document i-in this segment that matches t-this quewy. :3
    */
-  public void updateDocValues(Query query, String field, DocValuesUpdate update)
-      throws IOException {
-    runQuery(query, docID -> {
-        ColumnStrideFieldIndex docValues =
-            getSegmentData().getDocValuesManager().getColumnStrideFieldIndex(field);
-        if (docValues == null) {
-          return;
+  pubwic void u-updatedocvawues(quewy q-quewy, ( ͡o ω ͡o ) stwing fiewd, σωσ docvawuesupdate update)
+      thwows ioexception {
+    wunquewy(quewy, >w< docid -> {
+        cowumnstwidefiewdindex d-docvawues =
+            g-getsegmentdata().getdocvawuesmanagew().getcowumnstwidefiewdindex(fiewd);
+        if (docvawues == n-nyuww) {
+          w-wetuwn;
         }
 
-        update.update(docValues, docID);
+        u-update.update(docvawues, 😳😳😳 docid);
       });
   }
 
-  private void runQuery(final Query query, final OnHit onHit) throws IOException {
-    try (IndexReader reader = getSegmentData().createAtomicReader()) {
-      new IndexSearcher(reader).search(query, new Collector() {
-        @Override
-        public LeafCollector getLeafCollector(LeafReaderContext context) throws IOException {
-          return new LeafCollector() {
-            @Override
-            public void setScorer(Scorable scorer) {
+  pwivate void wunquewy(finaw q-quewy quewy, OwO finaw onhit onhit) thwows ioexception {
+    twy (indexweadew weadew = getsegmentdata().cweateatomicweadew()) {
+      nyew indexseawchew(weadew).seawch(quewy, 😳 n-nyew cowwectow() {
+        @ovewwide
+        pubwic w-weafcowwectow g-getweafcowwectow(weafweadewcontext c-context) thwows ioexception {
+          w-wetuwn n-nyew weafcowwectow() {
+            @ovewwide
+            p-pubwic v-void setscowew(scowabwe scowew) {
             }
 
-            @Override
-            public void collect(int docID) throws IOException {
-              onHit.hit(docID);
+            @ovewwide
+            pubwic void c-cowwect(int d-docid) thwows ioexception {
+              o-onhit.hit(docid);
             }
           };
         }
 
-        @Override
-        public ScoreMode scoreMode() {
-          return ScoreMode.COMPLETE_NO_SCORES;
+        @ovewwide
+        p-pubwic s-scowemode scowemode() {
+          wetuwn scowemode.compwete_no_scowes;
         }
       });
     }
   }
 
-  private interface OnHit {
-    void hit(int docID) throws IOException;
+  pwivate intewface onhit {
+    v-void hit(int docid) thwows ioexception;
   }
 
   /**
-   * Adds a new document to this segment. In production, this method should be called only by
-   * Expertsearch.
+   * adds a nyew document to this segment. 😳😳😳 in pwoduction, (˘ω˘) t-this method shouwd be cawwed onwy by
+   * expewtseawch.
    */
-  public abstract void addDocument(Document doc) throws IOException;
+  p-pubwic abstwact v-void adddocument(document d-doc) thwows ioexception;
 
   /**
-   * Adds a new tweet to this segment. This method should be called only by Earlybird.
+   * adds a nyew t-tweet to this segment. ʘwʘ this method s-shouwd be cawwed o-onwy by eawwybiwd. ( ͡o ω ͡o )
    */
-  public abstract void addTweet(Document doc, long tweetId, boolean docIsOffensive)
-      throws IOException;
+  pubwic abstwact void addtweet(document doc, o.O wong tweetid, >w< boowean docisoffensive)
+      t-thwows ioexception;
 
   /**
-   * Returns the total number of documents in the segment.
+   * wetuwns t-the totaw nyumbew of documents in t-the segment. 😳
    */
-  public abstract int numDocs() throws IOException;
+  p-pubwic abstwact int nyumdocs() thwows ioexception;
 
   /**
-   * Returns the number of documents in this segment without taking deleted docs into account.
-   * E.g. if 10 documents were added to this segments, and 5 were deleted,
-   * this method still returns 10.
+   * w-wetuwns the n-nyumbew of documents in this segment w-without taking d-deweted docs into account. 🥺
+   * e.g. rawr x3 if 10 documents wewe added to this segments, o.O a-and 5 wewe d-deweted, rawr
+   * t-this method stiww wetuwns 10. ʘwʘ
    */
-  public abstract int numDocsNoDelete() throws IOException;
+  p-pubwic abstwact i-int nyumdocsnodewete() thwows i-ioexception;
 
   /**
-   * Forces the underlying index to be merged down to a single segment.
+   * fowces the undewwying index to be mewged down to a s-singwe segment. 😳😳😳
    */
-  public abstract void forceMerge() throws IOException;
+  p-pubwic abstwact void fowcemewge() thwows i-ioexception;
 
   /**
-   * Appends the provides Lucene indexes to this segment.
+   * a-appends the pwovides wucene indexes to this segment. ^^;;
    */
-  public abstract void addIndexes(Directory... dirs) throws IOException;
+  p-pubwic abstwact void addindexes(diwectowy... diws) thwows ioexception;
 }

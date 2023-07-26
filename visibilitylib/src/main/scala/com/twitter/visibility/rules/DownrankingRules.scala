@@ -1,207 +1,207 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.common.ModelScoreThresholds
-import com.twitter.visibility.configapi.configs.DeciderKey
-import com.twitter.visibility.configapi.params.FSRuleParams.HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableDownrankSpamReplySectioningRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.NotGraduatedUserLabelRuleHoldbackExperimentParam
-import com.twitter.visibility.configapi.params.TimelineConversationsDownrankingSpecificParams._
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
-import com.twitter.visibility.rules.RuleActionSourceBuilder.UserSafetyLabelSourceBuilder
+impowt com.twittew.timewines.configapi.pawams
+i-impowt com.twittew.visibiwity.common.modewscowethweshowds
+i-impowt c-com.twittew.visibiwity.configapi.configs.decidewkey
+i-impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.highspammytweetcontentscoweconvodownwankabusivequawitythweshowdpawam
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams.enabwedownwankspamwepwysectioningwuwepawam
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams.enabwenotgwaduateddownwankconvosabusivequawitywuwepawam
+impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.notgwaduatedusewwabewwuwehowdbackexpewimentpawam
+impowt com.twittew.visibiwity.configapi.pawams.timewineconvewsationsdownwankingspecificpawams._
+impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawam
+impowt com.twittew.visibiwity.modews.tweetsafetywabewtype
+impowt c-com.twittew.visibiwity.modews.usewwabewvawue
+impowt com.twittew.visibiwity.wuwes.condition._
+i-impowt com.twittew.visibiwity.wuwes.wuweactionsouwcebuiwdew.tweetsafetywabewsouwcebuiwdew
+impowt com.twittew.visibiwity.wuwes.wuweactionsouwcebuiwdew.usewsafetywabewsouwcebuiwdew
 
-object DownrankingRules {
+object downwankingwuwes {
 
-  val ToxicityScoreAboveDownrankAbusiveQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
-    TweetHasLabelWithLanguageScoreAboveThreshold(
-      safetyLabel = TweetSafetyLabelType.HighToxicityScore,
-      languagesToScoreThresholds = ModelScoreThresholds.ToxicityAbusiveQualityLanguagesToThresholds
+  v-vaw toxicityscoweabovedownwankabusivequawitysectionthweshowdcondition: tweethaswabewwithwanguagescoweabovethweshowd =
+    t-tweethaswabewwithwanguagescoweabovethweshowd(
+      s-safetywabew = tweetsafetywabewtype.hightoxicityscowe, -.-
+      wanguagestoscowethweshowds = modewscowethweshowds.toxicityabusivequawitywanguagestothweshowds
     )
 
-  val ToxicityScoreAboveDownrankLowQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
-    TweetHasLabelWithLanguageScoreAboveThreshold(
-      safetyLabel = TweetSafetyLabelType.HighToxicityScore,
-      languagesToScoreThresholds = ModelScoreThresholds.ToxicityLowQualityLanguagesToThresholds
+  vaw toxicityscoweabovedownwankwowquawitysectionthweshowdcondition: tweethaswabewwithwanguagescoweabovethweshowd =
+    t-tweethaswabewwithwanguagescoweabovethweshowd(
+      safetywabew = tweetsafetywabewtype.hightoxicityscowe, ^^
+      wanguagestoscowethweshowds = modewscowethweshowds.toxicitywowquawitywanguagestothweshowds
     )
 
-  val ToxicityScoreAboveDownrankHighQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
-    TweetHasLabelWithLanguageScoreAboveThreshold(
-      safetyLabel = TweetSafetyLabelType.HighToxicityScore,
-      languagesToScoreThresholds = ModelScoreThresholds.ToxicityHighQualityLanguagesToThresholds
+  v-vaw toxicityscoweabovedownwankhighquawitysectionthweshowdcondition: t-tweethaswabewwithwanguagescoweabovethweshowd =
+    t-tweethaswabewwithwanguagescoweabovethweshowd(
+      s-safetywabew = t-tweetsafetywabewtype.hightoxicityscowe, (⑅˘꒳˘)
+      wanguagestoscowethweshowds = modewscowethweshowds.toxicityhighquawitywanguagestothweshowds
     )
 
-  val HighSpammyTweetContentScoreConvoDownrankAbusiveQualityCondition: Condition =
-    TweetHasLabelWithScoreAboveThresholdWithParam(
-      TweetSafetyLabelType.HighSpammyTweetContentScore,
-      HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam)
+  v-vaw highspammytweetcontentscoweconvodownwankabusivequawitycondition: condition =
+    tweethaswabewwithscoweabovethweshowdwithpawam(
+      t-tweetsafetywabewtype.highspammytweetcontentscowe,
+      highspammytweetcontentscoweconvodownwankabusivequawitythweshowdpawam)
 
-  val HighCryptospamScoreConvoDownrankAbusiveQualityCondition: Condition =
-    TweetHasLabel(TweetSafetyLabelType.HighCryptospamScore)
+  vaw highcwyptospamscoweconvodownwankabusivequawitycondition: condition =
+    tweethaswabew(tweetsafetywabewtype.highcwyptospamscowe)
 }
 
-object HighToxicityScoreDownrankHighQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      Downrank,
-      DownrankingRules.ToxicityScoreAboveDownrankHighQualitySectionThresholdCondition
+object h-hightoxicityscowedownwankhighquawitysectionwuwe
+    extends conditionwithnotinnewciwcweoffwiendswuwe(
+      d-downwank, nyaa~~
+      d-downwankingwuwes.toxicityscoweabovedownwankhighquawitysectionthweshowdcondition
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
+    w-with doeswogvewdictdecidewed {
+  ovewwide def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+    t-tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.hightoxicityscowe))
 
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  ovewwide def vewdictwogdecidewkey = d-decidewkey.enabwedownwevewwuwevewdictwogging
 }
 
-object HighToxicityScoreDownrankLowQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionLowQuality,
-      DownrankingRules.ToxicityScoreAboveDownrankLowQualitySectionThresholdCondition
+o-object hightoxicityscowedownwankwowquawitysectionwuwe
+    extends conditionwithnotinnewciwcweoffwiendswuwe(
+      c-convewsationsectionwowquawity, /(^•ω•^)
+      downwankingwuwes.toxicityscoweabovedownwankwowquawitysectionthweshowdcondition
     )
-    with DoesLogVerdict {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
+    w-with doeswogvewdict {
+  ovewwide def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.hightoxicityscowe))
 }
 
-object HighToxicityScoreDownrankAbusiveQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      DownrankingRules.ToxicityScoreAboveDownrankAbusiveQualitySectionThresholdCondition
+object hightoxicityscowedownwankabusivequawitysectionwuwe
+    e-extends conditionwithnotinnewciwcweoffwiendswuwe(
+      convewsationsectionabusivequawity, (U ﹏ U)
+      d-downwankingwuwes.toxicityscoweabovedownwankabusivequawitysectionthweshowdcondition
     )
-    with DoesLogVerdict {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
+    w-with doeswogvewdict {
+  ovewwide def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.hightoxicityscowe))
 }
 
-object UntrustedUrlConversationsTweetLabelRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.UntrustedUrl)
+object untwusteduwwconvewsationstweetwabewwuwe
+    e-extends conditionwithnotinnewciwcweoffwiendswuwe(
+      c-convewsationsectionabusivequawity, 😳😳😳
+      tweethaswabew(tweetsafetywabewtype.untwusteduww)
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.UntrustedUrl))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+    w-with doeswogvewdictdecidewed {
+  o-ovewwide def actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.untwusteduww))
+  ovewwide def vewdictwogdecidewkey = d-decidewkey.enabwedownwevewwuwevewdictwogging
 }
 
-object DownrankSpamReplyConversationsTweetLabelRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.DownrankSpamReply)
+object downwankspamwepwyconvewsationstweetwabewwuwe
+    extends conditionwithnotinnewciwcweoffwiendswuwe(
+      convewsationsectionabusivequawity, >w<
+      tweethaswabew(tweetsafetywabewtype.downwankspamwepwy)
     )
-    with DoesLogVerdictDecidered {
+    w-with doeswogvewdictdecidewed {
 
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  ovewwide def enabwed: s-seq[wuwepawam[boowean]] =
+    s-seq(enabwedownwankspamwepwysectioningwuwepawam)
 
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.DownrankSpamReply))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  o-ovewwide def actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = s-some(
+    t-tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.downwankspamwepwy))
+  o-ovewwide def vewdictwogdecidewkey = decidewkey.enabwedownwevewwuwevewdictwogging
 }
 
-object DownrankSpamReplyConversationsAuthorLabelRule
-    extends AuthorLabelWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      UserLabelValue.DownrankSpamReply
+object downwankspamwepwyconvewsationsauthowwabewwuwe
+    e-extends a-authowwabewwithnotinnewciwcweoffwiendswuwe(
+      c-convewsationsectionabusivequawity, XD
+      u-usewwabewvawue.downwankspamwepwy
     )
-    with DoesLogVerdictDecidered {
+    w-with doeswogvewdictdecidewed {
 
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  ovewwide def enabwed: s-seq[wuwepawam[boowean]] =
+    seq(enabwedownwankspamwepwysectioningwuwepawam)
+  ovewwide def vewdictwogdecidewkey = decidewkey.enabwedownwevewwuwevewdictwogging
 
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(UserLabelValue.DownrankSpamReply))
+  ovewwide d-def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = some(
+    usewsafetywabewsouwcebuiwdew(usewwabewvawue.downwankspamwepwy))
 }
 
-object NotGraduatedConversationsAuthorLabelRule
-    extends AuthorLabelWithNotInnerCircleOfFriendsRule(
-      ConversationSectionLowQuality,
-      UserLabelValue.NotGraduated
+o-object notgwaduatedconvewsationsauthowwabewwuwe
+    e-extends a-authowwabewwithnotinnewciwcweoffwiendswuwe(
+      convewsationsectionwowquawity, o.O
+      u-usewwabewvawue.notgwaduated
     )
-    with DoesLogVerdictDecidered {
+    with doeswogvewdictdecidewed {
 
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam)
+  o-ovewwide def e-enabwed: seq[wuwepawam[boowean]] =
+    seq(enabwenotgwaduateddownwankconvosabusivequawitywuwepawam)
 
-  override def holdbacks: Seq[RuleParam[Boolean]] = Seq(
-    NotGraduatedUserLabelRuleHoldbackExperimentParam)
+  ovewwide def howdbacks: seq[wuwepawam[boowean]] = seq(
+    nyotgwaduatedusewwabewwuwehowdbackexpewimentpawam)
 
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(UserLabelValue.NotGraduated))
+  o-ovewwide def vewdictwogdecidewkey = d-decidewkey.enabwedownwevewwuwevewdictwogging
+  ovewwide d-def actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = some(
+    usewsafetywabewsouwcebuiwdew(usewwabewvawue.notgwaduated))
 }
 
-object HighProactiveTosScoreTweetLabelDownrankingRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.HighProactiveTosScore)
+object highpwoactivetosscowetweetwabewdownwankingwuwe
+    e-extends conditionwithnotinnewciwcweoffwiendswuwe(
+      c-convewsationsectionabusivequawity, mya
+      tweethaswabew(tweetsafetywabewtype.highpwoactivetosscowe)
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighProactiveTosScore))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+    w-with doeswogvewdictdecidewed {
+  o-ovewwide def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.highpwoactivetosscowe))
+  o-ovewwide def vewdictwogdecidewkey = d-decidewkey.enabwedownwevewwuwevewdictwogging
 }
 
-object HighPSpammyTweetScoreDownrankLowQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action = ConversationSectionLowQuality,
-      condition = TweetHasLabelWithScoreAboveThreshold(
-        TweetSafetyLabelType.HighPSpammyTweetScore,
-        ModelScoreThresholds.HighPSpammyTweetScoreThreshold)
+o-object highpspammytweetscowedownwankwowquawitysectionwuwe
+    extends conditionwithnotinnewciwcweoffwiendswuwe(
+      a-action = c-convewsationsectionwowquawity, 🥺
+      condition = t-tweethaswabewwithscoweabovethweshowd(
+        tweetsafetywabewtype.highpspammytweetscowe, ^^;;
+        modewscowethweshowds.highpspammytweetscowethweshowd)
     )
-    with DoesLogVerdictDecidered {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnablePSpammyTweetDownrankConvosLowQualityParam)
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighPSpammyTweetScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with doeswogvewdictdecidewed {
+  ovewwide d-def enabwed: seq[wuwepawam[boowean]] = s-seq(
+    enabwepspammytweetdownwankconvoswowquawitypawam)
+  ovewwide def a-actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.highpspammytweetscowe))
+  ovewwide def vewdictwogdecidewkey: d-decidewkey.vawue =
+    decidewkey.enabwespammytweetwuwevewdictwogging
 }
 
-object HighSpammyTweetContentScoreConvoDownrankAbusiveQualityRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action = ConversationSectionAbusiveQuality,
-      condition = And(
-        Not(IsTweetInTweetLevelStcmHoldback),
-        DownrankingRules.HighSpammyTweetContentScoreConvoDownrankAbusiveQualityCondition)
+object highspammytweetcontentscoweconvodownwankabusivequawitywuwe
+    extends conditionwithnotinnewciwcweoffwiendswuwe(
+      a-action = convewsationsectionabusivequawity, :3
+      condition = a-and(
+        n-nyot(istweetintweetwevewstcmhowdback), (U ﹏ U)
+        downwankingwuwes.highspammytweetcontentscoweconvodownwankabusivequawitycondition)
     )
-    with DoesLogVerdictDecidered {
-  override def isEnabled(params: Params): Boolean = {
-    params(EnableHighSpammyTweetContentScoreConvoDownrankAbusiveQualityRuleParam)
+    with doeswogvewdictdecidewed {
+  ovewwide def isenabwed(pawams: pawams): b-boowean = {
+    p-pawams(enabwehighspammytweetcontentscoweconvodownwankabusivequawitywuwepawam)
   }
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighSpammyTweetContentScore))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  ovewwide def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.highspammytweetcontentscowe))
+  ovewwide d-def vewdictwogdecidewkey = decidewkey.enabwedownwevewwuwevewdictwogging
 }
 
-object HighCryptospamScoreConvoDownrankAbusiveQualityRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action = ConversationSectionAbusiveQuality,
-      condition = DownrankingRules.HighCryptospamScoreConvoDownrankAbusiveQualityCondition
+object highcwyptospamscoweconvodownwankabusivequawitywuwe
+    extends conditionwithnotinnewciwcweoffwiendswuwe(
+      a-action = convewsationsectionabusivequawity, OwO
+      c-condition = d-downwankingwuwes.highcwyptospamscoweconvodownwankabusivequawitycondition
     )
-    with DoesLogVerdictDecidered {
-  override def isEnabled(params: Params): Boolean = {
-    params(EnableHighCryptospamScoreConvoDownrankAbusiveQualityRuleParam)
+    with doeswogvewdictdecidewed {
+  o-ovewwide def isenabwed(pawams: p-pawams): b-boowean = {
+    p-pawams(enabwehighcwyptospamscoweconvodownwankabusivequawitywuwepawam)
   }
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighCryptospamScore))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  ovewwide d-def actionsouwcebuiwdew: option[wuweactionsouwcebuiwdew] = s-some(
+    tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.highcwyptospamscowe))
+  ovewwide def vewdictwogdecidewkey = d-decidewkey.enabwedownwevewwuwevewdictwogging
 }
 
-object RitoActionedTweetDownrankLowQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action = ConversationSectionLowQuality,
-      condition = TweetHasLabel(TweetSafetyLabelType.RitoActionedTweet)
+o-object w-witoactionedtweetdownwankwowquawitysectionwuwe
+    extends conditionwithnotinnewciwcweoffwiendswuwe(
+      action = c-convewsationsectionwowquawity,
+      condition = t-tweethaswabew(tweetsafetywabewtype.witoactionedtweet)
     )
-    with DoesLogVerdictDecidered {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableRitoActionedTweetDownrankConvosLowQualityParam)
+    w-with doeswogvewdictdecidewed {
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(
+    e-enabwewitoactionedtweetdownwankconvoswowquawitypawam)
 
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.RitoActionedTweet))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  o-ovewwide d-def actionsouwcebuiwdew: o-option[wuweactionsouwcebuiwdew] = some(
+    t-tweetsafetywabewsouwcebuiwdew(tweetsafetywabewtype.witoactionedtweet))
+  ovewwide def vewdictwogdecidewkey = decidewkey.enabwedownwevewwuwevewdictwogging
 }

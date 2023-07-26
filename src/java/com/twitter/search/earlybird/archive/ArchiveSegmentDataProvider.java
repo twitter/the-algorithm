@@ -1,83 +1,83 @@
-package com.twitter.search.earlybird.archive;
+package com.twittew.seawch.eawwybiwd.awchive;
 
-import java.io.IOException;
-import java.util.List;
+impowt j-java.io.ioexception;
+i-impowt j-java.utiw.wist;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+i-impowt com.googwe.common.base.pweconditions;
+impowt c-com.googwe.common.cowwect.wists;
 
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer.ArchiveTimeSlice;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.segment.EmptySegmentDataReaderSet;
-import com.twitter.search.earlybird.segment.SegmentDataProvider;
-import com.twitter.search.earlybird.segment.SegmentDataReaderSet;
+i-impowt com.twittew.seawch.common.pawtitioning.base.segment;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+i-impowt com.twittew.seawch.common.utiw.io.wecowdweadew.wecowdweadew;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdindexconfig;
+impowt com.twittew.seawch.eawwybiwd.awchive.awchivetimeswicew.awchivetimeswice;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt c-com.twittew.seawch.eawwybiwd.document.documentfactowy;
+impowt c-com.twittew.seawch.eawwybiwd.document.tweetdocument;
+impowt com.twittew.seawch.eawwybiwd.pawtition.dynamicpawtitionconfig;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
+i-impowt com.twittew.seawch.eawwybiwd.segment.emptysegmentdataweadewset;
+impowt com.twittew.seawch.eawwybiwd.segment.segmentdatapwovidew;
+i-impowt com.twittew.seawch.eawwybiwd.segment.segmentdataweadewset;
 
-public class ArchiveSegmentDataProvider implements SegmentDataProvider {
-  private static final org.slf4j.Logger LOG =
-      org.slf4j.LoggerFactory.getLogger(ArchiveSegmentDataProvider.class);
+p-pubwic cwass awchivesegmentdatapwovidew impwements segmentdatapwovidew {
+  pwivate s-static finaw owg.swf4j.woggew wog =
+      owg.swf4j.woggewfactowy.getwoggew(awchivesegmentdatapwovidew.cwass);
 
-  private DynamicPartitionConfig dynamicPartitionConfig;
-  private final ArchiveTimeSlicer timeSlicer;
+  pwivate d-dynamicpawtitionconfig dynamicpawtitionconfig;
+  p-pwivate finaw awchivetimeswicew t-timeswicew;
 
-  private final DocumentFactory<ThriftIndexingEvent> documentFactory;
+  p-pwivate finaw documentfactowy<thwiftindexingevent> d-documentfactowy;
 
-  private final SegmentDataReaderSet readerSet;
+  pwivate finaw segmentdataweadewset w-weadewset;
 
-  public ArchiveSegmentDataProvider(
-      DynamicPartitionConfig dynamicPartitionConfig,
-      ArchiveTimeSlicer timeSlicer,
-      EarlybirdIndexConfig earlybirdIndexConfig) throws IOException {
-    this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.timeSlicer = timeSlicer;
-    this.readerSet = createSegmentDataReaderSet();
-    this.documentFactory = earlybirdIndexConfig.createDocumentFactory();
+  pubwic awchivesegmentdatapwovidew(
+      dynamicpawtitionconfig d-dynamicpawtitionconfig, (ˆ ﻌ ˆ)♡
+      awchivetimeswicew timeswicew,
+      eawwybiwdindexconfig eawwybiwdindexconfig) thwows ioexception {
+    this.dynamicpawtitionconfig = d-dynamicpawtitionconfig;
+    this.timeswicew = t-timeswicew;
+    t-this.weadewset = c-cweatesegmentdataweadewset();
+    this.documentfactowy = eawwybiwdindexconfig.cweatedocumentfactowy();
   }
 
-  @Override
-  public List<Segment> newSegmentList() throws IOException {
-    List<ArchiveTimeSlice> timeSlices = timeSlicer.getTimeSlicesInTierRange();
-    if (timeSlices == null || timeSlices.isEmpty()) {
-      return Lists.newArrayList();
+  @ovewwide
+  pubwic wist<segment> n-nyewsegmentwist() t-thwows ioexception {
+    w-wist<awchivetimeswice> t-timeswices = timeswicew.gettimeswicesintiewwange();
+    i-if (timeswices == nyuww || timeswices.isempty()) {
+      w-wetuwn wists.newawwaywist();
     }
-    List<Segment> segments = Lists.newArrayListWithCapacity(timeSlices.size());
-    for (ArchiveTimeSlice timeSlice : timeSlices) {
-      segments.add(newArchiveSegment(timeSlice));
+    wist<segment> s-segments = wists.newawwaywistwithcapacity(timeswices.size());
+    fow (awchivetimeswice t-timeswice : timeswices) {
+      s-segments.add(newawchivesegment(timeswice));
     }
-    return segments;
+    w-wetuwn segments;
   }
 
   /**
-   * Creates a new Segment instance for the given timeslice.
+   * cweates a nyew segment instance fow the given timeswice. 😳😳😳
    */
-  public ArchiveSegment newArchiveSegment(ArchiveTimeSlice archiveTimeSlice) {
-    return new ArchiveSegment(
-        archiveTimeSlice,
-        dynamicPartitionConfig.getCurrentPartitionConfig().getIndexingHashPartitionID(),
-        EarlybirdConfig.getMaxSegmentSize());
+  pubwic awchivesegment nyewawchivesegment(awchivetimeswice awchivetimeswice) {
+    w-wetuwn nyew a-awchivesegment(
+        awchivetimeswice, :3
+        d-dynamicpawtitionconfig.getcuwwentpawtitionconfig().getindexinghashpawtitionid(), OwO
+        e-eawwybiwdconfig.getmaxsegmentsize());
   }
 
-  @Override
-  public SegmentDataReaderSet getSegmentDataReaderSet() {
-    return readerSet;
+  @ovewwide
+  p-pubwic segmentdataweadewset getsegmentdataweadewset() {
+    wetuwn weadewset;
   }
 
-  private EmptySegmentDataReaderSet createSegmentDataReaderSet() throws IOException {
-    return new EmptySegmentDataReaderSet() {
+  pwivate e-emptysegmentdataweadewset cweatesegmentdataweadewset() thwows ioexception {
+    wetuwn nyew emptysegmentdataweadewset() {
 
-      @Override
-      public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo)
-          throws IOException {
-        Segment segment = segmentInfo.getSegment();
-        Preconditions.checkArgument(segment instanceof ArchiveSegment);
-        return ((ArchiveSegment) segment).getStatusRecordReader(documentFactory);
+      @ovewwide
+      pubwic wecowdweadew<tweetdocument> n-newdocumentweadew(segmentinfo segmentinfo)
+          t-thwows i-ioexception {
+        s-segment segment = segmentinfo.getsegment();
+        p-pweconditions.checkawgument(segment instanceof a-awchivesegment);
+        w-wetuwn ((awchivesegment) s-segment).getstatuswecowdweadew(documentfactowy);
       }
     };
   }

@@ -1,24 +1,24 @@
-package com.twitter.tweetypie.media
+package com.twittew.tweetypie.media
 
-import com.twitter.mediaservices.commons.thriftscala._
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
-import com.twitter.tweetypie.thriftscala.MediaEntity
+impowt com.twittew.mediasewvices.commons.thwiftscawa._
+i-impowt c-com.twittew.mediasewvices.commons.tweetmedia.thwiftscawa._
+i-impowt c-com.twittew.tweetypie.thwiftscawa.mediaentity
 
-object MediaKeyUtil {
+o-object mediakeyutiw {
 
-  def get(mediaEntity: MediaEntity): MediaKey =
-    mediaEntity.mediaKey.getOrElse {
-      throw new IllegalStateException("""Media key undefined. This state is unexpected, the media
-          |key should be set by the tweet creation for new tweets
-          |and by `MediaKeyHydrator` for legacy tweets.""".stripMargin)
+  d-def g-get(mediaentity: m-mediaentity): mediakey =
+    mediaentity.mediakey.getowewse {
+      thwow nyew iwwegawstateexception("""media key undefined. rawr this s-state is unexpected, OwO the media
+          |key shouwd be set by t-the tweet cweation fow nyew tweets
+          |and b-by `mediakeyhydwatow` fow wegacy tweets.""".stwipmawgin)
     }
 
-  def contentType(mediaKey: MediaKey): MediaContentType =
-    mediaKey.mediaCategory match {
-      case MediaCategory.TweetImage => MediaContentType.ImageJpeg
-      case MediaCategory.TweetGif => MediaContentType.VideoMp4
-      case MediaCategory.TweetVideo => MediaContentType.VideoGeneric
-      case MediaCategory.AmplifyVideo => MediaContentType.VideoGeneric
-      case mediaCats => throw new NotImplementedError(mediaCats.toString)
+  def contenttype(mediakey: m-mediakey): mediacontenttype =
+    mediakey.mediacategowy m-match {
+      c-case mediacategowy.tweetimage => mediacontenttype.imagejpeg
+      case mediacategowy.tweetgif => mediacontenttype.videomp4
+      case mediacategowy.tweetvideo => m-mediacontenttype.videogenewic
+      case mediacategowy.ampwifyvideo => mediacontenttype.videogenewic
+      case mediacats => t-thwow nyew nyotimpwementedewwow(mediacats.tostwing)
     }
 }

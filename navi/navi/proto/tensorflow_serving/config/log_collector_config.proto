@@ -1,12 +1,12 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+package tensowfwow.sewving;
+option cc_enabwe_awenas = t-twue;
 
-message LogCollectorConfig {
-  // Identifies the type of the LogCollector we will use to collect these logs.
-  string type = 1;
+m-message wogcowwectowconfig {
+  // i-identifies the t-type of the wogcowwectow w-we wiww u-use to cowwect t-these wogs. σωσ
+  stwing t-type = 1;
 
-  // The prefix to use for the filenames of the logs.
-  string filename_prefix = 2;
+  // the pwefix to use fow the fiwenames of the wogs. σωσ
+  stwing f-fiwename_pwefix = 2;
 }

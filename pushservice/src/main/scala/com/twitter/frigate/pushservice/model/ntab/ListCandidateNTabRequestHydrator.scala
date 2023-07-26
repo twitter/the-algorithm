@@ -1,34 +1,34 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.pushservice.model.ListRecommendationPushCandidate
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.InlineCard
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.wistwecommendationpushcandidate
+i-impowt com.twittew.notificationsewvice.thwiftscawa.dispwaytext
+impowt c-com.twittew.notificationsewvice.thwiftscawa.dispwaytextentity
+i-impowt com.twittew.notificationsewvice.thwiftscawa.inwinecawd
+i-impowt com.twittew.notificationsewvice.thwiftscawa.stowycontext
+i-impowt com.twittew.notificationsewvice.thwiftscawa.textvawue
+impowt c-com.twittew.utiw.futuwe
 
-trait ListCandidateNTabRequestHydrator extends NTabRequestHydrator {
+twait w-wistcandidatentabwequesthydwatow e-extends nytabwequesthydwatow {
 
-  self: ListRecommendationPushCandidate =>
+  sewf: wistwecommendationpushcandidate =>
 
-  override lazy val senderIdFut: Future[Long] =
-    listOwnerId.map(_.getOrElse(0L))
+  ovewwide wazy vaw sendewidfut: futuwe[wong] =
+    w-wistownewid.map(_.getowewse(0w))
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = Future.Nil
+  ovewwide wazy vaw facepiweusewsfut: f-futuwe[seq[wong]] = futuwe.niw
 
-  override lazy val storyContext: Option[StoryContext] = None
+  o-ovewwide wazy vaw stowycontext: option[stowycontext] = nyone
 
-  override lazy val inlineCard: Option[InlineCard] = None
+  o-ovewwide wazy vaw inwinecawd: option[inwinecawd] = n-nyone
 
-  override lazy val tapThroughFut: Future[String] = Future.value(s"i/lists/${listId}")
+  ovewwide w-wazy vaw tapthwoughfut: futuwe[stwing] = futuwe.vawue(s"i/wists/${wistid}")
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = listName.map {
-    listNameOpt =>
-      listNameOpt.toSeq.map { name =>
-        DisplayTextEntity(name = "title", value = TextValue.Text(name))
+  ovewwide wazy vaw dispwaytextentitiesfut: f-futuwe[seq[dispwaytextentity]] = wistname.map {
+    wistnameopt =>
+      wistnameopt.toseq.map { nyame =>
+        dispwaytextentity(name = "titwe", vawue = textvawue.text(name))
       }
   }
 
-  override val socialProofDisplayText: Option[DisplayText] = Some(DisplayText())
+  ovewwide v-vaw sociawpwoofdispwaytext: option[dispwaytext] = s-some(dispwaytext())
 }

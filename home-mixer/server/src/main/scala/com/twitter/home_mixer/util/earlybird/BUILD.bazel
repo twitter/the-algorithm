@@ -1,23 +1,23 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "home-mixer/thrift/src/main/thrift:thrift-scala",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/java/com/twitter/search/common/schema/earlybird",
-        "src/java/com/twitter/search/common/util/lang",
-        "src/java/com/twitter/search/queryparser/query:core-query-nodes",
-        "src/java/com/twitter/search/queryparser/query/search:search-query-nodes",
-        "src/thrift/com/twitter/search:earlybird-scala",
-        "src/thrift/com/twitter/search/common:constants-scala",
-        "src/thrift/com/twitter/search/common:query-scala",
-        "src/thrift/com/twitter/search/common:ranking-scala",
-        "timelines/src/main/scala/com/twitter/timelines/clients/relevance_search",
-        "timelines/src/main/scala/com/twitter/timelines/earlybird/common/options",
-        "timelines/src/main/scala/com/twitter/timelines/earlybird/common/utils",
-        "timelines/src/main/scala/com/twitter/timelines/model/types",
-        "timelines/src/main/scala/com/twitter/timelines/util/stats",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "home-mixew/thwift/swc/main/thwift:thwift-scawa", (⑅˘꒳˘)
+        "swc/java/com/twittew/seawch/common/schema/base", ( ͡o ω ͡o )
+        "swc/java/com/twittew/seawch/common/schema/eawwybiwd", UwU
+        "swc/java/com/twittew/seawch/common/utiw/wang", rawr x3
+        "swc/java/com/twittew/seawch/quewypawsew/quewy:cowe-quewy-nodes", rawr
+        "swc/java/com/twittew/seawch/quewypawsew/quewy/seawch:seawch-quewy-nodes", σωσ
+        "swc/thwift/com/twittew/seawch:eawwybiwd-scawa", σωσ
+        "swc/thwift/com/twittew/seawch/common:constants-scawa", >_<
+        "swc/thwift/com/twittew/seawch/common:quewy-scawa", :3
+        "swc/thwift/com/twittew/seawch/common:wanking-scawa", (U ﹏ U)
+        "timewines/swc/main/scawa/com/twittew/timewines/cwients/wewevance_seawch", -.-
+        "timewines/swc/main/scawa/com/twittew/timewines/eawwybiwd/common/options", (ˆ ﻌ ˆ)♡
+        "timewines/swc/main/scawa/com/twittew/timewines/eawwybiwd/common/utiws",
+        "timewines/swc/main/scawa/com/twittew/timewines/modew/types", (⑅˘꒳˘)
+        "timewines/swc/main/scawa/com/twittew/timewines/utiw/stats", (U ᵕ U❁)
+    ], -.-
 )

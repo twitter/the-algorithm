@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
 
-trait HasEntryIdentifier extends UniversalNoun[Any] with HasEntryNamespace {
-  // Distinctly identifies this entry and must be unique relative to other entries within a response
-  lazy val entryIdentifier: String = s"$entryNamespace-$id"
+t-twait hasentwyidentifiew e-extends univewsawnoun[any] w-with h-hasentwynamespace {
+  // d-distinctwy i-identifies t-this entwy and must b-be unique wewative to othew entwies within a wesponse
+  wazy vaw entwyidentifiew: s-stwing = s"$entwynamespace-$id"
 }

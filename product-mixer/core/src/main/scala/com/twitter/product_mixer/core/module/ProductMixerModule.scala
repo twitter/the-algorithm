@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.module
+package com.twittew.pwoduct_mixew.cowe.moduwe
 
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.international.modules.LanguagesModule
-import com.twitter.product_mixer.core.product.guice.ProductScopeModule
-import com.twitter.finatra.jackson.modules.ScalaObjectMapperModule
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
+impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags.pwoductmixewfwagmoduwe
+i-impowt c-com.twittew.finatwa.decidew.moduwes.decidewmoduwe
+i-impowt com.twittew.finatwa.intewnationaw.moduwes.wanguagesmoduwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pwoduct.guice.pwoductscopemoduwe
+impowt c-com.twittew.finatwa.jackson.moduwes.scawaobjectmappewmoduwe
+i-impowt com.twittew.inject.thwift.moduwes.thwiftcwientidmoduwe
 
 /**
- * ProductMixerModule provides modules required by all Product Mixer services.
+ * pwoductmixewmoduwe pwovides moduwes wequiwed by aww pwoduct m-mixew sewvices. nyaa~~
  *
- * @note if your service calls Strato you will need to add the [[StratoClientModule]] yourself.
+ * @note if youw sewvice cawws stwato you w-wiww nyeed to add the [[stwatocwientmoduwe]] y-youwsewf. /(^•ω•^)
  */
-object ProductMixerModule extends TwitterModule {
+object pwoductmixewmoduwe extends twittewmoduwe {
 
-  override val modules = Seq(
-    ABDeciderModule,
-    ConfigApiModule,
-    DeciderModule,
-    FeatureSwitchesModule,
-    LanguagesModule,
-    PipelineExecutionLoggerModule,
-    ProductMixerFlagModule,
-    new ProductScopeModule(),
-    ScalaObjectMapperModule,
-    ThriftClientIdModule,
+  o-ovewwide vaw moduwes = seq(
+    a-abdecidewmoduwe, rawr
+    c-configapimoduwe, OwO
+    decidewmoduwe, (U ﹏ U)
+    featuweswitchesmoduwe, >_<
+    wanguagesmoduwe, rawr x3
+    pipewineexecutionwoggewmoduwe, mya
+    p-pwoductmixewfwagmoduwe, nyaa~~
+    nyew pwoductscopemoduwe(), (⑅˘꒳˘)
+    scawaobjectmappewmoduwe, rawr x3
+    thwiftcwientidmoduwe, (✿oωo)
   )
 }

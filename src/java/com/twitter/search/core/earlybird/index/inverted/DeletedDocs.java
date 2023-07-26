@@ -1,242 +1,242 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import org.apache.lucene.util.Bits;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.wucene.utiw.bits;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+impowt it.unimi.dsi.fastutiw.ints.int2intopenhashmap;
 
-public abstract class DeletedDocs implements Flushable {
-  private static final Logger LOG = LoggerFactory.getLogger(DeletedDocs.class);
+p-pubwic abstwact cwass deweteddocs i-impwements fwushabwe {
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(deweteddocs.cwass);
 
   /**
-   * Deletes the given document.
+   * dewetes t-the given document. 🥺
    */
-  public abstract boolean deleteDoc(int docID);
+  pubwic a-abstwact boowean dewetedoc(int docid);
 
   /**
-   * Returns a point-in-time view of the deleted docs. Calling {@link #deleteDoc(int)} afterwards
-   * will not alter this View.
+   * wetuwns a point-in-time v-view of the deweted docs. XD cawwing {@wink #dewetedoc(int)} aftewwawds
+   * wiww nyot awtew this v-view. (U ᵕ U❁)
    */
-  public abstract View getView();
+  pubwic abstwact view g-getview();
 
   /**
-   * Number of deletions.
+   * n-nyumbew o-of dewetions. :3
    */
-  public abstract int numDeletions();
+  p-pubwic abstwact int nyumdewetions();
 
   /**
-   * Returns a DeletedDocs instance that has the same deleted tweet IDs, but mapped to the doc IDs
-   * in the optimizedTweetIdMapper.
+   * wetuwns a-a deweteddocs instance that has the same deweted t-tweet ids, ( ͡o ω ͡o ) but mapped to the doc ids
+   * in the optimizedtweetidmappew. òωó
    *
-   * @param originalTweetIdMapper The original DocIDToTweetIDMapper instance that was used to add
-   *                              doc IDs to this DeletedDocs instance.
-   * @param optimizedTweetIdMapper The new DocIDToTweetIDMapper instance.
-   * @return An DeletedDocs instance that has the same tweets deleted, but mapped to the doc IDs in
-   *         optimizedTweetIdMapper.
+   * @pawam owiginawtweetidmappew the owiginaw docidtotweetidmappew i-instance that was used to add
+   *                              d-doc ids to this d-deweteddocs i-instance. σωσ
+   * @pawam optimizedtweetidmappew the nyew docidtotweetidmappew i-instance. (U ᵕ U❁)
+   * @wetuwn a-an deweteddocs instance that has t-the same tweets d-deweted, (✿oωo) but mapped to the doc i-ids in
+   *         optimizedtweetidmappew. ^^
    */
-  public abstract DeletedDocs optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException;
+  p-pubwic abstwact deweteddocs optimize(
+      d-docidtotweetidmappew owiginawtweetidmappew,
+      d-docidtotweetidmappew optimizedtweetidmappew) t-thwows ioexception;
 
-  public abstract class View {
+  p-pubwic abstwact cwass view {
     /**
-     * Returns true, if the given document was deleted.
+     * wetuwns twue, ^•ﻌ•^ if the given document was deweted. XD
      */
-    public abstract boolean isDeleted(int docID);
-
-    /**
-     * Returns true, if there are any deleted documents in this View.
-     */
-    public abstract boolean hasDeletions();
+    pubwic abstwact boowean isdeweted(int d-docid);
 
     /**
-     * Returns {@link Bits} where all deleted documents have their bit set to 0, and
-     * all non-deleted documents have their bits set to 1.
+     * wetuwns t-twue, :3 if thewe awe any deweted d-documents i-in this view. (ꈍᴗꈍ)
      */
-    public abstract Bits getLiveDocs();
+    p-pubwic abstwact boowean hasdewetions();
+
+    /**
+     * wetuwns {@wink b-bits} whewe aww deweted documents have theiw bit set to 0, and
+     * aww nyon-deweted d-documents have theiw bits s-set to 1. :3
+     */
+    p-pubwic abstwact b-bits getwivedocs();
   }
 
-  public static class Default extends DeletedDocs {
-    private static final int KEY_NOT_FOUND = -1;
+  pubwic static c-cwass defauwt extends d-deweteddocs {
+    p-pwivate s-static finaw int key_not_found = -1;
 
-    private final int size;
-    private final Int2IntOpenHashMap deletes;
+    pwivate f-finaw int size;
+    p-pwivate finaw i-int2intopenhashmap d-dewetes;
 
-    // Each delete is marked with a unique, consecutively-increasing sequence ID.
-    private int sequenceID = 0;
+    // e-each dewete is mawked with a unique, (U ﹏ U) consecutivewy-incweasing sequence i-id. UwU
+    pwivate int sequenceid = 0;
 
-    public Default(int size) {
+    pubwic defauwt(int size) {
       this.size = size;
-      deletes = new Int2IntOpenHashMap(size);
-      deletes.defaultReturnValue(KEY_NOT_FOUND);
+      d-dewetes = nyew int2intopenhashmap(size);
+      dewetes.defauwtwetuwnvawue(key_not_found);
     }
 
     /**
-     * Returns false, if this call was a noop, i.e. if the document was already deleted.
+     * wetuwns fawse, 😳😳😳 i-if this caww was a-a nyoop, XD i.e. i-if the document was awweady deweted. o.O
      */
-    @Override
-    public boolean deleteDoc(int docID) {
-      if (deletes.putIfAbsent(docID, sequenceID) == KEY_NOT_FOUND) {
-        sequenceID++;
-        return true;
+    @ovewwide
+    pubwic b-boowean dewetedoc(int docid) {
+      i-if (dewetes.putifabsent(docid, (⑅˘꒳˘) s-sequenceid) == key_not_found) {
+        sequenceid++;
+        wetuwn twue;
       }
-      return false;
+      wetuwn fawse;
     }
 
-    private boolean isDeleted(int internalID, int readerSequenceID) {
-      int deletedSequenceId = deletes.get(internalID);
-      return (deletedSequenceId >= 0) && (deletedSequenceId < readerSequenceID);
+    pwivate b-boowean isdeweted(int intewnawid, 😳😳😳 i-int weadewsequenceid) {
+      int dewetedsequenceid = d-dewetes.get(intewnawid);
+      w-wetuwn (dewetedsequenceid >= 0) && (dewetedsequenceid < weadewsequenceid);
     }
 
-    private boolean hasDeletions(int readerSequenceID) {
-      return readerSequenceID > 0;
+    pwivate boowean h-hasdewetions(int w-weadewsequenceid) {
+      wetuwn w-weadewsequenceid > 0;
     }
 
-    @Override
-    public int numDeletions() {
-      return sequenceID;
+    @ovewwide
+    p-pubwic int nyumdewetions() {
+      wetuwn sequenceid;
     }
 
-    @Override
-    public View getView() {
-      return new View() {
-        private final int readerSequenceID = sequenceID;
+    @ovewwide
+    pubwic view getview() {
+      wetuwn nyew view() {
+        pwivate f-finaw int weadewsequenceid = s-sequenceid;
 
-        // liveDocs bitset contains inverted (decreasing) docids.
-        public final Bits liveDocs = !hasDeletions() ? null : new Bits() {
-          @Override
-          public final boolean get(int docID) {
-            return !isDeleted(docID);
+        // w-wivedocs bitset contains i-invewted (decweasing) d-docids. nyaa~~
+        pubwic finaw b-bits wivedocs = !hasdewetions() ? nyuww : nyew bits() {
+          @ovewwide
+          pubwic finaw boowean g-get(int docid) {
+            w-wetuwn !isdeweted(docid);
           }
 
-          @Override
-          public final int length() {
-            return size;
+          @ovewwide
+          pubwic finaw int wength() {
+            w-wetuwn s-size;
           }
         };
 
-        @Override
-        public Bits getLiveDocs() {
-          return liveDocs;
+        @ovewwide
+        pubwic bits getwivedocs() {
+          wetuwn wivedocs;
         }
 
 
-        // Operates on internal (increasing) docids.
-        @Override
-        public final boolean isDeleted(int internalID) {
-          return DeletedDocs.Default.this.isDeleted(internalID, readerSequenceID);
+        // o-opewates on intewnaw (incweasing) docids. rawr
+        @ovewwide
+        pubwic finaw boowean i-isdeweted(int intewnawid) {
+          wetuwn deweteddocs.defauwt.this.isdeweted(intewnawid, -.- weadewsequenceid);
         }
 
-        @Override
-        public final boolean hasDeletions() {
-          return DeletedDocs.Default.this.hasDeletions(readerSequenceID);
+        @ovewwide
+        p-pubwic finaw b-boowean hasdewetions() {
+          wetuwn deweteddocs.defauwt.this.hasdewetions(weadewsequenceid);
         }
       };
     }
 
-    @Override
-    public DeletedDocs optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                                DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-      DeletedDocs optimizedDeletedDocs = new Default(size);
-      for (int deletedDocID : deletes.keySet()) {
-        long tweetID = originalTweetIdMapper.getTweetID(deletedDocID);
-        int optimizedDeletedDocID = optimizedTweetIdMapper.getDocID(tweetID);
-        optimizedDeletedDocs.deleteDoc(optimizedDeletedDocID);
+    @ovewwide
+    pubwic deweteddocs optimize(docidtotweetidmappew o-owiginawtweetidmappew, (✿oωo)
+                                d-docidtotweetidmappew optimizedtweetidmappew) thwows ioexception {
+      deweteddocs optimizeddeweteddocs = n-nyew defauwt(size);
+      fow (int d-deweteddocid : dewetes.keyset()) {
+        wong tweetid = owiginawtweetidmappew.gettweetid(deweteddocid);
+        i-int optimizeddeweteddocid = optimizedtweetidmappew.getdocid(tweetid);
+        o-optimizeddeweteddocs.dewetedoc(optimizeddeweteddocid);
       }
-      return optimizedDeletedDocs;
+      w-wetuwn optimizeddeweteddocs;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Default.FlushHandler getFlushHandler() {
-      return new Default.FlushHandler(this, size);
+    @suppwesswawnings("unchecked")
+    @ovewwide
+    p-pubwic defauwt.fwushhandwew getfwushhandwew() {
+      w-wetuwn n-nyew defauwt.fwushhandwew(this, /(^•ω•^) s-size);
     }
 
-    public static final class FlushHandler extends Flushable.Handler<Default> {
-      private final int size;
+    pubwic static f-finaw cwass fwushhandwew e-extends fwushabwe.handwew<defauwt> {
+      pwivate finaw i-int size;
 
-      public FlushHandler(Default objectToFlush, int size) {
-        super(objectToFlush);
-        this.size = size;
+      p-pubwic fwushhandwew(defauwt o-objecttofwush, 🥺 int size) {
+        supew(objecttofwush);
+        t-this.size = size;
       }
 
-      public FlushHandler(int size) {
-        this.size = size;
+      pubwic fwushhandwew(int s-size) {
+        t-this.size = size;
       }
 
-      @Override
-      protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-        long startTime = getClock().nowMillis();
+      @ovewwide
+      pwotected void dofwush(fwushinfo f-fwushinfo, ʘwʘ d-datasewiawizew o-out) thwows i-ioexception {
+        wong stawttime = g-getcwock().nowmiwwis();
 
-        Int2IntOpenHashMap deletes = getObjectToFlush().deletes;
-        out.writeIntArray(deletes.keySet().toIntArray());
+        int2intopenhashmap dewetes = getobjecttofwush().dewetes;
+        out.wwiteintawway(dewetes.keyset().tointawway());
 
-        getFlushTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+        getfwushtimewstats().timewincwement(getcwock().nowmiwwis() - s-stawttime);
       }
 
-      @Override
-      protected Default doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOException {
-        Default deletedDocs = new Default(size);
-        long startTime = getClock().nowMillis();
+      @ovewwide
+      pwotected d-defauwt dowoad(fwushinfo f-fwushinfo, UwU datadesewiawizew in) t-thwows ioexception {
+        defauwt d-deweteddocs = n-nyew defauwt(size);
+        w-wong stawttime = g-getcwock().nowmiwwis();
 
-        int[] deletedDocIDs = in.readIntArray();
-        for (int docID : deletedDocIDs) {
-          deletedDocs.deleteDoc(docID);
+        i-int[] deweteddocids = in.weadintawway();
+        fow (int docid : deweteddocids) {
+          deweteddocs.dewetedoc(docid);
         }
 
-        getLoadTimerStats().timerIncrement(getClock().nowMillis() - startTime);
-        return deletedDocs;
+        getwoadtimewstats().timewincwement(getcwock().nowmiwwis() - stawttime);
+        wetuwn deweteddocs;
       }
     }
   }
 
-  public static final DeletedDocs NO_DELETES = new DeletedDocs() {
-    @Override
-    public <T extends Flushable> Handler<T> getFlushHandler() {
-      return null;
+  p-pubwic s-static finaw deweteddocs n-nyo_dewetes = nyew deweteddocs() {
+    @ovewwide
+    p-pubwic <t extends fwushabwe> handwew<t> getfwushhandwew() {
+      w-wetuwn nyuww;
     }
 
-    @Override
-    public boolean deleteDoc(int docID) {
-      return false;
+    @ovewwide
+    p-pubwic boowean dewetedoc(int d-docid) {
+      wetuwn fawse;
     }
 
-    @Override
-    public DeletedDocs optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                                DocIDToTweetIDMapper optimizedTweetIdMapper) {
-      return this;
+    @ovewwide
+    pubwic d-deweteddocs optimize(docidtotweetidmappew o-owiginawtweetidmappew,
+                                docidtotweetidmappew o-optimizedtweetidmappew) {
+      w-wetuwn this;
     }
 
-    @Override
-    public int numDeletions() {
-      return 0;
+    @ovewwide
+    pubwic int nyumdewetions() {
+      wetuwn 0;
     }
 
-    @Override
-    public View getView() {
-      return new View() {
-        @Override
-        public boolean isDeleted(int docID) {
-          return false;
+    @ovewwide
+    pubwic view getview() {
+      w-wetuwn nyew view() {
+        @ovewwide
+        p-pubwic boowean isdeweted(int d-docid) {
+          w-wetuwn fawse;
         }
 
-        @Override
-        public boolean hasDeletions() {
-          return false;
+        @ovewwide
+        p-pubwic boowean hasdewetions() {
+          w-wetuwn f-fawse;
         }
 
-        @Override
-        public Bits getLiveDocs() {
-          return null;
+        @ovewwide
+        pubwic bits getwivedocs() {
+          w-wetuwn nyuww;
         }
 
       };

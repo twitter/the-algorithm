@@ -1,107 +1,107 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics
 
-import java.lang.{Long => JLong}
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.ConversionUtils._
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import scala.math.max
+impowt java.wang.{wong => j-jwong}
+i-impowt com.twittew.mw.api._
+i-impowt com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.convewsionutiws._
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.time
+i-impowt scawa.math.max
 
 /**
- * This metric measures how recently an action has taken place. A value of 1.0
- * indicates the action happened just now. This value decays with time if the
- * action has not taken place and is reset to 1 when the action happens. So lower
- * value indicates a stale or older action.
+ * t-this metwic measuwes how wecentwy an action has taken pwace. (˘ω˘) a vawue of 1.0
+ * i-indicates the action happened just nyow. ^^;; this vawue d-decays with time if the
+ * action h-has nyot taken pwace and is weset to 1 when the action happens. (✿oωo) s-so wowew
+ * vawue indicates a-a stawe ow owdew a-action. (U ﹏ U)
  *
- * For example consider an action of "user liking a video". The last reset metric
- * value changes as follows for a half life of 1 day.
+ * fow exampwe considew an action of "usew wiking a video". -.- the wast w-weset metwic
+ * vawue changes as fowwows fow a hawf wife of 1 day. ^•ﻌ•^
  *
  * ----------------------------------------------------------------------------
- *  day  |         action           |  feature value |      Description
+ *  d-day  |         action           |  f-featuwe vawue |      d-descwiption
  * ----------------------------------------------------------------------------
- *   1   | user likes the video     |      1.0       |    Set the value to 1
- *   2   | user does not like video |      0.5       |    Decay the value
- *   3   | user does not like video |      0.25      |    Decay the value
- *   4   | user likes the video     |      1.0       |    Reset the value to 1
+ *   1   | u-usew w-wikes the video     |      1.0       |    set the vawue to 1
+ *   2   | u-usew does nyot wike video |      0.5       |    decay the v-vawue
+ *   3   | usew does nyot wike video |      0.25      |    decay the vawue
+ *   4   | usew wikes the video     |      1.0       |    weset t-the vawue to 1
  * -----------------------------------------------------------------------------
  *
- * @tparam T
+ * @tpawam t
  */
-case class TypedLastResetMetric[T]() extends TimedValueAggregationMetric[T] {
-  import AggregationMetricCommon._
+case cwass t-typedwastwesetmetwic[t]() e-extends t-timedvawueaggwegationmetwic[t] {
+  impowt aggwegationmetwiccommon._
 
-  override val operatorName = "last_reset"
+  ovewwide vaw opewatowname = "wast_weset"
 
-  override def getIncrementValue(
-    record: DataRecord,
-    feature: Option[Feature[T]],
-    timestampFeature: Feature[JLong]
-  ): TimedValue[Double] = {
-    val featureExists: Boolean = feature match {
-      case Some(f) => SRichDataRecord(record).hasFeature(f)
-      case None => true
+  o-ovewwide d-def getincwementvawue(
+    wecowd: d-datawecowd, rawr
+    f-featuwe: option[featuwe[t]], (˘ω˘)
+    timestampfeatuwe: f-featuwe[jwong]
+  ): timedvawue[doubwe] = {
+    v-vaw featuweexists: boowean = featuwe match {
+      c-case some(f) => swichdatawecowd(wecowd).hasfeatuwe(f)
+      c-case nyone => twue
     }
 
-    TimedValue[Double](
-      value = booleanToDouble(featureExists),
-      timestamp = Time.fromMilliseconds(getTimestamp(record, timestampFeature))
+    t-timedvawue[doubwe](
+      v-vawue = booweantodoubwe(featuweexists), nyaa~~
+      timestamp = time.fwommiwwiseconds(gettimestamp(wecowd, UwU timestampfeatuwe))
     )
   }
-  private def getDecayedValue(
-    olderTimedValue: TimedValue[Double],
-    newerTimestamp: Time,
-    halfLife: Duration
-  ): Double = {
-    if (halfLife.inMilliseconds == 0L) {
+  pwivate def getdecayedvawue(
+    owdewtimedvawue: t-timedvawue[doubwe], :3
+    n-nyewewtimestamp: time, (⑅˘꒳˘)
+    h-hawfwife: d-duwation
+  ): doubwe = {
+    i-if (hawfwife.inmiwwiseconds == 0w) {
       0.0
-    } else {
-      val timeDelta = newerTimestamp.inMilliseconds - olderTimedValue.timestamp.inMilliseconds
-      val resultValue = olderTimedValue.value / math.pow(2.0, timeDelta / halfLife.inMillis)
-      if (resultValue > AggregationMetricCommon.Epsilon) resultValue else 0.0
+    } ewse {
+      vaw timedewta = nyewewtimestamp.inmiwwiseconds - owdewtimedvawue.timestamp.inmiwwiseconds
+      vaw w-wesuwtvawue = owdewtimedvawue.vawue / math.pow(2.0, (///ˬ///✿) timedewta / hawfwife.inmiwwis)
+      i-if (wesuwtvawue > aggwegationmetwiccommon.epsiwon) wesuwtvawue e-ewse 0.0
     }
   }
 
-  override def plus(
-    left: TimedValue[Double],
-    right: TimedValue[Double],
-    halfLife: Duration
-  ): TimedValue[Double] = {
+  o-ovewwide def pwus(
+    w-weft: timedvawue[doubwe], ^^;;
+    wight: timedvawue[doubwe], >_<
+    h-hawfwife: duwation
+  ): t-timedvawue[doubwe] = {
 
-    val (newerTimedValue, olderTimedValue) = if (left.timestamp > right.timestamp) {
-      (left, right)
-    } else {
-      (right, left)
+    v-vaw (newewtimedvawue, rawr x3 owdewtimedvawue) = i-if (weft.timestamp > wight.timestamp) {
+      (weft, /(^•ω•^) wight)
+    } e-ewse {
+      (wight, :3 w-weft)
     }
 
-    val optionallyDecayedOlderValue = if (halfLife == Duration.Top) {
-      // Since we don't want to decay, older value is not changed
-      olderTimedValue.value
-    } else {
-      // Decay older value
-      getDecayedValue(olderTimedValue, newerTimedValue.timestamp, halfLife)
+    v-vaw optionawwydecayedowdewvawue = i-if (hawfwife == d-duwation.top) {
+      // since we don't want to decay, (ꈍᴗꈍ) owdew vawue is n-nyot changed
+      owdewtimedvawue.vawue
+    } ewse {
+      // decay owdew vawue
+      getdecayedvawue(owdewtimedvawue, /(^•ω•^) nyewewtimedvawue.timestamp, (⑅˘꒳˘) h-hawfwife)
     }
 
-    TimedValue[Double](
-      value = max(newerTimedValue.value, optionallyDecayedOlderValue),
-      timestamp = newerTimedValue.timestamp
+    timedvawue[doubwe](
+      vawue = max(newewtimedvawue.vawue, ( ͡o ω ͡o ) optionawwydecayedowdewvawue), òωó
+      t-timestamp = n-newewtimedvawue.timestamp
     )
   }
 
-  override def zero(timeOpt: Option[Long]): TimedValue[Double] = TimedValue[Double](
-    value = 0.0,
-    timestamp = Time.fromMilliseconds(0)
+  ovewwide d-def zewo(timeopt: option[wong]): t-timedvawue[doubwe] = timedvawue[doubwe](
+    v-vawue = 0.0, (⑅˘꒳˘)
+    t-timestamp = time.fwommiwwiseconds(0)
   )
 }
 
 /**
- * Syntactic sugar for the last reset metric that works with
- * any feature type as opposed to being tied to a specific type.
- * See EasyMetric.scala for more details on why this is useful.
+ * syntactic sugaw fow the wast weset metwic that wowks with
+ * a-any featuwe type as opposed t-to being tied to a specific type. XD
+ * s-see easymetwic.scawa f-fow mowe detaiws on why this is usefuw. -.-
  */
-object LastResetMetric extends EasyMetric {
-  override def forFeatureType[T](
-    featureType: FeatureType
-  ): Option[AggregationMetric[T, _]] =
-    Some(TypedLastResetMetric[T]())
+o-object w-wastwesetmetwic extends easymetwic {
+  o-ovewwide d-def fowfeatuwetype[t](
+    featuwetype: featuwetype
+  ): option[aggwegationmetwic[t, :3 _]] =
+    some(typedwastwesetmetwic[t]())
 }

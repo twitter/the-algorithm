@@ -1,28 +1,28 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.thriftscala.MentionEntity
-import com.twitter.tweetypie.unmentions.thriftscala.UnmentionData
+impowt c-com.twittew.tweetypie.cowe.vawuestate
+i-impowt c-com.twittew.tweetypie.thwiftscawa.mentionentity
+i-impowt com.twittew.tweetypie.unmentions.thwiftscawa.unmentiondata
 
-object UnmentionDataHydrator {
-  type Type = ValueHydrator[Option[UnmentionData], Ctx]
+o-object unmentiondatahydwatow {
+  t-type type = v-vawuehydwatow[option[unmentiondata], 😳 ctx]
 
-  case class Ctx(
-    conversationId: Option[TweetId],
-    mentions: Seq[MentionEntity],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case cwass ctx(
+    convewsationid: option[tweetid], XD
+    m-mentions: seq[mentionentity], :3
+    undewwyingtweetctx: tweetctx)
+      extends t-tweetctx.pwoxy
 
-  def apply(): Type = {
-    ValueHydrator.map[Option[UnmentionData], Ctx] { (_, ctx) =>
-      val mentionedUserIds: Seq[UserId] = ctx.mentions.flatMap(_.userId)
+  def appwy(): t-type = {
+    vawuehydwatow.map[option[unmentiondata], 😳😳😳 ctx] { (_, ctx) =>
+      v-vaw mentionedusewids: seq[usewid] = c-ctx.mentions.fwatmap(_.usewid)
 
-      ValueState.modified(
-        Some(UnmentionData(ctx.conversationId, Option(mentionedUserIds).filter(_.nonEmpty)))
+      vawuestate.modified(
+        s-some(unmentiondata(ctx.convewsationid, -.- option(mentionedusewids).fiwtew(_.nonempty)))
       )
     }
-  }.onlyIf { (_, ctx) =>
-    ctx.tweetFieldRequested(Tweet.UnmentionDataField)
+  }.onwyif { (_, ( ͡o ω ͡o ) ctx) =>
+    ctx.tweetfiewdwequested(tweet.unmentiondatafiewd)
   }
 }

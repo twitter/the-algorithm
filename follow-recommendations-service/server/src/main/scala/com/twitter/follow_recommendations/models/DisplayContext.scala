@@ -1,113 +1,113 @@
-package com.twitter.follow_recommendations.models
+package com.twittew.fowwow_wecommendations.modews
 
-import com.twitter.follow_recommendations.common.models.FlowContext
-import com.twitter.follow_recommendations.common.models.RecentlyEngagedUserId
-import com.twitter.follow_recommendations.logging.thriftscala.OfflineDisplayContext
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
-import scala.reflect.ClassTag
-import scala.reflect.classTag
+impowt com.twittew.fowwow_wecommendations.common.modews.fwowcontext
+i-impowt com.twittew.fowwow_wecommendations.common.modews.wecentwyengagedusewid
+i-impowt com.twittew.fowwow_wecommendations.wogging.thwiftscawa.offwinedispwaycontext
+i-impowt com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
+i-impowt com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
+i-impowt scawa.wefwect.cwasstag
+i-impowt scawa.wefwect.cwasstag
 
-trait DisplayContext {
-  def toOfflineThrift: offline.OfflineDisplayContext
+twait dispwaycontext {
+  def tooffwinethwift: o-offwine.offwinedispwaycontext
 }
 
-object DisplayContext {
-  case class Profile(profileId: Long) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.Profile(offline.OfflineProfile(profileId))
+object dispwaycontext {
+  c-case cwass pwofiwe(pwofiweid: w-wong) extends dispwaycontext {
+    ovewwide vaw tooffwinethwift: o-offwinedispwaycontext =
+      offwine.offwinedispwaycontext.pwofiwe(offwine.offwinepwofiwe(pwofiweid))
   }
-  case class Search(searchQuery: String) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.Search(offline.OfflineSearch(searchQuery))
+  c-case cwass seawch(seawchquewy: s-stwing) extends dispwaycontext {
+    ovewwide vaw tooffwinethwift: offwinedispwaycontext =
+      o-offwine.offwinedispwaycontext.seawch(offwine.offwineseawch(seawchquewy))
   }
-  case class Rux(focalAuthorId: Long) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.Rux(offline.OfflineRux(focalAuthorId))
-  }
-
-  case class Topic(topicId: Long) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.Topic(offline.OfflineTopic(topicId))
+  case cwass wux(focawauthowid: wong) extends dispwaycontext {
+    ovewwide vaw tooffwinethwift: offwinedispwaycontext =
+      o-offwine.offwinedispwaycontext.wux(offwine.offwinewux(focawauthowid))
   }
 
-  case class ReactiveFollow(followedUserIds: Seq[Long]) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.ReactiveFollow(offline.OfflineReactiveFollow(followedUserIds))
+  case cwass t-topic(topicid: w-wong) extends d-dispwaycontext {
+    o-ovewwide vaw tooffwinethwift: offwinedispwaycontext =
+      o-offwine.offwinedispwaycontext.topic(offwine.offwinetopic(topicid))
   }
 
-  case class NuxInterests(flowContext: Option[FlowContext], uttInterestIds: Option[Seq[Long]])
-      extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.NuxInterests(
-        offline.OfflineNuxInterests(flowContext.map(_.toOfflineThrift)))
+  case cwass weactivefowwow(fowwowedusewids: s-seq[wong]) extends dispwaycontext {
+    ovewwide vaw tooffwinethwift: offwinedispwaycontext =
+      offwine.offwinedispwaycontext.weactivefowwow(offwine.offwineweactivefowwow(fowwowedusewids))
   }
 
-  case class PostNuxFollowTask(flowContext: Option[FlowContext]) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.PostNuxFollowTask(
-        offline.OfflinePostNuxFollowTask(flowContext.map(_.toOfflineThrift)))
+  case cwass nyuxintewests(fwowcontext: o-option[fwowcontext], (⑅˘꒳˘) uttintewestids: o-option[seq[wong]])
+      e-extends dispwaycontext {
+    o-ovewwide vaw tooffwinethwift: offwinedispwaycontext =
+      offwine.offwinedispwaycontext.nuxintewests(
+        offwine.offwinenuxintewests(fwowcontext.map(_.tooffwinethwift)))
   }
 
-  case class AdCampaignTarget(similarToUserIds: Seq[Long]) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.AdCampaignTarget(
-        offline.OfflineAdCampaignTarget(similarToUserIds))
+  case cwass p-postnuxfowwowtask(fwowcontext: o-option[fwowcontext]) extends d-dispwaycontext {
+    o-ovewwide vaw tooffwinethwift: o-offwinedispwaycontext =
+      offwine.offwinedispwaycontext.postnuxfowwowtask(
+        o-offwine.offwinepostnuxfowwowtask(fwowcontext.map(_.tooffwinethwift)))
   }
 
-  case class ConnectTab(
-    byfSeedUserIds: Seq[Long],
-    similarToUserIds: Seq[Long],
-    engagedUserIds: Seq[RecentlyEngagedUserId])
-      extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.ConnectTab(
-        offline.OfflineConnectTab(
-          byfSeedUserIds,
-          similarToUserIds,
-          engagedUserIds.map(user => user.toOfflineThrift)))
+  case cwass adcampaigntawget(simiwawtousewids: s-seq[wong]) extends dispwaycontext {
+    o-ovewwide vaw tooffwinethwift: o-offwinedispwaycontext =
+      o-offwine.offwinedispwaycontext.adcampaigntawget(
+        offwine.offwineadcampaigntawget(simiwawtousewids))
   }
 
-  case class SimilarToUser(similarToUserId: Long) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.SimilarToUser(offline.OfflineSimilarToUser(similarToUserId))
+  case cwass connecttab(
+    byfseedusewids: seq[wong], (///ˬ///✿)
+    simiwawtousewids: s-seq[wong], ^^;;
+    e-engagedusewids: seq[wecentwyengagedusewid])
+      e-extends d-dispwaycontext {
+    o-ovewwide vaw tooffwinethwift: offwinedispwaycontext =
+      offwine.offwinedispwaycontext.connecttab(
+        o-offwine.offwineconnecttab(
+          byfseedusewids, >_<
+          simiwawtousewids, rawr x3
+          engagedusewids.map(usew => usew.tooffwinethwift)))
   }
 
-  def fromThrift(tDisplayContext: t.DisplayContext): DisplayContext = tDisplayContext match {
-    case t.DisplayContext.Profile(p) => Profile(p.profileId)
-    case t.DisplayContext.Search(s) => Search(s.searchQuery)
-    case t.DisplayContext.Rux(r) => Rux(r.focalAuthorId)
-    case t.DisplayContext.Topic(t) => Topic(t.topicId)
-    case t.DisplayContext.ReactiveFollow(f) => ReactiveFollow(f.followedUserIds)
-    case t.DisplayContext.NuxInterests(n) =>
-      NuxInterests(n.flowContext.map(FlowContext.fromThrift), n.uttInterestIds)
-    case t.DisplayContext.AdCampaignTarget(a) =>
-      AdCampaignTarget(a.similarToUserIds)
-    case t.DisplayContext.ConnectTab(connect) =>
-      ConnectTab(
-        connect.byfSeedUserIds,
-        connect.similarToUserIds,
-        connect.recentlyEngagedUserIds.map(RecentlyEngagedUserId.fromThrift))
-    case t.DisplayContext.SimilarToUser(r) =>
-      SimilarToUser(r.similarToUserId)
-    case t.DisplayContext.PostNuxFollowTask(p) =>
-      PostNuxFollowTask(p.flowContext.map(FlowContext.fromThrift))
-    case t.DisplayContext.UnknownUnionField(t) =>
-      throw new UnknownDisplayContextException(t.field.name)
+  c-case cwass simiwawtousew(simiwawtousewid: w-wong) extends d-dispwaycontext {
+    o-ovewwide vaw tooffwinethwift: o-offwinedispwaycontext =
+      o-offwine.offwinedispwaycontext.simiwawtousew(offwine.offwinesimiwawtousew(simiwawtousewid))
   }
 
-  def getDisplayContextAs[T <: DisplayContext: ClassTag](displayContext: DisplayContext): T =
-    displayContext match {
-      case context: T => context
+  d-def fwomthwift(tdispwaycontext: t-t.dispwaycontext): dispwaycontext = tdispwaycontext m-match {
+    c-case t.dispwaycontext.pwofiwe(p) => p-pwofiwe(p.pwofiweid)
+    c-case t.dispwaycontext.seawch(s) => s-seawch(s.seawchquewy)
+    case t.dispwaycontext.wux(w) => wux(w.focawauthowid)
+    c-case t.dispwaycontext.topic(t) => topic(t.topicid)
+    case t.dispwaycontext.weactivefowwow(f) => weactivefowwow(f.fowwowedusewids)
+    case t-t.dispwaycontext.nuxintewests(n) =>
+      nyuxintewests(n.fwowcontext.map(fwowcontext.fwomthwift), /(^•ω•^) ny.uttintewestids)
+    case t-t.dispwaycontext.adcampaigntawget(a) =>
+      a-adcampaigntawget(a.simiwawtousewids)
+    c-case t.dispwaycontext.connecttab(connect) =>
+      connecttab(
+        c-connect.byfseedusewids, :3
+        connect.simiwawtousewids, (ꈍᴗꈍ)
+        c-connect.wecentwyengagedusewids.map(wecentwyengagedusewid.fwomthwift))
+    c-case t.dispwaycontext.simiwawtousew(w) =>
+      simiwawtousew(w.simiwawtousewid)
+    case t.dispwaycontext.postnuxfowwowtask(p) =>
+      postnuxfowwowtask(p.fwowcontext.map(fwowcontext.fwomthwift))
+    case t.dispwaycontext.unknownunionfiewd(t) =>
+      t-thwow nyew unknowndispwaycontextexception(t.fiewd.name)
+  }
+
+  d-def getdispwaycontextas[t <: dispwaycontext: c-cwasstag](dispwaycontext: d-dispwaycontext): t =
+    dispwaycontext match {
+      c-case context: t-t => context
       case _ =>
-        throw new UnexpectedDisplayContextTypeException(
-          displayContext,
-          classTag[T].getClass.getSimpleName)
+        t-thwow nyew u-unexpecteddispwaycontexttypeexception(
+          dispwaycontext, /(^•ω•^)
+          cwasstag[t].getcwass.getsimpwename)
     }
 }
 
-class UnknownDisplayContextException(name: String)
-    extends Exception(s"Unknown DisplayContext in Thrift: ${name}")
+cwass unknowndispwaycontextexception(name: stwing)
+    e-extends exception(s"unknown dispwaycontext i-in t-thwift: ${name}")
 
-class UnexpectedDisplayContextTypeException(displayContext: DisplayContext, expectedType: String)
-    extends Exception(s"DisplayContext ${displayContext} not of expected type ${expectedType}")
+cwass unexpecteddispwaycontexttypeexception(dispwaycontext: d-dispwaycontext, (⑅˘꒳˘) e-expectedtype: stwing)
+    extends e-exception(s"dispwaycontext ${dispwaycontext} nyot of expected type ${expectedtype}")

@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awwpipewines
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope.pawtitionedcandidates
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Drops all Candidates on the `remainingCandidates` side which are in the [[pipelineScope]]
+ * dwops aww candidates o-on the `wemainingcandidates` side which awe in the [[pipewinescope]]
  *
- * This is typically used as a placeholder when templating out a new pipeline or
- * as a simple filter to drop candidates based only on the [[CandidateScope]]
+ * t-this is typicawwy u-used as a pwacehowdew when tempwating out a nyew pipewine ow
+ * a-as a simpwe fiwtew to dwop candidates b-based onwy o-on the [[candidatescope]]
  */
-case class DropAllCandidates(override val pipelineScope: CandidateScope = AllPipelines)
-    extends Selector[PipelineQuery] {
+case cwass dwopawwcandidates(ovewwide vaw pipewinescope: candidatescope = awwpipewines)
+    e-extends sewectow[pipewinequewy] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val PartitionedCandidates(inScope, outOfScope) = pipelineScope.partition(remainingCandidates)
+  ovewwide def appwy(
+    quewy: pipewinequewy, rawr x3
+    wemainingcandidates: s-seq[candidatewithdetaiws], (✿oωo)
+    wesuwt: seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    v-vaw pawtitionedcandidates(inscope, (ˆ ﻌ ˆ)♡ o-outofscope) = p-pipewinescope.pawtition(wemainingcandidates)
 
-    SelectorResult(remainingCandidates = outOfScope, result = result)
+    sewectowwesuwt(wemainingcandidates = outofscope, w-wesuwt = wesuwt)
   }
 }

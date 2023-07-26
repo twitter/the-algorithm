@@ -1,206 +1,206 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
+package com.twittew.simcwustews_v2.scawding.topic_wecommendations
 
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.recos.entities.thriftscala._
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.DataSources
-import com.twitter.simclusters_v2.hdfs_sources.TopProducersForLocaleTopicsFromTopicFollowGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ProducerId
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+impowt com.twittew.bijection.buffewabwe
+i-impowt c-com.twittew.bijection.injection
+i-impowt com.twittew.wecos.entities.thwiftscawa._
+i-impowt com.twittew.scawding._
+impowt c-com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt c-com.twittew.simcwustews_v2.common.countwy
+impowt com.twittew.simcwustews_v2.common.wanguage
+impowt com.twittew.simcwustews_v2.common.topicid
+impowt c-com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.simcwustews_v2.hdfs_souwces.datasouwces
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.toppwoducewsfowwocawetopicsfwomtopicfowwowgwaphscawadataset
+impowt com.twittew.simcwustews_v2.scawding.common.matwix.spawsematwix
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw.pwoducewid
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces
+impowt com.twittew.simcwustews_v2.thwiftscawa.usewandneighbows
+impowt c-com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+impowt c-com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt j-java.utiw.timezone
 
 /**
- * In this file, we compute the top producers for a topic from the Topic Follow Graph
+ * in this fiwe, (ˆ ﻌ ˆ)♡ we compute the top pwoducews fow a topic fwom the t-topic fowwow gwaph
  *
- * It works as follows:
+ * it wowks as fowwows:
  *
- *  1. Producer embedding: List of users who follow the producer's profile and follow atleast one topic
+ *  1. ^^;; pwoducew embedding: wist o-of usews who fowwow the pwoducew's p-pwofiwe and f-fowwow atweast o-one topic
  *
- *  2. Topic embedding: List of users who follow the topic
+ *  2. (⑅˘꒳˘) t-topic embedding: wist of usews who fowwow the t-topic
  *
- *  3. Score(producer, topic) = cosine similarity of the producer and topic embedding as defined above
+ *  3. rawr x3 scowe(pwoducew, (///ˬ///✿) topic) = cosine s-simiwawity of the pwoducew and topic embedding as defined above
  *
- *  4. Please note that we compute the top producers for each topic locale.
+ *  4. 🥺 pwease nyote that we c-compute the top pwoducews fow each t-topic wocawe. >_<
  */
 
 /**
-scalding remote run --user cassowary \
- --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations:top_producers_for_topics_from_topic_follow_graph-adhoc \
- --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.ProducersForTopicsFromTopicFollowGraphAdhocApp \
- --submitter  hadoopnest1.atla.twitter.com  \
- --  --date 2021-01-06 --minActiveFollowers 400 --maxProducersPerTopic 50 \
- --output_dir_producers_per_topic /user/cassowary/adhoc/ldap/ttf_profile_pages_topics_to_producers
+s-scawding w-wemote wun --usew cassowawy \
+ --tawget swc/scawa/com/twittew/simcwustews_v2/scawding/topic_wecommendations:top_pwoducews_fow_topics_fwom_topic_fowwow_gwaph-adhoc \
+ --main-cwass com.twittew.simcwustews_v2.scawding.topic_wecommendations.pwoducewsfowtopicsfwomtopicfowwowgwaphadhocapp \
+ --submittew  h-hadoopnest1.atwa.twittew.com  \
+ --  --date 2021-01-06 --minactivefowwowews 400 --maxpwoducewspewtopic 50 \
+ --output_diw_pwoducews_pew_topic /usew/cassowawy/adhoc/wdap/ttf_pwofiwe_pages_topics_to_pwoducews
  */
 
-object ProducersForTopicsFromTopicFollowGraphAdhocApp extends AdhocExecutionApp {
+o-object pwoducewsfowtopicsfwomtopicfowwowgwaphadhocapp extends a-adhocexecutionapp {
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import ProducersForTopicsFromTopicFollowGraph._
-    val outputDirProducersPerTopic = args("output_dir_producers_per_topic")
-    val minActiveFollowersForProducer = args.int("minActiveFollowers", 400)
-    val maxProducersPerTopicPerLocale = args.int("maxProducersPerTopic", 50)
-    val minTopicFollows = args.int("minTopicFollows", 100)
+    impwicit d-datewange: datewange, UwU
+    timezone: timezone, >_<
+    u-uniqueid: uniqueid
+  ): e-execution[unit] = {
+    impowt p-pwoducewsfowtopicsfwomtopicfowwowgwaph._
+    v-vaw outputdiwpwoducewspewtopic = awgs("output_diw_pwoducews_pew_topic")
+    vaw minactivefowwowewsfowpwoducew = awgs.int("minactivefowwowews", -.- 400)
+    vaw maxpwoducewspewtopicpewwocawe = awgs.int("maxpwoducewspewtopic", mya 50)
+    v-vaw mintopicfowwows = a-awgs.int("mintopicfowwows", 100)
 
-    val topicsFollowedByProducersFollowers = getTopicsFromProducersFollowers(
-      DataSources
-        .userUserNormalizedGraphSource(dateRange.prepend(Days(7))),
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.userSource,
-      ExternalDataSources.inferredUserConsumedLanguageSource,
-      minActiveFollowersForProducer,
-      minTopicFollows
+    vaw t-topicsfowwowedbypwoducewsfowwowews = g-gettopicsfwompwoducewsfowwowews(
+      d-datasouwces
+        .usewusewnowmawizedgwaphsouwce(datewange.pwepend(days(7))),
+      extewnawdatasouwces.topicfowwowgwaphsouwce, >w<
+      extewnawdatasouwces.usewsouwce, (U ﹏ U)
+      extewnawdatasouwces.infewwedusewconsumedwanguagesouwce, 😳😳😳
+      m-minactivefowwowewsfowpwoducew, o.O
+      mintopicfowwows
     )
 
-    sortAndGetTopProducersPerLocaleTopic(
-      topicsFollowedByProducersFollowers,
-      maxProducersPerTopicPerLocale).writeExecution(TypedTsv(outputDirProducersPerTopic))
+    sowtandgettoppwoducewspewwocawetopic(
+      topicsfowwowedbypwoducewsfowwowews, òωó
+      maxpwoducewspewtopicpewwocawe).wwiteexecution(typedtsv(outputdiwpwoducewspewtopic))
 
   }
 }
 
 /**
-capesospy-v2 update --build_locally \
- --start_cron top_producers_for_topics_from_topic_follow_graph \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --buiwd_wocawwy \
+ --stawt_cwon t-top_pwoducews_fow_topics_fwom_topic_fowwow_gwaph \
+ swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
 
-object ProducersForTopicsFromTopicFollowGraphBatchApp extends ScheduledExecutionApp {
-  override val firstTime: RichDate = RichDate("2020-10-01")
+o-object pwoducewsfowtopicsfwomtopicfowwowgwaphbatchapp e-extends scheduwedexecutionapp {
+  o-ovewwide vaw fiwsttime: w-wichdate = wichdate("2020-10-01")
 
-  override val batchIncrement: Duration = Days(1)
+  o-ovewwide vaw b-batchincwement: d-duwation = days(1)
 
-  private val topProducersForLocaleTopicsPath: String =
-    "/user/cassowary/manhattan_sequence_files/top_producers_for_topics_from_topic_follow_graph"
+  pwivate vaw toppwoducewsfowwocawetopicspath: s-stwing =
+    "/usew/cassowawy/manhattan_sequence_fiwes/top_pwoducews_fow_topics_fwom_topic_fowwow_gwaph"
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import ProducersForTopicsFromTopicFollowGraph._
-    val minActiveFollowersForProducer = args.int("minActiveFollowers", 400)
-    val maxProducersPerTopicPerLocale = args.int("maxProducersPerTopic", 50)
-    val minTopicFollows = args.int("minTopicFollows", 100)
+    i-impwicit d-datewange: datewange, 😳😳😳
+    timezone: timezone, σωσ
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
+    impowt pwoducewsfowtopicsfwomtopicfowwowgwaph._
+    vaw minactivefowwowewsfowpwoducew = awgs.int("minactivefowwowews", (⑅˘꒳˘) 400)
+    vaw maxpwoducewspewtopicpewwocawe = awgs.int("maxpwoducewspewtopic", (///ˬ///✿) 50)
+    vaw m-mintopicfowwows = awgs.int("mintopicfowwows", 🥺 100)
 
-    val topicsFollowedByProducersFollowers = getTopicsFromProducersFollowers(
-      DataSources
-        .userUserNormalizedGraphSource(dateRange.prepend(Days(7))),
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.userSource,
-      ExternalDataSources.inferredUserConsumedLanguageSource,
-      minActiveFollowersForProducer,
-      minTopicFollows
+    vaw topicsfowwowedbypwoducewsfowwowews = gettopicsfwompwoducewsfowwowews(
+      d-datasouwces
+        .usewusewnowmawizedgwaphsouwce(datewange.pwepend(days(7))), OwO
+      e-extewnawdatasouwces.topicfowwowgwaphsouwce, >w<
+      e-extewnawdatasouwces.usewsouwce, 🥺
+      extewnawdatasouwces.infewwedusewconsumedwanguagesouwce, nyaa~~
+      m-minactivefowwowewsfowpwoducew,
+      mintopicfowwows
     )
 
-    sortAndGetTopProducersPerLocaleTopic(
-      topicsFollowedByProducersFollowers,
-      maxProducersPerTopicPerLocale)
+    s-sowtandgettoppwoducewspewwocawetopic(
+      t-topicsfowwowedbypwoducewsfowwowews, ^^
+      maxpwoducewspewtopicpewwocawe)
       .map {
-        case ((topicId, languageOpt, countryOpt), producersWithScores) =>
-          KeyVal(
-            SemanticCoreEntityWithLocale(
-              entityId = topicId,
-              context = Locale(language = languageOpt, country = countryOpt)),
-            UserScoreList(producersWithScores.map {
-              case (producerId, producerScore) =>
-                UserWithScore(userId = producerId, score = producerScore)
+        case ((topicid, >w< wanguageopt, OwO countwyopt), XD pwoducewswithscowes) =>
+          keyvaw(
+            s-semanticcoweentitywithwocawe(
+              entityid = t-topicid, ^^;;
+              context = wocawe(wanguage = w-wanguageopt, 🥺 c-countwy = countwyopt)), XD
+            usewscowewist(pwoducewswithscowes.map {
+              c-case (pwoducewid, (U ᵕ U❁) p-pwoducewscowe) =>
+                usewwithscowe(usewid = p-pwoducewid, :3 s-scowe = pwoducewscowe)
             })
           )
-      }.writeDALVersionedKeyValExecution(
-        TopProducersForLocaleTopicsFromTopicFollowGraphScalaDataset,
-        D.Suffix(topProducersForLocaleTopicsPath),
-        version = ExplicitEndTime(dateRange.end)
+      }.wwitedawvewsionedkeyvawexecution(
+        toppwoducewsfowwocawetopicsfwomtopicfowwowgwaphscawadataset, ( ͡o ω ͡o )
+        d.suffix(toppwoducewsfowwocawetopicspath), òωó
+        vewsion = expwicitendtime(datewange.end)
       )
   }
 }
 
-object ProducersForTopicsFromTopicFollowGraph {
+o-object p-pwoducewsfowtopicsfwomtopicfowwowgwaph {
 
-  implicit val sparseMatrixInj: Injection[
-    (ProducerId, Option[Language], Option[Country]),
-    Array[Byte]
+  i-impwicit vaw spawsematwixinj: injection[
+    (pwoducewid, σωσ o-option[wanguage], (U ᵕ U❁) o-option[countwy]), (✿oωo)
+    awway[byte]
   ] =
-    Bufferable.injectionOf[(ProducerId, Option[Language], Option[Country])]
+    b-buffewabwe.injectionof[(pwoducewid, ^^ option[wanguage], ^•ﻌ•^ option[countwy])]
 
-  // This function takes the producer to topics map and generates the sorted and
-  // truncated top producers ranked list for each locale topic
-  def sortAndGetTopProducersPerLocaleTopic(
-    producerToTopics: TypedPipe[(ProducerId, (TopicId, Option[Language], Option[Country]), Double)],
-    maxProducersPerLocaleTopic: Int
+  // this function takes the pwoducew t-to topics m-map and genewates the sowted and
+  // twuncated t-top pwoducews wanked w-wist fow each wocawe topic
+  def sowtandgettoppwoducewspewwocawetopic(
+    pwoducewtotopics: t-typedpipe[(pwoducewid, XD (topicid, :3 option[wanguage], (ꈍᴗꈍ) option[countwy]), :3 doubwe)], (U ﹏ U)
+    maxpwoducewspewwocawetopic: i-int
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[((TopicId, Option[Language], Option[Country]), List[(ProducerId, Double)])] = {
-    val numTopicsWithLocales = Stat("num_topics_with_locales")
-    producerToTopics
+    impwicit uniqueid: uniqueid
+  ): t-typedpipe[((topicid, UwU o-option[wanguage], 😳😳😳 option[countwy]), XD wist[(pwoducewid, o.O doubwe)])] = {
+    v-vaw n-nyumtopicswithwocawes = stat("num_topics_with_wocawes")
+    pwoducewtotopics
       .map {
-        case (producerId, (topicId, languageOpt, countryOpt), score) =>
-          ((topicId, languageOpt, countryOpt), Seq((producerId, score)))
+        case (pwoducewid, (⑅˘꒳˘) (topicid, w-wanguageopt, 😳😳😳 countwyopt), nyaa~~ scowe) =>
+          ((topicid, rawr w-wanguageopt, -.- countwyopt), (✿oωo) seq((pwoducewid, /(^•ω•^) scowe)))
       }
-      .sumByKey.mapValues { producersList =>
-        numTopicsWithLocales.inc()
-        producersList.sortBy(-_._2).take(maxProducersPerLocaleTopic).toList
-      }.toTypedPipe
+      .sumbykey.mapvawues { p-pwoducewswist =>
+        nyumtopicswithwocawes.inc()
+        p-pwoducewswist.sowtby(-_._2).take(maxpwoducewspewwocawetopic).towist
+      }.totypedpipe
   }
 
-  def getTopicsFromProducersFollowers(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    followedTopicsToUsers: TypedPipe[(TopicId, UserId)],
-    userSource: TypedPipe[(UserId, (Country, Language))],
-    userLanguages: TypedPipe[(UserId, Seq[(Language, Double)])],
-    minActiveFollowersForProducer: Int,
-    minTopicFollows: Int
+  d-def gettopicsfwompwoducewsfowwowews(
+    u-usewusewgwaph: typedpipe[usewandneighbows], 🥺
+    f-fowwowedtopicstousews: t-typedpipe[(topicid, ʘwʘ u-usewid)], UwU
+    usewsouwce: typedpipe[(usewid, XD (countwy, (✿oωo) w-wanguage))], :3
+    u-usewwanguages: typedpipe[(usewid, (///ˬ///✿) seq[(wanguage, nyaa~~ d-doubwe)])], >w<
+    m-minactivefowwowewsfowpwoducew: i-int, -.-
+    mintopicfowwows: int
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(ProducerId, (TopicId, Option[Language], Option[Country]), Double)] = {
+    i-impwicit datewange: datewange, (✿oωo)
+    t-timezone: timezone, (˘ω˘)
+    u-uniqueid: uniqueid
+  ): typedpipe[(pwoducewid, rawr (topicid, OwO option[wanguage], ^•ﻌ•^ o-option[countwy]), UwU d-doubwe)] = {
 
-    val usersFollowingTopics: TypedPipe[UserId] = followedTopicsToUsers.map(_._2).distinct
-    val producerToUsersSparseMatrix: SparseMatrix[ProducerId, UserId, Double] =
-      TopicsForProducersUtils
-        .getProducersToFollowedByUsersSparseMatrix(
-          userUserGraph,
-          minActiveFollowersForProducer).filterCols(usersFollowingTopics).rowL2Normalize
+    v-vaw usewsfowwowingtopics: t-typedpipe[usewid] = fowwowedtopicstousews.map(_._2).distinct
+    v-vaw pwoducewtousewsspawsematwix: spawsematwix[pwoducewid, (˘ω˘) usewid, (///ˬ///✿) doubwe] =
+      topicsfowpwoducewsutiws
+        .getpwoducewstofowwowedbyusewsspawsematwix(
+          usewusewgwaph, σωσ
+          minactivefowwowewsfowpwoducew).fiwtewcows(usewsfowwowingtopics).woww2nowmawize
 
-    val userToTopicsSparseSkinnyMatrix: SparseMatrix[
-      UserId,
-      (TopicId, Option[Language], Option[Country]),
-      Double
+    v-vaw usewtotopicsspawseskinnymatwix: spawsematwix[
+      u-usewid, /(^•ω•^)
+      (topicid, 😳 option[wanguage], 😳 o-option[countwy]), (⑅˘꒳˘)
+      doubwe
     ] =
-      TopicsForProducersUtils
-        .getFollowedTopicsToUserSparseMatrix(
-          followedTopicsToUsers,
-          userSource,
-          userLanguages,
-          minTopicFollows).rowL2Normalize.transpose
+      t-topicsfowpwoducewsutiws
+        .getfowwowedtopicstousewspawsematwix(
+          fowwowedtopicstousews, 😳😳😳
+          u-usewsouwce, 😳
+          u-usewwanguages, XD
+          m-mintopicfowwows).woww2nowmawize.twanspose
 
-    // Obtain the Producer to Locale Topics Matrix
-    val producersToLocaleTopicsMatrix: SparseMatrix[
-      ProducerId,
-      (TopicId, Option[Language], Option[Country]),
-      Double
+    // o-obtain t-the pwoducew to wocawe topics matwix
+    vaw pwoducewstowocawetopicsmatwix: spawsematwix[
+      pwoducewid, mya
+      (topicid, ^•ﻌ•^ option[wanguage], ʘwʘ option[countwy]), ( ͡o ω ͡o )
+      d-doubwe
     ] =
-      producerToUsersSparseMatrix.multiplySparseMatrix(userToTopicsSparseSkinnyMatrix)
+      p-pwoducewtousewsspawsematwix.muwtipwyspawsematwix(usewtotopicsspawseskinnymatwix)
 
-    producersToLocaleTopicsMatrix.toTypedPipe
+    p-pwoducewstowocawetopicsmatwix.totypedpipe
   }
 }

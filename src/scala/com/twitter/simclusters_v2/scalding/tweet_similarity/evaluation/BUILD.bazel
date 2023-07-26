@@ -1,40 +1,50 @@
-scala_library(
-    platform = "java8",
-    tags = ["bazel-only"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "snowflake:id",
-        "src/java/com/twitter/ml/api/constant",
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/rux/landing_page/data_pipeline:labeled_rux_service_scribe-scala",
-        "src/scala/com/twitter/rux/landing_page/data_pipeline:landing_page_labeled_data_record-java",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/dalv2/dataset",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/source",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/summingbird/common",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:ddg_util",
-        "twml/runtime/src/main/scala/com/twitter/twml/runtime/scalding",
+scawa_wibwawy(
+    pwatfowm = "java8", (⑅˘꒳˘)
+    tags = ["bazew-onwy"], ( ͡o ω ͡o )
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/stowehaus:awgebwa", UwU
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", rawr x3
+        "snowfwake:id", rawr
+        "swc/java/com/twittew/mw/api/constant", σωσ
+        "swc/scawa/com/twittew/mw/api:api-base", σωσ
+        "swc/scawa/com/twittew/wux/wanding_page/data_pipewine:wabewed_wux_sewvice_scwibe-scawa", >_<
+        "swc/scawa/com/twittew/wux/wanding_page/data_pipewine:wanding_page_wabewed_data_wecowd-java", :3
+        "swc/scawa/com/twittew/scawding_intewnaw/dawv2", (U ﹏ U)
+        "swc/scawa/com/twittew/scawding_intewnaw/dawv2/dataset", -.-
+        "swc/scawa/com/twittew/scawding_intewnaw/job", (ˆ ﻌ ˆ)♡
+        "swc/scawa/com/twittew/scawding_intewnaw/job/anawytics_batch", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/scawding_intewnaw/souwce", (U ᵕ U❁)
+        "swc/scawa/com/twittew/scawding_intewnaw/souwce/wzo_scwooge", -.-
+        "swc/scawa/com/twittew/simcwustews_v2/common",
+        "swc/scawa/com/twittew/simcwustews_v2/scawding", ^^;;
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/common", >_<
+        "swc/scawa/com/twittew/simcwustews_v2/summingbiwd/common", mya
+        "swc/scawa/com/twittew/wtf/scawding/jobs/common:ddg_utiw", mya
+        "twmw/wuntime/swc/main/scawa/com/twittew/twmw/wuntime/scawding", 😳
     ],
 )
 
-hadoop_binary(
-    name = "rux_landing_ddg_analysis-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation.RUXLandingDdgAnalysisAdhocApp",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    n-nyame = "wux_wanding_ddg_anawysis-adhoc", XD
+    m-main = "com.twittew.simcwustews_v2.scawding.tweet_simiwawity.evawuation.wuxwandingddganawysisadhocapp", :3
+    p-pwatfowm = "java8", 😳😳😳
+    w-wuntime_pwatfowm = "java8", -.-
+    t-tags = [
+        "bazew-compatibwe", ( ͡o ω ͡o )
+        "bazew-compatibwe:migwated", rawr x3
+        "bazew-onwy", nyaa~~
+    ],
+    d-dependencies = [
+        ":evawuation", /(^•ω•^)
+    ],
+)
+_pwatfowm = "java8", /(^•ω•^)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+        "bazew-compatibwe", rawr x3
+        "bazew-compatibwe:migwated", (U ﹏ U)
+        "bazew-onwy", (U ﹏ U)
+    ], (⑅˘꒳˘)
     dependencies = [
-        ":evaluation",
-    ],
+        ":evawuation", òωó
+    ], ʘwʘ
 )

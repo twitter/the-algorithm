@@ -1,77 +1,77 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+impowt owg.apache.commons.pipewine.stageexception;
+i-impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+i-impowt owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.ingester.pipeline.twitter.filters.IngesterValidMessageFilter;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
+i-impowt com.twittew.seawch.ingestew.pipewine.twittew.fiwtews.ingestewvawidmessagefiwtew;
+impowt c-com.twittew.seawch.ingestew.pipewine.utiw.pipewinestagewuntimeexception;
 
 /**
- * Filter out Twitter messages meeting some filtering rule.
+ * f-fiwtew out twittew messages meeting some fiwtewing wuwe.
  */
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class FilterTwitterMessageStage extends TwitterBaseStage
-    <TwitterMessage, TwitterMessage> {
-  private IngesterValidMessageFilter filter = null;
-  private SearchRateCounter validMessages;
-  private SearchRateCounter invalidMessages;
+@consumedtypes(twittewmessage.cwass)
+@pwoducesconsumed
+pubwic c-cwass fiwtewtwittewmessagestage extends twittewbasestage
+    <twittewmessage, mya twittewmessage> {
+  p-pwivate ingestewvawidmessagefiwtew fiwtew = n-nyuww;
+  pwivate seawchwatecountew vawidmessages;
+  pwivate seawchwatecountew i-invawidmessages;
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @ovewwide
+  pwotected v-void initstats() {
+    supew.initstats();
+    i-innewsetupstats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    validMessages = SearchRateCounter.export(getStageNamePrefix() + "_valid_messages");
-    invalidMessages = SearchRateCounter.export(getStageNamePrefix() + "_filtered_messages");
+  @ovewwide
+  pwotected void innewsetupstats() {
+    vawidmessages = seawchwatecountew.expowt(getstagenamepwefix() + "_vawid_messages");
+    i-invawidmessages = seawchwatecountew.expowt(getstagenamepwefix() + "_fiwtewed_messages");
   }
 
-  @Override
-  protected void doInnerPreprocess() {
-    innerSetup();
+  @ovewwide
+  pwotected void doinnewpwepwocess() {
+    innewsetup();
   }
 
-  @Override
-  protected void innerSetup() {
-    filter = new IngesterValidMessageFilter(decider);
+  @ovewwide
+  p-pwotected void innewsetup() {
+    f-fiwtew = nyew i-ingestewvawidmessagefiwtew(decidew);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof TwitterMessage)) {
-      throw new StageException(this, "Object is not a IngesterTwitterMessage: "
+  @ovewwide
+  p-pubwic v-void innewpwocess(object obj) thwows stageexception {
+    i-if (!(obj instanceof twittewmessage)) {
+      thwow nyew s-stageexception(this, 😳 "object is nyot a ingestewtwittewmessage: "
       + obj);
     }
 
-    TwitterMessage message = (TwitterMessage) obj;
-    if (tryToFilter(message)) {
-      emitAndCount(message);
+    twittewmessage message = (twittewmessage) obj;
+    i-if (twytofiwtew(message)) {
+      emitandcount(message);
     }
   }
 
-  @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
-    if (!tryToFilter(message)) {
-      throw new PipelineStageRuntimeException("Failed to filter, does not have to "
-      + "pass to the next stage");
+  @ovewwide
+  p-pwotected twittewmessage i-innewwunstagev2(twittewmessage m-message) {
+    if (!twytofiwtew(message)) {
+      thwow nyew pipewinestagewuntimeexception("faiwed t-to f-fiwtew, does nyot have to "
+      + "pass t-to the n-nyext stage");
     }
-    return message;
+    wetuwn m-message;
   }
 
-  private boolean tryToFilter(TwitterMessage message) {
-    boolean ableToFilter = false;
-    if (message != null && filter.accepts(message)) {
-      validMessages.increment();
-      ableToFilter = true;
-    } else {
-      invalidMessages.increment();
+  pwivate boowean t-twytofiwtew(twittewmessage message) {
+    boowean a-abwetofiwtew = fawse;
+    if (message != n-nyuww && fiwtew.accepts(message)) {
+      v-vawidmessages.incwement();
+      a-abwetofiwtew = twue;
+    } ewse {
+      invawidmessages.incwement();
     }
-    return ableToFilter;
+    wetuwn abwetofiwtew;
   }
 }

@@ -1,72 +1,72 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twittew.simcwustews_v2.summingbiwd.common
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.thriftscala.{
-  ClustersUserIsInterestedIn,
-  ClustersWithScores,
-  Scores
+impowt com.twittew.simcwustews_v2.common.cwustewid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.{
+  c-cwustewsusewisintewestedin, >w<
+  c-cwustewswithscowes, rawr
+  scowes
 }
 
-object SimClustersInterestedInUtil {
+o-object s-simcwustewsintewestedinutiw {
 
-  private final val EmptyClustersWithScores = ClustersWithScores()
+  p-pwivate finaw vaw e-emptycwustewswithscowes = cwustewswithscowes()
 
-  case class InterestedInScores(
-    favScore: Double,
-    clusterNormalizedFavScore: Double,
-    clusterNormalizedFollowScore: Double,
-    clusterNormalizedLogFavScore: Double)
+  case cwass intewestedinscowes(
+    favscowe: d-doubwe, mya
+    cwustewnowmawizedfavscowe: doubwe, ^^
+    cwustewnowmawizedfowwowscowe: d-doubwe, 😳😳😳
+    cwustewnowmawizedwogfavscowe: doubwe)
 
-  def topClustersWithScores(
-    userInterests: ClustersUserIsInterestedIn
-  ): Seq[(ClusterId, InterestedInScores)] = {
-    userInterests.clusterIdToScores.toSeq.map {
-      case (clusterId, scores) =>
-        val favScore = scores.favScore.getOrElse(0.0)
-        val normalizedFavScore = scores.favScoreClusterNormalizedOnly.getOrElse(0.0)
-        val normalizedFollowScore = scores.followScoreClusterNormalizedOnly.getOrElse(0.0)
-        val normalizedLogFavScore = scores.logFavScoreClusterNormalizedOnly.getOrElse(0.0)
+  d-def topcwustewswithscowes(
+    usewintewests: cwustewsusewisintewestedin
+  ): seq[(cwustewid, mya i-intewestedinscowes)] = {
+    usewintewests.cwustewidtoscowes.toseq.map {
+      c-case (cwustewid, s-scowes) =>
+        vaw favscowe = scowes.favscowe.getowewse(0.0)
+        vaw nyowmawizedfavscowe = scowes.favscowecwustewnowmawizedonwy.getowewse(0.0)
+        v-vaw nyowmawizedfowwowscowe = scowes.fowwowscowecwustewnowmawizedonwy.getowewse(0.0)
+        vaw nyowmawizedwogfavscowe = scowes.wogfavscowecwustewnowmawizedonwy.getowewse(0.0)
 
         (
-          clusterId,
-          InterestedInScores(
-            favScore,
-            normalizedFavScore,
-            normalizedFollowScore,
-            normalizedLogFavScore))
+          cwustewid, 😳
+          intewestedinscowes(
+            favscowe, -.-
+            n-nyowmawizedfavscowe, 🥺
+            nyowmawizedfowwowscowe, o.O
+            n-nyowmawizedwogfavscowe))
     }
   }
 
-  def buildClusterWithScores(
-    clusterScores: Seq[(ClusterId, InterestedInScores)],
-    timeInMs: Double,
-    favScoreThresholdForUserInterest: Double
+  d-def buiwdcwustewwithscowes(
+    c-cwustewscowes: seq[(cwustewid, /(^•ω•^) intewestedinscowes)], nyaa~~
+    t-timeinms: doubwe, nyaa~~
+    favscowethweshowdfowusewintewest: doubwe
   )(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid
-  ): ClustersWithScores = {
-    val scoresMap = clusterScores.collect {
+    i-impwicit thwiftdecayedvawuemonoid: thwiftdecayedvawuemonoid
+  ): cwustewswithscowes = {
+    v-vaw scowesmap = cwustewscowes.cowwect {
       case (
-            clusterId,
-            InterestedInScores(
-              favScore,
-              _,
-              _,
-              clusterNormalizedLogFavScore))
-          // NOTE: the threshold is on favScore, and the computation is on normalizedFavScore
-          // This threshold reduces the number of unique keys in the cache by 80%,
-          // based on offline analysis
-          if favScore >= favScoreThresholdForUserInterest =>
+            cwustewid, :3
+            intewestedinscowes(
+              favscowe, 😳😳😳
+              _, (˘ω˘)
+              _, ^^
+              c-cwustewnowmawizedwogfavscowe))
+          // nyote: t-the thweshowd i-is on favscowe, :3 a-and the computation is on nyowmawizedfavscowe
+          // this thweshowd weduces t-the nyumbew o-of unique keys in the cache by 80%, -.-
+          // b-based on offwine a-anawysis
+          if favscowe >= f-favscowethweshowdfowusewintewest =>
 
-        val favClusterNormalized8HrHalfLifeScoreOpt =
-            Some(thriftDecayedValueMonoid.build(clusterNormalizedLogFavScore, timeInMs))
+        vaw favcwustewnowmawized8hwhawfwifescoweopt =
+            s-some(thwiftdecayedvawuemonoid.buiwd(cwustewnowmawizedwogfavscowe, 😳 timeinms))
 
-        clusterId -> Scores(favClusterNormalized8HrHalfLifeScore = favClusterNormalized8HrHalfLifeScoreOpt)
-    }.toMap
+        cwustewid -> scowes(favcwustewnowmawized8hwhawfwifescowe = f-favcwustewnowmawized8hwhawfwifescoweopt)
+    }.tomap
 
-    if (scoresMap.nonEmpty) {
-      ClustersWithScores(Some(scoresMap))
-    } else {
-      EmptyClustersWithScores
+    if (scowesmap.nonempty) {
+      c-cwustewswithscowes(some(scowesmap))
+    } ewse {
+      emptycwustewswithscowes
     }
   }
 }

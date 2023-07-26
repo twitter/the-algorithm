@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+impowt c-com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
+i-impowt com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
 
-case class FlowRecommendation(userId: Long) {
+c-case cwass fwowwecommendation(usewid: w-wong) {
 
-  def toThrift: t.FlowRecommendation =
-    t.FlowRecommendation(userId = userId)
+  d-def tothwift: t-t.fwowwecommendation =
+    t.fwowwecommendation(usewid = usewid)
 
-  def toOfflineThrift: offline.OfflineFlowRecommendation =
-    offline.OfflineFlowRecommendation(userId = userId)
+  def tooffwinethwift: offwine.offwinefwowwecommendation =
+    o-offwine.offwinefwowwecommendation(usewid = usewid)
 
 }
 
-object FlowRecommendation {
-  def fromThrift(flowRecommendation: t.FlowRecommendation): FlowRecommendation = {
-    FlowRecommendation(
-      userId = flowRecommendation.userId
+object f-fwowwecommendation {
+  def fwomthwift(fwowwecommendation: t-t.fwowwecommendation): fwowwecommendation = {
+    fwowwecommendation(
+      usewid = fwowwecommendation.usewid
     )
   }
 

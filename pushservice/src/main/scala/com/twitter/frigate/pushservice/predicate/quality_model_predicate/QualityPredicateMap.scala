@@ -1,21 +1,21 @@
-package com.twitter.frigate.pushservice.predicate.quality_model_predicate
+package com.twittew.fwigate.pushsewvice.pwedicate.quawity_modew_pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.QualityPredicateEnum
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.hermit.predicate.NamedPredicate
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.pawams.quawitypwedicateenum
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.pwedicatesfowcandidate
+i-impowt c-com.twittew.hewmit.pwedicate.namedpwedicate
 
-object QualityPredicateMap {
+object quawitypwedicatemap {
 
-  def apply(
+  def appwy(
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Map[QualityPredicateEnum.Value, NamedPredicate[PushCandidate]] = {
-    Map(
-      QualityPredicateEnum.WeightedOpenOrNtabClick -> WeightedOpenOrNtabClickQualityPredicate(),
-      QualityPredicateEnum.ExplicitOpenOrNtabClickFilter -> ExplicitOONCFilterPredicate(),
-      QualityPredicateEnum.AlwaysTrue -> PredicatesForCandidate.alwaysTruePushCandidatePredicate,
+    i-impwicit statsweceivew: statsweceivew
+  ): map[quawitypwedicateenum.vawue, (U ᵕ U❁) n-nyamedpwedicate[pushcandidate]] = {
+    map(
+      quawitypwedicateenum.weightedopenowntabcwick -> weightedopenowntabcwickquawitypwedicate(), -.-
+      q-quawitypwedicateenum.expwicitopenowntabcwickfiwtew -> expwicitooncfiwtewpwedicate(), ^^;;
+      quawitypwedicateenum.awwaystwue -> pwedicatesfowcandidate.awwaystwuepushcandidatepwedicate, >_<
     )
   }
 }

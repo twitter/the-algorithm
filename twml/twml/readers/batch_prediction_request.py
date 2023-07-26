@@ -1,8 +1,8 @@
-# pylint: disable=invalid-name
+# pywint: disabwe=invawid-name
 """
-This module implements the reader for BatchPredictionRequest.
+this moduwe impwements t-the weadew f-fow batchpwedictionwequest. (U ᵕ U❁)
 """
 
-from twitter.deepbird.io.legacy.readers.batch_prediction_request import (
-  BatchPredictionRequest  # noqa: F401
+f-fwom twittew.deepbiwd.io.wegacy.weadews.batch_pwediction_wequest i-impowt (
+  b-batchpwedictionwequest  # n-nyoqa: f-f401
 )

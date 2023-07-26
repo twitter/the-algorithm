@@ -1,117 +1,117 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.twittew.fowwow_wecommendations.fwows.content_wecommendew_fwow
 
-import com.twitter.timelines.configapi.FSBoundedParam
+impowt c-com.twittew.timewines.configapi.fsboundedpawam
 
-object ContentRecommenderFlowCandidateSourceWeightsParams {
-  // Social based
-  case object ForwardPhoneBookSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.ForwardPhoneBookSourceWeight,
+o-object contentwecommendewfwowcandidatesouwceweightspawams {
+  // s-sociaw based
+  c-case object fowwawdphonebooksouwceweight
+      e-extends fsboundedpawam[doubwe](
+        c-contentwecommendewfwowfeatuweswitchkeys.fowwawdphonebooksouwceweight, 😳
+        1d, -.-
+        0d, 🥺
+        1000d)
+  c-case object f-fowwawdemaiwbooksouwceweight
+      extends fsboundedpawam[doubwe](
+        contentwecommendewfwowfeatuweswitchkeys.fowwawdemaiwbooksouwceweight, o.O
         1d,
+        0d, /(^•ω•^)
+        1000d)
+  case object wevewsephonebooksouwceweight
+      e-extends fsboundedpawam[doubwe](
+        contentwecommendewfwowfeatuweswitchkeys.wevewsephonebooksouwceweight, nyaa~~
+        1d, nyaa~~
+        0d, :3
+        1000d)
+  c-case object wevewseemaiwbooksouwceweight
+      extends fsboundedpawam[doubwe](
+        c-contentwecommendewfwowfeatuweswitchkeys.wevewseemaiwbooksouwceweight, 😳😳😳
+        1d, (˘ω˘)
         0d,
         1000d)
-  case object ForwardEmailBookSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.ForwardEmailBookSourceWeight,
+  case object offwinestwongtiepwedictionsouwceweight
+      extends fsboundedpawam[doubwe](
+        c-contentwecommendewfwowfeatuweswitchkeys.offwinestwongtiepwedictionsouwceweight, ^^
         1d,
+        0d, :3
+        1000d)
+  case object twianguwawwoopssouwceweight
+      e-extends fsboundedpawam[doubwe](
+        c-contentwecommendewfwowfeatuweswitchkeys.twianguwawwoopssouwceweight, -.-
+        1d, 😳
+        0d, mya
+        1000d)
+  case object usewusewgwaphsouwceweight
+      extends fsboundedpawam[doubwe](
+        contentwecommendewfwowfeatuweswitchkeys.usewusewgwaphsouwceweight, (˘ω˘)
+        1d, >_<
+        0d, -.-
+        1000d)
+  c-case object nyewfowwowingnewfowwowingexpansionsouwceweight
+      extends fsboundedpawam[doubwe](
+        contentwecommendewfwowfeatuweswitchkeys.newfowwowingnewfowwowingexpansionsouwceweight, 🥺
+        1d, (U ﹏ U)
         0d,
         1000d)
-  case object ReversePhoneBookSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.ReversePhoneBookSourceWeight,
-        1d,
+  // a-activity based
+  case object n-newfowwowingsimiwawusewsouwceweight
+      e-extends f-fsboundedpawam[doubwe](
+        c-contentwecommendewfwowfeatuweswitchkeys.newfowwowingsimiwawusewsouwceweight, >w<
+        1d, mya
         0d,
         1000d)
-  case object ReverseEmailBookSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.ReverseEmailBookSourceWeight,
-        1d,
+  case object wecentengagementsimiwawusewsouwceweight
+      e-extends fsboundedpawam[doubwe](
+        contentwecommendewfwowfeatuweswitchkeys.wecentengagementsimiwawusewsouwceweight, >w<
+        1d, nyaa~~
         0d,
         1000d)
-  case object OfflineStrongTiePredictionSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.OfflineStrongTiePredictionSourceWeight,
-        1d,
+  case object w-wepeatedpwofiwevisitssouwceweight
+      extends fsboundedpawam[doubwe](
+        contentwecommendewfwowfeatuweswitchkeys.wepeatedpwofiwevisitssouwceweight, (✿oωo)
+        1d, ʘwʘ
         0d,
         1000d)
-  case object TriangularLoopsSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.TriangularLoopsSourceWeight,
-        1d,
+  case object weawgwaphoonsouwceweight
+      extends f-fsboundedpawam[doubwe](
+        contentwecommendewfwowfeatuweswitchkeys.weawgwaphoonsouwceweight, (ˆ ﻌ ˆ)♡
+        1d, 😳😳😳
         0d,
         1000d)
-  case object UserUserGraphSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.UserUserGraphSourceWeight,
-        1d,
+  // g-geo based
+  c-case object popcountwysouwceweight
+      e-extends fsboundedpawam[doubwe](
+        contentwecommendewfwowfeatuweswitchkeys.popcountwysouwceweight, :3
+        1d, OwO
         0d,
         1000d)
-  case object NewFollowingNewFollowingExpansionSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.NewFollowingNewFollowingExpansionSourceWeight,
+  case o-object popgeohashsouwceweight
+      e-extends fsboundedpawam[doubwe](
+        contentwecommendewfwowfeatuweswitchkeys.popgeohashsouwceweight, (U ﹏ U)
         1d,
-        0d,
+        0d, >w<
         1000d)
-  // Activity based
-  case object NewFollowingSimilarUserSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.NewFollowingSimilarUserSourceWeight,
+  c-case object p-popcountwybackfiwwsouwceweight
+      extends fsboundedpawam[doubwe](
+        c-contentwecommendewfwowfeatuweswitchkeys.popcountwybackfiwwsouwceweight, (U ﹏ U)
         1d,
-        0d,
+        0d, 😳
         1000d)
-  case object RecentEngagementSimilarUserSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.RecentEngagementSimilarUserSourceWeight,
-        1d,
-        0d,
+  case object ppmiwocawefowwowsouwceweight
+      e-extends fsboundedpawam[doubwe](
+        contentwecommendewfwowfeatuweswitchkeys.ppmiwocawefowwowsouwceweight, (ˆ ﻌ ˆ)♡
+        1d, 😳😳😳
+        0d, (U ﹏ U)
         1000d)
-  case object RepeatedProfileVisitsSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.RepeatedProfileVisitsSourceWeight,
-        1d,
-        0d,
+  c-case object topowganicfowwowsaccountssouwceweight
+      e-extends fsboundedpawam[doubwe](
+        c-contentwecommendewfwowfeatuweswitchkeys.topowganicfowwowsaccountssouwceweight, (///ˬ///✿)
+        1d, 😳
+        0d, 😳
         1000d)
-  case object RealGraphOonSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.RealGraphOonSourceWeight,
-        1d,
-        0d,
-        1000d)
-  // Geo based
-  case object PopCountrySourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.PopCountrySourceWeight,
-        1d,
-        0d,
-        1000d)
-  case object PopGeohashSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.PopGeohashSourceWeight,
-        1d,
-        0d,
-        1000d)
-  case object PopCountryBackfillSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.PopCountryBackfillSourceWeight,
-        1d,
-        0d,
-        1000d)
-  case object PPMILocaleFollowSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.PPMILocaleFollowSourceWeight,
-        1d,
-        0d,
-        1000d)
-  case object TopOrganicFollowsAccountsSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.TopOrganicFollowsAccountsSourceWeight,
-        1d,
-        0d,
-        1000d)
-  case object CrowdSearchAccountSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.CrowdSearchAccountSourceWeight,
-        1d,
+  c-case object cwowdseawchaccountsouwceweight
+      extends fsboundedpawam[doubwe](
+        contentwecommendewfwowfeatuweswitchkeys.cwowdseawchaccountsouwceweight, σωσ
+        1d, rawr x3
         0d,
         1000d)
 }

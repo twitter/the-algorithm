@@ -1,111 +1,111 @@
-package com.twitter.product_mixer.core.model.common.identifier
+package com.twittew.pwoduct_mixew.cowe.modew.common.identifiew
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.twitter.conversions.StringOps
-import scala.util.matching.Regex
+impowt com.fastewxmw.jackson.databind.annotation.jsonsewiawize
+i-impowt c-com.twittew.convewsions.stwingops
+i-impowt scawa.utiw.matching.wegex
 
 /**
- * Component Identifiers are a type of identifier used in product mixer to identify
- * unique components - products, pipelines, candidate sources.
+ * c-component identifiews a-awe a type o-of identifiew used i-in pwoduct mixew t-to identify
+ * unique components - pwoducts, UwU pipewines, candidate souwces.
  *
- * Each identifier has two parts - a type and a name. Subclasses of [[ComponentIdentifier]]
- * should hardcode the `componentType`, and be declared in this file.
+ * e-each identifiew has two pawts - a type and a-a nyame. :3 subcwasses of [[componentidentifiew]]
+ * s-shouwd hawdcode the `componenttype`, (⑅˘꒳˘) and be decwawed in this f-fiwe. (///ˬ///✿)
  *
- * For example, a [[ProductPipelineIdentifier]] has the type "ProductPipeline".
+ * fow exampwe, ^^;; a [[pwoductpipewineidentifiew]] h-has the t-type "pwoductpipewine". >_<
  *
- * Component identifiers are used in:
- *   - Logs
- *   - Tooling
- *   - Metrics
- *   - Feature Switches
+ * component identifiews awe used in:
+ *   - wogs
+ *   - toowing
+ *   - m-metwics
+ *   - featuwe switches
  *
-  * A component identifier name is restricted to:
- *   - 3 to 80 characters to ensure reasonable length
- *   - A-Z, a-z, and Digits
- *   - Must start with A-Z
- *   - Digits only on the ends of "words"
- *   - Examples include "AlphaSample" and "UsersLikeMe"
- *   - and "SimsV2" or "Test6"
+  * a component identifiew nyame is westwicted t-to:
+ *   - 3 to 80 chawactews t-to ensuwe weasonabwe w-wength
+ *   - a-a-z, rawr x3 a-z, a-and digits
+ *   - must stawt with a-z
+ *   - digits o-onwy on the ends of "wowds"
+ *   - exampwes i-incwude "awphasampwe" and "usewswikeme"
+ *   - and "simsv2" ow "test6"
  *
- * Avoid including types like "Pipeline", "MixerPipeline" etc in your identifier. these
- * can be implied by the type itself, and will automatically be used where appropriate (logs etc).
+ * avoid incwuding types wike "pipewine", /(^•ω•^) "mixewpipewine" e-etc in youw identifiew. :3 these
+ * c-can be impwied b-by the type i-itsewf, (ꈍᴗꈍ) and wiww automaticawwy be used whewe appwopwiate (wogs etc). /(^•ω•^)
  */
-@JsonSerialize(using = classOf[ComponentIdentifierSerializer])
-abstract class ComponentIdentifier(
-  val componentType: String,
-  val name: String)
-    extends Equals {
+@jsonsewiawize(using = c-cwassof[componentidentifiewsewiawizew])
+a-abstwact cwass componentidentifiew(
+  vaw c-componenttype: s-stwing, (⑅˘꒳˘)
+  vaw nyame: stwing)
+    e-extends equaws {
 
-  val file: sourcecode.File = ""
+  vaw fiwe: s-souwcecode.fiwe = ""
 
-  override val toString: String = s"$name$componentType"
+  ovewwide vaw tostwing: s-stwing = s"$name$componenttype"
 
-  val snakeCase: String = StringOps.toSnakeCase(toString)
+  vaw snakecase: s-stwing = stwingops.tosnakecase(tostwing)
 
-  val toScopes: Seq[String] = Seq(componentType, name)
+  vaw t-toscopes: seq[stwing] = s-seq(componenttype, ( ͡o ω ͡o ) nyame)
 }
 
-object ComponentIdentifier {
-  // Allows for CamelCase and CamelCaseVer3 styles
-  val AllowedCharacters: Regex = "([A-Z][A-Za-z]*[0-9]*)+".r
-  val MinLength = 3
-  val MaxLength = 80
+object componentidentifiew {
+  // awwows fow camewcase and camewcasevew3 stywes
+  vaw awwowedchawactews: w-wegex = "([a-z][a-za-z]*[0-9]*)+".w
+  v-vaw minwength = 3
+  vaw maxwength = 80
 
   /**
-   * When a [[ComponentIdentifier.name]] is [[BasedOnParentComponent]]
-   * then when operations that depend on the [[ComponentIdentifier]]
-   * are performed, like registering and stats, we will perform that
-   * operation by substituting the [[ComponentIdentifier.name]] with
-   * the parent component's [[ComponentIdentifier.name]].
+   * w-when a [[componentidentifiew.name]] i-is [[basedonpawentcomponent]]
+   * t-then when opewations that depend on the [[componentidentifiew]]
+   * awe pewfowmed, òωó w-wike wegistewing and stats, (⑅˘꒳˘) we wiww pewfowm that
+   * opewation by substituting t-the [[componentidentifiew.name]] with
+   * the p-pawent component's [[componentidentifiew.name]]. XD
    */
-  private[core] val BasedOnParentComponent = "BasedOnParentComponent"
+  p-pwivate[cowe] v-vaw basedonpawentcomponent = "basedonpawentcomponent"
 
-  def isValidName(name: String): Boolean = {
-    name match {
-      case n if n.length < MinLength =>
-        false
-      case n if n.length > MaxLength =>
-        false
-      case AllowedCharacters(_*) =>
-        true
+  def isvawidname(name: s-stwing): b-boowean = {
+    n-nyame match {
+      c-case ny if ny.wength < minwength =>
+        fawse
+      case n-ny if ny.wength > m-maxwength =>
+        f-fawse
+      c-case awwowedchawactews(_*) =>
+        t-twue
       case _ =>
-        false
+        fawse
     }
   }
 
-  implicit val ordering: Ordering[ComponentIdentifier] =
-    Ordering.by { component =>
-      val componentTypeRank = component match {
-        case _: ProductIdentifier => 0
-        case _: ProductPipelineIdentifier => 1
-        case _: MixerPipelineIdentifier => 2
-        case _: RecommendationPipelineIdentifier => 3
-        case _: ScoringPipelineIdentifier => 4
-        case _: CandidatePipelineIdentifier => 5
-        case _: PipelineStepIdentifier => 6
-        case _: CandidateSourceIdentifier => 7
-        case _: FeatureHydratorIdentifier => 8
-        case _: GateIdentifier => 9
-        case _: FilterIdentifier => 10
-        case _: TransformerIdentifier => 11
-        case _: ScorerIdentifier => 12
-        case _: DecoratorIdentifier => 13
-        case _: DomainMarshallerIdentifier => 14
-        case _: TransportMarshallerIdentifier => 15
-        case _: SideEffectIdentifier => 16
-        case _: PlatformIdentifier => 17
-        case _: SelectorIdentifier => 18
-        case _ => Int.MaxValue
+  impwicit v-vaw owdewing: owdewing[componentidentifiew] =
+    owdewing.by { component =>
+      vaw componenttypewank = component match {
+        c-case _: pwoductidentifiew => 0
+        case _: pwoductpipewineidentifiew => 1
+        case _: mixewpipewineidentifiew => 2
+        c-case _: w-wecommendationpipewineidentifiew => 3
+        c-case _: scowingpipewineidentifiew => 4
+        case _: candidatepipewineidentifiew => 5
+        c-case _: pipewinestepidentifiew => 6
+        case _: candidatesouwceidentifiew => 7
+        c-case _: f-featuwehydwatowidentifiew => 8
+        case _: gateidentifiew => 9
+        case _: fiwtewidentifiew => 10
+        case _: twansfowmewidentifiew => 11
+        c-case _: scowewidentifiew => 12
+        case _: d-decowatowidentifiew => 13
+        case _: domainmawshawwewidentifiew => 14
+        c-case _: twanspowtmawshawwewidentifiew => 15
+        c-case _: sideeffectidentifiew => 16
+        case _: pwatfowmidentifiew => 17
+        c-case _: s-sewectowidentifiew => 18
+        case _ => i-int.maxvawue
       }
 
-      // First rank by type, then by name for equivalent types for overall order stability
-      (componentTypeRank, component.name)
+      // f-fiwst wank by type, -.- then by nyame fow equivawent types fow ovewaww owdew stabiwity
+      (componenttypewank, :3 c-component.name)
     }
 }
 
 /**
- * HasComponentIdentifier indicates that component has a [[ComponentIdentifier]]
+ * h-hascomponentidentifiew i-indicates that component has a-a [[componentidentifiew]]
  */
-trait HasComponentIdentifier {
-  val identifier: ComponentIdentifier
+twait h-hascomponentidentifiew {
+  vaw identifiew: c-componentidentifiew
 }

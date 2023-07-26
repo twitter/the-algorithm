@@ -1,19 +1,19 @@
-package com.twitter.unified_user_actions.adapter
+package com.twittew.unified_usew_actions.adaptew
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
 
-trait AbstractAdapter[INPUT, OUTK, OUTV] extends Serializable {
+t-twait abstwactadaptew[input, ( ͡o ω ͡o ) o-outk, outv] extends s-sewiawizabwe {
 
   /**
-   * The basic input -> seq[output] adapter which concrete adapters should extend from
-   * @param input a single INPUT
-   * @return A list of (OUTK, OUTV) tuple. The OUTK is the output key mainly for publishing to Kafka (or Pubsub).
-   *         If other processing, e.g. offline batch processing, doesn't require the output key then it can drop it
-   *         like source.adaptOneToKeyedMany.map(_._2)
+   * t-the basic input -> s-seq[output] adaptew w-which concwete a-adaptews shouwd extend fwom
+   * @pawam input a singwe input
+   * @wetuwn a wist of (outk, rawr x3 o-outv) tupwe. the outk is the output key mainwy f-fow pubwishing to kafka (ow pubsub). nyaa~~
+   *         i-if othew pwocessing, /(^•ω•^) e.g. rawr offwine batch pwocessing, OwO doesn't wequiwe t-the output key then it can d-dwop it
+   *         w-wike souwce.adaptonetokeyedmany.map(_._2)
    */
-  def adaptOneToKeyedMany(
-    input: INPUT,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(OUTK, OUTV)]
+  def adaptonetokeyedmany(
+    input: input, (U ﹏ U)
+    statsweceivew: statsweceivew = n-nyuwwstatsweceivew
+  ): seq[(outk, >_< outv)]
 }

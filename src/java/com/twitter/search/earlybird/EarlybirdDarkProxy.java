@@ -1,113 +1,113 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.cowwect.wists;
 
-import org.apache.thrift.protocol.TCompactProtocol;
+i-impowt o-owg.apache.thwift.pwotocow.tcompactpwotocow;
 
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.builder.ClientBuilder;
-import com.twitter.finagle.builder.ClientConfig.Yes;
-import com.twitter.finagle.mtls.client.MtlsThriftMuxClient;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.finagle.zipkin.thrift.ZipkinTracer;
-import com.twitter.search.common.dark.DarkProxy;
-import com.twitter.search.common.dark.ResolverProxy;
-import com.twitter.search.common.dark.ServerSetResolver;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.util.thrift.BytesToThriftFilter;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.util.Duration;
+i-impowt com.twittew.finagwe.thwiftmux;
+i-impowt c-com.twittew.finagwe.buiwdew.cwientbuiwdew;
+impowt com.twittew.finagwe.buiwdew.cwientconfig.yes;
+impowt com.twittew.finagwe.mtws.cwient.mtwsthwiftmuxcwient;
+impowt c-com.twittew.finagwe.stats.statsweceivew;
+impowt com.twittew.finagwe.thwift.cwientid;
+i-impowt com.twittew.finagwe.thwift.thwiftcwientwequest;
+impowt com.twittew.finagwe.zipkin.thwift.zipkintwacew;
+i-impowt com.twittew.seawch.common.dawk.dawkpwoxy;
+impowt com.twittew.seawch.common.dawk.wesowvewpwoxy;
+impowt com.twittew.seawch.common.dawk.sewvewsetwesowvew;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt c-com.twittew.seawch.common.utiw.thwift.bytestothwiftfiwtew;
+impowt c-com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
+impowt com.twittew.utiw.duwation;
 
-public class EarlybirdDarkProxy {
-  private static final String WARM_UP_DECIDER_KEY_PREFIX = "warmup_";
+pubwic cwass eawwybiwddawkpwoxy {
+  p-pwivate static finaw stwing wawm_up_decidew_key_pwefix = "wawmup_";
 
-  private static final int DARK_REQUESTS_TOTAL_REQUEST_TIMEOUT_MS =
-      EarlybirdConfig.getInt("dark_requests_total_request_timeout_ms", 800);
-  private static final int DARK_REQUESTS_INDIVIDUAL_REQUEST_TIMEOUT_MS =
-      EarlybirdConfig.getInt("dark_requests_individual_request_timeout_ms", 800);
-  private static final int DARK_REQUESTS_CONNECT_TIMEOUT_MS =
-      EarlybirdConfig.getInt("dark_requests_connect_timeout_ms", 500);
-  private static final int DARK_REQUESTS_NUM_RETRIES =
-      EarlybirdConfig.getInt("dark_requests_num_retries", 1);
-  private static final String DARK_REQUESTS_FINAGLE_CLIENT_ID =
-      EarlybirdConfig.getString("dark_requests_finagle_client_id", "earlybird_warmup");
+  pwivate static finaw int dawk_wequests_totaw_wequest_timeout_ms =
+      e-eawwybiwdconfig.getint("dawk_wequests_totaw_wequest_timeout_ms", rawr 800);
+  pwivate static f-finaw int dawk_wequests_individuaw_wequest_timeout_ms =
+      e-eawwybiwdconfig.getint("dawk_wequests_individuaw_wequest_timeout_ms", 😳 800);
+  p-pwivate static f-finaw int dawk_wequests_connect_timeout_ms =
+      eawwybiwdconfig.getint("dawk_wequests_connect_timeout_ms", >w< 500);
+  pwivate static f-finaw int dawk_wequests_num_wetwies =
+      eawwybiwdconfig.getint("dawk_wequests_num_wetwies", (⑅˘꒳˘) 1);
+  pwivate s-static finaw stwing dawk_wequests_finagwe_cwient_id =
+      eawwybiwdconfig.getstwing("dawk_wequests_finagwe_cwient_id", OwO "eawwybiwd_wawmup");
 
-  private final DarkProxy<ThriftClientRequest, byte[]> darkProxy;
+  pwivate finaw dawkpwoxy<thwiftcwientwequest, (ꈍᴗꈍ) byte[]> dawkpwoxy;
 
-  public EarlybirdDarkProxy(SearchDecider searchDecider,
-                            StatsReceiver statsReceiver,
-                            EarlybirdServerSetManager earlybirdServerSetManager,
-                            EarlybirdWarmUpManager earlybirdWarmUpManager,
-                            String clusterName) {
-    darkProxy = newDarkProxy(searchDecider,
-                             statsReceiver,
-                             earlybirdServerSetManager,
-                             earlybirdWarmUpManager,
-                             clusterName);
+  pubwic eawwybiwddawkpwoxy(seawchdecidew seawchdecidew, 😳
+                            s-statsweceivew statsweceivew, 😳😳😳
+                            e-eawwybiwdsewvewsetmanagew e-eawwybiwdsewvewsetmanagew, mya
+                            e-eawwybiwdwawmupmanagew eawwybiwdwawmupmanagew, mya
+                            stwing cwustewname) {
+    dawkpwoxy = n-nyewdawkpwoxy(seawchdecidew, (⑅˘꒳˘)
+                             statsweceivew, (U ﹏ U)
+                             e-eawwybiwdsewvewsetmanagew, mya
+                             eawwybiwdwawmupmanagew, ʘwʘ
+                             c-cwustewname);
   }
 
-  public DarkProxy<ThriftClientRequest, byte[]> getDarkProxy() {
-    return darkProxy;
+  p-pubwic dawkpwoxy<thwiftcwientwequest, (˘ω˘) b-byte[]> getdawkpwoxy() {
+    wetuwn dawkpwoxy;
   }
 
-  @VisibleForTesting
-  protected DarkProxy<ThriftClientRequest, byte[]> newDarkProxy(
-      SearchDecider searchDecider,
-      StatsReceiver statsReceiver,
-      EarlybirdServerSetManager earlybirdServerSetManager,
-      final EarlybirdWarmUpManager earlybirdWarmUpManager,
-      String clusterName) {
-    ResolverProxy resolverProxy = new ResolverProxy();
-    ServerSetResolver.SelfServerSetResolver selfServerSetResolver =
-        new ServerSetResolver.SelfServerSetResolver(
-            earlybirdServerSetManager.getServerSetIdentifier(), resolverProxy);
-    selfServerSetResolver.init();
+  @visibwefowtesting
+  p-pwotected dawkpwoxy<thwiftcwientwequest, (U ﹏ U) byte[]> nyewdawkpwoxy(
+      s-seawchdecidew seawchdecidew, ^•ﻌ•^
+      s-statsweceivew statsweceivew, (˘ω˘)
+      e-eawwybiwdsewvewsetmanagew e-eawwybiwdsewvewsetmanagew, :3
+      finaw eawwybiwdwawmupmanagew eawwybiwdwawmupmanagew, ^^;;
+      stwing cwustewname) {
+    wesowvewpwoxy wesowvewpwoxy = nyew wesowvewpwoxy();
+    s-sewvewsetwesowvew.sewfsewvewsetwesowvew s-sewfsewvewsetwesowvew =
+        nyew sewvewsetwesowvew.sewfsewvewsetwesowvew(
+            e-eawwybiwdsewvewsetmanagew.getsewvewsetidentifiew(), 🥺 w-wesowvewpwoxy);
+    s-sewfsewvewsetwesowvew.init();
 
-    final String clusterNameForDeciderKey = clusterName.toLowerCase().replaceAll("-", "_");
-    final String warmUpServerSetIdentifier = earlybirdWarmUpManager.getServerSetIdentifier();
-    DarkProxy newDarkProxy = new DarkProxy<ThriftClientRequest, byte[]>(
-        selfServerSetResolver,
-        newClientBuilder(statsReceiver),
-        resolverProxy,
-        searchDecider,
-        Lists.newArrayList(warmUpServerSetIdentifier),
-        new BytesToThriftFilter(),
-        statsReceiver) {
-      @Override
-      protected String getServicePathDeciderKey(String servicePath) {
-        if (warmUpServerSetIdentifier.equals(servicePath)) {
-          return WARM_UP_DECIDER_KEY_PREFIX + clusterNameForDeciderKey;
+    finaw stwing cwustewnamefowdecidewkey = cwustewname.towowewcase().wepwaceaww("-", (⑅˘꒳˘) "_");
+    finaw s-stwing wawmupsewvewsetidentifiew = eawwybiwdwawmupmanagew.getsewvewsetidentifiew();
+    dawkpwoxy newdawkpwoxy = nyew dawkpwoxy<thwiftcwientwequest, nyaa~~ b-byte[]>(
+        sewfsewvewsetwesowvew, :3
+        n-nyewcwientbuiwdew(statsweceivew),
+        w-wesowvewpwoxy, ( ͡o ω ͡o )
+        s-seawchdecidew, mya
+        wists.newawwaywist(wawmupsewvewsetidentifiew), (///ˬ///✿)
+        n-new bytestothwiftfiwtew(), (˘ω˘)
+        s-statsweceivew) {
+      @ovewwide
+      pwotected s-stwing g-getsewvicepathdecidewkey(stwing sewvicepath) {
+        if (wawmupsewvewsetidentifiew.equaws(sewvicepath)) {
+          w-wetuwn wawm_up_decidew_key_pwefix + c-cwustewnamefowdecidewkey;
         }
 
-        return clusterNameForDeciderKey;
+        w-wetuwn cwustewnamefowdecidewkey;
       }
     };
 
-    newDarkProxy.init();
-    return newDarkProxy;
+    n-nyewdawkpwoxy.init();
+    w-wetuwn nyewdawkpwoxy;
   }
 
-  private ClientBuilder<ThriftClientRequest, byte[], ?, Yes, Yes> newClientBuilder(
-      StatsReceiver statsReceiver) {
-    return ClientBuilder.get()
-        .daemon(true)
-        .timeout(Duration.apply(DARK_REQUESTS_TOTAL_REQUEST_TIMEOUT_MS, TimeUnit.MILLISECONDS))
-        .requestTimeout(
-            Duration.apply(DARK_REQUESTS_INDIVIDUAL_REQUEST_TIMEOUT_MS, TimeUnit.MILLISECONDS))
-        .tcpConnectTimeout(Duration.apply(DARK_REQUESTS_CONNECT_TIMEOUT_MS, TimeUnit.MILLISECONDS))
-        .retries(DARK_REQUESTS_NUM_RETRIES)
-        .reportTo(statsReceiver)
-        .tracer(ZipkinTracer.mk(statsReceiver))
-        .stack(new MtlsThriftMuxClient(
-            ThriftMux.client())
-            .withMutualTls(EarlybirdProperty.getServiceIdentifier())
-            .withProtocolFactory(new TCompactProtocol.Factory())
-            .withClientId(new ClientId(DARK_REQUESTS_FINAGLE_CLIENT_ID)));
+  pwivate cwientbuiwdew<thwiftcwientwequest, ^^;; byte[], (✿oωo) ?, yes, yes> n-nyewcwientbuiwdew(
+      statsweceivew statsweceivew) {
+    wetuwn cwientbuiwdew.get()
+        .daemon(twue)
+        .timeout(duwation.appwy(dawk_wequests_totaw_wequest_timeout_ms, (U ﹏ U) timeunit.miwwiseconds))
+        .wequesttimeout(
+            duwation.appwy(dawk_wequests_individuaw_wequest_timeout_ms, -.- t-timeunit.miwwiseconds))
+        .tcpconnecttimeout(duwation.appwy(dawk_wequests_connect_timeout_ms, ^•ﻌ•^ timeunit.miwwiseconds))
+        .wetwies(dawk_wequests_num_wetwies)
+        .wepowtto(statsweceivew)
+        .twacew(zipkintwacew.mk(statsweceivew))
+        .stack(new mtwsthwiftmuxcwient(
+            thwiftmux.cwient())
+            .withmutuawtws(eawwybiwdpwopewty.getsewviceidentifiew())
+            .withpwotocowfactowy(new t-tcompactpwotocow.factowy())
+            .withcwientid(new c-cwientid(dawk_wequests_finagwe_cwient_id)));
   }
 }

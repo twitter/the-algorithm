@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.product.guice
+package com.twittew.pwoduct_mixew.cowe.pwoduct.guice
 
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.inject.twittewmoduwe
+impowt c-com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope.pwoductscoped
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
+impowt j-javax.inject.singweton
 
 /**
- * Registers the @ProductScoped scope.
+ * w-wegistews the @pwoductscoped s-scope. (U ᵕ U❁)
  *
- * See https://github.com/google/guice/wiki/CustomScopes#registering-the-scope
+ * see h-https://github.com/googwe/guice/wiki/customscopes#wegistewing-the-scope
  */
-@Singleton
-class ProductScopeModule extends TwitterModule {
+@singweton
+c-cwass pwoductscopemoduwe extends twittewmoduwe {
 
-  val productScope: ProductScope = new ProductScope
+  vaw pwoductscope: p-pwoductscope = new pwoductscope
 
-  override def configure(): Unit = {
-    bindScope(classOf[ProductScoped], productScope)
+  ovewwide def c-configuwe(): unit = {
+    bindscope(cwassof[pwoductscoped], p-pwoductscope)
 
-    bind[Product].toProvider(SimpleScope.SEEDED_KEY_PROVIDER).in(classOf[ProductScoped])
+    bind[pwoduct].topwovidew(simpwescope.seeded_key_pwovidew).in(cwassof[pwoductscoped])
   }
 
-  @Provides
-  def providesProductScope(): ProductScope = productScope
+  @pwovides
+  def pwovidespwoductscope(): pwoductscope = pwoductscope
 }

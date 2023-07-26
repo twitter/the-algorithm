@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.quewy_twansfowmew
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerUtegQueryTransformer._
-import com.twitter.home_mixer.util.earlybird.EarlybirdRequestUtil
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.timelineranker.{model => tlr}
-import com.twitter.timelineranker.{thriftscala => t}
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.earlybird.common.options.EarlybirdScoringModelConfig
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.weawgwaphinnetwowkscowesfeatuwe
+i-impowt com.twittew.home_mixew.modew.wequest.hasdevicecontext
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.quewy_twansfowmew.timewinewankewutegquewytwansfowmew._
+i-impowt c-com.twittew.home_mixew.utiw.eawwybiwd.eawwybiwdwequestutiw
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.hasquawityfactowstatus
+impowt com.twittew.timewinewankew.{modew => t-tww}
+impowt com.twittew.timewinewankew.{thwiftscawa => t}
+impowt c-com.twittew.timewines.common.modew.tweetkindoption
+impowt com.twittew.timewines.eawwybiwd.common.options.eawwybiwdscowingmodewconfig
+impowt com.twittew.timewines.modew.usewid
+i-impowt com.twittew.timewines.modew.candidate.candidatetweetsouwceid
 
-object TimelineRankerUtegQueryTransformer {
-  private val SinceDuration = 24.hours
-  private val MaxTweetsToFetch = 300
-  private val MaxUtegCandidates = 800
+object timewinewankewutegquewytwansfowmew {
+  p-pwivate vaw s-sinceduwation = 24.houws
+  pwivate vaw maxtweetstofetch = 300
+  pwivate vaw maxutegcandidates = 800
 
-  private val tweetKindOptions =
-    TweetKindOption(includeOriginalTweetsAndQuotes = true, includeReplies = true)
+  pwivate v-vaw tweetkindoptions =
+    tweetkindoption(incwudeowiginawtweetsandquotes = twue, nyaa~~ incwudewepwies = twue)
 
-  def utegEarlybirdModels: Seq[EarlybirdScoringModelConfig] =
-    EarlybirdRequestUtil.EarlybirdScoringModels.UnifiedEngagementRectweet
+  def u-utegeawwybiwdmodews: seq[eawwybiwdscowingmodewconfig] =
+    e-eawwybiwdwequestutiw.eawwybiwdscowingmodews.unifiedengagementwectweet
 }
 
-case class TimelineRankerUtegQueryTransformer[
-  Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext
+c-case cwass t-timewinewankewutegquewytwansfowmew[
+  q-quewy <: pipewinequewy with hasquawityfactowstatus w-with hasdevicecontext
 ](
-  override val candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  override val maxTweetsToFetch: Int = MaxTweetsToFetch)
-    extends CandidatePipelineQueryTransformer[Query, t.UtegLikedByTweetsQuery]
-    with TimelineRankerQueryTransformer[Query] {
+  ovewwide vaw candidatepipewineidentifiew: candidatepipewineidentifiew, nyaa~~
+  o-ovewwide vaw maxtweetstofetch: int = maxtweetstofetch)
+    extends candidatepipewinequewytwansfowmew[quewy, :3 t-t.utegwikedbytweetsquewy]
+    with timewinewankewquewytwansfowmew[quewy] {
 
-  override val candidateTweetSourceId = CandidateTweetSourceId.RecommendedTweet
-  override val options = tweetKindOptions
-  override val earlybirdModels = utegEarlybirdModels
-  override def getTensorflowModel(query: Query): Option[String] = {
-    Some(query.params(ScoredTweetsParam.EarlybirdTensorflowModel.UtegParam))
+  o-ovewwide v-vaw candidatetweetsouwceid = c-candidatetweetsouwceid.wecommendedtweet
+  ovewwide vaw options = tweetkindoptions
+  ovewwide vaw eawwybiwdmodews = u-utegeawwybiwdmodews
+  o-ovewwide def gettensowfwowmodew(quewy: q-quewy): o-option[stwing] = {
+    some(quewy.pawams(scowedtweetspawam.eawwybiwdtensowfwowmodew.utegpawam))
   }
 
-  override def utegLikedByTweetsOptions(input: Query): Option[tlr.UtegLikedByTweetsOptions] = Some(
-    tlr.UtegLikedByTweetsOptions(
-      utegCount = MaxUtegCandidates,
-      isInNetwork = false,
-      weightedFollowings = input.features
-        .map(_.getOrElse(RealGraphInNetworkScoresFeature, Map.empty[UserId, Double]))
-        .getOrElse(Map.empty)
+  o-ovewwide def utegwikedbytweetsoptions(input: q-quewy): option[tww.utegwikedbytweetsoptions] = some(
+    t-tww.utegwikedbytweetsoptions(
+      utegcount = m-maxutegcandidates, 😳😳😳
+      isinnetwowk = f-fawse, (˘ω˘)
+      w-weightedfowwowings = input.featuwes
+        .map(_.getowewse(weawgwaphinnetwowkscowesfeatuwe, ^^ map.empty[usewid, :3 doubwe]))
+        .getowewse(map.empty)
     )
   )
 
-  override def transform(input: Query): t.UtegLikedByTweetsQuery =
-    buildTimelineRankerQuery(input, SinceDuration).toThriftUtegLikedByTweetsQuery
+  ovewwide def twansfowm(input: quewy): t-t.utegwikedbytweetsquewy =
+    b-buiwdtimewinewankewquewy(input, -.- sinceduwation).tothwiftutegwikedbytweetsquewy
 }

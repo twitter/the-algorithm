@@ -1,13 +1,13 @@
-package com.twitter.ann.common
+package com.twittew.ann.common
 
-import com.twitter.stitch.Stitch
+impowt com.twittew.stitch.stitch
 
-trait EmbeddingProducer[T] {
+t-twait embeddingpwoducew[t] {
 
   /**
-   * Produce an embedding from type T. Implementations of this could do a lookup from an id to an
-   * embedding. Or they could run a deep model on features that output and embedding.
-   * @return An embedding Stitch. See go/stitch for details on how to use the Stitch API.
+   * p-pwoduce a-an embedding fwom t-type t. (U ᵕ U❁) impwementations o-of this c-couwd do a wookup f-fwom an id t-to an
+   * embedding. -.- ow they couwd wun a deep modew on featuwes that output and e-embedding. ^^;;
+   * @wetuwn an embedding stitch. >_< see g-go/stitch fow detaiws on how t-to use the stitch api. mya
    */
-  def produceEmbedding(input: T): Stitch[Option[EmbeddingType.EmbeddingVector]]
+  def pwoduceembedding(input: t): stitch[option[embeddingtype.embeddingvectow]]
 }

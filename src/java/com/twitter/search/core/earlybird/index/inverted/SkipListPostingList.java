@@ -1,232 +1,232 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
-import javax.annotation.Nullable;
+impowt j-java.io.ioexception;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
+i-impowt owg.apache.wucene.index.postingsenum;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+i-impowt owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
 
-import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.HasPayloads;
-import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.HasPositions;
-import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.INVALID_POSITION;
-import static com.twitter.search.core.earlybird.index.inverted.TermsArray.INVALID;
+impowt static c-com.twittew.seawch.cowe.eawwybiwd.index.invewted.skipwistcontainew.haspaywoads;
+impowt static com.twittew.seawch.cowe.eawwybiwd.index.invewted.skipwistcontainew.haspositions;
+i-impowt static com.twittew.seawch.cowe.eawwybiwd.index.invewted.skipwistcontainew.invawid_position;
+impowt static c-com.twittew.seawch.cowe.eawwybiwd.index.invewted.tewmsawway.invawid;
 
 /**
- * A skip list implementation of real time posting list. Supports out of order updates.
+ * a skip wist impwementation of weaw time posting wist. o.O s-suppowts out of owdew updates. (⑅˘꒳˘)
  */
-public class SkipListPostingList implements Flushable {
-  /** Underlying skip list. */
-  private final SkipListContainer<Key> skipListContainer;
+p-pubwic cwass s-skipwistpostingwist impwements fwushabwe {
+  /** undewwying skip wist. 😳😳😳 */
+  p-pwivate finaw skipwistcontainew<key> skipwistcontainew;
 
-  /** Key used when inserting into the skip list. */
-  private final Key key = new Key();
+  /** key used when insewting into the skip wist. nyaa~~ */
+  p-pwivate finaw key key = nyew key();
 
-  public SkipListPostingList(
-      HasPositions hasPositions,
-      HasPayloads hasPayloads,
-      String field) {
-    this.skipListContainer = new SkipListContainer<>(
-        new DocIDComparator(),
-        hasPositions,
-        hasPayloads,
-        field);
+  p-pubwic skipwistpostingwist(
+      h-haspositions h-haspositions, rawr
+      h-haspaywoads haspaywoads, -.-
+      stwing f-fiewd) {
+    this.skipwistcontainew = nyew skipwistcontainew<>(
+        nyew docidcompawatow(), (✿oωo)
+        h-haspositions, /(^•ω•^)
+        haspaywoads, 🥺
+        fiewd);
   }
 
-  /** Used by {@link SkipListPostingList.FlushHandler} */
-  private SkipListPostingList(SkipListContainer<Key> skipListContainer) {
-    this.skipListContainer = skipListContainer;
+  /** used by {@wink skipwistpostingwist.fwushhandwew} */
+  pwivate skipwistpostingwist(skipwistcontainew<key> s-skipwistcontainew) {
+    this.skipwistcontainew = s-skipwistcontainew;
   }
 
   /**
-   * Appends a posting to the posting list for a term.
+   * a-appends a posting t-to the posting wist fow a tewm. ʘwʘ
    */
-  public void appendPosting(
-      int termID,
-      TermsArray termsArray,
-      int docID,
-      int position,
-      @Nullable BytesRef payload) {
-    termsArray.getLargestPostings()[termID] = Math.max(
-        termsArray.getLargestPostings()[termID],
-        docID);
+  pubwic void appendposting(
+      i-int tewmid, UwU
+      t-tewmsawway tewmsawway, XD
+      int docid, (✿oωo)
+      i-int position, :3
+      @nuwwabwe b-byteswef paywoad) {
+    t-tewmsawway.getwawgestpostings()[tewmid] = math.max(
+        t-tewmsawway.getwawgestpostings()[tewmid], (///ˬ///✿)
+        docid);
 
-    // Append to an existing skip list.
-    // Notice, header tower index is stored at the last postings pointer spot.
-    int postingsPointer = termsArray.getPostingsPointer(termID);
-    if (postingsPointer == INVALID) {
-      // Create a new skip list and add the first posting.
-      postingsPointer = skipListContainer.newSkipList();
+    // append to an e-existing skip wist. nyaa~~
+    // nyotice, >w< h-headew towew index is stowed a-at the wast postings p-pointew spot. -.-
+    int postingspointew = tewmsawway.getpostingspointew(tewmid);
+    if (postingspointew == invawid) {
+      // cweate a nyew skip wist and a-add the fiwst posting. (✿oωo)
+      p-postingspointew = skipwistcontainew.newskipwist();
     }
 
-    boolean havePostingForThisDoc = insertPosting(docID, position, payload, postingsPointer);
+    boowean h-havepostingfowthisdoc = i-insewtposting(docid, p-position, (˘ω˘) paywoad, rawr postingspointew);
 
-    // If this is a new document ID, we need to update the document frequency for this term
-    if (!havePostingForThisDoc) {
-      termsArray.getDocumentFrequency()[termID]++;
+    // if this is a nyew document i-id, we nyeed to update the document fwequency fow this tewm
+    if (!havepostingfowthisdoc) {
+      t-tewmsawway.getdocumentfwequency()[tewmid]++;
     }
 
-    termsArray.updatePostingsPointer(termID, postingsPointer);
+    tewmsawway.updatepostingspointew(tewmid, OwO p-postingspointew);
   }
 
   /**
-   * Deletes the given doc ID from the posting list for the term.
+   * dewetes t-the given d-doc id fwom the posting wist fow t-the tewm. ^•ﻌ•^
    */
-  public void deletePosting(int termID, TermsArray postingsArray, int docID) {
-    int docFreq = postingsArray.getDocumentFrequency()[termID];
-    if (docFreq == 0) {
-      return;
+  p-pubwic void d-deweteposting(int t-tewmid, UwU tewmsawway postingsawway, (˘ω˘) int docid) {
+    i-int docfweq = p-postingsawway.getdocumentfwequency()[tewmid];
+    i-if (docfweq == 0) {
+      wetuwn;
     }
 
-    int postingsPointer = postingsArray.getPostingsPointer(termID);
-    // skipListContainer is not empty, try to delete docId from it.
-    int smallestDoc = deletePosting(docID, postingsPointer);
-    if (smallestDoc == SkipListContainer.INITIAL_VALUE) {
-      // Key does not exist.
-      return;
+    i-int postingspointew = p-postingsawway.getpostingspointew(tewmid);
+    // skipwistcontainew is nyot empty, (///ˬ///✿) twy to d-dewete docid fwom it. σωσ
+    int smowestdoc = deweteposting(docid, /(^•ω•^) postingspointew);
+    if (smowestdoc == skipwistcontainew.initiaw_vawue) {
+      // k-key does nyot exist. 😳
+      wetuwn;
     }
 
-    postingsArray.getDocumentFrequency()[termID]--;
+    postingsawway.getdocumentfwequency()[tewmid]--;
   }
 
   /**
-   * Insert posting into an existing skip list.
+   * i-insewt posting i-into an existing s-skip wist. 😳
    *
-   * @param docID docID of the this posting.
-   * @param skipListHead header tower index of the skip list
-   *                         in which the posting will be inserted.
-   * @return whether we have already inserted this document ID into this term list.
+   * @pawam docid docid of the t-this posting. (⑅˘꒳˘)
+   * @pawam skipwisthead h-headew t-towew index of the skip wist
+   *                         in which the posting wiww be insewted. 😳😳😳
+   * @wetuwn whethew w-we have awweady insewted this d-document id into this tewm wist. 😳
    */
-  private boolean insertPosting(int docID, int position, BytesRef termPayload, int skipListHead) {
-    int[] payload = PayloadUtil.encodePayload(termPayload);
-    return skipListContainer.insert(key.withDocAndPosition(docID, position), docID, position,
-        payload, skipListHead);
+  p-pwivate b-boowean insewtposting(int docid, XD int position, mya byteswef tewmpaywoad, i-int skipwisthead) {
+    i-int[] paywoad = paywoadutiw.encodepaywoad(tewmpaywoad);
+    w-wetuwn s-skipwistcontainew.insewt(key.withdocandposition(docid, ^•ﻌ•^ position), ʘwʘ docid, position, ( ͡o ω ͡o )
+        paywoad, mya skipwisthead);
   }
 
-  private int deletePosting(int docID, int skipListHead) {
-    return skipListContainer.delete(key.withDocAndPosition(docID, INVALID_POSITION), skipListHead);
+  pwivate int deweteposting(int d-docid, o.O i-int skipwisthead) {
+    w-wetuwn skipwistcontainew.dewete(key.withdocandposition(docid, (✿oωo) i-invawid_position), :3 s-skipwisthead);
   }
 
-  /** Return a term docs enumerator with position flag on. */
-  public PostingsEnum postings(
-      int postingPointer,
-      int docFreq,
-      int maxPublishedPointer) {
-    return new SkipListPostingsEnum(
-        postingPointer, docFreq, maxPublishedPointer, skipListContainer);
+  /** wetuwn a t-tewm docs enumewatow with position fwag on. 😳 */
+  pubwic postingsenum postings(
+      i-int postingpointew, (U ﹏ U)
+      int d-docfweq, mya
+      int maxpubwishedpointew) {
+    wetuwn new skipwistpostingsenum(
+        p-postingpointew, (U ᵕ U❁) d-docfweq, :3 maxpubwishedpointew, mya skipwistcontainew);
   }
 
   /**
-   * Get the number of documents (AKA document frequency or DF) for the given term.
+   * get t-the nyumbew of documents (aka document fwequency ow df) fow the given tewm.
    */
-  public int getDF(int termID, TermsArray postingsArray) {
-    int[] documentFrequency = postingsArray.getDocumentFrequency();
-    Preconditions.checkArgument(termID < documentFrequency.length);
+  p-pubwic int getdf(int tewmid, OwO tewmsawway postingsawway) {
+    i-int[] documentfwequency = p-postingsawway.getdocumentfwequency();
+    pweconditions.checkawgument(tewmid < documentfwequency.wength);
 
-    return documentFrequency[termID];
+    wetuwn d-documentfwequency[tewmid];
   }
 
-  public int getDocIDFromPosting(int posting) {
-    // Posting is simply the whole doc ID.
-    return posting;
+  p-pubwic int getdocidfwomposting(int posting) {
+    // posting is simpwy the whowe d-doc id. (ˆ ﻌ ˆ)♡
+    wetuwn posting;
   }
 
-  public int getMaxPublishedPointer() {
-    return skipListContainer.getPoolSize();
+  p-pubwic int getmaxpubwishedpointew() {
+    wetuwn skipwistcontainew.getpoowsize();
   }
 
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @suppwesswawnings("unchecked")
+  @ovewwide
+  pubwic f-fwushhandwew getfwushhandwew() {
+    w-wetuwn n-nyew fwushhandwew(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<SkipListPostingList> {
-    private static final String SKIP_LIST_PROP_NAME = "skipList";
+  pubwic static cwass f-fwushhandwew extends fwushabwe.handwew<skipwistpostingwist> {
+    p-pwivate static f-finaw stwing s-skip_wist_pwop_name = "skipwist";
 
-    public FlushHandler(SkipListPostingList objectToFlush) {
-      super(objectToFlush);
+    pubwic f-fwushhandwew(skipwistpostingwist o-objecttofwush) {
+      supew(objecttofwush);
     }
 
-    public FlushHandler() {
+    pubwic f-fwushhandwew() {
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      SkipListPostingList objectToFlush = getObjectToFlush();
+    @ovewwide
+    p-pwotected v-void dofwush(fwushinfo fwushinfo, ʘwʘ datasewiawizew o-out) thwows ioexception {
+      s-skipwistpostingwist o-objecttofwush = getobjecttofwush();
 
-      objectToFlush.skipListContainer.getFlushHandler()
-          .flush(flushInfo.newSubProperties(SKIP_LIST_PROP_NAME), out);
+      objecttofwush.skipwistcontainew.getfwushhandwew()
+          .fwush(fwushinfo.newsubpwopewties(skip_wist_pwop_name), o.O out);
     }
 
-    @Override
-    protected SkipListPostingList doLoad(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      SkipListComparator<Key> comparator = new DocIDComparator();
-      SkipListContainer.FlushHandler<Key> flushHandler =
-          new SkipListContainer.FlushHandler<>(comparator);
-      SkipListContainer<Key> skipList =
-          flushHandler.load(flushInfo.getSubProperties(SKIP_LIST_PROP_NAME), in);
-      return new SkipListPostingList(skipList);
-    }
-  }
-
-  /**
-   * Key used to in {@link SkipListContainer} by {@link SkipListPostingList}.
-   */
-  public static class Key {
-    private int docID;
-    private int position;
-
-    public int getDocID() {
-      return docID;
-    }
-
-    public int getPosition() {
-      return position;
-    }
-
-    public Key withDocAndPosition(int withDocID, int withPosition) {
-      this.docID = withDocID;
-      this.position = withPosition;
-      return this;
+    @ovewwide
+    p-pwotected s-skipwistpostingwist d-dowoad(
+        f-fwushinfo fwushinfo, UwU datadesewiawizew i-in) thwows ioexception {
+      skipwistcompawatow<key> compawatow = nyew docidcompawatow();
+      skipwistcontainew.fwushhandwew<key> f-fwushhandwew =
+          new skipwistcontainew.fwushhandwew<>(compawatow);
+      s-skipwistcontainew<key> skipwist =
+          fwushhandwew.woad(fwushinfo.getsubpwopewties(skip_wist_pwop_name), i-in);
+      wetuwn nyew skipwistpostingwist(skipwist);
     }
   }
 
   /**
-   * Comparator for docID and position.
+   * k-key used to in {@wink s-skipwistcontainew} b-by {@wink s-skipwistpostingwist}. rawr x3
    */
-  public static class DocIDComparator implements SkipListComparator<Key> {
-    private static final int SENTINEL_VALUE = DocIdSetIterator.NO_MORE_DOCS;
+  pubwic s-static cwass k-key {
+    pwivate int docid;
+    pwivate int position;
 
-    @Override
-    public int compareKeyWithValue(Key key, int targetDocID, int targetPosition) {
-      // No key could represent sentinel value and sentinel value is the largest.
-      int docCompare = key.getDocID() - targetDocID;
-      if (docCompare == 0 && targetPosition != INVALID_POSITION) {
-        return key.getPosition() - targetPosition;
-      } else {
-        return docCompare;
+    pubwic int getdocid() {
+      wetuwn docid;
+    }
+
+    p-pubwic int g-getposition() {
+      w-wetuwn position;
+    }
+
+    pubwic key withdocandposition(int w-withdocid, 🥺 int withposition) {
+      this.docid = withdocid;
+      t-this.position = w-withposition;
+      wetuwn t-this;
+    }
+  }
+
+  /**
+   * compawatow fow docid and position. :3
+   */
+  p-pubwic s-static cwass docidcompawatow impwements s-skipwistcompawatow<key> {
+    p-pwivate static finaw int sentinew_vawue = docidsetitewatow.no_mowe_docs;
+
+    @ovewwide
+    pubwic int compawekeywithvawue(key k-key, (ꈍᴗꈍ) int tawgetdocid, i-int t-tawgetposition) {
+      // n-nyo key c-couwd wepwesent sentinew vawue a-and sentinew vawue i-is the wawgest. 🥺
+      int doccompawe = k-key.getdocid() - t-tawgetdocid;
+      if (doccompawe == 0 && t-tawgetposition != invawid_position) {
+        wetuwn key.getposition() - t-tawgetposition;
+      } ewse {
+        w-wetuwn doccompawe;
       }
     }
 
-    @Override
-    public int compareValues(int docID1, int docID2) {
-      // Sentinel value is the largest.
-      return docID1 - docID2;
+    @ovewwide
+    p-pubwic int compawevawues(int d-docid1, (✿oωo) int docid2) {
+      // sentinew v-vawue is the wawgest. (U ﹏ U)
+      w-wetuwn d-docid1 - docid2;
     }
 
-    @Override
-    public int getSentinelValue() {
-      return SENTINEL_VALUE;
+    @ovewwide
+    pubwic int getsentinewvawue() {
+      wetuwn sentinew_vawue;
     }
   }
 }

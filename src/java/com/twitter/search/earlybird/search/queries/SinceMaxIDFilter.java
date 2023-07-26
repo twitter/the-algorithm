@@ -1,210 +1,210 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt o-owg.apache.wucene.index.weafweadew;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.seawch.booweancwause;
+i-impowt owg.apache.wucene.seawch.booweanquewy;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+i-impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
-import com.twitter.search.earlybird.index.TweetIDMapper;
+i-impowt com.twittew.seawch.common.quewy.defauwtfiwtewweight;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.awwdocsitewatow;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.wangefiwtewdisi;
+impowt com.twittew.seawch.eawwybiwd.index.tweetidmappew;
 
 /**
- * Filters tweet ids according to since_id and max_id parameter.
+ * fiwtews t-tweet ids accowding to since_id a-and max_id p-pawametew. >w<
  *
- * Note that since_id is exclusive and max_id is inclusive.
+ * nyote that since_id is excwusive and max_id is incwusive. -.-
  */
-public final class SinceMaxIDFilter extends Query {
-  public static final long NO_FILTER = -1;
+p-pubwic finaw cwass sincemaxidfiwtew extends quewy {
+  pubwic static finaw wong n-no_fiwtew = -1;
 
-  private final long sinceIdExclusive;
-  private final long maxIdInclusive;
+  pwivate finaw w-wong sinceidexcwusive;
+  p-pwivate f-finaw wong maxidincwusive;
 
-  public static Query getSinceMaxIDQuery(long sinceIdExclusive, long maxIdInclusive) {
-    return new BooleanQuery.Builder()
-        .add(new SinceMaxIDFilter(sinceIdExclusive, maxIdInclusive), BooleanClause.Occur.FILTER)
-        .build();
+  p-pubwic static quewy getsincemaxidquewy(wong sinceidexcwusive, (✿oωo) w-wong maxidincwusive) {
+    wetuwn n-new booweanquewy.buiwdew()
+        .add(new sincemaxidfiwtew(sinceidexcwusive, (˘ω˘) maxidincwusive), rawr booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  public static Query getSinceIDQuery(long sinceIdExclusive) {
-    return new BooleanQuery.Builder()
-        .add(new SinceMaxIDFilter(sinceIdExclusive, NO_FILTER), BooleanClause.Occur.FILTER)
-        .build();
+  pubwic static quewy getsinceidquewy(wong sinceidexcwusive) {
+    w-wetuwn nyew booweanquewy.buiwdew()
+        .add(new s-sincemaxidfiwtew(sinceidexcwusive, OwO n-nyo_fiwtew), ^•ﻌ•^ b-booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  public static Query getMaxIDQuery(long maxIdInclusive) {
-    return new BooleanQuery.Builder()
-        .add(new SinceMaxIDFilter(NO_FILTER, maxIdInclusive), BooleanClause.Occur.FILTER)
-        .build();
+  pubwic static quewy getmaxidquewy(wong maxidincwusive) {
+    w-wetuwn n-nyew booweanquewy.buiwdew()
+        .add(new sincemaxidfiwtew(no_fiwtew, UwU m-maxidincwusive), (˘ω˘) b-booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  private SinceMaxIDFilter(long sinceIdExclusive, long maxIdInclusive) {
-    this.sinceIdExclusive = sinceIdExclusive;
-    this.maxIdInclusive = maxIdInclusive;
+  pwivate sincemaxidfiwtew(wong s-sinceidexcwusive, wong maxidincwusive) {
+    t-this.sinceidexcwusive = sinceidexcwusive;
+    this.maxidincwusive = m-maxidincwusive;
   }
 
-  @Override
-  public int hashCode() {
-    return (int) (sinceIdExclusive * 13 + maxIdInclusive);
+  @ovewwide
+  pubwic int hashcode() {
+    w-wetuwn (int) (sinceidexcwusive * 13 + maxidincwusive);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof SinceMaxIDFilter)) {
-      return false;
+  @ovewwide
+  p-pubwic b-boowean equaws(object obj) {
+    if (!(obj instanceof sincemaxidfiwtew)) {
+      wetuwn fawse;
     }
 
-    SinceMaxIDFilter filter = SinceMaxIDFilter.class.cast(obj);
-    return (sinceIdExclusive == filter.sinceIdExclusive)
-        && (maxIdInclusive == filter.maxIdInclusive);
+    sincemaxidfiwtew fiwtew = s-sincemaxidfiwtew.cwass.cast(obj);
+    w-wetuwn (sinceidexcwusive == fiwtew.sinceidexcwusive)
+        && (maxidincwusive == f-fiwtew.maxidincwusive);
   }
 
-  @Override
-  public String toString(String field) {
-    if (sinceIdExclusive != NO_FILTER && maxIdInclusive != NO_FILTER) {
-      return "SinceIdFilter:" + sinceIdExclusive + ",MaxIdFilter:" + maxIdInclusive;
-    } else if (maxIdInclusive != NO_FILTER) {
-      return "MaxIdFilter:" + maxIdInclusive;
-    } else {
-      return "SinceIdFilter:" + sinceIdExclusive;
+  @ovewwide
+  p-pubwic s-stwing tostwing(stwing fiewd) {
+    if (sinceidexcwusive != nyo_fiwtew && m-maxidincwusive != nyo_fiwtew) {
+      wetuwn "sinceidfiwtew:" + sinceidexcwusive + ",maxidfiwtew:" + maxidincwusive;
+    } ewse if (maxidincwusive != n-nyo_fiwtew) {
+      wetuwn "maxidfiwtew:" + m-maxidincwusive;
+    } e-ewse {
+      wetuwn "sinceidfiwtew:" + s-sinceidexcwusive;
     }
   }
 
   /**
-   * Determines if this segment is at least partially covered by the given tweet ID range.
+   * detewmines if this s-segment is at w-weast pawtiawwy c-covewed by the g-given tweet id wange. (///ˬ///✿)
    */
-  public static boolean sinceMaxIDsInRange(
-      TweetIDMapper tweetIdMapper, long sinceIdExclusive, long maxIdInclusive) {
-    // Check for since id out of range. Note that since this ID is exclusive,
-    // equality is out of range too.
-    if (sinceIdExclusive != NO_FILTER && sinceIdExclusive >= tweetIdMapper.getMaxTweetID()) {
-      return false;
+  pubwic static boowean s-sincemaxidsinwange(
+      tweetidmappew t-tweetidmappew, σωσ w-wong s-sinceidexcwusive, /(^•ω•^) w-wong maxidincwusive) {
+    // check fow since id out of wange. nyote that since t-this id is excwusive, 😳
+    // equawity is out of wange too. 😳
+    if (sinceidexcwusive != nyo_fiwtew && sinceidexcwusive >= t-tweetidmappew.getmaxtweetid()) {
+      wetuwn fawse;
     }
 
-    // Check for max id in range.
-    return maxIdInclusive == NO_FILTER || maxIdInclusive >= tweetIdMapper.getMinTweetID();
+    // check fow max id in wange. (⑅˘꒳˘)
+    wetuwn m-maxidincwusive == n-nyo_fiwtew || m-maxidincwusive >= tweetidmappew.getmintweetid();
   }
 
-  // Returns true if this segment is completely covered by these id filters.
-  private static boolean sinceMaxIdsCoverRange(
-      TweetIDMapper tweetIdMapper, long sinceIdExclusive, long maxIdInclusive) {
-    // Check for since_id specified AND since_id newer than than first tweet.
-    if (sinceIdExclusive != NO_FILTER && sinceIdExclusive >= tweetIdMapper.getMinTweetID()) {
-      return false;
+  // w-wetuwns twue if this segment is c-compwetewy covewed b-by these id fiwtews. 😳😳😳
+  pwivate static boowean sincemaxidscovewwange(
+      tweetidmappew tweetidmappew, 😳 w-wong sinceidexcwusive, XD w-wong maxidincwusive) {
+    // check fow since_id s-specified and s-since_id nyewew than than fiwst tweet. mya
+    if (sinceidexcwusive != n-nyo_fiwtew && s-sinceidexcwusive >= tweetidmappew.getmintweetid()) {
+      w-wetuwn f-fawse;
     }
 
-    // Check for max id in range.
-    return maxIdInclusive == NO_FILTER || maxIdInclusive > tweetIdMapper.getMaxTweetID();
+    // check fow max id in wange. ^•ﻌ•^
+    wetuwn maxidincwusive == nyo_fiwtew || maxidincwusive > t-tweetidmappew.getmaxtweetid();
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader reader = context.reader();
-        if (!(reader instanceof EarlybirdIndexSegmentAtomicReader)) {
-          return new AllDocsIterator(reader);
+  @ovewwide
+  p-pubwic weight c-cweateweight(indexseawchew seawchew, ʘwʘ s-scowemode scowemode, f-fwoat boost)
+      thwows i-ioexception {
+    wetuwn nyew defauwtfiwtewweight(this) {
+      @ovewwide
+      pwotected docidsetitewatow getdocidsetitewatow(weafweadewcontext context) thwows i-ioexception {
+        w-weafweadew weadew = context.weadew();
+        if (!(weadew i-instanceof e-eawwybiwdindexsegmentatomicweadew)) {
+          wetuwn nyew awwdocsitewatow(weadew);
         }
 
-        EarlybirdIndexSegmentAtomicReader twitterInMemoryIndexReader =
-            (EarlybirdIndexSegmentAtomicReader) reader;
-        TweetIDMapper tweetIdMapper =
-            (TweetIDMapper) twitterInMemoryIndexReader.getSegmentData().getDocIDToTweetIDMapper();
+        eawwybiwdindexsegmentatomicweadew twittewinmemowyindexweadew =
+            (eawwybiwdindexsegmentatomicweadew) w-weadew;
+        tweetidmappew tweetidmappew =
+            (tweetidmappew) twittewinmemowyindexweadew.getsegmentdata().getdocidtotweetidmappew();
 
-        // Important to return a null DocIdSetIterator here, so the Scorer will skip searching
-        // this segment completely.
-        if (!sinceMaxIDsInRange(tweetIdMapper, sinceIdExclusive, maxIdInclusive)) {
-          return null;
+        // impowtant to w-wetuwn a nyuww docidsetitewatow hewe, ( ͡o ω ͡o ) so the scowew w-wiww skip s-seawching
+        // this segment compwetewy. mya
+        if (!sincemaxidsinwange(tweetidmappew, o.O s-sinceidexcwusive, (✿oωo) maxidincwusive)) {
+          w-wetuwn nyuww;
         }
 
-        // Optimization: just return a match-all iterator when the whole segment is in range.
-        // This avoids having to do so many status id lookups.
-        if (sinceMaxIdsCoverRange(tweetIdMapper, sinceIdExclusive, maxIdInclusive)) {
-          return new AllDocsIterator(reader);
+        // optimization: just wetuwn a match-aww i-itewatow when the whowe segment i-is in wange. :3
+        // this avoids having to do so many status i-id wookups. 😳
+        if (sincemaxidscovewwange(tweetidmappew, (U ﹏ U) s-sinceidexcwusive, mya m-maxidincwusive)) {
+          wetuwn nyew awwdocsitewatow(weadew);
         }
 
-        return new SinceMaxIDDocIdSetIterator(
-            twitterInMemoryIndexReader, sinceIdExclusive, maxIdInclusive);
+        w-wetuwn new sincemaxiddocidsetitewatow(
+            t-twittewinmemowyindexweadew, (U ᵕ U❁) s-sinceidexcwusive, :3 m-maxidincwusive);
       }
     };
   }
 
-  @VisibleForTesting
-  static class SinceMaxIDDocIdSetIterator extends RangeFilterDISI {
-    private final DocIDToTweetIDMapper docIdToTweetIdMapper;
-    private final long sinceIdExclusive;
-    private final long maxIdInclusive;
+  @visibwefowtesting
+  static cwass s-sincemaxiddocidsetitewatow extends w-wangefiwtewdisi {
+    pwivate finaw docidtotweetidmappew d-docidtotweetidmappew;
+    p-pwivate f-finaw wong sinceidexcwusive;
+    pwivate finaw wong maxidincwusive;
 
-    public SinceMaxIDDocIdSetIterator(EarlybirdIndexSegmentAtomicReader reader,
-                                      long sinceIdExclusive,
-                                      long maxIdInclusive) throws IOException {
-      super(reader,
-            findMaxIdDocID(reader, maxIdInclusive),
-            findSinceIdDocID(reader, sinceIdExclusive));
-      this.docIdToTweetIdMapper = reader.getSegmentData().getDocIDToTweetIDMapper();
-      this.sinceIdExclusive = sinceIdExclusive;  // sinceStatusId == NO_FILTER is OK, it's exclusive
-      this.maxIdInclusive = maxIdInclusive != NO_FILTER ? maxIdInclusive : Long.MAX_VALUE;
+    p-pubwic sincemaxiddocidsetitewatow(eawwybiwdindexsegmentatomicweadew weadew, mya
+                                      w-wong s-sinceidexcwusive, OwO
+                                      wong maxidincwusive) thwows ioexception {
+      supew(weadew, (ˆ ﻌ ˆ)♡
+            f-findmaxiddocid(weadew, ʘwʘ m-maxidincwusive),
+            f-findsinceiddocid(weadew, o.O s-sinceidexcwusive));
+      this.docidtotweetidmappew = w-weadew.getsegmentdata().getdocidtotweetidmappew();
+      this.sinceidexcwusive = sinceidexcwusive;  // sincestatusid == nyo_fiwtew is ok, UwU it's excwusive
+      t-this.maxidincwusive = maxidincwusive != n-nyo_fiwtew ? maxidincwusive : w-wong.max_vawue;
     }
 
     /**
-     * This is a necessary check when we have out of order tweets in the archive.
-     * When tweets are out of order, this guarantees that no false positive results are returned.
-     * I.e. we can still miss some tweets in the specified range, but we never incorrectly return
-     * anything that's not in the range.
+     * this is a nyecessawy c-check when we have out of o-owdew tweets in t-the awchive. rawr x3
+     * w-when tweets a-awe out of owdew, 🥺 t-this guawantees that nyo fawse positive wesuwts awe wetuwned. :3
+     * i.e. (ꈍᴗꈍ) we can stiww miss some tweets in the s-specified wange, 🥺 b-but we nyevew i-incowwectwy wetuwn
+     * anything t-that's nyot in the wange. (✿oωo)
      */
-    @Override
-    protected boolean shouldReturnDoc() {
-      final long statusID = docIdToTweetIdMapper.getTweetID(docID());
-      return statusID > sinceIdExclusive && statusID <= maxIdInclusive;
+    @ovewwide
+    pwotected boowean shouwdwetuwndoc() {
+      f-finaw wong statusid = d-docidtotweetidmappew.gettweetid(docid());
+      wetuwn s-statusid > sinceidexcwusive && statusid <= maxidincwusive;
     }
 
-    private static int findSinceIdDocID(
-        EarlybirdIndexSegmentAtomicReader reader, long sinceIdExclusive) throws IOException {
-      TweetIDMapper tweetIdMapper =
-          (TweetIDMapper) reader.getSegmentData().getDocIDToTweetIDMapper();
-      if (sinceIdExclusive != SinceMaxIDFilter.NO_FILTER) {
-        // We use this as an upper bound on the search, so we want to find the highest possible
-        // doc ID for this tweet ID.
-        boolean findMaxDocID = true;
-        return tweetIdMapper.findDocIdBound(
-            sinceIdExclusive,
-            findMaxDocID,
-            reader.getSmallestDocID(),
-            reader.maxDoc() - 1);
-      } else {
-        return DocIDToTweetIDMapper.ID_NOT_FOUND;
+    pwivate static i-int findsinceiddocid(
+        e-eawwybiwdindexsegmentatomicweadew weadew, (U ﹏ U) wong s-sinceidexcwusive) t-thwows ioexception {
+      tweetidmappew tweetidmappew =
+          (tweetidmappew) weadew.getsegmentdata().getdocidtotweetidmappew();
+      if (sinceidexcwusive != sincemaxidfiwtew.no_fiwtew) {
+        // w-we use this as a-an uppew bound o-on the seawch, :3 so w-we want to find t-the highest possibwe
+        // doc id fow this t-tweet id. ^^;;
+        b-boowean findmaxdocid = twue;
+        w-wetuwn t-tweetidmappew.finddocidbound(
+            sinceidexcwusive,
+            f-findmaxdocid, rawr
+            weadew.getsmowestdocid(), 😳😳😳
+            weadew.maxdoc() - 1);
+      } e-ewse {
+        wetuwn docidtotweetidmappew.id_not_found;
       }
     }
 
-    private static int findMaxIdDocID(
-        EarlybirdIndexSegmentAtomicReader reader, long maxIdInclusive) throws IOException {
-      TweetIDMapper tweetIdMapper =
-          (TweetIDMapper) reader.getSegmentData().getDocIDToTweetIDMapper();
-      if (maxIdInclusive != SinceMaxIDFilter.NO_FILTER) {
-        // We use this as a lower bound on the search, so we want to find the lowest possible
-        // doc ID for this tweet ID.
-        boolean findMaxDocID = false;
-        return tweetIdMapper.findDocIdBound(
-            maxIdInclusive,
-            findMaxDocID,
-            reader.getSmallestDocID(),
-            reader.maxDoc() - 1);
-      } else {
-        return DocIDToTweetIDMapper.ID_NOT_FOUND;
+    p-pwivate static i-int findmaxiddocid(
+        eawwybiwdindexsegmentatomicweadew weadew, (✿oωo) w-wong maxidincwusive) thwows ioexception {
+      t-tweetidmappew t-tweetidmappew =
+          (tweetidmappew) weadew.getsegmentdata().getdocidtotweetidmappew();
+      i-if (maxidincwusive != sincemaxidfiwtew.no_fiwtew) {
+        // we use this as a wowew bound o-on the seawch, OwO so we want to find the wowest p-possibwe
+        // d-doc id fow this tweet id. ʘwʘ
+        b-boowean findmaxdocid = fawse;
+        w-wetuwn t-tweetidmappew.finddocidbound(
+            maxidincwusive, (ˆ ﻌ ˆ)♡
+            findmaxdocid, (U ﹏ U)
+            w-weadew.getsmowestdocid(),
+            weadew.maxdoc() - 1);
+      } ewse {
+        w-wetuwn docidtotweetidmappew.id_not_found;
       }
     }
   }

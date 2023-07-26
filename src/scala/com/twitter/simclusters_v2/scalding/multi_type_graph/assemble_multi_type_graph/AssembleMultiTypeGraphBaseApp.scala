@@ -1,184 +1,184 @@
-package com.twitter.simclusters_v2.scalding
-package multi_type_graph.assemble_multi_type_graph
+package com.twittew.simcwustews_v2.scawding
+package m-muwti_type_gwaph.assembwe_muwti_type_gwaph
 
-import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDataset}
-import com.twitter.scalding.{Execution, _}
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe.typedPipeToRichPipe
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.{
-  LeftNode,
-  Noun,
-  NounWithFrequency,
-  NounWithFrequencyList,
-  RightNodeType,
-  RightNodeTypeStruct,
-  RightNodeWithEdgeWeight,
-  RightNodeWithEdgeWeightList,
-  MultiTypeGraphEdge
+impowt c-com.twittew.daw.cwient.dataset.{keyvawdawdataset, :3 s-snapshotdawdataset}
+i-impowt c-com.twittew.scawding.{execution, ʘwʘ _}
+i-impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.{d, 🥺 _}
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+i-impowt com.twittew.simcwustews_v2.scawding.common.typedwichpipe.typedpipetowichpipe
+impowt com.twittew.simcwustews_v2.scawding.common.utiw
+impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  weftnode, >_<
+  n-nyoun, ʘwʘ
+  nyounwithfwequency,
+  nyounwithfwequencywist, (˘ω˘)
+  wightnodetype, (✿oωo)
+  w-wightnodetypestwuct, (///ˬ///✿)
+  wightnodewithedgeweight, rawr x3
+  w-wightnodewithedgeweightwist,
+  muwtitypegwaphedge
 }
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
-import java.util.TimeZone
+impowt com.twittew.wtf.scawding.jobs.common.datewangeexecutionapp
+impowt java.utiw.timezone
 
 /**
- * In this file, we assemble the multi_type_graph user-entity engagement signals
+ * i-in this fiwe, -.- we assembwe the m-muwti_type_gwaph u-usew-entity engagement signaws
  *
- * It works as follows and the following datasets are produced as a result:
+ * it wowks as fowwows and the fowwowing datasets a-awe pwoduced as a wesuwt:
  *
- * 1. FullGraph (fullMultiTypeGraphSnapshotDataset) : reads datasets from multiple sources and generates
- * a bipartite graph with LeftNode -> RightNode edges, capturing a user's engagement with varied entity types
+ * 1. ^^ fuwwgwaph (fuwwmuwtitypegwaphsnapshotdataset) : weads datasets fwom muwtipwe s-souwces and genewates
+ * a-a bipawtite gwaph w-with weftnode -> w-wightnode edges, (⑅˘꒳˘) c-captuwing a usew's engagement with vawied entity t-types
  *
- * 2. TruncatedGraph (truncatedMultiTypeGraphKeyValDataset): a truncated version of the FullGraph
- * where we only store the topK most frequently occurring RightNodes in the bipartite graph LeftNode -> RightNode
+ * 2. nyaa~~ twuncatedgwaph (twuncatedmuwtitypegwaphkeyvawdataset): a twuncated v-vewsion of the fuwwgwaph
+ * whewe we onwy stowe the topk most fwequentwy occuwwing wightnodes i-in the bipawtite gwaph weftnode -> w-wightnode
  *
- * 3. TopKNouns (topKRightNounsKeyValDataset): this stores the topK most frequent Nouns for each engagement type
- * Please note that this dataset is currently only being used for the debugger to find which nodes we consider as the
- * most frequently occurring, in FullGraph
+ * 3. /(^•ω•^) t-topknouns (topkwightnounskeyvawdataset): t-this stowes the topk most fwequent nyouns fow each engagement t-type
+ * pwease n-nyote that this dataset is cuwwentwy o-onwy being u-used fow the debuggew to find w-which nyodes we considew as the
+ * m-most fwequentwy occuwwing, (U ﹏ U) in fuwwgwaph
  */
 
-trait AssembleMultiTypeGraphBaseApp extends DateRangeExecutionApp {
-  val truncatedMultiTypeGraphKeyValDataset: KeyValDALDataset[
-    KeyVal[LeftNode, RightNodeWithEdgeWeightList]
+t-twait assembwemuwtitypegwaphbaseapp extends datewangeexecutionapp {
+  v-vaw twuncatedmuwtitypegwaphkeyvawdataset: keyvawdawdataset[
+    k-keyvaw[weftnode, 😳😳😳 w-wightnodewithedgeweightwist]
   ]
-  val topKRightNounsKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
+  vaw topkwightnounskeyvawdataset: keyvawdawdataset[
+    keyvaw[wightnodetypestwuct, >w< nyounwithfwequencywist]
   ]
-  val fullMultiTypeGraphSnapshotDataset: SnapshotDALDataset[MultiTypeGraphEdge]
-  val isAdhoc: Boolean
-  val truncatedMultiTypeGraphMHOutputPath: String
-  val topKRightNounsMHOutputPath: String
-  val fullMultiTypeGraphThriftOutputPath: String
+  vaw fuwwmuwtitypegwaphsnapshotdataset: snapshotdawdataset[muwtitypegwaphedge]
+  v-vaw isadhoc: b-boowean
+  vaw twuncatedmuwtitypegwaphmhoutputpath: s-stwing
+  v-vaw topkwightnounsmhoutputpath: s-stwing
+  vaw fuwwmuwtitypegwaphthwiftoutputpath: stwing
 
-  override def runOnDateRange(
-    args: Args
+  ovewwide def wunondatewange(
+    a-awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import Config._
-    import AssembleMultiTypeGraph._
+    impwicit datewange: datewange, XD
+    timezone: timezone, o.O
+    uniqueid: u-uniqueid
+  ): execution[unit] = {
+    impowt c-config._
+    i-impowt assembwemuwtitypegwaph._
 
-    val numKeysInTruncatedGraph = Stat("num_keys_truncated_mts")
-    val numKeysInTopKNounsGraph = Stat("num_keys_topk_nouns_mts")
+    v-vaw nyumkeysintwuncatedgwaph = stat("num_keys_twuncated_mts")
+    v-vaw nyumkeysintopknounsgwaph = s-stat("num_keys_topk_nouns_mts")
 
-    val fullGraph: TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] =
-      getFullGraph().count("num_entries_full_graph")
+    v-vaw f-fuwwgwaph: typedpipe[(weftnode, mya wightnodewithedgeweight)] =
+      getfuwwgwaph().count("num_entwies_fuww_gwaph")
 
-    val topKRightNodes: TypedPipe[(RightNodeType, Seq[(Noun, Double)])] =
-      getTopKRightNounsWithFrequencies(
-        fullGraph,
-        TopKConfig,
-        GlobalDefaultMinFrequencyOfRightNodeType)
+    v-vaw topkwightnodes: t-typedpipe[(wightnodetype, 🥺 s-seq[(noun, ^^;; d-doubwe)])] =
+      g-gettopkwightnounswithfwequencies(
+        fuwwgwaph, :3
+        topkconfig, (U ﹏ U)
+        gwobawdefauwtminfwequencyofwightnodetype)
 
-    val truncatedGraph: TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] =
-      getTruncatedGraph(fullGraph, topKRightNodes).count("num_entries_truncated_graph")
+    v-vaw twuncatedgwaph: typedpipe[(weftnode, OwO wightnodewithedgeweight)] =
+      gettwuncatedgwaph(fuwwgwaph, 😳😳😳 topkwightnodes).count("num_entwies_twuncated_gwaph")
 
-    // key transformations - truncated graph, keyed by LeftNode
-    val truncatedGraphKeyedBySrc: TypedPipe[(LeftNode, RightNodeWithEdgeWeightList)] =
-      truncatedGraph
+    // key twansfowmations - twuncated gwaph, k-keyed by weftnode
+    vaw twuncatedgwaphkeyedbyswc: typedpipe[(weftnode, (ˆ ﻌ ˆ)♡ wightnodewithedgeweightwist)] =
+      twuncatedgwaph
         .map {
-          case (LeftNode.UserId(userId), rightNodeWithWeight) =>
-            userId -> List(rightNodeWithWeight)
+          c-case (weftnode.usewid(usewid), XD w-wightnodewithweight) =>
+            u-usewid -> wist(wightnodewithweight)
         }
-        .sumByKey
+        .sumbykey
         .map {
-          case (userId, rightNodeWithWeightList) =>
-            (LeftNode.UserId(userId), RightNodeWithEdgeWeightList(rightNodeWithWeightList))
+          c-case (usewid, (ˆ ﻌ ˆ)♡ wightnodewithweightwist) =>
+            (weftnode.usewid(usewid), ( ͡o ω ͡o ) w-wightnodewithedgeweightwist(wightnodewithweightwist))
         }
 
-    // key transformation - topK nouns, keyed by the RightNodeNounType
-    val topKNounsKeyedByType: TypedPipe[(RightNodeTypeStruct, NounWithFrequencyList)] =
-      topKRightNodes
+    // k-key twansfowmation - topk nyouns, rawr x3 keyed by the wightnodenountype
+    vaw topknounskeyedbytype: typedpipe[(wightnodetypestwuct, nyaa~~ nyounwithfwequencywist)] =
+      t-topkwightnodes
         .map {
-          case (rightNodeType, rightNounsWithScoresList) =>
-            val nounsListWithFrequency: Seq[NounWithFrequency] = rightNounsWithScoresList
+          case (wightnodetype, >_< w-wightnounswithscoweswist) =>
+            vaw nyounswistwithfwequency: s-seq[nounwithfwequency] = w-wightnounswithscoweswist
               .map {
-                case (noun, aggregatedFrequency) =>
-                  NounWithFrequency(noun, aggregatedFrequency)
+                case (noun, ^^;; aggwegatedfwequency) =>
+                  n-nounwithfwequency(noun, (ˆ ﻌ ˆ)♡ a-aggwegatedfwequency)
               }
-            (RightNodeTypeStruct(rightNodeType), NounWithFrequencyList(nounsListWithFrequency))
+            (wightnodetypestwuct(wightnodetype), ^^;; nyounwithfwequencywist(nounswistwithfwequency))
         }
 
-    //WriteExecs - truncated graph
-    val truncatedGraphTsvExec: Execution[Unit] =
-      truncatedGraphKeyedBySrc.writeExecution(
-        TypedTsv[(LeftNode, RightNodeWithEdgeWeightList)](AdhocRootPrefix + "truncated_graph_tsv"))
+    //wwiteexecs - t-twuncated g-gwaph
+    vaw twuncatedgwaphtsvexec: execution[unit] =
+      twuncatedgwaphkeyedbyswc.wwiteexecution(
+        typedtsv[(weftnode, (⑅˘꒳˘) wightnodewithedgeweightwist)](adhocwootpwefix + "twuncated_gwaph_tsv"))
 
-    val truncatedGraphDALExec: Execution[Unit] = truncatedGraphKeyedBySrc
+    vaw twuncatedgwaphdawexec: e-execution[unit] = t-twuncatedgwaphkeyedbyswc
       .map {
-        case (leftNode, rightNodeWithWeightList) =>
-          numKeysInTruncatedGraph.inc()
-          KeyVal(leftNode, rightNodeWithWeightList)
+        c-case (weftnode, rawr x3 wightnodewithweightwist) =>
+          n-nyumkeysintwuncatedgwaph.inc()
+          k-keyvaw(weftnode, (///ˬ///✿) wightnodewithweightwist)
       }
-      .writeDALVersionedKeyValExecution(
-        truncatedMultiTypeGraphKeyValDataset,
-        D.Suffix(
-          (if (!isAdhoc)
-             RootPath
-           else
-             AdhocRootPrefix)
-            + truncatedMultiTypeGraphMHOutputPath),
-        ExplicitEndTime(dateRange.`end`)
+      .wwitedawvewsionedkeyvawexecution(
+        t-twuncatedmuwtitypegwaphkeyvawdataset, 🥺
+        d.suffix(
+          (if (!isadhoc)
+             wootpath
+           ewse
+             adhocwootpwefix)
+            + twuncatedmuwtitypegwaphmhoutputpath),
+        e-expwicitendtime(datewange.`end`)
       )
 
-    //WriteExec - topK rightnouns
-    val topKNounsTsvExec: Execution[Unit] =
-      topKNounsKeyedByType.writeExecution(
-        TypedTsv[(RightNodeTypeStruct, NounWithFrequencyList)](
-          AdhocRootPrefix + "top_k_right_nouns_tsv"))
+    //wwiteexec - t-topk wightnouns
+    vaw topknounstsvexec: e-execution[unit] =
+      t-topknounskeyedbytype.wwiteexecution(
+        typedtsv[(wightnodetypestwuct, >_< nyounwithfwequencywist)](
+          adhocwootpwefix + "top_k_wight_nouns_tsv"))
 
-    // writing topKNouns MH dataset for debugger
-    val topKNounsDALExec: Execution[Unit] = topKNounsKeyedByType
+    // w-wwiting topknouns mh dataset fow debuggew
+    vaw topknounsdawexec: execution[unit] = t-topknounskeyedbytype
       .map {
-        case (engagementType, rightList) =>
-          val rightListMH =
-            NounWithFrequencyList(rightList.nounWithFrequencyList.take(TopKRightNounsForMHDump))
-          numKeysInTopKNounsGraph.inc()
-          KeyVal(engagementType, rightListMH)
+        case (engagementtype, UwU wightwist) =>
+          v-vaw w-wightwistmh =
+            nyounwithfwequencywist(wightwist.nounwithfwequencywist.take(topkwightnounsfowmhdump))
+          nyumkeysintopknounsgwaph.inc()
+          keyvaw(engagementtype, >_< w-wightwistmh)
       }
-      .writeDALVersionedKeyValExecution(
-        topKRightNounsKeyValDataset,
-        D.Suffix(
-          (if (!isAdhoc)
-             RootPath
-           else
-             AdhocRootPrefix)
-            + topKRightNounsMHOutputPath),
-        ExplicitEndTime(dateRange.`end`)
+      .wwitedawvewsionedkeyvawexecution(
+        t-topkwightnounskeyvawdataset, -.-
+        d.suffix(
+          (if (!isadhoc)
+             wootpath
+           ewse
+             a-adhocwootpwefix)
+            + topkwightnounsmhoutputpath), mya
+        e-expwicitendtime(datewange.`end`)
       )
 
-    //WriteExec - fullGraph
-    val fullGraphDALExec: Execution[Unit] = fullGraph
+    //wwiteexec - fuwwgwaph
+    vaw fuwwgwaphdawexec: execution[unit] = f-fuwwgwaph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          MultiTypeGraphEdge(leftNode, rightNodeWithWeight)
-      }.writeDALSnapshotExecution(
-        fullMultiTypeGraphSnapshotDataset,
-        D.Daily,
-        D.Suffix(
-          (if (!isAdhoc)
-             RootThriftPath
-           else
-             AdhocRootPrefix)
-            + fullMultiTypeGraphThriftOutputPath),
-        D.Parquet,
-        dateRange.`end`
+        case (weftnode, >w< w-wightnodewithweight) =>
+          m-muwtitypegwaphedge(weftnode, (U ﹏ U) wightnodewithweight)
+      }.wwitedawsnapshotexecution(
+        f-fuwwmuwtitypegwaphsnapshotdataset, 😳😳😳
+        d.daiwy, o.O
+        d-d.suffix(
+          (if (!isadhoc)
+             w-wootthwiftpath
+           e-ewse
+             adhocwootpwefix)
+            + f-fuwwmuwtitypegwaphthwiftoutputpath), òωó
+        d-d.pawquet, 😳😳😳
+        datewange.`end`
       )
 
-    if (isAdhoc) {
-      Util.printCounters(
-        Execution
+    if (isadhoc) {
+      u-utiw.pwintcountews(
+        e-execution
           .zip(
-            truncatedGraphTsvExec,
-            topKNounsTsvExec,
-            truncatedGraphDALExec,
-            topKNounsDALExec,
-            fullGraphDALExec).unit)
-    } else {
-      Util.printCounters(
-        Execution.zip(truncatedGraphDALExec, topKNounsDALExec, fullGraphDALExec).unit)
+            t-twuncatedgwaphtsvexec, σωσ
+            topknounstsvexec, (⑅˘꒳˘)
+            twuncatedgwaphdawexec, (///ˬ///✿)
+            topknounsdawexec, 🥺
+            f-fuwwgwaphdawexec).unit)
+    } ewse {
+      u-utiw.pwintcountews(
+        e-execution.zip(twuncatedgwaphdawexec, OwO topknounsdawexec, >w< fuwwgwaphdawexec).unit)
     }
 
   }

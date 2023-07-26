@@ -1,14 +1,14 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics
 
-import com.twitter.util.Time
+impowt com.twittew.utiw.time
 
 /**
- * Case class wrapping a (value, timestamp) tuple.
- * All aggregate metrics must operate over this class
- * to ensure we can implement decay and half lives for them.
- * This is translated to an algebird DecayedValue under the hood.
+ * c-case cwass w-wwapping a (vawue, ^^;; t-timestamp) t-tupwe. >_<
+ * aww a-aggwegate metwics m-must opewate ovew t-this cwass
+ * t-to ensuwe we can impwement decay and hawf wives fow them. mya
+ * this is twanswated t-to an awgebiwd decayedvawue undew the hood.
  *
- * @param value Value being wrapped
- * @param timestamp Time after epoch at which value is being measured
+ * @pawam v-vawue vawue being wwapped
+ * @pawam timestamp t-time aftew epoch at which vawue is being measuwed
  */
-case class TimedValue[T](value: T, timestamp: Time)
+case c-cwass timedvawue[t](vawue: t, mya timestamp: time)

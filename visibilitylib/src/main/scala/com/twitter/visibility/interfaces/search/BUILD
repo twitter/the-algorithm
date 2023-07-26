@@ -1,34 +1,34 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/src/java/com/twitter/logpipeline/client:logpipeline-event-publisher-thin",
-        "decider/src/main/scala",
-        "mediaservices/media-util/src/main/scala",
-        "servo/decider/src/main/scala",
-        "src/thrift/com/twitter/escherbird:media-annotation-structs-scala",
-        "src/thrift/com/twitter/spam/rtf:safety-level-scala",
-        "src/thrift/com/twitter/spam/rtf:tweet-rtf-event-scala",
-        "src/thrift/com/twitter/tweetypie:tweet-scala",
-        "stitch/stitch-core",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "visibility/common/src/main/scala/com/twitter/visibility/common",
-        "visibility/lib/src/main/resources/config",
-        "visibility/lib/src/main/scala/com/twitter/visibility",
-        "visibility/lib/src/main/scala/com/twitter/visibility/builder/media",
-        "visibility/lib/src/main/scala/com/twitter/visibility/builder/tweets",
-        "visibility/lib/src/main/scala/com/twitter/visibility/builder/users",
-        "visibility/lib/src/main/scala/com/twitter/visibility/configapi/configs",
-        "visibility/lib/src/main/scala/com/twitter/visibility/features",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/search",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/tweets",
-        "visibility/lib/src/main/thrift/com/twitter/visibility/logging:vf-logging-scala",
-    ],
-    exports = [
-        "visibility/common/src/main/scala/com/twitter/visibility/common",
-        "visibility/lib/src/main/scala/com/twitter/visibility",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    p-pwatfowm = "java8", o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/swc/java/com/twittew/wogpipewine/cwient:wogpipewine-event-pubwishew-thin", ( ͡o ω ͡o )
+        "decidew/swc/main/scawa", UwU
+        "mediasewvices/media-utiw/swc/main/scawa", rawr x3
+        "sewvo/decidew/swc/main/scawa",
+        "swc/thwift/com/twittew/eschewbiwd:media-annotation-stwucts-scawa", rawr
+        "swc/thwift/com/twittew/spam/wtf:safety-wevew-scawa", σωσ
+        "swc/thwift/com/twittew/spam/wtf:tweet-wtf-event-scawa", σωσ
+        "swc/thwift/com/twittew/tweetypie:tweet-scawa", >_<
+        "stitch/stitch-cowe", :3
+        "stwato/swc/main/scawa/com/twittew/stwato/cwient", (U ﹏ U)
+        "visibiwity/common/swc/main/scawa/com/twittew/visibiwity/common", -.-
+        "visibiwity/wib/swc/main/wesouwces/config", (ˆ ﻌ ˆ)♡
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity", (⑅˘꒳˘)
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/buiwdew/media", (U ᵕ U❁)
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/buiwdew/tweets", -.-
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/buiwdew/usews", ^^;;
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/configapi/configs", >_<
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/featuwes",
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/intewfaces/common/seawch", mya
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity/intewfaces/common/tweets", mya
+        "visibiwity/wib/swc/main/thwift/com/twittew/visibiwity/wogging:vf-wogging-scawa", 😳
+    ], XD
+    expowts = [
+        "visibiwity/common/swc/main/scawa/com/twittew/visibiwity/common", :3
+        "visibiwity/wib/swc/main/scawa/com/twittew/visibiwity", 😳😳😳
+    ], -.-
 )

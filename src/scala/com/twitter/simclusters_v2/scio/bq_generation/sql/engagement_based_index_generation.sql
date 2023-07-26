@@ -1,85 +1,85 @@
--- This SQL query generate the cluster to top k tweets index based on tweet engagements.
--- The engagement type is decided by USER_TWEET_ENGAGEMENT_TABLE_SQL.
+-- this sqw quewy genewate the cwustew t-to top k tweets i-index based o-on tweet engagements. OwO
+-- t-the engagement t-type is d-decided by usew_tweet_engagement_tabwe_sqw. (ꈍᴗꈍ)
 
-with vars as (
-        SELECT {HALF_LIFE} AS halfLife, -- Default: 8 hour halfLife in millis
-        UNIX_MILLIS("{CURRENT_TS}") AS currentTs,
-    ),
+with v-vaws as (
+        s-sewect {hawf_wife} as hawfwife, 😳 -- defauwt: 8 houw hawfwife in miwwis
+        u-unix_miwwis("{cuwwent_ts}") as cuwwentts,
+    ), 😳😳😳
 
-  user_tweet_engagement_pairs AS (
-      {USER_TWEET_ENGAGEMENT_TABLE_SQL}
+  usew_tweet_engagement_paiws a-as (
+      {usew_tweet_engagement_tabwe_sqw}
+  ), mya
+
+  -- a sequence o-of fiwtews to get ewigibwe tweetids fow tweet embedding genewation
+  -- appwy m-min intewaction count fiwtew
+ u-usew_tweet_intewaction_with_min_intewaction_count_fiwtew a-as (
+      sewect usewid, mya usew_tweet_engagement_paiws.tweetid, (⑅˘꒳˘) tsmiwwis
+      fwom usew_tweet_engagement_paiws, (U ﹏ U) v-vaws
+      join (
+          sewect tweetid, mya count(distinct(usewid)) as intewactioncount
+          f-fwom usew_tweet_engagement_paiws
+          g-gwoup by t-tweetid
+          h-having intewactioncount >= {min_intewaction_count} -- o-onwy genewate tweet embeddings fow tweets w-with >= {min_intewaction_count} intewactions
+      ) ewigibwe_tweets u-using(tweetid)
+  ), ʘwʘ
+
+  -- appwy min fav count fiwtew
+  usew_tweet_intewaction_with_fav_count_fiwtew as (
+    {tweet_intewaction_with_fav_count_fiwtew_sqw}
+  ), (˘ω˘)
+
+  -- appwy heawth and v-video fiwtew
+  usew_tweet_intewaction_with_heawth_fiwtew as (
+    {tweet_intewaction_with_heawth_fiwtew_sqw}
   ),
 
-  -- A sequence of filters to get eligible tweetIds for tweet embedding generation
-  -- Apply min interaction count filter
- user_tweet_interaction_with_min_interaction_count_filter AS (
-      SELECT userId, user_tweet_engagement_pairs.tweetId, tsMillis
-      FROM user_tweet_engagement_pairs, vars
-      JOIN (
-          SELECT tweetId, COUNT(DISTINCT(userId)) AS interactionCount
-          FROM user_tweet_engagement_pairs
-          GROUP BY tweetId
-          HAVING interactionCount >= {MIN_INTERACTION_COUNT} -- Only generate tweet embeddings for tweets with >= {MIN_INTERACTION_COUNT} interactions
-      ) eligible_tweets USING(tweetId)
-  ),
+  -- f-finaw fiwtewed u-usew tweet i-intewaction tabwe
+  -- wead the wesuwt fwom the wast fiwtew
+  u-usew_tweet_intewaction_pwocessed_tabwe a-as (
+    sewect *
+    fwom u-usew_tweet_intewaction_with_heawth_fiwtew
+  ), (U ﹏ U)
 
-  -- Apply min fav count filter
-  user_tweet_interaction_with_fav_count_filter AS (
-    {TWEET_INTERACTION_WITH_FAV_COUNT_FILTER_SQL}
-  ),
+  -- w-wead consumew embeddings
+  c-consumew_embeddings as (
+     {consumew_embeddings_sqw}
+  ), ^•ﻌ•^
 
-  -- Apply health and video filter
-  user_tweet_interaction_with_health_filter AS (
-    {TWEET_INTERACTION_WITH_HEALTH_FILTER_SQL}
-  ),
+  -- u-update tweet cwustew scowes based on intewaction e-events
+  tweet_cwustew_scowes as (
+      sewect t-tweetid, (˘ω˘)
+          stwuct(
+              cwustewid, :3
+              c-case vaws.hawfwife
+                -- h-hawfwife = -1 means thewe is nyo hawf wife decay and we diwectwy take the sum as the scowe
+                w-when -1 t-then sum(cwustewnowmawizedwogfavscowe)
+                ewse sum(cwustewnowmawizedwogfavscowe * p-pow(0.5, ^^;; (cuwwentts - t-tsmiwwis) / v-vaws.hawfwife))
+                end as nyowmawizedscowe, 🥺
+              count(*) as engagementcount)
+          a-as cwustewidtoscowes
+      fwom usew_tweet_intewaction_pwocessed_tabwe, (⑅˘꒳˘) vaws
+      join consumew_embeddings u-using(usewid)
+      gwoup by tweetid, nyaa~~ c-cwustewid, :3 vaws.hawfwife
+  ), ( ͡o ω ͡o )
 
-  -- Final filtered user tweet interaction table
-  -- Read the result from the last filter
-  user_tweet_interaction_processed_table AS (
-    SELECT *
-    FROM user_tweet_interaction_with_health_filter
-  ),
+  -- g-genewate tweet e-embeddings
+  tweet_embeddings_with_top_cwustews a-as (
+      s-sewect tweetid, a-awway_agg(
+          c-cwustewidtoscowes
+          owdew by cwustewidtoscowes.nowmawizedscowe desc
+          w-wimit {tweet_embedding_wength}
+      ) a-as cwustewidtoscowes
+      f-fwom t-tweet_cwustew_scowes
+      g-gwoup by tweetid
+  ), mya
 
-  -- Read consumer embeddings
-  consumer_embeddings AS (
-     {CONSUMER_EMBEDDINGS_SQL}
-  ),
-
-  -- Update tweet cluster scores based on interaction events
-  tweet_cluster_scores AS (
-      SELECT tweetId,
-          STRUCT(
-              clusterId,
-              CASE vars.halfLife
-                -- halfLife = -1 means there is no half life decay and we directly take the sum as the score
-                WHEN -1 THEN SUM(clusterNormalizedLogFavScore)
-                ELSE SUM(clusterNormalizedLogFavScore * POW(0.5, (currentTs - tsMillis) / vars.halfLife))
-                END AS normalizedScore,
-              COUNT(*) AS engagementCount)
-          AS clusterIdToScores
-      FROM user_tweet_interaction_processed_table, vars
-      JOIN consumer_embeddings USING(userId)
-      GROUP BY tweetId, clusterId, vars.halfLife
-  ),
-
-  -- Generate tweet embeddings
-  tweet_embeddings_with_top_clusters AS (
-      SELECT tweetId, ARRAY_AGG(
-          clusterIdToScores
-          ORDER BY clusterIdToScores.normalizedScore DESC
-          LIMIT {TWEET_EMBEDDING_LENGTH}
-      ) AS clusterIdToScores
-      FROM tweet_cluster_scores
-      GROUP BY tweetId
-  ),
-
-  clusters_top_k_tweets AS (
-    SELECT clusterId, ARRAY_AGG(STRUCT(tweetId, normalizedScore AS tweetScore) ORDER BY normalizedScore DESC LIMIT {CLUSTER_TOP_K_TWEETS}) AS topKTweetsForClusterKey
-    FROM tweet_embeddings_with_top_clusters, UNNEST(clusterIdToScores) AS clusterIdToScores
-    WHERE engagementCount >= {MIN_ENGAGEMENT_PER_CLUSTER}
-    GROUP BY clusterId
+  cwustews_top_k_tweets as (
+    s-sewect cwustewid, (///ˬ///✿) awway_agg(stwuct(tweetid, (˘ω˘) nowmawizedscowe as tweetscowe) owdew by nyowmawizedscowe desc wimit {cwustew_top_k_tweets}) a-as topktweetsfowcwustewkey
+    fwom tweet_embeddings_with_top_cwustews, ^^;; u-unnest(cwustewidtoscowes) as c-cwustewidtoscowes
+    w-whewe engagementcount >= {min_engagement_pew_cwustew}
+    gwoup by cwustewid
   )
 
-SELECT *
-FROM clusters_top_k_tweets
+s-sewect *
+fwom cwustews_top_k_tweets
 

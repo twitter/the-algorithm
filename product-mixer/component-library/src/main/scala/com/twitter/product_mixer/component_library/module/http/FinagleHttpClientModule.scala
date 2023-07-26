@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.component_library.module.http
+package com.twittew.pwoduct_mixew.component_wibwawy.moduwe.http
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Http
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientBuilder.buildFinagleHttpClientMutualTls
-import com.twitter.util.Duration
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.convewsions.duwationops._
+impowt c-com.twittew.finagwe.http
+impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.inject.annotations.fwag
+i-impowt com.twittew.pwoduct_mixew.shawed_wibwawy.http_cwient.finagwehttpcwientbuiwdew.buiwdfinagwehttpcwientmutuawtws
+i-impowt com.twittew.utiw.duwation
+impowt javax.inject.named
+impowt javax.inject.singweton
 
-object FinagleHttpClientModule extends TwitterModule {
+object finagwehttpcwientmoduwe extends twittewmoduwe {
 
-  final val HttpClientRequestTimeout = "http_client.request_timeout"
-  final val HttpClientConnectTimeout = "http_client.connect_timeout"
-  final val HttpClientAcquisitionTimeout = "http_client.acquisition_timeout"
+  f-finaw vaw httpcwientwequesttimeout = "http_cwient.wequest_timeout"
+  finaw vaw httpcwientconnecttimeout = "http_cwient.connect_timeout"
+  f-finaw vaw httpcwientacquisitiontimeout = "http_cwient.acquisition_timeout"
 
-  flag[Duration](
-    name = HttpClientRequestTimeout,
-    default = 200.milliseconds,
-    help = "HTTP client request timeout")
+  fwag[duwation](
+    n-nyame = httpcwientwequesttimeout, mya
+    defauwt = 200.miwwiseconds, (˘ω˘)
+    hewp = "http cwient w-wequest timeout")
 
-  flag[Duration](
-    name = HttpClientConnectTimeout,
-    default = 500.milliseconds,
-    help = "HTTP client transport connect timeout")
+  fwag[duwation](
+    n-nyame = h-httpcwientconnecttimeout, >_<
+    defauwt = 500.miwwiseconds, -.-
+    hewp = "http cwient twanspowt connect timeout")
 
-  flag[Duration](
-    name = HttpClientAcquisitionTimeout,
-    default = 500.milliseconds,
-    help = "HTTP client session acquisition timeout")
+  f-fwag[duwation](
+    nyame = httpcwientacquisitiontimeout, 🥺
+    defauwt = 500.miwwiseconds, (U ﹏ U)
+    hewp = "http cwient session acquisition t-timeout")
 
-  final val FinagleHttpClientModule = "FinagleHttpClientModule"
+  finaw vaw f-finagwehttpcwientmoduwe = "finagwehttpcwientmoduwe"
 
   /**
-   * Provides a Finagle HTTP client with S2S Auth / Mutual TLS
+   * p-pwovides a finagwe h-http cwient with s-s2s auth / mutuaw tws
    *
-   * Note that the timeouts configured in this module are meant to be a reasonable starting point
-   * only. To further tuning the settings, either override the flags or create local copy of the module.
+   * nyote that the t-timeouts configuwed in this moduwe awe meant t-to be a weasonabwe stawting point
+   * onwy. >w< to fuwthew tuning the settings, mya eithew ovewwide the f-fwags ow cweate wocaw copy of the m-moduwe. >w<
    *
-   * @param requestTimeout     HTTP client request timeout
-   * @param connectTimeout     HTTP client transport connect timeout
-   * @param acquisitionTimeout HTTP client session acquisition timeout
-   * @param serviceIdentifier  Service ID used to S2S Auth
-   * @param statsReceiver      Stats
+   * @pawam w-wequesttimeout     http c-cwient wequest timeout
+   * @pawam connecttimeout     http cwient t-twanspowt c-connect timeout
+   * @pawam acquisitiontimeout http c-cwient session a-acquisition timeout
+   * @pawam sewviceidentifiew  s-sewvice id used to s2s auth
+   * @pawam s-statsweceivew      stats
    *
-   * @return Finagle HTTP Client with S2S Auth / Mutual TLS
+   * @wetuwn finagwe h-http cwient with s2s auth / mutuaw t-tws
    */
-  @Provides
-  @Singleton
-  @Named(FinagleHttpClientModule)
-  def providesFinagleHttpClient(
-    @Flag(HttpClientRequestTimeout) requestTimeout: Duration,
-    @Flag(HttpClientConnectTimeout) connectTimeout: Duration,
-    @Flag(HttpClientAcquisitionTimeout) acquisitionTimeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Http.Client =
-    buildFinagleHttpClientMutualTls(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @pwovides
+  @singweton
+  @named(finagwehttpcwientmoduwe)
+  def pwovidesfinagwehttpcwient(
+    @fwag(httpcwientwequesttimeout) w-wequesttimeout: d-duwation,
+    @fwag(httpcwientconnecttimeout) connecttimeout: duwation, nyaa~~
+    @fwag(httpcwientacquisitiontimeout) acquisitiontimeout: duwation, (✿oωo)
+    sewviceidentifiew: sewviceidentifiew, ʘwʘ
+    s-statsweceivew: s-statsweceivew
+  ): http.cwient =
+    b-buiwdfinagwehttpcwientmutuawtws(
+      w-wequesttimeout = w-wequesttimeout, (ˆ ﻌ ˆ)♡
+      connecttimeout = connecttimeout, 😳😳😳
+      acquisitiontimeout = a-acquisitiontimeout,
+      sewviceidentifiew = sewviceidentifiew, :3
+      statsweceivew = statsweceivew
     )
 }

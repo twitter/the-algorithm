@@ -1,34 +1,34 @@
-# See
-# Checkout the README to see how to deploy the job
+# see
+# checkout the weadme to see h-how to depwoy t-the job
 
-class Profile(Struct):
-  project = Required(String)
-  date = Required(String)
-  environment = Default(String, 'dev')
-  machine= Default(String, 'n2-highmem-16')
+cwass pwofiwe(stwuct):
+  p-pwoject = wequiwed(stwing)
+  date = w-wequiwed(stwing)
+  e-enviwonment = d-defauwt(stwing, mya 'dev')
+  m-machine= defauwt(stwing, 😳 'n2-highmem-16')
 
-job = Job(
-  name='assemble-multi-type-graph-scio-adhoc-app',
-  project='{{profile.project}}',
-  staging_bucket='{{profile.project}}',
-  service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-  region='us-central1',
-  worker_config=WorkerConfig(
-    num_workers=2,
-    worker_machine_type='{{profile.machine}}',
-    worker_disk_type=WorkerDiskType('HDD')
-  ),
-  extra_args={
-    "environment": '{{profile.environment}}',
-    "date": Quote('{{profile.date}}'),
+j-job = job(
+  nyame='assembwe-muwti-type-gwaph-scio-adhoc-app', XD
+  pwoject='{{pwofiwe.pwoject}}', :3
+  staging_bucket='{{pwofiwe.pwoject}}', 😳😳😳
+  sewvice_account='{{pwofiwe.usew_name}}-shdw@twttw-dp-svc-accounts.iam.gsewviceaccount.com', -.-
+  w-wegion='us-centwaw1', ( ͡o ω ͡o )
+  wowkew_config=wowkewconfig(
+    nyum_wowkews=2, rawr x3
+    wowkew_machine_type='{{pwofiwe.machine}}', nyaa~~
+    w-wowkew_disk_type=wowkewdisktype('hdd')
+  ), /(^•ω•^)
+  extwa_awgs={
+    "enviwonment": '{{pwofiwe.enviwonment}}', rawr
+    "date": q-quote('{{pwofiwe.date}}'), OwO
   },
-  deployment_config=BatchDeploymentConfig(
-    role='{{profile.user_name}}',
-    build_target='src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph:assemble-multi-type-graph-scio-adhoc-app',
-    gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-    statebird_config=StatebirdConfig(
-      batch_width='PT1H',
-      first_time='{{profile.date}}'
+  depwoyment_config=batchdepwoymentconfig(
+    wowe='{{pwofiwe.usew_name}}', (U ﹏ U)
+    buiwd_tawget='swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/assembwe_muwti_type_gwaph:assembwe-muwti-type-gwaph-scio-adhoc-app', >_<
+    g-gcp_depwoyment_cwedentiaws='/vaw/wib/tss/keys/{{pwofiwe.usew_name}}/cwoud/gcp/dp/shadow.json', rawr x3
+    statebiwd_config=statebiwdconfig(
+      b-batch_width='pt1h', mya
+      f-fiwst_time='{{pwofiwe.date}}'
     )
   )
 )

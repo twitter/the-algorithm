@@ -1,69 +1,69 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.service.talon.thriftscala._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.Talon
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.core.OverCapacity
+i-impowt com.twittew.sewvice.tawon.thwiftscawa._
+i-impowt com.twittew.stitch.seqgwoup
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.compat.wegacyseqgwoup
+i-impowt com.twittew.tweetypie.backends.tawon
+i-impowt com.twittew.tweetypie.cwient_id.cwientidhewpew
+i-impowt com.twittew.tweetypie.cowe.ovewcapacity
 
-case class UrlSlug(text: String) extends AnyVal
-case class ExpandedUrl(text: String) extends AnyVal
+case cwass uwwswug(text: stwing) extends anyvaw
+case cwass e-expandeduww(text: stwing) extends anyvaw
 
-object UrlRepository {
-  type Type = UrlSlug => Stitch[ExpandedUrl]
+object u-uwwwepositowy {
+  type type = u-uwwswug => stitch[expandeduww]
 
   /**
-   * Builds a UrlRepository from a Talon.Expand arrow.
+   * buiwds a uwwwepositowy fwom a tawon.expand a-awwow. 😳
    */
-  def apply(
-    talonExpand: Talon.Expand,
-    tweetypieClientId: String,
-    statsReceiver: StatsReceiver,
-    clientIdHelper: ClientIdHelper,
-  ): Type = {
-    val observedTalonExpand: Talon.Expand =
-      talonExpand
-        .trackOutcome(statsReceiver, _ => clientIdHelper.effectiveClientId.getOrElse("unknown"))
+  def appwy(
+    t-tawonexpand: t-tawon.expand, mya
+    tweetypiecwientid: stwing, (˘ω˘)
+    statsweceivew: statsweceivew, >_<
+    c-cwientidhewpew: cwientidhewpew, -.-
+  ): type = {
+    vaw obsewvedtawonexpand: tawon.expand =
+      tawonexpand
+        .twackoutcome(statsweceivew, 🥺 _ => c-cwientidhewpew.effectivecwientid.getowewse("unknown"))
 
-    val expandGroup = SeqGroup[ExpandRequest, Try[ExpandResponse]] { requests =>
-      LegacySeqGroup.liftToSeqTry(
-        Future.collect(requests.map(r => observedTalonExpand(r).liftToTry)))
+    vaw expandgwoup = s-seqgwoup[expandwequest, (U ﹏ U) t-twy[expandwesponse]] { w-wequests =>
+      w-wegacyseqgwoup.wifttoseqtwy(
+        futuwe.cowwect(wequests.map(w => obsewvedtawonexpand(w).wifttotwy)))
     }
 
-    slug =>
-      val request = toExpandRequest(slug, auditMessage(tweetypieClientId, clientIdHelper))
+    swug =>
+      v-vaw wequest = toexpandwequest(swug, >w< auditmessage(tweetypiecwientid, mya c-cwientidhewpew))
 
-      Stitch
-        .call(request, expandGroup)
-        .lowerFromTry
-        .flatMap(toExpandedUrl(slug, _))
+      stitch
+        .caww(wequest, >w< expandgwoup)
+        .wowewfwomtwy
+        .fwatmap(toexpandeduww(swug, nyaa~~ _))
   }
 
-  def auditMessage(tweetypieClientId: String, clientIdHelper: ClientIdHelper): String = {
-    tweetypieClientId + clientIdHelper.effectiveClientId.mkString(":", "", "")
+  def auditmessage(tweetypiecwientid: stwing, (✿oωo) cwientidhewpew: c-cwientidhewpew): stwing = {
+    t-tweetypiecwientid + c-cwientidhewpew.effectivecwientid.mkstwing(":", ʘwʘ "", "")
   }
 
-  def toExpandRequest(slug: UrlSlug, auditMessage: String): ExpandRequest =
-    ExpandRequest(userId = 0, shortUrl = slug.text, fromUser = false, auditMsg = Some(auditMessage))
+  d-def toexpandwequest(swug: uwwswug, (ˆ ﻌ ˆ)♡ auditmessage: stwing): expandwequest =
+    e-expandwequest(usewid = 0, 😳😳😳 showtuww = s-swug.text, :3 fwomusew = f-fawse, OwO auditmsg = s-some(auditmessage))
 
-  def toExpandedUrl(slug: UrlSlug, res: ExpandResponse): Stitch[ExpandedUrl] =
-    res.responseCode match {
-      case ResponseCode.Ok =>
-        // use Option(res.longUrl) because res.longUrl can be null
-        Option(res.longUrl) match {
-          case None => Stitch.NotFound
-          case Some(longUrl) => Stitch.value(ExpandedUrl(longUrl))
+  def toexpandeduww(swug: u-uwwswug, (U ﹏ U) wes: expandwesponse): stitch[expandeduww] =
+    w-wes.wesponsecode match {
+      case wesponsecode.ok =>
+        // u-use option(wes.wonguww) b-because wes.wonguww can be nuww
+        o-option(wes.wonguww) m-match {
+          case nyone => stitch.notfound
+          case some(wonguww) => stitch.vawue(expandeduww(wonguww))
         }
 
-      case ResponseCode.BadInput =>
-        Stitch.NotFound
+      case wesponsecode.badinput =>
+        stitch.notfound
 
-      // we shouldn't see other ResponseCodes, because Talon.Expand translates them to
-      // exceptions, but we have this catch-all just in case.
-      case _ =>
-        Stitch.exception(OverCapacity("talon"))
+      // w-we shouwdn't s-see othew wesponsecodes, >w< because t-tawon.expand twanswates t-them to
+      // e-exceptions, (U ﹏ U) but we have this catch-aww just in case. 😳
+      c-case _ =>
+        stitch.exception(ovewcapacity("tawon"))
     }
 }

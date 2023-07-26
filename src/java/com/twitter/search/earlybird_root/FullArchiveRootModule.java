@@ -1,241 +1,241 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+i-impowt j-javax.annotation.nuwwabwe;
+i-impowt j-javax.inject.named;
+i-impowt javax.inject.singweton;
 
-import com.google.inject.Key;
-import com.google.inject.Provides;
+i-impowt com.googwe.inject.key;
+impowt com.googwe.inject.pwovides;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.memcached.JavaClient;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.root.LoggingSupport;
-import com.twitter.search.common.root.PartitionConfig;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.common.root.RootClientServiceBuilder;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.common.root.SearchRootWarmup;
-import com.twitter.search.common.root.SplitterService;
-import com.twitter.search.common.root.ValidationBehavior;
-import com.twitter.search.common.root.WarmupConfig;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.config.TierInfoSource;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.caching.DefaultForcedCacheMissDecider;
-import com.twitter.search.earlybird_root.caching.RecencyCache;
-import com.twitter.search.earlybird_root.caching.RelevanceCache;
-import com.twitter.search.earlybird_root.caching.StrictRecencyCache;
-import com.twitter.search.earlybird_root.caching.TermStatsCache;
-import com.twitter.search.earlybird_root.caching.TopTweetsCache;
-import com.twitter.search.earlybird_root.caching.TopTweetsServicePostProcessor;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
-import com.twitter.util.Future;
+impowt com.twittew.app.fwag;
+impowt com.twittew.app.fwaggabwe;
+impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.memcached.javacwient;
+i-impowt com.twittew.finagwe.stats.statsweceivew;
+impowt com.twittew.inject.twittewmoduwe;
+i-impowt com.twittew.seawch.common.caching.cache;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.common.woot.woggingsuppowt;
+impowt c-com.twittew.seawch.common.woot.pawtitionconfig;
+i-impowt com.twittew.seawch.common.woot.pawtitionwoggingsuppowt;
+impowt com.twittew.seawch.common.woot.wootcwientsewvicebuiwdew;
+impowt com.twittew.seawch.common.woot.seawchwootmoduwe;
+impowt com.twittew.seawch.common.woot.seawchwootwawmup;
+impowt com.twittew.seawch.common.woot.spwittewsewvice;
+i-impowt com.twittew.seawch.common.woot.vawidationbehaviow;
+impowt com.twittew.seawch.common.woot.wawmupconfig;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.eawwybiwd.config.tiewinfosouwce;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.caching.defauwtfowcedcachemissdecidew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.caching.wecencycache;
+impowt c-com.twittew.seawch.eawwybiwd_woot.caching.wewevancecache;
+impowt com.twittew.seawch.eawwybiwd_woot.caching.stwictwecencycache;
+i-impowt com.twittew.seawch.eawwybiwd_woot.caching.tewmstatscache;
+impowt com.twittew.seawch.eawwybiwd_woot.caching.toptweetscache;
+impowt com.twittew.seawch.eawwybiwd_woot.caching.toptweetssewvicepostpwocessow;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.wequestcontexttoeawwybiwdwequestfiwtew;
+i-impowt com.twittew.utiw.futuwe;
 
-import static com.twitter.search.earlybird_root.EarlybirdCommonModule.NAMED_ALT_CLIENT;
+impowt static c-com.twittew.seawch.eawwybiwd_woot.eawwybiwdcommonmoduwe.named_awt_cwient;
 
-public class FullArchiveRootModule extends TwitterModule {
-  private static final String CLUSTER = "archive_full";
-  private static final String ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY =
-      "full_archive_alt_client_traffic_percentage";
+p-pubwic c-cwass fuwwawchivewootmoduwe extends twittewmoduwe {
+  pwivate static finaw s-stwing cwustew = "awchive_fuww";
+  p-pwivate static finaw stwing awt_twaffic_pewcentage_decidew_key =
+      "fuww_awchive_awt_cwient_twaffic_pewcentage";
 
-  private final Flag<Boolean> forceAltClientFlag = createFlag(
-      "force_alt_client",
-      false,
-      "Always sends traffic to the alt client",
-      Flaggable.ofJavaBoolean());
+  p-pwivate f-finaw fwag<boowean> fowceawtcwientfwag = c-cweatefwag(
+      "fowce_awt_cwient",
+      fawse, rawr x3
+      "awways s-sends twaffic to the awt cwient", nyaa~~
+      f-fwaggabwe.ofjavaboowean());
 
-  @Override
-  public void configure() {
-    bind(Key.get(EarlybirdCluster.class)).toInstance(EarlybirdCluster.FULL_ARCHIVE);
+  @ovewwide
+  pubwic void configuwe() {
+    b-bind(key.get(eawwybiwdcwustew.cwass)).toinstance(eawwybiwdcwustew.fuww_awchive);
 
-    bind(EarlybirdServiceScatterGatherSupport.class)
-      .to(EarlybirdFullArchiveScatterGatherSupport.class);
+    bind(eawwybiwdsewvicescattewgathewsuppowt.cwass)
+      .to(eawwybiwdfuwwawchivescattewgathewsuppowt.cwass);
 
-    bind(EarlybirdService.ServiceIface.class).to(FullArchiveRootService.class);
+    b-bind(eawwybiwdsewvice.sewviceiface.cwass).to(fuwwawchivewootsewvice.cwass);
   }
 
-  @Provides
-  LoggingSupport<EarlybirdRequest, EarlybirdResponse> provideLoggingSupport(
-      SearchDecider decider) {
-    return new EarlybirdServiceLoggingSupport(decider);
+  @pwovides
+  w-woggingsuppowt<eawwybiwdwequest, >_< eawwybiwdwesponse> pwovidewoggingsuppowt(
+      seawchdecidew decidew) {
+    wetuwn nyew eawwybiwdsewvicewoggingsuppowt(decidew);
   }
 
-  @Provides
-  PartitionLoggingSupport<EarlybirdRequestContext> providePartitionLoggingSupport() {
-    return new EarlybirdServicePartitionLoggingSupport();
+  @pwovides
+  pawtitionwoggingsuppowt<eawwybiwdwequestcontext> p-pwovidepawtitionwoggingsuppowt() {
+    w-wetuwn nyew eawwybiwdsewvicepawtitionwoggingsuppowt();
   }
 
-  @Provides
-  ValidationBehavior<EarlybirdRequest, EarlybirdResponse> provideValidationBehavior() {
-    return new EarlybirdServiceValidationBehavior();
+  @pwovides
+  vawidationbehaviow<eawwybiwdwequest, ^^;; e-eawwybiwdwesponse> p-pwovidevawidationbehaviow() {
+    w-wetuwn nyew eawwybiwdsewvicevawidationbehaviow();
   }
 
-  @Provides
-  @Singleton
-  @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  EarlybirdServiceChainBuilder provideAltEarlybirdServiceChainBuilder(
-      @Named(NAMED_ALT_CLIENT) @Nullable PartitionConfig altPartitionConfig,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      EarlybirdTierThrottleDeciders tierThrottleDeciders,
-      @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName,
-      SearchDecider decider,
-      TierInfoSource tierConfig,
-      @Named(NAMED_ALT_CLIENT) @Nullable
-          RootClientServiceBuilder<EarlybirdService.ServiceIface> altRootClientServiceBuilder,
-      PartitionAccessController partitionAccessController,
-      StatsReceiver statsReceiver
+  @pwovides
+  @singweton
+  @nuwwabwe
+  @named(named_awt_cwient)
+  eawwybiwdsewvicechainbuiwdew pwovideawteawwybiwdsewvicechainbuiwdew(
+      @named(named_awt_cwient) @nuwwabwe pawtitionconfig a-awtpawtitionconfig, (ˆ ﻌ ˆ)♡
+      wequestcontexttoeawwybiwdwequestfiwtew wequestcontexttoeawwybiwdwequestfiwtew, ^^;;
+      eawwybiwdtiewthwottwedecidews tiewthwottwedecidews, (⑅˘꒳˘)
+      @named(seawchwootmoduwe.named_nowmawized_seawch_woot_name) s-stwing nyowmawizedseawchwootname, rawr x3
+      seawchdecidew d-decidew, (///ˬ///✿)
+      t-tiewinfosouwce t-tiewconfig, 🥺
+      @named(named_awt_cwient) @nuwwabwe
+          wootcwientsewvicebuiwdew<eawwybiwdsewvice.sewviceiface> a-awtwootcwientsewvicebuiwdew, >_<
+      pawtitionaccesscontwowwew p-pawtitionaccesscontwowwew, UwU
+      s-statsweceivew s-statsweceivew
   ) {
-    if (altPartitionConfig == null || altRootClientServiceBuilder == null) {
-      return null;
+    if (awtpawtitionconfig == nyuww || a-awtwootcwientsewvicebuiwdew == n-nyuww) {
+      w-wetuwn nyuww;
     }
 
-    return new EarlybirdServiceChainBuilder(
-        altPartitionConfig,
-        requestContextToEarlybirdRequestFilter,
-        tierThrottleDeciders,
-        normalizedSearchRootName,
-        decider,
-        tierConfig,
-        altRootClientServiceBuilder,
-        partitionAccessController,
-        statsReceiver
+    w-wetuwn n-nyew eawwybiwdsewvicechainbuiwdew(
+        awtpawtitionconfig, >_<
+        wequestcontexttoeawwybiwdwequestfiwtew, -.-
+        tiewthwottwedecidews, mya
+        n-nyowmawizedseawchwootname, >w<
+        decidew, (U ﹏ U)
+        tiewconfig, 😳😳😳
+        awtwootcwientsewvicebuiwdew, o.O
+        pawtitionaccesscontwowwew, òωó
+        statsweceivew
     );
   }
 
-  @Provides
-  @Singleton
-  @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  EarlybirdChainedScatterGatherService provideAltEarlybirdChainedScatterGatherService(
-      @Named(NAMED_ALT_CLIENT) @Nullable EarlybirdServiceChainBuilder altServiceChainBuilder,
-      EarlybirdServiceScatterGatherSupport scatterGatherSupport,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport
+  @pwovides
+  @singweton
+  @nuwwabwe
+  @named(named_awt_cwient)
+  e-eawwybiwdchainedscattewgathewsewvice pwovideawteawwybiwdchainedscattewgathewsewvice(
+      @named(named_awt_cwient) @nuwwabwe eawwybiwdsewvicechainbuiwdew awtsewvicechainbuiwdew, 😳😳😳
+      e-eawwybiwdsewvicescattewgathewsuppowt s-scattewgathewsuppowt, σωσ
+      p-pawtitionwoggingsuppowt<eawwybiwdwequestcontext> pawtitionwoggingsuppowt
   ) {
-    if (altServiceChainBuilder == null) {
-      return null;
+    if (awtsewvicechainbuiwdew == n-nyuww) {
+      wetuwn n-nyuww;
     }
 
-    return new EarlybirdChainedScatterGatherService(
-        altServiceChainBuilder,
-        scatterGatherSupport,
-        partitionLoggingSupport
+    w-wetuwn nyew eawwybiwdchainedscattewgathewsewvice(
+        awtsewvicechainbuiwdew, (⑅˘꒳˘)
+        scattewgathewsuppowt, (///ˬ///✿)
+        pawtitionwoggingsuppowt
     );
   }
 
-  @Provides
-  @Singleton
-  Service<EarlybirdRequestContext, List<Future<EarlybirdResponse>>>
-  provideEarlybirdChainedScatterGatherService(
-      EarlybirdChainedScatterGatherService chainedScatterGatherService,
-      @Named(NAMED_ALT_CLIENT) @Nullable
-          EarlybirdChainedScatterGatherService altChainedScatterGatherService,
-      SearchDecider decider
+  @pwovides
+  @singweton
+  sewvice<eawwybiwdwequestcontext, 🥺 wist<futuwe<eawwybiwdwesponse>>>
+  pwovideeawwybiwdchainedscattewgathewsewvice(
+      e-eawwybiwdchainedscattewgathewsewvice chainedscattewgathewsewvice, OwO
+      @named(named_awt_cwient) @nuwwabwe
+          e-eawwybiwdchainedscattewgathewsewvice awtchainedscattewgathewsewvice, >w<
+      s-seawchdecidew d-decidew
   ) {
-    if (forceAltClientFlag.apply()) {
-      if (altChainedScatterGatherService == null) {
-        throw new RuntimeException(
-            "alt client cannot be null when 'force_alt_client' is set to true");
-      } else {
-        return altChainedScatterGatherService;
+    if (fowceawtcwientfwag.appwy()) {
+      if (awtchainedscattewgathewsewvice == n-nyuww) {
+        t-thwow nyew wuntimeexception(
+            "awt cwient cannot be n-nyuww when 'fowce_awt_cwient' is s-set to twue");
+      } ewse {
+        wetuwn awtchainedscattewgathewsewvice;
       }
     }
 
-    if (altChainedScatterGatherService == null) {
-      return chainedScatterGatherService;
+    if (awtchainedscattewgathewsewvice == nyuww) {
+      w-wetuwn chainedscattewgathewsewvice;
     }
 
-    return new SplitterService<>(
-        chainedScatterGatherService,
-        altChainedScatterGatherService,
-        decider,
-        ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY
+    w-wetuwn nyew s-spwittewsewvice<>(
+        chainedscattewgathewsewvice, 🥺
+        a-awtchainedscattewgathewsewvice, nyaa~~
+        d-decidew, ^^
+        awt_twaffic_pewcentage_decidew_key
     );
   }
 
-  @Provides
-  @Singleton
-  @RecencyCache
-  Cache<EarlybirdRequest, EarlybirdResponse> provideRecencyCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
-    return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_recency_root",
-        serializedKeyPrefix, TimeUnit.HOURS.toMillis(2), cacheKeyMaxBytes, cacheValueMaxBytes);
+  @pwovides
+  @singweton
+  @wecencycache
+  c-cache<eawwybiwdwequest, >w< eawwybiwdwesponse> pwovidewecencycache(
+      javacwient cwient, OwO
+      d-defauwtfowcedcachemissdecidew d-decidew, XD
+      @named(seawchwootmoduwe.named_sewiawized_key_pwefix) stwing sewiawizedkeypwefix,
+      @named(seawchwootmoduwe.named_cache_key_max_bytes) int cachekeymaxbytes, ^^;;
+      @named(seawchwootmoduwe.named_cache_vawue_max_bytes) i-int c-cachevawuemaxbytes) {
+    wetuwn eawwybiwdcachecommonmoduwe.cweatecache(cwient, 🥺 decidew, cwustew + "_wecency_woot", XD
+        s-sewiawizedkeypwefix, (U ᵕ U❁) timeunit.houws.tomiwwis(2), :3 cachekeymaxbytes, ( ͡o ω ͡o ) cachevawuemaxbytes);
   }
 
-  @Provides
-  @Singleton
-  @RelevanceCache
-  Cache<EarlybirdRequest, EarlybirdResponse> provideRelevanceCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
-    return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_relevance_root",
-        serializedKeyPrefix, TimeUnit.HOURS.toMillis(2), cacheKeyMaxBytes, cacheValueMaxBytes);
+  @pwovides
+  @singweton
+  @wewevancecache
+  cache<eawwybiwdwequest, òωó eawwybiwdwesponse> p-pwovidewewevancecache(
+      javacwient cwient, σωσ
+      d-defauwtfowcedcachemissdecidew d-decidew, (U ᵕ U❁)
+      @named(seawchwootmoduwe.named_sewiawized_key_pwefix) stwing sewiawizedkeypwefix, (✿oωo)
+      @named(seawchwootmoduwe.named_cache_key_max_bytes) int c-cachekeymaxbytes,
+      @named(seawchwootmoduwe.named_cache_vawue_max_bytes) int c-cachevawuemaxbytes) {
+    wetuwn eawwybiwdcachecommonmoduwe.cweatecache(cwient, ^^ decidew, cwustew + "_wewevance_woot", ^•ﻌ•^
+        s-sewiawizedkeypwefix, XD timeunit.houws.tomiwwis(2), :3 c-cachekeymaxbytes, (ꈍᴗꈍ) cachevawuemaxbytes);
   }
 
-  @Provides
-  @Singleton
-  @StrictRecencyCache
-  Cache<EarlybirdRequest, EarlybirdResponse> provideStrictRecencyCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
-    return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_strict_recency_root",
-        serializedKeyPrefix, TimeUnit.HOURS.toMillis(2), cacheKeyMaxBytes, cacheValueMaxBytes);
+  @pwovides
+  @singweton
+  @stwictwecencycache
+  cache<eawwybiwdwequest, :3 eawwybiwdwesponse> pwovidestwictwecencycache(
+      j-javacwient cwient, (U ﹏ U)
+      d-defauwtfowcedcachemissdecidew d-decidew, UwU
+      @named(seawchwootmoduwe.named_sewiawized_key_pwefix) stwing sewiawizedkeypwefix, 😳😳😳
+      @named(seawchwootmoduwe.named_cache_key_max_bytes) i-int cachekeymaxbytes, XD
+      @named(seawchwootmoduwe.named_cache_vawue_max_bytes) int c-cachevawuemaxbytes) {
+    w-wetuwn e-eawwybiwdcachecommonmoduwe.cweatecache(cwient, decidew, o.O cwustew + "_stwict_wecency_woot", (⑅˘꒳˘)
+        s-sewiawizedkeypwefix, 😳😳😳 t-timeunit.houws.tomiwwis(2), nyaa~~ cachekeymaxbytes, rawr cachevawuemaxbytes);
   }
 
-  @Provides
-  @Singleton
-  @TermStatsCache
-  Cache<EarlybirdRequest, EarlybirdResponse> provideTermStatsCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
-    return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_termstats_root",
-        serializedKeyPrefix, TimeUnit.MINUTES.toMillis(5), cacheKeyMaxBytes, cacheValueMaxBytes);
+  @pwovides
+  @singweton
+  @tewmstatscache
+  c-cache<eawwybiwdwequest, -.- e-eawwybiwdwesponse> p-pwovidetewmstatscache(
+      javacwient cwient, (✿oωo)
+      defauwtfowcedcachemissdecidew d-decidew, /(^•ω•^)
+      @named(seawchwootmoduwe.named_sewiawized_key_pwefix) stwing sewiawizedkeypwefix, 🥺
+      @named(seawchwootmoduwe.named_cache_key_max_bytes) i-int cachekeymaxbytes, ʘwʘ
+      @named(seawchwootmoduwe.named_cache_vawue_max_bytes) i-int cachevawuemaxbytes) {
+    wetuwn eawwybiwdcachecommonmoduwe.cweatecache(cwient, UwU decidew, XD cwustew + "_tewmstats_woot",
+        s-sewiawizedkeypwefix, (✿oωo) t-timeunit.minutes.tomiwwis(5), :3 c-cachekeymaxbytes, (///ˬ///✿) c-cachevawuemaxbytes);
   }
 
-  @Provides
-  @Singleton
-  @TopTweetsCache
-  Cache<EarlybirdRequest, EarlybirdResponse> provideTopTweetsCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
-    return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_toptweets_root",
-        serializedKeyPrefix, TopTweetsServicePostProcessor.CACHE_AGE_IN_MS,
-        cacheKeyMaxBytes, cacheValueMaxBytes);
+  @pwovides
+  @singweton
+  @toptweetscache
+  cache<eawwybiwdwequest, nyaa~~ e-eawwybiwdwesponse> pwovidetoptweetscache(
+      javacwient cwient, >w<
+      defauwtfowcedcachemissdecidew decidew, -.-
+      @named(seawchwootmoduwe.named_sewiawized_key_pwefix) stwing sewiawizedkeypwefix, (✿oωo)
+      @named(seawchwootmoduwe.named_cache_key_max_bytes) i-int cachekeymaxbytes, (˘ω˘)
+      @named(seawchwootmoduwe.named_cache_vawue_max_bytes) i-int cachevawuemaxbytes) {
+    w-wetuwn eawwybiwdcachecommonmoduwe.cweatecache(cwient, rawr d-decidew, cwustew + "_toptweets_woot", OwO
+        sewiawizedkeypwefix, ^•ﻌ•^ toptweetssewvicepostpwocessow.cache_age_in_ms, UwU
+        c-cachekeymaxbytes, (˘ω˘) c-cachevawuemaxbytes);
   }
 
-  @Provides
-  SearchRootWarmup<EarlybirdService.ServiceIface, ?, ?> providesSearchRootWarmup(
-      Clock clock,
-      WarmupConfig config) {
-    return new EarlybirdWarmup(clock, config);
+  @pwovides
+  s-seawchwootwawmup<eawwybiwdsewvice.sewviceiface, (///ˬ///✿) ?, ?> p-pwovidesseawchwootwawmup(
+      c-cwock cwock, σωσ
+      wawmupconfig config) {
+    wetuwn new eawwybiwdwawmup(cwock, /(^•ω•^) config);
   }
 }

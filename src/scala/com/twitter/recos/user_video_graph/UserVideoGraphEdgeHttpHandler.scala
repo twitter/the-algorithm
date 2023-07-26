@@ -1,101 +1,101 @@
-package com.twitter.recos.user_video_graph
+package com.twittew.wecos.usew_video_gwaph
 
-import com.twitter.finagle.Service
-import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Response
-import com.twitter.finagle.http.Status
-import com.twitter.finagle.http.Version
-import com.twitter.frigate.common.util.HTMLUtil
-import com.twitter.graphjet.algorithms.TweetIDMask
-import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment
-import com.twitter.graphjet.bipartite.MultiSegmentIterator
-import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph
-import com.twitter.logging.Logger
-import com.twitter.util.Future
-import java.util.Random
-import scala.collection.mutable.ListBuffer
+impowt c-com.twittew.finagwe.sewvice
+i-impowt c-com.twittew.finagwe.http.wequest
+i-impowt com.twittew.finagwe.http.wesponse
+impowt c-com.twittew.finagwe.http.status
+i-impowt com.twittew.finagwe.http.vewsion
+i-impowt c-com.twittew.fwigate.common.utiw.htmwutiw
+impowt com.twittew.gwaphjet.awgowithms.tweetidmask
+impowt com.twittew.gwaphjet.bipawtite.segment.bipawtitegwaphsegment
+impowt com.twittew.gwaphjet.bipawtite.muwtisegmentitewatow
+i-impowt com.twittew.gwaphjet.bipawtite.muwtisegmentpowewwawbipawtitegwaph
+impowt com.twittew.wogging.woggew
+i-impowt com.twittew.utiw.futuwe
+i-impowt java.utiw.wandom
+impowt scawa.cowwection.mutabwe.wistbuffew
 
-class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
-    extends Service[Request, Response] {
-  private val log = Logger("UserTweetGraphEdgeHttpHandler")
-  private val tweetIDMask = new TweetIDMask()
+cwass u-usewtweetgwaphedgehttphandwew(gwaph: muwtisegmentpowewwawbipawtitegwaph)
+    e-extends sewvice[wequest, >w< w-wesponse] {
+  pwivate vaw wog = woggew("usewtweetgwaphedgehttphandwew")
+  pwivate vaw tweetidmask = nyew t-tweetidmask()
 
-  def getCardInfo(rightNode: Long): String = {
-    val bits: Long = rightNode & TweetIDMask.METAMASK
-    bits match {
-      case TweetIDMask.PHOTO => "Photo"
-      case TweetIDMask.PLAYER => "Video"
-      case TweetIDMask.SUMMARY => "Url"
-      case TweetIDMask.PROMOTION => "Promotion"
-      case _ => "Regular"
+  def getcawdinfo(wightnode: wong): stwing = {
+    vaw bits: wong = wightnode & t-tweetidmask.metamask
+    bits m-match {
+      case t-tweetidmask.photo => "photo"
+      c-case tweetidmask.pwayew => "video"
+      case t-tweetidmask.summawy => "uww"
+      case tweetidmask.pwomotion => "pwomotion"
+      case _ => "weguwaw"
     }
   }
 
-  private def getUserEdges(userId: Long): ListBuffer[Edge] = {
-    val random = new Random()
-    val iterator =
-      graph
-        .getRandomLeftNodeEdges(userId, 10, random).asInstanceOf[MultiSegmentIterator[
-          BipartiteGraphSegment
+  p-pwivate def getusewedges(usewid: wong): w-wistbuffew[edge] = {
+    vaw wandom = nyew wandom()
+    vaw itewatow =
+      gwaph
+        .getwandomweftnodeedges(usewid, rawr 10, wandom).asinstanceof[muwtisegmentitewatow[
+          bipawtitegwaphsegment
         ]]
-    val tweets = new ListBuffer[Edge]()
-    if (iterator != null) {
-      while (iterator.hasNext) {
-        val rightNode = iterator.nextLong()
-        val edgeType = iterator.currentEdgeType()
-        tweets += Edge(
-          tweetIDMask.restore(rightNode),
-          UserVideoEdgeTypeMask(edgeType).toString,
-          getCardInfo(rightNode),
+    v-vaw tweets = nyew wistbuffew[edge]()
+    i-if (itewatow != n-nuww) {
+      w-whiwe (itewatow.hasnext) {
+        vaw wightnode = itewatow.nextwong()
+        vaw edgetype = itewatow.cuwwentedgetype()
+        t-tweets += edge(
+          t-tweetidmask.westowe(wightnode), 😳
+          usewvideoedgetypemask(edgetype).tostwing, >w<
+          g-getcawdinfo(wightnode), (⑅˘꒳˘)
         )
       }
     }
-    tweets
+    t-tweets
   }
 
-  def apply(httpRequest: Request): Future[Response] = {
-    log.info("UserTweetGraphEdgeHttpHandler params: " + httpRequest.getParams())
-    val time0 = System.currentTimeMillis
+  def appwy(httpwequest: w-wequest): futuwe[wesponse] = {
+    wog.info("usewtweetgwaphedgehttphandwew p-pawams: " + httpwequest.getpawams())
+    vaw time0 = s-system.cuwwenttimemiwwis
 
-    val tweetId = httpRequest.getLongParam("tweetId")
-    val queryTweetDegree = graph.getRightNodeDegree(tweetId)
-    val tweetEdges = getTweetEdges(tweetId)
+    vaw tweetid = httpwequest.getwongpawam("tweetid")
+    v-vaw quewytweetdegwee = gwaph.getwightnodedegwee(tweetid)
+    v-vaw tweetedges = g-gettweetedges(tweetid)
 
-    val userId = httpRequest.getLongParam("userId")
-    val queryUserDegree = graph.getLeftNodeDegree(userId)
+    vaw usewid = httpwequest.getwongpawam("usewid")
+    vaw quewyusewdegwee = gwaph.getweftnodedegwee(usewid)
 
-    val response = Response(Version.Http11, Status.Ok)
-    val userEdges = getUserEdges(userId)
-    val elapsed = System.currentTimeMillis - time0
-    val comment = ("Please specify \"userId\"  or \"tweetId\" param." +
-      "\n query tweet degree = " + queryTweetDegree +
-      "\n query user degree = " + queryUserDegree +
-      "\n done in %d ms<br>").format(elapsed)
-    val tweetContent = userEdges.toList
+    vaw wesponse = wesponse(vewsion.http11, OwO status.ok)
+    vaw usewedges = g-getusewedges(usewid)
+    vaw e-ewapsed = system.cuwwenttimemiwwis - time0
+    v-vaw comment = ("pwease s-specify \"usewid\"  o-ow \"tweetid\" pawam." +
+      "\n quewy tweet degwee = " + quewytweetdegwee +
+      "\n q-quewy usew degwee = " + quewyusewdegwee +
+      "\n done in %d ms<bw>").fowmat(ewapsed)
+    vaw tweetcontent = u-usewedges.towist
       .map { edge =>
-        s"<b>TweetId</b>: ${edge.tweetId},\n<b>Action type</b>: ${edge.actionType},\n<b>Card type</b>: ${edge.cardType}"
-          .replaceAll("\n", " ")
-      }.mkString("\n<br>\n")
+        s-s"<b>tweetid</b>: ${edge.tweetid},\n<b>action t-type</b>: ${edge.actiontype},\n<b>cawd t-type</b>: ${edge.cawdtype}"
+          .wepwaceaww("\n", (ꈍᴗꈍ) " ")
+      }.mkstwing("\n<bw>\n")
 
-    response.setContentString(
-      HTMLUtil.html.replace("XXXXX", comment + tweetContent + "\n<hr/>\n" + tweetEdges.toString()))
-    Future.value(response)
+    wesponse.setcontentstwing(
+      h-htmwutiw.htmw.wepwace("xxxxx", 😳 c-comment + t-tweetcontent + "\n<hw/>\n" + t-tweetedges.tostwing()))
+    futuwe.vawue(wesponse)
   }
 
-  private def getTweetEdges(tweetId: Long): ListBuffer[Long] = {
-    val random = new Random()
-    val iterator =
-      graph
-        .getRandomRightNodeEdges(tweetId, 500, random).asInstanceOf[MultiSegmentIterator[
-          BipartiteGraphSegment
+  pwivate d-def gettweetedges(tweetid: w-wong): w-wistbuffew[wong] = {
+    v-vaw wandom = n-nyew wandom()
+    vaw itewatow =
+      gwaph
+        .getwandomwightnodeedges(tweetid, 😳😳😳 500, mya wandom).asinstanceof[muwtisegmentitewatow[
+          bipawtitegwaphsegment
         ]]
-    val terms = new ListBuffer[Long]()
-    if (iterator != null) {
-      while (iterator.hasNext) { terms += iterator.nextLong() }
+    v-vaw tewms = nyew wistbuffew[wong]()
+    if (itewatow != nyuww) {
+      whiwe (itewatow.hasnext) { tewms += itewatow.nextwong() }
     }
-    terms.distinct
+    t-tewms.distinct
   }
 
 }
 
-case class Edge(tweetId: Long, actionType: String, cardType: String)
+case cwass edge(tweetid: wong, mya actiontype: stwing, (⑅˘꒳˘) c-cawdtype: stwing)

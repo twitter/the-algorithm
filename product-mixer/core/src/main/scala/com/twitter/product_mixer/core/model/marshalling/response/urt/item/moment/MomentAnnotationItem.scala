@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.moment
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.moment
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
 
-object MomentAnnotationItem {
-  val MomentAnnotationEntryNamespace = EntryNamespace("momentannotation")
+object momentannotationitem {
+  vaw momentannotationentwynamespace = entwynamespace("momentannotation")
 }
 
 /**
- * Represents a MomentAnnotation URT item.
- * This is primarily used by Trends Searth Result Page for displaying Trends Title or Description
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/MomentAnnotation.html
+ * w-wepwesents a momentannotation uwt item. (˘ω˘)
+ * this i-is pwimawiwy used by twends s-seawth wesuwt page fow dispwaying twends titwe ow descwiption
+ * u-uwt api wefewence: https://docbiwd.twittew.biz/unified_wich_timewines_uwt/gen/com/twittew/timewines/wendew/thwiftscawa/momentannotation.htmw
  */
-case class MomentAnnotationItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  override val isPinned: Option[Boolean],
-  text: Option[RichText],
-  header: Option[RichText],
-) extends TimelineItem {
+c-case cwass momentannotationitem(
+  o-ovewwide vaw id: wong, (⑅˘꒳˘)
+  ovewwide vaw sowtindex: option[wong],
+  ovewwide vaw c-cwienteventinfo: option[cwienteventinfo], (///ˬ///✿)
+  ovewwide vaw feedbackactioninfo: option[feedbackactioninfo], 😳😳😳
+  ovewwide v-vaw ispinned: option[boowean], 🥺
+  t-text: option[wichtext], mya
+  h-headew: option[wichtext],
+) e-extends t-timewineitem {
 
-  override val entryNamespace: EntryNamespace =
-    MomentAnnotationItem.MomentAnnotationEntryNamespace
+  ovewwide vaw entwynamespace: e-entwynamespace =
+    momentannotationitem.momentannotationentwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovewwide def withsowtindex(sowtindex: w-wong): timewineentwy = copy(sowtindex = some(sowtindex))
 }

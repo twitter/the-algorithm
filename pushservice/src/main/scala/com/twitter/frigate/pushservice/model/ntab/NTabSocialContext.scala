@@ -1,46 +1,46 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.common.base.SocialContextActions
-import com.twitter.frigate.common.base.SocialContextUserDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.util.Future
+impowt com.twittew.fwigate.common.base.sociawcontextactions
+impowt c-com.twittew.fwigate.common.base.sociawcontextusewdetaiws
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.utiw.candidateutiw
+i-impowt c-com.twittew.utiw.futuwe
 
-trait NTabSocialContext {
-  self: PushCandidate with SocialContextActions with SocialContextUserDetails =>
+t-twait n-nytabsociawcontext {
+  s-sewf: pushcandidate with sociawcontextactions with sociawcontextusewdetaiws =>
 
-  private def ntabDisplayUserIds: Seq[Long] =
-    socialContextUserIds.take(ntabDisplayUserIdsLength)
+  pwivate d-def nytabdispwayusewids: seq[wong] =
+    sociawcontextusewids.take(ntabdispwayusewidswength)
 
-  def ntabDisplayUserIdsLength: Int =
-    if (socialContextUserIds.size == 2) 2 else 1
+  d-def nytabdispwayusewidswength: int =
+    if (sociawcontextusewids.size == 2) 2 e-ewse 1
 
-  def ntabDisplayNamesAndIds: Future[Seq[(String, Long)]] =
-    scUserMap.map { userObjMap =>
-      ntabDisplayUserIds.flatMap { id =>
-        userObjMap(id).flatMap(_.profile.map(_.name)).map { name => (name, id) }
+  def ntabdispwaynamesandids: futuwe[seq[(stwing, >_< wong)]] =
+    s-scusewmap.map { usewobjmap =>
+      n-nytabdispwayusewids.fwatmap { i-id =>
+        usewobjmap(id).fwatmap(_.pwofiwe.map(_.name)).map { nyame => (name, (⑅˘꒳˘) id) }
       }
     }
 
-  def rankedNtabDisplayNamesAndIds(defaultToRecency: Boolean): Future[Seq[(String, Long)]] =
-    scUserMap.flatMap { userObjMap =>
-      val rankedSocialContextActivityFut =
-        CandidateUtil.getRankedSocialContext(
-          socialContextActions,
-          target.seedsWithWeight,
-          defaultToRecency)
-      rankedSocialContextActivityFut.map { rankedSocialContextActivity =>
-        val ntabDisplayUserIds =
-          rankedSocialContextActivity.map(_.userId).take(ntabDisplayUserIdsLength)
-        ntabDisplayUserIds.flatMap { id =>
-          userObjMap(id).flatMap(_.profile.map(_.name)).map { name => (name, id) }
+  def wankedntabdispwaynamesandids(defauwttowecency: b-boowean): futuwe[seq[(stwing, /(^•ω•^) wong)]] =
+    scusewmap.fwatmap { usewobjmap =>
+      v-vaw wankedsociawcontextactivityfut =
+        c-candidateutiw.getwankedsociawcontext(
+          s-sociawcontextactions, rawr x3
+          t-tawget.seedswithweight, (U ﹏ U)
+          d-defauwttowecency)
+      wankedsociawcontextactivityfut.map { wankedsociawcontextactivity =>
+        v-vaw nytabdispwayusewids =
+          wankedsociawcontextactivity.map(_.usewid).take(ntabdispwayusewidswength)
+        nytabdispwayusewids.fwatmap { i-id =>
+          usewobjmap(id).fwatmap(_.pwofiwe.map(_.name)).map { nyame => (name, (U ﹏ U) id) }
         }
       }
     }
 
-  def otherCount: Future[Int] =
-    ntabDisplayNamesAndIds.map {
-      case namesWithIdSeq =>
-        Math.max(0, socialContextUserIds.length - namesWithIdSeq.size)
+  def othewcount: futuwe[int] =
+    n-nytabdispwaynamesandids.map {
+      case nyameswithidseq =>
+        math.max(0, (⑅˘꒳˘) s-sociawcontextusewids.wength - n-nameswithidseq.size)
     }
 }

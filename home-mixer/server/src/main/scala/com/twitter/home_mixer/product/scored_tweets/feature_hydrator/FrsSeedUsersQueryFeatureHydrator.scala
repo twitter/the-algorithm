@@ -1,64 +1,64 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.follow_recommendations.{thriftscala => frs}
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.product_mixer.component_library.candidate_source.recommendations.UserFollowRecommendationsCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyView
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.{thwiftscawa => f-fws}
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.wecommendations.usewfowwowwecommendationscandidatesouwce
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.stwato.stwatokeyview
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.quewyfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.stitch.stitch
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-object FrsSeedUserIdsFeature extends Feature[TweetCandidate, Option[Seq[Long]]]
-object FrsUserToFollowedByUserIdsFeature extends Feature[TweetCandidate, Map[Long, Seq[Long]]]
+o-object fwsseedusewidsfeatuwe e-extends featuwe[tweetcandidate, o.O option[seq[wong]]]
+object fwsusewtofowwowedbyusewidsfeatuwe e-extends featuwe[tweetcandidate, ( ͡o ω ͡o ) map[wong, (U ﹏ U) seq[wong]]]
 
-@Singleton
-case class FrsSeedUsersQueryFeatureHydrator @Inject() (
-  userFollowRecommendationsCandidateSource: UserFollowRecommendationsCandidateSource)
-    extends QueryFeatureHydrator[ScoredTweetsQuery] {
+@singweton
+c-case cwass f-fwsseedusewsquewyfeatuwehydwatow @inject() (
+  usewfowwowwecommendationscandidatesouwce: usewfowwowwecommendationscandidatesouwce)
+    extends quewyfeatuwehydwatow[scowedtweetsquewy] {
 
-  private val maxUsersToFetch = 100
+  pwivate vaw maxusewstofetch = 100
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("FrsSeedUsers")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew = featuwehydwatowidentifiew("fwsseedusews")
 
-  override def features: Set[Feature[_, _]] = Set(
-    FrsSeedUserIdsFeature,
-    FrsUserToFollowedByUserIdsFeature
+  ovewwide def featuwes: set[featuwe[_, (///ˬ///✿) _]] = set(
+    f-fwsseedusewidsfeatuwe, >w<
+    fwsusewtofowwowedbyusewidsfeatuwe
   )
 
-  override def hydrate(query: ScoredTweetsQuery): Stitch[FeatureMap] = {
-    val frsRequest = frs.RecommendationRequest(
-      clientContext = frs.ClientContext(query.getOptionalUserId),
-      displayLocation = frs.DisplayLocation.HomeTimelineTweetRecs,
-      maxResults = Some(maxUsersToFetch)
+  o-ovewwide d-def hydwate(quewy: s-scowedtweetsquewy): s-stitch[featuwemap] = {
+    vaw fwswequest = fws.wecommendationwequest(
+      c-cwientcontext = fws.cwientcontext(quewy.getoptionawusewid), rawr
+      dispwaywocation = f-fws.dispwaywocation.hometimewinetweetwecs, mya
+      maxwesuwts = some(maxusewstofetch)
     )
 
-    userFollowRecommendationsCandidateSource(StratoKeyView(frsRequest, Unit))
-      .map { userRecommendations: Seq[frs.UserRecommendation] =>
-        val seedUserIds = userRecommendations.map(_.userId)
-        val seedUserIdsSet = seedUserIds.toSet
+    usewfowwowwecommendationscandidatesouwce(stwatokeyview(fwswequest, ^^ unit))
+      .map { usewwecommendations: seq[fws.usewwecommendation] =>
+        vaw s-seedusewids = usewwecommendations.map(_.usewid)
+        v-vaw seedusewidsset = s-seedusewids.toset
 
-        val userToFollowedByUserIds: Map[Long, Seq[Long]] = userRecommendations.flatMap {
-          userRecommendation =>
-            if (seedUserIdsSet.contains(userRecommendation.userId)) {
-              val followProof =
-                userRecommendation.reason.flatMap(_.accountProof).flatMap(_.followProof)
-              val followedByUserIds = followProof.map(_.userIds).getOrElse(Seq.empty)
-              Some(userRecommendation.userId -> followedByUserIds)
-            } else {
-              None
+        v-vaw usewtofowwowedbyusewids: map[wong, 😳😳😳 seq[wong]] = usewwecommendations.fwatmap {
+          usewwecommendation =>
+            i-if (seedusewidsset.contains(usewwecommendation.usewid)) {
+              v-vaw fowwowpwoof =
+                usewwecommendation.weason.fwatmap(_.accountpwoof).fwatmap(_.fowwowpwoof)
+              v-vaw fowwowedbyusewids = f-fowwowpwoof.map(_.usewids).getowewse(seq.empty)
+              some(usewwecommendation.usewid -> f-fowwowedbyusewids)
+            } ewse {
+              n-nyone
             }
-        }.toMap
+        }.tomap
 
-        FeatureMapBuilder()
-          .add(FrsSeedUserIdsFeature, Some(seedUserIds))
-          .add(FrsUserToFollowedByUserIdsFeature, userToFollowedByUserIds)
-          .build()
+        featuwemapbuiwdew()
+          .add(fwsseedusewidsfeatuwe, mya some(seedusewids))
+          .add(fwsusewtofowwowedbyusewidsfeatuwe, 😳 usewtofowwowedbyusewids)
+          .buiwd()
       }
   }
 }

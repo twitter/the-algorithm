@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.message
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.message.CompactPromptCandidateUrtItemStringCenterBuilder.CompactPromptClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.CompactPromptCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.CompactPromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.message.compactpwomptcandidateuwtitemstwingcentewbuiwdew.compactpwomptcwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.compactpwomptcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basestw
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.wichtext.basewichtextbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.compactpwomptmessagecontent
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messagepwomptitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object CompactPromptCandidateUrtItemStringCenterBuilder {
-  val CompactPromptClientEventInfoElement: String = "message"
+object compactpwomptcandidateuwtitemstwingcentewbuiwdew {
+  v-vaw compactpwomptcwienteventinfoewement: stwing = "message"
 }
 
-case class CompactPromptCandidateUrtItemStringCenterBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, CompactPromptCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, CompactPromptCandidate]
-  ] = None,
-  headerTextBuilder: BaseStr[Query, CompactPromptCandidate],
-  bodyTextBuilder: Option[BaseStr[Query, CompactPromptCandidate]] = None,
-  headerRichTextBuilder: Option[BaseRichTextBuilder[Query, CompactPromptCandidate]] = None,
-  bodyRichTextBuilder: Option[BaseRichTextBuilder[Query, CompactPromptCandidate]] = None)
-    extends CandidateUrtEntryBuilder[Query, CompactPromptCandidate, MessagePromptItem] {
+c-case cwass compactpwomptcandidateuwtitemstwingcentewbuiwdew[-quewy <: pipewinequewy](
+  cwienteventinfobuiwdew: basecwienteventinfobuiwdew[quewy, 😳 c-compactpwomptcandidate], mya
+  feedbackactioninfobuiwdew: option[
+    b-basefeedbackactioninfobuiwdew[quewy, (˘ω˘) c-compactpwomptcandidate]
+  ] = nyone, >_<
+  headewtextbuiwdew: basestw[quewy, compactpwomptcandidate], -.-
+  bodytextbuiwdew: o-option[basestw[quewy, 🥺 compactpwomptcandidate]] = nyone, (U ﹏ U)
+  headewwichtextbuiwdew: option[basewichtextbuiwdew[quewy, >w< compactpwomptcandidate]] = n-nyone, mya
+  bodywichtextbuiwdew: o-option[basewichtextbuiwdew[quewy, c-compactpwomptcandidate]] = n-nyone)
+    e-extends candidateuwtentwybuiwdew[quewy, >w< compactpwomptcandidate, nyaa~~ messagepwomptitem] {
 
-  override def apply(
-    query: Query,
-    compactPromptCandidate: CompactPromptCandidate,
-    candidateFeatures: FeatureMap
-  ): MessagePromptItem =
-    MessagePromptItem(
-      id = compactPromptCandidate.id.toString,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
-        query,
-        compactPromptCandidate,
-        candidateFeatures,
-        Some(CompactPromptClientEventInfoElement)),
-      feedbackActionInfo = feedbackActionInfoBuilder.flatMap(
-        _.apply(query, compactPromptCandidate, candidateFeatures)),
-      isPinned = None,
-      content = CompactPromptMessageContent(
-        headerText = headerTextBuilder.apply(query, compactPromptCandidate, candidateFeatures),
-        bodyText = bodyTextBuilder.map(_.apply(query, compactPromptCandidate, candidateFeatures)),
-        primaryButtonAction = None,
-        secondaryButtonAction = None,
-        action = None,
-        headerRichText =
-          headerRichTextBuilder.map(_.apply(query, compactPromptCandidate, candidateFeatures)),
-        bodyRichText =
-          bodyRichTextBuilder.map(_.apply(query, compactPromptCandidate, candidateFeatures))
-      ),
-      impressionCallbacks = None
+  o-ovewwide def appwy(
+    quewy: quewy, (✿oωo)
+    c-compactpwomptcandidate: compactpwomptcandidate, ʘwʘ
+    candidatefeatuwes: featuwemap
+  ): messagepwomptitem =
+    messagepwomptitem(
+      i-id = compactpwomptcandidate.id.tostwing, (ˆ ﻌ ˆ)♡
+      s-sowtindex = n-nyone, 😳😳😳 // s-sowt indexes awe automaticawwy set in the domain mawshawwew phase
+      c-cwienteventinfo = c-cwienteventinfobuiwdew(
+        quewy, :3
+        c-compactpwomptcandidate, OwO
+        c-candidatefeatuwes, (U ﹏ U)
+        some(compactpwomptcwienteventinfoewement)), >w<
+      f-feedbackactioninfo = feedbackactioninfobuiwdew.fwatmap(
+        _.appwy(quewy, (U ﹏ U) c-compactpwomptcandidate, candidatefeatuwes)), 😳
+      ispinned = n-nyone, (ˆ ﻌ ˆ)♡
+      content = compactpwomptmessagecontent(
+        h-headewtext = headewtextbuiwdew.appwy(quewy, 😳😳😳 compactpwomptcandidate, (U ﹏ U) c-candidatefeatuwes),
+        b-bodytext = bodytextbuiwdew.map(_.appwy(quewy, (///ˬ///✿) compactpwomptcandidate, candidatefeatuwes)), 😳
+        pwimawybuttonaction = nyone, 😳
+        secondawybuttonaction = nyone, σωσ
+        a-action = nyone, rawr x3
+        h-headewwichtext =
+          headewwichtextbuiwdew.map(_.appwy(quewy, OwO c-compactpwomptcandidate, /(^•ω•^) c-candidatefeatuwes)), 😳😳😳
+        b-bodywichtext =
+          bodywichtextbuiwdew.map(_.appwy(quewy, ( ͡o ω ͡o ) compactpwomptcandidate, >_< candidatefeatuwes))
+      ), >w<
+      i-impwessioncawwbacks = nyone
     )
 }

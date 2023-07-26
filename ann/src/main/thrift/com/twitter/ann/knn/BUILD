@@ -1,11 +1,11 @@
-create_thrift_libraries(
-    base_name = "thrift",
-    sources = ["*.thrift"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = ["src/thrift/com/twitter/ml/featurestore:ml-feature-store"],
-    generate_languages = [
-        "java",
-        "scala",
-    ],
+cweate_thwift_wibwawies(
+    base_name = "thwift", OwO
+    souwces = ["*.thwift"], 🥺
+    p-pwatfowm = "java8", òωó
+    t-tags = ["bazew-compatibwe"], o.O
+    d-dependency_woots = ["swc/thwift/com/twittew/mw/featuwestowe:mw-featuwe-stowe"], (U ᵕ U❁)
+    genewate_wanguages = [
+        "java", (⑅˘꒳˘)
+        "scawa", ( ͡o ω ͡o )
+    ], UwU
 )

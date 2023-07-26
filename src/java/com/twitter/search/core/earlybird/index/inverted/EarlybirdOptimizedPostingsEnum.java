@@ -1,178 +1,178 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import org.apache.lucene.util.BytesRef;
+i-impowt owg.apache.wucene.utiw.byteswef;
 
 /**
- * Extend {@link EarlybirdPostingsEnum} to add more functionalities for docs (and positions)
- * enumerator of {@link OptimizedPostingLists}.
+ * e-extend {@wink e-eawwybiwdpostingsenum} t-to add m-mowe functionawities f-fow docs (and p-positions)
+ * enumewatow of {@wink optimizedpostingwists}. (˘ω˘)
  */
-public abstract class EarlybirdOptimizedPostingsEnum extends EarlybirdPostingsEnum {
-  /** Current doc and its frequency. */
-  private int currentDocID = -1;
-  private int currentFreq = 0;
+pubwic abstwact cwass eawwybiwdoptimizedpostingsenum e-extends eawwybiwdpostingsenum {
+  /** cuwwent doc and i-its fwequency. ʘwʘ */
+  pwivate int c-cuwwentdocid = -1;
+  pwivate int cuwwentfweq = 0;
 
   /**
-   * Next doc and its frequency.
-   * These values should be set at {@link #loadNextPosting()}.
+   * nyext d-doc and its fwequency. ( ͡o ω ͡o )
+   * t-these vawues shouwd b-be set at {@wink #woadnextposting()}. o.O
    */
-  protected int nextDocID;
-  protected int nextFreq;
+  pwotected int nextdocid;
+  pwotected int nyextfweq;
 
-  /** Pointer to the enumerated posting list. */
-  protected final int postingListPointer;
+  /** pointew t-to the enumewated posting wist. >w< */
+  pwotected finaw int postingwistpointew;
 
-  /** Total number of postings in the enumerated posting list. */
-  protected final int numPostingsTotal;
+  /** totaw nyumbew o-of postings in the enumewated p-posting wist. 😳 */
+  p-pwotected f-finaw int nyumpostingstotaw;
 
-  /** Query cost tracker. */
-  protected final QueryCostTracker queryCostTracker;
+  /** q-quewy cost twackew. 🥺 */
+  pwotected finaw quewycosttwackew q-quewycosttwackew;
 
   /**
-   * Sole constructor.
+   * sowe constwuctow. rawr x3
    *
-   * @param postingListPointer pointer to the posting list for which this enumerator is created
-   * @param numPostings number of postings in the posting list for which this enumerator is created
+   * @pawam p-postingwistpointew pointew to the posting wist fow which this enumewatow is cweated
+   * @pawam nyumpostings nyumbew o-of postings in the posting w-wist fow which t-this enumewatow i-is cweated
    */
-  public EarlybirdOptimizedPostingsEnum(int postingListPointer, int numPostings) {
-    this.postingListPointer = postingListPointer;
-    this.numPostingsTotal = numPostings;
+  pubwic eawwybiwdoptimizedpostingsenum(int postingwistpointew, o.O int numpostings) {
+    t-this.postingwistpointew = p-postingwistpointew;
+    this.numpostingstotaw = n-nyumpostings;
 
-    // Get the thread local query cost tracker.
-    this.queryCostTracker = QueryCostTracker.getTracker();
+    // g-get the thwead wocaw quewy c-cost twackew. rawr
+    this.quewycosttwackew = q-quewycosttwackew.gettwackew();
   }
 
   /**
-   * Set {@link #currentDocID} and {@link #currentFreq} and load next posting.
-   * This method will de-dup if duplicate doc IDs are stored.
+   * set {@wink #cuwwentdocid} and {@wink #cuwwentfweq} and w-woad nyext posting. ʘwʘ
+   * this m-method wiww de-dup if dupwicate d-doc ids awe stowed. 😳😳😳
    *
-   * @return {@link #currentDocID}
-   * @see {@link #nextDoc()}
+   * @wetuwn {@wink #cuwwentdocid}
+   * @see {@wink #nextdoc()}
    */
-  @Override
-  protected final int nextDocNoDel() throws IOException {
-    currentDocID = nextDocID;
+  @ovewwide
+  p-pwotected finaw int nyextdocnodew() thwows ioexception {
+    cuwwentdocid = nyextdocid;
 
-    // Return immediately if exhausted.
-    if (currentDocID == NO_MORE_DOCS) {
-      return NO_MORE_DOCS;
+    // wetuwn i-immediatewy i-if exhausted. ^^;;
+    if (cuwwentdocid == n-nyo_mowe_docs) {
+      w-wetuwn n-nyo_mowe_docs;
     }
 
-    currentFreq = nextFreq;
-    loadNextPosting();
+    cuwwentfweq = nyextfweq;
+    woadnextposting();
 
-    // In case duplicate doc ID is stored.
-    while (currentDocID == nextDocID) {
-      currentFreq += nextFreq;
-      loadNextPosting();
+    // in case dupwicate d-doc id is stowed. o.O
+    whiwe (cuwwentdocid == nyextdocid) {
+      cuwwentfweq += nyextfweq;
+      w-woadnextposting();
     }
 
-    startCurrentDoc();
-    return currentDocID;
+    stawtcuwwentdoc();
+    wetuwn c-cuwwentdocid;
   }
 
   /**
-   * Called when {@link #nextDocNoDel()} advances to a new docID.
-   * Subclasses can do extra accounting as needed.
+   * c-cawwed when {@wink #nextdocnodew()} a-advances to a nyew docid. (///ˬ///✿)
+   * s-subcwasses c-can do extwa accounting a-as nyeeded. σωσ
    */
-  protected void startCurrentDoc() {
-    // No-op in this class.
+  p-pwotected void stawtcuwwentdoc() {
+    // nyo-op in t-this cwass. nyaa~~
   }
 
   /**
-   * Loads the next posting, setting the nextDocID and nextFreq.
+   * w-woads t-the nyext posting, ^^;; s-setting the n-nyextdocid and nyextfweq. ^•ﻌ•^
    *
-   * @see #nextDocNoDel()
+   * @see #nextdocnodew()
    */
-  protected abstract void loadNextPosting();
+  pwotected abstwact void woadnextposting();
 
   /**
-   * Subclass should implement {@link #skipTo(int)}.
+   * s-subcwass shouwd impwement {@wink #skipto(int)}. σωσ
    *
-   * @see org.apache.lucene.search.DocIdSetIterator#advance(int)
+   * @see owg.apache.wucene.seawch.docidsetitewatow#advance(int)
    */
-  @Override
-  public final int advance(int target) throws IOException {
-    // Skipping to NO_MORE_DOCS or beyond largest doc ID.
-    if (target == NO_MORE_DOCS || target > getLargestDocID()) {
-      currentDocID = nextDocID = NO_MORE_DOCS;
-      currentFreq = nextFreq = 0;
-      return NO_MORE_DOCS;
+  @ovewwide
+  pubwic finaw int advance(int tawget) thwows i-ioexception {
+    // skipping to nyo_mowe_docs ow beyond wawgest d-doc id. -.-
+    if (tawget == n-nyo_mowe_docs || t-tawget > getwawgestdocid()) {
+      c-cuwwentdocid = nyextdocid = nyo_mowe_docs;
+      c-cuwwentfweq = n-nyextfweq = 0;
+      wetuwn nyo_mowe_docs;
     }
 
-    // Skip as close as possible.
-    skipTo(target);
+    // skip as cwose as possibwe. ^^;;
+    skipto(tawget);
 
-    // Calling nextDoc to reach the target, or go beyond it if target does not exist.
-    int doc;
-    do {
-      doc = nextDoc();
-    } while (doc < target);
+    // cawwing nyextdoc t-to weach the tawget, XD ow go beyond i-it if tawget does nyot exist. 🥺
+    i-int doc;
+    d-do {
+      doc = nyextdoc();
+    } whiwe (doc < t-tawget);
 
-    return doc;
+    w-wetuwn doc;
   }
 
   /**
-   * Used in {@link #advance(int)}.
-   * This method should skip to the given target as close as possible, but NOT reach the target.
+   * used i-in {@wink #advance(int)}. òωó
+   * t-this method shouwd skip to the given tawget as cwose as possibwe, but nyot weach t-the tawget. (ˆ ﻌ ˆ)♡
    *
    * @see #advance(int)
    */
-  protected abstract void skipTo(int target);
+  p-pwotected abstwact v-void skipto(int tawget);
 
   /**
-   * Return loaded {@link #currentFreq}.
+   * w-wetuwn w-woaded {@wink #cuwwentfweq}. -.-
    *
-   * @see org.apache.lucene.index.PostingsEnum#freq()
-   * @see #nextDocNoDel()
+   * @see owg.apache.wucene.index.postingsenum#fweq()
+   * @see #nextdocnodew()
    */
-  @Override
-  public final int freq() throws IOException {
-    return currentFreq;
+  @ovewwide
+  p-pubwic finaw int fweq() thwows ioexception {
+    wetuwn cuwwentfweq;
   }
 
   /**
-   * Return loaded {@link #currentDocID}.
+   * wetuwn w-woaded {@wink #cuwwentdocid}. :3
    *
-   * @see org.apache.lucene.index.PostingsEnum#docID() ()
-   * @see #nextDocNoDel()
+   * @see o-owg.apache.wucene.index.postingsenum#docid() ()
+   * @see #nextdocnodew()
    */
-  @Override
-  public final int docID() {
-    return currentDocID;
+  @ovewwide
+  pubwic finaw int docid() {
+    w-wetuwn c-cuwwentdocid;
   }
 
   /*********************************************
-   * Not Supported Information                 *
-   * @see org.apache.lucene.index.PostingsEnum *
+   * nyot suppowted infowmation                 *
+   * @see owg.apache.wucene.index.postingsenum *
    *********************************************/
 
-  @Override
-  public int nextPosition() throws IOException {
-    return -1;
+  @ovewwide
+  p-pubwic int nyextposition() thwows ioexception {
+    wetuwn -1;
   }
 
-  @Override
-  public int startOffset() throws IOException {
-    return -1;
+  @ovewwide
+  pubwic i-int stawtoffset() thwows ioexception {
+    wetuwn -1;
   }
 
-  @Override
-  public int endOffset() throws IOException {
-    return -1;
+  @ovewwide
+  p-pubwic i-int endoffset() thwows ioexception {
+    wetuwn -1;
   }
 
-  @Override
-  public BytesRef getPayload() throws IOException {
-    return null;
+  @ovewwide
+  pubwic b-byteswef getpaywoad() t-thwows ioexception {
+    wetuwn nyuww;
   }
 
   /*********************************
-   * Helper methods for subclasses *
+   * hewpew methods fow s-subcwasses *
    *********************************/
 
-  protected int getCurrentFreq() {
-    return currentFreq;
+  pwotected i-int getcuwwentfweq() {
+    wetuwn cuwwentfweq;
   }
 }

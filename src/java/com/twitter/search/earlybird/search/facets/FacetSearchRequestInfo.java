@@ -1,28 +1,28 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import org.apache.lucene.search.Query;
+impowt owg.apache.wucene.seawch.quewy;
 
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetRankingOptions;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+i-impowt c-com.twittew.seawch.common.wanking.thwiftjava.thwiftfacetwankingoptions;
+i-impowt c-com.twittew.seawch.common.seawch.tewminationtwackew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetcountstate;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.seawchwequestinfo;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
 
-public class FacetSearchRequestInfo extends SearchRequestInfo {
-  protected final FacetCountState facetCountState;
-  protected final ThriftFacetRankingOptions rankingOptions;
+p-pubwic cwass facetseawchwequestinfo extends seawchwequestinfo {
+  pwotected f-finaw facetcountstate facetcountstate;
+  pwotected f-finaw thwiftfacetwankingoptions wankingoptions;
 
-  public FacetSearchRequestInfo(ThriftSearchQuery searchQuery,
-                                ThriftFacetRankingOptions rankingOptions,
-                                Query query,
-                                FacetCountState facetCountState,
-                                TerminationTracker terminationTracker) {
-    super(searchQuery, query, terminationTracker);
-    this.facetCountState = facetCountState;
-    this.rankingOptions = rankingOptions;
+  p-pubwic facetseawchwequestinfo(thwiftseawchquewy seawchquewy, (U ﹏ U)
+                                thwiftfacetwankingoptions wankingoptions, >_<
+                                q-quewy quewy, rawr x3
+                                f-facetcountstate f-facetcountstate, mya
+                                tewminationtwackew tewminationtwackew) {
+    supew(seawchquewy, nyaa~~ quewy, tewminationtwackew);
+    t-this.facetcountstate = facetcountstate;
+    this.wankingoptions = wankingoptions;
   }
 
-  public final FacetCountState getFacetCountState() {
-    return this.facetCountState;
+  pubwic finaw f-facetcountstate getfacetcountstate() {
+    w-wetuwn t-this.facetcountstate;
   }
 }

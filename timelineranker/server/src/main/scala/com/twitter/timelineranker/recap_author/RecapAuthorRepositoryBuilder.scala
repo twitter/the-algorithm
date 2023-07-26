@@ -1,90 +1,90 @@
-package com.twitter.timelineranker.recap_author
+package com.twittew.timewinewankew.wecap_authow
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.timelineranker.config.RequestScopes
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.repository.CandidatesRepositoryBuilder
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt c-com.twittew.timewinewankew.config.wequestscopes
+i-impowt com.twittew.timewinewankew.config.wuntimeconfiguwation
+i-impowt com.twittew.timewinewankew.wepositowy.candidateswepositowybuiwdew
+i-impowt c-com.twittew.timewinewankew.visibiwity.sgsfowwowgwaphdatafiewds
+impowt com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdsewvice
+impowt com.twittew.timewines.utiw.stats.wequestscope
+impowt com.twittew.utiw.duwation
 
-class RecapAuthorRepositoryBuilder(config: RuntimeConfiguration)
-    extends CandidatesRepositoryBuilder(config) {
-  override val clientSubId = "recap_by_author"
-  override val requestScope: RequestScope = RequestScopes.RecapAuthorSource
-  override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
-    SgsFollowGraphDataFields.ValueSet(
-      SgsFollowGraphDataFields.FollowedUserIds,
-      SgsFollowGraphDataFields.MutuallyFollowingUserIds,
-      SgsFollowGraphDataFields.MutedUserIds
+cwass wecapauthowwepositowybuiwdew(config: w-wuntimeconfiguwation)
+    extends candidateswepositowybuiwdew(config) {
+  o-ovewwide vaw cwientsubid = "wecap_by_authow"
+  o-ovewwide vaw wequestscope: wequestscope = wequestscopes.wecapauthowsouwce
+  o-ovewwide vaw fowwowgwaphdatafiewdstofetch: s-sgsfowwowgwaphdatafiewds.vawueset =
+    s-sgsfowwowgwaphdatafiewds.vawueset(
+      sgsfowwowgwaphdatafiewds.fowwowedusewids, >w<
+      sgsfowwowgwaphdatafiewds.mutuawwyfowwowingusewids, (⑅˘꒳˘)
+      sgsfowwowgwaphdatafiewds.mutedusewids
     )
 
   /**
-   * Budget for processing within the search root cluster for the recap_by_author query.
+   * budget fow p-pwocessing within the seawch woot cwustew fow the wecap_by_authow quewy. OwO
    */
-  override val searchProcessingTimeout: Duration = 250.milliseconds
-  private val EarlybirdTimeout = 650.milliseconds
-  private val EarlybirdRequestTimeout = 600.milliseconds
+  o-ovewwide vaw seawchpwocessingtimeout: duwation = 250.miwwiseconds
+  p-pwivate vaw e-eawwybiwdtimeout = 650.miwwiseconds
+  p-pwivate vaw e-eawwybiwdwequesttimeout = 600.miwwiseconds
 
-  private val EarlybirdRealtimeCGTimeout = 650.milliseconds
-  private val EarlybirdRealtimeCGRequestTimeout = 600.milliseconds
+  pwivate vaw eawwybiwdweawtimecgtimeout = 650.miwwiseconds
+  pwivate v-vaw eawwybiwdweawtimecgwequesttimeout = 600.miwwiseconds
 
   /**
-   * TLM -> TLR timeout is 1s for candidate retrieval, so make the finagle TLR -> EB timeout
-   * a bit shorter than 1s.
+   * twm -> tww timeout is 1s f-fow candidate wetwievaw, (ꈍᴗꈍ) so make the finagwe tww -> eb timeout
+   * a bit showtew than 1s. 😳
    */
-  override def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdClient(
-      scope = scope,
-      requestTimeout = EarlybirdRequestTimeout,
-      // timeout is slight less than timelineranker client timeout in timelinemixer
-      timeout = EarlybirdTimeout,
-      retryPolicy = RetryPolicy.Never
+  o-ovewwide def eawwybiwdcwient(scope: s-stwing): e-eawwybiwdsewvice.methodpewendpoint =
+    c-config.undewwyingcwients.cweateeawwybiwdcwient(
+      scope = scope, 😳😳😳
+      wequesttimeout = eawwybiwdwequesttimeout, mya
+      // t-timeout i-is swight wess than timewinewankew c-cwient timeout i-in timewinemixew
+      timeout = e-eawwybiwdtimeout, mya
+      wetwypowicy = w-wetwypowicy.nevew
     )
 
-  /** The RealtimeCG clients below are only used for the Earlybird Cluster Migration */
-  private def earlybirdRealtimeCGClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdRealtimeCgClient(
-      scope = scope,
-      requestTimeout = EarlybirdRealtimeCGRequestTimeout,
-      timeout = EarlybirdRealtimeCGTimeout,
-      retryPolicy = RetryPolicy.Never
+  /** the weawtimecg cwients b-bewow awe onwy used fow the eawwybiwd c-cwustew migwation */
+  pwivate d-def eawwybiwdweawtimecgcwient(scope: s-stwing): eawwybiwdsewvice.methodpewendpoint =
+    config.undewwyingcwients.cweateeawwybiwdweawtimecgcwient(
+      scope = scope, (⑅˘꒳˘)
+      wequesttimeout = eawwybiwdweawtimecgwequesttimeout, (U ﹏ U)
+      t-timeout = e-eawwybiwdweawtimecgtimeout, mya
+      wetwypowicy = w-wetwypowicy.nevew
     )
 
-  private val realtimeCGClientSubId = "realtime_cg_recap_by_author"
-  private lazy val searchRealtimeCGClient =
-    newSearchClient(earlybirdRealtimeCGClient, clientId = realtimeCGClientSubId)
+  p-pwivate vaw weawtimecgcwientsubid = "weawtime_cg_wecap_by_authow"
+  p-pwivate wazy vaw seawchweawtimecgcwient =
+    nyewseawchcwient(eawwybiwdweawtimecgcwient, ʘwʘ cwientid = weawtimecgcwientsubid)
 
-  def apply(): RecapAuthorRepository = {
-    val recapAuthorSource = new RecapAuthorSource(
-      gizmoduckClient,
-      searchClient,
-      tweetyPieLowQoSClient,
-      userMetadataClient,
-      followGraphDataProvider, // Used to early-enforce visibility filtering, even though authorIds is part of query
-      config.underlyingClients.contentFeaturesCache,
-      clientFactories.visibilityEnforcerFactory.apply(
-        VisibilityRules,
-        RequestScopes.RecapAuthorSource
-      ),
-      config.statsReceiver
+  d-def appwy(): wecapauthowwepositowy = {
+    vaw wecapauthowsouwce = nyew wecapauthowsouwce(
+      gizmoduckcwient, (˘ω˘)
+      s-seawchcwient,
+      tweetypiewowqoscwient, (U ﹏ U)
+      u-usewmetadatacwient, ^•ﻌ•^
+      f-fowwowgwaphdatapwovidew, (˘ω˘) // u-used to eawwy-enfowce visibiwity f-fiwtewing, :3 even t-though authowids i-is pawt of q-quewy
+      config.undewwyingcwients.contentfeatuwescache, ^^;;
+      cwientfactowies.visibiwityenfowcewfactowy.appwy(
+        visibiwitywuwes, 🥺
+        w-wequestscopes.wecapauthowsouwce
+      ), (⑅˘꒳˘)
+      c-config.statsweceivew
     )
-    val recapAuthorRealtimeCGSource = new RecapAuthorSource(
-      gizmoduckClient,
-      searchRealtimeCGClient,
-      tweetyPieLowQoSClient,
-      userMetadataClient,
-      followGraphDataProvider, // Used to early-enforce visibility filtering, even though authorIds is part of query
-      config.underlyingClients.contentFeaturesCache,
-      clientFactories.visibilityEnforcerFactory.apply(
-        VisibilityRules,
-        RequestScopes.RecapAuthorSource
-      ),
-      config.statsReceiver.scope("replacementRealtimeCG")
+    v-vaw wecapauthowweawtimecgsouwce = n-nyew wecapauthowsouwce(
+      g-gizmoduckcwient,
+      seawchweawtimecgcwient, nyaa~~
+      tweetypiewowqoscwient, :3
+      usewmetadatacwient, ( ͡o ω ͡o )
+      f-fowwowgwaphdatapwovidew, mya // used to eawwy-enfowce visibiwity fiwtewing, (///ˬ///✿) even though authowids is pawt o-of quewy
+      config.undewwyingcwients.contentfeatuwescache, (˘ω˘)
+      cwientfactowies.visibiwityenfowcewfactowy.appwy(
+        visibiwitywuwes, ^^;;
+        w-wequestscopes.wecapauthowsouwce
+      ), (✿oωo)
+      c-config.statsweceivew.scope("wepwacementweawtimecg")
     )
 
-    new RecapAuthorRepository(recapAuthorSource, recapAuthorRealtimeCGSource)  
+    n-nyew wecapauthowwepositowy(wecapauthowsouwce, (U ﹏ U) wecapauthowweawtimecgsouwce)  
   }
 }

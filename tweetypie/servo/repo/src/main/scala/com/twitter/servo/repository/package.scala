@@ -1,50 +1,50 @@
-package com.twitter.servo
+package com.twittew.sewvo
 
-import com.twitter.util.Future
+impowt c-com.twittew.utiw.futuwe
 
-package object repository {
-
-  /**
-   * Base repository type.  Maps a Query to a future Result
-   */
-  type Repository[-Q, +R] = Q => Future[R]
+p-package o-object wepositowy {
 
   /**
-   * RepositoryFilters can be chained onto Repositories to asynchronously apply transformations to
-   * Repository results.
+   * b-base wepositowy t-type. (✿oωo)  maps a q-quewy to a futuwe w-wesuwt
    */
-  type RepositoryFilter[-Q, -R, +S] = (Q, Future[R]) => Future[S]
-
-  type KeyValueResult[K, V] = keyvalue.KeyValueResult[K, V]
-  val KeyValueResult = keyvalue.KeyValueResult
+  t-type wepositowy[-q, ʘwʘ +w] = q => futuwe[w]
 
   /**
-   * A KeyValueRepository is a type of repository that handles bulk gets of data.  The query
-   * defines the values to fetch, and is usually made of up of a Seq[K], possibly with other
-   * contextual information needed to perform the query.  The result is a KeyValueResult,
-   * which contains a break-out of found, notFound, and failed key lookups.  The set of
-   * keys may or may-not be computable locally from the query.  This top-level type does not
-   * require that the keys are computable from the query, but certain instances, such as
-   * CachingKeyValueRepository, do require key-computability.
+   * wepositowyfiwtews can be chained o-onto wepositowies to asynchwonouswy appwy t-twansfowmations to
+   * wepositowy w-wesuwts. (ˆ ﻌ ˆ)♡
    */
-  type KeyValueRepository[Q, K, V] = Repository[Q, KeyValueResult[K, V]]
+  type wepositowyfiwtew[-q, 😳😳😳 -w, +s] = (q, :3 futuwe[w]) => futuwe[s]
 
-  type CounterKeyValueRepository[K] = KeyValueRepository[Seq[K], K, Long]
+  t-type keyvawuewesuwt[k, OwO v] = keyvawue.keyvawuewesuwt[k, (U ﹏ U) v]
+  v-vaw keyvawuewesuwt = k-keyvawue.keyvawuewesuwt
 
   /**
-   * For KeyValueRepository scenarios where the query is a sequence of keys, a SubqueryBuilder
-   * defines how to convert a sub-set of the keys from the query into a query.
+   * a keyvawuewepositowy is a type of wepositowy that handwes buwk gets o-of data. >w<  the quewy
+   * defines the vawues to fetch, (U ﹏ U) and is usuawwy made of up o-of a seq[k], 😳 possibwy with othew
+   * c-contextuaw i-infowmation nyeeded t-to pewfowm t-the quewy. (ˆ ﻌ ˆ)♡  the wesuwt is a keyvawuewesuwt, 😳😳😳
+   * which contains a-a bweak-out of found, (U ﹏ U) nyotfound, and faiwed key w-wookups. (///ˬ///✿)  the set of
+   * keys may ow may-not be computabwe wocawwy fwom the quewy. 😳  this top-wevew t-type does nyot
+   * wequiwe t-that the keys awe c-computabwe fwom t-the quewy, 😳 but cewtain instances, σωσ such as
+   * cachingkeyvawuewepositowy, rawr x3 d-do w-wequiwe key-computabiwity. OwO
    */
-  type SubqueryBuilder[Q <: Seq[K], K] = (Seq[K], Q) => Q
+  type keyvawuewepositowy[q, /(^•ω•^) k-k, v-v] = wepositowy[q, keyvawuewesuwt[k, 😳😳😳 v-v]]
+
+  type countewkeyvawuewepositowy[k] = k-keyvawuewepositowy[seq[k], ( ͡o ω ͡o ) k, wong]
 
   /**
-   * A SubqueryBuilder where the query type is nothing more than a sequence of keys.
+   * fow keyvawuewepositowy s-scenawios whewe the quewy i-is a sequence of keys, >_< a subquewybuiwdew
+   * d-defines how to convewt a-a sub-set of the keys fwom the quewy into a quewy. >w<
    */
-  @deprecated("use keysAsQuery", "1.1.0")
-  def KeysAsQuery[K]: SubqueryBuilder[Seq[K], K] = keysAsQuery[K]
+  type subquewybuiwdew[q <: seq[k], rawr k] = (seq[k], 😳 q-q) => q
 
   /**
-   * A SubqueryBuilder where the query type is nothing more than a sequence of keys.
+   * a-a subquewybuiwdew whewe the q-quewy type is n-nyothing mowe than a-a sequence of keys. >w<
    */
-  def keysAsQuery[K]: SubqueryBuilder[Seq[K], K] = (keys, parentQuery) => keys
+  @depwecated("use keysasquewy", "1.1.0")
+  def keysasquewy[k]: s-subquewybuiwdew[seq[k], (⑅˘꒳˘) k] = keysasquewy[k]
+
+  /**
+   * a subquewybuiwdew whewe the quewy type is nyothing m-mowe than a sequence of k-keys. OwO
+   */
+  def k-keysasquewy[k]: s-subquewybuiwdew[seq[k], (ꈍᴗꈍ) k] = (keys, 😳 p-pawentquewy) => k-keys
 }

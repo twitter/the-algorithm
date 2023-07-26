@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.configapi
+package com.twittew.fowwow_wecommendations.configapi
 
-import com.twitter.timelines.configapi.BaseRequestContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.NullFeatureContext
-import com.twitter.timelines.configapi.GuestId
-import com.twitter.timelines.configapi.UserId
-import com.twitter.timelines.configapi.WithFeatureContext
-import com.twitter.timelines.configapi.WithGuestId
-import com.twitter.timelines.configapi.WithUserId
+impowt com.twittew.timewines.configapi.basewequestcontext
+impowt c-com.twittew.timewines.configapi.featuwecontext
+i-impowt com.twittew.timewines.configapi.nuwwfeatuwecontext
+impowt c-com.twittew.timewines.configapi.guestid
+i-impowt c-com.twittew.timewines.configapi.usewid
+i-impowt c-com.twittew.timewines.configapi.withfeatuwecontext
+i-impowt com.twittew.timewines.configapi.withguestid
+impowt com.twittew.timewines.configapi.withusewid
 
-case class RequestContext(
-  userId: Option[UserId],
-  guestId: Option[GuestId],
-  featureContext: FeatureContext = NullFeatureContext)
-    extends BaseRequestContext
-    with WithUserId
-    with WithGuestId
-    with WithFeatureContext
+case cwass wequestcontext(
+  u-usewid: option[usewid], -.-
+  guestid: option[guestid], ^^;;
+  featuwecontext: featuwecontext = n-nyuwwfeatuwecontext)
+    extends b-basewequestcontext
+    with withusewid
+    with withguestid
+    w-with withfeatuwecontext

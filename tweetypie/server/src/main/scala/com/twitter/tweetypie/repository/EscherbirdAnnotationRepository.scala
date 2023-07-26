@@ -1,23 +1,23 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.Escherbird
-import com.twitter.tweetypie.thriftscala.EscherbirdEntityAnnotations
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.compat.wegacyseqgwoup
+i-impowt com.twittew.tweetypie.backends.eschewbiwd
+i-impowt com.twittew.tweetypie.thwiftscawa.eschewbiwdentityannotations
 
-object EscherbirdAnnotationRepository {
-  type Type = Tweet => Stitch[Option[EscherbirdEntityAnnotations]]
+o-object e-eschewbiwdannotationwepositowy {
+  t-type type = tweet => stitch[option[eschewbiwdentityannotations]]
 
-  def apply(annotate: Escherbird.Annotate): Type =
-    // use a `SeqGroup` to group the future-calls together, even though they can be
-    // executed independently, in order to help keep hydration between different tweets
-    // in sync, to improve batching in hydrators which occur later in the pipeline.
+  def appwy(annotate: eschewbiwd.annotate): type =
+    // use a-a `seqgwoup` to gwoup the futuwe-cawws togethew, /(^•ω•^) e-even though they can be
+    // e-exekawaii~d independentwy, rawr in owdew to hewp keep hydwation between d-diffewent tweets
+    // in s-sync, OwO to impwove b-batching in hydwatows which occuw watew in the pipewine. (U ﹏ U)
     tweet =>
-      Stitch
-        .call(tweet, LegacySeqGroup(annotate.liftSeq))
+      stitch
+        .caww(tweet, >_< w-wegacyseqgwoup(annotate.wiftseq))
         .map { annotations =>
-          if (annotations.isEmpty) None
-          else Some(EscherbirdEntityAnnotations(annotations))
+          if (annotations.isempty) nyone
+          ewse s-some(eschewbiwdentityannotations(annotations))
         }
 }

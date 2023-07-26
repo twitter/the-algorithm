@@ -1,21 +1,21 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.inject.Inject;
+impowt j-javax.inject.inject;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
+i-impowt com.twittew.seawch.common.pawtitioning.base.pawtitionmappingmanagew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdfeatuweschemamewgew;
 
 /**
- * The EarlybirdServiceScatterGatherSupport implementation used to fan out requests to the earlybird
- * partitions in the realtime_cg cluster.
+ * t-the e-eawwybiwdsewvicescattewgathewsuppowt i-impwementation u-used to fan out wequests to the eawwybiwd
+ * pawtitions in the weawtime_cg c-cwustew. >_<
  */
-public class EarlybirdRealtimeCgScatterGatherSupport extends EarlybirdServiceScatterGatherSupport {
-  /** Creates a new EarlybirdRealtimeCgScatterGatherSupport instance. */
-  @Inject
-  EarlybirdRealtimeCgScatterGatherSupport(
-      PartitionMappingManager partitionMappingManager,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(partitionMappingManager, EarlybirdCluster.REALTIME_CG, featureSchemaMerger);
+pubwic cwass eawwybiwdweawtimecgscattewgathewsuppowt extends eawwybiwdsewvicescattewgathewsuppowt {
+  /** c-cweates a nyew eawwybiwdweawtimecgscattewgathewsuppowt instance. mya */
+  @inject
+  e-eawwybiwdweawtimecgscattewgathewsuppowt(
+      pawtitionmappingmanagew pawtitionmappingmanagew, mya
+      eawwybiwdfeatuweschemamewgew featuweschemamewgew) {
+    s-supew(pawtitionmappingmanagew, 😳 eawwybiwdcwustew.weawtime_cg, XD f-featuweschemamewgew);
   }
 }

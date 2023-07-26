@@ -1,795 +1,795 @@
-package com.twitter.tweetypie
-package config
+package com.twittew.tweetypie
+package c-config
 
-import com.twitter.ads.internal.pcl.service.CallbackPromotedContentLogger
-import com.twitter.ads.loggingclient.AdsLoggingClient
-import com.twitter.adserver.thriftscala.AdCallbackEvent
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.container.{thriftscala => ccs}
-import com.twitter.deferredrpc.client.DeferredThriftService
-import com.twitter.deferredrpc.thrift.Datacenter
-import com.twitter.deferredrpc.thrift.DeferredRPC
-import com.twitter.deferredrpc.thrift.Target
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotationService$FinagleClient
-import com.twitter.escherbird.thriftscala.{
-  TweetEntityAnnotationService => TweetEntityAnnotationScroogeIface
+impowt c-com.twittew.ads.intewnaw.pcw.sewvice.cawwbackpwomotedcontentwoggew
+i-impowt com.twittew.ads.woggingcwient.adswoggingcwient
+i-impowt c-com.twittew.adsewvew.thwiftscawa.adcawwbackevent
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.convewsions.pewcentops._
+i-impowt com.twittew.containew.{thwiftscawa => ccs}
+impowt com.twittew.defewwedwpc.cwient.defewwedthwiftsewvice
+impowt c-com.twittew.defewwedwpc.thwift.datacentew
+impowt com.twittew.defewwedwpc.thwift.defewwedwpc
+impowt c-com.twittew.defewwedwpc.thwift.tawget
+impowt c-com.twittew.eschewbiwd.thwiftscawa.tweetentityannotationsewvice$finagwecwient
+impowt com.twittew.eschewbiwd.thwiftscawa.{
+  tweetentityannotationsewvice => tweetentityannotationscwoogeiface
 }
-import com.twitter.eventbus.client.EventBusPublisher
-import com.twitter.eventbus.client.EventBusPublisherBuilder
-import com.twitter.expandodo.thriftscala.CardsService$FinagleClient
-import com.twitter.expandodo.thriftscala.{CardsService => CardsScroogeIface}
-import com.twitter.finagle._
-import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.client.Transporter
-import com.twitter.finagle.factory.TimeoutFactory
-import com.twitter.finagle.liveness.FailureAccrualFactory
-import com.twitter.finagle.loadbalancer.Balancers
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsClientBuilder._
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.partitioning.param
-import com.twitter.finagle.service.TimeoutFilter.PropagateDeadlines
-import com.twitter.finagle.service._
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ThriftClientRequest
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finagle.tracing.DefaultTracer
-import com.twitter.flockdb.client.thriftscala.FlockDB
-import com.twitter.flockdb.client.FlockResponse
-import com.twitter.flockdb.client.TFlockClient
-import com.twitter.flockdb.client.UserTimelineGraph
-import com.twitter.geoduck.backend.hydration.thriftscala.{Hydration => GeoduckHydration}
-import com.twitter.geoduck.backend.relevance.thriftscala.Relevance
-import com.twitter.geoduck.backend.relevance.thriftscala.Relevance$FinagleClient
-import com.twitter.geoduck.backend.relevance.thriftscala.RelevanceContext
-import com.twitter.geoduck.service.common.clientmodules.GeoduckGeohashLocate
-import com.twitter.geoduck.thriftscala.ReverseGeocoder
-import com.twitter.geoduck.util.service.GeoduckLocate
-import com.twitter.gizmoduck.thriftscala.UserService
-import com.twitter.hashing.KeyHasher
-import com.twitter.limiter.client.LimiterClientFactory
-import com.twitter.mediainfo.server.thriftscala.MediaInfoService$FinagleClient
-import com.twitter.mediainfo.server.thriftscala.{MediaInfoService => MediaInfoScroogeIface}
-import com.twitter.merlin.thriftscala.UserRolesService
-import com.twitter.passbird.thriftscala.PassbirdService
-import com.twitter.passbird.thriftscala.PassbirdService$FinagleClient
-import com.twitter.service.gen.scarecrow.thriftscala.ScarecrowService$FinagleClient
-import com.twitter.service.gen.scarecrow.thriftscala.{ScarecrowService => ScarecrowScroogeIface}
-import com.twitter.service.talon.thriftscala.Talon$FinagleClient
-import com.twitter.service.talon.thriftscala.{Talon => TalonScroogeIface}
-import com.twitter.snowflake.client.SnowflakeClient
-import com.twitter.snowflake.thriftscala.Snowflake
-import com.twitter.socialgraph.thriftscala.SocialGraphService$FinagleClient
-import com.twitter.socialgraph.thriftscala.{SocialGraphService => SocialGraphScroogeIface}
-import com.twitter.storage.client.manhattan.kv.Experiments
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.NoMtlsParams
-import com.twitter.strato.client.Strato
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.timelineservice.fanout.thriftscala.FanoutService
-import com.twitter.timelineservice.fanout.thriftscala.FanoutService$FinagleClient
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.tweetypie.backends._
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.media.MediaClient
-import com.twitter.tweetypie.service.ReplicatingTweetService.GatedReplicationClient
-import com.twitter.tweetypie.storage.ManhattanTweetStorageClient
-import com.twitter.tweetypie.storage.TweetStorageClient
-import com.twitter.tweetypie.store._
-import com.twitter.tweetypie.thriftscala.DeleteLocationData
-import com.twitter.tweetypie.thriftscala.RetweetArchivalEvent
-import com.twitter.tweetypie.thriftscala.TweetEvent
-import com.twitter.tweetypie.thriftscala.TweetServiceInternal$FinagleClient
-import com.twitter.user_image_service.thriftscala.UserImageService$FinagleClient
-import com.twitter.user_image_service.thriftscala.{UserImageService => UserImageScroogeIface}
-import com.twitter.util.Throw
-import com.twitter.util.Timer
-import com.twitter.util.{TimeoutException => UtilTimeoutException}
-import scala.util.Random
+impowt com.twittew.eventbus.cwient.eventbuspubwishew
+impowt com.twittew.eventbus.cwient.eventbuspubwishewbuiwdew
+i-impowt com.twittew.expandodo.thwiftscawa.cawdssewvice$finagwecwient
+impowt com.twittew.expandodo.thwiftscawa.{cawdssewvice => c-cawdsscwoogeiface}
+i-impowt com.twittew.finagwe._
+impowt com.twittew.finagwe.buiwdew.cwientbuiwdew
+impowt com.twittew.finagwe.cwient.twanspowtew
+impowt com.twittew.finagwe.factowy.timeoutfactowy
+impowt com.twittew.finagwe.wiveness.faiwuweaccwuawfactowy
+i-impowt com.twittew.finagwe.woadbawancew.bawancews
+impowt com.twittew.finagwe.mtws.authentication.emptysewviceidentifiew
+impowt com.twittew.finagwe.mtws.cwient.mtwscwientbuiwdew._
+impowt com.twittew.finagwe.mtws.cwient.mtwsstackcwient._
+i-impowt com.twittew.finagwe.pawtitioning.pawam
+i-impowt com.twittew.finagwe.sewvice.timeoutfiwtew.pwopagatedeadwines
+i-impowt c-com.twittew.finagwe.sewvice._
+i-impowt com.twittew.finagwe.ssw.oppowtunistictws
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finagwe.thwift.thwiftcwientwequest
+i-impowt com.twittew.finagwe.thwiftmux.methodbuiwdew
+impowt com.twittew.finagwe.twacing.defauwttwacew
+impowt c-com.twittew.fwockdb.cwient.thwiftscawa.fwockdb
+impowt com.twittew.fwockdb.cwient.fwockwesponse
+impowt com.twittew.fwockdb.cwient.tfwockcwient
+impowt com.twittew.fwockdb.cwient.usewtimewinegwaph
+impowt com.twittew.geoduck.backend.hydwation.thwiftscawa.{hydwation => g-geoduckhydwation}
+impowt c-com.twittew.geoduck.backend.wewevance.thwiftscawa.wewevance
+i-impowt c-com.twittew.geoduck.backend.wewevance.thwiftscawa.wewevance$finagwecwient
+impowt com.twittew.geoduck.backend.wewevance.thwiftscawa.wewevancecontext
+impowt com.twittew.geoduck.sewvice.common.cwientmoduwes.geoduckgeohashwocate
+i-impowt com.twittew.geoduck.thwiftscawa.wevewsegeocodew
+i-impowt com.twittew.geoduck.utiw.sewvice.geoduckwocate
+i-impowt com.twittew.gizmoduck.thwiftscawa.usewsewvice
+i-impowt com.twittew.hashing.keyhashew
+impowt c-com.twittew.wimitew.cwient.wimitewcwientfactowy
+impowt com.twittew.mediainfo.sewvew.thwiftscawa.mediainfosewvice$finagwecwient
+i-impowt com.twittew.mediainfo.sewvew.thwiftscawa.{mediainfosewvice => mediainfoscwoogeiface}
+impowt com.twittew.mewwin.thwiftscawa.usewwowessewvice
+i-impowt com.twittew.passbiwd.thwiftscawa.passbiwdsewvice
+impowt c-com.twittew.passbiwd.thwiftscawa.passbiwdsewvice$finagwecwient
+impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.scawecwowsewvice$finagwecwient
+i-impowt com.twittew.sewvice.gen.scawecwow.thwiftscawa.{scawecwowsewvice => s-scawecwowscwoogeiface}
+impowt com.twittew.sewvice.tawon.thwiftscawa.tawon$finagwecwient
+impowt com.twittew.sewvice.tawon.thwiftscawa.{tawon => tawonscwoogeiface}
+impowt com.twittew.snowfwake.cwient.snowfwakecwient
+i-impowt com.twittew.snowfwake.thwiftscawa.snowfwake
+i-impowt com.twittew.sociawgwaph.thwiftscawa.sociawgwaphsewvice$finagwecwient
+i-impowt com.twittew.sociawgwaph.thwiftscawa.{sociawgwaphsewvice => s-sociawgwaphscwoogeiface}
+i-impowt com.twittew.stowage.cwient.manhattan.kv.expewiments
+impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwient
+impowt c-com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+impowt com.twittew.stowage.cwient.manhattan.kv.nomtwspawams
+impowt com.twittew.stwato.cwient.stwato
+impowt c-com.twittew.stwato.cwient.{cwient => stwatocwient}
+i-impowt com.twittew.timewinesewvice.fanout.thwiftscawa.fanoutsewvice
+i-impowt c-com.twittew.timewinesewvice.fanout.thwiftscawa.fanoutsewvice$finagwecwient
+impowt c-com.twittew.timewinesewvice.{thwiftscawa => t-tws}
+impowt com.twittew.tweetypie.backends._
+i-impowt c-com.twittew.tweetypie.cwient_id.cwientidhewpew
+impowt com.twittew.tweetypie.media.mediacwient
+impowt com.twittew.tweetypie.sewvice.wepwicatingtweetsewvice.gatedwepwicationcwient
+i-impowt com.twittew.tweetypie.stowage.manhattantweetstowagecwient
+i-impowt com.twittew.tweetypie.stowage.tweetstowagecwient
+impowt c-com.twittew.tweetypie.stowe._
+i-impowt com.twittew.tweetypie.thwiftscawa.dewetewocationdata
+i-impowt com.twittew.tweetypie.thwiftscawa.wetweetawchivawevent
+impowt com.twittew.tweetypie.thwiftscawa.tweetevent
+impowt com.twittew.tweetypie.thwiftscawa.tweetsewviceintewnaw$finagwecwient
+i-impowt com.twittew.usew_image_sewvice.thwiftscawa.usewimagesewvice$finagwecwient
+impowt com.twittew.usew_image_sewvice.thwiftscawa.{usewimagesewvice => usewimagescwoogeiface}
+impowt com.twittew.utiw.thwow
+i-impowt com.twittew.utiw.timew
+impowt com.twittew.utiw.{timeoutexception => u-utiwtimeoutexception}
+i-impowt s-scawa.utiw.wandom
 
-trait BackendClients {
+twait backendcwients {
 
-  /** returns all the finagle.Names created while building clients */
-  def referencedNames: Seq[Name]
+  /** w-wetuwns aww the finagwe.names c-cweated whiwe b-buiwding cwients */
+  def wefewencednames: seq[name]
 
-  val asyncRetryTweetService: ThriftTweetService
-  val asyncTweetDeletionService: ThriftTweetService
-  val asyncTweetService: ThriftTweetService
-  val configBus: ConfigBus
-  val creativesContainerService: CreativesContainerService
-  val darkTrafficClient: Service[Array[Byte], Array[Byte]]
-  val deleteLocationDataPublisher: EventBusPublisher[DeleteLocationData]
-  val escherbird: Escherbird
-  val expandodo: Expandodo
-  val fanoutServiceClient: FanoutService.MethodPerEndpoint
-  val geoHydrationLocate: GeoduckLocate
-  val geoRelevance: Relevance.MethodPerEndpoint
-  val geoScrubEventStore: GeoScrubEventStore
-  val geoduckGeohashLocate: GeoduckGeohashLocate
-  val gizmoduck: Gizmoduck
-  val gnipEnricherator: GnipEnricherator
-  val guano: Guano
-  val limiterService: LimiterService
-  val lowQoSReplicationClients: Seq[GatedReplicationClient]
-  val mediaClient: MediaClient
-  val mediaInfoService: MediaInfoService
-  val memcacheClient: memcached.Client
-  val merlin: UserRolesService.MethodPerEndpoint
-  val passbirdClient: PassbirdService.MethodPerEndpoint
-  val replicationClient: ThriftTweetService
-  val retweetArchivalEventPublisher: EventBusPublisher[RetweetArchivalEvent]
-  val scarecrow: Scarecrow
-  val snowflakeClient: SnowflakeClient.SnowflakeClient
-  val socialGraphService: SocialGraphService
-  val stratoserverClient: StratoClient
-  val talon: Talon
-  val tflockReadClient: TFlockClient
-  val tflockWriteClient: TFlockClient
-  val timelineService: TimelineService
-  val tweetEventsPublisher: EventBusPublisher[TweetEvent]
-  val tweetStorageClient: TweetStorageClient
-  val userImageService: UserImageService
-  val callbackPromotedContentLogger: CallbackPromotedContentLogger
+  vaw asyncwetwytweetsewvice: thwifttweetsewvice
+  vaw asynctweetdewetionsewvice: t-thwifttweetsewvice
+  vaw a-asynctweetsewvice: thwifttweetsewvice
+  v-vaw configbus: c-configbus
+  vaw cweativescontainewsewvice: cweativescontainewsewvice
+  vaw d-dawktwafficcwient: s-sewvice[awway[byte], /(^•ω•^) awway[byte]]
+  v-vaw dewetewocationdatapubwishew: e-eventbuspubwishew[dewetewocationdata]
+  vaw eschewbiwd: eschewbiwd
+  vaw expandodo: expandodo
+  vaw fanoutsewvicecwient: f-fanoutsewvice.methodpewendpoint
+  v-vaw geohydwationwocate: g-geoduckwocate
+  vaw g-geowewevance: w-wewevance.methodpewendpoint
+  vaw g-geoscwubeventstowe: geoscwubeventstowe
+  vaw geoduckgeohashwocate: geoduckgeohashwocate
+  vaw g-gizmoduck: gizmoduck
+  v-vaw gnipenwichewatow: gnipenwichewatow
+  vaw guano: guano
+  v-vaw wimitewsewvice: w-wimitewsewvice
+  vaw wowqoswepwicationcwients: seq[gatedwepwicationcwient]
+  vaw mediacwient: m-mediacwient
+  vaw mediainfosewvice: mediainfosewvice
+  vaw memcachecwient: m-memcached.cwient
+  vaw mewwin: usewwowessewvice.methodpewendpoint
+  vaw passbiwdcwient: p-passbiwdsewvice.methodpewendpoint
+  v-vaw wepwicationcwient: thwifttweetsewvice
+  vaw wetweetawchivaweventpubwishew: e-eventbuspubwishew[wetweetawchivawevent]
+  v-vaw scawecwow: scawecwow
+  vaw snowfwakecwient: snowfwakecwient.snowfwakecwient
+  v-vaw sociawgwaphsewvice: sociawgwaphsewvice
+  vaw stwatosewvewcwient: s-stwatocwient
+  vaw tawon: tawon
+  vaw tfwockweadcwient: t-tfwockcwient
+  vaw tfwockwwitecwient: t-tfwockcwient
+  v-vaw timewinesewvice: timewinesewvice
+  v-vaw tweeteventspubwishew: eventbuspubwishew[tweetevent]
+  v-vaw tweetstowagecwient: t-tweetstowagecwient
+  v-vaw usewimagesewvice: usewimagesewvice
+  v-vaw cawwbackpwomotedcontentwoggew: c-cawwbackpwomotedcontentwoggew
 }
 
 /**
- * default implementation of BackendClients that connects to real, remote
- * backend services.
+ * defauwt impwementation o-of backendcwients t-that connects t-to weaw, rawr wemote
+ * backend sewvices. nyaa~~
  */
-object BackendClients {
-  // for most services, tweetypie typically maintains only a single connection to
-  // each host in the cluster, and that is enough for normal steady-state work.
-  // to prevent ddos'ing backends during unusual traffic influxes, we set the host
-  // connection limit to be 2-3x the steady-state daily peak, giving plenty of head
-  // room but without allowing an excessive number of connections.
-  private val defaultHostConnectionLimit = 3
+object b-backendcwients {
+  // fow most s-sewvices, ( ͡o ω ͡o ) tweetypie t-typicawwy maintains onwy a singwe connection to
+  // each host i-in the cwustew, σωσ a-and that is e-enough fow nyowmaw s-steady-state wowk. (✿oωo)
+  // to pwevent d-ddos'ing backends duwing unusuaw twaffic infwuxes, (///ˬ///✿) we set the host
+  // connection wimit to b-be 2-3x the steady-state daiwy p-peak, σωσ giving pwenty of head
+  // w-woom but without awwowing an excessive n-nyumbew of connections. UwU
+  p-pwivate vaw defauwthostconnectionwimit = 3
 
-  // 100ms is greater than most gc pauses; smaller values cause more timeouts
-  private val defaultConnectTimeout = 100.milliseconds
-  // tcpConnect timeout is less than half of defaultConnectTimeout, to allow at least
-  // two tries (except when there is a GC pause)
-  private val defaultTcpConnectTimeout = 20.milliseconds
+  // 100ms i-is gweatew t-than most gc p-pauses; smowew v-vawues cause mowe timeouts
+  pwivate vaw defauwtconnecttimeout = 100.miwwiseconds
+  // tcpconnect timeout is wess than hawf of defauwtconnecttimeout, (⑅˘꒳˘) t-to awwow a-at weast
+  // two t-twies (except when thewe is a g-gc pause)
+  pwivate vaw defauwttcpconnecttimeout = 20.miwwiseconds
 
-  private val WriteExceptionsOnly: PartialFunction[Try[Nothing], Boolean] =
-    RetryPolicy.WriteExceptionsOnly
+  pwivate vaw wwiteexceptionsonwy: p-pawtiawfunction[twy[nothing], /(^•ω•^) b-boowean] =
+    wetwypowicy.wwiteexceptionsonwy
 
-  private val ClosedExceptionsOnly: PartialFunction[Try[Nothing], Boolean] = {
-    case Throw(_: ChannelClosedException) => true
+  p-pwivate vaw cwosedexceptionsonwy: pawtiawfunction[twy[nothing], -.- b-boowean] = {
+    c-case thwow(_: channewcwosedexception) => t-twue
   }
 
-  private val TimeoutExceptionsOnly: PartialFunction[Try[Nothing], Boolean] = {
-    case Throw(_: TimeoutException) => true
-    case Throw(_: UtilTimeoutException) => true
+  pwivate v-vaw timeoutexceptionsonwy: pawtiawfunction[twy[nothing], boowean] = {
+    case thwow(_: timeoutexception) => twue
+    case t-thwow(_: utiwtimeoutexception) => t-twue
   }
 
-  private val NoBackoff = Backoff.const(0.second)
+  pwivate v-vaw nyobackoff = b-backoff.const(0.second)
 
-  private def retry(writeExceptions: Int = 100, closedExceptions: Int = 2, timeouts: Int = 0) =
-    RetryPolicy.combine(
-      RetryPolicy.backoff(NoBackoff.take(writeExceptions))(WriteExceptionsOnly),
-      RetryPolicy.backoff(NoBackoff.take(closedExceptions))(ClosedExceptionsOnly),
-      RetryPolicy.backoff(NoBackoff.take(timeouts))(TimeoutExceptionsOnly)
+  p-pwivate def wetwy(wwiteexceptions: int = 100, (ˆ ﻌ ˆ)♡ c-cwosedexceptions: i-int = 2, nyaa~~ timeouts: int = 0) =
+    w-wetwypowicy.combine(
+      wetwypowicy.backoff(nobackoff.take(wwiteexceptions))(wwiteexceptionsonwy), ʘwʘ
+      w-wetwypowicy.backoff(nobackoff.take(cwosedexceptions))(cwosedexceptionsonwy), :3
+      wetwypowicy.backoff(nobackoff.take(timeouts))(timeoutexceptionsonwy)
     )
 
-  implicit val warmup: Warmup[BackendClients] = {
-    // Use a random string so that the keys are likely to hash to
-    // different memcache instances. Request multiple keys at a time so
-    // that we don't consider the backend warm just because we can get a
-    // bunch of successful responses to one cache.
-    val cacheGet = (_: memcached.Client).get(Seq.fill(20)(Random.nextLong.toString))
+  i-impwicit vaw wawmup: wawmup[backendcwients] = {
+    // use a wandom s-stwing so that the keys awe w-wikewy to hash t-to
+    // diffewent memcache instances. (U ᵕ U❁) w-wequest muwtipwe keys at a time so
+    // t-that we don't c-considew the backend w-wawm just because we can get a
+    // bunch of successfuw wesponses t-to one cache. (U ﹏ U)
+    vaw cacheget = (_: memcached.cwient).get(seq.fiww(20)(wandom.nextwong.tostwing))
 
-    Warmup
-      .empty[BackendClients]
-      .warmField(_.expandodo)
-      .warmField(_.gizmoduck)
-      .warmField(_.memcacheClient)(Warmup("memcache")(cacheGet))
-      .warmField(_.talon)
-      .warmField(_.tweetStorageClient)(Warmup("tweetstorage")(_.ping()))
-      .warmField(_.tflockReadClient)(Warmup("tflock")(_.contains(UserTimelineGraph, 0, 0)))
-      .warmField(_.scarecrow)
-      .warmField(_.socialGraphService)
-      .warmField(_.timelineService)
-      .warmField(_.geoRelevance)(Warmup("geo_relevance")(_.placeSearch(RelevanceContext())))
+    w-wawmup
+      .empty[backendcwients]
+      .wawmfiewd(_.expandodo)
+      .wawmfiewd(_.gizmoduck)
+      .wawmfiewd(_.memcachecwient)(wawmup("memcache")(cacheget))
+      .wawmfiewd(_.tawon)
+      .wawmfiewd(_.tweetstowagecwient)(wawmup("tweetstowage")(_.ping()))
+      .wawmfiewd(_.tfwockweadcwient)(wawmup("tfwock")(_.contains(usewtimewinegwaph, ^^ 0, 0)))
+      .wawmfiewd(_.scawecwow)
+      .wawmfiewd(_.sociawgwaphsewvice)
+      .wawmfiewd(_.timewinesewvice)
+      .wawmfiewd(_.geowewevance)(wawmup("geo_wewevance")(_.pwaceseawch(wewevancecontext())))
   }
 
-  def apply(
-    settings: TweetServiceSettings,
-    deciderGates: TweetypieDeciderGates,
-    statsReceiver: StatsReceiver,
-    hostStatsReceiver: StatsReceiver,
-    timer: Timer,
-    clientIdHelper: ClientIdHelper,
-  ): BackendClients = {
-    val thriftClientId = settings.thriftClientId
-    val tracer = DefaultTracer
+  d-def appwy(
+    settings: t-tweetsewvicesettings, òωó
+    decidewgates: tweetypiedecidewgates, /(^•ω•^)
+    s-statsweceivew: s-statsweceivew, 😳😳😳
+    hoststatsweceivew: statsweceivew, :3
+    timew: timew,
+    c-cwientidhewpew: cwientidhewpew, (///ˬ///✿)
+  ): backendcwients = {
+    v-vaw thwiftcwientid = s-settings.thwiftcwientid
+    vaw twacew = defauwttwacew
 
-    val env = settings.env.toString
-    val zone = settings.zone
-    val log = Logger(getClass)
-    val backendsScope = statsReceiver.scope("backends")
+    v-vaw env = settings.env.tostwing
+    vaw zone = s-settings.zone
+    v-vaw wog = woggew(getcwass)
+    v-vaw backendsscope = statsweceivew.scope("backends")
 
-    /** a Seq builder of finagle.Names loaded via getName */
-    val referencedNamesBuilder = Seq.newBuilder[Name]
+    /** a seq buiwdew of finagwe.names woaded via getname */
+    vaw wefewencednamesbuiwdew = seq.newbuiwdew[name]
 
-    /** the default set of exceptions we believe are safe for Tweetypie to retry */
-    val defaultResponseClassifier: ResponseClassifier =
-      ResponseClassifier.RetryOnChannelClosed.orElse(ResponseClassifier.RetryOnTimeout)
+    /** the defauwt set of exceptions we bewieve awe safe fow tweetypie to wetwy */
+    v-vaw defauwtwesponsecwassifiew: w-wesponsecwassifiew =
+      wesponsecwassifiew.wetwyonchannewcwosed.owewse(wesponsecwassifiew.wetwyontimeout)
 
     /**
-     * Resolve a string into a Finagle Name and record it
-     * in referencedNames.
+     * wesowve a-a stwing into a-a finagwe nyame a-and wecowd it
+     * in wefewencednames. rawr x3
      */
-    def eval(address: String): Name = {
-      val name = Resolver.eval(address)
-      referencedNamesBuilder += name
-      name
+    d-def evaw(addwess: stwing): n-nyame = {
+      v-vaw nyame = wesowvew.evaw(addwess)
+      w-wefewencednamesbuiwdew += nyame
+      n-nyame
     }
 
-    def backendContext(name: String) =
-      Backend.Context(timer, backendsScope.scope(name))
+    d-def backendcontext(name: stwing) =
+      backend.context(timew, (U ᵕ U❁) b-backendsscope.scope(name))
 
-    // by default, retries on most exceptions (see defaultRetryExceptions).  if an rpc is not
-    // idempotent, it should use a different retry policy.
-    def clientBuilder(name: String) = {
-      ClientBuilder()
+    // b-by defauwt, (⑅˘꒳˘) w-wetwies on most e-exceptions (see d-defauwtwetwyexceptions). (˘ω˘)  i-if a-an wpc is nyot
+    // i-idempotent, :3 i-it shouwd use a diffewent wetwy p-powicy. XD
+    def c-cwientbuiwdew(name: s-stwing) = {
+      cwientbuiwdew()
         .name(name)
-        .reportTo(statsReceiver)
-        .reportHostStats(hostStatsReceiver)
-        .tracer(tracer)
-        .daemon(true)
-        .tcpConnectTimeout(defaultTcpConnectTimeout)
-        .connectTimeout(defaultConnectTimeout)
-        .retryPolicy(retry())
+        .wepowtto(statsweceivew)
+        .wepowthoststats(hoststatsweceivew)
+        .twacew(twacew)
+        .daemon(twue)
+        .tcpconnecttimeout(defauwttcpconnecttimeout)
+        .connecttimeout(defauwtconnecttimeout)
+        .wetwypowicy(wetwy())
     }
 
-    def thriftMuxClientBuilder(name: String, address: String, clazz: Class[_]) = {
-      clientBuilder(name)
+    d-def thwiftmuxcwientbuiwdew(name: stwing, >_< addwess: stwing, (✿oωo) cwazz: c-cwass[_]) = {
+      cwientbuiwdew(name)
         .stack(
-          ThriftMux.client
-            .withClientId(thriftClientId)
-            .withOpportunisticTls(OpportunisticTls.Required)
-            .withServiceClass(clazz))
-        .loadBalancer(balancer())
-        .dest(eval(address))
-        .mutualTls(settings.serviceIdentifier)
+          t-thwiftmux.cwient
+            .withcwientid(thwiftcwientid)
+            .withoppowtunistictws(oppowtunistictws.wequiwed)
+            .withsewvicecwass(cwazz))
+        .woadbawancew(bawancew())
+        .dest(evaw(addwess))
+        .mutuawtws(settings.sewviceidentifiew)
     }
 
-    // Our base ThriftMux.Client
-    // Prefer using thriftMuxMethodBuilder below but
-    // can be used to build custom clients (re: darkTrafficClient)
-    def thriftMuxClient(name: String, propagateDeadlines: Boolean = true): ThriftMux.Client = {
-      ThriftMux.client
-        .withClientId(thriftClientId)
-        .withLabel(name)
-        .withStatsReceiver(statsReceiver)
-        .withTracer(tracer)
-        .withTransport.connectTimeout(defaultTcpConnectTimeout)
-        .withSession.acquisitionTimeout(defaultConnectTimeout)
-        .withMutualTls(settings.serviceIdentifier)
-        .withOpportunisticTls(OpportunisticTls.Required)
-        .configured(PropagateDeadlines(enabled = propagateDeadlines))
+    // o-ouw base thwiftmux.cwient
+    // p-pwefew using thwiftmuxmethodbuiwdew bewow but
+    // c-can be used to buiwd custom c-cwients (we: dawktwafficcwient)
+    d-def thwiftmuxcwient(name: stwing, (ꈍᴗꈍ) pwopagatedeadwines: b-boowean = twue): thwiftmux.cwient = {
+      thwiftmux.cwient
+        .withcwientid(thwiftcwientid)
+        .withwabew(name)
+        .withstatsweceivew(statsweceivew)
+        .withtwacew(twacew)
+        .withtwanspowt.connecttimeout(defauwttcpconnecttimeout)
+        .withsession.acquisitiontimeout(defauwtconnecttimeout)
+        .withmutuawtws(settings.sewviceidentifiew)
+        .withoppowtunistictws(oppowtunistictws.wequiwed)
+        .configuwed(pwopagatedeadwines(enabwed = pwopagatedeadwines))
     }
 
-    // If an endpoint is non-idempotent you should add .nonidempotent and
-    // leave off any ResponseClassifiers (it will remove any placed before but not after)
-    // If it is unequivocally idempotent you should add .idempotent and
-    // leave off any ResponseClassifiers (it will retry on all Throws).  This will also
-    // enable backup requests
-    def thriftMuxMethodBuilder(
-      name: String,
-      dest: String,
-    ): MethodBuilder = {
-      thriftMuxClient(name)
-        .withLoadBalancer(balancer(minAperture = 2))
-        .methodBuilder(dest)
-        .withRetryForClassifier(defaultResponseClassifier)
-        .withTimeoutTotal(2.seconds) // total timeout including 1st attempt and up to 2 retries
+    // if a-an endpoint is nyon-idempotent y-you shouwd add .nonidempotent a-and
+    // weave off any wesponsecwassifiews (it wiww wemove any pwaced b-befowe but nyot aftew)
+    // i-if it is unequivocawwy i-idempotent y-you shouwd add .idempotent and
+    // weave o-off any wesponsecwassifiews (it w-wiww wetwy on aww thwows). XD  this w-wiww awso
+    // enabwe backup wequests
+    def t-thwiftmuxmethodbuiwdew(
+      nyame: stwing, :3
+      d-dest: stwing, mya
+    ): m-methodbuiwdew = {
+      t-thwiftmuxcwient(name)
+        .withwoadbawancew(bawancew(minapewtuwe = 2))
+        .methodbuiwdew(dest)
+        .withwetwyfowcwassifiew(defauwtwesponsecwassifiew)
+        .withtimeouttotaw(2.seconds) // totaw t-timeout incwuding 1st a-attempt a-and up to 2 wetwies
     }
 
-    def balancer(minAperture: Int = 2) = Balancers.aperture(minAperture = minAperture)
+    d-def bawancew(minapewtuwe: int = 2) = b-bawancews.apewtuwe(minapewtuwe = m-minapewtuwe)
 
-    val eventBusPublisherBuilder =
-      EventBusPublisherBuilder()
-        .dest(eval("/s/eventbus/provisioning"))
-        .clientId(settings.thriftClientId)
-        // eventbus stats are further scoped by stream, so put all
-        // publishers under the same stats namespace
-        .statsReceiver(backendsScope.scope("event_bus"))
-        // This makes the underlying kps-client to be resolved over WilyNs vs DNS
-        .serviceIdentifier(settings.serviceIdentifier)
+    v-vaw eventbuspubwishewbuiwdew =
+      e-eventbuspubwishewbuiwdew()
+        .dest(evaw("/s/eventbus/pwovisioning"))
+        .cwientid(settings.thwiftcwientid)
+        // eventbus s-stats awe f-fuwthew scoped b-by stweam, òωó so put a-aww
+        // pubwishews undew t-the same stats nyamespace
+        .statsweceivew(backendsscope.scope("event_bus"))
+        // t-this makes the undewwying kps-cwient t-to be wesowved o-ovew wiwyns v-vs dns
+        .sewviceidentifiew(settings.sewviceidentifiew)
 
-    new BackendClients {
-      def referencedNames: Seq[Name] = referencedNamesBuilder.result()
+    nyew backendcwients {
+      def wefewencednames: seq[name] = w-wefewencednamesbuiwdew.wesuwt()
 
-      val memcacheClient: memcached.Client =
-        Memcached.client
-          .withMutualTls(settings.serviceIdentifier)
-          .connectionsPerEndpoint(2)
-          .configured(param.KeyHasher(KeyHasher.FNV1_32))
-          .configured(Transporter.ConnectTimeout(100.milliseconds))
-          .configured(TimeoutFilter.Param(200.milliseconds))
-          .configured(TimeoutFactory.Param(200.milliseconds))
-          .configured(param.EjectFailedHost(false))
-          .configured(FailureAccrualFactory.Param(numFailures = 20, markDeadFor = 30.second))
-          .configured(
-            PendingRequestFilter.Param(limit = Some(settings.cacheClientPendingRequestLimit))
+      v-vaw memcachecwient: m-memcached.cwient =
+        memcached.cwient
+          .withmutuawtws(settings.sewviceidentifiew)
+          .connectionspewendpoint(2)
+          .configuwed(pawam.keyhashew(keyhashew.fnv1_32))
+          .configuwed(twanspowtew.connecttimeout(100.miwwiseconds))
+          .configuwed(timeoutfiwtew.pawam(200.miwwiseconds))
+          .configuwed(timeoutfactowy.pawam(200.miwwiseconds))
+          .configuwed(pawam.ejectfaiwedhost(fawse))
+          .configuwed(faiwuweaccwuawfactowy.pawam(numfaiwuwes = 20, nyaa~~ mawkdeadfow = 30.second))
+          .configuwed(
+            pendingwequestfiwtew.pawam(wimit = s-some(settings.cachecwientpendingwequestwimit))
           )
-          .filtered(new MemcacheExceptionLoggingFilter)
-          .newRichClient(dest = eval(settings.twemcacheDest), label = "memcache")
+          .fiwtewed(new m-memcacheexceptionwoggingfiwtew)
+          .newwichcwient(dest = evaw(settings.twemcachedest), 🥺 w-wabew = "memcache")
 
-      /* clients */
-      val tweetStorageClient: TweetStorageClient =
-        Manhattan.fromClient(
-          new ManhattanTweetStorageClient(
-            settings.tweetStorageConfig,
-            statsReceiver = backendsScope.scope("tweet_storage"),
-            clientIdHelper = clientIdHelper,
+      /* c-cwients */
+      vaw tweetstowagecwient: tweetstowagecwient =
+        manhattan.fwomcwient(
+          n-nyew manhattantweetstowagecwient(
+            s-settings.tweetstowageconfig, -.-
+            statsweceivew = backendsscope.scope("tweet_stowage"), 🥺
+            c-cwientidhewpew = c-cwientidhewpew, (˘ω˘)
           )
         )
 
-      val socialGraphService: SocialGraphService = {
-        val finagleClient =
-          new SocialGraphService$FinagleClient(
-            thriftMuxClientBuilder(
-              "socialgraph",
-              "/s/socialgraph/socialgraph",
-              classOf[SocialGraphScroogeIface.MethodPerEndpoint]
-            ).loadBalancer(Balancers.aperturePeakEwma(minAperture = 16))
-              .build()
+      vaw sociawgwaphsewvice: sociawgwaphsewvice = {
+        v-vaw finagwecwient =
+          n-nyew sociawgwaphsewvice$finagwecwient(
+            thwiftmuxcwientbuiwdew(
+              "sociawgwaph", òωó
+              "/s/sociawgwaph/sociawgwaph", UwU
+              cwassof[sociawgwaphscwoogeiface.methodpewendpoint]
+            ).woadbawancew(bawancews.apewtuwepeakewma(minapewtuwe = 16))
+              .buiwd()
           )
 
-        settings.socialGraphSeviceConfig(
-          SocialGraphService.fromClient(finagleClient),
-          backendContext("socialgraph")
+        s-settings.sociawgwaphseviceconfig(
+          sociawgwaphsewvice.fwomcwient(finagwecwient),
+          backendcontext("sociawgwaph")
         )
       }
 
-      val tflockClient =
-        new FlockDB.FinagledClient(
-          thriftMuxClientBuilder("tflock", "/s/tflock/tflock", classOf[FlockDB.MethodPerEndpoint])
-            .loadBalancer(balancer(minAperture = 5))
-            .responseClassifier(FlockResponse.classifier)
-            .build(),
-          serviceName = "tflock",
-          stats = statsReceiver
+      v-vaw tfwockcwient =
+        nyew fwockdb.finagwedcwient(
+          t-thwiftmuxcwientbuiwdew("tfwock", ^•ﻌ•^ "/s/tfwock/tfwock", mya c-cwassof[fwockdb.methodpewendpoint])
+            .woadbawancew(bawancew(minapewtuwe = 5))
+            .wesponsecwassifiew(fwockwesponse.cwassifiew)
+            .buiwd(), (✿oωo)
+          sewvicename = "tfwock", XD
+          s-stats = statsweceivew
         )
 
-      val tflockReadClient: TFlockClient =
-        settings.tflockReadConfig(tflockClient, backendContext("tflock"))
+      v-vaw tfwockweadcwient: t-tfwockcwient =
+        settings.tfwockweadconfig(tfwockcwient, :3 b-backendcontext("tfwock"))
 
-      val tflockWriteClient: TFlockClient =
-        settings.tflockWriteConfig(tflockClient, backendContext("tflock"))
+      v-vaw tfwockwwitecwient: t-tfwockcwient =
+        s-settings.tfwockwwiteconfig(tfwockcwient, (U ﹏ U) backendcontext("tfwock"))
 
-      val gizmoduck: Gizmoduck = {
-        val clientBuilder =
-          thriftMuxClientBuilder(
+      v-vaw gizmoduck: g-gizmoduck = {
+        vaw c-cwientbuiwdew =
+          thwiftmuxcwientbuiwdew(
             "gizmoduck",
-            "/s/gizmoduck/gizmoduck",
-            classOf[UserService.MethodPerEndpoint])
-            .loadBalancer(balancer(minAperture = 63))
-        val mb = MethodBuilder
-          .from(clientBuilder)
-          .idempotent(maxExtraLoad = 1.percent)
-          .servicePerEndpoint[UserService.ServicePerEndpoint]
+            "/s/gizmoduck/gizmoduck", UwU
+            c-cwassof[usewsewvice.methodpewendpoint])
+            .woadbawancew(bawancew(minapewtuwe = 63))
+        vaw mb = methodbuiwdew
+          .fwom(cwientbuiwdew)
+          .idempotent(maxextwawoad = 1.pewcent)
+          .sewvicepewendpoint[usewsewvice.sewvicepewendpoint]
 
-        val gizmoduckClient = ThriftMux.Client.methodPerEndpoint(mb)
-        settings.gizmoduckConfig(Gizmoduck.fromClient(gizmoduckClient), backendContext("gizmoduck"))
+        vaw gizmoduckcwient = t-thwiftmux.cwient.methodpewendpoint(mb)
+        s-settings.gizmoduckconfig(gizmoduck.fwomcwient(gizmoduckcwient), b-backendcontext("gizmoduck"))
       }
 
-      val merlin: UserRolesService.MethodPerEndpoint = {
-        val thriftClient = thriftMuxMethodBuilder("merlin", "/s/merlin/merlin")
-          .withTimeoutPerRequest(100.milliseconds)
-          .withTimeoutTotal(400.milliseconds)
+      vaw mewwin: usewwowessewvice.methodpewendpoint = {
+        vaw thwiftcwient = thwiftmuxmethodbuiwdew("mewwin", ʘwʘ "/s/mewwin/mewwin")
+          .withtimeoutpewwequest(100.miwwiseconds)
+          .withtimeouttotaw(400.miwwiseconds)
           .idempotent(0.01)
-          .servicePerEndpoint[UserRolesService.ServicePerEndpoint]
+          .sewvicepewendpoint[usewwowessewvice.sewvicepewendpoint]
 
-        ThriftMux.Client.methodPerEndpoint(thriftClient)
+        t-thwiftmux.cwient.methodpewendpoint(thwiftcwient)
       }
 
-      val talon: Talon = {
-        val talonClient =
-          new Talon$FinagleClient(
-            thriftMuxClientBuilder(
-              "talon",
-              "/s/talon/backend",
-              classOf[TalonScroogeIface.MethodPerEndpoint])
-              .build()
+      vaw tawon: tawon = {
+        v-vaw t-tawoncwient =
+          nyew tawon$finagwecwient(
+            thwiftmuxcwientbuiwdew(
+              "tawon", >w<
+              "/s/tawon/backend",
+              cwassof[tawonscwoogeiface.methodpewendpoint])
+              .buiwd()
           )
 
-        settings.talonConfig(Talon.fromClient(talonClient), backendContext("talon"))
+        s-settings.tawonconfig(tawon.fwomcwient(tawoncwient), 😳😳😳 backendcontext("tawon"))
       }
 
-      val guano = Guano()
+      v-vaw guano = g-guano()
 
-      val mediaInfoService: MediaInfoService = {
-        val finagleClient =
-          new MediaInfoService$FinagleClient(
-            thriftMuxClientBuilder(
+      vaw m-mediainfosewvice: m-mediainfosewvice = {
+        v-vaw finagwecwient =
+          nyew mediainfosewvice$finagwecwient(
+            thwiftmuxcwientbuiwdew(
               "mediainfo",
-              "/s/photurkey/mediainfo",
-              classOf[MediaInfoScroogeIface.MethodPerEndpoint])
-              .loadBalancer(balancer(minAperture = 75))
-              .build()
+              "/s/photuwkey/mediainfo", rawr
+              cwassof[mediainfoscwoogeiface.methodpewendpoint])
+              .woadbawancew(bawancew(minapewtuwe = 75))
+              .buiwd()
           )
 
-        settings.mediaInfoServiceConfig(
-          MediaInfoService.fromClient(finagleClient),
-          backendContext("mediainfo")
+        settings.mediainfosewviceconfig(
+          m-mediainfosewvice.fwomcwient(finagwecwient), ^•ﻌ•^
+          backendcontext("mediainfo")
         )
       }
 
-      val userImageService: UserImageService = {
-        val finagleClient =
-          new UserImageService$FinagleClient(
-            thriftMuxClientBuilder(
-              "userImage",
-              "/s/user-image-service/uis",
-              classOf[UserImageScroogeIface.MethodPerEndpoint])
-              .build()
+      v-vaw usewimagesewvice: usewimagesewvice = {
+        vaw finagwecwient =
+          nyew usewimagesewvice$finagwecwient(
+            t-thwiftmuxcwientbuiwdew(
+              "usewimage", σωσ
+              "/s/usew-image-sewvice/uis", :3
+              cwassof[usewimagescwoogeiface.methodpewendpoint])
+              .buiwd()
           )
 
-        settings.userImageServiceConfig(
-          UserImageService.fromClient(finagleClient),
-          backendContext("userImage")
+        settings.usewimagesewviceconfig(
+          usewimagesewvice.fwomcwient(finagwecwient), rawr x3
+          backendcontext("usewimage")
         )
       }
 
-      val mediaClient: MediaClient =
-        MediaClient.fromBackends(
-          userImageService = userImageService,
-          mediaInfoService = mediaInfoService
+      v-vaw mediacwient: m-mediacwient =
+        mediacwient.fwombackends(
+          usewimagesewvice = u-usewimagesewvice,
+          mediainfosewvice = mediainfosewvice
         )
 
-      val timelineService: TimelineService = {
-        val timelineServiceClient =
-          new tls.TimelineService$FinagleClient(
-            thriftMuxClientBuilder(
-              "timelineService",
-              "/s/timelineservice/timelineservice",
-              classOf[tls.TimelineService.MethodPerEndpoint])
-              .loadBalancer(balancer(minAperture = 13))
-              .build()
+      v-vaw timewinesewvice: t-timewinesewvice = {
+        vaw timewinesewvicecwient =
+          n-nyew tws.timewinesewvice$finagwecwient(
+            t-thwiftmuxcwientbuiwdew(
+              "timewinesewvice", nyaa~~
+              "/s/timewinesewvice/timewinesewvice", :3
+              cwassof[tws.timewinesewvice.methodpewendpoint])
+              .woadbawancew(bawancew(minapewtuwe = 13))
+              .buiwd()
           )
 
-        settings.timelineServiceConfig(
-          TimelineService.fromClient(timelineServiceClient),
-          backendContext("timelineService")
+        settings.timewinesewviceconfig(
+          timewinesewvice.fwomcwient(timewinesewvicecwient), >w<
+          b-backendcontext("timewinesewvice")
         )
       }
 
-      val expandodo: Expandodo = {
-        val cardsServiceClient =
-          new CardsService$FinagleClient(
-            thriftMuxClientBuilder(
-              "expandodo",
-              "/s/expandodo/server",
-              classOf[CardsScroogeIface.MethodPerEndpoint])
-              .loadBalancer(balancer(minAperture = 6))
-              .build()
+      vaw expandodo: expandodo = {
+        v-vaw cawdssewvicecwient =
+          n-nyew c-cawdssewvice$finagwecwient(
+            thwiftmuxcwientbuiwdew(
+              "expandodo", rawr
+              "/s/expandodo/sewvew", 😳
+              cwassof[cawdsscwoogeiface.methodpewendpoint])
+              .woadbawancew(bawancew(minapewtuwe = 6))
+              .buiwd()
           )
 
-        settings.expandodoConfig(
-          Expandodo.fromClient(cardsServiceClient),
-          backendContext("expandodo")
+        settings.expandodoconfig(
+          e-expandodo.fwomcwient(cawdssewvicecwient), 😳
+          backendcontext("expandodo")
         )
       }
 
-      val creativesContainerService: CreativesContainerService = {
-        val mb = thriftMuxMethodBuilder(
-          "creativesContainerService",
-          "/s/creatives-container/creatives-container",
-        ).withTimeoutTotal(300.milliseconds)
-          .idempotent(maxExtraLoad = 1.percent)
-          .servicePerEndpoint[ccs.CreativesContainerService.ServicePerEndpoint]
+      vaw cweativescontainewsewvice: cweativescontainewsewvice = {
+        v-vaw mb = thwiftmuxmethodbuiwdew(
+          "cweativescontainewsewvice", 🥺
+          "/s/cweatives-containew/cweatives-containew", rawr x3
+        ).withtimeouttotaw(300.miwwiseconds)
+          .idempotent(maxextwawoad = 1.pewcent)
+          .sewvicepewendpoint[ccs.cweativescontainewsewvice.sewvicepewendpoint]
 
-        settings.creativesContainerServiceConfig(
-          CreativesContainerService.fromClient(ccs.CreativesContainerService.MethodPerEndpoint(mb)),
-          backendContext("creativesContainerService")
+        s-settings.cweativescontainewsewviceconfig(
+          c-cweativescontainewsewvice.fwomcwient(ccs.cweativescontainewsewvice.methodpewendpoint(mb)), ^^
+          b-backendcontext("cweativescontainewsewvice")
         )
       }
 
-      val scarecrow: Scarecrow = {
-        val scarecrowClient = new ScarecrowService$FinagleClient(
-          thriftMuxClientBuilder(
-            "scarecrow",
-            "/s/abuse/scarecrow",
-            classOf[ScarecrowScroogeIface.MethodPerEndpoint])
-            .loadBalancer(balancer(minAperture = 6))
-            .build(),
-          serviceName = "scarecrow",
-          stats = statsReceiver
+      vaw scawecwow: scawecwow = {
+        v-vaw scawecwowcwient = n-nyew scawecwowsewvice$finagwecwient(
+          thwiftmuxcwientbuiwdew(
+            "scawecwow", ( ͡o ω ͡o )
+            "/s/abuse/scawecwow", XD
+            cwassof[scawecwowscwoogeiface.methodpewendpoint])
+            .woadbawancew(bawancew(minapewtuwe = 6))
+            .buiwd(), ^^
+          sewvicename = "scawecwow", (⑅˘꒳˘)
+          s-stats = statsweceivew
         )
 
-        settings.scarecrowConfig(Scarecrow.fromClient(scarecrowClient), backendContext("scarecrow"))
+        settings.scawecwowconfig(scawecwow.fwomcwient(scawecwowcwient), (⑅˘꒳˘) b-backendcontext("scawecwow"))
       }
 
-      val snowflakeClient: Snowflake.MethodPerEndpoint = {
-        eval("/s/snowflake/snowflake") // eagerly resolve the serverset
-        val mb = thriftMuxMethodBuilder(
-          "snowflake",
-          "/s/snowflake/snowflake"
-        ).withTimeoutTotal(300.milliseconds)
-          .withTimeoutPerRequest(100.milliseconds)
-          .idempotent(maxExtraLoad = 1.percent)
+      vaw snowfwakecwient: snowfwake.methodpewendpoint = {
+        e-evaw("/s/snowfwake/snowfwake") // e-eagewwy wesowve the s-sewvewset
+        v-vaw mb = thwiftmuxmethodbuiwdew(
+          "snowfwake", ^•ﻌ•^
+          "/s/snowfwake/snowfwake"
+        ).withtimeouttotaw(300.miwwiseconds)
+          .withtimeoutpewwequest(100.miwwiseconds)
+          .idempotent(maxextwawoad = 1.pewcent)
 
-        SnowflakeClient.snowflakeClient(mb)
+        s-snowfwakecwient.snowfwakecwient(mb)
       }
 
-      val deferredRpcClient =
-        new DeferredRPC.FinagledClient(
-          thriftMuxClientBuilder(
-            "deferredrpc",
-            "/s/kafka-shared/krpc-server-main",
-            classOf[DeferredRPC.MethodPerEndpoint])
-            .requestTimeout(200.milliseconds)
-            .retryPolicy(retry(timeouts = 3))
-            .build(),
-          serviceName = "deferredrpc",
-          stats = statsReceiver
+      vaw defewwedwpccwient =
+        nyew d-defewwedwpc.finagwedcwient(
+          thwiftmuxcwientbuiwdew(
+            "defewwedwpc", ( ͡o ω ͡o )
+            "/s/kafka-shawed/kwpc-sewvew-main", ( ͡o ω ͡o )
+            cwassof[defewwedwpc.methodpewendpoint])
+            .wequesttimeout(200.miwwiseconds)
+            .wetwypowicy(wetwy(timeouts = 3))
+            .buiwd(), (✿oωo)
+          s-sewvicename = "defewwedwpc", 😳😳😳
+          stats = statsweceivew
         )
 
-      def deferredTweetypie(target: Target): ThriftTweetService = {
-        // When deferring back to the local datacenter, preserve the finagle
-        // context and dtabs. This will ensure that developer dtabs are honored
-        // and that context is preserved in eventbus. (eventbus enqueues only
-        // happen in async requests within the same datacenter.)
+      def defewwedtweetypie(tawget: tawget): thwifttweetsewvice = {
+        // w-when defewwing back t-to the wocaw d-datacentew, OwO pwesewve t-the finagwe
+        // c-context and dtabs. ^^ t-this wiww ensuwe that devewopew dtabs awe honowed
+        // a-and that context is p-pwesewved in eventbus. (eventbus enqueues onwy
+        // happen i-in async wequests w-within the same datacentew.)
         //
-        // Effectively, this means we consider deferredrpc requests within the
-        // same datacenter to be part of the same request, but replicated
-        // requests are not.
-        val isLocal: Boolean = target.datacenter == Datacenter.Local
+        // e-effectivewy, rawr x3 this means we c-considew defewwedwpc w-wequests within the
+        // s-same datacentew t-to be pawt of the same wequest, 🥺 b-but wepwicated
+        // wequests awe nyot. (ˆ ﻌ ˆ)♡
+        vaw iswocaw: boowean = t-tawget.datacentew == datacentew.wocaw
 
-        val deferredThriftService: Service[ThriftClientRequest, Array[Byte]] =
-          new DeferredThriftService(
-            deferredRpcClient,
-            target,
-            serializeFinagleContexts = isLocal,
-            serializeFinagleDtabs = isLocal
+        v-vaw defewwedthwiftsewvice: sewvice[thwiftcwientwequest, ( ͡o ω ͡o ) awway[byte]] =
+          n-nyew defewwedthwiftsewvice(
+            d-defewwedwpccwient, >w<
+            t-tawget, /(^•ω•^)
+            sewiawizefinagwecontexts = i-iswocaw, 😳😳😳
+            s-sewiawizefinagwedtabs = iswocaw
           )
 
-        new TweetServiceInternal$FinagleClient(deferredThriftService)
+        n-nyew tweetsewviceintewnaw$finagwecwient(defewwedthwiftsewvice)
       }
 
-      val replicationClient: ThriftTweetService =
-        deferredTweetypie(Target(Datacenter.AllOthers, "tweetypie-replication"))
+      vaw wepwicationcwient: t-thwifttweetsewvice =
+        defewwedtweetypie(tawget(datacentew.awwothews, (U ᵕ U❁) "tweetypie-wepwication"))
 
-      // used for read endpoints replication
-      val lowQoSReplicationClients: Seq[GatedReplicationClient] = {
-        val rampUpGate = Gate.linearRampUp(Time.now, settings.forkingRampUp)
+      // u-used fow w-wead endpoints wepwication
+      vaw wowqoswepwicationcwients: seq[gatedwepwicationcwient] = {
+        vaw wampupgate = gate.wineawwampup(time.now, (˘ω˘) settings.fowkingwampup)
 
-        // Gates to avoid sending replicated reads from a cluster to itself
-        val inATLA = if (settings.zone == "atla") Gate.True else Gate.False
-        val inPDXA = if (settings.zone == "pdxa") Gate.True else Gate.False
+        // g-gates to a-avoid sending wepwicated weads fwom a cwustew to itsewf
+        v-vaw inatwa = if (settings.zone == "atwa") gate.twue e-ewse gate.fawse
+        v-vaw inpdxa = if (settings.zone == "pdxa") gate.twue ewse gate.fawse
 
-        Seq(
-          GatedReplicationClient(
-            client = deferredTweetypie(Target(Datacenter.Atla, "tweetypie-lowqos")),
-            gate = rampUpGate & deciderGates.replicateReadsToATLA & !inATLA
-          ),
-          GatedReplicationClient(
-            client = deferredTweetypie(Target(Datacenter.Pdxa, "tweetypie-lowqos")),
-            gate = rampUpGate & deciderGates.replicateReadsToPDXA & !inPDXA
+        seq(
+          g-gatedwepwicationcwient(
+            cwient = defewwedtweetypie(tawget(datacentew.atwa, 😳 "tweetypie-wowqos")),
+            g-gate = wampupgate & decidewgates.wepwicateweadstoatwa & !inatwa
+          ), (ꈍᴗꈍ)
+          g-gatedwepwicationcwient(
+            c-cwient = defewwedtweetypie(tawget(datacentew.pdxa, "tweetypie-wowqos")), :3
+            g-gate = wampupgate & d-decidewgates.wepwicateweadstopdxa & !inpdxa
           )
         )
       }
 
-      // used for async operations in the write path
-      val asyncTweetService: ThriftTweetService =
-        deferredTweetypie(Target(Datacenter.Local, "tweetypie"))
+      // u-used fow a-async opewations i-in the wwite p-path
+      vaw asynctweetsewvice: thwifttweetsewvice =
+        defewwedtweetypie(tawget(datacentew.wocaw, /(^•ω•^) "tweetypie"))
 
-      // used to trigger asyncEraseUserTweetsRequest
-      val asyncTweetDeletionService: ThriftTweetService =
-        deferredTweetypie(Target(Datacenter.Local, "tweetypie-retweet-deletion"))
+      // used to twiggew asyncewaseusewtweetswequest
+      v-vaw asynctweetdewetionsewvice: t-thwifttweetsewvice =
+        d-defewwedtweetypie(tawget(datacentew.wocaw, ^^;; "tweetypie-wetweet-dewetion"))
 
-      // used for async retries
-      val asyncRetryTweetService: ThriftTweetService =
-        deferredTweetypie(Target(Datacenter.Local, "tweetypie-async-retry"))
+      // u-used fow async w-wetwies
+      v-vaw asyncwetwytweetsewvice: thwifttweetsewvice =
+        defewwedtweetypie(tawget(datacentew.wocaw, o.O "tweetypie-async-wetwy"))
 
-      val darkTrafficClient: Service[Array[Byte], Array[Byte]] = {
-        val thriftService =
-          thriftMuxClient(
-            "tweetypie.dark",
-            propagateDeadlines = false
-          ).withRequestTimeout(100.milliseconds)
-            .newService("/s/tweetypie/proxy")
+      vaw dawktwafficcwient: sewvice[awway[byte], 😳 a-awway[byte]] = {
+        v-vaw thwiftsewvice =
+          thwiftmuxcwient(
+            "tweetypie.dawk", UwU
+            pwopagatedeadwines = f-fawse
+          ).withwequesttimeout(100.miwwiseconds)
+            .newsewvice("/s/tweetypie/pwoxy")
 
-        val transformer =
-          new Filter[Array[Byte], Array[Byte], ThriftClientRequest, Array[Byte]] {
-            override def apply(
-              request: Array[Byte],
-              service: Service[ThriftClientRequest, Array[Byte]]
-            ): Future[Array[Byte]] =
-              service(new ThriftClientRequest(request, false))
+        v-vaw twansfowmew =
+          n-nyew fiwtew[awway[byte], >w< awway[byte], o.O thwiftcwientwequest, (˘ω˘) awway[byte]] {
+            o-ovewwide def appwy(
+              wequest: a-awway[byte], òωó
+              s-sewvice: sewvice[thwiftcwientwequest, nyaa~~ awway[byte]]
+            ): futuwe[awway[byte]] =
+              s-sewvice(new thwiftcwientwequest(wequest, ( ͡o ω ͡o ) fawse))
           }
 
-        transformer andThen thriftService
+        t-twansfowmew a-andthen thwiftsewvice
       }
 
-      val geoHydrationClient: GeoduckHydration.MethodPerEndpoint = {
-        val mb = thriftMuxMethodBuilder("geoduck_hydration", "/s/geo/hydration")
-          .withTimeoutPerRequest(100.millis)
-          .idempotent(maxExtraLoad = 1.percent)
-        ThriftMux.Client.methodPerEndpoint(
-          mb.servicePerEndpoint[GeoduckHydration.ServicePerEndpoint])
+      v-vaw g-geohydwationcwient: g-geoduckhydwation.methodpewendpoint = {
+        v-vaw mb = thwiftmuxmethodbuiwdew("geoduck_hydwation", 😳😳😳 "/s/geo/hydwation")
+          .withtimeoutpewwequest(100.miwwis)
+          .idempotent(maxextwawoad = 1.pewcent)
+        t-thwiftmux.cwient.methodpewendpoint(
+          m-mb.sewvicepewendpoint[geoduckhydwation.sewvicepewendpoint])
       }
 
-      val geoHydrationLocate: GeoduckLocate = geoHydrationClient.locate
+      vaw geohydwationwocate: g-geoduckwocate = g-geohydwationcwient.wocate
 
-      val geoReverseGeocoderClient: ReverseGeocoder.MethodPerEndpoint = {
-        val mb = thriftMuxMethodBuilder("geoduck_reversegeocoder", "/s/geo/geoduck_reversegeocoder")
-          .withTimeoutPerRequest(100.millis)
-          .idempotent(maxExtraLoad = 1.percent)
-        ThriftMux.Client.methodPerEndpoint(
-          mb.servicePerEndpoint[ReverseGeocoder.ServicePerEndpoint])
+      vaw geowevewsegeocodewcwient: w-wevewsegeocodew.methodpewendpoint = {
+        vaw mb = thwiftmuxmethodbuiwdew("geoduck_wevewsegeocodew", ^•ﻌ•^ "/s/geo/geoduck_wevewsegeocodew")
+          .withtimeoutpewwequest(100.miwwis)
+          .idempotent(maxextwawoad = 1.pewcent)
+        thwiftmux.cwient.methodpewendpoint(
+          m-mb.sewvicepewendpoint[wevewsegeocodew.sewvicepewendpoint])
       }
 
-      val geoduckGeohashLocate: GeoduckGeohashLocate = {
-        new GeoduckGeohashLocate(
-          reverseGeocoderClient = geoReverseGeocoderClient,
-          hydrationClient = geoHydrationClient,
-          classScopedStatsReceiver = statsReceiver.scope("geo_geohash_locate"))
+      vaw geoduckgeohashwocate: g-geoduckgeohashwocate = {
+        nyew geoduckgeohashwocate(
+          w-wevewsegeocodewcwient = g-geowevewsegeocodewcwient, (˘ω˘)
+          hydwationcwient = geohydwationcwient, (˘ω˘)
+          c-cwassscopedstatsweceivew = statsweceivew.scope("geo_geohash_wocate"))
       }
 
-      val geoRelevance =
-        new Relevance$FinagleClient(
-          thriftMuxClientBuilder(
-            "geoduck_relevance",
-            "/s/geo/relevance",
-            classOf[Relevance.MethodPerEndpoint])
-            .requestTimeout(100.milliseconds)
-            .retryPolicy(retry(timeouts = 1))
-            .build(),
-          stats = statsReceiver
+      vaw geowewevance =
+        n-nyew wewevance$finagwecwient(
+          t-thwiftmuxcwientbuiwdew(
+            "geoduck_wewevance", -.-
+            "/s/geo/wewevance", ^•ﻌ•^
+            cwassof[wewevance.methodpewendpoint])
+            .wequesttimeout(100.miwwiseconds)
+            .wetwypowicy(wetwy(timeouts = 1))
+            .buiwd(), /(^•ω•^)
+          stats = statsweceivew
         )
 
-      val fanoutServiceClient =
-        new FanoutService$FinagleClient(
-          new DeferredThriftService(deferredRpcClient, Target(Datacenter.Local, "fanoutservice")),
-          serviceName = "fanoutservice",
-          stats = statsReceiver
+      v-vaw f-fanoutsewvicecwient =
+        nyew f-fanoutsewvice$finagwecwient(
+          nyew defewwedthwiftsewvice(defewwedwpccwient, (///ˬ///✿) tawget(datacentew.wocaw, mya "fanoutsewvice")), o.O
+          s-sewvicename = "fanoutsewvice", ^•ﻌ•^
+          s-stats = statsweceivew
         )
 
-      val limiterService: LimiterService = {
-        val limiterClient =
-          new LimiterClientFactory(
-            name = "limiter",
-            clientId = thriftClientId,
-            tracer = tracer,
-            statsReceiver = statsReceiver,
-            serviceIdentifier = settings.serviceIdentifier,
-            opportunisticTlsLevel = OpportunisticTls.Required,
-            daemonize = true
-          )(eval("/s/limiter/limiter"))
+      vaw w-wimitewsewvice: w-wimitewsewvice = {
+        vaw wimitewcwient =
+          n-nyew w-wimitewcwientfactowy(
+            n-nyame = "wimitew", (U ᵕ U❁)
+            c-cwientid = thwiftcwientid,
+            twacew = twacew, :3
+            statsweceivew = statsweceivew, (///ˬ///✿)
+            sewviceidentifiew = settings.sewviceidentifiew, (///ˬ///✿)
+            o-oppowtunistictwswevew = o-oppowtunistictws.wequiwed, 🥺
+            d-daemonize = t-twue
+          )(evaw("/s/wimitew/wimitew"))
 
-        val limiterBackend = settings.limiterBackendConfig(
-          LimiterBackend.fromClient(limiterClient),
-          backendContext("limiter")
+        v-vaw w-wimitewbackend = settings.wimitewbackendconfig(
+          w-wimitewbackend.fwomcwient(wimitewcwient), -.-
+          backendcontext("wimitew")
         )
 
-        LimiterService.fromBackend(
-          limiterBackend.incrementFeature,
-          limiterBackend.getFeatureUsage,
-          getAppId,
-          backendsScope.scope("limiter")
+        w-wimitewsewvice.fwombackend(
+          wimitewbackend.incwementfeatuwe, nyaa~~
+          w-wimitewbackend.getfeatuweusage, (///ˬ///✿)
+          g-getappid, 🥺
+          backendsscope.scope("wimitew")
         )
       }
 
-      val passbirdClient =
-        new PassbirdService$FinagleClient(
-          thriftMuxClientBuilder(
-            "passbird",
-            "/s/passbird/passbird",
-            classOf[PassbirdService.MethodPerEndpoint])
-            .requestTimeout(100.milliseconds)
-            .retryPolicy(retry(timeouts = 1))
-            .build(),
-          serviceName = "passbird",
-          stats = statsReceiver
+      vaw passbiwdcwient =
+        n-nyew passbiwdsewvice$finagwecwient(
+          thwiftmuxcwientbuiwdew(
+            "passbiwd", >w<
+            "/s/passbiwd/passbiwd", rawr x3
+            cwassof[passbiwdsewvice.methodpewendpoint])
+            .wequesttimeout(100.miwwiseconds)
+            .wetwypowicy(wetwy(timeouts = 1))
+            .buiwd(), (⑅˘꒳˘)
+          s-sewvicename = "passbiwd", σωσ
+          stats = s-statsweceivew
         )
 
-      val escherbird: Escherbird = {
-        val escherbirdClient =
-          new TweetEntityAnnotationService$FinagleClient(
-            thriftMuxClientBuilder(
-              "escherbird",
-              "/s/escherbird/annotationservice",
-              classOf[TweetEntityAnnotationScroogeIface.MethodPerEndpoint])
-              .build()
+      v-vaw eschewbiwd: eschewbiwd = {
+        v-vaw eschewbiwdcwient =
+          n-nyew tweetentityannotationsewvice$finagwecwient(
+            t-thwiftmuxcwientbuiwdew(
+              "eschewbiwd",
+              "/s/eschewbiwd/annotationsewvice", XD
+              cwassof[tweetentityannotationscwoogeiface.methodpewendpoint])
+              .buiwd()
           )
-        settings.escherbirdConfig(
-          Escherbird.fromClient(escherbirdClient),
-          backendContext("escherbird")
+        s-settings.eschewbiwdconfig(
+          e-eschewbiwd.fwomcwient(eschewbiwdcwient), -.-
+          backendcontext("eschewbiwd")
         )
       }
 
-      val geoScrubEventStore: GeoScrubEventStore = {
-        val mhMtlsParams =
-          if (settings.serviceIdentifier == EmptyServiceIdentifier) NoMtlsParams
-          else
-            ManhattanKVClientMtlsParams(
-              serviceIdentifier = settings.serviceIdentifier,
-              opportunisticTls = OpportunisticTls.Required)
+      v-vaw geoscwubeventstowe: geoscwubeventstowe = {
+        v-vaw mhmtwspawams =
+          i-if (settings.sewviceidentifiew == e-emptysewviceidentifiew) nyomtwspawams
+          e-ewse
+            manhattankvcwientmtwspawams(
+              sewviceidentifiew = s-settings.sewviceidentifiew, >_<
+              oppowtunistictws = oppowtunistictws.wequiwed)
 
-        val mhClient =
-          new ManhattanKVClient(
-            appId = "geoduck_scrub_datastore",
-            dest = "/s/manhattan/omega.native-thrift",
-            mtlsParams = mhMtlsParams,
-            label = "mh_omega",
-            Seq(Experiments.ApertureLoadBalancer)
+        vaw mhcwient =
+          nyew manhattankvcwient(
+            appid = "geoduck_scwub_datastowe", rawr
+            dest = "/s/manhattan/omega.native-thwift", 😳😳😳
+            m-mtwspawams = mhmtwspawams, UwU
+            wabew = "mh_omega", (U ﹏ U)
+            seq(expewiments.apewtuwewoadbawancew)
           )
 
-        GeoScrubEventStore(
-          mhClient,
-          settings.geoScrubEventStoreConfig,
-          backendContext("geoScrubEventStore")
+        geoscwubeventstowe(
+          mhcwient, (˘ω˘)
+          settings.geoscwubeventstoweconfig, /(^•ω•^)
+          b-backendcontext("geoscwubeventstowe")
         )
       }
 
-      val tweetEventsPublisher: EventBusPublisher[TweetEvent] =
-        eventBusPublisherBuilder
-          .streamName("tweet_events")
-          .thriftStruct(TweetEvent)
-          .publishTimeout(500.milliseconds)
-          .serializeFinagleDtabs(true)
-          .build()
+      vaw tweeteventspubwishew: eventbuspubwishew[tweetevent] =
+        e-eventbuspubwishewbuiwdew
+          .stweamname("tweet_events")
+          .thwiftstwuct(tweetevent)
+          .pubwishtimeout(500.miwwiseconds)
+          .sewiawizefinagwedtabs(twue)
+          .buiwd()
 
-      val deleteLocationDataPublisher: EventBusPublisher[DeleteLocationData] =
-        eventBusPublisherBuilder
-          .streamName("tweetypie_delete_location_data_prod")
-          .thriftStruct(DeleteLocationData)
-          // deleteLocationData is relatively rare, and publishing to
-          // eventbus is all that the endpoint does. This means that it
-          // is much more likely that we will have to make a connection,
-          // which has much greater latency, and also makes us more
-          // tolerant of slow requests, so we choose a long timeout.
-          .publishTimeout(2.seconds)
-          .build()
+      vaw dewetewocationdatapubwishew: e-eventbuspubwishew[dewetewocationdata] =
+        eventbuspubwishewbuiwdew
+          .stweamname("tweetypie_dewete_wocation_data_pwod")
+          .thwiftstwuct(dewetewocationdata)
+          // dewetewocationdata i-is wewativewy wawe, (U ﹏ U) a-and pubwishing to
+          // e-eventbus is aww t-that the endpoint does. ^•ﻌ•^ this means that it
+          // i-is much mowe wikewy that we wiww have to make a connection, >w<
+          // w-which has much gweatew watency, ʘwʘ a-and awso makes us mowe
+          // t-towewant of swow wequests, òωó s-so we choose a w-wong timeout.
+          .pubwishtimeout(2.seconds)
+          .buiwd()
 
-      val retweetArchivalEventPublisher: EventBusPublisher[RetweetArchivalEvent] =
-        eventBusPublisherBuilder
-          .streamName("retweet_archival_events")
-          .thriftStruct(RetweetArchivalEvent)
-          .publishTimeout(500.milliseconds)
-          .build()
+      vaw wetweetawchivaweventpubwishew: e-eventbuspubwishew[wetweetawchivawevent] =
+        eventbuspubwishewbuiwdew
+          .stweamname("wetweet_awchivaw_events")
+          .thwiftstwuct(wetweetawchivawevent)
+          .pubwishtimeout(500.miwwiseconds)
+          .buiwd()
 
-      val gnipEnricherator: GnipEnricherator = {
-        val gnipEnricherator =
-          thriftMuxMethodBuilder(
-            "enricherator",
-            "/s/datadelivery-enrichments/enricherator"
+      vaw gnipenwichewatow: g-gnipenwichewatow = {
+        vaw gnipenwichewatow =
+          thwiftmuxmethodbuiwdew(
+            "enwichewatow", o.O
+            "/s/datadewivewy-enwichments/enwichewatow"
           )
-        GnipEnricherator.fromMethod(gnipEnricherator)
+        gnipenwichewatow.fwommethod(gnipenwichewatow)
       }
 
-      val stratoserverClient: StratoClient = Strato.client
-        .withMutualTls(
-          serviceIdentifier = settings.serviceIdentifier,
-          opportunisticLevel = OpportunisticTls.Required)
-        .withLabel("stratoserver")
-        .withRequestTimeout(100.milliseconds)
-        .build()
+      vaw stwatosewvewcwient: s-stwatocwient = s-stwato.cwient
+        .withmutuawtws(
+          sewviceidentifiew = s-settings.sewviceidentifiew, ( ͡o ω ͡o )
+          o-oppowtunisticwevew = oppowtunistictws.wequiwed)
+        .withwabew("stwatosewvew")
+        .withwequesttimeout(100.miwwiseconds)
+        .buiwd()
 
-      val configBus: ConfigBus =
-        ConfigBus(backendsScope.scope("config_bus"), settings.instanceId, settings.instanceCount)
+      v-vaw configbus: configbus =
+        configbus(backendsscope.scope("config_bus"), mya settings.instanceid, >_< settings.instancecount)
 
-      val callbackPromotedContentLogger: CallbackPromotedContentLogger = {
-        val publisher =
-          eventBusPublisherBuilder
-            .streamName(settings.adsLoggingClientTopicName)
-            .thriftStruct(AdCallbackEvent)
-            .publishTimeout(500.milliseconds)
-            .serializeFinagleDtabs(true)
-            .maxQueuedEvents(1000)
-            .kafkaDest("/s/kafka/ads-callback:kafka-tls")
-            .build()
+      vaw c-cawwbackpwomotedcontentwoggew: c-cawwbackpwomotedcontentwoggew = {
+        vaw pubwishew =
+          e-eventbuspubwishewbuiwdew
+            .stweamname(settings.adswoggingcwienttopicname)
+            .thwiftstwuct(adcawwbackevent)
+            .pubwishtimeout(500.miwwiseconds)
+            .sewiawizefinagwedtabs(twue)
+            .maxqueuedevents(1000)
+            .kafkadest("/s/kafka/ads-cawwback:kafka-tws")
+            .buiwd()
 
-        val stats = backendsScope.scope("promoted_content")
-        val adsLoggingClient = AdsLoggingClient(publisher, stats, "Tweetypie")
-        new CallbackPromotedContentLogger(adsLoggingClient, stats)
+        v-vaw stats = backendsscope.scope("pwomoted_content")
+        v-vaw adswoggingcwient = adswoggingcwient(pubwishew, stats, rawr "tweetypie")
+        n-nyew cawwbackpwomotedcontentwoggew(adswoggingcwient, >_< stats)
       }
     }
   }

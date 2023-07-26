@@ -1,63 +1,63 @@
-package com.twitter.home_mixer.model
+package com.twittew.home_mixew.modew
 
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdBottomTweetFeature
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdResponseTruncatedFeature
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.IncludeInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.home_mixew.functionaw_component.candidate_souwce.eawwybiwdbottomtweetfeatuwe
+i-impowt com.twittew.home_mixew.functionaw_component.candidate_souwce.eawwybiwdwesponsetwuncatedfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtowdewedcuwsow
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.incwudeinstwuction
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinemoduwe
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet.tweetitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.gapcuwsow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.topcuwsow
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Determine whether to include a Gap Cursor in the response based on whether a timeline
- * is truncated because it has more entries than the max response size.
- * There are two ways this can happen:
- *  1) There are unused entries in Earlybird. This is determined by a flag returned from Earlybird.
- *     We respect the Earlybird flag only if there are some entries after deduping and filtering
- *     to ensure that we do not get stuck repeatedly serving gaps which lead to no tweets.
- *  2) Ads injection can take the response size over the max count. Goldfinch truncates tweet
- *     entries in this case. We can check if the bottom tweet from Earlybird is in the response to
- *     determine if all Earlybird tweets have been used.
+ * detewmine whethew t-to incwude a gap cuwsow in t-the wesponse based on whethew a timewine
+ * is twuncated because i-it has mowe entwies than the m-max wesponse size. >w<
+ * t-thewe awe two ways this can happen:
+ *  1) thewe awe unused entwies in eawwybiwd. rawr t-this is detewmined by a fwag wetuwned fwom eawwybiwd. 😳
+ *     we wespect t-the eawwybiwd fwag onwy if thewe a-awe some entwies a-aftew deduping a-and fiwtewing
+ *     t-to ensuwe that we do nyot get stuck wepeatedwy s-sewving gaps which wead to no tweets. >w<
+ *  2) a-ads injection can take the wesponse size ovew the max count. (⑅˘꒳˘) gowdfinch twuncates tweet
+ *     e-entwies in this case. OwO we can check i-if the bottom t-tweet fwom eawwybiwd i-is in the wesponse to
+ *     detewmine if aww eawwybiwd tweets h-have been used. (ꈍᴗꈍ)
  *
- * While scrolling down to get older tweets (BottomCursor), responses will generally be
- * truncated, but we don't want to render a gap cursor there, so we need to ensure we only
- * apply the truncation check to newer (TopCursor) or middle (GapCursor) requests.
+ * w-whiwe scwowwing down t-to get owdew tweets (bottomcuwsow), 😳 w-wesponses wiww genewawwy be
+ * t-twuncated, 😳😳😳 but we don't want t-to wendew a gap cuwsow thewe, mya so we nyeed to ensuwe w-we onwy
+ * appwy the twuncation c-check to nyewew (topcuwsow) ow middwe (gapcuwsow) w-wequests. mya
  *
- * We return either a Gap Cursor or a Bottom Cursor, but not both, so the include instruction
- * for Bottom should be the inverse of Gap.
+ * w-we wetuwn eithew a gap cuwsow ow a bottom cuwsow, but nyot both, (⑅˘꒳˘) so the incwude instwuction
+ * fow bottom s-shouwd be the invewse o-of gap. (U ﹏ U)
  */
-object GapIncludeInstruction
-    extends IncludeInstruction[PipelineQuery with HasPipelineCursor[UrtOrderedCursor]] {
+object gapincwudeinstwuction
+    e-extends incwudeinstwuction[pipewinequewy w-with h-haspipewinecuwsow[uwtowdewedcuwsow]] {
 
-  override def apply(
-    query: PipelineQuery with HasPipelineCursor[UrtOrderedCursor],
-    entries: Seq[TimelineEntry]
-  ): Boolean = {
-    val wasTruncated = query.features.exists(_.getOrElse(EarlybirdResponseTruncatedFeature, false))
+  ovewwide def appwy(
+    quewy: pipewinequewy w-with haspipewinecuwsow[uwtowdewedcuwsow], mya
+    entwies: seq[timewineentwy]
+  ): boowean = {
+    vaw wastwuncated = quewy.featuwes.exists(_.getowewse(eawwybiwdwesponsetwuncatedfeatuwe, ʘwʘ fawse))
 
-    // Get oldest tweet or tweets within oldest conversation module
-    val tweetEntries = entries.view.reverse
-      .collectFirst {
-        case item: TweetItem if item.promotedMetadata.isEmpty => Seq(item.id.toString)
-        case module: TimelineModule if module.items.head.item.isInstanceOf[TweetItem] =>
-          module.items.map(_.item.id.toString)
-      }.toSeq.flatten
+    // get o-owdest tweet ow tweets within o-owdest convewsation m-moduwe
+    v-vaw tweetentwies = entwies.view.wevewse
+      .cowwectfiwst {
+        c-case item: t-tweetitem if item.pwomotedmetadata.isempty => seq(item.id.tostwing)
+        c-case m-moduwe: timewinemoduwe if moduwe.items.head.item.isinstanceof[tweetitem] =>
+          moduwe.items.map(_.item.id.tostwing)
+      }.toseq.fwatten
 
-    val bottomCursor =
-      query.features.flatMap(_.getOrElse(EarlybirdBottomTweetFeature, None)).map(_.toString)
+    v-vaw bottomcuwsow =
+      q-quewy.featuwes.fwatmap(_.getowewse(eawwybiwdbottomtweetfeatuwe, (˘ω˘) n-nyone)).map(_.tostwing)
 
-    // Ads truncation happened if we have at least max count entries and bottom tweet is missing
-    val adsTruncation = query.requestedMaxResults.exists(_ <= entries.size) &&
-      !bottomCursor.exists(tweetEntries.contains)
+    // a-ads twuncation h-happened if we have at weast max count entwies and bottom tweet i-is missing
+    vaw adstwuncation = quewy.wequestedmaxwesuwts.exists(_ <= entwies.size) &&
+      !bottomcuwsow.exists(tweetentwies.contains)
 
-    query.pipelineCursor.exists(_.cursorType match {
-      case Some(TopCursor) | Some(GapCursor) =>
-        (wasTruncated && tweetEntries.nonEmpty) || adsTruncation
-      case _ => false
+    quewy.pipewinecuwsow.exists(_.cuwsowtype match {
+      c-case some(topcuwsow) | some(gapcuwsow) =>
+        (wastwuncated && tweetentwies.nonempty) || adstwuncation
+      case _ => f-fawse
     })
   }
 }

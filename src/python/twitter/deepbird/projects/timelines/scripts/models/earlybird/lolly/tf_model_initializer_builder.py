@@ -1,91 +1,91 @@
-from .parsers import LollyModelFeaturesParser
+fwom .pawsews impowt wowwymodewfeatuwespawsew
 
 
-class TFModelInitializerBuilder:
+cwass t-tfmodewinitiawizewbuiwdew:
 
-  def __init__(self, model_features_parser=LollyModelFeaturesParser()):
-    self._model_features_parser = model_features_parser
+  d-def __init__(sewf, mya m-modew_featuwes_pawsew=wowwymodewfeatuwespawsew()):
+    s-sewf._modew_featuwes_pawsew = m-modew_featuwes_pawsew
 
-  def build(self, lolly_model_reader):
+  d-def buiwd(sewf, w-wowwy_modew_weadew):
     '''
-    :param lolly_model_reader: LollyModelReader instance
-    :return: tf_model_initializer dictionary of the following format:
+    :pawam w-wowwy_modew_weadew: wowwymodewweadew instance
+    :wetuwn: tf_modew_initiawizew dictionawy o-of the fowwowing fowmat:
       {
-        "features": {
-          "bias": 0.0,
-          "binary": {
-            # (feature name : feature weight) pairs
-            "feature_name_1": 0.0,
+        "featuwes": {
+          "bias": 0.0, (˘ω˘)
+          "binawy": {
+            # (featuwe nyame : featuwe w-weight) paiws
+            "featuwe_name_1": 0.0, >_<
             ...
-            "feature_nameN": 0.0
-          },
-          "discretized": {
-            # (feature name : index aligned lists of bin_boundaries and weights
-            "feature_name_1": {
-              "bin_boundaries": [1, ..., inf],
-              "weights": [0.0, ..., 0.0]
+            "featuwe_namen": 0.0
+          }, -.-
+          "discwetized": {
+            # (featuwe nyame : index a-awigned wists of bin_boundawies and weights
+            "featuwe_name_1": {
+              "bin_boundawies": [1, 🥺 ..., inf], (U ﹏ U)
+              "weights": [0.0, >w< ..., 0.0]
             }
             ...
-            "feature_name_K": {
-              "bin_boundaries": [1, ..., inf],
-              "weights": [0.0, ..., 0.0]
+            "featuwe_name_k": {
+              "bin_boundawies": [1, mya ..., i-inf], >w<
+              "weights": [0.0, nyaa~~ ..., 0.0]
             }
           }
         }
       }
     '''
-    tf_model_initializer = {
-      "features": {}
+    tf_modew_initiawizew = {
+      "featuwes": {}
     }
 
-    features = self._model_features_parser.parse(lolly_model_reader)
-    tf_model_initializer["features"]["bias"] = features["bias"]
-    self._set_discretized_features(features["discretized"], tf_model_initializer)
+    f-featuwes = s-sewf._modew_featuwes_pawsew.pawse(wowwy_modew_weadew)
+    tf_modew_initiawizew["featuwes"]["bias"] = featuwes["bias"]
+    sewf._set_discwetized_featuwes(featuwes["discwetized"], (✿oωo) tf_modew_initiawizew)
 
-    self._dedup_binary_features(features["binary"], features["discretized"])
-    tf_model_initializer["features"]["binary"] = features["binary"]
+    s-sewf._dedup_binawy_featuwes(featuwes["binawy"], ʘwʘ featuwes["discwetized"])
+    tf_modew_initiawizew["featuwes"]["binawy"] = featuwes["binawy"]
 
-    return tf_model_initializer
+    wetuwn tf_modew_initiawizew
 
-  def _set_discretized_features(self, discretized_features, tf_model_initializer):
-    if len(discretized_features) == 0:
-      return
+  d-def _set_discwetized_featuwes(sewf, (ˆ ﻌ ˆ)♡ discwetized_featuwes, 😳😳😳 tf_modew_initiawizew):
+    i-if wen(discwetized_featuwes) == 0:
+      w-wetuwn
 
-    num_bins = max([len(bins) for bins in discretized_features.values()])
+    nyum_bins = m-max([wen(bins) f-fow bins in discwetized_featuwes.vawues()])
 
-    bin_boundaries_and_weights = {}
-    for feature_name in discretized_features:
-      bin_boundaries_and_weights[feature_name] = self._extract_bin_boundaries_and_weights(
-        discretized_features[feature_name], num_bins)
+    bin_boundawies_and_weights = {}
+    fow f-featuwe_name in discwetized_featuwes:
+      bin_boundawies_and_weights[featuwe_name] = sewf._extwact_bin_boundawies_and_weights(
+        d-discwetized_featuwes[featuwe_name], :3 nyum_bins)
 
-    tf_model_initializer["features"]["discretized"] = bin_boundaries_and_weights
+    tf_modew_initiawizew["featuwes"]["discwetized"] = bin_boundawies_and_weights
 
-  def _dedup_binary_features(self, binary_features, discretized_features):
-    [binary_features.pop(feature_name) for feature_name in discretized_features]
+  def _dedup_binawy_featuwes(sewf, OwO binawy_featuwes, (U ﹏ U) d-discwetized_featuwes):
+    [binawy_featuwes.pop(featuwe_name) fow featuwe_name i-in discwetized_featuwes]
 
-  def _extract_bin_boundaries_and_weights(self, discretized_feature_buckets, num_bins):
-    bin_boundary_weight_pairs = []
+  d-def _extwact_bin_boundawies_and_weights(sewf, >w< d-discwetized_featuwe_buckets, (U ﹏ U) nyum_bins):
+    bin_boundawy_weight_paiws = []
 
-    for bucket in discretized_feature_buckets:
-      bin_boundary_weight_pairs.append([bucket[0], bucket[2]])
+    fow b-bucket in discwetized_featuwe_buckets:
+      b-bin_boundawy_weight_paiws.append([bucket[0], 😳 bucket[2]])
 
-    # The default DBv2 HashingDiscretizer bin membership interval is (a, b]
+    # t-the d-defauwt dbv2 hashingdiscwetizew bin membewship i-intewvaw is (a, (ˆ ﻌ ˆ)♡ b]
     #
-    # The Earlybird Lolly prediction engine discretizer bin membership interval is [a, b)
+    # the e-eawwybiwd wowwy pwediction engine discwetizew b-bin membewship intewvaw is [a, 😳😳😳 b-b)
     #
-    # Thus, convert (a, b] to [a, b) by inverting the bin boundaries.
-    for bin_boundary_weight_pair in bin_boundary_weight_pairs:
-      if bin_boundary_weight_pair[0] < float("inf"):
-        bin_boundary_weight_pair[0] *= -1
+    # thus, (U ﹏ U) convewt (a, (///ˬ///✿) b-b] to [a, 😳 b) by i-invewting the bin boundawies. 😳
+    fow bin_boundawy_weight_paiw in bin_boundawy_weight_paiws:
+      if bin_boundawy_weight_paiw[0] < fwoat("inf"):
+        bin_boundawy_weight_paiw[0] *= -1
 
-    while len(bin_boundary_weight_pairs) < num_bins:
-      bin_boundary_weight_pairs.append([float("inf"), float(0)])
+    w-whiwe wen(bin_boundawy_weight_paiws) < n-nyum_bins:
+      bin_boundawy_weight_paiws.append([fwoat("inf"), σωσ f-fwoat(0)])
 
-    bin_boundary_weight_pairs.sort(key=lambda bin_boundary_weight_pair: bin_boundary_weight_pair[0])
+    b-bin_boundawy_weight_paiws.sowt(key=wambda b-bin_boundawy_weight_paiw: bin_boundawy_weight_paiw[0])
 
-    bin_boundaries, weights = list(zip(*bin_boundary_weight_pairs))
+    bin_boundawies, rawr x3 weights = wist(zip(*bin_boundawy_weight_paiws))
 
-    return {
-      "bin_boundaries": bin_boundaries,
+    w-wetuwn {
+      "bin_boundawies": bin_boundawies, OwO
       "weights": weights
     }

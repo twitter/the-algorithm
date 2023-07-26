@@ -1,45 +1,45 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.twittew.home_mixew.functionaw_component.fiwtew
 
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import scala.collection.mutable
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+i-impowt c-com.twittew.home_mixew.utiw.candidatesutiw
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.stitch.stitch
+impowt scawa.cowwection.mutabwe
 
-object RetweetDeduplicationFilter extends Filter[PipelineQuery, TweetCandidate] {
+object wetweetdedupwicationfiwtew e-extends fiwtew[pipewinequewy, ʘwʘ tweetcandidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("RetweetDeduplication")
+  o-ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("wetweetdedupwication")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    // If there are 2 retweets of the same native tweet, we will choose the first one
-    // The tweets are returned in descending score order, so we will choose the higher scored tweet
-    val dedupedTweetIdsSet =
-      candidates.partition(_.features.getOrElse(IsRetweetFeature, false)) match {
-        case (retweets, nativeTweets) =>
-          val nativeTweetIds = nativeTweets.map(_.candidate.id)
-          val seenTweetIds = mutable.Set[Long]() ++ nativeTweetIds
-          val dedupedRetweets = retweets.filter { retweet =>
-            val tweetIdAndSourceId = CandidatesUtil.getTweetIdAndSourceId(retweet)
-            val retweetIsUnique = tweetIdAndSourceId.forall(!seenTweetIds.contains(_))
-            if (retweetIsUnique) {
-              seenTweetIds ++= tweetIdAndSourceId
+  ovewwide d-def appwy(
+    quewy: pipewinequewy, /(^•ω•^)
+    candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[fiwtewwesuwt[tweetcandidate]] = {
+    // if thewe awe 2 wetweets of the same native tweet, ʘwʘ we w-wiww choose the fiwst one
+    // the tweets awe wetuwned in descending scowe owdew, σωσ s-so we wiww choose the highew s-scowed tweet
+    v-vaw dedupedtweetidsset =
+      c-candidates.pawtition(_.featuwes.getowewse(iswetweetfeatuwe, OwO f-fawse)) match {
+        case (wetweets, 😳😳😳 n-nyativetweets) =>
+          vaw nyativetweetids = nyativetweets.map(_.candidate.id)
+          v-vaw seentweetids = mutabwe.set[wong]() ++ nyativetweetids
+          vaw dedupedwetweets = wetweets.fiwtew { wetweet =>
+            vaw tweetidandsouwceid = candidatesutiw.gettweetidandsouwceid(wetweet)
+            v-vaw wetweetisunique = tweetidandsouwceid.fowaww(!seentweetids.contains(_))
+            if (wetweetisunique) {
+              s-seentweetids ++= t-tweetidandsouwceid
             }
-            retweetIsUnique
+            w-wetweetisunique
           }
-          (nativeTweets ++ dedupedRetweets).map(_.candidate.id).toSet
+          (nativetweets ++ dedupedwetweets).map(_.candidate.id).toset
       }
 
-    val (kept, removed) =
+    vaw (kept, 😳😳😳 wemoved) =
       candidates
-        .map(_.candidate).partition(candidate => dedupedTweetIdsSet.contains(candidate.id))
-    Stitch.value(FilterResult(kept = kept, removed = removed))
+        .map(_.candidate).pawtition(candidate => d-dedupedtweetidsset.contains(candidate.id))
+    s-stitch.vawue(fiwtewwesuwt(kept = kept, o.O w-wemoved = wemoved))
   }
 }

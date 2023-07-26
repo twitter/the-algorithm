@@ -1,74 +1,74 @@
-package com.twitter.search.earlybird_root.routers;
+package com.twittew.seawch.eawwybiwd_woot.woutews;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+impowt javax.inject.named;
+i-impowt j-javax.inject.singweton;
 
-import com.google.inject.Provides;
+i-impowt c-com.googwe.inject.pwovides;
 
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.FullArchiveServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.RealtimeServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.ServingRangeProvider;
+i-impowt com.twittew.inject.twittewmoduwe;
+i-impowt c-com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.eawwybiwdtimewangefiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.fuwwawchivesewvingwangepwovidew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.weawtimesewvingwangepwovidew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.sewvingwangepwovidew;
 
-public class RelevanceRequestRouterModule extends TwitterModule {
-  public static final String FULL_ARCHIVE_TIME_RANGE_FILTER =
-      "relevance_full_archive_time_range_filter";
-  public static final String REALTIME_TIME_RANGE_FILTER =
-      "relevance_realtime_time_range_filter";
-  public static final String PROTECTED_TIME_RANGE_FILTER =
-      "relevance_protected_time_range_filter";
+p-pubwic cwass wewevancewequestwoutewmoduwe extends twittewmoduwe {
+  p-pubwic static finaw stwing f-fuww_awchive_time_wange_fiwtew =
+      "wewevance_fuww_awchive_time_wange_fiwtew";
+  pubwic static finaw stwing weawtime_time_wange_fiwtew =
+      "wewevance_weawtime_time_wange_fiwtew";
+  p-pubwic static finaw stwing pwotected_time_wange_fiwtew =
+      "wewevance_pwotected_time_wange_fiwtew";
 
-  public static final String REALTIME_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_relevance_realtime_serving_range_boundary_hours_ago";
-  public static final String FULL_ARCHIVE_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_relevance_full_archive_serving_range_boundary_hours_ago";
-  public static final String PROTECTED_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_relevance_protected_serving_range_boundary_hours_ago";
+  p-pubwic s-static finaw stwing weawtime_sewving_wange_boundawy_houws_ago_decidew_key =
+      "supewwoot_wewevance_weawtime_sewving_wange_boundawy_houws_ago";
+  pubwic static finaw stwing fuww_awchive_sewving_wange_boundawy_houws_ago_decidew_key =
+      "supewwoot_wewevance_fuww_awchive_sewving_wange_boundawy_houws_ago";
+  p-pubwic static finaw stwing pwotected_sewving_wange_boundawy_houws_ago_decidew_key =
+      "supewwoot_wewevance_pwotected_sewving_wange_boundawy_houws_ago";
 
-  private ServingRangeProvider getFullArchiveServingRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new FullArchiveServingRangeProvider(
-        decider, FULL_ARCHIVE_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  pwivate sewvingwangepwovidew g-getfuwwawchivesewvingwangepwovidew(finaw seawchdecidew d-decidew)
+      t-thwows exception {
+    w-wetuwn nyew f-fuwwawchivesewvingwangepwovidew(
+        decidew, mya fuww_awchive_sewving_wange_boundawy_houws_ago_decidew_key);
   }
 
-  private ServingRangeProvider getRealtimeServingRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new RealtimeServingRangeProvider(
-        decider, REALTIME_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  p-pwivate sewvingwangepwovidew getweawtimesewvingwangepwovidew(finaw s-seawchdecidew decidew)
+      thwows exception {
+    wetuwn nyew weawtimesewvingwangepwovidew(
+        decidew, 😳 weawtime_sewving_wange_boundawy_houws_ago_decidew_key);
   }
 
-  private ServingRangeProvider getProtectedServingRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new RealtimeServingRangeProvider(
-        decider, PROTECTED_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  pwivate s-sewvingwangepwovidew getpwotectedsewvingwangepwovidew(finaw s-seawchdecidew d-decidew)
+      t-thwows exception {
+    wetuwn nyew weawtimesewvingwangepwovidew(
+        decidew, pwotected_sewving_wange_boundawy_houws_ago_decidew_key);
   }
 
-  @Provides
-  @Singleton
-  @Named(FULL_ARCHIVE_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesFullArchiveTimeRangeFilter(SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
-        getFullArchiveServingRangeProvider(decider));
+  @pwovides
+  @singweton
+  @named(fuww_awchive_time_wange_fiwtew)
+  p-pwivate e-eawwybiwdtimewangefiwtew pwovidesfuwwawchivetimewangefiwtew(seawchdecidew decidew)
+      thwows e-exception {
+    w-wetuwn eawwybiwdtimewangefiwtew.newtimewangefiwtewwithoutquewywewwitew(
+        getfuwwawchivesewvingwangepwovidew(decidew));
   }
 
-  @Provides
-  @Singleton
-  @Named(REALTIME_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesRealtimeTimeRangeFilter(SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
-        getRealtimeServingRangeProvider(decider));
+  @pwovides
+  @singweton
+  @named(weawtime_time_wange_fiwtew)
+  p-pwivate eawwybiwdtimewangefiwtew p-pwovidesweawtimetimewangefiwtew(seawchdecidew decidew)
+      thwows exception {
+    w-wetuwn eawwybiwdtimewangefiwtew.newtimewangefiwtewwithoutquewywewwitew(
+        g-getweawtimesewvingwangepwovidew(decidew));
   }
 
-  @Provides
-  @Singleton
-  @Named(PROTECTED_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesProtectedTimeRangeFilter(SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
-        getProtectedServingRangeProvider(decider));
+  @pwovides
+  @singweton
+  @named(pwotected_time_wange_fiwtew)
+  pwivate eawwybiwdtimewangefiwtew p-pwovidespwotectedtimewangefiwtew(seawchdecidew decidew)
+      t-thwows exception {
+    wetuwn eawwybiwdtimewangefiwtew.newtimewangefiwtewwithoutquewywewwitew(
+        getpwotectedsewvingwangepwovidew(decidew));
   }
 }

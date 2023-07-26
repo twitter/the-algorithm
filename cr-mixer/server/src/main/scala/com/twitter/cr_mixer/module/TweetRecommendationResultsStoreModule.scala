@@ -1,32 +1,32 @@
-package com.twitter.cr_mixer.module
+package com.twittew.cw_mixew.moduwe
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetResponse
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.hermit.store.common.ReadableWritableStore
-import com.twitter.hermit.store.common.ObservedReadableWritableMemcacheStore
-import com.twitter.simclusters_v2.common.UserId
-import javax.inject.Named
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.bijection.scwooge.binawyscawacodec
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.cw_mixew.modew.moduwenames
+i-impowt c-com.twittew.cw_mixew.thwiftscawa.cwmixewtweetwesponse
+impowt com.twittew.finagwe.memcached.{cwient => memcachedcwient}
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.inject.twittewmoduwe
+impowt c-com.twittew.hewmit.stowe.common.weadabwewwitabwestowe
+impowt com.twittew.hewmit.stowe.common.obsewvedweadabwewwitabwememcachestowe
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt javax.inject.named
 
-object TweetRecommendationResultsStoreModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def providesTweetRecommendationResultsStore(
-    @Named(ModuleNames.TweetRecommendationResultsCache) tweetRecommendationResultsCacheClient: MemcachedClient,
-    statsReceiver: StatsReceiver
-  ): ReadableWritableStore[UserId, CrMixerTweetResponse] = {
-    ObservedReadableWritableMemcacheStore.fromCacheClient(
-      cacheClient = tweetRecommendationResultsCacheClient,
-      ttl = 24.hours)(
-      valueInjection = BinaryScalaCodec(CrMixerTweetResponse),
-      statsReceiver = statsReceiver.scope("TweetRecommendationResultsMemcacheStore"),
-      keyToString = { k: UserId => k.toString }
+object tweetwecommendationwesuwtsstowemoduwe extends twittewmoduwe {
+  @pwovides
+  @singweton
+  d-def pwovidestweetwecommendationwesuwtsstowe(
+    @named(moduwenames.tweetwecommendationwesuwtscache) tweetwecommendationwesuwtscachecwient: m-memcachedcwient, (U ﹏ U)
+    s-statsweceivew: statsweceivew
+  ): weadabwewwitabwestowe[usewid, >_< cwmixewtweetwesponse] = {
+    obsewvedweadabwewwitabwememcachestowe.fwomcachecwient(
+      c-cachecwient = tweetwecommendationwesuwtscachecwient, rawr x3
+      ttw = 24.houws)(
+      vawueinjection = binawyscawacodec(cwmixewtweetwesponse), mya
+      statsweceivew = s-statsweceivew.scope("tweetwecommendationwesuwtsmemcachestowe"), nyaa~~
+      keytostwing = { k-k: usewid => k-k.tostwing }
     )
   }
 }

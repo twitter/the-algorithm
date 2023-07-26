@@ -1,45 +1,45 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+impowt "tensowfwow/cowe/fwamewowk/tensow_shape.pwoto";
+impowt "tensowfwow/cowe/fwamewowk/types.pwoto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ResourceHandle";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/resource_handle_go_proto";
+o-option cc_enabwe_awenas = t-twue;
+o-option java_outew_cwassname = "wesouwcehandwe";
+o-option java_muwtipwe_fiwes = t-twue;
+o-option java_package = "owg.tensowfwow.fwamewowk";
+o-option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/fwamewowk/wesouwce_handwe_go_pwoto";
 
-// Protocol buffer representing a handle to a tensorflow resource. Handles are
-// not valid across executions, but can be serialized back and forth from within
-// a single run.
-message ResourceHandleProto {
-  // Unique name for the device containing the resource.
-  string device = 1;
+// p-pwotocow buffew wepwesenting a handwe to a tensowfwow wesouwce. òωó handwes awe
+// n-nyot vawid acwoss executions, ʘwʘ but can be sewiawized b-back and fowth fwom within
+// a-a singwe wun. /(^•ω•^)
+message wesouwcehandwepwoto {
+  // unique name fow the device c-containing the wesouwce. ʘwʘ
+  stwing d-device = 1;
 
-  // Container in which this resource is placed.
-  string container = 2;
+  // c-containew in which this wesouwce is pwaced.
+  stwing containew = 2;
 
-  // Unique name of this resource.
-  string name = 3;
+  // unique nyame of t-this wesouwce. σωσ
+  stwing nyame = 3;
 
-  // Hash code for the type of the resource. Is only valid in the same device
-  // and in the same execution.
-  uint64 hash_code = 4;
+  // hash code fow the type of the wesouwce. OwO i-is onwy vawid in the same device
+  // a-and in t-the same execution. 😳😳😳
+  u-uint64 hash_code = 4;
 
-  // For debug-only, the name of the type pointed to by this handle, if
-  // available.
-  string maybe_type_name = 5;
+  // f-fow debug-onwy, 😳😳😳 the nyame of the type pointed t-to by this handwe, o.O if
+  // avaiwabwe.
+  stwing maybe_type_name = 5;
 
-  // Protocol buffer representing a pair of (data type, tensor shape).
-  message DtypeAndShape {
-    DataType dtype = 1;
-    TensorShapeProto shape = 2;
+  // p-pwotocow buffew wepwesenting a paiw of (data type, ( ͡o ω ͡o ) tensow shape). (U ﹏ U)
+  message dtypeandshape {
+    d-datatype dtype = 1;
+    t-tensowshapepwoto s-shape = 2;
   }
 
-  // Data types and shapes for the underlying resource.
-  repeated DtypeAndShape dtypes_and_shapes = 6;
+  // d-data types and shapes fow the undewwying wesouwce. (///ˬ///✿)
+  wepeated d-dtypeandshape d-dtypes_and_shapes = 6;
 
-  reserved 7;
+  wesewved 7;
 }

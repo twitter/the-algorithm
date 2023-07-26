@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.service.exceptions
+package com.twittew.fowwow_wecommendations.sewvice.exceptions
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.inject.Logging
-import com.twitter.util.Future
-import javax.inject.Singleton
+impowt c-com.twittew.finatwa.thwift.exceptions.exceptionmappew
+i-impowt c-com.twittew.inject.wogging
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class UnknownLoggingExceptionMapper extends ExceptionMapper[Exception, Throwable] with Logging {
-  def handleException(throwable: Exception): Future[Throwable] = {
-    error(
-      s"Unmapped Exception: ${throwable.getMessage} - ${throwable.getStackTrace.mkString(", \n\t")}",
-      throwable
+@singweton
+c-cwass unknownwoggingexceptionmappew extends exceptionmappew[exception, (⑅˘꒳˘) thwowabwe] with wogging {
+  d-def handweexception(thwowabwe: exception): futuwe[thwowabwe] = {
+    e-ewwow(
+      s"unmapped e-exception: ${thwowabwe.getmessage} - ${thwowabwe.getstacktwace.mkstwing(", (U ᵕ U❁) \n\t")}", -.-
+      thwowabwe
     )
 
-    Future.exception(throwable)
+    futuwe.exception(thwowabwe)
   }
 }

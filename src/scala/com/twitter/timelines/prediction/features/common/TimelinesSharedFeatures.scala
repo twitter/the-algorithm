@@ -1,759 +1,759 @@
-package com.twitter.timelines.prediction.features.common
+package com.twittew.timewines.pwediction.featuwes.common
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.ml.api.Feature.Binary
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.Feature.Discrete
-import com.twitter.ml.api.Feature.SparseBinary
-import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api.Feature.Text
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import scala.collection.JavaConverters._
+impowt c-com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+i-impowt c-com.twittew.mw.api.featuwe.binawy
+i-impowt com.twittew.mw.api.featuwe.continuous
+i-impowt com.twittew.mw.api.featuwe.discwete
+i-impowt c-com.twittew.mw.api.featuwe.spawsebinawy
+i-impowt com.twittew.mw.api.featuwe.spawsecontinuous
+impowt com.twittew.mw.api.featuwe.text
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.typedaggwegategwoup
+impowt scawa.cowwection.javaconvewtews._
 
-object TimelinesSharedFeatures extends TimelinesSharedFeatures("")
-object InReplyToTweetTimelinesSharedFeatures extends TimelinesSharedFeatures("in_reply_to_tweet")
+object t-timewinesshawedfeatuwes extends timewinesshawedfeatuwes("")
+o-object inwepwytotweettimewinesshawedfeatuwes extends timewinesshawedfeatuwes("in_wepwy_to_tweet")
 
 /**
- * Defines shared features
+ * d-defines shawed featuwes
  */
-class TimelinesSharedFeatures(prefix: String) {
-  private def name(featureName: String): String = {
-    if (prefix.nonEmpty) {
-      s"$prefix.$featureName"
-    } else {
-      featureName
+cwass timewinesshawedfeatuwes(pwefix: stwing) {
+  p-pwivate def nyame(featuwename: s-stwing): s-stwing = {
+    if (pwefix.nonempty) {
+      s"$pwefix.$featuwename"
+    } ewse {
+      featuwename
     }
   }
 
-  // meta
-  val EXPERIMENT_META = new SparseBinary(
-    name("timelines.meta.experiment_meta"),
-    Set(ExperimentId, ExperimentName).asJava)
+  // m-meta
+  vaw expewiment_meta = nyew spawsebinawy(
+    nyame("timewines.meta.expewiment_meta"),
+    set(expewimentid, mya e-expewimentname).asjava)
 
-  // historically used in the "combined models" to distinguish in-network and out of network tweets.
-  // now the feature denotes which adapter (recap or rectweet) was used to generate the datarecords.
-  // and is used by the data collection pipeline to split the training data.
-  val INJECTION_TYPE = new Discrete(name("timelines.meta.injection_type"))
+  // histowicawwy u-used in the "combined m-modews" t-to distinguish i-in-netwowk and out of nyetwowk tweets. 😳
+  // nyow t-the featuwe denotes which adaptew (wecap ow wectweet) w-was used to genewate the datawecowds. σωσ
+  // and is used by the data cowwection pipewine to s-spwit the twaining data. ( ͡o ω ͡o )
+  vaw i-injection_type = n-nyew discwete(name("timewines.meta.injection_type"))
 
-  // Used to indicate which injection module is this
-  val INJECTION_MODULE_NAME = new Text(name("timelines.meta.injection_module_name"))
+  // u-used to indicate which injection moduwe is this
+  vaw i-injection_moduwe_name = n-nyew text(name("timewines.meta.injection_moduwe_name"))
 
-  val LIST_ID = new Discrete(name("timelines.meta.list_id"))
-  val LIST_IS_PINNED = new Binary(name("timelines.meta.list_is_pinned"))
+  vaw wist_id = n-nyew discwete(name("timewines.meta.wist_id"))
+  v-vaw wist_is_pinned = nyew binawy(name("timewines.meta.wist_is_pinned"))
 
-  // internal id per each PS request. mainly to join back commomn features and candidate features later
-  val PREDICTION_REQUEST_ID = new Discrete(name("timelines.meta.prediction_request_id"))
-  // internal id per each TLM request. mainly to deduplicate re-served cached tweets in logging
-  val SERVED_REQUEST_ID = new Discrete(name("timelines.meta.served_request_id"))
-  // internal id used for join key in kafka logging, equal to servedRequestId if tweet is cached,
-  // else equal to predictionRequestId
-  val SERVED_ID = new Discrete(name("timelines.meta.served_id"))
-  val REQUEST_JOIN_ID = new Discrete(name("timelines.meta.request_join_id"))
+  // i-intewnaw id pew each ps wequest. m-mainwy to join back commomn featuwes and candidate f-featuwes watew
+  vaw pwediction_wequest_id = n-nyew discwete(name("timewines.meta.pwediction_wequest_id"))
+  // intewnaw id pew e-each twm wequest. XD m-mainwy to dedupwicate we-sewved cached tweets in wogging
+  vaw sewved_wequest_id = nyew discwete(name("timewines.meta.sewved_wequest_id"))
+  // intewnaw id u-used fow join key i-in kafka wogging, :3 equaw to sewvedwequestid i-if t-tweet is cached, :3
+  // e-ewse equaw to pwedictionwequestid
+  vaw sewved_id = nyew d-discwete(name("timewines.meta.sewved_id"))
+  vaw wequest_join_id = nyew discwete(name("timewines.meta.wequest_join_id"))
 
-  // Internal boolean flag per tweet, whether the tweet is served from RankedTweetsCache: TQ-14050
-  // this feature should not be trained on, blacklisted in feature_config: D838346
-  val IS_READ_FROM_CACHE = new Binary(name("timelines.meta.is_read_from_cache"))
+  // intewnaw boowean f-fwag pew tweet, (⑅˘꒳˘) whethew the tweet i-is sewved fwom w-wankedtweetscache: t-tq-14050
+  // this featuwe shouwd n-nyot be twained o-on, òωó bwackwisted i-in featuwe_config: d-d838346
+  vaw is_wead_fwom_cache = nyew b-binawy(name("timewines.meta.is_wead_fwom_cache"))
 
-  // model score discounts
-  val PHOTO_DISCOUNT = new Continuous(name("timelines.score_discounts.photo"))
-  val VIDEO_DISCOUNT = new Continuous(name("timelines.score_discounts.video"))
-  val TWEET_HEIGHT_DISCOUNT = new Continuous(name("timelines.score_discounts.tweet_height"))
-  val TOXICITY_DISCOUNT = new Continuous(name("timelines.score_discounts.toxicity"))
+  // m-modew scowe d-discounts
+  v-vaw photo_discount = n-nyew continuous(name("timewines.scowe_discounts.photo"))
+  vaw video_discount = nyew continuous(name("timewines.scowe_discounts.video"))
+  vaw tweet_height_discount = n-nyew continuous(name("timewines.scowe_discounts.tweet_height"))
+  vaw toxicity_discount = nyew continuous(name("timewines.scowe_discounts.toxicity"))
 
   // engagements
-  val ENGAGEMENT_TYPE = new Discrete(name("timelines.engagement.type"))
-  val PREDICTED_IS_FAVORITED =
-    new Continuous(name("timelines.engagement_predicted.is_favorited"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_RETWEETED =
-    new Continuous(name("timelines.engagement_predicted.is_retweeted"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_QUOTED =
-    new Continuous(name("timelines.engagement_predicted.is_quoted"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_REPLIED =
-    new Continuous(name("timelines.engagement_predicted.is_replied"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_OPEN_LINKED = new Continuous(
-    name("timelines.engagement_predicted.is_open_linked"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_GOOD_OPEN_LINK = new Continuous(
-    name("timelines.engagement_predicted.is_good_open_link"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_PROFILE_CLICKED = new Continuous(
-    name("timelines.engagement_predicted.is_profile_clicked"),
-    Set(EngagementScore).asJava
+  vaw engagement_type = n-nyew discwete(name("timewines.engagement.type"))
+  vaw pwedicted_is_favowited =
+    nyew continuous(name("timewines.engagement_pwedicted.is_favowited"), mya s-set(engagementscowe).asjava)
+  v-vaw pwedicted_is_wetweeted =
+    n-nyew continuous(name("timewines.engagement_pwedicted.is_wetweeted"), 😳😳😳 set(engagementscowe).asjava)
+  v-vaw pwedicted_is_quoted =
+    nyew continuous(name("timewines.engagement_pwedicted.is_quoted"), :3 s-set(engagementscowe).asjava)
+  v-vaw pwedicted_is_wepwied =
+    nyew continuous(name("timewines.engagement_pwedicted.is_wepwied"), >_< set(engagementscowe).asjava)
+  vaw pwedicted_is_open_winked = nyew continuous(
+    nyame("timewines.engagement_pwedicted.is_open_winked"), 🥺
+    s-set(engagementscowe).asjava)
+  vaw pwedicted_is_good_open_wink = n-nyew continuous(
+    n-nyame("timewines.engagement_pwedicted.is_good_open_wink"), (ꈍᴗꈍ)
+    set(engagementscowe).asjava)
+  v-vaw pwedicted_is_pwofiwe_cwicked = nyew continuous(
+    n-nyame("timewines.engagement_pwedicted.is_pwofiwe_cwicked"), rawr x3
+    s-set(engagementscowe).asjava
   )
-  val PREDICTED_IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED = new Continuous(
-    name("timelines.engagement_predicted.is_profile_clicked_and_profile_engaged"),
-    Set(EngagementScore).asJava
+  vaw pwedicted_is_pwofiwe_cwicked_and_pwofiwe_engaged = nyew c-continuous(
+    n-nyame("timewines.engagement_pwedicted.is_pwofiwe_cwicked_and_pwofiwe_engaged"), (U ﹏ U)
+    set(engagementscowe).asjava
   )
-  val PREDICTED_IS_CLICKED =
-    new Continuous(name("timelines.engagement_predicted.is_clicked"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_PHOTO_EXPANDED = new Continuous(
-    name("timelines.engagement_predicted.is_photo_expanded"),
-    Set(EngagementScore).asJava
+  vaw pwedicted_is_cwicked =
+    nyew continuous(name("timewines.engagement_pwedicted.is_cwicked"), ( ͡o ω ͡o ) set(engagementscowe).asjava)
+  v-vaw pwedicted_is_photo_expanded = n-nyew c-continuous(
+    nyame("timewines.engagement_pwedicted.is_photo_expanded"), 😳😳😳
+    s-set(engagementscowe).asjava
   )
-  val PREDICTED_IS_FOLLOWED =
-    new Continuous(name("timelines.engagement_predicted.is_followed"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_DONT_LIKE =
-    new Continuous(name("timelines.engagement_predicted.is_dont_like"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_VIDEO_PLAYBACK_50 = new Continuous(
-    name("timelines.engagement_predicted.is_video_playback_50"),
-    Set(EngagementScore).asJava
+  v-vaw pwedicted_is_fowwowed =
+    nyew continuous(name("timewines.engagement_pwedicted.is_fowwowed"), 🥺 s-set(engagementscowe).asjava)
+  vaw pwedicted_is_dont_wike =
+    nyew continuous(name("timewines.engagement_pwedicted.is_dont_wike"), òωó set(engagementscowe).asjava)
+  vaw pwedicted_is_video_pwayback_50 = n-nyew continuous(
+    n-name("timewines.engagement_pwedicted.is_video_pwayback_50"),
+    set(engagementscowe).asjava
   )
-  val PREDICTED_IS_VIDEO_QUALITY_VIEWED = new Continuous(
-    name("timelines.engagement_predicted.is_video_quality_viewed"),
-    Set(EngagementScore).asJava
+  vaw pwedicted_is_video_quawity_viewed = n-nyew continuous(
+    n-nyame("timewines.engagement_pwedicted.is_video_quawity_viewed"), XD
+    set(engagementscowe).asjava
   )
-  val PREDICTED_IS_GOOD_CLICKED_V1 = new Continuous(
-    name("timelines.engagement_predicted.is_good_clicked_convo_desc_favorited_or_replied"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_GOOD_CLICKED_V2 = new Continuous(
-    name("timelines.engagement_predicted.is_good_clicked_convo_desc_v2"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_TWEET_DETAIL_DWELLED_8_SEC = new Continuous(
-    name("timelines.engagement_predicted.is_tweet_detail_dwelled_8_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_TWEET_DETAIL_DWELLED_15_SEC = new Continuous(
-    name("timelines.engagement_predicted.is_tweet_detail_dwelled_15_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_TWEET_DETAIL_DWELLED_25_SEC = new Continuous(
-    name("timelines.engagement_predicted.is_tweet_detail_dwelled_25_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_TWEET_DETAIL_DWELLED_30_SEC = new Continuous(
-    name("timelines.engagement_predicted.is_tweet_detail_dwelled_30_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_GOOD_CLICKED_WITH_DWELL_SUM_GTE_60S = new Continuous(
-    name(
-      "timelines.engagement_predicted.is_good_clicked_convo_desc_favorited_or_replied_or_dwell_sum_gte_60_secs"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_FAVORITED_FAV_ENGAGED_BY_AUTHOR = new Continuous(
-    name("timelines.engagement_predicted.is_favorited_fav_engaged_by_author"),
-    Set(EngagementScore).asJava)
+  vaw pwedicted_is_good_cwicked_v1 = nyew c-continuous(
+    nyame("timewines.engagement_pwedicted.is_good_cwicked_convo_desc_favowited_ow_wepwied"), XD
+    set(engagementscowe).asjava)
+  vaw pwedicted_is_good_cwicked_v2 = nyew continuous(
+    n-nyame("timewines.engagement_pwedicted.is_good_cwicked_convo_desc_v2"), ( ͡o ω ͡o )
+    set(engagementscowe).asjava)
+  vaw pwedicted_is_tweet_detaiw_dwewwed_8_sec = n-nyew continuous(
+    n-nyame("timewines.engagement_pwedicted.is_tweet_detaiw_dwewwed_8_sec"), >w<
+    set(engagementscowe).asjava)
+  vaw pwedicted_is_tweet_detaiw_dwewwed_15_sec = nyew c-continuous(
+    n-nyame("timewines.engagement_pwedicted.is_tweet_detaiw_dwewwed_15_sec"), mya
+    set(engagementscowe).asjava)
+  vaw pwedicted_is_tweet_detaiw_dwewwed_25_sec = nyew c-continuous(
+    nyame("timewines.engagement_pwedicted.is_tweet_detaiw_dwewwed_25_sec"), (ꈍᴗꈍ)
+    s-set(engagementscowe).asjava)
+  vaw pwedicted_is_tweet_detaiw_dwewwed_30_sec = nyew c-continuous(
+    nyame("timewines.engagement_pwedicted.is_tweet_detaiw_dwewwed_30_sec"), -.-
+    s-set(engagementscowe).asjava)
+  v-vaw pwedicted_is_good_cwicked_with_dweww_sum_gte_60s = n-new continuous(
+    nyame(
+      "timewines.engagement_pwedicted.is_good_cwicked_convo_desc_favowited_ow_wepwied_ow_dweww_sum_gte_60_secs"), (⑅˘꒳˘)
+    s-set(engagementscowe).asjava)
+  v-vaw pwedicted_is_favowited_fav_engaged_by_authow = n-nyew continuous(
+    nyame("timewines.engagement_pwedicted.is_favowited_fav_engaged_by_authow"), (U ﹏ U)
+    s-set(engagementscowe).asjava)
 
-  val PREDICTED_IS_REPORT_TWEET_CLICKED =
-    new Continuous(
-      name("timelines.engagement_predicted.is_report_tweet_clicked"),
-      Set(EngagementScore).asJava)
-  val PREDICTED_IS_NEGATIVE_FEEDBACK = new Continuous(
-    name("timelines.engagement_predicted.is_negative_feedback"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_NEGATIVE_FEEDBACK_V2 = new Continuous(
-    name("timelines.engagement_predicted.is_negative_feedback_v2"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_WEAK_NEGATIVE_FEEDBACK = new Continuous(
-    name("timelines.engagement_predicted.is_weak_negative_feedback"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_STRONG_NEGATIVE_FEEDBACK = new Continuous(
-    name("timelines.engagement_predicted.is_strong_negative_feedback"),
-    Set(EngagementScore).asJava)
+  v-vaw pwedicted_is_wepowt_tweet_cwicked =
+    nyew continuous(
+      nyame("timewines.engagement_pwedicted.is_wepowt_tweet_cwicked"), σωσ
+      s-set(engagementscowe).asjava)
+  v-vaw pwedicted_is_negative_feedback = n-nyew continuous(
+    nyame("timewines.engagement_pwedicted.is_negative_feedback"), :3
+    set(engagementscowe).asjava)
+  vaw p-pwedicted_is_negative_feedback_v2 = nyew continuous(
+    n-nyame("timewines.engagement_pwedicted.is_negative_feedback_v2"), /(^•ω•^)
+    s-set(engagementscowe).asjava)
+  vaw pwedicted_is_weak_negative_feedback = nyew continuous(
+    nyame("timewines.engagement_pwedicted.is_weak_negative_feedback"), σωσ
+    set(engagementscowe).asjava)
+  v-vaw pwedicted_is_stwong_negative_feedback = n-nyew continuous(
+    n-nyame("timewines.engagement_pwedicted.is_stwong_negative_feedback"), (U ᵕ U❁)
+    set(engagementscowe).asjava)
 
-  val PREDICTED_IS_DWELLED_IN_BOUNDS_V1 = new Continuous(
-    name("timelines.engagement_predicted.is_dwelled_in_bounds_v1"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_DWELL_NORMALIZED_OVERALL = new Continuous(
-    name("timelines.engagement_predicted.dwell_normalized_overall"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_DWELL_CDF =
-    new Continuous(name("timelines.engagement_predicted.dwell_cdf"), Set(EngagementScore).asJava)
-  val PREDICTED_DWELL_CDF_OVERALL = new Continuous(
-    name("timelines.engagement_predicted.dwell_cdf_overall"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_DWELLED =
-    new Continuous(name("timelines.engagement_predicted.is_dwelled"), Set(EngagementScore).asJava)
+  vaw p-pwedicted_is_dwewwed_in_bounds_v1 = nyew continuous(
+    n-nyame("timewines.engagement_pwedicted.is_dwewwed_in_bounds_v1"), 😳
+    set(engagementscowe).asjava)
+  vaw pwedicted_dweww_nowmawized_ovewaww = nyew continuous(
+    nyame("timewines.engagement_pwedicted.dweww_nowmawized_ovewaww"), ʘwʘ
+    set(engagementscowe).asjava)
+  v-vaw pwedicted_dweww_cdf =
+    nyew continuous(name("timewines.engagement_pwedicted.dweww_cdf"), (⑅˘꒳˘) s-set(engagementscowe).asjava)
+  vaw pwedicted_dweww_cdf_ovewaww = n-nyew continuous(
+    nyame("timewines.engagement_pwedicted.dweww_cdf_ovewaww"), ^•ﻌ•^
+    s-set(engagementscowe).asjava)
+  vaw pwedicted_is_dwewwed =
+    n-nyew continuous(name("timewines.engagement_pwedicted.is_dwewwed"), nyaa~~ s-set(engagementscowe).asjava)
 
-  val PREDICTED_IS_HOME_LATEST_VISITED = new Continuous(
-    name("timelines.engagement_predicted.is_home_latest_visited"),
-    Set(EngagementScore).asJava)
+  v-vaw pwedicted_is_home_watest_visited = n-nyew continuous(
+    n-nyame("timewines.engagement_pwedicted.is_home_watest_visited"), XD
+    set(engagementscowe).asjava)
 
-  val PREDICTED_IS_BOOKMARKED = new Continuous(
-    name("timelines.engagement_predicted.is_bookmarked"),
-    Set(EngagementScore).asJava)
+  vaw pwedicted_is_bookmawked = nyew continuous(
+    nyame("timewines.engagement_pwedicted.is_bookmawked"), /(^•ω•^)
+    set(engagementscowe).asjava)
 
-  val PREDICTED_IS_SHARED =
-    new Continuous(name("timelines.engagement_predicted.is_shared"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_SHARE_MENU_CLICKED = new Continuous(
-    name("timelines.engagement_predicted.is_share_menu_clicked"),
-    Set(EngagementScore).asJava)
+  vaw pwedicted_is_shawed =
+    n-nyew continuous(name("timewines.engagement_pwedicted.is_shawed"), (U ᵕ U❁) s-set(engagementscowe).asjava)
+  v-vaw pwedicted_is_shawe_menu_cwicked = nyew c-continuous(
+    nyame("timewines.engagement_pwedicted.is_shawe_menu_cwicked"), mya
+    set(engagementscowe).asjava)
 
-  val PREDICTED_IS_PROFILE_DWELLED_20_SEC = new Continuous(
-    name("timelines.engagement_predicted.is_profile_dwelled_20_sec"),
-    Set(EngagementScore).asJava)
+  vaw pwedicted_is_pwofiwe_dwewwed_20_sec = n-nyew c-continuous(
+    nyame("timewines.engagement_pwedicted.is_pwofiwe_dwewwed_20_sec"), (ˆ ﻌ ˆ)♡
+    s-set(engagementscowe).asjava)
 
-  val PREDICTED_IS_FULLSCREEN_VIDEO_DWELLED_5_SEC = new Continuous(
-    name("timelines.engagement_predicted.is_fullscreen_video_dwelled_5_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_FULLSCREEN_VIDEO_DWELLED_10_SEC = new Continuous(
-    name("timelines.engagement_predicted.is_fullscreen_video_dwelled_10_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_FULLSCREEN_VIDEO_DWELLED_20_SEC = new Continuous(
-    name("timelines.engagement_predicted.is_fullscreen_video_dwelled_20_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_FULLSCREEN_VIDEO_DWELLED_30_SEC = new Continuous(
-    name("timelines.engagement_predicted.is_fullscreen_video_dwelled_30_sec"),
-    Set(EngagementScore).asJava)
+  vaw pwedicted_is_fuwwscween_video_dwewwed_5_sec = nyew c-continuous(
+    n-nyame("timewines.engagement_pwedicted.is_fuwwscween_video_dwewwed_5_sec"), (✿oωo)
+    set(engagementscowe).asjava)
+  vaw p-pwedicted_is_fuwwscween_video_dwewwed_10_sec = n-nyew continuous(
+    nyame("timewines.engagement_pwedicted.is_fuwwscween_video_dwewwed_10_sec"), (✿oωo)
+    set(engagementscowe).asjava)
+  vaw pwedicted_is_fuwwscween_video_dwewwed_20_sec = nyew continuous(
+    n-nyame("timewines.engagement_pwedicted.is_fuwwscween_video_dwewwed_20_sec"), òωó
+    s-set(engagementscowe).asjava)
+  v-vaw p-pwedicted_is_fuwwscween_video_dwewwed_30_sec = n-nyew continuous(
+    nyame("timewines.engagement_pwedicted.is_fuwwscween_video_dwewwed_30_sec"), (˘ω˘)
+    s-set(engagementscowe).asjava)
 
-  // Please use this timestamp, not the `meta.timestamp`, for the actual served timestamp.
-  val SERVED_TIMESTAMP =
-    new Discrete("timelines.meta.timestamp.served", Set(PrivateTimestamp).asJava)
+  // p-pwease use this timestamp, (ˆ ﻌ ˆ)♡ n-nyot the `meta.timestamp`, f-fow the actuaw sewved t-timestamp. ( ͡o ω ͡o )
+  vaw sewved_timestamp =
+    nyew d-discwete("timewines.meta.timestamp.sewved", rawr x3 set(pwivatetimestamp).asjava)
 
-  // timestamp when the engagement has occurred. do not train on these features
-  val TIMESTAMP_FAVORITED =
-    new Discrete("timelines.meta.timestamp.engagement.favorited", Set(PublicTimestamp).asJava)
-  val TIMESTAMP_RETWEETED =
-    new Discrete("timelines.meta.timestamp.engagement.retweeted", Set(PublicTimestamp).asJava)
-  val TIMESTAMP_REPLIED =
-    new Discrete("timelines.meta.timestamp.engagement.replied", Set(PublicTimestamp).asJava)
-  val TIMESTAMP_PROFILE_CLICKED = new Discrete(
-    "timelines.meta.timestamp.engagement.profile_clicked",
-    Set(PrivateTimestamp).asJava)
-  val TIMESTAMP_CLICKED =
-    new Discrete("timelines.meta.timestamp.engagement.clicked", Set(PrivateTimestamp).asJava)
-  val TIMESTAMP_PHOTO_EXPANDED =
-    new Discrete("timelines.meta.timestamp.engagement.photo_expanded", Set(PrivateTimestamp).asJava)
-  val TIMESTAMP_DWELLED =
-    new Discrete("timelines.meta.timestamp.engagement.dwelled", Set(PrivateTimestamp).asJava)
-  val TIMESTAMP_VIDEO_PLAYBACK_50 = new Discrete(
-    "timelines.meta.timestamp.engagement.video_playback_50",
-    Set(PrivateTimestamp).asJava)
-  // reply engaged by author
-  val TIMESTAMP_REPLY_FAVORITED_BY_AUTHOR = new Discrete(
-    "timelines.meta.timestamp.engagement.reply_favorited_by_author",
-    Set(PublicTimestamp).asJava)
-  val TIMESTAMP_REPLY_REPLIED_BY_AUTHOR = new Discrete(
-    "timelines.meta.timestamp.engagement.reply_replied_by_author",
-    Set(PublicTimestamp).asJava)
-  val TIMESTAMP_REPLY_RETWEETED_BY_AUTHOR = new Discrete(
-    "timelines.meta.timestamp.engagement.reply_retweeted_by_author",
-    Set(PublicTimestamp).asJava)
-  // fav engaged by author
-  val TIMESTAMP_FAV_FAVORITED_BY_AUTHOR = new Discrete(
-    "timelines.meta.timestamp.engagement.fav_favorited_by_author",
-    Set(PublicTimestamp).asJava)
-  val TIMESTAMP_FAV_REPLIED_BY_AUTHOR = new Discrete(
-    "timelines.meta.timestamp.engagement.fav_replied_by_author",
-    Set(PublicTimestamp).asJava)
-  val TIMESTAMP_FAV_RETWEETED_BY_AUTHOR = new Discrete(
-    "timelines.meta.timestamp.engagement.fav_retweeted_by_author",
-    Set(PublicTimestamp).asJava)
-  val TIMESTAMP_FAV_FOLLOWED_BY_AUTHOR = new Discrete(
-    "timelines.meta.timestamp.engagement.fav_followed_by_author",
-    Set(PublicTimestamp).asJava)
-  // good click
-  val TIMESTAMP_GOOD_CLICK_CONVO_DESC_FAVORITED = new Discrete(
-    "timelines.meta.timestamp.engagement.good_click_convo_desc_favorited",
-    Set(PrivateTimestamp).asJava)
-  val TIMESTAMP_GOOD_CLICK_CONVO_DESC_REPLIIED = new Discrete(
-    "timelines.meta.timestamp.engagement.good_click_convo_desc_replied",
-    Set(PrivateTimestamp).asJava)
-  val TIMESTAMP_GOOD_CLICK_CONVO_DESC_PROFILE_CLICKED = new Discrete(
-    "timelines.meta.timestamp.engagement.good_click_convo_desc_profiile_clicked",
-    Set(PrivateTimestamp).asJava)
-  val TIMESTAMP_NEGATIVE_FEEDBACK = new Discrete(
-    "timelines.meta.timestamp.engagement.negative_feedback",
-    Set(PrivateTimestamp).asJava)
-  val TIMESTAMP_REPORT_TWEET_CLICK =
-    new Discrete(
-      "timelines.meta.timestamp.engagement.report_tweet_click",
-      Set(PrivateTimestamp).asJava)
-  val TIMESTAMP_IMPRESSED =
-    new Discrete("timelines.meta.timestamp.engagement.impressed", Set(PublicTimestamp).asJava)
-  val TIMESTAMP_TWEET_DETAIL_DWELLED =
-    new Discrete(
-      "timelines.meta.timestamp.engagement.tweet_detail_dwelled",
-      Set(PublicTimestamp).asJava)
-  val TIMESTAMP_PROFILE_DWELLED =
-    new Discrete("timelines.meta.timestamp.engagement.profile_dwelled", Set(PublicTimestamp).asJava)
-  val TIMESTAMP_FULLSCREEN_VIDEO_DWELLED =
-    new Discrete(
-      "timelines.meta.timestamp.engagement.fullscreen_video_dwelled",
-      Set(PublicTimestamp).asJava)
-  val TIMESTAMP_LINK_DWELLED =
-    new Discrete("timelines.meta.timestamp.engagement.link_dwelled", Set(PublicTimestamp).asJava)
+  // t-timestamp when t-the engagement has occuwwed. (˘ω˘) do n-nyot twain on these featuwes
+  vaw timestamp_favowited =
+    n-nyew d-discwete("timewines.meta.timestamp.engagement.favowited", òωó s-set(pubwictimestamp).asjava)
+  vaw timestamp_wetweeted =
+    nyew discwete("timewines.meta.timestamp.engagement.wetweeted", ( ͡o ω ͡o ) set(pubwictimestamp).asjava)
+  v-vaw timestamp_wepwied =
+    nyew discwete("timewines.meta.timestamp.engagement.wepwied", σωσ set(pubwictimestamp).asjava)
+  vaw t-timestamp_pwofiwe_cwicked = new d-discwete(
+    "timewines.meta.timestamp.engagement.pwofiwe_cwicked", (U ﹏ U)
+    set(pwivatetimestamp).asjava)
+  v-vaw timestamp_cwicked =
+    n-nyew discwete("timewines.meta.timestamp.engagement.cwicked", rawr s-set(pwivatetimestamp).asjava)
+  vaw timestamp_photo_expanded =
+    nyew discwete("timewines.meta.timestamp.engagement.photo_expanded", -.- s-set(pwivatetimestamp).asjava)
+  vaw timestamp_dwewwed =
+    n-nyew discwete("timewines.meta.timestamp.engagement.dwewwed", ( ͡o ω ͡o ) s-set(pwivatetimestamp).asjava)
+  vaw timestamp_video_pwayback_50 = n-nyew discwete(
+    "timewines.meta.timestamp.engagement.video_pwayback_50", >_<
+    set(pwivatetimestamp).asjava)
+  // w-wepwy e-engaged by authow
+  v-vaw timestamp_wepwy_favowited_by_authow = nyew discwete(
+    "timewines.meta.timestamp.engagement.wepwy_favowited_by_authow",
+    set(pubwictimestamp).asjava)
+  vaw timestamp_wepwy_wepwied_by_authow = nyew discwete(
+    "timewines.meta.timestamp.engagement.wepwy_wepwied_by_authow", o.O
+    set(pubwictimestamp).asjava)
+  vaw timestamp_wepwy_wetweeted_by_authow = nyew discwete(
+    "timewines.meta.timestamp.engagement.wepwy_wetweeted_by_authow", σωσ
+    set(pubwictimestamp).asjava)
+  // fav engaged b-by authow
+  vaw t-timestamp_fav_favowited_by_authow = new discwete(
+    "timewines.meta.timestamp.engagement.fav_favowited_by_authow", -.-
+    set(pubwictimestamp).asjava)
+  v-vaw timestamp_fav_wepwied_by_authow = n-nyew discwete(
+    "timewines.meta.timestamp.engagement.fav_wepwied_by_authow", σωσ
+    s-set(pubwictimestamp).asjava)
+  vaw timestamp_fav_wetweeted_by_authow = n-nyew discwete(
+    "timewines.meta.timestamp.engagement.fav_wetweeted_by_authow", :3
+    s-set(pubwictimestamp).asjava)
+  v-vaw timestamp_fav_fowwowed_by_authow = nyew discwete(
+    "timewines.meta.timestamp.engagement.fav_fowwowed_by_authow", ^^
+    s-set(pubwictimestamp).asjava)
+  // good c-cwick
+  vaw timestamp_good_cwick_convo_desc_favowited = n-nyew discwete(
+    "timewines.meta.timestamp.engagement.good_cwick_convo_desc_favowited", òωó
+    set(pwivatetimestamp).asjava)
+  v-vaw timestamp_good_cwick_convo_desc_wepwiied = n-nyew discwete(
+    "timewines.meta.timestamp.engagement.good_cwick_convo_desc_wepwied", (ˆ ﻌ ˆ)♡
+    s-set(pwivatetimestamp).asjava)
+  v-vaw timestamp_good_cwick_convo_desc_pwofiwe_cwicked = n-nyew discwete(
+    "timewines.meta.timestamp.engagement.good_cwick_convo_desc_pwofiiwe_cwicked", XD
+    set(pwivatetimestamp).asjava)
+  vaw t-timestamp_negative_feedback = n-nyew discwete(
+    "timewines.meta.timestamp.engagement.negative_feedback", òωó
+    s-set(pwivatetimestamp).asjava)
+  v-vaw timestamp_wepowt_tweet_cwick =
+    nyew discwete(
+      "timewines.meta.timestamp.engagement.wepowt_tweet_cwick", (ꈍᴗꈍ)
+      s-set(pwivatetimestamp).asjava)
+  v-vaw t-timestamp_impwessed =
+    nyew d-discwete("timewines.meta.timestamp.engagement.impwessed", UwU set(pubwictimestamp).asjava)
+  vaw timestamp_tweet_detaiw_dwewwed =
+    n-nyew discwete(
+      "timewines.meta.timestamp.engagement.tweet_detaiw_dwewwed", >w<
+      set(pubwictimestamp).asjava)
+  v-vaw timestamp_pwofiwe_dwewwed =
+    n-nyew d-discwete("timewines.meta.timestamp.engagement.pwofiwe_dwewwed", ʘwʘ set(pubwictimestamp).asjava)
+  v-vaw timestamp_fuwwscween_video_dwewwed =
+    nyew d-discwete(
+      "timewines.meta.timestamp.engagement.fuwwscween_video_dwewwed", :3
+      set(pubwictimestamp).asjava)
+  v-vaw timestamp_wink_dwewwed =
+    nyew discwete("timewines.meta.timestamp.engagement.wink_dwewwed", ^•ﻌ•^ s-set(pubwictimestamp).asjava)
 
-  // these are used to dup and split the negative instances during streaming processing (kafka)
-  val TRAINING_FOR_FAVORITED =
-    new Binary("timelines.meta.training_data.for_favorited", Set(EngagementId).asJava)
-  val TRAINING_FOR_RETWEETED =
-    new Binary("timelines.meta.training_data.for_retweeted", Set(EngagementId).asJava)
-  val TRAINING_FOR_REPLIED =
-    new Binary("timelines.meta.training_data.for_replied", Set(EngagementId).asJava)
-  val TRAINING_FOR_PROFILE_CLICKED =
-    new Binary("timelines.meta.training_data.for_profile_clicked", Set(EngagementId).asJava)
-  val TRAINING_FOR_CLICKED =
-    new Binary("timelines.meta.training_data.for_clicked", Set(EngagementId).asJava)
-  val TRAINING_FOR_PHOTO_EXPANDED =
-    new Binary("timelines.meta.training_data.for_photo_expanded", Set(EngagementId).asJava)
-  val TRAINING_FOR_VIDEO_PLAYBACK_50 =
-    new Binary("timelines.meta.training_data.for_video_playback_50", Set(EngagementId).asJava)
-  val TRAINING_FOR_NEGATIVE_FEEDBACK =
-    new Binary("timelines.meta.training_data.for_negative_feedback", Set(EngagementId).asJava)
-  val TRAINING_FOR_REPORTED =
-    new Binary("timelines.meta.training_data.for_reported", Set(EngagementId).asJava)
-  val TRAINING_FOR_DWELLED =
-    new Binary("timelines.meta.training_data.for_dwelled", Set(EngagementId).asJava)
-  val TRAINING_FOR_SHARED =
-    new Binary("timelines.meta.training_data.for_shared", Set(EngagementId).asJava)
-  val TRAINING_FOR_SHARE_MENU_CLICKED =
-    new Binary("timelines.meta.training_data.for_share_menu_clicked", Set(EngagementId).asJava)
+  // these awe used to dup and spwit the nyegative instances d-duwing stweaming pwocessing (kafka)
+  v-vaw twaining_fow_favowited =
+    n-nyew binawy("timewines.meta.twaining_data.fow_favowited", (ˆ ﻌ ˆ)♡ set(engagementid).asjava)
+  vaw twaining_fow_wetweeted =
+    n-nyew binawy("timewines.meta.twaining_data.fow_wetweeted", 🥺 set(engagementid).asjava)
+  v-vaw twaining_fow_wepwied =
+    n-nyew binawy("timewines.meta.twaining_data.fow_wepwied", OwO s-set(engagementid).asjava)
+  vaw twaining_fow_pwofiwe_cwicked =
+    n-nyew binawy("timewines.meta.twaining_data.fow_pwofiwe_cwicked", 🥺 s-set(engagementid).asjava)
+  vaw twaining_fow_cwicked =
+    n-nyew binawy("timewines.meta.twaining_data.fow_cwicked", OwO set(engagementid).asjava)
+  v-vaw twaining_fow_photo_expanded =
+    nyew binawy("timewines.meta.twaining_data.fow_photo_expanded", (U ᵕ U❁) s-set(engagementid).asjava)
+  v-vaw twaining_fow_video_pwayback_50 =
+    n-nyew binawy("timewines.meta.twaining_data.fow_video_pwayback_50", ( ͡o ω ͡o ) s-set(engagementid).asjava)
+  v-vaw twaining_fow_negative_feedback =
+    n-nyew binawy("timewines.meta.twaining_data.fow_negative_feedback", ^•ﻌ•^ s-set(engagementid).asjava)
+  vaw twaining_fow_wepowted =
+    n-nyew binawy("timewines.meta.twaining_data.fow_wepowted", o.O s-set(engagementid).asjava)
+  v-vaw twaining_fow_dwewwed =
+    n-nyew binawy("timewines.meta.twaining_data.fow_dwewwed", (⑅˘꒳˘) s-set(engagementid).asjava)
+  v-vaw twaining_fow_shawed =
+    n-nyew binawy("timewines.meta.twaining_data.fow_shawed", (ˆ ﻌ ˆ)♡ s-set(engagementid).asjava)
+  vaw twaining_fow_shawe_menu_cwicked =
+    n-nyew binawy("timewines.meta.twaining_data.fow_shawe_menu_cwicked", :3 set(engagementid).asjava)
 
-  // Warning: do not train on these features
-  val PREDICTED_SCORE = new Continuous(name("timelines.score"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_FAV = new Continuous(name("timelines.score.fav"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_RETWEET =
-    new Continuous(name("timelines.score.retweet"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_REPLY =
-    new Continuous(name("timelines.score.reply"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_OPEN_LINK =
-    new Continuous(name("timelines.score.open_link"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_GOOD_OPEN_LINK =
-    new Continuous(name("timelines.score.good_open_link"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_PROFILE_CLICK =
-    new Continuous(name("timelines.score.profile_click"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_DETAIL_EXPAND =
-    new Continuous(name("timelines.score.detail_expand"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_PHOTO_EXPAND =
-    new Continuous(name("timelines.score.photo_expand"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_PLAYBACK_50 =
-    new Continuous(name("timelines.score.playback_50"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_VIDEO_QUALITY_VIEW =
-    new Continuous(name("timelines.score.video_quality_view"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_DONT_LIKE =
-    new Continuous(name("timelines.score.dont_like"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_PROFILE_CLICKED_AND_PROFILE_ENGAGED =
-    new Continuous(
-      name("timelines.score.profile_clicked_and_profile_engaged"),
-      Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_GOOD_CLICKED_V1 =
-    new Continuous(name("timelines.score.good_clicked_v1"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_GOOD_CLICKED_V2 =
-    new Continuous(name("timelines.score.good_clicked_v2"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_DWELL =
-    new Continuous(name("timelines.score.dwell"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_DWELL_CDF =
-    new Continuous(name("timelines.score.dwell_cfd"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_DWELL_CDF_OVERALL =
-    new Continuous(name("timelines.score.dwell_cfd_overall"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_DWELL_NORMALIZED_OVERALL =
-    new Continuous(name("timelines.score.dwell_normalized_overall"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_NEGATIVE_FEEDBACK =
-    new Continuous(name("timelines.score.negative_feedback"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_NEGATIVE_FEEDBACK_V2 =
-    new Continuous(name("timelines.score.negative_feedback_v2"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_WEAK_NEGATIVE_FEEDBACK =
-    new Continuous(name("timelines.score.weak_negative_feedback"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_STRONG_NEGATIVE_FEEDBACK =
-    new Continuous(name("timelines.score.strong_negative_feedback"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_REPORT_TWEET_CLICKED =
-    new Continuous(name("timelines.score.report_tweet_clicked"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_UNFOLLOW_TOPIC =
-    new Continuous(name("timelines.score.unfollow_topic"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_FOLLOW =
-    new Continuous(name("timelines.score.follow"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_RELEVANCE_PROMPT_YES_CLICKED =
-    new Continuous(
-      name("timelines.score.relevance_prompt_yes_clicked"),
-      Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_BOOKMARK =
-    new Continuous(name("timelines.score.bookmark"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_SHARE =
-    new Continuous(name("timelines.score.share"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_SHARE_MENU_CLICK =
-    new Continuous(name("timelines.score.share_menu_click"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_PROFILE_DWELLED =
-    new Continuous(name("timelines.score.good_profile_dwelled"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_TWEET_DETAIL_DWELLED =
-    new Continuous(name("timelines.score.tweet_detail_dwelled"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_FULLSCREEN_VIDEO_DWELL =
-    new Continuous(name("timelines.score.fullscreen_video_dwell"), Set(EngagementScore).asJava)
+  // w-wawning: do nyot twain on t-these featuwes
+  v-vaw pwedicted_scowe = n-nyew continuous(name("timewines.scowe"), /(^•ω•^) set(engagementscowe).asjava)
+  vaw pwedicted_scowe_fav = nyew continuous(name("timewines.scowe.fav"), òωó s-set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_wetweet =
+    n-nyew continuous(name("timewines.scowe.wetweet"), :3 set(engagementscowe).asjava)
+  vaw pwedicted_scowe_wepwy =
+    nyew continuous(name("timewines.scowe.wepwy"), (˘ω˘) s-set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_open_wink =
+    nyew continuous(name("timewines.scowe.open_wink"), 😳 s-set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_good_open_wink =
+    nyew continuous(name("timewines.scowe.good_open_wink"), σωσ set(engagementscowe).asjava)
+  v-vaw p-pwedicted_scowe_pwofiwe_cwick =
+    n-nyew continuous(name("timewines.scowe.pwofiwe_cwick"), UwU s-set(engagementscowe).asjava)
+  vaw pwedicted_scowe_detaiw_expand =
+    nyew continuous(name("timewines.scowe.detaiw_expand"), -.- s-set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_photo_expand =
+    nyew continuous(name("timewines.scowe.photo_expand"), 🥺 set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_pwayback_50 =
+    new continuous(name("timewines.scowe.pwayback_50"), 😳😳😳 set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_video_quawity_view =
+    n-new continuous(name("timewines.scowe.video_quawity_view"), 🥺 s-set(engagementscowe).asjava)
+  vaw pwedicted_scowe_dont_wike =
+    n-nyew continuous(name("timewines.scowe.dont_wike"), ^^ s-set(engagementscowe).asjava)
+  vaw pwedicted_scowe_pwofiwe_cwicked_and_pwofiwe_engaged =
+    n-nyew continuous(
+      nyame("timewines.scowe.pwofiwe_cwicked_and_pwofiwe_engaged"), ^^;;
+      set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_good_cwicked_v1 =
+    n-nyew c-continuous(name("timewines.scowe.good_cwicked_v1"), >w< s-set(engagementscowe).asjava)
+  vaw pwedicted_scowe_good_cwicked_v2 =
+    n-new c-continuous(name("timewines.scowe.good_cwicked_v2"), σωσ s-set(engagementscowe).asjava)
+  vaw pwedicted_scowe_dweww =
+    n-nyew continuous(name("timewines.scowe.dweww"), >w< set(engagementscowe).asjava)
+  vaw pwedicted_scowe_dweww_cdf =
+    n-nyew continuous(name("timewines.scowe.dweww_cfd"), s-set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_dweww_cdf_ovewaww =
+    nyew continuous(name("timewines.scowe.dweww_cfd_ovewaww"), (⑅˘꒳˘) set(engagementscowe).asjava)
+  vaw pwedicted_scowe_dweww_nowmawized_ovewaww =
+    nyew continuous(name("timewines.scowe.dweww_nowmawized_ovewaww"), òωó s-set(engagementscowe).asjava)
+  vaw pwedicted_scowe_negative_feedback =
+    nyew c-continuous(name("timewines.scowe.negative_feedback"), (⑅˘꒳˘) s-set(engagementscowe).asjava)
+  vaw pwedicted_scowe_negative_feedback_v2 =
+    nyew continuous(name("timewines.scowe.negative_feedback_v2"), (ꈍᴗꈍ) s-set(engagementscowe).asjava)
+  vaw pwedicted_scowe_weak_negative_feedback =
+    n-nyew continuous(name("timewines.scowe.weak_negative_feedback"), rawr x3 s-set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_stwong_negative_feedback =
+    n-nyew continuous(name("timewines.scowe.stwong_negative_feedback"), ( ͡o ω ͡o ) s-set(engagementscowe).asjava)
+  vaw pwedicted_scowe_wepowt_tweet_cwicked =
+    nyew continuous(name("timewines.scowe.wepowt_tweet_cwicked"), UwU set(engagementscowe).asjava)
+  vaw pwedicted_scowe_unfowwow_topic =
+    n-nyew continuous(name("timewines.scowe.unfowwow_topic"), ^^ s-set(engagementscowe).asjava)
+  vaw pwedicted_scowe_fowwow =
+    nyew continuous(name("timewines.scowe.fowwow"), (˘ω˘) set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_wewevance_pwompt_yes_cwicked =
+    nyew continuous(
+      nyame("timewines.scowe.wewevance_pwompt_yes_cwicked"), (ˆ ﻌ ˆ)♡
+      set(engagementscowe).asjava)
+  vaw p-pwedicted_scowe_bookmawk =
+    n-nyew continuous(name("timewines.scowe.bookmawk"), OwO set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_shawe =
+    nyew continuous(name("timewines.scowe.shawe"), 😳 set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_shawe_menu_cwick =
+    n-nyew continuous(name("timewines.scowe.shawe_menu_cwick"), UwU s-set(engagementscowe).asjava)
+  vaw pwedicted_scowe_pwofiwe_dwewwed =
+    nyew c-continuous(name("timewines.scowe.good_pwofiwe_dwewwed"), 🥺 set(engagementscowe).asjava)
+  vaw pwedicted_scowe_tweet_detaiw_dwewwed =
+    n-nyew continuous(name("timewines.scowe.tweet_detaiw_dwewwed"), 😳😳😳 set(engagementscowe).asjava)
+  v-vaw pwedicted_scowe_fuwwscween_video_dweww =
+    n-nyew continuous(name("timewines.scowe.fuwwscween_video_dweww"), ʘwʘ s-set(engagementscowe).asjava)
 
-  // hydrated in TimelinesSharedFeaturesAdapter that recap adapter calls
-  val ORIGINAL_AUTHOR_ID = new Discrete(name("entities.original_author_id"), Set(UserId).asJava)
-  val SOURCE_AUTHOR_ID = new Discrete(name("entities.source_author_id"), Set(UserId).asJava)
-  val SOURCE_TWEET_ID = new Discrete(name("entities.source_tweet_id"), Set(TweetId).asJava)
-  val TOPIC_ID = new Discrete(name("entities.topic_id"), Set(SemanticcoreClassification).asJava)
-  val INFERRED_TOPIC_IDS =
-    new SparseBinary(name("entities.inferred_topic_ids"), Set(SemanticcoreClassification).asJava)
-  val INFERRED_TOPIC_ID = TypedAggregateGroup.sparseFeature(INFERRED_TOPIC_IDS)
+  // hydwated in timewinesshawedfeatuwesadaptew t-that wecap adaptew cawws
+  vaw owiginaw_authow_id = nyew discwete(name("entities.owiginaw_authow_id"), /(^•ω•^) s-set(usewid).asjava)
+  v-vaw souwce_authow_id = n-nyew d-discwete(name("entities.souwce_authow_id"), :3 set(usewid).asjava)
+  vaw souwce_tweet_id = n-nyew discwete(name("entities.souwce_tweet_id"), :3 s-set(tweetid).asjava)
+  vaw topic_id = nyew discwete(name("entities.topic_id"), mya s-set(semanticcowecwassification).asjava)
+  vaw infewwed_topic_ids =
+    nyew s-spawsebinawy(name("entities.infewwed_topic_ids"), (///ˬ///✿) set(semanticcowecwassification).asjava)
+  vaw infewwed_topic_id = t-typedaggwegategwoup.spawsefeatuwe(infewwed_topic_ids)
 
-  val WEIGHTED_FAV_COUNT = new Continuous(
-    name("timelines.earlybird.weighted_fav_count"),
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava)
-  val WEIGHTED_RETWEET_COUNT = new Continuous(
-    name("timelines.earlybird.weighted_retweet_count"),
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val WEIGHTED_REPLY_COUNT = new Continuous(
-    name("timelines.earlybird.weighted_reply_count"),
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava)
-  val WEIGHTED_QUOTE_COUNT = new Continuous(
-    name("timelines.earlybird.weighted_quote_count"),
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val EMBEDS_IMPRESSION_COUNT_V2 = new Continuous(
-    name("timelines.earlybird.embeds_impression_count_v2"),
-    Set(CountOfImpression).asJava)
-  val EMBEDS_URL_COUNT_V2 = new Continuous(
-    name("timelines.earlybird.embeds_url_count_v2"),
-    Set(CountOfPrivateTweetEntitiesAndMetadata, CountOfPublicTweetEntitiesAndMetadata).asJava)
-  val DECAYED_FAVORITE_COUNT = new Continuous(
-    name("timelines.earlybird.decayed_favorite_count"),
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava)
-  val DECAYED_RETWEET_COUNT = new Continuous(
-    name("timelines.earlybird.decayed_retweet_count"),
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val DECAYED_REPLY_COUNT = new Continuous(
-    name("timelines.earlybird.decayed_reply_count"),
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava)
-  val DECAYED_QUOTE_COUNT = new Continuous(
-    name("timelines.earlybird.decayed_quote_count"),
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val FAKE_FAVORITE_COUNT = new Continuous(
-    name("timelines.earlybird.fake_favorite_count"),
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava)
-  val FAKE_RETWEET_COUNT = new Continuous(
-    name("timelines.earlybird.fake_retweet_count"),
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val FAKE_REPLY_COUNT = new Continuous(
-    name("timelines.earlybird.fake_reply_count"),
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava)
-  val FAKE_QUOTE_COUNT = new Continuous(
-    name("timelines.earlybird.fake_quote_count"),
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val QUOTE_COUNT = new Continuous(
-    name("timelines.earlybird.quote_count"),
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
+  v-vaw weighted_fav_count = nyew continuous(
+    n-nyame("timewines.eawwybiwd.weighted_fav_count"), (⑅˘꒳˘)
+    s-set(countofpwivatewikes, :3 c-countofpubwicwikes).asjava)
+  vaw weighted_wetweet_count = nyew continuous(
+    n-nyame("timewines.eawwybiwd.weighted_wetweet_count"), /(^•ω•^)
+    set(countofpwivatewetweets, ^^;; countofpubwicwetweets).asjava)
+  v-vaw weighted_wepwy_count = nyew continuous(
+    nyame("timewines.eawwybiwd.weighted_wepwy_count"), (U ᵕ U❁)
+    s-set(countofpwivatewepwies, (U ﹏ U) c-countofpubwicwepwies).asjava)
+  v-vaw weighted_quote_count = nyew c-continuous(
+    n-nyame("timewines.eawwybiwd.weighted_quote_count"), mya
+    set(countofpwivatewetweets, ^•ﻌ•^ c-countofpubwicwetweets).asjava)
+  vaw embeds_impwession_count_v2 = nyew continuous(
+    n-nyame("timewines.eawwybiwd.embeds_impwession_count_v2"), (U ﹏ U)
+    set(countofimpwession).asjava)
+  v-vaw embeds_uww_count_v2 = nyew continuous(
+    n-nyame("timewines.eawwybiwd.embeds_uww_count_v2"), :3
+    s-set(countofpwivatetweetentitiesandmetadata, rawr x3 countofpubwictweetentitiesandmetadata).asjava)
+  v-vaw decayed_favowite_count = n-nyew c-continuous(
+    nyame("timewines.eawwybiwd.decayed_favowite_count"), 😳😳😳
+    s-set(countofpwivatewikes, >w< c-countofpubwicwikes).asjava)
+  vaw decayed_wetweet_count = n-nyew continuous(
+    nyame("timewines.eawwybiwd.decayed_wetweet_count"), òωó
+    set(countofpwivatewetweets, 😳 c-countofpubwicwetweets).asjava)
+  vaw decayed_wepwy_count = n-nyew continuous(
+    nyame("timewines.eawwybiwd.decayed_wepwy_count"), (✿oωo)
+    set(countofpwivatewepwies, OwO c-countofpubwicwepwies).asjava)
+  v-vaw decayed_quote_count = n-nyew continuous(
+    nyame("timewines.eawwybiwd.decayed_quote_count"), (U ﹏ U)
+    s-set(countofpwivatewetweets, (ꈍᴗꈍ) c-countofpubwicwetweets).asjava)
+  vaw fake_favowite_count = n-nyew continuous(
+    nyame("timewines.eawwybiwd.fake_favowite_count"), rawr
+    s-set(countofpwivatewikes, countofpubwicwikes).asjava)
+  v-vaw fake_wetweet_count = n-nyew continuous(
+    nyame("timewines.eawwybiwd.fake_wetweet_count"), ^^
+    set(countofpwivatewetweets, rawr countofpubwicwetweets).asjava)
+  v-vaw fake_wepwy_count = n-nyew continuous(
+    nyame("timewines.eawwybiwd.fake_wepwy_count"), nyaa~~
+    set(countofpwivatewepwies, c-countofpubwicwepwies).asjava)
+  vaw f-fake_quote_count = n-nyew continuous(
+    nyame("timewines.eawwybiwd.fake_quote_count"), nyaa~~
+    set(countofpwivatewetweets, o.O countofpubwicwetweets).asjava)
+  vaw quote_count = n-nyew continuous(
+    nyame("timewines.eawwybiwd.quote_count"), òωó
+    set(countofpwivatewetweets, ^^;; c-countofpubwicwetweets).asjava)
 
-  // Safety features
-  val LABEL_ABUSIVE_FLAG =
-    new Binary(name("timelines.earlybird.label_abusive_flag"), Set(TweetSafetyLabels).asJava)
-  val LABEL_ABUSIVE_HI_RCL_FLAG =
-    new Binary(name("timelines.earlybird.label_abusive_hi_rcl_flag"), Set(TweetSafetyLabels).asJava)
-  val LABEL_DUP_CONTENT_FLAG =
-    new Binary(name("timelines.earlybird.label_dup_content_flag"), Set(TweetSafetyLabels).asJava)
-  val LABEL_NSFW_HI_PRC_FLAG =
-    new Binary(name("timelines.earlybird.label_nsfw_hi_prc_flag"), Set(TweetSafetyLabels).asJava)
-  val LABEL_NSFW_HI_RCL_FLAG =
-    new Binary(name("timelines.earlybird.label_nsfw_hi_rcl_flag"), Set(TweetSafetyLabels).asJava)
-  val LABEL_SPAM_FLAG =
-    new Binary(name("timelines.earlybird.label_spam_flag"), Set(TweetSafetyLabels).asJava)
-  val LABEL_SPAM_HI_RCL_FLAG =
-    new Binary(name("timelines.earlybird.label_spam_hi_rcl_flag"), Set(TweetSafetyLabels).asJava)
+  // safety featuwes
+  v-vaw wabew_abusive_fwag =
+    nyew b-binawy(name("timewines.eawwybiwd.wabew_abusive_fwag"), rawr set(tweetsafetywabews).asjava)
+  v-vaw w-wabew_abusive_hi_wcw_fwag =
+    n-nyew binawy(name("timewines.eawwybiwd.wabew_abusive_hi_wcw_fwag"), ^•ﻌ•^ s-set(tweetsafetywabews).asjava)
+  v-vaw wabew_dup_content_fwag =
+    n-nyew binawy(name("timewines.eawwybiwd.wabew_dup_content_fwag"), nyaa~~ set(tweetsafetywabews).asjava)
+  vaw wabew_nsfw_hi_pwc_fwag =
+    new binawy(name("timewines.eawwybiwd.wabew_nsfw_hi_pwc_fwag"), nyaa~~ set(tweetsafetywabews).asjava)
+  vaw wabew_nsfw_hi_wcw_fwag =
+    n-nyew binawy(name("timewines.eawwybiwd.wabew_nsfw_hi_wcw_fwag"), 😳😳😳 s-set(tweetsafetywabews).asjava)
+  v-vaw wabew_spam_fwag =
+    n-nyew binawy(name("timewines.eawwybiwd.wabew_spam_fwag"), s-set(tweetsafetywabews).asjava)
+  v-vaw wabew_spam_hi_wcw_fwag =
+    nyew binawy(name("timewines.eawwybiwd.wabew_spam_hi_wcw_fwag"), 😳😳😳 set(tweetsafetywabews).asjava)
 
-  // Periscope features
-  val PERISCOPE_EXISTS = new Binary(
-    name("timelines.earlybird.periscope_exists"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val PERISCOPE_IS_LIVE = new Binary(
-    name("timelines.earlybird.periscope_is_live"),
-    Set(PrivateBroadcastMetrics, PublicBroadcastMetrics).asJava)
-  val PERISCOPE_HAS_BEEN_FEATURED = new Binary(
-    name("timelines.earlybird.periscope_has_been_featured"),
-    Set(PrivateBroadcastMetrics, PublicBroadcastMetrics).asJava)
-  val PERISCOPE_IS_CURRENTLY_FEATURED = new Binary(
-    name("timelines.earlybird.periscope_is_currently_featured"),
-    Set(PrivateBroadcastMetrics, PublicBroadcastMetrics).asJava
+  // p-pewiscope featuwes
+  v-vaw pewiscope_exists = nyew binawy(
+    nyame("timewines.eawwybiwd.pewiscope_exists"), σωσ
+    set(pubwictweetentitiesandmetadata, o.O p-pwivatetweetentitiesandmetadata).asjava)
+  v-vaw pewiscope_is_wive = n-nyew binawy(
+    nyame("timewines.eawwybiwd.pewiscope_is_wive"), σωσ
+    set(pwivatebwoadcastmetwics, nyaa~~ pubwicbwoadcastmetwics).asjava)
+  v-vaw pewiscope_has_been_featuwed = nyew binawy(
+    n-nyame("timewines.eawwybiwd.pewiscope_has_been_featuwed"), rawr x3
+    set(pwivatebwoadcastmetwics, (///ˬ///✿) p-pubwicbwoadcastmetwics).asjava)
+  vaw pewiscope_is_cuwwentwy_featuwed = n-nyew binawy(
+    nyame("timewines.eawwybiwd.pewiscope_is_cuwwentwy_featuwed"), o.O
+    s-set(pwivatebwoadcastmetwics, p-pubwicbwoadcastmetwics).asjava
   )
-  val PERISCOPE_IS_FROM_QUALITY_SOURCE = new Binary(
-    name("timelines.earlybird.periscope_is_from_quality_source"),
-    Set(PrivateBroadcastMetrics, PublicBroadcastMetrics).asJava
+  vaw pewiscope_is_fwom_quawity_souwce = n-nyew binawy(
+    n-nyame("timewines.eawwybiwd.pewiscope_is_fwom_quawity_souwce"), òωó
+    s-set(pwivatebwoadcastmetwics, OwO p-pubwicbwoadcastmetwics).asjava
   )
 
-  val VISIBLE_TOKEN_RATIO = new Continuous(name("timelines.earlybird.visible_token_ratio"))
-  val HAS_QUOTE = new Binary(
-    name("timelines.earlybird.has_quote"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val IS_COMPOSER_SOURCE_CAMERA = new Binary(
-    name("timelines.earlybird.is_composer_source_camera"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
+  v-vaw visibwe_token_watio = n-nyew continuous(name("timewines.eawwybiwd.visibwe_token_watio"))
+  vaw has_quote = n-nyew binawy(
+    n-nyame("timewines.eawwybiwd.has_quote"), σωσ
+    set(pubwictweetentitiesandmetadata, nyaa~~ p-pwivatetweetentitiesandmetadata).asjava)
+  vaw is_composew_souwce_camewa = nyew binawy(
+    n-nyame("timewines.eawwybiwd.is_composew_souwce_camewa"), OwO
+    set(pubwictweetentitiesandmetadata, ^^ p-pwivatetweetentitiesandmetadata).asjava)
 
-  val EARLYBIRD_SCORE = new Continuous(
-    name("timelines.earlybird_score"),
-    Set(EngagementScore).asJava
-  ) // separating from the rest of "timelines.earlybird." namespace
+  vaw e-eawwybiwd_scowe = n-nyew continuous(
+    nyame("timewines.eawwybiwd_scowe"), (///ˬ///✿)
+    set(engagementscowe).asjava
+  ) // s-sepawating fwom the west of "timewines.eawwybiwd." nyamespace
 
-  val DWELL_TIME_MS = new Continuous(
-    name("timelines.engagement.dwell_time_ms"),
-    Set(EngagementDurationAndTimestamp, ImpressionMetadata, PrivateTimestamp).asJava)
+  v-vaw dweww_time_ms = n-nyew continuous(
+    name("timewines.engagement.dweww_time_ms"), σωσ
+    set(engagementduwationandtimestamp, rawr x3 i-impwessionmetadata, (ˆ ﻌ ˆ)♡ p-pwivatetimestamp).asjava)
 
-  val TWEET_DETAIL_DWELL_TIME_MS = new Continuous(
-    name("timelines.engagement.tweet_detail_dwell_time_ms"),
-    Set(EngagementDurationAndTimestamp, ImpressionMetadata, PrivateTimestamp).asJava)
+  vaw tweet_detaiw_dweww_time_ms = n-nyew continuous(
+    nyame("timewines.engagement.tweet_detaiw_dweww_time_ms"), 🥺
+    set(engagementduwationandtimestamp, (⑅˘꒳˘) i-impwessionmetadata, 😳😳😳 p-pwivatetimestamp).asjava)
 
-  val PROFILE_DWELL_TIME_MS = new Continuous(
-    name("timelines.engagement.profile_dwell_time_ms"),
-    Set(EngagementDurationAndTimestamp, ImpressionMetadata, PrivateTimestamp).asJava)
+  vaw pwofiwe_dweww_time_ms = n-nyew continuous(
+    n-nyame("timewines.engagement.pwofiwe_dweww_time_ms"), /(^•ω•^)
+    set(engagementduwationandtimestamp, >w< impwessionmetadata, ^•ﻌ•^ p-pwivatetimestamp).asjava)
 
-  val FULLSCREEN_VIDEO_DWELL_TIME_MS = new Continuous(
-    name("timelines.engagement.fullscreen_video_dwell_time_ms"),
-    Set(EngagementDurationAndTimestamp, ImpressionMetadata, PrivateTimestamp).asJava)
+  v-vaw fuwwscween_video_dweww_time_ms = nyew c-continuous(
+    n-nyame("timewines.engagement.fuwwscween_video_dweww_time_ms"), 😳😳😳
+    set(engagementduwationandtimestamp, :3 impwessionmetadata, (ꈍᴗꈍ) pwivatetimestamp).asjava)
 
-  val LINK_DWELL_TIME_MS = new Continuous(
-    name("timelines.engagement.link_dwell_time_ms"),
-    Set(EngagementDurationAndTimestamp, ImpressionMetadata, PrivateTimestamp).asJava)
+  vaw wink_dweww_time_ms = nyew continuous(
+    nyame("timewines.engagement.wink_dweww_time_ms"), ^•ﻌ•^
+    set(engagementduwationandtimestamp, >w< i-impwessionmetadata, ^^;; p-pwivatetimestamp).asjava)
 
-  val ASPECT_RATIO_DEN = new Continuous(
-    name("tweetsource.tweet.media.aspect_ratio_den"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val ASPECT_RATIO_NUM = new Continuous(
-    name("tweetsource.tweet.media.aspect_ratio_num"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val BIT_RATE = new Continuous(
-    name("tweetsource.tweet.media.bit_rate"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val HEIGHT_2 = new Continuous(
-    name("tweetsource.tweet.media.height_2"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val HEIGHT_1 = new Continuous(
-    name("tweetsource.tweet.media.height_1"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val HEIGHT_3 = new Continuous(
-    name("tweetsource.tweet.media.height_3"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val HEIGHT_4 = new Continuous(
-    name("tweetsource.tweet.media.height_4"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val RESIZE_METHOD_1 = new Discrete(
-    name("tweetsource.tweet.media.resize_method_1"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val RESIZE_METHOD_2 = new Discrete(
-    name("tweetsource.tweet.media.resize_method_2"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val RESIZE_METHOD_3 = new Discrete(
-    name("tweetsource.tweet.media.resize_method_3"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val RESIZE_METHOD_4 = new Discrete(
-    name("tweetsource.tweet.media.resize_method_4"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val VIDEO_DURATION = new Continuous(
-    name("tweetsource.tweet.media.video_duration"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val WIDTH_1 = new Continuous(
-    name("tweetsource.tweet.media.width_1"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val WIDTH_2 = new Continuous(
-    name("tweetsource.tweet.media.width_2"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val WIDTH_3 = new Continuous(
-    name("tweetsource.tweet.media.width_3"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val WIDTH_4 = new Continuous(
-    name("tweetsource.tweet.media.width_4"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val NUM_MEDIA_TAGS = new Continuous(
-    name("tweetsource.tweet.media.num_tags"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val MEDIA_TAG_SCREEN_NAMES = new SparseBinary(
-    name("tweetsource.tweet.media.tag_screen_names"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val STICKER_IDS = new SparseBinary(
-    name("tweetsource.tweet.media.sticker_ids"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
+  v-vaw aspect_watio_den = n-nyew c-continuous(
+    n-nyame("tweetsouwce.tweet.media.aspect_watio_den"), (✿oωo)
+    set(mediafiwe, òωó m-mediapwocessinginfowmation).asjava)
+  v-vaw aspect_watio_num = n-nyew continuous(
+    n-name("tweetsouwce.tweet.media.aspect_watio_num"), ^^
+    set(mediafiwe, ^^ mediapwocessinginfowmation).asjava)
+  v-vaw bit_wate = nyew continuous(
+    nyame("tweetsouwce.tweet.media.bit_wate"), rawr
+    s-set(mediafiwe, XD mediapwocessinginfowmation).asjava)
+  v-vaw height_2 = n-new continuous(
+    nyame("tweetsouwce.tweet.media.height_2"), rawr
+    s-set(mediafiwe, 😳 m-mediapwocessinginfowmation).asjava)
+  v-vaw height_1 = nyew continuous(
+    n-nyame("tweetsouwce.tweet.media.height_1"), 🥺
+    s-set(mediafiwe, (U ᵕ U❁) mediapwocessinginfowmation).asjava)
+  v-vaw height_3 = nyew continuous(
+    n-name("tweetsouwce.tweet.media.height_3"), 😳
+    s-set(mediafiwe, 🥺 m-mediapwocessinginfowmation).asjava)
+  vaw height_4 = n-nyew continuous(
+    nyame("tweetsouwce.tweet.media.height_4"), (///ˬ///✿)
+    set(mediafiwe, mya m-mediapwocessinginfowmation).asjava)
+  vaw wesize_method_1 = nyew discwete(
+    nyame("tweetsouwce.tweet.media.wesize_method_1"), (✿oωo)
+    set(mediafiwe, ^•ﻌ•^ mediapwocessinginfowmation).asjava)
+  vaw w-wesize_method_2 = nyew discwete(
+    nyame("tweetsouwce.tweet.media.wesize_method_2"),
+    set(mediafiwe, o.O mediapwocessinginfowmation).asjava)
+  vaw wesize_method_3 = nyew discwete(
+    n-nyame("tweetsouwce.tweet.media.wesize_method_3"), o.O
+    set(mediafiwe, XD mediapwocessinginfowmation).asjava)
+  vaw wesize_method_4 = n-nyew discwete(
+    nyame("tweetsouwce.tweet.media.wesize_method_4"), ^•ﻌ•^
+    s-set(mediafiwe, ʘwʘ mediapwocessinginfowmation).asjava)
+  vaw video_duwation = n-nyew continuous(
+    n-nyame("tweetsouwce.tweet.media.video_duwation"), (U ﹏ U)
+    set(mediafiwe, 😳😳😳 m-mediapwocessinginfowmation).asjava)
+  v-vaw width_1 = nyew continuous(
+    n-nyame("tweetsouwce.tweet.media.width_1"), 🥺
+    set(mediafiwe, (///ˬ///✿) mediapwocessinginfowmation).asjava)
+  vaw width_2 = n-nyew continuous(
+    nyame("tweetsouwce.tweet.media.width_2"), (˘ω˘)
+    s-set(mediafiwe, :3 mediapwocessinginfowmation).asjava)
+  v-vaw width_3 = nyew continuous(
+    n-nyame("tweetsouwce.tweet.media.width_3"), /(^•ω•^)
+    s-set(mediafiwe, :3 mediapwocessinginfowmation).asjava)
+  vaw width_4 = nyew c-continuous(
+    nyame("tweetsouwce.tweet.media.width_4"),
+    set(mediafiwe, mya mediapwocessinginfowmation).asjava)
+  v-vaw nyum_media_tags = nyew continuous(
+    nyame("tweetsouwce.tweet.media.num_tags"), XD
+    set(pubwictweetentitiesandmetadata, (///ˬ///✿) pwivatetweetentitiesandmetadata).asjava)
+  v-vaw m-media_tag_scween_names = nyew s-spawsebinawy(
+    n-nyame("tweetsouwce.tweet.media.tag_scween_names"), 🥺
+    set(pubwictweetentitiesandmetadata, o.O p-pwivatetweetentitiesandmetadata).asjava)
+  vaw stickew_ids = nyew spawsebinawy(
+    nyame("tweetsouwce.tweet.media.stickew_ids"), mya
+    set(pubwictweetentitiesandmetadata, rawr x3 p-pwivatetweetentitiesandmetadata).asjava)
 
-  val NUM_COLOR_PALLETTE_ITEMS = new Continuous(
-    name("tweetsource.v2.tweet.media.num_color_pallette_items"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val COLOR_1_RED = new Continuous(
-    name("tweetsource.v2.tweet.media.color_1_red"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val COLOR_1_BLUE = new Continuous(
-    name("tweetsource.v2.tweet.media.color_1_blue"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val COLOR_1_GREEN = new Continuous(
-    name("tweetsource.v2.tweet.media.color_1_green"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val COLOR_1_PERCENTAGE = new Continuous(
-    name("tweetsource.v2.tweet.media.color_1_percentage"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val MEDIA_PROVIDERS = new SparseBinary(
-    name("tweetsource.v2.tweet.media.providers"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val IS_360 = new Binary(
-    name("tweetsource.v2.tweet.media.is_360"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val VIEW_COUNT =
-    new Continuous(name("tweetsource.v2.tweet.media.view_count"), Set(MediaContentMetrics).asJava)
-  val IS_MANAGED = new Binary(
-    name("tweetsource.v2.tweet.media.is_managed"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val IS_MONETIZABLE = new Binary(
-    name("tweetsource.v2.tweet.media.is_monetizable"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val IS_EMBEDDABLE = new Binary(
-    name("tweetsource.v2.tweet.media.is_embeddable"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val CLASSIFICATION_LABELS = new SparseContinuous(
-    name("tweetsource.v2.tweet.media.classification_labels"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
+  v-vaw nyum_cowow_pawwette_items = nyew continuous(
+    n-nyame("tweetsouwce.v2.tweet.media.num_cowow_pawwette_items"), 😳
+    s-set(mediafiwe, 😳😳😳 mediapwocessinginfowmation).asjava)
+  vaw c-cowow_1_wed = nyew continuous(
+    nyame("tweetsouwce.v2.tweet.media.cowow_1_wed"), >_<
+    s-set(mediafiwe, >w< mediapwocessinginfowmation).asjava)
+  vaw cowow_1_bwue = n-nyew continuous(
+    n-nyame("tweetsouwce.v2.tweet.media.cowow_1_bwue"), rawr x3
+    set(mediafiwe, XD mediapwocessinginfowmation).asjava)
+  v-vaw cowow_1_gween = nyew continuous(
+    nyame("tweetsouwce.v2.tweet.media.cowow_1_gween"), ^^
+    set(mediafiwe, (✿oωo) mediapwocessinginfowmation).asjava)
+  vaw cowow_1_pewcentage = nyew continuous(
+    nyame("tweetsouwce.v2.tweet.media.cowow_1_pewcentage"),
+    s-set(mediafiwe, >w< m-mediapwocessinginfowmation).asjava)
+  vaw media_pwovidews = n-nyew s-spawsebinawy(
+    nyame("tweetsouwce.v2.tweet.media.pwovidews"), 😳😳😳
+    s-set(pubwictweetentitiesandmetadata, (ꈍᴗꈍ) pwivatetweetentitiesandmetadata).asjava)
+  vaw is_360 = nyew binawy(
+    nyame("tweetsouwce.v2.tweet.media.is_360"), (✿oωo)
+    set(mediafiwe, (˘ω˘) m-mediapwocessinginfowmation).asjava)
+  vaw view_count =
+    nyew continuous(name("tweetsouwce.v2.tweet.media.view_count"), nyaa~~ set(mediacontentmetwics).asjava)
+  v-vaw is_managed = n-nyew binawy(
+    n-nyame("tweetsouwce.v2.tweet.media.is_managed"), ( ͡o ω ͡o )
+    set(mediafiwe, 🥺 mediapwocessinginfowmation).asjava)
+  vaw is_monetizabwe = n-nyew binawy(
+    n-nyame("tweetsouwce.v2.tweet.media.is_monetizabwe"), (U ﹏ U)
+    s-set(mediafiwe, ( ͡o ω ͡o ) mediapwocessinginfowmation).asjava)
+  v-vaw is_embeddabwe = n-nyew binawy(
+    nyame("tweetsouwce.v2.tweet.media.is_embeddabwe"), (///ˬ///✿)
+    s-set(mediafiwe, (///ˬ///✿) mediapwocessinginfowmation).asjava)
+  vaw c-cwassification_wabews = nyew spawsecontinuous(
+    n-nyame("tweetsouwce.v2.tweet.media.cwassification_wabews"), (✿oωo)
+    set(mediafiwe, (U ᵕ U❁) m-mediapwocessinginfowmation).asjava)
 
-  val NUM_STICKERS = new Continuous(
-    name("tweetsource.v2.tweet.media.num_stickers"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val NUM_FACES = new Continuous(
-    name("tweetsource.v2.tweet.media.num_faces"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val FACE_AREAS = new Continuous(
-    name("tweetsource.v2.tweet.media.face_areas"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val HAS_SELECTED_PREVIEW_IMAGE = new Binary(
-    name("tweetsource.v2.tweet.media.has_selected_preview_image"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val HAS_TITLE = new Binary(
-    name("tweetsource.v2.tweet.media.has_title"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val HAS_DESCRIPTION = new Binary(
-    name("tweetsource.v2.tweet.media.has_description"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val HAS_VISIT_SITE_CALL_TO_ACTION = new Binary(
-    name("tweetsource.v2.tweet.media.has_visit_site_call_to_action"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val HAS_APP_INSTALL_CALL_TO_ACTION = new Binary(
-    name("tweetsource.v2.tweet.media.has_app_install_call_to_action"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
-  val HAS_WATCH_NOW_CALL_TO_ACTION = new Binary(
-    name("tweetsource.v2.tweet.media.has_watch_now_call_to_action"),
-    Set(MediaFile, MediaProcessingInformation).asJava)
+  v-vaw nyum_stickews = nyew continuous(
+    n-nyame("tweetsouwce.v2.tweet.media.num_stickews"),
+    s-set(pubwictweetentitiesandmetadata, ʘwʘ pwivatetweetentitiesandmetadata).asjava)
+  v-vaw nyum_faces = nyew continuous(
+    nyame("tweetsouwce.v2.tweet.media.num_faces"), ʘwʘ
+    s-set(mediafiwe, XD mediapwocessinginfowmation).asjava)
+  v-vaw face_aweas = n-nyew continuous(
+    nyame("tweetsouwce.v2.tweet.media.face_aweas"), (✿oωo)
+    set(mediafiwe, ^•ﻌ•^ m-mediapwocessinginfowmation).asjava)
+  vaw has_sewected_pweview_image = nyew binawy(
+    nyame("tweetsouwce.v2.tweet.media.has_sewected_pweview_image"), ^•ﻌ•^
+    set(mediafiwe, >_< mediapwocessinginfowmation).asjava)
+  vaw has_titwe = nyew binawy(
+    n-nyame("tweetsouwce.v2.tweet.media.has_titwe"), mya
+    set(mediafiwe, σωσ mediapwocessinginfowmation).asjava)
+  v-vaw has_descwiption = nyew binawy(
+    n-nyame("tweetsouwce.v2.tweet.media.has_descwiption"), rawr
+    set(mediafiwe, (✿oωo) mediapwocessinginfowmation).asjava)
+  vaw h-has_visit_site_caww_to_action = nyew binawy(
+    nyame("tweetsouwce.v2.tweet.media.has_visit_site_caww_to_action"), :3
+    s-set(mediafiwe, rawr x3 mediapwocessinginfowmation).asjava)
+  vaw has_app_instaww_caww_to_action = n-nyew binawy(
+    nyame("tweetsouwce.v2.tweet.media.has_app_instaww_caww_to_action"), ^^
+    set(mediafiwe, ^^ m-mediapwocessinginfowmation).asjava)
+  vaw has_watch_now_caww_to_action = nyew binawy(
+    n-nyame("tweetsouwce.v2.tweet.media.has_watch_now_caww_to_action"), OwO
+    s-set(mediafiwe, ʘwʘ mediapwocessinginfowmation).asjava)
 
-  val NUM_CAPS =
-    new Continuous(name("tweetsource.tweet.text.num_caps"), Set(PublicTweets, PrivateTweets).asJava)
-  val TWEET_LENGTH =
-    new Continuous(name("tweetsource.tweet.text.length"), Set(PublicTweets, PrivateTweets).asJava)
-  val TWEET_LENGTH_TYPE = new Discrete(
-    name("tweetsource.tweet.text.length_type"),
-    Set(PublicTweets, PrivateTweets).asJava)
-  val NUM_WHITESPACES = new Continuous(
-    name("tweetsource.tweet.text.num_whitespaces"),
-    Set(PublicTweets, PrivateTweets).asJava)
-  val HAS_QUESTION =
-    new Binary(name("tweetsource.tweet.text.has_question"), Set(PublicTweets, PrivateTweets).asJava)
-  val NUM_NEWLINES = new Continuous(
-    name("tweetsource.tweet.text.num_newlines"),
-    Set(PublicTweets, PrivateTweets).asJava)
-  val EMOJI_TOKENS = new SparseBinary(
-    name("tweetsource.v3.tweet.text.emoji_tokens"),
-    Set(PublicTweets, PrivateTweets).asJava)
-  val EMOTICON_TOKENS = new SparseBinary(
-    name("tweetsource.v3.tweet.text.emoticon_tokens"),
-    Set(PublicTweets, PrivateTweets).asJava)
-  val NUM_EMOJIS = new Continuous(
-    name("tweetsource.v3.tweet.text.num_emojis"),
-    Set(PublicTweets, PrivateTweets).asJava)
-  val NUM_EMOTICONS = new Continuous(
-    name("tweetsource.v3.tweet.text.num_emoticons"),
-    Set(PublicTweets, PrivateTweets).asJava)
-  val POS_UNIGRAMS = new SparseBinary(
-    name("tweetsource.v3.tweet.text.pos_unigrams"),
-    Set(PublicTweets, PrivateTweets).asJava)
-  val POS_BIGRAMS = new SparseBinary(
-    name("tweetsource.v3.tweet.text.pos_bigrams"),
-    Set(PublicTweets, PrivateTweets).asJava)
-  val TEXT_TOKENS = new SparseBinary(
-    name("tweetsource.v4.tweet.text.tokens"),
-    Set(PublicTweets, PrivateTweets).asJava)
+  vaw nyum_caps =
+    n-nyew continuous(name("tweetsouwce.tweet.text.num_caps"), /(^•ω•^) s-set(pubwictweets, ʘwʘ pwivatetweets).asjava)
+  v-vaw tweet_wength =
+    n-nyew continuous(name("tweetsouwce.tweet.text.wength"), (⑅˘꒳˘) set(pubwictweets, UwU pwivatetweets).asjava)
+  v-vaw tweet_wength_type = nyew discwete(
+    nyame("tweetsouwce.tweet.text.wength_type"), -.-
+    set(pubwictweets, :3 p-pwivatetweets).asjava)
+  vaw nyum_whitespaces = nyew continuous(
+    nyame("tweetsouwce.tweet.text.num_whitespaces"), >_<
+    s-set(pubwictweets, nyaa~~ p-pwivatetweets).asjava)
+  v-vaw has_question =
+    nyew binawy(name("tweetsouwce.tweet.text.has_question"), ( ͡o ω ͡o ) set(pubwictweets, o.O p-pwivatetweets).asjava)
+  vaw nyum_newwines = n-nyew continuous(
+    nyame("tweetsouwce.tweet.text.num_newwines"), :3
+    s-set(pubwictweets, (˘ω˘) pwivatetweets).asjava)
+  v-vaw emoji_tokens = nyew spawsebinawy(
+    name("tweetsouwce.v3.tweet.text.emoji_tokens"), rawr x3
+    set(pubwictweets, (U ᵕ U❁) pwivatetweets).asjava)
+  v-vaw emoticon_tokens = n-nyew spawsebinawy(
+    nyame("tweetsouwce.v3.tweet.text.emoticon_tokens"), 🥺
+    set(pubwictweets, >_< p-pwivatetweets).asjava)
+  vaw nyum_emojis = nyew continuous(
+    n-nyame("tweetsouwce.v3.tweet.text.num_emojis"), :3
+    s-set(pubwictweets, :3 p-pwivatetweets).asjava)
+  v-vaw nyum_emoticons = n-nyew c-continuous(
+    nyame("tweetsouwce.v3.tweet.text.num_emoticons"), (ꈍᴗꈍ)
+    set(pubwictweets, σωσ p-pwivatetweets).asjava)
+  v-vaw pos_unigwams = n-nyew spawsebinawy(
+    n-name("tweetsouwce.v3.tweet.text.pos_unigwams"), 😳
+    set(pubwictweets, mya p-pwivatetweets).asjava)
+  v-vaw pos_bigwams = nyew s-spawsebinawy(
+    n-nyame("tweetsouwce.v3.tweet.text.pos_bigwams"), (///ˬ///✿)
+    s-set(pubwictweets, ^^ pwivatetweets).asjava)
+  vaw text_tokens = n-nyew spawsebinawy(
+    nyame("tweetsouwce.v4.tweet.text.tokens"), (✿oωo)
+    set(pubwictweets, ( ͡o ω ͡o ) p-pwivatetweets).asjava)
 
-  // Health features model scores (see go/toxicity, go/pblock, go/pspammytweet)
-  val PBLOCK_SCORE =
-    new Continuous(name("timelines.earlybird.pblock_score"), Set(TweetSafetyScores).asJava)
-  val TOXICITY_SCORE =
-    new Continuous(name("timelines.earlybird.toxicity_score"), Set(TweetSafetyScores).asJava)
-  val EXPERIMENTAL_HEALTH_MODEL_SCORE_1 =
-    new Continuous(
-      name("timelines.earlybird.experimental_health_model_score_1"),
-      Set(TweetSafetyScores).asJava)
-  val EXPERIMENTAL_HEALTH_MODEL_SCORE_2 =
-    new Continuous(
-      name("timelines.earlybird.experimental_health_model_score_2"),
-      Set(TweetSafetyScores).asJava)
-  val EXPERIMENTAL_HEALTH_MODEL_SCORE_3 =
-    new Continuous(
-      name("timelines.earlybird.experimental_health_model_score_3"),
-      Set(TweetSafetyScores).asJava)
-  val EXPERIMENTAL_HEALTH_MODEL_SCORE_4 =
-    new Continuous(
-      name("timelines.earlybird.experimental_health_model_score_4"),
-      Set(TweetSafetyScores).asJava)
-  val PSPAMMY_TWEET_SCORE =
-    new Continuous(name("timelines.earlybird.pspammy_tweet_score"), Set(TweetSafetyScores).asJava)
-  val PREPORTED_TWEET_SCORE =
-    new Continuous(name("timelines.earlybird.preported_tweet_score"), Set(TweetSafetyScores).asJava)
+  // heawth featuwes modew scowes (see g-go/toxicity, ^^;; g-go/pbwock, :3 go/pspammytweet)
+  vaw pbwock_scowe =
+    nyew c-continuous(name("timewines.eawwybiwd.pbwock_scowe"), 😳 s-set(tweetsafetyscowes).asjava)
+  vaw toxicity_scowe =
+    n-nyew continuous(name("timewines.eawwybiwd.toxicity_scowe"), XD s-set(tweetsafetyscowes).asjava)
+  vaw expewimentaw_heawth_modew_scowe_1 =
+    nyew continuous(
+      n-nyame("timewines.eawwybiwd.expewimentaw_heawth_modew_scowe_1"), (///ˬ///✿)
+      s-set(tweetsafetyscowes).asjava)
+  vaw expewimentaw_heawth_modew_scowe_2 =
+    nyew continuous(
+      n-nyame("timewines.eawwybiwd.expewimentaw_heawth_modew_scowe_2"), o.O
+      s-set(tweetsafetyscowes).asjava)
+  vaw expewimentaw_heawth_modew_scowe_3 =
+    nyew c-continuous(
+      nyame("timewines.eawwybiwd.expewimentaw_heawth_modew_scowe_3"), o.O
+      set(tweetsafetyscowes).asjava)
+  vaw expewimentaw_heawth_modew_scowe_4 =
+    nyew continuous(
+      nyame("timewines.eawwybiwd.expewimentaw_heawth_modew_scowe_4"), XD
+      s-set(tweetsafetyscowes).asjava)
+  vaw pspammy_tweet_scowe =
+    nyew continuous(name("timewines.eawwybiwd.pspammy_tweet_scowe"), ^^;; s-set(tweetsafetyscowes).asjava)
+  v-vaw pwepowted_tweet_scowe =
+    n-nyew continuous(name("timewines.eawwybiwd.pwepowted_tweet_scowe"), 😳😳😳 set(tweetsafetyscowes).asjava)
 
-  // where record was displayed e.g. recap vs ranked timeline vs recycled
-  // (do NOT use for training in prediction, since this is set post-scoring)
-  // This differs from TimelinesSharedFeatures.INJECTION_TYPE, which is only
-  // set to Recap or Rectweet, and is available pre-scoring.
-  // This also differs from TimeFeatures.IS_TWEET_RECYCLED, which is set
-  // pre-scoring and indicates if a tweet is being considered for recycling.
-  // In contrast, DISPLAY_SUGGEST_TYPE == RecycledTweet means the tweet
-  // was actually served in a recycled tweet module. The two should currently
-  // have the same value, but need not in future, so please only use
-  // IS_TWEET_RECYCLED/CANDIDATE_TWEET_SOURCE_ID for training models and
-  // only use DISPLAY_SUGGEST_TYPE for offline analysis of tweets actually
-  // served in recycled modules.
-  val DISPLAY_SUGGEST_TYPE = new Discrete(name("recap.display.suggest_type"))
+  // w-whewe w-wecowd was dispwayed e-e.g. (U ᵕ U❁) wecap v-vs wanked timewine v-vs wecycwed
+  // (do nyot use fow twaining i-in pwediction, /(^•ω•^) s-since this is set p-post-scowing)
+  // this diffews f-fwom timewinesshawedfeatuwes.injection_type, 😳😳😳 w-which is onwy
+  // s-set to wecap ow wectweet, rawr x3 and i-is avaiwabwe pwe-scowing. ʘwʘ
+  // t-this awso diffews f-fwom timefeatuwes.is_tweet_wecycwed, UwU w-which is s-set
+  // pwe-scowing and indicates i-if a tweet is being considewed f-fow wecycwing. (⑅˘꒳˘)
+  // i-in contwast, ^^ dispway_suggest_type == wecycwedtweet means the t-tweet
+  // was a-actuawwy sewved in a wecycwed t-tweet moduwe. 😳😳😳 the t-two shouwd cuwwentwy
+  // have the same vawue, òωó b-but nyeed nyot i-in futuwe, ^^;; so pwease o-onwy use
+  // i-is_tweet_wecycwed/candidate_tweet_souwce_id fow t-twaining modews a-and
+  // onwy use dispway_suggest_type fow offwine a-anawysis of tweets actuawwy
+  // sewved in wecycwed moduwes. (✿oωo)
+  vaw dispway_suggest_type = n-nyew discwete(name("wecap.dispway.suggest_type"))
 
-  // Candidate tweet source id - related to DISPLAY_SUGGEST_TYPE above, but this is a
-  // property of the candidate rather than display location so is safe to use
-  // in model training, unlike DISPLAY_SUGGEST_TYPE.
-  val CANDIDATE_TWEET_SOURCE_ID =
-    new Discrete(name("timelines.meta.candidate_tweet_source_id"), Set(TweetId).asJava)
+  // c-candidate tweet souwce id - wewated to dispway_suggest_type above, rawr but this i-is a
+  // pwopewty o-of the candidate wathew than dispway wocation s-so is safe to use
+  // in modew t-twaining, XD unwike d-dispway_suggest_type. 😳
+  v-vaw candidate_tweet_souwce_id =
+    nyew discwete(name("timewines.meta.candidate_tweet_souwce_id"), (U ᵕ U❁) set(tweetid).asjava)
 
-  // Was at least 50% of this tweet in the user's viewport for at least 500 ms,
-  // OR did the user engage with the tweet publicly or privately
-  val IS_LINGER_IMPRESSION =
-    new Binary(name("timelines.engagement.is_linger_impression"), Set(EngagementsPrivate).asJava)
+  // w-was at weast 50% of t-this tweet in the usew's viewpowt f-fow at weast 500 ms, UwU
+  // ow did the usew engage w-with the tweet pubwicwy ow pwivatewy
+  v-vaw is_wingew_impwession =
+    nyew binawy(name("timewines.engagement.is_wingew_impwession"), OwO set(engagementspwivate).asjava)
 
-  // Features to create rollups
-  val LANGUAGE_GROUP = new Discrete(name("timelines.tweet.text.language_group"))
+  // featuwes t-to cweate wowwups
+  vaw w-wanguage_gwoup = new discwete(name("timewines.tweet.text.wanguage_gwoup"))
 
-  // The final position index of the tweet being trained on in the timeline
-  // served from TLM (could still change later in TLS-API), as recorded by
-  // PositionIndexLoggingEnvelopeTransform.
-  val FINAL_POSITION_INDEX = new Discrete(name("timelines.display.final_position_index"))
+  // the finaw position index of the tweet being twained on in the timewine
+  // sewved f-fwom twm (couwd s-stiww change w-watew in tws-api), 😳 a-as wecowded by
+  // positionindexwoggingenvewopetwansfowm. (˘ω˘)
+  vaw finaw_position_index = n-nyew discwete(name("timewines.dispway.finaw_position_index"))
 
-  // The traceId of the timeline request, can be used to group tweets in the same response.
-  val TRACE_ID = new Discrete(name("timelines.display.trace_id"), Set(TfeTransactionId).asJava)
+  // the twaceid of the timewine wequest, òωó c-can be used t-to gwoup tweets i-in the same wesponse. OwO
+  v-vaw twace_id = nyew discwete(name("timewines.dispway.twace_id"), (✿oωo) set(tfetwansactionid).asjava)
 
-  // Whether this tweet was randomly injected into the timeline or not, for exploration purposes
-  val IS_RANDOM_TWEET = new Binary(name("timelines.display.is_random_tweet"))
+  // whethew this tweet w-was wandomwy injected i-into the timewine ow nyot, (⑅˘꒳˘) fow expwowation puwposes
+  vaw i-is_wandom_tweet = nyew binawy(name("timewines.dispway.is_wandom_tweet"))
 
-  //  Whether this tweet was reordered with softmax ranking for explore/exploit, and needs to
-  //  be excluded from exploit only holdback
-  val IS_SOFTMAX_RANKING_TWEET = new Binary(name("timelines.display.is_softmax_ranking_tweet"))
+  //  w-whethew this tweet w-was weowdewed w-with softmax wanking fow expwowe/expwoit, /(^•ω•^) and nyeeds to
+  //  be excwuded fwom expwoit onwy howdback
+  v-vaw is_softmax_wanking_tweet = nyew binawy(name("timewines.dispway.is_softmax_wanking_tweet"))
 
-  // Whether the user viewing the tweet has disabled ranked timeline.
-  val IS_RANKED_TIMELINE_DISABLER = new Binary(
-    name("timelines.user_features.is_ranked_timeline_disabler"),
-    Set(AnnotationValue, GeneralSettings).asJava)
+  // w-whethew the usew viewing the tweet has disabwed wanked t-timewine. 🥺
+  vaw is_wanked_timewine_disabwew = n-nyew binawy(
+    nyame("timewines.usew_featuwes.is_wanked_timewine_disabwew"), -.-
+    set(annotationvawue, ( ͡o ω ͡o ) g-genewawsettings).asjava)
 
-  // Whether the user viewing the tweet was one of those released from DDG 4205 control
-  // as part of http://go/shrink-4205 process to shrink the quality features holdback.
-  val IS_USER_RELEASED_FROM_QUALITY_HOLDBACK = new Binary(
-    name("timelines.user_features.is_released_from_quality_holdback"),
-    Set(ExperimentId, ExperimentName).asJava)
+  // w-whethew t-the usew viewing t-the tweet was o-one of those weweased fwom ddg 4205 c-contwow
+  // a-as pawt of http://go/shwink-4205 pwocess to shwink t-the quawity featuwes howdback. 😳😳😳
+  vaw is_usew_weweased_fwom_quawity_howdback = n-nyew binawy(
+    nyame("timewines.usew_featuwes.is_weweased_fwom_quawity_howdback"), (˘ω˘)
+    s-set(expewimentid, ^^ e-expewimentname).asjava)
 
-  val INITIAL_PREDICTION_FAV =
-    new Continuous(name("timelines.initial_prediction.fav"), Set(EngagementScore).asJava)
-  val INITIAL_PREDICTION_RETWEET =
-    new Continuous(name("timelines.initial_prediction.retweet"), Set(EngagementScore).asJava)
-  val INITIAL_PREDICTION_REPLY =
-    new Continuous(name("timelines.initial_prediction.reply"), Set(EngagementScore).asJava)
-  val INITIAL_PREDICTION_OPEN_LINK =
-    new Continuous(name("timelines.initial_prediction.open_link"), Set(EngagementScore).asJava)
-  val INITIAL_PREDICTION_PROFILE_CLICK =
-    new Continuous(name("timelines.initial_prediction.profile_click"), Set(EngagementScore).asJava)
-  val INITIAL_PREDICTION_VIDEO_PLAYBACK_50 = new Continuous(
-    name("timelines.initial_prediction.video_playback_50"),
-    Set(EngagementScore).asJava)
-  val INITIAL_PREDICTION_DETAIL_EXPAND =
-    new Continuous(name("timelines.initial_prediction.detail_expand"), Set(EngagementScore).asJava)
-  val INITIAL_PREDICTION_PHOTO_EXPAND =
-    new Continuous(name("timelines.initial_prediction.photo_expand"), Set(EngagementScore).asJava)
+  vaw initiaw_pwediction_fav =
+    n-nyew continuous(name("timewines.initiaw_pwediction.fav"), σωσ s-set(engagementscowe).asjava)
+  vaw initiaw_pwediction_wetweet =
+    nyew continuous(name("timewines.initiaw_pwediction.wetweet"), 🥺 set(engagementscowe).asjava)
+  v-vaw initiaw_pwediction_wepwy =
+    n-nyew continuous(name("timewines.initiaw_pwediction.wepwy"), 🥺 s-set(engagementscowe).asjava)
+  v-vaw initiaw_pwediction_open_wink =
+    nyew continuous(name("timewines.initiaw_pwediction.open_wink"), /(^•ω•^) set(engagementscowe).asjava)
+  vaw initiaw_pwediction_pwofiwe_cwick =
+    n-nyew continuous(name("timewines.initiaw_pwediction.pwofiwe_cwick"), (⑅˘꒳˘) set(engagementscowe).asjava)
+  vaw initiaw_pwediction_video_pwayback_50 = n-nyew continuous(
+    nyame("timewines.initiaw_pwediction.video_pwayback_50"), -.-
+    set(engagementscowe).asjava)
+  v-vaw initiaw_pwediction_detaiw_expand =
+    nyew continuous(name("timewines.initiaw_pwediction.detaiw_expand"), 😳 set(engagementscowe).asjava)
+  v-vaw initiaw_pwediction_photo_expand =
+    nyew c-continuous(name("timewines.initiaw_pwediction.photo_expand"), 😳😳😳 s-set(engagementscowe).asjava)
 
-  val VIEWER_FOLLOWS_ORIGINAL_AUTHOR =
-    new Binary(name("timelines.viewer_follows_original_author"), Set(Follow).asJava)
+  v-vaw viewew_fowwows_owiginaw_authow =
+    n-nyew binawy(name("timewines.viewew_fowwows_owiginaw_authow"), >w< s-set(fowwow).asjava)
 
-  val IS_TOP_ONE = new Binary(name("timelines.position.is_top_one"))
-  val IS_TOP_FIVE =
-    new Binary(name(featureName = "timelines.position.is_top_five"))
-  val IS_TOP_TEN =
-    new Binary(name(featureName = "timelines.position.is_top_ten"))
+  vaw i-is_top_one = nyew b-binawy(name("timewines.position.is_top_one"))
+  v-vaw is_top_five =
+    n-nyew binawy(name(featuwename = "timewines.position.is_top_five"))
+  vaw i-is_top_ten =
+    n-nyew binawy(name(featuwename = "timewines.position.is_top_ten"))
 
-  val LOG_POSITION =
-    new Continuous(name(featureName = "timelines.position.log_10"))
+  v-vaw wog_position =
+    nyew c-continuous(name(featuwename = "timewines.position.wog_10"))
 
 }

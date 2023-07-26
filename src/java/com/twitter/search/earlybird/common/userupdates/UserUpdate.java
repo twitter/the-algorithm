@@ -1,38 +1,38 @@
-package com.twitter.search.earlybird.common.userupdates;
+package com.twittew.seawch.eawwybiwd.common.usewupdates;
 
-import java.util.Date;
+impowt j-java.utiw.date;
 
-import com.twitter.search.common.indexing.thriftjava.UserUpdateType;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.usewupdatetype;
 
 /**
- * Contains an update for a user.
+ * c-contains a-an update f-fow a usew. (⑅˘꒳˘)
  */
-public class UserUpdate {
-  public final long twitterUserID;
-  public final UserUpdateType updateType;
-  public final int updateValue;
-  private final Date updatedAt;
+p-pubwic cwass usewupdate {
+  p-pubwic f-finaw wong twittewusewid;
+  pubwic finaw usewupdatetype updatetype;
+  pubwic finaw int updatevawue;
+  p-pwivate finaw date updatedat;
 
-  public UserUpdate(long twitterUserID,
-                    UserUpdateType updateType,
-                    int updateValue,
-                    Date updatedAt) {
+  pubwic u-usewupdate(wong twittewusewid, rawr x3
+                    u-usewupdatetype updatetype, (✿oωo)
+                    int updatevawue, (ˆ ﻌ ˆ)♡
+                    date updatedat) {
 
-    this.twitterUserID = twitterUserID;
-    this.updateType = updateType;
-    this.updateValue = updateValue;
-    this.updatedAt = (Date) updatedAt.clone();
+    t-this.twittewusewid = twittewusewid;
+    t-this.updatetype = u-updatetype;
+    this.updatevawue = updatevawue;
+    this.updatedat = (date) updatedat.cwone();
   }
 
-  @Override public String toString() {
-    return "UserInfoUpdate[userID=" + twitterUserID + ",updateType=" + updateType
-           + ",updateValue=" + updateValue + ",updatedAt=" + getUpdatedAt() + "]";
+  @ovewwide p-pubwic stwing tostwing() {
+    wetuwn "usewinfoupdate[usewid=" + twittewusewid + ",updatetype=" + updatetype
+           + ",updatevawue=" + u-updatevawue + ",updatedat=" + getupdatedat() + "]";
   }
 
   /**
-   * Returns a copy of the updated-at date.
+   * w-wetuwns a-a copy of the u-updated-at date. (˘ω˘)
    */
-  public Date getUpdatedAt() {
-    return (Date) updatedAt.clone();
+  p-pubwic date getupdatedat() {
+    wetuwn (date) u-updatedat.cwone();
   }
 }

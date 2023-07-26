@@ -1,15 +1,15 @@
-package com.twitter.visibility.configapi.params
+package com.twittew.visibiwity.configapi.pawams
 
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.pawam
 
-abstract class LabelSourceParam(override val default: Boolean) extends Param(default) {
-  override val statName: String = s"LabelSourceParam/${this.getClass.getSimpleName}"
+a-abstwact c-cwass wabewsouwcepawam(ovewwide v-vaw defauwt: b-boowean) extends p-pawam(defauwt) {
+  o-ovewwide v-vaw statname: stwing = s-s"wabewsouwcepawam/${this.getcwass.getsimpwename}"
 }
 
-private[visibility] object LabelSourceParams {
-  object FilterLabelsFromBot7174Param extends LabelSourceParam(false)
+pwivate[visibiwity] object wabewsouwcepawams {
+  object fiwtewwabewsfwombot7174pawam extends wabewsouwcepawam(fawse)
 
-  object FilterTweetsSmyteAutomationParamA extends LabelSourceParam(false)
-  object FilterTweetsSmyteAutomationParamB extends LabelSourceParam(false)
-  object FilterTweetsSmyteAutomationParamAB extends LabelSourceParam(false)
+  o-object fiwtewtweetssmyteautomationpawama extends wabewsouwcepawam(fawse)
+  object fiwtewtweetssmyteautomationpawamb e-extends wabewsouwcepawam(fawse)
+  o-object fiwtewtweetssmyteautomationpawamab extends wabewsouwcepawam(fawse)
 }

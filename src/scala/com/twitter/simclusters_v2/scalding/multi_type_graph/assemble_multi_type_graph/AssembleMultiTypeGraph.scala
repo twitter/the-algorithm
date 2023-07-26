@@ -1,514 +1,514 @@
-package com.twitter.simclusters_v2.scalding
-package multi_type_graph.assemble_multi_type_graph
+package com.twittew.simcwustews_v2.scawding
+package m-muwti_type_gwaph.assembwe_muwti_type_gwaph
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{DateRange, Days, Stat, UniqueID}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.{
-  LeftNode,
-  Noun,
-  RightNode,
-  RightNodeType,
-  RightNodeWithEdgeWeight
+impowt c-com.twittew.bijection.scwooge.binawyscawacodec
+i-impowt com.twittew.scawding_intewnaw.job.wequiwedbinawycompawatows.owdsew
+impowt c-com.twittew.scawding.typed.typedpipe
+i-impowt c-com.twittew.scawding.{datewange, ^^;; d-days, (˘ω˘) stat, uniqueid}
+i-impowt com.twittew.scawding_intewnaw.dawv2.daw
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces
+impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  weftnode, OwO
+  n-nyoun,
+  wightnode, (ꈍᴗꈍ)
+  wightnodetype, òωó
+  wightnodewithedgeweight
 }
-import java.util.TimeZone
-import com.twitter.iesource.thriftscala.{InteractionEvent, InteractionType, ReferenceTweet}
-import com.twitter.simclusters_v2.common.{Country, Language, TopicId, TweetId, UserId}
-import com.twitter.usersource.snapshot.combined.UsersourceScalaDataset
-import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
+i-impowt java.utiw.timezone
+impowt com.twittew.iesouwce.thwiftscawa.{intewactionevent, i-intewactiontype, ʘwʘ wefewencetweet}
+impowt com.twittew.simcwustews_v2.common.{countwy, ʘwʘ w-wanguage, nyaa~~ topicid, tweetid, UwU usewid}
+i-impowt com.twittew.usewsouwce.snapshot.combined.usewsouwcescawadataset
+i-impowt com.twittew.fwigate.data_pipewine.magicwecs.magicwecs_notifications_wite.thwiftscawa.magicwecsnotificationwite
+impowt com.twittew.twadoop.usew.gen.thwiftscawa.combinedusew
 
-object AssembleMultiTypeGraph {
-  import Config._
+object assembwemuwtitypegwaph {
+  impowt config._
 
-  implicit val nounOrdering: Ordering[Noun] = new Ordering[Noun] {
-    // We define an ordering for each noun type as specified in simclusters_v2/multi_type_graph.thrift
-    // Please make sure we don't remove anything here that's still a part of the union Noun thrift and
-    // vice versa, if we add a new noun type to thrift, an ordering for it needs to added here as well.
-    def nounTypeOrder(noun: Noun): Int = noun match {
-      case _: Noun.UserId => 0
-      case _: Noun.Country => 1
-      case _: Noun.Language => 2
-      case _: Noun.Query => 3
-      case _: Noun.TopicId => 4
-      case _: Noun.TweetId => 5
+  i-impwicit vaw nyounowdewing: owdewing[noun] = new owdewing[noun] {
+    // we d-define an owdewing fow each nyoun t-type as specified i-in simcwustews_v2/muwti_type_gwaph.thwift
+    // p-pwease make s-suwe we don't wemove anything hewe that's stiww a-a pawt of the union nyoun thwift and
+    // vice v-vewsa, (⑅˘꒳˘) if we add a nyew nyoun type to thwift, (˘ω˘) an owdewing fow it nyeeds to added hewe as weww. :3
+    d-def nyountypeowdew(noun: nyoun): i-int = nyoun m-match {
+      c-case _: nyoun.usewid => 0
+      case _: nyoun.countwy => 1
+      case _: nyoun.wanguage => 2
+      case _: nyoun.quewy => 3
+      c-case _: nyoun.topicid => 4
+      c-case _: nyoun.tweetid => 5
     }
 
-    override def compare(x: Noun, y: Noun): Int = (x, y) match {
-      case (Noun.UserId(a), Noun.UserId(b)) => a compare b
-      case (Noun.Country(a), Noun.Country(b)) => a compare b
-      case (Noun.Language(a), Noun.Language(b)) => a compare b
-      case (Noun.Query(a), Noun.Query(b)) => a compare b
-      case (Noun.TopicId(a), Noun.TopicId(b)) => a compare b
-      case (Noun.TweetId(a), Noun.TweetId(b)) => a compare b
-      case (nounA, nounB) => nounTypeOrder(nounA) compare nounTypeOrder(nounB)
+    ovewwide d-def compawe(x: n-nyoun, (˘ω˘) y: nyoun): int = (x, nyaa~~ y) m-match {
+      case (noun.usewid(a), (U ﹏ U) nyoun.usewid(b)) => a-a compawe b
+      case (noun.countwy(a), nyaa~~ nyoun.countwy(b)) => a-a compawe b
+      case (noun.wanguage(a), ^^;; n-nyoun.wanguage(b)) => a compawe b-b
+      case (noun.quewy(a), OwO n-nyoun.quewy(b)) => a compawe b
+      case (noun.topicid(a), nyaa~~ nyoun.topicid(b)) => a compawe b
+      case (noun.tweetid(a), UwU n-nyoun.tweetid(b)) => a-a compawe b
+      case (nouna, 😳 n-nyounb) => n-nyountypeowdew(nouna) c-compawe nyountypeowdew(nounb)
     }
   }
-  implicit val rightNodeTypeOrdering: Ordering[RightNodeType] = ordSer[RightNodeType]
+  impwicit vaw wightnodetypeowdewing: o-owdewing[wightnodetype] = owdsew[wightnodetype]
 
-  implicit val rightNodeTypeWithNounOrdering: Ordering[RightNode] =
-    new Ordering[RightNode] {
-      override def compare(x: RightNode, y: RightNode): Int = {
-        Ordering
-          .Tuple2(rightNodeTypeOrdering, nounOrdering)
-          .compare((x.rightNodeType, x.noun), (y.rightNodeType, y.noun))
+  impwicit vaw wightnodetypewithnounowdewing: owdewing[wightnode] =
+    n-nyew owdewing[wightnode] {
+      ovewwide def c-compawe(x: wightnode, 😳 y-y: wightnode): i-int = {
+        owdewing
+          .tupwe2(wightnodetypeowdewing, (ˆ ﻌ ˆ)♡ n-nyounowdewing)
+          .compawe((x.wightnodetype, (✿oωo) x-x.noun), nyaa~~ (y.wightnodetype, ^^ y-y.noun))
       }
     }
 
-  def getUserTweetInteractionGraph(
-    tweetInteractionEvents: TypedPipe[InteractionEvent],
+  d-def getusewtweetintewactiongwaph(
+    tweetintewactionevents: typedpipe[intewactionevent],
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numUserTweetInteractionEntries = Stat("num_user_tweet_interaction_entries")
-    val numDistinctUserTweetInteractionEntries = Stat("num_distinct_user_tweet_interaction_entries")
-    val numFavedTweets = Stat("num_faved_tweets")
-    val numRepliedTweets = Stat("num_replied_tweets")
-    val numRetweetedTweets = Stat("num_retweeted_tweets")
-    val userTweetInteractionsByType: TypedPipe[((UserId, RightNodeType), TweetId)] =
-      tweetInteractionEvents
-        .flatMap { event =>
-          val referenceTweet: Option[ReferenceTweet] = event.referenceTweet
-          val targetId: Long = event.targetId
-          val userId: Long = event.engagingUserId
+    impwicit uniqueid: u-uniqueid
+  ): t-typedpipe[(weftnode, (///ˬ///✿) w-wightnodewithedgeweight)] = {
+    v-vaw n-nyumusewtweetintewactionentwies = stat("num_usew_tweet_intewaction_entwies")
+    vaw nyumdistinctusewtweetintewactionentwies = stat("num_distinct_usew_tweet_intewaction_entwies")
+    v-vaw nyumfavedtweets = stat("num_faved_tweets")
+    vaw numwepwiedtweets = stat("num_wepwied_tweets")
+    vaw nyumwetweetedtweets = stat("num_wetweeted_tweets")
+    v-vaw usewtweetintewactionsbytype: typedpipe[((usewid, 😳 wightnodetype), òωó t-tweetid)] =
+      t-tweetintewactionevents
+        .fwatmap { e-event =>
+          vaw wefewencetweet: o-option[wefewencetweet] = event.wefewencetweet
+          v-vaw t-tawgetid: wong = event.tawgetid
+          vaw usewid: wong = event.engagingusewid
 
-          //  To find the id of the tweet that was interacted with
-          //  For likes, this is the targetId; for retweet or reply, it is the referenceTweet's id
-          //  One thing to note is that for likes, referenceTweet is empty
-          val (tweetIdOpt, rightNodeTypeOpt) = {
-            event.interactionType match {
-              case Some(InteractionType.Favorite) =>
-                // Only allow favorites on original tweets, not retweets, to avoid double-counting
-                // because we have retweet-type tweets in the data source as well
+          //  to find the id of the tweet that w-was intewacted with
+          //  f-fow wikes, ^^;; this is the tawgetid; f-fow wetweet o-ow wepwy, rawr it is the wefewencetweet's id
+          //  o-one thing t-to nyote is that fow wikes, (ˆ ﻌ ˆ)♡ wefewencetweet i-is empty
+          vaw (tweetidopt, XD w-wightnodetypeopt) = {
+            event.intewactiontype match {
+              case some(intewactiontype.favowite) =>
+                // o-onwy awwow f-favowites on o-owiginaw tweets, >_< not wetweets, (˘ω˘) to a-avoid doubwe-counting
+                // b-because we have wetweet-type t-tweets in the data souwce as weww
                 (
-                  if (referenceTweet.isEmpty) {
-                    numFavedTweets.inc()
-                    Some(targetId)
-                  } else None,
-                  Some(RightNodeType.FavTweet))
-              case Some(InteractionType.Reply) =>
-                numRepliedTweets.inc()
-                (referenceTweet.map(_.tweetId), Some(RightNodeType.ReplyTweet))
-              case Some(InteractionType.Retweet) =>
-                numRetweetedTweets.inc()
-                (referenceTweet.map(_.tweetId), Some(RightNodeType.RetweetTweet))
-              case _ => (None, None)
+                  if (wefewencetweet.isempty) {
+                    nyumfavedtweets.inc()
+                    s-some(tawgetid)
+                  } e-ewse none, 😳
+                  some(wightnodetype.favtweet))
+              c-case some(intewactiontype.wepwy) =>
+                n-nyumwepwiedtweets.inc()
+                (wefewencetweet.map(_.tweetid), o.O some(wightnodetype.wepwytweet))
+              case some(intewactiontype.wetweet) =>
+                nyumwetweetedtweets.inc()
+                (wefewencetweet.map(_.tweetid), (ꈍᴗꈍ) s-some(wightnodetype.wetweettweet))
+              case _ => (none, rawr x3 nyone)
             }
           }
-          for {
-            tweetId <- tweetIdOpt
-            rightNodeType <- rightNodeTypeOpt
-          } yield {
-            numUserTweetInteractionEntries.inc()
-            ((userId, rightNodeType), tweetId)
+          fow {
+            tweetid <- t-tweetidopt
+            wightnodetype <- wightnodetypeopt
+          } y-yiewd {
+            n-nyumusewtweetintewactionentwies.inc()
+            ((usewid, ^^ wightnodetype), OwO tweetid)
           }
         }
 
-    userTweetInteractionsByType
-      .mapValues(Set(_))
-      .sumByKey
-      .flatMap {
-        case ((userId, rightNodeType), tweetIdSet) =>
-          tweetIdSet.map { tweetId =>
-            numDistinctUserTweetInteractionEntries.inc()
+    usewtweetintewactionsbytype
+      .mapvawues(set(_))
+      .sumbykey
+      .fwatmap {
+        c-case ((usewid, ^^ wightnodetype), :3 tweetidset) =>
+          t-tweetidset.map { tweetid =>
+            nyumdistinctusewtweetintewactionentwies.inc()
             (
-              LeftNode.UserId(userId),
-              RightNodeWithEdgeWeight(
-                rightNode = RightNode(rightNodeType = rightNodeType, noun = Noun.TweetId(tweetId)),
+              weftnode.usewid(usewid), o.O
+              w-wightnodewithedgeweight(
+                wightnode = w-wightnode(wightnodetype = wightnodetype, -.- nyoun = nyoun.tweetid(tweetid)), (U ﹏ U)
                 weight = 1.0))
           }
       }
   }
 
-  def getUserFavGraph(
-    userUserFavEdges: TypedPipe[(UserId, UserId, Double)]
+  d-def getusewfavgwaph(
+    usewusewfavedges: t-typedpipe[(usewid, o.O u-usewid, OwO doubwe)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numInputFavEdges = Stat("num_input_fav_edges")
-    userUserFavEdges.map {
-      case (srcId, destId, edgeWt) =>
-        numInputFavEdges.inc()
+    i-impwicit uniqueid: uniqueid
+  ): t-typedpipe[(weftnode, ^•ﻌ•^ w-wightnodewithedgeweight)] = {
+    v-vaw nyuminputfavedges = stat("num_input_fav_edges")
+    u-usewusewfavedges.map {
+      case (swcid, ʘwʘ d-destid, :3 edgewt) =>
+        nyuminputfavedges.inc()
         (
-          LeftNode.UserId(srcId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.FavUser, noun = Noun.UserId(destId)),
-            weight = edgeWt))
+          w-weftnode.usewid(swcid), 😳
+          w-wightnodewithedgeweight(
+            w-wightnode =
+              wightnode(wightnodetype = wightnodetype.favusew, òωó n-nyoun = nyoun.usewid(destid)),
+            weight = edgewt))
     }
   }
 
-  def getUserFollowGraph(
-    userUserFollowEdges: TypedPipe[(UserId, UserId)]
+  def g-getusewfowwowgwaph(
+    u-usewusewfowwowedges: typedpipe[(usewid, 🥺 usewid)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numFlockFollowEdges = Stat("num_flock_follow_edges")
-    userUserFollowEdges.map {
-      case (srcId, destId) =>
-        numFlockFollowEdges.inc()
+    impwicit uniqueid: u-uniqueid
+  ): t-typedpipe[(weftnode, rawr x3 w-wightnodewithedgeweight)] = {
+    v-vaw nyumfwockfowwowedges = s-stat("num_fwock_fowwow_edges")
+    usewusewfowwowedges.map {
+      case (swcid, ^•ﻌ•^ destid) =>
+        nyumfwockfowwowedges.inc()
         (
-          LeftNode.UserId(srcId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.FollowUser, noun = Noun.UserId(destId)),
+          weftnode.usewid(swcid), :3
+          w-wightnodewithedgeweight(
+            wightnode =
+              w-wightnode(wightnodetype = wightnodetype.fowwowusew, (ˆ ﻌ ˆ)♡ noun = n-nyoun.usewid(destid)), (U ᵕ U❁)
             weight = 1.0))
     }
   }
 
-  def getUserBlockGraph(
-    userUserBlockEdges: TypedPipe[(UserId, UserId)]
+  d-def getusewbwockgwaph(
+    usewusewbwockedges: t-typedpipe[(usewid, :3 u-usewid)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numFlockBlockEdges = Stat("num_flock_block_edges")
-    userUserBlockEdges.map {
-      case (srcId, destId) =>
-        numFlockBlockEdges.inc()
+    i-impwicit u-uniqueid: uniqueid
+  ): t-typedpipe[(weftnode, ^^;; wightnodewithedgeweight)] = {
+    vaw nyumfwockbwockedges = stat("num_fwock_bwock_edges")
+    usewusewbwockedges.map {
+      case (swcid, ( ͡o ω ͡o ) destid) =>
+        nyumfwockbwockedges.inc()
         (
-          LeftNode.UserId(srcId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.BlockUser, noun = Noun.UserId(destId)),
+          w-weftnode.usewid(swcid),
+          w-wightnodewithedgeweight(
+            w-wightnode =
+              wightnode(wightnodetype = w-wightnodetype.bwockusew, o.O nyoun = nyoun.usewid(destid)), ^•ﻌ•^
             weight = 1.0))
     }
   }
 
-  def getUserAbuseReportGraph(
-    userUserAbuseReportEdges: TypedPipe[(UserId, UserId)]
+  d-def getusewabusewepowtgwaph(
+    u-usewusewabusewepowtedges: typedpipe[(usewid, XD u-usewid)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numFlockAbuseEdges = Stat("num_flock_abuse_edges")
-    userUserAbuseReportEdges.map {
-      case (srcId, destId) =>
-        numFlockAbuseEdges.inc()
+    impwicit uniqueid: uniqueid
+  ): t-typedpipe[(weftnode, ^^ w-wightnodewithedgeweight)] = {
+    vaw n-nyumfwockabuseedges = s-stat("num_fwock_abuse_edges")
+    usewusewabusewepowtedges.map {
+      case (swcid, o.O destid) =>
+        nyumfwockabuseedges.inc()
         (
-          LeftNode.UserId(srcId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.AbuseReportUser, noun = Noun.UserId(destId)),
-            weight = 1.0))
+          w-weftnode.usewid(swcid), ( ͡o ω ͡o )
+          w-wightnodewithedgeweight(
+            w-wightnode =
+              w-wightnode(wightnodetype = w-wightnodetype.abusewepowtusew, /(^•ω•^) noun = nyoun.usewid(destid)),
+            w-weight = 1.0))
     }
   }
 
-  def filterInvalidUsers(
-    flockEdges: TypedPipe[(UserId, UserId)],
-    validUsers: TypedPipe[UserId]
-  ): TypedPipe[(UserId, UserId)] = {
-    flockEdges
-      .join(validUsers.asKeys)
-      //      .withReducers(10000)
+  d-def fiwtewinvawidusews(
+    f-fwockedges: t-typedpipe[(usewid, 🥺 usewid)], nyaa~~
+    v-vawidusews: typedpipe[usewid]
+  ): typedpipe[(usewid, mya u-usewid)] = {
+    fwockedges
+      .join(vawidusews.askeys)
+      //      .withweducews(10000)
       .map {
-        case (srcId, (destId, _)) =>
-          (destId, srcId)
+        c-case (swcid, XD (destid, _)) =>
+          (destid, nyaa~~ s-swcid)
       }
-      .join(validUsers.asKeys)
-      //      .withReducers(10000)
+      .join(vawidusews.askeys)
+      //      .withweducews(10000)
       .map {
-        case (destId, (srcId, _)) =>
-          (srcId, destId)
+        case (destid, ʘwʘ (swcid, (⑅˘꒳˘) _)) =>
+          (swcid, :3 d-destid)
       }
   }
 
-  def getUserSpamReportGraph(
-    userUserSpamReportEdges: TypedPipe[(UserId, UserId)]
+  def getusewspamwepowtgwaph(
+    usewusewspamwepowtedges: t-typedpipe[(usewid, -.- u-usewid)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numFlockSpamEdges = Stat("num_flock_spam_edges")
-    userUserSpamReportEdges.map {
-      case (srcId, destId) =>
-        numFlockSpamEdges.inc()
+    i-impwicit uniqueid: uniqueid
+  ): typedpipe[(weftnode, 😳😳😳 wightnodewithedgeweight)] = {
+    v-vaw nyumfwockspamedges = stat("num_fwock_spam_edges")
+    usewusewspamwepowtedges.map {
+      c-case (swcid, (U ﹏ U) d-destid) =>
+        nyumfwockspamedges.inc()
         (
-          LeftNode.UserId(srcId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.SpamReportUser, noun = Noun.UserId(destId)),
+          w-weftnode.usewid(swcid), o.O
+          wightnodewithedgeweight(
+            w-wightnode =
+              w-wightnode(wightnodetype = wightnodetype.spamwepowtusew, ( ͡o ω ͡o ) nyoun = nyoun.usewid(destid)), òωó
             weight = 1.0))
     }
   }
 
-  def getUserTopicFollowGraph(
-    topicUserFollowedByEdges: TypedPipe[(TopicId, UserId)]
+  d-def getusewtopicfowwowgwaph(
+    topicusewfowwowedbyedges: typedpipe[(topicid, 🥺 u-usewid)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numTFGEdges = Stat("num_tfg_edges")
-    topicUserFollowedByEdges.map {
-      case (topicId, userId) =>
-        numTFGEdges.inc()
+    i-impwicit uniqueid: uniqueid
+  ): t-typedpipe[(weftnode, /(^•ω•^) wightnodewithedgeweight)] = {
+    v-vaw nyumtfgedges = s-stat("num_tfg_edges")
+    t-topicusewfowwowedbyedges.map {
+      case (topicid, 😳😳😳 usewid) =>
+        nyumtfgedges.inc()
         (
-          LeftNode.UserId(userId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.FollowTopic, noun = Noun.TopicId(topicId)),
+          weftnode.usewid(usewid), ^•ﻌ•^
+          wightnodewithedgeweight(
+            wightnode =
+              wightnode(wightnodetype = wightnodetype.fowwowtopic, nyaa~~ nyoun = noun.topicid(topicid)), OwO
             weight = 1.0)
         )
     }
   }
 
-  def getUserSignUpCountryGraph(
-    userSignUpCountryEdges: TypedPipe[(UserId, (Country, Language))]
+  def getusewsignupcountwygwaph(
+    usewsignupcountwyedges: typedpipe[(usewid, ^•ﻌ•^ (countwy, wanguage))]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numUserSourceEntriesRead = Stat("num_user_source_entries")
-    userSignUpCountryEdges.map {
-      case (userId, (country, lang)) =>
-        numUserSourceEntriesRead.inc()
+    i-impwicit uniqueid: u-uniqueid
+  ): typedpipe[(weftnode, σωσ wightnodewithedgeweight)] = {
+    v-vaw n-nyumusewsouwceentwieswead = s-stat("num_usew_souwce_entwies")
+    usewsignupcountwyedges.map {
+      c-case (usewid, -.- (countwy, (˘ω˘) wang)) =>
+        n-nyumusewsouwceentwieswead.inc()
         (
-          LeftNode.UserId(userId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.SignUpCountry, noun = Noun.Country(country)),
+          w-weftnode.usewid(usewid), rawr x3
+          wightnodewithedgeweight(
+            w-wightnode =
+              wightnode(wightnodetype = w-wightnodetype.signupcountwy, rawr x3 n-nyoun = nyoun.countwy(countwy)), σωσ
             weight = 1.0))
     }
   }
 
-  def getMagicRecsNotifOpenOrClickTweetsGraph(
-    userMRNotifOpenOrClickEvents: TypedPipe[MagicRecsNotificationLite]
+  d-def getmagicwecsnotifopenowcwicktweetsgwaph(
+    u-usewmwnotifopenowcwickevents: t-typedpipe[magicwecsnotificationwite]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numNotifOpenOrClickEntries = Stat("num_notif_open_or_click")
-    userMRNotifOpenOrClickEvents.flatMap { entry =>
-      numNotifOpenOrClickEntries.inc()
-      for {
-        userId <- entry.targetUserId
-        tweetId <- entry.tweetId
-      } yield {
+    i-impwicit uniqueid: u-uniqueid
+  ): t-typedpipe[(weftnode, nyaa~~ w-wightnodewithedgeweight)] = {
+    v-vaw nyumnotifopenowcwickentwies = s-stat("num_notif_open_ow_cwick")
+    usewmwnotifopenowcwickevents.fwatmap { e-entwy =>
+      n-nyumnotifopenowcwickentwies.inc()
+      f-fow {
+        usewid <- e-entwy.tawgetusewid
+        tweetid <- entwy.tweetid
+      } yiewd {
         (
-          LeftNode.UserId(userId),
-          RightNodeWithEdgeWeight(
-            rightNode = RightNode(
-              rightNodeType = RightNodeType.NotifOpenOrClickTweet,
-              noun = Noun.TweetId(tweetId)),
+          w-weftnode.usewid(usewid), (ꈍᴗꈍ)
+          wightnodewithedgeweight(
+            wightnode = w-wightnode(
+              w-wightnodetype = w-wightnodetype.notifopenowcwicktweet, ^•ﻌ•^
+              nyoun = n-nyoun.tweetid(tweetid)), >_<
             weight = 1.0))
       }
     }
   }
 
-  def getUserConsumedLanguagesGraph(
-    userConsumedLanguageEdges: TypedPipe[(UserId, Seq[(Language, Double)])]
+  d-def getusewconsumedwanguagesgwaph(
+    u-usewconsumedwanguageedges: typedpipe[(usewid, ^^;; seq[(wanguage, ^^;; d-doubwe)])]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numPenguinSourceEntriesRead = Stat("num_penguin_source_entries")
-    userConsumedLanguageEdges.flatMap {
-      case (userId, langWithWeights) =>
-        numPenguinSourceEntriesRead.inc()
-        langWithWeights.map {
-          case (lang, weight) =>
+    impwicit uniqueid: uniqueid
+  ): typedpipe[(weftnode, /(^•ω•^) wightnodewithedgeweight)] = {
+    v-vaw nyumpenguinsouwceentwieswead = s-stat("num_penguin_souwce_entwies")
+    u-usewconsumedwanguageedges.fwatmap {
+      case (usewid, nyaa~~ wangwithweights) =>
+        nyumpenguinsouwceentwieswead.inc()
+        wangwithweights.map {
+          c-case (wang, (✿oωo) weight) =>
             (
-              LeftNode.UserId(userId),
-              RightNodeWithEdgeWeight(
-                rightNode = RightNode(
-                  rightNodeType = RightNodeType.ConsumedLanguage,
-                  noun = Noun.Language(lang)),
+              w-weftnode.usewid(usewid), ( ͡o ω ͡o )
+              w-wightnodewithedgeweight(
+                w-wightnode = wightnode(
+                  wightnodetype = w-wightnodetype.consumedwanguage,
+                  n-nyoun = nyoun.wanguage(wang)), (U ᵕ U❁)
                 weight = weight))
         }
     }
   }
 
-  def getSearchGraph(
-    userSearchQueryEdges: TypedPipe[(UserId, String)]
+  d-def getseawchgwaph(
+    usewseawchquewyedges: t-typedpipe[(usewid, òωó stwing)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numSearchQueries = Stat("num_search_queries")
-    userSearchQueryEdges.map {
-      case (userId, query) =>
-        numSearchQueries.inc()
+    impwicit u-uniqueid: u-uniqueid
+  ): t-typedpipe[(weftnode, σωσ wightnodewithedgeweight)] = {
+    v-vaw nyumseawchquewies = stat("num_seawch_quewies")
+    u-usewseawchquewyedges.map {
+      case (usewid, :3 q-quewy) =>
+        nyumseawchquewies.inc()
         (
-          LeftNode.UserId(userId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.SearchQuery, noun = Noun.Query(query)),
-            weight = 1.0))
+          w-weftnode.usewid(usewid), OwO
+          wightnodewithedgeweight(
+            w-wightnode =
+              w-wightnode(wightnodetype = w-wightnodetype.seawchquewy, ^^ n-nyoun = nyoun.quewy(quewy)), (˘ω˘)
+            w-weight = 1.0))
     }
   }
 
-  def buildEmployeeGraph(
-    fullGraph: TypedPipe[(LeftNode, RightNodeWithEdgeWeight)]
+  d-def buiwdempwoyeegwaph(
+    f-fuwwgwaph: typedpipe[(weftnode, OwO w-wightnodewithedgeweight)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numEmployeeEdges = Stat("num_employee_edges")
-    val employeeIds = Config.SampledEmployeeIds
-    fullGraph
-      .collect {
-        case (LeftNode.UserId(userId), rightNodeWithWeight) if employeeIds.contains(userId) =>
-          numEmployeeEdges.inc()
-          (LeftNode.UserId(userId), rightNodeWithWeight)
+    impwicit uniqueid: u-uniqueid
+  ): typedpipe[(weftnode, w-wightnodewithedgeweight)] = {
+    vaw n-nyumempwoyeeedges = s-stat("num_empwoyee_edges")
+    v-vaw empwoyeeids = config.sampwedempwoyeeids
+    fuwwgwaph
+      .cowwect {
+        case (weftnode.usewid(usewid), UwU w-wightnodewithweight) i-if empwoyeeids.contains(usewid) =>
+          n-nyumempwoyeeedges.inc()
+          (weftnode.usewid(usewid), ^•ﻌ•^ wightnodewithweight)
       }
   }
 
-  def getTruncatedGraph(
-    fullGraph: TypedPipe[(LeftNode, RightNodeWithEdgeWeight)],
-    topKWithFrequency: TypedPipe[(RightNodeType, Seq[(Noun, Double)])]
+  def gettwuncatedgwaph(
+    fuwwgwaph: typedpipe[(weftnode, (ꈍᴗꈍ) w-wightnodewithedgeweight)], /(^•ω•^)
+    t-topkwithfwequency: typedpipe[(wightnodetype, (U ᵕ U❁) s-seq[(noun, (✿oωo) doubwe)])]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numEntriesTruncatedGraph = Stat("num_entries_truncated_graph")
-    val numTopKTruncatedNouns = Stat("num_topk_truncated_nouns")
+    impwicit u-uniqueid: uniqueid
+  ): typedpipe[(weftnode, OwO wightnodewithedgeweight)] = {
+    v-vaw nyumentwiestwuncatedgwaph = s-stat("num_entwies_twuncated_gwaph")
+    vaw n-nyumtopktwuncatednouns = s-stat("num_topk_twuncated_nouns")
 
-    implicit val rightNodeSer: RightNode => Array[Byte] = BinaryScalaCodec(RightNode)
-    val topNouns: TypedPipe[RightNode] = topKWithFrequency
-      .flatMap {
-        case (rightNodeType, nounsList) =>
-          nounsList
+    impwicit vaw wightnodesew: wightnode => a-awway[byte] = b-binawyscawacodec(wightnode)
+    vaw topnouns: typedpipe[wightnode] = t-topkwithfwequency
+      .fwatmap {
+        case (wightnodetype, :3 nyounswist) =>
+          n-nyounswist
             .map {
-              case (nounVal, aggregatedFrequency) =>
-                numTopKTruncatedNouns.inc()
-                RightNode(rightNodeType, nounVal)
+              case (nounvaw, nyaa~~ a-aggwegatedfwequency) =>
+                n-nyumtopktwuncatednouns.inc()
+                wightnode(wightnodetype, ^•ﻌ•^ nyounvaw)
             }
       }
 
-    fullGraph
+    f-fuwwgwaph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          (rightNodeWithWeight.rightNode, (leftNode, rightNodeWithWeight))
+        c-case (weftnode, ( ͡o ω ͡o ) wightnodewithweight) =>
+          (wightnodewithweight.wightnode, ^^;; (weftnode, mya w-wightnodewithweight))
       }
-      .sketch(reducers = 5000)
-      .join(topNouns.asKeys.toTypedPipe)
+      .sketch(weducews = 5000)
+      .join(topnouns.askeys.totypedpipe)
       .map {
-        case (rightNode, ((left, rightNodeWithWeight), _)) =>
-          numEntriesTruncatedGraph.inc()
-          (left, rightNodeWithWeight)
-      }
-  }
-
-  def getTopKRightNounsWithFrequencies(
-    fullGraph: TypedPipe[(LeftNode, RightNodeWithEdgeWeight)],
-    topKConfig: Map[RightNodeType, Int],
-    minFrequency: Int
-  )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(RightNodeType, Seq[(Noun, Double)])] = {
-    val maxAcrossRightNounType: Int = topKConfig.valuesIterator.max
-    fullGraph
-      .map {
-        case (leftNode, rightNodeWithWeight) =>
-          (rightNodeWithWeight.rightNode, 1.0)
-      }
-      .sumByKey
-      //      .withReducers(20000)
-      .toTypedPipe
-      .filter(_._2 >= minFrequency)
-      .map {
-        case (rightNode, freq) =>
-          (rightNode.rightNodeType, (rightNode.noun, freq))
-      }
-      .group(rightNodeTypeOrdering)
-      // Note: if maxAcrossRightNounType is >15M, it might result in OOM on reducer
-      .sortedReverseTake(maxAcrossRightNounType)(Ordering.by(_._2))
-      // An alternative to using group followed by sortedReverseTake is to define TopKMonoids,
-      // one for each RightNodeType to get the most frequent rightNouns
-      .map {
-        case (rightNodeType, nounsListWithFreq) =>
-          val truncatedList = nounsListWithFreq
-            .sortBy(-_._2)
-            .take(topKConfig.getOrElse(rightNodeType, NumTopNounsForUnknownRightNodeType))
-          (rightNodeType, truncatedList)
+        case (wightnode, ((weft, (U ᵕ U❁) w-wightnodewithweight), _)) =>
+          n-nyumentwiestwuncatedgwaph.inc()
+          (weft, ^•ﻌ•^ w-wightnodewithweight)
       }
   }
 
-  def getValidUsers(
-    userSource: TypedPipe[CombinedUser]
+  d-def gettopkwightnounswithfwequencies(
+    fuwwgwaph: t-typedpipe[(weftnode, (U ﹏ U) w-wightnodewithedgeweight)], /(^•ω•^)
+    t-topkconfig: map[wightnodetype, ʘwʘ i-int], XD
+    minfwequency: int
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[UserId] = {
-    val numValidUsers = Stat("num_valid_users")
-    userSource
-      .flatMap { u =>
-        for {
-          user <- u.user
-          if user.id != 0
-          safety <- user.safety
+    impwicit u-uniqueid: u-uniqueid
+  ): typedpipe[(wightnodetype, s-seq[(noun, (⑅˘꒳˘) doubwe)])] = {
+    vaw maxacwosswightnountype: int = topkconfig.vawuesitewatow.max
+    fuwwgwaph
+      .map {
+        c-case (weftnode, nyaa~~ wightnodewithweight) =>
+          (wightnodewithweight.wightnode, UwU 1.0)
+      }
+      .sumbykey
+      //      .withweducews(20000)
+      .totypedpipe
+      .fiwtew(_._2 >= m-minfwequency)
+      .map {
+        c-case (wightnode, (˘ω˘) fweq) =>
+          (wightnode.wightnodetype, rawr x3 (wightnode.noun, (///ˬ///✿) fweq))
+      }
+      .gwoup(wightnodetypeowdewing)
+      // n-nyote: if maxacwosswightnountype is >15m, 😳😳😳 it might w-wesuwt in oom o-on weducew
+      .sowtedwevewsetake(maxacwosswightnountype)(owdewing.by(_._2))
+      // a-an awtewnative t-to using g-gwoup fowwowed by sowtedwevewsetake is to define topkmonoids, (///ˬ///✿)
+      // one fow e-each wightnodetype to get the m-most fwequent wightnouns
+      .map {
+        case (wightnodetype, ^^;; nyounswistwithfweq) =>
+          vaw twuncatedwist = n-nyounswistwithfweq
+            .sowtby(-_._2)
+            .take(topkconfig.getowewse(wightnodetype, ^^ nyumtopnounsfowunknownwightnodetype))
+          (wightnodetype, (///ˬ///✿) twuncatedwist)
+      }
+  }
+
+  def getvawidusews(
+    usewsouwce: typedpipe[combinedusew]
+  )(
+    i-impwicit u-uniqueid: uniqueid
+  ): typedpipe[usewid] = {
+    v-vaw nyumvawidusews = stat("num_vawid_usews")
+    usewsouwce
+      .fwatmap { u-u =>
+        f-fow {
+          usew <- u.usew
+          i-if usew.id != 0
+          safety <- u-usew.safety
           if !(safety.suspended || safety.deactivated)
-        } yield {
-          numValidUsers.inc()
-          user.id
+        } yiewd {
+          nyumvawidusews.inc()
+          usew.id
         }
       }
   }
 
-  def getFullGraph(
+  def g-getfuwwgwaph(
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
+    impwicit datewange: datewange, -.-
+    t-timezone: t-timezone, /(^•ω•^)
+    u-uniqueid: uniqueid
+  ): typedpipe[(weftnode, UwU wightnodewithedgeweight)] = {
 
-    // list of valid UserIds - to filter out deactivated or suspended user accounts
-    val userSource: TypedPipe[CombinedUser] =
-      DAL
-        .readMostRecentSnapshotNoOlderThan(UsersourceScalaDataset, Days(7)).toTypedPipe
-    val validUsers: TypedPipe[UserId] = getValidUsers(userSource).forceToDisk
+    // w-wist of vawid usewids - to fiwtew out deactivated ow suspended usew accounts
+    v-vaw usewsouwce: t-typedpipe[combinedusew] =
+      d-daw
+        .weadmostwecentsnapshotnoowdewthan(usewsouwcescawadataset, d-days(7)).totypedpipe
+    vaw vawidusews: typedpipe[usewid] = g-getvawidusews(usewsouwce).fowcetodisk
 
-    //Dataset read operations
+    //dataset w-wead opewations
 
-    // ieSource tweet engagements data for tweet favs, replies, retweets - from last 14 days
-    val tweetSource: TypedPipe[InteractionEvent] =
-      ExternalDataSources.ieSourceTweetEngagementsSource(dateRange =
-        DateRange(dateRange.end - Days(14), dateRange.end))
+    // iesouwce tweet engagements d-data fow tweet favs, (⑅˘꒳˘) wepwies, wetweets - fwom w-wast 14 days
+    vaw tweetsouwce: typedpipe[intewactionevent] =
+      e-extewnawdatasouwces.iesouwcetweetengagementssouwce(datewange =
+        d-datewange(datewange.end - days(14), ʘwʘ d-datewange.end))
 
-    // user-user fav edges
-    val userUserFavEdges: TypedPipe[(UserId, UserId, Double)] =
-      ExternalDataSources.getFavEdges(HalfLifeInDaysForFavScore)
+    // u-usew-usew f-fav edges
+    vaw usewusewfavedges: typedpipe[(usewid, σωσ u-usewid, doubwe)] =
+      extewnawdatasouwces.getfavedges(hawfwifeindaysfowfavscowe)
 
-    // user-user follow edges
-    val userUserFollowEdges: TypedPipe[(UserId, UserId)] =
-      filterInvalidUsers(ExternalDataSources.flockFollowsSource, validUsers)
+    // u-usew-usew fowwow edges
+    vaw usewusewfowwowedges: typedpipe[(usewid, ^^ u-usewid)] =
+      f-fiwtewinvawidusews(extewnawdatasouwces.fwockfowwowssouwce, OwO v-vawidusews)
 
-    // user-user block edges
-    val userUserBlockEdges: TypedPipe[(UserId, UserId)] =
-      filterInvalidUsers(ExternalDataSources.flockBlocksSource, validUsers)
+    // u-usew-usew bwock e-edges
+    vaw usewusewbwockedges: typedpipe[(usewid, (ˆ ﻌ ˆ)♡ u-usewid)] =
+      fiwtewinvawidusews(extewnawdatasouwces.fwockbwockssouwce, o.O vawidusews)
 
-    // user-user abuse report edges
-    val userUserAbuseReportEdges: TypedPipe[(UserId, UserId)] =
-      filterInvalidUsers(ExternalDataSources.flockReportAsAbuseSource, validUsers)
+    // u-usew-usew abuse wepowt edges
+    v-vaw usewusewabusewepowtedges: typedpipe[(usewid, (˘ω˘) usewid)] =
+      f-fiwtewinvawidusews(extewnawdatasouwces.fwockwepowtasabusesouwce, 😳 v-vawidusews)
 
-    // user-user spam report edges
-    val userUserSpamReportEdges: TypedPipe[(UserId, UserId)] =
-      filterInvalidUsers(ExternalDataSources.flockReportAsSpamSource, validUsers)
+    // usew-usew s-spam wepowt edges
+    vaw u-usewusewspamwepowtedges: t-typedpipe[(usewid, (U ᵕ U❁) usewid)] =
+      f-fiwtewinvawidusews(extewnawdatasouwces.fwockwepowtasspamsouwce, :3 v-vawidusews)
 
-    // user-signup country edges
-    val userSignUpCountryEdges: TypedPipe[(UserId, (Country, Language))] =
-      ExternalDataSources.userSource
+    // usew-signup countwy e-edges
+    vaw usewsignupcountwyedges: typedpipe[(usewid, o.O (countwy, wanguage))] =
+      e-extewnawdatasouwces.usewsouwce
 
-    // user-consumed language edges
-    val userConsumedLanguageEdges: TypedPipe[(UserId, Seq[(Language, Double)])] =
-      ExternalDataSources.inferredUserConsumedLanguageSource
+    // usew-consumed w-wanguage edges
+    vaw usewconsumedwanguageedges: typedpipe[(usewid, (///ˬ///✿) s-seq[(wanguage, OwO d-doubwe)])] =
+      e-extewnawdatasouwces.infewwedusewconsumedwanguagesouwce
 
-    // user-topic follow edges
-    val topicUserFollowedByEdges: TypedPipe[(TopicId, UserId)] =
-      ExternalDataSources.topicFollowGraphSource
+    // usew-topic f-fowwow edges
+    v-vaw topicusewfowwowedbyedges: typedpipe[(topicid, >w< u-usewid)] =
+      extewnawdatasouwces.topicfowwowgwaphsouwce
 
-    // user-MRNotifOpenOrClick events from last 7 days
-    val userMRNotifOpenOrClickEvents: TypedPipe[MagicRecsNotificationLite] =
-      ExternalDataSources.magicRecsNotficationOpenOrClickEventsSource(dateRange =
-        DateRange(dateRange.end - Days(7), dateRange.end))
+    // u-usew-mwnotifopenowcwick events fwom wast 7 d-days
+    vaw u-usewmwnotifopenowcwickevents: typedpipe[magicwecsnotificationwite] =
+      extewnawdatasouwces.magicwecsnotficationopenowcwickeventssouwce(datewange =
+        datewange(datewange.end - days(7), ^^ datewange.end))
 
-    // user-searchQuery strings from last 7 days
-    val userSearchQueryEdges: TypedPipe[(UserId, String)] =
-      ExternalDataSources.adaptiveSearchScribeLogsSource(dateRange =
-        DateRange(dateRange.end - Days(7), dateRange.end))
+    // u-usew-seawchquewy s-stwings fwom wast 7 days
+    vaw usewseawchquewyedges: typedpipe[(usewid, (⑅˘꒳˘) s-stwing)] =
+      extewnawdatasouwces.adaptiveseawchscwibewogssouwce(datewange =
+        d-datewange(datewange.end - d-days(7), ʘwʘ datewange.end))
 
-    getUserTweetInteractionGraph(tweetSource) ++
-      getUserFavGraph(userUserFavEdges) ++
-      getUserFollowGraph(userUserFollowEdges) ++
-      getUserBlockGraph(userUserBlockEdges) ++
-      getUserAbuseReportGraph(userUserAbuseReportEdges) ++
-      getUserSpamReportGraph(userUserSpamReportEdges) ++
-      getUserSignUpCountryGraph(userSignUpCountryEdges) ++
-      getUserConsumedLanguagesGraph(userConsumedLanguageEdges) ++
-      getUserTopicFollowGraph(topicUserFollowedByEdges) ++
-      getMagicRecsNotifOpenOrClickTweetsGraph(userMRNotifOpenOrClickEvents) ++
-      getSearchGraph(userSearchQueryEdges)
+    getusewtweetintewactiongwaph(tweetsouwce) ++
+      getusewfavgwaph(usewusewfavedges) ++
+      getusewfowwowgwaph(usewusewfowwowedges) ++
+      g-getusewbwockgwaph(usewusewbwockedges) ++
+      getusewabusewepowtgwaph(usewusewabusewepowtedges) ++
+      getusewspamwepowtgwaph(usewusewspamwepowtedges) ++
+      getusewsignupcountwygwaph(usewsignupcountwyedges) ++
+      g-getusewconsumedwanguagesgwaph(usewconsumedwanguageedges) ++
+      getusewtopicfowwowgwaph(topicusewfowwowedbyedges) ++
+      g-getmagicwecsnotifopenowcwicktweetsgwaph(usewmwnotifopenowcwickevents) ++
+      getseawchgwaph(usewseawchquewyedges)
   }
 }

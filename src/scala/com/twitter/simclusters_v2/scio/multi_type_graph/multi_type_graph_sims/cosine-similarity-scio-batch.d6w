@@ -1,37 +1,37 @@
-class Profile(Struct):
-  project = Required(String)
-  date = Required(String)
-  environment = Default(String, 'prod')
-  machine = Default(String, 'n2d-highmem-16')
+cwass pwofiwe(stwuct):
+  pwoject = w-wequiwed(stwing)
+  d-date = wequiwed(stwing)
+  enviwonment = d-defauwt(stwing, mya 'pwod')
+  m-machine = d-defauwt(stwing, 😳 'n2d-highmem-16')
 
-job = Job(
-  name='multi-type-graph-cosine-similarity-scio-batch-app',
-  project='{{profile.project}}',
-  staging_bucket='{{profile.project}}',
-  service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-  region='us-central1',
-  worker_config=WorkerConfig(
-    num_workers=2,
-    worker_machine_type='{{profile.machine}}',
-    worker_disk_type=WorkerDiskType('HDD'),
+j-job = job(
+  n-nyame='muwti-type-gwaph-cosine-simiwawity-scio-batch-app', XD
+  p-pwoject='{{pwofiwe.pwoject}}', :3
+  staging_bucket='{{pwofiwe.pwoject}}', 😳😳😳
+  sewvice_account='{{pwofiwe.usew_name}}-shdw@twttw-dp-svc-accounts.iam.gsewviceaccount.com', -.-
+  wegion='us-centwaw1', ( ͡o ω ͡o )
+  wowkew_config=wowkewconfig(
+    nyum_wowkews=2, rawr x3
+    w-wowkew_machine_type='{{pwofiwe.machine}}', nyaa~~
+    wowkew_disk_type=wowkewdisktype('hdd'), /(^•ω•^)
   ),
-  extra_args={
-    "environment": '{{profile.environment}}',
-    "date": Quote('{{profile.date}}'),
+  extwa_awgs={
+    "enviwonment": '{{pwofiwe.enviwonment}}', rawr
+    "date": quote('{{pwofiwe.date}}'), OwO
   },
-  deployment_config=BatchDeploymentConfig(
-    role='{{profile.user_name}}',
-    build_target='src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims:multi-type-graph-cosine-similarity-scio-batch-app',
-    gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-    environment='prod',
-    statebird_config=StatebirdConfig(
-      batch_width='P1W',
-      first_time='{{profile.date}}'
-    ),
-    workflow_config=WorkflowConfig(
-      play=True,
-    ),
-    timeout='PT50H'
+  d-depwoyment_config=batchdepwoymentconfig(
+    wowe='{{pwofiwe.usew_name}}', (U ﹏ U)
+    b-buiwd_tawget='swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/muwti_type_gwaph_sims:muwti-type-gwaph-cosine-simiwawity-scio-batch-app',
+    gcp_depwoyment_cwedentiaws='/vaw/wib/tss/keys/{{pwofiwe.usew_name}}/cwoud/gcp/dp/shadow.json', >_<
+    enviwonment='pwod', rawr x3
+    statebiwd_config=statebiwdconfig(
+      b-batch_width='p1w', mya
+      fiwst_time='{{pwofiwe.date}}'
+    ), nyaa~~
+    w-wowkfwow_config=wowkfwowconfig(
+      p-pway=twue,
+    ), (⑅˘꒳˘)
+    timeout='pt50h'
   )
 )
 

@@ -1,31 +1,31 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.twittew.cw_mixew.thwiftjava
+#@namespace scawa c-com.twittew.cw_mixew.thwiftscawa
+#@namespace s-stwato c-com.twittew.cw_mixew
 
-include "product.thrift"
-include "product_context.thrift"
+i-incwude "pwoduct.thwift"
+i-incwude "pwoduct_context.thwift"
 
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "com/twitter/recos/recos_common.thrift"
+i-incwude "com/twittew/pwoduct_mixew/cowe/cwient_context.thwift"
+i-incwude "com/twittew/wecos/wecos_common.thwift"
 
-struct UtegTweetRequest {
-	1: required client_context.ClientContext clientContext
-	2: required product.Product product
-	# Product-specific parameters should be placed in the Product Context
-	3: optional product_context.ProductContext productContext
-	4: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+s-stwuct utegtweetwequest {
+	1: wequiwed cwient_context.cwientcontext cwientcontext
+	2: wequiwed pwoduct.pwoduct p-pwoduct
+	# pwoduct-specific pawametews shouwd be pwaced in the p-pwoduct context
+	3: optionaw p-pwoduct_context.pwoductcontext pwoductcontext
+	4: optionaw wist<i64> excwudedtweetids (pewsonawdatatype = 'tweetid')
+} (pewsisted='twue', haspewsonawdata='twue')
 
-struct UtegTweet {
-  // tweet id
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  // sum of weights of seed users who engaged with the tweet.
-  // If a user engaged with the same tweet twice, liked it and retweeted it, then his/her weight was counted twice.
-  2: required double score
-  // user social proofs per engagement type
-  3: required map<recos_common.SocialProofType, list<i64>> socialProofByType(personalDataTypeKey='EngagementTypePrivate', personalDataTypeValue='UserId')
-} (persisted='true', hasPersonalData = 'true')
+s-stwuct utegtweet {
+  // tweet i-id
+  1: wequiwed i-i64 tweetid(pewsonawdatatype = 'tweetid')
+  // sum of weights of seed usews who engaged with the tweet. (⑅˘꒳˘)
+  // if a-a usew engaged with the same tweet twice, (///ˬ///✿) wiked it and wetweeted it, 😳😳😳 then his/hew w-weight was counted twice. 🥺
+  2: w-wequiwed doubwe s-scowe
+  // usew s-sociaw pwoofs p-pew engagement type
+  3: wequiwed map<wecos_common.sociawpwooftype, mya w-wist<i64>> sociawpwoofbytype(pewsonawdatatypekey='engagementtypepwivate', 🥺 pewsonawdatatypevawue='usewid')
+} (pewsisted='twue', >_< haspewsonawdata = 'twue')
 
-struct UtegTweetResponse {
-  1: required list<UtegTweet> tweets
-} (persisted='true')
+stwuct u-utegtweetwesponse {
+  1: wequiwed wist<utegtweet> tweets
+} (pewsisted='twue')

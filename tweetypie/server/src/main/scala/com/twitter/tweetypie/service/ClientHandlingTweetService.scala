@@ -1,524 +1,524 @@
-/** Copyright 2012 Twitter, Inc. */
-package com.twitter.tweetypie.service
+/** copywight 2012 twittew, (U ᵕ U❁) inc. */
+p-package com.twittew.tweetypie.sewvice
 
-import com.twitter.coreservices.StratoPublicApiRequestAttributionCounter
-import com.twitter.finagle.CancelledRequestException
-import com.twitter.finagle.context.Contexts
-import com.twitter.finagle.context.Deadline
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.stats.DefaultStatsReceiver
-import com.twitter.finagle.stats.Stat
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.util.ExceptionCategorizer
-import com.twitter.servo.util.MemoizedExceptionCounterFactory
-import com.twitter.tweetypie.Future
-import com.twitter.tweetypie.Gate
-import com.twitter.tweetypie.Logger
-import com.twitter.tweetypie.StatsReceiver
-import com.twitter.tweetypie.ThriftTweetService
-import com.twitter.tweetypie.TweetId
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.context.TweetypieContext
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Promise
+i-impowt c-com.twittew.cowesewvices.stwatopubwicapiwequestattwibutioncountew
+i-impowt com.twittew.finagwe.cancewwedwequestexception
+i-impowt com.twittew.finagwe.context.contexts
+i-impowt com.twittew.finagwe.context.deadwine
+i-impowt com.twittew.finagwe.mux.cwientdiscawdedwequestexception
+impowt c-com.twittew.finagwe.stats.defauwtstatsweceivew
+impowt com.twittew.finagwe.stats.stat
+impowt com.twittew.sewvo.exception.thwiftscawa.cwientewwow
+impowt com.twittew.sewvo.utiw.exceptioncategowizew
+i-impowt com.twittew.sewvo.utiw.memoizedexceptioncountewfactowy
+impowt com.twittew.tweetypie.futuwe
+i-impowt com.twittew.tweetypie.gate
+i-impowt com.twittew.tweetypie.woggew
+impowt com.twittew.tweetypie.statsweceivew
+impowt c-com.twittew.tweetypie.thwifttweetsewvice
+impowt c-com.twittew.tweetypie.tweetid
+i-impowt com.twittew.tweetypie.cwient_id.cwientidhewpew
+impowt com.twittew.tweetypie.context.tweetypiecontext
+impowt com.twittew.tweetypie.cowe.ovewcapacity
+impowt c-com.twittew.tweetypie.sewvewutiw.exceptioncountew
+impowt com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.utiw.pwomise
 
 /**
- * A TweetService that takes care of the handling of requests from
- * external services. In particular, this wrapper doesn't have any
- * logic for handling requests itself. It just serves as a gateway for
- * requests and responses, making sure that the underlying tweet
- * service only sees requests it should handle and that the external
- * clients get clean responses.
+ * a tweetsewvice that takes c-cawe of the handwing of wequests f-fwom
+ * extewnaw s-sewvices. :3 in p-pawticuwaw, ^^;; this w-wwappew doesn't have any
+ * wogic fow handwing w-wequests itsewf. ( ͡o ω ͡o ) it just sewves as a gateway fow
+ * w-wequests and wesponses, o.O making suwe that the undewwying tweet
+ * sewvice onwy sees wequests i-it shouwd handwe and that the extewnaw
+ * c-cwients g-get cwean wesponses. ^•ﻌ•^
  *
- * - Ensures that exceptions are propagated cleanly
- * - Sheds traffic if necessary
- * - Authenticates clients
- * - Records stats about clients
+ * - e-ensuwes that exceptions awe pwopagated cweanwy
+ * - sheds twaffic i-if nyecessawy
+ * - a-authenticates cwients
+ * - w-wecowds stats about c-cwients
  *
- * For each endpoint, we record both client-specific and total metrics for number of requests,
- * successes, exceptions, and latency.  The stats names follow the patterns:
- * - ./<methodName>/requests
- * - ./<methodName>/success
- * - ./<methodName>/client_errors
- * - ./<methodName>/server_errors
- * - ./<methodName>/exceptions
- * - ./<methodName>/exceptions/<exceptionName>
- * - ./<methodName>/<clientId>/requests
- * - ./<methodName>/<clientId>/success
- * - ./<methodName>/<clientId>/exceptions
- * - ./<methodName>/<clientId>/exceptions/<exceptionName>
+ * fow each endpoint, XD w-we wecowd both cwient-specific a-and totaw metwics fow nyumbew of wequests, ^^
+ * s-successes, o.O exceptions, ( ͡o ω ͡o ) and watency. /(^•ω•^)  t-the stats names fowwow the p-pattewns:
+ * - ./<methodname>/wequests
+ * - ./<methodname>/success
+ * - ./<methodname>/cwient_ewwows
+ * - ./<methodname>/sewvew_ewwows
+ * - ./<methodname>/exceptions
+ * - ./<methodname>/exceptions/<exceptionname>
+ * - ./<methodname>/<cwientid>/wequests
+ * - ./<methodname>/<cwientid>/success
+ * - ./<methodname>/<cwientid>/exceptions
+ * - ./<methodname>/<cwientid>/exceptions/<exceptionname>
  */
-class ClientHandlingTweetService(
-  underlying: ThriftTweetService,
-  stats: StatsReceiver,
-  loadShedEligible: Gate[String],
-  shedReadTrafficVoluntarily: Gate[Unit],
-  requestAuthorizer: ClientRequestAuthorizer,
-  getTweetsAuthorizer: MethodAuthorizer[GetTweetsRequest],
-  getTweetFieldsAuthorizer: MethodAuthorizer[GetTweetFieldsRequest],
-  requestSizeAuthorizer: MethodAuthorizer[Int],
-  clientIdHelper: ClientIdHelper)
-    extends ThriftTweetService {
-  import RescueExceptions._
+c-cwass cwienthandwingtweetsewvice(
+  undewwying: thwifttweetsewvice, 🥺
+  stats: statsweceivew, nyaa~~
+  woadshedewigibwe: gate[stwing], mya
+  shedweadtwafficvowuntawiwy: g-gate[unit],
+  w-wequestauthowizew: cwientwequestauthowizew,
+  g-gettweetsauthowizew: m-methodauthowizew[gettweetswequest], XD
+  g-gettweetfiewdsauthowizew: methodauthowizew[gettweetfiewdswequest], nyaa~~
+  wequestsizeauthowizew: methodauthowizew[int], ʘwʘ
+  c-cwientidhewpew: cwientidhewpew)
+    extends thwifttweetsewvice {
+  impowt w-wescueexceptions._
 
-  private val log = Logger("com.twitter.tweetypie.service.TweetService")
+  pwivate vaw w-wog = woggew("com.twittew.tweetypie.sewvice.tweetsewvice")
 
-  private[this] val Requests = "requests"
-  private[this] val Success = "success"
-  private[this] val Latency = "latency_ms"
+  p-pwivate[this] vaw w-wequests = "wequests"
+  pwivate[this] v-vaw success = "success"
+  p-pwivate[this] v-vaw watency = "watency_ms"
 
-  private[this] val StratoStatsCounter = new StratoPublicApiRequestAttributionCounter(
-    DefaultStatsReceiver
+  p-pwivate[this] vaw stwatostatscountew = n-nyew stwatopubwicapiwequestattwibutioncountew(
+    d-defauwtstatsweceivew
   )
-  private[this] val clientServerCategorizer =
-    ExceptionCategorizer.simple {
+  p-pwivate[this] v-vaw cwientsewvewcategowizew =
+    e-exceptioncategowizew.simpwe {
       _ match {
-        case _: ClientError | _: AccessDenied => "client_errors"
-        case _ => "server_errors"
+        case _: cwientewwow | _: a-accessdenied => "cwient_ewwows"
+        case _ => "sewvew_ewwows"
       }
     }
 
-  private[this] val preServoExceptionCountersWithClientId =
-    new MemoizedExceptionCounterFactory(stats)
-  private[this] val preServoExceptionCounters =
-    new MemoizedExceptionCounterFactory(stats, categorizer = ExceptionCounter.defaultCategorizer)
-  private[this] val postServoExceptionCounters =
-    new MemoizedExceptionCounterFactory(stats, categorizer = clientServerCategorizer)
+  pwivate[this] vaw pwesewvoexceptioncountewswithcwientid =
+    nyew memoizedexceptioncountewfactowy(stats)
+  pwivate[this] vaw p-pwesewvoexceptioncountews =
+    new memoizedexceptioncountewfactowy(stats, categowizew = exceptioncountew.defauwtcategowizew)
+  p-pwivate[this] v-vaw postsewvoexceptioncountews =
+    n-nyew memoizedexceptioncountewfactowy(stats, (⑅˘꒳˘) categowizew = c-cwientsewvewcategowizew)
 
-  private def clientId: String =
-    clientIdHelper.effectiveClientId.getOrElse(ClientIdHelper.UnknownClientId)
-  private def clientIdRoot: String =
-    clientIdHelper.effectiveClientIdRoot.getOrElse(ClientIdHelper.UnknownClientId)
+  pwivate d-def cwientid: s-stwing =
+    cwientidhewpew.effectivecwientid.getowewse(cwientidhewpew.unknowncwientid)
+  pwivate def cwientidwoot: stwing =
+    cwientidhewpew.effectivecwientidwoot.getowewse(cwientidhewpew.unknowncwientid)
 
-  private[this] val futureOverCapacityException =
-    Future.exception(OverCapacity("Request rejected due to load shedding."))
+  pwivate[this] v-vaw futuweovewcapacityexception =
+    futuwe.exception(ovewcapacity("wequest w-wejected due to woad shedding."))
 
-  private[this] def ifNotOverCapacityRead[T](
-    methodStats: StatsReceiver,
-    requestSize: Long
+  p-pwivate[this] d-def ifnotovewcapacitywead[t](
+    methodstats: statsweceivew, :3
+    w-wequestsize: w-wong
   )(
-    f: => Future[T]
-  ): Future[T] = {
-    val couldShed = loadShedEligible(clientId)
-    val doShed = couldShed && shedReadTrafficVoluntarily()
+    f: => futuwe[t]
+  ): f-futuwe[t] = {
+    v-vaw couwdshed = woadshedewigibwe(cwientid)
+    vaw doshed = couwdshed && shedweadtwafficvowuntawiwy()
 
-    methodStats.stat("loadshed_incoming_requests").add(requestSize)
-    if (couldShed) {
-      methodStats.stat("loadshed_eligible_requests").add(requestSize)
-    } else {
-      methodStats.stat("loadshed_ineligible_requests").add(requestSize)
+    m-methodstats.stat("woadshed_incoming_wequests").add(wequestsize)
+    i-if (couwdshed) {
+      m-methodstats.stat("woadshed_ewigibwe_wequests").add(wequestsize)
+    } ewse {
+      m-methodstats.stat("woadshed_inewigibwe_wequests").add(wequestsize)
     }
 
-    if (doShed) {
-      methodStats.stat("loadshed_rejected_requests").add(requestSize)
-      futureOverCapacityException
-    } else {
+    i-if (doshed) {
+      methodstats.stat("woadshed_wejected_wequests").add(wequestsize)
+      f-futuweovewcapacityexception
+    } ewse {
       f
     }
   }
 
-  private def maybeTimeFuture[A](maybeStat: Option[Stat])(f: => Future[A]) =
-    maybeStat match {
-      case Some(stat) => Stat.timeFuture(stat)(f)
-      case None => f
+  pwivate def maybetimefutuwe[a](maybestat: option[stat])(f: => f-futuwe[a]) =
+    m-maybestat match {
+      case some(stat) => stat.timefutuwe(stat)(f)
+      c-case n-nyone => f
     }
 
   /**
-   * Perform the action, increment the appropriate counters, and clean up the exceptions to servo exceptions
+   * pewfowm the action, -.- incwement the appwopwiate countews, 😳😳😳 a-and cwean up the exceptions to sewvo exceptions
    *
-   * This method also masks all interrupts to prevent request cancellation on hangup.
+   * this method awso masks aww intewwupts t-to pwevent wequest cancewwation on hangup. (U ﹏ U)
    */
-  private[this] def trackS[T](
-    name: String,
-    requestInfo: Any,
-    extraStatPrefix: Option[String] = None,
-    requestSize: Option[Long] = None
+  p-pwivate[this] d-def twacks[t](
+    nyame: stwing, o.O
+    wequestinfo: any, ( ͡o ω ͡o )
+    e-extwastatpwefix: o-option[stwing] = nyone, òωó
+    wequestsize: option[wong] = nyone
   )(
-    action: StatsReceiver => Future[T]
-  ): Future[T] = {
-    val methodStats = stats.scope(name)
-    val clientStats = methodStats.scope(clientIdRoot)
-    val cancelledCounter = methodStats.counter("cancelled")
+    a-action: statsweceivew => f-futuwe[t]
+  ): futuwe[t] = {
+    vaw methodstats = stats.scope(name)
+    vaw c-cwientstats = methodstats.scope(cwientidwoot)
+    v-vaw cancewwedcountew = m-methodstats.countew("cancewwed")
 
     /**
-     * Returns an identical future except that it ignores interrupts and increments a counter
-     * when a request is cancelled. This is [[Future]].masked but with a counter.
+     * wetuwns a-an identicaw futuwe except t-that it ignowes i-intewwupts and incwements a-a countew
+     * when a-a wequest is cancewwed. 🥺 t-this is [[futuwe]].masked but with a countew. /(^•ω•^)
      */
-    def maskedWithStats[A](f: Future[A]): Future[A] = {
-      val p = Promise[A]()
-      p.setInterruptHandler {
-        case _: ClientDiscardedRequestException | _: CancelledRequestException =>
-          cancelledCounter.incr()
+    def maskedwithstats[a](f: f-futuwe[a]): f-futuwe[a] = {
+      v-vaw p = pwomise[a]()
+      p.setintewwupthandwew {
+        c-case _: cwientdiscawdedwequestexception | _: cancewwedwequestexception =>
+          c-cancewwedcountew.incw()
       }
-      f.proxyTo(p)
+      f-f.pwoxyto(p)
       p
     }
 
-    maskedWithStats(
-      requestAuthorizer(name, clientIdHelper.effectiveClientId)
-        .flatMap { _ =>
-          methodStats.counter(Requests).incr()
-          extraStatPrefix.foreach(p => methodStats.counter(p, Requests).incr())
-          clientStats.counter(Requests).incr()
-          StratoStatsCounter.recordStats(name, "tweets", requestSize.getOrElse(1L))
+    maskedwithstats(
+      wequestauthowizew(name, c-cwientidhewpew.effectivecwientid)
+        .fwatmap { _ =>
+          m-methodstats.countew(wequests).incw()
+          e-extwastatpwefix.foweach(p => m-methodstats.countew(p, 😳😳😳 wequests).incw())
+          c-cwientstats.countew(wequests).incw()
+          stwatostatscountew.wecowdstats(name, ^•ﻌ•^ "tweets", wequestsize.getowewse(1w))
 
-          Stat.timeFuture(methodStats.stat(Latency)) {
-            Stat.timeFuture(clientStats.stat(Latency)) {
-              maybeTimeFuture(extraStatPrefix.map(p => methodStats.stat(p, Latency))) {
-                TweetypieContext.Local.trackStats(stats, methodStats, clientStats)
+          stat.timefutuwe(methodstats.stat(watency)) {
+            stat.timefutuwe(cwientstats.stat(watency)) {
+              maybetimefutuwe(extwastatpwefix.map(p => m-methodstats.stat(p, nyaa~~ watency))) {
+                t-tweetypiecontext.wocaw.twackstats(stats, OwO methodstats, ^•ﻌ•^ c-cwientstats)
 
-                // Remove the deadline for backend requests when we mask client cancellations so
-                // that side-effects are applied to all backend services even after client timeouts.
-                // Wrap and then flatten an extra layer of Future to capture any thrown exceptions.
-                Future(Contexts.broadcast.letClear(Deadline)(action(methodStats))).flatten
+                // wemove t-the deadwine fow backend wequests w-when we mask c-cwient cancewwations s-so
+                // t-that s-side-effects awe appwied to aww backend sewvices even aftew cwient timeouts. σωσ
+                // wwap and then fwatten an extwa w-wayew of futuwe t-to captuwe any t-thwown exceptions. -.-
+                futuwe(contexts.bwoadcast.wetcweaw(deadwine)(action(methodstats))).fwatten
               }
             }
           }
         }
-    ).onSuccess { _ =>
-        methodStats.counter(Success).incr()
-        extraStatPrefix.foreach(p => methodStats.counter(p, Success).incr())
-        clientStats.counter(Success).incr()
+    ).onsuccess { _ =>
+        m-methodstats.countew(success).incw()
+        extwastatpwefix.foweach(p => methodstats.countew(p, (˘ω˘) success).incw())
+        c-cwientstats.countew(success).incw()
       }
-      .onFailure { e =>
-        preServoExceptionCounters(name)(e)
-        preServoExceptionCountersWithClientId(name, clientIdRoot)(e)
+      .onfaiwuwe { e-e =>
+        pwesewvoexceptioncountews(name)(e)
+        p-pwesewvoexceptioncountewswithcwientid(name, rawr x3 cwientidwoot)(e)
       }
-      .rescue(rescueToServoFailure(name, clientId))
-      .onFailure { e =>
-        postServoExceptionCounters(name)(e)
-        logFailure(e, requestInfo)
+      .wescue(wescuetosewvofaiwuwe(name, rawr x3 cwientid))
+      .onfaiwuwe { e =>
+        p-postsewvoexceptioncountews(name)(e)
+        w-wogfaiwuwe(e, σωσ wequestinfo)
       }
   }
 
-  def track[T](
-    name: String,
-    requestInfo: Any,
-    extraStatPrefix: Option[String] = None,
-    requestSize: Option[Long] = None
+  d-def twack[t](
+    n-nyame: stwing, nyaa~~
+    wequestinfo: any, (ꈍᴗꈍ)
+    extwastatpwefix: option[stwing] = nyone, ^•ﻌ•^
+    w-wequestsize: o-option[wong] = n-nyone
   )(
-    action: => Future[T]
-  ): Future[T] = {
-    trackS(name, requestInfo, extraStatPrefix, requestSize) { _: StatsReceiver => action }
+    a-action: => futuwe[t]
+  ): f-futuwe[t] = {
+    twacks(name, >_< wequestinfo, ^^;; e-extwastatpwefix, ^^;; w-wequestsize) { _: statsweceivew => a-action }
   }
 
-  private def logFailure(ex: Throwable, requestInfo: Any): Unit =
-    log.warn(s"Returning failure response: $ex\n failed request info: $requestInfo")
+  p-pwivate def wogfaiwuwe(ex: t-thwowabwe, /(^•ω•^) wequestinfo: any): unit =
+    w-wog.wawn(s"wetuwning faiwuwe wesponse: $ex\n f-faiwed w-wequest info: $wequestinfo")
 
-  object RequestWidthPrefix {
-    private def prefix(width: Int) = {
-      val bucketMin =
-        width match {
-          case c if c < 10 => "0_9"
+  object wequestwidthpwefix {
+    p-pwivate def pwefix(width: int) = {
+      vaw b-bucketmin =
+        w-width match {
+          c-case c if c < 10 => "0_9"
           case c if c < 100 => "10_99"
-          case _ => "100_plus"
+          case _ => "100_pwus"
         }
-      s"width_$bucketMin"
+      s-s"width_$bucketmin"
     }
 
-    def forGetTweetsRequest(r: GetTweetsRequest): String = prefix(r.tweetIds.size)
-    def forGetTweetFieldsRequest(r: GetTweetFieldsRequest): String = prefix(r.tweetIds.size)
+    def fowgettweetswequest(w: g-gettweetswequest): s-stwing = pwefix(w.tweetids.size)
+    d-def fowgettweetfiewdswequest(w: gettweetfiewdswequest): s-stwing = p-pwefix(w.tweetids.size)
   }
 
-  object WithMediaPrefix {
-    def forPostTweetRequest(r: PostTweetRequest): String =
-      if (r.mediaUploadIds.exists(_.nonEmpty))
+  object withmediapwefix {
+    def f-fowposttweetwequest(w: posttweetwequest): stwing =
+      i-if (w.mediaupwoadids.exists(_.nonempty))
         "with_media"
-      else
+      e-ewse
         "without_media"
   }
 
-  override def getTweets(request: GetTweetsRequest): Future[Seq[GetTweetResult]] =
-    trackS(
-      "get_tweets",
-      request,
-      Some(RequestWidthPrefix.forGetTweetsRequest(request)),
-      Some(request.tweetIds.size)
+  ovewwide def gettweets(wequest: g-gettweetswequest): futuwe[seq[gettweetwesuwt]] =
+    t-twacks(
+      "get_tweets", nyaa~~
+      w-wequest, (✿oωo)
+      s-some(wequestwidthpwefix.fowgettweetswequest(wequest)), ( ͡o ω ͡o )
+      some(wequest.tweetids.size)
     ) { stats =>
-      getTweetsAuthorizer(request, clientId).flatMap { _ =>
-        ifNotOverCapacityRead(stats, request.tweetIds.length) {
-          underlying.getTweets(request)
+      gettweetsauthowizew(wequest, (U ᵕ U❁) cwientid).fwatmap { _ =>
+        ifnotovewcapacitywead(stats, òωó wequest.tweetids.wength) {
+          undewwying.gettweets(wequest)
         }
       }
     }
 
-  override def getTweetFields(request: GetTweetFieldsRequest): Future[Seq[GetTweetFieldsResult]] =
-    trackS(
-      "get_tweet_fields",
-      request,
-      Some(RequestWidthPrefix.forGetTweetFieldsRequest(request)),
-      Some(request.tweetIds.size)
-    ) { stats =>
-      getTweetFieldsAuthorizer(request, clientId).flatMap { _ =>
-        ifNotOverCapacityRead(stats, request.tweetIds.length) {
-          underlying.getTweetFields(request)
+  ovewwide def gettweetfiewds(wequest: gettweetfiewdswequest): futuwe[seq[gettweetfiewdswesuwt]] =
+    twacks(
+      "get_tweet_fiewds", σωσ
+      wequest, :3
+      s-some(wequestwidthpwefix.fowgettweetfiewdswequest(wequest)), OwO
+      some(wequest.tweetids.size)
+    ) { s-stats =>
+      gettweetfiewdsauthowizew(wequest, ^^ cwientid).fwatmap { _ =>
+        i-ifnotovewcapacitywead(stats, (˘ω˘) w-wequest.tweetids.wength) {
+          u-undewwying.gettweetfiewds(wequest)
         }
       }
     }
 
-  override def replicatedGetTweets(request: GetTweetsRequest): Future[Unit] =
-    track("replicated_get_tweets", request, requestSize = Some(request.tweetIds.size)) {
-      underlying.replicatedGetTweets(request).rescue {
-        case e: Throwable => Future.Unit // do not need deferredrpc to retry on exceptions
+  ovewwide def w-wepwicatedgettweets(wequest: gettweetswequest): futuwe[unit] =
+    t-twack("wepwicated_get_tweets", w-wequest, OwO wequestsize = some(wequest.tweetids.size)) {
+      u-undewwying.wepwicatedgettweets(wequest).wescue {
+        case e: t-thwowabwe => futuwe.unit // d-do nyot nyeed defewwedwpc to wetwy o-on exceptions
       }
     }
 
-  override def replicatedGetTweetFields(request: GetTweetFieldsRequest): Future[Unit] =
-    track("replicated_get_tweet_fields", request, requestSize = Some(request.tweetIds.size)) {
-      underlying.replicatedGetTweetFields(request).rescue {
-        case e: Throwable => Future.Unit // do not need deferredrpc to retry on exceptions
+  ovewwide d-def wepwicatedgettweetfiewds(wequest: g-gettweetfiewdswequest): f-futuwe[unit] =
+    t-twack("wepwicated_get_tweet_fiewds", UwU w-wequest, ^•ﻌ•^ w-wequestsize = s-some(wequest.tweetids.size)) {
+      u-undewwying.wepwicatedgettweetfiewds(wequest).wescue {
+        case e: t-thwowabwe => futuwe.unit // d-do nyot n-nyeed defewwedwpc to wetwy on e-exceptions
       }
     }
 
-  override def getTweetCounts(request: GetTweetCountsRequest): Future[Seq[GetTweetCountsResult]] =
-    trackS("get_tweet_counts", request, requestSize = Some(request.tweetIds.size)) { stats =>
-      ifNotOverCapacityRead(stats, request.tweetIds.length) {
-        requestSizeAuthorizer(request.tweetIds.size, clientId).flatMap { _ =>
-          underlying.getTweetCounts(request)
+  ovewwide def gettweetcounts(wequest: g-gettweetcountswequest): futuwe[seq[gettweetcountswesuwt]] =
+    t-twacks("get_tweet_counts", w-wequest, (ꈍᴗꈍ) w-wequestsize = some(wequest.tweetids.size)) { s-stats =>
+      ifnotovewcapacitywead(stats, /(^•ω•^) w-wequest.tweetids.wength) {
+        wequestsizeauthowizew(wequest.tweetids.size, (U ᵕ U❁) c-cwientid).fwatmap { _ =>
+          undewwying.gettweetcounts(wequest)
         }
       }
     }
 
-  override def replicatedGetTweetCounts(request: GetTweetCountsRequest): Future[Unit] =
-    track("replicated_get_tweet_counts", request, requestSize = Some(request.tweetIds.size)) {
-      underlying.replicatedGetTweetCounts(request).rescue {
-        case e: Throwable => Future.Unit // do not need deferredrpc to retry on exceptions
+  o-ovewwide def wepwicatedgettweetcounts(wequest: gettweetcountswequest): futuwe[unit] =
+    twack("wepwicated_get_tweet_counts", (✿oωo) wequest, OwO wequestsize = s-some(wequest.tweetids.size)) {
+      undewwying.wepwicatedgettweetcounts(wequest).wescue {
+        c-case e: t-thwowabwe => futuwe.unit // do nyot nyeed defewwedwpc to wetwy o-on exceptions
       }
     }
 
-  override def postTweet(request: PostTweetRequest): Future[PostTweetResult] =
-    track("post_tweet", request, Some(WithMediaPrefix.forPostTweetRequest(request))) {
-      underlying.postTweet(request)
+  ovewwide def posttweet(wequest: p-posttweetwequest): f-futuwe[posttweetwesuwt] =
+    t-twack("post_tweet", :3 wequest, some(withmediapwefix.fowposttweetwequest(wequest))) {
+      undewwying.posttweet(wequest)
     }
 
-  override def postRetweet(request: RetweetRequest): Future[PostTweetResult] =
-    track("post_retweet", request) {
-      underlying.postRetweet(request)
+  o-ovewwide def postwetweet(wequest: w-wetweetwequest): futuwe[posttweetwesuwt] =
+    t-twack("post_wetweet", nyaa~~ wequest) {
+      undewwying.postwetweet(wequest)
     }
 
-  override def setAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] =
-    track("set_additional_fields", request) {
-      underlying.setAdditionalFields(request)
+  o-ovewwide def setadditionawfiewds(wequest: setadditionawfiewdswequest): f-futuwe[unit] =
+    t-twack("set_additionaw_fiewds", ^•ﻌ•^ w-wequest) {
+      undewwying.setadditionawfiewds(wequest)
     }
 
-  override def deleteAdditionalFields(request: DeleteAdditionalFieldsRequest): Future[Unit] =
-    track("delete_additional_fields", request, requestSize = Some(request.tweetIds.size)) {
-      requestSizeAuthorizer(request.tweetIds.size, clientId).flatMap { _ =>
-        underlying.deleteAdditionalFields(request)
+  o-ovewwide d-def deweteadditionawfiewds(wequest: d-deweteadditionawfiewdswequest): f-futuwe[unit] =
+    twack("dewete_additionaw_fiewds", ( ͡o ω ͡o ) wequest, w-wequestsize = s-some(wequest.tweetids.size)) {
+      w-wequestsizeauthowizew(wequest.tweetids.size, c-cwientid).fwatmap { _ =>
+        u-undewwying.deweteadditionawfiewds(wequest)
       }
     }
 
-  override def asyncSetAdditionalFields(request: AsyncSetAdditionalFieldsRequest): Future[Unit] =
-    track("async_set_additional_fields", request) {
-      underlying.asyncSetAdditionalFields(request)
+  o-ovewwide def a-asyncsetadditionawfiewds(wequest: a-asyncsetadditionawfiewdswequest): futuwe[unit] =
+    t-twack("async_set_additionaw_fiewds", ^^;; wequest) {
+      undewwying.asyncsetadditionawfiewds(wequest)
     }
 
-  override def asyncDeleteAdditionalFields(
-    request: AsyncDeleteAdditionalFieldsRequest
-  ): Future[Unit] =
-    track("async_delete_additional_fields", request) {
-      underlying.asyncDeleteAdditionalFields(request)
+  o-ovewwide def asyncdeweteadditionawfiewds(
+    w-wequest: asyncdeweteadditionawfiewdswequest
+  ): f-futuwe[unit] =
+    t-twack("async_dewete_additionaw_fiewds", mya wequest) {
+      undewwying.asyncdeweteadditionawfiewds(wequest)
     }
 
-  override def replicatedUndeleteTweet2(request: ReplicatedUndeleteTweet2Request): Future[Unit] =
-    track("replicated_undelete_tweet2", request) { underlying.replicatedUndeleteTweet2(request) }
+  ovewwide def wepwicatedundewetetweet2(wequest: w-wepwicatedundewetetweet2wequest): f-futuwe[unit] =
+    t-twack("wepwicated_undewete_tweet2", (U ᵕ U❁) wequest) { undewwying.wepwicatedundewetetweet2(wequest) }
 
-  override def replicatedInsertTweet2(request: ReplicatedInsertTweet2Request): Future[Unit] =
-    track("replicated_insert_tweet2", request) { underlying.replicatedInsertTweet2(request) }
+  ovewwide def wepwicatedinsewttweet2(wequest: w-wepwicatedinsewttweet2wequest): f-futuwe[unit] =
+    twack("wepwicated_insewt_tweet2", ^•ﻌ•^ w-wequest) { undewwying.wepwicatedinsewttweet2(wequest) }
 
-  override def asyncInsert(request: AsyncInsertRequest): Future[Unit] =
-    track("async_insert", request) { underlying.asyncInsert(request) }
+  o-ovewwide def asyncinsewt(wequest: asyncinsewtwequest): futuwe[unit] =
+    t-twack("async_insewt", (U ﹏ U) w-wequest) { u-undewwying.asyncinsewt(wequest) }
 
-  override def updatePossiblySensitiveTweet(
-    request: UpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] =
-    track("update_possibly_sensitive_tweet", request) {
-      underlying.updatePossiblySensitiveTweet(request)
+  o-ovewwide def updatepossibwysensitivetweet(
+    wequest: u-updatepossibwysensitivetweetwequest
+  ): f-futuwe[unit] =
+    twack("update_possibwy_sensitive_tweet", /(^•ω•^) wequest) {
+      undewwying.updatepossibwysensitivetweet(wequest)
     }
 
-  override def asyncUpdatePossiblySensitiveTweet(
-    request: AsyncUpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] =
-    track("async_update_possibly_sensitive_tweet", request) {
-      underlying.asyncUpdatePossiblySensitiveTweet(request)
+  o-ovewwide def asyncupdatepossibwysensitivetweet(
+    wequest: a-asyncupdatepossibwysensitivetweetwequest
+  ): futuwe[unit] =
+    t-twack("async_update_possibwy_sensitive_tweet", ʘwʘ w-wequest) {
+      undewwying.asyncupdatepossibwysensitivetweet(wequest)
     }
 
-  override def replicatedUpdatePossiblySensitiveTweet(tweet: Tweet): Future[Unit] =
-    track("replicated_update_possibly_sensitive_tweet", tweet) {
-      underlying.replicatedUpdatePossiblySensitiveTweet(tweet)
+  o-ovewwide def wepwicatedupdatepossibwysensitivetweet(tweet: t-tweet): futuwe[unit] =
+    t-twack("wepwicated_update_possibwy_sensitive_tweet", XD tweet) {
+      u-undewwying.wepwicatedupdatepossibwysensitivetweet(tweet)
     }
 
-  override def undeleteTweet(request: UndeleteTweetRequest): Future[UndeleteTweetResponse] =
-    track("undelete_tweet", request) {
-      underlying.undeleteTweet(request)
+  o-ovewwide d-def undewetetweet(wequest: undewetetweetwequest): f-futuwe[undewetetweetwesponse] =
+    twack("undewete_tweet", (⑅˘꒳˘) w-wequest) {
+      u-undewwying.undewetetweet(wequest)
     }
 
-  override def asyncUndeleteTweet(request: AsyncUndeleteTweetRequest): Future[Unit] =
-    track("async_undelete_tweet", request) {
-      underlying.asyncUndeleteTweet(request)
+  o-ovewwide def asyncundewetetweet(wequest: a-asyncundewetetweetwequest): futuwe[unit] =
+    twack("async_undewete_tweet", nyaa~~ w-wequest) {
+      u-undewwying.asyncundewetetweet(wequest)
     }
 
-  override def unretweet(request: UnretweetRequest): Future[UnretweetResult] =
-    track("unretweet", request) {
-      underlying.unretweet(request)
+  o-ovewwide def unwetweet(wequest: unwetweetwequest): futuwe[unwetweetwesuwt] =
+    twack("unwetweet", UwU w-wequest) {
+      undewwying.unwetweet(wequest)
     }
 
-  override def eraseUserTweets(request: EraseUserTweetsRequest): Future[Unit] =
-    track("erase_user_tweets", request) {
-      underlying.eraseUserTweets(request)
+  o-ovewwide def ewaseusewtweets(wequest: e-ewaseusewtweetswequest): futuwe[unit] =
+    twack("ewase_usew_tweets", (˘ω˘) w-wequest) {
+      undewwying.ewaseusewtweets(wequest)
     }
 
-  override def asyncEraseUserTweets(request: AsyncEraseUserTweetsRequest): Future[Unit] =
-    track("async_erase_user_tweets", request) {
-      underlying.asyncEraseUserTweets(request)
+  ovewwide d-def asyncewaseusewtweets(wequest: a-asyncewaseusewtweetswequest): f-futuwe[unit] =
+    t-twack("async_ewase_usew_tweets", rawr x3 w-wequest) {
+      undewwying.asyncewaseusewtweets(wequest)
     }
 
-  override def asyncDelete(request: AsyncDeleteRequest): Future[Unit] =
-    track("async_delete", request) { underlying.asyncDelete(request) }
+  ovewwide def asyncdewete(wequest: asyncdewetewequest): f-futuwe[unit] =
+    twack("async_dewete", (///ˬ///✿) w-wequest) { undewwying.asyncdewete(wequest) }
 
-  override def deleteTweets(request: DeleteTweetsRequest): Future[Seq[DeleteTweetResult]] =
-    track("delete_tweets", request, requestSize = Some(request.tweetIds.size)) {
-      requestSizeAuthorizer(request.tweetIds.size, clientId).flatMap { _ =>
-        underlying.deleteTweets(request)
+  ovewwide def dewetetweets(wequest: dewetetweetswequest): f-futuwe[seq[dewetetweetwesuwt]] =
+    twack("dewete_tweets", 😳😳😳 wequest, wequestsize = some(wequest.tweetids.size)) {
+      wequestsizeauthowizew(wequest.tweetids.size, (///ˬ///✿) c-cwientid).fwatmap { _ =>
+        u-undewwying.dewetetweets(wequest)
       }
     }
 
-  override def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit] =
-    track("cascaded_delete_tweet", request) { underlying.cascadedDeleteTweet(request) }
+  ovewwide d-def cascadeddewetetweet(wequest: cascadeddewetetweetwequest): futuwe[unit] =
+    t-twack("cascaded_dewete_tweet", w-wequest) { undewwying.cascadeddewetetweet(wequest) }
 
-  override def replicatedDeleteTweet2(request: ReplicatedDeleteTweet2Request): Future[Unit] =
-    track("replicated_delete_tweet2", request) { underlying.replicatedDeleteTweet2(request) }
+  o-ovewwide def wepwicateddewetetweet2(wequest: w-wepwicateddewetetweet2wequest): futuwe[unit] =
+    twack("wepwicated_dewete_tweet2", wequest) { undewwying.wepwicateddewetetweet2(wequest) }
 
-  override def incrTweetFavCount(request: IncrTweetFavCountRequest): Future[Unit] =
-    track("incr_tweet_fav_count", request) { underlying.incrTweetFavCount(request) }
+  o-ovewwide def incwtweetfavcount(wequest: incwtweetfavcountwequest): f-futuwe[unit] =
+    t-twack("incw_tweet_fav_count", ^^;; wequest) { u-undewwying.incwtweetfavcount(wequest) }
 
-  override def asyncIncrFavCount(request: AsyncIncrFavCountRequest): Future[Unit] =
-    track("async_incr_fav_count", request) { underlying.asyncIncrFavCount(request) }
+  ovewwide def asyncincwfavcount(wequest: a-asyncincwfavcountwequest): futuwe[unit] =
+    twack("async_incw_fav_count", ^^ wequest) { undewwying.asyncincwfavcount(wequest) }
 
-  override def replicatedIncrFavCount(tweetId: TweetId, delta: Int): Future[Unit] =
-    track("replicated_incr_fav_count", tweetId) {
-      underlying.replicatedIncrFavCount(tweetId, delta)
+  ovewwide d-def wepwicatedincwfavcount(tweetid: t-tweetid, (///ˬ///✿) d-dewta: int): f-futuwe[unit] =
+    twack("wepwicated_incw_fav_count", -.- tweetid) {
+      u-undewwying.wepwicatedincwfavcount(tweetid, /(^•ω•^) d-dewta)
     }
 
-  override def incrTweetBookmarkCount(request: IncrTweetBookmarkCountRequest): Future[Unit] =
-    track("incr_tweet_bookmark_count", request) { underlying.incrTweetBookmarkCount(request) }
+  ovewwide def incwtweetbookmawkcount(wequest: i-incwtweetbookmawkcountwequest): futuwe[unit] =
+    twack("incw_tweet_bookmawk_count", UwU w-wequest) { undewwying.incwtweetbookmawkcount(wequest) }
 
-  override def asyncIncrBookmarkCount(request: AsyncIncrBookmarkCountRequest): Future[Unit] =
-    track("async_incr_bookmark_count", request) { underlying.asyncIncrBookmarkCount(request) }
+  ovewwide def asyncincwbookmawkcount(wequest: asyncincwbookmawkcountwequest): futuwe[unit] =
+    t-twack("async_incw_bookmawk_count", (⑅˘꒳˘) w-wequest) { undewwying.asyncincwbookmawkcount(wequest) }
 
-  override def replicatedIncrBookmarkCount(tweetId: TweetId, delta: Int): Future[Unit] =
-    track("replicated_incr_bookmark_count", tweetId) {
-      underlying.replicatedIncrBookmarkCount(tweetId, delta)
+  o-ovewwide def wepwicatedincwbookmawkcount(tweetid: t-tweetid, ʘwʘ dewta: i-int): futuwe[unit] =
+    twack("wepwicated_incw_bookmawk_count", σωσ tweetid) {
+      u-undewwying.wepwicatedincwbookmawkcount(tweetid, ^^ dewta)
     }
 
-  override def replicatedSetAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] =
-    track("replicated_set_additional_fields", request) {
-      underlying.replicatedSetAdditionalFields(request)
+  ovewwide def w-wepwicatedsetadditionawfiewds(wequest: setadditionawfiewdswequest): futuwe[unit] =
+    twack("wepwicated_set_additionaw_fiewds", OwO w-wequest) {
+      u-undewwying.wepwicatedsetadditionawfiewds(wequest)
     }
 
-  def setRetweetVisibility(request: SetRetweetVisibilityRequest): Future[Unit] = {
-    track("set_retweet_visibility", request) {
-      underlying.setRetweetVisibility(request)
+  d-def s-setwetweetvisibiwity(wequest: s-setwetweetvisibiwitywequest): futuwe[unit] = {
+    t-twack("set_wetweet_visibiwity", (ˆ ﻌ ˆ)♡ wequest) {
+      undewwying.setwetweetvisibiwity(wequest)
     }
   }
 
-  def asyncSetRetweetVisibility(request: AsyncSetRetweetVisibilityRequest): Future[Unit] = {
-    track("async_set_retweet_visibility", request) {
-      underlying.asyncSetRetweetVisibility(request)
+  d-def asyncsetwetweetvisibiwity(wequest: asyncsetwetweetvisibiwitywequest): f-futuwe[unit] = {
+    twack("async_set_wetweet_visibiwity", o.O wequest) {
+      undewwying.asyncsetwetweetvisibiwity(wequest)
     }
   }
 
-  override def replicatedSetRetweetVisibility(
-    request: ReplicatedSetRetweetVisibilityRequest
-  ): Future[Unit] =
-    track("replicated_set_retweet_visibility", request) {
-      underlying.replicatedSetRetweetVisibility(request)
+  o-ovewwide d-def wepwicatedsetwetweetvisibiwity(
+    wequest: w-wepwicatedsetwetweetvisibiwitywequest
+  ): futuwe[unit] =
+    t-twack("wepwicated_set_wetweet_visibiwity", (˘ω˘) w-wequest) {
+      undewwying.wepwicatedsetwetweetvisibiwity(wequest)
     }
 
-  override def replicatedDeleteAdditionalFields(
-    request: ReplicatedDeleteAdditionalFieldsRequest
-  ): Future[Unit] =
-    track("replicated_delete_additional_fields", request) {
-      underlying.replicatedDeleteAdditionalFields(request)
+  ovewwide d-def wepwicateddeweteadditionawfiewds(
+    w-wequest: wepwicateddeweteadditionawfiewdswequest
+  ): f-futuwe[unit] =
+    twack("wepwicated_dewete_additionaw_fiewds", 😳 wequest) {
+      undewwying.wepwicateddeweteadditionawfiewds(wequest)
     }
 
-  override def replicatedTakedown(tweet: Tweet): Future[Unit] =
-    track("replicated_takedown", tweet) { underlying.replicatedTakedown(tweet) }
+  o-ovewwide def wepwicatedtakedown(tweet: t-tweet): futuwe[unit] =
+    twack("wepwicated_takedown", (U ᵕ U❁) t-tweet) { undewwying.wepwicatedtakedown(tweet) }
 
-  override def scrubGeoUpdateUserTimestamp(request: DeleteLocationData): Future[Unit] =
-    track("scrub_geo_update_user_timestamp", request) {
-      underlying.scrubGeoUpdateUserTimestamp(request)
+  o-ovewwide def s-scwubgeoupdateusewtimestamp(wequest: dewetewocationdata): f-futuwe[unit] =
+    twack("scwub_geo_update_usew_timestamp", :3 w-wequest) {
+      undewwying.scwubgeoupdateusewtimestamp(wequest)
     }
 
-  override def scrubGeo(request: GeoScrub): Future[Unit] =
-    track("scrub_geo", request, requestSize = Some(request.statusIds.size)) {
-      requestSizeAuthorizer(request.statusIds.size, clientId).flatMap { _ =>
-        underlying.scrubGeo(request)
+  o-ovewwide def scwubgeo(wequest: geoscwub): futuwe[unit] =
+    twack("scwub_geo", o.O w-wequest, (///ˬ///✿) wequestsize = some(wequest.statusids.size)) {
+      wequestsizeauthowizew(wequest.statusids.size, OwO c-cwientid).fwatmap { _ =>
+        u-undewwying.scwubgeo(wequest)
       }
     }
 
-  override def replicatedScrubGeo(tweetIds: Seq[TweetId]): Future[Unit] =
-    track("replicated_scrub_geo", tweetIds) { underlying.replicatedScrubGeo(tweetIds) }
+  ovewwide def wepwicatedscwubgeo(tweetids: seq[tweetid]): futuwe[unit] =
+    t-twack("wepwicated_scwub_geo", >w< t-tweetids) { undewwying.wepwicatedscwubgeo(tweetids) }
 
-  override def deleteLocationData(request: DeleteLocationDataRequest): Future[Unit] =
-    track("delete_location_data", request) {
-      underlying.deleteLocationData(request)
+  ovewwide def dewetewocationdata(wequest: dewetewocationdatawequest): f-futuwe[unit] =
+    twack("dewete_wocation_data", ^^ w-wequest) {
+      u-undewwying.dewetewocationdata(wequest)
     }
 
-  override def flush(request: FlushRequest): Future[Unit] =
-    track("flush", request, requestSize = Some(request.tweetIds.size)) {
-      requestSizeAuthorizer(request.tweetIds.size, clientId).flatMap { _ =>
-        underlying.flush(request)
+  ovewwide def fwush(wequest: fwushwequest): futuwe[unit] =
+    t-twack("fwush", (⑅˘꒳˘) wequest, ʘwʘ wequestsize = some(wequest.tweetids.size)) {
+      wequestsizeauthowizew(wequest.tweetids.size, (///ˬ///✿) c-cwientid).fwatmap { _ =>
+        undewwying.fwush(wequest)
       }
     }
 
-  override def takedown(request: TakedownRequest): Future[Unit] =
-    track("takedown", request) { underlying.takedown(request) }
+  o-ovewwide d-def takedown(wequest: takedownwequest): f-futuwe[unit] =
+    t-twack("takedown", XD w-wequest) { u-undewwying.takedown(wequest) }
 
-  override def asyncTakedown(request: AsyncTakedownRequest): Future[Unit] =
-    track("async_takedown", request) {
-      underlying.asyncTakedown(request)
+  o-ovewwide d-def asynctakedown(wequest: asynctakedownwequest): futuwe[unit] =
+    twack("async_takedown", 😳 wequest) {
+      undewwying.asynctakedown(wequest)
     }
 
-  override def setTweetUserTakedown(request: SetTweetUserTakedownRequest): Future[Unit] =
-    track("set_tweet_user_takedown", request) { underlying.setTweetUserTakedown(request) }
+  ovewwide d-def settweetusewtakedown(wequest: s-settweetusewtakedownwequest): f-futuwe[unit] =
+    t-twack("set_tweet_usew_takedown", >w< w-wequest) { u-undewwying.settweetusewtakedown(wequest) }
 
-  override def quotedTweetDelete(request: QuotedTweetDeleteRequest): Future[Unit] =
-    track("quoted_tweet_delete", request) {
-      underlying.quotedTweetDelete(request)
+  ovewwide def quotedtweetdewete(wequest: quotedtweetdewetewequest): futuwe[unit] =
+    t-twack("quoted_tweet_dewete", w-wequest) {
+      undewwying.quotedtweetdewete(wequest)
     }
 
-  override def quotedTweetTakedown(request: QuotedTweetTakedownRequest): Future[Unit] =
-    track("quoted_tweet_takedown", request) {
-      underlying.quotedTweetTakedown(request)
+  ovewwide def quotedtweettakedown(wequest: q-quotedtweettakedownwequest): f-futuwe[unit] =
+    t-twack("quoted_tweet_takedown", (˘ω˘) wequest) {
+      undewwying.quotedtweettakedown(wequest)
     }
 
-  override def getDeletedTweets(
-    request: GetDeletedTweetsRequest
-  ): Future[Seq[GetDeletedTweetResult]] =
-    track("get_deleted_tweets", request, requestSize = Some(request.tweetIds.size)) {
-      requestSizeAuthorizer(request.tweetIds.size, clientId).flatMap { _ =>
-        underlying.getDeletedTweets(request)
+  ovewwide def getdewetedtweets(
+    w-wequest: getdewetedtweetswequest
+  ): futuwe[seq[getdewetedtweetwesuwt]] =
+    twack("get_deweted_tweets", nyaa~~ wequest, w-wequestsize = s-some(wequest.tweetids.size)) {
+      wequestsizeauthowizew(wequest.tweetids.size, cwientid).fwatmap { _ =>
+        u-undewwying.getdewetedtweets(wequest)
       }
     }
 
-  override def getStoredTweets(
-    request: GetStoredTweetsRequest
-  ): Future[Seq[GetStoredTweetsResult]] = {
-    track("get_stored_tweets", request, requestSize = Some(request.tweetIds.size)) {
-      requestSizeAuthorizer(request.tweetIds.size, clientId).flatMap { _ =>
-        underlying.getStoredTweets(request)
+  ovewwide def getstowedtweets(
+    w-wequest: getstowedtweetswequest
+  ): f-futuwe[seq[getstowedtweetswesuwt]] = {
+    twack("get_stowed_tweets", 😳😳😳 w-wequest, (U ﹏ U) w-wequestsize = s-some(wequest.tweetids.size)) {
+      w-wequestsizeauthowizew(wequest.tweetids.size, (˘ω˘) c-cwientid).fwatmap { _ =>
+        u-undewwying.getstowedtweets(wequest)
       }
     }
   }
 
-  override def getStoredTweetsByUser(
-    request: GetStoredTweetsByUserRequest
-  ): Future[GetStoredTweetsByUserResult] = {
-    track("get_stored_tweets_by_user", request) {
-      underlying.getStoredTweetsByUser(request)
+  ovewwide def getstowedtweetsbyusew(
+    w-wequest: g-getstowedtweetsbyusewwequest
+  ): futuwe[getstowedtweetsbyusewwesuwt] = {
+    t-twack("get_stowed_tweets_by_usew", :3 wequest) {
+      undewwying.getstowedtweetsbyusew(wequest)
     }
   }
 }

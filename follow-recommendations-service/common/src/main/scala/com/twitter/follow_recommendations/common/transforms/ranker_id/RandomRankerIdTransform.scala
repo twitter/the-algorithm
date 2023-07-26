@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.transforms.ranker_id
+package com.twittew.fowwow_wecommendations.common.twansfowms.wankew_id
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.base.GatedTransform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+impowt com.googwe.inject.inject
+i-impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.gatedtwansfowm
+impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.scowe
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.timewines.configapi.haspawams
 
 /**
- * This class appends each candidate's rankerIds with the RandomRankerId.
- * This is primarily for determining if a candidate was generated via random shuffling.
+ * t-this cwass appends each candidate's wankewids with the wandomwankewid. :3
+ * t-this is pwimawiwy fow detewmining if a candidate w-was genewated via wandom s-shuffwing. 😳😳😳
  */
-@Singleton
-class RandomRankerIdTransform @Inject() () extends GatedTransform[HasParams, CandidateUser] {
+@singweton
+cwass wandomwankewidtwansfowm @inject() () extends gatedtwansfowm[haspawams, -.- c-candidateusew] {
 
-  override def transform(
-    target: HasParams,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] = {
-    Stitch.value(candidates.map(_.addScore(Score.RandomScore)))
+  ovewwide d-def twansfowm(
+    t-tawget: haspawams, ( ͡o ω ͡o )
+    candidates: seq[candidateusew]
+  ): stitch[seq[candidateusew]] = {
+    stitch.vawue(candidates.map(_.addscowe(scowe.wandomscowe)))
   }
 }

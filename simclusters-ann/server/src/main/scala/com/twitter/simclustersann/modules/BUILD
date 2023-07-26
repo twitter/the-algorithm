@@ -1,24 +1,12 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
-        "finagle/finagle-stats",
-        "finatra/inject/inject-core/src/main/scala",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store/strato",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/store/common",
-        "relevance-platform/src/main/scala/com/twitter/relevance_platform/common/injection",
-        "relevance-platform/src/main/scala/com/twitter/relevance_platform/common/readablestore",
-        "relevance-platform/src/main/scala/com/twitter/relevance_platform/simclustersann/multicluster",
-        "representation-manager/client/src/main/scala/com/twitter/representation_manager",
-        "simclusters-ann/server/src/main/scala/com/twitter/simclustersann/candidate_source",
-        "simclusters-ann/server/src/main/scala/com/twitter/simclustersann/common",
-        "simclusters-ann/server/src/main/scala/com/twitter/simclustersann/exceptions",
-        "simclusters-ann/thrift/src/main/thrift:thrift-scala",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/scala/com/twitter/simclusters_v2/summingbird",
-        "src/scala/com/twitter/storehaus_internal/memcache",
-        "src/scala/com/twitter/storehaus_internal/util",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+java_wibwawy(
+    souwces = ["*.java"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/guava", òωó
+        "3wdpawty/jvm/wog4j",
+        "swc/java/com/twittew/seawch/common/wewevance:utiws", o.O
+        "swc/java/com/twittew/seawch/common/utiw/eawwybiwd", (U ᵕ U❁)
+        "swc/thwift/com/twittew/seawch:eawwybiwd-java", (⑅˘꒳˘)
     ],
 )

@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.timewine_moduwe
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleConversationMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.sociawcontextmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduweconvewsationmetadata
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class ModuleConversationMetadataMarshaller @Inject() (
-  socialContextMarshaller: SocialContextMarshaller) {
+@singweton
+c-cwass moduweconvewsationmetadatamawshawwew @inject() (
+  sociawcontextmawshawwew: s-sociawcontextmawshawwew) {
 
-  def apply(
-    moduleConversationMetadata: ModuleConversationMetadata
-  ): urt.ModuleConversationMetadata = urt.ModuleConversationMetadata(
-    allTweetIds = moduleConversationMetadata.allTweetIds,
-    socialContext = moduleConversationMetadata.socialContext.map(socialContextMarshaller(_)),
-    enableDeduplication = moduleConversationMetadata.enableDeduplication
+  def appwy(
+    moduweconvewsationmetadata: moduweconvewsationmetadata
+  ): uwt.moduweconvewsationmetadata = u-uwt.moduweconvewsationmetadata(
+    awwtweetids = moduweconvewsationmetadata.awwtweetids, (ˆ ﻌ ˆ)♡
+    s-sociawcontext = moduweconvewsationmetadata.sociawcontext.map(sociawcontextmawshawwew(_)), (⑅˘꒳˘)
+    e-enabwededupwication = moduweconvewsationmetadata.enabwededupwication
   )
 }

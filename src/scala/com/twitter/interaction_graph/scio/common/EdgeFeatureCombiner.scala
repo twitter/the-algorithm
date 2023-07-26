@@ -1,350 +1,350 @@
-package com.twitter.interaction_graph.scio.common
+package com.twittew.intewaction_gwaph.scio.common
 
-import com.spotify.scio.ScioMetrics
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.EdgeFeature
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
+impowt com.spotify.scio.sciometwics
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.edge
+i-impowt c-com.twittew.intewaction_gwaph.thwiftscawa.edgefeatuwe
+i-impowt c-com.twittew.intewaction_gwaph.thwiftscawa.featuwename
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.timesewiesstatistics
 
-object EdgeFeatureCombiner {
-  def apply(srcId: Long, destId: Long): EdgeFeatureCombiner = new EdgeFeatureCombiner(
-    instanceEdge = Edge(srcId, destId),
-    featureMap = Map(
-      FeatureName.NumRetweets -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumFavorites -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumMentions -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumTweetClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumLinkClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumProfileViews -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumFollows -> new BooleanOrEdgeCombiner,
-      FeatureName.NumUnfollows -> new BooleanOrEdgeCombiner,
-      FeatureName.NumMutualFollows -> new BooleanOrEdgeCombiner,
-      FeatureName.NumBlocks -> new BooleanOrEdgeCombiner,
-      FeatureName.NumMutes -> new BooleanOrEdgeCombiner,
-      FeatureName.NumReportAsAbuses -> new BooleanOrEdgeCombiner,
-      FeatureName.NumReportAsSpams -> new BooleanOrEdgeCombiner,
-      FeatureName.NumTweetQuotes -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.AddressBookEmail -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookPhone -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookInBoth -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookMutualEdgeEmail -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookMutualEdgePhone -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookMutualEdgeInBoth -> new BooleanOrEdgeCombiner,
-      FeatureName.TotalDwellTime -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumInspectedStatuses -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumPhotoTags -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumPushOpens -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumNtabClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtMentions -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtReplies -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtRetweets -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtFavories -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtLinkClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtTweetClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtTweetQuotes -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumShares -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumEmailOpen -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumEmailClick -> new WeightedAdditiveEdgeCombiner,
+o-object e-edgefeatuwecombinew {
+  def appwy(swcid: wong, mya destid: wong): edgefeatuwecombinew = n-nyew edgefeatuwecombinew(
+    instanceedge = edge(swcid, mya d-destid),
+    featuwemap = map(
+      f-featuwename.numwetweets -> nyew weightedadditiveedgecombinew, /(^•ω•^)
+      featuwename.numfavowites -> nyew weightedadditiveedgecombinew, ^^;;
+      featuwename.nummentions -> n-nyew weightedadditiveedgecombinew, 🥺
+      featuwename.numtweetcwicks -> n-nyew weightedadditiveedgecombinew, ^^
+      f-featuwename.numwinkcwicks -> nyew weightedadditiveedgecombinew, ^•ﻌ•^
+      featuwename.numpwofiweviews -> nyew weightedadditiveedgecombinew, /(^•ω•^)
+      featuwename.numfowwows -> n-nyew booweanowedgecombinew, ^^
+      featuwename.numunfowwows -> nyew booweanowedgecombinew, 🥺
+      featuwename.nummutuawfowwows -> nyew booweanowedgecombinew, (U ᵕ U❁)
+      f-featuwename.numbwocks -> nyew b-booweanowedgecombinew, 😳😳😳
+      featuwename.nummutes -> n-nyew booweanowedgecombinew, nyaa~~
+      f-featuwename.numwepowtasabuses -> n-nyew booweanowedgecombinew, (˘ω˘)
+      featuwename.numwepowtasspams -> new b-booweanowedgecombinew, >_<
+      featuwename.numtweetquotes -> nyew w-weightedadditiveedgecombinew, XD
+      featuwename.addwessbookemaiw -> nyew booweanowedgecombinew, rawr x3
+      featuwename.addwessbookphone -> nyew booweanowedgecombinew, ( ͡o ω ͡o )
+      featuwename.addwessbookinboth -> n-nyew booweanowedgecombinew, :3
+      featuwename.addwessbookmutuawedgeemaiw -> n-nyew booweanowedgecombinew, mya
+      f-featuwename.addwessbookmutuawedgephone -> n-new booweanowedgecombinew,
+      featuwename.addwessbookmutuawedgeinboth -> nyew booweanowedgecombinew, σωσ
+      featuwename.totawdwewwtime -> n-nyew w-weightedadditiveedgecombinew, (ꈍᴗꈍ)
+      featuwename.numinspectedstatuses -> n-nyew weightedadditiveedgecombinew, OwO
+      f-featuwename.numphototags -> nyew weightedadditiveedgecombinew, o.O
+      f-featuwename.numpushopens -> nyew weightedadditiveedgecombinew, 😳😳😳
+      f-featuwename.numntabcwicks -> nyew weightedadditiveedgecombinew, /(^•ω•^)
+      featuwename.numwtmentions -> n-nyew weightedadditiveedgecombinew, OwO
+      featuwename.numwtwepwies -> n-nyew weightedadditiveedgecombinew, ^^
+      featuwename.numwtwetweets -> n-nyew w-weightedadditiveedgecombinew, (///ˬ///✿)
+      featuwename.numwtfavowies -> nyew weightedadditiveedgecombinew, (///ˬ///✿)
+      featuwename.numwtwinkcwicks -> nyew weightedadditiveedgecombinew, (///ˬ///✿)
+      featuwename.numwttweetcwicks -> nyew weightedadditiveedgecombinew, ʘwʘ
+      f-featuwename.numwttweetquotes -> n-nyew weightedadditiveedgecombinew, ^•ﻌ•^
+      f-featuwename.numshawes -> n-nyew w-weightedadditiveedgecombinew, OwO
+      featuwename.numemaiwopen -> nyew weightedadditiveedgecombinew, (U ﹏ U)
+      featuwename.numemaiwcwick -> n-nyew weightedadditiveedgecombinew, (ˆ ﻌ ˆ)♡
     )
   )
 }
 
 /**
- * This class can take in a number of input Edge thrift objects, (all of which are assumed to
- * contain information about a single edge) and builds a combined Edge protobuf object, which has
- * the union of all the input.
+ * this cwass can take in a nyumbew of input edge thwift objects, (⑅˘꒳˘) (aww o-of which awe assumed to
+ * contain i-infowmation a-about a singwe e-edge) and buiwds a combined edge p-pwotobuf object, (U ﹏ U) w-which has
+ * t-the union of aww t-the input.
  * <p>
- * There are two modes of aggregation: one of them just adds the values in assuming that these are
- * from the same day, and the other adds them in a time-decayed manner using the passed in weights.
+ * thewe awe two modes of aggwegation: o-one of t-them just adds t-the vawues in assuming t-that these a-awe
+ * fwom the same day, o.O and the othew adds them in a time-decayed m-mannew using the passed in weights. mya
  * <p>
- * The input objects features must be disjoint. Also, remember that the edge is directed!
+ * the input objects featuwes must be disjoint. XD a-awso, wemembew that the edge is diwected! òωó
  */
-class EdgeFeatureCombiner(instanceEdge: Edge, featureMap: Map[FeatureName, EFeatureCombiner]) {
+cwass edgefeatuwecombinew(instanceedge: e-edge, (˘ω˘) featuwemap: m-map[featuwename, e-efeatuwecombinew]) {
 
   /**
-   * Adds features without any decay. To be used for the same day.
+   * adds f-featuwes without any decay. :3 to be u-used fow the same d-day. OwO
    *
-   * @param edge edge to be added into the combiner
+   * @pawam edge edge to be added into the combinew
    */
-  def addFeature(edge: Edge): EdgeFeatureCombiner = {
+  def addfeatuwe(edge: edge): edgefeatuwecombinew = {
 
-    val newEdge =
-      if (edge.weight.isDefined) instanceEdge.copy(weight = edge.weight) else instanceEdge
-    val newFeatures = featureMap.map {
-      case (featureName, combiner) =>
-        edge.features.find(_.name.equals(featureName)) match {
-          case Some(feature) =>
-            val updatedCombiner =
-              if (combiner.isSet) combiner.updateFeature(feature) else combiner.setFeature(feature)
-            (featureName, updatedCombiner)
-          case _ => (featureName, combiner)
+    v-vaw nyewedge =
+      if (edge.weight.isdefined) i-instanceedge.copy(weight = edge.weight) e-ewse i-instanceedge
+    vaw nyewfeatuwes = featuwemap.map {
+      c-case (featuwename, mya c-combinew) =>
+        edge.featuwes.find(_.name.equaws(featuwename)) m-match {
+          c-case some(featuwe) =>
+            vaw updatedcombinew =
+              if (combinew.isset) combinew.updatefeatuwe(featuwe) ewse c-combinew.setfeatuwe(featuwe)
+            (featuwename, (˘ω˘) u-updatedcombinew)
+          c-case _ => (featuwename, o.O combinew)
         }
     }
 
-    new EdgeFeatureCombiner(newEdge, newFeatures)
+    n-nyew e-edgefeatuwecombinew(newedge, (✿oωo) nyewfeatuwes)
 
   }
 
   /**
-   * Adds features with decays. Used for combining multiple days.
+   * a-adds featuwes with decays. (ˆ ﻌ ˆ)♡ used fow combining muwtipwe days. ^^;;
    *
-   * @param edge  edge to be added into the combiner
-   * @param alpha parameters for the decay calculation
-   * @param day   number of days from today
+   * @pawam e-edge  e-edge to be added into the combinew
+   * @pawam awpha pawametews f-fow the decay cawcuwation
+   * @pawam d-day   nyumbew of days fwom today
    */
-  def addFeature(edge: Edge, alpha: Double, day: Int): EdgeFeatureCombiner = {
+  def addfeatuwe(edge: e-edge, OwO awpha: doubwe, 🥺 day: int): edgefeatuwecombinew = {
 
-    val newEdge = if (edge.weight.isDefined) edge.copy(weight = edge.weight) else edge
-    val newFeatures = featureMap.map {
-      case (featureName, combiner) =>
-        edge.features.find(_.name.equals(featureName)) match {
-          case Some(feature) =>
-            val updatedCombiner =
-              if (combiner.isSet) combiner.updateFeature(feature, alpha, day)
-              else combiner.setFeature(feature, alpha, day)
-            ScioMetrics.counter("EdgeFeatureCombiner.addFeature", feature.name.name).inc()
-            (featureName, updatedCombiner)
-          case _ => (featureName, combiner)
+    vaw nyewedge = if (edge.weight.isdefined) e-edge.copy(weight = edge.weight) ewse edge
+    vaw nyewfeatuwes = f-featuwemap.map {
+      c-case (featuwename, mya combinew) =>
+        edge.featuwes.find(_.name.equaws(featuwename)) match {
+          c-case s-some(featuwe) =>
+            vaw updatedcombinew =
+              if (combinew.isset) combinew.updatefeatuwe(featuwe, 😳 a-awpha, day)
+              ewse combinew.setfeatuwe(featuwe, òωó a-awpha, day)
+            sciometwics.countew("edgefeatuwecombinew.addfeatuwe", /(^•ω•^) featuwe.name.name).inc()
+            (featuwename, -.- updatedcombinew)
+          case _ => (featuwename, òωó c-combinew)
         }
     }
-    new EdgeFeatureCombiner(newEdge, newFeatures)
+    nyew edgefeatuwecombinew(newedge, /(^•ω•^) n-nyewfeatuwes)
   }
 
   /**
-   * Generate the final combined Edge instance
-   * We return a deterministically sorted list of edge features
+   * g-genewate the finaw combined e-edge instance
+   * we wetuwn a d-detewministicawwy s-sowted wist of e-edge featuwes
    *
-   * @param totalDays total number of days to be combined together
+   * @pawam totawdays totaw n-nyumbew of days t-to be combined togethew
    */
-  def getCombinedEdge(totalDays: Int): Edge = {
-    val moreFeatures = featureMap.values
-      .flatMap { combiner =>
-        combiner.getFinalFeature(totalDays)
-      }.toList.sortBy(_.name.value)
-    instanceEdge.copy(
-      features = moreFeatures
+  def getcombinededge(totawdays: int): edge = {
+    v-vaw mowefeatuwes = f-featuwemap.vawues
+      .fwatmap { c-combinew =>
+        combinew.getfinawfeatuwe(totawdays)
+      }.towist.sowtby(_.name.vawue)
+    instanceedge.copy(
+      f-featuwes = mowefeatuwes
     )
   }
 
 }
 
 /**
- * This portion contains the actual combination logic. For now, we only implement a simple
- * additive combiner, but in future we'd like to have things like time-weighted (exponential
- * decay, maybe) values.
+ * this p-powtion contains t-the actuaw combination wogic. /(^•ω•^) fow nyow, we onwy impwement a s-simpwe
+ * additive c-combinew, 😳 but i-in futuwe we'd w-wike to have things wike time-weighted (exponentiaw
+ * d-decay, :3 maybe) vawues. (U ᵕ U❁)
  */
 
-trait EFeatureCombiner {
-  val edgeFeature: Option[EdgeFeature]
-  val startingDay: Int
-  val endingDay: Int
-  val timeSeriesStatistics: Option[TimeSeriesStatistics]
+twait efeatuwecombinew {
+  vaw edgefeatuwe: option[edgefeatuwe]
+  vaw stawtingday: i-int
+  vaw endingday: int
+  v-vaw timesewiesstatistics: option[timesewiesstatistics]
 
-  def updateTSS(feature: EdgeFeature, alpha: Double): Option[TimeSeriesStatistics]
+  d-def updatetss(featuwe: edgefeatuwe, ʘwʘ awpha: d-doubwe): option[timesewiesstatistics]
 
-  def addToTSS(feature: EdgeFeature): Option[TimeSeriesStatistics]
+  def a-addtotss(featuwe: e-edgefeatuwe): o-option[timesewiesstatistics]
 
-  def updateFeature(feature: EdgeFeature): EFeatureCombiner
+  d-def updatefeatuwe(featuwe: e-edgefeatuwe): efeatuwecombinew
 
-  def updateFeature(feature: EdgeFeature, alpha: Double, day: Int): EFeatureCombiner
+  def updatefeatuwe(featuwe: edgefeatuwe, o.O awpha: doubwe, ʘwʘ day: int): efeatuwecombinew
 
-  def isSet: Boolean
+  d-def isset: b-boowean
 
-  def dropFeature: Boolean
+  def dwopfeatuwe: b-boowean
 
-  def setFeature(feature: EdgeFeature, alpha: Double, day: Int): EFeatureCombiner
+  def setfeatuwe(featuwe: edgefeatuwe, ^^ a-awpha: doubwe, ^•ﻌ•^ day: int): efeatuwecombinew
 
-  def setFeature(feature: EdgeFeature): EFeatureCombiner
+  def setfeatuwe(featuwe: e-edgefeatuwe): e-efeatuwecombinew
 
-  def getFinalFeature(totalDays: Int): Option[EdgeFeature]
+  def getfinawfeatuwe(totawdays: i-int): option[edgefeatuwe]
 
 }
 
-case class WeightedAdditiveEdgeCombiner(
-  override val edgeFeature: Option[EdgeFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
-  override val endingDay: Int = Integer.MIN_VALUE,
-  override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends EFeatureCombiner {
+case cwass weightedadditiveedgecombinew(
+  ovewwide v-vaw edgefeatuwe: o-option[edgefeatuwe] = nyone, mya
+  o-ovewwide vaw s-stawtingday: int = integew.max_vawue, UwU
+  ovewwide vaw endingday: int = integew.min_vawue, >_<
+  o-ovewwide v-vaw timesewiesstatistics: o-option[timesewiesstatistics] = nyone)
+    e-extends e-efeatuwecombinew {
 
-  override def updateTSS(
-    feature: EdgeFeature,
-    alpha: Double
-  ): Option[TimeSeriesStatistics] = {
-    timeSeriesStatistics.map(tss =>
-      InteractionGraphUtils.updateTimeSeriesStatistics(tss, feature.tss.mean, alpha))
+  ovewwide d-def updatetss(
+    f-featuwe: edgefeatuwe, /(^•ω•^)
+    awpha: d-doubwe
+  ): o-option[timesewiesstatistics] = {
+    timesewiesstatistics.map(tss =>
+      i-intewactiongwaphutiws.updatetimesewiesstatistics(tss, òωó featuwe.tss.mean, σωσ awpha))
   }
 
-  override def addToTSS(feature: EdgeFeature): Option[TimeSeriesStatistics] = {
-    timeSeriesStatistics.map(tss =>
-      InteractionGraphUtils.addToTimeSeriesStatistics(tss, feature.tss.mean))
+  o-ovewwide def addtotss(featuwe: e-edgefeatuwe): o-option[timesewiesstatistics] = {
+    timesewiesstatistics.map(tss =>
+      i-intewactiongwaphutiws.addtotimesewiesstatistics(tss, ( ͡o ω ͡o ) featuwe.tss.mean))
   }
 
-  override def updateFeature(feature: EdgeFeature): WeightedAdditiveEdgeCombiner = {
-    WeightedAdditiveEdgeCombiner(
-      edgeFeature,
-      startingDay,
-      endingDay,
-      addToTSS(feature)
+  ovewwide d-def updatefeatuwe(featuwe: e-edgefeatuwe): w-weightedadditiveedgecombinew = {
+    weightedadditiveedgecombinew(
+      edgefeatuwe, nyaa~~
+      stawtingday, :3
+      e-endingday, UwU
+      addtotss(featuwe)
     )
   }
 
-  def setFeature(feature: EdgeFeature, alpha: Double, day: Int): WeightedAdditiveEdgeCombiner = {
-    val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+  def setfeatuwe(featuwe: e-edgefeatuwe, o.O a-awpha: doubwe, (ˆ ﻌ ˆ)♡ day: int): weightedadditiveedgecombinew = {
+    vaw n-nyewstawtingday = math.min(stawtingday, ^^;; d-day)
+    v-vaw nyewendingday = math.max(endingday, ʘwʘ day)
 
-    val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
-        feature.tss.numDaysSinceLast
-      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
+    v-vaw nyumdayssincewast =
+      if (featuwe.tss.numdayssincewast.exists(_ > 0))
+        featuwe.tss.numdayssincewast
+      ewse s-some(featuwe.tss.numewapseddays - f-featuwe.tss.numnonzewodays + 1)
 
-    val tss = feature.tss.copy(
-      numDaysSinceLast = numDaysSinceLast,
-      ewma = alpha * feature.tss.ewma
+    vaw tss = f-featuwe.tss.copy(
+      nyumdayssincewast = n-nyumdayssincewast, σωσ
+      e-ewma = a-awpha * featuwe.tss.ewma
     )
 
-    val newFeature = EdgeFeature(
-      name = feature.name,
+    vaw nyewfeatuwe = edgefeatuwe(
+      nyame = featuwe.name, ^^;;
       tss = tss
     )
 
-    WeightedAdditiveEdgeCombiner(
-      Some(newFeature),
-      newStartingDay,
-      newEndingDay,
-      Some(tss)
+    weightedadditiveedgecombinew(
+      some(newfeatuwe), ʘwʘ
+      nyewstawtingday, ^^
+      nyewendingday, nyaa~~
+      some(tss)
     )
   }
 
-  def getFinalFeature(totalDays: Int): Option[EdgeFeature] = {
-    if (edgeFeature.isEmpty || dropFeature) return None
+  def getfinawfeatuwe(totawdays: int): option[edgefeatuwe] = {
+    if (edgefeatuwe.isempty || d-dwopfeatuwe) w-wetuwn nyone
 
-    val newTss = if (totalDays > 0) {
-      val elapsed =
-        timeSeriesStatistics.map(tss => tss.numElapsedDays + totalDays - 1 - startingDay)
+    vaw newtss = if (totawdays > 0) {
+      v-vaw e-ewapsed =
+        t-timesewiesstatistics.map(tss => tss.numewapseddays + t-totawdays - 1 - stawtingday)
 
-      val latest =
-        if (endingDay > 0) Some(totalDays - endingDay)
-        else
-          timeSeriesStatistics.flatMap(tss =>
-            tss.numDaysSinceLast.map(numDaysSinceLast => numDaysSinceLast + totalDays - 1))
+      v-vaw w-watest =
+        if (endingday > 0) s-some(totawdays - endingday)
+        e-ewse
+          t-timesewiesstatistics.fwatmap(tss =>
+            tss.numdayssincewast.map(numdayssincewast => nyumdayssincewast + t-totawdays - 1))
 
-      timeSeriesStatistics.map(tss =>
-        tss.copy(
-          numElapsedDays = elapsed.get,
-          numDaysSinceLast = latest
+      timesewiesstatistics.map(tss =>
+        t-tss.copy(
+          n-nyumewapseddays = e-ewapsed.get, (///ˬ///✿)
+          n-nyumdayssincewast = w-watest
         ))
-    } else timeSeriesStatistics
+    } e-ewse timesewiesstatistics
 
-    edgeFeature.map(ef => ef.copy(tss = newTss.get))
+    edgefeatuwe.map(ef => e-ef.copy(tss = n-nyewtss.get))
   }
 
-  override def updateFeature(
-    feature: EdgeFeature,
-    alpha: Double,
-    day: Int
-  ): WeightedAdditiveEdgeCombiner = copy(
-    endingDay = Math.max(endingDay, day),
-    timeSeriesStatistics = updateTSS(feature, alpha)
+  ovewwide d-def updatefeatuwe(
+    f-featuwe: e-edgefeatuwe, XD
+    awpha: doubwe, :3
+    d-day: int
+  ): weightedadditiveedgecombinew = copy(
+    endingday = m-math.max(endingday, òωó day), ^^
+    t-timesewiesstatistics = u-updatetss(featuwe, ^•ﻌ•^ a-awpha)
   )
 
-  override def dropFeature: Boolean = timeSeriesStatistics.exists(tss =>
-    tss.numDaysSinceLast.exists(_ > InteractionGraphUtils.MAX_DAYS_RETENTION) ||
-      tss.ewma < InteractionGraphUtils.MIN_FEATURE_VALUE)
+  ovewwide def dwopfeatuwe: b-boowean = timesewiesstatistics.exists(tss =>
+    t-tss.numdayssincewast.exists(_ > intewactiongwaphutiws.max_days_wetention) ||
+      t-tss.ewma < intewactiongwaphutiws.min_featuwe_vawue)
 
-  override def isSet = edgeFeature.isDefined
+  o-ovewwide def isset = edgefeatuwe.isdefined
 
-  override def setFeature(feature: EdgeFeature): WeightedAdditiveEdgeCombiner =
-    setFeature(feature, 1.0, 0)
+  ovewwide def setfeatuwe(featuwe: edgefeatuwe): weightedadditiveedgecombinew =
+    s-setfeatuwe(featuwe, σωσ 1.0, 0)
 
 }
 
 /**
- * This combiner resets the value to 0 if the latest event being combined = 0. Ignores time decays.
+ * this combinew w-wesets the v-vawue to 0 if the watest event being combined = 0. (ˆ ﻌ ˆ)♡ ignowes time d-decays. nyaa~~
  */
-case class BooleanOrEdgeCombiner(
-  override val edgeFeature: Option[EdgeFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
-  override val endingDay: Int = Integer.MIN_VALUE,
-  override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends EFeatureCombiner {
+case cwass booweanowedgecombinew(
+  o-ovewwide vaw e-edgefeatuwe: option[edgefeatuwe] = n-nyone, ʘwʘ
+  ovewwide vaw stawtingday: int = integew.max_vawue, ^•ﻌ•^
+  o-ovewwide vaw endingday: i-int = integew.min_vawue, rawr x3
+  ovewwide vaw t-timesewiesstatistics: option[timesewiesstatistics] = nyone)
+    e-extends efeatuwecombinew {
 
-  override def updateTSS(
-    feature: EdgeFeature,
-    alpha: Double
-  ): Option[TimeSeriesStatistics] = {
-    val value = timeSeriesStatistics.map(tss => Math.floor(tss.ewma))
-    val newValue = if (value.exists(_ == 1.0) || feature.tss.mean > 0.0) 1.0 else 0.0
-    timeSeriesStatistics.map(tss =>
-      tss.copy(
-        mean = newValue,
-        ewma = newValue,
-        numNonZeroDays = tss.numNonZeroDays + 1
+  ovewwide def updatetss(
+    f-featuwe: e-edgefeatuwe, 🥺
+    a-awpha: doubwe
+  ): option[timesewiesstatistics] = {
+    v-vaw v-vawue = timesewiesstatistics.map(tss => m-math.fwoow(tss.ewma))
+    v-vaw nyewvawue = if (vawue.exists(_ == 1.0) || f-featuwe.tss.mean > 0.0) 1.0 e-ewse 0.0
+    t-timesewiesstatistics.map(tss =>
+      t-tss.copy(
+        m-mean = nyewvawue,
+        e-ewma = n-nyewvawue, ʘwʘ
+        n-nyumnonzewodays = tss.numnonzewodays + 1
       ))
   }
 
-  override def addToTSS(feature: EdgeFeature): Option[TimeSeriesStatistics] = {
-    val value = timeSeriesStatistics.map(tss => Math.floor(tss.ewma))
-    val newValue = if (value.exists(_ == 1.0) || feature.tss.mean > 0.0) 1.0 else 0.0
-    timeSeriesStatistics.map(tss => tss.copy(mean = newValue, ewma = newValue))
+  ovewwide d-def addtotss(featuwe: edgefeatuwe): o-option[timesewiesstatistics] = {
+    vaw vawue = timesewiesstatistics.map(tss => m-math.fwoow(tss.ewma))
+    v-vaw nyewvawue = i-if (vawue.exists(_ == 1.0) || featuwe.tss.mean > 0.0) 1.0 ewse 0.0
+    timesewiesstatistics.map(tss => tss.copy(mean = n-nyewvawue, (˘ω˘) e-ewma = n-nyewvawue))
   }
 
-  override def updateFeature(feature: EdgeFeature): BooleanOrEdgeCombiner = BooleanOrEdgeCombiner(
-    edgeFeature,
-    startingDay,
-    endingDay,
-    addToTSS(feature)
+  ovewwide def updatefeatuwe(featuwe: edgefeatuwe): b-booweanowedgecombinew = b-booweanowedgecombinew(
+    edgefeatuwe, o.O
+    s-stawtingday, σωσ
+    e-endingday, (ꈍᴗꈍ)
+    addtotss(featuwe)
   )
 
-  def setFeature(feature: EdgeFeature, alpha: Double, day: Int): BooleanOrEdgeCombiner = {
-    val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+  def setfeatuwe(featuwe: edgefeatuwe, (ˆ ﻌ ˆ)♡ a-awpha: doubwe, o.O d-day: int): b-booweanowedgecombinew = {
+    vaw n-nyewstawtingday = math.min(stawtingday, :3 day)
+    v-vaw nyewendingday = m-math.max(endingday, -.- day)
 
-    val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
-        feature.tss.numDaysSinceLast.get
-      else feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1
+    vaw nyumdayssincewast =
+      i-if (featuwe.tss.numdayssincewast.exists(_ > 0))
+        featuwe.tss.numdayssincewast.get
+      ewse featuwe.tss.numewapseddays - f-featuwe.tss.numnonzewodays + 1
 
-    val tss = feature.tss.copy(
-      numDaysSinceLast = Some(numDaysSinceLast),
-      ewma = alpha * feature.tss.ewma
+    vaw tss = f-featuwe.tss.copy(
+      n-nyumdayssincewast = some(numdayssincewast), ( ͡o ω ͡o )
+      ewma = a-awpha * featuwe.tss.ewma
     )
 
-    val newFeature = EdgeFeature(
-      name = feature.name,
-      tss = tss
+    v-vaw nyewfeatuwe = edgefeatuwe(
+      n-nyame = featuwe.name, /(^•ω•^)
+      t-tss = tss
     )
 
-    BooleanOrEdgeCombiner(
-      Some(newFeature),
-      newStartingDay,
-      newEndingDay,
-      Some(tss)
+    b-booweanowedgecombinew(
+      s-some(newfeatuwe), (⑅˘꒳˘)
+      n-nyewstawtingday,
+      nyewendingday, òωó
+      some(tss)
     )
   }
 
-  override def getFinalFeature(totalDays: Int): Option[EdgeFeature] =
-    if (timeSeriesStatistics.exists(tss => tss.ewma < 1.0)) None
-    else {
-      if (edgeFeature.isEmpty || dropFeature) return None
-      edgeFeature.map(ef =>
+  o-ovewwide def g-getfinawfeatuwe(totawdays: i-int): option[edgefeatuwe] =
+    i-if (timesewiesstatistics.exists(tss => tss.ewma < 1.0)) nyone
+    e-ewse {
+      if (edgefeatuwe.isempty || d-dwopfeatuwe) w-wetuwn nyone
+      edgefeatuwe.map(ef =>
         ef.copy(
-          tss = timeSeriesStatistics.get
+          tss = timesewiesstatistics.get
         ))
     }
 
-  override def updateFeature(
-    feature: EdgeFeature,
-    alpha: Double,
-    day: Int
-  ): BooleanOrEdgeCombiner = copy(
-    endingDay = Math.max(endingDay, day),
-    timeSeriesStatistics = updateTSS(feature, alpha)
+  ovewwide d-def updatefeatuwe(
+    featuwe: e-edgefeatuwe,
+    a-awpha: doubwe, 🥺
+    day: int
+  ): booweanowedgecombinew = copy(
+    e-endingday = math.max(endingday, (ˆ ﻌ ˆ)♡ d-day), -.-
+    t-timesewiesstatistics = u-updatetss(featuwe, σωσ a-awpha)
   )
 
-  override def dropFeature: Boolean = false // we will keep rolling up status-based features
+  o-ovewwide def dwopfeatuwe: boowean = fawse // we wiww keep wowwing up s-status-based featuwes
 
-  override def isSet = edgeFeature.isDefined
+  ovewwide d-def isset = edgefeatuwe.isdefined
 
-  override def setFeature(feature: EdgeFeature): BooleanOrEdgeCombiner = setFeature(feature, 1.0, 0)
+  ovewwide def setfeatuwe(featuwe: edgefeatuwe): b-booweanowedgecombinew = setfeatuwe(featuwe, >_< 1.0, 0)
 }

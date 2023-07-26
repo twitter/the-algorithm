@@ -1,25 +1,25 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.inject.Inject;
+impowt j-javax.inject.inject;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
+i-impowt com.twittew.seawch.common.pawtitioning.base.pawtitionmappingmanagew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdfeatuweschemamewgew;
 
 /**
- * The EarlybirdServiceScatterGatherSupport implementation used to fan out requests to the earlybird
- * partitions in the protected cluster.
+ * t-the e-eawwybiwdsewvicescattewgathewsuppowt i-impwementation u-used to fan out wequests to the eawwybiwd
+ * pawtitions in the pwotected cwustew. rawr
  */
-public class EarlybirdProtectedScatterGatherSupport extends EarlybirdServiceScatterGatherSupport {
+p-pubwic cwass eawwybiwdpwotectedscattewgathewsuppowt extends eawwybiwdsewvicescattewgathewsuppowt {
   /**
-   * Construct a EarlybirdProtectedScatterGatherSupport to do minUserFanOut,
-   * used only by protected. The main difference from the base class is that
-   * if the from user ID is not set, exception is thrown.
+   * c-constwuct a eawwybiwdpwotectedscattewgathewsuppowt t-to do minusewfanout, OwO
+   * used onwy by pwotected. (U ﹏ U) the m-main diffewence fwom the base c-cwass is that
+   * i-if the fwom usew id is nyot set, >_< exception is thwown. rawr x3
    */
-  @Inject
-  EarlybirdProtectedScatterGatherSupport(
-      PartitionMappingManager partitionMappingManager,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(partitionMappingManager, EarlybirdCluster.PROTECTED, featureSchemaMerger);
+  @inject
+  eawwybiwdpwotectedscattewgathewsuppowt(
+      p-pawtitionmappingmanagew pawtitionmappingmanagew, mya
+      eawwybiwdfeatuweschemamewgew featuweschemamewgew) {
+    supew(pawtitionmappingmanagew, nyaa~~ e-eawwybiwdcwustew.pwotected, (⑅˘꒳˘) featuweschemamewgew);
   }
 }

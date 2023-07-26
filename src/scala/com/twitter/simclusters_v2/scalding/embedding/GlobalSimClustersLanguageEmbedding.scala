@@ -1,197 +1,197 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.twittew.simcwustews_v2.scawding.embedding
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.ExplicitEndTime
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.Timestamp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.InternalId.ClusterId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2GlobalLanguageEmbeddingScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2GlobalLanguageEmbeddingThriftScalaDataset
-import com.twitter.simclusters_v2.thriftscala.LanguageToClusters
-import java.util.TimeZone
+impowt com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt c-com.twittew.daw.cwient.dataset.snapshotdawdataset
+i-impowt com.twittew.scawding.datewange
+i-impowt c-com.twittew.scawding.days
+i-impowt c-com.twittew.scawding.uniqueid
+i-impowt com.twittew.scawding._
+impowt com.twittew.scawding.typed.typedpipe
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.d
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.expwicitendtime
+i-impowt com.twittew.scawding_intewnaw.dawv2.dawwwite.wwiteextension
+impowt com.twittew.scawding_intewnaw.job.wequiwedbinawycompawatows.owdsew
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt c-com.twittew.simcwustews_v2.common.countwy
+impowt com.twittew.simcwustews_v2.common.wanguage
+impowt c-com.twittew.simcwustews_v2.common.timestamp
+impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.intewestedinsouwces
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces
+impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisintewestedin
+impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid.cwustewid
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+impowt com.twittew.simcwustews_v2.thwiftscawa.usewtointewestedincwustewscowes
+impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.simcwustewsv2gwobawwanguageembeddingscawadataset
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.simcwustewsv2gwobawwanguageembeddingthwiftscawadataset
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.wanguagetocwustews
+i-impowt java.utiw.timezone
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  --start_cron global_simclusters_language_embedding_job \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+c-capesospy-v2 update --buiwd_wocawwy --stawt_cwon \
+  --stawt_cwon gwobaw_simcwustews_wanguage_embedding_job \
+  swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
-object GlobalSimClustersLanguageEmbeddingBatchApp extends ScheduledExecutionApp {
+o-object gwobawsimcwustewswanguageembeddingbatchapp extends scheduwedexecutionapp {
 
-  override val firstTime: RichDate = RichDate("2023-03-07")
+  o-ovewwide vaw fiwsttime: wichdate = wichdate("2023-03-07")
 
-  override val batchIncrement: Duration = Days(1)
+  ovewwide vaw batchincwement: duwation = d-days(1)
 
-  val outputHdfsDirectory =
-    "/user/cassowary/manhattan_sequence_files/global_simclusters_language_embeddings"
+  vaw outputhdfsdiwectowy =
+    "/usew/cassowawy/manhattan_sequence_fiwes/gwobaw_simcwustews_wanguage_embeddings"
 
-  val outputThriftHdfsDirectory =
-    "/user/cassowary/processed/global_simclusters_language_embeddings"
+  vaw o-outputthwifthdfsdiwectowy =
+    "/usew/cassowawy/pwocessed/gwobaw_simcwustews_wanguage_embeddings"
 
-  val globalLanguageEmbeddingsKeyValDataset: KeyValDALDataset[
-    KeyVal[String, ClustersUserIsInterestedIn]
-  ] = SimclustersV2GlobalLanguageEmbeddingScalaDataset
+  v-vaw gwobawwanguageembeddingskeyvawdataset: k-keyvawdawdataset[
+    keyvaw[stwing, -.- cwustewsusewisintewestedin]
+  ] = simcwustewsv2gwobawwanguageembeddingscawadataset
 
-  val globalLanguageEmbeddingsThriftDataset: SnapshotDALDataset[LanguageToClusters] =
-    SimclustersV2GlobalLanguageEmbeddingThriftScalaDataset
+  vaw g-gwobawwanguageembeddingsthwiftdataset: s-snapshotdawdataset[wanguagetocwustews] =
+    simcwustewsv2gwobawwanguageembeddingthwiftscawadataset
 
-  val numOfClustersPerLanguage: Int = 400
+  v-vaw nyumofcwustewspewwanguage: i-int = 400
 
-  def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedIn2020Source
+  def getintewestedinfn: (
+    d-datewange, :3
+    timezone
+  ) => t-typedpipe[(usewid, ʘwʘ cwustewsusewisintewestedin)] =
+    intewestedinsouwces.simcwustewsintewestedin2020souwce
 
-  def flattenAndFilterUserInterestedIn(
-    interestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)]
-  ): TypedPipe[(UserId, (Int, Double))] = {
-    interestedIn
-    // Get (userId, Seq[(clusterId, scores)]
+  def fwattenandfiwtewusewintewestedin(
+    i-intewestedin: typedpipe[(usewid, 🥺 c-cwustewsusewisintewestedin)]
+  ): typedpipe[(usewid, >_< (int, ʘwʘ d-doubwe))] = {
+    i-intewestedin
+    // get (usewid, (˘ω˘) seq[(cwustewid, (✿oωo) scowes)]
       .map {
-        case (user, clusterUserIsInterestedIn) => {
-          (user, clusterUserIsInterestedIn.clusterIdToScores)
+        case (usew, (///ˬ///✿) cwustewusewisintewestedin) => {
+          (usew, rawr x3 cwustewusewisintewestedin.cwustewidtoscowes)
         }
       }
-      // Flatten it into (UserId, ClusterId, LogFavScore)
-      .flatMap {
-        case (userId, clusterUserIsInterestedIn) => {
-          clusterUserIsInterestedIn.toSeq.map {
-            case (clusterId, scores) => {
-              (userId, (clusterId, scores.logFavScore.getOrElse(0.0)))
+      // fwatten it into (usewid, -.- c-cwustewid, ^^ w-wogfavscowe)
+      .fwatmap {
+        case (usewid, (⑅˘꒳˘) c-cwustewusewisintewestedin) => {
+          c-cwustewusewisintewestedin.toseq.map {
+            c-case (cwustewid, nyaa~~ scowes) => {
+              (usewid, /(^•ω•^) (cwustewid, (U ﹏ U) scowes.wogfavscowe.getowewse(0.0)))
             }
           }
         }
-      }.filter(_._2._2 > 0.0) // Filter out zero scores
+      }.fiwtew(_._2._2 > 0.0) // fiwtew out zewo s-scowes
   }
 
-  def getGlobalSimClustersEmbeddingPerLanguage(
-    interestedIn: TypedPipe[(UserId, (Int, Double))],
-    favEdges: TypedPipe[(UserId, TweetId, Timestamp)],
-    language: TypedPipe[(UserId, (Country, Language))]
-  ): TypedPipe[(Language, ClustersUserIsInterestedIn)] = {
-    // Engagement fav edges
-    val edges = favEdges.map { case (userId, tweetId, ts) => (userId, (tweetId, ts)) }
+  def getgwobawsimcwustewsembeddingpewwanguage(
+    intewestedin: typedpipe[(usewid, 😳😳😳 (int, doubwe))], >w<
+    f-favedges: typedpipe[(usewid, XD t-tweetid, o.O timestamp)], mya
+    wanguage: t-typedpipe[(usewid, 🥺 (countwy, w-wanguage))]
+  ): typedpipe[(wanguage, ^^;; c-cwustewsusewisintewestedin)] = {
+    // e-engagement fav e-edges
+    vaw e-edges = favedges.map { case (usewid, :3 tweetid, (U ﹏ U) ts) => (usewid, OwO (tweetid, t-ts)) }
 
-    // Language information for users
-    val userLanguage = language.map {
-      case (userId, (country, lang)) => (userId, lang)
+    // w-wanguage i-infowmation fow u-usews
+    vaw usewwanguage = w-wanguage.map {
+      case (usewid, 😳😳😳 (countwy, (ˆ ﻌ ˆ)♡ wang)) => (usewid, XD wang)
     }
-    val numUsersPerLanguage = userLanguage.map {
-      case (_, lang) => (lang, 1L)
-    }.sumByKey
+    v-vaw nyumusewspewwanguage = usewwanguage.map {
+      case (_, (ˆ ﻌ ˆ)♡ wang) => (wang, ( ͡o ω ͡o ) 1w)
+    }.sumbykey
 
-    val embeddings =
-      interestedIn
-        .join(edges) // Join InterestedIn and user-tweet engagements
+    vaw embeddings =
+      intewestedin
+        .join(edges) // join i-intewestedin and usew-tweet engagements
         .map {
-          case (userId, ((clusterId, score), (_, _))) => {
-            (userId, (clusterId, score))
+          case (usewid, rawr x3 ((cwustewid, nyaa~~ s-scowe), (_, _))) => {
+            (usewid, >_< (cwustewid, ^^;; s-scowe))
           }
         }
-        .join(userLanguage) // Join and get cluster scores per language
+        .join(usewwanguage) // j-join and get cwustew scowes p-pew wanguage
         .map {
-          case (userId, ((clusterId, score), lang)) => {
-            ((lang, clusterId), score)
+          case (usewid, (ˆ ﻌ ˆ)♡ ((cwustewid, ^^;; s-scowe), (⑅˘꒳˘) wang)) => {
+            ((wang, rawr x3 c-cwustewid), (///ˬ///✿) scowe)
           }
         }
-        .sumByKey // Sum the user embeddings per language based on the engagements
-        .map { case ((lang, clusterId), score) => (lang, (clusterId, score)) }
-        .join(numUsersPerLanguage)
-        // We compute the average cluster scores per language
+        .sumbykey // sum the usew embeddings pew wanguage based on the engagements
+        .map { c-case ((wang, 🥺 cwustewid), scowe) => (wang, >_< (cwustewid, UwU s-scowe)) }
+        .join(numusewspewwanguage)
+        // we compute the a-avewage cwustew s-scowes pew wanguage
         .map {
-          case (lang, ((clusterId, score), count)) => (lang, (clusterId -> score / count))
+          case (wang, ((cwustewid, >_< scowe), -.- count)) => (wang, mya (cwustewid -> scowe / c-count))
         }
-        .group
-        .sortedReverseTake(numOfClustersPerLanguage)(Ordering
-          .by(_._2)) // Take top 400 clusters per language
-        .flatMap {
-          case (lang, clusterScores) => {
-            clusterScores.map {
-              case (clusterId, score) => (lang, (clusterId, score))
+        .gwoup
+        .sowtedwevewsetake(numofcwustewspewwanguage)(owdewing
+          .by(_._2)) // t-take top 400 cwustews p-pew wanguage
+        .fwatmap {
+          c-case (wang, >w< cwustewscowes) => {
+            cwustewscowes.map {
+              case (cwustewid, (U ﹏ U) scowe) => (wang, 😳😳😳 (cwustewid, o.O s-scowe))
             }
           }
-        }.mapValues { case (clusterId, score) => Map(clusterId -> score) }
+        }.mapvawues { c-case (cwustewid, òωó s-scowe) => map(cwustewid -> scowe) }
 
-    // Build the final SimClusters embeddings per language
-    embeddings.sumByKey.map {
-      case (lang, clusterToScore) => {
-        val clusterScores = clusterToScore.map {
-          case (clusterId, score) =>
-            clusterId -> UserToInterestedInClusterScores(logFavScore = Some(score))
+    // buiwd t-the finaw simcwustews e-embeddings pew wanguage
+    e-embeddings.sumbykey.map {
+      case (wang, 😳😳😳 cwustewtoscowe) => {
+        vaw cwustewscowes = cwustewtoscowe.map {
+          c-case (cwustewid, s-scowe) =>
+            cwustewid -> usewtointewestedincwustewscowes(wogfavscowe = s-some(scowe))
         }
-        (lang, ClustersUserIsInterestedIn(ModelVersion.Model20m145k2020.name, clusterScores))
+        (wang, σωσ c-cwustewsusewisintewestedin(modewvewsion.modew20m145k2020.name, (⑅˘꒳˘) cwustewscowes))
       }
     }
   }
-  override def runOnDateRange(
-    args: Args
+  ovewwide def wunondatewange(
+    awgs: a-awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // Read the most recent InterestedIn snapshot from the past 21 days
-    val interestedIn =
-      InterestedInSources
-        .simClustersInterestedIn2020Source(dateRange.prepend(Days(21)), timeZone).forceToDisk
+    impwicit datewange: datewange, (///ˬ///✿)
+    timezone: timezone, 🥺
+    uniqueid: u-uniqueid
+  ): execution[unit] = {
+    // wead the most wecent i-intewestedin s-snapshot fwom the past 21 days
+    vaw intewestedin =
+      intewestedinsouwces
+        .simcwustewsintewestedin2020souwce(datewange.pwepend(days(21)), OwO timezone).fowcetodisk
 
-    // Get the user tweet fav engagement history from the past 2 days
-    val userTweetFavEdges = ExternalDataSources.userTweetFavoritesSource
+    // g-get the u-usew tweet fav engagement histowy fwom the past 2 days
+    vaw u-usewtweetfavedges = extewnawdatasouwces.usewtweetfavowitessouwce
 
-    // Read user language from UserSource
-    val userLanguages = ExternalDataSources.userSource
+    // w-wead usew wanguage fwom usewsouwce
+    vaw usewwanguages = e-extewnawdatasouwces.usewsouwce
 
-    val globalEmbeddings = getGlobalSimClustersEmbeddingPerLanguage(
-      flattenAndFilterUserInterestedIn(interestedIn),
-      userTweetFavEdges,
-      userLanguages)
+    vaw gwobawembeddings = getgwobawsimcwustewsembeddingpewwanguage(
+      fwattenandfiwtewusewintewestedin(intewestedin), >w<
+      u-usewtweetfavedges, 🥺
+      u-usewwanguages)
 
-    // Write results as a key-val dataset
-    globalEmbeddings
+    // wwite wesuwts a-as a key-vaw dataset
+    gwobawembeddings
       .map {
-        case (lang, embeddings) =>
-          KeyVal(lang, embeddings)
+        c-case (wang, nyaa~~ embeddings) =>
+          k-keyvaw(wang, ^^ e-embeddings)
       }
-      .writeDALVersionedKeyValExecution(
-        globalLanguageEmbeddingsKeyValDataset,
-        D.Suffix(outputHdfsDirectory)
+      .wwitedawvewsionedkeyvawexecution(
+        gwobawwanguageembeddingskeyvawdataset,
+        d-d.suffix(outputhdfsdiwectowy)
       )
 
-    // Write results as a thrift dataset
-    globalEmbeddings
+    // w-wwite wesuwts as a thwift dataset
+    gwobawembeddings
       .map {
-        case (lang, clusterUserIsInterestedIn) =>
-          LanguageToClusters(
-            lang,
-            clusterUserIsInterestedIn.knownForModelVersion,
-            clusterUserIsInterestedIn.clusterIdToScores
+        c-case (wang, >w< cwustewusewisintewestedin) =>
+          w-wanguagetocwustews(
+            w-wang, OwO
+            cwustewusewisintewestedin.knownfowmodewvewsion, XD
+            cwustewusewisintewestedin.cwustewidtoscowes
           )
       }
-      .writeDALSnapshotExecution(
-        globalLanguageEmbeddingsThriftDataset,
-        D.Daily,
-        D.Suffix(outputThriftHdfsDirectory),
-        D.Parquet,
-        dateRange.`end`
+      .wwitedawsnapshotexecution(
+        g-gwobawwanguageembeddingsthwiftdataset, ^^;;
+        d.daiwy, 🥺
+        d-d.suffix(outputthwifthdfsdiwectowy), XD
+        d-d.pawquet, (U ᵕ U❁)
+        datewange.`end`
       )
   }
 }

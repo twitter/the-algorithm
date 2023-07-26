@@ -1,69 +1,69 @@
-package com.twitter.search.earlybird.queryparser;
+package com.twittew.seawch.eawwybiwd.quewypawsew;
 
-import java.util.Map;
+impowt java.utiw.map;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
 
-import org.apache.lucene.search.Query;
+i-impowt owg.apache.wucene.seawch.quewy;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.query.MappableField;
-import com.twitter.search.common.schema.base.FieldWeightDefault;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.search.termination.QueryTimeout;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.queryparser.query.search.SearchOperator;
+i-impowt c-com.twittew.decidew.decidew;
+i-impowt c-com.twittew.seawch.common.quewy.mappabwefiewd;
+i-impowt com.twittew.seawch.common.schema.base.fiewdweightdefauwt;
+impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.common.seawch.tewminationtwackew;
+i-impowt com.twittew.seawch.common.seawch.tewmination.quewytimeout;
+impowt c-com.twittew.seawch.eawwybiwd.common.usewupdates.usewscwubgeomap;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.muwtisegmenttewmdictionawymanagew;
+impowt com.twittew.seawch.eawwybiwd.quewycache.quewycachemanagew;
+impowt c-com.twittew.seawch.quewypawsew.quewy.seawch.seawchopewatow;
 
-public class LuceneRelevanceQueryVisitor extends EarlybirdLuceneQueryVisitor {
-  public LuceneRelevanceQueryVisitor(
-      ImmutableSchemaInterface schema,
-      QueryCacheManager queryCacheManager,
-      UserTable userTable,
-      UserScrubGeoMap userScrubGeoMap,
-      TerminationTracker terminationTracker,
-      Map<String, FieldWeightDefault> fieldWeightMap,
-      Map<MappableField, String> mappableFieldMap,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      Decider decider,
-      EarlybirdCluster earlybirdCluster,
-      QueryTimeout queryTimeout) {
-    super(
-        schema,
-        queryCacheManager,
-        userTable,
-        userScrubGeoMap,
-        terminationTracker,
-        fieldWeightMap,
-        mappableFieldMap,
-        multiSegmentTermDictionaryManager,
-        decider,
-        earlybirdCluster,
-        queryTimeout);
+pubwic cwass wucenewewevancequewyvisitow e-extends e-eawwybiwdwucenequewyvisitow {
+  pubwic wucenewewevancequewyvisitow(
+      immutabweschemaintewface schema, mya
+      quewycachemanagew q-quewycachemanagew, 😳
+      usewtabwe usewtabwe, -.-
+      usewscwubgeomap usewscwubgeomap, 🥺
+      t-tewminationtwackew tewminationtwackew, o.O
+      m-map<stwing, /(^•ω•^) f-fiewdweightdefauwt> f-fiewdweightmap, nyaa~~
+      m-map<mappabwefiewd, nyaa~~ stwing> mappabwefiewdmap, :3
+      muwtisegmenttewmdictionawymanagew m-muwtisegmenttewmdictionawymanagew, 😳😳😳
+      decidew decidew, (˘ω˘)
+      eawwybiwdcwustew e-eawwybiwdcwustew, ^^
+      quewytimeout quewytimeout) {
+    supew(
+        schema, :3
+        quewycachemanagew, -.-
+        usewtabwe, 😳
+        usewscwubgeomap, mya
+        tewminationtwackew, (˘ω˘)
+        f-fiewdweightmap,
+        mappabwefiewdmap, >_<
+        m-muwtisegmenttewmdictionawymanagew, -.-
+        decidew, 🥺
+        e-eawwybiwdcwustew, (U ﹏ U)
+        q-quewytimeout);
   }
 
-  @VisibleForTesting
-  protected LuceneRelevanceQueryVisitor(
-      ImmutableSchemaInterface schema,
-      QueryCacheManager queryCacheManager,
-      UserTable userTable,
-      UserScrubGeoMap userScrubGeoMap,
-      EarlybirdCluster earlybirdCluster) {
-    super(schema,
-          queryCacheManager,
-          userTable,
-          userScrubGeoMap,
-          earlybirdCluster,
-          queryCacheManager.getDecider());
+  @visibwefowtesting
+  pwotected wucenewewevancequewyvisitow(
+      immutabweschemaintewface schema, >w<
+      q-quewycachemanagew q-quewycachemanagew, mya
+      usewtabwe usewtabwe, >w<
+      usewscwubgeomap usewscwubgeomap, nyaa~~
+      e-eawwybiwdcwustew e-eawwybiwdcwustew) {
+    supew(schema, (✿oωo)
+          quewycachemanagew, ʘwʘ
+          u-usewtabwe, (ˆ ﻌ ˆ)♡
+          usewscwubgeomap, 😳😳😳
+          e-eawwybiwdcwustew, :3
+          quewycachemanagew.getdecidew());
   }
 
-  @Override
-  protected Query visitSinceIDOperator(SearchOperator op) {
-    // since_id is handled by the blender for relevance queries, so don't filter on it.
-    return null;
+  @ovewwide
+  pwotected quewy v-visitsinceidopewatow(seawchopewatow op) {
+    // s-since_id is handwed by the b-bwendew fow wewevance q-quewies, OwO so don't fiwtew on it. (U ﹏ U)
+    wetuwn nyuww;
   }
 }

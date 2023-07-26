@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageHeaderFacepile
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pages.wendew.{thwiftscawa => u-uwp}
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.uwwmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.topicpageheadewfacepiwe
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class TopicPageHeaderFacepileMarshaller @Inject() (
-  urlMarshaller: UrlMarshaller) {
+@singweton
+c-cwass topicpageheadewfacepiwemawshawwew @inject() (
+  u-uwwmawshawwew: uwwmawshawwew) {
 
-  def apply(topicPageHeaderFacepile: TopicPageHeaderFacepile): urp.TopicPageHeaderFacepile =
-    urp.TopicPageHeaderFacepile(
-      userIds = topicPageHeaderFacepile.userIds,
-      facepileUrl = topicPageHeaderFacepile.facepileUrl.map(urlMarshaller(_))
+  def appwy(topicpageheadewfacepiwe: topicpageheadewfacepiwe): u-uwp.topicpageheadewfacepiwe =
+    uwp.topicpageheadewfacepiwe(
+      usewids = topicpageheadewfacepiwe.usewids, :3
+      f-facepiweuww = topicpageheadewfacepiwe.facepiweuww.map(uwwmawshawwew(_))
     )
 }

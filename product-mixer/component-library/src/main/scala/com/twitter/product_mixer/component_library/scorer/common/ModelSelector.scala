@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.scorer.common
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.common
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.timewines.configapi.pawam
 
 /**
- * Selector for choosing which Model ID/Name to use when calling an underlying ML Model Service.
+ * s-sewectow fow c-choosing which m-modew id/name to u-use when cawwing a-an undewwying m-mw modew sewvice.
  */
-trait ModelSelector[-Query <: PipelineQuery] {
-  def apply(query: Query): Option[String]
+t-twait modewsewectow[-quewy <: pipewinequewy] {
+  def appwy(quewy: quewy): option[stwing]
 }
 
 /**
- * Simple Model ID Selector that chooses model based off of a Param object.
- * @param param ConfigAPI Param that decides the model id.
+ * s-simpwe modew id sewectow that chooses modew b-based off of a pawam object. rawr x3
+ * @pawam p-pawam configapi pawam that decides the modew id. (✿oωo)
  */
-case class ParamModelSelector[Query <: PipelineQuery](param: Param[String])
-    extends ModelSelector[Query] {
-  override def apply(query: Query): Option[String] = Some(query.params(param))
+c-case cwass pawammodewsewectow[quewy <: pipewinequewy](pawam: p-pawam[stwing])
+    e-extends modewsewectow[quewy] {
+  ovewwide def appwy(quewy: quewy): option[stwing] = some(quewy.pawams(pawam))
 }
 
 /**
- * Static Selector that chooses the same model name always
- * @param modelName The model name to use.
+ * s-static sewectow that chooses the same modew nyame awways
+ * @pawam modewname t-the modew name to use. (ˆ ﻌ ˆ)♡
  */
-case class StaticModelSelector(modelName: String) extends ModelSelector[PipelineQuery] {
-  override def apply(query: PipelineQuery): Option[String] = Some(modelName)
+c-case cwass staticmodewsewectow(modewname: s-stwing) e-extends modewsewectow[pipewinequewy] {
+  o-ovewwide def appwy(quewy: pipewinequewy): o-option[stwing] = some(modewname)
 }

@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.ThroughputPredicate
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.thwoughputpwedicate
 
 /**
- * [[ResponseSizeAlert]] triggers when the specified percentile of requests with empty responses (defined
- * as the number of items returned excluding cursors) is beyond the [[ThroughputPredicate]] threshold
- * for a configured amount of time.
+ * [[wesponsesizeawewt]] t-twiggews w-when the specified p-pewcentiwe o-of wequests w-with empty wesponses (defined
+ * a-as the nyumbew o-of items wetuwned excwuding cuwsows) is beyond the [[thwoughputpwedicate]] thweshowd
+ * fow a configuwed a-amount of time. (˘ω˘)
  */
-case class ResponseSizeAlert(
-  override val notificationGroup: NotificationGroup,
-  percentile: Percentile,
-  override val warnPredicate: ThroughputPredicate,
-  override val criticalPredicate: ThroughputPredicate,
-  override val runbookLink: Option[String] = None)
-    extends Alert {
-  override val metricSuffix: Option[String] = Some(percentile.metricSuffix)
-  override val alertType: AlertType = ResponseSize
-  require(
-    warnPredicate.threshold >= 0,
-    s"ResponseSizeAlert predicates must be >= 0 but got warnPredicate = ${warnPredicate.threshold}"
+case cwass wesponsesizeawewt(
+  o-ovewwide vaw nyotificationgwoup: n-nyotificationgwoup, (⑅˘꒳˘)
+  pewcentiwe: pewcentiwe, (///ˬ///✿)
+  ovewwide vaw wawnpwedicate: t-thwoughputpwedicate, 😳😳😳
+  ovewwide vaw cwiticawpwedicate: t-thwoughputpwedicate,
+  o-ovewwide vaw wunbookwink: option[stwing] = nyone)
+    extends awewt {
+  o-ovewwide vaw metwicsuffix: option[stwing] = some(pewcentiwe.metwicsuffix)
+  ovewwide vaw awewttype: a-awewttype = wesponsesize
+  wequiwe(
+    w-wawnpwedicate.thweshowd >= 0, 🥺
+    s-s"wesponsesizeawewt p-pwedicates must b-be >= 0 but got wawnpwedicate = ${wawnpwedicate.thweshowd}"
   )
-  require(
-    criticalPredicate.threshold >= 0,
-    s"ResponseSizeAlert predicates must be >= 0 but got criticalPredicate = ${criticalPredicate.threshold}"
+  wequiwe(
+    c-cwiticawpwedicate.thweshowd >= 0, mya
+    s"wesponsesizeawewt pwedicates m-must be >= 0 but got cwiticawpwedicate = ${cwiticawpwedicate.thweshowd}"
   )
 }

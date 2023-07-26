@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.service.slice
+package com.twittew.pwoduct_mixew.cowe.sewvice.swice
 
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.stitch.Stitch
-import com.twitter.strato.graphql.thriftscala.SliceResult
-import com.twitter.timelines.configapi.Params
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewinewequest
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy.pwoductpipewinewegistwy
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.stwato.gwaphqw.thwiftscawa.swicewesuwt
+impowt com.twittew.timewines.configapi.pawams
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.reflect.runtime.universe.TypeTag
+impowt javax.inject.inject
+impowt javax.inject.singweton
+impowt s-scawa.wefwect.wuntime.univewse.typetag
 
 /**
- * Look up and execute Slice products in the [[ProductPipelineRegistry]]
+ * wook up and exekawaii~ swice p-pwoducts in the [[pwoductpipewinewegistwy]]
  */
-@Singleton
-class SliceService @Inject() (productPipelineRegistry: ProductPipelineRegistry) {
+@singweton
+cwass s-swicesewvice @inject() (pwoductpipewinewegistwy: pwoductpipewinewegistwy) {
 
-  def getSliceResponse[RequestType <: Request](
-    request: RequestType,
-    params: Params
+  def getswicewesponse[wequesttype <: wequest](
+    w-wequest: wequesttype,
+    pawams: p-pawams
   )(
-    implicit requestTypeTag: TypeTag[RequestType]
-  ): Stitch[SliceResult] =
-    productPipelineRegistry
-      .getProductPipeline[RequestType, SliceResult](request.product)
-      .process(ProductPipelineRequest(request, params))
+    i-impwicit wequesttypetag: typetag[wequesttype]
+  ): stitch[swicewesuwt] =
+    pwoductpipewinewegistwy
+      .getpwoductpipewine[wequesttype, 😳😳😳 swicewesuwt](wequest.pwoduct)
+      .pwocess(pwoductpipewinewequest(wequest, -.- p-pawams))
 }

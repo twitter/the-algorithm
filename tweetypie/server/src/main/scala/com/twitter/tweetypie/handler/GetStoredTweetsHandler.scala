@@ -1,160 +1,160 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.StoredTweetResult._
-import com.twitter.tweetypie.core.StoredTweetResult
-import com.twitter.tweetypie.core.TweetResult
-import com.twitter.tweetypie.FieldId
-import com.twitter.tweetypie.FutureArrow
-import com.twitter.tweetypie.repository.CacheControl
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetResultRepository
-import com.twitter.tweetypie.thriftscala.{BounceDeleted => BounceDeletedState}
-import com.twitter.tweetypie.thriftscala.{ForceAdded => ForceAddedState}
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsRequest
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsOptions
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsResult
-import com.twitter.tweetypie.thriftscala.{HardDeleted => HardDeletedState}
-import com.twitter.tweetypie.thriftscala.{NotFound => NotFoundState}
-import com.twitter.tweetypie.thriftscala.{SoftDeleted => SoftDeletedState}
-import com.twitter.tweetypie.thriftscala.StatusCounts
-import com.twitter.tweetypie.thriftscala.StoredTweetError
-import com.twitter.tweetypie.thriftscala.StoredTweetInfo
-import com.twitter.tweetypie.thriftscala.StoredTweetState
-import com.twitter.tweetypie.thriftscala.{Undeleted => UndeletedState}
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.tweetypie.cowe.stowedtweetwesuwt._
+i-impowt com.twittew.tweetypie.cowe.stowedtweetwesuwt
+i-impowt c-com.twittew.tweetypie.cowe.tweetwesuwt
+i-impowt com.twittew.tweetypie.fiewdid
+i-impowt com.twittew.tweetypie.futuweawwow
+impowt com.twittew.tweetypie.wepositowy.cachecontwow
+impowt com.twittew.tweetypie.wepositowy.tweetquewy
+i-impowt com.twittew.tweetypie.wepositowy.tweetwesuwtwepositowy
+impowt c-com.twittew.tweetypie.thwiftscawa.{bouncedeweted => bouncedewetedstate}
+i-impowt com.twittew.tweetypie.thwiftscawa.{fowceadded => fowceaddedstate}
+impowt com.twittew.tweetypie.thwiftscawa.getstowedtweetswequest
+i-impowt com.twittew.tweetypie.thwiftscawa.getstowedtweetsoptions
+impowt com.twittew.tweetypie.thwiftscawa.getstowedtweetswesuwt
+i-impowt com.twittew.tweetypie.thwiftscawa.{hawddeweted => h-hawddewetedstate}
+impowt com.twittew.tweetypie.thwiftscawa.{notfound => nyotfoundstate}
+impowt com.twittew.tweetypie.thwiftscawa.{softdeweted => s-softdewetedstate}
+impowt com.twittew.tweetypie.thwiftscawa.statuscounts
+impowt com.twittew.tweetypie.thwiftscawa.stowedtweetewwow
+impowt c-com.twittew.tweetypie.thwiftscawa.stowedtweetinfo
+impowt com.twittew.tweetypie.thwiftscawa.stowedtweetstate
+i-impowt com.twittew.tweetypie.thwiftscawa.{undeweted => u-undewetedstate}
 
-object GetStoredTweetsHandler {
-  type Type = FutureArrow[GetStoredTweetsRequest, Seq[GetStoredTweetsResult]]
+o-object g-getstowedtweetshandwew {
+  type type = futuweawwow[getstowedtweetswequest, OwO s-seq[getstowedtweetswesuwt]]
 
-  def apply(tweetRepo: TweetResultRepository.Type): Type = {
-    FutureArrow[GetStoredTweetsRequest, Seq[GetStoredTweetsResult]] { request =>
-      val requestOptions: GetStoredTweetsOptions =
-        request.options.getOrElse(GetStoredTweetsOptions())
-      val queryOptions = toTweetQueryOptions(requestOptions)
+  def appwy(tweetwepo: tweetwesuwtwepositowy.type): type = {
+    f-futuweawwow[getstowedtweetswequest, 😳 seq[getstowedtweetswesuwt]] { wequest =>
+      vaw wequestoptions: getstowedtweetsoptions =
+        w-wequest.options.getowewse(getstowedtweetsoptions())
+      vaw quewyoptions = t-totweetquewyoptions(wequestoptions)
 
-      val result = Stitch
-        .traverse(request.tweetIds) { tweetId =>
-          tweetRepo(tweetId, queryOptions)
-            .map(toStoredTweetInfo)
-            .map(GetStoredTweetsResult(_))
-            .handle {
-              case _ =>
-                GetStoredTweetsResult(
-                  StoredTweetInfo(
-                    tweetId = tweetId,
-                    errors = Seq(StoredTweetError.FailedFetch)
+      v-vaw wesuwt = s-stitch
+        .twavewse(wequest.tweetids) { tweetid =>
+          tweetwepo(tweetid, 😳😳😳 quewyoptions)
+            .map(tostowedtweetinfo)
+            .map(getstowedtweetswesuwt(_))
+            .handwe {
+              c-case _ =>
+                g-getstowedtweetswesuwt(
+                  stowedtweetinfo(
+                    tweetid = tweetid, (˘ω˘)
+                    e-ewwows = s-seq(stowedtweetewwow.faiwedfetch)
                   )
                 )
             }
         }
 
-      Stitch.run(result)
+      stitch.wun(wesuwt)
     }
   }
 
-  private def toTweetQueryOptions(options: GetStoredTweetsOptions): TweetQuery.Options = {
-    val countsFields: Set[FieldId] = Set(
-      StatusCounts.FavoriteCountField.id,
-      StatusCounts.ReplyCountField.id,
-      StatusCounts.RetweetCountField.id,
-      StatusCounts.QuoteCountField.id
+  p-pwivate def totweetquewyoptions(options: g-getstowedtweetsoptions): tweetquewy.options = {
+    vaw countsfiewds: s-set[fiewdid] = set(
+      s-statuscounts.favowitecountfiewd.id, ʘwʘ
+      statuscounts.wepwycountfiewd.id, ( ͡o ω ͡o )
+      s-statuscounts.wetweetcountfiewd.id, o.O
+      s-statuscounts.quotecountfiewd.id
     )
 
-    TweetQuery.Options(
-      include = GetTweetsHandler.BaseInclude.also(
-        tweetFields = Set(Tweet.CountsField.id) ++ options.additionalFieldIds,
-        countsFields = countsFields
-      ),
-      cacheControl = CacheControl.NoCache,
-      enforceVisibilityFiltering = !options.bypassVisibilityFiltering,
-      forUserId = options.forUserId,
-      requireSourceTweet = false,
-      fetchStoredTweets = true
+    tweetquewy.options(
+      incwude = gettweetshandwew.baseincwude.awso(
+        tweetfiewds = set(tweet.countsfiewd.id) ++ options.additionawfiewdids, >w<
+        countsfiewds = c-countsfiewds
+      ), 😳
+      c-cachecontwow = cachecontwow.nocache, 🥺
+      e-enfowcevisibiwityfiwtewing = !options.bypassvisibiwityfiwtewing, rawr x3
+      f-fowusewid = o-options.fowusewid, o.O
+      wequiwesouwcetweet = fawse, rawr
+      fetchstowedtweets = twue
     )
   }
 
-  private def toStoredTweetInfo(tweetResult: TweetResult): StoredTweetInfo = {
-    def translateErrors(errors: Seq[StoredTweetResult.Error]): Seq[StoredTweetError] = {
-      errors.map {
-        case StoredTweetResult.Error.Corrupt => StoredTweetError.Corrupt
-        case StoredTweetResult.Error.FieldsMissingOrInvalid =>
-          StoredTweetError.FieldsMissingOrInvalid
-        case StoredTweetResult.Error.ScrubbedFieldsPresent => StoredTweetError.ScrubbedFieldsPresent
-        case StoredTweetResult.Error.ShouldBeHardDeleted => StoredTweetError.ShouldBeHardDeleted
+  p-pwivate def tostowedtweetinfo(tweetwesuwt: tweetwesuwt): stowedtweetinfo = {
+    def twanswateewwows(ewwows: seq[stowedtweetwesuwt.ewwow]): s-seq[stowedtweetewwow] = {
+      ewwows.map {
+        c-case stowedtweetwesuwt.ewwow.cowwupt => s-stowedtweetewwow.cowwupt
+        c-case stowedtweetwesuwt.ewwow.fiewdsmissingowinvawid =>
+          s-stowedtweetewwow.fiewdsmissingowinvawid
+        c-case s-stowedtweetwesuwt.ewwow.scwubbedfiewdspwesent => s-stowedtweetewwow.scwubbedfiewdspwesent
+        case stowedtweetwesuwt.ewwow.shouwdbehawddeweted => stowedtweetewwow.shouwdbehawddeweted
       }
     }
 
-    val tweetData = tweetResult.value
+    v-vaw t-tweetdata = tweetwesuwt.vawue
 
-    tweetData.storedTweetResult match {
-      case Some(storedTweetResult) => {
-        val (tweet, storedTweetState, errors) = storedTweetResult match {
-          case Present(errors, _) => (Some(tweetData.tweet), None, translateErrors(errors))
-          case HardDeleted(softDeletedAtMsec, hardDeletedAtMsec) =>
+    t-tweetdata.stowedtweetwesuwt m-match {
+      case s-some(stowedtweetwesuwt) => {
+        vaw (tweet, ʘwʘ stowedtweetstate, 😳😳😳 ewwows) = s-stowedtweetwesuwt match {
+          case pwesent(ewwows, ^^;; _) => (some(tweetdata.tweet), o.O nyone, twanswateewwows(ewwows))
+          case hawddeweted(softdewetedatmsec, (///ˬ///✿) hawddewetedatmsec) =>
             (
-              Some(tweetData.tweet),
-              Some(
-                StoredTweetState.HardDeleted(
-                  HardDeletedState(softDeletedAtMsec, hardDeletedAtMsec))),
-              Seq()
+              s-some(tweetdata.tweet),
+              some(
+                stowedtweetstate.hawddeweted(
+                  hawddewetedstate(softdewetedatmsec, σωσ h-hawddewetedatmsec))),
+              s-seq()
             )
-          case SoftDeleted(softDeletedAtMsec, errors, _) =>
+          c-case softdeweted(softdewetedatmsec, nyaa~~ ewwows, _) =>
             (
-              Some(tweetData.tweet),
-              Some(StoredTweetState.SoftDeleted(SoftDeletedState(softDeletedAtMsec))),
-              translateErrors(errors)
+              s-some(tweetdata.tweet), ^^;;
+              some(stowedtweetstate.softdeweted(softdewetedstate(softdewetedatmsec))), ^•ﻌ•^
+              t-twanswateewwows(ewwows)
             )
-          case BounceDeleted(deletedAtMsec, errors, _) =>
+          c-case bouncedeweted(dewetedatmsec, σωσ ewwows, _) =>
             (
-              Some(tweetData.tweet),
-              Some(StoredTweetState.BounceDeleted(BounceDeletedState(deletedAtMsec))),
-              translateErrors(errors)
+              some(tweetdata.tweet), -.-
+              some(stowedtweetstate.bouncedeweted(bouncedewetedstate(dewetedatmsec))), ^^;;
+              twanswateewwows(ewwows)
             )
-          case Undeleted(undeletedAtMsec, errors, _) =>
+          case undeweted(undewetedatmsec, XD e-ewwows, 🥺 _) =>
             (
-              Some(tweetData.tweet),
-              Some(StoredTweetState.Undeleted(UndeletedState(undeletedAtMsec))),
-              translateErrors(errors)
+              some(tweetdata.tweet), òωó
+              s-some(stowedtweetstate.undeweted(undewetedstate(undewetedatmsec))), (ˆ ﻌ ˆ)♡
+              twanswateewwows(ewwows)
             )
-          case ForceAdded(addedAtMsec, errors, _) =>
+          c-case fowceadded(addedatmsec, -.- e-ewwows, :3 _) =>
             (
-              Some(tweetData.tweet),
-              Some(StoredTweetState.ForceAdded(ForceAddedState(addedAtMsec))),
-              translateErrors(errors)
+              some(tweetdata.tweet), ʘwʘ
+              some(stowedtweetstate.fowceadded(fowceaddedstate(addedatmsec))), 🥺
+              t-twanswateewwows(ewwows)
             )
-          case Failed(errors) => (None, None, translateErrors(errors))
-          case NotFound => (None, Some(StoredTweetState.NotFound(NotFoundState())), Seq())
+          c-case faiwed(ewwows) => (none, >_< nyone, ʘwʘ twanswateewwows(ewwows))
+          c-case n-notfound => (none, (˘ω˘) some(stowedtweetstate.notfound(notfoundstate())), (✿oωo) seq())
         }
 
-        StoredTweetInfo(
-          tweetId = tweetData.tweet.id,
-          tweet = tweet.map(sanitizeNullMediaFields),
-          storedTweetState = storedTweetState,
-          errors = errors
+        stowedtweetinfo(
+          tweetid = t-tweetdata.tweet.id, (///ˬ///✿)
+          t-tweet = tweet.map(sanitizenuwwmediafiewds), rawr x3
+          s-stowedtweetstate = stowedtweetstate, -.-
+          e-ewwows = e-ewwows
         )
       }
 
-      case None =>
-        StoredTweetInfo(
-          tweetId = tweetData.tweet.id,
-          tweet = Some(sanitizeNullMediaFields(tweetData.tweet))
+      case nyone =>
+        s-stowedtweetinfo(
+          tweetid = tweetdata.tweet.id, ^^
+          tweet = some(sanitizenuwwmediafiewds(tweetdata.tweet))
         )
     }
   }
 
-  private def sanitizeNullMediaFields(tweet: Tweet): Tweet = {
-    // Some media fields are initialized as `null` at the storage layer.
-    // If the Tweet is meant to be hard deleted, or is not hydrated for
-    // some other reason but the media entities still exist, we sanitize
-    // these fields to allow serialization.
-    tweet.copy(media = tweet.media.map(_.map { mediaEntity =>
-      mediaEntity.copy(
-        url = Option(mediaEntity.url).getOrElse(""),
-        mediaUrl = Option(mediaEntity.mediaUrl).getOrElse(""),
-        mediaUrlHttps = Option(mediaEntity.mediaUrlHttps).getOrElse(""),
-        displayUrl = Option(mediaEntity.displayUrl).getOrElse(""),
-        expandedUrl = Option(mediaEntity.expandedUrl).getOrElse(""),
+  pwivate d-def sanitizenuwwmediafiewds(tweet: t-tweet): tweet = {
+    // some media fiewds awe i-initiawized as `nuww` a-at the stowage wayew. (⑅˘꒳˘)
+    // if the tweet is meant to be h-hawd deweted, nyaa~~ ow is nyot hydwated fow
+    // some othew weason but the media entities s-stiww exist, /(^•ω•^) we sanitize
+    // these fiewds t-to awwow sewiawization. (U ﹏ U)
+    t-tweet.copy(media = tweet.media.map(_.map { mediaentity =>
+      mediaentity.copy(
+        u-uww = o-option(mediaentity.uww).getowewse(""), 😳😳😳
+        mediauww = option(mediaentity.mediauww).getowewse(""), >w<
+        mediauwwhttps = option(mediaentity.mediauwwhttps).getowewse(""), XD
+        dispwayuww = option(mediaentity.dispwayuww).getowewse(""), o.O
+        e-expandeduww = option(mediaentity.expandeduww).getowewse(""), mya
       )
     }))
   }

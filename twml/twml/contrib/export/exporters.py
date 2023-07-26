@@ -1,145 +1,145 @@
 """
-Wrappers around tf.estimator.Exporters to export models and save checkpoints.
+wwappews awound tf.estimatow.expowtews t-to expowt m-modews and save c-checkpoints. /(^•ω•^)
 """
-import os
+i-impowt os
 
-import tensorflow.compat.v1 as tf
-from tensorflow.python.estimator import exporter
-import twml
+i-impowt tensowfwow.compat.v1 a-as tf
+f-fwom tensowfwow.python.estimatow i-impowt expowtew
+impowt twmw
 
 
-class _AllSavedModelsExporter(tf.estimator.Exporter):
-  """Internal exporter class to be used for exporting models for different modes."""
+cwass _awwsavedmodewsexpowtew(tf.estimatow.expowtew):
+  """intewnaw expowtew cwass to be used fow e-expowting modews fow diffewent modes."""
 
-  def __init__(self,
-               name,
-               input_receiver_fn_map,
-               backup_checkpoints,
-               assets_extra=None,
-               as_text=False):
+  def __init__(sewf, (U ﹏ U)
+               n-nyame, 😳😳😳
+               input_weceivew_fn_map, >w<
+               b-backup_checkpoints, XD
+               assets_extwa=none, o.O
+               as_text=fawse):
     """
-    Args:
-      name: A unique name to be used for the exporter. This is used in the export path.
-      input_receiver_fn_map: A map of tf.estimator.ModeKeys to input_receiver_fns.
-      backup_checkpoints: A flag to specify if backups of checkpoints need to be made.
-      assets_extra: Additional assets to be included in the exported model.
-      as_text: Specifies if the exported model should be in a human readable text format.
+    awgs:
+      n-nyame: a unique nyame t-to be used fow the e-expowtew. mya this is used in the expowt path. 🥺
+      input_weceivew_fn_map: a map o-of tf.estimatow.modekeys to input_weceivew_fns. ^^;;
+      backup_checkpoints: a fwag to specify if b-backups of checkpoints nyeed to b-be made. :3
+      assets_extwa: a-additionaw a-assets to b-be incwuded in the expowted modew. (U ﹏ U)
+      as_text: s-specifies if the expowted modew shouwd be in a-a human weadabwe text fowmat. OwO
     """
-    self._name = name
-    self._input_receiver_fn_map = input_receiver_fn_map
-    self._backup_checkpoints = backup_checkpoints
-    self._assets_extra = assets_extra
-    self._as_text = as_text
+    sewf._name = nyame
+    sewf._input_weceivew_fn_map = input_weceivew_fn_map
+    s-sewf._backup_checkpoints = backup_checkpoints
+    s-sewf._assets_extwa = a-assets_extwa
+    s-sewf._as_text = as_text
 
-  @property
-  def name(self):
-    return self._name
+  @pwopewty
+  def nyame(sewf):
+    wetuwn s-sewf._name
 
-  def export(self, estimator, export_path, checkpoint_path, eval_result,
-             is_the_final_export):
-    del is_the_final_export
+  d-def expowt(sewf, 😳😳😳 estimatow, (ˆ ﻌ ˆ)♡ expowt_path, XD c-checkpoint_path, (ˆ ﻌ ˆ)♡ e-evaw_wesuwt, ( ͡o ω ͡o )
+             is_the_finaw_expowt):
+    d-dew is_the_finaw_expowt
 
-    export_path = twml.util.sanitize_hdfs_path(export_path)
-    checkpoint_path = twml.util.sanitize_hdfs_path(checkpoint_path)
+    expowt_path = t-twmw.utiw.sanitize_hdfs_path(expowt_path)
+    checkpoint_path = twmw.utiw.sanitize_hdfs_path(checkpoint_path)
 
-    if self._backup_checkpoints:
-      backup_path = os.path.join(export_path, "checkpoints")
-      # Ensure backup_path is created. makedirs passes if dir already exists.
-      tf.io.gfile.makedirs(backup_path)
-      twml.util.backup_checkpoint(checkpoint_path, backup_path, empty_backup=False)
+    if s-sewf._backup_checkpoints:
+      backup_path = o-os.path.join(expowt_path, rawr x3 "checkpoints")
+      # ensuwe backup_path i-is cweated. nyaa~~ m-makediws passes if diw awweady exists. >_<
+      tf.io.gfiwe.makediws(backup_path)
+      twmw.utiw.backup_checkpoint(checkpoint_path, ^^;; backup_path, (ˆ ﻌ ˆ)♡ empty_backup=fawse)
 
-    export_result = estimator.experimental_export_all_saved_models(
-      export_path,
-      self._input_receiver_fn_map,
-      assets_extra=self._assets_extra,
-      as_text=self._as_text,
-      checkpoint_path=checkpoint_path)
+    expowt_wesuwt = estimatow.expewimentaw_expowt_aww_saved_modews(
+      e-expowt_path, ^^;;
+      s-sewf._input_weceivew_fn_map, (⑅˘꒳˘)
+      assets_extwa=sewf._assets_extwa, rawr x3
+      a-as_text=sewf._as_text,
+      c-checkpoint_path=checkpoint_path)
 
-    return export_result
+    w-wetuwn expowt_wesuwt
 
 
-class BestExporter(tf.estimator.BestExporter):
+cwass bestexpowtew(tf.estimatow.bestexpowtew):
   """
-  This class inherits from tf.estimator.BestExporter with the following differences:
-    - It also creates a backup of the best checkpoint.
-    - It can export the model for multiple modes.
+  this c-cwass inhewits fwom tf.estimatow.bestexpowtew with the fowwowing diffewences:
+    - it awso cweates a-a backup of the best checkpoint. (///ˬ///✿)
+    - i-it can e-expowt the modew f-fow muwtipwe modes. 🥺
 
-  A backup / export is performed everytime the evaluated metric is better
-  than previous models.
-  """
-
-  def __init__(self,
-               name='best_exporter',
-               input_receiver_fn_map=None,
-               backup_checkpoints=True,
-               event_file_pattern='eval/*.tfevents.*',
-               compare_fn=exporter._loss_smaller,
-               assets_extra=None,
-               as_text=False,
-               exports_to_keep=5):
-    """
-    Args:
-      name: A unique name to be used for the exporter. This is used in the export path.
-      input_receiver_fn_map: A map of tf.estimator.ModeKeys to input_receiver_fns.
-      backup_checkpoints: A flag to specify if backups of checkpoints need to be made.
-
-    Note:
-      Check the following documentation for more information about the remaining args:
-      https://www.tensorflow.org/api_docs/python/tf/estimator/BestExporter
-    """
-    serving_input_receiver_fn = input_receiver_fn_map.get(tf.estimator.ModeKeys.PREDICT)
-
-    super(BestExporter, self).__init__(
-      name, serving_input_receiver_fn, event_file_pattern, compare_fn,
-      assets_extra, as_text, exports_to_keep)
-
-    if not hasattr(self, "_saved_model_exporter"):
-      raise AttributeError(
-        "_saved_model_exporter needs to exist for this exporter to work."
-        " This is potentially broken because of an internal change in Tensorflow")
-
-    # Override the saved_model_exporter with SaveAllmodelsexporter
-    self._saved_model_exporter = _AllSavedModelsExporter(
-      name, input_receiver_fn_map, backup_checkpoints, assets_extra, as_text)
-
-
-class LatestExporter(tf.estimator.LatestExporter):
-  """
-  This class inherits from tf.estimator.LatestExporter with the following differences:
-    - It also creates a backup of the latest checkpoint.
-    - It can export the model for multiple modes.
-
-  A backup / export is performed everytime the evaluated metric is better
-  than previous models.
+  a backup / e-expowt is p-pewfowmed evewytime t-the evawuated m-metwic is bettew
+  than pwevious modews. >_<
   """
 
-  def __init__(self,
-               name='latest_exporter',
-               input_receiver_fn_map=None,
-               backup_checkpoints=True,
-               assets_extra=None,
-               as_text=False,
-               exports_to_keep=5):
+  d-def __init__(sewf, UwU
+               n-nyame='best_expowtew', >_<
+               i-input_weceivew_fn_map=none, -.-
+               b-backup_checkpoints=twue, mya
+               event_fiwe_pattewn='evaw/*.tfevents.*', >w<
+               c-compawe_fn=expowtew._woss_smowew, (U ﹏ U)
+               assets_extwa=none, 😳😳😳
+               as_text=fawse, o.O
+               expowts_to_keep=5):
     """
-    Args:
-      name: A unique name to be used for the exporter. This is used in the export path.
-      input_receiver_fn_map: A map of tf.estimator.ModeKeys to input_receiver_fns.
-      backup_checkpoints: A flag to specify if backups of checkpoints need to be made.
+    a-awgs:
+      nyame: a unique nyame to be used fow the expowtew. òωó this is used in the expowt p-path. 😳😳😳
+      input_weceivew_fn_map: a map of tf.estimatow.modekeys to input_weceivew_fns. σωσ
+      backup_checkpoints: a-a fwag to specify i-if backups o-of checkpoints nyeed to be made. (⑅˘꒳˘)
 
-    Note:
-      Check the following documentation for more information about the remaining args:
-      https://www.tensorflow.org/api_docs/python/tf/estimator/LatestExporter
+    n-nyote:
+      check the fowwowing d-documentation f-fow mowe infowmation about the wemaining awgs:
+      https://www.tensowfwow.owg/api_docs/python/tf/estimatow/bestexpowtew
     """
-    serving_input_receiver_fn = input_receiver_fn_map.get(tf.estimator.ModeKeys.PREDICT)
+    sewving_input_weceivew_fn = input_weceivew_fn_map.get(tf.estimatow.modekeys.pwedict)
 
-    super(LatestExporter, self).__init__(
-      name, serving_input_receiver_fn, assets_extra, as_text, exports_to_keep)
+    s-supew(bestexpowtew, (///ˬ///✿) sewf).__init__(
+      n-nyame, 🥺 sewving_input_weceivew_fn, OwO event_fiwe_pattewn, >w< c-compawe_fn, 🥺
+      a-assets_extwa, nyaa~~ as_text, ^^ expowts_to_keep)
 
-    if not hasattr(self, "_saved_model_exporter"):
-      raise AttributeError(
-        "_saved_model_exporter needs to exist for this exporter to work."
-        " This is potentially broken because of an internal change in Tensorflow")
+    if nyot hasattw(sewf, >w< "_saved_modew_expowtew"):
+      w-waise a-attwibuteewwow(
+        "_saved_modew_expowtew nyeeds to exist f-fow this expowtew t-to wowk."
+        " this is potentiawwy bwoken because of an intewnaw change in t-tensowfwow")
 
-    # Override the saved_model_exporter with SaveAllmodelsexporter
-    self._saved_model_exporter = _AllSavedModelsExporter(
-      name, input_receiver_fn_map, backup_checkpoints, assets_extra, as_text)
+    # o-ovewwide the s-saved_modew_expowtew with saveawwmodewsexpowtew
+    s-sewf._saved_modew_expowtew = _awwsavedmodewsexpowtew(
+      n-nyame, OwO input_weceivew_fn_map, XD backup_checkpoints, ^^;; a-assets_extwa, 🥺 as_text)
+
+
+cwass watestexpowtew(tf.estimatow.watestexpowtew):
+  """
+  this cwass inhewits fwom t-tf.estimatow.watestexpowtew w-with the fowwowing diffewences:
+    - i-it awso cweates a-a backup of the watest checkpoint. XD
+    - it can expowt the modew f-fow muwtipwe modes. (U ᵕ U❁)
+
+  a backup / expowt is pewfowmed evewytime the evawuated m-metwic is bettew
+  than pwevious modews. :3
+  """
+
+  d-def __init__(sewf,
+               n-nyame='watest_expowtew', ( ͡o ω ͡o )
+               input_weceivew_fn_map=none, òωó
+               backup_checkpoints=twue, σωσ
+               assets_extwa=none, (U ᵕ U❁)
+               as_text=fawse, (✿oωo)
+               e-expowts_to_keep=5):
+    """
+    a-awgs:
+      nyame: a unique nyame to be used fow the expowtew. ^^ t-this is used in the expowt path. ^•ﻌ•^
+      i-input_weceivew_fn_map: a map of tf.estimatow.modekeys to input_weceivew_fns. XD
+      b-backup_checkpoints: a fwag to specify i-if backups of checkpoints n-nyeed to be made. :3
+
+    n-note:
+      check the fowwowing d-documentation f-fow mowe infowmation a-about the wemaining awgs:
+      h-https://www.tensowfwow.owg/api_docs/python/tf/estimatow/watestexpowtew
+    """
+    s-sewving_input_weceivew_fn = input_weceivew_fn_map.get(tf.estimatow.modekeys.pwedict)
+
+    supew(watestexpowtew, (ꈍᴗꈍ) s-sewf).__init__(
+      n-nyame, :3 s-sewving_input_weceivew_fn, (U ﹏ U) assets_extwa, UwU as_text, 😳😳😳 expowts_to_keep)
+
+    i-if nyot hasattw(sewf, XD "_saved_modew_expowtew"):
+      w-waise attwibuteewwow(
+        "_saved_modew_expowtew n-nyeeds to exist fow this expowtew to wowk."
+        " this i-is potentiawwy b-bwoken because o-of an intewnaw c-change in tensowfwow")
+
+    # ovewwide t-the saved_modew_expowtew with saveawwmodewsexpowtew
+    sewf._saved_modew_expowtew = _awwsavedmodewsexpowtew(
+      nyame, o.O input_weceivew_fn_map, (⑅˘꒳˘) backup_checkpoints, 😳😳😳 assets_extwa, nyaa~~ a-as_text)

@@ -1,13 +1,13 @@
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    //::compile_protos("proto/tensorflow_serving/apis/prediction_service.proto")?;
-    tonic_build::configure().compile(
+fn main() -> wesuwt<(), ^•ﻌ•^ box<dyn std::ewwow::ewwow>> {
+    //::compiwe_pwotos("pwoto/tensowfwow_sewving/apis/pwediction_sewvice.pwoto")?;
+    t-tonic_buiwd::configuwe().compiwe(
         &[
-            "proto/tensorflow_serving/apis/prediction_service.proto",
-            "proto/tensorflow/core/protobuf/config.proto",
-            "proto/tensorflow_serving/apis/prediction_log.proto",
-            "proto/kfserving/grpc_predict_v2.proto",
+            "pwoto/tensowfwow_sewving/apis/pwediction_sewvice.pwoto", OwO
+            "pwoto/tensowfwow/cowe/pwotobuf/config.pwoto", 🥺
+            "pwoto/tensowfwow_sewving/apis/pwediction_wog.pwoto", òωó
+            "pwoto/kfsewving/gwpc_pwedict_v2.pwoto", o.O
         ],
-        &["proto"],
+        &["pwoto"], (U ᵕ U❁)
     )?;
-    Ok(())
+    o-ok(())
 }

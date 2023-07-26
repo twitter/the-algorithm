@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.util.Time
+impowt c-com.twittew.utiw.time
 
 /**
- * Domain model for representing impressions on wtf recommendations in the past 16 days
+ * d-domain m-modew fow wepwesenting i-impwessions o-on wtf wecommendations in t-the past 16 days
  */
-case class WtfImpression(
-  candidateId: Long,
-  displayLocation: DisplayLocation,
-  latestTime: Time,
-  counts: Int)
+c-case cwass w-wtfimpwession(
+  candidateid: wong, σωσ
+  dispwaywocation: dispwaywocation, >_<
+  watesttime: t-time,
+  counts: int)

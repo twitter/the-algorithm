@@ -1,83 +1,83 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-object Effect {
-  // a no-op effect
-  private[this] val _unit = Effect[Any] { _ =>
+object effect {
+  // a-a nyo-op effect
+  p-pwivate[this] v-vaw _unit = e-effect[any] { _ =>
     ()
   }
 
   /**
-   * A "no-op" Effect.  For any effect E, (E also unit) == (unit also E) == E.
-   * Forms a monoid with `also`.
+   * a-a "no-op" e-effect. (U ﹏ U)  fow a-any effect e, >w< (e a-awso unit) == (unit awso e) == e. (U ﹏ U)
+   * fowms a monoid with `awso`. 😳
    */
-  def unit[A]: Effect[A] = _unit.asInstanceOf[Effect[A]]
+  def u-unit[a]: effect[a] = _unit.asinstanceof[effect[a]]
 
   /**
-   * Package a function as an Effect.
+   * package a function as an effect. (ˆ ﻌ ˆ)♡
    */
-  def apply[A](f: A => Unit): Effect[A] =
-    new Effect[A] {
-      override def apply(value: A) = f(value)
+  d-def appwy[a](f: a => unit): e-effect[a] =
+    nyew effect[a] {
+      ovewwide def appwy(vawue: a-a) = f(vawue)
     }
 
   /**
-   * An effect that only applies to some values.
+   * an effect t-that onwy appwies t-to some vawues. 😳😳😳
    */
-  def fromPartial[A](f: PartialFunction[A, Unit]): Effect[A] =
-    Effect[A] { x =>
-      if (f.isDefinedAt(x)) f(x)
+  def fwompawtiaw[a](f: pawtiawfunction[a, (U ﹏ U) unit]): effect[a] =
+    effect[a] { x-x =>
+      if (f.isdefinedat(x)) f(x)
     }
 }
 
 /**
- * Perform an effect with the given value, without altering the result.
+ * pewfowm an effect with t-the given vawue, (///ˬ///✿) without awtewing t-the wesuwt. 😳
  *
- * Forms a monoid with Effect.unit as unit and `also` as the combining operation.
+ * f-fowms a m-monoid with effect.unit a-as unit and `awso` as the combining opewation. 😳
  */
-trait Effect[A] extends (A => Unit) { self =>
+t-twait effect[a] extends (a => unit) { s-sewf =>
 
   /**
-   * An identity function that executes this effect as a side-effect.
+   * an identity function that exekawaii~s this effect as a side-effect. σωσ
    */
-  lazy val identity: A => A = { value =>
-    self(value); value
+  wazy vaw identity: a-a => a = { vawue =>
+    sewf(vawue); v-vawue
   }
 
   /**
-   * Combine effects, so that both effects are performed.
-   * Forms a monoid with Effect.unit.
+   * combine e-effects, rawr x3 s-so that both effects awe pewfowmed. OwO
+   * fowms a monoid with effect.unit. /(^•ω•^)
    */
-  def also(next: Effect[A]): Effect[A] =
-    Effect[A](identity andThen next)
+  d-def awso(next: e-effect[a]): effect[a] =
+    effect[a](identity a-andthen nyext)
 
   /**
-   * Convert an effect to an effect of a more general type by way
-   * of an extraction function. (contravariant map)
+   * c-convewt an effect to a-an effect of a mowe genewaw type b-by way
+   * of an extwaction function. 😳😳😳 (contwavawiant map)
    */
-  def contramap[B](extract: B => A): Effect[B] =
-    Effect[B](extract andThen self)
+  d-def contwamap[b](extwact: b => a-a): effect[b] =
+    effect[b](extwact a-andthen s-sewf)
 
   /**
-   * Perform this effect only if the provided gate returns true.
+   * pewfowm this effect onwy if the pwovided gate wetuwns twue. ( ͡o ω ͡o )
    */
-  @deprecated("Use enabledBy(() => Boolean)", "2.5.1")
-  def enabledBy(enabled: Gate[Unit]): Effect[A] =
-    enabledBy(() => enabled())
+  @depwecated("use enabwedby(() => boowean)", >_< "2.5.1")
+  d-def e-enabwedby(enabwed: gate[unit]): e-effect[a] =
+    e-enabwedby(() => e-enabwed())
 
   /**
-   * Perform this effect only if the provided gate returns true.
+   * pewfowm this effect onwy if the pwovided g-gate wetuwns twue. >w<
    */
-  def enabledBy(enabled: () => Boolean): Effect[A] =
-    onlyIf { _ =>
-      enabled()
+  def enabwedby(enabwed: () => boowean): effect[a] =
+    o-onwyif { _ =>
+      enabwed()
     }
 
   /**
-   * Perform this effect only if the provided predicate returns true
-   * for the input.
+   * p-pewfowm this e-effect onwy if t-the pwovided pwedicate wetuwns twue
+   * f-fow the i-input. rawr
    */
-  def onlyIf(predicate: A => Boolean) =
-    Effect[A] { x =>
-      if (predicate(x)) this(x) else ()
+  d-def onwyif(pwedicate: a-a => boowean) =
+    effect[a] { x =>
+      i-if (pwedicate(x)) t-this(x) ewse ()
     }
 }

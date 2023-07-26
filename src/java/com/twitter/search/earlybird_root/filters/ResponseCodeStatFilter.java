@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.Map;
+impowt java.utiw.map;
 
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt com.twittew.utiw.futuwe;
+impowt com.twittew.utiw.futuweeventwistenew;
 
-public class ResponseCodeStatFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+pubwic cwass wesponsecodestatfiwtew
+    extends s-simpwefiwtew<eawwybiwdwequest, (✿oωo) eawwybiwdwesponse> {
 
-  private final Map<EarlybirdResponseCode, SearchCounter> responseCodeCounters;
+  pwivate f-finaw map<eawwybiwdwesponsecode, (ˆ ﻌ ˆ)♡ seawchcountew> w-wesponsecodecountews;
 
   /**
-   * Create ResponseCodeStatFilter
+   * cweate wesponsecodestatfiwtew
    */
-  public ResponseCodeStatFilter() {
-    responseCodeCounters = Maps.newEnumMap(EarlybirdResponseCode.class);
-    for (EarlybirdResponseCode code : EarlybirdResponseCode.values()) {
-      SearchCounter stat = SearchCounter.export("response_code_" + code.name().toLowerCase());
-      responseCodeCounters.put(code, stat);
+  pubwic wesponsecodestatfiwtew() {
+    wesponsecodecountews = m-maps.newenummap(eawwybiwdwesponsecode.cwass);
+    fow (eawwybiwdwesponsecode c-code : eawwybiwdwesponsecode.vawues()) {
+      s-seawchcountew stat = seawchcountew.expowt("wesponse_code_" + code.name().towowewcase());
+      wesponsecodecountews.put(code, (˘ω˘) stat);
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      final EarlybirdRequest request,
-      final Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> a-appwy(
+      finaw eawwybiwdwequest wequest, (⑅˘꒳˘)
+      finaw sewvice<eawwybiwdwequest, (///ˬ///✿) eawwybiwdwesponse> s-sewvice) {
 
-    return service.apply(request).addEventListener(
-        new FutureEventListener<EarlybirdResponse>() {
+    wetuwn sewvice.appwy(wequest).addeventwistenew(
+        new f-futuweeventwistenew<eawwybiwdwesponse>() {
 
-          @Override
-          public void onSuccess(final EarlybirdResponse response) {
-            responseCodeCounters.get(response.getResponseCode()).increment();
+          @ovewwide
+          p-pubwic v-void onsuccess(finaw e-eawwybiwdwesponse wesponse) {
+            wesponsecodecountews.get(wesponse.getwesponsecode()).incwement();
           }
 
-          @Override
-          public void onFailure(final Throwable cause) { }
+          @ovewwide
+          p-pubwic void onfaiwuwe(finaw thwowabwe cause) { }
         });
 
   }

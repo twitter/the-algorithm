@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item
 
-sealed trait VerticalGridItemTileStyle
+seawed t-twait vewticawgwiditemtiwestywe
 
-case object SingleStateDefaultVerticalGridItemTileStyle extends VerticalGridItemTileStyle
-case object DoubleStateDefaultVerticalGridItemTileStyle extends VerticalGridItemTileStyle
+c-case object s-singwestatedefauwtvewticawgwiditemtiwestywe e-extends v-vewticawgwiditemtiwestywe
+c-case object doubwestatedefauwtvewticawgwiditemtiwestywe e-extends v-vewticawgwiditemtiwestywe

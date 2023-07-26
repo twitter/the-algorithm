@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.candidate_sources.user_user_graph
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.usew_usew_gwaph
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.pawam
+i-impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class UserUserGraphFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    UserUserGraphParams.UserUserGraphCandidateSourceEnabledInWeightMap,
-    UserUserGraphParams.UserUserGraphCandidateSourceEnabledInTransform
+@singweton
+c-cwass usewusewgwaphfsconfig @inject() () e-extends featuweswitchconfig {
+  ovewwide vaw booweanfspawams: seq[pawam[boowean] w-with fsname] = seq(
+    usewusewgwaphpawams.usewusewgwaphcandidatesouwceenabwedinweightmap, :3
+    u-usewusewgwaphpawams.usewusewgwaphcandidatesouwceenabwedintwansfowm
   )
 }

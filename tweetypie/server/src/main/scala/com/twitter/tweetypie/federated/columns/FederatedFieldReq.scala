@@ -1,7 +1,7 @@
-package com.twitter.tweetypie.federated.columns
+package com.twittew.tweetypie.fedewated.cowumns
 
-import com.twitter.tweetypie.TweetId
+impowt com.twittew.tweetypie.tweetid
 
-// Case class to be used for grouping Stitch requests
-// for Federated Fields
-case class FederatedFieldReq(tweetId: TweetId, fieldId: Short)
+// c-case cwass t-to be used fow g-gwouping stitch w-wequests
+// fow f-fedewated fiewds
+c-case cwass fedewatedfiewdweq(tweetid: t-tweetid, (⑅˘꒳˘) f-fiewdid: showt)

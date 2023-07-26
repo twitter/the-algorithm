@@ -1,39 +1,39 @@
-package com.twitter.unified_user_actions.adapter.email_notification_event
+package com.twittew.unified_usew_actions.adaptew.emaiw_notification_event
 
-import com.twitter.ibis.thriftscala.NotificationScribe
-import com.twitter.logbase.thriftscala.LogBase
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.SourceLineage
+impowt c-com.twittew.ibis.thwiftscawa.notificationscwibe
+i-impowt com.twittew.wogbase.thwiftscawa.wogbase
+i-impowt com.twittew.unified_usew_actions.adaptew.common.adaptewutiws
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.eventmetadata
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.souwcewineage
 
-object EmailNotificationEventUtils {
+o-object e-emaiwnotificationeventutiws {
 
   /*
-   * Extract TweetId from Logbase.page, here is a sample page below
-   * https://twitter.com/i/events/1580827044245544962?cn=ZmxleGlibGVfcmVjcw%3D%3D&refsrc=email
+   * e-extwact tweetid fwom wogbase.page, rawr x3 hewe is a sampwe page bewow
+   * https://twittew.com/i/events/1580827044245544962?cn=zmxwegwibgvfcmvjcw%3d%3d&wefswc=emaiw
    * */
-  def extractTweetId(path: String): Option[Long] = {
-    val ptn = raw".*/([0-9]+)\\??.*".r
-    path match {
-      case ptn(tweetId) =>
-        Some(tweetId.toLong)
+  d-def extwacttweetid(path: stwing): option[wong] = {
+    v-vaw ptn = waw".*/([0-9]+)\\??.*".w
+    path m-match {
+      case ptn(tweetid) =>
+        some(tweetid.towong)
       case _ =>
-        None
+        nyone
     }
   }
 
-  def extractTweetId(logBase: LogBase): Option[Long] = logBase.page match {
-    case Some(path) => extractTweetId(path)
-    case None => None
+  def e-extwacttweetid(wogbase: wogbase): o-option[wong] = w-wogbase.page match {
+    case some(path) => extwacttweetid(path)
+    case nyone => n-nyone
   }
 
-  def extractEventMetaData(scribe: NotificationScribe): EventMetadata =
-    EventMetadata(
-      sourceTimestampMs = scribe.timestamp,
-      receivedTimestampMs = AdapterUtils.currentTimestampMs,
-      sourceLineage = SourceLineage.EmailNotificationEvents,
-      language = scribe.logBase.flatMap(_.language),
-      countryCode = scribe.logBase.flatMap(_.country),
-      clientAppId = scribe.logBase.flatMap(_.clientAppId),
+  def extwacteventmetadata(scwibe: nyotificationscwibe): eventmetadata =
+    eventmetadata(
+      souwcetimestampms = s-scwibe.timestamp, (✿oωo)
+      weceivedtimestampms = a-adaptewutiws.cuwwenttimestampms, (ˆ ﻌ ˆ)♡
+      s-souwcewineage = s-souwcewineage.emaiwnotificationevents, (˘ω˘)
+      w-wanguage = scwibe.wogbase.fwatmap(_.wanguage), (⑅˘꒳˘)
+      countwycode = scwibe.wogbase.fwatmap(_.countwy), (///ˬ///✿)
+      c-cwientappid = scwibe.wogbase.fwatmap(_.cwientappid), 😳😳😳
     )
 }

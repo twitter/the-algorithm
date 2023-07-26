@@ -1,324 +1,324 @@
-# Naming convention:
-# For publishing action types, use [Publish][ActionTypeInThrift]. Please see the Thrift definition at unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions/action_info.thrift
+# nyaming convention:
+# fow pubwishing a-action types, (✿oωo) u-use [pubwish][actiontypeinthwift]. ^^ p-pwease see t-the thwift definition a-at unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions/action_info.thwift
 
-PublishServerTweetFav:
-  default_availability: 0
-PublishServerTweetUnfav:
-  default_availability: 0
-PublishServerTweetCreate:
-  default_availability: 0
-PublishServerTweetReply:
-  default_availability: 0
-PublishServerTweetQuote:
-  default_availability: 0
-PublishServerTweetRetweet:
-  default_availability: 0
-PublishServerTweetDelete:
-  default_availability: 0
-PublishServerTweetUnreply:
-  default_availability: 0
-PublishServerTweetUnquote:
-  default_availability: 0
-PublishServerTweetUnretweet:
-  default_availability: 0
-PublishServerTweetEdit:
-  default_availability: 0
-PublishServerTweetReport:
-  default_availability: 0
-PublishServerProfileFollow:
-  default_availability: 0
-PublishServerProfileUnfollow:
-  default_availability: 0
-PublishServerProfileBlock:
-  default_availability: 0
-PublishServerProfileUnblock:
-  default_availability: 0
-PublishServerProfileMute:
-  default_availability: 0
-PublishServerProfileUnmute:
-  default_availability: 0
-PublishServerProfileReport:
-  default_availability: 0
-PublishClientTweetFav:
-  default_availability: 0
-PublishClientTweetUnfav:
-  default_availability: 0
-PublishClientTweetLingerImpression:
-  default_availability: 0
-PublishClientTweetRenderImpression:
-  default_availability: 0
-PublishClientTweetReply:
-  default_availability: 0
-PublishClientTweetQuote:
-  default_availability: 0
-PublishClientTweetRetweet:
-  default_availability: 0
-PublishClientTweetClickReply:
-  default_availability: 0
-PublishClientTweetClickQuote:
-  default_availability: 0
-PublishClientTweetVideoPlayback25:
-  default_availability: 0
-PublishClientTweetVideoPlayback50:
-  default_availability: 0
-PublishClientTweetVideoPlayback75:
-  default_availability: 0
-PublishClientTweetVideoPlayback95:
-  default_availability: 0
-PublishClientTweetVideoPlayFromTap:
-  default_availability: 0
-PublishClientTweetVideoQualityView:
-  default_availability: 0
-PublishClientTweetVideoView:
-  default_availability: 0
-PublishClientTweetVideoMrcView:
-  default_availability: 0
-PublishClientTweetVideoViewThreshold:
-  default_availability: 0
-PublishClientTweetVideoCtaUrlClick:
-  default_availability: 0
-PublishClientTweetVideoCtaWatchClick:
-  default_availability: 0
-PublishClientTweetUnretweet:
-  default_availability: 0
-PublishClientTweetClickCaret:
-  default_availability: 0
-PublishClientTweetPhotoExpand:
-  default_availability: 0
-PublishClientTweetClickMentionScreenName:
-  default_availability: 0
-PublishClientCardClick:
-  default_availability: 0
-PublishClientCardOpenApp:
-  default_availability: 0
-PublishClientCardAppInstallAttempt:
-  default_availability: 0
-PublishClientPollCardVote:
-  default_availability: 0
-PublishClientTweetProfileMentionClick:
-  default_availability: 0
-PublishClientTweetClick:
-  default_availability: 0
-PublishClientTopicFollow:
-  default_availability: 0
-PublishClientTopicUnfollow:
-  default_availability: 0
-PublishClientTopicNotInterestedIn:
-  default_availability: 0
-PublishClientTopicUndoNotInterestedIn:
-  default_availability: 0
-PublishClientTweetNotHelpful:
-  default_availability: 0
-PublishClientTweetUndoNotHelpful:
-  default_availability: 0
-PublishClientTweetReport:
-  default_availability: 0
-PublishClientTweetNotInterestedIn:
-  default_availability: 0
-PublishClientTweetUndoNotInterestedIn:
-  default_availability: 0
-PublishClientTweetNotAboutTopic:
-  default_availability: 0
-PublishClientTweetUndoNotAboutTopic:
-  default_availability: 0
-PublishClientTweetNotRecent:
-  default_availability: 0
-PublishClientTweetUndoNotRecent:
-  default_availability: 0
-PublishClientTweetSeeFewer:
-  default_availability: 0
-PublishClientTweetUndoSeeFewer:
-  default_availability: 0
-PublishClientTweetNotRelevant:
-  default_availability: 0
-PublishClientTweetUndoNotRelevant:
-  default_availability: 0
-PublishClientProfileFollowAttempt:
-  default_availability: 0
-PublishClientTweetFavoriteAttempt:
-  default_availability: 0
-PublishClientTweetRetweetAttempt:
-  default_availability: 0
-PublishClientTweetReplyAttempt:
-  default_availability: 0
-PublishClientCTALoginClick:
-  default_availability: 0
-PublishClientCTALoginStart:
-  default_availability: 0
-PublishClientCTALoginSuccess:
-  default_availability: 0
-PublishClientCTASignupClick:
-  default_availability: 0
-PublishClientCTASignupSuccess:
-  default_availability: 0
-PublishClientProfileBlock:
-    default_availability: 0
-PublishClientProfileUnblock:
-  default_availability: 0
-PublishClientProfileMute:
-  default_availability: 0
-PublishClientProfileReport:
-  default_availability: 0
-PublishClientProfileFollow:
-  default_availability: 0
-PublishClientProfileClick:
-  default_availability: 0
-PublishClientTweetFollowAuthor:
-  default_availability: 0
-PublishClientTweetUnfollowAuthor:
-  default_availability: 0
-PublishClientTweetBlockAuthor:
-  default_availability: 0
-PublishClientTweetUnblockAuthor:
-  default_availability: 0
-PublishClientTweetMuteAuthor:
-  default_availability: 0
-PublishClientNotificationOpen:
-  default_availability: 0
-PublishClientNotificationClick:
-  default_availability: 0
-PublishClientNotificationSeeLessOften:
-  default_availability: 0
-PublishClientNotificationDismiss:
-  default_availability: 0
-PublishClientTypeaheadClick:
-  default_availability: 0
-PublishClientFeedbackPromptSubmit:
-  default_availability: 0
-PublishClientProfileShow:
-  default_availability: 0
-PublishClientTweetV2Impression:
-  default_availability: 0
-PublishClientTweetVideoFullscreenV2Impression:
-  default_availability: 0
-PublishClientTweetImageFullscreenV2Impression:
-  default_availability: 0
-PublishClientProfileV2Impression:
-  default_availability: 0
-PublishClientTweetClickProfile:
-  default_availability: 0
-PublishClientTweetClickShare:
-  default_availability: 0
-PublishClientTweetShareViaCopyLink:
-  default_availability: 0
-PublishClientTweetClickSendViaDirectMessage:
-  default_availability: 0
-PublishClientTweetShareViaBookmark:
-  default_availability: 0
-PublishClientTweetUnbookmark:
-  default_availability: 0
-PublishClientTweetClickHashtag:
-  default_availability: 0
-PublishClientTweetBookmark:
-  default_availability: 0
-PublishClientTweetOpenLink:
-  default_availability: 0
-PublishClientTweetTakeScreenshot:
-  default_availability: 0
-PublishClientTweetVideoPlaybackStart:
-  default_availability: 0
-PublishClientTweetVideoPlaybackComplete:
-  default_availability: 0
-PublishClientTweetEmailClick:
-  default_availability: 0
-PublishClientAppExit:
-  default_availability: 0
-PublishClientTweetGalleryImpression:
-  default_availability: 0
-PublishClientTweetDetailsImpression:
-  default_availability: 0
-PublishClientTweetMomentImpression:
-  default_availability: 0
-PublishServerUserCreate:
-  default_availability: 0
-PublishServerUserUpdate:
-  default_availability: 0
-PublishServerPromotedTweetFav:
-  default_availability: 0
-PublishServerPromotedTweetUnfav:
-  default_availability: 0
-PublishServerPromotedTweetReply:
-  default_availability: 0
-PublishServerPromotedTweetRetweet:
-  default_availability: 0
-PublishServerPromotedTweetComposeTweet:
-  default_availability: 0
-PublishServerPromotedTweetBlockAuthor:
-  default_availability: 0
-PublishServerPromotedTweetUnblockAuthor:
-  default_availability: 0
-PublishServerPromotedTweetClick:
-  default_availability: 0
-PublishServerPromotedTweetReport:
-  default_availability: 0
-PublishServerPromotedProfileFollow:
-  default_availability: 0
-PublishServerPromotedProfileUnfollow:
-  default_availability: 0
-PublishServerPromotedTweetMuteAuthor:
-  default_availability: 0
-PublishServerPromotedTweetClickProfile:
-  default_availability: 0
-PublishServerPromotedTweetClickHashtag:
-  default_availability: 0
-PublishServerPromotedTweetOpenLink:
-  default_availability: 0
-PublishServerPromotedTweetCarouselSwipeNext:
-  default_availability: 0
-PublishServerPromotedTweetCarouselSwipePrevious:
-  default_availability: 0
-PublishServerPromotedTweetLingerImpressionShort:
-  default_availability: 0
-PublishServerPromotedTweetLingerImpressionMedium:
-  default_availability: 0
-PublishServerPromotedTweetLingerImpressionLong:
-  default_availability: 0
-PublishServerPromotedTweetClickSpotlight:
-  default_availability: 0
-PublishServerPromotedTweetViewSpotlight:
-  default_availability: 0
-PublishServerPromotedTrendView:
-  default_availability: 0
-PublishServerPromotedTrendClick:
-  default_availability: 0
-PublishServerPromotedTweetVideoPlayback25:
-  default_availability: 0
-PublishServerPromotedTweetVideoPlayback50:
-  default_availability: 0
-PublishServerPromotedTweetVideoPlayback75:
-  default_availability: 0
-PublishServerPromotedTweetVideoAdPlayback25:
-  default_availability: 0
-PublishServerPromotedTweetVideoAdPlayback50:
-  default_availability: 0
-PublishServerPromotedTweetVideoAdPlayback75:
-  default_availability: 0
-PublishServerTweetVideoAdPlayback25:
-  default_availability: 0
-PublishServerTweetVideoAdPlayback50:
-  default_availability: 0
-PublishServerTweetVideoAdPlayback75:
-  default_availability: 0
-PublishServerPromotedTweetDismissWithoutReason:
-  default_availability: 0
-PublishServerPromotedTweetDismissUninteresting:
-  default_availability: 0
-PublishServerPromotedTweetDismissRepetitive:
-  default_availability: 0
-PublishServerPromotedTweetDismissSpam:
-  default_availability: 0
-PublishServerTweetArchiveFavorite:
-  default_availability: 0
-PublishServerTweetUnarchiveFavorite:
-  default_availability: 0
-PublishServerTweetArchiveRetweet:
-  default_availability: 0
-PublishServerTweetUnarchiveRetweet:
-  default_availability: 0
-RekeyUUAClientTweetRenderImpression:
-  default_availability: 0
-RekeyUUAIesourceClientTweetRenderImpression:
-  default_availability: 0
-EnrichmentPlannerSampling:
-  default_availability: 0
+p-pubwishsewvewtweetfav:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewtweetunfav:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewtweetcweate:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewtweetwepwy:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewtweetquote:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewtweetwetweet:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewtweetdewete:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewtweetunwepwy:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewtweetunquote:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewtweetunwetweet:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewtweetedit:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewtweetwepowt:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwofiwefowwow:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwofiweunfowwow:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwofiwebwock:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwofiweunbwock:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewpwofiwemute:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwofiweunmute:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwofiwewepowt:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetfav:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetunfav:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetwingewimpwession:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetwendewimpwession:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetwepwy:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetquote:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetwetweet:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetcwickwepwy:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetcwickquote:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetvideopwayback25:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetvideopwayback50:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetvideopwayback75:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetvideopwayback95:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetvideopwayfwomtap:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetvideoquawityview:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetvideoview:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetvideomwcview:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetvideoviewthweshowd:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetvideoctauwwcwick:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetvideoctawatchcwick:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetunwetweet:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetcwickcawet:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetphotoexpand:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetcwickmentionscweenname:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwientcawdcwick:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishcwientcawdopenapp:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwientcawdappinstawwattempt:
+  defauwt_avaiwabiwity: 0
+pubwishcwientpowwcawdvote:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetpwofiwementioncwick:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetcwick:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttopicfowwow:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttopicunfowwow:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishcwienttopicnotintewestedin:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttopicundonotintewestedin:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetnothewpfuw:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetundonothewpfuw:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetwepowt:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetnotintewestedin:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetundonotintewestedin:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetnotabouttopic:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetundonotabouttopic:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetnotwecent:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetundonotwecent:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetseefewew:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetundoseefewew:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetnotwewevant:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetundonotwewevant:
+  defauwt_avaiwabiwity: 0
+pubwishcwientpwofiwefowwowattempt:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetfavowiteattempt:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetwetweetattempt:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetwepwyattempt:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwientctawogincwick:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwientctawoginstawt:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwientctawoginsuccess:
+  defauwt_avaiwabiwity: 0
+pubwishcwientctasignupcwick:
+  defauwt_avaiwabiwity: 0
+pubwishcwientctasignupsuccess:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwientpwofiwebwock:
+    d-defauwt_avaiwabiwity: 0
+pubwishcwientpwofiweunbwock:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishcwientpwofiwemute:
+  defauwt_avaiwabiwity: 0
+pubwishcwientpwofiwewepowt:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishcwientpwofiwefowwow:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwientpwofiwecwick:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetfowwowauthow:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetunfowwowauthow:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetbwockauthow:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetunbwockauthow:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetmuteauthow:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwientnotificationopen:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwientnotificationcwick:
+  defauwt_avaiwabiwity: 0
+pubwishcwientnotificationseewessoften:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwientnotificationdismiss:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttypeaheadcwick:
+  defauwt_avaiwabiwity: 0
+pubwishcwientfeedbackpwomptsubmit:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishcwientpwofiweshow:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetv2impwession:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetvideofuwwscweenv2impwession:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetimagefuwwscweenv2impwession:
+  defauwt_avaiwabiwity: 0
+pubwishcwientpwofiwev2impwession:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetcwickpwofiwe:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetcwickshawe:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetshaweviacopywink:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetcwicksendviadiwectmessage:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetshaweviabookmawk:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetunbookmawk:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetcwickhashtag:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetbookmawk:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetopenwink:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweettakescweenshot:
+  defauwt_avaiwabiwity: 0
+pubwishcwienttweetvideopwaybackstawt:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetvideopwaybackcompwete:
+  defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetemaiwcwick:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwientappexit:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetgawwewyimpwession:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishcwienttweetdetaiwsimpwession:
+  d-defauwt_avaiwabiwity: 0
+pubwishcwienttweetmomentimpwession:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewusewcweate:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewusewupdate:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetfav:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetunfav:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetwepwy:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetwetweet:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetcomposetweet:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetbwockauthow:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetunbwockauthow:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetcwick:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetwepowt:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedpwofiwefowwow:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedpwofiweunfowwow:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetmuteauthow:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetcwickpwofiwe:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetcwickhashtag:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetopenwink:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetcawousewswipenext:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetcawousewswipepwevious:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetwingewimpwessionshowt:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetwingewimpwessionmedium:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetwingewimpwessionwong:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetcwickspotwight:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetviewspotwight:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtwendview:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtwendcwick:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetvideopwayback25:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetvideopwayback50:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetvideopwayback75:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetvideoadpwayback25:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetvideoadpwayback50:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetvideoadpwayback75:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewtweetvideoadpwayback25:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewtweetvideoadpwayback50:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewtweetvideoadpwayback75:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetdismisswithoutweason:
+  defauwt_avaiwabiwity: 0
+pubwishsewvewpwomotedtweetdismissunintewesting:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetdismisswepetitive:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewpwomotedtweetdismissspam:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewtweetawchivefavowite:
+  d-defauwt_avaiwabiwity: 0
+p-pubwishsewvewtweetunawchivefavowite:
+  defauwt_avaiwabiwity: 0
+p-pubwishsewvewtweetawchivewetweet:
+  d-defauwt_avaiwabiwity: 0
+pubwishsewvewtweetunawchivewetweet:
+  defauwt_avaiwabiwity: 0
+w-wekeyuuacwienttweetwendewimpwession:
+  defauwt_avaiwabiwity: 0
+wekeyuuaiesouwcecwienttweetwendewimpwession:
+  d-defauwt_avaiwabiwity: 0
+enwichmentpwannewsampwing:
+  d-defauwt_avaiwabiwity: 0
 

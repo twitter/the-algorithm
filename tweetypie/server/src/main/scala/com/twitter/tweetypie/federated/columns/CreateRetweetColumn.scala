@@ -1,184 +1,184 @@
-package com.twitter.tweetypie
-package federated.columns
+package com.twittew.tweetypie
+package f-fedewated.cowumns
 
-import com.twitter.accounts.util.SafetyMetadataUtils
-import com.twitter.ads.callback.thriftscala.EngagementRequest
-import com.twitter.bouncer.thriftscala.{Bounce => BouncerBounce}
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.AllOf
-import com.twitter.strato.config.BouncerAccess
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
-import com.twitter.strato.response.Err
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.federated.columns.ApiErrors._
-import com.twitter.tweetypie.federated.columns.CreateRetweetColumn.toCreateRetweetErr
-import com.twitter.tweetypie.federated.context.GetRequestContext
-import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataRequest
-import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataResponse
-import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogger
-import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogger.RetweetEngagement
-import com.twitter.tweetypie.thriftscala.TweetCreateState._
-import com.twitter.tweetypie.thriftscala.{graphql => gql}
-import com.twitter.tweetypie.{thriftscala => thrift}
-import com.twitter.weaverbird.common.{GetRequestContext => WGetRequestContext}
+i-impowt com.twittew.accounts.utiw.safetymetadatautiws
+i-impowt c-com.twittew.ads.cawwback.thwiftscawa.engagementwequest
+i-impowt c-com.twittew.bouncew.thwiftscawa.{bounce => b-bouncewbounce}
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.catawog.opmetadata
+impowt c-com.twittew.stwato.config.awwof
+impowt com.twittew.stwato.config.bouncewaccess
+impowt com.twittew.stwato.config.contactinfo
+i-impowt com.twittew.stwato.config.powicy
+i-impowt com.twittew.stwato.data.conv
+impowt com.twittew.stwato.data.descwiption.pwaintext
+impowt c-com.twittew.stwato.data.wifecycwe.pwoduction
+impowt com.twittew.stwato.fed.stwatofed
+i-impowt c-com.twittew.stwato.opcontext.opcontext
+impowt com.twittew.stwato.wesponse.eww
+impowt com.twittew.stwato.thwift.scwoogeconv
+impowt com.twittew.tweetypie.fedewated.cowumns.apiewwows._
+i-impowt com.twittew.tweetypie.fedewated.cowumns.cweatewetweetcowumn.tocweatewetweeteww
+impowt com.twittew.tweetypie.fedewated.context.getwequestcontext
+impowt com.twittew.tweetypie.fedewated.pwefetcheddata.pwefetcheddatawequest
+i-impowt com.twittew.tweetypie.fedewated.pwefetcheddata.pwefetcheddatawesponse
+i-impowt com.twittew.tweetypie.fedewated.pwomotedcontent.tweetpwomotedcontentwoggew
+i-impowt c-com.twittew.tweetypie.fedewated.pwomotedcontent.tweetpwomotedcontentwoggew.wetweetengagement
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetcweatestate._
+impowt c-com.twittew.tweetypie.thwiftscawa.{gwaphqw => gqw}
+impowt com.twittew.tweetypie.{thwiftscawa => t-thwift}
+impowt com.twittew.weavewbiwd.common.{getwequestcontext => wgetwequestcontext}
 
-class CreateRetweetColumn(
-  retweet: thrift.RetweetRequest => Future[thrift.PostTweetResult],
-  getRequestContext: GetRequestContext,
-  prefetchedDataRepository: PrefetchedDataRequest => Stitch[PrefetchedDataResponse],
-  logTweetPromotedContent: TweetPromotedContentLogger.Type,
-  statsReceiver: StatsReceiver,
-) extends StratoFed.Column(CreateRetweetColumn.Path)
-    with StratoFed.Execute.StitchWithContext
-    with StratoFed.HandleDarkRequests {
+cwass cweatewetweetcowumn(
+  wetweet: thwift.wetweetwequest => futuwe[thwift.posttweetwesuwt], σωσ
+  getwequestcontext: g-getwequestcontext, (⑅˘꒳˘)
+  pwefetcheddatawepositowy: p-pwefetcheddatawequest => s-stitch[pwefetcheddatawesponse], (///ˬ///✿)
+  w-wogtweetpwomotedcontent: tweetpwomotedcontentwoggew.type, 🥺
+  statsweceivew: statsweceivew, OwO
+) extends stwatofed.cowumn(cweatewetweetcowumn.path)
+    w-with stwatofed.exekawaii~.stitchwithcontext
+    w-with stwatofed.handwedawkwequests {
 
-  override val policy: Policy = AllOf(
-    Seq(AccessPolicy.TweetMutationCommonAccessPolicies, BouncerAccess()))
+  ovewwide vaw powicy: p-powicy = awwof(
+    s-seq(accesspowicy.tweetmutationcommonaccesspowicies, >w< bouncewaccess()))
 
-  // The underlying call to thriftTweetService.postRetweet is not idempotent
-  override val isIdempotent: Boolean = false
+  // t-the undewwying caww to thwifttweetsewvice.postwetweet i-is nyot idempotent
+  ovewwide vaw isidempotent: b-boowean = fawse
 
-  override type Arg = gql.CreateRetweetRequest
-  override type Result = gql.CreateRetweetResponseWithSubqueryPrefetchItems
+  ovewwide t-type awg = gqw.cweatewetweetwequest
+  o-ovewwide t-type wesuwt = gqw.cweatewetweetwesponsewithsubquewypwefetchitems
 
-  override val argConv: Conv[Arg] = ScroogeConv.fromStruct
-  override val resultConv: Conv[Result] = ScroogeConv.fromStruct
+  ovewwide vaw awgconv: conv[awg] = scwoogeconv.fwomstwuct
+  ovewwide vaw wesuwtconv: conv[wesuwt] = s-scwoogeconv.fwomstwuct
 
-  override val contactInfo: ContactInfo = TweetypieContactInfo
-  override val metadata: OpMetadata = OpMetadata(
-    Some(Production),
-    Some(PlainText("Creates a retweet by the calling Twitter user of the given source tweet.")))
+  o-ovewwide vaw contactinfo: c-contactinfo = tweetypiecontactinfo
+  o-ovewwide vaw m-metadata: opmetadata = opmetadata(
+    some(pwoduction), 🥺
+    some(pwaintext("cweates a-a wetweet by the cawwing twittew usew of the given souwce tweet.")))
 
-  private val getWeaverbirdCtx = new WGetRequestContext()
+  p-pwivate vaw getweavewbiwdctx = nyew wgetwequestcontext()
 
-  override def execute(request: Arg, opContext: OpContext): Stitch[Result] = {
-    val ctx = getRequestContext(opContext)
+  o-ovewwide d-def exekawaii~(wequest: a-awg, nyaa~~ opcontext: opcontext): s-stitch[wesuwt] = {
+    v-vaw ctx = getwequestcontext(opcontext)
 
-    // First, do any request parameter validation that can result in an error
-    // prior to calling into thriftTweetService.retweet.
-    val safetyLevel = ctx.safetyLevel.getOrElse(throw SafetyLevelMissingErr)
+    // fiwst, ^^ d-do any wequest p-pawametew vawidation that can wesuwt in an e-ewwow
+    // pwiow t-to cawwing into t-thwifttweetsewvice.wetweet. >w<
+    v-vaw safetywevew = c-ctx.safetywevew.getowewse(thwow safetywevewmissingeww)
 
-    // Macaw-tweets returns ApiError.ClientNotPrivileged if the caller provides
-    // an impression_id but lacks the PROMOTED_TWEETS_IN_TIMELINE privilege.
-    val trackingId = request.engagementRequest match {
-      case Some(engagementRequest: EngagementRequest) if ctx.hasPrivilegePromotedTweetsInTimeline =>
-        TrackingId.parse(engagementRequest.impressionId, statsReceiver)
-      case Some(e: EngagementRequest) =>
-        throw ClientNotPrivilegedErr
-      case None =>
-        None
+    // macaw-tweets wetuwns apiewwow.cwientnotpwiviweged i-if the cawwew pwovides
+    // an impwession_id but wacks the pwomoted_tweets_in_timewine pwiviwege. OwO
+    vaw t-twackingid = wequest.engagementwequest match {
+      case some(engagementwequest: engagementwequest) i-if ctx.haspwiviwegepwomotedtweetsintimewine =>
+        t-twackingid.pawse(engagementwequest.impwessionid, XD statsweceivew)
+      c-case some(e: engagementwequest) =>
+        thwow c-cwientnotpwiviwegedeww
+      case nyone =>
+        n-nyone
     }
 
-    // DeviceSource is an oauth string computed from the ClientApplicationId.
-    // Macaw-tweets allows non-oauth callers, but GraphQL does not. An undefined
-    // ClientApplicationId is similar to TweetCreateState.DeviceSourceNotFound,
-    // which Macaw-tweets handles via a catch-all that returns
-    // ApiError.GenericAccessDenied
-    val deviceSource = ctx.deviceSource.getOrElse(throw GenericAccessDeniedErr)
+    // d-devicesouwce is an oauth stwing computed fwom the cwientappwicationid. ^^;;
+    // macaw-tweets awwows nyon-oauth c-cawwews, 🥺 but gwaphqw does n-nyot. XD an undefined
+    // cwientappwicationid i-is simiwaw to tweetcweatestate.devicesouwcenotfound, (U ᵕ U❁)
+    // w-which macaw-tweets handwes via a catch-aww t-that wetuwns
+    // a-apiewwow.genewicaccessdenied
+    vaw d-devicesouwce = c-ctx.devicesouwce.getowewse(thwow genewicaccessdeniedeww)
 
-    // Macaw-tweets doesn't perform any parameter validation for the components
-    // used as input to makeSafetyMetaData.
-    val safetyMetadata = SafetyMetadataUtils.makeSafetyMetaData(
-      sessionHash = ctx.sessionHash,
-      knownDeviceToken = ctx.knownDeviceToken,
-      contributorId = ctx.contributorId
+    // macaw-tweets doesn't pewfowm any pawametew vawidation f-fow the components
+    // u-used as input to m-makesafetymetadata. :3
+    vaw safetymetadata = safetymetadatautiws.makesafetymetadata(
+      s-sessionhash = c-ctx.sessionhash, ( ͡o ω ͡o )
+      knowndevicetoken = c-ctx.knowndevicetoken, òωó
+      contwibutowid = ctx.contwibutowid
     )
 
-    val thriftRetweetRequest = thrift.RetweetRequest(
-      sourceStatusId = request.tweetId,
-      userId = ctx.twitterUserId,
-      contributorUserId = None, // no longer supported, per tweet_service.thrift
-      createdVia = deviceSource,
-      nullcast = request.nullcast,
-      trackingId = trackingId,
-      dark = ctx.isDarkRequest,
-      hydrationOptions = Some(HydrationOptions.writePathHydrationOptions(ctx.cardsPlatformKey)),
-      safetyMetaData = Some(safetyMetadata),
+    vaw thwiftwetweetwequest = t-thwift.wetweetwequest(
+      s-souwcestatusid = wequest.tweetid, σωσ
+      usewid = c-ctx.twittewusewid, (U ᵕ U❁)
+      c-contwibutowusewid = nyone, (✿oωo) // nyo wongew suppowted, ^^ pew tweet_sewvice.thwift
+      c-cweatedvia = devicesouwce, ^•ﻌ•^
+      nyuwwcast = wequest.nuwwcast, XD
+      twackingid = t-twackingid, :3
+      dawk = ctx.isdawkwequest, (ꈍᴗꈍ)
+      hydwationoptions = s-some(hydwationoptions.wwitepathhydwationoptions(ctx.cawdspwatfowmkey)), :3
+      s-safetymetadata = some(safetymetadata), (U ﹏ U)
     )
 
-    val stitchRetweet = Stitch.callFuture(retweet(thriftRetweetRequest))
+    vaw stitchwetweet = stitch.cawwfutuwe(wetweet(thwiftwetweetwequest))
 
-    request.engagementRequest.foreach { engagement =>
-      logTweetPromotedContent(engagement, RetweetEngagement, ctx.isDarkRequest)
+    w-wequest.engagementwequest.foweach { e-engagement =>
+      wogtweetpwomotedcontent(engagement, UwU wetweetengagement, 😳😳😳 ctx.isdawkwequest)
     }
 
-    stitchRetweet.flatMap { result: thrift.PostTweetResult =>
-      result.state match {
-        case thrift.TweetCreateState.Ok =>
-          val r = PrefetchedDataRequest(
-            tweet = result.tweet.get,
-            sourceTweet = result.sourceTweet,
-            quotedTweet = result.quotedTweet,
-            safetyLevel = safetyLevel,
-            requestContext = getWeaverbirdCtx()
+    s-stitchwetweet.fwatmap { wesuwt: t-thwift.posttweetwesuwt =>
+      wesuwt.state match {
+        case thwift.tweetcweatestate.ok =>
+          v-vaw w = pwefetcheddatawequest(
+            t-tweet = wesuwt.tweet.get, XD
+            s-souwcetweet = wesuwt.souwcetweet, o.O
+            q-quotedtweet = wesuwt.quotedtweet, (⑅˘꒳˘)
+            s-safetywevew = s-safetywevew, 😳😳😳
+            wequestcontext = g-getweavewbiwdctx()
           )
 
-          prefetchedDataRepository(r)
-            .liftToOption()
-            .map((prefetchedData: Option[PrefetchedDataResponse]) => {
-              gql.CreateRetweetResponseWithSubqueryPrefetchItems(
-                data = Some(gql.CreateRetweetResponse(result.tweet.map(_.id))),
-                subqueryPrefetchItems = prefetchedData.map(_.value)
+          pwefetcheddatawepositowy(w)
+            .wifttooption()
+            .map((pwefetcheddata: o-option[pwefetcheddatawesponse]) => {
+              g-gqw.cweatewetweetwesponsewithsubquewypwefetchitems(
+                data = some(gqw.cweatewetweetwesponse(wesuwt.tweet.map(_.id))), nyaa~~
+                s-subquewypwefetchitems = p-pwefetcheddata.map(_.vawue)
               )
             })
-        case errState =>
-          throw toCreateRetweetErr(errState, result.bounce, result.failureReason)
+        c-case ewwstate =>
+          thwow tocweatewetweeteww(ewwstate, rawr wesuwt.bounce, -.- w-wesuwt.faiwuweweason)
       }
     }
   }
 }
 
-object CreateRetweetColumn {
-  val Path = "tweetypie/createRetweet.Tweet"
+object c-cweatewetweetcowumn {
+  v-vaw path = "tweetypie/cweatewetweet.tweet"
 
   /**
-   * Ported from:
-   *   StatusesRetweetController#retweetStatus rescue block
-   *   TweetyPieStatusRepository.toRetweetException
+   * powted fwom:
+   *   statuseswetweetcontwowwew#wetweetstatus w-wescue bwock
+   *   t-tweetypiestatuswepositowy.towetweetexception
    */
-  def toCreateRetweetErr(
-    errState: thrift.TweetCreateState,
-    bounce: Option[BouncerBounce],
-    failureReason: Option[String]
-  ): Err = errState match {
-    case CannotRetweetBlockingUser =>
-      BlockedUserErr
-    case AlreadyRetweeted =>
-      AlreadyRetweetedErr
-    case Duplicate =>
-      DuplicateStatusErr
-    case CannotRetweetOwnTweet | CannotRetweetProtectedTweet | CannotRetweetSuspendedUser =>
-      InvalidRetweetForStatusErr
-    case UserNotFound | SourceTweetNotFound | SourceUserNotFound | CannotRetweetDeactivatedUser =>
-      StatusNotFoundErr
-    case UserDeactivated | UserSuspended =>
-      UserDeniedRetweetErr
-    case RateLimitExceeded =>
-      RateLimitExceededErr
-    case UrlSpam =>
-      TweetUrlSpamErr
-    case Spam | UserReadonly =>
-      TweetSpammerErr
-    case SafetyRateLimitExceeded =>
-      SafetyRateLimitExceededErr
-    case Bounce if bounce.isDefined =>
-      accessDeniedByBouncerErr(bounce.get)
-    case DisabledByIpiPolicy =>
-      failureReason
-        .map(tweetEngagementLimitedErr)
-        .getOrElse(GenericAccessDeniedErr)
-    case TrustedFriendsRetweetNotAllowed =>
-      TrustedFriendsRetweetNotAllowedErr
-    case StaleTweetRetweetNotAllowed =>
-      StaleTweetRetweetNotAllowedErr
-    case _ =>
-      GenericAccessDeniedErr
+  d-def tocweatewetweeteww(
+    e-ewwstate: thwift.tweetcweatestate,
+    bounce: o-option[bouncewbounce], (✿oωo)
+    faiwuweweason: option[stwing]
+  ): eww = ewwstate match {
+    case cannotwetweetbwockingusew =>
+      bwockeduseweww
+    c-case awweadywetweeted =>
+      awweadywetweetedeww
+    case d-dupwicate =>
+      dupwicatestatuseww
+    c-case cannotwetweetowntweet | c-cannotwetweetpwotectedtweet | cannotwetweetsuspendedusew =>
+      i-invawidwetweetfowstatuseww
+    c-case u-usewnotfound | s-souwcetweetnotfound | s-souwceusewnotfound | cannotwetweetdeactivatedusew =>
+      statusnotfoundeww
+    case usewdeactivated | usewsuspended =>
+      usewdeniedwetweeteww
+    case w-watewimitexceeded =>
+      w-watewimitexceededeww
+    c-case uwwspam =>
+      tweetuwwspameww
+    c-case spam | usewweadonwy =>
+      tweetspammeweww
+    case safetywatewimitexceeded =>
+      safetywatewimitexceededeww
+    c-case b-bounce if bounce.isdefined =>
+      accessdeniedbybounceweww(bounce.get)
+    c-case disabwedbyipipowicy =>
+      faiwuweweason
+        .map(tweetengagementwimitedeww)
+        .getowewse(genewicaccessdeniedeww)
+    c-case twustedfwiendswetweetnotawwowed =>
+      t-twustedfwiendswetweetnotawwowedeww
+    case stawetweetwetweetnotawwowed =>
+      s-stawetweetwetweetnotawwowedeww
+    c-case _ =>
+      genewicaccessdeniedeww
   }
 }

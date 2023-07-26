@@ -1,99 +1,99 @@
-package com.twitter.search.earlybird.queryparser;
+package com.twittew.seawch.eawwybiwd.quewypawsew;
 
-import java.util.Set;
+impowt java.utiw.set;
 
-import com.google.common.collect.ImmutableSet;
+i-impowt c-com.googwe.common.cowwect.immutabweset;
 
-import com.twitter.search.queryparser.query.BooleanQuery;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Operator;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.QueryVisitor;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.query.annotation.FieldNameWithBoost;
+i-impowt c-com.twittew.seawch.quewypawsew.quewy.booweanquewy;
+i-impowt com.twittew.seawch.quewypawsew.quewy.conjunction;
+i-impowt c-com.twittew.seawch.quewypawsew.quewy.disjunction;
+i-impowt com.twittew.seawch.quewypawsew.quewy.opewatow;
+impowt com.twittew.seawch.quewypawsew.quewy.phwase;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewyvisitow;
+impowt com.twittew.seawch.quewypawsew.quewy.speciawtewm;
+i-impowt com.twittew.seawch.quewypawsew.quewy.tewm;
+impowt c-com.twittew.seawch.quewypawsew.quewy.annotation.annotation;
+impowt com.twittew.seawch.quewypawsew.quewy.annotation.fiewdnamewithboost;
 
 /**
- * Detects whether the query tree has certain field annotations.
+ * detects whethew the q-quewy twee has cewtain fiewd a-annotations. >w<
  */
-public class DetectFieldAnnotationVisitor extends QueryVisitor<Boolean> {
-  private final ImmutableSet<String> fieldNames;
+p-pubwic cwass detectfiewdannotationvisitow extends quewyvisitow<boowean> {
+  pwivate finaw immutabweset<stwing> f-fiewdnames;
 
   /**
-   * This visitor will return true if the query tree has a FIELD annotation with any of the given
-   * field names. If the set is empty, any FIELD annotation will match.
+   * this visitow wiww wetuwn twue if the quewy twee has a fiewd a-annotation with any of the given
+   * f-fiewd n-nyames. (U ﹏ U) if the set i-is empty, 😳 any f-fiewd annotation wiww match. (ˆ ﻌ ˆ)♡
    */
-  public DetectFieldAnnotationVisitor(Set<String> fieldNames) {
-    this.fieldNames = ImmutableSet.copyOf(fieldNames);
+  pubwic detectfiewdannotationvisitow(set<stwing> f-fiewdnames) {
+    this.fiewdnames = immutabweset.copyof(fiewdnames);
   }
 
   /**
-   * This visitor will return true if the query tree has a FIELD annotation.
+   * t-this visitow wiww wetuwn twue if the quewy twee has a fiewd annotation. 😳😳😳
    */
-  public DetectFieldAnnotationVisitor() {
-    this.fieldNames = ImmutableSet.of();
+  pubwic d-detectfiewdannotationvisitow() {
+    this.fiewdnames = i-immutabweset.of();
   }
 
-  @Override
-  public Boolean visit(Disjunction disjunction) throws QueryParserException {
-    return visitQuery(disjunction) || visitBooleanQuery(disjunction);
+  @ovewwide
+  pubwic b-boowean visit(disjunction d-disjunction) thwows quewypawsewexception {
+    wetuwn visitquewy(disjunction) || visitbooweanquewy(disjunction);
   }
 
-  @Override
-  public Boolean visit(Conjunction conjunction) throws QueryParserException {
-    return visitQuery(conjunction) || visitBooleanQuery(conjunction);
+  @ovewwide
+  p-pubwic boowean v-visit(conjunction conjunction) t-thwows quewypawsewexception {
+    w-wetuwn visitquewy(conjunction) || visitbooweanquewy(conjunction);
   }
 
-  @Override
-  public Boolean visit(Phrase phrase) throws QueryParserException {
-    return visitQuery(phrase);
+  @ovewwide
+  p-pubwic boowean visit(phwase p-phwase) thwows quewypawsewexception {
+    wetuwn visitquewy(phwase);
   }
 
-  @Override
-  public Boolean visit(Term term) throws QueryParserException {
-    return visitQuery(term);
+  @ovewwide
+  p-pubwic boowean visit(tewm t-tewm) thwows quewypawsewexception {
+    wetuwn v-visitquewy(tewm);
   }
 
-  @Override
-  public Boolean visit(Operator operator) throws QueryParserException {
-    return visitQuery(operator);
+  @ovewwide
+  p-pubwic boowean visit(opewatow opewatow) thwows quewypawsewexception {
+    wetuwn visitquewy(opewatow);
   }
 
-  @Override
-  public Boolean visit(SpecialTerm special) throws QueryParserException {
-    return visitQuery(special);
+  @ovewwide
+  pubwic boowean visit(speciawtewm s-speciaw) thwows q-quewypawsewexception {
+    wetuwn visitquewy(speciaw);
   }
 
-  private Boolean visitQuery(Query query) throws QueryParserException {
-    if (query.hasAnnotations()) {
-      for (Annotation annotation : query.getAnnotations()) {
-        if (!Annotation.Type.FIELD.equals(annotation.getType())) {
+  p-pwivate boowean v-visitquewy(quewy q-quewy) thwows quewypawsewexception {
+    if (quewy.hasannotations()) {
+      fow (annotation a-annotation : quewy.getannotations()) {
+        if (!annotation.type.fiewd.equaws(annotation.gettype())) {
           continue;
         }
-        if (fieldNames.isEmpty()) {
-          return true;
+        if (fiewdnames.isempty()) {
+          wetuwn twue;
         }
-        FieldNameWithBoost value = (FieldNameWithBoost) annotation.getValue();
-        if (fieldNames.contains(value.getFieldName())) {
-          return true;
+        f-fiewdnamewithboost vawue = (fiewdnamewithboost) a-annotation.getvawue();
+        i-if (fiewdnames.contains(vawue.getfiewdname())) {
+          w-wetuwn twue;
         }
       }
     }
 
-    return false;
+    wetuwn f-fawse;
   }
 
-  private boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
-    for (Query subQuery : query.getChildren()) {
-      if (subQuery.accept(this)) {
-        return true;
+  p-pwivate boowean v-visitbooweanquewy(booweanquewy quewy) t-thwows quewypawsewexception {
+    fow (quewy subquewy : quewy.getchiwdwen()) {
+      i-if (subquewy.accept(this)) {
+        w-wetuwn twue;
       }
     }
 
-    return false;
+    w-wetuwn fawse;
   }
 }

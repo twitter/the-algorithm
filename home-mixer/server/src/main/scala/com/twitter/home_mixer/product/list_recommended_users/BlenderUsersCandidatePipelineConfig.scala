@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.product.list_recommended_users
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews
 
-import com.twitter.home_mixer.product.list_recommended_users.candidate_source.BlenderUsersCandidateSource
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.IsGizmoduckValidUserFeatureHydrator
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.IsSGSValidUserFeatureHydrator
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.RecentListMembersFeature
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.user.UserCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.gate.EmptySeqFeatureGate
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.search.blender.thriftscala.ThriftBlenderRequest
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.pwoduct.wist_wecommended_usews.candidate_souwce.bwendewusewscandidatesouwce
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow.isgizmoduckvawidusewfeatuwehydwatow
+i-impowt c-com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow.issgsvawidusewfeatuwehydwatow
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow.wecentwistmembewsfeatuwe
+i-impowt c-com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsquewy
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.uwtitemcandidatedecowatow
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.usew.usewcandidateuwtitembuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata.cwienteventinfobuiwdew
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.gate.emptyseqfeatuwegate
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basecandidatefeatuwehydwatow
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+impowt com.twittew.seawch.bwendew.thwiftscawa.thwiftbwendewwequest
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class BlenderUsersCandidatePipelineConfig @Inject() (
-  blenderUsersCandidateSource: BlenderUsersCandidateSource,
-  isGizmoduckValidUserFeatureHydrator: IsGizmoduckValidUserFeatureHydrator,
-  isSGSValidUserFeatureHydrator: IsSGSValidUserFeatureHydrator)
-    extends CandidatePipelineConfig[
-      ListRecommendedUsersQuery,
-      ThriftBlenderRequest,
-      Long,
-      UserCandidate
+@singweton
+cwass bwendewusewscandidatepipewineconfig @inject() (
+  bwendewusewscandidatesouwce: bwendewusewscandidatesouwce, o.O
+  i-isgizmoduckvawidusewfeatuwehydwatow: isgizmoduckvawidusewfeatuwehydwatow, /(^•ω•^)
+  i-issgsvawidusewfeatuwehydwatow: i-issgsvawidusewfeatuwehydwatow)
+    e-extends c-candidatepipewineconfig[
+      wistwecommendedusewsquewy, nyaa~~
+      thwiftbwendewwequest, nyaa~~
+      w-wong, :3
+      usewcandidate
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("BlenderUsers")
+  ovewwide vaw identifiew: c-candidatepipewineidentifiew =
+    candidatepipewineidentifiew("bwendewusews")
 
-  override val gates: Seq[Gate[ListRecommendedUsersQuery]] =
-    Seq(EmptySeqFeatureGate(RecentListMembersFeature))
+  ovewwide vaw gates: seq[gate[wistwecommendedusewsquewy]] =
+    seq(emptyseqfeatuwegate(wecentwistmembewsfeatuwe))
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ListRecommendedUsersQuery,
-    ThriftBlenderRequest
-  ] = BlenderUsersCandidatePipelineQueryTransformer
+  o-ovewwide vaw quewytwansfowmew: candidatepipewinequewytwansfowmew[
+    w-wistwecommendedusewsquewy, 😳😳😳
+    t-thwiftbwendewwequest
+  ] = b-bwendewusewscandidatepipewinequewytwansfowmew
 
-  override val candidateSource: BaseCandidateSource[ThriftBlenderRequest, Long] =
-    blenderUsersCandidateSource
+  ovewwide vaw candidatesouwce: basecandidatesouwce[thwiftbwendewwequest, (˘ω˘) wong] =
+    b-bwendewusewscandidatesouwce
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    Long,
-    UserCandidate
-  ] = { candidate => UserCandidate(id = candidate) }
+  o-ovewwide vaw wesuwttwansfowmew: c-candidatepipewinewesuwtstwansfowmew[
+    w-wong,
+    usewcandidate
+  ] = { c-candidate => usewcandidate(id = c-candidate) }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ListRecommendedUsersQuery, UserCandidate, _]
-  ] = Seq(
-    isGizmoduckValidUserFeatureHydrator,
-    isSGSValidUserFeatureHydrator
+  ovewwide vaw pwefiwtewfeatuwehydwationphase1: s-seq[
+    basecandidatefeatuwehydwatow[wistwecommendedusewsquewy, ^^ u-usewcandidate, _]
+  ] = seq(
+    isgizmoduckvawidusewfeatuwehydwatow, :3
+    i-issgsvawidusewfeatuwehydwatow
   )
 
-  override val decorator: Option[CandidateDecorator[ListRecommendedUsersQuery, UserCandidate]] = {
-    val clientEventInfoBuilder = ClientEventInfoBuilder("user")
-    val userItemBuilder = UserCandidateUrtItemBuilder(clientEventInfoBuilder)
-    Some(UrtItemCandidateDecorator(userItemBuilder))
+  o-ovewwide vaw decowatow: option[candidatedecowatow[wistwecommendedusewsquewy, -.- usewcandidate]] = {
+    vaw cwienteventinfobuiwdew = cwienteventinfobuiwdew("usew")
+    vaw usewitembuiwdew = u-usewcandidateuwtitembuiwdew(cwienteventinfobuiwdew)
+    some(uwtitemcandidatedecowatow(usewitembuiwdew))
   }
 }

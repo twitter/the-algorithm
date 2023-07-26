@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.model.cursor
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow
 
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.search.common.util.bloomfilter.AdaptiveLongIntBloomFilter
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinecuwsow
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.uwtpipewinecuwsow
+i-impowt com.twittew.seawch.common.utiw.bwoomfiwtew.adaptivewongintbwoomfiwtew
 
 /**
- * Cursor model that may be used when cursoring over a unordered candidate source. On each server
- * round-trip, the server will add the IDs of the candidates into a space efficient bloom filter.
- * Then on subsequent requests the client will return the cursor, and the bloom filter can be sent to
- * the downstream's bloom filter parameter in serialized form, or exclude candidates locally via a
- * filter on the candidate source pipeline.
+ * c-cuwsow modew t-that may be used w-when cuwsowing o-ovew a unowdewed c-candidate souwce. (⑅˘꒳˘) o-on each sewvew
+ * wound-twip, /(^•ω•^) the sewvew wiww add the ids of the candidates i-into a space efficient bwoom fiwtew. rawr x3
+ * then on s-subsequent wequests the cwient w-wiww wetuwn the cuwsow, (U ﹏ U) and the bwoom fiwtew can be sent to
+ * the d-downstweam's bwoom fiwtew pawametew i-in sewiawized f-fowm, (U ﹏ U) ow excwude candidates wocawwy via a
+ * fiwtew on the candidate souwce p-pipewine. (⑅˘꒳˘)
  *
- * @param initialSortIndex See [[UrtPipelineCursor]]
- * @param longIntBloomFilter the bloom filter to use to dedup candidate from the candidate list
+ * @pawam initiawsowtindex see [[uwtpipewinecuwsow]]
+ * @pawam wongintbwoomfiwtew the bwoom fiwtew t-to use to dedup candidate fwom t-the candidate wist
  */
-case class UrtUnorderedBloomFilterCursor(
-  override val initialSortIndex: Long,
-  // space-efficient and mutable variant of the BloomFilter class used for storing long integers.
-  longIntBloomFilter: AdaptiveLongIntBloomFilter)
-    extends UrtPipelineCursor
+c-case cwass u-uwtunowdewedbwoomfiwtewcuwsow(
+  o-ovewwide vaw initiawsowtindex: wong,
+  // space-efficient a-and mutabwe vawiant of the bwoomfiwtew c-cwass used fow stowing wong integews. òωó
+  wongintbwoomfiwtew: adaptivewongintbwoomfiwtew)
+    extends uwtpipewinecuwsow
 
-case class UnorderedBloomFilterCursor(
-  longIntBloomFilter: AdaptiveLongIntBloomFilter)
-    extends PipelineCursor
+case c-cwass unowdewedbwoomfiwtewcuwsow(
+  wongintbwoomfiwtew: a-adaptivewongintbwoomfiwtew)
+    e-extends p-pipewinecuwsow

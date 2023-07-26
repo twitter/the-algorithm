@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DeepLink
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrlType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpoint
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.deepwink
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.extewnawuww
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uwwtype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uwtendpoint
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class UrlTypeMarshaller @Inject() () {
+@singweton
+cwass uwwtypemawshawwew @inject() () {
 
-  def apply(urlType: UrlType): urt.UrlType = urlType match {
-    case ExternalUrl => urt.UrlType.ExternalUrl
-    case DeepLink => urt.UrlType.DeepLink
-    case UrtEndpoint => urt.UrlType.UrtEndpoint
+  def appwy(uwwtype: u-uwwtype): uwt.uwwtype = uwwtype match {
+    c-case extewnawuww => uwt.uwwtype.extewnawuww
+    c-case deepwink => uwt.uwwtype.deepwink
+    case uwtendpoint => uwt.uwwtype.uwtendpoint
   }
 }

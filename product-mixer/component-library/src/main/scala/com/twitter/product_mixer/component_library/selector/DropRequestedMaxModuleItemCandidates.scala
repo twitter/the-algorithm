@@ -1,68 +1,68 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.timewines.configapi.pawam
 
 /**
- * Limit the number of results (for 1 or more modules) from a certain candidate
- * source to PipelineQuery.requestedMaxResults.
+ * wimit the nyumbew of w-wesuwts (fow 1 ow mowe moduwes) f-fwom a cewtain candidate
+ * souwce to pipewinequewy.wequestedmaxwesuwts. 😳
  *
- * PipelineQuery.requestedMaxResults is optionally set in the pipelineQuery.
- * If it is not set, then the default value of DefaultRequestedMaxModuleItemsParam is used.
+ * pipewinequewy.wequestedmaxwesuwts i-is optionawwy set in the pipewinequewy. 😳
+ * i-if i-it is nyot set, σωσ then the defauwt vawue of defauwtwequestedmaxmoduweitemspawam is used. rawr x3
  *
- * For example, if PipelineQuery.requestedMaxResults is 3, and a candidatePipeline returned 1 module
- * containing 10 items in the candidate pool, then these module items will be reduced to the first 3
- * module items. Note that to update the ordering of the candidates, an
- * UpdateModuleItemsCandidateOrderingSelector may be used prior to using this selector.
+ * fow exampwe, OwO if pipewinequewy.wequestedmaxwesuwts i-is 3, /(^•ω•^) and a candidatepipewine wetuwned 1 moduwe
+ * containing 10 items in the candidate p-poow, 😳😳😳 then these moduwe i-items wiww be weduced t-to the fiwst 3
+ * m-moduwe items. ( ͡o ω ͡o ) n-nyote that to update the owdewing of the candidates, >_< a-an
+ * updatemoduweitemscandidateowdewingsewectow may b-be used pwiow to using this sewectow. >w<
  *
- * Another example, if PipelineQuery.requestedMaxResults is 3, and a candidatePipeline returned 5
- * modules each containing 10 items in the candidate pool, then the module items in each of the 5
- * modules will be reduced to the first 3 module items.
+ * anothew exampwe, rawr if pipewinequewy.wequestedmaxwesuwts is 3, 😳 and a candidatepipewine w-wetuwned 5
+ * moduwes each containing 10 i-items in t-the candidate p-poow, >w< then the moduwe items in each of the 5
+ * moduwes wiww be w-weduced to the fiwst 3 m-moduwe items. (⑅˘꒳˘)
  *
- * @note this updates the module in the `remainingCandidates`
+ * @note this updates the m-moduwe in the `wemainingcandidates`
  */
-case class DropRequestedMaxModuleItemCandidates(
-  override val pipelineScope: CandidateScope,
-  defaultRequestedMaxModuleItemResultsParam: Param[Int])
-    extends Selector[PipelineQuery] {
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
+c-case cwass dwopwequestedmaxmoduweitemcandidates(
+  o-ovewwide vaw pipewinescope: c-candidatescope, OwO
+  defauwtwequestedmaxmoduweitemwesuwtspawam: pawam[int])
+    e-extends sewectow[pipewinequewy] {
+  ovewwide d-def appwy(
+    quewy: pipewinequewy, (ꈍᴗꈍ)
+    w-wemainingcandidates: s-seq[candidatewithdetaiws], 😳
+    wesuwt: seq[candidatewithdetaiws]
+  ): sewectowwesuwt = {
 
-    val requestedMaxModuleItemSelections =
-      query.maxResults(defaultRequestedMaxModuleItemResultsParam)
-    assert(
-      requestedMaxModuleItemSelections > 0,
-      "Requested Max module item selections must be greater than zero")
+    vaw wequestedmaxmoduweitemsewections =
+      quewy.maxwesuwts(defauwtwequestedmaxmoduweitemwesuwtspawam)
+    assewt(
+      wequestedmaxmoduweitemsewections > 0, 😳😳😳
+      "wequested m-max moduwe item s-sewections must be gweatew than z-zewo")
 
-    val resultUpdated = result.map {
-      case module: ModuleCandidateWithDetails if pipelineScope.contains(module) =>
-        // this applies to all candidates in a module, even if they are from a different
-        // candidate source which can happen if items are added to a module during selection
-        module.copy(candidates =
-          DropSelector.takeUntil(requestedMaxModuleItemSelections, module.candidates))
-      case candidate => candidate
+    vaw w-wesuwtupdated = w-wesuwt.map {
+      case moduwe: moduwecandidatewithdetaiws if pipewinescope.contains(moduwe) =>
+        // t-this appwies to aww candidates in a moduwe, mya even if they awe fwom a d-diffewent
+        // candidate souwce w-which can h-happen if items a-awe added to a moduwe duwing sewection
+        moduwe.copy(candidates =
+          d-dwopsewectow.takeuntiw(wequestedmaxmoduweitemsewections, mya m-moduwe.candidates))
+      c-case candidate => c-candidate
     }
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = resultUpdated)
+    sewectowwesuwt(wemainingcandidates = wemainingcandidates, (⑅˘꒳˘) w-wesuwt = wesuwtupdated)
   }
 }
 
-object DropRequestedMaxModuleItemCandidates {
-  def apply(
-    candidatePipeline: CandidatePipelineIdentifier,
-    defaultRequestedMaxModuleItemResultsParam: Param[Int]
+o-object dwopwequestedmaxmoduweitemcandidates {
+  d-def appwy(
+    c-candidatepipewine: c-candidatepipewineidentifiew, (U ﹏ U)
+    defauwtwequestedmaxmoduweitemwesuwtspawam: pawam[int]
   ) =
-    new DropRequestedMaxModuleItemCandidates(
-      SpecificPipeline(candidatePipeline),
-      defaultRequestedMaxModuleItemResultsParam)
+    nyew dwopwequestedmaxmoduweitemcandidates(
+      s-specificpipewine(candidatepipewine), mya
+      defauwtwequestedmaxmoduweitemwesuwtspawam)
 }

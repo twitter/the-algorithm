@@ -1,37 +1,37 @@
-package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.wecent_engagement
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
 
-object RepeatedProfileVisitsParams {
+o-object w-wepeatedpwofiwevisitspawams {
 
-  // If RepeatedProfileVisitsSource is run and there are recommended candidates for the target user, whether or not
-  // to actually include such candidates in our output recommendations. This FS will be used to control bucketing of
-  // users into control vs treatment buckets.
-  case object IncludeCandidates
-      extends FSParam[Boolean](name = "repeated_profile_visits_include_candidates", default = false)
+  // i-if wepeatedpwofiwevisitssouwce i-is wun and t-thewe awe wecommended c-candidates fow the tawget usew, rawr whethew ow nyot
+  // to actuawwy incwude s-such candidates in ouw output wecommendations. mya this fs wiww be used t-to contwow bucketing of
+  // u-usews into contwow vs tweatment buckets.
+  case object incwudecandidates
+      e-extends fspawam[boowean](name = "wepeated_pwofiwe_visits_incwude_candidates", ^^ defauwt = f-fawse)
 
-  // The threshold at or above which we will consider a profile to have been visited "frequently enough" to recommend
-  // the profile to the target user.
-  case object RecommendationThreshold
-      extends FSBoundedParam[Int](
-        name = "repeated_profile_visits_recommendation_threshold",
-        default = 3,
-        min = 0,
-        max = Integer.MAX_VALUE)
+  // t-the thweshowd at ow above which we wiww considew a pwofiwe to have been visited "fwequentwy e-enough" to wecommend
+  // the pwofiwe to the tawget usew. 😳😳😳
+  case object wecommendationthweshowd
+      e-extends fsboundedpawam[int](
+        nyame = "wepeated_pwofiwe_visits_wecommendation_thweshowd", mya
+        d-defauwt = 3, 😳
+        m-min = 0, -.-
+        m-max = integew.max_vawue)
 
-  // The threshold at or above which we will consider a profile to have been visited "frequently enough" to recommend
-  // the profile to the target user.
-  case object BucketingThreshold
-      extends FSBoundedParam[Int](
-        name = "repeated_profile_visits_bucketing_threshold",
-        default = 3,
-        min = 0,
-        max = Integer.MAX_VALUE)
+  // t-the thweshowd at ow above which we wiww considew a-a pwofiwe to have been visited "fwequentwy enough" to wecommend
+  // t-the pwofiwe to the tawget usew. 🥺
+  case object bucketingthweshowd
+      extends fsboundedpawam[int](
+        nyame = "wepeated_pwofiwe_visits_bucketing_thweshowd", o.O
+        d-defauwt = 3, /(^•ω•^)
+        min = 0, nyaa~~
+        m-max = i-integew.max_vawue)
 
-  // Whether or not to use the online dataset (which has repeated profile visits information updated to within minutes)
-  // instead of the offline dataset (updated via offline jobs, which can have delays of hours to days).
-  case object UseOnlineDataset
-      extends FSParam[Boolean](name = "repeated_profile_visits_use_online_dataset", default = true)
+  // w-whethew ow nyot to use the onwine dataset (which has w-wepeated pwofiwe v-visits infowmation updated to within m-minutes)
+  // i-instead of the offwine dataset (updated v-via offwine jobs, nyaa~~ which c-can have deways of houws to days). :3
+  case object u-useonwinedataset
+      extends f-fspawam[boowean](name = "wepeated_pwofiwe_visits_use_onwine_dataset", 😳😳😳 defauwt = t-twue)
 
 }

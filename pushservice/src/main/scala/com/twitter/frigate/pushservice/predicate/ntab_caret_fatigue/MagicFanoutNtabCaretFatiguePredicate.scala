@@ -1,28 +1,28 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.ntab_caret_fatigue.NtabCaretClickFatiguePredicateHelper
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.pwedicate.ntab_cawet_fatigue.ntabcawetcwickfatiguepwedicatehewpew
+i-impowt com.twittew.fwigate.common.wec_types.wectypes
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
 
-object MagicFanoutNtabCaretFatiguePredicate {
-  val name = "MagicFanoutNtabCaretFatiguePredicateForCandidate"
+o-object magicfanoutntabcawetfatiguepwedicate {
+  v-vaw nyame = "magicfanoutntabcawetfatiguepwedicatefowcandidate"
 
-  private val MomentsCategory = "Moments"
-  private val MomentsViaMagicRecsCategory = "MomentsViaMagicRecs"
+  p-pwivate vaw momentscategowy = "moments"
+  pwivate vaw momentsviamagicwecscategowy = "momentsviamagicwecs"
 
-  def apply()(implicit globalStats: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val scopedStats = globalStats.scope(name)
-    val genericTypeCategories = Seq(MomentsCategory, MomentsViaMagicRecsCategory)
-    val crts = RecTypes.magicFanoutEventTypes
-    RecTypeNtabCaretClickFatiguePredicate
-      .apply(
-        genericTypeCategories,
-        crts,
-        NtabCaretClickFatiguePredicateHelper.calculateFatiguePeriodMagicRecs,
-        useMostRecentDislikeTime = true,
-        name = name
-      ).withStats(scopedStats).withName(name)
+  def appwy()(impwicit gwobawstats: s-statsweceivew): nyamedpwedicate[pushcandidate] = {
+    vaw s-scopedstats = gwobawstats.scope(name)
+    v-vaw genewictypecategowies = seq(momentscategowy, 😳😳😳 momentsviamagicwecscategowy)
+    v-vaw cwts = wectypes.magicfanouteventtypes
+    w-wectypentabcawetcwickfatiguepwedicate
+      .appwy(
+        g-genewictypecategowies, -.-
+        cwts, ( ͡o ω ͡o )
+        nytabcawetcwickfatiguepwedicatehewpew.cawcuwatefatiguepewiodmagicwecs, rawr x3
+        usemostwecentdiswiketime = twue, nyaa~~
+        nyame = n-nyame
+      ).withstats(scopedstats).withname(name)
   }
 }

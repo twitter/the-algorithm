@@ -1,32 +1,32 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.store.QuotedTweetDelete
-import com.twitter.tweetypie.thriftscala.QuotedTweetDeleteRequest
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.tweetypie.wepositowy.tweetquewy
+i-impowt com.twittew.tweetypie.wepositowy.tweetwepositowy
+i-impowt c-com.twittew.tweetypie.stowe.quotedtweetdewete
+impowt c-com.twittew.tweetypie.thwiftscawa.quotedtweetdewetewequest
 
 /**
- * Create the appropriate QuotedTweetDelete.Event for a QuotedTweetDelete request.
+ * c-cweate the appwopwiate quotedtweetdewete.event fow a quotedtweetdewete wequest. (U ﹏ U)
  */
-object QuotedTweetDeleteEventBuilder {
-  type Type = QuotedTweetDeleteRequest => Future[Option[QuotedTweetDelete.Event]]
+object q-quotedtweetdeweteeventbuiwdew {
+  type type = quotedtweetdewetewequest => f-futuwe[option[quotedtweetdewete.event]]
 
-  val queryOptions: TweetQuery.Options =
-    TweetQuery.Options(GetTweetsHandler.BaseInclude)
+  vaw quewyoptions: t-tweetquewy.options =
+    tweetquewy.options(gettweetshandwew.baseincwude)
 
-  def apply(tweetRepo: TweetRepository.Optional): Type =
-    request =>
-      Stitch.run(
-        tweetRepo(request.quotingTweetId, queryOptions).map {
-          _.map { quotingTweet =>
-            QuotedTweetDelete.Event(
-              quotingTweetId = request.quotingTweetId,
-              quotingUserId = getUserId(quotingTweet),
-              quotedTweetId = request.quotedTweetId,
-              quotedUserId = request.quotedUserId,
-              timestamp = Time.now
+  def appwy(tweetwepo: tweetwepositowy.optionaw): t-type =
+    wequest =>
+      s-stitch.wun(
+        t-tweetwepo(wequest.quotingtweetid, >_< quewyoptions).map {
+          _.map { quotingtweet =>
+            quotedtweetdewete.event(
+              quotingtweetid = w-wequest.quotingtweetid, rawr x3
+              quotingusewid = getusewid(quotingtweet), mya
+              quotedtweetid = wequest.quotedtweetid, nyaa~~
+              q-quotedusewid = wequest.quotedusewid, (⑅˘꒳˘)
+              t-timestamp = t-time.now
             )
           }
         }

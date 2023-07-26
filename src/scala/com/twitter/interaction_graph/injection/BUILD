@@ -1,25 +1,25 @@
-scala_library(
-    name = "user_session_inj",
-    sources = ["UserSessionInjection.scala"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/thrift/com/twitter/user_session_store:thrift-scala",
-    ],
+scawa_wibwawy(
+    nyame = "usew_session_inj", rawr
+    souwces = ["usewsessioninjection.scawa"], σωσ
+    p-pwatfowm = "java8", σωσ
+    s-stwict_deps = t-twue, >_<
+    t-tags = ["bazew-compatibwe"], :3
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/bijection:scwooge", (U ﹏ U)
+        "swc/scawa/com/twittew/scawding_intewnaw/muwtifowmat/fowmat", -.-
+        "swc/thwift/com/twittew/usew_session_stowe:thwift-scawa", (ˆ ﻌ ˆ)♡
+    ], (⑅˘꒳˘)
 )
 
-scala_library(
-    name = "edge_list_injection",
-    sources = ["EdgeListInjection.scala"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
+s-scawa_wibwawy(
+    n-nyame = "edge_wist_injection", (U ᵕ U❁)
+    s-souwces = ["edgewistinjection.scawa"], -.-
+    pwatfowm = "java8", ^^;;
+    stwict_deps = twue, >_<
+    tags = ["bazew-compatibwe"], mya
     dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
+        "3wdpawty/jvm/com/twittew/bijection:scwooge", mya
+        "swc/scawa/com/twittew/scawding_intewnaw/muwtifowmat/fowmat", 😳
+        "swc/thwift/com/twittew/intewaction_gwaph:intewaction_gwaph-scawa", XD
     ],
 )

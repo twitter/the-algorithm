@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot
 
-sealed trait ForwardPivotDisplayType
+seawed t-twait fowwawdpivotdispwaytype
 
-case object LiveEvent extends ForwardPivotDisplayType
-case object SoftIntervention extends ForwardPivotDisplayType
-case object CommunityNotes extends ForwardPivotDisplayType
+case o-object wiveevent e-extends fowwawdpivotdispwaytype
+c-case object s-softintewvention e-extends fowwawdpivotdispwaytype
+c-case object communitynotes e-extends fowwawdpivotdispwaytype

@@ -1,137 +1,137 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.twittew.cw_mixew.candidate_genewation
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.filter.PreRankFilterRunner
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RelatedVideoTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUnifiedSimilarityEngine
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.twittew.contentwecommendew.thwiftscawa.tweetinfo
+i-impowt c-com.twittew.cw_mixew.fiwtew.pwewankfiwtewwunnew
+i-impowt com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.cw_mixew.modew.wewatedvideotweetcandidategenewatowquewy
+i-impowt com.twittew.cw_mixew.modew.tweetwithcandidategenewationinfo
+i-impowt com.twittew.cw_mixew.modew.moduwenames
+i-impowt com.twittew.cw_mixew.simiwawity_engine.standawdsimiwawityengine
+i-impowt com.twittew.cw_mixew.simiwawity_engine.tweetbasedunifiedsimiwawityengine
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.fwigate.common.utiw.statsutiw
+impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.timewines.configapi
+impowt com.twittew.utiw.futuwe
+impowt javax.inject.inject
+i-impowt javax.inject.named
+impowt j-javax.inject.singweton
 
-@Singleton
-class RelatedVideoTweetCandidateGenerator @Inject() (
-  @Named(ModuleNames.TweetBasedUnifiedSimilarityEngine) tweetBasedUnifiedSimilarityEngine: StandardSimilarityEngine[
-    TweetBasedUnifiedSimilarityEngine.Query,
-    TweetWithCandidateGenerationInfo
-  ],
-  preRankFilterRunner: PreRankFilterRunner,
-  tweetInfoStore: ReadableStore[TweetId, TweetInfo],
-  globalStats: StatsReceiver) {
+@singweton
+c-cwass wewatedvideotweetcandidategenewatow @inject() (
+  @named(moduwenames.tweetbasedunifiedsimiwawityengine) tweetbasedunifiedsimiwawityengine: standawdsimiwawityengine[
+    tweetbasedunifiedsimiwawityengine.quewy, >_<
+    tweetwithcandidategenewationinfo
+  ], rawr x3
+  p-pwewankfiwtewwunnew: pwewankfiwtewwunnew, /(^•ω•^)
+  tweetinfostowe: weadabwestowe[tweetid, :3 tweetinfo], (ꈍᴗꈍ)
+  g-gwobawstats: statsweceivew) {
 
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val preRankFilterStats = stats.scope("preRankFilter")
+  p-pwivate v-vaw stats: statsweceivew = g-gwobawstats.scope(this.getcwass.getcanonicawname)
+  p-pwivate vaw fetchcandidatesstats = stats.scope("fetchcandidates")
+  pwivate vaw p-pwewankfiwtewstats = stats.scope("pwewankfiwtew")
 
   def get(
-    query: RelatedVideoTweetCandidateGeneratorQuery
-  ): Future[Seq[InitialCandidate]] = {
+    q-quewy: wewatedvideotweetcandidategenewatowquewy
+  ): futuwe[seq[initiawcandidate]] = {
 
-    val allStats = stats.scope("all")
-    val perProductStats = stats.scope("perProduct", query.product.toString)
-    StatsUtil.trackItemsStats(allStats) {
-      StatsUtil.trackItemsStats(perProductStats) {
-        for {
-          initialCandidates <- StatsUtil.trackBlockStats(fetchCandidatesStats) {
-            fetchCandidates(query)
+    vaw awwstats = stats.scope("aww")
+    vaw pewpwoductstats = stats.scope("pewpwoduct", /(^•ω•^) quewy.pwoduct.tostwing)
+    s-statsutiw.twackitemsstats(awwstats) {
+      statsutiw.twackitemsstats(pewpwoductstats) {
+        f-fow {
+          i-initiawcandidates <- s-statsutiw.twackbwockstats(fetchcandidatesstats) {
+            fetchcandidates(quewy)
           }
-          filteredCandidates <- StatsUtil.trackBlockStats(preRankFilterStats) {
-            preRankFilter(query, initialCandidates)
+          fiwtewedcandidates <- statsutiw.twackbwockstats(pwewankfiwtewstats) {
+            p-pwewankfiwtew(quewy, i-initiawcandidates)
           }
-        } yield {
-          filteredCandidates.headOption
-            .getOrElse(
-              throw new UnsupportedOperationException(
-                "RelatedVideoTweetCandidateGenerator results invalid")
-            ).take(query.maxNumResults)
+        } yiewd {
+          f-fiwtewedcandidates.headoption
+            .getowewse(
+              t-thwow new unsuppowtedopewationexception(
+                "wewatedvideotweetcandidategenewatow w-wesuwts invawid")
+            ).take(quewy.maxnumwesuwts)
         }
       }
     }
   }
 
-  def fetchCandidates(
-    query: RelatedVideoTweetCandidateGeneratorQuery
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    query.internalId match {
-      case InternalId.TweetId(_) =>
-        getCandidatesFromSimilarityEngine(
-          query,
-          TweetBasedUnifiedSimilarityEngine.fromParamsForRelatedVideoTweet,
-          tweetBasedUnifiedSimilarityEngine.getCandidates)
+  def fetchcandidates(
+    q-quewy: wewatedvideotweetcandidategenewatowquewy
+  ): futuwe[seq[seq[initiawcandidate]]] = {
+    q-quewy.intewnawid match {
+      c-case intewnawid.tweetid(_) =>
+        getcandidatesfwomsimiwawityengine(
+          q-quewy, (⑅˘꒳˘)
+          t-tweetbasedunifiedsimiwawityengine.fwompawamsfowwewatedvideotweet, ( ͡o ω ͡o )
+          tweetbasedunifiedsimiwawityengine.getcandidates)
       case _ =>
-        throw new UnsupportedOperationException(
-          "RelatedVideoTweetCandidateGenerator gets invalid InternalId")
+        thwow nyew unsuppowtedopewationexception(
+          "wewatedvideotweetcandidategenewatow gets invawid intewnawid")
     }
   }
 
   /***
-   * fetch Candidates from TweetBased/ProducerBased Unified Similarity Engine,
-   * and apply VF filter based on TweetInfoStore
-   * To align with the downstream processing (filter, rank), we tend to return a Seq[Seq[InitialCandidate]]
-   * instead of a Seq[Candidate] even though we only have a Seq in it.
+   * fetch candidates fwom t-tweetbased/pwoducewbased u-unified simiwawity engine, òωó
+   * a-and appwy v-vf fiwtew based o-on tweetinfostowe
+   * to awign with the downstweam pwocessing (fiwtew, (⑅˘꒳˘) w-wank), XD we tend to wetuwn a seq[seq[initiawcandidate]]
+   * instead of a seq[candidate] e-even though we onwy have a seq i-in it. -.-
    */
-  private def getCandidatesFromSimilarityEngine[QueryType](
-    query: RelatedVideoTweetCandidateGeneratorQuery,
-    fromParamsForRelatedVideoTweet: (InternalId, configapi.Params) => QueryType,
-    getFunc: QueryType => Future[Option[Seq[TweetWithCandidateGenerationInfo]]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
+  p-pwivate def getcandidatesfwomsimiwawityengine[quewytype](
+    quewy: w-wewatedvideotweetcandidategenewatowquewy, :3
+    fwompawamsfowwewatedvideotweet: (intewnawid, nyaa~~ c-configapi.pawams) => q-quewytype, 😳
+    g-getfunc: quewytype => f-futuwe[option[seq[tweetwithcandidategenewationinfo]]]
+  ): futuwe[seq[seq[initiawcandidate]]] = {
 
     /***
-     * We wrap the query to be a Seq of queries for the Sim Engine to ensure evolvability of candidate generation
-     * and as a result, it will return Seq[Seq[InitialCandidate]]
+     * we w-wwap the quewy t-to be a seq of quewies f-fow the sim e-engine to ensuwe e-evowvabiwity of candidate genewation
+     * and as a wesuwt, (⑅˘꒳˘) it wiww wetuwn s-seq[seq[initiawcandidate]]
      */
-    val engineQueries =
-      Seq(fromParamsForRelatedVideoTweet(query.internalId, query.params))
+    vaw enginequewies =
+      seq(fwompawamsfowwewatedvideotweet(quewy.intewnawid, nyaa~~ quewy.pawams))
 
-    Future
-      .collect {
-        engineQueries.map { query =>
-          for {
-            candidates <- getFunc(query)
-            prefilterCandidates <- convertToInitialCandidates(
-              candidates.toSeq.flatten
+    futuwe
+      .cowwect {
+        enginequewies.map { q-quewy =>
+          fow {
+            candidates <- getfunc(quewy)
+            p-pwefiwtewcandidates <- c-convewttoinitiawcandidates(
+              c-candidates.toseq.fwatten
             )
-          } yield prefilterCandidates
+          } yiewd pwefiwtewcandidates
         }
       }
   }
 
-  private def preRankFilter(
-    query: RelatedVideoTweetCandidateGeneratorQuery,
-    candidates: Seq[Seq[InitialCandidate]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    preRankFilterRunner
-      .runSequentialFilters(query, candidates)
+  p-pwivate def pwewankfiwtew(
+    quewy: wewatedvideotweetcandidategenewatowquewy, OwO
+    c-candidates: s-seq[seq[initiawcandidate]]
+  ): futuwe[seq[seq[initiawcandidate]]] = {
+    pwewankfiwtewwunnew
+      .wunsequentiawfiwtews(quewy, rawr x3 candidates)
   }
 
-  private[candidate_generation] def convertToInitialCandidates(
-    candidates: Seq[TweetWithCandidateGenerationInfo],
-  ): Future[Seq[InitialCandidate]] = {
-    val tweetIds = candidates.map(_.tweetId).toSet
-    Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
+  pwivate[candidate_genewation] def convewttoinitiawcandidates(
+    c-candidates: seq[tweetwithcandidategenewationinfo], XD
+  ): f-futuwe[seq[initiawcandidate]] = {
+    vaw tweetids = c-candidates.map(_.tweetid).toset
+    f-futuwe.cowwect(tweetinfostowe.muwtiget(tweetids)).map { tweetinfos =>
       /***
-       * If tweetInfo does not exist, we will filter out this tweet candidate.
-       * This tweetInfo filter also acts as the VF filter
+       * if tweetinfo d-does nyot exist, σωσ w-we wiww fiwtew out this tweet c-candidate. (U ᵕ U❁)
+       * t-this tweetinfo fiwtew awso acts as the vf fiwtew
        */
-      candidates.collect {
-        case candidate if tweetInfos.getOrElse(candidate.tweetId, None).isDefined =>
-          val tweetInfo = tweetInfos(candidate.tweetId)
-            .getOrElse(throw new IllegalStateException("Check previous line's condition"))
+      candidates.cowwect {
+        case candidate i-if tweetinfos.getowewse(candidate.tweetid, (U ﹏ U) n-nyone).isdefined =>
+          v-vaw tweetinfo = tweetinfos(candidate.tweetid)
+            .getowewse(thwow n-nyew iwwegawstateexception("check p-pwevious wine's condition"))
 
-          InitialCandidate(
-            tweetId = candidate.tweetId,
-            tweetInfo = tweetInfo,
-            candidate.candidateGenerationInfo
+          i-initiawcandidate(
+            tweetid = candidate.tweetid, :3
+            tweetinfo = tweetinfo, ( ͡o ω ͡o )
+            c-candidate.candidategenewationinfo
           )
       }
     }

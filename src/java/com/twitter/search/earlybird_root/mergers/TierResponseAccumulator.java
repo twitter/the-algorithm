@@ -1,97 +1,97 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
-import java.util.ArrayList;
-import java.util.List;
+impowt java.utiw.awwaywist;
+impowt j-java.utiw.wist;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.TierResponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.tiewwesponse;
 
-public final class TierResponseAccumulator extends ResponseAccumulator {
-  private static final String TARGET_TYPE_TIER = "tier";
+p-pubwic finaw cwass t-tiewwesponseaccumuwatow e-extends w-wesponseaccumuwatow {
+  pwivate static finaw stwing tawget_type_tiew = "tiew";
 
-  private final List<TierResponse> tierResponses = new ArrayList<>();
-  // Total number of partitions the request was sent to, across all tiers.
-  private int totalPartitionsQueriedInAllTiers = 0;
-  // Among the above partitions, the number of them that returned successful responses.
-  private int totalSuccessfulPartitionsInAllTiers = 0;
+  pwivate finaw w-wist<tiewwesponse> tiewwesponses = nyew awwaywist<>();
+  // t-totaw nyumbew of pawtitions the w-wequest was sent to, >w< acwoss aww tiews. mya
+  pwivate int totawpawtitionsquewiedinawwtiews = 0;
+  // a-among the above pawtitions, >w< the n-nyumbew of them t-that wetuwned successfuw wesponses.
+  pwivate int totawsuccessfuwpawtitionsinawwtiews = 0;
 
-  @Override
-  public String getNameForLogging(int responseIndex, int numTotalResponses) {
-    return TARGET_TYPE_TIER + (numTotalResponses - responseIndex);
+  @ovewwide
+  pubwic s-stwing getnamefowwogging(int wesponseindex, nyaa~~ int nyumtotawwesponses) {
+    wetuwn t-tawget_type_tiew + (numtotawwesponses - wesponseindex);
   }
 
-  @Override
-  public String getNameForEarlybirdResponseCodeStats(int responseIndex, int numTotalResponses) {
-    return TARGET_TYPE_TIER + (numTotalResponses - responseIndex);
+  @ovewwide
+  p-pubwic s-stwing getnamefoweawwybiwdwesponsecodestats(int w-wesponseindex, (✿oωo) i-int nyumtotawwesponses) {
+    wetuwn tawget_type_tiew + (numtotawwesponses - wesponseindex);
   }
 
-  @Override
-  protected boolean isMergingAcrossTiers() {
-    return true;
+  @ovewwide
+  p-pwotected boowean ismewgingacwosstiews() {
+    wetuwn twue;
   }
 
-  @Override
-  public boolean shouldEarlyTerminateMerge(EarlyTerminateTierMergePredicate merger) {
-    if (foundError()) {
-      return true;
+  @ovewwide
+  p-pubwic boowean shouwdeawwytewminatemewge(eawwytewminatetiewmewgepwedicate mewgew) {
+    if (foundewwow()) {
+      wetuwn twue;
     }
 
-    int numResults = 0;
-    for (EarlybirdResponse resp : getSuccessResponses()) {
-      if (resp.isSetSearchResults()) {
-        numResults += resp.getSearchResults().getResultsSize();
+    int n-nyumwesuwts = 0;
+    fow (eawwybiwdwesponse w-wesp : g-getsuccesswesponses()) {
+      i-if (wesp.issetseawchwesuwts()) {
+        nyumwesuwts += wesp.getseawchwesuwts().getwesuwtssize();
       }
     }
 
-    return merger.shouldEarlyTerminateTierMerge(numResults, foundEarlyTermination());
+    wetuwn mewgew.shouwdeawwytewminatetiewmewge(numwesuwts, ʘwʘ foundeawwytewmination());
   }
 
-  @Override
-  public void handleSkippedResponse(EarlybirdResponseCode responseCode) {
-    tierResponses.add(new TierResponse()
-        .setNumPartitions(0)
-        .setNumSuccessfulPartitions(0)
-        .setTierResponseCode(responseCode));
+  @ovewwide
+  p-pubwic v-void handweskippedwesponse(eawwybiwdwesponsecode wesponsecode) {
+    t-tiewwesponses.add(new t-tiewwesponse()
+        .setnumpawtitions(0)
+        .setnumsuccessfuwpawtitions(0)
+        .settiewwesponsecode(wesponsecode));
   }
 
-  @Override
-  public void handleErrorResponse(EarlybirdResponse response) {
-    // TierResponse, which is only returned if merging results from different tiers.
-    TierResponse tr = new TierResponse();
-    if (response != null) {
-      if (response.isSetResponseCode()) {
-        tr.setTierResponseCode(response.getResponseCode());
-      } else {
-        tr.setTierResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
+  @ovewwide
+  pubwic void handweewwowwesponse(eawwybiwdwesponse w-wesponse) {
+    // tiewwesponse, (ˆ ﻌ ˆ)♡ w-which is onwy wetuwned if mewging wesuwts fwom d-diffewent tiews. 😳😳😳
+    tiewwesponse t-tw = nyew tiewwesponse();
+    if (wesponse != n-nyuww) {
+      i-if (wesponse.issetwesponsecode()) {
+        tw.settiewwesponsecode(wesponse.getwesponsecode());
+      } ewse {
+        tw.settiewwesponsecode(eawwybiwdwesponsecode.twansient_ewwow);
       }
-      tr.setNumPartitions(response.getNumPartitions());
-      tr.setNumSuccessfulPartitions(0);
-      totalPartitionsQueriedInAllTiers += response.getNumPartitions();
-    } else {
-      tr.setTierResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR)
-          .setNumPartitions(0)
-          .setNumSuccessfulPartitions(0);
+      tw.setnumpawtitions(wesponse.getnumpawtitions());
+      tw.setnumsuccessfuwpawtitions(0);
+      totawpawtitionsquewiedinawwtiews += w-wesponse.getnumpawtitions();
+    } e-ewse {
+      tw.settiewwesponsecode(eawwybiwdwesponsecode.twansient_ewwow)
+          .setnumpawtitions(0)
+          .setnumsuccessfuwpawtitions(0);
     }
 
-    tierResponses.add(tr);
+    t-tiewwesponses.add(tw);
   }
 
-  @Override
-  public AccumulatedResponses.PartitionCounts getPartitionCounts() {
-    return new AccumulatedResponses.PartitionCounts(totalPartitionsQueriedInAllTiers,
-        totalSuccessfulPartitionsInAllTiers, tierResponses);
+  @ovewwide
+  p-pubwic accumuwatedwesponses.pawtitioncounts g-getpawtitioncounts() {
+    wetuwn nyew accumuwatedwesponses.pawtitioncounts(totawpawtitionsquewiedinawwtiews, :3
+        totawsuccessfuwpawtitionsinawwtiews, OwO t-tiewwesponses);
   }
 
-  @Override
-  public void extraSuccessfulResponseHandler(EarlybirdResponse response) {
-    // Record tier stats.
-    totalPartitionsQueriedInAllTiers += response.getNumPartitions();
-    totalSuccessfulPartitionsInAllTiers += response.getNumSuccessfulPartitions();
+  @ovewwide
+  pubwic void extwasuccessfuwwesponsehandwew(eawwybiwdwesponse wesponse) {
+    // wecowd tiew stats. (U ﹏ U)
+    totawpawtitionsquewiedinawwtiews += w-wesponse.getnumpawtitions();
+    totawsuccessfuwpawtitionsinawwtiews += w-wesponse.getnumsuccessfuwpawtitions();
 
-    tierResponses.add(new TierResponse()
-        .setNumPartitions(response.getNumPartitions())
-        .setNumSuccessfulPartitions(response.getNumSuccessfulPartitions())
-        .setTierResponseCode(EarlybirdResponseCode.SUCCESS));
+    tiewwesponses.add(new t-tiewwesponse()
+        .setnumpawtitions(wesponse.getnumpawtitions())
+        .setnumsuccessfuwpawtitions(wesponse.getnumsuccessfuwpawtitions())
+        .settiewwesponsecode(eawwybiwdwesponsecode.success));
   }
 }

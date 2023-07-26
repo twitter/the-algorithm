@@ -1,23 +1,23 @@
-package com.twitter.home_mixer.product.scored_tweets.scoring_pipeline
+package com.twittew.home_mixew.pwoduct.scowed_tweets.scowing_pipewine
 
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.scorer.HeuristicScorer
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineConfig
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.scowew.heuwisticscowew
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.sewectow.insewtappendwesuwts
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awwpipewines
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowingpipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.scowing.scowingpipewineconfig
 
-object ScoredTweetsHeuristicScoringPipelineConfig
-    extends ScoringPipelineConfig[ScoredTweetsQuery, TweetCandidate] {
+object s-scowedtweetsheuwisticscowingpipewineconfig
+    extends scowingpipewineconfig[scowedtweetsquewy, mya tweetcandidate] {
 
-  override val identifier: ScoringPipelineIdentifier =
-    ScoringPipelineIdentifier("ScoredTweetsHeuristic")
+  o-ovewwide vaw identifiew: scowingpipewineidentifiew =
+    scowingpipewineidentifiew("scowedtweetsheuwistic")
 
-  override val selectors: Seq[Selector[ScoredTweetsQuery]] = Seq(InsertAppendResults(AllPipelines))
+  o-ovewwide vaw sewectows: seq[sewectow[scowedtweetsquewy]] = seq(insewtappendwesuwts(awwpipewines))
 
-  override val scorers: Seq[Scorer[ScoredTweetsQuery, TweetCandidate]] =
-    Seq(HeuristicScorer)
+  ovewwide v-vaw scowews: seq[scowew[scowedtweetsquewy, mya t-tweetcandidate]] =
+    s-seq(heuwisticscowew)
 }

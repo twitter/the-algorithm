@@ -1,47 +1,47 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twittew.simcwustews_v2.hdfs_souwces.injections
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaBinaryThrift
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.ml.api.thriftscala.Embedding
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.scawabinawythwift
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa._
+i-impowt c-com.twittew.mw.api.thwiftscawa.embedding
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.wong2bigendian
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.scawacompactthwift
 
-object EntityEmbeddingsInjections {
+object e-entityembeddingsinjections {
 
-  final val EntitySimClustersEmbeddingInjection: KeyValInjection[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  finaw vaw entitysimcwustewsembeddinginjection: keyvawinjection[
+    s-simcwustewsembeddingid, rawr x3
+    simcwustewsembedding
   ] =
-    KeyValInjection(
-      ScalaBinaryThrift(SimClustersEmbeddingId),
-      ScalaBinaryThrift(SimClustersEmbedding)
+    k-keyvawinjection(
+      scawabinawythwift(simcwustewsembeddingid), (✿oωo)
+      scawabinawythwift(simcwustewsembedding)
     )
 
-  final val InternalIdEmbeddingInjection: KeyValInjection[
-    SimClustersEmbeddingId,
-    InternalIdEmbedding
+  finaw v-vaw intewnawidembeddinginjection: keyvawinjection[
+    s-simcwustewsembeddingid, (ˆ ﻌ ˆ)♡
+    i-intewnawidembedding
   ] =
-    KeyValInjection(
-      ScalaBinaryThrift(SimClustersEmbeddingId),
-      ScalaBinaryThrift(InternalIdEmbedding)
+    keyvawinjection(
+      scawabinawythwift(simcwustewsembeddingid),
+      scawabinawythwift(intewnawidembedding)
     )
 
-  final val EntitySimClustersMultiEmbeddingInjection: KeyValInjection[
-    SimClustersMultiEmbeddingId,
-    SimClustersMultiEmbedding
+  finaw v-vaw entitysimcwustewsmuwtiembeddinginjection: keyvawinjection[
+    simcwustewsmuwtiembeddingid, (˘ω˘)
+    simcwustewsmuwtiembedding
   ] =
-    KeyValInjection(
-      ScalaBinaryThrift(SimClustersMultiEmbeddingId),
-      ScalaBinaryThrift(SimClustersMultiEmbedding)
+    keyvawinjection(
+      scawabinawythwift(simcwustewsmuwtiembeddingid), (⑅˘꒳˘)
+      s-scawabinawythwift(simcwustewsmuwtiembedding)
     )
 
-  final val UserMbcgEmbeddingInjection: KeyValInjection[
-    Long,
-    Embedding
+  finaw v-vaw usewmbcgembeddinginjection: k-keyvawinjection[
+    w-wong, (///ˬ///✿)
+    e-embedding
   ] =
-    KeyValInjection[Long, Embedding](
-      Long2BigEndian,
-      ScalaCompactThrift(Embedding)
+    keyvawinjection[wong, 😳😳😳 embedding](
+      w-wong2bigendian, 🥺
+      scawacompactthwift(embedding)
     )
 }

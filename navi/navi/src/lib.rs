@@ -1,215 +1,215 @@
-#[macro_use]
-extern crate lazy_static;
-extern crate core;
+#[macwo_use]
+extewn cwate wazy_static;
+e-extewn cwate c-cowe;
 
-use serde_json::Value;
-use tokio::sync::oneshot::Sender;
-use tokio::time::Instant;
-use std::ops::Deref;
-use itertools::Itertools;
-use crate::bootstrap::TensorInput;
-use crate::predict_service::Model;
-use crate::tf_proto::{DataType, TensorProto};
+use sewde_json::vawue;
+u-use tokio::sync::oneshot::sendew;
+u-use tokio::time::instant;
+u-use s-std::ops::dewef;
+u-use itewtoows::itewtoows;
+u-use cwate::bootstwap::tensowinput;
+use cwate::pwedict_sewvice::modew;
+use cwate::tf_pwoto::{datatype, 😳😳😳 tensowpwoto};
 
-pub mod batch;
-pub mod bootstrap;
-pub mod cli_args;
-pub mod metrics;
-pub mod onnx_model;
-pub mod predict_service;
-pub mod tf_model;
-pub mod torch_model;
-pub mod cores {
-    pub mod validator;
+p-pub mod batch;
+pub mod bootstwap;
+pub mod cwi_awgs;
+p-pub mod metwics;
+pub mod onnx_modew;
+p-pub mod pwedict_sewvice;
+pub mod tf_modew;
+pub mod towch_modew;
+p-pub mod cowes {
+    pub m-mod vawidatow;
 }
 
-pub mod tf_proto {
-    tonic::include_proto!("tensorflow");
-    pub mod tensorflow_serving {
-        tonic::include_proto!("tensorflow.serving");
+p-pub mod tf_pwoto {
+    tonic::incwude_pwoto!("tensowfwow");
+    pub mod tensowfwow_sewving {
+        tonic::incwude_pwoto!("tensowfwow.sewving");
     }
 }
 
-pub mod kf_serving {
-    tonic::include_proto!("inference");
+pub mod kf_sewving {
+    t-tonic::incwude_pwoto!("infewence");
 }
 #[cfg(test)]
 mod tests {
-    use crate::cli_args::Args;
+    use cwate::cwi_awgs::awgs;
     #[test]
-    fn test_version_string_to_epoch() {
-        assert_eq!(
-            Args::version_str_to_epoch("2022-12-20T10:18:53.000Z").unwrap_or(-1),
+    fn test_vewsion_stwing_to_epoch() {
+        assewt_eq!(
+            a-awgs::vewsion_stw_to_epoch("2022-12-20t10:18:53.000z").unwwap_ow(-1),
             1671531533000
         );
-        assert_eq!(Args::version_str_to_epoch("1203444").unwrap_or(-1), 1203444);
+        assewt_eq!(awgs::vewsion_stw_to_epoch("1203444").unwwap_ow(-1), ^^;; 1203444);
     }
 }
 
-mod utils {
-    use crate::cli_args::{ARGS, MODEL_SPECS};
-    use anyhow::Result;
-    use log::info;
-    use serde_json::Value;
+m-mod utiws {
+    u-use cwate::cwi_awgs::{awgs, m-modew_specs};
+    u-use anyhow::wesuwt;
+    use wog::info;
+    u-use sewde_json::vawue;
 
-    pub fn read_config(meta_file: &String) -> Result<Value> {
-        let json = std::fs::read_to_string(meta_file)?;
-        let v: Value = serde_json::from_str(&json)?;
-        Ok(v)
+    pub fn wead_config(meta_fiwe: &stwing) -> wesuwt<vawue> {
+        wet json = s-std::fs::wead_to_stwing(meta_fiwe)?;
+        wet v: vawue = sewde_json::fwom_stw(&json)?;
+        ok(v)
     }
-    pub fn get_config_or_else<F>(model_config: &Value, key: &str, default: F) -> String
-    where
-        F: FnOnce() -> String,
+    pub fn get_config_ow_ewse<f>(modew_config: &vawue, o.O key: &stw, defauwt: f) -> s-stwing
+    whewe
+        f: fnonce() -> s-stwing, (///ˬ///✿)
     {
-        match model_config[key] {
-            Value::String(ref v) => {
-                info!("from model_config: {}={}", key, v);
-                v.to_string()
+        match m-modew_config[key] {
+            v-vawue::stwing(wef v) => {
+                info!("fwom modew_config: {}={}", σωσ key, v);
+                v-v.to_stwing()
             }
-            Value::Number(ref num) => {
+            v-vawue::numbew(wef nyum) => {
                 info!(
-                    "from model_config: {}={} (turn number into a string)",
-                    key, num
+                    "fwom m-modew_config: {}={} (tuwn n-nyumbew into a stwing)", nyaa~~
+                    k-key, ^^;; nyum
                 );
-                num.to_string()
+                nyum.to_stwing()
             }
             _ => {
-                let d = default();
-                info!("from default: {}={}", key, d);
+                w-wet d = defauwt();
+                info!("fwom defauwt: {}={}", ^•ﻌ•^ k-key, d);
                 d
             }
         }
     }
-    pub fn get_config_or(model_config: &Value, key: &str, default: &str) -> String {
-        get_config_or_else(model_config, key, || default.to_string())
+    pub fn get_config_ow(modew_config: &vawue, k-key: &stw, σωσ defauwt: &stw) -> s-stwing {
+        g-get_config_ow_ewse(modew_config, -.- key, || defauwt.to_stwing())
     }
-    pub fn get_meta_dir() -> &'static str {
-        ARGS.meta_json_dir
-            .as_ref()
-            .map(|s| s.as_str())
-            .unwrap_or_else(|| {
-                let model_dir = &ARGS.model_dir[0];
-                let meta_dir = &model_dir[0..model_dir.rfind(&MODEL_SPECS[0]).unwrap()];
+    pub fn get_meta_diw() -> &'static stw {
+        awgs.meta_json_diw
+            .as_wef()
+            .map(|s| s.as_stw())
+            .unwwap_ow_ewse(|| {
+                wet m-modew_diw = &awgs.modew_diw[0];
+                w-wet meta_diw = &modew_diw[0..modew_diw.wfind(&modew_specs[0]).unwwap()];
                 info!(
-                    "no meta_json_dir specified, hence derive from first model dir:{}->{}",
-                    model_dir, meta_dir
+                    "no m-meta_json_diw s-specified, ^^;; h-hence dewive fwom fiwst modew diw:{}->{}", XD
+                    modew_diw, meta_diw
                 );
-                meta_dir
+                m-meta_diw
             })
     }
 }
 
-pub type SerializedInput = Vec<u8>;
-pub const VERSION: &str = env!("CARGO_PKG_VERSION");
-pub const NAME: &str = env!("CARGO_PKG_NAME");
-pub type ModelFactory<T> = fn(usize, String, &Value) -> anyhow::Result<T>;
-pub const MAX_NUM_MODELS: usize = 16;
-pub const MAX_NUM_OUTPUTS: usize = 30;
-pub const MAX_NUM_INPUTS: usize = 120;
-pub const META_INFO: &str = "META.json";
+pub type sewiawizedinput = vec<u8>;
+pub const vewsion: &stw = e-env!("cawgo_pkg_vewsion");
+pub const nyame: &stw = e-env!("cawgo_pkg_name");
+p-pub type modewfactowy<t> = fn(usize, 🥺 s-stwing, &vawue) -> anyhow::wesuwt<t>;
+pub c-const max_num_modews: u-usize = 16;
+p-pub const max_num_outputs: u-usize = 30;
+pub const max_num_inputs: usize = 120;
+p-pub const meta_info: &stw = "meta.json";
 
-//use a heap allocated generic type here so that both
-//Tensorflow & Pytorch implementation can return their Tensor wrapped in a Box
-//without an extra memcopy to Vec
-pub type TensorReturn<T> = Box<dyn Deref<Target = [T]>>;
+//use a-a heap awwocated g-genewic type h-hewe so that both
+//tensowfwow & p-pytowch impwementation can wetuwn theiw tensow wwapped in a box
+//without a-an extwa memcopy to vec
+pub type tensowwetuwn<t> = box<dyn dewef<tawget = [t]>>;
 
-//returned tensor may be int64 i.e., a list of relevant ad ids
-pub enum TensorReturnEnum {
-    FloatTensorReturn(TensorReturn<f32>),
-    StringTensorReturn(TensorReturn<String>),
-    Int64TensorReturn(TensorReturn<i64>),
-    Int32TensorReturn(TensorReturn<i32>),
+//wetuwned tensow may be int64 i.e., a-a wist of wewevant ad ids
+pub enum tensowwetuwnenum {
+    fwoattensowwetuwn(tensowwetuwn<f32>), òωó
+    s-stwingtensowwetuwn(tensowwetuwn<stwing>), (ˆ ﻌ ˆ)♡
+    i-int64tensowwetuwn(tensowwetuwn<i64>), -.-
+    int32tensowwetuwn(tensowwetuwn<i32>), :3
 }
 
-impl TensorReturnEnum {
-    #[inline(always)]
-    pub fn slice(&self, start: usize, end: usize) -> TensorScores {
-        match self {
-            TensorReturnEnum::FloatTensorReturn(f32_return) => {
-                TensorScores::Float32TensorScores(f32_return[start..end].to_vec())
+i-impw tensowwetuwnenum {
+    #[inwine(awways)]
+    pub fn s-swice(&sewf, ʘwʘ stawt: usize, 🥺 end: u-usize) -> tensowscowes {
+        m-match sewf {
+            tensowwetuwnenum::fwoattensowwetuwn(f32_wetuwn) => {
+                tensowscowes::fwoat32tensowscowes(f32_wetuwn[stawt..end].to_vec())
             }
-            TensorReturnEnum::Int64TensorReturn(i64_return) => {
-                TensorScores::Int64TensorScores(i64_return[start..end].to_vec())
+            tensowwetuwnenum::int64tensowwetuwn(i64_wetuwn) => {
+                tensowscowes::int64tensowscowes(i64_wetuwn[stawt..end].to_vec())
             }
-            TensorReturnEnum::Int32TensorReturn(i32_return) => {
-                TensorScores::Int32TensorScores(i32_return[start..end].to_vec())
+            tensowwetuwnenum::int32tensowwetuwn(i32_wetuwn) => {
+                t-tensowscowes::int32tensowscowes(i32_wetuwn[stawt..end].to_vec())
             }
-            TensorReturnEnum::StringTensorReturn(str_return) => {
-                TensorScores::StringTensorScores(str_return[start..end].to_vec())
+            tensowwetuwnenum::stwingtensowwetuwn(stw_wetuwn) => {
+                t-tensowscowes::stwingtensowscowes(stw_wetuwn[stawt..end].to_vec())
             }
         }
     }
 }
 
-#[derive(Debug)]
-pub enum PredictResult {
-    Ok(Vec<TensorScores>, i64),
-    DropDueToOverload,
-    ModelNotFound(usize),
-    ModelNotReady(usize),
-    ModelVersionNotFound(usize, i64),
+#[dewive(debug)]
+pub enum p-pwedictwesuwt {
+    o-ok(vec<tensowscowes>, i64), >_<
+    dwopduetoovewwoad, ʘwʘ
+    m-modewnotfound(usize), (˘ω˘)
+    m-modewnotweady(usize), (✿oωo)
+    modewvewsionnotfound(usize, (///ˬ///✿) i64),
 }
 
-#[derive(Debug)]
-pub enum TensorScores {
-    Float32TensorScores(Vec<f32>),
-    Int64TensorScores(Vec<i64>),
-    Int32TensorScores(Vec<i32>),
-    StringTensorScores(Vec<String>),
+#[dewive(debug)]
+p-pub enum tensowscowes {
+    f-fwoat32tensowscowes(vec<f32>), rawr x3
+    int64tensowscowes(vec<i64>), -.-
+    int32tensowscowes(vec<i32>),
+    stwingtensowscowes(vec<stwing>), ^^
 }
 
-impl TensorScores {
-    pub fn create_tensor_proto(self) -> TensorProto {
-        match self {
-            TensorScores::Float32TensorScores(f32_tensor) => TensorProto {
-                dtype: DataType::DtFloat as i32,
-                float_val: f32_tensor,
-                ..Default::default()
-            },
-            TensorScores::Int64TensorScores(i64_tensor) => TensorProto {
-                dtype: DataType::DtInt64 as i32,
-                int64_val: i64_tensor,
-                ..Default::default()
-            },
-            TensorScores::Int32TensorScores(i32_tensor) => TensorProto {
-                dtype: DataType::DtInt32 as i32,
-                int_val: i32_tensor,
-                ..Default::default()
-            },
-            TensorScores::StringTensorScores(str_tensor) => TensorProto {
-                dtype: DataType::DtString as i32,
-                string_val: str_tensor.into_iter().map(|s| s.into_bytes()).collect_vec(),
-                ..Default::default()
-            },
+impw tensowscowes {
+    p-pub fn cweate_tensow_pwoto(sewf) -> t-tensowpwoto {
+        m-match sewf {
+            t-tensowscowes::fwoat32tensowscowes(f32_tensow) => t-tensowpwoto {
+                dtype: datatype::dtfwoat a-as i32, (⑅˘꒳˘)
+                fwoat_vaw: f32_tensow, nyaa~~
+                ..defauwt::defauwt()
+            }, /(^•ω•^)
+            tensowscowes::int64tensowscowes(i64_tensow) => t-tensowpwoto {
+                d-dtype: datatype::dtint64 as i32, (U ﹏ U)
+                i-int64_vaw: i-i64_tensow, 😳😳😳
+                ..defauwt::defauwt()
+            }, >w<
+            tensowscowes::int32tensowscowes(i32_tensow) => tensowpwoto {
+                dtype: d-datatype::dtint32 as i32, XD
+                int_vaw: i32_tensow, o.O
+                ..defauwt::defauwt()
+            }, mya
+            tensowscowes::stwingtensowscowes(stw_tensow) => tensowpwoto {
+                d-dtype: datatype::dtstwing as i32, 🥺
+                stwing_vaw: s-stw_tensow.into_itew().map(|s| s.into_bytes()).cowwect_vec(), ^^;;
+                ..defauwt::defauwt()
+            }, :3
         }
     }
-    pub fn len(&self) -> usize {
-        match &self {
-            TensorScores::Float32TensorScores(t) => t.len(),
-            TensorScores::Int64TensorScores(t) => t.len(),
-            TensorScores::Int32TensorScores(t) => t.len(),
-            TensorScores::StringTensorScores(t) => t.len(),
+    p-pub fn wen(&sewf) -> usize {
+        match &sewf {
+            tensowscowes::fwoat32tensowscowes(t) => t-t.wen(), (U ﹏ U)
+            t-tensowscowes::int64tensowscowes(t) => t.wen(), OwO
+            tensowscowes::int32tensowscowes(t) => t.wen(), 😳😳😳
+            t-tensowscowes::stwingtensowscowes(t) => t.wen(), (ˆ ﻌ ˆ)♡
         }
     }
 }
 
-#[derive(Debug)]
-pub enum PredictMessage<T: Model> {
-    Predict(
-        usize,
-        Option<i64>,
-        Vec<TensorInput>,
-        Sender<PredictResult>,
-        Instant,
+#[dewive(debug)]
+pub e-enum pwedictmessage<t: modew> {
+    pwedict(
+        usize, XD
+        o-option<i64>, (ˆ ﻌ ˆ)♡
+        vec<tensowinput>, ( ͡o ω ͡o )
+        s-sendew<pwedictwesuwt>,
+        i-instant, rawr x3
     ),
-    UpsertModel(T),
+    upsewtmodew(t), nyaa~~
     /*
-    #[allow(dead_code)]
-    DeleteModel(usize),
+    #[awwow(dead_code)]
+    d-dewetemodew(usize), >_<
      */
 }
 
-#[derive(Debug)]
-pub struct Callback(Sender<PredictResult>, usize);
+#[dewive(debug)]
+pub stwuct c-cawwback(sendew<pwedictwesuwt>, u-usize);
 
-pub const MAX_VERSIONS_PER_MODEL: usize = 2;
+pub c-const max_vewsions_pew_modew: usize = 2;

@@ -1,155 +1,155 @@
-package com.twitter.servo.hydrator
+package com.twittew.sewvo.hydwatow
 
-import com.twitter.servo.data.Mutation
-import com.twitter.servo.util.{Effect, Gate}
-import com.twitter.servo.repository._
-import com.twitter.util.{Future, Return, Try}
+impowt com.twittew.sewvo.data.mutation
+i-impowt c-com.twittew.sewvo.utiw.{effect, (U ﹏ U) g-gate}
+impowt com.twittew.sewvo.wepositowy._
+i-impowt c-com.twittew.utiw.{futuwe, UwU w-wetuwn, 😳😳😳 t-twy}
 
-object KeyValueHydrator {
-  // KeyValueHydrator extends this function type
-  type FunctionType[Q, K, V] = (Q, Future[KeyValueResult[K, V]]) => Future[Mutation[V]]
-  type Filter[Q, K, V] = (Q, Future[KeyValueResult[K, V]]) => Future[Boolean]
+object k-keyvawuehydwatow {
+  // keyvawuehydwatow extends this function type
+  type functiontype[q, XD k-k, o.O v] = (q, futuwe[keyvawuewesuwt[k, (⑅˘꒳˘) v]]) => futuwe[mutation[v]]
+  t-type fiwtew[q, 😳😳😳 k, v] = (q, futuwe[keyvawuewesuwt[k, nyaa~~ v-v]]) => futuwe[boowean]
 
-  private[this] val _unit = fromMutation[Any, Any, Any](Mutation.unit[Any])
-
-  /**
-   * A no-op hydrator.  Forms a monoid with `also`.
-   */
-  def unit[Q, K, V]: KeyValueHydrator[Q, K, V] =
-    _unit.asInstanceOf[KeyValueHydrator[Q, K, V]]
+  pwivate[this] vaw _unit = fwommutation[any, rawr any, a-any](mutation.unit[any])
 
   /**
-   * Packages a function as a KeyValueHydrator
+   * a nyo-op hydwatow. -.-  f-fowms a-a monoid with `awso`. (✿oωo)
    */
-  def apply[Q, K, V](f: FunctionType[Q, K, V]): KeyValueHydrator[Q, K, V] =
-    new KeyValueHydrator[Q, K, V] {
-      override def apply(query: Q, futureResults: Future[KeyValueResult[K, V]]) =
-        f(query, futureResults)
+  def unit[q, /(^•ω•^) k, v]: keyvawuehydwatow[q, 🥺 k, v] =
+    _unit.asinstanceof[keyvawuehydwatow[q, ʘwʘ k-k, v]]
+
+  /**
+   * packages a function as a keyvawuehydwatow
+   */
+  def a-appwy[q, UwU k, v](f: functiontype[q, XD k-k, v]): keyvawuehydwatow[q, (✿oωo) k, v-v] =
+    nyew k-keyvawuehydwatow[q, :3 k-k, v] {
+      ovewwide def appwy(quewy: q, (///ˬ///✿) futuwewesuwts: f-futuwe[keyvawuewesuwt[k, nyaa~~ v]]) =
+        f(quewy, >w< futuwewesuwts)
     }
 
   /**
-   * Creates a new KeyValueHydrator out of several underlying KVHydrators. The
-   * apply method is called on each KeyValueHydrator with the same
-   * futureResults, allowing each to kick-off some asynchronous work
-   * to produce a future Hydrated[Mutation]. When all the future
-   * Hydrated[Mutation]s are available, the results are folded,
-   * left-to-right, over the mutations, to build up the final
-   * results.
+   * c-cweates a nyew keyvawuehydwatow out of sevewaw undewwying kvhydwatows. -.- the
+   * appwy method is cawwed on each keyvawuehydwatow w-with the same
+   * futuwewesuwts, a-awwowing each t-to kick-off some a-asynchwonous wowk
+   * to pwoduce a futuwe hydwated[mutation]. (✿oωo) when aww the futuwe
+   * h-hydwated[mutation]s a-awe avaiwabwe, (˘ω˘) the w-wesuwts awe fowded, rawr
+   * w-weft-to-wight, OwO ovew the m-mutations, ^•ﻌ•^ to buiwd up the finaw
+   * w-wesuwts.
    */
-  def inParallel[Q, K, V](hydrators: KeyValueHydrator[Q, K, V]*): KeyValueHydrator[Q, K, V] =
-    KeyValueHydrator[Q, K, V] { (query, futureResults) =>
-      val futureMutations = hydrators map { t =>
-        t(query, futureResults)
+  def inpawawwew[q, UwU k, v](hydwatows: k-keyvawuehydwatow[q, (˘ω˘) k, v]*): keyvawuehydwatow[q, (///ˬ///✿) k-k, σωσ v] =
+    keyvawuehydwatow[q, k-k, /(^•ω•^) v] { (quewy, 😳 f-futuwewesuwts) =>
+      vaw futuwemutations = hydwatows map { t =>
+        t(quewy, 😳 futuwewesuwts)
       }
-      Future.collect(futureMutations) map Mutation.all
+      futuwe.cowwect(futuwemutations) m-map m-mutation.aww
     }
 
-  def const[Q, K, V](futureMutation: Future[Mutation[V]]): KeyValueHydrator[Q, K, V] =
-    KeyValueHydrator[Q, K, V] { (_, _) =>
-      futureMutation
+  def const[q, k-k, (⑅˘꒳˘) v](futuwemutation: f-futuwe[mutation[v]]): k-keyvawuehydwatow[q, 😳😳😳 k, v] =
+    keyvawuehydwatow[q, 😳 k, v] { (_, XD _) =>
+      f-futuwemutation
     }
 
-  def fromMutation[Q, K, V](mutation: Mutation[V]): KeyValueHydrator[Q, K, V] =
-    const[Q, K, V](Future.value(mutation))
+  def fwommutation[q, mya k, v](mutation: mutation[v]): keyvawuehydwatow[q, ^•ﻌ•^ k-k, ʘwʘ v] =
+    const[q, ( ͡o ω ͡o ) k, v-v](futuwe.vawue(mutation))
 }
 
 /**
- * A KeyValueHydrator builds a Mutation to be applied to the values in a KeyValueResult, but does
- * not itself apply the Mutation.  This allows several KeyValueHydrators to be composed together to
- * begin their work in parallel to build the Mutations, which can then be combined and applied
- * to the results later (see asRepositoryFilter).
+ * a-a keyvawuehydwatow b-buiwds a mutation to be a-appwied to the v-vawues in a keyvawuewesuwt, mya b-but d-does
+ * nyot itsewf appwy the mutation. o.O  this awwows s-sevewaw keyvawuehydwatows t-to be composed togethew t-to
+ * begin t-theiw wowk in p-pawawwew to buiwd the mutations, (✿oωo) which can then be combined and a-appwied
+ * to the wesuwts watew (see aswepositowyfiwtew). :3
  *
- * Forms a monoid with KeyValueHydrator.unit as unit and `also` as the combining function.
+ * fowms a monoid with keyvawuehydwatow.unit as unit a-and `awso` as the combining function. 😳
  */
-trait KeyValueHydrator[Q, K, V] extends KeyValueHydrator.FunctionType[Q, K, V] {
-  protected[this] val unitMutation = Mutation.unit[V]
-  protected[this] val futureUnitMutation = Future.value(unitMutation)
+twait keyvawuehydwatow[q, (U ﹏ U) k-k, v] extends k-keyvawuehydwatow.functiontype[q, mya k-k, (U ᵕ U❁) v] {
+  pwotected[this] v-vaw unitmutation = mutation.unit[v]
+  p-pwotected[this] v-vaw futuweunitmutation = futuwe.vawue(unitmutation)
 
   /**
-   * Combines two KeyValueHydrators.  Forms a monoid with KeyValueHydator.unit
+   * combines two keyvawuehydwatows. :3  fowms a monoid with keyvawuehydatow.unit
    */
-  def also(next: KeyValueHydrator[Q, K, V]): KeyValueHydrator[Q, K, V] =
-    KeyValueHydrator.inParallel(this, next)
+  d-def awso(next: keyvawuehydwatow[q, mya k-k, OwO v]): keyvawuehydwatow[q, (ˆ ﻌ ˆ)♡ k-k, v] =
+    k-keyvawuehydwatow.inpawawwew(this, ʘwʘ nyext)
 
   /**
-   * Turns a single KeyValueHydrator into a RepositoryFilter by applying the Mutation to
-   * found values in the KeyValueResult.  If the mutation throws an exception, it will
-   * be caught and the resulting key/value paired moved to the failed map of the resulting
-   * KeyValueResult.
+   * tuwns a s-singwe keyvawuehydwatow i-into a wepositowyfiwtew b-by appwying the m-mutation to
+   * found vawues in the keyvawuewesuwt. o.O  if the mutation thwows an e-exception, UwU it wiww
+   * b-be caught a-and the wesuwting key/vawue paiwed m-moved to the f-faiwed map of the wesuwting
+   * k-keyvawuewesuwt. rawr x3
    */
-  lazy val asRepositoryFilter: RepositoryFilter[Q, KeyValueResult[K, V], KeyValueResult[K, V]] =
-    (query, futureResults) => {
-      this(query, futureResults) flatMap { mutation =>
-        val update = mutation.endo
-        futureResults map { results =>
-          results.mapValues {
-            case Return(Some(value)) => Try(Some(update(value)))
-            case x => x
+  wazy vaw aswepositowyfiwtew: wepositowyfiwtew[q, 🥺 keyvawuewesuwt[k, :3 v], k-keyvawuewesuwt[k, (ꈍᴗꈍ) v-v]] =
+    (quewy, 🥺 futuwewesuwts) => {
+      this(quewy, (✿oωo) futuwewesuwts) f-fwatmap { m-mutation =>
+        vaw update = mutation.endo
+        futuwewesuwts m-map { wesuwts =>
+          wesuwts.mapvawues {
+            case wetuwn(some(vawue)) => twy(some(update(vawue)))
+            c-case x => x
           }
         }
       }
     }
 
   /**
-   * Apply this hydrator to the result of a repository.
+   * appwy this hydwatow t-to the wesuwt o-of a wepositowy.
    */
-  def hydratedBy_:(repo: KeyValueRepository[Q, K, V]): KeyValueRepository[Q, K, V] =
-    Repository.composed(repo, asRepositoryFilter)
+  def hydwatedby_:(wepo: keyvawuewepositowy[q, (U ﹏ U) k-k, v]): k-keyvawuewepositowy[q, :3 k, v] =
+    wepositowy.composed(wepo, ^^;; aswepositowyfiwtew)
 
   /**
-   * Return a new hydrator that applies the same mutation as this
-   * hydrator, but can be enabled/disabled or dark enabled/disabled via Gates.  The light
-   * gate takes precedence over the dark gate.  This allows you to go from 0%->100% dark,
-   * and then from 0%->100% light without affecting backend traffic.
+   * wetuwn a nyew hydwatow t-that appwies the same mutation a-as this
+   * hydwatow, rawr but can be enabwed/disabwed ow dawk e-enabwed/disabwed via gates.  the w-wight
+   * gate t-takes pwecedence ovew the dawk g-gate.  this awwows you to go fwom 0%->100% d-dawk, 😳😳😳
+   * a-and then fwom 0%->100% w-wight without affecting b-backend twaffic. (✿oωo)
    */
-  @deprecated("Use enabledBy(() => Boolean, () => Boolean)", "2.5.1")
-  def enabledBy(light: Gate[Unit], dark: Gate[Unit] = Gate.False): KeyValueHydrator[Q, K, V] =
-    enabledBy(
+  @depwecated("use enabwedby(() => boowean, OwO () => b-boowean)", ʘwʘ "2.5.1")
+  def enabwedby(wight: gate[unit], (ˆ ﻌ ˆ)♡ d-dawk: gate[unit] = g-gate.fawse): k-keyvawuehydwatow[q, (U ﹏ U) k, v] =
+    enabwedby(
       { () =>
-        light()
-      },
+        w-wight()
+      }, UwU
       { () =>
-        dark()
+        dawk()
       })
 
   /**
-   * Return a new hydrator that applies the same mutation as this
-   * hydrator, but can be enabled/disabled or dark enable/disabled via nullary boolean functions.
-   * The light function takes precedence over the dark function.
-   * This allows you to go from 0%->100% dark, and then from 0%->100% light
-   * without affecting backend traffic.
+   * w-wetuwn a-a nyew hydwatow that appwies the same mutation as this
+   * hydwatow, XD b-but can be e-enabwed/disabwed o-ow dawk enabwe/disabwed v-via nyuwwawy boowean functions. ʘwʘ
+   * the w-wight function takes pwecedence ovew the dawk function. rawr x3
+   * this awwows you to go fwom 0%->100% d-dawk, ^^;; and then fwom 0%->100% w-wight
+   * without affecting backend t-twaffic. ʘwʘ
    */
-  def enabledBy(light: () => Boolean, dark: () => Boolean): KeyValueHydrator[Q, K, V] =
-    KeyValueHydrator[Q, K, V] { (query, futureResults) =>
-      val isLight = light()
-      val isDark = !isLight && dark()
-      if (!isLight && !isDark) {
-        futureUnitMutation
-      } else {
-        this(query, futureResults) map {
-          case mutation if isLight => mutation
-          case mutation if isDark => mutation.dark
+  def enabwedby(wight: () => b-boowean, (U ﹏ U) dawk: () => boowean): k-keyvawuehydwatow[q, (˘ω˘) k-k, v] =
+    k-keyvawuehydwatow[q, (ꈍᴗꈍ) k-k, /(^•ω•^) v] { (quewy, f-futuwewesuwts) =>
+      vaw iswight = wight()
+      vaw isdawk = !iswight && dawk()
+      if (!iswight && !isdawk) {
+        futuweunitmutation
+      } ewse {
+        t-this(quewy, >_< f-futuwewesuwts) m-map {
+          case mutation i-if iswight => mutation
+          case mutation if isdawk => m-mutation.dawk
         }
       }
     }
 
   /**
-   * Build a new hydrator that will return the same result as the current hydrator,
-   * but will additionally perform the supplied effect on the result of hydration.
+   * b-buiwd a nyew hydwatow that wiww w-wetuwn the same wesuwt as the cuwwent hydwatow, σωσ
+   * b-but wiww a-additionawwy pewfowm the suppwied e-effect on the w-wesuwt of hydwation. ^^;;
    */
-  def withEffect(effect: Effect[Option[V]]): KeyValueHydrator[Q, K, V] =
-    KeyValueHydrator[Q, K, V] { (query, futureResults) =>
-      this(query, futureResults) map { _ withEffect effect }
+  def witheffect(effect: effect[option[v]]): keyvawuehydwatow[q, 😳 k-k, >_< v-v] =
+    keyvawuehydwatow[q, -.- k-k, v-v] { (quewy, UwU futuwewesuwts) =>
+      t-this(quewy, :3 futuwewesuwts) m-map { _ witheffect e-effect }
     }
 
   /**
-   * Builds a new hydrator that only attempt to hydrate if the
-   * supplied filter returns true.
+   * buiwds a-a nyew hydwatow t-that onwy attempt to hydwate i-if the
+   * suppwied fiwtew wetuwns twue. σωσ
    */
-  def filter(predicate: KeyValueHydrator.Filter[Q, K, V]): KeyValueHydrator[Q, K, V] =
-    KeyValueHydrator[Q, K, V] { (q, r) =>
-      predicate(q, r) flatMap { t =>
-        if (t) this(q, r) else futureUnitMutation
+  d-def fiwtew(pwedicate: keyvawuehydwatow.fiwtew[q, >w< k-k, (ˆ ﻌ ˆ)♡ v]): keyvawuehydwatow[q, ʘwʘ k-k, v] =
+    keyvawuehydwatow[q, :3 k, v] { (q, (˘ω˘) w) =>
+      p-pwedicate(q, 😳😳😳 w) fwatmap { t =>
+        i-if (t) this(q, rawr x3 w) e-ewse futuweunitmutation
       }
     }
 }

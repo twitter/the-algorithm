@@ -1,200 +1,200 @@
-package com.twitter.simclusters_v2.score
+package com.twittew.simcwustews_v2.scowe
 
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbeddingId, ScoreId => ThriftScoreId}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.simcwustews_v2.common.simcwustewsembedding
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{simcwustewsembeddingid, :3 s-scoweid => t-thwiftscoweid}
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
 
-object SimClustersEmbeddingPairScoreStore {
+o-object simcwustewsembeddingpaiwscowestowe {
 
   /**
-   * Internal Instance of a SimClusters Embedding based Pair Score store.
+   * i-intewnaw instance of a simcwustews embedding based paiw scowe stowe.
    */
-  private case class SimClustersEmbeddingInternalPairScoreStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-    score: (SimClustersEmbedding, SimClustersEmbedding) => Future[Option[Double]])
-      extends PairScoreStore[
-        SimClustersEmbeddingPairScoreId,
-        SimClustersEmbeddingId,
-        SimClustersEmbeddingId,
-        SimClustersEmbedding,
-        SimClustersEmbedding
+  p-pwivate case cwass simcwustewsembeddingintewnawpaiwscowestowe(
+    simcwustewsembeddingstowe: w-weadabwestowe[simcwustewsembeddingid, simcwustewsembedding], nyaa~~
+    s-scowe: (simcwustewsembedding, 😳 simcwustewsembedding) => futuwe[option[doubwe]])
+      extends p-paiwscowestowe[
+        simcwustewsembeddingpaiwscoweid, (⑅˘꒳˘)
+        s-simcwustewsembeddingid, nyaa~~
+        s-simcwustewsembeddingid, OwO
+        simcwustewsembedding, rawr x3
+        simcwustewsembedding
       ] {
 
-    override val compositeKey1: SimClustersEmbeddingPairScoreId => SimClustersEmbeddingId =
-      _.embeddingId1
-    override val compositeKey2: SimClustersEmbeddingPairScoreId => SimClustersEmbeddingId =
-      _.embeddingId2
+    ovewwide vaw compositekey1: s-simcwustewsembeddingpaiwscoweid => simcwustewsembeddingid =
+      _.embeddingid1
+    ovewwide vaw compositekey2: simcwustewsembeddingpaiwscoweid => s-simcwustewsembeddingid =
+      _.embeddingid2
 
-    override def underlyingStore1: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] =
-      simClustersEmbeddingStore
+    ovewwide d-def undewwyingstowe1: w-weadabwestowe[simcwustewsembeddingid, XD simcwustewsembedding] =
+      s-simcwustewsembeddingstowe
 
-    override def underlyingStore2: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] =
-      simClustersEmbeddingStore
+    o-ovewwide def undewwyingstowe2: weadabwestowe[simcwustewsembeddingid, σωσ s-simcwustewsembedding] =
+      simcwustewsembeddingstowe
 
-    override def fromThriftScoreId: ThriftScoreId => SimClustersEmbeddingPairScoreId =
-      SimClustersEmbeddingPairScoreId.fromThriftScoreId
+    ovewwide def fwomthwiftscoweid: t-thwiftscoweid => simcwustewsembeddingpaiwscoweid =
+      simcwustewsembeddingpaiwscoweid.fwomthwiftscoweid
   }
 
-  def buildDotProductStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def buiwddotpwoductstowe(
+    simcwustewsembeddingstowe: weadabwestowe[simcwustewsembeddingid, (U ᵕ U❁) simcwustewsembedding]
+  ): paiwscowestowe[
+    s-simcwustewsembeddingpaiwscoweid, (U ﹏ U)
+    simcwustewsembeddingid, :3
+    simcwustewsembeddingid, ( ͡o ω ͡o )
+    s-simcwustewsembedding, σωσ
+    s-simcwustewsembedding
   ] = {
 
-    def dotProduct: (SimClustersEmbedding, SimClustersEmbedding) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.dotProduct(embedding2)))
+    d-def dotpwoduct: (simcwustewsembedding, >w< simcwustewsembedding) => futuwe[option[doubwe]] = {
+      case (embedding1, 😳😳😳 e-embedding2) =>
+        f-futuwe.vawue(some(embedding1.dotpwoduct(embedding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      dotProduct
+    simcwustewsembeddingintewnawpaiwscowestowe(
+      s-simcwustewsembeddingstowe, OwO
+      d-dotpwoduct
     )
   }
 
-  def buildCosineSimilarityStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def b-buiwdcosinesimiwawitystowe(
+    simcwustewsembeddingstowe: w-weadabwestowe[simcwustewsembeddingid, 😳 simcwustewsembedding]
+  ): paiwscowestowe[
+    s-simcwustewsembeddingpaiwscoweid, 😳😳😳
+    simcwustewsembeddingid,
+    s-simcwustewsembeddingid, (˘ω˘)
+    simcwustewsembedding, ʘwʘ
+    s-simcwustewsembedding
   ] = {
 
-    def cosineSimilarity: (SimClustersEmbedding, SimClustersEmbedding) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.cosineSimilarity(embedding2)))
+    d-def cosinesimiwawity: (simcwustewsembedding, ( ͡o ω ͡o ) simcwustewsembedding) => futuwe[option[doubwe]] = {
+      case (embedding1, o.O embedding2) =>
+        futuwe.vawue(some(embedding1.cosinesimiwawity(embedding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      cosineSimilarity
+    simcwustewsembeddingintewnawpaiwscowestowe(
+      s-simcwustewsembeddingstowe, >w<
+      c-cosinesimiwawity
     )
   }
 
-  def buildLogCosineSimilarityStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def buiwdwogcosinesimiwawitystowe(
+    s-simcwustewsembeddingstowe: w-weadabwestowe[simcwustewsembeddingid, 😳 s-simcwustewsembedding]
+  ): paiwscowestowe[
+    simcwustewsembeddingpaiwscoweid, 🥺
+    simcwustewsembeddingid, rawr x3
+    s-simcwustewsembeddingid, o.O
+    simcwustewsembedding,
+    simcwustewsembedding
   ] = {
 
-    def logNormCosineSimilarity: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.logNormCosineSimilarity(embedding2)))
+    def wognowmcosinesimiwawity: (
+      simcwustewsembedding, rawr
+      s-simcwustewsembedding
+    ) => futuwe[option[doubwe]] = {
+      c-case (embedding1, ʘwʘ e-embedding2) =>
+        f-futuwe.vawue(some(embedding1.wognowmcosinesimiwawity(embedding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      logNormCosineSimilarity
+    simcwustewsembeddingintewnawpaiwscowestowe(
+      s-simcwustewsembeddingstowe, 😳😳😳
+      w-wognowmcosinesimiwawity
     )
   }
 
-  def buildExpScaledCosineSimilarityStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  d-def buiwdexpscawedcosinesimiwawitystowe(
+    s-simcwustewsembeddingstowe: weadabwestowe[simcwustewsembeddingid, ^^;; simcwustewsembedding]
+  ): paiwscowestowe[
+    s-simcwustewsembeddingpaiwscoweid, o.O
+    s-simcwustewsembeddingid, (///ˬ///✿)
+    simcwustewsembeddingid, σωσ
+    s-simcwustewsembedding, nyaa~~
+    s-simcwustewsembedding
   ] = {
 
-    def expScaledCosineSimilarity: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.expScaledCosineSimilarity(embedding2)))
+    d-def expscawedcosinesimiwawity: (
+      simcwustewsembedding, ^^;;
+      simcwustewsembedding
+    ) => futuwe[option[doubwe]] = {
+      c-case (embedding1, ^•ﻌ•^ embedding2) =>
+        futuwe.vawue(some(embedding1.expscawedcosinesimiwawity(embedding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      expScaledCosineSimilarity
+    simcwustewsembeddingintewnawpaiwscowestowe(
+      simcwustewsembeddingstowe, σωσ
+      expscawedcosinesimiwawity
     )
   }
 
-  def buildJaccardSimilarityStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  d-def buiwdjaccawdsimiwawitystowe(
+    simcwustewsembeddingstowe: weadabwestowe[simcwustewsembeddingid, -.- s-simcwustewsembedding]
+  ): p-paiwscowestowe[
+    s-simcwustewsembeddingpaiwscoweid, ^^;;
+    simcwustewsembeddingid, XD
+    s-simcwustewsembeddingid, 🥺
+    simcwustewsembedding, òωó
+    s-simcwustewsembedding
   ] = {
 
-    def jaccardSimilarity: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.jaccardSimilarity(embedding2)))
+    d-def jaccawdsimiwawity: (
+      simcwustewsembedding, (ˆ ﻌ ˆ)♡
+      simcwustewsembedding
+    ) => futuwe[option[doubwe]] = {
+      case (embedding1, -.- embedding2) =>
+        f-futuwe.vawue(some(embedding1.jaccawdsimiwawity(embedding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      jaccardSimilarity
+    simcwustewsembeddingintewnawpaiwscowestowe(
+      s-simcwustewsembeddingstowe, :3
+      jaccawdsimiwawity
     )
   }
 
-  def buildEuclideanDistanceStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  d-def buiwdeucwideandistancestowe(
+    s-simcwustewsembeddingstowe: weadabwestowe[simcwustewsembeddingid, ʘwʘ simcwustewsembedding]
+  ): p-paiwscowestowe[
+    s-simcwustewsembeddingpaiwscoweid, 🥺
+    simcwustewsembeddingid, >_<
+    s-simcwustewsembeddingid, ʘwʘ
+    s-simcwustewsembedding, (˘ω˘)
+    simcwustewsembedding
   ] = {
 
-    def euclideanDistance: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.euclideanDistance(embedding2)))
+    def eucwideandistance: (
+      simcwustewsembedding, (✿oωo)
+      simcwustewsembedding
+    ) => f-futuwe[option[doubwe]] = {
+      case (embedding1, (///ˬ///✿) e-embedding2) =>
+        f-futuwe.vawue(some(embedding1.eucwideandistance(embedding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      euclideanDistance
+    simcwustewsembeddingintewnawpaiwscowestowe(
+      s-simcwustewsembeddingstowe, rawr x3
+      e-eucwideandistance
     )
   }
 
-  def buildManhattanDistanceStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def buiwdmanhattandistancestowe(
+    s-simcwustewsembeddingstowe: weadabwestowe[simcwustewsembeddingid, -.- simcwustewsembedding]
+  ): paiwscowestowe[
+    simcwustewsembeddingpaiwscoweid, ^^
+    s-simcwustewsembeddingid,
+    s-simcwustewsembeddingid, (⑅˘꒳˘)
+    simcwustewsembedding, nyaa~~
+    simcwustewsembedding
   ] = {
 
-    def manhattanDistance: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.manhattanDistance(embedding2)))
+    d-def manhattandistance: (
+      simcwustewsembedding, /(^•ω•^)
+      s-simcwustewsembedding
+    ) => futuwe[option[doubwe]] = {
+      case (embedding1, (U ﹏ U) embedding2) =>
+        f-futuwe.vawue(some(embedding1.manhattandistance(embedding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      manhattanDistance
+    simcwustewsembeddingintewnawpaiwscowestowe(
+      simcwustewsembeddingstowe, 😳😳😳
+      manhattandistance
     )
   }
 

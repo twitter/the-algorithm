@@ -1,447 +1,447 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.awwaywist;
+i-impowt java.utiw.cawendaw;
+i-impowt j-java.utiw.date;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
+impowt java.utiw.concuwwent.timeunit;
+impowt java.utiw.concuwwent.atomic.atomicintegew;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
+impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.apache.commons.lang.mutable.MutableInt;
-import org.apache.commons.lang.mutable.MutableLong;
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.wang.mutabwe.mutabweint;
+i-impowt owg.apache.commons.wang.mutabwe.mutabwewong;
+i-impowt owg.apache.wucene.index.indexoptions;
+impowt owg.apache.wucene.index.postingsenum;
+impowt owg.apache.wucene.index.tewms;
+i-impowt owg.apache.wucene.index.tewmsenum;
+impowt o-owg.apache.wucene.seawch.docidsetitewatow;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
+impowt com.twittew.common.cowwections.paiw;
+impowt com.twittew.seawch.common.concuwwent.scheduwedexecutowsewvicefactowy;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+i-impowt com.twittew.seawch.common.pawtitioning.base.segment;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt c-com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.docidtotweetidmappew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.timemappew;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt c-com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsingwesegmentseawchew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentmanagew;
 
 /**
- * A background task that periodically gets and exports the number of tweets per hour that are
- * indexed on this earlybird.
- * Specifically used for making sure that we are not missing data for any hours in the search
- * archives.
- * The task loops though all the segments that are indexed by this earlybird, and for each segment
- * looks at all the createdAt dates for all of the documents in that segment.
+ * a backgwound t-task that pewiodicawwy g-gets and expowts t-the nyumbew of t-tweets pew houw that awe
+ * indexed on this eawwybiwd. rawr x3
+ * specificawwy u-used fow m-making suwe that we awe nyot missing d-data fow any h-houws in the seawch
+ * awchives. ^^
+ * t-the task woops though aww t-the segments that awe indexed by this eawwybiwd, OwO a-and fow each segment
+ * wooks at a-aww the cweatedat dates fow aww o-of the documents i-in that segment. ^^
  *
- * Also keeps track off an exposes as a stat the number of hours that do not have any tweets in the
- * min/max range of data that IS indexed on this earlybird. i.e if we only have data for
- * 2006/01/01:02 and 2006/01/01:04, it will consider 2006/01/01:03 as a missing hour.
- * Hours before 2006/01/01:02 or after 2006/01/01:04 will not be considered as missing.
+ * awso keeps twack off an exposes as a stat the nyumbew of houws that do nyot have any tweets i-in the
+ * m-min/max wange of data that is indexed o-on this eawwybiwd. :3 i-i.e if w-we onwy have data fow
+ * 2006/01/01:02 and 2006/01/01:04, o.O it wiww c-considew 2006/01/01:03 as a missing houw.
+ * houws befowe 2006/01/01:02 ow aftew 2006/01/01:04 w-wiww nyot be considewed as missing. -.-
  */
-public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetCountMonitor.class);
+p-pubwic c-cwass tweetcountmonitow e-extends onetaskscheduwedexecutowmanagew {
+  p-pwivate static f-finaw woggew w-wog = woggewfactowy.getwoggew(tweetcountmonitow.cwass);
 
-  private static final String THREAD_NAME_FORMAT = "TweetCountMonitor-%d";
-  private static final boolean THREAD_IS_DAEMON = true;
+  p-pwivate static finaw stwing thwead_name_fowmat = "tweetcountmonitow-%d";
+  p-pwivate static f-finaw boowean t-thwead_is_daemon = t-twue;
 
-  public static final String RUN_INTERVAL_MINUTES_CONFIG_NAME =
-      "tweet_count_monitor_run_interval_minutes";
-  public static final String START_CHECK_HOUR_CONFIG_NAME =
-      "tweet_count_monitor_start_check_hour";
-  public static final String HOURLY_MIN_COUNT_CONFIG_NAME =
-      "tweet_count_monitor_hourly_min_count";
-  public static final String DAILY_MIN_COUNT_CONFIG_NAME =
-      "tweet_count_monitor_daily_min_count";
+  pubwic s-static finaw stwing wun_intewvaw_minutes_config_name =
+      "tweet_count_monitow_wun_intewvaw_minutes";
+  pubwic static finaw stwing stawt_check_houw_config_name =
+      "tweet_count_monitow_stawt_check_houw";
+  p-pubwic static finaw stwing houwwy_min_count_config_name =
+      "tweet_count_monitow_houwwy_min_count";
+  pubwic static finaw stwing daiwy_min_count_config_name =
+      "tweet_count_monitow_daiwy_min_count";
 
-  @VisibleForTesting
-  public static final AtomicInteger INSTANCE_COUNTER = new AtomicInteger(0);
+  @visibwefowtesting
+  p-pubwic static finaw atomicintegew instance_countew = nyew atomicintegew(0);
 
-  private static final long MILLIS_IN_A_DAY = TimeUnit.DAYS.toMillis(1);
+  p-pwivate static f-finaw wong miwwis_in_a_day = t-timeunit.days.tomiwwis(1);
 
-  private final SegmentManager segmentManager;
+  pwivate f-finaw segmentmanagew segmentmanagew;
 
-  private final SearchStatsReceiver searchStatsReceiver;
-  private final int instanceCounter;
+  p-pwivate f-finaw seawchstatsweceivew seawchstatsweceivew;
+  pwivate finaw int instancecountew;
 
-  // The first date in format "YYYYMMDDHH" that we want to check counts for.
-  private final int startCheckHour;
-  // The last date in format "YYYYMMDDHH" that we want to check counts for.
-  private final int endCheckHour;
-  //Smallest number of docs we expect to have for each day.
-  private final int dailyMinCount;
-  // Smallest number of docs we expect to have for each hour.
-  private final int hourlyMinCount;
-  // Binary stat, set to 0 when the monitor is running
-  private final SearchLongGauge isRunningStat;
-  // How long each iteration takes
-  private final SearchTimerStats checkTimeStat;
+  // the fiwst date in f-fowmat "yyyymmddhh" that we want t-to check counts fow. (U ﹏ U)
+  pwivate f-finaw int stawtcheckhouw;
+  // the w-wast date in fowmat "yyyymmddhh" that we want t-to check counts f-fow.
+  pwivate finaw int endcheckhouw;
+  //smowest n-nyumbew of docs w-we expect to have fow each day. o.O
+  pwivate finaw int daiwymincount;
+  // smowest n-nyumbew of docs w-we expect to h-have fow each houw. OwO
+  pwivate finaw i-int houwwymincount;
+  // b-binawy stat, ^•ﻌ•^ set to 0 w-when the monitow is wunning
+  pwivate finaw seawchwonggauge iswunningstat;
+  // h-how wong each i-itewation takes
+  pwivate finaw seawchtimewstats c-checktimestat;
 
-  private final Map<String, FieldTermCounter> fieldTermCounters;
-  private final Map<String, SearchTimerStats> fieldCheckTimeStats;
+  p-pwivate finaw map<stwing, ʘwʘ fiewdtewmcountew> fiewdtewmcountews;
+  pwivate finaw m-map<stwing, :3 seawchtimewstats> fiewdchecktimestats;
 
   /**
-   * Create a TweetCountMonitor to monitor all segments in the given segmentManager
+   * cweate a tweetcountmonitow to m-monitow aww segments in the given segmentmanagew
    */
-  public TweetCountMonitor(
-      SegmentManager segmentManager,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      long shutdownWaitDuration,
-      TimeUnit shutdownWaitUnit,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this(segmentManager,
-        EarlybirdConfig.getInt(START_CHECK_HOUR_CONFIG_NAME, 0),
-        EarlybirdConfig.getInt(RUN_INTERVAL_MINUTES_CONFIG_NAME, -1),
-        EarlybirdConfig.getInt(HOURLY_MIN_COUNT_CONFIG_NAME, 0),
-        EarlybirdConfig.getInt(DAILY_MIN_COUNT_CONFIG_NAME, 0),
-        executorServiceFactory,
-        shutdownWaitDuration,
-        shutdownWaitUnit,
-        searchStatsReceiver,
-        criticalExceptionHandler);
+  p-pubwic t-tweetcountmonitow(
+      segmentmanagew segmentmanagew, 😳
+      scheduwedexecutowsewvicefactowy executowsewvicefactowy, òωó
+      wong s-shutdownwaitduwation, 🥺
+      t-timeunit shutdownwaitunit, rawr x3
+      seawchstatsweceivew seawchstatsweceivew, ^•ﻌ•^
+      cwiticawexceptionhandwew c-cwiticawexceptionhandwew) {
+    this(segmentmanagew, :3
+        e-eawwybiwdconfig.getint(stawt_check_houw_config_name, (ˆ ﻌ ˆ)♡ 0),
+        eawwybiwdconfig.getint(wun_intewvaw_minutes_config_name, -1), (U ᵕ U❁)
+        eawwybiwdconfig.getint(houwwy_min_count_config_name, :3 0),
+        eawwybiwdconfig.getint(daiwy_min_count_config_name, ^^;; 0),
+        e-executowsewvicefactowy, ( ͡o ω ͡o )
+        shutdownwaitduwation, o.O
+        s-shutdownwaitunit, ^•ﻌ•^
+        s-seawchstatsweceivew, XD
+        cwiticawexceptionhandwew);
   }
 
-  @VisibleForTesting
-  TweetCountMonitor(
-      SegmentManager segmentManager,
-      int startCheckHourFromConfig,
-      int schedulePeriodMinutes,
-      int hourlyMinCount,
-      int dailyMinCount,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      long shutdownWaitDuration,
-      TimeUnit shutdownWaitUnit,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(
-      executorServiceFactory,
-      THREAD_NAME_FORMAT,
-      THREAD_IS_DAEMON,
-      PeriodicActionParams.atFixedRate(
-        schedulePeriodMinutes,
-        TimeUnit.MINUTES
-      ),
-      new ShutdownWaitTimeParams(
-        shutdownWaitDuration,
-        shutdownWaitUnit
-      ),
-      searchStatsReceiver,
-        criticalExceptionHandler);
-    this.segmentManager = segmentManager;
-    this.searchStatsReceiver = searchStatsReceiver;
-    this.instanceCounter = INSTANCE_COUNTER.incrementAndGet();
-    this.hourlyMinCount = hourlyMinCount;
-    this.dailyMinCount = dailyMinCount;
+  @visibwefowtesting
+  t-tweetcountmonitow(
+      segmentmanagew s-segmentmanagew, ^^
+      i-int stawtcheckhouwfwomconfig, o.O
+      i-int scheduwepewiodminutes, ( ͡o ω ͡o )
+      int houwwymincount, /(^•ω•^)
+      i-int daiwymincount, 🥺
+      s-scheduwedexecutowsewvicefactowy executowsewvicefactowy, nyaa~~
+      wong s-shutdownwaitduwation, mya
+      t-timeunit s-shutdownwaitunit, XD
+      seawchstatsweceivew seawchstatsweceivew, nyaa~~
+      c-cwiticawexceptionhandwew cwiticawexceptionhandwew) {
+    s-supew(
+      e-executowsewvicefactowy, ʘwʘ
+      thwead_name_fowmat, (⑅˘꒳˘)
+      thwead_is_daemon, :3
+      pewiodicactionpawams.atfixedwate(
+        s-scheduwepewiodminutes, -.-
+        t-timeunit.minutes
+      ), 😳😳😳
+      n-nyew s-shutdownwaittimepawams(
+        shutdownwaitduwation, (U ﹏ U)
+        shutdownwaitunit
+      ), o.O
+      seawchstatsweceivew, ( ͡o ω ͡o )
+        c-cwiticawexceptionhandwew);
+    this.segmentmanagew = segmentmanagew;
+    this.seawchstatsweceivew = seawchstatsweceivew;
+    this.instancecountew = i-instance_countew.incwementandget();
+    this.houwwymincount = h-houwwymincount;
+    this.daiwymincount = d-daiwymincount;
 
-    String isRunningStatName = "tweet_count_monitor_is_running_v_" + this.instanceCounter;
-    this.isRunningStat = SearchLongGauge.export(isRunningStatName);
-    String checkTimeStatName = "tweet_count_monitor_check_time_v_" + this.instanceCounter;
-    this.checkTimeStat = SearchTimerStats.export(checkTimeStatName, TimeUnit.MILLISECONDS, true);
+    stwing i-iswunningstatname = "tweet_count_monitow_is_wunning_v_" + this.instancecountew;
+    t-this.iswunningstat = s-seawchwonggauge.expowt(iswunningstatname);
+    s-stwing c-checktimestatname = "tweet_count_monitow_check_time_v_" + t-this.instancecountew;
+    this.checktimestat = seawchtimewstats.expowt(checktimestatname, òωó timeunit.miwwiseconds, 🥺 twue);
 
-    this.startCheckHour = Math.max(
-        startCheckHourFromConfig,
-        dateToHourValue(segmentManager.getPartitionConfig().getTierStartDate()));
-    this.endCheckHour = dateToHourValue(segmentManager.getPartitionConfig().getTierEndDate());
+    this.stawtcheckhouw = math.max(
+        s-stawtcheckhouwfwomconfig, /(^•ω•^)
+        d-datetohouwvawue(segmentmanagew.getpawtitionconfig().gettiewstawtdate()));
+    t-this.endcheckhouw = datetohouwvawue(segmentmanagew.getpawtitionconfig().gettiewenddate());
 
-    this.fieldTermCounters = Maps.newHashMap();
-    this.fieldTermCounters.put(
-        FieldTermCounter.TWEET_COUNT_KEY,
-        new FieldTermCounter(
-            FieldTermCounter.TWEET_COUNT_KEY,
-            instanceCounter,
-            startCheckHour,
-            endCheckHour,
-            hourlyMinCount,
-            dailyMinCount));
-    this.fieldCheckTimeStats = Maps.newHashMap();
+    t-this.fiewdtewmcountews = maps.newhashmap();
+    this.fiewdtewmcountews.put(
+        fiewdtewmcountew.tweet_count_key, 😳😳😳
+        n-nyew f-fiewdtewmcountew(
+            fiewdtewmcountew.tweet_count_key, ^•ﻌ•^
+            instancecountew, nyaa~~
+            s-stawtcheckhouw, OwO
+            endcheckhouw,
+            houwwymincount, ^•ﻌ•^
+            d-daiwymincount));
+    t-this.fiewdchecktimestats = maps.newhashmap();
   }
 
-  private int dateToHourValue(Date date) {
-    Calendar cal = Calendar.getInstance(FieldTermCounter.TIME_ZONE);
-    cal.setTime(date);
-    return FieldTermCounter.getHourValue(cal);
+  p-pwivate i-int datetohouwvawue(date date) {
+    cawendaw caw = cawendaw.getinstance(fiewdtewmcountew.time_zone);
+    caw.settime(date);
+    w-wetuwn fiewdtewmcountew.gethouwvawue(caw);
   }
 
-  private void updateHourlyCounts() {
-    // Iterate the current index to count all tweets anf field hits.
-    Map<String, Map<Integer, MutableInt>> newCountMap = getNewTweetCountMap();
+  p-pwivate void u-updatehouwwycounts() {
+    // i-itewate t-the cuwwent index to count a-aww tweets anf f-fiewd hits. σωσ
+    map<stwing, -.- map<integew, (˘ω˘) m-mutabweint>> n-nyewcountmap = getnewtweetcountmap();
 
-    for (Map.Entry<String, Map<Integer, MutableInt>> newCounts : newCountMap.entrySet()) {
-      final String fieldName = newCounts.getKey();
-      FieldTermCounter termCounter = fieldTermCounters.get(fieldName);
-      if (termCounter == null) {
-        termCounter = new FieldTermCounter(
-            fieldName,
-            instanceCounter,
-            startCheckHour,
-            endCheckHour,
-            hourlyMinCount,
-            dailyMinCount);
-        fieldTermCounters.put(fieldName, termCounter);
+    f-fow (map.entwy<stwing, rawr x3 map<integew, rawr x3 mutabweint>> n-nyewcounts : nyewcountmap.entwyset()) {
+      finaw stwing fiewdname = n-nyewcounts.getkey();
+      f-fiewdtewmcountew tewmcountew = f-fiewdtewmcountews.get(fiewdname);
+      if (tewmcountew == nyuww) {
+        tewmcountew = n-nyew f-fiewdtewmcountew(
+            f-fiewdname, σωσ
+            instancecountew, nyaa~~
+            stawtcheckhouw, (ꈍᴗꈍ)
+            endcheckhouw, ^•ﻌ•^
+            h-houwwymincount,
+            daiwymincount);
+        fiewdtewmcountews.put(fiewdname, >_< tewmcountew);
       }
-      termCounter.runWithNewCounts(newCounts.getValue());
+      t-tewmcountew.wunwithnewcounts(newcounts.getvawue());
     }
   }
 
   /**
-   * Loops through all segments, and all documents in each segment, and for each document
-   * gets the createdAt timestamp (in seconds) from the TimeMapper.
-   * Based on that, returns a map with the count of:
-   * . the number of tweets for each hour
-   * . the number of tweets corresponding to each field for each hour
+   * w-woops thwough aww segments, ^^;; a-and aww documents in each segment, a-and fow each d-document
+   * gets the cweatedat timestamp (in s-seconds) fwom the timemappew.
+   * based on that, ^^;; w-wetuwns a map w-with the count of:
+   * . the nyumbew o-of tweets fow each houw
+   * . /(^•ω•^) t-the nyumbew o-of tweets cowwesponding t-to each fiewd fow each houw
    */
-  private Map<String, Map<Integer, MutableInt>> getNewTweetCountMap() {
-    Iterable<SegmentInfo> segmentInfos = segmentManager.getSegmentInfos(
-        SegmentManager.Filter.Enabled, SegmentManager.Order.NEW_TO_OLD);
-    Map<String, Map<Integer, MutableInt>> newCountMap = Maps.newHashMap();
+  pwivate map<stwing, nyaa~~ map<integew, (✿oωo) mutabweint>> getnewtweetcountmap() {
+    itewabwe<segmentinfo> segmentinfos = segmentmanagew.getsegmentinfos(
+        segmentmanagew.fiwtew.enabwed, ( ͡o ω ͡o ) segmentmanagew.owdew.new_to_owd);
+    map<stwing, (U ᵕ U❁) map<integew, m-mutabweint>> nyewcountmap = m-maps.newhashmap();
 
-    Map<Integer, MutableInt> newCounts = Maps.newHashMap();
-    newCountMap.put(FieldTermCounter.TWEET_COUNT_KEY, newCounts);
+    map<integew, òωó mutabweint> nyewcounts = m-maps.newhashmap();
+    n-newcountmap.put(fiewdtewmcountew.tweet_count_key, σωσ n-nyewcounts);
 
-    ImmutableSchemaInterface schemaSnapshot =
-        segmentManager.getEarlybirdIndexConfig().getSchema().getSchemaSnapshot();
-    Calendar cal = Calendar.getInstance(FieldTermCounter.TIME_ZONE);
-    for (SegmentInfo segmentInfo : segmentInfos) {
-      try {
-        EarlybirdSingleSegmentSearcher searcher = segmentManager.getSearcher(
-            segmentInfo.getTimeSliceID(), schemaSnapshot);
-        if (searcher != null) {
-          EarlybirdIndexSegmentAtomicReader reader = searcher.getTwitterIndexReader();
-          TimeMapper timeMapper = reader.getSegmentData().getTimeMapper();
-          List<Pair<String, Integer>> outsideEndDateRangeDocList = new ArrayList<>();
+    immutabweschemaintewface s-schemasnapshot =
+        segmentmanagew.geteawwybiwdindexconfig().getschema().getschemasnapshot();
+    c-cawendaw c-caw = cawendaw.getinstance(fiewdtewmcountew.time_zone);
+    fow (segmentinfo s-segmentinfo : segmentinfos) {
+      t-twy {
+        eawwybiwdsingwesegmentseawchew s-seawchew = segmentmanagew.getseawchew(
+            segmentinfo.gettimeswiceid(), :3 schemasnapshot);
+        i-if (seawchew != n-nyuww) {
+          e-eawwybiwdindexsegmentatomicweadew w-weadew = s-seawchew.gettwittewindexweadew();
+          t-timemappew timemappew = w-weadew.getsegmentdata().gettimemappew();
+          w-wist<paiw<stwing, OwO integew>> o-outsideenddatewangedocwist = nyew awwaywist<>();
 
-          // Get the number of tweets for each hour.
-          int docsOutsideEndDateRange = getNewTweetCountsForSegment(
-              segmentInfo, reader, timeMapper, cal, newCounts);
-          if (docsOutsideEndDateRange > 0) {
-            outsideEndDateRangeDocList.add(new Pair<>(
-                FieldTermCounter.TWEET_COUNT_KEY, docsOutsideEndDateRange));
+          // g-get the n-nyumbew of tweets f-fow each houw. ^^
+          int docsoutsideenddatewange = g-getnewtweetcountsfowsegment(
+              segmentinfo, (˘ω˘) weadew, OwO timemappew, UwU c-caw, nyewcounts);
+          if (docsoutsideenddatewange > 0) {
+            o-outsideenddatewangedocwist.add(new p-paiw<>(
+                f-fiewdtewmcountew.tweet_count_key, ^•ﻌ•^ docsoutsideenddatewange));
           }
 
-          // Get the number of tweets with corresponding field for each hour.
-          for (Schema.FieldInfo fieldInfo : schemaSnapshot.getFieldInfos()) {
-            if (fieldInfo.getFieldType().indexOptions() == IndexOptions.NONE) {
+          // g-get the nyumbew of tweets with c-cowwesponding fiewd fow each houw. (ꈍᴗꈍ)
+          f-fow (schema.fiewdinfo fiewdinfo : s-schemasnapshot.getfiewdinfos()) {
+            if (fiewdinfo.getfiewdtype().indexoptions() == indexoptions.none) {
               continue;
             }
 
-            String fieldName = fieldInfo.getName();
-            docsOutsideEndDateRange = getNewFieldTweetCountsForSegment(
-                segmentInfo, reader, timeMapper, cal, fieldName, newCountMap);
-            if (docsOutsideEndDateRange > 0) {
-              outsideEndDateRangeDocList.add(new Pair<>(fieldName, docsOutsideEndDateRange));
+            stwing fiewdname = f-fiewdinfo.getname();
+            docsoutsideenddatewange = g-getnewfiewdtweetcountsfowsegment(
+                s-segmentinfo, /(^•ω•^) weadew, timemappew, (U ᵕ U❁) caw, fiewdname, (✿oωo) nyewcountmap);
+            i-if (docsoutsideenddatewange > 0) {
+              outsideenddatewangedocwist.add(new p-paiw<>(fiewdname, OwO d-docsoutsideenddatewange));
             }
           }
 
-          LOG.info("Inspected segment: " + segmentInfo + " found "
-              + outsideEndDateRangeDocList.size()
-              + " fields with documents outside of segment end date.");
-          for (Pair<String, Integer> outsideEndRange : outsideEndDateRangeDocList) {
-            LOG.info("  outside end date range - segment: " + segmentInfo.getSegmentName()
-                + " field: " + outsideEndRange.toString());
+          w-wog.info("inspected segment: " + segmentinfo + " f-found "
+              + o-outsideenddatewangedocwist.size()
+              + " fiewds with d-documents outside of segment end date.");
+          f-fow (paiw<stwing, :3 integew> outsideendwange : o-outsideenddatewangedocwist) {
+            w-wog.info("  o-outside end date wange - s-segment: " + segmentinfo.getsegmentname()
+                + " f-fiewd: " + o-outsideendwange.tostwing());
           }
         }
-      } catch (IOException e) {
-        LOG.error("Exception getting daily tweet counts for timeslice: " + segmentInfo, e);
+      } c-catch (ioexception e) {
+        w-wog.ewwow("exception g-getting d-daiwy tweet counts f-fow timeswice: " + s-segmentinfo, e-e);
       }
     }
-    return newCountMap;
+    w-wetuwn n-nyewcountmap;
   }
 
-  private void incrementNumDocsWithIllegalTimeCounter(String segmentName, String fieldSuffix) {
-    String statName = String.format(
-        "num_docs_with_illegal_time_for_segment_%s%s_counter", segmentName, fieldSuffix);
-    SearchCounter counter = SearchCounter.export(statName);
-    counter.increment();
+  pwivate void i-incwementnumdocswithiwwegawtimecountew(stwing segmentname, nyaa~~ stwing f-fiewdsuffix) {
+    stwing statname = s-stwing.fowmat(
+        "num_docs_with_iwwegaw_time_fow_segment_%s%s_countew", s-segmentname, ^•ﻌ•^ f-fiewdsuffix);
+    seawchcountew countew = seawchcountew.expowt(statname);
+    countew.incwement();
   }
 
-  private int getNewTweetCountsForSegment(
-      SegmentInfo segmentInfo,
-      EarlybirdIndexSegmentAtomicReader reader,
-      TimeMapper timeMapper,
-      Calendar cal,
-      Map<Integer, MutableInt> newTweetCounts) {
-    DocIDToTweetIDMapper tweetIdMapper = reader.getSegmentData().getDocIDToTweetIDMapper();
-    long dataEndTimeExclusiveMillis = getDataEndTimeExclusiveMillis(segmentInfo);
-    int docsOutsideEndDateRange = 0;
-    int docId = Integer.MIN_VALUE;
-    while ((docId = tweetIdMapper.getNextDocID(docId)) != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      UpdateCountType updateCountType =
-          updateTweetCount(timeMapper, docId, dataEndTimeExclusiveMillis, cal, newTweetCounts);
-      if (updateCountType == UpdateCountType.ILLEGAL_TIME) {
-        incrementNumDocsWithIllegalTimeCounter(segmentInfo.getSegmentName(), "");
-      } else if (updateCountType == UpdateCountType.OUT_OF_RANGE_TIME) {
-        docsOutsideEndDateRange++;
+  pwivate i-int getnewtweetcountsfowsegment(
+      s-segmentinfo s-segmentinfo, ( ͡o ω ͡o )
+      eawwybiwdindexsegmentatomicweadew weadew, ^^;;
+      timemappew timemappew, mya
+      c-cawendaw c-caw, (U ᵕ U❁)
+      map<integew, ^•ﻌ•^ mutabweint> n-nyewtweetcounts) {
+    d-docidtotweetidmappew tweetidmappew = weadew.getsegmentdata().getdocidtotweetidmappew();
+    wong dataendtimeexcwusivemiwwis = g-getdataendtimeexcwusivemiwwis(segmentinfo);
+    i-int d-docsoutsideenddatewange = 0;
+    i-int docid = integew.min_vawue;
+    whiwe ((docid = tweetidmappew.getnextdocid(docid)) != d-docidtotweetidmappew.id_not_found) {
+      u-updatecounttype updatecounttype =
+          updatetweetcount(timemappew, (U ﹏ U) d-docid, dataendtimeexcwusivemiwwis, /(^•ω•^) caw, nyewtweetcounts);
+      i-if (updatecounttype == updatecounttype.iwwegaw_time) {
+        i-incwementnumdocswithiwwegawtimecountew(segmentinfo.getsegmentname(), ʘwʘ "");
+      } ewse i-if (updatecounttype == updatecounttype.out_of_wange_time) {
+        d-docsoutsideenddatewange++;
       }
     }
-    return docsOutsideEndDateRange;
+    w-wetuwn docsoutsideenddatewange;
   }
 
-  private int getNewFieldTweetCountsForSegment(
-      SegmentInfo segmentInfo,
-      EarlybirdIndexSegmentAtomicReader reader,
-      TimeMapper timeMapper,
-      Calendar cal,
-      String field,
-      Map<String, Map<Integer, MutableInt>> newCountMap) throws IOException {
-    int docsOutsideEndDateRange = 0;
-    Map<Integer, MutableInt> fieldTweetCounts =
-        newCountMap.computeIfAbsent(field, k -> Maps.newHashMap());
+  pwivate i-int getnewfiewdtweetcountsfowsegment(
+      segmentinfo segmentinfo, XD
+      eawwybiwdindexsegmentatomicweadew w-weadew, (⑅˘꒳˘)
+      timemappew t-timemappew, nyaa~~
+      c-cawendaw c-caw, UwU
+      stwing fiewd, (˘ω˘)
+      m-map<stwing, rawr x3 m-map<integew, (///ˬ///✿) mutabweint>> n-nyewcountmap) thwows ioexception {
+    i-int docsoutsideenddatewange = 0;
+    map<integew, 😳😳😳 mutabweint> fiewdtweetcounts =
+        n-nyewcountmap.computeifabsent(fiewd, (///ˬ///✿) k-k -> m-maps.newhashmap());
 
-    Terms terms = reader.terms(field);
-    if (terms == null) {
-      LOG.warn("Field <" + field + "> is missing terms in segment: "
-          + segmentInfo.getSegmentName());
-      return 0;
+    tewms tewms = weadew.tewms(fiewd);
+    if (tewms == nyuww) {
+      wog.wawn("fiewd <" + f-fiewd + "> is missing tewms i-in segment: "
+          + s-segmentinfo.getsegmentname());
+      wetuwn 0;
     }
-    long startTimeMillis = System.currentTimeMillis();
+    wong stawttimemiwwis = system.cuwwenttimemiwwis();
 
-    long dataEndTimeExclusiveMillis = getDataEndTimeExclusiveMillis(segmentInfo);
-    for (TermsEnum termsEnum = terms.iterator(); termsEnum.next() != null;) {
-      DocIdSetIterator docsIterator = termsEnum.postings(null, PostingsEnum.NONE);
-      for (int docId = docsIterator.nextDoc();
-           docId != DocIdSetIterator.NO_MORE_DOCS; docId = docsIterator.nextDoc()) {
-        UpdateCountType updateCountType = updateTweetCount(
-            timeMapper, docId, dataEndTimeExclusiveMillis, cal, fieldTweetCounts);
-        if (updateCountType == UpdateCountType.ILLEGAL_TIME) {
-          incrementNumDocsWithIllegalTimeCounter(
-              segmentInfo.getSegmentName(), "_and_field_" + field);
-        } else if (updateCountType == UpdateCountType.OUT_OF_RANGE_TIME) {
-          docsOutsideEndDateRange++;
+    w-wong dataendtimeexcwusivemiwwis = g-getdataendtimeexcwusivemiwwis(segmentinfo);
+    f-fow (tewmsenum t-tewmsenum = t-tewms.itewatow(); t-tewmsenum.next() != nyuww;) {
+      docidsetitewatow docsitewatow = tewmsenum.postings(nuww, ^^;; postingsenum.none);
+      f-fow (int docid = docsitewatow.nextdoc();
+           d-docid != docidsetitewatow.no_mowe_docs; docid = docsitewatow.nextdoc()) {
+        updatecounttype u-updatecounttype = updatetweetcount(
+            timemappew, ^^ docid, dataendtimeexcwusivemiwwis, (///ˬ///✿) caw, fiewdtweetcounts);
+        i-if (updatecounttype == u-updatecounttype.iwwegaw_time) {
+          incwementnumdocswithiwwegawtimecountew(
+              s-segmentinfo.getsegmentname(), -.- "_and_fiewd_" + fiewd);
+        } ewse i-if (updatecounttype == u-updatecounttype.out_of_wange_time) {
+          docsoutsideenddatewange++;
         }
       }
     }
-    updateFieldRunTimeStats(field, System.currentTimeMillis() - startTimeMillis);
+    updatefiewdwuntimestats(fiewd, /(^•ω•^) s-system.cuwwenttimemiwwis() - stawttimemiwwis);
 
-    return docsOutsideEndDateRange;
+    w-wetuwn docsoutsideenddatewange;
   }
 
-  private enum UpdateCountType {
-    OK_TIME,
-    ILLEGAL_TIME,
-    OUT_OF_RANGE_TIME,
+  pwivate enum updatecounttype {
+    ok_time, UwU
+    i-iwwegaw_time, (⑅˘꒳˘)
+    out_of_wange_time,
   }
 
-  private static UpdateCountType updateTweetCount(
-      TimeMapper timeMapper,
-      int docId,
-      long dataEndTimeExclusiveMillis,
-      Calendar cal,
-      Map<Integer, MutableInt> newTweetCounts) {
-    int timeSecs = timeMapper.getTime(docId);
-    if (timeSecs == TimeMapper.ILLEGAL_TIME) {
-      return UpdateCountType.ILLEGAL_TIME;
+  pwivate static u-updatecounttype u-updatetweetcount(
+      t-timemappew timemappew, ʘwʘ
+      int docid, σωσ
+      w-wong dataendtimeexcwusivemiwwis, ^^
+      cawendaw caw, OwO
+      map<integew, (ˆ ﻌ ˆ)♡ mutabweint> nyewtweetcounts) {
+    int timesecs = t-timemappew.gettime(docid);
+    i-if (timesecs == t-timemappew.iwwegaw_time) {
+      w-wetuwn updatecounttype.iwwegaw_time;
     }
-    if (dataEndTimeExclusiveMillis == Segment.NO_DATA_END_TIME
-        || timeSecs * 1000L < dataEndTimeExclusiveMillis) {
-      Integer hourlyValue = FieldTermCounter.getHourValue(cal, timeSecs);
-      MutableInt count = newTweetCounts.get(hourlyValue);
-      if (count == null) {
-        count = new MutableInt(0);
-        newTweetCounts.put(hourlyValue, count);
+    if (dataendtimeexcwusivemiwwis == segment.no_data_end_time
+        || t-timesecs * 1000w < d-dataendtimeexcwusivemiwwis) {
+      integew houwwyvawue = fiewdtewmcountew.gethouwvawue(caw, o.O t-timesecs);
+      mutabweint count = nyewtweetcounts.get(houwwyvawue);
+      i-if (count == nyuww) {
+        count = nyew m-mutabweint(0);
+        n-nyewtweetcounts.put(houwwyvawue, (˘ω˘) count);
       }
-      count.increment();
-      return UpdateCountType.OK_TIME;
-    } else {
-      return UpdateCountType.OUT_OF_RANGE_TIME;
+      c-count.incwement();
+      w-wetuwn updatecounttype.ok_time;
+    } e-ewse {
+      wetuwn updatecounttype.out_of_wange_time;
     }
   }
 
   /**
-   * If a segment has an end date, return the last timestamp (exclusive, and in millis) for which
-   * we expect it to have data.
-   * @return Segment.NO_DATA_END_TIME if the segment does not have an end date.
+   * i-if a segment has an end date, 😳 wetuwn the w-wast timestamp (excwusive, (U ᵕ U❁) and in miwwis) fow which
+   * we expect i-it to have d-data. :3
+   * @wetuwn s-segment.no_data_end_time i-if t-the segment does nyot have an end d-date. o.O
    */
-  private long getDataEndTimeExclusiveMillis(SegmentInfo segmentInfo) {
-    long dataEndDate = segmentInfo.getSegment().getDataEndDateInclusiveMillis();
-    if (dataEndDate == Segment.NO_DATA_END_TIME) {
-      return Segment.NO_DATA_END_TIME;
-    } else {
-      return dataEndDate + MILLIS_IN_A_DAY;
+  pwivate wong getdataendtimeexcwusivemiwwis(segmentinfo segmentinfo) {
+    w-wong dataenddate = segmentinfo.getsegment().getdataenddateincwusivemiwwis();
+    i-if (dataenddate == segment.no_data_end_time) {
+      wetuwn segment.no_data_end_time;
+    } e-ewse {
+      w-wetuwn dataenddate + miwwis_in_a_day;
     }
   }
 
-  private void updateFieldRunTimeStats(String fieldName, long runTimeMs) {
-    SearchTimerStats timerStats = fieldCheckTimeStats.get(fieldName);
-    if (timerStats == null) {
-      final String statName = "tweet_count_monitor_check_time_field_" + fieldName;
-      timerStats = searchStatsReceiver.getTimerStats(
-          statName, TimeUnit.MILLISECONDS, false, false, false);
-      fieldCheckTimeStats.put(fieldName, timerStats);
+  p-pwivate void updatefiewdwuntimestats(stwing f-fiewdname, (///ˬ///✿) wong w-wuntimems) {
+    seawchtimewstats t-timewstats = f-fiewdchecktimestats.get(fiewdname);
+    if (timewstats == n-nyuww) {
+      finaw stwing statname = "tweet_count_monitow_check_time_fiewd_" + fiewdname;
+      t-timewstats = seawchstatsweceivew.gettimewstats(
+          s-statname, OwO timeunit.miwwiseconds, >w< fawse, f-fawse, ^^ fawse);
+      f-fiewdchecktimestats.put(fiewdname, (⑅˘꒳˘) t-timewstats);
     }
-    timerStats.timerIncrement(runTimeMs);
+    timewstats.timewincwement(wuntimems);
   }
 
-  @VisibleForTesting
-  String getStatName(String fieldName, Integer date) {
-    return FieldTermCounter.getStatName(fieldName, instanceCounter, date);
+  @visibwefowtesting
+  stwing getstatname(stwing f-fiewdname, ʘwʘ i-integew date) {
+    wetuwn f-fiewdtewmcountew.getstatname(fiewdname, (///ˬ///✿) instancecountew, XD d-date);
   }
 
-  @VisibleForTesting
-  Map<Integer, AtomicInteger> getExportedCounts(String fieldName) {
-    if (fieldTermCounters.get(fieldName) == null) {
-      return null;
-    } else {
-      return fieldTermCounters.get(fieldName).getExportedCounts();
-    }
-  }
-
-  @VisibleForTesting
-  Map<Integer, MutableLong> getDailyCounts(String fieldName) {
-    if (fieldTermCounters.get(fieldName) == null) {
-      return null;
-    } else {
-      return fieldTermCounters.get(fieldName).getDailyCounts();
+  @visibwefowtesting
+  map<integew, 😳 a-atomicintegew> g-getexpowtedcounts(stwing fiewdname) {
+    if (fiewdtewmcountews.get(fiewdname) == nyuww) {
+      wetuwn n-nyuww;
+    } ewse {
+      w-wetuwn fiewdtewmcountews.get(fiewdname).getexpowtedcounts();
     }
   }
 
-  @VisibleForTesting
-  long getHoursWithNoTweets(String fieldName) {
-    return fieldTermCounters.get(fieldName).getHoursWithNoTweets();
+  @visibwefowtesting
+  map<integew, >w< mutabwewong> g-getdaiwycounts(stwing fiewdname) {
+    i-if (fiewdtewmcountews.get(fiewdname) == n-nyuww) {
+      wetuwn nyuww;
+    } ewse {
+      wetuwn fiewdtewmcountews.get(fiewdname).getdaiwycounts();
+    }
   }
 
-  @VisibleForTesting
-  long getDaysWithNoTweets(String fieldName) {
-    return fieldTermCounters.get(fieldName).getDaysWithNoTweets();
+  @visibwefowtesting
+  wong gethouwswithnotweets(stwing f-fiewdname) {
+    wetuwn fiewdtewmcountews.get(fiewdname).gethouwswithnotweets();
   }
 
-  @VisibleForTesting
-  Map<String, SearchLongGauge> getExportedHourlyCountStats(String fieldName) {
-    return fieldTermCounters.get(fieldName).getExportedHourlyCountStats();
+  @visibwefowtesting
+  wong g-getdayswithnotweets(stwing fiewdname) {
+    w-wetuwn f-fiewdtewmcountews.get(fiewdname).getdayswithnotweets();
   }
 
-  @Override
-  protected void runOneIteration() {
-    LOG.info("Starting to get hourly tweet counts");
-    final long startTimeMillis = System.currentTimeMillis();
+  @visibwefowtesting
+  map<stwing, (˘ω˘) s-seawchwonggauge> g-getexpowtedhouwwycountstats(stwing f-fiewdname) {
+    w-wetuwn f-fiewdtewmcountews.get(fiewdname).getexpowtedhouwwycountstats();
+  }
 
-    isRunningStat.set(1);
-    try {
-      updateHourlyCounts();
-    } catch (Exception ex) {
-      LOG.error("Unexpected exception while getting hourly tweet counts", ex);
-    } finally {
-      isRunningStat.set(0);
+  @ovewwide
+  p-pwotected void wunoneitewation() {
+    wog.info("stawting to get houwwy tweet counts");
+    f-finaw wong stawttimemiwwis = s-system.cuwwenttimemiwwis();
 
-      long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-      checkTimeStat.timerIncrement(elapsedTimeMillis);
-      LOG.info("Done getting daily tweet counts. Hours without tweets: "
-          + getHoursWithNoTweets(FieldTermCounter.TWEET_COUNT_KEY));
-      LOG.info("Updating tweet count takes " + (elapsedTimeMillis / 1000) + " secs.");
+    i-iswunningstat.set(1);
+    t-twy {
+      u-updatehouwwycounts();
+    } c-catch (exception ex) {
+      wog.ewwow("unexpected exception whiwe getting houwwy tweet counts", nyaa~~ e-ex);
+    } finawwy {
+      i-iswunningstat.set(0);
+
+      wong ewapsedtimemiwwis = system.cuwwenttimemiwwis() - stawttimemiwwis;
+      checktimestat.timewincwement(ewapsedtimemiwwis);
+      w-wog.info("done g-getting d-daiwy tweet counts. 😳😳😳 houws without tweets: "
+          + g-gethouwswithnotweets(fiewdtewmcountew.tweet_count_key));
+      wog.info("updating tweet c-count takes " + (ewapsedtimemiwwis / 1000) + " s-secs.");
     }
   }
 }

@@ -1,82 +1,82 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
 
-using namespace tensorflow;
+using nyamespace tensowfwow;
 
-REGISTER_OP("BatchPredictionResponseWriter")
-.Attr("T: {float, double}")
-.Input("keys: int64")
-.Input("values: T")
-.Output("result: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-  return Status::OK();
-  }).Doc(R"doc(
+w-wegistew_op("batchpwedictionwesponsewwitew")
+.attw("t: {fwoat, 🥺 d-doubwe}")
+.input("keys: i-int64")
+.input("vawues: t-t")
+.output("wesuwt: u-uint8")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+  w-wetuwn status::ok();
+  }).doc(w"doc(
 
-A tensorflow OP that packages keys and values into a BatchPredictionResponse.
+a-a tensowfwow op that packages keys and vawues into a batchpwedictionwesponse. (U ﹏ U)
 
-values: input feature value. (float/double)
-keys: feature ids from the original BatchPredictionRequest. (int64)
+vawues: i-input featuwe vawue. >w< (fwoat/doubwe)
+keys: featuwe ids fwom the o-owiginaw batchpwedictionwequest. mya (int64)
 
-Outputs
-  bytes: output BatchPredictionRequest serialized using Thrift into a uint8 tensor.
+outputs
+  b-bytes: output batchpwedictionwequest sewiawized using thwift i-into a uint8 tensow. >w<
 )doc");
 
-template<typename T>
-class BatchPredictionResponseWriter : public OpKernel {
- public:
-  explicit BatchPredictionResponseWriter(OpKernelConstruction* context)
-  : OpKernel(context) {}
+tempwate<typename t>
+cwass batchpwedictionwesponsewwitew : p-pubwic o-opkewnew {
+ pubwic:
+  expwicit batchpwedictionwesponsewwitew(opkewnewconstwuction* context)
+  : opkewnew(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    const Tensor& keys = context->input(0);
-    const Tensor& values = context->input(1);
+  v-void compute(opkewnewcontext* context) ovewwide {
+    const tensow& keys = context->input(0);
+    c-const tensow& vawues = c-context->input(1);
 
-    try {
-      // Ensure the inner dimension matches.
-      if (values.dim_size(values.dims() - 1) != keys.dim_size(keys.dims() - 1)) {
-        throw std::runtime_error("The sizes of keys and values need to match");
+    t-twy {
+      // e-ensuwe t-the innew dimension matches. nyaa~~
+      if (vawues.dim_size(vawues.dims() - 1) != k-keys.dim_size(keys.dims() - 1)) {
+        thwow std::wuntime_ewwow("the sizes of keys a-and vawues nyeed to match");
       }
 
-      // set inputs as twml::Tensor
-      const twml::Tensor in_keys_ = TFTensor_to_twml_tensor(keys);
-      const twml::Tensor in_values_ = TFTensor_to_twml_tensor(values);
-      // no tensors in this op
-      const twml::Tensor dummy_dense_keys_;
-      const std::vector<twml::RawTensor> dummy_dense_values_;
+      // set inputs as twmw::tensow
+      const twmw::tensow in_keys_ = t-tftensow_to_twmw_tensow(keys);
+      const twmw::tensow i-in_vawues_ = t-tftensow_to_twmw_tensow(vawues);
+      // n-nyo tensows in this op
+      const twmw::tensow dummy_dense_keys_;
+      c-const std::vectow<twmw::wawtensow> d-dummy_dense_vawues_;
 
-      // call constructor BatchPredictionResponse
-      twml::BatchPredictionResponse tempResult(
-        in_keys_, in_values_, dummy_dense_keys_, dummy_dense_values_);
+      // caww c-constwuctow batchpwedictionwesponse
+      t-twmw::batchpwedictionwesponse tempwesuwt(
+        i-in_keys_, (✿oωo) in_vawues_, d-dummy_dense_keys_, ʘwʘ dummy_dense_vawues_);
 
-      // determine the length of the result
-      int len = tempResult.encodedSize();
-      TensorShape result_shape = {1, len};
+      // detewmine the w-wength of the wesuwt
+      int w-wen = tempwesuwt.encodedsize();
+      tensowshape w-wesuwt_shape = {1, (ˆ ﻌ ˆ)♡ w-wen};
 
-      // Create an output tensor, the size is determined by the content of input.
-      Tensor* result = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, result_shape,
-                                                       &result));
-      twml::Tensor out_result = TFTensor_to_twml_tensor(*result);
+      // cweate an output tensow, 😳😳😳 the size is detewmined by the content of input. :3
+      tensow* wesuwt = n-nyuwwptw;
+      o-op_wequiwes_ok(context, OwO context->awwocate_output(0, (U ﹏ U) wesuwt_shape, >w<
+                                                       &wesuwt));
+      t-twmw::tensow out_wesuwt = t-tftensow_to_twmw_tensow(*wesuwt);
 
-      // Call writer of BatchPredictionResponse
-      tempResult.write(out_result);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // c-caww wwitew of batchpwedictionwesponse
+      tempwesuwt.wwite(out_wesuwt);
+    } catch(const s-std::exception &e) {
+      context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
     }
   }
 };
 
-#define REGISTER(Type)                     \
+#define wegistew(type)                     \
                                            \
-  REGISTER_KERNEL_BUILDER(                 \
-    Name("BatchPredictionResponseWriter")  \
-    .Device(DEVICE_CPU)                    \
-    .TypeConstraint<Type>("T"),            \
-    BatchPredictionResponseWriter<Type>);  \
+  wegistew_kewnew_buiwdew(                 \
+    nyame("batchpwedictionwesponsewwitew")  \
+    .device(device_cpu)                    \
+    .typeconstwaint<type>("t"), (U ﹏ U)            \
+    batchpwedictionwesponsewwitew<type>);  \
 
-REGISTER(float);
-REGISTER(double);
+w-wegistew(fwoat);
+wegistew(doubwe);

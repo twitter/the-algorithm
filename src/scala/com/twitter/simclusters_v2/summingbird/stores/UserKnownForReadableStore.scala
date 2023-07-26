@@ -1,75 +1,75 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twittew.simcwustews_v2.summingbiwd.stowes
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.thriftscala.{ClustersUserIsKnownFor, ModelVersion}
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.{Athena, ManhattanRO, ManhattanROConfig}
-import com.twitter.storehaus_internal.util.{ApplicationID, DatasetName, HDFSPath}
-import com.twitter.util.Future
+impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.bijection.scwooge.compactscawacodec
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{cwustewsusewisknownfow, (ˆ ﻌ ˆ)♡ m-modewvewsion}
+i-impowt c-com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt c-com.twittew.stowehaus_intewnaw.manhattan.{athena, 😳😳😳 manhattanwo, (U ﹏ U) manhattanwoconfig}
+impowt com.twittew.stowehaus_intewnaw.utiw.{appwicationid, (///ˬ///✿) datasetname, h-hdfspath}
+impowt com.twittew.utiw.futuwe
 
-object UserKnownForReadableStore {
+object u-usewknownfowweadabwestowe {
 
-  private val dataSetNameDec11 = "simclusters_v2_known_for_20m_145k_dec11"
-  private val dataSetNameUpdated = "simclusters_v2_known_for_20m_145k_updated"
-  private val dataSetName2020 = "simclusters_v2_known_for_20m_145k_2020"
+  pwivate vaw datasetnamedec11 = "simcwustews_v2_known_fow_20m_145k_dec11"
+  p-pwivate vaw datasetnameupdated = "simcwustews_v2_known_fow_20m_145k_updated"
+  pwivate vaw datasetname2020 = "simcwustews_v2_known_fow_20m_145k_2020"
 
-  private def buildForModelVersion(
-    appId: String,
-    storeName: String,
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[Long, ClustersUserIsKnownFor] = {
-    implicit val keyInjection: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val knownForCodec: Injection[ClustersUserIsKnownFor, Array[Byte]] =
-      CompactScalaCodec(ClustersUserIsKnownFor)
+  p-pwivate def buiwdfowmodewvewsion(
+    a-appid: s-stwing, 😳
+    stowename: stwing, 😳
+    mhmtwspawams: manhattankvcwientmtwspawams
+  ): weadabwestowe[wong, σωσ c-cwustewsusewisknownfow] = {
+    impwicit vaw keyinjection: injection[wong, awway[byte]] = i-injection.wong2bigendian
+    impwicit v-vaw knownfowcodec: i-injection[cwustewsusewisknownfow, a-awway[byte]] =
+      c-compactscawacodec(cwustewsusewisknownfow)
 
-    ManhattanRO.getReadableStoreWithMtls[Long, ClustersUserIsKnownFor](
-      ManhattanROConfig(
-        HDFSPath(""), // not needed
-        ApplicationID(appId),
-        DatasetName(storeName),
-        Athena
-      ),
-      mhMtlsParams
+    manhattanwo.getweadabwestowewithmtws[wong, rawr x3 cwustewsusewisknownfow](
+      m-manhattanwoconfig(
+        hdfspath(""), OwO // nyot nyeeded
+        a-appwicationid(appid), /(^•ω•^)
+        datasetname(stowename), 😳😳😳
+        athena
+      ), ( ͡o ω ͡o )
+      mhmtwspawams
     )
   }
 
-  def get(appId: String, mhMtlsParams: ManhattanKVClientMtlsParams): UserKnownForReadableStore = {
-    val dec11Store = buildForModelVersion(appId, dataSetNameDec11, mhMtlsParams)
-    val updatedStore = buildForModelVersion(appId, dataSetNameUpdated, mhMtlsParams)
-    val version2020Store = buildForModelVersion(appId, dataSetName2020, mhMtlsParams)
+  def get(appid: stwing, >_< mhmtwspawams: manhattankvcwientmtwspawams): u-usewknownfowweadabwestowe = {
+    vaw d-dec11stowe = buiwdfowmodewvewsion(appid, >w< d-datasetnamedec11, rawr m-mhmtwspawams)
+    vaw updatedstowe = buiwdfowmodewvewsion(appid, 😳 datasetnameupdated, >w< m-mhmtwspawams)
+    v-vaw vewsion2020stowe = buiwdfowmodewvewsion(appid, (⑅˘꒳˘) d-datasetname2020, OwO m-mhmtwspawams)
 
-    UserKnownForReadableStore(dec11Store, updatedStore, version2020Store)
+    usewknownfowweadabwestowe(dec11stowe, (ꈍᴗꈍ) u-updatedstowe, 😳 vewsion2020stowe)
   }
 
-  def getDefaultStore(mhMtlsParams: ManhattanKVClientMtlsParams): UserKnownForReadableStore =
-    get("simclusters_v2", mhMtlsParams)
+  def getdefauwtstowe(mhmtwspawams: m-manhattankvcwientmtwspawams): usewknownfowweadabwestowe =
+    get("simcwustews_v2", 😳😳😳 m-mhmtwspawams)
 
 }
 
-case class Query(userId: Long, modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated)
+case cwass quewy(usewid: w-wong, mya modewvewsion: modewvewsion = m-modewvewsion.modew20m145kupdated)
 
 /**
- * Mainly used in debuggers to fetch the top knownFor clusters across different model versions
+ * m-mainwy used in debuggews to fetch the top knownfow cwustews acwoss diffewent modew vewsions
  */
-case class UserKnownForReadableStore(
-  knownForStoreDec11: ReadableStore[Long, ClustersUserIsKnownFor],
-  knownForStoreUpdated: ReadableStore[Long, ClustersUserIsKnownFor],
-  knownForStore2020: ReadableStore[Long, ClustersUserIsKnownFor])
-    extends ReadableStore[Query, ClustersUserIsKnownFor] {
+case cwass u-usewknownfowweadabwestowe(
+  k-knownfowstowedec11: weadabwestowe[wong, mya c-cwustewsusewisknownfow], (⑅˘꒳˘)
+  k-knownfowstoweupdated: w-weadabwestowe[wong, (U ﹏ U) cwustewsusewisknownfow], mya
+  knownfowstowe2020: weadabwestowe[wong, ʘwʘ c-cwustewsusewisknownfow])
+    extends weadabwestowe[quewy, (˘ω˘) cwustewsusewisknownfow] {
 
-  override def get(query: Query): Future[Option[ClustersUserIsKnownFor]] = {
-    query.modelVersion match {
-      case ModelVersion.Model20m145kDec11 =>
-        knownForStoreDec11.get(query.userId)
-      case ModelVersion.Model20m145kUpdated =>
-        knownForStoreUpdated.get(query.userId)
-      case ModelVersion.Model20m145k2020 =>
-        knownForStore2020.get(query.userId)
+  ovewwide def g-get(quewy: quewy): futuwe[option[cwustewsusewisknownfow]] = {
+    q-quewy.modewvewsion m-match {
+      c-case modewvewsion.modew20m145kdec11 =>
+        knownfowstowedec11.get(quewy.usewid)
+      c-case m-modewvewsion.modew20m145kupdated =>
+        knownfowstoweupdated.get(quewy.usewid)
+      c-case m-modewvewsion.modew20m145k2020 =>
+        knownfowstowe2020.get(quewy.usewid)
       case c =>
-        throw new IllegalArgumentException(
-          s"Never heard of $c before! Is this a new model version?")
+        t-thwow nyew i-iwwegawawgumentexception(
+          s-s"nevew heawd o-of $c befowe! (U ﹏ U) i-is this a nyew modew vewsion?")
     }
   }
 }

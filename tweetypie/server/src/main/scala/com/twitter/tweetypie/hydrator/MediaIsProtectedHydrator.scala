@@ -1,36 +1,36 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.NotFound
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.media.Media
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.stitch.notfound
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.media.media
+impowt c-com.twittew.tweetypie.wepositowy._
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object MediaIsProtectedHydrator {
-  type Ctx = MediaEntityHydrator.Cacheable.Ctx
-  type Type = MediaEntityHydrator.Cacheable.Type
+o-object mediaispwotectedhydwatow {
+  type ctx = mediaentityhydwatow.cacheabwe.ctx
+  type type = mediaentityhydwatow.cacheabwe.type
 
-  val hydratedField: FieldByPath = MediaEntityHydrator.hydratedField
+  v-vaw hydwatedfiewd: fiewdbypath = mediaentityhydwatow.hydwatedfiewd
 
-  def apply(repo: UserProtectionRepository.Type): Type =
-    ValueHydrator[MediaEntity, Ctx] { (curr, ctx) =>
-      val request = UserKey(ctx.userId)
+  d-def appwy(wepo: usewpwotectionwepositowy.type): t-type =
+    vawuehydwatow[mediaentity, 🥺 ctx] { (cuww, >_< ctx) =>
+      vaw wequest = u-usewkey(ctx.usewid)
 
-      repo(request).liftToTry.map {
-        case Return(p) => ValueState.modified(curr.copy(isProtected = Some(p)))
-        case Throw(NotFound) => ValueState.unmodified(curr)
-        case Throw(_) => ValueState.partial(curr, hydratedField)
+      wepo(wequest).wifttotwy.map {
+        c-case wetuwn(p) => v-vawuestate.modified(cuww.copy(ispwotected = some(p)))
+        case thwow(notfound) => vawuestate.unmodified(cuww)
+        case thwow(_) => vawuestate.pawtiaw(cuww, >_< h-hydwatedfiewd)
       }
-    }.onlyIf { (curr, ctx) =>
-      // We need to update isProtected for media entities that:
-      // 1. Do not already have it set.
-      // 2. Did not come from another tweet.
+    }.onwyif { (cuww, (⑅˘꒳˘) ctx) =>
+      // we nyeed to update ispwotected fow media entities t-that:
+      // 1. /(^•ω•^) do nyot a-awweady have it s-set. rawr x3
+      // 2. (U ﹏ U) d-did nyot come f-fwom anothew tweet. (U ﹏ U)
       //
-      // If the entity does not have an expandedUrl, we can't be sure
-      // whether the media originated with this tweet.
-      curr.isProtected.isEmpty &&
-      Media.isOwnMedia(ctx.tweetId, curr) &&
-      curr.expandedUrl != null
+      // if the entity does nyot have a-an expandeduww, (⑅˘꒳˘) we can't be suwe
+      // whethew t-the media owiginated with this tweet. òωó
+      cuww.ispwotected.isempty &&
+      media.isownmedia(ctx.tweetid, ʘwʘ cuww) &&
+      c-cuww.expandeduww != nyuww
     }
 }

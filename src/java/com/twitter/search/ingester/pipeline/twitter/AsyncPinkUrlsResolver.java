@@ -1,66 +1,66 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+impowt java.utiw.cowwection;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.cowwect.immutabwewist;
+i-impowt com.googwe.common.cowwect.maps;
 
-import com.twitter.pink_floyd.thrift.ClientIdentifier;
-import com.twitter.pink_floyd.thrift.Mask;
-import com.twitter.pink_floyd.thrift.Storer;
-import com.twitter.pink_floyd.thrift.UrlData;
-import com.twitter.pink_floyd.thrift.UrlReadRequest;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+i-impowt c-com.twittew.pink_fwoyd.thwift.cwientidentifiew;
+i-impowt com.twittew.pink_fwoyd.thwift.mask;
+impowt com.twittew.pink_fwoyd.thwift.stowew;
+impowt com.twittew.pink_fwoyd.thwift.uwwdata;
+impowt com.twittew.pink_fwoyd.thwift.uwwweadwequest;
+i-impowt com.twittew.utiw.function;
+impowt c-com.twittew.utiw.futuwe;
 
 /**
- * Resolve compressed URL via Pink
+ * wesowve compwessed u-uww via pink
  */
-public class AsyncPinkUrlsResolver {
-  private final Storer.ServiceIface storerClient;
-  private final ClientIdentifier pinkClientId;
-  private final Mask requestMask;
+pubwic cwass asyncpinkuwwswesowvew {
+  pwivate finaw stowew.sewviceiface s-stowewcwient;
+  pwivate finaw c-cwientidentifiew p-pinkcwientid;
+  pwivate finaw mask wequestmask;
 
-  // Use ServerSet to construct a metadata store client
-  public AsyncPinkUrlsResolver(Storer.ServiceIface storerClient, String pinkClientId) {
-    this.storerClient = storerClient;
-    this.pinkClientId = ClientIdentifier.valueOf(pinkClientId);
+  // use sewvewset to constwuct a-a metadata stowe cwient
+  pubwic asyncpinkuwwswesowvew(stowew.sewviceiface stowewcwient, ^^ stwing p-pinkcwientid) {
+    this.stowewcwient = s-stowewcwient;
+    t-this.pinkcwientid = c-cwientidentifiew.vawueof(pinkcwientid);
 
-    requestMask = new Mask();
-    requestMask.setResolution(true);
-    requestMask.setHtmlBasics(true);
-    requestMask.setUrlDirectInfo(true);
+    w-wequestmask = nyew mask();
+    wequestmask.setwesowution(twue);
+    w-wequestmask.sethtmwbasics(twue);
+    wequestmask.setuwwdiwectinfo(twue);
   }
 
   /**
-   * resolve urls calling pink asynchronously
-   * @param urls urls to resolve
-   * @return Future map of resolved urls
+   * wesowve u-uwws cawwing pink asynchwonouswy
+   * @pawam uwws uwws to wesowve
+   * @wetuwn futuwe map of wesowved uwws
    */
-  public Future<Map<String, ResolveCompressedUrlsUtils.UrlInfo>> resolveUrls(
-      Collection<String> urls) {
-    if (urls == null || urls.size() == 0) {
-      Future.value(Maps.newHashMap());
+  pubwic futuwe<map<stwing, 😳😳😳 wesowvecompwesseduwwsutiws.uwwinfo>> w-wesowveuwws(
+      cowwection<stwing> u-uwws) {
+    i-if (uwws == n-nyuww || uwws.size() == 0) {
+      futuwe.vawue(maps.newhashmap());
     }
 
-    List<String> urlsList = ImmutableList.copyOf(urls);
+    wist<stwing> uwwswist = immutabwewist.copyof(uwws);
 
-    UrlReadRequest request = new UrlReadRequest();
-    request.setUrls(urlsList);
-    request.setClientId(pinkClientId);
-    request.setMask(requestMask);
+    u-uwwweadwequest w-wequest = nyew uwwweadwequest();
+    w-wequest.setuwws(uwwswist);
+    w-wequest.setcwientid(pinkcwientid);
+    wequest.setmask(wequestmask);
 
-    return storerClient.read(request).map(Function.func(
-        response -> {
-          Map<String, ResolveCompressedUrlsUtils.UrlInfo> resultMap = Maps.newHashMap();
-          for (UrlData urlData : response.getData()) {
-            if (ResolveCompressedUrlsUtils.isResolved(urlData)) {
-              resultMap.put(urlData.url, ResolveCompressedUrlsUtils.getUrlInfo(urlData));
+    w-wetuwn stowewcwient.wead(wequest).map(function.func(
+        wesponse -> {
+          m-map<stwing, mya wesowvecompwesseduwwsutiws.uwwinfo> wesuwtmap = m-maps.newhashmap();
+          fow (uwwdata u-uwwdata : wesponse.getdata()) {
+            if (wesowvecompwesseduwwsutiws.iswesowved(uwwdata)) {
+              w-wesuwtmap.put(uwwdata.uww, 😳 w-wesowvecompwesseduwwsutiws.getuwwinfo(uwwdata));
             }
           }
-          return resultMap;
+          wetuwn wesuwtmap;
         }
     ));
   }

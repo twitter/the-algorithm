@@ -1,18 +1,18 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/timelines/prediction/common/adapters",
-        "src/scala/com/twitter/timelines/prediction/common/adapters:base",
-        "src/scala/com/twitter/timelines/prediction/features/common",
-        "src/scala/com/twitter/timelines/prediction/features/conversation_features",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "src/thrift/com/twitter/ml/api:data-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "home-mixew/sewvew/swc/main/scawa/com/twittew/home_mixew/modew", (⑅˘꒳˘)
+        "swc/java/com/twittew/mw/api:api-base", ( ͡o ω ͡o )
+        "swc/scawa/com/twittew/mw/api:api-base", UwU
+        "swc/scawa/com/twittew/mw/api/utiw", rawr x3
+        "swc/scawa/com/twittew/timewines/pwediction/common/adaptews", rawr
+        "swc/scawa/com/twittew/timewines/pwediction/common/adaptews:base", σωσ
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/common", σωσ
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/convewsation_featuwes", >_<
+        "swc/thwift/com/twittew/mw/api:data-java", :3
+        "swc/thwift/com/twittew/mw/api:data-scawa", (U ﹏ U)
     ],
 )

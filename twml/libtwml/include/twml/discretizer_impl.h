@@ -1,22 +1,22 @@
-#pragma once
-#include <twml/common.h>
-#include <twml/defines.h>
-#include <twml/Tensor.h>
+#pwagma once
+#incwude <twmw/common.h>
+#incwude <twmw/defines.h>
+#incwude <twmw/tensow.h>
 
-#ifdef __cplusplus
-namespace twml {
-    TWMLAPI void discretizerInfer(
-        Tensor &output_keys,
-        Tensor &output_vals,
-        const Tensor &input_ids,
-        const Tensor &input_vals,
-        const Tensor &bin_ids,
-        const Tensor &bin_vals,
-        const Tensor &feature_offsets,
-        int output_bits,
-        const Map<int64_t, int64_t> &ID_to_index,
-        int start_compute,
-        int end_compute,
-        int output_start);
-}  // namespace twml
+#ifdef __cpwuspwus
+nyamespace t-twmw {
+    t-twmwapi void discwetizewinfew(
+        t-tensow &output_keys, (U ﹏ U)
+        t-tensow &output_vaws, -.-
+        c-const tensow &input_ids, (ˆ ﻌ ˆ)♡
+        c-const tensow &input_vaws, (⑅˘꒳˘)
+        c-const tensow &bin_ids, (U ᵕ U❁)
+        c-const tensow &bin_vaws, -.-
+        const tensow &featuwe_offsets, ^^;;
+        int output_bits, >_<
+        const map<int64_t, mya i-int64_t> &id_to_index, mya
+        int stawt_compute, 😳
+        int end_compute, XD
+        i-int output_stawt);
+}  // nyamespace twmw
 #endif

@@ -1,14 +1,14 @@
-package com.twitter.visibility.interfaces.tweets
+package com.twittew.visibiwity.intewfaces.tweets
 
-import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+impowt com.twittew.visibiwity.modews.usewunavaiwabwestateenum
+impowt c-com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.modews.viewewcontext
 
-case class UserUnavailableStateVisibilityRequest(
-  safetyLevel: SafetyLevel,
-  tweetId: Long,
-  viewerContext: ViewerContext,
-  userUnavailableState: UserUnavailableStateEnum,
-  isRetweet: Boolean,
-  isInnerQuotedTweet: Boolean,
+c-case cwass usewunavaiwabwestatevisibiwitywequest(
+  s-safetywevew: s-safetywevew, σωσ
+  t-tweetid: wong, σωσ
+  v-viewewcontext: v-viewewcontext, >_<
+  usewunavaiwabwestate: usewunavaiwabwestateenum, :3
+  iswetweet: boowean, (U ﹏ U)
+  isinnewquotedtweet: b-boowean, -.-
 )

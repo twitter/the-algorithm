@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.core.pipeline.product
+package com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.pipeline_selector_executor.PipelineSelectorExecutorResult
-import com.twitter.product_mixer.core.service.quality_factor_executor.QualityFactorExecutorResult
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.mixew.mixewpipewinewesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.wecommendation.wecommendationpipewinewesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_sewectow_executow.pipewinesewectowexecutowwesuwt
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.quawity_factow_executow.quawityfactowexecutowwesuwt
 
-case class ProductPipelineResult[Result](
-  transformedQuery: Option[PipelineQuery],
-  qualityFactorResult: Option[QualityFactorExecutorResult],
-  gateResult: Option[GateExecutorResult],
-  pipelineSelectorResult: Option[PipelineSelectorExecutorResult],
-  mixerPipelineResult: Option[MixerPipelineResult[Result]],
-  recommendationPipelineResult: Option[RecommendationPipelineResult[_, Result]],
-  traceId: Option[String],
-  failure: Option[PipelineFailure],
-  result: Option[Result])
-    extends PipelineResult[Result] {
+case cwass pwoductpipewinewesuwt[wesuwt](
+  twansfowmedquewy: option[pipewinequewy], OwO
+  q-quawityfactowwesuwt: option[quawityfactowexecutowwesuwt], 😳😳😳
+  gatewesuwt: o-option[gateexecutowwesuwt],
+  pipewinesewectowwesuwt: o-option[pipewinesewectowexecutowwesuwt], 😳😳😳
+  mixewpipewinewesuwt: option[mixewpipewinewesuwt[wesuwt]],
+  wecommendationpipewinewesuwt: o-option[wecommendationpipewinewesuwt[_, o.O wesuwt]], ( ͡o ω ͡o )
+  twaceid: o-option[stwing],
+  f-faiwuwe: option[pipewinefaiwuwe], (U ﹏ U)
+  wesuwt: option[wesuwt])
+    extends p-pipewinewesuwt[wesuwt] {
 
-  override val resultSize: Int = {
-    if (mixerPipelineResult.isDefined) {
-      mixerPipelineResult.map(_.resultSize).getOrElse(0)
-    } else {
-      recommendationPipelineResult.map(_.resultSize).getOrElse(0)
+  ovewwide vaw wesuwtsize: int = {
+    if (mixewpipewinewesuwt.isdefined) {
+      m-mixewpipewinewesuwt.map(_.wesuwtsize).getowewse(0)
+    } ewse {
+      w-wecommendationpipewinewesuwt.map(_.wesuwtsize).getowewse(0)
     }
   }
 
-  override def withFailure(failure: PipelineFailure): PipelineResult[Result] =
-    copy(failure = Some(failure))
+  o-ovewwide d-def withfaiwuwe(faiwuwe: p-pipewinefaiwuwe): pipewinewesuwt[wesuwt] =
+    copy(faiwuwe = some(faiwuwe))
 
-  override def withResult(result: Result): PipelineResult[Result] = copy(result = Some(result))
+  o-ovewwide def withwesuwt(wesuwt: wesuwt): p-pipewinewesuwt[wesuwt] = copy(wesuwt = some(wesuwt))
 }
 
-object ProductPipelineResult {
-  def empty[A]: ProductPipelineResult[A] = ProductPipelineResult(
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None
+object pwoductpipewinewesuwt {
+  def empty[a]: pwoductpipewinewesuwt[a] = pwoductpipewinewesuwt(
+    n-nyone, (///ˬ///✿)
+    nyone, >w<
+    nyone,
+    n-nyone, rawr
+    nyone, mya
+    n-nyone, ^^
+    n-none,
+    nyone, 😳😳😳
+    nyone
   )
 
-  def fromResult[A](result: A): ProductPipelineResult[A] = ProductPipelineResult(
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    Some(result)
+  def fwomwesuwt[a](wesuwt: a): pwoductpipewinewesuwt[a] = p-pwoductpipewinewesuwt(
+    n-nyone, mya
+    nyone, 😳
+    n-nyone, -.-
+    nyone,
+    n-nyone, 🥺
+    nyone, o.O
+    none,
+    n-nyone, /(^•ω•^)
+    some(wesuwt)
   )
 }

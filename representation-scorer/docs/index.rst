@@ -1,36 +1,36 @@
-Representation Scorer (RSX)
+wepwesentation scowew (wsx)
 ###########################
 
-Overview
+ovewview
 ========
 
-Representation Scorer (RSX) is a StratoFed service which serves scores for pairs of entities (User, Tweet, Topic...) based on some representation of those entities. For example, it serves User-Tweet scores based on the cosine similarity of SimClusters embeddings for each of these.  It aims to provide these with low latency and at high scale, to support applications such as scoring for ANN candidate generation and feature hydration via feature store.
+w-wepwesentation s-scowew (wsx) i-is a stwatofed s-sewvice which s-sewves scowes f-fow paiws of entities (usew, ^^ tweet, :3 t-topic...) b-based on some wepwesentation of those entities. fow exampwe, -.- it sewves usew-tweet s-scowes based on the cosine simiwawity of simcwustews e-embeddings fow each of these. 😳  i-it aims to pwovide these with wow watency and at high scawe, mya t-to suppowt appwications such a-as scowing fow ann c-candidate genewation and featuwe hydwation via featuwe stowe. (˘ω˘)
 
 
-Current use cases
+cuwwent use cases
 -----------------
 
-RSX currently serves traffic for the following use cases:
+w-wsx cuwwentwy sewves twaffic fow the fowwowing use cases:
 
-- User-Tweet similarity scores for Home ranking, using SimClusters embedding dot product
-- Topic-Tweet similarity scores for topical tweet candidate generation and topic social proof, using SimClusters embedding cosine similarity and CERTO scores
-- Tweet-Tweet and User-Tweet similarity scores for ANN candidate generation, using SimClusters embedding cosine similarity 
-- (in development) User-Tweet similarity scores for Home ranking, based on various aggregations of similarities with recent faves, retweets and follows performed by the user
+- usew-tweet s-simiwawity scowes fow home wanking, >_< u-using simcwustews e-embedding d-dot pwoduct
+- topic-tweet s-simiwawity scowes fow topicaw tweet candidate g-genewation and topic sociaw pwoof, -.- using s-simcwustews embedding cosine simiwawity and cewto scowes
+- tweet-tweet and usew-tweet simiwawity s-scowes fow ann candidate genewation, 🥺 u-using simcwustews e-embedding c-cosine simiwawity 
+- (in devewopment) usew-tweet simiwawity scowes f-fow home wanking, (U ﹏ U) b-based on vawious aggwegations o-of simiwawities w-with wecent faves, >w< wetweets a-and fowwows pewfowmed by the usew
 
-Getting Started
+g-getting stawted
 ===============
 
-Fetching scores
+fetching scowes
 ---------------
 
-Scores are served from the recommendations/representation_scorer/score column.
+scowes awe s-sewved fwom the wecommendations/wepwesentation_scowew/scowe c-cowumn. mya
 
-Using RSX for your application
+using wsx f-fow youw appwication
 ------------------------------
 
-RSX may be a good fit for your application if you need scores based on combinations of SimCluster embeddings for core nouns. We also plan to support other embeddings and scoring approaches in the future.
+w-wsx may be a good fit fow youw appwication if you nyeed scowes based on combinations of simcwustew embeddings f-fow cowe nyouns. >w< w-we awso pwan to suppowt othew e-embeddings and s-scowing appwoaches i-in the futuwe. nyaa~~
 
-.. toctree::
+.. toctwee::
    :maxdepth: 2
    :hidden:
 

@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.twittew.seawch.eawwybiwd.awchive.segmentbuiwdew;
 
-import java.util.HashMap;
-import java.util.Map;
+impowt j-java.utiw.hashmap;
+i-impowt java.utiw.map;
 
-import com.twitter.common.util.Clock;
+i-impowt c-com.twittew.common.utiw.cwock;
 
 /**
- * A class that prevents handling a given segment more than once every hdfsCheckIntervalMillis
+ * a-a cwass t-that pwevents h-handwing a given s-segment mowe than once evewy hdfscheckintewvawmiwwis
  */
-public class RateLimitingSegmentHandler {
-  private final long hdfsCheckIntervalMillis;
-  private final Clock clock;
-  private final Map<String, Long> segmentNameToLastUpdatedTimeMillis = new HashMap<>();
+pubwic cwass watewimitingsegmenthandwew {
+  p-pwivate finaw wong hdfscheckintewvawmiwwis;
+  pwivate finaw c-cwock cwock;
+  pwivate finaw m-map<stwing, (˘ω˘) wong> segmentnametowastupdatedtimemiwwis = nyew hashmap<>();
 
-  RateLimitingSegmentHandler(long hdfsCheckIntervalMillis, Clock clock) {
-    this.hdfsCheckIntervalMillis = hdfsCheckIntervalMillis;
-    this.clock = clock;
+  watewimitingsegmenthandwew(wong h-hdfscheckintewvawmiwwis, (⑅˘꒳˘) cwock cwock) {
+    t-this.hdfscheckintewvawmiwwis = h-hdfscheckintewvawmiwwis;
+    this.cwock = cwock;
   }
 
-  SegmentBuilderSegment processSegment(SegmentBuilderSegment segment)
-      throws SegmentUpdaterException, SegmentInfoConstructionException {
+  segmentbuiwdewsegment pwocesssegment(segmentbuiwdewsegment s-segment)
+      thwows segmentupdatewexception, (///ˬ///✿) segmentinfoconstwuctionexception {
 
-    String segmentName = segment.getSegmentName();
+    stwing segmentname = s-segment.getsegmentname();
 
-    Long lastUpdatedMillis = segmentNameToLastUpdatedTimeMillis.get(segmentName);
-    if (lastUpdatedMillis == null) {
-      lastUpdatedMillis = 0L;
+    wong wastupdatedmiwwis = segmentnametowastupdatedtimemiwwis.get(segmentname);
+    i-if (wastupdatedmiwwis == n-nyuww) {
+      w-wastupdatedmiwwis = 0w;
     }
 
-    long nowMillis = clock.nowMillis();
-    if (nowMillis - lastUpdatedMillis < hdfsCheckIntervalMillis) {
-      return segment;
+    w-wong nyowmiwwis = cwock.nowmiwwis();
+    if (nowmiwwis - w-wastupdatedmiwwis < hdfscheckintewvawmiwwis) {
+      wetuwn segment;
     }
-    segmentNameToLastUpdatedTimeMillis.put(segmentName, nowMillis);
+    s-segmentnametowastupdatedtimemiwwis.put(segmentname, 😳😳😳 nyowmiwwis);
 
-    return segment.handle();
+    wetuwn segment.handwe();
   }
 }

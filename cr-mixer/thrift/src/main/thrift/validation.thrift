@@ -1,19 +1,19 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.twittew.cw_mixew.thwiftjava
+#@namespace scawa c-com.twittew.cw_mixew.thwiftscawa
+#@namespace s-stwato c-com.twittew.cw_mixew
 
-// ValidationErrorCode is used to identify classes of client errors returned from a Product Mixer
-// service. Use [[PipelineFailureExceptionMapper]] to adapt pipeline failures into thrift errors.
-enum ValidationErrorCode {
-  PRODUCT_DISABLED = 1
-  PLACEHOLDER_2 = 2
-} (hasPersonalData='false')
+// v-vawidationewwowcode i-is used to identify c-cwasses of c-cwient ewwows wetuwned f-fwom a pwoduct mixew
+// sewvice. >_< use [[pipewinefaiwuweexceptionmappew]] to adapt pipewine faiwuwes into thwift e-ewwows.
+enum vawidationewwowcode {
+  pwoduct_disabwed = 1
+  p-pwacehowdew_2 = 2
+} (haspewsonawdata='fawse')
 
-exception ValidationException {
-  1: ValidationErrorCode errorCode
-  2: string msg
-} (hasPersonalData='false')
+exception vawidationexception {
+  1: v-vawidationewwowcode ewwowcode
+  2: stwing msg
+} (haspewsonawdata='fawse')
 
-exception ValidationExceptionList {
-  1: list<ValidationException> errors
-} (hasPersonalData='false')
+e-exception vawidationexceptionwist {
+  1: wist<vawidationexception> e-ewwows
+} (haspewsonawdata='fawse')

@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.products.explore_tab.configapi
+package com.twittew.fowwow_wecommendations.pwoducts.expwowe_tab.configapi
 
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.FSParam
+impowt c-com.twittew.timewines.configapi.pawam
+i-impowt com.twittew.timewines.configapi.fspawam
 
-object ExploreTabParams {
-  object EnableProduct extends Param[Boolean](false)
-  object EnableProductForSoftUser
-      extends FSParam[Boolean]("explore_tab_enable_product_for_soft_user", false)
+o-object expwowetabpawams {
+  o-object enabwepwoduct e-extends p-pawam[boowean](fawse)
+  o-object enabwepwoductfowsoftusew
+      e-extends fspawam[boowean]("expwowe_tab_enabwe_pwoduct_fow_soft_usew", UwU fawse)
 }

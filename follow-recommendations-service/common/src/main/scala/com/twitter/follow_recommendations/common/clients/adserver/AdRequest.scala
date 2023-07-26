@@ -1,45 +1,45 @@
-package com.twitter.follow_recommendations.common.clients.adserver
+package com.twittew.fowwow_wecommendations.common.cwients.adsewvew
 
-import com.twitter.adserver.{thriftscala => t}
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+impowt com.twittew.adsewvew.{thwiftscawa => t}
+i-impowt com.twittew.fowwow_wecommendations.common.modews.dispwaywocation
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.cwientcontext
 
-case class AdRequest(
-  clientContext: ClientContext,
-  displayLocation: DisplayLocation,
-  isTest: Option[Boolean],
-  profileUserId: Option[Long]) {
-  def toThrift: t.AdRequestParams = {
+c-case cwass a-adwequest(
+  c-cwientcontext: c-cwientcontext, >_<
+  d-dispwaywocation: dispwaywocation, >_<
+  istest: option[boowean], (⑅˘꒳˘)
+  pwofiweusewid: option[wong]) {
+  def tothwift: t.adwequestpawams = {
 
-    val request = t.AdRequest(
-      displayLocation = displayLocation.toAdDisplayLocation.getOrElse(
-        throw new MissingAdDisplayLocation(displayLocation)),
-      isTest = isTest,
-      countImpressionsOnCallback = Some(true),
-      numOrganicItems = Some(AdRequest.DefaultNumOrganicItems.toShort),
-      profileUserId = profileUserId
+    v-vaw wequest = t.adwequest(
+      dispwaywocation = d-dispwaywocation.toaddispwaywocation.getowewse(
+        thwow nyew missingaddispwaywocation(dispwaywocation)), /(^•ω•^)
+      i-istest = istest, rawr x3
+      countimpwessionsoncawwback = some(twue), (U ﹏ U)
+      nyumowganicitems = s-some(adwequest.defauwtnumowganicitems.toshowt), (U ﹏ U)
+      pwofiweusewid = p-pwofiweusewid
     )
 
-    val clientInfo = t.ClientInfo(
-      clientId = clientContext.appId.map(_.toInt),
-      userIp = clientContext.ipAddress,
-      userId64 = clientContext.userId,
-      guestId = clientContext.guestId,
-      userAgent = clientContext.userAgent,
-      referrer = None,
-      deviceId = clientContext.deviceId,
-      languageCode = clientContext.languageCode,
-      countryCode = clientContext.countryCode
+    v-vaw cwientinfo = t.cwientinfo(
+      cwientid = cwientcontext.appid.map(_.toint), (⑅˘꒳˘)
+      usewip = cwientcontext.ipaddwess, òωó
+      u-usewid64 = cwientcontext.usewid, ʘwʘ
+      guestid = cwientcontext.guestid, /(^•ω•^)
+      usewagent = cwientcontext.usewagent, ʘwʘ
+      w-wefewwew = nyone, σωσ
+      deviceid = c-cwientcontext.deviceid, OwO
+      w-wanguagecode = c-cwientcontext.wanguagecode, 😳😳😳
+      c-countwycode = cwientcontext.countwycode
     )
 
-    t.AdRequestParams(request, clientInfo)
+    t.adwequestpawams(wequest, 😳😳😳 c-cwientinfo)
   }
 }
 
-object AdRequest {
-  val DefaultNumOrganicItems = 10
+object adwequest {
+  vaw defauwtnumowganicitems = 10
 }
 
-class MissingAdDisplayLocation(displayLocation: DisplayLocation)
-    extends Exception(
-      s"Display Location ${displayLocation.toString} has no mapped AdsDisplayLocation set.")
+c-cwass missingaddispwaywocation(dispwaywocation: dispwaywocation)
+    extends exception(
+      s"dispway wocation ${dispwaywocation.tostwing} h-has nyo mapped adsdispwaywocation s-set.")

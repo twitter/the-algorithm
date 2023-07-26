@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlert
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlertInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.showawewt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.showawewtinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class ShowAlertInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, ShowAlertInstruction] {
+c-case cwass s-showawewtinstwuctionbuiwdew[quewy <: pipewinequewy](
+  ovewwide vaw incwudeinstwuction: incwudeinstwuction[quewy] = a-awwaysincwude)
+    extends uwtinstwuctionbuiwdew[quewy, -.- showawewtinstwuction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[ShowAlertInstruction] = {
-    if (includeInstruction(query, entries)) {
-      // Currently only one Alert is supported per response
-      entries.collectFirst {
-        case alertEntry: ShowAlert => ShowAlertInstruction(alertEntry)
-      }.toSeq
-    } else Seq.empty
+  o-ovewwide def buiwd(
+    q-quewy: quewy, ( ͡o ω ͡o )
+    entwies: seq[timewineentwy]
+  ): seq[showawewtinstwuction] = {
+    if (incwudeinstwuction(quewy, rawr x3 e-entwies)) {
+      // cuwwentwy o-onwy one awewt i-is suppowted pew wesponse
+      entwies.cowwectfiwst {
+        case awewtentwy: showawewt => s-showawewtinstwuction(awewtentwy)
+      }.toseq
+    } ewse seq.empty
   }
 }

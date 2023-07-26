@@ -1,119 +1,119 @@
-package com.twitter.search.ingester.pipeline.wire;
+package com.twittew.seawch.ingestew.pipewine.wiwe;
 
-import java.util.concurrent.TimeUnit;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+impowt java.utiw.concuwwent.timeunit;
+i-impowt j-javax.naming.context;
+i-impowt javax.naming.initiawcontext;
+i-impowt j-javax.naming.namingexception;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.apache.thwift.pwotocow.tbinawypwotocow;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common_internal.manhattan.ManhattanClient;
-import com.twitter.common_internal.manhattan.ManhattanClientImpl;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.builder.ClientBuilder;
-import com.twitter.finagle.builder.ClientConfig.Yes;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.mtls.client.MtlsThriftMuxClient;
-import com.twitter.finagle.mux.transport.OpportunisticTls;
-import com.twitter.finagle.stats.DefaultStatsReceiver;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.manhattan.thriftv1.ConsistencyLevel;
-import com.twitter.manhattan.thriftv1.ManhattanCoordinator;
-import com.twitter.metastore.client_v2.MetastoreClient;
-import com.twitter.metastore.client_v2.MetastoreClientImpl;
-import com.twitter.util.Duration;
+impowt c-com.twittew.common.quantity.amount;
+impowt com.twittew.common.quantity.time;
+impowt com.twittew.common_intewnaw.manhattan.manhattancwient;
+i-impowt com.twittew.common_intewnaw.manhattan.manhattancwientimpw;
+impowt c-com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.thwiftmux;
+impowt com.twittew.finagwe.buiwdew.cwientbuiwdew;
+i-impowt com.twittew.finagwe.buiwdew.cwientconfig.yes;
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew;
+i-impowt com.twittew.finagwe.mtws.cwient.mtwsthwiftmuxcwient;
+impowt com.twittew.finagwe.mux.twanspowt.oppowtunistictws;
+impowt com.twittew.finagwe.stats.defauwtstatsweceivew;
+i-impowt com.twittew.finagwe.thwift.cwientid;
+impowt com.twittew.finagwe.thwift.thwiftcwientwequest;
+impowt com.twittew.manhattan.thwiftv1.consistencywevew;
+impowt c-com.twittew.manhattan.thwiftv1.manhattancoowdinatow;
+impowt com.twittew.metastowe.cwient_v2.metastowecwient;
+impowt c-com.twittew.metastowe.cwient_v2.metastowecwientimpw;
+i-impowt c-com.twittew.utiw.duwation;
 
-public class StratoMetaStoreWireModule {
-  private WireModule wireModule;
-  private static final Logger LOG = LoggerFactory.getLogger(StratoMetaStoreWireModule.class);
+p-pubwic cwass stwatometastowewiwemoduwe {
+  pwivate w-wiwemoduwe wiwemoduwe;
+  pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(stwatometastowewiwemoduwe.cwass);
 
-  public StratoMetaStoreWireModule(WireModule wireModule) {
-    this.wireModule = wireModule;
+  pubwic stwatometastowewiwemoduwe(wiwemoduwe wiwemoduwe) {
+    this.wiwemoduwe = wiwemoduwe;
   }
 
-  private static final String MANHATTAN_SD_ZK_ROLE =
-      WireModule.JNDI_PIPELINE_ROOT + "manhattanSDZKRole";
-  private static final String MANHATTAN_SD_ZK_ENV =
-      WireModule.JNDI_PIPELINE_ROOT + "manhattanSDZKEnv";
-  private static final String MANHATTAN_SD_ZK_NAME =
-      WireModule.JNDI_PIPELINE_ROOT + "manhattanSDZKName";
-  private static final String MANHATTAN_APPLICATION_ID = "ingester_starbuck";
+  p-pwivate static finaw s-stwing manhattan_sd_zk_wowe =
+      w-wiwemoduwe.jndi_pipewine_woot + "manhattansdzkwowe";
+  p-pwivate static finaw stwing manhattan_sd_zk_env =
+      wiwemoduwe.jndi_pipewine_woot + "manhattansdzkenv";
+  p-pwivate s-static finaw stwing manhattan_sd_zk_name =
+      w-wiwemoduwe.jndi_pipewine_woot + "manhattansdzkname";
+  p-pwivate static finaw stwing m-manhattan_appwication_id = "ingestew_stawbuck";
 
-  private static class Options {
-    // The client id as a string
-    private final String clientId = "ingester";
+  pwivate s-static cwass options {
+    // the cwient id as a stwing
+    pwivate f-finaw stwing cwientid = "ingestew";
 
-    // The connection timeout in millis
-    private final long connectTimeout = 50;
+    // t-the connection timeout in miwwis
+    p-pwivate finaw w-wong connecttimeout = 50;
 
-    // The request timeout im millis
-    private final long requestTimeout = 300;
+    // the wequest timeout im miwwis
+    pwivate finaw wong wequesttimeout = 300;
 
-    // Total timeout per call (including retries)
-    private final long totalTimeout = 500;
+    // totaw timeout pew caww (incwuding w-wetwies)
+    p-pwivate finaw wong totawtimeout = 500;
 
-    // The maximum number of retries per call
-    private final int retries = 2;
+    // t-the maximum n-nyumbew of wetwies p-pew caww
+    pwivate finaw int wetwies = 2;
   }
 
-  private final Options options = new Options();
+  pwivate f-finaw options options = nyew options();
 
-  private ClientBuilder<ThriftClientRequest, byte[], ?, Yes, Yes> getClientBuilder(
-      String name,
-      ServiceIdentifier serviceIdentifier) {
-    return getClientBuilder(name, new ClientId(options.clientId), serviceIdentifier);
+  pwivate cwientbuiwdew<thwiftcwientwequest, rawr byte[], (˘ω˘) ?, y-yes, yes> getcwientbuiwdew(
+      stwing nyame, nyaa~~
+      s-sewviceidentifiew s-sewviceidentifiew) {
+    w-wetuwn getcwientbuiwdew(name, UwU nyew cwientid(options.cwientid), :3 s-sewviceidentifiew);
   }
 
-  private ClientBuilder<ThriftClientRequest, byte[], ?, Yes, Yes> getClientBuilder(
-          String name,
-          ClientId clientId,
-          ServiceIdentifier serviceIdentifier) {
-    Preconditions.checkNotNull(serviceIdentifier,
-        "Can't create Metastore Manhattan client with S2S auth because Service Identifier is null");
-    LOG.info(String.format("Service identifier for Metastore Manhattan client: %s",
-        ServiceIdentifier.asString(serviceIdentifier)));
-    return ClientBuilder.get()
+  p-pwivate c-cwientbuiwdew<thwiftcwientwequest, (⑅˘꒳˘) b-byte[], (///ˬ///✿) ?, yes, yes> getcwientbuiwdew(
+          stwing n-nyame, ^^;;
+          c-cwientid cwientid, >_<
+          s-sewviceidentifiew s-sewviceidentifiew) {
+    p-pweconditions.checknotnuww(sewviceidentifiew, rawr x3
+        "can't cweate metastowe manhattan cwient with s2s a-auth because sewvice identifiew is nuww");
+    wog.info(stwing.fowmat("sewvice identifiew fow metastowe manhattan c-cwient: %s", /(^•ω•^)
+        sewviceidentifiew.asstwing(sewviceidentifiew)));
+    wetuwn cwientbuiwdew.get()
         .name(name)
-        .tcpConnectTimeout(new Duration(TimeUnit.MILLISECONDS.toNanos(options.connectTimeout)))
-        .requestTimeout(new Duration(TimeUnit.MILLISECONDS.toNanos(options.requestTimeout)))
-        .timeout(new Duration(TimeUnit.MILLISECONDS.toNanos(options.totalTimeout)))
-        .retries(options.retries)
-        .reportTo(DefaultStatsReceiver.get())
-        .stack(new MtlsThriftMuxClient(ThriftMux.client())
-            .withMutualTls(serviceIdentifier)
-            .withClientId(clientId)
-            .withOpportunisticTls(OpportunisticTls.Required()));
+        .tcpconnecttimeout(new d-duwation(timeunit.miwwiseconds.tonanos(options.connecttimeout)))
+        .wequesttimeout(new d-duwation(timeunit.miwwiseconds.tonanos(options.wequesttimeout)))
+        .timeout(new d-duwation(timeunit.miwwiseconds.tonanos(options.totawtimeout)))
+        .wetwies(options.wetwies)
+        .wepowtto(defauwtstatsweceivew.get())
+        .stack(new mtwsthwiftmuxcwient(thwiftmux.cwient())
+            .withmutuawtws(sewviceidentifiew)
+            .withcwientid(cwientid)
+            .withoppowtunistictws(oppowtunistictws.wequiwed()));
   }
 
   /**
-   * Returns the Metastore client.
+   * w-wetuwns the metastowe c-cwient. :3
    */
-  public MetastoreClient getMetastoreClient(ServiceIdentifier serviceIdentifier)
-      throws NamingException {
-    Context jndiContext = new InitialContext();
-    String destString = String.format("/cluster/local/%s/%s/%s",
-        jndiContext.lookup(MANHATTAN_SD_ZK_ROLE),
-        jndiContext.lookup(MANHATTAN_SD_ZK_ENV),
-        jndiContext.lookup(MANHATTAN_SD_ZK_NAME));
-    LOG.info("Manhattan serverset Name: {}", destString);
+  p-pubwic metastowecwient getmetastowecwient(sewviceidentifiew sewviceidentifiew)
+      thwows nyamingexception {
+    context jndicontext = nyew initiawcontext();
+    s-stwing deststwing = stwing.fowmat("/cwustew/wocaw/%s/%s/%s", (ꈍᴗꈍ)
+        j-jndicontext.wookup(manhattan_sd_zk_wowe), /(^•ω•^)
+        jndicontext.wookup(manhattan_sd_zk_env), (⑅˘꒳˘)
+        j-jndicontext.wookup(manhattan_sd_zk_name));
+    w-wog.info("manhattan sewvewset nyame: {}", ( ͡o ω ͡o ) deststwing);
 
-    Service<ThriftClientRequest, byte[]> service =
-        ClientBuilder.safeBuild(getClientBuilder("metastore", serviceIdentifier).dest(destString));
+    s-sewvice<thwiftcwientwequest, òωó b-byte[]> sewvice =
+        cwientbuiwdew.safebuiwd(getcwientbuiwdew("metastowe", (⑅˘꒳˘) sewviceidentifiew).dest(deststwing));
 
-    ManhattanClient manhattanClient = new ManhattanClientImpl(
-        new ManhattanCoordinator.ServiceToClient(service, new TBinaryProtocol.Factory()),
-        MANHATTAN_APPLICATION_ID,
-        Amount.of((int) options.requestTimeout, Time.MILLISECONDS),
-        ConsistencyLevel.ONE);
+    m-manhattancwient m-manhattancwient = nyew manhattancwientimpw(
+        nyew manhattancoowdinatow.sewvicetocwient(sewvice, XD nyew tbinawypwotocow.factowy()), -.-
+        manhattan_appwication_id, :3
+        a-amount.of((int) o-options.wequesttimeout, nyaa~~ t-time.miwwiseconds), 😳
+        consistencywevew.one);
 
-    return new MetastoreClientImpl(manhattanClient);
+    w-wetuwn nyew metastowecwientimpw(manhattancwient);
   }
 }

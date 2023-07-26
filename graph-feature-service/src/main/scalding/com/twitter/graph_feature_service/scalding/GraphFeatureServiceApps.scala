@@ -1,52 +1,52 @@
-package com.twitter.graph_feature_service.scalding
+package com.twittew.gwaph_featuwe_sewvice.scawding
 
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.UniqueID
-import java.util.Calendar
-import java.util.TimeZone
-import sun.util.calendar.BaseCalendar
+impowt com.twittew.scawding.datewange
+i-impowt c-com.twittew.scawding.execution
+impowt c-com.twittew.scawding.wichdate
+i-impowt com.twittew.scawding.uniqueid
+i-impowt j-java.utiw.cawendaw
+i-impowt java.utiw.timezone
+i-impowt sun.utiw.cawendaw.basecawendaw
 
 /**
- * To launch an adhoc run:
+ * to waunch an adhoc wun:
  *
-  scalding remote run --target graph-feature-service/src/main/scalding/com/twitter/graph_feature_service/scalding:graph_feature_service_adhoc_job
+  scawding w-wemote wun --tawget gwaph-featuwe-sewvice/swc/main/scawding/com/twittew/gwaph_featuwe_sewvice/scawding:gwaph_featuwe_sewvice_adhoc_job
  */
-object GraphFeatureServiceAdhocApp
-    extends GraphFeatureServiceMainJob
-    with GraphFeatureServiceAdhocBaseApp {}
+object g-gwaphfeatuwesewviceadhocapp
+    extends gwaphfeatuwesewvicemainjob
+    w-with gwaphfeatuwesewviceadhocbaseapp {}
 
 /**
- * To schedule the job, upload the workflows config (only required for the first time and subsequent config changes):
- * scalding workflow upload --jobs graph-feature-service/src/main/scalding/com/twitter/graph_feature_service/scalding:graph_feature_service_daily_job --autoplay --build-cron-schedule "20 23 1 * *"
- * You can then build from the UI by clicking "Build" and pasting in your remote branch, or leave it empty if you're redeploying from master.
- * The workflows config above should automatically trigger once each month.
+ * to scheduwe the job, 🥺 upwoad the wowkfwows c-config (onwy wequiwed fow the f-fiwst time and s-subsequent config changes):
+ * scawding wowkfwow upwoad --jobs gwaph-featuwe-sewvice/swc/main/scawding/com/twittew/gwaph_featuwe_sewvice/scawding:gwaph_featuwe_sewvice_daiwy_job --autopway --buiwd-cwon-scheduwe "20 23 1 * *"
+ * y-you can then buiwd fwom the ui by cwicking "buiwd" and pasting in youw wemote b-bwanch, o.O ow weave it empty if y-you'we wedepwoying f-fwom mastew. /(^•ω•^)
+ * t-the wowkfwows c-config above shouwd automaticawwy twiggew once e-each month. nyaa~~
  */
-object GraphFeatureServiceScheduledApp
-    extends GraphFeatureServiceMainJob
-    with GraphFeatureServiceScheduledBaseApp {
-  override def firstTime: RichDate = RichDate("2018-05-18")
+object gwaphfeatuwesewvicescheduwedapp
+    extends g-gwaphfeatuwesewvicemainjob
+    with gwaphfeatuwesewvicescheduwedbaseapp {
+  ovewwide def fiwsttime: wichdate = wichdate("2018-05-18")
 
-  override def runOnDateRange(
-    enableValueGraphs: Option[Boolean],
-    enableKeyGraphs: Option[Boolean]
+  ovewwide d-def wunondatewange(
+    enabwevawuegwaphs: o-option[boowean], nyaa~~
+    e-enabwekeygwaphs: o-option[boowean]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // Only run the value Graphs on Tuesday, Thursday, Saturday
-    val overrideEnableValueGraphs = {
-      val dayOfWeek = dateRange.start.toCalendar.get(Calendar.DAY_OF_WEEK)
-      dayOfWeek == BaseCalendar.TUESDAY |
-        dayOfWeek == BaseCalendar.THURSDAY |
-        dayOfWeek == BaseCalendar.SATURDAY
+    impwicit datewange: datewange, :3
+    timezone: timezone, 😳😳😳
+    u-uniqueid: u-uniqueid
+  ): execution[unit] = {
+    // o-onwy w-wun the vawue gwaphs on tuesday, (˘ω˘) t-thuwsday, ^^ satuwday
+    vaw ovewwideenabwevawuegwaphs = {
+      v-vaw dayofweek = datewange.stawt.tocawendaw.get(cawendaw.day_of_week)
+      dayofweek == b-basecawendaw.tuesday |
+        dayofweek == b-basecawendaw.thuwsday |
+        dayofweek == b-basecawendaw.satuwday
     }
 
-    super.runOnDateRange(
-      Some(true),
-      Some(false) // disable key Graphs since we are not using them in production
+    s-supew.wunondatewange(
+      some(twue), :3
+      some(fawse) // disabwe key gwaphs since we awe nyot using them in pwoduction
     )
   }
 }

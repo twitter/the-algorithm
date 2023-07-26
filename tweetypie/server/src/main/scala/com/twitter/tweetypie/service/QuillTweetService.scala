@@ -1,75 +1,75 @@
-package com.twitter.tweetypie
-package service
+package com.twittew.tweetypie
+package s-sewvice
 
-import com.twitter.quill.capture.QuillCapture
-import com.twitter.tweetypie.thriftscala._
-import org.apache.thrift.transport.TMemoryBuffer
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.quill.capture.Payloads
-import com.twitter.tweetypie.service.QuillTweetService.createThriftBinaryRequest
-import org.apache.thrift.protocol.TMessage
-import org.apache.thrift.protocol.TMessageType
-import org.apache.thrift.protocol.TProtocol
+impowt c-com.twittew.quiww.captuwe.quiwwcaptuwe
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
+i-impowt owg.apache.thwift.twanspowt.tmemowybuffew
+i-impowt com.twittew.finagwe.thwift.pwotocows
+i-impowt com.twittew.quiww.captuwe.paywoads
+i-impowt com.twittew.tweetypie.sewvice.quiwwtweetsewvice.cweatethwiftbinawywequest
+impowt owg.apache.thwift.pwotocow.tmessage
+impowt owg.apache.thwift.pwotocow.tmessagetype
+i-impowt owg.apache.thwift.pwotocow.tpwotocow
 
-object QuillTweetService {
-  // Construct the byte stream for a binary thrift request
-  def createThriftBinaryRequest(method_name: String, write_args: TProtocol => Unit): Array[Byte] = {
-    val buf = new TMemoryBuffer(512)
-    val oprot = Protocols.binaryFactory().getProtocol(buf)
+object quiwwtweetsewvice {
+  // c-constwuct the byte stweam f-fow a binawy thwift wequest
+  def cweatethwiftbinawywequest(method_name: stwing, mya w-wwite_awgs: tpwotocow => unit): a-awway[byte] = {
+    v-vaw buf = new tmemowybuffew(512)
+    vaw opwot = pwotocows.binawyfactowy().getpwotocow(buf)
 
-    oprot.writeMessageBegin(new TMessage(method_name, TMessageType.CALL, 0))
-    write_args(oprot)
-    oprot.writeMessageEnd()
+    opwot.wwitemessagebegin(new t-tmessage(method_name, (˘ω˘) tmessagetype.caww, >_< 0))
+    wwite_awgs(opwot)
+    opwot.wwitemessageend()
 
-    // Return bytes
-    java.util.Arrays.copyOfRange(buf.getArray, 0, buf.length)
+    // wetuwn b-bytes
+    java.utiw.awways.copyofwange(buf.getawway, -.- 0, buf.wength)
   }
 }
 
 /**
- * Wraps an underlying TweetService, logging some requests.
+ * w-wwaps an undewwying t-tweetsewvice, 🥺 w-wogging some w-wequests. (U ﹏ U)
  */
-class QuillTweetService(quillCapture: QuillCapture, protected val underlying: ThriftTweetService)
-    extends TweetServiceProxy {
+cwass quiwwtweetsewvice(quiwwcaptuwe: quiwwcaptuwe, >w< p-pwotected vaw undewwying: thwifttweetsewvice)
+    extends tweetsewvicepwoxy {
 
-  override def postTweet(request: PostTweetRequest): Future[PostTweetResult] = {
-    val requestBytes = createThriftBinaryRequest(
-      TweetService.PostTweet.name,
-      TweetService.PostTweet.Args(request).write)
-    quillCapture.storeServerRecv(Payloads.fromThriftMessageBytes(requestBytes))
-    underlying.postTweet(request)
+  o-ovewwide def posttweet(wequest: posttweetwequest): futuwe[posttweetwesuwt] = {
+    vaw wequestbytes = cweatethwiftbinawywequest(
+      t-tweetsewvice.posttweet.name, mya
+      tweetsewvice.posttweet.awgs(wequest).wwite)
+    q-quiwwcaptuwe.stowesewvewwecv(paywoads.fwomthwiftmessagebytes(wequestbytes))
+    u-undewwying.posttweet(wequest)
   }
 
-  override def deleteTweets(request: DeleteTweetsRequest): Future[Seq[DeleteTweetResult]] = {
-    val requestBytes = createThriftBinaryRequest(
-      TweetService.DeleteTweets.name,
-      TweetService.DeleteTweets.Args(request).write)
-    quillCapture.storeServerRecv(Payloads.fromThriftMessageBytes(requestBytes))
-    underlying.deleteTweets(request)
+  o-ovewwide def dewetetweets(wequest: dewetetweetswequest): futuwe[seq[dewetetweetwesuwt]] = {
+    v-vaw wequestbytes = c-cweatethwiftbinawywequest(
+      tweetsewvice.dewetetweets.name, >w<
+      t-tweetsewvice.dewetetweets.awgs(wequest).wwite)
+    q-quiwwcaptuwe.stowesewvewwecv(paywoads.fwomthwiftmessagebytes(wequestbytes))
+    undewwying.dewetetweets(wequest)
   }
 
-  override def postRetweet(request: RetweetRequest): Future[PostTweetResult] = {
-    val requestBytes = createThriftBinaryRequest(
-      TweetService.PostRetweet.name,
-      TweetService.PostRetweet.Args(request).write)
-    quillCapture.storeServerRecv(Payloads.fromThriftMessageBytes(requestBytes))
-    underlying.postRetweet(request)
+  o-ovewwide def postwetweet(wequest: w-wetweetwequest): futuwe[posttweetwesuwt] = {
+    vaw wequestbytes = c-cweatethwiftbinawywequest(
+      tweetsewvice.postwetweet.name,
+      tweetsewvice.postwetweet.awgs(wequest).wwite)
+    q-quiwwcaptuwe.stowesewvewwecv(paywoads.fwomthwiftmessagebytes(wequestbytes))
+    undewwying.postwetweet(wequest)
   }
 
-  override def unretweet(request: UnretweetRequest): Future[UnretweetResult] = {
-    val requestBytes = createThriftBinaryRequest(
-      TweetService.Unretweet.name,
-      TweetService.Unretweet.Args(request).write)
-    quillCapture.storeServerRecv(Payloads.fromThriftMessageBytes(requestBytes))
-    underlying.unretweet(request)
+  o-ovewwide d-def unwetweet(wequest: unwetweetwequest): futuwe[unwetweetwesuwt] = {
+    vaw wequestbytes = cweatethwiftbinawywequest(
+      tweetsewvice.unwetweet.name, nyaa~~
+      tweetsewvice.unwetweet.awgs(wequest).wwite)
+    q-quiwwcaptuwe.stowesewvewwecv(paywoads.fwomthwiftmessagebytes(wequestbytes))
+    u-undewwying.unwetweet(wequest)
   }
 
-  override def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit] = {
-    val requestBytes = createThriftBinaryRequest(
-      TweetServiceInternal.CascadedDeleteTweet.name,
-      TweetServiceInternal.CascadedDeleteTweet.Args(request).write)
-    quillCapture.storeServerRecv(Payloads.fromThriftMessageBytes(requestBytes))
-    underlying.cascadedDeleteTweet(request)
+  ovewwide d-def cascadeddewetetweet(wequest: c-cascadeddewetetweetwequest): f-futuwe[unit] = {
+    vaw wequestbytes = cweatethwiftbinawywequest(
+      tweetsewviceintewnaw.cascadeddewetetweet.name, (✿oωo)
+      t-tweetsewviceintewnaw.cascadeddewetetweet.awgs(wequest).wwite)
+    quiwwcaptuwe.stowesewvewwecv(paywoads.fwomthwiftmessagebytes(wequestbytes))
+    undewwying.cascadeddewetetweet(wequest)
   }
 
 }

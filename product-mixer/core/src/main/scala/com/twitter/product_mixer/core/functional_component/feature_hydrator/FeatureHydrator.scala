@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.Component
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.component
 
-/** Hydrates a [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]] for a given input */
-trait FeatureHydrator[FeatureType <: Feature[_, _]] extends Component {
-  def features: Set[FeatureType]
+/** h-hydwates a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]] f-fow a given input */
+t-twait featuwehydwatow[featuwetype <: f-featuwe[_, ( ͡o ω ͡o ) _]] e-extends c-component {
+  def featuwes: set[featuwetype]
 }

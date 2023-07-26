@@ -1,118 +1,118 @@
-package com.twitter.tweetypie.handler
+package com.twittew.tweetypie.handwew
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.repository.ConversationControlRepository
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.thriftscala.ExclusiveTweetControl
-import com.twitter.tweetypie.thriftscala.ExclusiveTweetControlOptions
-import com.twitter.tweetypie.thriftscala.QuotedTweet
-import com.twitter.tweetypie.thriftscala.TrustedFriendsControl
-import com.twitter.tweetypie.thriftscala.TrustedFriendsControlOptions
-import com.twitter.tweetypie.thriftscala.TweetCreateState
-import com.twitter.tweetypie.FutureEffect
-import com.twitter.tweetypie.Gate
-import com.twitter.tweetypie.TweetId
-import com.twitter.tweetypie.UserId
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.EditOptions
-import com.twitter.visibility.writer.interfaces.tweets.TweetWriteEnforcementLibrary
-import com.twitter.visibility.writer.interfaces.tweets.TweetWriteEnforcementRequest
-import com.twitter.visibility.writer.models.ActorContext
-import com.twitter.visibility.writer.Allow
-import com.twitter.visibility.writer.Deny
-import com.twitter.visibility.writer.DenyExclusiveTweetReply
-import com.twitter.visibility.writer.DenyStaleTweetQuoteTweet
-import com.twitter.visibility.writer.DenyStaleTweetReply
-import com.twitter.visibility.writer.DenySuperFollowsCreate
-import com.twitter.visibility.writer.DenyTrustedFriendsCreate
-import com.twitter.visibility.writer.DenyTrustedFriendsQuoteTweet
-import com.twitter.visibility.writer.DenyTrustedFriendsReply
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe.tweetcweatefaiwuwe
+i-impowt c-com.twittew.tweetypie.wepositowy.convewsationcontwowwepositowy
+i-impowt com.twittew.tweetypie.wepositowy.tweetquewy
+i-impowt com.twittew.tweetypie.thwiftscawa.excwusivetweetcontwow
+i-impowt com.twittew.tweetypie.thwiftscawa.excwusivetweetcontwowoptions
+i-impowt c-com.twittew.tweetypie.thwiftscawa.quotedtweet
+impowt com.twittew.tweetypie.thwiftscawa.twustedfwiendscontwow
+impowt com.twittew.tweetypie.thwiftscawa.twustedfwiendscontwowoptions
+impowt com.twittew.tweetypie.thwiftscawa.tweetcweatestate
+i-impowt com.twittew.tweetypie.futuweeffect
+impowt com.twittew.tweetypie.gate
+i-impowt com.twittew.tweetypie.tweetid
+impowt c-com.twittew.tweetypie.usewid
+impowt com.twittew.tweetypie.thwiftscawa.editcontwow
+impowt com.twittew.tweetypie.thwiftscawa.editoptions
+impowt c-com.twittew.visibiwity.wwitew.intewfaces.tweets.tweetwwiteenfowcementwibwawy
+impowt com.twittew.visibiwity.wwitew.intewfaces.tweets.tweetwwiteenfowcementwequest
+i-impowt com.twittew.visibiwity.wwitew.modews.actowcontext
+i-impowt com.twittew.visibiwity.wwitew.awwow
+impowt com.twittew.visibiwity.wwitew.deny
+impowt com.twittew.visibiwity.wwitew.denyexcwusivetweetwepwy
+i-impowt com.twittew.visibiwity.wwitew.denystawetweetquotetweet
+impowt com.twittew.visibiwity.wwitew.denystawetweetwepwy
+impowt com.twittew.visibiwity.wwitew.denysupewfowwowscweate
+impowt com.twittew.visibiwity.wwitew.denytwustedfwiendscweate
+i-impowt com.twittew.visibiwity.wwitew.denytwustedfwiendsquotetweet
+impowt com.twittew.visibiwity.wwitew.denytwustedfwiendswepwy
 
-object TweetWriteValidator {
-  case class Request(
-    conversationId: Option[TweetId],
-    userId: UserId,
-    exclusiveTweetControlOptions: Option[ExclusiveTweetControlOptions],
-    replyToExclusiveTweetControl: Option[ExclusiveTweetControl],
-    trustedFriendsControlOptions: Option[TrustedFriendsControlOptions],
-    inReplyToTrustedFriendsControl: Option[TrustedFriendsControl],
-    quotedTweetOpt: Option[QuotedTweet],
-    inReplyToTweetId: Option[TweetId],
-    inReplyToEditControl: Option[EditControl],
-    editOptions: Option[EditOptions])
+o-object tweetwwitevawidatow {
+  c-case cwass wequest(
+    c-convewsationid: o-option[tweetid], (˘ω˘)
+    usewid: usewid, ^^;;
+    e-excwusivetweetcontwowoptions: option[excwusivetweetcontwowoptions], (✿oωo)
+    wepwytoexcwusivetweetcontwow: option[excwusivetweetcontwow],
+    t-twustedfwiendscontwowoptions: option[twustedfwiendscontwowoptions], (U ﹏ U)
+    inwepwytotwustedfwiendscontwow: option[twustedfwiendscontwow], -.-
+    quotedtweetopt: option[quotedtweet], ^•ﻌ•^
+    i-inwepwytotweetid: option[tweetid], rawr
+    i-inwepwytoeditcontwow: o-option[editcontwow], (˘ω˘)
+    e-editoptions: option[editoptions])
 
-  type Type = FutureEffect[Request]
+  type type = futuweeffect[wequest]
 
-  def apply(
-    convoCtlRepo: ConversationControlRepository.Type,
-    tweetWriteEnforcementLibrary: TweetWriteEnforcementLibrary,
-    enableExclusiveTweetControlValidation: Gate[Unit],
-    enableTrustedFriendsControlValidation: Gate[Unit],
-    enableStaleTweetValidation: Gate[Unit]
-  ): FutureEffect[Request] =
-    FutureEffect[Request] { request =>
-      // We are creating up an empty TweetQuery.Options here so we can use the default
-      // CacheControl value and avoid hard coding it here.
-      val queryOptions = TweetQuery.Options(TweetQuery.Include())
-      Stitch.run {
-        for {
-          convoCtl <- request.conversationId match {
-            case Some(convoId) =>
-              convoCtlRepo(
-                convoId,
-                queryOptions.cacheControl
+  d-def a-appwy(
+    convoctwwepo: convewsationcontwowwepositowy.type, nyaa~~
+    t-tweetwwiteenfowcementwibwawy: t-tweetwwiteenfowcementwibwawy, UwU
+    enabweexcwusivetweetcontwowvawidation: g-gate[unit], :3
+    enabwetwustedfwiendscontwowvawidation: g-gate[unit], (⑅˘꒳˘)
+    enabwestawetweetvawidation: gate[unit]
+  ): f-futuweeffect[wequest] =
+    futuweeffect[wequest] { w-wequest =>
+      // we awe cweating u-up an empty t-tweetquewy.options hewe so we can use the defauwt
+      // cachecontwow vawue and avoid hawd coding it hewe. (///ˬ///✿)
+      v-vaw quewyoptions = t-tweetquewy.options(tweetquewy.incwude())
+      stitch.wun {
+        f-fow {
+          c-convoctw <- w-wequest.convewsationid match {
+            case some(convoid) =>
+              convoctwwepo(
+                c-convoid, ^^;;
+                quewyoptions.cachecontwow
               )
-            case None =>
-              Stitch.value(None)
+            case nyone =>
+              stitch.vawue(none)
           }
 
-          result <- tweetWriteEnforcementLibrary(
-            TweetWriteEnforcementRequest(
-              rootConversationControl = convoCtl,
-              convoId = request.conversationId,
-              exclusiveTweetControlOptions = request.exclusiveTweetControlOptions,
-              replyToExclusiveTweetControl = request.replyToExclusiveTweetControl,
-              trustedFriendsControlOptions = request.trustedFriendsControlOptions,
-              inReplyToTrustedFriendsControl = request.inReplyToTrustedFriendsControl,
-              quotedTweetOpt = request.quotedTweetOpt,
-              actorContext = ActorContext(request.userId),
-              inReplyToTweetId = request.inReplyToTweetId,
-              inReplyToEditControl = request.inReplyToEditControl,
-              editOptions = request.editOptions
-            ),
-            enableExclusiveTweetControlValidation = enableExclusiveTweetControlValidation,
-            enableTrustedFriendsControlValidation = enableTrustedFriendsControlValidation,
-            enableStaleTweetValidation = enableStaleTweetValidation
+          wesuwt <- tweetwwiteenfowcementwibwawy(
+            t-tweetwwiteenfowcementwequest(
+              wootconvewsationcontwow = c-convoctw, >_<
+              c-convoid = w-wequest.convewsationid, rawr x3
+              excwusivetweetcontwowoptions = w-wequest.excwusivetweetcontwowoptions, /(^•ω•^)
+              w-wepwytoexcwusivetweetcontwow = w-wequest.wepwytoexcwusivetweetcontwow, :3
+              t-twustedfwiendscontwowoptions = wequest.twustedfwiendscontwowoptions, (ꈍᴗꈍ)
+              inwepwytotwustedfwiendscontwow = w-wequest.inwepwytotwustedfwiendscontwow, /(^•ω•^)
+              q-quotedtweetopt = w-wequest.quotedtweetopt, (⑅˘꒳˘)
+              a-actowcontext = a-actowcontext(wequest.usewid), ( ͡o ω ͡o )
+              inwepwytotweetid = wequest.inwepwytotweetid, òωó
+              inwepwytoeditcontwow = wequest.inwepwytoeditcontwow, (⑅˘꒳˘)
+              e-editoptions = wequest.editoptions
+            ), XD
+            enabweexcwusivetweetcontwowvawidation = enabweexcwusivetweetcontwowvawidation, -.-
+            enabwetwustedfwiendscontwowvawidation = enabwetwustedfwiendscontwowvawidation, :3
+            e-enabwestawetweetvawidation = enabwestawetweetvawidation
           )
-          _ <- result match {
-            case Allow =>
-              Stitch.Done
-            case Deny =>
-              Stitch.exception(TweetCreateFailure.State(TweetCreateState.ReplyTweetNotAllowed))
-            case DenyExclusiveTweetReply =>
-              Stitch.exception(
-                TweetCreateFailure.State(TweetCreateState.ExclusiveTweetEngagementNotAllowed))
-            case DenySuperFollowsCreate =>
-              Stitch.exception(
-                TweetCreateFailure.State(TweetCreateState.SuperFollowsCreateNotAuthorized))
-            case DenyTrustedFriendsReply =>
-              Stitch.exception(
-                TweetCreateFailure.State(TweetCreateState.TrustedFriendsEngagementNotAllowed))
-            case DenyTrustedFriendsCreate =>
-              Stitch.exception(
-                TweetCreateFailure.State(TweetCreateState.TrustedFriendsCreateNotAllowed))
-            case DenyTrustedFriendsQuoteTweet =>
-              Stitch.exception(
-                TweetCreateFailure.State(TweetCreateState.TrustedFriendsQuoteTweetNotAllowed))
-            case DenyStaleTweetReply =>
-              Stitch.exception(
-                TweetCreateFailure.State(TweetCreateState.StaleTweetEngagementNotAllowed))
-            case DenyStaleTweetQuoteTweet =>
-              Stitch.exception(
-                TweetCreateFailure.State(TweetCreateState.StaleTweetQuoteTweetNotAllowed))
+          _ <- wesuwt match {
+            case a-awwow =>
+              s-stitch.done
+            c-case deny =>
+              stitch.exception(tweetcweatefaiwuwe.state(tweetcweatestate.wepwytweetnotawwowed))
+            c-case denyexcwusivetweetwepwy =>
+              stitch.exception(
+                t-tweetcweatefaiwuwe.state(tweetcweatestate.excwusivetweetengagementnotawwowed))
+            c-case denysupewfowwowscweate =>
+              stitch.exception(
+                tweetcweatefaiwuwe.state(tweetcweatestate.supewfowwowscweatenotauthowized))
+            case denytwustedfwiendswepwy =>
+              stitch.exception(
+                t-tweetcweatefaiwuwe.state(tweetcweatestate.twustedfwiendsengagementnotawwowed))
+            case denytwustedfwiendscweate =>
+              s-stitch.exception(
+                tweetcweatefaiwuwe.state(tweetcweatestate.twustedfwiendscweatenotawwowed))
+            c-case d-denytwustedfwiendsquotetweet =>
+              stitch.exception(
+                tweetcweatefaiwuwe.state(tweetcweatestate.twustedfwiendsquotetweetnotawwowed))
+            c-case d-denystawetweetwepwy =>
+              stitch.exception(
+                t-tweetcweatefaiwuwe.state(tweetcweatestate.stawetweetengagementnotawwowed))
+            c-case denystawetweetquotetweet =>
+              stitch.exception(
+                tweetcweatefaiwuwe.state(tweetcweatestate.stawetweetquotetweetnotawwowed))
           }
-        } yield ()
+        } yiewd ()
       }
     }
 }

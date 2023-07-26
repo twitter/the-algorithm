@@ -1,16 +1,16 @@
-scala_library(
-    sources = [
-        "*.scala",
+scawa_wibwawy(
+    souwces = [
+        "*.scawa", (ꈍᴗꈍ)
     ],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "common-internal/analytics/client-analytics-data-layer/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "src/scala/com/twitter/loggedout/analytics/common",
-        "src/thrift/com/twitter/clientapp/gen:clientapp-scala",
-        "twadoop_config/configuration/log_categories/group/scribelib:client_event-scala",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter:base",
-        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/common",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [
+        "common-intewnaw/anawytics/cwient-anawytics-data-wayew/swc/main/scawa",
+        "kafka/finagwe-kafka/finatwa-kafka/swc/main/scawa", OwO
+        "swc/scawa/com/twittew/woggedout/anawytics/common", 🥺
+        "swc/thwift/com/twittew/cwientapp/gen:cwientapp-scawa", òωó
+        "twadoop_config/configuwation/wog_categowies/gwoup/scwibewib:cwient_event-scawa", o.O
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew:base", (U ᵕ U❁)
+        "unified_usew_actions/adaptew/swc/main/scawa/com/twittew/unified_usew_actions/adaptew/common", (⑅˘꒳˘)
+        "unified_usew_actions/thwift/swc/main/thwift/com/twittew/unified_usew_actions:unified_usew_actions-scawa", ( ͡o ω ͡o )
     ],
 )

@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tlx
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.tweet_twx
 
-import com.twitter.ml.featurestore.timelines.thriftscala.TimelineScorerScoreView
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.scorer.tweet_tlx.TLXScore
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.ml.featureStore.TimelineScorerTweetScoresV1ClientColumn
-import com.twitter.timelinescorer.thriftscala.v1
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.mw.featuwestowe.timewines.thwiftscawa.timewinescowewscoweview
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.scowew.tweet_twx.twxscowe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.genewated.cwient.mw.featuwestowe.timewinescowewtweetscowesv1cwientcowumn
+i-impowt com.twittew.timewinescowew.thwiftscawa.v1
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * Hydrate Tweet Scores via Timeline Scorer (TLX)
+ * hydwate t-tweet scowes v-via timewine scowew (twx)
  *
- * Note that this is the [[CandidateFeatureHydrator]] version of
- * [[com.twitter.product_mixer.component_library.scorer.tweet_tlx.TweetTLXStratoScorer]]
+ * nyote that this is the [[candidatefeatuwehydwatow]] vewsion of
+ * [[com.twittew.pwoduct_mixew.component_wibwawy.scowew.tweet_twx.tweettwxstwatoscowew]]
  */
-@Singleton
-class TweetTLXScoreCandidateFeatureHydrator @Inject() (
-  column: TimelineScorerTweetScoresV1ClientColumn)
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@singweton
+c-cwass tweettwxscowecandidatefeatuwehydwatow @inject() (
+  cowumn: timewinescowewtweetscowesv1cwientcowumn)
+    extends candidatefeatuwehydwatow[pipewinequewy, o.O t-tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TweetTLXScore")
+  ovewwide v-vaw identifiew: f-featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("tweettwxscowe")
 
-  override val features: Set[Feature[_, _]] = Set(TLXScore)
+  o-ovewwide vaw featuwes: set[featuwe[_, ( ͡o ω ͡o ) _]] = set(twxscowe)
 
-  private val NoScoreMap = FeatureMapBuilder()
-    .add(TLXScore, None)
-    .build()
+  p-pwivate vaw nyoscowemap = featuwemapbuiwdew()
+    .add(twxscowe, (U ﹏ U) nyone)
+    .buiwd()
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    query.getOptionalUserId match {
-      case Some(userId) =>
-        column.fetcher
-          .fetch(candidate.id, TimelineScorerScoreView(Some(userId)))
-          .map(scoredTweet =>
-            scoredTweet.v match {
-              case Some(v1.ScoredTweet(Some(_), score, _, _)) =>
-                FeatureMapBuilder()
-                  .add(TLXScore, score)
-                  .build()
-              case _ => throw new Exception(s"Invalid response from TLX: ${scoredTweet.v}")
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, (///ˬ///✿)
+    candidate: tweetcandidate, >w<
+    existingfeatuwes: f-featuwemap
+  ): stitch[featuwemap] = {
+    q-quewy.getoptionawusewid m-match {
+      case s-some(usewid) =>
+        cowumn.fetchew
+          .fetch(candidate.id, rawr timewinescowewscoweview(some(usewid)))
+          .map(scowedtweet =>
+            scowedtweet.v m-match {
+              c-case some(v1.scowedtweet(some(_), mya s-scowe, ^^ _, _)) =>
+                f-featuwemapbuiwdew()
+                  .add(twxscowe, 😳😳😳 scowe)
+                  .buiwd()
+              c-case _ => thwow nyew exception(s"invawid wesponse f-fwom twx: ${scowedtweet.v}")
             })
       case _ =>
-        Stitch.value(NoScoreMap)
+        stitch.vawue(noscowemap)
     }
   }
 }

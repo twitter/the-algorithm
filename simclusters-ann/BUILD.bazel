@@ -1,1 +1,48 @@
-# This prevents SQ query from grabbing //:all since it traverses up once to find a BUILD
+awias(
+    nyame = "fwigate-pushsewvice", >_<
+    tawget = ":fwigate-pushsewvice_wib", mya
+)
+
+t-tawget(
+    n-nyame = "fwigate-pushsewvice_wib", mya
+    d-dependencies = [
+        "fwigate/fwigate-pushsewvice-opensouwce/swc/main/scawa/com/twittew/fwigate/pushsewvice",
+    ], 😳
+)
+
+j-jvm_binawy(
+    n-nyame = "bin", XD
+    b-basename = "fwigate-pushsewvice", :3
+    m-main = "com.twittew.fwigate.pushsewvice.pushsewvicemain", 😳😳😳
+    w-wuntime_pwatfowm = "java11", -.-
+    tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    dependencies = [
+        "3wdpawty/jvm/ch/qos/wogback:wogback-cwassic", rawr x3
+        "finatwa/inject/inject-wogback/swc/main/scawa", nyaa~~
+        "fwigate/fwigate-pushsewvice-opensouwce/swc/main/scawa/com/twittew/fwigate/pushsewvice", /(^•ω•^)
+        "wogwens/wogwens-wogback/swc/main/scawa/com/twittew/wogwens/wogback", rawr
+        "twittew-sewvew/wogback-cwassic/swc/main/scawa", OwO
+    ],
+    excwudes = [
+        excwude("com.twittew.twanswations", (U ﹏ U) "twanswations-twittew"), >_<
+        e-excwude("owg.apache.hadoop", rawr x3 "hadoop-aws"), mya
+        excwude("owg.tensowfwow"), nyaa~~
+        scawa_excwude("com.twittew", "ckoia-scawa"),
+    ], (⑅˘꒳˘)
+)
+
+j-jvm_app(
+    nyame = "bundwe", rawr x3
+    b-basename = "fwigate-pushsewvice-package-dist",
+    awchive = "zip", (✿oωo)
+    binawy = ":bin", (ˆ ﻌ ˆ)♡
+    tags = ["bazew-compatibwe"], (˘ω˘)
+)
+
+p-python3_wibwawy(
+    nyame = "mw_modew_constants", (⑅˘꒳˘)
+    souwces = [
+        "config/deepbiwd/constants.py", (///ˬ///✿)
+    ], 😳😳😳
+    t-tags = ["bazew-compatibwe"], 🥺
+)

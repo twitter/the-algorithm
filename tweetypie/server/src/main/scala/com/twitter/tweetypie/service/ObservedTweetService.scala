@@ -1,421 +1,421 @@
-package com.twitter.tweetypie
-package service
+package com.twittew.tweetypie
+package s-sewvice
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.util.SynchronizedHashMap
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.service.observer._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.finagle.tracing.Trace
+impowt c-com.twittew.sewvo.exception.thwiftscawa.cwientewwow
+i-impowt c-com.twittew.sewvo.utiw.synchwonizedhashmap
+i-impowt c-com.twittew.tweetypie.cwient_id.cwientidhewpew
+i-impowt com.twittew.tweetypie.sewvice.obsewvew._
+i-impowt com.twittew.tweetypie.thwiftscawa._
+impowt com.twittew.finagwe.twacing.twace
 
 /**
- * Wraps an underlying TweetService, observing requests and results.
+ * wwaps an undewwying t-tweetsewvice, rawr x3 obsewving wequests and wesuwts. (ˆ ﻌ ˆ)♡
  */
-class ObservedTweetService(
-  protected val underlying: ThriftTweetService,
-  stats: StatsReceiver,
-  clientIdHelper: ClientIdHelper)
-    extends TweetServiceProxy {
+c-cwass obsewvedtweetsewvice(
+  pwotected vaw undewwying: t-thwifttweetsewvice, σωσ
+  stats: statsweceivew, (U ﹏ U)
+  cwientidhewpew: cwientidhewpew)
+    e-extends tweetsewvicepwoxy {
 
-  private[this] val asyncEventOrRetryScope = stats.scope("async_event_or_retry")
-  private[this] val deleteFieldsScope = stats.scope("delete_additional_fields")
-  private[this] val deleteTweetsScope = stats.scope("delete_tweets")
-  private[this] val getDeletedTweetsScope = stats.scope("get_deleted_tweets")
-  private[this] val getTweetCountsScope = stats.scope("get_tweet_counts")
-  private[this] val getTweetsScope = stats.scope("get_tweets")
-  private[this] val getTweetFieldsScope = stats.scope("get_tweet_fields")
-  private[this] val postTweetScope = stats.scope("post_tweet")
-  private[this] val replicatedInsertTweet2Scope = stats.scope("replicated_insert_tweet2")
-  private[this] val retweetScope = stats.scope("post_retweet")
-  private[this] val scrubGeoScope = stats.scope("scrub_geo")
-  private[this] val setFieldsScope = stats.scope("set_additional_fields")
-  private[this] val setRetweetVisibilityScope = stats.scope("set_retweet_visibility")
-  private[this] val getStoredTweetsScope = stats.scope("get_stored_tweets")
-  private[this] val getStoredTweetsByUserScope = stats.scope("get_stored_tweets_by_user")
+  p-pwivate[this] v-vaw asynceventowwetwyscope = stats.scope("async_event_ow_wetwy")
+  pwivate[this] vaw dewetefiewdsscope = stats.scope("dewete_additionaw_fiewds")
+  p-pwivate[this] vaw dewetetweetsscope = stats.scope("dewete_tweets")
+  pwivate[this] vaw getdewetedtweetsscope = s-stats.scope("get_deweted_tweets")
+  pwivate[this] vaw g-gettweetcountsscope = s-stats.scope("get_tweet_counts")
+  p-pwivate[this] v-vaw gettweetsscope = stats.scope("get_tweets")
+  pwivate[this] v-vaw gettweetfiewdsscope = stats.scope("get_tweet_fiewds")
+  pwivate[this] v-vaw posttweetscope = stats.scope("post_tweet")
+  pwivate[this] vaw wepwicatedinsewttweet2scope = stats.scope("wepwicated_insewt_tweet2")
+  pwivate[this] v-vaw wetweetscope = stats.scope("post_wetweet")
+  p-pwivate[this] v-vaw scwubgeoscope = s-stats.scope("scwub_geo")
+  pwivate[this] vaw setfiewdsscope = stats.scope("set_additionaw_fiewds")
+  p-pwivate[this] v-vaw setwetweetvisibiwityscope = stats.scope("set_wetweet_visibiwity")
+  p-pwivate[this] v-vaw getstowedtweetsscope = stats.scope("get_stowed_tweets")
+  p-pwivate[this] vaw getstowedtweetsbyusewscope = s-stats.scope("get_stowed_tweets_by_usew")
 
-  private[this] val defaultGetTweetsRequestOptions = GetTweetOptions()
+  pwivate[this] vaw defauwtgettweetswequestoptions = g-gettweetoptions()
 
-  /** Increments the appropriate write success/failure counter */
-  private[this] val observeWriteResult: Effect[Try[_]] = {
-    withAndWithoutClientId(stats) { (stats, _) =>
-      val successCounter = stats.counter("write_successes")
-      val failureCounter = stats.counter("write_failures")
-      val clientErrorCounter = stats.counter("write_client_errors")
-      Effect[Try[_]] {
-        case Return(_) => successCounter.incr()
-        case Throw(ClientError(_, _)) | Throw(AccessDenied(_, _)) => clientErrorCounter.incr()
-        case Throw(_) => failureCounter.incr()
+  /** incwements t-the appwopwiate wwite success/faiwuwe c-countew */
+  p-pwivate[this] vaw obsewvewwitewesuwt: effect[twy[_]] = {
+    withandwithoutcwientid(stats) { (stats, >w< _) =>
+      vaw successcountew = stats.countew("wwite_successes")
+      vaw faiwuwecountew = stats.countew("wwite_faiwuwes")
+      vaw cwientewwowcountew = s-stats.countew("wwite_cwient_ewwows")
+      e-effect[twy[_]] {
+        case w-wetuwn(_) => s-successcountew.incw()
+        c-case thwow(cwientewwow(_, σωσ _)) | thwow(accessdenied(_, nyaa~~ _)) => cwientewwowcountew.incw()
+        c-case thwow(_) => faiwuwecountew.incw()
       }
     }
   }
 
-  /** Increments the tweet_creates counter on future success. */
-  private[this] val observeTweetWriteSuccess: Effect[Any] = {
-    withAndWithoutClientId(stats) { (stats, _) =>
-      val counter = stats.counter("tweet_writes")
-      Effect[Any] { _ => counter.incr() }
+  /** incwements the tweet_cweates countew o-on futuwe success. 🥺 */
+  pwivate[this] v-vaw obsewvetweetwwitesuccess: e-effect[any] = {
+    w-withandwithoutcwientid(stats) { (stats, rawr x3 _) =>
+      vaw c-countew = stats.countew("tweet_wwites")
+      e-effect[any] { _ => c-countew.incw() }
     }
   }
 
-  private[this] val observeGetTweetsRequest =
-    withAndWithoutClientId(getTweetsScope) {
-      GetTweetsObserver.observeRequest
+  p-pwivate[this] vaw obsewvegettweetswequest =
+    withandwithoutcwientid(gettweetsscope) {
+      g-gettweetsobsewvew.obsewvewequest
     }
 
-  private[this] val observeGetTweetFieldsRequest =
-    withAndWithoutClientId(getTweetFieldsScope) {
-      GetTweetFieldsObserver.observeRequest
+  p-pwivate[this] v-vaw obsewvegettweetfiewdswequest =
+    withandwithoutcwientid(gettweetfiewdsscope) {
+      g-gettweetfiewdsobsewvew.obsewvewequest
     }
 
-  private[this] val observeGetTweetCountsRequest =
-    withAndWithoutClientId(getTweetCountsScope) { (s, _) =>
-      GetTweetCountsObserver.observeRequest(s)
+  p-pwivate[this] vaw obsewvegettweetcountswequest =
+    withandwithoutcwientid(gettweetcountsscope) { (s, σωσ _) =>
+      gettweetcountsobsewvew.obsewvewequest(s)
     }
 
-  private[this] val observeRetweetRequest: Effect[RetweetRequest] =
-    withAndWithoutClientId(retweetScope) { (s, _) => Observer.observeRetweetRequest(s) }
+  p-pwivate[this] vaw obsewvewetweetwequest: effect[wetweetwequest] =
+    withandwithoutcwientid(wetweetscope) { (s, (///ˬ///✿) _) => obsewvew.obsewvewetweetwequest(s) }
 
-  private[this] val observeDeleteTweetsRequest =
-    withAndWithoutClientId(deleteTweetsScope) { (s, _) => Observer.observeDeleteTweetsRequest(s) }
+  pwivate[this] v-vaw obsewvedewetetweetswequest =
+    withandwithoutcwientid(dewetetweetsscope) { (s, (U ﹏ U) _) => obsewvew.obsewvedewetetweetswequest(s) }
 
-  private[this] val observeSetFieldsRequest: Effect[SetAdditionalFieldsRequest] =
-    withAndWithoutClientId(setFieldsScope) { (s, _) => Observer.observeSetFieldsRequest(s) }
+  pwivate[this] v-vaw obsewvesetfiewdswequest: e-effect[setadditionawfiewdswequest] =
+    w-withandwithoutcwientid(setfiewdsscope) { (s, ^^;; _) => obsewvew.obsewvesetfiewdswequest(s) }
 
-  private[this] val observeSetRetweetVisibilityRequest: Effect[SetRetweetVisibilityRequest] =
-    withAndWithoutClientId(setRetweetVisibilityScope) { (s, _) =>
-      Observer.observeSetRetweetVisibilityRequest(s)
+  p-pwivate[this] vaw obsewvesetwetweetvisibiwitywequest: e-effect[setwetweetvisibiwitywequest] =
+    w-withandwithoutcwientid(setwetweetvisibiwityscope) { (s, _) =>
+      obsewvew.obsewvesetwetweetvisibiwitywequest(s)
     }
 
-  private[this] val observeDeleteFieldsRequest: Effect[DeleteAdditionalFieldsRequest] =
-    withAndWithoutClientId(deleteFieldsScope) { (s, _) => Observer.observeDeleteFieldsRequest(s) }
+  pwivate[this] vaw obsewvedewetefiewdswequest: effect[deweteadditionawfiewdswequest] =
+    withandwithoutcwientid(dewetefiewdsscope) { (s, 🥺 _) => o-obsewvew.obsewvedewetefiewdswequest(s) }
 
-  private[this] val observePostTweetAdditionals: Effect[Tweet] =
-    withAndWithoutClientId(postTweetScope) { (s, _) => Observer.observeAdditionalFields(s) }
+  pwivate[this] v-vaw obsewveposttweetadditionaws: effect[tweet] =
+    w-withandwithoutcwientid(posttweetscope) { (s, òωó _) => o-obsewvew.obsewveadditionawfiewds(s) }
 
-  private[this] val observePostTweetRequest: Effect[PostTweetRequest] =
-    withAndWithoutClientId(postTweetScope) { (s, _) => PostTweetObserver.observerRequest(s) }
+  pwivate[this] vaw obsewveposttweetwequest: e-effect[posttweetwequest] =
+    w-withandwithoutcwientid(posttweetscope) { (s, XD _) => posttweetobsewvew.obsewvewwequest(s) }
 
-  private[this] val observeGetTweetResults =
-    withAndWithoutClientId(getTweetsScope) {
-      GetTweetsObserver.observeResults
+  p-pwivate[this] v-vaw obsewvegettweetwesuwts =
+    withandwithoutcwientid(gettweetsscope) {
+      gettweetsobsewvew.obsewvewesuwts
     }
 
-  private[this] val observeGetTweetFieldsResults: Effect[Seq[GetTweetFieldsResult]] =
-    GetTweetFieldsObserver.observeResults(getTweetFieldsScope)
+  pwivate[this] vaw obsewvegettweetfiewdswesuwts: e-effect[seq[gettweetfiewdswesuwt]] =
+    g-gettweetfiewdsobsewvew.obsewvewesuwts(gettweetfiewdsscope)
 
-  private[this] val observeTweetCountsResults =
-    GetTweetCountsObserver.observeResults(getTweetCountsScope)
+  p-pwivate[this] vaw obsewvetweetcountswesuwts =
+    g-gettweetcountsobsewvew.obsewvewesuwts(gettweetcountsscope)
 
-  private[this] val observeScrubGeoRequest =
-    Observer.observeScrubGeo(scrubGeoScope)
+  p-pwivate[this] vaw obsewvescwubgeowequest =
+    o-obsewvew.obsewvescwubgeo(scwubgeoscope)
 
-  private[this] val observeRetweetResponse =
-    PostTweetObserver.observeResults(retweetScope, byClient = false)
+  pwivate[this] vaw obsewvewetweetwesponse =
+    posttweetobsewvew.obsewvewesuwts(wetweetscope, :3 bycwient = fawse)
 
-  private[this] val observePostTweetResponse =
-    PostTweetObserver.observeResults(postTweetScope, byClient = false)
+  p-pwivate[this] v-vaw obsewveposttweetwesponse =
+    posttweetobsewvew.obsewvewesuwts(posttweetscope, (U ﹏ U) bycwient = f-fawse)
 
-  private[this] val observeAsyncInsertRequest =
-    Observer.observeAsyncInsertRequest(asyncEventOrRetryScope)
+  pwivate[this] v-vaw obsewveasyncinsewtwequest =
+    obsewvew.obsewveasyncinsewtwequest(asynceventowwetwyscope)
 
-  private[this] val observeAsyncSetAdditionalFieldsRequest =
-    Observer.observeAsyncSetAdditionalFieldsRequest(asyncEventOrRetryScope)
+  pwivate[this] vaw obsewveasyncsetadditionawfiewdswequest =
+    o-obsewvew.obsewveasyncsetadditionawfiewdswequest(asynceventowwetwyscope)
 
-  private[this] val observeAsyncSetRetweetVisibilityRequest =
-    Observer.observeAsyncSetRetweetVisibilityRequest(asyncEventOrRetryScope)
+  pwivate[this] vaw obsewveasyncsetwetweetvisibiwitywequest =
+    obsewvew.obsewveasyncsetwetweetvisibiwitywequest(asynceventowwetwyscope)
 
-  private[this] val observeAsyncUndeleteTweetRequest =
-    Observer.observeAsyncUndeleteTweetRequest(asyncEventOrRetryScope)
+  pwivate[this] vaw o-obsewveasyncundewetetweetwequest =
+    obsewvew.obsewveasyncundewetetweetwequest(asynceventowwetwyscope)
 
-  private[this] val observeAsyncDeleteTweetRequest =
-    Observer.observeAsyncDeleteTweetRequest(asyncEventOrRetryScope)
+  pwivate[this] v-vaw o-obsewveasyncdewetetweetwequest =
+    obsewvew.obsewveasyncdewetetweetwequest(asynceventowwetwyscope)
 
-  private[this] val observeAsyncDeleteAdditionalFieldsRequest =
-    Observer.observeAsyncDeleteAdditionalFieldsRequest(asyncEventOrRetryScope)
+  pwivate[this] vaw obsewveasyncdeweteadditionawfiewdswequest =
+    o-obsewvew.obsewveasyncdeweteadditionawfiewdswequest(asynceventowwetwyscope)
 
-  private[this] val observeAsyncTakedownRequest =
-    Observer.observeAsyncTakedownRequest(asyncEventOrRetryScope)
+  p-pwivate[this] vaw obsewveasynctakedownwequest =
+    obsewvew.obsewveasynctakedownwequest(asynceventowwetwyscope)
 
-  private[this] val observeAsyncUpdatePossiblySensitiveTweetRequest =
-    Observer.observeAsyncUpdatePossiblySensitiveTweetRequest(asyncEventOrRetryScope)
+  pwivate[this] v-vaw obsewveasyncupdatepossibwysensitivetweetwequest =
+    obsewvew.obsewveasyncupdatepossibwysensitivetweetwequest(asynceventowwetwyscope)
 
-  private[this] val observedReplicatedInsertTweet2Request =
-    Observer.observeReplicatedInsertTweetRequest(replicatedInsertTweet2Scope)
+  p-pwivate[this] vaw obsewvedwepwicatedinsewttweet2wequest =
+    obsewvew.obsewvewepwicatedinsewttweetwequest(wepwicatedinsewttweet2scope)
 
-  private[this] val observeGetTweetFieldsResultState: Effect[GetTweetFieldsObserver.Type] =
-    withAndWithoutClientId(getTweetFieldsScope) { (statsReceiver, _) =>
-      GetTweetFieldsObserver.observeExchange(statsReceiver)
+  pwivate[this] v-vaw obsewvegettweetfiewdswesuwtstate: effect[gettweetfiewdsobsewvew.type] =
+    w-withandwithoutcwientid(gettweetfiewdsscope) { (statsweceivew, >w< _) =>
+      g-gettweetfiewdsobsewvew.obsewveexchange(statsweceivew)
     }
 
-  private[this] val observeGetTweetsResultState: Effect[GetTweetsObserver.Type] =
-    withAndWithoutClientId(getTweetsScope) { (statsReceiver, _) =>
-      GetTweetsObserver.observeExchange(statsReceiver)
+  pwivate[this] v-vaw obsewvegettweetswesuwtstate: effect[gettweetsobsewvew.type] =
+    w-withandwithoutcwientid(gettweetsscope) { (statsweceivew, /(^•ω•^) _) =>
+      g-gettweetsobsewvew.obsewveexchange(statsweceivew)
     }
 
-  private[this] val observeGetTweetCountsResultState: Effect[GetTweetCountsObserver.Type] =
-    withAndWithoutClientId(getTweetCountsScope) { (statsReceiver, _) =>
-      GetTweetCountsObserver.observeExchange(statsReceiver)
+  p-pwivate[this] vaw obsewvegettweetcountswesuwtstate: e-effect[gettweetcountsobsewvew.type] =
+    w-withandwithoutcwientid(gettweetcountsscope) { (statsweceivew, (⑅˘꒳˘) _) =>
+      gettweetcountsobsewvew.obsewveexchange(statsweceivew)
     }
 
-  private[this] val observeGetDeletedTweetsResultState: Effect[GetDeletedTweetsObserver.Type] =
-    withAndWithoutClientId(getDeletedTweetsScope) { (statsReceiver, _) =>
-      GetDeletedTweetsObserver.observeExchange(statsReceiver)
+  pwivate[this] v-vaw obsewvegetdewetedtweetswesuwtstate: e-effect[getdewetedtweetsobsewvew.type] =
+    w-withandwithoutcwientid(getdewetedtweetsscope) { (statsweceivew, _) =>
+      getdewetedtweetsobsewvew.obsewveexchange(statsweceivew)
     }
 
-  private[this] val observeGetStoredTweetsRequest: Effect[GetStoredTweetsRequest] =
-    GetStoredTweetsObserver.observeRequest(getStoredTweetsScope)
+  pwivate[this] v-vaw obsewvegetstowedtweetswequest: effect[getstowedtweetswequest] =
+    g-getstowedtweetsobsewvew.obsewvewequest(getstowedtweetsscope)
 
-  private[this] val observeGetStoredTweetsResult: Effect[Seq[GetStoredTweetsResult]] =
-    GetStoredTweetsObserver.observeResult(getStoredTweetsScope)
+  p-pwivate[this] vaw obsewvegetstowedtweetswesuwt: effect[seq[getstowedtweetswesuwt]] =
+    getstowedtweetsobsewvew.obsewvewesuwt(getstowedtweetsscope)
 
-  private[this] val observeGetStoredTweetsResultState: Effect[GetStoredTweetsObserver.Type] =
-    GetStoredTweetsObserver.observeExchange(getStoredTweetsScope)
+  p-pwivate[this] vaw o-obsewvegetstowedtweetswesuwtstate: e-effect[getstowedtweetsobsewvew.type] =
+    g-getstowedtweetsobsewvew.obsewveexchange(getstowedtweetsscope)
 
-  private[this] val observeGetStoredTweetsByUserRequest: Effect[GetStoredTweetsByUserRequest] =
-    GetStoredTweetsByUserObserver.observeRequest(getStoredTweetsByUserScope)
+  pwivate[this] v-vaw obsewvegetstowedtweetsbyusewwequest: effect[getstowedtweetsbyusewwequest] =
+    getstowedtweetsbyusewobsewvew.obsewvewequest(getstowedtweetsbyusewscope)
 
-  private[this] val observeGetStoredTweetsByUserResult: Effect[GetStoredTweetsByUserResult] =
-    GetStoredTweetsByUserObserver.observeResult(getStoredTweetsByUserScope)
+  pwivate[this] vaw obsewvegetstowedtweetsbyusewwesuwt: effect[getstowedtweetsbyusewwesuwt] =
+    g-getstowedtweetsbyusewobsewvew.obsewvewesuwt(getstowedtweetsbyusewscope)
 
-  private[this] val observeGetStoredTweetsByUserResultState: Effect[
-    GetStoredTweetsByUserObserver.Type
+  pwivate[this] v-vaw obsewvegetstowedtweetsbyusewwesuwtstate: effect[
+    g-getstowedtweetsbyusewobsewvew.type
   ] =
-    GetStoredTweetsByUserObserver.observeExchange(getStoredTweetsByUserScope)
+    getstowedtweetsbyusewobsewvew.obsewveexchange(getstowedtweetsbyusewscope)
 
-  override def getTweets(request: GetTweetsRequest): Future[Seq[GetTweetResult]] = {
-    val actualRequest =
-      if (request.options.nonEmpty) request
-      else request.copy(options = Some(defaultGetTweetsRequestOptions))
-    observeGetTweetsRequest(actualRequest)
-    Trace.recordBinary("query_width", request.tweetIds.length)
-    super
-      .getTweets(request)
-      .onSuccess(observeGetTweetResults)
-      .respond(response => observeGetTweetsResultState((request, response)))
+  ovewwide d-def gettweets(wequest: gettweetswequest): futuwe[seq[gettweetwesuwt]] = {
+    v-vaw actuawwequest =
+      i-if (wequest.options.nonempty) w-wequest
+      e-ewse wequest.copy(options = s-some(defauwtgettweetswequestoptions))
+    obsewvegettweetswequest(actuawwequest)
+    twace.wecowdbinawy("quewy_width", ʘwʘ wequest.tweetids.wength)
+    supew
+      .gettweets(wequest)
+      .onsuccess(obsewvegettweetwesuwts)
+      .wespond(wesponse => obsewvegettweetswesuwtstate((wequest, rawr x3 wesponse)))
   }
 
-  override def getTweetFields(request: GetTweetFieldsRequest): Future[Seq[GetTweetFieldsResult]] = {
-    observeGetTweetFieldsRequest(request)
-    Trace.recordBinary("query_width", request.tweetIds.length)
-    super
-      .getTweetFields(request)
-      .onSuccess(observeGetTweetFieldsResults)
-      .respond(response => observeGetTweetFieldsResultState((request, response)))
+  ovewwide def g-gettweetfiewds(wequest: g-gettweetfiewdswequest): f-futuwe[seq[gettweetfiewdswesuwt]] = {
+    obsewvegettweetfiewdswequest(wequest)
+    t-twace.wecowdbinawy("quewy_width", (˘ω˘) wequest.tweetids.wength)
+    supew
+      .gettweetfiewds(wequest)
+      .onsuccess(obsewvegettweetfiewdswesuwts)
+      .wespond(wesponse => obsewvegettweetfiewdswesuwtstate((wequest, o.O w-wesponse)))
   }
 
-  override def getTweetCounts(request: GetTweetCountsRequest): Future[Seq[GetTweetCountsResult]] = {
-    observeGetTweetCountsRequest(request)
-    Trace.recordBinary("query_width", request.tweetIds.length)
-    super
-      .getTweetCounts(request)
-      .onSuccess(observeTweetCountsResults)
-      .respond(response => observeGetTweetCountsResultState((request, response)))
+  o-ovewwide def gettweetcounts(wequest: g-gettweetcountswequest): futuwe[seq[gettweetcountswesuwt]] = {
+    obsewvegettweetcountswequest(wequest)
+    t-twace.wecowdbinawy("quewy_width", 😳 w-wequest.tweetids.wength)
+    supew
+      .gettweetcounts(wequest)
+      .onsuccess(obsewvetweetcountswesuwts)
+      .wespond(wesponse => obsewvegettweetcountswesuwtstate((wequest, o.O w-wesponse)))
   }
 
-  override def getDeletedTweets(
-    request: GetDeletedTweetsRequest
-  ): Future[Seq[GetDeletedTweetResult]] = {
-    Trace.recordBinary("query_width", request.tweetIds.length)
-    super
-      .getDeletedTweets(request)
-      .respond(response => observeGetDeletedTweetsResultState((request, response)))
+  o-ovewwide def getdewetedtweets(
+    wequest: getdewetedtweetswequest
+  ): futuwe[seq[getdewetedtweetwesuwt]] = {
+    twace.wecowdbinawy("quewy_width", ^^;; w-wequest.tweetids.wength)
+    s-supew
+      .getdewetedtweets(wequest)
+      .wespond(wesponse => o-obsewvegetdewetedtweetswesuwtstate((wequest, ( ͡o ω ͡o ) wesponse)))
   }
 
-  override def postTweet(request: PostTweetRequest): Future[PostTweetResult] = {
-    observePostTweetRequest(request)
-    request.additionalFields.foreach(observePostTweetAdditionals)
-    super
-      .postTweet(request)
-      .onSuccess(observePostTweetResponse)
-      .onSuccess(observeTweetWriteSuccess)
-      .respond(observeWriteResult)
+  o-ovewwide def posttweet(wequest: p-posttweetwequest): futuwe[posttweetwesuwt] = {
+    o-obsewveposttweetwequest(wequest)
+    w-wequest.additionawfiewds.foweach(obsewveposttweetadditionaws)
+    supew
+      .posttweet(wequest)
+      .onsuccess(obsewveposttweetwesponse)
+      .onsuccess(obsewvetweetwwitesuccess)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def postRetweet(request: RetweetRequest): Future[PostTweetResult] = {
-    observeRetweetRequest(request)
-    super
-      .postRetweet(request)
-      .onSuccess(observeRetweetResponse)
-      .onSuccess(observeTweetWriteSuccess)
-      .respond(observeWriteResult)
+  o-ovewwide d-def postwetweet(wequest: wetweetwequest): futuwe[posttweetwesuwt] = {
+    obsewvewetweetwequest(wequest)
+    s-supew
+      .postwetweet(wequest)
+      .onsuccess(obsewvewetweetwesponse)
+      .onsuccess(obsewvetweetwwitesuccess)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def setAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] = {
-    observeSetFieldsRequest(request)
-    super
-      .setAdditionalFields(request)
-      .respond(observeWriteResult)
+  ovewwide def setadditionawfiewds(wequest: setadditionawfiewdswequest): f-futuwe[unit] = {
+    obsewvesetfiewdswequest(wequest)
+    s-supew
+      .setadditionawfiewds(wequest)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def setRetweetVisibility(request: SetRetweetVisibilityRequest): Future[Unit] = {
-    observeSetRetweetVisibilityRequest(request)
-    super
-      .setRetweetVisibility(request)
-      .respond(observeWriteResult)
+  o-ovewwide def setwetweetvisibiwity(wequest: s-setwetweetvisibiwitywequest): futuwe[unit] = {
+    obsewvesetwetweetvisibiwitywequest(wequest)
+    s-supew
+      .setwetweetvisibiwity(wequest)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def deleteAdditionalFields(request: DeleteAdditionalFieldsRequest): Future[Unit] = {
-    observeDeleteFieldsRequest(request)
-    super
-      .deleteAdditionalFields(request)
-      .respond(observeWriteResult)
+  o-ovewwide d-def deweteadditionawfiewds(wequest: deweteadditionawfiewdswequest): futuwe[unit] = {
+    obsewvedewetefiewdswequest(wequest)
+    s-supew
+      .deweteadditionawfiewds(wequest)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def updatePossiblySensitiveTweet(
-    request: UpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] =
-    super
-      .updatePossiblySensitiveTweet(request)
-      .respond(observeWriteResult)
+  ovewwide def updatepossibwysensitivetweet(
+    w-wequest: u-updatepossibwysensitivetweetwequest
+  ): futuwe[unit] =
+    supew
+      .updatepossibwysensitivetweet(wequest)
+      .wespond(obsewvewwitewesuwt)
 
-  override def deleteLocationData(request: DeleteLocationDataRequest): Future[Unit] =
-    super
-      .deleteLocationData(request)
-      .respond(observeWriteResult)
+  o-ovewwide def dewetewocationdata(wequest: d-dewetewocationdatawequest): f-futuwe[unit] =
+    supew
+      .dewetewocationdata(wequest)
+      .wespond(obsewvewwitewesuwt)
 
-  override def scrubGeo(geoScrub: GeoScrub): Future[Unit] = {
-    observeScrubGeoRequest(geoScrub)
-    super
-      .scrubGeo(geoScrub)
-      .respond(observeWriteResult)
+  ovewwide def scwubgeo(geoscwub: geoscwub): f-futuwe[unit] = {
+    obsewvescwubgeowequest(geoscwub)
+    supew
+      .scwubgeo(geoscwub)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def scrubGeoUpdateUserTimestamp(request: DeleteLocationData): Future[Unit] =
-    super.scrubGeoUpdateUserTimestamp(request).respond(observeWriteResult)
+  ovewwide d-def scwubgeoupdateusewtimestamp(wequest: d-dewetewocationdata): futuwe[unit] =
+    s-supew.scwubgeoupdateusewtimestamp(wequest).wespond(obsewvewwitewesuwt)
 
-  override def takedown(request: TakedownRequest): Future[Unit] =
-    super
-      .takedown(request)
-      .respond(observeWriteResult)
+  ovewwide def takedown(wequest: t-takedownwequest): f-futuwe[unit] =
+    s-supew
+      .takedown(wequest)
+      .wespond(obsewvewwitewesuwt)
 
-  override def setTweetUserTakedown(request: SetTweetUserTakedownRequest): Future[Unit] =
-    super
-      .setTweetUserTakedown(request)
-      .respond(observeWriteResult)
+  ovewwide def settweetusewtakedown(wequest: settweetusewtakedownwequest): futuwe[unit] =
+    supew
+      .settweetusewtakedown(wequest)
+      .wespond(obsewvewwitewesuwt)
 
-  override def incrTweetFavCount(request: IncrTweetFavCountRequest): Future[Unit] =
-    super
-      .incrTweetFavCount(request)
-      .respond(observeWriteResult)
+  ovewwide def incwtweetfavcount(wequest: incwtweetfavcountwequest): futuwe[unit] =
+    supew
+      .incwtweetfavcount(wequest)
+      .wespond(obsewvewwitewesuwt)
 
-  override def incrTweetBookmarkCount(request: IncrTweetBookmarkCountRequest): Future[Unit] =
-    super
-      .incrTweetBookmarkCount(request)
-      .respond(observeWriteResult)
+  ovewwide def incwtweetbookmawkcount(wequest: i-incwtweetbookmawkcountwequest): f-futuwe[unit] =
+    supew
+      .incwtweetbookmawkcount(wequest)
+      .wespond(obsewvewwitewesuwt)
 
-  override def deleteTweets(request: DeleteTweetsRequest): Future[Seq[DeleteTweetResult]] = {
-    observeDeleteTweetsRequest(request)
-    super
-      .deleteTweets(request)
-      .respond(observeWriteResult)
+  ovewwide def dewetetweets(wequest: d-dewetetweetswequest): f-futuwe[seq[dewetetweetwesuwt]] = {
+    obsewvedewetetweetswequest(wequest)
+    s-supew
+      .dewetetweets(wequest)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit] =
-    super
-      .cascadedDeleteTweet(request)
-      .respond(observeWriteResult)
+  ovewwide def c-cascadeddewetetweet(wequest: cascadeddewetetweetwequest): f-futuwe[unit] =
+    s-supew
+      .cascadeddewetetweet(wequest)
+      .wespond(obsewvewwitewesuwt)
 
-  override def asyncInsert(request: AsyncInsertRequest): Future[Unit] = {
-    observeAsyncInsertRequest(request)
-    super
-      .asyncInsert(request)
-      .respond(observeWriteResult)
+  ovewwide d-def asyncinsewt(wequest: asyncinsewtwequest): f-futuwe[unit] = {
+    o-obsewveasyncinsewtwequest(wequest)
+    supew
+      .asyncinsewt(wequest)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def asyncSetAdditionalFields(request: AsyncSetAdditionalFieldsRequest): Future[Unit] = {
-    observeAsyncSetAdditionalFieldsRequest(request)
-    super
-      .asyncSetAdditionalFields(request)
-      .respond(observeWriteResult)
+  ovewwide d-def asyncsetadditionawfiewds(wequest: a-asyncsetadditionawfiewdswequest): f-futuwe[unit] = {
+    o-obsewveasyncsetadditionawfiewdswequest(wequest)
+    s-supew
+      .asyncsetadditionawfiewds(wequest)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def asyncSetRetweetVisibility(
-    request: AsyncSetRetweetVisibilityRequest
-  ): Future[Unit] = {
-    observeAsyncSetRetweetVisibilityRequest(request)
-    super
-      .asyncSetRetweetVisibility(request)
-      .respond(observeWriteResult)
+  o-ovewwide def asyncsetwetweetvisibiwity(
+    w-wequest: a-asyncsetwetweetvisibiwitywequest
+  ): f-futuwe[unit] = {
+    obsewveasyncsetwetweetvisibiwitywequest(wequest)
+    s-supew
+      .asyncsetwetweetvisibiwity(wequest)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def asyncUndeleteTweet(request: AsyncUndeleteTweetRequest): Future[Unit] = {
-    observeAsyncUndeleteTweetRequest(request)
-    super
-      .asyncUndeleteTweet(request)
-      .respond(observeWriteResult)
+  ovewwide d-def asyncundewetetweet(wequest: a-asyncundewetetweetwequest): futuwe[unit] = {
+    o-obsewveasyncundewetetweetwequest(wequest)
+    supew
+      .asyncundewetetweet(wequest)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def asyncDelete(request: AsyncDeleteRequest): Future[Unit] = {
-    observeAsyncDeleteTweetRequest(request)
-    super
-      .asyncDelete(request)
-      .respond(observeWriteResult)
+  ovewwide d-def asyncdewete(wequest: asyncdewetewequest): f-futuwe[unit] = {
+    o-obsewveasyncdewetetweetwequest(wequest)
+    s-supew
+      .asyncdewete(wequest)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def asyncDeleteAdditionalFields(
-    request: AsyncDeleteAdditionalFieldsRequest
-  ): Future[Unit] = {
-    observeAsyncDeleteAdditionalFieldsRequest(request)
-    super
-      .asyncDeleteAdditionalFields(request)
-      .respond(observeWriteResult)
+  ovewwide d-def asyncdeweteadditionawfiewds(
+    wequest: a-asyncdeweteadditionawfiewdswequest
+  ): futuwe[unit] = {
+    o-obsewveasyncdeweteadditionawfiewdswequest(wequest)
+    supew
+      .asyncdeweteadditionawfiewds(wequest)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def asyncTakedown(request: AsyncTakedownRequest): Future[Unit] = {
-    observeAsyncTakedownRequest(request)
-    super
-      .asyncTakedown(request)
-      .respond(observeWriteResult)
+  o-ovewwide def asynctakedown(wequest: asynctakedownwequest): futuwe[unit] = {
+    obsewveasynctakedownwequest(wequest)
+    s-supew
+      .asynctakedown(wequest)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def asyncUpdatePossiblySensitiveTweet(
-    request: AsyncUpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] = {
-    observeAsyncUpdatePossiblySensitiveTweetRequest(request)
-    super
-      .asyncUpdatePossiblySensitiveTweet(request)
-      .respond(observeWriteResult)
+  ovewwide d-def asyncupdatepossibwysensitivetweet(
+    w-wequest: asyncupdatepossibwysensitivetweetwequest
+  ): futuwe[unit] = {
+    obsewveasyncupdatepossibwysensitivetweetwequest(wequest)
+    supew
+      .asyncupdatepossibwysensitivetweet(wequest)
+      .wespond(obsewvewwitewesuwt)
   }
 
-  override def replicatedInsertTweet2(request: ReplicatedInsertTweet2Request): Future[Unit] = {
-    observedReplicatedInsertTweet2Request(request.cachedTweet.tweet)
-    super.replicatedInsertTweet2(request)
+  o-ovewwide def wepwicatedinsewttweet2(wequest: w-wepwicatedinsewttweet2wequest): f-futuwe[unit] = {
+    o-obsewvedwepwicatedinsewttweet2wequest(wequest.cachedtweet.tweet)
+    supew.wepwicatedinsewttweet2(wequest)
   }
 
-  override def getStoredTweets(
-    request: GetStoredTweetsRequest
-  ): Future[Seq[GetStoredTweetsResult]] = {
-    observeGetStoredTweetsRequest(request)
-    super
-      .getStoredTweets(request)
-      .onSuccess(observeGetStoredTweetsResult)
-      .respond(response => observeGetStoredTweetsResultState((request, response)))
+  ovewwide def getstowedtweets(
+    w-wequest: getstowedtweetswequest
+  ): f-futuwe[seq[getstowedtweetswesuwt]] = {
+    obsewvegetstowedtweetswequest(wequest)
+    s-supew
+      .getstowedtweets(wequest)
+      .onsuccess(obsewvegetstowedtweetswesuwt)
+      .wespond(wesponse => obsewvegetstowedtweetswesuwtstate((wequest, ^^;; wesponse)))
   }
 
-  override def getStoredTweetsByUser(
-    request: GetStoredTweetsByUserRequest
-  ): Future[GetStoredTweetsByUserResult] = {
-    observeGetStoredTweetsByUserRequest(request)
-    super
-      .getStoredTweetsByUser(request)
-      .onSuccess(observeGetStoredTweetsByUserResult)
-      .respond(response => observeGetStoredTweetsByUserResultState((request, response)))
+  o-ovewwide def getstowedtweetsbyusew(
+    w-wequest: getstowedtweetsbyusewwequest
+  ): f-futuwe[getstowedtweetsbyusewwesuwt] = {
+    o-obsewvegetstowedtweetsbyusewwequest(wequest)
+    supew
+      .getstowedtweetsbyusew(wequest)
+      .onsuccess(obsewvegetstowedtweetsbyusewwesuwt)
+      .wespond(wesponse => o-obsewvegetstowedtweetsbyusewwesuwtstate((wequest, ^^;; w-wesponse)))
   }
 
-  private def withAndWithoutClientId[A](
-    stats: StatsReceiver
+  p-pwivate d-def withandwithoutcwientid[a](
+    stats: statsweceivew
   )(
-    f: (StatsReceiver, Boolean) => Effect[A]
+    f-f: (statsweceivew, XD b-boowean) => e-effect[a]
   ) =
-    f(stats, false).also(withClientId(stats)(f))
+    f-f(stats, 🥺 f-fawse).awso(withcwientid(stats)(f))
 
-  private def withClientId[A](stats: StatsReceiver)(f: (StatsReceiver, Boolean) => Effect[A]) = {
-    val map = new SynchronizedHashMap[String, Effect[A]]
+  p-pwivate d-def withcwientid[a](stats: s-statsweceivew)(f: (statsweceivew, (///ˬ///✿) boowean) => e-effect[a]) = {
+    vaw m-map = nyew synchwonizedhashmap[stwing, (U ᵕ U❁) effect[a]]
 
-    Effect[A] { value =>
-      clientIdHelper.effectiveClientIdRoot.foreach { clientId =>
-        val clientObserver = map.getOrElseUpdate(clientId, f(stats.scope(clientId), true))
-        clientObserver(value)
+    e-effect[a] { v-vawue =>
+      c-cwientidhewpew.effectivecwientidwoot.foweach { cwientid =>
+        vaw cwientobsewvew = map.getowewseupdate(cwientid, ^^;; f-f(stats.scope(cwientid), ^^;; t-twue))
+        c-cwientobsewvew(vawue)
       }
     }
   }

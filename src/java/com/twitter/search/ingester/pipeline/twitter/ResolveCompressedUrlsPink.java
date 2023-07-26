@@ -1,113 +1,113 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.set;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.immutabwewist;
+i-impowt com.googwe.common.cowwect.wists;
+impowt c-com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.decider.Decider;
-import com.twitter.pink_floyd.thrift.ClientIdentifier;
-import com.twitter.pink_floyd.thrift.Mask;
-import com.twitter.pink_floyd.thrift.Storer;
-import com.twitter.pink_floyd.thrift.UrlData;
-import com.twitter.pink_floyd.thrift.UrlReadRequest;
-import com.twitter.pink_floyd.thrift.UrlReadResponse;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.util.Await;
-import com.twitter.util.Future;
-import com.twitter.util.Throw;
-import com.twitter.util.Throwables;
-import com.twitter.util.Try;
+impowt com.twittew.decidew.decidew;
+impowt com.twittew.pink_fwoyd.thwift.cwientidentifiew;
+i-impowt com.twittew.pink_fwoyd.thwift.mask;
+impowt com.twittew.pink_fwoyd.thwift.stowew;
+i-impowt com.twittew.pink_fwoyd.thwift.uwwdata;
+impowt com.twittew.pink_fwoyd.thwift.uwwweadwequest;
+i-impowt com.twittew.pink_fwoyd.thwift.uwwweadwesponse;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.utiw.await;
+i-impowt com.twittew.utiw.futuwe;
+impowt com.twittew.utiw.thwow;
+i-impowt com.twittew.utiw.thwowabwes;
+i-impowt com.twittew.utiw.twy;
 
-import static com.twitter.search.ingester.pipeline.twitter.ResolveCompressedUrlsUtils.getUrlInfo;
+impowt static com.twittew.seawch.ingestew.pipewine.twittew.wesowvecompwesseduwwsutiws.getuwwinfo;
 
 /**
- * Resolve compressed URL via Pink
+ * wesowve compwessed uww via pink
  */
-public class ResolveCompressedUrlsPink {
-  private static final Logger LOG = LoggerFactory.getLogger(ResolveCompressedUrlsPink.class);
-  private static final String PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY = "pink_requests_batch_size";
+p-pubwic cwass wesowvecompwesseduwwspink {
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(wesowvecompwesseduwwspink.cwass);
+  pwivate s-static finaw s-stwing pink_wequests_batch_size_decidew_key = "pink_wequests_batch_size";
 
-  private final Storer.ServiceIface storerClient;
-  private final ClientIdentifier pinkClientId;
-  private final Mask requestMask;
-  private final SearchDecider decider;
+  p-pwivate f-finaw stowew.sewviceiface stowewcwient;
+  pwivate finaw cwientidentifiew pinkcwientid;
+  pwivate f-finaw mask wequestmask;
+  pwivate finaw seawchdecidew d-decidew;
 
-  // Use ServerSet to construct a metadata store client
-  public ResolveCompressedUrlsPink(Storer.ServiceIface storerClient,
-                                   String pinkClientId,
-                                   Decider decider) {
-    this.storerClient = storerClient;
-    this.pinkClientId = ClientIdentifier.valueOf(pinkClientId);
-    this.decider = new SearchDecider(Preconditions.checkNotNull(decider));
+  // use sewvewset to constwuct a metadata stowe cwient
+  pubwic wesowvecompwesseduwwspink(stowew.sewviceiface s-stowewcwient, ^•ﻌ•^
+                                   stwing pinkcwientid, (˘ω˘)
+                                   decidew d-decidew) {
+    t-this.stowewcwient = s-stowewcwient;
+    this.pinkcwientid = cwientidentifiew.vawueof(pinkcwientid);
+    this.decidew = n-nyew s-seawchdecidew(pweconditions.checknotnuww(decidew));
 
-    requestMask = new Mask();
-    requestMask.setResolution(true);
-    requestMask.setHtmlBasics(true);
-    requestMask.setUrlDirectInfo(true);
+    wequestmask = n-nyew mask();
+    w-wequestmask.setwesowution(twue);
+    wequestmask.sethtmwbasics(twue);
+    w-wequestmask.setuwwdiwectinfo(twue);
   }
 
   /**
-   * Resolve a set of URLs using PinkFloyd.
+   * wesowve a s-set of uwws using pinkfwoyd. :3
    */
-  public Map<String, ResolveCompressedUrlsUtils.UrlInfo> resolveUrls(Set<String> urls) {
-    if (urls == null || urls.size() == 0) {
-      return null;
+  pubwic map<stwing, ^^;; w-wesowvecompwesseduwwsutiws.uwwinfo> wesowveuwws(set<stwing> u-uwws) {
+    if (uwws == nyuww || u-uwws.size() == 0) {
+      wetuwn n-nyuww;
     }
 
-    List<String> urlsList = ImmutableList.copyOf(urls);
-    int batchSize = decider.featureExists(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
-        ? decider.getAvailability(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
+    wist<stwing> uwwswist = immutabwewist.copyof(uwws);
+    int batchsize = decidew.featuweexists(pink_wequests_batch_size_decidew_key)
+        ? decidew.getavaiwabiwity(pink_wequests_batch_size_decidew_key)
         : 10000;
-    int numRequests = (int) Math.ceil(1.0 * urlsList.size() / batchSize);
+    i-int nyumwequests = (int) m-math.ceiw(1.0 * uwwswist.size() / b-batchsize);
 
-    List<Future<UrlReadResponse>> responseFutures = Lists.newArrayList();
-    for (int i = 0; i < numRequests; ++i) {
-      UrlReadRequest request = new UrlReadRequest();
-      request.setUrls(
-          urlsList.subList(i * batchSize, Math.min(urlsList.size(), (i + 1) * batchSize)));
-      request.setMask(requestMask);
-      request.setClientId(pinkClientId);
+    w-wist<futuwe<uwwweadwesponse>> w-wesponsefutuwes = wists.newawwaywist();
+    fow (int i = 0; i < nyumwequests; ++i) {
+      u-uwwweadwequest wequest = nyew uwwweadwequest();
+      wequest.setuwws(
+          uwwswist.subwist(i * batchsize, 🥺 math.min(uwwswist.size(), (⑅˘꒳˘) (i + 1) * b-batchsize)));
+      wequest.setmask(wequestmask);
+      w-wequest.setcwientid(pinkcwientid);
 
-      // Send all requests in parallel.
-      responseFutures.add(storerClient.read(request));
+      // s-send aww w-wequests in pawawwew. nyaa~~
+      wesponsefutuwes.add(stowewcwient.wead(wequest));
     }
 
-    Map<String, ResolveCompressedUrlsUtils.UrlInfo> resultMap = Maps.newHashMap();
-    for (Future<UrlReadResponse> responseFuture : responseFutures) {
-      Try<UrlReadResponse> tryResponse = getResponseTry(responseFuture);
-      if (tryResponse.isThrow()) {
+    m-map<stwing, :3 w-wesowvecompwesseduwwsutiws.uwwinfo> w-wesuwtmap = m-maps.newhashmap();
+    fow (futuwe<uwwweadwesponse> wesponsefutuwe : w-wesponsefutuwes) {
+      t-twy<uwwweadwesponse> t-twywesponse = g-getwesponsetwy(wesponsefutuwe);
+      i-if (twywesponse.isthwow()) {
         continue;
       }
 
-      UrlReadResponse response = tryResponse.get();
-      for (UrlData urlData : response.getData()) {
-        if (ResolveCompressedUrlsUtils.isResolved(urlData)) {
-          resultMap.put(urlData.url, getUrlInfo(urlData));
+      uwwweadwesponse wesponse = t-twywesponse.get();
+      fow (uwwdata uwwdata : wesponse.getdata()) {
+        if (wesowvecompwesseduwwsutiws.iswesowved(uwwdata)) {
+          wesuwtmap.put(uwwdata.uww, ( ͡o ω ͡o ) g-getuwwinfo(uwwdata));
         }
       }
     }
 
-    return resultMap;
+    wetuwn wesuwtmap;
   }
 
-  private Try<UrlReadResponse> getResponseTry(Future<UrlReadResponse> responseFuture) {
-    try {
-      Try<UrlReadResponse> tryResponse = Await.result(responseFuture.liftToTry());
-      if (tryResponse.isThrow()) {
-        Throwable throwable = ((Throw) tryResponse).e();
-        LOG.warn("Failed to resolve URLs with Pink Storer.", throwable);
+  pwivate twy<uwwweadwesponse> g-getwesponsetwy(futuwe<uwwweadwesponse> w-wesponsefutuwe) {
+    t-twy {
+      twy<uwwweadwesponse> t-twywesponse = await.wesuwt(wesponsefutuwe.wifttotwy());
+      i-if (twywesponse.isthwow()) {
+        t-thwowabwe thwowabwe = ((thwow) twywesponse).e();
+        wog.wawn("faiwed to wesowve uwws with pink stowew.", mya t-thwowabwe);
       }
-      return tryResponse;
-    } catch (Exception e) {
-      return Throwables.unchecked(e);
+      wetuwn twywesponse;
+    } c-catch (exception e) {
+      w-wetuwn thwowabwes.unchecked(e);
     }
   }
 }

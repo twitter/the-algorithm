@@ -1,17 +1,17 @@
-package com.twitter.tweetypie.repository
+package com.twittew.tweetypie.wepositowy
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.TweetId
-import com.twitter.tweetypie.core.TweetResult
+impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.tweetid
+impowt c-com.twittew.tweetypie.cowe.tweetwesuwt
 
-object TweetResultRepository {
-  type Type = (TweetId, TweetQuery.Options) => Stitch[TweetResult]
+o-object t-tweetwesuwtwepositowy {
+  type t-type = (tweetid, ^^;; t-tweetquewy.options) => stitch[tweetwesuwt]
 
   /**
-   * Short-circuits the request of invalid tweet ids (`<= 0`) by immediately throwing `NotFound`.
+   * showt-ciwcuits the wequest of invawid t-tweet ids (`<= 0`) by immediatewy thwowing `notfound`. >_<
    */
-  def shortCircuitInvalidIds(repo: Type): Type = {
-    case (tweetId, _) if tweetId <= 0 => Stitch.NotFound
-    case (tweetId, options) => repo(tweetId, options)
+  d-def showtciwcuitinvawidids(wepo: type): type = {
+    c-case (tweetid, mya _) if tweetid <= 0 => stitch.notfound
+    case (tweetid, mya options) => w-wepo(tweetid, options)
   }
 }

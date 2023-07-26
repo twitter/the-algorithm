@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-ads-callback-engagements-prod",
-  "config-files": [
-    "uua-ads-callback-engagements.aurora"
-  ],
-  "build": {
-    "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
-    },
+  "wowe": "discode", XD
+  "name": "uua-ads-cawwback-engagements-pwod", >_<
+  "config-fiwes": [
+    "uua-ads-cawwback-engagements.auwowa"
+  ], (ꈍᴗꈍ)
+  "buiwd": {
+    "pway": twue, ^•ﻌ•^
+    "twiggew": {
+      "cwon-scheduwe": "0 17 * * 2"
+    }, OwO
     "dependencies": [
       {
-        "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "wowe": "packew", 🥺
+        "name": "packew-cwient-no-pex", òωó
+        "vewsion": "watest"
       }
-    ],
+    ], o.O
     "steps": [
       {
-        "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-ads-callback-engagements"
-      },
+        "type": "bazew-bundwe", (U ᵕ U❁)
+        "name": "bundwe", (⑅˘꒳˘)
+        "tawget": "unified_usew_actions/sewvice/swc/main/scawa:uua-ads-cawwback-engagements"
+      }, ( ͡o ω ͡o )
       {
-        "type": "packer",
-        "name": "uua-ads-callback-engagements",
-        "artifact": "./dist/uua-ads-callback-engagements.zip"
+        "type": "packew", UwU
+        "name": "uua-ads-cawwback-engagements", rawr x3
+        "awtifact": "./dist/uua-ads-cawwback-engagements.zip"
       }
     ]
-  },
-  "targets": [
+  }, rawr
+  "tawgets": [
     {
-      "type": "group",
-      "name": "prod",
-      "targets": [
+      "type": "gwoup", σωσ
+      "name": "pwod", σωσ
+      "tawgets": [
         {
-          "name": "uua-ads-callback-engagements-prod-atla",
-          "key": "atla/discode/prod/uua-ads-callback-engagements"
+          "name": "uua-ads-cawwback-engagements-pwod-atwa", >_<
+          "key": "atwa/discode/pwod/uua-ads-cawwback-engagements"
         },
         {
-          "name": "uua-ads-callback-engagements-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-ads-callback-engagements"
+          "name": "uua-ads-cawwback-engagements-pwod-pdxa", :3
+          "key": "pdxa/discode/pwod/uua-ads-cawwback-engagements"
         }
       ]
     }
-  ],
-  "subscriptions": [
+  ], (U ﹏ U)
+  "subscwiptions": [
    {
-     "type": "SLACK",
-     "recipients": [
+     "type": "swack", -.-
+     "wecipients": [
        {
-         "to": "discode-oncall"
+         "to": "discode-oncaww"
        }
-     ],
-     "events": ["WORKFLOW_SUCCESS"]
-   },
+     ], (ˆ ﻌ ˆ)♡
+     "events": ["wowkfwow_success"]
+   }, (⑅˘꒳˘)
    {
-     "type": "SLACK",
-     "recipients": [{
-       "to": "discode-oncall"
-     }],
-     "events": ["*FAILED"]
+     "type": "swack", (U ᵕ U❁)
+     "wecipients": [{
+       "to": "discode-oncaww"
+     }], -.-
+     "events": ["*faiwed"]
    }
   ]
 }

@@ -1,166 +1,166 @@
-package com.twitter.tweetypie
-package federated
-package prefetcheddata
+package com.twittew.tweetypie
+package f-fedewated
+package p-pwefetcheddata
 
-import com.twitter.consumer_privacy.mention_controls.thriftscala.UnmentionInfo
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.QueryFields
-import com.twitter.gizmoduck.thriftscala.UserResult
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.strato.graphql.thriftscala.CacheMissStrategy
-import com.twitter.strato.graphql.thriftscala.PrefetchedData
-import com.twitter.strato.graphql.thriftscala.TweetResult
-import com.twitter.tweetypie.backends.Gizmoduck
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Throwables
-import com.twitter.vibes.thriftscala.VibeV2
-import com.twitter.weaverbird.common.GetRequestContext
-import com.twitter.weaverbird.common.PerTOOAppCallerStats
-import com.twitter.weaverbird.common.RequestContext
-import com.twitter.weaverbird.converters.tweet.WeaverbirdEntitySetMutations
-import com.twitter.weaverbird.converters.tweet.WeaverbirdTweetMutations
-import com.twitter.weaverbird.hydrators._
-import com.twitter.weaverbird.mappers.ApiTweetPrefetchedMapper
-import com.twitter.weaverbird.repositories.UserRepository
-import com.twitter.weaverbird.converters.common.EntityRenderingOptions
+i-impowt com.twittew.consumew_pwivacy.mention_contwows.thwiftscawa.unmentioninfo
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.gizmoduck.thwiftscawa.wookupcontext
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.quewyfiewds
+i-impowt com.twittew.gizmoduck.thwiftscawa.usewwesuwt
+impowt com.twittew.spam.wtf.thwiftscawa.safetywevew
+impowt com.twittew.stitch.compat.wegacyseqgwoup
+impowt c-com.twittew.stitch.seqgwoup
+impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.gwaphqw.thwiftscawa.cachemissstwategy
+i-impowt com.twittew.stwato.gwaphqw.thwiftscawa.pwefetcheddata
+impowt com.twittew.stwato.gwaphqw.thwiftscawa.tweetwesuwt
+i-impowt com.twittew.tweetypie.backends.gizmoduck
+impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.utiw.thwowabwes
+i-impowt com.twittew.vibes.thwiftscawa.vibev2
+impowt com.twittew.weavewbiwd.common.getwequestcontext
+impowt com.twittew.weavewbiwd.common.pewtooappcawwewstats
+impowt com.twittew.weavewbiwd.common.wequestcontext
+i-impowt com.twittew.weavewbiwd.convewtews.tweet.weavewbiwdentitysetmutations
+impowt com.twittew.weavewbiwd.convewtews.tweet.weavewbiwdtweetmutations
+impowt com.twittew.weavewbiwd.hydwatows._
+impowt com.twittew.weavewbiwd.mappews.apitweetpwefetchedmappew
+i-impowt com.twittew.weavewbiwd.wepositowies.usewwepositowy
+impowt c-com.twittew.weavewbiwd.convewtews.common.entitywendewingoptions
 
-private[federated] final case class PrefetchedDataRequest(
-  tweet: Tweet,
-  sourceTweet: Option[Tweet],
-  quotedTweet: Option[Tweet],
-  unmentionInfo: Option[UnmentionInfo] = None,
-  vibe: Option[VibeV2] = None,
-  safetyLevel: SafetyLevel,
-  requestContext: RequestContext)
+p-pwivate[fedewated] f-finaw case c-cwass pwefetcheddatawequest(
+  tweet: tweet, /(^•ω•^)
+  souwcetweet: o-option[tweet], (U ﹏ U)
+  quotedtweet: option[tweet], 😳😳😳
+  unmentioninfo: option[unmentioninfo] = n-nyone, >w<
+  vibe: option[vibev2] = nyone, XD
+  safetywevew: safetywevew, o.O
+  wequestcontext: wequestcontext)
 
-private[federated] final case class PrefetchedDataResponse(value: PrefetchedData)
+p-pwivate[fedewated] finaw case cwass p-pwefetcheddatawesponse(vawue: p-pwefetcheddata)
 
-private[federated] object PrefetchedDataResponse {
-  // For NotFound, there is no subsequent result or quoted_tweet_results field, so both
-  // settings are false here. These deciders will be removed post migration.
-  private[this] val prefetchedMapper = new ApiTweetPrefetchedMapper(
-    skipTweetResultPrefetchItem = () => false
+pwivate[fedewated] o-object pwefetcheddatawesponse {
+  // fow nyotfound, mya thewe is nyo subsequent wesuwt o-ow quoted_tweet_wesuwts f-fiewd, 🥺 so both
+  // s-settings awe fawse h-hewe. ^^;; these decidews wiww be w-wemoved post migwation. :3
+  pwivate[this] v-vaw pwefetchedmappew = nyew apitweetpwefetchedmappew(
+    skiptweetwesuwtpwefetchitem = () => f-fawse
   )
-  def notFound(tweetId: Long): PrefetchedDataResponse =
-    PrefetchedDataResponse(
-      value = prefetchedMapper.getPrefetchedData(
-        tweetId = tweetId,
-        apiTweet = None,
-        tweetResult = None
+  def nyotfound(tweetid: w-wong): pwefetcheddatawesponse =
+    p-pwefetcheddatawesponse(
+      v-vawue = pwefetchedmappew.getpwefetcheddata(
+        tweetid = tweetid, (U ﹏ U)
+        apitweet = nyone, OwO
+        tweetwesuwt = nyone
       )
     )
 }
 
-private[federated] object PrefetchedDataRepository {
-  def apply(
-    thriftTweetToApiTweet: ThriftTweetToApiTweet,
-    prefetchedMapper: ApiTweetPrefetchedMapper,
-    statsReceiver: StatsReceiver,
-  ): PrefetchedDataRequest => Stitch[PrefetchedDataResponse] =
-    (request: PrefetchedDataRequest) => {
-      val thriftTweetToApiTweetRequest = ThriftTweetToApiTweetRequest(
-        tweet = request.tweet,
-        sourceTweet = request.sourceTweet,
-        quotedTweet = request.quotedTweet,
-        // For Tweet writes, filteredReason will always be None.
-        filteredReason = None,
-        safetyLevel = request.safetyLevel,
-        requestContext = request.requestContext,
-        entityRenderingOptions = EntityRenderingOptions()
+p-pwivate[fedewated] o-object pwefetcheddatawepositowy {
+  d-def appwy(
+    t-thwifttweettoapitweet: t-thwifttweettoapitweet,
+    pwefetchedmappew: apitweetpwefetchedmappew,
+    statsweceivew: s-statsweceivew, 😳😳😳
+  ): pwefetcheddatawequest => stitch[pwefetcheddatawesponse] =
+    (wequest: pwefetcheddatawequest) => {
+      vaw thwifttweettoapitweetwequest = t-thwifttweettoapitweetwequest(
+        tweet = w-wequest.tweet, (ˆ ﻌ ˆ)♡
+        s-souwcetweet = w-wequest.souwcetweet, XD
+        quotedtweet = w-wequest.quotedtweet, (ˆ ﻌ ˆ)♡
+        // f-fow tweet wwites, ( ͡o ω ͡o ) f-fiwtewedweason w-wiww awways be nyone. rawr x3
+        fiwtewedweason = nyone, nyaa~~
+        safetywevew = w-wequest.safetywevew, >_<
+        w-wequestcontext = w-wequest.wequestcontext, ^^;;
+        e-entitywendewingoptions = e-entitywendewingoptions()
       )
 
-      val successCounter = statsReceiver.counter("success")
-      val failuresCounter = statsReceiver.counter("failures")
-      val failuresScope = statsReceiver.scope("failures")
+      vaw successcountew = statsweceivew.countew("success")
+      v-vaw faiwuwescountew = statsweceivew.countew("faiwuwes")
+      vaw faiwuwesscope = statsweceivew.scope("faiwuwes")
 
-      thriftTweetToApiTweet
-        .arrow(thriftTweetToApiTweetRequest)
-        .onSuccess(_ => successCounter.incr())
-        .onFailure { t =>
-          failuresCounter.incr()
-          failuresScope.counter(Throwables.mkString(t): _*).incr()
+      thwifttweettoapitweet
+        .awwow(thwifttweettoapitweetwequest)
+        .onsuccess(_ => successcountew.incw())
+        .onfaiwuwe { t-t =>
+          faiwuwescountew.incw()
+          faiwuwesscope.countew(thwowabwes.mkstwing(t): _*).incw()
         }
-        .map((resp: ThriftTweetToApiTweetResponse) => {
-          val prefetchedData: PrefetchedData = prefetchedMapper.getPrefetchedData(
-            tweetId = request.tweet.id,
-            apiTweet = Some(resp.apiTweet),
-            // since ApiTweet was hydrate, we can fabricate a TweetResult.Tweet
-            tweetResult = Some(TweetResult.Tweet(request.tweet.id)),
-            unmentionInfo = request.unmentionInfo,
-            editControl = request.tweet.editControl,
-            previousCounts = request.tweet.previousCounts,
-            vibe = request.vibe,
-            editPerspective = request.tweet.editPerspective,
-            noteTweet = request.tweet.noteTweet
+        .map((wesp: thwifttweettoapitweetwesponse) => {
+          vaw p-pwefetcheddata: p-pwefetcheddata = p-pwefetchedmappew.getpwefetcheddata(
+            tweetid = wequest.tweet.id, (ˆ ﻌ ˆ)♡
+            a-apitweet = some(wesp.apitweet), ^^;;
+            // s-since apitweet w-was hydwate, (⑅˘꒳˘) we can fabwicate a tweetwesuwt.tweet
+            tweetwesuwt = some(tweetwesuwt.tweet(wequest.tweet.id)), rawr x3
+            unmentioninfo = w-wequest.unmentioninfo, (///ˬ///✿)
+            editcontwow = w-wequest.tweet.editcontwow, 🥺
+            pweviouscounts = w-wequest.tweet.pweviouscounts, >_<
+            v-vibe = wequest.vibe, UwU
+            editpewspective = wequest.tweet.editpewspective, >_<
+            n-nyotetweet = w-wequest.tweet.notetweet
           )
 
-          // Notify GraphQL API to not attempt hydration for missing
-          // ApiTweet/TweetResult fields. This is only needed on the
-          // Tweet write path since the newly created Tweet may not
-          // be fully persisted yet in tbird Manhattan.
-          val shortCircuitedPrefetchedData = prefetchedData.copy(
-            onCacheMiss = CacheMissStrategy.ShortCircuitExisting
+          // nyotify g-gwaphqw api to n-nyot attempt hydwation fow missing
+          // apitweet/tweetwesuwt fiewds. -.- this is onwy needed o-on the
+          // t-tweet wwite p-path since the nyewwy cweated t-tweet may nyot
+          // b-be fuwwy pewsisted y-yet in tbiwd manhattan. mya
+          vaw showtciwcuitedpwefetcheddata = pwefetcheddata.copy(
+            oncachemiss = cachemissstwategy.showtciwcuitexisting
           )
 
-          PrefetchedDataResponse(shortCircuitedPrefetchedData)
+          p-pwefetcheddatawesponse(showtciwcuitedpwefetcheddata)
         })
     }
 }
 
-private[federated] object PrefetchedDataRepositoryBuilder {
-  def apply(
-    getUserResultsById: Gizmoduck.GetById,
-    statsReceiver: StatsReceiver
-  ): PrefetchedDataRequest => Stitch[PrefetchedDataResponse] = {
-    val repoStats = statsReceiver.scope("repositories")
+p-pwivate[fedewated] object pwefetcheddatawepositowybuiwdew {
+  d-def appwy(
+    g-getusewwesuwtsbyid: gizmoduck.getbyid, >w<
+    statsweceivew: statsweceivew
+  ): p-pwefetcheddatawequest => stitch[pwefetcheddatawesponse] = {
+    vaw wepostats = statsweceivew.scope("wepositowies")
 
-    case class GetUserResultById(
-      queryFields: Set[QueryFields],
-      lookupContext: LookupContext,
-    ) extends SeqGroup[UserId, UserResult] {
-      override def run(keys: Seq[UserId]): Future[Seq[Try[UserResult]]] =
-        LegacySeqGroup.liftToSeqTry(getUserResultsById((lookupContext, keys, queryFields)))
+    case c-cwass getusewwesuwtbyid(
+      quewyfiewds: set[quewyfiewds], (U ﹏ U)
+      wookupcontext: w-wookupcontext, 😳😳😳
+    ) e-extends seqgwoup[usewid, o.O usewwesuwt] {
+      ovewwide d-def wun(keys: seq[usewid]): f-futuwe[seq[twy[usewwesuwt]]] =
+        wegacyseqgwoup.wifttoseqtwy(getusewwesuwtsbyid((wookupcontext, òωó keys, quewyfiewds)))
 
-      override def maxSize: Int = 100
+      ovewwide def maxsize: i-int = 100
     }
 
-    val stitchGetUserResultById: UserRepository.GetUserResultById =
-      (userId: UserId, queryFields: Set[QueryFields], lookupContext: LookupContext) =>
-        Stitch.call(userId, GetUserResultById(queryFields, lookupContext))
+    vaw stitchgetusewwesuwtbyid: u-usewwepositowy.getusewwesuwtbyid =
+      (usewid: usewid, 😳😳😳 quewyfiewds: set[quewyfiewds], σωσ wookupcontext: wookupcontext) =>
+        s-stitch.caww(usewid, (⑅˘꒳˘) getusewwesuwtbyid(quewyfiewds, w-wookupcontext))
 
-    val userRepository = new UserRepository(stitchGetUserResultById, repoStats)
+    v-vaw usewwepositowy = nyew usewwepositowy(stitchgetusewwesuwtbyid, (///ˬ///✿) w-wepostats)
 
-    // Note, this is weaverbird.common.GetRequestContext
-    val getRequestContext = new GetRequestContext()
+    // nyote, 🥺 this i-is weavewbiwd.common.getwequestcontext
+    v-vaw g-getwequestcontext = nyew getwequestcontext()
 
-    // TwiggyUserHydrator is needed to hydrate TwiggyUsers for CWC and misc. logic
-    val twiggyUserHydrator = new TwiggyUserHydrator(userRepository, getRequestContext)
+    // t-twiggyusewhydwatow i-is nyeeded to hydwate twiggyusews fow cwc a-and misc. OwO wogic
+    v-vaw twiggyusewhydwatow = n-nyew twiggyusewhydwatow(usewwepositowy, >w< getwequestcontext)
 
-    val weaverbirdMutations = new WeaverbirdTweetMutations(
-      new WeaverbirdEntitySetMutations(
-        new PerTOOAppCallerStats(statsReceiver, getRequestContext)
+    vaw weavewbiwdmutations = n-nyew weavewbiwdtweetmutations(
+      nyew weavewbiwdentitysetmutations(
+        n-nyew pewtooappcawwewstats(statsweceivew, 🥺 g-getwequestcontext)
       )
     )
 
-    val prefetchedMapper = new ApiTweetPrefetchedMapper(
-      // do not skip this in mutation path as we depends on it
-      skipTweetResultPrefetchItem = () => false
+    vaw pwefetchedmappew = nyew apitweetpwefetchedmappew(
+      // do nyot s-skip this in mutation p-path as we d-depends on it
+      s-skiptweetwesuwtpwefetchitem = () => fawse
     )
 
-    val thriftTweetToApiTweet: ThriftTweetToApiTweet =
-      new FoundThriftTweetToApiTweet(
-        statsReceiver,
-        twiggyUserHydrator,
-        weaverbirdMutations
+    v-vaw thwifttweettoapitweet: thwifttweettoapitweet =
+      nyew foundthwifttweettoapitweet(
+        statsweceivew, nyaa~~
+        twiggyusewhydwatow, ^^
+        weavewbiwdmutations
       )
-    PrefetchedDataRepository(
-      thriftTweetToApiTweet,
-      prefetchedMapper,
-      repoStats.scope("prefetched_data_repo")
+    pwefetcheddatawepositowy(
+      thwifttweettoapitweet,
+      pwefetchedmappew, >w<
+      w-wepostats.scope("pwefetched_data_wepo")
     )
   }
 }

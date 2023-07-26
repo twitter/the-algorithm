@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_ranker
+package com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.timewine_wankew
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import com.twitter.stitch.Stitch
-import com.twitter.timelineranker.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwcewithextwactedfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidateswithsouwcefeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.unexpectedcandidatewesuwt
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewinewankew.{thwiftscawa => t}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * Source tweets of retweets present in Timeline Ranker candidates list.
- * These tweets are used only for further ranking. They are not returned to the end user.
+ * s-souwce tweets of wetweets pwesent in timewine w-wankew candidates wist.
+ * these t-tweets awe used onwy fow fuwthew wanking. 🥺 they awe nyot wetuwned t-to the end usew. >_<
  */
-case object TimelineRankerUtegSourceTweetsFeature
-    extends Feature[PipelineQuery, Seq[t.CandidateTweet]]
+case o-object timewinewankewutegsouwcetweetsfeatuwe
+    e-extends featuwe[pipewinequewy, >_< seq[t.candidatetweet]]
 
-@Singleton
-class TimelineRankerUtegCandidateSource @Inject() (
-  timelineRankerClient: t.TimelineRanker.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[t.UtegLikedByTweetsQuery, t.CandidateTweet] {
+@singweton
+cwass timewinewankewutegcandidatesouwce @inject() (
+  timewinewankewcwient: t.timewinewankew.methodpewendpoint)
+    extends candidatesouwcewithextwactedfeatuwes[t.utegwikedbytweetsquewy, (⑅˘꒳˘) t-t.candidatetweet] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("TimelineRankerUteg")
+  ovewwide vaw identifiew: candidatesouwceidentifiew =
+    candidatesouwceidentifiew("timewinewankewuteg")
 
-  override def apply(
-    request: t.UtegLikedByTweetsQuery
-  ): Stitch[CandidatesWithSourceFeatures[t.CandidateTweet]] = {
-    Stitch
-      .callFuture(timelineRankerClient.getUtegLikedByTweetCandidates(Seq(request)))
-      .map { response =>
-        val result = response.headOption.getOrElse(
-          throw PipelineFailure(UnexpectedCandidateResult, "Empty Timeline Ranker response"))
-        val candidates = result.candidates.toSeq.flatten
-        val sourceTweets = result.sourceTweets.toSeq.flatten
+  ovewwide def appwy(
+    w-wequest: t.utegwikedbytweetsquewy
+  ): s-stitch[candidateswithsouwcefeatuwes[t.candidatetweet]] = {
+    stitch
+      .cawwfutuwe(timewinewankewcwient.getutegwikedbytweetcandidates(seq(wequest)))
+      .map { w-wesponse =>
+        v-vaw wesuwt = w-wesponse.headoption.getowewse(
+          thwow pipewinefaiwuwe(unexpectedcandidatewesuwt, /(^•ω•^) "empty timewine w-wankew wesponse"))
+        vaw candidates = wesuwt.candidates.toseq.fwatten
+        v-vaw souwcetweets = wesuwt.souwcetweets.toseq.fwatten
 
-        val candidateSourceFeatures = FeatureMapBuilder()
-          .add(TimelineRankerUtegSourceTweetsFeature, sourceTweets)
-          .build()
+        vaw candidatesouwcefeatuwes = featuwemapbuiwdew()
+          .add(timewinewankewutegsouwcetweetsfeatuwe, rawr x3 souwcetweets)
+          .buiwd()
 
-        CandidatesWithSourceFeatures(candidates = candidates, features = candidateSourceFeatures)
+        candidateswithsouwcefeatuwes(candidates = c-candidates, (U ﹏ U) featuwes = candidatesouwcefeatuwes)
       }
   }
 }

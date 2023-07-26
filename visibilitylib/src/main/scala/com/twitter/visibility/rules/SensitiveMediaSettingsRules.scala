@@ -1,277 +1,277 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.rules.Condition.ViewerHasAdultMediaSettingLevel
-import com.twitter.visibility.rules.Condition.ViewerHasViolentMediaSettingLevel
-import com.twitter.visibility.rules.Condition.ViewerHasOtherSensitiveMediaSettingLevel
-import com.twitter.visibility.rules.Condition.LoggedInViewer
-import com.twitter.visibility.rules.Condition.LoggedOutViewer
-import com.twitter.visibility.rules.Condition.TweetHasNsfwUserAuthor
-import com.twitter.visibility.rules.Condition.TweetHasNsfwAdminAuthor
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.Or
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.NonAuthorViewer
-import com.twitter.visibility.rules.Condition.TweetHasMedia
-import com.twitter.visibility.rules.Reason.Nsfw
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.contenthealth.sensitivemediasettings.thriftscala.SensitiveMediaSettingsLevel
+impowt com.twittew.visibiwity.wuwes.condition.viewewhasaduwtmediasettingwevew
+i-impowt com.twittew.visibiwity.wuwes.condition.viewewhasviowentmediasettingwevew
+i-impowt com.twittew.visibiwity.wuwes.condition.viewewhasothewsensitivemediasettingwevew
+i-impowt c-com.twittew.visibiwity.wuwes.condition.woggedinviewew
+i-impowt com.twittew.visibiwity.wuwes.condition.woggedoutviewew
+i-impowt com.twittew.visibiwity.wuwes.condition.tweethasnsfwusewauthow
+i-impowt c-com.twittew.visibiwity.wuwes.condition.tweethasnsfwadminauthow
+impowt com.twittew.visibiwity.wuwes.condition.and
+impowt com.twittew.visibiwity.wuwes.condition.ow
+impowt com.twittew.visibiwity.wuwes.condition.not
+impowt com.twittew.visibiwity.wuwes.condition.nonauthowviewew
+i-impowt com.twittew.visibiwity.wuwes.condition.tweethasmedia
+impowt com.twittew.visibiwity.wuwes.weason.nsfw
+impowt com.twittew.visibiwity.modews.tweetsafetywabewtype
+i-impowt com.twittew.contentheawth.sensitivemediasettings.thwiftscawa.sensitivemediasettingswevew
 
 
-abstract class AdultMediaTweetLabelDropRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Drop(Nsfw),
-      And(LoggedInViewer, ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
-      tweetSafetyLabelType
+a-abstwact cwass aduwtmediatweetwabewdwopwuwe(tweetsafetywabewtype: tweetsafetywabewtype)
+    extends conditionwithtweetwabewwuwe(
+      d-dwop(nsfw), ^^;;
+      and(woggedinviewew, v-viewewhasaduwtmediasettingwevew(sensitivemediasettingswevew.dwop)), ^•ﻌ•^
+      t-tweetsafetywabewtype
     )
 
-abstract class ViolentMediaTweetLabelDropRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Drop(Nsfw),
-      And(LoggedInViewer, ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
-      tweetSafetyLabelType
+abstwact cwass viowentmediatweetwabewdwopwuwe(tweetsafetywabewtype: tweetsafetywabewtype)
+    extends c-conditionwithtweetwabewwuwe(
+      dwop(nsfw), σωσ
+      and(woggedinviewew, -.- viewewhasviowentmediasettingwevew(sensitivemediasettingswevew.dwop)), ^^;;
+      tweetsafetywabewtype
     )
 
-abstract class OtherSensitiveMediaTweetLabelDropRule(condition: Condition)
-    extends RuleWithConstantAction(
-      Drop(Nsfw),
-      And(
-        condition,
-        And(
-          TweetHasMedia,
-          LoggedInViewer,
-          ViewerHasOtherSensitiveMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)))
+a-abstwact cwass othewsensitivemediatweetwabewdwopwuwe(condition: c-condition)
+    e-extends wuwewithconstantaction(
+      d-dwop(nsfw), XD
+      a-and(
+        condition, 🥺
+        and(
+          t-tweethasmedia, òωó
+          woggedinviewew, (ˆ ﻌ ˆ)♡
+          viewewhasothewsensitivemediasettingwevew(sensitivemediasettingswevew.dwop)))
     )
 
-abstract class AdultMediaTweetLabelInterstitialRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Interstitial(Nsfw),
-      Or(
-        LoggedOutViewer,
-        ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Warn),
-        Not(ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Allow))
-      ),
-      tweetSafetyLabelType
+a-abstwact cwass aduwtmediatweetwabewintewstitiawwuwe(tweetsafetywabewtype: tweetsafetywabewtype)
+    extends conditionwithtweetwabewwuwe(
+      intewstitiaw(nsfw), -.-
+      ow(
+        w-woggedoutviewew, :3
+        viewewhasaduwtmediasettingwevew(sensitivemediasettingswevew.wawn), ʘwʘ
+        n-nyot(viewewhasaduwtmediasettingwevew(sensitivemediasettingswevew.awwow))
+      ), 🥺
+      t-tweetsafetywabewtype
     )
 
-abstract class ViolentMediaTweetLabelInterstitialRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Interstitial(Nsfw),
-      Or(
-        LoggedOutViewer,
-        ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Warn),
-        Not(ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Allow))
-      ),
-      tweetSafetyLabelType
+abstwact c-cwass viowentmediatweetwabewintewstitiawwuwe(tweetsafetywabewtype: tweetsafetywabewtype)
+    extends conditionwithtweetwabewwuwe(
+      intewstitiaw(nsfw), >_<
+      o-ow(
+        w-woggedoutviewew, ʘwʘ
+        viewewhasviowentmediasettingwevew(sensitivemediasettingswevew.wawn), (˘ω˘)
+        nyot(viewewhasviowentmediasettingwevew(sensitivemediasettingswevew.awwow))
+      ), (✿oωo)
+      t-tweetsafetywabewtype
     )
 
-abstract class OtherSensitiveMediaTweetLabelInterstitialRule(condition: Condition)
-    extends RuleWithConstantAction(
-      Interstitial(Nsfw),
-      And(
-        condition,
-        TweetHasMedia,
-        Or(
-          LoggedOutViewer,
-          ViewerHasOtherSensitiveMediaSettingLevel(SensitiveMediaSettingsLevel.Warn)
+a-abstwact cwass othewsensitivemediatweetwabewintewstitiawwuwe(condition: c-condition)
+    extends w-wuwewithconstantaction(
+      intewstitiaw(nsfw), (///ˬ///✿)
+      and(
+        condition, rawr x3
+        t-tweethasmedia, -.-
+        ow(
+          woggedoutviewew, ^^
+          v-viewewhasothewsensitivemediasettingwevew(sensitivemediasettingswevew.wawn)
         )
       )
     )
 
-abstract class AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Tombstone(Epitaph.AdultMedia),
-      And(
-        LoggedInViewer,
-        NonAuthorViewer,
-        ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
-      tweetSafetyLabelType
+abstwact c-cwass aduwtmediatweetwabewdwopsettingwevewtombstonewuwe(
+  t-tweetsafetywabewtype: tweetsafetywabewtype)
+    extends conditionwithtweetwabewwuwe(
+      tombstone(epitaph.aduwtmedia), (⑅˘꒳˘)
+      and(
+        woggedinviewew, nyaa~~
+        nyonauthowviewew,
+        viewewhasaduwtmediasettingwevew(sensitivemediasettingswevew.dwop)), /(^•ω•^)
+      t-tweetsafetywabewtype
     )
 
-abstract class ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Tombstone(Epitaph.ViolentMedia),
-      And(
-        LoggedInViewer,
-        NonAuthorViewer,
-        ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
-      tweetSafetyLabelType
+a-abstwact cwass viowentmediatweetwabewdwopsettingwevewtombstonewuwe(
+  t-tweetsafetywabewtype: t-tweetsafetywabewtype)
+    e-extends conditionwithtweetwabewwuwe(
+      tombstone(epitaph.viowentmedia), (U ﹏ U)
+      and(
+        w-woggedinviewew, 😳😳😳
+        nyonauthowviewew, >w<
+        viewewhasviowentmediasettingwevew(sensitivemediasettingswevew.dwop)), XD
+      tweetsafetywabewtype
     )
 
-abstract class OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(condition: Condition)
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.OtherSensitiveMedia),
-      And(
-        condition,
-        And(
-          TweetHasMedia,
-          LoggedInViewer,
-          NonAuthorViewer,
-          ViewerHasOtherSensitiveMediaSettingLevel(SensitiveMediaSettingsLevel.Drop))
+abstwact cwass o-othewsensitivemediatweetwabewdwopsettingwevewtombstonewuwe(condition: condition)
+    e-extends w-wuwewithconstantaction(
+      tombstone(epitaph.othewsensitivemedia), o.O
+      a-and(
+        condition, mya
+        a-and(
+          t-tweethasmedia, 🥺
+          w-woggedinviewew, ^^;;
+          nyonauthowviewew, :3
+          v-viewewhasothewsensitivemediasettingwevew(sensitivemediasettingswevew.dwop))
       )
     )
 
-case object SensitiveMediaTweetDropRules {
+case object sensitivemediatweetdwopwuwes {
 
 
-  object AdultMediaNsfwHighPrecisionTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwHighPrecision
+  o-object aduwtmediansfwhighpwecisiontweetwabewdwopwuwe
+      e-extends aduwtmediatweetwabewdwopwuwe(
+        t-tweetsafetywabewtype.nsfwhighpwecision
       )
 
-  object AdultMediaNsfwCardImageTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwCardImage
+  o-object aduwtmediansfwcawdimagetweetwabewdwopwuwe
+      e-extends aduwtmediatweetwabewdwopwuwe(
+        tweetsafetywabewtype.nsfwcawdimage
       )
 
-  object AdultMediaNsfwReportedHeuristicsTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  object aduwtmediansfwwepowtedheuwisticstweetwabewdwopwuwe
+      extends aduwtmediatweetwabewdwopwuwe(
+        t-tweetsafetywabewtype.nsfwwepowtedheuwistics
       )
 
-  object AdultMediaNsfwVideoTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwVideo
+  object aduwtmediansfwvideotweetwabewdwopwuwe
+      extends aduwtmediatweetwabewdwopwuwe(
+        tweetsafetywabewtype.nsfwvideo
       )
 
-  object AdultMediaNsfwHighRecallTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwHighRecall
+  object aduwtmediansfwhighwecawwtweetwabewdwopwuwe
+      e-extends aduwtmediatweetwabewdwopwuwe(
+        tweetsafetywabewtype.nsfwhighwecaww
       )
 
-  object AdultMediaNsfwTextTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwText
+  object aduwtmediansfwtexttweetwabewdwopwuwe
+      e-extends a-aduwtmediatweetwabewdwopwuwe(
+        t-tweetsafetywabewtype.nsfwtext
       )
 
-  object ViolentMediaGoreAndViolenceHighPrecisionDropRule
-      extends ViolentMediaTweetLabelDropRule(
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
+  object viowentmediagoweandviowencehighpwecisiondwopwuwe
+      extends v-viowentmediatweetwabewdwopwuwe(
+        tweetsafetywabewtype.goweandviowencehighpwecision
       )
 
-  object ViolentMediaGoreAndViolenceReportedHeuristicsDropRule
-      extends ViolentMediaTweetLabelDropRule(
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  object v-viowentmediagoweandviowencewepowtedheuwisticsdwopwuwe
+      extends v-viowentmediatweetwabewdwopwuwe(
+        tweetsafetywabewtype.goweandviowencewepowtedheuwistics
       )
 
-  object OtherSensitiveMediaNsfwUserTweetFlagDropRule
-      extends OtherSensitiveMediaTweetLabelDropRule(
-        TweetHasNsfwUserAuthor
+  object othewsensitivemediansfwusewtweetfwagdwopwuwe
+      extends othewsensitivemediatweetwabewdwopwuwe(
+        tweethasnsfwusewauthow
       )
 
-  object OtherSensitiveMediaNsfwAdminTweetFlagDropRule
-      extends OtherSensitiveMediaTweetLabelDropRule(
-        TweetHasNsfwAdminAuthor
+  object othewsensitivemediansfwadmintweetfwagdwopwuwe
+      extends o-othewsensitivemediatweetwabewdwopwuwe(
+        tweethasnsfwadminauthow
       )
 }
 
-case object SensitiveMediaTweetInterstitialRules {
+c-case object sensitivemediatweetintewstitiawwuwes {
 
-  object AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwHighPrecision
+  object a-aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe
+      e-extends aduwtmediatweetwabewintewstitiawwuwe(
+        tweetsafetywabewtype.nsfwhighpwecision
       )
-      with DoesLogVerdict
+      with d-doeswogvewdict
 
-  object AdultMediaNsfwCardImageTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwCardImage
-      )
-
-  object AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  o-object aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe
+      extends aduwtmediatweetwabewintewstitiawwuwe(
+        t-tweetsafetywabewtype.nsfwcawdimage
       )
 
-  object AdultMediaNsfwVideoTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwVideo
+  o-object aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe
+      extends aduwtmediatweetwabewintewstitiawwuwe(
+        tweetsafetywabewtype.nsfwwepowtedheuwistics
       )
 
-  object AdultMediaNsfwHighRecallTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwHighRecall
+  object aduwtmediansfwvideotweetwabewintewstitiawwuwe
+      e-extends aduwtmediatweetwabewintewstitiawwuwe(
+        t-tweetsafetywabewtype.nsfwvideo
       )
 
-  object AdultMediaNsfwTextTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwText
+  o-object aduwtmediansfwhighwecawwtweetwabewintewstitiawwuwe
+      extends aduwtmediatweetwabewintewstitiawwuwe(
+        t-tweetsafetywabewtype.nsfwhighwecaww
       )
 
-  object ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule
-      extends ViolentMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
-      )
-      with DoesLogVerdict
-
-  object ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule
-      extends ViolentMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  o-object aduwtmediansfwtexttweetwabewintewstitiawwuwe
+      e-extends aduwtmediatweetwabewintewstitiawwuwe(
+        tweetsafetywabewtype.nsfwtext
       )
 
-  object OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule
-      extends OtherSensitiveMediaTweetLabelInterstitialRule(
-        TweetHasNsfwUserAuthor
+  object viowentmediagoweandviowencehighpwecisionintewstitiawwuwe
+      extends viowentmediatweetwabewintewstitiawwuwe(
+        t-tweetsafetywabewtype.goweandviowencehighpwecision
+      )
+      w-with doeswogvewdict
+
+  object viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe
+      e-extends viowentmediatweetwabewintewstitiawwuwe(
+        t-tweetsafetywabewtype.goweandviowencewepowtedheuwistics
       )
 
-  object OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule
-      extends OtherSensitiveMediaTweetLabelInterstitialRule(
-        TweetHasNsfwAdminAuthor
+  object othewsensitivemediansfwusewtweetfwagintewstitiawwuwe
+      extends othewsensitivemediatweetwabewintewstitiawwuwe(
+        tweethasnsfwusewauthow
+      )
+
+  o-object othewsensitivemediansfwadmintweetfwagintewstitiawwuwe
+      extends othewsensitivemediatweetwabewintewstitiawwuwe(
+        tweethasnsfwadminauthow
       )
 
 }
 
-case object SensitiveMediaTweetDropSettingLevelTombstoneRules {
+case object sensitivemediatweetdwopsettingwevewtombstonewuwes {
 
 
-  object AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwHighPrecision
+  o-object aduwtmediansfwhighpwecisiontweetwabewdwopsettingwevewtombstonewuwe
+      extends a-aduwtmediatweetwabewdwopsettingwevewtombstonewuwe(
+        tweetsafetywabewtype.nsfwhighpwecision
       )
 
-  object AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwCardImage
+  o-object aduwtmediansfwcawdimagetweetwabewdwopsettingwevewtombstonewuwe
+      extends aduwtmediatweetwabewdwopsettingwevewtombstonewuwe(
+        tweetsafetywabewtype.nsfwcawdimage
       )
 
-  object AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  o-object a-aduwtmediansfwwepowtedheuwisticstweetwabewdwopsettingwevewtombstonewuwe
+      extends aduwtmediatweetwabewdwopsettingwevewtombstonewuwe(
+        tweetsafetywabewtype.nsfwwepowtedheuwistics
       )
 
-  object AdultMediaNsfwVideoTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwVideo
+  object a-aduwtmediansfwvideotweetwabewdwopsettingwevewtombstonewuwe
+      extends aduwtmediatweetwabewdwopsettingwevewtombstonewuwe(
+        t-tweetsafetywabewtype.nsfwvideo
       )
 
-  object AdultMediaNsfwHighRecallTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwHighRecall
+  object aduwtmediansfwhighwecawwtweetwabewdwopsettingwevewtombstonewuwe
+      extends aduwtmediatweetwabewdwopsettingwevewtombstonewuwe(
+        tweetsafetywabewtype.nsfwhighwecaww
       )
 
-  object AdultMediaNsfwTextTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwText
+  o-object aduwtmediansfwtexttweetwabewdwopsettingwevewtombstonewuwe
+      extends a-aduwtmediatweetwabewdwopsettingwevewtombstonewuwe(
+        t-tweetsafetywabewtype.nsfwtext
       )
 
-  object ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule
-      extends ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
+  object viowentmediagoweandviowencehighpwecisiondwopsettingwevetombstonewuwe
+      e-extends viowentmediatweetwabewdwopsettingwevewtombstonewuwe(
+        tweetsafetywabewtype.goweandviowencehighpwecision
       )
 
-  object ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule
-      extends ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  o-object viowentmediagoweandviowencewepowtedheuwisticsdwopsettingwevewtombstonewuwe
+      e-extends viowentmediatweetwabewdwopsettingwevewtombstonewuwe(
+        t-tweetsafetywabewtype.goweandviowencewepowtedheuwistics
       )
 
-  object OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule
-      extends OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetHasNsfwUserAuthor
+  object othewsensitivemediansfwusewtweetfwagdwopsettingwevewtombstonewuwe
+      e-extends othewsensitivemediatweetwabewdwopsettingwevewtombstonewuwe(
+        t-tweethasnsfwusewauthow
       )
 
-  object OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule
-      extends OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetHasNsfwAdminAuthor
+  object othewsensitivemediansfwadmintweetfwagdwopsettingwevewtombstonewuwe
+      extends othewsensitivemediatweetwabewdwopsettingwevewtombstonewuwe(
+        t-tweethasnsfwadminauthow
       )
 }

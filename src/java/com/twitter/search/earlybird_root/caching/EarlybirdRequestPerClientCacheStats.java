@@ -1,46 +1,46 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+impowt java.utiw.map;
+i-impowt j-java.utiw.concuwwent.concuwwenthashmap;
 
-import com.twitter.search.common.caching.filter.PerClientCacheStats;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+i-impowt c-com.twittew.seawch.common.caching.fiwtew.pewcwientcachestats;
+i-impowt c-com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt c-com.twittew.seawch.eawwybiwd.common.eawwybiwdwequestutiw;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-public class EarlybirdRequestPerClientCacheStats
-    extends PerClientCacheStats<EarlybirdRequestContext> {
+pubwic cwass eawwybiwdwequestpewcwientcachestats
+    e-extends pewcwientcachestats<eawwybiwdwequestcontext> {
 
-  private String cacheOffByClientStatFormat;
-  private final Map<String, SearchRateCounter> cacheTurnedOffByClient;
+  pwivate stwing c-cacheoffbycwientstatfowmat;
+  pwivate finaw map<stwing, /(^•ω•^) s-seawchwatecountew> cachetuwnedoffbycwient;
 
-  private String cacheHitsByClientStatFormat;
-  private final Map<String, SearchRateCounter> cacheHitsByClient;
+  pwivate stwing cachehitsbycwientstatfowmat;
+  p-pwivate finaw map<stwing, rawr x3 s-seawchwatecountew> c-cachehitsbycwient;
 
-  public EarlybirdRequestPerClientCacheStats(String cacheRequestType) {
-    this.cacheOffByClientStatFormat =
-        cacheRequestType + "_client_id_%s_cache_turned_off_in_request";
-    this.cacheTurnedOffByClient = new ConcurrentHashMap<>();
+  pubwic eawwybiwdwequestpewcwientcachestats(stwing cachewequesttype) {
+    this.cacheoffbycwientstatfowmat =
+        c-cachewequesttype + "_cwient_id_%s_cache_tuwned_off_in_wequest";
+    this.cachetuwnedoffbycwient = nyew concuwwenthashmap<>();
 
-    this.cacheHitsByClientStatFormat = cacheRequestType + "_client_id_%s_cache_hit_total";
-    this.cacheHitsByClient = new ConcurrentHashMap<>();
+    this.cachehitsbycwientstatfowmat = cachewequesttype + "_cwient_id_%s_cache_hit_totaw";
+    t-this.cachehitsbycwient = nyew concuwwenthashmap<>();
   }
 
-  @Override
-  public void recordRequest(EarlybirdRequestContext requestContext) {
-    if (!EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())) {
-      String client = requestContext.getRequest().getClientId();
-      SearchRateCounter counter = cacheTurnedOffByClient.computeIfAbsent(client,
-          cl -> SearchRateCounter.export(String.format(cacheOffByClientStatFormat, cl)));
-      counter.increment();
+  @ovewwide
+  p-pubwic void w-wecowdwequest(eawwybiwdwequestcontext w-wequestcontext) {
+    i-if (!eawwybiwdwequestutiw.iscachingawwowed(wequestcontext.getwequest())) {
+      stwing cwient = wequestcontext.getwequest().getcwientid();
+      s-seawchwatecountew countew = cachetuwnedoffbycwient.computeifabsent(cwient, (U ﹏ U)
+          cw -> seawchwatecountew.expowt(stwing.fowmat(cacheoffbycwientstatfowmat, (U ﹏ U) c-cw)));
+      countew.incwement();
     }
   }
 
-  @Override
-  public void recordCacheHit(EarlybirdRequestContext requestContext) {
-    String client = requestContext.getRequest().getClientId();
-    SearchRateCounter counter = cacheHitsByClient.computeIfAbsent(client,
-        cl -> SearchRateCounter.export(String.format(cacheHitsByClientStatFormat, cl)));
-    counter.increment();
+  @ovewwide
+  pubwic void wecowdcachehit(eawwybiwdwequestcontext wequestcontext) {
+    stwing cwient = w-wequestcontext.getwequest().getcwientid();
+    seawchwatecountew countew = cachehitsbycwient.computeifabsent(cwient, (⑅˘꒳˘)
+        c-cw -> s-seawchwatecountew.expowt(stwing.fowmat(cachehitsbycwientstatfowmat, òωó c-cw)));
+    countew.incwement();
   }
 }

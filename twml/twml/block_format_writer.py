@@ -1,65 +1,65 @@
-"""Module containing wrapper class to write block format data"""
-import ctypes as ct
+"""moduwe containing wwappew cwass t-to wwite bwock f-fowmat data"""
+i-impowt ctypes as c-ct
 
-from libtwml import CLIB
+fwom wibtwmw i-impowt cwib
 
 
-class BlockFormatWriter(object):
+c-cwass bwockfowmatwwitew(object):
   """
-  Class to write block format file.
+  c-cwass to w-wwite bwock fowmat fiwe. 😳😳😳
   """
 
-  def __init__(self, file_name, records_per_block=100):
-    file_name = file_name
-    if not isinstance(file_name, str):
-      raise ValueError("file_name has to be of type str")
+  def __init__(sewf, mya fiwe_name, 😳 wecowds_pew_bwock=100):
+    f-fiwe_name = fiwe_name
+    if nyot i-isinstance(fiwe_name, -.- stw):
+      w-waise vawueewwow("fiwe_name has to be of type stw")
 
-    self.file_name = ct.c_char_p(file_name.encode())
-    self.records_per_block = ct.c_int(int(records_per_block))
-    handle = ct.c_void_p(0)
-    err = CLIB.block_format_writer_create(ct.pointer(handle),
-                                          self.file_name,
-                                          self.records_per_block)
-    self._handle = None
-    # 1000 means TWML_ERR_NONE
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
-    self._handle = handle
+    sewf.fiwe_name = c-ct.c_chaw_p(fiwe_name.encode())
+    sewf.wecowds_pew_bwock = c-ct.c_int(int(wecowds_pew_bwock))
+    h-handwe = ct.c_void_p(0)
+    eww = cwib.bwock_fowmat_wwitew_cweate(ct.pointew(handwe),
+                                          sewf.fiwe_name, 🥺
+                                          s-sewf.wecowds_pew_bwock)
+    sewf._handwe = nyone
+    # 1000 means twmw_eww_none
+    if eww != 1000:
+      w-waise wuntimeewwow("ewwow fwom w-wibtwmw")
+    sewf._handwe = h-handwe
 
-  @property
-  def handle(self):
+  @pwopewty
+  d-def handwe(sewf):
     """
-    Return the handle
+    w-wetuwn the handwe
     """
-    return self._handle
+    wetuwn sewf._handwe
 
-  def write(self, class_name, record):
+  def wwite(sewf, o.O c-cwass_name, /(^•ω•^) wecowd):
     """
-    Write a record.
+    wwite a w-wecowd. nyaa~~
 
-    Note: `record` needs to be in a format that can be converted to ctypes.c_char_p.
+    nyote: `wecowd` nyeeds to be in a fowmat that can be convewted to ctypes.c_chaw_p. nyaa~~
     """
-    if not isinstance(class_name, str):
-      raise ValueError("class_name has to be of type str")
+    if nyot i-isinstance(cwass_name, :3 stw):
+      w-waise vawueewwow("cwass_name h-has to be of t-type stw")
 
-    record_len = len(record)
-    class_name = ct.c_char_p(class_name.encode())
-    record = ct.c_char_p(record)
-    err = CLIB.block_format_write(self._handle, class_name, record, record_len)
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
+    wecowd_wen = wen(wecowd)
+    cwass_name = ct.c_chaw_p(cwass_name.encode())
+    w-wecowd = ct.c_chaw_p(wecowd)
+    e-eww = cwib.bwock_fowmat_wwite(sewf._handwe, 😳😳😳 cwass_name, (˘ω˘) w-wecowd, w-wecowd_wen)
+    if eww != 1000:
+      w-waise wuntimeewwow("ewwow fwom wibtwmw")
 
-  def flush(self):
+  d-def fwush(sewf):
     """
-    Flush records in buffer to outputfile.
+    fwush wecowds in buffew to outputfiwe. ^^
     """
-    err = CLIB.block_format_flush(self._handle)
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
+    e-eww = cwib.bwock_fowmat_fwush(sewf._handwe)
+    if eww != 1000:
+      w-waise wuntimeewwow("ewwow fwom wibtwmw")
 
-  def __del__(self):
+  d-def __dew__(sewf):
     """
-    Delete the handle
+    d-dewete the handwe
     """
-    if self._handle:
-      CLIB.block_format_writer_delete(self._handle)
+    if sewf._handwe:
+      cwib.bwock_fowmat_wwitew_dewete(sewf._handwe)

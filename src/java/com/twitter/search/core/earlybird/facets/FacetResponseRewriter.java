@@ -1,16 +1,16 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import com.twitter.search.common.facets.thriftjava.FacetResponse;
+impowt com.twittew.seawch.common.facets.thwiftjava.facetwesponse;
 
 /**
- * Rewrite facet responses
+ * w-wewwite f-facet wesponses
  */
-public interface FacetResponseRewriter {
+p-pubwic intewface f-facetwesponsewewwitew {
   /**
-   * Do the response rewrite
+   * d-do the w-wesponse wewwite
    *
-   * @param facetResponse the response before the rewriting
-   * @return the rewrited response
+   * @pawam f-facetwesponse t-the wesponse befowe the wewwiting
+   * @wetuwn the wewwited wesponse
    */
-  FacetResponse rewrite(FacetResponse facetResponse);
+  facetwesponse wewwite(facetwesponse facetwesponse);
 }

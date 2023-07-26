@@ -1,401 +1,401 @@
-from datetime import datetime
-from importlib import import_module
-import os
+fwom datetime impowt datetime
+fwom i-impowtwib impowt i-impowt_moduwe
+i-impowt os
 
-from toxicity_ml_pipeline.data.data_preprocessing import (
-  DefaultENNoPreprocessor,
-  DefaultENPreprocessor,
+fwom t-toxicity_mw_pipewine.data.data_pwepwocessing i-impowt (
+  d-defauwtennopwepwocessow, 😳😳😳
+  d-defauwtenpwepwocessow, OwO
 )
-from toxicity_ml_pipeline.data.dataframe_loader import ENLoader, ENLoaderWithSampling
-from toxicity_ml_pipeline.data.mb_generator import BalancedMiniBatchLoader
-from toxicity_ml_pipeline.load_model import load, get_last_layer
-from toxicity_ml_pipeline.optim.callbacks import (
-  AdditionalResultLogger,
-  ControlledStoppingCheckpointCallback,
-  GradientLoggingTensorBoard,
-  SyncingTensorBoard,
+f-fwom toxicity_mw_pipewine.data.datafwame_woadew impowt enwoadew, ^•ﻌ•^ enwoadewwithsampwing
+fwom toxicity_mw_pipewine.data.mb_genewatow impowt b-bawancedminibatchwoadew
+fwom toxicity_mw_pipewine.woad_modew i-impowt woad, (ꈍᴗꈍ) get_wast_wayew
+fwom t-toxicity_mw_pipewine.optim.cawwbacks impowt (
+  additionawwesuwtwoggew, (⑅˘꒳˘)
+  contwowwedstoppingcheckpointcawwback, (⑅˘꒳˘)
+  g-gwadientwoggingtensowboawd, (ˆ ﻌ ˆ)♡
+  syncingtensowboawd,
 )
-from toxicity_ml_pipeline.optim.schedulers import WarmUp
-from toxicity_ml_pipeline.settings.default_settings_abs import GCS_ADDRESS as ABS_GCS
-from toxicity_ml_pipeline.settings.default_settings_tox import (
-  GCS_ADDRESS as TOX_GCS,
-  MODEL_DIR,
-  RANDOM_SEED,
-  REMOTE_LOGDIR,
-  WARM_UP_PERC,
+f-fwom toxicity_mw_pipewine.optim.scheduwews i-impowt wawmup
+fwom toxicity_mw_pipewine.settings.defauwt_settings_abs impowt gcs_addwess as abs_gcs
+fwom toxicity_mw_pipewine.settings.defauwt_settings_tox i-impowt (
+  gcs_addwess as tox_gcs, /(^•ω•^)
+  modew_diw,
+  wandom_seed, òωó
+  wemote_wogdiw, (⑅˘꒳˘)
+  w-wawm_up_pewc, (U ᵕ U❁)
 )
-from toxicity_ml_pipeline.utils.helpers import check_gpu, set_seeds, upload_model
+fwom toxicity_mw_pipewine.utiws.hewpews i-impowt c-check_gpu, >w< set_seeds, u-upwoad_modew
 
-import numpy as np
-import tensorflow as tf
-
-
-try:
-  from tensorflow_addons.optimizers import AdamW
-except ModuleNotFoundError:
-  print("No TFA")
+i-impowt nyumpy as nyp
+impowt tensowfwow as t-tf
 
 
-class Trainer(object):
-  OPTIMIZERS = ["Adam", "AdamW"]
+twy:
+  fwom tensowfwow_addons.optimizews impowt a-adamw
+except moduwenotfoundewwow:
+  pwint("no tfa")
 
-  def __init__(
-    self,
-    optimizer_name,
-    weight_decay,
-    learning_rate,
-    mb_size,
-    train_epochs,
-    content_loss_weight=1,
-    language="en",
-    scope='TOX',
-    project=...,
-    experiment_id="default",
-    gradient_clipping=None,
-    fold="time",
-    seed=RANDOM_SEED,
-    log_gradients=False,
-    kw="",
-    stopping_epoch=None,
-    test=False,
+
+cwass twainew(object):
+  optimizews = ["adam", σωσ "adamw"]
+
+  d-def __init__(
+    sewf, -.-
+    o-optimizew_name, o.O
+    w-weight_decay, ^^
+    w-weawning_wate, >_<
+    mb_size, >w<
+    twain_epochs, >_<
+    content_woss_weight=1, >w<
+    w-wanguage="en", rawr
+    s-scope='tox', rawr x3
+    pwoject=...,
+    e-expewiment_id="defauwt", ( ͡o ω ͡o )
+    g-gwadient_cwipping=none, (˘ω˘)
+    fowd="time", 😳
+    s-seed=wandom_seed, OwO
+    wog_gwadients=fawse, (˘ω˘)
+    k-kw="", òωó
+    stopping_epoch=none, ( ͡o ω ͡o )
+    test=fawse, UwU
   ):
-    self.seed = seed
-    self.weight_decay = weight_decay
-    self.learning_rate = learning_rate
-    self.mb_size = mb_size
-    self.train_epochs = train_epochs
-    self.gradient_clipping = gradient_clipping
+    sewf.seed = s-seed
+    sewf.weight_decay = w-weight_decay
+    sewf.weawning_wate = w-weawning_wate
+    s-sewf.mb_size = mb_size
+    sewf.twain_epochs = twain_epochs
+    sewf.gwadient_cwipping = gwadient_cwipping
 
-    if optimizer_name not in self.OPTIMIZERS:
-      raise ValueError(
-        f"Optimizer {optimizer_name} not implemented. Accepted values {self.OPTIMIZERS}."
+    if o-optimizew_name nyot i-in sewf.optimizews:
+      waise v-vawueewwow(
+        f-f"optimizew {optimizew_name} n-nyot impwemented. /(^•ω•^) accepted vawues {sewf.optimizews}."
       )
-    self.optimizer_name = optimizer_name
-    self.log_gradients = log_gradients
-    self.test = test
-    self.fold = fold
-    self.stopping_epoch = stopping_epoch
-    self.language = language
-    if scope == 'TOX':
-      GCS_ADDRESS = TOX_GCS.format(project=project)
-    elif scope == 'ABS':
-      GCS_ADDRESS = ABS_GCS
-    else:
-      raise ValueError
-    GCS_ADDRESS = GCS_ADDRESS.format(project=project)
-    try:
-      self.setting_file = import_module(f"toxicity_ml_pipeline.settings.{scope.lower()}{project}_settings")
-    except ModuleNotFoundError:
-      raise ValueError(f"You need to define a setting file for your project {project}.")
-    experiment_settings = self.setting_file.experiment_settings
+    sewf.optimizew_name = o-optimizew_name
+    sewf.wog_gwadients = wog_gwadients
+    sewf.test = test
+    sewf.fowd = f-fowd
+    sewf.stopping_epoch = s-stopping_epoch
+    s-sewf.wanguage = w-wanguage
+    if scope == 'tox':
+      g-gcs_addwess = tox_gcs.fowmat(pwoject=pwoject)
+    e-ewif scope == 'abs':
+      g-gcs_addwess = a-abs_gcs
+    ewse:
+      waise vawueewwow
+    g-gcs_addwess = g-gcs_addwess.fowmat(pwoject=pwoject)
+    t-twy:
+      s-sewf.setting_fiwe = i-impowt_moduwe(f"toxicity_mw_pipewine.settings.{scope.wowew()}{pwoject}_settings")
+    except moduwenotfoundewwow:
+      waise vawueewwow(f"you nyeed t-to define a setting fiwe fow youw pwoject {pwoject}.")
+    expewiment_settings = sewf.setting_fiwe.expewiment_settings
 
-    self.project = project
-    self.remote_logdir = REMOTE_LOGDIR.format(GCS_ADDRESS=GCS_ADDRESS, project=project)
-    self.model_dir = MODEL_DIR.format(GCS_ADDRESS=GCS_ADDRESS, project=project)
+    sewf.pwoject = p-pwoject
+    sewf.wemote_wogdiw = wemote_wogdiw.fowmat(gcs_addwess=gcs_addwess, (ꈍᴗꈍ) pwoject=pwoject)
+    s-sewf.modew_diw = m-modew_diw.fowmat(gcs_addwess=gcs_addwess, 😳 p-pwoject=pwoject)
 
-    if experiment_id not in experiment_settings:
-      raise ValueError("This is not an experiment id as defined in the settings file.")
+    if expewiment_id n-nyot in expewiment_settings:
+      waise vawueewwow("this i-is n-nyot an expewiment id as defined in the settings fiwe.")
 
-    for var, default_value in experiment_settings["default"].items():
-      override_val = experiment_settings[experiment_id].get(var, default_value)
-      print("Setting ", var, override_val)
-      self.__setattr__(var, override_val)
+    fow vaw, mya defauwt_vawue in expewiment_settings["defauwt"].items():
+      o-ovewwide_vaw = expewiment_settings[expewiment_id].get(vaw, mya d-defauwt_vawue)
+      pwint("setting ", /(^•ω•^) v-vaw, ^^;; ovewwide_vaw)
+      s-sewf.__setattw__(vaw, 🥺 ovewwide_vaw)
 
-    self.content_loss_weight = content_loss_weight if self.dual_head else None
+    sewf.content_woss_weight = c-content_woss_weight i-if sewf.duaw_head ewse n-nyone
 
-    self.mb_loader = BalancedMiniBatchLoader(
-      fold=self.fold,
-      seed=self.seed,
-      perc_training_tox=self.perc_training_tox,
-      mb_size=self.mb_size,
-      n_outer_splits="time",
-      scope=scope,
-      project=project,
-      dual_head=self.dual_head,
-      sample_weights=self.sample_weights,
-      huggingface=("bertweet" in self.model_type),
+    sewf.mb_woadew = b-bawancedminibatchwoadew(
+      fowd=sewf.fowd, ^^
+      seed=sewf.seed, ^•ﻌ•^
+      pewc_twaining_tox=sewf.pewc_twaining_tox, /(^•ω•^)
+      mb_size=sewf.mb_size, ^^
+      n-ny_outew_spwits="time", 🥺
+      s-scope=scope,
+      p-pwoject=pwoject, (U ᵕ U❁)
+      duaw_head=sewf.duaw_head, 😳😳😳
+      s-sampwe_weights=sewf.sampwe_weights, nyaa~~
+      h-huggingface=("bewtweet" in s-sewf.modew_type), (˘ω˘)
     )
-    self._init_dirnames(kw=kw, experiment_id=experiment_id)
-    print("------- Checking there is a GPU")
-    check_gpu()
+    sewf._init_diwnames(kw=kw, >_< expewiment_id=expewiment_id)
+    pwint("------- checking t-thewe is a gpu")
+    c-check_gpu()
 
-  def _init_dirnames(self, kw, experiment_id):
-    kw = "test" if self.test else kw
-    hyper_param_kw = ""
-    if self.optimizer_name == "AdamW":
-      hyper_param_kw += f"{self.weight_decay}_"
-    if self.gradient_clipping:
-      hyper_param_kw += f"{self.gradient_clipping}_"
-    if self.content_loss_weight:
-      hyper_param_kw += f"{self.content_loss_weight}_"
-    experiment_name = (
-      f"{self.language}{str(datetime.now()).replace(' ', '')[:-7]}{kw}_{experiment_id}{self.fold}_"
-      f"{self.optimizer_name}_"
-      f"{self.learning_rate}_"
-      f"{hyper_param_kw}"
-      f"{self.mb_size}_"
-      f"{self.perc_training_tox}_"
-      f"{self.train_epochs}_seed{self.seed}"
+  def _init_diwnames(sewf, XD kw, e-expewiment_id):
+    k-kw = "test" if sewf.test ewse kw
+    hypew_pawam_kw = ""
+    if sewf.optimizew_name == "adamw":
+      h-hypew_pawam_kw += f"{sewf.weight_decay}_"
+    if sewf.gwadient_cwipping:
+      hypew_pawam_kw += f"{sewf.gwadient_cwipping}_"
+    i-if sewf.content_woss_weight:
+      hypew_pawam_kw += f-f"{sewf.content_woss_weight}_"
+    e-expewiment_name = (
+      f"{sewf.wanguage}{stw(datetime.now()).wepwace(' ', rawr x3 '')[:-7]}{kw}_{expewiment_id}{sewf.fowd}_"
+      f"{sewf.optimizew_name}_"
+      f"{sewf.weawning_wate}_"
+      f"{hypew_pawam_kw}"
+      f-f"{sewf.mb_size}_"
+      f-f"{sewf.pewc_twaining_tox}_"
+      f"{sewf.twain_epochs}_seed{sewf.seed}"
     )
-    print("------- Experiment name: ", experiment_name)
-    self.logdir = (
-      f"..."
-      if self.test
-      else f"..."
+    pwint("------- expewiment n-nyame: ", ( ͡o ω ͡o ) expewiment_name)
+    sewf.wogdiw = (
+      f-f"..."
+      if sewf.test
+      ewse f"..."
     )
-    self.checkpoint_path = f"{self.model_dir}/{experiment_name}"
+    sewf.checkpoint_path = f-f"{sewf.modew_diw}/{expewiment_name}"
 
   @staticmethod
-  def _additional_writers(logdir, metric_name):
-    return tf.summary.create_file_writer(os.path.join(logdir, metric_name))
+  def _additionaw_wwitews(wogdiw, :3 m-metwic_name):
+    w-wetuwn tf.summawy.cweate_fiwe_wwitew(os.path.join(wogdiw, mya metwic_name))
 
-  def get_callbacks(self, fold, val_data, test_data):
-    fold_logdir = self.logdir + f"_fold{fold}"
-    fold_checkpoint_path = self.checkpoint_path + f"_fold{fold}/{{epoch:02d}}"
+  d-def get_cawwbacks(sewf, σωσ fowd, (ꈍᴗꈍ) vaw_data, t-test_data):
+    f-fowd_wogdiw = s-sewf.wogdiw + f"_fowd{fowd}"
+    fowd_checkpoint_path = s-sewf.checkpoint_path + f-f"_fowd{fowd}/{{epoch:02d}}"
 
-    tb_args = {
-      "log_dir": fold_logdir,
-      "histogram_freq": 0,
-      "update_freq": 500,
-      "embeddings_freq": 0,
-      "remote_logdir": f"{self.remote_logdir}_{self.language}"
-      if not self.test
-      else f"{self.remote_logdir}_test",
+    tb_awgs = {
+      "wog_diw": fowd_wogdiw,
+      "histogwam_fweq": 0, OwO
+      "update_fweq": 500, o.O
+      "embeddings_fweq": 0, 😳😳😳
+      "wemote_wogdiw": f"{sewf.wemote_wogdiw}_{sewf.wanguage}"
+      i-if nyot sewf.test
+      e-ewse f"{sewf.wemote_wogdiw}_test", /(^•ω•^)
     }
-    tensorboard_callback = (
-      GradientLoggingTensorBoard(loader=self.mb_loader, val_data=val_data, freq=10, **tb_args)
-      if self.log_gradients
-      else SyncingTensorBoard(**tb_args)
+    t-tensowboawd_cawwback = (
+      gwadientwoggingtensowboawd(woadew=sewf.mb_woadew, OwO vaw_data=vaw_data, ^^ f-fweq=10, **tb_awgs)
+      if sewf.wog_gwadients
+      e-ewse syncingtensowboawd(**tb_awgs)
     )
 
-    callbacks = [tensorboard_callback]
-    if "bertweet" in self.model_type:
-      from_logits = True
-      dataset_transform_func = self.mb_loader.make_huggingface_tensorflow_ds
-    else:
-      from_logits = False
-      dataset_transform_func = None
+    cawwbacks = [tensowboawd_cawwback]
+    i-if "bewtweet" in sewf.modew_type:
+      fwom_wogits = twue
+      d-dataset_twansfowm_func = s-sewf.mb_woadew.make_huggingface_tensowfwow_ds
+    e-ewse:
+      fwom_wogits = f-fawse
+      dataset_twansfowm_func = n-nyone
 
-    fixed_recall = 0.85 if not self.dual_head else 0.5
-    val_callback = AdditionalResultLogger(
-      data=val_data,
-      set_="validation",
-      from_logits=from_logits,
-      dataset_transform_func=dataset_transform_func,
-      dual_head=self.dual_head,
-      fixed_recall=fixed_recall
+    fixed_wecaww = 0.85 if nyot sewf.duaw_head ewse 0.5
+    vaw_cawwback = additionawwesuwtwoggew(
+      data=vaw_data, (///ˬ///✿)
+      s-set_="vawidation", (///ˬ///✿)
+      fwom_wogits=fwom_wogits, (///ˬ///✿)
+      dataset_twansfowm_func=dataset_twansfowm_func, ʘwʘ
+      d-duaw_head=sewf.duaw_head, ^•ﻌ•^
+      fixed_wecaww=fixed_wecaww
     )
-    if val_callback is not None:
-      callbacks.append(val_callback)
+    i-if vaw_cawwback is nyot nyone:
+      c-cawwbacks.append(vaw_cawwback)
 
-    test_callback = AdditionalResultLogger(
-      data=test_data,
-      set_="test",
-      from_logits=from_logits,
-      dataset_transform_func=dataset_transform_func,
-      dual_head=self.dual_head,
-      fixed_recall=fixed_recall
+    test_cawwback = a-additionawwesuwtwoggew(
+      d-data=test_data, OwO
+      s-set_="test", (U ﹏ U)
+      f-fwom_wogits=fwom_wogits, (ˆ ﻌ ˆ)♡
+      d-dataset_twansfowm_func=dataset_twansfowm_func, (⑅˘꒳˘)
+      duaw_head=sewf.duaw_head, (U ﹏ U)
+      fixed_wecaww=fixed_wecaww
     )
-    callbacks.append(test_callback)
+    cawwbacks.append(test_cawwback)
 
-    checkpoint_args = {
-      "filepath": fold_checkpoint_path,
-      "verbose": 0,
-      "monitor": "val_pr_auc",
-      "save_weights_only": True,
-      "mode": "max",
-      "save_freq": "epoch",
+    checkpoint_awgs = {
+      "fiwepath": fowd_checkpoint_path, o.O
+      "vewbose": 0,
+      "monitow": "vaw_pw_auc", mya
+      "save_weights_onwy": twue,
+      "mode": "max", XD
+      "save_fweq": "epoch", òωó
     }
-    if self.stopping_epoch:
-      checkpoint_callback = ControlledStoppingCheckpointCallback(
-        **checkpoint_args,
-        stopping_epoch=self.stopping_epoch,
-        save_best_only=False,
+    if sewf.stopping_epoch:
+      c-checkpoint_cawwback = c-contwowwedstoppingcheckpointcawwback(
+        **checkpoint_awgs, (˘ω˘)
+        s-stopping_epoch=sewf.stopping_epoch, :3
+        save_best_onwy=fawse,
       )
-      callbacks.append(checkpoint_callback)
+      c-cawwbacks.append(checkpoint_cawwback)
 
-    return callbacks
+    wetuwn cawwbacks
 
-  def get_lr_schedule(self, steps_per_epoch):
-    total_num_steps = steps_per_epoch * self.train_epochs
+  def get_ww_scheduwe(sewf, OwO steps_pew_epoch):
+    t-totaw_num_steps = s-steps_pew_epoch * sewf.twain_epochs
 
-    warm_up_perc = WARM_UP_PERC if self.learning_rate >= 1e-3 else 0
-    warm_up_steps = int(total_num_steps * warm_up_perc)
-    if self.linear_lr_decay:
-      learning_rate_fn = tf.keras.optimizers.schedules.PolynomialDecay(
-        self.learning_rate,
-        total_num_steps - warm_up_steps,
-        end_learning_rate=0.0,
-        power=1.0,
-        cycle=False,
+    wawm_up_pewc = w-wawm_up_pewc if sewf.weawning_wate >= 1e-3 ewse 0
+    wawm_up_steps = i-int(totaw_num_steps * w-wawm_up_pewc)
+    if sewf.wineaw_ww_decay:
+      w-weawning_wate_fn = t-tf.kewas.optimizews.scheduwes.powynomiawdecay(
+        sewf.weawning_wate, mya
+        totaw_num_steps - wawm_up_steps, (˘ω˘)
+        end_weawning_wate=0.0, o.O
+        p-powew=1.0, (✿oωo)
+        c-cycwe=fawse, (ˆ ﻌ ˆ)♡
       )
-    else:
-      print('Constant learning rate')
-      learning_rate_fn = self.learning_rate
+    e-ewse:
+      p-pwint('constant w-weawning wate')
+      weawning_wate_fn = s-sewf.weawning_wate
 
-    if warm_up_perc > 0:
-      print(f".... using warm-up for {warm_up_steps} steps")
-      warm_up_schedule = WarmUp(
-        initial_learning_rate=self.learning_rate,
-        decay_schedule_fn=learning_rate_fn,
-        warmup_steps=warm_up_steps,
+    i-if wawm_up_pewc > 0:
+      pwint(f".... ^^;; u-using wawm-up fow {wawm_up_steps} s-steps")
+      wawm_up_scheduwe = w-wawmup(
+        initiaw_weawning_wate=sewf.weawning_wate, OwO
+        decay_scheduwe_fn=weawning_wate_fn,
+        w-wawmup_steps=wawm_up_steps, 🥺
       )
-      return warm_up_schedule
-    return learning_rate_fn
+      wetuwn w-wawm_up_scheduwe
+    w-wetuwn weawning_wate_fn
 
-  def get_optimizer(self, schedule):
-    optim_args = {
-      "learning_rate": schedule,
-      "beta_1": 0.9,
-      "beta_2": 0.999,
-      "epsilon": 1e-6,
-      "amsgrad": False,
+  def get_optimizew(sewf, mya s-scheduwe):
+    optim_awgs = {
+      "weawning_wate": scheduwe, 😳
+      "beta_1": 0.9, òωó
+      "beta_2": 0.999, /(^•ω•^)
+      "epsiwon": 1e-6, -.-
+      "amsgwad": f-fawse, òωó
     }
-    if self.gradient_clipping:
-      optim_args["global_clipnorm"] = self.gradient_clipping
+    if s-sewf.gwadient_cwipping:
+      o-optim_awgs["gwobaw_cwipnowm"] = sewf.gwadient_cwipping
 
-    print(f".... {self.optimizer_name} w global clipnorm {self.gradient_clipping}")
-    if self.optimizer_name == "Adam":
-      return tf.keras.optimizers.Adam(**optim_args)
+    pwint(f".... {sewf.optimizew_name} w gwobaw cwipnowm {sewf.gwadient_cwipping}")
+    i-if sewf.optimizew_name == "adam":
+      wetuwn tf.kewas.optimizews.adam(**optim_awgs)
 
-    if self.optimizer_name == "AdamW":
-      optim_args["weight_decay"] = self.weight_decay
-      return AdamW(**optim_args)
-    raise NotImplementedError
+    if sewf.optimizew_name == "adamw":
+      o-optim_awgs["weight_decay"] = s-sewf.weight_decay
+      wetuwn a-adamw(**optim_awgs)
+    waise notimpwementedewwow
 
-  def get_training_actors(self, steps_per_epoch, val_data, test_data, fold):
-    callbacks = self.get_callbacks(fold=fold, val_data=val_data, test_data=test_data)
-    schedule = self.get_lr_schedule(steps_per_epoch=steps_per_epoch)
+  d-def get_twaining_actows(sewf, /(^•ω•^) s-steps_pew_epoch, /(^•ω•^) vaw_data, test_data, 😳 fowd):
+    c-cawwbacks = sewf.get_cawwbacks(fowd=fowd, vaw_data=vaw_data, :3 t-test_data=test_data)
+    s-scheduwe = sewf.get_ww_scheduwe(steps_pew_epoch=steps_pew_epoch)
 
-    optimizer = self.get_optimizer(schedule)
+    o-optimizew = sewf.get_optimizew(scheduwe)
 
-    return optimizer, callbacks
+    wetuwn o-optimizew, (U ᵕ U❁) c-cawwbacks
 
-  def load_data(self):
-    if self.project == 435 or self.project == 211:
-      if self.dataset_type is None:
-        data_loader = ENLoader(project=self.project, setting_file=self.setting_file)
-        dataset_type_args = {}
-      else:
-        data_loader = ENLoaderWithSampling(project=self.project, setting_file=self.setting_file)
-        dataset_type_args = self.dataset_type
+  def w-woad_data(sewf):
+    if sewf.pwoject == 435 ow sewf.pwoject == 211:
+      if sewf.dataset_type is nyone:
+        data_woadew = enwoadew(pwoject=sewf.pwoject, ʘwʘ setting_fiwe=sewf.setting_fiwe)
+        dataset_type_awgs = {}
+      ewse:
+        data_woadew = enwoadewwithsampwing(pwoject=sewf.pwoject, o.O setting_fiwe=sewf.setting_fiwe)
+        d-dataset_type_awgs = s-sewf.dataset_type
 
-    df = data_loader.load_data(
-      language=self.language, test=self.test, reload=self.dataset_reload, **dataset_type_args
+    df = data_woadew.woad_data(
+      w-wanguage=sewf.wanguage, ʘwʘ t-test=sewf.test, ^^ w-wewoad=sewf.dataset_wewoad, ^•ﻌ•^ **dataset_type_awgs
     )
 
-    return df
+    wetuwn df
 
-  def preprocess(self, df):
-    if self.project == 435 or self.project == 211:
-      if self.preprocessing is None:
-        data_prepro = DefaultENNoPreprocessor()
-      elif self.preprocessing == "default":
-        data_prepro = DefaultENPreprocessor()
-      else:
-        raise NotImplementedError
+  d-def pwepwocess(sewf, mya df):
+    if s-sewf.pwoject == 435 o-ow sewf.pwoject == 211:
+      if sewf.pwepwocessing i-is nyone:
+        data_pwepwo = d-defauwtennopwepwocessow()
+      e-ewif sewf.pwepwocessing == "defauwt":
+        data_pwepwo = defauwtenpwepwocessow()
+      e-ewse:
+        w-waise nyotimpwementedewwow
 
-    return data_prepro(
-      df=df,
-      label_column=self.label_column,
-      class_weight=self.perc_training_tox if self.sample_weights == 'class_weight' else None,
-      filter_low_agreements=self.filter_low_agreements,
-      num_classes=self.num_classes,
+    w-wetuwn data_pwepwo(
+      d-df=df, UwU
+      w-wabew_cowumn=sewf.wabew_cowumn, >_<
+      c-cwass_weight=sewf.pewc_twaining_tox i-if sewf.sampwe_weights == 'cwass_weight' e-ewse n-nyone, /(^•ω•^)
+      fiwtew_wow_agweements=sewf.fiwtew_wow_agweements, òωó
+      nyum_cwasses=sewf.num_cwasses, σωσ
     )
 
-  def load_model(self, optimizer):
-    smart_bias_value = (
-      np.log(self.perc_training_tox / (1 - self.perc_training_tox)) if self.smart_bias_init else 0
+  d-def w-woad_modew(sewf, ( ͡o ω ͡o ) o-optimizew):
+    smawt_bias_vawue = (
+      n-nyp.wog(sewf.pewc_twaining_tox / (1 - sewf.pewc_twaining_tox)) if sewf.smawt_bias_init e-ewse 0
     )
-    model = load(
-      optimizer,
-      seed=self.seed,
-      trainable=self.trainable,
-      model_type=self.model_type,
-      loss_name=self.loss_name,
-      num_classes=self.num_classes,
-      additional_layer=self.additional_layer,
-      smart_bias_value=smart_bias_value,
-      content_num_classes=self.content_num_classes,
-      content_loss_name=self.content_loss_name,
-      content_loss_weight=self.content_loss_weight
+    modew = woad(
+      o-optimizew, nyaa~~
+      s-seed=sewf.seed, :3
+      t-twainabwe=sewf.twainabwe,
+      modew_type=sewf.modew_type, UwU
+      w-woss_name=sewf.woss_name, o.O
+      nyum_cwasses=sewf.num_cwasses, (ˆ ﻌ ˆ)♡
+      a-additionaw_wayew=sewf.additionaw_wayew, ^^;;
+      smawt_bias_vawue=smawt_bias_vawue, ʘwʘ
+      c-content_num_cwasses=sewf.content_num_cwasses, σωσ
+      content_woss_name=sewf.content_woss_name, ^^;;
+      c-content_woss_weight=sewf.content_woss_weight
     )
 
-    if self.model_reload is not False:
-      model_folder = upload_model(full_gcs_model_path=os.path.join(self.model_dir, self.model_reload))
-      model.load_weights(model_folder)
-      if self.scratch_last_layer:
-        print('Putting the last layer back to scratch')
-        model.layers[-1] = get_last_layer(seed=self.seed,
-                                        num_classes=self.num_classes,
-                                        smart_bias_value=smart_bias_value)
+    if sewf.modew_wewoad is nyot fawse:
+      modew_fowdew = upwoad_modew(fuww_gcs_modew_path=os.path.join(sewf.modew_diw, ʘwʘ s-sewf.modew_wewoad))
+      modew.woad_weights(modew_fowdew)
+      i-if sewf.scwatch_wast_wayew:
+        p-pwint('putting the wast wayew back to scwatch')
+        modew.wayews[-1] = g-get_wast_wayew(seed=sewf.seed, ^^
+                                        nyum_cwasses=sewf.num_cwasses, nyaa~~
+                                        smawt_bias_vawue=smawt_bias_vawue)
 
-    return model
+    w-wetuwn modew
 
-  def _train_single_fold(self, mb_generator, test_data, steps_per_epoch, fold, val_data=None):
-    steps_per_epoch = 100 if self.test else steps_per_epoch
+  d-def _twain_singwe_fowd(sewf, (///ˬ///✿) m-mb_genewatow, XD test_data, :3 steps_pew_epoch, òωó fowd, v-vaw_data=none):
+    s-steps_pew_epoch = 100 if s-sewf.test ewse steps_pew_epoch
 
-    optimizer, callbacks = self.get_training_actors(
-      steps_per_epoch=steps_per_epoch, val_data=val_data, test_data=test_data, fold=fold
+    optimizew, ^^ c-cawwbacks = sewf.get_twaining_actows(
+      steps_pew_epoch=steps_pew_epoch, ^•ﻌ•^ v-vaw_data=vaw_data, σωσ t-test_data=test_data, (ˆ ﻌ ˆ)♡ f-fowd=fowd
     )
-    print("Loading model")
-    model = self.load_model(optimizer)
-    print(f"Nb of steps per epoch: {steps_per_epoch} ---- launching training")
-    training_args = {
-      "epochs": self.train_epochs,
-      "steps_per_epoch": steps_per_epoch,
-      "batch_size": self.mb_size,
-      "callbacks": callbacks,
-      "verbose": 2,
+    pwint("woading m-modew")
+    m-modew = sewf.woad_modew(optimizew)
+    p-pwint(f"nb o-of steps pew epoch: {steps_pew_epoch} ---- w-waunching twaining")
+    t-twaining_awgs = {
+      "epochs": s-sewf.twain_epochs, nyaa~~
+      "steps_pew_epoch": s-steps_pew_epoch, ʘwʘ
+      "batch_size": s-sewf.mb_size, ^•ﻌ•^
+      "cawwbacks": c-cawwbacks, rawr x3
+      "vewbose": 2, 🥺
     }
 
-    model.fit(mb_generator, **training_args)
-    return
+    m-modew.fit(mb_genewatow, **twaining_awgs)
+    w-wetuwn
 
-  def train_full_model(self):
-    print("Setting up random seed.")
-    set_seeds(self.seed)
+  def twain_fuww_modew(sewf):
+    pwint("setting u-up wandom seed.")
+    s-set_seeds(sewf.seed)
 
-    print(f"Loading {self.language} data")
-    df = self.load_data()
-    df = self.preprocess(df=df)
+    pwint(f"woading {sewf.wanguage} d-data")
+    d-df = sewf.woad_data()
+    d-df = sewf.pwepwocess(df=df)
 
-    print("Going to train on everything but the test dataset")
-    mini_batches, test_data, steps_per_epoch = self.mb_loader.simple_cv_load(df)
+    pwint("going to twain on evewything but the t-test dataset")
+    m-mini_batches, ʘwʘ t-test_data, steps_pew_epoch = sewf.mb_woadew.simpwe_cv_woad(df)
 
-    self._train_single_fold(
-      mb_generator=mini_batches, test_data=test_data, steps_per_epoch=steps_per_epoch, fold="full"
+    sewf._twain_singwe_fowd(
+      mb_genewatow=mini_batches, (˘ω˘) test_data=test_data, o.O s-steps_pew_epoch=steps_pew_epoch, σωσ f-fowd="fuww"
     )
 
-  def train(self):
-    print("Setting up random seed.")
-    set_seeds(self.seed)
+  def twain(sewf):
+    pwint("setting u-up w-wandom seed.")
+    set_seeds(sewf.seed)
 
-    print(f"Loading {self.language} data")
-    df = self.load_data()
-    df = self.preprocess(df=df)
+    pwint(f"woading {sewf.wanguage} data")
+    d-df = sewf.woad_data()
+    d-df = sewf.pwepwocess(df=df)
 
-    print("Loading MB generator")
+    p-pwint("woading m-mb genewatow")
     i = 0
-    if self.project == 435 or self.project == 211:
-      mb_generator, steps_per_epoch, val_data, test_data = self.mb_loader.no_cv_load(full_df=df)
-      self._train_single_fold(
-        mb_generator=mb_generator,
-        val_data=val_data,
-        test_data=test_data,
-        steps_per_epoch=steps_per_epoch,
-        fold=i,
+    if sewf.pwoject == 435 o-ow sewf.pwoject == 211:
+      m-mb_genewatow, (ꈍᴗꈍ) steps_pew_epoch, (ˆ ﻌ ˆ)♡ vaw_data, o.O test_data = s-sewf.mb_woadew.no_cv_woad(fuww_df=df)
+      sewf._twain_singwe_fowd(
+        mb_genewatow=mb_genewatow, :3
+        v-vaw_data=vaw_data, -.-
+        test_data=test_data, ( ͡o ω ͡o )
+        s-steps_pew_epoch=steps_pew_epoch, /(^•ω•^)
+        f-fowd=i, (⑅˘꒳˘)
       )
-    else:
-      raise ValueError("Sure you want to do multiple fold training")
-      for mb_generator, steps_per_epoch, val_data, test_data in self.mb_loader(full_df=df):
-        self._train_single_fold(
-          mb_generator=mb_generator,
-          val_data=val_data,
-          test_data=test_data,
-          steps_per_epoch=steps_per_epoch,
-          fold=i,
+    ewse:
+      waise v-vawueewwow("suwe y-you want to do muwtipwe fowd twaining")
+      f-fow mb_genewatow, òωó steps_pew_epoch, 🥺 v-vaw_data, (ˆ ﻌ ˆ)♡ test_data i-in sewf.mb_woadew(fuww_df=df):
+        s-sewf._twain_singwe_fowd(
+          m-mb_genewatow=mb_genewatow, -.-
+          vaw_data=vaw_data, σωσ
+          t-test_data=test_data, >_<
+          s-steps_pew_epoch=steps_pew_epoch, :3
+          f-fowd=i, OwO
         )
         i += 1
-        if i == 3:
-          break
+        i-if i == 3:
+          bweak

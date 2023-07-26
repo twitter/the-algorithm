@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird.common.userupdates;
+package com.twittew.seawch.eawwybiwd.common.usewupdates;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+impowt j-java.utiw.date;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.indexing.thriftjava.UserUpdateType;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt c-com.twittew.decidew.decidew;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.usewupdatetype;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
 
 /**
- * Contains logic for deciding whether to apply a certain user update to the {@link UserTable}.
+ * contains wogic fow deciding whethew to appwy a-a cewtain usew update to the {@wink usewtabwe}. >w<
  */
-public class UserUpdatesChecker {
-  private final Date antisocialStartDate;
-  private final Decider decider;
-  private final boolean isFullArchiveCluster;
+p-pubwic cwass usewupdatescheckew {
+  p-pwivate finaw date antisociawstawtdate;
+  pwivate finaw decidew decidew;
+  p-pwivate finaw boowean isfuwwawchivecwustew;
 
-  public UserUpdatesChecker(Clock clock, Decider decider, EarlybirdCluster cluster) {
-    // How many days of antisocial users to keep. A value of -1 means keeping all user updates.
-    long antisocialRecordDays =
-        EarlybirdConfig.getLong("keep_recent_antisocial_user_updates_days", 30);
-    this.antisocialStartDate = antisocialRecordDays > 0
-        ? new Date(clock.nowMillis() - TimeUnit.DAYS.toMillis(antisocialRecordDays)) : null;
-    this.decider = decider;
-    this.isFullArchiveCluster = cluster == EarlybirdCluster.FULL_ARCHIVE;
+  p-pubwic usewupdatescheckew(cwock c-cwock, (⑅˘꒳˘) decidew decidew, OwO eawwybiwdcwustew cwustew) {
+    // how many days of antisociaw usews t-to keep. (ꈍᴗꈍ) a vawue of -1 means keeping aww usew updates. 😳
+    wong antisociawwecowddays =
+        e-eawwybiwdconfig.getwong("keep_wecent_antisociaw_usew_updates_days", 😳😳😳 30);
+    this.antisociawstawtdate = a-antisociawwecowddays > 0
+        ? n-nyew d-date(cwock.nowmiwwis() - t-timeunit.days.tomiwwis(antisociawwecowddays)) : nyuww;
+    this.decidew = d-decidew;
+    this.isfuwwawchivecwustew = cwustew == e-eawwybiwdcwustew.fuww_awchive;
   }
 
   /**
-   * Decides whether to skip the given UserInfoUpdate.
+   * decides whethew to skip the given usewinfoupdate. mya
    */
-  public boolean skipUserUpdate(UserUpdate userUpdate) {
-    if (userUpdate == null) { // always skip null updates
-      return true;
+  pubwic boowean skipusewupdate(usewupdate usewupdate) {
+    i-if (usewupdate == nyuww) { // a-awways s-skip nyuww updates
+      w-wetuwn twue;
     }
 
-    UserUpdateType type = userUpdate.updateType;
+    usewupdatetype type = usewupdate.updatetype;
 
-    if (type == UserUpdateType.PROTECTED && skipProtectedUserUpdate()) {
-      return true;
+    i-if (type == usewupdatetype.pwotected && s-skippwotectedusewupdate()) {
+      wetuwn t-twue;
     }
 
-    if (type == UserUpdateType.ANTISOCIAL && skipAntisocialUserUpdate(userUpdate)) {
-      return true;
+    i-if (type == usewupdatetype.antisociaw && skipantisociawusewupdate(usewupdate)) {
+      w-wetuwn twue;
     }
 
-    // NSFW users can continue to tweet even after they are marked as NSFW. That means
-    // that the snapshot needs to have all NSFW users from the beginning of time. Hence, no NSFW
-    // users updates check here.
+    // n-nysfw usews can continue to tweet even aftew t-they awe mawked as nysfw. mya that m-means
+    // that the snapshot n-nyeeds to have a-aww nsfw usews fwom the beginning of time. (⑅˘꒳˘) hence, nyo nysfw
+    // usews updates check hewe. (U ﹏ U)
 
-    // pass all checks, do not skip this user update
-    return false;
+    // pass aww c-checks, mya do nyot s-skip this usew update
+    wetuwn f-fawse;
   }
 
-  // Antisocial/suspended users can't tweet after they are suspended. Thus if our index stores
-  // tweets from the last 10 days, and they were suspended 60 days ago, we don't need them since
-  // there will be no tweets from them. We can save space by not storing info about those users.
+  // a-antisociaw/suspended u-usews can't tweet aftew they awe suspended. ʘwʘ thus if ouw index s-stowes
+  // tweets fwom the wast 10 days, (˘ω˘) and they wewe suspended 60 days ago, (U ﹏ U) w-we don't nyeed them since
+  // t-thewe wiww be n-nyo tweets fwom t-them. ^•ﻌ•^ we can save space by nyot s-stowing info about t-those usews. (˘ω˘)
 
-  // (For archive, at rebuild time we filter out all suspended users tweets, so for a user that
-  // was suspended before a rebuild, no need to use space to store that the user is suspended)
-  private boolean skipAntisocialUserUpdate(UserUpdate userUpdate) {
-    return antisocialStartDate != null && userUpdate.getUpdatedAt().before(antisocialStartDate);
+  // (fow a-awchive, :3 a-at webuiwd time we fiwtew out aww suspended u-usews tweets, ^^;; so f-fow a usew that
+  // w-was suspended b-befowe a webuiwd, 🥺 n-nyo nyeed to use space to stowe that the usew is suspended)
+  p-pwivate boowean skipantisociawusewupdate(usewupdate usewupdate) {
+    wetuwn antisociawstawtdate != nyuww && u-usewupdate.getupdatedat().befowe(antisociawstawtdate);
   }
 
-  // skip protected user updates for realtime and protected clusters
-  private boolean skipProtectedUserUpdate() {
-    return !isFullArchiveCluster;
+  // skip pwotected usew updates fow weawtime and p-pwotected cwustews
+  p-pwivate boowean s-skippwotectedusewupdate() {
+    wetuwn !isfuwwawchivecwustew;
   }
 }

@@ -1,7 +1,7 @@
-package com.twitter.tweetypie
+package com.twittew.tweetypie
 
-package object media {
-  type TweetId = Long
-  type UserId = Long
-  type MediaId = Long
+package o-object media {
+  t-type tweetid = w-wong
+  type u-usewid = wong
+  t-type mediaid = w-wong
 }

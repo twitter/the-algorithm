@@ -1,77 +1,77 @@
-package com.twitter.interaction_graph.scio.agg_direct_interactions
+package com.twittew.intewaction_gwaph.scio.agg_diwect_intewactions
 
-import com.spotify.scio.ScioContext
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.io.fs.multiformat.WriteOptions
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.interaction_graph.scio.common.UserUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import org.joda.time.Interval
+impowt com.spotify.scio.sciocontext
+i-impowt com.twittew.beam.io.daw.daw
+i-impowt c-com.twittew.beam.io.daw.daw.diskfowmat
+i-impowt com.twittew.beam.io.fs.muwtifowmat.pathwayout
+i-impowt c-com.twittew.beam.io.fs.muwtifowmat.wwiteoptions
+i-impowt com.twittew.beam.job.sewviceidentifiewoptions
+i-impowt com.twittew.intewaction_gwaph.scio.common.usewutiw
+impowt com.twittew.intewaction_gwaph.thwiftscawa.edge
+impowt com.twittew.intewaction_gwaph.thwiftscawa.vewtex
+i-impowt com.twittew.scio_intewnaw.job.sciobeamjob
+impowt com.twittew.statebiwd.v2.thwiftscawa.enviwonment
+impowt o-owg.joda.time.intewvaw
 
-object InteractionGraphAggDirectInteractionsJob
-    extends ScioBeamJob[InteractionGraphAggDirectInteractionsOption] {
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphAggDirectInteractionsOption
-  ): Unit = {
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val dateInterval: Interval = pipelineOptions.interval
+object i-intewactiongwaphaggdiwectintewactionsjob
+    extends sciobeamjob[intewactiongwaphaggdiwectintewactionsoption] {
+  ovewwide pwotected d-def configuwepipewine(
+    sciocontext: sciocontext, /(^•ω•^)
+    p-pipewineoptions: intewactiongwaphaggdiwectintewactionsoption
+  ): u-unit = {
+    @twansient
+    impwicit wazy vaw sc: sciocontext = sciocontext
+    i-impwicit wazy vaw dateintewvaw: intewvaw = pipewineoptions.intewvaw
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
-    } else {
-      dalEnvironment
+    vaw dawenviwonment: stwing = p-pipewineoptions
+      .as(cwassof[sewviceidentifiewoptions])
+      .getenviwonment()
+    vaw dawwwiteenviwonment = i-if (pipewineoptions.getdawwwiteenviwonment != n-nyuww) {
+      p-pipewineoptions.getdawwwiteenviwonment
+    } e-ewse {
+      dawenviwonment
     }
 
-    val source = InteractionGraphAggDirectInteractionsSource(pipelineOptions)
+    vaw souwce = i-intewactiongwaphaggdiwectintewactionssouwce(pipewineoptions)
 
-    val rawUsers = source.readCombinedUsers()
-    val safeUsers = UserUtil.getValidUsers(rawUsers)
+    vaw wawusews = souwce.weadcombinedusews()
+    v-vaw safeusews = usewutiw.getvawidusews(wawusews)
 
-    val rawFavorites = source.readFavorites(dateInterval)
-    val rawPhotoTags = source.readPhotoTags(dateInterval)
-    val tweetSource = source.readTweetSource(dateInterval)
+    vaw wawfavowites = souwce.weadfavowites(dateintewvaw)
+    vaw wawphototags = s-souwce.weadphototags(dateintewvaw)
+    vaw tweetsouwce = s-souwce.weadtweetsouwce(dateintewvaw)
 
-    val (vertex, edges) = InteractionGraphAggDirectInteractionsUtil.process(
-      rawFavorites,
-      tweetSource,
-      rawPhotoTags,
-      safeUsers
+    v-vaw (vewtex, nyaa~~ e-edges) = intewactiongwaphaggdiwectintewactionsutiw.pwocess(
+      wawfavowites, nyaa~~
+      tweetsouwce, :3
+      w-wawphototags, 😳😳😳
+      s-safeusews
     )
 
-    vertex.saveAsCustomOutput(
-      "Write Vertex Records",
-      DAL.write[Vertex](
-        InteractionGraphAggDirectInteractionsVertexDailyScalaDataset,
-        PathLayout.DailyPath(
-          pipelineOptions.getOutputPath + "/aggregated_direct_interactions_vertex_daily"),
-        dateInterval,
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 8.0).ceil.toInt))
+    vewtex.saveascustomoutput(
+      "wwite v-vewtex wecowds", (˘ω˘)
+      d-daw.wwite[vewtex](
+        intewactiongwaphaggdiwectintewactionsvewtexdaiwyscawadataset,
+        p-pathwayout.daiwypath(
+          pipewineoptions.getoutputpath + "/aggwegated_diwect_intewactions_vewtex_daiwy"), ^^
+        d-dateintewvaw, :3
+        diskfowmat.pawquet, -.-
+        enviwonment.vawueof(dawwwiteenviwonment), 😳
+        w-wwiteoption =
+          wwiteoptions(numofshawds = s-some((pipewineoptions.getnumbewofshawds / 8.0).ceiw.toint))
       )
     )
 
-    edges.saveAsCustomOutput(
-      "Write Edge Records",
-      DAL.write[Edge](
-        InteractionGraphAggDirectInteractionsEdgeDailyScalaDataset,
-        PathLayout.DailyPath(
-          pipelineOptions.getOutputPath + "/aggregated_direct_interactions_edge_daily"),
-        dateInterval,
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+    edges.saveascustomoutput(
+      "wwite e-edge wecowds", mya
+      d-daw.wwite[edge](
+        intewactiongwaphaggdiwectintewactionsedgedaiwyscawadataset, (˘ω˘)
+        pathwayout.daiwypath(
+          pipewineoptions.getoutputpath + "/aggwegated_diwect_intewactions_edge_daiwy"), >_<
+        dateintewvaw, -.-
+        diskfowmat.pawquet, 🥺
+        enviwonment.vawueof(dawwwiteenviwonment), (U ﹏ U)
+        wwiteoption = w-wwiteoptions(numofshawds = s-some(pipewineoptions.getnumbewofshawds))
       )
     )
 

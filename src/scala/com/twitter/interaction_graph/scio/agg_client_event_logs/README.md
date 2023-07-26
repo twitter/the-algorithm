@@ -1,34 +1,34 @@
-## InteractionGraphClientEventLogs Dataflow Job
+## intewactiongwaphcwienteventwogs datafwow job
 
-#### IntelliJ
+#### i-intewwij
 ```
-./bazel idea src/scala/com/twitter/interaction_graph/scio/agg_client_event_logs:interaction_graph_client_event_logs_scio
-```
-
-#### Compile
-```
-./bazel build src/scala/com/twitter/interaction_graph/scio/agg_client_event_logs:interaction_graph_client_event_logs_scio
+./bazew i-idea swc/scawa/com/twittew/intewaction_gwaph/scio/agg_cwient_event_wogs:intewaction_gwaph_cwient_event_wogs_scio
 ```
 
-#### Build Jar
+#### c-compiwe
 ```
-./bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_client_event_logs:interaction_graph_client_event_logs_scio
+./bazew b-buiwd swc/scawa/com/twittew/intewaction_gwaph/scio/agg_cwient_event_wogs:intewaction_gwaph_cwient_event_wogs_scio
 ```
 
-#### Run Scheduled Job
+#### b-buiwd jaw
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-client-event-logs-dataflow
+./bazew b-bundwe s-swc/scawa/com/twittew/intewaction_gwaph/scio/agg_cwient_event_wogs:intewaction_gwaph_cwient_event_wogs_scio
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_client_event_logs/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-04-27 \
-  --bind=profile.output_path=processed/interaction_graph_agg_client_event_logs_dataflow
+#### w-wun scheduwed job
+```
+expowt pwojectid=twttw-wecos-mw-pwod
+expowt wegion=us-centwaw1
+expowt j-job_name=intewaction-gwaph-cwient-event-wogs-datafwow
+
+bin/d6w scheduwe \
+  ${pwojectid}/${wegion}/${job_name} \
+  s-swc/scawa/com/twittew/intewaction_gwaph/scio/agg_cwient_event_wogs/config.d6w \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.pwoject=${pwojectid} \
+  --bind=pwofiwe.wegion=${wegion} \
+  --bind=pwofiwe.job_name=${job_name} \
+  --bind=pwofiwe.enviwonment=pwod \
+  --bind=pwofiwe.date=2022-04-27 \
+  --bind=pwofiwe.output_path=pwocessed/intewaction_gwaph_agg_cwient_event_wogs_datafwow
 ```

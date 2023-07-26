@@ -1,147 +1,147 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import java.nio.ByteBuffer
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt java.nio.bytebuffew
 
-object TweetQuery {
+o-object tweetquewy {
 
   /**
-   * Parent trait that indicates what triggered the tweet query.
+   * p-pawent twait that i-indicates nyani t-twiggewed the t-tweet quewy. XD
    */
-  sealed trait Cause {
-    import Cause._
+  seawed twait cause {
+    impowt cause._
 
     /**
-     * Is the tweet query hydrating the specified tweet for the purposes of a write?
+     * is t-the tweet quewy hydwating the specified tweet fow t-the puwposes of a wwite?
      */
-    def writing(tweetId: TweetId): Boolean =
+    d-def wwiting(tweetid: tweetid): boowean =
       this match {
-        case w: Write if w.tweetId == tweetId => true
-        case _ => false
+        c-case w: wwite if w.tweetid == t-tweetid => t-twue
+        case _ => fawse
       }
 
     /**
-     * Is the tweet query performing a regular read for any tweet? If the cause is
-     * a write on a different tweet, then any other tweet that is read in support of the write
-     * is considered a normal read, and is subject to read-path hydration.
+     * is the tweet quewy pewfowming a weguwaw w-wead fow any tweet? if the cause is
+     * a wwite on a diffewent tweet, ^^;; then a-any othew tweet that is wead in s-suppowt of the wwite
+     * i-is considewed a-a nyowmaw w-wead, 🥺 and is subject to wead-path hydwation. XD
      */
-    def reading(tweetId: TweetId): Boolean =
-      !writing(tweetId)
+    d-def weading(tweetid: tweetid): boowean =
+      !wwiting(tweetid)
 
     /**
-     * Are we performing an insert after create on the specified tweet?  An undelete operation
-     * performs an insert, but is not considered an initial insert.
+     * a-awe we pewfowming an insewt aftew cweate on the specified tweet?  an undewete opewation
+     * p-pewfowms an insewt, (U ᵕ U❁) b-but is nyot considewed a-an initiaw i-insewt. :3
      */
-    def initialInsert(tweetId: TweetId): Boolean =
-      this match {
-        case Insert(`tweetId`) => true
-        case _ => false
+    def initiawinsewt(tweetid: tweetid): boowean =
+      this m-match {
+        c-case insewt(`tweetid`) => twue
+        c-case _ => f-fawse
       }
   }
 
-  object Cause {
-    case object Read extends Cause
-    trait Write extends Cause {
-      val tweetId: TweetId
+  object cause {
+    c-case object wead extends c-cause
+    twait wwite extends cause {
+      vaw t-tweetid: tweetid
     }
-    case class Insert(tweetId: TweetId) extends Write
-    case class Undelete(tweetId: TweetId) extends Write
+    case c-cwass insewt(tweetid: tweetid) e-extends wwite
+    c-case cwass undewete(tweetid: tweetid) extends wwite
   }
 
   /**
-   * Options for TweetQuery.
+   * options fow tweetquewy. ( ͡o ω ͡o )
    *
-   * @param include indicates which optionally hydrated fields on each tweet should be
-   *   hydrated and included.
-   * @param enforceVisibilityFiltering whether Tweetypie visibility hydrators should be run to
-   *   filter protected tweets, blocked quote tweets, contributor data, etc. This does not affect
-   *   Visibility Library (http://go/vf) based filtering.
-   * @param cause indicates what triggered the read: a normal read, or a write operation.
-   * @param forExternalConsumption when true, the tweet is being read for rendering to an external
-   *   client such as the iPhone Twitter app and is subject to being Dropped to prevent serving
-   *   "bad" text to clients that might crash their OS. When false, the tweet is being read for internal
-   *   non-client purposes and should never be Dropped.
-   * @param isInnerQuotedTweet Set by [[com.twitter.tweetypie.hydrator.QuotedTweetHydrator]],
-   *   to be used by [[com.twitter.visibility.interfaces.tweets.TweetVisibilityLibrary]]
-   *   so VisibilityFiltering library can execute Interstitial logic on inner quoted tweets.
-   * @param fetchStoredTweets Set by GetStoredTweetsHandler. If set to true, the Manhattan storage
-   *   layer will fetch and construct Tweets regardless of what state they're in.
+   * @pawam incwude indicates which optionawwy h-hydwated fiewds o-on each tweet shouwd be
+   *   h-hydwated and i-incwuded. òωó
+   * @pawam e-enfowcevisibiwityfiwtewing whethew tweetypie visibiwity hydwatows shouwd be w-wun to
+   *   fiwtew pwotected tweets, σωσ bwocked quote tweets, (U ᵕ U❁) contwibutow data, (✿oωo) e-etc. this does nyot affect
+   *   v-visibiwity wibwawy (http://go/vf) b-based fiwtewing.
+   * @pawam c-cause indicates nyani twiggewed t-the wead: a nyowmaw w-wead, ^^ ow a w-wwite opewation. ^•ﻌ•^
+   * @pawam f-fowextewnawconsumption when twue, XD the tweet is being w-wead fow wendewing t-to an extewnaw
+   *   c-cwient s-such as the iphone t-twittew app and is subject to being dwopped to pwevent sewving
+   *   "bad" t-text to cwients that might cwash theiw os. :3 when fawse, (ꈍᴗꈍ) the tweet is being wead fow intewnaw
+   *   n-non-cwient puwposes and shouwd nyevew be dwopped. :3
+   * @pawam isinnewquotedtweet s-set by [[com.twittew.tweetypie.hydwatow.quotedtweethydwatow]], (U ﹏ U)
+   *   t-to be u-used by [[com.twittew.visibiwity.intewfaces.tweets.tweetvisibiwitywibwawy]]
+   *   so visibiwityfiwtewing w-wibwawy can exekawaii~ i-intewstitiaw w-wogic on innew quoted tweets. UwU
+   * @pawam fetchstowedtweets set by getstowedtweetshandwew. 😳😳😳 if set t-to twue, XD the manhattan stowage
+   *   w-wayew wiww fetch and constwuct t-tweets wegawdwess o-of nyani state they'we in. o.O
    */
-  case class Options(
-    include: TweetQuery.Include,
-    cacheControl: CacheControl = CacheControl.ReadWriteCache,
-    cardsPlatformKey: Option[String] = None,
-    excludeReported: Boolean = false,
-    enforceVisibilityFiltering: Boolean = false,
-    safetyLevel: SafetyLevel = SafetyLevel.FilterNone,
-    forUserId: Option[UserId] = None,
-    languageTag: String = "en",
-    extensionsArgs: Option[ByteBuffer] = None,
-    cause: Cause = Cause.Read,
-    scrubUnrequestedFields: Boolean = true,
-    requireSourceTweet: Boolean = true,
-    forExternalConsumption: Boolean = false,
-    simpleQuotedTweet: Boolean = false,
-    isInnerQuotedTweet: Boolean = false,
-    fetchStoredTweets: Boolean = false,
-    isSourceTweet: Boolean = false,
-    enableEditControlHydration: Boolean = true)
+  case c-cwass options(
+    i-incwude: tweetquewy.incwude, (⑅˘꒳˘)
+    cachecontwow: c-cachecontwow = c-cachecontwow.weadwwitecache, 😳😳😳
+    cawdspwatfowmkey: option[stwing] = nyone, nyaa~~
+    excwudewepowted: b-boowean = fawse, rawr
+    e-enfowcevisibiwityfiwtewing: b-boowean = fawse, -.-
+    safetywevew: s-safetywevew = s-safetywevew.fiwtewnone, (✿oωo)
+    fowusewid: option[usewid] = n-nyone, /(^•ω•^)
+    wanguagetag: stwing = "en", 🥺
+    extensionsawgs: option[bytebuffew] = n-nyone, ʘwʘ
+    c-cause: cause = cause.wead, UwU
+    scwubunwequestedfiewds: b-boowean = t-twue, XD
+    wequiwesouwcetweet: boowean = twue, (✿oωo)
+    fowextewnawconsumption: b-boowean = fawse, :3
+    simpwequotedtweet: boowean = fawse, (///ˬ///✿)
+    isinnewquotedtweet: boowean = fawse, nyaa~~
+    f-fetchstowedtweets: boowean = fawse, >w<
+    issouwcetweet: b-boowean = f-fawse, -.-
+    enabweeditcontwowhydwation: boowean = twue)
 
-  case class Include(
-    tweetFields: Set[FieldId] = Set.empty,
-    countsFields: Set[FieldId] = Set.empty,
-    mediaFields: Set[FieldId] = Set.empty,
-    quotedTweet: Boolean = false,
-    pastedMedia: Boolean = false) {
+  case cwass incwude(
+    t-tweetfiewds: s-set[fiewdid] = set.empty, (✿oωo)
+    countsfiewds: set[fiewdid] = s-set.empty, (˘ω˘)
+    mediafiewds: set[fiewdid] = s-set.empty, rawr
+    quotedtweet: boowean = fawse, OwO
+    pastedmedia: b-boowean = fawse) {
 
     /**
-     * Accumulates additional (rather than replaces) field ids.
+     * a-accumuwates a-additionaw (wathew than w-wepwaces) fiewd ids. ^•ﻌ•^
      */
-    def also(
-      tweetFields: Traversable[FieldId] = Nil,
-      countsFields: Traversable[FieldId] = Nil,
-      mediaFields: Traversable[FieldId] = Nil,
-      quotedTweet: Option[Boolean] = None,
-      pastedMedia: Option[Boolean] = None
-    ): Include =
-      copy(
-        tweetFields = this.tweetFields ++ tweetFields,
-        countsFields = this.countsFields ++ countsFields,
-        mediaFields = this.mediaFields ++ mediaFields,
-        quotedTweet = quotedTweet.getOrElse(this.quotedTweet),
-        pastedMedia = pastedMedia.getOrElse(this.pastedMedia)
+    d-def awso(
+      t-tweetfiewds: t-twavewsabwe[fiewdid] = nyiw, UwU
+      c-countsfiewds: t-twavewsabwe[fiewdid] = nyiw, (˘ω˘)
+      mediafiewds: t-twavewsabwe[fiewdid] = n-nyiw, (///ˬ///✿)
+      q-quotedtweet: option[boowean] = nyone, σωσ
+      p-pastedmedia: option[boowean] = nyone
+    ): incwude =
+      c-copy(
+        t-tweetfiewds = this.tweetfiewds ++ tweetfiewds, /(^•ω•^)
+        countsfiewds = t-this.countsfiewds ++ c-countsfiewds, 😳
+        m-mediafiewds = t-this.mediafiewds ++ mediafiewds, 😳
+        q-quotedtweet = quotedtweet.getowewse(this.quotedtweet), (⑅˘꒳˘)
+        pastedmedia = pastedmedia.getowewse(this.pastedmedia)
       )
 
     /**
-     * Removes field ids.
+     * wemoves fiewd ids. 😳😳😳
      */
-    def exclude(
-      tweetFields: Traversable[FieldId] = Nil,
-      countsFields: Traversable[FieldId] = Nil,
-      mediaFields: Traversable[FieldId] = Nil
-    ): Include =
+    def excwude(
+      t-tweetfiewds: twavewsabwe[fiewdid] = nyiw, 😳
+      c-countsfiewds: twavewsabwe[fiewdid] = nyiw, XD
+      m-mediafiewds: twavewsabwe[fiewdid] = nyiw
+    ): i-incwude =
       copy(
-        tweetFields = this.tweetFields -- tweetFields,
-        countsFields = this.countsFields -- countsFields,
-        mediaFields = this.mediaFields -- mediaFields
+        t-tweetfiewds = this.tweetfiewds -- t-tweetfiewds, mya
+        c-countsfiewds = t-this.countsfiewds -- c-countsfiewds, ^•ﻌ•^
+        mediafiewds = this.mediafiewds -- mediafiewds
       )
 
-    def ++(that: Include): Include =
+    def ++(that: incwude): incwude =
       copy(
-        tweetFields = this.tweetFields ++ that.tweetFields,
-        countsFields = this.countsFields ++ that.countsFields,
-        mediaFields = this.mediaFields ++ that.mediaFields,
-        quotedTweet = this.quotedTweet || that.quotedTweet,
-        pastedMedia = this.pastedMedia || that.pastedMedia
+        t-tweetfiewds = this.tweetfiewds ++ t-that.tweetfiewds, ʘwʘ
+        c-countsfiewds = this.countsfiewds ++ t-that.countsfiewds, ( ͡o ω ͡o )
+        mediafiewds = this.mediafiewds ++ that.mediafiewds, mya
+        q-quotedtweet = t-this.quotedtweet || that.quotedtweet, o.O
+        p-pastedmedia = this.pastedmedia || that.pastedmedia
       )
   }
 }
 
-sealed case class CacheControl(writeToCache: Boolean, readFromCache: Boolean)
+s-seawed case c-cwass cachecontwow(wwitetocache: boowean, (✿oωo) weadfwomcache: b-boowean)
 
-object CacheControl {
-  val NoCache: CacheControl = CacheControl(false, false)
-  val ReadOnlyCache: CacheControl = CacheControl(false, true)
-  val ReadWriteCache: CacheControl = CacheControl(true, true)
+o-object cachecontwow {
+  vaw nyocache: cachecontwow = cachecontwow(fawse, fawse)
+  v-vaw weadonwycache: c-cachecontwow = c-cachecontwow(fawse, :3 t-twue)
+  v-vaw weadwwitecache: cachecontwow = c-cachecontwow(twue, 😳 t-twue)
 }

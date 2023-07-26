@@ -1,59 +1,59 @@
-from twml.trainers import DataRecordTrainer
+fwom twmw.twainews impowt datawecowdtwainew
 
-from .features import FEATURE_LIST_DEFAULT_PATH
+f-fwom .featuwes i-impowt f-featuwe_wist_defauwt_path
 
 
-def get_training_arg_parser():
-  parser = DataRecordTrainer.add_parser_arguments()
+d-def g-get_twaining_awg_pawsew():
+  pawsew = d-datawecowdtwainew.add_pawsew_awguments()
 
-  parser.add_argument(
-    "--feature_list",
-    default=FEATURE_LIST_DEFAULT_PATH,
-    type=str,
-    help="Which features to use for training",
+  p-pawsew.add_awgument(
+    "--featuwe_wist", rawr x3
+    d-defauwt=featuwe_wist_defauwt_path, (U ﹏ U)
+    type=stw, (U ﹏ U)
+    hewp="which featuwes to use fow twaining", (⑅˘꒳˘)
   )
 
-  parser.add_argument(
-    "--param_file",
-    default=None,
-    type=str,
-    help="Path to JSON file containing the graph parameters. If None, model will load default parameters.",
+  p-pawsew.add_awgument(
+    "--pawam_fiwe", òωó
+    defauwt=none, ʘwʘ
+    type=stw, /(^•ω•^)
+    h-hewp="path to json fiwe containing t-the gwaph pawametews. ʘwʘ if nyone, modew wiww woad defauwt p-pawametews.", σωσ
   )
 
-  parser.add_argument(
-    "--directly_export_best",
-    default=False,
-    action="store_true",
-    help="whether to directly_export best_checkpoint",
+  pawsew.add_awgument(
+    "--diwectwy_expowt_best", OwO
+    d-defauwt=fawse, 😳😳😳
+    a-action="stowe_twue", 😳😳😳
+    hewp="whethew to diwectwy_expowt best_checkpoint", o.O
   )
 
-  parser.add_argument(
-    "--warm_start_from", default=None, type=str, help="model dir to warm start from"
+  pawsew.add_awgument(
+    "--wawm_stawt_fwom", ( ͡o ω ͡o ) d-defauwt=none, (U ﹏ U) type=stw, (///ˬ///✿) hewp="modew diw to wawm stawt fwom"
   )
 
-  parser.add_argument(
-    "--warm_start_base_dir",
-    default=None,
-    type=str,
-    help="latest ckpt in this folder will be used to ",
+  pawsew.add_awgument(
+    "--wawm_stawt_base_diw", >w<
+    d-defauwt=none, rawr
+    type=stw, mya
+    h-hewp="watest c-ckpt in t-this fowdew wiww b-be used to ", ^^
   )
 
-  parser.add_argument(
-    "--model_type",
-    default=None,
-    type=str,
-    help="Which type of model to train.",
+  pawsew.add_awgument(
+    "--modew_type", 😳😳😳
+    defauwt=none, mya
+    t-type=stw, 😳
+    hewp="which type of modew to t-twain.", -.-
   )
-  return parser
+  wetuwn pawsew
 
 
-def get_eval_arg_parser():
-  parser = get_training_arg_parser()
-  parser.add_argument(
-    "--eval_checkpoint",
-    default=None,
-    type=str,
-    help="Which checkpoint to use for evaluation",
+def get_evaw_awg_pawsew():
+  pawsew = get_twaining_awg_pawsew()
+  pawsew.add_awgument(
+    "--evaw_checkpoint", 🥺
+    d-defauwt=none, o.O
+    type=stw, /(^•ω•^)
+    h-hewp="which checkpoint t-to use f-fow evawuation", nyaa~~
   )
 
-  return parser
+  wetuwn pawsew

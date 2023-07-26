@@ -1,536 +1,536 @@
-package com.twitter.timelines.prediction.features.common
+package com.twittew.timewines.pwediction.featuwes.common
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureType
-import com.twitter.ml.api.Feature.Binary
-import java.lang.{Boolean => JBoolean}
-import scala.collection.JavaConverters._
+impowt c-com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+i-impowt c-com.twittew.mw.api.featuwe
+i-impowt c-com.twittew.mw.api.featuwetype
+i-impowt com.twittew.mw.api.featuwe.binawy
+i-impowt j-java.wang.{boowean => jboowean}
+impowt scawa.cowwection.javaconvewtews._
 
-object CombinedFeatures {
-  val IS_CLICKED =
-    new Binary("timelines.engagement.is_clicked", Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_DWELLED =
-    new Binary("timelines.engagement.is_dwelled", Set(TweetsViewed, EngagementsPrivate).asJava)
-  val IS_DWELLED_IN_BOUNDS_V1 = new Binary(
-    "timelines.engagement.is_dwelled_in_bounds_v1",
-    Set(TweetsViewed, EngagementsPrivate).asJava)
-  val IS_FAVORITED = new Binary(
-    "timelines.engagement.is_favorited",
-    Set(PublicLikes, PrivateLikes, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_FOLLOWED = new Binary(
-    "timelines.engagement.is_followed",
-    Set(EngagementsPrivate, EngagementsPublic, Follow).asJava)
-  val IS_IMPRESSED =
-    new Binary("timelines.engagement.is_impressed", Set(TweetsViewed, EngagementsPrivate).asJava)
-  val IS_OPEN_LINKED = new Binary(
-    "timelines.engagement.is_open_linked",
-    Set(EngagementsPrivate, LinksClickedOn).asJava)
-  val IS_PHOTO_EXPANDED = new Binary(
-    "timelines.engagement.is_photo_expanded",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED = new Binary(
-    "timelines.engagement.is_profile_clicked",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_QUOTED = new Binary(
-    "timelines.engagement.is_quoted",
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED = new Binary(
-    "timelines.engagement.is_replied",
-    Set(PublicReplies, PrivateReplies, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_RETWEETED = new Binary(
-    "timelines.engagement.is_retweeted",
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_RETWEETED_WITHOUT_QUOTE = new Binary(
-    "timelines.enagagement.is_retweeted_without_quote",
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_SHARE_DM_CLICKED =
-    new Binary("timelines.engagement.is_tweet_share_dm_clicked", Set(EngagementsPrivate).asJava)
-  val IS_SHARE_DM_SENT =
-    new Binary("timelines.engagement.is_tweet_share_dm_sent", Set(EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_25 = new Binary(
-    "timelines.engagement.is_video_playback_25",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_50 = new Binary(
-    "timelines.engagement.is_video_playback_50",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_75 = new Binary(
-    "timelines.engagement.is_video_playback_75",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_95 = new Binary(
-    "timelines.engagement.is_video_playback_95",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_COMPLETE = new Binary(
-    "timelines.engagement.is_video_playback_complete",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_START = new Binary(
-    "timelines.engagement.is_video_playback_start",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_VIEWED = new Binary(
-    "timelines.engagement.is_video_viewed",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava)
-  val IS_VIDEO_QUALITY_VIEWED = new Binary(
-    "timelines.engagement.is_video_quality_viewed",
-    Set(MediaEngagementActivities, EngagementsPrivate).asJava
+object combinedfeatuwes {
+  v-vaw is_cwicked =
+    new binawy("timewines.engagement.is_cwicked", σωσ set(tweetscwicked, -.- e-engagementspwivate).asjava)
+  vaw i-is_dwewwed =
+    nyew binawy("timewines.engagement.is_dwewwed", (˘ω˘) set(tweetsviewed, rawr x3 engagementspwivate).asjava)
+  v-vaw is_dwewwed_in_bounds_v1 = new binawy(
+    "timewines.engagement.is_dwewwed_in_bounds_v1", rawr x3
+    s-set(tweetsviewed, e-engagementspwivate).asjava)
+  vaw is_favowited = nyew binawy(
+    "timewines.engagement.is_favowited", σωσ
+    set(pubwicwikes, nyaa~~ pwivatewikes, (ꈍᴗꈍ) e-engagementspwivate, ^•ﻌ•^ engagementspubwic).asjava)
+  vaw is_fowwowed = nyew binawy(
+    "timewines.engagement.is_fowwowed", >_<
+    set(engagementspwivate, ^^;; e-engagementspubwic, ^^;; fowwow).asjava)
+  v-vaw is_impwessed =
+    n-nyew binawy("timewines.engagement.is_impwessed", /(^•ω•^) s-set(tweetsviewed, nyaa~~ e-engagementspwivate).asjava)
+  vaw is_open_winked = nyew binawy(
+    "timewines.engagement.is_open_winked", (✿oωo)
+    s-set(engagementspwivate, ( ͡o ω ͡o ) winkscwickedon).asjava)
+  vaw is_photo_expanded = n-nyew binawy(
+    "timewines.engagement.is_photo_expanded", (U ᵕ U❁)
+    set(mediaengagementactivities, òωó engagementspwivate).asjava)
+  vaw is_pwofiwe_cwicked = nyew binawy(
+    "timewines.engagement.is_pwofiwe_cwicked", σωσ
+    s-set(pwofiwesviewed, :3 pwofiwescwicked, OwO e-engagementspwivate).asjava)
+  v-vaw is_quoted = n-nyew binawy(
+    "timewines.engagement.is_quoted", ^^
+    set(pubwicwetweets, (˘ω˘) pwivatewetweets, OwO engagementspwivate, UwU engagementspubwic).asjava)
+  v-vaw is_wepwied = n-nyew binawy(
+    "timewines.engagement.is_wepwied", ^•ﻌ•^
+    set(pubwicwepwies, (ꈍᴗꈍ) p-pwivatewepwies, /(^•ω•^) e-engagementspwivate, (U ᵕ U❁) engagementspubwic).asjava)
+  v-vaw is_wetweeted = n-nyew binawy(
+    "timewines.engagement.is_wetweeted", (✿oωo)
+    set(pubwicwetweets, OwO pwivatewetweets, engagementspwivate, :3 e-engagementspubwic).asjava)
+  vaw is_wetweeted_without_quote = n-nyew binawy(
+    "timewines.enagagement.is_wetweeted_without_quote", nyaa~~
+    set(pubwicwetweets, ^•ﻌ•^ pwivatewetweets, ( ͡o ω ͡o ) e-engagementspwivate, ^^;; e-engagementspubwic).asjava)
+  vaw is_shawe_dm_cwicked =
+    nyew binawy("timewines.engagement.is_tweet_shawe_dm_cwicked", mya set(engagementspwivate).asjava)
+  vaw is_shawe_dm_sent =
+    nyew binawy("timewines.engagement.is_tweet_shawe_dm_sent", (U ᵕ U❁) set(engagementspwivate).asjava)
+  v-vaw is_video_pwayback_25 = n-nyew binawy(
+    "timewines.engagement.is_video_pwayback_25", ^•ﻌ•^
+    set(mediaengagementactivities, (U ﹏ U) e-engagementspwivate).asjava)
+  v-vaw is_video_pwayback_50 = n-nyew binawy(
+    "timewines.engagement.is_video_pwayback_50", /(^•ω•^)
+    set(mediaengagementactivities, ʘwʘ engagementspwivate).asjava)
+  v-vaw is_video_pwayback_75 = nyew binawy(
+    "timewines.engagement.is_video_pwayback_75", XD
+    set(mediaengagementactivities, (⑅˘꒳˘) engagementspwivate).asjava)
+  vaw is_video_pwayback_95 = n-nyew binawy(
+    "timewines.engagement.is_video_pwayback_95", nyaa~~
+    set(mediaengagementactivities, UwU e-engagementspwivate).asjava)
+  vaw i-is_video_pwayback_compwete = n-new binawy(
+    "timewines.engagement.is_video_pwayback_compwete", (˘ω˘)
+    set(mediaengagementactivities, rawr x3 e-engagementspwivate).asjava)
+  v-vaw is_video_pwayback_stawt = n-nyew binawy(
+    "timewines.engagement.is_video_pwayback_stawt", (///ˬ///✿)
+    s-set(mediaengagementactivities, 😳😳😳 engagementspwivate).asjava)
+  vaw is_video_viewed = n-nyew binawy(
+    "timewines.engagement.is_video_viewed", (///ˬ///✿)
+    s-set(mediaengagementactivities, ^^;; e-engagementspwivate).asjava)
+  v-vaw is_video_quawity_viewed = n-new binawy(
+    "timewines.engagement.is_video_quawity_viewed",
+    set(mediaengagementactivities, ^^ engagementspwivate).asjava
   ) 
-  // v1: post click engagements: fav, reply
-  val IS_GOOD_CLICKED_CONVO_DESC_V1 = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_favorited_or_replied",
-    Set(
-      TweetsClicked,
-      PublicLikes,
-      PrivateLikes,
-      PublicReplies,
-      PrivateReplies,
-      EngagementsPrivate,
-      EngagementsPublic).asJava)
-  // v2: post click engagements: click
-  val IS_GOOD_CLICKED_CONVO_DESC_V2 = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_v2",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_WITH_DWELL_SUM_GTE_60S = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_favorited_or_replied_or_dwell_sum_gte_60_secs",
-    Set(
-      TweetsClicked,
-      PublicLikes,
-      PrivateLikes,
-      PublicReplies,
-      PrivateReplies,
-      EngagementsPrivate,
-      EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_FAVORITED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_favorited",
-    Set(PublicLikes, PrivateLikes, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_REPLIED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_replied",
-    Set(PublicReplies, PrivateReplies, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_RETWEETED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_retweeted",
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_CLICKED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_clicked",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_FOLLOWED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_followed",
-    Set(EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_SHARE_DM_CLICKED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_share_dm_clicked",
-    Set(EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_PROFILE_CLICKED = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_profile_clicked",
-    Set(EngagementsPrivate).asJava)
+  // v1: post c-cwick engagements: fav, (///ˬ///✿) wepwy
+  vaw is_good_cwicked_convo_desc_v1 = nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_favowited_ow_wepwied",
+    set(
+      tweetscwicked, -.-
+      pubwicwikes, /(^•ω•^)
+      p-pwivatewikes, UwU
+      pubwicwepwies, (⑅˘꒳˘)
+      pwivatewepwies, ʘwʘ
+      engagementspwivate, σωσ
+      e-engagementspubwic).asjava)
+  // v-v2: post cwick engagements: c-cwick
+  vaw is_good_cwicked_convo_desc_v2 = n-nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_v2", ^^
+    set(tweetscwicked, e-engagementspwivate).asjava)
+  v-vaw is_good_cwicked_with_dweww_sum_gte_60s = nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_favowited_ow_wepwied_ow_dweww_sum_gte_60_secs", OwO
+    set(
+      tweetscwicked, (ˆ ﻌ ˆ)♡
+      pubwicwikes, o.O
+      pwivatewikes, (˘ω˘)
+      p-pubwicwepwies, 😳
+      pwivatewepwies, (U ᵕ U❁)
+      e-engagementspwivate, :3
+      engagementspubwic).asjava)
+  v-vaw is_good_cwicked_convo_desc_favowited = n-nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_favowited", o.O
+    set(pubwicwikes, (///ˬ///✿) p-pwivatewikes, OwO e-engagementspwivate, >w< engagementspubwic).asjava)
+  v-vaw i-is_good_cwicked_convo_desc_wepwied = new binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_wepwied", ^^
+    set(pubwicwepwies, (⑅˘꒳˘) pwivatewepwies, ʘwʘ engagementspwivate, (///ˬ///✿) e-engagementspubwic).asjava)
+  v-vaw is_good_cwicked_convo_desc_wetweeted = n-nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_wetweeted", XD
+    set(pubwicwetweets, 😳 p-pwivatewetweets, >w< e-engagementspwivate, (˘ω˘) engagementspubwic).asjava)
+  vaw i-is_good_cwicked_convo_desc_cwicked = nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_cwicked", nyaa~~
+    set(tweetscwicked, 😳😳😳 engagementspwivate).asjava)
+  vaw is_good_cwicked_convo_desc_fowwowed = n-nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_fowwowed", (U ﹏ U)
+    s-set(engagementspwivate).asjava)
+  vaw is_good_cwicked_convo_desc_shawe_dm_cwicked = nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_shawe_dm_cwicked", (˘ω˘)
+    s-set(engagementspwivate).asjava)
+  v-vaw is_good_cwicked_convo_desc_pwofiwe_cwicked = nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_pwofiwe_cwicked", :3
+    set(engagementspwivate).asjava)
 
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_0 = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_uam_gt_0",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_1 = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_uam_gt_1",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_2 = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_uam_gt_2",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_3 = new Binary(
-    "timelines.engagement.is_good_clicked_convo_desc_uam_gt_3",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
+  vaw i-is_good_cwicked_convo_desc_uam_gt_0 = nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_uam_gt_0", >w<
+    set(engagementspwivate, ^^ engagementspubwic).asjava)
+  vaw is_good_cwicked_convo_desc_uam_gt_1 = n-nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_uam_gt_1", 😳😳😳
+    set(engagementspwivate, nyaa~~ engagementspubwic).asjava)
+  vaw i-is_good_cwicked_convo_desc_uam_gt_2 = n-nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_uam_gt_2", (⑅˘꒳˘)
+    set(engagementspwivate, :3 engagementspubwic).asjava)
+  vaw is_good_cwicked_convo_desc_uam_gt_3 = n-nyew binawy(
+    "timewines.engagement.is_good_cwicked_convo_desc_uam_gt_3", ʘwʘ
+    s-set(engagementspwivate, rawr x3 engagementspubwic).asjava)
 
-  val IS_TWEET_DETAIL_DWELLED = new Binary(
-    "timelines.engagement.is_tweet_detail_dwelled",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_8_SEC = new Binary(
-    "timelines.engagement.is_tweet_detail_dwelled_8_sec",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_15_SEC = new Binary(
-    "timelines.engagement.is_tweet_detail_dwelled_15_sec",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_25_SEC = new Binary(
-    "timelines.engagement.is_tweet_detail_dwelled_25_sec",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_30_SEC = new Binary(
-    "timelines.engagement.is_tweet_detail_dwelled_30_sec",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
+  vaw is_tweet_detaiw_dwewwed = nyew b-binawy(
+    "timewines.engagement.is_tweet_detaiw_dwewwed", (///ˬ///✿)
+    set(tweetscwicked, 😳😳😳 e-engagementspwivate).asjava)
+  vaw is_tweet_detaiw_dwewwed_8_sec = nyew binawy(
+    "timewines.engagement.is_tweet_detaiw_dwewwed_8_sec", XD
+    set(tweetscwicked, >_< e-engagementspwivate).asjava)
+  vaw is_tweet_detaiw_dwewwed_15_sec = n-nyew binawy(
+    "timewines.engagement.is_tweet_detaiw_dwewwed_15_sec", >w<
+    s-set(tweetscwicked, /(^•ω•^) engagementspwivate).asjava)
+  v-vaw is_tweet_detaiw_dwewwed_25_sec = nyew binawy(
+    "timewines.engagement.is_tweet_detaiw_dwewwed_25_sec", :3
+    s-set(tweetscwicked, ʘwʘ e-engagementspwivate).asjava)
+  v-vaw is_tweet_detaiw_dwewwed_30_sec = nyew binawy(
+    "timewines.engagement.is_tweet_detaiw_dwewwed_30_sec", (˘ω˘)
+    s-set(tweetscwicked, (ꈍᴗꈍ) e-engagementspwivate).asjava)
 
-  val IS_PROFILE_DWELLED = new Binary(
-    "timelines.engagement.is_profile_dwelled",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_DWELLED_10_SEC = new Binary(
-    "timelines.engagement.is_profile_dwelled_10_sec",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_DWELLED_20_SEC = new Binary(
-    "timelines.engagement.is_profile_dwelled_20_sec",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_DWELLED_30_SEC = new Binary(
-    "timelines.engagement.is_profile_dwelled_30_sec",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
+  vaw is_pwofiwe_dwewwed = nyew binawy(
+    "timewines.engagement.is_pwofiwe_dwewwed", ^^
+    s-set(pwofiwesviewed, ^^ p-pwofiwescwicked, ( ͡o ω ͡o ) e-engagementspwivate).asjava)
+  vaw is_pwofiwe_dwewwed_10_sec = nyew binawy(
+    "timewines.engagement.is_pwofiwe_dwewwed_10_sec", -.-
+    s-set(pwofiwesviewed, ^^;; pwofiwescwicked, ^•ﻌ•^ engagementspwivate).asjava)
+  v-vaw i-is_pwofiwe_dwewwed_20_sec = nyew binawy(
+    "timewines.engagement.is_pwofiwe_dwewwed_20_sec", (˘ω˘)
+    set(pwofiwesviewed, o.O p-pwofiwescwicked, (✿oωo) e-engagementspwivate).asjava)
+  v-vaw is_pwofiwe_dwewwed_30_sec = n-nyew binawy(
+    "timewines.engagement.is_pwofiwe_dwewwed_30_sec", 😳😳😳
+    set(pwofiwesviewed, (ꈍᴗꈍ) pwofiwescwicked, σωσ e-engagementspwivate).asjava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED = new Binary(
-    "timelines.engagement.is_fullscreen_video_dwelled",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  vaw is_fuwwscween_video_dwewwed = nyew binawy(
+    "timewines.engagement.is_fuwwscween_video_dwewwed", UwU
+    set(mediaengagementactivities, ^•ﻌ•^ engagementtypepwivate, mya engagementspwivate).asjava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_5_SEC = new Binary(
-    "timelines.engagement.is_fullscreen_video_dwelled_5_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  v-vaw is_fuwwscween_video_dwewwed_5_sec = nyew b-binawy(
+    "timewines.engagement.is_fuwwscween_video_dwewwed_5_sec", /(^•ω•^)
+    set(mediaengagementactivities, rawr e-engagementtypepwivate, engagementspwivate).asjava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_10_SEC = new Binary(
-    "timelines.engagement.is_fullscreen_video_dwelled_10_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  vaw i-is_fuwwscween_video_dwewwed_10_sec = nyew binawy(
+    "timewines.engagement.is_fuwwscween_video_dwewwed_10_sec", nyaa~~
+    s-set(mediaengagementactivities, ( ͡o ω ͡o ) e-engagementtypepwivate, σωσ e-engagementspwivate).asjava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_20_SEC = new Binary(
-    "timelines.engagement.is_fullscreen_video_dwelled_20_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  v-vaw i-is_fuwwscween_video_dwewwed_20_sec = nyew binawy(
+    "timewines.engagement.is_fuwwscween_video_dwewwed_20_sec", (✿oωo)
+    set(mediaengagementactivities, (///ˬ///✿) engagementtypepwivate, σωσ engagementspwivate).asjava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_30_SEC = new Binary(
-    "timelines.engagement.is_fullscreen_video_dwelled_30_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  vaw is_fuwwscween_video_dwewwed_30_sec = nyew binawy(
+    "timewines.engagement.is_fuwwscween_video_dwewwed_30_sec", UwU
+    s-set(mediaengagementactivities, (⑅˘꒳˘) e-engagementtypepwivate, /(^•ω•^) e-engagementspwivate).asjava)
 
-  val IS_LINK_DWELLED_15_SEC = new Binary(
-    "timelines.engagement.is_link_dwelled_15_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  vaw is_wink_dwewwed_15_sec = n-nyew binawy(
+    "timewines.engagement.is_wink_dwewwed_15_sec", -.-
+    set(mediaengagementactivities, (ˆ ﻌ ˆ)♡ engagementtypepwivate, nyaa~~ engagementspwivate).asjava)
 
-  val IS_LINK_DWELLED_30_SEC = new Binary(
-    "timelines.engagement.is_link_dwelled_30_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  vaw i-is_wink_dwewwed_30_sec = n-nyew binawy(
+    "timewines.engagement.is_wink_dwewwed_30_sec", ʘwʘ
+    s-set(mediaengagementactivities, :3 engagementtypepwivate, engagementspwivate).asjava)
 
-  val IS_LINK_DWELLED_60_SEC = new Binary(
-    "timelines.engagement.is_link_dwelled_60_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  vaw is_wink_dwewwed_60_sec = n-nyew binawy(
+    "timewines.engagement.is_wink_dwewwed_60_sec", (U ᵕ U❁)
+    s-set(mediaengagementactivities, (U ﹏ U) engagementtypepwivate, ^^ e-engagementspwivate).asjava)
 
-  val IS_HOME_LATEST_VISITED =
-    new Binary("timelines.engagement.is_home_latest_visited", Set(EngagementsPrivate).asJava)
+  v-vaw is_home_watest_visited =
+    nyew binawy("timewines.engagement.is_home_watest_visited", òωó set(engagementspwivate).asjava)
 
-  val IS_BOOKMARKED =
-    new Binary("timelines.engagement.is_bookmarked", Set(EngagementsPrivate).asJava)
-  val IS_SHARED =
-    new Binary("timelines.engagement.is_shared", Set(EngagementsPrivate).asJava)
-  val IS_SHARE_MENU_CLICKED =
-    new Binary("timelines.engagement.is_share_menu_clicked", Set(EngagementsPrivate).asJava)
+  vaw is_bookmawked =
+    n-nyew binawy("timewines.engagement.is_bookmawked", /(^•ω•^) s-set(engagementspwivate).asjava)
+  v-vaw is_shawed =
+    n-nyew binawy("timewines.engagement.is_shawed", 😳😳😳 s-set(engagementspwivate).asjava)
+  vaw is_shawe_menu_cwicked =
+    n-nyew binawy("timewines.engagement.is_shawe_menu_cwicked", :3 s-set(engagementspwivate).asjava)
 
-  // Negative engagements
-  val IS_DONT_LIKE = new Binary("timelines.engagement.is_dont_like", Set(EngagementsPrivate).asJava)
-  val IS_BLOCK_CLICKED = new Binary(
-    "timelines.engagement.is_block_clicked",
-    Set(Blocks, TweetsClicked, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_BLOCK_DIALOG_BLOCKED = new Binary(
-    "timelines.engagement.is_block_dialog_blocked",
-    Set(Blocks, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_MUTE_CLICKED = new Binary(
-    "timelines.engagement.is_mute_clicked",
-    Set(Mutes, TweetsClicked, EngagementsPrivate).asJava)
-  val IS_MUTE_DIALOG_MUTED =
-    new Binary("timelines.engagement.is_mute_dialog_muted", Set(Mutes, EngagementsPrivate).asJava)
-  val IS_REPORT_TWEET_CLICKED = new Binary(
-    "timelines.engagement.is_report_tweet_clicked",
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_CARET_CLICKED =
-    new Binary("timelines.engagement.is_caret_clicked", Set(EngagementsPrivate).asJava)
-  val IS_NOT_ABOUT_TOPIC =
-    new Binary("timelines.engagement.is_not_about_topic", Set(EngagementsPrivate).asJava)
-  val IS_NOT_RECENT =
-    new Binary("timelines.engagement.is_not_recent", Set(EngagementsPrivate).asJava)
-  val IS_NOT_RELEVANT =
-    new Binary("timelines.engagement.is_not_relevant", Set(EngagementsPrivate).asJava)
-  val IS_SEE_FEWER =
-    new Binary("timelines.engagement.is_see_fewer", Set(EngagementsPrivate).asJava)
-  val IS_UNFOLLOW_TOPIC =
-    new Binary("timelines.engagement.is_unfollow_topic", Set(EngagementsPrivate).asJava)
-  val IS_FOLLOW_TOPIC =
-    new Binary("timelines.engagement.is_follow_topic", Set(EngagementsPrivate).asJava)
-  val IS_NOT_INTERESTED_IN_TOPIC =
-    new Binary("timelines.engagement.is_not_interested_in_topic", Set(EngagementsPrivate).asJava)
-  val IS_NEGATIVE_FEEDBACK =
-    new Binary("timelines.engagement.is_negative_feedback", Set(EngagementsPrivate).asJava)
-  val IS_IMPLICIT_POSITIVE_FEEDBACK_UNION =
-    new Binary(
-      "timelines.engagement.is_implicit_positive_feedback_union",
-      Set(EngagementsPrivate).asJava)
-  val IS_EXPLICIT_POSITIVE_FEEDBACK_UNION =
-    new Binary(
-      "timelines.engagement.is_explicit_positive_feedback_union",
-      Set(EngagementsPrivate).asJava)
-  val IS_ALL_NEGATIVE_FEEDBACK_UNION =
-    new Binary(
-      "timelines.engagement.is_all_negative_feedback_union",
-      Set(EngagementsPrivate).asJava)
-  // Reciprocal engagements for reply forward engagement
-  val IS_REPLIED_REPLY_IMPRESSED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_impressed_by_author",
-    Set(EngagementsPrivate).asJava)
-  val IS_REPLIED_REPLY_FAVORITED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_favorited_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateLikes, PublicLikes).asJava)
-  val IS_REPLIED_REPLY_QUOTED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_quoted_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateRetweets, PublicRetweets).asJava)
-  val IS_REPLIED_REPLY_REPLIED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_replied_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateReplies, PublicReplies).asJava)
-  val IS_REPLIED_REPLY_RETWEETED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_retweeted_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateRetweets, PublicRetweets).asJava)
-  val IS_REPLIED_REPLY_BLOCKED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_blocked_by_author",
-    Set(Blocks, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_FOLLOWED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_followed_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, Follow).asJava)
-  val IS_REPLIED_REPLY_UNFOLLOWED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_unfollowed_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_MUTED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_muted_by_author",
-    Set(Mutes, EngagementsPrivate).asJava)
-  val IS_REPLIED_REPLY_REPORTED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_replied_reply_reported_by_author",
-    Set(EngagementsPrivate).asJava)
+  // nyegative e-engagements
+  v-vaw is_dont_wike = new binawy("timewines.engagement.is_dont_wike", (///ˬ///✿) s-set(engagementspwivate).asjava)
+  vaw is_bwock_cwicked = nyew b-binawy(
+    "timewines.engagement.is_bwock_cwicked",
+    set(bwocks, t-tweetscwicked, rawr x3 e-engagementspwivate, (U ᵕ U❁) engagementspubwic).asjava)
+  v-vaw is_bwock_diawog_bwocked = new binawy(
+    "timewines.engagement.is_bwock_diawog_bwocked", (⑅˘꒳˘)
+    set(bwocks, (˘ω˘) e-engagementspwivate, :3 e-engagementspubwic).asjava)
+  v-vaw is_mute_cwicked = nyew binawy(
+    "timewines.engagement.is_mute_cwicked", XD
+    set(mutes, >_< t-tweetscwicked, (✿oωo) engagementspwivate).asjava)
+  vaw is_mute_diawog_muted =
+    n-nyew binawy("timewines.engagement.is_mute_diawog_muted", (ꈍᴗꈍ) s-set(mutes, engagementspwivate).asjava)
+  v-vaw is_wepowt_tweet_cwicked = nyew binawy(
+    "timewines.engagement.is_wepowt_tweet_cwicked", XD
+    s-set(tweetscwicked, :3 e-engagementspwivate).asjava)
+  vaw is_cawet_cwicked =
+    nyew binawy("timewines.engagement.is_cawet_cwicked", mya s-set(engagementspwivate).asjava)
+  vaw is_not_about_topic =
+    nyew binawy("timewines.engagement.is_not_about_topic", òωó s-set(engagementspwivate).asjava)
+  vaw i-is_not_wecent =
+    nyew binawy("timewines.engagement.is_not_wecent", nyaa~~ s-set(engagementspwivate).asjava)
+  vaw is_not_wewevant =
+    n-nyew binawy("timewines.engagement.is_not_wewevant", 🥺 s-set(engagementspwivate).asjava)
+  v-vaw is_see_fewew =
+    nyew binawy("timewines.engagement.is_see_fewew", -.- set(engagementspwivate).asjava)
+  vaw is_unfowwow_topic =
+    nyew binawy("timewines.engagement.is_unfowwow_topic", 🥺 set(engagementspwivate).asjava)
+  vaw is_fowwow_topic =
+    nyew binawy("timewines.engagement.is_fowwow_topic", (˘ω˘) set(engagementspwivate).asjava)
+  vaw is_not_intewested_in_topic =
+    nyew binawy("timewines.engagement.is_not_intewested_in_topic", òωó set(engagementspwivate).asjava)
+  vaw i-is_negative_feedback =
+    n-nyew binawy("timewines.engagement.is_negative_feedback", UwU set(engagementspwivate).asjava)
+  v-vaw is_impwicit_positive_feedback_union =
+    n-nyew binawy(
+      "timewines.engagement.is_impwicit_positive_feedback_union", ^•ﻌ•^
+      s-set(engagementspwivate).asjava)
+  vaw i-is_expwicit_positive_feedback_union =
+    nyew b-binawy(
+      "timewines.engagement.is_expwicit_positive_feedback_union", mya
+      s-set(engagementspwivate).asjava)
+  vaw is_aww_negative_feedback_union =
+    n-nyew binawy(
+      "timewines.engagement.is_aww_negative_feedback_union", (✿oωo)
+      s-set(engagementspwivate).asjava)
+  // w-wecipwocaw engagements fow wepwy fowwawd engagement
+  v-vaw is_wepwied_wepwy_impwessed_by_authow = n-nyew binawy(
+    "timewines.engagement.is_wepwied_wepwy_impwessed_by_authow", XD
+    s-set(engagementspwivate).asjava)
+  v-vaw is_wepwied_wepwy_favowited_by_authow = n-nyew binawy(
+    "timewines.engagement.is_wepwied_wepwy_favowited_by_authow", :3
+    s-set(engagementspwivate, (U ﹏ U) e-engagementspubwic, p-pwivatewikes, p-pubwicwikes).asjava)
+  vaw is_wepwied_wepwy_quoted_by_authow = n-nyew b-binawy(
+    "timewines.engagement.is_wepwied_wepwy_quoted_by_authow",
+    s-set(engagementspwivate, UwU engagementspubwic, ʘwʘ p-pwivatewetweets, >w< pubwicwetweets).asjava)
+  vaw is_wepwied_wepwy_wepwied_by_authow = n-nyew binawy(
+    "timewines.engagement.is_wepwied_wepwy_wepwied_by_authow", 😳😳😳
+    set(engagementspwivate, rawr e-engagementspubwic, ^•ﻌ•^ p-pwivatewepwies, σωσ p-pubwicwepwies).asjava)
+  vaw i-is_wepwied_wepwy_wetweeted_by_authow = nyew binawy(
+    "timewines.engagement.is_wepwied_wepwy_wetweeted_by_authow", :3
+    s-set(engagementspwivate, rawr x3 engagementspubwic, nyaa~~ p-pwivatewetweets, :3 pubwicwetweets).asjava)
+  v-vaw is_wepwied_wepwy_bwocked_by_authow = nyew binawy(
+    "timewines.engagement.is_wepwied_wepwy_bwocked_by_authow", >w<
+    set(bwocks, rawr engagementspwivate, 😳 engagementspubwic).asjava)
+  v-vaw is_wepwied_wepwy_fowwowed_by_authow = nyew binawy(
+    "timewines.engagement.is_wepwied_wepwy_fowwowed_by_authow", 😳
+    s-set(engagementspwivate, 🥺 e-engagementspubwic, fowwow).asjava)
+  vaw is_wepwied_wepwy_unfowwowed_by_authow = n-nyew binawy(
+    "timewines.engagement.is_wepwied_wepwy_unfowwowed_by_authow", rawr x3
+    set(engagementspwivate, ^^ e-engagementspubwic).asjava)
+  v-vaw is_wepwied_wepwy_muted_by_authow = n-nyew binawy(
+    "timewines.engagement.is_wepwied_wepwy_muted_by_authow", ( ͡o ω ͡o )
+    set(mutes, XD engagementspwivate).asjava)
+  v-vaw is_wepwied_wepwy_wepowted_by_authow = n-nyew binawy(
+    "timewines.engagement.is_wepwied_wepwy_wepowted_by_authow", ^^
+    set(engagementspwivate).asjava)
 
-  // Reciprocal engagements for fav forward engagement
-  val IS_FAVORITED_FAV_FAVORITED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_favorited_fav_favorited_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateLikes, PublicLikes).asJava
+  // w-wecipwocaw engagements fow fav fowwawd engagement
+  v-vaw is_favowited_fav_favowited_by_authow = nyew binawy(
+    "timewines.engagement.is_favowited_fav_favowited_by_authow", (⑅˘꒳˘)
+    s-set(engagementspwivate, e-engagementspubwic, (⑅˘꒳˘) p-pwivatewikes, ^•ﻌ•^ pubwicwikes).asjava
   )
-  val IS_FAVORITED_FAV_REPLIED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_favorited_fav_replied_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateReplies, PublicReplies).asJava
+  v-vaw is_favowited_fav_wepwied_by_authow = n-nyew b-binawy(
+    "timewines.engagement.is_favowited_fav_wepwied_by_authow", ( ͡o ω ͡o )
+    s-set(engagementspwivate, ( ͡o ω ͡o ) engagementspubwic, (✿oωo) p-pwivatewepwies, 😳😳😳 p-pubwicwepwies).asjava
   )
-  val IS_FAVORITED_FAV_RETWEETED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_favorited_fav_retweeted_by_author",
-    Set(EngagementsPrivate, EngagementsPublic, PrivateRetweets, PublicRetweets).asJava
+  v-vaw is_favowited_fav_wetweeted_by_authow = n-nyew binawy(
+    "timewines.engagement.is_favowited_fav_wetweeted_by_authow", OwO
+    s-set(engagementspwivate, ^^ e-engagementspubwic, rawr x3 p-pwivatewetweets, 🥺 p-pubwicwetweets).asjava
   )
-  val IS_FAVORITED_FAV_FOLLOWED_BY_AUTHOR = new Binary(
-    "timelines.engagement.is_favorited_fav_followed_by_author",
-    Set(EngagementsPrivate, EngagementsPublic).asJava
+  vaw is_favowited_fav_fowwowed_by_authow = n-nyew binawy(
+    "timewines.engagement.is_favowited_fav_fowwowed_by_authow", (ˆ ﻌ ˆ)♡
+    set(engagementspwivate, ( ͡o ω ͡o ) e-engagementspubwic).asjava
   )
 
-  // define good profile click by considering following engagements (follow, fav, reply, retweet, etc.) at profile page
-  val IS_PROFILE_CLICKED_AND_PROFILE_FOLLOW = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_follow",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, Follow).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_FAV = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_fav",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, PrivateLikes, PublicLikes).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_REPLY = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_reply",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, PrivateReplies, PublicReplies).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_RETWEET = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_retweet",
-    Set(
-      ProfilesViewed,
-      ProfilesClicked,
-      EngagementsPrivate,
-      PrivateRetweets,
-      PublicRetweets).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_TWEET_CLICK = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_tweet_click",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, TweetsClicked).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_SHARE_DM_CLICK = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_share_dm_click",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // This derived label is the union of all binary features above
-  val IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_engaged",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, EngagementsPublic).asJava)
+  // define good pwofiwe c-cwick by considewing f-fowwowing e-engagements (fowwow, >w< fav, wepwy, /(^•ω•^) wetweet, etc.) at pwofiwe p-page
+  vaw is_pwofiwe_cwicked_and_pwofiwe_fowwow = n-new binawy(
+    "timewines.engagement.is_pwofiwe_cwicked_and_pwofiwe_fowwow", 😳😳😳
+    s-set(pwofiwesviewed, (U ᵕ U❁) pwofiwescwicked, (˘ω˘) engagementspwivate, fowwow).asjava)
+  v-vaw is_pwofiwe_cwicked_and_pwofiwe_fav = n-nyew binawy(
+    "timewines.engagement.is_pwofiwe_cwicked_and_pwofiwe_fav", 😳
+    set(pwofiwesviewed, (ꈍᴗꈍ) p-pwofiwescwicked, :3 e-engagementspwivate, /(^•ω•^) pwivatewikes, ^^;; pubwicwikes).asjava)
+  vaw is_pwofiwe_cwicked_and_pwofiwe_wepwy = n-nyew binawy(
+    "timewines.engagement.is_pwofiwe_cwicked_and_pwofiwe_wepwy", o.O
+    s-set(pwofiwesviewed, 😳 p-pwofiwescwicked, UwU e-engagementspwivate, >w< pwivatewepwies, o.O pubwicwepwies).asjava)
+  v-vaw is_pwofiwe_cwicked_and_pwofiwe_wetweet = n-nyew binawy(
+    "timewines.engagement.is_pwofiwe_cwicked_and_pwofiwe_wetweet", (˘ω˘)
+    set(
+      pwofiwesviewed, òωó
+      p-pwofiwescwicked, nyaa~~
+      engagementspwivate, ( ͡o ω ͡o )
+      pwivatewetweets, 😳😳😳
+      pubwicwetweets).asjava)
+  v-vaw is_pwofiwe_cwicked_and_pwofiwe_tweet_cwick = nyew b-binawy(
+    "timewines.engagement.is_pwofiwe_cwicked_and_pwofiwe_tweet_cwick", ^•ﻌ•^
+    s-set(pwofiwesviewed, (˘ω˘) pwofiwescwicked, (˘ω˘) e-engagementspwivate, -.- t-tweetscwicked).asjava)
+  vaw is_pwofiwe_cwicked_and_pwofiwe_shawe_dm_cwick = n-nyew binawy(
+    "timewines.engagement.is_pwofiwe_cwicked_and_pwofiwe_shawe_dm_cwick", ^•ﻌ•^
+    set(pwofiwesviewed, /(^•ω•^) p-pwofiwescwicked, (///ˬ///✿) e-engagementspwivate).asjava)
+  // t-this dewived w-wabew is the union of aww b-binawy featuwes a-above
+  vaw is_pwofiwe_cwicked_and_pwofiwe_engaged = n-nyew binawy(
+    "timewines.engagement.is_pwofiwe_cwicked_and_pwofiwe_engaged", mya
+    set(pwofiwesviewed, p-pwofiwescwicked, o.O engagementspwivate, ^•ﻌ•^ engagementspubwic).asjava)
 
-  // define bad profile click by considering following engagements (user report, tweet report, mute, block, etc) at profile page
-  val IS_PROFILE_CLICKED_AND_PROFILE_USER_REPORT_CLICK = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_user_report_click",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_TWEET_REPORT_CLICK = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_tweet_report_click",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_MUTE = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_mute",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_BLOCK = new Binary(
-    "timelines.engagement.is_profile_clicked_and_profile_block",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // This derived label is the union of bad profile click engagements and existing negative feedback
-  val IS_NEGATIVE_FEEDBACK_V2 = new Binary(
-    "timelines.engagement.is_negative_feedback_v2",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_NEGATIVE_FEEDBACK_UNION = new Binary(
-    "timelines.engagement.is_negative_feedback_union",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // don't like, mute or profile page -> mute
-  val IS_WEAK_NEGATIVE_FEEDBACK = new Binary(
-    "timelines.engagement.is_weak_negative_feedback",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // report, block or profile page -> report, block
-  val IS_STRONG_NEGATIVE_FEEDBACK = new Binary(
-    "timelines.engagement.is_strong_negative_feedback",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // engagement for following user from any surface area
-  val IS_FOLLOWED_FROM_ANY_SURFACE_AREA = new Binary(
-    "timelines.engagement.is_followed_from_any_surface_area",
-    Set(EngagementsPublic, EngagementsPrivate).asJava)
-  val IS_RELEVANCE_PROMPT_YES_CLICKED = new Binary(
-    "timelines.engagement.is_relevance_prompt_yes_clicked",
-    Set(EngagementsPublic, EngagementsPrivate).asJava)
+  // define bad pwofiwe c-cwick by c-considewing fowwowing e-engagements (usew wepowt, (U ᵕ U❁) tweet wepowt, :3 mute, bwock, (///ˬ///✿) etc) at pwofiwe page
+  v-vaw is_pwofiwe_cwicked_and_pwofiwe_usew_wepowt_cwick = new binawy(
+    "timewines.engagement.is_pwofiwe_cwicked_and_pwofiwe_usew_wepowt_cwick", (///ˬ///✿)
+    s-set(pwofiwesviewed, 🥺 p-pwofiwescwicked, -.- engagementspwivate).asjava)
+  vaw is_pwofiwe_cwicked_and_pwofiwe_tweet_wepowt_cwick = n-nyew binawy(
+    "timewines.engagement.is_pwofiwe_cwicked_and_pwofiwe_tweet_wepowt_cwick", nyaa~~
+    set(pwofiwesviewed, (///ˬ///✿) p-pwofiwescwicked, 🥺 e-engagementspwivate).asjava)
+  v-vaw is_pwofiwe_cwicked_and_pwofiwe_mute = n-nyew b-binawy(
+    "timewines.engagement.is_pwofiwe_cwicked_and_pwofiwe_mute", >w<
+    set(pwofiwesviewed, rawr x3 pwofiwescwicked, (⑅˘꒳˘) engagementspwivate).asjava)
+  vaw is_pwofiwe_cwicked_and_pwofiwe_bwock = n-nyew binawy(
+    "timewines.engagement.is_pwofiwe_cwicked_and_pwofiwe_bwock", σωσ
+    s-set(pwofiwesviewed, XD pwofiwescwicked, -.- engagementspwivate).asjava)
+  // this dewived w-wabew is the union of bad pwofiwe cwick engagements and existing nyegative feedback
+  v-vaw is_negative_feedback_v2 = n-nyew binawy(
+    "timewines.engagement.is_negative_feedback_v2", >_<
+    set(pwofiwesviewed, rawr p-pwofiwescwicked, 😳😳😳 engagementspwivate).asjava)
+  vaw is_negative_feedback_union = n-new b-binawy(
+    "timewines.engagement.is_negative_feedback_union", UwU
+    set(pwofiwesviewed, (U ﹏ U) p-pwofiwescwicked, (˘ω˘) engagementspwivate).asjava)
+  // d-don't wike, /(^•ω•^) mute ow pwofiwe page -> mute
+  vaw is_weak_negative_feedback = n-nyew binawy(
+    "timewines.engagement.is_weak_negative_feedback", (U ﹏ U)
+    set(pwofiwesviewed, ^•ﻌ•^ pwofiwescwicked, >w< e-engagementspwivate).asjava)
+  // w-wepowt, ʘwʘ bwock o-ow pwofiwe page -> wepowt, òωó bwock
+  vaw is_stwong_negative_feedback = n-nyew binawy(
+    "timewines.engagement.is_stwong_negative_feedback", o.O
+    set(pwofiwesviewed, ( ͡o ω ͡o ) pwofiwescwicked, mya engagementspwivate).asjava)
+  // engagement fow fowwowing usew f-fwom any suwface a-awea
+  vaw is_fowwowed_fwom_any_suwface_awea = n-nyew binawy(
+    "timewines.engagement.is_fowwowed_fwom_any_suwface_awea", >_<
+    s-set(engagementspubwic, rawr engagementspwivate).asjava)
+  vaw is_wewevance_pwompt_yes_cwicked = n-nyew b-binawy(
+    "timewines.engagement.is_wewevance_pwompt_yes_cwicked", >_<
+    set(engagementspubwic, (U ﹏ U) engagementspwivate).asjava)
 
-  // Reply downvote engagements
-  val IS_REPLY_DOWNVOTED =
-    new Binary("timelines.engagement.is_reply_downvoted", Set(EngagementsPrivate).asJava)
-  val IS_REPLY_DOWNVOTE_REMOVED =
-    new Binary("timelines.engagement.is_reply_downvote_removed", Set(EngagementsPrivate).asJava)
+  // w-wepwy downvote engagements
+  vaw is_wepwy_downvoted =
+    n-nyew binawy("timewines.engagement.is_wepwy_downvoted", rawr set(engagementspwivate).asjava)
+  v-vaw is_wepwy_downvote_wemoved =
+    n-nyew binawy("timewines.engagement.is_wepwy_downvote_wemoved", (U ᵕ U❁) set(engagementspwivate).asjava)
 
   /**
-   * Contains all engagements that are used/consumed by real-time
-   * aggregates summingbird jobs. These engagements need to be
-   * extractable from [[ClientEvent]].
+   * c-contains aww e-engagements that a-awe used/consumed by weaw-time
+   * aggwegates s-summingbiwd jobs. (ˆ ﻌ ˆ)♡ these engagements nyeed to be
+   * e-extwactabwe fwom [[cwientevent]].
    */
-  val EngagementsRealTime: Set[Feature[JBoolean]] = Set(
-    IS_CLICKED,
-    IS_DWELLED,
-    IS_FAVORITED,
-    IS_FOLLOWED,
-    IS_OPEN_LINKED,
-    IS_PHOTO_EXPANDED,
-    IS_PROFILE_CLICKED,
-    IS_QUOTED,
-    IS_REPLIED,
-    IS_RETWEETED,
-    IS_RETWEETED_WITHOUT_QUOTE,
-    IS_SHARE_DM_CLICKED,
-    IS_SHARE_DM_SENT,
-    IS_VIDEO_PLAYBACK_50,
-    IS_VIDEO_VIEWED,
-    IS_VIDEO_QUALITY_VIEWED
+  vaw engagementsweawtime: set[featuwe[jboowean]] = s-set(
+    is_cwicked, >_<
+    i-is_dwewwed, ^^;;
+    i-is_favowited, ʘwʘ
+    i-is_fowwowed, 😳😳😳
+    i-is_open_winked,
+    is_photo_expanded, UwU
+    i-is_pwofiwe_cwicked, OwO
+    is_quoted,
+    is_wepwied,
+    i-is_wetweeted, :3
+    is_wetweeted_without_quote, -.-
+    i-is_shawe_dm_cwicked, 🥺
+    is_shawe_dm_sent, -.-
+    is_video_pwayback_50, -.-
+    i-is_video_viewed, (U ﹏ U)
+    i-is_video_quawity_viewed
   )
 
-  val NegativeEngagementsRealTime: Set[Feature[JBoolean]] = Set(
-    IS_REPORT_TWEET_CLICKED,
-    IS_BLOCK_CLICKED,
-    IS_MUTE_CLICKED
+  vaw nyegativeengagementsweawtime: s-set[featuwe[jboowean]] = set(
+    i-is_wepowt_tweet_cwicked, rawr
+    i-is_bwock_cwicked, mya
+    is_mute_cwicked
   )
 
-  val NegativeEngagementsRealTimeDontLike: Set[Feature[JBoolean]] = Set(
-    IS_DONT_LIKE
+  v-vaw n-nyegativeengagementsweawtimedontwike: set[featuwe[jboowean]] = s-set(
+    is_dont_wike
   )
 
-  val NegativeEngagementsSecondary: Set[Feature[JBoolean]] = Set(
-    IS_NOT_INTERESTED_IN_TOPIC,
-    IS_NOT_ABOUT_TOPIC,
-    IS_NOT_RECENT,
-    IS_NOT_RELEVANT,
-    IS_SEE_FEWER,
-    IS_UNFOLLOW_TOPIC
+  vaw nyegativeengagementssecondawy: set[featuwe[jboowean]] = s-set(
+    is_not_intewested_in_topic, ( ͡o ω ͡o )
+    i-is_not_about_topic, /(^•ω•^)
+    is_not_wecent, >_<
+    is_not_wewevant, (✿oωo)
+    i-is_see_fewew, 😳😳😳
+    i-is_unfowwow_topic
   )
 
-  val PrivateEngagements: Set[Feature[JBoolean]] = Set(
-    IS_CLICKED,
-    IS_DWELLED,
-    IS_OPEN_LINKED,
-    IS_PHOTO_EXPANDED,
-    IS_PROFILE_CLICKED,
-    IS_QUOTED,
-    IS_VIDEO_PLAYBACK_50,
-    IS_VIDEO_QUALITY_VIEWED
+  v-vaw pwivateengagements: s-set[featuwe[jboowean]] = s-set(
+    is_cwicked, (ꈍᴗꈍ)
+    i-is_dwewwed, 🥺
+    is_open_winked, mya
+    i-is_photo_expanded, (ˆ ﻌ ˆ)♡
+    is_pwofiwe_cwicked,
+    i-is_quoted, (⑅˘꒳˘)
+    i-is_video_pwayback_50, òωó
+    is_video_quawity_viewed
   )
 
-  val ImpressedEngagements: Set[Feature[JBoolean]] = Set(
-    IS_IMPRESSED
+  vaw impwessedengagements: set[featuwe[jboowean]] = set(
+    is_impwessed
   )
 
-  val PrivateEngagementsV2: Set[Feature[JBoolean]] = Set(
-    IS_CLICKED,
-    IS_OPEN_LINKED,
-    IS_PHOTO_EXPANDED,
-    IS_PROFILE_CLICKED,
-    IS_VIDEO_PLAYBACK_50,
-    IS_VIDEO_QUALITY_VIEWED
-  ) ++ ImpressedEngagements
+  v-vaw pwivateengagementsv2: s-set[featuwe[jboowean]] = set(
+    is_cwicked, o.O
+    is_open_winked,
+    is_photo_expanded, XD
+    i-is_pwofiwe_cwicked, (˘ω˘)
+    is_video_pwayback_50, (ꈍᴗꈍ)
+    i-is_video_quawity_viewed
+  ) ++ i-impwessedengagements
 
-  val CoreEngagements: Set[Feature[JBoolean]] = Set(
-    IS_FAVORITED,
-    IS_REPLIED,
-    IS_RETWEETED
+  vaw coweengagements: set[featuwe[jboowean]] = set(
+    is_favowited, >w<
+    is_wepwied, XD
+    i-is_wetweeted
   )
 
-  val DwellEngagements: Set[Feature[JBoolean]] = Set(
-    IS_DWELLED
+  vaw dwewwengagements: set[featuwe[jboowean]] = s-set(
+    is_dwewwed
   )
 
-  val PrivateCoreEngagements: Set[Feature[JBoolean]] = Set(
-    IS_CLICKED,
-    IS_OPEN_LINKED,
-    IS_PHOTO_EXPANDED,
-    IS_VIDEO_PLAYBACK_50,
-    IS_VIDEO_QUALITY_VIEWED
+  v-vaw pwivatecoweengagements: s-set[featuwe[jboowean]] = set(
+    i-is_cwicked, -.-
+    i-is_open_winked, ^^;;
+    i-is_photo_expanded, XD
+    i-is_video_pwayback_50,
+    i-is_video_quawity_viewed
   )
 
-  val ConditionalEngagements: Set[Feature[JBoolean]] = Set(
-    IS_GOOD_CLICKED_CONVO_DESC_V1,
-    IS_GOOD_CLICKED_CONVO_DESC_V2,
-    IS_GOOD_CLICKED_WITH_DWELL_SUM_GTE_60S
+  v-vaw conditionawengagements: set[featuwe[jboowean]] = set(
+    is_good_cwicked_convo_desc_v1, :3
+    is_good_cwicked_convo_desc_v2, σωσ
+    is_good_cwicked_with_dweww_sum_gte_60s
   )
 
-  val ShareEngagements: Set[Feature[JBoolean]] = Set(
-    IS_SHARED,
-    IS_SHARE_MENU_CLICKED
+  vaw shaweengagements: s-set[featuwe[jboowean]] = s-set(
+    i-is_shawed, XD
+    i-is_shawe_menu_cwicked
   )
 
-  val BookmarkEngagements: Set[Feature[JBoolean]] = Set(
-    IS_BOOKMARKED
+  v-vaw bookmawkengagements: s-set[featuwe[jboowean]] = set(
+    is_bookmawked
   )
 
-  val TweetDetailDwellEngagements: Set[Feature[JBoolean]] = Set(
-    IS_TWEET_DETAIL_DWELLED,
-    IS_TWEET_DETAIL_DWELLED_8_SEC,
-    IS_TWEET_DETAIL_DWELLED_15_SEC,
-    IS_TWEET_DETAIL_DWELLED_25_SEC,
-    IS_TWEET_DETAIL_DWELLED_30_SEC
+  vaw tweetdetaiwdwewwengagements: set[featuwe[jboowean]] = set(
+    i-is_tweet_detaiw_dwewwed, :3
+    i-is_tweet_detaiw_dwewwed_8_sec, rawr
+    is_tweet_detaiw_dwewwed_15_sec,
+    is_tweet_detaiw_dwewwed_25_sec, 😳
+    is_tweet_detaiw_dwewwed_30_sec
   )
 
-  val ProfileDwellEngagements: Set[Feature[JBoolean]] = Set(
-    IS_PROFILE_DWELLED,
-    IS_PROFILE_DWELLED_10_SEC,
-    IS_PROFILE_DWELLED_20_SEC,
-    IS_PROFILE_DWELLED_30_SEC
+  v-vaw pwofiwedwewwengagements: set[featuwe[jboowean]] = s-set(
+    i-is_pwofiwe_dwewwed, 😳😳😳
+    is_pwofiwe_dwewwed_10_sec, (ꈍᴗꈍ)
+    is_pwofiwe_dwewwed_20_sec, 🥺
+    i-is_pwofiwe_dwewwed_30_sec
   )
 
-  val FullscreenVideoDwellEngagements: Set[Feature[JBoolean]] = Set(
-    IS_FULLSCREEN_VIDEO_DWELLED,
-    IS_FULLSCREEN_VIDEO_DWELLED_5_SEC,
-    IS_FULLSCREEN_VIDEO_DWELLED_10_SEC,
-    IS_FULLSCREEN_VIDEO_DWELLED_20_SEC,
-    IS_FULLSCREEN_VIDEO_DWELLED_30_SEC
+  vaw fuwwscweenvideodwewwengagements: set[featuwe[jboowean]] = s-set(
+    is_fuwwscween_video_dwewwed, ^•ﻌ•^
+    i-is_fuwwscween_video_dwewwed_5_sec, XD
+    is_fuwwscween_video_dwewwed_10_sec, ^•ﻌ•^
+    is_fuwwscween_video_dwewwed_20_sec, ^^;;
+    is_fuwwscween_video_dwewwed_30_sec
   )
 
-  // Please do not add new engagements here until having estimated the impact
-  // to capacity requirements. User-author real-time aggregates have a very
-  // large key space.
-  val UserAuthorEngagements: Set[Feature[JBoolean]] = CoreEngagements ++ DwellEngagements ++ Set(
-    IS_CLICKED,
-    IS_PROFILE_CLICKED,
-    IS_PHOTO_EXPANDED,
-    IS_VIDEO_PLAYBACK_50,
-    IS_NEGATIVE_FEEDBACK_UNION
+  // p-pwease do nyot add nyew engagements h-hewe untiw h-having estimated the impact
+  // t-to capacity w-wequiwements. usew-authow w-weaw-time a-aggwegates have a-a vewy
+  // w-wawge key space. ʘwʘ
+  vaw usewauthowengagements: s-set[featuwe[jboowean]] = c-coweengagements ++ dwewwengagements ++ s-set(
+    is_cwicked, OwO
+    is_pwofiwe_cwicked, 🥺
+    is_photo_expanded, (⑅˘꒳˘)
+    i-is_video_pwayback_50, (///ˬ///✿)
+    is_negative_feedback_union
   )
 
-  val ImplicitPositiveEngagements: Set[Feature[JBoolean]] = Set(
-    IS_CLICKED,
-    IS_DWELLED,
-    IS_OPEN_LINKED,
-    IS_PROFILE_CLICKED,
-    IS_QUOTED,
-    IS_VIDEO_PLAYBACK_50,
-    IS_VIDEO_QUALITY_VIEWED,
-    IS_TWEET_DETAIL_DWELLED,
-    IS_GOOD_CLICKED_CONVO_DESC_V1,
-    IS_GOOD_CLICKED_CONVO_DESC_V2,
-    IS_SHARED,
-    IS_SHARE_MENU_CLICKED,
-    IS_SHARE_DM_SENT,
-    IS_SHARE_DM_CLICKED
+  v-vaw impwicitpositiveengagements: set[featuwe[jboowean]] = s-set(
+    i-is_cwicked, (✿oωo)
+    is_dwewwed, nyaa~~
+    is_open_winked, >w<
+    i-is_pwofiwe_cwicked, (///ˬ///✿)
+    is_quoted, rawr
+    is_video_pwayback_50,
+    i-is_video_quawity_viewed, (U ﹏ U)
+    i-is_tweet_detaiw_dwewwed, ^•ﻌ•^
+    is_good_cwicked_convo_desc_v1, (///ˬ///✿)
+    is_good_cwicked_convo_desc_v2, o.O
+    i-is_shawed, >w<
+    i-is_shawe_menu_cwicked, nyaa~~
+    is_shawe_dm_sent, òωó
+    i-is_shawe_dm_cwicked
   )
 
-  val ExplicitPositiveEngagements: Set[Feature[JBoolean]] = CoreEngagements ++ Set(
-    IS_FOLLOWED,
-    IS_QUOTED
+  vaw expwicitpositiveengagements: set[featuwe[jboowean]] = coweengagements ++ s-set(
+    is_fowwowed, (U ᵕ U❁)
+    i-is_quoted
   )
 
-  val AllNegativeEngagements: Set[Feature[JBoolean]] =
-    NegativeEngagementsRealTime ++ NegativeEngagementsRealTimeDontLike ++ Set(
-      IS_NOT_RECENT,
-      IS_NOT_RELEVANT,
-      IS_SEE_FEWER
+  vaw a-awwnegativeengagements: s-set[featuwe[jboowean]] =
+    nyegativeengagementsweawtime ++ nyegativeengagementsweawtimedontwike ++ s-set(
+      i-is_not_wecent, (///ˬ///✿)
+      i-is_not_wewevant, (✿oωo)
+      i-is_see_fewew
     )
 }

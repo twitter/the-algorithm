@@ -1,30 +1,30 @@
-package com.twitter.search.feature_update_service.modules;
+package com.twittew.seawch.featuwe_update_sewvice.moduwes;
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+impowt c-com.googwe.inject.pwovides;
+i-impowt c-com.googwe.inject.singweton;
 
-import com.twitter.app.Flaggable;
-import com.twitter.inject.TwitterModule;
-import com.twitter.inject.annotations.Flag;
+i-impowt com.twittew.app.fwaggabwe;
+i-impowt com.twittew.inject.twittewmoduwe;
+i-impowt c-com.twittew.inject.annotations.fwag;
 
-import com.twitter.search.feature_update_service.whitelist.ClientIdWhitelist;
+i-impowt com.twittew.seawch.featuwe_update_sewvice.whitewist.cwientidwhitewist;
 
 /**
- * Provides a ClientIdWhitelist, which periodically loads the
- * Feature Update Service client whitelist from ConfigBus
+ * pwovides a cwientidwhitewist, /(^•ω•^) which pewiodicawwy woads the
+ * featuwe u-update sewvice cwient whitewist fwom configbus
  */
-public class ClientIdWhitelistModule extends TwitterModule {
-  public ClientIdWhitelistModule() {
-    flag("client.whitelist.path", "",
-        "Path to client id white list.", Flaggable.ofString());
-    flag("client.whitelist.enable", true,
-        "Enable client whitelist for production.", Flaggable.ofBoolean());
+p-pubwic cwass cwientidwhitewistmoduwe extends t-twittewmoduwe {
+  pubwic cwientidwhitewistmoduwe() {
+    fwag("cwient.whitewist.path", rawr "",
+        "path t-to cwient id white wist.", OwO fwaggabwe.ofstwing());
+    f-fwag("cwient.whitewist.enabwe", t-twue, (U ﹏ U)
+        "enabwe cwient whitewist fow pwoduction.", >_< fwaggabwe.ofboowean());
   }
 
-    @Provides
-    @Singleton
-    public ClientIdWhitelist provideClientWhitelist(
-        @Flag("client.whitelist.path") String clientIdWhiteListPath) throws Exception {
-        return ClientIdWhitelist.initWhitelist(clientIdWhiteListPath);
+    @pwovides
+    @singweton
+    pubwic c-cwientidwhitewist pwovidecwientwhitewist(
+        @fwag("cwient.whitewist.path") stwing cwientidwhitewistpath) thwows exception {
+        wetuwn c-cwientidwhitewist.initwhitewist(cwientidwhitewistpath);
     }
   }

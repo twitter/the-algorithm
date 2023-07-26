@@ -1,3 +1,3 @@
-resources(
-    sources = ["*"],
+wesouwces(
+    souwces = ["*"], XD
 )

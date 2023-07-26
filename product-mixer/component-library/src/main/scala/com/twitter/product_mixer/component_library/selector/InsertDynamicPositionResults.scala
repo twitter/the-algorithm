@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector._
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow._
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object InsertDynamicPositionResults {
-  def apply[Query <: PipelineQuery](
-    candidatePipeline: CandidatePipelineIdentifier,
-    dynamicInsertionPosition: DynamicInsertionPosition[Query],
-  ): InsertDynamicPositionResults[Query] =
-    new InsertDynamicPositionResults(SpecificPipeline(candidatePipeline), dynamicInsertionPosition)
+object insewtdynamicpositionwesuwts {
+  def appwy[quewy <: p-pipewinequewy](
+    candidatepipewine: candidatepipewineidentifiew, 😳
+    d-dynamicinsewtionposition: dynamicinsewtionposition[quewy], (ˆ ﻌ ˆ)♡
+  ): i-insewtdynamicpositionwesuwts[quewy] =
+    nyew insewtdynamicpositionwesuwts(specificpipewine(candidatepipewine), 😳😳😳 dynamicinsewtionposition)
 
-  def apply[Query <: PipelineQuery](
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    dynamicInsertionPosition: DynamicInsertionPosition[Query]
-  ): InsertDynamicPositionResults[Query] =
-    new InsertDynamicPositionResults(
-      SpecificPipelines(candidatePipelines),
-      dynamicInsertionPosition)
+  def appwy[quewy <: p-pipewinequewy](
+    candidatepipewines: s-set[candidatepipewineidentifiew],
+    d-dynamicinsewtionposition: dynamicinsewtionposition[quewy]
+  ): insewtdynamicpositionwesuwts[quewy] =
+    nyew insewtdynamicpositionwesuwts(
+      specificpipewines(candidatepipewines), (U ﹏ U)
+      d-dynamicinsewtionposition)
 }
 
 /**
- * Compute a position for inserting the candidates into result. If a `None` is returned, the
- * Selector using this would not insert the candidates into the result.
+ * compute a position fow insewting the candidates into w-wesuwt. (///ˬ///✿) if a `none` is wetuwned, 😳 t-the
+ * sewectow u-using this wouwd n-nyot insewt t-the candidates into the wesuwt. 😳
  */
-trait DynamicInsertionPosition[-Query <: PipelineQuery] {
-  def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): Option[Int]
+twait dynamicinsewtionposition[-quewy <: p-pipewinequewy] {
+  def appwy(
+    quewy: quewy, σωσ
+    w-wemainingcandidates: seq[candidatewithdetaiws], rawr x3
+    wesuwt: seq[candidatewithdetaiws]
+  ): option[int]
 }
 
 /**
- * Insert all candidates in a pipeline scope at a 0-indexed dynamic position computed
- * using the provided [[DynamicInsertionPosition]] instance. If the current results are a shorter
- * length than the computed position, then the candidates will be appended to the results.
- * If the [[DynamicInsertionPosition]] returns a `None`, the candidates are not
- * added to the result.
+ * insewt aww candidates in a pipewine s-scope at a 0-indexed dynamic p-position computed
+ * u-using the p-pwovided [[dynamicinsewtionposition]] instance. OwO if the cuwwent wesuwts awe a showtew
+ * w-wength t-than the computed position, /(^•ω•^) then t-the candidates w-wiww be appended to the wesuwts. 😳😳😳
+ * i-if the [[dynamicinsewtionposition]] wetuwns a-a `none`, ( ͡o ω ͡o ) the candidates awe nyot
+ * added to the w-wesuwt. >_<
  */
-case class InsertDynamicPositionResults[-Query <: PipelineQuery](
-  override val pipelineScope: CandidateScope,
-  dynamicInsertionPosition: DynamicInsertionPosition[Query])
-    extends Selector[Query] {
+case cwass insewtdynamicpositionwesuwts[-quewy <: p-pipewinequewy](
+  ovewwide vaw p-pipewinescope: candidatescope, >w<
+  d-dynamicinsewtionposition: dynamicinsewtionposition[quewy])
+    extends sewectow[quewy] {
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    dynamicInsertionPosition(query, remainingCandidates, result) match {
-      case Some(position) =>
-        InsertSelector.insertIntoResultsAtPosition(
-          position = position,
-          pipelineScope = pipelineScope,
-          remainingCandidates = remainingCandidates,
-          result = result)
-      case None =>
-        // When a valid position is not provided, do not insert the candidates.
-        // Both the remainingCandidates and result are unchanged.
-        SelectorResult(remainingCandidates = remainingCandidates, result = result)
+  ovewwide def appwy(
+    quewy: quewy, rawr
+    wemainingcandidates: s-seq[candidatewithdetaiws], 😳
+    w-wesuwt: seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    d-dynamicinsewtionposition(quewy, >w< w-wemainingcandidates, wesuwt) match {
+      case some(position) =>
+        i-insewtsewectow.insewtintowesuwtsatposition(
+          position = position, (⑅˘꒳˘)
+          pipewinescope = pipewinescope, OwO
+          w-wemainingcandidates = wemainingcandidates, (ꈍᴗꈍ)
+          w-wesuwt = wesuwt)
+      c-case n-nyone =>
+        // when a vawid p-position is nyot p-pwovided, 😳 do n-nyot insewt the c-candidates. 😳😳😳
+        // both the wemainingcandidates a-and wesuwt a-awe unchanged. mya
+        s-sewectowwesuwt(wemainingcandidates = w-wemainingcandidates, mya w-wesuwt = wesuwt)
     }
   }
 }

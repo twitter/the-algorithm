@@ -1,50 +1,50 @@
-package com.twitter.home_mixer.product.for_you.side_effect
+package com.twittew.home_mixew.pwoduct.fow_you.side_effect
 
-import com.twitter.home_mixer.model.HomeFeatures.IsReadFromCacheFeature
-import com.twitter.home_mixer.model.HomeFeatures.PredictionRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.isweadfwomcachefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.pwedictionwequestidfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.sewvedidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.sewvedwequestidfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.stweamtokafkafeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object ServedCandidateKafkaSideEffect {
+object sewvedcandidatekafkasideeffect {
 
-  def extractCandidates(
-    query: PipelineQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    sourceIdentifiers: Set[CandidatePipelineIdentifier]
-  ): Seq[ItemCandidateWithDetails] = {
-    val servedRequestIdOpt =
-      query.features.getOrElse(FeatureMap.empty).getOrElse(ServedRequestIdFeature, None)
+  d-def extwactcandidates(
+    q-quewy: pipewinequewy, mya
+    sewectedcandidates: seq[candidatewithdetaiws], 🥺
+    s-souwceidentifiews: set[candidatepipewineidentifiew]
+  ): seq[itemcandidatewithdetaiws] = {
+    v-vaw sewvedwequestidopt =
+      q-quewy.featuwes.getowewse(featuwemap.empty).getowewse(sewvedwequestidfeatuwe, >_< nyone)
 
-    selectedCandidates.iterator
-      .filter(candidate => sourceIdentifiers.contains(candidate.source))
-      .flatMap {
-        case item: ItemCandidateWithDetails => Seq(item)
-        case module: ModuleCandidateWithDetails => module.candidates
+    sewectedcandidates.itewatow
+      .fiwtew(candidate => souwceidentifiews.contains(candidate.souwce))
+      .fwatmap {
+        case item: itemcandidatewithdetaiws => s-seq(item)
+        case moduwe: moduwecandidatewithdetaiws => moduwe.candidates
       }
-      .filter(candidate => candidate.features.getOrElse(StreamToKafkaFeature, false))
-      .map { candidate =>
-        val servedId =
-          if (candidate.features.getOrElse(IsReadFromCacheFeature, false) &&
-            servedRequestIdOpt.nonEmpty)
-            servedRequestIdOpt
-          else
-            candidate.features.getOrElse(PredictionRequestIdFeature, None)
+      .fiwtew(candidate => candidate.featuwes.getowewse(stweamtokafkafeatuwe, >_< fawse))
+      .map { c-candidate =>
+        vaw sewvedid =
+          i-if (candidate.featuwes.getowewse(isweadfwomcachefeatuwe, (⑅˘꒳˘) f-fawse) &&
+            s-sewvedwequestidopt.nonempty)
+            s-sewvedwequestidopt
+          ewse
+            candidate.featuwes.getowewse(pwedictionwequestidfeatuwe, /(^•ω•^) nyone)
 
-        candidate.copy(features = candidate.features + (ServedIdFeature, servedId))
-      }.toSeq
-      // deduplicate by (tweetId, userId, servedId)
-      .groupBy { candidate =>
+        c-candidate.copy(featuwes = candidate.featuwes + (sewvedidfeatuwe, rawr x3 sewvedid))
+      }.toseq
+      // d-dedupwicate by (tweetid, (U ﹏ U) usewid, sewvedid)
+      .gwoupby { candidate =>
         (
-          candidate.candidateIdLong,
-          query.getRequiredUserId,
-          candidate.features.getOrElse(ServedIdFeature, None))
-      }.values.map(_.head).toSeq
+          candidate.candidateidwong,
+          quewy.getwequiwedusewid, (U ﹏ U)
+          c-candidate.featuwes.getowewse(sewvedidfeatuwe, (⑅˘꒳˘) nyone))
+      }.vawues.map(_.head).toseq
   }
 }

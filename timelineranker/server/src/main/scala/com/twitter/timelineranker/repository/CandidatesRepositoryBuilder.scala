@@ -1,89 +1,89 @@
-package com.twitter.timelineranker.repository
+package com.twittew.timewinewankew.wepositowy
 
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.timelineranker.visibility.ScopedSgsFollowGraphDataProviderFactory
-import com.twitter.timelines.clients.relevance_search.ScopedSearchClientFactory
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.user_tweet_entity_graph.UserTweetEntityGraphClient
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.util.Duration
-import com.twitter.timelineranker.config.ClientWrapperFactories
-import com.twitter.timelineranker.config.UnderlyingClientConfiguration
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.timelines.clients.gizmoduck.GizmoduckClient
-import com.twitter.timelines.clients.manhattan.ManhattanUserMetadataClient
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
+impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdsewvice
+impowt c-com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.timewinewankew.config.wuntimeconfiguwation
+i-impowt com.twittew.timewinewankew.modew.wecapquewy
+i-impowt com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt c-com.twittew.timewinewankew.visibiwity.sgsfowwowgwaphdatafiewds
+impowt c-com.twittew.timewinewankew.visibiwity.scopedsgsfowwowgwaphdatapwovidewfactowy
+impowt com.twittew.timewines.cwients.wewevance_seawch.scopedseawchcwientfactowy
+impowt com.twittew.timewines.cwients.wewevance_seawch.seawchcwient
+impowt com.twittew.timewines.cwients.usew_tweet_entity_gwaph.usewtweetentitygwaphcwient
+impowt com.twittew.timewines.utiw.stats.wequestscope
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.timewinewankew.config.cwientwwappewfactowies
+impowt com.twittew.timewinewankew.config.undewwyingcwientconfiguwation
+i-impowt com.twittew.timewinewankew.visibiwity.fowwowgwaphdatapwovidew
+i-impowt com.twittew.timewines.cwients.gizmoduck.gizmoduckcwient
+impowt com.twittew.timewines.cwients.manhattan.manhattanusewmetadatacwient
+impowt com.twittew.timewines.cwients.tweetypie.tweetypiecwient
 
-abstract class CandidatesRepositoryBuilder(config: RuntimeConfiguration) extends RepositoryBuilder {
+a-abstwact cwass candidateswepositowybuiwdew(config: w-wuntimeconfiguwation) e-extends wepositowybuiwdew {
 
-  def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint
-  def searchProcessingTimeout: Duration
-  def clientSubId: String
-  def requestScope: RequestScope
-  def followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet
+  def eawwybiwdcwient(scope: stwing): eawwybiwdsewvice.methodpewendpoint
+  def s-seawchpwocessingtimeout: duwation
+  def cwientsubid: stwing
+  def wequestscope: w-wequestscope
+  def fowwowgwaphdatafiewdstofetch: s-sgsfowwowgwaphdatafiewds.vawueset
 
-  protected lazy val clientConfig: UnderlyingClientConfiguration = config.underlyingClients
+  p-pwotected w-wazy vaw cwientconfig: u-undewwyingcwientconfiguwation = config.undewwyingcwients
 
-  protected lazy val clientFactories: ClientWrapperFactories = config.clientWrapperFactories
-  protected lazy val gizmoduckClient: GizmoduckClient =
-    clientFactories.gizmoduckClientFactory.scope(requestScope)
-  protected lazy val searchClient: SearchClient = newSearchClient(clientId = clientSubId)
-  protected lazy val tweetyPieHighQoSClient: TweetyPieClient =
-    clientFactories.tweetyPieHighQoSClientFactory.scope(requestScope)
-  protected lazy val tweetyPieLowQoSClient: TweetyPieClient =
-    clientFactories.tweetyPieLowQoSClientFactory.scope(requestScope)
-  protected lazy val followGraphDataProvider: FollowGraphDataProvider =
-    new ScopedSgsFollowGraphDataProviderFactory(
-      clientFactories.socialGraphClientFactory,
-      clientFactories.visibilityProfileHydratorFactory,
-      followGraphDataFieldsToFetch,
-      config.statsReceiver
-    ).scope(requestScope)
-  protected lazy val userMetadataClient: ManhattanUserMetadataClient =
-    clientFactories.userMetadataClientFactory.scope(requestScope)
-  protected lazy val userTweetEntityGraphClient: UserTweetEntityGraphClient =
-    new UserTweetEntityGraphClient(
-      config.underlyingClients.userTweetEntityGraphClient,
-      config.statsReceiver
+  pwotected wazy v-vaw cwientfactowies: cwientwwappewfactowies = config.cwientwwappewfactowies
+  p-pwotected wazy vaw gizmoduckcwient: gizmoduckcwient =
+    cwientfactowies.gizmoduckcwientfactowy.scope(wequestscope)
+  pwotected wazy vaw seawchcwient: s-seawchcwient = nyewseawchcwient(cwientid = c-cwientsubid)
+  p-pwotected wazy v-vaw tweetypiehighqoscwient: tweetypiecwient =
+    cwientfactowies.tweetypiehighqoscwientfactowy.scope(wequestscope)
+  pwotected w-wazy vaw tweetypiewowqoscwient: t-tweetypiecwient =
+    cwientfactowies.tweetypiewowqoscwientfactowy.scope(wequestscope)
+  p-pwotected w-wazy vaw fowwowgwaphdatapwovidew: fowwowgwaphdatapwovidew =
+    n-nyew scopedsgsfowwowgwaphdatapwovidewfactowy(
+      cwientfactowies.sociawgwaphcwientfactowy,
+      c-cwientfactowies.visibiwitypwofiwehydwatowfactowy, OwO
+      fowwowgwaphdatafiewdstofetch, (ꈍᴗꈍ)
+      config.statsweceivew
+    ).scope(wequestscope)
+  p-pwotected wazy vaw usewmetadatacwient: m-manhattanusewmetadatacwient =
+    cwientfactowies.usewmetadatacwientfactowy.scope(wequestscope)
+  p-pwotected w-wazy vaw usewtweetentitygwaphcwient: usewtweetentitygwaphcwient =
+    nyew usewtweetentitygwaphcwient(
+      config.undewwyingcwients.usewtweetentitygwaphcwient, 😳
+      config.statsweceivew
     )
 
-  protected lazy val perRequestSearchClientIdProvider: DependencyProvider[Option[String]] =
-    DependencyProvider { recapQuery: RecapQuery =>
-      recapQuery.searchClientSubId.map { subId =>
-        clientConfig.timelineRankerClientId(Some(s"$subId.$clientSubId")).name
+  p-pwotected w-wazy vaw pewwequestseawchcwientidpwovidew: d-dependencypwovidew[option[stwing]] =
+    d-dependencypwovidew { w-wecapquewy: wecapquewy =>
+      wecapquewy.seawchcwientsubid.map { subid =>
+        cwientconfig.timewinewankewcwientid(some(s"$subid.$cwientsubid")).name
       }
     }
 
-  protected lazy val perRequestSourceSearchClientIdProvider: DependencyProvider[Option[String]] =
-    DependencyProvider { recapQuery: RecapQuery =>
-      recapQuery.searchClientSubId.map { subId =>
-        clientConfig.timelineRankerClientId(Some(s"$subId.${clientSubId}_source_tweets")).name
+  p-pwotected wazy vaw pewwequestsouwceseawchcwientidpwovidew: dependencypwovidew[option[stwing]] =
+    dependencypwovidew { w-wecapquewy: wecapquewy =>
+      w-wecapquewy.seawchcwientsubid.map { s-subid =>
+        c-cwientconfig.timewinewankewcwientid(some(s"$subid.${cwientsubid}_souwce_tweets")).name
       }
     }
 
-  protected def newSearchClient(clientId: String): SearchClient =
-    new ScopedSearchClientFactory(
-      searchServiceClient = earlybirdClient(clientId),
-      clientId = clientConfig.timelineRankerClientId(Some(clientId)).name,
-      processingTimeout = Some(searchProcessingTimeout),
-      collectConversationIdGate = Gate.True,
-      statsReceiver = config.statsReceiver
-    ).scope(requestScope)
+  pwotected def n-nyewseawchcwient(cwientid: s-stwing): s-seawchcwient =
+    n-nyew scopedseawchcwientfactowy(
+      seawchsewvicecwient = eawwybiwdcwient(cwientid), 😳😳😳
+      c-cwientid = cwientconfig.timewinewankewcwientid(some(cwientid)).name, mya
+      pwocessingtimeout = s-some(seawchpwocessingtimeout), mya
+      c-cowwectconvewsationidgate = g-gate.twue, (⑅˘꒳˘)
+      s-statsweceivew = config.statsweceivew
+    ).scope(wequestscope)
 
-  protected def newSearchClient(
-    earlybirdReplacementClient: String => EarlybirdService.MethodPerEndpoint,
-    clientId: String
-  ): SearchClient =
-    new ScopedSearchClientFactory(
-      searchServiceClient = earlybirdReplacementClient(clientId),
-      clientId = clientConfig.timelineRankerClientId(Some(clientId)).name,
-      processingTimeout = Some(searchProcessingTimeout),
-      collectConversationIdGate = Gate.True,
-      statsReceiver = config.statsReceiver
-    ).scope(requestScope)
+  pwotected def nyewseawchcwient(
+    e-eawwybiwdwepwacementcwient: stwing => eawwybiwdsewvice.methodpewendpoint, (U ﹏ U)
+    cwientid: stwing
+  ): seawchcwient =
+    nyew scopedseawchcwientfactowy(
+      s-seawchsewvicecwient = eawwybiwdwepwacementcwient(cwientid), mya
+      cwientid = cwientconfig.timewinewankewcwientid(some(cwientid)).name, ʘwʘ
+      p-pwocessingtimeout = s-some(seawchpwocessingtimeout), (˘ω˘)
+      c-cowwectconvewsationidgate = gate.twue, (U ﹏ U)
+      s-statsweceivew = config.statsweceivew
+    ).scope(wequestscope)
 }

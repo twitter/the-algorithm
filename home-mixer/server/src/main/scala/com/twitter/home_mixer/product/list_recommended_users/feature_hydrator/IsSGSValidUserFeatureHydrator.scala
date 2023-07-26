@@ -1,64 +1,64 @@
-package com.twitter.home_mixer.product.list_recommended_users.feature_hydrator
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.IsSGSValidUserFeature
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
+impowt com.twittew.home_mixew.modew.wequest.haswistid
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsfeatuwes.issgsvawidusewfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.sociawgwaph.{thwiftscawa => sg}
+impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.stitch.sociawgwaph.sociawgwaph
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class IsSGSValidUserFeatureHydrator @Inject() (socialGraph: SocialGraph)
-    extends BulkCandidateFeatureHydrator[PipelineQuery with HasListId, UserCandidate] {
+@singweton
+c-cwass issgsvawidusewfeatuwehydwatow @inject() (sociawgwaph: sociawgwaph)
+    e-extends buwkcandidatefeatuwehydwatow[pipewinequewy w-with haswistid, usewcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("IsSGSValidUser")
+  ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("issgsvawidusew")
 
-  override def features: Set[Feature[_, _]] = Set(IsSGSValidUserFeature)
+  ovewwide def featuwes: set[featuwe[_, 😳😳😳 _]] = set(issgsvawidusewfeatuwe)
 
-  override def apply(
-    query: PipelineQuery with HasListId,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val sourceId = query.getRequiredUserId
-    val targetUserIds = candidates.map(_.candidate.id)
-    val request = sg.IdsRequest(
-      relationships = Seq(
-        sg.SrcRelationship(
-          source = sourceId,
-          relationshipType = sg.RelationshipType.Blocking,
-          hasRelationship = true,
-          targets = Some(targetUserIds)),
-        sg.SrcRelationship(
-          source = sourceId,
-          relationshipType = sg.RelationshipType.BlockedBy,
-          hasRelationship = true,
-          targets = Some(targetUserIds)),
-        sg.SrcRelationship(
-          source = sourceId,
-          relationshipType = sg.RelationshipType.Muting,
-          hasRelationship = true,
-          targets = Some(targetUserIds))
-      ),
-      pageRequest = Some(sg.PageRequest(selectAll = Some(true))),
-      context = Some(sg.LookupContext(performUnion = Some(true)))
+  ovewwide d-def appwy(
+    quewy: pipewinequewy w-with haswistid, mya
+    c-candidates: s-seq[candidatewithfeatuwes[usewcandidate]]
+  ): s-stitch[seq[featuwemap]] = {
+    vaw souwceid = quewy.getwequiwedusewid
+    v-vaw tawgetusewids = candidates.map(_.candidate.id)
+    vaw wequest = s-sg.idswequest(
+      wewationships = seq(
+        sg.swcwewationship(
+          souwce = souwceid, 😳
+          wewationshiptype = s-sg.wewationshiptype.bwocking, -.-
+          haswewationship = t-twue, 🥺
+          t-tawgets = some(tawgetusewids)), o.O
+        s-sg.swcwewationship(
+          souwce = souwceid, /(^•ω•^)
+          wewationshiptype = sg.wewationshiptype.bwockedby, nyaa~~
+          haswewationship = t-twue, nyaa~~
+          t-tawgets = some(tawgetusewids)), :3
+        sg.swcwewationship(
+          s-souwce = s-souwceid, 😳😳😳
+          wewationshiptype = s-sg.wewationshiptype.muting, (˘ω˘)
+          haswewationship = twue, ^^
+          tawgets = s-some(tawgetusewids))
+      ), :3
+      pagewequest = some(sg.pagewequest(sewectaww = s-some(twue))), -.-
+      context = some(sg.wookupcontext(pewfowmunion = s-some(twue)))
     )
 
-    socialGraph.ids(request).map(_.ids).map(_.toSet).map { hasRelationshipUserIds =>
-      candidates.map { candidate =>
-        FeatureMapBuilder()
-          .add(IsSGSValidUserFeature, !hasRelationshipUserIds.contains(candidate.candidate.id))
-          .build()
+    sociawgwaph.ids(wequest).map(_.ids).map(_.toset).map { h-haswewationshipusewids =>
+      c-candidates.map { candidate =>
+        featuwemapbuiwdew()
+          .add(issgsvawidusewfeatuwe, 😳 !haswewationshipusewids.contains(candidate.candidate.id))
+          .buiwd()
       }
     }
   }

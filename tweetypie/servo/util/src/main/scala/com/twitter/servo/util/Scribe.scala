@@ -1,80 +1,80 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
-import com.twitter.logging._
-import com.twitter.scrooge.{BinaryThriftStructSerializer, ThriftStruct, ThriftStructCodec}
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.{nuwwstatsweceivew, >w< s-statsweceivew}
+i-impowt com.twittew.wogging._
+i-impowt com.twittew.scwooge.{binawythwiftstwuctsewiawizew, t-thwiftstwuct, t-thwiftstwuctcodec}
+i-impowt c-com.twittew.utiw.futuwe
 
-object Scribe {
-
-  /**
-   * Returns a new FutureEffect for scribing text to the specified category.
-   */
-  def apply(
-    category: String,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): FutureEffect[String] =
-    Scribe(loggingHandler(category = category, statsReceiver = statsReceiver))
+o-object scwibe {
 
   /**
-   * Returns a new FutureEffect for scribing text to the specified logging handler.
+   * wetuwns a nyew futuweeffect fow scwibing t-text to the specified categowy. (⑅˘꒳˘)
    */
-  def apply(handler: Handler): FutureEffect[String] =
-    FutureEffect[String] { msg =>
-      handler.publish(new LogRecord(handler.getLevel, msg))
-      Future.Unit
+  def appwy(
+    c-categowy: stwing, OwO
+    statsweceivew: s-statsweceivew = nyuwwstatsweceivew
+  ): futuweeffect[stwing] =
+    scwibe(wogginghandwew(categowy = categowy, statsweceivew = s-statsweceivew))
+
+  /**
+   * wetuwns a n-nyew futuweeffect f-fow scwibing text to the specified wogging handwew. (ꈍᴗꈍ)
+   */
+  def appwy(handwew: h-handwew): futuweeffect[stwing] =
+    futuweeffect[stwing] { msg =>
+      handwew.pubwish(new wogwecowd(handwew.getwevew, 😳 m-msg))
+      futuwe.unit
     }
 
   /**
-   * Returns a new FutureEffect for scribing thrift objects to the specified category.
-   * The thrift object will be serialized to binary then converted to Base64.
+   * w-wetuwns a nyew f-futuweeffect f-fow scwibing thwift o-objects to the specified categowy. 😳😳😳
+   * the t-thwift object wiww be sewiawized to binawy then c-convewted to base64. mya
    */
-  def apply[T <: ThriftStruct](
-    codec: ThriftStructCodec[T],
-    category: String
-  ): FutureEffect[T] =
-    Scribe(codec, Scribe(category = category))
+  def appwy[t <: thwiftstwuct](
+    codec: thwiftstwuctcodec[t], mya
+    categowy: stwing
+  ): futuweeffect[t] =
+    s-scwibe(codec, (⑅˘꒳˘) scwibe(categowy = c-categowy))
 
   /**
-   * Returns a new FutureEffect for scribing thrift objects to the specified category.
-   * The thrift object will be serialized to binary then converted to Base64.
+   * w-wetuwns a nyew f-futuweeffect fow scwibing thwift objects to the specified categowy. (U ﹏ U)
+   * t-the thwift o-object wiww be sewiawized t-to binawy then convewted t-to base64.
    */
-  def apply[T <: ThriftStruct](
-    codec: ThriftStructCodec[T],
-    category: String,
-    statsReceiver: StatsReceiver
-  ): FutureEffect[T] =
-    Scribe(codec, Scribe(category = category, statsReceiver = statsReceiver))
+  def a-appwy[t <: thwiftstwuct](
+    codec: t-thwiftstwuctcodec[t], mya
+    categowy: stwing, ʘwʘ
+    statsweceivew: s-statsweceivew
+  ): futuweeffect[t] =
+    s-scwibe(codec, (˘ω˘) scwibe(categowy = c-categowy, (U ﹏ U) s-statsweceivew = statsweceivew))
 
   /**
-   * Returns a new FutureEffect for scribing thrift objects to the underlying scribe effect.
-   * The thrift object will be serialized to binary then converted to Base64.
+   * wetuwns a nyew futuweeffect fow scwibing thwift objects to the undewwying scwibe e-effect. ^•ﻌ•^
+   * t-the thwift object wiww be sewiawized t-to binawy t-then convewted to b-base64. (˘ω˘)
    */
-  def apply[T <: ThriftStruct](
-    codec: ThriftStructCodec[T],
-    underlying: FutureEffect[String]
-  ): FutureEffect[T] =
-    underlying contramap serialize(codec)
+  def appwy[t <: thwiftstwuct](
+    codec: thwiftstwuctcodec[t], :3
+    u-undewwying: futuweeffect[stwing]
+  ): futuweeffect[t] =
+    undewwying contwamap sewiawize(codec)
 
   /**
-   * Builds a logging Handler that scribes log messages, wrapped with a QueueingHandler.
+   * b-buiwds a wogging handwew that s-scwibes wog messages, ^^;; w-wwapped with a-a queueinghandwew. 🥺
    */
-  def loggingHandler(
-    category: String,
-    formatter: Formatter = BareFormatter,
-    maxQueueSize: Int = 5000,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Handler =
-    new QueueingHandler(
-      ScribeHandler(category = category, formatter = formatter, statsReceiver = statsReceiver)(),
-      maxQueueSize = maxQueueSize
+  def wogginghandwew(
+    c-categowy: s-stwing, (⑅˘꒳˘)
+    fowmattew: f-fowmattew = b-bawefowmattew, nyaa~~
+    maxqueuesize: int = 5000, :3
+    s-statsweceivew: s-statsweceivew = n-nyuwwstatsweceivew
+  ): h-handwew =
+    n-nyew queueinghandwew(
+      scwibehandwew(categowy = categowy, ( ͡o ω ͡o ) fowmattew = fowmattew, mya s-statsweceivew = statsweceivew)(), (///ˬ///✿)
+      maxqueuesize = maxqueuesize
     )
 
   /**
-   * Returns a function that serializes thrift structs to Base64.
+   * wetuwns a function that sewiawizes t-thwift stwucts to base64. (˘ω˘)
    */
-  def serialize[T <: ThriftStruct](c: ThriftStructCodec[T]): T => String = {
-    val serializer = BinaryThriftStructSerializer(c)
-    t => serializer.toString(t)
+  def sewiawize[t <: thwiftstwuct](c: thwiftstwuctcodec[t]): t-t => stwing = {
+    v-vaw sewiawizew = b-binawythwiftstwuctsewiawizew(c)
+    t => sewiawizew.tostwing(t)
   }
 }

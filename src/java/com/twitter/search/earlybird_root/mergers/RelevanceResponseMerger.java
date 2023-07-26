@@ -1,267 +1,267 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+impowt java.utiw.cowwections;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt j-java.utiw.set;
+i-impowt java.utiw.tweemap;
+i-impowt j-java.utiw.concuwwent.timeunit;
+i-impowt java.utiw.stweam.cowwectows;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.function;
+impowt c-com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.common.util.earlybird.ResultsUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.collectors.RelevanceMergeCollector;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+i-impowt com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt c-com.twittew.seawch.common.metwics.seawchtimewstats;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.eawwybiwdwesponseutiw;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.wesuwtsutiw;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwankingmode;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd_woot.cowwectows.wewevancemewgecowwectow;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdfeatuweschemamewgew;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt c-com.twittew.utiw.futuwe;
 
 /**
- * Merger class to merge relevance search EarlybirdResponse objects
+ * m-mewgew cwass t-to mewge wewevance seawch eawwybiwdwesponse objects
  */
-public class RelevanceResponseMerger extends EarlybirdResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(RelevanceResponseMerger.class);
+pubwic c-cwass wewevancewesponsemewgew extends eawwybiwdwesponsemewgew {
+  pwivate static f-finaw woggew wog = woggewfactowy.getwoggew(wewevancewesponsemewgew.cwass);
 
-  private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_relevance", TimeUnit.NANOSECONDS, false, true);
+  pwivate static finaw seawchtimewstats timew =
+      seawchtimewstats.expowt("mewge_wewevance", (✿oωo) t-timeunit.nanoseconds, (U ﹏ U) fawse, twue);
 
-  private static final SearchCounter RELVEANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS =
-      SearchCounter.export("merger_relevance_tier_merge_early_terminated_with_not_enough_results");
+  p-pwivate static f-finaw seawchcountew w-wewveance_tiew_mewge_eawwy_tewminated_with_not_enough_wesuwts =
+      seawchcountew.expowt("mewgew_wewevance_tiew_mewge_eawwy_tewminated_with_not_enough_wesuwts");
 
-  private static final String PARTITION_NUM_RESULTS_COUNTER_SKIP_STATS =
-      "merger_relevance_post_trimmed_results_skip_stat_tier_%s_partition_%d";
+  pwivate static finaw stwing pawtition_num_wesuwts_countew_skip_stats =
+      "mewgew_wewevance_post_twimmed_wesuwts_skip_stat_tiew_%s_pawtition_%d";
 
-  @VisibleForTesting
-  public static final String PARTITION_NUM_RESULTS_COUNTER_NAME_FORMAT =
-      "merger_relevance_post_trimmed_results_from_tier_%s_partition_%d";
+  @visibwefowtesting
+  p-pubwic s-static finaw stwing pawtition_num_wesuwts_countew_name_fowmat =
+      "mewgew_wewevance_post_twimmed_wesuwts_fwom_tiew_%s_pawtition_%d";
 
-  protected static final Function<EarlybirdResponse, Map<ThriftLanguage, Integer>> LANG_MAP_GETTER =
-      response -> response.getSearchResults() == null
-          ? null
-          : response.getSearchResults().getLanguageHistogram();
+  p-pwotected static f-finaw function<eawwybiwdwesponse, map<thwiftwanguage, :3 i-integew>> wang_map_gettew =
+      w-wesponse -> wesponse.getseawchwesuwts() == nyuww
+          ? n-nyuww
+          : wesponse.getseawchwesuwts().getwanguagehistogwam();
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.8;
+  p-pwivate static finaw doubwe successfuw_wesponse_thweshowd = 0.8;
 
-  private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
+  p-pwivate finaw e-eawwybiwdfeatuweschemamewgew featuweschemamewgew;
 
-  // The number of partitions are not meaningful when it is invoked through multi-tier merging.
-  private final int numPartitions;
+  // the nyumbew of pawtitions awe nyot meaningfuw when it is invoked thwough muwti-tiew mewging. ^^;;
+  p-pwivate f-finaw int nyumpawtitions;
 
-  public RelevanceResponseMerger(EarlybirdRequestContext requestContext,
-                                 List<Future<EarlybirdResponse>> responses,
-                                 ResponseAccumulator mode,
-                                 EarlybirdFeatureSchemaMerger featureSchemaMerger,
-                                 int numPartitions) {
-    super(requestContext, responses, mode);
-    this.featureSchemaMerger = Preconditions.checkNotNull(featureSchemaMerger);
-    this.numPartitions = numPartitions;
+  pubwic w-wewevancewesponsemewgew(eawwybiwdwequestcontext w-wequestcontext, rawr
+                                 w-wist<futuwe<eawwybiwdwesponse>> wesponses, 😳😳😳
+                                 wesponseaccumuwatow mode, (✿oωo)
+                                 e-eawwybiwdfeatuweschemamewgew featuweschemamewgew, OwO
+                                 int numpawtitions) {
+    supew(wequestcontext, ʘwʘ wesponses, mode);
+    t-this.featuweschemamewgew = pweconditions.checknotnuww(featuweschemamewgew);
+    t-this.numpawtitions = n-nyumpawtitions;
   }
 
-  @Override
-  protected double getDefaultSuccessResponseThreshold() {
-    return SUCCESSFUL_RESPONSE_THRESHOLD;
+  @ovewwide
+  p-pwotected doubwe getdefauwtsuccesswesponsethweshowd() {
+    w-wetuwn s-successfuw_wesponse_thweshowd;
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return TIMER;
+  @ovewwide
+  p-pwotected seawchtimewstats g-getmewgedwesponsetimew() {
+    wetuwn timew;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse mergedResponse) {
-    final ThriftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
-    long maxId = findMaxFullySearchedStatusID();
-    long minId = findMinFullySearchedStatusID();
+  @ovewwide
+  p-pwotected e-eawwybiwdwesponse i-intewnawmewge(eawwybiwdwesponse m-mewgedwesponse) {
+    finaw t-thwiftseawchquewy seawchquewy = wequestcontext.getwequest().getseawchquewy();
+    wong maxid = f-findmaxfuwwyseawchedstatusid();
+    wong minid = findminfuwwyseawchedstatusid();
 
-    Preconditions.checkNotNull(searchQuery);
-    Preconditions.checkState(searchQuery.isSetRankingMode());
-    Preconditions.checkState(searchQuery.getRankingMode() == ThriftSearchRankingMode.RELEVANCE);
+    pweconditions.checknotnuww(seawchquewy);
+    pweconditions.checkstate(seawchquewy.issetwankingmode());
+    pweconditions.checkstate(seawchquewy.getwankingmode() == t-thwiftseawchwankingmode.wewevance);
 
-    // First get the results in score order (the default comparator for this merge collector).
-    RelevanceMergeCollector collector = new RelevanceMergeCollector(responses.size());
-    int totalResultSize = addResponsesToCollector(collector);
-    ThriftSearchResults searchResults = collector.getAllSearchResults();
+    // fiwst get the wesuwts in scowe owdew (the d-defauwt compawatow f-fow this m-mewge cowwectow). (ˆ ﻌ ˆ)♡
+    wewevancemewgecowwectow c-cowwectow = nyew wewevancemewgecowwectow(wesponses.size());
+    i-int t-totawwesuwtsize = addwesponsestocowwectow(cowwectow);
+    thwiftseawchwesuwts seawchwesuwts = cowwectow.getawwseawchwesuwts();
 
-    TrimStats trimStats = trimResults(searchResults);
-    featureSchemaMerger.collectAndSetFeatureSchemaInResponse(
-        searchResults,
-        requestContext,
-        "merger_relevance_tier",
-        accumulatedResponses.getSuccessResponses());
+    twimstats t-twimstats = twimwesuwts(seawchwesuwts);
+    featuweschemamewgew.cowwectandsetfeatuweschemainwesponse(
+        s-seawchwesuwts, (U ﹏ U)
+        wequestcontext, UwU
+        "mewgew_wewevance_tiew", XD
+        a-accumuwatedwesponses.getsuccesswesponses());
 
-    mergedResponse.setSearchResults(searchResults);
+    m-mewgedwesponse.setseawchwesuwts(seawchwesuwts);
 
-    searchResults = mergedResponse.getSearchResults();
-    searchResults
-        .setHitCounts(aggregateHitCountMap())
-        .setLanguageHistogram(aggregateLanguageHistograms());
+    seawchwesuwts = mewgedwesponse.getseawchwesuwts();
+    s-seawchwesuwts
+        .sethitcounts(aggwegatehitcountmap())
+        .setwanguagehistogwam(aggwegatewanguagehistogwams());
 
-    if (!accumulatedResponses.getMaxIds().isEmpty()) {
-      searchResults.setMaxSearchedStatusID(maxId);
+    i-if (!accumuwatedwesponses.getmaxids().isempty()) {
+      seawchwesuwts.setmaxseawchedstatusid(maxid);
     }
 
-    if (!accumulatedResponses.getMinIds().isEmpty()) {
-      searchResults.setMinSearchedStatusID(minId);
+    i-if (!accumuwatedwesponses.getminids().isempty()) {
+      s-seawchwesuwts.setminseawchedstatusid(minid);
     }
 
-    LOG.debug("Hits: {} Removed duplicates: {}", totalResultSize, trimStats.getRemovedDupsCount());
-    LOG.debug("Hash Partition'ed Earlybird call completed successfully: {}", mergedResponse);
+    wog.debug("hits: {} wemoved dupwicates: {}", ʘwʘ totawwesuwtsize, rawr x3 twimstats.getwemoveddupscount());
+    w-wog.debug("hash p-pawtition'ed eawwybiwd c-caww compweted successfuwwy: {}", ^^;; m-mewgedwesponse);
 
-    publishNumResultsFromPartitionStatistics(mergedResponse);
+    p-pubwishnumwesuwtsfwompawtitionstatistics(mewgedwesponse);
 
-    return mergedResponse;
+    wetuwn mewgedwesponse;
   }
 
   /**
-   * If any of the partitions has an early termination, the tier merge must also early terminate.
+   * i-if any of the pawtitions has an eawwy tewmination, ʘwʘ the tiew mewge must awso e-eawwy tewminate. (U ﹏ U)
    *
-   * If a partition early terminated (we haven't fully searched that partition), and we instead
-   * moved onto the next tier, there will be a gap of unsearched results.
+   * i-if a pawtition eawwy tewminated (we h-haven't fuwwy seawched t-that pawtition), (˘ω˘) and we instead
+   * moved onto the nyext t-tiew, (ꈍᴗꈍ) thewe wiww be a gap of unseawched wesuwts. /(^•ω•^)
    *
-   * If our early termination condition was only if we had enough results, we could get bad quality
-   * results by only looking at 20 hits when asking for 20 results.
+   * if ouw eawwy tewmination c-condition was onwy if we had enough wesuwts, >_< w-we couwd get b-bad quawity
+   * wesuwts by onwy wooking at 20 hits when asking f-fow 20 wesuwts. σωσ
    */
-  @Override
-  public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                               boolean foundEarlyTermination) {
+  @ovewwide
+  p-pubwic boowean shouwdeawwytewminatetiewmewge(int totawwesuwtsfwomsuccessfuwshawds, ^^;;
+                                               boowean foundeawwytewmination) {
 
-    // Don't use computeNumResultsToKeep because if returnAllResults is true, it will be
-    // Integer.MAX_VALUE and we will always log a stat that we didn't get enough results
-    int resultsRequested;
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request.isSetNumResultsToReturnAtRoot()) {
-      resultsRequested = request.getNumResultsToReturnAtRoot();
-    } else {
-      resultsRequested = request.getSearchQuery().getCollectorParams().getNumResultsToReturn();
+    // don't u-use computenumwesuwtstokeep because if wetuwnawwwesuwts i-is twue, 😳 it wiww be
+    // integew.max_vawue and we w-wiww awways wog a stat that we d-didn't get enough w-wesuwts
+    int wesuwtswequested;
+    e-eawwybiwdwequest wequest = w-wequestcontext.getwequest();
+    i-if (wequest.issetnumwesuwtstowetuwnatwoot()) {
+      w-wesuwtswequested = wequest.getnumwesuwtstowetuwnatwoot();
+    } e-ewse {
+      w-wesuwtswequested = wequest.getseawchquewy().getcowwectowpawams().getnumwesuwtstowetuwn();
     }
-    if (foundEarlyTermination && totalResultsFromSuccessfulShards < resultsRequested) {
-      RELVEANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS.increment();
+    if (foundeawwytewmination && t-totawwesuwtsfwomsuccessfuwshawds < w-wesuwtswequested) {
+      w-wewveance_tiew_mewge_eawwy_tewminated_with_not_enough_wesuwts.incwement();
     }
 
-    return foundEarlyTermination;
+    wetuwn foundeawwytewmination;
   }
 
   /**
-   * Merge language histograms from all queries.
+   * m-mewge wanguage histogwams f-fwom aww quewies. >_<
    *
-   * @return Merge per-language count map.
+   * @wetuwn m-mewge pew-wanguage count map. -.-
    */
-  private Map<ThriftLanguage, Integer> aggregateLanguageHistograms() {
-    Map<ThriftLanguage, Integer> totalLangCounts = new TreeMap<>(
-        ResultsUtil.aggregateCountMap(
-            accumulatedResponses.getSuccessResponses(), LANG_MAP_GETTER));
-    if (totalLangCounts.size() > 0) {
-      if (responseMessageBuilder.isDebugMode()) {
-        responseMessageBuilder.append("Language Distrbution:\n");
-        int count = 0;
-        for (Map.Entry<ThriftLanguage, Integer> entry : totalLangCounts.entrySet()) {
-          responseMessageBuilder.append(
-              String.format(" %10s:%6d", entry.getKey(), entry.getValue()));
+  pwivate map<thwiftwanguage, UwU i-integew> a-aggwegatewanguagehistogwams() {
+    m-map<thwiftwanguage, :3 i-integew> totawwangcounts = n-nyew tweemap<>(
+        wesuwtsutiw.aggwegatecountmap(
+            accumuwatedwesponses.getsuccesswesponses(), σωσ wang_map_gettew));
+    if (totawwangcounts.size() > 0) {
+      if (wesponsemessagebuiwdew.isdebugmode()) {
+        w-wesponsemessagebuiwdew.append("wanguage distwbution:\n");
+        i-int count = 0;
+        fow (map.entwy<thwiftwanguage, >w< integew> e-entwy : totawwangcounts.entwyset()) {
+          wesponsemessagebuiwdew.append(
+              s-stwing.fowmat(" %10s:%6d", (ˆ ﻌ ˆ)♡ entwy.getkey(), ʘwʘ entwy.getvawue()));
           if (++count % 5 == 0) {
-            responseMessageBuilder.append("\n");
+            w-wesponsemessagebuiwdew.append("\n");
           }
         }
-        responseMessageBuilder.append("\n");
+        w-wesponsemessagebuiwdew.append("\n");
       }
     }
-    return totalLangCounts;
+    w-wetuwn t-totawwangcounts;
   }
 
   /**
-   * Find the min status id that has been searched. Since no results are trimmed for Relevance mode,
-   * it should be the smallest among the min IDs.
+   * f-find the min status id that has been seawched. :3 since no wesuwts awe twimmed fow wewevance mode, (˘ω˘)
+   * it shouwd b-be the smowest a-among the min ids. 😳😳😳
    */
-  private long findMinFullySearchedStatusID() {
-    // The min ID should be the smallest among the min IDs
-    return accumulatedResponses.getMinIds().isEmpty() ? 0
-        : Collections.min(accumulatedResponses.getMinIds());
+  p-pwivate wong findminfuwwyseawchedstatusid() {
+    // t-the min id shouwd be the smowest among the min ids
+    wetuwn accumuwatedwesponses.getminids().isempty() ? 0
+        : c-cowwections.min(accumuwatedwesponses.getminids());
   }
 
   /**
-   * Find the max status id that has been searched. Since no results are trimmed for Relevance mode,
-   * it should be the largest among the max IDs.
+   * f-find the max status id t-that has been seawched. rawr x3 since nyo wesuwts awe t-twimmed fow wewevance m-mode, (✿oωo)
+   * it shouwd be the w-wawgest among t-the max ids. (ˆ ﻌ ˆ)♡
    */
-  private long findMaxFullySearchedStatusID() {
-    // The max ID should be the largest among the max IDs
-    return accumulatedResponses.getMaxIds().isEmpty() ? 0
-        : Collections.max(accumulatedResponses.getMaxIds());
+  pwivate wong findmaxfuwwyseawchedstatusid() {
+    // the max id shouwd be the w-wawgest among t-the max ids
+    w-wetuwn accumuwatedwesponses.getmaxids().isempty() ? 0
+        : c-cowwections.max(accumuwatedwesponses.getmaxids());
   }
 
   /**
-   * Return all the searchResults except duplicates.
+   * w-wetuwn aww the seawchwesuwts e-except dupwicates. :3
    *
-   * @param searchResults ThriftSearchResults that hold the to be trimmed List<ThriftSearchResult>
-   * @return TrimStats containing statistics about how many results being removed
+   * @pawam s-seawchwesuwts thwiftseawchwesuwts t-that howd t-the to be twimmed wist<thwiftseawchwesuwt>
+   * @wetuwn t-twimstats containing statistics about how m-many wesuwts being wemoved
    */
-  private TrimStats trimResults(ThriftSearchResults searchResults) {
-    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 0) {
-      // no results, no trimming needed
-      return TrimStats.EMPTY_STATS;
+  p-pwivate twimstats t-twimwesuwts(thwiftseawchwesuwts seawchwesuwts) {
+    i-if (!seawchwesuwts.issetwesuwts() || seawchwesuwts.getwesuwtssize() == 0) {
+      // nyo wesuwts, (U ᵕ U❁) nyo t-twimming nyeeded
+      w-wetuwn t-twimstats.empty_stats;
     }
 
-    if (requestContext.getRequest().getSearchQuery().isSetSearchStatusIds()) {
-      // Not a normal search, no trimming needed
-      return TrimStats.EMPTY_STATS;
+    if (wequestcontext.getwequest().getseawchquewy().issetseawchstatusids()) {
+      // nyot a nyowmaw seawch, ^^;; no t-twimming nyeeded
+      wetuwn twimstats.empty_stats;
     }
 
-    TrimStats trimStats = new TrimStats();
-    trimExactDups(searchResults, trimStats);
+    twimstats twimstats = n-nyew twimstats();
+    t-twimexactdups(seawchwesuwts, mya twimstats);
 
-    truncateResults(searchResults, trimStats);
+    t-twuncatewesuwts(seawchwesuwts, 😳😳😳 twimstats);
 
-    return trimStats;
+    w-wetuwn t-twimstats;
   }
 
-  private void publishNumResultsFromPartitionStatistics(EarlybirdResponse mergedResponse) {
+  pwivate void pubwishnumwesuwtsfwompawtitionstatistics(eawwybiwdwesponse m-mewgedwesponse) {
 
-    // Keep track of all of the results that were kept after merging
-    Set<Long> mergedResults =
-        EarlybirdResponseUtil.getResults(mergedResponse).getResults()
-            .stream()
-            .map(result -> result.getId())
-            .collect(Collectors.toSet());
+    // keep twack of aww of the wesuwts t-that wewe k-kept aftew mewging
+    set<wong> m-mewgedwesuwts =
+        eawwybiwdwesponseutiw.getwesuwts(mewgedwesponse).getwesuwts()
+            .stweam()
+            .map(wesuwt -> w-wesuwt.getid())
+            .cowwect(cowwectows.toset());
 
-    // For each successful response (pre merge), count how many of its results were kept post merge.
-    // Increment the appropriate stat.
-    for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
-      if (!response.isSetEarlybirdServerStats()) {
+    // f-fow each s-successfuw wesponse (pwe mewge), OwO count how many of its wesuwts wewe kept post mewge. rawr
+    // incwement the appwopwiate stat. XD
+    fow (eawwybiwdwesponse wesponse : accumuwatedwesponses.getsuccesswesponses()) {
+      if (!wesponse.isseteawwybiwdsewvewstats()) {
         continue;
       }
-      int numResultsKept = 0;
-      for (ThriftSearchResult result
-          : EarlybirdResponseUtil.getResults(response).getResults()) {
-        if (mergedResults.contains(result.getId())) {
-          ++numResultsKept;
+      int nyumwesuwtskept = 0;
+      f-fow (thwiftseawchwesuwt w-wesuwt
+          : eawwybiwdwesponseutiw.getwesuwts(wesponse).getwesuwts()) {
+        if (mewgedwesuwts.contains(wesuwt.getid())) {
+          ++numwesuwtskept;
         }
       }
 
-      // We only update partition stats when the partition ID looks sane.
-      String tierName = response.getEarlybirdServerStats().getTierName();
-      int partition = response.getEarlybirdServerStats().getPartition();
-      if (partition >= 0 && partition < numPartitions) {
-        SearchCounter.export(String.format(PARTITION_NUM_RESULTS_COUNTER_NAME_FORMAT,
-            tierName,
-            partition))
-            .add(numResultsKept);
-      } else {
-        SearchCounter.export(String.format(PARTITION_NUM_RESULTS_COUNTER_SKIP_STATS,
-            tierName,
-            partition)).increment();
+      // w-we onwy u-update pawtition s-stats when the pawtition id wooks s-sane. (U ﹏ U)
+      stwing tiewname = w-wesponse.geteawwybiwdsewvewstats().gettiewname();
+      i-int pawtition = wesponse.geteawwybiwdsewvewstats().getpawtition();
+      i-if (pawtition >= 0 && pawtition < n-nyumpawtitions) {
+        s-seawchcountew.expowt(stwing.fowmat(pawtition_num_wesuwts_countew_name_fowmat, (˘ω˘)
+            tiewname, UwU
+            pawtition))
+            .add(numwesuwtskept);
+      } e-ewse {
+        s-seawchcountew.expowt(stwing.fowmat(pawtition_num_wesuwts_countew_skip_stats, >_<
+            t-tiewname, σωσ
+            p-pawtition)).incwement();
       }
     }
   }

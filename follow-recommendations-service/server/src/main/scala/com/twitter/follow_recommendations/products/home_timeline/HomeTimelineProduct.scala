@@ -1,114 +1,114 @@
-package com.twitter.follow_recommendations.products.home_timeline
+package com.twittew.fowwow_wecommendations.pwoducts.home_timewine
 
-import com.twitter.follow_recommendations.assembler.models.ActionConfig
-import com.twitter.follow_recommendations.assembler.models.FollowedByUsersProof
-import com.twitter.follow_recommendations.assembler.models.FooterConfig
-import com.twitter.follow_recommendations.assembler.models.GeoContextProof
-import com.twitter.follow_recommendations.assembler.models.HeaderConfig
-import com.twitter.follow_recommendations.assembler.models.Layout
-import com.twitter.follow_recommendations.assembler.models.TitleConfig
-import com.twitter.follow_recommendations.assembler.models.UserListLayout
-import com.twitter.follow_recommendations.assembler.models.UserListOptions
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlow
-import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlowRequest
-import com.twitter.follow_recommendations.blenders.PromotedAccountsBlender
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
-import com.twitter.follow_recommendations.products.common.Product
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.follow_recommendations.products.home_timeline.configapi.HomeTimelineParams._
-import com.twitter.inject.Injector
-import com.twitter.product_mixer.core.model.marshalling.request
-import com.twitter.product_mixer.core.product.guice.ProductScope
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.assembwew.modews.actionconfig
+i-impowt c-com.twittew.fowwow_wecommendations.assembwew.modews.fowwowedbyusewspwoof
+i-impowt c-com.twittew.fowwow_wecommendations.assembwew.modews.footewconfig
+i-impowt com.twittew.fowwow_wecommendations.assembwew.modews.geocontextpwoof
+i-impowt c-com.twittew.fowwow_wecommendations.assembwew.modews.headewconfig
+i-impowt com.twittew.fowwow_wecommendations.assembwew.modews.wayout
+impowt com.twittew.fowwow_wecommendations.assembwew.modews.titweconfig
+impowt com.twittew.fowwow_wecommendations.assembwew.modews.usewwistwayout
+impowt com.twittew.fowwow_wecommendations.assembwew.modews.usewwistoptions
+i-impowt com.twittew.fowwow_wecommendations.common.base.basewecommendationfwow
+impowt com.twittew.fowwow_wecommendations.common.base.identitytwansfowm
+impowt com.twittew.fowwow_wecommendations.common.base.twansfowm
+i-impowt com.twittew.fowwow_wecommendations.fwows.ads.pwomotedaccountsfwow
+impowt com.twittew.fowwow_wecommendations.fwows.ads.pwomotedaccountsfwowwequest
+i-impowt com.twittew.fowwow_wecommendations.bwendews.pwomotedaccountsbwendew
+impowt com.twittew.fowwow_wecommendations.common.modews.dispwaywocation
+impowt com.twittew.fowwow_wecommendations.common.modews.wecommendation
+i-impowt com.twittew.fowwow_wecommendations.fwows.post_nux_mw.postnuxmwfwow
+i-impowt com.twittew.fowwow_wecommendations.fwows.post_nux_mw.postnuxmwwequestbuiwdew
+i-impowt com.twittew.fowwow_wecommendations.pwoducts.common.pwoduct
+impowt com.twittew.fowwow_wecommendations.pwoducts.common.pwoductwequest
+impowt com.twittew.fowwow_wecommendations.pwoducts.home_timewine.configapi.hometimewinepawams._
+i-impowt com.twittew.inject.injectow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest
+impowt com.twittew.pwoduct_mixew.cowe.pwoduct.guice.pwoductscope
+impowt com.twittew.stitch.stitch
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class HomeTimelineProduct @Inject() (
-  postNuxMlFlow: PostNuxMlFlow,
-  postNuxMlRequestBuilder: PostNuxMlRequestBuilder,
-  promotedAccountsFlow: PromotedAccountsFlow,
-  promotedAccountsBlender: PromotedAccountsBlender,
-  productScope: ProductScope,
-  injector: Injector,
-) extends Product {
+@singweton
+c-cwass h-hometimewinepwoduct @inject() (
+  p-postnuxmwfwow: p-postnuxmwfwow, OwO
+  postnuxmwwequestbuiwdew: postnuxmwwequestbuiwdew,
+  pwomotedaccountsfwow: p-pwomotedaccountsfwow,
+  pwomotedaccountsbwendew: pwomotedaccountsbwendew, (ꈍᴗꈍ)
+  p-pwoductscope: pwoductscope, 😳
+  injectow: injectow, 😳😳😳
+) extends pwoduct {
 
-  override val name: String = "Home Timeline"
+  ovewwide vaw n-nyame: stwing = "home timewine"
 
-  override val identifier: String = "home-timeline"
+  o-ovewwide vaw i-identifiew: stwing = "home-timewine"
 
-  override val displayLocation: DisplayLocation = DisplayLocation.HomeTimeline
+  o-ovewwide vaw dispwaywocation: dispwaywocation = dispwaywocation.hometimewine
 
-  override def selectWorkflows(
-    request: ProductRequest
-  ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
-    postNuxMlRequestBuilder.build(request).map { postNuxMlRequest =>
-      Seq(
-        postNuxMlFlow.mapKey({ request: ProductRequest => postNuxMlRequest }),
-        promotedAccountsFlow.mapKey(mkPromotedAccountsRequest))
+  o-ovewwide d-def sewectwowkfwows(
+    wequest: p-pwoductwequest
+  ): s-stitch[seq[basewecommendationfwow[pwoductwequest, mya _ <: wecommendation]]] = {
+    p-postnuxmwwequestbuiwdew.buiwd(wequest).map { postnuxmwwequest =>
+      s-seq(
+        postnuxmwfwow.mapkey({ wequest: pwoductwequest => postnuxmwwequest }), mya
+        p-pwomotedaccountsfwow.mapkey(mkpwomotedaccountswequest))
     }
   }
 
-  override val blender: Transform[ProductRequest, Recommendation] = {
-    promotedAccountsBlender.mapTarget[ProductRequest](getMaxResults)
+  ovewwide vaw bwendew: t-twansfowm[pwoductwequest, (⑅˘꒳˘) wecommendation] = {
+    p-pwomotedaccountsbwendew.maptawget[pwoductwequest](getmaxwesuwts)
   }
 
-  private val identityTransform = new IdentityTransform[ProductRequest, Recommendation]
+  p-pwivate vaw identitytwansfowm = nyew identitytwansfowm[pwoductwequest, (U ﹏ U) wecommendation]
 
-  override def resultsTransformer(
-    request: ProductRequest
-  ): Stitch[Transform[ProductRequest, Recommendation]] = Stitch.value(identityTransform)
+  ovewwide def wesuwtstwansfowmew(
+    wequest: pwoductwequest
+  ): stitch[twansfowm[pwoductwequest, mya wecommendation]] = s-stitch.vawue(identitytwansfowm)
 
-  override def enabled(request: ProductRequest): Stitch[Boolean] =
-    Stitch.value(request.params(EnableProduct))
+  o-ovewwide def enabwed(wequest: p-pwoductwequest): s-stitch[boowean] =
+    s-stitch.vawue(wequest.pawams(enabwepwoduct))
 
-  override def layout: Option[Layout] = {
-    productMixerProduct.map { product =>
-      val homeTimelineStrings = productScope.let(product) {
-        injector.instance[HomeTimelineStrings]
+  ovewwide def wayout: option[wayout] = {
+    pwoductmixewpwoduct.map { pwoduct =>
+      v-vaw hometimewinestwings = pwoductscope.wet(pwoduct) {
+        injectow.instance[hometimewinestwings]
       }
-      UserListLayout(
-        header = Some(HeaderConfig(TitleConfig(homeTimelineStrings.whoToFollowModuleTitle))),
-        userListOptions = UserListOptions(userBioEnabled = true, userBioTruncated = true, None),
-        socialProofs = Some(
-          Seq(
-            FollowedByUsersProof(
-              homeTimelineStrings.whoToFollowFollowedByManyUserSingleString,
-              homeTimelineStrings.whoToFollowFollowedByManyUserDoubleString,
-              homeTimelineStrings.whoToFollowFollowedByManyUserMultipleString
-            ),
-            GeoContextProof(homeTimelineStrings.whoToFollowPopularInCountryKey)
-          )),
-        footer = Some(
-          FooterConfig(
-            Some(ActionConfig(homeTimelineStrings.whoToFollowModuleFooter, "http://twitter.com"))))
+      usewwistwayout(
+        headew = s-some(headewconfig(titweconfig(hometimewinestwings.whotofowwowmoduwetitwe))), ʘwʘ
+        usewwistoptions = u-usewwistoptions(usewbioenabwed = t-twue, (˘ω˘) u-usewbiotwuncated = twue, (U ﹏ U) nyone),
+        s-sociawpwoofs = s-some(
+          s-seq(
+            f-fowwowedbyusewspwoof(
+              hometimewinestwings.whotofowwowfowwowedbymanyusewsingwestwing, ^•ﻌ•^
+              hometimewinestwings.whotofowwowfowwowedbymanyusewdoubwestwing, (˘ω˘)
+              hometimewinestwings.whotofowwowfowwowedbymanyusewmuwtipwestwing
+            ), :3
+            g-geocontextpwoof(hometimewinestwings.whotofowwowpopuwawincountwykey)
+          )), ^^;;
+        f-footew = s-some(
+          f-footewconfig(
+            s-some(actionconfig(hometimewinestwings.whotofowwowmoduwefootew, 🥺 "http://twittew.com"))))
       )
     }
   }
 
-  override def productMixerProduct: Option[request.Product] = Some(HTLProductMixer)
+  ovewwide def pwoductmixewpwoduct: option[wequest.pwoduct] = s-some(htwpwoductmixew)
 
-  private[home_timeline] def mkPromotedAccountsRequest(
-    req: ProductRequest
-  ): PromotedAccountsFlowRequest = {
-    PromotedAccountsFlowRequest(
-      req.recommendationRequest.clientContext,
-      req.params,
-      req.recommendationRequest.displayLocation,
-      None,
-      req.recommendationRequest.excludedIds.getOrElse(Nil)
+  pwivate[home_timewine] def mkpwomotedaccountswequest(
+    weq: pwoductwequest
+  ): pwomotedaccountsfwowwequest = {
+    p-pwomotedaccountsfwowwequest(
+      weq.wecommendationwequest.cwientcontext, (⑅˘꒳˘)
+      weq.pawams, nyaa~~
+      weq.wecommendationwequest.dispwaywocation, :3
+      nyone, ( ͡o ω ͡o )
+      w-weq.wecommendationwequest.excwudedids.getowewse(niw)
     )
   }
 
-  private[home_timeline] def getMaxResults(req: ProductRequest): Int = {
-    req.recommendationRequest.maxResults.getOrElse(
-      req.params(DefaultMaxResults)
+  p-pwivate[home_timewine] d-def getmaxwesuwts(weq: pwoductwequest): i-int = {
+    weq.wecommendationwequest.maxwesuwts.getowewse(
+      weq.pawams(defauwtmaxwesuwts)
     )
   }
 }

@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.modules
-import com.twitter.inject.TwitterModule
+package com.twittew.fowwow_wecommendations.moduwes
+impowt com.twittew.inject.twittewmoduwe
 
-object FlagsModule extends TwitterModule {
-  flag[Boolean](
-    name = "fetch_prod_promoted_accounts",
-    help = "Whether or not to fetch production promoted accounts (true / false)"
+o-object f-fwagsmoduwe extends t-twittewmoduwe {
+  f-fwag[boowean](
+    n-nyame = "fetch_pwod_pwomoted_accounts", mya
+    h-hewp = "whethew o-ow nyot to f-fetch pwoduction pwomoted accounts (twue / fawse)"
   )
-  flag[Boolean](
-    name = "interests_opt_out_prod_enabled",
-    help = "Whether to fetch intersts opt out data from the prod strato column or not"
+  fwag[boowean](
+    nyame = "intewests_opt_out_pwod_enabwed", 😳
+    h-hewp = "whethew to fetch intewsts opt o-out data fwom the pwod stwato c-cowumn ow nyot"
   )
-  flag[Boolean](
-    name = "log_results",
-    default = false,
-    help = "Whether to log results such that we use them for scoring or metrics"
+  fwag[boowean](
+    nyame = "wog_wesuwts", XD
+    defauwt = fawse, :3
+    h-hewp = "whethew to wog w-wesuwts such that w-we use them fow scowing ow metwics"
   )
 }

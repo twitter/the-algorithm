@@ -1,51 +1,51 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.entity
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twittew.simcwustews_v2.thwiftjava
+nyamespace py g-gen.twittew.simcwustews_v2.entity
+#@namespace s-scawa com.twittew.simcwustews_v2.thwiftscawa
+#@namespace s-stwato c-com.twittew.simcwustews_v2
 
-include "com/twitter/algebird_internal/algebird.thrift"
-
-/**
- * Penguin text entity. All fields are required as this is used as a part of a memcache key.
- **/
-struct PenguinKey {
-  1: required string textEntity
-}(hasPersonalData = 'false')
+i-incwude "com/twittew/awgebiwd_intewnaw/awgebiwd.thwift"
 
 /**
- * NER text entity. All fields are required as this is used as a part of a memcache key.
+ * p-penguin t-text entity. (⑅˘꒳˘) a-aww fiewds awe wequiwed as this is used as a pawt of a memcache key. /(^•ω•^)
  **/
-struct NerKey {
-  1: required string textEntity
-  2: required i32 wholeEntityType
-}(hasPersonalData = 'false')
+stwuct p-penguinkey {
+  1: wequiwed stwing textentity
+}(haspewsonawdata = 'fawse')
 
 /**
- * Semantic Core text entity. All fields are required as this is used as a part of a memcache key.
+ * n-nyew text entity. rawr x3 aww fiewds a-awe wequiwed as this is used as a pawt of a memcache key. (U ﹏ U)
  **/
-struct SemanticCoreKey {
-  1: required i64 entityId(personalDataType = 'SemanticcoreClassification')
-}(hasPersonalData = 'true')
+s-stwuct nyewkey {
+  1: wequiwed stwing t-textentity
+  2: w-wequiwed i32 whoweentitytype
+}(haspewsonawdata = 'fawse')
 
 /**
- * Represents an entity extracted from a tweet.
+ * semantic cowe text entity. (U ﹏ U) aww fiewds awe w-wequiwed as this is used as a pawt of a memcache key. (⑅˘꒳˘)
  **/
-union TweetTextEntity {
-  1: string hashtag
-  2: PenguinKey penguin
-  3: NerKey ner
-  4: SemanticCoreKey semanticCore
-}(hasPersonalData = 'true')
-
-struct SpaceId {
-  1: string id
-}(hasPersonalData = 'true')
+stwuct semanticcowekey {
+  1: w-wequiwed i64 entityid(pewsonawdatatype = 'semanticcowecwassification')
+}(haspewsonawdata = 'twue')
 
 /**
- * All possible entities that simclusters are associated with.
+ * w-wepwesents a-an entity extwacted f-fwom a tweet. òωó
  **/
-union SimClusterEntity {
-  1: i64 tweetId(personalDataType = 'TweetId')
-  2: TweetTextEntity tweetEntity
-  3: SpaceId spaceId
-}(hasPersonalData = 'true')
+u-union tweettextentity {
+  1: stwing hashtag
+  2: penguinkey p-penguin
+  3: nyewkey nyew
+  4: semanticcowekey s-semanticcowe
+}(haspewsonawdata = 'twue')
+
+stwuct spaceid {
+  1: stwing id
+}(haspewsonawdata = 'twue')
+
+/**
+ * aww possibwe entities that simcwustews a-awe associated with. ʘwʘ
+ **/
+u-union simcwustewentity {
+  1: i-i64 tweetid(pewsonawdatatype = 'tweetid')
+  2: tweettextentity tweetentity
+  3: s-spaceid spaceid
+}(haspewsonawdata = 'twue')

@@ -1,31 +1,31 @@
-package com.twitter.recosinjector.filters
+package com.twittew.wecosinjectow.fiwtews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.wecosinjectow.cwients.tweetypie
+i-impowt c-com.twittew.utiw.futuwe
 
-class TweetFilter(
-  tweetypie: Tweetypie
+c-cwass t-tweetfiwtew(
+  t-tweetypie: tweetypie
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val requests = stats.counter("requests")
-  private val filtered = stats.counter("filtered")
+  impwicit statsweceivew: statsweceivew) {
+  pwivate vaw s-stats = statsweceivew.scope(this.getcwass.getsimpwename)
+  pwivate vaw wequests = s-stats.countew("wequests")
+  pwivate vaw fiwtewed = s-stats.countew("fiwtewed")
 
   /**
-   * Query Tweetypie to see if we can fetch a tweet object successfully. TweetyPie applies a safety
-   * filter and will not return the tweet object if the filter does not pass.
+   * quewy tweetypie to see if we can fetch a-a tweet object successfuwwy. (U ﹏ U) t-tweetypie appwies a-a safety
+   * fiwtew and wiww nyot wetuwn the tweet object if the fiwtew does n-nyot pass. >_<
    */
-  def filterForTweetypieSafetyLevel(tweetId: Long): Future[Boolean] = {
-    requests.incr()
+  def fiwtewfowtweetypiesafetywevew(tweetid: wong): futuwe[boowean] = {
+    wequests.incw()
     tweetypie
-      .getTweet(tweetId)
+      .gettweet(tweetid)
       .map {
-        case Some(_) =>
-          true
-        case _ =>
-          filtered.incr()
-          false
+        c-case some(_) =>
+          twue
+        c-case _ =>
+          f-fiwtewed.incw()
+          fawse
       }
   }
 }

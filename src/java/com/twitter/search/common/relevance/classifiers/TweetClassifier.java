@@ -1,118 +1,118 @@
-package com.twitter.search.common.relevance.classifiers;
+package com.twittew.seawch.common.wewevance.cwassifiews;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+i-impowt com.twittew.seawch.common.wewevance.entities.twittewmessage;
 
 /**
- * Interface to perform feature classification for a single
- * @TwitterMessage object, or a group of them.
+ * i-intewface to p-pewfowm featuwe c-cwassification fow a-a singwe
+ * @twittewmessage object, (U ﹏ U) o-ow a gwoup o-of them. :3
  *
- * Classification includes two steps: feature extraction, and
- * quality evaluation. During feature extraction, any interesting
- * feature that is deemed useful for subsequent quality analysis
- * is extracted from the @TwitterMessage object. Quality evaluation
- * is then done by a group of @TweetEvaluator objects associated
- * with the classifier, by using the various features extracted in the
- * previous step.
+ * cwassification incwudes two steps: featuwe extwaction, ( ͡o ω ͡o ) and
+ * quawity e-evawuation. σωσ duwing featuwe extwaction, any i-intewesting
+ * featuwe that is d-deemed usefuw fow subsequent quawity anawysis
+ * is extwacted fwom t-the @twittewmessage object. >w< q-quawity evawuation
+ * i-is then done by a gwoup of @tweetevawuatow objects associated
+ * with the cwassifiew, 😳😳😳 by using t-the vawious featuwes extwacted in the
+ * pwevious step. OwO
  *
- * Feature extraction and quality evaluation results are stored in
- * @TweetFeatures field of the @TwitterMessage object, which is defined
- * in src/main/thrift/classifier.thrift.
+ * featuwe extwaction a-and quawity evawuation wesuwts a-awe stowed i-in
+ * @tweetfeatuwes f-fiewd of the @twittewmessage o-object, 😳 which is defined
+ * in swc/main/thwift/cwassifiew.thwift. 😳😳😳
  */
-public abstract class TweetClassifier {
+p-pubwic abstwact cwass tweetcwassifiew {
   /**
-   * A list of TweetQualityEvaluators which are invoked after
-   * feature extraction is done. If null, no quality evaluation
-   * is done.
+   * a wist o-of tweetquawityevawuatows which awe invoked aftew
+   * featuwe extwaction is done. (˘ω˘) if nyuww, nyo q-quawity evawuation
+   * is done. ʘwʘ
    */
-  protected Iterable<TweetEvaluator> qualityEvaluators = null;
+  p-pwotected i-itewabwe<tweetevawuatow> quawityevawuatows = n-nyuww;
 
   /**
-   * Passed in TwitterMessage is examined and any extractable
-   * features are saved in TweetFeatures field of TwitterMessage.
-   * Then TweetQualityEvaluators are applied to compute various
-   * quality values.
+   * passed in twittewmessage is examined and any e-extwactabwe
+   * f-featuwes awe saved in tweetfeatuwes f-fiewd of t-twittewmessage. ( ͡o ω ͡o )
+   * then tweetquawityevawuatows a-awe appwied to compute vawious
+   * q-quawity vawues. o.O
    *
-   * @param tweet TwitterMessage to perform classification on.
+   * @pawam tweet twittewmessage to pewfowm c-cwassification on. >w<
    */
-  public void classifyTweet(final TwitterMessage tweet) {
-    Preconditions.checkNotNull(tweet);
+  p-pubwic void cwassifytweet(finaw twittewmessage t-tweet) {
+    pweconditions.checknotnuww(tweet);
 
-    // extract features
-    extractFeatures(tweet);
+    // e-extwact featuwes
+    extwactfeatuwes(tweet);
 
-    // compute quality
-    evaluate(tweet);
+    // compute quawity
+    evawuate(tweet);
   }
 
   /**
-   * Classify a group of TwitterMessages and store features in their corresponding
-   * TweetFeatures fields.
+   * cwassify a gwoup of twittewmessages a-and stowe f-featuwes in theiw cowwesponding
+   * t-tweetfeatuwes f-fiewds. 😳
    *
-   * This default implementation just iterates through the map and classifies each
-   * individual tweet. Batching for better performance, if applicable, can be implemented by
-   * concrete subclasses.
+   * t-this defauwt impwementation just itewates thwough the map a-and cwassifies each
+   * individuaw tweet. 🥺 batching fow bettew pewfowmance, if appwicabwe, rawr x3 c-can be impwemented by
+   * c-concwete subcwasses. o.O
    *
-   * @param tweets TwitterMessages to perform classification on.
+   * @pawam t-tweets t-twittewmessages to pewfowm cwassification o-on. rawr
    */
-  public void classifyTweets(final Iterable<TwitterMessage> tweets) {
-    extractFeatures(tweets);
-    evaluate(tweets);
+  p-pubwic v-void cwassifytweets(finaw i-itewabwe<twittewmessage> tweets) {
+    extwactfeatuwes(tweets);
+    e-evawuate(tweets);
   }
 
   /**
-   * Use the specified list of TweetQualityEvaluators for this classifier.
+   * u-use the specified w-wist of tweetquawityevawuatows f-fow this cwassifiew. ʘwʘ
    *
-   * @param evaluators list of TweetQualityEvaluators to be used with this classifier.
+   * @pawam e-evawuatows wist of tweetquawityevawuatows to be used with this cwassifiew.
    */
-  protected void setQualityEvaluators(final Iterable<TweetEvaluator> qualityEvaluators) {
-    Preconditions.checkNotNull(qualityEvaluators);
-    this.qualityEvaluators = qualityEvaluators;
+  p-pwotected void setquawityevawuatows(finaw itewabwe<tweetevawuatow> quawityevawuatows) {
+    pweconditions.checknotnuww(quawityevawuatows);
+    this.quawityevawuatows = q-quawityevawuatows;
   }
 
 
   /**
-   * Extract interesting features from a single TwitterMessage for classification.
+   * extwact intewesting featuwes fwom a singwe t-twittewmessage f-fow cwassification. 😳😳😳
    *
-   * @param tweet TwitterMessage to extract interesting features for
+   * @pawam t-tweet twittewmessage to extwact i-intewesting featuwes fow
    */
-  protected abstract void extractFeatures(final TwitterMessage tweet);
+  p-pwotected a-abstwact void extwactfeatuwes(finaw twittewmessage tweet);
 
   /**
-   * Extract interesting features from a list of TwitterMessages for classification.
-   * @param tweets list of TwitterMessages to extract interesting features for
+   * extwact intewesting featuwes fwom a wist o-of twittewmessages fow cwassification. ^^;;
+   * @pawam t-tweets wist of twittewmessages t-to extwact intewesting f-featuwes fow
    */
-  protected void extractFeatures(final Iterable<TwitterMessage> tweets) {
-    for (TwitterMessage tweet: tweets) {
-      extractFeatures(tweet);
+  pwotected void extwactfeatuwes(finaw i-itewabwe<twittewmessage> t-tweets) {
+    fow (twittewmessage t-tweet: t-tweets) {
+      extwactfeatuwes(tweet);
     }
   }
 
   /**
-   * Given a TwitterMessage which already has its features extracted,
-   * perform quality evaluation.
+   * given a twittewmessage which awweady has its f-featuwes extwacted, o.O
+   * p-pewfowm q-quawity evawuation. (///ˬ///✿)
    *
-   * @param tweet TwitterMessage to perform quality evaluation for
+   * @pawam tweet twittewmessage t-to pewfowm q-quawity evawuation fow
    */
-  protected void evaluate(final TwitterMessage tweet) {
-    if (qualityEvaluators == null) {
-      return;
+  p-pwotected void evawuate(finaw twittewmessage tweet) {
+    if (quawityevawuatows == nyuww) {
+      w-wetuwn;
     }
-    for (TweetEvaluator evaluator : qualityEvaluators) {
-      evaluator.evaluate(tweet);
+    f-fow (tweetevawuatow evawuatow : quawityevawuatows) {
+      e-evawuatow.evawuate(tweet);
     }
   }
 
   /**
-   * Given a list of TwitterMessages which already have their features extracted,
-   * perform quality evaluation.
+   * g-given a wist of twittewmessages which awweady have theiw featuwes e-extwacted, σωσ
+   * pewfowm quawity evawuation. nyaa~~
    *
-   * @param tweets list of TwitterMessages to perform quality evaluation for
+   * @pawam tweets wist of twittewmessages t-to pewfowm quawity evawuation fow
    */
-  protected void evaluate(final Iterable<TwitterMessage> tweets) {
-    for (TwitterMessage tweet: tweets) {
-      evaluate(tweet);
+  pwotected v-void evawuate(finaw i-itewabwe<twittewmessage> tweets) {
+    fow (twittewmessage tweet: tweets) {
+      e-evawuate(tweet);
     }
   }
 }

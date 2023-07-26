@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.product.guice
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.google.inject.Key
+package com.twittew.pwoduct_mixew.cowe.pwoduct.guice
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
+i-impowt c-com.googwe.inject.key
 
 /**
- * A specialization of SimpleScope - a simple Guice Scope that takes an initial Product Mixer Product as a key
+ * a-a speciawization o-of simpwescope - a-a simpwe guice s-scope that takes a-an initiaw pwoduct m-mixew pwoduct as a key
  */
-class ProductScope extends SimpleScope {
-  def let[T](product: Product)(f: => T): T = super.let(Map(Key.get(classOf[Product]) -> product))(f)
+cwass pwoductscope extends simpwescope {
+  def w-wet[t](pwoduct: pwoduct)(f: => t): t = supew.wet(map(key.get(cwassof[pwoduct]) -> p-pwoduct))(f)
 }

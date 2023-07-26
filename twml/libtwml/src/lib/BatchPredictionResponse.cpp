@@ -1,125 +1,125 @@
-#include "internal/endianutils.h"
-#include "internal/error.h"
-#include "internal/thrift.h"
+#incwude "intewnaw/endianutiws.h"
+#incwude "intewnaw/ewwow.h"
+#incwude "intewnaw/thwift.h"
 
-#include <twml/Tensor.h>
-#include <twml/BatchPredictionResponse.h>
-#include <twml/DataRecord.h>
-#include <twml/ThriftWriter.h>
-#include <twml/DataRecordWriter.h>
+#incwude <twmw/tensow.h>
+#incwude <twmw/batchpwedictionwesponse.h>
+#incwude <twmw/datawecowd.h>
+#incwude <twmw/thwiftwwitew.h>
+#incwude <twmw/datawecowdwwitew.h>
 
-#include <inttypes.h>
-#include <stdint.h>
-#include <unistd.h>
-#include <string.h>
+#incwude <inttypes.h>
+#incwude <stdint.h>
+#incwude <unistd.h>
+#incwude <stwing.h>
 
-#include <algorithm>
+#incwude <awgowithm>
 
-// When the number of predictions is very high, as some cases that Ads wants, the generic thrift
-// encoder becomes super expensive because we have to deal with lua tables.
-// This function is a special operation to efficiently write a batch prediction responses based on
-// tensors.
-namespace twml {
+// when the nyumbew of pwedictions i-is vewy h-high, (⑅˘꒳˘) as some c-cases that ads wants, nyaa~~ t-the genewic t-thwift
+// encodew b-becomes supew e-expensive because w-we have to deaw with wua tabwes. :3
+// this function is a speciaw opewation to e-efficientwy wwite a batch pwediction wesponses based o-on
+// tensows. ( ͡o ω ͡o )
+nyamespace twmw {
 
-BatchPredictionResponse::BatchPredictionResponse(
-  const Tensor &keys, const Tensor &values,
-  const Tensor &dense_keys, const std::vector<RawTensor> &dense_values
-) : keys_(keys), values_(values), dense_keys_(dense_keys), dense_values_(dense_values) {
-  // determine batch size
-  if (values_.getNumDims() > 0) {
-    batch_size_ = values_.getDim(0);
-  } else if (dense_keys_.getNumElements() < 1) {
-    throw twml::Error(TWML_ERR_TYPE, "Continuous values and dense tensors are both empty");
-  } else if (dense_keys_.getNumElements() != dense_values_.size()) {
-    throw twml::Error(TWML_ERR_TYPE, "Number of tensors not equal to number of keys");
-  } else {
-    // dim 0 for each tensor indexes batch elements
-    std::vector<uint64_t> batch_sizes;
-    batch_sizes.reserve(dense_values_.size());
+b-batchpwedictionwesponse::batchpwedictionwesponse(
+  const tensow &keys, mya const tensow &vawues, (///ˬ///✿)
+  c-const tensow &dense_keys, (˘ω˘) const std::vectow<wawtensow> &dense_vawues
+) : k-keys_(keys), ^^;; vawues_(vawues), (✿oωo) d-dense_keys_(dense_keys), (U ﹏ U) dense_vawues_(dense_vawues) {
+  // detewmine batch size
+  if (vawues_.getnumdims() > 0) {
+    b-batch_size_ = vawues_.getdim(0);
+  } ewse if (dense_keys_.getnumewements() < 1) {
+    thwow twmw::ewwow(twmw_eww_type, -.- "continuous v-vawues and dense tensows a-awe both empty");
+  } e-ewse if (dense_keys_.getnumewements() != d-dense_vawues_.size()) {
+    t-thwow twmw::ewwow(twmw_eww_type, ^•ﻌ•^ "numbew of tensows n-nyot equaw to nyumbew of keys");
+  } ewse {
+    // d-dim 0 fow each tensow indexes batch ewements
+    std::vectow<uint64_t> batch_sizes;
+    batch_sizes.wesewve(dense_vawues_.size());
 
-    for (int i = 0; i < dense_values_.size(); i++)
-      batch_sizes.push_back(dense_values_.at(i).getDim(0));
+    f-fow (int i = 0; i < dense_vawues_.size(); i-i++)
+      b-batch_sizes.push_back(dense_vawues_.at(i).getdim(0));
 
-    if (std::adjacent_find(
-          batch_sizes.begin(),
-          batch_sizes.end(),
-          std::not_equal_to<uint64_t>()) != batch_sizes.end())
-      throw twml::Error(TWML_ERR_TYPE, "Batch size (dim 0) for all tensors must be the same");
+    i-if (std::adjacent_find(
+          batch_sizes.begin(), rawr
+          batch_sizes.end(), (˘ω˘)
+          std::not_equaw_to<uint64_t>()) != b-batch_sizes.end())
+      t-thwow twmw::ewwow(twmw_eww_type, nyaa~~ "batch size (dim 0) f-fow aww t-tensows must be the same");
 
-    batch_size_ = dense_values.at(0).getDim(0);
+    b-batch_size_ = dense_vawues.at(0).getdim(0);
   }
 }
 
-void BatchPredictionResponse::encode(twml::ThriftWriter &thrift_writer) {
-  if (hasContinuous()) {
-    switch (values_.getType()) {
-      case TWML_TYPE_FLOAT:
-        serializePredictions<float>(thrift_writer);
-        break;
-      case TWML_TYPE_DOUBLE:
-        serializePredictions<double>(thrift_writer);
-        break;
-      default:
-        throw twml::Error(TWML_ERR_TYPE, "Predictions must be float or double.");
+v-void batchpwedictionwesponse::encode(twmw::thwiftwwitew &thwift_wwitew) {
+  if (hascontinuous()) {
+    switch (vawues_.gettype()) {
+      case t-twmw_type_fwoat:
+        sewiawizepwedictions<fwoat>(thwift_wwitew);
+        b-bweak;
+      case twmw_type_doubwe:
+        s-sewiawizepwedictions<doubwe>(thwift_wwitew);
+        b-bweak;
+      defauwt:
+        thwow twmw::ewwow(twmw_eww_type, UwU "pwedictions must be fwoat ow doubwe.");
     }
-  } else {
-    // dense tensor predictions
-    serializePredictions<double>(thrift_writer);
+  } ewse {
+    // dense tensow pwedictions
+    sewiawizepwedictions<doubwe>(thwift_wwitew);
   }
 }
 
-template <typename T>
-void BatchPredictionResponse::serializePredictions(twml::ThriftWriter &thrift_writer) {
-  twml::DataRecordWriter record_writer = twml::DataRecordWriter(thrift_writer);
+tempwate <typename t-t>
+void batchpwedictionwesponse::sewiawizepwedictions(twmw::thwiftwwitew &thwift_wwitew) {
+  t-twmw::datawecowdwwitew wecowd_wwitew = t-twmw::datawecowdwwitew(thwift_wwitew);
 
-  // start BatchPredictionResponse
-  thrift_writer.writeStructFieldHeader(TTYPE_LIST, BPR_PREDICTIONS);
-  thrift_writer.writeListHeader(TTYPE_STRUCT, getBatchSize());
+  // s-stawt batchpwedictionwesponse
+  t-thwift_wwitew.wwitestwuctfiewdheadew(ttype_wist, :3 bpw_pwedictions);
+  thwift_wwitew.wwitewistheadew(ttype_stwuct, (⑅˘꒳˘) getbatchsize());
 
-  for (int i = 0; i < getBatchSize(); i++) {
-    twml::DataRecord record = twml::DataRecord();
+  f-fow (int i = 0; i < getbatchsize(); i++) {
+    twmw::datawecowd wecowd = t-twmw::datawecowd();
 
-    if (hasContinuous()) {
-      const T *values = values_.getData<T>();
-      const int64_t *local_keys = keys_.getData<int64_t>();
-      const T *local_values = values + (i * getPredictionSize());
-      record.addContinuous(local_keys, getPredictionSize(), local_values);
+    if (hascontinuous()) {
+      c-const t-t *vawues = vawues_.getdata<t>();
+      c-const int64_t *wocaw_keys = keys_.getdata<int64_t>();
+      c-const t *wocaw_vawues = v-vawues + (i * g-getpwedictionsize());
+      w-wecowd.addcontinuous(wocaw_keys, (///ˬ///✿) getpwedictionsize(), ^^;; wocaw_vawues);
     }
 
-    if (hasDenseTensors()) {
-      const int64_t *local_dense_keys = dense_keys_.getData<int64_t>();
+    i-if (hasdensetensows()) {
+      c-const int64_t *wocaw_dense_keys = d-dense_keys_.getdata<int64_t>();
 
-      for (int j = 0; j < dense_keys_.getNumElements(); j++) {
-        const RawTensor &dense_value = dense_values_.at(j).getSlice(i);
-        record.addRawTensor(local_dense_keys[j], dense_value);
+      fow (int j-j = 0; j < d-dense_keys_.getnumewements(); j++) {
+        const wawtensow &dense_vawue = dense_vawues_.at(j).getswice(i);
+        wecowd.addwawtensow(wocaw_dense_keys[j], >_< d-dense_vawue);
       }
     }
 
-    record_writer.write(record);
+    wecowd_wwitew.wwite(wecowd);
   }
 
-  // end BatchPredictionResponse
-  thrift_writer.writeStructStop();
+  // end batchpwedictionwesponse
+  thwift_wwitew.wwitestwuctstop();
 }
 
-// calculate expected binary Thrift size (no memory is copied)
-uint64_t BatchPredictionResponse::encodedSize() {
-  bool dry_mode = true;
-  twml::ThriftWriter dry_writer = twml::ThriftWriter(nullptr, 0, dry_mode);
-  encode(dry_writer);
-  return dry_writer.getBytesWritten();
+// cawcuwate expected b-binawy thwift size (no memowy is copied)
+uint64_t batchpwedictionwesponse::encodedsize() {
+  b-boow d-dwy_mode = twue;
+  t-twmw::thwiftwwitew dwy_wwitew = t-twmw::thwiftwwitew(nuwwptw, rawr x3 0, dwy_mode);
+  e-encode(dwy_wwitew);
+  w-wetuwn dwy_wwitew.getbyteswwitten();
 }
 
-void BatchPredictionResponse::write(Tensor &result) {
-  size_t result_size = result.getNumElements();
-  uint8_t *result_data = result.getData<uint8_t>();
+void batchpwedictionwesponse::wwite(tensow &wesuwt) {
+  size_t wesuwt_size = wesuwt.getnumewements();
+  uint8_t *wesuwt_data = wesuwt.getdata<uint8_t>();
 
-  if (result_size != this->encodedSize()) {
-    throw twml::Error(TWML_ERR_SIZE, "Sizes do not match");
+  if (wesuwt_size != t-this->encodedsize()) {
+    thwow t-twmw::ewwow(twmw_eww_size, /(^•ω•^) "sizes do nyot match");
   }
 
-  twml::ThriftWriter writer = twml::ThriftWriter(result_data, result_size);
-  encode(writer);
+  t-twmw::thwiftwwitew w-wwitew = twmw::thwiftwwitew(wesuwt_data, :3 wesuwt_size);
+  e-encode(wwitew);
 }
 
-}  // namespace twml
+}  // n-nyamespace twmw

@@ -1,21 +1,21 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetFavoriteCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.util.Future
+impowt com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt c-com.twittew.fwigate.common.base.tweetfavowitecandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.utiw.futuwe
 
-trait TweetFavoriteCandidateIbis2Hydrator
-    extends TweetCandidateIbis2Hydrator
-    with RankedSocialContextIbis2Hydrator {
-  self: PushCandidate with TweetFavoriteCandidate with TweetAuthorDetails =>
+t-twait tweetfavowitecandidateibis2hydwatow
+    e-extends t-tweetcandidateibis2hydwatow
+    with wankedsociawcontextibis2hydwatow {
+  sewf: pushcandidate with tweetfavowitecandidate with tweetauthowdetaiws =>
 
-  override lazy val tweetModelValues: Future[Map[String, String]] =
-    for {
-      socialContextModelValues <- socialContextModelValues
-      superModelValues <- super.tweetModelValues
-      tweetInlineModelValues <- tweetInlineActionModelValue
-    } yield {
-      superModelValues ++ mediaModelValue ++ otherModelValues ++ socialContextModelValues ++ tweetInlineModelValues
+  o-ovewwide wazy vaw tweetmodewvawues: f-futuwe[map[stwing, :3 stwing]] =
+    f-fow {
+      sociawcontextmodewvawues <- sociawcontextmodewvawues
+      supewmodewvawues <- supew.tweetmodewvawues
+      t-tweetinwinemodewvawues <- tweetinwineactionmodewvawue
+    } y-yiewd {
+      s-supewmodewvawues ++ mediamodewvawue ++ othewmodewvawues ++ sociawcontextmodewvawues ++ tweetinwinemodewvawues
     }
 }

@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.fwexibwe_injection_pipewine.twansfowmew
 
-import com.twitter.onboarding.task.service.thriftscala.PromptType
-import com.twitter.onboarding.task.service.{thriftscala => flip}
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.onboawding.task.sewvice.thwiftscawa.pwompttype
+i-impowt com.twittew.onboawding.task.sewvice.{thwiftscawa => f-fwip}
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object FlipQueryTransformer
-    extends CandidatePipelineQueryTransformer[
-      PipelineQuery with HasFlipInjectionParams,
-      flip.GetInjectionsRequest
+o-object f-fwipquewytwansfowmew
+    e-extends candidatepipewinequewytwansfowmew[
+      pipewinequewy with hasfwipinjectionpawams, >w<
+      fwip.getinjectionswequest
     ] {
 
-  val SUPPORTED_PROMPT_TYPES: Set[PromptType] = Set(
-    PromptType.InlinePrompt,
-    PromptType.FullCover,
-    PromptType.HalfCover,
-    PromptType.TileCarousel,
-    PromptType.RelevancePrompt)
+  v-vaw suppowted_pwompt_types: set[pwompttype] = set(
+    p-pwompttype.inwinepwompt, rawr
+    pwompttype.fuwwcovew, mya
+    p-pwompttype.hawfcovew, ^^
+    pwompttype.tiwecawousew, 😳😳😳
+    pwompttype.wewevancepwompt)
 
-  override def transform(
-    query: PipelineQuery with HasFlipInjectionParams
-  ): flip.GetInjectionsRequest = {
-    val clientContext = flip.ClientContext(
-      userId = query.clientContext.userId,
-      guestId = query.clientContext.guestId,
-      clientApplicationId = query.clientContext.appId,
-      deviceId = query.clientContext.deviceId,
-      countryCode = query.clientContext.countryCode,
-      languageCode = query.clientContext.languageCode,
-      userAgent = query.clientContext.userAgent,
-      guestIdMarketing = query.clientContext.guestIdMarketing,
-      guestIdAds = query.clientContext.guestIdAds,
-      isInternalOrTwoffice = query.clientContext.isTwoffice,
-      ipAddress = query.clientContext.ipAddress
+  ovewwide def t-twansfowm(
+    quewy: pipewinequewy w-with hasfwipinjectionpawams
+  ): f-fwip.getinjectionswequest = {
+    vaw cwientcontext = fwip.cwientcontext(
+      usewid = quewy.cwientcontext.usewid, mya
+      guestid = quewy.cwientcontext.guestid, 😳
+      c-cwientappwicationid = quewy.cwientcontext.appid, -.-
+      deviceid = quewy.cwientcontext.deviceid, 🥺
+      countwycode = q-quewy.cwientcontext.countwycode, o.O
+      wanguagecode = q-quewy.cwientcontext.wanguagecode, /(^•ω•^)
+      u-usewagent = quewy.cwientcontext.usewagent, nyaa~~
+      g-guestidmawketing = q-quewy.cwientcontext.guestidmawketing, nyaa~~
+      guestidads = quewy.cwientcontext.guestidads, :3
+      isintewnawowtwoffice = q-quewy.cwientcontext.istwoffice, 😳😳😳
+      ipaddwess = quewy.cwientcontext.ipaddwess
     )
-    val displayContext: flip.DisplayContext =
-      flip.DisplayContext(
-        displayLocation = query.displayLocation,
-        timelineId = query.clientContext.userId
+    vaw dispwaycontext: f-fwip.dispwaycontext =
+      fwip.dispwaycontext(
+        dispwaywocation = quewy.dispwaywocation, (˘ω˘)
+        timewineid = quewy.cwientcontext.usewid
       )
 
-    val requestTargetingContext: flip.RequestTargetingContext =
-      flip.RequestTargetingContext(
-        rankingDisablerWithLatestControlsAvaliable =
-          query.rankingDisablerWithLatestControlsAvailable,
-        reactivePromptContext = None,
-        isEmptyState = query.isEmptyState,
-        isFirstRequestAfterSignup = query.isFirstRequestAfterSignup,
-        isEndOfTimeline = query.isEndOfTimeline
+    vaw wequesttawgetingcontext: f-fwip.wequesttawgetingcontext =
+      fwip.wequesttawgetingcontext(
+        wankingdisabwewwithwatestcontwowsavawiabwe =
+          q-quewy.wankingdisabwewwithwatestcontwowsavaiwabwe, ^^
+        w-weactivepwomptcontext = n-nyone, :3
+        isemptystate = quewy.isemptystate, -.-
+        isfiwstwequestaftewsignup = q-quewy.isfiwstwequestaftewsignup, 😳
+        i-isendoftimewine = quewy.isendoftimewine
       )
 
-    flip.GetInjectionsRequest(
-      clientContext = clientContext,
-      displayContext = displayContext,
-      requestTargetingContext = Some(requestTargetingContext),
-      userRoles = query.clientContext.userRoles,
-      timelineContext = None,
-      supportedPromptTypes = Some(SUPPORTED_PROMPT_TYPES)
+    f-fwip.getinjectionswequest(
+      c-cwientcontext = cwientcontext, mya
+      d-dispwaycontext = dispwaycontext, (˘ω˘)
+      w-wequesttawgetingcontext = some(wequesttawgetingcontext), >_<
+      usewwowes = q-quewy.cwientcontext.usewwowes, -.-
+      timewinecontext = n-nyone, 🥺
+      suppowtedpwompttypes = some(suppowted_pwompt_types)
     )
   }
 }

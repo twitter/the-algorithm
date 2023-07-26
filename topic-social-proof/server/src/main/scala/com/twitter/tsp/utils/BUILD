@@ -1,14 +1,14 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], (ꈍᴗꈍ)
     tags = [
-        "bazel-compatible",
+        "bazew-compatibwe", ^•ﻌ•^
     ],
-    dependencies = [
-        "3rdparty/jvm/org/lz4:lz4-java",
-        "content-recommender/thrift/src/main/thrift:thrift-scala",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store/health",
-        "stitch/stitch-storehaus",
-        "topic-social-proof/server/src/main/thrift:thrift-scala",
-    ],
+    d-dependencies = [
+        "3wdpawty/jvm/owg/wz4:wz4-java", OwO
+        "content-wecommendew/thwift/swc/main/thwift:thwift-scawa",
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/stowe", 🥺
+        "fwigate/fwigate-common/swc/main/scawa/com/twittew/fwigate/common/stowe/heawth", òωó
+        "stitch/stitch-stowehaus", o.O
+        "topic-sociaw-pwoof/sewvew/swc/main/thwift:thwift-scawa",
+    ], (U ᵕ U❁)
 )

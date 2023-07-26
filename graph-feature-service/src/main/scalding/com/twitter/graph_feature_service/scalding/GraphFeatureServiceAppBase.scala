@@ -1,85 +1,85 @@
-package com.twitter.graph_feature_service.scalding
+package com.twittew.gwaph_featuwe_sewvice.scawding
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
-  BatchDescription,
-  BatchFirstTime,
-  BatchIncrement,
-  TwitterScheduledExecutionApp
+impowt com.twittew.scawding._
+i-impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+i-impowt c-com.twittew.scawding_intewnaw.job.anawytics_batch.{
+  a-anawyticsbatchexecution, >w<
+  a-anawyticsbatchexecutionawgs, nyaa~~
+  b-batchdescwiption, (✿oωo)
+  b-batchfiwsttime, ʘwʘ
+  b-batchincwement, (ˆ ﻌ ˆ)♡
+  twittewscheduwedexecutionapp
 }
-import java.util.TimeZone
+impowt java.utiw.timezone
 
 /**
- * Each job only needs to implement this runOnDateRange() function. It makes it easier for testing.
+ * each j-job onwy nyeeds to impwement this wunondatewange() f-function. 😳😳😳 it makes it easiew f-fow testing. :3
  */
-trait GraphFeatureServiceBaseJob {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+twait gwaphfeatuwesewvicebasejob {
+  impwicit vaw timezone: t-timezone = dateops.utc
+  impwicit v-vaw datepawsew: d-datepawsew = datepawsew.defauwt
 
-  def runOnDateRange(
-    enableValueGraphs: Option[Boolean] = None,
-    enableKeyGraphs: Option[Boolean] = None
+  def wunondatewange(
+    enabwevawuegwaphs: option[boowean] = nyone, OwO
+    enabwekeygwaphs: o-option[boowean] = nyone
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+    impwicit datewange: datewange, (U ﹏ U)
+    timezone: timezone, >w<
+    u-uniqueid: uniqueid
+  ): e-execution[unit]
 
   /**
-   * Print customized counters in the log
+   * p-pwint c-customized countews i-in the wog
    */
-  def printerCounters[T](execution: Execution[T]): Execution[Unit] = {
-    execution.getCounters
-      .flatMap {
-        case (_, counters) =>
-          counters.toMap.toSeq
-            .sortBy(e => (e._1.group, e._1.counter))
-            .foreach {
-              case (statKey, value) =>
-                println(s"${statKey.group}\t${statKey.counter}\t$value")
+  def pwintewcountews[t](execution: execution[t]): e-execution[unit] = {
+    execution.getcountews
+      .fwatmap {
+        case (_, (U ﹏ U) countews) =>
+          c-countews.tomap.toseq
+            .sowtby(e => (e._1.gwoup, 😳 e._1.countew))
+            .foweach {
+              case (statkey, (ˆ ﻌ ˆ)♡ vawue) =>
+                pwintwn(s"${statkey.gwoup}\t${statkey.countew}\t$vawue")
             }
-          Execution.unit
+          execution.unit
       }
   }
 }
 
 /**
- * Trait that wraps things about adhoc jobs.
+ * t-twait that wwaps things about adhoc j-jobs. 😳😳😳
  */
-trait GraphFeatureServiceAdhocBaseApp extends TwitterExecutionApp with GraphFeatureServiceBaseJob {
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
-      implicit val dateRange: DateRange = DateRange.parse(args.list("date"))(timeZone, dateParser)
-      printerCounters(runOnDateRange())
+twait g-gwaphfeatuwesewviceadhocbaseapp e-extends twittewexecutionapp with gwaphfeatuwesewvicebasejob {
+  ovewwide def job: execution[unit] = e-execution.withid { i-impwicit uniqueid =>
+    e-execution.getawgs.fwatmap { a-awgs: awgs =>
+      impwicit vaw d-datewange: datewange = datewange.pawse(awgs.wist("date"))(timezone, (U ﹏ U) d-datepawsew)
+      pwintewcountews(wunondatewange())
     }
   }
 }
 
 /**
- * Trait that wraps things about scheduled jobs.
+ * twait t-that wwaps things about scheduwed j-jobs.
  *
- * A new daily app only needs to declare the starting date.
+ * a nyew daiwy app o-onwy nyeeds to d-decwawe the stawting date. (///ˬ///✿)
  */
-trait GraphFeatureServiceScheduledBaseApp
-    extends TwitterScheduledExecutionApp
-    with GraphFeatureServiceBaseJob {
+twait gwaphfeatuwesewvicescheduwedbaseapp
+    extends twittewscheduwedexecutionapp
+    with gwaphfeatuwesewvicebasejob {
 
-  def firstTime: RichDate // for example: RichDate("2018-02-21")
+  def fiwsttime: wichdate // f-fow exampwe: w-wichdate("2018-02-21")
 
-  def batchIncrement: Duration = Days(1)
+  def batchincwement: d-duwation = days(1)
 
-  override def scheduledJob: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    val analyticsArgs = AnalyticsBatchExecutionArgs(
-      batchDesc = BatchDescription(getClass.getName),
-      firstTime = BatchFirstTime(firstTime),
-      batchIncrement = BatchIncrement(batchIncrement)
+  o-ovewwide d-def scheduwedjob: execution[unit] = execution.withid { impwicit u-uniqueid =>
+    vaw anawyticsawgs = anawyticsbatchexecutionawgs(
+      batchdesc = batchdescwiption(getcwass.getname), 😳
+      fiwsttime = b-batchfiwsttime(fiwsttime), 😳
+      batchincwement = b-batchincwement(batchincwement)
     )
 
-    AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
-      printerCounters(runOnDateRange())
+    a-anawyticsbatchexecution(anawyticsawgs) { i-impwicit datewange =>
+      pwintewcountews(wunondatewange())
     }
   }
 }

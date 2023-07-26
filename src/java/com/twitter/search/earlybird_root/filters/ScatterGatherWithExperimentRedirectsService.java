@@ -1,59 +1,59 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.Map;
+impowt java.utiw.map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.ScatterGatherService;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ExperimentCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt com.twittew.seawch.common.woot.scattewgathewsewvice;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.expewimentcwustew;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.utiw.futuwe;
 
-public class ScatterGatherWithExperimentRedirectsService
-    extends Service<EarlybirdRequestContext, EarlybirdResponse> {
-  private final Service<EarlybirdRequestContext, EarlybirdResponse>
-      controlScatterGatherService;
+pubwic c-cwass scattewgathewwithexpewimentwediwectssewvice
+    extends sewvice<eawwybiwdwequestcontext, (U ﹏ U) e-eawwybiwdwesponse> {
+  pwivate f-finaw sewvice<eawwybiwdwequestcontext, (⑅˘꒳˘) eawwybiwdwesponse>
+      contwowscattewgathewsewvice;
 
-  private final Map<ExperimentCluster,
-      ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse>>
-      experimentScatterGatherServices;
+  pwivate finaw map<expewimentcwustew, òωó
+      s-scattewgathewsewvice<eawwybiwdwequestcontext, ʘwʘ eawwybiwdwesponse>>
+      e-expewimentscattewgathewsewvices;
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ScatterGatherWithExperimentRedirectsService.class);
+  p-pwivate static finaw woggew wog =
+      woggewfactowy.getwoggew(scattewgathewwithexpewimentwediwectssewvice.cwass);
 
-  public ScatterGatherWithExperimentRedirectsService(
-      Service<EarlybirdRequestContext, EarlybirdResponse> controlScatterGatherService,
-      Map<ExperimentCluster,
-          ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse>>
-          experimentScatterGatherServices
+  pubwic scattewgathewwithexpewimentwediwectssewvice(
+      s-sewvice<eawwybiwdwequestcontext, /(^•ω•^) eawwybiwdwesponse> contwowscattewgathewsewvice, ʘwʘ
+      map<expewimentcwustew, σωσ
+          scattewgathewsewvice<eawwybiwdwequestcontext, OwO eawwybiwdwesponse>>
+          e-expewimentscattewgathewsewvices
   ) {
-    this.controlScatterGatherService = controlScatterGatherService;
-    this.experimentScatterGatherServices = experimentScatterGatherServices;
+    this.contwowscattewgathewsewvice = c-contwowscattewgathewsewvice;
+    t-this.expewimentscattewgathewsewvices = e-expewimentscattewgathewsewvices;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequestContext request) {
-    if (request.getRequest().isSetExperimentClusterToUse()) {
-      ExperimentCluster cluster = request.getRequest().getExperimentClusterToUse();
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> appwy(eawwybiwdwequestcontext wequest) {
+    i-if (wequest.getwequest().issetexpewimentcwustewtouse()) {
+      expewimentcwustew cwustew = w-wequest.getwequest().getexpewimentcwustewtouse();
 
-      if (!experimentScatterGatherServices.containsKey(cluster)) {
-        String error = String.format(
-            "Received invalid experiment cluster: %s", cluster.name());
+      if (!expewimentscattewgathewsewvices.containskey(cwustew)) {
+        stwing ewwow = stwing.fowmat(
+            "weceived invawid expewiment cwustew: %s", 😳😳😳 c-cwustew.name());
 
-        LOG.error("{} Request: {}", error, request.getRequest());
+        wog.ewwow("{} w-wequest: {}", 😳😳😳 e-ewwow, o.O w-wequest.getwequest());
 
-        return Future.value(new EarlybirdResponse()
-            .setResponseCode(EarlybirdResponseCode.CLIENT_ERROR)
-            .setDebugString(error));
+        wetuwn futuwe.vawue(new eawwybiwdwesponse()
+            .setwesponsecode(eawwybiwdwesponsecode.cwient_ewwow)
+            .setdebugstwing(ewwow));
       }
 
-      return experimentScatterGatherServices.get(cluster).apply(request);
+      wetuwn expewimentscattewgathewsewvices.get(cwustew).appwy(wequest);
     }
 
-    return controlScatterGatherService.apply(request);
+    w-wetuwn contwowscattewgathewsewvice.appwy(wequest);
   }
 }

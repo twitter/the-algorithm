@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird_root.validators;
+package com.twittew.seawch.eawwybiwd_woot.vawidatows;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.utiw.futuwe;
 
-/** A no-op ServiceResponseValidator. */
-public class PassThroughResponseValidator implements ServiceResponseValidator<EarlybirdResponse> {
-  @Override
-  public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
-    return Future.value(response);
+/** a-a nyo-op s-sewvicewesponsevawidatow. rawr x3 */
+pubwic c-cwass passthwoughwesponsevawidatow i-impwements s-sewvicewesponsevawidatow<eawwybiwdwesponse> {
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> v-vawidate(eawwybiwdwesponse wesponse) {
+    wetuwn futuwe.vawue(wesponse);
   }
 }

@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageHeader
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageHeader
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pages.wendew.{thwiftscawa => u-uwp}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.pageheadew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.topicpageheadew
+i-impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class PageHeaderMarshaller @Inject() (
-  topicPageHeaderMarshaller: TopicPageHeaderMarshaller) {
+@singweton
+cwass pageheadewmawshawwew @inject() (
+  topicpageheadewmawshawwew: topicpageheadewmawshawwew) {
 
-  def apply(pageHeader: PageHeader): urp.PageHeader = pageHeader match {
-    case pageHeader: TopicPageHeader =>
-      urp.PageHeader.TopicPageHeader(topicPageHeaderMarshaller(pageHeader))
+  def appwy(pageheadew: p-pageheadew): uwp.pageheadew = pageheadew m-match {
+    case pageheadew: t-topicpageheadew =>
+      uwp.pageheadew.topicpageheadew(topicpageheadewmawshawwew(pageheadew))
   }
 }

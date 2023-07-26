@@ -1,23 +1,23 @@
-create_thrift_libraries(
-    base_name = "simclusters_v2-thrift",
-    sources = ["*.thrift"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "src/thrift/com/twitter/algebird_internal",
+cweate_thwift_wibwawies(
+    base_name = "simcwustews_v2-thwift", (U ᵕ U❁)
+    souwces = ["*.thwift"], (⑅˘꒳˘)
+    p-pwatfowm = "java8", ( ͡o ω ͡o )
+    t-tags = ["bazew-compatibwe"], UwU
+    d-dependency_woots = [
+        "swc/thwift/com/twittew/awgebiwd_intewnaw", rawr x3
     ],
-    export_roots = [
-        "src/thrift/com/twitter/algebird_internal:algebird_internal",
-    ],
-    generate_languages = [
-        "go",
-        "java",
-        "lua",
+    e-expowt_woots = [
+        "swc/thwift/com/twittew/awgebiwd_intewnaw:awgebiwd_intewnaw", rawr
+    ], σωσ
+    g-genewate_wanguages = [
+        "go", σωσ
+        "java", >_<
+        "wua", :3
         "python",
-        "ruby",
-        "scala",
-        "strato",
+        "wuby",
+        "scawa", (U ﹏ U)
+        "stwato", -.-
     ],
-    provides_java_name = "simclusters_v2-thrift-java",
-    provides_scala_name = "simclusters_v2-thrift-scala",
+    p-pwovides_java_name = "simcwustews_v2-thwift-java", (ˆ ﻌ ˆ)♡
+    p-pwovides_scawa_name = "simcwustews_v2-thwift-scawa", (⑅˘꒳˘)
 )

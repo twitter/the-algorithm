@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait BaseClientEventDetailsBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+twait b-basecwienteventdetaiwsbuiwdew[-quewy <: p-pipewinequewy, (U ﹏ U) -candidate <: u-univewsawnoun[any]] {
 
   /**
-   * @return a [[ClientEventDetails]] for the provided [[Candidate]]
-   * @see [[ClientEventDetails]]
+   * @wetuwn a-a [[cwienteventdetaiws]] fow the pwovided [[candidate]]
+   * @see [[cwienteventdetaiws]]
    */
-  def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails]
+  def appwy(
+    quewy: quewy, -.-
+    c-candidate: candidate, (ˆ ﻌ ˆ)♡
+    candidatefeatuwes: f-featuwemap
+  ): option[cwienteventdetaiws]
 }

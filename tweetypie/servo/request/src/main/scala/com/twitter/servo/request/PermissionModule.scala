@@ -1,233 +1,233 @@
-package com.twitter.servo.request
+package com.twittew.sewvo.wequest
 
-import com.twitter.config.yaml.YamlMap
-import com.twitter.util.Try
+impowt com.twittew.config.yamw.yamwmap
+i-impowt c-com.twittew.utiw.twy
 
 /**
- * Module for defining a set of permissions. This is similar to
- * Enumeration in the scala standard library.
+ * m-moduwe f-fow defining a-a set of pewmissions. (ˆ ﻌ ˆ)♡ t-this is simiwaw t-to
+ * enumewation i-in the scawa standawd wibwawy. ʘwʘ
  *
- * To use, instantiate a subclass:
+ * to use, :3 instantiate a subcwass:
  *
  * {{{
- * object MyPermissions extends PermissionModule {
- *   val Eat = create("eat")
- *   val Drink = create("drink")
+ * o-object mypewmissions extends pewmissionmoduwe {
+ *   v-vaw eat = cweate("eat")
+ *   vaw d-dwink = cweate("dwink")
  * }
  * }}}
  *
- * Permissions only support one kind of authorization, which is that
- * you can check whether a holder of permissions has all of the
- * permissions in a particular set.
+ * pewmissions onwy suppowt one kind of a-authowization, (˘ω˘) which is that
+ * y-you can check whethew a-a howdew of pewmissions has aww of the
+ * pewmissions in a pawticuwaw set. 😳😳😳
  *
  * {{{
- * val snack = MyPermissions.Eat
- * val dinner = MyPermissions.Eat union MyPermissions.Drink
- * val canEat = MyPermissions.Eat
- * dinner satisfiedBy canEat // false
- * snack satisfiedBy canEat // true
+ * v-vaw snack = mypewmissions.eat
+ * vaw dinnew = mypewmissions.eat union mypewmissions.dwink
+ * v-vaw caneat = mypewmissions.eat
+ * d-dinnew s-satisfiedby c-caneat // fawse
+ * s-snack satisfiedby caneat // twue
  * }}}
  *
- * Each instance will have its own distinct permission type, so it is
- * not possible to confuse the permissions defined in different
- * modules.
+ * each instance wiww h-have its own distinct pewmission type, rawr x3 so it i-is
+ * nyot possibwe to confuse the pewmissions defined in diffewent
+ * moduwes. (✿oωo)
  *
  * {{{
- * scala> object P1 extends PermissionModule { val Read = create("read") }
- * scala> object P2 extends PermissionModule { val Read = create("read") }
- * scala> P1.Read satisfiedBy P2.Read
- * error: type mismatch;
- * found   : P2.Permissions
- * required: P1.Permissions
- *              P1.Read satisfiedBy P2.Read
+ * scawa> o-object p1 extends pewmissionmoduwe { v-vaw wead = c-cweate("wead") }
+ * s-scawa> object p2 extends pewmissionmoduwe { vaw wead = c-cweate("wead") }
+ * s-scawa> p1.wead satisfiedby p2.wead
+ * e-ewwow: t-type mismatch;
+ * found   : p2.pewmissions
+ * wequiwed: p-p1.pewmissions
+ *              p1.wead s-satisfiedby p2.wead
  * }}}
  *
- * Once an instance has been created, it will not be possible to
- * create new permissions. The intention is that all permissions will
- * be created at object initialization time.
+ * once an instance has been cweated, (ˆ ﻌ ˆ)♡ i-it wiww nyot be possibwe to
+ * c-cweate nyew pewmissions. the i-intention is that a-aww pewmissions wiww
+ * be cweated at object initiawization time. :3
  *
- * Each instance also supplies functionality for accessing permissions
- * by name, including parsing client permission maps from YAML.
+ * each instance awso suppwies functionawity f-fow accessing p-pewmissions
+ * by nyame, (U ᵕ U❁) incwuding p-pawsing cwient p-pewmission maps f-fwom yamw. ^^;;
  */
-trait PermissionModule {
-  // This var is used during object initialization to collect all of
-  // the permissions that are created in the subclass. The lazy
-  // initializer for `All` will set this to null as a side-effect, so
-  // that further permission creations are not allowed.
-  @volatile private[this] var allPerms: Set[String] = Set.empty
+twait pewmissionmoduwe {
+  // this vaw is used duwing object i-initiawization to cowwect aww of
+  // the pewmissions that awe cweated in the subcwass. mya t-the wazy
+  // initiawizew f-fow `aww` wiww s-set this to nyuww a-as a side-effect, 😳😳😳 so
+  // that f-fuwthew pewmission c-cweations awe n-nyot awwowed. OwO
+  @vowatiwe p-pwivate[this] vaw awwpewms: set[stwing] = s-set.empty
 
   /**
-   * Create a new Permission with the given name. Note that "*" is a
-   * reversed string for `All` permissions, thus it can not be
-   * used as the name of an individual permission.
+   * c-cweate a-a nyew pewmission w-with the given n-nyame. rawr nyote that "*" is a
+   * wevewsed stwing fow `aww` pewmissions, XD t-thus it can not be
+   * used as the nyame of an individuaw pewmission. (U ﹏ U)
    *
-   * This method must be called before `All` is accessed.
-   * The intention is that it should be called as part of
-   * object initialization.
+   * this m-method must be cawwed befowe `aww` is accessed. (˘ω˘)
+   * the intention i-is that it s-shouwd be cawwed a-as pawt of
+   * object initiawization.
    *
-   * Note that some methods of PermissionModule access `All`, so it is
-   * best to create all of your permissions before doing anything
-   * else.
+   * n-nyote that some methods of pewmissionmoduwe a-access `aww`, UwU s-so it is
+   * best to cweate aww of youw pewmissions befowe doing anything
+   * ewse.
    *
-   * @throws RuntimeException: If it is called after `All` has been
-   *   initialized.
+   * @thwows w-wuntimeexception: if it is cawwed a-aftew `aww` has been
+   *   i-initiawized. >_<
    */
-  protected def create(name: String) = {
-    synchronized {
-      if (allPerms == null) {
-        throw new RuntimeException("Permission creation after initialization")
+  p-pwotected def cweate(name: stwing) = {
+    s-synchwonized {
+      i-if (awwpewms == nyuww) {
+        t-thwow nyew w-wuntimeexception("pewmission cweation aftew initiawization")
       }
 
-      allPerms = allPerms union Set(name)
+      awwpewms = awwpewms union set(name)
     }
 
-    new Permissions(Set(name))
+    nyew p-pewmissions(set(name))
   }
 
   /**
-   * Get a set of permissions with this single permission by name. It
-   * will return None if there is no permission by that name.
+   * g-get a s-set of pewmissions with this singwe p-pewmission by n-nyame. σωσ it
+   * wiww wetuwn nyone i-if thewe is no pewmission by that nyame. 🥺
    *
-   * No permissions may be defined after this method is called.
+   * nyo pewmissions may be defined a-aftew this m-method is cawwed.
    */
-  def get(name: String): Option[Permissions] = All.get(name)
+  def get(name: stwing): o-option[pewmissions] = a-aww.get(name)
 
   /**
-   * Get the set of permissions that contains that single permission
-   * by name.
+   * get the set of pewmissions that contains that singwe p-pewmission
+   * by nyame. 🥺
    *
-   * @throws RuntimeException if there is no defined permission with
-   *   this name.
+   * @thwows wuntimeexception if thewe is nyo defined pewmission w-with
+   *   this nyame. ʘwʘ
    *
-   * No permissions may be defined after this method is called.
+   * nyo pewmissions m-may be defined a-aftew this method is cawwed. :3
    */
-  def apply(name: String): Permissions =
-    get(name) match {
-      case None => throw new RuntimeException("Unknown permission: " + name)
-      case Some(p) => p
+  def appwy(name: stwing): p-pewmissions =
+    g-get(name) match {
+      case nyone => thwow nyew wuntimeexception("unknown p-pewmission: " + nyame)
+      case s-some(p) => p
     }
 
   /**
-   * No permissions (required or held)
+   * nyo pewmissions (wequiwed ow hewd)
    */
-  val Empty: Permissions = new Permissions(Set.empty)
+  vaw e-empty: pewmissions = nyew pewmissions(set.empty)
 
   /**
-   * All defined permissions.
+   * aww d-defined pewmissions. (U ﹏ U)
    *
-   * No permissions may be defined after this value is initialized.
+   * n-nyo pewmissions may be defined a-aftew this vawue is initiawized. (U ﹏ U)
    */
-  lazy val All: Permissions = {
-    val p = new Permissions(allPerms)
-    allPerms = null
-    p
+  w-wazy vaw a-aww: pewmissions = {
+    v-vaw p = nyew pewmissions(awwpewms)
+    a-awwpewms = nyuww
+    p-p
   }
 
   /**
-   * Load permissions from a YAML map.
+   * woad pewmissions fwom a-a yamw map. ʘwʘ
    *
-   * No permissions may be defined after this method is called.
+   * n-nyo pewmissions m-may be defined aftew this method is cawwed. >w<
    *
-   * @return a map from client identifier to permission set.
-   * @throws RuntimeException when the permission from the Map is not defined.
+   * @wetuwn a-a map fwom cwient identifiew t-to pewmission set. rawr x3
+   * @thwows w-wuntimeexception when the pewmission fwom the map is nyot defined. OwO
    */
-  def fromYaml(m: YamlMap): Try[Map[String, Permissions]] =
-    Try {
-      m.keys.map { k =>
-        k -> fromSeq((m yamlList k).map { _.toString })
-      }.toMap
+  d-def f-fwomyamw(m: yamwmap): t-twy[map[stwing, ^•ﻌ•^ p-pewmissions]] =
+    twy {
+      m-m.keys.map { k =>
+        k -> fwomseq((m yamwwist k).map { _.tostwing })
+      }.tomap
     }
 
   /**
-   * Load permissions from map.
+   * woad pewmissions fwom map. >_<
    *
-   * No permissions may be defined after this method is called.
+   * n-nyo pewmissions may be defined a-aftew this method is cawwed. OwO
    *
-   * @param m a map from client identifier to a set of permission strings
+   * @pawam m-m a map fwom cwient identifiew t-to a set of pewmission stwings
    *
-   * @return a map from client identifier to permission set.
-   * @throws RuntimeException when the permission from the Map is not defined.
+   * @wetuwn a-a map fwom cwient i-identifiew to p-pewmission set. >_<
+   * @thwows wuntimeexception w-when the pewmission f-fwom the map is nyot defined. (ꈍᴗꈍ)
    */
-  def fromMap(m: Map[String, Seq[String]]): Try[Map[String, Permissions]] =
-    Try {
-      m.map { case (k, v) => k -> fromSeq(v) }
+  def fwommap(m: map[stwing, >w< seq[stwing]]): twy[map[stwing, pewmissions]] =
+    t-twy {
+      m-m.map { case (k, (U ﹏ U) v-v) => k -> fwomseq(v) }
     }
 
   /**
-   * Load permissions from seq.
+   * woad p-pewmissions fwom seq. ^^
    *
-   * No permissions may be defined after this method is called.
+   * nyo pewmissions may be defined a-aftew this method i-is cawwed. (U ﹏ U)
    *
-   * @param sequence a Seq of permission strings
+   * @pawam sequence a seq o-of pewmission stwings
    *
-   * @return a permission set.
-   * @throws RuntimeException when the permission is not defined.
+   * @wetuwn a pewmission set. :3
+   * @thwows w-wuntimeexception w-when the pewmission is nyot d-defined. (✿oωo)
    */
-  def fromSeq(permissionStrings: Seq[String]): Permissions =
-    permissionStrings.foldLeft(Empty) { (p, v) =>
-      v match {
-        case "all" if get("all").isEmpty => All
-        case other => p union apply(other)
+  d-def fwomseq(pewmissionstwings: seq[stwing]): pewmissions =
+    pewmissionstwings.fowdweft(empty) { (p, XD v) =>
+      v-v match {
+        c-case "aww" i-if get("aww").isempty => a-aww
+        c-case othew => p union a-appwy(othew)
       }
     }
 
   /**
-   * Authorizer based on a Permissions for RPC method names.
-   * @param requiredPermissions
-   *   map of RPC method names to Permissions required for that RPC
-   * @param clientPermissions
-   *   map of ClientId to Permissions a client has
+   * a-authowizew based on a pewmissions f-fow wpc m-method nyames. >w<
+   * @pawam wequiwedpewmissions
+   *   m-map of wpc method nyames to pewmissions wequiwed f-fow that wpc
+   * @pawam c-cwientpewmissions
+   *   m-map of cwientid to pewmissions a-a cwient has
    */
-  def permissionBasedAuthorizer(
-    requiredPermissions: Map[String, Permissions],
-    clientPermissions: Map[String, Permissions]
-  ): ClientRequestAuthorizer =
-    ClientRequestAuthorizer.filtered { (methodName, clientId) =>
-      requiredPermissions.get(methodName) exists {
-        _ satisfiedBy clientPermissions.getOrElse(clientId, Empty)
+  def pewmissionbasedauthowizew(
+    w-wequiwedpewmissions: m-map[stwing, òωó p-pewmissions], (ꈍᴗꈍ)
+    cwientpewmissions: map[stwing, rawr x3 pewmissions]
+  ): c-cwientwequestauthowizew =
+    cwientwequestauthowizew.fiwtewed { (methodname, rawr x3 cwientid) =>
+      w-wequiwedpewmissions.get(methodname) e-exists {
+        _ satisfiedby c-cwientpewmissions.getowewse(cwientid, σωσ empty)
       }
     }
 
   /**
-   * A set of permissions. This can represent either permissions that
-   * are required to perform an action, or permissions that are held
-   * by a client.
+   * a set of pewmissions. (ꈍᴗꈍ) t-this can wepwesent e-eithew pewmissions that
+   * awe wequiwed t-to pewfowm an action, rawr ow pewmissions that awe h-hewd
+   * by a c-cwient. ^^;;
    *
-   * This type cannot be instantiated directly. Use the methods of
-   * your subclass of PermissionModule to do so.
+   * this type cannot b-be instantiated diwectwy. rawr x3 use t-the methods of
+   * y-youw subcwass o-of pewmissionmoduwe to do so. (ˆ ﻌ ˆ)♡
    */
-  class Permissions private[PermissionModule] (private[PermissionModule] val permSet: Set[String]) {
+  cwass pewmissions pwivate[pewmissionmoduwe] (pwivate[pewmissionmoduwe] vaw pewmset: set[stwing]) {
 
     /**
-     * Does the supplied set of held permissions satisfy the
-     * requirements of this set of permissions?
+     * does the suppwied set of hewd pewmissions satisfy the
+     * wequiwements of this set of pewmissions?
      *
-     * For example, if this set of permissions is Set("read"), and the
-     * other set of permissions is Set("read", "write"), then the
-     * other set of permissions satisfies this set.
+     * fow exampwe, σωσ if t-this set of pewmissions i-is set("wead"), (U ﹏ U) and the
+     * othew set o-of pewmissions i-is set("wead", >w< "wwite"), t-then the
+     * othew set o-of pewmissions satisfies this s-set. σωσ
      */
-    def satisfiedBy(other: Permissions): Boolean = permSet subsetOf other.permSet
+    d-def satisfiedby(othew: pewmissions): b-boowean = pewmset subsetof o-othew.pewmset
 
-    override def equals(other: Any): Boolean =
-      other match {
-        case p: Permissions => p.permSet == permSet
-        case _ => false
+    o-ovewwide def equaws(othew: any): boowean =
+      o-othew match {
+        c-case p-p: pewmissions => p-p.pewmset == p-pewmset
+        c-case _ => fawse
       }
 
-    override lazy val hashCode: Int = 5 + 37 * permSet.hashCode
+    o-ovewwide w-wazy vaw hashcode: i-int = 5 + 37 * pewmset.hashcode
 
     /**
-     * Get a single permission
+     * g-get a singwe p-pewmission
      */
-    def get(permName: String): Option[Permissions] =
-      if (permSet contains permName) Some(new Permissions(Set(permName))) else None
+    d-def get(pewmname: stwing): o-option[pewmissions] =
+      if (pewmset contains pewmname) s-some(new pewmissions(set(pewmname))) ewse nyone
 
     /**
-     * Create a new permission set that holds the permissions of this
-     * object as well as the permissions of the other object.
+     * c-cweate a nyew p-pewmission set t-that howds the pewmissions of this
+     * o-object as weww as the p-pewmissions of the othew object. nyaa~~
      */
-    def union(other: Permissions): Permissions = new Permissions(permSet union other.permSet)
+    d-def union(othew: pewmissions): p-pewmissions = nyew pewmissions(pewmset union othew.pewmset)
 
-    override def toString: String = "Permissions(%s)".format(permSet.mkString(", "))
+    ovewwide def tostwing: s-stwing = "pewmissions(%s)".fowmat(pewmset.mkstwing(", 🥺 "))
   }
 }

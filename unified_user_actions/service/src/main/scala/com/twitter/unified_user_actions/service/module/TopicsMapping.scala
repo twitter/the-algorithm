@@ -1,5 +1,5 @@
-package com.twitter.unified_user_actions.service.module
+package com.twittew.unified_usew_actions.sewvice.moduwe
 
-case class TopicsMapping(
-  all: String = "unified_user_actions",
-  engagementsOnly: String = "unified_user_actions_engagements")
+case cwass t-topicsmapping(
+  a-aww: stwing = "unified_usew_actions", 🥺
+  e-engagementsonwy: s-stwing = "unified_usew_actions_engagements")

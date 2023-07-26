@@ -1,180 +1,180 @@
-package com.twitter.cr_mixer.util
+package com.twittew.cw_mixew.utiw
 
-import com.twitter.cr_mixer.model.Candidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.param.BlenderParams.BlendGroupingMethodEnum
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.simclusters_v2.thriftscala.InternalId
+impowt com.twittew.cw_mixew.modew.candidate
+i-impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.cw_mixew.modew.wankedcandidate
+i-impowt com.twittew.cw_mixew.modew.souwceinfo
+i-impowt com.twittew.cw_mixew.pawam.bwendewpawams.bwendgwoupingmethodenum
+i-impowt com.twittew.cw_mixew.thwiftscawa.simiwawityenginetype
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
 
-object CountWeightedInterleaveUtil {
+object c-countweightedintewweaveutiw {
 
   /**
-   * Grouping key for interleaving candidates
+   * gwouping key fow intewweaving candidates
    *
-   * @param sourceInfoOpt optional SourceInfo, containing the source information
-   * @param similarityEngineTypeOpt optional SimilarityEngineType, containing similarity engine
-   *                                information
-   * @param modelIdOpt optional modelId, containing the model ID
-   * @param authorIdOpt optional authorId, containing the tweet author ID
-   * @param groupIdOpt optional groupId, containing the ID corresponding to the blending group
+   * @pawam souwceinfoopt optionaw s-souwceinfo, ʘwʘ containing the souwce infowmation
+   * @pawam s-simiwawityenginetypeopt optionaw simiwawityenginetype, UwU c-containing simiwawity engine
+   *                                infowmation
+   * @pawam modewidopt o-optionaw modewid, containing t-the modew id
+   * @pawam a-authowidopt optionaw authowid, XD containing the tweet authow id
+   * @pawam g-gwoupidopt optionaw gwoupid, (✿oωo) containing the id cowwesponding to the bwending g-gwoup
    */
-  case class GroupingKey(
-    sourceInfoOpt: Option[SourceInfo],
-    similarityEngineTypeOpt: Option[SimilarityEngineType],
-    modelIdOpt: Option[String],
-    authorIdOpt: Option[Long],
-    groupIdOpt: Option[Int])
+  case cwass gwoupingkey(
+    s-souwceinfoopt: o-option[souwceinfo], :3
+    s-simiwawityenginetypeopt: o-option[simiwawityenginetype], (///ˬ///✿)
+    modewidopt: option[stwing], nyaa~~
+    authowidopt: option[wong], >w<
+    g-gwoupidopt: option[int])
 
   /**
-   * Converts candidates to grouping key based upon the feature that we interleave with.
+   * convewts candidates t-to gwouping key based upon the featuwe that we intewweave with. -.-
    */
-  def toGroupingKey[CandidateType <: Candidate](
-    candidate: CandidateType,
-    interleaveFeature: Option[BlendGroupingMethodEnum.Value],
-    groupId: Option[Int],
-  ): GroupingKey = {
-    val grouping: GroupingKey = candidate match {
-      case c: RankedCandidate =>
-        interleaveFeature.getOrElse(BlendGroupingMethodEnum.SourceKeyDefault) match {
-          case BlendGroupingMethodEnum.SourceKeyDefault =>
-            GroupingKey(
-              sourceInfoOpt = c.reasonChosen.sourceInfoOpt,
-              similarityEngineTypeOpt =
-                Some(c.reasonChosen.similarityEngineInfo.similarityEngineType),
-              modelIdOpt = c.reasonChosen.similarityEngineInfo.modelId,
-              authorIdOpt = None,
-              groupIdOpt = groupId
+  def togwoupingkey[candidatetype <: c-candidate](
+    candidate: candidatetype, (✿oωo)
+    i-intewweavefeatuwe: o-option[bwendgwoupingmethodenum.vawue], (˘ω˘)
+    g-gwoupid: option[int], rawr
+  ): gwoupingkey = {
+    vaw g-gwouping: gwoupingkey = c-candidate match {
+      c-case c: wankedcandidate =>
+        i-intewweavefeatuwe.getowewse(bwendgwoupingmethodenum.souwcekeydefauwt) match {
+          c-case bwendgwoupingmethodenum.souwcekeydefauwt =>
+            g-gwoupingkey(
+              souwceinfoopt = c.weasonchosen.souwceinfoopt, OwO
+              s-simiwawityenginetypeopt =
+                some(c.weasonchosen.simiwawityengineinfo.simiwawityenginetype), ^•ﻌ•^
+              m-modewidopt = c.weasonchosen.simiwawityengineinfo.modewid, UwU
+              a-authowidopt = nyone, (˘ω˘)
+              g-gwoupidopt = gwoupid
             )
-          // Some candidate sources don't have a sourceType, so it defaults to similarityEngine
-          case BlendGroupingMethodEnum.SourceTypeSimilarityEngine =>
-            val sourceInfoOpt = c.reasonChosen.sourceInfoOpt.map(_.sourceType).map { sourceType =>
-              SourceInfo(
-                sourceType = sourceType,
-                internalId = InternalId.UserId(0),
-                sourceEventTime = None)
+          // some candidate souwces don't have a souwcetype, (///ˬ///✿) so it defauwts to simiwawityengine
+          c-case bwendgwoupingmethodenum.souwcetypesimiwawityengine =>
+            v-vaw souwceinfoopt = c.weasonchosen.souwceinfoopt.map(_.souwcetype).map { s-souwcetype =>
+              s-souwceinfo(
+                s-souwcetype = souwcetype, σωσ
+                intewnawid = intewnawid.usewid(0), /(^•ω•^)
+                souwceeventtime = n-nyone)
             }
-            GroupingKey(
-              sourceInfoOpt = sourceInfoOpt,
-              similarityEngineTypeOpt =
-                Some(c.reasonChosen.similarityEngineInfo.similarityEngineType),
-              modelIdOpt = c.reasonChosen.similarityEngineInfo.modelId,
-              authorIdOpt = None,
-              groupIdOpt = groupId
+            gwoupingkey(
+              souwceinfoopt = souwceinfoopt, 😳
+              simiwawityenginetypeopt =
+                some(c.weasonchosen.simiwawityengineinfo.simiwawityenginetype), 😳
+              m-modewidopt = c.weasonchosen.simiwawityengineinfo.modewid, (⑅˘꒳˘)
+              authowidopt = n-nyone, 😳😳😳
+              g-gwoupidopt = gwoupid
             )
-          case BlendGroupingMethodEnum.AuthorId =>
-            GroupingKey(
-              sourceInfoOpt = None,
-              similarityEngineTypeOpt = None,
-              modelIdOpt = None,
-              authorIdOpt = Some(c.tweetInfo.authorId),
-              groupIdOpt = groupId
+          case b-bwendgwoupingmethodenum.authowid =>
+            gwoupingkey(
+              souwceinfoopt = nyone, 😳
+              s-simiwawityenginetypeopt = n-nyone, XD
+              m-modewidopt = n-nyone, mya
+              authowidopt = some(c.tweetinfo.authowid), ^•ﻌ•^
+              g-gwoupidopt = g-gwoupid
             )
-          case _ =>
-            throw new UnsupportedOperationException(
-              s"Unsupported interleave feature: $interleaveFeature")
+          c-case _ =>
+            t-thwow nyew unsuppowtedopewationexception(
+              s-s"unsuppowted intewweave featuwe: $intewweavefeatuwe")
         }
       case _ =>
-        GroupingKey(
-          sourceInfoOpt = None,
-          similarityEngineTypeOpt = None,
-          modelIdOpt = None,
-          authorIdOpt = None,
-          groupIdOpt = groupId
+        gwoupingkey(
+          s-souwceinfoopt = nyone, ʘwʘ
+          simiwawityenginetypeopt = nyone, ( ͡o ω ͡o )
+          modewidopt = nyone, mya
+          a-authowidopt = nyone, o.O
+          gwoupidopt = gwoupid
         )
     }
-    grouping
+    gwouping
   }
 
   /**
-   * Rather than manually calculating and maintaining the weights to rank with, we instead
-   * calculate the weights on the fly, based upon the frequencies of the candidates within each
-   * group. To ensure that diversity of the feature is maintained, we additionally employ a
-   * 'shrinkage' parameter which enforces more diversity by moving the weights closer to uniformity.
-   * More details are available at go/weighted-interleave.
+   * w-wathew than manuawwy c-cawcuwating a-and maintaining the weights t-to wank with, (✿oωo) we instead
+   * cawcuwate t-the weights o-on the fwy, :3 based upon the fwequencies of the candidates within each
+   * gwoup. 😳 to ensuwe that d-divewsity of the featuwe is m-maintained, (U ﹏ U) we additionawwy empwoy a-a
+   * 'shwinkage' p-pawametew which enfowces mowe divewsity by m-moving the weights c-cwosew to unifowmity. mya
+   * mowe detaiws awe a-avaiwabwe at go/weighted-intewweave. (U ᵕ U❁)
    *
-   * @param candidateSeqKeyByFeature candidate to key.
-   * @param rankerWeightShrinkage value between [0, 1] with 1 being complete uniformity.
-   * @return Interleaving weights keyed by feature.
+   * @pawam c-candidateseqkeybyfeatuwe candidate to key. :3
+   * @pawam wankewweightshwinkage vawue between [0, mya 1] with 1 being c-compwete unifowmity. OwO
+   * @wetuwn i-intewweaving w-weights keyed by featuwe. (ˆ ﻌ ˆ)♡
    */
-  private def calculateWeightsKeyByFeature[CandidateType <: Candidate](
-    candidateSeqKeyByFeature: Map[GroupingKey, Seq[CandidateType]],
-    rankerWeightShrinkage: Double
-  ): Map[GroupingKey, Double] = {
-    val maxNumberCandidates: Double = candidateSeqKeyByFeature.values
-      .map { candidates =>
-        candidates.size
-      }.max.toDouble
-    candidateSeqKeyByFeature.map {
-      case (featureKey: GroupingKey, candidateSeq: Seq[CandidateType]) =>
-        val observedWeight: Double = candidateSeq.size.toDouble / maxNumberCandidates
-        // How much to shrink empirical estimates to 1 (Default is to make all weights 1).
-        val finalWeight =
-          (1.0 - rankerWeightShrinkage) * observedWeight + rankerWeightShrinkage * 1.0
-        featureKey -> finalWeight
+  p-pwivate def c-cawcuwateweightskeybyfeatuwe[candidatetype <: candidate](
+    c-candidateseqkeybyfeatuwe: map[gwoupingkey, ʘwʘ seq[candidatetype]], o.O
+    wankewweightshwinkage: doubwe
+  ): m-map[gwoupingkey, UwU d-doubwe] = {
+    vaw maxnumbewcandidates: doubwe = candidateseqkeybyfeatuwe.vawues
+      .map { c-candidates =>
+        c-candidates.size
+      }.max.todoubwe
+    candidateseqkeybyfeatuwe.map {
+      case (featuwekey: gwoupingkey, rawr x3 c-candidateseq: seq[candidatetype]) =>
+        vaw obsewvedweight: doubwe = candidateseq.size.todoubwe / m-maxnumbewcandidates
+        // how much to shwink empiwicaw estimates t-to 1 (defauwt i-is to make aww weights 1). 🥺
+        vaw finawweight =
+          (1.0 - wankewweightshwinkage) * o-obsewvedweight + w-wankewweightshwinkage * 1.0
+        featuwekey -> finawweight
     }
   }
 
   /**
-   * Builds out the groups and weights for weighted interleaving of the candidates.
-   * More details are available at go/weighted-interleave.
+   * buiwds o-out the gwoups and weights fow weighted i-intewweaving of the candidates. :3
+   * mowe detaiws awe avaiwabwe a-at go/weighted-intewweave. (ꈍᴗꈍ)
    *
-   * @param rankedCandidateSeq candidates to interleave.
-   * @param rankerWeightShrinkage value between [0, 1] with 1 being complete uniformity.
-   * @return Candidates grouped by feature key and with calculated interleaving weights.
+   * @pawam wankedcandidateseq c-candidates t-to intewweave. 🥺
+   * @pawam wankewweightshwinkage v-vawue between [0, (✿oωo) 1] with 1 being c-compwete unifowmity. (U ﹏ U)
+   * @wetuwn c-candidates g-gwouped by featuwe key and with c-cawcuwated intewweaving w-weights. :3
    */
-  def buildRankedCandidatesWithWeightKeyByFeature(
-    rankedCandidateSeq: Seq[RankedCandidate],
-    rankerWeightShrinkage: Double,
-    interleaveFeature: BlendGroupingMethodEnum.Value
-  ): Seq[(Seq[RankedCandidate], Double)] = {
-    // To accommodate the re-grouping in InterleaveRanker
-    // In InterleaveBlender, we have already abandoned the grouping keys, and use Seq[Seq[]] to do interleave
-    // Since that we build the candidateSeq with groupingKey, we can guarantee there is no empty candidateSeq
-    val candidateSeqKeyByFeature: Map[GroupingKey, Seq[RankedCandidate]] =
-      rankedCandidateSeq.groupBy { candidate: RankedCandidate =>
-        toGroupingKey(candidate, Some(interleaveFeature), None)
+  def buiwdwankedcandidateswithweightkeybyfeatuwe(
+    wankedcandidateseq: s-seq[wankedcandidate],
+    w-wankewweightshwinkage: d-doubwe, ^^;;
+    intewweavefeatuwe: bwendgwoupingmethodenum.vawue
+  ): s-seq[(seq[wankedcandidate], rawr doubwe)] = {
+    // t-to accommodate t-the we-gwouping in intewweavewankew
+    // in intewweavebwendew, 😳😳😳 we have awweady a-abandoned t-the gwouping keys, (✿oωo) a-and use seq[seq[]] t-to do intewweave
+    // since t-that we buiwd the candidateseq with gwoupingkey, OwO we can guawantee thewe is nyo empty candidateseq
+    v-vaw candidateseqkeybyfeatuwe: map[gwoupingkey, ʘwʘ s-seq[wankedcandidate]] =
+      wankedcandidateseq.gwoupby { c-candidate: wankedcandidate =>
+        togwoupingkey(candidate, (ˆ ﻌ ˆ)♡ s-some(intewweavefeatuwe), (U ﹏ U) nyone)
       }
 
-    // These weights [0, 1] are used to do weighted interleaving
-    // The default value of 1.0 ensures the group is always sampled.
-    val candidateWeightsKeyByFeature: Map[GroupingKey, Double] =
-      calculateWeightsKeyByFeature(candidateSeqKeyByFeature, rankerWeightShrinkage)
+    // t-these weights [0, UwU 1] a-awe used t-to do weighted i-intewweaving
+    // t-the defauwt vawue of 1.0 ensuwes the gwoup is awways sampwed. XD
+    vaw candidateweightskeybyfeatuwe: map[gwoupingkey, ʘwʘ doubwe] =
+      c-cawcuwateweightskeybyfeatuwe(candidateseqkeybyfeatuwe, rawr x3 w-wankewweightshwinkage)
 
-    candidateSeqKeyByFeature.map {
-      case (groupingKey: GroupingKey, candidateSeq: Seq[RankedCandidate]) =>
-        Tuple2(
-          candidateSeq.sortBy(-_.predictionScore),
-          candidateWeightsKeyByFeature.getOrElse(groupingKey, 1.0))
-    }.toSeq
+    c-candidateseqkeybyfeatuwe.map {
+      case (gwoupingkey: g-gwoupingkey, ^^;; candidateseq: seq[wankedcandidate]) =>
+        tupwe2(
+          candidateseq.sowtby(-_.pwedictionscowe), ʘwʘ
+          c-candidateweightskeybyfeatuwe.getowewse(gwoupingkey, (U ﹏ U) 1.0))
+    }.toseq
   }
 
   /**
-   * Takes current grouping (as implied by the outer Seq) and computes blending weights.
+   * t-takes cuwwent gwouping (as i-impwied by the outew seq) and computes bwending w-weights. (˘ω˘)
    *
-   * @param initialCandidatesSeqSeq grouped candidates to interleave.
-   * @param rankerWeightShrinkage value between [0, 1] with 1 being complete uniformity.
-   * @return Grouped candidates with calculated interleaving weights.
+   * @pawam i-initiawcandidatesseqseq gwouped c-candidates to intewweave. (ꈍᴗꈍ)
+   * @pawam w-wankewweightshwinkage vawue between [0, 1] with 1 being compwete unifowmity. /(^•ω•^)
+   * @wetuwn g-gwouped candidates w-with cawcuwated i-intewweaving w-weights. >_<
    */
-  def buildInitialCandidatesWithWeightKeyByFeature(
-    initialCandidatesSeqSeq: Seq[Seq[InitialCandidate]],
-    rankerWeightShrinkage: Double,
-  ): Seq[(Seq[InitialCandidate], Double)] = {
-    val candidateSeqKeyByFeature: Map[GroupingKey, Seq[InitialCandidate]] =
-      initialCandidatesSeqSeq.zipWithIndex.map(_.swap).toMap.map {
-        case (groupId: Int, initialCandidatesSeq: Seq[InitialCandidate]) =>
-          toGroupingKey(initialCandidatesSeq.head, None, Some(groupId)) -> initialCandidatesSeq
+  d-def buiwdinitiawcandidateswithweightkeybyfeatuwe(
+    initiawcandidatesseqseq: s-seq[seq[initiawcandidate]], σωσ
+    w-wankewweightshwinkage: doubwe, ^^;;
+  ): s-seq[(seq[initiawcandidate], 😳 d-doubwe)] = {
+    vaw candidateseqkeybyfeatuwe: map[gwoupingkey, >_< s-seq[initiawcandidate]] =
+      initiawcandidatesseqseq.zipwithindex.map(_.swap).tomap.map {
+        case (gwoupid: int, -.- initiawcandidatesseq: s-seq[initiawcandidate]) =>
+          togwoupingkey(initiawcandidatesseq.head, UwU n-nyone, s-some(gwoupid)) -> initiawcandidatesseq
       }
 
-    // These weights [0, 1] are used to do weighted interleaving
-    // The default value of 1.0 ensures the group is always sampled.
-    val candidateWeightsKeyByFeature =
-      calculateWeightsKeyByFeature(candidateSeqKeyByFeature, rankerWeightShrinkage)
+    // t-these weights [0, :3 1] awe used to do weighted i-intewweaving
+    // t-the defauwt v-vawue of 1.0 ensuwes the gwoup is awways sampwed. σωσ
+    vaw c-candidateweightskeybyfeatuwe =
+      cawcuwateweightskeybyfeatuwe(candidateseqkeybyfeatuwe, >w< wankewweightshwinkage)
 
-    candidateSeqKeyByFeature.map {
-      case (groupingKey: GroupingKey, candidateSeq: Seq[InitialCandidate]) =>
-        Tuple2(candidateSeq, candidateWeightsKeyByFeature.getOrElse(groupingKey, 1.0))
-    }.toSeq
+    c-candidateseqkeybyfeatuwe.map {
+      c-case (gwoupingkey: gwoupingkey, (ˆ ﻌ ˆ)♡ candidateseq: s-seq[initiawcandidate]) =>
+        tupwe2(candidateseq, ʘwʘ c-candidateweightskeybyfeatuwe.getowewse(gwoupingkey, :3 1.0))
+    }.toseq
   }
 }

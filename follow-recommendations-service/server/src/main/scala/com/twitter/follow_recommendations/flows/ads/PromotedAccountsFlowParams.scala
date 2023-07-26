@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.flows.ads
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+package com.twittew.fowwow_wecommendations.fwows.ads
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.timewines.configapi.pawam
+i-impowt c-com.twittew.utiw.duwation
 
-abstract class PromotedAccountsFlowParams[A](default: A) extends Param[A](default) {
-  override val statName: String = "ads/" + this.getClass.getSimpleName
+a-abstwact cwass pwomotedaccountsfwowpawams[a](defauwt: a-a) extends p-pawam[a](defauwt) {
+  o-ovewwide v-vaw statname: stwing = "ads/" + this.getcwass.getsimpwename
 }
 
-object PromotedAccountsFlowParams {
+object pwomotedaccountsfwowpawams {
 
-  // number of total slots returned to the end user, available to put ads
-  case object TargetEligibility extends PromotedAccountsFlowParams[Boolean](true)
-  case object ResultSizeParam extends PromotedAccountsFlowParams[Int](Int.MaxValue)
-  case object BatchSizeParam extends PromotedAccountsFlowParams[Int](Int.MaxValue)
-  case object FetchCandidateSourceBudget
-      extends PromotedAccountsFlowParams[Duration](1000.millisecond)
+  // nyumbew of totaw swots w-wetuwned to the end usew, mya avaiwabwe to put ads
+  c-case object tawgetewigibiwity extends pwomotedaccountsfwowpawams[boowean](twue)
+  c-case object wesuwtsizepawam extends pwomotedaccountsfwowpawams[int](int.maxvawue)
+  case object batchsizepawam e-extends pwomotedaccountsfwowpawams[int](int.maxvawue)
+  case object f-fetchcandidatesouwcebudget
+      e-extends pwomotedaccountsfwowpawams[duwation](1000.miwwisecond)
 
 }

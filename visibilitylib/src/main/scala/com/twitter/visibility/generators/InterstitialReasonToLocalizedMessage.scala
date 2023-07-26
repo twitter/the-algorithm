@@ -1,47 +1,47 @@
-package com.twitter.visibility.generators
+package com.twittew.visibiwity.genewatows
 
-import com.twitter.visibility.common.actions.InterstitialReason
-import com.twitter.visibility.common.actions.LocalizedMessage
-import com.twitter.visibility.common.actions.MessageLink
-import com.twitter.visibility.results.richtext.InterstitialReasonToRichText
-import com.twitter.visibility.results.richtext.InterstitialReasonToRichText.InterstitialCopy
-import com.twitter.visibility.results.richtext.InterstitialReasonToRichText.InterstitialLink
-import com.twitter.visibility.results.translation.LearnMoreLink
-import com.twitter.visibility.results.translation.Resource
-import com.twitter.visibility.results.translation.Translator
+impowt c-com.twittew.visibiwity.common.actions.intewstitiawweason
+i-impowt c-com.twittew.visibiwity.common.actions.wocawizedmessage
+i-impowt com.twittew.visibiwity.common.actions.messagewink
+i-impowt com.twittew.visibiwity.wesuwts.wichtext.intewstitiawweasontowichtext
+i-impowt c-com.twittew.visibiwity.wesuwts.wichtext.intewstitiawweasontowichtext.intewstitiawcopy
+i-impowt com.twittew.visibiwity.wesuwts.wichtext.intewstitiawweasontowichtext.intewstitiawwink
+impowt com.twittew.visibiwity.wesuwts.twanswation.weawnmowewink
+impowt com.twittew.visibiwity.wesuwts.twanswation.wesouwce
+impowt com.twittew.visibiwity.wesuwts.twanswation.twanswatow
 
-object InterstitialReasonToLocalizedMessage {
-  def apply(
-    reason: InterstitialReason,
-    languageTag: String,
-  ): Option[LocalizedMessage] = {
-    InterstitialReasonToRichText.reasonToCopy(reason).map { copy =>
-      val text = Translator.translate(
-        copy.resource,
-        languageTag
+o-object intewstitiawweasontowocawizedmessage {
+  def appwy(
+    weason: intewstitiawweason, òωó
+    wanguagetag: s-stwing, ʘwʘ
+  ): option[wocawizedmessage] = {
+    i-intewstitiawweasontowichtext.weasontocopy(weason).map { copy =>
+      vaw text = twanswatow.twanswate(
+        copy.wesouwce, /(^•ω•^)
+        w-wanguagetag
       )
-      localizeWithCopyAndText(copy, languageTag, text)
+      wocawizewithcopyandtext(copy, w-wanguagetag, ʘwʘ t-text)
     }
   }
 
-  private def localizeWithCopyAndText(
-    copy: InterstitialCopy,
-    languageTag: String,
-    text: String
-  ): LocalizedMessage = {
-    val learnMore = Translator.translate(LearnMoreLink, languageTag)
+  pwivate def wocawizewithcopyandtext(
+    copy: intewstitiawcopy, σωσ
+    wanguagetag: s-stwing,
+    text: stwing
+  ): wocawizedmessage = {
+    vaw weawnmowe = twanswatow.twanswate(weawnmowewink, OwO w-wanguagetag)
 
-    val learnMoreLinkOpt =
-      copy.link.map { link =>
-        MessageLink(key = Resource.LearnMorePlaceholder, displayText = learnMore, uri = link)
+    vaw weawnmowewinkopt =
+      c-copy.wink.map { w-wink =>
+        m-messagewink(key = w-wesouwce.weawnmowepwacehowdew, 😳😳😳 dispwaytext = weawnmowe, 😳😳😳 uwi = w-wink)
       }
-    val additionalLinks = copy.additionalLinks.map {
-      case InterstitialLink(placeholder, copyResource, link) =>
-        val copyText = Translator.translate(copyResource, languageTag)
-        MessageLink(key = placeholder, displayText = copyText, uri = link)
+    vaw additionawwinks = copy.additionawwinks.map {
+      c-case intewstitiawwink(pwacehowdew, o.O copywesouwce, ( ͡o ω ͡o ) wink) =>
+        vaw copytext = twanswatow.twanswate(copywesouwce, (U ﹏ U) wanguagetag)
+        messagewink(key = p-pwacehowdew, (///ˬ///✿) dispwaytext = c-copytext, >w< uwi = w-wink)
     }
 
-    val links = learnMoreLinkOpt.toSeq ++ additionalLinks
-    LocalizedMessage(message = text, language = languageTag, links = links)
+    v-vaw winks = weawnmowewinkopt.toseq ++ additionawwinks
+    wocawizedmessage(message = t-text, rawr wanguage = w-wanguagetag, mya winks = winks)
   }
 }

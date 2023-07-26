@@ -1,25 +1,11 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "product-mixer/core/src/main/java/com/twitter/product_mixer/core/product/guice/scope",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/identifier",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
-        "stringcenter/client/src/main/scala/com/twitter/stringcenter/client",
-        "stringcenter/client/src/main/scala/com/twitter/stringcenter/client/sources",
-        "stringcenter/client/src/main/scala/com/twitter/stringcenter/client/sources/refreshing",
-        "util/util-jackson/src/main/scala/com/twitter/util/jackson",
-    ],
-    exports = [
-        "product-mixer/core/src/main/java/com/twitter/product_mixer/core/product/guice/scope",
-        "stringcenter/client/src/main/scala/com/twitter/stringcenter/client",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    p-pwatfowm = "java8", (U ᵕ U❁)
+    s-stwict_deps = t-twue, (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [
+    ], UwU
+    e-expowts = [
+    ], rawr x3
 )

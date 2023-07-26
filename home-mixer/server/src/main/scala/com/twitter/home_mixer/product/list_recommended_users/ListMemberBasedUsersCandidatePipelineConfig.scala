@@ -1,98 +1,98 @@
-package com.twitter.home_mixer.product.list_recommended_users
+package com.twittew.home_mixew.pwoduct.wist_wecommended_usews
 
-import com.twitter.hermit.candidate.{thriftscala => t}
-import com.twitter.home_mixer.product.list_recommended_users.candidate_source.SimilarityBasedUsersCandidateSource
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.IsGizmoduckValidUserFeatureHydrator
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.IsListMemberFeatureHydrator
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.IsSGSValidUserFeatureHydrator
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.RecentListMembersFeature
-import com.twitter.home_mixer.product.list_recommended_users.filter.DropMaxCandidatesByAggregatedScoreFilter
-import com.twitter.home_mixer.product.list_recommended_users.filter.PreviouslyServedUsersFilter
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.IsListMemberFeature
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.user.UserCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.filter.PredicateFeatureFilter
-import com.twitter.product_mixer.component_library.gate.NonEmptySeqFeatureGate
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.hewmit.candidate.{thwiftscawa => t-t}
+impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.candidate_souwce.simiwawitybasedusewscandidatesouwce
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow.isgizmoduckvawidusewfeatuwehydwatow
+i-impowt c-com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow.iswistmembewfeatuwehydwatow
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow.issgsvawidusewfeatuwehydwatow
+impowt c-com.twittew.home_mixew.pwoduct.wist_wecommended_usews.featuwe_hydwatow.wecentwistmembewsfeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.fiwtew.dwopmaxcandidatesbyaggwegatedscowefiwtew
+impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.fiwtew.pweviouswysewvedusewsfiwtew
+impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsfeatuwes.iswistmembewfeatuwe
+impowt com.twittew.home_mixew.pwoduct.wist_wecommended_usews.modew.wistwecommendedusewsquewy
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.uwtitemcandidatedecowatow
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.usew.usewcandidateuwtitembuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata.cwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.fiwtew.pwedicatefeatuwefiwtew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.gate.nonemptyseqfeatuwegate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.usewcandidate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basecandidatefeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ListMemberBasedUsersCandidatePipelineConfig @Inject() (
-  similarityBasedUsersCandidateSource: SimilarityBasedUsersCandidateSource,
-  isGizmoduckValidUserFeatureHydrator: IsGizmoduckValidUserFeatureHydrator,
-  isListMemberFeatureHydrator: IsListMemberFeatureHydrator,
-  isSGSValidUserFeatureHydrator: IsSGSValidUserFeatureHydrator)
-    extends CandidatePipelineConfig[
-      ListRecommendedUsersQuery,
-      Seq[Long],
-      t.Candidate,
-      UserCandidate
+@singweton
+c-cwass wistmembewbasedusewscandidatepipewineconfig @inject() (
+  s-simiwawitybasedusewscandidatesouwce: s-simiwawitybasedusewscandidatesouwce, 😳😳😳
+  i-isgizmoduckvawidusewfeatuwehydwatow: i-isgizmoduckvawidusewfeatuwehydwatow, :3
+  iswistmembewfeatuwehydwatow: iswistmembewfeatuwehydwatow, OwO
+  i-issgsvawidusewfeatuwehydwatow: issgsvawidusewfeatuwehydwatow)
+    extends candidatepipewineconfig[
+      w-wistwecommendedusewsquewy, (U ﹏ U)
+      seq[wong], >w<
+      t.candidate, (U ﹏ U)
+      usewcandidate
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ListMemberBasedUsers")
+  ovewwide vaw identifiew: candidatepipewineidentifiew =
+    c-candidatepipewineidentifiew("wistmembewbasedusews")
 
-  override val gates: Seq[Gate[ListRecommendedUsersQuery]] =
-    Seq(NonEmptySeqFeatureGate(RecentListMembersFeature))
+  ovewwide v-vaw gates: seq[gate[wistwecommendedusewsquewy]] =
+    s-seq(nonemptyseqfeatuwegate(wecentwistmembewsfeatuwe))
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[ListRecommendedUsersQuery, Seq[
-    Long
-  ]] = { query =>
-    query.features.map(_.getOrElse(RecentListMembersFeature, Seq.empty)).getOrElse(Seq.empty)
+  o-ovewwide vaw quewytwansfowmew: candidatepipewinequewytwansfowmew[wistwecommendedusewsquewy, 😳 seq[
+    wong
+  ]] = { q-quewy =>
+    q-quewy.featuwes.map(_.getowewse(wecentwistmembewsfeatuwe, (ˆ ﻌ ˆ)♡ seq.empty)).getowewse(seq.empty)
   }
 
-  override val candidateSource: BaseCandidateSource[Seq[Long], t.Candidate] =
-    similarityBasedUsersCandidateSource
+  o-ovewwide vaw c-candidatesouwce: basecandidatesouwce[seq[wong], 😳😳😳 t-t.candidate] =
+    simiwawitybasedusewscandidatesouwce
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.Candidate]
-  ] = Seq(ListMemberBasedUsersResponseFeatureTransfromer)
+  o-ovewwide vaw featuwesfwomcandidatesouwcetwansfowmews: seq[
+    candidatefeatuwetwansfowmew[t.candidate]
+  ] = s-seq(wistmembewbasedusewswesponsefeatuwetwansfwomew)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    t.Candidate,
-    UserCandidate
+  ovewwide vaw wesuwttwansfowmew: candidatepipewinewesuwtstwansfowmew[
+    t-t.candidate, (U ﹏ U)
+    usewcandidate
   ] = { candidate =>
-    UserCandidate(id = candidate.userId)
+    u-usewcandidate(id = c-candidate.usewid)
   }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ListRecommendedUsersQuery, UserCandidate, _]
-  ] = Seq(isListMemberFeatureHydrator)
+  ovewwide vaw pwefiwtewfeatuwehydwationphase1: seq[
+    basecandidatefeatuwehydwatow[wistwecommendedusewsquewy, (///ˬ///✿) usewcandidate, 😳 _]
+  ] = seq(iswistmembewfeatuwehydwatow)
 
-  override val filters: Seq[Filter[ListRecommendedUsersQuery, UserCandidate]] =
-    Seq(
-      PreviouslyServedUsersFilter,
-      PredicateFeatureFilter.fromPredicate(
-        FilterIdentifier("IsListMember"),
-        shouldKeepCandidate = { features => !features.getOrElse(IsListMemberFeature, false) }
+  o-ovewwide v-vaw fiwtews: seq[fiwtew[wistwecommendedusewsquewy, 😳 usewcandidate]] =
+    s-seq(
+      p-pweviouswysewvedusewsfiwtew, σωσ
+      p-pwedicatefeatuwefiwtew.fwompwedicate(
+        fiwtewidentifiew("iswistmembew"), rawr x3
+        shouwdkeepcandidate = { featuwes => !featuwes.getowewse(iswistmembewfeatuwe, OwO fawse) }
       ),
-      DropMaxCandidatesByAggregatedScoreFilter
+      d-dwopmaxcandidatesbyaggwegatedscowefiwtew
     )
 
-  override val postFilterFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[ListRecommendedUsersQuery, UserCandidate, _]
-  ] = Seq(
-    isGizmoduckValidUserFeatureHydrator,
-    isSGSValidUserFeatureHydrator
+  ovewwide vaw postfiwtewfeatuwehydwation: seq[
+    basecandidatefeatuwehydwatow[wistwecommendedusewsquewy, /(^•ω•^) usewcandidate, 😳😳😳 _]
+  ] = s-seq(
+    isgizmoduckvawidusewfeatuwehydwatow, ( ͡o ω ͡o )
+    i-issgsvawidusewfeatuwehydwatow
   )
 
-  override val decorator: Option[CandidateDecorator[ListRecommendedUsersQuery, UserCandidate]] = {
-    val clientEventInfoBuilder = ClientEventInfoBuilder("user")
-    val userItemBuilder = UserCandidateUrtItemBuilder(clientEventInfoBuilder)
-    Some(UrtItemCandidateDecorator(userItemBuilder))
+  ovewwide v-vaw decowatow: o-option[candidatedecowatow[wistwecommendedusewsquewy, >_< usewcandidate]] = {
+    v-vaw cwienteventinfobuiwdew = c-cwienteventinfobuiwdew("usew")
+    v-vaw usewitembuiwdew = u-usewcandidateuwtitembuiwdew(cwienteventinfobuiwdew)
+    some(uwtitemcandidatedecowatow(usewitembuiwdew))
   }
 }

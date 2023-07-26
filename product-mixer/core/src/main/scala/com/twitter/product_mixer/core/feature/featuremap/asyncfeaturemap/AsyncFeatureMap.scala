@@ -1,134 +1,134 @@
-package com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.asyncfeatuwemap
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.stitch.Stitch
+impowt c-com.fastewxmw.jackson.databind.annotation.jsonsewiawize
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt com.twittew.stitch.stitch
 
-import scala.collection.immutable.Queue
+impowt scawa.cowwection.immutabwe.queue
 
 /**
- * An internal representation of an async [[FeatureMap]] containing [[Stitch]]s of [[FeatureMap]]s
- * which are already running in the background.
+ * an intewnaw wepwesentation of an async [[featuwemap]] c-containing [[stitch]]s of [[featuwemap]]s
+ * which awe awweady wunning in t-the backgwound. :3
  *
- * Async features are added by providing the [[PipelineStepIdentifier]] of the [[com.twitter.product_mixer.core.pipeline.PipelineBuilder.Step Step]]
- * before which the async [[Feature]]s are needed, and a [[Stitch]] of the async [[FeatureMap]].
- * It's expected that the [[Stitch]] has already been started and is running in the background.
+ * async featuwes a-awe added by pwoviding the [[pipewinestepidentifiew]] of the [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewinebuiwdew.step s-step]]
+ * befowe which the async [[featuwe]]s a-awe nyeeded, (U ﹏ U) and a-a [[stitch]] of the async [[featuwemap]]. OwO
+ * it's expected that the [[stitch]] has awweady been s-stawted and is wunning in the backgwound. 😳😳😳
  *
- * While not essential to it's core behavior, [[AsyncFeatureMap]] also keeps track of the [[FeatureHydratorIdentifier]]
- * and the Set of [[Feature]]s which will be hydrated for each [[Stitch]] of a [[FeatureMap]] it's given.
+ * whiwe nyot essentiaw to it's cowe b-behaviow, (ˆ ﻌ ˆ)♡ [[asyncfeatuwemap]] awso keeps twack o-of the [[featuwehydwatowidentifiew]]
+ * a-and the s-set of [[featuwe]]s w-which wiww be hydwated fow each [[stitch]] o-of a [[featuwemap]] it's given. XD
  *
- * @param asyncFeatureMaps the [[FeatureMap]]s for [[PipelineStepIdentifier]]s which have not been reached yet
+ * @pawam asyncfeatuwemaps the [[featuwemap]]s f-fow [[pipewinestepidentifiew]]s which have nyot been weached yet
  *
- * @note [[PipelineStepIdentifier]]s must only refer to [[com.twitter.product_mixer.core.pipeline.PipelineBuilder.Step Step]]s
- *       in the current [[com.twitter.product_mixer.core.pipeline.Pipeline Pipeline]].
- *       Only plain [[FeatureMap]]s are passed into underlying [[com.twitter.product_mixer.core.model.common.Component Component]]s and
- *       [[com.twitter.product_mixer.core.pipeline.Pipeline Pipeline]]s so [[AsyncFeatureMap]]s are scoped
- *       for a specific [[com.twitter.product_mixer.core.pipeline.Pipeline Pipeline]] only.
+ * @note [[pipewinestepidentifiew]]s must onwy wefew to [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewinebuiwdew.step step]]s
+ *       i-in the cuwwent [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine pipewine]]. (ˆ ﻌ ˆ)♡
+ *       o-onwy pwain [[featuwemap]]s a-awe passed into u-undewwying [[com.twittew.pwoduct_mixew.cowe.modew.common.component component]]s and
+ *       [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine pipewine]]s so [[asyncfeatuwemap]]s a-awe scoped
+ *       f-fow a specific [[com.twittew.pwoduct_mixew.cowe.pipewine.pipewine p-pipewine]] o-onwy. ( ͡o ω ͡o )
  */
-@JsonSerialize(using = classOf[AsyncFeatureMapSerializer])
-private[core] case class AsyncFeatureMap(
-  asyncFeatureMaps: Map[PipelineStepIdentifier, Queue[
-    (FeatureHydratorIdentifier, Set[Feature[_, _]], Stitch[FeatureMap])
+@jsonsewiawize(using = cwassof[asyncfeatuwemapsewiawizew])
+p-pwivate[cowe] case cwass a-asyncfeatuwemap(
+  asyncfeatuwemaps: map[pipewinestepidentifiew, rawr x3 q-queue[
+    (featuwehydwatowidentifiew, nyaa~~ set[featuwe[_, >_< _]], ^^;; s-stitch[featuwemap])
   ]]) {
 
-  def ++(right: AsyncFeatureMap): AsyncFeatureMap = {
-    val map = Map.newBuilder[
-      PipelineStepIdentifier,
-      Queue[(FeatureHydratorIdentifier, Set[Feature[_, _]], Stitch[FeatureMap])]]
-    (asyncFeatureMaps.keysIterator ++ right.asyncFeatureMaps.keysIterator).foreach { key =>
-      val currentThenRightAsyncFeatureMaps =
-        asyncFeatureMaps.getOrElse(key, Queue.empty) ++
-          right.asyncFeatureMaps.getOrElse(key, Queue.empty)
-      map += (key -> currentThenRightAsyncFeatureMaps)
+  def ++(wight: asyncfeatuwemap): a-asyncfeatuwemap = {
+    v-vaw map = map.newbuiwdew[
+      pipewinestepidentifiew, (ˆ ﻌ ˆ)♡
+      queue[(featuwehydwatowidentifiew, set[featuwe[_, ^^;; _]], (⑅˘꒳˘) stitch[featuwemap])]]
+    (asyncfeatuwemaps.keysitewatow ++ wight.asyncfeatuwemaps.keysitewatow).foweach { k-key =>
+      v-vaw cuwwentthenwightasyncfeatuwemaps =
+        asyncfeatuwemaps.getowewse(key, rawr x3 q-queue.empty) ++
+          w-wight.asyncfeatuwemaps.getowewse(key, (///ˬ///✿) q-queue.empty)
+      map += (key -> cuwwentthenwightasyncfeatuwemaps)
     }
-    AsyncFeatureMap(map.result())
+    asyncfeatuwemap(map.wesuwt())
   }
 
   /**
-   * Returns a new [[AsyncFeatureMap]] which now keeps track of the provided `features`
-   * and will make them available when calling [[hydrate]] with `hydrateBefore`.
+   * wetuwns a-a nyew [[asyncfeatuwemap]] which nyow keeps twack of the pwovided `featuwes`
+   * and wiww m-make them avaiwabwe when cawwing [[hydwate]] with `hydwatebefowe`. 🥺
    *
-   * @param featureHydratorIdentifier the [[FeatureHydratorIdentifier]] of the [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator FeatureHydrator]]
-   *                                  which these [[Feature]]s are from
-   * @param hydrateBefore             the [[PipelineStepIdentifier]] before which the [[Feature]]s need to be hydrated
-   * @param featuresToHydrate         a Set of the [[Feature]]s which will be hydrated
-   * @param features                  a [[Stitch]] of the [[FeatureMap]]
+   * @pawam f-featuwehydwatowidentifiew t-the [[featuwehydwatowidentifiew]] o-of the [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwehydwatow featuwehydwatow]]
+   *                                  w-which these [[featuwe]]s a-awe fwom
+   * @pawam h-hydwatebefowe             t-the [[pipewinestepidentifiew]] befowe which the [[featuwe]]s nyeed t-to be hydwated
+   * @pawam f-featuwestohydwate         a-a set of t-the [[featuwe]]s w-which wiww be hydwated
+   * @pawam featuwes                  a [[stitch]] of the [[featuwemap]]
    */
-  def addAsyncFeatures(
-    featureHydratorIdentifier: FeatureHydratorIdentifier,
-    hydrateBefore: PipelineStepIdentifier,
-    featuresToHydrate: Set[Feature[_, _]],
-    features: Stitch[FeatureMap]
-  ): AsyncFeatureMap = {
-    val featureMapList =
-      asyncFeatureMaps.getOrElse(hydrateBefore, Queue.empty) :+
-        ((featureHydratorIdentifier, featuresToHydrate, features))
-    AsyncFeatureMap(asyncFeatureMaps + (hydrateBefore -> featureMapList))
+  d-def addasyncfeatuwes(
+    featuwehydwatowidentifiew: featuwehydwatowidentifiew, >_<
+    hydwatebefowe: pipewinestepidentifiew, UwU
+    featuwestohydwate: set[featuwe[_, >_< _]],
+    f-featuwes: stitch[featuwemap]
+  ): asyncfeatuwemap = {
+    vaw featuwemapwist =
+      a-asyncfeatuwemaps.getowewse(hydwatebefowe, -.- q-queue.empty) :+
+        ((featuwehydwatowidentifiew, mya f-featuwestohydwate, >w< featuwes))
+    a-asyncfeatuwemap(asyncfeatuwemaps + (hydwatebefowe -> featuwemapwist))
   }
 
   /**
-   * The current state of the [[AsyncFeatureMap]] excluding the [[Stitch]]s.
+   * the cuwwent state o-of the [[asyncfeatuwemap]] e-excwuding the [[stitch]]s. (U ﹏ U)
    */
-  def features: Map[PipelineStepIdentifier, Seq[(FeatureHydratorIdentifier, Set[Feature[_, _]])]] =
-    asyncFeatureMaps.mapValues(_.map {
-      case (featureHydratorIdentifier, features, _) => (featureHydratorIdentifier, features)
+  def featuwes: map[pipewinestepidentifiew, 😳😳😳 seq[(featuwehydwatowidentifiew, o.O set[featuwe[_, òωó _]])]] =
+    asyncfeatuwemaps.mapvawues(_.map {
+      case (featuwehydwatowidentifiew, 😳😳😳 f-featuwes, σωσ _) => (featuwehydwatowidentifiew, (⑅˘꒳˘) featuwes)
     })
 
   /**
-   * Returns a [[Some]] containing a [[Stitch]] with a [[FeatureMap]] holding the [[Feature]]s that are
-   * supposed to be hydrated at `identifier` if there are [[Feature]]s to hydrate at `identifier`
+   * w-wetuwns a [[some]] containing a-a [[stitch]] w-with a [[featuwemap]] howding the [[featuwe]]s t-that awe
+   * s-supposed to be hydwated at `identifiew` i-if thewe a-awe [[featuwe]]s to hydwate at `identifiew`
    *
-   * Returns [[None]] if there are no [[Feature]]s to hydrate at the provided `identifier`,
-   * this allows for determining if there is work to do without running a [[Stitch]].
+   * wetuwns [[none]] if thewe awe nyo [[featuwe]]s t-to hydwate a-at the pwovided `identifiew`, (///ˬ///✿)
+   * t-this awwows fow detewmining i-if thewe is wowk t-to do without wunning a [[stitch]]. 🥺
    *
-   * @note this only hydrates the [[Feature]]s for the specific `identifier`, it does not hydrate
-   *       [[Feature]]s for earlier Steps.
-   * @param identifier the [[PipelineStepIdentifier]] to hydrate [[Feature]]s for
+   * @note t-this onwy hydwates the [[featuwe]]s fow the specific `identifiew`, OwO it does n-nyot hydwate
+   *       [[featuwe]]s f-fow eawwiew steps. >w<
+   * @pawam identifiew t-the [[pipewinestepidentifiew]] to h-hydwate [[featuwe]]s fow
    */
-  def hydrate(
-    identifier: PipelineStepIdentifier
-  ): Option[Stitch[FeatureMap]] =
-    asyncFeatureMaps.get(identifier) match {
-      case Some(Queue((_, _, featureMap))) =>
-        // if there is only 1 `FeatureMap` we dont need to do a collect so just return that Stitch
-        Some(featureMap)
-      case Some(featureMapList) =>
-        // if there are multiple `FeatureMap`s we need to collect and merge them together
-        Some(
-          Stitch
-            .collect(featureMapList.map { case (_, _, featureMap) => featureMap })
-            .map { featureMapList => FeatureMap.merge(featureMapList) })
-      case None =>
-        // No results for the provided `identifier` so return `None`
-        None
+  def hydwate(
+    identifiew: p-pipewinestepidentifiew
+  ): option[stitch[featuwemap]] =
+    asyncfeatuwemaps.get(identifiew) match {
+      case s-some(queue((_, 🥺 _, featuwemap))) =>
+        // if thewe is onwy 1 `featuwemap` we d-dont need to do a-a cowwect so just wetuwn that stitch
+        some(featuwemap)
+      case some(featuwemapwist) =>
+        // i-if t-thewe awe muwtipwe `featuwemap`s we nyeed to cowwect and mewge them togethew
+        s-some(
+          stitch
+            .cowwect(featuwemapwist.map { c-case (_, nyaa~~ _, featuwemap) => featuwemap })
+            .map { featuwemapwist => f-featuwemap.mewge(featuwemapwist) })
+      case nyone =>
+        // n-nyo wesuwts f-fow the pwovided `identifiew` so wetuwn `none`
+        n-nyone
     }
 }
 
-private[core] object AsyncFeatureMap {
-  val empty: AsyncFeatureMap = AsyncFeatureMap(Map.empty)
+pwivate[cowe] o-object asyncfeatuwemap {
+  v-vaw empty: asyncfeatuwemap = a-asyncfeatuwemap(map.empty)
 
   /**
-   * Builds the an [[AsyncFeatureMap]] from a Seq of [[Stitch]] of [[FeatureMap]]
-   * tupled with the relevant metadata we use to build the necessary state.
+   * buiwds the a-an [[asyncfeatuwemap]] f-fwom a seq of [[stitch]] of [[featuwemap]]
+   * t-tupwed w-with the wewevant m-metadata we use to buiwd the nyecessawy state. ^^
    *
-   * This is primarily for convenience, since in most cases an [[AsyncFeatureMap]]
-   * will be built from the result of individual [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator FeatureHydrator]]s
-   * and combining them into the correct internal state.
+   * t-this is pwimawiwy fow c-convenience, >w< since i-in most cases an [[asyncfeatuwemap]]
+   * wiww be buiwt fwom t-the wesuwt of individuaw [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwehydwatow f-featuwehydwatow]]s
+   * a-and combining t-them into the cowwect intewnaw s-state. OwO
    */
-  def fromFeatureMaps(
-    asyncFeatureMaps: Seq[
-      (FeatureHydratorIdentifier, PipelineStepIdentifier, Set[Feature[_, _]], Stitch[FeatureMap])
+  def fwomfeatuwemaps(
+    asyncfeatuwemaps: seq[
+      (featuwehydwatowidentifiew, XD pipewinestepidentifiew, ^^;; set[featuwe[_, 🥺 _]], stitch[featuwemap])
     ]
-  ): AsyncFeatureMap =
-    AsyncFeatureMap(
-      asyncFeatureMaps
-        .groupBy { case (_, hydrateBefore, _, _) => hydrateBefore }
-        .mapValues(featureMaps =>
-          Queue(featureMaps.map {
-            case (hydratorIdentifier, _, featuresToHydrate, stitch) =>
-              (hydratorIdentifier, featuresToHydrate, stitch)
+  ): a-asyncfeatuwemap =
+    asyncfeatuwemap(
+      asyncfeatuwemaps
+        .gwoupby { c-case (_, XD hydwatebefowe, (U ᵕ U❁) _, _) => hydwatebefowe }
+        .mapvawues(featuwemaps =>
+          q-queue(featuwemaps.map {
+            case (hydwatowidentifiew, :3 _, ( ͡o ω ͡o ) f-featuwestohydwate, òωó stitch) =>
+              (hydwatowidentifiew, σωσ f-featuwestohydwate, (U ᵕ U❁) s-stitch)
           }: _*)))
 }

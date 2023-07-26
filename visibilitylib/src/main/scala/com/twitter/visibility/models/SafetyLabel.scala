@@ -1,90 +1,90 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-import com.twitter.spam.rtf.{thriftscala => s}
-import com.twitter.visibility.safety_label_store.{thriftscala => store}
+impowt com.twittew.spam.wtf.{thwiftscawa => s-s}
+impowt com.twittew.visibiwity.safety_wabew_stowe.{thwiftscawa => s-stowe}
 
-case class SafetyLabel(
-  score: Option[Double] = None,
-  applicableUsers: Set[Long] = Set.empty,
-  source: Option[LabelSource] = None,
-  modelMetadata: Option[TweetModelMetadata] = None,
-  createdAtMsec: Option[Long] = None,
-  expiresAtMsec: Option[Long] = None,
-  labelMetadata: Option[SafetyLabelMetadata] = None,
-  applicableCountries: Option[Seq[String]] = None)
+case c-cwass safetywabew(
+  s-scowe: option[doubwe] = n-nyone, nyaa~~
+  appwicabweusews: s-set[wong] = s-set.empty, (✿oωo)
+  s-souwce: option[wabewsouwce] = nyone, ʘwʘ
+  modewmetadata: option[tweetmodewmetadata] = nyone, (ˆ ﻌ ˆ)♡
+  cweatedatmsec: option[wong] = n-nyone, 😳😳😳
+  expiwesatmsec: option[wong] = n-nyone, :3
+  wabewmetadata: option[safetywabewmetadata] = n-nyone, OwO
+  appwicabwecountwies: option[seq[stwing]] = nyone)
 
-object SafetyLabel {
-  def fromThrift(safetyLabel: s.SafetyLabel): SafetyLabel = {
-    SafetyLabel(
-      score = safetyLabel.score,
-      applicableUsers = safetyLabel.applicableUsers
-        .map { perspectivalUsers =>
-          (perspectivalUsers map {
-            _.userId
-          }).toSet
-        }.getOrElse(Set.empty),
-      source = safetyLabel.source.flatMap(LabelSource.fromString),
-      modelMetadata = safetyLabel.modelMetadata.flatMap(TweetModelMetadata.fromThrift),
-      createdAtMsec = safetyLabel.createdAtMsec,
-      expiresAtMsec = safetyLabel.expiresAtMsec,
-      labelMetadata = safetyLabel.labelMetadata.map(SafetyLabelMetadata.fromThrift(_)),
-      applicableCountries = safetyLabel.applicableCountries
+o-object safetywabew {
+  def f-fwomthwift(safetywabew: s-s.safetywabew): safetywabew = {
+    safetywabew(
+      scowe = safetywabew.scowe, (U ﹏ U)
+      appwicabweusews = s-safetywabew.appwicabweusews
+        .map { pewspectivawusews =>
+          (pewspectivawusews map {
+            _.usewid
+          }).toset
+        }.getowewse(set.empty), >w<
+      souwce = safetywabew.souwce.fwatmap(wabewsouwce.fwomstwing), (U ﹏ U)
+      modewmetadata = s-safetywabew.modewmetadata.fwatmap(tweetmodewmetadata.fwomthwift), 😳
+      cweatedatmsec = safetywabew.cweatedatmsec, (ˆ ﻌ ˆ)♡
+      expiwesatmsec = s-safetywabew.expiwesatmsec, 😳😳😳
+      w-wabewmetadata = s-safetywabew.wabewmetadata.map(safetywabewmetadata.fwomthwift(_)), (U ﹏ U)
+      a-appwicabwecountwies = safetywabew.appwicabwecountwies
     )
   }
 
-  def toThrift(safetyLabel: SafetyLabel): s.SafetyLabel = {
-    s.SafetyLabel(
-      score = safetyLabel.score,
-      applicableUsers = if (safetyLabel.applicableUsers.nonEmpty) {
-        Some(safetyLabel.applicableUsers.toSeq.map {
-          s.PerspectivalUser(_)
+  def tothwift(safetywabew: s-safetywabew): s.safetywabew = {
+    s.safetywabew(
+      scowe = s-safetywabew.scowe, (///ˬ///✿)
+      appwicabweusews = if (safetywabew.appwicabweusews.nonempty) {
+        some(safetywabew.appwicabweusews.toseq.map {
+          s.pewspectivawusew(_)
         })
-      } else {
-        None
-      },
-      source = safetyLabel.source.map(_.name),
-      modelMetadata = safetyLabel.modelMetadata.map(TweetModelMetadata.toThrift),
-      createdAtMsec = safetyLabel.createdAtMsec,
-      expiresAtMsec = safetyLabel.expiresAtMsec,
-      labelMetadata = safetyLabel.labelMetadata.map(_.toThrift),
-      applicableCountries = safetyLabel.applicableCountries
+      } ewse {
+        n-nyone
+      }, 😳
+      souwce = s-safetywabew.souwce.map(_.name), 😳
+      m-modewmetadata = s-safetywabew.modewmetadata.map(tweetmodewmetadata.tothwift), σωσ
+      cweatedatmsec = safetywabew.cweatedatmsec, rawr x3
+      expiwesatmsec = s-safetywabew.expiwesatmsec, OwO
+      w-wabewmetadata = safetywabew.wabewmetadata.map(_.tothwift),
+      a-appwicabwecountwies = s-safetywabew.appwicabwecountwies
     )
   }
 }
 
-trait SafetyLabelWithType[EntitySafetyLabelType <: SafetyLabelType] {
-  val safetyLabelType: EntitySafetyLabelType
-  val safetyLabel: SafetyLabel
+twait safetywabewwithtype[entitysafetywabewtype <: s-safetywabewtype] {
+  vaw safetywabewtype: e-entitysafetywabewtype
+  vaw safetywabew: safetywabew
 }
 
-case class MediaSafetyLabel(
-  override val safetyLabelType: MediaSafetyLabelType,
-  override val safetyLabel: SafetyLabel)
-    extends SafetyLabelWithType[MediaSafetyLabelType] {
+c-case cwass mediasafetywabew(
+  o-ovewwide vaw safetywabewtype: m-mediasafetywabewtype, /(^•ω•^)
+  o-ovewwide vaw safetywabew: safetywabew)
+    extends safetywabewwithtype[mediasafetywabewtype] {
 
-  def fromThrift(
-    thriftType: store.MediaSafetyLabelType,
-    thriftLabel: s.SafetyLabel
-  ): MediaSafetyLabel = {
-    MediaSafetyLabel(
-      MediaSafetyLabelType.fromThrift(thriftType),
-      SafetyLabel.fromThrift(thriftLabel)
+  def fwomthwift(
+    thwifttype: stowe.mediasafetywabewtype, 😳😳😳
+    t-thwiftwabew: s-s.safetywabew
+  ): mediasafetywabew = {
+    m-mediasafetywabew(
+      m-mediasafetywabewtype.fwomthwift(thwifttype), ( ͡o ω ͡o )
+      s-safetywabew.fwomthwift(thwiftwabew)
     )
   }
 }
 
-case class SpaceSafetyLabel(
-  override val safetyLabelType: SpaceSafetyLabelType,
-  override val safetyLabel: SafetyLabel)
-    extends SafetyLabelWithType[SpaceSafetyLabelType] {
+case cwass spacesafetywabew(
+  ovewwide vaw safetywabewtype: spacesafetywabewtype, >_<
+  ovewwide v-vaw safetywabew: safetywabew)
+    extends safetywabewwithtype[spacesafetywabewtype] {
 
-  def fromThrift(
-    thriftType: store.SpaceSafetyLabelType,
-    thriftLabel: s.SafetyLabel
-  ): SpaceSafetyLabel = {
-    SpaceSafetyLabel(
-      SpaceSafetyLabelType.fromThrift(thriftType),
-      SafetyLabel.fromThrift(thriftLabel)
+  def fwomthwift(
+    thwifttype: s-stowe.spacesafetywabewtype, >w<
+    thwiftwabew: s-s.safetywabew
+  ): s-spacesafetywabew = {
+    s-spacesafetywabew(
+      spacesafetywabewtype.fwomthwift(thwifttype), rawr
+      s-safetywabew.fwomthwift(thwiftwabew)
     )
   }
 }

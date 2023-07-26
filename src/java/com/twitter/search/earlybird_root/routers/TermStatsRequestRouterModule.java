@@ -1,60 +1,60 @@
-package com.twitter.search.earlybird_root.routers;
+package com.twittew.seawch.eawwybiwd_woot.woutews;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+impowt javax.inject.named;
+i-impowt j-javax.inject.singweton;
 
-import com.google.inject.Provides;
+i-impowt c-com.googwe.inject.pwovides;
 
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.FullArchiveServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.RealtimeServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.ServingRangeProvider;
+i-impowt com.twittew.inject.twittewmoduwe;
+i-impowt c-com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.eawwybiwdtimewangefiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.fuwwawchivesewvingwangepwovidew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.weawtimesewvingwangepwovidew;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.sewvingwangepwovidew;
 
-public class TermStatsRequestRouterModule extends TwitterModule {
-  public static final String FULL_ARCHIVE_TIME_RANGE_FILTER =
-      "term_stats_full_archive_time_range_filter";
-  public static final String REALTIME_TIME_RANGE_FILTER =
-      "term_stats_realtime_time_range_filter";
+p-pubwic cwass tewmstatswequestwoutewmoduwe extends twittewmoduwe {
+  p-pubwic static finaw stwing f-fuww_awchive_time_wange_fiwtew =
+      "tewm_stats_fuww_awchive_time_wange_fiwtew";
+  pubwic static finaw stwing weawtime_time_wange_fiwtew =
+      "tewm_stats_weawtime_time_wange_fiwtew";
 
-  private static final String SUPERROOT_TERM_STATS_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_term_stats_serving_range_boundary_hours_ago";
+  p-pwivate static finaw stwing s-supewwoot_tewm_stats_sewving_wange_boundawy_houws_ago_decidew_key =
+      "supewwoot_tewm_stats_sewving_wange_boundawy_houws_ago";
 
-  private ServingRangeProvider getFullArchiveTimeRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new FullArchiveServingRangeProvider(
-        decider, SUPERROOT_TERM_STATS_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  p-pwivate sewvingwangepwovidew getfuwwawchivetimewangepwovidew(finaw seawchdecidew decidew)
+      t-thwows exception {
+    wetuwn nyew fuwwawchivesewvingwangepwovidew(
+        decidew, (///ˬ///✿) supewwoot_tewm_stats_sewving_wange_boundawy_houws_ago_decidew_key);
   }
 
-  private ServingRangeProvider getRealtimeTimeRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new RealtimeServingRangeProvider(
-        decider, SUPERROOT_TERM_STATS_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
-  }
-
-  /**
-   * For term stats full archive cluster spans from 21 March to 2006 to 6 days ago from current time
-   */
-  @Provides
-  @Singleton
-  @Named(FULL_ARCHIVE_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesFullArchiveTimeRangeFilter(final SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithQueryRewriter(
-        getFullArchiveTimeRangeProvider(decider), decider);
+  pwivate sewvingwangepwovidew g-getweawtimetimewangepwovidew(finaw seawchdecidew d-decidew)
+      t-thwows exception {
+    w-wetuwn n-nyew weawtimesewvingwangepwovidew(
+        decidew, >w< supewwoot_tewm_stats_sewving_wange_boundawy_houws_ago_decidew_key);
   }
 
   /**
-   * For term stats realtime cluster spans from 6 days ago from current time to a far away date
-   * into the future
+   * f-fow tewm stats fuww awchive cwustew spans f-fwom 21 mawch to 2006 to 6 days ago fwom cuwwent time
    */
-  @Provides
-  @Singleton
-  @Named(REALTIME_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesRealtimeTimeRangeFilter(final SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithQueryRewriter(
-        getRealtimeTimeRangeProvider(decider), decider);
+  @pwovides
+  @singweton
+  @named(fuww_awchive_time_wange_fiwtew)
+  pwivate eawwybiwdtimewangefiwtew pwovidesfuwwawchivetimewangefiwtew(finaw seawchdecidew d-decidew)
+      thwows e-exception {
+    w-wetuwn eawwybiwdtimewangefiwtew.newtimewangefiwtewwithquewywewwitew(
+        g-getfuwwawchivetimewangepwovidew(decidew), rawr decidew);
+  }
+
+  /**
+   * fow tewm stats weawtime cwustew s-spans fwom 6 d-days ago fwom cuwwent time to a f-faw away date
+   * i-into the futuwe
+   */
+  @pwovides
+  @singweton
+  @named(weawtime_time_wange_fiwtew)
+  pwivate e-eawwybiwdtimewangefiwtew pwovidesweawtimetimewangefiwtew(finaw s-seawchdecidew decidew)
+      thwows exception {
+    w-wetuwn eawwybiwdtimewangefiwtew.newtimewangefiwtewwithquewywewwitew(
+        getweawtimetimewangepwovidew(decidew), mya d-decidew);
   }
 }

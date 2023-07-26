@@ -1,64 +1,64 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
+package com.twittew.simcwustews_v2.scawding.topic_wecommendations.modew_based_topic_wecommendations
 
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.{DataRecord, FeatureContext, IRecordOneToOneAdapter}
+impowt com.twittew.mw.api.utiw.fdsw._
+i-impowt c-com.twittew.mw.api.{datawecowd, 😳😳😳 f-featuwecontext, mya i-iwecowdonetooneadaptew}
 
-case class UserTopicTrainingSample(
-  userId: Long,
-  followedTopics: Set[Long],
-  notInterestedTopics: Set[Long],
-  userCountry: String,
-  userLanguage: String,
-  targetTopicId: Int,
-  userInterestedInSimClusters: Map[Int, Double],
-  followedTopicsSimClusters: Map[Int, Double],
-  notInterestedTopicsSimClusters: Map[Int, Double])
+c-case cwass u-usewtopictwainingsampwe(
+  u-usewid: wong, 😳
+  f-fowwowedtopics: set[wong], -.-
+  nyotintewestedtopics: set[wong], 🥺
+  usewcountwy: stwing, o.O
+  usewwanguage: s-stwing, /(^•ω•^)
+  tawgettopicid: int, nyaa~~
+  usewintewestedinsimcwustews: m-map[int, nyaa~~ doubwe], :3
+  fowwowedtopicssimcwustews: m-map[int, doubwe], 😳😳😳
+  nyotintewestedtopicssimcwustews: map[int, (˘ω˘) doubwe])
 
-class UserTopicDataRecordAdapter extends IRecordOneToOneAdapter[UserTopicTrainingSample] {
-  import UserFeatures._
-
-  /**
-   * Get its feature context used to annotate the data.
-   *
-   * @return feature context
-   */
-  override def getFeatureContext: FeatureContext = UserFeatures.FeatureContext
+cwass usewtopicdatawecowdadaptew e-extends iwecowdonetooneadaptew[usewtopictwainingsampwe] {
+  i-impowt usewfeatuwes._
 
   /**
-   * Adapt record of type T to DataRecord.
+   * g-get its featuwe context used to annotate the data. ^^
    *
-   * @param record raw record of type T
-   *
-   * @return a DataRecord
-   *
-   * @throws com.twitter.ml.api.InvalidFeatureException
+   * @wetuwn featuwe c-context
    */
-  override def adaptToDataRecord(record: UserTopicTrainingSample): DataRecord = {
-    val dr = new DataRecord()
+  ovewwide def getfeatuwecontext: featuwecontext = usewfeatuwes.featuwecontext
 
-    dr.setFeatureValue(UserIdFeature, record.userId)
-    dr.setFeatureValue(
-      UserSimClusterFeatures,
-      record.userInterestedInSimClusters.map {
-        case (id, score) => id.toString -> score
-      })
-    dr.setFeatureValue(FollowedTopicIdFeatures, record.followedTopics.map(_.toString))
-    dr.setFeatureValue(NotInterestedTopicIdFeatures, record.notInterestedTopics.map(_.toString))
-    dr.setFeatureValue(UserCountryFeature, record.userCountry)
-    dr.setFeatureValue(UserLanguageFeature, record.userLanguage)
+  /**
+   * a-adapt wecowd of type t-t to datawecowd. :3
+   *
+   * @pawam w-wecowd waw w-wecowd of type t
+   *
+   * @wetuwn a-a datawecowd
+   *
+   * @thwows com.twittew.mw.api.invawidfeatuweexception
+   */
+  ovewwide def a-adapttodatawecowd(wecowd: usewtopictwainingsampwe): datawecowd = {
+    v-vaw dw = nyew datawecowd()
 
-    dr.setFeatureValue(
-      FollowedTopicSimClusterAvgFeatures,
-      record.followedTopicsSimClusters.map {
-        case (id, score) => id.toString -> score
+    dw.setfeatuwevawue(usewidfeatuwe, -.- wecowd.usewid)
+    dw.setfeatuwevawue(
+      usewsimcwustewfeatuwes, 😳
+      w-wecowd.usewintewestedinsimcwustews.map {
+        case (id, mya s-scowe) => id.tostwing -> s-scowe
+      })
+    d-dw.setfeatuwevawue(fowwowedtopicidfeatuwes, (˘ω˘) wecowd.fowwowedtopics.map(_.tostwing))
+    dw.setfeatuwevawue(notintewestedtopicidfeatuwes, >_< wecowd.notintewestedtopics.map(_.tostwing))
+    d-dw.setfeatuwevawue(usewcountwyfeatuwe, -.- w-wecowd.usewcountwy)
+    dw.setfeatuwevawue(usewwanguagefeatuwe, 🥺 w-wecowd.usewwanguage)
+
+    d-dw.setfeatuwevawue(
+      fowwowedtopicsimcwustewavgfeatuwes,
+      w-wecowd.fowwowedtopicssimcwustews.map {
+        case (id, (U ﹏ U) s-scowe) => id.tostwing -> scowe
       })
 
-    dr.setFeatureValue(
-      NotInterestedTopicSimClusterAvgFeatures,
-      record.notInterestedTopicsSimClusters.map {
-        case (id, score) => id.toString -> score
+    dw.setfeatuwevawue(
+      n-nyotintewestedtopicsimcwustewavgfeatuwes, >w<
+      wecowd.notintewestedtopicssimcwustews.map {
+        c-case (id, mya scowe) => i-id.tostwing -> s-scowe
       })
-    dr.setFeatureValue(TargetTopicIdFeatures, record.targetTopicId.toLong)
-    dr.getRecord
+    dw.setfeatuwevawue(tawgettopicidfeatuwes, >w< wecowd.tawgettopicid.towong)
+    dw.getwecowd
   }
 }

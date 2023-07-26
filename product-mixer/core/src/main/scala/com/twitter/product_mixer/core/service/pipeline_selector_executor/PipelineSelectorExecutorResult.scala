@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.service.pipeline_selector_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_sewectow_executow
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
 
-case class PipelineSelectorExecutorResult(pipelineIdentifier: ComponentIdentifier)
+c-case c-cwass pipewinesewectowexecutowwesuwt(pipewineidentifiew: c-componentidentifiew)

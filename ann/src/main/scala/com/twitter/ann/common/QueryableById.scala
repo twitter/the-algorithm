@@ -1,41 +1,41 @@
-package com.twitter.ann.common
+package com.twittew.ann.common
 
-import com.twitter.stitch.Stitch
+impowt com.twittew.stitch.stitch
 
 /**
- * This is a trait that allows you to query for nearest neighbors given an arbitrary type T1. This is
- * in contrast to a regular com.twitter.ann.common.Appendable, which takes an embedding as the input
- * argument.
+ * t-this is a-a twait that awwows y-you to quewy f-fow nyeawest nyeighbows g-given an a-awbitwawy type t-t1. rawr x3 this is
+ * i-in contwast to a weguwaw com.twittew.ann.common.appendabwe, (U ﹏ U) which takes an embedding as the input
+ * a-awgument. (U ﹏ U)
  *
- * This interface uses the Stitch API for batching. See go/stitch for details on how to use it.
+ * this intewface uses the stitch a-api fow batching. (⑅˘꒳˘) see go/stitch f-fow detaiws on how to use it. òωó
  *
- * @tparam T1 type of the query.
- * @tparam T2 type of the result.
- * @tparam P runtime parameters supported by the index.
- * @tparam D distance function used in the index.
+ * @tpawam t1 type of the quewy. ʘwʘ
+ * @tpawam t2 type of the w-wesuwt.
+ * @tpawam p wuntime pawametews s-suppowted b-by the index. /(^•ω•^)
+ * @tpawam d distance function used in the index. ʘwʘ
  */
-trait QueryableById[T1, T2, P <: RuntimeParams, D <: Distance[D]] {
-  def queryById(
-    id: T1,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Stitch[List[T2]]
+twait quewyabwebyid[t1, σωσ t-t2, p <: wuntimepawams, OwO d <: distance[d]] {
+  def quewybyid(
+    id: t-t1, 😳😳😳
+    nyumofneighbows: int, 😳😳😳
+    w-wuntimepawams: p-p
+  ): stitch[wist[t2]]
 
-  def queryByIdWithDistance(
-    id: T1,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Stitch[List[NeighborWithDistance[T2, D]]]
+  def q-quewybyidwithdistance(
+    i-id: t1, o.O
+    nyumofneighbows: int, ( ͡o ω ͡o )
+    w-wuntimepawams: p
+  ): stitch[wist[neighbowwithdistance[t2, (U ﹏ U) d]]]
 
-  def batchQueryById(
-    ids: Seq[T1],
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Stitch[List[NeighborWithSeed[T1, T2]]]
+  def batchquewybyid(
+    ids: s-seq[t1], (///ˬ///✿)
+    nyumofneighbows: int, >w<
+    wuntimepawams: p
+  ): stitch[wist[neighbowwithseed[t1, rawr t2]]]
 
-  def batchQueryWithDistanceById(
-    ids: Seq[T1],
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Stitch[List[NeighborWithDistanceWithSeed[T1, T2, D]]]
+  def batchquewywithdistancebyid(
+    ids: s-seq[t1], mya
+    nyumofneighbows: i-int, ^^
+    wuntimepawams: p-p
+  ): s-stitch[wist[neighbowwithdistancewithseed[t1, 😳😳😳 t2, d]]]
 }

@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.asyncfeatuwemap
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
+impowt c-com.fastewxmw.jackson.cowe.jsongenewatow
+i-impowt c-com.fastewxmw.jackson.databind.jsonsewiawizew
+impowt c-com.fastewxmw.jackson.databind.sewiawizewpwovidew
 
 /**
- * Since an [[AsyncFeatureMap]] is typically incomplete, and by the time it's serialized, all the [[com.twitter.product_mixer.core.feature.Feature]]s
- * it will typically be completed and part of the Query or Candidate's individual [[com.twitter.product_mixer.core.feature.Feature]]s
- * we instead opt to provide a summary of the Features which would be hydrated using [[AsyncFeatureMap.features]]
+ * s-since an [[asyncfeatuwemap]] i-is t-typicawwy incompwete, σωσ a-and by the time it's sewiawized, OwO aww the [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]s
+ * it wiww typicawwy be compweted a-and pawt of the quewy ow candidate's individuaw [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]s
+ * w-we instead opt to pwovide a-a summawy of the featuwes which wouwd be hydwated using [[asyncfeatuwemap.featuwes]]
  *
- * This indicates which [[com.twitter.product_mixer.core.feature.Feature]]s will be ready at which Steps
- * and which [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator]]
- * are responsible for those [[com.twitter.product_mixer.core.feature.Feature]]
+ * t-this indicates which [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]s w-wiww be w-weady at which steps
+ * and which [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwehydwatow]]
+ * awe wesponsibwe fow those [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
  *
- * @note changes to serialization logic can have serious performance implications given how hot the
- *       serialization path is. Consider benchmarking changes with [[com.twitter.product_mixer.core.benchmark.AsyncQueryFeatureMapSerializationBenchmark]]
+ * @note changes t-to sewiawization wogic can have sewious pewfowmance impwications given how hot t-the
+ *       sewiawization path i-is. 😳😳😳 considew benchmawking c-changes w-with [[com.twittew.pwoduct_mixew.cowe.benchmawk.asyncquewyfeatuwemapsewiawizationbenchmawk]]
  */
-private[asyncfeaturemap] class AsyncFeatureMapSerializer() extends JsonSerializer[AsyncFeatureMap] {
-  override def serialize(
-    asyncFeatureMap: AsyncFeatureMap,
-    gen: JsonGenerator,
-    serializers: SerializerProvider
-  ): Unit = {
-    gen.writeStartObject()
+p-pwivate[asyncfeatuwemap] cwass asyncfeatuwemapsewiawizew() e-extends jsonsewiawizew[asyncfeatuwemap] {
+  ovewwide d-def sewiawize(
+    asyncfeatuwemap: asyncfeatuwemap, 😳😳😳
+    gen: jsongenewatow, o.O
+    sewiawizews: s-sewiawizewpwovidew
+  ): unit = {
+    g-gen.wwitestawtobject()
 
-    asyncFeatureMap.features.foreach {
-      case (stepIdentifier, featureHydrators) =>
-        gen.writeObjectFieldStart(stepIdentifier.toString)
+    a-asyncfeatuwemap.featuwes.foweach {
+      c-case (stepidentifiew, ( ͡o ω ͡o ) featuwehydwatows) =>
+        gen.wwiteobjectfiewdstawt(stepidentifiew.tostwing)
 
-        featureHydrators.foreach {
-          case (hydratorIdentifier, featuresFromHydrator) =>
-            gen.writeArrayFieldStart(hydratorIdentifier.toString)
+        featuwehydwatows.foweach {
+          case (hydwatowidentifiew, (U ﹏ U) f-featuwesfwomhydwatow) =>
+            g-gen.wwiteawwayfiewdstawt(hydwatowidentifiew.tostwing)
 
-            featuresFromHydrator.foreach(feature => gen.writeString(feature.toString))
+            featuwesfwomhydwatow.foweach(featuwe => g-gen.wwitestwing(featuwe.tostwing))
 
-            gen.writeEndArray()
+            g-gen.wwiteendawway()
         }
 
-        gen.writeEndObject()
+        gen.wwiteendobject()
     }
 
-    gen.writeEndObject()
+    g-gen.wwiteendobject()
   }
 }

@@ -1,56 +1,56 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.util.IdentityHashMap;
+impowt j-java.utiw.identityhashmap;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import com.twitter.search.queryparser.query.BooleanQuery;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.visitors.DetectAnnotationVisitor;
+i-impowt com.twittew.seawch.quewypawsew.quewy.booweanquewy;
+i-impowt c-com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+impowt com.twittew.seawch.quewypawsew.quewy.annotation.annotation;
+impowt com.twittew.seawch.quewypawsew.visitows.detectannotationvisitow;
 
 /**
- * A visitor that collects node ranks from :r annotation in the query
+ * a-a visitow that cowwects nyode wanks fwom :w annotation i-in the quewy
  */
-public class QueryRankVisitor extends DetectAnnotationVisitor {
-  private final IdentityHashMap<Query, Integer> nodeToRankMap = Maps.newIdentityHashMap();
+pubwic c-cwass quewywankvisitow extends detectannotationvisitow {
+  pwivate f-finaw identityhashmap<quewy, (⑅˘꒳˘) integew> nyodetowankmap = m-maps.newidentityhashmap();
 
-  public QueryRankVisitor() {
-    super(Annotation.Type.NODE_RANK);
+  p-pubwic quewywankvisitow() {
+    supew(annotation.type.node_wank);
   }
 
-  @Override
-  protected boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
-    if (query.hasAnnotationType(Annotation.Type.NODE_RANK)) {
-      collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
+  @ovewwide
+  pwotected boowean visitbooweanquewy(booweanquewy q-quewy) thwows quewypawsewexception {
+    if (quewy.hasannotationtype(annotation.type.node_wank)) {
+      cowwectnodewank(quewy.getannotationof(annotation.type.node_wank).get(), òωó quewy);
     }
 
-    boolean found = false;
-    for (Query child : query.getChildren()) {
-      found |= child.accept(this);
+    boowean found = f-fawse;
+    fow (quewy chiwd : q-quewy.getchiwdwen()) {
+      found |= c-chiwd.accept(this);
     }
-    return found;
+    w-wetuwn found;
   }
 
-  @Override
-  protected boolean visitQuery(Query query) throws QueryParserException {
-    if (query.hasAnnotationType(Annotation.Type.NODE_RANK)) {
-      collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
-      return true;
+  @ovewwide
+  p-pwotected boowean visitquewy(quewy quewy) t-thwows quewypawsewexception {
+    if (quewy.hasannotationtype(annotation.type.node_wank)) {
+      cowwectnodewank(quewy.getannotationof(annotation.type.node_wank).get(), ʘwʘ q-quewy);
+      wetuwn twue;
     }
 
-    return false;
+    wetuwn fawse;
   }
 
-  private void collectNodeRank(Annotation anno, Query query) {
-    Preconditions.checkArgument(anno.getType() == Annotation.Type.NODE_RANK);
-    int rank = (Integer) anno.getValue();
-    nodeToRankMap.put(query, rank);
+  pwivate void cowwectnodewank(annotation a-anno, /(^•ω•^) quewy quewy) {
+    p-pweconditions.checkawgument(anno.gettype() == a-annotation.type.node_wank);
+    i-int wank = (integew) anno.getvawue();
+    nyodetowankmap.put(quewy, ʘwʘ wank);
   }
 
-  public IdentityHashMap<Query, Integer> getNodeToRankMap() {
-    return nodeToRankMap;
+  pubwic identityhashmap<quewy, σωσ i-integew> getnodetowankmap() {
+    w-wetuwn nyodetowankmap;
   }
 }

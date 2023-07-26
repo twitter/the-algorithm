@@ -1,79 +1,79 @@
-package com.twitter.cr_mixer
-package featureswitch
+package com.twittew.cw_mixew
+package f-featuweswitch
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abdecider.Recipient
-import com.twitter.abdecider.Bucket
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.util.Local
-import scala.collection.concurrent.{Map => ConcurrentMap}
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.abdecidew.woggingabdecidew
+i-impowt com.twittew.abdecidew.wecipient
+i-impowt com.twittew.abdecidew.bucket
+i-impowt c-com.twittew.fwigate.common.utiw.statsutiw
+i-impowt com.twittew.utiw.wocaw
+impowt scawa.cowwection.concuwwent.{map => concuwwentmap}
 
 /**
- * Wraps a LoggingABDecider, so all impressed buckets are recorded to a 'LocalContext' on a given request.
+ * w-wwaps a woggingabdecidew, (U ﹏ U) so aww impwessed b-buckets awe wecowded to a 'wocawcontext' o-on a given wequest. 😳
  *
- * Contexts (https://twitter.github.io/finagle/guide/Contexts.html) are Finagle's mechanism for
- * storing state/variables without having to pass these variables all around the request.
+ * contexts (https://twittew.github.io/finagwe/guide/contexts.htmw) awe finagwe's mechanism f-fow
+ * stowing state/vawiabwes w-without having t-to pass these vawiabwes aww awound the wequest. (ˆ ﻌ ˆ)♡
  *
- * In order for this class to be used the [[SetImpressedBucketsLocalContextFilter]] must be applied
- * at the beginning of the request, to initialize a concurrent map used to store impressed buckets.
+ * in owdew fow this cwass to b-be used the [[setimpwessedbucketswocawcontextfiwtew]] must be appwied
+ * at the beginning of the wequest, 😳😳😳 to initiawize a-a concuwwent map used t-to stowe impwessed b-buckets.
  *
- * Whenever we get an a/b impression, the bucket information is logged to the concurrent hashmap.
+ * w-whenevew we get a-an a/b impwession, (U ﹏ U) the bucket infowmation is wogged t-to the concuwwent hashmap. (///ˬ///✿)
  */
-case class CrMixerLoggingABDecider(
-  loggingAbDecider: LoggingABDecider,
-  statsReceiver: StatsReceiver)
-    extends LoggingABDecider {
+case cwass c-cwmixewwoggingabdecidew(
+  woggingabdecidew: woggingabdecidew, 😳
+  statsweceivew: statsweceivew)
+    extends woggingabdecidew {
 
-  private val scopedStatsReceiver = statsReceiver.scope("cr_logging_ab_decider")
+  p-pwivate vaw scopedstatsweceivew = statsweceivew.scope("cw_wogging_ab_decidew")
 
-  override def impression(
-    experimentName: String,
-    recipient: Recipient
-  ): Option[Bucket] = {
+  o-ovewwide def i-impwession(
+    e-expewimentname: stwing, 😳
+    wecipient: wecipient
+  ): option[bucket] = {
 
-    StatsUtil.trackNonFutureBlockStats(scopedStatsReceiver.scope("log_impression")) {
-      val maybeBuckets = loggingAbDecider.impression(experimentName, recipient)
-      maybeBuckets.foreach { b =>
-        scopedStatsReceiver.counter("impressions").incr()
-        CrMixerImpressedBuckets.recordImpressedBucket(b)
+    s-statsutiw.twacknonfutuwebwockstats(scopedstatsweceivew.scope("wog_impwession")) {
+      v-vaw maybebuckets = woggingabdecidew.impwession(expewimentname, σωσ w-wecipient)
+      m-maybebuckets.foweach { b =>
+        s-scopedstatsweceivew.countew("impwessions").incw()
+        cwmixewimpwessedbuckets.wecowdimpwessedbucket(b)
       }
-      maybeBuckets
+      m-maybebuckets
     }
   }
 
-  override def track(
-    experimentName: String,
-    eventName: String,
-    recipient: Recipient
-  ): Unit = {
-    loggingAbDecider.track(experimentName, eventName, recipient)
+  ovewwide def twack(
+    e-expewimentname: stwing, rawr x3
+    e-eventname: stwing, OwO
+    wecipient: w-wecipient
+  ): u-unit = {
+    woggingabdecidew.twack(expewimentname, /(^•ω•^) eventname, 😳😳😳 wecipient)
   }
 
-  override def bucket(
-    experimentName: String,
-    recipient: Recipient
-  ): Option[Bucket] = {
-    loggingAbDecider.bucket(experimentName, recipient)
+  ovewwide def bucket(
+    expewimentname: stwing, ( ͡o ω ͡o )
+    wecipient: w-wecipient
+  ): o-option[bucket] = {
+    woggingabdecidew.bucket(expewimentname, >_< w-wecipient)
   }
 
-  override def experiments: Seq[String] = loggingAbDecider.experiments
+  o-ovewwide def e-expewiments: seq[stwing] = woggingabdecidew.expewiments
 
-  override def experiment(experimentName: String) =
-    loggingAbDecider.experiment(experimentName)
+  ovewwide def expewiment(expewimentname: s-stwing) =
+    woggingabdecidew.expewiment(expewimentname)
 }
 
-object CrMixerImpressedBuckets {
-  private[featureswitch] val localImpressedBucketsMap = new Local[ConcurrentMap[Bucket, Boolean]]
+object cwmixewimpwessedbuckets {
+  pwivate[featuweswitch] vaw wocawimpwessedbucketsmap = n-nyew wocaw[concuwwentmap[bucket, boowean]]
 
   /**
-   * Gets all impressed buckets for this request.
+   * g-gets aww impwessed b-buckets fow this w-wequest. >w<
    **/
-  def getAllImpressedBuckets: Option[List[Bucket]] = {
-    localImpressedBucketsMap.apply().map(_.map { case (k, _) => k }.toList)
+  def getawwimpwessedbuckets: o-option[wist[bucket]] = {
+    wocawimpwessedbucketsmap.appwy().map(_.map { c-case (k, rawr _) => k-k }.towist)
   }
 
-  private[featureswitch] def recordImpressedBucket(bucket: Bucket) = {
-    localImpressedBucketsMap().foreach { m => m += bucket -> true }
+  p-pwivate[featuweswitch] def wecowdimpwessedbucket(bucket: bucket) = {
+    w-wocawimpwessedbucketsmap().foweach { m-m => m-m += bucket -> t-twue }
   }
 }

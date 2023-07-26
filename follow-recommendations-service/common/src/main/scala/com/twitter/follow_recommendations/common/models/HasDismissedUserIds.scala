@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasDismissedUserIds {
-  // user ids that are recently followed by the target user
-  def dismissedUserIds: Option[Seq[Long]]
+twait hasdismissedusewids {
+  // u-usew ids t-that awe wecentwy f-fowwowed by t-the tawget usew
+  d-def dismissedusewids: o-option[seq[wong]]
 }

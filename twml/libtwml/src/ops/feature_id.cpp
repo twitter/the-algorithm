@@ -1,58 +1,58 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
 
-using namespace tensorflow;
+using nyamespace tensowfwow;
 
-REGISTER_OP("FeatureId")
-.Attr("feature_names: list(string)")
-.Output("output: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
+w-wegistew_op("featuweid")
+.attw("featuwe_names: w-wist(stwing)")
+.output("output: i-int64")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    w-wetuwn status::ok();
+  }).doc(w"doc(
 
-A tensorflow OP that hashes a list of strings into int64. This is used for feature name hashing.
+a-a tensowfwow o-op that hashes a-a wist of stwings into int64. (U ﹏ U) this is used fow featuwe nyame hashing. (⑅˘꒳˘)
 
-Attr
-  feature_names: a list of string feature names (list(string)).
+attw
+  f-featuwe_names: a wist of stwing featuwe nyames (wist(stwing)). òωó
 
-Outputs
-  ouput: hashes corresponding to the string feature names (int64).
+o-outputs
+  ouput: hashes cowwesponding t-to the stwing featuwe nyames (int64). ʘwʘ
 )doc");
 
 
-class FeatureId : public OpKernel {
- private:
-    std::vector<string> input_vector;
+cwass featuweid : pubwic o-opkewnew {
+ pwivate:
+    std::vectow<stwing> i-input_vectow;
 
- public:
-  explicit FeatureId(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_names", &input_vector));
+ p-pubwic:
+  expwicit featuweid(opkewnewconstwuction* context) : opkewnew(context) {
+    op_wequiwes_ok(context, /(^•ω•^) c-context->getattw("featuwe_names", ʘwʘ &input_vectow));
   }
 
-  void Compute(OpKernelContext* context) override {
-    // Get size of the input_vector and create TensorShape shape
-    const int total_size = static_cast<int>(input_vector.size());
-    TensorShape shape = {total_size};
+  void compute(opkewnewcontext* context) ovewwide {
+    // get size of the input_vectow a-and cweate tensowshape s-shape
+    const i-int totaw_size = s-static_cast<int>(input_vectow.size());
+    t-tensowshape shape = {totaw_size};
 
-    // Create an output tensor
-    Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, shape,
-                             &output_tensor));
-    auto output_flat = output_tensor->flat<int64>();
+    // cweate an o-output tensow
+    tensow* output_tensow = nyuwwptw;
+    o-op_wequiwes_ok(context, σωσ context->awwocate_output(0, OwO shape, 😳😳😳
+                             &output_tensow));
+    auto output_fwat = output_tensow->fwat<int64>();
 
-    // Transform the input tensor into a int64
-    for (int i = 0; i < total_size; i++) {
-      output_flat(i) = twml::featureId(input_vector[i]);
+    // twansfowm the input t-tensow into a int64
+    fow (int i-i = 0; i < t-totaw_size; i++) {
+      o-output_fwat(i) = twmw::featuweid(input_vectow[i]);
     }
   }
 };
 
 
-REGISTER_KERNEL_BUILDER(
-  Name("FeatureId")
-  .Device(DEVICE_CPU),
-  FeatureId);
+wegistew_kewnew_buiwdew(
+  nyame("featuweid")
+  .device(device_cpu), 😳😳😳
+  f-featuweid);

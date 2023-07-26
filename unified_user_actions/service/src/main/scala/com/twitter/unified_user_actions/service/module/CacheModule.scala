@@ -1,48 +1,48 @@
-package com.twitter.unified_user_actions.service.module
+package com.twittew.unified_usew_actions.sewvice.moduwe
 
-import com.google.common.cache.CacheBuilder
-import com.google.inject.Provides
-import com.twitter.dynmap.DynMap
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.unified_user_actions.enricher.hcache.LocalCache
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.util.Future
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
+impowt com.googwe.common.cache.cachebuiwdew
+i-impowt com.googwe.inject.pwovides
+i-impowt com.twittew.dynmap.dynmap
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.inject.annotations.fwag
+i-impowt c-com.twittew.unified_usew_actions.enwichew.hcache.wocawcache
+impowt com.twittew.unified_usew_actions.enwichew.intewnaw.thwiftscawa.enwichmentkey
+impowt com.twittew.utiw.futuwe
+impowt java.utiw.concuwwent.timeunit
+i-impowt javax.inject.singweton
 
-object CacheModule extends TwitterModule {
-  private final val localCacheTtlFlagName = "local.cache.ttl.seconds"
-  private final val localCacheMaxSizeFlagName = "local.cache.max.size"
+object cachemoduwe extends twittewmoduwe {
+  p-pwivate finaw vaw wocawcachettwfwagname = "wocaw.cache.ttw.seconds"
+  p-pwivate finaw vaw wocawcachemaxsizefwagname = "wocaw.cache.max.size"
 
-  flag[Long](
-    name = localCacheTtlFlagName,
-    default = 1800L,
-    help = "Local Cache's TTL in seconds"
+  fwag[wong](
+    nyame = w-wocawcachettwfwagname, 😳😳😳
+    defauwt = 1800w, 🥺
+    h-hewp = "wocaw c-cache's ttw in seconds"
   )
 
-  flag[Long](
-    name = localCacheMaxSizeFlagName,
-    default = 1000L,
-    help = "Local Cache's max size"
+  fwag[wong](
+    nyame = wocawcachemaxsizefwagname, mya
+    defauwt = 1000w, 🥺
+    hewp = "wocaw c-cache's max size"
   )
 
-  @Provides
-  @Singleton
-  def providesLocalCache(
-    @Flag(localCacheTtlFlagName) localCacheTtlFlag: Long,
-    @Flag(localCacheMaxSizeFlagName) localCacheMaxSizeFlag: Long,
-    statsReceiver: StatsReceiver
-  ): LocalCache[EnrichmentKey, DynMap] = {
-    val underlying = CacheBuilder
-      .newBuilder()
-      .expireAfterWrite(localCacheTtlFlag, TimeUnit.SECONDS)
-      .maximumSize(localCacheMaxSizeFlag)
-      .build[EnrichmentKey, Future[DynMap]]()
+  @pwovides
+  @singweton
+  def pwovideswocawcache(
+    @fwag(wocawcachettwfwagname) wocawcachettwfwag: wong, >_<
+    @fwag(wocawcachemaxsizefwagname) w-wocawcachemaxsizefwag: wong, >_<
+    s-statsweceivew: s-statsweceivew
+  ): w-wocawcache[enwichmentkey, (⑅˘꒳˘) d-dynmap] = {
+    vaw undewwying = cachebuiwdew
+      .newbuiwdew()
+      .expiweaftewwwite(wocawcachettwfwag, /(^•ω•^) t-timeunit.seconds)
+      .maximumsize(wocawcachemaxsizefwag)
+      .buiwd[enwichmentkey, rawr x3 futuwe[dynmap]]()
 
-    new LocalCache[EnrichmentKey, DynMap](
-      underlying = underlying,
-      statsReceiver = statsReceiver.scope("enricherLocalCache"))
+    nyew wocawcache[enwichmentkey, (U ﹏ U) d-dynmap](
+      undewwying = undewwying, (U ﹏ U)
+      statsweceivew = statsweceivew.scope("enwichewwocawcache"))
   }
 }

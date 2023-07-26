@@ -1,58 +1,58 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.cr_mixer.thriftscala.CrMixer
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetRequest
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetResponse
-import com.twitter.cr_mixer.thriftscala.FrsTweetRequest
-import com.twitter.cr_mixer.thriftscala.FrsTweetResponse
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
+impowt c-com.twittew.cw_mixew.thwiftscawa.cwmixew
+i-impowt c-com.twittew.cw_mixew.thwiftscawa.cwmixewtweetwequest
+i-impowt c-com.twittew.cw_mixew.thwiftscawa.cwmixewtweetwesponse
+i-impowt com.twittew.cw_mixew.thwiftscawa.fwstweetwequest
+impowt c-com.twittew.cw_mixew.thwiftscawa.fwstweetwesponse
+i-impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+impowt com.twittew.finagwe.stats.stat
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.utiw.futuwe
 
 /**
- * Store to get content recs from content recommender.
+ * s-stowe to get content wecs fwom content wecommendew. /(^•ω•^)
  */
-case class CrMixerTweetStore(
-  crMixer: CrMixer.MethodPerEndpoint
+case c-cwass cwmixewtweetstowe(
+  cwmixew: cwmixew.methodpewendpoint
 )(
-  implicit statsReceiver: StatsReceiver = NullStatsReceiver) {
+  i-impwicit statsweceivew: statsweceivew = nuwwstatsweceivew) {
 
-  private val requestsCounter = statsReceiver.counter("requests")
-  private val successCounter = statsReceiver.counter("success")
-  private val failuresCounter = statsReceiver.counter("failures")
-  private val nonEmptyCounter = statsReceiver.counter("non_empty")
-  private val emptyCounter = statsReceiver.counter("empty")
-  private val failuresScope = statsReceiver.scope("failures")
-  private val latencyStat = statsReceiver.stat("latency")
+  pwivate vaw wequestscountew = s-statsweceivew.countew("wequests")
+  pwivate v-vaw successcountew = s-statsweceivew.countew("success")
+  pwivate vaw faiwuwescountew = statsweceivew.countew("faiwuwes")
+  pwivate v-vaw nyonemptycountew = statsweceivew.countew("non_empty")
+  pwivate vaw emptycountew = statsweceivew.countew("empty")
+  pwivate v-vaw faiwuwesscope = statsweceivew.scope("faiwuwes")
+  p-pwivate v-vaw watencystat = s-statsweceivew.stat("watency")
 
-  private def updateStats[T](f: => Future[Option[T]]): Future[Option[T]] = {
-    requestsCounter.incr()
-    Stat
-      .timeFuture(latencyStat)(f)
-      .onSuccess { r =>
-        if (r.isDefined) nonEmptyCounter.incr() else emptyCounter.incr()
-        successCounter.incr()
+  p-pwivate def updatestats[t](f: => futuwe[option[t]]): f-futuwe[option[t]] = {
+    wequestscountew.incw()
+    stat
+      .timefutuwe(watencystat)(f)
+      .onsuccess { w-w =>
+        if (w.isdefined) nyonemptycountew.incw() ewse emptycountew.incw()
+        successcountew.incw()
       }
-      .onFailure { e =>
+      .onfaiwuwe { e =>
         {
-          failuresCounter.incr()
-          failuresScope.counter(e.getClass.getName).incr()
+          f-faiwuwescountew.incw()
+          faiwuwesscope.countew(e.getcwass.getname).incw()
         }
       }
   }
 
-  def getTweetRecommendations(
-    request: CrMixerTweetRequest
-  ): Future[Option[CrMixerTweetResponse]] = {
-    updateStats(crMixer.getTweetRecommendations(request).map { response =>
-      Some(response)
+  d-def gettweetwecommendations(
+    w-wequest: cwmixewtweetwequest
+  ): f-futuwe[option[cwmixewtweetwesponse]] = {
+    updatestats(cwmixew.gettweetwecommendations(wequest).map { wesponse =>
+      some(wesponse)
     })
   }
 
-  def getFRSTweetCandidates(request: FrsTweetRequest): Future[Option[FrsTweetResponse]] = {
-    updateStats(crMixer.getFrsBasedTweetRecommendations(request).map { response =>
-      Some(response)
+  def g-getfwstweetcandidates(wequest: f-fwstweetwequest): futuwe[option[fwstweetwesponse]] = {
+    u-updatestats(cwmixew.getfwsbasedtweetwecommendations(wequest).map { wesponse =>
+      s-some(wesponse)
     })
   }
 }

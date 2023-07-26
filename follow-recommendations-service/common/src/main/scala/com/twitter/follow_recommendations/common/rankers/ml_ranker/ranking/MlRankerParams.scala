@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking
+package com.twittew.fowwow_wecommendations.common.wankews.mw_wankew.wanking
 
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
+impowt c-com.twittew.fowwow_wecommendations.common.wankews.common.wankewid
+i-impowt com.twittew.timewines.configapi.fsenumpawam
+i-impowt com.twittew.timewines.configapi.fspawam
 
 /**
- * When adding Producer side experiments, make sure to register the FS Key in [[ProducerFeatureFilter]]
- * in [[FeatureSwitchesModule]], otherwise, the FS will not work.
+ * when a-adding pwoducew s-side expewiments, m-make suwe t-to wegistew the f-fs key in [[pwoducewfeatuwefiwtew]]
+ * in [[featuweswitchesmoduwe]], /(^•ω•^) othewwise, the fs wiww nyot wowk. rawr
  */
-object MlRankerParams {
-  // which ranker to use by default for the given request
-  case object RequestScorerIdParam
-      extends FSEnumParam[RankerId.type](
-        name = "post_nux_ml_flow_ml_ranker_id",
-        default = RankerId.PostNuxProdRanker,
-        enum = RankerId
+object m-mwwankewpawams {
+  // which wankew to use by defauwt f-fow the given wequest
+  case o-object wequestscowewidpawam
+      extends fsenumpawam[wankewid.type](
+        nyame = "post_nux_mw_fwow_mw_wankew_id", OwO
+        defauwt = wankewid.postnuxpwodwankew, (U ﹏ U)
+        e-enum = wankewid
       )
 
-  // which ranker to use for the given candidate
-  case object CandidateScorerIdParam
-      extends FSEnumParam[RankerId.type](
-        name = "post_nux_ml_flow_candidate_user_scorer_id",
-        default = RankerId.None,
-        enum = RankerId
+  // which wankew to use f-fow the given c-candidate
+  case object candidatescowewidpawam
+      extends fsenumpawam[wankewid.type](
+        nyame = "post_nux_mw_fwow_candidate_usew_scowew_id", >_<
+        defauwt = wankewid.none, rawr x3
+        e-enum = wankewid
       )
 
-  case object ScribeRankingInfoInMlRanker
-      extends FSParam[Boolean]("post_nux_ml_flow_scribe_ranking_info_in_ml_ranker", true)
+  case object scwibewankinginfoinmwwankew
+      extends fspawam[boowean]("post_nux_mw_fwow_scwibe_wanking_info_in_mw_wankew", mya t-twue)
 }

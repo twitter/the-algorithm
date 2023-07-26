@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+package com.twittew.fowwow_wecommendations.common.pwedicates.sgs
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.hasduwationconvewsion
+i-impowt com.twittew.utiw.duwation
 
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class SgsPredicateFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    SgsPredicateParams.SgsRelationshipsPredicateTimeout
+@singweton
+c-cwass s-sgspwedicatefsconfig @inject() () e-extends featuweswitchconfig {
+  ovewwide vaw duwationfspawams: seq[fsboundedpawam[duwation] with hasduwationconvewsion] = s-seq(
+    sgspwedicatepawams.sgswewationshipspwedicatetimeout
   )
 }

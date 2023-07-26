@@ -1,84 +1,84 @@
-package com.twitter.product_mixer.core.pipeline.step.candidate_source
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.candidate_souwce
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.transformer.BaseCandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutor
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.basecandidatepipewinequewytwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.hascandidateswithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.candidate_souwce_executow.candidatesouwceexecutow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_souwce_executow.candidatesouwceexecutowwesuwt
+i-impowt com.twittew.stitch.awwow
+impowt javax.inject.inject
 
 /**
- * A candidate source step, which takes the query and gets csandidates from the candidate source.
+ * a-a candidate souwce step, (U ﹏ U) which takes the quewy and gets csandidates f-fwom the candidate souwce. (///ˬ///✿)
  *
- * @param candidateSourceExecutor Candidate Source Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to filter
- * @tparam State The pipeline state domain model.
+ * @pawam c-candidatesouwceexecutow c-candidate souwce executow
+ * @tpawam quewy type of pipewinequewy domain m-modew
+ * @tpawam candidate type of candidates to fiwtew
+ * @tpawam state the pipewine s-state domain modew. 😳
  */
-case class CandidateSourceStep[
-  Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithFeatures[Candidate, State]] @Inject() (
-  candidateSourceExecutor: CandidateSourceExecutor)
-    extends Step[
-      State,
-      CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate],
-      Query,
-      CandidateSourceExecutorResult[
-        Candidate
+case c-cwass candidatesouwcestep[
+  q-quewy <: pipewinequewy, 😳
+  c-candidatesouwcequewy, σωσ
+  c-candidatesouwcewesuwt, rawr x3
+  candidate <: univewsawnoun[any], OwO
+  state <: h-hasquewy[quewy, /(^•ω•^) state] with hascandidateswithfeatuwes[candidate, 😳😳😳 s-state]] @inject() (
+  candidatesouwceexecutow: candidatesouwceexecutow)
+    extends step[
+      state, ( ͡o ω ͡o )
+      candidatesouwceconfig[quewy, >_< candidatesouwcequewy, >w< c-candidatesouwcewesuwt, rawr candidate], 😳
+      q-quewy, >w<
+      candidatesouwceexecutowwesuwt[
+        c-candidate
       ]
     ] {
-  override def isEmpty(
-    config: CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate]
-  ): Boolean = false
+  o-ovewwide def isempty(
+    config: candidatesouwceconfig[quewy, (⑅˘꒳˘) candidatesouwcequewy, OwO c-candidatesouwcewesuwt, (ꈍᴗꈍ) c-candidate]
+  ): boowean = f-fawse
 
-  override def adaptInput(
-    state: State,
-    config: CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate]
-  ): Query = state.query
+  o-ovewwide def adaptinput(
+    state: s-state, 😳
+    config: candidatesouwceconfig[quewy, 😳😳😳 c-candidatesouwcequewy, mya candidatesouwcewesuwt, mya candidate]
+  ): q-quewy = state.quewy
 
-  override def arrow(
-    config: CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate],
-    context: Executor.Context
-  ): Arrow[Query, CandidateSourceExecutorResult[Candidate]] = candidateSourceExecutor.arrow(
-    config.candidateSource,
-    config.queryTransformer,
-    config.resultTransformer,
-    config.resultFeaturesTransformers,
+  ovewwide d-def awwow(
+    config: candidatesouwceconfig[quewy, (⑅˘꒳˘) c-candidatesouwcequewy, (U ﹏ U) c-candidatesouwcewesuwt, mya candidate], ʘwʘ
+    context: executow.context
+  ): awwow[quewy, (˘ω˘) candidatesouwceexecutowwesuwt[candidate]] = candidatesouwceexecutow.awwow(
+    config.candidatesouwce, (U ﹏ U)
+    config.quewytwansfowmew, ^•ﻌ•^
+    c-config.wesuwttwansfowmew, (˘ω˘)
+    c-config.wesuwtfeatuwestwansfowmews, :3
     context
   )
 
-  override def updateState(
-    state: State,
-    executorResult: CandidateSourceExecutorResult[Candidate],
-    config: CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate]
-  ): State = state
-    .updateQuery(
-      state.query
-        .withFeatureMap(executorResult.candidateSourceFeatureMap).asInstanceOf[
-          Query]).updateCandidatesWithFeatures(executorResult.candidates)
+  o-ovewwide d-def updatestate(
+    s-state: state, ^^;;
+    executowwesuwt: candidatesouwceexecutowwesuwt[candidate], 🥺
+    config: c-candidatesouwceconfig[quewy, (⑅˘꒳˘) candidatesouwcequewy, nyaa~~ candidatesouwcewesuwt, :3 candidate]
+  ): state = s-state
+    .updatequewy(
+      state.quewy
+        .withfeatuwemap(executowwesuwt.candidatesouwcefeatuwemap).asinstanceof[
+          q-quewy]).updatecandidateswithfeatuwes(executowwesuwt.candidates)
 }
 
-case class CandidateSourceConfig[
-  Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Candidate <: UniversalNoun[Any]
+c-case cwass c-candidatesouwceconfig[
+  quewy <: p-pipewinequewy, ( ͡o ω ͡o )
+  c-candidatesouwcequewy, mya
+  c-candidatesouwcewesuwt, (///ˬ///✿)
+  c-candidate <: univewsawnoun[any]
 ](
-  candidateSource: BaseCandidateSource[CandidateSourceQuery, CandidateSourceResult],
-  queryTransformer: BaseCandidatePipelineQueryTransformer[
-    Query,
-    CandidateSourceQuery
-  ],
-  resultTransformer: CandidatePipelineResultsTransformer[CandidateSourceResult, Candidate],
-  resultFeaturesTransformers: Seq[CandidateFeatureTransformer[CandidateSourceResult]])
+  candidatesouwce: basecandidatesouwce[candidatesouwcequewy, (˘ω˘) c-candidatesouwcewesuwt], ^^;;
+  q-quewytwansfowmew: b-basecandidatepipewinequewytwansfowmew[
+    q-quewy, (✿oωo)
+    candidatesouwcequewy
+  ], (U ﹏ U)
+  w-wesuwttwansfowmew: candidatepipewinewesuwtstwansfowmew[candidatesouwcewesuwt, -.- candidate],
+  wesuwtfeatuwestwansfowmews: seq[candidatefeatuwetwansfowmew[candidatesouwcewesuwt]])

@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
 
-case class Timeline(
-  id: String,
-  instructions: Seq[TimelineInstruction],
-  // responseObjects::feedbackActions actions are populated implicitly, see UrtTransportMarshaller
-  metadata: Option[TimelineMetadata] = None)
-    extends HasMarshalling
+c-case c-cwass timewine(
+  i-id: stwing, rawr
+  i-instwuctions: s-seq[timewineinstwuction], σωσ
+  // w-wesponseobjects::feedbackactions a-actions awe popuwated i-impwicitwy, σωσ see uwttwanspowtmawshawwew
+  metadata: option[timewinemetadata] = nyone)
+    extends hasmawshawwing

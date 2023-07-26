@@ -1,36 +1,36 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+impowt j-javax.inject.inject;
+i-impowt javax.inject.singweton;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.SearchRootServer;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.filters.QueryTokenizerFilter;
-import com.twitter.search.queryparser.query.QueryParserException;
+i-impowt com.twittew.finagwe.sewvice;
+i-impowt c-com.twittew.seawch.common.woot.seawchwootsewvew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
+i-impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.quewytokenizewfiwtew;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
 
-@Singleton
-public class SuperRootServer extends SearchRootServer<EarlybirdService.ServiceIface> {
-  private final QueryTokenizerFilter queryTokenizerFilter;
+@singweton
+pubwic cwass supewwootsewvew extends seawchwootsewvew<eawwybiwdsewvice.sewviceiface> {
+  pwivate f-finaw quewytokenizewfiwtew quewytokenizewfiwtew;
 
-  @Inject
-  public SuperRootServer(
-      SuperRootService svc,
-      Service<byte[], byte[]> byteSvc,
-      QueryTokenizerFilter queryTokenizerFilter) {
-    super(svc, byteSvc);
+  @inject
+  pubwic supewwootsewvew(
+      s-supewwootsewvice svc, nyaa~~
+      sewvice<byte[], /(^•ω•^) b-byte[]> bytesvc, rawr
+      quewytokenizewfiwtew quewytokenizewfiwtew) {
+    s-supew(svc, OwO bytesvc);
 
-    this.queryTokenizerFilter = queryTokenizerFilter;
+    t-this.quewytokenizewfiwtew = q-quewytokenizewfiwtew;
   }
 
-  @Override
-  public void warmup() {
-    super.warmup();
+  @ovewwide
+  pubwic void wawmup() {
+    supew.wawmup();
 
-    try {
-      queryTokenizerFilter.performExpensiveInitialization();
-    } catch (QueryParserException e) {
-      throw new RuntimeException(e);
+    twy {
+      q-quewytokenizewfiwtew.pewfowmexpensiveinitiawization();
+    } catch (quewypawsewexception e) {
+      thwow nyew wuntimeexception(e);
     }
   }
 }

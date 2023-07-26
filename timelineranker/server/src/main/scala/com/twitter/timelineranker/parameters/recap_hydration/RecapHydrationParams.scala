@@ -1,48 +1,48 @@
-package com.twitter.timelineranker.parameters.recap_hydration
+package com.twittew.timewinewankew.pawametews.wecap_hydwation
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt c-com.twittew.timewines.configapi.pawam
 
-object RecapHydrationParams {
-
-  /**
-   * Enables semantic core, penguin, and tweetypie content features in recap hydration source.
-   */
-  object EnableContentFeaturesHydrationParam extends Param(false)
+o-object w-wecaphydwationpawams {
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * e-enabwes semantic c-cowe, /(^•ω•^) penguin, rawr x3 a-and tweetypie content featuwes in wecap hydwation souwce. (U ﹏ U)
    */
-  object EnableTokensInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recap_hydration_enable_tokens_in_content_features_hydration",
-        default = false
+  object enabwecontentfeatuweshydwationpawam e-extends pawam(fawse)
+
+  /**
+   * additionawwy enabwes tokens when h-hydwating content featuwes. (U ﹏ U)
+   */
+  o-object enabwetokensincontentfeatuweshydwationpawam
+      extends fspawam(
+        nyame = "wecap_hydwation_enabwe_tokens_in_content_featuwes_hydwation", (⑅˘꒳˘)
+        defauwt = f-fawse
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * additionawwy e-enabwes t-tweet text when hydwating content featuwes. òωó
+   * this onwy wowks if enabwecontentfeatuweshydwationpawam i-is set to twue
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recap_hydration_enable_tweet_text_in_content_features_hydration",
-        default = false
+  object enabwetweettextincontentfeatuweshydwationpawam
+      extends fspawam(
+        n-nyame = "wecap_hydwation_enabwe_tweet_text_in_content_featuwes_hydwation", ʘwʘ
+        defauwt = f-fawse
       )
 
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * a-additionawwy e-enabwes c-convewsationcontwow when hydwating content featuwes. /(^•ω•^)
+   * t-this onwy wowks if enabwecontentfeatuweshydwationpawam is set to twue
    */
-  object EnableConversationControlInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "conversation_control_in_content_features_hydration_recap_hydration_enable",
-        default = false
+  o-object enabweconvewsationcontwowincontentfeatuweshydwationpawam
+      extends fspawam(
+        nyame = "convewsation_contwow_in_content_featuwes_hydwation_wecap_hydwation_enabwe", ʘwʘ
+        defauwt = fawse
       )
 
-  object EnableTweetMediaHydrationParam
-      extends FSParam(
-        name = "tweet_media_hydration_recap_hydration_enable",
-        default = false
+  o-object enabwetweetmediahydwationpawam
+      extends f-fspawam(
+        n-nyame = "tweet_media_hydwation_wecap_hydwation_enabwe",
+        d-defauwt = fawse
       )
 
 }

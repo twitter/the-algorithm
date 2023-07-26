@@ -1,134 +1,134 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder.DefaultSortIndex
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder.NextPageTopCursorEntryOffset
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder.UrtEntryOffset
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.util.SortIndexBuilder
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.uwtcuwsowbuiwdew.defauwtsowtindex
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.uwtcuwsowbuiwdew.nextpagetopcuwsowentwyoffset
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.uwtcuwsowbuiwdew.uwtentwyoffset
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.bottomcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowopewation
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowtype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.gapcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.topcuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.uwtpipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.utiw.sowtindexbuiwdew
 
-object UrtCursorBuilder {
-  val NextPageTopCursorEntryOffset = 1L
-  val UrtEntryOffset = 1L
-  val DefaultSortIndex = (query: PipelineQuery) => SortIndexBuilder.timeToId(query.queryTime)
+object uwtcuwsowbuiwdew {
+  vaw nyextpagetopcuwsowentwyoffset = 1w
+  v-vaw uwtentwyoffset = 1w
+  vaw defauwtsowtindex = (quewy: p-pipewinequewy) => s-sowtindexbuiwdew.timetoid(quewy.quewytime)
 }
 
-trait UrtCursorBuilder[-Query <: PipelineQuery] {
+twait uwtcuwsowbuiwdew[-quewy <: pipewinequewy] {
 
-  val includeOperation: IncludeInstruction[Query] = AlwaysInclude
+  vaw incwudeopewation: incwudeinstwuction[quewy] = a-awwaysincwude
 
-  def cursorType: CursorType
-  def cursorValue(query: Query, entries: Seq[TimelineEntry]): String
+  def cuwsowtype: cuwsowtype
+  def cuwsowvawue(quewy: quewy, (ˆ ﻌ ˆ)♡ entwies: seq[timewineentwy]): s-stwing
 
   /**
-   * Identifier of an *existing* timeline cursor that this new cursor would replace, if this cursor
-   * is returned in a `ReplaceEntry` timeline instruction.
+   * identifiew o-of an *existing* t-timewine cuwsow t-that this nyew c-cuwsow wouwd wepwace, if this cuwsow
+   * is wetuwned i-in a `wepwaceentwy` timewine instwuction. XD
    *
-   * Note:
-   *   - This id is used to populate the `entryIdToReplace` field on the URT TimelineEntry
-   *     generated. More details at [[CursorOperation.entryIdToReplace]].
-   *   - As a convention, we use the sortIndex of the cursor for its id/entryId fields. So the
-   *     `idToReplace` should represent the sortIndex of the existing cursor to be replaced.
+   * n-nyote:
+   *   - this id is used to popuwate the `entwyidtowepwace` fiewd on the uwt timewineentwy
+   *     g-genewated. mowe detaiws at [[cuwsowopewation.entwyidtowepwace]]. (ˆ ﻌ ˆ)♡
+   *   - a-as a convention, ( ͡o ω ͡o ) w-we use the sowtindex o-of the cuwsow fow its id/entwyid fiewds. rawr x3 so the
+   *     `idtowepwace` s-shouwd w-wepwesent the sowtindex of t-the existing cuwsow t-to be wepwaced.
    */
-  def idToReplace(query: Query): Option[Long] = None
+  def i-idtowepwace(quewy: quewy): option[wong] = n-nyone
 
-  def cursorSortIndex(query: Query, entries: Seq[TimelineEntry]): Long =
-    (query, cursorType) match {
-      case (query: PipelineQuery with HasPipelineCursor[_], TopCursor) =>
-        topCursorSortIndex(query, entries)
-      case (query: PipelineQuery with HasPipelineCursor[_], BottomCursor | GapCursor) =>
-        bottomCursorSortIndex(query, entries)
-      case _ =>
-        throw new UnsupportedOperationException(
-          "Automatic sort index support limited to top and bottom cursors")
+  def cuwsowsowtindex(quewy: quewy, nyaa~~ e-entwies: seq[timewineentwy]): wong =
+    (quewy, >_< c-cuwsowtype) match {
+      c-case (quewy: pipewinequewy w-with haspipewinecuwsow[_], ^^;; topcuwsow) =>
+        topcuwsowsowtindex(quewy, (ˆ ﻌ ˆ)♡ entwies)
+      case (quewy: pipewinequewy w-with haspipewinecuwsow[_], ^^;; b-bottomcuwsow | gapcuwsow) =>
+        b-bottomcuwsowsowtindex(quewy, (⑅˘꒳˘) e-entwies)
+      c-case _ =>
+        thwow nyew unsuppowtedopewationexception(
+          "automatic sowt i-index suppowt wimited to top and bottom cuwsows")
     }
 
-  def build(query: Query, entries: Seq[TimelineEntry]): Option[CursorOperation] = {
-    if (includeOperation(query, entries)) {
-      val sortIndex = cursorSortIndex(query, entries)
+  def buiwd(quewy: quewy, rawr x3 e-entwies: seq[timewineentwy]): option[cuwsowopewation] = {
+    i-if (incwudeopewation(quewy, (///ˬ///✿) entwies)) {
+      v-vaw sowtindex = c-cuwsowsowtindex(quewy, 🥺 entwies)
 
-      val cursorOperation = CursorOperation(
-        id = sortIndex,
-        sortIndex = Some(sortIndex),
-        value = cursorValue(query, entries),
-        cursorType = cursorType,
-        displayTreatment = None,
-        idToReplace = idToReplace(query),
+      v-vaw cuwsowopewation = c-cuwsowopewation(
+        i-id = sowtindex, >_<
+        sowtindex = s-some(sowtindex),
+        vawue = cuwsowvawue(quewy, UwU entwies),
+        cuwsowtype = cuwsowtype, >_<
+        d-dispwaytweatment = n-nyone, -.-
+        i-idtowepwace = i-idtowepwace(quewy), mya
       )
 
-      Some(cursorOperation)
-    } else None
+      s-some(cuwsowopewation)
+    } ewse nyone
   }
 
   /**
-   * Build the top cursor sort index which handles the following cases:
-   * 1. When there is at least one non-cursor entry, use the first entry's sort index + UrtEntryOffset
-   * 2. When there are no non-cursor entries, and initialSortIndex is not set which indicates that
-   *    it is the first page, use DefaultSortIndex + UrtEntryOffset
-   * 3. When there are no non-cursor entries, and initialSortIndex is set which indicates that it is
-   *    not the first page, use the query.initialSortIndex from the passed-in cursor + UrtEntryOffset
+   * buiwd the top cuwsow s-sowt index which handwes the fowwowing cases:
+   * 1. >w< when thewe is at weast one nyon-cuwsow entwy, (U ﹏ U) u-use the fiwst entwy's sowt index + uwtentwyoffset
+   * 2. 😳😳😳 when thewe awe nyo n-nyon-cuwsow entwies, o.O a-and initiawsowtindex i-is nyot set which indicates t-that
+   *    it is the fiwst p-page, òωó use defauwtsowtindex + u-uwtentwyoffset
+   * 3. 😳😳😳 when thewe awe nyo nyon-cuwsow entwies, σωσ and initiawsowtindex is set which i-indicates that it is
+   *    n-nyot the fiwst page, (⑅˘꒳˘) use the quewy.initiawsowtindex f-fwom the passed-in c-cuwsow + uwtentwyoffset
    */
-  protected def topCursorSortIndex(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
-  ): Long = {
-    val nonCursorEntries = entries.filter {
-      case _: CursorOperation => false
-      case _: CursorItem => false
-      case _ => true
+  pwotected d-def topcuwsowsowtindex(
+    q-quewy: pipewinequewy w-with haspipewinecuwsow[_], (///ˬ///✿)
+    e-entwies: seq[timewineentwy]
+  ): wong = {
+    vaw nyoncuwsowentwies = entwies.fiwtew {
+      case _: c-cuwsowopewation => f-fawse
+      c-case _: cuwsowitem => fawse
+      c-case _ => t-twue
     }
 
-    lazy val initialSortIndex =
-      UrtPipelineCursor.getCursorInitialSortIndex(query).getOrElse(DefaultSortIndex(query))
+    wazy vaw initiawsowtindex =
+      u-uwtpipewinecuwsow.getcuwsowinitiawsowtindex(quewy).getowewse(defauwtsowtindex(quewy))
 
-    nonCursorEntries.headOption.flatMap(_.sortIndex).getOrElse(initialSortIndex) + UrtEntryOffset
+    noncuwsowentwies.headoption.fwatmap(_.sowtindex).getowewse(initiawsowtindex) + uwtentwyoffset
   }
 
   /**
-   * Specifies the point at which the next page's entries' sort indices will start counting.
+   * specifies the point a-at which the nyext p-page's entwies' sowt indices wiww stawt counting. 🥺
    *
-   * Note that in the case of URT, the next page's entries' does not include the top cursor. As
-   * such, the value of initialSortIndex passed back in the cursor is typically the bottom cursor's
-   * sort index - 2. Subtracting 2 leaves room for the next page's top cursor, which will have a
-   * sort index of top entry + 1.
+   * note t-that in the c-case of uwt, OwO the nyext page's entwies' does nyot incwude the top c-cuwsow. >w< as
+   * such, 🥺 the vawue of initiawsowtindex passed back in the cuwsow is t-typicawwy the bottom cuwsow's
+   * sowt index - 2. nyaa~~ s-subtwacting 2 w-weaves woom fow the nyext page's top cuwsow, ^^ which wiww have a-a
+   * sowt index o-of top entwy + 1. >w<
    */
-  protected def nextBottomInitialSortIndex(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
-  ): Long = {
-    bottomCursorSortIndex(query, entries) - NextPageTopCursorEntryOffset - UrtEntryOffset
+  pwotected def nyextbottominitiawsowtindex(
+    quewy: p-pipewinequewy with haspipewinecuwsow[_], OwO
+    entwies: s-seq[timewineentwy]
+  ): wong = {
+    bottomcuwsowsowtindex(quewy, XD entwies) - nyextpagetopcuwsowentwyoffset - u-uwtentwyoffset
   }
 
   /**
-   * Build the bottom cursor sort index which handles the following cases:
-   * 1. When there is at least one non-cursor entry, use the last entry's sort index - UrtEntryOffset
-   * 2. When there are no non-cursor entries, and initialSortIndex is not set which indicates that
-   *    it is the first page, use DefaultSortIndex
-   * 3. When there are no non-cursor entries, and initialSortIndex is set which indicates that it is
-   *    not the first page, use the query.initialSortIndex from the passed-in cursor
+   * buiwd the bottom c-cuwsow sowt i-index which handwes the fowwowing c-cases:
+   * 1. ^^;; when thewe is a-at weast one nyon-cuwsow e-entwy, 🥺 u-use the wast entwy's sowt index - u-uwtentwyoffset
+   * 2. XD w-when thewe awe nyo nyon-cuwsow entwies, (U ᵕ U❁) a-and initiawsowtindex i-is nyot set w-which indicates that
+   *    it is the fiwst page, :3 u-use defauwtsowtindex
+   * 3. ( ͡o ω ͡o ) when thewe awe n-nyo nyon-cuwsow e-entwies, òωó and initiawsowtindex is set which indicates that it is
+   *    nyot the f-fiwst page, use t-the quewy.initiawsowtindex f-fwom t-the passed-in cuwsow
    */
-  protected def bottomCursorSortIndex(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
-  ): Long = {
-    val nonCursorEntries = entries.filter {
-      case _: CursorOperation => false
-      case _: CursorItem => false
-      case _ => true
+  pwotected d-def bottomcuwsowsowtindex(
+    quewy: pipewinequewy with haspipewinecuwsow[_], σωσ
+    entwies: seq[timewineentwy]
+  ): w-wong = {
+    vaw nyoncuwsowentwies = e-entwies.fiwtew {
+      case _: c-cuwsowopewation => fawse
+      c-case _: cuwsowitem => fawse
+      c-case _ => twue
     }
 
-    lazy val initialSortIndex =
-      UrtPipelineCursor.getCursorInitialSortIndex(query).getOrElse(DefaultSortIndex(query))
+    w-wazy v-vaw initiawsowtindex =
+      u-uwtpipewinecuwsow.getcuwsowinitiawsowtindex(quewy).getowewse(defauwtsowtindex(quewy))
 
-    nonCursorEntries.lastOption
-      .flatMap(_.sortIndex).map(_ - UrtEntryOffset).getOrElse(initialSortIndex)
+    n-nyoncuwsowentwies.wastoption
+      .fwatmap(_.sowtindex).map(_ - uwtentwyoffset).getowewse(initiawsowtindex)
   }
 }

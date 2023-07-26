@@ -1,48 +1,48 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.eventbus.client.EventBusPublisher
-import com.twitter.eventbus.client.EventBusPublisherBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.timelines.config.ConfigUtils
-import com.twitter.timelines.config.Env
-import com.twitter.timelines.impressionstore.thriftscala.PublishedImpressionList
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.eventbus.cwient.eventbuspubwishew
+i-impowt c-com.twittew.eventbus.cwient.eventbuspubwishewbuiwdew
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.timewines.config.configutiws
+impowt com.twittew.timewines.config.env
+impowt com.twittew.timewines.impwessionstowe.thwiftscawa.pubwishedimpwessionwist
+i-impowt javax.inject.singweton
 
-object ClientSentImpressionsPublisherModule extends TwitterModule with ConfigUtils {
-  private val serviceName = "home-mixer"
+object cwientsentimpwessionspubwishewmoduwe extends twittewmoduwe w-with configutiws {
+  pwivate v-vaw sewvicename = "home-mixew"
 
-  @Singleton
-  @Provides
-  def providesClientSentImpressionsPublisher(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): EventBusPublisher[PublishedImpressionList] = {
-    val env = serviceIdentifier.environment.toLowerCase match {
-      case "prod" => Env.prod
-      case "staging" => Env.staging
-      case "local" => Env.local
-      case _ => Env.devel
+  @singweton
+  @pwovides
+  def pwovidescwientsentimpwessionspubwishew(
+    sewviceidentifiew: sewviceidentifiew, (U ﹏ U)
+    s-statsweceivew: statsweceivew
+  ): e-eventbuspubwishew[pubwishedimpwessionwist] = {
+    vaw e-env = sewviceidentifiew.enviwonment.towowewcase match {
+      case "pwod" => env.pwod
+      case "staging" => env.staging
+      c-case "wocaw" => env.wocaw
+      case _ => env.devew
     }
 
-    val streamName = env match {
-      case Env.prod => "timelinemixer_client_sent_impressions_prod"
-      case _ => "timelinemixer_client_sent_impressions_devel"
+    vaw stweamname = env match {
+      c-case env.pwod => "timewinemixew_cwient_sent_impwessions_pwod"
+      case _ => "timewinemixew_cwient_sent_impwessions_devew"
     }
 
-    EventBusPublisherBuilder()
-      .clientId(clientIdWithScopeOpt(serviceName, env))
-      .serviceIdentifier(serviceIdentifier)
-      .streamName(streamName)
-      .statsReceiver(statsReceiver.scope("eventbus"))
-      .thriftStruct(PublishedImpressionList)
-      .tcpConnectTimeout(20.milliseconds)
-      .connectTimeout(100.milliseconds)
-      .requestTimeout(1.second)
-      .publishTimeout(1.second)
-      .build()
+    e-eventbuspubwishewbuiwdew()
+      .cwientid(cwientidwithscopeopt(sewvicename, >_< e-env))
+      .sewviceidentifiew(sewviceidentifiew)
+      .stweamname(stweamname)
+      .statsweceivew(statsweceivew.scope("eventbus"))
+      .thwiftstwuct(pubwishedimpwessionwist)
+      .tcpconnecttimeout(20.miwwiseconds)
+      .connecttimeout(100.miwwiseconds)
+      .wequesttimeout(1.second)
+      .pubwishtimeout(1.second)
+      .buiwd()
   }
 }

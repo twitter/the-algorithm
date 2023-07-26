@@ -1,49 +1,49 @@
-package com.twitter.frigate.pushservice.take.history
+package com.twittew.fwigate.pushsewvice.take.histowy
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.history.HistoryStoreKeyContext
-import com.twitter.frigate.common.history.PushServiceHistoryStore
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.conversions.DurationOps._
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.histowy.histowystowekeycontext
+i-impowt com.twittew.fwigate.common.histowy.pushsewvicehistowystowe
+i-impowt com.twittew.fwigate.common.wec_types.wectypes
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.thwiftscawa.fwigatenotification
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.convewsions.duwationops._
 
-class HistoryWriter(historyStore: PushServiceHistoryStore, stats: StatsReceiver) {
-  private lazy val historyWriterStats = stats.scope(this.getClass.getSimpleName)
-  private lazy val historyWriteCounter = historyWriterStats.counter("history_write_num")
-  private lazy val loggedOutHistoryWriteCounter =
-    historyWriterStats.counter("logged_out_history_write_num")
+cwass histowywwitew(histowystowe: pushsewvicehistowystowe, (///ˬ///✿) s-stats: statsweceivew) {
+  pwivate wazy v-vaw histowywwitewstats = stats.scope(this.getcwass.getsimpwename)
+  p-pwivate wazy vaw histowywwitecountew = histowywwitewstats.countew("histowy_wwite_num")
+  pwivate wazy vaw w-woggedouthistowywwitecountew =
+    histowywwitewstats.countew("wogged_out_histowy_wwite_num")
 
-  private def writeTtlForHistory(candidate: PushCandidate): Duration = {
-    if (candidate.target.isLoggedOutUser) {
+  p-pwivate def wwitettwfowhistowy(candidate: p-pushcandidate): duwation = {
+    if (candidate.tawget.iswoggedoutusew) {
       60.days
-    } else if (RecTypes.isTweetType(candidate.commonRecType)) {
-      candidate.target.params(PushFeatureSwitchParams.FrigateHistoryTweetNotificationWriteTtl)
-    } else candidate.target.params(PushFeatureSwitchParams.FrigateHistoryOtherNotificationWriteTtl)
+    } ewse if (wectypes.istweettype(candidate.commonwectype)) {
+      candidate.tawget.pawams(pushfeatuweswitchpawams.fwigatehistowytweetnotificationwwitettw)
+    } e-ewse candidate.tawget.pawams(pushfeatuweswitchpawams.fwigatehistowyothewnotificationwwitettw)
   }
 
-  def writeSendToHistory(
-    candidate: PushCandidate,
-    frigateNotificationForPersistence: FrigateNotification
-  ): Future[Unit] = {
-    val historyStoreKeyContext = HistoryStoreKeyContext(
-      candidate.target.targetId,
-      candidate.target.pushContext.flatMap(_.useMemcacheForHistory).getOrElse(false)
+  def wwitesendtohistowy(
+    candidate: pushcandidate,
+    f-fwigatenotificationfowpewsistence: fwigatenotification
+  ): f-futuwe[unit] = {
+    v-vaw histowystowekeycontext = h-histowystowekeycontext(
+      c-candidate.tawget.tawgetid, 😳😳😳
+      candidate.tawget.pushcontext.fwatmap(_.usememcachefowhistowy).getowewse(fawse)
     )
-    if (candidate.target.isLoggedOutUser) {
-      loggedOutHistoryWriteCounter.incr()
-    } else {
-      historyWriteCounter.incr()
+    if (candidate.tawget.iswoggedoutusew) {
+      w-woggedouthistowywwitecountew.incw()
+    } ewse {
+      histowywwitecountew.incw()
     }
-    historyStore
+    h-histowystowe
       .put(
-        historyStoreKeyContext,
-        candidate.createdAt,
-        frigateNotificationForPersistence,
-        Some(writeTtlForHistory(candidate))
+        histowystowekeycontext, 🥺
+        candidate.cweatedat, mya
+        fwigatenotificationfowpewsistence, 🥺
+        some(wwitettwfowhistowy(candidate))
       )
   }
 }

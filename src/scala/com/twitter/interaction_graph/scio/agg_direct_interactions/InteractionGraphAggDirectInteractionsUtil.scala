@@ -1,168 +1,168 @@
-package com.twitter.interaction_graph.scio.agg_direct_interactions
+package com.twittew.intewaction_gwaph.scio.agg_diwect_intewactions
 
-import com.spotify.scio.ScioMetrics
-import com.spotify.scio.values.SCollection
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.scio.common.FeatureKey
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.scio.common.UserUtil.DUMMY_USER_ID
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
-import com.twitter.timelineservice.thriftscala.FavoriteEventUnion.Favorite
-import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
-import com.twitter.tweetypie.thriftscala.TweetMediaTagEvent
+impowt com.spotify.scio.sciometwics
+i-impowt com.spotify.scio.vawues.scowwection
+i-impowt com.twittew.intewaction_gwaph.scio.common.featuwegenewatowutiw
+i-impowt com.twittew.intewaction_gwaph.scio.common.featuwekey
+i-impowt com.twittew.intewaction_gwaph.scio.common.intewactiongwaphwawinput
+i-impowt c-com.twittew.intewaction_gwaph.scio.common.usewutiw.dummy_usew_id
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.edge
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.featuwename
+impowt com.twittew.intewaction_gwaph.thwiftscawa.vewtex
+impowt com.twittew.timewinesewvice.thwiftscawa.contextuawizedfavowiteevent
+i-impowt com.twittew.timewinesewvice.thwiftscawa.favowiteeventunion.favowite
+impowt com.twittew.tweetsouwce.common.thwiftscawa.unhydwatedfwattweet
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetmediatagevent
 
-object InteractionGraphAggDirectInteractionsUtil {
+o-object intewactiongwaphaggdiwectintewactionsutiw {
 
-  val DefaultFeatureValue = 1L
+  vaw defauwtfeatuwevawue = 1w
 
-  def favouriteFeatures(
-    rawFavorites: SCollection[ContextualizedFavoriteEvent]
-  ): SCollection[(FeatureKey, Long)] = {
-    rawFavorites
-      .withName("fav features")
-      .flatMap { event =>
+  def favouwitefeatuwes(
+    w-wawfavowites: scowwection[contextuawizedfavowiteevent]
+  ): s-scowwection[(featuwekey, σωσ w-wong)] = {
+    wawfavowites
+      .withname("fav featuwes")
+      .fwatmap { event =>
         event.event match {
-          case Favorite(e) if e.userId != e.tweetUserId =>
-            ScioMetrics.counter("process", "fav").inc()
-            Some(
-              FeatureKey(e.userId, e.tweetUserId, FeatureName.NumFavorites) -> DefaultFeatureValue)
-          case _ => None
+          c-case favowite(e) if e.usewid != e.tweetusewid =>
+            sciometwics.countew("pwocess", >w< "fav").inc()
+            some(
+              f-featuwekey(e.usewid, 😳😳😳 e.tweetusewid, OwO f-featuwename.numfavowites) -> d-defauwtfeatuwevawue)
+          c-case _ => none
         }
       }
 
   }
 
-  def mentionFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource
-      .withName("mention features")
-      .flatMap {
-        case s if s.shareSourceTweetId.isEmpty => // only for non-retweets
-          s.atMentionedUserIds
-            .map { users =>
-              users.toSet.map { uid: Long =>
-                ScioMetrics.counter("process", "mention").inc()
-                FeatureKey(s.userId, uid, FeatureName.NumMentions) -> DefaultFeatureValue
-              }.toSeq
+  d-def mentionfeatuwes(
+    tweetsouwce: s-scowwection[unhydwatedfwattweet]
+  ): scowwection[(featuwekey, 😳 wong)] = {
+    t-tweetsouwce
+      .withname("mention featuwes")
+      .fwatmap {
+        case s if s.shawesouwcetweetid.isempty => // onwy fow nyon-wetweets
+          s-s.atmentionedusewids
+            .map { usews =>
+              u-usews.toset.map { u-uid: wong =>
+                s-sciometwics.countew("pwocess", 😳😳😳 "mention").inc()
+                featuwekey(s.usewid, uid, (˘ω˘) featuwename.nummentions) -> d-defauwtfeatuwevawue
+              }.toseq
             }
-            .getOrElse(Nil)
-        case _ =>
-          Nil
+            .getowewse(niw)
+        c-case _ =>
+          nyiw
       }
   }
 
-  def photoTagFeatures(
-    rawPhotoTags: SCollection[TweetMediaTagEvent]
-  ): SCollection[(FeatureKey, Long)] = {
-    rawPhotoTags
-      .withName("photo tag features")
-      .flatMap { p =>
-        p.taggedUserIds.map { (p.userId, _) }
+  d-def phototagfeatuwes(
+    w-wawphototags: scowwection[tweetmediatagevent]
+  ): s-scowwection[(featuwekey, ʘwʘ wong)] = {
+    w-wawphototags
+      .withname("photo tag featuwes")
+      .fwatmap { p =>
+        p-p.taggedusewids.map { (p.usewid, ( ͡o ω ͡o ) _) }
       }
-      .collect {
-        case (src, dst) if src != dst =>
-          ScioMetrics.counter("process", "photo tag").inc()
-          FeatureKey(src, dst, FeatureName.NumPhotoTags) -> DefaultFeatureValue
-      }
-  }
-
-  def retweetFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource
-      .withName("retweet features")
-      .collect {
-        case s if s.shareSourceUserId.exists(_ != s.userId) =>
-          ScioMetrics.counter("process", "share tweet").inc()
-          FeatureKey(
-            s.userId,
-            s.shareSourceUserId.get,
-            FeatureName.NumRetweets) -> DefaultFeatureValue
+      .cowwect {
+        case (swc, o.O d-dst) if swc != dst =>
+          s-sciometwics.countew("pwocess", >w< "photo tag").inc()
+          f-featuwekey(swc, 😳 dst, 🥺 featuwename.numphototags) -> defauwtfeatuwevawue
       }
   }
 
-  def quotedTweetFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource
-      .withName("quoted tweet features")
-      .collect {
-        case t if t.quotedTweetUserId.isDefined =>
-          ScioMetrics.counter("process", "quote tweet").inc()
-          FeatureKey(
-            t.userId,
-            t.quotedTweetUserId.get,
-            FeatureName.NumTweetQuotes) -> DefaultFeatureValue
+  def wetweetfeatuwes(
+    tweetsouwce: scowwection[unhydwatedfwattweet]
+  ): scowwection[(featuwekey, rawr x3 wong)] = {
+    t-tweetsouwce
+      .withname("wetweet f-featuwes")
+      .cowwect {
+        case s if s-s.shawesouwceusewid.exists(_ != s-s.usewid) =>
+          s-sciometwics.countew("pwocess", o.O "shawe tweet").inc()
+          featuwekey(
+            s.usewid, rawr
+            s-s.shawesouwceusewid.get, ʘwʘ
+            featuwename.numwetweets) -> defauwtfeatuwevawue
       }
   }
 
-  def replyTweetFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource
-      .withName("reply tweet features")
-      .collect {
-        case t if t.inReplyToUserId.isDefined =>
-          ScioMetrics.counter("process", "reply tweet").inc()
-          FeatureKey(t.userId, t.inReplyToUserId.get, FeatureName.NumReplies) -> DefaultFeatureValue
+  def quotedtweetfeatuwes(
+    tweetsouwce: s-scowwection[unhydwatedfwattweet]
+  ): scowwection[(featuwekey, 😳😳😳 w-wong)] = {
+    t-tweetsouwce
+      .withname("quoted t-tweet featuwes")
+      .cowwect {
+        case t-t if t.quotedtweetusewid.isdefined =>
+          s-sciometwics.countew("pwocess", ^^;; "quote t-tweet").inc()
+          f-featuwekey(
+            t.usewid, o.O
+            t.quotedtweetusewid.get, (///ˬ///✿)
+            featuwename.numtweetquotes) -> d-defauwtfeatuwevawue
       }
   }
 
-  // we create edges to a dummy user id since creating a tweet has no destination id
-  def createTweetFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource.withName("create tweet features").map { tweet =>
-      ScioMetrics.counter("process", "create tweet").inc()
-      FeatureKey(tweet.userId, DUMMY_USER_ID, FeatureName.NumCreateTweets) -> DefaultFeatureValue
+  d-def wepwytweetfeatuwes(
+    t-tweetsouwce: scowwection[unhydwatedfwattweet]
+  ): s-scowwection[(featuwekey, σωσ w-wong)] = {
+    tweetsouwce
+      .withname("wepwy tweet featuwes")
+      .cowwect {
+        case t i-if t.inwepwytousewid.isdefined =>
+          sciometwics.countew("pwocess", nyaa~~ "wepwy tweet").inc()
+          featuwekey(t.usewid, t.inwepwytousewid.get, ^^;; featuwename.numwepwies) -> d-defauwtfeatuwevawue
+      }
+  }
+
+  // we cweate edges to a dummy usew id since c-cweating a tweet h-has nyo destination i-id
+  def cweatetweetfeatuwes(
+    tweetsouwce: s-scowwection[unhydwatedfwattweet]
+  ): scowwection[(featuwekey, ^•ﻌ•^ w-wong)] = {
+    t-tweetsouwce.withname("cweate tweet featuwes").map { tweet =>
+      sciometwics.countew("pwocess", σωσ "cweate tweet").inc()
+      featuwekey(tweet.usewid, -.- d-dummy_usew_id, ^^;; featuwename.numcweatetweets) -> d-defauwtfeatuwevawue
     }
   }
 
-  def process(
-    rawFavorites: SCollection[ContextualizedFavoriteEvent],
-    tweetSource: SCollection[UnhydratedFlatTweet],
-    rawPhotoTags: SCollection[TweetMediaTagEvent],
-    safeUsers: SCollection[Long]
-  ): (SCollection[Vertex], SCollection[Edge]) = {
-    val favouriteInput = favouriteFeatures(rawFavorites)
-    val mentionInput = mentionFeatures(tweetSource)
-    val photoTagInput = photoTagFeatures(rawPhotoTags)
-    val retweetInput = retweetFeatures(tweetSource)
-    val quotedTweetInput = quotedTweetFeatures(tweetSource)
-    val replyInput = replyTweetFeatures(tweetSource)
-    val createTweetInput = createTweetFeatures(tweetSource)
+  def pwocess(
+    w-wawfavowites: s-scowwection[contextuawizedfavowiteevent], XD
+    tweetsouwce: scowwection[unhydwatedfwattweet], 🥺
+    w-wawphototags: s-scowwection[tweetmediatagevent], òωó
+    safeusews: s-scowwection[wong]
+  ): (scowwection[vewtex], (ˆ ﻌ ˆ)♡ s-scowwection[edge]) = {
+    vaw favouwiteinput = favouwitefeatuwes(wawfavowites)
+    vaw mentioninput = mentionfeatuwes(tweetsouwce)
+    v-vaw p-phototaginput = p-phototagfeatuwes(wawphototags)
+    vaw wetweetinput = w-wetweetfeatuwes(tweetsouwce)
+    v-vaw quotedtweetinput = quotedtweetfeatuwes(tweetsouwce)
+    vaw wepwyinput = w-wepwytweetfeatuwes(tweetsouwce)
+    vaw cweatetweetinput = cweatetweetfeatuwes(tweetsouwce)
 
-    val allInput = SCollection.unionAll(
-      Seq(
-        favouriteInput,
-        mentionInput,
-        photoTagInput,
-        retweetInput,
-        quotedTweetInput,
-        replyInput,
-        createTweetInput
+    vaw awwinput = scowwection.unionaww(
+      s-seq(
+        favouwiteinput, -.-
+        m-mentioninput, :3
+        phototaginput, ʘwʘ
+        wetweetinput, 🥺
+        q-quotedtweetinput, >_<
+        w-wepwyinput, ʘwʘ
+        cweatetweetinput
       ))
 
-    val filteredFeatureInput = allInput
-      .keyBy(_._1.src)
-      .intersectByKey(safeUsers) // filter for safe users
-      .values
-      .collect {
-        case (FeatureKey(src, dst, feature), featureValue) if src != dst =>
-          FeatureKey(src, dst, feature) -> featureValue
+    vaw fiwtewedfeatuweinput = awwinput
+      .keyby(_._1.swc)
+      .intewsectbykey(safeusews) // f-fiwtew fow safe usews
+      .vawues
+      .cowwect {
+        case (featuwekey(swc, (˘ω˘) dst, (✿oωo) featuwe), featuwevawue) i-if swc != dst =>
+          featuwekey(swc, (///ˬ///✿) dst, featuwe) -> f-featuwevawue
       }
-      .sumByKey
+      .sumbykey
       .map {
-        case (FeatureKey(src, dst, feature), featureValue) =>
-          val age = 1
-          InteractionGraphRawInput(src, dst, feature, age, featureValue)
+        c-case (featuwekey(swc, rawr x3 dst, featuwe), -.- featuwevawue) =>
+          vaw age = 1
+          i-intewactiongwaphwawinput(swc, ^^ dst, f-featuwe, (⑅˘꒳˘) age, featuwevawue)
       }
 
-    FeatureGeneratorUtil.getFeatures(filteredFeatureInput)
+    featuwegenewatowutiw.getfeatuwes(fiwtewedfeatuweinput)
   }
 
 }

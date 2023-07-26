@@ -1,47 +1,47 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.twittew.fowwow_wecommendations.assembwew.modews
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+impowt c-com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
 
-trait WTFPresentation {
-  def toThrift: t.WTFPresentation
+twait w-wtfpwesentation {
+  d-def tothwift: t-t.wtfpwesentation
 }
 
-case class UserList(
-  userBioEnabled: Boolean,
-  userBioTruncated: Boolean,
-  userBioMaxLines: Option[Long],
-  feedbackAction: Option[FeedbackAction])
-    extends WTFPresentation {
-  def toThrift: t.WTFPresentation = {
-    t.WTFPresentation.UserBioList(
-      t.UserList(userBioEnabled, userBioTruncated, userBioMaxLines, feedbackAction.map(_.toThrift)))
+c-case cwass u-usewwist(
+  usewbioenabwed: b-boowean, rawr x3
+  usewbiotwuncated: boowean, (✿oωo)
+  usewbiomaxwines: option[wong], (ˆ ﻌ ˆ)♡
+  f-feedbackaction: option[feedbackaction])
+    extends wtfpwesentation {
+  def t-tothwift: t.wtfpwesentation = {
+    t.wtfpwesentation.usewbiowist(
+      t-t.usewwist(usewbioenabwed, (˘ω˘) usewbiotwuncated, (⑅˘꒳˘) usewbiomaxwines, feedbackaction.map(_.tothwift)))
   }
 }
 
-object UserList {
-  def fromUserListOptions(
-    userListOptions: UserListOptions
-  ): UserList = {
-    UserList(
-      userListOptions.userBioEnabled,
-      userListOptions.userBioTruncated,
-      userListOptions.userBioMaxLines,
-      None)
+o-object usewwist {
+  def fwomusewwistoptions(
+    u-usewwistoptions: u-usewwistoptions
+  ): usewwist = {
+    usewwist(
+      usewwistoptions.usewbioenabwed, (///ˬ///✿)
+      usewwistoptions.usewbiotwuncated, 😳😳😳
+      u-usewwistoptions.usewbiomaxwines, 🥺
+      none)
   }
 }
 
-case class Carousel(
-  feedbackAction: Option[FeedbackAction])
-    extends WTFPresentation {
-  def toThrift: t.WTFPresentation = {
-    t.WTFPresentation.Carousel(t.Carousel(feedbackAction.map(_.toThrift)))
+case cwass cawousew(
+  feedbackaction: option[feedbackaction])
+    extends w-wtfpwesentation {
+  def tothwift: t-t.wtfpwesentation = {
+    t-t.wtfpwesentation.cawousew(t.cawousew(feedbackaction.map(_.tothwift)))
   }
 }
 
-object Carousel {
-  def fromCarouselOptions(
-    carouselOptions: CarouselOptions
-  ): Carousel = {
-    Carousel(None)
+o-object cawousew {
+  d-def fwomcawousewoptions(
+    cawousewoptions: cawousewoptions
+  ): c-cawousew = {
+    cawousew(none)
   }
 }

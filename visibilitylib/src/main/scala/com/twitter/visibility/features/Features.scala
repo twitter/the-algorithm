@@ -1,269 +1,269 @@
-package com.twitter.visibility.features
+package com.twittew.visibiwity.featuwes
 
-import com.twitter.contenthealth.toxicreplyfilter.thriftscala.FilterState
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import com.twitter.visibility.models.TweetDeleteReason.TweetDeleteReason
-import com.twitter.visibility.models._
+impowt com.twittew.contentheawth.toxicwepwyfiwtew.thwiftscawa.fiwtewstate
+i-impowt com.twittew.gizmoduck.thwiftscawa.wabew
+i-impowt com.twittew.seawch.common.constants.thwiftscawa.thwiftquewysouwce
+i-impowt c-com.twittew.tseng.withhowding.thwiftscawa.takedownweason
+i-impowt c-com.twittew.utiw.duwation
+i-impowt c-com.twittew.utiw.time
+impowt com.twittew.visibiwity.modews.tweetdeweteweason.tweetdeweteweason
+impowt com.twittew.visibiwity.modews._
 
-case object AuthorId extends Feature[Set[Long]]
+case object authowid extends f-featuwe[set[wong]]
 
-case object ViewerId extends Feature[Long]
+case object viewewid extends f-featuwe[wong]
 
-case object AuthorIsProtected extends Feature[Boolean]
+case object a-authowispwotected extends featuwe[boowean]
 
-case object AuthorIsSuspended extends Feature[Boolean]
+case object authowissuspended e-extends featuwe[boowean]
 
-case object AuthorIsUnavailable extends Feature[Boolean]
+c-case object a-authowisunavaiwabwe extends featuwe[boowean]
 
-case object AuthorIsDeactivated extends Feature[Boolean]
+case object authowisdeactivated extends featuwe[boowean]
 
-case object AuthorIsErased extends Feature[Boolean]
+case object a-authowisewased extends featuwe[boowean]
 
-case object AuthorIsOffboarded extends Feature[Boolean]
+case object authowisoffboawded extends featuwe[boowean]
 
-case object AuthorIsVerified extends Feature[Boolean]
+c-case object authowisvewified e-extends featuwe[boowean]
 
-case object AuthorIsBlueVerified extends Feature[Boolean]
+case o-object authowisbwuevewified e-extends featuwe[boowean]
 
-case object ViewerIsSuspended extends Feature[Boolean]
+c-case object viewewissuspended extends f-featuwe[boowean]
 
-case object ViewerIsDeactivated extends Feature[Boolean]
+case object viewewisdeactivated extends featuwe[boowean]
 
-case object AuthorFollowsViewer extends Feature[Boolean]
+c-case object authowfowwowsviewew extends featuwe[boowean]
 
-case object AuthorUserLabels extends Feature[Seq[Label]]
+case object authowusewwabews e-extends featuwe[seq[wabew]]
 
-case object ViewerFollowsAuthorOfViolatingTweet extends Feature[Boolean]
+case object viewewfowwowsauthowofviowatingtweet e-extends featuwe[boowean]
 
-case object ViewerDoesNotFollowAuthorOfViolatingTweet extends Feature[Boolean]
+c-case object v-viewewdoesnotfowwowauthowofviowatingtweet extends featuwe[boowean]
 
-case object ViewerFollowsAuthor extends Feature[Boolean]
+case object viewewfowwowsauthow e-extends f-featuwe[boowean]
 
-case object ViewerBlocksAuthor extends Feature[Boolean]
+case object v-viewewbwocksauthow e-extends featuwe[boowean]
 
-case object AuthorBlocksViewer extends Feature[Boolean]
+case o-object authowbwocksviewew extends f-featuwe[boowean]
 
-case object AuthorMutesViewer extends Feature[Boolean]
+case object authowmutesviewew e-extends featuwe[boowean]
 
-case object ViewerMutesAuthor extends Feature[Boolean]
+case o-object viewewmutesauthow extends f-featuwe[boowean]
 
-case object AuthorReportsViewerAsSpam extends Feature[Boolean]
+c-case object authowwepowtsviewewasspam extends featuwe[boowean]
 
-case object ViewerReportsAuthorAsSpam extends Feature[Boolean]
+case object viewewwepowtsauthowasspam extends f-featuwe[boowean]
 
-case object ViewerReportedTweet extends Feature[Boolean]
+c-case object viewewwepowtedtweet e-extends featuwe[boowean]
 
-case object ViewerMutesRetweetsFromAuthor extends Feature[Boolean]
+c-case object viewewmuteswetweetsfwomauthow e-extends featuwe[boowean]
 
-case object ViewerHasUniversalQualityFilterEnabled extends Feature[Boolean]
+case object viewewhasunivewsawquawityfiwtewenabwed e-extends featuwe[boowean]
 
-case object ViewerIsProtected extends Feature[Boolean]
+case object viewewispwotected extends featuwe[boowean]
 
-case object ViewerIsSoftUser extends Feature[Boolean]
+case object viewewissoftusew e-extends featuwe[boowean]
 
-case object TweetSafetyLabels extends Feature[Seq[TweetSafetyLabel]]
+case object tweetsafetywabews e-extends f-featuwe[seq[tweetsafetywabew]]
 
-case object SpaceSafetyLabels extends Feature[Seq[SpaceSafetyLabel]]
+c-case object spacesafetywabews e-extends featuwe[seq[spacesafetywabew]]
 
-case object MediaSafetyLabels extends Feature[Seq[MediaSafetyLabel]]
+c-case o-object mediasafetywabews e-extends featuwe[seq[mediasafetywabew]]
 
-case object TweetTakedownReasons extends Feature[Seq[TakedownReason]]
+case object tweettakedownweasons e-extends featuwe[seq[takedownweason]]
 
-case object AuthorTakedownReasons extends Feature[Seq[TakedownReason]]
+c-case object a-authowtakedownweasons e-extends f-featuwe[seq[takedownweason]]
 
-case object AuthorIsNsfwUser extends Feature[Boolean]
+case object authowisnsfwusew extends featuwe[boowean]
 
-case object AuthorIsNsfwAdmin extends Feature[Boolean]
+c-case object authowisnsfwadmin extends featuwe[boowean]
 
-case object TweetHasNsfwUser extends Feature[Boolean]
+case object tweethasnsfwusew extends featuwe[boowean]
 
-case object TweetHasNsfwAdmin extends Feature[Boolean]
+c-case object tweethasnsfwadmin extends featuwe[boowean]
 
-case object TweetHasMedia extends Feature[Boolean]
+case object tweethasmedia e-extends f-featuwe[boowean]
 
-case object CardHasMedia extends Feature[Boolean]
+c-case object cawdhasmedia extends f-featuwe[boowean]
 
-case object TweetHasCard extends Feature[Boolean]
+case object t-tweethascawd extends f-featuwe[boowean]
 
-case object ViewerMutesKeywordInTweetForHomeTimeline extends Feature[MutedKeyword]
+case object viewewmuteskeywowdintweetfowhometimewine extends featuwe[mutedkeywowd]
 
-case object ViewerMutesKeywordInTweetForTweetReplies extends Feature[MutedKeyword]
+case o-object viewewmuteskeywowdintweetfowtweetwepwies extends featuwe[mutedkeywowd]
 
-case object ViewerMutesKeywordInTweetForNotifications extends Feature[MutedKeyword]
+c-case object viewewmuteskeywowdintweetfownotifications extends featuwe[mutedkeywowd]
 
-case object ViewerMutesKeywordInSpaceTitleForNotifications extends Feature[MutedKeyword]
+c-case object v-viewewmuteskeywowdinspacetitwefownotifications extends featuwe[mutedkeywowd]
 
-case object ViewerMutesKeywordInTweetForAllSurfaces extends Feature[MutedKeyword]
+case object viewewmuteskeywowdintweetfowawwsuwfaces e-extends featuwe[mutedkeywowd]
 
-case object ViewerUserLabels extends Feature[Seq[Label]]
+c-case object viewewusewwabews extends featuwe[seq[wabew]]
 
-case object RequestCountryCode extends Feature[String]
+c-case o-object wequestcountwycode extends featuwe[stwing]
 
-case object RequestIsVerifiedCrawler extends Feature[Boolean]
+case object wequestisvewifiedcwawwew e-extends f-featuwe[boowean]
 
-case object ViewerCountryCode extends Feature[String]
+c-case object viewewcountwycode e-extends featuwe[stwing]
 
-case object TweetIsSelfReply extends Feature[Boolean]
+c-case object tweetissewfwepwy e-extends featuwe[boowean]
 
-case object TweetIsNullcast extends Feature[Boolean]
+case object tweetisnuwwcast extends featuwe[boowean]
 
-case object TweetTimestamp extends Feature[Time]
+c-case object t-tweettimestamp extends featuwe[time]
 
-case object TweetIsInnerQuotedTweet extends Feature[Boolean]
+case object t-tweetisinnewquotedtweet e-extends featuwe[boowean]
 
-case object TweetIsRetweet extends Feature[Boolean]
+case object tweetiswetweet e-extends featuwe[boowean]
 
-case object TweetIsSourceTweet extends Feature[Boolean]
+case object tweetissouwcetweet extends featuwe[boowean]
 
-case object TweetDeleteReason extends Feature[TweetDeleteReason]
+c-case object tweetdeweteweason extends featuwe[tweetdeweteweason]
 
-case object TweetReplyToParentTweetDuration extends Feature[Duration]
+c-case object t-tweetwepwytopawenttweetduwation extends featuwe[duwation]
 
-case object TweetReplyToRootTweetDuration extends Feature[Duration]
+case object tweetwepwytowoottweetduwation extends f-featuwe[duwation]
 
-case object TweetHasCommunityConversationControl extends Feature[Boolean]
-case object TweetHasByInvitationConversationControl extends Feature[Boolean]
-case object TweetHasFollowersConversationControl extends Feature[Boolean]
-case object TweetConversationViewerIsInvited extends Feature[Boolean]
-case object TweetConversationViewerIsInvitedViaReplyMention extends Feature[Boolean]
-case object TweetConversationViewerIsRootAuthor extends Feature[Boolean]
-case object ConversationRootAuthorFollowsViewer extends Feature[Boolean]
-case object ViewerFollowsConversationRootAuthor extends Feature[Boolean]
+c-case object tweethascommunityconvewsationcontwow extends featuwe[boowean]
+case o-object tweethasbyinvitationconvewsationcontwow extends featuwe[boowean]
+c-case object tweethasfowwowewsconvewsationcontwow extends featuwe[boowean]
+c-case object tweetconvewsationviewewisinvited e-extends featuwe[boowean]
+c-case object tweetconvewsationviewewisinvitedviawepwymention e-extends featuwe[boowean]
+case object tweetconvewsationviewewiswootauthow e-extends featuwe[boowean]
+c-case object c-convewsationwootauthowfowwowsviewew extends f-featuwe[boowean]
+c-case object viewewfowwowsconvewsationwootauthow extends featuwe[boowean]
 
-case object TweetIsExclusiveTweet extends Feature[Boolean]
-case object ViewerIsExclusiveTweetRootAuthor extends Feature[Boolean]
-case object ViewerSuperFollowsExclusiveTweetRootAuthor extends Feature[Boolean]
+case o-object tweetisexcwusivetweet e-extends f-featuwe[boowean]
+case object viewewisexcwusivetweetwootauthow e-extends featuwe[boowean]
+case o-object viewewsupewfowwowsexcwusivetweetwootauthow e-extends featuwe[boowean]
 
-case object TweetIsCommunityTweet extends Feature[Boolean]
+case object tweetiscommunitytweet extends featuwe[boowean]
 
-case object CommunityTweetCommunityNotFound extends Feature[Boolean]
+c-case object c-communitytweetcommunitynotfound e-extends featuwe[boowean]
 
-case object CommunityTweetCommunityDeleted extends Feature[Boolean]
+c-case object communitytweetcommunitydeweted extends f-featuwe[boowean]
 
-case object CommunityTweetCommunitySuspended extends Feature[Boolean]
+case object communitytweetcommunitysuspended extends featuwe[boowean]
 
-case object CommunityTweetCommunityVisible extends Feature[Boolean]
+case object communitytweetcommunityvisibwe e-extends featuwe[boowean]
 
-case object CommunityTweetIsHidden extends Feature[Boolean]
+case object communitytweetishidden e-extends featuwe[boowean]
 
-case object ViewerIsInternalCommunitiesAdmin extends Feature[Boolean]
+case o-object viewewisintewnawcommunitiesadmin extends f-featuwe[boowean]
 
-case object ViewerIsCommunityAdmin extends Feature[Boolean]
+case object v-viewewiscommunityadmin e-extends f-featuwe[boowean]
 
-case object ViewerIsCommunityModerator extends Feature[Boolean]
+c-case object viewewiscommunitymodewatow e-extends featuwe[boowean]
 
-case object ViewerIsCommunityMember extends Feature[Boolean]
+case object viewewiscommunitymembew extends featuwe[boowean]
 
-case object CommunityTweetAuthorIsRemoved extends Feature[Boolean]
+case object communitytweetauthowiswemoved extends featuwe[boowean]
 
-case object NotificationIsOnCommunityTweet extends Feature[Boolean]
+c-case object n-nyotificationisoncommunitytweet e-extends featuwe[boowean]
 
-case object NotificationIsOnUnmentionedViewer extends Feature[Boolean]
+case o-object nyotificationisonunmentionedviewew extends featuwe[boowean]
 
-case object SearchResultsPageNumber extends Feature[Int]
+case object s-seawchwesuwtspagenumbew e-extends featuwe[int]
 
-case object SearchCandidateCount extends Feature[Int]
+case o-object seawchcandidatecount extends featuwe[int]
 
-case object SearchQuerySource extends Feature[ThriftQuerySource]
+case object s-seawchquewysouwce e-extends featuwe[thwiftquewysouwce]
 
-case object SearchQueryHasUser extends Feature[Boolean]
+case object s-seawchquewyhasusew e-extends featuwe[boowean]
 
-case object TweetSemanticCoreAnnotations extends Feature[Seq[SemanticCoreAnnotation]]
+case object tweetsemanticcoweannotations extends featuwe[seq[semanticcoweannotation]]
 
-case object OuterAuthorId extends Feature[Long]
+case object o-outewauthowid e-extends featuwe[wong]
 
-case object AuthorBlocksOuterAuthor extends Feature[Boolean]
+c-case object a-authowbwocksoutewauthow e-extends featuwe[boowean]
 
-case object OuterAuthorFollowsAuthor extends Feature[Boolean]
+c-case object o-outewauthowfowwowsauthow extends f-featuwe[boowean]
 
-case object OuterAuthorIsInnerAuthor extends Feature[Boolean]
+c-case object outewauthowisinnewauthow e-extends featuwe[boowean]
 
-case object TweetIsModerated extends Feature[Boolean]
-case object FocalTweetId extends Feature[Long]
+case object t-tweetismodewated extends featuwe[boowean]
+c-case object f-focawtweetid extends featuwe[wong]
 
-case object TweetId extends Feature[Long]
+c-case object tweetid extends featuwe[wong]
 
-case object TweetConversationId extends Feature[Long]
-case object TweetParentId extends Feature[Long]
-case object ConversationRootAuthorIsVerified extends Feature[Boolean]
+c-case object t-tweetconvewsationid e-extends featuwe[wong]
+case object tweetpawentid extends featuwe[wong]
+c-case object convewsationwootauthowisvewified extends f-featuwe[boowean]
 
-case object ViewerOptInBlocking extends Feature[Boolean]
+c-case object viewewoptinbwocking extends featuwe[boowean]
 
-case object ViewerOptInFiltering extends Feature[Boolean]
+c-case object viewewoptinfiwtewing e-extends f-featuwe[boowean]
 
-case object ViewerRoles extends Feature[Seq[String]] {
-  val EmployeeRole = "employee"
+case object viewewwowes extends f-featuwe[seq[stwing]] {
+  vaw empwoyeewowe = "empwoyee"
 }
 
-case object TweetMisinformationPolicies extends Feature[Seq[MisinformationPolicy]]
+case object tweetmisinfowmationpowicies e-extends f-featuwe[seq[misinfowmationpowicy]]
 
-case object TweetEnglishMisinformationPolicies extends Feature[Seq[MisinformationPolicy]]
+case object t-tweetengwishmisinfowmationpowicies extends featuwe[seq[misinfowmationpowicy]]
 
-case object HasInnerCircleOfFriendsRelationship extends Feature[Boolean]
+c-case object hasinnewciwcweoffwiendswewationship e-extends featuwe[boowean]
 
-case object ViewerAge extends Feature[UserAge]
+c-case object viewewage extends featuwe[usewage]
 
-case object HasDmcaMediaFeature extends Feature[Boolean]
+case object hasdmcamediafeatuwe extends featuwe[boowean]
 
-case object MediaGeoRestrictionsAllowList extends Feature[Seq[String]]
-case object MediaGeoRestrictionsDenyList extends Feature[Seq[String]]
+case object mediageowestwictionsawwowwist extends featuwe[seq[stwing]]
+case object mediageowestwictionsdenywist e-extends featuwe[seq[stwing]]
 
-case object TweetIsTrustedFriendTweet extends Feature[Boolean]
-case object ViewerIsTrustedFriendTweetAuthor extends Feature[Boolean]
-case object ViewerIsTrustedFriendOfTweetAuthor extends Feature[Boolean]
+c-case object tweetistwustedfwiendtweet extends featuwe[boowean]
+c-case object viewewistwustedfwiendtweetauthow e-extends f-featuwe[boowean]
+case object v-viewewistwustedfwiendoftweetauthow extends featuwe[boowean]
 
-case object DmConversationIsOneToOneConversation extends Feature[Boolean]
-case object DmConversationHasEmptyTimeline extends Feature[Boolean]
-case object DmConversationHasValidLastReadableEventId extends Feature[Boolean]
-case object DmConversationInfoExists extends Feature[Boolean]
-case object DmConversationTimelineExists extends Feature[Boolean]
-case object ViewerIsDmConversationParticipant extends Feature[Boolean]
+c-case object dmconvewsationisonetooneconvewsation e-extends featuwe[boowean]
+case object d-dmconvewsationhasemptytimewine extends featuwe[boowean]
+c-case o-object dmconvewsationhasvawidwastweadabweeventid extends featuwe[boowean]
+case o-object dmconvewsationinfoexists e-extends featuwe[boowean]
+c-case o-object dmconvewsationtimewineexists e-extends featuwe[boowean]
+c-case o-object viewewisdmconvewsationpawticipant e-extends f-featuwe[boowean]
 
-case object DmEventIsMessageCreateEvent extends Feature[Boolean]
-case object DmEventIsWelcomeMessageCreateEvent extends Feature[Boolean]
-case object DmEventIsLastMessageReadUpdateEvent extends Feature[Boolean]
-case object DmEventIsDeleted extends Feature[Boolean]
-case object DmEventIsHidden extends Feature[Boolean]
-case object ViewerIsDmEventInitiatingUser extends Feature[Boolean]
-case object DmEventInOneToOneConversationWithUnavailableUser extends Feature[Boolean]
-case object DmEventIsJoinConversationEvent extends Feature[Boolean]
-case object DmEventIsConversationCreateEvent extends Feature[Boolean]
-case object DmEventInOneToOneConversation extends Feature[Boolean]
-case object DmEventIsTrustConversationEvent extends Feature[Boolean]
-case object DmEventIsCsFeedbackSubmitted extends Feature[Boolean]
-case object DmEventIsCsFeedbackDismissed extends Feature[Boolean]
-case object DmEventIsPerspectivalJoinConversationEvent extends Feature[Boolean]
+case object d-dmeventismessagecweateevent e-extends f-featuwe[boowean]
+case object d-dmeventiswewcomemessagecweateevent extends featuwe[boowean]
+case o-object dmeventiswastmessageweadupdateevent extends f-featuwe[boowean]
+c-case object d-dmeventisdeweted extends featuwe[boowean]
+c-case object dmeventishidden e-extends featuwe[boowean]
+c-case object viewewisdmeventinitiatingusew extends f-featuwe[boowean]
+case object dmeventinonetooneconvewsationwithunavaiwabweusew extends featuwe[boowean]
+case o-object dmeventisjoinconvewsationevent extends featuwe[boowean]
+case o-object dmeventisconvewsationcweateevent e-extends featuwe[boowean]
+case object dmeventinonetooneconvewsation extends f-featuwe[boowean]
+case object d-dmeventistwustconvewsationevent e-extends featuwe[boowean]
+c-case object dmeventiscsfeedbacksubmitted extends featuwe[boowean]
+case o-object dmeventiscsfeedbackdismissed e-extends featuwe[boowean]
+c-case object dmeventispewspectivawjoinconvewsationevent extends featuwe[boowean]
 
-case object DmEventOccurredBeforeLastClearedEvent extends Feature[Boolean]
-case object DmEventOccurredBeforeJoinConversationEvent extends Feature[Boolean]
+c-case object dmeventoccuwwedbefowewastcweawedevent extends featuwe[boowean]
+c-case o-object dmeventoccuwwedbefowejoinconvewsationevent e-extends featuwe[boowean]
 
-case object CardUriHost extends Feature[String]
-case object CardIsPoll extends Feature[Boolean]
+case o-object cawduwihost e-extends featuwe[stwing]
+c-case o-object cawdispoww extends featuwe[boowean]
 
-case object TweetIsStaleTweet extends Feature[Boolean]
+case o-object tweetisstawetweet e-extends f-featuwe[boowean]
 
-case object TweetIsEditTweet extends Feature[Boolean]
+c-case object t-tweetisedittweet e-extends featuwe[boowean]
 
-case object TweetIsLatestTweet extends Feature[Boolean]
+c-case o-object tweetiswatesttweet extends f-featuwe[boowean]
 
-case object TweetIsInitialTweet extends Feature[Boolean]
+case object t-tweetisinitiawtweet extends featuwe[boowean]
 
-case object TweetIsCollabInvitationTweet extends Feature[Boolean]
+c-case object tweetiscowwabinvitationtweet e-extends f-featuwe[boowean]
 
-case object ViewerSensitiveMediaSettings extends Feature[UserSensitiveMediaSettings]
-
-
-case object ToxicReplyFilterState extends Feature[FilterState]
+case object viewewsensitivemediasettings extends f-featuwe[usewsensitivemediasettings]
 
 
-case object ToxicReplyFilterConversationAuthorIsViewer extends Feature[Boolean]
+c-case o-object toxicwepwyfiwtewstate extends featuwe[fiwtewstate]
 
-case object RawQuery extends Feature[String]
 
-case object AuthorScreenName extends Feature[String]
+case o-object toxicwepwyfiwtewconvewsationauthowisviewew e-extends featuwe[boowean]
 
-case object TweetIsInternalPromotedContent extends Feature[Boolean]
+case o-object wawquewy e-extends featuwe[stwing]
+
+case object authowscweenname extends f-featuwe[stwing]
+
+c-case object tweetisintewnawpwomotedcontent e-extends f-featuwe[boowean]

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.vewticaw_gwid_item
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditem
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class VerticalGridItemMarshaller @Inject() (
-  verticalGridItemContentMarshaller: VerticalGridItemContentMarshaller) {
+@singweton
+c-cwass vewticawgwiditemmawshawwew @inject() (
+  vewticawgwiditemcontentmawshawwew: vewticawgwiditemcontentmawshawwew) {
 
-  def apply(verticalGridItem: VerticalGridItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.VerticalGridItem(
-      urt.VerticalGridItem(
-        content = verticalGridItemContentMarshaller(verticalGridItem)
+  def appwy(vewticawgwiditem: vewticawgwiditem): u-uwt.timewineitemcontent =
+    uwt.timewineitemcontent.vewticawgwiditem(
+      uwt.vewticawgwiditem(
+        content = vewticawgwiditemcontentmawshawwew(vewticawgwiditem)
       )
     )
 }

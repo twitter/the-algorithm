@@ -1,23 +1,23 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.twittew.cw_mixew.thwiftjava
+#@namespace scawa c-com.twittew.cw_mixew.thwiftscawa
+#@namespace s-stwato c-com.twittew.cw_mixew
 
-include "product.thrift"
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+i-incwude "pwoduct.thwift"
+i-incwude "com/twittew/pwoduct_mixew/cowe/cwient_context.thwift"
+i-incwude "com/twittew/simcwustews_v2/identifiew.thwift"
 
-struct RelatedVideoTweetRequest {
-  1: required identifier.InternalId internalId
-	2: required product.Product product
-	3: required client_context.ClientContext clientContext # RUX LogOut will have clientContext.userId = None
-	4: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+s-stwuct w-wewatedvideotweetwequest {
+  1: wequiwed identifiew.intewnawid intewnawid
+	2: wequiwed pwoduct.pwoduct pwoduct
+	3: w-wequiwed cwient_context.cwientcontext cwientcontext # wux wogout w-wiww have cwientcontext.usewid = nyone
+	4: o-optionaw wist<i64> excwudedtweetids (pewsonawdatatype = 'tweetid')
+} (pewsisted='twue', :3 haspewsonawdata='twue')
 
-struct RelatedVideoTweet {
-  1: required i64 tweetId (personalDataType = 'TweetId')
-  2: optional double score
-} (persisted='true', hasPersonalData='true')
+stwuct wewatedvideotweet {
+  1: w-wequiwed i64 tweetid (pewsonawdatatype = 'tweetid')
+  2: optionaw d-doubwe scowe
+} (pewsisted='twue', 😳😳😳 h-haspewsonawdata='twue')
 
-struct RelatedVideoTweetResponse {
-  1: required list<RelatedVideoTweet> tweets
-} (persisted='true')
+stwuct wewatedvideotweetwesponse {
+  1: wequiwed wist<wewatedvideotweet> tweets
+} (pewsisted='twue')

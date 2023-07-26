@@ -1,13 +1,13 @@
-#pragma once
+#pwagma once
 
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include <twml.h>
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude <twmw.h>
 
-using namespace tensorflow;
-twml::Tensor TFTensor_to_twml_tensor(Tensor &input);
-twml::RawTensor TFTensor_to_twml_raw_tensor(Tensor &input);
-const twml::Tensor TFTensor_to_twml_tensor(const Tensor &input);
-const twml::RawTensor TFTensor_to_twml_raw_tensor(const Tensor &input);
+using nyamespace t-tensowfwow;
+twmw::tensow t-tftensow_to_twmw_tensow(tensow &input);
+t-twmw::wawtensow t-tftensow_to_twmw_waw_tensow(tensow &input);
+c-const twmw::tensow t-tftensow_to_twmw_tensow(const t-tensow &input);
+c-const twmw::wawtensow tftensow_to_twmw_waw_tensow(const tensow &input);
 

@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.follow_recommendations.thriftscala.DebugParams
+impowt c-com.twittew.fowwow_wecommendations.thwiftscawa.debugpawams
 
-case class DebugOptions(
-  randomizationSeed: Option[Long] = None,
-  fetchDebugInfo: Boolean = false,
-  doNotLog: Boolean = false)
+c-case c-cwass debugoptions(
+  w-wandomizationseed: o-option[wong] = n-nyone, 😳😳😳
+  f-fetchdebuginfo: b-boowean = fawse, -.-
+  donotwog: boowean = fawse)
 
-object DebugOptions {
-  def fromDebugParamsThrift(debugParams: DebugParams): DebugOptions = {
-    DebugOptions(
-      debugParams.randomizationSeed,
-      debugParams.includeDebugInfoInResults.getOrElse(false),
-      debugParams.doNotLog.getOrElse(false)
+object debugoptions {
+  def fwomdebugpawamsthwift(debugpawams: d-debugpawams): debugoptions = {
+    debugoptions(
+      debugpawams.wandomizationseed, ( ͡o ω ͡o )
+      d-debugpawams.incwudedebuginfoinwesuwts.getowewse(fawse), rawr x3
+      debugpawams.donotwog.getowewse(fawse)
     )
   }
 }
 
-trait HasDebugOptions {
-  def debugOptions: Option[DebugOptions]
+t-twait hasdebugoptions {
+  def debugoptions: option[debugoptions]
 
-  def getRandomizationSeed: Option[Long] = debugOptions.flatMap(_.randomizationSeed)
+  d-def getwandomizationseed: option[wong] = d-debugoptions.fwatmap(_.wandomizationseed)
 
-  def fetchDebugInfo: Option[Boolean] = debugOptions.map(_.fetchDebugInfo)
+  d-def fetchdebuginfo: option[boowean] = debugoptions.map(_.fetchdebuginfo)
 }
 
-trait HasFrsDebugOptions {
-  def frsDebugOptions: Option[DebugOptions]
+twait hasfwsdebugoptions {
+  def fwsdebugoptions: o-option[debugoptions]
 }

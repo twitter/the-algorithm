@@ -1,740 +1,740 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringRequest
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringResponse
-import com.twitter.abuse.detection.scoring.thriftscala.{Model => TweetHealthModel}
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.NsfwTextDetectionModel
-import com.twitter.frigate.pushservice.params.PushConstants
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.CandidateHydrationUtil
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.frigate.pushservice.util.MediaAnnotationsUtil
-import com.twitter.frigate.thriftscala.UserMediaRepresentation
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hss.api.thriftscala.UserHealthSignal._
-import com.twitter.hss.api.thriftscala.SignalValue
-import com.twitter.hss.api.thriftscala.UserHealthSignalResponse
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.Time
+impowt com.twittew.abuse.detection.scowing.thwiftscawa.tweetscowingwequest
+i-impowt c-com.twittew.abuse.detection.scowing.thwiftscawa.tweetscowingwesponse
+i-impowt c-com.twittew.abuse.detection.scowing.thwiftscawa.{modew => t-tweetheawthmodew}
+i-impowt c-com.twittew.finagwe.stats.countew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.fwigate.common.base._
+impowt com.twittew.fwigate.common.wec_types.wectypes
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.nsfwtextdetectionmodew
+impowt com.twittew.fwigate.pushsewvice.pawams.pushconstants
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt c-com.twittew.fwigate.pushsewvice.utiw.candidatehydwationutiw
+impowt com.twittew.fwigate.pushsewvice.utiw.candidateutiw
+impowt com.twittew.fwigate.pushsewvice.utiw.mediaannotationsutiw
+i-impowt com.twittew.fwigate.thwiftscawa.usewmediawepwesentation
+i-impowt c-com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.hewmit.pwedicate.pwedicate
+impowt com.twittew.hss.api.thwiftscawa.usewheawthsignaw._
+i-impowt com.twittew.hss.api.thwiftscawa.signawvawue
+impowt com.twittew.hss.api.thwiftscawa.usewheawthsignawwesponse
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.time
 
-object HealthPredicates {
+o-object heawthpwedicates {
 
-  private val NsfwTextDetectionModelMap: Map[NsfwTextDetectionModel.Value, TweetHealthModel] =
-    Map(
-      NsfwTextDetectionModel.ProdModel -> TweetHealthModel.PnsfwTweetText,
-      NsfwTextDetectionModel.RetrainedModel -> TweetHealthModel.ExperimentalHealthModelScore1,
+  p-pwivate v-vaw nysfwtextdetectionmodewmap: m-map[nsfwtextdetectionmodew.vawue, tweetheawthmodew] =
+    map(
+      nysfwtextdetectionmodew.pwodmodew -> t-tweetheawthmodew.pnsfwtweettext, XD
+      nysfwtextdetectionmodew.wetwainedmodew -> tweetheawthmodew.expewimentawheawthmodewscowe1, 😳
     )
 
-  private def tweetIsSupportedLanguage(
-    candidate: PushCandidate,
-    supportedLanguages: Set[String]
-  ): Boolean = {
-    val tweetLanguage =
-      candidate.categoricalFeatures.getOrElse("RecTweet.TweetyPieResult.Language", "")
-    supportedLanguages.contains(tweetLanguage)
+  p-pwivate def tweetissuppowtedwanguage(
+    candidate: pushcandidate, >w<
+    suppowtedwanguages: set[stwing]
+  ): boowean = {
+    v-vaw tweetwanguage =
+      candidate.categowicawfeatuwes.getowewse("wectweet.tweetypiewesuwt.wanguage", (˘ω˘) "")
+    s-suppowtedwanguages.contains(tweetwanguage)
   }
 
-  def tweetHealthSignalScorePredicate(
-    tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse],
-    applyToQuoteTweet: Boolean = false
+  d-def tweetheawthsignawscowepwedicate(
+    t-tweetheawthscowestowe: weadabwestowe[tweetscowingwequest, nyaa~~ tweetscowingwesponse], 😳😳😳
+    appwytoquotetweet: b-boowean = f-fawse
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate with TweetDetails] = {
-    val name = "tweet_health_signal_store_applyToQuoteTweet_" + applyToQuoteTweet.toString
-    val scopedStatsReceiver = stats.scope(name)
-    val numCandidatesStats = scopedStatsReceiver.scope("num_candidates")
-    val numCandidatesMediaNsfwScoreStats = numCandidatesStats.scope("media_nsfw_score")
+    impwicit stats: s-statsweceivew
+  ): n-nyamedpwedicate[pushcandidate with tweetcandidate w-with tweetdetaiws] = {
+    vaw nyame = "tweet_heawth_signaw_stowe_appwytoquotetweet_" + appwytoquotetweet.tostwing
+    v-vaw scopedstatsweceivew = stats.scope(name)
+    v-vaw nyumcandidatesstats = s-scopedstatsweceivew.scope("num_candidates")
+    vaw nyumcandidatesmediansfwscowestats = n-nyumcandidatesstats.scope("media_nsfw_scowe")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with TweetDetails =>
-        numCandidatesStats.counter("all").incr()
-        val target = candidate.target
-        val tweetIdOpt = if (!applyToQuoteTweet) {
-          Some(candidate.tweetId)
-        } else candidate.tweetyPieResult.flatMap(_.quotedTweet.map(_.id))
+    p-pwedicate
+      .fwomasync { candidate: pushcandidate with tweetcandidate with tweetdetaiws =>
+        nyumcandidatesstats.countew("aww").incw()
+        vaw t-tawget = candidate.tawget
+        v-vaw tweetidopt = if (!appwytoquotetweet) {
+          s-some(candidate.tweetid)
+        } e-ewse candidate.tweetypiewesuwt.fwatmap(_.quotedtweet.map(_.id))
 
-        tweetIdOpt match {
-          case Some(tweetId) =>
-            val pMediaNsfwRequest =
-              TweetScoringRequest(tweetId, TweetHealthModel.ExperimentalHealthModelScore4)
-            tweetHealthScoreStore.get(pMediaNsfwRequest).map {
-              case Some(tweetScoringResponse) =>
-                numCandidatesMediaNsfwScoreStats.counter("non_empty").incr()
-                val pMediaNsfwScore = tweetScoringResponse.score
+        t-tweetidopt match {
+          case some(tweetid) =>
+            vaw pmediansfwwequest =
+              tweetscowingwequest(tweetid, (U ﹏ U) t-tweetheawthmodew.expewimentawheawthmodewscowe4)
+            tweetheawthscowestowe.get(pmediansfwwequest).map {
+              case some(tweetscowingwesponse) =>
+                nyumcandidatesmediansfwscowestats.countew("non_empty").incw()
+                vaw pmediansfwscowe = t-tweetscowingwesponse.scowe
 
-                if (!applyToQuoteTweet) {
-                  candidate
-                    .cacheExternalScore("NsfwMediaProbability", Future.value(Some(pMediaNsfwScore)))
+                if (!appwytoquotetweet) {
+                  c-candidate
+                    .cacheextewnawscowe("nsfwmediapwobabiwity", (˘ω˘) f-futuwe.vawue(some(pmediansfwscowe)))
                 }
 
-                val pMediaNsfwShouldBucket =
-                  pMediaNsfwScore > target.params(
-                    PushFeatureSwitchParams.PnsfwTweetMediaBucketingThreshold)
-                if (CandidateUtil.shouldApplyHealthQualityFilters(
-                    candidate) && pMediaNsfwShouldBucket) {
-                  numCandidatesMediaNsfwScoreStats.counter("bucketed").incr()
-                  if (target.params(PushFeatureSwitchParams.PnsfwTweetMediaFilterOonOnly)
-                    && !RecTypes.isOutOfNetworkTweetRecType(candidate.commonRecType)) {
-                    true
-                  } else {
-                    val pMediaNsfwScoreThreshold =
-                      if (applyToQuoteTweet)
-                        target.params(PushFeatureSwitchParams.PnsfwQuoteTweetThreshold)
-                      else if (candidate.hasPhoto)
-                        target.params(PushFeatureSwitchParams.PnsfwTweetImageThreshold)
-                      else target.params(PushFeatureSwitchParams.PnsfwTweetMediaThreshold)
-                    candidate.cachePredicateInfo(
-                      name + "_nsfwMedia",
-                      pMediaNsfwScore,
-                      pMediaNsfwScoreThreshold,
-                      pMediaNsfwScore > pMediaNsfwScoreThreshold)
-                    if (pMediaNsfwScore > pMediaNsfwScoreThreshold) {
-                      numCandidatesMediaNsfwScoreStats.counter("filtered").incr()
-                      false
-                    } else true
+                v-vaw pmediansfwshouwdbucket =
+                  pmediansfwscowe > t-tawget.pawams(
+                    p-pushfeatuweswitchpawams.pnsfwtweetmediabucketingthweshowd)
+                i-if (candidateutiw.shouwdappwyheawthquawityfiwtews(
+                    c-candidate) && pmediansfwshouwdbucket) {
+                  nyumcandidatesmediansfwscowestats.countew("bucketed").incw()
+                  i-if (tawget.pawams(pushfeatuweswitchpawams.pnsfwtweetmediafiwtewoononwy)
+                    && !wectypes.isoutofnetwowktweetwectype(candidate.commonwectype)) {
+                    t-twue
+                  } e-ewse {
+                    v-vaw pmediansfwscowethweshowd =
+                      i-if (appwytoquotetweet)
+                        tawget.pawams(pushfeatuweswitchpawams.pnsfwquotetweetthweshowd)
+                      ewse if (candidate.hasphoto)
+                        tawget.pawams(pushfeatuweswitchpawams.pnsfwtweetimagethweshowd)
+                      e-ewse tawget.pawams(pushfeatuweswitchpawams.pnsfwtweetmediathweshowd)
+                    candidate.cachepwedicateinfo(
+                      nyame + "_nsfwmedia", :3
+                      pmediansfwscowe, >w<
+                      pmediansfwscowethweshowd, ^^
+                      p-pmediansfwscowe > pmediansfwscowethweshowd)
+                    if (pmediansfwscowe > pmediansfwscowethweshowd) {
+                      n-nyumcandidatesmediansfwscowestats.countew("fiwtewed").incw()
+                      f-fawse
+                    } e-ewse twue
                   }
-                } else true
-              case _ =>
-                numCandidatesMediaNsfwScoreStats.counter("empty").incr()
-                if (candidate.hasPhoto || candidate.hasVideo) {
-                  numCandidatesMediaNsfwScoreStats.counter("media_tweet_with_empty_score").incr()
+                } ewse twue
+              c-case _ =>
+                nyumcandidatesmediansfwscowestats.countew("empty").incw()
+                i-if (candidate.hasphoto || c-candidate.hasvideo) {
+                  nyumcandidatesmediansfwscowestats.countew("media_tweet_with_empty_scowe").incw()
                 }
-                true
+                twue
             }
-          case _ => Future.True
+          case _ => futuwe.twue
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(stats.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def healthSignalScoreSpammyTweetPredicate(
-    tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse]
+  def heawthsignawscowespammytweetpwedicate(
+    tweetheawthscowestowe: w-weadabwestowe[tweetscowingwequest, 😳😳😳 tweetscowingwesponse]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate with TweetDetails] = {
-    val name = "health_signal_store_spammy_tweet"
-    val statsScope = stats.scope(name)
-    val allCandidatesCounter = statsScope.counter("all_candidates")
-    val eligibleCandidatesCounter = statsScope.counter("eligible_candidates")
-    val oonCandidatesCounter = statsScope.counter("oon_candidates")
-    val inCandidatesCounter = statsScope.counter("in_candidates")
-    val bucketedCandidatesCounter = statsScope.counter("num_bucketed")
-    val nonEmptySpamScoreCounter = statsScope.counter("non_empty_spam_score")
-    val filteredOonCandidatesCounter = statsScope.counter("num_filtered_oon")
-    val filteredInCandidatesCounter = statsScope.counter("num_filtered_in")
+    i-impwicit stats: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate w-with tweetcandidate with tweetdetaiws] = {
+    vaw nyame = "heawth_signaw_stowe_spammy_tweet"
+    v-vaw statsscope = s-stats.scope(name)
+    vaw a-awwcandidatescountew = s-statsscope.countew("aww_candidates")
+    vaw ewigibwecandidatescountew = statsscope.countew("ewigibwe_candidates")
+    vaw ooncandidatescountew = s-statsscope.countew("oon_candidates")
+    v-vaw incandidatescountew = s-statsscope.countew("in_candidates")
+    vaw bucketedcandidatescountew = s-statsscope.countew("num_bucketed")
+    v-vaw nyonemptyspamscowecountew = statsscope.countew("non_empty_spam_scowe")
+    v-vaw fiwtewedooncandidatescountew = statsscope.countew("num_fiwtewed_oon")
+    vaw fiwtewedincandidatescountew = statsscope.countew("num_fiwtewed_in")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with TweetDetails =>
-        allCandidatesCounter.incr()
-        val crt = candidate.commonRecType
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(crt) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(crt)
-        if (isOonCandidate) {
-          oonCandidatesCounter.incr()
+    pwedicate
+      .fwomasync { c-candidate: pushcandidate w-with tweetcandidate with tweetdetaiws =>
+        a-awwcandidatescountew.incw()
+        v-vaw cwt = candidate.commonwectype
+        vaw isooncandidate = wectypes.isoutofnetwowktweetwectype(cwt) ||
+          wectypes.outofnetwowktopictweettypes.contains(cwt)
+        if (isooncandidate) {
+          o-ooncandidatescountew.incw()
         }
-        val target = candidate.target
-        if (target.params(PushFeatureSwitchParams.EnableSpammyTweetFilter)) {
-          eligibleCandidatesCounter.incr()
-          val tweetSpamScore =
-            TweetScoringRequest(candidate.tweetId, TweetHealthModel.SpammyTweetContent)
-          tweetHealthScoreStore.get(tweetSpamScore).map {
-            case (Some(tweetScoringResponse)) =>
-              nonEmptySpamScoreCounter.incr()
-              val candidateSpamScore = tweetScoringResponse.score
+        vaw tawget = candidate.tawget
+        if (tawget.pawams(pushfeatuweswitchpawams.enabwespammytweetfiwtew)) {
+          ewigibwecandidatescountew.incw()
+          vaw t-tweetspamscowe =
+            tweetscowingwequest(candidate.tweetid, nyaa~~ tweetheawthmodew.spammytweetcontent)
+          t-tweetheawthscowestowe.get(tweetspamscowe).map {
+            c-case (some(tweetscowingwesponse)) =>
+              nyonemptyspamscowecountew.incw()
+              vaw candidatespamscowe = tweetscowingwesponse.scowe
 
-              candidate
-                .cacheExternalScore("SpammyTweetScore", Future.value(Some(candidateSpamScore)))
+              c-candidate
+                .cacheextewnawscowe("spammytweetscowe", (⑅˘꒳˘) f-futuwe.vawue(some(candidatespamscowe)))
 
-              val tweetSpamShouldBucket =
-                candidateSpamScore > target.params(
-                  PushFeatureSwitchParams.SpammyTweetBucketingThreshold)
-              if (CandidateUtil.shouldApplyHealthQualityFilters(
-                  candidate) && tweetSpamShouldBucket) {
-                bucketedCandidatesCounter.incr()
-                if (isOonCandidate) {
-                  val spamScoreThreshold =
-                    target.params(PushFeatureSwitchParams.SpammyTweetOonThreshold)
-                  if (candidateSpamScore > spamScoreThreshold) {
-                    filteredOonCandidatesCounter.incr()
-                    false
-                  } else true
-                } else {
-                  inCandidatesCounter.incr()
-                  val spamScoreThreshold =
-                    target.params(PushFeatureSwitchParams.SpammyTweetInThreshold)
-                  if (candidateSpamScore > spamScoreThreshold) {
-                    filteredInCandidatesCounter.incr()
-                    false
-                  } else true
+              vaw tweetspamshouwdbucket =
+                candidatespamscowe > tawget.pawams(
+                  p-pushfeatuweswitchpawams.spammytweetbucketingthweshowd)
+              if (candidateutiw.shouwdappwyheawthquawityfiwtews(
+                  c-candidate) && tweetspamshouwdbucket) {
+                bucketedcandidatescountew.incw()
+                if (isooncandidate) {
+                  v-vaw spamscowethweshowd =
+                    t-tawget.pawams(pushfeatuweswitchpawams.spammytweetoonthweshowd)
+                  i-if (candidatespamscowe > spamscowethweshowd) {
+                    f-fiwtewedooncandidatescountew.incw()
+                    fawse
+                  } ewse t-twue
+                } e-ewse {
+                  i-incandidatescountew.incw()
+                  vaw spamscowethweshowd =
+                    t-tawget.pawams(pushfeatuweswitchpawams.spammytweetinthweshowd)
+                  i-if (candidatespamscowe > spamscowethweshowd) {
+                    fiwtewedincandidatescountew.incw()
+                    f-fawse
+                  } e-ewse twue
                 }
-              } else true
-            case _ => true
+              } e-ewse twue
+            case _ => twue
           }
-        } else Future.True
+        } e-ewse futuwe.twue
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(stats.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def healthSignalScorePnsfwTweetTextPredicate(
-    tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse]
+  def heawthsignawscowepnsfwtweettextpwedicate(
+    t-tweetheawthscowestowe: w-weadabwestowe[tweetscowingwequest, :3 tweetscowingwesponse]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "health_signal_store_pnsfw_tweet_text"
-    val statsScope = stats.scope(name)
-    val allCandidatesCounter = statsScope.counter("all_candidates")
-    val nonEmptyNsfwTextScoreNum = statsScope.counter("non_empty_nsfw_text_score")
-    val filteredCounter = statsScope.counter("num_filtered")
-    val lowScoreCounter = statsScope.counter("low_score_count")
+    impwicit stats: statsweceivew
+  ): nyamedpwedicate[pushcandidate w-with t-tweetcandidate] = {
+    v-vaw nyame = "heawth_signaw_stowe_pnsfw_tweet_text"
+    v-vaw statsscope = stats.scope(name)
+    v-vaw awwcandidatescountew = statsscope.countew("aww_candidates")
+    vaw nyonemptynsfwtextscowenum = statsscope.countew("non_empty_nsfw_text_scowe")
+    vaw fiwtewedcountew = s-statsscope.countew("num_fiwtewed")
+    vaw w-wowscowecountew = statsscope.countew("wow_scowe_count")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate =>
-        val target = candidate.target
-        val predEnabled =
-          target.params(PushFeatureSwitchParams.EnableHealthSignalStorePnsfwTweetTextPredicate)
-        if (CandidateUtil.shouldApplyHealthQualityFilters(
-            candidate) && predEnabled && tweetIsSupportedLanguage(candidate, Set(""))) {
-          allCandidatesCounter.incr()
-          val pnsfwTextRequest =
-            TweetScoringRequest(candidate.tweetId, TweetHealthModel.PnsfwTweetText)
-          tweetHealthScoreStore.get(pnsfwTextRequest).flatMap {
-            case Some(tweetScoringResponse) => {
-              nonEmptyNsfwTextScoreNum.incr()
-              if (tweetScoringResponse.score < 1e-8) {
-                lowScoreCounter.incr()
+    p-pwedicate
+      .fwomasync { candidate: p-pushcandidate with tweetcandidate =>
+        v-vaw tawget = c-candidate.tawget
+        v-vaw pwedenabwed =
+          t-tawget.pawams(pushfeatuweswitchpawams.enabweheawthsignawstowepnsfwtweettextpwedicate)
+        i-if (candidateutiw.shouwdappwyheawthquawityfiwtews(
+            candidate) && pwedenabwed && tweetissuppowtedwanguage(candidate, ʘwʘ set(""))) {
+          awwcandidatescountew.incw()
+          vaw pnsfwtextwequest =
+            tweetscowingwequest(candidate.tweetid, rawr x3 t-tweetheawthmodew.pnsfwtweettext)
+          t-tweetheawthscowestowe.get(pnsfwtextwequest).fwatmap {
+            c-case some(tweetscowingwesponse) => {
+              nyonemptynsfwtextscowenum.incw()
+              i-if (tweetscowingwesponse.scowe < 1e-8) {
+                wowscowecountew.incw()
               }
 
               candidate
-                .cacheExternalScore(
-                  "NsfwTextProbability-en",
-                  Future.value(Some(tweetScoringResponse.score)))
-              val threshold = target.params(PushFeatureSwitchParams.PnsfwTweetTextThreshold)
-              candidate.cachePredicateInfo(
-                name,
-                tweetScoringResponse.score,
-                threshold,
-                tweetScoringResponse.score > threshold)
-              if (tweetScoringResponse.score > threshold) {
-                filteredCounter.incr()
-                Future.False
-              } else Future.True
+                .cacheextewnawscowe(
+                  "nsfwtextpwobabiwity-en", (///ˬ///✿)
+                  futuwe.vawue(some(tweetscowingwesponse.scowe)))
+              v-vaw thweshowd = t-tawget.pawams(pushfeatuweswitchpawams.pnsfwtweettextthweshowd)
+              candidate.cachepwedicateinfo(
+                nyame, 😳😳😳
+                t-tweetscowingwesponse.scowe, XD
+                thweshowd, >_<
+                tweetscowingwesponse.scowe > t-thweshowd)
+              i-if (tweetscowingwesponse.scowe > thweshowd) {
+                fiwtewedcountew.incw()
+                f-futuwe.fawse
+              } e-ewse futuwe.twue
             }
-            case _ => Future.True
+            case _ => futuwe.twue
           }
-        } else Future.True
+        } ewse futuwe.twue
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(stats.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def healthSignalScoreMultilingualPnsfwTweetTextPredicate(
-    tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse]
+  def heawthsignawscowemuwtiwinguawpnsfwtweettextpwedicate(
+    t-tweetheawthscowestowe: w-weadabwestowe[tweetscowingwequest, t-tweetscowingwesponse]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "health_signal_store_multilingual_pnsfw_tweet_text"
-    val statsScope = stats.scope(name)
+    i-impwicit s-stats: statsweceivew
+  ): nyamedpwedicate[pushcandidate w-with tweetcandidate] = {
+    v-vaw nyame = "heawth_signaw_stowe_muwtiwinguaw_pnsfw_tweet_text"
+    vaw statsscope = s-stats.scope(name)
 
-    val allLanguagesIdentifier = "all"
-    val languagesSelectedForStats =
-      Set("") + allLanguagesIdentifier
+    v-vaw awwwanguagesidentifiew = "aww"
+    vaw wanguagessewectedfowstats =
+      s-set("") + awwwanguagesidentifiew
 
-    val candidatesCounterMap: Map[String, Counter] = languagesSelectedForStats.map { lang =>
-      lang -> statsScope.counter(f"candidates_$lang")
-    }.toMap
-    val nonEmptyHealthScoreMap: Map[String, Counter] = languagesSelectedForStats.map { lang =>
-      lang -> statsScope.counter(f"non_empty_health_score_$lang")
-    }.toMap
-    val emptyHealthScoreMap: Map[String, Counter] = languagesSelectedForStats.map { lang =>
-      lang -> statsScope.counter(f"empty_health_score_$lang")
-    }.toMap
-    val bucketedCounterMap: Map[String, Counter] = languagesSelectedForStats.map { lang =>
-      lang -> statsScope.counter(f"num_candidates_bucketed_$lang")
-    }.toMap
-    val filteredCounterMap: Map[String, Counter] = languagesSelectedForStats.map { lang =>
-      lang -> statsScope.counter(f"num_filtered_$lang")
-    }.toMap
-    val lowScoreCounterMap: Map[String, Counter] = languagesSelectedForStats.map { lang =>
-      lang -> statsScope.counter(f"low_score_count_$lang")
-    }.toMap
+    vaw candidatescountewmap: map[stwing, >w< countew] = w-wanguagessewectedfowstats.map { wang =>
+      w-wang -> statsscope.countew(f"candidates_$wang")
+    }.tomap
+    v-vaw nonemptyheawthscowemap: map[stwing, /(^•ω•^) countew] = w-wanguagessewectedfowstats.map { wang =>
+      wang -> statsscope.countew(f"non_empty_heawth_scowe_$wang")
+    }.tomap
+    v-vaw emptyheawthscowemap: m-map[stwing, :3 c-countew] = wanguagessewectedfowstats.map { wang =>
+      wang -> statsscope.countew(f"empty_heawth_scowe_$wang")
+    }.tomap
+    v-vaw bucketedcountewmap: map[stwing, ʘwʘ countew] = wanguagessewectedfowstats.map { w-wang =>
+      w-wang -> statsscope.countew(f"num_candidates_bucketed_$wang")
+    }.tomap
+    vaw fiwtewedcountewmap: m-map[stwing, (˘ω˘) countew] = w-wanguagessewectedfowstats.map { w-wang =>
+      wang -> statsscope.countew(f"num_fiwtewed_$wang")
+    }.tomap
+    vaw wowscowecountewmap: m-map[stwing, (ꈍᴗꈍ) countew] = wanguagessewectedfowstats.map { w-wang =>
+      wang -> s-statsscope.countew(f"wow_scowe_count_$wang")
+    }.tomap
 
-    val wrongBucketingModelCounter = statsScope.counter("wrong_bucketing_model_count")
-    val wrongDetectionModelCounter = statsScope.counter("wrong_detection_model_count")
+    vaw wwongbucketingmodewcountew = s-statsscope.countew("wwong_bucketing_modew_count")
+    vaw wwongdetectionmodewcountew = s-statsscope.countew("wwong_detection_modew_count")
 
-    def increaseCounterForLanguage(counterMap: Map[String, Counter], language: String): Unit = {
-      counterMap.get(allLanguagesIdentifier) match {
-        case Some(counter) => counter.incr()
+    d-def incweasecountewfowwanguage(countewmap: m-map[stwing, ^^ countew], ^^ wanguage: stwing): unit = {
+      countewmap.get(awwwanguagesidentifiew) match {
+        case some(countew) => countew.incw()
         case _ =>
       }
-      counterMap.get(language) match {
-        case Some(counter) => counter.incr()
+      countewmap.get(wanguage) match {
+        case s-some(countew) => c-countew.incw()
         case _ =>
       }
     }
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate =>
-        val target = candidate.target
+    pwedicate
+      .fwomasync { c-candidate: pushcandidate w-with t-tweetcandidate =>
+        vaw tawget = c-candidate.tawget
 
-        val languageFeatureName = "RecTweet.TweetyPieResult.Language"
+        vaw wanguagefeatuwename = "wectweet.tweetypiewesuwt.wanguage"
 
-        lazy val isPredicateEnabledForTarget = target.params(
-          PushFeatureSwitchParams.EnableHealthSignalStoreMultilingualPnsfwTweetTextPredicate)
+        w-wazy vaw i-ispwedicateenabwedfowtawget = tawget.pawams(
+          pushfeatuweswitchpawams.enabweheawthsignawstowemuwtiwinguawpnsfwtweettextpwedicate)
 
-        lazy val targetNsfwTextDetectionModel: NsfwTextDetectionModel.Value =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextModel)
+        w-wazy vaw tawgetnsfwtextdetectionmodew: nysfwtextdetectionmodew.vawue =
+          t-tawget.pawams(pushfeatuweswitchpawams.muwtiwinguawpnsfwtweettextmodew)
 
-        lazy val targetPredicateSupportedLanguageSeq: Seq[String] =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextSupportedLanguages)
+        w-wazy vaw tawgetpwedicatesuppowtedwanguageseq: seq[stwing] =
+          tawget.pawams(pushfeatuweswitchpawams.muwtiwinguawpnsfwtweettextsuppowtedwanguages)
 
-        lazy val bucketingModelSeq: Seq[NsfwTextDetectionModel.Value] =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextBucketingModelList)
+        w-wazy vaw b-bucketingmodewseq: s-seq[nsfwtextdetectionmodew.vawue] =
+          t-tawget.pawams(pushfeatuweswitchpawams.muwtiwinguawpnsfwtweettextbucketingmodewwist)
 
-        lazy val bucketingThresholdPerLanguageSeq: Seq[Double] =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextBucketingThreshold)
+        w-wazy vaw bucketingthweshowdpewwanguageseq: s-seq[doubwe] =
+          t-tawget.pawams(pushfeatuweswitchpawams.muwtiwinguawpnsfwtweettextbucketingthweshowd)
 
-        lazy val filteringThresholdPerLanguageSeq: Seq[Double] =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextFilteringThreshold)
+        w-wazy vaw fiwtewingthweshowdpewwanguageseq: s-seq[doubwe] =
+          tawget.pawams(pushfeatuweswitchpawams.muwtiwinguawpnsfwtweettextfiwtewingthweshowd)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(
-            candidate) && isPredicateEnabledForTarget) {
-          val candidateLanguage =
-            candidate.categoricalFeatures.getOrElse(languageFeatureName, "")
+        i-if (candidateutiw.shouwdappwyheawthquawityfiwtews(
+            candidate) && i-ispwedicateenabwedfowtawget) {
+          v-vaw candidatewanguage =
+            candidate.categowicawfeatuwes.getowewse(wanguagefeatuwename, ( ͡o ω ͡o ) "")
 
-          val indexOfCandidateLanguage =
-            targetPredicateSupportedLanguageSeq.indexOf(candidateLanguage)
+          v-vaw indexofcandidatewanguage =
+            tawgetpwedicatesuppowtedwanguageseq.indexof(candidatewanguage)
 
-          val isCandidateLanguageSupported = indexOfCandidateLanguage >= 0
+          vaw iscandidatewanguagesuppowted = i-indexofcandidatewanguage >= 0
 
-          if (isCandidateLanguageSupported) {
-            increaseCounterForLanguage(candidatesCounterMap, candidateLanguage)
+          if (iscandidatewanguagesuppowted) {
+            i-incweasecountewfowwanguage(candidatescountewmap, -.- c-candidatewanguage)
 
-            val bucketingModelScoreMap: Map[NsfwTextDetectionModel.Value, Future[Option[Double]]] =
-              bucketingModelSeq.map { modelName =>
-                NsfwTextDetectionModelMap.get(modelName) match {
-                  case Some(targetNsfwTextDetectionModel) =>
-                    val pnsfwTweetTextRequest: TweetScoringRequest =
-                      TweetScoringRequest(candidate.tweetId, targetNsfwTextDetectionModel)
+            v-vaw bucketingmodewscowemap: map[nsfwtextdetectionmodew.vawue, ^^;; f-futuwe[option[doubwe]]] =
+              bucketingmodewseq.map { m-modewname =>
+                nysfwtextdetectionmodewmap.get(modewname) m-match {
+                  case some(tawgetnsfwtextdetectionmodew) =>
+                    v-vaw pnsfwtweettextwequest: tweetscowingwequest =
+                      tweetscowingwequest(candidate.tweetid, ^•ﻌ•^ tawgetnsfwtextdetectionmodew)
 
-                    val scoreOptFut: Future[Option[Double]] =
-                      tweetHealthScoreStore.get(pnsfwTweetTextRequest).map(_.map(_.score))
+                    vaw scoweoptfut: f-futuwe[option[doubwe]] =
+                      tweetheawthscowestowe.get(pnsfwtweettextwequest).map(_.map(_.scowe))
 
-                    candidate
-                      .cacheExternalScore("NsfwTextProbability", scoreOptFut)
+                    c-candidate
+                      .cacheextewnawscowe("nsfwtextpwobabiwity", (˘ω˘) s-scoweoptfut)
 
-                    modelName -> scoreOptFut
+                    modewname -> scoweoptfut
                   case _ =>
-                    wrongBucketingModelCounter.incr()
-                    modelName -> Future.None
+                    w-wwongbucketingmodewcountew.incw()
+                    modewname -> f-futuwe.none
                 }
-              }.toMap
+              }.tomap
 
-            val candidateLanguageBucketingThreshold =
-              bucketingThresholdPerLanguageSeq(indexOfCandidateLanguage)
+            v-vaw candidatewanguagebucketingthweshowd =
+              b-bucketingthweshowdpewwanguageseq(indexofcandidatewanguage)
 
-            val userShouldBeBucketedFut: Future[Boolean] =
-              Future
-                .collect(bucketingModelScoreMap.map {
-                  case (_, modelScoreOptFut) =>
-                    modelScoreOptFut.map {
-                      case Some(score) =>
-                        increaseCounterForLanguage(nonEmptyHealthScoreMap, candidateLanguage)
-                        score > candidateLanguageBucketingThreshold
-                      case _ =>
-                        increaseCounterForLanguage(emptyHealthScoreMap, candidateLanguage)
-                        false
+            vaw usewshouwdbebucketedfut: futuwe[boowean] =
+              f-futuwe
+                .cowwect(bucketingmodewscowemap.map {
+                  c-case (_, modewscoweoptfut) =>
+                    m-modewscoweoptfut.map {
+                      case some(scowe) =>
+                        incweasecountewfowwanguage(nonemptyheawthscowemap, o.O c-candidatewanguage)
+                        scowe > candidatewanguagebucketingthweshowd
+                      c-case _ =>
+                        i-incweasecountewfowwanguage(emptyheawthscowemap, (✿oωo) c-candidatewanguage)
+                        fawse
                     }
-                }.toSeq).map(_.contains(true))
+                }.toseq).map(_.contains(twue))
 
-            val candidateShouldBeFilteredFut: Future[Boolean] = userShouldBeBucketedFut.flatMap {
-              userShouldBeBucketed =>
-                if (userShouldBeBucketed) {
-                  increaseCounterForLanguage(bucketedCounterMap, candidateLanguage)
+            vaw candidateshouwdbefiwtewedfut: f-futuwe[boowean] = u-usewshouwdbebucketedfut.fwatmap {
+              u-usewshouwdbebucketed =>
+                i-if (usewshouwdbebucketed) {
+                  incweasecountewfowwanguage(bucketedcountewmap, 😳😳😳 c-candidatewanguage)
 
-                  val candidateLanguageFilteringThreshold =
-                    filteringThresholdPerLanguageSeq(indexOfCandidateLanguage)
+                  v-vaw candidatewanguagefiwtewingthweshowd =
+                    f-fiwtewingthweshowdpewwanguageseq(indexofcandidatewanguage)
 
-                  bucketingModelScoreMap.get(targetNsfwTextDetectionModel) match {
-                    case Some(scoreOptFut) =>
-                      scoreOptFut.map {
-                        case Some(score) =>
-                          val candidateShouldBeFiltered =
-                            score > candidateLanguageFilteringThreshold
-                          if (candidateShouldBeFiltered) {
-                            increaseCounterForLanguage(filteredCounterMap, candidateLanguage)
+                  b-bucketingmodewscowemap.get(tawgetnsfwtextdetectionmodew) m-match {
+                    c-case some(scoweoptfut) =>
+                      s-scoweoptfut.map {
+                        c-case some(scowe) =>
+                          vaw candidateshouwdbefiwtewed =
+                            s-scowe > candidatewanguagefiwtewingthweshowd
+                          i-if (candidateshouwdbefiwtewed) {
+                            incweasecountewfowwanguage(fiwtewedcountewmap, (ꈍᴗꈍ) c-candidatewanguage)
                           }
-                          candidateShouldBeFiltered
-                        case _ => false
+                          c-candidateshouwdbefiwtewed
+                        c-case _ => fawse
                       }
                     case _ =>
-                      wrongDetectionModelCounter.incr()
-                      Future.False
+                      wwongdetectionmodewcountew.incw()
+                      f-futuwe.fawse
                   }
-                } else {
-                  increaseCounterForLanguage(lowScoreCounterMap, candidateLanguage)
-                  Future.False
+                } ewse {
+                  i-incweasecountewfowwanguage(wowscowecountewmap, σωσ c-candidatewanguage)
+                  futuwe.fawse
                 }
             }
-            candidateShouldBeFilteredFut.map(result => !result)
-          } else Future.True
-        } else Future.True
+            candidateshouwdbefiwtewedfut.map(wesuwt => !wesuwt)
+          } ewse futuwe.twue
+        } e-ewse futuwe.twue
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(stats.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def authorProfileBasedPredicate(
+  d-def authowpwofiwebasedpwedicate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "author_profile"
-    val statsScope = stats.scope(name)
-    val filterByNsfwToken = statsScope.counter("filter_by_nsfw_token")
-    val filterByAccountAge = statsScope.counter("filter_by_account_age")
+    impwicit stats: s-statsweceivew
+  ): n-nyamedpwedicate[pushcandidate with tweetcandidate] = {
+    vaw nyame = "authow_pwofiwe"
+    vaw statsscope = s-stats.scope(name)
+    v-vaw fiwtewbynsfwtoken = s-statsscope.countew("fiwtew_by_nsfw_token")
+    vaw f-fiwtewbyaccountage = statsscope.countew("fiwtew_by_account_age")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate =>
-        val target = candidate.target
+    pwedicate
+      .fwomasync { c-candidate: p-pushcandidate with tweetcandidate =>
+        vaw t-tawget = candidate.tawget
         candidate match {
-          case cand: PushCandidate with TweetAuthorDetails =>
-            cand.tweetAuthor.map {
-              case Some(author) =>
-                val nsfwTokens = target.params(PushFeatureSwitchParams.NsfwTokensParam)
-                val accountAgeInHours =
-                  (Time.now - Time.fromMilliseconds(author.createdAtMsec)).inHours
-                val isNsfwAccount = CandidateHydrationUtil.isNsfwAccount(author, nsfwTokens)
-                val isVerified = author.safety.map(_.verified).getOrElse(false)
+          case cand: pushcandidate w-with tweetauthowdetaiws =>
+            cand.tweetauthow.map {
+              c-case some(authow) =>
+                v-vaw nysfwtokens = tawget.pawams(pushfeatuweswitchpawams.nsfwtokenspawam)
+                v-vaw accountageinhouws =
+                  (time.now - t-time.fwommiwwiseconds(authow.cweatedatmsec)).inhouws
+                vaw i-isnsfwaccount = candidatehydwationutiw.isnsfwaccount(authow, UwU nysfwtokens)
+                v-vaw i-isvewified = authow.safety.map(_.vewified).getowewse(fawse)
 
-                if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && !isVerified) {
-                  val enableNsfwTokenCheck =
-                    target.params(PushFeatureSwitchParams.EnableNsfwTokenBasedFiltering)
-                  val minimumAllowedAge =
-                    target.params(PushFeatureSwitchParams.MinimumAllowedAuthorAccountAgeInHours)
-                  cand.cachePredicateInfo(
-                    name + "_nsfwToken",
-                    if (isNsfwAccount) 1.0 else 0.0,
-                    0.0,
-                    enableNsfwTokenCheck && isNsfwAccount)
-                  cand.cachePredicateInfo(
-                    name + "_authorAge",
-                    accountAgeInHours,
-                    minimumAllowedAge,
-                    accountAgeInHours < minimumAllowedAge)
+                i-if (candidateutiw.shouwdappwyheawthquawityfiwtews(candidate) && !isvewified) {
+                  v-vaw enabwensfwtokencheck =
+                    t-tawget.pawams(pushfeatuweswitchpawams.enabwensfwtokenbasedfiwtewing)
+                  v-vaw minimumawwowedage =
+                    t-tawget.pawams(pushfeatuweswitchpawams.minimumawwowedauthowaccountageinhouws)
+                  cand.cachepwedicateinfo(
+                    nyame + "_nsfwtoken", ^•ﻌ•^
+                    i-if (isnsfwaccount) 1.0 ewse 0.0, mya
+                    0.0, /(^•ω•^)
+                    enabwensfwtokencheck && i-isnsfwaccount)
+                  c-cand.cachepwedicateinfo(
+                    n-nyame + "_authowage", rawr
+                    accountageinhouws, nyaa~~
+                    minimumawwowedage, ( ͡o ω ͡o )
+                    accountageinhouws < minimumawwowedage)
 
-                  if (enableNsfwTokenCheck && isNsfwAccount) {
-                    filterByNsfwToken.incr()
-                    false
-                  } else if (accountAgeInHours < minimumAllowedAge) {
-                    filterByAccountAge.incr()
-                    false
-                  } else true
-                } else true
-              case _ => true
+                  i-if (enabwensfwtokencheck && isnsfwaccount) {
+                    f-fiwtewbynsfwtoken.incw()
+                    f-fawse
+                  } ewse if (accountageinhouws < minimumawwowedage) {
+                    f-fiwtewbyaccountage.incw()
+                    fawse
+                  } e-ewse twue
+                } e-ewse t-twue
+              c-case _ => t-twue
             }
-          case _ => Future.value(true)
+          case _ => futuwe.vawue(twue)
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(stats.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def authorSensitiveMediaPredicate(
-    producerMediaRepresentationStore: ReadableStore[Long, UserMediaRepresentation]
+  def authowsensitivemediapwedicate(
+    pwoducewmediawepwesentationstowe: w-weadabwestowe[wong, σωσ usewmediawepwesentation]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    val name = "author_sensitive_media_mrtwistly"
-    val statsScope = stats.scope(name)
-    val enableQueryNum = statsScope.counter("enable_query")
-    val nonEmptyMediaRepresentationNum = statsScope.counter("non_empty_media_representation")
-    val filteredOON = statsScope.counter("filtered_oon")
+    i-impwicit stats: statsweceivew
+  ): nyamedpwedicate[pushcandidate with t-tweetauthow] = {
+    vaw nyame = "authow_sensitive_media_mwtwistwy"
+    vaw statsscope = stats.scope(name)
+    vaw enabwequewynum = s-statsscope.countew("enabwe_quewy")
+    v-vaw nyonemptymediawepwesentationnum = statsscope.countew("non_empty_media_wepwesentation")
+    v-vaw fiwtewedoon = statsscope.countew("fiwtewed_oon")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetAuthor =>
-        val target = candidate.target
-        val useAggressiveThresholds = CandidateUtil.useAggressiveHealthThresholds(candidate)
+    pwedicate
+      .fwomasync { c-candidate: pushcandidate w-with tweetauthow =>
+        vaw tawget = c-candidate.tawget
+        vaw u-useaggwessivethweshowds = candidateutiw.useaggwessiveheawththweshowds(candidate)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) &&
-          RecTypes.isOutOfNetworkTweetRecType(candidate.commonRecType) &&
-          target.params(PushFeatureSwitchParams.EnableQueryAuthorMediaRepresentationStore)) {
-          enableQueryNum.incr()
+        if (candidateutiw.shouwdappwyheawthquawityfiwtews(candidate) &&
+          wectypes.isoutofnetwowktweetwectype(candidate.commonwectype) &&
+          t-tawget.pawams(pushfeatuweswitchpawams.enabwequewyauthowmediawepwesentationstowe)) {
+          enabwequewynum.incw()
 
-          candidate.authorId match {
-            case Some(authorId) =>
-              producerMediaRepresentationStore.get(authorId).map {
-                case Some(mediaRepresentation) =>
-                  nonEmptyMediaRepresentationNum.incr()
-                  val sumScore: Double = mediaRepresentation.mediaRepresentation.values.sum
-                  val nudityScore: Double = mediaRepresentation.mediaRepresentation
-                    .getOrElse(MediaAnnotationsUtil.nudityCategoryId, 0.0)
-                  val nudityRate = if (sumScore > 0) nudityScore / sumScore else 0.0
+          candidate.authowid m-match {
+            c-case some(authowid) =>
+              p-pwoducewmediawepwesentationstowe.get(authowid).map {
+                case some(mediawepwesentation) =>
+                  n-nyonemptymediawepwesentationnum.incw()
+                  vaw sumscowe: doubwe = mediawepwesentation.mediawepwesentation.vawues.sum
+                  vaw nyudityscowe: d-doubwe = m-mediawepwesentation.mediawepwesentation
+                    .getowewse(mediaannotationsutiw.nuditycategowyid, (✿oωo) 0.0)
+                  v-vaw nyuditywate = i-if (sumscowe > 0) nyudityscowe / sumscowe e-ewse 0.0
 
                   candidate
-                    .cacheExternalScore("AuthorNudityScore", Future.value(Some(nudityScore)))
-                  candidate.cacheExternalScore("AuthorNudityRate", Future.value(Some(nudityRate)))
+                    .cacheextewnawscowe("authownudityscowe", (///ˬ///✿) f-futuwe.vawue(some(nudityscowe)))
+                  candidate.cacheextewnawscowe("authownuditywate", futuwe.vawue(some(nuditywate)))
 
-                  val threshold = if (useAggressiveThresholds) {
-                    target.params(
-                      PushFeatureSwitchParams.AuthorSensitiveMediaFilteringThresholdForMrTwistly)
-                  } else {
-                    target.params(PushFeatureSwitchParams.AuthorSensitiveMediaFilteringThreshold)
+                  v-vaw thweshowd = if (useaggwessivethweshowds) {
+                    tawget.pawams(
+                      p-pushfeatuweswitchpawams.authowsensitivemediafiwtewingthweshowdfowmwtwistwy)
+                  } ewse {
+                    tawget.pawams(pushfeatuweswitchpawams.authowsensitivemediafiwtewingthweshowd)
                   }
-                  candidate.cachePredicateInfo(
-                    name,
-                    nudityRate,
-                    threshold,
-                    nudityRate > threshold,
-                    Some(Map[String, Double]("sumScore" -> sumScore, "nudityScore" -> nudityScore)))
+                  c-candidate.cachepwedicateinfo(
+                    n-nyame, σωσ
+                    nyuditywate, UwU
+                    t-thweshowd, (⑅˘꒳˘)
+                    n-nyuditywate > thweshowd, /(^•ω•^)
+                    s-some(map[stwing, -.- doubwe]("sumscowe" -> sumscowe, (ˆ ﻌ ˆ)♡ "nudityscowe" -> nyudityscowe)))
 
-                  if (nudityRate > threshold) {
-                    filteredOON.incr()
-                    false
-                  } else true
-                case _ => true
+                  i-if (nuditywate > thweshowd) {
+                    fiwtewedoon.incw()
+                    f-fawse
+                  } ewse twue
+                case _ => twue
               }
-            case _ => Future.True
+            case _ => f-futuwe.twue
           }
-        } else {
-          Future.True
+        } e-ewse {
+          f-futuwe.twue
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(stats.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def sensitiveMediaCategoryPredicate(
+  d-def sensitivemediacategowypwedicate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "sensitive_media_category"
-    val tweetMediaAnnotationFeature =
-      "tweet.mediaunderstanding.tweet_annotations.sensitive_category_probabilities"
-    val scopedStatsReceiver = stats.scope(name)
-    val allCandidatesCounter = scopedStatsReceiver.counter("all_candidates")
-    val nonZeroNudityCandidatesCounter = scopedStatsReceiver.counter("non_zero_nudity_candidates")
-    val nudityScoreStats = scopedStatsReceiver.stat("nudity_scores")
+    i-impwicit stats: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate with tweetcandidate] = {
+    vaw nyame = "sensitive_media_categowy"
+    v-vaw tweetmediaannotationfeatuwe =
+      "tweet.mediaundewstanding.tweet_annotations.sensitive_categowy_pwobabiwities"
+    v-vaw scopedstatsweceivew = stats.scope(name)
+    vaw awwcandidatescountew = s-scopedstatsweceivew.countew("aww_candidates")
+    v-vaw nyonzewonuditycandidatescountew = scopedstatsweceivew.countew("non_zewo_nudity_candidates")
+    v-vaw nyudityscowestats = scopedstatsweceivew.stat("nudity_scowes")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        allCandidatesCounter.incr()
-        val target = candidate.target
-        val nudityScore = candidate.sparseContinuousFeatures
-          .getOrElse(tweetMediaAnnotationFeature, Map.empty[String, Double]).getOrElse(
-            MediaAnnotationsUtil.nudityCategoryId,
+    pwedicate
+      .fwomasync { c-candidate: p-pushcandidate =>
+        awwcandidatescountew.incw()
+        vaw tawget = c-candidate.tawget
+        v-vaw nyudityscowe = candidate.spawsecontinuousfeatuwes
+          .getowewse(tweetmediaannotationfeatuwe, nyaa~~ m-map.empty[stwing, ʘwʘ doubwe]).getowewse(
+            mediaannotationsutiw.nuditycategowyid, :3
             0.0)
-        if (nudityScore > 0) nonZeroNudityCandidatesCounter.incr()
-        nudityScoreStats.add(nudityScore.toFloat)
-        val threshold =
-          target.params(PushFeatureSwitchParams.TweetMediaSensitiveCategoryThresholdParam)
-        candidate.cachePredicateInfo(name, nudityScore, threshold, nudityScore > threshold)
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && nudityScore > threshold) {
-          Future.False
-        } else {
-          Future.True
+        if (nudityscowe > 0) n-nyonzewonuditycandidatescountew.incw()
+        nyudityscowestats.add(nudityscowe.tofwoat)
+        v-vaw thweshowd =
+          tawget.pawams(pushfeatuweswitchpawams.tweetmediasensitivecategowythweshowdpawam)
+        candidate.cachepwedicateinfo(name, (U ᵕ U❁) n-nyudityscowe, (U ﹏ U) thweshowd, ^^ n-nyudityscowe > t-thweshowd)
+        if (candidateutiw.shouwdappwyheawthquawityfiwtews(candidate) && n-nyudityscowe > t-thweshowd) {
+          futuwe.fawse
+        } e-ewse {
+          futuwe.twue
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(stats.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def profanityPredicate(
+  d-def pwofanitypwedicate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "profanity_filter"
-    val scopedStatsReceiver = stats.scope(name)
-    val allCandidatesCounter = scopedStatsReceiver.counter("all_candidates")
+    impwicit s-stats: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate with tweetcandidate] = {
+    vaw nyame = "pwofanity_fiwtew"
+    vaw scopedstatsweceivew = stats.scope(name)
+    v-vaw awwcandidatescountew = s-scopedstatsweceivew.countew("aww_candidates")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        allCandidatesCounter.incr()
-        val target = candidate.target
+    pwedicate
+      .fwomasync { candidate: pushcandidate =>
+        awwcandidatescountew.incw()
+        v-vaw tawget = candidate.tawget
 
-        lazy val enableFilter =
-          target.params(PushFeatureSwitchParams.EnableProfanityFilterParam)
-        val tweetSemanticCoreIds = candidate.sparseBinaryFeatures
-          .getOrElse(PushConstants.TweetSemanticCoreIdFeature, Set.empty[String])
+        w-wazy vaw enabwefiwtew =
+          t-tawget.pawams(pushfeatuweswitchpawams.enabwepwofanityfiwtewpawam)
+        vaw tweetsemanticcoweids = candidate.spawsebinawyfeatuwes
+          .getowewse(pushconstants.tweetsemanticcoweidfeatuwe, òωó set.empty[stwing])
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) &&
-          tweetSemanticCoreIds.contains(PushConstants.ProfanityFilter_Id) && enableFilter) {
-          Future.False
-        } else {
-          Future.True
+        i-if (candidateutiw.shouwdappwyheawthquawityfiwtews(candidate) &&
+          tweetsemanticcoweids.contains(pushconstants.pwofanityfiwtew_id) && enabwefiwtew) {
+          f-futuwe.fawse
+        } ewse {
+          f-futuwe.twue
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(stats.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def agathaAbusiveTweetAuthorPredicateMrTwistly(
+  def a-agathaabusivetweetauthowpwedicatemwtwistwy(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with OutOfNetworkTweetCandidate] = {
-    val name = "agatha_abusive_tweet_author_mr_twistly"
-    val scopedStatsReceiver = stats.scope(name)
-    val allCandidatesCounter = scopedStatsReceiver.counter("all_candidates")
-    val isMrBackfillCRCandidateCounter = scopedStatsReceiver.counter("isMrBackfillCR_candidates")
-    Predicate
-      .fromAsync { cand: PushCandidate with OutOfNetworkTweetCandidate =>
-        allCandidatesCounter.incr()
-        val target = cand.target
-        val tweetSemanticCoreIds = cand.sparseBinaryFeatures
-          .getOrElse(PushConstants.TweetSemanticCoreIdFeature, Set.empty[String])
+    impwicit s-stats: statsweceivew
+  ): n-nyamedpwedicate[pushcandidate w-with outofnetwowktweetcandidate] = {
+    v-vaw nyame = "agatha_abusive_tweet_authow_mw_twistwy"
+    v-vaw scopedstatsweceivew = s-stats.scope(name)
+    vaw awwcandidatescountew = scopedstatsweceivew.countew("aww_candidates")
+    vaw ismwbackfiwwcwcandidatecountew = scopedstatsweceivew.countew("ismwbackfiwwcw_candidates")
+    pwedicate
+      .fwomasync { c-cand: pushcandidate w-with o-outofnetwowktweetcandidate =>
+        a-awwcandidatescountew.incw()
+        v-vaw tawget = c-cand.tawget
+        vaw tweetsemanticcoweids = cand.spawsebinawyfeatuwes
+          .getowewse(pushconstants.tweetsemanticcoweidfeatuwe, /(^•ω•^) set.empty[stwing])
 
-        val hasAbuseStrikeTop2Percent =
-          tweetSemanticCoreIds.contains(PushConstants.AbuseStrike_Top2Percent_Id)
-        val hasAbuseStrikeTop1Percent =
-          tweetSemanticCoreIds.contains(PushConstants.AbuseStrike_Top1Percent_Id)
-        val hasAbuseStrikeTop05Percent =
-          tweetSemanticCoreIds.contains(PushConstants.AbuseStrike_Top05Percent_Id)
+        vaw hasabusestwiketop2pewcent =
+          tweetsemanticcoweids.contains(pushconstants.abusestwike_top2pewcent_id)
+        v-vaw hasabusestwiketop1pewcent =
+          tweetsemanticcoweids.contains(pushconstants.abusestwike_top1pewcent_id)
+        vaw h-hasabusestwiketop05pewcent =
+          tweetsemanticcoweids.contains(pushconstants.abusestwike_top05pewcent_id)
 
-        if (hasAbuseStrikeTop2Percent) {
-          scopedStatsReceiver.counter("abuse_strike_top_2_percent_candidates").incr()
+        if (hasabusestwiketop2pewcent) {
+          scopedstatsweceivew.countew("abuse_stwike_top_2_pewcent_candidates").incw()
         }
-        if (hasAbuseStrikeTop1Percent) {
-          scopedStatsReceiver.counter("abuse_strike_top_1_percent_candidates").incr()
+        i-if (hasabusestwiketop1pewcent) {
+          s-scopedstatsweceivew.countew("abuse_stwike_top_1_pewcent_candidates").incw()
         }
-        if (hasAbuseStrikeTop05Percent) {
-          scopedStatsReceiver.counter("abuse_strike_top_05_percent_candidates").incr()
+        i-if (hasabusestwiketop05pewcent) {
+          scopedstatsweceivew.countew("abuse_stwike_top_05_pewcent_candidates").incw()
         }
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(cand) && cand.isMrBackfillCR.getOrElse(
-            false)) {
-          isMrBackfillCRCandidateCounter.incr()
-          if (hasAbuseStrikeTop2Percent) {
-            if (target.params(
-                PushFeatureSwitchParams.EnableAbuseStrikeTop2PercentFilterSimCluster) && hasAbuseStrikeTop2Percent ||
-              target.params(
-                PushFeatureSwitchParams.EnableAbuseStrikeTop1PercentFilterSimCluster) && hasAbuseStrikeTop1Percent ||
-              target.params(
-                PushFeatureSwitchParams.EnableAbuseStrikeTop05PercentFilterSimCluster) && hasAbuseStrikeTop05Percent) {
-              Future.False
-            } else {
-              Future.True
+        if (candidateutiw.shouwdappwyheawthquawityfiwtews(cand) && c-cand.ismwbackfiwwcw.getowewse(
+            fawse)) {
+          ismwbackfiwwcwcandidatecountew.incw()
+          i-if (hasabusestwiketop2pewcent) {
+            i-if (tawget.pawams(
+                pushfeatuweswitchpawams.enabweabusestwiketop2pewcentfiwtewsimcwustew) && hasabusestwiketop2pewcent ||
+              t-tawget.pawams(
+                pushfeatuweswitchpawams.enabweabusestwiketop1pewcentfiwtewsimcwustew) && h-hasabusestwiketop1pewcent ||
+              t-tawget.pawams(
+                pushfeatuweswitchpawams.enabweabusestwiketop05pewcentfiwtewsimcwustew) && h-hasabusestwiketop05pewcent) {
+              f-futuwe.fawse
+            } e-ewse {
+              f-futuwe.twue
             }
-          } else {
-            Future.True
+          } e-ewse {
+            f-futuwe.twue
           }
-        } else Future.True
+        } ewse f-futuwe.twue
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(stats.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def userHealthSignalsPredicate(
-    userHealthSignalStore: ReadableStore[Long, UserHealthSignalResponse]
+  d-def usewheawthsignawspwedicate(
+    usewheawthsignawstowe: w-weadabwestowe[wong, 😳😳😳 usewheawthsignawwesponse]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetDetails] = {
-    val name = "agatha_user_health_model_score"
-    val scopedStatsReceiver = stats.scope(name)
-    val allCandidatesCounter = scopedStatsReceiver.counter("all_candidates")
-    val bucketedUserCandidatesCounter =
-      scopedStatsReceiver.counter("bucketed_user_candidates")
-    val filteredOON = scopedStatsReceiver.counter("filtered_oon")
+    impwicit stats: s-statsweceivew
+  ): nyamedpwedicate[pushcandidate w-with tweetdetaiws] = {
+    vaw nyame = "agatha_usew_heawth_modew_scowe"
+    v-vaw scopedstatsweceivew = s-stats.scope(name)
+    vaw awwcandidatescountew = scopedstatsweceivew.countew("aww_candidates")
+    vaw b-bucketedusewcandidatescountew =
+      scopedstatsweceivew.countew("bucketed_usew_candidates")
+    vaw fiwtewedoon = s-scopedstatsweceivew.countew("fiwtewed_oon")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetDetails =>
-        allCandidatesCounter.incr()
-        val target = candidate.target
-        val useAggressiveThresholds = CandidateUtil.useAggressiveHealthThresholds(candidate)
+    p-pwedicate
+      .fwomasync { candidate: pushcandidate with t-tweetdetaiws =>
+        a-awwcandidatescountew.incw()
+        vaw tawget = candidate.tawget
+        v-vaw useaggwessivethweshowds = candidateutiw.useaggwessiveheawththweshowds(candidate)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && target.params(
-            PushFeatureSwitchParams.EnableAgathaUserHealthModelPredicate)) {
-          val healthSignalsResponseFutOpt: Future[Option[UserHealthSignalResponse]] =
-            candidate.authorId match {
-              case Some(authorId) => userHealthSignalStore.get(authorId)
-              case _ => Future.None
+        if (candidateutiw.shouwdappwyheawthquawityfiwtews(candidate) && t-tawget.pawams(
+            p-pushfeatuweswitchpawams.enabweagathausewheawthmodewpwedicate)) {
+          vaw heawthsignawswesponsefutopt: f-futuwe[option[usewheawthsignawwesponse]] =
+            c-candidate.authowid match {
+              case some(authowid) => u-usewheawthsignawstowe.get(authowid)
+              c-case _ => futuwe.none
             }
-          healthSignalsResponseFutOpt.map {
-            case Some(response) =>
-              val agathaRecentAbuseStrikeScore: Double = userHealthSignalValueToDouble(
-                response.signalValues
-                  .getOrElse(AgathaRecentAbuseStrikeDouble, SignalValue.DoubleValue(0.0)))
-              val agathaCalibratedNSFWScore: Double = userHealthSignalValueToDouble(
-                response.signalValues
-                  .getOrElse(AgathaCalibratedNsfwDouble, SignalValue.DoubleValue(0.0)))
-              val agathaTextNSFWScore: Double = userHealthSignalValueToDouble(response.signalValues
-                .getOrElse(NsfwTextUserScoreDouble, SignalValue.DoubleValue(0.0)))
+          h-heawthsignawswesponsefutopt.map {
+            case s-some(wesponse) =>
+              vaw agathawecentabusestwikescowe: doubwe = usewheawthsignawvawuetodoubwe(
+                wesponse.signawvawues
+                  .getowewse(agathawecentabusestwikedoubwe, :3 signawvawue.doubwevawue(0.0)))
+              vaw agathacawibwatednsfwscowe: d-doubwe = u-usewheawthsignawvawuetodoubwe(
+                w-wesponse.signawvawues
+                  .getowewse(agathacawibwatednsfwdoubwe, (///ˬ///✿) s-signawvawue.doubwevawue(0.0)))
+              v-vaw agathatextnsfwscowe: d-doubwe = usewheawthsignawvawuetodoubwe(wesponse.signawvawues
+                .getowewse(nsfwtextusewscowedoubwe, rawr x3 s-signawvawue.doubwevawue(0.0)))
 
+              c-candidate
+                .cacheextewnawscowe(
+                  "agathawecentabusestwikescowe", (U ᵕ U❁)
+                  futuwe.vawue(some(agathawecentabusestwikescowe)))
+              c-candidate
+                .cacheextewnawscowe(
+                  "agathacawibwatednsfwscowe", (⑅˘꒳˘)
+                  f-futuwe.vawue(some(agathacawibwatednsfwscowe)))
               candidate
-                .cacheExternalScore(
-                  "agathaRecentAbuseStrikeScore",
-                  Future.value(Some(agathaRecentAbuseStrikeScore)))
-              candidate
-                .cacheExternalScore(
-                  "agathaCalibratedNSFWScore",
-                  Future.value(Some(agathaCalibratedNSFWScore)))
-              candidate
-                .cacheExternalScore("agathaTextNSFWScore", Future.value(Some(agathaTextNSFWScore)))
+                .cacheextewnawscowe("agathatextnsfwscowe", (˘ω˘) futuwe.vawue(some(agathatextnsfwscowe)))
 
-              val NSFWShouldBucket = agathaCalibratedNSFWScore > target.params(
-                PushFeatureSwitchParams.AgathaCalibratedNSFWBucketThreshold)
-              val textNSFWShouldBucket = agathaTextNSFWScore > target.params(
-                PushFeatureSwitchParams.AgathaTextNSFWBucketThreshold)
+              v-vaw nysfwshouwdbucket = agathacawibwatednsfwscowe > tawget.pawams(
+                p-pushfeatuweswitchpawams.agathacawibwatednsfwbucketthweshowd)
+              vaw textnsfwshouwdbucket = a-agathatextnsfwscowe > t-tawget.pawams(
+                pushfeatuweswitchpawams.agathatextnsfwbucketthweshowd)
 
-              if (NSFWShouldBucket || textNSFWShouldBucket) {
-                bucketedUserCandidatesCounter.incr()
-                if (NSFWShouldBucket) {
-                  scopedStatsReceiver.counter("calibrated_nsfw_bucketed_user_candidates").incr()
+              i-if (nsfwshouwdbucket || t-textnsfwshouwdbucket) {
+                b-bucketedusewcandidatescountew.incw()
+                if (nsfwshouwdbucket) {
+                  s-scopedstatsweceivew.countew("cawibwated_nsfw_bucketed_usew_candidates").incw()
                 }
-                if (textNSFWShouldBucket) {
-                  scopedStatsReceiver.counter("text_nsfw_bucketed_user_candidates").incr()
+                i-if (textnsfwshouwdbucket) {
+                  scopedstatsweceivew.countew("text_nsfw_bucketed_usew_candidates").incw()
                 }
 
-                val (thresholdAgathaNsfw, thresholdTextNsfw) = if (useAggressiveThresholds) {
+                v-vaw (thweshowdagathansfw, :3 thweshowdtextnsfw) = i-if (useaggwessivethweshowds) {
                   (
-                    target.params(
-                      PushFeatureSwitchParams.AgathaCalibratedNSFWThresholdForMrTwistly),
-                    target
-                      .params(PushFeatureSwitchParams.AgathaTextNSFWThresholdForMrTwistly))
-                } else {
+                    t-tawget.pawams(
+                      p-pushfeatuweswitchpawams.agathacawibwatednsfwthweshowdfowmwtwistwy), XD
+                    tawget
+                      .pawams(pushfeatuweswitchpawams.agathatextnsfwthweshowdfowmwtwistwy))
+                } e-ewse {
                   (
-                    target.params(PushFeatureSwitchParams.AgathaCalibratedNSFWThreshold),
-                    target.params(PushFeatureSwitchParams.AgathaTextNSFWThreshold))
+                    tawget.pawams(pushfeatuweswitchpawams.agathacawibwatednsfwthweshowd), >_<
+                    tawget.pawams(pushfeatuweswitchpawams.agathatextnsfwthweshowd))
                 }
-                candidate.cachePredicateInfo(
-                  name + "_agathaNsfw",
-                  agathaCalibratedNSFWScore,
-                  thresholdAgathaNsfw,
-                  agathaCalibratedNSFWScore > thresholdAgathaNsfw)
-                candidate.cachePredicateInfo(
-                  name + "_authorTextNsfw",
-                  agathaTextNSFWScore,
-                  thresholdTextNsfw,
-                  agathaTextNSFWScore > thresholdTextNsfw)
+                c-candidate.cachepwedicateinfo(
+                  nyame + "_agathansfw", (✿oωo)
+                  agathacawibwatednsfwscowe,
+                  thweshowdagathansfw, (ꈍᴗꈍ)
+                  agathacawibwatednsfwscowe > thweshowdagathansfw)
+                candidate.cachepwedicateinfo(
+                  nyame + "_authowtextnsfw", XD
+                  agathatextnsfwscowe, :3
+                  t-thweshowdtextnsfw, mya
+                  agathatextnsfwscowe > thweshowdtextnsfw)
 
-                if ((agathaCalibratedNSFWScore > thresholdAgathaNsfw) ||
-                  (agathaTextNSFWScore > thresholdTextNsfw)) {
-                  filteredOON.incr()
-                  false
-                } else true
-              } else {
-                true
+                if ((agathacawibwatednsfwscowe > thweshowdagathansfw) ||
+                  (agathatextnsfwscowe > thweshowdtextnsfw)) {
+                  fiwtewedoon.incw()
+                  f-fawse
+                } ewse twue
+              } e-ewse {
+                twue
               }
-            case _ => true
+            case _ => twue
           }
-        } else {
-          Future.True
+        } e-ewse {
+          futuwe.twue
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(stats.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 
-  def userHealthSignalValueToDouble(signalValue: SignalValue): Double = {
-    signalValue match {
-      case SignalValue.DoubleValue(value) => value
-      case _ => throw new Exception(f"Could not convert signal value to double")
+  def usewheawthsignawvawuetodoubwe(signawvawue: s-signawvawue): doubwe = {
+    signawvawue m-match {
+      case signawvawue.doubwevawue(vawue) => v-vawue
+      case _ => t-thwow nyew exception(f"couwd nyot convewt s-signaw vawue to doubwe")
     }
   }
 }

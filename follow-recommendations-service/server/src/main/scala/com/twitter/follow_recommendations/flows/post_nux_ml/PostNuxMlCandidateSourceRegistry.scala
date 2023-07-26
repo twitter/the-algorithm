@@ -1,103 +1,103 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.twittew.fowwow_wecommendations.fwows.post_nux_mw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.CandidateSourceRegistry
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardPhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReverseEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReversePhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountrySource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountryBackFillSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashQualityFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashSource
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.real_graph.RealGraphOonV2Source
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RecentEngagementNonDirectFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RepeatedProfileVisitsSource
-import com.twitter.follow_recommendations.common.candidate_sources.salsa.RecentEngagementDirectFollowSalsaExpansionSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.LinearRegressionFollow2vecNearestNeighborsStore
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OnlineSTPSourceScorer
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource
-import com.twitter.follow_recommendations.common.candidate_sources.user_user_graph.UserUserGraphCandidateSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.candidatesouwcewegistwy
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.enwichedcandidatesouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook.fowwawdemaiwbooksouwce
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook.fowwawdphonebooksouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook.wevewseemaiwbooksouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.addwessbook.wevewsephonebooksouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.cwowd_seawch_accounts.cwowdseawchaccountssouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.top_owganic_fowwows_accounts.topowganicfowwowsaccountssouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popcountwysouwce
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popcountwybackfiwwsouwce
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popgeohashquawityfowwowsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.geo.popgeohashsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.ppmi_wocawe_fowwow.ppmiwocawefowwowsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.weaw_gwaph.weawgwaphoonv2souwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.wecent_engagement.wecentengagementnondiwectfowwowsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.wecent_engagement.wepeatedpwofiwevisitssouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sawsa.wecentengagementdiwectfowwowsawsaexpansionsouwce
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims.wineawwegwessionfowwow2vecneawestneighbowsstowe
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion.wecentengagementsimiwawusewssouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion.wecentfowwowingsimiwawusewssouwce
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.stp.onwinestpsouwcescowew
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.stp.offwinestwongtiepwedictionsouwce
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.twianguwaw_woops.twianguwawwoopssouwce
+impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.usew_usew_gwaph.usewusewgwaphcandidatesouwce
+impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class PostNuxMlCandidateSourceRegistry @Inject() (
-  crowdSearchAccountsCandidateSource: CrowdSearchAccountsSource,
-  topOrganicFollowsAccountsSource: TopOrganicFollowsAccountsSource,
-  linearRegressionfollow2vecNearestNeighborsStore: LinearRegressionFollow2vecNearestNeighborsStore,
-  forwardEmailBookSource: ForwardEmailBookSource,
-  forwardPhoneBookSource: ForwardPhoneBookSource,
-  offlineStrongTiePredictionSource: OfflineStrongTiePredictionSource,
-  onlineSTPSource: OnlineSTPSourceScorer,
-  popCountrySource: PopCountrySource,
-  popCountryBackFillSource: PopCountryBackFillSource,
-  popGeohashSource: PopGeohashSource,
-  recentEngagementDirectFollowSimilarUsersSource: RecentEngagementSimilarUsersSource,
-  recentEngagementNonDirectFollowSource: RecentEngagementNonDirectFollowSource,
-  recentEngagementDirectFollowSalsaExpansionSource: RecentEngagementDirectFollowSalsaExpansionSource,
-  recentFollowingSimilarUsersSource: RecentFollowingSimilarUsersSource,
-  realGraphOonV2Source: RealGraphOonV2Source,
-  repeatedProfileVisitSource: RepeatedProfileVisitsSource,
-  reverseEmailBookSource: ReverseEmailBookSource,
-  reversePhoneBookSource: ReversePhoneBookSource,
-  triangularLoopsSource: TriangularLoopsSource,
-  userUserGraphCandidateSource: UserUserGraphCandidateSource,
-  ppmiLocaleFollowSource: PPMILocaleFollowSource,
-  popGeohashQualityFollowSource: PopGeohashQualityFollowSource,
-  baseStatsReceiver: StatsReceiver,
-) extends CandidateSourceRegistry[PostNuxMlRequest, CandidateUser] {
-  import EnrichedCandidateSource._
+@singweton
+cwass postnuxmwcandidatesouwcewegistwy @inject() (
+  c-cwowdseawchaccountscandidatesouwce: cwowdseawchaccountssouwce, OwO
+  topowganicfowwowsaccountssouwce: t-topowganicfowwowsaccountssouwce, (ꈍᴗꈍ)
+  wineawwegwessionfowwow2vecneawestneighbowsstowe: wineawwegwessionfowwow2vecneawestneighbowsstowe, 😳
+  fowwawdemaiwbooksouwce: fowwawdemaiwbooksouwce, 😳😳😳
+  fowwawdphonebooksouwce: fowwawdphonebooksouwce, mya
+  o-offwinestwongtiepwedictionsouwce: offwinestwongtiepwedictionsouwce, mya
+  o-onwinestpsouwce: o-onwinestpsouwcescowew, (⑅˘꒳˘)
+  p-popcountwysouwce: popcountwysouwce, (U ﹏ U)
+  popcountwybackfiwwsouwce: popcountwybackfiwwsouwce, mya
+  p-popgeohashsouwce: p-popgeohashsouwce, ʘwʘ
+  wecentengagementdiwectfowwowsimiwawusewssouwce: w-wecentengagementsimiwawusewssouwce, (˘ω˘)
+  wecentengagementnondiwectfowwowsouwce: w-wecentengagementnondiwectfowwowsouwce, (U ﹏ U)
+  wecentengagementdiwectfowwowsawsaexpansionsouwce: wecentengagementdiwectfowwowsawsaexpansionsouwce, ^•ﻌ•^
+  w-wecentfowwowingsimiwawusewssouwce: wecentfowwowingsimiwawusewssouwce, (˘ω˘)
+  w-weawgwaphoonv2souwce: weawgwaphoonv2souwce, :3
+  wepeatedpwofiwevisitsouwce: w-wepeatedpwofiwevisitssouwce, ^^;;
+  wevewseemaiwbooksouwce: w-wevewseemaiwbooksouwce, 🥺
+  wevewsephonebooksouwce: w-wevewsephonebooksouwce, (⑅˘꒳˘)
+  t-twianguwawwoopssouwce: twianguwawwoopssouwce,
+  usewusewgwaphcandidatesouwce: usewusewgwaphcandidatesouwce, nyaa~~
+  ppmiwocawefowwowsouwce: ppmiwocawefowwowsouwce,
+  popgeohashquawityfowwowsouwce: p-popgeohashquawityfowwowsouwce, :3
+  b-basestatsweceivew: statsweceivew, ( ͡o ω ͡o )
+) e-extends c-candidatesouwcewegistwy[postnuxmwwequest, c-candidateusew] {
+  impowt enwichedcandidatesouwce._
 
-  override val statsReceiver = baseStatsReceiver
-    .scope("post_nux_ml_flow", "candidate_sources")
+  ovewwide vaw statsweceivew = b-basestatsweceivew
+    .scope("post_nux_mw_fwow", mya "candidate_souwces")
 
-  // sources primarily based on social graph signals
-  private[this] val socialSources = Seq(
-    linearRegressionfollow2vecNearestNeighborsStore.mapKeys[PostNuxMlRequest](
-      _.getOptionalUserId.toSeq),
-    forwardEmailBookSource,
-    forwardPhoneBookSource,
-    offlineStrongTiePredictionSource,
-    onlineSTPSource,
-    reverseEmailBookSource,
-    reversePhoneBookSource,
-    triangularLoopsSource,
+  // souwces pwimawiwy based on sociaw gwaph signaws
+  pwivate[this] v-vaw sociawsouwces = seq(
+    wineawwegwessionfowwow2vecneawestneighbowsstowe.mapkeys[postnuxmwwequest](
+      _.getoptionawusewid.toseq),
+    f-fowwawdemaiwbooksouwce, (///ˬ///✿)
+    f-fowwawdphonebooksouwce, (˘ω˘)
+    o-offwinestwongtiepwedictionsouwce, ^^;;
+    onwinestpsouwce, (✿oωo)
+    w-wevewseemaiwbooksouwce, (U ﹏ U)
+    w-wevewsephonebooksouwce, -.-
+    t-twianguwawwoopssouwce, ^•ﻌ•^
   )
 
-  // sources primarily based on geo signals
-  private[this] val geoSources = Seq(
-    popCountrySource,
-    popCountryBackFillSource,
-    popGeohashSource,
-    popGeohashQualityFollowSource,
-    topOrganicFollowsAccountsSource,
-    crowdSearchAccountsCandidateSource,
-    ppmiLocaleFollowSource,
+  // s-souwces pwimawiwy based on geo signaws
+  p-pwivate[this] v-vaw geosouwces = s-seq(
+    popcountwysouwce, rawr
+    p-popcountwybackfiwwsouwce, (˘ω˘)
+    popgeohashsouwce, nyaa~~
+    p-popgeohashquawityfowwowsouwce, UwU
+    topowganicfowwowsaccountssouwce, :3
+    cwowdseawchaccountscandidatesouwce, (⑅˘꒳˘)
+    ppmiwocawefowwowsouwce, (///ˬ///✿)
   )
 
-  // sources primarily based on recent activity signals
-  private[this] val activitySources = Seq(
-    repeatedProfileVisitSource,
-    recentEngagementDirectFollowSalsaExpansionSource.mapKeys[PostNuxMlRequest](
-      _.getOptionalUserId.toSeq),
-    recentEngagementDirectFollowSimilarUsersSource,
-    recentEngagementNonDirectFollowSource.mapKeys[PostNuxMlRequest](_.getOptionalUserId.toSeq),
-    recentFollowingSimilarUsersSource,
-    realGraphOonV2Source,
-    userUserGraphCandidateSource,
+  // s-souwces pwimawiwy based on wecent activity signaws
+  pwivate[this] vaw activitysouwces = seq(
+    wepeatedpwofiwevisitsouwce, ^^;;
+    w-wecentengagementdiwectfowwowsawsaexpansionsouwce.mapkeys[postnuxmwwequest](
+      _.getoptionawusewid.toseq), >_<
+    wecentengagementdiwectfowwowsimiwawusewssouwce, rawr x3
+    wecentengagementnondiwectfowwowsouwce.mapkeys[postnuxmwwequest](_.getoptionawusewid.toseq), /(^•ω•^)
+    wecentfowwowingsimiwawusewssouwce, :3
+    weawgwaphoonv2souwce, (ꈍᴗꈍ)
+    usewusewgwaphcandidatesouwce,
   )
 
-  override val sources: Set[CandidateSource[PostNuxMlRequest, CandidateUser]] = (
-    geoSources ++ socialSources ++ activitySources
-  ).toSet
+  o-ovewwide vaw s-souwces: set[candidatesouwce[postnuxmwwequest, /(^•ω•^) c-candidateusew]] = (
+    geosouwces ++ s-sociawsouwces ++ activitysouwces
+  ).toset
 }

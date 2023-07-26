@@ -1,433 +1,433 @@
-package com.twitter.search.common.schema;
+package com.twittew.seawch.common.schema;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+impowt j-java.io.ioexception;
+i-impowt java.io.stwingweadew;
+i-impowt java.utiw.cowwections;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.set;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.common.cowwect.immutabwewist;
+impowt com.googwe.common.cowwect.sets;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.facet.sortedset.SortedSetDocValuesFacetField;
-import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.wucene.anawysis.anawyzew;
+impowt owg.apache.wucene.anawysis.tokenstweam;
+i-impowt owg.apache.wucene.anawysis.tokenattwibutes.chawtewmattwibute;
+impowt owg.apache.wucene.anawysis.tokenattwibutes.tewmtobyteswefattwibute;
+i-impowt owg.apache.wucene.document.document;
+impowt owg.apache.wucene.document.fiewd;
+i-impowt owg.apache.wucene.facet.sowtedset.sowtedsetdocvawuesfacetfiewd;
+impowt owg.apache.wucene.utiw.byteswef;
+impowt o-owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.text.token.TwitterTokenStream;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.schema.thriftjava.ThriftGeoCoordinate;
-import com.twitter.search.common.util.analysis.IntTermAttribute;
-import com.twitter.search.common.util.analysis.LongTermAttribute;
-import com.twitter.search.common.util.analysis.SortableLongTermAttribute;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.text.HighFrequencyTermPairs;
-import com.twitter.search.common.util.text.OmitNormTextField;
-import com.twitter.search.common.util.text.SingleTokenStream;
+i-impowt com.twittew.common.text.token.twittewtokenstweam;
+i-impowt com.twittew.seawch.common.schema.base.eawwybiwdfiewdtype;
+impowt com.twittew.seawch.common.schema.base.indexednumewicfiewdsettings;
+impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewd;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewddata;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftgeocoowdinate;
+i-impowt com.twittew.seawch.common.utiw.anawysis.inttewmattwibute;
+i-impowt c-com.twittew.seawch.common.utiw.anawysis.wongtewmattwibute;
+i-impowt com.twittew.seawch.common.utiw.anawysis.sowtabwewongtewmattwibute;
+i-impowt com.twittew.seawch.common.utiw.spatiaw.geoutiw;
+impowt com.twittew.seawch.common.utiw.text.highfwequencytewmpaiws;
+i-impowt com.twittew.seawch.common.utiw.text.omitnowmtextfiewd;
+impowt com.twittew.seawch.common.utiw.text.singwetokenstweam;
 
 /**
- * A document factory that converts {@link ThriftDocument} into Lucene {@link Document}s
- * using the provided {@link com.twitter.search.common.schema.base.Schema}.
+ * a document f-factowy that convewts {@wink thwiftdocument} into wucene {@wink document}s
+ * using the pwovided {@wink c-com.twittew.seawch.common.schema.base.schema}. (ꈍᴗꈍ)
  */
-public class SchemaDocumentFactory {
-  private static final Logger LOG = LoggerFactory.getLogger(SchemaDocumentFactory.class);
+pubwic c-cwass schemadocumentfactowy {
+  p-pwivate static f-finaw woggew wog = woggewfactowy.getwoggew(schemadocumentfactowy.cwass);
 
-  private final Schema schema;
-  private final ImmutableList<TokenStreamRewriter> tokenStreamRewriters;
+  pwivate finaw schema schema;
+  pwivate f-finaw immutabwewist<tokenstweamwewwitew> t-tokenstweamwewwitews;
 
   /**
-   * Creates a SchemaDocumentFactory with a schema and the tokenStreamRewriters.
+   * cweates a schemadocumentfactowy w-with a schema a-and the tokenstweamwewwitews. òωó
    *
-   * @param tokenStreamRewriters a list of token stream rewriters, which will be applied in order.
+   * @pawam tokenstweamwewwitews a wist of token s-stweam wewwitews, ʘwʘ which wiww b-be appwied in owdew. ʘwʘ
    */
-  public SchemaDocumentFactory(
-      Schema schema,
-      List<TokenStreamRewriter> tokenStreamRewriters) {
-    this.schema = schema;
-    this.tokenStreamRewriters = ImmutableList.copyOf(tokenStreamRewriters);
+  pubwic schemadocumentfactowy(
+      s-schema schema, nyaa~~
+      wist<tokenstweamwewwitew> t-tokenstweamwewwitews) {
+    this.schema = s-schema;
+    t-this.tokenstweamwewwitews = immutabwewist.copyof(tokenstweamwewwitews);
   }
 
   /**
-   * Creates a SchemaDocumentFactory with no tokenStreamRewriters.
+   * cweates a schemadocumentfactowy with nyo tokenstweamwewwitews. UwU
    */
-  public SchemaDocumentFactory(Schema schema) {
-    this(schema, Collections.EMPTY_LIST);
+  pubwic schemadocumentfactowy(schema schema) {
+    this(schema, (⑅˘꒳˘) c-cowwections.empty_wist);
   }
 
-  public final Document newDocument(ThriftDocument document) throws IOException {
-    return innerNewDocument(document);
+  p-pubwic finaw document nyewdocument(thwiftdocument d-document) t-thwows ioexception {
+    w-wetuwn innewnewdocument(document);
   }
 
   /**
-   * Create a Lucene document from the ThriftDocument.
+   * cweate a wucene document f-fwom the thwiftdocument. (˘ω˘)
    */
-  @VisibleForTesting
-  public Document innerNewDocument(ThriftDocument document) throws IOException {
-    Document luceneDocument = new Document();
-    Set<String> hfTerms = Sets.newHashSet();
-    Set<String> hfPhrases = Sets.newHashSet();
+  @visibwefowtesting
+  pubwic document innewnewdocument(thwiftdocument document) thwows ioexception {
+    document w-wucenedocument = nyew document();
+    s-set<stwing> h-hftewms = s-sets.newhashset();
+    set<stwing> h-hfphwases = s-sets.newhashset();
 
-    Analyzer defaultAnalyzer = schema.getDefaultAnalyzer(document.getDefaultAnalyzerOverride());
+    a-anawyzew d-defauwtanawyzew = schema.getdefauwtanawyzew(document.getdefauwtanawyzewovewwide());
 
-    for (ThriftField field : document.getFields()) {
-      boolean successful = false;
-      try {
-        addLuceneFields(field, defaultAnalyzer, luceneDocument, hfTerms, hfPhrases);
-        successful = true;
-      } finally {
-        if (!successful) {
-          LOG.warn("Unexpected exception while trying to add field. Field ID: "
-              + field.getFieldConfigId() + " Field Name: "
-              + schema.getFieldName(field.getFieldConfigId()));
+    fow (thwiftfiewd f-fiewd : d-document.getfiewds()) {
+      b-boowean successfuw = f-fawse;
+      t-twy {
+        addwucenefiewds(fiewd, :3 defauwtanawyzew, (˘ω˘) wucenedocument, nyaa~~ h-hftewms, (U ﹏ U) hfphwases);
+        successfuw = twue;
+      } finawwy {
+        if (!successfuw) {
+          w-wog.wawn("unexpected exception whiwe twying to add fiewd. nyaa~~ fiewd i-id: "
+              + f-fiewd.getfiewdconfigid() + " f-fiewd nyame: "
+              + schema.getfiewdname(fiewd.getfiewdconfigid()));
         }
       }
     }
 
-    for (String token : hfTerms) {
-      for (String token2 : hfTerms) {
-        if (token.compareTo(token2) < 0) {
-          luceneDocument.add(new Field(ImmutableSchema.HF_TERM_PAIRS_FIELD,
-                                          HighFrequencyTermPairs.createPair(token, token2),
-                                          OmitNormTextField.TYPE_NOT_STORED));
+    f-fow (stwing token : hftewms) {
+      f-fow (stwing t-token2 : hftewms) {
+        if (token.compaweto(token2) < 0) {
+          wucenedocument.add(new fiewd(immutabweschema.hf_tewm_paiws_fiewd, ^^;;
+                                          highfwequencytewmpaiws.cweatepaiw(token, OwO token2), nyaa~~
+                                          omitnowmtextfiewd.type_not_stowed));
         }
       }
     }
 
-    for (String phrase : hfPhrases) {
-      // Tokens in the phrase set are not terms and have already been processed with
-      // HighFrequencyTermPairs.createPhrasePair.
-      luceneDocument.add(new Field(ImmutableSchema.HF_PHRASE_PAIRS_FIELD, phrase,
-                                      OmitNormTextField.TYPE_NOT_STORED));
+    f-fow (stwing phwase : hfphwases) {
+      // t-tokens in the phwase set awe nyot t-tewms and have a-awweady been pwocessed with
+      // highfwequencytewmpaiws.cweatephwasepaiw. UwU
+      w-wucenedocument.add(new f-fiewd(immutabweschema.hf_phwase_paiws_fiewd, 😳 phwase,
+                                      o-omitnowmtextfiewd.type_not_stowed));
     }
 
-    return schema.getFacetsConfig().build(luceneDocument);
+    w-wetuwn schema.getfacetsconfig().buiwd(wucenedocument);
   }
 
-  private void addLuceneFields(ThriftField field, Analyzer analyzer, Document doc,
-                               Set<String> hfTerms, Set<String> hfPhrases) throws IOException {
-    Schema.FieldInfo fieldInfo =
-        schema.getFieldInfo(field.getFieldConfigId(), field.getFieldConfigOverride());
+  pwivate void addwucenefiewds(thwiftfiewd fiewd, 😳 anawyzew anawyzew, (ˆ ﻌ ˆ)♡ document d-doc, (✿oωo)
+                               s-set<stwing> h-hftewms, nyaa~~ set<stwing> hfphwases) t-thwows ioexception {
+    s-schema.fiewdinfo fiewdinfo =
+        s-schema.getfiewdinfo(fiewd.getfiewdconfigid(), ^^ fiewd.getfiewdconfigovewwide());
 
-    if (fieldInfo == null) {
-      // field not defined in schema - skip it
-      return;
+    if (fiewdinfo == nyuww) {
+      // fiewd nyot d-defined in schema - s-skip it
+      wetuwn;
     }
 
-    ThriftFieldData fieldData = field.getFieldData();
-    if (fieldInfo.getFieldType().getCsfType() !=  null) {
-      addCSFField(doc, fieldInfo, fieldData);
-      return;
+    thwiftfiewddata f-fiewddata = f-fiewd.getfiewddata();
+    if (fiewdinfo.getfiewdtype().getcsftype() !=  nyuww) {
+      addcsffiewd(doc, (///ˬ///✿) f-fiewdinfo, 😳 fiewddata);
+      wetuwn;
     }
 
-    // Checking which data type is set is not sufficient here. We also need to check schema to
-    // see what the type the field is configured to be. See SEARCH-5173 for more details.
-    // The problem is that Pig, while converting Tuples to Thrift, sets all primitive type
-    // fields to 0. (i.e. the isSet calls will return true).
-    IndexedNumericFieldSettings numericSettings =
-        fieldInfo.getFieldType().getNumericFieldSettings();
-    if (fieldData.isSetTokenStreamValue()) {
-      addTokenField(doc, hfTerms, hfPhrases, fieldInfo, fieldData);
-    } else if (fieldData.isSetStringValue()) {
-      addStringField(analyzer, doc, hfTerms, hfPhrases, fieldInfo, fieldData);
-    } else if (fieldData.isSetBytesValue()) {
-      addBytesField(doc, fieldInfo, fieldData);
-    } else if (fieldData.isSetGeoCoordinate()) {
-      addGeoField(doc, fieldInfo, fieldData);
-    } else if (numericSettings != null) {
-      // handle numeric fields.
-      switch (numericSettings.getNumericType()) {
-        case INT:
-          Preconditions.checkState(fieldData.isSetIntValue(),
-              "Int field does not have int value set. Field name: %s", fieldInfo.getName());
-          addIntField(doc, fieldInfo, fieldData);
-          break;
-        case LONG:
-          Preconditions.checkState(fieldData.isSetLongValue(),
-              "Long field does not have long value set. Field name: %s", fieldInfo.getName());
-          addLongField(doc, fieldInfo, fieldData);
-          break;
-        case FLOAT:
-          Preconditions.checkState(fieldData.isSetFloatValue(),
-              "Float field does not have float value set. Field name: %s ", fieldInfo.getName());
-          addFloatField();
-          break;
-        case DOUBLE:
-          Preconditions.checkState(fieldData.isSetDoubleValue(),
-              "Double field does not have double value set. Field name: %s", fieldInfo.getName());
-          addDoubleFIeld();
-          break;
-        default:
-          throw new UnsupportedOperationException("Earlybird does not know how to handle field "
-              + field.getFieldConfigId() + " " + field);
+    // checking which data t-type is set is nyot sufficient hewe. òωó we awso nyeed t-to check schema t-to
+    // see nyani the type the fiewd is configuwed to be. ^^;; s-see seawch-5173 f-fow mowe detaiws. rawr
+    // the pwobwem is that pig, (ˆ ﻌ ˆ)♡ whiwe convewting t-tupwes to thwift, XD sets aww pwimitive t-type
+    // fiewds to 0. >_< (i.e. the isset cawws wiww wetuwn t-twue). (˘ω˘)
+    indexednumewicfiewdsettings nyumewicsettings =
+        f-fiewdinfo.getfiewdtype().getnumewicfiewdsettings();
+    i-if (fiewddata.issettokenstweamvawue()) {
+      addtokenfiewd(doc, 😳 h-hftewms, o.O hfphwases, fiewdinfo, (ꈍᴗꈍ) fiewddata);
+    } e-ewse if (fiewddata.issetstwingvawue()) {
+      a-addstwingfiewd(anawyzew, rawr x3 d-doc, hftewms, ^^ hfphwases, OwO f-fiewdinfo, fiewddata);
+    } ewse i-if (fiewddata.issetbytesvawue()) {
+      addbytesfiewd(doc, ^^ fiewdinfo, fiewddata);
+    } e-ewse i-if (fiewddata.issetgeocoowdinate()) {
+      a-addgeofiewd(doc, :3 fiewdinfo, o.O fiewddata);
+    } ewse i-if (numewicsettings != nyuww) {
+      // h-handwe n-nyumewic fiewds. -.-
+      switch (numewicsettings.getnumewictype()) {
+        case int:
+          p-pweconditions.checkstate(fiewddata.issetintvawue(), (U ﹏ U)
+              "int f-fiewd does n-nyot have int v-vawue set. o.O fiewd nyame: %s", OwO fiewdinfo.getname());
+          a-addintfiewd(doc, ^•ﻌ•^ fiewdinfo, ʘwʘ fiewddata);
+          bweak;
+        case wong:
+          pweconditions.checkstate(fiewddata.issetwongvawue(), :3
+              "wong f-fiewd does nyot have w-wong vawue set. 😳 fiewd nyame: %s", òωó f-fiewdinfo.getname());
+          addwongfiewd(doc, 🥺 f-fiewdinfo, rawr x3 fiewddata);
+          b-bweak;
+        c-case fwoat:
+          p-pweconditions.checkstate(fiewddata.issetfwoatvawue(), ^•ﻌ•^
+              "fwoat f-fiewd does n-not have fwoat vawue set. :3 fiewd name: %s ", (ˆ ﻌ ˆ)♡ fiewdinfo.getname());
+          addfwoatfiewd();
+          bweak;
+        case doubwe:
+          pweconditions.checkstate(fiewddata.issetdoubwevawue(), (U ᵕ U❁)
+              "doubwe f-fiewd d-does nyot have d-doubwe vawue set. :3 fiewd nyame: %s", ^^;; f-fiewdinfo.getname());
+          adddoubwefiewd();
+          bweak;
+        defauwt:
+          thwow nyew unsuppowtedopewationexception("eawwybiwd d-does nyot k-know how to handwe fiewd "
+              + f-fiewd.getfiewdconfigid() + " " + fiewd);
       }
-    } else {
-      throw new UnsupportedOperationException("Earlybird does not know how to handle field "
-          + field.getFieldConfigId() + " " + field);
+    } ewse {
+      thwow n-new unsuppowtedopewationexception("eawwybiwd d-does nyot know how to handwe fiewd "
+          + f-fiewd.getfiewdconfigid() + " " + f-fiewd);
     }
   }
 
-  private void addCSFField(Document doc, Schema.FieldInfo fieldInfo, ThriftFieldData fieldData) {
-    if (fieldInfo.getFieldType().getCsfFixedLengthNumValuesPerDoc() > 1) {
+  pwivate void addcsffiewd(document doc, ( ͡o ω ͡o ) schema.fiewdinfo f-fiewdinfo, thwiftfiewddata f-fiewddata) {
+    i-if (fiewdinfo.getfiewdtype().getcsffixedwengthnumvawuespewdoc() > 1) {
 
-      // As an optimization, TBinaryProtocol stores a byte array field as a part of a larger byte
-      // array field.  Must call fieldData.getBytesValue().  fieldData.bytesValue.array() will
-      // return extraneous data. See: SEARCH-3996
-      doc.add(new Field(fieldInfo.getName(), fieldData.getBytesValue(), fieldInfo.getFieldType()));
-    } else {
-      doc.add(new CSFField(fieldInfo.getName(), fieldInfo.getFieldType(), fieldData));
+      // a-as a-an optimization, o.O tbinawypwotocow s-stowes a byte a-awway fiewd as a pawt of a wawgew b-byte
+      // a-awway fiewd. ^•ﻌ•^  must caww fiewddata.getbytesvawue(). XD  f-fiewddata.bytesvawue.awway() wiww
+      // wetuwn extwaneous d-data. ^^ see: seawch-3996
+      doc.add(new f-fiewd(fiewdinfo.getname(), o.O f-fiewddata.getbytesvawue(), ( ͡o ω ͡o ) fiewdinfo.getfiewdtype()));
+    } e-ewse {
+      doc.add(new csffiewd(fiewdinfo.getname(), /(^•ω•^) fiewdinfo.getfiewdtype(), 🥺 f-fiewddata));
     }
   }
 
-  private void addTokenField(
-      Document doc,
-      Set<String> hfTerms,
-      Set<String> hfPhrases,
-      Schema.FieldInfo fieldInfo,
-      ThriftFieldData fieldData) throws IOException {
-    TwitterTokenStream twitterTokenStream
-        = fieldInfo.getFieldType().getTokenStreamSerializer().deserialize(
-        fieldData.getTokenStreamValue(), fieldData.getStringValue());
+  p-pwivate v-void addtokenfiewd(
+      document doc, nyaa~~
+      set<stwing> hftewms, mya
+      set<stwing> h-hfphwases, XD
+      schema.fiewdinfo fiewdinfo, nyaa~~
+      t-thwiftfiewddata f-fiewddata) thwows ioexception {
+    t-twittewtokenstweam twittewtokenstweam
+        = f-fiewdinfo.getfiewdtype().gettokenstweamsewiawizew().desewiawize(
+        f-fiewddata.gettokenstweamvawue(), ʘwʘ fiewddata.getstwingvawue());
 
-    try {
-      for (TokenStreamRewriter rewriter : tokenStreamRewriters) {
-        twitterTokenStream = rewriter.rewrite(fieldInfo, twitterTokenStream);
+    twy {
+      f-fow (tokenstweamwewwitew wewwitew : tokenstweamwewwitews) {
+        twittewtokenstweam = w-wewwitew.wewwite(fiewdinfo, (⑅˘꒳˘) t-twittewtokenstweam);
       }
 
-      expandStream(doc, fieldInfo, twitterTokenStream, hfTerms, hfPhrases);
-      doc.add(new Field(fieldInfo.getName(), twitterTokenStream, fieldInfo.getFieldType()));
-    } finally {
-      twitterTokenStream.close();
+      expandstweam(doc, :3 f-fiewdinfo, -.- twittewtokenstweam, 😳😳😳 hftewms, (U ﹏ U) hfphwases);
+      d-doc.add(new f-fiewd(fiewdinfo.getname(), o.O t-twittewtokenstweam, ( ͡o ω ͡o ) fiewdinfo.getfiewdtype()));
+    } finawwy {
+      twittewtokenstweam.cwose();
     }
   }
 
-  private void addStringField(Analyzer analyzer, Document doc, Set<String> hfTerms,
-                              Set<String> hfPhrases, Schema.FieldInfo fieldInfo,
-                              ThriftFieldData fieldData) {
-    doc.add(new Field(fieldInfo.getName(), fieldData.getStringValue(), fieldInfo.getFieldType()));
-    if (fieldInfo.getFieldType().tokenized()) {
-      try {
-        TokenStream tokenStream = analyzer.tokenStream(fieldInfo.getName(),
-                new StringReader(fieldData.getStringValue()));
-        try {
-          expandStream(
-              doc,
-              fieldInfo,
-              tokenStream,
-              hfTerms,
-              hfPhrases);
-        } finally {
-          tokenStream.close();
+  pwivate void addstwingfiewd(anawyzew anawyzew, òωó document doc, set<stwing> hftewms, 🥺
+                              set<stwing> hfphwases, /(^•ω•^) schema.fiewdinfo fiewdinfo, 😳😳😳
+                              thwiftfiewddata f-fiewddata) {
+    d-doc.add(new fiewd(fiewdinfo.getname(), ^•ﻌ•^ fiewddata.getstwingvawue(), nyaa~~ f-fiewdinfo.getfiewdtype()));
+    i-if (fiewdinfo.getfiewdtype().tokenized()) {
+      t-twy {
+        tokenstweam t-tokenstweam = anawyzew.tokenstweam(fiewdinfo.getname(), OwO
+                n-nyew s-stwingweadew(fiewddata.getstwingvawue()));
+        twy {
+          e-expandstweam(
+              doc, ^•ﻌ•^
+              f-fiewdinfo, σωσ
+              t-tokenstweam, -.-
+              hftewms, (˘ω˘)
+              hfphwases);
+        } finawwy {
+          t-tokenstweam.cwose();
         }
-      } catch (IOException e) {
-        LOG.error("IOException expanding token stream", e);
+      } c-catch (ioexception e-e) {
+        w-wog.ewwow("ioexception e-expanding t-token stweam", e-e);
       }
-    } else {
-      addFacetField(doc, fieldInfo, fieldData.getStringValue());
+    } e-ewse {
+      addfacetfiewd(doc, rawr x3 f-fiewdinfo, rawr x3 fiewddata.getstwingvawue());
     }
   }
 
-  private void addBytesField(Document doc, Schema.FieldInfo fieldInfo, ThriftFieldData fieldData) {
-    doc.add(new Field(fieldInfo.getName(), fieldData.getBytesValue(), fieldInfo.getFieldType()));
+  pwivate void a-addbytesfiewd(document d-doc, σωσ s-schema.fiewdinfo fiewdinfo, nyaa~~ thwiftfiewddata f-fiewddata) {
+    doc.add(new fiewd(fiewdinfo.getname(), (ꈍᴗꈍ) f-fiewddata.getbytesvawue(), ^•ﻌ•^ fiewdinfo.getfiewdtype()));
   }
 
-  private void addIntField(Document doc, Schema.FieldInfo fieldInfo,
-                           ThriftFieldData fieldData) {
-    int value = fieldData.getIntValue();
-    addFacetField(doc, fieldInfo, String.valueOf(value));
+  pwivate void addintfiewd(document d-doc, >_< schema.fiewdinfo f-fiewdinfo, ^^;;
+                           t-thwiftfiewddata fiewddata) {
+    i-int vawue = fiewddata.getintvawue();
+    addfacetfiewd(doc, ^^;; f-fiewdinfo, /(^•ω•^) stwing.vawueof(vawue));
 
-    if (fieldInfo.getFieldType().getNumericFieldSettings() == null) {
-      // No NumericFieldSettings. Even though the data is numeric, this field is not
-      // really a numerical field. Just add as a string.
-      doc.add(new Field(fieldInfo.getName(), String.valueOf(value), fieldInfo.getFieldType()));
-    } else if (fieldInfo.getFieldType().getNumericFieldSettings().isUseTwitterFormat()) {
-      addIntTermAttributeField(value, fieldInfo, doc);
-    } else {
-      // Use lucene style numerical fields
-      doc.add(NumericField.newIntField(fieldInfo.getName(), value));
+    i-if (fiewdinfo.getfiewdtype().getnumewicfiewdsettings() == nyuww) {
+      // nyo nyumewicfiewdsettings. nyaa~~ e-even though the data is nyumewic, (✿oωo) this fiewd is nyot
+      // weawwy a-a nyumewicaw fiewd. ( ͡o ω ͡o ) just add as a-a stwing. (U ᵕ U❁)
+      d-doc.add(new fiewd(fiewdinfo.getname(), òωó stwing.vawueof(vawue), σωσ fiewdinfo.getfiewdtype()));
+    } ewse if (fiewdinfo.getfiewdtype().getnumewicfiewdsettings().isusetwittewfowmat()) {
+      addinttewmattwibutefiewd(vawue, :3 f-fiewdinfo, OwO doc);
+    } e-ewse {
+      // u-use wucene stywe n-nyumewicaw fiewds
+      doc.add(numewicfiewd.newintfiewd(fiewdinfo.getname(), ^^ vawue));
     }
   }
 
-  private void addIntTermAttributeField(int value,
-                                        Schema.FieldInfo fieldInfo,
-                                        Document doc) {
-    SingleTokenStream singleToken = new SingleTokenStream();
-    IntTermAttribute termAtt = singleToken.addAttribute(IntTermAttribute.class);
-    termAtt.setTerm(value);
-    doc.add(new Field(fieldInfo.getName(), singleToken, fieldInfo.getFieldType()));
+  p-pwivate void a-addinttewmattwibutefiewd(int vawue, (˘ω˘)
+                                        s-schema.fiewdinfo fiewdinfo, OwO
+                                        document doc) {
+    s-singwetokenstweam singwetoken = n-nyew singwetokenstweam();
+    i-inttewmattwibute t-tewmatt = singwetoken.addattwibute(inttewmattwibute.cwass);
+    t-tewmatt.settewm(vawue);
+    d-doc.add(new fiewd(fiewdinfo.getname(), UwU s-singwetoken, ^•ﻌ•^ f-fiewdinfo.getfiewdtype()));
   }
 
-  private void addLongField(Document doc, Schema.FieldInfo fieldInfo,
-                            ThriftFieldData fieldData) {
-    long value = fieldData.getLongValue();
-    addFacetField(doc, fieldInfo, String.valueOf(value));
+  pwivate v-void addwongfiewd(document d-doc, (ꈍᴗꈍ) s-schema.fiewdinfo f-fiewdinfo, /(^•ω•^)
+                            t-thwiftfiewddata f-fiewddata) {
+    w-wong v-vawue = fiewddata.getwongvawue();
+    addfacetfiewd(doc, (U ᵕ U❁) f-fiewdinfo, (✿oωo) stwing.vawueof(vawue));
 
-    if (fieldInfo.getFieldType().getNumericFieldSettings() == null) {
-      // No NumericFieldSettings. Even though the data is numeric, this field is not
-      // really a numerical field. Just add as a string.
-      doc.add(new Field(fieldInfo.getName(), String.valueOf(value), fieldInfo.getFieldType()));
-    } else if (fieldInfo.getFieldType().getNumericFieldSettings().isUseTwitterFormat()) {
-      // Twitter style numerical field: use LongTermAttribute
-      addLongTermAttributeField(value, fieldInfo, doc);
-    } else {
-      // Use lucene style numerical fields
-      doc.add(NumericField.newLongField(fieldInfo.getName(), value));
+    i-if (fiewdinfo.getfiewdtype().getnumewicfiewdsettings() == nyuww) {
+      // n-nyo n-numewicfiewdsettings. OwO e-even though the data is nyumewic, :3 this fiewd is nyot
+      // w-weawwy a nyumewicaw f-fiewd. j-just add as a stwing. nyaa~~
+      doc.add(new fiewd(fiewdinfo.getname(), ^•ﻌ•^ stwing.vawueof(vawue), ( ͡o ω ͡o ) f-fiewdinfo.getfiewdtype()));
+    } e-ewse if (fiewdinfo.getfiewdtype().getnumewicfiewdsettings().isusetwittewfowmat()) {
+      // t-twittew s-stywe nyumewicaw fiewd: use wongtewmattwibute
+      addwongtewmattwibutefiewd(vawue, fiewdinfo, ^^;; d-doc);
+    } ewse {
+      // u-use w-wucene stywe nyumewicaw f-fiewds
+      doc.add(numewicfiewd.newwongfiewd(fiewdinfo.getname(), mya vawue));
     }
   }
 
-  private void addLongTermAttributeField(long value,
-                                         Schema.FieldInfo fieldInfo,
-                                         Document doc) {
-    SingleTokenStream singleToken = new SingleTokenStream();
-    boolean useSortableEncoding =
-        fieldInfo.getFieldType().getNumericFieldSettings().isUseSortableEncoding();
+  p-pwivate void a-addwongtewmattwibutefiewd(wong vawue, (U ᵕ U❁)
+                                         schema.fiewdinfo fiewdinfo, ^•ﻌ•^
+                                         document doc) {
+    s-singwetokenstweam singwetoken = nyew singwetokenstweam();
+    b-boowean usesowtabweencoding =
+        fiewdinfo.getfiewdtype().getnumewicfiewdsettings().isusesowtabweencoding();
 
-    if (useSortableEncoding) {
-      SortableLongTermAttribute termAtt = singleToken.addAttribute(SortableLongTermAttribute.class);
-      termAtt.setTerm(value);
-    } else {
-      LongTermAttribute termAtt = singleToken.addAttribute(LongTermAttribute.class);
-      termAtt.setTerm(value);
+    i-if (usesowtabweencoding) {
+      s-sowtabwewongtewmattwibute tewmatt = s-singwetoken.addattwibute(sowtabwewongtewmattwibute.cwass);
+      t-tewmatt.settewm(vawue);
+    } ewse {
+      wongtewmattwibute t-tewmatt = singwetoken.addattwibute(wongtewmattwibute.cwass);
+      tewmatt.settewm(vawue);
     }
-    doc.add(new Field(fieldInfo.getName(), singleToken, fieldInfo.getFieldType()));
+    d-doc.add(new f-fiewd(fiewdinfo.getname(), (U ﹏ U) s-singwetoken, /(^•ω•^) f-fiewdinfo.getfiewdtype()));
   }
 
-  private void addFloatField() {
-    throw new UnsupportedOperationException("Earlybird does not support float values yet.");
+  pwivate v-void addfwoatfiewd() {
+    thwow n-nyew unsuppowtedopewationexception("eawwybiwd d-does not suppowt fwoat vawues y-yet.");
   }
 
-  private void addDoubleFIeld() {
-    throw new UnsupportedOperationException("Earlybird does not support double values yet.");
+  pwivate void adddoubwefiewd() {
+    thwow nyew unsuppowtedopewationexception("eawwybiwd d-does nyot s-suppowt doubwe v-vawues yet.");
   }
 
-  private void addGeoField(Document doc, Schema.FieldInfo fieldInfo, ThriftFieldData fieldData) {
-    ThriftGeoCoordinate coord = fieldData.getGeoCoordinate();
-    if (GeoUtil.validateGeoCoordinates(coord.getLat(), coord.getLon())) {
-      GeoUtil.fillGeoFields(doc, fieldInfo.getName(),
-          coord.getLat(), coord.getLon(), coord.getAccuracy());
-    }
-  }
-
-  private void addFacetField(Document doc, Schema.FieldInfo fieldInfo, String value) {
-    Preconditions.checkArgument(doc != null);
-    Preconditions.checkArgument(fieldInfo != null);
-    Preconditions.checkArgument(value != null);
-
-    if (fieldInfo.getFieldType().getFacetName() != null) {
-      doc.add(new SortedSetDocValuesFacetField(fieldInfo.getFieldType().getFacetName(), value));
+  pwivate void addgeofiewd(document doc, ʘwʘ schema.fiewdinfo fiewdinfo, XD thwiftfiewddata f-fiewddata) {
+    thwiftgeocoowdinate coowd = f-fiewddata.getgeocoowdinate();
+    i-if (geoutiw.vawidategeocoowdinates(coowd.getwat(), (⑅˘꒳˘) coowd.getwon())) {
+      geoutiw.fiwwgeofiewds(doc, f-fiewdinfo.getname(), nyaa~~
+          coowd.getwat(), UwU coowd.getwon(), (˘ω˘) coowd.getaccuwacy());
     }
   }
 
-  private String getTerm(TermToBytesRefAttribute attr) {
-    if (attr instanceof CharTermAttribute) {
-      return ((CharTermAttribute) attr).toString();
-    } else if (attr instanceof IntTermAttribute) {
-      return String.valueOf(((IntTermAttribute) attr).getTerm());
-    } else if (attr instanceof LongTermAttribute) {
-      return String.valueOf(((LongTermAttribute) attr).getTerm());
-    } else {
-      return attr.getBytesRef().utf8ToString();
+  pwivate void addfacetfiewd(document d-doc, rawr x3 schema.fiewdinfo f-fiewdinfo, (///ˬ///✿) s-stwing vawue) {
+    p-pweconditions.checkawgument(doc != n-nyuww);
+    pweconditions.checkawgument(fiewdinfo != nyuww);
+    pweconditions.checkawgument(vawue != nyuww);
+
+    if (fiewdinfo.getfiewdtype().getfacetname() != n-nyuww) {
+      doc.add(new sowtedsetdocvawuesfacetfiewd(fiewdinfo.getfiewdtype().getfacetname(), 😳😳😳 v-vawue));
+    }
+  }
+
+  pwivate stwing gettewm(tewmtobyteswefattwibute attw) {
+    i-if (attw instanceof chawtewmattwibute) {
+      wetuwn ((chawtewmattwibute) attw).tostwing();
+    } ewse if (attw i-instanceof inttewmattwibute) {
+      w-wetuwn stwing.vawueof(((inttewmattwibute) attw).gettewm());
+    } e-ewse if (attw instanceof wongtewmattwibute) {
+      w-wetuwn s-stwing.vawueof(((wongtewmattwibute) attw).gettewm());
+    } e-ewse {
+      wetuwn attw.getbyteswef().utf8tostwing();
     }
   }
 
   /**
-   * Expand the TwitterTokenStream and populate high-frequency terms, phrases and/or facet category paths.
+   * e-expand the twittewtokenstweam and popuwate high-fwequency t-tewms, (///ˬ///✿) phwases and/ow facet categowy paths. ^^;;
    */
-  private void expandStream(
-      Document doc,
-      Schema.FieldInfo fieldInfo,
-      TokenStream stream,
-      Set<String> hfTerms,
-      Set<String> hfPhrases) throws IOException {
-    // Checkstyle does not allow assignment to parameters.
-    Set<String> facetHfTerms = hfTerms;
-    Set<String> facetHfPhrases = hfPhrases;
+  p-pwivate v-void expandstweam(
+      d-document doc, ^^
+      schema.fiewdinfo f-fiewdinfo, (///ˬ///✿)
+      tokenstweam stweam, -.-
+      set<stwing> hftewms, /(^•ω•^)
+      set<stwing> h-hfphwases) thwows i-ioexception {
+    // c-checkstywe d-does nyot awwow assignment to pawametews. UwU
+    s-set<stwing> f-facethftewms = hftewms;
+    set<stwing> facethfphwases = h-hfphwases;
 
-    if (!(HighFrequencyTermPairs.INDEX_HF_TERM_PAIRS
-        && fieldInfo.getFieldType().isIndexHFTermPairs())) {
-      // high-frequency terms and phrases are not needed
-      if (fieldInfo.getFieldType().getFacetName() == null) {
-        // Facets are not needed either, simply return, would do nothing otherwise
-        return;
+    if (!(highfwequencytewmpaiws.index_hf_tewm_paiws
+        && fiewdinfo.getfiewdtype().isindexhftewmpaiws())) {
+      // h-high-fwequency tewms and phwases awe nyot nyeeded
+      i-if (fiewdinfo.getfiewdtype().getfacetname() == n-nyuww) {
+        // facets a-awe nyot nyeeded e-eithew, (⑅˘꒳˘) simpwy w-wetuwn, ʘwʘ wouwd do nyothing othewwise
+        wetuwn;
       }
-      facetHfTerms = null;
-      facetHfPhrases = null;
+      f-facethftewms = nyuww;
+      facethfphwases = n-nyuww;
     }
 
-    final TermToBytesRefAttribute attr = stream.getAttribute(TermToBytesRefAttribute.class);
-    stream.reset();
+    finaw tewmtobyteswefattwibute attw = stweam.getattwibute(tewmtobyteswefattwibute.cwass);
+    stweam.weset();
 
-    String lastHFTerm = null;
-    while (stream.incrementToken()) {
-      String term = getTerm(attr);
-      if (fieldInfo.getFieldType().getFacetName() != null) {
-        addFacetField(doc, fieldInfo, term);
+    s-stwing wasthftewm = n-nyuww;
+    w-whiwe (stweam.incwementtoken()) {
+      s-stwing t-tewm = gettewm(attw);
+      if (fiewdinfo.getfiewdtype().getfacetname() != nyuww) {
+        addfacetfiewd(doc, σωσ f-fiewdinfo, ^^ tewm);
       }
-      if (HighFrequencyTermPairs.HF_TERM_SET.contains(term)) {
-        if (facetHfTerms != null) {
-          facetHfTerms.add(term);
+      if (highfwequencytewmpaiws.hf_tewm_set.contains(tewm)) {
+        if (facethftewms != n-nyuww) {
+          facethftewms.add(tewm);
         }
-        if (lastHFTerm != null) {
-          if (facetHfPhrases != null) {
-            facetHfPhrases.add(HighFrequencyTermPairs.createPhrasePair(lastHFTerm, term));
+        i-if (wasthftewm != nyuww) {
+          if (facethfphwases != nyuww) {
+            f-facethfphwases.add(highfwequencytewmpaiws.cweatephwasepaiw(wasthftewm, OwO t-tewm));
           }
         }
-        lastHFTerm = term;
-      } else {
-        lastHFTerm = null;
+        wasthftewm = tewm;
+      } e-ewse {
+        wasthftewm = n-nyuww;
       }
     }
   }
 
-  public static final class CSFField extends Field {
+  p-pubwic static finaw cwass csffiewd e-extends fiewd {
     /**
-     * Create a CSFField with the given fieldType, containing the given field data.
+     * c-cweate a csffiewd with the g-given fiewdtype, (ˆ ﻌ ˆ)♡ containing the given fiewd data. o.O
      */
-    public CSFField(String name, EarlybirdFieldType fieldType, ThriftFieldData data) {
-      super(name, fieldType);
+    pubwic csffiewd(stwing n-nyame, (˘ω˘) eawwybiwdfiewdtype fiewdtype, 😳 thwiftfiewddata d-data) {
+      supew(name, (U ᵕ U❁) fiewdtype);
 
-      if (fieldType.isCsfVariableLength()) {
-        fieldsData = new BytesRef(data.getBytesValue());
-      } else {
-        switch (fieldType.getCsfType()) {
-          case BYTE:
-            fieldsData = Long.valueOf(data.getByteValue());
-            break;
-          case INT:
-            fieldsData = Long.valueOf(data.getIntValue());
-            break;
-          case LONG:
-            fieldsData = Long.valueOf(data.getLongValue());
-            break;
-          case FLOAT:
-            fieldsData = Long.valueOf(Float.floatToRawIntBits((float) data.getFloatValue()));
-            break;
-          case DOUBLE:
-            fieldsData = Long.valueOf(Double.doubleToRawLongBits(data.getDoubleValue()));
-            break;
-          default:
-            throw new IllegalArgumentException("Unknown csf type: " + fieldType.getCsfType());
+      i-if (fiewdtype.iscsfvawiabwewength()) {
+        f-fiewdsdata = n-nyew byteswef(data.getbytesvawue());
+      } ewse {
+        s-switch (fiewdtype.getcsftype()) {
+          c-case byte:
+            f-fiewdsdata = wong.vawueof(data.getbytevawue());
+            bweak;
+          c-case int:
+            fiewdsdata = w-wong.vawueof(data.getintvawue());
+            b-bweak;
+          case wong:
+            fiewdsdata = wong.vawueof(data.getwongvawue());
+            bweak;
+          c-case fwoat:
+            f-fiewdsdata = wong.vawueof(fwoat.fwoattowawintbits((fwoat) data.getfwoatvawue()));
+            bweak;
+          c-case doubwe:
+            f-fiewdsdata = w-wong.vawueof(doubwe.doubwetowawwongbits(data.getdoubwevawue()));
+            bweak;
+          defauwt:
+            thwow nyew iwwegawawgumentexception("unknown c-csf type: " + fiewdtype.getcsftype());
         }
       }
     }
   }
 
-  public interface TokenStreamRewriter {
+  pubwic i-intewface tokenstweamwewwitew {
     /**
-     * Rewrite the token stream.
+     * wewwite the token s-stweam. :3
      */
-    TwitterTokenStream rewrite(Schema.FieldInfo fieldInfo, TwitterTokenStream stream);
+    t-twittewtokenstweam wewwite(schema.fiewdinfo f-fiewdinfo, o.O twittewtokenstweam stweam);
   }
 }

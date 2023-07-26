@@ -1,322 +1,322 @@
-package com.twitter.recos.user_tweet_entity_graph
+package com.twittew.wecos.usew_tweet_entity_gwaph
 
-import java.util.Random
-import com.twitter.concurrent.AsyncQueue
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms._
-import com.twitter.graphjet.algorithms.filters._
-import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse
-import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountForTweet
-import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
-import com.twitter.logging.Logger
-import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
-import com.twitter.recos.model.SalsaQueryRunner.SalsaRunnerConfig
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntityRequest
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetEntityDisplayLocation
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetType
-import com.twitter.recos.util.Stats.trackBlockStats
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Try
-import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet
-import scala.collection.JavaConverters._
+impowt java.utiw.wandom
+i-impowt c-com.twittew.concuwwent.asyncqueue
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.gwaphjet.awgowithms._
+i-impowt com.twittew.gwaphjet.awgowithms.fiwtews._
+i-impowt c-com.twittew.gwaphjet.awgowithms.counting.topseconddegweebycountwesponse
+impowt com.twittew.gwaphjet.awgowithms.counting.tweet.topseconddegweebycountfowtweet
+impowt com.twittew.gwaphjet.awgowithms.counting.tweet.topseconddegweebycountwequestfowtweet
+impowt c-com.twittew.gwaphjet.bipawtite.nodemetadataweftindexedmuwtisegmentbipawtitegwaph
+impowt com.twittew.wogging.woggew
+impowt com.twittew.wecos.gwaph_common.finagwestatsweceivewwwappew
+i-impowt com.twittew.wecos.modew.sawsaquewywunnew.sawsawunnewconfig
+impowt com.twittew.wecos.wecos_common.thwiftscawa.sociawpwooftype
+i-impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.wecommendtweetentitywequest
+impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.tweetentitydispwaywocation
+impowt c-com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.tweettype
+impowt com.twittew.wecos.utiw.stats.twackbwockstats
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.javatimew
+impowt com.twittew.utiw.twy
+impowt it.unimi.dsi.fastutiw.wongs.wong2doubweopenhashmap
+impowt it.unimi.dsi.fastutiw.wongs.wongopenhashset
+impowt s-scawa.cowwection.javaconvewtews._
 
-import com.twitter.graphjet.algorithms.RecommendationType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  RecommendationType => ThriftRecommendationType
+impowt com.twittew.gwaphjet.awgowithms.wecommendationtype
+impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.{
+  wecommendationtype => t-thwiftwecommendationtype
 }
-import scala.collection.Map
-import scala.collection.Set
+impowt scawa.cowwection.map
+i-impowt scawa.cowwection.set
 
-object TweetRecommendationsRunner {
-  private val DefaultTweetTypes: Seq[TweetType] =
-    Seq(TweetType.Regular, TweetType.Summary, TweetType.Photo, TweetType.Player)
-  private val DefaultF1ExactSocialProofSize = 1
-  private val DefaultRareTweetRecencyMillis: Long = 7.days.inMillis
+o-object t-tweetwecommendationswunnew {
+  p-pwivate vaw defauwttweettypes: seq[tweettype] =
+    s-seq(tweettype.weguwaw, /(^•ω•^) tweettype.summawy, >_< tweettype.photo, σωσ tweettype.pwayew)
+  p-pwivate vaw defauwtf1exactsociawpwoofsize = 1
+  pwivate vaw defauwtwawetweetwecencymiwwis: wong = 7.days.inmiwwis
 
   /**
-   * Map valid social proof types specified by clients to an array of bytes. If clients do not
-   * specify any social proof type unions in thrift, it will return an empty set by default.
+   * map vawid sociaw p-pwoof types specified by cwients t-to an awway o-of bytes. ^^;; if c-cwients do nyot
+   * specify any sociaw pwoof type unions in thwift, 😳 i-it wiww wetuwn a-an empty set by defauwt. >_<
    */
-  private def getSocialProofTypeUnions(
-    socialProofTypeUnions: Option[Set[Seq[SocialProofType]]]
-  ): Set[Array[Byte]] = {
-    socialProofTypeUnions
+  p-pwivate def g-getsociawpwooftypeunions(
+    sociawpwooftypeunions: option[set[seq[sociawpwooftype]]]
+  ): s-set[awway[byte]] = {
+    sociawpwooftypeunions
       .map {
         _.map {
           _.map {
-            _.getValue.toByte
-          }.toArray
+            _.getvawue.tobyte
+          }.toawway
         }
       }
-      .getOrElse(Set.empty)
+      .getowewse(set.empty)
   }
 
-  private def getRecommendationTypes(
-    recommendationTypes: Seq[ThriftRecommendationType]
-  ): Set[RecommendationType] = {
-    recommendationTypes.flatMap {
+  p-pwivate def getwecommendationtypes(
+    wecommendationtypes: seq[thwiftwecommendationtype]
+  ): set[wecommendationtype] = {
+    w-wecommendationtypes.fwatmap {
       _ match {
-        case ThriftRecommendationType.Tweet => Some(RecommendationType.TWEET)
-        case ThriftRecommendationType.Hashtag => Some(RecommendationType.HASHTAG)
-        case ThriftRecommendationType.Url => Some(RecommendationType.URL)
+        c-case thwiftwecommendationtype.tweet => some(wecommendationtype.tweet)
+        case thwiftwecommendationtype.hashtag => some(wecommendationtype.hashtag)
+        c-case thwiftwecommendationtype.uww => s-some(wecommendationtype.uww)
         case _ =>
-          throw new Exception("Unmatched Recommendation Type in getRecommendationTypes")
+          thwow nyew exception("unmatched wecommendation type in getwecommendationtypes")
       }
-    }.toSet
+    }.toset
   }
 
-  private def convertThriftEnumsToJavaEnums(
-    maxResults: Option[Map[ThriftRecommendationType, Int]]
-  ): Map[RecommendationType, Integer] = {
-    maxResults
+  pwivate def convewtthwiftenumstojavaenums(
+    m-maxwesuwts: option[map[thwiftwecommendationtype, -.- i-int]]
+  ): map[wecommendationtype, integew] = {
+    m-maxwesuwts
       .map {
-        _.flatMap {
-          _ match {
-            case (ThriftRecommendationType.Tweet, v) => Some((RecommendationType.TWEET, v: Integer))
-            case (ThriftRecommendationType.Hashtag, v) =>
-              Some((RecommendationType.HASHTAG, v: Integer))
-            case (ThriftRecommendationType.Url, v) => Some((RecommendationType.URL, v: Integer))
-            case _ =>
-              throw new Exception("Unmatched Recommendation Type in convertThriftEnumsToJavaEnums")
+        _.fwatmap {
+          _ m-match {
+            c-case (thwiftwecommendationtype.tweet, UwU v) => some((wecommendationtype.tweet, :3 v: integew))
+            c-case (thwiftwecommendationtype.hashtag, σωσ v) =>
+              some((wecommendationtype.hashtag, >w< v: integew))
+            case (thwiftwecommendationtype.uww, (ˆ ﻌ ˆ)♡ v-v) => some((wecommendationtype.uww, ʘwʘ v: integew))
+            c-case _ =>
+              t-thwow nyew e-exception("unmatched wecommendation t-type in convewtthwiftenumstojavaenums")
           }
         }
       }
-      .getOrElse(Map.empty)
+      .getowewse(map.empty)
   }
 
 }
 
 /**
- * The MagicRecsRunner creates a queue of reader threads, MagicRecs, and each one reads from the
- * graph and computes recommendations.
+ * t-the magicwecswunnew c-cweates a-a queue of weadew thweads, :3 magicwecs, and each o-one weads fwom t-the
+ * gwaph and c-computes wecommendations. (˘ω˘)
  */
-class TweetRecommendationsRunner(
-  bipartiteGraph: NodeMetadataLeftIndexedMultiSegmentBipartiteGraph,
-  salsaRunnerConfig: SalsaRunnerConfig,
-  statsReceiverWrapper: FinagleStatsReceiverWrapper) {
+cwass t-tweetwecommendationswunnew(
+  b-bipawtitegwaph: nyodemetadataweftindexedmuwtisegmentbipawtitegwaph, 😳😳😳
+  sawsawunnewconfig: sawsawunnewconfig, rawr x3
+  s-statsweceivewwwappew: finagwestatsweceivewwwappew) {
 
-  import TweetRecommendationsRunner._
+  impowt tweetwecommendationswunnew._
 
-  private val log: Logger = Logger()
+  pwivate vaw wog: woggew = woggew()
 
-  private val stats = statsReceiverWrapper.statsReceiver.scope(this.getClass.getSimpleName)
-  private val magicRecsFailureCounter = stats.counter("failure")
-  private val pollCounter = stats.counter("poll")
-  private val pollTimeoutCounter = stats.counter("pollTimeout")
-  private val offerCounter = stats.counter("offer")
-  private val pollLatencyStat = stats.stat("pollLatency")
+  p-pwivate vaw stats = statsweceivewwwappew.statsweceivew.scope(this.getcwass.getsimpwename)
+  pwivate vaw magicwecsfaiwuwecountew = stats.countew("faiwuwe")
+  p-pwivate vaw powwcountew = s-stats.countew("poww")
+  p-pwivate vaw powwtimeoutcountew = s-stats.countew("powwtimeout")
+  pwivate vaw o-offewcountew = s-stats.countew("offew")
+  pwivate vaw powwwatencystat = stats.stat("powwwatency")
 
-  private val magicRecsQueue = new AsyncQueue[TopSecondDegreeByCountForTweet]
-  (0 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
-    magicRecsQueue.offer(
-      new TopSecondDegreeByCountForTweet(
-        bipartiteGraph,
-        salsaRunnerConfig.expectedNodesToHitInSalsa,
-        statsReceiverWrapper.scope(this.getClass.getSimpleName)
+  pwivate vaw magicwecsqueue = n-nyew asyncqueue[topseconddegweebycountfowtweet]
+  (0 untiw sawsawunnewconfig.numsawsawunnews).foweach { _ =>
+    m-magicwecsqueue.offew(
+      nyew t-topseconddegweebycountfowtweet(
+        b-bipawtitegwaph, (✿oωo)
+        sawsawunnewconfig.expectednodestohitinsawsa, (ˆ ﻌ ˆ)♡
+        statsweceivewwwappew.scope(this.getcwass.getsimpwename)
       )
     )
   }
 
-  private implicit val timer: JavaTimer = new JavaTimer(true)
+  p-pwivate impwicit v-vaw timew: javatimew = nyew j-javatimew(twue)
 
-  private def getBaseFilters(
-    staleTweetDuration: Long,
-    tweetTypes: Seq[TweetType]
+  p-pwivate def getbasefiwtews(
+    stawetweetduwation: wong, :3
+    tweettypes: seq[tweettype]
   ) = {
-    List(
-      // Keep RecentTweetFilter first since it's the cheapest
-      new RecentTweetFilter(staleTweetDuration, statsReceiverWrapper),
-      new TweetCardFilter(
-        tweetTypes.contains(TweetType.Regular),
-        tweetTypes.contains(TweetType.Summary),
-        tweetTypes.contains(TweetType.Photo),
-        tweetTypes.contains(TweetType.Player),
-        false, // no promoted tweets
-        statsReceiverWrapper
-      ),
-      new DirectInteractionsFilter(bipartiteGraph, statsReceiverWrapper),
-      new RequestedSetFilter(statsReceiverWrapper),
-      new SocialProofTypesFilter(statsReceiverWrapper)
+    w-wist(
+      // k-keep wecenttweetfiwtew f-fiwst since it's the cheapest
+      n-nyew wecenttweetfiwtew(stawetweetduwation, (U ᵕ U❁) statsweceivewwwappew), ^^;;
+      n-nyew tweetcawdfiwtew(
+        t-tweettypes.contains(tweettype.weguwaw), mya
+        tweettypes.contains(tweettype.summawy), 😳😳😳
+        tweettypes.contains(tweettype.photo), OwO
+        tweettypes.contains(tweettype.pwayew), rawr
+        fawse, XD // n-nyo pwomoted tweets
+        s-statsweceivewwwappew
+      ), (U ﹏ U)
+      nyew diwectintewactionsfiwtew(bipawtitegwaph, (˘ω˘) statsweceivewwwappew), UwU
+      nyew w-wequestedsetfiwtew(statsweceivewwwappew), >_<
+      n-nyew sociawpwooftypesfiwtew(statsweceivewwwappew)
     )
   }
 
   /**
-   * Helper method to interpret the output of MagicRecs graph
+   * hewpew method to intewpwet the output of m-magicwecs gwaph
    *
-   * @param magicRecsResponse is the response from running MagicRecs
-   * @return a sequence of candidate ids, with score and list of social proofs
+   * @pawam magicwecswesponse is the wesponse fwom wunning magicwecs
+   * @wetuwn a-a sequence of candidate ids, σωσ with scowe a-and wist of sociaw p-pwoofs
    */
-  private def transformMagicRecsResponse(
-    magicRecsResponse: Option[TopSecondDegreeByCountResponse]
-  ): Seq[RecommendationInfo] = {
-    val responses = magicRecsResponse match {
-      case Some(response) => response.getRankedRecommendations.asScala.toSeq
-      case _ => Nil
+  pwivate def twansfowmmagicwecswesponse(
+    magicwecswesponse: option[topseconddegweebycountwesponse]
+  ): seq[wecommendationinfo] = {
+    v-vaw w-wesponses = magicwecswesponse match {
+      case some(wesponse) => wesponse.getwankedwecommendations.asscawa.toseq
+      c-case _ => nyiw
     }
-    responses
+    w-wesponses
   }
 
   /**
-   * Helper function to determine different post-process filtering logic in GraphJet,
-   * based on display locations
+   * hewpew function to detewmine diffewent p-post-pwocess fiwtewing wogic i-in gwaphjet, 🥺
+   * b-based on dispway wocations
    */
-  private def getFiltersByDisplayLocations(
-    displayLocation: TweetEntityDisplayLocation,
-    whitelistAuthors: LongOpenHashSet,
-    blacklistAuthors: LongOpenHashSet,
-    validSocialProofs: Array[Byte]
+  p-pwivate def getfiwtewsbydispwaywocations(
+    d-dispwaywocation: t-tweetentitydispwaywocation,
+    w-whitewistauthows: wongopenhashset, 🥺
+    b-bwackwistauthows: wongopenhashset, ʘwʘ
+    v-vawidsociawpwoofs: awway[byte]
   ) = {
-    displayLocation match {
-      case TweetEntityDisplayLocation.MagicRecsF1 =>
-        Seq(
-          new ANDFilters(
-            List[ResultFilter](
-              new TweetAuthorFilter(
-                bipartiteGraph,
-                whitelistAuthors,
-                new LongOpenHashSet(),
-                statsReceiverWrapper),
-              new ExactUserSocialProofSizeFilter(
-                DefaultF1ExactSocialProofSize,
-                validSocialProofs,
-                statsReceiverWrapper
+    dispwaywocation match {
+      case t-tweetentitydispwaywocation.magicwecsf1 =>
+        s-seq(
+          n-nyew andfiwtews(
+            wist[wesuwtfiwtew](
+              nyew tweetauthowfiwtew(
+                b-bipawtitegwaph, :3
+                whitewistauthows, (U ﹏ U)
+                n-nyew w-wongopenhashset(), (U ﹏ U)
+                statsweceivewwwappew), ʘwʘ
+              nyew exactusewsociawpwoofsizefiwtew(
+                defauwtf1exactsociawpwoofsize, >w<
+                v-vawidsociawpwoofs, rawr x3
+                s-statsweceivewwwappew
               )
-            ).asJava,
-            statsReceiverWrapper
-          ),
-          // Blacklist filter must be applied separately from F1's AND filter chain
-          new TweetAuthorFilter(
-            bipartiteGraph,
-            new LongOpenHashSet(),
-            blacklistAuthors,
-            statsReceiverWrapper)
+            ).asjava, OwO
+            s-statsweceivewwwappew
+          ), ^•ﻌ•^
+          // b-bwackwist fiwtew must be appwied s-sepawatewy fwom f1's and fiwtew chain
+          nyew tweetauthowfiwtew(
+            bipawtitegwaph, >_<
+            nyew wongopenhashset(), OwO
+            b-bwackwistauthows, >_<
+            statsweceivewwwappew)
         )
-      case TweetEntityDisplayLocation.MagicRecsRareTweet =>
-        Seq(
-          new TweetAuthorFilter(
-            bipartiteGraph,
-            whitelistAuthors,
-            blacklistAuthors,
-            statsReceiverWrapper),
-          new RecentEdgeMetadataFilter(
-            DefaultRareTweetRecencyMillis,
-            UserTweetEdgeTypeMask.Tweet.id.toByte,
-            statsReceiverWrapper
+      case t-tweetentitydispwaywocation.magicwecswawetweet =>
+        seq(
+          n-nyew tweetauthowfiwtew(
+            b-bipawtitegwaph, (ꈍᴗꈍ)
+            whitewistauthows,
+            b-bwackwistauthows,
+            s-statsweceivewwwappew), >w<
+          n-nyew wecentedgemetadatafiwtew(
+            d-defauwtwawetweetwecencymiwwis, (U ﹏ U)
+            usewtweetedgetypemask.tweet.id.tobyte,
+            s-statsweceivewwwappew
           )
         )
       case _ =>
-        Seq(
-          new TweetAuthorFilter(
-            bipartiteGraph,
-            whitelistAuthors,
-            blacklistAuthors,
-            statsReceiverWrapper))
+        seq(
+          nyew tweetauthowfiwtew(
+            bipawtitegwaph, ^^
+            whitewistauthows, (U ﹏ U)
+            bwackwistauthows,
+            s-statsweceivewwwappew))
     }
   }
 
   /**
-   * Helper method to run salsa computation and convert the results to Option
+   * h-hewpew m-method to wun sawsa computation a-and convewt the wesuwts to option
    *
-   * @param magicRecs is magicRecs reader on bipartite graph
-   * @param magicRecsRequest is the magicRecs request
-   * @return is an option of MagicRecsResponse
+   * @pawam magicwecs is magicwecs weadew o-on bipawtite g-gwaph
+   * @pawam magicwecswequest i-is the magicwecs wequest
+   * @wetuwn is an o-option of magicwecswesponse
    */
-  private def getMagicRecsResponse(
-    magicRecs: TopSecondDegreeByCountForTweet,
-    magicRecsRequest: TopSecondDegreeByCountRequestForTweet
+  p-pwivate def getmagicwecswesponse(
+    m-magicwecs: t-topseconddegweebycountfowtweet, :3
+    magicwecswequest: topseconddegweebycountwequestfowtweet
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Option[TopSecondDegreeByCountResponse] = {
-    trackBlockStats(stats) {
-      val random = new Random()
-      // compute recs -- need to catch and print exceptions here otherwise they are swallowed
-      val magicRecsAttempt =
-        Try(magicRecs.computeRecommendations(magicRecsRequest, random)).onFailure { e =>
-          magicRecsFailureCounter.incr()
-          log.error(e, "MagicRecs computation failed")
+    impwicit statsweceivew: s-statsweceivew
+  ): o-option[topseconddegweebycountwesponse] = {
+    t-twackbwockstats(stats) {
+      v-vaw wandom = n-nyew wandom()
+      // compute w-wecs -- nyeed to c-catch and pwint exceptions hewe o-othewwise they a-awe swawwowed
+      vaw magicwecsattempt =
+        t-twy(magicwecs.computewecommendations(magicwecswequest, wandom)).onfaiwuwe { e =>
+          magicwecsfaiwuwecountew.incw()
+          w-wog.ewwow(e, (✿oωo) "magicwecs computation faiwed")
         }
-      magicRecsAttempt.toOption
+      m-magicwecsattempt.tooption
     }
   }
 
-  private def getMagicRecsRequest(
-    request: RecommendTweetEntityRequest
-  ): TopSecondDegreeByCountRequestForTweet = {
-    val requesterId = request.requesterId
-    val leftSeedNodes = new Long2DoubleOpenHashMap(
-      request.seedsWithWeights.keys.toArray,
-      request.seedsWithWeights.values.toArray
+  p-pwivate def getmagicwecswequest(
+    w-wequest: wecommendtweetentitywequest
+  ): topseconddegweebycountwequestfowtweet = {
+    vaw wequestewid = w-wequest.wequestewid
+    v-vaw weftseednodes = n-nyew wong2doubweopenhashmap(
+      wequest.seedswithweights.keys.toawway, XD
+      wequest.seedswithweights.vawues.toawway
     )
-    val tweetsToExcludeArray = new LongOpenHashSet(request.excludedTweetIds.getOrElse(Nil).toArray)
-    val staleTweetDuration = request.maxTweetAgeInMillis.getOrElse(RecosConfig.maxTweetAgeInMillis)
-    val staleEngagementDuration =
-      request.maxEngagementAgeInMillis.getOrElse(RecosConfig.maxEngagementAgeInMillis)
-    val tweetTypes = request.tweetTypes.getOrElse(DefaultTweetTypes)
-    val tweetAuthors = new LongOpenHashSet(request.tweetAuthors.getOrElse(Nil).toArray)
-    val excludedTweetAuthors = new LongOpenHashSet(
-      request.excludedTweetAuthors.getOrElse(Nil).toArray)
-    val validSocialProofs =
-      UserTweetEdgeTypeMask.getUserTweetGraphSocialProofTypes(request.socialProofTypes)
+    vaw tweetstoexcwudeawway = n-nyew wongopenhashset(wequest.excwudedtweetids.getowewse(niw).toawway)
+    vaw stawetweetduwation = w-wequest.maxtweetageinmiwwis.getowewse(wecosconfig.maxtweetageinmiwwis)
+    v-vaw staweengagementduwation =
+      wequest.maxengagementageinmiwwis.getowewse(wecosconfig.maxengagementageinmiwwis)
+    v-vaw tweettypes = wequest.tweettypes.getowewse(defauwttweettypes)
+    vaw t-tweetauthows = n-nyew wongopenhashset(wequest.tweetauthows.getowewse(niw).toawway)
+    vaw excwudedtweetauthows = nyew wongopenhashset(
+      wequest.excwudedtweetauthows.getowewse(niw).toawway)
+    v-vaw vawidsociawpwoofs =
+      usewtweetedgetypemask.getusewtweetgwaphsociawpwooftypes(wequest.sociawpwooftypes)
 
-    val resultFilterChain = new ResultFilterChain(
+    vaw w-wesuwtfiwtewchain = n-nyew wesuwtfiwtewchain(
       (
-        getBaseFilters(staleTweetDuration, tweetTypes) ++
-          getFiltersByDisplayLocations(
-            displayLocation = request.displayLocation,
-            whitelistAuthors = tweetAuthors,
-            blacklistAuthors = excludedTweetAuthors,
-            validSocialProofs = validSocialProofs
+        getbasefiwtews(stawetweetduwation, >w< t-tweettypes) ++
+          getfiwtewsbydispwaywocations(
+            d-dispwaywocation = w-wequest.dispwaywocation, òωó
+            w-whitewistauthows = tweetauthows, (ꈍᴗꈍ)
+            bwackwistauthows = excwudedtweetauthows, rawr x3
+            vawidsociawpwoofs = vawidsociawpwoofs
           )
-      ).asJava
+      ).asjava
     )
 
-    new TopSecondDegreeByCountRequestForTweet(
-      requesterId,
-      leftSeedNodes,
-      tweetsToExcludeArray,
-      getRecommendationTypes(request.recommendationTypes).asJava,
-      convertThriftEnumsToJavaEnums(request.maxResultsByType).asJava,
-      UserTweetEdgeTypeMask.SIZE,
-      request.maxUserSocialProofSize.getOrElse(RecosConfig.maxUserSocialProofSize),
-      request.maxTweetSocialProofSize.getOrElse(RecosConfig.maxTweetSocialProofSize),
-      convertThriftEnumsToJavaEnums(request.minUserSocialProofSizes).asJava,
-      validSocialProofs,
-      staleTweetDuration,
-      staleEngagementDuration,
-      resultFilterChain,
-      getSocialProofTypeUnions(request.socialProofTypeUnions).asJava
+    nyew topseconddegweebycountwequestfowtweet(
+      wequestewid, rawr x3
+      weftseednodes, σωσ
+      tweetstoexcwudeawway, (ꈍᴗꈍ)
+      getwecommendationtypes(wequest.wecommendationtypes).asjava, rawr
+      convewtthwiftenumstojavaenums(wequest.maxwesuwtsbytype).asjava, ^^;;
+      usewtweetedgetypemask.size,
+      w-wequest.maxusewsociawpwoofsize.getowewse(wecosconfig.maxusewsociawpwoofsize), rawr x3
+      w-wequest.maxtweetsociawpwoofsize.getowewse(wecosconfig.maxtweetsociawpwoofsize), (ˆ ﻌ ˆ)♡
+      convewtthwiftenumstojavaenums(wequest.minusewsociawpwoofsizes).asjava, σωσ
+      vawidsociawpwoofs, (U ﹏ U)
+      stawetweetduwation, >w<
+      s-staweengagementduwation, σωσ
+      w-wesuwtfiwtewchain, nyaa~~
+      g-getsociawpwooftypeunions(wequest.sociawpwooftypeunions).asjava
     )
   }
 
-  def apply(request: RecommendTweetEntityRequest): Future[Seq[RecommendationInfo]] = {
-    pollCounter.incr()
-    val t0 = System.currentTimeMillis
-    magicRecsQueue.poll().map { magicRecs =>
-      val pollTime = System.currentTimeMillis - t0
-      pollLatencyStat.add(pollTime)
-      val magicRecsResponse = Try {
-        if (pollTime < salsaRunnerConfig.timeoutSalsaRunner) {
-          val magicRecsRequest = getMagicRecsRequest(request)
-          transformMagicRecsResponse(
-            getMagicRecsResponse(magicRecs, magicRecsRequest)(statsReceiverWrapper.statsReceiver)
+  def appwy(wequest: w-wecommendtweetentitywequest): futuwe[seq[wecommendationinfo]] = {
+    powwcountew.incw()
+    v-vaw t0 = system.cuwwenttimemiwwis
+    m-magicwecsqueue.poww().map { magicwecs =>
+      v-vaw powwtime = system.cuwwenttimemiwwis - t-t0
+      powwwatencystat.add(powwtime)
+      v-vaw magicwecswesponse = twy {
+        if (powwtime < s-sawsawunnewconfig.timeoutsawsawunnew) {
+          v-vaw magicwecswequest = g-getmagicwecswequest(wequest)
+          t-twansfowmmagicwecswesponse(
+            getmagicwecswesponse(magicwecs, 🥺 magicwecswequest)(statsweceivewwwappew.statsweceivew)
           )
-        } else {
-          // if we did not get a magicRecs in time, then fail fast here and immediately put it back
-          log.warning("magicRecsQueue polling timeout")
-          pollTimeoutCounter.incr()
-          throw new RuntimeException("magicRecs poll timeout")
-          Nil
+        } e-ewse {
+          // if w-we did nyot get a-a magicwecs in t-time, rawr x3 then faiw f-fast hewe and immediatewy put it b-back
+          w-wog.wawning("magicwecsqueue p-powwing timeout")
+          p-powwtimeoutcountew.incw()
+          thwow nyew wuntimeexception("magicwecs p-poww timeout")
+          nyiw
         }
-      } ensure {
-        magicRecsQueue.offer(magicRecs)
-        offerCounter.incr()
+      } e-ensuwe {
+        m-magicwecsqueue.offew(magicwecs)
+        o-offewcountew.incw()
       }
-      magicRecsResponse.toOption getOrElse Nil
+      magicwecswesponse.tooption getowewse n-nyiw
     }
   }
 }

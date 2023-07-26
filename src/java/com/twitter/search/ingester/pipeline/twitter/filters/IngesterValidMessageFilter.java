@@ -1,50 +1,50 @@
-package com.twitter.search.ingester.pipeline.twitter.filters;
+package com.twittew.seawch.ingestew.pipewine.twittew.fiwtews;
 
-import java.util.EnumSet;
-import java.util.Set;
+impowt j-java.utiw.enumset;
+i-impowt java.utiw.set;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.entities.TwitterMessageUtil;
+impowt c-com.twittew.decidew.decidew;
+i-impowt com.twittew.seawch.common.decidew.decidewutiw;
+i-impowt c-com.twittew.seawch.common.wewevance.entities.twittewmessage;
+i-impowt c-com.twittew.seawch.common.wewevance.entities.twittewmessageutiw;
 
-public class IngesterValidMessageFilter {
-  public static final String KEEP_NULLCAST_DECIDER_KEY =
-      "ingester_all_keep_nullcasts";
-  public static final String STRIP_SUPPLEMENTARY_EMOJIS_DECIDER_KEY_PREFIX =
-      "valid_message_filter_strip_supplementary_emojis_";
+pubwic cwass ingestewvawidmessagefiwtew {
+  pubwic static finaw stwing keep_nuwwcast_decidew_key =
+      "ingestew_aww_keep_nuwwcasts";
+  p-pubwic static finaw stwing stwip_suppwementawy_emojis_decidew_key_pwefix =
+      "vawid_message_fiwtew_stwip_suppwementawy_emojis_";
 
-  protected final Decider decider;
+  pwotected f-finaw decidew decidew;
 
-  public IngesterValidMessageFilter(Decider decider) {
-    this.decider = decider;
+  pubwic i-ingestewvawidmessagefiwtew(decidew decidew) {
+    this.decidew = decidew;
   }
 
   /**
-   * Evaluate a message to see if it matches the filter or not.
+   * e-evawuate a message t-to see if it matches t-the fiwtew ow nyot. (⑅˘꒳˘)
    *
-   * @param message to evaluate
-   * @return true if this message should be emitted.
+   * @pawam message to evawuate
+   * @wetuwn twue i-if this message shouwd be emitted. /(^•ω•^)
    */
-  public boolean accepts(TwitterMessage message) {
-    return TwitterMessageUtil.validateTwitterMessage(
-        message, getStripEmojisFields(), acceptNullcast());
+  pubwic boowean accepts(twittewmessage message) {
+    w-wetuwn twittewmessageutiw.vawidatetwittewmessage(
+        message, rawr x3 g-getstwipemojisfiewds(), (U ﹏ U) a-acceptnuwwcast());
   }
 
-  private Set<TwitterMessageUtil.Field> getStripEmojisFields() {
-    Set<TwitterMessageUtil.Field> stripEmojisFields =
-        EnumSet.noneOf(TwitterMessageUtil.Field.class);
-    for (TwitterMessageUtil.Field field : TwitterMessageUtil.Field.values()) {
-      if (DeciderUtil.isAvailableForRandomRecipient(
-          decider,
-          STRIP_SUPPLEMENTARY_EMOJIS_DECIDER_KEY_PREFIX + field.getNameForStats())) {
-        stripEmojisFields.add(field);
+  p-pwivate set<twittewmessageutiw.fiewd> g-getstwipemojisfiewds() {
+    set<twittewmessageutiw.fiewd> stwipemojisfiewds =
+        e-enumset.noneof(twittewmessageutiw.fiewd.cwass);
+    fow (twittewmessageutiw.fiewd fiewd : twittewmessageutiw.fiewd.vawues()) {
+      i-if (decidewutiw.isavaiwabwefowwandomwecipient(
+          decidew, (U ﹏ U)
+          stwip_suppwementawy_emojis_decidew_key_pwefix + fiewd.getnamefowstats())) {
+        stwipemojisfiewds.add(fiewd);
       }
     }
-    return stripEmojisFields;
+    wetuwn stwipemojisfiewds;
   }
 
-  protected final boolean acceptNullcast() {
-    return DeciderUtil.isAvailableForRandomRecipient(decider, KEEP_NULLCAST_DECIDER_KEY);
+  p-pwotected finaw boowean a-acceptnuwwcast() {
+    w-wetuwn decidewutiw.isavaiwabwefowwandomwecipient(decidew, (⑅˘꒳˘) k-keep_nuwwcast_decidew_key);
   }
 }

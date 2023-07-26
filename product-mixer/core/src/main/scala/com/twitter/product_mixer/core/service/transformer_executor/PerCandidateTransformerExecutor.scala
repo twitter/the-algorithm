@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.service.transformer_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.twansfowmew_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.transformer.Transformer
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.twansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+i-impowt c-com.twittew.stitch.awwow
+i-impowt c-com.twittew.utiw.twy
+i-impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * For wrapping [[Transformer]]s that are applied per-candidate
+ * fow wwapping [[twansfowmew]]s that awe appwied pew-candidate
  *
- * Records a single span for running all the components,
- * but stats per-component.
+ * w-wecowds a singwe span fow wunning aww t-the components, (U ﹏ U)
+ * but stats p-pew-component. >_<
  */
-@Singleton
-class PerCandidateTransformerExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
+@singweton
+cwass pewcandidatetwansfowmewexecutow @inject() (ovewwide vaw statsweceivew: s-statsweceivew)
+    extends e-executow {
 
-  def arrow[In, Out](
-    transformer: Transformer[In, Out],
-    context: Executor.Context,
-  ): Arrow[Seq[In], Seq[Try[Out]]] = {
-    val perCandidateArrow = wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing(
-      context,
-      transformer.identifier
-    )(Arrow.map(transformer.transform)).liftToTry
+  d-def awwow[in, rawr x3 out](
+    twansfowmew: twansfowmew[in, mya out],
+    context: executow.context, nyaa~~
+  ): a-awwow[seq[in], seq[twy[out]]] = {
+    vaw pewcandidateawwow = wwappewcandidatecomponentwithexecutowbookkeepingwithouttwacing(
+      context, (⑅˘꒳˘)
+      t-twansfowmew.identifiew
+    )(awwow.map(twansfowmew.twansfowm)).wifttotwy
 
-    wrapComponentsWithTracingOnly(
-      context,
-      transformer.identifier
-    )(Arrow.sequence(perCandidateArrow))
+    wwapcomponentswithtwacingonwy(
+      c-context, rawr x3
+      t-twansfowmew.identifiew
+    )(awwow.sequence(pewcandidateawwow))
   }
 }

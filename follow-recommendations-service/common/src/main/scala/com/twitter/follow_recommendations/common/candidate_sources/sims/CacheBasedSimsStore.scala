@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.sims
 
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
+impowt c-com.twittew.eschewbiwd.utiw.stitchcache.stitchcache
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.hassimiwawtocontext
+i-impowt com.twittew.hewmit.candidate.thwiftscawa.candidates
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.cwient.fetchew
+impowt c-com.twittew.timewines.configapi.haspawams
+impowt com.twittew.utiw.duwation
 
-import java.lang.{Long => JLong}
+impowt java.wang.{wong => j-jwong}
 
-class CacheBasedSimsStore(
-  id: CandidateSourceIdentifier,
-  fetcher: Fetcher[Long, Unit, Candidates],
-  maxCacheSize: Int,
-  cacheTtl: Duration,
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[HasParams with HasSimilarToContext, CandidateUser] {
+cwass cachebasedsimsstowe(
+  i-id: candidatesouwceidentifiew, (⑅˘꒳˘)
+  fetchew: fetchew[wong, òωó unit, ʘwʘ candidates], /(^•ω•^)
+  maxcachesize: i-int, ʘwʘ
+  cachettw: duwation, σωσ
+  s-statsweceivew: s-statsweceivew)
+    extends candidatesouwce[haspawams with hassimiwawtocontext, OwO c-candidateusew] {
 
-  override val identifier: CandidateSourceIdentifier = id
-  private def getUsersFromSimsSource(userId: JLong): Stitch[Option[Candidates]] = {
-    fetcher
-      .fetch(userId)
+  ovewwide vaw identifiew: candidatesouwceidentifiew = id
+  pwivate def g-getusewsfwomsimssouwce(usewid: jwong): stitch[option[candidates]] = {
+    f-fetchew
+      .fetch(usewid)
       .map(_.v)
   }
 
-  private val simsCache = StitchCache[JLong, Option[Candidates]](
-    maxCacheSize = maxCacheSize,
-    ttl = cacheTtl,
-    statsReceiver = statsReceiver,
-    underlyingCall = getUsersFromSimsSource
+  p-pwivate v-vaw simscache = s-stitchcache[jwong, 😳😳😳 option[candidates]](
+    maxcachesize = m-maxcachesize, 😳😳😳
+    ttw = cachettw, o.O
+    statsweceivew = s-statsweceivew, ( ͡o ω ͡o )
+    undewwyingcaww = getusewsfwomsimssouwce
   )
 
-  override def apply(request: HasParams with HasSimilarToContext): Stitch[Seq[CandidateUser]] = {
-    Stitch
-      .traverse(request.similarToUserIds) { userId =>
-        simsCache.readThrough(userId).map { candidatesOpt =>
-          candidatesOpt
+  ovewwide def appwy(wequest: haspawams with h-hassimiwawtocontext): stitch[seq[candidateusew]] = {
+    s-stitch
+      .twavewse(wequest.simiwawtousewids) { u-usewid =>
+        s-simscache.weadthwough(usewid).map { candidatesopt =>
+          candidatesopt
             .map { candidates =>
-              StratoBasedSimsCandidateSource.map(userId, candidates)
-            }.getOrElse(Nil)
+              s-stwatobasedsimscandidatesouwce.map(usewid, (U ﹏ U) c-candidates)
+            }.getowewse(niw)
         }
-      }.map(_.flatten.distinct.map(_.withCandidateSource(identifier)))
+      }.map(_.fwatten.distinct.map(_.withcandidatesouwce(identifiew)))
   }
 }

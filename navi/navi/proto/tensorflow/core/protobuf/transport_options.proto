@@ -1,10 +1,10 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow;
+package tensowfwow;
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option go_package = "github.com/tensowfwow/tensowfwow/tensowfwow/go/cowe/pwotobuf/fow_cowe_pwotos_go_pwoto";
 
-// Extra data needed on a non-RDMA RecvBufResponse.
-message RecvBufRespExtra {
-  repeated bytes tensor_content = 1;
+// e-extwa data n-nyeeded on a n-nyon-wdma wecvbufwesponse. (U ᵕ U❁)
+m-message w-wecvbufwespextwa {
+  w-wepeated b-bytes tensow_content = 1;
 }

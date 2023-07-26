@@ -1,34 +1,34 @@
-package com.twitter.recosinjector.filters
+package com.twittew.wecosinjectow.fiwtews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.wecosinjectow.cwients.tweetypie
+i-impowt c-com.twittew.utiw.futuwe
 
 /**
- * Filters tweets that are null cast, i.e. tweet is not delivered to a user's followers,
- * not shown in the user's timeline, and does not appear in search results.
- * They are mainly ads tweets.
+ * f-fiwtews tweets t-that awe nyuww c-cast, (ˆ ﻌ ˆ)♡ i.e. tweet is nyot dewivewed to a usew's fowwowews, (˘ω˘)
+ * nyot shown in the u-usew's timewine, (⑅˘꒳˘) and does nyot appeaw in seawch w-wesuwts. (///ˬ///✿)
+ * they awe mainwy ads t-tweets. 😳😳😳
  */
-class NullCastTweetFilter(
-  tweetypie: Tweetypie
+cwass nyuwwcasttweetfiwtew(
+  tweetypie: tweetypie
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val requests = stats.counter("requests")
-  private val filtered = stats.counter("filtered")
+  i-impwicit statsweceivew: statsweceivew) {
+  pwivate v-vaw stats = s-statsweceivew.scope(this.getcwass.getsimpwename)
+  pwivate vaw wequests = stats.countew("wequests")
+  pwivate vaw fiwtewed = s-stats.countew("fiwtewed")
 
-  // Return Future(True) to keep the Tweet.
-  def filter(tweetId: Long): Future[Boolean] = {
-    requests.incr()
-    tweetypie
-      .getTweet(tweetId)
-      .map { tweetOpt =>
-        // If the null cast bit is Some(true), drop the tweet.
-        val isNullCastTweet = tweetOpt.flatMap(_.coreData).exists(_.nullcast)
-        if (isNullCastTweet) {
-          filtered.incr()
+  // wetuwn futuwe(twue) to keep the tweet. 🥺
+  def fiwtew(tweetid: wong): f-futuwe[boowean] = {
+    wequests.incw()
+    t-tweetypie
+      .gettweet(tweetid)
+      .map { t-tweetopt =>
+        // i-if the nyuww c-cast bit is some(twue), mya dwop the tweet. 🥺
+        v-vaw isnuwwcasttweet = tweetopt.fwatmap(_.cowedata).exists(_.nuwwcast)
+        if (isnuwwcasttweet) {
+          f-fiwtewed.incw()
         }
-        !isNullCastTweet
+        !isnuwwcasttweet
       }
   }
 }

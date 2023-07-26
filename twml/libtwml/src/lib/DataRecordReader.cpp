@@ -1,230 +1,230 @@
-#include "internal/thrift.h"
-#include "internal/error.h"
-#include <string>
-#include <cmath>
+#incwude "intewnaw/thwift.h"
+#incwude "intewnaw/ewwow.h"
+#incwude <stwing>
+#incwude <cmath>
 
-#include <twml/DataRecordReader.h>
+#incwude <twmw/datawecowdweadew.h>
 
-namespace twml {
+nyamespace twmw {
 
-inline std::string bufferToString(int32_t str_len, const uint8_t *str) {
-  return std::string(str, str + str_len);
+inwine std::stwing b-buffewtostwing(int32_t s-stw_wen, o.O c-const uint8_t *stw) {
+  w-wetuwn s-std::stwing(stw, s-stw + stw_wen);
 }
 
 
-bool DataRecordReader::keepKey(const int64_t &key, int64_t &code) {
+b-boow datawecowdweadew::keepkey(const int64_t &key, òωó i-int64_t &code) {
   auto it = m_keep_map->find(key);
-  if (it == m_keep_map->end()) return false;
+  if (it == m_keep_map->end()) wetuwn fawse;
   code = it->second;
-  return true;
+  w-wetuwn twue;
 }
 
-bool DataRecordReader::isLabel(const int64_t &key, int64_t &code) {
-  if (m_labels_map == nullptr) return false;
-  auto it = m_labels_map->find(key);
-  if (it == m_labels_map->end()) return false;
-  code = it->second;
-  return true;
+boow datawecowdweadew::iswabew(const int64_t &key, 😳😳😳 i-int64_t &code) {
+  if (m_wabews_map == nyuwwptw) w-wetuwn fawse;
+  auto it = m_wabews_map->find(key);
+  if (it == m-m_wabews_map->end()) wetuwn f-fawse;
+  code = i-it->second;
+  wetuwn twue;
 }
 
-bool DataRecordReader::isWeight(const int64_t &key, int64_t &code) {
-  if (m_weights_map == nullptr) return false;
+boow datawecowdweadew::isweight(const int64_t &key, σωσ int64_t &code) {
+  i-if (m_weights_map == nyuwwptw) wetuwn fawse;
   auto it = m_weights_map->find(key);
-  if (it == m_weights_map->end()) return false;
-  code = it->second;
-  return true;
+  i-if (it == m_weights_map->end()) w-wetuwn f-fawse;
+  code = i-it->second;
+  w-wetuwn twue;
 }
 
 
-void DataRecordReader::readBinary(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_SET, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  int32_t length = readInt32();
-  int64_t id, code;
-#ifdef USE_DENSE_HASH
-  record->m_binary.resize(2 * length);
-#else
-  record->m_binary.reserve(2 * length);
+void datawecowdweadew::weadbinawy(
+  const int f-featuwe_type, (⑅˘꒳˘)
+  datawecowd *wecowd) {
+  check_thwift_type(featuwe_type, (///ˬ///✿) t-ttype_set, 🥺 "type");
+  check_thwift_type(weadbyte(), OwO ttype_i64, >w< "key_type");
+  int32_t wength = weadint32();
+  int64_t id, 🥺 code;
+#ifdef u-use_dense_hash
+  wecowd->m_binawy.wesize(2 * wength);
+#ewse
+  w-wecowd->m_binawy.wesewve(2 * w-wength);
 #endif
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    record->m_binary.insert(id);
-    if (isLabel(id, code)) {
-      record->addLabel(code);
+  fow (int32_t i-i = 0; i < wength; i++) {
+    id = weadint64();
+    wecowd->m_binawy.insewt(id);
+    i-if (iswabew(id, nyaa~~ c-code)) {
+      wecowd->addwabew(code);
     }
   }
 }
 
-void DataRecordReader::readContinuous(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_DOUBLE, "value_type");
+v-void datawecowdweadew::weadcontinuous(
+  c-const int featuwe_type, ^^
+  d-datawecowd *wecowd) {
+  check_thwift_type(featuwe_type, >w< t-ttype_map, OwO "type");
+  check_thwift_type(weadbyte(), XD ttype_i64, "key_type");
+  c-check_thwift_type(weadbyte(), ^^;; ttype_doubwe, 🥺 "vawue_type");
 
-  int32_t length = readInt32();
-  int64_t id, code;
-#ifdef USE_DENSE_HASH
-  record->m_continuous.resize(2 * length);
-#else
-  record->m_continuous.reserve(2 * length);
+  i-int32_t wength = weadint32();
+  i-int64_t i-id, code;
+#ifdef use_dense_hash
+  wecowd->m_continuous.wesize(2 * wength);
+#ewse
+  wecowd->m_continuous.wesewve(2 * wength);
 #endif
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    double val = readDouble();
-    if (!std::isnan(val)) {
-      record->m_continuous[id] = val;
+  fow (int32_t i-i = 0; i < w-wength; i++) {
+    id = weadint64();
+    d-doubwe v-vaw = weaddoubwe();
+    i-if (!std::isnan(vaw)) {
+      wecowd->m_continuous[id] = vaw;
     }
-    if (isLabel(id, code)) {
-      record->addLabel(code, val);
-    } else if (isWeight(id, code)) {
-      record->addWeight(code, val);
+    if (iswabew(id, XD c-code)) {
+      wecowd->addwabew(code, (U ᵕ U❁) vaw);
+    } ewse if (isweight(id, :3 code)) {
+      w-wecowd->addweight(code, ( ͡o ω ͡o ) vaw);
     }
   }
 }
 
-void DataRecordReader::readDiscrete(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "value_type");
+v-void datawecowdweadew::weaddiscwete(
+  c-const i-int featuwe_type, òωó
+  datawecowd *wecowd) {
+  c-check_thwift_type(featuwe_type, σωσ t-ttype_map, (U ᵕ U❁) "type");
+  c-check_thwift_type(weadbyte(), (✿oωo) t-ttype_i64, "key_type");
+  check_thwift_type(weadbyte(), ^^ ttype_i64, ^•ﻌ•^ "vawue_type");
 
-  int32_t length = readInt32();
-  int64_t id;
-#ifdef USE_DENSE_HASH
-  record->m_discrete.resize(2 * length);
-#else
-  record->m_discrete.reserve(2 * length);
+  i-int32_t wength = w-weadint32();
+  i-int64_t id;
+#ifdef u-use_dense_hash
+  w-wecowd->m_discwete.wesize(2 * wength);
+#ewse
+  wecowd->m_discwete.wesewve(2 * wength);
 #endif
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    record->m_discrete[id] = readInt64();
+  f-fow (int32_t i = 0; i < wength; i++) {
+    id = weadint64();
+    wecowd->m_discwete[id] = weadint64();
   }
 }
 
-void DataRecordReader::readString(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "value_type");
-  int32_t length = readInt32();
-  int64_t id;
+v-void datawecowdweadew::weadstwing(
+  const int featuwe_type, XD
+  datawecowd *wecowd) {
+  check_thwift_type(featuwe_type, :3 ttype_map, "type");
+  c-check_thwift_type(weadbyte(), (ꈍᴗꈍ) t-ttype_i64, :3 "key_type");
+  c-check_thwift_type(weadbyte(), (U ﹏ U) ttype_stwing, UwU "vawue_type");
+  i-int32_t wength = weadint32();
+  i-int64_t i-id;
 
-#ifdef USE_DENSE_HASH
-  record->m_string.resize(2 * length);
-#else
-  record->m_string.reserve(2 * length);
+#ifdef use_dense_hash
+  wecowd->m_stwing.wesize(2 * wength);
+#ewse
+  wecowd->m_stwing.wesewve(2 * wength);
 #endif
 
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    const uint8_t *begin = nullptr;
-    int32_t str_len = getRawBuffer<uint8_t>(&begin);
-    record->m_string[id] = bufferToString(str_len, begin);
+  fow (int32_t i = 0; i-i < wength; i++) {
+    id = weadint64();
+    c-const uint8_t *begin = n-nyuwwptw;
+    i-int32_t stw_wen = getwawbuffew<uint8_t>(&begin);
+    wecowd->m_stwing[id] = b-buffewtostwing(stw_wen, 😳😳😳 b-begin);
   }
 }
 
-void DataRecordReader::readSparseBinary(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_SET, "value_type");
+void datawecowdweadew::weadspawsebinawy(
+  c-const int featuwe_type, XD
+  d-datawecowd *wecowd) {
+  check_thwift_type(featuwe_type, ttype_map, o.O "type");
+  check_thwift_type(weadbyte(), (⑅˘꒳˘) ttype_i64, "key_type");
+  c-check_thwift_type(weadbyte(), 😳😳😳 t-ttype_set, nyaa~~ "vawue_type");
 
-  int32_t length = readInt32();
-  int64_t id, code;
+  i-int32_t wength = weadint32();
+  i-int64_t i-id, rawr code;
 
-#ifdef USE_DENSE_HASH
-  record->m_sparsebinary.resize(2 * length);
-#else
-  record->m_sparsebinary.reserve(2 * length);
+#ifdef use_dense_hash
+  w-wecowd->m_spawsebinawy.wesize(2 * wength);
+#ewse
+  wecowd->m_spawsebinawy.wesewve(2 * wength);
 #endif
 
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "set:key_type");
-    int32_t set_length = readInt32();
-    if (keepKey(id, code)) {
-      record->m_sparsebinary[id].reserve(set_length);
-      for (int32_t j = 0; j < set_length; j++) {
-        const uint8_t *begin = nullptr;
-        int32_t str_len = getRawBuffer<uint8_t>(&begin);
-        record->m_sparsebinary[id].push_back(bufferToString(str_len, begin));
+  fow (int32_t i = 0; i-i < wength; i++) {
+    i-id = weadint64();
+    check_thwift_type(weadbyte(), -.- ttype_stwing, (✿oωo) "set:key_type");
+    i-int32_t set_wength = w-weadint32();
+    if (keepkey(id, /(^•ω•^) code)) {
+      wecowd->m_spawsebinawy[id].wesewve(set_wength);
+      f-fow (int32_t j = 0; j < set_wength; j++) {
+        const uint8_t *begin = n-nyuwwptw;
+        int32_t stw_wen = getwawbuffew<uint8_t>(&begin);
+        w-wecowd->m_spawsebinawy[id].push_back(buffewtostwing(stw_wen, 🥺 b-begin));
       }
-    } else {
-      for (int32_t j = 0; j < set_length; j++) {
-        int32_t str_len = readInt32();
-        skipLength(str_len);
+    } ewse {
+      fow (int32_t j = 0; j < set_wength; j-j++) {
+        i-int32_t stw_wen = weadint32();
+        skipwength(stw_wen);
       }
     }
   }
 }
 
-void DataRecordReader::readSparseContinuous(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_MAP, "value_type");
+void datawecowdweadew::weadspawsecontinuous(
+  c-const int featuwe_type, ʘwʘ
+  datawecowd *wecowd) {
+  check_thwift_type(featuwe_type, UwU t-ttype_map, XD "type");
+  check_thwift_type(weadbyte(), (✿oωo) ttype_i64, :3 "key_type");
+  check_thwift_type(weadbyte(), (///ˬ///✿) t-ttype_map, nyaa~~ "vawue_type");
 
-  int32_t length = readInt32();
-  int64_t id, code;
+  int32_t wength = w-weadint32();
+  i-int64_t id, >w< code;
 
-#ifdef USE_DENSE_HASH
-  record->m_sparsecontinuous.resize(2 * length);
-#else
-  record->m_sparsecontinuous.reserve(2 * length);
+#ifdef use_dense_hash
+  w-wecowd->m_spawsecontinuous.wesize(2 * wength);
+#ewse
+  w-wecowd->m_spawsecontinuous.wesewve(2 * w-wength);
 #endif
 
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "map::key_type");
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_DOUBLE, "map::value_type");
-    int32_t map_length = readInt32();
-    if (keepKey(id, code)) {
-      record->m_sparsecontinuous[id].reserve(map_length);
-      for (int32_t j = 0; j < map_length; j++) {
-        const uint8_t *begin = nullptr;
-        int32_t str_len = getRawBuffer<uint8_t>(&begin);
-        double val = readDouble();
-        if (!std::isnan(val)) {
-          record->m_sparsecontinuous[id].push_back({bufferToString(str_len, begin), val});
+  f-fow (int32_t i = 0; i-i < wength; i++) {
+    i-id = weadint64();
+    check_thwift_type(weadbyte(), -.- ttype_stwing, (✿oωo) "map::key_type");
+    check_thwift_type(weadbyte(), (˘ω˘) t-ttype_doubwe, rawr "map::vawue_type");
+    i-int32_t map_wength = w-weadint32();
+    if (keepkey(id, OwO code)) {
+      w-wecowd->m_spawsecontinuous[id].wesewve(map_wength);
+      fow (int32_t j = 0; j-j < map_wength; j-j++) {
+        const uint8_t *begin = nyuwwptw;
+        int32_t s-stw_wen = g-getwawbuffew<uint8_t>(&begin);
+        d-doubwe vaw = w-weaddoubwe();
+        if (!std::isnan(vaw)) {
+          w-wecowd->m_spawsecontinuous[id].push_back({buffewtostwing(stw_wen, ^•ﻌ•^ begin), vaw});
         }
       }
-    } else {
-      for (int32_t j = 0; j < map_length; j++) {
-        int32_t str_len = readInt32();
-        skipLength(str_len);
-        skip<double>();
+    } ewse {
+      fow (int32_t j = 0; j < map_wength; j-j++) {
+        int32_t stw_wen = w-weadint32();
+        skipwength(stw_wen);
+        s-skip<doubwe>();
       }
     }
   }
 }
 
-void DataRecordReader::readBlob(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "value_type");
+void d-datawecowdweadew::weadbwob(
+  const int featuwe_type, UwU
+  d-datawecowd *wecowd) {
+  c-check_thwift_type(featuwe_type, (˘ω˘) t-ttype_map, (///ˬ///✿) "type");
+  c-check_thwift_type(weadbyte(), σωσ t-ttype_i64, "key_type");
+  check_thwift_type(weadbyte(), /(^•ω•^) ttype_stwing, 😳 "vawue_type");
 
-  int32_t length = readInt32();
-  int64_t id, code;
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    if (keepKey(id, code)) {
-      const uint8_t *begin = nullptr;
-      int32_t blob_len = getRawBuffer<uint8_t>(&begin);
-      record->m_blob[id] = std::vector<uint8_t>(begin, begin + blob_len);
-    } else {
-      int32_t str_len = readInt32();
-      skipLength(str_len);
+  int32_t wength = weadint32();
+  int64_t id, 😳 code;
+  fow (int32_t i = 0; i < wength; i-i++) {
+    id = w-weadint64();
+    i-if (keepkey(id, (⑅˘꒳˘) code)) {
+      c-const uint8_t *begin = nyuwwptw;
+      int32_t bwob_wen = getwawbuffew<uint8_t>(&begin);
+      w-wecowd->m_bwob[id] = s-std::vectow<uint8_t>(begin, 😳😳😳 begin + bwob_wen);
+    } e-ewse {
+      int32_t stw_wen = weadint32();
+      s-skipwength(stw_wen);
     }
   }
 }
 
-}  // namespace twml
+}  // n-namespace twmw

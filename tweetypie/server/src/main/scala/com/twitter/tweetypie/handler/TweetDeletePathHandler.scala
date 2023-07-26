@@ -1,810 +1,810 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.conversions.DurationOps.RichDuration
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.exception.thriftscala.ClientErrorCause
-import com.twitter.servo.util.FutureArrow
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.NotFound
-import com.twitter.timelineservice.thriftscala.PerspectiveResult
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.store._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Time
-import com.twitter.util.Try
-import Try._
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.tweetypie.backends.TimelineService.GetPerspectives
-import com.twitter.tweetypie.util.EditControlUtil
-import scala.util.control.NoStackTrace
+impowt c-com.twittew.convewsions.duwationops.wichduwation
+i-impowt com.twittew.sewvo.exception.thwiftscawa.cwientewwow
+i-impowt com.twittew.sewvo.exception.thwiftscawa.cwientewwowcause
+i-impowt com.twittew.sewvo.utiw.futuweawwow
+i-impowt c-com.twittew.snowfwake.id.snowfwakeid
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.stitch.notfound
+impowt com.twittew.timewinesewvice.thwiftscawa.pewspectivewesuwt
+impowt c-com.twittew.timewinesewvice.{thwiftscawa => tws}
+impowt com.twittew.tweetypie.cowe._
+impowt com.twittew.tweetypie.wepositowy._
+i-impowt com.twittew.tweetypie.stowe._
+impowt com.twittew.tweetypie.thwiftscawa._
+i-impowt com.twittew.utiw.time
+impowt com.twittew.utiw.twy
+impowt twy._
+impowt com.twittew.spam.wtf.thwiftscawa.safetywabewtype
+i-impowt com.twittew.tweetypie.backends.timewinesewvice.getpewspectives
+impowt com.twittew.tweetypie.utiw.editcontwowutiw
+i-impowt scawa.utiw.contwow.nostacktwace
 
-case class CascadedDeleteNotAvailable(retweetId: TweetId) extends Exception with NoStackTrace {
-  override def getMessage: String =
-    s"""|Cascaded delete tweet failed because tweet $retweetId
-        |is not present in cache or manhattan.""".stripMargin
+c-case cwass cascadeddewetenotavaiwabwe(wetweetid: tweetid) extends exception with nyostacktwace {
+  ovewwide def g-getmessage: stwing =
+    s"""|cascaded dewete tweet faiwed because tweet $wetweetid
+        |is n-not pwesent in cache ow manhattan.""".stwipmawgin
 }
 
-object TweetDeletePathHandler {
+o-object tweetdewetepathhandwew {
 
-  type DeleteTweets =
-    (DeleteTweetsRequest, Boolean) => Future[Seq[DeleteTweetResult]]
+  t-type dewetetweets =
+    (dewetetweetswequest, (✿oωo) b-boowean) => f-futuwe[seq[dewetetweetwesuwt]]
 
-  type UnretweetEdits = (Option[EditControl], TweetId, UserId) => Future[Unit]
+  type unwetweetedits = (option[editcontwow], òωó tweetid, (˘ω˘) usewid) => f-futuwe[unit]
 
-  /** The information from a deleteTweet request that can be inspected by a deleteTweets validator */
-  case class DeleteTweetsContext(
-    byUserId: Option[UserId],
-    authenticatedUserId: Option[UserId],
-    tweetAuthorId: UserId,
-    users: Map[UserId, User],
-    isUserErasure: Boolean,
-    expectedErasureUserId: Option[UserId],
-    tweetIsBounced: Boolean,
-    isBounceDelete: Boolean)
+  /** the infowmation fwom a dewetetweet w-wequest that can be inspected by a dewetetweets vawidatow */
+  case cwass dewetetweetscontext(
+    b-byusewid: option[usewid], (ˆ ﻌ ˆ)♡
+    a-authenticatedusewid: o-option[usewid], ( ͡o ω ͡o )
+    t-tweetauthowid: usewid,
+    usews: map[usewid, rawr x3 usew],
+    isusewewasuwe: b-boowean, (˘ω˘)
+    e-expectedewasuweusewid: option[usewid], òωó
+    t-tweetisbounced: b-boowean, ( ͡o ω ͡o )
+    isbouncedewete: b-boowean)
 
-  /** Provides reason a tweet deletion was allowed */
-  sealed trait DeleteAuthorization { def byUserId: Option[UserId] }
+  /** pwovides weason a-a tweet dewetion was awwowed */
+  seawed twait d-deweteauthowization { def byusewid: o-option[usewid] }
 
-  case class AuthorizedByTweetOwner(userId: UserId) extends DeleteAuthorization {
-    def byUserId: Option[UserId] = Some(userId)
+  case cwass a-authowizedbytweetownew(usewid: u-usewid) extends deweteauthowization {
+    def byusewid: option[usewid] = some(usewid)
   }
-  case class AuthorizedByTweetContributor(contributorUserId: UserId) extends DeleteAuthorization {
-    def byUserId: Option[UserId] = Some(contributorUserId)
+  case cwass authowizedbytweetcontwibutow(contwibutowusewid: usewid) e-extends deweteauthowization {
+    d-def byusewid: option[usewid] = s-some(contwibutowusewid)
   }
-  case class AuthorizedByAdmin(adminUserId: UserId) extends DeleteAuthorization {
-    def byUserId: Option[UserId] = Some(adminUserId)
+  c-case cwass authowizedbyadmin(adminusewid: u-usewid) extends deweteauthowization {
+    def byusewid: option[usewid] = s-some(adminusewid)
   }
-  case object AuthorizedByErasure extends DeleteAuthorization {
-    def byUserId: None.type = None
+  case object authowizedbyewasuwe extends deweteauthowization {
+    d-def byusewid: nyone.type = n-nyone
   }
 
-  // Type for a method that receives all the relevant information about a proposed internal tweet
-  // deletion and can return Future.exception to cancel the delete due to a validation error or
-  // return a [[DeleteAuthorization]] specifying the reason the deletion is allowed.
-  type ValidateDeleteTweets = FutureArrow[DeleteTweetsContext, DeleteAuthorization]
+  // t-type fow a-a method that weceives aww the w-wewevant infowmation a-about a pwoposed i-intewnaw t-tweet
+  // dewetion and can wetuwn futuwe.exception t-to cancew the d-dewete due to a-a vawidation ewwow o-ow
+  // wetuwn a-a [[deweteauthowization]] specifying the weason the dewetion is a-awwowed. σωσ
+  type vawidatedewetetweets = futuweawwow[dewetetweetscontext, (U ﹏ U) deweteauthowization]
 
-  val userFieldsForDelete: Set[UserField] =
-    Set(UserField.Account, UserField.Profile, UserField.Roles, UserField.Safety)
+  vaw usewfiewdsfowdewete: set[usewfiewd] =
+    s-set(usewfiewd.account, rawr usewfiewd.pwofiwe, -.- usewfiewd.wowes, ( ͡o ω ͡o ) usewfiewd.safety)
 
-  val userQueryOptions: UserQueryOptions =
-    UserQueryOptions(
-      userFieldsForDelete,
-      UserVisibility.All
+  v-vaw usewquewyoptions: u-usewquewyoptions =
+    u-usewquewyoptions(
+      usewfiewdsfowdewete, >_<
+      u-usewvisibiwity.aww
     )
 
-  // user_agent property originates from the client so truncate to a reasonable length
-  val MaxUserAgentLength = 1000
+  // usew_agent pwopewty o-owiginates fwom t-the cwient so twuncate to a weasonabwe wength
+  vaw maxusewagentwength = 1000
 
-  // Age under which we treat not found tweets in
-  // cascaded_delete_tweet as a temporary condition (the most likely
-  // explanation being that the tweet has not yet been
-  // replicated). Tweets older than this we assume are due to
-  // *permanently* inconsistent data, either spurious edges in tflock or
-  // tweets that are not loadable from Manhattan.
-  val MaxCascadedDeleteTweetTemporaryInconsistencyAge: Duration =
+  // age undew which we tweat n-nyot found tweets in
+  // cascaded_dewete_tweet a-as a tempowawy condition (the most w-wikewy
+  // expwanation b-being that the tweet has nyot yet been
+  // w-wepwicated). o.O t-tweets owdew than this we assume a-awe due to
+  // *pewmanentwy* i-inconsistent data, σωσ eithew spuwious edges in tfwock ow
+  // tweets that awe nyot w-woadabwe fwom m-manhattan. -.-
+  vaw m-maxcascadeddewetetweettempowawyinconsistencyage: duwation =
     10.minutes
 }
 
-trait TweetDeletePathHandler {
-  import TweetDeletePathHandler.ValidateDeleteTweets
+t-twait tweetdewetepathhandwew {
+  i-impowt tweetdewetepathhandwew.vawidatedewetetweets
 
-  def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit]
+  def cascadeddewetetweet(wequest: c-cascadeddewetetweetwequest): futuwe[unit]
 
-  def deleteTweets(
-    request: DeleteTweetsRequest,
-    isUnretweetEdits: Boolean = false,
-  ): Future[Seq[DeleteTweetResult]]
+  def dewetetweets(
+    wequest: dewetetweetswequest, σωσ
+    i-isunwetweetedits: boowean = f-fawse, :3
+  ): futuwe[seq[dewetetweetwesuwt]]
 
-  def internalDeleteTweets(
-    request: DeleteTweetsRequest,
-    byUserId: Option[UserId],
-    authenticatedUserId: Option[UserId],
-    validate: ValidateDeleteTweets,
-    isUnretweetEdits: Boolean = false
-  ): Future[Seq[DeleteTweetResult]]
+  def intewnawdewetetweets(
+    w-wequest: dewetetweetswequest, ^^
+    b-byusewid: option[usewid], òωó
+    authenticatedusewid: option[usewid], (ˆ ﻌ ˆ)♡
+    v-vawidate: vawidatedewetetweets, XD
+    isunwetweetedits: boowean = fawse
+  ): futuwe[seq[dewetetweetwesuwt]]
 
-  def unretweetEdits(
-    optEditControl: Option[EditControl],
-    excludedTweetId: TweetId,
-    byUserId: UserId
-  ): Future[Unit]
+  d-def unwetweetedits(
+    opteditcontwow: option[editcontwow], òωó
+    e-excwudedtweetid: t-tweetid,
+    byusewid: usewid
+  ): futuwe[unit]
 }
 
 /**
- * Implementation of TweetDeletePathHandler
+ * i-impwementation o-of tweetdewetepathhandwew
  */
-class DefaultTweetDeletePathHandler(
-  stats: StatsReceiver,
-  tweetResultRepo: TweetResultRepository.Type,
-  userRepo: UserRepository.Optional,
-  stratoSafetyLabelsRepo: StratoSafetyLabelsRepository.Type,
-  lastQuoteOfQuoterRepo: LastQuoteOfQuoterRepository.Type,
-  tweetStore: TotalTweetStore,
-  getPerspectives: GetPerspectives)
-    extends TweetDeletePathHandler {
-  import TweetDeletePathHandler._
+cwass defauwttweetdewetepathhandwew(
+  stats: statsweceivew, (ꈍᴗꈍ)
+  t-tweetwesuwtwepo: tweetwesuwtwepositowy.type,
+  u-usewwepo: usewwepositowy.optionaw, UwU
+  stwatosafetywabewswepo: stwatosafetywabewswepositowy.type, >w<
+  wastquoteofquotewwepo: wastquoteofquotewwepositowy.type, ʘwʘ
+  tweetstowe: t-totawtweetstowe,
+  getpewspectives: getpewspectives)
+    e-extends tweetdewetepathhandwew {
+  i-impowt tweetdewetepathhandwew._
 
-  val tweetRepo: TweetRepository.Type = TweetRepository.fromTweetResult(tweetResultRepo)
+  vaw tweetwepo: t-tweetwepositowy.type = tweetwepositowy.fwomtweetwesuwt(tweetwesuwtwepo)
 
-  // attempt to delete tweets was made by someone other than the tweet owner or an admin user
-  object DeleteTweetsPermissionException extends Exception with NoStackTrace
-  object ExpectedUserIdMismatchException extends Exception with NoStackTrace
+  // a-attempt to d-dewete tweets w-was made by someone othew than the t-tweet ownew ow a-an admin usew
+  object dewetetweetspewmissionexception extends e-exception with n-nyostacktwace
+  o-object expectedusewidmismatchexception extends exception with nyostacktwace
 
-  private[this] val log = Logger("com.twitter.tweetypie.store.TweetDeletions")
+  pwivate[this] v-vaw wog = woggew("com.twittew.tweetypie.stowe.tweetdewetions")
 
-  private[this] val cascadeEditDelete = stats.scope("cascade_edit_delete")
-  private[this] val cascadeEditDeletesEnqueued = cascadeEditDelete.counter("enqueued")
-  private[this] val cascadeEditDeleteTweets = cascadeEditDelete.counter("tweets")
-  private[this] val cascadeEditDeleteFailures = cascadeEditDelete.counter("failures")
+  pwivate[this] v-vaw c-cascadeeditdewete = stats.scope("cascade_edit_dewete")
+  pwivate[this] vaw cascadeeditdewetesenqueued = c-cascadeeditdewete.countew("enqueued")
+  p-pwivate[this] vaw c-cascadeeditdewetetweets = c-cascadeeditdewete.countew("tweets")
+  pwivate[this] v-vaw cascadeeditdewetefaiwuwes = cascadeeditdewete.countew("faiwuwes")
 
-  private[this] val cascadedDeleteTweet = stats.scope("cascaded_delete_tweet")
-  private[this] val cascadedDeleteTweetFailures = cascadedDeleteTweet.counter("failures")
-  private[this] val cascadedDeleteTweetSourceMatch = cascadedDeleteTweet.counter("source_match")
-  private[this] val cascadedDeleteTweetSourceMismatch =
-    cascadedDeleteTweet.counter("source_mismatch")
-  private[this] val cascadedDeleteTweetTweetNotFound =
-    cascadedDeleteTweet.counter("tweet_not_found")
-  private[this] val cascadedDeleteTweetTweetNotFoundAge =
-    cascadedDeleteTweet.stat("tweet_not_found_age")
-  private[this] val cascadedDeleteTweetUserNotFound = cascadedDeleteTweet.counter("user_not_found")
+  pwivate[this] vaw cascadeddewetetweet = stats.scope("cascaded_dewete_tweet")
+  pwivate[this] v-vaw cascadeddewetetweetfaiwuwes = cascadeddewetetweet.countew("faiwuwes")
+  p-pwivate[this] vaw cascadeddewetetweetsouwcematch = c-cascadeddewetetweet.countew("souwce_match")
+  pwivate[this] v-vaw cascadeddewetetweetsouwcemismatch =
+    cascadeddewetetweet.countew("souwce_mismatch")
+  pwivate[this] v-vaw c-cascadeddewetetweettweetnotfound =
+    c-cascadeddewetetweet.countew("tweet_not_found")
+  p-pwivate[this] v-vaw cascadeddewetetweettweetnotfoundage =
+    cascadeddewetetweet.stat("tweet_not_found_age")
+  pwivate[this] vaw cascadeddewetetweetusewnotfound = cascadeddewetetweet.countew("usew_not_found")
 
-  private[this] val deleteTweets = stats.scope("delete_tweets")
-  private[this] val deleteTweetsAuth = deleteTweets.scope("per_tweet_auth")
-  private[this] val deleteTweetsAuthAttempts = deleteTweetsAuth.counter("attempts")
-  private[this] val deleteTweetsAuthFailures = deleteTweetsAuth.counter("failures")
-  private[this] val deleteTweetsAuthSuccessAdmin = deleteTweetsAuth.counter("success_admin")
-  private[this] val deleteTweetsAuthSuccessByUser = deleteTweetsAuth.counter("success_by_user")
-  private[this] val deleteTweetsTweets = deleteTweets.counter("tweets")
-  private[this] val deleteTweetsFailures = deleteTweets.counter("failures")
-  private[this] val deleteTweetsTweetNotFound = deleteTweets.counter("tweet_not_found")
-  private[this] val deleteTweetsUserNotFound = deleteTweets.counter("user_not_found")
-  private[this] val userIdMismatchInTweetDelete =
-    deleteTweets.counter("expected_actual_user_id_mismatch")
-  private[this] val bounceDeleteFlagNotSet =
-    deleteTweets.counter("bounce_delete_flag_not_set")
+  pwivate[this] vaw dewetetweets = s-stats.scope("dewete_tweets")
+  p-pwivate[this] v-vaw dewetetweetsauth = dewetetweets.scope("pew_tweet_auth")
+  p-pwivate[this] vaw dewetetweetsauthattempts = dewetetweetsauth.countew("attempts")
+  pwivate[this] v-vaw dewetetweetsauthfaiwuwes = d-dewetetweetsauth.countew("faiwuwes")
+  pwivate[this] vaw d-dewetetweetsauthsuccessadmin = dewetetweetsauth.countew("success_admin")
+  pwivate[this] v-vaw dewetetweetsauthsuccessbyusew = dewetetweetsauth.countew("success_by_usew")
+  p-pwivate[this] vaw dewetetweetstweets = d-dewetetweets.countew("tweets")
+  p-pwivate[this] vaw dewetetweetsfaiwuwes = dewetetweets.countew("faiwuwes")
+  pwivate[this] vaw dewetetweetstweetnotfound = dewetetweets.countew("tweet_not_found")
+  p-pwivate[this] v-vaw dewetetweetsusewnotfound = d-dewetetweets.countew("usew_not_found")
+  pwivate[this] v-vaw u-usewidmismatchintweetdewete =
+    dewetetweets.countew("expected_actuaw_usew_id_mismatch")
+  p-pwivate[this] v-vaw bouncedewetefwagnotset =
+    d-dewetetweets.countew("bounce_dewete_fwag_not_set")
 
-  private[this] def getUser(userId: UserId): Future[Option[User]] =
-    Stitch.run(userRepo(UserKey(userId), userQueryOptions))
+  p-pwivate[this] def getusew(usewid: u-usewid): futuwe[option[usew]] =
+    stitch.wun(usewwepo(usewkey(usewid), :3 usewquewyoptions))
 
-  private[this] def getUsersForDeleteTweets(userIds: Seq[UserId]): Future[Map[UserId, User]] =
-    Stitch.run(
-      Stitch
-        .traverse(userIds) { userId =>
-          userRepo(UserKey(userId), userQueryOptions).map {
-            case Some(u) => Some(userId -> u)
-            case None => deleteTweetsUserNotFound.incr(); None
+  p-pwivate[this] def getusewsfowdewetetweets(usewids: s-seq[usewid]): f-futuwe[map[usewid, ^•ﻌ•^ usew]] =
+    s-stitch.wun(
+      stitch
+        .twavewse(usewids) { usewid =>
+          usewwepo(usewkey(usewid), (ˆ ﻌ ˆ)♡ u-usewquewyoptions).map {
+            c-case s-some(u) => some(usewid -> u)
+            case nyone => dewetetweetsusewnotfound.incw(); n-nyone
           }
         }
-        .map(_.flatten.toMap)
+        .map(_.fwatten.tomap)
     )
 
-  private[this] def getTweet(tweetId: TweetId): Future[Tweet] =
-    Stitch.run(tweetRepo(tweetId, WritePathQueryOptions.deleteTweetsWithoutEditControl))
+  pwivate[this] def gettweet(tweetid: t-tweetid): futuwe[tweet] =
+    stitch.wun(tweetwepo(tweetid, 🥺 w-wwitepathquewyoptions.dewetetweetswithouteditcontwow))
 
-  private[this] def getSingleDeletedTweet(
-    id: TweetId,
-    isCascadedEditTweetDeletion: Boolean = false
-  ): Stitch[Option[TweetData]] = {
-    val opts = if (isCascadedEditTweetDeletion) {
-      // Disable edit control hydration if this is cascade delete of edits.
-      // When edit control is hydrated, the tweet will actually be considered already deleted.
-      WritePathQueryOptions.deleteTweetsWithoutEditControl
-    } else {
-      WritePathQueryOptions.deleteTweets
+  pwivate[this] d-def getsingwedewetedtweet(
+    id: tweetid, OwO
+    i-iscascadededittweetdewetion: b-boowean = fawse
+  ): stitch[option[tweetdata]] = {
+    vaw opts = i-if (iscascadededittweetdewetion) {
+      // disabwe edit contwow hydwation if t-this is cascade d-dewete of edits. 🥺
+      // when e-edit contwow is hydwated, OwO the tweet w-wiww actuawwy b-be considewed a-awweady deweted.
+      wwitepathquewyoptions.dewetetweetswithouteditcontwow
+    } ewse {
+      wwitepathquewyoptions.dewetetweets
     }
-    tweetResultRepo(id, opts)
-      .map(_.value)
-      .liftToOption {
-        // We treat the request the same whether the tweet never
-        // existed or is in one of the already-deleted states by
-        // just filtering out those tweets. Any tweets that we
-        // return should be deleted. If the tweet has been
-        // bounce-deleted, we never want to soft-delete it, and
-        // vice versa.
-        case NotFound | FilteredState.Unavailable.TweetDeleted |
-            FilteredState.Unavailable.BounceDeleted =>
-          true
+    tweetwesuwtwepo(id, (U ᵕ U❁) opts)
+      .map(_.vawue)
+      .wifttooption {
+        // we tweat the wequest the same whethew the tweet nyevew
+        // existed ow is in one of the awweady-deweted s-states b-by
+        // just fiwtewing out those tweets. ( ͡o ω ͡o ) a-any tweets that w-we
+        // wetuwn s-shouwd be deweted. if the tweet h-has been
+        // bounce-deweted, ^•ﻌ•^ w-we nyevew w-want to soft-dewete it, o.O and
+        // v-vice vewsa. (⑅˘꒳˘)
+        case n-nyotfound | fiwtewedstate.unavaiwabwe.tweetdeweted |
+            f-fiwtewedstate.unavaiwabwe.bouncedeweted =>
+          twue
       }
   }
 
-  private[this] def getTweetsForDeleteTweets(
-    ids: Seq[TweetId],
-    isCascadedEditTweetDeletion: Boolean
-  ): Future[Map[TweetId, TweetData]] =
-    Stitch
-      .run {
-        Stitch.traverse(ids) { id =>
-          getSingleDeletedTweet(id, isCascadedEditTweetDeletion)
+  pwivate[this] d-def gettweetsfowdewetetweets(
+    i-ids: s-seq[tweetid], (ˆ ﻌ ˆ)♡
+    i-iscascadededittweetdewetion: b-boowean
+  ): futuwe[map[tweetid, t-tweetdata]] =
+    s-stitch
+      .wun {
+        s-stitch.twavewse(ids) { i-id =>
+          getsingwedewetedtweet(id, :3 i-iscascadededittweetdewetion)
             .map {
-              // When deleting a tweet that has been edited, we want to instead delete the initial version.
-              // Because the initial tweet will be hydrated in every request, if it is deleted, later
-              // revisions will be hidden, and cleaned up asynchronously by TP Daemons
+              // w-when deweting a-a tweet that has been edited, /(^•ω•^) we w-want to instead dewete the initiaw vewsion. òωó
+              // b-because the initiaw t-tweet wiww be h-hydwated in evewy w-wequest, :3 if it is deweted, (˘ω˘) watew
+              // w-wevisions wiww be hidden, 😳 and c-cweaned up asynchwonouswy by tp d-daemons
 
-              // However, we don't need to do a second lookup if it's already the original tweet
-              // or if we're doing a cascading edit tweet delete (deleting the entire tweet history)
-              case Some(tweetData)
-                  if EditControlUtil.isInitialTweet(tweetData.tweet) ||
-                    isCascadedEditTweetDeletion =>
-                Stitch.value(Some(tweetData))
-              case Some(tweetData) =>
-                getSingleDeletedTweet(EditControlUtil.getInitialTweetId(tweetData.tweet))
-              case None =>
-                Stitch.value(None)
-              // We need to preserve the input tweetId, and the initial TweetData
-            }.flatten.map(tweetData => (id, tweetData))
+              // howevew, σωσ w-we don't nyeed to do a second wookup if it's awweady the owiginaw tweet
+              // o-ow if we'we doing a-a cascading edit t-tweet dewete (deweting the entiwe tweet histowy)
+              case some(tweetdata)
+                  i-if editcontwowutiw.isinitiawtweet(tweetdata.tweet) ||
+                    iscascadededittweetdewetion =>
+                s-stitch.vawue(some(tweetdata))
+              c-case s-some(tweetdata) =>
+                getsingwedewetedtweet(editcontwowutiw.getinitiawtweetid(tweetdata.tweet))
+              case n-nyone =>
+                s-stitch.vawue(none)
+              // we n-nyeed to pwesewve the input tweetid, UwU and the initiaw t-tweetdata
+            }.fwatten.map(tweetdata => (id, tweetdata))
         }
       }
-      .map(_.collect { case (tweetId, Some(tweetData)) => (tweetId, tweetData) }.toMap)
+      .map(_.cowwect { c-case (tweetid, -.- s-some(tweetdata)) => (tweetid, 🥺 t-tweetdata) }.tomap)
 
-  private[this] def getStratoBounceStatuses(
-    ids: Seq[Long],
-    isUserErasure: Boolean,
-    isCascadedEditedTweetDeletion: Boolean
-  ): Future[Map[TweetId, Boolean]] = {
-    // Don't load bounce label for user erasure tweet deletion.
-    // User Erasure deletions cause unnecessary spikes of traffic
-    // to Strato when we read the bounce label that we don't use.
+  pwivate[this] d-def getstwatobouncestatuses(
+    i-ids: seq[wong], 😳😳😳
+    i-isusewewasuwe: b-boowean, 🥺
+    iscascadededitedtweetdewetion: b-boowean
+  ): f-futuwe[map[tweetid, ^^ b-boowean]] = {
+    // d-don't woad b-bounce wabew f-fow usew ewasuwe t-tweet dewetion. ^^;;
+    // u-usew ewasuwe dewetions c-cause unnecessawy spikes of twaffic
+    // t-to stwato when we wead t-the bounce wabew t-that we don't u-use. >w<
 
-    // We also want to always delete a bounced tweet if the rest of the
-    // edit chain is being deleted in a cascaded edit tweet delete
-    if (isUserErasure || isCascadedEditedTweetDeletion) {
-      Future.value(ids.map(id => id -> false).toMap)
-    } else {
-      Stitch.run(
-        Stitch
-          .traverse(ids) { id =>
-            stratoSafetyLabelsRepo(id, SafetyLabelType.Bounce).map { label =>
-              id -> label.isDefined
+    // we awso want to awways dewete a bounced tweet if the w-west of the
+    // e-edit chain i-is being deweted in a cascaded edit tweet dewete
+    if (isusewewasuwe || i-iscascadededitedtweetdewetion) {
+      f-futuwe.vawue(ids.map(id => id -> f-fawse).tomap)
+    } e-ewse {
+      stitch.wun(
+        stitch
+          .twavewse(ids) { id =>
+            s-stwatosafetywabewswepo(id, σωσ s-safetywabewtype.bounce).map { w-wabew =>
+              i-id -> wabew.isdefined
             }
           }
-          .map(_.toMap)
+          .map(_.tomap)
       )
     }
   }
 
-  /** A suspended/deactivated user can't delete tweets */
-  private[this] def userNotSuspendedOrDeactivated(user: User): Try[User] =
-    user.safety match {
-      case None => Throw(UpstreamFailure.UserSafetyEmptyException)
-      case Some(safety) if safety.deactivated =>
-        Throw(
-          AccessDenied(
-            s"User deactivated userId: ${user.id}",
-            errorCause = Some(AccessDeniedCause.UserDeactivated)
+  /** a suspended/deactivated u-usew can't d-dewete tweets */
+  pwivate[this] def usewnotsuspendedowdeactivated(usew: u-usew): twy[usew] =
+    usew.safety match {
+      c-case none => thwow(upstweamfaiwuwe.usewsafetyemptyexception)
+      c-case s-some(safety) if safety.deactivated =>
+        t-thwow(
+          a-accessdenied(
+            s"usew d-deactivated usewid: ${usew.id}", >w<
+            ewwowcause = some(accessdeniedcause.usewdeactivated)
           )
         )
-      case Some(safety) if safety.suspended =>
-        Throw(
-          AccessDenied(
-            s"User suspended userId: ${user.id}",
-            errorCause = Some(AccessDeniedCause.UserSuspended)
+      c-case some(safety) i-if safety.suspended =>
+        t-thwow(
+          a-accessdenied(
+            s"usew s-suspended usewid: ${usew.id}",
+            e-ewwowcause = s-some(accessdeniedcause.usewsuspended)
           )
         )
-      case _ => Return(user)
+      case _ => w-wetuwn(usew)
     }
 
   /**
-   * Ensure that byUser has permission to delete tweet either by virtue of owning the tweet or being
-   * an admin user.  Returns the reason as a DeleteAuthorization or else throws an Exception if not
-   * authorized.
+   * ensuwe that byusew has pewmission t-to dewete t-tweet eithew by v-viwtue of owning the tweet ow being
+   * an admin usew. (⑅˘꒳˘)  wetuwns the weason as a-a deweteauthowization ow ewse thwows a-an exception i-if nyot
+   * authowized. òωó
    */
-  private[this] def userAuthorizedToDeleteTweet(
-    byUser: User,
-    optAuthenticatedUserId: Option[UserId],
-    tweetAuthorId: UserId
-  ): Try[DeleteAuthorization] = {
+  pwivate[this] d-def usewauthowizedtodewetetweet(
+    byusew: usew, (⑅˘꒳˘)
+    o-optauthenticatedusewid: o-option[usewid], (ꈍᴗꈍ)
+    t-tweetauthowid: u-usewid
+  ): t-twy[deweteauthowization] = {
 
-    def hasAdminPrivilege =
-      byUser.roles.exists(_.rights.contains("delete_user_tweets"))
+    def hasadminpwiviwege =
+      byusew.wowes.exists(_.wights.contains("dewete_usew_tweets"))
 
-    deleteTweetsAuthAttempts.incr()
-    if (byUser.id == tweetAuthorId) {
-      deleteTweetsAuthSuccessByUser.incr()
-      optAuthenticatedUserId match {
-        case Some(uid) =>
-          Return(AuthorizedByTweetContributor(uid))
-        case None =>
-          Return(AuthorizedByTweetOwner(byUser.id))
+    dewetetweetsauthattempts.incw()
+    if (byusew.id == t-tweetauthowid) {
+      dewetetweetsauthsuccessbyusew.incw()
+      o-optauthenticatedusewid match {
+        case some(uid) =>
+          wetuwn(authowizedbytweetcontwibutow(uid))
+        c-case nyone =>
+          wetuwn(authowizedbytweetownew(byusew.id))
       }
-    } else if (optAuthenticatedUserId.isEmpty && hasAdminPrivilege) { // contributor may not assume admin role
-      deleteTweetsAuthSuccessAdmin.incr()
-      Return(AuthorizedByAdmin(byUser.id))
-    } else {
-      deleteTweetsAuthFailures.incr()
-      Throw(DeleteTweetsPermissionException)
+    } ewse if (optauthenticatedusewid.isempty && h-hasadminpwiviwege) { // c-contwibutow may not assume admin w-wowe
+      dewetetweetsauthsuccessadmin.incw()
+      wetuwn(authowizedbyadmin(byusew.id))
+    } ewse {
+      dewetetweetsauthfaiwuwes.incw()
+      t-thwow(dewetetweetspewmissionexception)
     }
   }
 
   /**
-   * expected user id is the id provided on the DeleteTweetsRequest that the indicates which user
-   * owns the tweets they want to delete. The actualUserId is the actual userId on the tweet we are about to delete.
-   * we check to ensure they are the same as a safety check against accidental deletion of tweets either from user mistakes
-   * or from corrupted data (e.g bad tflock edges)
+   * e-expected usew id is the id pwovided o-on the dewetetweetswequest that the indicates w-which usew
+   * owns the tweets they want to dewete. rawr x3 the actuawusewid i-is the actuaw usewid on the tweet we awe a-about to dewete. ( ͡o ω ͡o )
+   * w-we check t-to ensuwe they awe the same as a safety check a-against accidentaw dewetion of tweets eithew fwom usew mistakes
+   * ow fwom cowwupted d-data (e.g b-bad tfwock edges)
    */
-  private[this] def expectedUserIdMatchesActualUserId(
-    expectedUserId: UserId,
-    actualUserId: UserId
-  ): Try[Unit] =
-    if (expectedUserId == actualUserId) {
-      Return.Unit
-    } else {
-      userIdMismatchInTweetDelete.incr()
-      Throw(ExpectedUserIdMismatchException)
+  p-pwivate[this] d-def expectedusewidmatchesactuawusewid(
+    expectedusewid: usewid, UwU
+    a-actuawusewid: usewid
+  ): t-twy[unit] =
+    if (expectedusewid == actuawusewid) {
+      w-wetuwn.unit
+    } ewse {
+      usewidmismatchintweetdewete.incw()
+      t-thwow(expectedusewidmismatchexception)
     }
 
   /**
-   * Validation for the normal public tweet delete case, the user must be found and must
-   * not be suspended or deactivated.
+   * vawidation fow the nyowmaw p-pubwic tweet dewete c-case, ^^ the usew must be found a-and must
+   * n-nyot be suspended o-ow deactivated. (˘ω˘)
    */
-  val validateTweetsForPublicDelete: ValidateDeleteTweets = FutureArrow {
-    ctx: DeleteTweetsContext =>
-      Future.const(
-        for {
+  vaw vawidatetweetsfowpubwicdewete: vawidatedewetetweets = f-futuweawwow {
+    ctx: dewetetweetscontext =>
+      futuwe.const(
+        fow {
 
-          // byUserId must be present
-          byUserId <- ctx.byUserId.orThrow(
-            ClientError(ClientErrorCause.BadRequest, "Missing byUserId")
+          // b-byusewid must be pwesent
+          byusewid <- ctx.byusewid.owthwow(
+            c-cwientewwow(cwientewwowcause.badwequest, (ˆ ﻌ ˆ)♡ "missing b-byusewid")
           )
 
-          // the byUser must be found
-          byUserOpt = ctx.users.get(byUserId)
-          byUser <- byUserOpt.orThrow(
-            ClientError(ClientErrorCause.BadRequest, s"User $byUserId not found")
+          // t-the byusew m-must be found
+          b-byusewopt = ctx.usews.get(byusewid)
+          b-byusew <- byusewopt.owthwow(
+            cwientewwow(cwientewwowcause.badwequest, OwO s-s"usew $byusewid nyot found")
           )
 
-          _ <- userNotSuspendedOrDeactivated(byUser)
+          _ <- u-usewnotsuspendedowdeactivated(byusew)
 
-          _ <- validateBounceConditions(
-            ctx.tweetIsBounced,
-            ctx.isBounceDelete
+          _ <- vawidatebounceconditions(
+            ctx.tweetisbounced,
+            c-ctx.isbouncedewete
           )
 
-          // if there's a contributor, make sure the user is found and not suspended or deactivated
+          // i-if thewe's a contwibutow, 😳 make s-suwe the usew is found and nyot s-suspended ow deactivated
           _ <-
-            ctx.authenticatedUserId
+            c-ctx.authenticatedusewid
               .map { uid =>
-                ctx.users.get(uid) match {
-                  case None =>
-                    Throw(ClientError(ClientErrorCause.BadRequest, s"Contributor $uid not found"))
-                  case Some(authUser) =>
-                    userNotSuspendedOrDeactivated(authUser)
+                c-ctx.usews.get(uid) m-match {
+                  case nyone =>
+                    t-thwow(cwientewwow(cwientewwowcause.badwequest, UwU s"contwibutow $uid nyot found"))
+                  case some(authusew) =>
+                    u-usewnotsuspendedowdeactivated(authusew)
                 }
               }
-              .getOrElse(Return.Unit)
+              .getowewse(wetuwn.unit)
 
-          // if the expected user id is present, make sure it matches the user id on the tweet
+          // if the expected u-usew id is pwesent, 🥺 make suwe it matches the usew i-id on the tweet
           _ <-
-            ctx.expectedErasureUserId
-              .map { expectedUserId =>
-                expectedUserIdMatchesActualUserId(expectedUserId, ctx.tweetAuthorId)
+            ctx.expectedewasuweusewid
+              .map { e-expectedusewid =>
+                e-expectedusewidmatchesactuawusewid(expectedusewid, 😳😳😳 ctx.tweetauthowid)
               }
-              .getOrElse(Return.Unit)
+              .getowewse(wetuwn.unit)
 
-          // User must own the tweet or be an admin
-          deleteAuth <- userAuthorizedToDeleteTweet(
-            byUser,
-            ctx.authenticatedUserId,
-            ctx.tweetAuthorId
+          // u-usew must o-own the tweet ow be an admin
+          d-deweteauth <- usewauthowizedtodewetetweet(
+            b-byusew, ʘwʘ
+            ctx.authenticatedusewid, /(^•ω•^)
+            c-ctx.tweetauthowid
           )
-        } yield deleteAuth
+        } y-yiewd deweteauth
       )
   }
 
-  private def validateBounceConditions(
-    tweetIsBounced: Boolean,
-    isBounceDelete: Boolean
-  ): Try[Unit] = {
-    if (tweetIsBounced && !isBounceDelete) {
-      bounceDeleteFlagNotSet.incr()
-      Throw(ClientError(ClientErrorCause.BadRequest, "Cannot normal delete a Bounced Tweet"))
-    } else {
-      Return.Unit
+  pwivate def vawidatebounceconditions(
+    tweetisbounced: boowean, :3
+    isbouncedewete: b-boowean
+  ): t-twy[unit] = {
+    if (tweetisbounced && !isbouncedewete) {
+      bouncedewetefwagnotset.incw()
+      thwow(cwientewwow(cwientewwowcause.badwequest, :3 "cannot n-nyowmaw dewete a bounced tweet"))
+    } e-ewse {
+      w-wetuwn.unit
     }
   }
 
   /**
-   * Validation for the user erasure case. User may be missing.
+   * vawidation fow the usew ewasuwe case. mya usew may be missing. (///ˬ///✿)
    */
-  val validateTweetsForUserErasureDaemon: ValidateDeleteTweets = FutureArrow {
-    ctx: DeleteTweetsContext =>
-      Future
+  v-vaw vawidatetweetsfowusewewasuwedaemon: vawidatedewetetweets = f-futuweawwow {
+    ctx: d-dewetetweetscontext =>
+      futuwe
         .const(
-          for {
-            expectedUserId <- ctx.expectedErasureUserId.orThrow(
-              ClientError(
-                ClientErrorCause.BadRequest,
-                "expectedUserId is required for DeleteTweetRequests"
+          f-fow {
+            expectedusewid <- c-ctx.expectedewasuweusewid.owthwow(
+              c-cwientewwow(
+                c-cwientewwowcause.badwequest, (⑅˘꒳˘)
+                "expectedusewid is w-wequiwed fow dewetetweetwequests"
               )
             )
 
-            // It's critical to always check that the userId on the tweet we want to delete matches the
-            // userId on the erasure request. This prevents us from accidentally deleting tweets not owned by the
-            // erased user, even if tflock serves us bad data.
-            validationResult <- expectedUserIdMatchesActualUserId(expectedUserId, ctx.tweetAuthorId)
-          } yield validationResult
+            // i-it's cwiticaw t-to awways check that the usewid on the tweet we want to dewete matches the
+            // usewid o-on the ewasuwe w-wequest. :3 this pwevents u-us fwom accidentawwy d-deweting t-tweets nyot o-owned by the
+            // ewased usew, /(^•ω•^) even if tfwock sewves us bad data. ^^;;
+            v-vawidationwesuwt <- e-expectedusewidmatchesactuawusewid(expectedusewid, (U ᵕ U❁) ctx.tweetauthowid)
+          } yiewd vawidationwesuwt
         )
-        .map(_ => AuthorizedByErasure)
+        .map(_ => authowizedbyewasuwe)
   }
 
   /**
-   * Fill in missing values of AuditDeleteTweet with values from TwitterContext.
+   * f-fiww in missing v-vawues of a-auditdewetetweet with vawues fwom twittewcontext. (U ﹏ U)
    */
-  def enrichMissingFromTwitterContext(orig: AuditDeleteTweet): AuditDeleteTweet = {
-    val viewer = TwitterContext()
-    orig.copy(
-      host = orig.host.orElse(viewer.flatMap(_.auditIp)),
-      clientApplicationId = orig.clientApplicationId.orElse(viewer.flatMap(_.clientApplicationId)),
-      userAgent = orig.userAgent.orElse(viewer.flatMap(_.userAgent)).map(_.take(MaxUserAgentLength))
+  d-def enwichmissingfwomtwittewcontext(owig: auditdewetetweet): auditdewetetweet = {
+    v-vaw viewew = twittewcontext()
+    o-owig.copy(
+      host = owig.host.owewse(viewew.fwatmap(_.auditip)), mya
+      cwientappwicationid = o-owig.cwientappwicationid.owewse(viewew.fwatmap(_.cwientappwicationid)), ^•ﻌ•^
+      usewagent = owig.usewagent.owewse(viewew.fwatmap(_.usewagent)).map(_.take(maxusewagentwength))
     )
   }
 
   /**
-   * core delete tweets implementation.
+   * c-cowe dewete t-tweets impwementation. (U ﹏ U)
    *
-   * The [[deleteTweets]] method wraps this method and provides validation required
-   * for a public endpoint.
+   * the [[dewetetweets]] m-method wwaps t-this method a-and pwovides vawidation w-wequiwed
+   * f-fow a pubwic e-endpoint. :3
    */
-  override def internalDeleteTweets(
-    request: DeleteTweetsRequest,
-    byUserId: Option[UserId],
-    authenticatedUserId: Option[UserId],
-    validate: ValidateDeleteTweets,
-    isUnretweetEdits: Boolean = false
-  ): Future[Seq[DeleteTweetResult]] = {
+  ovewwide def i-intewnawdewetetweets(
+    w-wequest: dewetetweetswequest, rawr x3
+    byusewid: o-option[usewid], 😳😳😳
+    authenticatedusewid: option[usewid], >w<
+    v-vawidate: vawidatedewetetweets, òωó
+    i-isunwetweetedits: boowean = f-fawse
+  ): f-futuwe[seq[dewetetweetwesuwt]] = {
 
-    val auditDeleteTweet =
-      enrichMissingFromTwitterContext(request.auditPassthrough.getOrElse(AuditDeleteTweet()))
-    deleteTweetsTweets.incr(request.tweetIds.size)
-    for {
-      tweetDataMap <- getTweetsForDeleteTweets(
-        request.tweetIds,
-        request.cascadedEditedTweetDeletion.getOrElse(false)
+    vaw auditdewetetweet =
+      enwichmissingfwomtwittewcontext(wequest.auditpassthwough.getowewse(auditdewetetweet()))
+    d-dewetetweetstweets.incw(wequest.tweetids.size)
+    fow {
+      tweetdatamap <- g-gettweetsfowdewetetweets(
+        w-wequest.tweetids, 😳
+        wequest.cascadededitedtweetdewetion.getowewse(fawse)
       )
 
-      userIds: Seq[UserId] = (tweetDataMap.values.map { td =>
-          getUserId(td.tweet)
-        } ++ byUserId ++ authenticatedUserId).toSeq.distinct
+      usewids: seq[usewid] = (tweetdatamap.vawues.map { t-td =>
+          g-getusewid(td.tweet)
+        } ++ byusewid ++ a-authenticatedusewid).toseq.distinct
 
-      users <- getUsersForDeleteTweets(userIds)
+      usews <- getusewsfowdewetetweets(usewids)
 
-      stratoBounceStatuses <- getStratoBounceStatuses(
-        tweetDataMap.keys.toSeq,
-        request.isUserErasure,
-        request.cascadedEditedTweetDeletion.getOrElse(false))
+      s-stwatobouncestatuses <- g-getstwatobouncestatuses(
+        tweetdatamap.keys.toseq, (✿oωo)
+        w-wequest.isusewewasuwe, OwO
+        w-wequest.cascadededitedtweetdewetion.getowewse(fawse))
 
-      results <- Future.collect {
-        request.tweetIds.map { tweetId =>
-          tweetDataMap.get(tweetId) match {
-            // already deleted, so nothing to do
-            case None =>
-              deleteTweetsTweetNotFound.incr()
-              Future.value(DeleteTweetResult(tweetId, TweetDeleteState.Ok))
-            case Some(tweetData) =>
-              val tweet: Tweet = tweetData.tweet
-              val tweetIsBounced = stratoBounceStatuses(tweetId)
-              val optSourceTweet: Option[Tweet] = tweetData.sourceTweetResult.map(_.value.tweet)
+      wesuwts <- futuwe.cowwect {
+        wequest.tweetids.map { t-tweetid =>
+          t-tweetdatamap.get(tweetid) m-match {
+            // a-awweady deweted, (U ﹏ U) so nyothing to do
+            case nyone =>
+              dewetetweetstweetnotfound.incw()
+              futuwe.vawue(dewetetweetwesuwt(tweetid, (ꈍᴗꈍ) tweetdewetestate.ok))
+            c-case some(tweetdata) =>
+              v-vaw t-tweet: tweet = t-tweetdata.tweet
+              v-vaw t-tweetisbounced = stwatobouncestatuses(tweetid)
+              vaw o-optsouwcetweet: o-option[tweet] = tweetdata.souwcetweetwesuwt.map(_.vawue.tweet)
 
-              val validation: Future[(Boolean, DeleteAuthorization)] = for {
-                isLastQuoteOfQuoter <- isFinalQuoteOfQuoter(tweet)
-                deleteAuth <- validate(
-                  DeleteTweetsContext(
-                    byUserId = byUserId,
-                    authenticatedUserId = authenticatedUserId,
-                    tweetAuthorId = getUserId(tweet),
-                    users = users,
-                    isUserErasure = request.isUserErasure,
-                    expectedErasureUserId = request.expectedUserId,
-                    tweetIsBounced = tweetIsBounced,
-                    isBounceDelete = request.isBounceDelete
+              v-vaw vawidation: f-futuwe[(boowean, rawr deweteauthowization)] = fow {
+                i-iswastquoteofquotew <- isfinawquoteofquotew(tweet)
+                deweteauth <- v-vawidate(
+                  dewetetweetscontext(
+                    b-byusewid = b-byusewid, ^^
+                    authenticatedusewid = authenticatedusewid, rawr
+                    t-tweetauthowid = g-getusewid(tweet), nyaa~~
+                    u-usews = usews, nyaa~~
+                    isusewewasuwe = w-wequest.isusewewasuwe, o.O
+                    e-expectedewasuweusewid = wequest.expectedusewid, òωó
+                    t-tweetisbounced = tweetisbounced, ^^;;
+                    i-isbouncedewete = w-wequest.isbouncedewete
                   )
                 )
-                _ <- optSourceTweet match {
-                  case Some(sourceTweet) if !isUnretweetEdits =>
-                    // If this is a retweet and this deletion was not triggered by
-                    // unretweetEdits, unretweet edits of the source Tweet
-                    // before deleting the retweet.
+                _ <- o-optsouwcetweet match {
+                  c-case some(souwcetweet) if !isunwetweetedits =>
+                    // if t-this is a wetweet and this dewetion was nyot twiggewed by
+                    // unwetweetedits, rawr unwetweet edits of the souwce tweet
+                    // b-befowe deweting the wetweet. ^•ﻌ•^
                     //
-                    // deleteAuth will always contain a byUserId except for erasure deletion,
-                    // in which case the retweets will be deleted individually.
-                    deleteAuth.byUserId match {
-                      case Some(userId) =>
-                        unretweetEdits(sourceTweet.editControl, sourceTweet.id, userId)
-                      case None => Future.Unit
+                    // deweteauth wiww awways contain a byusewid except fow ewasuwe d-dewetion, nyaa~~
+                    // in which case the wetweets w-wiww be deweted individuawwy. nyaa~~
+                    d-deweteauth.byusewid match {
+                      case some(usewid) =>
+                        u-unwetweetedits(souwcetweet.editcontwow, 😳😳😳 souwcetweet.id, 😳😳😳 u-usewid)
+                      case none => f-futuwe.unit
                     }
-                  case _ => Future.Unit
+                  c-case _ => futuwe.unit
                 }
-              } yield {
-                (isLastQuoteOfQuoter, deleteAuth)
+              } yiewd {
+                (iswastquoteofquotew, σωσ d-deweteauth)
               }
 
-              validation
-                .flatMap {
-                  case (isLastQuoteOfQuoter: Boolean, deleteAuth: DeleteAuthorization) =>
-                    val isAdminDelete = deleteAuth match {
-                      case AuthorizedByAdmin(_) => true
-                      case _ => false
+              vawidation
+                .fwatmap {
+                  case (iswastquoteofquotew: boowean, o.O d-deweteauth: deweteauthowization) =>
+                    v-vaw isadmindewete = d-deweteauth match {
+                      case authowizedbyadmin(_) => t-twue
+                      c-case _ => fawse
                     }
 
-                    val event =
-                      DeleteTweet.Event(
-                        tweet = tweet,
-                        timestamp = Time.now,
-                        user = users.get(getUserId(tweet)),
-                        byUserId = deleteAuth.byUserId,
-                        auditPassthrough = Some(auditDeleteTweet),
-                        isUserErasure = request.isUserErasure,
-                        isBounceDelete = request.isBounceDelete && tweetIsBounced,
-                        isLastQuoteOfQuoter = isLastQuoteOfQuoter,
-                        isAdminDelete = isAdminDelete
+                    vaw event =
+                      dewetetweet.event(
+                        t-tweet = tweet, σωσ
+                        timestamp = time.now, nyaa~~
+                        usew = u-usews.get(getusewid(tweet)), rawr x3
+                        byusewid = deweteauth.byusewid, (///ˬ///✿)
+                        auditpassthwough = some(auditdewetetweet), o.O
+                        i-isusewewasuwe = w-wequest.isusewewasuwe, òωó
+                        isbouncedewete = w-wequest.isbouncedewete && t-tweetisbounced, OwO
+                        iswastquoteofquotew = i-iswastquoteofquotew, σωσ
+                        isadmindewete = isadmindewete
                       )
-                    val numberOfEdits: Int = tweet.editControl
-                      .collect {
-                        case EditControl.Initial(initial) =>
-                          initial.editTweetIds.count(_ != tweet.id)
+                    vaw nyumbewofedits: int = tweet.editcontwow
+                      .cowwect {
+                        c-case editcontwow.initiaw(initiaw) =>
+                          i-initiaw.edittweetids.count(_ != tweet.id)
                       }
-                      .getOrElse(0)
-                    cascadeEditDeletesEnqueued.incr(numberOfEdits)
-                    tweetStore
-                      .deleteTweet(event)
-                      .map(_ => DeleteTweetResult(tweetId, TweetDeleteState.Ok))
+                      .getowewse(0)
+                    c-cascadeeditdewetesenqueued.incw(numbewofedits)
+                    t-tweetstowe
+                      .dewetetweet(event)
+                      .map(_ => dewetetweetwesuwt(tweetid, nyaa~~ t-tweetdewetestate.ok))
                 }
-                .onFailure { _ =>
-                  deleteTweetsFailures.incr()
+                .onfaiwuwe { _ =>
+                  dewetetweetsfaiwuwes.incw()
                 }
-                .handle {
-                  case ExpectedUserIdMismatchException =>
-                    DeleteTweetResult(tweetId, TweetDeleteState.ExpectedUserIdMismatch)
-                  case DeleteTweetsPermissionException =>
-                    DeleteTweetResult(tweetId, TweetDeleteState.PermissionError)
+                .handwe {
+                  case e-expectedusewidmismatchexception =>
+                    dewetetweetwesuwt(tweetid, OwO tweetdewetestate.expectedusewidmismatch)
+                  c-case d-dewetetweetspewmissionexception =>
+                    dewetetweetwesuwt(tweetid, ^^ tweetdewetestate.pewmissionewwow)
                 }
           }
         }
       }
-    } yield results
+    } y-yiewd wesuwts
   }
 
-  private def isFinalQuoteOfQuoter(tweet: Tweet): Future[Boolean] = {
-    tweet.quotedTweet match {
-      case Some(qt) =>
-        Stitch.run {
-          lastQuoteOfQuoterRepo
-            .apply(qt.tweetId, getUserId(tweet))
-            .liftToTry
-            .map(_.getOrElse(false))
+  pwivate def isfinawquoteofquotew(tweet: tweet): futuwe[boowean] = {
+    tweet.quotedtweet match {
+      case some(qt) =>
+        s-stitch.wun {
+          w-wastquoteofquotewwepo
+            .appwy(qt.tweetid, (///ˬ///✿) getusewid(tweet))
+            .wifttotwy
+            .map(_.getowewse(fawse))
         }
-      case None => Future(false)
+      case n-nyone => futuwe(fawse)
     }
   }
 
   /**
-   *  Validations for the public deleteTweets endpoint.
-   *   - ensures that the byUserId user can be found and is in the correct user state
-   *   - ensures that the tweet is being deleted by the tweet's owner, or by an admin
-   *  If there is a validation error, a future.exception is returned
+   *  v-vawidations fow the pubwic dewetetweets e-endpoint. σωσ
+   *   - ensuwes that the byusewid usew can be found and is in the cowwect usew s-state
+   *   - ensuwes that the tweet is being deweted by the tweet's ownew, rawr x3 ow b-by an admin
+   *  i-if thewe is a-a vawidation ewwow, (ˆ ﻌ ˆ)♡ a futuwe.exception is wetuwned
    *
-   *  If the delete request is part of a user erasure, validations are relaxed (the User is allowed to be missing).
+   *  if t-the dewete wequest i-is pawt of a u-usew ewasuwe, 🥺 vawidations awe wewaxed (the u-usew is awwowed to be m-missing). (⑅˘꒳˘)
    */
-  val deleteTweetsValidator: ValidateDeleteTweets =
-    FutureArrow { context =>
-      if (context.isUserErasure) {
-        validateTweetsForUserErasureDaemon(context)
-      } else {
-        validateTweetsForPublicDelete(context)
+  vaw dewetetweetsvawidatow: vawidatedewetetweets =
+    f-futuweawwow { context =>
+      i-if (context.isusewewasuwe) {
+        vawidatetweetsfowusewewasuwedaemon(context)
+      } ewse {
+        v-vawidatetweetsfowpubwicdewete(context)
       }
     }
 
-  override def deleteTweets(
-    request: DeleteTweetsRequest,
-    isUnretweetEdits: Boolean = false,
-  ): Future[Seq[DeleteTweetResult]] = {
+  ovewwide d-def dewetetweets(
+    w-wequest: dewetetweetswequest, 😳😳😳
+    i-isunwetweetedits: b-boowean = fawse, /(^•ω•^)
+  ): f-futuwe[seq[dewetetweetwesuwt]] = {
 
-    // For comparison testing we only want to compare the DeleteTweetsRequests that are generated
-    // in DeleteTweets path and not the call that comes from the Unretweet path
-    val context = TwitterContext()
-    internalDeleteTweets(
-      request,
-      byUserId = request.byUserId.orElse(context.flatMap(_.userId)),
-      context.flatMap(_.authenticatedUserId),
-      deleteTweetsValidator,
-      isUnretweetEdits
+    // fow c-compawison testing we onwy want t-to compawe the d-dewetetweetswequests that awe genewated
+    // in dewetetweets path a-and nyot the caww that comes fwom the unwetweet path
+    vaw context = twittewcontext()
+    intewnawdewetetweets(
+      wequest, >w<
+      byusewid = w-wequest.byusewid.owewse(context.fwatmap(_.usewid)), ^•ﻌ•^
+      context.fwatmap(_.authenticatedusewid),
+      dewetetweetsvawidatow, 😳😳😳
+      i-isunwetweetedits
     )
   }
 
-  // Cascade delete tweet is the logic for removing tweets that are detached
-  // from their dependency which has been deleted. They are already filtered
-  // out from serving, so this operation reconciles storage with the view
-  // presented by Tweetypie.
-  // This RPC call is delegated from daemons or batch jobs. Currently there
-  // are two use-cases when this call is issued:
-  // *   Deleting detached retweets after the source tweet was deleted.
-  //     This is done through RetweetsDeletion daemon and the
-  //     CleanupDetachedRetweets job.
-  // *   Deleting edits of an initial tweet that has been deleted.
-  //     This is done by CascadedEditedTweetDelete daemon.
-  //     Note that, when serving the original delete request for an edit,
-  //     the initial tweet is only deleted, which makes all edits hidden.
-  override def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit] = {
-    val contextViewer = TwitterContext()
-    getTweet(request.tweetId)
-      .transform {
-        case Throw(
-              FilteredState.Unavailable.TweetDeleted | FilteredState.Unavailable.BounceDeleted) =>
-          // The retweet or edit was already deleted via some other mechanism
-          Future.Unit
+  // cascade d-dewete tweet is the wogic fow wemoving tweets t-that awe detached
+  // fwom theiw dependency which h-has been deweted. :3 they awe awweady fiwtewed
+  // o-out fwom sewving, (ꈍᴗꈍ) so this opewation weconciwes s-stowage with the view
+  // pwesented by tweetypie. ^•ﻌ•^
+  // t-this w-wpc caww is dewegated fwom daemons ow batch jobs. >w< c-cuwwentwy thewe
+  // a-awe two use-cases when t-this caww is issued:
+  // *   d-deweting detached wetweets aftew the s-souwce tweet was deweted. ^^;;
+  //     this is done thwough wetweetsdewetion d-daemon and the
+  //     cweanupdetachedwetweets job. (✿oωo)
+  // *   d-deweting e-edits of an initiaw t-tweet that has been deweted. òωó
+  //     this is done by cascadededitedtweetdewete d-daemon. ^^
+  //     nyote that, w-when sewving the owiginaw dewete w-wequest fow a-an edit, ^^
+  //     the initiaw tweet is onwy deweted, rawr which makes aww edits hidden. XD
+  ovewwide def c-cascadeddewetetweet(wequest: c-cascadeddewetetweetwequest): futuwe[unit] = {
+    vaw contextviewew = t-twittewcontext()
+    gettweet(wequest.tweetid)
+      .twansfowm {
+        case thwow(
+              f-fiwtewedstate.unavaiwabwe.tweetdeweted | f-fiwtewedstate.unavaiwabwe.bouncedeweted) =>
+          // t-the w-wetweet ow edit w-was awweady deweted v-via some othew mechanism
+          futuwe.unit
 
-        case Throw(NotFound) =>
-          cascadedDeleteTweetTweetNotFound.incr()
-          val recentlyCreated =
-            if (SnowflakeId.isSnowflakeId(request.tweetId)) {
-              val age = Time.now - SnowflakeId(request.tweetId).time
-              cascadedDeleteTweetTweetNotFoundAge.add(age.inMilliseconds)
-              age < MaxCascadedDeleteTweetTemporaryInconsistencyAge
-            } else {
-              false
+        c-case t-thwow(notfound) =>
+          c-cascadeddewetetweettweetnotfound.incw()
+          v-vaw wecentwycweated =
+            i-if (snowfwakeid.issnowfwakeid(wequest.tweetid)) {
+              v-vaw age = time.now - snowfwakeid(wequest.tweetid).time
+              c-cascadeddewetetweettweetnotfoundage.add(age.inmiwwiseconds)
+              a-age < maxcascadeddewetetweettempowawyinconsistencyage
+            } e-ewse {
+              fawse
             }
 
-          if (recentlyCreated) {
-            // Treat the NotFound as a temporary condition, most
-            // likely due to replication lag.
-            Future.exception(CascadedDeleteNotAvailable(request.tweetId))
-          } else {
-            // Treat the NotFound as a permanent inconsistenty, either
-            // spurious edges in tflock or invalid data in Manhattan. This
-            // was happening a few times an hour during the time that we
-            // were not treating it specially. For now, we will just log that
-            // it happened, but in the longer term, it would be good
-            // to collect this data and repair the corruption.
-            log.warn(
-              Seq(
-                "cascaded_delete_tweet_old_not_found",
-                request.tweetId,
-                request.cascadedFromTweetId
-              ).mkString("\t")
+          if (wecentwycweated) {
+            // tweat t-the nyotfound as a tempowawy condition, rawr most
+            // w-wikewy due to wepwication wag. 😳
+            futuwe.exception(cascadeddewetenotavaiwabwe(wequest.tweetid))
+          } e-ewse {
+            // t-tweat the nyotfound as a pewmanent inconsistenty, 🥺 eithew
+            // s-spuwious edges i-in tfwock ow invawid data in m-manhattan. (U ᵕ U❁) this
+            // was h-happening a few times an houw duwing the time that we
+            // w-wewe nyot t-tweating it speciawwy. 😳 fow nyow, we wiww just w-wog that
+            // i-it happened, 🥺 but in the wongew tewm, (///ˬ///✿) it w-wouwd be good
+            // to cowwect this data and wepaiw the cowwuption. mya
+            wog.wawn(
+              s-seq(
+                "cascaded_dewete_tweet_owd_not_found", (✿oωo)
+                wequest.tweetid,
+                wequest.cascadedfwomtweetid
+              ).mkstwing("\t")
             )
-            Future.Done
+            f-futuwe.done
           }
 
-        // Any other FilteredStates should not be thrown because of
-        // the options that we used to load the tweet, so we will just
-        // let them bubble up as an internal server error
-        case Throw(other) =>
-          Future.exception(other)
+        // a-any othew f-fiwtewedstates shouwd nyot be thwown b-because of
+        // t-the o-options that we u-used to woad the t-tweet, ^•ﻌ•^ so we wiww just
+        // wet them bubbwe u-up as an intewnaw s-sewvew ewwow
+        c-case thwow(othew) =>
+          futuwe.exception(othew)
 
-        case Return(tweet) =>
-          Future
+        c-case wetuwn(tweet) =>
+          f-futuwe
             .join(
-              isFinalQuoteOfQuoter(tweet),
-              getUser(getUserId(tweet))
+              i-isfinawquoteofquotew(tweet), o.O
+              getusew(getusewid(tweet))
             )
-            .flatMap {
-              case (isLastQuoteOfQuoter, user) =>
-                if (user.isEmpty) {
-                  cascadedDeleteTweetUserNotFound.incr()
+            .fwatmap {
+              c-case (iswastquoteofquotew, o.O u-usew) =>
+                i-if (usew.isempty) {
+                  c-cascadeddewetetweetusewnotfound.incw()
                 }
-                val tweetSourceId = getShare(tweet).map(_.sourceStatusId)
-                val initialEditId = tweet.editControl.collect {
-                  case EditControl.Edit(edit) => edit.initialTweetId
+                v-vaw tweetsouwceid = g-getshawe(tweet).map(_.souwcestatusid)
+                vaw initiaweditid = t-tweet.editcontwow.cowwect {
+                  c-case editcontwow.edit(edit) => edit.initiawtweetid
                 }
-                if (initialEditId.contains(request.cascadedFromTweetId)) {
-                  cascadeEditDeleteTweets.incr()
+                if (initiaweditid.contains(wequest.cascadedfwomtweetid)) {
+                  cascadeeditdewetetweets.incw()
                 }
-                if (tweetSourceId.contains(request.cascadedFromTweetId)
-                  || initialEditId.contains(request.cascadedFromTweetId)) {
-                  cascadedDeleteTweetSourceMatch.incr()
-                  val deleteEvent =
-                    DeleteTweet.Event(
-                      tweet = tweet,
-                      timestamp = Time.now,
-                      user = user,
-                      byUserId = contextViewer.flatMap(_.userId),
-                      cascadedFromTweetId = Some(request.cascadedFromTweetId),
-                      auditPassthrough = request.auditPassthrough,
-                      isUserErasure = false,
-                      // cascaded deletes of retweets or edits have not been through a bouncer flow,
-                      // so are not considered to be "bounce deleted".
-                      isBounceDelete = false,
-                      isLastQuoteOfQuoter = isLastQuoteOfQuoter,
-                      isAdminDelete = false
+                i-if (tweetsouwceid.contains(wequest.cascadedfwomtweetid)
+                  || i-initiaweditid.contains(wequest.cascadedfwomtweetid)) {
+                  cascadeddewetetweetsouwcematch.incw()
+                  v-vaw deweteevent =
+                    d-dewetetweet.event(
+                      tweet = tweet, XD
+                      t-timestamp = t-time.now, ^•ﻌ•^
+                      u-usew = u-usew, ʘwʘ
+                      b-byusewid = c-contextviewew.fwatmap(_.usewid), (U ﹏ U)
+                      cascadedfwomtweetid = some(wequest.cascadedfwomtweetid), 😳😳😳
+                      auditpassthwough = w-wequest.auditpassthwough, 🥺
+                      isusewewasuwe = fawse, (///ˬ///✿)
+                      // cascaded dewetes of wetweets ow e-edits have nyot b-been thwough a bouncew fwow, (˘ω˘)
+                      // so awe nyot considewed to b-be "bounce deweted".
+                      i-isbouncedewete = fawse,
+                      iswastquoteofquotew = i-iswastquoteofquotew, :3
+                      isadmindewete = f-fawse
                     )
-                  tweetStore
-                    .deleteTweet(deleteEvent)
-                    .onFailure { _ =>
-                      if (initialEditId.contains(request.cascadedFromTweetId)) {
-                        cascadeEditDeleteFailures.incr()
+                  t-tweetstowe
+                    .dewetetweet(deweteevent)
+                    .onfaiwuwe { _ =>
+                      i-if (initiaweditid.contains(wequest.cascadedfwomtweetid)) {
+                        cascadeeditdewetefaiwuwes.incw()
                       }
                     }
-                } else {
-                  cascadedDeleteTweetSourceMismatch.incr()
-                  log.warn(
-                    Seq(
-                      "cascaded_from_tweet_id_source_mismatch",
-                      request.tweetId,
-                      request.cascadedFromTweetId,
-                      tweetSourceId.orElse(initialEditId).getOrElse("-")
-                    ).mkString("\t")
+                } ewse {
+                  cascadeddewetetweetsouwcemismatch.incw()
+                  w-wog.wawn(
+                    seq(
+                      "cascaded_fwom_tweet_id_souwce_mismatch", /(^•ω•^)
+                      wequest.tweetid, :3
+                      w-wequest.cascadedfwomtweetid, mya
+                      tweetsouwceid.owewse(initiaweditid).getowewse("-")
+                    ).mkstwing("\t")
                   )
-                  Future.Done
+                  f-futuwe.done
                 }
             }
       }
-      .onFailure(_ => cascadedDeleteTweetFailures.incr())
+      .onfaiwuwe(_ => cascadeddewetetweetfaiwuwes.incw())
   }
 
-  // Given a list of edit Tweet ids and a user id, find the retweet ids of those edit ids from the given user
-  private def editTweetIdRetweetsFromUser(
-    editTweetIds: Seq[TweetId],
-    byUserId: UserId
-  ): Future[Seq[TweetId]] = {
-    if (editTweetIds.isEmpty) {
-      Future.value(Seq())
-    } else {
-      getPerspectives(
-        Seq(tls.PerspectiveQuery(byUserId, editTweetIds))
-      ).map { res: Seq[PerspectiveResult] =>
-        res.headOption.toSeq
-          .flatMap(_.perspectives.flatMap(_.retweetId))
+  // given a wist of edit t-tweet ids and a usew id, XD find t-the wetweet ids of those edit ids fwom the given u-usew
+  pwivate def edittweetidwetweetsfwomusew(
+    e-edittweetids: seq[tweetid], (///ˬ///✿)
+    byusewid: usewid
+  ): futuwe[seq[tweetid]] = {
+    if (edittweetids.isempty) {
+      futuwe.vawue(seq())
+    } ewse {
+      g-getpewspectives(
+        s-seq(tws.pewspectivequewy(byusewid, 🥺 edittweetids))
+      ).map { w-wes: s-seq[pewspectivewesuwt] =>
+        wes.headoption.toseq
+          .fwatmap(_.pewspectives.fwatmap(_.wetweetid))
       }
     }
   }
 
-  /* This function is called from three places -
-   * 1. When Tweetypie gets a request to retweet the latest version of an edit chain, all the
-   * previous revisons should be unretweeted.
-   * i.e. On Retweet of the latest tweet - unretweets all the previous revisions for this user.
-   * - create A
-   * - retweet A'(retweet of A)
-   * - create edit B(edit of A)
-   * - retweet B' => Deletes A'
+  /* this function i-is cawwed fwom thwee pwaces -
+   * 1. o.O when tweetypie gets a-a wequest to wetweet t-the watest v-vewsion of an edit c-chain, mya aww the
+   * pwevious wevisons shouwd be unwetweeted. rawr x3
+   * i.e. on wetweet o-of the watest t-tweet - unwetweets aww the pwevious wevisions fow this usew. 😳
+   * - c-cweate a
+   * - wetweet a'(wetweet o-of a)
+   * - c-cweate edit b-b(edit of a)
+   * - wetweet b' => dewetes a'
    *
-   * 2. When Tweetypie gets an unretweet request for a source tweet that is an edit tweet, all
-   * the versions of the edit chain is retweeted.
-   * i.e. On unretweet of any version in the edit chain - unretweets all the revisions for this user
-   * - create A
-   * - retweet A'
-   * - create B
-   * - unretweet B => Deletes A' (& also any B' if it existed)
+   * 2. 😳😳😳 when tweetypie gets an unwetweet wequest f-fow a souwce tweet that is a-an edit tweet, >_< aww
+   * the vewsions of the edit chain is wetweeted. >w<
+   * i-i.e. rawr x3 on unwetweet of a-any vewsion in the edit chain - unwetweets aww the w-wevisions fow t-this usew
+   * - c-cweate a
+   * - w-wetweet a'
+   * - c-cweate b
+   * - unwetweet b => d-dewetes a' (& a-awso any b' if it existed)
    *
-   * 3. When Tweetypie gets a delete request for a retweet, say A1. & if A happens to the source
-   * tweet for A1 & if A is an edit tweet, then the entire edit chain should be unretweeted & not
-   * A. i.e. On delete of a retweet - unretweet all the revisions for this user.
-   * - create A
-   * - retweet A'
-   * - create B
-   * - delete A' => Deletes A' (& also any B' if it existed)
+   * 3. XD w-when tweetypie gets a dewete wequest fow a-a wetweet, ^^ say a1. & if a happens t-to the souwce
+   * t-tweet fow a1 & if a is an e-edit tweet, (✿oωo) then t-the entiwe edit chain shouwd be unwetweeted & nyot
+   * a. >w< i.e. 😳😳😳 o-on dewete of a w-wetweet - unwetweet a-aww the wevisions f-fow this usew.
+   * - cweate a
+   * - wetweet a'
+   * - cweate b-b
+   * - dewete a' => dewetes a' (& awso any b-b' if it existed)
    *
-   * The following function has two failure scenarios -
-   * i. when it fails to get perspectives of any of the edit tweets.
-   * ii. the deletion of any of the retweets of these edits fail.
+   * the fowwowing function has two faiwuwe s-scenawios -
+   * i. (ꈍᴗꈍ) when it faiws to get pewspectives of any o-of the edit tweets. (✿oωo)
+   * ii. (˘ω˘) t-the dewetion of a-any of the wetweets o-of these edits faiw. nyaa~~
    *
-   * In either of this scenario, we fail the entire request & the error bubbles up to the top.
-   * Note: The above unretweet of edits only happens for the current user.
-   * In normal circumstances, a maximum of one Tweet in the edit chain will have been retweeted,
-   * but we don't know which one it was. Additionally, there may be circumstances where
-   * unretweet failed, and we end up with multiple versions retweeted. For these reasons,
-   * we always unretweet all the revisions (except for `excludedTweetId`).
-   * This is a no-op if none of these versions have been retweeted.
+   * i-in eithew of t-this scenawio, ( ͡o ω ͡o ) we faiw the entiwe w-wequest & the e-ewwow bubbwes up t-to the top. 🥺
+   * n-nyote: the above unwetweet of e-edits onwy happens f-fow the cuwwent u-usew. (U ﹏ U)
+   * in nyowmaw ciwcumstances, ( ͡o ω ͡o ) a-a maximum of one tweet in the edit chain wiww have been wetweeted, (///ˬ///✿)
+   * but we don't know w-which one it was. (///ˬ///✿) a-additionawwy, (✿oωo) thewe may be ciwcumstances w-whewe
+   * unwetweet faiwed, (U ᵕ U❁) and we e-end up with muwtipwe v-vewsions wetweeted. f-fow these w-weasons, ʘwʘ
+   * we awways unwetweet a-aww the wevisions (except fow `excwudedtweetid`). ʘwʘ
+   * this i-is a nyo-op if n-nyone of these vewsions have been wetweeted. XD
    * */
-  override def unretweetEdits(
-    optEditControl: Option[EditControl],
-    excludedTweetId: TweetId,
-    byUserId: UserId
-  ): Future[Unit] = {
+  ovewwide d-def unwetweetedits(
+    opteditcontwow: o-option[editcontwow], (✿oωo)
+    excwudedtweetid: tweetid,
+    b-byusewid: usewid
+  ): futuwe[unit] = {
 
-    val editTweetIds: Seq[TweetId] =
-      EditControlUtil.getEditTweetIds(optEditControl).get().filter(_ != excludedTweetId)
+    v-vaw edittweetids: seq[tweetid] =
+      editcontwowutiw.getedittweetids(opteditcontwow).get().fiwtew(_ != e-excwudedtweetid)
 
-    (editTweetIdRetweetsFromUser(editTweetIds, byUserId).flatMap { tweetIds =>
-      if (tweetIds.nonEmpty) {
-        deleteTweets(
-          DeleteTweetsRequest(tweetIds = tweetIds, byUserId = Some(byUserId)),
-          isUnretweetEdits = true
+    (edittweetidwetweetsfwomusew(edittweetids, byusewid).fwatmap { t-tweetids =>
+      if (tweetids.nonempty) {
+        d-dewetetweets(
+          d-dewetetweetswequest(tweetids = tweetids, ^•ﻌ•^ byusewid = some(byusewid)), ^•ﻌ•^
+          i-isunwetweetedits = twue
         )
-      } else {
-        Future.Nil
+      } ewse {
+        f-futuwe.niw
       }
     }).unit
   }

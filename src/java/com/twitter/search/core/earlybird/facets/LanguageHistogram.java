@@ -1,104 +1,104 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.util.Arrays;
-import java.util.Map;
+impowt java.utiw.awways;
+i-impowt j-java.utiw.map;
 
-import com.google.common.collect.ImmutableMap;
+i-impowt com.googwe.common.cowwect.immutabwemap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
+i-impowt c-com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
 
 /**
- * A util class to build a language histogram
+ * a utiw cwass to buiwd a wanguage histogwam
  */
-public class LanguageHistogram {
-  private static final Logger LOG = LoggerFactory.getLogger(LanguageHistogram.class);
+pubwic c-cwass wanguagehistogwam {
+  pwivate static finaw w-woggew wog = woggewfactowy.getwoggew(wanguagehistogwam.cwass);
 
-  public static final LanguageHistogram EMPTY_HISTOGRAM = new LanguageHistogram() {
-    // Let's make this immutable for safety.
-    @Override public void clear() {
-      throw new UnsupportedOperationException();
+  pubwic static f-finaw wanguagehistogwam empty_histogwam = nyew wanguagehistogwam() {
+    // w-wet's make this immutabwe f-fow safety. (ꈍᴗꈍ)
+    @ovewwide p-pubwic void cweaw() {
+      thwow nyew unsuppowtedopewationexception();
     }
 
-    @Override public void increment(int languageID) {
-      throw new UnsupportedOperationException();
+    @ovewwide pubwic void incwement(int w-wanguageid) {
+      thwow nyew unsuppowtedopewationexception();
     }
 
-    @Override public void add(int languageID, int value) {
-      throw new UnsupportedOperationException();
+    @ovewwide pubwic void add(int w-wanguageid, 😳 int vawue) {
+      t-thwow nyew unsuppowtedopewationexception();
     }
 
-    @Override public void addAll(LanguageHistogram histogram) {
-      throw new UnsupportedOperationException();
+    @ovewwide p-pubwic void addaww(wanguagehistogwam h-histogwam) {
+      t-thwow nyew unsuppowtedopewationexception();
     }
   };
 
-  private final int[] languageHistogram = new int[ThriftLanguage.values().length];
+  pwivate finaw i-int[] wanguagehistogwam = nyew int[thwiftwanguage.vawues().wength];
 
-  public int[] getLanguageHistogram() {
-    return languageHistogram;
+  p-pubwic int[] getwanguagehistogwam() {
+    wetuwn wanguagehistogwam;
   }
 
   /**
-   * Returns this histogram represented as a language->count map.
+   * wetuwns this histogwam wepwesented as a-a wanguage->count map. 😳😳😳
    */
-  public Map<ThriftLanguage, Integer> getLanguageHistogramAsMap() {
-    ImmutableMap.Builder<ThriftLanguage, Integer> builder = ImmutableMap.builder();
-    for (int i = 0; i < languageHistogram.length; i++) {
-      // ThriftLanguage.findByValue() might return null, which should fall back to UNKNOWN.
-      ThriftLanguage lang = ThriftLanguage.findByValue(i);
-      lang = lang == null ? ThriftLanguage.UNKNOWN : lang;
-      builder.put(lang, languageHistogram[i]);
+  p-pubwic map<thwiftwanguage, mya i-integew> g-getwanguagehistogwamasmap() {
+    immutabwemap.buiwdew<thwiftwanguage, integew> buiwdew = immutabwemap.buiwdew();
+    f-fow (int i-i = 0; i < wanguagehistogwam.wength; i++) {
+      // t-thwiftwanguage.findbyvawue() m-might wetuwn nyuww, mya which s-shouwd faww back to unknown. (⑅˘꒳˘)
+      t-thwiftwanguage wang = thwiftwanguage.findbyvawue(i);
+      wang = w-wang == nyuww ? thwiftwanguage.unknown : w-wang;
+      buiwdew.put(wang, w-wanguagehistogwam[i]);
     }
-    return builder.build();
+    w-wetuwn buiwdew.buiwd();
   }
 
-  public void clear() {
-    Arrays.fill(languageHistogram, 0);
+  pubwic void cweaw() {
+    awways.fiww(wanguagehistogwam, (U ﹏ U) 0);
   }
 
-  public void increment(int languageId) {
-    if (isValidLanguageId(languageId)) {
-      languageHistogram[languageId]++;
-    }
-  }
-
-  public void increment(ThriftLanguage language) {
-    increment(language.getValue());
-  }
-
-  public void add(int languageId, int value) {
-    if (isValidLanguageId(languageId)) {
-      languageHistogram[languageId] += value;
+  pubwic void incwement(int wanguageid) {
+    i-if (isvawidwanguageid(wanguageid)) {
+      w-wanguagehistogwam[wanguageid]++;
     }
   }
 
-  public void add(ThriftLanguage language, int value) {
-    add(language.getValue(), value);
+  pubwic void i-incwement(thwiftwanguage w-wanguage) {
+    i-incwement(wanguage.getvawue());
+  }
+
+  pubwic void add(int wanguageid, mya int vawue) {
+    i-if (isvawidwanguageid(wanguageid)) {
+      wanguagehistogwam[wanguageid] += vawue;
+    }
+  }
+
+  pubwic void add(thwiftwanguage wanguage, ʘwʘ int vawue) {
+    a-add(wanguage.getvawue(), (˘ω˘) vawue);
   }
 
   /**
-   * Adds all entries from the provided histogram to this histogram.
+   * a-adds a-aww entwies fwom t-the pwovided histogwam to this h-histogwam. (U ﹏ U)
    */
-  public void addAll(LanguageHistogram histogram) {
-    if (histogram == EMPTY_HISTOGRAM) {
-      return;
+  p-pubwic void a-addaww(wanguagehistogwam h-histogwam) {
+    if (histogwam == empty_histogwam) {
+      w-wetuwn;
     }
-    for (int i = 0; i < languageHistogram.length; i++) {
-      languageHistogram[i] += histogram.languageHistogram[i];
+    f-fow (int i-i = 0; i < wanguagehistogwam.wength; i-i++) {
+      w-wanguagehistogwam[i] += histogwam.wanguagehistogwam[i];
     }
   }
 
-  // Check for out of bound languages.  If a language is out of bounds, we don't want it
-  // to cause the entire search to fail.
-  private boolean isValidLanguageId(int languageId) {
-    if (languageId < languageHistogram.length) {
-      return true;
-    } else {
-      LOG.error("Language id " + languageId + " out of range");
-      return false;
+  // check fow out of bound w-wanguages. ^•ﻌ•^  if a wanguage is out of bounds, (˘ω˘) we don't want it
+  // to cause the entiwe seawch to f-faiw. :3
+  pwivate boowean isvawidwanguageid(int wanguageid) {
+    if (wanguageid < wanguagehistogwam.wength) {
+      w-wetuwn twue;
+    } e-ewse {
+      w-wog.ewwow("wanguage id " + wanguageid + " o-out of wange");
+      w-wetuwn fawse;
     }
   }
 }

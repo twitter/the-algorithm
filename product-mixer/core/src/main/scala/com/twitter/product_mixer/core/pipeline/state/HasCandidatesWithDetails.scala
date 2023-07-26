@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.twittew.pwoduct_mixew.cowe.pipewine.state
 
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.decowation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
 
-trait HasCandidatesWithDetails[T] {
-  def candidatesWithDetails: Seq[CandidateWithDetails]
-  def updateCandidatesWithDetails(newCandidates: Seq[CandidateWithDetails]): T
+t-twait h-hascandidateswithdetaiws[t] {
+  d-def candidateswithdetaiws: s-seq[candidatewithdetaiws]
+  d-def updatecandidateswithdetaiws(newcandidates: s-seq[candidatewithdetaiws]): t-t
 
-  def updateDecorations(decoration: Seq[Decoration]): T
+  def updatedecowations(decowation: seq[decowation]): t
 }

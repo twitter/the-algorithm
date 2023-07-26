@@ -1,53 +1,53 @@
-package com.twitter.representation_manager.config
+package com.twittew.wepwesentation_managew.config
 
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.util.Duration
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+i-impowt c-com.twittew.utiw.duwation
 
 /*
  * --------------------------------------------
- * PLEASE NOTE:
- * Having in-memory cache is not necessarily a free performance win, anyone considering it should
- * investigate rather than blindly enabling it
+ * p-pwease nyote:
+ * h-having in-memowy c-cache is nyot n-necessawiwy a fwee pewfowmance win, mya anyone considewing it shouwd
+ * investigate w-wathew than bwindwy enabwing it
  * --------------------------------------------
  * */
 
-sealed trait InMemoryCacheParams
+seawed twait i-inmemowycachepawams
 
 /*
- * This holds params that is required to set up a in-mem cache for a single embedding store
+ * this howds pawams t-that is wequiwed to set up a in-mem cache fow a singwe embedding s-stowe
  */
-case class EnabledInMemoryCacheParams(
-  ttl: Duration,
-  maxKeys: Int,
-  cacheName: String)
-  extends InMemoryCacheParams
-object DisabledInMemoryCacheParams extends InMemoryCacheParams
+case cwass enabwedinmemowycachepawams(
+  t-ttw: duwation, 😳
+  m-maxkeys: int, -.-
+  cachename: stwing)
+  extends inmemowycachepawams
+object disabwedinmemowycachepawams e-extends inmemowycachepawams
 
 /*
- * This is the class for the in-memory cache config. Client could pass in their own cacheParamsMap to
- * create a new InMemoryCacheConfig instead of using the DefaultInMemoryCacheConfig object below
+ * this is the cwass fow the in-memowy c-cache config. cwient couwd pass i-in theiw own cachepawamsmap t-to
+ * c-cweate a nyew i-inmemowycacheconfig instead of using the defauwtinmemowycacheconfig o-object bewow
  * */
-class InMemoryCacheConfig(
-  cacheParamsMap: Map[
-    (EmbeddingType, ModelVersion),
-    InMemoryCacheParams
-  ] = Map.empty) {
+cwass inmemowycacheconfig(
+  cachepawamsmap: m-map[
+    (embeddingtype, 🥺 modewvewsion), o.O
+    inmemowycachepawams
+  ] = map.empty) {
 
-  def getCacheSetup(
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): InMemoryCacheParams = {
-    // When requested embedding type doesn't exist, we return DisabledInMemoryCacheParams
-    cacheParamsMap.getOrElse((embeddingType, modelVersion), DisabledInMemoryCacheParams)
+  def getcachesetup(
+    embeddingtype: e-embeddingtype, /(^•ω•^)
+    modewvewsion: m-modewvewsion
+  ): i-inmemowycachepawams = {
+    // w-when wequested embedding type doesn't exist, nyaa~~ we wetuwn disabwedinmemowycachepawams
+    c-cachepawamsmap.getowewse((embeddingtype, nyaa~~ m-modewvewsion), :3 disabwedinmemowycachepawams)
   }
 }
 
 /*
- * Default config for the in-memory cache
- * Clients can directly import and use this one if they don't want to set up a customised config
+ * d-defauwt c-config fow the in-memowy cache
+ * c-cwients can diwectwy impowt a-and use this one if they don't want to set up a-a customised config
  * */
-object DefaultInMemoryCacheConfig extends InMemoryCacheConfig {
-  // set default to no in-memory caching
-  val cacheParamsMap = Map.empty
+object d-defauwtinmemowycacheconfig extends i-inmemowycacheconfig {
+  // s-set defauwt to nyo in-memowy caching
+  vaw cachepawamsmap = map.empty
 }

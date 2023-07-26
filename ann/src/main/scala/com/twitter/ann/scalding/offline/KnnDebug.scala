@@ -1,117 +1,117 @@
-package com.twitter.ann.scalding.offline
+package com.twittew.ann.scawding.offwine
 
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.cortex.ml.embeddings.common.{DataSourceManager, GraphEdge, Helpers, UserKind}
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors}
-import com.twitter.pluck.source.core_workflows.user_model.CondensedUserStateScalaDataset
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
+impowt c-com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.condensedusewstate
+i-impowt com.twittew.cowtex.mw.embeddings.common.{datasouwcemanagew, :3 g-gwaphedge, ( ͡o ω ͡o ) h-hewpews, mya usewkind}
+i-impowt com.twittew.mw.featuwestowe.wib.usewid
+i-impowt com.twittew.entityembeddings.neighbows.thwiftscawa.{entitykey, (///ˬ///✿) n-nyeawestneighbows}
+i-impowt com.twittew.pwuck.souwce.cowe_wowkfwows.usew_modew.condensedusewstatescawadataset
+impowt com.twittew.scawding._
+impowt com.twittew.scawding.typed.typedpipe
+impowt com.twittew.scawding_intewnaw.dawv2.daw
+impowt c-com.twittew.usewsouwce.snapshot.fwat.usewsouwcefwatscawadataset
+impowt com.twittew.usewsouwce.snapshot.fwat.thwiftscawa.fwatusew
 
-case class ConsumerAssoc(consumerId: UserId, assoc: List[String])
+case cwass c-consumewassoc(consumewid: usewid, (˘ω˘) a-assoc: wist[stwing])
 
-object KnnDebug {
+object knndebug {
 
-  def getConsumerAssociations(
-    graph: TypedPipe[GraphEdge[UserId, UserId]],
-    usernames: TypedPipe[(UserId, String)],
-    reducers: Int
-  ): TypedPipe[ConsumerAssoc] = {
-    graph
-      .groupBy(_.itemId)
-      .join(usernames).withReducers(reducers)
-      .values
+  def getconsumewassociations(
+    g-gwaph: typedpipe[gwaphedge[usewid, ^^;; usewid]], (✿oωo)
+    u-usewnames: typedpipe[(usewid, (U ﹏ U) s-stwing)], -.-
+    weducews: int
+  ): typedpipe[consumewassoc] = {
+    gwaph
+      .gwoupby(_.itemid)
+      .join(usewnames).withweducews(weducews)
+      .vawues
       .map {
-        case (edge: GraphEdge[UserId, UserId], producerScreenName: String) =>
-          ConsumerAssoc(consumerId = edge.consumerId, assoc = List(producerScreenName))
+        case (edge: gwaphedge[usewid, ^•ﻌ•^ u-usewid], rawr pwoducewscweenname: stwing) =>
+          consumewassoc(consumewid = edge.consumewid, (˘ω˘) assoc = w-wist(pwoducewscweenname))
       }
-      .groupBy(_.consumerId).withReducers(reducers)
-      .reduce[ConsumerAssoc] {
-        case (uFollow1: ConsumerAssoc, uFollow2: ConsumerAssoc) =>
-          ConsumerAssoc(consumerId = uFollow1.consumerId, assoc = uFollow1.assoc ++ uFollow2.assoc)
+      .gwoupby(_.consumewid).withweducews(weducews)
+      .weduce[consumewassoc] {
+        case (ufowwow1: c-consumewassoc, nyaa~~ u-ufowwow2: consumewassoc) =>
+          c-consumewassoc(consumewid = u-ufowwow1.consumewid, assoc = ufowwow1.assoc ++ u-ufowwow2.assoc)
       }
-      .values
+      .vawues
   }
 
   /**
-   * Write the neighbors and a set of follows to a tsv for easier analysis during debugging
-   * We take the set of users with between 25-50 follows and grab only those users
+   * wwite the nyeighbows and a-a set of fowwows to a tsv fow easiew anawysis duwing debugging
+   * we take the set of usews with b-between 25-50 fowwows and gwab o-onwy those usews
    *
-   * This returns 4 strings of the form:
-   * consumerId, state, followUserName<f>followUserName<f>followUserName, neighborName<n>neighborName<n>neighborName
+   * t-this w-wetuwns 4 stwings of the fowm:
+   * consumewid, UwU state, fowwowusewname<f>fowwowusewname<f>fowwowusewname, :3 n-nyeighbowname<n>neighbowname<n>neighbowname
    */
-  def getDebugTable(
-    neighborsPipe: TypedPipe[(EntityKey, NearestNeighbors)],
-    shards: Int,
-    reducers: Int,
-    limit: Int = 10000,
-    userDataset: Option[TypedPipe[FlatUser]] = None,
-    followDataset: Option[TypedPipe[GraphEdge[UserId, UserId]]] = None,
-    consumerStatesDataset: Option[TypedPipe[CondensedUserState]] = None,
-    minFollows: Int = 25,
-    maxFollows: Int = 50
+  def g-getdebugtabwe(
+    nyeighbowspipe: t-typedpipe[(entitykey, (⑅˘꒳˘) n-nyeawestneighbows)], (///ˬ///✿)
+    shawds: int, ^^;;
+    w-weducews: int, >_<
+    wimit: i-int = 10000, rawr x3
+    usewdataset: option[typedpipe[fwatusew]] = nyone, /(^•ω•^)
+    f-fowwowdataset: option[typedpipe[gwaphedge[usewid, :3 u-usewid]]] = none, (ꈍᴗꈍ)
+    consumewstatesdataset: o-option[typedpipe[condensedusewstate]] = n-nyone, /(^•ω•^)
+    minfowwows: int = 25, (⑅˘꒳˘)
+    maxfowwows: int = 50
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(String, String, String, String)] = {
+    impwicit datewange: datewange
+  ): typedpipe[(stwing, ( ͡o ω ͡o ) s-stwing, òωó stwing, (⑅˘꒳˘) s-stwing)] = {
 
-    val usersourcePipe: TypedPipe[FlatUser] = userDataset
-      .getOrElse(DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, dateRange).toTypedPipe)
+    vaw usewsouwcepipe: t-typedpipe[fwatusew] = u-usewdataset
+      .getowewse(daw.weadmostwecentsnapshot(usewsouwcefwatscawadataset, XD d-datewange).totypedpipe)
 
-    val followGraph: TypedPipe[GraphEdge[UserId, UserId]] = followDataset
-      .getOrElse(new DataSourceManager().getFollowGraph())
+    vaw fowwowgwaph: typedpipe[gwaphedge[usewid, -.- usewid]] = fowwowdataset
+      .getowewse(new datasouwcemanagew().getfowwowgwaph())
 
-    val consumerStates: TypedPipe[CondensedUserState] = consumerStatesDataset
-      .getOrElse(DAL.read(CondensedUserStateScalaDataset).toTypedPipe)
+    v-vaw consumewstates: typedpipe[condensedusewstate] = consumewstatesdataset
+      .getowewse(daw.wead(condensedusewstatescawadataset).totypedpipe)
 
-    val usernames: TypedPipe[(UserId, String)] = usersourcePipe.flatMap { flatUser =>
-      (flatUser.screenName, flatUser.id) match {
-        case (Some(name: String), Some(userId: Long)) => Some((UserId(userId), name))
-        case _ => None
+    vaw usewnames: typedpipe[(usewid, :3 stwing)] = usewsouwcepipe.fwatmap { f-fwatusew =>
+      (fwatusew.scweenname, nyaa~~ fwatusew.id) m-match {
+        c-case (some(name: s-stwing), 😳 some(usewid: w-wong)) => some((usewid(usewid), n-nyame))
+        c-case _ => nyone
       }
-    }.fork
+    }.fowk
 
-    val consumerFollows: TypedPipe[ConsumerAssoc] =
-      getConsumerAssociations(followGraph, usernames, reducers)
-        .filter { uFollow => (uFollow.assoc.size > minFollows && uFollow.assoc.size < maxFollows) }
+    v-vaw consumewfowwows: typedpipe[consumewassoc] =
+      getconsumewassociations(fowwowgwaph, (⑅˘꒳˘) usewnames, nyaa~~ w-weducews)
+        .fiwtew { u-ufowwow => (ufowwow.assoc.size > m-minfowwows && u-ufowwow.assoc.size < m-maxfowwows) }
 
-    val neighborGraph: TypedPipe[GraphEdge[UserId, UserId]] = neighborsPipe
-      .limit(limit)
-      .flatMap {
-        case (entityKey: EntityKey, neighbors: NearestNeighbors) =>
-          Helpers.optionalToLong(entityKey.id) match {
-            case Some(entityId: Long) =>
-              neighbors.neighbors.flatMap { neighbor =>
-                Helpers
-                  .optionalToLong(neighbor.neighbor.id)
-                  .map { neighborId =>
-                    GraphEdge[UserId, UserId](
-                      consumerId = UserId(entityId),
-                      itemId = UserId(neighborId),
-                      weight = 1.0F)
+    vaw nyeighbowgwaph: typedpipe[gwaphedge[usewid, OwO usewid]] = nyeighbowspipe
+      .wimit(wimit)
+      .fwatmap {
+        c-case (entitykey: entitykey, rawr x3 nyeighbows: nyeawestneighbows) =>
+          hewpews.optionawtowong(entitykey.id) match {
+            c-case some(entityid: wong) =>
+              nyeighbows.neighbows.fwatmap { nyeighbow =>
+                h-hewpews
+                  .optionawtowong(neighbow.neighbow.id)
+                  .map { n-nyeighbowid =>
+                    g-gwaphedge[usewid, XD usewid](
+                      consumewid = u-usewid(entityid), σωσ
+                      itemid = usewid(neighbowid), (U ᵕ U❁)
+                      w-weight = 1.0f)
                   }
               }
-            case None => List()
+            c-case nyone => wist()
           }
       }
-    val consumerNeighbors: TypedPipe[ConsumerAssoc] =
-      getConsumerAssociations(neighborGraph, usernames, reducers)
+    vaw consumewneighbows: typedpipe[consumewassoc] =
+      getconsumewassociations(neighbowgwaph, usewnames, (U ﹏ U) weducews)
 
-    consumerFollows
-      .groupBy(_.consumerId)
-      .join(consumerStates.groupBy { consumer => UserId(consumer.uid) }).withReducers(reducers)
-      .join(consumerNeighbors.groupBy(_.consumerId)).withReducers(reducers)
-      .values
+    c-consumewfowwows
+      .gwoupby(_.consumewid)
+      .join(consumewstates.gwoupby { consumew => u-usewid(consumew.uid) }).withweducews(weducews)
+      .join(consumewneighbows.gwoupby(_.consumewid)).withweducews(weducews)
+      .vawues
       .map {
-        case ((uFollow: ConsumerAssoc, state: CondensedUserState), uNeighbors: ConsumerAssoc) =>
+        case ((ufowwow: c-consumewassoc, :3 s-state: condensedusewstate), ( ͡o ω ͡o ) uneighbows: consumewassoc) =>
           (
-            UserKind.stringInjection(uFollow.consumerId),
-            state.state.toString,
-            uFollow.assoc mkString "<f>",
-            uNeighbors.assoc mkString "<n>")
+            usewkind.stwinginjection(ufowwow.consumewid), σωσ
+            s-state.state.tostwing, >w<
+            u-ufowwow.assoc mkstwing "<f>", 😳😳😳
+            uneighbows.assoc m-mkstwing "<n>")
       }
-      .shard(shards)
+      .shawd(shawds)
   }
 }

@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.reaction
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.weaction
 
-sealed abstract class TimelineReactionExecution
+seawed abstwact cwass t-timewineweactionexecution
 
-case class ImmediateTimelineReaction(key: String) extends TimelineReactionExecution
+c-case cwass immediatetimewineweaction(key: s-stwing) e-extends timewineweactionexecution
 
-case class RemoteTimelineReaction(
-  requestParams: Map[String, String],
-  timeoutInSeconds: Option[Short])
-    extends TimelineReactionExecution
+c-case cwass w-wemotetimewineweaction(
+  w-wequestpawams: m-map[stwing, rawr stwing],
+  timeoutinseconds: option[showt])
+    extends timewineweactionexecution

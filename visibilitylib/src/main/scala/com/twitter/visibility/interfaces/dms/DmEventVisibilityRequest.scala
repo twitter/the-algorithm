@@ -1,9 +1,9 @@
-package com.twitter.visibility.interfaces.dms
+package com.twittew.visibiwity.intewfaces.dms
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+impowt c-com.twittew.visibiwity.modews.safetywevew
+impowt c-com.twittew.visibiwity.modews.viewewcontext
 
-case class DmEventVisibilityRequest(
-  dmEventId: Long,
-  safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext)
+c-case cwass dmeventvisibiwitywequest(
+  d-dmeventid: w-wong, (⑅˘꒳˘)
+  safetywevew: s-safetywevew, ( ͡o ω ͡o )
+  v-viewewcontext: v-viewewcontext)

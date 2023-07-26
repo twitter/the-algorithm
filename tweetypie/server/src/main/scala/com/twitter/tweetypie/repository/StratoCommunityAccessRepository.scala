@@ -1,26 +1,26 @@
-package com.twitter.tweetypie.repository
+package com.twittew.tweetypie.wepositowy
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.CommunityId
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
+impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.tweetypie.communityid
+i-impowt com.twittew.stwato.cwient.fetchew
+i-impowt c-com.twittew.stwato.cwient.{cwient => s-stwatocwient}
 
-object StratoCommunityAccessRepository {
-  type Type = CommunityId => Stitch[Option[CommunityAccess]]
+o-object stwatocommunityaccesswepositowy {
+  type type = communityid => stitch[option[communityaccess]]
 
-  sealed trait CommunityAccess
-  object CommunityAccess {
-    case object Public extends CommunityAccess
-    case object Closed extends CommunityAccess
-    case object Private extends CommunityAccess
+  seawed twait communityaccess
+  object communityaccess {
+    c-case object pubwic extends communityaccess
+    c-case object cwosed extends c-communityaccess
+    case object pwivate extends communityaccess
   }
 
-  val column = "communities/access.Community"
+  v-vaw cowumn = "communities/access.community"
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[CommunityId, Unit, CommunityAccess] =
-      client.fetcher[CommunityId, CommunityAccess](column)
+  d-def a-appwy(cwient: stwatocwient): type = {
+    vaw fetchew: fetchew[communityid, nyaa~~ unit, c-communityaccess] =
+      cwient.fetchew[communityid, /(^•ω•^) communityaccess](cowumn)
 
-    communityId => fetcher.fetch(communityId).map(_.v)
+    communityid => fetchew.fetch(communityid).map(_.v)
   }
 }

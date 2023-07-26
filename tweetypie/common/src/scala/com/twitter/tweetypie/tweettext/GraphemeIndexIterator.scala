@@ -1,44 +1,44 @@
-package com.twitter.tweetypie.tweettext
+package com.twittew.tweetypie.tweettext
 
-import com.ibm.icu.text.BreakIterator
+impowt com.ibm.icu.text.bweakitewatow
 
 /**
- * Adapt the [[BreakIterator]] interface to a scala [[Iterator]]
- * over the offsets of user-perceived characters in a String.
+ * a-adapt the [[bweakitewatow]] i-intewface to a s-scawa [[itewatow]]
+ * o-ovew the o-offsets of usew-pewceived c-chawactews i-in a stwing.
  */
-object GraphemeIndexIterator {
+o-object gwaphemeindexitewatow {
 
   /**
-   * Produce an iterator over indices in the string that mark the end
-   * of a user-perceived character (grapheme)
+   * pwoduce an itewatow ovew indices in the stwing that mawk the end
+   * o-of a usew-pewceived chawactew (gwapheme)
    */
-  def ends(s: String): Iterator[Offset.CodeUnit] =
-    // The start of every grapheme but the first is also a grapheme
-    // end. The last grapheme ends at the end of the string.
-    starts(s).drop(1) ++ Iterator(Offset.CodeUnit.length(s))
+  def ends(s: s-stwing): itewatow[offset.codeunit] =
+    // the stawt of evewy g-gwapheme but the fiwst is awso a gwapheme
+    // end. rawr x3 the wast g-gwapheme ends at the end of the s-stwing. (U ﹏ U)
+    stawts(s).dwop(1) ++ i-itewatow(offset.codeunit.wength(s))
 
   /**
-   * Produce an iterator over indices in the string that mark the start
-   * of a user-perceived character (grapheme)
+   * pwoduce an itewatow ovew indices in the stwing that mawk the s-stawt
+   * of a usew-pewceived chawactew (gwapheme)
    */
-  def starts(s: String): Iterator[Offset.CodeUnit] =
-    new Iterator[Offset.CodeUnit] {
-      private[this] val it = BreakIterator.getCharacterInstance()
+  def stawts(s: stwing): itewatow[offset.codeunit] =
+    n-nyew itewatow[offset.codeunit] {
+      pwivate[this] v-vaw it = b-bweakitewatow.getchawactewinstance()
 
-      it.setText(s)
+      i-it.settext(s)
 
-      override def hasNext: Boolean = it.current < s.length
+      o-ovewwide def hasnext: boowean = it.cuwwent < s.wength
 
-      override def next: Offset.CodeUnit = {
-        if (!hasNext) throw new IllegalArgumentException(s"${it.current()}, ${s.length}")
+      ovewwide d-def nyext: offset.codeunit = {
+        if (!hasnext) thwow n-nyew iwwegawawgumentexception(s"${it.cuwwent()}, ${s.wength}")
 
-        // No matter what, we will be returning the value of `current`,
-        // which is the index of the start of the next grapheme.
-        val result = it.current()
+        // nyo mattew nyani, (U ﹏ U) we wiww be wetuwning the vawue of `cuwwent`, (⑅˘꒳˘)
+        // which is t-the index of the stawt of the nyext g-gwapheme. òωó
+        v-vaw wesuwt = i-it.cuwwent()
 
         it.next()
 
-        Offset.CodeUnit(result)
+        offset.codeunit(wesuwt)
       }
     }
 }

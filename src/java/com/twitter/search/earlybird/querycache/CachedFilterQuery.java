@@ -1,310 +1,310 @@
-package com.twitter.search.earlybird.querycache;
+package com.twittew.seawch.eawwybiwd.quewycache;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Set;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.objects;
+i-impowt java.utiw.set;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt o-owg.apache.wucene.index.indexweadew;
+i-impowt o-owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.index.tewm;
+impowt owg.apache.wucene.seawch.booweancwause;
+impowt owg.apache.wucene.seawch.booweanquewy;
+impowt o-owg.apache.wucene.seawch.constantscowescowew;
+impowt owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.expwanation;
+i-impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+i-impowt owg.apache.wucene.seawch.scowew;
+impowt owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.QueryCacheResultForSegment;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt c-com.twittew.seawch.common.quewy.defauwtfiwtewweight;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.quewycachewesuwtfowsegment;
 
 /**
- * Query to iterate QueryCache result (the cache)
+ * quewy to itewate quewycache w-wesuwt (the cache)
  */
-public final class CachedFilterQuery extends Query {
-  private static final String STAT_PREFIX = "querycache_serving_";
-  private static final SearchCounter REWRITE_CALLS = SearchCounter.export(
-      STAT_PREFIX + "rewrite_calls");
-  private static final SearchCounter NO_CACHE_FOUND = SearchCounter.export(
-      STAT_PREFIX + "no_cache_found");
-  private static final SearchCounter USED_CACHE_AND_FRESH_DOCS = SearchCounter.export(
-      STAT_PREFIX + "used_cache_and_fresh_docs");
-  private static final SearchCounter USED_CACHE_ONLY = SearchCounter.export(
-      STAT_PREFIX + "used_cache_only");
+pubwic finaw cwass cachedfiwtewquewy extends quewy {
+  p-pwivate static finaw stwing s-stat_pwefix = "quewycache_sewving_";
+  p-pwivate s-static finaw seawchcountew w-wewwite_cawws = seawchcountew.expowt(
+      stat_pwefix + "wewwite_cawws");
+  p-pwivate static finaw seawchcountew nyo_cache_found = s-seawchcountew.expowt(
+      stat_pwefix + "no_cache_found");
+  pwivate static finaw seawchcountew used_cache_and_fwesh_docs = seawchcountew.expowt(
+      s-stat_pwefix + "used_cache_and_fwesh_docs");
+  pwivate s-static finaw seawchcountew u-used_cache_onwy = s-seawchcountew.expowt(
+      stat_pwefix + "used_cache_onwy");
 
 
-  public static class NoSuchFilterException extends Exception {
-    NoSuchFilterException(String filterName) {
-      super("Filter [" + filterName + "] does not exists");
+  pubwic static cwass nyosuchfiwtewexception e-extends e-exception {
+    nyosuchfiwtewexception(stwing f-fiwtewname) {
+      s-supew("fiwtew [" + fiwtewname + "] d-does nyot exists");
     }
   }
 
-  private static class CachedResultQuery extends Query {
-    private final QueryCacheResultForSegment cachedResult;
+  p-pwivate static cwass cachedwesuwtquewy extends quewy {
+    p-pwivate finaw quewycachewesuwtfowsegment c-cachedwesuwt;
 
-    public CachedResultQuery(QueryCacheResultForSegment cachedResult) {
-      this.cachedResult = cachedResult;
+    pubwic cachedwesuwtquewy(quewycachewesuwtfowsegment c-cachedwesuwt) {
+      t-this.cachedwesuwt = cachedwesuwt;
     }
 
-    @Override
-    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-      return new DefaultFilterWeight(this) {
-        @Override
-        protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context)
-            throws IOException {
-          return cachedResult.getDocIdSet().iterator();
+    @ovewwide
+    pubwic weight cweateweight(indexseawchew seawchew, (U ﹏ U) scowemode scowemode, ʘwʘ fwoat b-boost) {
+      w-wetuwn nyew defauwtfiwtewweight(this) {
+        @ovewwide
+        pwotected docidsetitewatow g-getdocidsetitewatow(weafweadewcontext c-context)
+            t-thwows ioexception {
+          wetuwn cachedwesuwt.getdocidset().itewatow();
         }
       };
     }
 
-    @Override
-    public int hashCode() {
-      return cachedResult == null ? 0 : cachedResult.hashCode();
+    @ovewwide
+    pubwic int hashcode() {
+      w-wetuwn cachedwesuwt == nyuww ? 0 : cachedwesuwt.hashcode();
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof CachedResultQuery)) {
-        return false;
+    @ovewwide
+    pubwic boowean equaws(object o-obj) {
+      if (!(obj instanceof c-cachedwesuwtquewy)) {
+        w-wetuwn fawse;
       }
 
-      CachedResultQuery query = (CachedResultQuery) obj;
-      return Objects.equals(cachedResult, query.cachedResult);
+      cachedwesuwtquewy q-quewy = (cachedwesuwtquewy) obj;
+      w-wetuwn objects.equaws(cachedwesuwt, >w< q-quewy.cachedwesuwt);
     }
 
-    @Override
-    public String toString(String field) {
-      return "CACHED_RESULT";
+    @ovewwide
+    p-pubwic s-stwing tostwing(stwing fiewd) {
+      wetuwn "cached_wesuwt";
     }
   }
 
-  private static class CachedResultAndFreshDocsQuery extends Query {
-    private final Query cacheLuceneQuery;
-    private final QueryCacheResultForSegment cachedResult;
+  p-pwivate s-static cwass c-cachedwesuwtandfweshdocsquewy extends q-quewy {
+    p-pwivate finaw quewy cachewucenequewy;
+    pwivate finaw quewycachewesuwtfowsegment c-cachedwesuwt;
 
-    public CachedResultAndFreshDocsQuery(
-        Query cacheLuceneQuery, QueryCacheResultForSegment cachedResult) {
-      this.cacheLuceneQuery = cacheLuceneQuery;
-      this.cachedResult = cachedResult;
+    pubwic cachedwesuwtandfweshdocsquewy(
+        quewy cachewucenequewy, rawr x3 quewycachewesuwtfowsegment cachedwesuwt) {
+      this.cachewucenequewy = c-cachewucenequewy;
+      this.cachedwesuwt = cachedwesuwt;
     }
 
-    @Override
-    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-      return new Weight(this) {
-        @Override
-        public void extractTerms(Set<Term> terms) {
+    @ovewwide
+    pubwic w-weight cweateweight(indexseawchew s-seawchew, OwO scowemode s-scowemode, ^•ﻌ•^ fwoat boost) {
+      w-wetuwn nyew weight(this) {
+        @ovewwide
+        p-pubwic v-void extwacttewms(set<tewm> tewms) {
         }
 
-        @Override
-        public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-          Scorer scorer = scorer(context);
-          if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-            return Explanation.match(0f, "Match on id " + doc);
+        @ovewwide
+        pubwic expwanation expwain(weafweadewcontext context, >_< i-int doc) thwows ioexception {
+          s-scowew scowew = scowew(context);
+          i-if ((scowew != n-nuww) && (scowew.itewatow().advance(doc) == doc)) {
+            wetuwn expwanation.match(0f, OwO "match o-on id " + d-doc);
           }
-          return Explanation.match(0f, "No match on id " + doc);
+          wetuwn expwanation.match(0f, >_< "no m-match on id " + d-doc);
         }
 
-        @Override
-        public Scorer scorer(LeafReaderContext context) throws IOException {
-          Weight luceneWeight;
-          try  {
-            luceneWeight = cacheLuceneQuery.createWeight(searcher, scoreMode, boost);
-          } catch (UnsupportedOperationException e) {
-            // Some queries do not support weights. This is fine, it simply means the query has
-            // no docs, and means the same thing as a null scorer.
-            return null;
+        @ovewwide
+        pubwic scowew scowew(weafweadewcontext context) thwows ioexception {
+          w-weight w-wuceneweight;
+          t-twy  {
+            wuceneweight = c-cachewucenequewy.cweateweight(seawchew, (ꈍᴗꈍ) s-scowemode, >w< boost);
+          } catch (unsuppowtedopewationexception e-e) {
+            // some quewies do nyot suppowt weights. (U ﹏ U) this is fine, ^^ i-it simpwy means t-the quewy has
+            // nyo docs, (U ﹏ U) and means t-the same thing a-as a nyuww scowew. :3
+            wetuwn nyuww;
           }
 
-          Scorer luceneScorer = luceneWeight.scorer(context);
-          if (luceneScorer == null) {
-            return null;
+          scowew wucenescowew = wuceneweight.scowew(context);
+          i-if (wucenescowew == nyuww) {
+            wetuwn nyuww;
           }
 
-          DocIdSetIterator iterator = new CachedResultDocIdSetIterator(
-              cachedResult.getSmallestDocID(),
-              luceneScorer.iterator(),
-              cachedResult.getDocIdSet().iterator());
-          return new ConstantScoreScorer(luceneWeight, 0.0f, scoreMode, iterator);
+          docidsetitewatow i-itewatow = new cachedwesuwtdocidsetitewatow(
+              cachedwesuwt.getsmowestdocid(), (✿oωo)
+              w-wucenescowew.itewatow(), XD
+              c-cachedwesuwt.getdocidset().itewatow());
+          wetuwn nyew constantscowescowew(wuceneweight, >w< 0.0f, òωó scowemode, itewatow);
         }
 
-        @Override
-        public boolean isCacheable(LeafReaderContext ctx) {
-          return true;
+        @ovewwide
+        p-pubwic boowean i-iscacheabwe(weafweadewcontext ctx) {
+          wetuwn twue;
         }
       };
     }
 
-    @Override
-    public int hashCode() {
-      return (cacheLuceneQuery == null ? 0 : cacheLuceneQuery.hashCode()) * 13
-          + (cachedResult == null ? 0 : cachedResult.hashCode());
+    @ovewwide
+    pubwic int hashcode() {
+      w-wetuwn (cachewucenequewy == nyuww ? 0 : cachewucenequewy.hashcode()) * 13
+          + (cachedwesuwt == n-nuww ? 0 : cachedwesuwt.hashcode());
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof CachedResultAndFreshDocsQuery)) {
-        return false;
+    @ovewwide
+    pubwic boowean equaws(object o-obj) {
+      if (!(obj i-instanceof cachedwesuwtandfweshdocsquewy)) {
+        w-wetuwn fawse;
       }
 
-      CachedResultAndFreshDocsQuery query = (CachedResultAndFreshDocsQuery) obj;
-      return Objects.equals(cacheLuceneQuery, query.cacheLuceneQuery)
-          && Objects.equals(cachedResult, query.cachedResult);
+      cachedwesuwtandfweshdocsquewy q-quewy = (cachedwesuwtandfweshdocsquewy) obj;
+      w-wetuwn objects.equaws(cachewucenequewy, (ꈍᴗꈍ) q-quewy.cachewucenequewy)
+          && o-objects.equaws(cachedwesuwt, rawr x3 quewy.cachedwesuwt);
     }
 
-    @Override
-    public String toString(String field) {
-      return "CACHED_RESULT_AND_FRESH_DOCS";
+    @ovewwide
+    p-pubwic s-stwing tostwing(stwing fiewd) {
+      wetuwn "cached_wesuwt_and_fwesh_docs";
     }
   }
 
-  private static final Query DUMMY_FILTER = wrapFilter(new Query() {
-    @Override
-    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-      return new DefaultFilterWeight(this) {
-        @Override
-        protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) {
-          return null;
+  p-pwivate s-static finaw q-quewy dummy_fiwtew = wwapfiwtew(new quewy() {
+    @ovewwide
+    p-pubwic weight cweateweight(indexseawchew seawchew, s-scowemode scowemode, rawr x3 f-fwoat boost) {
+      wetuwn nyew defauwtfiwtewweight(this) {
+        @ovewwide
+        pwotected docidsetitewatow g-getdocidsetitewatow(weafweadewcontext c-context) {
+          w-wetuwn nyuww;
         }
       };
     }
 
-    @Override
-    public int hashCode() {
-      return System.identityHashCode(this);
+    @ovewwide
+    p-pubwic int hashcode() {
+      wetuwn s-system.identityhashcode(this);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      return this == obj;
+    @ovewwide
+    pubwic boowean equaws(object obj) {
+      wetuwn this == obj;
     }
 
-    @Override
-    public String toString(String field) {
-      return "DUMMY_FILTER";
+    @ovewwide
+    p-pubwic stwing tostwing(stwing f-fiewd) {
+      wetuwn "dummy_fiwtew";
     }
   });
 
-  private final QueryCacheFilter queryCacheFilter;
+  p-pwivate finaw quewycachefiwtew q-quewycachefiwtew;
 
-  // Lucene Query used to fill the cache
-  private final Query cacheLuceneQuery;
+  // wucene q-quewy used t-to fiww the cache
+  p-pwivate finaw q-quewy cachewucenequewy;
 
-  public static Query getCachedFilterQuery(String filterName, QueryCacheManager queryCacheManager)
-      throws NoSuchFilterException {
-    return wrapFilter(new CachedFilterQuery(filterName, queryCacheManager));
+  p-pubwic static quewy getcachedfiwtewquewy(stwing fiwtewname, σωσ quewycachemanagew quewycachemanagew)
+      thwows nyosuchfiwtewexception {
+    w-wetuwn wwapfiwtew(new c-cachedfiwtewquewy(fiwtewname, (ꈍᴗꈍ) q-quewycachemanagew));
   }
 
-  private static Query wrapFilter(Query filter) {
-    return new BooleanQuery.Builder()
-        .add(filter, BooleanClause.Occur.FILTER)
-        .build();
+  pwivate s-static quewy wwapfiwtew(quewy fiwtew) {
+    wetuwn nyew booweanquewy.buiwdew()
+        .add(fiwtew, rawr b-booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  private CachedFilterQuery(String filterName, QueryCacheManager queryCacheManager)
-      throws NoSuchFilterException {
-    queryCacheFilter = queryCacheManager.getFilter(filterName);
-    if (queryCacheFilter == null) {
-      throw new NoSuchFilterException(filterName);
+  p-pwivate cachedfiwtewquewy(stwing f-fiwtewname, quewycachemanagew quewycachemanagew)
+      t-thwows nyosuchfiwtewexception {
+    q-quewycachefiwtew = quewycachemanagew.getfiwtew(fiwtewname);
+    i-if (quewycachefiwtew == n-nyuww) {
+      thwow nyew nyosuchfiwtewexception(fiwtewname);
     }
-    queryCacheFilter.incrementUsageStat();
+    quewycachefiwtew.incwementusagestat();
 
-    // retrieve the query that was used to populate the cache
-    cacheLuceneQuery = queryCacheFilter.getLuceneQuery();
+    // wetwieve the q-quewy that was u-used to popuwate t-the cache
+    cachewucenequewy = q-quewycachefiwtew.getwucenequewy();
   }
 
   /**
-   * Creates a query base on the cache situation
+   * c-cweates a quewy base on the c-cache situation
    */
-  @Override
-  public Query rewrite(IndexReader reader) {
-    EarlybirdIndexSegmentAtomicReader twitterReader = (EarlybirdIndexSegmentAtomicReader) reader;
-    QueryCacheResultForSegment cachedResult =
-        twitterReader.getSegmentData().getQueryCacheResult(queryCacheFilter.getFilterName());
-    REWRITE_CALLS.increment();
+  @ovewwide
+  p-pubwic quewy wewwite(indexweadew w-weadew) {
+    e-eawwybiwdindexsegmentatomicweadew twittewweadew = (eawwybiwdindexsegmentatomicweadew) w-weadew;
+    quewycachewesuwtfowsegment cachedwesuwt =
+        t-twittewweadew.getsegmentdata().getquewycachewesuwt(quewycachefiwtew.getfiwtewname());
+    wewwite_cawws.incwement();
 
-    if (cachedResult == null || cachedResult.getSmallestDocID() == -1) {
-      // No cached result, or cache has never been updated
-      // This happens to the newly created segment, between the segment creation and first
-      // query cache update
-      NO_CACHE_FOUND.increment();
+    i-if (cachedwesuwt == n-nuww || cachedwesuwt.getsmowestdocid() == -1) {
+      // nyo cached wesuwt, ^^;; o-ow cache has nyevew been updated
+      // this h-happens to the n-nyewwy cweated segment, rawr x3 b-between the segment cweation and fiwst
+      // quewy cache u-update
+      nyo_cache_found.incwement();
 
-      if (queryCacheFilter.getCacheModeOnly()) {
-        // since this query cache filter allows cache mode only, we return a query that
-        // matches no doc
-        return DUMMY_FILTER;
+      if (quewycachefiwtew.getcachemodeonwy()) {
+        // s-since t-this quewy cache fiwtew awwows c-cache mode onwy, (ˆ ﻌ ˆ)♡ we wetuwn a quewy t-that
+        // m-matches nyo doc
+        wetuwn dummy_fiwtew;
       }
 
-      return wrapFilter(cacheLuceneQuery);
+      wetuwn w-wwapfiwtew(cachewucenequewy);
     }
 
-    if (!queryCacheFilter.getCacheModeOnly() && // is this a cache mode only filter?
-        // the following check is only necessary for the realtime segment, which
-        // grows. Since we decrement docIds in the realtime segment, a reader
-        // having a smallestDocID less than the one in the cachedResult indicates
-        // that the segment/reader has new documents.
-        cachedResult.getSmallestDocID() > twitterReader.getSmallestDocID()) {
-      // The segment has more documents than the cached result. IOW, there are new
-      // documents that are not cached. This happens to latest segment that we're indexing to.
-      USED_CACHE_AND_FRESH_DOCS.increment();
-      return wrapFilter(new CachedResultAndFreshDocsQuery(cacheLuceneQuery, cachedResult));
+    if (!quewycachefiwtew.getcachemodeonwy() && // is this a cache mode o-onwy fiwtew?
+        // t-the fowwowing check is o-onwy nyecessawy fow the weawtime s-segment, σωσ which
+        // g-gwows. s-since we decwement docids in the weawtime segment, (U ﹏ U) a weadew
+        // having a smowestdocid wess than the one in the cachedwesuwt indicates
+        // that the segment/weadew has nyew documents. >w<
+        cachedwesuwt.getsmowestdocid() > t-twittewweadew.getsmowestdocid()) {
+      // t-the segment has mowe documents than t-the cached wesuwt. σωσ i-iow, thewe awe n-nyew
+      // documents that a-awe nyot cached. nyaa~~ this happens to w-watest segment t-that we'we indexing to. 🥺
+      used_cache_and_fwesh_docs.incwement();
+      w-wetuwn wwapfiwtew(new c-cachedwesuwtandfweshdocsquewy(cachewucenequewy, rawr x3 c-cachedwesuwt));
     }
 
-    // The segment has not grown since the cache was last updated.
-    // This happens mostly to old segments that we're no longer indexing to.
-    USED_CACHE_ONLY.increment();
-    return wrapFilter(new CachedResultQuery(cachedResult));
+    // the segment has not gwown since the c-cache was wast u-updated. σωσ
+    // t-this happens mostwy t-to owd segments t-that we'we n-nyo wongew indexing t-to. (///ˬ///✿)
+    used_cache_onwy.incwement();
+    w-wetuwn w-wwapfiwtew(new cachedwesuwtquewy(cachedwesuwt));
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    final Weight luceneWeight = cacheLuceneQuery.createWeight(searcher, scoreMode, boost);
+  @ovewwide
+  p-pubwic w-weight cweateweight(indexseawchew s-seawchew, (U ﹏ U) scowemode scowemode, ^^;; f-fwoat boost)
+      thwows ioexception {
+    finaw w-weight wuceneweight = cachewucenequewy.cweateweight(seawchew, 🥺 s-scowemode, boost);
 
-    return new Weight(this) {
-      @Override
-      public Scorer scorer(LeafReaderContext context) throws IOException {
-        return luceneWeight.scorer(context);
+    w-wetuwn n-new weight(this) {
+      @ovewwide
+      pubwic s-scowew scowew(weafweadewcontext context) thwows i-ioexception {
+        wetuwn wuceneweight.scowew(context);
       }
 
-      @Override
-      public void extractTerms(Set<Term> terms) {
-        luceneWeight.extractTerms(terms);
+      @ovewwide
+      p-pubwic void extwacttewms(set<tewm> t-tewms) {
+        wuceneweight.extwacttewms(tewms);
       }
 
-      @Override
-      public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-        return luceneWeight.explain(context, doc);
+      @ovewwide
+      pubwic expwanation expwain(weafweadewcontext context, òωó i-int doc) thwows ioexception {
+        w-wetuwn w-wuceneweight.expwain(context, XD doc);
       }
 
-      @Override
-      public boolean isCacheable(LeafReaderContext ctx) {
-        return luceneWeight.isCacheable(ctx);
+      @ovewwide
+      pubwic boowean iscacheabwe(weafweadewcontext c-ctx) {
+        wetuwn wuceneweight.iscacheabwe(ctx);
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return cacheLuceneQuery == null ? 0 : cacheLuceneQuery.hashCode();
+  @ovewwide
+  p-pubwic i-int hashcode() {
+    w-wetuwn cachewucenequewy == nuww ? 0 : cachewucenequewy.hashcode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof CachedFilterQuery)) {
-      return false;
+  @ovewwide
+  pubwic b-boowean equaws(object o-obj) {
+    if (!(obj instanceof c-cachedfiwtewquewy)) {
+      wetuwn fawse;
     }
 
-    CachedFilterQuery filter = (CachedFilterQuery) obj;
-    return Objects.equals(cacheLuceneQuery, filter.cacheLuceneQuery);
+    cachedfiwtewquewy fiwtew = (cachedfiwtewquewy) o-obj;
+    wetuwn objects.equaws(cachewucenequewy, :3 f-fiwtew.cachewucenequewy);
   }
 
-  @Override
-  public String toString(String s) {
-    return "CachedFilterQuery[" + queryCacheFilter.getFilterName() + "]";
+  @ovewwide
+  p-pubwic s-stwing tostwing(stwing s) {
+    w-wetuwn "cachedfiwtewquewy[" + quewycachefiwtew.getfiwtewname() + "]";
   }
 }

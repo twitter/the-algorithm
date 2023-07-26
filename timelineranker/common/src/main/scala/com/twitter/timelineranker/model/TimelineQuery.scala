@@ -1,82 +1,82 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.UserId
-import com.twitter.timelineservice.model.TimelineId
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+i-impowt com.twittew.timewines.modew.usewid
+i-impowt c-com.twittew.timewinesewvice.modew.timewineid
 
-object TimelineQuery {
-  def fromThrift(query: thrift.TimelineQuery): TimelineQuery = {
-    val queryType = query.queryType
-    val id = TimelineId.fromThrift(query.timelineId)
-    val maxCount = query.maxCount
-    val range = query.range.map(TimelineRange.fromThrift)
-    val options = query.options.map(TimelineQueryOptions.fromThrift)
+o-object timewinequewy {
+  d-def fwomthwift(quewy: t-thwift.timewinequewy): timewinequewy = {
+    vaw quewytype = quewy.quewytype
+    vaw id = timewineid.fwomthwift(quewy.timewineid)
+    v-vaw maxcount = quewy.maxcount
+    vaw wange = q-quewy.wange.map(timewinewange.fwomthwift)
+    vaw options = q-quewy.options.map(timewinequewyoptions.fwomthwift)
 
-    queryType match {
-      case thrift.TimelineQueryType.Ranked =>
-        val rankedOptions = getRankedOptions(options)
-        RankedTimelineQuery(id, maxCount, range, rankedOptions)
+    quewytype match {
+      case thwift.timewinequewytype.wanked =>
+        v-vaw wankedoptions = getwankedoptions(options)
+        w-wankedtimewinequewy(id, (U ﹏ U) maxcount, >w< w-wange, wankedoptions)
 
-      case thrift.TimelineQueryType.ReverseChron =>
-        val reverseChronOptions = getReverseChronOptions(options)
-        ReverseChronTimelineQuery(id, maxCount, range, reverseChronOptions)
+      case thwift.timewinequewytype.wevewsechwon =>
+        vaw wevewsechwonoptions = g-getwevewsechwonoptions(options)
+        wevewsechwontimewinequewy(id, mya maxcount, >w< wange, wevewsechwonoptions)
 
       case _ =>
-        throw new IllegalArgumentException(s"Unsupported query type: $queryType")
+        t-thwow nyew iwwegawawgumentexception(s"unsuppowted q-quewy t-type: $quewytype")
     }
   }
 
-  def getRankedOptions(
-    options: Option[TimelineQueryOptions]
-  ): Option[RankedTimelineQueryOptions] = {
-    options.map {
-      case o: RankedTimelineQueryOptions => o
-      case _ =>
-        throw new IllegalArgumentException(
-          "Only RankedTimelineQueryOptions are supported when queryType is TimelineQueryType.Ranked"
+  d-def getwankedoptions(
+    o-options: option[timewinequewyoptions]
+  ): option[wankedtimewinequewyoptions] = {
+    o-options.map {
+      case o: wankedtimewinequewyoptions => o
+      c-case _ =>
+        thwow nyew iwwegawawgumentexception(
+          "onwy wankedtimewinequewyoptions awe suppowted when quewytype i-is timewinequewytype.wanked"
         )
     }
   }
 
-  def getReverseChronOptions(
-    options: Option[TimelineQueryOptions]
-  ): Option[ReverseChronTimelineQueryOptions] = {
+  def getwevewsechwonoptions(
+    o-options: o-option[timewinequewyoptions]
+  ): o-option[wevewsechwontimewinequewyoptions] = {
     options.map {
-      case o: ReverseChronTimelineQueryOptions => o
+      case o: wevewsechwontimewinequewyoptions => o-o
       case _ =>
-        throw new IllegalArgumentException(
-          "Only ReverseChronTimelineQueryOptions are supported when queryType is TimelineQueryType.ReverseChron"
+        t-thwow nyew iwwegawawgumentexception(
+          "onwy w-wevewsechwontimewinequewyoptions a-awe suppowted when quewytype i-is timewinequewytype.wevewsechwon"
         )
     }
   }
 }
 
-abstract class TimelineQuery(
-  private val queryType: thrift.TimelineQueryType,
-  val id: TimelineId,
-  val maxCount: Option[Int],
-  val range: Option[TimelineRange],
-  val options: Option[TimelineQueryOptions]) {
+abstwact c-cwass timewinequewy(
+  pwivate vaw quewytype: t-thwift.timewinequewytype, nyaa~~
+  vaw i-id: timewineid, (✿oωo)
+  vaw maxcount: o-option[int], ʘwʘ
+  v-vaw wange: option[timewinewange], (ˆ ﻌ ˆ)♡
+  vaw options: option[timewinequewyoptions]) {
 
-  throwIfInvalid()
+  thwowifinvawid()
 
-  def userId: UserId = {
+  def usewid: usewid = {
     id.id
   }
 
-  def throwIfInvalid(): Unit = {
-    Timeline.throwIfIdInvalid(id)
-    range.foreach(_.throwIfInvalid())
-    options.foreach(_.throwIfInvalid())
+  d-def thwowifinvawid(): u-unit = {
+    timewine.thwowifidinvawid(id)
+    w-wange.foweach(_.thwowifinvawid())
+    o-options.foweach(_.thwowifinvawid())
   }
 
-  def toThrift: thrift.TimelineQuery = {
-    thrift.TimelineQuery(
-      queryType = queryType,
-      timelineId = id.toThrift,
-      maxCount = maxCount,
-      range = range.map(_.toTimelineRangeThrift),
-      options = options.map(_.toTimelineQueryOptionsThrift)
+  d-def tothwift: thwift.timewinequewy = {
+    thwift.timewinequewy(
+      quewytype = q-quewytype, 😳😳😳
+      timewineid = id.tothwift, :3
+      maxcount = maxcount, OwO
+      w-wange = wange.map(_.totimewinewangethwift), (U ﹏ U)
+      options = o-options.map(_.totimewinequewyoptionsthwift)
     )
   }
 }

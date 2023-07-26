@@ -1,184 +1,184 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.candidate.FrigateHistory
-import com.twitter.frigate.common.candidate.ResurrectedUserDetails
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.candidate.UserDetails
-import com.twitter.frigate.pushcap.thriftscala.ModelType
-import com.twitter.frigate.pushcap.thriftscala.PushcapInfo
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.scribe.thriftscala.PushCapInfo
-import com.twitter.util.Duration
-import com.twitter.util.Future
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.tawgetusew
+i-impowt c-com.twittew.fwigate.common.candidate.fwigatehistowy
+i-impowt com.twittew.fwigate.common.candidate.wesuwwectedusewdetaiws
+impowt com.twittew.fwigate.common.candidate.tawgetabdecidew
+impowt com.twittew.fwigate.common.candidate.usewdetaiws
+impowt c-com.twittew.fwigate.pushcap.thwiftscawa.modewtype
+impowt com.twittew.fwigate.pushcap.thwiftscawa.pushcapinfo
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt c-com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt com.twittew.fwigate.scwibe.thwiftscawa.pushcapinfo
+impowt c-com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
 
-case class PushCapFatigueInfo(
-  pushcap: Int,
-  fatigueInterval: Duration) {}
+case cwass pushcapfatigueinfo(
+  pushcap: int, (U ﹏ U)
+  f-fatigueintewvaw: duwation) {}
 
-object PushCapUtil {
+o-object pushcaputiw {
 
-  def getDefaultPushCap(target: Target): Future[Int] = {
-    Future.value(target.params(PushFeatureSwitchParams.MaxMrPushSends24HoursParam))
+  d-def getdefauwtpushcap(tawget: tawget): futuwe[int] = {
+    futuwe.vawue(tawget.pawams(pushfeatuweswitchpawams.maxmwpushsends24houwspawam))
   }
 
-  def getMinimumRestrictedPushcapInfo(
-    restrictedPushcap: Int,
-    originalPushcapInfo: PushcapInfo,
-    statsReceiver: StatsReceiver
-  ): PushcapInfo = {
-    if (originalPushcapInfo.pushcap < restrictedPushcap) {
-      statsReceiver
-        .scope("minModelPushcapRestrictions").counter(
-          f"num_users_adjusted_from_${originalPushcapInfo.pushcap}_to_${restrictedPushcap}").incr()
-      PushcapInfo(
-        pushcap = restrictedPushcap.toShort,
-        modelType = ModelType.NoModel,
-        timestamp = 0L,
-        fatigueMinutes = Some((24L / restrictedPushcap) * 60L)
+  def getminimumwestwictedpushcapinfo(
+    westwictedpushcap: i-int, :3
+    owiginawpushcapinfo: pushcapinfo, ( ͡o ω ͡o )
+    statsweceivew: statsweceivew
+  ): pushcapinfo = {
+    i-if (owiginawpushcapinfo.pushcap < westwictedpushcap) {
+      s-statsweceivew
+        .scope("minmodewpushcapwestwictions").countew(
+          f-f"num_usews_adjusted_fwom_${owiginawpushcapinfo.pushcap}_to_${westwictedpushcap}").incw()
+      p-pushcapinfo(
+        p-pushcap = westwictedpushcap.toshowt, σωσ
+        modewtype = m-modewtype.nomodew, >w<
+        timestamp = 0w, 😳😳😳
+        fatigueminutes = s-some((24w / westwictedpushcap) * 60w)
       )
-    } else originalPushcapInfo
+    } ewse owiginawpushcapinfo
   }
 
-  def getPushCapFatigue(
-    target: Target,
-    statsReceiver: StatsReceiver
-  ): Future[PushCapFatigueInfo] = {
-    val pushCapStats = statsReceiver.scope("pushcap_stats")
-    target.dynamicPushcap
-      .map { dynamicPushcapOpt =>
-        val pushCap: Int = dynamicPushcapOpt match {
-          case Some(pushcapInfo) => pushcapInfo.pushcap
-          case _ => target.params(PushFeatureSwitchParams.MaxMrPushSends24HoursParam)
+  def getpushcapfatigue(
+    t-tawget: tawget, OwO
+    statsweceivew: s-statsweceivew
+  ): f-futuwe[pushcapfatigueinfo] = {
+    v-vaw pushcapstats = statsweceivew.scope("pushcap_stats")
+    tawget.dynamicpushcap
+      .map { dynamicpushcapopt =>
+        v-vaw p-pushcap: int = dynamicpushcapopt m-match {
+          c-case some(pushcapinfo) => pushcapinfo.pushcap
+          c-case _ => tawget.pawams(pushfeatuweswitchpawams.maxmwpushsends24houwspawam)
         }
 
-        pushCapStats.stat("pushCapValueStats").add(pushCap)
-        pushCapStats
-          .scope("pushCapValueCount").counter(f"num_users_with_pushcap_$pushCap").incr()
+        p-pushcapstats.stat("pushcapvawuestats").add(pushcap)
+        pushcapstats
+          .scope("pushcapvawuecount").countew(f"num_usews_with_pushcap_$pushcap").incw()
 
-        target.finalPushcapAndFatigue += "pushPushCap" -> PushCapInfo("pushPushCap", pushCap.toByte)
+        tawget.finawpushcapandfatigue += "pushpushcap" -> p-pushcapinfo("pushpushcap", 😳 pushcap.tobyte)
 
-        PushCapFatigueInfo(pushCap, 24.hours)
+        p-pushcapfatigueinfo(pushcap, 😳😳😳 24.houws)
       }
   }
 
-  def getMinDurationsSincePushWithoutUsingPushCap(
-    target: TargetUser
-      with TargetABDecider
-      with FrigateHistory
-      with UserDetails
-      with ResurrectedUserDetails
+  def getminduwationssincepushwithoutusingpushcap(
+    t-tawget: tawgetusew
+      with t-tawgetabdecidew
+      with fwigatehistowy
+      with usewdetaiws
+      with wesuwwectedusewdetaiws
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Duration = {
-    val minDurationSincePush =
-      if (target.params(PushFeatureSwitchParams.EnableGraduallyRampUpNotification)) {
-        val daysInterval =
-          target.params(PushFeatureSwitchParams.GraduallyRampUpPhaseDurationDays).inDays.toDouble
-        val daysSinceActivation =
-          if (target.isResurrectedUser && target.timeSinceResurrection.isDefined) {
-            target.timeSinceResurrection.map(_.inDays.toDouble).get
-          } else {
-            target.timeElapsedAfterSignup.inDays.toDouble
+    impwicit statsweceivew: statsweceivew
+  ): d-duwation = {
+    v-vaw minduwationsincepush =
+      i-if (tawget.pawams(pushfeatuweswitchpawams.enabwegwaduawwywampupnotification)) {
+        v-vaw daysintewvaw =
+          t-tawget.pawams(pushfeatuweswitchpawams.gwaduawwywampupphaseduwationdays).indays.todoubwe
+        vaw dayssinceactivation =
+          if (tawget.iswesuwwectedusew && tawget.timesincewesuwwection.isdefined) {
+            t-tawget.timesincewesuwwection.map(_.indays.todoubwe).get
+          } ewse {
+            tawget.timeewapsedaftewsignup.indays.todoubwe
           }
-        val phaseInterval =
-          Math.max(
+        vaw phaseintewvaw =
+          math.max(
             1,
-            Math.ceil(daysSinceActivation / daysInterval).toInt
+            m-math.ceiw(dayssinceactivation / daysintewvaw).toint
           )
-        val minDuration = 24 / phaseInterval
-        val finalMinDuration =
-          Math.max(4, minDuration).hours
-        statsReceiver
-          .scope("GraduallyRampUpFinalMinDuration").counter(s"$finalMinDuration.hours").incr()
-        finalMinDuration
-      } else {
-        target.params(PushFeatureSwitchParams.MinDurationSincePushParam)
+        v-vaw minduwation = 24 / p-phaseintewvaw
+        v-vaw finawminduwation =
+          m-math.max(4, (˘ω˘) m-minduwation).houws
+        s-statsweceivew
+          .scope("gwaduawwywampupfinawminduwation").countew(s"$finawminduwation.houws").incw()
+        f-finawminduwation
+      } ewse {
+        tawget.pawams(pushfeatuweswitchpawams.minduwationsincepushpawam)
       }
-    statsReceiver
-      .scope("minDurationsSincePushWithoutUsingPushCap").counter(
-        s"$minDurationSincePush.hours").incr()
-    minDurationSincePush
+    statsweceivew
+      .scope("minduwationssincepushwithoutusingpushcap").countew(
+        s-s"$minduwationsincepush.houws").incw()
+    m-minduwationsincepush
   }
 
-  def getMinDurationSincePush(
-    target: Target,
-    statsReceiver: StatsReceiver
-  ): Future[Duration] = {
-    val minDurationStats: StatsReceiver = statsReceiver.scope("pushcapMinDuration_stats")
-    val minDurationModifierCalculator =
-      MinDurationModifierCalculator()
-    val openedPushByHourAggregatedFut =
-      if (target.params(PushFeatureSwitchParams.EnableQueryUserOpenedHistory))
-        target.openedPushByHourAggregated
-      else Future.None
-    Future
+  d-def g-getminduwationsincepush(
+    tawget: t-tawget, ʘwʘ
+    statsweceivew: statsweceivew
+  ): futuwe[duwation] = {
+    v-vaw minduwationstats: statsweceivew = statsweceivew.scope("pushcapminduwation_stats")
+    vaw minduwationmodifiewcawcuwatow =
+      minduwationmodifiewcawcuwatow()
+    v-vaw openedpushbyhouwaggwegatedfut =
+      if (tawget.pawams(pushfeatuweswitchpawams.enabwequewyusewopenedhistowy))
+        tawget.openedpushbyhouwaggwegated
+      ewse futuwe.none
+    f-futuwe
       .join(
-        target.dynamicPushcap,
-        target.accountCountryCode,
-        openedPushByHourAggregatedFut
+        t-tawget.dynamicpushcap, ( ͡o ω ͡o )
+        t-tawget.accountcountwycode, o.O
+        openedpushbyhouwaggwegatedfut
       )
       .map {
-        case (dynamicPushcapOpt, countryCodeOpt, openedPushByHourAggregated) =>
-          val minDurationSincePush: Duration = {
-            val isGraduallyRampingUpResurrected = target.isResurrectedUser && target.params(
-              PushFeatureSwitchParams.EnableGraduallyRampUpNotification)
-            if (isGraduallyRampingUpResurrected || target.params(
-                PushFeatureSwitchParams.EnableExplicitPushCap)) {
-              getMinDurationsSincePushWithoutUsingPushCap(target)(minDurationStats)
-            } else {
-              dynamicPushcapOpt match {
-                case Some(pushcapInfo) =>
-                  pushcapInfo.fatigueMinutes match {
-                    case Some(fatigueMinutes) => (fatigueMinutes / 60).hours
-                    case _ if pushcapInfo.pushcap > 0 => (24 / pushcapInfo.pushcap).hours
-                    case _ => getMinDurationsSincePushWithoutUsingPushCap(target)(minDurationStats)
+        c-case (dynamicpushcapopt, >w< countwycodeopt, 😳 o-openedpushbyhouwaggwegated) =>
+          v-vaw minduwationsincepush: duwation = {
+            vaw isgwaduawwywampingupwesuwwected = tawget.iswesuwwectedusew && tawget.pawams(
+              p-pushfeatuweswitchpawams.enabwegwaduawwywampupnotification)
+            if (isgwaduawwywampingupwesuwwected || t-tawget.pawams(
+                pushfeatuweswitchpawams.enabweexpwicitpushcap)) {
+              g-getminduwationssincepushwithoutusingpushcap(tawget)(minduwationstats)
+            } e-ewse {
+              dynamicpushcapopt match {
+                c-case s-some(pushcapinfo) =>
+                  pushcapinfo.fatigueminutes m-match {
+                    c-case some(fatigueminutes) => (fatigueminutes / 60).houws
+                    case _ if pushcapinfo.pushcap > 0 => (24 / pushcapinfo.pushcap).houws
+                    c-case _ => getminduwationssincepushwithoutusingpushcap(tawget)(minduwationstats)
                   }
-                case _ =>
-                  getMinDurationsSincePushWithoutUsingPushCap(target)(minDurationStats)
+                c-case _ =>
+                  g-getminduwationssincepushwithoutusingpushcap(tawget)(minduwationstats)
               }
             }
           }
 
-          val modifiedMinDurationSincePush =
-            if (target.params(PushFeatureSwitchParams.EnableMinDurationModifier)) {
-              val modifierHourOpt =
-                minDurationModifierCalculator.getMinDurationModifier(
-                  target,
-                  countryCodeOpt,
-                  statsReceiver.scope("MinDuration"))
-              modifierHourOpt match {
-                case Some(modifierHour) => modifierHour.hours
-                case _ => minDurationSincePush
+          vaw modifiedminduwationsincepush =
+            if (tawget.pawams(pushfeatuweswitchpawams.enabweminduwationmodifiew)) {
+              v-vaw modifiewhouwopt =
+                m-minduwationmodifiewcawcuwatow.getminduwationmodifiew(
+                  tawget, 🥺
+                  c-countwycodeopt, rawr x3
+                  statsweceivew.scope("minduwation"))
+              modifiewhouwopt match {
+                case some(modifiewhouw) => modifiewhouw.houws
+                c-case _ => m-minduwationsincepush
               }
-            } else if (target.params(
-                PushFeatureSwitchParams.EnableMinDurationModifierByUserHistory)) {
-              val modifierMinuteOpt =
-                minDurationModifierCalculator.getMinDurationModifierByUserOpenedHistory(
-                  target,
-                  openedPushByHourAggregated,
-                  statsReceiver.scope("MinDuration"))
+            } ewse if (tawget.pawams(
+                pushfeatuweswitchpawams.enabweminduwationmodifiewbyusewhistowy)) {
+              v-vaw m-modifiewminuteopt =
+                minduwationmodifiewcawcuwatow.getminduwationmodifiewbyusewopenedhistowy(
+                  tawget, o.O
+                  openedpushbyhouwaggwegated, rawr
+                  s-statsweceivew.scope("minduwation"))
 
-              modifierMinuteOpt match {
-                case Some(modifierMinute) => modifierMinute.minutes
-                case _ => minDurationSincePush
+              modifiewminuteopt match {
+                case some(modifiewminute) => modifiewminute.minutes
+                c-case _ => minduwationsincepush
               }
-            } else minDurationSincePush
+            } ewse minduwationsincepush
 
-          target.finalPushcapAndFatigue += "pushFatigue" -> PushCapInfo(
-            "pushFatigue",
-            modifiedMinDurationSincePush.inHours.toByte)
+          t-tawget.finawpushcapandfatigue += "pushfatigue" -> p-pushcapinfo(
+            "pushfatigue", ʘwʘ
+            modifiedminduwationsincepush.inhouws.tobyte)
 
-          minDurationStats
-            .stat("minDurationSincePushValueStats").add(modifiedMinDurationSincePush.inHours)
-          minDurationStats
-            .scope("minDurationSincePushValueCount").counter(
-              s"$modifiedMinDurationSincePush").incr()
+          minduwationstats
+            .stat("minduwationsincepushvawuestats").add(modifiedminduwationsincepush.inhouws)
+          minduwationstats
+            .scope("minduwationsincepushvawuecount").countew(
+              s"$modifiedminduwationsincepush").incw()
 
-          modifiedMinDurationSincePush
+          m-modifiedminduwationsincepush
       }
   }
 }

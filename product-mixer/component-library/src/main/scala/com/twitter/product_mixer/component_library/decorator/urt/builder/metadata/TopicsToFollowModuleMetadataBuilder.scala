@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarouselMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.timewine_moduwe.basemoduwemetadatabuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.gwidcawousewmetadata
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduwemetadata
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.timewines.configapi.pawam
 
-object TopicsToFollowModuleMetadataBuilder {
+o-object topicstofowwowmoduwemetadatabuiwdew {
 
-  val TopicsPerRow = 7
+  vaw topicspewwow = 7
 
   /*
-   * rows = min(MAX_NUM_ROWS, # topics / TOPICS_PER_ROW)
-   * where TOPICS_PER_ROW = 7
+   * wows = min(max_num_wows, rawr x3 # topics / topics_pew_wow)
+   * w-whewe topics_pew_wow = 7
    */
-  def getCarouselRowCount(topicsCount: Int, maxCarouselRows: Int): Int =
-    Math.min(maxCarouselRows, (topicsCount / TopicsPerRow) + 1)
+  def getcawousewwowcount(topicscount: i-int, mya maxcawousewwows: int): int =
+    m-math.min(maxcawousewwows, nyaa~~ (topicscount / topicspewwow) + 1)
 }
 
-case class TopicsToFollowModuleMetadataBuilder(maxCarouselRowsParam: Param[Int])
-    extends BaseModuleMetadataBuilder[PipelineQuery, UniversalNoun[Any]] {
+case cwass topicstofowwowmoduwemetadatabuiwdew(maxcawousewwowspawam: pawam[int])
+    e-extends basemoduwemetadatabuiwdew[pipewinequewy, (⑅˘꒳˘) u-univewsawnoun[any]] {
 
-  import TopicsToFollowModuleMetadataBuilder._
+  i-impowt topicstofowwowmoduwemetadatabuiwdew._
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-  ): ModuleMetadata = {
-    val rowCount = getCarouselRowCount(candidates.size, query.params(maxCarouselRowsParam))
-    ModuleMetadata(
-      adsMetadata = None,
-      conversationMetadata = None,
-      gridCarouselMetadata = Some(GridCarouselMetadata(numRows = Some(rowCount)))
+  ovewwide def appwy(
+    quewy: pipewinequewy, rawr x3
+    candidates: s-seq[candidatewithfeatuwes[univewsawnoun[any]]]
+  ): moduwemetadata = {
+    vaw wowcount = getcawousewwowcount(candidates.size, (✿oωo) quewy.pawams(maxcawousewwowspawam))
+    m-moduwemetadata(
+      adsmetadata = nyone, (ˆ ﻌ ˆ)♡
+      c-convewsationmetadata = n-nyone, (˘ω˘)
+      gwidcawousewmetadata = s-some(gwidcawousewmetadata(numwows = s-some(wowcount)))
     )
   }
 }

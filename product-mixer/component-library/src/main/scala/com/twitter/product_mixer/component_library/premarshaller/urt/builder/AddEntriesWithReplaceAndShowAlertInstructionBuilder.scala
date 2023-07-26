@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlert
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.addentwiestimewineinstwuction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.showawewt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class AddEntriesWithReplaceAndShowAlertInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
+c-case cwass addentwieswithwepwaceandshowawewtinstwuctionbuiwdew[quewy <: p-pipewinequewy](
+  o-ovewwide v-vaw incwudeinstwuction: incwudeinstwuction[quewy] = awwaysincwude)
+    extends uwtinstwuctionbuiwdew[quewy, a-addentwiestimewineinstwuction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val entriesToAdd = entries
-        .filterNot(_.isInstanceOf[ShowAlert])
-        .filter(_.entryIdToReplace.isEmpty)
-      if (entriesToAdd.nonEmpty) Seq(AddEntriesTimelineInstruction(entriesToAdd))
-      else Seq.empty
-    } else
-      Seq.empty
+  ovewwide def buiwd(
+    quewy: q-quewy, mya
+    entwies: seq[timewineentwy]
+  ): seq[addentwiestimewineinstwuction] = {
+    i-if (incwudeinstwuction(quewy, 😳 entwies)) {
+      vaw entwiestoadd = entwies
+        .fiwtewnot(_.isinstanceof[showawewt])
+        .fiwtew(_.entwyidtowepwace.isempty)
+      i-if (entwiestoadd.nonempty) seq(addentwiestimewineinstwuction(entwiestoadd))
+      e-ewse seq.empty
+    } e-ewse
+      seq.empty
   }
 }

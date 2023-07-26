@@ -1,39 +1,39 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams.QualityPredicateIdParam
-import com.twitter.frigate.pushservice.predicate.quality_model_predicate._
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams.quawitypwedicateidpawam
+i-impowt com.twittew.fwigate.pushsewvice.pwedicate.quawity_modew_pwedicate._
+impowt c-com.twittew.hewmit.pwedicate.namedpwedicate
+i-impowt com.twittew.hewmit.pwedicate.pwedicate
+i-impowt com.twittew.utiw.futuwe
 
-object JointDauAndQualityModelPredicate {
+o-object jointdauandquawitymodewpwedicate {
 
-  val name = "JointDauAndQualityModelPredicate"
+  v-vaw nyame = "jointdauandquawitymodewpwedicate"
 
-  def apply()(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val stats = statsReceiver.scope(s"predicate_$name")
+  def appwy()(impwicit statsweceivew: statsweceivew): n-nyamedpwedicate[pushcandidate] = {
+    vaw stats = statsweceivew.scope(s"pwedicate_$name")
 
-    val defaultPred = WeightedOpenOrNtabClickQualityPredicate()
-    val qualityPredicateMap = QualityPredicateMap()
+    v-vaw defauwtpwed = weightedopenowntabcwickquawitypwedicate()
+    v-vaw quawitypwedicatemap = quawitypwedicatemap()
 
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        if (!candidate.target.skipModelPredicate) {
+    pwedicate
+      .fwomasync { candidate: p-pushcandidate =>
+        if (!candidate.tawget.skipmodewpwedicate) {
 
-          val modelPredicate =
-            qualityPredicateMap.getOrElse(
-              candidate.target.params(QualityPredicateIdParam),
-              defaultPred)
+          v-vaw modewpwedicate =
+            q-quawitypwedicatemap.getowewse(
+              candidate.tawget.pawams(quawitypwedicateidpawam), -.-
+              defauwtpwed)
 
-          val modelPredicateResultFut =
-            modelPredicate.apply(Seq(candidate)).map(_.headOption.getOrElse(false))
+          vaw modewpwedicatewesuwtfut =
+            modewpwedicate.appwy(seq(candidate)).map(_.headoption.getowewse(fawse))
 
-          modelPredicateResultFut
-        } else Future.True
+          m-modewpwedicatewesuwtfut
+        } ewse futuwe.twue
       }
-      .withStats(stats)
-      .withName(name)
+      .withstats(stats)
+      .withname(name)
   }
 }

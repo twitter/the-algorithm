@@ -1,13 +1,13 @@
-package com.twitter.recos.user_user_graph
+package com.twittew.wecos.usew_usew_gwaph
 
 /**
- * The class holds all the config parameters for kafka queue.
+ * the cwass howds a-aww the config p-pawametews fow kafka q-queue. :3
  */
-object KafkaConfig {
-  // The size of the RecosHoseMessage array that is written to the concurrently linked queue
-  // Buffersize of 64 to keep throughput around 64 / (2K edgesPerSec / 150 kafka threads) = 6 seconds, which is lower
-  // than young gen gc cycle, 20 seconds. So that all the incoming messages will be gced in young gen instead of old gen.
-  val bufferSize = 64
+o-object kafkaconfig {
+  // t-the size o-of the wecoshosemessage a-awway t-that is wwitten to the concuwwentwy winked queue
+  // buffewsize of 64 to keep t-thwoughput awound 64 / (2k edgespewsec / 150 kafka t-thweads) = 6 seconds, 😳😳😳 which is w-wowew
+  // than young gen gc cycwe, -.- 20 seconds. ( ͡o ω ͡o ) so that aww the i-incoming messages wiww be gced i-in young gen instead o-of owd gen. rawr x3
+  vaw buffewsize = 64
 
-  println("KafkaConfig -                 bufferSize " + bufferSize)
+  pwintwn("kafkaconfig -                 buffewsize " + buffewsize)
 }

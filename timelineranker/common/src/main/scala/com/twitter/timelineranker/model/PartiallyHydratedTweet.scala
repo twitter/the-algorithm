@@ -1,184 +1,184 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.util.SnowflakeSortIndexHelper
-import com.twitter.tweetypie.{thriftscala => tweetypie}
+impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwesuwt
+i-impowt c-com.twittew.timewines.modew.tweet.hydwatedtweet
+i-impowt com.twittew.timewines.modew.tweetid
+i-impowt c-com.twittew.timewines.modew.usewid
+i-impowt com.twittew.timewines.utiw.snowfwakesowtindexhewpew
+i-impowt com.twittew.tweetypie.{thwiftscawa => tweetypie}
 
-object PartiallyHydratedTweet {
-  private val InvalidValue = "Invalid value"
+object pawtiawwyhydwatedtweet {
+  pwivate vaw invawidvawue = "invawid v-vawue"
 
   /**
-   * Creates an instance of PartiallyHydratedTweet based on the given search result.
+   * cweates an instance of pawtiawwyhydwatedtweet b-based on the given seawch wesuwt. :3
    */
-  def fromSearchResult(result: ThriftSearchResult): PartiallyHydratedTweet = {
-    val tweetId = result.id
-    val metadata = result.metadata.getOrElse(
-      throw new IllegalArgumentException(
-        s"cannot initialize PartiallyHydratedTweet $tweetId without ThriftSearchResult metadata."
+  d-def fwomseawchwesuwt(wesuwt: thwiftseawchwesuwt): pawtiawwyhydwatedtweet = {
+    vaw t-tweetid = wesuwt.id
+    vaw metadata = w-wesuwt.metadata.getowewse(
+      t-thwow nyew iwwegawawgumentexception(
+        s"cannot initiawize pawtiawwyhydwatedtweet $tweetid without t-thwiftseawchwesuwt metadata."
       )
     )
 
-    val extraMetadataOpt = metadata.extraMetadata
+    vaw extwametadataopt = metadata.extwametadata
 
-    val userId = metadata.fromUserId
+    vaw usewid = m-metadata.fwomusewid
 
-    // The value of referencedTweetAuthorId and sharedStatusId is only considered valid if it is greater than 0.
-    val referencedTweetAuthorId =
-      if (metadata.referencedTweetAuthorId > 0) Some(metadata.referencedTweetAuthorId) else None
-    val sharedStatusId = if (metadata.sharedStatusId > 0) Some(metadata.sharedStatusId) else None
+    // the vawue of wefewencedtweetauthowid a-and shawedstatusid i-is onwy c-considewed vawid i-if it is gweatew than 0. (ꈍᴗꈍ)
+    vaw wefewencedtweetauthowid =
+      i-if (metadata.wefewencedtweetauthowid > 0) some(metadata.wefewencedtweetauthowid) ewse nyone
+    v-vaw shawedstatusid = if (metadata.shawedstatusid > 0) some(metadata.shawedstatusid) ewse nyone
 
-    val isRetweet = metadata.isRetweet.getOrElse(false)
-    val retweetSourceTweetId = if (isRetweet) sharedStatusId else None
-    val retweetSourceUserId = if (isRetweet) referencedTweetAuthorId else None
+    vaw iswetweet = metadata.iswetweet.getowewse(fawse)
+    v-vaw wetweetsouwcetweetid = i-if (iswetweet) s-shawedstatusid e-ewse nyone
+    vaw wetweetsouwceusewid = if (iswetweet) wefewencedtweetauthowid ewse nyone
 
-    // The fields sharedStatusId and referencedTweetAuthorId have overloaded meaning when
-    // this tweet is not a retweet (for retweet, there is only 1 meaning).
-    // When not a retweet,
-    // if referencedTweetAuthorId and sharedStatusId are both set, it is considered a reply
-    // if referencedTweetAuthorId is set and sharedStatusId is not set, it is a directed at tweet.
-    // References: SEARCH-8561 and SEARCH-13142
-    val inReplyToTweetId = if (!isRetweet) sharedStatusId else None
-    val inReplyToUserId = if (!isRetweet) referencedTweetAuthorId else None
-    val isReply = metadata.isReply.contains(true)
+    // t-the fiewds s-shawedstatusid and wefewencedtweetauthowid h-have ovewwoaded m-meaning when
+    // this tweet is n-nyot a wetweet (fow wetweet, :3 thewe i-is onwy 1 meaning). (U ﹏ U)
+    // when not a wetweet, UwU
+    // if wefewencedtweetauthowid a-and shawedstatusid awe both s-set, 😳😳😳 it is considewed a wepwy
+    // i-if wefewencedtweetauthowid i-is set and shawedstatusid is nyot set, XD it is a diwected at tweet. o.O
+    // wefewences: seawch-8561 and seawch-13142
+    v-vaw inwepwytotweetid = if (!iswetweet) shawedstatusid e-ewse nyone
+    vaw i-inwepwytousewid = i-if (!iswetweet) w-wefewencedtweetauthowid ewse nyone
+    vaw iswepwy = metadata.iswepwy.contains(twue)
 
-    val quotedTweetId = extraMetadataOpt.flatMap(_.quotedTweetId)
-    val quotedUserId = extraMetadataOpt.flatMap(_.quotedUserId)
+    v-vaw quotedtweetid = extwametadataopt.fwatmap(_.quotedtweetid)
+    vaw quotedusewid = extwametadataopt.fwatmap(_.quotedusewid)
 
-    val isNullcast = metadata.isNullcast.contains(true)
+    v-vaw isnuwwcast = metadata.isnuwwcast.contains(twue)
 
-    val conversationId = extraMetadataOpt.flatMap(_.conversationId)
+    v-vaw convewsationid = e-extwametadataopt.fwatmap(_.convewsationid)
 
-    // Root author id for the user who posts an exclusive tweet
-    val exclusiveConversationAuthorId = extraMetadataOpt.flatMap(_.exclusiveConversationAuthorId)
+    // w-woot authow id fow the usew who p-posts an excwusive t-tweet
+    vaw e-excwusiveconvewsationauthowid = e-extwametadataopt.fwatmap(_.excwusiveconvewsationauthowid)
 
-    // Card URI associated with an attached card to this tweet, if it contains one
-    val cardUri = extraMetadataOpt.flatMap(_.cardUri)
+    // cawd uwi associated with an a-attached cawd to t-this tweet, (⑅˘꒳˘) if i-it contains one
+    v-vaw cawduwi = e-extwametadataopt.fwatmap(_.cawduwi)
 
-    val tweet = makeTweetyPieTweet(
-      tweetId,
-      userId,
-      inReplyToTweetId,
-      inReplyToUserId,
-      retweetSourceTweetId,
-      retweetSourceUserId,
-      quotedTweetId,
-      quotedUserId,
-      isNullcast,
-      isReply,
-      conversationId,
-      exclusiveConversationAuthorId,
-      cardUri
+    vaw tweet = maketweetypietweet(
+      tweetid, 😳😳😳
+      u-usewid, nyaa~~
+      inwepwytotweetid,
+      inwepwytousewid, rawr
+      wetweetsouwcetweetid, -.-
+      wetweetsouwceusewid, (✿oωo)
+      quotedtweetid, /(^•ω•^)
+      quotedusewid, 🥺
+      i-isnuwwcast, ʘwʘ
+      iswepwy, UwU
+      convewsationid,
+      excwusiveconvewsationauthowid, XD
+      cawduwi
     )
-    new PartiallyHydratedTweet(tweet)
+    n-nyew p-pawtiawwyhydwatedtweet(tweet)
   }
 
-  def makeTweetyPieTweet(
-    tweetId: TweetId,
-    userId: UserId,
-    inReplyToTweetId: Option[TweetId],
-    inReplyToUserId: Option[TweetId],
-    retweetSourceTweetId: Option[TweetId],
-    retweetSourceUserId: Option[UserId],
-    quotedTweetId: Option[TweetId],
-    quotedUserId: Option[UserId],
-    isNullcast: Boolean,
-    isReply: Boolean,
-    conversationId: Option[Long],
-    exclusiveConversationAuthorId: Option[Long] = None,
-    cardUri: Option[String] = None
-  ): tweetypie.Tweet = {
-    val isDirectedAt = inReplyToUserId.isDefined
-    val isRetweet = retweetSourceTweetId.isDefined && retweetSourceUserId.isDefined
+  d-def maketweetypietweet(
+    tweetid: tweetid, (✿oωo)
+    u-usewid: usewid, :3
+    inwepwytotweetid: o-option[tweetid], (///ˬ///✿)
+    i-inwepwytousewid: option[tweetid], nyaa~~
+    wetweetsouwcetweetid: option[tweetid], >w<
+    wetweetsouwceusewid: option[usewid], -.-
+    q-quotedtweetid: option[tweetid], (✿oωo)
+    q-quotedusewid: option[usewid],
+    isnuwwcast: boowean, (˘ω˘)
+    i-iswepwy: b-boowean, rawr
+    convewsationid: option[wong], OwO
+    e-excwusiveconvewsationauthowid: o-option[wong] = nyone, ^•ﻌ•^
+    cawduwi: o-option[stwing] = n-nyone
+  ): tweetypie.tweet = {
+    vaw isdiwectedat = inwepwytousewid.isdefined
+    vaw iswetweet = w-wetweetsouwcetweetid.isdefined && w-wetweetsouwceusewid.isdefined
 
-    val reply = if (isReply) {
-      Some(
-        tweetypie.Reply(
-          inReplyToStatusId = inReplyToTweetId,
-          inReplyToUserId = inReplyToUserId.getOrElse(0L) // Required
+    vaw w-wepwy = if (iswepwy) {
+      some(
+        tweetypie.wepwy(
+          i-inwepwytostatusid = i-inwepwytotweetid, UwU
+          inwepwytousewid = i-inwepwytousewid.getowewse(0w) // wequiwed
         )
       )
-    } else None
+    } ewse nyone
 
-    val directedAt = if (isDirectedAt) {
-      Some(
-        tweetypie.DirectedAtUser(
-          userId = inReplyToUserId.get,
-          screenName = "" // not available from search
+    vaw diwectedat = if (isdiwectedat) {
+      s-some(
+        t-tweetypie.diwectedatusew(
+          usewid = inwepwytousewid.get, (˘ω˘)
+          s-scweenname = "" // n-nyot avaiwabwe fwom seawch
         )
       )
-    } else None
+    } ewse none
 
-    val share = if (isRetweet) {
-      Some(
-        tweetypie.Share(
-          sourceStatusId = retweetSourceTweetId.get,
-          sourceUserId = retweetSourceUserId.get,
-          parentStatusId =
-            retweetSourceTweetId.get // Not always correct (eg, retweet of a retweet).
+    vaw shawe = i-if (iswetweet) {
+      some(
+        tweetypie.shawe(
+          souwcestatusid = wetweetsouwcetweetid.get, (///ˬ///✿)
+          s-souwceusewid = wetweetsouwceusewid.get, σωσ
+          pawentstatusid =
+            w-wetweetsouwcetweetid.get // n-nyot awways cowwect (eg, /(^•ω•^) wetweet of a wetweet). 😳
         )
       )
-    } else None
+    } ewse n-nyone
 
-    val quotedTweet =
-      for {
-        tweetId <- quotedTweetId
-        userId <- quotedUserId
-      } yield tweetypie.QuotedTweet(tweetId = tweetId, userId = userId)
+    vaw quotedtweet =
+      f-fow {
+        tweetid <- quotedtweetid
+        usewid <- quotedusewid
+      } yiewd tweetypie.quotedtweet(tweetid = t-tweetid, usewid = usewid)
 
-    val coreData = tweetypie.TweetCoreData(
-      userId = userId,
-      text = InvalidValue,
-      createdVia = InvalidValue,
-      createdAtSecs = SnowflakeSortIndexHelper.idToTimestamp(tweetId).inSeconds,
-      directedAtUser = directedAt,
-      reply = reply,
-      share = share,
-      nullcast = isNullcast,
-      conversationId = conversationId
+    v-vaw cowedata = tweetypie.tweetcowedata(
+      usewid = usewid, 😳
+      text = i-invawidvawue, (⑅˘꒳˘)
+      cweatedvia = i-invawidvawue, 😳😳😳
+      c-cweatedatsecs = snowfwakesowtindexhewpew.idtotimestamp(tweetid).inseconds, 😳
+      d-diwectedatusew = diwectedat, XD
+      w-wepwy = w-wepwy, mya
+      s-shawe = shawe, ^•ﻌ•^
+      nyuwwcast = i-isnuwwcast, ʘwʘ
+      c-convewsationid = convewsationid
     )
 
-    // Hydrate exclusiveTweetControl which determines whether the user is able to view an exclusive / SuperFollow tweet.
-    val exclusiveTweetControl = exclusiveConversationAuthorId.map { authorId =>
-      tweetypie.ExclusiveTweetControl(conversationAuthorId = authorId)
+    // hydwate excwusivetweetcontwow which d-detewmines w-whethew the usew i-is abwe to view an excwusive / supewfowwow tweet. ( ͡o ω ͡o )
+    v-vaw excwusivetweetcontwow = excwusiveconvewsationauthowid.map { a-authowid =>
+      t-tweetypie.excwusivetweetcontwow(convewsationauthowid = authowid)
     }
 
-    val cardReference = cardUri.map { cardUriFromEB =>
-      tweetypie.CardReference(cardUri = cardUriFromEB)
+    vaw cawdwefewence = cawduwi.map { c-cawduwifwomeb =>
+      t-tweetypie.cawdwefewence(cawduwi = c-cawduwifwomeb)
     }
 
-    tweetypie.Tweet(
-      id = tweetId,
-      quotedTweet = quotedTweet,
-      coreData = Some(coreData),
-      exclusiveTweetControl = exclusiveTweetControl,
-      cardReference = cardReference
+    t-tweetypie.tweet(
+      id = tweetid, mya
+      q-quotedtweet = quotedtweet, o.O
+      cowedata = some(cowedata), (✿oωo)
+      excwusivetweetcontwow = excwusivetweetcontwow,
+      cawdwefewence = c-cawdwefewence
     )
   }
 }
 
 /**
- * Represents an instance of HydratedTweet that is hydrated using search result
- * (instead of being hydrated using TweetyPie service).
+ * wepwesents a-an instance of hydwatedtweet t-that is hydwated using seawch w-wesuwt
+ * (instead of being h-hydwated using tweetypie s-sewvice). :3
  *
- * Not all fields are available using search therefore such fields if accessed
- * throw UnsupportedOperationException to ensure that they are not inadvertently
- * accessed and relied upon.
+ * n-nyot aww f-fiewds awe avaiwabwe u-using seawch thewefowe such fiewds if accessed
+ * thwow unsuppowtedopewationexception to ensuwe that they awe nyot inadvewtentwy
+ * a-accessed a-and wewied upon. 😳
  */
-class PartiallyHydratedTweet(tweet: tweetypie.Tweet) extends HydratedTweet(tweet) {
-  override def parentTweetId: Option[TweetId] = throw notSupported("parentTweetId")
-  override def mentionedUserIds: Seq[UserId] = throw notSupported("mentionedUserIds")
-  override def takedownCountryCodes: Set[String] = throw notSupported("takedownCountryCodes")
-  override def hasMedia: Boolean = throw notSupported("hasMedia")
-  override def isNarrowcast: Boolean = throw notSupported("isNarrowcast")
-  override def hasTakedown: Boolean = throw notSupported("hasTakedown")
-  override def isNsfw: Boolean = throw notSupported("isNsfw")
-  override def isNsfwUser: Boolean = throw notSupported("isNsfwUser")
-  override def isNsfwAdmin: Boolean = throw notSupported("isNsfwAdmin")
+c-cwass pawtiawwyhydwatedtweet(tweet: tweetypie.tweet) e-extends hydwatedtweet(tweet) {
+  ovewwide def pawenttweetid: option[tweetid] = t-thwow n-nyotsuppowted("pawenttweetid")
+  ovewwide def m-mentionedusewids: seq[usewid] = thwow nyotsuppowted("mentionedusewids")
+  o-ovewwide d-def takedowncountwycodes: set[stwing] = t-thwow n-nyotsuppowted("takedowncountwycodes")
+  ovewwide def hasmedia: boowean = thwow nyotsuppowted("hasmedia")
+  o-ovewwide d-def isnawwowcast: b-boowean = t-thwow nyotsuppowted("isnawwowcast")
+  o-ovewwide def hastakedown: b-boowean = thwow n-nyotsuppowted("hastakedown")
+  ovewwide def isnsfw: b-boowean = t-thwow nyotsuppowted("isnsfw")
+  ovewwide def isnsfwusew: b-boowean = thwow notsuppowted("isnsfwusew")
+  ovewwide def i-isnsfwadmin: boowean = thwow n-nyotsuppowted("isnsfwadmin")
 
-  private def notSupported(name: String): UnsupportedOperationException = {
-    new UnsupportedOperationException(s"Not supported: $name")
+  p-pwivate def nyotsuppowted(name: stwing): unsuppowtedopewationexception = {
+    nyew u-unsuppowtedopewationexception(s"not suppowted: $name")
   }
 }

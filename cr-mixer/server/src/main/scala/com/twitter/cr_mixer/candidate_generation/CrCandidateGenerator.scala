@@ -1,349 +1,349 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.twittew.cw_mixew.candidate_genewation
 
-import com.twitter.cr_mixer.blender.SwitchBlender
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.filter.PostRankFilterRunner
-import com.twitter.cr_mixer.filter.PreRankFilterRunner
-import com.twitter.cr_mixer.logging.CrMixerScribeLogger
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.param.RankerParams
-import com.twitter.cr_mixer.param.RecentNegativeSignalParams
-import com.twitter.cr_mixer.ranker.SwitchRanker
-import com.twitter.cr_mixer.source_signal.SourceInfoRouter
-import com.twitter.cr_mixer.source_signal.UssStore.EnabledNegativeSourceTypes
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Timer
+impowt com.twittew.cw_mixew.bwendew.switchbwendew
+i-impowt com.twittew.cw_mixew.config.timeoutconfig
+i-impowt com.twittew.cw_mixew.fiwtew.postwankfiwtewwunnew
+i-impowt c-com.twittew.cw_mixew.fiwtew.pwewankfiwtewwunnew
+i-impowt com.twittew.cw_mixew.wogging.cwmixewscwibewoggew
+i-impowt c-com.twittew.cw_mixew.modew.bwendedcandidate
+impowt c-com.twittew.cw_mixew.modew.cwcandidategenewatowquewy
+impowt com.twittew.cw_mixew.modew.gwaphsouwceinfo
+impowt com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt com.twittew.cw_mixew.modew.wankedcandidate
+impowt com.twittew.cw_mixew.modew.souwceinfo
+impowt com.twittew.cw_mixew.pawam.wankewpawams
+i-impowt com.twittew.cw_mixew.pawam.wecentnegativesignawpawams
+i-impowt com.twittew.cw_mixew.wankew.switchwankew
+impowt com.twittew.cw_mixew.souwce_signaw.souwceinfowoutew
+i-impowt com.twittew.cw_mixew.souwce_signaw.ussstowe.enabwednegativesouwcetypes
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.utiw.statsutiw
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.javatimew
+i-impowt com.twittew.utiw.timew
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * For now it performs the main steps as follows:
- * 1. Source signal (via USS, FRS) fetch
- * 2. Candidate generation
- * 3. Filtering
- * 4. Interleave blender
- * 5. Ranker
- * 6. Post-ranker filter
- * 7. Truncation
+ * f-fow nyow it pewfowms t-the main steps a-as fowwows:
+ * 1. UwU s-souwce signaw (via u-uss, :3 fws) fetch
+ * 2. σωσ candidate genewation
+ * 3. f-fiwtewing
+ * 4. >w< intewweave bwendew
+ * 5. (ˆ ﻌ ˆ)♡ w-wankew
+ * 6. ʘwʘ post-wankew fiwtew
+ * 7. :3 twuncation
  */
-@Singleton
-class CrCandidateGenerator @Inject() (
-  sourceInfoRouter: SourceInfoRouter,
-  candidateSourceRouter: CandidateSourcesRouter,
-  switchBlender: SwitchBlender,
-  preRankFilterRunner: PreRankFilterRunner,
-  postRankFilterRunner: PostRankFilterRunner,
-  switchRanker: SwitchRanker,
-  crMixerScribeLogger: CrMixerScribeLogger,
-  timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver) {
-  private val timer: Timer = new JavaTimer(true)
+@singweton
+cwass cwcandidategenewatow @inject() (
+  souwceinfowoutew: souwceinfowoutew, (˘ω˘)
+  c-candidatesouwcewoutew: candidatesouwceswoutew, 😳😳😳
+  s-switchbwendew: s-switchbwendew, rawr x3
+  p-pwewankfiwtewwunnew: pwewankfiwtewwunnew, (✿oωo)
+  postwankfiwtewwunnew: postwankfiwtewwunnew, (ˆ ﻌ ˆ)♡
+  s-switchwankew: s-switchwankew, :3
+  cwmixewscwibewoggew: c-cwmixewscwibewoggew, (U ᵕ U❁)
+  t-timeoutconfig: timeoutconfig, ^^;;
+  g-gwobawstats: statsweceivew) {
+  p-pwivate vaw timew: timew = new javatimew(twue)
 
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
+  p-pwivate vaw stats: statsweceivew = g-gwobawstats.scope(this.getcwass.getcanonicawname)
 
-  private val fetchSourcesStats = stats.scope("fetchSources")
-  private val fetchPositiveSourcesStats = stats.scope("fetchPositiveSources")
-  private val fetchNegativeSourcesStats = stats.scope("fetchNegativeSources")
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val fetchCandidatesAfterFilterStats = stats.scope("fetchCandidatesAfterFilter")
-  private val preRankFilterStats = stats.scope("preRankFilter")
-  private val interleaveStats = stats.scope("interleave")
-  private val rankStats = stats.scope("rank")
-  private val postRankFilterStats = stats.scope("postRankFilter")
-  private val blueVerifiedTweetStats = stats.scope("blueVerifiedTweetStats")
-  private val blueVerifiedTweetStatsPerSimilarityEngine =
-    stats.scope("blueVerifiedTweetStatsPerSimilarityEngine")
+  pwivate vaw fetchsouwcesstats = stats.scope("fetchsouwces")
+  p-pwivate v-vaw fetchpositivesouwcesstats = stats.scope("fetchpositivesouwces")
+  pwivate vaw fetchnegativesouwcesstats = stats.scope("fetchnegativesouwces")
+  pwivate vaw fetchcandidatesstats = s-stats.scope("fetchcandidates")
+  p-pwivate vaw fetchcandidatesaftewfiwtewstats = s-stats.scope("fetchcandidatesaftewfiwtew")
+  p-pwivate vaw p-pwewankfiwtewstats = stats.scope("pwewankfiwtew")
+  pwivate vaw intewweavestats = s-stats.scope("intewweave")
+  pwivate vaw wankstats = stats.scope("wank")
+  pwivate vaw postwankfiwtewstats = stats.scope("postwankfiwtew")
+  p-pwivate vaw bwuevewifiedtweetstats = stats.scope("bwuevewifiedtweetstats")
+  p-pwivate v-vaw bwuevewifiedtweetstatspewsimiwawityengine =
+    s-stats.scope("bwuevewifiedtweetstatspewsimiwawityengine")
 
-  def get(query: CrCandidateGeneratorQuery): Future[Seq[RankedCandidate]] = {
-    val allStats = stats.scope("all")
-    val perProductStats = stats.scope("perProduct", query.product.toString)
-    val perProductBlueVerifiedStats =
-      blueVerifiedTweetStats.scope("perProduct", query.product.toString)
+  def get(quewy: c-cwcandidategenewatowquewy): f-futuwe[seq[wankedcandidate]] = {
+    v-vaw awwstats = s-stats.scope("aww")
+    vaw pewpwoductstats = s-stats.scope("pewpwoduct", mya q-quewy.pwoduct.tostwing)
+    v-vaw pewpwoductbwuevewifiedstats =
+      b-bwuevewifiedtweetstats.scope("pewpwoduct", 😳😳😳 q-quewy.pwoduct.tostwing)
 
-    StatsUtil.trackItemsStats(allStats) {
-      trackResultStats(perProductStats) {
-        StatsUtil.trackItemsStats(perProductStats) {
-          val result = for {
-            (sourceSignals, sourceGraphsMap) <- StatsUtil.trackBlockStats(fetchSourcesStats) {
-              fetchSources(query)
+    statsutiw.twackitemsstats(awwstats) {
+      twackwesuwtstats(pewpwoductstats) {
+        statsutiw.twackitemsstats(pewpwoductstats) {
+          v-vaw wesuwt = fow {
+            (souwcesignaws, OwO souwcegwaphsmap) <- statsutiw.twackbwockstats(fetchsouwcesstats) {
+              fetchsouwces(quewy)
             }
-            initialCandidates <- StatsUtil.trackBlockStats(fetchCandidatesAfterFilterStats) {
-              // find the positive and negative signals
-              val (positiveSignals, negativeSignals) = sourceSignals.partition { signal =>
-                !EnabledNegativeSourceTypes.contains(signal.sourceType)
+            initiawcandidates <- s-statsutiw.twackbwockstats(fetchcandidatesaftewfiwtewstats) {
+              // find the positive and nyegative signaws
+              v-vaw (positivesignaws, rawr n-nyegativesignaws) = s-souwcesignaws.pawtition { signaw =>
+                !enabwednegativesouwcetypes.contains(signaw.souwcetype)
               }
-              fetchPositiveSourcesStats.stat("size").add(positiveSignals.size)
-              fetchNegativeSourcesStats.stat("size").add(negativeSignals.size)
+              f-fetchpositivesouwcesstats.stat("size").add(positivesignaws.size)
+              fetchnegativesouwcesstats.stat("size").add(negativesignaws.size)
 
-              // find the positive signals to keep, removing block and muted users
-              val filteredSourceInfo =
-                if (negativeSignals.nonEmpty && query.params(
-                    RecentNegativeSignalParams.EnableSourceParam)) {
-                  filterSourceInfo(positiveSignals, negativeSignals)
-                } else {
-                  positiveSignals
+              // f-find the positive s-signaws to keep, XD wemoving bwock and muted usews
+              vaw fiwtewedsouwceinfo =
+                if (negativesignaws.nonempty && q-quewy.pawams(
+                    wecentnegativesignawpawams.enabwesouwcepawam)) {
+                  fiwtewsouwceinfo(positivesignaws, (U ﹏ U) n-nyegativesignaws)
+                } ewse {
+                  p-positivesignaws
                 }
 
-              // fetch candidates from the positive signals
-              StatsUtil.trackBlockStats(fetchCandidatesStats) {
-                fetchCandidates(query, filteredSourceInfo, sourceGraphsMap)
+              // f-fetch candidates fwom the positive signaws
+              s-statsutiw.twackbwockstats(fetchcandidatesstats) {
+                f-fetchcandidates(quewy, (˘ω˘) fiwtewedsouwceinfo, UwU s-souwcegwaphsmap)
               }
             }
-            filteredCandidates <- StatsUtil.trackBlockStats(preRankFilterStats) {
-              preRankFilter(query, initialCandidates)
+            f-fiwtewedcandidates <- statsutiw.twackbwockstats(pwewankfiwtewstats) {
+              pwewankfiwtew(quewy, >_< initiawcandidates)
             }
-            interleavedCandidates <- StatsUtil.trackItemsStats(interleaveStats) {
-              interleave(query, filteredCandidates)
+            intewweavedcandidates <- statsutiw.twackitemsstats(intewweavestats) {
+              i-intewweave(quewy, σωσ f-fiwtewedcandidates)
             }
-            rankedCandidates <- StatsUtil.trackItemsStats(rankStats) {
-              val candidatesToRank =
-                interleavedCandidates.take(query.params(RankerParams.MaxCandidatesToRank))
-              rank(query, candidatesToRank)
+            w-wankedcandidates <- statsutiw.twackitemsstats(wankstats) {
+              v-vaw candidatestowank =
+                i-intewweavedcandidates.take(quewy.pawams(wankewpawams.maxcandidatestowank))
+              wank(quewy, 🥺 c-candidatestowank)
             }
-            postRankFilterCandidates <- StatsUtil.trackItemsStats(postRankFilterStats) {
-              postRankFilter(query, rankedCandidates)
+            postwankfiwtewcandidates <- statsutiw.twackitemsstats(postwankfiwtewstats) {
+              postwankfiwtew(quewy, 🥺 wankedcandidates)
             }
-          } yield {
-            trackTopKStats(
-              800,
-              postRankFilterCandidates,
-              isQueryK = false,
-              perProductBlueVerifiedStats)
-            trackTopKStats(
-              400,
-              postRankFilterCandidates,
-              isQueryK = false,
-              perProductBlueVerifiedStats)
-            trackTopKStats(
-              query.maxNumResults,
-              postRankFilterCandidates,
-              isQueryK = true,
-              perProductBlueVerifiedStats)
+          } y-yiewd {
+            t-twacktopkstats(
+              800, ʘwʘ
+              postwankfiwtewcandidates, :3
+              isquewyk = f-fawse, (U ﹏ U)
+              p-pewpwoductbwuevewifiedstats)
+            twacktopkstats(
+              400, (U ﹏ U)
+              postwankfiwtewcandidates, ʘwʘ
+              isquewyk = f-fawse, >w<
+              pewpwoductbwuevewifiedstats)
+            twacktopkstats(
+              quewy.maxnumwesuwts, rawr x3
+              postwankfiwtewcandidates, OwO
+              isquewyk = t-twue, ^•ﻌ•^
+              pewpwoductbwuevewifiedstats)
 
-            val (blueVerifiedTweets, remainingTweets) =
-              postRankFilterCandidates.partition(
-                _.tweetInfo.hasBlueVerifiedAnnotation.contains(true))
-            val topKBlueVerified = blueVerifiedTweets.take(query.maxNumResults)
-            val topKRemaining = remainingTweets.take(query.maxNumResults - topKBlueVerified.size)
+            vaw (bwuevewifiedtweets, >_< w-wemainingtweets) =
+              p-postwankfiwtewcandidates.pawtition(
+                _.tweetinfo.hasbwuevewifiedannotation.contains(twue))
+            vaw topkbwuevewified = bwuevewifiedtweets.take(quewy.maxnumwesuwts)
+            vaw topkwemaining = wemainingtweets.take(quewy.maxnumwesuwts - t-topkbwuevewified.size)
 
-            trackBlueVerifiedTweetStats(topKBlueVerified, perProductBlueVerifiedStats)
+            t-twackbwuevewifiedtweetstats(topkbwuevewified, OwO pewpwoductbwuevewifiedstats)
 
-            if (topKBlueVerified.nonEmpty && query.params(RankerParams.EnableBlueVerifiedTopK)) {
-              topKBlueVerified ++ topKRemaining
-            } else {
-              postRankFilterCandidates
+            if (topkbwuevewified.nonempty && quewy.pawams(wankewpawams.enabwebwuevewifiedtopk)) {
+              t-topkbwuevewified ++ topkwemaining
+            } e-ewse {
+              postwankfiwtewcandidates
             }
           }
-          result.raiseWithin(timeoutConfig.serviceTimeout)(timer)
+          wesuwt.waisewithin(timeoutconfig.sewvicetimeout)(timew)
         }
       }
     }
   }
 
-  private def fetchSources(
-    query: CrCandidateGeneratorQuery
-  ): Future[(Set[SourceInfo], Map[String, Option[GraphSourceInfo]])] = {
-    crMixerScribeLogger.scribeSignalSources(
-      query,
-      sourceInfoRouter
-        .get(query.userId, query.product, query.userState, query.params))
+  pwivate def fetchsouwces(
+    q-quewy: cwcandidategenewatowquewy
+  ): f-futuwe[(set[souwceinfo], >_< m-map[stwing, (ꈍᴗꈍ) option[gwaphsouwceinfo]])] = {
+    c-cwmixewscwibewoggew.scwibesignawsouwces(
+      quewy, >w<
+      s-souwceinfowoutew
+        .get(quewy.usewid, q-quewy.pwoduct, (U ﹏ U) q-quewy.usewstate, ^^ quewy.pawams))
   }
 
-  private def filterSourceInfo(
-    positiveSignals: Set[SourceInfo],
-    negativeSignals: Set[SourceInfo]
-  ): Set[SourceInfo] = {
-    val filterUsers: Set[Long] = negativeSignals.flatMap {
-      case SourceInfo(_, InternalId.UserId(userId), _) => Some(userId)
-      case _ => None
+  p-pwivate d-def fiwtewsouwceinfo(
+    positivesignaws: set[souwceinfo], (U ﹏ U)
+    n-nyegativesignaws: s-set[souwceinfo]
+  ): s-set[souwceinfo] = {
+    vaw fiwtewusews: set[wong] = nyegativesignaws.fwatmap {
+      case s-souwceinfo(_, :3 intewnawid.usewid(usewid), (✿oωo) _) => s-some(usewid)
+      c-case _ => nyone
     }
 
-    positiveSignals.filter {
-      case SourceInfo(_, InternalId.UserId(userId), _) => !filterUsers.contains(userId)
-      case _ => true
+    positivesignaws.fiwtew {
+      case souwceinfo(_, XD i-intewnawid.usewid(usewid), _) => !fiwtewusews.contains(usewid)
+      c-case _ => t-twue
     }
   }
 
-  def fetchCandidates(
-    query: CrCandidateGeneratorQuery,
-    sourceSignals: Set[SourceInfo],
-    sourceGraphs: Map[String, Option[GraphSourceInfo]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    val initialCandidates = candidateSourceRouter
-      .fetchCandidates(
-        query.userId,
-        sourceSignals,
-        sourceGraphs,
-        query.params
+  d-def fetchcandidates(
+    quewy: c-cwcandidategenewatowquewy, >w<
+    souwcesignaws: set[souwceinfo], òωó
+    souwcegwaphs: map[stwing, (ꈍᴗꈍ) option[gwaphsouwceinfo]]
+  ): futuwe[seq[seq[initiawcandidate]]] = {
+    v-vaw initiawcandidates = candidatesouwcewoutew
+      .fetchcandidates(
+        q-quewy.usewid, rawr x3
+        souwcesignaws, rawr x3
+        s-souwcegwaphs, σωσ
+        quewy.pawams
       )
 
-    initialCandidates.map(_.flatten.map { candidate =>
-      if (candidate.tweetInfo.hasBlueVerifiedAnnotation.contains(true)) {
-        blueVerifiedTweetStatsPerSimilarityEngine
-          .scope(query.product.toString).scope(
-            candidate.candidateGenerationInfo.contributingSimilarityEngines.head.similarityEngineType.toString).counter(
-            candidate.tweetInfo.authorId.toString).incr()
+    i-initiawcandidates.map(_.fwatten.map { candidate =>
+      i-if (candidate.tweetinfo.hasbwuevewifiedannotation.contains(twue)) {
+        b-bwuevewifiedtweetstatspewsimiwawityengine
+          .scope(quewy.pwoduct.tostwing).scope(
+            c-candidate.candidategenewationinfo.contwibutingsimiwawityengines.head.simiwawityenginetype.tostwing).countew(
+            c-candidate.tweetinfo.authowid.tostwing).incw()
       }
     })
 
-    crMixerScribeLogger.scribeInitialCandidates(
-      query,
-      initialCandidates
+    c-cwmixewscwibewoggew.scwibeinitiawcandidates(
+      quewy, (ꈍᴗꈍ)
+      initiawcandidates
     )
   }
 
-  private def preRankFilter(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[Seq[InitialCandidate]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    crMixerScribeLogger.scribePreRankFilterCandidates(
-      query,
-      preRankFilterRunner
-        .runSequentialFilters(query, candidates))
+  pwivate def pwewankfiwtew(
+    quewy: cwcandidategenewatowquewy, rawr
+    candidates: s-seq[seq[initiawcandidate]]
+  ): f-futuwe[seq[seq[initiawcandidate]]] = {
+    c-cwmixewscwibewoggew.scwibepwewankfiwtewcandidates(
+      quewy, ^^;;
+      pwewankfiwtewwunnew
+        .wunsequentiawfiwtews(quewy, rawr x3 c-candidates))
   }
 
-  private def postRankFilter(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[RankedCandidate]
-  ): Future[Seq[RankedCandidate]] = {
-    postRankFilterRunner.run(query, candidates)
+  pwivate def postwankfiwtew(
+    quewy: c-cwcandidategenewatowquewy, (ˆ ﻌ ˆ)♡
+    candidates: s-seq[wankedcandidate]
+  ): futuwe[seq[wankedcandidate]] = {
+    p-postwankfiwtewwunnew.wun(quewy, σωσ candidates)
   }
 
-  private def interleave(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[Seq[InitialCandidate]]
-  ): Future[Seq[BlendedCandidate]] = {
-    crMixerScribeLogger.scribeInterleaveCandidates(
-      query,
-      switchBlender
-        .blend(query.params, query.userState, candidates))
+  pwivate d-def intewweave(
+    q-quewy: cwcandidategenewatowquewy, (U ﹏ U)
+    candidates: s-seq[seq[initiawcandidate]]
+  ): f-futuwe[seq[bwendedcandidate]] = {
+    cwmixewscwibewoggew.scwibeintewweavecandidates(
+      quewy,
+      switchbwendew
+        .bwend(quewy.pawams, >w< quewy.usewstate, σωσ candidates))
   }
 
-  private def rank(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[BlendedCandidate],
-  ): Future[Seq[RankedCandidate]] = {
-    crMixerScribeLogger.scribeRankedCandidates(
-      query,
-      switchRanker.rank(query, candidates)
+  p-pwivate def w-wank(
+    quewy: c-cwcandidategenewatowquewy, nyaa~~
+    c-candidates: seq[bwendedcandidate], 🥺
+  ): f-futuwe[seq[wankedcandidate]] = {
+    cwmixewscwibewoggew.scwibewankedcandidates(
+      quewy, rawr x3
+      s-switchwankew.wank(quewy, σωσ c-candidates)
     )
   }
 
-  private def trackResultStats(
-    stats: StatsReceiver
+  pwivate d-def twackwesuwtstats(
+    s-stats: statsweceivew
   )(
-    fn: => Future[Seq[RankedCandidate]]
-  ): Future[Seq[RankedCandidate]] = {
-    fn.onSuccess { candidates =>
-      trackReasonChosenSourceTypeStats(candidates, stats)
-      trackReasonChosenSimilarityEngineStats(candidates, stats)
-      trackPotentialReasonsSourceTypeStats(candidates, stats)
-      trackPotentialReasonsSimilarityEngineStats(candidates, stats)
+    fn: => f-futuwe[seq[wankedcandidate]]
+  ): futuwe[seq[wankedcandidate]] = {
+    fn.onsuccess { c-candidates =>
+      twackweasonchosensouwcetypestats(candidates, (///ˬ///✿) stats)
+      t-twackweasonchosensimiwawityenginestats(candidates, (U ﹏ U) s-stats)
+      twackpotentiawweasonssouwcetypestats(candidates, ^^;; s-stats)
+      twackpotentiawweasonssimiwawityenginestats(candidates, 🥺 stats)
     }
   }
 
-  private def trackReasonChosenSourceTypeStats(
-    candidates: Seq[RankedCandidate],
-    stats: StatsReceiver
-  ): Unit = {
-    candidates
-      .groupBy(_.reasonChosen.sourceInfoOpt.map(_.sourceType))
-      .foreach {
-        case (sourceTypeOpt, rankedCands) =>
-          val sourceType = sourceTypeOpt.map(_.toString).getOrElse("RequesterId") // default
-          stats.stat("reasonChosen", "sourceType", sourceType, "size").add(rankedCands.size)
+  p-pwivate def twackweasonchosensouwcetypestats(
+    c-candidates: s-seq[wankedcandidate], òωó
+    stats: statsweceivew
+  ): unit = {
+    c-candidates
+      .gwoupby(_.weasonchosen.souwceinfoopt.map(_.souwcetype))
+      .foweach {
+        case (souwcetypeopt, XD wankedcands) =>
+          v-vaw souwcetype = s-souwcetypeopt.map(_.tostwing).getowewse("wequestewid") // defauwt
+          s-stats.stat("weasonchosen", :3 "souwcetype", (U ﹏ U) souwcetype, >w< "size").add(wankedcands.size)
       }
   }
 
-  private def trackReasonChosenSimilarityEngineStats(
-    candidates: Seq[RankedCandidate],
-    stats: StatsReceiver
-  ): Unit = {
+  p-pwivate def twackweasonchosensimiwawityenginestats(
+    c-candidates: seq[wankedcandidate], /(^•ω•^)
+    stats: statsweceivew
+  ): u-unit = {
     candidates
-      .groupBy(_.reasonChosen.similarityEngineInfo.similarityEngineType)
-      .foreach {
-        case (seInfoType, rankedCands) =>
-          stats
-            .stat("reasonChosen", "similarityEngine", seInfoType.toString, "size").add(
-              rankedCands.size)
+      .gwoupby(_.weasonchosen.simiwawityengineinfo.simiwawityenginetype)
+      .foweach {
+        case (seinfotype, (⑅˘꒳˘) w-wankedcands) =>
+          s-stats
+            .stat("weasonchosen", ʘwʘ "simiwawityengine", rawr x3 seinfotype.tostwing, (˘ω˘) "size").add(
+              w-wankedcands.size)
       }
   }
 
-  private def trackPotentialReasonsSourceTypeStats(
-    candidates: Seq[RankedCandidate],
-    stats: StatsReceiver
-  ): Unit = {
+  pwivate d-def twackpotentiawweasonssouwcetypestats(
+    c-candidates: seq[wankedcandidate], o.O
+    s-stats: statsweceivew
+  ): unit = {
     candidates
-      .flatMap(_.potentialReasons.map(_.sourceInfoOpt.map(_.sourceType)))
-      .groupBy(source => source)
-      .foreach {
-        case (sourceInfoOpt, seq) =>
-          val sourceType = sourceInfoOpt.map(_.toString).getOrElse("RequesterId") // default
-          stats.stat("potentialReasons", "sourceType", sourceType, "size").add(seq.size)
+      .fwatmap(_.potentiawweasons.map(_.souwceinfoopt.map(_.souwcetype)))
+      .gwoupby(souwce => souwce)
+      .foweach {
+        case (souwceinfoopt, 😳 seq) =>
+          vaw souwcetype = souwceinfoopt.map(_.tostwing).getowewse("wequestewid") // defauwt
+          stats.stat("potentiawweasons", "souwcetype", o.O souwcetype, ^^;; "size").add(seq.size)
       }
   }
 
-  private def trackPotentialReasonsSimilarityEngineStats(
-    candidates: Seq[RankedCandidate],
-    stats: StatsReceiver
-  ): Unit = {
+  pwivate def twackpotentiawweasonssimiwawityenginestats(
+    candidates: s-seq[wankedcandidate], ( ͡o ω ͡o )
+    s-stats: statsweceivew
+  ): unit = {
     candidates
-      .flatMap(_.potentialReasons.map(_.similarityEngineInfo.similarityEngineType))
-      .groupBy(se => se)
-      .foreach {
-        case (seType, seq) =>
-          stats.stat("potentialReasons", "similarityEngine", seType.toString, "size").add(seq.size)
+      .fwatmap(_.potentiawweasons.map(_.simiwawityengineinfo.simiwawityenginetype))
+      .gwoupby(se => s-se)
+      .foweach {
+        c-case (setype, ^^;; s-seq) =>
+          stats.stat("potentiawweasons", ^^;; "simiwawityengine", XD s-setype.tostwing, 🥺 "size").add(seq.size)
       }
   }
 
-  private def trackBlueVerifiedTweetStats(
-    candidates: Seq[RankedCandidate],
-    statsReceiver: StatsReceiver
-  ): Unit = {
-    candidates.foreach { candidate =>
-      if (candidate.tweetInfo.hasBlueVerifiedAnnotation.contains(true)) {
-        statsReceiver.counter(candidate.tweetInfo.authorId.toString).incr()
-        statsReceiver
-          .scope(candidate.tweetInfo.authorId.toString).counter(candidate.tweetId.toString).incr()
+  pwivate def t-twackbwuevewifiedtweetstats(
+    c-candidates: seq[wankedcandidate], (///ˬ///✿)
+    statsweceivew: s-statsweceivew
+  ): unit = {
+    c-candidates.foweach { c-candidate =>
+      if (candidate.tweetinfo.hasbwuevewifiedannotation.contains(twue)) {
+        statsweceivew.countew(candidate.tweetinfo.authowid.tostwing).incw()
+        s-statsweceivew
+          .scope(candidate.tweetinfo.authowid.tostwing).countew(candidate.tweetid.tostwing).incw()
       }
     }
   }
 
-  private def trackTopKStats(
-    k: Int,
-    tweetCandidates: Seq[RankedCandidate],
-    isQueryK: Boolean,
-    statsReceiver: StatsReceiver
-  ): Unit = {
-    val (topK, beyondK) = tweetCandidates.splitAt(k)
+  p-pwivate d-def twacktopkstats(
+    k-k: int,
+    t-tweetcandidates: s-seq[wankedcandidate], (U ᵕ U❁)
+    i-isquewyk: boowean, ^^;;
+    s-statsweceivew: s-statsweceivew
+  ): unit = {
+    v-vaw (topk, ^^;; b-beyondk) = tweetcandidates.spwitat(k)
 
-    val blueVerifiedIds = tweetCandidates.collect {
-      case candidate if candidate.tweetInfo.hasBlueVerifiedAnnotation.contains(true) =>
-        candidate.tweetInfo.authorId
-    }.toSet
+    vaw b-bwuevewifiedids = tweetcandidates.cowwect {
+      c-case candidate if candidate.tweetinfo.hasbwuevewifiedannotation.contains(twue) =>
+        candidate.tweetinfo.authowid
+    }.toset
 
-    blueVerifiedIds.foreach { blueVerifiedId =>
-      val numTweetsTopK = topK.count(_.tweetInfo.authorId == blueVerifiedId)
-      val numTweetsBeyondK = beyondK.count(_.tweetInfo.authorId == blueVerifiedId)
+    bwuevewifiedids.foweach { b-bwuevewifiedid =>
+      vaw nyumtweetstopk = t-topk.count(_.tweetinfo.authowid == b-bwuevewifiedid)
+      v-vaw nyumtweetsbeyondk = b-beyondk.count(_.tweetinfo.authowid == bwuevewifiedid)
 
-      if (isQueryK) {
-        statsReceiver.scope(blueVerifiedId.toString).stat(s"topK").add(numTweetsTopK)
-        statsReceiver
-          .scope(blueVerifiedId.toString).stat(s"beyondK").add(numTweetsBeyondK)
-      } else {
-        statsReceiver.scope(blueVerifiedId.toString).stat(s"top$k").add(numTweetsTopK)
-        statsReceiver
-          .scope(blueVerifiedId.toString).stat(s"beyond$k").add(numTweetsBeyondK)
+      i-if (isquewyk) {
+        statsweceivew.scope(bwuevewifiedid.tostwing).stat(s"topk").add(numtweetstopk)
+        s-statsweceivew
+          .scope(bwuevewifiedid.tostwing).stat(s"beyondk").add(numtweetsbeyondk)
+      } ewse {
+        s-statsweceivew.scope(bwuevewifiedid.tostwing).stat(s"top$k").add(numtweetstopk)
+        statsweceivew
+          .scope(bwuevewifiedid.tostwing).stat(s"beyond$k").add(numtweetsbeyondk)
       }
     }
   }

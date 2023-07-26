@@ -1,104 +1,104 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.twittew.seawch.ingestew.pipewine.utiw;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+impowt java.utiw.hashset;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.set;
+i-impowt j-java.utiw.concuwwent.concuwwenthashmap;
 
-import com.google.common.collect.Sets;
+i-impowt c-com.googwe.common.cowwect.sets;
 
-import com.twitter.util.Future;
-import com.twitter.util.Promise;
+i-impowt com.twittew.utiw.futuwe;
+impowt com.twittew.utiw.pwomise;
 
 /**
- * Batches single requests of type RQ -> Future<RP> to an underlying client that supports batch
- * calls with multiple values of type RQ. Threadsafe.
+ * batches singwe wequests of type wq -> f-futuwe<wp> to an undewwying cwient that suppowts b-batch
+ * cawws with muwtipwe vawues o-of type wq. rawr thweadsafe. 😳
  */
-public class BatchingClient<RQ, RP> {
-  @FunctionalInterface
-  public interface BatchClient<RQ, RP> {
+pubwic cwass batchingcwient<wq, >w< wp> {
+  @functionawintewface
+  p-pubwic intewface batchcwient<wq, (⑅˘꒳˘) w-wp> {
     /**
-     * Issue a request to the underlying store which supports batches of requests.
+     * i-issue a wequest to the undewwying stowe which suppowts batches of wequests. OwO
      */
-    Future<Map<RQ, RP>> batchGet(Set<RQ> requests);
+    f-futuwe<map<wq, (ꈍᴗꈍ) wp>> batchget(set<wq> wequests);
   }
 
   /**
-   * unsentRequests is not threadsafe, and so it must be externally synchronized.
+   * unsentwequests i-is nyot thweadsafe, 😳 a-and so it must b-be extewnawwy synchwonized.
    */
-  private final HashSet<RQ> unsentRequests = new HashSet<>();
+  p-pwivate finaw h-hashset<wq> unsentwequests = nyew hashset<>();
 
-  private final ConcurrentHashMap<RQ, Promise<RP>> promises = new ConcurrentHashMap<>();
+  pwivate finaw c-concuwwenthashmap<wq, 😳😳😳 pwomise<wp>> pwomises = n-nyew concuwwenthashmap<>();
 
-  private final BatchClient<RQ, RP> batchClient;
-  private final int batchSize;
+  pwivate finaw batchcwient<wq, mya wp> batchcwient;
+  pwivate finaw int batchsize;
 
-  public BatchingClient(
-      BatchClient<RQ, RP> batchClient,
-      int batchSize
+  p-pubwic batchingcwient(
+      batchcwient<wq, mya w-wp> b-batchcwient,
+      i-int batchsize
   ) {
-    this.batchClient = batchClient;
-    this.batchSize = batchSize;
+    this.batchcwient = batchcwient;
+    this.batchsize = batchsize;
   }
 
   /**
-   * Send a request and receive a Future<RP>. The future will not be resolved until at there at
-   * least batchSize requests ready to send.
+   * s-send a-a wequest and weceive a futuwe<wp>. (⑅˘꒳˘) t-the futuwe w-wiww nyot be wesowved untiw at thewe a-at
+   * weast batchsize wequests w-weady to send. (U ﹏ U)
    */
-  public Future<RP> call(RQ request) {
-    Promise<RP> promise = promises.computeIfAbsent(request, r -> new Promise<>());
+  pubwic futuwe<wp> caww(wq w-wequest) {
+    pwomise<wp> p-pwomise = pwomises.computeifabsent(wequest, mya w -> n-new pwomise<>());
 
-    maybeBatchCall(request);
+    m-maybebatchcaww(wequest);
 
-    return promise;
+    wetuwn pwomise;
   }
 
-  private void maybeBatchCall(RQ request) {
-    Set<RQ> frozenRequests;
-    synchronized (unsentRequests) {
-      unsentRequests.add(request);
-      if (unsentRequests.size() < batchSize) {
-        return;
+  pwivate void maybebatchcaww(wq wequest) {
+    set<wq> fwozenwequests;
+    synchwonized (unsentwequests) {
+      unsentwequests.add(wequest);
+      i-if (unsentwequests.size() < b-batchsize) {
+        wetuwn;
       }
 
-      // Make a copy of requests so we can modify it inside executeBatchCall without additional
-      // synchronization.
-      frozenRequests = new HashSet<>(unsentRequests);
-      unsentRequests.clear();
+      // m-make a-a copy of wequests s-so we can modify it inside exekawaii~batchcaww without additionaw
+      // s-synchwonization. ʘwʘ
+      fwozenwequests = nyew hashset<>(unsentwequests);
+      unsentwequests.cweaw();
     }
 
-    executeBatchCall(frozenRequests);
+    exekawaii~batchcaww(fwozenwequests);
   }
 
-  private void executeBatchCall(Set<RQ> requests) {
-    batchClient.batchGet(requests)
-        .onSuccess(responseMap -> {
-          for (Map.Entry<RQ, RP> entry : responseMap.entrySet()) {
-            Promise<RP> promise = promises.remove(entry.getKey());
-            if (promise != null) {
-              promise.become(Future.value(entry.getValue()));
+  p-pwivate void exekawaii~batchcaww(set<wq> w-wequests) {
+    b-batchcwient.batchget(wequests)
+        .onsuccess(wesponsemap -> {
+          f-fow (map.entwy<wq, (˘ω˘) wp> entwy : w-wesponsemap.entwyset()) {
+            p-pwomise<wp> p-pwomise = pwomises.wemove(entwy.getkey());
+            i-if (pwomise != nyuww) {
+              pwomise.become(futuwe.vawue(entwy.getvawue()));
             }
           }
 
-          Set<RQ> outstandingRequests = Sets.difference(requests, responseMap.keySet());
-          for (RQ request : outstandingRequests) {
-            Promise<RP> promise = promises.remove(request);
-            if (promise != null) {
-              promise.become(Future.exception(new ResponseNotReturnedException(request)));
+          s-set<wq> outstandingwequests = s-sets.diffewence(wequests, (U ﹏ U) w-wesponsemap.keyset());
+          fow (wq w-wequest : o-outstandingwequests) {
+            pwomise<wp> pwomise = pwomises.wemove(wequest);
+            if (pwomise != nyuww) {
+              p-pwomise.become(futuwe.exception(new wesponsenotwetuwnedexception(wequest)));
             }
           }
 
-          return null;
+          wetuwn nyuww;
         })
-        .onFailure(exception -> {
-          for (RQ request : requests) {
-            Promise<RP> promise = promises.remove(request);
-            if (promise != null) {
-              promise.become(Future.exception(exception));
+        .onfaiwuwe(exception -> {
+          fow (wq wequest : wequests) {
+            pwomise<wp> p-pwomise = pwomises.wemove(wequest);
+            if (pwomise != nyuww) {
+              pwomise.become(futuwe.exception(exception));
             }
           }
 
-          return null;
+          w-wetuwn n-nyuww;
         });
   }
 }

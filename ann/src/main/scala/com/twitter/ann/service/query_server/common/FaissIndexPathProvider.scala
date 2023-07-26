@@ -1,20 +1,20 @@
-package com.twitter.ann.service.query_server.common
+package com.twittew.ann.sewvice.quewy_sewvew.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.search.common.file.AbstractFile
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.seawch.common.fiwe.abstwactfiwe
 
-case class FaissIndexPathProvider(
-  override val minIndexSizeBytes: Long,
-  override val maxIndexSizeBytes: Long,
-  override val statsReceiver: StatsReceiver)
-    extends BaseIndexPathProvider {
+c-case cwass f-faissindexpathpwovidew(
+  o-ovewwide v-vaw minindexsizebytes: w-wong, ^^;;
+  o-ovewwide vaw maxindexsizebytes: wong, >_<
+  ovewwide vaw statsweceivew: statsweceivew)
+    e-extends baseindexpathpwovidew {
 
-  override val log = Logger.get("FAISSIndexPathProvider")
+  ovewwide vaw wog = w-woggew.get("faissindexpathpwovidew")
 
-  override def isValidIndex(dir: AbstractFile): Boolean = {
-    dir.isDirectory &&
-    dir.hasSuccessFile &&
-    dir.getChild("faiss.index").exists()
+  ovewwide d-def isvawidindex(diw: abstwactfiwe): boowean = {
+    diw.isdiwectowy &&
+    d-diw.hassuccessfiwe &&
+    diw.getchiwd("faiss.index").exists()
   }
 }

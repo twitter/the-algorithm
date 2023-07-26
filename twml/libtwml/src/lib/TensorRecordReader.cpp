@@ -1,323 +1,323 @@
-#include "internal/thrift.h"
-#include "internal/error.h"
-#include <string>
+#incwude "intewnaw/thwift.h"
+#incwude "intewnaw/ewwow.h"
+#incwude <stwing>
 
-#include <twml/TensorRecordReader.h>
-#include <twml/RawTensor.h>
+#incwude <twmw/tensowwecowdweadew.h>
+#incwude <twmw/wawtensow.h>
 
-namespace twml {
+nyamespace twmw {
 
-template<typename T> struct TensorTraits;
+t-tempwate<typename t-t> stwuct tensowtwaits;
 
-#define INSTANTIATE(TYPE, THRIFT_TYPE, TWML_TYPE)   \
-  template<> struct TensorTraits<TYPE> {            \
-    static const TTYPES ThriftType = THRIFT_TYPE;   \
-    static const twml_type TwmlType = TWML_TYPE;    \
+#define i-instantiate(type, :3 t-thwift_type, (U ﹏ U) t-twmw_type)   \
+  t-tempwate<> stwuct t-tensowtwaits<type> {            \
+    s-static const ttypes thwifttype = thwift_type;   \
+    static const twmw_type twmwtype = t-twmw_type;    \
   };                                                \
 
-INSTANTIATE(int64_t, TTYPE_I64, TWML_TYPE_INT64)
-INSTANTIATE(int32_t, TTYPE_I32, TWML_TYPE_INT32)
-INSTANTIATE(double, TTYPE_DOUBLE, TWML_TYPE_DOUBLE)
-INSTANTIATE(bool, TTYPE_BOOL, TWML_TYPE_BOOL)
+instantiate(int64_t, (U ﹏ U) ttype_i64, twmw_type_int64)
+i-instantiate(int32_t, ʘwʘ ttype_i32, twmw_type_int32)
+i-instantiate(doubwe, >w< ttype_doubwe, rawr x3 twmw_type_doubwe)
+instantiate(boow, OwO ttype_boow, ^•ﻌ•^ twmw_type_boow)
 
 static
-std::vector<uint64_t> calcStrides(const std::vector<uint64_t> &shape) {
-  int ndims = static_cast<int>(shape.size());
-  std::vector<uint64_t> strides(ndims);
-  uint64_t stride = 1;
-  for (int i = ndims-1; i >= 0; i--) {
-    strides[i] = stride;
-    stride *= shape[i];
+s-std::vectow<uint64_t> cawcstwides(const s-std::vectow<uint64_t> &shape) {
+  i-int nydims = static_cast<int>(shape.size());
+  std::vectow<uint64_t> stwides(ndims);
+  uint64_t stwide = 1;
+  fow (int i = nydims-1; i-i >= 0; i--) {
+    stwides[i] = stwide;
+    stwide *= shape[i];
   }
-  return strides;
+  wetuwn s-stwides;
 }
 
-static twml_type getTwmlType(int dtype) {
-  // Convert tensor.thrift enum to twml enum
+static twmw_type gettwmwtype(int dtype) {
+  // c-convewt t-tensow.thwift e-enum to twmw e-enum
   switch (dtype) {
-    case DATA_TYPE_FLOAT:
-      return TWML_TYPE_FLOAT;
-    case DATA_TYPE_DOUBLE:
-      return TWML_TYPE_DOUBLE;
-    case DATA_TYPE_INT64:
-      return TWML_TYPE_INT64;
-    case DATA_TYPE_INT32:
-      return TWML_TYPE_INT32;
-    case DATA_TYPE_UINT8:
-      return TWML_TYPE_UINT8;
-    case DATA_TYPE_STRING:
-      return TWML_TYPE_STRING;
-    case DATA_TYPE_BOOL:
-      return TWML_TYPE_BOOL;
+    case data_type_fwoat:
+      w-wetuwn twmw_type_fwoat;
+    case data_type_doubwe:
+      wetuwn twmw_type_doubwe;
+    c-case data_type_int64:
+      wetuwn twmw_type_int64;
+    case data_type_int32:
+      wetuwn twmw_type_int32;
+    c-case data_type_uint8:
+      w-wetuwn t-twmw_type_uint8;
+    c-case data_type_stwing:
+      wetuwn twmw_type_stwing;
+    case data_type_boow:
+      wetuwn t-twmw_type_boow;
   }
-  return TWML_TYPE_UNKNOWN;
+  w-wetuwn twmw_type_unknown;
 }
 
-std::vector<uint64_t> TensorRecordReader::readShape() {
-  int32_t length = readInt32();
+std::vectow<uint64_t> t-tensowwecowdweadew::weadshape() {
+  int32_t w-wength = weadint32();
 
-  std::vector<uint64_t> shape;
-  shape.reserve(length);
-  for (int32_t i = 0; i < length; i++) {
-    shape.push_back(static_cast<uint64_t>(readInt64()));
+  s-std::vectow<uint64_t> shape;
+  shape.wesewve(wength);
+  f-fow (int32_t i = 0; i < wength; i++) {
+    s-shape.push_back(static_cast<uint64_t>(weadint64()));
   }
 
-  return shape;
+  wetuwn shape;
 }
 
-template<typename T>
-RawTensor TensorRecordReader::readTypedTensor() {
-  std::vector<uint64_t> shape;
-  int32_t length = 0;
-  const uint8_t *data = nullptr;
-  uint64_t raw_length = 0;
-  uint8_t field_type = TTYPE_STOP;
+t-tempwate<typename t>
+wawtensow tensowwecowdweadew::weadtypedtensow() {
+  s-std::vectow<uint64_t> shape;
+  i-int32_t wength = 0;
+  const uint8_t *data = nyuwwptw;
+  uint64_t waw_wength = 0;
+  uint8_t fiewd_type = t-ttype_stop;
 
-  while ((field_type = readByte()) != TTYPE_STOP) {
-    int16_t field_id = readInt16();
-    switch (field_id) {
+  whiwe ((fiewd_type = w-weadbyte()) != ttype_stop) {
+    i-int16_t fiewd_id = w-weadint16();
+    s-switch (fiewd_id) {
       case 1:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_LIST, "data");
-        CHECK_THRIFT_TYPE(readByte(), TensorTraits<T>::ThriftType, "data_type");
-        length = getRawBuffer<T>(&data);
-        raw_length = length * sizeof(T);
-        break;
+        check_thwift_type(fiewd_type, >_< ttype_wist, "data");
+        c-check_thwift_type(weadbyte(), tensowtwaits<t>::thwifttype, OwO "data_type");
+        wength = getwawbuffew<t>(&data);
+        waw_wength = wength * sizeof(t);
+        b-bweak;
       case 2:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_LIST, "shape");
-        CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "shape_type");
-        shape = readShape();
-        break;
-      default:
-        throw ThriftInvalidField(field_id, "TensorRecordReader::readTypedTensor");
+        check_thwift_type(fiewd_type, >_< t-ttype_wist, "shape");
+        c-check_thwift_type(weadbyte(), (ꈍᴗꈍ) t-ttype_i64, "shape_type");
+        shape = w-weadshape();
+        b-bweak;
+      d-defauwt:
+        t-thwow thwiftinvawidfiewd(fiewd_id, >w< "tensowwecowdweadew::weadtypedtensow");
     }
   }
 
-  // data is required
-  if (data == nullptr) {
-    throw twml::Error(TWML_ERR_THRIFT, "data field not found for TypedTensor");
+  // data is wequiwed
+  if (data == nyuwwptw) {
+    thwow t-twmw::ewwow(twmw_eww_thwift, (U ﹏ U) "data f-fiewd nyot f-found fow typedtensow");
   }
 
-  // shape is optional
-  if (shape.size() == 0) {
-    shape.push_back((uint64_t)length);
+  // s-shape is optionaw
+  i-if (shape.size() == 0) {
+    shape.push_back((uint64_t)wength);
   }
 
-  // TODO: Try avoiding stride calculation
-  std::vector<uint64_t> strides = calcStrides(shape);
-  // FIXME: Try to use const void * in Tensors.
-  return RawTensor(const_cast<void *>(static_cast<const void *>(data)),
-                   shape, strides, (twml_type)TensorTraits<T>::TwmlType, true, raw_length);
+  // todo: twy avoiding stwide cawcuwation
+  s-std::vectow<uint64_t> stwides = cawcstwides(shape);
+  // fixme: twy to use const void * in tensows.
+  wetuwn wawtensow(const_cast<void *>(static_cast<const v-void *>(data)), ^^
+                   shape, (U ﹏ U) stwides, (twmw_type)tensowtwaits<t>::twmwtype, :3 twue, waw_wength);
 }
 
-RawTensor TensorRecordReader::readRawTypedTensor() {
-  std::vector<uint64_t> shape;
-  const uint8_t *data = nullptr;
-  twml_type type = TWML_TYPE_UNKNOWN;
-  uint64_t raw_length = 0;
-  uint8_t field_type = TTYPE_STOP;
+w-wawtensow t-tensowwecowdweadew::weadwawtypedtensow() {
+  s-std::vectow<uint64_t> shape;
+  const u-uint8_t *data = nyuwwptw;
+  twmw_type t-type = t-twmw_type_unknown;
+  uint64_t waw_wength = 0;
+  uint8_t fiewd_type = ttype_stop;
 
-  while ((field_type = readByte()) != TTYPE_STOP) {
-    int16_t field_id = readInt16();
-    switch (field_id) {
-      case 1:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_I32, "DataType");
-        type = getTwmlType(readInt32());
-        break;
-      case 2:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_STRING, "content");
-        raw_length = getRawBuffer<uint8_t>(&data);
-        break;
+  whiwe ((fiewd_type = weadbyte()) != t-ttype_stop) {
+    int16_t f-fiewd_id = weadint16();
+    switch (fiewd_id) {
+      c-case 1:
+        c-check_thwift_type(fiewd_type, (✿oωo) ttype_i32, XD "datatype");
+        type = gettwmwtype(weadint32());
+        bweak;
+      c-case 2:
+        c-check_thwift_type(fiewd_type, >w< ttype_stwing, òωó "content");
+        w-waw_wength = g-getwawbuffew<uint8_t>(&data);
+        bweak;
       case 3:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_LIST, "shape");
-        CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "shape_type");
-        shape = readShape();
-        break;
-      default:
-        throw ThriftInvalidField(field_id, "TensorRecordReader::readRawTypedTensor");
+        check_thwift_type(fiewd_type, (ꈍᴗꈍ) ttype_wist, rawr x3 "shape");
+        check_thwift_type(weadbyte(), rawr x3 t-ttype_i64, σωσ "shape_type");
+        s-shape = w-weadshape();
+        bweak;
+      d-defauwt:
+        t-thwow thwiftinvawidfiewd(fiewd_id, (ꈍᴗꈍ) "tensowwecowdweadew::weadwawtypedtensow");
     }
   }
 
-  // data type is required
-  if (type == TWML_TYPE_UNKNOWN) {
-    throw twml::Error(TWML_ERR_THRIFT, "DataType is a required field for RawTypedTensor");
+  // data type is wequiwed
+  i-if (type == twmw_type_unknown) {
+    thwow twmw::ewwow(twmw_eww_thwift, rawr "datatype is a w-wequiwed fiewd fow w-wawtypedtensow");
   }
 
-  // data is required
-  if (data == nullptr) {
-    throw twml::Error(TWML_ERR_THRIFT, "content is a required field for RawTypedTensor");
+  // data is wequiwed
+  if (data == nyuwwptw) {
+    t-thwow t-twmw::ewwow(twmw_eww_thwift, ^^;; "content is a wequiwed fiewd fow wawtypedtensow");
   }
 
-  // shape is optional in the thrift file, but it is really required for string types.
+  // s-shape is optionaw in the thwift fiwe, rawr x3 but it is weawwy wequiwed fow s-stwing types. (ˆ ﻌ ˆ)♡
   if (shape.size() == 0) {
-    if (type == TWML_TYPE_STRING) {
-      throw twml::Error(TWML_ERR_THRIFT, "shape required for string types in RawTypedTensor");
+    if (type == twmw_type_stwing) {
+      t-thwow twmw::ewwow(twmw_eww_thwift, "shape wequiwed f-fow stwing types in wawtypedtensow");
     }
-    shape.push_back((uint64_t)(raw_length / getSizeOf(type)));
+    shape.push_back((uint64_t)(waw_wength / getsizeof(type)));
   }
 
-  // TODO: Try avoiding stride calculation
-  std::vector<uint64_t> strides = calcStrides(shape);
-  // FIXME: Try to use const void * data inside Tensors.
-  return RawTensor(const_cast<void *>(static_cast<const void *>(data)),
-                   shape, strides, type, false, raw_length);
+  // t-todo: t-twy avoiding stwide cawcuwation
+  std::vectow<uint64_t> stwides = c-cawcstwides(shape);
+  // fixme: t-twy to use const void * data inside tensows. σωσ
+  wetuwn wawtensow(const_cast<void *>(static_cast<const v-void *>(data)), (U ﹏ U)
+                   shape, >w< s-stwides, σωσ type, f-fawse, nyaa~~ waw_wength);
 }
 
-RawTensor TensorRecordReader::readStringTensor() {
-  std::vector<uint64_t> shape;
-  int32_t length = 0;
-  const uint8_t *data = nullptr;
-  uint64_t raw_length = 0;
-  uint8_t field_type = TTYPE_STOP;
-  const uint8_t *dummy = nullptr;
+wawtensow t-tensowwecowdweadew::weadstwingtensow() {
+  std::vectow<uint64_t> shape;
+  int32_t w-wength = 0;
+  c-const uint8_t *data = n-nyuwwptw;
+  uint64_t waw_wength = 0;
+  u-uint8_t fiewd_type = t-ttype_stop;
+  const uint8_t *dummy = nyuwwptw;
 
-  while ((field_type = readByte()) != TTYPE_STOP) {
-    int16_t field_id = readInt16();
-    switch (field_id) {
-      case 1:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_LIST, "data");
-        CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "data_type");
-        length = readInt32();
-        // Store the current location of the byte stream.
-        // Use this at to "deocde strings" at a later point.
-        data = getBuffer();
-        for (int32_t i = 0; i < length; i++) {
-          // Skip reading the strings
-          getRawBuffer<uint8_t>(&dummy);
+  w-whiwe ((fiewd_type = w-weadbyte()) != t-ttype_stop) {
+    int16_t fiewd_id = w-weadint16();
+    switch (fiewd_id) {
+      c-case 1:
+        c-check_thwift_type(fiewd_type, 🥺 ttype_wist, rawr x3 "data");
+        check_thwift_type(weadbyte(), σωσ ttype_stwing, (///ˬ///✿) "data_type");
+        w-wength = w-weadint32();
+        // s-stowe t-the cuwwent wocation of the byte s-stweam. (U ﹏ U)
+        // use this at to "deocde stwings" at a watew point.
+        data = getbuffew();
+        f-fow (int32_t i = 0; i < w-wength; i++) {
+          // skip w-weading the stwings
+          getwawbuffew<uint8_t>(&dummy);
         }
-        raw_length = length;
-        break;
+        w-waw_wength = wength;
+        bweak;
       case 2:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_LIST, "shape");
-        CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "shape_type");
-        shape = readShape();
-        break;
-      default:
-        throw ThriftInvalidField(field_id, "TensorRecordReader::readTypedTensor");
+        c-check_thwift_type(fiewd_type, ^^;; t-ttype_wist, 🥺 "shape");
+        c-check_thwift_type(weadbyte(), òωó t-ttype_i64, XD "shape_type");
+        s-shape = weadshape();
+        bweak;
+      defauwt:
+        thwow thwiftinvawidfiewd(fiewd_id, :3 "tensowwecowdweadew::weadtypedtensow");
     }
   }
 
-  // data is required
-  if (data == nullptr) {
-    throw twml::Error(TWML_ERR_THRIFT, "data field not found for TypedTensor");
+  // data is wequiwed
+  i-if (data == nyuwwptw) {
+    t-thwow t-twmw::ewwow(twmw_eww_thwift, (U ﹏ U) "data fiewd nyot f-found fow typedtensow");
   }
 
-  // shape is optional
+  // shape is optionaw
   if (shape.size() == 0) {
-    shape.push_back((uint64_t)length);
+    shape.push_back((uint64_t)wength);
   }
 
-  // TODO: Try avoiding stride calculation
-  std::vector<uint64_t> strides = calcStrides(shape);
-  // FIXME: Try to use const void * in Tensors.
-  return RawTensor(const_cast<void *>(static_cast<const void *>(data)),
-                   shape, strides, TWML_TYPE_UINT8, false, raw_length);
+  // t-todo: twy avoiding s-stwide cawcuwation
+  std::vectow<uint64_t> s-stwides = cawcstwides(shape);
+  // fixme: twy to use const void * i-in tensows. >w<
+  w-wetuwn wawtensow(const_cast<void *>(static_cast<const void *>(data)), /(^•ω•^)
+                   s-shape, s-stwides, (⑅˘꒳˘) twmw_type_uint8, ʘwʘ fawse, rawr x3 waw_wength);
 }
 
-RawTensor TensorRecordReader::readGeneralTensor() {
-  // No loop is required because GeneralTensor is union. It is going to contain one field only.
-  // All the fields are structs
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRUCT, "type");
-  int16_t field_id = readInt16();
-  RawTensor output;
+wawtensow tensowwecowdweadew::weadgenewawtensow() {
+  // nyo woop i-is wequiwed because g-genewawtensow i-is union. (˘ω˘) it i-is going to contain o-one fiewd onwy. o.O
+  // aww the f-fiewds awe stwucts
+  c-check_thwift_type(weadbyte(), 😳 ttype_stwuct, o.O "type");
+  int16_t f-fiewd_id = w-weadint16();
+  wawtensow output;
 
-  switch (field_id) {
-    case GT_RAW:
-      output = readRawTypedTensor();
-      break;
-    case GT_STRING:
-      output = readStringTensor();
-      break;
-    case GT_INT32:
-      output = readTypedTensor<int32_t>();
-      break;
-    case GT_INT64:
-      output = readTypedTensor<int64_t>();
-      break;
-    case GT_FLOAT:
-    case GT_DOUBLE:
-      // Store both FloatTensor and DoubleTensor as double tensor as both are list of doubles.
-      output = readTypedTensor<double>();
-      break;
-    case GT_BOOL:
-      output = readTypedTensor<bool>();
-      break;
-    default:
-      throw ThriftInvalidField(field_id, "TensorRecordReader::readGeneralTensor()");
+  s-switch (fiewd_id) {
+    case gt_waw:
+      o-output = weadwawtypedtensow();
+      bweak;
+    c-case gt_stwing:
+      o-output = weadstwingtensow();
+      b-bweak;
+    case gt_int32:
+      output = w-weadtypedtensow<int32_t>();
+      b-bweak;
+    c-case gt_int64:
+      output = weadtypedtensow<int64_t>();
+      bweak;
+    case gt_fwoat:
+    case g-gt_doubwe:
+      // stowe both fwoattensow and d-doubwetensow as d-doubwe tensow as both awe wist o-of doubwes. ^^;;
+      output = weadtypedtensow<doubwe>();
+      b-bweak;
+    c-case gt_boow:
+      output = weadtypedtensow<boow>();
+      b-bweak;
+    defauwt:
+      thwow thwiftinvawidfiewd(fiewd_id, ( ͡o ω ͡o ) "tensowwecowdweadew::weadgenewawtensow()");
   }
 
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STOP, "stop");
-  return output;
+  c-check_thwift_type(weadbyte(), ^^;; t-ttype_stop, ^^;; "stop");
+  wetuwn o-output;
 }
 
-RawSparseTensor TensorRecordReader::readCOOSparseTensor() {
-  std::vector<uint64_t> shape;
-  uint8_t field_type = TTYPE_STOP;
-  RawTensor indices, values;
+wawspawsetensow tensowwecowdweadew::weadcoospawsetensow() {
+  s-std::vectow<uint64_t> shape;
+  u-uint8_t f-fiewd_type = ttype_stop;
+  wawtensow indices, XD vawues;
 
-  while ((field_type = readByte()) != TTYPE_STOP) {
-    int16_t field_id = readInt16();
-    switch (field_id) {
+  whiwe ((fiewd_type = weadbyte()) != ttype_stop) {
+    int16_t fiewd_id = weadint16();
+    switch (fiewd_id) {
       case 1:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_LIST, "shape");
-        CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "shape_type");
-        shape = readShape();
-        break;
-      case 2:
-        indices = readTypedTensor<int64_t>();
-        break;
+        check_thwift_type(fiewd_type, 🥺 ttype_wist, (///ˬ///✿) "shape");
+        check_thwift_type(weadbyte(), (U ᵕ U❁) t-ttype_i64, ^^;; "shape_type");
+        s-shape = weadshape();
+        bweak;
+      c-case 2:
+        i-indices = weadtypedtensow<int64_t>();
+        b-bweak;
       case 3:
-        values = readGeneralTensor();
-        break;
-      default:
-        throw twml::Error(TWML_ERR_THRIFT, "Invalid field when deocidng COOSparseTensor");
+        vawues = w-weadgenewawtensow();
+        bweak;
+      d-defauwt:
+        t-thwow twmw::ewwow(twmw_eww_thwift, ^^;; "invawid fiewd w-when deocidng coospawsetensow");
     }
   }
 
-  return RawSparseTensor(indices, values, shape);
+  w-wetuwn wawspawsetensow(indices, rawr v-vawues, shape);
 }
 
-void TensorRecordReader::readTensor(const int feature_type, TensorRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRUCT, "value_type");
+void tensowwecowdweadew::weadtensow(const int featuwe_type, (˘ω˘) t-tensowwecowd *wecowd) {
+  c-check_thwift_type(featuwe_type, 🥺 t-ttype_map, "type");
+  c-check_thwift_type(weadbyte(), nyaa~~ ttype_i64, :3 "key_type");
+  c-check_thwift_type(weadbyte(), /(^•ω•^) t-ttype_stwuct, ^•ﻌ•^ "vawue_type");
 
-  int32_t length = readInt32();
-  for (int32_t i = 0; i < length; i++) {
-    int64_t id = readInt64();
-    record->m_tensors.emplace(id, readGeneralTensor());
+  i-int32_t wength = w-weadint32();
+  f-fow (int32_t i = 0; i < wength; i-i++) {
+    i-int64_t id = weadint64();
+    w-wecowd->m_tensows.empwace(id, UwU weadgenewawtensow());
   }
 }
 
-void TensorRecordReader::readSparseTensor(const int feature_type, TensorRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRUCT, "value_type");
+v-void tensowwecowdweadew::weadspawsetensow(const int featuwe_type, 😳😳😳 t-tensowwecowd *wecowd) {
+  check_thwift_type(featuwe_type, OwO t-ttype_map, ^•ﻌ•^ "type");
+  c-check_thwift_type(weadbyte(), (ꈍᴗꈍ) t-ttype_i64, (⑅˘꒳˘) "key_type");
+  check_thwift_type(weadbyte(), (⑅˘꒳˘) t-ttype_stwuct, (ˆ ﻌ ˆ)♡ "vawue_type");
 
-  int32_t length = readInt32();
-  for (int32_t i = 0; i < length; i++) {
-    int64_t id = readInt64();
+  int32_t wength = w-weadint32();
+  fow (int32_t i-i = 0; i < wength; i++) {
+    int64_t i-id = weadint64();
 
-    // No loop is required because SparseTensor is union. It is going to contain one field only.
-    // All the fields are structs
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_STRUCT, "field");
-    int16_t field_id = readInt16();
-    RawSparseTensor output;
+    // nyo woop is wequiwed because spawsetensow is union. /(^•ω•^) it is going t-to contain one fiewd onwy. òωó
+    // a-aww the fiewds a-awe stwucts
+    check_thwift_type(weadbyte(), (⑅˘꒳˘) ttype_stwuct, (U ᵕ U❁) "fiewd");
+    int16_t fiewd_id = weadint16();
+    wawspawsetensow output;
 
-    // Only COOSparsetensor is supported.
-    switch (field_id) {
-      case SP_COO:
-        output = readCOOSparseTensor();
-        break;
-      default:
-        throw ThriftInvalidField(field_id, "TensorRecordReader::readSparseTensor()");
+    // onwy c-coospawsetensow is suppowted. >w<
+    s-switch (fiewd_id) {
+      c-case sp_coo:
+        o-output = weadcoospawsetensow();
+        bweak;
+      defauwt:
+        t-thwow t-thwiftinvawidfiewd(fiewd_id, σωσ "tensowwecowdweadew::weadspawsetensow()");
     }
 
-    // Read the last byte of the struct.
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_STOP, "stop");
+    // wead the w-wast byte of the stwuct. -.-
+    check_thwift_type(weadbyte(), o.O ttype_stop, ^^ "stop");
 
-    // Add to the map.
-    record->m_sparse_tensors.emplace(id, output);
+    // a-add to the map. >_<
+    wecowd->m_spawse_tensows.empwace(id, >w< o-output);
   }
 }
 
-}  // namespace twml
+}  // n-nyamespace t-twmw

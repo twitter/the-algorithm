@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.premarshaller.urp
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwp
 
-import com.twitter.product_mixer.component_library.premarshaller.urp.builder.PageBodyBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urp.builder.PageHeaderBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urp.builder.PageNavBarBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urp.builder.TimelineScribeConfigBuilder
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urp._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwp.buiwdew.pagebodybuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwp.buiwdew.pageheadewbuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwp.buiwdew.pagenavbawbuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwp.buiwdew.timewinescwibeconfigbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.pwemawshawwew.domainmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.domainmawshawwewidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp._
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object UrpDomainMarshaller {
-  val PageIdSuffix = "-Page"
+object uwpdomainmawshawwew {
+  v-vaw pageidsuffix = "-page"
 }
 
 /**
- * Domain marshaller that given the builders for the body, header and navbar will generate a URP Page
+ * domain mawshawwew that g-given the buiwdews fow the body, ^^ h-headew and nyavbaw wiww genewate a uwp page
  *
- * @param pageBodyBuilder     PageBody builder that generates a PageBody with the query and selections
- * @param scribeConfigBuilder Scribe Config builder that generates the configuration for scribing of the page
- * @param pageHeaderBuilder   PageHeader builder that generates a PageHeader with the query and selections
- * @param pageNavBarBuilder   PageNavBar builder that generates a PageNavBar with the query and selections
- * @tparam Query The type of Query that this Marshaller operates with
+ * @pawam pagebodybuiwdew     p-pagebody buiwdew that genewates a-a pagebody with t-the quewy and sewections
+ * @pawam scwibeconfigbuiwdew scwibe config buiwdew that genewates the c-configuwation fow scwibing of the page
+ * @pawam pageheadewbuiwdew   pageheadew b-buiwdew that genewates a pageheadew w-with the quewy a-and sewections
+ * @pawam p-pagenavbawbuiwdew   p-pagenavbaw buiwdew that genewates a pagenavbaw with t-the quewy and sewections
+ * @tpawam quewy the t-type of quewy that this mawshawwew opewates with
  */
-case class UrpDomainMarshaller[-Query <: PipelineQuery](
-  pageBodyBuilder: PageBodyBuilder[Query],
-  pageHeaderBuilder: Option[PageHeaderBuilder[Query]] = None,
-  pageNavBarBuilder: Option[PageNavBarBuilder[Query]] = None,
-  scribeConfigBuilder: Option[TimelineScribeConfigBuilder[Query]] = None,
-  override val identifier: DomainMarshallerIdentifier =
-    DomainMarshallerIdentifier("UnifiedRichPage"))
-    extends DomainMarshaller[Query, Page] {
+case cwass uwpdomainmawshawwew[-quewy <: pipewinequewy](
+  p-pagebodybuiwdew: pagebodybuiwdew[quewy], :3
+  p-pageheadewbuiwdew: o-option[pageheadewbuiwdew[quewy]] = n-nyone, -.-
+  pagenavbawbuiwdew: option[pagenavbawbuiwdew[quewy]] = nyone, 😳
+  scwibeconfigbuiwdew: option[timewinescwibeconfigbuiwdew[quewy]] = nyone, mya
+  o-ovewwide vaw i-identifiew: domainmawshawwewidentifiew =
+    domainmawshawwewidentifiew("unifiedwichpage"))
+    e-extends domainmawshawwew[quewy, (˘ω˘) p-page] {
 
-  override def apply(
-    query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): Page = {
-    val pageBody = pageBodyBuilder.build(query, selections)
-    val pageHeader = pageHeaderBuilder.flatMap(_.build(query, selections))
-    val pageNavBar = pageNavBarBuilder.flatMap(_.build(query, selections))
-    val scribeConfig = scribeConfigBuilder.flatMap(_.build(query, pageBody, pageHeader, pageNavBar))
+  ovewwide def appwy(
+    q-quewy: quewy, >_<
+    sewections: s-seq[candidatewithdetaiws]
+  ): page = {
+    vaw pagebody = pagebodybuiwdew.buiwd(quewy, -.- s-sewections)
+    vaw p-pageheadew = pageheadewbuiwdew.fwatmap(_.buiwd(quewy, 🥺 sewections))
+    v-vaw pagenavbaw = p-pagenavbawbuiwdew.fwatmap(_.buiwd(quewy, (U ﹏ U) sewections))
+    vaw scwibeconfig = scwibeconfigbuiwdew.fwatmap(_.buiwd(quewy, >w< pagebody, mya pageheadew, pagenavbaw))
 
-    Page(
-      id = query.product.identifier.toString + UrpDomainMarshaller.PageIdSuffix,
-      pageBody = pageBody,
-      scribeConfig = scribeConfig,
-      pageHeader = pageHeader,
-      pageNavBar = pageNavBar
+    page(
+      i-id = quewy.pwoduct.identifiew.tostwing + u-uwpdomainmawshawwew.pageidsuffix, >w<
+      pagebody = p-pagebody, nyaa~~
+      s-scwibeconfig = scwibeconfig, (✿oωo)
+      p-pageheadew = pageheadew, ʘwʘ
+      pagenavbaw = pagenavbaw
     )
   }
 }

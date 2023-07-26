@@ -1,71 +1,71 @@
-package com.twitter.tweetypie.backends
+package com.twittew.tweetypie.backends
 
-import com.twitter.container.{thriftscala => ccs}
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finatra.thrift.thriftscala.ServerError
-import com.twitter.finatra.thrift.thriftscala.ServerErrorCause
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.Duration
-import com.twitter.tweetypie.Future
-import com.twitter.tweetypie.Try
-import com.twitter.tweetypie.util.RetryPolicyBuilder
-import com.twitter.tweetypie.{thriftscala => tp}
-import com.twitter.util.Throw
+impowt com.twittew.containew.{thwiftscawa => c-ccs}
+impowt c-com.twittew.finagwe.backoff
+i-impowt c-com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt c-com.twittew.finatwa.thwift.thwiftscawa.sewvewewwow
+i-impowt com.twittew.finatwa.thwift.thwiftscawa.sewvewewwowcause
+i-impowt com.twittew.sewvo.utiw.futuweawwow
+impowt com.twittew.tweetypie.duwation
+impowt com.twittew.tweetypie.futuwe
+impowt com.twittew.tweetypie.twy
+i-impowt com.twittew.tweetypie.utiw.wetwypowicybuiwdew
+impowt c-com.twittew.tweetypie.{thwiftscawa => tp}
+impowt c-com.twittew.utiw.thwow
 
-object CreativesContainerService {
-  import Backend._
+object cweativescontainewsewvice {
+  impowt backend._
 
-  type MaterializeAsTweet = FutureArrow[ccs.MaterializeAsTweetRequests, Seq[tp.GetTweetResult]]
-  type MaterializeAsTweetFields =
-    FutureArrow[ccs.MaterializeAsTweetFieldsRequests, Seq[tp.GetTweetFieldsResult]]
+  t-type matewiawizeastweet = futuweawwow[ccs.matewiawizeastweetwequests, -.- s-seq[tp.gettweetwesuwt]]
+  t-type matewiawizeastweetfiewds =
+    futuweawwow[ccs.matewiawizeastweetfiewdswequests, 🥺 seq[tp.gettweetfiewdswesuwt]]
 
-  def fromClient(
-    client: ccs.CreativesContainerService.MethodPerEndpoint
-  ): CreativesContainerService =
-    new CreativesContainerService {
-      val materializeAsTweet: MaterializeAsTweet = FutureArrow(client.materializeAsTweets)
-      val materializeAsTweetFields: MaterializeAsTweetFields = FutureArrow(
-        client.materializeAsTweetFields)
+  def fwomcwient(
+    c-cwient: ccs.cweativescontainewsewvice.methodpewendpoint
+  ): cweativescontainewsewvice =
+    new cweativescontainewsewvice {
+      vaw matewiawizeastweet: matewiawizeastweet = futuweawwow(cwient.matewiawizeastweets)
+      v-vaw matewiawizeastweetfiewds: matewiawizeastweetfiewds = f-futuweawwow(
+        c-cwient.matewiawizeastweetfiewds)
 
-      def ping(): Future[Unit] = client.materializeAsTweets(ccs.MaterializeAsTweetRequests()).unit
+      d-def ping(): f-futuwe[unit] = cwient.matewiawizeastweets(ccs.matewiawizeastweetwequests()).unit
     }
 
-  case class Config(
-    requestTimeout: Duration,
-    timeoutBackoffs: Stream[Duration],
-    serverErrorBackoffs: Stream[Duration]) {
-    def apply(svc: CreativesContainerService, ctx: Backend.Context): CreativesContainerService =
-      new CreativesContainerService {
-        override val materializeAsTweet: MaterializeAsTweet =
-          policy("materializeAsTweets", ctx)(svc.materializeAsTweet)
+  case c-cwass config(
+    wequesttimeout: duwation, (U ﹏ U)
+    t-timeoutbackoffs: stweam[duwation],
+    sewvewewwowbackoffs: stweam[duwation]) {
+    def appwy(svc: cweativescontainewsewvice, >w< ctx: b-backend.context): cweativescontainewsewvice =
+      n-nyew cweativescontainewsewvice {
+        o-ovewwide vaw matewiawizeastweet: m-matewiawizeastweet =
+          powicy("matewiawizeastweets", mya ctx)(svc.matewiawizeastweet)
 
-        override val materializeAsTweetFields: MaterializeAsTweetFields =
-          policy("materializeAsTweetFields", ctx)(svc.materializeAsTweetFields)
+        ovewwide vaw matewiawizeastweetfiewds: m-matewiawizeastweetfiewds =
+          p-powicy("matewiawizeastweetfiewds", >w< ctx)(svc.matewiawizeastweetfiewds)
 
-        override def ping(): Future[Unit] = svc.ping()
+        o-ovewwide def ping(): f-futuwe[unit] = svc.ping()
       }
 
-    private[this] def policy[A, B](name: String, ctx: Context): Builder[A, B] =
-      defaultPolicy(name, requestTimeout, retryPolicy, ctx)
+    p-pwivate[this] def powicy[a, nyaa~~ b-b](name: stwing, (✿oωo) ctx: context): buiwdew[a, ʘwʘ b-b] =
+      defauwtpowicy(name, (ˆ ﻌ ˆ)♡ wequesttimeout, 😳😳😳 w-wetwypowicy, :3 ctx)
 
-    private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
-      RetryPolicy.combine[Try[B]](
-        RetryPolicyBuilder.timeouts[B](timeoutBackoffs),
-        RetryPolicy.backoff(Backoff.fromStream(serverErrorBackoffs)) {
-          case Throw(ex: ServerError) if ex.errorCause != ServerErrorCause.NotImplemented => true
+    pwivate[this] d-def wetwypowicy[b]: w-wetwypowicy[twy[b]] =
+      wetwypowicy.combine[twy[b]](
+        wetwypowicybuiwdew.timeouts[b](timeoutbackoffs), OwO
+        wetwypowicy.backoff(backoff.fwomstweam(sewvewewwowbackoffs)) {
+          case thwow(ex: sewvewewwow) if ex.ewwowcause != s-sewvewewwowcause.notimpwemented => t-twue
         }
       )
 
-    implicit val warmup: Warmup[CreativesContainerService] =
-      Warmup[CreativesContainerService]("creativesContainerService")(_.ping())
+    impwicit v-vaw wawmup: w-wawmup[cweativescontainewsewvice] =
+      w-wawmup[cweativescontainewsewvice]("cweativescontainewsewvice")(_.ping())
   }
 }
 
-trait CreativesContainerService {
-  import CreativesContainerService._
+twait cweativescontainewsewvice {
+  impowt cweativescontainewsewvice._
 
-  val materializeAsTweet: MaterializeAsTweet
-  val materializeAsTweetFields: MaterializeAsTweetFields
-  def ping(): Future[Unit]
+  v-vaw matewiawizeastweet: matewiawizeastweet
+  vaw matewiawizeastweetfiewds: matewiawizeastweetfiewds
+  def p-ping(): futuwe[unit]
 }

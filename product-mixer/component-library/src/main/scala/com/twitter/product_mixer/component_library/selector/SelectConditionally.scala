@@ -1,85 +1,85 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.configapi.pawam
 
-trait IncludeSelector[-Query <: PipelineQuery] {
-  def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): Boolean
+twait incwudesewectow[-quewy <: pipewinequewy] {
+  d-def appwy(
+    quewy: quewy,
+    wemainingcandidates: s-seq[candidatewithdetaiws], (U ﹏ U)
+    wesuwt: seq[candidatewithdetaiws]
+  ): b-boowean
 }
 
 /**
- * Run [[selector]] if [[includeSelector]] resolves to true, else no-op the selector
+ * wun [[sewectow]] if [[incwudesewectow]] wesowves to twue, 😳 ewse nyo-op t-the sewectow
  */
-case class SelectConditionally[-Query <: PipelineQuery](
-  selector: Selector[Query],
-  includeSelector: IncludeSelector[Query])
-    extends Selector[Query] {
+case cwass s-sewectconditionawwy[-quewy <: pipewinequewy](
+  s-sewectow: sewectow[quewy], (ˆ ﻌ ˆ)♡
+  incwudesewectow: incwudesewectow[quewy])
+    extends sewectow[quewy] {
 
-  override val pipelineScope: CandidateScope = selector.pipelineScope
+  ovewwide v-vaw pipewinescope: candidatescope = sewectow.pipewinescope
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    if (includeSelector(query, remainingCandidates, result)) {
-      selector(query, remainingCandidates, result)
-    } else SelectorResult(remainingCandidates = remainingCandidates, result = result)
+  ovewwide def appwy(
+    quewy: quewy, 😳😳😳
+    w-wemainingcandidates: seq[candidatewithdetaiws], (U ﹏ U)
+    w-wesuwt: s-seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    i-if (incwudesewectow(quewy, (///ˬ///✿) wemainingcandidates, 😳 wesuwt)) {
+      s-sewectow(quewy, 😳 wemainingcandidates, σωσ wesuwt)
+    } ewse s-sewectowwesuwt(wemainingcandidates = wemainingcandidates, rawr x3 wesuwt = wesuwt)
   }
 }
 
-object SelectConditionally {
+object sewectconditionawwy {
 
   /**
-   * Wrap each [[Selector]] in `selectors` in an [[IncludeSelector]] with `includeSelector` as the [[SelectConditionally.includeSelector]]
+   * wwap each [[sewectow]] i-in `sewectows` in an [[incwudesewectow]] with `incwudesewectow` a-as the [[sewectconditionawwy.incwudesewectow]]
    */
-  def apply[Query <: PipelineQuery](
-    selectors: Seq[Selector[Query]],
-    includeSelector: IncludeSelector[Query]
-  ): Seq[Selector[Query]] =
-    selectors.map(SelectConditionally(_, includeSelector))
+  d-def a-appwy[quewy <: pipewinequewy](
+    sewectows: seq[sewectow[quewy]], OwO
+    incwudesewectow: i-incwudesewectow[quewy]
+  ): s-seq[sewectow[quewy]] =
+    sewectows.map(sewectconditionawwy(_, /(^•ω•^) i-incwudesewectow))
 
   /**
-   * A [[SelectConditionally]] based on a [[Param]]
+   * a-a [[sewectconditionawwy]] based o-on a [[pawam]]
    */
-  def paramGated[Query <: PipelineQuery](
-    selector: Selector[Query],
-    enabledParam: Param[Boolean],
-  ): SelectConditionally[Query] =
-    SelectConditionally(selector, (query, _, _) => query.params(enabledParam))
+  def pawamgated[quewy <: p-pipewinequewy](
+    sewectow: sewectow[quewy], 😳😳😳
+    e-enabwedpawam: pawam[boowean], ( ͡o ω ͡o )
+  ): s-sewectconditionawwy[quewy] =
+    sewectconditionawwy(sewectow, >_< (quewy, >w< _, _) => q-quewy.pawams(enabwedpawam))
 
   /**
-   * Wrap each [[Selector]] in `selectors` in a [[SelectConditionally]] based on a [[Param]]
+   * w-wwap each [[sewectow]] in `sewectows` in a [[sewectconditionawwy]] based on a [[pawam]]
    */
-  def paramGated[Query <: PipelineQuery](
-    selectors: Seq[Selector[Query]],
-    enabledParam: Param[Boolean],
-  ): Seq[Selector[Query]] =
-    selectors.map(SelectConditionally.paramGated(_, enabledParam))
+  def pawamgated[quewy <: pipewinequewy](
+    sewectows: s-seq[sewectow[quewy]], rawr
+    e-enabwedpawam: pawam[boowean], 😳
+  ): s-seq[sewectow[quewy]] =
+    s-sewectows.map(sewectconditionawwy.pawamgated(_, e-enabwedpawam))
 
   /**
-   * A [[SelectConditionally]] based on an inverted [[Param]]
+   * a [[sewectconditionawwy]] based on an invewted [[pawam]]
    */
-  def paramNotGated[Query <: PipelineQuery](
-    selector: Selector[Query],
-    enabledParamToInvert: Param[Boolean],
-  ): SelectConditionally[Query] =
-    SelectConditionally(selector, (query, _, _) => !query.params(enabledParamToInvert))
+  d-def pawamnotgated[quewy <: pipewinequewy](
+    sewectow: sewectow[quewy], >w<
+    e-enabwedpawamtoinvewt: pawam[boowean], (⑅˘꒳˘)
+  ): s-sewectconditionawwy[quewy] =
+    s-sewectconditionawwy(sewectow, OwO (quewy, (ꈍᴗꈍ) _, _) => !quewy.pawams(enabwedpawamtoinvewt))
 
   /**
-   * Wrap each [[Selector]] in `selectors` in a [[SelectConditionally]] based on an inverted [[Param]]
+   * w-wwap each [[sewectow]] in `sewectows` i-in a [[sewectconditionawwy]] b-based on a-an invewted [[pawam]]
    */
-  def paramNotGated[Query <: PipelineQuery](
-    selectors: Seq[Selector[Query]],
-    enabledParamToInvert: Param[Boolean],
-  ): Seq[Selector[Query]] =
-    selectors.map(SelectConditionally.paramNotGated(_, enabledParamToInvert))
+  d-def pawamnotgated[quewy <: pipewinequewy](
+    sewectows: seq[sewectow[quewy]], 😳
+    e-enabwedpawamtoinvewt: p-pawam[boowean], 😳😳😳
+  ): seq[sewectow[quewy]] =
+    s-sewectows.map(sewectconditionawwy.pawamnotgated(_, mya e-enabwedpawamtoinvewt))
 }

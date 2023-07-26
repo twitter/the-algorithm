@@ -1,372 +1,372 @@
 """
-This module implements custom tf.data.datasets for twml.
+this moduwe impwements custom t-tf.data.datasets f-fow twmw.
 """
-import numbers
+i-impowt nyumbews
 
-from absl import logging
-from kazoo.client import KazooClient
-from libtwml import OPLIB
-import tensorflow.compat.v1 as tf
-from twml.constants import DEFAULT_ZOOKEEPER_BASE_ZNODE, DEFAULT_ZOOKEEPER_HOST
+f-fwom absw impowt w-wogging
+fwom kazoo.cwient i-impowt k-kazoocwient
+fwom w-wibtwmw impowt opwib
+impowt tensowfwow.compat.v1 as tf
+fwom twmw.constants impowt d-defauwt_zookeepew_base_znode, rawr x3 defauwt_zookeepew_host
 
 
-class BlockFormatDataset(tf.data.Dataset):
-  """A ``tf.data.Dataset`` comprising records from one or more TFRecord files."""
+cwass b-bwockfowmatdataset(tf.data.dataset):
+  """a ``tf.data.dataset`` compwising wecowds f-fwom one ow mowe tfwecowd fiwes."""
 
-  def __init__(self, filenames, compression_type="auto", buffer_size=1 << 20):
+  def __init__(sewf, σωσ fiwenames, nyaa~~ compwession_type="auto", (ꈍᴗꈍ) b-buffew_size=1 << 20):
     """
-    Creates a ``BlockFormatDataset``.
+    cweates a ``bwockfowmatdataset``.
 
-    Args:
-      filenames:
-        A `tf.string` tensor containing one or more filenames.
-      compression_type:
-        A string specifying the compression type.
-        Can be one of 'gz' (or 'gzip'), 'none', 'auto' (default).
-        When compression_type == 'auto', it is inferred from file extension.
-      buffer_size:
-        Buffer size to be used during decompression. default: 1<<20.
+    a-awgs:
+      f-fiwenames:
+        a `tf.stwing` tensow containing one ow mowe fiwenames. ^•ﻌ•^
+      c-compwession_type:
+        a stwing specifying the compwession type. >_<
+        can be one o-of 'gz' (ow 'gzip'), ^^;; 'none', 'auto' (defauwt). ^^;;
+        when compwession_type == 'auto', /(^•ω•^) i-it is infewwed f-fwom fiwe e-extension. nyaa~~
+      b-buffew_size:
+        buffew size to be used duwing d-decompwession. (✿oωo) defauwt: 1<<20. ( ͡o ω ͡o )
     """
-    self._filenames = tf.convert_to_tensor(filenames, dtype=tf.string, name="filenames")
-    self._compression_type = tf.convert_to_tensor(compression_type.lower(), name="compression_type")
-    self._buffer_size = tf.convert_to_tensor(buffer_size, dtype=tf.int64, name="buffer_size")
-    # Parent class calss self._as_variant_tensor in init. So call this at the end.
-    super(BlockFormatDataset, self).__init__()
+    sewf._fiwenames = t-tf.convewt_to_tensow(fiwenames, (U ᵕ U❁) dtype=tf.stwing, òωó nyame="fiwenames")
+    sewf._compwession_type = tf.convewt_to_tensow(compwession_type.wowew(), σωσ nyame="compwession_type")
+    s-sewf._buffew_size = tf.convewt_to_tensow(buffew_size, :3 d-dtype=tf.int64, OwO n-nyame="buffew_size")
+    # p-pawent cwass cawss sewf._as_vawiant_tensow in init. ^^ so caww this a-at the end. (˘ω˘)
+    s-supew(bwockfowmatdataset, OwO sewf).__init__()
 
-  def _as_variant_tensor(self):
+  d-def _as_vawiant_tensow(sewf):
     """
-    Create the resource handle for the dataset.
+    c-cweate the wesouwce handwe f-fow the dataset. UwU
     """
-    try:
-      block_format_dataset = __import__("libtwml_internal").OPLIB.block_format_dataset
-      return block_format_dataset(self._filenames)
-    except ImportError:
-      block_format_dataset = OPLIB.block_format_dataset_v2
-      return block_format_dataset(self._filenames, self._compression_type, self._buffer_size)
+    twy:
+      bwock_fowmat_dataset = __impowt__("wibtwmw_intewnaw").opwib.bwock_fowmat_dataset
+      w-wetuwn bwock_fowmat_dataset(sewf._fiwenames)
+    except impowtewwow:
+      bwock_fowmat_dataset = opwib.bwock_fowmat_dataset_v2
+      w-wetuwn bwock_fowmat_dataset(sewf._fiwenames, ^•ﻌ•^ s-sewf._compwession_type, (ꈍᴗꈍ) sewf._buffew_size)
 
-  def _inputs(self):
-    return []
+  def _inputs(sewf):
+    w-wetuwn []
 
-  @property
-  def output_shapes(self):
-    """Return output shapes"""
-    return tf.TensorShape([])
+  @pwopewty
+  d-def output_shapes(sewf):
+    """wetuwn output shapes"""
+    wetuwn tf.tensowshape([])
 
-  @property
-  def output_types(self):
-    """Return output types"""
-    return tf.string
+  @pwopewty
+  def output_types(sewf):
+    """wetuwn output types"""
+    wetuwn tf.stwing
 
-  @property
-  def output_classes(self):
-    """Return output classes"""
-    return tf.Tensor
+  @pwopewty
+  d-def output_cwasses(sewf):
+    """wetuwn o-output cwasses"""
+    w-wetuwn tf.tensow
 
 
-def downsample_dataset(dataset, sample_rate, rate_name):
+d-def downsampwe_dataset(dataset, /(^•ω•^) s-sampwe_wate, (U ᵕ U❁) wate_name):
   """
-  Downsample a tf.data.Dataset at sample_rate
+  downsampwe a tf.data.dataset a-at sampwe_wate
   """
-  if sample_rate is None or sample_rate == 1.0:
-    return dataset
-  elif not isinstance(sample_rate, numbers.Real):
-    raise TypeError("dataset %s must be a real number" % rate_name)
-  elif sample_rate <= 0 or sample_rate > 1:
-    raise ValueError("dataset %s must be in range (0, 1])" % rate_name)
-  return dataset.filter(lambda _: tf.squeeze(tf.random_uniform([1])) < sample_rate)
+  if sampwe_wate is nyone ow sampwe_wate == 1.0:
+    wetuwn d-dataset
+  ewif nyot isinstance(sampwe_wate, (✿oωo) n-nyumbews.weaw):
+    w-waise typeewwow("dataset %s m-must be a weaw nyumbew" % wate_name)
+  e-ewif sampwe_wate <= 0 o-ow s-sampwe_wate > 1:
+    w-waise vawueewwow("dataset %s must be in wange (0, OwO 1])" % wate_name)
+  w-wetuwn d-dataset.fiwtew(wambda _: t-tf.squeeze(tf.wandom_unifowm([1])) < s-sampwe_wate)
 
 
-def _filenames_dataset(files, shards=None, shard_index=None):
+def _fiwenames_dataset(fiwes, :3 s-shawds=none, nyaa~~ shawd_index=none):
   """
-  Get a tf.data.Dataset with file names from a list of files
-  Optionally shard the file list (see stream_block_format_dataset)
+  get a tf.data.dataset with f-fiwe nyames fwom a wist of fiwes
+  optionawwy shawd the fiwe wist (see stweam_bwock_fowmat_dataset)
   """
-  files = tf.data.Dataset.from_tensor_slices(files)
+  fiwes = t-tf.data.dataset.fwom_tensow_swices(fiwes)
 
-  if [shards, shard_index] != [None, None]:
-    logging.info("Sharding files dataset (index: %d, shards: %d)" % (shard_index, shards))
-    files = files.shard(num_shards=shards, index=shard_index)
+  if [shawds, ^•ﻌ•^ shawd_index] != [none, ( ͡o ω ͡o ) nyone]:
+    wogging.info("shawding f-fiwes dataset (index: %d, ^^;; s-shawds: %d)" % (shawd_index, mya s-shawds))
+    fiwes = f-fiwes.shawd(num_shawds=shawds, (U ᵕ U❁) index=shawd_index)
 
-  return files
+  w-wetuwn fiwes
 
 
-def stream_block_format_dataset(
-        files, parse_fn, batch_size, num_threads,
-        shuffle=True, repeat=False,
-        block_length=None, part_file_parallelism=None, file_shuffle_size=None,
-        record_shuffle_size=None, dataset_fn=None,
-        keep_rate=None, parts_downsampling_rate=None, prefetch_size=2,
-        shards=None, shard_index=None, shuffle_files=True, interleave=True):
+d-def stweam_bwock_fowmat_dataset(
+        fiwes, ^•ﻌ•^ pawse_fn, batch_size, (U ﹏ U) nyum_thweads, /(^•ω•^)
+        shuffwe=twue, ʘwʘ wepeat=fawse, XD
+        bwock_wength=none, (⑅˘꒳˘) p-pawt_fiwe_pawawwewism=none, nyaa~~ fiwe_shuffwe_size=none, UwU
+        w-wecowd_shuffwe_size=none, (˘ω˘) dataset_fn=none, rawr x3
+        k-keep_wate=none, (///ˬ///✿) p-pawts_downsampwing_wate=none, 😳😳😳 pwefetch_size=2, (///ˬ///✿)
+        shawds=none, ^^;; shawd_index=none, ^^ shuffwe_fiwes=twue, (///ˬ///✿) i-intewweave=twue):
   """
-  Helper function to stream a list of part files.
+  h-hewpew function to s-stweam a wist of p-pawt fiwes. -.-
 
-  Args:
-    files:
-      List of input files which will create a dataset.
-    parse_fn:
-      A function that takes a byte tensor containing a datarecord and decodes it.
+  awgs:
+    fiwes:
+      wist of input fiwes which wiww cweate a dataset. /(^•ω•^)
+    p-pawse_fn:
+      a-a function t-that takes a byte tensow c-containing a datawecowd a-and decodes it.
     batch_size:
-      The batch size for each step.
-    num_threads:
-      Number of threads working on the data in parallel.
-    shuffle:
-      Shuffle records within each file using ``record_shuffle_size``. Defaults to True.
-    repeat:
-      Repeat the dataset indefinitely. Defaults to False.
-      Useful when you want to use an ``[train,eval]_steps`` greater than the size of the dataset
-      (otherwise ``Estimator.[train,evaluate]`` stop when the end of the dataset is reached).
-    block_length (optional):
-      Number of consecutive records to pull from a single part file.
-      Defaults to batch_size.
-    part_file_parallelism (optional):
-      Number of part files to read from in parallel. Once a part file is completely read, it will
-      be replaced by the next part file in the part file list.
+      t-the batch size fow each step. UwU
+    nyum_thweads:
+      nyumbew of thweads w-wowking on t-the data in pawawwew. (⑅˘꒳˘)
+    shuffwe:
+      shuffwe w-wecowds within e-each fiwe using ``wecowd_shuffwe_size``. ʘwʘ defauwts to twue. σωσ
+    wepeat:
+      wepeat t-the dataset indefinitewy. ^^ defauwts to fawse. OwO
+      usefuw when you want to u-use an ``[twain,evaw]_steps`` gweatew than the size of the dataset
+      (othewwise ``estimatow.[twain,evawuate]`` s-stop when the e-end of the dataset is weached). (ˆ ﻌ ˆ)♡
+    bwock_wength (optionaw):
+      nyumbew of c-consecutive wecowds t-to puww fwom a singwe pawt fiwe. o.O
+      defauwts to batch_size. (˘ω˘)
+    p-pawt_fiwe_pawawwewism (optionaw):
+      nyumbew of pawt fiwes t-to wead fwom in pawawwew. 😳 once a pawt fiwe is compwetewy wead, (U ᵕ U❁) i-it wiww
+      be wepwaced by t-the nyext pawt f-fiwe in the pawt fiwe wist. :3
 
-      ``num_threads`` specifies a reader thread pool size, while ``part_file_parallelism`` specifies
-      the number of files to read from in parallel. If ``part_file_parallelism`` is greater than or
-      equal to ``num_threads``, the reads will be distributed over ``num_threads``. On the other hand,
-      if ``part_file_parallelism`` is smaller than``num_threads``, it is very likely that the reader
-      thread pool will be underutilized, since it can never be the case that every reader thread has
-      a part file to read from.
+      ``num_thweads`` s-specifies a weadew thwead poow s-size, o.O whiwe ``pawt_fiwe_pawawwewism`` s-specifies
+      t-the nyumbew of fiwes to w-wead fwom in pawawwew. (///ˬ///✿) i-if ``pawt_fiwe_pawawwewism`` is gweatew than ow
+      equaw t-to ``num_thweads``, OwO t-the weads w-wiww be distwibuted ovew ``num_thweads``. >w< on the o-othew hand, ^^
+      if ``pawt_fiwe_pawawwewism`` i-is smowew than``num_thweads``, (⑅˘꒳˘) i-it is vewy wikewy that the weadew
+      thwead poow wiww be undewutiwized, ʘwʘ s-since i-it can nyevew be t-the case that e-evewy weadew thwead has
+      a p-pawt fiwe to wead fwom. (///ˬ///✿)
 
-    file_shuffle_size (optional):
-      the buffer_size used for shuffling of the list of files.
-      Defaults to 1000. For example, if you have 2000 files, the first
-      1000 files are shuffled together, iterated through, then the next 1000 files are shuffled
-      and iterated through.
-    record_shuffle_size (optional):
-      the ``buffer_size`` used for shuffling records in each thread.
-      Defaults to ``batch_size * 8`` records.
-    dataset_fn (optional):
-      A function of that modifies the dataset after it reads different interleaved parts files.
-      Defaults to:
+    fiwe_shuffwe_size (optionaw):
+      the buffew_size used fow shuffwing of the wist of fiwes. XD
+      d-defauwts to 1000. 😳 fow exampwe, >w< if y-you have 2000 fiwes, (˘ω˘) the fiwst
+      1000 f-fiwes awe shuffwed togethew, nyaa~~ i-itewated thwough, 😳😳😳 then t-the nyext 1000 fiwes a-awe shuffwed
+      a-and itewated t-thwough. (U ﹏ U)
+    w-wecowd_shuffwe_size (optionaw):
+      the ``buffew_size`` used fow shuffwing wecowds in each thwead. (˘ω˘)
+      defauwts to ``batch_size * 8`` w-wecowds. :3
+    d-dataset_fn (optionaw):
+      a-a function of that modifies t-the dataset aftew it weads diffewent intewweaved pawts fiwes. >w<
+      d-defauwts to:
 
-      .. code-block:: python
+      .. c-code-bwock:: python
 
-        def dataset_fn(dataset, parse_fn, batch_size):
-          return dataset.batch(batch_size).map(parse_fn, 1)
+        d-def dataset_fn(dataset, ^^ pawse_fn, 😳😳😳 batch_size):
+          wetuwn dataset.batch(batch_size).map(pawse_fn, nyaa~~ 1)
 
-    keep_rate (optional):
-      A float value in (0.0, 1.0] that indicates to drop records according to the Bernoulli
-      distribution with p = 1 - keep_rate.
-      Defaults to None (no records dropped).
+    k-keep_wate (optionaw):
+      a-a fwoat vawue in (0.0, (⑅˘꒳˘) 1.0] t-that indicates t-to dwop wecowds accowding to the bewnouwwi
+      distwibution with p = 1 - keep_wate. :3
+      d-defauwts t-to nyone (no w-wecowds dwopped). ʘwʘ
 
-    parts_downsampling_rate (optional):
-      A float value in ``(0.0, 1.0]`` that indicates the factor by which to downsample part files.
-      For example, a value of 0.2 means only 20 percent of part files become part of the dataset.
+    p-pawts_downsampwing_wate (optionaw):
+      a-a fwoat vawue in ``(0.0, rawr x3 1.0]`` t-that indicates t-the factow by which to downsampwe p-pawt fiwes. (///ˬ///✿)
+      f-fow exampwe, 😳😳😳 a vawue of 0.2 m-means onwy 20 pewcent of pawt fiwes become pawt o-of the dataset. XD
 
-      Note that this argument is only useful in conjunction with a [train,eval]_steps of -1
-      (that is, when the entire dataset is used). Furthermore, note that even in this case, each
-      epoch will see a different set of part files. This is because new part files are re-sampled
-      every epoch. In other words, this argument is only provided for backwards compatibility with
-      DeepBird v1. We recommend you use a smaller [train,eval]_steps (or specify a keep_rate)
-      instead.
+      nyote t-that this awgument i-is onwy usefuw in conjunction w-with a [twain,evaw]_steps of -1
+      (that is, >_< w-when the entiwe d-dataset is used). >w< f-fuwthewmowe, /(^•ω•^) nyote that even in this case, :3 each
+      epoch wiww s-see a diffewent set of pawt fiwes. ʘwʘ this is because n-nyew pawt f-fiwes awe we-sampwed
+      evewy e-epoch. (˘ω˘) in othew wowds, (ꈍᴗꈍ) this awgument i-is onwy pwovided f-fow backwawds compatibiwity with
+      deepbiwd v-v1. ^^ we wecommend you use a smowew [twain,evaw]_steps (ow s-specify a keep_wate)
+      i-instead. ^^
 
-    shards (optional):
-      Number of partitions to shard the dataset into. This is useful for codistillation and other
-      techniques that require each worker to train on disjoint partitions of the dataset.
-      The dataset is not sharded by default.
+    shawds (optionaw):
+      n-nyumbew of pawtitions to shawd t-the dataset into. ( ͡o ω ͡o ) t-this is usefuw f-fow codistiwwation and othew
+      techniques that wequiwe each wowkew to twain on disjoint pawtitions of the dataset. -.-
+      the dataset is nyot shawded by defauwt. ^^;;
 
-    shard_index (optional):
-      Which partition of the dataset to use if ``shards`` is set.
+    shawd_index (optionaw):
+      which pawtition of the d-dataset to use i-if ``shawds`` is set. ^•ﻌ•^
 
-    shuffle_files (optional):
-      Shuffle the list of files. Defaults to True.
-      When False, files are iterated in the order they are passed in.
+    shuffwe_fiwes (optionaw):
+      shuffwe t-the wist of f-fiwes. (˘ω˘) defauwts t-to twue. o.O
+      when fawse, (✿oωo) fiwes a-awe itewated in the owdew they a-awe passed in. 😳😳😳
 
-    interleave (optional):
-      Interleave records from multiple files in parallel. Defaults to True.
+    i-intewweave (optionaw):
+      intewweave wecowds f-fwom muwtipwe fiwes in pawawwew. (ꈍᴗꈍ) d-defauwts to t-twue. σωσ
 
-  Returns:
-    tf.data.DataSet of batches of HashedDataRecord resource handles decoded and streamed online.
+  wetuwns:
+    tf.data.dataset of batches o-of hasheddatawecowd w-wesouwce handwes d-decoded and s-stweamed onwine.
   """
-  # Creating a dataset from an input directory
+  # c-cweating a-a dataset f-fwom an input diwectowy
 
-  files = _filenames_dataset(files, shards=shards, shard_index=shard_index)
+  f-fiwes = _fiwenames_dataset(fiwes, UwU s-shawds=shawds, ^•ﻌ•^ shawd_index=shawd_index)
 
-  file_shuffle_size = file_shuffle_size if file_shuffle_size is not None else 100000
-  record_shuffle_size = record_shuffle_size if record_shuffle_size is not None else (batch_size * 8)
-  block_length = block_length if block_length is not None else batch_size
+  f-fiwe_shuffwe_size = f-fiwe_shuffwe_size if f-fiwe_shuffwe_size is nyot nyone e-ewse 100000
+  wecowd_shuffwe_size = wecowd_shuffwe_size i-if wecowd_shuffwe_size is nyot nyone ewse (batch_size * 8)
+  b-bwock_wength = b-bwock_wength i-if bwock_wength is nyot nyone e-ewse batch_size
 
-  logging.info("NUM_THREADS: %d", num_threads)
+  wogging.info("num_thweads: %d", mya n-nyum_thweads)
 
-  if repeat:
-    files = files.repeat()
+  if wepeat:
+    f-fiwes = fiwes.wepeat()
 
-  if shuffle_files:
-    # Randomly shuffle the files list.
-    files = files.shuffle(buffer_size=file_shuffle_size)
+  if s-shuffwe_fiwes:
+    # wandomwy shuffwe the fiwes wist. /(^•ω•^)
+    fiwes = fiwes.shuffwe(buffew_size=fiwe_shuffwe_size)
 
-  # Downsample parts files
-  files = downsample_dataset(files, parts_downsampling_rate, "parts_downsampling_rate")
+  # d-downsampwe pawts fiwes
+  fiwes = d-downsampwe_dataset(fiwes, rawr p-pawts_downsampwing_wate, nyaa~~ "pawts_downsampwing_wate")
 
-  # Interleave the result from BlockFormatDataset
-  # block_length == batch_size results in batch_size records being read from a single file.
-  def map_fn(filenames):
-    '''function that maps each filename to a BlockFormatDataset'''
-    # reach each file using BlockFormatDataset
-    dataset = BlockFormatDataset(filenames)
+  # intewweave the wesuwt fwom bwockfowmatdataset
+  # b-bwock_wength == batch_size w-wesuwts in b-batch_size wecowds b-being wead fwom a singwe fiwe. ( ͡o ω ͡o )
+  def map_fn(fiwenames):
+    '''function t-that m-maps each fiwename to a bwockfowmatdataset'''
+    # w-weach each fiwe using bwockfowmatdataset
+    dataset = bwockfowmatdataset(fiwenames)
 
-    # early prefetching can sometimes improve performance (like on GCS)
-    dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
+    # e-eawwy pwefetching can sometimes i-impwove pewfowmance (wike o-on gcs)
+    d-dataset = dataset.pwefetch(tf.data.expewimentaw.autotune)
 
-    # Shuffling before repeating ensures strong ordering.
-    if shuffle:
-      dataset = dataset.shuffle(buffer_size=record_shuffle_size)
+    # s-shuffwing b-befowe wepeating e-ensuwes stwong o-owdewing. σωσ
+    if shuffwe:
+      d-dataset = dataset.shuffwe(buffew_size=wecowd_shuffwe_size)
 
-    return dataset
+    w-wetuwn dataset
 
-  if interleave:
-    part_file_parallelism = num_threads if part_file_parallelism is None else part_file_parallelism
-    dataset = files.interleave(
-      map_fn, cycle_length=part_file_parallelism, block_length=block_length, num_parallel_calls=num_threads)
-  else:
-    dataset = files.flat_map(map_fn)
+  i-if intewweave:
+    p-pawt_fiwe_pawawwewism = num_thweads i-if pawt_fiwe_pawawwewism i-is nyone ewse p-pawt_fiwe_pawawwewism
+    d-dataset = fiwes.intewweave(
+      m-map_fn, (✿oωo) cycwe_wength=pawt_fiwe_pawawwewism, (///ˬ///✿) b-bwock_wength=bwock_wength, σωσ nyum_pawawwew_cawws=num_thweads)
+  e-ewse:
+    d-dataset = fiwes.fwat_map(map_fn)
 
-  # Downsample DataRecords
-  dataset = downsample_dataset(dataset, keep_rate, "keep_rate")
+  # d-downsampwe datawecowds
+  dataset = downsampwe_dataset(dataset, UwU keep_wate, "keep_wate")
 
-  if dataset_fn is None:
-    # Create a batch of datarecords and decode them
-    return dataset.batch(batch_size).map(parse_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE).prefetch(prefetch_size)
+  i-if dataset_fn i-is nyone:
+    # c-cweate a batch of datawecowds and decode them
+    wetuwn dataset.batch(batch_size).map(pawse_fn, (⑅˘꒳˘) n-nyum_pawawwew_cawws=tf.data.expewimentaw.autotune).pwefetch(pwefetch_size)
 
-  return dataset_fn(dataset, parse_fn, batch_size)
-
-
-def cx_zk_path(path):
-  if path is None:
-    raise ValueError("Path for zookeeper dataset pointer is None. You must specify a path.")
-  return_path = "/".join([DEFAULT_ZOOKEEPER_BASE_ZNODE, path])
-  logging.info("Zookeeper path is: {}".format(return_path))
-  return return_path
+  wetuwn d-dataset_fn(dataset, pawse_fn, /(^•ω•^) b-batch_size)
 
 
-def zookeeper_ordered_dataset(
-        files, parse_fn, batch_size, zk_counter_path, repeat=False,
-        num_threads=2, block_length=None, part_file_parallelism=None,
-        batch_shuffle_size=None, file_keep_rate=None, record_keep_rate=None,
-        prefetch_size=2, interleave=False, dataset_fn=None, verbose=False):
+d-def cx_zk_path(path):
+  if path is nyone:
+    waise vawueewwow("path f-fow zookeepew d-dataset pointew i-is nyone. -.- you m-must specify a path.")
+  wetuwn_path = "/".join([defauwt_zookeepew_base_znode, (ˆ ﻌ ˆ)♡ path])
+  wogging.info("zookeepew p-path is: {}".fowmat(wetuwn_path))
+  w-wetuwn wetuwn_path
+
+
+def zookeepew_owdewed_dataset(
+        f-fiwes, nyaa~~ pawse_fn, batch_size, ʘwʘ zk_countew_path, :3 w-wepeat=fawse, (U ᵕ U❁)
+        nyum_thweads=2, (U ﹏ U) b-bwock_wength=none, ^^ p-pawt_fiwe_pawawwewism=none, òωó
+        batch_shuffwe_size=none, /(^•ω•^) f-fiwe_keep_wate=none, 😳😳😳 w-wecowd_keep_wate=none, :3
+        pwefetch_size=2, (///ˬ///✿) i-intewweave=fawse, rawr x3 dataset_fn=none, (U ᵕ U❁) vewbose=fawse):
   """
-  Make a tf.Dataset given an ordered list of filenames, using Zookeeper to keep track of
-  which file to read, and to coordinate multiple workers.
+  m-make a tf.dataset g-given an o-owdewed wist of f-fiwenames, (⑅˘꒳˘) using zookeepew to k-keep twack of
+  w-which fiwe to wead, (˘ω˘) a-and to coowdinate muwtipwe wowkews. :3
 
-  Args:
-    files:
-      ordered list of (typically HDFS) filenames. This must remain consistent
-      between different workers, and between worker restarts (e.g. in the case
-      of instance failure or preemption).
-      To ensure this remains consistent, consider using the --train.files_list
-      option from DataRecordTrainer.
-    parse_fn:
-      A function that takes a byte tensor containing a datarecord and decodes it.
+  a-awgs:
+    fiwes:
+      owdewed wist of (typicawwy h-hdfs) f-fiwenames. XD this m-must wemain consistent
+      between diffewent wowkews, >_< and between wowkew westawts (e.g. (✿oωo) in t-the case
+      of instance faiwuwe o-ow pweemption). (ꈍᴗꈍ)
+      t-to ensuwe this wemains consistent, XD considew u-using the --twain.fiwes_wist
+      option fwom d-datawecowdtwainew. :3
+    p-pawse_fn:
+      a-a function t-that takes a-a byte tensow containing a datawecowd and decodes it. mya
     batch_size:
-      The batch size for each step.
-    zk_counter_path:
-      Path under the root node for the underlying zookeeper shared counter that
-      is used to coordinate distributed iteration over the list of files.
-      Full path will be `'/'.join([DEFAULT_ZOOKEEPER_BASE_ZNODE, zk_counter_path])`.
-    repeat:
-      Default False. Set True to repeat over the files forever.
-    num_threads:
-      Default 2. Number of threads working on the data in parallel.
-      Only used if interleave=True.
-    block_length:
-      Default None. Number of consecutive records to pull from a single part file.
-      If None, then block_length=batch_size will be used.
-      Only used if interleave=True.
-    part_file_parallelism:
-      Default None. Number of part files to read from in parallel. Once a part file is completely
-      read, it will be replaced by the next part file indicated by the zookeeper counter.
-      Only used if interleave=True.
+      the b-batch size fow each step. òωó
+    zk_countew_path:
+      p-path undew the woot nyode fow the undewwying zookeepew shawed c-countew that
+      is used to coowdinate distwibuted itewation ovew the wist o-of fiwes. nyaa~~
+      f-fuww path wiww be `'/'.join([defauwt_zookeepew_base_znode, 🥺 z-zk_countew_path])`. -.-
+    wepeat:
+      defauwt fawse. 🥺 s-set twue to wepeat o-ovew the fiwes fowevew. (˘ω˘)
+    n-nyum_thweads:
+      defauwt 2. òωó nyumbew o-of thweads wowking on the data in pawawwew. UwU
+      onwy used i-if intewweave=twue. ^•ﻌ•^
+    bwock_wength:
+      defauwt nyone. nyumbew o-of consecutive w-wecowds to p-puww fwom a singwe pawt fiwe. mya
+      if nyone, (✿oωo) then b-bwock_wength=batch_size wiww be used. XD
+      onwy used if intewweave=twue. :3
+    pawt_fiwe_pawawwewism:
+      d-defauwt n-nyone. (U ﹏ U) numbew o-of pawt fiwes t-to wead fwom in pawawwew. UwU once a pawt fiwe is c-compwetewy
+      w-wead, ʘwʘ it wiww be wepwaced by the nyext pawt fiwe i-indicated by the zookeepew countew. >w<
+      onwy u-used if intewweave=twue. 😳😳😳
 
-      ``num_threads`` specifies a reader thread pool size, while ``part_file_parallelism`` specifies
-      the number of files to read from in parallel. If ``part_file_parallelism`` is greater than or
-      equal to ``num_threads``, the reads will be distributed over ``num_threads``. On the other hand,
-      if ``part_file_parallelism`` is smaller than``num_threads``, it is very likely that the reader
-      thread pool will be underutilized, since it can never be the case that every reader thread has
-      a part file to read from.
+      ``num_thweads`` specifies a weadew thwead poow s-size, rawr whiwe ``pawt_fiwe_pawawwewism`` s-specifies
+      the nyumbew o-of fiwes to wead f-fwom in pawawwew. ^•ﻌ•^ i-if ``pawt_fiwe_pawawwewism`` is gweatew than ow
+      equaw t-to ``num_thweads``, σωσ the weads wiww be distwibuted o-ovew ``num_thweads``. :3 on the othew hand, rawr x3
+      if ``pawt_fiwe_pawawwewism`` is s-smowew than``num_thweads``, nyaa~~ i-it i-is vewy wikewy t-that the weadew
+      t-thwead poow wiww be undewutiwized, :3 s-since it can nyevew be the case that evewy w-weadew thwead has
+      a pawt f-fiwe to wead fwom. >w<
 
-    batch_shuffle_size:
-      Default None. Size of shuffle buffer, for shuffling that will be applied after batching.
-      if None, then batches will not be shuffled. Ignored if dataset_fn is provided.
-    file_keep_rate:
-      Default None. Fraction of files to keep, or None to keep all files.
-    record_keep_rate:
-      Default None. Fraction of records to keep, or None to keep all records.
-    prefetch_size:
-      Default 2. Number of parsed batches to prefetch. Ignored if dataset_fn is provided.
-    interleave:
-      Default False. Set True to use tf.data.Dataset.interleave rather than flat_map.
-    dataset_fn:
-      A function that is applied to the dataset of individual records, after
-      these have been read from the parts files.
-      If ``None`` (the default), the behavior will be as though dataset_fn were set to:
+    batch_shuffwe_size:
+      defauwt nyone. rawr s-size of shuffwe b-buffew, 😳 fow shuffwing that wiww b-be appwied aftew batching. 😳
+      i-if nyone, 🥺 then b-batches wiww nyot be shuffwed. rawr x3 i-ignowed if dataset_fn i-is pwovided. ^^
+    fiwe_keep_wate:
+      d-defauwt nyone. ( ͡o ω ͡o ) fwaction of fiwes to keep, XD ow nyone to keep aww fiwes. ^^
+    w-wecowd_keep_wate:
+      defauwt nyone. (⑅˘꒳˘) f-fwaction of wecowds to keep, (⑅˘꒳˘) ow nyone to keep aww w-wecowds. ^•ﻌ•^
+    p-pwefetch_size:
+      d-defauwt 2. ( ͡o ω ͡o ) nyumbew of pawsed b-batches to pwefetch. ( ͡o ω ͡o ) i-ignowed if dataset_fn is p-pwovided. (✿oωo)
+    intewweave:
+      defauwt fawse. 😳😳😳 set t-twue to use tf.data.dataset.intewweave wathew t-than fwat_map. OwO
+    d-dataset_fn:
+      a function that is appwied to the dataset of individuaw wecowds, ^^ a-aftew
+      t-these have been wead fwom the pawts fiwes.
+      if ``none`` (the d-defauwt), rawr x3 the behaviow wiww b-be as though dataset_fn w-wewe set to:
 
-      .. code-block:: python
+      .. code-bwock:: python
 
-        def dataset_fn(dataset, parse_fn, batch_size):
+        def dataset_fn(dataset, 🥺 p-pawse_fn, (ˆ ﻌ ˆ)♡ batch_size):
           dataset = dataset.batch(batch_size)
-          dataset = dataset.map(parse_fn, tf.data.experimental.AUTOTUNE)
-          if batch_shuffle_size:
-            dataset = dataset.shuffle(batch_shuffle_size)
-          return dataset.prefetch(prefetch_size)
+          d-dataset = dataset.map(pawse_fn, tf.data.expewimentaw.autotune)
+          i-if b-batch_shuffwe_size:
+            dataset = dataset.shuffwe(batch_shuffwe_size)
+          w-wetuwn dataset.pwefetch(pwefetch_size)
 
-    verbose:
-      Default False. Set True to log the names of files loaded by TF.
+    v-vewbose:
+      d-defauwt fawse. ( ͡o ω ͡o ) s-set twue to wog t-the nyames of f-fiwes woaded by tf.
   """
-  block_length = batch_size if block_length is None else block_length
-  part_file_parallelism = num_threads if part_file_parallelism is None else part_file_parallelism
+  bwock_wength = batch_size if bwock_wength is none ewse bwock_wength
+  p-pawt_fiwe_pawawwewism = n-nyum_thweads i-if pawt_fiwe_pawawwewism i-is nyone ewse pawt_fiwe_pawawwewism
 
-  def zk_index_generator(my_files=files):
-    zk = KazooClient(hosts=DEFAULT_ZOOKEEPER_HOST)
-    zk.start()
-    my_counter = zk.Counter(cx_zk_path(zk_counter_path), default=0)
-    while True:
-      my_counter += 1
-      counter_pre_value = my_counter.pre_value
-      if repeat:
-        counter_pre_value = counter_pre_value % len(my_files)
-      if counter_pre_value >= len(my_files):
-        break
-      else:
-        chosen_file = my_files[counter_pre_value]
-        if verbose:
-          logging.info("{}. yielding {}".format(counter_pre_value, chosen_file))
-        yield chosen_file
-    zk.stop()
+  d-def zk_index_genewatow(my_fiwes=fiwes):
+    z-zk = kazoocwient(hosts=defauwt_zookeepew_host)
+    zk.stawt()
+    my_countew = zk.countew(cx_zk_path(zk_countew_path), >w< defauwt=0)
+    w-whiwe twue:
+      m-my_countew += 1
+      countew_pwe_vawue = my_countew.pwe_vawue
+      if wepeat:
+        c-countew_pwe_vawue = c-countew_pwe_vawue % w-wen(my_fiwes)
+      if countew_pwe_vawue >= wen(my_fiwes):
+        b-bweak
+      ewse:
+        chosen_fiwe = m-my_fiwes[countew_pwe_vawue]
+        i-if vewbose:
+          wogging.info("{}. /(^•ω•^) yiewding {}".fowmat(countew_pwe_vawue, 😳😳😳 c-chosen_fiwe))
+        yiewd chosen_fiwe
+    z-zk.stop()
 
-  files = tf.data.Dataset.from_generator(zk_index_generator, tf.string)
+  f-fiwes = tf.data.dataset.fwom_genewatow(zk_index_genewatow, (U ᵕ U❁) tf.stwing)
 
-  # Downsample parts files
-  files = downsample_dataset(files, file_keep_rate, "file_keep_rate")
+  # d-downsampwe p-pawts fiwes
+  f-fiwes = downsampwe_dataset(fiwes, (˘ω˘) f-fiwe_keep_wate, 😳 "fiwe_keep_wate")
 
-  def map_fn(filenames):
-    return BlockFormatDataset(filenames).prefetch(20)
+  d-def m-map_fn(fiwenames):
+    wetuwn bwockfowmatdataset(fiwenames).pwefetch(20)
 
-  # Dont interleave for sequential training
-  if interleave:
-    dataset = files.interleave(
-      map_fn,
-      cycle_length=part_file_parallelism,
-      block_length=block_length,
-      num_parallel_calls=num_threads)
-  else:
-    dataset = files.flat_map(map_fn)
+  # dont i-intewweave fow s-sequentiaw twaining
+  if intewweave:
+    d-dataset = fiwes.intewweave(
+      map_fn, (ꈍᴗꈍ)
+      c-cycwe_wength=pawt_fiwe_pawawwewism, :3
+      bwock_wength=bwock_wength, /(^•ω•^)
+      n-nyum_pawawwew_cawws=num_thweads)
+  ewse:
+    d-dataset = fiwes.fwat_map(map_fn)
 
-  # Downsample DataRecords
-  dataset = downsample_dataset(dataset, record_keep_rate, "record_keep_rate")
+  # d-downsampwe datawecowds
+  dataset = downsampwe_dataset(dataset, ^^;; w-wecowd_keep_wate, o.O "wecowd_keep_wate")
 
-  if dataset_fn is None:
-    # Create a batch of datarecords and decode them
+  if dataset_fn is nyone:
+    # c-cweate a batch of d-datawecowds and decode them
     dataset = dataset.batch(batch_size)
-    dataset = dataset.map(parse_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-    # shuffle after batching and parsing for performance reasons
-    # faster b/c 1 random selection is made per batch rather than per record
-    if batch_shuffle_size:
-      dataset = dataset.shuffle(buffer_size=batch_shuffle_size)
-    dataset = dataset.prefetch(prefetch_size)
+    d-dataset = d-dataset.map(pawse_fn, 😳 nyum_pawawwew_cawws=tf.data.expewimentaw.autotune)
+    # s-shuffwe aftew batching and pawsing fow pewfowmance w-weasons
+    # f-fastew b/c 1 wandom sewection i-is made pew batch w-wathew than pew wecowd
+    if batch_shuffwe_size:
+      d-dataset = d-dataset.shuffwe(buffew_size=batch_shuffwe_size)
+    d-dataset = d-dataset.pwefetch(pwefetch_size)
 
-  else:
-    dataset = dataset_fn(dataset, parse_fn, batch_size)
+  ewse:
+    dataset = dataset_fn(dataset, UwU pawse_fn, batch_size)
 
-  return dataset
+  wetuwn dataset

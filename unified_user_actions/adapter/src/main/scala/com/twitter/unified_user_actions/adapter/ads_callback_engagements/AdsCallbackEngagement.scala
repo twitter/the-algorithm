@@ -1,125 +1,125 @@
-package com.twitter.unified_user_actions.adapter.ads_callback_engagements
+package com.twittew.unified_usew_actions.adaptew.ads_cawwback_engagements
 
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.unified_user_actions.thriftscala._
+impowt c-com.twittew.ads.spendsewvew.thwiftscawa.spendsewvewevent
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa._
 
-object AdsCallbackEngagement {
-  object PromotedTweetFav extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetFav)
+o-object adscawwbackengagement {
+  o-object pwomotedtweetfav e-extends b-baseadscawwbackengagement(actiontype.sewvewpwomotedtweetfav)
 
-  object PromotedTweetUnfav extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetUnfav)
+  o-object pwomotedtweetunfav extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetunfav)
 
-  object PromotedTweetReply extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetReply)
+  object pwomotedtweetwepwy extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetwepwy)
 
-  object PromotedTweetRetweet
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetRetweet)
+  o-object pwomotedtweetwetweet
+      extends b-baseadscawwbackengagement(actiontype.sewvewpwomotedtweetwetweet)
 
-  object PromotedTweetBlockAuthor
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetBlockAuthor)
+  object pwomotedtweetbwockauthow
+      e-extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetbwockauthow)
 
-  object PromotedTweetUnblockAuthor
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetUnblockAuthor)
+  object pwomotedtweetunbwockauthow
+      e-extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetunbwockauthow)
 
-  object PromotedTweetComposeTweet
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetComposeTweet)
+  object pwomotedtweetcomposetweet
+      extends b-baseadscawwbackengagement(actiontype.sewvewpwomotedtweetcomposetweet)
 
-  object PromotedTweetClick extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetClick)
+  o-object pwomotedtweetcwick extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetcwick)
 
-  object PromotedTweetReport extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetReport)
+  object pwomotedtweetwepowt extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetwepowt)
 
-  object PromotedProfileFollow
-      extends ProfileAdsCallbackEngagement(ActionType.ServerPromotedProfileFollow)
+  o-object pwomotedpwofiwefowwow
+      extends pwofiweadscawwbackengagement(actiontype.sewvewpwomotedpwofiwefowwow)
 
-  object PromotedProfileUnfollow
-      extends ProfileAdsCallbackEngagement(ActionType.ServerPromotedProfileUnfollow)
+  object p-pwomotedpwofiweunfowwow
+      extends pwofiweadscawwbackengagement(actiontype.sewvewpwomotedpwofiweunfowwow)
 
-  object PromotedTweetMuteAuthor
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetMuteAuthor)
+  o-object pwomotedtweetmuteauthow
+      e-extends b-baseadscawwbackengagement(actiontype.sewvewpwomotedtweetmuteauthow)
 
-  object PromotedTweetClickProfile
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetClickProfile)
+  o-object pwomotedtweetcwickpwofiwe
+      extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetcwickpwofiwe)
 
-  object PromotedTweetClickHashtag
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetClickHashtag)
+  object pwomotedtweetcwickhashtag
+      e-extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetcwickhashtag)
 
-  object PromotedTweetOpenLink
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetOpenLink) {
-    override def getItem(input: SpendServerEvent): Option[Item] = {
-      input.engagementEvent.flatMap { e =>
-        e.impressionData.flatMap { i =>
-          getPromotedTweetInfo(
-            i.promotedTweetId,
-            i.advertiserId,
-            tweetActionInfoOpt = Some(
-              TweetActionInfo.ServerPromotedTweetOpenLink(
-                ServerPromotedTweetOpenLink(url = e.url))))
+  object pwomotedtweetopenwink
+      extends b-baseadscawwbackengagement(actiontype.sewvewpwomotedtweetopenwink) {
+    ovewwide def getitem(input: spendsewvewevent): option[item] = {
+      input.engagementevent.fwatmap { e-e =>
+        e.impwessiondata.fwatmap { i =>
+          g-getpwomotedtweetinfo(
+            i-i.pwomotedtweetid, OwO
+            i-i.advewtisewid, /(^•ω•^)
+            tweetactioninfoopt = some(
+              tweetactioninfo.sewvewpwomotedtweetopenwink(
+                s-sewvewpwomotedtweetopenwink(uww = e-e.uww))))
         }
       }
     }
   }
 
-  object PromotedTweetCarouselSwipeNext
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetCarouselSwipeNext)
+  object pwomotedtweetcawousewswipenext
+      e-extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetcawousewswipenext)
 
-  object PromotedTweetCarouselSwipePrevious
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetCarouselSwipePrevious)
+  o-object pwomotedtweetcawousewswipepwevious
+      extends b-baseadscawwbackengagement(actiontype.sewvewpwomotedtweetcawousewswipepwevious)
 
-  object PromotedTweetLingerImpressionShort
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetLingerImpressionShort)
+  object pwomotedtweetwingewimpwessionshowt
+      e-extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetwingewimpwessionshowt)
 
-  object PromotedTweetLingerImpressionMedium
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetLingerImpressionMedium)
+  object pwomotedtweetwingewimpwessionmedium
+      e-extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetwingewimpwessionmedium)
 
-  object PromotedTweetLingerImpressionLong
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetLingerImpressionLong)
+  o-object pwomotedtweetwingewimpwessionwong
+      extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetwingewimpwessionwong)
 
-  object PromotedTweetClickSpotlight
-      extends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTweetClickSpotlight)
+  o-object pwomotedtweetcwickspotwight
+      e-extends basetwendadscawwbackengagement(actiontype.sewvewpwomotedtweetcwickspotwight)
 
-  object PromotedTweetViewSpotlight
-      extends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTweetViewSpotlight)
+  object pwomotedtweetviewspotwight
+      extends basetwendadscawwbackengagement(actiontype.sewvewpwomotedtweetviewspotwight)
 
-  object PromotedTrendView
-      extends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTrendView)
+  object pwomotedtwendview
+      extends basetwendadscawwbackengagement(actiontype.sewvewpwomotedtwendview)
 
-  object PromotedTrendClick
-      extends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTrendClick)
+  o-object p-pwomotedtwendcwick
+      extends b-basetwendadscawwbackengagement(actiontype.sewvewpwomotedtwendcwick)
 
-  object PromotedTweetVideoPlayback25
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoPlayback25)
+  o-object p-pwomotedtweetvideopwayback25
+      extends basevideoadscawwbackengagement(actiontype.sewvewpwomotedtweetvideopwayback25)
 
-  object PromotedTweetVideoPlayback50
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoPlayback50)
+  object pwomotedtweetvideopwayback50
+      extends b-basevideoadscawwbackengagement(actiontype.sewvewpwomotedtweetvideopwayback50)
 
-  object PromotedTweetVideoPlayback75
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoPlayback75)
+  object pwomotedtweetvideopwayback75
+      extends basevideoadscawwbackengagement(actiontype.sewvewpwomotedtweetvideopwayback75)
 
-  object PromotedTweetVideoAdPlayback25
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoAdPlayback25)
+  object pwomotedtweetvideoadpwayback25
+      e-extends basevideoadscawwbackengagement(actiontype.sewvewpwomotedtweetvideoadpwayback25)
 
-  object PromotedTweetVideoAdPlayback50
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoAdPlayback50)
+  object p-pwomotedtweetvideoadpwayback50
+      e-extends b-basevideoadscawwbackengagement(actiontype.sewvewpwomotedtweetvideoadpwayback50)
 
-  object PromotedTweetVideoAdPlayback75
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoAdPlayback75)
+  object pwomotedtweetvideoadpwayback75
+      extends b-basevideoadscawwbackengagement(actiontype.sewvewpwomotedtweetvideoadpwayback75)
 
-  object TweetVideoAdPlayback25
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerTweetVideoAdPlayback25)
+  o-object t-tweetvideoadpwayback25
+      e-extends basevideoadscawwbackengagement(actiontype.sewvewtweetvideoadpwayback25)
 
-  object TweetVideoAdPlayback50
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerTweetVideoAdPlayback50)
+  object tweetvideoadpwayback50
+      e-extends basevideoadscawwbackengagement(actiontype.sewvewtweetvideoadpwayback50)
 
-  object TweetVideoAdPlayback75
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerTweetVideoAdPlayback75)
+  o-object tweetvideoadpwayback75
+      e-extends b-basevideoadscawwbackengagement(actiontype.sewvewtweetvideoadpwayback75)
 
-  object PromotedTweetDismissWithoutReason
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissWithoutReason)
+  object p-pwomotedtweetdismisswithoutweason
+      extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetdismisswithoutweason)
 
-  object PromotedTweetDismissUninteresting
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissUninteresting)
+  object pwomotedtweetdismissunintewesting
+      e-extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetdismissunintewesting)
 
-  object PromotedTweetDismissRepetitive
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissRepetitive)
+  object pwomotedtweetdismisswepetitive
+      extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetdismisswepetitive)
 
-  object PromotedTweetDismissSpam
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissSpam)
+  object pwomotedtweetdismissspam
+      extends baseadscawwbackengagement(actiontype.sewvewpwomotedtweetdismissspam)
 }

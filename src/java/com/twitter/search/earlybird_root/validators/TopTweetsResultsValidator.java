@@ -1,22 +1,22 @@
-package com.twitter.search.earlybird_root.validators;
+package com.twittew.seawch.eawwybiwd_woot.vawidatows;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.utiw.futuwe;
 
-public class TopTweetsResultsValidator implements ServiceResponseValidator<EarlybirdResponse> {
-  private final EarlybirdCluster cluster;
+p-pubwic c-cwass toptweetswesuwtsvawidatow i-impwements sewvicewesponsevawidatow<eawwybiwdwesponse> {
+  p-pwivate f-finaw eawwybiwdcwustew cwustew;
 
-  public TopTweetsResultsValidator(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  pubwic toptweetswesuwtsvawidatow(eawwybiwdcwustew cwustew) {
+    this.cwustew = c-cwustew;
   }
 
-  @Override
-  public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
-    if (!response.isSetSearchResults() || !response.getSearchResults().isSetResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set search results."));
+  @ovewwide
+  pubwic futuwe<eawwybiwdwesponse> vawidate(eawwybiwdwesponse w-wesponse) {
+    if (!wesponse.issetseawchwesuwts() || !wesponse.getseawchwesuwts().issetwesuwts()) {
+      w-wetuwn futuwe.exception(
+          nyew iwwegawstateexception(cwustew + " d-didn't set seawch wesuwts."));
     }
-    return Future.value(response);
+    w-wetuwn f-futuwe.vawue(wesponse);
   }
 }

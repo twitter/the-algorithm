@@ -1,228 +1,228 @@
-package src.scala.com.twitter.recos.hose.common
+package swc.scawa.com.twittew.wecos.hose.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph
-import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.kafka.client.processor.ThreadSafeKafkaConsumerClient
-import com.twitter.logging.Logger
-import com.twitter.recos.hose.common.BufferedEdgeCollector
-import com.twitter.recos.hose.common.BufferedEdgeWriter
-import com.twitter.recos.hose.common.EdgeCollector
-import com.twitter.recos.hose.common.RecosEdgeProcessor
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.recos.util.Action
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.Semaphore
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.finatwa.kafka.consumews.finagwekafkaconsumewbuiwdew
+i-impowt com.twittew.gwaphjet.bipawtite.weftindexedmuwtisegmentbipawtitegwaph
+i-impowt com.twittew.gwaphjet.bipawtite.segment.weftindexedbipawtitegwaphsegment
+i-impowt com.twittew.kafka.cwient.pwocessow.atweastoncepwocessow
+i-impowt com.twittew.kafka.cwient.pwocessow.thweadsafekafkaconsumewcwient
+i-impowt com.twittew.wogging.woggew
+i-impowt c-com.twittew.wecos.hose.common.buffewededgecowwectow
+impowt com.twittew.wecos.hose.common.buffewededgewwitew
+impowt com.twittew.wecos.hose.common.edgecowwectow
+impowt com.twittew.wecos.hose.common.wecosedgepwocessow
+i-impowt com.twittew.wecos.intewnaw.thwiftscawa.wecoshosemessage
+impowt com.twittew.wecos.utiw.action
+impowt j-java.utiw.concuwwent.atomic.atomicboowean
+impowt j-java.utiw.concuwwent.concuwwentwinkedqueue
+impowt java.utiw.concuwwent.executowsewvice
+impowt java.utiw.concuwwent.executows
+i-impowt java.utiw.concuwwent.semaphowe
 
 /**
- * The class is an variation of UnifiedGraphWriter which allow one instance to hold multiple graphs
+ * the cwass is an vawiation o-of unifiedgwaphwwitew which a-awwow one instance to howd muwtipwe gwaphs
  */
-trait UnifiedGraphWriterMulti[
-  TSegment <: LeftIndexedBipartiteGraphSegment,
-  TGraph <: LeftIndexedMultiSegmentBipartiteGraph[TSegment]] { writer =>
+twait unifiedgwaphwwitewmuwti[
+  tsegment <: w-weftindexedbipawtitegwaphsegment, (✿oωo)
+  tgwaph <: weftindexedmuwtisegmentbipawtitegwaph[tsegment]] { wwitew =>
 
-  import UnifiedGraphWriterMulti._
+  impowt unifiedgwaphwwitewmuwti._
 
-  def shardId: String
-  def env: String
-  def hosename: String
-  def bufferSize: Int
-  def consumerNum: Int
-  def catchupWriterNum: Int
-  def kafkaConsumerBuilder: FinagleKafkaConsumerBuilder[String, RecosHoseMessage]
-  def clientId: String
-  def statsReceiver: StatsReceiver
-
-  /**
-   * Adds a RecosHoseMessage to the graph. used by live writer to insert edges to the
-   * current segment
-   */
-  def addEdgeToGraph(
-    graphs: Seq[(TGraph, Set[Action.Value])],
-    recosHoseMessage: RecosHoseMessage
-  ): Unit
+  def shawdid: s-stwing
+  def env: stwing
+  def hosename: s-stwing
+  d-def buffewsize: i-int
+  def consumewnum: i-int
+  def catchupwwitewnum: int
+  def kafkaconsumewbuiwdew: f-finagwekafkaconsumewbuiwdew[stwing, (˘ω˘) wecoshosemessage]
+  def c-cwientid: stwing
+  def statsweceivew: statsweceivew
 
   /**
-   * Adds a RecosHoseMessage to the given segment in the graph. Used by catch up writers to
-   * insert edges to non-current (old) segments
+   * adds a wecoshosemessage to the gwaph. rawr used by wive w-wwitew to insewt edges to the
+   * c-cuwwent segment
    */
-  def addEdgeToSegment(
-    segment: Seq[(TSegment, Set[Action.Value])],
-    recosHoseMessage: RecosHoseMessage
-  ): Unit
+  def a-addedgetogwaph(
+    g-gwaphs: seq[(tgwaph, set[action.vawue])], OwO
+    wecoshosemessage: wecoshosemessage
+  ): u-unit
 
-  private val log = Logger()
-  private val isRunning: AtomicBoolean = new AtomicBoolean(true)
-  private val initialized: AtomicBoolean = new AtomicBoolean(false)
-  private var processors: Seq[AtLeastOnceProcessor[String, RecosHoseMessage]] = Seq.empty
-  private var consumers: Seq[ThreadSafeKafkaConsumerClient[String, RecosHoseMessage]] = Seq.empty
-  private val threadPool: ExecutorService = Executors.newCachedThreadPool()
+  /**
+   * a-adds a wecoshosemessage t-to the given s-segment in the gwaph. ^•ﻌ•^ used by c-catch up wwitews to
+   * insewt e-edges to nyon-cuwwent (owd) segments
+   */
+  def a-addedgetosegment(
+    segment: s-seq[(tsegment, UwU set[action.vawue])], (˘ω˘)
+    w-wecoshosemessage: w-wecoshosemessage
+  ): unit
 
-  def shutdown(): Unit = {
-    processors.foreach { processor =>
-      processor.close()
+  pwivate vaw wog = woggew()
+  pwivate vaw iswunning: atomicboowean = nyew atomicboowean(twue)
+  p-pwivate v-vaw initiawized: atomicboowean = n-new atomicboowean(fawse)
+  p-pwivate v-vaw pwocessows: seq[atweastoncepwocessow[stwing, (///ˬ///✿) wecoshosemessage]] = seq.empty
+  p-pwivate vaw consumews: seq[thweadsafekafkaconsumewcwient[stwing, σωσ wecoshosemessage]] = seq.empty
+  pwivate v-vaw thweadpoow: executowsewvice = e-executows.newcachedthweadpoow()
+
+  d-def shutdown(): u-unit = {
+    pwocessows.foweach { p-pwocessow =>
+      p-pwocessow.cwose()
     }
-    processors = Seq.empty
-    consumers.foreach { consumer =>
-      consumer.close()
+    p-pwocessows = s-seq.empty
+    consumews.foweach { consumew =>
+      c-consumew.cwose()
     }
-    consumers = Seq.empty
-    threadPool.shutdown()
-    isRunning.set(false)
+    c-consumews = seq.empty
+    t-thweadpoow.shutdown()
+    i-iswunning.set(fawse)
   }
 
-  def initHose(liveGraphs: Seq[(TGraph, Set[Action.Value])]): Unit = this.synchronized {
-    if (!initialized.get) {
-      initialized.set(true)
+  d-def inithose(wivegwaphs: seq[(tgwaph, /(^•ω•^) set[action.vawue])]): unit = t-this.synchwonized {
+    if (!initiawized.get) {
+      initiawized.set(twue)
 
-      val queue: java.util.Queue[Array[RecosHoseMessage]] =
-        new ConcurrentLinkedQueue[Array[RecosHoseMessage]]()
-      val queuelimit: Semaphore = new Semaphore(1024)
+      vaw queue: java.utiw.queue[awway[wecoshosemessage]] =
+        nyew concuwwentwinkedqueue[awway[wecoshosemessage]]()
+      v-vaw queuewimit: semaphowe = nyew semaphowe(1024)
 
-      initRecosHoseKafka(queue, queuelimit)
-      initGrpahWriters(liveGraphs, queue, queuelimit)
-    } else {
-      throw new RuntimeException("attempt to re-init kafka hose")
+      initwecoshosekafka(queue, 😳 q-queuewimit)
+      i-initgwpahwwitews(wivegwaphs, 😳 q-queue, (⑅˘꒳˘) queuewimit)
+    } ewse {
+      t-thwow nyew wuntimeexception("attempt t-to w-we-init kafka hose")
     }
   }
 
-  private def initRecosHoseKafka(
-    queue: java.util.Queue[Array[RecosHoseMessage]],
-    queuelimit: Semaphore,
-  ): Unit = {
-    try {
-      consumers = (0 until consumerNum).map { index =>
-        new ThreadSafeKafkaConsumerClient(
-          kafkaConsumerBuilder.clientId(s"clientId-$index").enableAutoCommit(false).config)
+  pwivate def initwecoshosekafka(
+    queue: java.utiw.queue[awway[wecoshosemessage]], 😳😳😳
+    queuewimit: semaphowe, 😳
+  ): unit = {
+    t-twy {
+      consumews = (0 u-untiw consumewnum).map { index =>
+        n-nyew thweadsafekafkaconsumewcwient(
+          k-kafkaconsumewbuiwdew.cwientid(s"cwientid-$index").enabweautocommit(fawse).config)
       }
-      processors = consumers.zipWithIndex.map {
-        case (consumer, index) =>
-          val bufferedWriter = BufferedEdgeCollector(bufferSize, queue, queuelimit, statsReceiver)
-          val processor = RecosEdgeProcessor(bufferedWriter)(statsReceiver)
+      pwocessows = consumews.zipwithindex.map {
+        c-case (consumew, XD i-index) =>
+          vaw b-buffewedwwitew = b-buffewededgecowwectow(buffewsize, mya queue, queuewimit, ^•ﻌ•^ statsweceivew)
+          vaw pwocessow = wecosedgepwocessow(buffewedwwitew)(statsweceivew)
 
-          AtLeastOnceProcessor[String, RecosHoseMessage](
-            s"recos-injector-kafka-$index",
-            hosename,
-            consumer,
-            processor.process,
-            maxPendingRequests = MaxPendingRequests * bufferSize,
-            workerThreads = ProcessorThreads,
-            commitIntervalMs = CommitIntervalMs,
-            statsReceiver = statsReceiver
+          a-atweastoncepwocessow[stwing, ʘwʘ w-wecoshosemessage](
+            s-s"wecos-injectow-kafka-$index", ( ͡o ω ͡o )
+            hosename, mya
+            c-consumew, o.O
+            p-pwocessow.pwocess, (✿oωo)
+            maxpendingwequests = m-maxpendingwequests * buffewsize, :3
+            wowkewthweads = pwocessowthweads, 😳
+            commitintewvawms = c-commitintewvawms, (U ﹏ U)
+            s-statsweceivew = statsweceivew
           )
       }
 
-      log.info(s"starting ${processors.size} recosKafka processors")
-      processors.foreach { processor =>
-        processor.start()
+      wog.info(s"stawting ${pwocessows.size} w-wecoskafka pwocessows")
+      p-pwocessows.foweach { pwocessow =>
+        pwocessow.stawt()
       }
     } catch {
-      case e: Throwable =>
-        e.printStackTrace()
-        log.error(e, e.toString)
-        processors.foreach { processor =>
-          processor.close()
+      c-case e: thwowabwe =>
+        e.pwintstacktwace()
+        wog.ewwow(e, mya e.tostwing)
+        pwocessows.foweach { p-pwocessow =>
+          pwocessow.cwose()
         }
-        processors = Seq.empty
-        consumers.foreach { consumer =>
-          consumer.close()
+        pwocessows = seq.empty
+        c-consumews.foweach { c-consumew =>
+          consumew.cwose()
         }
-        consumers = Seq.empty
+        consumews = seq.empty
     }
   }
 
   /**
-   * Initialize the graph writers,
-   * by first creating catch up writers to bootstrap the older segments,
-   * and then assigning a live writer to populate the live segment.
+   * i-initiawize t-the gwaph wwitews, (U ᵕ U❁)
+   * by fiwst cweating catch up wwitews t-to bootstwap the owdew segments, :3
+   * a-and then assigning a wive wwitew to popuwate the wive segment. mya
    */
-  private def initGrpahWriters(
-    liveGraphs: Seq[(TGraph, Set[Action.Value])],
-    queue: java.util.Queue[Array[RecosHoseMessage]],
-    queuelimit: Semaphore
-  ): Unit = {
-    // define a number of (numBootstrapWriters - 1) catchup writer threads, each of which will write
-    // to a separate graph segment.
-    val catchupWriters = (0 until (catchupWriterNum - 1)).map { index =>
-      val segments = liveGraphs.map { case (graph, actions) => (graph.getLiveSegment, actions) }
-      for (liveGraph <- liveGraphs) {
-        liveGraph._1.rollForwardSegment()
+  p-pwivate def initgwpahwwitews(
+    wivegwaphs: s-seq[(tgwaph, OwO s-set[action.vawue])], (ˆ ﻌ ˆ)♡
+    queue: java.utiw.queue[awway[wecoshosemessage]], ʘwʘ
+    q-queuewimit: semaphowe
+  ): u-unit = {
+    // d-define a nyumbew o-of (numbootstwapwwitews - 1) catchup wwitew thweads, o.O e-each of which w-wiww wwite
+    // to a sepawate gwaph segment. UwU
+    v-vaw catchupwwitews = (0 u-untiw (catchupwwitewnum - 1)).map { i-index =>
+      vaw segments = wivegwaphs.map { c-case (gwaph, rawr x3 actions) => (gwaph.getwivesegment, 🥺 a-actions) }
+      f-fow (wivegwaph <- wivegwaphs) {
+        wivegwaph._1.wowwfowwawdsegment()
       }
-      getCatchupWriter(segments, queue, queuelimit, index)
+      getcatchupwwitew(segments, :3 q-queue, queuewimit, (ꈍᴗꈍ) i-index)
     }
-    val threadPool: ExecutorService = Executors.newCachedThreadPool()
+    v-vaw thweadpoow: e-executowsewvice = executows.newcachedthweadpoow()
 
-    log.info("starting live graph writer that runs until service shutdown")
+    w-wog.info("stawting wive gwaph wwitew that wuns untiw sewvice shutdown")
 
-    // define one live writer thread
-    val liveWriter = getLiveWriter(liveGraphs, queue, queuelimit)
-    threadPool.submit(liveWriter)
+    // define one wive wwitew thwead
+    v-vaw wivewwitew = getwivewwitew(wivegwaphs, 🥺 queue, (✿oωo) q-queuewimit)
+    thweadpoow.submit(wivewwitew)
 
-    log.info(
-      "starting catchup graph writer, which will terminate as soon as the catchup segment is full"
+    w-wog.info(
+      "stawting catchup gwaph w-wwitew, (U ﹏ U) which wiww tewminate as s-soon as the catchup s-segment is f-fuww"
     )
-    catchupWriters.map(threadPool.submit(_))
+    c-catchupwwitews.map(thweadpoow.submit(_))
   }
 
-  private def getLiveWriter(
-    liveGraphs: Seq[(TGraph, Set[Action.Value])],
-    queue: java.util.Queue[Array[RecosHoseMessage]],
-    queuelimit: Semaphore,
-  ): BufferedEdgeWriter = {
-    val liveEdgeCollector = new EdgeCollector {
-      override def addEdge(message: RecosHoseMessage): Unit =
-        addEdgeToGraph(liveGraphs, message)
+  p-pwivate def getwivewwitew(
+    wivegwaphs: seq[(tgwaph, :3 set[action.vawue])], ^^;;
+    queue: java.utiw.queue[awway[wecoshosemessage]], rawr
+    queuewimit: semaphowe, 😳😳😳
+  ): buffewededgewwitew = {
+    v-vaw w-wiveedgecowwectow = n-nyew edgecowwectow {
+      ovewwide def addedge(message: w-wecoshosemessage): unit =
+        addedgetogwaph(wivegwaphs, (✿oωo) message)
     }
-    BufferedEdgeWriter(
-      queue,
-      queuelimit,
-      liveEdgeCollector,
-      statsReceiver.scope("liveWriter"),
-      isRunning.get
+    b-buffewededgewwitew(
+      q-queue, OwO
+      queuewimit, ʘwʘ
+      w-wiveedgecowwectow, (ˆ ﻌ ˆ)♡
+      statsweceivew.scope("wivewwitew"), (U ﹏ U)
+      iswunning.get
     )
   }
 
-  private def getCatchupWriter(
-    segments: Seq[(TSegment, Set[Action.Value])],
-    queue: java.util.Queue[Array[RecosHoseMessage]],
-    queuelimit: Semaphore,
-    catchupWriterIndex: Int,
-  ): BufferedEdgeWriter = {
-    val catchupEdgeCollector = new EdgeCollector {
-      var currentNumEdges = 0
+  p-pwivate def g-getcatchupwwitew(
+    segments: s-seq[(tsegment, UwU set[action.vawue])], XD
+    q-queue: java.utiw.queue[awway[wecoshosemessage]], ʘwʘ
+    queuewimit: semaphowe, rawr x3
+    catchupwwitewindex: int, ^^;;
+  ): b-buffewededgewwitew = {
+    v-vaw catchupedgecowwectow = n-nyew e-edgecowwectow {
+      v-vaw cuwwentnumedges = 0
 
-      override def addEdge(message: RecosHoseMessage): Unit = {
-        currentNumEdges += 1
-        addEdgeToSegment(segments, message)
+      ovewwide def a-addedge(message: w-wecoshosemessage): unit = {
+        c-cuwwentnumedges += 1
+        a-addedgetosegment(segments, ʘwʘ message)
       }
     }
-    val maxEdges = segments.map(_._1.getMaxNumEdges).sum
+    v-vaw maxedges = segments.map(_._1.getmaxnumedges).sum
 
-    def runCondition(): Boolean = {
-      isRunning.get && ((maxEdges - catchupEdgeCollector.currentNumEdges) > bufferSize)
+    def wuncondition(): b-boowean = {
+      iswunning.get && ((maxedges - c-catchupedgecowwectow.cuwwentnumedges) > b-buffewsize)
     }
 
-    BufferedEdgeWriter(
-      queue,
-      queuelimit,
-      catchupEdgeCollector,
-      statsReceiver.scope("catcher_" + catchupWriterIndex),
-      runCondition
+    buffewededgewwitew(
+      q-queue, (U ﹏ U)
+      queuewimit, (˘ω˘)
+      catchupedgecowwectow, (ꈍᴗꈍ)
+      statsweceivew.scope("catchew_" + c-catchupwwitewindex), /(^•ω•^)
+      w-wuncondition
     )
   }
 }
 
-private object UnifiedGraphWriterMulti {
+p-pwivate object unifiedgwaphwwitewmuwti {
 
-  // The RecosEdgeProcessor is not thread-safe. Only use one thread to process each instance.
-  val ProcessorThreads = 1
-  // Each one cache at most 1000 * bufferSize requests.
-  val MaxPendingRequests = 1000
-  // Short Commit MS to reduce duplicate messages.
-  val CommitIntervalMs: Long = 5000 // 5 seconds, Default Kafka value.
+  // the wecosedgepwocessow is nyot t-thwead-safe. >_< onwy use one thwead to pwocess each i-instance. σωσ
+  vaw p-pwocessowthweads = 1
+  // each o-one cache at most 1000 * buffewsize w-wequests. ^^;;
+  v-vaw maxpendingwequests = 1000
+  // showt commit ms to weduce dupwicate m-messages. 😳
+  vaw commitintewvawms: wong = 5000 // 5 s-seconds, >_< d-defauwt kafka vawue. -.-
 }

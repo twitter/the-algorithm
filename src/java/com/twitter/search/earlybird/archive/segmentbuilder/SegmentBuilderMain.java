@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.twittew.seawch.eawwybiwd.awchive.segmentbuiwdew;
 
-public final class SegmentBuilderMain {
+pubwic f-finaw cwass s-segmentbuiwdewmain {
 
-  private SegmentBuilderMain() { }
+  p-pwivate s-segmentbuiwdewmain() { }
 
-  public static void main(String[] args) {
-    new SegmentBuilderApp().main(args);
+  p-pubwic s-static void main(stwing[] a-awgs) {
+    n-nyew segmentbuiwdewapp().main(awgs);
   }
 }

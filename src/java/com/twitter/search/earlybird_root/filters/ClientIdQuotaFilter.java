@@ -1,274 +1,274 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+impowt java.utiw.optionaw;
+i-impowt j-java.utiw.concuwwent.concuwwenthashmap;
+i-impowt j-java.utiw.concuwwent.concuwwentmap;
 
-import javax.inject.Inject;
+i-impowt j-javax.inject.inject;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.RateLimiterProxy;
-import com.google.common.util.concurrent.TwitterRateLimiterProxyFactory;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.cache.cachebuiwdew;
+impowt com.googwe.common.cache.cachewoadew;
+impowt com.googwe.common.cache.woadingcache;
+i-impowt com.googwe.common.utiw.concuwwent.watewimitewpwoxy;
+impowt com.googwe.common.utiw.concuwwent.twittewwatewimitewpwoxyfactowy;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.quota.ClientIdQuotaManager;
-import com.twitter.search.earlybird_root.quota.QuotaInfo;
-import com.twitter.util.Future;
+i-impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.simpwefiwtew;
+impowt com.twittew.seawch.common.metwics.seawchcustomgauge;
+impowt c-com.twittew.seawch.common.metwics.seawchwonggauge;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.common.utiw.finagweutiw;
+i-impowt com.twittew.seawch.eawwybiwd.common.cwientidutiw;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt c-com.twittew.seawch.eawwybiwd_woot.quota.cwientidquotamanagew;
+impowt com.twittew.seawch.eawwybiwd_woot.quota.quotainfo;
+i-impowt c-com.twittew.utiw.futuwe;
 
 /**
- * A filter that tracks and limits the per-client request rate. The ID of the client is determined
- * by looking at the Finagle client ID and the EarlybirdRequest.clientId field.
+ * a-a fiwtew that t-twacks and wimits the pew-cwient wequest wate. σωσ the i-id of the cwient is detewmined
+ * by wooking a-at the finagwe cwient id and the eawwybiwdwequest.cwientid fiewd. nyaa~~
  *
- * The configuration currently has one config based implementation: see ConfigRepoBasedQuotaManager.
+ * the configuwation cuwwentwy h-has one config based impwementation: s-see configwepobasedquotamanagew. 🥺
  *
- * If a client has a quota set, this filter will rate limit the requests from that client based on
- * that quota. Otherwise, the client is assumed to use a "common request pool", which has its own
- * quota. A quota for the common pool must always exist (even if it's set to 0).
+ * i-if a cwient has a-a quota set, rawr x3 this fiwtew wiww wate wimit the wequests fwom that c-cwient based on
+ * t-that quota. σωσ othewwise, (///ˬ///✿) the cwient i-is assumed t-to use a "common wequest poow", (U ﹏ U) w-which has its own
+ * quota. ^^;; a quota f-fow the common poow must awways exist (even i-if it's set to 0). 🥺
  *
- * All rate limiters used in this class are tolerant to bursts. See TwitterRateLimiterFactory for
- * more details.
+ * aww wate w-wimitews used in this cwass awe t-towewant to buwsts. òωó s-see twittewwatewimitewfactowy fow
+ * mowe detaiws. XD
  *
- * If a client sends us more requests than its allowed quota, we keep track of the excess traffic
- * and export that number in a counter. However, we rate limit the requests from that client only if
- * the QuotaInfo returned from ClientIdQuotaManager has the shouldEnforceQuota property set to true.
+ * if a cwient sends us mowe wequests than its awwowed quota, :3 we keep t-twack of the excess t-twaffic
+ * and expowt that n-nyumbew in a countew. (U ﹏ U) h-howevew, w-we wate wimit the wequests fwom that cwient onwy if
+ * the quotainfo w-wetuwned fwom cwientidquotamanagew has the shouwdenfowcequota pwopewty set t-to twue. >w<
  *
- * If a request is rate limited, the filter will return an EarlybirdResponse with a
- * QUOTA_EXCEEDED_ERROR response code.
+ * if a wequest is wate w-wimited, /(^•ω•^) the f-fiwtew wiww wetuwn a-an eawwybiwdwesponse with a
+ * q-quota_exceeded_ewwow w-wesponse c-code. (⑅˘꒳˘)
  */
-public class ClientIdQuotaFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final class ClientQuota {
-    private final QuotaInfo quotaInfo;
-    private final boolean shouldAllowRequest;
-    private final ClientIdRequestCounters requestCounters;
+pubwic c-cwass cwientidquotafiwtew extends simpwefiwtew<eawwybiwdwequest, ʘwʘ e-eawwybiwdwesponse> {
+  p-pwivate s-static finaw cwass c-cwientquota {
+    p-pwivate finaw quotainfo quotainfo;
+    pwivate finaw boowean s-shouwdawwowwequest;
+    pwivate finaw cwientidwequestcountews wequestcountews;
 
-    private ClientQuota(
-        QuotaInfo quotaInfo,
-        boolean shouldAllowRequest,
-        ClientIdRequestCounters requestCounters) {
+    pwivate cwientquota(
+        q-quotainfo quotainfo, rawr x3
+        boowean shouwdawwowwequest,
+        cwientidwequestcountews wequestcountews) {
 
-      this.quotaInfo = quotaInfo;
-      this.shouldAllowRequest = shouldAllowRequest;
-      this.requestCounters = requestCounters;
+      t-this.quotainfo = q-quotainfo;
+      t-this.shouwdawwowwequest = shouwdawwowwequest;
+      t-this.wequestcountews = wequestcountews;
     }
   }
 
-  private static final class ClientIdRequestCounters {
-    private static final String REQUESTS_RECEIVED_COUNTER_NAME_PATTERN =
-        "quota_requests_received_for_client_id_%s";
+  p-pwivate static f-finaw cwass cwientidwequestcountews {
+    pwivate static finaw stwing wequests_weceived_countew_name_pattewn =
+        "quota_wequests_weceived_fow_cwient_id_%s";
 
-    private static final String THROTTLED_REQUESTS_COUNTER_NAME_PATTERN =
-        "quota_requests_throttled_for_client_id_%s";
+    pwivate static finaw stwing t-thwottwed_wequests_countew_name_pattewn =
+        "quota_wequests_thwottwed_fow_cwient_id_%s";
 
-    private static final String REQUESTS_ABOVE_QUOTA_COUNTER_NAME_PATTERN =
-        "quota_requests_above_quota_for_client_id_%s";
+    pwivate s-static finaw stwing wequests_above_quota_countew_name_pattewn =
+        "quota_wequests_above_quota_fow_cwient_id_%s";
 
-    private static final String REQUESTS_WITHIN_QUOTA_COUNTER_NAME_PATTERN =
-        "quota_requests_within_quota_for_client_id_%s";
+    p-pwivate s-static finaw stwing wequests_within_quota_countew_name_pattewn =
+        "quota_wequests_within_quota_fow_cwient_id_%s";
 
-    private static final String PER_CLIENT_QUOTA_GAUGE_NAME_PATTERN =
-        "quota_for_client_id_%s";
+    pwivate static f-finaw stwing p-pew_cwient_quota_gauge_name_pattewn =
+        "quota_fow_cwient_id_%s";
 
-    private final SearchRateCounter throttledRequestsCounter;
-    private final SearchRateCounter requestsReceivedCounter;
-    private final SearchRateCounter requestsAboveQuotaCounter;
-    private final SearchRateCounter requestsWithinQuotaCounter;
-    private final SearchLongGauge quotaClientGauge;
+    pwivate f-finaw seawchwatecountew t-thwottwedwequestscountew;
+    pwivate finaw seawchwatecountew wequestsweceivedcountew;
+    pwivate f-finaw seawchwatecountew w-wequestsabovequotacountew;
+    p-pwivate finaw seawchwatecountew w-wequestswithinquotacountew;
+    p-pwivate finaw seawchwonggauge q-quotacwientgauge;
 
-    private ClientIdRequestCounters(String clientId) {
-      this.throttledRequestsCounter = SearchRateCounter.export(
-          String.format(THROTTLED_REQUESTS_COUNTER_NAME_PATTERN, clientId));
+    pwivate cwientidwequestcountews(stwing cwientid) {
+      this.thwottwedwequestscountew = s-seawchwatecountew.expowt(
+          s-stwing.fowmat(thwottwed_wequests_countew_name_pattewn, (˘ω˘) cwientid));
 
-      this.requestsReceivedCounter = SearchRateCounter.export(
-          String.format(REQUESTS_RECEIVED_COUNTER_NAME_PATTERN, clientId), true);
+      this.wequestsweceivedcountew = s-seawchwatecountew.expowt(
+          s-stwing.fowmat(wequests_weceived_countew_name_pattewn, o.O cwientid), 😳 twue);
 
-      this.quotaClientGauge = SearchLongGauge.export(
-          String.format(PER_CLIENT_QUOTA_GAUGE_NAME_PATTERN, clientId));
+      this.quotacwientgauge = s-seawchwonggauge.expowt(
+          stwing.fowmat(pew_cwient_quota_gauge_name_pattewn, o.O cwientid));
 
-      this.requestsAboveQuotaCounter = SearchRateCounter.export(
-            String.format(REQUESTS_ABOVE_QUOTA_COUNTER_NAME_PATTERN, clientId));
+      this.wequestsabovequotacountew = seawchwatecountew.expowt(
+            stwing.fowmat(wequests_above_quota_countew_name_pattewn, ^^;; c-cwientid));
 
-      this.requestsWithinQuotaCounter = SearchRateCounter.export(
-            String.format(REQUESTS_WITHIN_QUOTA_COUNTER_NAME_PATTERN, clientId));
+      this.wequestswithinquotacountew = seawchwatecountew.expowt(
+            s-stwing.fowmat(wequests_within_quota_countew_name_pattewn, ( ͡o ω ͡o ) c-cwientid));
     }
   }
 
-  private static final String REQUESTS_RECEIVED_FOR_EMAIL_COUNTER_NAME_PATTERN =
-      "quota_requests_received_for_email_%s";
+  pwivate static finaw stwing wequests_weceived_fow_emaiw_countew_name_pattewn =
+      "quota_wequests_weceived_fow_emaiw_%s";
 
-  // We have this aggregate stat only because doing sumany(...) on the
-  // per-client statistic is too expensive for an alert.
-  @VisibleForTesting
-  static final SearchRateCounter TOTAL_REQUESTS_RECEIVED_COUNTER =
-      SearchRateCounter.export("total_quota_requests_received", true);
+  // we have this a-aggwegate stat o-onwy because doing sumany(...) on the
+  // pew-cwient statistic i-is too expensive fow an awewt. ^^;;
+  @visibwefowtesting
+  s-static finaw seawchwatecountew totaw_wequests_weceived_countew =
+      seawchwatecountew.expowt("totaw_quota_wequests_weceived", ^^;; twue);
 
-  private static final int DEFAULT_BURST_FACTOR_SECONDS = 60;
-  private static final String QUOTA_STAT_CACHE_SIZE = "quota_stat_cache_size";
-  private static final String MISSING_QUOTA_FOR_CLIENT_ID_COUNTER_NAME_PATTERN =
-      "quota_requests_with_missing_quota_for_client_id_%s";
+  p-pwivate static finaw int defauwt_buwst_factow_seconds = 60;
+  p-pwivate static f-finaw stwing quota_stat_cache_size = "quota_stat_cache_size";
+  pwivate static finaw s-stwing missing_quota_fow_cwient_id_countew_name_pattewn =
+      "quota_wequests_with_missing_quota_fow_cwient_id_%s";
 
-  private static final Logger LOG = LoggerFactory.getLogger(ClientIdQuotaFilter.class);
+  pwivate s-static finaw w-woggew wog = w-woggewfactowy.getwoggew(cwientidquotafiwtew.cwass);
 
-  private final ConcurrentMap<String, RateLimiterProxy> rateLimiterProxiesByClientId =
-      new ConcurrentHashMap<>();
+  pwivate finaw c-concuwwentmap<stwing, XD w-watewimitewpwoxy> watewimitewpwoxiesbycwientid =
+      nyew concuwwenthashmap<>();
 
-  private final ClientIdQuotaManager quotaManager;
-  private final TwitterRateLimiterProxyFactory rateLimiterProxyFactory;
-  private final LoadingCache<String, ClientIdRequestCounters> clientRequestCounters;
-  private final LoadingCache<String, SearchRateCounter> emailRequestCounters;
+  p-pwivate finaw cwientidquotamanagew q-quotamanagew;
+  p-pwivate finaw twittewwatewimitewpwoxyfactowy watewimitewpwoxyfactowy;
+  p-pwivate finaw woadingcache<stwing, 🥺 cwientidwequestcountews> c-cwientwequestcountews;
+  p-pwivate finaw woadingcache<stwing, (///ˬ///✿) seawchwatecountew> emaiwwequestcountews;
 
-  /** Creates a new ClientIdQuotaFilter instance. */
-  @Inject
-  public ClientIdQuotaFilter(ClientIdQuotaManager quotaManager,
-                             TwitterRateLimiterProxyFactory rateLimiterProxyFactory) {
-    this.quotaManager = quotaManager;
-    this.rateLimiterProxyFactory = rateLimiterProxyFactory;
+  /** cweates a nyew c-cwientidquotafiwtew i-instance. (U ᵕ U❁) */
+  @inject
+  p-pubwic cwientidquotafiwtew(cwientidquotamanagew q-quotamanagew, ^^;;
+                             twittewwatewimitewpwoxyfactowy w-watewimitewpwoxyfactowy) {
+    this.quotamanagew = quotamanagew;
+    this.watewimitewpwoxyfactowy = watewimitewpwoxyfactowy;
 
-    this.clientRequestCounters = CacheBuilder.newBuilder()
-        .build(new CacheLoader<String, ClientIdRequestCounters>() {
-          @Override
-          public ClientIdRequestCounters load(String clientId) {
-            return new ClientIdRequestCounters(clientId);
+    this.cwientwequestcountews = cachebuiwdew.newbuiwdew()
+        .buiwd(new c-cachewoadew<stwing, ^^;; cwientidwequestcountews>() {
+          @ovewwide
+          p-pubwic cwientidwequestcountews woad(stwing c-cwientid) {
+            wetuwn nyew c-cwientidwequestcountews(cwientid);
           }
         });
-    this.emailRequestCounters = CacheBuilder.newBuilder()
-        .build(new CacheLoader<String, SearchRateCounter>() {
-          @Override
-          public SearchRateCounter load(String email) {
-            return SearchRateCounter.export(
-                String.format(REQUESTS_RECEIVED_FOR_EMAIL_COUNTER_NAME_PATTERN, email));
+    this.emaiwwequestcountews = cachebuiwdew.newbuiwdew()
+        .buiwd(new c-cachewoadew<stwing, rawr s-seawchwatecountew>() {
+          @ovewwide
+          p-pubwic seawchwatecountew w-woad(stwing e-emaiw) {
+            wetuwn seawchwatecountew.expowt(
+                stwing.fowmat(wequests_weceived_fow_emaiw_countew_name_pattewn, (˘ω˘) emaiw));
           }
         });
 
-    SearchCustomGauge.export(QUOTA_STAT_CACHE_SIZE, () -> clientRequestCounters.size());
+    seawchcustomgauge.expowt(quota_stat_cache_size, 🥺 () -> cwientwequestcountews.size());
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    String finagleClientId = FinagleUtil.getFinagleClientName();
-    String requestClientId = ClientIdUtil.getClientIdFromRequest(request);
-    LOG.debug(String.format("Client id from request or attribution: %s", requestClientId));
+  @ovewwide
+  pubwic f-futuwe<eawwybiwdwesponse> appwy(eawwybiwdwequest w-wequest, nyaa~~
+                                         s-sewvice<eawwybiwdwequest, :3 eawwybiwdwesponse> s-sewvice) {
+    stwing finagwecwientid = finagweutiw.getfinagwecwientname();
+    stwing wequestcwientid = c-cwientidutiw.getcwientidfwomwequest(wequest);
+    w-wog.debug(stwing.fowmat("cwient id fwom wequest o-ow attwibution: %s", /(^•ω•^) wequestcwientid));
 
-    // Multiple client ids may be grouped into a single quota client id, all the
-    // unknown or unset client ids for example.
-    String quotaClientId = ClientIdUtil.getQuotaClientId(requestClientId);
-    LOG.debug(String.format("Client id used for checking quota: %s", quotaClientId));
+    // muwtipwe cwient i-ids may be gwouped i-into a singwe quota cwient id, a-aww the
+    // u-unknown ow unset cwient ids fow exampwe. ^•ﻌ•^
+    stwing quotacwientid = cwientidutiw.getquotacwientid(wequestcwientid);
+    w-wog.debug(stwing.fowmat("cwient i-id used f-fow checking quota: %s", UwU q-quotacwientid));
 
-    ClientQuota clientQuota = getClientQuota(quotaClientId);
-    if (!clientQuota.shouldAllowRequest && clientQuota.quotaInfo.shouldEnforceQuota()) {
-      clientQuota.requestCounters.throttledRequestsCounter.increment();
+    c-cwientquota cwientquota = getcwientquota(quotacwientid);
+    i-if (!cwientquota.shouwdawwowwequest && c-cwientquota.quotainfo.shouwdenfowcequota()) {
+      cwientquota.wequestcountews.thwottwedwequestscountew.incwement();
 
-      return Future.value(getQuotaExceededResponse(
-          finagleClientId,
-          clientQuota.quotaInfo.getQuotaClientId(),
-          clientQuota.quotaInfo.getQuota()));
+      w-wetuwn futuwe.vawue(getquotaexceededwesponse(
+          f-finagwecwientid, 😳😳😳
+          cwientquota.quotainfo.getquotacwientid(), OwO
+          c-cwientquota.quotainfo.getquota()));
     }
 
-    return service.apply(request);
+    wetuwn sewvice.appwy(wequest);
   }
 
-  private ClientQuota getClientQuota(String clientId) {
-    Optional<QuotaInfo> quotaInfoOptional = quotaManager.getQuotaForClient(clientId);
-    if (!quotaInfoOptional.isPresent()) {
-      SearchRateCounter noQuotaFoundForClientCounter = SearchRateCounter.export(
-          String.format(MISSING_QUOTA_FOR_CLIENT_ID_COUNTER_NAME_PATTERN, clientId));
-      noQuotaFoundForClientCounter.increment();
+  pwivate c-cwientquota getcwientquota(stwing c-cwientid) {
+    o-optionaw<quotainfo> quotainfooptionaw = quotamanagew.getquotafowcwient(cwientid);
+    i-if (!quotainfooptionaw.ispwesent()) {
+      seawchwatecountew nyoquotafoundfowcwientcountew = s-seawchwatecountew.expowt(
+          stwing.fowmat(missing_quota_fow_cwient_id_countew_name_pattewn, ^•ﻌ•^ cwientid));
+      n-nyoquotafoundfowcwientcountew.incwement();
     }
 
-    // If a quota was set for this client, use it. Otherwise, use the common pool's quota.
-    // A quota for the common pool must always exist.
-    QuotaInfo quotaInfo = quotaInfoOptional.orElseGet(quotaManager::getCommonPoolQuota);
+    // i-if a quota was set fow this cwient, (ꈍᴗꈍ) use it. othewwise, (⑅˘꒳˘) u-use the common poow's quota. (⑅˘꒳˘)
+    // a quota fow t-the common poow m-must awways exist. (ˆ ﻌ ˆ)♡
+    quotainfo q-quotainfo = quotainfooptionaw.owewseget(quotamanagew::getcommonpoowquota);
 
-    ClientIdRequestCounters requestCounters = clientRequestCounters
-        .getUnchecked(quotaInfo.getQuotaClientId());
-    emailRequestCounters.getUnchecked(quotaInfo.getQuotaEmail()).increment();
+    cwientidwequestcountews w-wequestcountews = c-cwientwequestcountews
+        .getunchecked(quotainfo.getquotacwientid());
+    emaiwwequestcountews.getunchecked(quotainfo.getquotaemaiw()).incwement();
 
-    // Increment a stat for each request the filter receives.
-    requestCounters.requestsReceivedCounter.increment();
+    // incwement a-a stat fow each wequest the fiwtew weceives. /(^•ω•^)
+    w-wequestcountews.wequestsweceivedcountew.incwement();
 
-    // Also increment the total stat
-    TOTAL_REQUESTS_RECEIVED_COUNTER.increment();
+    // a-awso incwement the totaw stat
+    t-totaw_wequests_weceived_countew.incwement();
 
-    // If shouldEnforceQuota is false, we already know that the request will be allowed.
-    // However, we still want to update the rate limiter and the stats.
-    final boolean requestAllowed;
-    if (quotaInfo.getQuota() == 0) {
-      // If the quota for this client is set to 0, then the request should not be allowed.
+    // if shouwdenfowcequota i-is fawse, òωó we awweady k-know that t-the wequest wiww be awwowed. (⑅˘꒳˘)
+    // howevew, (U ᵕ U❁) we stiww want to update the wate wimitew and the stats. >w<
+    finaw boowean wequestawwowed;
+    if (quotainfo.getquota() == 0) {
+      // if the quota fow this cwient is set to 0, σωσ then the wequest s-shouwd nyot be a-awwowed. -.-
       //
-      // Do not update the rate limiter's rate: RateLimiter only accepts positive rates, and in any
-      // case, we already know that the request should not be allowed.
-      requestAllowed = false;
-    } else {
-      // The quota is not 0: update the rate limiter with the new quota, and see if the request
-      // should be allowed.
-      RateLimiterProxy rateLimiterProxy = getClientRateLimiterProxy(quotaInfo.getQuotaClientId(),
-          quotaInfo.getQuota());
-      requestAllowed = rateLimiterProxy.tryAcquire();
+      // do nyot update the wate w-wimitew's wate: w-watewimitew onwy a-accepts positive wates, o.O and i-in any
+      // case, we awweady k-know that the wequest s-shouwd nyot be awwowed. ^^
+      w-wequestawwowed = fawse;
+    } e-ewse {
+      // t-the quota is nyot 0: update the wate wimitew w-with the new quota, >_< a-and see if the w-wequest
+      // s-shouwd be awwowed. >w<
+      w-watewimitewpwoxy w-watewimitewpwoxy = g-getcwientwatewimitewpwoxy(quotainfo.getquotacwientid(), >_<
+          q-quotainfo.getquota());
+      w-wequestawwowed = watewimitewpwoxy.twyacquiwe();
     }
 
-    // Report the current quota for each client
-    requestCounters.quotaClientGauge.set(quotaInfo.getQuota());
+    // w-wepowt t-the cuwwent q-quota fow each cwient
+    wequestcountews.quotacwientgauge.set(quotainfo.getquota());
 
-    // Update the corresponding counter, if the request should not be allowed.
-    if (!requestAllowed) {
-      requestCounters.requestsAboveQuotaCounter.increment();
-    } else {
-      requestCounters.requestsWithinQuotaCounter.increment();
+    // update t-the cowwesponding countew, >w< if the wequest s-shouwd nyot be awwowed. rawr
+    if (!wequestawwowed) {
+      w-wequestcountews.wequestsabovequotacountew.incwement();
+    } e-ewse {
+      w-wequestcountews.wequestswithinquotacountew.incwement();
     }
 
-    // Throttle the request only if the quota for this service should be enforced.
-    return new ClientQuota(quotaInfo, requestAllowed, requestCounters);
+    // thwottwe t-the wequest onwy if the quota f-fow this sewvice shouwd be enfowced. rawr x3
+    w-wetuwn nyew cwientquota(quotainfo, ( ͡o ω ͡o ) w-wequestawwowed, (˘ω˘) wequestcountews);
   }
 
-  private RateLimiterProxy getClientRateLimiterProxy(String clientId, int rate) {
-    // If a RateLimiter for this client doesn't exist, create one,
-    // unless another thread beat us to it.
-    RateLimiterProxy clientRateLimiterProxy = rateLimiterProxiesByClientId.get(clientId);
-    if (clientRateLimiterProxy == null) {
-      clientRateLimiterProxy =
-          rateLimiterProxyFactory.createRateLimiterProxy(rate, DEFAULT_BURST_FACTOR_SECONDS);
-      RateLimiterProxy existingClientRateLimiterProxy =
-        rateLimiterProxiesByClientId.putIfAbsent(clientId, clientRateLimiterProxy);
-      if (existingClientRateLimiterProxy != null) {
-        clientRateLimiterProxy = existingClientRateLimiterProxy;
+  pwivate watewimitewpwoxy getcwientwatewimitewpwoxy(stwing cwientid, 😳 int wate) {
+    // i-if a watewimitew fow t-this cwient doesn't e-exist, cweate one, OwO
+    // unwess anothew thwead beat us to i-it. (˘ω˘)
+    watewimitewpwoxy cwientwatewimitewpwoxy = w-watewimitewpwoxiesbycwientid.get(cwientid);
+    i-if (cwientwatewimitewpwoxy == n-nyuww) {
+      cwientwatewimitewpwoxy =
+          watewimitewpwoxyfactowy.cweatewatewimitewpwoxy(wate, òωó defauwt_buwst_factow_seconds);
+      w-watewimitewpwoxy e-existingcwientwatewimitewpwoxy =
+        watewimitewpwoxiesbycwientid.putifabsent(cwientid, ( ͡o ω ͡o ) c-cwientwatewimitewpwoxy);
+      if (existingcwientwatewimitewpwoxy != nyuww) {
+        cwientwatewimitewpwoxy = e-existingcwientwatewimitewpwoxy;
       }
-      LOG.info("Using rate limiter with rate {} for clientId {}.",
-               clientRateLimiterProxy.getRate(), clientId);
+      wog.info("using w-wate wimitew w-with wate {} f-fow cwientid {}.", UwU
+               cwientwatewimitewpwoxy.getwate(), /(^•ω•^) c-cwientid);
     }
 
-    // Update the quota, if needed.
-    if (clientRateLimiterProxy.getRate() != rate) {
-      LOG.info("Updating the rate from {} to {} for clientId {}.",
-               clientRateLimiterProxy.getRate(), rate, clientId);
-      clientRateLimiterProxy.setRate(rate);
+    // u-update t-the quota, (ꈍᴗꈍ) if n-nyeeded. 😳
+    if (cwientwatewimitewpwoxy.getwate() != wate) {
+      w-wog.info("updating t-the wate f-fwom {} to {} fow c-cwientid {}.", mya
+               c-cwientwatewimitewpwoxy.getwate(), mya w-wate, /(^•ω•^) cwientid);
+      c-cwientwatewimitewpwoxy.setwate(wate);
     }
 
-    return clientRateLimiterProxy;
+    w-wetuwn cwientwatewimitewpwoxy;
   }
 
-  private static EarlybirdResponse getQuotaExceededResponse(
-      String finagleClientId, String quotaClientId, int quota) {
-    return new EarlybirdResponse(EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
-      .setSearchResults(new ThriftSearchResults())
-      .setDebugString(String.format(
-          "Client %s (finagle client ID %s) has exceeded its request quota of %d. "
-          + "Please request more quota at go/searchquota.",
-          quotaClientId, finagleClientId, quota));
+  p-pwivate static eawwybiwdwesponse g-getquotaexceededwesponse(
+      stwing finagwecwientid, s-stwing q-quotacwientid, ^^;; i-int quota) {
+    wetuwn nyew eawwybiwdwesponse(eawwybiwdwesponsecode.quota_exceeded_ewwow, 🥺 0)
+      .setseawchwesuwts(new thwiftseawchwesuwts())
+      .setdebugstwing(stwing.fowmat(
+          "cwient %s (finagwe cwient id %s) h-has exceeded its w-wequest quota o-of %d. ^^ "
+          + "pwease wequest mowe quota at go/seawchquota.", ^•ﻌ•^
+          q-quotacwientid, /(^•ω•^) finagwecwientid, ^^ q-quota));
   }
 }

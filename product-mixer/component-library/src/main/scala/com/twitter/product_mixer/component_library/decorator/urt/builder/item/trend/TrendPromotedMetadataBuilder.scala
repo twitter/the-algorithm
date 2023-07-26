@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.twend
 
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendDescriptionFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendDisclosureTypeFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendImpressionIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendNameFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.pwomotedtwenddescwiptionfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.pwomotedtwenddiscwosuwetypefeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.pwomotedtwendidfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.pwomotedtwendimpwessionidfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.pwomotedtwendnamefeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.pwomoted.basepwomotedmetadatabuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.pwomotedmetadata
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object TrendPromotedMetadataBuilder
-    extends BasePromotedMetadataBuilder[PipelineQuery, UniversalNoun[Any]] {
+o-object twendpwomotedmetadatabuiwdew
+    extends basepwomotedmetadatabuiwdew[pipewinequewy, (⑅˘꒳˘) u-univewsawnoun[any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): Option[PromotedMetadata] = {
-    // If a promoted trend name exists, then this is a promoted trend
-    candidateFeatures.getOrElse(PromotedTrendNameFeature, None).map { promotedTrendName =>
-      PromotedMetadata(
-        // This is the current product behavior that advertiserId is always set to 0L.
-        // Correct advertiser name comes from Trend's trendMetadata.metaDescription.
-        advertiserId = 0L,
-        disclosureType = candidateFeatures.getOrElse(PromotedTrendDisclosureTypeFeature, None),
-        experimentValues = None,
-        promotedTrendId = candidateFeatures.getOrElse(PromotedTrendIdFeature, None),
-        promotedTrendName = Some(promotedTrendName),
-        promotedTrendQueryTerm = None,
-        adMetadataContainer = None,
-        promotedTrendDescription =
-          candidateFeatures.getOrElse(PromotedTrendDescriptionFeature, None),
-        impressionString = candidateFeatures.getOrElse(PromotedTrendImpressionIdFeature, None),
-        clickTrackingInfo = None
+  ovewwide d-def appwy(
+    quewy: pipewinequewy, òωó
+    candidate: univewsawnoun[any], ʘwʘ
+    candidatefeatuwes: f-featuwemap
+  ): option[pwomotedmetadata] = {
+    // i-if a pwomoted t-twend nyame exists, /(^•ω•^) then this is a pwomoted twend
+    candidatefeatuwes.getowewse(pwomotedtwendnamefeatuwe, ʘwʘ none).map { pwomotedtwendname =>
+      p-pwomotedmetadata(
+        // this is the cuwwent pwoduct behaviow that advewtisewid is awways s-set to 0w.
+        // cowwect a-advewtisew nyame c-comes fwom twend's t-twendmetadata.metadescwiption. σωσ
+        a-advewtisewid = 0w, OwO
+        discwosuwetype = candidatefeatuwes.getowewse(pwomotedtwenddiscwosuwetypefeatuwe, 😳😳😳 n-nyone),
+        expewimentvawues = nyone, 😳😳😳
+        p-pwomotedtwendid = candidatefeatuwes.getowewse(pwomotedtwendidfeatuwe, o.O nyone), ( ͡o ω ͡o )
+        pwomotedtwendname = some(pwomotedtwendname), (U ﹏ U)
+        pwomotedtwendquewytewm = n-nyone, (///ˬ///✿)
+        admetadatacontainew = none, >w<
+        p-pwomotedtwenddescwiption =
+          c-candidatefeatuwes.getowewse(pwomotedtwenddescwiptionfeatuwe, rawr n-none),
+        impwessionstwing = candidatefeatuwes.getowewse(pwomotedtwendimpwessionidfeatuwe, mya none),
+        c-cwicktwackinginfo = n-nyone
       )
     }
   }

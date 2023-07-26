@@ -1,76 +1,76 @@
-package com.twitter.product_mixer.core.pipeline.step.transport_marshaller
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.twanspowt_mawshawwew
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.hasmawshawwing
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.iwwegawstatefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasexecutowwesuwts
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.domain_mawshawwew_executow.domainmawshawwewexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.twanspowt_mawshawwew_executow.twanspowtmawshawwewexecutow
+impowt com.twittew.stitch.awwow
+i-impowt javax.inject.inject
 
 /**
- * A transport marshaller step, it takes domain marshalled result as input and returns trasnport
- * ready marshalled object.
- * The [[State]] object is responsible for keeping a reference of the built marshalled response.
+ * a twanspowt m-mawshawwew step, >w< it takes domain mawshawwed wesuwt as input a-and wetuwns twasnpowt
+ * weady m-mawshawwed object. (U ﹏ U)
+ * t-the [[state]] object is wesponsibwe fow keeping a wefewence of the buiwt mawshawwed w-wesponse. 😳
  *
- * @param transportMarshallerExecutor Domain Marshaller executor.
- * @tparam Query Type of PipelineQuery domain model
- * @tparam DomainResponseType the domain marshalling type used as input
- * @tparam TransportResponseType the expected returned transport type
- * @tparam State The pipeline state domain model.
+ * @pawam twanspowtmawshawwewexecutow domain mawshawwew executow. (ˆ ﻌ ˆ)♡
+ * @tpawam quewy type of p-pipewinequewy domain modew
+ * @tpawam d-domainwesponsetype t-the domain m-mawshawwing t-type used as input
+ * @tpawam twanspowtwesponsetype the expected w-wetuwned twanspowt type
+ * @tpawam state the p-pipewine state domain modew. 😳😳😳
  */
-case class TransportMarshallerStep[
-  DomainResponseType <: HasMarshalling,
-  TransportResponseType,
-  State <: HasExecutorResults[State]] @Inject() (
-  transportMarshallerExecutor: TransportMarshallerExecutor)
-    extends Step[
-      State,
-      TransportMarshallerConfig[DomainResponseType, TransportResponseType],
-      TransportMarshallerExecutor.Inputs[DomainResponseType],
-      TransportMarshallerExecutor.Result[TransportResponseType]
+case cwass twanspowtmawshawwewstep[
+  domainwesponsetype <: hasmawshawwing, (U ﹏ U)
+  twanspowtwesponsetype, (///ˬ///✿)
+  state <: h-hasexecutowwesuwts[state]] @inject() (
+  twanspowtmawshawwewexecutow: t-twanspowtmawshawwewexecutow)
+    e-extends s-step[
+      state, 😳
+      twanspowtmawshawwewconfig[domainwesponsetype, 😳 twanspowtwesponsetype], σωσ
+      twanspowtmawshawwewexecutow.inputs[domainwesponsetype], rawr x3
+      t-twanspowtmawshawwewexecutow.wesuwt[twanspowtwesponsetype]
     ] {
 
-  override def isEmpty(
-    config: TransportMarshallerConfig[DomainResponseType, TransportResponseType]
-  ): Boolean = false
+  o-ovewwide def isempty(
+    c-config: twanspowtmawshawwewconfig[domainwesponsetype, OwO t-twanspowtwesponsetype]
+  ): boowean = fawse
 
-  override def adaptInput(
-    state: State,
-    config: TransportMarshallerConfig[DomainResponseType, TransportResponseType]
-  ): TransportMarshallerExecutor.Inputs[DomainResponseType] = {
-    val domainMarshallerResult = state.executorResultsByPipelineStep
-      .getOrElse(
-        config.domainMarshallerStepIdentifier,
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Missing Domain Marshaller in Transport Marshaller Step")).asInstanceOf[
-        DomainMarshallerExecutor.Result[DomainResponseType]]
-    TransportMarshallerExecutor.Inputs(domainMarshallerResult.result)
+  o-ovewwide def adaptinput(
+    s-state: state, /(^•ω•^)
+    config: twanspowtmawshawwewconfig[domainwesponsetype, 😳😳😳 twanspowtwesponsetype]
+  ): t-twanspowtmawshawwewexecutow.inputs[domainwesponsetype] = {
+    vaw domainmawshawwewwesuwt = s-state.executowwesuwtsbypipewinestep
+      .getowewse(
+        config.domainmawshawwewstepidentifiew, ( ͡o ω ͡o )
+        t-thwow pipewinefaiwuwe(
+          i-iwwegawstatefaiwuwe, >_<
+          "missing domain mawshawwew in twanspowt mawshawwew step")).asinstanceof[
+        domainmawshawwewexecutow.wesuwt[domainwesponsetype]]
+    twanspowtmawshawwewexecutow.inputs(domainmawshawwewwesuwt.wesuwt)
   }
 
-  // Noop as platform updates executor result
-  override def updateState(
-    state: State,
-    executorResult: TransportMarshallerExecutor.Result[TransportResponseType],
-    config: TransportMarshallerConfig[DomainResponseType, TransportResponseType]
-  ): State = state
+  // n-nyoop as p-pwatfowm updates executow wesuwt
+  o-ovewwide def u-updatestate(
+    s-state: state, >w<
+    executowwesuwt: twanspowtmawshawwewexecutow.wesuwt[twanspowtwesponsetype],
+    config: twanspowtmawshawwewconfig[domainwesponsetype, rawr t-twanspowtwesponsetype]
+  ): state = state
 
-  override def arrow(
-    config: TransportMarshallerConfig[DomainResponseType, TransportResponseType],
-    context: Executor.Context
-  ): Arrow[TransportMarshallerExecutor.Inputs[
-    DomainResponseType
-  ], TransportMarshallerExecutor.Result[TransportResponseType]] =
-    transportMarshallerExecutor.arrow(config.transportMarshaller, context)
+  ovewwide def awwow(
+    config: twanspowtmawshawwewconfig[domainwesponsetype, 😳 t-twanspowtwesponsetype], >w<
+    context: executow.context
+  ): a-awwow[twanspowtmawshawwewexecutow.inputs[
+    d-domainwesponsetype
+  ], (⑅˘꒳˘) t-twanspowtmawshawwewexecutow.wesuwt[twanspowtwesponsetype]] =
+    twanspowtmawshawwewexecutow.awwow(config.twanspowtmawshawwew, OwO c-context)
 
 }
 
-case class TransportMarshallerConfig[DomainResponseType <: HasMarshalling, TransportResponseType](
-  transportMarshaller: TransportMarshaller[DomainResponseType, TransportResponseType],
-  domainMarshallerStepIdentifier: PipelineStepIdentifier)
+c-case cwass twanspowtmawshawwewconfig[domainwesponsetype <: h-hasmawshawwing, (ꈍᴗꈍ) t-twanspowtwesponsetype](
+  twanspowtmawshawwew: twanspowtmawshawwew[domainwesponsetype, 😳 t-twanspowtwesponsetype],
+  d-domainmawshawwewstepidentifiew: p-pipewinestepidentifiew)

@@ -1,156 +1,156 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
 /**
- * Docs, frequencies, and positions enumerator for {@link HighDFPackedIntsPostingLists}.
+ * d-docs, ^^;; f-fwequencies, XD a-and positions enumewatow f-fow {@wink h-highdfpackedintspostingwists}.
  */
-public class HighDFPackedIntsDocsAndPositionsEnum extends HighDFPackedIntsDocsEnum {
+p-pubwic cwass h-highdfpackedintsdocsandpositionsenum extends highdfpackedintsdocsenum {
   /**
-   * Pre-computed shifts, masks, and start int indices for {@link #positionListsReader}.
-   * These pre-computed values should be read-only and shared across all reader threads.
+   * pwe-computed shifts, 🥺 masks, òωó a-and stawt int indices fow {@wink #positionwistsweadew}. (ˆ ﻌ ˆ)♡
+   * these pwe-computed v-vawues shouwd be wead-onwy and s-shawed acwoss aww weadew thweads. -.-
    *
-   * Notice:
-   * - start int indices are NEEDED since there IS jumping within a slice in
-   *   {@link #doAdditionalSkip()} and {@link #startCurrentDoc()}.
+   * notice:
+   * - stawt int indices a-awe nyeeded since thewe is jumping w-within a swice i-in
+   *   {@wink #doadditionawskip()} and {@wink #stawtcuwwentdoc()}. :3
    */
-  private static final PackedLongsReaderPreComputedValues PRE_COMPUTED_VALUES =
-      new PackedLongsReaderPreComputedValues(
-          HighDFPackedIntsPostingLists.MAX_POSITION_BIT,
-          HighDFPackedIntsPostingLists.POSITION_SLICE_NUM_BITS_WITHOUT_HEADER,
-          HighDFPackedIntsPostingLists.POSITION_SLICE_SIZE_WITHOUT_HEADER,
-          true);
+  pwivate static finaw packedwongsweadewpwecomputedvawues pwe_computed_vawues =
+      n-nyew packedwongsweadewpwecomputedvawues(
+          highdfpackedintspostingwists.max_position_bit, ʘwʘ
+          highdfpackedintspostingwists.position_swice_num_bits_without_headew, 🥺
+          highdfpackedintspostingwists.position_swice_size_without_headew, >_<
+          twue);
 
   /**
-   * Int block pool holding the positions for the read posting list. This is mainly used while
-   * reading slice headers in {@link #loadNextPositionSlice()}.
+   * int b-bwock poow howding the positions f-fow the wead posting w-wist. ʘwʘ this i-is mainwy used w-whiwe
+   * weading swice headews in {@wink #woadnextpositionswice()}. (˘ω˘)
    */
-  private final IntBlockPool positionLists;
+  pwivate f-finaw intbwockpoow positionwists;
 
-  /** Packed ints reader for positions. */
-  private final IntBlockPoolPackedLongsReader positionListsReader;
+  /** packed ints weadew f-fow positions. (✿oωo) */
+  pwivate finaw intbwockpoowpackedwongsweadew positionwistsweadew;
 
-  /** Total number of positions in the current position slice. */
-  private int numPositionsInSliceTotal;
+  /** totaw nyumbew of positions in the c-cuwwent position swice. (///ˬ///✿) */
+  pwivate i-int nyumpositionsinswicetotaw;
 
   /**
-   * Number of remaining positions for {@link #currentDocID}; this value is decremented every time
-   * {@link #nextPosition()} is called.
+   * n-nyumbew of wemaining p-positions fow {@wink #cuwwentdocid}; this vawue is decwemented e-evewy time
+   * {@wink #nextposition()} i-is cawwed.
    */
-  private int numPositionsRemainingForCurrentDocID;
+  p-pwivate int nyumpositionswemainingfowcuwwentdocid;
 
   /**
-   * Pointer to the first int, which contains the position slice header, of the next position slice.
-   * This value is used to track which slice will be loaded when {@link #loadNextPositionSlice()} is
-   * called.
+   * pointew t-to the fiwst int, rawr x3 which contains t-the position swice headew, -.- o-of the nyext position swice.
+   * this vawue i-is used to twack which swice wiww b-be woaded when {@wink #woadnextpositionswice()} is
+   * cawwed. ^^
    */
-  private int nextPositionSlicePointer;
+  p-pwivate i-int nextpositionswicepointew;
 
   /**
-   * Create a docs and positions enumerator.
+   * cweate a docs and positions enumewatow. (⑅˘꒳˘)
    */
-  public HighDFPackedIntsDocsAndPositionsEnum(
-      IntBlockPool skipLists,
-      IntBlockPool deltaFreqLists,
-      IntBlockPool positionLists,
-      int postingListPointer,
-      int numPostings,
-      boolean omitPositions) {
-    super(skipLists, deltaFreqLists, postingListPointer, numPostings, omitPositions);
+  pubwic highdfpackedintsdocsandpositionsenum(
+      intbwockpoow skipwists, nyaa~~
+      i-intbwockpoow d-dewtafweqwists, /(^•ω•^)
+      intbwockpoow positionwists, (U ﹏ U)
+      i-int postingwistpointew, 😳😳😳
+      i-int nyumpostings, >w<
+      b-boowean omitpositions) {
+    supew(skipwists, XD dewtafweqwists, o.O p-postingwistpointew, mya nyumpostings, 🥺 omitpositions);
 
-    this.positionLists = positionLists;
-    this.positionListsReader = new IntBlockPoolPackedLongsReader(
-        positionLists,
-        PRE_COMPUTED_VALUES,
-        queryCostTracker,
-        QueryCostTracker.CostType.LOAD_OPTIMIZED_POSTING_BLOCK);
+    this.positionwists = positionwists;
+    t-this.positionwistsweadew = nyew intbwockpoowpackedwongsweadew(
+        p-positionwists, ^^;;
+        p-pwe_computed_vawues, :3
+        q-quewycosttwackew, (U ﹏ U)
+        quewycosttwackew.costtype.woad_optimized_posting_bwock);
 
-    // Load the first position slice.
-    this.nextPositionSlicePointer = skipListReader.getPositionCurrentSlicePointer();
-    loadNextPositionSlice();
+    // w-woad t-the fiwst position s-swice. OwO
+    this.nextpositionswicepointew = s-skipwistweadew.getpositioncuwwentswicepointew();
+    woadnextpositionswice();
   }
 
   /**
-   * Prepare for current doc:
-   * - skipping over unread positions for the current doc.
-   * - reset remaining positions for current doc to {@link #currentFreq}.
+   * pwepawe f-fow cuwwent d-doc:
+   * - skipping o-ovew unwead p-positions fow the c-cuwwent doc. 😳😳😳
+   * - weset wemaining positions fow cuwwent doc t-to {@wink #cuwwentfweq}. (ˆ ﻌ ˆ)♡
    *
-   * @see #nextDocNoDel()
+   * @see #nextdocnodew()
    */
-  @Override
-  protected void startCurrentDoc() {
-    // Locate next position for current doc by skipping over unread positions from the previous doc.
-    if (numPositionsRemainingForCurrentDocID != 0) {
-      int numPositionsRemainingInSlice =
-          numPositionsInSliceTotal - positionListsReader.getPackedValueIndex();
-      while (numPositionsRemainingInSlice <= numPositionsRemainingForCurrentDocID) {
-        numPositionsRemainingForCurrentDocID -= numPositionsRemainingInSlice;
-        nextPositionSlicePointer += HighDFPackedIntsPostingLists.SLICE_SIZE;
-        loadNextPositionSlice();
-        numPositionsRemainingInSlice = numPositionsInSliceTotal;
+  @ovewwide
+  pwotected void stawtcuwwentdoc() {
+    // wocate nyext position fow cuwwent doc by s-skipping ovew unwead positions fwom the pwevious doc. XD
+    if (numpositionswemainingfowcuwwentdocid != 0) {
+      i-int nyumpositionswemaininginswice =
+          nyumpositionsinswicetotaw - p-positionwistsweadew.getpackedvawueindex();
+      w-whiwe (numpositionswemaininginswice <= nyumpositionswemainingfowcuwwentdocid) {
+        n-nyumpositionswemainingfowcuwwentdocid -= nyumpositionswemaininginswice;
+        n-nyextpositionswicepointew += h-highdfpackedintspostingwists.swice_size;
+        woadnextpositionswice();
+        nyumpositionswemaininginswice = nyumpositionsinswicetotaw;
       }
 
-      positionListsReader.setPackedValueIndex(
-          positionListsReader.getPackedValueIndex() + numPositionsRemainingForCurrentDocID);
+      positionwistsweadew.setpackedvawueindex(
+          positionwistsweadew.getpackedvawueindex() + n-nyumpositionswemainingfowcuwwentdocid);
     }
 
-    // Number of remaining positions for current doc is current freq.
-    numPositionsRemainingForCurrentDocID = getCurrentFreq();
+    // nyumbew of wemaining p-positions fow cuwwent doc i-is cuwwent fweq. (ˆ ﻌ ˆ)♡
+    n-nyumpositionswemainingfowcuwwentdocid = getcuwwentfweq();
   }
 
   /**
-   * Put positions reader to the start of next position slice and reset number of bits per packed
-   * value for next position slice.
+   * put positions weadew t-to the stawt o-of next position swice and weset n-nyumbew of bits p-pew packed
+   * vawue fow nyext position swice. ( ͡o ω ͡o )
    */
-  private void loadNextPositionSlice() {
-    final int header = positionLists.get(nextPositionSlicePointer);
-    final int bitsForPosition = HighDFPackedIntsPostingLists.getNumBitsForPosition(header);
-    numPositionsInSliceTotal = HighDFPackedIntsPostingLists.getNumPositionsInSlice(header);
+  pwivate void woadnextpositionswice() {
+    f-finaw int h-headew = positionwists.get(nextpositionswicepointew);
+    f-finaw int bitsfowposition = h-highdfpackedintspostingwists.getnumbitsfowposition(headew);
+    n-nyumpositionsinswicetotaw = highdfpackedintspostingwists.getnumpositionsinswice(headew);
 
-    positionListsReader.jumpToInt(
-        nextPositionSlicePointer + HighDFPackedIntsPostingLists.POSITION_SLICE_HEADER_SIZE,
-        bitsForPosition);
+    p-positionwistsweadew.jumptoint(
+        nyextpositionswicepointew + highdfpackedintspostingwists.position_swice_headew_size, rawr x3
+        bitsfowposition);
   }
 
   /**
-   * Return next position for current doc.
-   * @see org.apache.lucene.index.PostingsEnum#nextPosition()
+   * wetuwn n-nyext position f-fow cuwwent doc. nyaa~~
+   * @see owg.apache.wucene.index.postingsenum#nextposition()
    */
-  @Override
-  public int nextPosition() throws IOException {
-    // Return -1 immediately if all positions are used up for current doc.
-    if (numPositionsRemainingForCurrentDocID == 0) {
-      return -1;
+  @ovewwide
+  pubwic int nyextposition() t-thwows i-ioexception {
+    // wetuwn -1 immediatewy if aww positions a-awe used up fow cuwwent doc. >_<
+    if (numpositionswemainingfowcuwwentdocid == 0) {
+      wetuwn -1;
     }
 
-    if (positionListsReader.getPackedValueIndex() < numPositionsInSliceTotal)  {
-      // Read next position in current slice.
-      final int nextPosition = (int) positionListsReader.readPackedLong();
-      numPositionsRemainingForCurrentDocID--;
-      return nextPosition;
-    } else {
-      // All positions in current slice is used up, load next slice.
-      nextPositionSlicePointer += HighDFPackedIntsPostingLists.SLICE_SIZE;
-      loadNextPositionSlice();
-      return nextPosition();
+    if (positionwistsweadew.getpackedvawueindex() < nyumpositionsinswicetotaw)  {
+      // wead nyext p-position in cuwwent swice. ^^;;
+      finaw int nyextposition = (int) p-positionwistsweadew.weadpackedwong();
+      n-numpositionswemainingfowcuwwentdocid--;
+      wetuwn nyextposition;
+    } ewse {
+      // a-aww positions i-in cuwwent swice is used up, (ˆ ﻌ ˆ)♡ woad nyext swice. ^^;;
+      nyextpositionswicepointew += h-highdfpackedintspostingwists.swice_size;
+      woadnextpositionswice();
+      w-wetuwn nyextposition();
     }
   }
 
   /**
-   * Set {@link #positionListsReader} to the correct location and correct number of bits per packed
-   * value for the delta-freq slice on which this enum is landed after skipping.
+   * set {@wink #positionwistsweadew} to the cowwect wocation and c-cowwect nyumbew of bits pew packed
+   * v-vawue fow t-the dewta-fweq swice on which t-this enum is wanded aftew skipping. (⑅˘꒳˘)
    *
-   * @see #skipTo(int)
+   * @see #skipto(int)
    */
-  @Override
-  protected void doAdditionalSkip() {
-    nextPositionSlicePointer = skipListReader.getPositionCurrentSlicePointer();
-    loadNextPositionSlice();
+  @ovewwide
+  p-pwotected void d-doadditionawskip() {
+    n-nyextpositionswicepointew = skipwistweadew.getpositioncuwwentswicepointew();
+    w-woadnextpositionswice();
 
-    // Locate the exact position in slice.
-    final int skipListEntryEncodedMetadata = skipListReader.getEncodedMetadataCurrentSlice();
-    positionListsReader.setPackedValueIndex(
-        HighDFPackedIntsPostingLists.getPositionOffsetInSlice(skipListEntryEncodedMetadata));
-    numPositionsRemainingForCurrentDocID = 0;
+    // wocate t-the exact position in swice. rawr x3
+    finaw int s-skipwistentwyencodedmetadata = s-skipwistweadew.getencodedmetadatacuwwentswice();
+    p-positionwistsweadew.setpackedvawueindex(
+        highdfpackedintspostingwists.getpositionoffsetinswice(skipwistentwyencodedmetadata));
+    nyumpositionswemainingfowcuwwentdocid = 0;
   }
 }

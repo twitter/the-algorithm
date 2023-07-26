@@ -1,255 +1,294 @@
-package com.twitter.recos.user_user_graph
+package com.twittew.wecos.usew_video_gwaph
 
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.app.Flag
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.http.HttpMuxer
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.server.MtlsStackServer._
-import com.twitter.finagle.mux.transport.OpportunisticTls
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.finatra.kafka.domain.KafkaGroupId
-import com.twitter.finatra.kafka.domain.SeekStrategy
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.frigate.common.util.ElfOwlFilter
-import com.twitter.frigate.common.util.ElfOwlFilter.ByLdapGroup
-import com.twitter.logging._
-import com.twitter.recos.decider.UserUserGraphDecider
-import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
-import com.twitter.recos.graph_common.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.recos.model.Constants
-import com.twitter.recos.user_user_graph.KafkaConfig._
-import com.twitter.recos.user_user_graph.RecosConfig._
-import com.twitter.server.Deciderable
-import com.twitter.server.TwitterServer
-import com.twitter.server.logging.{Logging => JDK14Logging}
-import com.twitter.servo.request._
-import com.twitter.servo.util.ExceptionCounter
-import com.twitter.thriftwebforms._
-import com.twitter.util.Await
-import com.twitter.util.Duration
-import java.net.InetSocketAddress
-import java.util.concurrent.TimeUnit
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.serialization.StringDeserializer
+impowt c-com.twittew.abdecidew.abdecidewfactowy
+i-impowt c-com.twittew.abdecidew.woggingabdecidew
+i-impowt com.twittew.app.fwag
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.thwiftmux
+i-impowt com.twittew.finagwe.http.httpmuxew
+impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+impowt com.twittew.finagwe.mtws.cwient.mtwsstackcwient.mtwsthwiftmuxcwientsyntax
+impowt com.twittew.finagwe.mtws.sewvew.mtwsstacksewvew._
+impowt com.twittew.finagwe.mux.cwientdiscawdedwequestexception
+i-impowt com.twittew.finagwe.mux.twanspowt.oppowtunistictws
+impowt com.twittew.finagwe.sewvice.weqwep
+i-impowt com.twittew.finagwe.sewvice.wesponsecwass
+i-impowt com.twittew.finagwe.thwift.cwientid
+impowt com.twittew.finatwa.kafka.consumews.finagwekafkaconsumewbuiwdew
+i-impowt com.twittew.finatwa.kafka.domain.kafkagwoupid
+impowt com.twittew.finatwa.kafka.domain.seekstwategy
+i-impowt c-com.twittew.finatwa.kafka.sewde.scawasewdes
+impowt com.twittew.fwigate.common.utiw.ewfowwfiwtew
+impowt com.twittew.fwigate.common.utiw.ewfowwfiwtew.bywdapgwoup
+impowt com.twittew.gwaphjet.bipawtite.muwtisegmentpowewwawbipawtitegwaph
+i-impowt com.twittew.wogging._
+impowt com.twittew.wecos.decidew.endpointwoadsheddew
+impowt com.twittew.wecos.decidew.usewtweetgwaphdecidew
+i-impowt com.twittew.wecos.gwaph_common.finagwestatsweceivewwwappew
+impowt com.twittew.wecos.gwaph_common.muwtisegmentpowewwawbipawtitegwaphbuiwdew
+i-impowt com.twittew.wecos.intewnaw.thwiftscawa.wecoshosemessage
+i-impowt com.twittew.wecos.usew_video_gwaph.wecosconfig._
+i-impowt c-com.twittew.wecos.usew_tweet_gwaph.wewatedtweethandwews.consumewsbasedwewatedtweetshandwew
+impowt com.twittew.wecos.usew_video_gwaph.wewatedtweethandwews.tweetbasedwewatedtweetshandwew
+i-impowt com.twittew.wecos.usew_video_gwaph.wewatedtweethandwews.pwoducewbasedwewatedtweetshandwew
+impowt c-com.twittew.wecos.usew_video_gwaph.stowe.usewwecentfowwowewsstowe
+impowt com.twittew.sewvew.decidewabwe
+impowt com.twittew.sewvew.twittewsewvew
+impowt com.twittew.sewvew.wogging.{wogging => jdk14wogging}
+i-impowt com.twittew.sewvo.wequest._
+impowt com.twittew.sewvo.utiw.exceptioncountew
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.sociawgwaph.thwiftscawa.sociawgwaphsewvice
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.await
+impowt c-com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.javatimew
+i-impowt c-com.twittew.utiw.thwow
+impowt c-com.twittew.utiw.timew
+impowt java.net.inetsocketaddwess
+i-impowt java.utiw.concuwwent.timeunit
+impowt owg.apache.kafka.cwients.commoncwientconfigs
+i-impowt owg.apache.kafka.common.config.saswconfigs
+impowt owg.apache.kafka.common.config.sswconfigs
+i-impowt owg.apache.kafka.common.secuwity.auth.secuwitypwotocow
+impowt owg.apache.kafka.common.sewiawization.stwingdesewiawizew
+i-impowt scawa.wefwect.cwasstag
 
-object Main extends TwitterServer with JDK14Logging with Deciderable {
-  profile =>
+o-object main extends twittewsewvew with jdk14wogging with decidewabwe {
+  pwofiwe =>
 
-  val shardId: Flag[Int] = flag("shardId", 0, "Shard ID")
-  val servicePort: Flag[InetSocketAddress] =
-    flag("service.port", new InetSocketAddress(10143), "Thrift service port")
-  val logDir: Flag[String] = flag("logdir", "recos", "Logging directory")
-  val hoseName: Flag[String] =
-    flag("hosename", "recos_injector_user_user", "the kafka stream used for incoming edges")
-  val maxNumSegments: Flag[Int] =
-    flag("maxNumSegments", graphBuilderConfig.maxNumSegments, "the number of segments in the graph")
-  val numShards: Flag[Int] = flag("numShards", 1, "Number of shards for this service")
-  val truststoreLocation: Flag[String] =
-    flag[String]("truststore_location", "", "Truststore file location")
+  vaw shawdid: fwag[int] = f-fwag("shawdid", (U ﹏ U) 0, "shawd i-id")
+  vaw sewvicepowt: f-fwag[inetsocketaddwess] =
+    f-fwag("sewvice.powt", UwU n-nyew inetsocketaddwess(10143), XD "thwift sewvice powt")
+  vaw wogdiw: fwag[stwing] = fwag("wogdiw", ʘwʘ "wecos", rawr x3 "wogging d-diwectowy")
+  vaw nyumshawds: fwag[int] = fwag("numshawds", ^^;; 1, "numbew of shawds fow t-this sewvice")
+  vaw twuststowewocation: f-fwag[stwing] =
+    f-fwag[stwing]("twuststowe_wocation", ʘwʘ "", "twuststowe f-fiwe wocation")
+  vaw hosename: f-fwag[stwing] =
+    f-fwag("hosename", (U ﹏ U) "wecos_injectow_usew_usew", (˘ω˘) "the k-kafka stweam u-used fow incoming edges")
 
-  val dataCenter: Flag[String] = flag("service.cluster", "atla", "Data Center")
-  val serviceRole: Flag[String] = flag("service.role", "Service Role")
-  val serviceEnv: Flag[String] = flag("service.env", "Service Env")
-  val serviceName: Flag[String] = flag("service.name", "Service Name")
+  vaw datacentew: f-fwag[stwing] = fwag("sewvice.cwustew", (ꈍᴗꈍ) "atwa", /(^•ω•^) "data c-centew")
+  v-vaw sewvicewowe: f-fwag[stwing] = f-fwag("sewvice.wowe", >_< "sewvice wowe")
+  vaw sewviceenv: fwag[stwing] = f-fwag("sewvice.env", σωσ "sewvice env")
+  vaw sewvicename: fwag[stwing] = fwag("sewvice.name", "sewvice nyame")
 
-  val statsReceiverWrapper: FinagleStatsReceiverWrapper = FinagleStatsReceiverWrapper(
-    statsReceiver
-  )
+  pwivate vaw m-maxnumsegments =
+    fwag("maxnumsegments", ^^;; gwaphbuiwdewconfig.maxnumsegments, 😳 "the nyumbew of segments i-in the gwaph")
+
+  p-pwivate v-vaw statsweceivewwwappew = finagwestatsweceivewwwappew(statsweceivew)
 
   /**
-   * A ClientRequestAuthorizer to be used in a request-authorization RequestFilter.
+   * a-a cwientwequestauthowizew to b-be used in a wequest-authowization w-wequestfiwtew. >_<
    */
-  lazy val clientAuthorizer: ClientRequestAuthorizer =
-    ClientRequestAuthorizer.observed(
-      ClientRequestAuthorizer.permissive,
-      new ClientRequestObserver(statsReceiver)
+  wazy vaw cwientauthowizew: cwientwequestauthowizew =
+    cwientwequestauthowizew.obsewved(
+      cwientwequestauthowizew.pewmissive, -.-
+      n-nyew cwientwequestobsewvew(statsweceivew)
     )
 
-  lazy val clientId = ClientId("userusergraph.%s".format(serviceEnv().replace("devel", "dev")))
+  wazy vaw c-cwientid = cwientid(s"usewtweetgwaph.${sewviceenv()}")
 
-  val shutdownTimeout: Flag[Duration] = flag(
-    "service.shutdownTimeout",
-    5.seconds,
-    "Maximum amount of time to wait for pending requests to complete on shutdown"
+  pwivate d-def makethwiftcwient[thwiftsewvicetype: c-cwasstag](
+    dest: stwing, UwU
+    wabew: s-stwing, :3
+    s-sewviceidentifiew: sewviceidentifiew,
+    w-wequesttimeout: d-duwation = 100.miwwiseconds
+  ): thwiftsewvicetype = {
+    thwiftmux.cwient
+      .withcwientid(cwientid("usewtweetgwaph.pwod"))
+      .withoppowtunistictws(oppowtunistictws.wequiwed)
+      .withmutuawtws(sewviceidentifiew)
+      .withwequesttimeout(wequesttimeout)
+      .withstatsweceivew(statsweceivew.scope("cwnt"))
+      .withwesponsecwassifiew {
+        case weqwep(_, σωσ thwow(_: cwientdiscawdedwequestexception)) => wesponsecwass.ignowabwe
+      }.buiwd[thwiftsewvicetype](dest, >w< w-wabew)
+  }
+
+  p-pwivate v-vaw shutdowntimeout = fwag(
+    "sewvice.shutdowntimeout", (ˆ ﻌ ˆ)♡
+    5.seconds, ʘwʘ
+    "maximum a-amount o-of time to wait fow pending wequests t-to compwete on shutdown"
   )
 
   /**
-   * ExceptionCounter for tracking failures from RequestHandler(s).
+   * exceptioncountew fow twacking faiwuwes fwom wequesthandwew(s). :3
    */
-  lazy val exceptionCounter = new ExceptionCounter(statsReceiver)
+  w-wazy vaw e-exceptioncountew = nyew exceptioncountew(statsweceivew)
 
   /**
-   * Function for translating exceptions returned by a RequestHandler. Useful
-   * for cases where underlying exception types should be wrapped in those
-   * defined in the project's Thrift IDL.
+   * function fow t-twanswating exceptions w-wetuwned by a wequesthandwew. (˘ω˘) usefuw
+   * fow cases whewe u-undewwying exception types shouwd be wwapped in those
+   * defined in the pwoject's t-thwift idw. 😳😳😳
    */
-  lazy val translateExceptions: PartialFunction[Throwable, Throwable] = {
+  wazy vaw twanswateexceptions: p-pawtiawfunction[thwowabwe, rawr x3 t-thwowabwe] = {
     case t => t
   }
 
-  // ********* logging **********
+  vaw defauwtwdapaccessgwoup: seq[stwing] = s-seq("eng", (✿oωo) "cassowawy-gwoup", (ˆ ﻌ ˆ)♡ "timewine-team")
 
-  lazy val loggingLevel: Level = Level.INFO
-  lazy val recosLogPath: String = logDir() + "/recos.log"
-  lazy val graphLogPath: String = logDir() + "/graph.log"
-  lazy val accessLogPath: String = logDir() + "/access.log"
+  // ********* w-wogging **********
 
-  override def loggerFactories: List[LoggerFactory] =
-    List(
-      LoggerFactory(
-        level = Some(loggingLevel),
-        handlers = QueueingHandler(
-          handler = FileHandler(
-            filename = recosLogPath,
-            level = Some(loggingLevel),
-            rollPolicy = Policy.Hourly,
-            rotateCount = 6,
-            formatter = new Formatter
+  wazy vaw woggingwevew: wevew = wevew.info
+  w-wazy vaw wecoswogpath: stwing = w-wogdiw() + "/wecos.wog"
+  wazy vaw gwaphwogpath: stwing = wogdiw() + "/gwaph.wog"
+  w-wazy vaw accesswogpath: s-stwing = wogdiw() + "/access.wog"
+
+  o-ovewwide def woggewfactowies: w-wist[woggewfactowy] =
+    wist(
+      w-woggewfactowy(
+        w-wevew = some(woggingwevew), :3
+        h-handwews = queueinghandwew(
+          handwew = f-fiwehandwew(
+            f-fiwename = wecoswogpath, (U ᵕ U❁)
+            wevew = some(woggingwevew), ^^;;
+            w-wowwpowicy = p-powicy.houwwy, mya
+            w-wotatecount = 6, 😳😳😳
+            fowmattew = nyew fowmattew
           )
-        ) :: Nil
-      ),
-      LoggerFactory(
-        node = "graph",
-        useParents = false,
-        level = Some(loggingLevel),
-        handlers = QueueingHandler(
-          handler = FileHandler(
-            filename = graphLogPath,
-            level = Some(loggingLevel),
-            rollPolicy = Policy.Hourly,
-            rotateCount = 6,
-            formatter = new Formatter
+        ) :: n-nyiw
+      ), OwO
+      woggewfactowy(
+        n-nyode = "gwaph", rawr
+        u-usepawents = fawse, XD
+        wevew = some(woggingwevew), (U ﹏ U)
+        handwews = q-queueinghandwew(
+          h-handwew = f-fiwehandwew(
+            f-fiwename = gwaphwogpath, (˘ω˘)
+            wevew = some(woggingwevew), UwU
+            w-wowwpowicy = powicy.houwwy, >_<
+            wotatecount = 6,
+            fowmattew = nyew fowmattew
           )
-        ) :: Nil
-      ),
-      LoggerFactory(
-        node = "access",
-        useParents = false,
-        level = Some(loggingLevel),
-        handlers = QueueingHandler(
-          handler = FileHandler(
-            filename = accessLogPath,
-            level = Some(loggingLevel),
-            rollPolicy = Policy.Hourly,
-            rotateCount = 6,
-            formatter = new Formatter
+        ) :: nyiw
+      ), σωσ
+      w-woggewfactowy(
+        nyode = "access", 🥺
+        u-usepawents = fawse, 🥺
+        w-wevew = some(woggingwevew), ʘwʘ
+        handwews = q-queueinghandwew(
+          handwew = fiwehandwew(
+            f-fiwename = accesswogpath, :3
+            w-wevew = s-some(woggingwevew), (U ﹏ U)
+            w-wowwpowicy = powicy.houwwy, (U ﹏ U)
+            w-wotatecount = 6, ʘwʘ
+            fowmattew = nyew fowmattew
           )
-        ) :: Nil
-      ),
-      LoggerFactory(
-        node = "client_event",
-        level = Some(loggingLevel),
-        useParents = false,
-        handlers = QueueingHandler(
-          maxQueueSize = 10000,
-          handler = ScribeHandler(
-            category = "client_event",
-            formatter = BareFormatter
+        ) :: nyiw
+      ), >w<
+      woggewfactowy(
+        nyode = "cwient_event", rawr x3
+        wevew = some(woggingwevew), OwO
+        usepawents = f-fawse, ^•ﻌ•^
+        h-handwews = q-queueinghandwew(
+          maxqueuesize = 10000, >_<
+          h-handwew = scwibehandwew(
+            categowy = "cwient_event",
+            fowmattew = b-bawefowmattew
           )
-        ) :: Nil
+        ) :: n-nyiw
       )
     )
-  // ******** Decider *************
+  // ******** decidew *************
 
-  val recosDecider: UserUserGraphDecider = UserUserGraphDecider()
+  // ********* a-abdecidew **********
 
-  // ********* ABdecider **********
+  vaw abdecidewymwpath: stwing = "/usw/wocaw/config/abdecidew/abdecidew.ymw"
 
-  val abDeciderYmlPath: String = "/usr/local/config/abdecider/abdecider.yml"
+  v-vaw scwibewoggew: o-option[woggew] = some(woggew.get("cwient_event"))
 
-  val scribeLogger: Option[Logger] = Some(Logger.get("client_event"))
+  vaw a-abdecidew: woggingabdecidew =
+    a-abdecidewfactowy(
+      abdecidewymwpath = abdecidewymwpath, OwO
+      scwibewoggew = scwibewoggew, >_<
+      e-enviwonment = s-some("pwoduction")
+    ).buiwdwithwogging()
 
-  val abDecider: LoggingABDecider =
-    ABDeciderFactory(
-      abDeciderYmlPath = abDeciderYmlPath,
-      scribeLogger = scribeLogger,
-      environment = Some("production")
-    ).buildWithLogging()
+  // ********* w-wecos sewvice **********
 
-  val ldapGroups = Seq("eng", "cassowary-group", "timeline-team")
+  d-def main(): unit = {
+    w-wog.info("buiwding gwaph w-with maxnumsegments = " + p-pwofiwe.maxnumsegments())
 
-  // ********* Recos service **********
+    impwicit v-vaw timew: t-timew = nyew javatimew(twue)
 
-  def main(): Unit = {
-    log.info("building graph with maxNumSegments = " + profile.maxNumSegments())
-    log.info("Reading from: " + hoseName())
-
-    val graph = NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder(
-      graphBuilderConfig.copy(maxNumSegments = profile.maxNumSegments()),
-      statsReceiverWrapper
+    vaw gwaph = muwtisegmentpowewwawbipawtitegwaphbuiwdew(
+      gwaphbuiwdewconfig.copy(maxnumsegments = p-pwofiwe.maxnumsegments()), (ꈍᴗꈍ)
+      statsweceivewwwappew
     )
 
-    val kafkaConfigBuilder = FinagleKafkaConsumerBuilder[String, RecosHoseMessage]()
-      .dest("/s/kafka/recommendations:kafka-tls")
-      .groupId(KafkaGroupId(f"user_user_graph-${shardId()}%06d"))
-      .keyDeserializer(new StringDeserializer)
-      .valueDeserializer(ScalaSerdes.Thrift[RecosHoseMessage].deserializer)
-      .seekStrategy(SeekStrategy.REWIND)
-      .rewindDuration(24.hours)
-      .withConfig(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.toString)
-      .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation())
-      .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-      .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-      .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
+    vaw kafkaconfigbuiwdew = f-finagwekafkaconsumewbuiwdew[stwing, >w< wecoshosemessage]()
+      .dest("/s/kafka/wecommendations:kafka-tws")
+      .gwoupid(kafkagwoupid(f"usew_video_gwaph-${shawdid()}%06d"))
+      .keydesewiawizew(new s-stwingdesewiawizew)
+      .vawuedesewiawizew(scawasewdes.thwift[wecoshosemessage].desewiawizew)
+      .seekstwategy(seekstwategy.wewind)
+      .wewindduwation(48.houws)
+      .withconfig(commoncwientconfigs.secuwity_pwotocow_config, (U ﹏ U) s-secuwitypwotocow.sasw_ssw.tostwing)
+      .withconfig(sswconfigs.ssw_twuststowe_wocation_config, twuststowewocation())
+      .withconfig(saswconfigs.sasw_mechanism, ^^ s-saswconfigs.gssapi_mechanism)
+      .withconfig(saswconfigs.sasw_kewbewos_sewvice_name, (U ﹏ U) "kafka")
+      .withconfig(saswconfigs.sasw_kewbewos_sewvew_name, "kafka")
 
-    val graphWriter = UserUserGraphWriter(
-      shardId = shardId().toString,
-      env = serviceEnv(),
-      hosename = hoseName(),
-      bufferSize = bufferSize,
-      kafkaConsumerBuilder = kafkaConfigBuilder,
-      clientId = clientId.name,
-      statsReceiver = statsReceiver
+    vaw gwaphwwitew =
+      usewvideogwaphwwitew(
+        s-shawdid().tostwing, :3
+        s-sewviceenv(), (✿oωo)
+        h-hosename(), XD
+        128, >w< // keep the owiginaw setting. òωó
+        kafkaconfigbuiwdew, (ꈍᴗꈍ)
+        c-cwientid.name, rawr x3
+        statsweceivew, rawr x3
+      )
+    gwaphwwitew.inithose(gwaph)
+
+    // f-fow mutuawtws
+    v-vaw sewviceidentifiew = sewviceidentifiew(
+      w-wowe = sewvicewowe(), σωσ
+      s-sewvice = s-sewvicename(), (ꈍᴗꈍ)
+      enviwonment = sewviceenv(), rawr
+      z-zone = datacentew()
     )
-    graphWriter.initHose(graph)
+    wog.info(s"sewviceidentifiew = ${sewviceidentifiew.tostwing}")
 
-    val recommendUsersHandler = RecommendUsersHandlerImpl(
-      graph,
-      Constants.salsaRunnerConfig,
-      recosDecider,
-      statsReceiverWrapper
-    )
+    v-vaw sociawgwaphcwient: s-sociawgwaphsewvice.methodpewendpoint =
+      makethwiftcwient[sociawgwaphsewvice.methodpewendpoint](
+        "/s/sociawgwaph/sociawgwaph", ^^;;
+        "sociawgwaph", rawr x3
+        sewviceidentifiew)
+    v-vaw usewwecentfowwowewsstowe: weadabwestowe[usewwecentfowwowewsstowe.quewy, (ˆ ﻌ ˆ)♡ seq[usewid]] =
+      n-nyew usewwecentfowwowewsstowe(sociawgwaphcwient)
 
-    val recos = new UserUserGraph(recommendUsersHandler) with LoggingUserUserGraph
+    v-vaw tweetbasedwewatedtweetshandwew = nyew t-tweetbasedwewatedtweetshandwew(gwaph, σωσ statsweceivew)
+    vaw consumewsbasedwewatedtweetshandwew =
+      nyew consumewsbasedwewatedtweetshandwew(gwaph, (U ﹏ U) statsweceivew)
+    vaw pwoducewbasedwewatedtweetshandwew =
+      nyew pwoducewbasedwewatedtweetshandwew(gwaph, >w< usewwecentfowwowewsstowe, σωσ statsweceivew)
 
-    // For MutualTLS
-    val serviceIdentifier = ServiceIdentifier(
-      role = serviceRole(),
-      service = serviceName(),
-      environment = serviceEnv(),
-      zone = dataCenter()
-    )
+    v-vaw decidew = u-usewtweetgwaphdecidew(sewviceenv(), nyaa~~ datacentew())
+    vaw e-endpointwoadsheddew = n-nyew endpointwoadsheddew(decidew)
+    v-vaw usewvideogwaph =
+      n-nyew usewvideogwaph(
+        tweetbasedwewatedtweetshandwew, 🥺
+        p-pwoducewbasedwewatedtweetshandwew, rawr x3
+        c-consumewsbasedwewatedtweetshandwew, σωσ
+        endpointwoadsheddew)(timew) with w-woggingusewvideogwaph
 
-    val thriftServer = ThriftMux.server
-      .withOpportunisticTls(OpportunisticTls.Required)
-      .withMutualTls(serviceIdentifier)
-      .serveIface(servicePort(), recos)
+    vaw thwiftsewvew = t-thwiftmux.sewvew
+      .withoppowtunistictws(oppowtunistictws.wequiwed)
+      .withmutuawtws(sewviceidentifiew)
+      .sewveiface(sewvicepowt(), (///ˬ///✿) u-usewvideogwaph)
 
-    this.addAdminRoute(ElfOwlFilter.getPostbackRoute())
+    wog.info("cwientid: " + cwientid.tostwing)
+    w-wog.info("sewvicepowt: " + s-sewvicepowt().tostwing)
 
-    val elfowlFilter = ElfOwlFilter(
-      ByLdapGroup(ldapGroups),
-      Duration.fromTimeUnit(5, TimeUnit.DAYS)
-    )
-
-    log.info(s"ServiceIdentifier = ${serviceIdentifier.toString}")
-    log.info("clientid: " + clientId.toString)
-    log.info("servicePort: " + servicePort().toString)
-    log.info("adding shutdown hook")
-    onExit {
-      graphWriter.shutdown()
-      thriftServer.close(shutdownTimeout().fromNow)
+    wog.info("adding s-shutdown hook")
+    o-onexit {
+      g-gwaphwwitew.shutdown()
+      t-thwiftsewvew.cwose(shutdowntimeout().fwomnow)
     }
-    log.info("added shutdown hook")
-    // Wait on the thriftServer so that shutdownTimeout is respected.
-    Await.result(thriftServer)
+    w-wog.info("added s-shutdown h-hook")
+
+    // wait on the thwiftsewvew s-so that s-shutdowntimeout i-is wespected. (U ﹏ U)
+    await.wesuwt(thwiftsewvew)
   }
 }

@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.swice.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.swiceitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait ShouldInclude[-Query <: PipelineQuery] {
-  def apply(query: Query, items: Seq[SliceItem]): Boolean
+twait s-shouwdincwude[-quewy <: p-pipewinequewy] {
+  d-def appwy(quewy: q-quewy, (U ᵕ U❁) items: seq[swiceitem]): b-boowean
 }
 
-object AlwaysInclude extends ShouldInclude[PipelineQuery] {
-  override def apply(query: PipelineQuery, entries: Seq[SliceItem]): Boolean = true
+object a-awwaysincwude e-extends shouwdincwude[pipewinequewy] {
+  ovewwide def appwy(quewy: pipewinequewy, -.- entwies: seq[swiceitem]): b-boowean = twue
 }
 
-object IncludeOnNonEmpty extends ShouldInclude[PipelineQuery] {
-  override def apply(query: PipelineQuery, entries: Seq[SliceItem]): Boolean = entries.nonEmpty
+object incwudeonnonempty e-extends shouwdincwude[pipewinequewy] {
+  ovewwide def appwy(quewy: p-pipewinequewy, ^^;; entwies: seq[swiceitem]): boowean = entwies.nonempty
 }

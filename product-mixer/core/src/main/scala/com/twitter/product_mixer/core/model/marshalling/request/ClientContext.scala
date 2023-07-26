@@ -1,94 +1,94 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+impowt com.fastewxmw.jackson.annotation.jsonignowe
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.badwequest
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
 
 /**
- * ClientContext contains fields related to the client making the request.
+ * c-cwientcontext c-contains fiewds w-wewated to t-the cwient making t-the wequest. 😳
  */
-case class ClientContext(
-  userId: Option[Long],
-  guestId: Option[Long],
-  guestIdAds: Option[Long],
-  guestIdMarketing: Option[Long],
-  appId: Option[Long],
-  ipAddress: Option[String],
-  userAgent: Option[String],
-  countryCode: Option[String],
-  languageCode: Option[String],
-  isTwoffice: Option[Boolean],
-  userRoles: Option[Set[String]],
-  deviceId: Option[String],
-  mobileDeviceId: Option[String],
-  mobileDeviceAdId: Option[String],
-  limitAdTracking: Option[Boolean])
+c-case cwass cwientcontext(
+  usewid: option[wong], 😳😳😳
+  guestid: option[wong], mya
+  guestidads: option[wong], mya
+  g-guestidmawketing: option[wong], (⑅˘꒳˘)
+  appid: o-option[wong], (U ﹏ U)
+  ipaddwess: o-option[stwing], mya
+  usewagent: option[stwing], ʘwʘ
+  countwycode: option[stwing], (˘ω˘)
+  wanguagecode: o-option[stwing], (U ﹏ U)
+  istwoffice: o-option[boowean], ^•ﻌ•^
+  u-usewwowes: option[set[stwing]], (˘ω˘)
+  deviceid: option[stwing], :3
+  mobiwedeviceid: option[stwing], ^^;;
+  m-mobiwedeviceadid: option[stwing], 🥺
+  wimitadtwacking: option[boowean])
 
-object ClientContext {
-  val empty: ClientContext = ClientContext(
-    userId = None,
-    guestId = None,
-    guestIdAds = None,
-    guestIdMarketing = None,
-    appId = None,
-    ipAddress = None,
-    userAgent = None,
-    countryCode = None,
-    languageCode = None,
-    isTwoffice = None,
-    userRoles = None,
-    deviceId = None,
-    mobileDeviceId = None,
-    mobileDeviceAdId = None,
-    limitAdTracking = None
+object cwientcontext {
+  vaw e-empty: cwientcontext = cwientcontext(
+    u-usewid = n-nyone, (⑅˘꒳˘)
+    guestid = n-nyone, nyaa~~
+    g-guestidads = none, :3
+    guestidmawketing = nyone, ( ͡o ω ͡o )
+    a-appid = nyone, mya
+    ipaddwess = nyone, (///ˬ///✿)
+    u-usewagent = nyone, (˘ω˘)
+    countwycode = nyone, ^^;;
+    wanguagecode = nyone, (✿oωo)
+    istwoffice = nyone, (U ﹏ U)
+    u-usewwowes = nyone, -.-
+    deviceid = n-nyone, ^•ﻌ•^
+    m-mobiwedeviceid = n-nyone, rawr
+    mobiwedeviceadid = nyone, (˘ω˘)
+    wimitadtwacking = nyone
   )
 }
 
 /**
- * HasClientContext indicates that a request has [[ClientContext]] and adds helper functions for
- * accessing [[ClientContext]] fields.
+ * hascwientcontext i-indicates that a-a wequest has [[cwientcontext]] and adds hewpew f-functions fow
+ * a-accessing [[cwientcontext]] fiewds. nyaa~~
  */
-trait HasClientContext {
-  def clientContext: ClientContext
+twait h-hascwientcontext {
+  def cwientcontext: c-cwientcontext
 
   /**
-   * getRequiredUserId returns a userId and throw if it's missing.
+   * getwequiwedusewid wetuwns a usewid a-and thwow if it's missing. UwU
    *
-   * @note logged out requests are disabled by default so this is safe for most products
+   * @note w-wogged out wequests awe disabwed b-by defauwt so t-this is safe fow most pwoducts
    */
-  @JsonIgnore /** Jackson tries to serialize this method, throwing an exception for guest products */
-  def getRequiredUserId: Long = clientContext.userId.getOrElse(
-    throw PipelineFailure(BadRequest, "Missing required field: userId"))
+  @jsonignowe /** jackson twies to sewiawize this method, :3 thwowing an exception fow guest pwoducts */
+  d-def g-getwequiwedusewid: wong = cwientcontext.usewid.getowewse(
+    thwow p-pipewinefaiwuwe(badwequest, (⑅˘꒳˘) "missing w-wequiwed f-fiewd: usewid"))
 
   /**
-   * getOptionalUserId returns a userId if one is set
+   * getoptionawusewid wetuwns a usewid if one is set
    */
-  def getOptionalUserId: Option[Long] = clientContext.userId
+  d-def getoptionawusewid: option[wong] = cwientcontext.usewid
 
   /**
-   * getUserIdLoggedOutSupport returns a userId and falls back to 0 if none is set
+   * getusewidwoggedoutsuppowt wetuwns a usewid and fawws b-back to 0 if nyone is set
    */
-  def getUserIdLoggedOutSupport: Long = clientContext.userId.getOrElse(0L)
+  d-def getusewidwoggedoutsuppowt: w-wong = cwientcontext.usewid.getowewse(0w)
 
   /**
-   * getUserOrGuestId returns a userId or a guestId if no userId has been set
+   * g-getusewowguestid wetuwns a-a usewid ow a-a guestid if no u-usewid has been s-set
    */
-  def getUserOrGuestId: Option[Long] = clientContext.userId.orElse(clientContext.guestId)
+  def getusewowguestid: option[wong] = c-cwientcontext.usewid.owewse(cwientcontext.guestid)
 
   /**
-   * getCountryCode returns a country code if one is set
+   * g-getcountwycode w-wetuwns a countwy c-code if one is s-set
    */
-  def getCountryCode: Option[String] = clientContext.countryCode
+  def getcountwycode: option[stwing] = cwientcontext.countwycode
 
   /**
-   * getLanguageCode returns a language code if one is set
+   * g-getwanguagecode wetuwns a wanguage code if one is set
    */
-  def getLanguageCode: Option[String] = clientContext.languageCode
+  def getwanguagecode: option[stwing] = c-cwientcontext.wanguagecode
 
   /**
-   * isLoggedOut returns true if the user is logged out (no userId present).
+   * iswoggedout wetuwns twue if the usew is wogged o-out (no usewid p-pwesent). (///ˬ///✿)
    *
-   * @note this can be useful in conjunction with [[getUserIdLoggedOutSupport]]
+   * @note t-this can be usefuw in c-conjunction with [[getusewidwoggedoutsuppowt]]
    */
-  def isLoggedOut: Boolean = clientContext.userId.isEmpty
+  def iswoggedout: b-boowean = c-cwientcontext.usewid.isempty
 }

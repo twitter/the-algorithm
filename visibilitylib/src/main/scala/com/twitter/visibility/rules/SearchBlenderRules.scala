@@ -1,37 +1,37 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.HasSearchCandidateCountGreaterThan45
-import com.twitter.visibility.rules.Condition.IsFirstPageSearchResult
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Reason.FirstPageSearchResult
+impowt com.twittew.visibiwity.modews.tweetsafetywabewtype
+impowt c-com.twittew.visibiwity.wuwes.condition.and
+i-impowt com.twittew.visibiwity.wuwes.condition.hasseawchcandidatecountgweatewthan45
+i-impowt com.twittew.visibiwity.wuwes.condition.isfiwstpageseawchwesuwt
+i-impowt c-com.twittew.visibiwity.wuwes.condition.not
+i-impowt c-com.twittew.visibiwity.wuwes.weason.fiwstpageseawchwesuwt
 
-abstract class FirstPageSearchResultWithTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      action,
-      IsFirstPageSearchResult,
-      tweetSafetyLabelType
+a-abstwact cwass fiwstpageseawchwesuwtwithtweetwabewwuwe(
+  action: action, OwO
+  tweetsafetywabewtype: tweetsafetywabewtype)
+    e-extends conditionwithtweetwabewwuwe(
+      action, (U ﹏ U)
+      i-isfiwstpageseawchwesuwt,
+      tweetsafetywabewtype
     )
 
-abstract class FirstPageSearchResultSmartOutOfNetworkWithTweetLabelRule(
-  action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      action,
-      And(
-        IsFirstPageSearchResult,
-        HasSearchCandidateCountGreaterThan45,
-        Condition.NonAuthorViewer,
-        Not(Condition.ViewerDoesFollowAuthor),
-        Not(Condition.VerifiedAuthor)
-      ),
-      tweetSafetyLabelType
+a-abstwact cwass fiwstpageseawchwesuwtsmawtoutofnetwowkwithtweetwabewwuwe(
+  action: action, >_<
+  tweetsafetywabewtype: t-tweetsafetywabewtype)
+    extends c-conditionwithtweetwabewwuwe(
+      a-action, rawr x3
+      and(
+        isfiwstpageseawchwesuwt, mya
+        hasseawchcandidatecountgweatewthan45, nyaa~~
+        condition.nonauthowviewew, (⑅˘꒳˘)
+        n-nyot(condition.viewewdoesfowwowauthow), rawr x3
+        nyot(condition.vewifiedauthow)
+      ), (✿oωo)
+      tweetsafetywabewtype
     )
 
-object FirstPageSearchResultAgathaSpamDropRule
-    extends FirstPageSearchResultWithTweetLabelRule(
-      Drop(FirstPageSearchResult),
-      TweetSafetyLabelType.AgathaSpam)
+object fiwstpageseawchwesuwtagathaspamdwopwuwe
+    e-extends fiwstpageseawchwesuwtwithtweetwabewwuwe(
+      dwop(fiwstpageseawchwesuwt), (ˆ ﻌ ˆ)♡
+      t-tweetsafetywabewtype.agathaspam)

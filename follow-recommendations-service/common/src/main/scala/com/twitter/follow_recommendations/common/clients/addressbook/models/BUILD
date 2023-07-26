@@ -1,10 +1,10 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "addressbook/thrift/src/thrift/com/twitter/addressbook:thrift-scala",
-        "addressbook/thrift/src/thrift/com/twitter/addressbook/datatypes:thrift-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], OwO
+    compiwew_option_sets = ["fataw_wawnings"], 🥺
+    p-pwatfowm = "java8", òωó
+    t-tags = ["bazew-compatibwe"], o.O
+    d-dependencies = [
+        "addwessbook/thwift/swc/thwift/com/twittew/addwessbook:thwift-scawa", (U ᵕ U❁)
+        "addwessbook/thwift/swc/thwift/com/twittew/addwessbook/datatypes:thwift-scawa", (⑅˘꒳˘)
     ],
 )

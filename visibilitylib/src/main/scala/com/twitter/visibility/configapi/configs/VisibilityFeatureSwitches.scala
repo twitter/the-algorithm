@@ -1,74 +1,74 @@
-package com.twitter.visibility.configapi.configs
+package com.twittew.visibiwity.configapi.configs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi._
-import com.twitter.util.Time
-import com.twitter.visibility.configapi.params.FSEnumRuleParam
-import com.twitter.visibility.configapi.params.FSRuleParams._
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.timewines.configapi._
+i-impowt c-com.twittew.utiw.time
+i-impowt com.twittew.visibiwity.configapi.pawams.fsenumwuwepawam
+i-impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams._
 
-private[visibility] object VisibilityFeatureSwitches {
+p-pwivate[visibiwity] o-object visibiwityfeatuweswitches {
 
-  val booleanFsOverrides: Seq[OptionalOverride[Boolean]] =
-    FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      AgeGatingAdultContentExperimentRuleEnabledParam,
-      CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam,
-      CommunityTweetDropProtectedRuleEnabledParam,
-      CommunityTweetDropRuleEnabledParam,
-      CommunityTweetLimitedActionsRulesEnabledParam,
-      CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam,
-      CommunityTweetNonMemberLimitedActionsRuleEnabledParam,
-      NsfwAgeBasedDropRulesHoldbackParam,
-      SkipTweetDetailLimitedEngagementRuleEnabledParam,
-      StaleTweetLimitedActionsRulesEnabledParam,
-      TrustedFriendsTweetLimitedEngagementsRuleEnabledParam,
-      FosnrFallbackDropRulesEnabledParam,
-      FosnrRulesEnabledParam
+  vaw booweanfsovewwides: seq[optionawuvwwide[boowean]] =
+    featuweswitchovewwideutiw.getbooweanfsovewwides(
+      a-agegatingaduwtcontentexpewimentwuweenabwedpawam, ( ͡o ω ͡o )
+      communitytweetcommunityunavaiwabwewimitedactionswuwesenabwedpawam, (U ﹏ U)
+      communitytweetdwoppwotectedwuweenabwedpawam, (///ˬ///✿)
+      c-communitytweetdwopwuweenabwedpawam, >w<
+      communitytweetwimitedactionswuwesenabwedpawam, rawr
+      c-communitytweetmembewwemovedwimitedactionswuwesenabwedpawam, mya
+      communitytweetnonmembewwimitedactionswuweenabwedpawam, ^^
+      nysfwagebaseddwopwuweshowdbackpawam, 😳😳😳
+      skiptweetdetaiwwimitedengagementwuweenabwedpawam, mya
+      stawetweetwimitedactionswuwesenabwedpawam, 😳
+      t-twustedfwiendstweetwimitedengagementswuweenabwedpawam, -.-
+      fosnwfawwbackdwopwuwesenabwedpawam, 🥺
+      fosnwwuwesenabwedpawam
     )
 
-  val doubleFsOverrides: Seq[OptionalOverride[Double]] =
-    FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-      HighSpammyTweetContentScoreSearchTopProdTweetLabelDropRuleThresholdParam,
-      HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThresholdParam,
-      HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThresholdParam,
-      HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThresholdParam,
-      HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam,
-      HighToxicityModelScoreSpaceThresholdParam,
-      AdAvoidanceHighToxicityModelScoreThresholdParam,
-      AdAvoidanceReportedTweetModelScoreThresholdParam,
+  vaw d-doubwefsovewwides: s-seq[optionawuvwwide[doubwe]] =
+    featuweswitchovewwideutiw.getboundeddoubwefsovewwides(
+      highspammytweetcontentscoweseawchtoppwodtweetwabewdwopwuwethweshowdpawam, o.O
+      highspammytweetcontentscoweseawchwatestpwodtweetwabewdwopwuwethweshowdpawam, /(^•ω•^)
+      highspammytweetcontentscowetwendtoptweetwabewdwopwuwethweshowdpawam, nyaa~~
+      h-highspammytweetcontentscowetwendwatesttweetwabewdwopwuwethweshowdpawam, nyaa~~
+      highspammytweetcontentscoweconvodownwankabusivequawitythweshowdpawam, :3
+      hightoxicitymodewscowespacethweshowdpawam, 😳😳😳
+      adavoidancehightoxicitymodewscowethweshowdpawam, (˘ω˘)
+      adavoidancewepowtedtweetmodewscowethweshowdpawam, ^^
     )
 
-  val timeFsOverrides: Seq[OptionalOverride[Time]] =
-    FeatureSwitchOverrideUtil.getTimeFromStringFSOverrides()
+  vaw timefsovewwides: s-seq[optionawuvwwide[time]] =
+    featuweswitchovewwideutiw.gettimefwomstwingfsovewwides()
 
-  val stringSeqFeatureSwitchOverrides: Seq[OptionalOverride[Seq[String]]] =
-    FeatureSwitchOverrideUtil.getStringSeqFSOverrides(
-      CountrySpecificNsfwContentGatingCountriesParam,
-      AgeGatingAdultContentExperimentCountriesParam,
-      CardUriRootDomainDenyListParam
+  v-vaw stwingseqfeatuweswitchovewwides: s-seq[optionawuvwwide[seq[stwing]]] =
+    f-featuweswitchovewwideutiw.getstwingseqfsovewwides(
+      c-countwyspecificnsfwcontentgatingcountwiespawam, :3
+      agegatingaduwtcontentexpewimentcountwiespawam, -.-
+      cawduwiwootdomaindenywistpawam
     )
 
-  val enumFsParams: Seq[FSEnumRuleParam[_ <: Enumeration]] = Seq()
+  vaw e-enumfspawams: seq[fsenumwuwepawam[_ <: enumewation]] = seq()
 
-  val mkOptionalEnumFsOverrides: (StatsReceiver, Logger) => Seq[OptionalOverride[_]] = {
-    (statsReceiver: StatsReceiver, logger: Logger) =>
-      FeatureSwitchOverrideUtil.getEnumFSOverrides(
-        statsReceiver,
-        logger,
-        enumFsParams: _*
+  v-vaw mkoptionawenumfsovewwides: (statsweceivew, 😳 woggew) => seq[optionawuvwwide[_]] = {
+    (statsweceivew: statsweceivew, mya woggew: woggew) =>
+      featuweswitchovewwideutiw.getenumfsovewwides(
+        s-statsweceivew, (˘ω˘)
+        woggew, >_<
+        enumfspawams: _*
       )
   }
 
-  def overrides(statsReceiver: StatsReceiver, logger: Logger): Seq[OptionalOverride[_]] = {
-    val enumOverrides = mkOptionalEnumFsOverrides(statsReceiver, logger)
-    booleanFsOverrides ++
-      doubleFsOverrides ++
-      timeFsOverrides ++
-      stringSeqFeatureSwitchOverrides ++
-      enumOverrides
+  def ovewwides(statsweceivew: s-statsweceivew, -.- w-woggew: w-woggew): seq[optionawuvwwide[_]] = {
+    vaw enumovewwides = mkoptionawenumfsovewwides(statsweceivew, 🥺 w-woggew)
+    b-booweanfsovewwides ++
+      doubwefsovewwides ++
+      t-timefsovewwides ++
+      s-stwingseqfeatuweswitchovewwides ++
+      enumovewwides
   }
 
-  def config(statsReceiver: StatsReceiver, logger: Logger): BaseConfig =
-    BaseConfigBuilder(overrides(statsReceiver.scope("features_switches"), logger))
-      .build("VisibilityFeatureSwitches")
+  d-def config(statsweceivew: statsweceivew, (U ﹏ U) w-woggew: woggew): baseconfig =
+    baseconfigbuiwdew(ovewwides(statsweceivew.scope("featuwes_switches"), >w< w-woggew))
+      .buiwd("visibiwityfeatuweswitches")
 }

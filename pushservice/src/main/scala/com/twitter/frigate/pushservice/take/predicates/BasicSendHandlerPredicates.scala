@@ -1,13 +1,13 @@
-package com.twitter.frigate.pushservice.take.predicates
+package com.twittew.fwigate.pushsewvice.take.pwedicates
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.hewmit.pwedicate.namedpwedicate
 
-trait BasicSendHandlerPredicates[C <: PushCandidate] {
+t-twait basicsendhandwewpwedicates[c <: p-pushcandidate] {
 
-  // specific predicates per candidate type before basic SendHandler predicates
-  val preCandidateSpecificPredicates: List[NamedPredicate[C]] = List.empty
+  // s-specific p-pwedicates p-pew candidate t-type befowe basic sendhandwew pwedicates
+  vaw pwecandidatespecificpwedicates: wist[namedpwedicate[c]] = wist.empty
 
-  // specific predicates per candidate type after basic SendHandler predicates, could be empty
-  val postCandidateSpecificPredicates: List[NamedPredicate[C]] = List.empty
+  // specific p-pwedicates pew candidate type aftew basic sendhandwew p-pwedicates, (⑅˘꒳˘) couwd be empty
+  v-vaw postcandidatespecificpwedicates: wist[namedpwedicate[c]] = wist.empty
 }

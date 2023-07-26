@@ -1,137 +1,137 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt o-owg.apache.wucene.index.weafweadewcontext;
+impowt o-owg.apache.wucene.seawch.booweancwause;
+i-impowt o-owg.apache.wucene.seawch.booweanquewy;
+i-impowt o-owg.apache.wucene.seawch.docidsetitewatow;
+impowt owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+i-impowt owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+impowt com.twittew.seawch.common.quewy.defauwtfiwtewweight;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.timemappew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.awwdocsitewatow;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.wangefiwtewdisi;
 
-// Filters tweets according to since time and until time (in seconds).
-// Note that since time is inclusive, and until time is exclusive.
-public final class SinceUntilFilter extends Query {
-  public static final int NO_FILTER = -1;
+// fiwtews tweets accowding to since t-time and untiw time (in seconds). ( ͡o ω ͡o )
+// n-nyote that s-since time is incwusive, o.O and untiw time is excwusive. >w<
+pubwic finaw cwass sinceuntiwfiwtew e-extends quewy {
+  pubwic static finaw int nyo_fiwtew = -1;
 
-  // These are both in seconds since the epoch.
-  private final int minTimeInclusive;
-  private final int maxTimeExclusive;
+  // these a-awe both in seconds since the e-epoch. 😳
+  pwivate f-finaw int mintimeincwusive;
+  pwivate f-finaw int m-maxtimeexcwusive;
 
-  public static Query getSinceQuery(int sinceTimeSeconds) {
-    return new BooleanQuery.Builder()
-        .add(new SinceUntilFilter(sinceTimeSeconds, NO_FILTER), BooleanClause.Occur.FILTER)
-        .build();
+  pubwic static quewy getsincequewy(int s-sincetimeseconds) {
+    wetuwn nyew booweanquewy.buiwdew()
+        .add(new s-sinceuntiwfiwtew(sincetimeseconds, 🥺 nyo_fiwtew), rawr x3 booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  public static Query getUntilQuery(int untilTimeSeconds) {
-    return new BooleanQuery.Builder()
-        .add(new SinceUntilFilter(NO_FILTER, untilTimeSeconds), BooleanClause.Occur.FILTER)
-        .build();
+  pubwic static quewy getuntiwquewy(int u-untiwtimeseconds) {
+    wetuwn n-nyew booweanquewy.buiwdew()
+        .add(new sinceuntiwfiwtew(no_fiwtew, o.O u-untiwtimeseconds), b-booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  public static Query getSinceUntilQuery(int sinceTimeSeconds, int untilTimeSeconds) {
-    return new BooleanQuery.Builder()
-        .add(new SinceUntilFilter(sinceTimeSeconds, untilTimeSeconds), BooleanClause.Occur.FILTER)
-        .build();
+  pubwic static quewy getsinceuntiwquewy(int sincetimeseconds, rawr i-int untiwtimeseconds) {
+    w-wetuwn nyew booweanquewy.buiwdew()
+        .add(new s-sinceuntiwfiwtew(sincetimeseconds, ʘwʘ u-untiwtimeseconds), 😳😳😳 booweancwause.occuw.fiwtew)
+        .buiwd();
   }
 
-  private SinceUntilFilter(int sinceTime, int untilTime) {
-    this.minTimeInclusive = sinceTime != NO_FILTER ? sinceTime : 0;
-    this.maxTimeExclusive = untilTime != NO_FILTER ? untilTime : Integer.MAX_VALUE;
+  p-pwivate sinceuntiwfiwtew(int s-sincetime, ^^;; int untiwtime) {
+    this.mintimeincwusive = s-sincetime != nyo_fiwtew ? sincetime : 0;
+    t-this.maxtimeexcwusive = untiwtime != n-nyo_fiwtew ? untiwtime : i-integew.max_vawue;
   }
 
-  @Override
-  public int hashCode() {
-    return (int) (minTimeInclusive * 17 + maxTimeExclusive);
+  @ovewwide
+  pubwic int hashcode() {
+    wetuwn (int) (mintimeincwusive * 17 + maxtimeexcwusive);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof SinceUntilFilter)) {
-      return false;
+  @ovewwide
+  pubwic boowean equaws(object obj) {
+    i-if (!(obj instanceof s-sinceuntiwfiwtew)) {
+      wetuwn fawse;
     }
 
-    SinceUntilFilter filter = SinceUntilFilter.class.cast(obj);
-    return (minTimeInclusive == filter.minTimeInclusive)
-        && (maxTimeExclusive == filter.maxTimeExclusive);
+    s-sinceuntiwfiwtew f-fiwtew = s-sinceuntiwfiwtew.cwass.cast(obj);
+    wetuwn (mintimeincwusive == fiwtew.mintimeincwusive)
+        && (maxtimeexcwusive == fiwtew.maxtimeexcwusive);
   }
 
-  @Override
-  public String toString(String field) {
-    if (minTimeInclusive > 0 && maxTimeExclusive != Integer.MAX_VALUE) {
-      return "SinceFilter:" + this.minTimeInclusive + ",UntilFilter:" + maxTimeExclusive;
-    } else if (minTimeInclusive > 0) {
-      return "SinceFilter:" + this.minTimeInclusive;
-    } else {
-      return "UntilFilter:" + this.maxTimeExclusive;
+  @ovewwide
+  pubwic s-stwing tostwing(stwing fiewd) {
+    if (mintimeincwusive > 0 && maxtimeexcwusive != integew.max_vawue) {
+      w-wetuwn "sincefiwtew:" + this.mintimeincwusive + ",untiwfiwtew:" + m-maxtimeexcwusive;
+    } e-ewse i-if (mintimeincwusive > 0) {
+      wetuwn "sincefiwtew:" + t-this.mintimeincwusive;
+    } e-ewse {
+      w-wetuwn "untiwfiwtew:" + t-this.maxtimeexcwusive;
     }
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader indexReader = context.reader();
-        if (!(indexReader instanceof EarlybirdIndexSegmentAtomicReader)) {
-          return new AllDocsIterator(indexReader);
+  @ovewwide
+  pubwic weight cweateweight(indexseawchew s-seawchew, o.O s-scowemode scowemode, (///ˬ///✿) f-fwoat boost)
+      t-thwows ioexception {
+    w-wetuwn nyew defauwtfiwtewweight(this) {
+      @ovewwide
+      pwotected docidsetitewatow getdocidsetitewatow(weafweadewcontext context) thwows i-ioexception {
+        weafweadew indexweadew = context.weadew();
+        if (!(indexweadew instanceof eawwybiwdindexsegmentatomicweadew)) {
+          w-wetuwn nyew awwdocsitewatow(indexweadew);
         }
 
-        EarlybirdIndexSegmentAtomicReader reader = (EarlybirdIndexSegmentAtomicReader) indexReader;
-        TimeMapper timeMapper = reader.getSegmentData().getTimeMapper();
-        int smallestDocID = timeMapper.findFirstDocId(maxTimeExclusive, reader.getSmallestDocID());
-        int largestDoc = timeMapper.findFirstDocId(minTimeInclusive, reader.getSmallestDocID());
-        int smallestDoc = smallestDocID > 0 ? smallestDocID - 1 : 0;
-        return new SinceUntilDocIdSetIterator(
-            reader,
-            timeMapper,
-            smallestDoc,
-            largestDoc,
-            minTimeInclusive,
-            maxTimeExclusive);
+        eawwybiwdindexsegmentatomicweadew weadew = (eawwybiwdindexsegmentatomicweadew) i-indexweadew;
+        t-timemappew t-timemappew = weadew.getsegmentdata().gettimemappew();
+        int smowestdocid = t-timemappew.findfiwstdocid(maxtimeexcwusive, σωσ weadew.getsmowestdocid());
+        int wawgestdoc = t-timemappew.findfiwstdocid(mintimeincwusive, nyaa~~ weadew.getsmowestdocid());
+        i-int smowestdoc = smowestdocid > 0 ? smowestdocid - 1 : 0;
+        wetuwn nyew sinceuntiwdocidsetitewatow(
+            weadew, ^^;;
+            t-timemappew, ^•ﻌ•^
+            smowestdoc,
+            w-wawgestdoc, σωσ
+            mintimeincwusive, -.-
+            m-maxtimeexcwusive);
       }
     };
   }
 
-  // Returns true if this TimeMapper is at least partially covered by these time filters.
-  public static boolean sinceUntilTimesInRange(
-      TimeMapper timeMapper, int sinceTime, int untilTime) {
-    return (sinceTime == NO_FILTER || sinceTime <= timeMapper.getLastTime())
-        && (untilTime == NO_FILTER || untilTime >= timeMapper.getFirstTime());
+  // w-wetuwns twue if this timemappew is a-at weast pawtiawwy c-covewed by these time fiwtews. ^^;;
+  p-pubwic static b-boowean sinceuntiwtimesinwange(
+      timemappew timemappew, XD int sincetime, 🥺 int untiwtime) {
+    w-wetuwn (sincetime == n-nyo_fiwtew || s-sincetime <= timemappew.getwasttime())
+        && (untiwtime == n-nyo_fiwtew || u-untiwtime >= timemappew.getfiwsttime());
   }
 
-  private static final class SinceUntilDocIdSetIterator extends RangeFilterDISI {
-    private final TimeMapper timeMapper;
-    private final int minTimeInclusive;
-    private final int maxTimeExclusive;
+  p-pwivate static finaw cwass sinceuntiwdocidsetitewatow extends wangefiwtewdisi {
+    p-pwivate f-finaw timemappew timemappew;
+    pwivate finaw i-int mintimeincwusive;
+    p-pwivate finaw int maxtimeexcwusive;
 
-    public SinceUntilDocIdSetIterator(EarlybirdIndexSegmentAtomicReader reader,
-                                      TimeMapper timeMapper,
-                                      int smallestDocID,
-                                      int largestDocID,
-                                      int minTimeInclusive,
-                                      int maxExclusive) throws IOException {
-      super(reader, smallestDocID, largestDocID);
-      this.timeMapper = timeMapper;
-      this.minTimeInclusive = minTimeInclusive;
-      this.maxTimeExclusive = maxExclusive;
+    pubwic sinceuntiwdocidsetitewatow(eawwybiwdindexsegmentatomicweadew weadew, òωó
+                                      t-timemappew timemappew,
+                                      int smowestdocid, (ˆ ﻌ ˆ)♡
+                                      int wawgestdocid,
+                                      int mintimeincwusive, -.-
+                                      i-int maxexcwusive) thwows ioexception {
+      s-supew(weadew, :3 s-smowestdocid, ʘwʘ wawgestdocid);
+      this.timemappew = timemappew;
+      t-this.mintimeincwusive = m-mintimeincwusive;
+      this.maxtimeexcwusive = maxexcwusive;
     }
 
-    @Override
-    protected boolean shouldReturnDoc() {
-      final int docTime = timeMapper.getTime(docID());
-      return docTime >= minTimeInclusive && docTime < maxTimeExclusive;
+    @ovewwide
+    pwotected boowean s-shouwdwetuwndoc() {
+      finaw i-int doctime = timemappew.gettime(docid());
+      wetuwn doctime >= mintimeincwusive && doctime < m-maxtimeexcwusive;
     }
   }
 }

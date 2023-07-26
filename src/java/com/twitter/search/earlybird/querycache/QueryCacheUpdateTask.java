@@ -1,283 +1,283 @@
-package com.twitter.search.earlybird.querycache;
+package com.twittew.seawch.eawwybiwd.quewycache;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.concuwwent.timeunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.common.cache.cachebuiwdew;
+i-impowt c-com.googwe.common.cache.cachewoadew;
+i-impowt com.googwe.common.cache.woadingcache;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.core.earlybird.index.QueryCacheResultForSegment;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdException;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.search.SearchResultsInfo;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.util.ScheduledExecutorTask;
+impowt c-com.twittew.common.quantity.amount;
+impowt com.twittew.common.quantity.time;
+impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.decidew.decidew;
+impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+impowt com.twittew.seawch.common.metwics.timew;
+i-impowt com.twittew.seawch.common.seawch.tewminationtwackew;
+i-impowt c-com.twittew.seawch.cowe.eawwybiwd.index.quewycachewesuwtfowsegment;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+i-impowt com.twittew.seawch.eawwybiwd.exception.eawwybiwdexception;
+impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsegment;
+impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsingwesegmentseawchew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.seawchwesuwtsinfo;
+impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.scheduwedexecutowtask;
 
 /**
- * Each task is responsible for one filter on one segment. We should have a total
- * of num_of_filter * num_of_segments tasks
+ * e-each t-task is wesponsibwe f-fow one fiwtew on one segment. >w< we shouwd have a-a totaw
+ * of nyum_of_fiwtew * nyum_of_segments t-tasks
  */
-@VisibleForTesting
-class QueryCacheUpdateTask extends ScheduledExecutorTask {
-  private static final Logger LOG =  LoggerFactory.getLogger(QueryCacheUpdateTask.class);
+@visibwefowtesting
+cwass quewycacheupdatetask extends scheduwedexecutowtask {
+  pwivate static finaw w-woggew wog =  woggewfactowy.getwoggew(quewycacheupdatetask.cwass);
 
-  // See OBSERVE-10347
-  private static final boolean EXPORT_STATS =
-      EarlybirdConfig.getBool("export_query_cache_update_task_stats", false);
+  // s-see obsewve-10347
+  pwivate s-static finaw b-boowean expowt_stats =
+      eawwybiwdconfig.getboow("expowt_quewy_cache_update_task_stats", rawr x3 fawse);
 
-  private static final LoadingCache<String, TaskStats> TASK_STATS =
-      CacheBuilder.newBuilder().build(new CacheLoader<String, TaskStats>() {
-        @Override
-        public TaskStats load(String statNamePrefix) {
-          return new TaskStats(statNamePrefix, EXPORT_STATS);
+  pwivate static finaw w-woadingcache<stwing, OwO t-taskstats> task_stats =
+      c-cachebuiwdew.newbuiwdew().buiwd(new c-cachewoadew<stwing, ^•ﻌ•^ taskstats>() {
+        @ovewwide
+        p-pubwic taskstats woad(stwing s-statnamepwefix) {
+          wetuwn nyew taskstats(statnamepwefix, >_< e-expowt_stats);
         }
       });
 
-  private static final SearchCounter FINISHED_TASKS = SearchCounter.export(
-      "querycache_finished_tasks");
+  pwivate s-static finaw seawchcountew finished_tasks = s-seawchcountew.expowt(
+      "quewycache_finished_tasks");
 
-  private final QueryCacheFilter filter;
+  p-pwivate finaw quewycachefiwtew fiwtew;
 
-  // Info/data of the segment this task is responsible for
-  private final SegmentInfo segmentInfo;
+  // info/data of the segment this task is wesponsibwe fow
+  p-pwivate finaw segmentinfo s-segmentinfo;
 
-  private final UserTable userTable;
+  pwivate f-finaw usewtabwe u-usewtabwe;
 
-  private volatile boolean ranOnce;
-  private final TaskStats stats;
-  private Amount<Long, Time> lastRunFinishTime;
+  p-pwivate vowatiwe boowean wanonce;
+  pwivate finaw taskstats stats;
+  p-pwivate amount<wong, OwO time> wastwunfinishtime;
 
-  // See SEARCH-4346
-  private final String filterAndSegment;
+  // see seawch-4346
+  pwivate f-finaw stwing fiwtewandsegment;
 
-  private final Decider decider;
+  p-pwivate finaw d-decidew decidew;
 
-  private static final class TaskStats {
-    private final SearchLongGauge numHitsStat;
-    private final SearchLongGauge updateLatencyStat;
-    private final SearchCounter updateSuccessCountStat;
-    private final SearchCounter updateFailureCountStat;
+  p-pwivate static finaw cwass t-taskstats {
+    p-pwivate finaw s-seawchwonggauge n-nyumhitsstat;
+    pwivate finaw seawchwonggauge u-updatewatencystat;
+    p-pwivate finaw s-seawchcountew u-updatesuccesscountstat;
+    pwivate f-finaw seawchcountew updatefaiwuwecountstat;
 
-    private TaskStats(String statNamePrefix, boolean exportStats) {
-      // See SEARCH-3698
-      numHitsStat = exportStats ? SearchLongGauge.export(statNamePrefix + "numhit")
-          : new SearchLongGauge(statNamePrefix + "numhit");
-      updateLatencyStat = exportStats
-          ? SearchLongGauge.export(statNamePrefix + "update_latency_ms")
-          : new SearchLongGauge(statNamePrefix + "update_latency_ms");
-      updateSuccessCountStat = exportStats
-          ? SearchCounter.export(statNamePrefix + "update_success_count")
-          : SearchCounter.create(statNamePrefix + "update_success_count");
-      updateFailureCountStat = exportStats
-          ? SearchCounter.export(statNamePrefix + "update_failure_count")
-          : SearchCounter.create(statNamePrefix + "update_failure_count");
+    pwivate taskstats(stwing s-statnamepwefix, >_< boowean expowtstats) {
+      // see seawch-3698
+      nyumhitsstat = expowtstats ? seawchwonggauge.expowt(statnamepwefix + "numhit")
+          : n-nyew seawchwonggauge(statnamepwefix + "numhit");
+      updatewatencystat = expowtstats
+          ? seawchwonggauge.expowt(statnamepwefix + "update_watency_ms")
+          : n-nyew s-seawchwonggauge(statnamepwefix + "update_watency_ms");
+      u-updatesuccesscountstat = expowtstats
+          ? s-seawchcountew.expowt(statnamepwefix + "update_success_count")
+          : seawchcountew.cweate(statnamepwefix + "update_success_count");
+      u-updatefaiwuwecountstat = e-expowtstats
+          ? seawchcountew.expowt(statnamepwefix + "update_faiwuwe_count")
+          : seawchcountew.cweate(statnamepwefix + "update_faiwuwe_count");
     }
   }
 
-  private final Amount<Long, Time> updateInterval;
-  private final Amount<Long, Time> initialDelay;
+  pwivate finaw amount<wong, time> updateintewvaw;
+  p-pwivate finaw amount<wong, (ꈍᴗꈍ) t-time> initiawdeway;
 
-  private final EarlybirdSearcherStats searcherStats;
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  pwivate f-finaw eawwybiwdseawchewstats s-seawchewstats;
+  pwivate finaw cwiticawexceptionhandwew c-cwiticawexceptionhandwew;
 
   /**
-   * Constructor
-   * @param filter Filter to be used to populate the cache
-   * @param segmentInfo Segment this task is responsible for
-   * @param updateInterval Time between successive updates
-   * @param initialDelay Time before the first update
-   * @param updateIterationCounter
-   * @param decider
+   * constwuctow
+   * @pawam f-fiwtew fiwtew to be used t-to popuwate the c-cache
+   * @pawam segmentinfo segment this task is wesponsibwe fow
+   * @pawam updateintewvaw time b-between successive u-updates
+   * @pawam i-initiawdeway time befowe t-the fiwst update
+   * @pawam u-updateitewationcountew
+   * @pawam decidew
    */
-  public QueryCacheUpdateTask(QueryCacheFilter filter,
-                              SegmentInfo segmentInfo,
-                              UserTable userTable,
-                              Amount<Long, Time> updateInterval,
-                              Amount<Long, Time> initialDelay,
-                              SearchCounter updateIterationCounter,
-                              EarlybirdSearcherStats searcherStats,
-                              Decider decider,
-                              CriticalExceptionHandler criticalExceptionHandler,
-                              Clock clock) {
-    super(updateIterationCounter, clock);
-    this.filter = filter;
-    this.segmentInfo = segmentInfo;
-    this.userTable = userTable;
-    this.ranOnce = false;
-    this.updateInterval = updateInterval;
-    this.initialDelay = initialDelay;
-    this.stats = setupStats();
-    this.filterAndSegment = String.format(
-        "QueryCacheFilter: %s | Segment: %d",
-        filter.getFilterName(), segmentInfo.getTimeSliceID());
-    this.searcherStats = searcherStats;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.decider = decider;
+  p-pubwic quewycacheupdatetask(quewycachefiwtew fiwtew, >w<
+                              segmentinfo segmentinfo, (U ﹏ U)
+                              usewtabwe u-usewtabwe, ^^
+                              a-amount<wong, (U ﹏ U) time> updateintewvaw, :3
+                              amount<wong, (✿oωo) time> i-initiawdeway, XD
+                              s-seawchcountew updateitewationcountew, >w<
+                              eawwybiwdseawchewstats seawchewstats, òωó
+                              decidew d-decidew, (ꈍᴗꈍ)
+                              cwiticawexceptionhandwew cwiticawexceptionhandwew, rawr x3
+                              cwock cwock) {
+    supew(updateitewationcountew, rawr x3 c-cwock);
+    this.fiwtew = fiwtew;
+    this.segmentinfo = s-segmentinfo;
+    t-this.usewtabwe = usewtabwe;
+    this.wanonce = fawse;
+    this.updateintewvaw = u-updateintewvaw;
+    t-this.initiawdeway = initiawdeway;
+    this.stats = setupstats();
+    t-this.fiwtewandsegment = stwing.fowmat(
+        "quewycachefiwtew: %s | s-segment: %d", σωσ
+        fiwtew.getfiwtewname(), (ꈍᴗꈍ) segmentinfo.gettimeswiceid());
+    this.seawchewstats = s-seawchewstats;
+    this.cwiticawexceptionhandwew = c-cwiticawexceptionhandwew;
+    t-this.decidew = decidew;
   }
 
-  @Override
-  protected void runOneIteration() {
-    try {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug(
-            "[{}] Updating with query [{}] for the {} th time.",
-            filterAndSegment,
-            filter.getQueryString(),
-            stats.updateSuccessCountStat.get() + stats.updateFailureCountStat.get() + 1
+  @ovewwide
+  p-pwotected void wunoneitewation() {
+    t-twy {
+      i-if (wog.isdebugenabwed()) {
+        w-wog.debug(
+            "[{}] updating w-with quewy [{}] f-fow the {} th time.", rawr
+            fiwtewandsegment, ^^;;
+            f-fiwtew.getquewystwing(), rawr x3
+            s-stats.updatesuccesscountstat.get() + s-stats.updatefaiwuwecountstat.get() + 1
         );
-        if (lastRunFinishTime != null) {
-          LOG.debug(
-              "[{}] Last run, {} th time, finished {} secs ago. Should run every {} secs",
-              filterAndSegment,
-              stats.updateSuccessCountStat.get() + stats.updateFailureCountStat.get(),
-              TimeUnit.NANOSECONDS.toSeconds(
-                  System.nanoTime() - lastRunFinishTime.as(Time.NANOSECONDS)),
-              updateInterval.as(Time.SECONDS)
+        if (wastwunfinishtime != nyuww) {
+          wog.debug(
+              "[{}] w-wast wun, (ˆ ﻌ ˆ)♡ {} th time, σωσ finished {} s-secs ago. (U ﹏ U) shouwd w-wun evewy {} secs", >w<
+              fiwtewandsegment, σωσ
+              stats.updatesuccesscountstat.get() + s-stats.updatefaiwuwecountstat.get(), nyaa~~
+              t-timeunit.nanoseconds.toseconds(
+                  system.nanotime() - w-wastwunfinishtime.as(time.nanoseconds)), 🥺
+              u-updateintewvaw.as(time.seconds)
           );
         }
       }
 
-      Timer timer = new Timer(TimeUnit.MILLISECONDS);
-      SearchResultsInfo result = null;
-      try {
-        result = update();
-      } catch (Exception e) {
-        String msg = "Failed to update query cache entry [" + filter.getFilterName()
-            + "] on segment [" + segmentInfo.getTimeSliceID() + "]";
-        LOG.warn(msg, e);
+      timew timew = nyew t-timew(timeunit.miwwiseconds);
+      seawchwesuwtsinfo wesuwt = nyuww;
+      twy {
+        wesuwt = update();
+      } c-catch (exception e) {
+        s-stwing msg = "faiwed to update q-quewy cache entwy [" + fiwtew.getfiwtewname()
+            + "] o-on segment [" + segmentinfo.gettimeswiceid() + "]";
+        w-wog.wawn(msg, rawr x3 e);
       }
 
-      long endTime = timer.stop();
-      updateStats(result, endTime);
+      w-wong endtime = t-timew.stop();
+      u-updatestats(wesuwt, σωσ e-endtime);
 
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("[{}] Updated in {} ms, hit {} docs.",
-            filterAndSegment, endTime, stats.numHitsStat.read());
+      if (wog.isdebugenabwed()) {
+        wog.debug("[{}] updated in {} ms, (///ˬ///✿) hit {} docs.", (U ﹏ U)
+            fiwtewandsegment, ^^;; e-endtime, 🥺 s-stats.numhitsstat.wead());
       }
-      // Need to catch throwable here instead of exception so we handle errors like OutOfMemory
-      // See RB=528695 and SEARCH-4402
-    } catch (Throwable t) {
-      String message = String.format("Got unexpected throwable in %s", getClass().getName());
-      LOG.error(message, t);
+      // n-nyeed to catch thwowabwe hewe instead o-of exception so we handwe ewwows wike outofmemowy
+      // see wb=528695 a-and seawch-4402
+    } c-catch (thwowabwe t) {
+      s-stwing message = stwing.fowmat("got unexpected t-thwowabwe in %s", òωó g-getcwass().getname());
+      wog.ewwow(message, XD t-t);
 
-      // Wrap the Throwable in a FatalEarlybirdException to categorize it and ensure it's
-      // handled as a fatal exception
-      criticalExceptionHandler.handle(this,
-          new EarlybirdException(message, t));
-    } finally {
-      // Earlybird won't become CURRENT until all tasks are run at least once. We don't want
-      // failed "run" (update) to prevent Earlybird from becoming CURRENT. As long as all tasks
-      // got a chance to run at least once, we are good to go.
-      ranOnce = true;
+      // w-wwap the thwowabwe in a fataweawwybiwdexception to categowize it and ensuwe it's
+      // handwed a-as a fataw exception
+      c-cwiticawexceptionhandwew.handwe(this, :3
+          n-nyew e-eawwybiwdexception(message, (U ﹏ U) t));
+    } f-finawwy {
+      // eawwybiwd w-won't become c-cuwwent untiw aww tasks awe w-wun at weast once. >w< w-we don't want
+      // faiwed "wun" (update) t-to pwevent eawwybiwd fwom becoming cuwwent. /(^•ω•^) as wong a-as aww tasks
+      // got a c-chance to wun at w-weast once, (⑅˘꒳˘) we awe good to go. ʘwʘ
+      w-wanonce = twue;
 
-      lastRunFinishTime = Amount.of(System.nanoTime(), Time.NANOSECONDS);
+      wastwunfinishtime = amount.of(system.nanotime(), rawr x3 t-time.nanoseconds);
     }
   }
 
-  public boolean ranOnce() {
-    return ranOnce;
+  p-pubwic b-boowean wanonce() {
+    wetuwn wanonce;
   }
 
-  private TaskStats setupStats() {
-    return TASK_STATS.getUnchecked(statNamePrefix());
+  pwivate taskstats s-setupstats() {
+    wetuwn task_stats.getunchecked(statnamepwefix());
   }
 
-  private SearchResultsInfo update() throws IOException {
-    // There's a chance that the EarlybirdSegment of a SegmentInfo to change at any
-    // time. Therefore, it's not safe to operate segments on the SegmentInfo level.
-    // On the archive clusters we create a new EarlybirdSegment and then swap it in when there's
-    // new data instead of appending to an existing EarlybirdSegment.
-    EarlybirdSegment earlybirdSegment = segmentInfo.getIndexSegment();
+  p-pwivate seawchwesuwtsinfo u-update() thwows ioexception {
+    // t-thewe's a chance that the eawwybiwdsegment o-of a s-segmentinfo to change at any
+    // time. (˘ω˘) thewefowe, o.O i-it's not safe to opewate segments on the segmentinfo w-wevew. 😳
+    // o-on the awchive cwustews w-we cweate a nyew eawwybiwdsegment a-and then swap i-it in when thewe's
+    // n-nyew data instead of appending to an existing eawwybiwdsegment. o.O
+    eawwybiwdsegment eawwybiwdsegment = segmentinfo.getindexsegment();
 
-    EarlybirdSingleSegmentSearcher searcher = earlybirdSegment.getSearcher(userTable);
-    if (searcher == null) {
-      LOG.warn("Unable to get searcher from TwitterIndexManager for segment ["
-          + segmentInfo.getTimeSliceID() + "]. Has it been dropped?");
-      return null;
+    eawwybiwdsingwesegmentseawchew seawchew = eawwybiwdsegment.getseawchew(usewtabwe);
+    if (seawchew == nyuww) {
+      wog.wawn("unabwe to g-get seawchew fwom t-twittewindexmanagew fow segment ["
+          + segmentinfo.gettimeswiceid() + "]. ^^;; h-has it been d-dwopped?");
+      w-wetuwn nyuww;
     }
 
-    QueryCacheResultCollector collector = new QueryCacheResultCollector(
-        searcher.getSchemaSnapshot(), filter, searcherStats, decider, clock, 0);
-    searcher.search(filter.getLuceneQuery(), collector);
+    quewycachewesuwtcowwectow c-cowwectow = nyew quewycachewesuwtcowwectow(
+        s-seawchew.getschemasnapshot(), ( ͡o ω ͡o ) f-fiwtew, seawchewstats, ^^;; decidew, ^^;; c-cwock, 0);
+    seawchew.seawch(fiwtew.getwucenequewy(), c-cowwectow);
 
-    QueryCacheResultForSegment cacheResult = collector.getCachedResult();
-    searcher.getTwitterIndexReader().getSegmentData().updateQueryCacheResult(
-        filter.getFilterName(), cacheResult);
+    q-quewycachewesuwtfowsegment cachewesuwt = cowwectow.getcachedwesuwt();
+    s-seawchew.gettwittewindexweadew().getsegmentdata().updatequewycachewesuwt(
+        f-fiwtew.getfiwtewname(), XD c-cachewesuwt);
 
-    FINISHED_TASKS.increment();
+    f-finished_tasks.incwement();
 
-    if (LOG.isDebugEnabled()) {
-      TerminationTracker tracker = collector.getSearchRequestInfo().getTerminationTracker();
-      LOG.debug(
-          "[{}] Updating query finished, start time ms is {}, termination reason is {}",
-          filterAndSegment,
-          tracker.getLocalStartTimeMillis(),
-          tracker.getEarlyTerminationState().getTerminationReason());
+    i-if (wog.isdebugenabwed()) {
+      t-tewminationtwackew t-twackew = c-cowwectow.getseawchwequestinfo().gettewminationtwackew();
+      w-wog.debug(
+          "[{}] updating quewy f-finished, 🥺 stawt t-time ms is {}, (///ˬ///✿) t-tewmination weason is {}", (U ᵕ U❁)
+          f-fiwtewandsegment, ^^;;
+          twackew.getwocawstawttimemiwwis(), ^^;;
+          twackew.geteawwytewminationstate().gettewminationweason());
     }
 
-    return collector.getResults();
+    wetuwn cowwectow.getwesuwts();
   }
 
-  private void updateStats(SearchResultsInfo result, long endTime) {
-    if (result != null) {
-      stats.numHitsStat.set(result.getNumHitsProcessed());
-      stats.updateSuccessCountStat.increment();
-    } else {
-      stats.updateFailureCountStat.increment();
+  p-pwivate void updatestats(seawchwesuwtsinfo w-wesuwt, rawr wong e-endtime) {
+    i-if (wesuwt != nyuww) {
+      s-stats.numhitsstat.set(wesuwt.getnumhitspwocessed());
+      stats.updatesuccesscountstat.incwement();
+    } e-ewse {
+      stats.updatefaiwuwecountstat.incwement();
     }
-    stats.updateLatencyStat.set(endTime);
+    s-stats.updatewatencystat.set(endtime);
   }
 
-  @VisibleForTesting
-  String statNamePrefix() {
-    // If we use this and try to display in monviz "ts(partition, single_instance, querycache*)",
-    // the UI shows "Really expensive query" message. We can keep this around for times when we
-    // want to start things manually and debug.
-    return "querycache_" + filter.getFilterName() + "_" + segmentInfo.getTimeSliceID() + "_";
+  @visibwefowtesting
+  stwing s-statnamepwefix() {
+    // if we use this and twy to dispway in monviz "ts(pawtition, (˘ω˘) singwe_instance, 🥺 q-quewycache*)", nyaa~~
+    // the ui shows "weawwy e-expensive q-quewy" message. :3 we can keep this awound fow times when we
+    // w-want to stawt things manuawwy and d-debug. /(^•ω•^)
+    wetuwn "quewycache_" + f-fiwtew.getfiwtewname() + "_" + s-segmentinfo.gettimeswiceid() + "_";
   }
 
-  public long getTimeSliceID() {
-    return segmentInfo.getTimeSliceID();
+  pubwic wong gettimeswiceid() {
+    wetuwn segmentinfo.gettimeswiceid();
   }
 
   //////////////////////////
-  // for unit tests only
+  // f-fow u-unit tests onwy
   //////////////////////////
-  @VisibleForTesting
-  String getFilterNameForTest() {
-    return filter.getFilterName();
+  @visibwefowtesting
+  stwing getfiwtewnamefowtest() {
+    w-wetuwn fiwtew.getfiwtewname();
   }
 
-  @VisibleForTesting
-  Amount<Long, Time> getUpdateIntervalForTest() {
-    return updateInterval;
+  @visibwefowtesting
+  amount<wong, ^•ﻌ•^ t-time> getupdateintewvawfowtest() {
+    wetuwn u-updateintewvaw;
   }
 
-  @VisibleForTesting
-  Amount<Long, Time> getInitialDelayForTest() {
-    return initialDelay;
+  @visibwefowtesting
+  a-amount<wong, UwU t-time> getinitiawdewayfowtest() {
+    wetuwn i-initiawdeway;
   }
 
-  @VisibleForTesting
-  TaskStats getTaskStatsForTest() {
-    return stats;
+  @visibwefowtesting
+  taskstats g-gettaskstatsfowtest() {
+    w-wetuwn stats;
   }
 }

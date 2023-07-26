@@ -1,51 +1,51 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicLong;
+impowt java.utiw.concuwwent.concuwwentwinkeddeque;
+i-impowt java.utiw.concuwwent.atomic.atomicwong;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
+i-impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+i-impowt c-com.twittew.seawch.common.metwics.seawchwatecountew;
 
 /**
- * A queue with metrics on size, enqueue rate and dequeue rate.
+ * a-a queue with metwics o-on size, 🥺 enqueue w-wate and d-dequeue wate. mya
  */
-public class InstrumentedQueue<T> {
-  private final SearchRateCounter enqueueRate;
-  private final SearchRateCounter dequeueRate;
-  private final AtomicLong queueSize = new AtomicLong();
+pubwic cwass instwumentedqueue<t> {
+  pwivate finaw seawchwatecountew enqueuewate;
+  p-pwivate finaw seawchwatecountew dequeuewate;
+  p-pwivate finaw atomicwong queuesize = n-nyew atomicwong();
 
-  private final ConcurrentLinkedDeque<T> queue;
+  pwivate finaw concuwwentwinkeddeque<t> queue;
 
-  public InstrumentedQueue(String statsPrefix) {
-    SearchLongGauge.export(statsPrefix + "_size", queueSize);
-    enqueueRate = SearchRateCounter.export(statsPrefix + "_enqueue");
-    dequeueRate = SearchRateCounter.export(statsPrefix + "_dequeue");
+  p-pubwic instwumentedqueue(stwing statspwefix) {
+    s-seawchwonggauge.expowt(statspwefix + "_size", 🥺 q-queuesize);
+    enqueuewate = seawchwatecountew.expowt(statspwefix + "_enqueue");
+    dequeuewate = seawchwatecountew.expowt(statspwefix + "_dequeue");
 
-    queue = new ConcurrentLinkedDeque<>();
+    q-queue = nyew concuwwentwinkeddeque<>();
   }
 
   /**
-   * Adds a new element to the queue.
+   * adds a nyew ewement to the queue. >_<
    */
-  public void add(T tve) {
+  pubwic void add(t t-tve) {
     queue.add(tve);
-    enqueueRate.increment();
-    queueSize.incrementAndGet();
+    enqueuewate.incwement();
+    q-queuesize.incwementandget();
   }
 
   /**
-   * Returns the first element in the queue. If the queue is empty, {@code null} is returned.
+   * w-wetuwns t-the fiwst ewement i-in the queue. >_< if the queue is empty, (⑅˘꒳˘) {@code n-nyuww} is wetuwned. /(^•ω•^)
    */
-  public T poll() {
-    T tve = queue.poll();
-    if (tve != null) {
-      dequeueRate.increment();
-      queueSize.decrementAndGet();
+  pubwic t poww() {
+    t tve = queue.poww();
+    if (tve != n-nyuww) {
+      dequeuewate.incwement();
+      queuesize.decwementandget();
     }
-    return tve;
+    wetuwn tve;
   }
 
-  public long getQueueSize() {
-    return queueSize.get();
+  pubwic wong getqueuesize() {
+    wetuwn queuesize.get();
   }
 }

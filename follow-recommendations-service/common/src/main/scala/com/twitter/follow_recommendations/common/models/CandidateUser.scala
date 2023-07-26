@@ -1,192 +1,192 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens
-import com.twitter.ml.api.thriftscala.{DataRecord => TDataRecord}
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+impowt c-com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
+i-impowt com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
+i-impowt com.twittew.hewmit.constants.awgowithmfeedbacktokens
+i-impowt c-com.twittew.mw.api.thwiftscawa.{datawecowd => t-tdatawecowd}
+impowt com.twittew.mw.api.utiw.scawatojavadatawecowdconvewsions
+impowt com.twittew.timewines.configapi.haspawams
+impowt com.twittew.timewines.configapi.pawams
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
 
-trait FollowableEntity extends UniversalNoun[Long]
+twait fowwowabweentity extends u-univewsawnoun[wong]
 
-trait Recommendation
-    extends FollowableEntity
-    with HasReason
-    with HasAdMetadata
-    with HasTrackingToken {
-  val score: Option[Double]
+twait w-wecommendation
+    extends fowwowabweentity
+    with hasweason
+    with hasadmetadata
+    w-with hastwackingtoken {
+  v-vaw scowe: o-option[doubwe]
 
-  def toThrift: t.Recommendation
+  def tothwift: t.wecommendation
 
-  def toOfflineThrift: offline.OfflineRecommendation
+  def tooffwinethwift: offwine.offwinewecommendation
 }
 
-case class CandidateUser(
-  override val id: Long,
-  override val score: Option[Double] = None,
-  override val reason: Option[Reason] = None,
-  override val userCandidateSourceDetails: Option[UserCandidateSourceDetails] = None,
-  override val adMetadata: Option[AdMetadata] = None,
-  override val trackingToken: Option[TrackingToken] = None,
-  override val dataRecord: Option[RichDataRecord] = None,
-  override val scores: Option[Scores] = None,
-  override val infoPerRankingStage: Option[scala.collection.Map[String, RankingInfo]] = None,
-  override val params: Params = Params.Invalid,
-  override val engagements: Seq[EngagementType] = Nil,
-  override val recommendationFlowIdentifier: Option[String] = None)
-    extends Recommendation
-    with HasUserCandidateSourceDetails
-    with HasDataRecord
-    with HasScores
-    with HasParams
-    with HasEngagements
-    with HasRecommendationFlowIdentifier
-    with HasInfoPerRankingStage {
+c-case cwass candidateusew(
+  ovewwide vaw id: wong, >w<
+  ovewwide vaw scowe: o-option[doubwe] = nyone, XD
+  ovewwide v-vaw weason: o-option[weason] = n-nyone, o.O
+  ovewwide v-vaw usewcandidatesouwcedetaiws: option[usewcandidatesouwcedetaiws] = nyone, mya
+  o-ovewwide vaw admetadata: option[admetadata] = none, 🥺
+  ovewwide v-vaw twackingtoken: option[twackingtoken] = nyone, ^^;;
+  ovewwide vaw datawecowd: option[wichdatawecowd] = n-nyone, :3
+  ovewwide vaw scowes: o-option[scowes] = n-nyone, (U ﹏ U)
+  o-ovewwide vaw infopewwankingstage: option[scawa.cowwection.map[stwing, OwO wankinginfo]] = nyone, 😳😳😳
+  o-ovewwide vaw pawams: p-pawams = pawams.invawid, (ˆ ﻌ ˆ)♡
+  ovewwide vaw engagements: s-seq[engagementtype] = n-nyiw, XD
+  ovewwide vaw wecommendationfwowidentifiew: o-option[stwing] = nyone)
+    extends w-wecommendation
+    with hasusewcandidatesouwcedetaiws
+    with hasdatawecowd
+    w-with hasscowes
+    with h-haspawams
+    with hasengagements
+    w-with haswecommendationfwowidentifiew
+    with h-hasinfopewwankingstage {
 
-  val rankerIdsStr: Option[Seq[String]] = {
-    val strs = scores.map(_.scores.flatMap(_.rankerId.map(_.toString)))
-    if (strs.exists(_.nonEmpty)) strs else None
+  vaw wankewidsstw: option[seq[stwing]] = {
+    vaw stws = scowes.map(_.scowes.fwatmap(_.wankewid.map(_.tostwing)))
+    if (stws.exists(_.nonempty)) stws ewse nyone
   }
 
-  val thriftDataRecord: Option[TDataRecord] = for {
-    richDataRecord <- dataRecord
-    dr <- richDataRecord.dataRecord
-  } yield {
-    ScalaToJavaDataRecordConversions.javaDataRecord2ScalaDataRecord(dr)
+  v-vaw thwiftdatawecowd: o-option[tdatawecowd] = fow {
+    w-wichdatawecowd <- d-datawecowd
+    d-dw <- wichdatawecowd.datawecowd
+  } yiewd {
+    scawatojavadatawecowdconvewsions.javadatawecowd2scawadatawecowd(dw)
   }
 
-  val toOfflineUserThrift: offline.OfflineUserRecommendation = {
-    val scoringDetails =
-      if (userCandidateSourceDetails.isEmpty && score.isEmpty && thriftDataRecord.isEmpty) {
-        None
-      } else {
-        Some(
-          offline.ScoringDetails(
-            candidateSourceDetails = userCandidateSourceDetails.map(_.toOfflineThrift),
-            score = score,
-            dataRecord = thriftDataRecord,
-            rankerIds = rankerIdsStr,
-            infoPerRankingStage = infoPerRankingStage.map(_.mapValues(_.toOfflineThrift))
+  vaw t-tooffwineusewthwift: offwine.offwineusewwecommendation = {
+    vaw scowingdetaiws =
+      if (usewcandidatesouwcedetaiws.isempty && scowe.isempty && t-thwiftdatawecowd.isempty) {
+        none
+      } e-ewse {
+        s-some(
+          o-offwine.scowingdetaiws(
+            candidatesouwcedetaiws = u-usewcandidatesouwcedetaiws.map(_.tooffwinethwift), (ˆ ﻌ ˆ)♡
+            s-scowe = scowe,
+            d-datawecowd = t-thwiftdatawecowd, ( ͡o ω ͡o )
+            wankewids = wankewidsstw, rawr x3
+            i-infopewwankingstage = i-infopewwankingstage.map(_.mapvawues(_.tooffwinethwift))
           )
         )
       }
-    offline
-      .OfflineUserRecommendation(
-        id,
-        reason.map(_.toOfflineThrift),
-        adMetadata.map(_.adImpression),
-        trackingToken.map(_.toOfflineThrift),
-        scoringDetails = scoringDetails
+    o-offwine
+      .offwineusewwecommendation(
+        id, nyaa~~
+        w-weason.map(_.tooffwinethwift), >_<
+        a-admetadata.map(_.adimpwession),
+        twackingtoken.map(_.tooffwinethwift), ^^;;
+        scowingdetaiws = scowingdetaiws
       )
   }
 
-  override val toOfflineThrift: offline.OfflineRecommendation =
-    offline.OfflineRecommendation.User(toOfflineUserThrift)
+  o-ovewwide vaw tooffwinethwift: offwine.offwinewecommendation =
+    offwine.offwinewecommendation.usew(tooffwineusewthwift)
 
-  val toUserThrift: t.UserRecommendation = {
-    val scoringDetails =
-      if (userCandidateSourceDetails.isEmpty && score.isEmpty && thriftDataRecord.isEmpty && scores.isEmpty) {
-        None
-      } else {
-        Some(
-          t.ScoringDetails(
-            candidateSourceDetails = userCandidateSourceDetails.map(_.toThrift),
-            score = score,
-            dataRecord = thriftDataRecord,
-            rankerIds = rankerIdsStr,
-            debugDataRecord = dataRecord.flatMap(_.debugDataRecord),
-            infoPerRankingStage = infoPerRankingStage.map(_.mapValues(_.toThrift))
+  vaw tousewthwift: t.usewwecommendation = {
+    v-vaw scowingdetaiws =
+      if (usewcandidatesouwcedetaiws.isempty && scowe.isempty && thwiftdatawecowd.isempty && s-scowes.isempty) {
+        nyone
+      } e-ewse {
+        s-some(
+          t.scowingdetaiws(
+            c-candidatesouwcedetaiws = usewcandidatesouwcedetaiws.map(_.tothwift), (ˆ ﻌ ˆ)♡
+            s-scowe = s-scowe, ^^;;
+            datawecowd = thwiftdatawecowd, (⑅˘꒳˘)
+            wankewids = wankewidsstw, rawr x3
+            debugdatawecowd = datawecowd.fwatmap(_.debugdatawecowd), (///ˬ///✿)
+            i-infopewwankingstage = infopewwankingstage.map(_.mapvawues(_.tothwift))
           )
         )
       }
-    t.UserRecommendation(
-      userId = id,
-      reason = reason.map(_.toThrift),
-      adImpression = adMetadata.map(_.adImpression),
-      trackingInfo = trackingToken.map(TrackingToken.serialize),
-      scoringDetails = scoringDetails,
-      recommendationFlowIdentifier = recommendationFlowIdentifier
+    t-t.usewwecommendation(
+      usewid = id,
+      w-weason = weason.map(_.tothwift), 🥺
+      a-adimpwession = admetadata.map(_.adimpwession),
+      twackinginfo = twackingtoken.map(twackingtoken.sewiawize), >_<
+      s-scowingdetaiws = s-scowingdetaiws, UwU
+      wecommendationfwowidentifiew = w-wecommendationfwowidentifiew
     )
   }
 
-  override val toThrift: t.Recommendation =
-    t.Recommendation.User(toUserThrift)
+  o-ovewwide vaw tothwift: t.wecommendation =
+    t.wecommendation.usew(tousewthwift)
 
-  def setFollowProof(followProofOpt: Option[FollowProof]): CandidateUser = {
+  def setfowwowpwoof(fowwowpwoofopt: option[fowwowpwoof]): candidateusew = {
     this.copy(
-      reason = reason
-        .map { reason =>
-          reason.copy(
-            accountProof = reason.accountProof
-              .map { accountProof =>
-                accountProof.copy(followProof = followProofOpt)
-              }.orElse(Some(AccountProof(followProof = followProofOpt)))
+      w-weason = weason
+        .map { w-weason =>
+          w-weason.copy(
+            accountpwoof = w-weason.accountpwoof
+              .map { a-accountpwoof =>
+                accountpwoof.copy(fowwowpwoof = f-fowwowpwoofopt)
+              }.owewse(some(accountpwoof(fowwowpwoof = fowwowpwoofopt)))
           )
-        }.orElse(Some(Reason(Some(AccountProof(followProof = followProofOpt)))))
+        }.owewse(some(weason(some(accountpwoof(fowwowpwoof = fowwowpwoofopt)))))
     )
   }
 
-  def addScore(score: Score): CandidateUser = {
-    val newScores = scores match {
-      case Some(existingScores) => existingScores.copy(scores = existingScores.scores :+ score)
-      case None => Scores(Seq(score))
+  def addscowe(scowe: s-scowe): candidateusew = {
+    vaw n-nyewscowes = scowes match {
+      case some(existingscowes) => e-existingscowes.copy(scowes = existingscowes.scowes :+ s-scowe)
+      case nyone => scowes(seq(scowe))
     }
-    this.copy(scores = Some(newScores))
+    this.copy(scowes = s-some(newscowes))
   }
 }
 
-object CandidateUser {
-  val DefaultCandidateScore = 1.0
+object candidateusew {
+  vaw defauwtcandidatescowe = 1.0
 
-  // for converting candidate in ScoringUserRequest
-  def fromUserRecommendation(candidate: t.UserRecommendation): CandidateUser = {
-    // we only use the primary candidate source for now
-    val userCandidateSourceDetails = for {
-      scoringDetails <- candidate.scoringDetails
-      candidateSourceDetails <- scoringDetails.candidateSourceDetails
-    } yield UserCandidateSourceDetails(
-      primaryCandidateSource = candidateSourceDetails.primarySource
-        .flatMap(AlgorithmFeedbackTokens.TokenToAlgorithmMap.get).map { algo =>
-          CandidateSourceIdentifier(algo.toString)
-        },
-      candidateSourceScores = fromThriftScoreMap(candidateSourceDetails.candidateSourceScores),
-      candidateSourceRanks = fromThriftRankMap(candidateSourceDetails.candidateSourceRanks),
-      addressBookMetadata = None
+  // fow convewting c-candidate in scowingusewwequest
+  def fwomusewwecommendation(candidate: t-t.usewwecommendation): c-candidateusew = {
+    // we onwy use the pwimawy candidate souwce fow nyow
+    v-vaw usewcandidatesouwcedetaiws = f-fow {
+      scowingdetaiws <- candidate.scowingdetaiws
+      candidatesouwcedetaiws <- scowingdetaiws.candidatesouwcedetaiws
+    } y-yiewd usewcandidatesouwcedetaiws(
+      p-pwimawycandidatesouwce = candidatesouwcedetaiws.pwimawysouwce
+        .fwatmap(awgowithmfeedbacktokens.tokentoawgowithmmap.get).map { awgo =>
+          candidatesouwceidentifiew(awgo.tostwing)
+        }, >_<
+      c-candidatesouwcescowes = fwomthwiftscowemap(candidatesouwcedetaiws.candidatesouwcescowes), -.-
+      c-candidatesouwcewanks = f-fwomthwiftwankmap(candidatesouwcedetaiws.candidatesouwcewanks), mya
+      addwessbookmetadata = n-nyone
     )
-    CandidateUser(
-      id = candidate.userId,
-      score = candidate.scoringDetails.flatMap(_.score),
-      reason = candidate.reason.map(Reason.fromThrift),
-      userCandidateSourceDetails = userCandidateSourceDetails,
-      trackingToken = candidate.trackingInfo.map(TrackingToken.deserialize),
-      recommendationFlowIdentifier = candidate.recommendationFlowIdentifier,
-      infoPerRankingStage = candidate.scoringDetails.flatMap(
-        _.infoPerRankingStage.map(_.mapValues(RankingInfo.fromThrift)))
+    candidateusew(
+      i-id = c-candidate.usewid, >w<
+      s-scowe = candidate.scowingdetaiws.fwatmap(_.scowe), (U ﹏ U)
+      w-weason = candidate.weason.map(weason.fwomthwift), 😳😳😳
+      u-usewcandidatesouwcedetaiws = usewcandidatesouwcedetaiws, o.O
+      twackingtoken = c-candidate.twackinginfo.map(twackingtoken.desewiawize), òωó
+      w-wecommendationfwowidentifiew = c-candidate.wecommendationfwowidentifiew, 😳😳😳
+      infopewwankingstage = candidate.scowingdetaiws.fwatmap(
+        _.infopewwankingstage.map(_.mapvawues(wankinginfo.fwomthwift)))
     )
   }
 
-  def fromThriftScoreMap(
-    thriftMapOpt: Option[scala.collection.Map[String, Double]]
-  ): Map[CandidateSourceIdentifier, Option[Double]] = {
-    (for {
-      thriftMap <- thriftMapOpt.toSeq
-      (algoName, score) <- thriftMap.toSeq
-    } yield {
-      CandidateSourceIdentifier(algoName) -> Some(score)
-    }).toMap
+  d-def fwomthwiftscowemap(
+    thwiftmapopt: o-option[scawa.cowwection.map[stwing, σωσ doubwe]]
+  ): m-map[candidatesouwceidentifiew, (⑅˘꒳˘) option[doubwe]] = {
+    (fow {
+      thwiftmap <- thwiftmapopt.toseq
+      (awgoname, (///ˬ///✿) scowe) <- thwiftmap.toseq
+    } y-yiewd {
+      c-candidatesouwceidentifiew(awgoname) -> s-some(scowe)
+    }).tomap
   }
 
-  def fromThriftRankMap(
-    thriftMapOpt: Option[scala.collection.Map[String, Int]]
-  ): Map[CandidateSourceIdentifier, Int] = {
-    (for {
-      thriftMap <- thriftMapOpt.toSeq
-      (algoName, rank) <- thriftMap.toSeq
-    } yield {
-      CandidateSourceIdentifier(algoName) -> rank
-    }).toMap
+  d-def fwomthwiftwankmap(
+    thwiftmapopt: o-option[scawa.cowwection.map[stwing, 🥺 int]]
+  ): map[candidatesouwceidentifiew, OwO int] = {
+    (fow {
+      thwiftmap <- thwiftmapopt.toseq
+      (awgoname, >w< wank) <- t-thwiftmap.toseq
+    } yiewd {
+      c-candidatesouwceidentifiew(awgoname) -> wank
+    }).tomap
   }
 }

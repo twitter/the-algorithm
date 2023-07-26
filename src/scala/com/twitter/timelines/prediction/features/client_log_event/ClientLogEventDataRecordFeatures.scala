@@ -1,169 +1,169 @@
-package com.twitter.timelines.prediction.features.client_log_event
+package com.twittew.timewines.pwediction.featuwes.cwient_wog_event
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.Feature.Binary
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.Feature.Discrete
-import scala.collection.JavaConverters._
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.thriftscala.CandidateTweetSourceId
+impowt com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+i-impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.featuwe.binawy
+i-impowt com.twittew.mw.api.featuwe.continuous
+i-impowt c-com.twittew.mw.api.featuwe.discwete
+i-impowt s-scawa.cowwection.javaconvewtews._
+i-impowt com.twittew.timewinesewvice.suggests.wogging.candidate_tweet_souwce_id.thwiftscawa.candidatetweetsouwceid
 
-object ClientLogEventDataRecordFeatures {
-  val HasConsumerVideo = new Binary(
-    "client_log_event.tweet.has_consumer_video",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val PhotoCount = new Continuous(
-    "client_log_event.tweet.photo_count",
-    Set(CountOfPrivateTweetEntitiesAndMetadata, CountOfPublicTweetEntitiesAndMetadata).asJava)
-  val HasImage = new Binary(
-    "client_log_event.tweet.has_image",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val IsReply =
-    new Binary("client_log_event.tweet.is_reply", Set(PublicReplies, PrivateReplies).asJava)
-  val IsRetweet =
-    new Binary("client_log_event.tweet.is_retweet", Set(PublicRetweets, PrivateRetweets).asJava)
-  val IsPromoted =
-    new Binary(
-      "client_log_event.tweet.is_promoted",
-      Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HasVisibleLink = new Binary(
-    "client_log_event.tweet.has_visible_link",
-    Set(UrlFoundFlag, PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HasHashtag = new Binary(
-    "client_log_event.tweet.has_hashtag",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val FromMutualFollow = new Binary("client_log_event.tweet.from_mutual_follow")
-  val IsInNetwork = new Binary("client_log_event.tweet.is_in_network")
-  val IsNotInNetwork = new Binary("client_log_event.tweet.is_not_in_network")
-  val FromRecap = new Binary("client_log_event.tweet.from_recap")
-  val FromRecycled = new Binary("client_log_event.tweet.from_recycled")
-  val FromActivity = new Binary("client_log_event.tweet.from_activity")
-  val FromSimcluster = new Binary("client_log_event.tweet.from_simcluster")
-  val FromErg = new Binary("client_log_event.tweet.from_erg")
-  val FromCroon = new Binary("client_log_event.tweet.from_croon")
-  val FromList = new Binary("client_log_event.tweet.from_list")
-  val FromRecTopic = new Binary("client_log_event.tweet.from_rec_topic")
-  val InjectedPosition = new Discrete("client_log_event.tweet.injectedPosition")
-  val TextOnly = new Binary("client_log_event.tweet.text_only")
-  val HasLikedBySocialContext = new Binary("client_log_event.tweet.has_liked_by_social_context")
-  val HasFollowedBySocialContext = new Binary(
-    "client_log_event.tweet.has_followed_by_social_context")
-  val HasTopicSocialContext = new Binary("client_log_event.tweet.has_topic_social_context")
-  val IsFollowedTopicTweet = new Binary("client_log_event.tweet.is_followed_topic_tweet")
-  val IsRecommendedTopicTweet = new Binary("client_log_event.tweet.is_recommended_topic_tweet")
-  val IsTweetAgeLessThan15Seconds = new Binary(
-    "client_log_event.tweet.tweet_age_less_than_15_seconds")
-  val IsTweetAgeLessThanOrEqualTo30Minutes = new Binary(
-    "client_log_event.tweet.tweet_age_lte_30_minutes")
-  val IsTweetAgeLessThanOrEqualTo1Hour = new Binary("client_log_event.tweet.tweet_age_lte_1_hour")
-  val IsTweetAgeLessThanOrEqualTo6Hours = new Binary("client_log_event.tweet.tweet_age_lte_6_hours")
-  val IsTweetAgeLessThanOrEqualTo12Hours = new Binary(
-    "client_log_event.tweet.tweet_age_lte_12_hours")
-  val IsTweetAgeGreaterThanOrEqualTo24Hours = new Binary(
-    "client_log_event.tweet.tweet_age_gte_24_hours")
-  val HasGreaterThanOrEqualTo100Favs = new Binary("client_log_event.tweet.has_gte_100_favs")
-  val HasGreaterThanOrEqualTo1KFavs = new Binary("client_log_event.tweet.has_gte_1k_favs")
-  val HasGreaterThanOrEqualTo10KFavs = new Binary("client_log_event.tweet.has_gte_10k_favs")
-  val HasGreaterThanOrEqualTo100KFavs = new Binary("client_log_event.tweet.has_gte_100k_favs")
-  val HasGreaterThanOrEqualTo10Retweets = new Binary("client_log_event.tweet.has_gte_10_retweets")
-  val HasGreaterThanOrEqualTo100Retweets = new Binary("client_log_event.tweet.has_gte_100_retweets")
-  val HasGreaterThanOrEqualTo1KRetweets = new Binary("client_log_event.tweet.has_gte_1k_retweets")
+object cwientwogeventdatawecowdfeatuwes {
+  vaw hasconsumewvideo = nyew binawy(
+    "cwient_wog_event.tweet.has_consumew_video", >_<
+    set(pubwictweetentitiesandmetadata, ʘwʘ p-pwivatetweetentitiesandmetadata).asjava)
+  vaw photocount = nyew continuous(
+    "cwient_wog_event.tweet.photo_count", (˘ω˘)
+    s-set(countofpwivatetweetentitiesandmetadata, (✿oωo) countofpubwictweetentitiesandmetadata).asjava)
+  v-vaw hasimage = nyew binawy(
+    "cwient_wog_event.tweet.has_image", (///ˬ///✿)
+    set(pubwictweetentitiesandmetadata, rawr x3 pwivatetweetentitiesandmetadata).asjava)
+  v-vaw iswepwy =
+    nyew b-binawy("cwient_wog_event.tweet.is_wepwy", -.- s-set(pubwicwepwies, ^^ pwivatewepwies).asjava)
+  vaw iswetweet =
+    nyew binawy("cwient_wog_event.tweet.is_wetweet", (⑅˘꒳˘) set(pubwicwetweets, nyaa~~ p-pwivatewetweets).asjava)
+  vaw ispwomoted =
+    nyew binawy(
+      "cwient_wog_event.tweet.is_pwomoted", /(^•ω•^)
+      set(pubwictweetentitiesandmetadata, (U ﹏ U) p-pwivatetweetentitiesandmetadata).asjava)
+  vaw hasvisibwewink = n-nyew binawy(
+    "cwient_wog_event.tweet.has_visibwe_wink", 😳😳😳
+    s-set(uwwfoundfwag, >w< p-pubwictweetentitiesandmetadata, XD p-pwivatetweetentitiesandmetadata).asjava)
+  vaw hashashtag = nyew binawy(
+    "cwient_wog_event.tweet.has_hashtag", o.O
+    set(pubwictweetentitiesandmetadata, mya p-pwivatetweetentitiesandmetadata).asjava)
+  vaw fwommutuawfowwow = n-nyew binawy("cwient_wog_event.tweet.fwom_mutuaw_fowwow")
+  vaw isinnetwowk = nyew binawy("cwient_wog_event.tweet.is_in_netwowk")
+  vaw isnotinnetwowk = nyew binawy("cwient_wog_event.tweet.is_not_in_netwowk")
+  v-vaw fwomwecap = nyew binawy("cwient_wog_event.tweet.fwom_wecap")
+  v-vaw fwomwecycwed = n-nyew b-binawy("cwient_wog_event.tweet.fwom_wecycwed")
+  vaw fwomactivity = nyew binawy("cwient_wog_event.tweet.fwom_activity")
+  vaw f-fwomsimcwustew = n-nyew binawy("cwient_wog_event.tweet.fwom_simcwustew")
+  vaw fwomewg = n-nyew binawy("cwient_wog_event.tweet.fwom_ewg")
+  v-vaw fwomcwoon = nyew binawy("cwient_wog_event.tweet.fwom_cwoon")
+  v-vaw fwomwist = nyew binawy("cwient_wog_event.tweet.fwom_wist")
+  v-vaw fwomwectopic = nyew binawy("cwient_wog_event.tweet.fwom_wec_topic")
+  v-vaw injectedposition = nyew d-discwete("cwient_wog_event.tweet.injectedposition")
+  vaw textonwy = n-nyew binawy("cwient_wog_event.tweet.text_onwy")
+  v-vaw haswikedbysociawcontext = nyew binawy("cwient_wog_event.tweet.has_wiked_by_sociaw_context")
+  vaw hasfowwowedbysociawcontext = nyew binawy(
+    "cwient_wog_event.tweet.has_fowwowed_by_sociaw_context")
+  vaw hastopicsociawcontext = nyew binawy("cwient_wog_event.tweet.has_topic_sociaw_context")
+  v-vaw isfowwowedtopictweet = n-nyew binawy("cwient_wog_event.tweet.is_fowwowed_topic_tweet")
+  vaw iswecommendedtopictweet = n-nyew b-binawy("cwient_wog_event.tweet.is_wecommended_topic_tweet")
+  v-vaw istweetagewessthan15seconds = nyew binawy(
+    "cwient_wog_event.tweet.tweet_age_wess_than_15_seconds")
+  vaw istweetagewessthanowequawto30minutes = new binawy(
+    "cwient_wog_event.tweet.tweet_age_wte_30_minutes")
+  vaw i-istweetagewessthanowequawto1houw = nyew binawy("cwient_wog_event.tweet.tweet_age_wte_1_houw")
+  vaw istweetagewessthanowequawto6houws = new binawy("cwient_wog_event.tweet.tweet_age_wte_6_houws")
+  vaw istweetagewessthanowequawto12houws = n-nyew binawy(
+    "cwient_wog_event.tweet.tweet_age_wte_12_houws")
+  vaw istweetagegweatewthanowequawto24houws = n-nyew binawy(
+    "cwient_wog_event.tweet.tweet_age_gte_24_houws")
+  v-vaw hasgweatewthanowequawto100favs = n-nyew binawy("cwient_wog_event.tweet.has_gte_100_favs")
+  vaw hasgweatewthanowequawto1kfavs = n-nyew binawy("cwient_wog_event.tweet.has_gte_1k_favs")
+  vaw h-hasgweatewthanowequawto10kfavs = n-nyew binawy("cwient_wog_event.tweet.has_gte_10k_favs")
+  v-vaw hasgweatewthanowequawto100kfavs = nyew binawy("cwient_wog_event.tweet.has_gte_100k_favs")
+  v-vaw h-hasgweatewthanowequawto10wetweets = n-nyew binawy("cwient_wog_event.tweet.has_gte_10_wetweets")
+  v-vaw hasgweatewthanowequawto100wetweets = n-nyew binawy("cwient_wog_event.tweet.has_gte_100_wetweets")
+  vaw hasgweatewthanowequawto1kwetweets = nyew binawy("cwient_wog_event.tweet.has_gte_1k_wetweets")
 
-  val TweetTypeToFeatureMap: Map[String, Binary] = Map(
-    "link" -> HasVisibleLink,
-    "hashtag" -> HasHashtag,
-    "mutual_follow" -> FromMutualFollow,
-    "in_network" -> IsInNetwork,
-    "text_only" -> TextOnly,
-    "has_liked_by_social_context" -> HasLikedBySocialContext,
-    "has_followed_by_social_context" -> HasFollowedBySocialContext,
-    "has_topic_social_context" -> HasTopicSocialContext,
-    "is_followed_topic_tweet" -> IsFollowedTopicTweet,
-    "is_recommended_topic_tweet" -> IsRecommendedTopicTweet,
-    "tweet_age_less_than_15_seconds" -> IsTweetAgeLessThan15Seconds,
-    "tweet_age_lte_30_minutes" -> IsTweetAgeLessThanOrEqualTo30Minutes,
-    "tweet_age_lte_1_hour" -> IsTweetAgeLessThanOrEqualTo1Hour,
-    "tweet_age_lte_6_hours" -> IsTweetAgeLessThanOrEqualTo6Hours,
-    "tweet_age_lte_12_hours" -> IsTweetAgeLessThanOrEqualTo12Hours,
-    "tweet_age_gte_24_hours" -> IsTweetAgeGreaterThanOrEqualTo24Hours,
-    "has_gte_100_favs" -> HasGreaterThanOrEqualTo100Favs,
-    "has_gte_1k_favs" -> HasGreaterThanOrEqualTo1KFavs,
-    "has_gte_10k_favs" -> HasGreaterThanOrEqualTo10KFavs,
-    "has_gte_100k_favs" -> HasGreaterThanOrEqualTo100KFavs,
-    "has_gte_10_retweets" -> HasGreaterThanOrEqualTo10Retweets,
-    "has_gte_100_retweets" -> HasGreaterThanOrEqualTo100Retweets,
-    "has_gte_1k_retweets" -> HasGreaterThanOrEqualTo1KRetweets
+  vaw t-tweettypetofeatuwemap: map[stwing, 🥺 binawy] = map(
+    "wink" -> hasvisibwewink,
+    "hashtag" -> hashashtag, ^^;;
+    "mutuaw_fowwow" -> fwommutuawfowwow, :3
+    "in_netwowk" -> i-isinnetwowk, (U ﹏ U)
+    "text_onwy" -> textonwy, OwO
+    "has_wiked_by_sociaw_context" -> haswikedbysociawcontext, 😳😳😳
+    "has_fowwowed_by_sociaw_context" -> hasfowwowedbysociawcontext, (ˆ ﻌ ˆ)♡
+    "has_topic_sociaw_context" -> h-hastopicsociawcontext, XD
+    "is_fowwowed_topic_tweet" -> i-isfowwowedtopictweet, (ˆ ﻌ ˆ)♡
+    "is_wecommended_topic_tweet" -> i-iswecommendedtopictweet, ( ͡o ω ͡o )
+    "tweet_age_wess_than_15_seconds" -> istweetagewessthan15seconds,
+    "tweet_age_wte_30_minutes" -> i-istweetagewessthanowequawto30minutes, rawr x3
+    "tweet_age_wte_1_houw" -> istweetagewessthanowequawto1houw, nyaa~~
+    "tweet_age_wte_6_houws" -> istweetagewessthanowequawto6houws, >_<
+    "tweet_age_wte_12_houws" -> i-istweetagewessthanowequawto12houws, ^^;;
+    "tweet_age_gte_24_houws" -> i-istweetagegweatewthanowequawto24houws, (ˆ ﻌ ˆ)♡
+    "has_gte_100_favs" -> hasgweatewthanowequawto100favs, ^^;;
+    "has_gte_1k_favs" -> hasgweatewthanowequawto1kfavs, (⑅˘꒳˘)
+    "has_gte_10k_favs" -> hasgweatewthanowequawto10kfavs, rawr x3
+    "has_gte_100k_favs" -> hasgweatewthanowequawto100kfavs, (///ˬ///✿)
+    "has_gte_10_wetweets" -> hasgweatewthanowequawto10wetweets, 🥺
+    "has_gte_100_wetweets" -> h-hasgweatewthanowequawto100wetweets, >_<
+    "has_gte_1k_wetweets" -> hasgweatewthanowequawto1kwetweets
   )
 
-  val CandidateTweetSourceIdFeatureMap: Map[Int, Binary] = Map(
-    CandidateTweetSourceId.RecapTweet.value -> FromRecap,
-    CandidateTweetSourceId.RecycledTweet.value -> FromRecycled,
-    CandidateTweetSourceId.RecommendedTweet.value -> FromActivity,
-    CandidateTweetSourceId.Simcluster.value -> FromSimcluster,
-    CandidateTweetSourceId.ErgTweet.value -> FromErg,
-    CandidateTweetSourceId.CroonTopicTweet.value -> FromCroon,
-    CandidateTweetSourceId.CroonTweet.value -> FromCroon,
-    CandidateTweetSourceId.ListTweet.value -> FromList,
-    CandidateTweetSourceId.RecommendedTopicTweet.value -> FromRecTopic
+  v-vaw candidatetweetsouwceidfeatuwemap: m-map[int, binawy] = m-map(
+    candidatetweetsouwceid.wecaptweet.vawue -> fwomwecap, UwU
+    candidatetweetsouwceid.wecycwedtweet.vawue -> f-fwomwecycwed, >_<
+    c-candidatetweetsouwceid.wecommendedtweet.vawue -> fwomactivity, -.-
+    c-candidatetweetsouwceid.simcwustew.vawue -> f-fwomsimcwustew, mya
+    candidatetweetsouwceid.ewgtweet.vawue -> fwomewg, >w<
+    candidatetweetsouwceid.cwoontopictweet.vawue -> fwomcwoon, (U ﹏ U)
+    c-candidatetweetsouwceid.cwoontweet.vawue -> f-fwomcwoon, 😳😳😳
+    c-candidatetweetsouwceid.wisttweet.vawue -> fwomwist, o.O
+    c-candidatetweetsouwceid.wecommendedtopictweet.vawue -> f-fwomwectopic
   )
 
-  val TweetFeaturesV2: Set[Feature[_]] = Set(
-    HasImage,
-    IsReply,
-    IsRetweet,
-    HasVisibleLink,
-    HasHashtag,
-    FromMutualFollow,
-    IsInNetwork
+  vaw t-tweetfeatuwesv2: set[featuwe[_]] = set(
+    hasimage,
+    iswepwy, òωó
+    iswetweet, 😳😳😳
+    h-hasvisibwewink, σωσ
+    h-hashashtag, (⑅˘꒳˘)
+    fwommutuawfowwow, (///ˬ///✿)
+    isinnetwowk
   )
 
-  val ContentTweetTypeFeatures: Set[Feature[_]] = Set(
-    HasImage,
-    HasVisibleLink,
-    HasHashtag,
-    TextOnly,
-    HasVisibleLink
+  v-vaw contenttweettypefeatuwes: s-set[featuwe[_]] = set(
+    hasimage, 🥺
+    hasvisibwewink, OwO
+    hashashtag, >w<
+    t-textonwy, 🥺
+    hasvisibwewink
   )
 
-  val FreshnessTweetTypeFeatures: Set[Feature[_]] = Set(
-    IsTweetAgeLessThan15Seconds,
-    IsTweetAgeLessThanOrEqualTo30Minutes,
-    IsTweetAgeLessThanOrEqualTo1Hour,
-    IsTweetAgeLessThanOrEqualTo6Hours,
-    IsTweetAgeLessThanOrEqualTo12Hours,
-    IsTweetAgeGreaterThanOrEqualTo24Hours
+  vaw fweshnesstweettypefeatuwes: set[featuwe[_]] = set(
+    istweetagewessthan15seconds, nyaa~~
+    i-istweetagewessthanowequawto30minutes, ^^
+    istweetagewessthanowequawto1houw,
+    istweetagewessthanowequawto6houws, >w<
+    i-istweetagewessthanowequawto12houws, OwO
+    i-istweetagegweatewthanowequawto24houws
   )
 
-  val SocialProofTweetTypeFeatures: Set[Feature[_]] = Set(
-    HasLikedBySocialContext,
-    HasFollowedBySocialContext,
-    HasTopicSocialContext
+  vaw sociawpwooftweettypefeatuwes: set[featuwe[_]] = set(
+    h-haswikedbysociawcontext, XD
+    h-hasfowwowedbysociawcontext, ^^;;
+    hastopicsociawcontext
   )
 
-  val TopicTweetPreferenceTweetTypeFeatures: Set[Feature[_]] = Set(
-    IsFollowedTopicTweet,
-    IsRecommendedTopicTweet
+  vaw topictweetpwefewencetweettypefeatuwes: set[featuwe[_]] = s-set(
+    isfowwowedtopictweet, 🥺
+    i-iswecommendedtopictweet
   )
 
-  val TweetPopularityTweetTypeFeatures: Set[Feature[_]] = Set(
-    HasGreaterThanOrEqualTo100Favs,
-    HasGreaterThanOrEqualTo1KFavs,
-    HasGreaterThanOrEqualTo10KFavs,
-    HasGreaterThanOrEqualTo100KFavs,
-    HasGreaterThanOrEqualTo10Retweets,
-    HasGreaterThanOrEqualTo100Retweets,
-    HasGreaterThanOrEqualTo1KRetweets
+  vaw tweetpopuwawitytweettypefeatuwes: set[featuwe[_]] = set(
+    h-hasgweatewthanowequawto100favs, XD
+    hasgweatewthanowequawto1kfavs, (U ᵕ U❁)
+    h-hasgweatewthanowequawto10kfavs, :3
+    h-hasgweatewthanowequawto100kfavs, ( ͡o ω ͡o )
+    hasgweatewthanowequawto10wetweets, òωó
+    h-hasgweatewthanowequawto100wetweets, σωσ
+    hasgweatewthanowequawto1kwetweets
   )
 
-  val UserGraphInteractionTweetTypeFeatures: Set[Feature[_]] = Set(
-    IsInNetwork,
-    FromMutualFollow,
-    IsNotInNetwork,
-    IsPromoted
+  v-vaw usewgwaphintewactiontweettypefeatuwes: s-set[featuwe[_]] = s-set(
+    isinnetwowk, (U ᵕ U❁)
+    fwommutuawfowwow, (✿oωo)
+    i-isnotinnetwowk, ^^
+    i-ispwomoted
   )
 
-  val UserContentPreferenceTweetTypeFeatures: Set[Feature[_]] =
-    ContentTweetTypeFeatures ++ FreshnessTweetTypeFeatures ++ SocialProofTweetTypeFeatures ++ TopicTweetPreferenceTweetTypeFeatures ++ TweetPopularityTweetTypeFeatures ++ UserGraphInteractionTweetTypeFeatures
-  val AuthorContentPreferenceTweetTypeFeatures: Set[Feature[_]] =
-    Set(IsInNetwork, FromMutualFollow, IsNotInNetwork) ++ ContentTweetTypeFeatures
+  vaw usewcontentpwefewencetweettypefeatuwes: s-set[featuwe[_]] =
+    c-contenttweettypefeatuwes ++ f-fweshnesstweettypefeatuwes ++ sociawpwooftweettypefeatuwes ++ topictweetpwefewencetweettypefeatuwes ++ t-tweetpopuwawitytweettypefeatuwes ++ usewgwaphintewactiontweettypefeatuwes
+  v-vaw a-authowcontentpwefewencetweettypefeatuwes: set[featuwe[_]] =
+    set(isinnetwowk, ^•ﻌ•^ fwommutuawfowwow, XD i-isnotinnetwowk) ++ c-contenttweettypefeatuwes
 }

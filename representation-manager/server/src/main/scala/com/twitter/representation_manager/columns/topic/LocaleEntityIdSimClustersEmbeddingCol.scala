@@ -1,76 +1,76 @@
-package com.twitter.representation_manager.columns.topic
+package com.twittew.wepwesentation_managew.cowumns.topic
 
-import com.twitter.representation_manager.columns.ColumnConfigBase
-import com.twitter.representation_manager.store.TopicSimClustersEmbeddingStore
-import com.twitter.representation_manager.thriftscala.SimClustersEmbeddingView
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.LocaleEntityId
-import com.twitter.stitch
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.storehaus.StitchOfReadableStore
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.AnyOf
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.FromColumns
-import com.twitter.strato.config.Policy
-import com.twitter.strato.config.Prefix
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle
-import com.twitter.strato.fed._
-import com.twitter.strato.thrift.ScroogeConv
-import javax.inject.Inject
+impowt c-com.twittew.wepwesentation_managew.cowumns.cowumnconfigbase
+i-impowt c-com.twittew.wepwesentation_managew.stowe.topicsimcwustewsembeddingstowe
+i-impowt c-com.twittew.wepwesentation_managew.thwiftscawa.simcwustewsembeddingview
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembedding
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+impowt com.twittew.simcwustews_v2.thwiftscawa.wocaweentityid
+impowt com.twittew.stitch
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.stitch.stowehaus.stitchofweadabwestowe
+impowt c-com.twittew.stwato.catawog.opmetadata
+impowt c-com.twittew.stwato.config.anyof
+impowt com.twittew.stwato.config.contactinfo
+impowt com.twittew.stwato.config.fwomcowumns
+i-impowt com.twittew.stwato.config.powicy
+i-impowt com.twittew.stwato.config.pwefix
+i-impowt com.twittew.stwato.data.conv
+impowt com.twittew.stwato.data.descwiption.pwaintext
+impowt com.twittew.stwato.data.wifecycwe
+impowt c-com.twittew.stwato.fed._
+impowt com.twittew.stwato.thwift.scwoogeconv
+impowt javax.inject.inject
 
-class LocaleEntityIdSimClustersEmbeddingCol @Inject() (
-  embeddingStore: TopicSimClustersEmbeddingStore)
-    extends StratoFed.Column(
-      "recommendations/representation_manager/simClustersEmbedding.LocaleEntityId")
-    with StratoFed.Fetch.Stitch {
+c-cwass wocaweentityidsimcwustewsembeddingcow @inject() (
+  embeddingstowe: t-topicsimcwustewsembeddingstowe)
+    e-extends stwatofed.cowumn(
+      "wecommendations/wepwesentation_managew/simcwustewsembedding.wocaweentityid")
+    w-with stwatofed.fetch.stitch {
 
-  private val storeStitch: SimClustersEmbeddingId => Stitch[SimClustersEmbedding] =
-    StitchOfReadableStore(embeddingStore.topicSimClustersEmbeddingStore.mapValues(_.toThrift))
+  p-pwivate vaw stowestitch: simcwustewsembeddingid => s-stitch[simcwustewsembedding] =
+    stitchofweadabwestowe(embeddingstowe.topicsimcwustewsembeddingstowe.mapvawues(_.tothwift))
 
-  val colPermissions: Seq[com.twitter.strato.config.Policy] =
-    ColumnConfigBase.recosPermissions ++ ColumnConfigBase.externalPermissions :+ FromColumns(
-      Set(
-        Prefix("ml/featureStore/simClusters"),
+  vaw cowpewmissions: seq[com.twittew.stwato.config.powicy] =
+    c-cowumnconfigbase.wecospewmissions ++ cowumnconfigbase.extewnawpewmissions :+ fwomcowumns(
+      set(
+        pwefix("mw/featuwestowe/simcwustews"), 🥺
       ))
 
-  override val policy: Policy = AnyOf({
-    colPermissions
+  ovewwide v-vaw powicy: powicy = anyof({
+    c-cowpewmissions
   })
 
-  override type Key = LocaleEntityId
-  override type View = SimClustersEmbeddingView
-  override type Value = SimClustersEmbedding
+  o-ovewwide t-type key = wocaweentityid
+  ovewwide type view = simcwustewsembeddingview
+  o-ovewwide type vawue = s-simcwustewsembedding
 
-  override val keyConv: Conv[Key] = ScroogeConv.fromStruct[LocaleEntityId]
-  override val viewConv: Conv[View] = ScroogeConv.fromStruct[SimClustersEmbeddingView]
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[SimClustersEmbedding]
+  ovewwide vaw keyconv: c-conv[key] = s-scwoogeconv.fwomstwuct[wocaweentityid]
+  ovewwide v-vaw viewconv: conv[view] = scwoogeconv.fwomstwuct[simcwustewsembeddingview]
+  o-ovewwide vaw vawueconv: conv[vawue] = scwoogeconv.fwomstwuct[simcwustewsembedding]
 
-  override val contactInfo: ContactInfo = ColumnConfigBase.contactInfo
+  o-ovewwide vaw contactinfo: c-contactinfo = cowumnconfigbase.contactinfo
 
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Lifecycle.Production),
-    description = Some(
-      PlainText(
-        "The Topic SimClusters Embedding Endpoint in Representation Management Service with LocaleEntityId." +
-          " TDD: http://go/rms-tdd"))
+  ovewwide vaw metadata: o-opmetadata = o-opmetadata(
+    wifecycwe = some(wifecycwe.pwoduction), (U ﹏ U)
+    descwiption = some(
+      pwaintext(
+        "the topic simcwustews embedding endpoint in wepwesentation m-management s-sewvice with wocaweentityid." +
+          " tdd: h-http://go/wms-tdd"))
   )
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
-    val embeddingId = SimClustersEmbeddingId(
-      view.embeddingType,
-      view.modelVersion,
-      InternalId.LocaleEntityId(key)
+  o-ovewwide def fetch(key: k-key, >w< view: view): stitch[wesuwt[vawue]] = {
+    vaw embeddingid = simcwustewsembeddingid(
+      v-view.embeddingtype,
+      view.modewvewsion, mya
+      intewnawid.wocaweentityid(key)
     )
 
-    storeStitch(embeddingId)
+    stowestitch(embeddingid)
       .map(embedding => found(embedding))
-      .handle {
-        case stitch.NotFound => missing
+      .handwe {
+        c-case stitch.notfound => missing
       }
   }
 

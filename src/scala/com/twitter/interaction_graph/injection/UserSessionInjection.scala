@@ -1,14 +1,14 @@
-package com.twitter.interaction_graph.injection
+package com.twittew.intewaction_gwaph.injection
 
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
+impowt com.twittew.usew_session_stowe.thwiftscawa.usewsession
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.scawacompactthwift
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.wong2bigendian
 
-object UserSessionInjection {
-  final val injection: KeyValInjection[Long, UserSession] =
-    KeyValInjection(
-      Long2BigEndian,
-      ScalaCompactThrift(UserSession)
+o-object u-usewsessioninjection {
+  f-finaw vaw injection: keyvawinjection[wong, σωσ usewsession] =
+    keyvawinjection(
+      w-wong2bigendian, >_<
+      scawacompactthwift(usewsession)
     )
 }

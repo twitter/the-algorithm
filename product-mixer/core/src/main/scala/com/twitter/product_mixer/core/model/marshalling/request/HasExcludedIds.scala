@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest
 
 /**
- * Allow clients to pass in a set of IDs that would be excluded from the results.
+ * awwow cwients t-to pass in a-a set of ids that w-wouwd be excwuded f-fwom the wesuwts. ( ͡o ω ͡o )
  */
-trait HasExcludedIds {
-  val excludedIds: Set[Long] = Set.empty
+t-twait h-hasexcwudedids {
+  v-vaw excwudedids: s-set[wong] = set.empty
 }

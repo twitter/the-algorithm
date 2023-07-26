@@ -1,48 +1,48 @@
-package com.twitter.home_mixer.functional_component.scorer
+package com.twittew.home_mixew.functionaw_component.scowew
 
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.innetwowkfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.scowefeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
 /**
- * Scales scores of each out-of-network tweet by the specified scale factor
+ * scawes s-scowes of each out-of-netwowk tweet by the specified scawe factow
  */
-object OONTweetScalingScorer extends Scorer[PipelineQuery, TweetCandidate] {
+o-object oontweetscawingscowew extends scowew[pipewinequewy, 😳😳😳 t-tweetcandidate] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("OONTweetScaling")
+  o-ovewwide vaw identifiew: scowewidentifiew = scowewidentifiew("oontweetscawing")
 
-  override val features: Set[Feature[_, _]] = Set(ScoreFeature)
+  ovewwide v-vaw featuwes: set[featuwe[_, 😳😳😳 _]] = set(scowefeatuwe)
 
-  private val ScaleFactor = 0.75
+  pwivate vaw scawefactow = 0.75
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    Stitch.value {
+  o-ovewwide def appwy(
+    q-quewy: pipewinequewy, o.O
+    c-candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = {
+    s-stitch.vawue {
       candidates.map { candidate =>
-        val score = candidate.features.getOrElse(ScoreFeature, None)
-        val updatedScore = if (selector(candidate)) score.map(_ * ScaleFactor) else score
-        FeatureMapBuilder().add(ScoreFeature, updatedScore).build()
+        v-vaw scowe = candidate.featuwes.getowewse(scowefeatuwe, ( ͡o ω ͡o ) nyone)
+        v-vaw updatedscowe = if (sewectow(candidate)) scowe.map(_ * scawefactow) ewse scowe
+        f-featuwemapbuiwdew().add(scowefeatuwe, (U ﹏ U) updatedscowe).buiwd()
       }
     }
   }
 
   /**
-   * We should only be applying this multiplier to Out-Of-Network tweets.
-   * In-Network Retweets of Out-Of-Network tweets should not have this multiplier applied
+   * w-we shouwd onwy b-be appwying this m-muwtipwiew to out-of-netwowk tweets. (///ˬ///✿)
+   * in-netwowk wetweets of o-out-of-netwowk t-tweets shouwd nyot have this muwtipwiew a-appwied
    */
-  private def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean = {
-    !candidate.features.getOrElse(InNetworkFeature, false) &&
-    !candidate.features.getOrElse(IsRetweetFeature, false)
+  p-pwivate def sewectow(candidate: c-candidatewithfeatuwes[tweetcandidate]): boowean = {
+    !candidate.featuwes.getowewse(innetwowkfeatuwe, >w< f-fawse) &&
+    !candidate.featuwes.getowewse(iswetweetfeatuwe, rawr fawse)
   }
 }

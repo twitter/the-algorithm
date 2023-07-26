@@ -1,24 +1,24 @@
-scala_library(
-    name = "common",
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+scawa_wibwawy(
+    nyame = "common", OwO
+    souwces = ["*.scawa"], 🥺
+    p-pwatfowm = "java8", òωó
+    t-tags = [
+        "bazew-compatibwe", o.O
+        "bazew-compatibwe:migwated", (U ᵕ U❁)
     ],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/java/com/twitter/ml/api/constant",
-        "src/java/com/twitter/ml/api/transform",
-        "src/java/com/twitter/search/modeling/tweet_ranking",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/timelines/prediction/features/common",
-        "src/scala/com/twitter/timelines/prediction/features/itl",
-        "src/scala/com/twitter/timelines/prediction/features/real_graph",
-        "src/scala/com/twitter/timelines/prediction/features/recap",
-        "src/scala/com/twitter/timelines/prediction/features/request_context",
-        "src/scala/com/twitter/timelines/prediction/features/time_features",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "src/thrift/com/twitter/ml/api:transform-java",
+    d-dependencies = [
+        "swc/java/com/twittew/mw/api:api-base", (⑅˘꒳˘)
+        "swc/java/com/twittew/mw/api/constant", ( ͡o ω ͡o )
+        "swc/java/com/twittew/mw/api/twansfowm", UwU
+        "swc/java/com/twittew/seawch/modewing/tweet_wanking", rawr x3
+        "swc/scawa/com/twittew/mw/api/utiw", rawr
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/common", σωσ
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/itw", σωσ
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/weaw_gwaph", >_<
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/wecap", :3
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/wequest_context", (U ﹏ U)
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/time_featuwes", -.-
+        "swc/thwift/com/twittew/mw/api:data-java", (ˆ ﻌ ˆ)♡
+        "swc/thwift/com/twittew/mw/api:twansfowm-java", (⑅˘꒳˘)
     ],
 )

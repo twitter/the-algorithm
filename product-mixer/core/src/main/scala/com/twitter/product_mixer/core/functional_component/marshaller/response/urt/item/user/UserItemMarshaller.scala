@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.usew
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.sociawcontextmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted.pwomotedmetadatamawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usewitem
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class UserItemMarshaller @Inject() (
-  userDisplayTypeMarshaller: UserDisplayTypeMarshaller,
-  promotedMetadataMarshaller: PromotedMetadataMarshaller,
-  socialContextMarshaller: SocialContextMarshaller,
-  userReactiveTriggersMarshaller: UserReactiveTriggersMarshaller) {
+@singweton
+cwass usewitemmawshawwew @inject() (
+  usewdispwaytypemawshawwew: usewdispwaytypemawshawwew, rawr x3
+  pwomotedmetadatamawshawwew: p-pwomotedmetadatamawshawwew, nyaa~~
+  sociawcontextmawshawwew: sociawcontextmawshawwew, /(^•ω•^)
+  u-usewweactivetwiggewsmawshawwew: usewweactivetwiggewsmawshawwew) {
 
-  def apply(userItem: UserItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.User(
-      urt.User(
-        id = userItem.id,
-        displayType = userDisplayTypeMarshaller(userItem.displayType),
-        promotedMetadata = userItem.promotedMetadata.map(promotedMetadataMarshaller(_)),
-        socialContext = userItem.socialContext.map(socialContextMarshaller(_)),
-        enableReactiveBlending = userItem.enableReactiveBlending,
-        reactiveTriggers = userItem.reactiveTriggers.map(userReactiveTriggersMarshaller(_))
+  d-def appwy(usewitem: usewitem): uwt.timewineitemcontent =
+    uwt.timewineitemcontent.usew(
+      u-uwt.usew(
+        id = usewitem.id, rawr
+        d-dispwaytype = u-usewdispwaytypemawshawwew(usewitem.dispwaytype), OwO
+        pwomotedmetadata = usewitem.pwomotedmetadata.map(pwomotedmetadatamawshawwew(_)), (U ﹏ U)
+        sociawcontext = usewitem.sociawcontext.map(sociawcontextmawshawwew(_)), >_<
+        e-enabweweactivebwending = usewitem.enabweweactivebwending, rawr x3
+        weactivetwiggews = usewitem.weactivetwiggews.map(usewweactivetwiggewsmawshawwew(_))
       )
     )
 }

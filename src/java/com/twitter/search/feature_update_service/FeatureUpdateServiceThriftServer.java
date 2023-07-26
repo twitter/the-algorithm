@@ -1,149 +1,149 @@
-package com.twitter.search.feature_update_service;
+package com.twittew.seawch.featuwe_update_sewvice;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.awwaywist;
+impowt j-java.utiw.awways;
+i-impowt java.utiw.cowwection;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.concuwwent.timeunit;
 
-import com.google.common.base.Preconditions;
-import com.google.inject.Module;
+i-impowt com.googwe.common.base.pweconditions;
+i-impowt com.googwe.inject.moduwe;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.finagle.Filter;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finatra.annotations.DarkTrafficFilterType;
-import com.twitter.finatra.decider.modules.DeciderModule$;
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule;
-import com.twitter.finatra.mtls.thriftmux.AbstractMtlsThriftServer;
-import com.twitter.finatra.thrift.filters.AccessLoggingFilter;
-import com.twitter.finatra.thrift.filters.LoggingMDCFilter;
-import com.twitter.finatra.thrift.filters.StatsFilter;
-import com.twitter.finatra.thrift.filters.ThriftMDCFilter;
-import com.twitter.finatra.thrift.filters.TraceIdMDCFilter;
-import com.twitter.finatra.thrift.routing.JavaThriftRouter;
-import com.twitter.inject.thrift.modules.ThriftClientIdModule$;
-import com.twitter.search.common.constants.SearchThriftWebFormsAccess;
-import com.twitter.search.common.metrics.BuildInfoStats;
-import com.twitter.search.common.util.PlatformStatsExporter;
-import com.twitter.search.feature_update_service.filters.ClientIdWhitelistFilter;
-import com.twitter.search.feature_update_service.modules.ClientIdWhitelistModule;
-import com.twitter.search.feature_update_service.modules.EarlybirdUtilModule;
-import com.twitter.search.feature_update_service.modules.FeatureUpdateServiceDiffyModule;
-import com.twitter.search.feature_update_service.modules.FinagleKafkaProducerModule;
-import com.twitter.search.feature_update_service.modules.FuturePoolModule;
-import com.twitter.search.feature_update_service.modules.TweetypieModule;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateService;
-import com.twitter.thriftwebforms.MethodOptionsAccessConfig;
-import com.twitter.util.ExecutorServiceFuturePool;
+impowt com.twittew.app.fwag;
+i-impowt com.twittew.app.fwaggabwe;
+impowt c-com.twittew.finagwe.fiwtew;
+impowt c-com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.thwiftmux;
+impowt com.twittew.finatwa.annotations.dawktwafficfiwtewtype;
+impowt com.twittew.finatwa.decidew.moduwes.decidewmoduwe$;
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwsthwiftwebfowmsmoduwe;
+impowt c-com.twittew.finatwa.mtws.thwiftmux.abstwactmtwsthwiftsewvew;
+i-impowt com.twittew.finatwa.thwift.fiwtews.accesswoggingfiwtew;
+impowt com.twittew.finatwa.thwift.fiwtews.woggingmdcfiwtew;
+impowt com.twittew.finatwa.thwift.fiwtews.statsfiwtew;
+impowt com.twittew.finatwa.thwift.fiwtews.thwiftmdcfiwtew;
+i-impowt com.twittew.finatwa.thwift.fiwtews.twaceidmdcfiwtew;
+impowt com.twittew.finatwa.thwift.wouting.javathwiftwoutew;
+impowt com.twittew.inject.thwift.moduwes.thwiftcwientidmoduwe$;
+i-impowt com.twittew.seawch.common.constants.seawchthwiftwebfowmsaccess;
+impowt c-com.twittew.seawch.common.metwics.buiwdinfostats;
+i-impowt com.twittew.seawch.common.utiw.pwatfowmstatsexpowtew;
+i-impowt com.twittew.seawch.featuwe_update_sewvice.fiwtews.cwientidwhitewistfiwtew;
+i-impowt com.twittew.seawch.featuwe_update_sewvice.moduwes.cwientidwhitewistmoduwe;
+impowt com.twittew.seawch.featuwe_update_sewvice.moduwes.eawwybiwdutiwmoduwe;
+impowt com.twittew.seawch.featuwe_update_sewvice.moduwes.featuweupdatesewvicediffymoduwe;
+impowt c-com.twittew.seawch.featuwe_update_sewvice.moduwes.finagwekafkapwoducewmoduwe;
+impowt com.twittew.seawch.featuwe_update_sewvice.moduwes.futuwepoowmoduwe;
+impowt com.twittew.seawch.featuwe_update_sewvice.moduwes.tweetypiemoduwe;
+i-impowt com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatesewvice;
+impowt com.twittew.thwiftwebfowms.methodoptionsaccessconfig;
+impowt com.twittew.utiw.executowsewvicefutuwepoow;
 
-public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(FeatureUpdateServiceThriftServer.class);
+pubwic c-cwass featuweupdatesewvicethwiftsewvew extends a-abstwactmtwsthwiftsewvew {
+  pwivate s-static finaw w-woggew wog =
+      woggewfactowy.getwoggew(featuweupdatesewvicethwiftsewvew.cwass);
 
-  // Ideally we would not have to access the "environment" flag here and we could instead pass
-  // a flag to the ThriftWebFormsModule that would either enable or disable thrift web forms.
-  // However, it is not simple to create our own TwitterModule that both extends the
-  // ThriftWebFormsModule and consumes an injected flag.
-  private Flag<String> envFlag = flag().create("environment",
-      "",
-      "Environment for service (prod, staging, staging1, devel)",
-      Flaggable.ofString());
+  // ideawwy we wouwd not h-have to access t-the "enviwonment" fwag hewe and w-we couwd instead p-pass
+  // a fwag to the thwiftwebfowmsmoduwe t-that wouwd eithew enabwe ow disabwe t-thwift web fowms. 😳😳😳
+  // howevew, OwO it is nyot simpwe t-to cweate ouw own twittewmoduwe t-that both extends the
+  // t-thwiftwebfowmsmoduwe a-and consumes an injected fwag. 😳
+  pwivate fwag<stwing> envfwag = fwag().cweate("enviwonment", 😳😳😳
+      "", (˘ω˘)
+      "enviwonment fow sewvice (pwod, ʘwʘ staging, ( ͡o ω ͡o ) staging1, d-devew)", o.O
+      f-fwaggabwe.ofstwing());
 
-  FeatureUpdateServiceThriftServer(String[] args) {
-    BuildInfoStats.export();
-    PlatformStatsExporter.exportPlatformStats();
+  featuweupdatesewvicethwiftsewvew(stwing[] awgs) {
+    b-buiwdinfostats.expowt();
+    p-pwatfowmstatsexpowtew.expowtpwatfowmstats();
 
-    flag().parseArgs(args, true);
+    f-fwag().pawseawgs(awgs, >w< twue);
   }
 
-  @Override
-  @SuppressWarnings("unchecked")
-  public Collection<Module> javaModules() {
-    List<Module> modules = new ArrayList<>();
-    modules.addAll(Arrays.asList(
-        ThriftClientIdModule$.MODULE$,
-        DeciderModule$.MODULE$,
-        new ClientIdWhitelistModule(),
-        new FinagleKafkaProducerModule(),
-        new EarlybirdUtilModule(),
-        new FuturePoolModule(),
-        new FeatureUpdateServiceDiffyModule(),
-        new TweetypieModule()));
+  @ovewwide
+  @suppwesswawnings("unchecked")
+  pubwic cowwection<moduwe> javamoduwes() {
+    w-wist<moduwe> moduwes = nyew awwaywist<>();
+    moduwes.addaww(awways.aswist(
+        thwiftcwientidmoduwe$.moduwe$, 😳
+        d-decidewmoduwe$.moduwe$, 🥺
+        nyew cwientidwhitewistmoduwe(), rawr x3
+        n-nyew finagwekafkapwoducewmoduwe(), o.O
+        n-new eawwybiwdutiwmoduwe(), rawr
+        n-nyew futuwepoowmoduwe(), ʘwʘ
+        nyew featuweupdatesewvicediffymoduwe(), 😳😳😳
+        n-nyew tweetypiemoduwe()));
 
-    // Only add the Thrift Web Forms module for non-prod services because we should
-    // not allow write access to production data through Thrift Web Forms.
-    String environment = envFlag.apply();
-    if ("prod".equals(environment)) {
-      LOG.info("Not including Thrift Web Forms because the environment is prod");
-    } else {
-      LOG.info("Including Thrift Web Forms because the environment is " + environment);
-      modules.add(
-        MtlsThriftWebFormsModule.create(
-          this,
-          FeatureUpdateService.ServiceIface.class,
-          MethodOptionsAccessConfig.byLdapGroup(SearchThriftWebFormsAccess.WRITE_LDAP_GROUP)
+    // o-onwy add t-the thwift web f-fowms moduwe fow nyon-pwod sewvices because we s-shouwd
+    // nyot a-awwow wwite access t-to pwoduction d-data thwough t-thwift web fowms. ^^;;
+    stwing enviwonment = envfwag.appwy();
+    if ("pwod".equaws(enviwonment)) {
+      w-wog.info("not incwuding thwift web fowms because the enviwonment is pwod");
+    } ewse {
+      w-wog.info("incwuding thwift web fowms because the enviwonment i-is " + enviwonment);
+      m-moduwes.add(
+        m-mtwsthwiftwebfowmsmoduwe.cweate(
+          this, o.O
+          f-featuweupdatesewvice.sewviceiface.cwass, (///ˬ///✿)
+          methodoptionsaccessconfig.bywdapgwoup(seawchthwiftwebfowmsaccess.wwite_wdap_gwoup)
         )
       );
     }
 
-    return modules;
+    w-wetuwn moduwes;
   }
 
-  @Override
-  public void configureThrift(JavaThriftRouter router) {
-    router
-        // Initialize Mapped Diagnostic Context (MDC) for logging
-        // (see https://logback.qos.ch/manual/mdc.html)
-        .filter(LoggingMDCFilter.class)
-        // Inject trace ID in MDC for logging
-        .filter(TraceIdMDCFilter.class)
-        // Inject request method and client ID in MDC for logging
-        .filter(ThriftMDCFilter.class)
-        // Log client access
-        .filter(AccessLoggingFilter.class)
-        // Export basic service stats
-        .filter(StatsFilter.class)
-        .filter(ClientIdWhitelistFilter.class)
-        .add(FeatureUpdateController.class);
+  @ovewwide
+  p-pubwic void configuwethwift(javathwiftwoutew woutew) {
+    woutew
+        // initiawize mapped diagnostic c-context (mdc) fow wogging
+        // (see h-https://wogback.qos.ch/manuaw/mdc.htmw)
+        .fiwtew(woggingmdcfiwtew.cwass)
+        // inject twace i-id in mdc fow w-wogging
+        .fiwtew(twaceidmdcfiwtew.cwass)
+        // inject wequest method a-and cwient id i-in mdc fow wogging
+        .fiwtew(thwiftmdcfiwtew.cwass)
+        // wog cwient a-access
+        .fiwtew(accesswoggingfiwtew.cwass)
+        // e-expowt basic sewvice stats
+        .fiwtew(statsfiwtew.cwass)
+        .fiwtew(cwientidwhitewistfiwtew.cwass)
+        .add(featuweupdatecontwowwew.cwass);
   }
 
-  @Override
-  public Service<byte[], byte[]> configureService(Service<byte[], byte[]> service) {
-    // Add the DarkTrafficFilter in "front" of the service being served.
-    return injector()
-        .instance(Filter.TypeAgnostic.class, DarkTrafficFilterType.class)
-        .andThen(service);
+  @ovewwide
+  pubwic sewvice<byte[], σωσ b-byte[]> configuwesewvice(sewvice<byte[], nyaa~~ b-byte[]> s-sewvice) {
+    // add the dawktwafficfiwtew i-in "fwont" o-of the sewvice being sewved. ^^;;
+    w-wetuwn injectow()
+        .instance(fiwtew.typeagnostic.cwass, ^•ﻌ•^ dawktwafficfiwtewtype.cwass)
+        .andthen(sewvice);
   }
 
-  @Override
-  public ThriftMux.Server configureThriftServer(ThriftMux.Server server) {
-    // This cast looks redundant, but it is required for pants to compile this file.
-    return (ThriftMux.Server) server.withResponseClassifier(new FeatureUpdateResponseClassifier());
+  @ovewwide
+  pubwic thwiftmux.sewvew configuwethwiftsewvew(thwiftmux.sewvew s-sewvew) {
+    // t-this cast wooks wedundant, σωσ but it is wequiwed f-fow pants to compiwe t-this fiwe. -.-
+    wetuwn (thwiftmux.sewvew) sewvew.withwesponsecwassifiew(new featuweupdatewesponsecwassifiew());
   }
 
-  @Override
-  public void postWarmup() {
-    super.postWarmup();
+  @ovewwide
+  p-pubwic void postwawmup() {
+    supew.postwawmup();
 
-    ExecutorServiceFuturePool futurePool = injector().instance(ExecutorServiceFuturePool.class);
-    Preconditions.checkNotNull(futurePool);
+    executowsewvicefutuwepoow futuwepoow = i-injectow().instance(executowsewvicefutuwepoow.cwass);
+    pweconditions.checknotnuww(futuwepoow);
 
-    onExit(() -> {
-      try {
-        futurePool.executor().shutdownNow();
+    onexit(() -> {
+      twy {
+        f-futuwepoow.executow().shutdownnow();
 
-        futurePool.executor().awaitTermination(10L, TimeUnit.SECONDS);
-      } catch (InterruptedException e) {
-        LOG.error("Interrupted while awaiting future pool termination", e);
+        f-futuwepoow.executow().awaittewmination(10w, ^^;; timeunit.seconds);
+      } catch (intewwuptedexception e) {
+        w-wog.ewwow("intewwupted w-whiwe awaiting futuwe poow tewmination", XD e);
       }
 
-      return null;
+      w-wetuwn nyuww;
     });
   }
 }

@@ -1,229 +1,229 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
+impowt java.io.ioexception;
+i-impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.hashmap;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.pwiowityqueue;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetEarlybirdSortingMode;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.facets.DummyFacetAccumulator;
-import com.twitter.search.core.earlybird.facets.FacetAccumulator;
-import com.twitter.search.core.earlybird.facets.FacetCountIterator;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.LanguageHistogram;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.AbstractResultsCollector;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher.FacetSearchResults;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
+impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
+impowt com.twittew.seawch.common.wanking.thwiftjava.thwiftfaceteawwybiwdsowtingmode;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.dummyfacetaccumuwatow;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetaccumuwatow;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetcountitewatow;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetidmap;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetidmap.facetfiewd;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.wanguagehistogwam;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.abstwactwesuwtscowwectow;
+impowt com.twittew.seawch.eawwybiwd.seawch.antigamingfiwtew;
+impowt com.twittew.seawch.eawwybiwd.seawch.eawwybiwdwuceneseawchew.facetseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcount;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetfiewdwesuwts;
 
-public class FacetResultsCollector extends
-    AbstractResultsCollector<FacetSearchRequestInfo, FacetSearchResults> {
+pubwic cwass facetwesuwtscowwectow e-extends
+    abstwactwesuwtscowwectow<facetseawchwequestinfo, facetseawchwesuwts> {
 
-  private final FacetScorer facetScorer;
-  private final ThriftFacetEarlybirdSortingMode sortingMode;
+  p-pwivate f-finaw facetscowew f-facetscowew;
+  p-pwivate finaw thwiftfaceteawwybiwdsowtingmode sowtingmode;
 
-  static class Accumulator {
-    protected final FacetAccumulator<ThriftFacetFieldResults>[] accumulators;
-    protected final FacetCountIterator accessor;
-    protected final FacetIDMap facetIDMap;
+  s-static cwass accumuwatow {
+    pwotected finaw facetaccumuwatow<thwiftfacetfiewdwesuwts>[] accumuwatows;
+    p-pwotected finaw facetcountitewatow accessow;
+    pwotected finaw facetidmap facetidmap;
 
-    Accumulator(FacetAccumulator<ThriftFacetFieldResults>[] accumulators,
-                FacetCountIterator accessor,
-                FacetIDMap facetIDMap) {
-      this.accumulators = accumulators;
-      this.accessor = accessor;
-      this.facetIDMap = facetIDMap;
+    accumuwatow(facetaccumuwatow<thwiftfacetfiewdwesuwts>[] a-accumuwatows, ( ͡o ω ͡o )
+                facetcountitewatow a-accessow, òωó
+                f-facetidmap f-facetidmap) {
+      this.accumuwatows = accumuwatows;
+      this.accessow = a-accessow;
+      t-this.facetidmap = facetidmap;
     }
 
-    FacetAccumulator<ThriftFacetFieldResults> getFacetAccumulator(String facetName) {
-      FacetField facet = facetIDMap.getFacetFieldByFacetName(facetName);
-      return accumulators[facet.getFacetId()];
+    f-facetaccumuwatow<thwiftfacetfiewdwesuwts> g-getfacetaccumuwatow(stwing facetname) {
+      f-facetfiewd facet = facetidmap.getfacetfiewdbyfacetname(facetname);
+      w-wetuwn accumuwatows[facet.getfacetid()];
     }
   }
 
-  private Accumulator currentAccumulator;
-  private List<Accumulator> segAccumulators;
-  private final HashingAndPruningFacetAccumulator.FacetComparator facetComparator;
+  pwivate accumuwatow c-cuwwentaccumuwatow;
+  pwivate w-wist<accumuwatow> segaccumuwatows;
+  p-pwivate f-finaw hashingandpwuningfacetaccumuwatow.facetcompawatow facetcompawatow;
 
   /**
-   * Creates a new FacetResultsCollector for the given facet search request.
+   * cweates a nyew facetwesuwtscowwectow fow the given facet seawch wequest. σωσ
    */
-  public FacetResultsCollector(
-      ImmutableSchemaInterface schema,
-      FacetSearchRequestInfo searchRequestInfo,
-      AntiGamingFilter antiGamingFilter,
-      EarlybirdSearcherStats searcherStats,
-      Clock clock,
-      int requestDebugInfo) {
-    super(schema, searchRequestInfo, clock, searcherStats, requestDebugInfo);
+  p-pubwic f-facetwesuwtscowwectow(
+      immutabweschemaintewface s-schema, (U ᵕ U❁)
+      f-facetseawchwequestinfo s-seawchwequestinfo,
+      antigamingfiwtew antigamingfiwtew, (✿oωo)
+      eawwybiwdseawchewstats s-seawchewstats, ^^
+      cwock cwock, ^•ﻌ•^
+      int wequestdebuginfo) {
+    supew(schema, XD s-seawchwequestinfo, :3 cwock, (ꈍᴗꈍ) s-seawchewstats, :3 wequestdebuginfo);
 
-    if (searchRequestInfo.rankingOptions != null
-        && searchRequestInfo.rankingOptions.isSetSortingMode()) {
-      this.sortingMode = searchRequestInfo.rankingOptions.getSortingMode();
-    } else {
-      this.sortingMode = ThriftFacetEarlybirdSortingMode.SORT_BY_WEIGHTED_COUNT;
+    i-if (seawchwequestinfo.wankingoptions != nyuww
+        && s-seawchwequestinfo.wankingoptions.issetsowtingmode()) {
+      this.sowtingmode = s-seawchwequestinfo.wankingoptions.getsowtingmode();
+    } e-ewse {
+      t-this.sowtingmode = t-thwiftfaceteawwybiwdsowtingmode.sowt_by_weighted_count;
     }
 
-    this.facetComparator = HashingAndPruningFacetAccumulator.getComparator(sortingMode);
-    this.facetScorer = createScorer(antiGamingFilter);
-    this.segAccumulators = new ArrayList<>();
+    this.facetcompawatow = hashingandpwuningfacetaccumuwatow.getcompawatow(sowtingmode);
+    t-this.facetscowew = c-cweatescowew(antigamingfiwtew);
+    t-this.segaccumuwatows = n-nyew awwaywist<>();
   }
 
-  @Override
-  public void startSegment() {
-    currentAccumulator = null;
+  @ovewwide
+  p-pubwic void stawtsegment() {
+    cuwwentaccumuwatow = nyuww;
   }
 
-  @Override
-  public void doCollect(long tweetID) throws IOException {
-    if (currentAccumulator == null) {
-      // Lazily create accumulators.  Most segment / query / facet combinations have no hits.
-      currentAccumulator = newPerSegmentAccumulator(currTwitterReader);
-      segAccumulators.add(currentAccumulator);
-      facetScorer.startSegment(currTwitterReader);
+  @ovewwide
+  p-pubwic void docowwect(wong tweetid) thwows ioexception {
+    if (cuwwentaccumuwatow == nyuww) {
+      // w-waziwy cweate accumuwatows. (U ﹏ U)  most segment / quewy / facet combinations h-have nyo h-hits. UwU
+      cuwwentaccumuwatow = n-nyewpewsegmentaccumuwatow(cuwwtwittewweadew);
+      segaccumuwatows.add(cuwwentaccumuwatow);
+      f-facetscowew.stawtsegment(cuwwtwittewweadew);
     }
-    facetScorer.incrementCounts(currentAccumulator, curDocId);
+    facetscowew.incwementcounts(cuwwentaccumuwatow, 😳😳😳 c-cuwdocid);
   }
 
-  @Override
-  public FacetSearchResults doGetResults() {
-    return new FacetSearchResults(this);
+  @ovewwide
+  p-pubwic facetseawchwesuwts dogetwesuwts() {
+    wetuwn nyew facetseawchwesuwts(this);
   }
 
   /**
-   * Returns the top-k facet results for the requested facetName.
+   * wetuwns the top-k f-facet wesuwts fow the wequested f-facetname.
    */
-  public ThriftFacetFieldResults getFacetResults(String facetName, int topK) {
-    int totalCount = 0;
-    final Map<String, ThriftFacetCount> map = new HashMap<>();
+  pubwic thwiftfacetfiewdwesuwts g-getfacetwesuwts(stwing f-facetname, XD int topk) {
+    int totawcount = 0;
+    finaw m-map<stwing, o.O t-thwiftfacetcount> map = nyew hashmap<>();
 
-    LanguageHistogram languageHistogram = new LanguageHistogram();
+    w-wanguagehistogwam w-wanguagehistogwam = nyew wanguagehistogwam();
 
-    for (Accumulator segAccumulator : segAccumulators) {
-      FacetAccumulator<ThriftFacetFieldResults> accumulator =
-          segAccumulator.getFacetAccumulator(facetName);
-      Preconditions.checkNotNull(accumulator);
+    fow (accumuwatow segaccumuwatow : segaccumuwatows) {
+      f-facetaccumuwatow<thwiftfacetfiewdwesuwts> a-accumuwatow =
+          s-segaccumuwatow.getfacetaccumuwatow(facetname);
+      pweconditions.checknotnuww(accumuwatow);
 
-      ThriftFacetFieldResults results = accumulator.getAllFacets();
-      if (results == null) {
+      t-thwiftfacetfiewdwesuwts wesuwts = a-accumuwatow.getawwfacets();
+      if (wesuwts == n-nyuww) {
         continue;
       }
 
-      totalCount += results.totalCount;
+      totawcount += wesuwts.totawcount;
 
-      // merge language histograms from different segments
-      languageHistogram.addAll(accumulator.getLanguageHistogram());
+      // mewge wanguage histogwams f-fwom diffewent s-segments
+      wanguagehistogwam.addaww(accumuwatow.getwanguagehistogwam());
 
-      for (ThriftFacetCount facetCount : results.getTopFacets()) {
-        String label = facetCount.getFacetLabel();
-        ThriftFacetCount oldCount = map.get(label);
-        if (oldCount != null) {
-          oldCount.setSimpleCount(oldCount.getSimpleCount() + facetCount.getSimpleCount());
-          oldCount.setWeightedCount(oldCount.getWeightedCount() + facetCount.getWeightedCount());
+      fow (thwiftfacetcount f-facetcount : w-wesuwts.gettopfacets()) {
+        stwing wabew = facetcount.getfacetwabew();
+        thwiftfacetcount o-owdcount = map.get(wabew);
+        if (owdcount != nyuww) {
+          owdcount.setsimpwecount(owdcount.getsimpwecount() + f-facetcount.getsimpwecount());
+          owdcount.setweightedcount(owdcount.getweightedcount() + facetcount.getweightedcount());
 
-          oldCount.setFacetCount(oldCount.getFacetCount() + facetCount.getFacetCount());
-          oldCount.setPenaltyCount(oldCount.getPenaltyCount() + facetCount.getPenaltyCount());
-        } else {
-          map.put(label, facetCount);
+          o-owdcount.setfacetcount(owdcount.getfacetcount() + f-facetcount.getfacetcount());
+          owdcount.setpenawtycount(owdcount.getpenawtycount() + facetcount.getpenawtycount());
+        } ewse {
+          m-map.put(wabew, (⑅˘꒳˘) f-facetcount);
         }
       }
     }
 
-    if (map.size() == 0 || totalCount == 0) {
-      // No results.
-      return null;
+    if (map.size() == 0 || totawcount == 0) {
+      // nyo wesuwts. 😳😳😳
+      w-wetuwn nyuww;
     }
 
-    // sort table wrt percentage
-    PriorityQueue<ThriftFacetCount> pq =
-        new PriorityQueue<>(map.size(), facetComparator.getThriftComparator(true));
-    pq.addAll(map.values());
+    // sowt tabwe wwt pewcentage
+    p-pwiowityqueue<thwiftfacetcount> pq =
+        nyew pwiowityqueue<>(map.size(), nyaa~~ facetcompawatow.getthwiftcompawatow(twue));
+    p-pq.addaww(map.vawues());
 
-    ThriftFacetFieldResults results = new ThriftFacetFieldResults();
-    results.setTopFacets(new ArrayList<>());
-    results.setTotalCount(totalCount);
+    thwiftfacetfiewdwesuwts w-wesuwts = nyew t-thwiftfacetfiewdwesuwts();
+    wesuwts.settopfacets(new awwaywist<>());
+    w-wesuwts.settotawcount(totawcount);
 
-    // Store merged language histogram into thrift object
-    for (Map.Entry<ThriftLanguage, Integer> entry
-        : languageHistogram.getLanguageHistogramAsMap().entrySet()) {
-      results.putToLanguageHistogram(entry.getKey(), entry.getValue());
+    // stowe mewged w-wanguage histogwam i-into thwift o-object
+    fow (map.entwy<thwiftwanguage, rawr integew> e-entwy
+        : w-wanguagehistogwam.getwanguagehistogwamasmap().entwyset()) {
+      wesuwts.puttowanguagehistogwam(entwy.getkey(), -.- entwy.getvawue());
     }
 
-    // Get top facets.
-    for (int i = 0; i < topK && i < map.size(); i++) {
-      ThriftFacetCount facetCount = pq.poll();
-      if (facetCount != null) {
-        results.addToTopFacets(facetCount);
+    // g-get top f-facets.
+    fow (int i-i = 0; i < topk && i < map.size(); i++) {
+      t-thwiftfacetcount facetcount = p-pq.poww();
+      i-if (facetcount != nyuww) {
+        wesuwts.addtotopfacets(facetcount);
       }
     }
-    return results;
+    wetuwn w-wesuwts;
   }
 
-  protected FacetScorer createScorer(AntiGamingFilter antiGamingFilter) {
-    if (searchRequestInfo.rankingOptions != null) {
-      return new DefaultFacetScorer(searchRequestInfo.getSearchQuery(),
-                                    searchRequestInfo.rankingOptions,
-                                    antiGamingFilter,
-                                    sortingMode);
-    } else {
-      return new FacetScorer() {
-        @Override
-        protected void startSegment(EarlybirdIndexSegmentAtomicReader reader) {
+  p-pwotected facetscowew c-cweatescowew(antigamingfiwtew a-antigamingfiwtew) {
+    if (seawchwequestinfo.wankingoptions != n-nyuww) {
+      wetuwn nyew defauwtfacetscowew(seawchwequestinfo.getseawchquewy(), (✿oωo)
+                                    seawchwequestinfo.wankingoptions, /(^•ω•^)
+                                    antigamingfiwtew,
+                                    sowtingmode);
+    } e-ewse {
+      wetuwn n-new facetscowew() {
+        @ovewwide
+        pwotected void stawtsegment(eawwybiwdindexsegmentatomicweadew w-weadew) {
         }
 
-        @Override
-        public void incrementCounts(Accumulator accumulator, int internalDocID) throws IOException {
-          accumulator.accessor.incrementData.accumulators = accumulator.accumulators;
-          accumulator.accessor.incrementData.weightedCountIncrement = 1;
-          accumulator.accessor.incrementData.penaltyIncrement = 0;
-          accumulator.accessor.incrementData.languageId = ThriftLanguage.UNKNOWN.getValue();
-          accumulator.accessor.collect(internalDocID);
+        @ovewwide
+        pubwic v-void incwementcounts(accumuwatow accumuwatow, 🥺 i-int intewnawdocid) t-thwows ioexception {
+          a-accumuwatow.accessow.incwementdata.accumuwatows = a-accumuwatow.accumuwatows;
+          a-accumuwatow.accessow.incwementdata.weightedcountincwement = 1;
+          accumuwatow.accessow.incwementdata.penawtyincwement = 0;
+          accumuwatow.accessow.incwementdata.wanguageid = thwiftwanguage.unknown.getvawue();
+          accumuwatow.accessow.cowwect(intewnawdocid);
         }
 
-        @Override
-        public FacetAccumulator getFacetAccumulator(FacetLabelProvider labelProvider) {
-          return new HashingAndPruningFacetAccumulator(labelProvider, facetComparator);
+        @ovewwide
+        pubwic facetaccumuwatow getfacetaccumuwatow(facetwabewpwovidew w-wabewpwovidew) {
+          wetuwn n-nyew hashingandpwuningfacetaccumuwatow(wabewpwovidew, ʘwʘ f-facetcompawatow);
         }
       };
     }
   }
 
-  protected Accumulator newPerSegmentAccumulator(EarlybirdIndexSegmentAtomicReader indexReader) {
-    final FacetIDMap facetIDMap = indexReader.getFacetIDMap();
-    final FacetCountIterator accessor =
-        indexReader.getFacetCountingArray().getIterator(
-            indexReader,
-            getSearchRequestInfo().getFacetCountState(),
-            TweetSearchFacetCountIteratorFactory.FACTORY);
+  pwotected a-accumuwatow nyewpewsegmentaccumuwatow(eawwybiwdindexsegmentatomicweadew indexweadew) {
+    finaw facetidmap f-facetidmap = i-indexweadew.getfacetidmap();
+    finaw facetcountitewatow a-accessow =
+        indexweadew.getfacetcountingawway().getitewatow(
+            indexweadew, UwU
+            g-getseawchwequestinfo().getfacetcountstate(), XD
+            t-tweetseawchfacetcountitewatowfactowy.factowy);
 
-    final FacetAccumulator<ThriftFacetFieldResults>[] accumulators =
-        (FacetAccumulator<ThriftFacetFieldResults>[])
-            new FacetAccumulator[facetIDMap.getNumberOfFacetFields()];
+    finaw facetaccumuwatow<thwiftfacetfiewdwesuwts>[] a-accumuwatows =
+        (facetaccumuwatow<thwiftfacetfiewdwesuwts>[])
+            n-new facetaccumuwatow[facetidmap.getnumbewoffacetfiewds()];
 
-    Map<String, FacetLabelProvider> labelProviders = indexReader.getFacetLabelProviders();
-    for (FacetField f : facetIDMap.getFacetFields()) {
-      int id = f.getFacetId();
-      if (getSearchRequestInfo().getFacetCountState().isCountField(f.getFieldInfo())) {
-        accumulators[id] = (FacetAccumulator<ThriftFacetFieldResults>) facetScorer
-                .getFacetAccumulator(labelProviders.get(f.getFacetName()));
-      } else {
-        // Dummmy accumulator does nothing.
-        accumulators[id] = new DummyFacetAccumulator();
+    map<stwing, (✿oωo) facetwabewpwovidew> wabewpwovidews = indexweadew.getfacetwabewpwovidews();
+    fow (facetfiewd f : f-facetidmap.getfacetfiewds()) {
+      i-int id = f-f.getfacetid();
+      i-if (getseawchwequestinfo().getfacetcountstate().iscountfiewd(f.getfiewdinfo())) {
+        a-accumuwatows[id] = (facetaccumuwatow<thwiftfacetfiewdwesuwts>) facetscowew
+                .getfacetaccumuwatow(wabewpwovidews.get(f.getfacetname()));
+      } e-ewse {
+        // d-dummmy accumuwatow does nyothing. :3
+        a-accumuwatows[id] = nyew d-dummyfacetaccumuwatow();
       }
     }
 
-    return new Accumulator(accumulators, accessor, facetIDMap);
+    wetuwn nyew accumuwatow(accumuwatows, (///ˬ///✿) a-accessow, nyaa~~ facetidmap);
   }
 }

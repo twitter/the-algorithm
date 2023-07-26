@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+package com.twittew.pwoduct_mixew.cowe.pipewine.scowing
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.candidate_featuwe_hydwatow_executow.candidatefeatuwehydwatowexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.gate_executow.gateexecutow
+i-impowt com.twittew.pwoduct_mixew.cowe.sewvice.sewectow_executow.sewectowexecutow
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class ScoringPipelineBuilderFactory @Inject() (
-  gateExecutor: GateExecutor,
-  selectorExecutor: SelectorExecutor,
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor,
-  statsReceiver: StatsReceiver) {
+@singweton
+cwass scowingpipewinebuiwdewfactowy @inject() (
+  gateexecutow: gateexecutow, 😳
+  sewectowexecutow: s-sewectowexecutow, XD
+  candidatefeatuwehydwatowexecutow: candidatefeatuwehydwatowexecutow, :3
+  statsweceivew: s-statsweceivew) {
 
   def get[
-    Query <: PipelineQuery,
-    Candidate <: UniversalNoun[Any]
-  ]: ScoringPipelineBuilder[Query, Candidate] = {
-    new ScoringPipelineBuilder[Query, Candidate](
-      gateExecutor,
-      selectorExecutor,
-      candidateFeatureHydratorExecutor,
-      statsReceiver
+    q-quewy <: pipewinequewy, 😳😳😳
+    candidate <: univewsawnoun[any]
+  ]: scowingpipewinebuiwdew[quewy, -.- candidate] = {
+    n-nyew scowingpipewinebuiwdew[quewy, candidate](
+      g-gateexecutow, ( ͡o ω ͡o )
+      s-sewectowexecutow, rawr x3
+      candidatefeatuwehydwatowexecutow, nyaa~~
+      statsweceivew
     )
   }
 }

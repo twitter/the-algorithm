@@ -1,62 +1,62 @@
-include "flows.thrift"
-include "recently_engaged_user_id.thrift"
+incwude "fwows.thwift"
+incwude "wecentwy_engaged_usew_id.thwift"
 
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+nyamespace java c-com.twittew.fowwow_wecommendations.thwiftjava
+#@namespace s-scawa c-com.twittew.fowwow_wecommendations.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendations
 
-struct Profile {
-    1: required i64 profileId(personalDataType='UserId')
-}(hasPersonalData='true')
+s-stwuct pwofiwe {
+    1: wequiwed i-i64 pwofiweid(pewsonawdatatype='usewid')
+}(haspewsonawdata='twue')
 
-struct Search {
-    1: required string searchQuery(personalDataType='SearchQuery')
-}(hasPersonalData='true')
+s-stwuct seawch {
+    1: wequiwed stwing seawchquewy(pewsonawdatatype='seawchquewy')
+}(haspewsonawdata='twue')
 
-struct Rux {
-    1: required i64 focalAuthorId(personalDataType='UserId')
-}(hasPersonalData='true')
+stwuct w-wux {
+    1: wequiwed i64 focawauthowid(pewsonawdatatype='usewid')
+}(haspewsonawdata='twue')
 
-struct Topic {
-  1: required i64 topicId(personalDataType = 'TopicFollow')
-}(hasPersonalData='true')
+stwuct topic {
+  1: w-wequiwed i64 topicid(pewsonawdatatype = 'topicfowwow')
+}(haspewsonawdata='twue')
 
-struct ReactiveFollow {
-    1: required list<i64> followedUserIds(personalDataType='UserId')
-}(hasPersonalData='true')
+s-stwuct weactivefowwow {
+    1: wequiwed wist<i64> fowwowedusewids(pewsonawdatatype='usewid')
+}(haspewsonawdata='twue')
 
-struct NuxInterests {
-    1: optional flows.FlowContext flowContext // set for recommendation inside an interactive flow
-    2: optional list<i64> uttInterestIds // if provided, we use these interestIds for generating candidates instead of for example fetching user selected interests
-}(hasPersonalData='true')
+stwuct n-nyuxintewests {
+    1: optionaw f-fwows.fwowcontext f-fwowcontext // set fow wecommendation inside an intewactive fwow
+    2: optionaw w-wist<i64> uttintewestids // if pwovided, mya we use these intewestids fow genewating c-candidates instead of fow e-exampwe fetching u-usew sewected i-intewests
+}(haspewsonawdata='twue')
 
-struct AdCampaignTarget {
-    1: required list<i64> similarToUserIds(personalDataType='UserId')
-}(hasPersonalData='true')
+s-stwuct adcampaigntawget {
+    1: wequiwed wist<i64> simiwawtousewids(pewsonawdatatype='usewid')
+}(haspewsonawdata='twue')
 
-struct ConnectTab {
-    1: required list<i64> byfSeedUserIds(personalDataType='UserId')
-    2: required list<i64> similarToUserIds(personalDataType='UserId')
-    3: required list<recently_engaged_user_id.RecentlyEngagedUserId> recentlyEngagedUserIds
-}(hasPersonalData='true')
+s-stwuct connecttab {
+    1: wequiwed wist<i64> byfseedusewids(pewsonawdatatype='usewid')
+    2: w-wequiwed wist<i64> simiwawtousewids(pewsonawdatatype='usewid')
+    3: wequiwed wist<wecentwy_engaged_usew_id.wecentwyengagedusewid> wecentwyengagedusewids
+}(haspewsonawdata='twue')
 
-struct SimilarToUser {
-    1: required i64 similarToUserId(personalDataType='UserId')
-}(hasPersonalData='true')
+stwuct simiwawtousew {
+    1: wequiwed i64 s-simiwawtousewid(pewsonawdatatype='usewid')
+}(haspewsonawdata='twue')
 
-struct PostNuxFollowTask {
-    1: optional flows.FlowContext flowContext // set for recommendation inside an interactive flow
-}(hasPersonalData='true')
+stwuct postnuxfowwowtask {
+    1: o-optionaw f-fwows.fwowcontext f-fwowcontext // set fow wecommendation inside an intewactive f-fwow
+}(haspewsonawdata='twue')
 
-union DisplayContext {
-    1: Profile profile
-    2: Search search
-    3: Rux rux
-    4: Topic topic
-    5: ReactiveFollow reactiveFollow
-    6: NuxInterests nuxInterests
-    7: AdCampaignTarget adCampaignTarget
-    8: ConnectTab connectTab
-    9: SimilarToUser similarToUser
-    10: PostNuxFollowTask postNuxFollowTask
-}(hasPersonalData='true')
+u-union dispwaycontext {
+    1: pwofiwe p-pwofiwe
+    2: s-seawch seawch
+    3: wux wux
+    4: t-topic topic
+    5: weactivefowwow w-weactivefowwow
+    6: nuxintewests nyuxintewests
+    7: adcampaigntawget a-adcampaigntawget
+    8: connecttab c-connecttab
+    9: simiwawtousew s-simiwawtousew
+    10: p-postnuxfowwowtask postnuxfowwowtask
+}(haspewsonawdata='twue')

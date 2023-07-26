@@ -1,93 +1,93 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.offwine_aggwegates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType.AggregateType
-import com.twitter.timelines.suggests.common.dense_data_record.thriftjava.DenseCompactDataRecord
-import java.lang.{Long => JLong}
-import java.util.{Map => JMap}
+impowt c-com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.mw.api.iwecowdonetooneadaptew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegategwoup
+impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegatetype.aggwegatetype
+i-impowt com.twittew.timewines.suggests.common.dense_data_wecowd.thwiftjava.densecompactdatawecowd
+impowt java.wang.{wong => j-jwong}
+impowt java.utiw.{map => j-jmap}
 
-abstract case class BaseEdgeAggregateFeature(
-  aggregateGroups: Set[AggregateGroup],
-  aggregateType: AggregateType,
-  extractMapFn: AggregateFeaturesToDecodeWithMetadata => JMap[JLong, DenseCompactDataRecord],
-  adapter: IRecordOneToOneAdapter[Seq[DataRecord]],
-  getSecondaryKeysFn: CandidateWithFeatures[TweetCandidate] => Seq[Long])
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord
+abstwact case cwass baseedgeaggwegatefeatuwe(
+  aggwegategwoups: set[aggwegategwoup], (U ﹏ U)
+  aggwegatetype: aggwegatetype, mya
+  e-extwactmapfn: aggwegatefeatuwestodecodewithmetadata => jmap[jwong, ʘwʘ densecompactdatawecowd], (˘ω˘)
+  adaptew: iwecowdonetooneadaptew[seq[datawecowd]], (U ﹏ U)
+  g-getsecondawykeysfn: candidatewithfeatuwes[tweetcandidate] => seq[wong])
+    e-extends d-datawecowdinafeatuwe[pipewinequewy]
+    w-with f-featuwewithdefauwtonfaiwuwe[pipewinequewy, ^•ﻌ•^ datawecowd] {
+  ovewwide d-def defauwtvawue: datawecowd = nyew datawecowd
 
-  private val rootFeatureInfo = new AggregateFeatureInfo(aggregateGroups, aggregateType)
-  val featureContext: FeatureContext = rootFeatureInfo.featureContext
-  val rootFeature: BaseAggregateRootFeature = rootFeatureInfo.feature
+  p-pwivate vaw wootfeatuweinfo = nyew aggwegatefeatuweinfo(aggwegategwoups, (˘ω˘) aggwegatetype)
+  vaw featuwecontext: featuwecontext = w-wootfeatuweinfo.featuwecontext
+  vaw wootfeatuwe: b-baseaggwegatewootfeatuwe = w-wootfeatuweinfo.featuwe
 }
 
-trait BaseEdgeAggregateFeatureHydrator
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+t-twait baseedgeaggwegatefeatuwehydwatow
+    extends buwkcandidatefeatuwehydwatow[pipewinequewy, :3 tweetcandidate] {
 
-  def aggregateFeatures: Set[BaseEdgeAggregateFeature]
+  def aggwegatefeatuwes: s-set[baseedgeaggwegatefeatuwe]
 
-  override def features = aggregateFeatures.asInstanceOf[Set[Feature[_, _]]]
+  o-ovewwide def featuwes = a-aggwegatefeatuwes.asinstanceof[set[featuwe[_, ^^;; _]]]
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offload {
-    val featureMapBuilders: Seq[FeatureMapBuilder] =
-      for (_ <- candidates) yield FeatureMapBuilder()
+  o-ovewwide def appwy(
+    q-quewy: pipewinequewy, 🥺
+    candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[seq[featuwemap]] = offwoadfutuwepoows.offwoad {
+    v-vaw featuwemapbuiwdews: seq[featuwemapbuiwdew] =
+      f-fow (_ <- candidates) y-yiewd featuwemapbuiwdew()
 
-    aggregateFeatures.foreach { feature =>
-      val featureValues = hydrateAggregateFeature(query, candidates, feature)
-      (featureMapBuilders zip featureValues).foreach {
-        case (featureMapBuilder, featureValue) => featureMapBuilder.add(feature, featureValue)
+    aggwegatefeatuwes.foweach { f-featuwe =>
+      vaw featuwevawues = hydwateaggwegatefeatuwe(quewy, (⑅˘꒳˘) candidates, nyaa~~ featuwe)
+      (featuwemapbuiwdews zip featuwevawues).foweach {
+        c-case (featuwemapbuiwdew, :3 f-featuwevawue) => featuwemapbuiwdew.add(featuwe, ( ͡o ω ͡o ) f-featuwevawue)
       }
     }
 
-    featureMapBuilders.map(_.build())
+    f-featuwemapbuiwdews.map(_.buiwd())
   }
 
-  private def hydrateAggregateFeature(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]],
-    feature: BaseEdgeAggregateFeature
-  ): Seq[DataRecord] = {
-    val rootFeature = feature.rootFeature
-    val extractMapFn = feature.extractMapFn
-    val featureContext = feature.featureContext
-    val secondaryIds: Seq[Seq[Long]] = candidates.map(feature.getSecondaryKeysFn)
+  p-pwivate def hydwateaggwegatefeatuwe(
+    quewy: pipewinequewy, mya
+    candidates: s-seq[candidatewithfeatuwes[tweetcandidate]], (///ˬ///✿)
+    featuwe: baseedgeaggwegatefeatuwe
+  ): seq[datawecowd] = {
+    vaw wootfeatuwe = featuwe.wootfeatuwe
+    v-vaw extwactmapfn = f-featuwe.extwactmapfn
+    v-vaw featuwecontext = featuwe.featuwecontext
+    v-vaw secondawyids: seq[seq[wong]] = c-candidates.map(featuwe.getsecondawykeysfn)
 
-    val featuresToDecodeWithMetadata = query.features
-      .flatMap(_.getOrElse(rootFeature, None))
-      .getOrElse(AggregateFeaturesToDecodeWithMetadata.empty)
+    v-vaw f-featuwestodecodewithmetadata = q-quewy.featuwes
+      .fwatmap(_.getowewse(wootfeatuwe, (˘ω˘) nyone))
+      .getowewse(aggwegatefeatuwestodecodewithmetadata.empty)
 
-    // Decode the DenseCompactDataRecords into DataRecords for each required secondary id.
-    val decoded: Map[Long, DataRecord] = Utils.selectAndTransform(
-      secondaryIds.flatten.distinct,
-      featuresToDecodeWithMetadata.toDataRecord,
-      extractMapFn(featuresToDecodeWithMetadata)
+    // decode the d-densecompactdatawecowds i-into datawecowds f-fow each w-wequiwed secondawy i-id. ^^;;
+    vaw decoded: map[wong, (✿oωo) datawecowd] = utiws.sewectandtwansfowm(
+      s-secondawyids.fwatten.distinct, (U ﹏ U)
+      featuwestodecodewithmetadata.todatawecowd, -.-
+      extwactmapfn(featuwestodecodewithmetadata)
     )
 
-    // Remove unnecessary features in-place. This is safe because the underlying DataRecords
-    // are unique and have just been generated in the previous step.
-    decoded.values.foreach(Utils.filterDataRecord(_, featureContext))
+    // wemove unnecessawy featuwes in-pwace. ^•ﻌ•^ this is safe b-because the undewwying datawecowds
+    // awe unique and have j-just been genewated i-in the pwevious s-step. rawr
+    decoded.vawues.foweach(utiws.fiwtewdatawecowd(_, (˘ω˘) f-featuwecontext))
 
-    // Put features into the FeatureMapBuilders
-    secondaryIds.map { ids =>
-      val dataRecords = ids.flatMap(decoded.get)
-      feature.adapter.adaptToDataRecord(dataRecords)
+    // put featuwes i-into the f-featuwemapbuiwdews
+    secondawyids.map { ids =>
+      vaw datawecowds = ids.fwatmap(decoded.get)
+      featuwe.adaptew.adapttodatawecowd(datawecowds)
     }
   }
 }

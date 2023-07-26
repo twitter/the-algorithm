@@ -1,329 +1,329 @@
-package com.twitter.simclusters_v2.scalding
+package com.twittew.simcwustews_v2.scawding
 
-import com.twitter.algebird.Monoid
-import com.twitter.logging.Logger
-import com.twitter.scalding.{Execution, TypedPipe, TypedTsv}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import java.util
-import no.uib.cipr.matrix.Matrix
-import no.uib.cipr.matrix.sparse.{ArpackSym, LinkedSparseMatrix}
-import scala.collection.JavaConverters._
+impowt c-com.twittew.awgebiwd.monoid
+impowt c-com.twittew.wogging.woggew
+i-impowt com.twittew.scawding.{execution, ^^ t-typedpipe, ^•ﻌ•^ t-typedtsv}
+impowt c-com.twittew.scawding_intewnaw.job.twittewexecutionapp
+i-impowt c-com.twittew.simcwustews_v2.hdfs_souwces.adhockeyvawsouwces
+impowt java.utiw
+impowt nyo.uib.cipw.matwix.matwix
+impowt nyo.uib.cipw.matwix.spawse.{awpacksym, /(^•ω•^) w-winkedspawsematwix}
+impowt scawa.cowwection.javaconvewtews._
 
-object EigenVectorsForSparseSymmetric {
-  val log: Logger = Logger()
+object e-eigenvectowsfowspawsesymmetwic {
+  vaw wog: woggew = w-woggew()
 
   /**
-   * Construct matrix from the rows of the matrix, specified as a map. The outer map is indexed by rowId, and the inner maps are indexed by columnId.
-   * Note that the input matrix is intended to be symmetric.
+   * constwuct matwix fwom the wows of the m-matwix, ^^ specified as a map. 🥺 the o-outew map is i-indexed by wowid, (U ᵕ U❁) and the innew maps awe indexed by cowumnid. 😳😳😳
+   * nyote that the i-input matwix is intended to be symmetwic. nyaa~~
    *
-   * @param map   A map specifying the rows of the matrix. The outer map is indexed by rowId, and the inner maps are indexed by columnId. Both rows and columns are zero-indexed.
-   * @param nRows number of rows in matrix
-   * @param nCols number of columns in matrix
+   * @pawam map   a map specifying t-the wows of the matwix. (˘ω˘) the o-outew map is indexed b-by wowid, >_< and t-the innew maps a-awe indexed by cowumnid. XD both wows and cowumns a-awe zewo-indexed. rawr x3
+   * @pawam nywows nyumbew of wows in matwix
+   * @pawam n-nycows nyumbew of cowumns in matwix
    *
-   * @return the constructed matrix
+   * @wetuwn the constwucted matwix
    */
-  def getMatrix(map: Map[Int, Map[Int, Double]], nRows: Int, nCols: Int): Matrix = {
-    val nonzeros = map.toSeq.flatMap {
-      case (i, subMap) =>
-        subMap.toSeq.map {
-          case (j, value) =>
-            (i, j, value)
+  def getmatwix(map: m-map[int, ( ͡o ω ͡o ) map[int, :3 doubwe]], n-nywows: int, mya nycows: i-int): matwix = {
+    v-vaw nyonzewos = map.toseq.fwatmap {
+      case (i, σωσ submap) =>
+        submap.toseq.map {
+          c-case (j, (ꈍᴗꈍ) v-vawue) =>
+            (i, OwO j, vawue)
         }
     }
-    getMatrix(nonzeros, nRows, nCols)
+    g-getmatwix(nonzewos, o.O n-nywows, 😳😳😳 ncows)
   }
 
   /**
-   * Construct matrix from iterable of the non-zero entries. Note that the input matrix is intended to be symmetric.
+   * constwuct matwix f-fwom itewabwe of the nyon-zewo e-entwies. /(^•ω•^) nyote that the input matwix is intended t-to be symmetwic. OwO
    *
-   * @param nonzeros non-zeros in (i, j, v) format, where i is row, j is column, and v is value. Both rows and columns are zero-indexed.
-   * @param nRows    number of rows in matrix
-   * @param nCols    number of columns in matrix
+   * @pawam nyonzewos nyon-zewos i-in (i, ^^ j, v) fowmat, (///ˬ///✿) whewe i-i is wow, (///ˬ///✿) j i-is cowumn, (///ˬ///✿) and v is vawue. ʘwʘ both wows and cowumns awe zewo-indexed. ^•ﻌ•^
+   * @pawam nywows    nyumbew of wows in matwix
+   * @pawam nycows    nyumbew o-of cowumns in matwix
    *
-   * @return the constructed matrix
+   * @wetuwn t-the constwucted matwix
    */
-  def getMatrix(nonzeros: Iterable[(Int, Int, Double)], nRows: Int, nCols: Int): Matrix = {
-    val matrix = new LinkedSparseMatrix(nRows, nCols)
-    var numEntries = 0
-    var maxRow = 0
-    var maxCol = 0
+  d-def getmatwix(nonzewos: itewabwe[(int, OwO i-int, (U ﹏ U) d-doubwe)], nywows: int, (ˆ ﻌ ˆ)♡ nycows: int): matwix = {
+    vaw matwix = n-new winkedspawsematwix(nwows, (⑅˘꒳˘) nycows)
+    vaw nyumentwies = 0
+    vaw maxwow = 0
+    vaw maxcow = 0
 
-    nonzeros.foreach {
-      case (i, j, v) =>
-        if (i > maxRow) {
-          maxRow = i
+    n-nyonzewos.foweach {
+      case (i, (U ﹏ U) j-j, v) =>
+        i-if (i > maxwow) {
+          m-maxwow = i
         }
-        if (j > maxCol) {
-          maxCol = j
+        i-if (j > m-maxcow) {
+          m-maxcow = j
         }
-        numEntries += 1
-        matrix.set(i, j, v)
+        n-nyumentwies += 1
+        matwix.set(i, o.O j, mya v)
     }
-    log.info(
-      "Finished building matrix with %d entries and maxRow %d and maxCol %d"
-        .format(numEntries, maxRow, maxCol))
+    w-wog.info(
+      "finished b-buiwding matwix w-with %d entwies a-and maxwow %d a-and maxcow %d"
+        .fowmat(numentwies, XD maxwow, òωó maxcow))
 
-    matrix
+    matwix
   }
 
   /**
-   * Prints out various diagnostics about how much the given matrix differs from a perfect
-   * symmetric matrix. If (i,j) and (j,i) are different, it sets both of them to be the max of the two.
-   * Call this function before invoking EVD.
+   * p-pwints out vawious diagnostics about how much the given matwix diffews fwom a pewfect
+   * s-symmetwic matwix. (˘ω˘) if (i,j) and (j,i) awe diffewent, :3 it sets b-both of them to b-be the max of the t-two.
+   * caww this function b-befowe invoking evd. OwO
    *
-   * @param matrix Matrix which is modified (if need be) in place.
+   * @pawam m-matwix matwix w-which is modified (if nyeed be) in pwace. mya
    */
-  def ensureMatrixIsSymmetric(matrix: Matrix): Unit = {
-    var numUnequalEntries = 0
-    var numEntriesDifferentBy1Percent = 0
-    var numEqualEntries = 0
-    var numUnequalDueToZero = 0
-    var maxUnequal = (0, 0, 0.0, 0.0)
-    matrix.iterator().asScala.foreach { entry =>
-      val curr = entry.get()
-      val opp = matrix.get(entry.column(), entry.row())
-      if (curr == opp) {
-        numEqualEntries += 1
-      } else {
-        numUnequalEntries += 1
+  def ensuwematwixissymmetwic(matwix: matwix): unit = {
+    v-vaw nyumunequawentwies = 0
+    vaw nyumentwiesdiffewentby1pewcent = 0
+    v-vaw nyumequawentwies = 0
+    vaw nyumunequawduetozewo = 0
+    v-vaw maxunequaw = (0, (˘ω˘) 0, 0.0, 0.0)
+    m-matwix.itewatow().asscawa.foweach { entwy =>
+      vaw cuww = entwy.get()
+      v-vaw o-opp = matwix.get(entwy.cowumn(), o.O entwy.wow())
+      i-if (cuww == o-opp) {
+        nyumequawentwies += 1
+      } ewse {
+        numunequawentwies += 1
         if (opp == 0) {
-          numUnequalDueToZero += 1
+          nyumunequawduetozewo += 1
         }
-        if (opp != 0 && (math.abs(curr - opp) / math.min(curr, opp)) > 0.01) {
-          numEntriesDifferentBy1Percent += 1
+        i-if (opp != 0 && (math.abs(cuww - o-opp) / math.min(cuww, (✿oωo) o-opp)) > 0.01) {
+          nyumentwiesdiffewentby1pewcent += 1
         }
-        if (opp != 0 && math.abs(curr - opp) > maxUnequal._4) {
-          maxUnequal = (entry.row(), entry.column(), curr, math.abs(curr - opp))
+        i-if (opp != 0 && m-math.abs(cuww - opp) > m-maxunequaw._4) {
+          maxunequaw = (entwy.wow(), (ˆ ﻌ ˆ)♡ entwy.cowumn(), ^^;; cuww, math.abs(cuww - opp))
         }
-        val max = math.max(curr, opp)
-        matrix.set(entry.column(), entry.row(), max)
-        matrix.set(entry.row(), entry.column(), max)
+        v-vaw max = math.max(cuww, OwO o-opp)
+        matwix.set(entwy.cowumn(), 🥺 entwy.wow(), mya m-max)
+        m-matwix.set(entwy.wow(), 😳 entwy.cowumn(), òωó max)
       }
     }
 
-    var numUnEqualPrinted = 0
-    matrix.iterator().asScala.foreach { entry =>
-      val opp = matrix.get(entry.column(), entry.row())
-      if (numUnEqualPrinted < 10 && entry.get() != opp) {
-        numUnEqualPrinted += 1
-        log.info(
-          "Entries for (%d, %d) are %s and %s"
-            .format(entry.row(), entry.column(), entry.get(), opp))
+    vaw nyumunequawpwinted = 0
+    matwix.itewatow().asscawa.foweach { e-entwy =>
+      vaw opp = matwix.get(entwy.cowumn(), /(^•ω•^) entwy.wow())
+      if (numunequawpwinted < 10 && entwy.get() != o-opp) {
+        nyumunequawpwinted += 1
+        wog.info(
+          "entwies f-fow (%d, -.- %d) a-awe %s and %s"
+            .fowmat(entwy.wow(), òωó entwy.cowumn(), /(^•ω•^) entwy.get(), /(^•ω•^) opp))
       }
     }
 
-    log.info(
-      "Num unequal entries: %d, num unequal due to zero: %d, num unequal by 1percent or more: %d, num equal entries: %d, maxUnequal: %s"
-        .format(
-          numUnequalEntries,
-          numUnequalDueToZero,
-          numEntriesDifferentBy1Percent,
-          numEqualEntries,
-          maxUnequal))
+    wog.info(
+      "num u-unequaw e-entwies: %d, 😳 nyum unequaw due to zewo: %d, :3 nyum unequaw by 1pewcent o-ow mowe: %d, (U ᵕ U❁) num equaw entwies: %d, ʘwʘ m-maxunequaw: %s"
+        .fowmat(
+          nyumunequawentwies, o.O
+          nyumunequawduetozewo, ʘwʘ
+          nyumentwiesdiffewentby1pewcent, ^^
+          n-nyumequawentwies, ^•ﻌ•^
+          maxunequaw))
   }
 
   /**
-   * Get the top-k eigenvalues (largest magnitude) and eigenvectors for an input matrix.
-   * Top eigenvalues means they're the largest in magnitude.
-   * Input matrix needs to be perfectly symmetric; if it's not, this function will fail.
+   * g-get the top-k e-eigenvawues (wawgest magnitude) a-and eigenvectows fow an input m-matwix. mya
+   * t-top eigenvawues m-means they'we the wawgest in magnitude. UwU
+   * i-input m-matwix nyeeds to be pewfectwy symmetwic; if it's n-nyot, this function w-wiww faiw. >_<
    *
-   * Many of the eigenvectors will have very small values along most of the dimensions. This method also
-   * only retains the bigger entries in an eigenvector.
+   * m-many of the eigenvectows wiww have v-vewy smow vawues awong most of the d-dimensions. /(^•ω•^) this m-method awso
+   * onwy wetains the biggew entwies in an eigenvectow. òωó
    *
-   * @param matrix               symmetric input matrix.
-   * @param k                    how many of the top eigenvectors to get.
-   * @param ratioToLargestCutoff An entry needs to be at least 1/ratioToLargestCutoff of the biggest entry in that vector to be retained.
+   * @pawam m-matwix               s-symmetwic i-input matwix. σωσ
+   * @pawam k-k                    how many o-of the top eigenvectows to get. ( ͡o ω ͡o )
+   * @pawam watiotowawgestcutoff an entwy needs to be at weast 1/watiotowawgestcutoff of the biggest e-entwy in that vectow to be w-wetained. nyaa~~
    *
-   * @return seq of (eigenvalue, eigenvector) pairs.
+   * @wetuwn seq o-of (eigenvawue, eigenvectow) paiws. :3
    */
-  def getTruncatedEVD(
-    matrix: Matrix,
-    k: Int,
-    ratioToLargestCutoff: Float
-  ): Seq[(Double, Seq[(Int, Double)])] = {
-    val solver = new ArpackSym(matrix)
-    val resultsMap = solver.solve(k, ArpackSym.Ritz.LM).asScala.toMap
-    val results = resultsMap.toIndexedSeq.sortBy { case (eigValue, _) => -eigValue }
-    results.zipWithIndex.map {
-      case ((eigValue, denseVectorJava), index) =>
-        val denseVector = new Array[Double](denseVectorJava.size())
-        denseVector.indices.foreach { index => denseVector(index) = denseVectorJava.get(index) }
-        val denseVectorMax = denseVector.maxBy { entry => math.abs(entry) }
-        val cutOff = math.abs(denseVectorMax) / ratioToLargestCutoff
-        val significantEntries = denseVector.zipWithIndex
-          .filter { case (vectorEntry, _) => math.abs(vectorEntry) >= cutOff }
-          .sortBy { case (vectorEntry, _) => -1 * math.abs(vectorEntry) }
-        (eigValue.toDouble, significantEntries.toSeq.map(_.swap))
+  d-def gettwuncatedevd(
+    m-matwix: matwix, UwU
+    k-k: int, o.O
+    w-watiotowawgestcutoff: f-fwoat
+  ): s-seq[(doubwe, (ˆ ﻌ ˆ)♡ seq[(int, ^^;; doubwe)])] = {
+    vaw sowvew = nyew awpacksym(matwix)
+    vaw wesuwtsmap = sowvew.sowve(k, ʘwʘ awpacksym.witz.wm).asscawa.tomap
+    v-vaw w-wesuwts = wesuwtsmap.toindexedseq.sowtby { c-case (eigvawue, σωσ _) => -eigvawue }
+    wesuwts.zipwithindex.map {
+      c-case ((eigvawue, ^^;; densevectowjava), ʘwʘ index) =>
+        vaw densevectow = n-new awway[doubwe](densevectowjava.size())
+        d-densevectow.indices.foweach { index => d-densevectow(index) = densevectowjava.get(index) }
+        vaw d-densevectowmax = d-densevectow.maxby { entwy => m-math.abs(entwy) }
+        v-vaw cutoff = math.abs(densevectowmax) / watiotowawgestcutoff
+        vaw significantentwies = densevectow.zipwithindex
+          .fiwtew { c-case (vectowentwy, ^^ _) => m-math.abs(vectowentwy) >= c-cutoff }
+          .sowtby { c-case (vectowentwy, nyaa~~ _) => -1 * m-math.abs(vectowentwy) }
+        (eigvawue.todoubwe, (///ˬ///✿) significantentwies.toseq.map(_.swap))
     }
   }
 
   /**
-   * Compute U*Diag*Ut - where Diag is a diagonal matrix, and U is a sparse matrix.
-   * This is primarily for testing - to make sure that the computed eigenvectors can be used to
-   * reconstruct the original matrix up to some reasonable approximation.
+   * c-compute u*diag*ut - w-whewe diag is a diagonaw matwix, XD a-and u is a-a spawse matwix. :3
+   * this is pwimawiwy f-fow testing - to make suwe that the computed e-eigenvectows can be used to
+   * w-weconstwuct t-the owiginaw matwix up to some w-weasonabwe appwoximation. òωó
    *
-   * @param diagToUColumns seq of (diagonal entries, associated column in U)
-   * @param cutoff         cutoff for including a value in the result.
+   * @pawam diagtoucowumns seq of (diagonaw e-entwies, ^^ a-associated c-cowumn in u)
+   * @pawam cutoff         cutoff fow incwuding a vawue i-in the wesuwt. ^•ﻌ•^
    *
-   * @return result of multiplication, returned as a map of the rows in the results.
+   * @wetuwn wesuwt of muwtipwication, σωσ w-wetuwned as a map o-of the wows in the wesuwts. (ˆ ﻌ ˆ)♡
    */
-  def uTimesDiagTimesUT(
-    diagToUColumns: Seq[(Double, Seq[(Int, Double)])],
-    cutoff: Double
-  ): Map[Int, Map[Int, Double]] = {
-    val result = new util.HashMap[Int, util.HashMap[Int, Double]]()
-    diagToUColumns.foreach {
-      case (diag, uColumn) =>
-        uColumn.foreach {
-          case (i, iVal) =>
-            uColumn.foreach {
-              case (j, jVal) =>
-                val prod = diag * iVal * jVal
-                if (result.containsKey(i)) {
-                  val newVal = if (result.get(i).containsKey(j)) {
-                    result.get(i).get(j) + prod
-                  } else prod
-                  result.get(i).put(j, newVal)
-                } else {
-                  result.put(i, new util.HashMap[Int, Double])
-                  result.get(i).put(j, prod)
+  d-def utimesdiagtimesut(
+    diagtoucowumns: s-seq[(doubwe, nyaa~~ seq[(int, ʘwʘ d-doubwe)])], ^•ﻌ•^
+    cutoff: doubwe
+  ): map[int, rawr x3 m-map[int, doubwe]] = {
+    vaw wesuwt = nyew utiw.hashmap[int, 🥺 u-utiw.hashmap[int, ʘwʘ d-doubwe]]()
+    diagtoucowumns.foweach {
+      c-case (diag, (˘ω˘) ucowumn) =>
+        ucowumn.foweach {
+          case (i, i-ivaw) =>
+            u-ucowumn.foweach {
+              c-case (j, o.O jvaw) =>
+                vaw pwod = diag * ivaw * jvaw
+                if (wesuwt.containskey(i)) {
+                  vaw nyewvaw = if (wesuwt.get(i).containskey(j)) {
+                    wesuwt.get(i).get(j) + pwod
+                  } ewse pwod
+                  wesuwt.get(i).put(j, σωσ nyewvaw)
+                } ewse {
+                  w-wesuwt.put(i, (ꈍᴗꈍ) n-nyew utiw.hashmap[int, (ˆ ﻌ ˆ)♡ doubwe])
+                  wesuwt.get(i).put(j, o.O p-pwod)
                 }
             }
         }
     }
-    val unfiltered = result.asScala.toMap.mapValues(_.asScala.toMap)
-    unfiltered
-      .mapValues { m => m.filter { case (_, value) => math.abs(value) >= cutoff } }
-      .filter { case (_, vector) => vector.nonEmpty }
+    v-vaw unfiwtewed = w-wesuwt.asscawa.tomap.mapvawues(_.asscawa.tomap)
+    unfiwtewed
+      .mapvawues { m-m => m.fiwtew { case (_, :3 v-vawue) => math.abs(vawue) >= cutoff } }
+      .fiwtew { c-case (_, -.- vectow) => vectow.nonempty }
   }
 
-  /** Note: This requires a full EVD to correctly compute the inverse! :-( */
-  def getInverseFromEVD(
-    evd: Seq[(Double, Seq[(Int, Double)])],
-    cutoff: Double
-  ): Map[Int, Map[Int, Double]] = {
-    val evdInverse = evd.map {
-      case (eigValue, eigVector) =>
-        (1.0 / eigValue, eigVector)
+  /** n-nyote: this wequiwes a-a fuww evd to cowwectwy c-compute the invewse! ( ͡o ω ͡o ) :-( */
+  def getinvewsefwomevd(
+    e-evd: seq[(doubwe, /(^•ω•^) s-seq[(int, (⑅˘꒳˘) doubwe)])], òωó
+    c-cutoff: d-doubwe
+  ): m-map[int, 🥺 map[int, (ˆ ﻌ ˆ)♡ d-doubwe]] = {
+    v-vaw evdinvewse = e-evd.map {
+      c-case (eigvawue, -.- eigvectow) =>
+        (1.0 / e-eigvawue, σωσ eigvectow)
     }
-    uTimesDiagTimesUT(evdInverse, cutoff)
+    u-utimesdiagtimesut(evdinvewse, >_< cutoff)
   }
 }
 
-object PCAProjectionMatrixAdhoc extends TwitterExecutionApp {
-  val log = Logger()
+o-object pcapwojectionmatwixadhoc e-extends twittewexecutionapp {
+  vaw w-wog = woggew()
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, _) =>
-        Execution.withId { _ =>
-          val args = config.getArgs
-          val k = args.int("k", 100)
-          val ratioToLargestEntryInVectorCutoff = args.int("ratioToLargestEntryInVectorCutoff", 100)
-          val minClusterFavers = args.int("minClusterFavers", 1000)
-          val input = TypedPipe.from(AdhocKeyValSources.clusterDetailsSource(args("inputDir")))
-          val outputDir = args("outputDir")
+  def job: execution[unit] =
+    e-execution.getconfigmode.fwatmap {
+      c-case (config, :3 _) =>
+        e-execution.withid { _ =>
+          vaw awgs = c-config.getawgs
+          vaw k-k = awgs.int("k", OwO 100)
+          vaw watiotowawgestentwyinvectowcutoff = a-awgs.int("watiotowawgestentwyinvectowcutoff", rawr 100)
+          vaw mincwustewfavews = a-awgs.int("mincwustewfavews", (///ˬ///✿) 1000)
+          vaw input = typedpipe.fwom(adhockeyvawsouwces.cwustewdetaiwssouwce(awgs("inputdiw")))
+          vaw outputdiw = awgs("outputdiw")
 
-          val filteredClustersExec =
+          v-vaw fiwtewedcwustewsexec =
             input
-              .collect {
-                case ((_, clusterId), details)
-                    if details.numUsersWithNonZeroFavScore > minClusterFavers =>
-                  clusterId
+              .cowwect {
+                case ((_, ^^ c-cwustewid), XD d-detaiws)
+                    if detaiws.numusewswithnonzewofavscowe > mincwustewfavews =>
+                  cwustewid
               }
-              .toIterableExecution
-              .map { fc =>
-                val fcSet = fc.toSet
-                log.info("Number of clusters with favers more than %d is %d"
-                  .format(minClusterFavers, fcSet.size))
-                fcSet
+              .toitewabweexecution
+              .map { f-fc =>
+                vaw fcset = f-fc.toset
+                w-wog.info("numbew o-of cwustews with favews mowe than %d i-is %d"
+                  .fowmat(mincwustewfavews, UwU f-fcset.size))
+                fcset
               }
 
-          filteredClustersExec
-            .flatMap { filteredClusters =>
-              input.flatMap {
-                case ((_, clusterId), details) =>
-                  if (filteredClusters(clusterId)) {
-                    details.neighborClusters.getOrElse(Nil).collect {
-                      case neighbor
-                          if filteredClusters(
-                            neighbor.clusterId) && neighbor.favCosineSimilarity.isDefined =>
-                        (clusterId, neighbor.clusterId, neighbor.favCosineSimilarity.get)
+          f-fiwtewedcwustewsexec
+            .fwatmap { fiwtewedcwustews =>
+              input.fwatmap {
+                c-case ((_, cwustewid), o.O detaiws) =>
+                  i-if (fiwtewedcwustews(cwustewid)) {
+                    d-detaiws.neighbowcwustews.getowewse(niw).cowwect {
+                      c-case nyeighbow
+                          if f-fiwtewedcwustews(
+                            nyeighbow.cwustewid) && n-nyeighbow.favcosinesimiwawity.isdefined =>
+                        (cwustewid, 😳 n-nyeighbow.cwustewid, (˘ω˘) n-nyeighbow.favcosinesimiwawity.get)
                     }
-                  } else Nil
-              }.toIterableExecution
+                  } ewse nyiw
+              }.toitewabweexecution
             }
-            .flatMap { edgesIter =>
-              val edges = edgesIter.toSeq
-              val oldIdToNewId = edges
-                .flatMap { case (i, j, _) => Seq(i, j) }
+            .fwatmap { e-edgesitew =>
+              v-vaw edges = e-edgesitew.toseq
+              v-vaw owdidtonewid = e-edges
+                .fwatmap { c-case (i, 🥺 j, _) => s-seq(i, ^^ j) }
                 .distinct
-                .zipWithIndex
-                .toMap
+                .zipwithindex
+                .tomap
 
-              val mapString = oldIdToNewId.toList
+              v-vaw mapstwing = owdidtonewid.towist
                 .take(5).map {
-                  case (old, nw) =>
-                    Seq(old, nw).mkString(" ")
-                }.mkString("\n")
-              log.info("A few entries of OldId to NewId map is")
-              log.info(mapString)
+                  c-case (owd, >w< nyw) =>
+                    s-seq(owd, ^^;; nyw).mkstwing(" ")
+                }.mkstwing("\n")
+              w-wog.info("a f-few entwies of o-owdid to nyewid map is")
+              wog.info(mapstwing)
 
-              val newIdToOldId = oldIdToNewId.map(_.swap)
-              log.info(
-                "Num clusters after filtering out those with no neighbors with favers more than %d is %d"
-                  .format(minClusterFavers, oldIdToNewId.size))
-              val newEdges = edges.map {
-                case (oldI, oldJ, value) =>
-                  (oldIdToNewId(oldI), oldIdToNewId(oldJ), value)
+              vaw n-nyewidtoowdid = o-owdidtonewid.map(_.swap)
+              w-wog.info(
+                "num cwustews aftew fiwtewing out those with nyo n-nyeighbows with f-favews mowe than %d is %d"
+                  .fowmat(mincwustewfavews, (˘ω˘) o-owdidtonewid.size))
+              v-vaw nyewedges = edges.map {
+                case (owdi, OwO owdj, (ꈍᴗꈍ) vawue) =>
+                  (owdidtonewid(owdi), òωó o-owdidtonewid(owdj), ʘwʘ v-vawue)
               }
-              log.info("Going to build matrix")
-              val matrix = EigenVectorsForSparseSymmetric.getMatrix(
-                newEdges,
-                oldIdToNewId.size,
-                oldIdToNewId.size)
-              EigenVectorsForSparseSymmetric.ensureMatrixIsSymmetric(matrix)
+              w-wog.info("going t-to buiwd matwix")
+              vaw matwix = eigenvectowsfowspawsesymmetwic.getmatwix(
+                n-nyewedges, ʘwʘ
+                o-owdidtonewid.size, nyaa~~
+                owdidtonewid.size)
+              eigenvectowsfowspawsesymmetwic.ensuwematwixissymmetwic(matwix)
 
-              log.info("Going to solve now for %d eigenvalues".format(k))
-              val tic = System.currentTimeMillis()
-              val results = EigenVectorsForSparseSymmetric.getTruncatedEVD(
-                matrix,
-                k,
-                ratioToLargestEntryInVectorCutoff)
-              val toc = System.currentTimeMillis()
-              log.info("Finished solving in %.2f minutes".format((toc - tic) / 1000 / 60.0))
+              w-wog.info("going to sowve nyow fow %d eigenvawues".fowmat(k))
+              v-vaw tic = system.cuwwenttimemiwwis()
+              vaw wesuwts = e-eigenvectowsfowspawsesymmetwic.gettwuncatedevd(
+                m-matwix, UwU
+                k, (⑅˘꒳˘)
+                w-watiotowawgestentwyinvectowcutoff)
+              vaw t-toc = system.cuwwenttimemiwwis()
+              wog.info("finished s-sowving in %.2f minutes".fowmat((toc - t-tic) / 1000 / 60.0))
 
-              val eigValues = results.map(_._1).map { x => "%.3g".format(x) }.mkString(" ")
-              val eigValueNorm = math.sqrt(results.map(_._1).map(x => x * x).sum)
-              val matrixNorm = math.sqrt(matrix.iterator().asScala.map(_.get()).map(x => x * x).sum)
+              v-vaw eigvawues = w-wesuwts.map(_._1).map { x-x => "%.3g".fowmat(x) }.mkstwing(" ")
+              vaw e-eigvawuenowm = math.sqwt(wesuwts.map(_._1).map(x => x-x * x).sum)
+              v-vaw matwixnowm = math.sqwt(matwix.itewatow().asscawa.map(_.get()).map(x => x-x * x).sum)
 
-              println(
-                "matrixNorm %s, eigValueNorm %s, explained fraction %s"
-                  .format(matrixNorm, eigValueNorm, eigValueNorm / matrixNorm))
+              pwintwn(
+                "matwixnowm %s, (˘ω˘) eigvawuenowm %s, :3 e-expwained f-fwaction %s"
+                  .fowmat(matwixnowm, (˘ω˘) e-eigvawuenowm, nyaa~~ eigvawuenowm / matwixnowm))
 
-              log.info("The eigenvalues are:")
-              log.info(eigValues)
+              wog.info("the eigenvawues awe:")
+              w-wog.info(eigvawues)
 
-              val nnzInEigenVectors = results.map(_._2.size).sum
-              log.info("Average nnz per eigenvector using ratioToLargestCutoff %d is %.2g"
-                .format(ratioToLargestEntryInVectorCutoff, nnzInEigenVectors * 1.0 / results.size))
-              val transposedRaw = results.zipWithIndex.flatMap {
-                case ((_, eigVector), eigIndex) =>
-                  eigVector.map {
-                    case (index, vectorEntry) =>
-                      val clusterId = newIdToOldId(index)
-                      Map(clusterId -> List((eigIndex, vectorEntry)))
+              vaw nynzineigenvectows = wesuwts.map(_._2.size).sum
+              w-wog.info("avewage n-nynz pew eigenvectow using watiotowawgestcutoff %d i-is %.2g"
+                .fowmat(watiotowawgestentwyinvectowcutoff, (U ﹏ U) nnzineigenvectows * 1.0 / w-wesuwts.size))
+              v-vaw twansposedwaw = w-wesuwts.zipwithindex.fwatmap {
+                c-case ((_, nyaa~~ e-eigvectow), ^^;; eigindex) =>
+                  eigvectow.map {
+                    case (index, OwO vectowentwy) =>
+                      v-vaw cwustewid = nyewidtoowdid(index)
+                      m-map(cwustewid -> wist((eigindex, nyaa~~ vectowentwy)))
                   }
               }
-              val transposed = Monoid.sum(transposedRaw).mapValues { rowForCluster =>
-                rowForCluster
+              vaw twansposed = m-monoid.sum(twansposedwaw).mapvawues { wowfowcwustew =>
+                wowfowcwustew
                   .map {
-                    case (dimId, weight) =>
-                      "%d:%.2g".format(dimId, weight)
-                  }.mkString(" ")
+                    case (dimid, UwU weight) =>
+                      "%d:%.2g".fowmat(dimid, 😳 w-weight)
+                  }.mkstwing(" ")
               }
-              TypedPipe.from(transposed.toSeq).writeExecution(TypedTsv(outputDir))
+              t-typedpipe.fwom(twansposed.toseq).wwiteexecution(typedtsv(outputdiw))
             }
         }
     }

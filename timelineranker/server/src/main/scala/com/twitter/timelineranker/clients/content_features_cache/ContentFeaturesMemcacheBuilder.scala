@@ -1,39 +1,39 @@
-package com.twitter.timelineranker.clients.content_features_cache
+package com.twittew.timewinewankew.cwients.content_featuwes_cache
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.clients.memcache_common._
-import com.twitter.timelines.content_features.{thriftscala => thrift}
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Duration
+impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.bijection.scwooge.compactscawacodec
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.stowehaus.stowe
+i-impowt com.twittew.timewinewankew.wecap.modew.contentfeatuwes
+i-impowt com.twittew.timewines.cwients.memcache_common._
+i-impowt com.twittew.timewines.content_featuwes.{thwiftscawa => t-thwift}
+impowt com.twittew.timewines.modew.tweetid
+impowt com.twittew.utiw.duwation
 
 /**
- * Content features will be stored by tweetId
+ * content featuwes wiww be stowed b-by tweetid
  */
-class ContentFeaturesMemcacheBuilder(
-  config: StorehausMemcacheConfig,
-  ttl: Duration,
-  statsReceiver: StatsReceiver) {
-  private[this] val scalaToThriftInjection: Injection[ContentFeatures, thrift.ContentFeatures] =
-    Injection.build[ContentFeatures, thrift.ContentFeatures](_.toThrift)(
-      ContentFeatures.tryFromThrift)
+cwass contentfeatuwesmemcachebuiwdew(
+  config: s-stowehausmemcacheconfig, mya
+  ttw: d-duwation,
+  statsweceivew: statsweceivew) {
+  pwivate[this] vaw s-scawatothwiftinjection: injection[contentfeatuwes, 🥺 t-thwift.contentfeatuwes] =
+    i-injection.buiwd[contentfeatuwes, >_< thwift.contentfeatuwes](_.tothwift)(
+      contentfeatuwes.twyfwomthwift)
 
-  private[this] val thriftToBytesInjection: Injection[thrift.ContentFeatures, Array[Byte]] =
-    CompactScalaCodec(thrift.ContentFeatures)
+  pwivate[this] vaw thwifttobytesinjection: i-injection[thwift.contentfeatuwes, >_< awway[byte]] =
+    compactscawacodec(thwift.contentfeatuwes)
 
-  private[this] implicit val valueInjection: Injection[ContentFeatures, Array[Byte]] =
-    scalaToThriftInjection.andThen(thriftToBytesInjection)
+  pwivate[this] impwicit v-vaw vawueinjection: injection[contentfeatuwes, (⑅˘꒳˘) a-awway[byte]] =
+    s-scawatothwiftinjection.andthen(thwifttobytesinjection)
 
-  private[this] val underlyingBuilder =
-    new MemcacheStoreBuilder[TweetId, ContentFeatures](
-      config = config,
-      scopeName = "contentFeaturesCache",
-      statsReceiver = statsReceiver,
-      ttl = ttl
+  p-pwivate[this] v-vaw undewwyingbuiwdew =
+    nyew memcachestowebuiwdew[tweetid, /(^•ω•^) c-contentfeatuwes](
+      config = config, rawr x3
+      scopename = "contentfeatuwescache", (U ﹏ U)
+      s-statsweceivew = statsweceivew, (U ﹏ U)
+      ttw = ttw
     )
 
-  def build(): Store[TweetId, ContentFeatures] = underlyingBuilder.build()
+  def buiwd(): stowe[tweetid, (⑅˘꒳˘) contentfeatuwes] = u-undewwyingbuiwdew.buiwd()
 }

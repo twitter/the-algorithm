@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.twittew.fowwow_wecommendations.assembwew.modews
 
-sealed trait Layout
+seawed t-twait wayout
 
-case class UserListLayout(
-  header: Option[HeaderConfig],
-  userListOptions: UserListOptions,
-  socialProofs: Option[Seq[SocialProof]],
-  footer: Option[FooterConfig])
-    extends Layout
+c-case cwass usewwistwayout(
+  h-headew: o-option[headewconfig], (ˆ ﻌ ˆ)♡
+  u-usewwistoptions: usewwistoptions, (⑅˘꒳˘)
+  s-sociawpwoofs: o-option[seq[sociawpwoof]], (U ᵕ U❁)
+  f-footew: option[footewconfig])
+    extends wayout
 
-case class CarouselLayout(
-  header: Option[HeaderConfig],
-  carouselOptions: CarouselOptions,
-  socialProofs: Option[Seq[SocialProof]])
-    extends Layout
+case cwass cawousewwayout(
+  h-headew: option[headewconfig], -.-
+  cawousewoptions: c-cawousewoptions, ^^;;
+  sociawpwoofs: option[seq[sociawpwoof]])
+    e-extends wayout

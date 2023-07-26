@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope.pwoductscoped
+i-impowt com.twittew.stwingcentew.cwient.extewnawstwingwegistwy
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.pwovidew
+i-impowt javax.inject.singweton
 
-@Singleton
-class FeedbackStrings @Inject() (
-  @ProductScoped externalStringRegistryProvider: Provider[ExternalStringRegistry]) {
-  private val externalStringRegistry = externalStringRegistryProvider.get()
+@singweton
+c-cwass feedbackstwings @inject() (
+  @pwoductscoped e-extewnawstwingwegistwypwovidew: pwovidew[extewnawstwingwegistwy]) {
+  pwivate vaw extewnawstwingwegistwy = extewnawstwingwegistwypwovidew.get()
 
-  val seeLessOftenFeedbackString =
-    externalStringRegistry.createProdString("Feedback.seeLessOften")
-  val seeLessOftenConfirmationFeedbackString =
-    externalStringRegistry.createProdString("Feedback.seeLessOftenConfirmation")
+  v-vaw seewessoftenfeedbackstwing =
+    extewnawstwingwegistwy.cweatepwodstwing("feedback.seewessoften")
+  vaw seewessoftenconfiwmationfeedbackstwing =
+    e-extewnawstwingwegistwy.cweatepwodstwing("feedback.seewessoftenconfiwmation")
 }

@@ -1,92 +1,92 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
+impowt j-java.utiw.map.entwy;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.cowwect.maps;
 
-import org.apache.lucene.facet.FacetResult;
+i-impowt owg.apache.wucene.facet.facetwesuwt;
 
-import com.twitter.search.common.facets.CountFacetSearchParam;
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.common.facets.thriftjava.FacetFieldRequest;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+impowt com.twittew.seawch.common.facets.countfacetseawchpawam;
+impowt com.twittew.seawch.common.facets.facetseawchpawam;
+i-impowt com.twittew.seawch.common.facets.thwiftjava.facetfiewdwequest;
+impowt com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedindex;
 
 /**
- * Global facet aggregator across all fields.
+ * gwobaw facet aggwegatow a-acwoss aww fiewds. σωσ
  *
  */
-public class FacetCountAggregator implements FacetTermCollector {
+pubwic cwass facetcountaggwegatow i-impwements facettewmcowwectow {
 
-  // keys for the following aggregators are fieldIds
-  private final Map<Integer, PerfieldFacetCountAggregator> aggregators;
-  private final Map<Integer, FacetSearchParam> facetSearchParamMap;
+  // k-keys f-fow the fowwowing aggwegatows awe fiewdids
+  pwivate finaw map<integew, rawr x3 pewfiewdfacetcountaggwegatow> a-aggwegatows;
+  pwivate finaw map<integew, OwO facetseawchpawam> facetseawchpawammap;
 
   /**
-   * Creates a new facet aggregator.
+   * c-cweates a nyew facet aggwegatow. /(^•ω•^)
    */
-  public FacetCountAggregator(
-      List<FacetSearchParam> facetSearchParams,
-      Schema schema,
-      FacetIDMap facetIDMap,
-      Map<String, InvertedIndex> labelProviderMap) {
+  p-pubwic f-facetcountaggwegatow(
+      wist<facetseawchpawam> f-facetseawchpawams, 😳😳😳
+      schema s-schema, ( ͡o ω ͡o )
+      facetidmap facetidmap, >_<
+      map<stwing, >w< invewtedindex> w-wabewpwovidewmap) {
 
-    aggregators = Maps.newHashMap();
-    facetSearchParamMap = Maps.newHashMap();
+    aggwegatows = maps.newhashmap();
+    f-facetseawchpawammap = maps.newhashmap();
 
-    // Check params:
-    for (FacetSearchParam facetSearchParam : facetSearchParams) {
-      if (!(facetSearchParam instanceof CountFacetSearchParam)) {
-        throw new IllegalArgumentException(
-            "this collector only supports CountFacetSearchParam; got " + facetSearchParam);
+    // check pawams:
+    fow (facetseawchpawam facetseawchpawam : facetseawchpawams) {
+      i-if (!(facetseawchpawam instanceof c-countfacetseawchpawam)) {
+        t-thwow nyew i-iwwegawawgumentexception(
+            "this cowwectow onwy suppowts countfacetseawchpawam; g-got " + f-facetseawchpawam);
       }
-      if (facetSearchParam.getFacetFieldRequest().getPath() != null
-          && !facetSearchParam.getFacetFieldRequest().getPath().isEmpty()) {
-        throw new IllegalArgumentException(
-            "this collector dosen't support hierarchical facets: "
-            + facetSearchParam.getFacetFieldRequest().getPath());
-      }
-
-      String field = facetSearchParam.getFacetFieldRequest().getField();
-      Schema.FieldInfo facetField =
-          schema == null ? null : schema.getFacetFieldByFacetName(field);
-
-      if (facetField == null || !labelProviderMap.containsKey(facetField.getName())) {
-        throw new IllegalStateException("facet field: " + field + " is not defined");
+      if (facetseawchpawam.getfacetfiewdwequest().getpath() != n-nyuww
+          && !facetseawchpawam.getfacetfiewdwequest().getpath().isempty()) {
+        t-thwow nyew iwwegawawgumentexception(
+            "this cowwectow d-dosen't suppowt hiewawchicaw f-facets: "
+            + facetseawchpawam.getfacetfiewdwequest().getpath());
       }
 
-      int fieldId = facetIDMap.getFacetField(facetField).getFacetId();
-      Preconditions.checkState(!aggregators.containsKey(fieldId));
-      Preconditions.checkState(!facetSearchParamMap.containsKey(fieldId));
-      aggregators.put(fieldId, new PerfieldFacetCountAggregator(field,
-          labelProviderMap.get(facetField.getName())));
-      facetSearchParamMap.put(fieldId, facetSearchParam);
+      stwing fiewd = f-facetseawchpawam.getfacetfiewdwequest().getfiewd();
+      schema.fiewdinfo f-facetfiewd =
+          schema == nyuww ? n-nuww : schema.getfacetfiewdbyfacetname(fiewd);
+
+      i-if (facetfiewd == nyuww || !wabewpwovidewmap.containskey(facetfiewd.getname())) {
+        thwow nyew iwwegawstateexception("facet fiewd: " + fiewd + " is nyot defined");
+      }
+
+      int fiewdid = f-facetidmap.getfacetfiewd(facetfiewd).getfacetid();
+      p-pweconditions.checkstate(!aggwegatows.containskey(fiewdid));
+      pweconditions.checkstate(!facetseawchpawammap.containskey(fiewdid));
+      a-aggwegatows.put(fiewdid, rawr n-nyew pewfiewdfacetcountaggwegatow(fiewd, 😳
+          w-wabewpwovidewmap.get(facetfiewd.getname())));
+      facetseawchpawammap.put(fiewdid, >w< facetseawchpawam);
     }
   }
 
   /**
-   * Returns the top facets.
+   * wetuwns the top f-facets. (⑅˘꒳˘)
    */
-  public Map<FacetFieldRequest, FacetResult> getTop() {
-    Map<FacetFieldRequest, FacetResult> map = Maps.newHashMap();
-    for (Entry<Integer, PerfieldFacetCountAggregator> entry : aggregators.entrySet()) {
-      FacetSearchParam facetSearchParam = facetSearchParamMap.get(entry.getKey());
-      map.put(facetSearchParam.getFacetFieldRequest(), entry.getValue().getTop(facetSearchParam));
+  pubwic map<facetfiewdwequest, OwO facetwesuwt> gettop() {
+    map<facetfiewdwequest, (ꈍᴗꈍ) facetwesuwt> m-map = maps.newhashmap();
+    fow (entwy<integew, 😳 p-pewfiewdfacetcountaggwegatow> entwy : a-aggwegatows.entwyset()) {
+      f-facetseawchpawam facetseawchpawam = f-facetseawchpawammap.get(entwy.getkey());
+      m-map.put(facetseawchpawam.getfacetfiewdwequest(), 😳😳😳 e-entwy.getvawue().gettop(facetseawchpawam));
     }
-    return map;
+    w-wetuwn map;
   }
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
-    PerfieldFacetCountAggregator perfieldAggregator = aggregators.get(fieldID);
-    if (perfieldAggregator != null) {
-      perfieldAggregator.collect((int) termID);
-      return true;
-    } else {
-      return false;
+  @ovewwide
+  pubwic boowean cowwect(int docid, mya w-wong tewmid, mya int f-fiewdid) {
+    p-pewfiewdfacetcountaggwegatow pewfiewdaggwegatow = a-aggwegatows.get(fiewdid);
+    i-if (pewfiewdaggwegatow != nyuww) {
+      pewfiewdaggwegatow.cowwect((int) tewmid);
+      w-wetuwn twue;
+    } ewse {
+      wetuwn fawse;
     }
   }
 

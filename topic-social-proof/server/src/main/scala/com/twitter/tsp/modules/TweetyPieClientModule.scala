@@ -1,63 +1,63 @@
-package com.twitter.tsp
-package modules
+package com.twittew.tsp
+package moduwes
 
-import com.google.inject.Module
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.service.ReqRep
-import com.twitter.finagle.service.ResponseClass
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.tweetypie.thriftscala.TweetService
-import com.twitter.util.Duration
-import com.twitter.util.Throw
-import com.twitter.stitch.tweetypie.{TweetyPie => STweetyPie}
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import javax.inject.Singleton
+i-impowt com.googwe.inject.moduwe
+i-impowt com.googwe.inject.pwovides
+i-impowt c-com.twittew.convewsions.duwationops.wichduwationfwomint
+i-impowt c-com.twittew.finagwe.thwiftmux
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+impowt com.twittew.finagwe.mtws.cwient.mtwsstackcwient.mtwsthwiftmuxcwientsyntax
+impowt com.twittew.finagwe.mux.cwientdiscawdedwequestexception
+impowt com.twittew.finagwe.sewvice.weqwep
+impowt c-com.twittew.finagwe.sewvice.wesponsecwass
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.inject.injectow
+impowt com.twittew.inject.thwift.moduwes.thwiftmethodbuiwdewcwientmoduwe
+impowt com.twittew.tweetypie.thwiftscawa.tweetsewvice
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.thwow
+impowt com.twittew.stitch.tweetypie.{tweetypie => s-stweetypie}
+i-impowt com.twittew.finatwa.mtws.thwiftmux.moduwes.mtwscwient
+impowt javax.inject.singweton
 
-object TweetyPieClientModule
-    extends ThriftMethodBuilderClientModule[
-      TweetService.ServicePerEndpoint,
-      TweetService.MethodPerEndpoint
+object tweetypiecwientmoduwe
+    extends thwiftmethodbuiwdewcwientmoduwe[
+      tweetsewvice.sewvicepewendpoint, OwO
+      tweetsewvice.methodpewendpoint
     ]
-    with MtlsClient {
-  override val label = "tweetypie"
-  override val dest = "/s/tweetypie/tweetypie"
-  override val requestTimeout: Duration = 450.milliseconds
+    with m-mtwscwient {
+  ovewwide vaw wabew = "tweetypie"
+  ovewwide vaw dest = "/s/tweetypie/tweetypie"
+  o-ovewwide vaw wequesttimeout: d-duwation = 450.miwwiseconds
 
-  override val modules: Seq[Module] = Seq(TSPClientIdModule)
+  o-ovewwide vaw moduwes: s-seq[moduwe] = s-seq(tspcwientidmoduwe)
 
-  // We bump the success rate from the default of 0.8 to 0.9 since we're dropping the
-  // consecutive failures part of the default policy.
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client =
-    super
-      .configureThriftMuxClient(injector, client)
-      .withMutualTls(injector.instance[ServiceIdentifier])
-      .withStatsReceiver(injector.instance[StatsReceiver].scope("clnt"))
-      .withClientId(injector.instance[ClientId])
-      .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+  // we bump the success wate fwom t-the defauwt of 0.8 to 0.9 since we'we dwopping the
+  // c-consecutive faiwuwes pawt of the defauwt powicy. 😳😳😳
+  ovewwide def configuwethwiftmuxcwient(
+    injectow: i-injectow, 😳😳😳
+    cwient: thwiftmux.cwient
+  ): t-thwiftmux.cwient =
+    s-supew
+      .configuwethwiftmuxcwient(injectow, o.O c-cwient)
+      .withmutuawtws(injectow.instance[sewviceidentifiew])
+      .withstatsweceivew(injectow.instance[statsweceivew].scope("cwnt"))
+      .withcwientid(injectow.instance[cwientid])
+      .withwesponsecwassifiew {
+        case weqwep(_, ( ͡o ω ͡o ) thwow(_: cwientdiscawdedwequestexception)) => w-wesponsecwass.ignowabwe
       }
-      .withSessionQualifier
-      .successRateFailureAccrual(successRate = 0.9, window = 30.seconds)
-      .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+      .withsessionquawifiew
+      .successwatefaiwuweaccwuaw(successwate = 0.9, (U ﹏ U) w-window = 30.seconds)
+      .withwesponsecwassifiew {
+        case weqwep(_, (///ˬ///✿) t-thwow(_: cwientdiscawdedwequestexception)) => wesponsecwass.ignowabwe
       }
 
-  @Provides
-  @Singleton
-  def providesTweetyPie(
-    tweetyPieService: TweetService.MethodPerEndpoint
-  ): STweetyPie = {
-    STweetyPie(tweetyPieService)
+  @pwovides
+  @singweton
+  d-def pwovidestweetypie(
+    tweetypiesewvice: t-tweetsewvice.methodpewendpoint
+  ): stweetypie = {
+    stweetypie(tweetypiesewvice)
   }
 }

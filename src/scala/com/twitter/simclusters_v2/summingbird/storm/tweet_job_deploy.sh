@@ -1,77 +1,77 @@
 #!/bin/bash
-# script to deploy simcluster storm job to CI
+# scwipt to depwoy simcwustew s-stowm job t-to ci
 
 set -u -e
 
-cd "$(git rev-parse --show-toplevel)"
+c-cd "$(git wev-pawse --show-topwevew)"
 
-# shellcheck source=/dev/null
-. "$(git rev-parse --show-toplevel)/devprod/source-sh-setup"
+# s-shewwcheck s-souwce=/dev/nuww
+. (U ﹏ U) "$(git w-wev-pawse --show-topwevew)/devpwod/souwce-sh-setup"
 
-function usage {
-  cat <<EOF
-    $0 --env [devel | prod] --dc [atla | pdxa]
+f-function u-usage {
+  cat <<eof
+    $0 --env [devew | pwod] --dc [atwa | pdxa]
 
-Optional:
-    --dc              atla | pdxa
-    --env             devel | prod
+optionaw:
+    --dc              atwa | pdxa
+    --env             d-devew | pwod
 
-EOF
-  if [ -n "$1" ] && [ "$1" != "noargs" ]; then
+eof
+  if [ -n "$1" ] && [ "$1" != "noawgs" ]; then
     echo ""
-    echo "Invalid app args encountered! Expecting: $1"
+    e-echo "invawid app awgs encountewed! e-expecting: $1"
   fi
 }
 
-if [ $# -lt 1 ]; then
-  usage noargs
+if [ $# -wt 1 ]; then
+  usage n-nyoawgs
   exit 1
 fi
 
-CLUSTER=
-ENV=
-USER=cassowary
+cwustew=
+env=
+u-usew=cassowawy
 
-while [[ $# -gt 1 ]]; do
+w-whiwe [[ $# -gt 1 ]]; do
   key="$1"
   
   case $key in
     --dc)
-      CLUSTER="$2"
-      shift
+      cwustew="$2"
+      s-shift
       ;;
     --env)
-      ENV="$2"
+      env="$2"
       shift
       ;;
     *)
-      # options ignored
+      # options ignowed
       ;;
-  esac
+  e-esac
   shift
 done
 
-echo "Bundling..."
+echo "bundwing..."
 
 
-JAR_NAME="tweet-simclusters-storm-job.tar"
-JOB_NAME="summingbird_simclusters_v2_tweet_job_${ENV}"
+j-jaw_name="tweet-simcwustews-stowm-job.taw"
+j-job_name="summingbiwd_simcwustews_v2_tweet_job_${env}"
 
-BASE_DIR="src/scala/com/twitter/simclusters_v2/summingbird"
-./bazel bundle --bundle-jvm-archive=tar ${BASE_DIR}:tweet-simclusters-storm-job || exit 1
+b-base_diw="swc/scawa/com/twittew/simcwustews_v2/summingbiwd"
+./bazew b-bundwe --bundwe-jvm-awchive=taw ${base_diw}:tweet-simcwustews-stowm-job || exit 1
 
-# initialize the aurora path for a heron job: <dc>/<role>/<env> where <env> can only be devel or prod 
-AURORA_PATH=${AURORA_PATH:="$CLUSTER/$USER/$ENV"}
-AURORA_JOB_KEY="${AURORA_PATH}/${JOB_NAME}"
+# initiawize the auwowa path f-fow a hewon job: <dc>/<wowe>/<env> whewe <env> c-can onwy be devew ow pwod 
+auwowa_path=${auwowa_path:="$cwustew/$usew/$env"}
+auwowa_job_key="${auwowa_path}/${job_name}"
 
-heron kill "$AURORA_PATH" "$JOB_NAME" || true
+hewon kiww "$auwowa_path" "$job_name" || twue
 
-echo "Waiting 5 seconds so heron is sure its dead"
-sleep 5
+echo "waiting 5 s-seconds so hewon is s-suwe its dead"
+sweep 5
 
-echo "AURORA_JOB_KEY: $AURORA_JOB_KEY"
+e-echo "auwowa_job_key: $auwowa_job_key"
 
-echo "Starting your topology... for ${ENV} ${JOB_NAME}"
+e-echo "stawting youw topowogy... fow ${env} ${job_name}"
 #set -v
 
-heron submit "${AURORA_PATH}" "dist/${JAR_NAME}" com.twitter.simclusters_v2.summingbird.storm.TweetJobRunner --env "$ENV" --dc "$CLUSTER"
+hewon submit "${auwowa_path}" "dist/${jaw_name}" c-com.twittew.simcwustews_v2.summingbiwd.stowm.tweetjobwunnew --env "$env" --dc "$cwustew"

@@ -1,22 +1,22 @@
-package com.twitter.simclusters_v2.score
+package com.twittew.simcwustews_v2.scowe
 
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.{scowe => t-thwiftscowe}
 
 /**
- * A uniform value type for all kinds of Calculation Score.
+ * a-a unifowm v-vawue type fow aww k-kinds of cawcuwation s-scowe. -.-
  **/
-case class Score(score: Double) {
+c-case cwass scowe(scowe: d-doubwe) {
 
-  implicit lazy val toThrift: ThriftScore = {
-    ThriftScore(score)
+  impwicit wazy vaw tothwift: thwiftscowe = {
+    thwiftscowe(scowe)
   }
 }
 
-object Score {
+o-object scowe {
 
   /**
-   * Only support Double Type Thrift score
+   * onwy suppowt doubwe t-type thwift scowe
    */
-  implicit val fromThriftScore: ThriftScore => Score = { thriftScore => Score(thriftScore.score) }
+  impwicit v-vaw fwomthwiftscowe: thwiftscowe => scowe = { thwiftscowe => s-scowe(thwiftscowe.scowe) }
 
 }

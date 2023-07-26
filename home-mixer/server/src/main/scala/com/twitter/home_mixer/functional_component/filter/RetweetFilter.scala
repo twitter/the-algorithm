@@ -1,32 +1,32 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.twittew.home_mixew.functionaw_component.fiwtew
 
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.iswetweetfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-object RetweetFilter extends Filter[PipelineQuery, TweetCandidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("Retweet")
+object wetweetfiwtew e-extends fiwtew[pipewinequewy, -.- tweetcandidate] {
+  ovewwide vaw i-identifiew: fiwtewidentifiew = fiwtewidentifiew("wetweet")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
+  o-ovewwide def appwy(
+    quewy: pipewinequewy, ( ͡o ω ͡o )
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[fiwtewwesuwt[tweetcandidate]] = {
 
-    val (kept, removed) = candidates
-      .partition { candidate =>
-        !candidate.features.getOrElse(IsRetweetFeature, false)
+    v-vaw (kept, rawr x3 wemoved) = c-candidates
+      .pawtition { c-candidate =>
+        !candidate.featuwes.getowewse(iswetweetfeatuwe, nyaa~~ fawse)
       }
 
-    val filterResult = FilterResult(
-      kept = kept.map(_.candidate),
-      removed = removed.map(_.candidate)
+    vaw fiwtewwesuwt = fiwtewwesuwt(
+      kept = kept.map(_.candidate), /(^•ω•^)
+      w-wemoved = wemoved.map(_.candidate)
     )
 
-    Stitch.value(filterResult)
+    stitch.vawue(fiwtewwesuwt)
   }
 }

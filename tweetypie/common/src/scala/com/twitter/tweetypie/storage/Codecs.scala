@@ -1,242 +1,242 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.bijection.Conversion.asMethod
-import com.twitter.bijection.Injection
-import com.twitter.scrooge.TFieldBlob
-import com.twitter.storage.client.manhattan.kv._
-import com.twitter.tweetypie.storage.Response.FieldResponse
-import com.twitter.tweetypie.storage.Response.FieldResponseCode
-import com.twitter.tweetypie.storage_internal.thriftscala.CoreFields
-import com.twitter.tweetypie.storage_internal.thriftscala.InternalTweet
-import com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet
-import java.io.ByteArrayOutputStream
-import java.nio.ByteBuffer
-import org.apache.thrift.protocol.TBinaryProtocol
-import org.apache.thrift.transport.TIOStreamTransport
-import org.apache.thrift.transport.TMemoryInputTransport
-import scala.collection.immutable
-import scala.util.control.NoStackTrace
+impowt com.twittew.bijection.convewsion.asmethod
+i-impowt com.twittew.bijection.injection
+i-impowt c-com.twittew.scwooge.tfiewdbwob
+i-impowt com.twittew.stowage.cwient.manhattan.kv._
+i-impowt com.twittew.tweetypie.stowage.wesponse.fiewdwesponse
+i-impowt com.twittew.tweetypie.stowage.wesponse.fiewdwesponsecode
+i-impowt com.twittew.tweetypie.stowage_intewnaw.thwiftscawa.cowefiewds
+i-impowt com.twittew.tweetypie.stowage_intewnaw.thwiftscawa.intewnawtweet
+impowt com.twittew.tweetypie.stowage_intewnaw.thwiftscawa.stowedtweet
+impowt java.io.byteawwayoutputstweam
+impowt j-java.nio.bytebuffew
+impowt owg.apache.thwift.pwotocow.tbinawypwotocow
+impowt owg.apache.thwift.twanspowt.tiostweamtwanspowt
+i-impowt owg.apache.thwift.twanspowt.tmemowyinputtwanspowt
+i-impowt scawa.cowwection.immutabwe
+impowt scawa.utiw.contwow.nostacktwace
 
-// NOTE: All field ids and Tweet structure in this file correspond to the StoredTweet struct ONLY
+// nyote: aww fiewd ids and tweet s-stwuctuwe in this fiwe cowwespond t-to the stowedtweet s-stwuct onwy
 
-object ByteArrayCodec {
-  def toByteBuffer(byteArray: Array[Byte]): ByteBuffer = byteArray.as[ByteBuffer]
-  def fromByteBuffer(buffer: ByteBuffer): Array[Byte] = buffer.as[Array[Byte]]
+object byteawwaycodec {
+  def tobytebuffew(byteawway: awway[byte]): b-bytebuffew = byteawway.as[bytebuffew]
+  def fwombytebuffew(buffew: bytebuffew): awway[byte] = b-buffew.as[awway[byte]]
 }
 
-object StringCodec {
-  private val string2ByteBuffer = Injection.connect[String, Array[Byte], ByteBuffer]
-  def toByteBuffer(strValue: String): ByteBuffer = string2ByteBuffer(strValue)
-  def fromByteBuffer(buffer: ByteBuffer): String = string2ByteBuffer.invert(buffer).get
+object stwingcodec {
+  p-pwivate vaw s-stwing2bytebuffew = i-injection.connect[stwing, 😳 a-awway[byte], o.O bytebuffew]
+  def tobytebuffew(stwvawue: stwing): bytebuffew = s-stwing2bytebuffew(stwvawue)
+  def fwombytebuffew(buffew: bytebuffew): s-stwing = stwing2bytebuffew.invewt(buffew).get
 }
 
 /**
- * Terminology
+ * tewminowogy
  * -----------
- * Tweet id field             : The field number of 'tweetId' in the 'Tweet' thrift structure (i.e "1")
+ * tweet id fiewd             : the fiewd nyumbew of 'tweetid' i-in the 'tweet' thwift stwuctuwe (i.e "1")
  *
- * First AdditionalField id   : The ID if the first additional field in 'Tweet' thrift structure. All field Ids less than this are
- *                              considered internal and all the ids greater than or equal to this field id are considered 'Additional fields'.
- *                              This is set to 100.
+ * f-fiwst additionawfiewd i-id   : t-the id if the fiwst additionaw fiewd in 'tweet' thwift stwuctuwe. ^^;; a-aww fiewd ids w-wess than this awe
+ *                              c-considewed intewnaw a-and aww the ids gweatew t-than ow equaw to this fiewd id awe c-considewed 'additionaw fiewds'. ( ͡o ω ͡o )
+ *                              this is set to 100. ^^;;
  *
- * Internal Fields            : Fields with ids [1 to firstAdditionalFieldid) (excluding firstAdditionalFieldId)
+ * i-intewnaw fiewds            : f-fiewds with ids [1 to f-fiwstadditionawfiewdid) (excwuding f-fiwstadditionawfiewdid)
  *
- * Core fields                : (Subset of Internal fields)- Fields with ids [1 to 8, 19]. These fields are "packed" together and stored
- *                              under a single key. This key is referred to as "CoreFieldsKey" (see @TweetKeyType.CoreFieldsKey).
- *                              Note: Actually field 1 is skipped when packing as this field is the tweet id and it need not be
- *                              explicitly stored since the pkey already contains the tweet Id)
+ * cowe fiewds                : (subset of intewnaw fiewds)- fiewds with ids [1 to 8, ^^;; 19]. XD these fiewds awe "packed" t-togethew and s-stowed
+ *                              undew a singwe k-key. 🥺 this k-key is wefewwed t-to as "cowefiewdskey" (see @tweetkeytype.cowefiewdskey). (///ˬ///✿)
+ *                              nyote: actuawwy fiewd 1 is skipped when p-packing as this fiewd is the tweet id and it nyeed nyot be
+ *                              expwicitwy s-stowed since the pkey awweady c-contains the t-tweet id)
  *
- * Root Core field id         : The field id under which the packed core fields are stored in Manhattan. (This is field Id "1")
+ * w-woot cowe fiewd id         : the f-fiewd id undew w-which the packed c-cowe fiewds awe s-stowed in manhattan. (U ᵕ U❁) (this is fiewd id "1")
  *
- * Required fields            : (Subset of Core fields) - Fields with ids [1 to 5] that MUST be present on every tweet.
+ * w-wequiwed fiewds            : (subset o-of cowe f-fiewds) - fiewds w-with ids [1 to 5] t-that must be pwesent on evewy tweet. ^^;;
  *
- * Additional Fields          : All fields with field ids >= 'firstAdditionalFieldId'
+ * additionaw fiewds          : a-aww fiewds with fiewd ids >= 'fiwstadditionawfiewdid'
  *
- * Compiled Additional fields : (Subset of Additional Fields) - All fields that the storage library knows about
- *                              (i.e present on the latest storage_internal.thrift that is compiled-in).
+ * compiwed additionaw fiewds : (subset of a-additionaw fiewds) - aww fiewds that the stowage wibwawy knows a-about
+ *                              (i.e p-pwesent o-on the watest stowage_intewnaw.thwift t-that is compiwed-in). ^^;;
  *
- * Passthrough fields         : (Subset of Additional Fields) - The fields on storage_internal.thrift that the storage library is NOT aware of
- *                              These field ids are is obtained looking at the "_passThroughFields" member of the scrooge-generated
- *                             'Tweet' object.
+ * p-passthwough f-fiewds         : (subset of additionaw fiewds) - the fiewds on stowage_intewnaw.thwift that the s-stowage wibwawy is not awawe of
+ *                              t-these fiewd ids awe is obtained w-wooking at the "_passthwoughfiewds" m-membew of the scwooge-genewated
+ *                             'tweet' object. rawr
  *
- * coreFieldsIdInInternalTweet: This is the field id of the core fields (the only field) in the Internal Tweet struct
+ * c-cowefiewdsidinintewnawtweet: t-this is the fiewd id of the c-cowe fiewds (the o-onwy fiewd) in the intewnaw tweet stwuct
  */
-object TweetFields {
-  val firstAdditionalFieldId: Short = 100
-  val tweetIdField: Short = 1
-  val geoFieldId: Short = 9
+object tweetfiewds {
+  vaw fiwstadditionawfiewdid: s-showt = 100
+  v-vaw tweetidfiewd: s-showt = 1
+  vaw geofiewdid: s-showt = 9
 
-  // The field under which all the core field values are stored (in serialized form).
-  val rootCoreFieldId: Short = 1
+  // t-the fiewd undew which aww the cowe f-fiewd vawues awe stowed (in sewiawized fowm). (˘ω˘)
+  vaw wootcowefiewdid: showt = 1
 
-  val coreFieldIds: immutable.IndexedSeq[FieldId] = {
-    val quotedTweetFieldId: Short = 19
-    (1 to 8).map(_.toShort) ++ Seq(quotedTweetFieldId)
+  v-vaw cowefiewdids: i-immutabwe.indexedseq[fiewdid] = {
+    vaw quotedtweetfiewdid: s-showt = 19
+    (1 t-to 8).map(_.toshowt) ++ seq(quotedtweetfiewdid)
   }
-  val requiredFieldIds: immutable.IndexedSeq[FieldId] = (1 to 5).map(_.toShort)
+  vaw wequiwedfiewdids: immutabwe.indexedseq[fiewdid] = (1 t-to 5).map(_.toshowt)
 
-  val coreFieldsIdInInternalTweet: Short = 1
+  vaw cowefiewdsidinintewnawtweet: showt = 1
 
-  val compiledAdditionalFieldIds: Seq[FieldId] =
-    StoredTweet.metaData.fields.filter(_.id >= firstAdditionalFieldId).map(_.id)
-  val internalFieldIds: Seq[FieldId] =
-    StoredTweet.metaData.fields.filter(_.id < firstAdditionalFieldId).map(_.id)
-  val nonCoreInternalFields: Seq[FieldId] =
-    (internalFieldIds.toSet -- coreFieldIds.toSet).toSeq
-  def getAdditionalFieldIds(tweet: StoredTweet): Seq[FieldId] =
-    compiledAdditionalFieldIds ++ tweet._passthroughFields.keys.toSeq
+  vaw compiwedadditionawfiewdids: s-seq[fiewdid] =
+    stowedtweet.metadata.fiewds.fiwtew(_.id >= fiwstadditionawfiewdid).map(_.id)
+  vaw i-intewnawfiewdids: s-seq[fiewdid] =
+    stowedtweet.metadata.fiewds.fiwtew(_.id < fiwstadditionawfiewdid).map(_.id)
+  vaw nyoncoweintewnawfiewds: s-seq[fiewdid] =
+    (intewnawfiewdids.toset -- cowefiewdids.toset).toseq
+  d-def getadditionawfiewdids(tweet: stowedtweet): seq[fiewdid] =
+    compiwedadditionawfiewdids ++ t-tweet._passthwoughfiewds.keys.toseq
 }
 
 /**
- * Helper object to convert TFieldBlob to ByteBuffer that gets stored in Manhattan.
+ * hewpew o-object to convewt tfiewdbwob to bytebuffew that gets stowed in manhattan. 🥺
  *
- * The following is the format in which the TFieldBlob gets stored:
- *    [Version][TField][TFieldBlob]
+ * t-the fowwowing is the fowmat in which t-the tfiewdbwob g-gets stowed:
+ *    [vewsion][tfiewd][tfiewdbwob]
  */
-object TFieldBlobCodec {
-  val BinaryProtocolFactory: TBinaryProtocol.Factory = new TBinaryProtocol.Factory()
-  val FormatVersion = 1.0
+object t-tfiewdbwobcodec {
+  vaw binawypwotocowfactowy: tbinawypwotocow.factowy = n-nyew tbinawypwotocow.factowy()
+  v-vaw fowmatvewsion = 1.0
 
-  def toByteBuffer(tFieldBlob: TFieldBlob): ByteBuffer = {
-    val baos = new ByteArrayOutputStream()
-    val prot = BinaryProtocolFactory.getProtocol(new TIOStreamTransport(baos))
+  d-def tobytebuffew(tfiewdbwob: tfiewdbwob): bytebuffew = {
+    v-vaw baos = nyew b-byteawwayoutputstweam()
+    vaw pwot = binawypwotocowfactowy.getpwotocow(new tiostweamtwanspowt(baos))
 
-    prot.writeDouble(FormatVersion)
-    prot.writeFieldBegin(tFieldBlob.field)
-    prot.writeBinary(ByteArrayCodec.toByteBuffer(tFieldBlob.data))
+    p-pwot.wwitedoubwe(fowmatvewsion)
+    p-pwot.wwitefiewdbegin(tfiewdbwob.fiewd)
+    p-pwot.wwitebinawy(byteawwaycodec.tobytebuffew(tfiewdbwob.data))
 
-    ByteArrayCodec.toByteBuffer(baos.toByteArray)
+    byteawwaycodec.tobytebuffew(baos.tobyteawway)
   }
 
-  def fromByteBuffer(buffer: ByteBuffer): TFieldBlob = {
-    val byteArray = ByteArrayCodec.fromByteBuffer(buffer)
-    val prot = BinaryProtocolFactory.getProtocol(new TMemoryInputTransport(byteArray))
+  def fwombytebuffew(buffew: b-bytebuffew): tfiewdbwob = {
+    vaw byteawway = b-byteawwaycodec.fwombytebuffew(buffew)
+    v-vaw pwot = binawypwotocowfactowy.getpwotocow(new tmemowyinputtwanspowt(byteawway))
 
-    val version = prot.readDouble()
-    if (version != FormatVersion) {
-      throw new VersionMismatchError(
-        "Version mismatch in decoding ByteBuffer to TFieldBlob. " +
-          "Actual version: " + version + ". Expected version: " + FormatVersion
+    vaw vewsion = p-pwot.weaddoubwe()
+    i-if (vewsion != f-fowmatvewsion) {
+      t-thwow nyew vewsionmismatchewwow(
+        "vewsion mismatch i-in decoding bytebuffew to tfiewdbwob. nyaa~~ " +
+          "actuaw vewsion: " + vewsion + ". :3 expected vewsion: " + f-fowmatvewsion
       )
     }
 
-    val tField = prot.readFieldBegin()
-    val dataBuffer = prot.readBinary()
-    val data = ByteArrayCodec.fromByteBuffer(dataBuffer)
+    vaw tfiewd = p-pwot.weadfiewdbegin()
+    vaw d-databuffew = pwot.weadbinawy()
+    vaw data = byteawwaycodec.fwombytebuffew(databuffew)
 
-    TFieldBlob(tField, data)
+    t-tfiewdbwob(tfiewd, /(^•ω•^) data)
   }
 }
 
 /**
- * Helper object to help convert 'CoreFields' object to/from TFieldBlob (and also to construct
- * 'CoreFields' object from a 'StoredTweet' object)
+ * h-hewpew object t-to hewp convewt 'cowefiewds' object t-to/fwom tfiewdbwob (and a-awso t-to constwuct
+ * 'cowefiewds' object fwom a 'stowedtweet' object)
  *
- * More details:
- * - A subset of fields on the 'StoredTweet' thrift structure (2-8,19) are 'packaged' and stored
- *   together as a serialized TFieldBlob object under a single key in Manhattan (see TweetKeyCodec
- *   helper object above for more details).
+ * mowe detaiws:
+ * - a subset of fiewds on the 'stowedtweet' t-thwift stwuctuwe (2-8,19) awe 'packaged' a-and s-stowed
+ *   togethew as a sewiawized t-tfiewdbwob object undew a singwe key in manhattan (see tweetkeycodec
+ *   h-hewpew object above f-fow mowe detaiws).
  *
- * - To make the packing/unpacking the fields to/from TFieldBlob object, we created the following
- *   two helper thrift structures 'CoreFields' and 'InternalTweet'
+ * - to make the packing/unpacking t-the fiewds to/fwom tfiewdbwob object, ^•ﻌ•^ w-we cweated the f-fowwowing
+ *   two hewpew thwift s-stwuctuwes 'cowefiewds' a-and 'intewnawtweet'
  *
- *       // The field Ids and types here MUST exactly match field Ids on 'StoredTweet' thrift structure.
- *       struct CoreFields {
- *          2: optional i64 user_id
+ *       // the fiewd ids and types hewe must exactwy match fiewd ids on 'stowedtweet' t-thwift s-stwuctuwe. UwU
+ *       s-stwuct cowefiewds {
+ *          2: o-optionaw i-i64 usew_id
  *          ...
- *          8: optional i64 contributor_id
+ *          8: optionaw i-i64 contwibutow_id
  *          ...
- *          19: optional StoredQuotedTweet stored_quoted_tweet
+ *          19: o-optionaw stowedquotedtweet s-stowed_quoted_tweet
  *
  *       }
  *
- *       // The field id of core fields MUST be "1"
- *       struct InternalTweet {
- *         1: CoreFields coreFields
+ *       // t-the fiewd id of cowe fiewds m-must be "1"
+ *       stwuct intewnawtweet {
+ *         1: cowefiewds c-cowefiewds
  *       }
  *
- * - Given the above two structures, packing/unpacking fields (2-8,19) on StoredTweet object into a TFieldBlob
- *   becomes very trivial:
- *     For packing:
- *       (i) Copy fields (2-8,19) from StoredTweet object to a new CoreFields object
- *      (ii) Create a new InternalTweet object with the 'CoreFields' object constructed in step (i) above
- *     (iii) Extract field "1" as a TFieldBlob from InternalField (by calling the scrooge generated "getFieldBlob(1)"
- *           function on the InternalField objecton
+ * - given the above t-two stwuctuwes, 😳😳😳 p-packing/unpacking fiewds (2-8,19) o-on stowedtweet object into a tfiewdbwob
+ *   b-becomes vewy twiviaw:
+ *     fow p-packing:
+ *       (i) c-copy fiewds (2-8,19) fwom stowedtweet object to a nyew c-cowefiewds object
+ *      (ii) cweate a nyew intewnawtweet object w-with the 'cowefiewds' o-object constwucted in step (i) a-above
+ *     (iii) extwact f-fiewd "1" as a t-tfiewdbwob fwom intewnawfiewd (by cawwing the scwooge g-genewated "getfiewdbwob(1)"
+ *           function on the intewnawfiewd objecton
  *
- *     For unpacking:
- *       (i) Create an empty 'InternalField' object
- *      (ii) Call scrooge-generated 'setField' by passing the tFieldBlob blob (created by packing steps above)
- *     (iii) Doing step (ii) above will create a hydrated 'CoreField' object that can be accessed by 'coreFields'
- *           member of 'InternalTweet' object.
+ *     f-fow unpacking:
+ *       (i) c-cweate an empty 'intewnawfiewd' o-object
+ *      (ii) caww scwooge-genewated 'setfiewd' b-by passing the t-tfiewdbwob bwob (cweated b-by packing steps above)
+ *     (iii) doing step (ii) above wiww cweate a hydwated 'cowefiewd' object that can be accessed by 'cowefiewds'
+ *           membew of 'intewnawtweet' object. OwO
  */
-object CoreFieldsCodec {
-  val coreFieldIds: Seq[FieldId] = CoreFields.metaData.fields.map(_.id)
+object cowefiewdscodec {
+  vaw cowefiewdids: seq[fiewdid] = c-cowefiewds.metadata.fiewds.map(_.id)
 
-  // "Pack" the core fields i.e converts 'CoreFields' object to "packed" tFieldBlob (See description
-  // above for more details)
-  def toTFieldBlob(coreFields: CoreFields): TFieldBlob = {
-    InternalTweet(Some(coreFields)).getFieldBlob(TweetFields.coreFieldsIdInInternalTweet).get
+  // "pack" t-the cowe fiewds i.e convewts 'cowefiewds' object to "packed" t-tfiewdbwob (see d-descwiption
+  // a-above fow mowe detaiws)
+  def t-totfiewdbwob(cowefiewds: cowefiewds): t-tfiewdbwob = {
+    i-intewnawtweet(some(cowefiewds)).getfiewdbwob(tweetfiewds.cowefiewdsidinintewnawtweet).get
   }
 
-  // "Unpack" the core fields from a packed TFieldBlob into a CoreFields object (see description above for
-  // more details)
-  def fromTFieldBlob(tFieldBlob: TFieldBlob): CoreFields = {
-    InternalTweet().setField(tFieldBlob).coreFields.get
+  // "unpack" the cowe f-fiewds fwom a packed tfiewdbwob i-into a cowefiewds o-object (see descwiption above fow
+  // mowe detaiws)
+  d-def fwomtfiewdbwob(tfiewdbwob: t-tfiewdbwob): c-cowefiewds = {
+    i-intewnawtweet().setfiewd(tfiewdbwob).cowefiewds.get
   }
 
-  // "Unpack" the core fields from a packed TFieldBlob into a Map of core-fieldId-> TFieldBlob
-  def unpackFields(tFieldBlob: TFieldBlob): Map[Short, TFieldBlob] =
-    fromTFieldBlob(tFieldBlob).getFieldBlobs(coreFieldIds)
+  // "unpack" t-the cowe fiewds f-fwom a packed tfiewdbwob i-into a m-map of cowe-fiewdid-> t-tfiewdbwob
+  def unpackfiewds(tfiewdbwob: t-tfiewdbwob): map[showt, t-tfiewdbwob] =
+    f-fwomtfiewdbwob(tfiewdbwob).getfiewdbwobs(cowefiewdids)
 
-  // Create a 'CoreFields' thrift object from 'Tweet' thrift object.
-  def fromTweet(tweet: StoredTweet): CoreFields = {
-    // As mentioned above, the field ids and types on the 'CoreFields' struct exactly match the
-    // corresponding fields on StoredTweet structure. So it is safe to call .getField() on Tweet object and
-    // and pass the returned tFleldBlob a 'setField' on 'CoreFields' object.
-    coreFieldIds.foldLeft(CoreFields()) {
-      case (core, fieldId) =>
-        tweet.getFieldBlob(fieldId) match {
-          case None => core
-          case Some(tFieldBlob) => core.setField(tFieldBlob)
+  // cweate a 'cowefiewds' t-thwift object fwom 'tweet' thwift object. ^•ﻌ•^
+  d-def fwomtweet(tweet: stowedtweet): c-cowefiewds = {
+    // a-as mentioned above, (ꈍᴗꈍ) t-the fiewd ids and types on t-the 'cowefiewds' stwuct exactwy m-match the
+    // cowwesponding f-fiewds on stowedtweet stwuctuwe. (⑅˘꒳˘) s-so it is safe to caww .getfiewd() on tweet object and
+    // and pass the wetuwned t-tfwewdbwob a 'setfiewd' on 'cowefiewds' o-object. (⑅˘꒳˘)
+    c-cowefiewdids.fowdweft(cowefiewds()) {
+      case (cowe, (ˆ ﻌ ˆ)♡ fiewdid) =>
+        tweet.getfiewdbwob(fiewdid) m-match {
+          case nyone => c-cowe
+          case s-some(tfiewdbwob) => c-cowe.setfiewd(tfiewdbwob)
         }
     }
   }
 }
 
 /**
- * Helper object to convert ManhattanException to FieldResponseCode thrift object
+ * hewpew object to convewt manhattanexception t-to fiewdwesponsecode t-thwift object
  */
-object FieldResponseCodeCodec {
-  import FieldResponseCodec.ValueNotFoundException
+object fiewdwesponsecodecodec {
+  i-impowt fiewdwesponsecodec.vawuenotfoundexception
 
-  def fromManhattanException(mhException: ManhattanException): FieldResponseCode = {
-    mhException match {
-      case _: ValueNotFoundException => FieldResponseCode.ValueNotFound
-      case _: InternalErrorManhattanException => FieldResponseCode.Error
-      case _: InvalidRequestManhattanException => FieldResponseCode.InvalidRequest
-      case _: DeniedManhattanException => FieldResponseCode.Error
-      case _: UnsatisfiableManhattanException => FieldResponseCode.Error
-      case _: TimeoutManhattanException => FieldResponseCode.Timeout
+  def fwommanhattanexception(mhexception: manhattanexception): f-fiewdwesponsecode = {
+    mhexception match {
+      c-case _: v-vawuenotfoundexception => f-fiewdwesponsecode.vawuenotfound
+      case _: intewnawewwowmanhattanexception => f-fiewdwesponsecode.ewwow
+      c-case _: i-invawidwequestmanhattanexception => f-fiewdwesponsecode.invawidwequest
+      case _: d-deniedmanhattanexception => f-fiewdwesponsecode.ewwow
+      c-case _: unsatisfiabwemanhattanexception => f-fiewdwesponsecode.ewwow
+      c-case _: t-timeoutmanhattanexception => f-fiewdwesponsecode.timeout
     }
   }
 }
 
 /**
- * Helper object to construct FieldResponse thrift object from an Exception.
- * This is typically called to convert 'ManhattanException' object to 'FieldResponse' thrift object
+ * h-hewpew object to constwuct f-fiewdwesponse thwift object f-fwom an exception. /(^•ω•^)
+ * this is t-typicawwy cawwed t-to convewt 'manhattanexception' o-object to 'fiewdwesponse' thwift object
  */
-object FieldResponseCodec {
-  class ValueNotFoundException extends ManhattanException("Value not found!") with NoStackTrace
-  private[storage] val NotFound = new ValueNotFoundException
+object fiewdwesponsecodec {
+  c-cwass v-vawuenotfoundexception e-extends manhattanexception("vawue not found!") with nyostacktwace
+  p-pwivate[stowage] v-vaw nyotfound = nyew v-vawuenotfoundexception
 
-  def fromThrowable(e: Throwable, additionalMsg: Option[String] = None): FieldResponse = {
-    val (respCode, errMsg) = e match {
-      case mhException: ManhattanException =>
-        (FieldResponseCodeCodec.fromManhattanException(mhException), mhException.getMessage)
-      case _ => (FieldResponseCode.Error, e.getMessage)
+  d-def fwomthwowabwe(e: thwowabwe, òωó additionawmsg: option[stwing] = n-nyone): f-fiewdwesponse = {
+    v-vaw (wespcode, (⑅˘꒳˘) e-ewwmsg) = e match {
+      case mhexception: m-manhattanexception =>
+        (fiewdwesponsecodecodec.fwommanhattanexception(mhexception), (U ᵕ U❁) m-mhexception.getmessage)
+      case _ => (fiewdwesponsecode.ewwow, >w< e.getmessage)
     }
 
-    val respMsg = additionalMsg.map(_ + ". " + errMsg).orElse(Some(errMsg.toString))
-    FieldResponse(respCode, respMsg)
+    vaw w-wespmsg = additionawmsg.map(_ + ". σωσ " + ewwmsg).owewse(some(ewwmsg.tostwing))
+    fiewdwesponse(wespcode, -.- w-wespmsg)
   }
 }

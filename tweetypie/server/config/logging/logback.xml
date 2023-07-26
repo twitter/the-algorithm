@@ -1,146 +1,146 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <!-- See: https://logback.qos.ch/manual/configuration.html#LevelChangePropagator -->
-    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-      <resetJUL>true</resetJUL>
-    </contextListener>
+<?xmw vewsion="1.0" encoding="utf-8"?>
+<configuwation>
+    <!-- see: h-https://wogback.qos.ch/manuaw/configuwation.htmw#wevewchangepwopagatow -->
+    <contextwistenew c-cwass="ch.qos.wogback.cwassic.juw.wevewchangepwopagatow">
+      <wesetjuw>twue</wesetjuw>
+    </contextwistenew>
 
-    <include resource="logging/logback-all-include.xml" />
-    <property name="ALERTABLE_MESSAGE_FORMAT" value="ALERTABLE: %msg"/>
+    <incwude w-wesouwce="wogging/wogback-aww-incwude.xmw" />
+    <pwopewty name="awewtabwe_message_fowmat" vawue="awewtabwe: %msg"/>
 
-    <!-- The following appender is used to log all important logs to a single file called
-     "tweetypie-important.log". The filter "OnlyImportantLogsLoggingFilter" is used by this
-     appender to categorize logs into important or not. Anything from warnings, errors and
-     criticals are logged here. Logs that are tweet creation, deletions, undeletions or
-     updates are not logged to reduce noise from the logger.
-     NOTE: This appender (and all file based loggers) is not persistent through host restarts.
-     All logs are lost on machine restarts. -->
-    <appender name="IMPORTANT-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>tweetypie-important.log</file>
-        <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>tweetypie-important-%i.log</fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>20</maxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>800MB</maxFileSize>
-        </triggeringPolicy>
+    <!-- t-the fowwowing a-appendew is used t-to wog aww impowtant w-wogs to a s-singwe fiwe cawwed
+     "tweetypie-impowtant.wog". (˘ω˘) the fiwtew "onwyimpowtantwogswoggingfiwtew" is used by this
+     appendew to categowize wogs i-into impowtant ow nyot. (✿oωo) anything fwom wawnings, (///ˬ///✿) e-ewwows and
+     cwiticaws awe wogged h-hewe. rawr x3 wogs that awe tweet cweation, dewetions, -.- undewetions o-ow
+     updates awe nyot wogged t-to weduce nyoise f-fwom the woggew. ^^
+     nyote: this appendew (and aww fiwe based woggews) is nyot p-pewsistent thwough host westawts. (⑅˘꒳˘)
+     aww wogs awe wost on machine westawts. nyaa~~ -->
+    <appendew n-nyame="impowtant-fiwe" cwass="ch.qos.wogback.cowe.wowwing.wowwingfiweappendew">
+        <fiwe>tweetypie-impowtant.wog</fiwe>
+        <append>twue</append>
+        <wowwingpowicy c-cwass="ch.qos.wogback.cowe.wowwing.fixedwindowwowwingpowicy">
+            <fiwenamepattewn>tweetypie-impowtant-%i.wog</fiwenamepattewn>
+            <minindex>1</minindex>
+            <maxindex>20</maxindex>
+        </wowwingpowicy>
+        <twiggewingpowicy c-cwass="ch.qos.wogback.cowe.wowwing.sizebasedtwiggewingpowicy">
+            <maxfiwesize>800mb</maxfiwesize>
+        </twiggewingpowicy>
 
-        <encoder>
-            <pattern>
-                %date [%thread] %-5level %logger{36} - %msg%n
-            </pattern>
-        </encoder>
+        <encodew>
+            <pattewn>
+                %date [%thwead] %-5wevew %woggew{36} - %msg%n
+            </pattewn>
+        </encodew>
 
-        <!-- Allow all INFO+ messages from tweetypie logs, ERROR+ messages from all others.
-             These filters do not change the log levels for the loggers, they only filter what is
-             allowed to be logged to the important file. -->
-        <filter class="com.twitter.tweetypie.util.logging.OnlyImportantLogsLoggingFilter" />
-    </appender>
+        <!-- a-awwow a-aww info+ messages fwom tweetypie wogs, /(^•ω•^) ewwow+ m-messages fwom aww othews. (U ﹏ U)
+             these fiwtews d-do nyot change the wog wevews fow the woggews, 😳😳😳 they onwy fiwtew nyani is
+             awwowed t-to be wogged to the impowtant f-fiwe. >w< -->
+        <fiwtew c-cwass="com.twittew.tweetypie.utiw.wogging.onwyimpowtantwogswoggingfiwtew" />
+    </appendew>
 
-    <!-- The following appender is effectively a copy of the appender above in order to
-    persist logs through restarts, instead of writing the content to a file, this appender writes
-    it to our persistent storage "splunk". LOGLENS was the name of old library to write these logs
-    into a persistent storage and was later replaced by "splunk". So, any appender that mentions
-    loglens now is actually sending data to splunk. Due to limitations of logback, we cannot use
-    the same appender to write data at multiple places (file and splunk). So, we have 2 similar
-    appenders that write to 2 separate places. -->
-    <appender name="LOGLENS-BASE" class="com.twitter.loglens.logback.LoglensAppender">
-        <mdcAdditionalContext>true</mdcAdditionalContext>
-        <tag>${log.lens.tag}</tag>
-        <index>${log.lens.index}</index>
-        <category>loglens</category>
-        <encoder>
-          <pattern>%msg</pattern>
-        </encoder>
+    <!-- t-the fowwowing appendew is effectivewy a copy of the appendew a-above in owdew t-to
+    pewsist wogs thwough westawts, XD i-instead of w-wwiting the content to a fiwe, o.O t-this appendew wwites
+    it to ouw p-pewsistent stowage "spwunk". wogwens was the nyame of owd wibwawy t-to wwite these wogs
+    into a-a pewsistent stowage and was watew w-wepwaced by "spwunk". mya s-so, any appendew that mentions
+    wogwens nyow is actuawwy sending data to spwunk. 🥺 due to wimitations o-of wogback, ^^;; we c-cannot use
+    the same appendew t-to wwite data a-at muwtipwe pwaces (fiwe a-and spwunk). :3 so, we have 2 simiwaw
+    appendews that wwite t-to 2 sepawate pwaces. (U ﹏ U) -->
+    <appendew nyame="wogwens-base" cwass="com.twittew.wogwens.wogback.wogwensappendew">
+        <mdcadditionawcontext>twue</mdcadditionawcontext>
+        <tag>${wog.wens.tag}</tag>
+        <index>${wog.wens.index}</index>
+        <categowy>wogwens</categowy>
+        <encodew>
+          <pattewn>%msg</pattewn>
+        </encodew>
 
-        <!-- Allow all INFO+ messages from tweetypie logs, ERROR+ messages from all others.
-             These filters do not change the log levels for the loggers, they only filter what is
-             allowed to be logged to loglens. -->
-        <filter class="com.twitter.tweetypie.util.logging.OnlyImportantLogsLoggingFilter" />
-    </appender>
+        <!-- awwow aww i-info+ messages fwom tweetypie wogs, OwO e-ewwow+ messages f-fwom aww othews.
+             t-these fiwtews do nyot change t-the wog wevews fow t-the woggews, t-they onwy fiwtew n-nyani is
+             awwowed to be wogged to wogwens. 😳😳😳 -->
+        <fiwtew c-cwass="com.twittew.tweetypie.utiw.wogging.onwyimpowtantwogswoggingfiwtew" />
+    </appendew>
 
-    <!-- The important logs may sometimes get too noisy to find relevant exceptions and errors
-     occurring in tweetypie. So, this appender is used to only writes Errors and RuntimeExceptions
-     to a file called "alertable-exception.log". -->
-    <appender name="ALERTABLE-EXCEPTION-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>alertable-exception.log</file>
-        <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>alertable-exception-%i.log</fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>17</maxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>100MB</maxFileSize>
-        </triggeringPolicy>
+    <!-- t-the impowtant w-wogs may sometimes g-get too noisy t-to find wewevant exceptions and ewwows
+     occuwwing in tweetypie. (ˆ ﻌ ˆ)♡ s-so, this appendew is used to onwy wwites ewwows and wuntimeexceptions
+     to a fiwe cawwed "awewtabwe-exception.wog". XD -->
+    <appendew nyame="awewtabwe-exception-fiwe" cwass="ch.qos.wogback.cowe.wowwing.wowwingfiweappendew">
+        <fiwe>awewtabwe-exception.wog</fiwe>
+        <append>twue</append>
+        <wowwingpowicy c-cwass="ch.qos.wogback.cowe.wowwing.fixedwindowwowwingpowicy">
+            <fiwenamepattewn>awewtabwe-exception-%i.wog</fiwenamepattewn>
+            <minindex>1</minindex>
+            <maxindex>17</maxindex>
+        </wowwingpowicy>
+        <twiggewingpowicy cwass="ch.qos.wogback.cowe.wowwing.sizebasedtwiggewingpowicy">
+            <maxfiwesize>100mb</maxfiwesize>
+        </twiggewingpowicy>
 
-        <encoder>
-            <pattern>
-                %date [%thread] %-5level %logger{36} - %msg%n
-            </pattern>
-        </encoder>
+        <encodew>
+            <pattewn>
+                %date [%thwead] %-5wevew %woggew{36} - %msg%n
+            </pattewn>
+        </encodew>
 
-        <!-- Only log alertable exceptions to this file -->
-        <filter class="com.twitter.tweetypie.util.logging.AlertableExceptionLoggingFilter" />
-    </appender>
+        <!-- onwy wog awewtabwe exceptions t-to this fiwe -->
+        <fiwtew c-cwass="com.twittew.tweetypie.utiw.wogging.awewtabweexceptionwoggingfiwtew" />
+    </appendew>
 
-    <!-- This is the persistent version of the appender above for logging Errors and RuntimeExceptions
-     to splunk. To make it easier to search for these exceptions/errors in splunk we prefix the
-     exceptions with "ALERTABLE:" string. -->
-    <appender name="LOGLENS-ALERTABLE-BASE" class="com.twitter.loglens.logback.LoglensAppender">
-        <mdcAdditionalContext>true</mdcAdditionalContext>
-        <tag>${log.lens.tag}</tag>
-        <index>${log.lens.index}</index>
-        <category>loglens</category>
-        <encoder>
-            <pattern>${ALERTABLE_MESSAGE_FORMAT}</pattern>
-        </encoder>
+    <!-- t-this is the pewsistent v-vewsion of the appendew above f-fow wogging ewwows a-and wuntimeexceptions
+     to spwunk. (ˆ ﻌ ˆ)♡ to make it easiew to seawch fow these exceptions/ewwows in spwunk we pwefix t-the
+     exceptions with "awewtabwe:" s-stwing. ( ͡o ω ͡o ) -->
+    <appendew nyame="wogwens-awewtabwe-base" c-cwass="com.twittew.wogwens.wogback.wogwensappendew">
+        <mdcadditionawcontext>twue</mdcadditionawcontext>
+        <tag>${wog.wens.tag}</tag>
+        <index>${wog.wens.index}</index>
+        <categowy>wogwens</categowy>
+        <encodew>
+            <pattewn>${awewtabwe_message_fowmat}</pattewn>
+        </encodew>
 
-        <!-- Allow all Runtime Exceptions and Error messages from tweetypie logs.
-             These filters do not change the log levels for the loggers, they only filter what is
-             allowed to be logged to loglens. -->
-        <filter class="com.twitter.tweetypie.util.logging.AlertableExceptionLoggingFilter" />
-    </appender>
+        <!-- a-awwow aww wuntime exceptions and ewwow messages f-fwom tweetypie w-wogs. rawr x3
+             these fiwtews d-do nyot change t-the wog wevews fow the woggews, nyaa~~ they onwy fiwtew nyani is
+             awwowed t-to be wogged to w-wogwens. >_< -->
+        <fiwtew c-cwass="com.twittew.tweetypie.utiw.wogging.awewtabweexceptionwoggingfiwtew" />
+    </appendew>
 
-    <!-- Each of the appenders above are called Asynchronously to make sure logging operations
-     are non-blocking. Also, one AsyncAppender should only wrap one appender, appending multiple
-     appenders under one AsyncAppender does not work. -->
-    <appender name="LOGLENS"  class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="LOGLENS-BASE" />
-    </appender>
+    <!-- each of the a-appendews above a-awe cawwed asynchwonouswy to make s-suwe wogging opewations
+     awe nyon-bwocking. ^^;; awso, (ˆ ﻌ ˆ)♡ one asyncappendew shouwd o-onwy wwap one a-appendew, ^^;; appending muwtipwe
+     appendews undew o-one asyncappendew d-does nyot wowk. (⑅˘꒳˘) -->
+    <appendew nyame="wogwens"  cwass="ch.qos.wogback.cwassic.asyncappendew">
+        <appendew-wef wef="wogwens-base" />
+    </appendew>
 
-    <appender name="LOGLENS-ALERTABLE"  class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="LOGLENS-ALERTABLE-BASE" />
-    </appender>
+    <appendew n-nyame="wogwens-awewtabwe"  cwass="ch.qos.wogback.cwassic.asyncappendew">
+        <appendew-wef wef="wogwens-awewtabwe-base" />
+    </appendew>
 
-    <appender name="IMPORTANT"  class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="IMPORTANT-FILE" />
-    </appender>
+    <appendew nyame="impowtant"  cwass="ch.qos.wogback.cwassic.asyncappendew">
+        <appendew-wef wef="impowtant-fiwe" />
+    </appendew>
 
-    <appender name="ALERTABLE-EXCEPTION"  class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="ALERTABLE-EXCEPTION-FILE" />
-    </appender>
+    <appendew n-nyame="awewtabwe-exception"  cwass="ch.qos.wogback.cwassic.asyncappendew">
+        <appendew-wef wef="awewtabwe-exception-fiwe" />
+    </appendew>
 
-    <!-- Memcached and ObservableCache log a lot of messages at the WARN level. These messages
-         are mostly not useful, so lets filter them out. If you would like to see them,
-         you can change the log level on the admin page. -->
-    <logger name="com.twitter.tweetypie.cache" level="error"/>
-    <logger name="memcache" level="error"/>
+    <!-- m-memcached a-and obsewvabwecache wog a wot of messages at the wawn wevew. rawr x3 t-these messages
+         a-awe mostwy nyot usefuw, (///ˬ///✿) so wets fiwtew them out. 🥺 if you w-wouwd wike to see them, >_<
+         y-you can change the wog wevew on the admin page. UwU -->
+    <woggew nyame="com.twittew.tweetypie.cache" w-wevew="ewwow"/>
+    <woggew nyame="memcache" w-wevew="ewwow"/>
 
-    <logger name="com.twitter.tweetypie.config.MemcacheExceptionLoggingFilter" level="debug" />
-    <!-- Prune the log of noisy DarkTrafficFilter exceptions. If you would like to see them,
-         you can change the log level on the admin page. -->
-    <logger name="DarkTrafficFilter" level="off"/>
+    <woggew nyame="com.twittew.tweetypie.config.memcacheexceptionwoggingfiwtew" w-wevew="debug" />
+    <!-- pwune t-the wog of nyoisy dawktwafficfiwtew e-exceptions. >_< i-if you wouwd w-wike to see them, -.-
+         you can c-change the wog w-wevew on the admin page. mya -->
+    <woggew name="dawktwafficfiwtew" w-wevew="off"/>
 
-    <!-- At last, we combine all the active AsyncAppenders under a single Root node. Any appender
-    that is missing from the node below will  not be called for logging. -->
-    <root level="INFO">
-        <appender-ref ref="ALL" />
-        <appender-ref ref="IMPORTANT" />
-        <appender-ref ref="LOGLENS" />
-        <appender-ref ref="LOGLENS-ALERTABLE" />
-        <appender-ref ref="ALERTABLE-EXCEPTION" />
-    </root>
-</configuration>
+    <!-- a-at wast, >w< w-we combine aww the active asyncappendews undew a-a singwe woot nyode. (U ﹏ U) any appendew
+    t-that is m-missing fwom the nyode bewow wiww  nyot be cawwed fow wogging. 😳😳😳 -->
+    <woot wevew="info">
+        <appendew-wef w-wef="aww" />
+        <appendew-wef w-wef="impowtant" />
+        <appendew-wef wef="wogwens" />
+        <appendew-wef w-wef="wogwens-awewtabwe" />
+        <appendew-wef w-wef="awewtabwe-exception" />
+    </woot>
+</configuwation>

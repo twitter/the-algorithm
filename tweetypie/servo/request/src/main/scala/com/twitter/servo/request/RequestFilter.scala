@@ -1,120 +1,120 @@
-package com.twitter.servo.request
+package com.twittew.sewvo.wequest
 
-import com.twitter.finagle.tracing.TraceId
-import com.twitter.servo.util.{FunctionArrow, Effect, FutureArrow, FutureEffect, Observable}
-import com.twitter.util.{Future, Try}
+impowt com.twittew.finagwe.twacing.twaceid
+i-impowt c-com.twittew.sewvo.utiw.{functionawwow, (⑅˘꒳˘) e-effect, ( ͡o ω ͡o ) f-futuweawwow, òωó f-futuweeffect, (⑅˘꒳˘) obsewvabwe}
+i-impowt c-com.twittew.utiw.{futuwe, XD t-twy}
 
 /**
- * Useful mixins for request types.
+ * usefuw mixins fow wequest types. -.-
  */
-trait HasTraceId {
+twait hastwaceid {
 
   /**
-   * The Finagle TraceId of the request.
+   * t-the finagwe twaceid of the wequest. :3
    */
-  def traceId: TraceId
+  d-def twaceid: twaceid
 }
 
 /**
- * A collection of RequestFilter factory functions.
+ * a-a cowwection of wequestfiwtew factowy functions. nyaa~~
  *
- * type RequestFilter[A] = FutureArrow[A, A]
+ * type w-wequestfiwtew[a] = futuweawwow[a, 😳 a-a]
  */
-object RequestFilter {
+object w-wequestfiwtew {
 
   /**
-   * Produce a RequestFilter from a function `A => Future[A]`.
+   * pwoduce a wequestfiwtew fwom a function `a => futuwe[a]`. (⑅˘꒳˘)
    */
-  def apply[A](f: A => Future[A]): RequestFilter[A] = FutureArrow(f)
+  def appwy[a](f: a-a => futuwe[a]): wequestfiwtew[a] = futuweawwow(f)
 
   /**
-   * Produce a RequestFilter from a function `A => Try[A]`.
+   * pwoduce a wequestfiwtew fwom a function `a => t-twy[a]`. nyaa~~
    *
-   * The Try is evaluated within a Future. Thus, Throw results are translated
-   * to `Future.exception`s.
+   * the twy is evawuated w-within a futuwe. OwO t-thus, rawr x3 thwow w-wesuwts awe twanswated
+   * to `futuwe.exception`s. XD
    */
-  def fromTry[A](f: A => Try[A]): RequestFilter[A] = FutureArrow.fromTry(f)
+  def f-fwomtwy[a](f: a => twy[a]): wequestfiwtew[a] = futuweawwow.fwomtwy(f)
 
   /**
-   * A no-op RequestFilter; it simply returns the request.
+   * a-a nyo-op wequestfiwtew; it simpwy wetuwns the w-wequest. σωσ
    *
-   * This forms a monoid with `append`.
+   * this fowms a monoid with `append`. (U ᵕ U❁)
    */
-  def identity[A]: RequestFilter[A] = FutureArrow.identity
+  def identity[a]: wequestfiwtew[a] = futuweawwow.identity
 
   /**
-   * Appends two RequestFilters together.
+   * a-appends two wequestfiwtews t-togethew. (U ﹏ U)
    *
-   * This forms a monoid with 'identity'.
+   * t-this fowms a-a monoid with 'identity'. :3
    */
-  def append[A](a: RequestFilter[A], b: RequestFilter[A]): RequestFilter[A] =
-    FutureArrow.append(a, b)
+  def append[a](a: wequestfiwtew[a], ( ͡o ω ͡o ) b: wequestfiwtew[a]): w-wequestfiwtew[a] =
+    f-futuweawwow.append(a, b)
 
   /**
-   * Compose an ordered series of RequestFilters into a single object.
+   * c-compose an o-owdewed sewies of wequestfiwtews i-into a singwe object. σωσ
    */
-  def all[A](filters: RequestFilter[A]*): RequestFilter[A] =
-    filters.foldLeft(identity[A])(append)
+  d-def aww[a](fiwtews: wequestfiwtew[a]*): wequestfiwtew[a] =
+    f-fiwtews.fowdweft(identity[a])(append)
 
   /**
-   * Produce a RequestFilter that applies a side-effect, returning the argument
-   * request as-is.
+   * pwoduce a wequestfiwtew t-that appwies a side-effect, >w< w-wetuwning t-the awgument
+   * wequest as-is. 😳😳😳
    */
-  def effect[A](effect: Effect[A]): RequestFilter[A] =
-    FutureArrow.fromFunctionArrow(FunctionArrow.effect(effect))
+  def effect[a](effect: effect[a]): wequestfiwtew[a] =
+    futuweawwow.fwomfunctionawwow(functionawwow.effect(effect))
 
   /**
-   * Produce a RequestFilter that applies a side-effect, returning the argument
-   * request as-is.
+   * pwoduce a wequestfiwtew t-that appwies a s-side-effect, OwO wetuwning the awgument
+   * w-wequest a-as-is. 😳
    */
-  def effect[A](effect: FutureEffect[A]): RequestFilter[A] = FutureArrow.effect(effect)
+  d-def effect[a](effect: futuweeffect[a]): wequestfiwtew[a] = futuweawwow.effect(effect)
 
   /**
-   * Returns a new request filter where all Futures returned from `a` have their
-   * `masked` method called
+   * w-wetuwns a nyew wequest fiwtew whewe aww futuwes wetuwned fwom `a` have theiw
+   * `masked` m-method cawwed
    */
-  def masked[A](a: RequestFilter[A]): RequestFilter[A] = a.masked
+  d-def masked[a](a: w-wequestfiwtew[a]): w-wequestfiwtew[a] = a.masked
 
   /**
-   * Produces a RequestFilter that proxies to one of two others, depending on a
-   * predicate.
+   * p-pwoduces a wequestfiwtew t-that pwoxies t-to one of t-two othews, depending on a
+   * pwedicate. 😳😳😳
    */
-  def choose[A](
-    predicate: A => Boolean,
-    ifTrue: RequestFilter[A],
-    ifFalse: RequestFilter[A]
-  ): RequestFilter[A] =
-    FutureArrow.choose(predicate, ifTrue, ifFalse)
+  d-def choose[a](
+    p-pwedicate: a-a => boowean, (˘ω˘)
+    i-iftwue: wequestfiwtew[a], ʘwʘ
+    i-iffawse: wequestfiwtew[a]
+  ): wequestfiwtew[a] =
+    futuweawwow.choose(pwedicate, ( ͡o ω ͡o ) iftwue, iffawse)
 
   /**
-   * Guard the application of a filter on a predicate. The filter is applied
-   * if the predicate returns true, otherwise, the request is simply returned.
+   * g-guawd the appwication of a fiwtew on a pwedicate. o.O the fiwtew is appwied
+   * if the pwedicate w-wetuwns twue, othewwise, >w< the wequest is simpwy wetuwned. 😳
    */
-  def onlyIf[A](predicate: A => Boolean, f: RequestFilter[A]): RequestFilter[A] =
-    FutureArrow.onlyIf(predicate, f)
+  def onwyif[a](pwedicate: a-a => boowean, 🥺 f-f: wequestfiwtew[a]): w-wequestfiwtew[a] =
+    futuweawwow.onwyif(pwedicate, rawr x3 f-f)
 
   /**
-   * Produces a RequestFilter that authorizes requests by applying an
-   * authorization function `A => Future[Unit]`. If the authorizer function
-   * results in a Future exception, requests are failed. Otherwise, they pass.
+   * pwoduces a wequestfiwtew t-that a-authowizes wequests by appwying an
+   * authowization function `a => futuwe[unit]`. o.O if the authowizew f-function
+   * wesuwts in a f-futuwe exception, rawr wequests awe f-faiwed. ʘwʘ othewwise, 😳😳😳 t-they pass. ^^;;
    */
-  def authorized[A <: Observable](authorizer: ClientRequestAuthorizer): RequestFilter[A] =
-    RequestFilter[A] { request =>
-      authorizer(request.requestName, request.clientIdString) map { _ =>
-        request
+  def authowized[a <: obsewvabwe](authowizew: c-cwientwequestauthowizew): w-wequestfiwtew[a] =
+    wequestfiwtew[a] { w-wequest =>
+      a-authowizew(wequest.wequestname, o.O wequest.cwientidstwing) map { _ =>
+        wequest
       }
     }
 
   /**
-   * Produces a RequestFilter that applies a ClientRequestObserver to requests.
+   * pwoduces a wequestfiwtew that a-appwies a cwientwequestobsewvew t-to wequests. (///ˬ///✿)
    *
-   * Used to increment counters and track stats for requests.
+   * u-used to incwement countews a-and twack stats f-fow wequests. σωσ
    */
-  def observed[A <: Observable](observer: ClientRequestObserver): RequestFilter[A] =
-    RequestFilter[A] { request =>
-      val clientIdScopesOpt = request.clientIdString map { Seq(_) }
-      observer(request.requestName, clientIdScopesOpt) map { _ =>
-        request
+  def obsewved[a <: o-obsewvabwe](obsewvew: cwientwequestobsewvew): wequestfiwtew[a] =
+    wequestfiwtew[a] { wequest =>
+      v-vaw cwientidscopesopt = w-wequest.cwientidstwing map { seq(_) }
+      obsewvew(wequest.wequestname, nyaa~~ c-cwientidscopesopt) m-map { _ =>
+        wequest
       }
     }
 }

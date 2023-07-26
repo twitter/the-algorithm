@@ -1,111 +1,111 @@
-package com.twitter.timelines.prediction.features.time_features
+package com.twittew.timewines.pwediction.featuwes.time_featuwes
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.ml.api.Feature._
-import scala.collection.JavaConverters._
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
+impowt com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+i-impowt com.twittew.mw.api.featuwe._
+i-impowt scawa.cowwection.javaconvewtews._
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.convewsions.duwationops._
 
-object TimeDataRecordFeatures {
-  val TIME_BETWEEN_NON_POLLING_REQUESTS_AVG = new Continuous(
-    "time_features.time_between_non_polling_requests_avg",
-    Set(PrivateTimestamp).asJava
+object t-timedatawecowdfeatuwes {
+  v-vaw time_between_non_powwing_wequests_avg = n-nyew c-continuous(
+    "time_featuwes.time_between_non_powwing_wequests_avg", mya
+    set(pwivatetimestamp).asjava
   )
-  val TIME_SINCE_TWEET_CREATION = new Continuous("time_features.time_since_tweet_creation")
-  val TIME_SINCE_SOURCE_TWEET_CREATION = new Continuous(
-    "time_features.time_since_source_tweet_creation"
+  vaw time_since_tweet_cweation = new continuous("time_featuwes.time_since_tweet_cweation")
+  vaw t-time_since_souwce_tweet_cweation = nyew continuous(
+    "time_featuwes.time_since_souwce_tweet_cweation"
   )
-  val TIME_SINCE_LAST_NON_POLLING_REQUEST = new Continuous(
-    "time_features.time_since_last_non_polling_request",
-    Set(PrivateTimestamp).asJava
+  vaw time_since_wast_non_powwing_wequest = n-nyew continuous(
+    "time_featuwes.time_since_wast_non_powwing_wequest", (///ˬ///✿)
+    set(pwivatetimestamp).asjava
   )
-  val NON_POLLING_REQUESTS_SINCE_TWEET_CREATION = new Continuous(
-    "time_features.non_polling_requests_since_tweet_creation",
-    Set(PrivateTimestamp).asJava
+  v-vaw nyon_powwing_wequests_since_tweet_cweation = nyew continuous(
+    "time_featuwes.non_powwing_wequests_since_tweet_cweation", (˘ω˘)
+    set(pwivatetimestamp).asjava
   )
-  val TWEET_AGE_RATIO = new Continuous("time_features.tweet_age_ratio")
-  val IS_TWEET_RECYCLED = new Binary("time_features.is_tweet_recycled")
-  // Last Engagement features
-  val LAST_FAVORITE_SINCE_CREATION_HRS = new Continuous(
-    "time_features.earlybird.last_favorite_since_creation_hrs",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
+  vaw tweet_age_watio = n-nyew continuous("time_featuwes.tweet_age_watio")
+  vaw is_tweet_wecycwed = n-nyew binawy("time_featuwes.is_tweet_wecycwed")
+  // w-wast engagement featuwes
+  vaw wast_favowite_since_cweation_hws = nyew continuous(
+    "time_featuwes.eawwybiwd.wast_favowite_since_cweation_hws", ^^;;
+    set(countofpwivatewikes, (✿oωo) c-countofpubwicwikes).asjava
   )
-  val LAST_RETWEET_SINCE_CREATION_HRS = new Continuous(
-    "time_features.earlybird.last_retweet_since_creation_hrs",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
+  vaw wast_wetweet_since_cweation_hws = nyew continuous(
+    "time_featuwes.eawwybiwd.wast_wetweet_since_cweation_hws", (U ﹏ U)
+    set(countofpwivatewetweets, -.- c-countofpubwicwetweets).asjava
   )
-  val LAST_REPLY_SINCE_CREATION_HRS = new Continuous(
-    "time_features.earlybird.last_reply_since_creation_hrs",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  vaw wast_wepwy_since_cweation_hws = n-nyew continuous(
+    "time_featuwes.eawwybiwd.wast_wepwy_since_cweation_hws", ^•ﻌ•^
+    s-set(countofpwivatewepwies, rawr c-countofpubwicwepwies).asjava
   )
-  val LAST_QUOTE_SINCE_CREATION_HRS = new Continuous(
-    "time_features.earlybird.last_quote_since_creation_hrs",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
+  v-vaw wast_quote_since_cweation_hws = nyew continuous(
+    "time_featuwes.eawwybiwd.wast_quote_since_cweation_hws",
+    set(countofpwivatewetweets, c-countofpubwicwetweets).asjava
   )
-  val TIME_SINCE_LAST_FAVORITE_HRS = new Continuous(
-    "time_features.earlybird.time_since_last_favorite",
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
+  vaw time_since_wast_favowite_hws = nyew c-continuous(
+    "time_featuwes.eawwybiwd.time_since_wast_favowite", (˘ω˘)
+    set(countofpwivatewikes, nyaa~~ countofpubwicwikes).asjava
   )
-  val TIME_SINCE_LAST_RETWEET_HRS = new Continuous(
-    "time_features.earlybird.time_since_last_retweet",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
+  vaw time_since_wast_wetweet_hws = nyew continuous(
+    "time_featuwes.eawwybiwd.time_since_wast_wetweet", UwU
+    set(countofpwivatewetweets, :3 c-countofpubwicwetweets).asjava
   )
-  val TIME_SINCE_LAST_REPLY_HRS = new Continuous(
-    "time_features.earlybird.time_since_last_reply",
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
+  vaw time_since_wast_wepwy_hws = n-nyew continuous(
+    "time_featuwes.eawwybiwd.time_since_wast_wepwy", (⑅˘꒳˘)
+    s-set(countofpwivatewepwies, (///ˬ///✿) c-countofpubwicwepwies).asjava
   )
-  val TIME_SINCE_LAST_QUOTE_HRS = new Continuous(
-    "time_features.earlybird.time_since_last_quote",
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
+  vaw time_since_wast_quote_hws = nyew c-continuous(
+    "time_featuwes.eawwybiwd.time_since_wast_quote", ^^;;
+    s-set(countofpwivatewetweets, >_< countofpubwicwetweets).asjava
   )
 
-  val TIME_SINCE_VIEWER_ACCOUNT_CREATION_SECS =
-    new Continuous(
-      "time_features.time_since_viewer_account_creation_secs",
-      Set(AccountCreationTime, AgeOfAccount).asJava)
+  v-vaw time_since_viewew_account_cweation_secs =
+    n-nyew continuous(
+      "time_featuwes.time_since_viewew_account_cweation_secs", rawr x3
+      set(accountcweationtime, /(^•ω•^) ageofaccount).asjava)
 
-  val USER_ID_IS_SNOWFLAKE_ID =
-    new Binary("time_features.time_user_id_is_snowflake_id", Set(UserType).asJava)
+  v-vaw usew_id_is_snowfwake_id =
+    nyew binawy("time_featuwes.time_usew_id_is_snowfwake_id", :3 s-set(usewtype).asjava)
 
-  val IS_30_DAY_NEW_USER =
-    new Binary("time_features.is_day_30_new_user", Set(AccountCreationTime, AgeOfAccount).asJava)
-  val IS_12_MONTH_NEW_USER =
-    new Binary("time_features.is_month_12_new_user", Set(AccountCreationTime, AgeOfAccount).asJava)
-  val ACCOUNT_AGE_INTERVAL =
-    new Discrete("time_features.account_age_interval", Set(AgeOfAccount).asJava)
+  vaw is_30_day_new_usew =
+    nyew binawy("time_featuwes.is_day_30_new_usew", (ꈍᴗꈍ) s-set(accountcweationtime, /(^•ω•^) ageofaccount).asjava)
+  v-vaw is_12_month_new_usew =
+    nyew binawy("time_featuwes.is_month_12_new_usew", (⑅˘꒳˘) s-set(accountcweationtime, ( ͡o ω ͡o ) a-ageofaccount).asjava)
+  vaw account_age_intewvaw =
+    nyew discwete("time_featuwes.account_age_intewvaw", òωó set(ageofaccount).asjava)
 }
 
-object AccountAgeInterval extends Enumeration {
-  val LTE_1_DAY, GT_1_DAY_LTE_5_DAY, GT_5_DAY_LTE_14_DAY, GT_14_DAY_LTE_30_DAY = Value
+object accountageintewvaw extends enumewation {
+  vaw wte_1_day, (⑅˘꒳˘) g-gt_1_day_wte_5_day, XD g-gt_5_day_wte_14_day, -.- gt_14_day_wte_30_day = v-vawue
 
-  def fromDuration(accountAge: Duration): Option[AccountAgeInterval.Value] = {
-    accountAge match {
-      case a if (a <= 1.day) => Some(LTE_1_DAY)
-      case a if (1.day < a && a <= 5.days) => Some(GT_1_DAY_LTE_5_DAY)
-      case a if (5.days < a && a <= 14.days) => Some(GT_5_DAY_LTE_14_DAY)
-      case a if (14.days < a && a <= 30.days) => Some(GT_14_DAY_LTE_30_DAY)
-      case _ => None
+  d-def fwomduwation(accountage: d-duwation): option[accountageintewvaw.vawue] = {
+    accountage match {
+      case a i-if (a <= 1.day) => some(wte_1_day)
+      case a if (1.day < a && a <= 5.days) => s-some(gt_1_day_wte_5_day)
+      case a if (5.days < a-a && a <= 14.days) => s-some(gt_5_day_wte_14_day)
+      c-case a if (14.days < a-a && a <= 30.days) => s-some(gt_14_day_wte_30_day)
+      c-case _ => n-nyone
     }
   }
 }
 
-case class TimeFeatures(
-  isTweetRecycled: Boolean,
-  timeSinceTweetCreation: Double,
-  isDay30NewUser: Boolean,
-  isMonth12NewUser: Boolean,
-  timeSinceSourceTweetCreation: Double, // same as timeSinceTweetCreation for non-retweets
-  timeSinceViewerAccountCreationSecs: Option[Double],
-  timeBetweenNonPollingRequestsAvg: Option[Double] = None,
-  timeSinceLastNonPollingRequest: Option[Double] = None,
-  nonPollingRequestsSinceTweetCreation: Option[Double] = None,
-  tweetAgeRatio: Option[Double] = None,
-  lastFavSinceCreationHrs: Option[Double] = None,
-  lastRetweetSinceCreationHrs: Option[Double] = None,
-  lastReplySinceCreationHrs: Option[Double] = None,
-  lastQuoteSinceCreationHrs: Option[Double] = None,
-  timeSinceLastFavoriteHrs: Option[Double] = None,
-  timeSinceLastRetweetHrs: Option[Double] = None,
-  timeSinceLastReplyHrs: Option[Double] = None,
-  timeSinceLastQuoteHrs: Option[Double] = None,
-  accountAgeInterval: Option[AccountAgeInterval.Value] = None)
+case cwass timefeatuwes(
+  istweetwecycwed: boowean, :3
+  timesincetweetcweation: d-doubwe, nyaa~~
+  isday30newusew: b-boowean, 😳
+  i-ismonth12newusew: b-boowean, (⑅˘꒳˘)
+  t-timesincesouwcetweetcweation: doubwe, nyaa~~ // same as timesincetweetcweation fow n-nyon-wetweets
+  timesinceviewewaccountcweationsecs: option[doubwe], OwO
+  timebetweennonpowwingwequestsavg: option[doubwe] = nyone, rawr x3
+  t-timesincewastnonpowwingwequest: option[doubwe] = nyone, XD
+  nyonpowwingwequestssincetweetcweation: option[doubwe] = n-nyone,
+  tweetagewatio: o-option[doubwe] = n-nyone, σωσ
+  wastfavsincecweationhws: o-option[doubwe] = nyone, (U ᵕ U❁)
+  wastwetweetsincecweationhws: o-option[doubwe] = n-nyone, (U ﹏ U)
+  wastwepwysincecweationhws: option[doubwe] = nyone, :3
+  wastquotesincecweationhws: option[doubwe] = n-nyone, ( ͡o ω ͡o )
+  timesincewastfavowitehws: option[doubwe] = n-nyone, σωσ
+  timesincewastwetweethws: option[doubwe] = n-nyone, >w<
+  t-timesincewastwepwyhws: option[doubwe] = nyone, 😳😳😳
+  t-timesincewastquotehws: o-option[doubwe] = nyone, OwO
+  a-accountageintewvaw: o-option[accountageintewvaw.vawue] = nyone)

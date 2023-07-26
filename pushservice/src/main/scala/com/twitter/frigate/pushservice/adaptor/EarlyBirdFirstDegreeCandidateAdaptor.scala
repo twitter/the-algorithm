@@ -1,293 +1,293 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.twittew.fwigate.pushsewvice.adaptow
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate._
-import com.twitter.frigate.common.predicate.CommonOutNetworkTweetCandidatesSourcePredicates.filterOutReplyTweet
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.hermit.store.tweetypie.UserTweet
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.search.common.features.thriftscala.ThriftSearchResultFeatures
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Future
-import com.twitter.util.Time
-import scala.collection.Map
+impowt com.twittew.finagwe.stats.stat
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base._
+i-impowt c-com.twittew.fwigate.common.candidate._
+i-impowt c-com.twittew.fwigate.common.pwedicate.commonoutnetwowktweetcandidatessouwcepwedicates.fiwtewoutwepwytweet
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+impowt com.twittew.fwigate.pushsewvice.pawams.pushpawams
+i-impowt com.twittew.fwigate.pushsewvice.utiw.pushdeviceutiw
+impowt com.twittew.hewmit.stowe.tweetypie.usewtweet
+i-impowt com.twittew.wecos.wecos_common.thwiftscawa.sociawpwooftype
+i-impowt com.twittew.seawch.common.featuwes.thwiftscawa.thwiftseawchwesuwtfeatuwes
+impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+impowt c-com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.timewines.configapi.pawam
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
+impowt scawa.cowwection.map
 
-case class EarlyBirdFirstDegreeCandidateAdaptor(
-  earlyBirdFirstDegreeCandidates: CandidateSource[
-    EarlybirdCandidateSource.Query,
-    EarlybirdCandidate
+case cwass eawwybiwdfiwstdegweecandidateadaptow(
+  eawwybiwdfiwstdegweecandidates: c-candidatesouwce[
+    eawwybiwdcandidatesouwce.quewy, (U ﹏ U)
+    eawwybiwdcandidate
   ],
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
-  userTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult],
-  maxResultsParam: Param[Int],
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+  tweetypiestowe: weadabwestowe[wong, (˘ω˘) t-tweetypiewesuwt], (ꈍᴗꈍ)
+  tweetypiestowenovf: w-weadabwestowe[wong, /(^•ω•^) t-tweetypiewesuwt], >_<
+  u-usewtweettweetypiestowe: w-weadabwestowe[usewtweet, σωσ tweetypiewesuwt], ^^;;
+  maxwesuwtspawam: pawam[int], 😳
+  g-gwobawstats: statsweceivew)
+    extends c-candidatesouwce[tawget, >_< wawcandidate]
+    with candidatesouwceewigibwe[tawget, wawcandidate] {
 
-  type EBCandidate = EarlybirdCandidate with TweetDetails
-  private val stats = globalStats.scope("EarlyBirdFirstDegreeAdaptor")
-  private val earlyBirdCandsStat: Stat = stats.stat("early_bird_cands_dist")
-  private val emptyEarlyBirdCands = stats.counter("empty_early_bird_candidates")
-  private val seedSetEmpty = stats.counter("empty_seedset")
-  private val seenTweetsStat = stats.stat("filtered_by_seen_tweets")
-  private val emptyTweetyPieResult = stats.stat("empty_tweetypie_result")
-  private val nonReplyTweetsCounter = stats.counter("non_reply_tweets")
-  private val enableRetweets = stats.counter("enable_retweets")
-  private val f1withoutSocialContexts = stats.counter("f1_without_social_context")
-  private val userTweetTweetyPieStoreCounter = stats.counter("user_tweet_tweetypie_store")
+  type ebcandidate = eawwybiwdcandidate w-with tweetdetaiws
+  p-pwivate vaw stats = g-gwobawstats.scope("eawwybiwdfiwstdegweeadaptow")
+  p-pwivate vaw eawwybiwdcandsstat: stat = stats.stat("eawwy_biwd_cands_dist")
+  pwivate vaw e-emptyeawwybiwdcands = s-stats.countew("empty_eawwy_biwd_candidates")
+  pwivate vaw s-seedsetempty = s-stats.countew("empty_seedset")
+  pwivate vaw seentweetsstat = stats.stat("fiwtewed_by_seen_tweets")
+  p-pwivate vaw emptytweetypiewesuwt = s-stats.stat("empty_tweetypie_wesuwt")
+  pwivate vaw nyonwepwytweetscountew = stats.countew("non_wepwy_tweets")
+  p-pwivate vaw enabwewetweets = s-stats.countew("enabwe_wetweets")
+  pwivate v-vaw f1withoutsociawcontexts = s-stats.countew("f1_without_sociaw_context")
+  pwivate vaw usewtweettweetypiestowecountew = stats.countew("usew_tweet_tweetypie_stowe")
 
-  override val name: String = earlyBirdFirstDegreeCandidates.name
+  ovewwide vaw nyame: stwing = eawwybiwdfiwstdegweecandidates.name
 
-  private def getAllSocialContextActions(
-    socialProofTypes: Seq[(SocialProofType, Seq[Long])]
-  ): Seq[SocialContextAction] = {
-    socialProofTypes.flatMap {
-      case (SocialProofType.Favorite, scIds) =>
-        scIds.map { scId =>
-          SocialContextAction(
-            scId,
-            Time.now.inMilliseconds,
-            socialContextActionType = Some(SocialContextActionType.Favorite)
+  p-pwivate d-def getawwsociawcontextactions(
+    sociawpwooftypes: s-seq[(sociawpwooftype, -.- s-seq[wong])]
+  ): s-seq[sociawcontextaction] = {
+    sociawpwooftypes.fwatmap {
+      case (sociawpwooftype.favowite, UwU scids) =>
+        s-scids.map { scid =>
+          sociawcontextaction(
+            scid, :3
+            time.now.inmiwwiseconds, σωσ
+            s-sociawcontextactiontype = some(sociawcontextactiontype.favowite)
           )
         }
-      case (SocialProofType.Retweet, scIds) =>
-        scIds.map { scId =>
-          SocialContextAction(
-            scId,
-            Time.now.inMilliseconds,
-            socialContextActionType = Some(SocialContextActionType.Retweet)
+      c-case (sociawpwooftype.wetweet, s-scids) =>
+        s-scids.map { scid =>
+          s-sociawcontextaction(
+            s-scid, >w<
+            t-time.now.inmiwwiseconds, (ˆ ﻌ ˆ)♡
+            s-sociawcontextactiontype = some(sociawcontextactiontype.wetweet)
           )
         }
-      case (SocialProofType.Reply, scIds) =>
-        scIds.map { scId =>
-          SocialContextAction(
-            scId,
-            Time.now.inMilliseconds,
-            socialContextActionType = Some(SocialContextActionType.Reply)
+      case (sociawpwooftype.wepwy, ʘwʘ s-scids) =>
+        s-scids.map { s-scid =>
+          s-sociawcontextaction(
+            s-scid, :3
+            time.now.inmiwwiseconds, (˘ω˘)
+            sociawcontextactiontype = some(sociawcontextactiontype.wepwy)
           )
         }
-      case (SocialProofType.Tweet, scIds) =>
-        scIds.map { scId =>
-          SocialContextAction(
-            scId,
-            Time.now.inMilliseconds,
-            socialContextActionType = Some(SocialContextActionType.Tweet)
+      c-case (sociawpwooftype.tweet, 😳😳😳 scids) =>
+        scids.map { scid =>
+          sociawcontextaction(
+            scid, rawr x3
+            t-time.now.inmiwwiseconds, (✿oωo)
+            sociawcontextactiontype = some(sociawcontextactiontype.tweet)
           )
         }
-      case _ => Nil
+      case _ => n-nyiw
     }
   }
 
-  private def generateRetweetCandidate(
-    inputTarget: Target,
-    candidate: EBCandidate,
-    scIds: Seq[Long],
-    socialProofTypes: Seq[(SocialProofType, Seq[Long])]
-  ): RawCandidate = {
-    val scActions = scIds.map { scId => SocialContextAction(scId, Time.now.inMilliseconds) }
-    new RawCandidate with TweetRetweetCandidate with EarlybirdTweetFeatures {
-      override val socialContextActions = scActions
-      override val socialContextAllTypeActions = getAllSocialContextActions(socialProofTypes)
-      override val tweetId = candidate.tweetId
-      override val target = inputTarget
-      override val tweetyPieResult = candidate.tweetyPieResult
-      override val features = candidate.features
+  p-pwivate def g-genewatewetweetcandidate(
+    inputtawget: tawget, (ˆ ﻌ ˆ)♡
+    c-candidate: ebcandidate, :3
+    s-scids: seq[wong], (U ᵕ U❁)
+    s-sociawpwooftypes: seq[(sociawpwooftype, ^^;; seq[wong])]
+  ): wawcandidate = {
+    vaw scactions = scids.map { s-scid => sociawcontextaction(scid, mya time.now.inmiwwiseconds) }
+    n-nyew wawcandidate with tweetwetweetcandidate w-with eawwybiwdtweetfeatuwes {
+      o-ovewwide vaw sociawcontextactions = scactions
+      o-ovewwide v-vaw sociawcontextawwtypeactions = getawwsociawcontextactions(sociawpwooftypes)
+      o-ovewwide v-vaw tweetid = candidate.tweetid
+      ovewwide vaw tawget = inputtawget
+      ovewwide vaw tweetypiewesuwt = candidate.tweetypiewesuwt
+      ovewwide v-vaw featuwes = c-candidate.featuwes
     }
   }
 
-  private def generateF1CandidateWithoutSocialContext(
-    inputTarget: Target,
-    candidate: EBCandidate
-  ): RawCandidate = {
-    f1withoutSocialContexts.incr()
-    new RawCandidate with F1FirstDegree with EarlybirdTweetFeatures {
-      override val tweetId = candidate.tweetId
-      override val target = inputTarget
-      override val tweetyPieResult = candidate.tweetyPieResult
-      override val features = candidate.features
+  p-pwivate def genewatef1candidatewithoutsociawcontext(
+    i-inputtawget: tawget, 😳😳😳
+    c-candidate: ebcandidate
+  ): w-wawcandidate = {
+    f1withoutsociawcontexts.incw()
+    nyew wawcandidate with f1fiwstdegwee w-with eawwybiwdtweetfeatuwes {
+      o-ovewwide vaw tweetid = candidate.tweetid
+      ovewwide vaw t-tawget = inputtawget
+      o-ovewwide vaw tweetypiewesuwt = candidate.tweetypiewesuwt
+      ovewwide v-vaw featuwes = candidate.featuwes
     }
   }
 
-  private def generateEarlyBirdCandidate(
-    id: Long,
-    result: Option[TweetyPieResult],
-    ebFeatures: Option[ThriftSearchResultFeatures]
-  ): EBCandidate = {
-    new EarlybirdCandidate with TweetDetails {
-      override val tweetyPieResult: Option[TweetyPieResult] = result
-      override val tweetId: Long = id
-      override val features: Option[ThriftSearchResultFeatures] = ebFeatures
+  pwivate def genewateeawwybiwdcandidate(
+    id: wong, OwO
+    wesuwt: o-option[tweetypiewesuwt], rawr
+    ebfeatuwes: option[thwiftseawchwesuwtfeatuwes]
+  ): ebcandidate = {
+    n-nyew e-eawwybiwdcandidate with tweetdetaiws {
+      ovewwide vaw tweetypiewesuwt: o-option[tweetypiewesuwt] = w-wesuwt
+      ovewwide vaw tweetid: wong = id
+      ovewwide v-vaw featuwes: option[thwiftseawchwesuwtfeatuwes] = ebfeatuwes
     }
   }
 
-  private def filterOutSeenTweets(seenTweetIds: Seq[Long], inputTweetIds: Seq[Long]): Seq[Long] = {
-    inputTweetIds.filterNot(seenTweetIds.contains)
+  p-pwivate def fiwtewoutseentweets(seentweetids: seq[wong], XD inputtweetids: s-seq[wong]): seq[wong] = {
+    i-inputtweetids.fiwtewnot(seentweetids.contains)
   }
 
-  private def filterInvalidTweets(
-    tweetIds: Seq[Long],
-    target: Target
-  ): Future[Seq[(Long, TweetyPieResult)]] = {
+  p-pwivate def fiwtewinvawidtweets(
+    t-tweetids: seq[wong], (U ﹏ U)
+    t-tawget: tawget
+  ): f-futuwe[seq[(wong, (˘ω˘) t-tweetypiewesuwt)]] = {
 
-    val resMap = {
-      if (target.params(PushFeatureSwitchParams.EnableF1FromProtectedTweetAuthors)) {
-        userTweetTweetyPieStoreCounter.incr()
-        val keys = tweetIds.map { tweetId =>
-          UserTweet(tweetId, Some(target.targetId))
+    vaw wesmap = {
+      i-if (tawget.pawams(pushfeatuweswitchpawams.enabwef1fwompwotectedtweetauthows)) {
+        u-usewtweettweetypiestowecountew.incw()
+        vaw keys = tweetids.map { tweetid =>
+          u-usewtweet(tweetid, UwU s-some(tawget.tawgetid))
         }
 
-        userTweetTweetyPieStore
-          .multiGet(keys.toSet).map {
-            case (userTweet, resultFut) =>
-              userTweet.tweetId -> resultFut
-          }.toMap
-      } else {
-        (target.params(PushFeatureSwitchParams.EnableVFInTweetypie) match {
-          case true => tweetyPieStore
-          case false => tweetyPieStoreNoVF
-        }).multiGet(tweetIds.toSet)
+        usewtweettweetypiestowe
+          .muwtiget(keys.toset).map {
+            c-case (usewtweet, >_< wesuwtfut) =>
+              usewtweet.tweetid -> w-wesuwtfut
+          }.tomap
+      } ewse {
+        (tawget.pawams(pushfeatuweswitchpawams.enabwevfintweetypie) match {
+          c-case t-twue => tweetypiestowe
+          case fawse => tweetypiestowenovf
+        }).muwtiget(tweetids.toset)
       }
     }
-    Future.collect(resMap).map { tweetyPieResultMap =>
-      val cands = filterOutReplyTweet(tweetyPieResultMap, nonReplyTweetsCounter).collect {
-        case (id: Long, Some(result)) =>
-          id -> result
+    futuwe.cowwect(wesmap).map { t-tweetypiewesuwtmap =>
+      v-vaw cands = fiwtewoutwepwytweet(tweetypiewesuwtmap, σωσ n-nyonwepwytweetscountew).cowwect {
+        c-case (id: wong, 🥺 some(wesuwt)) =>
+          i-id -> wesuwt
       }
 
-      emptyTweetyPieResult.add(tweetyPieResultMap.size - cands.size)
-      cands.toSeq
+      emptytweetypiewesuwt.add(tweetypiewesuwtmap.size - cands.size)
+      cands.toseq
     }
   }
 
-  private def getEBRetweetCandidates(
-    inputTarget: Target,
-    retweets: Seq[(Long, TweetyPieResult)]
-  ): Seq[RawCandidate] = {
-    retweets.flatMap {
-      case (_, tweetypieResult) =>
-        tweetypieResult.tweet.coreData.flatMap { coreData =>
-          tweetypieResult.sourceTweet.map { sourceTweet =>
-            val tweetId = sourceTweet.id
-            val scId = coreData.userId
-            val socialProofTypes = Seq((SocialProofType.Retweet, Seq(scId)))
-            val candidate = generateEarlyBirdCandidate(
-              tweetId,
-              Some(TweetyPieResult(sourceTweet, None, None)),
-              None
+  pwivate def g-getebwetweetcandidates(
+    inputtawget: t-tawget,
+    wetweets: s-seq[(wong, 🥺 tweetypiewesuwt)]
+  ): seq[wawcandidate] = {
+    w-wetweets.fwatmap {
+      case (_, tweetypiewesuwt) =>
+        t-tweetypiewesuwt.tweet.cowedata.fwatmap { c-cowedata =>
+          t-tweetypiewesuwt.souwcetweet.map { s-souwcetweet =>
+            v-vaw tweetid = souwcetweet.id
+            vaw scid = cowedata.usewid
+            vaw sociawpwooftypes = seq((sociawpwooftype.wetweet, ʘwʘ seq(scid)))
+            vaw candidate = g-genewateeawwybiwdcandidate(
+              t-tweetid, :3
+              s-some(tweetypiewesuwt(souwcetweet, (U ﹏ U) none, nyone)), (U ﹏ U)
+              n-nyone
             )
-            generateRetweetCandidate(
-              inputTarget,
-              candidate,
-              Seq(scId),
-              socialProofTypes
+            genewatewetweetcandidate(
+              inputtawget, ʘwʘ
+              candidate, >w<
+              seq(scid), rawr x3
+              s-sociawpwooftypes
             )
           }
         }
     }
   }
 
-  private def getEBFirstDegreeCands(
-    tweets: Seq[(Long, TweetyPieResult)],
-    ebTweetIdMap: Map[Long, Option[ThriftSearchResultFeatures]]
-  ): Seq[EBCandidate] = {
-    tweets.map {
-      case (id, tweetypieResult) =>
-        val features = ebTweetIdMap.getOrElse(id, None)
-        generateEarlyBirdCandidate(id, Some(tweetypieResult), features)
+  p-pwivate def getebfiwstdegweecands(
+    t-tweets: seq[(wong, OwO tweetypiewesuwt)], ^•ﻌ•^
+    ebtweetidmap: m-map[wong, >_< o-option[thwiftseawchwesuwtfeatuwes]]
+  ): seq[ebcandidate] = {
+    t-tweets.map {
+      c-case (id, OwO tweetypiewesuwt) =>
+        vaw featuwes = ebtweetidmap.getowewse(id, >_< none)
+        g-genewateeawwybiwdcandidate(id, (ꈍᴗꈍ) s-some(tweetypiewesuwt), >w< f-featuwes)
     }
   }
 
   /**
-   * Returns a combination of raw candidates made of: f1 recs, topic social proof recs, sc recs and retweet candidates
+   * w-wetuwns a-a combination of waw candidates m-made of: f1 w-wecs, (U ﹏ U) topic sociaw pwoof wecs, ^^ sc w-wecs and wetweet c-candidates
    */
-  def buildRawCandidates(
-    inputTarget: Target,
-    firstDegreeCandidates: Seq[EBCandidate],
-    retweetCandidates: Seq[RawCandidate]
-  ): Seq[RawCandidate] = {
-    val hydratedF1Recs =
-      firstDegreeCandidates.map(generateF1CandidateWithoutSocialContext(inputTarget, _))
-    hydratedF1Recs ++ retweetCandidates
+  def buiwdwawcandidates(
+    i-inputtawget: tawget, (U ﹏ U)
+    fiwstdegweecandidates: seq[ebcandidate], :3
+    w-wetweetcandidates: seq[wawcandidate]
+  ): s-seq[wawcandidate] = {
+    v-vaw hydwatedf1wecs =
+      f-fiwstdegweecandidates.map(genewatef1candidatewithoutsociawcontext(inputtawget, (✿oωo) _))
+    hydwatedf1wecs ++ wetweetcandidates
   }
 
-  override def get(inputTarget: Target): Future[Option[Seq[RawCandidate]]] = {
-    inputTarget.seedsWithWeight.flatMap { seedsetOpt =>
-      val seedsetMap = seedsetOpt.getOrElse(Map.empty)
+  o-ovewwide d-def get(inputtawget: t-tawget): futuwe[option[seq[wawcandidate]]] = {
+    inputtawget.seedswithweight.fwatmap { seedsetopt =>
+      v-vaw seedsetmap = seedsetopt.getowewse(map.empty)
 
-      if (seedsetMap.isEmpty) {
-        seedSetEmpty.incr()
-        Future.None
-      } else {
-        val maxResultsToReturn = inputTarget.params(maxResultsParam)
-        val maxTweetAge = inputTarget.params(PushFeatureSwitchParams.F1CandidateMaxTweetAgeParam)
-        val earlybirdQuery = EarlybirdCandidateSource.Query(
-          maxNumResultsToReturn = maxResultsToReturn,
-          seedset = seedsetMap,
-          maxConsecutiveResultsByTheSameUser = Some(1),
-          maxTweetAge = maxTweetAge,
-          disableTimelinesMLModel = false,
-          searcherId = Some(inputTarget.targetId),
-          isProtectTweetsEnabled =
-            inputTarget.params(PushFeatureSwitchParams.EnableF1FromProtectedTweetAuthors),
-          followedUserIds = Some(seedsetMap.keySet.toSeq)
+      if (seedsetmap.isempty) {
+        s-seedsetempty.incw()
+        f-futuwe.none
+      } ewse {
+        v-vaw maxwesuwtstowetuwn = i-inputtawget.pawams(maxwesuwtspawam)
+        v-vaw maxtweetage = inputtawget.pawams(pushfeatuweswitchpawams.f1candidatemaxtweetagepawam)
+        vaw eawwybiwdquewy = e-eawwybiwdcandidatesouwce.quewy(
+          maxnumwesuwtstowetuwn = maxwesuwtstowetuwn, XD
+          s-seedset = s-seedsetmap, >w<
+          maxconsecutivewesuwtsbythesameusew = s-some(1), òωó
+          maxtweetage = maxtweetage, (ꈍᴗꈍ)
+          d-disabwetimewinesmwmodew = f-fawse, rawr x3
+          s-seawchewid = some(inputtawget.tawgetid), rawr x3
+          ispwotecttweetsenabwed =
+            inputtawget.pawams(pushfeatuweswitchpawams.enabwef1fwompwotectedtweetauthows), σωσ
+          fowwowedusewids = some(seedsetmap.keyset.toseq)
         )
 
-        Future
-          .join(inputTarget.seenTweetIds, earlyBirdFirstDegreeCandidates.get(earlybirdQuery))
-          .flatMap {
-            case (seenTweetIds, Some(candidates)) =>
-              earlyBirdCandsStat.add(candidates.size)
+        futuwe
+          .join(inputtawget.seentweetids, (ꈍᴗꈍ) eawwybiwdfiwstdegweecandidates.get(eawwybiwdquewy))
+          .fwatmap {
+            case (seentweetids, rawr some(candidates)) =>
+              eawwybiwdcandsstat.add(candidates.size)
 
-              val ebTweetIdMap = candidates.map { cand => cand.tweetId -> cand.features }.toMap
+              vaw ebtweetidmap = candidates.map { cand => cand.tweetid -> c-cand.featuwes }.tomap
 
-              val ebTweetIds = ebTweetIdMap.keys.toSeq
+              v-vaw ebtweetids = ebtweetidmap.keys.toseq
 
-              val tweetIds = filterOutSeenTweets(seenTweetIds, ebTweetIds)
-              seenTweetsStat.add(ebTweetIds.size - tweetIds.size)
+              vaw tweetids = f-fiwtewoutseentweets(seentweetids, ^^;; e-ebtweetids)
+              s-seentweetsstat.add(ebtweetids.size - tweetids.size)
 
-              filterInvalidTweets(tweetIds, inputTarget)
-                .map { validTweets =>
-                  val (retweets, tweets) = validTweets.partition {
-                    case (_, tweetypieResult) =>
-                      tweetypieResult.sourceTweet.isDefined
+              f-fiwtewinvawidtweets(tweetids, rawr x3 inputtawget)
+                .map { v-vawidtweets =>
+                  v-vaw (wetweets, tweets) = vawidtweets.pawtition {
+                    c-case (_, (ˆ ﻌ ˆ)♡ tweetypiewesuwt) =>
+                      t-tweetypiewesuwt.souwcetweet.isdefined
                   }
 
-                  val firstDegreeCandidates = getEBFirstDegreeCands(tweets, ebTweetIdMap)
+                  v-vaw fiwstdegweecandidates = getebfiwstdegweecands(tweets, σωσ ebtweetidmap)
 
-                  val retweetCandidates = {
-                    if (inputTarget.params(PushParams.EarlyBirdSCBasedCandidatesParam) &&
-                      inputTarget.params(PushParams.MRTweetRetweetRecsParam)) {
-                      enableRetweets.incr()
-                      getEBRetweetCandidates(inputTarget, retweets)
-                    } else Nil
+                  v-vaw wetweetcandidates = {
+                    i-if (inputtawget.pawams(pushpawams.eawwybiwdscbasedcandidatespawam) &&
+                      i-inputtawget.pawams(pushpawams.mwtweetwetweetwecspawam)) {
+                      e-enabwewetweets.incw()
+                      g-getebwetweetcandidates(inputtawget, (U ﹏ U) w-wetweets)
+                    } e-ewse n-nyiw
                   }
 
-                  Some(
-                    buildRawCandidates(
-                      inputTarget,
-                      firstDegreeCandidates,
-                      retweetCandidates
+                  s-some(
+                    buiwdwawcandidates(
+                      i-inputtawget, >w<
+                      f-fiwstdegweecandidates, σωσ
+                      w-wetweetcandidates
                     ))
                 }
 
             case _ =>
-              emptyEarlyBirdCands.incr()
-              Future.None
+              e-emptyeawwybiwdcands.incw()
+              futuwe.none
           }
       }
     }
   }
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    PushDeviceUtil.isRecommendationsEligible(target)
+  ovewwide d-def iscandidatesouwceavaiwabwe(tawget: tawget): f-futuwe[boowean] = {
+    p-pushdeviceutiw.iswecommendationsewigibwe(tawget)
   }
 }

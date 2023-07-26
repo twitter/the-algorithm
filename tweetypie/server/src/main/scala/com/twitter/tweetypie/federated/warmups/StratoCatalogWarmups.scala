@@ -1,140 +1,140 @@
-package com.twitter.tweetypie
-package federated
-package warmups
+package com.twittew.tweetypie
+package f-fedewated
+package w-wawmups
 
-import com.twitter.context.TwitterContext
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.strato.access.Access
-import com.twitter.strato.access.Access.AccessToken
-import com.twitter.strato.access.Access.AuthenticatedTwitterUserId
-import com.twitter.strato.access.Access.AuthenticatedTwitterUserNotSuspended
-import com.twitter.strato.access.Access.TwitterUserId
-import com.twitter.strato.access.Access.TwitterUserNotSuspended
-import com.twitter.strato.catalog.Ops
-import com.twitter.strato.client.StaticClient
-import com.twitter.strato.context.StratoContext
-import com.twitter.strato.opcontext.DarkRequest
-import com.twitter.strato.opcontext.OpContext
-import com.twitter.strato.test.config.bouncer.TestPrincipals
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.tweetypie.federated.columns.CreateRetweetColumn
-import com.twitter.tweetypie.federated.columns.CreateTweetColumn
-import com.twitter.tweetypie.federated.columns.DeleteTweetColumn
-import com.twitter.tweetypie.federated.columns.UnretweetColumn
-import com.twitter.tweetypie.service.WarmupQueriesSettings
-import com.twitter.tweetypie.thriftscala.graphql._
-import com.twitter.util.logging.Logger
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
+i-impowt com.twittew.context.twittewcontext
+i-impowt c-com.twittew.context.thwiftscawa.viewew
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt c-com.twittew.stitch.stitch
+impowt com.twittew.stwato.access.access
+impowt com.twittew.stwato.access.access.accesstoken
+impowt c-com.twittew.stwato.access.access.authenticatedtwittewusewid
+impowt com.twittew.stwato.access.access.authenticatedtwittewusewnotsuspended
+i-impowt com.twittew.stwato.access.access.twittewusewid
+impowt c-com.twittew.stwato.access.access.twittewusewnotsuspended
+impowt com.twittew.stwato.catawog.ops
+impowt com.twittew.stwato.cwient.staticcwient
+impowt com.twittew.stwato.context.stwatocontext
+i-impowt com.twittew.stwato.opcontext.dawkwequest
+impowt com.twittew.stwato.opcontext.opcontext
+i-impowt com.twittew.stwato.test.config.bouncew.testpwincipaws
+i-impowt com.twittew.stwato.thwift.scwoogeconvimpwicits._
+impowt com.twittew.tweetypie.fedewated.cowumns.cweatewetweetcowumn
+impowt com.twittew.tweetypie.fedewated.cowumns.cweatetweetcowumn
+i-impowt com.twittew.tweetypie.fedewated.cowumns.dewetetweetcowumn
+impowt com.twittew.tweetypie.fedewated.cowumns.unwetweetcowumn
+impowt c-com.twittew.tweetypie.sewvice.wawmupquewiessettings
+impowt com.twittew.tweetypie.thwiftscawa.gwaphqw._
+i-impowt com.twittew.utiw.wogging.woggew
+impowt c-com.twittew.utiw.futuwe
+i-impowt c-com.twittew.utiw.stopwatch
 
-object StratoCatalogWarmups {
-  private[this] val log = Logger(getClass)
+object stwatocatawogwawmups {
+  pwivate[this] vaw w-wog = woggew(getcwass)
 
-  // Performs warmup queries, failing after 30 seconds
-  def warmup(
-    warmupSettings: WarmupQueriesSettings,
-    catalog: PartialFunction[String, Ops]
-  ): Future[Unit] = {
-    val elapsed = Stopwatch.start()
-    // note: we need to supply bouncer principals here, because the
-    //       columns are gated by a bouncer policy
-    Access
-      .withPrincipals(WarmupPrincipals) {
-        StratoContext.withOpContext(WarmupOpContext) {
-          TwitterContext.let(viewer = WarmupViewer) {
-            warmupSettings.clientId.asCurrent {
-              Stitch.run(executeDarkly(catalog))
+  // pewfowms wawmup quewies, rawr faiwing a-aftew 30 seconds
+  def wawmup(
+    wawmupsettings: wawmupquewiessettings, (˘ω˘)
+    catawog: pawtiawfunction[stwing, nyaa~~ ops]
+  ): futuwe[unit] = {
+    vaw e-ewapsed = stopwatch.stawt()
+    // nyote: we n-need to suppwy bouncew p-pwincipaws h-hewe, UwU because the
+    //       cowumns awe gated by a bouncew p-powicy
+    access
+      .withpwincipaws(wawmuppwincipaws) {
+        s-stwatocontext.withopcontext(wawmupopcontext) {
+          twittewcontext.wet(viewew = w-wawmupviewew) {
+            w-wawmupsettings.cwientid.ascuwwent {
+              stitch.wun(exekawaii~dawkwy(catawog))
             }
           }
         }
       }
-      .onSuccess { _ => log.info("warmup completed in %s".format(elapsed())) }
-      .onFailure { t => log.error("could not complete warmup queries before startup.", t) }
+      .onsuccess { _ => w-wog.info("wawmup compweted in %s".fowmat(ewapsed())) }
+      .onfaiwuwe { t-t => wog.ewwow("couwd nyot compwete wawmup q-quewies befowe stawtup.", :3 t-t) }
   }
 
-  private val WarmupTwitterUserId = 0L
+  pwivate vaw wawmuptwittewusewid = 0w
 
-  private val WarmupPrincipals = Set(
-    TestPrincipals.normalStratoBouncerAccessPrincipal,
-    AuthenticatedTwitterUserId(WarmupTwitterUserId),
-    TwitterUserId(WarmupTwitterUserId),
-    TwitterUserNotSuspended,
-    AuthenticatedTwitterUserNotSuspended,
-    AccessToken(isWritable = true)
+  p-pwivate vaw w-wawmuppwincipaws = set(
+    testpwincipaws.nowmawstwatobouncewaccesspwincipaw, (⑅˘꒳˘)
+    authenticatedtwittewusewid(wawmuptwittewusewid), (///ˬ///✿)
+    twittewusewid(wawmuptwittewusewid), ^^;;
+    twittewusewnotsuspended, >_<
+    authenticatedtwittewusewnotsuspended, rawr x3
+    accesstoken(iswwitabwe = t-twue)
   )
 
-  private[this] val RwebClientId = 0L
+  pwivate[this] v-vaw wwebcwientid = 0w
 
-  private[this] val WarmupViewer = Viewer(
-    userId = Some(WarmupTwitterUserId),
-    authenticatedUserId = Some(WarmupTwitterUserId),
-    clientApplicationId = Some(RwebClientId),
+  pwivate[this] v-vaw wawmupviewew = v-viewew(
+    u-usewid = some(wawmuptwittewusewid), /(^•ω•^)
+    authenticatedusewid = some(wawmuptwittewusewid), :3
+    cwientappwicationid = some(wwebcwientid), (ꈍᴗꈍ)
   )
 
-  private[this] val WarmupOpContext =
-    OpContext
-      .safetyLevel(SafetyLevel.TweetWritesApi.name)
-      .copy(darkRequest = Some(DarkRequest()))
-      .toThrift()
+  pwivate[this] v-vaw wawmupopcontext =
+    opcontext
+      .safetywevew(safetywevew.tweetwwitesapi.name)
+      .copy(dawkwequest = some(dawkwequest()))
+      .tothwift()
 
-  private[this] val EllenOscarSelfie = 440322224407314432L
+  pwivate[this] vaw ewwenoscawsewfie = 440322224407314432w
 
-  private[this] val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  p-pwivate[this] vaw twittewcontext: t-twittewcontext =
+    c-com.twittew.context.twittewcontext(com.twittew.tweetypie.twittewcontextpewmit)
 
-  private[this] def executeDarkly(catalog: PartialFunction[String, Ops]): Stitch[Unit] = {
-    val stratoClient = new StaticClient(catalog)
-    val tweetCreator =
-      stratoClient.executer[CreateTweetRequest, CreateTweetResponseWithSubqueryPrefetchItems](
-        CreateTweetColumn.Path)
+  p-pwivate[this] def e-exekawaii~dawkwy(catawog: p-pawtiawfunction[stwing, /(^•ω•^) o-ops]): stitch[unit] = {
+    v-vaw stwatocwient = new staticcwient(catawog)
+    vaw t-tweetcweatow =
+      s-stwatocwient.exekawaii~w[cweatetweetwequest, (⑅˘꒳˘) c-cweatetweetwesponsewithsubquewypwefetchitems](
+        c-cweatetweetcowumn.path)
 
-    val tweetDeletor =
-      stratoClient
-        .executer[DeleteTweetRequest, DeleteTweetResponseWithSubqueryPrefetchItems](
-          DeleteTweetColumn.Path)
+    v-vaw tweetdewetow =
+      stwatocwient
+        .exekawaii~w[dewetetweetwequest, ( ͡o ω ͡o ) dewetetweetwesponsewithsubquewypwefetchitems](
+          dewetetweetcowumn.path)
 
-    val retweetCreator =
-      stratoClient
-        .executer[CreateRetweetRequest, CreateRetweetResponseWithSubqueryPrefetchItems](
-          CreateRetweetColumn.Path)
+    v-vaw wetweetcweatow =
+      stwatocwient
+        .exekawaii~w[cweatewetweetwequest, òωó cweatewetweetwesponsewithsubquewypwefetchitems](
+          cweatewetweetcowumn.path)
 
-    val unretweetor =
-      stratoClient
-        .executer[UnretweetRequest, UnretweetResponseWithSubqueryPrefetchItems](
-          UnretweetColumn.Path)
+    vaw unwetweetow =
+      s-stwatocwient
+        .exekawaii~w[unwetweetwequest, (⑅˘꒳˘) unwetweetwesponsewithsubquewypwefetchitems](
+          unwetweetcowumn.path)
 
-    val stitchCreateTweet =
-      tweetCreator
-        .execute(CreateTweetRequest("getting warmer"))
-        .onSuccess(_ => log.info(s"${CreateTweetColumn.Path} warmup success"))
-        .onFailure(e => log.info(s"${CreateTweetColumn.Path} warmup fail: $e"))
+    vaw stitchcweatetweet =
+      t-tweetcweatow
+        .exekawaii~(cweatetweetwequest("getting w-wawmew"))
+        .onsuccess(_ => w-wog.info(s"${cweatetweetcowumn.path} wawmup s-success"))
+        .onfaiwuwe(e => wog.info(s"${cweatetweetcowumn.path} w-wawmup f-faiw: $e"))
 
-    val stitchDeleteTweet =
-      tweetDeletor
-        .execute(DeleteTweetRequest(-1L))
-        .onSuccess(_ => log.info(s"${DeleteTweetColumn.Path} warmup success"))
-        .onFailure(e => log.info(s"${DeleteTweetColumn.Path} warmup fail: $e"))
+    vaw stitchdewetetweet =
+      tweetdewetow
+        .exekawaii~(dewetetweetwequest(-1w))
+        .onsuccess(_ => wog.info(s"${dewetetweetcowumn.path} wawmup success"))
+        .onfaiwuwe(e => wog.info(s"${dewetetweetcowumn.path} w-wawmup faiw: $e"))
 
-    val stitchCreateRetweet =
-      retweetCreator
-        .execute(CreateRetweetRequest(EllenOscarSelfie))
-        .onSuccess(_ => log.info(s"${CreateRetweetColumn.Path} warmup success"))
-        .onFailure(e => log.info(s"${CreateRetweetColumn.Path} warmup fail: $e"))
+    vaw s-stitchcweatewetweet =
+      wetweetcweatow
+        .exekawaii~(cweatewetweetwequest(ewwenoscawsewfie))
+        .onsuccess(_ => w-wog.info(s"${cweatewetweetcowumn.path} w-wawmup success"))
+        .onfaiwuwe(e => wog.info(s"${cweatewetweetcowumn.path} wawmup f-faiw: $e"))
 
-    val stitchUnretweet =
-      unretweetor
-        .execute(UnretweetRequest(EllenOscarSelfie))
-        .onSuccess(_ => log.info(s"${UnretweetColumn.Path} warmup success"))
-        .onFailure(e => log.info(s"${UnretweetColumn.Path} warmup fail: $e"))
+    v-vaw stitchunwetweet =
+      unwetweetow
+        .exekawaii~(unwetweetwequest(ewwenoscawsewfie))
+        .onsuccess(_ => w-wog.info(s"${unwetweetcowumn.path} w-wawmup success"))
+        .onfaiwuwe(e => wog.info(s"${unwetweetcowumn.path} wawmup faiw: $e"))
 
-    Stitch
+    s-stitch
       .join(
-        stitchCreateTweet,
-        stitchDeleteTweet,
-        stitchCreateRetweet,
-        stitchUnretweet,
+        s-stitchcweatetweet, XD
+        s-stitchdewetetweet, -.-
+        stitchcweatewetweet, :3
+        s-stitchunwetweet, nyaa~~
       ).unit
   }
 }

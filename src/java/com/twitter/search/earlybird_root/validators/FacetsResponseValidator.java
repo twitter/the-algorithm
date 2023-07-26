@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird_root.validators;
+package com.twittew.seawch.eawwybiwd_woot.vawidatows;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+i-impowt com.twittew.utiw.futuwe;
 
-public class FacetsResponseValidator implements ServiceResponseValidator<EarlybirdResponse> {
+p-pubwic c-cwass facetswesponsevawidatow i-impwements s-sewvicewesponsevawidatow<eawwybiwdwesponse> {
 
-  private final EarlybirdCluster cluster;
+  p-pwivate finaw eawwybiwdcwustew cwustew;
 
   /**
-   * Validator for facets responses
+   * vawidatow fow facets w-wesponses
    */
-  public FacetsResponseValidator(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  pubwic facetswesponsevawidatow(eawwybiwdcwustew cwustew) {
+    t-this.cwustew = cwustew;
   }
 
-  @Override
-  public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
-    if (!response.isSetSearchResults() || !response.getSearchResults().isSetResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set search results."));
+  @ovewwide
+  pubwic f-futuwe<eawwybiwdwesponse> vawidate(eawwybiwdwesponse wesponse) {
+    if (!wesponse.issetseawchwesuwts() || !wesponse.getseawchwesuwts().issetwesuwts()) {
+      w-wetuwn futuwe.exception(
+          nyew iwwegawstateexception(cwustew + " d-didn't set seawch w-wesuwts."));
     }
 
-    if (!response.isSetFacetResults()) {
-      return Future.exception(
-          new IllegalStateException(
-              cluster + " facets response does not have the facetResults field set."));
+    if (!wesponse.issetfacetwesuwts()) {
+      wetuwn futuwe.exception(
+          nyew iwwegawstateexception(
+              cwustew + " facets w-wesponse does nyot have the facetwesuwts fiewd set."));
     }
 
-    if (response.getFacetResults().getFacetFields().isEmpty()) {
-      return Future.exception(
-          new IllegalStateException(
-              cluster + " facets response does not have any facet fields set."));
+    if (wesponse.getfacetwesuwts().getfacetfiewds().isempty()) {
+      w-wetuwn futuwe.exception(
+          n-nyew i-iwwegawstateexception(
+              c-cwustew + " f-facets wesponse does nyot have any facet fiewds s-set."));
     }
 
-    return Future.value(response);
+    wetuwn futuwe.vawue(wesponse);
   }
 }

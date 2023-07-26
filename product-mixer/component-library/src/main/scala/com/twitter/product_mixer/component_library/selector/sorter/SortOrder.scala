@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow.sowtew
 
-sealed trait SortOrder
-case object Ascending extends SortOrder
-case object Descending extends SortOrder
+seawed twait s-sowtowdew
+case o-object ascending e-extends sowtowdew
+c-case object descending e-extends s-sowtowdew

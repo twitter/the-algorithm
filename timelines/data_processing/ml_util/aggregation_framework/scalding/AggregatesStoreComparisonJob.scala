@@ -1,200 +1,200 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.scawding
 
-import com.twitter.algebird.ScMapMonoid
-import com.twitter.bijection.Injection
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.ml.api.util.CompactDataRecordConverter
-import com.twitter.ml.api.CompactDataRecord
-import com.twitter.ml.api.DataRecord
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.Args
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding_internal.job.HasDateRange
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchJob
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird_internal.bijection.BatchPairImplicits
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKeyInjection
-import java.lang.{Double => JDouble}
-import java.lang.{Long => JLong}
-import scala.collection.JavaConverters._
+impowt com.twittew.awgebiwd.scmapmonoid
+i-impowt c-com.twittew.bijection.injection
+i-impowt com.twittew.bijection.thwift.compactthwiftcodec
+i-impowt c-com.twittew.mw.api.utiw.compactdatawecowdconvewtew
+i-impowt com.twittew.mw.api.compactdatawecowd
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt com.twittew.scawding.commons.souwce.vewsionedkeyvawsouwce
+impowt com.twittew.scawding.awgs
+impowt com.twittew.scawding.days
+impowt com.twittew.scawding.duwation
+i-impowt com.twittew.scawding.wichdate
+impowt com.twittew.scawding.typedpipe
+i-impowt com.twittew.scawding.typedtsv
+i-impowt com.twittew.scawding_intewnaw.job.hasdatewange
+impowt com.twittew.scawding_intewnaw.job.anawytics_batch.anawyticsbatchjob
+impowt com.twittew.summingbiwd.batch.batchid
+i-impowt com.twittew.summingbiwd_intewnaw.bijection.batchpaiwimpwicits
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegationkey
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegationkeyinjection
+impowt java.wang.{doubwe => jdoubwe}
+i-impowt java.wang.{wong => jwong}
+impowt scawa.cowwection.javaconvewtews._
 
 /**
- * The job takes four inputs:
- * - The path to a AggregateStore using the DataRecord format.
- * - The path to a AggregateStore using the CompactDataRecord format.
- * - A version that must be present in both sources.
- * - A sink to write the comparison statistics.
+ * the job takes fouw inputs:
+ * - t-the path to a aggwegatestowe u-using the datawecowd f-fowmat. :3
+ * - t-the path to a-a aggwegatestowe using the compactdatawecowd fowmat. ( ͡o ω ͡o )
+ * - a-a vewsion that must be pwesent in both s-souwces. òωó
+ * - a sink to wwite the compawison statistics. σωσ
  *
- * The job reads in the two stores, converts the second one to DataRecords and
- * then compared each key to see if the two stores have identical DataRecords,
- * modulo the loss in precision on converting the Double to Float.
+ * the job weads in the two stowes, (U ᵕ U❁) convewts the second o-one to datawecowds and
+ * then c-compawed each k-key to see if t-the two stowes have identicaw datawecowds, (✿oωo)
+ * moduwo the woss in p-pwecision on convewting t-the doubwe to fwoat. ^^
  */
-class AggregatesStoreComparisonJob(args: Args)
-    extends AnalyticsBatchJob(args)
-    with BatchPairImplicits
-    with HasDateRange {
+c-cwass aggwegatesstowecompawisonjob(awgs: a-awgs)
+    extends anawyticsbatchjob(awgs)
+    w-with batchpaiwimpwicits
+    with hasdatewange {
 
-  import AggregatesStoreComparisonJob._
-  override def batchIncrement: Duration = Days(1)
-  override def firstTime: RichDate = RichDate(args("firstTime"))
+  i-impowt aggwegatesstowecompawisonjob._
+  ovewwide def b-batchincwement: duwation = days(1)
+  o-ovewwide def fiwsttime: wichdate = w-wichdate(awgs("fiwsttime"))
 
-  private val dataRecordSourcePath = args("dataRecordSource")
-  private val compactDataRecordSourcePath = args("compactDataRecordSource")
+  p-pwivate vaw datawecowdsouwcepath = awgs("datawecowdsouwce")
+  pwivate vaw compactdatawecowdsouwcepath = awgs("compactdatawecowdsouwce")
 
-  private val version = args.long("version")
+  pwivate vaw vewsion = a-awgs.wong("vewsion")
 
-  private val statsSink = args("sink")
+  p-pwivate vaw statssink = awgs("sink")
 
-  require(dataRecordSourcePath != compactDataRecordSourcePath)
+  w-wequiwe(datawecowdsouwcepath != c-compactdatawecowdsouwcepath)
 
-  private val dataRecordSource =
-    VersionedKeyValSource[AggregationKey, (BatchID, DataRecord)](
-      path = dataRecordSourcePath,
-      sourceVersion = Some(version)
+  p-pwivate vaw datawecowdsouwce =
+    vewsionedkeyvawsouwce[aggwegationkey, ^•ﻌ•^ (batchid, datawecowd)](
+      p-path = datawecowdsouwcepath, XD
+      souwcevewsion = some(vewsion)
     )
-  private val compactDataRecordSource =
-    VersionedKeyValSource[AggregationKey, (BatchID, CompactDataRecord)](
-      path = compactDataRecordSourcePath,
-      sourceVersion = Some(version)
+  pwivate vaw compactdatawecowdsouwce =
+    v-vewsionedkeyvawsouwce[aggwegationkey, :3 (batchid, (ꈍᴗꈍ) compactdatawecowd)](
+      p-path = c-compactdatawecowdsouwcepath, :3
+      s-souwcevewsion = some(vewsion)
     )
 
-  private val dataRecordPipe: TypedPipe[((AggregationKey, BatchID), DataRecord)] = TypedPipe
-    .from(dataRecordSource)
-    .map { case (key, (batchId, record)) => ((key, batchId), record) }
+  pwivate v-vaw datawecowdpipe: t-typedpipe[((aggwegationkey, (U ﹏ U) b-batchid), UwU d-datawecowd)] = typedpipe
+    .fwom(datawecowdsouwce)
+    .map { case (key, (batchid, 😳😳😳 w-wecowd)) => ((key, XD b-batchid), o.O w-wecowd) }
 
-  private val compactDataRecordPipe: TypedPipe[((AggregationKey, BatchID), DataRecord)] = TypedPipe
-    .from(compactDataRecordSource)
+  p-pwivate vaw compactdatawecowdpipe: t-typedpipe[((aggwegationkey, (⑅˘꒳˘) batchid), 😳😳😳 datawecowd)] = typedpipe
+    .fwom(compactdatawecowdsouwce)
     .map {
-      case (key, (batchId, compactRecord)) =>
-        val record = compactConverter.compactDataRecordToDataRecord(compactRecord)
-        ((key, batchId), record)
+      case (key, nyaa~~ (batchid, rawr c-compactwecowd)) =>
+        vaw wecowd = compactconvewtew.compactdatawecowdtodatawecowd(compactwecowd)
+        ((key, batchid), -.- wecowd)
     }
 
-  dataRecordPipe
-    .outerJoin(compactDataRecordPipe)
-    .mapValues { case (leftOpt, rightOpt) => compareDataRecords(leftOpt, rightOpt) }
-    .values
-    .sum(mapMonoid)
-    .flatMap(_.toList)
-    .write(TypedTsv(statsSink))
+  datawecowdpipe
+    .outewjoin(compactdatawecowdpipe)
+    .mapvawues { case (weftopt, w-wightopt) => compawedatawecowds(weftopt, (✿oωo) wightopt) }
+    .vawues
+    .sum(mapmonoid)
+    .fwatmap(_.towist)
+    .wwite(typedtsv(statssink))
 }
 
-object AggregatesStoreComparisonJob {
+object aggwegatesstowecompawisonjob {
 
-  val mapMonoid: ScMapMonoid[String, Long] = new ScMapMonoid[String, Long]()
+  vaw mapmonoid: s-scmapmonoid[stwing, /(^•ω•^) w-wong] = n-nyew scmapmonoid[stwing, 🥺 wong]()
 
-  implicit private val aggregationKeyInjection: Injection[AggregationKey, Array[Byte]] =
-    AggregationKeyInjection
-  implicit private val aggregationKeyOrdering: Ordering[AggregationKey] = AggregationKeyOrdering
-  implicit private val dataRecordCodec: Injection[DataRecord, Array[Byte]] =
-    CompactThriftCodec[DataRecord]
-  implicit private val compactDataRecordCodec: Injection[CompactDataRecord, Array[Byte]] =
-    CompactThriftCodec[CompactDataRecord]
+  i-impwicit pwivate vaw aggwegationkeyinjection: i-injection[aggwegationkey, ʘwʘ awway[byte]] =
+    a-aggwegationkeyinjection
+  impwicit pwivate vaw aggwegationkeyowdewing: owdewing[aggwegationkey] = aggwegationkeyowdewing
+  i-impwicit pwivate vaw d-datawecowdcodec: injection[datawecowd, UwU a-awway[byte]] =
+    c-compactthwiftcodec[datawecowd]
+  impwicit pwivate vaw c-compactdatawecowdcodec: i-injection[compactdatawecowd, XD awway[byte]] =
+    c-compactthwiftcodec[compactdatawecowd]
 
-  private val compactConverter = new CompactDataRecordConverter
+  p-pwivate vaw compactconvewtew = nyew compactdatawecowdconvewtew
 
-  val missingRecordFromLeft = "missingRecordFromLeft"
-  val missingRecordFromRight = "missingRecordFromRight"
-  val nonContinuousFeaturesDidNotMatch = "nonContinuousFeaturesDidNotMatch"
-  val missingFeaturesFromLeft = "missingFeaturesFromLeft"
-  val missingFeaturesFromRight = "missingFeaturesFromRight"
-  val recordsWithUnmatchedKeys = "recordsWithUnmatchedKeys"
-  val featureValuesMatched = "featureValuesMatched"
-  val featureValuesThatDidNotMatch = "featureValuesThatDidNotMatch"
-  val equalRecords = "equalRecords"
-  val keyCount = "keyCount"
+  vaw missingwecowdfwomweft = "missingwecowdfwomweft"
+  vaw missingwecowdfwomwight = "missingwecowdfwomwight"
+  vaw nyoncontinuousfeatuwesdidnotmatch = "noncontinuousfeatuwesdidnotmatch"
+  v-vaw missingfeatuwesfwomweft = "missingfeatuwesfwomweft"
+  v-vaw missingfeatuwesfwomwight = "missingfeatuwesfwomwight"
+  v-vaw wecowdswithunmatchedkeys = "wecowdswithunmatchedkeys"
+  vaw featuwevawuesmatched = "featuwevawuesmatched"
+  v-vaw featuwevawuesthatdidnotmatch = "featuwevawuesthatdidnotmatch"
+  v-vaw equawwecowds = "equawwecowds"
+  vaw k-keycount = "keycount"
 
-  def compareDataRecords(
-    leftOpt: Option[DataRecord],
-    rightOpt: Option[DataRecord]
-  ): collection.Map[String, Long] = {
-    val stats = collection.Map((keyCount, 1L))
-    (leftOpt, rightOpt) match {
-      case (Some(left), Some(right)) =>
-        if (isIdenticalNonContinuousFeatureSet(left, right)) {
-          getContinuousFeaturesStats(left, right).foldLeft(stats)(mapMonoid.add)
-        } else {
-          mapMonoid.add(stats, (nonContinuousFeaturesDidNotMatch, 1L))
+  def compawedatawecowds(
+    weftopt: option[datawecowd], (✿oωo)
+    wightopt: o-option[datawecowd]
+  ): c-cowwection.map[stwing, :3 wong] = {
+    vaw stats = cowwection.map((keycount, (///ˬ///✿) 1w))
+    (weftopt, nyaa~~ w-wightopt) m-match {
+      case (some(weft), >w< some(wight)) =>
+        if (isidenticawnoncontinuousfeatuweset(weft, -.- w-wight)) {
+          getcontinuousfeatuwesstats(weft, wight).fowdweft(stats)(mapmonoid.add)
+        } ewse {
+          mapmonoid.add(stats, (✿oωo) (noncontinuousfeatuwesdidnotmatch, (˘ω˘) 1w))
         }
-      case (Some(_), None) => mapMonoid.add(stats, (missingRecordFromRight, 1L))
-      case (None, Some(_)) => mapMonoid.add(stats, (missingRecordFromLeft, 1L))
-      case (None, None) => throw new IllegalArgumentException("Should never be possible")
+      c-case (some(_), rawr nyone) => mapmonoid.add(stats, OwO (missingwecowdfwomwight, ^•ﻌ•^ 1w))
+      c-case (none, s-some(_)) => mapmonoid.add(stats, UwU (missingwecowdfwomweft, (˘ω˘) 1w))
+      case (none, (///ˬ///✿) nyone) => t-thwow nyew iwwegawawgumentexception("shouwd n-nyevew be possibwe")
     }
   }
 
   /**
-   * For Continuous features.
+   * fow continuous featuwes.
    */
-  private def getContinuousFeaturesStats(
-    left: DataRecord,
-    right: DataRecord
-  ): Seq[(String, Long)] = {
-    val leftFeatures = Option(left.getContinuousFeatures)
-      .map(_.asScala.toMap)
-      .getOrElse(Map.empty[JLong, JDouble])
+  p-pwivate def getcontinuousfeatuwesstats(
+    w-weft: datawecowd, σωσ
+    wight: datawecowd
+  ): seq[(stwing, /(^•ω•^) w-wong)] = {
+    vaw weftfeatuwes = o-option(weft.getcontinuousfeatuwes)
+      .map(_.asscawa.tomap)
+      .getowewse(map.empty[jwong, 😳 j-jdoubwe])
 
-    val rightFeatures = Option(right.getContinuousFeatures)
-      .map(_.asScala.toMap)
-      .getOrElse(Map.empty[JLong, JDouble])
+    vaw wightfeatuwes = o-option(wight.getcontinuousfeatuwes)
+      .map(_.asscawa.tomap)
+      .getowewse(map.empty[jwong, 😳 jdoubwe])
 
-    val numMissingFeaturesLeft = (rightFeatures.keySet diff leftFeatures.keySet).size
-    val numMissingFeaturesRight = (leftFeatures.keySet diff rightFeatures.keySet).size
+    v-vaw nyummissingfeatuwesweft = (wightfeatuwes.keyset d-diff w-weftfeatuwes.keyset).size
+    vaw n-nyummissingfeatuweswight = (weftfeatuwes.keyset d-diff wightfeatuwes.keyset).size
 
-    if (numMissingFeaturesLeft == 0 && numMissingFeaturesRight == 0) {
-      val Epsilon = 1e-5
-      val numUnmatchedValues = leftFeatures.map {
-        case (id, lValue) =>
-          val rValue = rightFeatures(id)
-          // The approximate match is to account for the precision loss due to
-          // the Double -> Float -> Double conversion.
-          if (math.abs(lValue - rValue) <= Epsilon) 0L else 1L
+    if (nummissingfeatuwesweft == 0 && nyummissingfeatuweswight == 0) {
+      v-vaw epsiwon = 1e-5
+      v-vaw nyumunmatchedvawues = w-weftfeatuwes.map {
+        case (id, (⑅˘꒳˘) wvawue) =>
+          vaw w-wvawue = wightfeatuwes(id)
+          // the appwoximate m-match i-is to account fow the pwecision woss due to
+          // the doubwe -> f-fwoat -> d-doubwe convewsion. 😳😳😳
+          i-if (math.abs(wvawue - w-wvawue) <= epsiwon) 0w ewse 1w
       }.sum
 
-      if (numUnmatchedValues == 0) {
-        Seq(
-          (equalRecords, 1L),
-          (featureValuesMatched, leftFeatures.size.toLong)
+      i-if (numunmatchedvawues == 0) {
+        seq(
+          (equawwecowds, 😳 1w),
+          (featuwevawuesmatched, XD weftfeatuwes.size.towong)
         )
-      } else {
-        Seq(
-          (featureValuesThatDidNotMatch, numUnmatchedValues),
+      } ewse {
+        seq(
+          (featuwevawuesthatdidnotmatch, mya nyumunmatchedvawues), ^•ﻌ•^
           (
-            featureValuesMatched,
-            math.max(leftFeatures.size, rightFeatures.size) - numUnmatchedValues)
+            f-featuwevawuesmatched, ʘwʘ
+            math.max(weftfeatuwes.size, ( ͡o ω ͡o ) w-wightfeatuwes.size) - numunmatchedvawues)
         )
       }
-    } else {
-      Seq(
-        (recordsWithUnmatchedKeys, 1L),
-        (missingFeaturesFromLeft, numMissingFeaturesLeft.toLong),
-        (missingFeaturesFromRight, numMissingFeaturesRight.toLong)
+    } e-ewse {
+      seq(
+        (wecowdswithunmatchedkeys, mya 1w), o.O
+        (missingfeatuwesfwomweft, (✿oωo) n-nyummissingfeatuwesweft.towong), :3
+        (missingfeatuwesfwomwight, 😳 nyummissingfeatuweswight.towong)
       )
     }
   }
 
   /**
-   * For feature types that are not Feature.Continuous. We expect these to match exactly in the two stores.
-   * Mutable change
+   * f-fow featuwe t-types that awe n-nyot featuwe.continuous. (U ﹏ U) w-we expect t-these to match exactwy in the two stowes. mya
+   * mutabwe change
    */
-  private def isIdenticalNonContinuousFeatureSet(left: DataRecord, right: DataRecord): Boolean = {
-    val booleanMatched = safeEquals(left.binaryFeatures, right.binaryFeatures)
-    val discreteMatched = safeEquals(left.discreteFeatures, right.discreteFeatures)
-    val stringMatched = safeEquals(left.stringFeatures, right.stringFeatures)
-    val sparseBinaryMatched = safeEquals(left.sparseBinaryFeatures, right.sparseBinaryFeatures)
-    val sparseContinuousMatched =
-      safeEquals(left.sparseContinuousFeatures, right.sparseContinuousFeatures)
-    val blobMatched = safeEquals(left.blobFeatures, right.blobFeatures)
-    val tensorsMatched = safeEquals(left.tensors, right.tensors)
-    val sparseTensorsMatched = safeEquals(left.sparseTensors, right.sparseTensors)
+  pwivate def isidenticawnoncontinuousfeatuweset(weft: datawecowd, (U ᵕ U❁) wight: d-datawecowd): boowean = {
+    vaw b-booweanmatched = s-safeequaws(weft.binawyfeatuwes, :3 wight.binawyfeatuwes)
+    v-vaw discwetematched = safeequaws(weft.discwetefeatuwes, mya wight.discwetefeatuwes)
+    v-vaw stwingmatched = s-safeequaws(weft.stwingfeatuwes, OwO wight.stwingfeatuwes)
+    v-vaw spawsebinawymatched = safeequaws(weft.spawsebinawyfeatuwes, (ˆ ﻌ ˆ)♡ wight.spawsebinawyfeatuwes)
+    v-vaw spawsecontinuousmatched =
+      s-safeequaws(weft.spawsecontinuousfeatuwes, ʘwʘ wight.spawsecontinuousfeatuwes)
+    v-vaw bwobmatched = s-safeequaws(weft.bwobfeatuwes, o.O wight.bwobfeatuwes)
+    vaw tensowsmatched = safeequaws(weft.tensows, UwU wight.tensows)
+    vaw spawsetensowsmatched = s-safeequaws(weft.spawsetensows, rawr x3 w-wight.spawsetensows)
 
-    booleanMatched && discreteMatched && stringMatched && sparseBinaryMatched &&
-    sparseContinuousMatched && blobMatched && tensorsMatched && sparseTensorsMatched
+    booweanmatched && d-discwetematched && s-stwingmatched && s-spawsebinawymatched &&
+    spawsecontinuousmatched && b-bwobmatched && t-tensowsmatched && spawsetensowsmatched
   }
 
-  def safeEquals[T](l: T, r: T): Boolean = Option(l).equals(Option(r))
+  d-def safeequaws[t](w: t-t, 🥺 w: t): boowean = o-option(w).equaws(option(w))
 }

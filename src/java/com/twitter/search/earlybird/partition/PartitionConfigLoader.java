@@ -1,45 +1,45 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.aurora.AuroraInstanceKey;
-import com.twitter.search.common.aurora.AuroraSchedulerClient;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.factory.PartitionConfigUtil;
+i-impowt com.twittew.seawch.common.auwowa.auwowainstancekey;
+i-impowt com.twittew.seawch.common.auwowa.auwowascheduwewcwient;
+impowt c-com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.factowy.pawtitionconfigutiw;
 
-public final class PartitionConfigLoader {
-  private static final Logger LOG = LoggerFactory.getLogger(PartitionConfigLoader.class);
+pubwic finaw cwass pawtitionconfigwoadew {
+  pwivate static f-finaw woggew wog = woggewfactowy.getwoggew(pawtitionconfigwoadew.cwass);
 
-  private PartitionConfigLoader() {
-    // this never gets called
+  pwivate p-pawtitionconfigwoadew() {
+    // this nyevew g-gets cawwed
   }
 
   /**
-   * Load partition information from the command line arguments and Aurora scheduler.
+   * woad pawtition infowmation fwom the c-command wine awguments and auwowa s-scheduwew. /(^•ω•^)
    *
-   * @return The new PartitionConfig object for this host
+   * @wetuwn t-the nyew pawtitionconfig object fow this host
    */
-  public static PartitionConfig getPartitionInfoForMesosConfig(
-      AuroraSchedulerClient schedulerClient) throws PartitionConfigLoadingException {
-    AuroraInstanceKey instanceKey =
-        Preconditions.checkNotNull(EarlybirdConfig.getAuroraInstanceKey());
-    int numTasks;
+  pubwic static pawtitionconfig g-getpawtitioninfofowmesosconfig(
+      auwowascheduwewcwient scheduwewcwient) thwows pawtitionconfigwoadingexception {
+    auwowainstancekey i-instancekey =
+        pweconditions.checknotnuww(eawwybiwdconfig.getauwowainstancekey());
+    i-int n-nyumtasks;
 
-    try {
-      numTasks = schedulerClient.getActiveTasks(
-          instanceKey.getRole(), instanceKey.getEnv(), instanceKey.getJobName()).size();
-      LOG.info("Found {} active tasks", numTasks);
-    } catch (IOException e) {
-      // This can happen when Aurora Scheduler is holding a conclave to elect a new reader.
-      LOG.warn("Failed to get tasks from Aurora scheduler.", e);
-      throw new PartitionConfigLoadingException("Failed to get tasks from Aurora scheduler.");
+    t-twy {
+      nyumtasks = s-scheduwewcwient.getactivetasks(
+          instancekey.getwowe(), ʘwʘ instancekey.getenv(), σωσ i-instancekey.getjobname()).size();
+      wog.info("found {} active t-tasks", OwO nyumtasks);
+    } catch (ioexception e) {
+      // this can happen when auwowa scheduwew is howding a c-concwave to ewect a nyew weadew.
+      w-wog.wawn("faiwed t-to get t-tasks fwom auwowa scheduwew.", 😳😳😳 e);
+      thwow nyew pawtitionconfigwoadingexception("faiwed t-to get t-tasks fwom auwowa scheduwew.");
     }
 
-    return PartitionConfigUtil.initPartitionConfigForAurora(numTasks);
+    w-wetuwn p-pawtitionconfigutiw.initpawtitionconfigfowauwowa(numtasks);
   }
 }

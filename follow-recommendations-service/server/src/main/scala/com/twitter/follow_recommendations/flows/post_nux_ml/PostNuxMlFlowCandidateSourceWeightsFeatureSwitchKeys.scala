@@ -1,46 +1,46 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.twittew.fowwow_wecommendations.fwows.post_nux_mw
 
-object PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys {
-  val CandidateWeightCrowdSearch = "post_nux_ml_flow_candidate_source_weights_user_crowd_search"
-  val CandidateWeightTopOrganicFollow =
-    "post_nux_ml_flow_candidate_source_weights_top_organic_follow"
-  val CandidateWeightPPMILocaleFollow =
-    "post_nux_ml_flow_candidate_source_weights_user_ppmi_locale_follow"
-  val CandidateWeightForwardEmailBook =
-    "post_nux_ml_flow_candidate_source_weights_user_forward_email_book"
-  val CandidateWeightForwardPhoneBook =
-    "post_nux_ml_flow_candidate_source_weights_user_forward_phone_book"
-  val CandidateWeightOfflineStrongTiePrediction =
-    "post_nux_ml_flow_candidate_source_weights_user_offline_strong_tie_prediction"
-  val CandidateWeightOnlineStp = "post_nux_ml_flow_candidate_source_weights_user_online_stp"
-  val CandidateWeightPopCountry = "post_nux_ml_flow_candidate_source_weights_user_pop_country"
-  val CandidateWeightPopGeohash = "post_nux_ml_flow_candidate_source_weights_user_pop_geohash"
-  val CandidateWeightPopGeohashQualityFollow =
-    "post_nux_ml_flow_candidate_source_weights_user_pop_geohash_quality_follow"
-  val CandidateWeightPopGeoBackfill =
-    "post_nux_ml_flow_candidate_source_weights_user_pop_geo_backfill"
-  val CandidateWeightRecentFollowingSimilarUsers =
-    "post_nux_ml_flow_candidate_source_weights_user_recent_following_similar_users"
-  val CandidateWeightRecentEngagementDirectFollowSalsaExpansion =
-    "post_nux_ml_flow_candidate_source_weights_user_recent_engagement_direct_follow_salsa_expansion"
-  val CandidateWeightRecentEngagementNonDirectFollow =
-    "post_nux_ml_flow_candidate_source_weights_user_recent_engagement_non_direct_follow"
-  val CandidateWeightRecentEngagementSimilarUsers =
-    "post_nux_ml_flow_candidate_source_weights_user_recent_engagement_similar_users"
-  val CandidateWeightRepeatedProfileVisits =
-    "post_nux_ml_flow_candidate_source_weights_user_repeated_profile_visits"
-  val CandidateWeightFollow2vecNearestNeighbors =
-    "post_nux_ml_flow_candidate_source_weights_user_follow2vec_nearest_neighbors"
-  val CandidateWeightReverseEmailBook =
-    "post_nux_ml_flow_candidate_source_weights_user_reverse_email_book"
-  val CandidateWeightReversePhoneBook =
-    "post_nux_ml_flow_candidate_source_weights_user_reverse_phone_book"
-  val CandidateWeightTriangularLoops =
-    "post_nux_ml_flow_candidate_source_weights_user_triangular_loops"
-  val CandidateWeightTwoHopRandomWalk =
-    "post_nux_ml_flow_candidate_source_weights_user_two_hop_random_walk"
-  val CandidateWeightUserUserGraph =
-    "post_nux_ml_flow_candidate_source_weights_user_user_user_graph"
-  val CandidateWeightRealGraphOonV2 =
-    "post_nux_ml_flow_candidate_source_weights_user_real_graph_oon_v2"
+object p-postnuxmwfwowcandidatesouwceweightsfeatuweswitchkeys {
+  v-vaw c-candidateweightcwowdseawch = "post_nux_mw_fwow_candidate_souwce_weights_usew_cwowd_seawch"
+  v-vaw c-candidateweighttopowganicfowwow =
+    "post_nux_mw_fwow_candidate_souwce_weights_top_owganic_fowwow"
+  v-vaw candidateweightppmiwocawefowwow =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_ppmi_wocawe_fowwow"
+  v-vaw candidateweightfowwawdemaiwbook =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_fowwawd_emaiw_book"
+  v-vaw candidateweightfowwawdphonebook =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_fowwawd_phone_book"
+  vaw candidateweightoffwinestwongtiepwediction =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_offwine_stwong_tie_pwediction"
+  vaw candidateweightonwinestp = "post_nux_mw_fwow_candidate_souwce_weights_usew_onwine_stp"
+  vaw candidateweightpopcountwy = "post_nux_mw_fwow_candidate_souwce_weights_usew_pop_countwy"
+  v-vaw candidateweightpopgeohash = "post_nux_mw_fwow_candidate_souwce_weights_usew_pop_geohash"
+  vaw candidateweightpopgeohashquawityfowwow =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_pop_geohash_quawity_fowwow"
+  vaw candidateweightpopgeobackfiww =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_pop_geo_backfiww"
+  v-vaw candidateweightwecentfowwowingsimiwawusews =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_wecent_fowwowing_simiwaw_usews"
+  vaw candidateweightwecentengagementdiwectfowwowsawsaexpansion =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_wecent_engagement_diwect_fowwow_sawsa_expansion"
+  v-vaw candidateweightwecentengagementnondiwectfowwow =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_wecent_engagement_non_diwect_fowwow"
+  vaw candidateweightwecentengagementsimiwawusews =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_wecent_engagement_simiwaw_usews"
+  vaw candidateweightwepeatedpwofiwevisits =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_wepeated_pwofiwe_visits"
+  vaw candidateweightfowwow2vecneawestneighbows =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_fowwow2vec_neawest_neighbows"
+  v-vaw candidateweightwevewseemaiwbook =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_wevewse_emaiw_book"
+  vaw candidateweightwevewsephonebook =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_wevewse_phone_book"
+  v-vaw candidateweighttwianguwawwoops =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_twianguwaw_woops"
+  v-vaw candidateweighttwohopwandomwawk =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_two_hop_wandom_wawk"
+  vaw candidateweightusewusewgwaph =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_usew_usew_gwaph"
+  vaw candidateweightweawgwaphoonv2 =
+    "post_nux_mw_fwow_candidate_souwce_weights_usew_weaw_gwaph_oon_v2"
 }

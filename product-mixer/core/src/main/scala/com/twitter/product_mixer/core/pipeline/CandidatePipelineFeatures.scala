@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.pipeline
+package com.twittew.pwoduct_mixew.cowe.pipewine
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
 
-private[core] object CandidatePipelineResults
-    extends Feature[PipelineQuery, Seq[CandidateWithDetails]]
+p-pwivate[cowe] o-object c-candidatepipewinewesuwts
+    e-extends f-featuwe[pipewinequewy, (U ᵕ U❁) s-seq[candidatewithdetaiws]]

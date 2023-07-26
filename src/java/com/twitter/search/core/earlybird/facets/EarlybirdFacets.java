@@ -1,102 +1,102 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+i-impowt c-com.googwe.common.base.pweconditions;
+i-impowt c-com.googwe.common.cowwect.wists;
 
-import org.apache.lucene.facet.FacetResult;
-import org.apache.lucene.facet.Facets;
-import org.apache.lucene.facet.FacetsCollector;
-import org.apache.lucene.facet.FacetsCollector.MatchingDocs;
-import org.apache.lucene.util.BitDocIdSet;
-import org.apache.lucene.util.BitSet;
+i-impowt owg.apache.wucene.facet.facetwesuwt;
+impowt owg.apache.wucene.facet.facets;
+impowt owg.apache.wucene.facet.facetscowwectow;
+impowt owg.apache.wucene.facet.facetscowwectow.matchingdocs;
+i-impowt owg.apache.wucene.utiw.bitdocidset;
+impowt owg.apache.wucene.utiw.bitset;
 
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.common.facets.thriftjava.FacetFieldRequest;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+i-impowt com.twittew.seawch.common.facets.facetseawchpawam;
+impowt c-com.twittew.seawch.common.facets.thwiftjava.facetfiewdwequest;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
 /**
- * Lucene accumulator implementation that counts on our facet counting array data structure.
+ * wucene accumuwatow i-impwementation that counts on ouw f-facet counting a-awway data stwuctuwe. >w<
  *
  */
-public class EarlybirdFacets extends Facets {
+pubwic cwass eawwybiwdfacets extends facets {
 
-  private final AbstractFacetCountingArray countingArray;
-  private final FacetCountAggregator aggregator;
-  private final EarlybirdIndexSegmentAtomicReader reader;
-  private final MatchingDocs matchingDocs;
-  private final Map<FacetFieldRequest, FacetResult> resultMapping;
+  pwivate finaw abstwactfacetcountingawway c-countingawway;
+  pwivate finaw facetcountaggwegatow aggwegatow;
+  pwivate f-finaw eawwybiwdindexsegmentatomicweadew weadew;
+  p-pwivate finaw m-matchingdocs m-matchingdocs;
+  p-pwivate finaw map<facetfiewdwequest, (⑅˘꒳˘) facetwesuwt> wesuwtmapping;
 
   /**
-   * Constructs an EarlybirdFacets accumulator.
+   * c-constwucts an eawwybiwdfacets accumuwatow. OwO
    */
-  public EarlybirdFacets(
-      List<FacetSearchParam> facetSearchParams,
-      FacetsCollector facetsCollector,
-      EarlybirdIndexSegmentAtomicReader reader) throws IOException {
+  p-pubwic eawwybiwdfacets(
+      wist<facetseawchpawam> facetseawchpawams, (ꈍᴗꈍ)
+      facetscowwectow facetscowwectow, 😳
+      eawwybiwdindexsegmentatomicweadew w-weadew) thwows ioexception {
 
-    Preconditions.checkArgument(facetSearchParams != null && !facetSearchParams.isEmpty());
-    Preconditions.checkArgument(
-        facetsCollector != null
-        && facetsCollector.getMatchingDocs() != null
-        && facetsCollector.getMatchingDocs().size() == 1);
-    Preconditions.checkNotNull(reader);
+    p-pweconditions.checkawgument(facetseawchpawams != n-nyuww && !facetseawchpawams.isempty());
+    p-pweconditions.checkawgument(
+        facetscowwectow != nyuww
+        && facetscowwectow.getmatchingdocs() != nyuww
+        && f-facetscowwectow.getmatchingdocs().size() == 1);
+    p-pweconditions.checknotnuww(weadew);
 
-    this.countingArray = reader.getSegmentData().getFacetCountingArray();
-    this.reader = reader;
-    this.aggregator = new FacetCountAggregator(facetSearchParams,
-        reader.getSegmentData().getSchema(),
-        reader.getFacetIDMap(),
-        reader.getSegmentData().getPerFieldMap());
-    this.matchingDocs = facetsCollector.getMatchingDocs().get(0);
+    this.countingawway = w-weadew.getsegmentdata().getfacetcountingawway();
+    t-this.weadew = weadew;
+    t-this.aggwegatow = nyew facetcountaggwegatow(facetseawchpawams, 😳😳😳
+        w-weadew.getsegmentdata().getschema(), mya
+        weadew.getfacetidmap(), mya
+        weadew.getsegmentdata().getpewfiewdmap());
+    t-this.matchingdocs = facetscowwectow.getmatchingdocs().get(0);
 
-    this.resultMapping = count();
+    t-this.wesuwtmapping = count();
   }
 
-  private Map<FacetFieldRequest, FacetResult> count() throws IOException {
-    Preconditions.checkState(matchingDocs.bits instanceof BitDocIdSet,
-            "Assuming BitDocIdSet");
-    final BitSet bits = ((BitDocIdSet) matchingDocs.bits).bits();
-    final int length = bits.length();
-    int doc = reader.getSmallestDocID();
-    if (doc != -1) {
-      while (doc < length && (doc = bits.nextSetBit(doc)) != -1) {
-        countingArray.collectForDocId(doc, aggregator);
-        doc++;
+  p-pwivate map<facetfiewdwequest, (⑅˘꒳˘) f-facetwesuwt> count() thwows ioexception {
+    pweconditions.checkstate(matchingdocs.bits instanceof bitdocidset, (U ﹏ U)
+            "assuming bitdocidset");
+    finaw b-bitset bits = ((bitdocidset) m-matchingdocs.bits).bits();
+    finaw i-int wength = bits.wength();
+    i-int doc = weadew.getsmowestdocid();
+    i-if (doc != -1) {
+      whiwe (doc < wength && (doc = bits.nextsetbit(doc)) != -1) {
+        countingawway.cowwectfowdocid(doc, mya aggwegatow);
+        d-doc++;
       }
     }
-    return aggregator.getTop();
+    wetuwn aggwegatow.gettop();
   }
 
-  @Override
-  public FacetResult getTopChildren(int topN, String dim, String... path) throws IOException {
-    FacetFieldRequest facetFieldRequest = new FacetFieldRequest(dim, topN);
-    if (path.length > 0) {
-      facetFieldRequest.setPath(Lists.newArrayList(path));
+  @ovewwide
+  pubwic facetwesuwt gettopchiwdwen(int topn, ʘwʘ s-stwing dim, (˘ω˘) stwing... path) thwows i-ioexception {
+    f-facetfiewdwequest f-facetfiewdwequest = nyew f-facetfiewdwequest(dim, (U ﹏ U) t-topn);
+    i-if (path.wength > 0) {
+      f-facetfiewdwequest.setpath(wists.newawwaywist(path));
     }
 
-    FacetResult result = resultMapping.get(facetFieldRequest);
+    facetwesuwt wesuwt = wesuwtmapping.get(facetfiewdwequest);
 
-    Preconditions.checkNotNull(
-        result,
-        "Illegal facet field request: %s, supported requests are: %s",
-        facetFieldRequest,
-        resultMapping.keySet());
+    p-pweconditions.checknotnuww(
+        w-wesuwt, ^•ﻌ•^
+        "iwwegaw f-facet f-fiewd wequest: %s, (˘ω˘) s-suppowted wequests awe: %s", :3
+        facetfiewdwequest, ^^;;
+        wesuwtmapping.keyset());
 
-    return result;
+    w-wetuwn wesuwt;
   }
 
-  @Override
-  public Number getSpecificValue(String dim, String... path) {
-    throw new UnsupportedOperationException("Not supported");
+  @ovewwide
+  pubwic nyumbew getspecificvawue(stwing dim, 🥺 stwing... path) {
+    thwow nyew u-unsuppowtedopewationexception("not suppowted");
   }
 
-  @Override
-  public List<FacetResult> getAllDims(int topN) throws IOException {
-    throw new UnsupportedOperationException("Not supported");
+  @ovewwide
+  pubwic wist<facetwesuwt> getawwdims(int topn) t-thwows ioexception {
+    t-thwow n-nyew unsuppowtedopewationexception("not suppowted");
   }
 
 }

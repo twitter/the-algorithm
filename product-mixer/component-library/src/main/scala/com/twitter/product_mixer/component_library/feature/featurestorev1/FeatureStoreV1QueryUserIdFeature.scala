@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.feature.featurestorev1
+package com.twittew.pwoduct_mixew.component_wibwawy.featuwe.featuwestowev1
 
-import com.twitter.ml.api.transform.FeatureRenameTransform
-import com.twitter.ml.featurestore.catalog.entities
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.TimelinesAggregationFrameworkFeatureGroup
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.core.feature.featurestorev1._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import scala.reflect.ClassTag
-object FeatureStoreV1QueryUserIdFeature {
-  def apply[Query <: PipelineQuery, Value](
-    feature: FSv1Feature[UserId, Value],
-    legacyName: Option[String] = None,
-    defaultValue: Option[Value] = None,
-    enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1Feature[Query, Query, _ <: EntityId, Value]
-    with FeatureStoreV1QueryFeature[Query, _ <: EntityId, Value] =
-    FeatureStoreV1QueryFeature(feature, QueryUserIdEntity, legacyName, defaultValue, enabledParam)
+impowt c-com.twittew.mw.api.twansfowm.featuwewenametwansfowm
+i-impowt com.twittew.mw.featuwestowe.catawog.entities
+i-impowt c-com.twittew.mw.featuwestowe.wib.entityid
+i-impowt c-com.twittew.mw.featuwestowe.wib.usewid
+i-impowt com.twittew.mw.featuwestowe.wib.entity.entity
+i-impowt com.twittew.mw.featuwestowe.wib.entity.entitywithid
+impowt com.twittew.mw.featuwestowe.wib.featuwe.timewinesaggwegationfwamewowkfeatuwegwoup
+impowt com.twittew.mw.featuwestowe.wib.featuwe.{featuwe => fsv1featuwe}
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1._
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.timewines.configapi.fspawam
+impowt scawa.wefwect.cwasstag
+o-object featuwestowev1quewyusewidfeatuwe {
+  def appwy[quewy <: pipewinequewy, ( ͡o ω ͡o ) v-vawue](
+    featuwe: fsv1featuwe[usewid, (U ﹏ U) v-vawue],
+    w-wegacyname: option[stwing] = nyone, (///ˬ///✿)
+    defauwtvawue: option[vawue] = nyone, >w<
+    e-enabwedpawam: option[fspawam[boowean]] = nyone
+  ): featuwestowev1featuwe[quewy, rawr quewy, _ <: entityid, mya vawue]
+    w-with featuwestowev1quewyfeatuwe[quewy, ^^ _ <: entityid, 😳😳😳 vawue] =
+    f-featuwestowev1quewyfeatuwe(featuwe, mya quewyusewidentity, 😳 w-wegacyname, -.- defauwtvawue, e-enabwedpawam)
 }
 
-object FeatureStoreV1QueryUserIdAggregateFeature {
-  def apply[Query <: PipelineQuery](
-    featureGroup: TimelinesAggregationFrameworkFeatureGroup[UserId],
-    enabledParam: Option[FSParam[Boolean]] = None,
-    keepLegacyNames: Boolean = false,
-    featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1QueryFeatureGroup[Query, _ <: EntityId] =
-    FeatureStoreV1QueryFeatureGroup(
-      featureGroup,
-      QueryUserIdEntity,
-      enabledParam,
-      keepLegacyNames,
-      featureNameTransform)((implicitly[ClassTag[UserId]]))
+o-object featuwestowev1quewyusewidaggwegatefeatuwe {
+  def appwy[quewy <: p-pipewinequewy](
+    featuwegwoup: timewinesaggwegationfwamewowkfeatuwegwoup[usewid], 🥺
+    e-enabwedpawam: option[fspawam[boowean]] = nyone, o.O
+    keepwegacynames: boowean = fawse,
+    featuwenametwansfowm: o-option[featuwewenametwansfowm] = nyone
+  ): featuwestowev1quewyfeatuwegwoup[quewy, /(^•ω•^) _ <: e-entityid] =
+    f-featuwestowev1quewyfeatuwegwoup(
+      f-featuwegwoup, nyaa~~
+      quewyusewidentity, nyaa~~
+      enabwedpawam, :3
+      keepwegacynames, 😳😳😳
+      f-featuwenametwansfowm)((impwicitwy[cwasstag[usewid]]))
 }
 
-object QueryUserIdEntity extends FeatureStoreV1QueryEntity[PipelineQuery, UserId] {
-  override val entity: Entity[UserId] = entities.core.User
+o-object quewyusewidentity e-extends featuwestowev1quewyentity[pipewinequewy, (˘ω˘) u-usewid] {
+  ovewwide vaw e-entity: entity[usewid] = entities.cowe.usew
 
-  override def entityWithId(query: PipelineQuery): EntityWithId[UserId] =
-    entity.withId(UserId(query.getUserIdLoggedOutSupport))
+  o-ovewwide def entitywithid(quewy: pipewinequewy): entitywithid[usewid] =
+    e-entity.withid(usewid(quewy.getusewidwoggedoutsuppowt))
 }

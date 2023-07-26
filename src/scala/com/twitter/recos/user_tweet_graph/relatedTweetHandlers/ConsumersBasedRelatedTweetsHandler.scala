@@ -1,68 +1,68 @@
-package com.twitter.recos.user_tweet_graph.relatedTweetHandlers
+package com.twittew.wecos.usew_tweet_gwaph.wewatedtweethandwews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
-import com.twitter.recos.user_tweet_graph.thriftscala._
-import com.twitter.recos.user_tweet_graph.util.FetchRHSTweetsUtil
-import com.twitter.recos.user_tweet_graph.util.FilterUtil
-import com.twitter.recos.user_tweet_graph.util.GetRelatedTweetCandidatesUtil
-import com.twitter.recos.util.Action
-import com.twitter.recos.util.Stats._
-import com.twitter.servo.request._
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import scala.concurrent.duration.HOURS
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.gwaphjet.bipawtite.api.bipawtitegwaph
+i-impowt com.twittew.wecos.usew_tweet_gwaph.thwiftscawa._
+i-impowt com.twittew.wecos.usew_tweet_gwaph.utiw.fetchwhstweetsutiw
+i-impowt com.twittew.wecos.usew_tweet_gwaph.utiw.fiwtewutiw
+i-impowt c-com.twittew.wecos.usew_tweet_gwaph.utiw.getwewatedtweetcandidatesutiw
+i-impowt c-com.twittew.wecos.utiw.action
+impowt com.twittew.wecos.utiw.stats._
+impowt com.twittew.sewvo.wequest._
+impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwe
+impowt scawa.concuwwent.duwation.houws
 
 /**
- * Implementation of the Thrift-defined service interface for consumersTweetBasedRelatedTweets.
- * given a list of consumer userIds, find the tweets they co-engaged with (we're treating input userIds as consumers therefore "consumersTweetBasedRelatedTweets" )
- * example use case: given a list of user's contacts in their address book, find tweets those contacts engaged with
+ * impwementation o-of the thwift-defined sewvice i-intewface fow consumewstweetbasedwewatedtweets. -.-
+ * given a wist of consumew usewids, 🥺 f-find the tweets they co-engaged w-with (we'we t-tweating input usewids as consumews thewefowe "consumewstweetbasedwewatedtweets" )
+ * exampwe use case: given a-a wist of usew's contacts in theiw addwess book, (U ﹏ U) find tweets those contacts engaged w-with
  */
-class ConsumersBasedRelatedTweetsHandler(
-  bipartiteGraph: BipartiteGraph,
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[ConsumersBasedRelatedTweetRequest, RelatedTweetResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+cwass consumewsbasedwewatedtweetshandwew(
+  b-bipawtitegwaph: b-bipawtitegwaph, >w<
+  s-statsweceivew: s-statsweceivew)
+    extends wequesthandwew[consumewsbasedwewatedtweetwequest, mya wewatedtweetwesponse] {
+  p-pwivate vaw stats = statsweceivew.scope(this.getcwass.getsimpwename)
 
-  override def apply(request: ConsumersBasedRelatedTweetRequest): Future[RelatedTweetResponse] = {
-    trackFutureBlockStats(stats) {
+  ovewwide d-def appwy(wequest: consumewsbasedwewatedtweetwequest): futuwe[wewatedtweetwesponse] = {
+    twackfutuwebwockstats(stats) {
 
-      val maxResults = request.maxResults.getOrElse(200)
-      val minScore = request.minScore.getOrElse(0.0)
-      val maxTweetAge = request.maxTweetAgeInHours.getOrElse(48)
-      val minResultDegree = request.minResultDegree.getOrElse(50)
-      val minCooccurrence = request.minCooccurrence.getOrElse(3)
-      val excludeTweetIds = request.excludeTweetIds.getOrElse(Seq.empty).toSet
+      vaw maxwesuwts = wequest.maxwesuwts.getowewse(200)
+      vaw m-minscowe = wequest.minscowe.getowewse(0.0)
+      vaw maxtweetage = w-wequest.maxtweetageinhouws.getowewse(48)
+      v-vaw minwesuwtdegwee = w-wequest.minwesuwtdegwee.getowewse(50)
+      vaw mincooccuwwence = wequest.mincooccuwwence.getowewse(3)
+      vaw excwudetweetids = w-wequest.excwudetweetids.getowewse(seq.empty).toset
 
-      val consumerSeedSet = request.consumerSeedSet.distinct.filter { userId =>
-        val userDegree = bipartiteGraph.getLeftNodeDegree(userId)
-        // constrain to users that have <100 engagements to avoid spammy behavior
-        userDegree < 100
+      v-vaw consumewseedset = wequest.consumewseedset.distinct.fiwtew { u-usewid =>
+        v-vaw usewdegwee = bipawtitegwaph.getweftnodedegwee(usewid)
+        // constwain t-to usews that have <100 e-engagements to avoid spammy behaviow
+        usewdegwee < 100
       }
 
-      val rhsTweetIds = FetchRHSTweetsUtil.fetchRHSTweets(
-        consumerSeedSet,
-        bipartiteGraph,
-        Set(Action.Favorite, Action.Retweet)
+      v-vaw whstweetids = f-fetchwhstweetsutiw.fetchwhstweets(
+        consumewseedset,
+        b-bipawtitegwaph, >w<
+        s-set(action.favowite, nyaa~~ action.wetweet)
       )
 
-      val scorePreFactor = 1000.0 / consumerSeedSet.size
-      val relatedTweetCandidates = GetRelatedTweetCandidatesUtil.getRelatedTweetCandidates(
-        rhsTweetIds,
-        minCooccurrence,
-        minResultDegree,
-        scorePreFactor,
-        bipartiteGraph)
+      vaw scowepwefactow = 1000.0 / consumewseedset.size
+      vaw wewatedtweetcandidates = getwewatedtweetcandidatesutiw.getwewatedtweetcandidates(
+        whstweetids, (✿oωo)
+        m-mincooccuwwence, ʘwʘ
+        m-minwesuwtdegwee, (ˆ ﻌ ˆ)♡
+        scowepwefactow, 😳😳😳
+        b-bipawtitegwaph)
 
-      val relatedTweets = relatedTweetCandidates
-        .filter(relatedTweet =>
-          FilterUtil.tweetAgeFilter(
-            relatedTweet.tweetId,
-            Duration(maxTweetAge, HOURS)) && (relatedTweet.score > minScore) && (!excludeTweetIds
-            .contains(relatedTweet.tweetId))).take(maxResults)
+      v-vaw w-wewatedtweets = wewatedtweetcandidates
+        .fiwtew(wewatedtweet =>
+          fiwtewutiw.tweetagefiwtew(
+            wewatedtweet.tweetid, :3
+            d-duwation(maxtweetage, OwO houws)) && (wewatedtweet.scowe > minscowe) && (!excwudetweetids
+            .contains(wewatedtweet.tweetid))).take(maxwesuwts)
 
-      stats.stat("response_size").add(relatedTweets.size)
-      Future.value(RelatedTweetResponse(tweets = relatedTweets))
+      stats.stat("wesponse_size").add(wewatedtweets.size)
+      futuwe.vawue(wewatedtweetwesponse(tweets = w-wewatedtweets))
     }
   }
 }

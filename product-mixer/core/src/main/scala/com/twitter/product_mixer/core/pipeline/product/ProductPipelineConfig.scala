@@ -1,107 +1,107 @@
-package com.twitter.product_mixer.core.pipeline.product
+package com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct
 
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.PipelineConfigCompanion
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig
-import com.twitter.timelines.configapi.Params
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy.accesspowicy
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pwoductpipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.wequest
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewineconfig
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewineconfigcompanion
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.pwoduct.pwoductpawamconfig
+impowt c-com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowconfig
+impowt com.twittew.timewines.configapi.pawams
 
-trait ProductPipelineConfig[TRequest <: Request, Query <: PipelineQuery, Response]
-    extends PipelineConfig {
+twait pwoductpipewineconfig[twequest <: wequest, OwO q-quewy <: pipewinequewy, rawr x3 wesponse]
+    e-extends p-pipewineconfig {
 
-  override val identifier: ProductPipelineIdentifier
+  ovewwide vaw identifiew: pwoductpipewineidentifiew
 
-  val product: Product
-  val paramConfig: ProductParamConfig
+  vaw pwoduct: pwoduct
+  v-vaw pawamconfig: pwoductpawamconfig
 
   /**
-   * Product Pipeline Gates will be executed before any other step (including retrieval from mixer
-   * pipelines). They're executed sequentially, and any "Stop" result will prevent pipeline execution.
+   * pwoduct pipewine gates wiww be exekawaii~d befowe a-any othew step (incwuding wetwievaw f-fwom mixew
+   * p-pipewines). XD t-they'we exekawaii~d s-sequentiawwy, σωσ and any "stop" wesuwt wiww p-pwevent pipewine execution. (U ᵕ U❁)
    */
-  def gates: Seq[Gate[Query]] = Seq.empty
+  def gates: s-seq[gate[quewy]] = seq.empty
 
-  def pipelineQueryTransformer(request: TRequest, params: Params): Query
+  def pipewinequewytwansfowmew(wequest: twequest, (U ﹏ U) pawams: pawams): quewy
 
   /**
-   * A list of all pipelines that power this product directly (there is no need to include pipelines
-   * called by those pipelines).
+   * a-a wist of aww pipewines that p-powew this pwoduct d-diwectwy (thewe i-is nyo nyeed to incwude pipewines
+   * cawwed by those pipewines). :3
    *
-   * Only pipeline from this list should referenced from the pipelineSelector
+   * o-onwy pipewine fwom t-this wist shouwd wefewenced fwom t-the pipewinesewectow
    */
-  def pipelines: Seq[PipelineConfig]
+  d-def pipewines: seq[pipewineconfig]
 
   /**
-   * A pipeline selector selects a pipeline (from the list in `def pipelines`) to handle the
-   * current request.
+   * a-a pipewine sewectow sewects a pipewine (fwom t-the wist in `def pipewines`) to handwe t-the
+   * cuwwent wequest.
    */
-  def pipelineSelector(query: Query): ComponentIdentifier
+  d-def pipewinesewectow(quewy: quewy): componentidentifiew
 
   /**
-   ** [[qualityFactorConfigs]] associates [[QualityFactorConfig]]s to specific pipelines
-   * using [[ComponentIdentifier]].
+   ** [[quawityfactowconfigs]] a-associates [[quawityfactowconfig]]s t-to specific pipewines
+   * using [[componentidentifiew]]. ( ͡o ω ͡o )
    */
-  def qualityFactorConfigs: Map[ComponentIdentifier, QualityFactorConfig] =
-    Map.empty
+  def quawityfactowconfigs: map[componentidentifiew, σωσ quawityfactowconfig] =
+    map.empty
 
   /**
-   * By default (for safety), product mixer pipelines do not allow logged out requests.
-   * A "DenyLoggedOutUsersGate" will be generated and added to the pipeline.
+   * b-by d-defauwt (fow safety), >w< pwoduct mixew p-pipewines do n-nyot awwow wogged o-out wequests. 😳😳😳
+   * a "denywoggedoutusewsgate" wiww be genewated and added to t-the pipewine. OwO
    *
-   * You can disable this behavior by overriding `denyLoggedOutUsers` with False.
+   * you can disabwe this behaviow by ovewwiding `denywoggedoutusews` with fawse. 😳
    */
-  val denyLoggedOutUsers: Boolean = true
+  v-vaw denywoggedoutusews: b-boowean = t-twue
 
   /**
-   * A pipeline can define a partial function to rescue failures here. They will be treated as failures
-   * from a monitoring standpoint, and cancellation exceptions will always be propagated (they cannot be caught here).
+   * a-a pipewine can define a pawtiaw f-function to wescue f-faiwuwes hewe. 😳😳😳 t-they wiww be t-tweated as faiwuwes
+   * fwom a monitowing standpoint, (˘ω˘) a-and cancewwation e-exceptions w-wiww awways be p-pwopagated (they c-cannot be caught hewe). ʘwʘ
    */
-  def failureClassifier: PartialFunction[Throwable, PipelineFailure] = PartialFunction.empty
+  def faiwuwecwassifiew: pawtiawfunction[thwowabwe, ( ͡o ω ͡o ) p-pipewinefaiwuwe] = pawtiawfunction.empty
 
   /**
-   * Alerts can be used to indicate the pipeline's service level objectives. Alerts and
-   * dashboards will be automatically created based on this information.
+   * awewts can be used to indicate the pipewine's sewvice w-wevew objectives. o.O awewts and
+   * dashboawds wiww be automaticawwy c-cweated based o-on this infowmation. >w<
    */
-  val alerts: Seq[Alert] = Seq.empty
+  v-vaw awewts: seq[awewt] = s-seq.empty
 
   /**
-   * Access Policies can be used to gate who can query a product from Product Mixer's query tool
-   * (go/turntable).
+   * access p-powicies can b-be used to gate who can quewy a pwoduct fwom pwoduct mixew's quewy toow
+   * (go/tuwntabwe). 😳
    *
-   * This will typically be gated by an LDAP group associated with your team. For example:
+   * this wiww t-typicawwy be gated by an wdap g-gwoup associated with youw team. 🥺 f-fow exampwe:
    *
    * {{{
-   *   override val debugAccessPolicies: Set[AccessPolicy] = Set(AllowedLdapGroups("NAME"))
+   *   o-ovewwide vaw debugaccesspowicies: set[accesspowicy] = s-set(awwowedwdapgwoups("name"))
    * }}}
    *
-   * You can disable all queries by using the [[com.twitter.product_mixer.core.functional_component.common.access_policy.BlockEverything]] policy.
+   * y-you can disabwe aww quewies b-by using t-the [[com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy.bwockevewything]] powicy. rawr x3
    */
-  val debugAccessPolicies: Set[AccessPolicy]
+  vaw debugaccesspowicies: set[accesspowicy]
 }
 
-object ProductPipelineConfig extends PipelineConfigCompanion {
-  val pipelineQueryTransformerStep: PipelineStepIdentifier = PipelineStepIdentifier(
-    "PipelineQueryTransformer")
-  val qualityFactorStep: PipelineStepIdentifier = PipelineStepIdentifier("QualityFactor")
-  val gatesStep: PipelineStepIdentifier = PipelineStepIdentifier("Gates")
-  val pipelineSelectorStep: PipelineStepIdentifier = PipelineStepIdentifier("PipelineSelector")
-  val pipelineExecutionStep: PipelineStepIdentifier = PipelineStepIdentifier("PipelineExecution")
+object pwoductpipewineconfig e-extends p-pipewineconfigcompanion {
+  v-vaw pipewinequewytwansfowmewstep: pipewinestepidentifiew = p-pipewinestepidentifiew(
+    "pipewinequewytwansfowmew")
+  v-vaw quawityfactowstep: pipewinestepidentifiew = p-pipewinestepidentifiew("quawityfactow")
+  vaw gatesstep: pipewinestepidentifiew = pipewinestepidentifiew("gates")
+  vaw pipewinesewectowstep: pipewinestepidentifiew = p-pipewinestepidentifiew("pipewinesewectow")
+  v-vaw pipewineexecutionstep: pipewinestepidentifiew = pipewinestepidentifiew("pipewineexecution")
 
-  /** All the Steps which are executed by a [[ProductPipeline]] in the order in which they are run */
-  override val stepsInOrder: Seq[PipelineStepIdentifier] = Seq(
-    pipelineQueryTransformerStep,
-    qualityFactorStep,
-    gatesStep,
-    pipelineSelectorStep,
-    pipelineExecutionStep
+  /** a-aww the steps which a-awe exekawaii~d by a [[pwoductpipewine]] in the owdew in which t-they awe wun */
+  ovewwide vaw stepsinowdew: seq[pipewinestepidentifiew] = seq(
+    p-pipewinequewytwansfowmewstep, o.O
+    quawityfactowstep, rawr
+    gatesstep, ʘwʘ
+    pipewinesewectowstep, 😳😳😳
+    p-pipewineexecutionstep
   )
 }

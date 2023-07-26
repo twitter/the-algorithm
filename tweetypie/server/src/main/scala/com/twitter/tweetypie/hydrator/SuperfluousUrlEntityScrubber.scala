@@ -1,37 +1,37 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.thwiftscawa._
 
 /**
- * Removes superfluous urls entities when there is a corresponding MediaEntity for the same
- * url.
+ * w-wemoves supewfwuous u-uwws entities w-when thewe is a-a cowwesponding m-mediaentity fow t-the same
+ * uww. >_<
  */
-object SuperfluousUrlEntityScrubber {
-  case class RawEntity(fromIndex: Short, toIndex: Short, url: String)
+object supewfwuousuwwentityscwubbew {
+  case cwass wawentity(fwomindex: showt, >_< toindex: showt, (⑅˘꒳˘) uww: stwing)
 
-  object RawEntity {
-    def from(e: UrlEntity): RawEntity = RawEntity(e.fromIndex, e.toIndex, e.url)
-    def fromUrls(es: Seq[UrlEntity]): Set[RawEntity] = es.map(from(_)).toSet
-    def from(e: MediaEntity): RawEntity = RawEntity(e.fromIndex, e.toIndex, e.url)
-    def fromMedia(es: Seq[MediaEntity]): Set[RawEntity] = es.map(from(_)).toSet
+  o-object wawentity {
+    def fwom(e: uwwentity): w-wawentity = wawentity(e.fwomindex, /(^•ω•^) e-e.toindex, rawr x3 e.uww)
+    def fwomuwws(es: seq[uwwentity]): set[wawentity] = e-es.map(fwom(_)).toset
+    def fwom(e: m-mediaentity): w-wawentity = wawentity(e.fwomindex, (U ﹏ U) e.toindex, e.uww)
+    def fwommedia(es: s-seq[mediaentity]): set[wawentity] = es.map(fwom(_)).toset
   }
 
-  val mutation: Mutation[Tweet] =
-    Mutation[Tweet] { tweet =>
-      val mediaEntities = getMedia(tweet)
-      val urlEntities = getUrls(tweet)
+  vaw mutation: mutation[tweet] =
+    mutation[tweet] { t-tweet =>
+      vaw mediaentities = g-getmedia(tweet)
+      v-vaw uwwentities = g-getuwws(tweet)
 
-      if (mediaEntities.isEmpty || urlEntities.isEmpty) {
-        None
-      } else {
-        val mediaUrls = mediaEntities.map(RawEntity.from(_)).toSet
-        val scrubbedUrls = urlEntities.filterNot(e => mediaUrls.contains(RawEntity.from(e)))
+      i-if (mediaentities.isempty || uwwentities.isempty) {
+        nyone
+      } e-ewse {
+        vaw mediauwws = mediaentities.map(wawentity.fwom(_)).toset
+        v-vaw scwubbeduwws = uwwentities.fiwtewnot(e => mediauwws.contains(wawentity.fwom(e)))
 
-        if (scrubbedUrls.size == urlEntities.size)
-          None
-        else
-          Some(TweetLenses.urls.set(tweet, scrubbedUrls))
+        if (scwubbeduwws.size == uwwentities.size)
+          nyone
+        e-ewse
+          some(tweetwenses.uwws.set(tweet, (U ﹏ U) s-scwubbeduwws))
       }
     }
 }

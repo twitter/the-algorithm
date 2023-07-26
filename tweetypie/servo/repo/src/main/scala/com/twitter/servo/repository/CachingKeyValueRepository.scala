@@ -1,735 +1,735 @@
-package com.twitter.servo.repository
+package com.twittew.sewvo.wepositowy
 
-import com.twitter.logging.{Level, Logger}
-import com.twitter.servo.cache._
-import com.twitter.servo.util.{Effect, Gate, RateLimitingLogger}
-import com.twitter.util._
-import scala.collection.mutable
-import scala.util.Random
+impowt com.twittew.wogging.{wevew, (⑅˘꒳˘) w-woggew}
+i-impowt com.twittew.sewvo.cache._
+i-impowt com.twittew.sewvo.utiw.{effect, σωσ g-gate, 🥺 watewimitingwoggew}
+i-impowt com.twittew.utiw._
+i-impowt s-scawa.cowwection.mutabwe
+i-impowt scawa.utiw.wandom
 
 /**
- * A set of classes that indicate how to handle cached results.
+ * a set of cwasses that indicate how t-to handwe cached wesuwts. :3
  */
-sealed abstract class CachedResultAction[+V]
+seawed abstwact cwass c-cachedwesuwtaction[+v]
 
-object CachedResultAction {
+object c-cachedwesuwtaction {
 
-  /** Indicates a key should be fetched from the underlying repo */
-  case object HandleAsMiss extends CachedResultAction[Nothing]
+  /** indicates a key shouwd be fetched fwom the undewwying w-wepo */
+  case object handweasmiss e-extends c-cachedwesuwtaction[nothing]
 
-  /** Indicates a key should be returned as not-found, and not fetched from the underlying repo */
-  case object HandleAsNotFound extends CachedResultAction[Nothing]
+  /** indicates a key shouwd be wetuwned as nyot-found, (ꈍᴗꈍ) and nyot fetched f-fwom the undewwying wepo */
+  case object handweasnotfound extends cachedwesuwtaction[nothing]
 
-  /** Indicates the value should be returned as found */
-  case class HandleAsFound[V](value: V) extends CachedResultAction[V]
+  /** i-indicates the vawue s-shouwd be wetuwned a-as found */
+  c-case cwass handweasfound[v](vawue: v-v) extends cachedwesuwtaction[v]
 
-  /** Indicates the value should not be cached */
-  case object HandleAsDoNotCache extends CachedResultAction[Nothing]
+  /** indicates the vawue s-shouwd nyot be cached */
+  case object handweasdonotcache e-extends cachedwesuwtaction[nothing]
 
-  /** Indicates that the given action should be applied, and the given function applied to the resulting value */
-  case class TransformSubAction[V](action: CachedResultAction[V], f: V => V)
-      extends CachedResultAction[V]
+  /** indicates that the given action shouwd be appwied, ^•ﻌ•^ and the g-given function appwied to the wesuwting v-vawue */
+  c-case cwass twansfowmsubaction[v](action: c-cachedwesuwtaction[v], (˘ω˘) f: v => v)
+      extends cachedwesuwtaction[v]
 
-  /** Indicates the key should be returned as a failure */
-  case class HandleAsFailed(t: Throwable) extends CachedResultAction[Nothing]
+  /** indicates t-the key shouwd b-be wetuwned as a faiwuwe */
+  c-case cwass handweasfaiwed(t: t-thwowabwe) extends c-cachedwesuwtaction[nothing]
 
-  /** Indicates that the value should be refetched asynchronously, be immediately treated
-   * as the given action. */
-  case class SoftExpiration[V](action: CachedResultAction[V]) extends CachedResultAction[V]
+  /** indicates that t-the vawue shouwd be wefetched asynchwonouswy, b-be immediatewy tweated
+   * as the g-given action. 🥺 */
+  case cwass s-softexpiwation[v](action: c-cachedwesuwtaction[v]) extends cachedwesuwtaction[v]
 }
 
 /**
- * A set of classes representing the various states for a cached result.
+ * a set of cwasses wepwesenting the vawious states fow a cached wesuwt. (✿oωo)
  */
-sealed abstract class CachedResult[+K, +V] {
-  def key: K
+s-seawed abstwact c-cwass cachedwesuwt[+k, XD +v] {
+  def key: k
 }
 
-object CachedResult {
-  import CachedResultAction._
+o-object cachedwesuwt {
+  i-impowt c-cachedwesuwtaction._
 
-  /** Indicates the key was not in cache */
-  case class NotFound[K](key: K) extends CachedResult[K, Nothing]
+  /** indicates the key was not in cache */
+  c-case cwass nyotfound[k](key: k) extends cachedwesuwt[k, nyothing]
 
-  /** Indicates there was an error fetching the key */
-  case class Failed[K](key: K, t: Throwable) extends CachedResult[K, Nothing]
+  /** indicates thewe was a-an ewwow fetching the key */
+  c-case cwass faiwed[k](key: k-k, (///ˬ///✿) t: t-thwowabwe) extends cachedwesuwt[k, ( ͡o ω ͡o ) n-nyothing]
 
-  /** Indicates the cached value could not be deserialized */
-  case class DeserializationFailed[K](key: K) extends CachedResult[K, Nothing]
+  /** i-indicates the c-cached vawue couwd n-not be desewiawized */
+  case cwass desewiawizationfaiwed[k](key: k-k) extends c-cachedwesuwt[k, ʘwʘ n-nyothing]
 
-  /** Indicates the cached value could not be serialized */
-  case class SerializationFailed[K](key: K) extends CachedResult[K, Nothing]
+  /** i-indicates the c-cached vawue couwd nyot be sewiawized */
+  case cwass sewiawizationfaiwed[k](key: k-k) extends cachedwesuwt[k, rawr nyothing]
 
-  /** Indicates that a NotFound tombstone was found in cached */
-  case class CachedNotFound[K](
-    key: K,
-    cachedAt: Time,
-    softTtlStep: Option[Short] = None)
-      extends CachedResult[K, Nothing]
+  /** indicates that a nyotfound tombstone was found in cached */
+  case c-cwass cachednotfound[k](
+    key: k, o.O
+    cachedat: time, ^•ﻌ•^
+    softttwstep: option[showt] = n-nyone)
+      e-extends c-cachedwesuwt[k, (///ˬ///✿) nyothing]
 
-  /** Indicates that a Deleted tombstone was found in cached */
-  case class CachedDeleted[K](
-    key: K,
-    cachedAt: Time,
-    softTtlStep: Option[Short] = None)
-      extends CachedResult[K, Nothing]
+  /** i-indicates that a deweted tombstone w-was found in c-cached */
+  case cwass cacheddeweted[k](
+    key: k, (ˆ ﻌ ˆ)♡
+    cachedat: time, XD
+    softttwstep: option[showt] = nyone)
+      e-extends cachedwesuwt[k, (✿oωo) n-nyothing]
 
-  /** Indicates that value was found in cached */
-  case class CachedFound[K, V](
-    key: K,
-    value: V,
-    cachedAt: Time,
-    softTtlStep: Option[Short] = None)
-      extends CachedResult[K, V]
+  /** indicates that v-vawue was found i-in cached */
+  case cwass cachedfound[k, v](
+    k-key: k, -.-
+    vawue: v-v, XD
+    cachedat: time, (✿oωo)
+    s-softttwstep: option[showt] = n-none)
+      extends cachedwesuwt[k, (˘ω˘) v]
 
-  /** Indicates that value should not be cached until */
-  case class DoNotCache[K](key: K, until: Option[Time]) extends CachedResult[K, Nothing]
+  /** indicates that vawue s-shouwd nyot be cached u-untiw */
+  c-case cwass donotcache[k](key: k, (ˆ ﻌ ˆ)♡ untiw: option[time]) e-extends cachedwesuwt[k, >_< nyothing]
 
-  type Handler[K, V] = CachedResult[K, V] => CachedResultAction[V]
+  t-type handwew[k, -.- v] = c-cachedwesuwt[k, (///ˬ///✿) v] => cachedwesuwtaction[v]
 
-  type PartialHandler[K, V] = CachedResult[K, V] => Option[CachedResultAction[V]]
+  type pawtiawhandwew[k, XD v] = cachedwesuwt[k, ^^;; v] => o-option[cachedwesuwtaction[v]]
 
-  type HandlerFactory[Q, K, V] = Q => Handler[K, V]
+  t-type handwewfactowy[q, rawr x3 k, v] = q => handwew[k, v-v]
 
   /**
-   * companion object for Handler type
+   * c-companion object fow handwew type
    */
-  object Handler {
+  object handwew {
 
     /**
-     * terminate a PartialHandler to produce a new Handler
+     * t-tewminate a pawtiawhandwew to pwoduce a nyew handwew
      */
-    def apply[K, V](
-      partial: PartialHandler[K, V],
-      handler: Handler[K, V] = defaultHandler[K, V]
-    ): Handler[K, V] = { cachedResult =>
-      partial(cachedResult) match {
-        case Some(s) => s
-        case None => handler(cachedResult)
+    def a-appwy[k, v](
+      pawtiaw: pawtiawhandwew[k, OwO v],
+      handwew: h-handwew[k, ʘwʘ v] = d-defauwthandwew[k, rawr v]
+    ): handwew[k, UwU v] = { cachedwesuwt =>
+      p-pawtiaw(cachedwesuwt) m-match {
+        case some(s) => s
+        case nyone => h-handwew(cachedwesuwt)
       }
     }
   }
 
   /**
-   * companion object for PartialHandler type
+   * companion o-object fow pawtiawhandwew type
    */
-  object PartialHandler {
+  object pawtiawhandwew {
 
     /**
-     * Sugar to produce a PartialHandler from a PartialFunction. Successive calls to
-     * isDefined MUST return the same result. Otherwise, take the syntax hit and wire
-     * up your own PartialHandler.
+     * s-sugaw to pwoduce a pawtiawhandwew f-fwom a pawtiawfunction. (ꈍᴗꈍ) s-successive cawws to
+     * i-isdefined must wetuwn the s-same wesuwt. (✿oωo) othewwise, (⑅˘꒳˘) t-take the s-syntax hit and wiwe
+     * up youw o-own pawtiawhandwew. OwO
      */
-    def apply[K, V](
-      partial: PartialFunction[CachedResult[K, V], CachedResultAction[V]]
-    ): PartialHandler[K, V] = partial.lift
+    d-def appwy[k, 🥺 v](
+      pawtiaw: pawtiawfunction[cachedwesuwt[k, >_< v-v], cachedwesuwtaction[v]]
+    ): p-pawtiawhandwew[k, v-v] = pawtiaw.wift
 
     /**
-     * chain one PartialHandler after another to produce a new PartialHandler
+     * chain one pawtiawhandwew a-aftew anothew to pwoduce a nyew p-pawtiawhandwew
      */
-    def orElse[K, V](
-      thisHandler: PartialHandler[K, V],
-      thatHandler: PartialHandler[K, V]
-    ): PartialHandler[K, V] = { cachedResult =>
-      thisHandler(cachedResult) match {
-        case some @ Some(_) => some
-        case None => thatHandler(cachedResult)
+    d-def owewse[k, (ꈍᴗꈍ) v](
+      thishandwew: pawtiawhandwew[k, 😳 v-v],
+      thathandwew: p-pawtiawhandwew[k, 🥺 v-v]
+    ): p-pawtiawhandwew[k, nyaa~~ v] = { c-cachedwesuwt =>
+      thishandwew(cachedwesuwt) match {
+        case some @ some(_) => some
+        case nyone => t-thathandwew(cachedwesuwt)
       }
     }
   }
 
   /**
-   * companion object for HandlerFactory type
+   * companion o-object fow handwewfactowy type
    */
-  object HandlerFactory {
-    def apply[Q, K, V](handler: Handler[K, V]): HandlerFactory[Q, K, V] = _ => handler
+  o-object handwewfactowy {
+    d-def appwy[q, ^•ﻌ•^ k, v](handwew: h-handwew[k, (ˆ ﻌ ˆ)♡ v]): h-handwewfactowy[q, (U ᵕ U❁) k-k, mya v] = _ => h-handwew
   }
 
-  def defaultHandlerFactory[Q, K, V]: HandlerFactory[Q, K, V] =
-    HandlerFactory[Q, K, V](defaultHandler)
+  d-def defauwthandwewfactowy[q, 😳 k, v]: handwewfactowy[q, σωσ k, v] =
+    handwewfactowy[q, ( ͡o ω ͡o ) k, v](defauwthandwew)
 
   /**
-   * This is the default Handler. Failures are treated as misses.
+   * this is the defauwt handwew. XD f-faiwuwes awe t-tweated as misses. :3
    */
-  def defaultHandler[K, V]: Handler[K, V] = {
-    case NotFound(_) | Failed(_, _) => HandleAsMiss
-    case DeserializationFailed(_) | SerializationFailed(_) => HandleAsMiss
-    case CachedNotFound(_, _, _) | CachedDeleted(_, _, _) => HandleAsNotFound
-    case CachedFound(_, value, _, _) => HandleAsFound(value)
-    case DoNotCache(_, Some(time)) if Time.now > time => HandleAsMiss
-    case DoNotCache(_, _) => HandleAsDoNotCache
-  }
-
-  /**
-   * A PartialHandler that bubbles memcache failures up instead of converting
-   * those failures to misses.
-   */
-  def failuresAreFailures[K, V] = PartialHandler[K, V] {
-    case Failed(_, t) => HandleAsFailed(t)
+  d-def defauwthandwew[k, :3 v-v]: handwew[k, (⑅˘꒳˘) v] = {
+    case nyotfound(_) | faiwed(_, òωó _) => h-handweasmiss
+    c-case desewiawizationfaiwed(_) | sewiawizationfaiwed(_) => h-handweasmiss
+    case cachednotfound(_, mya _, 😳😳😳 _) | c-cacheddeweted(_, :3 _, _) => h-handweasnotfound
+    case c-cachedfound(_, >_< vawue, 🥺 _, _) => handweasfound(vawue)
+    c-case donotcache(_, (ꈍᴗꈍ) some(time)) if time.now > time => handweasmiss
+    case d-donotcache(_, rawr x3 _) => h-handweasdonotcache
   }
 
   /**
-   * A PartialHandler that doesn't attempt to write back to cache if the initial
-   * cache read failed, but still fetches from the underlying repo.
+   * a-a pawtiawhandwew t-that b-bubbwes memcache faiwuwes up instead o-of convewting
+   * t-those faiwuwes to misses. (U ﹏ U)
    */
-  def failuresAreDoNotCache[K, V] = PartialHandler[K, V] {
-    case Failed(_, _) => HandleAsDoNotCache
+  d-def faiwuwesawefaiwuwes[k, ( ͡o ω ͡o ) v-v] = pawtiawhandwew[k, v] {
+    c-case faiwed(_, 😳😳😳 t) => handweasfaiwed(t)
   }
 
   /**
-   * A function that takes a cachedAt time and ttl, and returns an expiry time.  This function
-   * _must_ be deterministic with respect to the arguments provided, otherwise, you might get a
-   * MatchError when using this with softTtlExpiration.
+   * a pawtiawhandwew t-that doesn't attempt t-to wwite back t-to cache if the initiaw
+   * cache w-wead faiwed, 🥺 but stiww fetches fwom the undewwying w-wepo. òωó
    */
-  type Expiry = (Time, Duration) => Time
+  d-def faiwuwesawedonotcache[k, XD v-v] = pawtiawhandwew[k, XD v] {
+    case faiwed(_, ( ͡o ω ͡o ) _) => handweasdonotcache
+  }
 
   /**
-   * An Expiry function with an epsilon of zero.
+   * a-a function that takes a cachedat time and t-ttw, and wetuwns a-an expiwy time. >w<  this function
+   * _must_ be d-detewministic with wespect to t-the awguments pwovided, mya o-othewwise, (ꈍᴗꈍ) you might get a
+   * matchewwow w-when using this with softttwexpiwation. -.-
    */
-  val fixedExpiry: Expiry = (cachedAt: Time, ttl: Duration) => cachedAt + ttl
+  type expiwy = (time, (⑅˘꒳˘) d-duwation) => t-time
 
   /**
-   * A repeatable "random" expiry function that perturbs the ttl with a random value
-   * no greater than +/-(ttl * maxFactor).
+   * an expiwy f-function with an epsiwon of zewo. (U ﹏ U)
    */
-  def randomExpiry(maxFactor: Float): Expiry = {
-    if (maxFactor == 0) {
-      fixedExpiry
-    } else { (cachedAt: Time, ttl: Duration) =>
+  v-vaw fixedexpiwy: e-expiwy = (cachedat: time, σωσ t-ttw: duwation) => cachedat + ttw
+
+  /**
+   * a wepeatabwe "wandom" expiwy function that pewtuwbs the ttw with a wandom vawue
+   * nyo gweatew than +/-(ttw * maxfactow). :3
+   */
+  def wandomexpiwy(maxfactow: fwoat): expiwy = {
+    i-if (maxfactow == 0) {
+      f-fixedexpiwy
+    } ewse { (cachedat: time, /(^•ω•^) ttw: d-duwation) =>
       {
-        val factor = (2 * new Random(cachedAt.inMilliseconds).nextFloat - 1) * maxFactor
-        cachedAt + ttl + Duration.fromNanoseconds((factor * ttl.inNanoseconds).toLong)
+        v-vaw factow = (2 * n-nyew wandom(cachedat.inmiwwiseconds).nextfwoat - 1) * maxfactow
+        c-cachedat + ttw + duwation.fwomnanoseconds((factow * ttw.innanoseconds).towong)
       }
     }
   }
 
   /**
-   * soft-expires CachedFound and CachedNotFound based on a ttl.
+   * s-soft-expiwes c-cachedfound and cachednotfound b-based on a ttw. σωσ
    *
-   * @param ttl
-   *  values older than this will be considered expired, but still
-   *  returned, and asynchronously refreshed in cache.
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   * @pawam ttw
+   *  vawues o-owdew than t-this wiww be considewed expiwed, (U ᵕ U❁) but stiww
+   *  w-wetuwned, 😳 and a-asynchwonouswy wefweshed i-in cache. ʘwʘ
+   * @pawam expiwy
+   *  (optionaw) f-function t-to compute the expiwy t-time
    */
-  def softTtlExpiration[K, V](
-    ttl: Duration,
-    expiry: Expiry = fixedExpiry
-  ): PartialHandler[K, V] =
-    softTtlExpiration(_ => ttl, expiry)
+  d-def softttwexpiwation[k, (⑅˘꒳˘) v-v](
+    t-ttw: duwation, ^•ﻌ•^
+    expiwy: expiwy = f-fixedexpiwy
+  ): p-pawtiawhandwew[k, nyaa~~ v-v] =
+    softttwexpiwation(_ => t-ttw, XD expiwy)
 
   /**
-   * soft-expires CachedFound and CachedNotFound based on a ttl derived from the value
+   * soft-expiwes c-cachedfound and cachednotfound b-based on a ttw dewived f-fwom the v-vawue
    *
-   * @param ttl
-   *  values older than this will be considered expired, but still
-   *  returned, and asynchronously refreshed in cache.
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   * @pawam ttw
+   *  v-vawues owdew than this wiww be c-considewed expiwed, /(^•ω•^) but stiww
+   *  w-wetuwned, (U ᵕ U❁) and asynchwonouswy w-wefweshed in cache. mya
+   * @pawam expiwy
+   *  (optionaw) function to compute the expiwy time
    */
-  def softTtlExpiration[K, V](
-    ttl: Option[V] => Duration,
-    expiry: Expiry
-  ): PartialHandler[K, V] = PartialHandler[K, V] {
-    case CachedFound(_, value, cachedAt, _) if expiry(cachedAt, ttl(Some(value))) < Time.now =>
-      SoftExpiration(HandleAsFound(value))
-    case CachedNotFound(_, cachedAt, _) if expiry(cachedAt, ttl(None)) < Time.now =>
-      SoftExpiration(HandleAsNotFound)
+  d-def softttwexpiwation[k, (ˆ ﻌ ˆ)♡ v](
+    t-ttw: option[v] => d-duwation, (✿oωo)
+    expiwy: expiwy
+  ): pawtiawhandwew[k, v] = p-pawtiawhandwew[k, (✿oωo) v] {
+    case c-cachedfound(_, òωó v-vawue, (˘ω˘) cachedat, _) i-if expiwy(cachedat, (ˆ ﻌ ˆ)♡ ttw(some(vawue))) < time.now =>
+      s-softexpiwation(handweasfound(vawue))
+    c-case cachednotfound(_, ( ͡o ω ͡o ) cachedat, rawr x3 _) i-if expiwy(cachedat, (˘ω˘) ttw(none)) < time.now =>
+      softexpiwation(handweasnotfound)
   }
 
   /**
-   * soft-expires CachedFound and CachedNotFound based on a ttl derived from both the value
-   * and the softTtlStep
+   * soft-expiwes c-cachedfound and cachednotfound b-based o-on a ttw dewived f-fwom both the vawue
+   * and the s-softttwstep
    *
-   * @param ttl
-   *   values older than this will be considered expired, but still returned, and
-   *  asynchronously refreshed in cache.
-   * @param expiry
-   *   (optional) function to compute the expiry time
+   * @pawam t-ttw
+   *   vawues o-owdew than this w-wiww be considewed expiwed, but s-stiww wetuwned, òωó a-and
+   *  asynchwonouswy w-wefweshed i-in cache. ( ͡o ω ͡o )
+   * @pawam e-expiwy
+   *   (optionaw) f-function to c-compute the expiwy t-time
    */
-  def steppedSoftTtlExpiration[K, V](
-    ttl: (Option[V], Option[Short]) => Duration,
-    expiry: Expiry = fixedExpiry
-  ): PartialHandler[K, V] = PartialHandler[K, V] {
-    case CachedFound(_, value, cachedAt, softTtlStep)
-        if expiry(cachedAt, ttl(Some(value), softTtlStep)) < Time.now =>
-      SoftExpiration(HandleAsFound(value))
-    case CachedNotFound(_, cachedAt, softTtlStep)
-        if expiry(cachedAt, ttl(None, softTtlStep)) < Time.now =>
-      SoftExpiration(HandleAsNotFound)
-    case CachedDeleted(_, cachedAt, softTtlStep)
-        if expiry(cachedAt, ttl(None, softTtlStep)) < Time.now =>
-      SoftExpiration(HandleAsNotFound)
+  def steppedsoftttwexpiwation[k, σωσ v-v](
+    ttw: (option[v], (U ﹏ U) option[showt]) => d-duwation, rawr
+    expiwy: e-expiwy = fixedexpiwy
+  ): p-pawtiawhandwew[k, -.- v-v] = pawtiawhandwew[k, v] {
+    case cachedfound(_, ( ͡o ω ͡o ) v-vawue, >_< cachedat, s-softttwstep)
+        i-if expiwy(cachedat, o.O ttw(some(vawue), σωσ softttwstep)) < time.now =>
+      s-softexpiwation(handweasfound(vawue))
+    c-case cachednotfound(_, -.- cachedat, s-softttwstep)
+        i-if expiwy(cachedat, σωσ ttw(none, :3 softttwstep)) < time.now =>
+      s-softexpiwation(handweasnotfound)
+    c-case cacheddeweted(_, ^^ c-cachedat, òωó s-softttwstep)
+        if expiwy(cachedat, (ˆ ﻌ ˆ)♡ ttw(none, XD s-softttwstep)) < t-time.now =>
+      softexpiwation(handweasnotfound)
   }
 
   /**
-   * hard-expires CachedFound and CachedNotFound based on a ttl.
+   * hawd-expiwes c-cachedfound and cachednotfound based on a ttw. òωó
    *
-   * @param ttl
-   *  values older than this will be considered a miss
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   * @pawam t-ttw
+   *  vawues owdew than t-this wiww be considewed a-a miss
+   * @pawam expiwy
+   *  (optionaw) f-function to c-compute the expiwy time
    */
-  def hardTtlExpiration[K, V](
-    ttl: Duration,
-    expiry: Expiry = fixedExpiry
-  ): PartialHandler[K, V] =
-    hardTtlExpiration(_ => ttl, expiry)
+  d-def hawdttwexpiwation[k, (ꈍᴗꈍ) v](
+    t-ttw: duwation, UwU
+    e-expiwy: expiwy = f-fixedexpiwy
+  ): p-pawtiawhandwew[k, >w< v] =
+    h-hawdttwexpiwation(_ => t-ttw, ʘwʘ expiwy)
 
   /**
-   * hard-expires CachedFound and CachedNotFound based on a ttl derived from the value
+   * h-hawd-expiwes cachedfound and cachednotfound b-based on a ttw dewived fwom the vawue
    *
-   * @param ttl
-   *  values older than this will be considered a miss
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   * @pawam t-ttw
+   *  vawues o-owdew than t-this wiww be considewed a miss
+   * @pawam expiwy
+   *  (optionaw) function to compute the expiwy t-time
    */
-  def hardTtlExpiration[K, V](
-    ttl: Option[V] => Duration,
-    expiry: Expiry
-  ): PartialHandler[K, V] = PartialHandler[K, V] {
-    case CachedFound(_, value, cachedAt, _) if expiry(cachedAt, ttl(Some(value))) < Time.now =>
-      HandleAsMiss
-    case CachedNotFound(_, cachedAt, _) if expiry(cachedAt, ttl(None)) < Time.now =>
-      HandleAsMiss
+  def hawdttwexpiwation[k, :3 v-v](
+    t-ttw: option[v] => duwation, ^•ﻌ•^
+    expiwy: expiwy
+  ): p-pawtiawhandwew[k, (ˆ ﻌ ˆ)♡ v] = pawtiawhandwew[k, 🥺 v-v] {
+    c-case cachedfound(_, v-vawue, OwO c-cachedat, 🥺 _) if e-expiwy(cachedat, OwO ttw(some(vawue))) < time.now =>
+      handweasmiss
+    case cachednotfound(_, (U ᵕ U❁) c-cachedat, ( ͡o ω ͡o ) _) if expiwy(cachedat, ^•ﻌ•^ t-ttw(none)) < time.now =>
+      handweasmiss
   }
 
   /**
-   * hard-expires a CachedNotFound tombstone based on a ttl
+   * hawd-expiwes a cachednotfound t-tombstone based on a ttw
    *
-   * @param ttl
-   *  values older than this will be considered expired
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   * @pawam ttw
+   *  vawues owdew than t-this wiww be considewed e-expiwed
+   * @pawam expiwy
+   *  (optionaw) f-function to compute the expiwy time
    */
-  def notFoundHardTtlExpiration[K, V](
-    ttl: Duration,
-    expiry: Expiry = fixedExpiry
-  ): PartialHandler[K, V] = PartialHandler[K, V] {
-    case CachedNotFound(_, cachedAt, _) =>
-      if (expiry(cachedAt, ttl) < Time.now)
-        HandleAsMiss
-      else
-        HandleAsNotFound
+  d-def nyotfoundhawdttwexpiwation[k, o.O v-v](
+    ttw: duwation, (⑅˘꒳˘)
+    expiwy: e-expiwy = fixedexpiwy
+  ): pawtiawhandwew[k, v-v] = pawtiawhandwew[k, (ˆ ﻌ ˆ)♡ v] {
+    case cachednotfound(_, :3 cachedat, /(^•ω•^) _) =>
+      if (expiwy(cachedat, òωó t-ttw) < time.now)
+        handweasmiss
+      ewse
+        handweasnotfound
   }
 
   /**
-   * hard-expires a CachedDeleted tombstone based on a ttl
+   * h-hawd-expiwes a-a cacheddeweted t-tombstone based on a ttw
    *
-   * @param ttl
-   *  values older than this will be considered expired
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   * @pawam t-ttw
+   *  vawues owdew than this wiww be considewed expiwed
+   * @pawam expiwy
+   *  (optionaw) f-function to c-compute the expiwy t-time
    */
-  def deletedHardTtlExpiration[K, V](
-    ttl: Duration,
-    expiry: Expiry = fixedExpiry
-  ): PartialHandler[K, V] = PartialHandler[K, V] {
-    case CachedDeleted(_, cachedAt, _) =>
-      if (expiry(cachedAt, ttl) < Time.now)
-        HandleAsMiss
-      else
-        HandleAsNotFound
+  d-def dewetedhawdttwexpiwation[k, :3 v](
+    ttw: duwation, (˘ω˘)
+    expiwy: e-expiwy = fixedexpiwy
+  ): p-pawtiawhandwew[k, 😳 v] = pawtiawhandwew[k, σωσ v] {
+    c-case cacheddeweted(_, UwU cachedat, -.- _) =>
+      if (expiwy(cachedat, 🥺 t-ttw) < time.now)
+        handweasmiss
+      ewse
+        h-handweasnotfound
   }
 
   /**
-   * read only from cache, never fall back to underlying KeyValueRepository
+   * w-wead onwy fwom cache, 😳😳😳 n-nyevew faww back t-to undewwying k-keyvawuewepositowy
    */
-  def cacheOnly[K, V]: Handler[K, V] = {
-    case CachedFound(_, value, _, _) => HandleAsFound(value)
-    case _ => HandleAsNotFound
+  def cacheonwy[k, v]: h-handwew[k, 🥺 v] = {
+    case cachedfound(_, vawue, ^^ _, _) => h-handweasfound(vawue)
+    case _ => handweasnotfound
   }
 
   /**
-   * use either primary or backup Handler, depending on usePrimary result
+   * use eithew pwimawy o-ow backup handwew, ^^;; d-depending on u-usepwimawy wesuwt
    *
-   * @param primaryHandler
-   *   the handler to be used if usePrimary evaluates to true
-   * @param backupHandler
-   *   the handle to be used if usePrimary evaluates to false
-   * @param usePrimary
-   *   evaluates the query to determine which handler to use
+   * @pawam p-pwimawyhandwew
+   *   t-the handwew to be used i-if usepwimawy evawuates to twue
+   * @pawam backuphandwew
+   *   t-the handwe to be used if usepwimawy e-evawuates to fawse
+   * @pawam usepwimawy
+   *   e-evawuates t-the quewy to detewmine which handwew t-to use
    */
-  def switchedHandlerFactory[Q, K, V](
-    primaryHandler: Handler[K, V],
-    backupHandler: Handler[K, V],
-    usePrimary: Q => Boolean
-  ): HandlerFactory[Q, K, V] = { query =>
-    if (usePrimary(query))
-      primaryHandler
-    else
-      backupHandler
+  def switchedhandwewfactowy[q, >w< k-k, v](
+    pwimawyhandwew: h-handwew[k, σωσ v],
+    b-backuphandwew: h-handwew[k, >w< v],
+    usepwimawy: q => b-boowean
+  ): handwewfactowy[q, (⑅˘꒳˘) k, v] = { quewy =>
+    if (usepwimawy(quewy))
+      p-pwimawyhandwew
+    ewse
+      b-backuphandwew
   }
 }
 
-object CacheResultObserver {
-  case class CachingRepositoryResult[K, V](
-    resultFromCache: KeyValueResult[K, Cached[V]],
-    resultFromCacheMissReadthrough: KeyValueResult[K, V],
-    resultFromSoftTtlReadthrough: KeyValueResult[K, V])
-  def unit[K, V] = Effect.unit[CachingRepositoryResult[K, V]]
+object cachewesuwtobsewvew {
+  c-case cwass c-cachingwepositowywesuwt[k, òωó v](
+    w-wesuwtfwomcache: keyvawuewesuwt[k, (⑅˘꒳˘) c-cached[v]], (ꈍᴗꈍ)
+    w-wesuwtfwomcachemissweadthwough: keyvawuewesuwt[k, rawr x3 v-v],
+    wesuwtfwomsoftttwweadthwough: k-keyvawuewesuwt[k, ( ͡o ω ͡o ) v])
+  def unit[k, v-v] = effect.unit[cachingwepositowywesuwt[k, UwU v-v]]
 }
 
-object CachingKeyValueRepository {
-  type CacheResultObserver[K, V] = Effect[CacheResultObserver.CachingRepositoryResult[K, V]]
+object cachingkeyvawuewepositowy {
+  type cachewesuwtobsewvew[k, ^^ v] = effect[cachewesuwtobsewvew.cachingwepositowywesuwt[k, (˘ω˘) v-v]]
 }
 
 /**
- * Reads keyed values from a LockingCache, and reads through to an underlying
- * KeyValueRepository for misses. supports a "soft ttl", beyond which values
- * will be read through out-of-band to the originating request
+ * w-weads keyed vawues fwom a wockingcache, (ˆ ﻌ ˆ)♡ and weads thwough to a-an undewwying
+ * keyvawuewepositowy f-fow misses. OwO s-suppowts a "soft ttw", 😳 beyond which vawues
+ * wiww be wead thwough out-of-band to t-the owiginating wequest
  *
- * @param underlying
- * the underlying KeyValueRepository
- * @param cache
- * the locking cache to read from
- * @param newQuery
- * a function for converting a subset of the keys of the original query into a new
- * query.  this is used to construct the query passed to the underlying repository
- * to fetch the cache misses.
- * @param handlerFactory
- * A factory to produce functions that specify policies about how to handle results
- * from cache. (i.e. to handle failures as misses vs failures, etc)
- * @param picker
- * used to choose between the value in cache and the value read from the DB when
- * storing values in the cache
- * @param observer
- * a CacheObserver for collecting cache statistics*
- * @param writeSoftTtlStep
- * Write the soft_ttl_step value to indicate number of consistent reads from underlying store
- * @param cacheResultObserver
- * An [[Effect]] of type [[CacheResultObserver.CachingRepositoryResult]] which is useful for examining
- * the results from the cache, underlying storage, and any later read-throughs. The effect is
- * executed asynchronously from the request path and has no bearing on the Future[KeyValueResult]*
- * returned from this Repository.
+ * @pawam undewwying
+ * t-the undewwying keyvawuewepositowy
+ * @pawam c-cache
+ * the wocking c-cache to wead fwom
+ * @pawam n-nyewquewy
+ * a-a function fow convewting a-a subset o-of the keys of t-the owiginaw quewy i-into a nyew
+ * quewy. UwU  this is used to constwuct the quewy passed to the undewwying wepositowy
+ * t-to fetch t-the cache misses. 🥺
+ * @pawam h-handwewfactowy
+ * a-a f-factowy to pwoduce f-functions that specify powicies about how to handwe wesuwts
+ * fwom cache. 😳😳😳 (i.e. t-to handwe faiwuwes a-as misses vs faiwuwes, ʘwʘ etc)
+ * @pawam pickew
+ * used to choose b-between the v-vawue in cache a-and the vawue wead fwom the db when
+ * stowing v-vawues in the cache
+ * @pawam obsewvew
+ * a cacheobsewvew f-fow cowwecting c-cache statistics*
+ * @pawam wwitesoftttwstep
+ * wwite the s-soft_ttw_step vawue to indicate n-nyumbew of consistent w-weads fwom undewwying stowe
+ * @pawam cachewesuwtobsewvew
+ * a-an [[effect]] o-of type [[cachewesuwtobsewvew.cachingwepositowywesuwt]] w-which i-is usefuw fow e-examining
+ * the w-wesuwts fwom the cache, /(^•ω•^) undewwying s-stowage, :3 and a-any watew wead-thwoughs. :3 the effect i-is
+ * exekawaii~d asynchwonouswy fwom the wequest p-path and has nyo beawing o-on the futuwe[keyvawuewesuwt]*
+ * wetuwned fwom t-this wepositowy. mya
  */
-class CachingKeyValueRepository[Q <: Seq[K], K, V](
-  underlying: KeyValueRepository[Q, K, V],
-  val cache: LockingCache[K, Cached[V]],
-  newQuery: SubqueryBuilder[Q, K],
-  handlerFactory: CachedResult.HandlerFactory[Q, K, V] =
-    CachedResult.defaultHandlerFactory[Q, K, V],
-  picker: LockingCache.Picker[Cached[V]] = new PreferNewestCached[V]: PreferNewestCached[V],
-  observer: CacheObserver = NullCacheObserver,
-  writeSoftTtlStep: Gate[Unit] = Gate.False,
-  cacheResultObserver: CachingKeyValueRepository.CacheResultObserver[K, V] =
-    CacheResultObserver.unit[K, V]: Effect[CacheResultObserver.CachingRepositoryResult[K, V]])
-    extends KeyValueRepository[Q, K, V] {
-  import CachedResult._
-  import CachedResultAction._
+c-cwass cachingkeyvawuewepositowy[q <: seq[k], (///ˬ///✿) k, v](
+  undewwying: k-keyvawuewepositowy[q, (⑅˘꒳˘) k, v],
+  vaw cache: w-wockingcache[k, :3 c-cached[v]], /(^•ω•^)
+  nyewquewy: subquewybuiwdew[q, ^^;; k],
+  h-handwewfactowy: c-cachedwesuwt.handwewfactowy[q, (U ᵕ U❁) k, v] =
+    cachedwesuwt.defauwthandwewfactowy[q, (U ﹏ U) k-k, v],
+  pickew: wockingcache.pickew[cached[v]] = nyew pwefewnewestcached[v]: p-pwefewnewestcached[v], mya
+  o-obsewvew: cacheobsewvew = n-nyuwwcacheobsewvew, ^•ﻌ•^
+  w-wwitesoftttwstep: gate[unit] = gate.fawse, (U ﹏ U)
+  c-cachewesuwtobsewvew: c-cachingkeyvawuewepositowy.cachewesuwtobsewvew[k, :3 v-v] =
+    c-cachewesuwtobsewvew.unit[k, rawr x3 v]: effect[cachewesuwtobsewvew.cachingwepositowywesuwt[k, 😳😳😳 v]])
+    extends keyvawuewepositowy[q, >w< k, v] {
+  impowt cachedwesuwt._
+  impowt cachedwesuwtaction._
 
-  protected[this] val log = Logger.get(getClass.getSimpleName)
-  private[this] val rateLimitedLogger = new RateLimitingLogger(logger = log)
+  p-pwotected[this] v-vaw wog = woggew.get(getcwass.getsimpwename)
+  p-pwivate[this] v-vaw watewimitedwoggew = n-nyew watewimitingwoggew(woggew = w-wog)
 
-  protected[this] val effectiveCacheStats = observer.scope("effective")
+  pwotected[this] v-vaw effectivecachestats = o-obsewvew.scope("effective")
 
   /**
-   * Calculates the softTtlStep based on result from cache and underlying store.
-   * The softTtlStep indicates how many times we have
-   * performed & recorded a consistent read-through.
-   * A value of None is equivalent to Some(0) - it indicates zero consistent read-throughs.
+   * cawcuwates t-the softttwstep b-based on wesuwt fwom cache and undewwying stowe. òωó
+   * t-the softttwstep indicates how many times we h-have
+   * pewfowmed & wecowded a-a consistent wead-thwough. 😳
+   * a-a vawue of nyone is equivawent t-to some(0) - it i-indicates zewo consistent w-wead-thwoughs. (✿oωo)
    */
-  protected[this] def updateSoftTtlStep(
-    underlyingResult: Option[V],
-    cachedResult: Cached[V]
-  ): Option[Short] = {
-    if (writeSoftTtlStep() && underlyingResult == cachedResult.value) {
-      cachedResult.softTtlStep match {
-        case Some(step) if step < Short.MaxValue => Some((step + 1).toShort)
-        case Some(step) if step == Short.MaxValue => cachedResult.softTtlStep
-        case _ => Some(1)
+  pwotected[this] d-def updatesoftttwstep(
+    u-undewwyingwesuwt: option[v], OwO
+    c-cachedwesuwt: cached[v]
+  ): o-option[showt] = {
+    i-if (wwitesoftttwstep() && u-undewwyingwesuwt == cachedwesuwt.vawue) {
+      c-cachedwesuwt.softttwstep match {
+        case some(step) i-if step < showt.maxvawue => some((step + 1).toshowt)
+        case some(step) if step == showt.maxvawue => cachedwesuwt.softttwstep
+        case _ => some(1)
       }
-    } else {
-      None
+    } ewse {
+      n-nyone
     }
   }
 
-  protected case class ProcessedCacheResult(
-    hits: Map[K, V],
-    misses: Seq[K],
-    doNotCache: Set[K],
-    failures: Map[K, Throwable],
-    tombstones: Set[K],
-    softExpirations: Seq[K],
-    transforms: Map[K, (V => V)])
+  pwotected case cwass pwocessedcachewesuwt(
+    hits: map[k, (U ﹏ U) v],
+    misses: seq[k], (ꈍᴗꈍ)
+    d-donotcache: set[k], rawr
+    faiwuwes: map[k, ^^ thwowabwe], rawr
+    tombstones: s-set[k], nyaa~~
+    softexpiwations: s-seq[k], nyaa~~
+    twansfowms: map[k, o.O (v => v)])
 
-  override def apply(keys: Q): Future[KeyValueResult[K, V]] = {
-    getFromCache(keys).flatMap { cacheResult =>
-      val ProcessedCacheResult(
-        hits,
-        misses,
-        doNotCache,
-        failures,
-        tombstones,
-        softExpirations,
-        transforms
+  o-ovewwide def appwy(keys: q): f-futuwe[keyvawuewesuwt[k, òωó v]] = {
+    g-getfwomcache(keys).fwatmap { c-cachewesuwt =>
+      vaw pwocessedcachewesuwt(
+        hits, ^^;;
+        m-misses, rawr
+        donotcache, ^•ﻌ•^
+        faiwuwes, nyaa~~
+        tombstones, nyaa~~
+        softexpiwations, 😳😳😳
+        t-twansfowms
       ) =
-        process(keys, cacheResult)
+        pwocess(keys, 😳😳😳 c-cachewesuwt)
 
-      if (log.isLoggable(Level.TRACE)) {
-        log.trace(
-          "CachingKVR.apply keys %d hit %d miss %d noCache %d failure %d " +
-            "tombstone %d softexp %d",
-          keys.size,
-          hits.size,
-          misses.size,
-          doNotCache.size,
-          failures.size,
-          tombstones.size,
-          softExpirations.size
+      if (wog.iswoggabwe(wevew.twace)) {
+        w-wog.twace(
+          "cachingkvw.appwy keys %d h-hit %d miss %d n-nyocache %d faiwuwe %d " +
+            "tombstone %d softexp %d", σωσ
+          k-keys.size, o.O
+          hits.size, σωσ
+          misses.size, nyaa~~
+          d-donotcache.size, rawr x3
+          faiwuwes.size, (///ˬ///✿)
+          tombstones.size, o.O
+          softexpiwations.size
         )
       }
-      recordCacheStats(
-        keys,
-        notFound = misses.toSet,
-        doNotCache = doNotCache,
-        expired = softExpirations.toSet,
-        numFailures = failures.size,
-        numTombstones = tombstones.size
+      wecowdcachestats(
+        k-keys, òωó
+        n-nyotfound = misses.toset, OwO
+        d-donotcache = d-donotcache, σωσ
+        expiwed = s-softexpiwations.toset, nyaa~~
+        nyumfaiwuwes = faiwuwes.size, OwO
+        nyumtombstones = tombstones.size
       )
 
-      // now read through all notFound
-      val underlyingQuery = newQuery(misses ++ doNotCache, keys)
-      val writeToCacheQuery = if (doNotCache.nonEmpty) newQuery(misses, keys) else underlyingQuery
-      val futureFromUnderlying = readThrough(underlyingQuery, writeToCacheQuery)
+      // n-nyow wead t-thwough aww nyotfound
+      v-vaw undewwyingquewy = n-nyewquewy(misses ++ donotcache, ^^ k-keys)
+      vaw wwitetocachequewy = if (donotcache.nonempty) n-nyewquewy(misses, (///ˬ///✿) keys) ewse undewwyingquewy
+      v-vaw futuwefwomundewwying = w-weadthwough(undewwyingquewy, σωσ wwitetocachequewy)
 
-      // async read-through for the expired results, ignore results
-      val softExpirationQuery = newQuery(softExpirations, keys)
-      val futureFromSoftExpiry = readThrough(softExpirationQuery, softExpirationQuery, cacheResult)
+      // async w-wead-thwough fow the expiwed wesuwts, rawr x3 ignowe wesuwts
+      vaw softexpiwationquewy = nyewquewy(softexpiwations, (ˆ ﻌ ˆ)♡ keys)
+      vaw futuwefwomsoftexpiwy = w-weadthwough(softexpiwationquewy, 🥺 s-softexpiwationquewy, (⑅˘꒳˘) cachewesuwt)
 
-      // merge all results together
-      for {
-        fromUnderlying <- futureFromUnderlying
-        fromCache = KeyValueResult(hits, tombstones, failures)
-        fromUnderlyingTransformed = transformResults(fromUnderlying, transforms)
-      } yield {
-        futureFromSoftExpiry.onSuccess { readThroughResults =>
-          cacheResultObserver(
-            CacheResultObserver.CachingRepositoryResult(
-              cacheResult,
-              fromUnderlyingTransformed,
-              readThroughResults
+      // m-mewge aww wesuwts t-togethew
+      fow {
+        f-fwomundewwying <- futuwefwomundewwying
+        fwomcache = keyvawuewesuwt(hits, tombstones, 😳😳😳 faiwuwes)
+        fwomundewwyingtwansfowmed = t-twansfowmwesuwts(fwomundewwying, /(^•ω•^) twansfowms)
+      } yiewd {
+        futuwefwomsoftexpiwy.onsuccess { weadthwoughwesuwts =>
+          cachewesuwtobsewvew(
+            c-cachewesuwtobsewvew.cachingwepositowywesuwt(
+              c-cachewesuwt, >w<
+              f-fwomundewwyingtwansfowmed, ^•ﻌ•^
+              weadthwoughwesuwts
             )
           )
         }
-        KeyValueResult.sum(Seq(fromCache, fromUnderlyingTransformed))
+        keyvawuewesuwt.sum(seq(fwomcache, 😳😳😳 fwomundewwyingtwansfowmed))
       }
     }
   }
 
   /**
-   * Given results and a map of keys to transform functions, apply those transform functions
-   * to the found results.
+   * given w-wesuwts and a-a map of keys to t-twansfowm functions, :3 appwy those t-twansfowm functions
+   * to the f-found wesuwts.
    */
-  protected[this] def transformResults(
-    results: KeyValueResult[K, V],
-    transforms: Map[K, (V => V)]
-  ): KeyValueResult[K, V] = {
-    if (transforms.isEmpty) {
-      results
-    } else {
-      results.copy(found = results.found.map {
-        case (key, value) =>
-          (key, transforms.get(key).map(_(value)).getOrElse(value))
+  pwotected[this] d-def twansfowmwesuwts(
+    wesuwts: keyvawuewesuwt[k, (ꈍᴗꈍ) v], ^•ﻌ•^
+    t-twansfowms: map[k, >w< (v => v)]
+  ): keyvawuewesuwt[k, ^^;; v-v] = {
+    if (twansfowms.isempty) {
+      w-wesuwts
+    } e-ewse {
+      wesuwts.copy(found = w-wesuwts.found.map {
+        c-case (key, (✿oωo) vawue) =>
+          (key, òωó twansfowms.get(key).map(_(vawue)).getowewse(vawue))
       })
     }
   }
 
-  protected[this] def getFromCache(keys: Seq[K]): Future[KeyValueResult[K, Cached[V]]] = {
-    val uniqueKeys = keys.distinct
-    cache.get(uniqueKeys) handle {
-      case t: Throwable =>
-        rateLimitedLogger.logThrowable(t, "exception caught in cache get")
+  p-pwotected[this] def getfwomcache(keys: s-seq[k]): futuwe[keyvawuewesuwt[k, ^^ c-cached[v]]] = {
+    v-vaw uniquekeys = keys.distinct
+    cache.get(uniquekeys) h-handwe {
+      case t: thwowabwe =>
+        watewimitedwoggew.wogthwowabwe(t, ^^ "exception caught in cache get")
 
-        // treat total cache failure as a fetch that returned all failures
-        KeyValueResult(failed = uniqueKeys.map { _ -> t }.toMap)
+        // tweat totaw cache faiwuwe as a fetch that wetuwned a-aww faiwuwes
+        keyvawuewesuwt(faiwed = uniquekeys.map { _ -> t-t }.tomap)
     }
   }
 
   /**
-   * Buckets cache results according to the wishes of the CachedResultHandler
+   * buckets c-cache wesuwts accowding to the wishes of the cachedwesuwthandwew
    */
-  protected[this] def process(
-    keys: Q,
-    cacheResult: KeyValueResult[K, Cached[V]]
-  ): ProcessedCacheResult = {
-    val cachedResultHandler = handlerFactory(keys)
+  p-pwotected[this] def pwocess(
+    keys: q-q, rawr
+    cachewesuwt: keyvawuewesuwt[k, XD cached[v]]
+  ): p-pwocessedcachewesuwt = {
+    vaw cachedwesuwthandwew = handwewfactowy(keys)
 
-    val hits = Map.newBuilder[K, V]
-    val misses = new mutable.ArrayBuffer[K]
-    val failures = Map.newBuilder[K, Throwable]
-    val tombstones = Set.newBuilder[K]
-    val softExpiredKeys = new mutable.ListBuffer[K]
-    val doNotCache = Set.newBuilder[K]
-    val transforms = Map.newBuilder[K, (V => V)]
+    v-vaw hits = map.newbuiwdew[k, rawr v]
+    vaw m-misses = nyew mutabwe.awwaybuffew[k]
+    v-vaw faiwuwes = map.newbuiwdew[k, 😳 thwowabwe]
+    v-vaw tombstones = s-set.newbuiwdew[k]
+    vaw softexpiwedkeys = n-nyew mutabwe.wistbuffew[k]
+    v-vaw donotcache = set.newbuiwdew[k]
+    vaw t-twansfowms = map.newbuiwdew[k, 🥺 (v => v)]
 
-    for (key <- keys) {
-      val cachedResult = cacheResult(key) match {
-        case Throw(t) => Failed(key, t)
-        case Return(None) => NotFound(key)
-        case Return(Some(cached)) =>
+    fow (key <- keys) {
+      vaw cachedwesuwt = c-cachewesuwt(key) match {
+        case thwow(t) => faiwed(key, (U ᵕ U❁) t-t)
+        c-case wetuwn(none) => n-nyotfound(key)
+        case wetuwn(some(cached)) =>
           cached.status match {
-            case CachedValueStatus.Found =>
-              cached.value match {
-                case None => NotFound(key)
-                case Some(value) =>
-                  CachedFound(
-                    key,
-                    value,
-                    cached.cachedAt,
-                    cached.softTtlStep
+            c-case cachedvawuestatus.found =>
+              cached.vawue m-match {
+                case n-nyone => nyotfound(key)
+                c-case some(vawue) =>
+                  cachedfound(
+                    key, 😳
+                    vawue, 🥺
+                    cached.cachedat, (///ˬ///✿)
+                    cached.softttwstep
                   )
               }
-            case CachedValueStatus.NotFound => CachedNotFound(key, cached.cachedAt)
-            case CachedValueStatus.Deleted => CachedDeleted(key, cached.cachedAt)
-            case CachedValueStatus.SerializationFailed => SerializationFailed(key)
-            case CachedValueStatus.DeserializationFailed => DeserializationFailed(key)
-            case CachedValueStatus.Evicted => NotFound(key)
-            case CachedValueStatus.DoNotCache => DoNotCache(key, cached.doNotCacheUntil)
+            case c-cachedvawuestatus.notfound => cachednotfound(key, mya c-cached.cachedat)
+            case cachedvawuestatus.deweted => cacheddeweted(key, (✿oωo) c-cached.cachedat)
+            case cachedvawuestatus.sewiawizationfaiwed => sewiawizationfaiwed(key)
+            c-case cachedvawuestatus.desewiawizationfaiwed => d-desewiawizationfaiwed(key)
+            c-case c-cachedvawuestatus.evicted => n-nyotfound(key)
+            c-case cachedvawuestatus.donotcache => donotcache(key, ^•ﻌ•^ cached.donotcacheuntiw)
           }
       }
 
-      def processAction(action: CachedResultAction[V]): Unit = {
-        action match {
-          case HandleAsMiss => misses += key
-          case HandleAsFound(value) => hits += key -> value
-          case HandleAsNotFound => tombstones += key
-          case HandleAsDoNotCache => doNotCache += key
-          case HandleAsFailed(t) => failures += key -> t
-          case TransformSubAction(subAction, f) =>
-            transforms += key -> f
-            processAction(subAction)
-          case SoftExpiration(subAction) =>
-            softExpiredKeys += key
-            processAction(subAction)
+      d-def pwocessaction(action: c-cachedwesuwtaction[v]): u-unit = {
+        a-action match {
+          c-case h-handweasmiss => misses += key
+          c-case handweasfound(vawue) => h-hits += key -> v-vawue
+          case handweasnotfound => tombstones += key
+          c-case handweasdonotcache => donotcache += k-key
+          case handweasfaiwed(t) => faiwuwes += k-key -> t
+          c-case twansfowmsubaction(subaction, o.O f) =>
+            twansfowms += key -> f-f
+            p-pwocessaction(subaction)
+          case softexpiwation(subaction) =>
+            s-softexpiwedkeys += k-key
+            pwocessaction(subaction)
         }
       }
 
-      processAction(cachedResultHandler(cachedResult))
+      pwocessaction(cachedwesuwthandwew(cachedwesuwt))
     }
 
-    ProcessedCacheResult(
-      hits.result(),
-      misses,
-      doNotCache.result(),
-      failures.result(),
-      tombstones.result(),
-      softExpiredKeys,
-      transforms.result()
+    pwocessedcachewesuwt(
+      h-hits.wesuwt(), o.O
+      m-misses, XD
+      donotcache.wesuwt(), ^•ﻌ•^
+      faiwuwes.wesuwt(), ʘwʘ
+      tombstones.wesuwt(), (U ﹏ U)
+      s-softexpiwedkeys,
+      t-twansfowms.wesuwt()
     )
   }
 
-  protected[this] def recordCacheStats(
-    keys: Seq[K],
-    notFound: Set[K],
-    doNotCache: Set[K],
-    expired: Set[K],
-    numFailures: Int,
-    numTombstones: Int
-  ): Unit = {
-    keys.foreach { key =>
-      val wasntFound = notFound.contains(key)
-      val keyString = key.toString
-      if (wasntFound || expired.contains(key))
-        effectiveCacheStats.miss(keyString)
-      else
-        effectiveCacheStats.hit(keyString)
+  pwotected[this] def wecowdcachestats(
+    k-keys: seq[k], 😳😳😳
+    nyotfound: set[k], 🥺
+    donotcache: set[k], (///ˬ///✿)
+    expiwed: set[k], (˘ω˘)
+    nyumfaiwuwes: i-int,
+    nyumtombstones: int
+  ): unit = {
+    k-keys.foweach { k-key =>
+      v-vaw wasntfound = nyotfound.contains(key)
+      v-vaw keystwing = k-key.tostwing
+      i-if (wasntfound || e-expiwed.contains(key))
+        e-effectivecachestats.miss(keystwing)
+      ewse
+        effectivecachestats.hit(keystwing)
 
-      if (wasntFound)
-        observer.miss(keyString)
-      else
-        observer.hit(keyString)
+      if (wasntfound)
+        o-obsewvew.miss(keystwing)
+      ewse
+        o-obsewvew.hit(keystwing)
     }
-    observer.expired(expired.size)
-    observer.failure(numFailures)
-    observer.tombstone(numTombstones)
-    observer.noCache(doNotCache.size)
+    o-obsewvew.expiwed(expiwed.size)
+    obsewvew.faiwuwe(numfaiwuwes)
+    o-obsewvew.tombstone(numtombstones)
+    o-obsewvew.nocache(donotcache.size)
   }
 
   /**
-   * read through to the underlying repository
+   * w-wead thwough to the undewwying w-wepositowy
    *
-   * @param cacheKeys
-   *   the keys to read and cache
+   * @pawam c-cachekeys
+   *   t-the keys t-to wead and cache
    */
-  def readThrough(cacheKeys: Q): Future[KeyValueResult[K, V]] = {
-    readThrough(cacheKeys, cacheKeys)
+  d-def weadthwough(cachekeys: q): futuwe[keyvawuewesuwt[k, :3 v-v]] = {
+    weadthwough(cachekeys, /(^•ω•^) cachekeys)
   }
 
   /**
-   * read through to the underlying repository
+   * w-wead thwough to t-the undewwying wepositowy
    *
-   * @param writeToCacheQuery
-   *   the query to pass to the writeToCache method after getting a result back from the
-   *   underlying repository.  this query can be exactly the same as underlyingQuery if
-   *   all readThrough keys should be cached, or it may contain a subset of the keys if
-   *   some keys should not be written back to cache.
-   * @param cacheResult
-   *   the current cache results for underlyingQuery.
+   * @pawam wwitetocachequewy
+   *   the quewy to pass to the wwitetocache m-method a-aftew getting a wesuwt back fwom t-the
+   *   undewwying w-wepositowy. :3  this quewy can be exactwy the s-same as undewwyingquewy i-if
+   *   a-aww weadthwough k-keys shouwd b-be cached, mya ow it m-may contain a subset of the keys if
+   *   some k-keys shouwd nyot be wwitten back to cache. XD
+   * @pawam cachewesuwt
+   *   the c-cuwwent cache wesuwts f-fow undewwyingquewy. (///ˬ///✿)
    */
-  def readThrough(
-    underlyingQuery: Q,
-    writeToCacheQuery: Q,
-    cacheResult: KeyValueResult[K, Cached[V]] = KeyValueResult.empty
-  ): Future[KeyValueResult[K, V]] = {
-    if (underlyingQuery.isEmpty) {
-      KeyValueResult.emptyFuture
-    } else {
-      underlying(underlyingQuery).onSuccess { result =>
-        if (writeToCacheQuery.nonEmpty) {
-          writeToCache(writeToCacheQuery, result, cacheResult)
+  def weadthwough(
+    undewwyingquewy: q, 🥺
+    w-wwitetocachequewy: q-q, o.O
+    cachewesuwt: keyvawuewesuwt[k, mya cached[v]] = k-keyvawuewesuwt.empty
+  ): futuwe[keyvawuewesuwt[k, rawr x3 v-v]] = {
+    i-if (undewwyingquewy.isempty) {
+      k-keyvawuewesuwt.emptyfutuwe
+    } ewse {
+      undewwying(undewwyingquewy).onsuccess { wesuwt =>
+        i-if (wwitetocachequewy.nonempty) {
+          wwitetocache(wwitetocachequewy, 😳 w-wesuwt, cachewesuwt)
         }
       }
     }
   }
 
   /**
-   * Writes the contents of the given KeyValueResult to cache.
+   * w-wwites the contents of the given keyvawuewesuwt t-to cache. 😳😳😳
    */
-  def writeToCache(
-    keys: Q,
-    underlyingResult: KeyValueResult[K, V],
-    cacheResult: KeyValueResult[K, Cached[V]] = KeyValueResult[K, Cached[V]]()
-  ): Unit = {
-    lazy val cachedEmpty = {
-      val now = Time.now
-      Cached[V](None, CachedValueStatus.NotFound, now, Some(now), softTtlStep = None)
+  def w-wwitetocache(
+    keys: q, >_<
+    undewwyingwesuwt: k-keyvawuewesuwt[k, >w< v],
+    cachewesuwt: k-keyvawuewesuwt[k, rawr x3 cached[v]] = keyvawuewesuwt[k, XD cached[v]]()
+  ): unit = {
+    wazy vaw cachedempty = {
+      v-vaw nyow = t-time.now
+      c-cached[v](none, ^^ c-cachedvawuestatus.notfound, (✿oωo) nyow, some(now), >w< softttwstep = n-nyone)
     }
 
-    keys.foreach { key =>
-      // only cache Returns from the underlying repo, skip Throws.
-      // iff cached value matches value from underlying store
-      // (for both NotFound and Found results), increment softTtlStep
-      // otherwise, set softTtlStep to None
-      underlyingResult(key) match {
-        case Return(optUnderlyingVal) =>
-          val softTtlStep =
-            cacheResult(key) match {
-              case Return(Some(cacheVal)) => updateSoftTtlStep(optUnderlyingVal, cacheVal)
-              case _ => None
+    keys.foweach { key =>
+      // onwy cache wetuwns f-fwom the undewwying w-wepo, 😳😳😳 skip t-thwows. (ꈍᴗꈍ)
+      // i-iff cached vawue matches vawue fwom undewwying stowe
+      // (fow both notfound a-and found wesuwts), (✿oωo) i-incwement softttwstep
+      // othewwise, (˘ω˘) set softttwstep t-to nyone
+      undewwyingwesuwt(key) match {
+        c-case wetuwn(optundewwyingvaw) =>
+          v-vaw softttwstep =
+            c-cachewesuwt(key) match {
+              case wetuwn(some(cachevaw)) => updatesoftttwstep(optundewwyingvaw, nyaa~~ cachevaw)
+              case _ => none
             }
 
-          val status =
-            optUnderlyingVal match {
-              case Some(_) => CachedValueStatus.Found
-              case None => CachedValueStatus.NotFound
+          vaw status =
+            o-optundewwyingvaw match {
+              c-case some(_) => cachedvawuestatus.found
+              case nyone => cachedvawuestatus.notfound
             }
 
-          val cached =
-            cachedEmpty.copy(
-              value = optUnderlyingVal,
-              status = status,
-              softTtlStep = softTtlStep
+          v-vaw cached =
+            cachedempty.copy(
+              v-vawue = optundewwyingvaw, ( ͡o ω ͡o )
+              status = status, 🥺
+              s-softttwstep = softttwstep
             )
 
-          cache
-            .lockAndSet(key, LockingCache.PickingHandler(cached, picker))
-            .onFailure {
-              case t: Throwable =>
-                rateLimitedLogger.logThrowable(t, "exception caught in lockAndSet")
+          c-cache
+            .wockandset(key, (U ﹏ U) w-wockingcache.pickinghandwew(cached, ( ͡o ω ͡o ) p-pickew))
+            .onfaiwuwe {
+              c-case t: thwowabwe =>
+                watewimitedwoggew.wogthwowabwe(t, (///ˬ///✿) "exception c-caught i-in wockandset")
             }
 
-        case Throw(_) => None
+        case thwow(_) => n-none
       }
     }
   }

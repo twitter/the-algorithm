@@ -1,144 +1,144 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+impowt c-com.twittew.fowwow_wecommendations.common.wankews.common.wankewid
+i-impowt com.twittew.fowwow_wecommendations.common.wankews.common.wankewid.wankewid
+i-impowt com.twittew.fowwow_wecommendations.wogging.{thwiftscawa => o-offwine}
+impowt c-com.twittew.fowwow_wecommendations.{thwiftscawa => t-t}
 
 /**
- * Type of Score. This is used to differentiate scores.
+ * t-type of scowe. nyaa~~ t-this is used to diffewentiate scowes. OwO
  *
- * Define it as a trait so it is possible to add more information for different score types.
+ * define it as a twait so it is possibwe t-to add mowe infowmation fow diffewent scowe t-types. rawr x3
  */
-sealed trait ScoreType {
-  def getName: String
+seawed twait scowetype {
+  d-def getname: stwing
 }
 
 /**
- * Existing Score Types
+ * existing scowe types
  */
-object ScoreType {
+object s-scowetype {
 
   /**
-   * the score is calculated based on heuristics and most likely not normalized
+   * the s-scowe is cawcuwated b-based on heuwistics and most wikewy nyot nyowmawized
    */
-  case object HeuristicBasedScore extends ScoreType {
-    override def getName: String = "HeuristicBasedScore"
+  case object heuwisticbasedscowe extends scowetype {
+    o-ovewwide def getname: stwing = "heuwisticbasedscowe"
   }
 
   /**
-   * probability of follow after the candidate is recommended to the user
+   * pwobabiwity of fowwow aftew the c-candidate is wecommended to the u-usew
    */
-  case object PFollowGivenReco extends ScoreType {
-    override def getName: String = "PFollowGivenReco"
+  case o-object pfowwowgivenweco e-extends s-scowetype {
+    ovewwide def getname: stwing = "pfowwowgivenweco"
   }
 
   /**
-   * probability of engage after the user follows the candidate
+   * p-pwobabiwity of engage aftew the usew fowwows t-the candidate
    */
-  case object PEngagementGivenFollow extends ScoreType {
-    override def getName: String = "PEngagementGivenFollow"
+  case object pengagementgivenfowwow extends scowetype {
+    ovewwide def getname: s-stwing = "pengagementgivenfowwow"
   }
 
   /**
-   * probability of engage per tweet impression
+   * pwobabiwity o-of engage p-pew tweet impwession
    */
-  case object PEngagementPerImpression extends ScoreType {
-    override def getName: String = "PEngagementPerImpression"
+  c-case object pengagementpewimpwession extends scowetype {
+    ovewwide d-def getname: s-stwing = "pengagementpewimpwession"
   }
 
   /**
-   * probability of engage per tweet impression
+   * pwobabiwity o-of engage pew tweet i-impwession
    */
-  case object PEngagementGivenReco extends ScoreType {
-    override def getName: String = "PEngagementGivenReco"
+  case object p-pengagementgivenweco extends s-scowetype {
+    ovewwide def getname: stwing = "pengagementgivenweco"
   }
 
-  def fromScoreTypeString(scoreTypeName: String): ScoreType = scoreTypeName match {
-    case "HeuristicBasedScore" => HeuristicBasedScore
-    case "PFollowGivenReco" => PFollowGivenReco
-    case "PEngagementGivenFollow" => PEngagementGivenFollow
-    case "PEngagementPerImpression" => PEngagementPerImpression
-    case "PEngagementGivenReco" => PEngagementGivenReco
+  d-def fwomscowetypestwing(scowetypename: s-stwing): scowetype = scowetypename m-match {
+    c-case "heuwisticbasedscowe" => heuwisticbasedscowe
+    case "pfowwowgivenweco" => pfowwowgivenweco
+    case "pengagementgivenfowwow" => pengagementgivenfowwow
+    case "pengagementpewimpwession" => p-pengagementpewimpwession
+    c-case "pengagementgivenweco" => pengagementgivenweco
   }
 }
 
 /**
- * Represent the output from a certain ranker or scorer. All the fields are optional
+ * w-wepwesent t-the output fwom a-a cewtain wankew ow scowew. XD aww the fiewds awe optionaw
  *
- * @param value value of the score
- * @param rankerId ranker id
- * @param scoreType score type
+ * @pawam v-vawue vawue of the scowe
+ * @pawam wankewid wankew id
+ * @pawam scowetype s-scowe type
  */
-final case class Score(
-  value: Double,
-  rankerId: Option[RankerId] = None,
-  scoreType: Option[ScoreType] = None) {
+finaw case cwass s-scowe(
+  vawue: d-doubwe, σωσ
+  wankewid: o-option[wankewid] = nyone, (U ᵕ U❁)
+  s-scowetype: option[scowetype] = nyone) {
 
-  def toThrift: t.Score = t.Score(
-    value = value,
-    rankerId = rankerId.map(_.toString),
-    scoreType = scoreType.map(_.getName)
+  d-def tothwift: t-t.scowe = t-t.scowe(
+    vawue = vawue, (U ﹏ U)
+    wankewid = wankewid.map(_.tostwing), :3
+    s-scowetype = s-scowetype.map(_.getname)
   )
 
-  def toOfflineThrift: offline.Score =
-    offline.Score(
-      value = value,
-      rankerId = rankerId.map(_.toString),
-      scoreType = scoreType.map(_.getName)
+  d-def tooffwinethwift: o-offwine.scowe =
+    o-offwine.scowe(
+      vawue = vawue, ( ͡o ω ͡o )
+      wankewid = wankewid.map(_.tostwing), σωσ
+      s-scowetype = scowetype.map(_.getname)
     )
 }
 
-object Score {
+object scowe {
 
-  val RandomScore = Score(0.0d, Some(RankerId.RandomRanker))
+  vaw wandomscowe = scowe(0.0d, >w< some(wankewid.wandomwankew))
 
-  def optimusScore(score: Double, scoreType: ScoreType): Score = {
-    Score(value = score, scoreType = Some(scoreType))
+  d-def optimusscowe(scowe: doubwe, 😳😳😳 scowetype: scowetype): scowe = {
+    s-scowe(vawue = s-scowe, OwO scowetype = s-some(scowetype))
   }
 
-  def predictionScore(score: Double, rankerId: RankerId): Score = {
-    Score(value = score, rankerId = Some(rankerId))
+  def pwedictionscowe(scowe: d-doubwe, 😳 wankewid: wankewid): s-scowe = {
+    s-scowe(vawue = scowe, 😳😳😳 wankewid = some(wankewid))
   }
 
-  def fromThrift(thriftScore: t.Score): Score =
-    Score(
-      value = thriftScore.value,
-      rankerId = thriftScore.rankerId.flatMap(RankerId.getRankerByName),
-      scoreType = thriftScore.scoreType.map(ScoreType.fromScoreTypeString)
+  def fwomthwift(thwiftscowe: t.scowe): scowe =
+    s-scowe(
+      vawue = thwiftscowe.vawue, (˘ω˘)
+      wankewid = t-thwiftscowe.wankewid.fwatmap(wankewid.getwankewbyname), ʘwʘ
+      scowetype = t-thwiftscowe.scowetype.map(scowetype.fwomscowetypestwing)
     )
 }
 
 /**
- * a list of scores
+ * a-a wist of scowes
  */
-final case class Scores(
-  scores: Seq[Score],
-  selectedRankerId: Option[RankerId] = None,
-  isInProducerScoringExperiment: Boolean = false) {
+finaw case cwass s-scowes(
+  scowes: s-seq[scowe], ( ͡o ω ͡o )
+  sewectedwankewid: o-option[wankewid] = n-nyone, o.O
+  isinpwoducewscowingexpewiment: boowean = fawse) {
 
-  def toThrift: t.Scores =
-    t.Scores(
-      scores = scores.map(_.toThrift),
-      selectedRankerId = selectedRankerId.map(_.toString),
-      isInProducerScoringExperiment = isInProducerScoringExperiment
+  def tothwift: t.scowes =
+    t-t.scowes(
+      s-scowes = scowes.map(_.tothwift), >w<
+      s-sewectedwankewid = sewectedwankewid.map(_.tostwing), 😳
+      i-isinpwoducewscowingexpewiment = i-isinpwoducewscowingexpewiment
     )
 
-  def toOfflineThrift: offline.Scores =
-    offline.Scores(
-      scores = scores.map(_.toOfflineThrift),
-      selectedRankerId = selectedRankerId.map(_.toString),
-      isInProducerScoringExperiment = isInProducerScoringExperiment
+  def t-tooffwinethwift: offwine.scowes =
+    offwine.scowes(
+      scowes = scowes.map(_.tooffwinethwift), 🥺
+      s-sewectedwankewid = s-sewectedwankewid.map(_.tostwing), rawr x3
+      isinpwoducewscowingexpewiment = isinpwoducewscowingexpewiment
     )
 }
 
-object Scores {
-  val Empty: Scores = Scores(Nil)
+o-object s-scowes {
+  vaw empty: scowes = scowes(niw)
 
-  def fromThrift(thriftScores: t.Scores): Scores =
-    Scores(
-      scores = thriftScores.scores.map(Score.fromThrift),
-      selectedRankerId = thriftScores.selectedRankerId.flatMap(RankerId.getRankerByName),
-      isInProducerScoringExperiment = thriftScores.isInProducerScoringExperiment
+  def fwomthwift(thwiftscowes: t-t.scowes): scowes =
+    scowes(
+      scowes = thwiftscowes.scowes.map(scowe.fwomthwift), o.O
+      sewectedwankewid = t-thwiftscowes.sewectedwankewid.fwatmap(wankewid.getwankewbyname), rawr
+      isinpwoducewscowingexpewiment = thwiftscowes.isinpwoducewscowingexpewiment
     )
 }

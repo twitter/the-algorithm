@@ -1,30 +1,30 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "finatra/inject/inject-core/src/main/scala",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
-        "src/scala/com/twitter/onboarding/relevance/candidate_generation/utt/models",
-        "src/thrift/com/twitter/core_workflows/user_model:user_model-scala",
-        "src/thrift/com/twitter/frigate/data_pipeline:frigate-user-history-thrift-scala",
-        "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
-        "src/thrift/com/twitter/hermit/pop_geo:hermit-pop-geo-scala",
-        "src/thrift/com/twitter/onboarding/relevance/relatable_accounts:relatable_accounts-scala",
-        "src/thrift/com/twitter/onboarding/relevance/store:store-scala",
-        "src/thrift/com/twitter/recos/user_user_graph:user_user_graph-scala",
-        "src/thrift/com/twitter/search/account_search/extended_network:extended_network_users-scala",
-        "src/thrift/com/twitter/service/metastore/gen:thrift-scala",
-        "src/thrift/com/twitter/wtf/candidate:wtf-candidate-scala",
-        "src/thrift/com/twitter/wtf/ml:wtf-ml-output-thrift-scala",
-        "src/thrift/com/twitter/wtf/real_time_interaction_graph:wtf-real_time_interaction_graph-thrift-scala",
-        "src/thrift/com/twitter/wtf/triangular_loop:triangular_loop-scala",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "util/util-slf4j-api/src/main/scala",
-    ],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/inject:guice", òωó
+        "3wdpawty/jvm/com/googwe/inject/extensions:guice-assistedinject", o.O
+        "3wdpawty/jvm/net/codingweww:scawa-guice", (U ᵕ U❁)
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", (⑅˘꒳˘)
+        "finatwa/inject/inject-cowe/swc/main/scawa", ( ͡o ω ͡o )
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/base", UwU
+        "fowwow-wecommendations-sewvice/common/swc/main/scawa/com/twittew/fowwow_wecommendations/common/constants",
+        "swc/scawa/com/twittew/onboawding/wewevance/candidate_genewation/utt/modews", rawr x3
+        "swc/thwift/com/twittew/cowe_wowkfwows/usew_modew:usew_modew-scawa", rawr
+        "swc/thwift/com/twittew/fwigate/data_pipewine:fwigate-usew-histowy-thwift-scawa", σωσ
+        "swc/thwift/com/twittew/hewmit/candidate:hewmit-candidate-scawa", σωσ
+        "swc/thwift/com/twittew/hewmit/pop_geo:hewmit-pop-geo-scawa", >_<
+        "swc/thwift/com/twittew/onboawding/wewevance/wewatabwe_accounts:wewatabwe_accounts-scawa",
+        "swc/thwift/com/twittew/onboawding/wewevance/stowe:stowe-scawa", :3
+        "swc/thwift/com/twittew/wecos/usew_usew_gwaph:usew_usew_gwaph-scawa", (U ﹏ U)
+        "swc/thwift/com/twittew/seawch/account_seawch/extended_netwowk:extended_netwowk_usews-scawa", -.-
+        "swc/thwift/com/twittew/sewvice/metastowe/gen:thwift-scawa", (ˆ ﻌ ˆ)♡
+        "swc/thwift/com/twittew/wtf/candidate:wtf-candidate-scawa", (⑅˘꒳˘)
+        "swc/thwift/com/twittew/wtf/mw:wtf-mw-output-thwift-scawa", (U ᵕ U❁)
+        "swc/thwift/com/twittew/wtf/weaw_time_intewaction_gwaph:wtf-weaw_time_intewaction_gwaph-thwift-scawa", -.-
+        "swc/thwift/com/twittew/wtf/twianguwaw_woop:twianguwaw_woop-scawa", ^^;;
+        "stwato/swc/main/scawa/com/twittew/stwato/cwient",
+        "utiw/utiw-swf4j-api/swc/main/scawa", >_<
+    ], mya
 )

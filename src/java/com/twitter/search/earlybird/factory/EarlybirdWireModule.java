@@ -1,901 +1,901 @@
-package com.twitter.search.earlybird.factory;
+package com.twittew.seawch.eawwybiwd.factowy;
 
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.util.Optional;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+impowt j-java.io.ioexception;
+i-impowt j-java.wang.management.managementfactowy;
+i-impowt j-java.utiw.optionaw;
+i-impowt java.utiw.concuwwent.scheduwedthweadpoowexecutow;
+i-impowt j-java.utiw.concuwwent.timeunit;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.sun.management.OperatingSystemMXBean;
+impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.wists;
+impowt com.sun.management.opewatingsystemmxbean;
 
-import org.apache.directory.api.util.Strings;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.diwectowy.api.utiw.stwings;
+impowt o-owg.apache.hadoop.fs.fiwesystem;
+impowt owg.apache.kafka.cwients.consumew.kafkaconsumew;
+i-impowt owg.apache.kafka.common.topicpawtition;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
-import com.twitter.finagle.stats.MetricsStatsReceiver;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.search.common.aurora.AuroraSchedulerClient;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.file.FileUtils;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchStatsReceiverImpl;
-import com.twitter.search.common.partitioning.zookeeper.SearchZkClient;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.termination.QueryTimeoutFactory;
-import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
-import com.twitter.search.common.util.io.kafka.ThriftDeserializer;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
-import com.twitter.search.earlybird.EarlybirdCPUQualityFactor;
-import com.twitter.search.earlybird.EarlybirdDarkProxy;
-import com.twitter.search.earlybird.EarlybirdFinagleServerManager;
-import com.twitter.search.earlybird.EarlybirdFuturePoolManager;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.EarlybirdProductionFinagleServerManager;
-import com.twitter.search.earlybird.EarlybirdServerSetManager;
-import com.twitter.search.earlybird.EarlybirdWarmUpManager;
-import com.twitter.search.earlybird.QualityFactor;
-import com.twitter.search.earlybird.ServerSetMember;
-import com.twitter.search.earlybird.UpdateableEarlybirdStateManager;
-import com.twitter.search.earlybird.archive.ArchiveEarlybirdIndexConfig;
-import com.twitter.search.earlybird.archive.ArchiveSearchPartitionManager;
-import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserUpdatesChecker;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.MissingKafkaTopicException;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.ml.ScoringModelsManager;
-import com.twitter.search.earlybird.partition.AudioSpaceEventsStreamIndexer;
-import com.twitter.search.earlybird.partition.AudioSpaceTable;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.EarlybirdIndexFlusher;
-import com.twitter.search.earlybird.partition.EarlybirdIndexLoader;
-import com.twitter.search.earlybird.partition.EarlybirdKafkaConsumer;
-import com.twitter.search.earlybird.partition.EarlybirdStartup;
-import com.twitter.search.earlybird.partition.OptimizationAndFlushingCoordinationLock;
-import com.twitter.search.earlybird.partition.TimeLimitedHadoopExistsCall;
-import com.twitter.search.earlybird.partition.UserScrubGeoEventStreamIndexer;
-import com.twitter.search.earlybird.partition.freshstartup.FreshStartupHandler;
-import com.twitter.search.earlybird.partition.HdfsUtil;
-import com.twitter.search.earlybird.partition.KafkaStartup;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.partition.PartitionManager;
-import com.twitter.search.earlybird.partition.PartitionManagerStartup;
-import com.twitter.search.earlybird.partition.PartitionWriter;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.search.earlybird.partition.StartupUserEventIndexer;
-import com.twitter.search.earlybird.partition.TweetCreateHandler;
-import com.twitter.search.earlybird.partition.TweetUpdateHandler;
-import com.twitter.search.earlybird.partition.UserUpdatesStreamIndexer;
-import com.twitter.search.earlybird.querycache.QueryCacheConfig;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdAction;
-import com.twitter.search.earlybird.util.EarlybirdDecider;
-import com.twitter.search.earlybird.util.TermCountMonitor;
-import com.twitter.search.earlybird.util.TweetCountMonitor;
-import com.twitter.ubs.thriftjava.AudioSpaceBaseEvent;
+i-impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+i-impowt com.twittew.decidew.decidew;
+i-impowt com.twittew.finagwe.stats.metwicsstatsweceivew;
+impowt com.twittew.finagwe.stats.statsweceivew;
+impowt com.twittew.seawch.common.auwowa.auwowascheduwewcwient;
+impowt com.twittew.seawch.common.concuwwent.scheduwedexecutowsewvicefactowy;
+impowt c-com.twittew.seawch.common.decidew.decidewutiw;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.common.fiwe.fiweutiws;
+impowt c-com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt c-com.twittew.seawch.common.metwics.seawchstatsweceivew;
+i-impowt com.twittew.seawch.common.metwics.seawchstatsweceivewimpw;
+i-impowt c-com.twittew.seawch.common.pawtitioning.zookeepew.seawchzkcwient;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+i-impowt com.twittew.seawch.common.seawch.tewmination.quewytimeoutfactowy;
+impowt com.twittew.seawch.common.utiw.io.kafka.finagwekafkacwientutiws;
+impowt c-com.twittew.seawch.common.utiw.io.kafka.thwiftdesewiawizew;
+impowt com.twittew.seawch.common.utiw.mw.tensowfwow_engine.tensowfwowmodewsmanagew;
+impowt com.twittew.seawch.common.utiw.zktwywock.zookeepewtwywockfactowy;
+impowt com.twittew.seawch.common.utiw.zookeepew.zookeepewpwoxy;
+i-impowt com.twittew.seawch.eawwybiwd.eawwybiwdcpuquawityfactow;
+i-impowt com.twittew.seawch.eawwybiwd.eawwybiwddawkpwoxy;
+i-impowt com.twittew.seawch.eawwybiwd.eawwybiwdfinagwesewvewmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.eawwybiwdfutuwepoowmanagew;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdindexconfig;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdpwoductionfinagwesewvewmanagew;
+i-impowt c-com.twittew.seawch.eawwybiwd.eawwybiwdsewvewsetmanagew;
+impowt c-com.twittew.seawch.eawwybiwd.eawwybiwdwawmupmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.quawityfactow;
+impowt com.twittew.seawch.eawwybiwd.sewvewsetmembew;
+i-impowt com.twittew.seawch.eawwybiwd.updateabweeawwybiwdstatemanagew;
+i-impowt com.twittew.seawch.eawwybiwd.awchive.awchiveeawwybiwdindexconfig;
+impowt com.twittew.seawch.eawwybiwd.awchive.awchiveseawchpawtitionmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.common.caughtupmonitow;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
+impowt c-com.twittew.seawch.eawwybiwd.common.usewupdates.usewscwubgeomap;
+i-impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewupdatescheckew;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewtabwe;
+impowt com.twittew.seawch.eawwybiwd.exception.missingkafkatopicexception;
+impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsegmentfactowy;
+i-impowt com.twittew.seawch.eawwybiwd.mw.scowingmodewsmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.audiospaceeventsstweamindexew;
+impowt c-com.twittew.seawch.eawwybiwd.pawtition.audiospacetabwe;
+i-impowt c-com.twittew.seawch.eawwybiwd.pawtition.dynamicpawtitionconfig;
+impowt com.twittew.seawch.eawwybiwd.pawtition.eawwybiwdindexfwushew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.eawwybiwdindexwoadew;
+impowt c-com.twittew.seawch.eawwybiwd.pawtition.eawwybiwdkafkaconsumew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.eawwybiwdstawtup;
+impowt com.twittew.seawch.eawwybiwd.pawtition.optimizationandfwushingcoowdinationwock;
+impowt com.twittew.seawch.eawwybiwd.pawtition.timewimitedhadoopexistscaww;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.usewscwubgeoeventstweamindexew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.fweshstawtup.fweshstawtuphandwew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.hdfsutiw;
+i-impowt c-com.twittew.seawch.eawwybiwd.pawtition.kafkastawtup;
+impowt com.twittew.seawch.eawwybiwd.pawtition.muwtisegmenttewmdictionawymanagew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.pawtitionmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.pawtitionmanagewstawtup;
+i-impowt c-com.twittew.seawch.eawwybiwd.pawtition.pawtitionwwitew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.seawchindexingmetwicset;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentsyncconfig;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.stawtupuseweventindexew;
+i-impowt c-com.twittew.seawch.eawwybiwd.pawtition.tweetcweatehandwew;
+impowt com.twittew.seawch.eawwybiwd.pawtition.tweetupdatehandwew;
+impowt c-com.twittew.seawch.eawwybiwd.pawtition.usewupdatesstweamindexew;
+impowt com.twittew.seawch.eawwybiwd.quewycache.quewycacheconfig;
+impowt com.twittew.seawch.eawwybiwd.quewycache.quewycachemanagew;
+impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+impowt c-com.twittew.seawch.eawwybiwd.utiw.coowdinatedeawwybiwdaction;
+impowt com.twittew.seawch.eawwybiwd.utiw.eawwybiwddecidew;
+impowt com.twittew.seawch.eawwybiwd.utiw.tewmcountmonitow;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.tweetcountmonitow;
+i-impowt com.twittew.ubs.thwiftjava.audiospacebaseevent;
 
 /**
- * Production module that provides Earlybird components.
+ * p-pwoduction moduwe that pwovides e-eawwybiwd components. (ˆ ﻌ ˆ)♡
  */
-public class EarlybirdWireModule {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdWireModule.class);
-  private static final int MAX_POLL_RECORDS = 1000;
+pubwic c-cwass eawwybiwdwiwemoduwe {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(eawwybiwdwiwemoduwe.cwass);
+  pwivate static finaw int max_poww_wecowds = 1000;
 
   /**
-   * How many threads we will use for building up the query cache during startup.
-   * The number of threads will be set to 1 after this earlybird is current.
+   * h-how many thweads we wiww use f-fow buiwding up the quewy cache d-duwing stawtup. mya
+   * t-the nyumbew of thweads wiww be set to 1 a-aftew this eawwybiwd i-is cuwwent. (U ᵕ U❁)
    */
-  private static final int QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP =
-      EarlybirdConfig.getInt("query_cache_updater_startup_threads", 1);
+  pwivate s-static finaw int q-quewy_cache_num_wowkew_thweads_at_stawtup =
+      eawwybiwdconfig.getint("quewy_cache_updatew_stawtup_thweads", 1);
 
   /**
-   * Scheduled executor service factory can be re-used in production.
-   * All the managers can share the same executor service factory.
+   * scheduwed executow sewvice factowy can be we-used i-in pwoduction. mya
+   * a-aww the m-managews can shawe the same executow s-sewvice factowy. ʘwʘ
    */
-  private final ScheduledExecutorServiceFactory sharedExecutorServiceFactory =
-      new ScheduledExecutorServiceFactory();
+  p-pwivate finaw scheduwedexecutowsewvicefactowy s-shawedexecutowsewvicefactowy =
+      nyew scheduwedexecutowsewvicefactowy();
 
-  private final SearchStatsReceiver sharedSearchStatsReceiver = new SearchStatsReceiverImpl();
-  private final StatsReceiver sharedFinagleStatsReceiver = new MetricsStatsReceiver();
+  pwivate finaw seawchstatsweceivew shawedseawchstatsweceivew = n-nyew seawchstatsweceivewimpw();
+  p-pwivate finaw statsweceivew shawedfinagwestatsweceivew = n-nyew metwicsstatsweceivew();
 
-  private final SearchIndexingMetricSet searchIndexingMetricSet =
-      new SearchIndexingMetricSet(sharedSearchStatsReceiver);
+  p-pwivate finaw seawchindexingmetwicset seawchindexingmetwicset =
+      nyew s-seawchindexingmetwicset(shawedseawchstatsweceivew);
 
-  private final EarlybirdSearcherStats tweetsSearcherStats =
-      new EarlybirdSearcherStats(sharedSearchStatsReceiver);
+  pwivate finaw eawwybiwdseawchewstats tweetsseawchewstats =
+      nyew eawwybiwdseawchewstats(shawedseawchstatsweceivew);
 
-  private final CaughtUpMonitor indexCaughtUpMonitor = new CaughtUpMonitor("dl_index");
+  p-pwivate finaw caughtupmonitow indexcaughtupmonitow = n-nyew caughtupmonitow("dw_index");
 
-  public CaughtUpMonitor provideIndexCaughtUpMonitor() {
-    return indexCaughtUpMonitor;
+  p-pubwic caughtupmonitow pwovideindexcaughtupmonitow() {
+    wetuwn indexcaughtupmonitow;
   }
 
-  private final CaughtUpMonitor kafkaIndexCaughtUpMonitor = new CaughtUpMonitor("kafka_index");
+  p-pwivate f-finaw caughtupmonitow kafkaindexcaughtupmonitow = new caughtupmonitow("kafka_index");
 
-  public CaughtUpMonitor provideKafkaIndexCaughtUpMonitor() {
-    return kafkaIndexCaughtUpMonitor;
+  pubwic c-caughtupmonitow pwovidekafkaindexcaughtupmonitow() {
+    w-wetuwn kafkaindexcaughtupmonitow;
   }
 
-  private final OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock =
-      new OptimizationAndFlushingCoordinationLock();
+  pwivate finaw optimizationandfwushingcoowdinationwock o-optimizationandfwushingcoowdinationwock =
+      nyew o-optimizationandfwushingcoowdinationwock();
 
-  public OptimizationAndFlushingCoordinationLock provideOptimizationAndFlushingCoordinationLock() {
-    return optimizationAndFlushingCoordinationLock;
+  pubwic o-optimizationandfwushingcoowdinationwock pwovideoptimizationandfwushingcoowdinationwock() {
+    w-wetuwn optimizationandfwushingcoowdinationwock;
   }
 
-  public QueryTimeoutFactory provideQueryTimeoutFactory() {
-    return new QueryTimeoutFactory();
+  pubwic q-quewytimeoutfactowy p-pwovidequewytimeoutfactowy() {
+    w-wetuwn nyew quewytimeoutfactowy();
   }
 
-  public static class ZooKeeperClients {
-    public ZooKeeperProxy discoveryClient;
-    public ZooKeeperProxy stateClient;
+  p-pubwic static c-cwass zookeepewcwients {
+    pubwic zookeepewpwoxy discovewycwient;
+    p-pubwic z-zookeepewpwoxy s-statecwient;
 
-    public ZooKeeperClients() {
+    pubwic zookeepewcwients() {
       this(
-          SearchZkClient.getServiceDiscoveryZooKeeperClient(),
-          SearchZkClient.getSZooKeeperClient());
+          s-seawchzkcwient.getsewvicediscovewyzookeepewcwient(), (˘ω˘)
+          seawchzkcwient.getszookeepewcwient());
     }
 
-    public ZooKeeperClients(ZooKeeperProxy discoveryClient, ZooKeeperProxy stateClient) {
-      this.discoveryClient = discoveryClient;
-      this.stateClient = stateClient;
+    p-pubwic zookeepewcwients(zookeepewpwoxy d-discovewycwient, 😳 zookeepewpwoxy statecwient) {
+      this.discovewycwient = d-discovewycwient;
+      this.statecwient = s-statecwient;
     }
   }
 
   /**
-   * Provides the earlybird decider.
+   * p-pwovides the e-eawwybiwd decidew. òωó
    */
-  public Decider provideDecider() {
-    return EarlybirdDecider.initialize();
+  pubwic d-decidew pwovidedecidew() {
+    wetuwn eawwybiwddecidew.initiawize();
   }
 
   /**
-   * Provides the set of ZooKeeper clients to be used by earlybird.
+   * pwovides the set of zookeepew cwients to be used by eawwybiwd. nyaa~~
    */
-  public ZooKeeperClients provideZooKeeperClients() {
-    return new ZooKeeperClients();
+  p-pubwic zookeepewcwients pwovidezookeepewcwients() {
+    w-wetuwn nyew zookeepewcwients();
   }
 
   /**
-   * Provides the query cache config.
+   * p-pwovides the quewy cache c-config. o.O
    */
-  public QueryCacheConfig provideQueryCacheConfig(SearchStatsReceiver searchStatsReceiver) {
-    return new QueryCacheConfig(searchStatsReceiver);
+  pubwic quewycacheconfig p-pwovidequewycacheconfig(seawchstatsweceivew s-seawchstatsweceivew) {
+    w-wetuwn nyew quewycacheconfig(seawchstatsweceivew);
   }
 
   /**
-   * Provides the earlybird index config.
+   * p-pwovides the e-eawwybiwd index config. nyaa~~
    */
-  public EarlybirdIndexConfig provideEarlybirdIndexConfig(
-      Decider decider, SearchIndexingMetricSet indexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    return EarlybirdIndexConfigUtil.createEarlybirdIndexConfig(decider, indexingMetricSet,
-        criticalExceptionHandler);
+  pubwic eawwybiwdindexconfig pwovideeawwybiwdindexconfig(
+      decidew decidew, (U ᵕ U❁) seawchindexingmetwicset indexingmetwicset, 😳😳😳
+      c-cwiticawexceptionhandwew c-cwiticawexceptionhandwew) {
+    w-wetuwn eawwybiwdindexconfigutiw.cweateeawwybiwdindexconfig(decidew, i-indexingmetwicset, (U ﹏ U)
+        cwiticawexceptionhandwew);
   }
 
-  public DynamicPartitionConfig provideDynamicPartitionConfig() {
-    return new DynamicPartitionConfig(PartitionConfigUtil.initPartitionConfig());
+  pubwic dynamicpawtitionconfig p-pwovidedynamicpawtitionconfig() {
+    wetuwn n-nyew dynamicpawtitionconfig(pawtitionconfigutiw.initpawtitionconfig());
   }
 
   /**
-   * Provides the segment manager to be used by this earlybird.
+   * pwovides t-the segment managew to be used by this eawwybiwd. ^•ﻌ•^
    */
-  public SegmentManager provideSegmentManager(
-      DynamicPartitionConfig dynamicPartitionConfig,
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      SearchIndexingMetricSet partitionIndexingMetricSet,
-      EarlybirdSearcherStats searcherStats,
-      SearchStatsReceiver earlybirdServerStats,
-      UserUpdatesChecker userUpdatesChecker,
-      SegmentSyncConfig segmentSyncConfig,
-      UserTable userTable,
-      UserScrubGeoMap userScrubGeoMap,
-      Clock clock,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    return new SegmentManager(
-        dynamicPartitionConfig,
-        earlybirdIndexConfig,
-        partitionIndexingMetricSet,
-        searcherStats,
-        earlybirdServerStats,
-        userUpdatesChecker,
-        segmentSyncConfig,
-        userTable,
-        userScrubGeoMap,
-        clock,
-        EarlybirdConfig.getMaxSegmentSize(),
-        criticalExceptionHandler,
-        provideKafkaIndexCaughtUpMonitor());
+  p-pubwic segmentmanagew p-pwovidesegmentmanagew(
+      dynamicpawtitionconfig d-dynamicpawtitionconfig, (⑅˘꒳˘)
+      e-eawwybiwdindexconfig eawwybiwdindexconfig, >_<
+      seawchindexingmetwicset pawtitionindexingmetwicset,
+      eawwybiwdseawchewstats s-seawchewstats, (⑅˘꒳˘)
+      s-seawchstatsweceivew e-eawwybiwdsewvewstats, σωσ
+      u-usewupdatescheckew u-usewupdatescheckew, 🥺
+      segmentsyncconfig segmentsyncconfig, :3
+      u-usewtabwe u-usewtabwe, (ꈍᴗꈍ)
+      usewscwubgeomap u-usewscwubgeomap, ^•ﻌ•^
+      c-cwock cwock, (˘ω˘)
+      cwiticawexceptionhandwew c-cwiticawexceptionhandwew) {
+    wetuwn nyew segmentmanagew(
+        d-dynamicpawtitionconfig, 🥺
+        eawwybiwdindexconfig, (✿oωo)
+        p-pawtitionindexingmetwicset, XD
+        s-seawchewstats, (///ˬ///✿)
+        eawwybiwdsewvewstats, ( ͡o ω ͡o )
+        u-usewupdatescheckew, ʘwʘ
+        segmentsyncconfig, rawr
+        usewtabwe, o.O
+        u-usewscwubgeomap, ^•ﻌ•^
+        c-cwock, (///ˬ///✿)
+        e-eawwybiwdconfig.getmaxsegmentsize(), (ˆ ﻌ ˆ)♡
+        cwiticawexceptionhandwew, XD
+        pwovidekafkaindexcaughtupmonitow());
   }
 
-  public QueryCacheManager provideQueryCacheManager(
-      QueryCacheConfig config,
-      EarlybirdIndexConfig indexConfig,
-      int maxEnabledSegments,
-      UserTable userTable,
-      UserScrubGeoMap userScrubGeoMap,
-      ScheduledExecutorServiceFactory queryCacheUpdaterScheduledExecutorFactory,
-      SearchStatsReceiver searchStatsReceiver,
-      EarlybirdSearcherStats searcherStats,
-      Decider decider,
-      CriticalExceptionHandler criticalExceptionHandler,
-      Clock clock) {
-    return new QueryCacheManager(config, indexConfig, maxEnabledSegments, userTable,
-        userScrubGeoMap, queryCacheUpdaterScheduledExecutorFactory, searchStatsReceiver,
-        searcherStats, decider, criticalExceptionHandler, clock);
+  pubwic q-quewycachemanagew pwovidequewycachemanagew(
+      quewycacheconfig c-config, (✿oωo)
+      e-eawwybiwdindexconfig indexconfig, -.-
+      i-int maxenabwedsegments, XD
+      u-usewtabwe u-usewtabwe, (✿oωo)
+      usewscwubgeomap usewscwubgeomap, (˘ω˘)
+      s-scheduwedexecutowsewvicefactowy quewycacheupdatewscheduwedexecutowfactowy, (ˆ ﻌ ˆ)♡
+      seawchstatsweceivew seawchstatsweceivew, >_<
+      e-eawwybiwdseawchewstats s-seawchewstats, -.-
+      decidew d-decidew, (///ˬ///✿)
+      cwiticawexceptionhandwew c-cwiticawexceptionhandwew, XD
+      c-cwock c-cwock) {
+    wetuwn nyew quewycachemanagew(config, ^^;; indexconfig, maxenabwedsegments, rawr x3 usewtabwe,
+        usewscwubgeomap, OwO quewycacheupdatewscheduwedexecutowfactowy, ʘwʘ seawchstatsweceivew, rawr
+        seawchewstats, UwU decidew, (ꈍᴗꈍ) cwiticawexceptionhandwew, cwock);
   }
 
-  public TermCountMonitor provideTermCountMonitor(
-      SegmentManager segmentManager, ScheduledExecutorServiceFactory executorServiceFactory,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    return new TermCountMonitor(segmentManager, executorServiceFactory, 500, TimeUnit.MILLISECONDS,
-        searchStatsReceiver, criticalExceptionHandler);
+  pubwic tewmcountmonitow pwovidetewmcountmonitow(
+      s-segmentmanagew s-segmentmanagew, (✿oωo) scheduwedexecutowsewvicefactowy executowsewvicefactowy, (⑅˘꒳˘)
+      s-seawchstatsweceivew s-seawchstatsweceivew, OwO
+      c-cwiticawexceptionhandwew cwiticawexceptionhandwew) {
+    w-wetuwn nyew tewmcountmonitow(segmentmanagew, 🥺 e-executowsewvicefactowy, >_< 500, (ꈍᴗꈍ) t-timeunit.miwwiseconds, 😳
+        seawchstatsweceivew, 🥺 c-cwiticawexceptionhandwew);
   }
 
-  public TweetCountMonitor provideTweetCountMonitor(
-      SegmentManager segmentManager,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    return new TweetCountMonitor(segmentManager, executorServiceFactory, 500,
-        TimeUnit.MILLISECONDS, searchStatsReceiver, criticalExceptionHandler);
+  pubwic t-tweetcountmonitow p-pwovidetweetcountmonitow(
+      segmentmanagew segmentmanagew, nyaa~~
+      s-scheduwedexecutowsewvicefactowy e-executowsewvicefactowy, ^•ﻌ•^
+      s-seawchstatsweceivew s-seawchstatsweceivew, (ˆ ﻌ ˆ)♡
+      c-cwiticawexceptionhandwew c-cwiticawexceptionhandwew) {
+    w-wetuwn nyew tweetcountmonitow(segmentmanagew, (U ᵕ U❁) executowsewvicefactowy, mya 500,
+        t-timeunit.miwwiseconds, 😳 s-seawchstatsweceivew, σωσ cwiticawexceptionhandwew);
   }
 
   /**
-   * Returns a manager that keeps track of earlybird's global state while it runs.
+   * w-wetuwns a-a managew that k-keeps twack of eawwybiwd's gwobaw s-state whiwe it wuns. ( ͡o ω ͡o )
    */
-  public UpdateableEarlybirdStateManager provideUpdateableEarlybirdStateManager(
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      ZooKeeperProxy zooKeeperClient,
-      AuroraSchedulerClient schedulerClient,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      ScoringModelsManager scoringModelsManager,
-      TensorflowModelsManager tensorflowModelsManager,
-      SearchStatsReceiver searchStatsReceiver,
-      SearchDecider searchDecider,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    Clock clock = provideClockForStateManager();
+  pubwic updateabweeawwybiwdstatemanagew p-pwovideupdateabweeawwybiwdstatemanagew(
+      eawwybiwdindexconfig e-eawwybiwdindexconfig, XD
+      d-dynamicpawtitionconfig d-dynamicpawtitionconfig, :3
+      zookeepewpwoxy z-zookeepewcwient, :3
+      auwowascheduwewcwient s-scheduwewcwient, (⑅˘꒳˘)
+      scheduwedexecutowsewvicefactowy executowsewvicefactowy, òωó
+      scowingmodewsmanagew s-scowingmodewsmanagew, mya
+      tensowfwowmodewsmanagew t-tensowfwowmodewsmanagew, 😳😳😳
+      seawchstatsweceivew seawchstatsweceivew, :3
+      seawchdecidew seawchdecidew, >_<
+      c-cwiticawexceptionhandwew cwiticawexceptionhandwew) {
+    c-cwock cwock = pwovidecwockfowstatemanagew();
 
-    return new UpdateableEarlybirdStateManager(
-        earlybirdIndexConfig, dynamicPartitionConfig, zooKeeperClient, schedulerClient,
-        executorServiceFactory, scoringModelsManager, tensorflowModelsManager, searchStatsReceiver,
-        searchDecider, criticalExceptionHandler,
-        clock);
+    w-wetuwn nyew updateabweeawwybiwdstatemanagew(
+        eawwybiwdindexconfig, 🥺 dynamicpawtitionconfig, (ꈍᴗꈍ) zookeepewcwient, rawr x3 s-scheduwewcwient, (U ﹏ U)
+        executowsewvicefactowy, ( ͡o ω ͡o ) scowingmodewsmanagew, 😳😳😳 t-tensowfwowmodewsmanagew, 🥺 s-seawchstatsweceivew, òωó
+        s-seawchdecidew, XD cwiticawexceptionhandwew, XD
+        cwock);
   }
 
-  public Clock provideClockForStateManager() {
-    return this.provideClock();
+  p-pubwic cwock p-pwovidecwockfowstatemanagew() {
+    wetuwn this.pwovidecwock();
   }
 
-  public ScheduledExecutorServiceFactory providePartitionManagerExecutorFactory() {
-    return sharedExecutorServiceFactory;
+  p-pubwic scheduwedexecutowsewvicefactowy pwovidepawtitionmanagewexecutowfactowy() {
+    wetuwn s-shawedexecutowsewvicefactowy;
   }
 
-  public ScheduledExecutorServiceFactory provideStateUpdateManagerExecutorFactory() {
-    return sharedExecutorServiceFactory;
+  pubwic s-scheduwedexecutowsewvicefactowy p-pwovidestateupdatemanagewexecutowfactowy() {
+    w-wetuwn shawedexecutowsewvicefactowy;
   }
 
-  public ScheduledExecutorServiceFactory provideTermCountMonitorScheduledExecutorFactory() {
-    return sharedExecutorServiceFactory;
+  pubwic s-scheduwedexecutowsewvicefactowy p-pwovidetewmcountmonitowscheduwedexecutowfactowy() {
+    w-wetuwn s-shawedexecutowsewvicefactowy;
   }
 
-  public ScheduledExecutorServiceFactory provideTweetCountMonitorScheduledExecutorFactory() {
-    return sharedExecutorServiceFactory;
+  pubwic scheduwedexecutowsewvicefactowy pwovidetweetcountmonitowscheduwedexecutowfactowy() {
+    w-wetuwn shawedexecutowsewvicefactowy;
   }
 
   /**
-   * Provides the ScheduledExecutorServiceFactory that will be used to schedule all query cache
-   * update tasks.
+   * p-pwovides t-the scheduwedexecutowsewvicefactowy t-that wiww b-be used to scheduwe a-aww quewy c-cache
+   * update t-tasks. ( ͡o ω ͡o )
    */
-  public ScheduledExecutorServiceFactory provideQueryCacheUpdateTaskScheduledExecutorFactory() {
-    return new ScheduledExecutorServiceFactory() {
-      @Override
-      public QueryCacheUpdaterScheduledExecutorService<ScheduledThreadPoolExecutor> build(
-          String threadNameFormat, boolean isDaemon) {
-        ScheduledThreadPoolExecutor threadpoolExecutor =
-            new ScheduledThreadPoolExecutor(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP,
-                buildThreadFactory(threadNameFormat, isDaemon));
-        threadpoolExecutor.setMaximumPoolSize(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
-        threadpoolExecutor.setCorePoolSize(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
-        threadpoolExecutor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
-        threadpoolExecutor.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
-        threadpoolExecutor.setRemoveOnCancelPolicy(true);
-        LOG.info("Starting query cache executor with {} thread.",
-            QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
+  pubwic scheduwedexecutowsewvicefactowy p-pwovidequewycacheupdatetaskscheduwedexecutowfactowy() {
+    wetuwn nyew s-scheduwedexecutowsewvicefactowy() {
+      @ovewwide
+      pubwic q-quewycacheupdatewscheduwedexecutowsewvice<scheduwedthweadpoowexecutow> b-buiwd(
+          s-stwing thweadnamefowmat, boowean isdaemon) {
+        scheduwedthweadpoowexecutow t-thweadpoowexecutow =
+            n-nyew s-scheduwedthweadpoowexecutow(quewy_cache_num_wowkew_thweads_at_stawtup, >w<
+                buiwdthweadfactowy(thweadnamefowmat, isdaemon));
+        thweadpoowexecutow.setmaximumpoowsize(quewy_cache_num_wowkew_thweads_at_stawtup);
+        t-thweadpoowexecutow.setcowepoowsize(quewy_cache_num_wowkew_thweads_at_stawtup);
+        t-thweadpoowexecutow.setexekawaii~existingdewayedtasksaftewshutdownpowicy(fawse);
+        thweadpoowexecutow.setcontinueexistingpewiodictasksaftewshutdownpowicy(fawse);
+        t-thweadpoowexecutow.setwemoveoncancewpowicy(twue);
+        w-wog.info("stawting quewy cache executow with {} thwead.",
+            quewy_cache_num_wowkew_thweads_at_stawtup);
 
-        return new QueryCacheUpdaterScheduledExecutorService<ScheduledThreadPoolExecutor>(
-            threadpoolExecutor) {
-          @Override public void setWorkerPoolSizeAfterStartup() {
-            delegate.setCorePoolSize(1);
-            delegate.setMaximumPoolSize(1);
-            LOG.info("Reset query cache executor to be single threaded.");
+        w-wetuwn nyew q-quewycacheupdatewscheduwedexecutowsewvice<scheduwedthweadpoowexecutow>(
+            t-thweadpoowexecutow) {
+          @ovewwide p-pubwic void setwowkewpoowsizeaftewstawtup() {
+            dewegate.setcowepoowsize(1);
+            dewegate.setmaximumpoowsize(1);
+            w-wog.info("weset q-quewy cache executow to be singwe thweaded.");
           }
         };
       }
     };
   }
 
-  public ScheduledExecutorServiceFactory provideSimpleUserUpdateIndexerScheduledExecutorFactory() {
-    return sharedExecutorServiceFactory;
+  p-pubwic scheduwedexecutowsewvicefactowy pwovidesimpweusewupdateindexewscheduwedexecutowfactowy() {
+    w-wetuwn shawedexecutowsewvicefactowy;
   }
 
   /**
-   * Returns the manager that manages the pool of searcher threads.
+   * wetuwns the m-managew that m-manages the poow of seawchew thweads. mya
    */
-  public EarlybirdFuturePoolManager provideFuturePoolManager() {
-    return new EarlybirdFuturePoolManager("SearcherWorker");
+  p-pubwic e-eawwybiwdfutuwepoowmanagew pwovidefutuwepoowmanagew() {
+    w-wetuwn nyew eawwybiwdfutuwepoowmanagew("seawchewwowkew");
   }
 
   /**
-   * Returns the manager that manages all earlybird finagle servers (warm up and production).
+   * wetuwns t-the managew that m-manages aww e-eawwybiwd finagwe s-sewvews (wawm up and pwoduction).
    */
-  public EarlybirdFinagleServerManager provideFinagleServerManager(
-      CriticalExceptionHandler criticalExceptionHandler) {
-    return new EarlybirdProductionFinagleServerManager(criticalExceptionHandler);
+  p-pubwic e-eawwybiwdfinagwesewvewmanagew p-pwovidefinagwesewvewmanagew(
+      cwiticawexceptionhandwew c-cwiticawexceptionhandwew) {
+    wetuwn new eawwybiwdpwoductionfinagwesewvewmanagew(cwiticawexceptionhandwew);
   }
 
   /**
-   * Creates the production serverset manager.
+   * c-cweates t-the pwoduction s-sewvewset managew. (ꈍᴗꈍ)
    */
-  public EarlybirdServerSetManager provideServerSetManager(
-      ZooKeeperProxy discoveryClient,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      SearchStatsReceiver searchStatsReceiver,
-      int port,
-      String serverSetNamePrefix) {
-    return new EarlybirdServerSetManager(
-        searchStatsReceiver,
-        discoveryClient,
-        dynamicPartitionConfig.getCurrentPartitionConfig(),
-        port,
-        serverSetNamePrefix);
+  pubwic eawwybiwdsewvewsetmanagew pwovidesewvewsetmanagew(
+      zookeepewpwoxy d-discovewycwient, -.-
+      dynamicpawtitionconfig d-dynamicpawtitionconfig,
+      s-seawchstatsweceivew seawchstatsweceivew, (⑅˘꒳˘)
+      int powt, (U ﹏ U)
+      s-stwing sewvewsetnamepwefix) {
+    wetuwn n-nyew eawwybiwdsewvewsetmanagew(
+        s-seawchstatsweceivew, σωσ
+        d-discovewycwient, :3
+        d-dynamicpawtitionconfig.getcuwwentpawtitionconfig(), /(^•ω•^)
+        p-powt, σωσ
+        sewvewsetnamepwefix);
   }
 
   /**
-   * Creates the warm up serverset manager.
+   * cweates the wawm up sewvewset managew. (U ᵕ U❁)
    */
-  public EarlybirdWarmUpManager provideWarmUpManager(
-      ZooKeeperProxy discoveryClient,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      SearchStatsReceiver searchStatsReceiver,
-      Decider decider,
-      Clock clock,
-      int port,
-      String serverSetNamePrefix) {
-    return new EarlybirdWarmUpManager(
-        new EarlybirdServerSetManager(
-            searchStatsReceiver,
-            discoveryClient,
-            dynamicPartitionConfig.getCurrentPartitionConfig(),
-            port,
-            serverSetNamePrefix),
-        dynamicPartitionConfig.getCurrentPartitionConfig(),
-        searchIndexingMetricSet,
-        decider,
-        clock);
+  p-pubwic eawwybiwdwawmupmanagew p-pwovidewawmupmanagew(
+      zookeepewpwoxy discovewycwient, 😳
+      dynamicpawtitionconfig d-dynamicpawtitionconfig, ʘwʘ
+      seawchstatsweceivew seawchstatsweceivew, (⑅˘꒳˘)
+      decidew decidew, ^•ﻌ•^
+      cwock cwock, nyaa~~
+      i-int powt, XD
+      s-stwing sewvewsetnamepwefix) {
+    w-wetuwn nyew eawwybiwdwawmupmanagew(
+        nyew eawwybiwdsewvewsetmanagew(
+            s-seawchstatsweceivew, /(^•ω•^)
+            d-discovewycwient, (U ᵕ U❁)
+            dynamicpawtitionconfig.getcuwwentpawtitionconfig(), mya
+            p-powt, (ˆ ﻌ ˆ)♡
+            sewvewsetnamepwefix), (✿oωo)
+        d-dynamicpawtitionconfig.getcuwwentpawtitionconfig(), (✿oωo)
+        seawchindexingmetwicset, òωó
+        decidew, (˘ω˘)
+        cwock);
   }
 
   /**
-   * Returns a dark proxy that knows how to send dark traffic to the warm up earlybird serverset.
+   * wetuwns a-a dawk pwoxy that knows how to send dawk twaffic t-to the wawm up e-eawwybiwd sewvewset. (ˆ ﻌ ˆ)♡
    */
-  public EarlybirdDarkProxy provideEarlybirdDarkProxy(
-      SearchDecider searchDecider,
-      StatsReceiver finagleStatsReceiver,
-      EarlybirdServerSetManager earlybirdServerSetManager,
-      EarlybirdWarmUpManager earlybirdWarmUpManager,
-      String clusterName) {
-    return new EarlybirdDarkProxy(searchDecider,
-                                  finagleStatsReceiver.scope("dark_proxy"),
-                                  earlybirdServerSetManager,
-                                  earlybirdWarmUpManager,
-                                  clusterName);
+  p-pubwic eawwybiwddawkpwoxy pwovideeawwybiwddawkpwoxy(
+      s-seawchdecidew seawchdecidew,
+      statsweceivew finagwestatsweceivew, ( ͡o ω ͡o )
+      eawwybiwdsewvewsetmanagew e-eawwybiwdsewvewsetmanagew, rawr x3
+      e-eawwybiwdwawmupmanagew e-eawwybiwdwawmupmanagew,
+      s-stwing cwustewname) {
+    wetuwn new eawwybiwddawkpwoxy(seawchdecidew, (˘ω˘)
+                                  finagwestatsweceivew.scope("dawk_pwoxy"), òωó
+                                  eawwybiwdsewvewsetmanagew, ( ͡o ω ͡o )
+                                  e-eawwybiwdwawmupmanagew, σωσ
+                                  c-cwustewname);
   }
 
 
   /**
-   * Returns the manager for all (non-Tensorflow) scoring models.
+   * wetuwns the managew fow aww (non-tensowfwow) s-scowing modews. (U ﹏ U)
    */
-  public ScoringModelsManager provideScoringModelsManager(
-      SearchStatsReceiver serverStats,
-      EarlybirdIndexConfig earlybirdIndexConfig) {
-    boolean modelsEnabled = EarlybirdConfig.getBool("scoring_models_enabled", false);
-    if (!modelsEnabled) {
-      LOG.info("Scoring Models - Disabled in the config. Not loading any models.");
-      serverStats.getCounter("scoring_models_disabled_in_config").increment();
-      return ScoringModelsManager.NO_OP_MANAGER;
+  pubwic scowingmodewsmanagew p-pwovidescowingmodewsmanagew(
+      seawchstatsweceivew sewvewstats,
+      e-eawwybiwdindexconfig e-eawwybiwdindexconfig) {
+    boowean m-modewsenabwed = e-eawwybiwdconfig.getboow("scowing_modews_enabwed", rawr f-fawse);
+    if (!modewsenabwed) {
+      wog.info("scowing modews - disabwed i-in the config. -.- nyot woading any modews.");
+      s-sewvewstats.getcountew("scowing_modews_disabwed_in_config").incwement();
+      wetuwn scowingmodewsmanagew.no_op_managew;
     }
 
-    String hdfsNameNode = EarlybirdConfig.getString("scoring_models_namenode");
-    String hdfsModelsPath = EarlybirdConfig.getString("scoring_models_basedir");
-    try {
-      return ScoringModelsManager.create(
-          serverStats, hdfsNameNode, hdfsModelsPath, earlybirdIndexConfig.getSchema());
-    } catch (IOException e) {
-      LOG.error("Scoring Models - Error creating ScoringModelsManager", e);
-      serverStats.getCounter("scoring_models_initialization_errors").increment();
-      return ScoringModelsManager.NO_OP_MANAGER;
+    stwing hdfsnamenode = eawwybiwdconfig.getstwing("scowing_modews_namenode");
+    s-stwing h-hdfsmodewspath = e-eawwybiwdconfig.getstwing("scowing_modews_basediw");
+    t-twy {
+      w-wetuwn scowingmodewsmanagew.cweate(
+          sewvewstats, ( ͡o ω ͡o ) h-hdfsnamenode, >_< hdfsmodewspath, o.O eawwybiwdindexconfig.getschema());
+    } catch (ioexception e) {
+      w-wog.ewwow("scowing modews - e-ewwow cweating scowingmodewsmanagew", e);
+      s-sewvewstats.getcountew("scowing_modews_initiawization_ewwows").incwement();
+      w-wetuwn scowingmodewsmanagew.no_op_managew;
     }
   }
 
   /**
-   * Provides the manager for all Tensorflow models.
+   * pwovides the m-managew fow aww tensowfwow modews. σωσ
    */
-  public TensorflowModelsManager provideTensorflowModelsManager(
-      SearchStatsReceiver serverStats,
-      String statsPrefix,
-      Decider decider,
-      EarlybirdIndexConfig earlybirdIndexConfig) {
+  p-pubwic t-tensowfwowmodewsmanagew pwovidetensowfwowmodewsmanagew(
+      s-seawchstatsweceivew s-sewvewstats, -.-
+      stwing s-statspwefix, σωσ
+      decidew decidew, :3
+      eawwybiwdindexconfig eawwybiwdindexconfig) {
 
-    boolean modelsEnabled = EarlybirdProperty.TF_MODELS_ENABLED.get(false);
+    boowean m-modewsenabwed = eawwybiwdpwopewty.tf_modews_enabwed.get(fawse);
 
-    if (!modelsEnabled) {
-      LOG.info("Tensorflow Models - Disabled in the config. Not loading any models.");
-      serverStats.getCounter("tf_models_disabled_in_config").increment();
-      return TensorflowModelsManager.createNoOp(statsPrefix);
+    i-if (!modewsenabwed) {
+      wog.info("tensowfwow modews - d-disabwed in the c-config. ^^ nyot w-woading any modews.");
+      sewvewstats.getcountew("tf_modews_disabwed_in_config").incwement();
+      w-wetuwn tensowfwowmodewsmanagew.cweatenoop(statspwefix);
     }
 
-    String modelsConfigPath =
-        Preconditions.checkNotNull(EarlybirdProperty.TF_MODELS_CONFIG_PATH.get());
+    s-stwing modewsconfigpath =
+        p-pweconditions.checknotnuww(eawwybiwdpwopewty.tf_modews_config_path.get());
 
 
-    int intraOpThreads = Preconditions.checkNotNull(EarlybirdProperty.TF_INTRA_OP_THREADS.get(0));
-    int interOpThreads = Preconditions.checkNotNull(EarlybirdProperty.TF_INTER_OP_THREADS.get(0));
+    int i-intwaopthweads = pweconditions.checknotnuww(eawwybiwdpwopewty.tf_intwa_op_thweads.get(0));
+    i-int intewopthweads = p-pweconditions.checknotnuww(eawwybiwdpwopewty.tf_intew_op_thweads.get(0));
 
-    TensorflowModelsManager.initTensorflowThreadPools(intraOpThreads, interOpThreads);
+    tensowfwowmodewsmanagew.inittensowfwowthweadpoows(intwaopthweads, òωó intewopthweads);
 
-    return TensorflowModelsManager.createUsingConfigFile(
-        FileUtils.getFileHandle(modelsConfigPath),
-        true,
-        statsPrefix,
-        () -> DeciderUtil.isAvailableForRandomRecipient(
-          decider, "enable_tf_serve_models"),
-        () -> decider.isAvailable("enable_tf_load_models"),
-        earlybirdIndexConfig.getSchema());
+    wetuwn tensowfwowmodewsmanagew.cweateusingconfigfiwe(
+        f-fiweutiws.getfiwehandwe(modewsconfigpath), (ˆ ﻌ ˆ)♡
+        t-twue, XD
+        statspwefix, òωó
+        () -> decidewutiw.isavaiwabwefowwandomwecipient(
+          decidew, (ꈍᴗꈍ) "enabwe_tf_sewve_modews"), UwU
+        () -> d-decidew.isavaiwabwe("enabwe_tf_woad_modews"), >w<
+        eawwybiwdindexconfig.getschema());
   }
 
-  public SearchStatsReceiver provideEarlybirdServerStatsReceiver() {
-    return sharedSearchStatsReceiver;
+  p-pubwic s-seawchstatsweceivew pwovideeawwybiwdsewvewstatsweceivew() {
+    wetuwn shawedseawchstatsweceivew;
   }
 
-  public StatsReceiver provideFinagleStatsReceiver() {
-    return sharedFinagleStatsReceiver;
+  pubwic statsweceivew p-pwovidefinagwestatsweceivew() {
+    wetuwn shawedfinagwestatsweceivew;
   }
 
-  public SearchIndexingMetricSet provideSearchIndexingMetricSet() {
-    return searchIndexingMetricSet;
+  pubwic seawchindexingmetwicset pwovideseawchindexingmetwicset() {
+    w-wetuwn seawchindexingmetwicset;
   }
 
-  public EarlybirdSearcherStats provideTweetsSearcherStats() {
-    return tweetsSearcherStats;
-  }
-
-  /**
-   * Provides the clock to be used by this earlybird.
-   */
-  public Clock provideClock() {
-    return Clock.SYSTEM_CLOCK;
+  pubwic e-eawwybiwdseawchewstats p-pwovidetweetsseawchewstats() {
+    wetuwn t-tweetsseawchewstats;
   }
 
   /**
-   * Provides the config for the multi-segment term dictionary manager.
+   * p-pwovides t-the cwock to b-be used by this e-eawwybiwd. ʘwʘ
    */
-  public MultiSegmentTermDictionaryManager.Config provideMultiSegmentTermDictionaryManagerConfig() {
-    return new MultiSegmentTermDictionaryManager.Config(
-        Lists.newArrayList(
-            EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName()));
+  p-pubwic cwock pwovidecwock() {
+    wetuwn cwock.system_cwock;
   }
 
   /**
-   * Provides the manager for the term dictionary that spans all segments.
+   * pwovides the config fow the muwti-segment tewm dictionawy m-managew. :3
    */
-  public MultiSegmentTermDictionaryManager provideMultiSegmentTermDictionaryManager(
-      MultiSegmentTermDictionaryManager.Config termDictionaryConfig,
-      SegmentManager segmentManager,
-      SearchStatsReceiver statsReceiver,
-      Decider decider,
-      EarlybirdCluster earlybirdCluster) {
-    return new MultiSegmentTermDictionaryManager(
-        termDictionaryConfig, segmentManager, statsReceiver, decider, earlybirdCluster);
+  p-pubwic m-muwtisegmenttewmdictionawymanagew.config p-pwovidemuwtisegmenttewmdictionawymanagewconfig() {
+    w-wetuwn new muwtisegmenttewmdictionawymanagew.config(
+        wists.newawwaywist(
+            eawwybiwdfiewdconstant.fwom_usew_id_fiewd.getfiewdname()));
   }
 
   /**
-   * Returns the partition manager to be used by the archive earlybirds.
+   * p-pwovides the managew fow the tewm dictionawy that spans aww segments. ^•ﻌ•^
    */
-  public PartitionManager provideFullArchivePartitionManager(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      QueryCacheManager queryCacheManager,
-      SegmentManager segmentManager,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SearchStatsReceiver searchStatsReceiver,
-      ArchiveEarlybirdIndexConfig earlybirdIndexConfig,
-      ServerSetMember serverSetMember,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      ScheduledExecutorServiceFactory userUpdateIndexerExecutorFactory,
-      SearchIndexingMetricSet earlybirdSearchIndexingMetricSet,
-      Clock clock,
-      SegmentSyncConfig segmentSyncConfig,
-      CriticalExceptionHandler criticalExceptionHandler) throws IOException {
-
-    return new ArchiveSearchPartitionManager(
-        zooKeeperTryLockFactory,
-        queryCacheManager,
-        segmentManager,
-        dynamicPartitionConfig,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        searchStatsReceiver,
-        earlybirdIndexConfig,
-        serverSetMember,
-        executorServiceFactory,
-        userUpdateIndexerExecutorFactory,
-        earlybirdSearchIndexingMetricSet,
-        segmentSyncConfig,
-        clock,
-        criticalExceptionHandler);
+  p-pubwic m-muwtisegmenttewmdictionawymanagew pwovidemuwtisegmenttewmdictionawymanagew(
+      muwtisegmenttewmdictionawymanagew.config tewmdictionawyconfig, (ˆ ﻌ ˆ)♡
+      s-segmentmanagew s-segmentmanagew, 🥺
+      s-seawchstatsweceivew statsweceivew, OwO
+      decidew decidew, 🥺
+      e-eawwybiwdcwustew eawwybiwdcwustew) {
+    wetuwn nyew m-muwtisegmenttewmdictionawymanagew(
+        t-tewmdictionawyconfig, OwO segmentmanagew, (U ᵕ U❁) statsweceivew, ( ͡o ω ͡o ) d-decidew, ^•ﻌ•^ eawwybiwdcwustew);
   }
 
   /**
-   * Provides the SegmentSyncConfig instance to be used by earlybird.
+   * wetuwns t-the pawtition m-managew to be used by the awchive e-eawwybiwds. o.O
    */
-  public SegmentSyncConfig provideSegmentSyncConfig(EarlybirdCluster cluster) {
-    String scrubGen = null;
-    if (cluster == EarlybirdCluster.FULL_ARCHIVE) {
-      scrubGen = EarlybirdProperty.EARLYBIRD_SCRUB_GEN.get();
-      LOG.info("The scrubGen provided from Aurora is: {}", scrubGen);
-      Preconditions.checkState(Strings.isNotEmpty(scrubGen));
+  p-pubwic p-pawtitionmanagew p-pwovidefuwwawchivepawtitionmanagew(
+      z-zookeepewtwywockfactowy z-zookeepewtwywockfactowy, (⑅˘꒳˘)
+      quewycachemanagew q-quewycachemanagew, (ˆ ﻌ ˆ)♡
+      s-segmentmanagew segmentmanagew, :3
+      d-dynamicpawtitionconfig dynamicpawtitionconfig, /(^•ω•^)
+      usewupdatesstweamindexew u-usewupdatesstweamindexew, òωó
+      usewscwubgeoeventstweamindexew usewscwubgeoeventstweamindexew, :3
+      s-seawchstatsweceivew seawchstatsweceivew, (˘ω˘)
+      a-awchiveeawwybiwdindexconfig e-eawwybiwdindexconfig, 😳
+      sewvewsetmembew sewvewsetmembew, σωσ
+      s-scheduwedexecutowsewvicefactowy executowsewvicefactowy, UwU
+      scheduwedexecutowsewvicefactowy u-usewupdateindexewexecutowfactowy, -.-
+      s-seawchindexingmetwicset eawwybiwdseawchindexingmetwicset, 🥺
+      cwock cwock, 😳😳😳
+      s-segmentsyncconfig s-segmentsyncconfig, 🥺
+      cwiticawexceptionhandwew c-cwiticawexceptionhandwew) thwows ioexception {
+
+    w-wetuwn nyew a-awchiveseawchpawtitionmanagew(
+        zookeepewtwywockfactowy, ^^
+        q-quewycachemanagew, ^^;;
+        s-segmentmanagew, >w<
+        dynamicpawtitionconfig, σωσ
+        usewupdatesstweamindexew, >w<
+        u-usewscwubgeoeventstweamindexew, (⑅˘꒳˘)
+        s-seawchstatsweceivew, òωó
+        e-eawwybiwdindexconfig, (⑅˘꒳˘)
+        s-sewvewsetmembew, (ꈍᴗꈍ)
+        executowsewvicefactowy, rawr x3
+        usewupdateindexewexecutowfactowy, ( ͡o ω ͡o )
+        eawwybiwdseawchindexingmetwicset, UwU
+        segmentsyncconfig, ^^
+        cwock, (˘ω˘)
+        cwiticawexceptionhandwew);
+  }
+
+  /**
+   * p-pwovides the segmentsyncconfig i-instance to be u-used by eawwybiwd. (ˆ ﻌ ˆ)♡
+   */
+  p-pubwic s-segmentsyncconfig p-pwovidesegmentsyncconfig(eawwybiwdcwustew cwustew) {
+    s-stwing s-scwubgen = nyuww;
+    if (cwustew == e-eawwybiwdcwustew.fuww_awchive) {
+      s-scwubgen = eawwybiwdpwopewty.eawwybiwd_scwub_gen.get();
+      wog.info("the scwubgen p-pwovided fwom auwowa is: {}", OwO scwubgen);
+      p-pweconditions.checkstate(stwings.isnotempty(scwubgen));
     }
-    return new SegmentSyncConfig(Optional.ofNullable(scrubGen));
+    wetuwn nyew s-segmentsyncconfig(optionaw.ofnuwwabwe(scwubgen));
   }
 
-  protected void storeEarlybirdStartupProducts(
-      TweetCreateHandler tweetCreateHandler,
-      PartitionWriter partitionWriter,
-      EarlybirdIndexFlusher earlybirdIndexFlusher
+  p-pwotected void stoweeawwybiwdstawtuppwoducts(
+      tweetcweatehandwew t-tweetcweatehandwew, 😳
+      p-pawtitionwwitew p-pawtitionwwitew, UwU
+      eawwybiwdindexfwushew e-eawwybiwdindexfwushew
   ) {
-    // TestWireModule wants to store these for further use.
+    // t-testwiwemoduwe wants t-to stowe these fow fuwthew use. 🥺
   }
 
   /**
-   * What directory are we going to load segments from on startup.
+   * n-nyani diwectowy a-awe we going to w-woad segments fwom on stawtup. 😳😳😳
    *
-   * When you're running loadtests or stagingN instances and they don't have a recent index
-   * flushed, it can take hours to generate a new index with a fresh startup. This slows
-   * down development. If the read_index_from_prod_location flag is set to true, we will read
-   * the index from the location where prod instances are flushing their index to.
-   * Unset it if you want to generate your own index.
+   * w-when you'we wunning woadtests ow stagingn i-instances and they don't have a wecent index
+   * fwushed, ʘwʘ it can take houws to genewate a nyew index with a f-fwesh stawtup. /(^•ω•^) this swows
+   * down devewopment. :3 if the wead_index_fwom_pwod_wocation fwag is set to twue, :3 we wiww wead
+   * the i-index fwom the wocation whewe pwod instances awe f-fwushing theiw index to. mya
+   * u-unset it if you want to genewate youw own index.
    *
-   * @return a string with the directory.
+   * @wetuwn a-a stwing with the diwectowy. (///ˬ///✿)
    */
-  public String getIndexLoadingDirectory() {
-    boolean readIndexFromProdLocation = EarlybirdProperty.READ_INDEX_FROM_PROD_LOCATION.get(false);
-    String environment = EarlybirdProperty.ENV.get("no_env_specified"); // default value for tests.
-    String readIndexDir = EarlybirdProperty.HDFS_INDEX_SYNC_DIR.get();
+  p-pubwic stwing getindexwoadingdiwectowy() {
+    b-boowean w-weadindexfwompwodwocation = eawwybiwdpwopewty.wead_index_fwom_pwod_wocation.get(fawse);
+    stwing e-enviwonment = eawwybiwdpwopewty.env.get("no_env_specified"); // defauwt vawue fow tests. (⑅˘꒳˘)
+    s-stwing weadindexdiw = eawwybiwdpwopewty.hdfs_index_sync_diw.get();
 
-    if (readIndexFromProdLocation) {
-      LOG.info("Will attempt to read index from prod locations");
-      LOG.info("Index directory provided: {}", readIndexDir);
-      // Replacing the path is a bit hacky, but it works ok.
-      readIndexDir = readIndexDir.replace("/" + environment + "/", "/prod/");
-      LOG.info("Will instead use index directory: {}", readIndexDir);
+    i-if (weadindexfwompwodwocation) {
+      wog.info("wiww attempt t-to wead index fwom pwod wocations");
+      w-wog.info("index d-diwectowy pwovided: {}", :3 weadindexdiw);
+      // wepwacing the p-path is a bit hacky, /(^•ω•^) but it wowks ok. ^^;;
+      weadindexdiw = w-weadindexdiw.wepwace("/" + enviwonment + "/", (U ᵕ U❁) "/pwod/");
+      wog.info("wiww instead use index diwectowy: {}", (U ﹏ U) w-weadindexdiw);
     }
 
-    return readIndexDir;
+    w-wetuwn weadindexdiw;
   }
 
   /**
-   * Indexer for audio space events.
+   * indexew f-fow audio space e-events. mya
    */
-  public AudioSpaceEventsStreamIndexer provideAudioSpaceEventsStreamIndexer(
-      AudioSpaceTable audioSpaceTable,
-      Clock clock) {
-    try {
-      return new AudioSpaceEventsStreamIndexer(
-          FinagleKafkaClientUtils.newKafkaConsumerForAssigning(
-              "",
-              new ThriftDeserializer<>(AudioSpaceBaseEvent.class),
-              "",
+  pubwic audiospaceeventsstweamindexew p-pwovideaudiospaceeventsstweamindexew(
+      audiospacetabwe audiospacetabwe, ^•ﻌ•^
+      cwock cwock) {
+    twy {
+      w-wetuwn n-nyew audiospaceeventsstweamindexew(
+          finagwekafkacwientutiws.newkafkaconsumewfowassigning(
+              "", (U ﹏ U)
+              n-nyew thwiftdesewiawizew<>(audiospacebaseevent.cwass),
+              "", :3
               20
-          ), audioSpaceTable, clock);
-    } catch (MissingKafkaTopicException ex) {
-      LOG.error("Missing kafka stream", ex);
-      return null;
+          ), a-audiospacetabwe, rawr x3 cwock);
+    } c-catch (missingkafkatopicexception ex) {
+      wog.ewwow("missing k-kafka stweam", 😳😳😳 ex);
+      wetuwn nyuww;
     }
   }
 
   /**
-   * Returns a class to start the Earlybird. See {@link EarlybirdStartup}.
+   * w-wetuwns a-a cwass to stawt the eawwybiwd. see {@wink eawwybiwdstawtup}. >w<
    */
-  public EarlybirdStartup provideEarlybirdStartup(
-      PartitionManager partitionManager,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      AudioSpaceEventsStreamIndexer audioSpaceEventsStreamIndexer,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      CriticalExceptionHandler criticalExceptionHandler,
-      SegmentManager segmentManager,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      QueryCacheManager queryCacheManager,
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      ServerSetMember serverSetMember,
-      Clock clock,
-      SegmentSyncConfig segmentSyncConfig,
-      EarlybirdSegmentFactory earlybirdSegmentFactory,
-      EarlybirdCluster cluster,
-      SearchDecider decider) throws IOException {
-    if (cluster == EarlybirdCluster.FULL_ARCHIVE) {
-      return new PartitionManagerStartup(clock, partitionManager);
+  p-pubwic eawwybiwdstawtup pwovideeawwybiwdstawtup(
+      pawtitionmanagew pawtitionmanagew, òωó
+      usewupdatesstweamindexew usewupdatesstweamindexew, 😳
+      usewscwubgeoeventstweamindexew usewscwubgeoeventstweamindexew,
+      audiospaceeventsstweamindexew audiospaceeventsstweamindexew, (✿oωo)
+      d-dynamicpawtitionconfig d-dynamicpawtitionconfig, OwO
+      cwiticawexceptionhandwew c-cwiticawexceptionhandwew, (U ﹏ U)
+      s-segmentmanagew segmentmanagew, (ꈍᴗꈍ)
+      m-muwtisegmenttewmdictionawymanagew muwtisegmenttewmdictionawymanagew, rawr
+      quewycachemanagew quewycachemanagew, ^^
+      zookeepewtwywockfactowy zookeepewtwywockfactowy, rawr
+      s-sewvewsetmembew sewvewsetmembew, nyaa~~
+      cwock cwock, nyaa~~
+      segmentsyncconfig s-segmentsyncconfig, o.O
+      e-eawwybiwdsegmentfactowy e-eawwybiwdsegmentfactowy, òωó
+      eawwybiwdcwustew cwustew, ^^;;
+      seawchdecidew d-decidew) thwows i-ioexception {
+    i-if (cwustew == eawwybiwdcwustew.fuww_awchive) {
+      w-wetuwn nyew pawtitionmanagewstawtup(cwock, p-pawtitionmanagew);
     }
 
-    // Check that the earlybird name is what we're expecting so we can build the kafka topics.
-    String earlybirdName = EarlybirdProperty.EARLYBIRD_NAME.get();
-    Preconditions.checkArgument("earlybird-realtime".equals(earlybirdName)
-        || "earlybird-protected".equals(earlybirdName)
-        || "earlybird-realtime-exp0".equals(earlybirdName)
-        || "earlybird-realtime_cg".equals(earlybirdName));
+    // check that t-the eawwybiwd nyame is nyani we'we e-expecting so we can buiwd the kafka topics. rawr
+    s-stwing eawwybiwdname = eawwybiwdpwopewty.eawwybiwd_name.get();
+    p-pweconditions.checkawgument("eawwybiwd-weawtime".equaws(eawwybiwdname)
+        || "eawwybiwd-pwotected".equaws(eawwybiwdname)
+        || "eawwybiwd-weawtime-exp0".equaws(eawwybiwdname)
+        || "eawwybiwd-weawtime_cg".equaws(eawwybiwdname));
 
-    StartupUserEventIndexer startupUserEventIndexer = new StartupUserEventIndexer(
-        provideSearchIndexingMetricSet(),
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        segmentManager,
-        clock);
+    stawtupuseweventindexew s-stawtupuseweventindexew = nyew stawtupuseweventindexew(
+        p-pwovideseawchindexingmetwicset(), ^•ﻌ•^
+        u-usewupdatesstweamindexew, nyaa~~
+        usewscwubgeoeventstweamindexew, nyaa~~
+        s-segmentmanagew, 😳😳😳
+        cwock);
 
-    // Coordinate leaving the serverset to flush segments to HDFS.
-    CoordinatedEarlybirdAction actionCoordinator = new CoordinatedEarlybirdAction(
-        zooKeeperTryLockFactory,
-        "segment_flusher",
-        dynamicPartitionConfig,
-        serverSetMember,
-        criticalExceptionHandler,
-        segmentSyncConfig);
-    actionCoordinator.setShouldSynchronize(true);
+    // c-coowdinate weaving the sewvewset t-to fwush segments t-to hdfs. 😳😳😳
+    coowdinatedeawwybiwdaction actioncoowdinatow = n-nyew coowdinatedeawwybiwdaction(
+        zookeepewtwywockfactowy, σωσ
+        "segment_fwushew", o.O
+        dynamicpawtitionconfig, σωσ
+        sewvewsetmembew, nyaa~~
+        cwiticawexceptionhandwew,
+        segmentsyncconfig);
+    actioncoowdinatow.setshouwdsynchwonize(twue);
 
-    FileSystem hdfsFileSystem = HdfsUtil.getHdfsFileSystem();
-    EarlybirdIndexFlusher earlybirdIndexFlusher = new EarlybirdIndexFlusher(
-        actionCoordinator,
-        hdfsFileSystem,
-        EarlybirdProperty.HDFS_INDEX_SYNC_DIR.get(),
-        segmentManager,
-        dynamicPartitionConfig.getCurrentPartitionConfig(),
-        clock,
-        new TimeLimitedHadoopExistsCall(hdfsFileSystem),
-        provideOptimizationAndFlushingCoordinationLock());
+    fiwesystem h-hdfsfiwesystem = hdfsutiw.gethdfsfiwesystem();
+    eawwybiwdindexfwushew e-eawwybiwdindexfwushew = nyew eawwybiwdindexfwushew(
+        a-actioncoowdinatow, rawr x3
+        hdfsfiwesystem, (///ˬ///✿)
+        eawwybiwdpwopewty.hdfs_index_sync_diw.get(), o.O
+        s-segmentmanagew, òωó
+        dynamicpawtitionconfig.getcuwwentpawtitionconfig(), OwO
+        cwock, σωσ
+        n-new timewimitedhadoopexistscaww(hdfsfiwesystem), nyaa~~
+        pwovideoptimizationandfwushingcoowdinationwock());
 
-    String baseTopicName = "search_ingester_%s_events_%s_%s";
+    stwing b-basetopicname = "seawch_ingestew_%s_events_%s_%s";
 
-    String earlybirdType;
+    stwing eawwybiwdtype;
 
-    if ("earlybird-protected".equals(earlybirdName)) {
-      earlybirdType = "protected";
-    } else if ("earlybird-realtime_cg".equals(earlybirdName)) {
-      earlybirdType = "realtime_cg";
-    } else {
-      earlybirdType = "realtime";
+    if ("eawwybiwd-pwotected".equaws(eawwybiwdname)) {
+      e-eawwybiwdtype = "pwotected";
+    } ewse if ("eawwybiwd-weawtime_cg".equaws(eawwybiwdname)) {
+      eawwybiwdtype = "weawtime_cg";
+    } ewse {
+      e-eawwybiwdtype = "weawtime";
     }
 
-    String tweetTopicName = String.format(
-        baseTopicName,
-        "indexing",
-        earlybirdType,
-        EarlybirdProperty.KAFKA_ENV.get());
+    s-stwing tweettopicname = stwing.fowmat(
+        basetopicname, OwO
+        "indexing", ^^
+        e-eawwybiwdtype, (///ˬ///✿)
+        e-eawwybiwdpwopewty.kafka_env.get());
 
-    String updateTopicName = String.format(
-        baseTopicName,
-        "update",
-        earlybirdType,
-        EarlybirdProperty.KAFKA_ENV.get());
+    stwing updatetopicname = s-stwing.fowmat(
+        b-basetopicname, σωσ
+        "update", rawr x3
+        eawwybiwdtype, (ˆ ﻌ ˆ)♡
+        eawwybiwdpwopewty.kafka_env.get());
 
-    LOG.info("Tweet topic: {}", tweetTopicName);
-    LOG.info("Update topic: {}", updateTopicName);
+    w-wog.info("tweet topic: {}", 🥺 tweettopicname);
+    wog.info("update t-topic: {}", (⑅˘꒳˘) updatetopicname);
 
-    TopicPartition tweetTopic = new TopicPartition(
-        tweetTopicName,
-        dynamicPartitionConfig.getCurrentPartitionConfig().getIndexingHashPartitionID());
-    TopicPartition updateTopic = new TopicPartition(
-        updateTopicName,
-        dynamicPartitionConfig.getCurrentPartitionConfig().getIndexingHashPartitionID());
+    topicpawtition tweettopic = nyew t-topicpawtition(
+        t-tweettopicname, 😳😳😳
+        d-dynamicpawtitionconfig.getcuwwentpawtitionconfig().getindexinghashpawtitionid());
+    topicpawtition updatetopic = nyew topicpawtition(
+        u-updatetopicname, /(^•ω•^)
+        dynamicpawtitionconfig.getcuwwentpawtitionconfig().getindexinghashpawtitionid());
 
-    EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory =
-        provideEarlybirdKafkaConsumersFactory();
-    FreshStartupHandler freshStartupHandler = new FreshStartupHandler(
-        clock,
-        earlybirdKafkaConsumersFactory,
-        tweetTopic,
-        updateTopic,
-        segmentManager,
-        EarlybirdConfig.getMaxSegmentSize(),
-        EarlybirdConfig.getLateTweetBuffer(),
-        criticalExceptionHandler
+    e-eawwybiwdkafkaconsumewsfactowy eawwybiwdkafkaconsumewsfactowy =
+        p-pwovideeawwybiwdkafkaconsumewsfactowy();
+    f-fweshstawtuphandwew fweshstawtuphandwew = nyew fweshstawtuphandwew(
+        cwock, >w<
+        eawwybiwdkafkaconsumewsfactowy, ^•ﻌ•^
+        tweettopic, 😳😳😳
+        u-updatetopic, :3
+        s-segmentmanagew, (ꈍᴗꈍ)
+        eawwybiwdconfig.getmaxsegmentsize(), ^•ﻌ•^
+        eawwybiwdconfig.getwatetweetbuffew(), >w<
+        c-cwiticawexceptionhandwew
     );
 
-    TweetUpdateHandler updateHandler = new TweetUpdateHandler(segmentManager);
+    tweetupdatehandwew updatehandwew = n-nyew t-tweetupdatehandwew(segmentmanagew);
 
-    CoordinatedEarlybirdAction postOptimizationRebuilds = new CoordinatedEarlybirdAction(
-            zooKeeperTryLockFactory,
-            "post_optimization_rebuilds",
-            dynamicPartitionConfig,
-            serverSetMember,
-            criticalExceptionHandler,
-            segmentSyncConfig
+    c-coowdinatedeawwybiwdaction p-postoptimizationwebuiwds = n-nyew coowdinatedeawwybiwdaction(
+            z-zookeepewtwywockfactowy, ^^;;
+            "post_optimization_webuiwds", (✿oωo)
+            dynamicpawtitionconfig, òωó
+            sewvewsetmembew, ^^
+            c-cwiticawexceptionhandwew, ^^
+            s-segmentsyncconfig
     );
-    postOptimizationRebuilds.setShouldSynchronize(true);
-    CoordinatedEarlybirdAction gcAction = new CoordinatedEarlybirdAction(
-            zooKeeperTryLockFactory,
-            "gc_before_optimization",
-            dynamicPartitionConfig,
-            serverSetMember,
-            criticalExceptionHandler,
-            segmentSyncConfig
+    p-postoptimizationwebuiwds.setshouwdsynchwonize(twue);
+    c-coowdinatedeawwybiwdaction g-gcaction = n-nyew coowdinatedeawwybiwdaction(
+            zookeepewtwywockfactowy, rawr
+            "gc_befowe_optimization", XD
+            d-dynamicpawtitionconfig, rawr
+            s-sewvewsetmembew, 😳
+            c-cwiticawexceptionhandwew, 🥺
+            segmentsyncconfig
     );
-    gcAction.setShouldSynchronize(true);
+    gcaction.setshouwdsynchwonize(twue);
 
-    TweetCreateHandler createHandler = new TweetCreateHandler(
-        segmentManager,
-        provideSearchIndexingMetricSet(),
-        criticalExceptionHandler,
-        multiSegmentTermDictionaryManager,
-        queryCacheManager,
-        postOptimizationRebuilds,
-        gcAction,
-        EarlybirdConfig.getLateTweetBuffer(),
-        EarlybirdConfig.getMaxSegmentSize(),
-        provideKafkaIndexCaughtUpMonitor(),
-        provideOptimizationAndFlushingCoordinationLock());
+    tweetcweatehandwew c-cweatehandwew = nyew tweetcweatehandwew(
+        segmentmanagew, (U ᵕ U❁)
+        p-pwovideseawchindexingmetwicset(), 😳
+        cwiticawexceptionhandwew,
+        muwtisegmenttewmdictionawymanagew, 🥺
+        q-quewycachemanagew, (///ˬ///✿)
+        p-postoptimizationwebuiwds, mya
+        gcaction, (✿oωo)
+        eawwybiwdconfig.getwatetweetbuffew(), ^•ﻌ•^
+        eawwybiwdconfig.getmaxsegmentsize(), o.O
+        p-pwovidekafkaindexcaughtupmonitow(), o.O
+        pwovideoptimizationandfwushingcoowdinationwock());
 
-    PartitionWriter partitionWriter = new PartitionWriter(
-        createHandler,
-        updateHandler,
-        criticalExceptionHandler,
-        PenguinVersion.versionFromByteValue(EarlybirdConfig.getPenguinVersionByte()),
-        clock);
+    p-pawtitionwwitew pawtitionwwitew = n-nyew pawtitionwwitew(
+        c-cweatehandwew, XD
+        updatehandwew, ^•ﻌ•^
+        cwiticawexceptionhandwew, ʘwʘ
+        penguinvewsion.vewsionfwombytevawue(eawwybiwdconfig.getpenguinvewsionbyte()), (U ﹏ U)
+        c-cwock);
 
-    KafkaConsumer<Long, ThriftVersionedEvents> rawKafkaConsumer =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer(
-            "earlybird_tweet_kafka_consumer");
+    k-kafkaconsumew<wong, 😳😳😳 thwiftvewsionedevents> wawkafkaconsumew =
+        e-eawwybiwdkafkaconsumewsfactowy.cweatekafkaconsumew(
+            "eawwybiwd_tweet_kafka_consumew");
 
-    EarlybirdKafkaConsumer earlybirdKafkaConsumer = provideKafkaConsumer(
-        criticalExceptionHandler,
-        rawKafkaConsumer,
-        tweetTopic,
-        updateTopic,
-        partitionWriter,
-        earlybirdIndexFlusher);
+    e-eawwybiwdkafkaconsumew eawwybiwdkafkaconsumew = pwovidekafkaconsumew(
+        cwiticawexceptionhandwew, 🥺
+        w-wawkafkaconsumew, (///ˬ///✿)
+        tweettopic, (˘ω˘)
+        updatetopic, :3
+        pawtitionwwitew, /(^•ω•^)
+        eawwybiwdindexfwushew);
 
-    EarlybirdIndexLoader earlybirdIndexLoader = new EarlybirdIndexLoader(
-        hdfsFileSystem,
-        getIndexLoadingDirectory(), // See SEARCH-32839
-        EarlybirdProperty.ENV.get("default_env_value"),
-        dynamicPartitionConfig.getCurrentPartitionConfig(),
-        earlybirdSegmentFactory,
-        segmentSyncConfig,
-        clock);
+    eawwybiwdindexwoadew e-eawwybiwdindexwoadew = nyew eawwybiwdindexwoadew(
+        h-hdfsfiwesystem, :3
+        g-getindexwoadingdiwectowy(), mya // s-see seawch-32839
+        eawwybiwdpwopewty.env.get("defauwt_env_vawue"), XD
+        d-dynamicpawtitionconfig.getcuwwentpawtitionconfig(), (///ˬ///✿)
+        e-eawwybiwdsegmentfactowy, 🥺
+        s-segmentsyncconfig, o.O
+        c-cwock);
 
-    this.storeEarlybirdStartupProducts(
-        createHandler,
-        partitionWriter,
-        earlybirdIndexFlusher
+    this.stoweeawwybiwdstawtuppwoducts(
+        c-cweatehandwew, mya
+        pawtitionwwitew, rawr x3
+        eawwybiwdindexfwushew
     );
 
-    return new KafkaStartup(
-        segmentManager,
-        earlybirdKafkaConsumer,
-        startupUserEventIndexer,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        audioSpaceEventsStreamIndexer,
-        queryCacheManager,
-        earlybirdIndexLoader,
-        freshStartupHandler,
-        provideSearchIndexingMetricSet(),
-        multiSegmentTermDictionaryManager,
-        criticalExceptionHandler,
-        decider
+    w-wetuwn n-nyew kafkastawtup(
+        s-segmentmanagew, 😳
+        eawwybiwdkafkaconsumew, 😳😳😳
+        s-stawtupuseweventindexew, >_<
+        u-usewupdatesstweamindexew, >w<
+        u-usewscwubgeoeventstweamindexew, rawr x3
+        audiospaceeventsstweamindexew, XD
+        q-quewycachemanagew, ^^
+        e-eawwybiwdindexwoadew, (✿oωo)
+        f-fweshstawtuphandwew, >w<
+        p-pwovideseawchindexingmetwicset(), 😳😳😳
+        m-muwtisegmenttewmdictionawymanagew, (ꈍᴗꈍ)
+        cwiticawexceptionhandwew, (✿oωo)
+        d-decidew
     );
   }
 
-  public QualityFactor provideQualityFactor(
-      Decider decider,
-      SearchStatsReceiver searchStatsReceiver
+  pubwic q-quawityfactow pwovidequawityfactow(
+      d-decidew decidew, (˘ω˘)
+      seawchstatsweceivew seawchstatsweceivew
   ) {
-    return new EarlybirdCPUQualityFactor(decider,
-        ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class),
-        searchStatsReceiver);
+    w-wetuwn nyew e-eawwybiwdcpuquawityfactow(decidew, nyaa~~
+        managementfactowy.getpwatfowmmxbean(opewatingsystemmxbean.cwass), ( ͡o ω ͡o )
+        s-seawchstatsweceivew);
   }
 
   /**
-   * Returns a new UserUpdatesKafkaConsumer to read user updates.
+   * w-wetuwns a nyew usewupdateskafkaconsumew to wead usew u-updates. 🥺
    */
-  public UserUpdatesStreamIndexer provideUserUpdatesKafkaConsumer(
-      SegmentManager segmentManager) {
-    try {
-      return new UserUpdatesStreamIndexer(
-          UserUpdatesStreamIndexer.provideKafkaConsumer(),
-          EarlybirdProperty.USER_UPDATES_KAFKA_TOPIC.get(),
-          provideSearchIndexingMetricSet(),
-          segmentManager);
-    } catch (MissingKafkaTopicException ex) {
-      // Yes, it will crash the server. We've never seen this topic missing, but
-      // we've seen some others, so we had to build this functionality in the
-      // constructor. If one day this one goes missing, we'll have to figure out
-      // how to handle it. For now, we crash.
-      throw new RuntimeException(ex);
+  p-pubwic usewupdatesstweamindexew p-pwovideusewupdateskafkaconsumew(
+      s-segmentmanagew s-segmentmanagew) {
+    t-twy {
+      wetuwn nyew usewupdatesstweamindexew(
+          u-usewupdatesstweamindexew.pwovidekafkaconsumew(), (U ﹏ U)
+          eawwybiwdpwopewty.usew_updates_kafka_topic.get(), ( ͡o ω ͡o )
+          pwovideseawchindexingmetwicset(), (///ˬ///✿)
+          segmentmanagew);
+    } catch (missingkafkatopicexception e-ex) {
+      // y-yes, (///ˬ///✿) it wiww cwash the sewvew. (✿oωo) we've nyevew seen this topic m-missing, (U ᵕ U❁) but
+      // w-we've seen some othews, ʘwʘ so we had to buiwd t-this functionawity in the
+      // c-constwuctow. ʘwʘ i-if one day this o-one goes missing, XD we'ww have to figuwe out
+      // how to handwe i-it. (✿oωo) fow nyow, ^•ﻌ•^ we cwash. ^•ﻌ•^
+      t-thwow new wuntimeexception(ex);
     }
   }
 
   /**
-   * Returns a new UserScrubGeosKafkaConsumer to read geo scrubbing events.
+   * wetuwns a n-nyew usewscwubgeoskafkaconsumew to wead geo scwubbing events. >_<
    */
-  public UserScrubGeoEventStreamIndexer provideUserScrubGeoEventKafkaConsumer(
-      SegmentManager segmentManager) {
-    try {
-      return new UserScrubGeoEventStreamIndexer(
-          UserScrubGeoEventStreamIndexer.provideKafkaConsumer(),
-          EarlybirdProperty.USER_SCRUB_GEO_KAFKA_TOPIC.get(),
-          provideSearchIndexingMetricSet(),
-          segmentManager);
-    } catch (MissingKafkaTopicException ex) {
+  p-pubwic usewscwubgeoeventstweamindexew pwovideusewscwubgeoeventkafkaconsumew(
+      s-segmentmanagew segmentmanagew) {
+    twy {
+      wetuwn n-nyew usewscwubgeoeventstweamindexew(
+          usewscwubgeoeventstweamindexew.pwovidekafkaconsumew(), mya
+          e-eawwybiwdpwopewty.usew_scwub_geo_kafka_topic.get(), σωσ
+          pwovideseawchindexingmetwicset(), rawr
+          segmentmanagew);
+    } catch (missingkafkatopicexception ex) {
       /**
-       * See {@link #provideUserUpdatesKafkaConsumer}
+       * see {@wink #pwovideusewupdateskafkaconsumew}
        */
-      throw new RuntimeException(ex);
+      thwow n-nyew wuntimeexception(ex);
     }
   }
 
   /**
-   * Returns a new ProductionEarlybirdKafkaConsumer to read ThriftVersionedEvents.
+   * w-wetuwns a nyew p-pwoductioneawwybiwdkafkaconsumew t-to wead thwiftvewsionedevents. (✿oωo)
    */
-  public EarlybirdKafkaConsumersFactory provideEarlybirdKafkaConsumersFactory() {
-    return new ProductionEarlybirdKafkaConsumersFactory(
-        EarlybirdProperty.KAFKA_PATH.get(),
-        MAX_POLL_RECORDS
+  pubwic eawwybiwdkafkaconsumewsfactowy pwovideeawwybiwdkafkaconsumewsfactowy() {
+    w-wetuwn nyew pwoductioneawwybiwdkafkaconsumewsfactowy(
+        eawwybiwdpwopewty.kafka_path.get(), :3
+        max_poww_wecowds
     );
   }
 
   /**
-   * Returns a class to read Tweets in the Earlybird. See {@link EarlybirdKafkaConsumer}.
+   * wetuwns a-a cwass to w-wead tweets in t-the eawwybiwd. rawr x3 s-see {@wink eawwybiwdkafkaconsumew}. ^^
    */
-  public EarlybirdKafkaConsumer provideKafkaConsumer(
-      CriticalExceptionHandler criticalExceptionHandler,
-      KafkaConsumer<Long, ThriftVersionedEvents> rawKafkaConsumer,
-      TopicPartition tweetTopic,
-      TopicPartition updateTopic,
-      PartitionWriter partitionWriter,
-      EarlybirdIndexFlusher earlybirdIndexFlusher
+  pubwic eawwybiwdkafkaconsumew pwovidekafkaconsumew(
+      cwiticawexceptionhandwew cwiticawexceptionhandwew, ^^
+      kafkaconsumew<wong, OwO t-thwiftvewsionedevents> w-wawkafkaconsumew, ʘwʘ
+      topicpawtition tweettopic, /(^•ω•^)
+      topicpawtition u-updatetopic, ʘwʘ
+      pawtitionwwitew p-pawtitionwwitew, (⑅˘꒳˘)
+      e-eawwybiwdindexfwushew e-eawwybiwdindexfwushew
   ) {
-    return new EarlybirdKafkaConsumer(
-        rawKafkaConsumer,
-        provideSearchIndexingMetricSet(),
-        criticalExceptionHandler,
-        partitionWriter,
-        tweetTopic,
-        updateTopic,
-        earlybirdIndexFlusher,
-        provideKafkaIndexCaughtUpMonitor());
+    wetuwn nyew eawwybiwdkafkaconsumew(
+        wawkafkaconsumew,
+        pwovideseawchindexingmetwicset(), UwU
+        cwiticawexceptionhandwew, -.-
+        pawtitionwwitew, :3
+        t-tweettopic, >_<
+        updatetopic,
+        e-eawwybiwdindexfwushew, nyaa~~
+        pwovidekafkaindexcaughtupmonitow());
   }
 }

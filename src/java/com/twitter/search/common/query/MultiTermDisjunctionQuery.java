@@ -1,61 +1,61 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Set;
+impowt j-java.io.ioexception;
+i-impowt java.utiw.itewatow;
+i-impowt java.utiw.set;
 
-import org.apache.lucene.index.FilteredTermsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.MultiTermQuery;
-import org.apache.lucene.util.AttributeSource;
-import org.apache.lucene.util.BytesRef;
+i-impowt owg.apache.wucene.index.fiwtewedtewmsenum;
+i-impowt o-owg.apache.wucene.index.tewms;
+impowt o-owg.apache.wucene.index.tewmsenum;
+i-impowt owg.apache.wucene.seawch.muwtitewmquewy;
+impowt owg.apache.wucene.utiw.attwibutesouwce;
+impowt owg.apache.wucene.utiw.byteswef;
 
 
-public class MultiTermDisjunctionQuery extends MultiTermQuery {
+p-pubwic cwass muwtitewmdisjunctionquewy extends muwtitewmquewy {
 
-  private final Set<BytesRef> values;
+  p-pwivate finaw set<byteswef> v-vawues;
 
-  /** Creates a new MultiTermDisjunctionQuery instance. */
-  public MultiTermDisjunctionQuery(String field, Set<BytesRef> values) {
-    super(field);
-    this.values = values;
+  /** cweates a nyew muwtitewmdisjunctionquewy instance. ( ͡o ω ͡o ) */
+  pubwic muwtitewmdisjunctionquewy(stwing f-fiewd, (U ﹏ U) set<byteswef> vawues) {
+    s-supew(fiewd);
+    t-this.vawues = vawues;
   }
 
-  @Override
-  protected TermsEnum getTermsEnum(Terms terms, AttributeSource atts)
-      throws IOException {
-    final TermsEnum termsEnum = terms.iterator();
-    final Iterator<BytesRef> it = values.iterator();
+  @ovewwide
+  pwotected tewmsenum gettewmsenum(tewms t-tewms, (///ˬ///✿) attwibutesouwce atts)
+      thwows ioexception {
+    finaw tewmsenum tewmsenum = tewms.itewatow();
+    f-finaw itewatow<byteswef> it = v-vawues.itewatow();
 
-    return new FilteredTermsEnum(termsEnum) {
-      @Override protected AcceptStatus accept(BytesRef term) throws IOException {
-        return AcceptStatus.YES;
+    w-wetuwn n-new fiwtewedtewmsenum(tewmsenum) {
+      @ovewwide p-pwotected acceptstatus accept(byteswef tewm) t-thwows ioexception {
+        wetuwn acceptstatus.yes;
       }
 
-      @Override public BytesRef next() throws IOException {
-        while (it.hasNext()) {
-          BytesRef termRef = it.next();
-          if (termsEnum.seekExact(termRef)) {
-            return termRef;
+      @ovewwide pubwic b-byteswef nyext() thwows ioexception {
+        whiwe (it.hasnext()) {
+          byteswef tewmwef = it.next();
+          if (tewmsenum.seekexact(tewmwef)) {
+            w-wetuwn tewmwef;
           }
         }
 
-        return null;
+        w-wetuwn n-nyuww;
       }
     };
   }
 
-  @Override
-  public String toString(String field) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("MultiTermDisjunctionQuery[");
-    for (BytesRef termVal : this.values) {
-      builder.append(termVal);
-      builder.append(",");
+  @ovewwide
+  p-pubwic stwing tostwing(stwing fiewd) {
+    stwingbuiwdew b-buiwdew = nyew s-stwingbuiwdew();
+    buiwdew.append("muwtitewmdisjunctionquewy[");
+    f-fow (byteswef t-tewmvaw : this.vawues) {
+      b-buiwdew.append(tewmvaw);
+      buiwdew.append(",");
     }
-    builder.setLength(builder.length() - 1);
-    builder.append("]");
-    return builder.toString();
+    b-buiwdew.setwength(buiwdew.wength() - 1);
+    buiwdew.append("]");
+    wetuwn b-buiwdew.tostwing();
   }
 }

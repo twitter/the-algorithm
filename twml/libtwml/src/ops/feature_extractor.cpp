@@ -1,134 +1,134 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include <map>
-#include <vector>
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
+#incwude <map>
+#incwude <vectow>
 
-REGISTER_OP("FeatureExtractor")
-.Attr("T: {float, double} = DT_FLOAT")
-.Input("mask_in: bool")
-.Input("ids_in: int64")
-.Input("keys_in: int64")
-.Input("values_in: T")
-.Input("codes_in: int64")
-.Input("types_in: int8")
-.Output("ids_out: int64")
-.Output("keys_out: int64")
-.Output("values_out: T")
-.Output("codes_out: int64")
-.Output("types_out: int8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
-  }).Doc(R"doc(
+wegistew_op("featuweextwactow")
+.attw("t: {fwoat, (U ᵕ U❁) doubwe} = d-dt_fwoat")
+.input("mask_in: b-boow")
+.input("ids_in: i-int64")
+.input("keys_in: i-int64")
+.input("vawues_in: t-t")
+.input("codes_in: i-int64")
+.input("types_in: i-int8")
+.output("ids_out: i-int64")
+.output("keys_out: int64")
+.output("vawues_out: t")
+.output("codes_out: int64")
+.output("types_out: int8")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    wetuwn status::ok();
+  }).doc(w"doc(
 
-A tensorflow OP that extracts the desired indices of a Tensor based on a mask
+a tensowfwow op t-that extwacts the desiwed indices o-of a tensow based on a mask
 
-Input
-  mask_in: boolean Tensor that determines which are the indices to be kept (bool)
-  ids_in: input indices Tensor (int64)
-  keys_in: input keys Tensor (int64)
-  values_in: input values Tensor (float/double)
-  codes_in: input codes Tensor (int64)
-  types_in: input types Tensor(int8)
+input
+  mask_in: boowean tensow t-that detewmines which awe the indices t-to be kept (boow)
+  i-ids_in: input indices tensow (int64)
+  keys_in: input keys tensow (int64)
+  v-vawues_in: input vawues tensow (fwoat/doubwe)
+  codes_in: input codes tensow (int64)
+  types_in: i-input types tensow(int8)
 
-Outputs
-  ids_out: output indices Tensor (int64)
-  keys_out: output keys Tensor (int64)
-  values_out: output values Tensor (float/double)
-  codes_out: output codes Tensor (int64)
-  types_out: output types Tensor(int8)
+o-outputs
+  ids_out: o-output indices t-tensow (int64)
+  k-keys_out: output keys tensow (int64)
+  vawues_out: o-output vawues tensow (fwoat/doubwe)
+  codes_out: o-output codes tensow (int64)
+  types_out: output types tensow(int8)
 
 )doc");
-template <typename T>
-class FeatureExtractor : public OpKernel {
- public:
-  explicit FeatureExtractor(OpKernelConstruction* context)
-      : OpKernel(context) {}
+tempwate <typename t>
+cwass f-featuweextwactow : pubwic opkewnew {
+ p-pubwic:
+  e-expwicit featuweextwactow(opkewnewconstwuction* c-context)
+      : opkewnew(context) {}
 
-  template <typename A, typename U>
-  bool allequal(const A &t, const U &u) {
-      return t == u;
+  tempwate <typename a, (U ﹏ U) t-typename u>
+  boow a-awwequaw(const a &t, const u &u) {
+      w-wetuwn t-t == u;
   }
 
-  template <typename A, typename U, typename... Others>
-  bool allequal(const A &t, const U &u, Others const &... args) {
-      return (t == u) && allequal(u, args...);
+  tempwate <typename a-a, :3 typename u, ( ͡o ω ͡o ) typename... o-othews>
+  boow awwequaw(const a &t, σωσ const u &u, o-othews const &... awgs) {
+      w-wetuwn (t == u) && awwequaw(u, >w< awgs...);
   }
 
-  void Compute(OpKernelContext* context) override {
-    // Get input tensors
-    const Tensor& input_mask = context->input(0);
-    const Tensor& input_ids = context->input(1);
-    const Tensor& input_keys = context->input(2);
-    const Tensor& input_values = context->input(3);
-    const Tensor& input_codes = context->input(4);
-    const Tensor& input_types = context->input(5);
+  v-void compute(opkewnewcontext* c-context) ovewwide {
+    // get input tensows
+    const tensow& input_mask = context->input(0);
+    const tensow& input_ids = c-context->input(1);
+    c-const tensow& input_keys = context->input(2);
+    c-const tensow& i-input_vawues = c-context->input(3);
+    const tensow& input_codes = context->input(4);
+    c-const tensow& input_types = context->input(5);
 
-    auto mask = input_mask.flat<bool>();
-    auto ids = input_ids.flat<int64>();
-    auto keys = input_keys.flat<int64>();
-    auto codes = input_codes.flat<int64>();
-    auto values = input_values.flat<T>();
-    auto types = input_types.flat<int8>();
+    auto mask = input_mask.fwat<boow>();
+    auto ids = i-input_ids.fwat<int64>();
+    auto keys = input_keys.fwat<int64>();
+    a-auto codes = i-input_codes.fwat<int64>();
+    a-auto vawues = input_vawues.fwat<t>();
+    a-auto types = input_types.fwat<int8>();
 
-    // Verify that all Tensors have the same size.
-    OP_REQUIRES(context, allequal(mask.size(), ids.size(), keys.size(), codes.size(), values.size(), types.size()),
-                errors::InvalidArgument("all input vectors must be the same size."));
+    // vewify t-that aww tensows h-have the s-same size. 😳😳😳
+    op_wequiwes(context, OwO awwequaw(mask.size(), 😳 ids.size(), 😳😳😳 k-keys.size(), (˘ω˘) c-codes.size(), ʘwʘ v-vawues.size(), ( ͡o ω ͡o ) t-types.size()), o.O
+                ewwows::invawidawgument("aww i-input vectows must be the same size."));
 
-    // Get the size of the output vectors by counting the numbers of trues.
-    int total_size = 0;
-    for (int i = 0; i < mask.size(); i++) {
+    // get t-the size of the output vectows by counting the nyumbews of twues. >w<
+    int totaw_size = 0;
+    fow (int i = 0; i < m-mask.size(); i++) {
       if (mask(i))
-        total_size += 1;
+        totaw_size += 1;
     }
 
-    // Shape is the number of Trues in the mask Eigen::Tensor
-    TensorShape shape_out = {total_size};
+    // shape is the nyumbew o-of twues in t-the mask eigen::tensow
+    t-tensowshape shape_out = {totaw_size};
 
-    // Create the output tensors
-    Tensor* output_codes = nullptr;
-    Tensor* output_ids = nullptr;
-    Tensor* output_values = nullptr;
-    Tensor* output_types = nullptr;
-    Tensor* output_keys = nullptr;
+    // c-cweate the output tensows
+    t-tensow* o-output_codes = nyuwwptw;
+    tensow* output_ids = nyuwwptw;
+    tensow* output_vawues = nyuwwptw;
+    t-tensow* output_types = nyuwwptw;
+    t-tensow* output_keys = n-nyuwwptw;
 
-    OP_REQUIRES_OK(context, context->allocate_output(0, shape_out, &output_ids));
-    OP_REQUIRES_OK(context, context->allocate_output(1, shape_out, &output_keys));
-    OP_REQUIRES_OK(context, context->allocate_output(2, shape_out, &output_values));
-    OP_REQUIRES_OK(context, context->allocate_output(3, shape_out, &output_codes));
-    OP_REQUIRES_OK(context, context->allocate_output(4, shape_out, &output_types));
+    o-op_wequiwes_ok(context, 😳 context->awwocate_output(0, 🥺 shape_out, rawr x3 &output_ids));
+    o-op_wequiwes_ok(context, o.O c-context->awwocate_output(1, rawr shape_out, &output_keys));
+    o-op_wequiwes_ok(context, ʘwʘ c-context->awwocate_output(2, 😳😳😳 shape_out, ^^;; &output_vawues));
+    op_wequiwes_ok(context, o.O context->awwocate_output(3, (///ˬ///✿) shape_out, σωσ &output_codes));
+    op_wequiwes_ok(context, nyaa~~ context->awwocate_output(4, ^^;; s-shape_out, &output_types));
 
-    auto output_ids_ = output_ids->flat<int64>();
-    auto output_keys_ = output_keys->flat<int64>();
-    auto output_codes_ = output_codes->flat<int64>();
-    auto output_values_ = output_values->flat<T>();
-    auto output_types_ = output_types->flat<int8>();
+    a-auto output_ids_ = o-output_ids->fwat<int64>();
+    auto output_keys_ = o-output_keys->fwat<int64>();
+    a-auto output_codes_ = output_codes->fwat<int64>();
+    auto output_vawues_ = o-output_vawues->fwat<t>();
+    auto output_types_ = output_types->fwat<int8>();
 
-    // Iterate through the mask and set values to output Eigen::Tensors
+    // itewate thwough the m-mask and set vawues t-to output eigen::tensows
     int j = 0;
-    for (int i = 0; i < mask.size(); i++) {
+    fow (int i = 0; i-i < mask.size(); i-i++) {
       if (mask(i)) {
         output_ids_(j) = ids(i);
-        output_keys_(j) = keys(i);
-        output_values_(j) = values(i);
+        output_keys_(j) = k-keys(i);
+        output_vawues_(j) = vawues(i);
         output_codes_(j) = codes(i);
-        output_types_(j) = types(i);
+        o-output_types_(j) = types(i);
         ++j;
       }
     }
   }
 };
 
-#define REGISTER(Type)                        \
+#define wegistew(type)                        \
                                               \
-  REGISTER_KERNEL_BUILDER(                    \
-  Name("FeatureExtractor")  \
-  .Device(DEVICE_CPU)                         \
-  .TypeConstraint<Type>("T"),                 \
-  FeatureExtractor<Type>);  \
+  w-wegistew_kewnew_buiwdew(                    \
+  n-nyame("featuweextwactow")  \
+  .device(device_cpu)                         \
+  .typeconstwaint<type>("t"), ^•ﻌ•^                 \
+  featuweextwactow<type>);  \
 
-REGISTER(float);
-REGISTER(double);
+wegistew(fwoat);
+wegistew(doubwe);

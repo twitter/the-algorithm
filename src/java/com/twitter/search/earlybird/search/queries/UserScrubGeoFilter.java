@@ -1,82 +1,82 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
-import java.util.Objects;
+impowt java.io.ioexception;
+i-impowt java.utiw.objects;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
+i-impowt o-owg.apache.wucene.index.weafweadewcontext;
+i-impowt o-owg.apache.wucene.index.numewicdocvawues;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.query.FilteredQuery;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.index.TweetIDMapper;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt c-com.twittew.seawch.common.quewy.fiwtewedquewy;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+impowt com.twittew.seawch.eawwybiwd.common.usewupdates.usewscwubgeomap;
+impowt c-com.twittew.seawch.eawwybiwd.index.tweetidmappew;
 
 /**
- * Filter that can be used with searches over geo field postings lists in order to filter out tweets
- * that have been geo scrubbed. Determines if a tweet has been geo scrubbed by comparing the
- * tweet's id against the max scrubbed tweet id for that tweet's author, which is stored in the
- * UserScrubGeoMap.
+ * fiwtew that can be used with seawches o-ovew geo fiewd postings wists i-in owdew to fiwtew out tweets
+ * that have been geo scwubbed. OwO d-detewmines if a tweet has been g-geo scwubbed by c-compawing the
+ * tweet's id against the max scwubbed tweet id fow that tweet's authow, (ꈍᴗꈍ) w-which is stowed in the
+ * usewscwubgeomap.
  *
- * See: go/realtime-geo-filtering
+ * see: go/weawtime-geo-fiwtewing
  */
-public class UserScrubGeoFilter implements FilteredQuery.DocIdFilterFactory {
+pubwic c-cwass usewscwubgeofiwtew impwements f-fiwtewedquewy.docidfiwtewfactowy {
 
-  private UserScrubGeoMap userScrubGeoMap;
+  p-pwivate u-usewscwubgeomap u-usewscwubgeomap;
 
-  private final SearchRateCounter totalRequestsUsingFilterCounter =
-      SearchRateCounter.export("user_scrub_geo_filter_total_requests");
+  pwivate finaw seawchwatecountew t-totawwequestsusingfiwtewcountew =
+      seawchwatecountew.expowt("usew_scwub_geo_fiwtew_totaw_wequests");
 
-  public static FilteredQuery.DocIdFilterFactory getDocIdFilterFactory(
-      UserScrubGeoMap userScrubGeoMap) {
-    return new UserScrubGeoFilter(userScrubGeoMap);
+  pubwic static f-fiwtewedquewy.docidfiwtewfactowy getdocidfiwtewfactowy(
+      usewscwubgeomap usewscwubgeomap) {
+    wetuwn new usewscwubgeofiwtew(usewscwubgeomap);
   }
 
-  public UserScrubGeoFilter(UserScrubGeoMap userScrubGeoMap) {
-    this.userScrubGeoMap = userScrubGeoMap;
-    totalRequestsUsingFilterCounter.increment();
+  pubwic u-usewscwubgeofiwtew(usewscwubgeomap usewscwubgeomap) {
+    t-this.usewscwubgeomap = u-usewscwubgeomap;
+    t-totawwequestsusingfiwtewcountew.incwement();
   }
 
-  @Override
-  public FilteredQuery.DocIdFilter getDocIdFilter(LeafReaderContext context) throws IOException {
-    // To determine if a given doc has been geo scrubbed we need two pieces of information about the
-    // doc: the associated tweet id and the user id of the tweet's author. We can get the tweet id
-    // from the TweetIDMapper for the segment we are currently searching, and we can get the user id
-    // of the tweet's author by looking up the doc id in the NumericDocValues for the
-    // FROM_USER_ID_CSF.
+  @ovewwide
+  pubwic fiwtewedquewy.docidfiwtew getdocidfiwtew(weafweadewcontext c-context) t-thwows ioexception {
+    // to detewmine i-if a given doc has b-been geo scwubbed we nyeed two p-pieces of infowmation about the
+    // d-doc: the associated tweet id and the usew i-id of the tweet's authow. 😳 we c-can get the tweet id
+    // fwom t-the tweetidmappew f-fow the segment we awe cuwwentwy seawching, 😳😳😳 and we can get the usew id
+    // of the tweet's authow by wooking u-up the doc id i-in the nyumewicdocvawues fow the
+    // f-fwom_usew_id_csf. mya
     //
-    // With this information we can check the UserScrubGeoMap to find out if the tweet has been
-    // geo scrubbed and filter it out accordingly.
-    final EarlybirdIndexSegmentAtomicReader currTwitterReader =
-        (EarlybirdIndexSegmentAtomicReader) context.reader();
-    final TweetIDMapper tweetIdMapper =
-        (TweetIDMapper) currTwitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    final NumericDocValues fromUserIdDocValues = currTwitterReader.getNumericDocValues(
-        EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
-    return (docId) -> fromUserIdDocValues.advanceExact(docId)
-        && !userScrubGeoMap.isTweetGeoScrubbed(
-            tweetIdMapper.getTweetID(docId), fromUserIdDocValues.longValue());
+    // w-with this i-infowmation we can check the usewscwubgeomap to find out if the tweet has been
+    // g-geo scwubbed and fiwtew it out accowdingwy. mya
+    finaw eawwybiwdindexsegmentatomicweadew cuwwtwittewweadew =
+        (eawwybiwdindexsegmentatomicweadew) c-context.weadew();
+    finaw tweetidmappew t-tweetidmappew =
+        (tweetidmappew) c-cuwwtwittewweadew.getsegmentdata().getdocidtotweetidmappew();
+    f-finaw nyumewicdocvawues fwomusewiddocvawues = c-cuwwtwittewweadew.getnumewicdocvawues(
+        e-eawwybiwdfiewdconstant.fwom_usew_id_csf.getfiewdname());
+    w-wetuwn (docid) -> f-fwomusewiddocvawues.advanceexact(docid)
+        && !usewscwubgeomap.istweetgeoscwubbed(
+            tweetidmappew.gettweetid(docid), (⑅˘꒳˘) fwomusewiddocvawues.wongvawue());
   }
 
-  @Override
-  public String toString() {
-    return "UserScrubGeoFilter";
+  @ovewwide
+  p-pubwic s-stwing tostwing() {
+    w-wetuwn "usewscwubgeofiwtew";
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof UserScrubGeoMap)) {
-      return false;
+  @ovewwide
+  p-pubwic b-boowean equaws(object obj) {
+    if (!(obj instanceof usewscwubgeomap)) {
+      w-wetuwn fawse;
     }
 
-    UserScrubGeoFilter filter = UserScrubGeoFilter.class.cast(obj);
-    // filters are considered equal as long as they are using the same UserScrubGeoMap
-    return Objects.equals(userScrubGeoMap, filter.userScrubGeoMap);
+    usewscwubgeofiwtew fiwtew = usewscwubgeofiwtew.cwass.cast(obj);
+    // fiwtews awe considewed equaw as w-wong as they awe using the same usewscwubgeomap
+    wetuwn objects.equaws(usewscwubgeomap, (U ﹏ U) f-fiwtew.usewscwubgeomap);
   }
 
-  @Override
-  public int hashCode() {
-    return userScrubGeoMap == null ? 0 : userScrubGeoMap.hashCode();
+  @ovewwide
+  p-pubwic int h-hashcode() {
+    wetuwn usewscwubgeomap == n-nyuww ? 0 : usewscwubgeomap.hashcode();
   }
 }

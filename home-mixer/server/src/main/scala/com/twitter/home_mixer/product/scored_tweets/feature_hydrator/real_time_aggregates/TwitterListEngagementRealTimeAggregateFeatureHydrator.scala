@@ -1,57 +1,57 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.weaw_time_aggwegates
 
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.TwitterListIdFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwitterListEngagementCache
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.ReadCache
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.prediction.common.aggregates.real_time.TimelinesOnlineAggregationFeaturesOnlyConfig._
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.googwe.inject.name.named
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.twittewwistidfeatuwe
+i-impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.twittewwistengagementcache
+i-impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.sewvo.cache.weadcache
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.aggwegategwoup
+impowt com.twittew.timewines.pwediction.common.aggwegates.weaw_time.timewinesonwineaggwegationfeatuwesonwyconfig._
+impowt j-javax.inject.inject
+impowt j-javax.inject.singweton
 
-object TwitterListEngagementRealTimeAggregateFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+o-object twittewwistengagementweawtimeaggwegatefeatuwe
+    extends datawecowdinafeatuwe[tweetcandidate]
+    with featuwewithdefauwtonfaiwuwe[tweetcandidate, σωσ datawecowd] {
+  ovewwide def d-defauwtvawue: datawecowd = nyew datawecowd()
 }
 
-@Singleton
-class TwitterListEngagementRealTimeAggregateFeatureHydrator @Inject() (
-  @Named(TwitterListEngagementCache) override val client: ReadCache[Long, DataRecord],
-  override val statsReceiver: StatsReceiver)
-    extends BaseRealTimeAggregateBulkCandidateFeatureHydrator[Long] {
+@singweton
+cwass twittewwistengagementweawtimeaggwegatefeatuwehydwatow @inject() (
+  @named(twittewwistengagementcache) o-ovewwide vaw cwient: weadcache[wong, OwO d-datawecowd], 😳😳😳
+  o-ovewwide v-vaw statsweceivew: s-statsweceivew)
+    extends baseweawtimeaggwegatebuwkcandidatefeatuwehydwatow[wong] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TwitterListEngagementRealTimeAggregate")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    featuwehydwatowidentifiew("twittewwistengagementweawtimeaggwegate")
 
-  override val outputFeature: DataRecordInAFeature[TweetCandidate] =
-    TwitterListEngagementRealTimeAggregateFeature
+  o-ovewwide vaw outputfeatuwe: datawecowdinafeatuwe[tweetcandidate] =
+    twittewwistengagementweawtimeaggwegatefeatuwe
 
-  override val aggregateGroups: Seq[AggregateGroup] = Seq(
-    listEngagementRealTimeAggregatesProd
+  ovewwide vaw aggwegategwoups: seq[aggwegategwoup] = s-seq(
+    wistengagementweawtimeaggwegatespwod
   )
 
-  override val aggregateGroupToPrefix: Map[AggregateGroup, String] = Map(
-    listEngagementRealTimeAggregatesProd -> "twitter_list.timelines.twitter_list_engagement_real_time_aggregates."
+  o-ovewwide vaw aggwegategwouptopwefix: m-map[aggwegategwoup, 😳😳😳 s-stwing] = map(
+    wistengagementweawtimeaggwegatespwod -> "twittew_wist.timewines.twittew_wist_engagement_weaw_time_aggwegates."
   )
 
-  override def keysFromQueryAndCandidates(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[Long]] = {
-    candidates.map { candidate =>
-      candidate.features
-        .getTry(TwitterListIdFeature)
-        .toOption
-        .flatten
+  ovewwide def keysfwomquewyandcandidates(
+    q-quewy: pipewinequewy, o.O
+    c-candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-seq[option[wong]] = {
+    c-candidates.map { candidate =>
+      c-candidate.featuwes
+        .gettwy(twittewwistidfeatuwe)
+        .tooption
+        .fwatten
     }
   }
 }

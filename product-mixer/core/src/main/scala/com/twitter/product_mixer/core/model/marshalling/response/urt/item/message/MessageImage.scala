@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagevawiant
 
-case class MessageImage(
-  imageVariants: Set[ImageVariant],
-  backgroundColor: Option[String])
+case c-cwass messageimage(
+  i-imagevawiants: s-set[imagevawiant], 🥺
+  b-backgwoundcowow: option[stwing])

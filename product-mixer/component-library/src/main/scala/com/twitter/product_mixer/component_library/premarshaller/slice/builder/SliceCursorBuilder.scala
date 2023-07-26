@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.swice.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.cuwsowitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.cuwsowtype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.swiceitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait SliceCursorBuilder[-Query <: PipelineQuery] {
+t-twait swicecuwsowbuiwdew[-quewy <: p-pipewinequewy] {
 
-  val includeOperation: ShouldInclude[Query] = AlwaysInclude
+  v-vaw incwudeopewation: s-shouwdincwude[quewy] = a-awwaysincwude
 
-  def cursorValue(query: Query, items: Seq[SliceItem]): String
-  def cursorType: CursorType
+  def cuwsowvawue(quewy: quewy, mya items: seq[swiceitem]): stwing
+  def cuwsowtype: c-cuwsowtype
 
-  def build(query: Query, entries: Seq[SliceItem]): Option[CursorItem] = {
-    if (includeOperation(query, entries)) {
-      Some(
-        CursorItem(
-          cursorType = cursorType,
-          value = cursorValue(query, entries)
+  def buiwd(quewy: quewy, 😳 entwies: s-seq[swiceitem]): option[cuwsowitem] = {
+    i-if (incwudeopewation(quewy, XD entwies)) {
+      some(
+        cuwsowitem(
+          cuwsowtype = c-cuwsowtype, :3
+          vawue = cuwsowvawue(quewy, 😳😳😳 e-entwies)
         ))
-    } else None
+    } e-ewse nyone
   }
 }

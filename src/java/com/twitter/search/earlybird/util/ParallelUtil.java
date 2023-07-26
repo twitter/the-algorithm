@@ -1,71 +1,71 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.stream.Collectors;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.concuwwent.executowsewvice;
+impowt j-java.utiw.concuwwent.executows;
+i-impowt java.utiw.concuwwent.thweadfactowy;
+i-impowt java.utiw.stweam.cowwectows;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+i-impowt com.googwe.common.utiw.concuwwent.thweadfactowybuiwdew;
 
-import com.twitter.util.Await;
-import com.twitter.util.Future;
-import com.twitter.util.Future$;
-import com.twitter.util.FuturePool;
-import com.twitter.util.FuturePool$;
+i-impowt com.twittew.utiw.await;
+i-impowt com.twittew.utiw.futuwe;
+impowt com.twittew.utiw.futuwe$;
+impowt com.twittew.utiw.futuwepoow;
+impowt com.twittew.utiw.futuwepoow$;
 
-public final class ParallelUtil {
-  private ParallelUtil() {
+p-pubwic finaw cwass pawawwewutiw {
+  pwivate pawawwewutiw() {
   }
 
-  public static <T, R> List<R> parmap(String threadName, CheckedFunction<T, R> fn, List<T> input)
-      throws Exception {
-    return parmap(threadName, input.size(), fn, input);
+  p-pubwic static <t, (˘ω˘) w> wist<w> p-pawmap(stwing thweadname, ^^ checkedfunction<t, :3 w> fn, wist<t> input)
+      t-thwows exception {
+    w-wetuwn pawmap(thweadname, -.- i-input.size(), 😳 fn, input);
   }
 
   /**
-   * Runs a function in parallel across the elements of the list, and throws an exception if any
-   * of the functions throws, or returns the results.
+   * wuns a function in pawawwew acwoss the ewements o-of the wist, and thwows an exception if any
+   * of the functions thwows, mya ow w-wetuwns the wesuwts. (˘ω˘)
    *
-   * Uses as many threads as there are elements in the input, so only use this for tasks that
-   * require significant CPU for each element, and have less elements than the number of cores.
+   * uses as many thweads a-as thewe awe e-ewements in the i-input, so onwy u-use this fow tasks that
+   * wequiwe significant c-cpu fow each ewement, >_< and have wess ewements t-than the nyumbew of cowes. -.-
    */
-  public static <T, R> List<R> parmap(
-      String threadName, int threadPoolSize, CheckedFunction<T, R> fn, List<T> input)
-      throws Exception {
-    ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize,
-        buildThreadFactory(threadName));
-    FuturePool futurePool = FuturePool$.MODULE$.apply(executor);
+  pubwic static <t, 🥺 w> wist<w> pawmap(
+      stwing thweadname, (U ﹏ U) i-int thweadpoowsize, >w< checkedfunction<t, mya w-w> fn, wist<t> i-input)
+      t-thwows exception {
+    executowsewvice executow = executows.newfixedthweadpoow(thweadpoowsize, >w<
+        b-buiwdthweadfactowy(thweadname));
+    f-futuwepoow futuwepoow = futuwepoow$.moduwe$.appwy(executow);
 
-    List<Future<R>> futures = input
-        .stream()
-        .map(in -> futurePool.apply(() -> {
-          try {
-            return fn.apply(in);
-          } catch (Exception e) {
-            throw new RuntimeException(e);
+    w-wist<futuwe<w>> f-futuwes = input
+        .stweam()
+        .map(in -> futuwepoow.appwy(() -> {
+          t-twy {
+            wetuwn f-fn.appwy(in);
+          } catch (exception e) {
+            thwow n-nyew wuntimeexception(e);
           }
-        })).collect(Collectors.toList());
+        })).cowwect(cowwectows.towist());
 
-    try {
-      return Await.result(Future$.MODULE$.collect(futures));
-    } finally {
-      executor.shutdownNow();
+    twy {
+      w-wetuwn await.wesuwt(futuwe$.moduwe$.cowwect(futuwes));
+    } finawwy {
+      e-executow.shutdownnow();
     }
   }
 
-  private static ThreadFactory buildThreadFactory(String threadNameFormat) {
-    return new ThreadFactoryBuilder()
-        .setNameFormat(threadNameFormat)
-        .setDaemon(false)
-        .build();
+  p-pwivate static thweadfactowy buiwdthweadfactowy(stwing thweadnamefowmat) {
+    wetuwn nyew thweadfactowybuiwdew()
+        .setnamefowmat(thweadnamefowmat)
+        .setdaemon(fawse)
+        .buiwd();
   }
 
-  @FunctionalInterface
-  public interface CheckedFunction<T, R> {
+  @functionawintewface
+  pubwic intewface checkedfunction<t, nyaa~~ w-w> {
     /**
-     * A function from T to R that throws checked Exceptions.
+     * a-a function fwom t to w that t-thwows checked e-exceptions. (✿oωo)
      */
-    R apply(T t) throws Exception;
+    w-w appwy(t t) thwows exception;
   }
 }

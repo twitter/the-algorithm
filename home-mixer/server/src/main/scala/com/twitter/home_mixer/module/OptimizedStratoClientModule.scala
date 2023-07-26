@@ -1,46 +1,46 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.service.Retries
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.BatchedStratoClientWithModerateTimeout
-import com.twitter.inject.TwitterModule
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.Strato
-import com.twitter.util.Try
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.sewvice.wetwies
+i-impowt com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt com.twittew.finagwe.ssw.oppowtunistictws
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt c-com.twittew.home_mixew.pawam.homemixewinjectionnames.batchedstwatocwientwithmodewatetimeout
+i-impowt com.twittew.inject.twittewmoduwe
+impowt com.twittew.stwato.cwient.cwient
+impowt com.twittew.stwato.cwient.stwato
+impowt c-com.twittew.utiw.twy
+impowt javax.inject.named
+impowt javax.inject.singweton
 
-object OptimizedStratoClientModule extends TwitterModule {
+object o-optimizedstwatocwientmoduwe extends twittewmoduwe {
 
-  private val ModerateStratoServerClientRequestTimeout = 500.millis
+  p-pwivate vaw modewatestwatosewvewcwientwequesttimeout = 500.miwwis
 
-  private val DefaultRetryPartialFunction: PartialFunction[Try[Nothing], Boolean] =
-    RetryPolicy.TimeoutAndWriteExceptionsOnly
-      .orElse(RetryPolicy.ChannelClosedExceptionsOnly)
+  pwivate vaw defauwtwetwypawtiawfunction: pawtiawfunction[twy[nothing], rawr b-boowean] =
+    wetwypowicy.timeoutandwwiteexceptionsonwy
+      .owewse(wetwypowicy.channewcwosedexceptionsonwy)
 
-  protected def mkRetryPolicy(tries: Int): RetryPolicy[Try[Nothing]] =
-    RetryPolicy.tries(tries, DefaultRetryPartialFunction)
+  p-pwotected d-def mkwetwypowicy(twies: int): wetwypowicy[twy[nothing]] =
+    wetwypowicy.twies(twies, OwO defauwtwetwypawtiawfunction)
 
-  @Singleton
-  @Provides
-  @Named(BatchedStratoClientWithModerateTimeout)
-  def providesStratoClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Client = {
-    Strato.client
-      .withMutualTls(serviceIdentifier, opportunisticLevel = OpportunisticTls.Required)
-      .withSession.acquisitionTimeout(500.milliseconds)
-      .withRequestTimeout(ModerateStratoServerClientRequestTimeout)
-      .withPerRequestTimeout(ModerateStratoServerClientRequestTimeout)
-      .withRpcBatchSize(5)
-      .configured(Retries.Policy(mkRetryPolicy(1)))
-      .withStatsReceiver(statsReceiver.scope("strato_client"))
-      .build()
+  @singweton
+  @pwovides
+  @named(batchedstwatocwientwithmodewatetimeout)
+  def pwovidesstwatocwient(
+    s-sewviceidentifiew: sewviceidentifiew, (U ﹏ U)
+    statsweceivew: statsweceivew
+  ): cwient = {
+    stwato.cwient
+      .withmutuawtws(sewviceidentifiew, >_< o-oppowtunisticwevew = oppowtunistictws.wequiwed)
+      .withsession.acquisitiontimeout(500.miwwiseconds)
+      .withwequesttimeout(modewatestwatosewvewcwientwequesttimeout)
+      .withpewwequesttimeout(modewatestwatosewvewcwientwequesttimeout)
+      .withwpcbatchsize(5)
+      .configuwed(wetwies.powicy(mkwetwypowicy(1)))
+      .withstatsweceivew(statsweceivew.scope("stwato_cwient"))
+      .buiwd()
   }
 }

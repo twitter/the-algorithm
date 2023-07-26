@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi
 
-import com.twitter.product_mixer.core.functional_component.configapi.registry.GlobalParamRegistry
-import com.twitter.product_mixer.core.product.registry.ProductParamRegistry
-import com.twitter.timelines.configapi.CompositeConfig
-import com.twitter.timelines.configapi.Config
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.wegistwy.gwobawpawamwegistwy
+i-impowt com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy.pwoductpawamwegistwy
+i-impowt com.twittew.timewines.configapi.compositeconfig
+i-impowt c-com.twittew.timewines.configapi.config
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ConfigBuilder @Inject() (
-  productParamRegistry: ProductParamRegistry,
-  globalParamRegistry: GlobalParamRegistry) {
+@singweton
+c-cwass configbuiwdew @inject() (
+  pwoductpawamwegistwy: pwoductpawamwegistwy, (U ﹏ U)
+  gwobawpawamwegistwy: g-gwobawpawamwegistwy) {
 
-  def build(): Config =
-    new CompositeConfig(productParamRegistry.build() ++ Seq(globalParamRegistry.build()))
+  def buiwd(): config =
+    n-nyew compositeconfig(pwoductpawamwegistwy.buiwd() ++ seq(gwobawpawamwegistwy.buiwd()))
 }

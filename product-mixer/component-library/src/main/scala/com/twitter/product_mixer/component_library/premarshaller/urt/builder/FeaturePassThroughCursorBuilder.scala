@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtPassThroughCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtpassthwoughcuwsow
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.cuwsow.uwtcuwsowsewiawizew
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowtype
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class PassThroughCursorBuilder[
-  -Query <: PipelineQuery with HasPipelineCursor[UrtPassThroughCursor]
+c-case cwass passthwoughcuwsowbuiwdew[
+  -quewy <: pipewinequewy with haspipewinecuwsow[uwtpassthwoughcuwsow]
 ](
-  cursorFeature: Feature[Query, String],
-  override val cursorType: CursorType)
-    extends UrtCursorBuilder[Query] {
+  cuwsowfeatuwe: featuwe[quewy, s-stwing], ( ͡o ω ͡o )
+  ovewwide vaw cuwsowtype: cuwsowtype)
+    e-extends uwtcuwsowbuiwdew[quewy] {
 
-  override val includeOperation: IncludeInstruction[Query] = { (query, _) =>
-    query.features.exists(_.getOrElse(cursorFeature, "").nonEmpty)
+  ovewwide v-vaw incwudeopewation: incwudeinstwuction[quewy] = { (quewy, rawr x3 _) =>
+    quewy.featuwes.exists(_.getowewse(cuwsowfeatuwe, nyaa~~ "").nonempty)
   }
 
-  override def cursorValue(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): String =
-    UrtCursorSerializer.serializeCursor(
-      UrtPassThroughCursor(
-        cursorSortIndex(query, entries),
-        query.features.map(_.get(cursorFeature)).getOrElse(""),
-        cursorType = Some(cursorType)
+  ovewwide d-def cuwsowvawue(
+    quewy: q-quewy, /(^•ω•^)
+    entwies: s-seq[timewineentwy]
+  ): stwing =
+    uwtcuwsowsewiawizew.sewiawizecuwsow(
+      uwtpassthwoughcuwsow(
+        cuwsowsowtindex(quewy, rawr entwies), OwO
+        q-quewy.featuwes.map(_.get(cuwsowfeatuwe)).getowewse(""), (U ﹏ U)
+        cuwsowtype = some(cuwsowtype)
       )
     )
 }

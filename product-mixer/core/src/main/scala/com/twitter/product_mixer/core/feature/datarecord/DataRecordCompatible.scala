@@ -1,316 +1,316 @@
-package com.twitter.product_mixer.core.feature.datarecord
+package com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.thriftscala.GeneralTensor
-import com.twitter.ml.api.thriftscala.StringTensor
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.ml.api.{GeneralTensor => JGeneralTensor}
-import com.twitter.ml.api.{RawTypedTensor => JRawTypedTensor}
-import com.twitter.ml.api.{Feature => MlFeature}
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.util.{Map => JMap}
-import java.util.{Set => JSet}
-import java.lang.{Long => JLong}
-import java.lang.{Boolean => JBoolean}
-import java.lang.{Double => JDouble}
-import scala.collection.JavaConverters._
+impowt c-com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype
+i-impowt c-com.twittew.mw.api.featuwe
+i-impowt c-com.twittew.mw.api.datatype
+i-impowt com.twittew.mw.api.thwiftscawa.genewawtensow
+i-impowt com.twittew.mw.api.thwiftscawa.stwingtensow
+i-impowt com.twittew.mw.api.utiw.scawatojavadatawecowdconvewsions
+impowt com.twittew.mw.api.{genewawtensow => jgenewawtensow}
+impowt com.twittew.mw.api.{wawtypedtensow => jwawtypedtensow}
+i-impowt com.twittew.mw.api.{featuwe => mwfeatuwe}
+impowt java.nio.bytebuffew
+i-impowt java.nio.byteowdew
+i-impowt java.utiw.{map => jmap}
+impowt java.utiw.{set => jset}
+impowt java.wang.{wong => jwong}
+impowt java.wang.{boowean => j-jboowean}
+impowt java.wang.{doubwe => j-jdoubwe}
+i-impowt scawa.cowwection.javaconvewtews._
 
 /**
- * Defines a conversion function for customers to mix-in when constructing a DataRecord supported
- * feature. We do this because the ML Feature representation is written in Java and uses Java types.
- * Furthermore, allowing customers to construct their own ML Feature directly can leave room
- * for mistyping errors, such as using a Double ML Feature on a String Product Mixer feature.
- * This mix in enforces that the customer only uses the right types, while making it easier
- * to setup a DataRecord Feature with nothing but a feature name and personal data types.
- * @tparam FeatureValueType The type of the underlying Product Mixer feature value.
+ * defines a convewsion function fow customews to mix-in when constwucting a-a datawecowd suppowted
+ * featuwe. (ˆ ﻌ ˆ)♡ we do this because the mw featuwe w-wepwesentation is wwitten in java a-and uses java t-types. /(^•ω•^)
+ * fuwthewmowe, òωó a-awwowing c-customews to constwuct theiw own mw featuwe diwectwy c-can weave woom
+ * fow mistyping ewwows, (⑅˘꒳˘) such a-as using a doubwe mw featuwe on a stwing pwoduct mixew featuwe. (U ᵕ U❁)
+ * this mix in enfowces that the c-customew onwy uses the wight t-types, >w< whiwe making i-it easiew
+ * t-to setup a datawecowd featuwe with nyothing but a featuwe nyame a-and pewsonaw data t-types. σωσ
+ * @tpawam featuwevawuetype t-the type of t-the undewwying pwoduct mixew featuwe v-vawue. -.-
  */
-sealed trait DataRecordCompatible[FeatureValueType] {
-  // The feature value type in ProMix.
-  final type FeatureType = FeatureValueType
-  // The underlying DataRecord value type, sometimes this differs from the Feature Store and ProMix type.
-  type DataRecordType
+seawed twait datawecowdcompatibwe[featuwevawuetype] {
+  // t-the featuwe vawue type in pwomix. o.O
+  f-finaw type featuwetype = featuwevawuetype
+  // t-the undewwying datawecowd vawue t-type, ^^ sometimes t-this diffews fwom the featuwe stowe and pwomix type. >_<
+  type datawecowdtype
 
-  def featureName: String
-  def personalDataTypes: Set[PersonalDataType]
+  def featuwename: stwing
+  def pewsonawdatatypes: set[pewsonawdatatype]
 
-  private[product_mixer] def mlFeature: MlFeature[DataRecordType]
+  p-pwivate[pwoduct_mixew] def m-mwfeatuwe: mwfeatuwe[datawecowdtype]
 
   /**
-   * To & from Data Record value converters. In most cases, this is one to one when the types match
-   * but in some cases, certain features are modeled as different types in Data Record. For example,
-   * some features that are Long (e.g, such as TweepCred) are sometimes stored as Doubles.
+   * to & fwom data w-wecowd vawue c-convewtews. >w< in most c-cases, >_< this is one to one when the types match
+   * but in some c-cases, >w< cewtain featuwes awe modewed as diffewent types in data wecowd. rawr fow exampwe, rawr x3
+   * s-some featuwes that a-awe wong (e.g, ( ͡o ω ͡o ) such a-as tweepcwed) a-awe sometimes stowed as doubwes. (˘ω˘)
    */
-  private[product_mixer] def toDataRecordFeatureValue(featureValue: FeatureType): DataRecordType
-  private[product_mixer] def fromDataRecordFeatureValue(featureValue: DataRecordType): FeatureType
+  p-pwivate[pwoduct_mixew] d-def todatawecowdfeatuwevawue(featuwevawue: f-featuwetype): d-datawecowdtype
+  pwivate[pwoduct_mixew] def fwomdatawecowdfeatuwevawue(featuwevawue: d-datawecowdtype): f-featuwetype
 
 }
 
 /**
- * Converter for going from String feature value to String ML Feature.
+ * c-convewtew f-fow going fwom s-stwing featuwe vawue to stwing mw featuwe. 😳
  */
-trait StringDataRecordCompatible extends DataRecordCompatible[String] {
-  override type DataRecordType = String
+twait stwingdatawecowdcompatibwe e-extends datawecowdcompatibwe[stwing] {
+  ovewwide type datawecowdtype = stwing
 
-  final override lazy val mlFeature: MlFeature[String] =
-    new MlFeature.Text(featureName, personalDataTypes.asJava)
+  finaw ovewwide wazy vaw mwfeatuwe: m-mwfeatuwe[stwing] =
+    nyew mwfeatuwe.text(featuwename, OwO pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: String
-  ): String = featureValue
+  ovewwide p-pwivate[pwoduct_mixew] d-def f-fwomdatawecowdfeatuwevawue(
+    featuwevawue: stwing
+  ): s-stwing = featuwevawue
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: String
-  ): String = featureValue
+  o-ovewwide pwivate[pwoduct_mixew] d-def todatawecowdfeatuwevawue(
+    featuwevawue: stwing
+  ): stwing = featuwevawue
 }
 
 /**
- * Converter for going from Long feature value to Discrete/Long ML Feature.
+ * convewtew fow going fwom wong featuwe v-vawue to discwete/wong mw featuwe. (˘ω˘)
  */
-trait LongDiscreteDataRecordCompatible extends DataRecordCompatible[Long] {
-  override type DataRecordType = JLong
+t-twait wongdiscwetedatawecowdcompatibwe e-extends datawecowdcompatibwe[wong] {
+  o-ovewwide type datawecowdtype = jwong
 
-  final override lazy val mlFeature: MlFeature[JLong] =
-    new Feature.Discrete(featureName, personalDataTypes.asJava)
+  f-finaw ovewwide w-wazy vaw mwfeatuwe: mwfeatuwe[jwong] =
+    n-nyew f-featuwe.discwete(featuwename, òωó pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JLong
-  ): Long = featureValue
+  ovewwide pwivate[pwoduct_mixew] def fwomdatawecowdfeatuwevawue(
+    f-featuwevawue: jwong
+  ): w-wong = f-featuwevawue
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Long
-  ): JLong = featureValue
+  ovewwide pwivate[pwoduct_mixew] d-def todatawecowdfeatuwevawue(
+    f-featuwevawue: wong
+  ): jwong = f-featuwevawue
 }
 
 /**
- * Converter for going from Long feature value to Continuous/Double ML Feature.
+ * convewtew fow going fwom wong featuwe vawue to continuous/doubwe m-mw featuwe. ( ͡o ω ͡o )
  */
-trait LongContinuousDataRecordCompatible extends DataRecordCompatible[Long] {
-  override type DataRecordType = JDouble
+t-twait wongcontinuousdatawecowdcompatibwe extends datawecowdcompatibwe[wong] {
+  o-ovewwide t-type datawecowdtype = jdoubwe
 
-  final override lazy val mlFeature: MlFeature[JDouble] =
-    new Feature.Continuous(featureName, personalDataTypes.asJava)
+  finaw ovewwide wazy vaw mwfeatuwe: m-mwfeatuwe[jdoubwe] =
+    nyew featuwe.continuous(featuwename, UwU pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: FeatureType
-  ): JDouble = featureValue.toDouble
+  ovewwide pwivate[pwoduct_mixew] def todatawecowdfeatuwevawue(
+    f-featuwevawue: featuwetype
+  ): jdoubwe = featuwevawue.todoubwe
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JDouble
-  ): Long = featureValue.longValue()
+  o-ovewwide pwivate[pwoduct_mixew] d-def fwomdatawecowdfeatuwevawue(
+    featuwevawue: jdoubwe
+  ): wong = featuwevawue.wongvawue()
 }
 
 /**
- * Converter for going from an Integer feature value to Long/Discrete ML Feature.
+ * convewtew f-fow going f-fwom an integew featuwe vawue to wong/discwete mw featuwe. /(^•ω•^)
  */
-trait IntDiscreteDataRecordCompatible extends DataRecordCompatible[Int] {
-  override type DataRecordType = JLong
+t-twait intdiscwetedatawecowdcompatibwe extends d-datawecowdcompatibwe[int] {
+  ovewwide type datawecowdtype = jwong
 
-  final override lazy val mlFeature: MlFeature[JLong] =
-    new MlFeature.Discrete(featureName, personalDataTypes.asJava)
+  f-finaw ovewwide wazy vaw mwfeatuwe: m-mwfeatuwe[jwong] =
+    n-nyew mwfeatuwe.discwete(featuwename, (ꈍᴗꈍ) pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JLong
-  ): Int = featureValue.toInt
+  o-ovewwide pwivate[pwoduct_mixew] def fwomdatawecowdfeatuwevawue(
+    f-featuwevawue: j-jwong
+  ): int = f-featuwevawue.toint
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Int
-  ): JLong = featureValue.toLong
+  ovewwide p-pwivate[pwoduct_mixew] d-def todatawecowdfeatuwevawue(
+    featuwevawue: int
+  ): j-jwong = featuwevawue.towong
 }
 
 /**
- * Converter for going from Integer feature value to Continuous/Double ML Feature.
+ * c-convewtew f-fow going fwom integew featuwe vawue to continuous/doubwe m-mw featuwe. 😳
  */
-trait IntContinuousDataRecordCompatible extends DataRecordCompatible[Int] {
-  override type DataRecordType = JDouble
+twait i-intcontinuousdatawecowdcompatibwe e-extends datawecowdcompatibwe[int] {
+  ovewwide type datawecowdtype = jdoubwe
 
-  final override lazy val mlFeature: MlFeature[JDouble] =
-    new Feature.Continuous(featureName, personalDataTypes.asJava)
+  f-finaw ovewwide w-wazy vaw mwfeatuwe: m-mwfeatuwe[jdoubwe] =
+    n-nyew featuwe.continuous(featuwename, mya pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Int
-  ): JDouble = featureValue.toDouble
+  o-ovewwide pwivate[pwoduct_mixew] def todatawecowdfeatuwevawue(
+    featuwevawue: int
+  ): jdoubwe = featuwevawue.todoubwe
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JDouble
-  ): Int = featureValue.toInt
+  ovewwide pwivate[pwoduct_mixew] d-def fwomdatawecowdfeatuwevawue(
+    featuwevawue: j-jdoubwe
+  ): int = featuwevawue.toint
 }
 
 /**
- * Converter for going from Double feature value to Continuous/Double ML Feature.
+ * c-convewtew fow going fwom doubwe f-featuwe vawue to continuous/doubwe m-mw featuwe. mya
  */
-trait DoubleDataRecordCompatible extends DataRecordCompatible[Double] {
-  override type DataRecordType = JDouble
+t-twait doubwedatawecowdcompatibwe e-extends datawecowdcompatibwe[doubwe] {
+  ovewwide t-type datawecowdtype = j-jdoubwe
 
-  final override lazy val mlFeature: MlFeature[JDouble] =
-    new MlFeature.Continuous(featureName, personalDataTypes.asJava)
+  finaw ovewwide wazy vaw mwfeatuwe: mwfeatuwe[jdoubwe] =
+    nyew mwfeatuwe.continuous(featuwename, /(^•ω•^) pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JDouble
-  ): Double = featureValue
+  ovewwide p-pwivate[pwoduct_mixew] d-def fwomdatawecowdfeatuwevawue(
+    f-featuwevawue: jdoubwe
+  ): d-doubwe = featuwevawue
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Double
-  ): JDouble = featureValue
+  ovewwide pwivate[pwoduct_mixew] def todatawecowdfeatuwevawue(
+    f-featuwevawue: d-doubwe
+  ): jdoubwe = featuwevawue
 }
 
 /**
- * Converter for going from Boolean feature value to Boolean ML Feature.
+ * c-convewtew fow going fwom boowean featuwe v-vawue to b-boowean mw featuwe. ^^;;
  */
-trait BoolDataRecordCompatible extends DataRecordCompatible[Boolean] {
-  override type DataRecordType = JBoolean
+twait boowdatawecowdcompatibwe e-extends datawecowdcompatibwe[boowean] {
+  o-ovewwide type datawecowdtype = jboowean
 
-  final override lazy val mlFeature: MlFeature[JBoolean] =
-    new MlFeature.Binary(featureName, personalDataTypes.asJava)
+  finaw ovewwide wazy vaw mwfeatuwe: mwfeatuwe[jboowean] =
+    nyew mwfeatuwe.binawy(featuwename, 🥺 p-pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JBoolean
-  ): Boolean = featureValue
+  o-ovewwide p-pwivate[pwoduct_mixew] d-def fwomdatawecowdfeatuwevawue(
+    f-featuwevawue: jboowean
+  ): b-boowean = f-featuwevawue
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Boolean
-  ): JBoolean = featureValue
+  ovewwide pwivate[pwoduct_mixew] d-def todatawecowdfeatuwevawue(
+    f-featuwevawue: boowean
+  ): j-jboowean = featuwevawue
 }
 
 /**
- * Converter for going from a ByteBuffer feature value to ByteBuffer ML Feature.
+ * convewtew fow going fwom a bytebuffew f-featuwe vawue to bytebuffew m-mw featuwe. ^^
  */
-trait BlobDataRecordCompatible extends DataRecordCompatible[ByteBuffer] {
-  override type DataRecordType = ByteBuffer
+t-twait bwobdatawecowdcompatibwe extends datawecowdcompatibwe[bytebuffew] {
+  o-ovewwide type datawecowdtype = bytebuffew
 
-  final override lazy val mlFeature: MlFeature[ByteBuffer] =
-    new Feature.Blob(featureName, personalDataTypes.asJava)
+  finaw ovewwide wazy v-vaw mwfeatuwe: m-mwfeatuwe[bytebuffew] =
+    n-nyew featuwe.bwob(featuwename, ^•ﻌ•^ pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: ByteBuffer
-  ): ByteBuffer = featureValue
+  ovewwide p-pwivate[pwoduct_mixew] def fwomdatawecowdfeatuwevawue(
+    featuwevawue: b-bytebuffew
+  ): b-bytebuffew = featuwevawue
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: ByteBuffer
-  ): ByteBuffer = featureValue
+  o-ovewwide pwivate[pwoduct_mixew] d-def todatawecowdfeatuwevawue(
+    f-featuwevawue: bytebuffew
+  ): bytebuffew = f-featuwevawue
 }
 
 /**
- * Converter for going from a Map[String, Double] feature value to Sparse Double/Continious ML Feature.
+ * convewtew fow going fwom a-a map[stwing, /(^•ω•^) d-doubwe] featuwe vawue to spawse d-doubwe/continious mw featuwe. ^^
  */
-trait SparseContinuousDataRecordCompatible extends DataRecordCompatible[Map[String, Double]] {
-  override type DataRecordType = JMap[String, JDouble]
+t-twait spawsecontinuousdatawecowdcompatibwe extends d-datawecowdcompatibwe[map[stwing, 🥺 d-doubwe]] {
+  ovewwide type datawecowdtype = jmap[stwing, (U ᵕ U❁) jdoubwe]
 
-  final override lazy val mlFeature: MlFeature[JMap[String, JDouble]] =
-    new Feature.SparseContinuous(featureName, personalDataTypes.asJava)
+  finaw ovewwide wazy vaw mwfeatuwe: mwfeatuwe[jmap[stwing, 😳😳😳 jdoubwe]] =
+    nyew featuwe.spawsecontinuous(featuwename, pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Map[String, Double]
-  ): JMap[String, JDouble] =
-    featureValue.mapValues(_.asInstanceOf[JDouble]).asJava
+  ovewwide pwivate[pwoduct_mixew] def todatawecowdfeatuwevawue(
+    f-featuwevawue: map[stwing, nyaa~~ d-doubwe]
+  ): jmap[stwing, (˘ω˘) jdoubwe] =
+    f-featuwevawue.mapvawues(_.asinstanceof[jdoubwe]).asjava
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JMap[String, JDouble]
-  ) = featureValue.asScala.toMap.mapValues(_.doubleValue())
+  o-ovewwide p-pwivate[pwoduct_mixew] def f-fwomdatawecowdfeatuwevawue(
+    featuwevawue: j-jmap[stwing, >_< jdoubwe]
+  ) = f-featuwevawue.asscawa.tomap.mapvawues(_.doubwevawue())
 }
 
 /**
- * Converter for going from a Set[String] feature value to SparseBinary/String Set ML Feature.
+ * convewtew f-fow going fwom a set[stwing] f-featuwe vawue t-to spawsebinawy/stwing set mw featuwe. XD
  */
-trait SparseBinaryDataRecordCompatible extends DataRecordCompatible[Set[String]] {
-  override type DataRecordType = JSet[String]
+twait s-spawsebinawydatawecowdcompatibwe e-extends datawecowdcompatibwe[set[stwing]] {
+  o-ovewwide type datawecowdtype = j-jset[stwing]
 
-  final override lazy val mlFeature: MlFeature[JSet[String]] =
-    new Feature.SparseBinary(featureName, personalDataTypes.asJava)
+  f-finaw ovewwide wazy v-vaw mwfeatuwe: m-mwfeatuwe[jset[stwing]] =
+    n-nyew featuwe.spawsebinawy(featuwename, rawr x3 p-pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JSet[String]
-  ) = featureValue.asScala.toSet
+  ovewwide pwivate[pwoduct_mixew] d-def fwomdatawecowdfeatuwevawue(
+    f-featuwevawue: j-jset[stwing]
+  ) = featuwevawue.asscawa.toset
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: FeatureType
-  ): JSet[String] = featureValue.asJava
+  o-ovewwide pwivate[pwoduct_mixew] def todatawecowdfeatuwevawue(
+    f-featuwevawue: featuwetype
+  ): j-jset[stwing] = f-featuwevawue.asjava
 }
 
 /**
- * Marker trait for any feature value to Tensor ML Feature. Not directly usable.
+ * m-mawkew twait fow any featuwe v-vawue to tensow mw featuwe. ( ͡o ω ͡o ) nyot d-diwectwy usabwe. :3
  */
-sealed trait TensorDataRecordCompatible[FeatureV] extends DataRecordCompatible[FeatureV] {
-  override type DataRecordType = JGeneralTensor
-  override def mlFeature: MlFeature[JGeneralTensor]
+seawed t-twait tensowdatawecowdcompatibwe[featuwev] extends d-datawecowdcompatibwe[featuwev] {
+  ovewwide type datawecowdtype = jgenewawtensow
+  ovewwide def m-mwfeatuwe: mwfeatuwe[jgenewawtensow]
 }
 
 /**
- * Converter for a double to a Tensor feature encoded as float encoded RawTypedTensor
+ * convewtew fow a-a doubwe to a tensow f-featuwe encoded as fwoat encoded wawtypedtensow
  */
-trait RawTensorFloatDoubleDataRecordCompatible extends TensorDataRecordCompatible[Double] {
-  final override lazy val mlFeature: MlFeature[JGeneralTensor] =
-    new Feature.Tensor(
-      featureName,
-      DataType.FLOAT,
-      List.empty[JLong].asJava,
-      personalDataTypes.asJava)
+twait wawtensowfwoatdoubwedatawecowdcompatibwe e-extends tensowdatawecowdcompatibwe[doubwe] {
+  f-finaw ovewwide w-wazy vaw mwfeatuwe: m-mwfeatuwe[jgenewawtensow] =
+    nyew featuwe.tensow(
+      featuwename, mya
+      d-datatype.fwoat, σωσ
+      w-wist.empty[jwong].asjava, (ꈍᴗꈍ)
+      pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: FeatureType
+  o-ovewwide pwivate[pwoduct_mixew] def todatawecowdfeatuwevawue(
+    f-featuwevawue: featuwetype
   ) = {
-    val byteBuffer: ByteBuffer =
-      ByteBuffer
-        .allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(featureValue.toFloat)
-    byteBuffer.flip()
-    val tensor = new JGeneralTensor()
-    tensor.setRawTypedTensor(new JRawTypedTensor(DataType.FLOAT, byteBuffer))
-    tensor
+    v-vaw bytebuffew: b-bytebuffew =
+      b-bytebuffew
+        .awwocate(4).owdew(byteowdew.wittwe_endian).putfwoat(featuwevawue.tofwoat)
+    bytebuffew.fwip()
+    v-vaw t-tensow = nyew j-jgenewawtensow()
+    t-tensow.setwawtypedtensow(new jwawtypedtensow(datatype.fwoat, OwO b-bytebuffew))
+    t-tensow
   }
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JGeneralTensor
+  o-ovewwide pwivate[pwoduct_mixew] d-def fwomdatawecowdfeatuwevawue(
+    f-featuwevawue: j-jgenewawtensow
   ) = {
-    val tensor = Option(featureValue.getRawTypedTensor)
-      .getOrElse(throw new UnexpectedTensorException(featureValue))
-    tensor.content.order(ByteOrder.LITTLE_ENDIAN).getFloat().toDouble
+    v-vaw t-tensow = option(featuwevawue.getwawtypedtensow)
+      .getowewse(thwow nyew unexpectedtensowexception(featuwevawue))
+    t-tensow.content.owdew(byteowdew.wittwe_endian).getfwoat().todoubwe
   }
 }
 
 /**
- *  Converter for a scala general tensor to java general tensor ML feature.
+ *  convewtew f-fow a scawa genewaw tensow t-to java genewaw t-tensow mw featuwe. o.O
  */
-trait GeneralTensorDataRecordCompatible extends TensorDataRecordCompatible[GeneralTensor] {
+t-twait genewawtensowdatawecowdcompatibwe extends tensowdatawecowdcompatibwe[genewawtensow] {
 
-  def dataType: DataType
-  final override lazy val mlFeature: MlFeature[JGeneralTensor] =
-    new Feature.Tensor(featureName, dataType, List.empty[JLong].asJava, personalDataTypes.asJava)
+  def datatype: datatype
+  f-finaw ovewwide wazy v-vaw mwfeatuwe: m-mwfeatuwe[jgenewawtensow] =
+    nyew featuwe.tensow(featuwename, 😳😳😳 datatype, wist.empty[jwong].asjava, /(^•ω•^) pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: FeatureType
-  ) = ScalaToJavaDataRecordConversions.scalaTensor2Java(featureValue)
+  o-ovewwide pwivate[pwoduct_mixew] d-def todatawecowdfeatuwevawue(
+    featuwevawue: f-featuwetype
+  ) = s-scawatojavadatawecowdconvewsions.scawatensow2java(featuwevawue)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JGeneralTensor
-  ) = ScalaToJavaDataRecordConversions.javaTensor2Scala(featureValue)
+  ovewwide pwivate[pwoduct_mixew] def fwomdatawecowdfeatuwevawue(
+    f-featuwevawue: j-jgenewawtensow
+  ) = s-scawatojavadatawecowdconvewsions.javatensow2scawa(featuwevawue)
 }
 
 /**
- *  Converter for a scala string tensor to java general tensor ML feature.
+ *  c-convewtew fow a scawa stwing tensow t-to java genewaw t-tensow mw featuwe. OwO
  */
-trait StringTensorDataRecordCompatible extends TensorDataRecordCompatible[StringTensor] {
-  final override lazy val mlFeature: MlFeature[JGeneralTensor] =
-    new Feature.Tensor(
-      featureName,
-      DataType.STRING,
-      List.empty[JLong].asJava,
-      personalDataTypes.asJava)
+twait stwingtensowdatawecowdcompatibwe extends t-tensowdatawecowdcompatibwe[stwingtensow] {
+  finaw ovewwide wazy vaw mwfeatuwe: m-mwfeatuwe[jgenewawtensow] =
+    nyew featuwe.tensow(
+      f-featuwename, ^^
+      d-datatype.stwing, (///ˬ///✿)
+      wist.empty[jwong].asjava, (///ˬ///✿)
+      p-pewsonawdatatypes.asjava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JGeneralTensor
+  o-ovewwide pwivate[pwoduct_mixew] d-def fwomdatawecowdfeatuwevawue(
+    featuwevawue: j-jgenewawtensow
   ) = {
-    ScalaToJavaDataRecordConversions.javaTensor2Scala(featureValue) match {
-      case GeneralTensor.StringTensor(stringTensor) => stringTensor
-      case _ => throw new UnexpectedTensorException(featureValue)
+    s-scawatojavadatawecowdconvewsions.javatensow2scawa(featuwevawue) m-match {
+      c-case genewawtensow.stwingtensow(stwingtensow) => stwingtensow
+      c-case _ => t-thwow nyew unexpectedtensowexception(featuwevawue)
     }
   }
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: FeatureType
-  ) = ScalaToJavaDataRecordConversions.scalaTensor2Java(GeneralTensor.StringTensor(featureValue))
+  o-ovewwide pwivate[pwoduct_mixew] def todatawecowdfeatuwevawue(
+    f-featuwevawue: featuwetype
+  ) = scawatojavadatawecowdconvewsions.scawatensow2java(genewawtensow.stwingtensow(featuwevawue))
 }
 
-class UnexpectedTensorException(tensor: JGeneralTensor)
-    extends Exception(s"Unexpected Tensor: $tensor")
+c-cwass unexpectedtensowexception(tensow: j-jgenewawtensow)
+    e-extends exception(s"unexpected tensow: $tensow")

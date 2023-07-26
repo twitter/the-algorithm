@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.article
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.sociawcontext
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
 
-object ArticleItem {
-  val ArticleEntryNamespace = EntryNamespace("article")
+o-object awticweitem {
+  vaw a-awticweentwynamespace = entwynamespace("awticwe")
 }
 
-case class ArticleItem(
-  override val id: Int,
-  articleSeedType: ArticleSeedType,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  displayType: Option[ArticleDisplayType],
-  socialContext: Option[SocialContext])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = ArticleItem.ArticleEntryNamespace
+case cwass awticweitem(
+  ovewwide vaw id: i-int, /(^•ω•^)
+  awticweseedtype: awticweseedtype, rawr
+  ovewwide v-vaw sowtindex: option[wong], OwO
+  o-ovewwide vaw cwienteventinfo: option[cwienteventinfo], (U ﹏ U)
+  ovewwide vaw feedbackactioninfo: o-option[feedbackactioninfo], >_<
+  dispwaytype: o-option[awticwedispwaytype], rawr x3
+  s-sociawcontext: option[sociawcontext])
+    extends timewineitem {
+  ovewwide vaw entwynamespace: e-entwynamespace = awticweitem.awticweentwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovewwide def withsowtindex(sowtindex: wong): timewineentwy = copy(sowtindex = s-some(sowtindex))
 }

@@ -1,18 +1,18 @@
-package com.twitter.usersignalservice.module
+package com.twittew.usewsignawsewvice.moduwe
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.google.inject.Provides
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+i-impowt com.googwe.inject.pwovides
+i-impowt javax.inject.singweton
 
-object MHMtlsParamsModule extends TwitterModule {
+o-object mhmtwspawamsmoduwe e-extends twittewmoduwe {
 
-  @Singleton
-  @Provides
-  def providesManhattanMtlsParams(
-    serviceIdentifier: ServiceIdentifier
-  ): ManhattanKVClientMtlsParams = {
-    ManhattanKVClientMtlsParams(serviceIdentifier)
+  @singweton
+  @pwovides
+  def pwovidesmanhattanmtwspawams(
+    sewviceidentifiew: sewviceidentifiew
+  ): manhattankvcwientmtwspawams = {
+    m-manhattankvcwientmtwspawams(sewviceidentifiew)
   }
 }

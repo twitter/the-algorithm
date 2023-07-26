@@ -1,201 +1,201 @@
-package com.twitter.search.common.relevance.entities;
+package com.twittew.seawch.common.wewevance.entities;
 
-import java.util.List;
-import java.util.Optional;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.optionaw;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoTags;
-import com.twitter.tweetypie.thriftjava.GeoCoordinates;
-import com.twitter.tweetypie.thriftjava.Place;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftgeowocationsouwce;
+i-impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftgeotags;
+i-impowt com.twittew.tweetypie.thwiftjava.geocoowdinates;
+i-impowt com.twittew.tweetypie.thwiftjava.pwace;
 
-import geo.google.datamodel.GeoAddressAccuracy;
+impowt geo.googwe.datamodew.geoaddwessaccuwacy;
 
 /**
- * A GeoObject, extending a GeoCoordinate to include radius and accuracy
+ * a geoobject, 😳😳😳 e-extending a geocoowdinate to incwude wadius and a-accuwacy
  */
-public class GeoObject {
+pubwic cwass geoobject {
 
-  public static final int INT_FIELD_NOT_PRESENT = -1;
-  public static final double DOUBLE_FIELD_NOT_PRESENT = -1.0;
+  p-pubwic static finaw int int_fiewd_not_pwesent = -1;
+  pubwic static finaw d-doubwe doubwe_fiewd_not_pwesent = -1.0;
 
-  private double latitude = DOUBLE_FIELD_NOT_PRESENT;
-  private double longitude = DOUBLE_FIELD_NOT_PRESENT;
-  private double radius = DOUBLE_FIELD_NOT_PRESENT;
+  pwivate doubwe watitude = d-doubwe_fiewd_not_pwesent;
+  p-pwivate doubwe wongitude = doubwe_fiewd_not_pwesent;
+  pwivate doubwe wadius = d-doubwe_fiewd_not_pwesent;
 
-  private final ThriftGeoLocationSource source;
+  pwivate finaw thwiftgeowocationsouwce souwce;
 
-  // Valid range is 0-9. With 0 being unknown and 9 being most accurate.
-  // If this GeoObject is valid, this should be set to INT_FIELD_NOT_PRESENT
-  private int accuracy = 0;
+  // vawid wange is 0-9. o.O with 0 b-being unknown and 9 being most accuwate. òωó
+  // i-if t-this geoobject i-is vawid, this shouwd b-be set to int_fiewd_not_pwesent
+  pwivate i-int accuwacy = 0;
 
-  /** Creates a new GeoObject instance. */
-  public GeoObject(double lat, double lon, ThriftGeoLocationSource source) {
-    this(lat, lon, 0, source);
+  /** cweates a nyew geoobject i-instance. 😳😳😳 */
+  pubwic geoobject(doubwe wat, σωσ doubwe won, (⑅˘꒳˘) thwiftgeowocationsouwce souwce) {
+    this(wat, (///ˬ///✿) won, 0, s-souwce);
   }
 
-  /** Creates a new GeoObject instance. */
-  public GeoObject(double lat, double lon, int acc, ThriftGeoLocationSource source) {
-    latitude = lat;
-    longitude = lon;
-    accuracy = acc;
-    this.source = source;
+  /** cweates a n-new geoobject instance. 🥺 */
+  p-pubwic g-geoobject(doubwe wat, OwO doubwe won, >w< int acc, 🥺 thwiftgeowocationsouwce souwce) {
+    w-watitude = w-wat;
+    wongitude = won;
+    accuwacy = a-acc;
+    t-this.souwce = souwce;
   }
 
-  /** Creates a new GeoObject instance. */
-  public GeoObject(ThriftGeoLocationSource source) {
-    this.source = source;
+  /** c-cweates a nyew geoobject instance. nyaa~~ */
+  p-pubwic geoobject(thwiftgeowocationsouwce souwce) {
+    t-this.souwce = souwce;
   }
 
   /**
-   * Tries to create a {@code GeoObject} instance from a given TweetyPie {@code Place} struct based
-   * on its bounding box coordinates.
+   * t-twies to cweate a {@code g-geoobject} instance f-fwom a given tweetypie {@code pwace} stwuct based
+   * on its bounding box coowdinates. ^^
    *
-   * @param place
-   * @return {@code Optional} instance with {@code GeoObject} if bounding box coordinates are
-   *         available, or an empty {@code Optional}.
+   * @pawam pwace
+   * @wetuwn {@code o-optionaw} i-instance with {@code geoobject} i-if bounding box c-coowdinates awe
+   *         avaiwabwe, >w< o-ow an empty {@code optionaw}. OwO
    */
-  public static Optional<GeoObject> fromPlace(Place place) {
-    // Can't use place.centroid: from the sample of data, centroid seems to always be null
-    // (as of May 17 2016).
-    if (place.isSetBounding_box() && place.getBounding_boxSize() > 0) {
-      int pointsCount = place.getBounding_boxSize();
+  pubwic static optionaw<geoobject> fwompwace(pwace p-pwace) {
+    // can't use pwace.centwoid: fwom the sampwe of data, XD centwoid seems t-to awways be nuww
+    // (as o-of may 17 2016). ^^;;
+    i-if (pwace.issetbounding_box() && p-pwace.getbounding_boxsize() > 0) {
+      int pointscount = p-pwace.getbounding_boxsize();
 
-      if (pointsCount == 1) {
-        GeoCoordinates point = place.getBounding_box().get(0);
-        return Optional.of(createForIngester(point.getLatitude(), point.getLongitude()));
-      } else {
-        double sumLatitude = 0.0;
-        double sumLongitude = 0.0;
+      i-if (pointscount == 1) {
+        g-geocoowdinates p-point = pwace.getbounding_box().get(0);
+        wetuwn optionaw.of(cweatefowingestew(point.getwatitude(), 🥺 point.getwongitude()));
+      } ewse {
+        doubwe s-sumwatitude = 0.0;
+        d-doubwe sumwongitude = 0.0;
 
-        List<GeoCoordinates> box = place.getBounding_box();
+        w-wist<geocoowdinates> b-box = pwace.getbounding_box();
 
-        // Drop the last point if it's the same as the first point.
-        // The same logic is present in several other classes dealing with places.
-        // See e.g. birdherd/src/main/scala/com/twitter/birdherd/tweetypie/TweetyPiePlace.scala
-        if (box.get(pointsCount - 1).equals(box.get(0))) {
-          pointsCount--;
+        // d-dwop the wast point if it's the same as the fiwst point. XD
+        // t-the same wogic is pwesent in sevewaw othew cwasses deawing with pwaces.
+        // see e.g. (U ᵕ U❁) b-biwdhewd/swc/main/scawa/com/twittew/biwdhewd/tweetypie/tweetypiepwace.scawa
+        if (box.get(pointscount - 1).equaws(box.get(0))) {
+          pointscount--;
         }
 
-        for (int i = 0; i < pointsCount; i++) {
-          GeoCoordinates coords = box.get(i);
-          sumLatitude += coords.getLatitude();
-          sumLongitude += coords.getLongitude();
+        fow (int i-i = 0; i < pointscount; i-i++) {
+          g-geocoowdinates coowds = b-box.get(i);
+          sumwatitude += c-coowds.getwatitude();
+          s-sumwongitude += coowds.getwongitude();
         }
 
-        double averageLatitude = sumLatitude / pointsCount;
-        double averageLongitude = sumLongitude / pointsCount;
-        return Optional.of(GeoObject.createForIngester(averageLatitude, averageLongitude));
+        doubwe avewagewatitude = sumwatitude / pointscount;
+        doubwe a-avewagewongitude = sumwongitude / p-pointscount;
+        wetuwn o-optionaw.of(geoobject.cweatefowingestew(avewagewatitude, :3 a-avewagewongitude));
       }
     }
-    return Optional.empty();
+    wetuwn optionaw.empty();
   }
 
-  public void setRadius(double radius) {
-    this.radius = radius;
+  pubwic void setwadius(doubwe w-wadius) {
+    t-this.wadius = wadius;
   }
 
-  public Double getRadius() {
-    return radius;
+  p-pubwic doubwe g-getwadius() {
+    wetuwn wadius;
   }
 
-  public void setLatitude(double latitude) {
-    this.latitude = latitude;
+  pubwic void setwatitude(doubwe watitude) {
+    t-this.watitude = w-watitude;
   }
 
-  public Double getLatitude() {
-    return latitude;
+  p-pubwic doubwe getwatitude() {
+    w-wetuwn watitude;
   }
 
-  public void setLongitude(double longitude) {
-    this.longitude = longitude;
+  p-pubwic void setwongitude(doubwe w-wongitude) {
+    this.wongitude = wongitude;
   }
 
-  public Double getLongitude() {
-    return longitude;
+  pubwic doubwe getwongitude() {
+    wetuwn w-wongitude;
   }
 
-  public int getAccuracy() {
-    return accuracy;
+  p-pubwic int getaccuwacy() {
+    wetuwn accuwacy;
   }
 
-  public void setAccuracy(int accuracy) {
-    this.accuracy = accuracy;
+  pubwic v-void setaccuwacy(int a-accuwacy) {
+    this.accuwacy = accuwacy;
   }
 
-  public ThriftGeoLocationSource getSource() {
-    return source;
+  pubwic t-thwiftgeowocationsouwce getsouwce() {
+    wetuwn souwce;
   }
 
-  /** Convers this GeoObject instance to a ThriftGeoTags instance. */
-  public ThriftGeoTags toThriftGeoTags(long twitterMessageId) {
-    ThriftGeoTags geoTags = new ThriftGeoTags();
-    geoTags.setStatusId(twitterMessageId);
-    geoTags.setLatitude(getLatitude());
-    geoTags.setLongitude(getLongitude());
-    geoTags.setAccuracy(accuracy);
-    geoTags.setGeoLocationSource(source);
-    return geoTags;
+  /** convews this g-geoobject instance to a thwiftgeotags instance. ( ͡o ω ͡o ) */
+  p-pubwic t-thwiftgeotags tothwiftgeotags(wong twittewmessageid) {
+    thwiftgeotags geotags = n-nyew thwiftgeotags();
+    g-geotags.setstatusid(twittewmessageid);
+    geotags.setwatitude(getwatitude());
+    geotags.setwongitude(getwongitude());
+    geotags.setaccuwacy(accuwacy);
+    g-geotags.setgeowocationsouwce(souwce);
+    wetuwn geotags;
   }
 
-  private static final double COORDS_EQUALITY_THRESHOLD = 1e-7;
+  p-pwivate static finaw doubwe coowds_equawity_thweshowd = 1e-7;
 
   /**
-   * Performs an approximate comparison between the two GeoObject instances.
+   * pewfowms a-an appwoximate compawison between t-the two geoobject i-instances. òωó
    *
-   * @deprecated This code is not performant and should not be used in
-   * production code. Use only for tests. See SEARCH-5148.
+   * @depwecated this code i-is nyot pewfowmant and shouwd nyot b-be used in
+   * p-pwoduction code. σωσ u-use onwy fow tests. (U ᵕ U❁) see seawch-5148. (✿oωo)
    */
-  @Deprecated
-  @VisibleForTesting
-  public static boolean approxEquals(GeoObject a, GeoObject b) {
-    if (a == null && b == null) {
-      return true;
+  @depwecated
+  @visibwefowtesting
+  p-pubwic static b-boowean appwoxequaws(geoobject a, ^^ geoobject b) {
+    if (a == n-nyuww && b == nyuww) {
+      w-wetuwn t-twue;
     }
-    if ((a == null && b != null) || (a != null && b == null)) {
-      return false;
-    }
-
-    if (a.accuracy != b.accuracy) {
-      return false;
-    }
-    if (Math.abs(a.latitude - b.latitude) > COORDS_EQUALITY_THRESHOLD) {
-      return false;
-    }
-    if (Math.abs(a.longitude - b.longitude) > COORDS_EQUALITY_THRESHOLD) {
-      return false;
-    }
-    if (Double.compare(a.radius, b.radius) != 0) {
-      return false;
-    }
-    if (a.source != b.source) {
-      return false;
+    if ((a == nyuww && b != nyuww) || (a != n-nyuww && b == nyuww)) {
+      w-wetuwn f-fawse;
     }
 
-    return true;
+    if (a.accuwacy != b.accuwacy) {
+      wetuwn f-fawse;
+    }
+    i-if (math.abs(a.watitude - b-b.watitude) > c-coowds_equawity_thweshowd) {
+      wetuwn f-fawse;
+    }
+    if (math.abs(a.wongitude - b.wongitude) > coowds_equawity_thweshowd) {
+      wetuwn fawse;
+    }
+    if (doubwe.compawe(a.wadius, b.wadius) != 0) {
+      w-wetuwn fawse;
+    }
+    i-if (a.souwce != b.souwce) {
+      w-wetuwn fawse;
+    }
+
+    wetuwn twue;
   }
 
-  @Override
-  public String toString() {
-    return "GeoObject{"
-        + "latitude=" + latitude
-        + ", longitude=" + longitude
-        + ", radius=" + radius
-        + ", source=" + source
-        + ", accuracy=" + accuracy
+  @ovewwide
+  p-pubwic stwing tostwing() {
+    wetuwn "geoobject{"
+        + "watitude=" + w-watitude
+        + ", ^•ﻌ•^ w-wongitude=" + w-wongitude
+        + ", XD w-wadius=" + w-wadius
+        + ", :3 souwce=" + souwce
+        + ", (ꈍᴗꈍ) accuwacy=" + accuwacy
         + '}';
   }
 
   /**
-   * Convenience factory method for ingester purposes.
+   * convenience factowy method f-fow ingestew p-puwposes. :3
    */
-  public static GeoObject createForIngester(double latitude, double longitude) {
-    return new GeoObject(
-        latitude,
-        longitude,
-        // store with highest level of accuracy: POINT_LEVEL
-        GeoAddressAccuracy.POINT_LEVEL.getCode(),
-        ThriftGeoLocationSource.GEOTAG);
+  p-pubwic static geoobject cweatefowingestew(doubwe w-watitude, (U ﹏ U) doubwe wongitude) {
+    wetuwn nyew geoobject(
+        w-watitude, UwU
+        w-wongitude, 😳😳😳
+        // stowe w-with highest wevew of accuwacy: point_wevew
+        g-geoaddwessaccuwacy.point_wevew.getcode(), XD
+        t-thwiftgeowocationsouwce.geotag);
   }
 }

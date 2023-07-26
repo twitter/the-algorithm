@@ -1,69 +1,69 @@
-#":mlwf_libs",
+#":mwwf_wibs", ^^;;
 
-python37_binary(
-    name = "eval_model",
-    source = "eval_model.py",
-    dependencies = [
-        ":libs",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/light_ranking:eval_model",
+python37_binawy(
+    nyame = "evaw_modew", >_<
+    souwce = "evaw_modew.py", mya
+    d-dependencies = [
+        ":wibs",
+        "3wdpawty/python/_cwosuwes/fwigate/fwigate-pushsewvice-opensouwce/swc/main/python/modews/wight_wanking:evaw_modew", mya
+    ], 😳
+)
+
+p-python37_binawy(
+    n-nyame = "twain_modew", XD
+    s-souwce = "deep_nowm.py", :3
+    d-dependencies = [
+        ":wibs", 😳😳😳
+        "3wdpawty/python/_cwosuwes/fwigate/fwigate-pushsewvice-opensouwce/swc/main/python/modews/wight_wanking:twain_modew", -.-
+    ], ( ͡o ω ͡o )
+)
+
+p-python37_binawy(
+    nyame = "twain_modew_wocaw", rawr x3
+    s-souwce = "deep_nowm.py", nyaa~~
+    d-dependencies = [
+        ":wibs", /(^•ω•^)
+        "3wdpawty/python/_cwosuwes/fwigate/fwigate-pushsewvice-opensouwce/swc/main/python/modews/wight_wanking:twain_modew_wocaw", rawr
+        "twmw", OwO
     ],
 )
 
-python37_binary(
-    name = "train_model",
-    source = "deep_norm.py",
+python37_binawy(
+    nyame = "evaw_modew_wocaw", (U ﹏ U)
+    souwce = "evaw_modew.py", >_<
     dependencies = [
-        ":libs",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/light_ranking:train_model",
+        ":wibs", rawr x3
+        "3wdpawty/python/_cwosuwes/fwigate/fwigate-pushsewvice-opensouwce/swc/main/python/modews/wight_wanking:evaw_modew_wocaw", mya
+        "twmw", nyaa~~
     ],
 )
 
-python37_binary(
-    name = "train_model_local",
-    source = "deep_norm.py",
+python37_binawy(
+    n-nyame = "mwwf_modew", (⑅˘꒳˘)
+    souwce = "deep_nowm.py", rawr x3
     dependencies = [
-        ":libs",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/light_ranking:train_model_local",
-        "twml",
+        ":mwwf_wibs", (✿oωo)
+        "3wdpawty/python/_cwosuwes/fwigate/fwigate-pushsewvice-opensouwce/swc/main/python/modews/wight_wanking:mwwf_modew", (ˆ ﻌ ˆ)♡
+    ], (˘ω˘)
+)
+
+p-python3_wibwawy(
+    nyame = "wibs", (⑅˘꒳˘)
+    souwces = ["**/*.py"], (///ˬ///✿)
+    t-tags = ["no-mypy"], 😳😳😳
+    dependencies = [
+        "swc/python/twittew/deepbiwd/pwojects/magic_wecs/wibs", 🥺
+        "swc/python/twittew/deepbiwd/utiw/data", mya
+        "twmw:twmw-nodeps", 🥺
     ],
 )
 
-python37_binary(
-    name = "eval_model_local",
-    source = "eval_model.py",
+python3_wibwawy(
+    nyame = "mwwf_wibs", >_<
+    souwces = ["**/*.py"], >_<
+    t-tags = ["no-mypy"], (⑅˘꒳˘)
     dependencies = [
-        ":libs",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/light_ranking:eval_model_local",
-        "twml",
-    ],
-)
-
-python37_binary(
-    name = "mlwf_model",
-    source = "deep_norm.py",
-    dependencies = [
-        ":mlwf_libs",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/light_ranking:mlwf_model",
-    ],
-)
-
-python3_library(
-    name = "libs",
-    sources = ["**/*.py"],
-    tags = ["no-mypy"],
-    dependencies = [
-        "src/python/twitter/deepbird/projects/magic_recs/libs",
-        "src/python/twitter/deepbird/util/data",
-        "twml:twml-nodeps",
-    ],
-)
-
-python3_library(
-    name = "mlwf_libs",
-    sources = ["**/*.py"],
-    tags = ["no-mypy"],
-    dependencies = [
-        "src/python/twitter/deepbird/projects/magic_recs/libs",
-        "twml",
+        "swc/python/twittew/deepbiwd/pwojects/magic_wecs/wibs", /(^•ω•^)
+        "twmw", rawr x3
     ],
 )

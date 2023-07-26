@@ -1,3 +1,3 @@
-package com.twitter.representationscorer.twistlyfeatures
+package com.twittew.wepwesentationscowew.twistwyfeatuwes
 
-case class ScoreResult(id: Long, score: Option[Double])
+case cwass s-scowewesuwt(id: w-wong, OwO scowe: o-option[doubwe])

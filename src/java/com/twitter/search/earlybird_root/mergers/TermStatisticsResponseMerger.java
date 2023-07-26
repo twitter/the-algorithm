@@ -1,90 +1,90 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.twittew.seawch.eawwybiwd_woot.mewgews;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.cowwection;
+i-impowt java.utiw.wist;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.collect.Collections2;
+i-impowt c-com.googwe.common.cowwect.cowwections2;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.earlybird.FacetsResultsUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+i-impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.facetswesuwtsutiws;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwifttewmstatisticswequest;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwifttewmstatisticswesuwts;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt c-com.twittew.utiw.futuwe;
 
 /**
- * Merger class to merge termstats EarlybirdResponse objects
+ * mewgew cwass t-to mewge tewmstats eawwybiwdwesponse objects
  */
-public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(TermStatisticsResponseMerger.class);
+pubwic cwass t-tewmstatisticswesponsemewgew extends e-eawwybiwdwesponsemewgew {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(tewmstatisticswesponsemewgew.cwass);
 
-  private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_term_stats", TimeUnit.NANOSECONDS, false, true);
+  pwivate static finaw seawchtimewstats t-timew =
+      seawchtimewstats.expowt("mewge_tewm_stats", ʘwʘ timeunit.nanoseconds, (ˆ ﻌ ˆ)♡ fawse, twue);
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  pwivate s-static finaw doubwe successfuw_wesponse_thweshowd = 0.9;
 
-  public TermStatisticsResponseMerger(EarlybirdRequestContext requestContext,
-                                      List<Future<EarlybirdResponse>> responses,
-                                      ResponseAccumulator mode) {
-    super(requestContext, responses, mode);
+  pubwic t-tewmstatisticswesponsemewgew(eawwybiwdwequestcontext w-wequestcontext, 😳😳😳
+                                      w-wist<futuwe<eawwybiwdwesponse>> w-wesponses, :3
+                                      wesponseaccumuwatow mode) {
+    s-supew(wequestcontext, OwO wesponses, mode);
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return TIMER;
+  @ovewwide
+  p-pwotected seawchtimewstats getmewgedwesponsetimew() {
+    wetuwn timew;
   }
 
-  @Override
-  protected double getDefaultSuccessResponseThreshold() {
-    return SUCCESSFUL_RESPONSE_THRESHOLD;
+  @ovewwide
+  pwotected doubwe getdefauwtsuccesswesponsethweshowd() {
+    w-wetuwn successfuw_wesponse_thweshowd;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse termStatsResponse) {
-    ThriftTermStatisticsRequest termStatisticsRequest =
-        requestContext.getRequest().getTermStatisticsRequest();
+  @ovewwide
+  pwotected e-eawwybiwdwesponse i-intewnawmewge(eawwybiwdwesponse t-tewmstatswesponse) {
+    thwifttewmstatisticswequest tewmstatisticswequest =
+        wequestcontext.getwequest().gettewmstatisticswequest();
 
-    Collection<EarlybirdResponse> termStatsResults =
-        Collections2.filter(accumulatedResponses.getSuccessResponses(),
-            earlybirdResponse -> earlybirdResponse.isSetTermStatisticsResults());
+    c-cowwection<eawwybiwdwesponse> t-tewmstatswesuwts =
+        cowwections2.fiwtew(accumuwatedwesponses.getsuccesswesponses(), (U ﹏ U)
+            e-eawwybiwdwesponse -> e-eawwybiwdwesponse.issettewmstatisticswesuwts());
 
-    ThriftTermStatisticsResults results =
-        new ThriftTermResultsMerger(
-            termStatsResults,
-            termStatisticsRequest.getHistogramSettings())
-        .merge();
+    thwifttewmstatisticswesuwts w-wesuwts =
+        nyew thwifttewmwesuwtsmewgew(
+            t-tewmstatswesuwts, >w<
+            tewmstatisticswequest.gethistogwamsettings())
+        .mewge();
 
-    if (results.getTermResults().isEmpty()) {
-      final String line = "No results returned from any backend for term statistics request: {}";
+    if (wesuwts.gettewmwesuwts().isempty()) {
+      f-finaw stwing wine = "no wesuwts w-wetuwned fwom any backend f-fow tewm statistics w-wequest: {}";
 
-      // If the termstats request was not empty and we got empty results. log it as a warning
-      // otherwise log is as a debug.
-      if (termStatisticsRequest.getTermRequestsSize() > 0) {
-        LOG.warn(line, termStatisticsRequest);
-      } else {
-        LOG.debug(line, termStatisticsRequest);
+      // if the tewmstats wequest was nyot empty and we got empty wesuwts. (U ﹏ U) wog it as a wawning
+      // o-othewwise w-wog is as a debug. 😳
+      if (tewmstatisticswequest.gettewmwequestssize() > 0) {
+        w-wog.wawn(wine, (ˆ ﻌ ˆ)♡ t-tewmstatisticswequest);
+      } e-ewse {
+        wog.debug(wine, 😳😳😳 tewmstatisticswequest);
       }
     }
 
-    termStatsResponse.setTermStatisticsResults(results);
-    termStatsResponse.setSearchResults(ThriftTermResultsMerger.mergeSearchStats(termStatsResults));
+    tewmstatswesponse.settewmstatisticswesuwts(wesuwts);
+    tewmstatswesponse.setseawchwesuwts(thwifttewmwesuwtsmewgew.mewgeseawchstats(tewmstatswesuwts));
 
-    FacetsResultsUtils.fixNativePhotoUrl(results.getTermResults().values());
+    f-facetswesuwtsutiws.fixnativephotouww(wesuwts.gettewmwesuwts().vawues());
 
-    LOG.debug("TermStats call completed successfully: {}", termStatsResponse);
+    wog.debug("tewmstats caww compweted successfuwwy: {}", (U ﹏ U) tewmstatswesponse);
 
-    return termStatsResponse;
+    w-wetuwn tewmstatswesponse;
   }
 
-  @Override
-  public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                                  boolean foundEarlyTermination) {
-    // To get accurate term stats, must never early terminate
-    return false;
+  @ovewwide
+  pubwic boowean shouwdeawwytewminatetiewmewge(int t-totawwesuwtsfwomsuccessfuwshawds, (///ˬ///✿)
+                                                  b-boowean foundeawwytewmination) {
+    // t-to get accuwate tewm s-stats, 😳 must nyevew e-eawwy tewminate
+    w-wetuwn fawse;
   }
 }

@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasGeohashAndCountryCode {
-  def geohashAndCountryCode: Option[GeohashAndCountryCode]
+twait hasgeohashandcountwycode {
+  d-def g-geohashandcountwycode: o-option[geohashandcountwycode]
 }

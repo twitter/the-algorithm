@@ -1,19 +1,19 @@
-package com.twitter.timelineranker.util
+package com.twittew.timewinewankew.utiw
 
-import com.twitter.tweetypie.{thriftscala => tweetypie}
-import com.twitter.timelineranker.recap.model.ContentFeatures
+impowt com.twittew.tweetypie.{thwiftscawa => t-tweetypie}
+i-impowt com.twittew.timewinewankew.wecap.modew.contentfeatuwes
 
-object TweetAnnotationFeaturesExtractor {
-  def addAnnotationFeaturesFromTweet(
-    inputFeatures: ContentFeatures,
-    tweet: tweetypie.Tweet,
-    hydrateSemanticCoreFeatures: Boolean
-  ): ContentFeatures = {
-    if (hydrateSemanticCoreFeatures) {
-      val annotations = tweet.escherbirdEntityAnnotations.map(_.entityAnnotations)
-      inputFeatures.copy(semanticCoreAnnotations = annotations)
-    } else {
-      inputFeatures
+object t-tweetannotationfeatuwesextwactow {
+  d-def addannotationfeatuwesfwomtweet(
+    i-inputfeatuwes: c-contentfeatuwes, :3
+    t-tweet: tweetypie.tweet, (U ﹏ U)
+    h-hydwatesemanticcowefeatuwes: boowean
+  ): contentfeatuwes = {
+    if (hydwatesemanticcowefeatuwes) {
+      vaw annotations = t-tweet.eschewbiwdentityannotations.map(_.entityannotations)
+      inputfeatuwes.copy(semanticcoweannotations = annotations)
+    } e-ewse {
+      inputfeatuwes
     }
   }
 }

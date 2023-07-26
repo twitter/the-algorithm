@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasByfSeedUserIds {
-  def byfSeedUserIds: Option[Seq[Long]]
+twait hasbyfseedusewids {
+  d-def byfseedusewids: o-option[seq[wong]]
 }

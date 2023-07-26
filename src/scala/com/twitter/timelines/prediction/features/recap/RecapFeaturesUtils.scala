@@ -1,29 +1,29 @@
-package com.twitter.timelines.prediction.features.recap
+package com.twittew.timewines.pwediction.featuwes.wecap
 
-object RecapFeaturesUtils {
-  // This needs to be updated if an engagement model is added or removed from prediction service.
-  val scoreFeatureIdsMap: Map[String, Long] = Map(
-    RecapFeatures.IS_FAVORITED.getFeatureName -> RecapFeatures.PREDICTED_IS_FAVORITED.getFeatureId,
-    RecapFeatures.IS_REPLIED.getFeatureName -> RecapFeatures.PREDICTED_IS_REPLIED.getFeatureId,
-    RecapFeatures.IS_RETWEETED.getFeatureName -> RecapFeatures.PREDICTED_IS_RETWEETED.getFeatureId,
-    RecapFeatures.IS_GOOD_CLICKED_CONVO_DESC_V1.getFeatureName -> RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V1.getFeatureId,
-    RecapFeatures.IS_GOOD_CLICKED_CONVO_DESC_V2.getFeatureName -> RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V2.getFeatureId,
-//    RecapFeatures.IS_NEGATIVE_FEEDBACK_V2.getFeatureName -> RecapFeatures.PREDICTED_IS_NEGATIVE_FEEDBACK_V2.getFeatureId,
-    RecapFeatures.IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED.getFeatureName -> RecapFeatures.PREDICTED_IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED.getFeatureId,
-    RecapFeatures.IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR.getFeatureName -> RecapFeatures.PREDICTED_IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR.getFeatureId
+object wecapfeatuwesutiws {
+  // t-this nyeeds t-to be updated i-if an engagement m-modew is added o-ow wemoved fwom p-pwediction sewvice. (⑅˘꒳˘)
+  v-vaw scowefeatuweidsmap: m-map[stwing, (///ˬ///✿) wong] = map(
+    wecapfeatuwes.is_favowited.getfeatuwename -> wecapfeatuwes.pwedicted_is_favowited.getfeatuweid, 😳😳😳
+    wecapfeatuwes.is_wepwied.getfeatuwename -> wecapfeatuwes.pwedicted_is_wepwied.getfeatuweid, 🥺
+    w-wecapfeatuwes.is_wetweeted.getfeatuwename -> wecapfeatuwes.pwedicted_is_wetweeted.getfeatuweid, mya
+    wecapfeatuwes.is_good_cwicked_convo_desc_v1.getfeatuwename -> wecapfeatuwes.pwedicted_is_good_cwicked_v1.getfeatuweid, 🥺
+    w-wecapfeatuwes.is_good_cwicked_convo_desc_v2.getfeatuwename -> wecapfeatuwes.pwedicted_is_good_cwicked_v2.getfeatuweid, >_<
+//    wecapfeatuwes.is_negative_feedback_v2.getfeatuwename -> w-wecapfeatuwes.pwedicted_is_negative_feedback_v2.getfeatuweid, >_<
+    wecapfeatuwes.is_pwofiwe_cwicked_and_pwofiwe_engaged.getfeatuwename -> wecapfeatuwes.pwedicted_is_pwofiwe_cwicked_and_pwofiwe_engaged.getfeatuweid, (⑅˘꒳˘)
+    wecapfeatuwes.is_wepwied_wepwy_engaged_by_authow.getfeatuwename -> wecapfeatuwes.pwedicted_is_wepwied_wepwy_engaged_by_authow.getfeatuweid
   )
 
-  // This needs to be updated if an engagement model is added or removed from prediction service.
-  val labelFeatureIdToScoreFeatureIdsMap: Map[Long, Long] = Map(
-    RecapFeatures.IS_FAVORITED.getFeatureId -> RecapFeatures.PREDICTED_IS_FAVORITED.getFeatureId,
-    RecapFeatures.IS_REPLIED.getFeatureId -> RecapFeatures.PREDICTED_IS_REPLIED.getFeatureId,
-    RecapFeatures.IS_RETWEETED.getFeatureId -> RecapFeatures.PREDICTED_IS_RETWEETED.getFeatureId,
-    RecapFeatures.IS_GOOD_CLICKED_CONVO_DESC_V1.getFeatureId -> RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V1.getFeatureId,
-    RecapFeatures.IS_GOOD_CLICKED_CONVO_DESC_V2.getFeatureId -> RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V2.getFeatureId,
-    //    RecapFeatures.IS_NEGATIVE_FEEDBACK_V2.getFeatureName -> RecapFeatures.PREDICTED_IS_NEGATIVE_FEEDBACK_V2.getFeatureId,
-    RecapFeatures.IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED.getFeatureId -> RecapFeatures.PREDICTED_IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED.getFeatureId,
-    RecapFeatures.IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR.getFeatureId -> RecapFeatures.PREDICTED_IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR.getFeatureId
+  // t-this nyeeds to be updated if a-an engagement m-modew is added ow wemoved fwom pwediction sewvice. /(^•ω•^)
+  vaw wabewfeatuweidtoscowefeatuweidsmap: map[wong, rawr x3 w-wong] = map(
+    wecapfeatuwes.is_favowited.getfeatuweid -> wecapfeatuwes.pwedicted_is_favowited.getfeatuweid, (U ﹏ U)
+    wecapfeatuwes.is_wepwied.getfeatuweid -> wecapfeatuwes.pwedicted_is_wepwied.getfeatuweid, (U ﹏ U)
+    w-wecapfeatuwes.is_wetweeted.getfeatuweid -> wecapfeatuwes.pwedicted_is_wetweeted.getfeatuweid, (⑅˘꒳˘)
+    w-wecapfeatuwes.is_good_cwicked_convo_desc_v1.getfeatuweid -> w-wecapfeatuwes.pwedicted_is_good_cwicked_v1.getfeatuweid, òωó
+    w-wecapfeatuwes.is_good_cwicked_convo_desc_v2.getfeatuweid -> wecapfeatuwes.pwedicted_is_good_cwicked_v2.getfeatuweid, ʘwʘ
+    //    w-wecapfeatuwes.is_negative_feedback_v2.getfeatuwename -> wecapfeatuwes.pwedicted_is_negative_feedback_v2.getfeatuweid,
+    wecapfeatuwes.is_pwofiwe_cwicked_and_pwofiwe_engaged.getfeatuweid -> w-wecapfeatuwes.pwedicted_is_pwofiwe_cwicked_and_pwofiwe_engaged.getfeatuweid, /(^•ω•^)
+    wecapfeatuwes.is_wepwied_wepwy_engaged_by_authow.getfeatuweid -> wecapfeatuwes.pwedicted_is_wepwied_wepwy_engaged_by_authow.getfeatuweid
   )
 
-  val labelFeatureNames: Seq[String] = scoreFeatureIdsMap.keys.toSeq
+  v-vaw wabewfeatuwenames: seq[stwing] = scowefeatuweidsmap.keys.toseq
 }

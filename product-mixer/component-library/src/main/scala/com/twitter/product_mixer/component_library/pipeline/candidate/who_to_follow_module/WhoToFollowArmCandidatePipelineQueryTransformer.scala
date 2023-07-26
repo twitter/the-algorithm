@@ -1,72 +1,72 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.who_to_fowwow_moduwe
 
-import com.twitter.account_recommendations_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.marshaller.request.ClientContextMarshaller
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.account_wecommendations_mixew.{thwiftscawa => t-t}
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wequest.cwientcontextmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.badwequest
+impowt com.twittew.timewines.configapi.pawam
 
-object WhoToFollowArmCandidatePipelineQueryTransformer {
-  val HomeDisplayLocation = "timeline"
-  val HomeReverseChronDisplayLocation = "timeline_reverse_chron"
-  val ProfileDisplayLocation = "profile_timeline"
+object w-whotofowwowawmcandidatepipewinequewytwansfowmew {
+  vaw homedispwaywocation = "timewine"
+  vaw h-homewevewsechwondispwaywocation = "timewine_wevewse_chwon"
+  vaw p-pwofiwedispwaywocation = "pwofiwe_timewine"
 }
 
-case class WhoToFollowArmCandidatePipelineQueryTransformer[-Query <: PipelineQuery](
-  displayLocationParam: Param[String],
-  excludedUserIdsFeature: Option[Feature[PipelineQuery, Seq[Long]]],
-  profileUserIdFeature: Option[Feature[PipelineQuery, Long]])
-    extends CandidatePipelineQueryTransformer[Query, t.AccountRecommendationsMixerRequest] {
+case cwass whotofowwowawmcandidatepipewinequewytwansfowmew[-quewy <: pipewinequewy](
+  dispwaywocationpawam: p-pawam[stwing], 🥺
+  excwudedusewidsfeatuwe: option[featuwe[pipewinequewy, o.O s-seq[wong]]], /(^•ω•^)
+  p-pwofiweusewidfeatuwe: option[featuwe[pipewinequewy, nyaa~~ wong]])
+    extends candidatepipewinequewytwansfowmew[quewy, nyaa~~ t.accountwecommendationsmixewwequest] {
 
-  override def transform(input: Query): t.AccountRecommendationsMixerRequest = {
-    input.params(displayLocationParam) match {
-      case WhoToFollowArmCandidatePipelineQueryTransformer.HomeReverseChronDisplayLocation =>
-        t.AccountRecommendationsMixerRequest(
-          clientContext = ClientContextMarshaller(input.clientContext),
-          product = t.Product.HomeReverseChronWhoToFollow,
-          productContext = Some(
-            t.ProductContext.HomeReverseChronWhoToFollowProductContext(
-              t.HomeReverseChronWhoToFollowProductContext(
-                wtfReactiveContext = Some(getWhoToFollowReactiveContext(input))
+  o-ovewwide def twansfowm(input: quewy): t.accountwecommendationsmixewwequest = {
+    input.pawams(dispwaywocationpawam) match {
+      c-case whotofowwowawmcandidatepipewinequewytwansfowmew.homewevewsechwondispwaywocation =>
+        t.accountwecommendationsmixewwequest(
+          c-cwientcontext = c-cwientcontextmawshawwew(input.cwientcontext), :3
+          p-pwoduct = t-t.pwoduct.homewevewsechwonwhotofowwow, 😳😳😳
+          pwoductcontext = some(
+            t-t.pwoductcontext.homewevewsechwonwhotofowwowpwoductcontext(
+              t.homewevewsechwonwhotofowwowpwoductcontext(
+                wtfweactivecontext = s-some(getwhotofowwowweactivecontext(input))
               )))
         )
-      case WhoToFollowArmCandidatePipelineQueryTransformer.HomeDisplayLocation =>
-        t.AccountRecommendationsMixerRequest(
-          clientContext = ClientContextMarshaller(input.clientContext),
-          product = t.Product.HomeWhoToFollow,
-          productContext = Some(
-            t.ProductContext.HomeWhoToFollowProductContext(
-              t.HomeWhoToFollowProductContext(
-                wtfReactiveContext = Some(getWhoToFollowReactiveContext(input))
+      case whotofowwowawmcandidatepipewinequewytwansfowmew.homedispwaywocation =>
+        t.accountwecommendationsmixewwequest(
+          cwientcontext = cwientcontextmawshawwew(input.cwientcontext), (˘ω˘)
+          pwoduct = t.pwoduct.homewhotofowwow,
+          p-pwoductcontext = some(
+            t.pwoductcontext.homewhotofowwowpwoductcontext(
+              t.homewhotofowwowpwoductcontext(
+                w-wtfweactivecontext = s-some(getwhotofowwowweactivecontext(input))
               )))
         )
-      case WhoToFollowArmCandidatePipelineQueryTransformer.ProfileDisplayLocation =>
-        t.AccountRecommendationsMixerRequest(
-          clientContext = ClientContextMarshaller(input.clientContext),
-          product = t.Product.ProfileWhoToFollow,
-          productContext = Some(
-            t.ProductContext.ProfileWhoToFollowProductContext(t.ProfileWhoToFollowProductContext(
-              wtfReactiveContext = Some(getWhoToFollowReactiveContext(input)),
-              profileUserId = profileUserIdFeature
-                .flatMap(feature => input.features.map(_.get(feature)))
-                .getOrElse(throw PipelineFailure(BadRequest, "profileUserId not provided")),
+      c-case whotofowwowawmcandidatepipewinequewytwansfowmew.pwofiwedispwaywocation =>
+        t.accountwecommendationsmixewwequest(
+          cwientcontext = cwientcontextmawshawwew(input.cwientcontext), ^^
+          p-pwoduct = t.pwoduct.pwofiwewhotofowwow, :3
+          p-pwoductcontext = some(
+            t-t.pwoductcontext.pwofiwewhotofowwowpwoductcontext(t.pwofiwewhotofowwowpwoductcontext(
+              w-wtfweactivecontext = some(getwhotofowwowweactivecontext(input)), -.-
+              pwofiweusewid = p-pwofiweusewidfeatuwe
+                .fwatmap(featuwe => input.featuwes.map(_.get(featuwe)))
+                .getowewse(thwow p-pipewinefaiwuwe(badwequest, 😳 "pwofiweusewid nyot pwovided")), mya
             )))
         )
-      case displayLocation =>
-        throw PipelineFailure(BadRequest, s"display location $displayLocation not supported")
+      case dispwaywocation =>
+        t-thwow pipewinefaiwuwe(badwequest, (˘ω˘) s"dispway w-wocation $dispwaywocation nyot suppowted")
     }
   }
 
-  private def getWhoToFollowReactiveContext(
-    input: Query
-  ): t.WhoToFollowReactiveContext = {
-    t.WhoToFollowReactiveContext(
-      excludedUserIds = excludedUserIdsFeature.flatMap(feature =>
-        input.features
-          .map(_.get(feature))),
+  p-pwivate d-def getwhotofowwowweactivecontext(
+    input: quewy
+  ): t.whotofowwowweactivecontext = {
+    t.whotofowwowweactivecontext(
+      excwudedusewids = excwudedusewidsfeatuwe.fwatmap(featuwe =>
+        input.featuwes
+          .map(_.get(featuwe))), >_<
     )
   }
 }

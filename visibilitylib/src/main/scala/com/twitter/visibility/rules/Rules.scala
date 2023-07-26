@@ -1,315 +1,315 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.RuleParams.EnableAuthorBlocksViewerDropRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableTimelineHomePromotedTweetHealthEnforcementRules
-import com.twitter.visibility.configapi.params.RuleParams.EnableViewerIsSoftUserDropRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.PromotedTweetHealthEnforcementHoldback
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.IsQuotedInnerTweet
-import com.twitter.visibility.rules.Condition.NonAuthorViewer
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.Retweet
-import com.twitter.visibility.rules.Condition.SoftViewer
-import com.twitter.visibility.rules.Reason._
+impowt com.twittew.visibiwity.configapi.pawams.wuwepawam
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.enabweauthowbwocksviewewdwopwuwepawam
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.enabweinnewquotedtweetviewewbwocksauthowintewstitiawwuwepawam
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.enabweinnewquotedtweetviewewmutesauthowintewstitiawwuwepawam
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.enabwetimewinehomepwomotedtweetheawthenfowcementwuwes
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.enabweviewewissoftusewdwopwuwepawam
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.pwomotedtweetheawthenfowcementhowdback
+impowt com.twittew.visibiwity.wuwes.condition.and
+impowt com.twittew.visibiwity.wuwes.condition.isquotedinnewtweet
+impowt com.twittew.visibiwity.wuwes.condition.nonauthowviewew
+i-impowt com.twittew.visibiwity.wuwes.condition.not
+impowt com.twittew.visibiwity.wuwes.condition.wetweet
+impowt c-com.twittew.visibiwity.wuwes.condition.softviewew
+impowt com.twittew.visibiwity.wuwes.weason._
 
-object DropAllRule
-    extends AlwaysActRule(
-      Drop(Unspecified)
+o-object dwopawwwuwe
+    extends awwaysactwuwe(
+      dwop(unspecified)
     )
 
-object AllowAllRule
-    extends AlwaysActRule(
-      Allow
+o-object awwowawwwuwe
+    extends a-awwaysactwuwe(
+      a-awwow
     )
 
-object TestRule
-    extends AlwaysActRule(
-      Drop(Unspecified)
+object testwuwe
+    extends awwaysactwuwe(
+      dwop(unspecified)
     )
 
-object DeactivatedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(DeactivatedAuthor),
-      Condition.DeactivatedAuthor
+object d-deactivatedauthowwuwe
+    extends onwywhennotauthowviewewwuwe(
+      dwop(deactivatedauthow), òωó
+      condition.deactivatedauthow
     )
 
-object ErasedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(ErasedAuthor),
-      Condition.ErasedAuthor
+object e-ewasedauthowwuwe
+    extends o-onwywhennotauthowviewewwuwe(
+      d-dwop(ewasedauthow), 😳😳😳
+      c-condition.ewasedauthow
     )
 
-object OffboardedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(OffboardedAuthor),
-      Condition.OffboardedAuthor
+o-object offboawdedauthowwuwe
+    extends o-onwywhennotauthowviewewwuwe(
+      dwop(offboawdedauthow), σωσ
+      condition.offboawdedauthow
     )
 
-object DropNsfwUserAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Nsfw),
-      Condition.NsfwUserAuthor
+o-object dwopnsfwusewauthowwuwe
+    extends onwywhennotauthowviewewwuwe(
+      dwop(nsfw), (⑅˘꒳˘)
+      condition.nsfwusewauthow
     )
 
-object DropNsfwUserAuthorViewerOptInFilteringOnSearchRule
-    extends ViewerOptInFilteringOnSearchRule(
-      Drop(Nsfw),
-      Condition.NsfwUserAuthor
+object dwopnsfwusewauthowviewewoptinfiwtewingonseawchwuwe
+    e-extends viewewoptinfiwtewingonseawchwuwe(
+      dwop(nsfw), (///ˬ///✿)
+      c-condition.nsfwusewauthow
     )
 
-object InterstitialNsfwUserAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Nsfw),
-      Condition.NsfwUserAuthor
+o-object intewstitiawnsfwusewauthowwuwe
+    e-extends onwywhennotauthowviewewwuwe(
+      intewstitiaw(nsfw), 🥺
+      condition.nsfwusewauthow
     )
 
-object DropNsfwAdminAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Nsfw),
-      Condition.NsfwAdminAuthor
+object dwopnsfwadminauthowwuwe
+    e-extends o-onwywhennotauthowviewewwuwe(
+      dwop(nsfw), OwO
+      c-condition.nsfwadminauthow
     )
 
-object DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule
-    extends ViewerOptInFilteringOnSearchRule(
-      Drop(Nsfw),
-      Condition.NsfwAdminAuthor
+o-object dwopnsfwadminauthowviewewoptinfiwtewingonseawchwuwe
+    extends viewewoptinfiwtewingonseawchwuwe(
+      d-dwop(nsfw), >w<
+      condition.nsfwadminauthow
     )
 
-object InterstitialNsfwAdminAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Nsfw),
-      Condition.NsfwAdminAuthor
+o-object intewstitiawnsfwadminauthowwuwe
+    extends onwywhennotauthowviewewwuwe(
+      intewstitiaw(nsfw), 🥺
+      c-condition.nsfwadminauthow
     )
 
-object ProtectedAuthorDropRule
-    extends RuleWithConstantAction(
-      Drop(Reason.ProtectedAuthor),
-      And(Condition.LoggedOutOrViewerNotFollowingAuthor, Condition.ProtectedAuthor)
+object p-pwotectedauthowdwopwuwe
+    extends w-wuwewithconstantaction(
+      d-dwop(weason.pwotectedauthow), nyaa~~
+      and(condition.woggedoutowviewewnotfowwowingauthow, ^^ condition.pwotectedauthow)
     )
 
-object ProtectedAuthorTombstoneRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.Protected),
-      And(Condition.LoggedOutOrViewerNotFollowingAuthor, Condition.ProtectedAuthor)
+object pwotectedauthowtombstonewuwe
+    extends wuwewithconstantaction(
+      tombstone(epitaph.pwotected), >w<
+      a-and(condition.woggedoutowviewewnotfowwowingauthow, OwO c-condition.pwotectedauthow)
     )
 
-object DropAllProtectedAuthorRule
-    extends RuleWithConstantAction(
-      Drop(Reason.ProtectedAuthor),
-      Condition.ProtectedAuthor
+object dwopawwpwotectedauthowwuwe
+    e-extends w-wuwewithconstantaction(
+      d-dwop(weason.pwotectedauthow), XD
+      condition.pwotectedauthow
     ) {
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  ovewwide def enabwefaiwcwosed: s-seq[wuwepawam[boowean]] = seq(wuwepawams.twue)
 }
 
-object ProtectedQuoteTweetAuthorRule
-    extends RuleWithConstantAction(
-      Drop(Reason.ProtectedAuthor),
-      And(Condition.OuterAuthorNotFollowingAuthor, Condition.ProtectedAuthor)
+object pwotectedquotetweetauthowwuwe
+    extends wuwewithconstantaction(
+      dwop(weason.pwotectedauthow), ^^;;
+      and(condition.outewauthownotfowwowingauthow, 🥺 c-condition.pwotectedauthow)
     )
 
-object DropProtectedViewerIfPresentRule
-    extends RuleWithConstantAction(
-      Drop(Reason.Unspecified),
-      And(Condition.LoggedInViewer, Condition.ProtectedViewer)
+object d-dwoppwotectedviewewifpwesentwuwe
+    e-extends wuwewithconstantaction(
+      d-dwop(weason.unspecified), XD
+      and(condition.woggedinviewew, (U ᵕ U❁) c-condition.pwotectedviewew)
     ) {
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  o-ovewwide d-def enabwefaiwcwosed: s-seq[wuwepawam[boowean]] = seq(wuwepawams.twue)
 }
 
-object SuspendedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(SuspendedAuthor),
-      Condition.SuspendedAuthor
+object suspendedauthowwuwe
+    e-extends o-onwywhennotauthowviewewwuwe(
+      d-dwop(suspendedauthow), :3
+      c-condition.suspendedauthow
     )
 
-object SuspendedViewerRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Unspecified),
-      Condition.SuspendedViewer
+o-object suspendedviewewwuwe
+    extends onwywhennotauthowviewewwuwe(
+      dwop(unspecified), ( ͡o ω ͡o )
+      condition.suspendedviewew
     )
 
-object DeactivatedViewerRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Unspecified),
-      Condition.DeactivatedViewer
+o-object deactivatedviewewwuwe
+    extends onwywhennotauthowviewewwuwe(
+      dwop(unspecified), òωó
+      condition.deactivatedviewew
     )
 
-object ViewerIsUnmentionedRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerIsUnmentioned),
-      Condition.ViewerIsUnmentioned
+o-object viewewisunmentionedwuwe
+    extends onwywhennotauthowviewewwuwe(
+      dwop(weason.viewewisunmentioned), σωσ
+      condition.viewewisunmentioned
     )
 
-abstract class AuthorBlocksViewerRule(override val action: Action)
-    extends OnlyWhenNotAuthorViewerRule(
-      action,
-      Condition.AuthorBlocksViewer
+a-abstwact c-cwass authowbwocksviewewwuwe(ovewwide v-vaw action: action)
+    e-extends onwywhennotauthowviewewwuwe(
+      action, (U ᵕ U❁)
+      condition.authowbwocksviewew
     )
 
-object AuthorBlocksViewerDropRule
-    extends AuthorBlocksViewerRule(
-      Drop(Reason.AuthorBlocksViewer)
+o-object authowbwocksviewewdwopwuwe
+    e-extends authowbwocksviewewwuwe(
+      dwop(weason.authowbwocksviewew)
     )
 
-object DeciderableAuthorBlocksViewerDropRule
-    extends AuthorBlocksViewerRule(
-      Drop(Reason.AuthorBlocksViewer)
+object decidewabweauthowbwocksviewewdwopwuwe
+    extends authowbwocksviewewwuwe(
+      dwop(weason.authowbwocksviewew)
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableAuthorBlocksViewerDropRuleParam)
+  o-ovewwide def enabwed: seq[wuwepawam[boowean]] =
+    s-seq(enabweauthowbwocksviewewdwopwuwepawam)
 }
 
-object AuthorBlocksViewerTombstoneRule
-    extends AuthorBlocksViewerRule(
-      Tombstone(Epitaph.BlockedBy)
+object authowbwocksviewewtombstonewuwe
+    e-extends authowbwocksviewewwuwe(
+      t-tombstone(epitaph.bwockedby)
     )
 
-object ViewerBlocksAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerBlocksAuthor),
-      Condition.ViewerBlocksAuthor
+object viewewbwocksauthowwuwe
+    extends o-onwywhennotauthowviewewwuwe(
+      d-dwop(weason.viewewbwocksauthow), (✿oωo)
+      condition.viewewbwocksauthow
     )
 
-object ViewerBlocksAuthorViewerOptInBlockingOnSearchRule
-    extends ViewerOptInBlockingOnSearchRule(
-      Drop(Reason.ViewerBlocksAuthor),
-      Condition.ViewerBlocksAuthor
+o-object viewewbwocksauthowviewewoptinbwockingonseawchwuwe
+    e-extends viewewoptinbwockingonseawchwuwe(
+      dwop(weason.viewewbwocksauthow),
+      condition.viewewbwocksauthow
     )
 
-object ViewerMutesAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerMutesAuthor),
-      Condition.ViewerMutesAuthor
+object viewewmutesauthowwuwe
+    e-extends o-onwywhennotauthowviewewwuwe(
+      d-dwop(weason.viewewmutesauthow), ^^
+      condition.viewewmutesauthow
     )
 
-object ViewerMutesAuthorViewerOptInBlockingOnSearchRule
-    extends ViewerOptInBlockingOnSearchRule(
-      Drop(Reason.ViewerMutesAuthor),
-      Condition.ViewerMutesAuthor
+o-object viewewmutesauthowviewewoptinbwockingonseawchwuwe
+    e-extends viewewoptinbwockingonseawchwuwe(
+      d-dwop(weason.viewewmutesauthow), ^•ﻌ•^
+      condition.viewewmutesauthow
     )
 
-object AuthorBlocksOuterAuthorRule
-    extends RuleWithConstantAction(
-      Drop(Reason.AuthorBlocksViewer),
-      And(Not(Condition.IsSelfQuote), Condition.AuthorBlocksOuterAuthor)
+object authowbwocksoutewauthowwuwe
+    extends wuwewithconstantaction(
+      d-dwop(weason.authowbwocksviewew), XD
+      a-and(not(condition.issewfquote), :3 condition.authowbwocksoutewauthow)
     )
 
-object ViewerMutesAndDoesNotFollowAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerHardMutedAuthor),
-      And(Condition.ViewerMutesAuthor, Not(Condition.ViewerDoesFollowAuthor))
+object viewewmutesanddoesnotfowwowauthowwuwe
+    e-extends onwywhennotauthowviewewwuwe(
+      dwop(weason.viewewhawdmutedauthow), (ꈍᴗꈍ)
+      a-and(condition.viewewmutesauthow, :3 nyot(condition.viewewdoesfowwowauthow))
     )
 
-object AuthorBlocksViewerUnspecifiedRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.Unspecified),
-      Condition.AuthorBlocksViewer
+object authowbwocksviewewunspecifiedwuwe
+    e-extends onwywhennotauthowviewewwuwe(
+      dwop(weason.unspecified), (U ﹏ U)
+      condition.authowbwocksviewew
     )
 
-object ViewerHasMatchingMutedKeywordForNotificationsRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForNotifications
+object viewewhasmatchingmutedkeywowdfownotificationswuwe
+    extends onwywhennotauthowviewewwuwe(
+      d-dwop(weason.mutedkeywowd), UwU
+      condition.viewewhasmatchingkeywowdfownotifications
     )
 
-object ViewerHasMatchingMutedKeywordForHomeTimelineRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForHomeTimeline
+object viewewhasmatchingmutedkeywowdfowhometimewinewuwe
+    e-extends onwywhennotauthowviewewwuwe(
+      dwop(weason.mutedkeywowd), 😳😳😳
+      c-condition.viewewhasmatchingkeywowdfowhometimewine
     )
 
-trait HasPromotedTweetHealthEnforcement extends WithGate {
-  override def holdbacks: Seq[RuleParam[Boolean]] = Seq(PromotedTweetHealthEnforcementHoldback)
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableTimelineHomePromotedTweetHealthEnforcementRules)
+twait haspwomotedtweetheawthenfowcement extends withgate {
+  ovewwide def h-howdbacks: seq[wuwepawam[boowean]] = s-seq(pwomotedtweetheawthenfowcementhowdback)
+  ovewwide def enabwed: seq[wuwepawam[boowean]] = seq(
+    enabwetimewinehomepwomotedtweetheawthenfowcementwuwes)
 }
 
-object ViewerHasMatchingMutedKeywordForHomeTimelinePromotedTweetRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForHomeTimeline
+o-object viewewhasmatchingmutedkeywowdfowhometimewinepwomotedtweetwuwe
+    e-extends onwywhennotauthowviewewwuwe(
+      dwop(weason.mutedkeywowd), XD
+      condition.viewewhasmatchingkeywowdfowhometimewine
     )
-    with HasPromotedTweetHealthEnforcement
+    with haspwomotedtweetheawthenfowcement
 
-object ViewerHasMatchingMutedKeywordForTweetRepliesRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForTweetReplies
-    )
-
-object MutedKeywordForTweetRepliesInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForTweetReplies
+o-object viewewhasmatchingmutedkeywowdfowtweetwepwieswuwe
+    extends o-onwywhennotauthowviewewwuwe(
+      d-dwop(weason.mutedkeywowd), o.O
+      condition.viewewhasmatchingkeywowdfowtweetwepwies
     )
 
-object MutedKeywordForQuotedTweetTweetDetailInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.MutedKeyword),
-      And(Condition.IsQuotedInnerTweet, Condition.ViewerHasMatchingKeywordForTweetReplies)
+o-object mutedkeywowdfowtweetwepwiesintewstitiawwuwe
+    extends o-onwywhennotauthowviewewwuwe(
+      i-intewstitiaw(weason.mutedkeywowd), (⑅˘꒳˘)
+      c-condition.viewewhasmatchingkeywowdfowtweetwepwies
     )
 
-object ViewerMutesAuthorInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerMutesAuthor),
-      Condition.ViewerMutesAuthor
+object mutedkeywowdfowquotedtweettweetdetaiwintewstitiawwuwe
+    e-extends o-onwywhennotauthowviewewwuwe(
+      intewstitiaw(weason.mutedkeywowd), 😳😳😳
+      and(condition.isquotedinnewtweet, nyaa~~ c-condition.viewewhasmatchingkeywowdfowtweetwepwies)
     )
 
-object ViewerMutesAuthorInnerQuotedTweetInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerMutesAuthor),
-      And(Condition.ViewerMutesAuthor, IsQuotedInnerTweet)
+o-object viewewmutesauthowintewstitiawwuwe
+    e-extends onwywhennotauthowviewewwuwe(
+      intewstitiaw(weason.viewewmutesauthow), rawr
+      condition.viewewmutesauthow
+    )
+
+o-object viewewmutesauthowinnewquotedtweetintewstitiawwuwe
+    extends o-onwywhennotauthowviewewwuwe(
+      i-intewstitiaw(weason.viewewmutesauthow), -.-
+      and(condition.viewewmutesauthow, (✿oωo) isquotedinnewtweet)
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam)
+  ovewwide def e-enabwed: seq[wuwepawam[boowean]] =
+    s-seq(enabweinnewquotedtweetviewewmutesauthowintewstitiawwuwepawam)
 }
 
-object ViewerMutesAuthorHomeTimelinePromotedTweetRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerMutesAuthor),
-      Condition.ViewerMutesAuthor
+object v-viewewmutesauthowhometimewinepwomotedtweetwuwe
+    e-extends onwywhennotauthowviewewwuwe(
+      d-dwop(weason.viewewmutesauthow), /(^•ω•^)
+      condition.viewewmutesauthow
     )
-    with HasPromotedTweetHealthEnforcement
+    with haspwomotedtweetheawthenfowcement
 
-object ViewerBlocksAuthorInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerBlocksAuthor),
-      Condition.ViewerBlocksAuthor
+object viewewbwocksauthowintewstitiawwuwe
+    extends onwywhennotauthowviewewwuwe(
+      intewstitiaw(weason.viewewbwocksauthow), 🥺
+      c-condition.viewewbwocksauthow
     )
 
-object ViewerBlocksAuthorInnerQuotedTweetInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerBlocksAuthor),
-      And(Condition.ViewerBlocksAuthor, IsQuotedInnerTweet)
+object viewewbwocksauthowinnewquotedtweetintewstitiawwuwe
+    e-extends onwywhennotauthowviewewwuwe(
+      intewstitiaw(weason.viewewbwocksauthow), ʘwʘ
+      a-and(condition.viewewbwocksauthow, UwU isquotedinnewtweet)
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam)
+  o-ovewwide def enabwed: s-seq[wuwepawam[boowean]] =
+    s-seq(enabweinnewquotedtweetviewewbwocksauthowintewstitiawwuwepawam)
 }
 
-object ViewerBlocksAuthorHomeTimelinePromotedTweetRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerBlocksAuthor),
-      Condition.ViewerBlocksAuthor
+o-object viewewbwocksauthowhometimewinepwomotedtweetwuwe
+    e-extends onwywhennotauthowviewewwuwe(
+      d-dwop(weason.viewewbwocksauthow), XD
+      condition.viewewbwocksauthow
     )
-    with HasPromotedTweetHealthEnforcement
+    with haspwomotedtweetheawthenfowcement
 
-object ViewerReportsAuthorInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerReportedAuthor),
-      Condition.ViewerReportsAuthor
+object viewewwepowtsauthowintewstitiawwuwe
+    extends onwywhennotauthowviewewwuwe(
+      intewstitiaw(weason.viewewwepowtedauthow), (✿oωo)
+      condition.viewewwepowtsauthow
     )
 
-object ViewerIsAuthorDropRule
-    extends RuleWithConstantAction(Drop(Unspecified), Not(NonAuthorViewer))
+o-object viewewisauthowdwopwuwe
+    e-extends wuwewithconstantaction(dwop(unspecified), :3 n-nyot(nonauthowviewew))
 
-object ViewerIsNotAuthorDropRule extends RuleWithConstantAction(Drop(Unspecified), NonAuthorViewer)
+object v-viewewisnotauthowdwopwuwe extends wuwewithconstantaction(dwop(unspecified), (///ˬ///✿) nonauthowviewew)
 
-object RetweetDropRule extends RuleWithConstantAction(Drop(Unspecified), Retweet)
+object wetweetdwopwuwe e-extends w-wuwewithconstantaction(dwop(unspecified), nyaa~~ wetweet)
 
-object ViewerIsSoftUserDropRule extends RuleWithConstantAction(Drop(ViewerIsSoftUser), SoftViewer) {
+o-object viewewissoftusewdwopwuwe extends wuwewithconstantaction(dwop(viewewissoftusew), >w< softviewew) {
 
-  override val enabled: Seq[RuleParam[Boolean]] = Seq(EnableViewerIsSoftUserDropRuleParam)
+  o-ovewwide v-vaw enabwed: seq[wuwepawam[boowean]] = s-seq(enabweviewewissoftusewdwopwuwepawam)
 }

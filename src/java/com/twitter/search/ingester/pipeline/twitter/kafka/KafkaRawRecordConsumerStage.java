@@ -1,36 +1,36 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+package com.twittew.seawch.ingestew.pipewine.twittew.kafka;
 
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.apache.kafka.common.serialization.Deserializer;
+impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+i-impowt o-owg.apache.commons.pipewine.vawidation.pwoducedtypes;
+i-impowt owg.apache.kafka.common.sewiawization.desewiawizew;
 
-import com.twitter.finatra.kafka.serde.internal.BaseDeserializer;
-import com.twitter.search.ingester.model.KafkaRawRecord;
-import com.twitter.util.Time;
+i-impowt com.twittew.finatwa.kafka.sewde.intewnaw.basedesewiawizew;
+i-impowt com.twittew.seawch.ingestew.modew.kafkawawwecowd;
+i-impowt c-com.twittew.utiw.time;
 
 /**
- * Kafka consumer stage that emits the binary payload wrapped in {@code ByteArray}.
+ * kafka consumew stage that emits the binawy paywoad wwapped in {@code b-byteawway}. rawr x3
  */
-@ConsumedTypes(String.class)
-@ProducedTypes(KafkaRawRecord.class)
-public class KafkaRawRecordConsumerStage extends KafkaConsumerStage<KafkaRawRecord> {
-  public KafkaRawRecordConsumerStage() {
-    super(getDeserializer());
+@consumedtypes(stwing.cwass)
+@pwoducedtypes(kafkawawwecowd.cwass)
+pubwic cwass kafkawawwecowdconsumewstage e-extends kafkaconsumewstage<kafkawawwecowd> {
+  pubwic kafkawawwecowdconsumewstage() {
+    s-supew(getdesewiawizew());
   }
 
-  private static Deserializer<KafkaRawRecord> getDeserializer() {
-    return new BaseDeserializer<KafkaRawRecord>() {
-      @Override
-      public KafkaRawRecord deserialize(String topic, byte[] data) {
-        return new KafkaRawRecord(data, Time.now().inMillis());
+  pwivate static desewiawizew<kafkawawwecowd> getdesewiawizew() {
+    w-wetuwn nyew basedesewiawizew<kafkawawwecowd>() {
+      @ovewwide
+      pubwic k-kafkawawwecowd desewiawize(stwing t-topic, mya byte[] data) {
+        wetuwn nyew kafkawawwecowd(data, nyaa~~ time.now().inmiwwis());
       }
     };
   }
 
-  public KafkaRawRecordConsumerStage(String kafkaClientId, String kafkaTopicName,
-                                     String kafkaConsumerGroupId, String kafkaClusterPath,
-                                     String deciderKey) {
-    super(kafkaClientId, kafkaTopicName, kafkaConsumerGroupId, kafkaClusterPath, deciderKey,
-        getDeserializer());
+  pubwic kafkawawwecowdconsumewstage(stwing k-kafkacwientid, (⑅˘꒳˘) stwing kafkatopicname, rawr x3
+                                     stwing kafkaconsumewgwoupid, (✿oωo) stwing kafkacwustewpath, (ˆ ﻌ ˆ)♡
+                                     stwing decidewkey) {
+    s-supew(kafkacwientid, (˘ω˘) kafkatopicname, (⑅˘꒳˘) k-kafkaconsumewgwoupid, (///ˬ///✿) k-kafkacwustewpath, 😳😳😳 d-decidewkey, 🥺
+        g-getdesewiawizew());
   }
 }

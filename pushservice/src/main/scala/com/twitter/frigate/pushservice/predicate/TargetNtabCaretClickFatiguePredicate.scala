@@ -1,91 +1,91 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.candidate.CaretFeedbackHistory
-import com.twitter.frigate.common.candidate.FrigateHistory
-import com.twitter.frigate.common.candidate.HTLVisitHistory
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.predicate.FrigateHistoryFatiguePredicate.TimeSeries
-import com.twitter.frigate.common.predicate.ntab_caret_fatigue.NtabCaretClickFatiguePredicateHelper
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.common.util.FeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.frigate.common.predicate.{FatiguePredicate => CommonFatiguePredicate}
+impowt com.twittew.convewsions.duwationops._
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.tawgetusew
+i-impowt com.twittew.fwigate.common.candidate.cawetfeedbackhistowy
+i-impowt com.twittew.fwigate.common.candidate.fwigatehistowy
+i-impowt c-com.twittew.fwigate.common.candidate.htwvisithistowy
+i-impowt com.twittew.fwigate.common.candidate.tawgetabdecidew
+impowt com.twittew.fwigate.common.histowy.histowy
+impowt com.twittew.fwigate.common.pwedicate.fwigatehistowyfatiguepwedicate.timesewies
+impowt com.twittew.fwigate.common.pwedicate.ntab_cawet_fatigue.ntabcawetcwickfatiguepwedicatehewpew
+i-impowt com.twittew.fwigate.common.wec_types.wectypes
+impowt com.twittew.fwigate.common.utiw.featuweswitchpawams
+impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt c-com.twittew.hewmit.pwedicate.pwedicate
+impowt com.twittew.notificationsewvice.thwiftscawa.cawetfeedbackdetaiws
+impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
+impowt c-com.twittew.fwigate.common.pwedicate.{fatiguepwedicate => commonfatiguepwedicate}
 
-object TargetNtabCaretClickFatiguePredicate {
-  import NtabCaretClickFatiguePredicateHelper._
+o-object t-tawgetntabcawetcwickfatiguepwedicate {
+  impowt nytabcawetcwickfatiguepwedicatehewpew._
 
-  private val MagicRecsCategory = "MagicRecs"
+  pwivate vaw magicwecscategowy = "magicwecs"
 
-  def apply[
-    T <: TargetUser with TargetABDecider with CaretFeedbackHistory with FrigateHistory with HTLVisitHistory
+  d-def appwy[
+    t <: tawgetusew with tawgetabdecidew with cawetfeedbackhistowy w-with fwigatehistowy with h-htwvisithistowy
   ](
-    filterHistory: TimeSeries => TimeSeries =
-      CommonFatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: TargetUser with TargetABDecider with CaretFeedbackHistory => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] =
-      CaretFeedbackHistoryFilter.caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    calculateFatiguePeriod: Seq[CaretFeedbackDetails] => Duration = calculateFatiguePeriodMagicRecs,
-    useMostRecentDislikeTime: Boolean = false,
-    name: String = "NtabCaretClickFatiguePredicate"
+    f-fiwtewhistowy: t-timesewies => t-timesewies =
+      commonfatiguepwedicate.wectypesonwyfiwtew(wectypes.shawedntabcawetfatiguetypes), >_<
+    fiwtewcawetfeedbackhistowy: tawgetusew w-with tawgetabdecidew with cawetfeedbackhistowy => s-seq[
+      cawetfeedbackdetaiws
+    ] => seq[cawetfeedbackdetaiws] =
+      cawetfeedbackhistowyfiwtew.cawetfeedbackhistowyfiwtew(seq(magicwecscategowy)), -.-
+    cawcuwatefatiguepewiod: seq[cawetfeedbackdetaiws] => d-duwation = cawcuwatefatiguepewiodmagicwecs, 🥺
+    u-usemostwecentdiswiketime: b-boowean = fawse, (U ﹏ U)
+    n-nyame: stwing = "ntabcawetcwickfatiguepwedicate"
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
+    impwicit statsweceivew: statsweceivew
+  ): nyamedpwedicate[t] = {
 
-    val scopedStats = statsReceiver.scope(name)
-    val crtStats = scopedStats.scope("crt")
-    Predicate
-      .fromAsync { target: T =>
-        Future.join(target.history, target.caretFeedbacks).map {
-          case (history, Some(feedbackDetails)) => {
-            val feedbackDetailsDeduped = dedupFeedbackDetails(
-              filterCaretFeedbackHistory(target)(feedbackDetails),
-              scopedStats
+    v-vaw scopedstats = s-statsweceivew.scope(name)
+    vaw cwtstats = s-scopedstats.scope("cwt")
+    p-pwedicate
+      .fwomasync { tawget: t =>
+        f-futuwe.join(tawget.histowy, >w< tawget.cawetfeedbacks).map {
+          c-case (histowy, mya some(feedbackdetaiws)) => {
+            vaw feedbackdetaiwsdeduped = d-dedupfeedbackdetaiws(
+              fiwtewcawetfeedbackhistowy(tawget)(feedbackdetaiws), >w<
+              s-scopedstats
             )
 
-            val fatiguePeriod =
-              if (hasUserDislikeInLast30Days(feedbackDetailsDeduped) && target.params(
-                  PushFeatureSwitchParams.EnableReducedFatigueRulesForSeeLessOften)) {
-                durationToFilterMRForSeeLessOftenExpt(
-                  feedbackDetailsDeduped,
-                  target.params(FeatureSwitchParams.NumberOfDaysToFilterMRForSeeLessOften),
-                  target.params(FeatureSwitchParams.NumberOfDaysToReducePushCapForSeeLessOften),
-                  scopedStats
+            vaw f-fatiguepewiod =
+              i-if (hasusewdiswikeinwast30days(feedbackdetaiwsdeduped) && tawget.pawams(
+                  pushfeatuweswitchpawams.enabweweducedfatiguewuwesfowseewessoften)) {
+                duwationtofiwtewmwfowseewessoftenexpt(
+                  feedbackdetaiwsdeduped, nyaa~~
+                  tawget.pawams(featuweswitchpawams.numbewofdaystofiwtewmwfowseewessoften), (✿oωo)
+                  tawget.pawams(featuweswitchpawams.numbewofdaystoweducepushcapfowseewessoften), ʘwʘ
+                  scopedstats
                 )
-              } else {
-                calculateFatiguePeriod(feedbackDetailsDeduped)
+              } e-ewse {
+                c-cawcuwatefatiguepewiod(feedbackdetaiwsdeduped)
               }
 
-            val crtlist = feedbackDetailsDeduped
-              .flatMap { fd =>
-                fd.genericNotificationMetadata.map { gm =>
-                  gm.genericType.name
+            vaw cwtwist = feedbackdetaiwsdeduped
+              .fwatmap { fd =>
+                f-fd.genewicnotificationmetadata.map { g-gm =>
+                  g-gm.genewictype.name
                 }
-              }.distinct.sorted.mkString("-")
+              }.distinct.sowted.mkstwing("-")
 
-            if (fatiguePeriod > 0.days) {
-              crtStats.scope(crtlist).counter("fatigued").incr()
-            } else {
-              crtStats.scope(crtlist).counter("non_fatigued").incr()
+            if (fatiguepewiod > 0.days) {
+              cwtstats.scope(cwtwist).countew("fatigued").incw()
+            } ewse {
+              cwtstats.scope(cwtwist).countew("non_fatigued").incw()
             }
 
-            val hasRecentSent =
-              hasRecentSend(History(filterHistory(history.history.toSeq).toMap), fatiguePeriod)
-            !hasRecentSent
+            v-vaw haswecentsent =
+              haswecentsend(histowy(fiwtewhistowy(histowy.histowy.toseq).tomap), fatiguepewiod)
+            !haswecentsent
           }
-          case _ => true
+          case _ => twue
         }
       }
-      .withStats(scopedStats)
-      .withName(name)
+      .withstats(scopedstats)
+      .withname(name)
   }
 }

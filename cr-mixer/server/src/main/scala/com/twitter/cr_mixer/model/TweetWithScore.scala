@@ -1,8 +1,8 @@
-package com.twitter.cr_mixer.model
+package com.twittew.cw_mixew.modew
 
-import com.twitter.simclusters_v2.common.TweetId
+impowt com.twittew.simcwustews_v2.common.tweetid
 
 /***
- * Bind a tweetId with a raw score generated from one single Similarity Engine
+ * b-bind a-a tweetid with a-a waw scowe genewated f-fwom one s-singwe simiwawity e-engine
  */
-case class TweetWithScore(tweetId: TweetId, score: Double)
+case c-cwass tweetwithscowe(tweetid: t-tweetid, ( ͡o ω ͡o ) scowe: doubwe)

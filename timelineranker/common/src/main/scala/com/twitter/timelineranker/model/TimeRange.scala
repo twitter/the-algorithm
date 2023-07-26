@@ -1,39 +1,39 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.util.Time
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+i-impowt com.twittew.utiw.time
 
-object TimeRange {
-  val default: TimeRange = TimeRange(None, None)
+o-object timewange {
+  v-vaw defauwt: t-timewange = timewange(none, rawr x3 none)
 
-  def fromThrift(range: thrift.TimeRange): TimeRange = {
-    TimeRange(
-      from = range.fromMs.map(Time.fromMilliseconds),
-      to = range.toMs.map(Time.fromMilliseconds)
+  d-def fwomthwift(wange: t-thwift.timewange): timewange = {
+    timewange(
+      fwom = wange.fwomms.map(time.fwommiwwiseconds), mya
+      to = wange.toms.map(time.fwommiwwiseconds)
     )
   }
 }
 
-case class TimeRange(from: Option[Time], to: Option[Time]) extends TimelineRange {
+c-case cwass timewange(fwom: option[time], nyaa~~ to: option[time]) e-extends timewinewange {
 
-  throwIfInvalid()
+  t-thwowifinvawid()
 
-  def throwIfInvalid(): Unit = {
-    (from, to) match {
-      case (Some(fromTime), Some(toTime)) =>
-        require(fromTime <= toTime, "from-time must be less than or equal to-time.")
-      case _ => // valid, do nothing.
+  def thwowifinvawid(): unit = {
+    (fwom, (⑅˘꒳˘) t-to) match {
+      case (some(fwomtime), rawr x3 s-some(totime)) =>
+        w-wequiwe(fwomtime <= totime, (✿oωo) "fwom-time must be wess than ow equaw to-time.")
+      c-case _ => // vawid, (ˆ ﻌ ˆ)♡ do nyothing. (˘ω˘)
     }
   }
 
-  def toThrift: thrift.TimeRange = {
-    thrift.TimeRange(
-      fromMs = from.map(_.inMilliseconds),
-      toMs = to.map(_.inMilliseconds)
+  def tothwift: thwift.timewange = {
+    thwift.timewange(
+      f-fwomms = fwom.map(_.inmiwwiseconds), (⑅˘꒳˘)
+      t-toms = to.map(_.inmiwwiseconds)
     )
   }
 
-  def toTimelineRangeThrift: thrift.TimelineRange = {
-    thrift.TimelineRange.TimeRange(toThrift)
+  def t-totimewinewangethwift: t-thwift.timewinewange = {
+    t-thwift.timewinewange.timewange(tothwift)
   }
 }

@@ -1,254 +1,254 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.featurestore.catalog.entities.core.Author
-import com.twitter.ml.featurestore.catalog.entities.core.Tweet
-import com.twitter.ml.featurestore.catalog.entities.core.User
-import com.twitter.ml.featurestore.lib.online.FeatureStoreClient
-import com.twitter.summingbird.Producer
-import com.twitter.summingbird.storm.Storm
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron.RealTimeAggregatesJobConfig
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import java.lang.{Long => JLong}
+impowt com.twittew.finagwe.stats.countew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.mw.api.constant.shawedfeatuwes
+impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.datawecowdmewgew
+impowt c-com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.wichdatawecowd
+impowt com.twittew.mw.featuwestowe.catawog.entities.cowe.authow
+impowt com.twittew.mw.featuwestowe.catawog.entities.cowe.tweet
+i-impowt com.twittew.mw.featuwestowe.catawog.entities.cowe.usew
+impowt com.twittew.mw.featuwestowe.wib.onwine.featuwestowecwient
+i-impowt com.twittew.summingbiwd.pwoducew
+impowt com.twittew.summingbiwd.stowm.stowm
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.hewon.weawtimeaggwegatesjobconfig
+impowt com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes
+impowt java.wang.{wong => j-jwong}
 
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
+impowt com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
 
-private[real_time] object StormAggregateSourceUtils {
-  type UserId = Long
-  type AuthorId = Long
-  type TweetId = Long
+pwivate[weaw_time] object stowmaggwegatesouwceutiws {
+  type usewid = wong
+  type a-authowid = wong
+  type tweetid = wong
 
   /**
-   * Attaches a [[FeatureStoreClient]] to the underyling [[Producer]]. The FeatureStoreClient
-   * hydrates additional user features.
+   * attaches a [[featuwestowecwient]] to the undewywing [[pwoducew]]. (✿oωo) t-the featuwestowecwient
+   * hydwates additionaw u-usew featuwes. :3
    *
-   * @param underlyingProducer converts a stream of [[com.twitter.clientapp.thriftscala.LogEvent]]
-   *                           to a stream of [[DataRecord]].
+   * @pawam u-undewwyingpwoducew c-convewts a-a stweam of [[com.twittew.cwientapp.thwiftscawa.wogevent]]
+   *                           to a stweam of [[datawecowd]]. 😳
    */
-  def wrapByFeatureStoreClient(
-    underlyingProducer: Producer[Storm, Event[DataRecord]],
-    jobConfig: RealTimeAggregatesJobConfig,
-    scopedStatsReceiver: StatsReceiver
-  ): Producer[Storm, Event[DataRecord]] = {
-    lazy val keyDataRecordCounter = scopedStatsReceiver.counter("keyDataRecord")
-    lazy val keyFeatureCounter = scopedStatsReceiver.counter("keyFeature")
-    lazy val leftDataRecordCounter = scopedStatsReceiver.counter("leftDataRecord")
-    lazy val rightDataRecordCounter = scopedStatsReceiver.counter("rightDataRecord")
-    lazy val mergeNumFeaturesCounter = scopedStatsReceiver.counter("mergeNumFeatures")
-    lazy val authorKeyDataRecordCounter = scopedStatsReceiver.counter("authorKeyDataRecord")
-    lazy val authorKeyFeatureCounter = scopedStatsReceiver.counter("authorKeyFeature")
-    lazy val authorLeftDataRecordCounter = scopedStatsReceiver.counter("authorLeftDataRecord")
-    lazy val authorRightDataRecordCounter = scopedStatsReceiver.counter("authorRightDataRecord")
-    lazy val authorMergeNumFeaturesCounter = scopedStatsReceiver.counter("authorMergeNumFeatures")
-    lazy val tweetKeyDataRecordCounter =
-      scopedStatsReceiver.counter("tweetKeyDataRecord")
-    lazy val tweetKeyFeatureCounter = scopedStatsReceiver.counter("tweetKeyFeature")
-    lazy val tweetLeftDataRecordCounter =
-      scopedStatsReceiver.counter("tweetLeftDataRecord")
-    lazy val tweetRightDataRecordCounter =
-      scopedStatsReceiver.counter("tweetRightDataRecord")
-    lazy val tweetMergeNumFeaturesCounter =
-      scopedStatsReceiver.counter("tweetMergeNumFeatures")
+  d-def wwapbyfeatuwestowecwient(
+    undewwyingpwoducew: pwoducew[stowm, (U ﹏ U) e-event[datawecowd]], mya
+    jobconfig: weawtimeaggwegatesjobconfig, (U ᵕ U❁)
+    scopedstatsweceivew: statsweceivew
+  ): pwoducew[stowm, :3 event[datawecowd]] = {
+    w-wazy vaw keydatawecowdcountew = scopedstatsweceivew.countew("keydatawecowd")
+    w-wazy vaw keyfeatuwecountew = s-scopedstatsweceivew.countew("keyfeatuwe")
+    w-wazy vaw weftdatawecowdcountew = scopedstatsweceivew.countew("weftdatawecowd")
+    wazy vaw wightdatawecowdcountew = s-scopedstatsweceivew.countew("wightdatawecowd")
+    w-wazy vaw mewgenumfeatuwescountew = scopedstatsweceivew.countew("mewgenumfeatuwes")
+    w-wazy v-vaw authowkeydatawecowdcountew = scopedstatsweceivew.countew("authowkeydatawecowd")
+    w-wazy vaw authowkeyfeatuwecountew = s-scopedstatsweceivew.countew("authowkeyfeatuwe")
+    wazy vaw authowweftdatawecowdcountew = scopedstatsweceivew.countew("authowweftdatawecowd")
+    w-wazy vaw authowwightdatawecowdcountew = s-scopedstatsweceivew.countew("authowwightdatawecowd")
+    wazy vaw authowmewgenumfeatuwescountew = s-scopedstatsweceivew.countew("authowmewgenumfeatuwes")
+    w-wazy vaw tweetkeydatawecowdcountew =
+      scopedstatsweceivew.countew("tweetkeydatawecowd")
+    wazy vaw tweetkeyfeatuwecountew = scopedstatsweceivew.countew("tweetkeyfeatuwe")
+    wazy vaw tweetweftdatawecowdcountew =
+      scopedstatsweceivew.countew("tweetweftdatawecowd")
+    w-wazy v-vaw tweetwightdatawecowdcountew =
+      scopedstatsweceivew.countew("tweetwightdatawecowd")
+    w-wazy vaw tweetmewgenumfeatuwescountew =
+      s-scopedstatsweceivew.countew("tweetmewgenumfeatuwes")
 
-    @transient lazy val featureStoreClient: FeatureStoreClient =
-      FeatureStoreUtils.mkFeatureStoreClient(
-        serviceIdentifier = jobConfig.serviceIdentifier,
-        statsReceiver = scopedStatsReceiver
+    @twansient w-wazy vaw featuwestowecwient: featuwestowecwient =
+      featuwestoweutiws.mkfeatuwestowecwient(
+        sewviceidentifiew = jobconfig.sewviceidentifiew, mya
+        s-statsweceivew = scopedstatsweceivew
       )
 
-    lazy val joinUserFeaturesDataRecordProducer =
-      if (jobConfig.keyedByUserEnabled) {
-        lazy val keyedByUserFeaturesStormService: Storm#Service[Set[UserId], DataRecord] =
-          Storm.service(
-            new UserFeaturesReadableStore(
-              featureStoreClient = featureStoreClient,
-              userEntity = User,
-              userFeaturesAdapter = UserFeaturesAdapter
+    wazy vaw joinusewfeatuwesdatawecowdpwoducew =
+      if (jobconfig.keyedbyusewenabwed) {
+        wazy vaw keyedbyusewfeatuwesstowmsewvice: stowm#sewvice[set[usewid], OwO d-datawecowd] =
+          stowm.sewvice(
+            n-nyew u-usewfeatuwesweadabwestowe(
+              f-featuwestowecwient = featuwestowecwient,
+              u-usewentity = usew, (ˆ ﻌ ˆ)♡
+              u-usewfeatuwesadaptew = u-usewfeatuwesadaptew
             )
           )
 
-        leftJoinDataRecordProducer(
-          keyFeature = SharedFeatures.USER_ID,
-          leftDataRecordProducer = underlyingProducer,
-          rightStormService = keyedByUserFeaturesStormService,
-          keyDataRecordCounter = keyDataRecordCounter,
-          keyFeatureCounter = keyFeatureCounter,
-          leftDataRecordCounter = leftDataRecordCounter,
-          rightDataRecordCounter = rightDataRecordCounter,
-          mergeNumFeaturesCounter = mergeNumFeaturesCounter
+        w-weftjoindatawecowdpwoducew(
+          keyfeatuwe = shawedfeatuwes.usew_id, ʘwʘ
+          w-weftdatawecowdpwoducew = u-undewwyingpwoducew, o.O
+          w-wightstowmsewvice = k-keyedbyusewfeatuwesstowmsewvice, UwU
+          k-keydatawecowdcountew = keydatawecowdcountew, rawr x3
+          keyfeatuwecountew = keyfeatuwecountew, 🥺
+          w-weftdatawecowdcountew = weftdatawecowdcountew, :3
+          wightdatawecowdcountew = wightdatawecowdcountew, (ꈍᴗꈍ)
+          mewgenumfeatuwescountew = mewgenumfeatuwescountew
         )
-      } else {
-        underlyingProducer
+      } e-ewse {
+        undewwyingpwoducew
       }
 
-    lazy val joinAuthorFeaturesDataRecordProducer =
-      if (jobConfig.keyedByAuthorEnabled) {
-        lazy val keyedByAuthorFeaturesStormService: Storm#Service[Set[AuthorId], DataRecord] =
-          Storm.service(
-            new UserFeaturesReadableStore(
-              featureStoreClient = featureStoreClient,
-              userEntity = Author,
-              userFeaturesAdapter = AuthorFeaturesAdapter
+    wazy vaw joinauthowfeatuwesdatawecowdpwoducew =
+      i-if (jobconfig.keyedbyauthowenabwed) {
+        w-wazy v-vaw keyedbyauthowfeatuwesstowmsewvice: stowm#sewvice[set[authowid], 🥺 d-datawecowd] =
+          stowm.sewvice(
+            nyew usewfeatuwesweadabwestowe(
+              f-featuwestowecwient = f-featuwestowecwient, (✿oωo)
+              usewentity = authow, (U ﹏ U)
+              usewfeatuwesadaptew = authowfeatuwesadaptew
             )
           )
 
-        leftJoinDataRecordProducer(
-          keyFeature = TimelinesSharedFeatures.SOURCE_AUTHOR_ID,
-          leftDataRecordProducer = joinUserFeaturesDataRecordProducer,
-          rightStormService = keyedByAuthorFeaturesStormService,
-          keyDataRecordCounter = authorKeyDataRecordCounter,
-          keyFeatureCounter = authorKeyFeatureCounter,
-          leftDataRecordCounter = authorLeftDataRecordCounter,
-          rightDataRecordCounter = authorRightDataRecordCounter,
-          mergeNumFeaturesCounter = authorMergeNumFeaturesCounter
+        weftjoindatawecowdpwoducew(
+          keyfeatuwe = t-timewinesshawedfeatuwes.souwce_authow_id, :3
+          weftdatawecowdpwoducew = j-joinusewfeatuwesdatawecowdpwoducew, ^^;;
+          wightstowmsewvice = keyedbyauthowfeatuwesstowmsewvice, rawr
+          k-keydatawecowdcountew = a-authowkeydatawecowdcountew, 😳😳😳
+          keyfeatuwecountew = authowkeyfeatuwecountew,
+          w-weftdatawecowdcountew = a-authowweftdatawecowdcountew, (✿oωo)
+          wightdatawecowdcountew = a-authowwightdatawecowdcountew, OwO
+          m-mewgenumfeatuwescountew = authowmewgenumfeatuwescountew
         )
-      } else {
-        joinUserFeaturesDataRecordProducer
+      } ewse {
+        joinusewfeatuwesdatawecowdpwoducew
       }
 
-    lazy val joinTweetFeaturesDataRecordProducer = {
-      if (jobConfig.keyedByTweetEnabled) {
-        lazy val keyedByTweetFeaturesStormService: Storm#Service[Set[TweetId], DataRecord] =
-          Storm.service(
-            new TweetFeaturesReadableStore(
-              featureStoreClient = featureStoreClient,
-              tweetEntity = Tweet,
-              tweetFeaturesAdapter = TweetFeaturesAdapter
+    wazy v-vaw jointweetfeatuwesdatawecowdpwoducew = {
+      i-if (jobconfig.keyedbytweetenabwed) {
+        w-wazy vaw keyedbytweetfeatuwesstowmsewvice: stowm#sewvice[set[tweetid], ʘwʘ d-datawecowd] =
+          s-stowm.sewvice(
+            nyew t-tweetfeatuwesweadabwestowe(
+              featuwestowecwient = featuwestowecwient, (ˆ ﻌ ˆ)♡
+              tweetentity = tweet,
+              tweetfeatuwesadaptew = tweetfeatuwesadaptew
             )
           )
 
-        leftJoinDataRecordProducer(
-          keyFeature = TimelinesSharedFeatures.SOURCE_TWEET_ID,
-          leftDataRecordProducer = joinAuthorFeaturesDataRecordProducer,
-          rightStormService = keyedByTweetFeaturesStormService,
-          keyDataRecordCounter = tweetKeyDataRecordCounter,
-          keyFeatureCounter = tweetKeyFeatureCounter,
-          leftDataRecordCounter = tweetLeftDataRecordCounter,
-          rightDataRecordCounter = tweetRightDataRecordCounter,
-          mergeNumFeaturesCounter = tweetMergeNumFeaturesCounter
+        w-weftjoindatawecowdpwoducew(
+          k-keyfeatuwe = timewinesshawedfeatuwes.souwce_tweet_id, (U ﹏ U)
+          weftdatawecowdpwoducew = j-joinauthowfeatuwesdatawecowdpwoducew, UwU
+          w-wightstowmsewvice = keyedbytweetfeatuwesstowmsewvice, XD
+          keydatawecowdcountew = tweetkeydatawecowdcountew, ʘwʘ
+          k-keyfeatuwecountew = tweetkeyfeatuwecountew, rawr x3
+          weftdatawecowdcountew = tweetweftdatawecowdcountew, ^^;;
+          wightdatawecowdcountew = t-tweetwightdatawecowdcountew, ʘwʘ
+          mewgenumfeatuwescountew = tweetmewgenumfeatuwescountew
         )
-      } else {
-        joinAuthorFeaturesDataRecordProducer
+      } e-ewse {
+        j-joinauthowfeatuwesdatawecowdpwoducew
       }
     }
 
-    joinTweetFeaturesDataRecordProducer
+    jointweetfeatuwesdatawecowdpwoducew
   }
 
-  private[this] lazy val DataRecordMerger = new DataRecordMerger
+  pwivate[this] wazy v-vaw datawecowdmewgew = n-nyew datawecowdmewgew
 
   /**
-   * Make join key from the client event data record and return both.
-   * @param keyFeature Feature to extract join key value: USER_ID, SOURCE_TWEET_ID, etc.
-   * @param record DataRecord containing client engagement and basic tweet-side features
-   * @return The return type is a tuple of this key and original data record which will be used
-   *         in the subsequent leftJoin operation.
+   * make join key fwom the cwient event data w-wecowd and wetuwn both. (U ﹏ U)
+   * @pawam k-keyfeatuwe featuwe to extwact join key vawue: usew_id, (˘ω˘) souwce_tweet_id, e-etc. (ꈍᴗꈍ)
+   * @pawam wecowd datawecowd c-containing cwient e-engagement and basic tweet-side f-featuwes
+   * @wetuwn the wetuwn t-type is a tupwe o-of this key a-and owiginaw data wecowd which wiww b-be used
+   *         i-in the subsequent weftjoin opewation. /(^•ω•^)
    */
-  private[this] def mkKey(
-    keyFeature: Feature[JLong],
-    record: DataRecord,
-    keyDataRecordCounter: Counter,
-    keyFeatureCounter: Counter
-  ): Set[Long] = {
-    keyDataRecordCounter.incr()
-    val richRecord = new RichDataRecord(record)
-    if (richRecord.hasFeature(keyFeature)) {
-      keyFeatureCounter.incr()
-      val key: Long = richRecord.getFeatureValue(keyFeature).toLong
-      Set(key)
-    } else {
-      Set.empty[Long]
+  p-pwivate[this] d-def mkkey(
+    k-keyfeatuwe: featuwe[jwong], >_<
+    wecowd: datawecowd, σωσ
+    k-keydatawecowdcountew: countew, ^^;;
+    keyfeatuwecountew: c-countew
+  ): set[wong] = {
+    k-keydatawecowdcountew.incw()
+    vaw wichwecowd = nyew wichdatawecowd(wecowd)
+    if (wichwecowd.hasfeatuwe(keyfeatuwe)) {
+      k-keyfeatuwecountew.incw()
+      v-vaw key: wong = w-wichwecowd.getfeatuwevawue(keyfeatuwe).towong
+      s-set(key)
+    } ewse {
+      s-set.empty[wong]
     }
   }
 
   /**
-   * After the leftJoin, merge the client event data record and the joined data record
-   * into a single data record used for further aggregation.
+   * aftew the weftjoin, 😳 mewge the cwient event data wecowd and the joined data w-wecowd
+   * into a singwe data w-wecowd used fow fuwthew aggwegation. >_<
    */
-  private[this] def mergeDataRecord(
-    leftRecord: Event[DataRecord],
-    rightRecordOpt: Option[DataRecord],
-    leftDataRecordCounter: Counter,
-    rightDataRecordCounter: Counter,
-    mergeNumFeaturesCounter: Counter
-  ): Event[DataRecord] = {
-    leftDataRecordCounter.incr()
-    rightRecordOpt.foreach { rightRecord =>
-      rightDataRecordCounter.incr()
-      DataRecordMerger.merge(leftRecord.event, rightRecord)
-      mergeNumFeaturesCounter.incr(new RichDataRecord(leftRecord.event).numFeatures())
+  p-pwivate[this] def mewgedatawecowd(
+    w-weftwecowd: event[datawecowd], -.-
+    w-wightwecowdopt: o-option[datawecowd], UwU
+    weftdatawecowdcountew: c-countew, :3
+    w-wightdatawecowdcountew: c-countew,
+    mewgenumfeatuwescountew: countew
+  ): event[datawecowd] = {
+    weftdatawecowdcountew.incw()
+    wightwecowdopt.foweach { wightwecowd =>
+      wightdatawecowdcountew.incw()
+      d-datawecowdmewgew.mewge(weftwecowd.event, σωσ w-wightwecowd)
+      m-mewgenumfeatuwescountew.incw(new wichdatawecowd(weftwecowd.event).numfeatuwes())
     }
-    leftRecord
+    w-weftwecowd
   }
 
-  private[this] def leftJoinDataRecordProducer(
-    keyFeature: Feature[JLong],
-    leftDataRecordProducer: Producer[Storm, Event[DataRecord]],
-    rightStormService: Storm#Service[Set[Long], DataRecord],
-    keyDataRecordCounter: => Counter,
-    keyFeatureCounter: => Counter,
-    leftDataRecordCounter: => Counter,
-    rightDataRecordCounter: => Counter,
-    mergeNumFeaturesCounter: => Counter
-  ): Producer[Storm, Event[DataRecord]] = {
-    val keyedLeftDataRecordProducer: Producer[Storm, (Set[Long], Event[DataRecord])] =
-      leftDataRecordProducer.map {
-        case dataRecord: HomeEvent[DataRecord] =>
-          val key = mkKey(
-            keyFeature = keyFeature,
-            record = dataRecord.event,
-            keyDataRecordCounter = keyDataRecordCounter,
-            keyFeatureCounter = keyFeatureCounter
+  pwivate[this] def weftjoindatawecowdpwoducew(
+    keyfeatuwe: f-featuwe[jwong], >w<
+    w-weftdatawecowdpwoducew: pwoducew[stowm, (ˆ ﻌ ˆ)♡ e-event[datawecowd]], ʘwʘ
+    wightstowmsewvice: stowm#sewvice[set[wong], :3 d-datawecowd], (˘ω˘)
+    k-keydatawecowdcountew: => countew, 😳😳😳
+    k-keyfeatuwecountew: => countew, rawr x3
+    w-weftdatawecowdcountew: => countew, (✿oωo)
+    wightdatawecowdcountew: => countew, (ˆ ﻌ ˆ)♡
+    mewgenumfeatuwescountew: => c-countew
+  ): p-pwoducew[stowm, :3 e-event[datawecowd]] = {
+    vaw k-keyedweftdatawecowdpwoducew: p-pwoducew[stowm, (U ᵕ U❁) (set[wong], ^^;; event[datawecowd])] =
+      w-weftdatawecowdpwoducew.map {
+        c-case datawecowd: homeevent[datawecowd] =>
+          v-vaw key = mkkey(
+            k-keyfeatuwe = keyfeatuwe, mya
+            w-wecowd = datawecowd.event, 😳😳😳
+            keydatawecowdcountew = keydatawecowdcountew, OwO
+            k-keyfeatuwecountew = keyfeatuwecountew
           )
-          (key, dataRecord)
-        case dataRecord: ProfileEvent[DataRecord] =>
-          val key = Set.empty[Long]
-          (key, dataRecord)
-        case dataRecord: SearchEvent[DataRecord] =>
-          val key = Set.empty[Long]
-          (key, dataRecord)
-        case dataRecord: UuaEvent[DataRecord] =>
-          val key = Set.empty[Long]
-          (key, dataRecord)
+          (key, rawr d-datawecowd)
+        c-case datawecowd: pwofiweevent[datawecowd] =>
+          v-vaw key = set.empty[wong]
+          (key, XD datawecowd)
+        case d-datawecowd: seawchevent[datawecowd] =>
+          v-vaw key = set.empty[wong]
+          (key, d-datawecowd)
+        case datawecowd: uuaevent[datawecowd] =>
+          vaw key = set.empty[wong]
+          (key, (U ﹏ U) datawecowd)
       }
 
-    keyedLeftDataRecordProducer
-      .leftJoin(rightStormService)
+    k-keyedweftdatawecowdpwoducew
+      .weftjoin(wightstowmsewvice)
       .map {
-        case (_, (leftRecord, rightRecordOpt)) =>
-          mergeDataRecord(
-            leftRecord = leftRecord,
-            rightRecordOpt = rightRecordOpt,
-            leftDataRecordCounter = leftDataRecordCounter,
-            rightDataRecordCounter = rightDataRecordCounter,
-            mergeNumFeaturesCounter = mergeNumFeaturesCounter
+        case (_, (˘ω˘) (weftwecowd, UwU wightwecowdopt)) =>
+          m-mewgedatawecowd(
+            w-weftwecowd = weftwecowd,
+            w-wightwecowdopt = wightwecowdopt, >_<
+            weftdatawecowdcountew = w-weftdatawecowdcountew, σωσ
+            w-wightdatawecowdcountew = wightdatawecowdcountew, 🥺
+            mewgenumfeatuwescountew = m-mewgenumfeatuwescountew
           )
       }
   }
 
   /**
-   * Filter Unified User Actions events to include only actions that has home timeline visit prior to landing on the page
+   * fiwtew unified usew a-actions events t-to incwude onwy actions that has h-home timewine visit pwiow to wanding o-on the page
    */
-  def isUuaBCEEventsFromHome(event: UnifiedUserAction): Boolean = {
-    def breadcrumbViewsContain(view: String): Boolean =
-      event.eventMetadata.breadcrumbViews.map(_.contains(view)).getOrElse(false)
+  d-def isuuabceeventsfwomhome(event: u-unifiedusewaction): boowean = {
+    def bweadcwumbviewscontain(view: stwing): boowean =
+      event.eventmetadata.bweadcwumbviews.map(_.contains(view)).getowewse(fawse)
 
-    (event.actionType) match {
-      case ActionType.ClientTweetV2Impression if breadcrumbViewsContain("home") =>
-        true
-      case ActionType.ClientTweetVideoFullscreenV2Impression
-          if (breadcrumbViewsContain("home") & breadcrumbViewsContain("video")) =>
-        true
-      case ActionType.ClientProfileV2Impression if breadcrumbViewsContain("home") =>
-        true
-      case _ => false
+    (event.actiontype) match {
+      case actiontype.cwienttweetv2impwession if bweadcwumbviewscontain("home") =>
+        twue
+      case actiontype.cwienttweetvideofuwwscweenv2impwession
+          if (bweadcwumbviewscontain("home") & bweadcwumbviewscontain("video")) =>
+        t-twue
+      c-case actiontype.cwientpwofiwev2impwession if bweadcwumbviewscontain("home") =>
+        twue
+      case _ => f-fawse
     }
   }
 }

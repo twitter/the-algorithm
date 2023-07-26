@@ -1,182 +1,182 @@
-package com.twitter.search.earlybird.util;
+package com.twittew.seawch.eawwybiwd.utiw;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+impowt j-java.utiw.wist;
+i-impowt java.utiw.map;
+i-impowt java.utiw.set;
 
-import javax.annotation.Nullable;
+impowt j-javax.annotation.nuwwabwe;
 
-import com.google.common.collect.ImmutableMap;
+i-impowt com.googwe.common.cowwect.immutabwemap;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.common.util.earlybird.ResultsUtil;
-import com.twitter.search.common.util.earlybird.ThriftSearchResultUtil;
-import com.twitter.search.common.util.earlybird.ThriftSearchResultsRelevanceStatsUtil;
-import com.twitter.search.core.earlybird.facets.LanguageHistogram;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.search.Hit;
-import com.twitter.search.earlybird.search.SearchResultsInfo;
-import com.twitter.search.earlybird.search.SimpleSearchResults;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultDebugInfo;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+i-impowt com.twittew.seawch.common.constants.thwiftjava.thwiftwanguage;
+i-impowt com.twittew.seawch.common.database.databaseconfig;
+i-impowt com.twittew.seawch.common.quewy.thwiftjava.eawwytewminationinfo;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.wesuwtsutiw;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.thwiftseawchwesuwtutiw;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.thwiftseawchwesuwtswewevancestatsutiw;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.wanguagehistogwam;
+impowt com.twittew.seawch.eawwybiwd.pawtition.pawtitionconfig;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.hit;
+impowt com.twittew.seawch.eawwybiwd.seawch.seawchwesuwtsinfo;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.simpweseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd.seawch.wewevance.wewevanceseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtdebuginfo;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtmetadata;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwtswewevancestats;
 
-// EarlybirdSearchResultUtil contains some simple static methods for constructing
-// ThriftSearchResult objects.
-public final class EarlybirdSearchResultUtil {
-  public static final double MIN_LANGUAGE_RATIO_TO_KEEP = 0.002;
+// eawwybiwdseawchwesuwtutiw contains some simpwe static methods f-fow constwucting
+// thwiftseawchwesuwt objects. XD
+pubwic finaw cwass eawwybiwdseawchwesuwtutiw {
+  p-pubwic static finaw doubwe min_wanguage_watio_to_keep = 0.002;
 
-  private EarlybirdSearchResultUtil() { }
+  p-pwivate eawwybiwdseawchwesuwtutiw() { }
 
   /**
-   * Update result stats on the ThriftSearchResult.
+   * u-update wesuwt s-stats on the t-thwiftseawchwesuwt. o.O
    */
-  public static void setResultStatistics(ThriftSearchResults results, SearchResultsInfo info) {
-    results.setNumHitsProcessed(info.getNumHitsProcessed());
-    results.setNumPartitionsEarlyTerminated(info.isEarlyTerminated() ? 1 : 0);
-    if (info.isSetSearchedStatusIDs()) {
-      results.setMaxSearchedStatusID(info.getMaxSearchedStatusID());
-      results.setMinSearchedStatusID(info.getMinSearchedStatusID());
+  pubwic static void setwesuwtstatistics(thwiftseawchwesuwts w-wesuwts, mya seawchwesuwtsinfo info) {
+    w-wesuwts.setnumhitspwocessed(info.getnumhitspwocessed());
+    wesuwts.setnumpawtitionseawwytewminated(info.iseawwytewminated() ? 1 : 0);
+    if (info.issetseawchedstatusids()) {
+      wesuwts.setmaxseawchedstatusid(info.getmaxseawchedstatusid());
+      wesuwts.setminseawchedstatusid(info.getminseawchedstatusid());
     }
 
-    if (info.isSetSearchedTimes()) {
-      results.setMaxSearchedTimeSinceEpoch(info.getMaxSearchedTime());
-      results.setMinSearchedTimeSinceEpoch(info.getMinSearchedTime());
+    if (info.issetseawchedtimes()) {
+      w-wesuwts.setmaxseawchedtimesinceepoch(info.getmaxseawchedtime());
+      wesuwts.setminseawchedtimesinceepoch(info.getminseawchedtime());
     }
   }
 
   /**
-   * Create an EarlyTerminationInfo based on information inside a SearchResultsInfo.
+   * c-cweate a-an eawwytewminationinfo b-based on infowmation inside a seawchwesuwtsinfo.
    */
-  public static EarlyTerminationInfo prepareEarlyTerminationInfo(SearchResultsInfo info) {
-    EarlyTerminationInfo earlyTerminationInfo = new EarlyTerminationInfo(info.isEarlyTerminated());
-    if (info.isEarlyTerminated()) {
-      earlyTerminationInfo.setEarlyTerminationReason(info.getEarlyTerminationReason());
+  pubwic static e-eawwytewminationinfo p-pwepaweeawwytewminationinfo(seawchwesuwtsinfo info) {
+    e-eawwytewminationinfo e-eawwytewminationinfo = nyew e-eawwytewminationinfo(info.iseawwytewminated());
+    if (info.iseawwytewminated()) {
+      e-eawwytewminationinfo.seteawwytewminationweason(info.geteawwytewminationweason());
     }
-    return earlyTerminationInfo;
+    wetuwn eawwytewminationinfo;
   }
 
   /**
-   * Populate language histogram inside ThriftSerachResults.
+   * popuwate wanguage h-histogwam inside thwiftsewachwesuwts. 🥺
    */
-  public static void setLanguageHistogram(ThriftSearchResults results,
-                                          LanguageHistogram languageHistogram) {
+  p-pubwic static void setwanguagehistogwam(thwiftseawchwesuwts w-wesuwts,
+                                          w-wanguagehistogwam wanguagehistogwam) {
     int sum = 0;
-    for (int value : languageHistogram.getLanguageHistogram()) {
-      sum += value;
+    fow (int vawue : wanguagehistogwam.getwanguagehistogwam()) {
+      sum += vawue;
     }
     if (sum == 0) {
-      return;
+      w-wetuwn;
     }
-    ImmutableMap.Builder<ThriftLanguage, Integer> builder = ImmutableMap.builder();
-    int threshold = (int) (sum * MIN_LANGUAGE_RATIO_TO_KEEP);
-    for (Map.Entry<ThriftLanguage, Integer> entry : languageHistogram.getLanguageHistogramAsMap()
-                                                                     .entrySet()) {
-      if (entry.getValue() > threshold) {
-        builder.put(entry.getKey(), entry.getValue());
+    i-immutabwemap.buiwdew<thwiftwanguage, ^^;; integew> b-buiwdew = immutabwemap.buiwdew();
+    i-int thweshowd = (int) (sum * m-min_wanguage_watio_to_keep);
+    fow (map.entwy<thwiftwanguage, :3 integew> entwy : wanguagehistogwam.getwanguagehistogwamasmap()
+                                                                     .entwyset()) {
+      i-if (entwy.getvawue() > thweshowd) {
+        buiwdew.put(entwy.getkey(), (U ﹏ U) entwy.getvawue());
       }
     }
-    Map<ThriftLanguage, Integer> langCounts = builder.build();
-    if (langCounts.size() > 0) {
-      results.setLanguageHistogram(langCounts);
+    map<thwiftwanguage, OwO i-integew> wangcounts = b-buiwdew.buiwd();
+    i-if (wangcounts.size() > 0) {
+      w-wesuwts.setwanguagehistogwam(wangcounts);
     }
   }
 
-  private static void addDebugInfoToResults(List<ThriftSearchResult> resultArray,
-                                            @Nullable PartitionConfig partitionConfig) {
-    if (partitionConfig == null) {
-      return;
+  pwivate static v-void adddebuginfotowesuwts(wist<thwiftseawchwesuwt> w-wesuwtawway, 😳😳😳
+                                            @nuwwabwe p-pawtitionconfig p-pawtitionconfig) {
+    if (pawtitionconfig == nyuww) {
+      w-wetuwn;
     }
-    ThriftSearchResultDebugInfo debugInfo = new ThriftSearchResultDebugInfo();
-    debugInfo.setHostname(DatabaseConfig.getLocalHostname());
-    // These info can also come from EarlybirdServer.get().getPartitionConfig() if we add such a
-    // getter for partitionConfig().
-    debugInfo.setPartitionId(partitionConfig.getIndexingHashPartitionID());
-    debugInfo.setTiername(partitionConfig.getTierName());
-    debugInfo.setClusterName(partitionConfig.getClusterName());
+    t-thwiftseawchwesuwtdebuginfo d-debuginfo = n-nyew thwiftseawchwesuwtdebuginfo();
+    d-debuginfo.sethostname(databaseconfig.getwocawhostname());
+    // these info can awso come fwom eawwybiwdsewvew.get().getpawtitionconfig() i-if we add such a
+    // gettew fow pawtitionconfig(). (ˆ ﻌ ˆ)♡
+    debuginfo.setpawtitionid(pawtitionconfig.getindexinghashpawtitionid());
+    debuginfo.settiewname(pawtitionconfig.gettiewname());
+    debuginfo.setcwustewname(pawtitionconfig.getcwustewname());
 
-    for (ThriftSearchResult result : resultArray) {
-      result.setDebugInfo(debugInfo);
+    f-fow (thwiftseawchwesuwt wesuwt : wesuwtawway) {
+      wesuwt.setdebuginfo(debuginfo);
     }
   }
 
   /**
-   * Write results into the result array.
-   * @param resultArray the result array to write into.
-   * @param hits the hits from the search.
-   * @param partitionConfig partition config used to fill in debug info. Pass in null if no debug
-   * info should be written into results.
+   * wwite w-wesuwts into t-the wesuwt awway. XD
+   * @pawam w-wesuwtawway the wesuwt awway to w-wwite into. (ˆ ﻌ ˆ)♡
+   * @pawam hits the h-hits fwom the seawch. ( ͡o ω ͡o )
+   * @pawam p-pawtitionconfig pawtition config used to fiww in debug info. rawr x3 pass in nyuww if nyo debug
+   * i-info shouwd be wwitten into wesuwts. nyaa~~
    */
-  public static void prepareResultsArray(List<ThriftSearchResult> resultArray,
-                                         SimpleSearchResults hits,
-                                         @Nullable PartitionConfig partitionConfig) {
-    for (int i = 0; i < hits.numHits(); i++) {
-      final Hit hit = hits.getHit(i);
-      final long id = hit.getStatusID();
-      final ThriftSearchResult result = new ThriftSearchResult(id);
-      final ThriftSearchResultMetadata resultMetadata = hit.getMetadata();
-      result.setMetadata(resultMetadata);
-      resultArray.add(result);
+  p-pubwic static void p-pwepawewesuwtsawway(wist<thwiftseawchwesuwt> w-wesuwtawway,
+                                         simpweseawchwesuwts hits, >_<
+                                         @nuwwabwe p-pawtitionconfig p-pawtitionconfig) {
+    fow (int i-i = 0; i < hits.numhits(); i-i++) {
+      finaw hit hit = hits.gethit(i);
+      finaw wong id = hit.getstatusid();
+      f-finaw thwiftseawchwesuwt w-wesuwt = nyew thwiftseawchwesuwt(id);
+      f-finaw thwiftseawchwesuwtmetadata w-wesuwtmetadata = h-hit.getmetadata();
+      wesuwt.setmetadata(wesuwtmetadata);
+      w-wesuwtawway.add(wesuwt);
     }
-    addDebugInfoToResults(resultArray, partitionConfig);
+    adddebuginfotowesuwts(wesuwtawway, ^^;; pawtitionconfig);
   }
 
   /**
-   * Write results into the result array.
-   * @param resultArray the result array to write into.
-   * @param hits the hits from the search.
-   * @param userIDWhitelist Used to set flag ThriftSearchResultMetadata.dontFilterUser.
-   * @param partitionConfig partition config used to fill in debug info. Pass in null if no debug
-   * info should be written into results.
+   * wwite wesuwts into the w-wesuwt awway. (ˆ ﻌ ˆ)♡
+   * @pawam w-wesuwtawway the wesuwt awway to wwite i-into. ^^;;
+   * @pawam h-hits the hits fwom the seawch. (⑅˘꒳˘)
+   * @pawam usewidwhitewist used t-to set fwag thwiftseawchwesuwtmetadata.dontfiwtewusew. rawr x3
+   * @pawam pawtitionconfig pawtition config used to fiww in debug info. (///ˬ///✿) p-pass in nyuww if nyo debug
+   * info shouwd be w-wwitten into wesuwts. 🥺
    */
-  public static void prepareRelevanceResultsArray(List<ThriftSearchResult> resultArray,
-                                                  RelevanceSearchResults hits,
-                                                  Set<Long> userIDWhitelist,
-                                                  @Nullable PartitionConfig partitionConfig) {
-    for (int i = 0; i < hits.numHits(); i++) {
-      final long id = hits.getHit(i).getStatusID();
-      final ThriftSearchResult result = new ThriftSearchResult(id);
-      final ThriftSearchResultMetadata resultMetadata = hits.resultMetadata[i];
-      result.setMetadata(resultMetadata);
-      if (userIDWhitelist != null) {
-        resultMetadata.setDontFilterUser(userIDWhitelist.contains(resultMetadata.getFromUserId()));
+  pubwic s-static void pwepawewewevancewesuwtsawway(wist<thwiftseawchwesuwt> wesuwtawway, >_<
+                                                  wewevanceseawchwesuwts h-hits,
+                                                  s-set<wong> usewidwhitewist, UwU
+                                                  @nuwwabwe pawtitionconfig pawtitionconfig) {
+    f-fow (int i = 0; i < hits.numhits(); i-i++) {
+      finaw wong id = hits.gethit(i).getstatusid();
+      finaw thwiftseawchwesuwt w-wesuwt = nyew thwiftseawchwesuwt(id);
+      f-finaw t-thwiftseawchwesuwtmetadata wesuwtmetadata = hits.wesuwtmetadata[i];
+      w-wesuwt.setmetadata(wesuwtmetadata);
+      if (usewidwhitewist != nyuww) {
+        w-wesuwtmetadata.setdontfiwtewusew(usewidwhitewist.contains(wesuwtmetadata.getfwomusewid()));
       }
 
-      resultArray.add(result);
+      w-wesuwtawway.add(wesuwt);
     }
-    addDebugInfoToResults(resultArray, partitionConfig);
+    a-adddebuginfotowesuwts(wesuwtawway, >_< pawtitionconfig);
   }
 
   /**
-   * Merge a List of ThriftSearchResults into a single ThriftSearchResults object.
+   * m-mewge a wist o-of thwiftseawchwesuwts into a singwe thwiftseawchwesuwts o-object. -.-
    */
-  public static ThriftSearchResults mergeSearchResults(List<ThriftSearchResults> allSearchResults) {
-    ThriftSearchResults mergedResults = new ThriftSearchResults();
-    mergedResults.setRelevanceStats(new ThriftSearchResultsRelevanceStats());
+  p-pubwic s-static thwiftseawchwesuwts mewgeseawchwesuwts(wist<thwiftseawchwesuwts> awwseawchwesuwts) {
+    t-thwiftseawchwesuwts mewgedwesuwts = n-nyew thwiftseawchwesuwts();
+    m-mewgedwesuwts.setwewevancestats(new thwiftseawchwesuwtswewevancestats());
 
-    mergedResults.setHitCounts(ResultsUtil.aggregateCountMap(allSearchResults,
-        ThriftSearchResultUtil.HIT_COUNTS_MAP_GETTER));
+    mewgedwesuwts.sethitcounts(wesuwtsutiw.aggwegatecountmap(awwseawchwesuwts, mya
+        thwiftseawchwesuwtutiw.hit_counts_map_gettew));
 
-    mergedResults.setLanguageHistogram(ResultsUtil.aggregateCountMap(allSearchResults,
-        ThriftSearchResultUtil.LANG_MAP_GETTER));
+    m-mewgedwesuwts.setwanguagehistogwam(wesuwtsutiw.aggwegatecountmap(awwseawchwesuwts,
+        t-thwiftseawchwesuwtutiw.wang_map_gettew));
 
-    for (ThriftSearchResults searchResults : allSearchResults) {
-      // Add results
-      mergedResults.getResults().addAll(searchResults.getResults());
-      // Update counts
-      ThriftSearchResultUtil.incrementCounts(mergedResults, searchResults);
-      // Update relevance stats
-      if (searchResults.getRelevanceStats() != null) {
-        ThriftSearchResultsRelevanceStatsUtil.addRelevanceStats(mergedResults.getRelevanceStats(),
-            searchResults.getRelevanceStats());
+    f-fow (thwiftseawchwesuwts s-seawchwesuwts : awwseawchwesuwts) {
+      // a-add wesuwts
+      mewgedwesuwts.getwesuwts().addaww(seawchwesuwts.getwesuwts());
+      // update counts
+      thwiftseawchwesuwtutiw.incwementcounts(mewgedwesuwts, >w< seawchwesuwts);
+      // update wewevance stats
+      i-if (seawchwesuwts.getwewevancestats() != nyuww) {
+        thwiftseawchwesuwtswewevancestatsutiw.addwewevancestats(mewgedwesuwts.getwewevancestats(), (U ﹏ U)
+            s-seawchwesuwts.getwewevancestats());
       }
     }
 
-    return mergedResults;
+    wetuwn m-mewgedwesuwts;
   }
 }

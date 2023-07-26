@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.param
+package com.twittew.home_mixew.pawam
 
-import com.twitter.home_mixer.param.HomeGlobalParams._
-import com.twitter.product_mixer.core.functional_component.configapi.registry.GlobalParamConfig
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.pawam.homegwobawpawams._
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.wegistwy.gwobawpawamconfig
+i-impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * Register Params that do not relate to a specific product. See GlobalParamConfig -> ParamConfig
- * for hooks to register Params based on type.
+ * w-wegistew p-pawams that d-do nyot wewate to a specific pwoduct. /(^•ω•^) see gwobawpawamconfig -> pawamconfig
+ * fow hooks to wegistew p-pawams based on type. rawr
  */
-@Singleton
-class HomeGlobalParamConfig @Inject() () extends GlobalParamConfig {
+@singweton
+cwass h-homegwobawpawamconfig @inject() () extends gwobawpawamconfig {
 
-  override val booleanFSOverrides = Seq(
-    AdsDisableInjectionBasedOnUserRoleParam,
-    EnableAdvertiserBrandSafetySettingsFeatureHydratorParam,
-    EnableImpressionBloomFilter,
-    EnableNahFeedbackInfoParam,
-    EnableNewTweetsPillAvatarsParam,
-    EnableScribeServedCandidatesParam,
-    EnableSendScoresToClient,
-    EnableSocialContextParam,
+  o-ovewwide vaw booweanfsovewwides = seq(
+    adsdisabweinjectionbasedonusewwowepawam, OwO
+    enabweadvewtisewbwandsafetysettingsfeatuwehydwatowpawam, (U ﹏ U)
+    e-enabweimpwessionbwoomfiwtew, >_<
+    enabwenahfeedbackinfopawam, rawr x3
+    e-enabwenewtweetspiwwavatawspawam, mya
+    e-enabwescwibesewvedcandidatespawam, nyaa~~
+    enabwesendscowestocwient, (⑅˘꒳˘)
+    enabwesociawcontextpawam, rawr x3
   )
 
-  override val boundedIntFSOverrides = Seq(
-    MaxNumberReplaceInstructionsParam,
-    TimelinesPersistenceStoreMaxEntriesPerClient,
+  ovewwide vaw boundedintfsovewwides = s-seq(
+    maxnumbewwepwaceinstwuctionspawam, (✿oωo)
+    timewinespewsistencestowemaxentwiespewcwient, (ˆ ﻌ ˆ)♡
   )
 
-  override val boundedDoubleFSOverrides = Seq(
-    ImpressionBloomFilterFalsePositiveRateParam
+  ovewwide vaw boundeddoubwefsovewwides = s-seq(
+    impwessionbwoomfiwtewfawsepositivewatepawam
   )
 }

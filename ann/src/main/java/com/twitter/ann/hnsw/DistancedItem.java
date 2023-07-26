@@ -1,23 +1,23 @@
-package com.twitter.ann.hnsw;
+package com.twittew.ann.hnsw;
 
 /**
- * An item associated with a float distance
- * @param <T> The type of the item.
+ * an item associated w-with a fwoat d-distance
+ * @pawam <t> t-the t-type of the item. ^^;;
  */
-public class DistancedItem<T> {
-  private final T item;
-  private final float distance;
+p-pubwic cwass d-distanceditem<t> {
+  p-pwivate f-finaw t item;
+  pwivate finaw fwoat distance;
 
-  public DistancedItem(T item, float distance) {
+  pubwic distanceditem(t item, >_< fwoat d-distance) {
     this.item = item;
-    this.distance = distance;
+    this.distance = d-distance;
   }
 
-  public T getItem() {
-    return item;
+  pubwic t-t getitem() {
+    wetuwn item;
   }
 
-  public float getDistance() {
-    return distance;
+  pubwic fwoat getdistance() {
+    w-wetuwn distance;
   }
 }

@@ -1,18 +1,18 @@
-java_library(
-    sources = ["*.java"],
-    platform = "java8",
-    provides = artifact(
-        org = "com.twitter.search.common.util",
-        name = "lang",
-        repo = artifactory,
+java_wibwawy(
+    souwces = ["*.java"], o.O
+    pwatfowm = "java8", (U ᵕ U❁)
+    p-pwovides = awtifact(
+        o-owg = "com.twittew.seawch.common.utiw", (⑅˘꒳˘)
+        n-nyame = "wang", ( ͡o ω ͡o )
+        w-wepo = awtifactowy, UwU
     ),
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "src/java/com/twitter/common/text/language:locale-util",
-        "src/thrift/com/twitter/search/common:constants-java",
+    t-tags = ["bazew-compatibwe"], rawr x3
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/code/findbugs:jsw305", rawr
+        "3wdpawty/jvm/com/googwe/guava", σωσ
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", σωσ
+        "3wdpawty/jvm/owg/swf4j:swf4j-api", >_<
+        "swc/java/com/twittew/common/text/wanguage:wocawe-utiw", :3
+        "swc/thwift/com/twittew/seawch/common:constants-java", (U ﹏ U)
     ],
 )

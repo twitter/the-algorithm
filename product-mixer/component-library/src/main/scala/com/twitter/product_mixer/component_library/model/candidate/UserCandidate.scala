@@ -1,87 +1,87 @@
-package com.twitter.product_mixer.component_library.model.candidate
+package com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate
 
-import com.fasterxml.jackson.annotation.JsonTypeName
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+impowt com.fastewxmw.jackson.annotation.jsontypename
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
 
-// JSON type annotations are needed for identifying renderable entities to Turntable, most candidates
-// do not need them.
-@JsonTypeName("user")
-trait BaseUserCandidate extends UniversalNoun[Long]
+// j-json type annotations a-awe nyeeded f-fow identifying w-wendewabwe e-entities to tuwntabwe, (U ﹏ U) most candidates
+// do nyot nyeed them. :3
+@jsontypename("usew")
+twait baseusewcandidate e-extends univewsawnoun[wong]
 
 /**
- * Canonical UserCandidate model. Always prefer this version over all other variants.
+ * canonicaw usewcandidate m-modew. ( ͡o ω ͡o ) awways pwefew this v-vewsion ovew aww othew vawiants. σωσ
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
- *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
- *       can be used to extract features from the candidate source response.
+ * @note any additionaw fiewds shouwd be a-added as a [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]
+ *       on the candidate's [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap]]. >w< i-if the
+ *       f-featuwes come fwom the candidate souwce itsewf (as opposed to hydwated v-via a
+ *       [[com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.candidatefeatuwehydwatow]]), 😳😳😳
+ *       then [[com.twittew.pwoduct_mixew.cowe.pipewine.candidate.candidatepipewineconfig.featuwesfwomcandidatesouwcetwansfowmews]]
+ *       can be used to extwact featuwes fwom the candidate souwce wesponse. OwO
  *
- * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
- *       the equals() implementation must be updated in order to handle class inheritor equality
- *       (see note on the equals method below)
+ * @note t-this cwass shouwd awways wemain `finaw`. 😳 i-if fow a-any weason the `finaw` m-modifiew i-is wemoved, 😳😳😳
+ *       the equaws() impwementation m-must be updated in owdew to handwe cwass inhewitow e-equawity
+ *       (see nyote on the equaws method bewow)
  */
-final class UserCandidate private (
-  override val id: Long)
-    extends BaseUserCandidate {
+finaw cwass usewcandidate pwivate (
+  o-ovewwide vaw id: wong)
+    e-extends baseusewcandidate {
 
   /**
-   * @inheritdoc
+   * @inhewitdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[UserCandidate]
+  o-ovewwide def canequaw(that: a-any): boowean = that.isinstanceof[usewcandidate]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * high pewfowmance impwementation o-of equaws m-method that wevewages:
+   *  - w-wefewentiaw equawity s-showt ciwcuit
+   *  - cached h-hashcode equawity showt ciwcuit
+   *  - f-fiewd vawues awe onwy checked if the h-hashcodes awe equaw to handwe t-the unwikewy case
+   *    of a hashcode c-cowwision
+   *  - w-wemovaw of check fow `that` being an equaws-compatibwe descendant since this cwass is finaw
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `candidate.canequaw(this)` is nyot nyecessawy b-because this c-cwass is finaw
+   * @see [[http://www.awtima.com/pins1ed/object-equawity.htmw pwogwamming in scawa, (˘ω˘)
+   *      chaptew 28]] f-fow d-discussion and design. ʘwʘ
    */
-  override def equals(that: Any): Boolean =
+  ovewwide d-def equaws(that: any): boowean =
     that match {
-      case candidate: UserCandidate =>
+      c-case candidate: usewcandidate =>
         (
           (this eq candidate)
-            || ((hashCode == candidate.hashCode) && (id == candidate.id))
+            || ((hashcode == candidate.hashcode) && (id == candidate.id))
         )
-      case _ =>
-        false
+      c-case _ =>
+        fawse
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * w-wevewage d-domain-specific c-constwaints (see nyotes bewow) t-to safewy constwuct a-and cache t-the
+   * hashcode a-as a vaw, ( ͡o ω ͡o ) such that it is instantiated once o-on object constwuction. o.O t-this pwevents t-the
+   * n-nyeed to wecompute t-the hashcode on each hashcode() invocation, >w< which is the behaviow o-of the
+   * scawa compiwew case cwass-genewated hashcode() since it cannot make assumptions w-wegawding fiewd
+   * object mutabiwity and hashcode impwementations. 😳
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated candidate
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note c-caching the h-hashcode is onwy s-safe if aww of the fiewds used t-to constwuct the hashcode
+   *       a-awe immutabwe. 🥺 t-this incwudes:
+   *       - inabiwity to mutate the object wefewence on fow an existing instantiated candidate
+   *       (i.e. rawr x3 e-each fiewd is a vaw)
+   *       - i-inabiwity to mutate the f-fiewd object instance i-itsewf (i.e. o.O each fiewd is an immutabwe
+   *       - i-inabiwity t-to mutate the fiewd object i-instance itsewf (i.e. rawr e-each fiewd is an immutabwe
+   *       data stwuctuwe), ʘwʘ assuming stabwe hashcode i-impwementations f-fow these o-objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note in owdew f-fow the hashcode t-to be consistent with object equawity, 😳😳😳 `##` m-must be used fow
+   *       boxed nyumewic types and nyuww. ^^;; as such, a-awways pwefew `.##` o-ovew `.hashcode()`. o.O
    */
-  override val hashCode: Int = id.##
+  ovewwide vaw hashcode: int = i-id.##
 }
 
-object UserCandidate {
-  def apply(id: Long): UserCandidate = new UserCandidate(id)
+object u-usewcandidate {
+  def appwy(id: wong): usewcandidate = nyew usewcandidate(id)
 }
 
 /**
- * Feature to indicate whether a rendered user candidate should be marked unread in URT. Used in
- * [[UserCandidateUrtItemBuilder]] when decorating the candidate.r
+ * f-featuwe to indicate whethew a wendewed usew candidate shouwd be mawked unwead i-in uwt. (///ˬ///✿) used in
+ * [[usewcandidateuwtitembuiwdew]] when decowating t-the candidate.w
  */
-object IsMarkUnreadFeature extends Feature[BaseUserCandidate, Boolean]
+o-object ismawkunweadfeatuwe extends featuwe[baseusewcandidate, σωσ b-boowean]

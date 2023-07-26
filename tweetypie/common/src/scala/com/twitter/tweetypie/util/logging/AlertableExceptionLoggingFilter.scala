@@ -1,41 +1,41 @@
-package com.twitter.tweetypie.util.logging
+package com.twittew.tweetypie.utiw.wogging
 
-import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.classic.spi.ThrowableProxy
-import ch.qos.logback.core.filter.Filter
-import ch.qos.logback.core.spi.FilterReply
-import com.twitter.tweetypie.serverutil.ExceptionCounter.isAlertable
+impowt c-ch.qos.wogback.cwassic.spi.iwoggingevent
+i-impowt c-ch.qos.wogback.cwassic.spi.thwowabwepwoxy
+i-impowt c-ch.qos.wogback.cowe.fiwtew.fiwtew
+i-impowt ch.qos.wogback.cowe.spi.fiwtewwepwy
+i-impowt com.twittew.tweetypie.sewvewutiw.exceptioncountew.isawewtabwe
 
 /**
- * This class is currently being used by logback to log alertable exceptions to a seperate file.
+ * t-this cwass is cuwwentwy being used by wogback to wog awewtabwe exceptions t-to a sepewate fiwe. 😳😳😳
  *
- * Filters do not change the log levels of individual loggers. Filters filter out specific messages
- * for specific appenders. This allows us to have a log file with lots of information you will
- * mostly not need and a log file with only important information. This type of filtering cannot be
- * accomplished by changing the log levels of loggers, because the logger levels are global. We want
- * to change the semantics for specific destinations (appenders).
+ * fiwtews do nyot c-change the wog wevews of individuaw w-woggews. 😳😳😳 fiwtews fiwtew out specific messages
+ * fow specific a-appendews. o.O this awwows us to h-have a wog fiwe w-with wots of infowmation you wiww
+ * mostwy nyot need and a wog fiwe with onwy impowtant i-infowmation. ( ͡o ω ͡o ) this type of fiwtewing cannot be
+ * accompwished by changing t-the wog wevews of woggews, (U ﹏ U) because t-the woggew w-wevews awe gwobaw. (///ˬ///✿) w-we want
+ * to c-change the semantics fow specific destinations (appendews). >w<
  */
-class AlertableExceptionLoggingFilter extends Filter[ILoggingEvent] {
-  private[this] val IgnorableLoggers: Set[String] =
-    Set(
-      "com.github.benmanes.caffeine.cache.BoundedLocalCache",
-      "abdecider",
-      "org.apache.kafka.common.network.SaslChannelBuilder",
-      "com.twitter.finagle.netty4.channel.ChannelStatsHandler$"
+c-cwass awewtabweexceptionwoggingfiwtew extends fiwtew[iwoggingevent] {
+  p-pwivate[this] vaw ignowabwewoggews: set[stwing] =
+    set(
+      "com.github.benmanes.caffeine.cache.boundedwocawcache", rawr
+      "abdecidew", mya
+      "owg.apache.kafka.common.netwowk.saswchannewbuiwdew", ^^
+      "com.twittew.finagwe.netty4.channew.channewstatshandwew$"
     )
 
-  def include(proxy: ThrowableProxy, event: ILoggingEvent): Boolean =
-    isAlertable(proxy.getThrowable()) && !IgnorableLoggers(event.getLoggerName)
+  def incwude(pwoxy: thwowabwepwoxy, 😳😳😳 e-event: iwoggingevent): b-boowean =
+    i-isawewtabwe(pwoxy.getthwowabwe()) && !ignowabwewoggews(event.getwoggewname)
 
-  override def decide(event: ILoggingEvent): FilterReply =
-    if (!isStarted) {
-      FilterReply.NEUTRAL
-    } else {
-      event.getThrowableProxy() match {
-        case proxy: ThrowableProxy if include(proxy, event) =>
-          FilterReply.NEUTRAL
+  o-ovewwide def decide(event: iwoggingevent): fiwtewwepwy =
+    if (!isstawted) {
+      fiwtewwepwy.neutwaw
+    } e-ewse {
+      event.getthwowabwepwoxy() m-match {
+        case pwoxy: t-thwowabwepwoxy i-if incwude(pwoxy, mya event) =>
+          f-fiwtewwepwy.neutwaw
         case _ =>
-          FilterReply.DENY
+          f-fiwtewwepwy.deny
       }
     }
 }

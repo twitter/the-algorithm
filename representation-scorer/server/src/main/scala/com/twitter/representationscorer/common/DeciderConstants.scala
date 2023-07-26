@@ -1,7 +1,7 @@
-package com.twitter.representationscorer
+package com.twittew.wepwesentationscowew
 
-object DeciderConstants {
-  val enableSimClustersEmbeddingStoreTimeouts = "enable_sim_clusters_embedding_store_timeouts"
-  val simClustersEmbeddingStoreTimeoutValueMillis =
-    "sim_clusters_embedding_store_timeout_value_millis"
+object d-decidewconstants {
+  v-vaw enabwesimcwustewsembeddingstowetimeouts = "enabwe_sim_cwustews_embedding_stowe_timeouts"
+  v-vaw simcwustewsembeddingstowetimeoutvawuemiwwis =
+    "sim_cwustews_embedding_stowe_timeout_vawue_miwwis"
 }

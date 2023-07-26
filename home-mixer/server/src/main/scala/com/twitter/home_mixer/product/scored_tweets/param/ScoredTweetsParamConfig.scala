@@ -1,89 +1,89 @@
-package com.twitter.home_mixer.product.scored_tweets.param
+package com.twittew.home_mixew.pwoduct.scowed_tweets.pawam
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam._
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.pawam.decidew.decidewkey
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam._
+i-impowt com.twittew.pwoduct_mixew.cowe.pwoduct.pwoductpawamconfig
+i-impowt com.twittew.sewvo.decidew.decidewkeyname
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class ScoredTweetsParamConfig @Inject() () extends ProductParamConfig {
-  override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableScoredTweetsProduct
-  override val supportedClientFSName: String = SupportedClientFSName
+@singweton
+c-cwass scowedtweetspawamconfig @inject() () extends pwoductpawamconfig {
+  ovewwide vaw enabweddecidewkey: decidewkeyname = decidewkey.enabwescowedtweetspwoduct
+  o-ovewwide vaw suppowtedcwientfsname: stwing = s-suppowtedcwientfsname
 
-  override val booleanDeciderOverrides = Seq(
-    CandidatePipeline.EnableBackfillParam,
-    CandidatePipeline.EnableTweetMixerParam,
-    CandidatePipeline.EnableFrsParam,
-    CandidatePipeline.EnableInNetworkParam,
-    CandidatePipeline.EnableListsParam,
-    CandidatePipeline.EnablePopularVideosParam,
-    CandidatePipeline.EnableUtegParam,
-    ScoredTweetsParam.EnableSimClustersSimilarityFeatureHydrationDeciderParam
+  ovewwide v-vaw booweandecidewovewwides = seq(
+    candidatepipewine.enabwebackfiwwpawam, nyaa~~
+    candidatepipewine.enabwetweetmixewpawam, :3
+    candidatepipewine.enabwefwspawam, 😳😳😳
+    c-candidatepipewine.enabweinnetwowkpawam, (˘ω˘)
+    candidatepipewine.enabwewistspawam, ^^
+    c-candidatepipewine.enabwepopuwawvideospawam, :3
+    c-candidatepipewine.enabweutegpawam, -.-
+    scowedtweetspawam.enabwesimcwustewssimiwawityfeatuwehydwationdecidewpawam
   )
 
-  override val booleanFSOverrides = Seq(
-    EnableBackfillCandidatePipelineParam,
-    EnableScribeScoredCandidatesParam
+  ovewwide vaw booweanfsovewwides = seq(
+    e-enabwebackfiwwcandidatepipewinepawam, 😳
+    enabwescwibescowedcandidatespawam
   )
 
-  override val boundedIntFSOverrides = Seq(
-    CachedScoredTweets.MinCachedTweetsParam,
-    MaxInNetworkResultsParam,
-    MaxOutOfNetworkResultsParam,
-    QualityFactor.BackfillMaxTweetsToScoreParam,
-    QualityFactor.TweetMixerMaxTweetsToScoreParam,
-    QualityFactor.FrsMaxTweetsToScoreParam,
-    QualityFactor.InNetworkMaxTweetsToScoreParam,
-    QualityFactor.ListsMaxTweetsToScoreParam,
-    QualityFactor.PopularVideosMaxTweetsToScoreParam,
-    QualityFactor.UtegMaxTweetsToScoreParam,
-    ServerMaxResultsParam
+  ovewwide vaw boundedintfsovewwides = seq(
+    c-cachedscowedtweets.mincachedtweetspawam, mya
+    maxinnetwowkwesuwtspawam, (˘ω˘)
+    maxoutofnetwowkwesuwtspawam, >_<
+    q-quawityfactow.backfiwwmaxtweetstoscowepawam, -.-
+    q-quawityfactow.tweetmixewmaxtweetstoscowepawam, 🥺
+    q-quawityfactow.fwsmaxtweetstoscowepawam, (U ﹏ U)
+    q-quawityfactow.innetwowkmaxtweetstoscowepawam, >w<
+    quawityfactow.wistsmaxtweetstoscowepawam, mya
+    quawityfactow.popuwawvideosmaxtweetstoscowepawam, >w<
+    q-quawityfactow.utegmaxtweetstoscowepawam, nyaa~~
+    sewvewmaxwesuwtspawam
   )
 
-  override val boundedDurationFSOverrides = Seq(
-    CachedScoredTweets.TTLParam
+  ovewwide vaw boundedduwationfsovewwides = s-seq(
+    cachedscowedtweets.ttwpawam
   )
 
-  override val stringFSOverrides = Seq(
-    Scoring.HomeModelParam,
-    EarlybirdTensorflowModel.InNetworkParam,
-    EarlybirdTensorflowModel.FrsParam,
-    EarlybirdTensorflowModel.UtegParam
+  ovewwide vaw stwingfsovewwides = seq(
+    scowing.homemodewpawam, (✿oωo)
+    e-eawwybiwdtensowfwowmodew.innetwowkpawam, ʘwʘ
+    eawwybiwdtensowfwowmodew.fwspawam, (ˆ ﻌ ˆ)♡
+    e-eawwybiwdtensowfwowmodew.utegpawam
   )
 
-  override val boundedDoubleFSOverrides = Seq(
-    BlueVerifiedAuthorInNetworkMultiplierParam,
-    BlueVerifiedAuthorOutOfNetworkMultiplierParam,
-    CreatorInNetworkMultiplierParam,
-    CreatorOutOfNetworkMultiplierParam,
-    OutOfNetworkScaleFactorParam,
-    // Model Weights
-    Scoring.ModelWeights.FavParam,
-    Scoring.ModelWeights.ReplyParam,
-    Scoring.ModelWeights.RetweetParam,
-    Scoring.ModelWeights.GoodClickParam,
-    Scoring.ModelWeights.GoodClickV2Param,
-    Scoring.ModelWeights.GoodProfileClickParam,
-    Scoring.ModelWeights.ReplyEngagedByAuthorParam,
-    Scoring.ModelWeights.VideoPlayback50Param,
-    Scoring.ModelWeights.ReportParam,
-    Scoring.ModelWeights.NegativeFeedbackV2Param,
-    Scoring.ModelWeights.TweetDetailDwellParam,
-    Scoring.ModelWeights.ProfileDwelledParam,
-    Scoring.ModelWeights.BookmarkParam,
-    Scoring.ModelWeights.ShareParam,
-    Scoring.ModelWeights.ShareMenuClickParam,
-    Scoring.ModelWeights.StrongNegativeFeedbackParam,
-    Scoring.ModelWeights.WeakNegativeFeedbackParam
+  o-ovewwide v-vaw boundeddoubwefsovewwides = seq(
+    bwuevewifiedauthowinnetwowkmuwtipwiewpawam, 😳😳😳
+    bwuevewifiedauthowoutofnetwowkmuwtipwiewpawam, :3
+    cweatowinnetwowkmuwtipwiewpawam, OwO
+    c-cweatowoutofnetwowkmuwtipwiewpawam, (U ﹏ U)
+    o-outofnetwowkscawefactowpawam, >w<
+    // modew weights
+    s-scowing.modewweights.favpawam, (U ﹏ U)
+    s-scowing.modewweights.wepwypawam, 😳
+    scowing.modewweights.wetweetpawam, (ˆ ﻌ ˆ)♡
+    s-scowing.modewweights.goodcwickpawam, 😳😳😳
+    scowing.modewweights.goodcwickv2pawam, (U ﹏ U)
+    s-scowing.modewweights.goodpwofiwecwickpawam, (///ˬ///✿)
+    scowing.modewweights.wepwyengagedbyauthowpawam, 😳
+    scowing.modewweights.videopwayback50pawam, 😳
+    s-scowing.modewweights.wepowtpawam, σωσ
+    scowing.modewweights.negativefeedbackv2pawam, rawr x3
+    s-scowing.modewweights.tweetdetaiwdwewwpawam,
+    scowing.modewweights.pwofiwedwewwedpawam, OwO
+    s-scowing.modewweights.bookmawkpawam, /(^•ω•^)
+    s-scowing.modewweights.shawepawam, 😳😳😳
+    scowing.modewweights.shawemenucwickpawam, ( ͡o ω ͡o )
+    scowing.modewweights.stwongnegativefeedbackpawam, >_<
+    scowing.modewweights.weaknegativefeedbackpawam
   )
 
-  override val longSetFSOverrides = Seq(
-    CompetitorSetParam
+  ovewwide vaw wongsetfsovewwides = seq(
+    competitowsetpawam
   )
 
-  override val stringSeqFSOverrides = Seq(
-    CompetitorURLSeqParam
+  o-ovewwide v-vaw stwingseqfsovewwides = seq(
+    c-competitowuwwseqpawam
   )
 }

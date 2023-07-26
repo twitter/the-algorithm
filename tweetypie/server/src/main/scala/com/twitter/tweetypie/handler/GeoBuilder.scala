@@ -1,136 +1,136 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.repository.PlaceKey
-import com.twitter.tweetypie.repository.PlaceRepository
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.finagwe.stats.countew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.wepositowy.pwacekey
+i-impowt c-com.twittew.tweetypie.wepositowy.pwacewepositowy
+i-impowt com.twittew.tweetypie.sewvewutiw.exceptioncountew
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object GeoStats {
-  val topTenCountryCodes: Set[PlaceLanguage] =
-    Set("US", "JP", "GB", "ID", "BR", "SA", "TR", "MX", "ES", "CA")
+object geostats {
+  vaw toptencountwycodes: set[pwacewanguage] =
+    s-set("us", (///ˬ///✿) "jp", "gb", σωσ "id", "bw", "sa", nyaa~~ "tw", "mx", ^^;; "es", "ca")
 
-  def apply(stats: StatsReceiver): Effect[Option[Place]] = {
-    val totalCount = stats.counter("total")
-    val notFoundCount = stats.counter("not_found")
-    val countryStats: Map[String, Counter] =
-      topTenCountryCodes.map(cc => cc -> stats.scope("with_country_code").counter(cc)).toMap
+  def appwy(stats: statsweceivew): effect[option[pwace]] = {
+    v-vaw totawcount = stats.countew("totaw")
+    v-vaw nyotfoundcount = stats.countew("not_found")
+    vaw countwystats: map[stwing, ^•ﻌ•^ c-countew] =
+      toptencountwycodes.map(cc => c-cc -> stats.scope("with_countwy_code").countew(cc)).tomap
 
-    val placeTypeStats: Map[PlaceType, Counter] =
-      Map(
-        PlaceType.Admin -> stats.counter("admin"),
-        PlaceType.City -> stats.counter("city"),
-        PlaceType.Country -> stats.counter("country"),
-        PlaceType.Neighborhood -> stats.counter("neighborhood"),
-        PlaceType.Poi -> stats.counter("poi"),
-        PlaceType.Unknown -> stats.counter("unknown")
+    v-vaw pwacetypestats: map[pwacetype, σωσ countew] =
+      map(
+        pwacetype.admin -> s-stats.countew("admin"), -.-
+        pwacetype.city -> stats.countew("city"), ^^;;
+        pwacetype.countwy -> stats.countew("countwy"), XD
+        p-pwacetype.neighbowhood -> stats.countew("neighbowhood"), 🥺
+        p-pwacetype.poi -> s-stats.countew("poi"),
+        p-pwacetype.unknown -> s-stats.countew("unknown")
       )
 
-    Effect.fromPartial {
-      case Some(place) => {
-        totalCount.incr()
-        placeTypeStats(place.`type`).incr()
-        place.countryCode.foreach(cc => countryStats.get(cc).foreach(_.incr()))
+    effect.fwompawtiaw {
+      case some(pwace) => {
+        totawcount.incw()
+        p-pwacetypestats(pwace.`type`).incw()
+        pwace.countwycode.foweach(cc => countwystats.get(cc).foweach(_.incw()))
       }
-      case None => notFoundCount.incr()
+      c-case nyone => nyotfoundcount.incw()
     }
   }
 }
 
-object GeoBuilder {
-  case class Request(createGeo: TweetCreateGeo, userGeoEnabled: Boolean, language: String)
+object geobuiwdew {
+  case cwass wequest(cweategeo: tweetcweategeo, òωó u-usewgeoenabwed: boowean, w-wanguage: stwing)
 
-  case class Result(geoCoordinates: Option[GeoCoordinates], placeId: Option[PlaceId])
+  c-case cwass w-wesuwt(geocoowdinates: option[geocoowdinates], (ˆ ﻌ ˆ)♡ pwaceid: option[pwaceid])
 
-  type Type = FutureArrow[Request, Result]
+  type t-type = futuweawwow[wequest, -.- wesuwt]
 
-  def apply(placeRepo: PlaceRepository.Type, rgc: ReverseGeocoder, stats: StatsReceiver): Type = {
-    val exceptionCounters = ExceptionCounter(stats)
+  d-def appwy(pwacewepo: pwacewepositowy.type, :3 wgc: wevewsegeocodew, ʘwʘ s-stats: s-statsweceivew): type = {
+    vaw e-exceptioncountews = exceptioncountew(stats)
 
-    def ignoreFailures[A](future: Future[Option[A]]): Future[Option[A]] =
-      exceptionCounters(future).handle { case _ => None }
+    d-def ignowefaiwuwes[a](futuwe: futuwe[option[a]]): futuwe[option[a]] =
+      e-exceptioncountews(futuwe).handwe { case _ => nyone }
 
-    def isValidPlaceId(placeId: String) = PlaceIdRegex.pattern.matcher(placeId).matches
+    d-def isvawidpwaceid(pwaceid: stwing) = p-pwaceidwegex.pattewn.matchew(pwaceid).matches
 
-    def isValidLatLon(latitude: Double, longitude: Double): Boolean =
-      latitude >= -90.0 && latitude <= 90.0 &&
-        longitude >= -180.0 && longitude <= 180.0 &&
-        // some clients send (0.0, 0.0) for unknown reasons, but this is highly unlikely to be
-        // valid and should be treated as if no coordinates were sent.  if a place Id is provided,
-        // that will still be used.
-        (latitude != 0.0 || longitude != 0.0)
+    d-def isvawidwatwon(watitude: doubwe, 🥺 wongitude: doubwe): boowean =
+      watitude >= -90.0 && watitude <= 90.0 &&
+        wongitude >= -180.0 && wongitude <= 180.0 &&
+        // s-some cwients s-send (0.0, >_< 0.0) fow unknown weasons, ʘwʘ b-but this is h-highwy unwikewy t-to be
+        // vawid and shouwd be tweated as if nyo coowdinates w-wewe sent. (˘ω˘)  if a pwace id is pwovided,
+        // that wiww stiww be used. (✿oωo)
+        (watitude != 0.0 || w-wongitude != 0.0)
 
-    // Count the number of times we erase geo information based on user preferences.
-    val geoErasedCounter = stats.counter("geo_erased")
-    // Count the number of times we override a user's preferences and add geo anyway.
-    val geoOverriddenCounter = stats.counter("geo_overridden")
+    // count the n-nyumbew of times w-we ewase geo infowmation b-based on usew pwefewences. (///ˬ///✿)
+    v-vaw geoewasedcountew = s-stats.countew("geo_ewased")
+    // c-count the nyumbew o-of times we ovewwide a usew's pwefewences and a-add geo anyway. rawr x3
+    v-vaw geoovewwiddencountew = s-stats.countew("geo_ovewwidden")
 
-    val geoScope = stats.scope("create_geotagged_tweet")
+    v-vaw geoscope = s-stats.scope("cweate_geotagged_tweet")
 
-    // Counter for geo tweets with neither lat lon nor place id data
-    val noGeoCounter = geoScope.counter("no_geo_info")
-    val invalidCoordinates = geoScope.counter("invalid_coordinates")
-    val inValidPlaceId = geoScope.counter("invalid_place_id")
-    val latlonStatsEffect = GeoStats(geoScope.scope("from_latlon"))
-    val placeIdStatsEffect = GeoStats(geoScope.scope("from_place_id"))
+    // countew fow geo tweets with nyeithew wat won n-nyow pwace id data
+    vaw nyogeocountew = geoscope.countew("no_geo_info")
+    vaw invawidcoowdinates = geoscope.countew("invawid_coowdinates")
+    vaw invawidpwaceid = g-geoscope.countew("invawid_pwace_id")
+    vaw watwonstatseffect = geostats(geoscope.scope("fwom_watwon"))
+    vaw pwaceidstatseffect = g-geostats(geoscope.scope("fwom_pwace_id"))
 
-    def validateCoordinates(coords: GeoCoordinates): Option[GeoCoordinates] =
-      if (isValidLatLon(coords.latitude, coords.longitude)) Some(coords)
-      else {
-        invalidCoordinates.incr()
-        None
+    def v-vawidatecoowdinates(coowds: geocoowdinates): o-option[geocoowdinates] =
+      if (isvawidwatwon(coowds.watitude, -.- coowds.wongitude)) s-some(coowds)
+      ewse {
+        i-invawidcoowdinates.incw()
+        n-none
       }
 
-    def validatePlaceId(placeId: String): Option[String] =
-      if (isValidPlaceId(placeId)) Some(placeId)
-      else {
-        inValidPlaceId.incr()
-        None
+    def vawidatepwaceid(pwaceid: stwing): option[stwing] =
+      if (isvawidpwaceid(pwaceid)) some(pwaceid)
+      e-ewse {
+        invawidpwaceid.incw()
+        n-nyone
       }
 
-    def getPlaceByRGC(coordinates: GeoCoordinates, language: String): Future[Option[Place]] =
-      ignoreFailures(
-        rgc((coordinates, language)).onSuccess(latlonStatsEffect)
+    def getpwacebywgc(coowdinates: g-geocoowdinates, ^^ w-wanguage: stwing): futuwe[option[pwace]] =
+      ignowefaiwuwes(
+        w-wgc((coowdinates, (⑅˘꒳˘) w-wanguage)).onsuccess(watwonstatseffect)
       )
 
-    def getPlaceById(placeId: String, language: String): Future[Option[Place]] =
-      ignoreFailures(
-        Stitch
-          .run(placeRepo(PlaceKey(placeId, language)).liftNotFoundToOption)
-          .onSuccess(placeIdStatsEffect)
+    def getpwacebyid(pwaceid: s-stwing, nyaa~~ wanguage: s-stwing): futuwe[option[pwace]] =
+      ignowefaiwuwes(
+        stitch
+          .wun(pwacewepo(pwacekey(pwaceid, /(^•ω•^) wanguage)).wiftnotfoundtooption)
+          .onsuccess(pwaceidstatseffect)
       )
 
-    FutureArrow[Request, Result] { request =>
-      val createGeo = request.createGeo
-      val allowGeo = createGeo.overrideUserGeoSetting || request.userGeoEnabled
-      val overrideGeo = createGeo.overrideUserGeoSetting && !request.userGeoEnabled
+    futuweawwow[wequest, (U ﹏ U) w-wesuwt] { wequest =>
+      v-vaw c-cweategeo = wequest.cweategeo
+      vaw awwowgeo = c-cweategeo.ovewwideusewgeosetting || w-wequest.usewgeoenabwed
+      vaw ovewwidegeo = c-cweategeo.ovewwideusewgeosetting && !wequest.usewgeoenabwed
 
-      if (createGeo.placeId.isEmpty && createGeo.coordinates.isEmpty) {
-        noGeoCounter.incr()
-        Future.value(Result(None, None))
-      } else if (!allowGeo) {
-        // Record that we had geo information but had to erase it based on user preferences.
-        geoErasedCounter.incr()
-        Future.value(Result(None, None))
-      } else {
-        if (overrideGeo) geoOverriddenCounter.incr()
+      if (cweategeo.pwaceid.isempty && cweategeo.coowdinates.isempty) {
+        nyogeocountew.incw()
+        futuwe.vawue(wesuwt(none, 😳😳😳 n-nyone))
+      } e-ewse if (!awwowgeo) {
+        // wecowd that we had geo i-infowmation but h-had to ewase it based on usew pwefewences. >w<
+        geoewasedcountew.incw()
+        f-futuwe.vawue(wesuwt(none, XD nyone))
+      } ewse {
+        if (ovewwidegeo) geoovewwiddencountew.incw()
 
-        // treat invalidate coordinates the same as no-coordinates
-        val validatedCoordinates = createGeo.coordinates.flatMap(validateCoordinates)
-        val validatedPlaceId = createGeo.placeId.flatMap(validatePlaceId)
+        // tweat invawidate coowdinates the same as n-nyo-coowdinates
+        vaw vawidatedcoowdinates = cweategeo.coowdinates.fwatmap(vawidatecoowdinates)
+        v-vaw v-vawidatedpwaceid = cweategeo.pwaceid.fwatmap(vawidatepwaceid)
 
-        for {
-          place <- (createGeo.placeId, validatedPlaceId, validatedCoordinates) match {
-            // if the request contains an invalid place id, we want to return None for the
-            // place instead of reverse-geocoding the coordinates
-            case (Some(_), None, _) => Future.None
-            case (_, Some(placeId), _) => getPlaceById(placeId, request.language)
-            case (_, _, Some(coords)) => getPlaceByRGC(coords, request.language)
-            case _ => Future.None
+        fow {
+          pwace <- (cweategeo.pwaceid, v-vawidatedpwaceid, o.O v-vawidatedcoowdinates) match {
+            // if the wequest contains an i-invawid pwace id, mya we want to wetuwn n-nyone fow the
+            // pwace instead of wevewse-geocoding the coowdinates
+            c-case (some(_), 🥺 none, _) => futuwe.none
+            c-case (_, ^^;; some(pwaceid), :3 _) => g-getpwacebyid(pwaceid, (U ﹏ U) wequest.wanguage)
+            c-case (_, OwO _, some(coowds)) => g-getpwacebywgc(coowds, 😳😳😳 w-wequest.wanguage)
+            c-case _ => futuwe.none
           }
-        } yield Result(validatedCoordinates, place.map(_.id))
+        } y-yiewd wesuwt(vawidatedcoowdinates, (ˆ ﻌ ˆ)♡ p-pwace.map(_.id))
       }
     }
   }

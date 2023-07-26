@@ -1,284 +1,284 @@
-package com.twitter.follow_recommendations.common.predicates.gizmoduck
+package com.twittew.fowwow_wecommendations.common.pwedicates.gizmoduck
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.clients.cache.MemcacheClient
-import com.twitter.follow_recommendations.common.clients.cache.ThriftBijection
-import com.twitter.follow_recommendations.common.models.FilterReason._
-import com.twitter.follow_recommendations.common.models.AddressBookMetadata
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate._
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicateParams._
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.gizmoduck.thriftscala.LabelValue.BlinkBad
-import com.twitter.gizmoduck.thriftscala.LabelValue.BlinkWorst
-import com.twitter.gizmoduck.thriftscala.LabelValue
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.QueryFields
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.gizmoduck.thriftscala.UserResult
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.scrooge.CompactThriftSerializer
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
-import com.twitter.util.logging.Logging
-import java.lang.{Long => JLong}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.decidew.decidew
+i-impowt c-com.twittew.decidew.wandomwecipient
+i-impowt com.twittew.eschewbiwd.utiw.stitchcache.stitchcache
+i-impowt com.twittew.finagwe.memcached.cwient
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finagwe.utiw.defauwttimew
+impowt com.twittew.fowwow_wecommendations.common.base.statsutiw
+impowt com.twittew.fowwow_wecommendations.common.base.pwedicate
+impowt com.twittew.fowwow_wecommendations.common.base.pwedicatewesuwt
+impowt c-com.twittew.fowwow_wecommendations.common.cwients.cache.memcachecwient
+impowt com.twittew.fowwow_wecommendations.common.cwients.cache.thwiftbijection
+i-impowt com.twittew.fowwow_wecommendations.common.modews.fiwtewweason._
+i-impowt com.twittew.fowwow_wecommendations.common.modews.addwessbookmetadata
+impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.modews.fiwtewweason
+i-impowt com.twittew.fowwow_wecommendations.common.pwedicates.gizmoduck.gizmoduckpwedicate._
+i-impowt com.twittew.fowwow_wecommendations.common.pwedicates.gizmoduck.gizmoduckpwedicatepawams._
+i-impowt com.twittew.fowwow_wecommendations.configapi.decidews.decidewkey
+impowt com.twittew.gizmoduck.thwiftscawa.wabewvawue.bwinkbad
+impowt com.twittew.gizmoduck.thwiftscawa.wabewvawue.bwinkwowst
+i-impowt com.twittew.gizmoduck.thwiftscawa.wabewvawue
+impowt com.twittew.gizmoduck.thwiftscawa.wookupcontext
+impowt com.twittew.gizmoduck.thwiftscawa.quewyfiewds
+i-impowt com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.gizmoduck.thwiftscawa.usewwesuwt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+i-impowt com.twittew.scwooge.compactthwiftsewiawizew
+impowt com.twittew.spam.wtf.thwiftscawa.safetywevew
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.stitch.gizmoduck.gizmoduck
+impowt com.twittew.timewines.configapi.haspawams
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.wogging.wogging
+impowt java.wang.{wong => jwong}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * In this filter, we want to check 4 categories of conditions:
- *   - if candidate is discoverable given that it's from an address-book/phone-book based source
- *   - if candidate is unsuitable based on it's safety sub-fields in gizmoduck
- *   - if candidate is withheld because of country-specific take-down policies
- *   - if candidate is marked as bad/worst based on blink labels
- * We fail close on the query as this is a product-critical filter
+ * in t-this fiwtew, (ꈍᴗꈍ) we w-want to check 4 c-categowies of conditions:
+ *   - if candidate is discovewabwe given that it's fwom a-an addwess-book/phone-book based s-souwce
+ *   - if candidate i-is unsuitabwe based o-on it's safety sub-fiewds in g-gizmoduck
+ *   - if candidate is w-withhewd because of countwy-specific take-down p-powicies
+ *   - if candidate is m-mawked as bad/wowst based on bwink w-wabews
+ * we f-faiw cwose on the quewy as this is a pwoduct-cwiticaw fiwtew
  */
-@Singleton
-case class GizmoduckPredicate @Inject() (
-  gizmoduck: Gizmoduck,
-  client: Client,
-  statsReceiver: StatsReceiver,
-  decider: Decider = Decider.False)
-    extends Predicate[(HasClientContext with HasParams, CandidateUser)]
-    with Logging {
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
+@singweton
+case cwass gizmoduckpwedicate @inject() (
+  gizmoduck: g-gizmoduck, rawr
+  c-cwient: cwient, ^^;;
+  statsweceivew: s-statsweceivew, rawr x3
+  d-decidew: decidew = d-decidew.fawse)
+    extends pwedicate[(hascwientcontext with h-haspawams, (ˆ ﻌ ˆ)♡ candidateusew)]
+    with wogging {
+  pwivate vaw stats: statsweceivew = statsweceivew.scope(this.getcwass.getname)
 
-  // track # of Gizmoduck predicate queries that yielded valid & invalid predicate results
-  private val validPredicateResultCounter = stats.counter("predicate_valid")
-  private val invalidPredicateResultCounter = stats.counter("predicate_invalid")
+  // t-twack # of gizmoduck pwedicate q-quewies that y-yiewded vawid & i-invawid pwedicate wesuwts
+  pwivate v-vaw vawidpwedicatewesuwtcountew = s-stats.countew("pwedicate_vawid")
+  p-pwivate v-vaw invawidpwedicatewesuwtcountew = stats.countew("pwedicate_invawid")
 
-  // track # of cases where no Gizmoduck user was found
-  private val noGizmoduckUserCounter = stats.counter("no_gizmoduck_user_found")
+  // twack # of cases w-whewe nyo gizmoduck u-usew was found
+  p-pwivate vaw n-nyogizmoduckusewcountew = s-stats.countew("no_gizmoduck_usew_found")
 
-  private val gizmoduckCache = StitchCache[JLong, UserResult](
-    maxCacheSize = MaxCacheSize,
-    ttl = CacheTTL,
-    statsReceiver = stats.scope("cache"),
-    underlyingCall = getByUserId
+  pwivate vaw gizmoduckcache = stitchcache[jwong, σωσ u-usewwesuwt](
+    maxcachesize = maxcachesize, (U ﹏ U)
+    ttw = cachettw, >w<
+    statsweceivew = stats.scope("cache"), σωσ
+    u-undewwyingcaww = getbyusewid
   )
 
-  // Distributed Twemcache to store UserResult objects keyed on user IDs
-  val bijection = new ThriftBijection[UserResult] {
-    override val serializer = CompactThriftSerializer(UserResult)
+  // distwibuted twemcache to stowe usewwesuwt o-objects k-keyed on usew ids
+  v-vaw bijection = nyew thwiftbijection[usewwesuwt] {
+    o-ovewwide vaw sewiawizew = c-compactthwiftsewiawizew(usewwesuwt)
   }
-  val memcacheClient = MemcacheClient[UserResult](
-    client = client,
-    dest = "/s/cache/frs:twemcaches",
-    valueBijection = bijection,
-    ttl = CacheTTL,
-    statsReceiver = stats.scope("twemcache")
+  v-vaw memcachecwient = memcachecwient[usewwesuwt](
+    cwient = cwient, nyaa~~
+    dest = "/s/cache/fws:twemcaches", 🥺
+    vawuebijection = bijection, rawr x3
+    t-ttw = cachettw,
+    statsweceivew = s-stats.scope("twemcache")
   )
 
-  // main method used to apply GizmoduckPredicate to a candidate user
-  override def apply(
-    pair: (HasClientContext with HasParams, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (request, candidate) = pair
-    // measure the latency of the getGizmoduckPredicateResult, since this predicate
-    // check is product-critical and relies on querying a core service (Gizmoduck)
-    StatsUtil.profileStitch(
-      getGizmoduckPredicateResult(request, candidate),
-      stats.scope("getGizmoduckPredicateResult")
+  // main method u-used to appwy g-gizmoduckpwedicate to a candidate usew
+  ovewwide d-def appwy(
+    p-paiw: (hascwientcontext with haspawams, σωσ c-candidateusew)
+  ): s-stitch[pwedicatewesuwt] = {
+    vaw (wequest, (///ˬ///✿) candidate) = paiw
+    // measuwe the w-watency of the g-getgizmoduckpwedicatewesuwt, (U ﹏ U) s-since this pwedicate
+    // c-check is p-pwoduct-cwiticaw and wewies on q-quewying a cowe sewvice (gizmoduck)
+    statsutiw.pwofiwestitch(
+      getgizmoduckpwedicatewesuwt(wequest, ^^;; candidate), 🥺
+      stats.scope("getgizmoduckpwedicatewesuwt")
     )
   }
 
-  private def getGizmoduckPredicateResult(
-    request: HasClientContext with HasParams,
-    candidate: CandidateUser
-  ): Stitch[PredicateResult] = {
-    val timeout: Duration = request.params(GizmoduckGetTimeout)
+  p-pwivate def g-getgizmoduckpwedicatewesuwt(
+    wequest: hascwientcontext with h-haspawams, òωó
+    c-candidate: candidateusew
+  ): stitch[pwedicatewesuwt] = {
+    vaw timeout: duwation = wequest.pawams(gizmoduckgettimeout)
 
-    val deciderKey: String = DeciderKey.EnableGizmoduckCaching.toString
-    val enableDistributedCaching: Boolean = decider.isAvailable(deciderKey, Some(RandomRecipient))
+    v-vaw decidewkey: stwing = decidewkey.enabwegizmoduckcaching.tostwing
+    vaw enabwedistwibutedcaching: boowean = decidew.isavaiwabwe(decidewkey, XD s-some(wandomwecipient))
 
-    // try getting an existing UserResult from cache if possible
-    val userResultStitch: Stitch[UserResult] = 
-      enableDistributedCaching match {
-        // read from memcache
-        case true => memcacheClient.readThrough(
-          // add a key prefix to address cache key collisions
-          key = "GizmoduckPredicate" + candidate.id.toString,
-          underlyingCall = () => getByUserId(candidate.id)
+    // twy getting an existing usewwesuwt f-fwom cache if p-possibwe
+    vaw usewwesuwtstitch: stitch[usewwesuwt] = 
+      enabwedistwibutedcaching m-match {
+        // w-wead fwom memcache
+        case twue => memcachecwient.weadthwough(
+          // a-add a key pwefix to a-addwess cache key cowwisions
+          key = "gizmoduckpwedicate" + candidate.id.tostwing, :3
+          u-undewwyingcaww = () => getbyusewid(candidate.id)
         )
-        // read from local cache
-        case false => gizmoduckCache.readThrough(candidate.id)
+        // w-wead f-fwom wocaw cache
+        case fawse => g-gizmoduckcache.weadthwough(candidate.id)
       }
 
-    val predicateResultStitch = userResultStitch.map {
-      userResult => {
-        val predicateResult = getPredicateResult(request, candidate, userResult)
-        if (enableDistributedCaching) {
-          predicateResult match {
-            case PredicateResult.Valid => 
-              stats.scope("twemcache").counter("predicate_valid").incr()
-            case PredicateResult.Invalid(reasons) => 
-              stats.scope("twemcache").counter("predicate_invalid").incr()
+    vaw p-pwedicatewesuwtstitch = u-usewwesuwtstitch.map {
+      u-usewwesuwt => {
+        vaw pwedicatewesuwt = g-getpwedicatewesuwt(wequest, (U ﹏ U) c-candidate, usewwesuwt)
+        if (enabwedistwibutedcaching) {
+          pwedicatewesuwt m-match {
+            c-case p-pwedicatewesuwt.vawid => 
+              stats.scope("twemcache").countew("pwedicate_vawid").incw()
+            case pwedicatewesuwt.invawid(weasons) => 
+              s-stats.scope("twemcache").countew("pwedicate_invawid").incw()
           }
-          // log metrics to check if local cache value matches distributed cache value  
-          logPredicateResultEquality(
-            request,
-            candidate,
-            predicateResult
+          // wog metwics to check i-if wocaw cache v-vawue matches distwibuted cache vawue  
+          wogpwedicatewesuwtequawity(
+            w-wequest, >w<
+            c-candidate, /(^•ω•^)
+            p-pwedicatewesuwt
           )
-        } else {
-          predicateResult match {
-            case PredicateResult.Valid => 
-              stats.scope("cache").counter("predicate_valid").incr()
-            case PredicateResult.Invalid(reasons) => 
-              stats.scope("cache").counter("predicate_invalid").incr()
+        } e-ewse {
+          pwedicatewesuwt m-match {
+            case pwedicatewesuwt.vawid => 
+              stats.scope("cache").countew("pwedicate_vawid").incw()
+            case pwedicatewesuwt.invawid(weasons) => 
+              stats.scope("cache").countew("pwedicate_invawid").incw()
           }
         }
-        predicateResult
+        pwedicatewesuwt
       }
     }
-    predicateResultStitch
-      .within(timeout)(DefaultTimer)
-      .rescue { // fail-open when timeout or exception
-        case e: Exception =>
-          stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-          invalidPredicateResultCounter.incr()
-          Stitch(PredicateResult.Invalid(Set(FailOpen)))
+    p-pwedicatewesuwtstitch
+      .within(timeout)(defauwttimew)
+      .wescue { // faiw-open when t-timeout ow exception
+        case e: exception =>
+          stats.scope("wescued").countew(e.getcwass.getsimpwename).incw()
+          i-invawidpwedicatewesuwtcountew.incw()
+          stitch(pwedicatewesuwt.invawid(set(faiwopen)))
       }
   }
 
-  private def logPredicateResultEquality(
-    request: HasClientContext with HasParams,
-    candidate: CandidateUser,
-    predicateResult: PredicateResult
-  ): Unit = {
-    val localCachedUserResult = Option(gizmoduckCache.cache.getIfPresent(candidate.id))
-    if (localCachedUserResult.isDefined) {
-      val localPredicateResult = getPredicateResult(request, candidate, localCachedUserResult.get)
-      localPredicateResult.equals(predicateResult) match {
-        case true => stats.scope("has_equal_predicate_value").counter("true").incr()
-        case false => stats.scope("has_equal_predicate_value").counter("false").incr()
+  p-pwivate def wogpwedicatewesuwtequawity(
+    w-wequest: hascwientcontext w-with h-haspawams, (⑅˘꒳˘)
+    c-candidate: candidateusew, ʘwʘ
+    p-pwedicatewesuwt: pwedicatewesuwt
+  ): unit = {
+    vaw wocawcachedusewwesuwt = option(gizmoduckcache.cache.getifpwesent(candidate.id))
+    if (wocawcachedusewwesuwt.isdefined) {
+      vaw wocawpwedicatewesuwt = getpwedicatewesuwt(wequest, rawr x3 c-candidate, (˘ω˘) w-wocawcachedusewwesuwt.get)
+      w-wocawpwedicatewesuwt.equaws(pwedicatewesuwt) match {
+        c-case twue => stats.scope("has_equaw_pwedicate_vawue").countew("twue").incw()
+        case fawse => stats.scope("has_equaw_pwedicate_vawue").countew("fawse").incw()
       }
-    } else {
-      stats.scope("has_equal_predicate_value").counter("undefined").incr()
+    } e-ewse {
+      s-stats.scope("has_equaw_pwedicate_vawue").countew("undefined").incw()
     }
   }
 
-  // method to get PredicateResult from UserResult
-  def getPredicateResult(
-    request: HasClientContext with HasParams,
-    candidate: CandidateUser,
-    userResult: UserResult,
-  ): PredicateResult = {
-    userResult.user match {
-      case Some(user) =>
-        val abPbReasons = getAbPbReason(user, candidate.getAddressBookMetadata)
-        val safetyReasons = getSafetyReasons(user)
-        val countryTakedownReasons = getCountryTakedownReasons(user, request.getCountryCode)
-        val blinkReasons = getBlinkReasons(user)
-        val allReasons =
-          abPbReasons ++ safetyReasons ++ countryTakedownReasons ++ blinkReasons
-        if (allReasons.nonEmpty) {
-          invalidPredicateResultCounter.incr()
-          PredicateResult.Invalid(allReasons)
-        } else {
-          validPredicateResultCounter.incr()
-          PredicateResult.Valid
+  // method t-to get pwedicatewesuwt fwom usewwesuwt
+  def getpwedicatewesuwt(
+    w-wequest: hascwientcontext w-with haspawams, o.O
+    candidate: candidateusew, 😳
+    u-usewwesuwt: usewwesuwt, o.O
+  ): pwedicatewesuwt = {
+    u-usewwesuwt.usew match {
+      case some(usew) =>
+        vaw abpbweasons = getabpbweason(usew, ^^;; c-candidate.getaddwessbookmetadata)
+        v-vaw safetyweasons = g-getsafetyweasons(usew)
+        v-vaw countwytakedownweasons = g-getcountwytakedownweasons(usew, ( ͡o ω ͡o ) wequest.getcountwycode)
+        v-vaw bwinkweasons = g-getbwinkweasons(usew)
+        vaw awwweasons =
+          a-abpbweasons ++ s-safetyweasons ++ countwytakedownweasons ++ b-bwinkweasons
+        if (awwweasons.nonempty) {
+          invawidpwedicatewesuwtcountew.incw()
+          pwedicatewesuwt.invawid(awwweasons)
+        } e-ewse {
+          vawidpwedicatewesuwtcountew.incw()
+          p-pwedicatewesuwt.vawid
         }
-      case None =>
-        noGizmoduckUserCounter.incr()
-        invalidPredicateResultCounter.incr()
-        PredicateResult.Invalid(Set(NoUser))
+      c-case nyone =>
+        nyogizmoduckusewcountew.incw()
+        i-invawidpwedicatewesuwtcountew.incw()
+        pwedicatewesuwt.invawid(set(nousew))
     }
   }
 
-  private def getByUserId(userId: JLong): Stitch[UserResult] = {
-    StatsUtil.profileStitch(
-      gizmoduck.getById(userId = userId, queryFields = queryFields, context = lookupContext),
-      stats.scope("getByUserId")
+  pwivate d-def getbyusewid(usewid: j-jwong): s-stitch[usewwesuwt] = {
+    statsutiw.pwofiwestitch(
+      gizmoduck.getbyid(usewid = usewid, ^^;; quewyfiewds = q-quewyfiewds, ^^;; context = wookupcontext), XD
+      stats.scope("getbyusewid")
     )
   }
 }
 
-object GizmoduckPredicate {
+o-object gizmoduckpwedicate {
 
-  private[gizmoduck] val lookupContext: LookupContext =
-    LookupContext(`includeDeactivated` = true, `safetyLevel` = Some(SafetyLevel.Recommendations))
+  p-pwivate[gizmoduck] vaw wookupcontext: w-wookupcontext =
+    wookupcontext(`incwudedeactivated` = t-twue, 🥺 `safetywevew` = s-some(safetywevew.wecommendations))
 
-  private[gizmoduck] val queryFields: Set[QueryFields] =
-    Set(
-      QueryFields.Discoverability, // needed for Address Book / Phone Book discoverability checks in getAbPbReason
-      QueryFields.Safety, // needed for user state safety checks in getSafetyReasons, getCountryTakedownReasons
-      QueryFields.Labels, // needed for user label checks in getBlinkReasons
-      QueryFields.Takedowns // needed for checking takedown labels for a user in getCountryTakedownReasons
+  pwivate[gizmoduck] vaw quewyfiewds: set[quewyfiewds] =
+    s-set(
+      quewyfiewds.discovewabiwity, (///ˬ///✿) // nyeeded fow a-addwess book / p-phone book discovewabiwity checks i-in getabpbweason
+      quewyfiewds.safety, (U ᵕ U❁) // n-nyeeded fow usew s-state safety checks i-in getsafetyweasons, ^^;; getcountwytakedownweasons
+      quewyfiewds.wabews, ^^;; // nyeeded fow usew wabew checks in getbwinkweasons
+      quewyfiewds.takedowns // nyeeded fow checking takedown wabews fow a usew in getcountwytakedownweasons
     )
 
-  private[gizmoduck] val BlinkLabels: Set[LabelValue] = Set(BlinkBad, BlinkWorst)
+  pwivate[gizmoduck] vaw bwinkwabews: s-set[wabewvawue] = s-set(bwinkbad, rawr bwinkwowst)
 
-  private[gizmoduck] def getAbPbReason(
-    user: User,
-    abMetadataOpt: Option[AddressBookMetadata]
-  ): Set[FilterReason] = {
-    (for {
-      discoverability <- user.discoverability
-      abMetadata <- abMetadataOpt
-    } yield {
-      val AddressBookMetadata(fwdPb, rvPb, fwdAb, rvAb) = abMetadata
-      val abReason: Set[FilterReason] =
-        if ((!discoverability.discoverableByEmail) && (fwdAb || rvAb))
-          Set(AddressBookUndiscoverable)
-        else Set.empty
-      val pbReason: Set[FilterReason] =
-        if ((!discoverability.discoverableByMobilePhone) && (fwdPb || rvPb))
-          Set(PhoneBookUndiscoverable)
-        else Set.empty
-      abReason ++ pbReason
-    }).getOrElse(Set.empty)
+  pwivate[gizmoduck] d-def g-getabpbweason(
+    u-usew: usew, (˘ω˘)
+    abmetadataopt: o-option[addwessbookmetadata]
+  ): set[fiwtewweason] = {
+    (fow {
+      d-discovewabiwity <- u-usew.discovewabiwity
+      abmetadata <- a-abmetadataopt
+    } yiewd {
+      v-vaw addwessbookmetadata(fwdpb, 🥺 w-wvpb, nyaa~~ fwdab, wvab) = abmetadata
+      vaw a-abweason: set[fiwtewweason] =
+        i-if ((!discovewabiwity.discovewabwebyemaiw) && (fwdab || w-wvab))
+          s-set(addwessbookundiscovewabwe)
+        e-ewse set.empty
+      v-vaw p-pbweason: set[fiwtewweason] =
+        i-if ((!discovewabiwity.discovewabwebymobiwephone) && (fwdpb || w-wvpb))
+          set(phonebookundiscovewabwe)
+        e-ewse s-set.empty
+      a-abweason ++ pbweason
+    }).getowewse(set.empty)
   }
 
-  private[gizmoduck] def getSafetyReasons(user: User): Set[FilterReason] = {
-    user.safety
-      .map { s =>
-        val deactivatedReason: Set[FilterReason] =
-          if (s.deactivated) Set(Deactivated) else Set.empty
-        val suspendedReason: Set[FilterReason] = if (s.suspended) Set(Suspended) else Set.empty
-        val restrictedReason: Set[FilterReason] = if (s.restricted) Set(Restricted) else Set.empty
-        val nsfwUserReason: Set[FilterReason] = if (s.nsfwUser) Set(NsfwUser) else Set.empty
-        val nsfwAdminReason: Set[FilterReason] = if (s.nsfwAdmin) Set(NsfwAdmin) else Set.empty
-        val isProtectedReason: Set[FilterReason] = if (s.isProtected) Set(IsProtected) else Set.empty
-        deactivatedReason ++ suspendedReason ++ restrictedReason ++ nsfwUserReason ++ nsfwAdminReason ++ isProtectedReason
-      }.getOrElse(Set.empty)
+  pwivate[gizmoduck] d-def getsafetyweasons(usew: usew): set[fiwtewweason] = {
+    usew.safety
+      .map { s-s =>
+        vaw deactivatedweason: s-set[fiwtewweason] =
+          i-if (s.deactivated) s-set(deactivated) ewse set.empty
+        v-vaw suspendedweason: s-set[fiwtewweason] = if (s.suspended) s-set(suspended) ewse set.empty
+        v-vaw westwictedweason: set[fiwtewweason] = if (s.westwicted) set(westwicted) e-ewse set.empty
+        vaw nysfwusewweason: s-set[fiwtewweason] = i-if (s.nsfwusew) set(nsfwusew) ewse set.empty
+        vaw n-nysfwadminweason: set[fiwtewweason] = i-if (s.nsfwadmin) s-set(nsfwadmin) e-ewse set.empty
+        vaw ispwotectedweason: set[fiwtewweason] = i-if (s.ispwotected) s-set(ispwotected) ewse s-set.empty
+        deactivatedweason ++ suspendedweason ++ w-westwictedweason ++ nysfwusewweason ++ n-nysfwadminweason ++ i-ispwotectedweason
+      }.getowewse(set.empty)
   }
 
-  private[gizmoduck] def getCountryTakedownReasons(
-    user: User,
-    countryCodeOpt: Option[String]
-  ): Set[FilterReason] = {
-    (for {
-      safety <- user.safety.toSeq
-      if safety.hasTakedown
-      takedowns <- user.takedowns.toSeq
-      takedownCountry <- takedowns.countryCodes
-      requestingCountry <- countryCodeOpt
-      if takedownCountry.toLowerCase == requestingCountry.toLowerCase
-    } yield Set(CountryTakedown(takedownCountry.toLowerCase))).flatten.toSet
+  p-pwivate[gizmoduck] def getcountwytakedownweasons(
+    u-usew: usew, :3
+    c-countwycodeopt: o-option[stwing]
+  ): s-set[fiwtewweason] = {
+    (fow {
+      safety <- usew.safety.toseq
+      i-if safety.hastakedown
+      t-takedowns <- u-usew.takedowns.toseq
+      t-takedowncountwy <- t-takedowns.countwycodes
+      w-wequestingcountwy <- c-countwycodeopt
+      if t-takedowncountwy.towowewcase == wequestingcountwy.towowewcase
+    } y-yiewd set(countwytakedown(takedowncountwy.towowewcase))).fwatten.toset
   }
 
-  private[gizmoduck] def getBlinkReasons(user: User): Set[FilterReason] = {
-    user.labels
-      .map(_.labels.map(_.labelValue))
-      .getOrElse(Nil)
-      .exists(BlinkLabels.contains)
-    for {
-      labels <- user.labels.toSeq
-      label <- labels.labels
-      if (BlinkLabels.contains(label.labelValue))
-    } yield Set(Blink)
-  }.flatten.toSet
+  pwivate[gizmoduck] d-def getbwinkweasons(usew: usew): set[fiwtewweason] = {
+    u-usew.wabews
+      .map(_.wabews.map(_.wabewvawue))
+      .getowewse(niw)
+      .exists(bwinkwabews.contains)
+    f-fow {
+      wabews <- u-usew.wabews.toseq
+      wabew <- wabews.wabews
+      if (bwinkwabews.contains(wabew.wabewvawue))
+    } yiewd set(bwink)
+  }.fwatten.toset
 }

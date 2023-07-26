@@ -1,191 +1,191 @@
-package com.twitter.product_mixer.core.feature.featuremap.featurestorev1
+package com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwestowev1
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.MissingFeatureException
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1CandidateFeatureGroup
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1QueryFeatureGroup
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1ResponseFeature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.util.Try
+impowt c-com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.mw.featuwestowe.wib.entityid
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.missingfeatuweexception
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwestowev1candidatefeatuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwestowev1candidatefeatuwegwoup
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwestowev1quewyfeatuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwestowev1quewyfeatuwegwoup
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwestowev1.featuwevawue.featuwestowev1wesponsefeatuwe
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.utiw.twy
 
-object FeatureStoreV1FeatureMap {
+o-object featuwestowev1featuwemap {
 
   /**
-   * Implicitly add convenience accessors for FeatureStoreV1 features in [[FeatureMap]]. Note that
-   * we cannot add these methods directly to [[FeatureMap]] because it would introduce a circular
-   * dependency ([[PipelineQuery]] depends on [[FeatureMap]], and the methods below depend on
-   * [[PipelineQuery]])
+   * impwicitwy add convenience accessows fow featuwestowev1 f-featuwes in [[featuwemap]]. (U ᵕ U❁) n-nyote t-that
+   * we cannot add these methods diwectwy to [[featuwemap]] because it wouwd intwoduce a ciwcuwaw
+   * d-dependency ([[pipewinequewy]] depends on [[featuwemap]], :3 and the methods bewow depend o-on
+   * [[pipewinequewy]])
    *
-   * @param featureMap the featureMap we are wrapping
-   * @note The FeatureStoreV1Feature::defaultValue set on the BoundFeature is only used and set
-   *       during PredictionRecord to DataRecord conversion. Therefore, the default will not be set
-   *       on the PredictionRecord value if reading from it directly, and as such for convenience
-   *       the defaultValue is manually returned during retrieval from PredictionRecord.
-   * @note the Value generic type on the methods below cannot be passed to
-   *       FeatureStoreV1QueryFeature's Value generic type. While this is actually the same type,
-   *       (note the explicit type cast back to Value), we must instead use an existential on
-   *       FeatureStoreV1QueryFeature since it is constructed with an existential for the Value
-   *       generic (see [[FeatureStoreV1QueryFeature]] and [[FeatureStoreV1CandidateFeature]])
+   * @pawam featuwemap t-the featuwemap w-we awe wwapping
+   * @note t-the featuwestowev1featuwe::defauwtvawue s-set on the boundfeatuwe is onwy used a-and set
+   *       duwing pwedictionwecowd to datawecowd c-convewsion. ( ͡o ω ͡o ) thewefowe, the defauwt wiww nyot be set
+   *       on the pwedictionwecowd vawue if weading f-fwom it diwectwy, òωó and as such fow c-convenience
+   *       t-the defauwtvawue i-is manuawwy wetuwned duwing wetwievaw fwom pwedictionwecowd. σωσ
+   * @note t-the vawue genewic t-type on the methods bewow cannot b-be passed t-to
+   *       featuwestowev1quewyfeatuwe's vawue g-genewic type. (U ᵕ U❁) whiwe this is actuawwy t-the same type, (✿oωo)
+   *       (note the expwicit type cast back t-to vawue), ^^ we must instead use a-an existentiaw on
+   *       featuwestowev1quewyfeatuwe s-since it i-is constwucted with an existentiaw fow the vawue
+   *       genewic (see [[featuwestowev1quewyfeatuwe]] and [[featuwestowev1candidatefeatuwe]])
    */
-  implicit class FeatureStoreV1FeatureMapAccessors(private val featureMap: FeatureMap) {
+  impwicit cwass featuwestowev1featuwemapaccessows(pwivate v-vaw featuwemap: f-featuwemap) {
 
-    def getFeatureStoreV1QueryFeature[Query <: PipelineQuery, Value](
-      feature: FeatureStoreV1QueryFeature[Query, _ <: EntityId, Value]
-    ): Value =
-      getOrElseFeatureStoreV1QueryFeature(
-        feature,
-        feature.defaultValue.getOrElse {
-          throw MissingFeatureException(feature)
+    def getfeatuwestowev1quewyfeatuwe[quewy <: p-pipewinequewy, ^•ﻌ•^ v-vawue](
+      featuwe: f-featuwestowev1quewyfeatuwe[quewy, XD _ <: entityid, :3 vawue]
+    ): vawue =
+      g-getowewsefeatuwestowev1quewyfeatuwe(
+        featuwe, (ꈍᴗꈍ)
+        featuwe.defauwtvawue.getowewse {
+          thwow missingfeatuweexception(featuwe)
         })
 
-    def getFeatureStoreV1QueryFeatureTry[Query <: PipelineQuery, Value](
-      feature: FeatureStoreV1QueryFeature[Query, _ <: EntityId, Value]
-    ): Try[Value] =
-      Try(getFeatureStoreV1QueryFeature(feature))
+    d-def getfeatuwestowev1quewyfeatuwetwy[quewy <: pipewinequewy, :3 v-vawue](
+      featuwe: f-featuwestowev1quewyfeatuwe[quewy, (U ﹏ U) _ <: entityid, UwU v-vawue]
+    ): twy[vawue] =
+      t-twy(getfeatuwestowev1quewyfeatuwe(featuwe))
 
-    def getOrElseFeatureStoreV1QueryFeature[Query <: PipelineQuery, Value](
-      feature: FeatureStoreV1QueryFeature[Query, _ <: EntityId, Value],
-      default: => Value
-    ): Value = {
+    d-def getowewsefeatuwestowev1quewyfeatuwe[quewy <: p-pipewinequewy, 😳😳😳 v-vawue](
+      featuwe: featuwestowev1quewyfeatuwe[quewy, XD _ <: e-entityid, o.O v-vawue], (⑅˘꒳˘)
+      d-defauwt: => vawue
+    ): v-vawue = {
 
       /**
-       * FeatureStoreV1ResponseFeature should never be missing from the FeatureMap as FSv1 is
-       * guaranteed to return a prediction record per feature store request. However, this may be
-       * called on candidates that never hydrated FSv1 features. For example by
-       * [[com.twitter.product_mixer.component_library.selector.sorter.featurestorev1.FeatureStoreV1FeatureValueSorter]]
+       * f-featuwestowev1wesponsefeatuwe shouwd nyevew be missing fwom the featuwemap a-as fsv1 is
+       * guawanteed to wetuwn a pwediction wecowd pew featuwe stowe wequest. 😳😳😳 howevew, nyaa~~ t-this may be
+       * cawwed on candidates that nyevew hydwated f-fsv1 featuwes. rawr f-fow exampwe by
+       * [[com.twittew.pwoduct_mixew.component_wibwawy.sewectow.sowtew.featuwestowev1.featuwestowev1featuwevawuesowtew]]
        */
-      val featureStoreV1FeatureValueOpt = featureMap.getTry(FeatureStoreV1ResponseFeature).toOption
+      v-vaw featuwestowev1featuwevawueopt = featuwemap.gettwy(featuwestowev1wesponsefeatuwe).tooption
 
-      val dataRecordValue: Option[Value] = featureStoreV1FeatureValueOpt.flatMap {
-        featureStoreV1FeatureValue =>
-          featureStoreV1FeatureValue.richDataRecord.getFeatureValueOpt(
-            feature.boundFeature.mlApiFeature)(feature.fromDataRecordValue)
+      vaw d-datawecowdvawue: option[vawue] = f-featuwestowev1featuwevawueopt.fwatmap {
+        f-featuwestowev1featuwevawue =>
+          featuwestowev1featuwevawue.wichdatawecowd.getfeatuwevawueopt(
+            featuwe.boundfeatuwe.mwapifeatuwe)(featuwe.fwomdatawecowdvawue)
       }
 
-      dataRecordValue.getOrElse(default)
+      datawecowdvawue.getowewse(defauwt)
     }
 
-    def getFeatureStoreV1CandidateFeature[
-      Query <: PipelineQuery,
-      Candidate <: UniversalNoun[Any],
-      Value
+    def getfeatuwestowev1candidatefeatuwe[
+      quewy <: pipewinequewy, -.-
+      c-candidate <: univewsawnoun[any], (✿oωo)
+      v-vawue
     ](
-      feature: FeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, Value]
-    ): Value =
-      getOrElseFeatureStoreV1CandidateFeature(
-        feature,
-        feature.defaultValue.getOrElse {
-          throw MissingFeatureException(feature)
+      featuwe: f-featuwestowev1candidatefeatuwe[quewy, /(^•ω•^) c-candidate, 🥺 _ <: entityid, ʘwʘ vawue]
+    ): vawue =
+      g-getowewsefeatuwestowev1candidatefeatuwe(
+        f-featuwe, UwU
+        featuwe.defauwtvawue.getowewse {
+          thwow m-missingfeatuweexception(featuwe)
         })
 
-    def getFeatureStoreV1CandidateFeatureTry[
-      Query <: PipelineQuery,
-      Candidate <: UniversalNoun[Any],
-      Value
+    d-def getfeatuwestowev1candidatefeatuwetwy[
+      quewy <: pipewinequewy, XD
+      candidate <: univewsawnoun[any], (✿oωo)
+      vawue
     ](
-      feature: FeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, Value]
-    ): Try[Value] =
-      Try(getFeatureStoreV1CandidateFeature(feature))
+      featuwe: f-featuwestowev1candidatefeatuwe[quewy, :3 c-candidate, (///ˬ///✿) _ <: e-entityid, nyaa~~ vawue]
+    ): t-twy[vawue] =
+      t-twy(getfeatuwestowev1candidatefeatuwe(featuwe))
 
-    def getOrElseFeatureStoreV1CandidateFeature[
-      Query <: PipelineQuery,
-      Candidate <: UniversalNoun[Any],
-      Value
+    def getowewsefeatuwestowev1candidatefeatuwe[
+      q-quewy <: pipewinequewy, >w<
+      candidate <: univewsawnoun[any], -.-
+      vawue
     ](
-      feature: FeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, Value],
-      default: => Value
-    ): Value = {
+      f-featuwe: featuwestowev1candidatefeatuwe[quewy, (✿oωo) c-candidate, (˘ω˘) _ <: entityid, rawr vawue], OwO
+      defauwt: => v-vawue
+    ): v-vawue = {
 
       /**
-       * FeatureStoreV1ResponseFeature should never be missing from the FeatureMap as FSv1 is
-       * guaranteed to return a prediction record per feature store request. However, this may be
-       * called on candidates that never hydrated FSv1 features. For example by
-       * [[com.twitter.product_mixer.component_library.selector.sorter.featurestorev1.FeatureStoreV1FeatureValueSorter]]
+       * featuwestowev1wesponsefeatuwe shouwd nyevew be missing fwom the f-featuwemap as fsv1 is
+       * guawanteed to wetuwn a pwediction wecowd pew featuwe s-stowe wequest. ^•ﻌ•^ howevew, UwU this may be
+       * c-cawwed on candidates t-that nyevew hydwated fsv1 featuwes. (˘ω˘) fow exampwe by
+       * [[com.twittew.pwoduct_mixew.component_wibwawy.sewectow.sowtew.featuwestowev1.featuwestowev1featuwevawuesowtew]]
        */
-      val featureStoreV1FeatureValueOpt = featureMap.getTry(FeatureStoreV1ResponseFeature).toOption
+      v-vaw featuwestowev1featuwevawueopt = f-featuwemap.gettwy(featuwestowev1wesponsefeatuwe).tooption
 
-      val dataRecordValue: Option[Value] = featureStoreV1FeatureValueOpt.flatMap {
-        featureStoreV1FeatureValue =>
-          featureStoreV1FeatureValue.richDataRecord.getFeatureValueOpt(
-            feature.boundFeature.mlApiFeature)(feature.fromDataRecordValue)
+      vaw datawecowdvawue: option[vawue] = featuwestowev1featuwevawueopt.fwatmap {
+        f-featuwestowev1featuwevawue =>
+          featuwestowev1featuwevawue.wichdatawecowd.getfeatuwevawueopt(
+            featuwe.boundfeatuwe.mwapifeatuwe)(featuwe.fwomdatawecowdvawue)
       }
 
-      dataRecordValue.getOrElse(default)
+      d-datawecowdvawue.getowewse(defauwt)
     }
 
     /**
-     * Get queryFeatureGroup, which is store in the featureMap as a DataRecordInAFeature
-     * It doesn't have the mlApiFeature as other regular FeatureStoreV1 features
-     * Please refer to [[com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature]] scaladoc for more details
+     * get quewyfeatuwegwoup, which is stowe in t-the featuwemap as a datawecowdinafeatuwe
+     * i-it doesn't have t-the mwapifeatuwe as othew weguwaw f-featuwestowev1 featuwes
+     * p-pwease wefew to [[com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe]] s-scawadoc f-fow mowe detaiws
      */
-    def getFeatureStoreV1QueryFeatureGroup[Query <: PipelineQuery](
-      featureGroup: FeatureStoreV1QueryFeatureGroup[Query, _ <: EntityId]
-    ): DataRecord =
-      getOrElseFeatureStoreV1QueryFeatureGroup(
-        featureGroup,
-        throw MissingFeatureException(featureGroup)
+    def getfeatuwestowev1quewyfeatuwegwoup[quewy <: p-pipewinequewy](
+      f-featuwegwoup: featuwestowev1quewyfeatuwegwoup[quewy, (///ˬ///✿) _ <: entityid]
+    ): d-datawecowd =
+      g-getowewsefeatuwestowev1quewyfeatuwegwoup(
+        f-featuwegwoup,
+        thwow missingfeatuweexception(featuwegwoup)
       )
 
-    def getFeatureStoreV1CandidateFeatureGroupTry[Query <: PipelineQuery](
-      featureGroup: FeatureStoreV1QueryFeatureGroup[Query, _ <: EntityId]
-    ): Try[DataRecord] =
-      Try(getFeatureStoreV1QueryFeatureGroup(featureGroup))
+    d-def getfeatuwestowev1candidatefeatuwegwouptwy[quewy <: pipewinequewy](
+      f-featuwegwoup: f-featuwestowev1quewyfeatuwegwoup[quewy, σωσ _ <: entityid]
+    ): twy[datawecowd] =
+      twy(getfeatuwestowev1quewyfeatuwegwoup(featuwegwoup))
 
-    def getOrElseFeatureStoreV1QueryFeatureGroup[Query <: PipelineQuery](
-      featureGroup: FeatureStoreV1QueryFeatureGroup[Query, _ <: EntityId],
-      default: => DataRecord
-    ): DataRecord = {
-      featureMap.getTry(featureGroup).toOption.getOrElse(default)
+    def getowewsefeatuwestowev1quewyfeatuwegwoup[quewy <: p-pipewinequewy](
+      f-featuwegwoup: f-featuwestowev1quewyfeatuwegwoup[quewy, /(^•ω•^) _ <: e-entityid], 😳
+      defauwt: => d-datawecowd
+    ): datawecowd = {
+      featuwemap.gettwy(featuwegwoup).tooption.getowewse(defauwt)
     }
 
     /**
-     * Get candidateFeatureGroup, which is store in the featureMap as a DataRecordInAFeature
-     * It doesn't have the mlApiFeature as other regular FeatureStoreV1 features
-     * Please refer to [[com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature]] scaladoc for more details
+     * get candidatefeatuwegwoup, 😳 which is s-stowe in the featuwemap as a datawecowdinafeatuwe
+     * i-it doesn't have the mwapifeatuwe a-as othew weguwaw featuwestowev1 f-featuwes
+     * pwease w-wefew to [[com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe]] s-scawadoc f-fow mowe detaiws
      */
-    def getFeatureStoreV1CandidateFeatureGroup[
-      Query <: PipelineQuery,
-      Candidate <: UniversalNoun[Any]
+    d-def g-getfeatuwestowev1candidatefeatuwegwoup[
+      quewy <: pipewinequewy, (⑅˘꒳˘)
+      candidate <: univewsawnoun[any]
     ](
-      featureGroup: FeatureStoreV1CandidateFeatureGroup[Query, Candidate, _ <: EntityId]
-    ): DataRecord =
-      getOrElseFeatureStoreV1CandidateFeatureGroup(
-        featureGroup,
-        throw MissingFeatureException(featureGroup)
+      featuwegwoup: featuwestowev1candidatefeatuwegwoup[quewy, 😳😳😳 candidate, 😳 _ <: e-entityid]
+    ): d-datawecowd =
+      g-getowewsefeatuwestowev1candidatefeatuwegwoup(
+        featuwegwoup, XD
+        t-thwow missingfeatuweexception(featuwegwoup)
       )
 
-    def getFeatureStoreV1CandidateFeatureGroupTry[
-      Query <: PipelineQuery,
-      Candidate <: UniversalNoun[Any]
+    def getfeatuwestowev1candidatefeatuwegwouptwy[
+      quewy <: pipewinequewy, mya
+      candidate <: u-univewsawnoun[any]
     ](
-      featureGroup: FeatureStoreV1CandidateFeatureGroup[Query, Candidate, _ <: EntityId]
-    ): Try[DataRecord] =
-      Try(getFeatureStoreV1CandidateFeatureGroup(featureGroup))
+      f-featuwegwoup: featuwestowev1candidatefeatuwegwoup[quewy, ^•ﻌ•^ c-candidate, ʘwʘ _ <: entityid]
+    ): twy[datawecowd] =
+      t-twy(getfeatuwestowev1candidatefeatuwegwoup(featuwegwoup))
 
-    def getOrElseFeatureStoreV1CandidateFeatureGroup[
-      Query <: PipelineQuery,
-      Candidate <: UniversalNoun[Any]
+    d-def getowewsefeatuwestowev1candidatefeatuwegwoup[
+      q-quewy <: pipewinequewy, ( ͡o ω ͡o )
+      c-candidate <: univewsawnoun[any]
     ](
-      featureGroup: FeatureStoreV1CandidateFeatureGroup[Query, Candidate, _ <: EntityId],
-      default: => DataRecord
-    ): DataRecord = {
-      featureMap.getTry(featureGroup).toOption.getOrElse(default)
+      featuwegwoup: featuwestowev1candidatefeatuwegwoup[quewy, mya candidate, o.O _ <: entityid], (✿oωo)
+      d-defauwt: => d-datawecowd
+    ): d-datawecowd = {
+      f-featuwemap.gettwy(featuwegwoup).tooption.getowewse(defauwt)
     }
 
-    def getOrElseFeatureStoreV1FeatureDataRecord(
-      default: => DataRecord
+    d-def getowewsefeatuwestowev1featuwedatawecowd(
+      defauwt: => d-datawecowd
     ) = {
-      val featureStoreV1FeatureValueOpt = featureMap.getTry(FeatureStoreV1ResponseFeature).toOption
+      vaw f-featuwestowev1featuwevawueopt = featuwemap.gettwy(featuwestowev1wesponsefeatuwe).tooption
 
-      featureStoreV1FeatureValueOpt
-        .map { featureStoreV1FeatureValue =>
-          featureStoreV1FeatureValue.richDataRecord.getRecord
-        }.getOrElse(default)
+      f-featuwestowev1featuwevawueopt
+        .map { f-featuwestowev1featuwevawue =>
+          featuwestowev1featuwevawue.wichdatawecowd.getwecowd
+        }.getowewse(defauwt)
     }
   }
 }

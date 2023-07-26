@@ -1,40 +1,40 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.twittew.unified_usew_actions.adaptew.cwient_event
 
-import com.twitter.clientapp.thriftscala.ItemType
+impowt c-com.twittew.cwientapp.thwiftscawa.itemtype
 
-object ItemTypeFilterPredicates {
-  private val TweetItemTypes = Set[ItemType](ItemType.Tweet, ItemType.QuotedTweet)
-  private val TopicItemTypes = Set[ItemType](ItemType.Tweet, ItemType.QuotedTweet, ItemType.Topic)
-  private val ProfileItemTypes = Set[ItemType](ItemType.User)
-  private val TypeaheadResultItemTypes = Set[ItemType](ItemType.Search, ItemType.User)
-  private val SearchResultsPageFeedbackSubmitItemTypes =
-    Set[ItemType](ItemType.Tweet, ItemType.RelevancePrompt)
-
-  /**
-   *  DDG lambda metrics count Tweets based on the `itemType`
-   *  Reference code - https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/scala/com/twitter/experiments/lambda/shared/Timelines.scala?L156
-   *  Since enums `PROMOTED_TWEET` and `POPULAR_TWEET` are deprecated in the following thrift
-   *  https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/clientapp/gen/client_app.thrift?L131
-   *  UUA filters two types of Tweets only: `TWEET` and `QUOTED_TWEET`
-   */
-  def isItemTypeTweet(itemTypeOpt: Option[ItemType]): Boolean =
-    itemTypeOpt.exists(itemType => TweetItemTypes.contains(itemType))
-
-  def isItemTypeTopic(itemTypeOpt: Option[ItemType]): Boolean =
-    itemTypeOpt.exists(itemType => TopicItemTypes.contains(itemType))
-
-  def isItemTypeProfile(itemTypeOpt: Option[ItemType]): Boolean =
-    itemTypeOpt.exists(itemType => ProfileItemTypes.contains(itemType))
-
-  def isItemTypeTypeaheadResult(itemTypeOpt: Option[ItemType]): Boolean =
-    itemTypeOpt.exists(itemType => TypeaheadResultItemTypes.contains(itemType))
-
-  def isItemTypeForSearchResultsPageFeedbackSubmit(itemTypeOpt: Option[ItemType]): Boolean =
-    itemTypeOpt.exists(itemType => SearchResultsPageFeedbackSubmitItemTypes.contains(itemType))
+o-object itemtypefiwtewpwedicates {
+  p-pwivate vaw t-tweetitemtypes = s-set[itemtype](itemtype.tweet, >w< i-itemtype.quotedtweet)
+  p-pwivate v-vaw topicitemtypes = set[itemtype](itemtype.tweet, rawr itemtype.quotedtweet, mya itemtype.topic)
+  pwivate v-vaw pwofiweitemtypes = set[itemtype](itemtype.usew)
+  pwivate v-vaw typeaheadwesuwtitemtypes = set[itemtype](itemtype.seawch, ^^ itemtype.usew)
+  p-pwivate vaw seawchwesuwtspagefeedbacksubmititemtypes =
+    set[itemtype](itemtype.tweet, 😳😳😳 itemtype.wewevancepwompt)
 
   /**
-   * Always return true. Use this when there is no need to filter based on `item_type` and all
-   * values of `item_type` are acceptable.
+   *  ddg wambda metwics c-count tweets based on the `itemtype`
+   *  w-wefewence c-code - https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/swc/scawa/com/twittew/expewiments/wambda/shawed/timewines.scawa?w156
+   *  since enums `pwomoted_tweet` and `popuwaw_tweet` awe depwecated in the fowwowing t-thwift
+   *  https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/swc/thwift/com/twittew/cwientapp/gen/cwient_app.thwift?w131
+   *  uua fiwtews two types of tweets onwy: `tweet` a-and `quoted_tweet`
    */
-  def ignoreItemType(itemTypeOpt: Option[ItemType]): Boolean = true
+  def isitemtypetweet(itemtypeopt: o-option[itemtype]): b-boowean =
+    i-itemtypeopt.exists(itemtype => t-tweetitemtypes.contains(itemtype))
+
+  def isitemtypetopic(itemtypeopt: option[itemtype]): b-boowean =
+    itemtypeopt.exists(itemtype => topicitemtypes.contains(itemtype))
+
+  d-def isitemtypepwofiwe(itemtypeopt: option[itemtype]): boowean =
+    itemtypeopt.exists(itemtype => pwofiweitemtypes.contains(itemtype))
+
+  d-def isitemtypetypeaheadwesuwt(itemtypeopt: option[itemtype]): b-boowean =
+    i-itemtypeopt.exists(itemtype => t-typeaheadwesuwtitemtypes.contains(itemtype))
+
+  def isitemtypefowseawchwesuwtspagefeedbacksubmit(itemtypeopt: option[itemtype]): boowean =
+    i-itemtypeopt.exists(itemtype => s-seawchwesuwtspagefeedbacksubmititemtypes.contains(itemtype))
+
+  /**
+   * awways w-wetuwn twue. mya use t-this when thewe is nyo nyeed to f-fiwtew based on `item_type` and a-aww
+   * vawues of `item_type` awe acceptabwe. 😳
+   */
+  d-def ignoweitemtype(itemtypeopt: option[itemtype]): b-boowean = twue
 }

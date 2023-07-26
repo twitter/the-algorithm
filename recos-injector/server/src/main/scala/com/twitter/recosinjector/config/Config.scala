@@ -1,41 +1,41 @@
-package com.twitter.recosinjector.config
+package com.twittew.wecosinjectow.config
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.frigate.common.store.TweetCreationTimeMHStore
-import com.twitter.frigate.common.util.UrlInfo
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.recosinjector.decider.RecosInjectorDecider
-import com.twitter.socialgraph.thriftscala.{IdsRequest, IdsResult}
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.fwigate.common.stowe.tweetcweationtimemhstowe
+i-impowt com.twittew.fwigate.common.utiw.uwwinfo
+i-impowt com.twittew.gizmoduck.thwiftscawa.usew
+impowt com.twittew.wecosinjectow.decidew.wecosinjectowdecidew
+impowt com.twittew.sociawgwaph.thwiftscawa.{idswequest, (˘ω˘) idswesuwt}
+impowt com.twittew.stitch.tweetypie.tweetypie.tweetypiewesuwt
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
 
-trait Config { self =>
-  implicit def statsReceiver: StatsReceiver
+t-twait config { sewf =>
+  i-impwicit def statsweceivew: statsweceivew
 
-  // ReadableStores
-  def tweetyPieStore: ReadableStore[Long, TweetyPieResult]
+  // weadabwestowes
+  d-def tweetypiestowe: weadabwestowe[wong, (⑅˘꒳˘) t-tweetypiewesuwt]
 
-  def userStore: ReadableStore[Long, User]
+  d-def usewstowe: weadabwestowe[wong, (///ˬ///✿) usew]
 
-  def socialGraphIdStore: ReadableStore[IdsRequest, IdsResult]
+  def sociawgwaphidstowe: weadabwestowe[idswequest, 😳😳😳 i-idswesuwt]
 
-  def urlInfoStore: ReadableStore[String, UrlInfo]
+  def uwwinfostowe: weadabwestowe[stwing, 🥺 uwwinfo]
 
-  // Manhattan stores
-  def tweetCreationStore: TweetCreationTimeMHStore
+  // manhattan stowes
+  d-def tweetcweationstowe: tweetcweationtimemhstowe
 
-  // Decider
-  def recosInjectorDecider: RecosInjectorDecider
+  // decidew
+  d-def wecosinjectowdecidew: w-wecosinjectowdecidew
 
-  // Constants
-  def recosInjectorThriftClientId: ClientId
+  // c-constants
+  d-def wecosinjectowthwiftcwientid: cwientid
 
-  def serviceIdentifier: ServiceIdentifier
+  def sewviceidentifiew: s-sewviceidentifiew
 
-  def outputKafkaTopicPrefix: String
+  def outputkafkatopicpwefix: stwing
 
-  def init(): Future[Unit] = Future.Done
+  def init(): f-futuwe[unit] = futuwe.done
 }

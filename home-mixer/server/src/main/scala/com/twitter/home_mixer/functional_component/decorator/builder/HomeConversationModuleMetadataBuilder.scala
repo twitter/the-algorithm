@@ -1,30 +1,30 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.buiwdew
 
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleConversationMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.home_mixew.modew.homefeatuwes.ancestowsfeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.basetweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.timewine_moduwe.basemoduwemetadatabuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduweconvewsationmetadata
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduwemetadata
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class HomeConversationModuleMetadataBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: BaseTweetCandidate
-]() extends BaseModuleMetadataBuilder[Query, Candidate] {
+case cwass homeconvewsationmoduwemetadatabuiwdew[
+  -quewy <: pipewinequewy, /(^•ω•^)
+  -candidate <: basetweetcandidate
+]() extends b-basemoduwemetadatabuiwdew[quewy, rawr candidate] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): ModuleMetadata = ModuleMetadata(
-    adsMetadata = None,
-    conversationMetadata = Some(
-      ModuleConversationMetadata(
-        allTweetIds = Some((candidates.last.candidate.id +:
-          candidates.last.features.getOrElse(AncestorsFeature, Seq.empty).map(_.tweetId)).reverse),
-        socialContext = None,
-        enableDeduplication = Some(true)
-      )),
-    gridCarouselMetadata = None
+  ovewwide def appwy(
+    q-quewy: quewy, OwO
+    candidates: s-seq[candidatewithfeatuwes[candidate]]
+  ): moduwemetadata = moduwemetadata(
+    adsmetadata = n-nyone, (U ﹏ U)
+    convewsationmetadata = s-some(
+      m-moduweconvewsationmetadata(
+        awwtweetids = some((candidates.wast.candidate.id +:
+          candidates.wast.featuwes.getowewse(ancestowsfeatuwe, >_< seq.empty).map(_.tweetid)).wevewse), rawr x3
+        s-sociawcontext = nyone, mya
+        enabwededupwication = some(twue)
+      )), nyaa~~
+    gwidcawousewmetadata = n-nyone
   )
 }

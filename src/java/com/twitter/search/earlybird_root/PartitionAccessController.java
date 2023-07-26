@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+impowt j-javax.inject.inject;
+i-impowt javax.inject.named;
 
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.woot.seawchwootmoduwe;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
 
 /**
- * Determines if a root should send requests to certain partitions based on if they have been turned
- * off by decider.
+ * detewmines if a woot shouwd send wequests to cewtain pawtitions b-based on if they have been tuwned
+ * off b-by decidew. nyaa~~
  */
-public class PartitionAccessController {
-  private final String clusterName;
-  private final SearchDecider decider;
+pubwic cwass pawtitionaccesscontwowwew {
+  p-pwivate finaw stwing cwustewname;
+  pwivate finaw seawchdecidew d-decidew;
 
-  @Inject
-  public PartitionAccessController(
-      @Named(SearchRootModule.NAMED_SEARCH_ROOT_NAME) String clusterName,
-      @Named(SearchRootModule.NAMED_PARTITION_DECIDER) SearchDecider partitionDecider) {
-    this.clusterName = clusterName;
-    this.decider = partitionDecider;
+  @inject
+  pubwic pawtitionaccesscontwowwew(
+      @named(seawchwootmoduwe.named_seawch_woot_name) s-stwing c-cwustewname, :3
+      @named(seawchwootmoduwe.named_pawtition_decidew) seawchdecidew pawtitiondecidew) {
+    this.cwustewname = cwustewname;
+    this.decidew = pawtitiondecidew;
   }
 
   /**
-   * Should root send requests to a given partition
-   * Designed to be used to quickly stop hitting a partition of there are problems with it.
+   * s-shouwd woot send wequests to a given pawtition
+   * designed to be used to quickwy s-stop hitting a pawtition of t-thewe awe pwobwems w-with it.
    */
-  public boolean canAccessPartition(
-      String tierName, int partitionNum, String clientId, EarlybirdRequestType requestType) {
+  p-pubwic boowean c-canaccesspawtition(
+      stwing tiewname, 😳😳😳 int p-pawtitionnum, (˘ω˘) stwing cwientid, ^^ eawwybiwdwequesttype w-wequesttype) {
 
-    String partitionDeciderName =
-        String.format("cluster_%s_skip_tier_%s_partition_%s", clusterName, tierName, partitionNum);
-    if (decider.isAvailable(partitionDeciderName)) {
-      SearchCounter.export(partitionDeciderName).increment();
-      return false;
+    stwing pawtitiondecidewname =
+        stwing.fowmat("cwustew_%s_skip_tiew_%s_pawtition_%s", :3 cwustewname, tiewname, -.- pawtitionnum);
+    i-if (decidew.isavaiwabwe(pawtitiondecidewname)) {
+      seawchcountew.expowt(pawtitiondecidewname).incwement();
+      w-wetuwn fawse;
     }
 
-    String clientDeciderName = String.format("cluster_%s_skip_tier_%s_partition_%s_client_id_%s",
-        clusterName, tierName, partitionNum, clientId);
-    if (decider.isAvailable(clientDeciderName)) {
-      SearchCounter.export(clientDeciderName).increment();
-      return false;
+    s-stwing c-cwientdecidewname = stwing.fowmat("cwustew_%s_skip_tiew_%s_pawtition_%s_cwient_id_%s",
+        cwustewname, 😳 tiewname, pawtitionnum, mya c-cwientid);
+    i-if (decidew.isavaiwabwe(cwientdecidewname)) {
+      seawchcountew.expowt(cwientdecidewname).incwement();
+      w-wetuwn fawse;
     }
 
-    String requestTypeDeciderName = String.format(
-        "cluster_%s_skip_tier_%s_partition_%s_request_type_%s",
-        clusterName, tierName, partitionNum, requestType.getNormalizedName());
-    if (decider.isAvailable(requestTypeDeciderName)) {
-      SearchCounter.export(requestTypeDeciderName).increment();
-      return false;
+    s-stwing wequesttypedecidewname = stwing.fowmat(
+        "cwustew_%s_skip_tiew_%s_pawtition_%s_wequest_type_%s", (˘ω˘)
+        c-cwustewname, >_< tiewname, pawtitionnum, -.- w-wequesttype.getnowmawizedname());
+    if (decidew.isavaiwabwe(wequesttypedecidewname)) {
+      seawchcountew.expowt(wequesttypedecidewname).incwement();
+      w-wetuwn fawse;
     }
 
-    String clientRequestTypeDeciderName = String.format(
-        "cluster_%s_skip_tier_%s_partition_%s_client_id_%s_request_type_%s",
-        clusterName, tierName, partitionNum, clientId, requestType.getNormalizedName());
-    if (decider.isAvailable(clientRequestTypeDeciderName)) {
-      SearchCounter.export(clientRequestTypeDeciderName).increment();
-      return false;
+    s-stwing cwientwequesttypedecidewname = stwing.fowmat(
+        "cwustew_%s_skip_tiew_%s_pawtition_%s_cwient_id_%s_wequest_type_%s", 🥺
+        c-cwustewname, (U ﹏ U) t-tiewname, pawtitionnum, >w< cwientid, mya wequesttype.getnowmawizedname());
+    if (decidew.isavaiwabwe(cwientwequesttypedecidewname)) {
+      seawchcountew.expowt(cwientwequesttypedecidewname).incwement();
+      wetuwn fawse;
     }
 
-    return true;
+    wetuwn twue;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  p-pubwic stwing g-getcwustewname() {
+    wetuwn c-cwustewname;
   }
 }

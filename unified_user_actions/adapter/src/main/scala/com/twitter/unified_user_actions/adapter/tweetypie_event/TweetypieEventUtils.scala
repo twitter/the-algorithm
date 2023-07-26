@@ -1,53 +1,53 @@
-package com.twitter.unified_user_actions.adapter.tweetypie_event
+package com.twittew.unified_usew_actions.adaptew.tweetypie_event
 
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.EditControlEdit
-import com.twitter.tweetypie.thriftscala.Tweet
+impowt com.twittew.tweetypie.thwiftscawa.editcontwow
+i-impowt com.twittew.tweetypie.thwiftscawa.editcontwowedit
+impowt c-com.twittew.tweetypie.thwiftscawa.tweet
 
-sealed trait TweetypieTweetType
-object TweetTypeDefault extends TweetypieTweetType
-object TweetTypeReply extends TweetypieTweetType
-object TweetTypeRetweet extends TweetypieTweetType
-object TweetTypeQuote extends TweetypieTweetType
-object TweetTypeEdit extends TweetypieTweetType
+seawed t-twait tweetypietweettype
+object t-tweettypedefauwt e-extends tweetypietweettype
+o-object tweettypewepwy e-extends t-tweetypietweettype
+object tweettypewetweet extends tweetypietweettype
+object tweettypequote e-extends tweetypietweettype
+object tweettypeedit e-extends tweetypietweettype
 
-object TweetypieEventUtils {
-  def editedTweetIdFromTweet(tweet: Tweet): Option[Long] = tweet.editControl.flatMap {
-    case EditControl.Edit(EditControlEdit(initialTweetId, _)) => Some(initialTweetId)
-    case _ => None
+o-object tweetypieeventutiws {
+  def editedtweetidfwomtweet(tweet: tweet): option[wong] = t-tweet.editcontwow.fwatmap {
+    case editcontwow.edit(editcontwowedit(initiawtweetid, -.- _)) => s-some(initiawtweetid)
+    c-case _ => nyone
   }
 
-  def tweetTypeFromTweet(tweet: Tweet): Option[TweetypieTweetType] = {
-    val data = tweet.coreData
-    val inReplyingToStatusIdOpt = data.flatMap(_.reply).flatMap(_.inReplyToStatusId)
-    val shareOpt = data.flatMap(_.share)
-    val quotedTweetOpt = tweet.quotedTweet
-    val editedTweetIdOpt = editedTweetIdFromTweet(tweet)
+  def tweettypefwomtweet(tweet: tweet): option[tweetypietweettype] = {
+    v-vaw data = tweet.cowedata
+    vaw inwepwyingtostatusidopt = data.fwatmap(_.wepwy).fwatmap(_.inwepwytostatusid)
+    vaw shaweopt = d-data.fwatmap(_.shawe)
+    vaw quotedtweetopt = t-tweet.quotedtweet
+    v-vaw e-editedtweetidopt = e-editedtweetidfwomtweet(tweet)
 
-    (inReplyingToStatusIdOpt, shareOpt, quotedTweetOpt, editedTweetIdOpt) match {
-      // Reply
-      case (Some(_), None, _, None) =>
-        Some(TweetTypeReply)
-      // For any kind of retweet (be it retweet of quote tweet or retweet of a regular tweet)
-      // we only need to look at the `share` field
-      // https://confluence.twitter.biz/pages/viewpage.action?spaceKey=CSVC&title=TweetyPie+FAQ#TweetypieFAQ-HowdoItellifaTweetisaRetweet
-      case (None, Some(_), _, None) =>
-        Some(TweetTypeRetweet)
-      // quote
-      case (None, None, Some(_), None) =>
-        Some(TweetTypeQuote)
-      // create
-      case (None, None, None, None) =>
-        Some(TweetTypeDefault)
+    (inwepwyingtostatusidopt, 😳 shaweopt, mya quotedtweetopt, (˘ω˘) editedtweetidopt) m-match {
+      // wepwy
+      case (some(_), >_< n-nyone, _, nyone) =>
+        some(tweettypewepwy)
+      // fow any kind of wetweet (be it wetweet of quote t-tweet ow wetweet of a weguwaw t-tweet)
+      // w-we onwy nyeed to w-wook at the `shawe` fiewd
+      // https://confwuence.twittew.biz/pages/viewpage.action?spacekey=csvc&titwe=tweetypie+faq#tweetypiefaq-howdoitewwifatweetisawetweet
+      case (none, -.- s-some(_), 🥺 _, n-nyone) =>
+        some(tweettypewetweet)
+      // q-quote
+      c-case (none, (U ﹏ U) nyone, >w< some(_), nyone) =>
+        s-some(tweettypequote)
+      // cweate
+      c-case (none, mya nyone, nyone, >w< nyone) =>
+        s-some(tweettypedefauwt)
       // edit
-      case (None, None, _, Some(_)) =>
-        Some(TweetTypeEdit)
-      // reply and retweet shouldn't be present at the same time
-      case (Some(_), Some(_), _, _) =>
-        None
-      // reply and edit / retweet and edit shouldn't be present at the same time
-      case (Some(_), None, _, Some(_)) | (None, Some(_), _, Some(_)) =>
-        None
+      c-case (none, nyaa~~ nyone, _, some(_)) =>
+        s-some(tweettypeedit)
+      // w-wepwy and wetweet shouwdn't be pwesent at the same time
+      case (some(_), (✿oωo) some(_), ʘwʘ _, _) =>
+        nyone
+      // wepwy a-and edit / w-wetweet and edit shouwdn't be pwesent a-at the same t-time
+      case (some(_), (ˆ ﻌ ˆ)♡ n-nyone, 😳😳😳 _, some(_)) | (none, :3 some(_), OwO _, some(_)) =>
+        n-nyone
     }
   }
 

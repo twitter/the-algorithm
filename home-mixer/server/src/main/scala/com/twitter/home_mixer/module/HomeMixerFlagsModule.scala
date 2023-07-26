@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.twitter.conversions.DurationOps.RichDuration
-import com.twitter.home_mixer.param.HomeMixerFlagName
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops.wichduwation
+i-impowt c-com.twittew.home_mixew.pawam.homemixewfwagname
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.utiw.duwation
 
-object HomeMixerFlagsModule extends TwitterModule {
+o-object h-homemixewfwagsmoduwe e-extends twittewmoduwe {
 
-  import HomeMixerFlagName._
+  impowt homemixewfwagname._
 
-  flag[Boolean](
-    name = ScribeClientEventsFlag,
-    default = false,
-    help = "Toggles logging client events to Scribe"
+  fwag[boowean](
+    nyame = scwibecwienteventsfwag, ʘwʘ
+    d-defauwt = fawse, /(^•ω•^)
+    hewp = "toggwes wogging cwient events t-to scwibe"
   )
 
-  flag[Boolean](
-    name = ScribeServedCandidatesFlag,
-    default = false,
-    help = "Toggles logging served candidates to Scribe"
+  fwag[boowean](
+    n-nyame = scwibesewvedcandidatesfwag, ʘwʘ
+    defauwt = fawse, σωσ
+    hewp = "toggwes w-wogging sewved candidates t-to scwibe"
   )
 
-  flag[Boolean](
-    name = ScribeScoredCandidatesFlag,
-    default = false,
-    help = "Toggles logging scored candidates to Scribe"
+  f-fwag[boowean](
+    nyame = scwibescowedcandidatesfwag, OwO
+    defauwt = fawse, 😳😳😳
+    hewp = "toggwes w-wogging scowed candidates to scwibe"
   )
 
-  flag[Boolean](
-    name = ScribeServedCommonFeaturesAndCandidateFeaturesFlag,
-    default = false,
-    help = "Toggles logging served common features and candidates features to Scribe"
+  fwag[boowean](
+    name = scwibesewvedcommonfeatuwesandcandidatefeatuwesfwag, 😳😳😳
+    defauwt = fawse,
+    h-hewp = "toggwes wogging sewved c-common featuwes a-and candidates f-featuwes to s-scwibe"
   )
 
-  flag[String](
-    name = DataRecordMetadataStoreConfigsYmlFlag,
-    default = "",
-    help = "The YML file that contains the necessary info for creating metadata store MySQL client."
+  fwag[stwing](
+    nyame = datawecowdmetadatastoweconfigsymwfwag, o.O
+    defauwt = "", ( ͡o ω ͡o )
+    h-hewp = "the ymw fiwe that contains the nyecessawy i-info fow cweating metadata stowe mysqw cwient."
   )
 
-  flag[String](
-    name = DarkTrafficFilterDeciderKey,
-    default = "dark_traffic_filter",
-    help = "Dark traffic filter decider key"
+  fwag[stwing](
+    nyame = dawktwafficfiwtewdecidewkey, (U ﹏ U)
+    defauwt = "dawk_twaffic_fiwtew", (///ˬ///✿)
+    hewp = "dawk twaffic f-fiwtew decidew key"
   )
 
-  flag[Duration](
-    TargetFetchLatency,
-    300.millis,
-    "Target fetch latency from candidate sources for Quality Factor"
+  fwag[duwation](
+    t-tawgetfetchwatency, >w<
+    300.miwwis, rawr
+    "tawget f-fetch watency f-fwom candidate souwces fow quawity factow"
   )
 
-  flag[Duration](
-    TargetScoringLatency,
-    700.millis,
-    "Target scoring latency for Quality Factor"
+  fwag[duwation](
+    t-tawgetscowingwatency, mya
+    700.miwwis, ^^
+    "tawget s-scowing watency fow quawity f-factow"
   )
 }

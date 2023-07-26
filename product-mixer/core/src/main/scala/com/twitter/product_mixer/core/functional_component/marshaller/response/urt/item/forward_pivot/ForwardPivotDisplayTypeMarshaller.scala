@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.fowwawd_pivot
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.CommunityNotes
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.ForwardPivotDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.LiveEvent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.SoftIntervention
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot.communitynotes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot.fowwawdpivotdispwaytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot.wiveevent
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.fowwawd_pivot.softintewvention
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ForwardPivotDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass fowwawdpivotdispwaytypemawshawwew @inject() () {
 
-  def apply(forwardPivotDisplayType: ForwardPivotDisplayType): urt.ForwardPivotDisplayType =
-    forwardPivotDisplayType match {
-      case LiveEvent => urt.ForwardPivotDisplayType.LiveEvent
-      case SoftIntervention => urt.ForwardPivotDisplayType.SoftIntervention
-      case CommunityNotes => urt.ForwardPivotDisplayType.CommunityNotes
+  d-def appwy(fowwawdpivotdispwaytype: fowwawdpivotdispwaytype): uwt.fowwawdpivotdispwaytype =
+    f-fowwawdpivotdispwaytype match {
+      c-case wiveevent => uwt.fowwawdpivotdispwaytype.wiveevent
+      case softintewvention => uwt.fowwawdpivotdispwaytype.softintewvention
+      c-case communitynotes => uwt.fowwawdpivotdispwaytype.communitynotes
     }
 }

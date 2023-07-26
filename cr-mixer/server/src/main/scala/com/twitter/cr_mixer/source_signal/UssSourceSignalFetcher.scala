@@ -1,160 +1,160 @@
-package com.twitter.cr_mixer.source_signal
+package com.twittew.cw_mixew.souwce_signaw
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.thriftscala.{Signal => UssSignal}
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.frigate.common.util.StatsUtil.Size
-import com.twitter.frigate.common.util.StatsUtil.Success
-import com.twitter.frigate.common.util.StatsUtil.Empty
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Singleton
-import javax.inject.Inject
-import javax.inject.Named
+impowt c-com.twittew.cw_mixew.config.timeoutconfig
+i-impowt c-com.twittew.cw_mixew.modew.moduwenames
+i-impowt c-com.twittew.cw_mixew.modew.souwceinfo
+i-impowt com.twittew.cw_mixew.thwiftscawa.souwcetype
+i-impowt c-com.twittew.cw_mixew.souwce_signaw.souwcefetchew.fetchewquewy
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.stowehaus.weadabwestowe
+impowt c-com.twittew.usewsignawsewvice.thwiftscawa.{signaw => usssignaw}
+impowt com.twittew.usewsignawsewvice.thwiftscawa.signawtype
+i-impowt com.twittew.fwigate.common.utiw.statsutiw.size
+i-impowt com.twittew.fwigate.common.utiw.statsutiw.success
+impowt com.twittew.fwigate.common.utiw.statsutiw.empty
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
+impowt j-javax.inject.singweton
+i-impowt javax.inject.inject
+impowt javax.inject.named
 
-@Singleton
-case class UssSourceSignalFetcher @Inject() (
-  @Named(ModuleNames.UssStore) ussStore: ReadableStore[UssStore.Query, Seq[
-    (SignalType, Seq[UssSignal])
-  ]],
-  override val timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver)
-    extends SourceSignalFetcher {
+@singweton
+case cwass usssouwcesignawfetchew @inject() (
+  @named(moduwenames.ussstowe) u-ussstowe: weadabwestowe[ussstowe.quewy, seq[
+    (signawtype, mya seq[usssignaw])
+  ]], 🥺
+  ovewwide vaw timeoutconfig: t-timeoutconfig, ^^;;
+  gwobawstats: s-statsweceivew)
+    e-extends s-souwcesignawfetchew {
 
-  override protected val stats: StatsReceiver = globalStats.scope(identifier)
-  override type SignalConvertType = UssSignal
+  o-ovewwide pwotected vaw stats: statsweceivew = g-gwobawstats.scope(identifiew)
+  ovewwide type signawconvewttype = u-usssignaw
 
-  // always enable USS call. We have fine-grained FS to decider which signal to fetch
-  override def isEnabled(query: FetcherQuery): Boolean = true
+  // awways enabwe uss caww. :3 we have fine-gwained fs to decidew which signaw t-to fetch
+  ovewwide def isenabwed(quewy: fetchewquewy): b-boowean = t-twue
 
-  override def fetchAndProcess(
-    query: FetcherQuery,
-  ): Future[Option[Seq[SourceInfo]]] = {
-    // Fetch raw signals
-    val rawSignals = ussStore.get(UssStore.Query(query.userId, query.params, query.product)).map {
+  o-ovewwide def fetchandpwocess(
+    quewy: fetchewquewy, (U ﹏ U)
+  ): futuwe[option[seq[souwceinfo]]] = {
+    // fetch waw s-signaws
+    vaw w-wawsignaws = ussstowe.get(ussstowe.quewy(quewy.usewid, quewy.pawams, OwO q-quewy.pwoduct)).map {
       _.map {
         _.map {
-          case (signalType, signals) =>
-            trackUssSignalStatsPerSignalType(query, signalType, signals)
-            (signalType, signals)
+          c-case (signawtype, 😳😳😳 signaws) =>
+            t-twackusssignawstatspewsignawtype(quewy, (ˆ ﻌ ˆ)♡ signawtype, s-signaws)
+            (signawtype, XD signaws)
         }
       }
     }
 
     /**
-     * Process signals:
-     * Transform a Seq of USS Signals with signalType specified to a Seq of SourceInfo
-     * We do case match to make sure the SignalType can correctly map to a SourceType defined in CrMixer
-     * and it should be simplified.
+     * pwocess signaws:
+     * t-twansfowm a seq of u-uss signaws with signawtype specified t-to a seq of s-souwceinfo
+     * we do case match to make suwe the signawtype can cowwectwy map to a souwcetype defined in cwmixew
+     * a-and i-it shouwd be simpwified. (ˆ ﻌ ˆ)♡
      */
-    rawSignals.map {
-      _.map { nestedSignal =>
-        val sourceInfoList = nestedSignal.flatMap {
-          case (signalType, ussSignals) =>
-            signalType match {
-              case SignalType.TweetFavorite =>
-                convertSourceInfo(sourceType = SourceType.TweetFavorite, signals = ussSignals)
-              case SignalType.Retweet =>
-                convertSourceInfo(sourceType = SourceType.Retweet, signals = ussSignals)
-              case SignalType.Reply =>
-                convertSourceInfo(sourceType = SourceType.Reply, signals = ussSignals)
-              case SignalType.OriginalTweet =>
-                convertSourceInfo(sourceType = SourceType.OriginalTweet, signals = ussSignals)
-              case SignalType.AccountFollow =>
-                convertSourceInfo(sourceType = SourceType.UserFollow, signals = ussSignals)
-              case SignalType.RepeatedProfileVisit180dMinVisit6V1 |
-                  SignalType.RepeatedProfileVisit90dMinVisit6V1 |
-                  SignalType.RepeatedProfileVisit14dMinVisit2V1 =>
-                convertSourceInfo(
-                  sourceType = SourceType.UserRepeatedProfileVisit,
-                  signals = ussSignals)
-              case SignalType.NotificationOpenAndClickV1 =>
-                convertSourceInfo(sourceType = SourceType.NotificationClick, signals = ussSignals)
-              case SignalType.TweetShareV1 =>
-                convertSourceInfo(sourceType = SourceType.TweetShare, signals = ussSignals)
-              case SignalType.RealGraphOon =>
-                convertSourceInfo(sourceType = SourceType.RealGraphOon, signals = ussSignals)
-              case SignalType.GoodTweetClick | SignalType.GoodTweetClick5s |
-                  SignalType.GoodTweetClick10s | SignalType.GoodTweetClick30s =>
-                convertSourceInfo(sourceType = SourceType.GoodTweetClick, signals = ussSignals)
-              case SignalType.VideoView90dPlayback50V1 =>
-                convertSourceInfo(
-                  sourceType = SourceType.VideoTweetPlayback50,
-                  signals = ussSignals)
-              case SignalType.VideoView90dQualityV1 =>
-                convertSourceInfo(
-                  sourceType = SourceType.VideoTweetQualityView,
-                  signals = ussSignals)
-              case SignalType.GoodProfileClick | SignalType.GoodProfileClick20s |
-                  SignalType.GoodProfileClick30s =>
-                convertSourceInfo(sourceType = SourceType.GoodProfileClick, signals = ussSignals)
-              // negative signals
-              case SignalType.AccountBlock =>
-                convertSourceInfo(sourceType = SourceType.AccountBlock, signals = ussSignals)
-              case SignalType.AccountMute =>
-                convertSourceInfo(sourceType = SourceType.AccountMute, signals = ussSignals)
-              case SignalType.TweetReport =>
-                convertSourceInfo(sourceType = SourceType.TweetReport, signals = ussSignals)
-              case SignalType.TweetDontLike =>
-                convertSourceInfo(sourceType = SourceType.TweetDontLike, signals = ussSignals)
-              // Aggregated Signals
-              case SignalType.TweetBasedUnifiedEngagementWeightedSignal |
-                  SignalType.TweetBasedUnifiedUniformSignal =>
-                convertSourceInfo(sourceType = SourceType.TweetAggregation, signals = ussSignals)
-              case SignalType.ProducerBasedUnifiedEngagementWeightedSignal |
-                  SignalType.ProducerBasedUnifiedUniformSignal =>
-                convertSourceInfo(sourceType = SourceType.ProducerAggregation, signals = ussSignals)
+    wawsignaws.map {
+      _.map { n-nyestedsignaw =>
+        v-vaw s-souwceinfowist = nyestedsignaw.fwatmap {
+          case (signawtype, ( ͡o ω ͡o ) usssignaws) =>
+            s-signawtype match {
+              case signawtype.tweetfavowite =>
+                convewtsouwceinfo(souwcetype = souwcetype.tweetfavowite, rawr x3 signaws = u-usssignaws)
+              case signawtype.wetweet =>
+                c-convewtsouwceinfo(souwcetype = s-souwcetype.wetweet, nyaa~~ signaws = u-usssignaws)
+              case signawtype.wepwy =>
+                c-convewtsouwceinfo(souwcetype = s-souwcetype.wepwy, >_< s-signaws = u-usssignaws)
+              case signawtype.owiginawtweet =>
+                convewtsouwceinfo(souwcetype = s-souwcetype.owiginawtweet, ^^;; s-signaws = u-usssignaws)
+              case s-signawtype.accountfowwow =>
+                c-convewtsouwceinfo(souwcetype = souwcetype.usewfowwow, (ˆ ﻌ ˆ)♡ signaws = usssignaws)
+              case signawtype.wepeatedpwofiwevisit180dminvisit6v1 |
+                  s-signawtype.wepeatedpwofiwevisit90dminvisit6v1 |
+                  signawtype.wepeatedpwofiwevisit14dminvisit2v1 =>
+                convewtsouwceinfo(
+                  souwcetype = souwcetype.usewwepeatedpwofiwevisit, ^^;;
+                  signaws = u-usssignaws)
+              case signawtype.notificationopenandcwickv1 =>
+                convewtsouwceinfo(souwcetype = souwcetype.notificationcwick, (⑅˘꒳˘) signaws = u-usssignaws)
+              c-case signawtype.tweetshawev1 =>
+                c-convewtsouwceinfo(souwcetype = souwcetype.tweetshawe, rawr x3 s-signaws = usssignaws)
+              c-case s-signawtype.weawgwaphoon =>
+                convewtsouwceinfo(souwcetype = souwcetype.weawgwaphoon, (///ˬ///✿) signaws = usssignaws)
+              case signawtype.goodtweetcwick | signawtype.goodtweetcwick5s |
+                  s-signawtype.goodtweetcwick10s | signawtype.goodtweetcwick30s =>
+                c-convewtsouwceinfo(souwcetype = souwcetype.goodtweetcwick, 🥺 s-signaws = usssignaws)
+              c-case signawtype.videoview90dpwayback50v1 =>
+                convewtsouwceinfo(
+                  souwcetype = s-souwcetype.videotweetpwayback50, >_<
+                  s-signaws = usssignaws)
+              c-case signawtype.videoview90dquawityv1 =>
+                c-convewtsouwceinfo(
+                  souwcetype = souwcetype.videotweetquawityview, UwU
+                  signaws = usssignaws)
+              c-case s-signawtype.goodpwofiwecwick | s-signawtype.goodpwofiwecwick20s |
+                  signawtype.goodpwofiwecwick30s =>
+                c-convewtsouwceinfo(souwcetype = s-souwcetype.goodpwofiwecwick, >_< signaws = usssignaws)
+              // n-nyegative signaws
+              case signawtype.accountbwock =>
+                convewtsouwceinfo(souwcetype = souwcetype.accountbwock, -.- s-signaws = usssignaws)
+              c-case signawtype.accountmute =>
+                convewtsouwceinfo(souwcetype = souwcetype.accountmute, mya s-signaws = u-usssignaws)
+              case signawtype.tweetwepowt =>
+                convewtsouwceinfo(souwcetype = s-souwcetype.tweetwepowt, >w< signaws = usssignaws)
+              case signawtype.tweetdontwike =>
+                convewtsouwceinfo(souwcetype = souwcetype.tweetdontwike, (U ﹏ U) s-signaws = usssignaws)
+              // aggwegated signaws
+              c-case signawtype.tweetbasedunifiedengagementweightedsignaw |
+                  s-signawtype.tweetbasedunifiedunifowmsignaw =>
+                convewtsouwceinfo(souwcetype = souwcetype.tweetaggwegation, 😳😳😳 signaws = usssignaws)
+              c-case signawtype.pwoducewbasedunifiedengagementweightedsignaw |
+                  s-signawtype.pwoducewbasedunifiedunifowmsignaw =>
+                convewtsouwceinfo(souwcetype = souwcetype.pwoducewaggwegation, o.O signaws = usssignaws)
 
-              // Default
+              // d-defauwt
               case _ =>
-                Seq.empty[SourceInfo]
+                s-seq.empty[souwceinfo]
             }
         }
-        sourceInfoList
+        souwceinfowist
       }
     }
   }
 
-  override def convertSourceInfo(
-    sourceType: SourceType,
-    signals: Seq[SignalConvertType]
-  ): Seq[SourceInfo] = {
-    signals.map { signal =>
-      SourceInfo(
-        sourceType = sourceType,
-        internalId = signal.targetInternalId.getOrElse(
-          throw new IllegalArgumentException(
-            s"${sourceType.toString} Signal does not have internalId")),
-        sourceEventTime =
-          if (signal.timestamp == 0L) None else Some(Time.fromMilliseconds(signal.timestamp))
+  ovewwide def convewtsouwceinfo(
+    s-souwcetype: souwcetype, òωó
+    s-signaws: s-seq[signawconvewttype]
+  ): seq[souwceinfo] = {
+    s-signaws.map { signaw =>
+      s-souwceinfo(
+        s-souwcetype = s-souwcetype, 😳😳😳
+        intewnawid = s-signaw.tawgetintewnawid.getowewse(
+          t-thwow nyew iwwegawawgumentexception(
+            s"${souwcetype.tostwing} signaw d-does nyot have i-intewnawid")), σωσ
+        s-souwceeventtime =
+          if (signaw.timestamp == 0w) nyone ewse some(time.fwommiwwiseconds(signaw.timestamp))
       )
     }
   }
 
-  private def trackUssSignalStatsPerSignalType(
-    query: FetcherQuery,
-    signalType: SignalType,
-    ussSignals: Seq[UssSignal]
-  ): Unit = {
-    val productScopedStats = stats.scope(query.product.originalName)
-    val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
-    val productStats = productScopedStats.scope(signalType.toString)
-    val productUserStateStats = productUserStateScopedStats.scope(signalType.toString)
+  p-pwivate def twackusssignawstatspewsignawtype(
+    q-quewy: fetchewquewy, (⑅˘꒳˘)
+    s-signawtype: signawtype, (///ˬ///✿)
+    usssignaws: seq[usssignaw]
+  ): u-unit = {
+    v-vaw pwoductscopedstats = s-stats.scope(quewy.pwoduct.owiginawname)
+    v-vaw pwoductusewstatescopedstats = pwoductscopedstats.scope(quewy.usewstate.tostwing)
+    v-vaw pwoductstats = pwoductscopedstats.scope(signawtype.tostwing)
+    vaw pwoductusewstatestats = pwoductusewstatescopedstats.scope(signawtype.tostwing)
 
-    productStats.counter(Success).incr()
-    productUserStateStats.counter(Success).incr()
-    val size = ussSignals.size
-    productStats.stat(Size).add(size)
-    productUserStateStats.stat(Size).add(size)
-    if (size == 0) {
-      productStats.counter(Empty).incr()
-      productUserStateStats.counter(Empty).incr()
+    pwoductstats.countew(success).incw()
+    pwoductusewstatestats.countew(success).incw()
+    v-vaw size = usssignaws.size
+    p-pwoductstats.stat(size).add(size)
+    pwoductusewstatestats.stat(size).add(size)
+    i-if (size == 0) {
+      pwoductstats.countew(empty).incw()
+      p-pwoductusewstatestats.countew(empty).incw()
     }
   }
 }

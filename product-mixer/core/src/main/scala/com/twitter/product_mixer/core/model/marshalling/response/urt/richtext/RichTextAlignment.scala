@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext
 
-sealed trait RichTextAlignment
+seawed twait wichtextawignment
 
-case object Natural extends RichTextAlignment
-case object Center extends RichTextAlignment
+case o-object nyatuwaw e-extends wichtextawignment
+c-case o-object centew e-extends wichtextawignment

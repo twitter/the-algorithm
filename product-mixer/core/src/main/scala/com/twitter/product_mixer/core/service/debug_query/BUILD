@@ -1,20 +1,23 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "configapi/configapi-core",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/product",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/recommendation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product/registry",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift-scala",
-        "product-mixer/turntable/service/src/main/scala/com/twitter/turntable/context:key",
-        "stitch/stitch-core",
-        "util/util-core:scala",
-        "util/util-jackson/src/main/scala/com/twitter/util/jackson",
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    p-pwatfowm = "java8", (U ᵕ U❁)
+    s-stwict_deps = t-twue, (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [
+        "3wdpawty/jvm/javax/inject:javax.inject", UwU
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/pwemawshawwew", rawr x3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common/identifiew", rawr
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine/pipewine_faiwuwe", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice", σωσ
+        "stitch/stitch-cowe", >_<
+    ],
+    e-expowts = [
+        "3wdpawty/jvm/javax/inject:javax.inject", :3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/functionaw_component/pwemawshawwew", (U ﹏ U)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common/identifiew", -.-
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine/pipewine_faiwuwe", (ˆ ﻌ ˆ)♡
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/sewvice", (⑅˘꒳˘)
+        "stitch/stitch-cowe", (U ᵕ U❁)
     ],
 )

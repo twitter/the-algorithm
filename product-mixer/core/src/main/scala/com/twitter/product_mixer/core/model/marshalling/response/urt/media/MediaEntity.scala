@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.media
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.media
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagevawiant
 
-sealed trait MediaEntity
+s-seawed twait m-mediaentity
 
-case class TweetMedia(
-  tweetId: Long,
-  momentId: Option[Long])
-    extends MediaEntity
+c-case cwass tweetmedia(
+  t-tweetid: w-wong, :3
+  momentid: o-option[wong])
+    e-extends mediaentity
 
-case class BroadcastId(id: String) extends MediaEntity
+case cwass bwoadcastid(id: stwing) extends mediaentity
 
-case class Image(image: ImageVariant) extends MediaEntity
+c-case cwass image(image: imagevawiant) extends m-mediaentity

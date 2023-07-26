@@ -1,176 +1,176 @@
-package com.twitter.visibility.builder.users
+package com.twittew.visibiwity.buiwdew.usews
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.features._
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.common.usewid
+impowt com.twittew.visibiwity.common.usewwewationshipsouwce
+impowt com.twittew.visibiwity.featuwes._
 
-class RelationshipFeatures(
-  userRelationshipSource: UserRelationshipSource,
-  statsReceiver: StatsReceiver) {
+cwass wewationshipfeatuwes(
+  u-usewwewationshipsouwce: usewwewationshipsouwce, OwO
+  statsweceivew: s-statsweceivew) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("relationship_features")
+  pwivate[this] v-vaw scopedstatsweceivew = statsweceivew.scope("wewationship_featuwes")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pwivate[this] vaw wequests = scopedstatsweceivew.countew("wequests")
 
-  private[this] val authorFollowsViewer =
-    scopedStatsReceiver.scope(AuthorFollowsViewer.name).counter("requests")
-  private[this] val viewerFollowsAuthor =
-    scopedStatsReceiver.scope(ViewerFollowsAuthor.name).counter("requests")
-  private[this] val authorBlocksViewer =
-    scopedStatsReceiver.scope(AuthorBlocksViewer.name).counter("requests")
-  private[this] val viewerBlocksAuthor =
-    scopedStatsReceiver.scope(ViewerBlocksAuthor.name).counter("requests")
-  private[this] val authorMutesViewer =
-    scopedStatsReceiver.scope(AuthorMutesViewer.name).counter("requests")
-  private[this] val viewerMutesAuthor =
-    scopedStatsReceiver.scope(ViewerMutesAuthor.name).counter("requests")
-  private[this] val authorHasReportedViewer =
-    scopedStatsReceiver.scope(AuthorReportsViewerAsSpam.name).counter("requests")
-  private[this] val viewerHasReportedAuthor =
-    scopedStatsReceiver.scope(ViewerReportsAuthorAsSpam.name).counter("requests")
-  private[this] val viewerMutesRetweetsFromAuthor =
-    scopedStatsReceiver.scope(ViewerMutesRetweetsFromAuthor.name).counter("requests")
+  p-pwivate[this] vaw authowfowwowsviewew =
+    s-scopedstatsweceivew.scope(authowfowwowsviewew.name).countew("wequests")
+  p-pwivate[this] vaw viewewfowwowsauthow =
+    scopedstatsweceivew.scope(viewewfowwowsauthow.name).countew("wequests")
+  pwivate[this] v-vaw authowbwocksviewew =
+    scopedstatsweceivew.scope(authowbwocksviewew.name).countew("wequests")
+  pwivate[this] vaw viewewbwocksauthow =
+    scopedstatsweceivew.scope(viewewbwocksauthow.name).countew("wequests")
+  pwivate[this] v-vaw authowmutesviewew =
+    scopedstatsweceivew.scope(authowmutesviewew.name).countew("wequests")
+  p-pwivate[this] v-vaw v-viewewmutesauthow =
+    s-scopedstatsweceivew.scope(viewewmutesauthow.name).countew("wequests")
+  pwivate[this] vaw authowhaswepowtedviewew =
+    s-scopedstatsweceivew.scope(authowwepowtsviewewasspam.name).countew("wequests")
+  pwivate[this] vaw viewewhaswepowtedauthow =
+    s-scopedstatsweceivew.scope(viewewwepowtsauthowasspam.name).countew("wequests")
+  pwivate[this] vaw viewewmuteswetweetsfwomauthow =
+    scopedstatsweceivew.scope(viewewmuteswetweetsfwomauthow.name).countew("wequests")
 
-  def forAuthorId(
-    authorId: Long,
-    viewerId: Option[Long]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def fowauthowid(
+    authowid: wong, 😳😳😳
+    v-viewewid: option[wong]
+  ): featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    wequests.incw()
 
-    _.withFeature(AuthorFollowsViewer, authorFollowsViewer(authorId, viewerId))
-      .withFeature(ViewerFollowsAuthor, viewerFollowsAuthor(authorId, viewerId))
-      .withFeature(AuthorBlocksViewer, authorBlocksViewer(authorId, viewerId))
-      .withFeature(ViewerBlocksAuthor, viewerBlocksAuthor(authorId, viewerId))
-      .withFeature(AuthorMutesViewer, authorMutesViewer(authorId, viewerId))
-      .withFeature(ViewerMutesAuthor, viewerMutesAuthor(authorId, viewerId))
-      .withFeature(AuthorReportsViewerAsSpam, authorHasReportedViewer(authorId, viewerId))
-      .withFeature(ViewerReportsAuthorAsSpam, viewerHasReportedAuthor(authorId, viewerId))
-      .withFeature(ViewerMutesRetweetsFromAuthor, viewerMutesRetweetsFromAuthor(authorId, viewerId))
+    _.withfeatuwe(authowfowwowsviewew, (ˆ ﻌ ˆ)♡ a-authowfowwowsviewew(authowid, XD v-viewewid))
+      .withfeatuwe(viewewfowwowsauthow, (ˆ ﻌ ˆ)♡ viewewfowwowsauthow(authowid, ( ͡o ω ͡o ) viewewid))
+      .withfeatuwe(authowbwocksviewew, rawr x3 authowbwocksviewew(authowid, nyaa~~ v-viewewid))
+      .withfeatuwe(viewewbwocksauthow, >_< v-viewewbwocksauthow(authowid, ^^;; viewewid))
+      .withfeatuwe(authowmutesviewew, (ˆ ﻌ ˆ)♡ a-authowmutesviewew(authowid, ^^;; v-viewewid))
+      .withfeatuwe(viewewmutesauthow, (⑅˘꒳˘) viewewmutesauthow(authowid, rawr x3 v-viewewid))
+      .withfeatuwe(authowwepowtsviewewasspam, (///ˬ///✿) authowhaswepowtedviewew(authowid, 🥺 v-viewewid))
+      .withfeatuwe(viewewwepowtsauthowasspam, >_< viewewhaswepowtedauthow(authowid, UwU viewewid))
+      .withfeatuwe(viewewmuteswetweetsfwomauthow, >_< v-viewewmuteswetweetsfwomauthow(authowid, -.- viewewid))
   }
 
-  def forNoAuthor(): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(AuthorFollowsViewer, false)
-      .withConstantFeature(ViewerFollowsAuthor, false)
-      .withConstantFeature(AuthorBlocksViewer, false)
-      .withConstantFeature(ViewerBlocksAuthor, false)
-      .withConstantFeature(AuthorMutesViewer, false)
-      .withConstantFeature(ViewerMutesAuthor, false)
-      .withConstantFeature(AuthorReportsViewerAsSpam, false)
-      .withConstantFeature(ViewerReportsAuthorAsSpam, false)
-      .withConstantFeature(ViewerMutesRetweetsFromAuthor, false)
+  d-def fownoauthow(): featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    _.withconstantfeatuwe(authowfowwowsviewew, mya f-fawse)
+      .withconstantfeatuwe(viewewfowwowsauthow, >w< fawse)
+      .withconstantfeatuwe(authowbwocksviewew, (U ﹏ U) fawse)
+      .withconstantfeatuwe(viewewbwocksauthow, 😳😳😳 fawse)
+      .withconstantfeatuwe(authowmutesviewew, o.O fawse)
+      .withconstantfeatuwe(viewewmutesauthow, òωó fawse)
+      .withconstantfeatuwe(authowwepowtsviewewasspam, 😳😳😳 fawse)
+      .withconstantfeatuwe(viewewwepowtsauthowasspam, σωσ fawse)
+      .withconstantfeatuwe(viewewmuteswetweetsfwomauthow, (⑅˘꒳˘) fawse)
   }
 
-  def forAuthor(author: User, viewerId: Option[Long]): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def f-fowauthow(authow: u-usew, (///ˬ///✿) viewewid: option[wong]): f-featuwemapbuiwdew => f-featuwemapbuiwdew = {
+    w-wequests.incw()
 
 
-    _.withFeature(AuthorFollowsViewer, authorFollowsViewer(author, viewerId))
-      .withFeature(ViewerFollowsAuthor, viewerFollowsAuthor(author, viewerId))
-      .withFeature(AuthorBlocksViewer, authorBlocksViewer(author, viewerId))
-      .withFeature(ViewerBlocksAuthor, viewerBlocksAuthor(author, viewerId))
-      .withFeature(AuthorMutesViewer, authorMutesViewer(author, viewerId))
-      .withFeature(ViewerMutesAuthor, viewerMutesAuthor(author, viewerId))
-      .withFeature(AuthorReportsViewerAsSpam, authorHasReportedViewer(author.id, viewerId))
-      .withFeature(ViewerReportsAuthorAsSpam, viewerHasReportedAuthor(author.id, viewerId))
-      .withFeature(ViewerMutesRetweetsFromAuthor, viewerMutesRetweetsFromAuthor(author, viewerId))
+    _.withfeatuwe(authowfowwowsviewew, 🥺 authowfowwowsviewew(authow, OwO viewewid))
+      .withfeatuwe(viewewfowwowsauthow, >w< viewewfowwowsauthow(authow, 🥺 v-viewewid))
+      .withfeatuwe(authowbwocksviewew, nyaa~~ authowbwocksviewew(authow, ^^ viewewid))
+      .withfeatuwe(viewewbwocksauthow, >w< viewewbwocksauthow(authow, OwO viewewid))
+      .withfeatuwe(authowmutesviewew, XD a-authowmutesviewew(authow, ^^;; viewewid))
+      .withfeatuwe(viewewmutesauthow, 🥺 v-viewewmutesauthow(authow, XD v-viewewid))
+      .withfeatuwe(authowwepowtsviewewasspam, (U ᵕ U❁) authowhaswepowtedviewew(authow.id, :3 v-viewewid))
+      .withfeatuwe(viewewwepowtsauthowasspam, ( ͡o ω ͡o ) viewewhaswepowtedauthow(authow.id, òωó v-viewewid))
+      .withfeatuwe(viewewmuteswetweetsfwomauthow, σωσ v-viewewmuteswetweetsfwomauthow(authow, (U ᵕ U❁) v-viewewid))
   }
 
-  def viewerFollowsAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.follows, viewerFollowsAuthor)
+  d-def viewewfowwowsauthow(authowid: usewid, (✿oωo) viewewid: option[usewid]): s-stitch[boowean] =
+    v-viewewvewbsauthow(authowid, ^^ v-viewewid, u-usewwewationshipsouwce.fowwows, v-viewewfowwowsauthow)
 
-  def viewerFollowsAuthor(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
-      author,
-      viewerId,
-      p => p.following,
-      userRelationshipSource.follows,
-      viewerFollowsAuthor)
+  def viewewfowwowsauthow(authow: usew, v-viewewid: option[usewid]): stitch[boowean] =
+    viewewvewbsauthow(
+      authow, ^•ﻌ•^
+      viewewid, XD
+      p => p.fowwowing, :3
+      u-usewwewationshipsouwce.fowwows, (ꈍᴗꈍ)
+      viewewfowwowsauthow)
 
-  def authorFollowsViewer(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    AuthorVerbsViewer(authorId, viewerId, userRelationshipSource.follows, authorFollowsViewer)
+  def authowfowwowsviewew(authowid: usewid, :3 viewewid: o-option[usewid]): s-stitch[boowean] =
+    a-authowvewbsviewew(authowid, (U ﹏ U) viewewid, UwU u-usewwewationshipsouwce.fowwows, 😳😳😳 authowfowwowsviewew)
 
-  def authorFollowsViewer(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    AuthorVerbsViewer(
-      author,
-      viewerId,
-      p => p.followedBy,
-      userRelationshipSource.follows,
-      authorFollowsViewer)
+  d-def authowfowwowsviewew(authow: u-usew, XD viewewid: option[usewid]): stitch[boowean] =
+    authowvewbsviewew(
+      authow, o.O
+      viewewid, (⑅˘꒳˘)
+      p-p => p.fowwowedby, 😳😳😳
+      usewwewationshipsouwce.fowwows,
+      a-authowfowwowsviewew)
 
-  def viewerBlocksAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.blocks, viewerBlocksAuthor)
+  def v-viewewbwocksauthow(authowid: usewid, nyaa~~ v-viewewid: option[usewid]): stitch[boowean] =
+    v-viewewvewbsauthow(authowid, rawr v-viewewid, -.- usewwewationshipsouwce.bwocks, (✿oωo) viewewbwocksauthow)
 
-  def viewerBlocksAuthor(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
-      author,
-      viewerId,
-      p => p.blocking,
-      userRelationshipSource.blocks,
-      viewerBlocksAuthor)
+  d-def viewewbwocksauthow(authow: u-usew, /(^•ω•^) viewewid: option[usewid]): stitch[boowean] =
+    viewewvewbsauthow(
+      authow, 🥺
+      v-viewewid, ʘwʘ
+      p-p => p.bwocking, UwU
+      u-usewwewationshipsouwce.bwocks, XD
+      viewewbwocksauthow)
 
-  def authorBlocksViewer(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.blockedBy, authorBlocksViewer)
+  d-def authowbwocksviewew(authowid: u-usewid, (✿oωo) viewewid: option[usewid]): s-stitch[boowean] =
+    viewewvewbsauthow(authowid, :3 viewewid, usewwewationshipsouwce.bwockedby, authowbwocksviewew)
 
-  def authorBlocksViewer(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
-      author,
-      viewerId,
-      p => p.blockedBy,
-      userRelationshipSource.blockedBy,
-      authorBlocksViewer)
+  d-def a-authowbwocksviewew(authow: usew, viewewid: option[usewid]): s-stitch[boowean] =
+    v-viewewvewbsauthow(
+      authow, (///ˬ///✿)
+      viewewid, nyaa~~
+      p => p.bwockedby, >w<
+      u-usewwewationshipsouwce.bwockedby, -.-
+      authowbwocksviewew)
 
-  def viewerMutesAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.mutes, viewerMutesAuthor)
+  def viewewmutesauthow(authowid: usewid, (✿oωo) viewewid: option[usewid]): s-stitch[boowean] =
+    viewewvewbsauthow(authowid, (˘ω˘) viewewid, rawr u-usewwewationshipsouwce.mutes, OwO v-viewewmutesauthow)
 
-  def viewerMutesAuthor(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
-      author,
-      viewerId,
-      p => p.muting,
-      userRelationshipSource.mutes,
-      viewerMutesAuthor)
+  def viewewmutesauthow(authow: usew, ^•ﻌ•^ viewewid: option[usewid]): s-stitch[boowean] =
+    v-viewewvewbsauthow(
+      authow, UwU
+      viewewid, (˘ω˘)
+      p => p.muting, (///ˬ///✿)
+      u-usewwewationshipsouwce.mutes, σωσ
+      viewewmutesauthow)
 
-  def authorMutesViewer(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.mutedBy, authorMutesViewer)
+  def a-authowmutesviewew(authowid: usewid, /(^•ω•^) viewewid: option[usewid]): stitch[boowean] =
+    v-viewewvewbsauthow(authowid, 😳 viewewid, 😳 usewwewationshipsouwce.mutedby, (⑅˘꒳˘) a-authowmutesviewew)
 
-  def authorMutesViewer(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
-      author,
-      viewerId,
-      p => p.mutedBy,
-      userRelationshipSource.mutedBy,
-      authorMutesViewer)
+  d-def authowmutesviewew(authow: usew, viewewid: o-option[usewid]): stitch[boowean] =
+    v-viewewvewbsauthow(
+      a-authow, 😳😳😳
+      v-viewewid, 😳
+      p => p.mutedby,
+      u-usewwewationshipsouwce.mutedby, XD
+      a-authowmutesviewew)
 
-  def viewerHasReportedAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
-      authorId,
-      viewerId,
-      userRelationshipSource.reportsAsSpam,
-      viewerHasReportedAuthor)
+  def viewewhaswepowtedauthow(authowid: usewid, mya v-viewewid: option[usewid]): s-stitch[boowean] =
+    v-viewewvewbsauthow(
+      authowid, ^•ﻌ•^
+      viewewid, ʘwʘ
+      u-usewwewationshipsouwce.wepowtsasspam, ( ͡o ω ͡o )
+      viewewhaswepowtedauthow)
 
-  def authorHasReportedViewer(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
-      authorId,
-      viewerId,
-      userRelationshipSource.reportedAsSpamBy,
-      authorHasReportedViewer)
+  d-def authowhaswepowtedviewew(authowid: u-usewid, viewewid: option[usewid]): stitch[boowean] =
+    viewewvewbsauthow(
+      a-authowid, mya
+      v-viewewid, o.O
+      u-usewwewationshipsouwce.wepowtedasspamby, (✿oωo)
+      a-authowhaswepowtedviewew)
 
-  def viewerMutesRetweetsFromAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
-      authorId,
-      viewerId,
-      userRelationshipSource.noRetweetsFrom,
-      viewerMutesRetweetsFromAuthor)
+  def viewewmuteswetweetsfwomauthow(authowid: u-usewid, :3 viewewid: option[usewid]): stitch[boowean] =
+    viewewvewbsauthow(
+      authowid, 😳
+      viewewid, (U ﹏ U)
+      u-usewwewationshipsouwce.nowetweetsfwom, mya
+      viewewmuteswetweetsfwomauthow)
 
-  def viewerMutesRetweetsFromAuthor(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
-      author,
-      viewerId,
-      p => p.noRetweetsFrom,
-      userRelationshipSource.noRetweetsFrom,
-      viewerMutesRetweetsFromAuthor)
+  d-def viewewmuteswetweetsfwomauthow(authow: usew, v-viewewid: option[usewid]): stitch[boowean] =
+    v-viewewvewbsauthow(
+      authow, (U ᵕ U❁)
+      v-viewewid, :3
+      p-p => p.nowetweetsfwom, mya
+      u-usewwewationshipsouwce.nowetweetsfwom, OwO
+      v-viewewmuteswetweetsfwomauthow)
 }

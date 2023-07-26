@@ -1,45 +1,45 @@
-# Tweetypie
+# tweetypie
 
-## Overview
+## ovewview
 
-Tweetypie is the core Tweet service that handles the reading and writing of Tweet data. It is called by the Twitter clients (through GraphQL), as well as various internal Twitter services, to fetch, create, delete, and edit Tweets. Tweetypie calls several backends to hydrate Tweet related data to return to callers.
+tweetypie i-is the cowe tweet s-sewvice that h-handwes the weading a-and wwiting o-of tweet data. -.- i-it is cawwed by t-the twittew cwients (thwough g-gwaphqw), ^^;; as weww as vawious intewnaw twittew sewvices, XD to fetch, c-cweate, 🥺 dewete, òωó and edit tweets. (ˆ ﻌ ˆ)♡ tweetypie cawws s-sevewaw backends to hydwate tweet w-wewated data to wetuwn to cawwews. -.-
 
-## How It Works
+## how it wowks
 
-The next sections describe the layers involved in the read and create paths for Tweets.
+the nyext s-sections descwibe the wayews invowved i-in the wead a-and cweate paths fow tweets. :3
 
-### Read Path
+### wead path
 
-In the read path, Tweetypie fetches the Tweet data from [Manhattan](https://blog.twitter.com/engineering/en_us/a/2014/manhattan-our-real-time-multi-tenant-distributed-database-for-twitter-scale) or [Twemcache](https://blog.twitter.com/engineering/en_us/a/2012/caching-with-twemcache), and hydrates data about the Tweet from various other backend services.
+in the wead path, ʘwʘ tweetypie fetches t-the tweet data fwom [manhattan](https://bwog.twittew.com/engineewing/en_us/a/2014/manhattan-ouw-weaw-time-muwti-tenant-distwibuted-database-fow-twittew-scawe) ow [twemcache](https://bwog.twittew.com/engineewing/en_us/a/2012/caching-with-twemcache), 🥺 and hydwates data a-about the tweet fwom vawious othew b-backend sewvices. >_<
 
-#### Relevant Packages
+#### w-wewevant p-packages
 
-- [backends](src/main/scala/com/twitter/tweetypie/backends/): A "backend" is a wrapper around a thrift service that Tweetypie calls. For example [Talon.scala](src/main/scala/com/twitter/tweetypie/backends/Talon.scala) is the backend for Talon, the URL shortener.
-- [repository](src/main/scala/com/twitter/tweetypie/repository/): A "repository" wraps a backend and provides a structured interface for retrieving data from the backend. [UrlRepository.scala](src/main/scala/com/twitter/tweetypie/repository/UrlRepository.scala) is the repository for the Talon backend.
-- [hydrator](src/main/scala/com/twitter/tweetypie/hydrator/): Tweetypie doesn't store all the data associated with Tweets. For example, it doesn't store User objects, but it stores screennames in the Tweet text (as mentions). It stores media IDs, but it doesn't store the media metadata. Hydrators take the raw Tweet data from Manhattan or Cache and return it with some additional information, along with hydration metadata that says whether the hydration took place. This information is usually fetched using a repository. For example, during the hydration process, the [UrlEntityHydrator](src/main/scala/com/twitter/tweetypie/hydrator/UrlEntityHydrator.scala) calls Talon using the [UrlRepository](src/main/scala/com/twitter/tweetypie/repository/UrlRepository.scala) and fetches the expanded URLs for the t.co links in the Tweet.
-- [handler](src/main/scala/com/twitter/tweetypie/handler/): A handler is a function that handles requests to one of the Tweetypie endpoints. The [GetTweetsHandler](src/main/scala/com/twitter/tweetypie/handler/GetTweetsHandler.scala) handles requests to `get_tweets`, one of the endpoints used to fetch Tweets.
+- [backends](swc/main/scawa/com/twittew/tweetypie/backends/): a-a "backend" is a wwappew awound a thwift s-sewvice that tweetypie cawws. ʘwʘ fow exampwe [tawon.scawa](swc/main/scawa/com/twittew/tweetypie/backends/tawon.scawa) i-is the backend fow tawon, (˘ω˘) the uww showtenew. (✿oωo)
+- [wepositowy](swc/main/scawa/com/twittew/tweetypie/wepositowy/): a "wepositowy" wwaps a backend and pwovides a-a stwuctuwed intewface fow wetwieving d-data fwom t-the backend. (///ˬ///✿) [uwwwepositowy.scawa](swc/main/scawa/com/twittew/tweetypie/wepositowy/uwwwepositowy.scawa) i-is the wepositowy fow the tawon backend. rawr x3
+- [hydwatow](swc/main/scawa/com/twittew/tweetypie/hydwatow/): tweetypie doesn't s-stowe aww the d-data associated with tweets. -.- fow e-exampwe, ^^ it doesn't s-stowe usew objects, (⑅˘꒳˘) but it s-stowes scweennames in the tweet t-text (as mentions). nyaa~~ it stowes media ids, /(^•ω•^) but it d-doesn't stowe the media metadata. (U ﹏ U) h-hydwatows take the waw tweet d-data fwom manhattan o-ow cache and wetuwn it with some additionaw infowmation, 😳😳😳 awong with hydwation metadata that says whethew the h-hydwation took p-pwace. >w< this infowmation is usuawwy f-fetched using a-a wepositowy. f-fow exampwe, XD duwing the hydwation pwocess, o.O the [uwwentityhydwatow](swc/main/scawa/com/twittew/tweetypie/hydwatow/uwwentityhydwatow.scawa) cawws t-tawon using the [uwwwepositowy](swc/main/scawa/com/twittew/tweetypie/wepositowy/uwwwepositowy.scawa) and fetches the expanded uwws fow the t.co winks in the tweet. mya
+- [handwew](swc/main/scawa/com/twittew/tweetypie/handwew/): a-a handwew is a function that handwes w-wequests to o-one of the tweetypie e-endpoints. 🥺 the [gettweetshandwew](swc/main/scawa/com/twittew/tweetypie/handwew/gettweetshandwew.scawa) h-handwes w-wequests to `get_tweets`, ^^;; one o-of the endpoints u-used to fetch tweets. :3
 
-#### Through the Read Path
+#### thwough the wead p-path
 
-At a high level, the path a `get_tweets` request takes is as follows.
+at a high w-wevew, the path a-a `get_tweets` w-wequest takes is a-as fowwows. (U ﹏ U)
 
-- The request is handled by [GetTweetsHandler](src/main/scala/com/twitter/tweetypie/handler/GetTweetsHandler.scala).
-- GetTweetsHandler uses the TweetResultRepository (defined in [LogicalRepositories.scala](src/main/scala/com/twitter/tweetypie/config/LogicalRepositories#L301)). The TweetResultRepository has at its core a [ManhattanTweetRespository](src/main/scala/com/twitter/tweetypie/repository/ManhattanTweetRepository.scala) (that fetches the Tweet data from Manhattan), wrapped in a [CachingTweetRepository](src/main/scala/com/twitter/tweetypie/repository/ManhattanTweetRepository.scala) (that applies caching using Twemcache). Finally, the caching repository is wrapped in a hydration layer (provided by [TweetHydration.hydrateRepo](src/main/scala/com/twitter/tweetypie/hydrator/TweetHydration.scala#L789)). Essentially, the TweetResultRepository fetches the Tweet data from cache or Manhattan, and passes it through the hydration pipeline.
-- The hydration pipeline is described in [TweetHydration.scala](src/main/scala/com/twitter/tweetypie/hydrator/TweetHydration.scala), where all the hydrators are combined together.
+- the wequest is handwed by [gettweetshandwew](swc/main/scawa/com/twittew/tweetypie/handwew/gettweetshandwew.scawa). OwO
+- gettweetshandwew u-uses the tweetwesuwtwepositowy (defined in [wogicawwepositowies.scawa](swc/main/scawa/com/twittew/tweetypie/config/wogicawwepositowies#w301)). 😳😳😳 the tweetwesuwtwepositowy has at its cowe a [manhattantweetwespositowy](swc/main/scawa/com/twittew/tweetypie/wepositowy/manhattantweetwepositowy.scawa) (that fetches the tweet data fwom manhattan), (ˆ ﻌ ˆ)♡ w-wwapped in a [cachingtweetwepositowy](swc/main/scawa/com/twittew/tweetypie/wepositowy/manhattantweetwepositowy.scawa) (that appwies caching using twemcache). XD f-finawwy, (ˆ ﻌ ˆ)♡ t-the caching wepositowy i-is wwapped in a hydwation w-wayew (pwovided by [tweethydwation.hydwatewepo](swc/main/scawa/com/twittew/tweetypie/hydwatow/tweethydwation.scawa#w789)). ( ͡o ω ͡o ) e-essentiawwy, rawr x3 t-the tweetwesuwtwepositowy fetches the tweet data fwom cache ow manhattan, nyaa~~ and passes it thwough the hydwation p-pipewine. >_<
+- the hydwation p-pipewine is descwibed in [tweethydwation.scawa](swc/main/scawa/com/twittew/tweetypie/hydwatow/tweethydwation.scawa), ^^;; w-whewe aww t-the hydwatows awe combined togethew. (ˆ ﻌ ˆ)♡
 
-### Write Path
+### wwite p-path
 
-The write path follows different patterns to the read path, but reuses some of the code.
+the wwite p-path fowwows diffewent pattewns t-to the wead path, b-but weuses some of the code. ^^;;
 
-#### Relevant Packages
+#### wewevant packages
 
-- [store](src/main/scala/com/twitter/tweetypie/store/): The store package includes the code for updating backends on write, and the coordination code for describing which backends need to be updated for which endpoints. There are two types of file in this package: stores and store modules. Files that end in Store are stores and define the logic for updating a backend, for example [ManhattanTweetStore](src/main/scala/com/twitter/tweetypie/store/ManhattanTweetStore.scala) writes Tweets to Manhattan. Most of the files that don't end in Store are store modules and define the logic for handling a write endpoint, and describe which stores are called, for example [InsertTweet](src/main/scala/com/twitter/tweetypie/store/InsertTweet.scala) which handles the `post_tweet` endpoint. Modules define which stores they call, and stores define which modules they handle.
+- [stowe](swc/main/scawa/com/twittew/tweetypie/stowe/): the stowe package i-incwudes the c-code fow updating b-backends on wwite, (⑅˘꒳˘) and the coowdination c-code f-fow descwibing which backends nyeed t-to be updated fow which endpoints. rawr x3 thewe awe two types of fiwe in this package: s-stowes and stowe m-moduwes. (///ˬ///✿) fiwes that end in stowe awe stowes a-and define the w-wogic fow updating a backend, fow exampwe [manhattantweetstowe](swc/main/scawa/com/twittew/tweetypie/stowe/manhattantweetstowe.scawa) wwites tweets t-to manhattan. 🥺 most of the fiwes that don't end in stowe awe stowe moduwes and d-define the wogic fow handwing a wwite endpoint, >_< a-and descwibe which s-stowes awe cawwed, UwU fow exampwe [insewttweet](swc/main/scawa/com/twittew/tweetypie/stowe/insewttweet.scawa) which handwes the `post_tweet` endpoint. >_< moduwes d-define which stowes t-they caww, -.- and stowes define which moduwes they handwe. mya
 
-#### Through the Write Path
+#### t-thwough the wwite path
 
-The path a `post_tweet` request takes is as follows.
+the path a-a `post_tweet` wequest takes is as fowwows. >w<
 
-- The request is handled in [PostTweet.scala](src/main/scala/com/twitter/tweetypie/handler/PostTweet.scala#L338).
-- [TweetBuilder](src/main/scala/com/twitter/tweetypie/handler/TweetBuilder.scala) creates a Tweet from the request, after performing text processing, validation, URL shortening, media processing, checking for duplicates etc.
-- [WritePathHydration.hydrateInsertTweet](src/main/scala/com/twitter/tweetypie/config/WritePathHydration.scala#L54) passes the Tweet through the hydration pipeline to return the caller.
-- The Tweet data is written to various stores as described in [InsertTweet.scala](src/main/scala/com/twitter/tweetypie/store/InsertTweet.scala#L84).
+- the wequest is h-handwed in [posttweet.scawa](swc/main/scawa/com/twittew/tweetypie/handwew/posttweet.scawa#w338). (U ﹏ U)
+- [tweetbuiwdew](swc/main/scawa/com/twittew/tweetypie/handwew/tweetbuiwdew.scawa) cweates a tweet f-fwom the wequest, 😳😳😳 a-aftew pewfowming text pwocessing, o.O v-vawidation, uww showtening, òωó m-media pwocessing, 😳😳😳 c-checking f-fow dupwicates etc. σωσ
+- [wwitepathhydwation.hydwateinsewttweet](swc/main/scawa/com/twittew/tweetypie/config/wwitepathhydwation.scawa#w54) passes the t-tweet thwough t-the hydwation pipewine to wetuwn the cawwew. (⑅˘꒳˘)
+- t-the tweet data is w-wwitten to vawious s-stowes as descwibed in [insewttweet.scawa](swc/main/scawa/com/twittew/tweetypie/stowe/insewttweet.scawa#w84). (///ˬ///✿)

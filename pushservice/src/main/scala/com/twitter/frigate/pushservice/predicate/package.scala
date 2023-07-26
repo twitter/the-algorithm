@@ -1,44 +1,44 @@
-package com.twitter.frigate.pushservice
+package com.twittew.fwigate.pushsewvice
 
-import com.twitter.frigate.common.base.Candidate
-import com.twitter.frigate.common.base.SocialGraphServiceRelationshipMap
-import com.twitter.frigate.common.base.TweetAuthor
-import com.twitter.frigate.common.rec_types.RecTypes.isInNetworkTweetType
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.Predicate
+impowt com.twittew.fwigate.common.base.candidate
+i-impowt c-com.twittew.fwigate.common.base.sociawgwaphsewvicewewationshipmap
+i-impowt com.twittew.fwigate.common.base.tweetauthow
+i-impowt com.twittew.fwigate.common.wec_types.wectypes.isinnetwowktweettype
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.hewmit.pwedicate.pwedicate
 
-package object predicate {
-  implicit class CandidatesWithAuthorFollowPredicates(
-    predicate: Predicate[
-      PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap
+p-package object p-pwedicate {
+  impwicit cwass candidateswithauthowfowwowpwedicates(
+    pwedicate: pwedicate[
+      pushcandidate w-with tweetauthow with sociawgwaphsewvicewewationshipmap
     ]) {
-    def applyOnlyToAuthorBeingFollowPredicates: Predicate[Candidate] =
-      predicate.optionalOn[Candidate](
+    def appwyonwytoauthowbeingfowwowpwedicates: p-pwedicate[candidate] =
+      pwedicate.optionawon[candidate](
         {
-          case candidate: PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap
-              if isInNetworkTweetType(candidate.commonRecType) =>
-            Some(candidate)
-          case _ =>
-            None
-        },
-        missingResult = true
+          c-case candidate: pushcandidate with tweetauthow with sociawgwaphsewvicewewationshipmap
+              i-if isinnetwowktweettype(candidate.commonwectype) =>
+            some(candidate)
+          c-case _ =>
+            n-nyone
+        }, (˘ω˘)
+        missingwesuwt = twue
       )
   }
 
-  implicit class TweetCandidateWithTweetAuthor(
-    predicate: Predicate[
-      PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap
+  impwicit cwass tweetcandidatewithtweetauthow(
+    p-pwedicate: pwedicate[
+      pushcandidate with tweetauthow with sociawgwaphsewvicewewationshipmap
     ]) {
-    def applyOnlyToBasicTweetPredicates: Predicate[Candidate] =
-      predicate.optionalOn[Candidate](
+    d-def appwyonwytobasictweetpwedicates: pwedicate[candidate] =
+      p-pwedicate.optionawon[candidate](
         {
-          case candidate: PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap
-              if isInNetworkTweetType(candidate.commonRecType) =>
-            Some(candidate)
+          case c-candidate: pushcandidate w-with t-tweetauthow with sociawgwaphsewvicewewationshipmap
+              if isinnetwowktweettype(candidate.commonwectype) =>
+            s-some(candidate)
           case _ =>
-            None
-        },
-        missingResult = true
+            nyone
+        }, (⑅˘꒳˘)
+        m-missingwesuwt = twue
       )
   }
 }

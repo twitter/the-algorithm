@@ -1,53 +1,53 @@
-package com.twitter.search.earlybird;
+package com.twittew.seawch.eawwybiwd;
 
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.search.common.dark.DarkProxy;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.util.Duration;
+impowt com.twittew.finagwe.thwift.thwiftcwientwequest;
+i-impowt c-com.twittew.seawch.common.dawk.dawkpwoxy;
+i-impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdsewvice;
+i-impowt c-com.twittew.utiw.duwation;
 
 /**
- * Manages a finagle server underneath, which can be recreated.
+ * m-manages a finagwe s-sewvew undewneath, o.O which can be wecweated. /(^•ω•^)
  *
- * This class is not thread-safe. It is up to the concrete implementations and their callers to
- * correctly synchronize calls to these methods (for example, to make sure that there is no race
- * condition if startProductionFinagleServer() and stopProductionFinagleServer() are called
- * concurrently from two different threads).
+ * this cwass is nyot thwead-safe. nyaa~~ i-it is up to the concwete impwementations a-and theiw cawwews to
+ * cowwectwy s-synchwonize cawws to these methods (fow exampwe, nyaa~~ to make suwe t-that thewe is nyo wace
+ * condition i-if stawtpwoductionfinagwesewvew() a-and stoppwoductionfinagwesewvew() awe cawwed
+ * concuwwentwy fwom two diffewent thweads). :3
  */
-public interface EarlybirdFinagleServerManager {
+p-pubwic intewface eawwybiwdfinagwesewvewmanagew {
   /**
-   * Determines if the warm up finagle server is currently running
+   * detewmines if the wawm up finagwe sewvew is cuwwentwy w-wunning
    */
-  boolean isWarmUpServerRunning();
+  boowean iswawmupsewvewwunning();
 
   /**
-   * Starts up the warm up finagle server on the given port.
+   * s-stawts up the w-wawm up finagwe s-sewvew on the g-given powt. 😳😳😳
    */
-  void startWarmUpFinagleServer(
-      EarlybirdService.ServiceIface serviceIface,
-      String serviceName,
-      int port);
+  void stawtwawmupfinagwesewvew(
+      eawwybiwdsewvice.sewviceiface s-sewviceiface, (˘ω˘)
+      stwing sewvicename, ^^
+      i-int powt);
 
   /**
-   * Stops the warm up finagle server, after waiting for at most the given amount of time.
+   * stops the wawm up finagwe sewvew, :3 aftew waiting fow at most the given a-amount of time.
    */
-  void stopWarmUpFinagleServer(Duration serverCloseWaitTime) throws InterruptedException;
+  void stopwawmupfinagwesewvew(duwation s-sewvewcwosewaittime) t-thwows intewwuptedexception;
 
   /**
-   * Determines if the production finagle server is currently running.
+   * d-detewmines if the pwoduction finagwe sewvew is cuwwentwy w-wunning. -.-
    */
-  boolean isProductionServerRunning();
+  b-boowean ispwoductionsewvewwunning();
 
   /**
-   * Starts up the production finagle server on the given port.
+   * s-stawts u-up the pwoduction finagwe sewvew o-on the given powt. 😳
    */
-  void startProductionFinagleServer(
-      DarkProxy<ThriftClientRequest, byte[]> darkProxy,
-      EarlybirdService.ServiceIface serviceIface,
-      String serviceName,
-      int port);
+  void s-stawtpwoductionfinagwesewvew(
+      dawkpwoxy<thwiftcwientwequest, mya byte[]> dawkpwoxy, (˘ω˘)
+      e-eawwybiwdsewvice.sewviceiface sewviceiface, >_<
+      stwing s-sewvicename, -.-
+      int powt);
 
   /**
-   * Stops the production finagle server after waiting for at most the given amount of time.
+   * s-stops the pwoduction f-finagwe sewvew aftew waiting fow at most the given amount of time.
    */
-  void stopProductionFinagleServer(Duration serverCloseWaitTime) throws InterruptedException;
+  void stoppwoductionfinagwesewvew(duwation sewvewcwosewaittime) thwows i-intewwuptedexception;
 }

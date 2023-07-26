@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.timewine_moduwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Classic
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ClassicNoDivider
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ContextEmphasis
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeaderDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.cwassic
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.cwassicnodividew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.contextemphasis
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewine_moduwe.moduweheadewdispwaytype
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class ModuleHeaderDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass moduweheadewdispwaytypemawshawwew @inject() () {
 
-  def apply(displayType: ModuleHeaderDisplayType): urt.ModuleHeaderDisplayType =
-    displayType match {
-      case Classic => urt.ModuleHeaderDisplayType.Classic
-      case ContextEmphasis => urt.ModuleHeaderDisplayType.ContextEmphasis
-      case ClassicNoDivider => urt.ModuleHeaderDisplayType.ClassicNoDivider
+  def appwy(dispwaytype: m-moduweheadewdispwaytype): uwt.moduweheadewdispwaytype =
+    dispwaytype m-match {
+      case cwassic => uwt.moduweheadewdispwaytype.cwassic
+      c-case contextemphasis => uwt.moduweheadewdispwaytype.contextemphasis
+      case cwassicnodividew => uwt.moduweheadewdispwaytype.cwassicnodividew
     }
 
 }

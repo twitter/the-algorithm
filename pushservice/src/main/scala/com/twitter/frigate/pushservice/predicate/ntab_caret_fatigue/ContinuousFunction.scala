@@ -1,148 +1,148 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.twittew.fwigate.pushsewvice.pwedicate.ntab_cawet_fatigue
 
-import com.twitter.finagle.stats.StatsReceiver
+impowt com.twittew.finagwe.stats.statsweceivew
 
-case class ContinuousFunctionParam(
-  knobs: Seq[Double],
-  knobValues: Seq[Double],
-  powers: Seq[Double],
-  weight: Double,
-  defaultValue: Double) {
+c-case cwass c-continuousfunctionpawam(
+  k-knobs: s-seq[doubwe], nyaa~~
+  k-knobvawues: seq[doubwe], OwO
+  p-powews: s-seq[doubwe], rawr x3
+  w-weight: doubwe, XD
+  defauwtvawue: doubwe) {
 
-  def validateParams(): Boolean = {
-    knobs.size > 0 && knobs.size - 1 == powers.size && knobs.size == knobValues.size
+  def vawidatepawams(): boowean = {
+    k-knobs.size > 0 && knobs.size - 1 == powews.size && k-knobs.size == knobvawues.size
   }
 }
 
-object ContinuousFunction {
+o-object continuousfunction {
 
   /**
-   * Evalutate the value for function f(x) = w(x - b)^power
-   * where w and b are decided by the start, startVal, end, endVal
+   * evawutate the vawue fow function f-f(x) = w(x - b)^powew
+   * w-whewe w and b a-awe decided by the stawt, σωσ stawtvaw, end, (U ᵕ U❁) endvaw
    * such that
-   *         w(start - b) ^ power = startVal
-   *         w(end - b) ^ power = endVal
+   *         w(stawt - b-b) ^ powew = stawtvaw
+   *         w(end - b) ^ powew = endvaw
    *
-   * @param value the value at which we will evaluate the param
-   * @return weight * f(value)
+   * @pawam vawue the v-vawue at which we wiww evawuate t-the pawam
+   * @wetuwn w-weight * f-f(vawue)
    */
-  def evaluateFn(
-    value: Double,
-    start: Double,
-    startVal: Double,
-    end: Double,
-    endVal: Double,
-    power: Double,
-    weight: Double
-  ): Double = {
-    val b =
-      (math.pow(startVal / endVal, 1 / power) * end - start) / (math.pow(
-        startVal / endVal,
-        1 / power) - 1)
-    val w = startVal / math.pow(start - b, power)
-    weight * w * math.pow(value - b, power)
+  d-def evawuatefn(
+    vawue: doubwe, (U ﹏ U)
+    stawt: doubwe, :3
+    s-stawtvaw: doubwe, ( ͡o ω ͡o )
+    end: doubwe, σωσ
+    e-endvaw: doubwe, >w<
+    powew: doubwe, 😳😳😳
+    weight: doubwe
+  ): doubwe = {
+    vaw b =
+      (math.pow(stawtvaw / endvaw, OwO 1 / p-powew) * end - stawt) / (math.pow(
+        s-stawtvaw / e-endvaw, 😳
+        1 / p-powew) - 1)
+    vaw w = stawtvaw / math.pow(stawt - b, powew)
+    w-weight * w-w * math.pow(vawue - b, powew)
   }
 
   /**
-   * Evaluate value for function f(x), and return weight * f(x)
+   * evawuate v-vawue fow f-function f(x), 😳😳😳 and wetuwn weight * f-f(x)
    *
-   * f(x) is a piecewise function
-   * f(x) = w_i * (x - b_i)^powers[i] for knobs[i] <= x < knobs[i+1]
-   * such that
-   *         w(knobs[i] - b) ^ power = knobVals[i]
-   *         w(knobs[i+1] - b) ^ power = knobVals[i+1]
+   * f(x) is a piecewise f-function
+   * f(x) = w_i * (x - b_i)^powews[i] f-fow knobs[i] <= x < knobs[i+1]
+   * s-such that
+   *         w-w(knobs[i] - b) ^ p-powew = knobvaws[i]
+   *         w(knobs[i+1] - b) ^ powew = knobvaws[i+1]
    *
-   * @return Evaluate value for weight * f(x), for the function described above. If the any of the input is invalid, returns defaultVal
+   * @wetuwn evawuate vawue fow weight * f(x), (˘ω˘) fow the function d-descwibed above. ʘwʘ i-if the any of the input is i-invawid, ( ͡o ω ͡o ) wetuwns d-defauwtvaw
    */
-  def safeEvaluateFn(
-    value: Double,
-    knobs: Seq[Double],
-    knobVals: Seq[Double],
-    powers: Seq[Double],
-    weight: Double,
-    defaultVal: Double,
-    statsReceiver: StatsReceiver
-  ): Double = {
-    val totalStats = statsReceiver.counter("safe_evalfn_total")
-    val validStats =
-      statsReceiver.counter("safe_evalfn_valid")
-    val validEndCaseStats =
-      statsReceiver.counter("safe_evalfn_valid_endcase")
-    val invalidStats = statsReceiver.counter("safe_evalfn_invalid")
+  d-def safeevawuatefn(
+    vawue: doubwe, o.O
+    knobs: seq[doubwe], >w<
+    k-knobvaws: seq[doubwe], 😳
+    powews: seq[doubwe], 🥺
+    weight: doubwe, rawr x3
+    defauwtvaw: d-doubwe, o.O
+    statsweceivew: s-statsweceivew
+  ): d-doubwe = {
+    v-vaw totawstats = statsweceivew.countew("safe_evawfn_totaw")
+    v-vaw vawidstats =
+      statsweceivew.countew("safe_evawfn_vawid")
+    v-vaw v-vawidendcasestats =
+      s-statsweceivew.countew("safe_evawfn_vawid_endcase")
+    vaw invawidstats = statsweceivew.countew("safe_evawfn_invawid")
 
-    totalStats.incr()
-    if (knobs.size <= 0 || knobs.size - 1 != powers.size || knobs.size != knobVals.size) {
-      invalidStats.incr()
-      defaultVal
-    } else {
-      val endIndex = knobs.indexWhere(knob => knob > value)
-      validStats.incr()
-      endIndex match {
+    t-totawstats.incw()
+    i-if (knobs.size <= 0 || k-knobs.size - 1 != p-powews.size || k-knobs.size != knobvaws.size) {
+      invawidstats.incw()
+      defauwtvaw
+    } e-ewse {
+      vaw endindex = knobs.indexwhewe(knob => knob > vawue)
+      vawidstats.incw()
+      endindex m-match {
         case -1 => {
-          validEndCaseStats.incr()
-          knobVals(knobVals.size - 1) * weight
+          vawidendcasestats.incw()
+          knobvaws(knobvaws.size - 1) * w-weight
         }
-        case 0 => {
-          validEndCaseStats.incr()
-          knobVals(0) * weight
+        c-case 0 => {
+          v-vawidendcasestats.incw()
+          knobvaws(0) * w-weight
         }
         case _ => {
-          val startIndex = endIndex - 1
-          evaluateFn(
-            value,
-            knobs(startIndex),
-            knobVals(startIndex),
-            knobs(endIndex),
-            knobVals(endIndex),
-            powers(startIndex),
+          v-vaw stawtindex = e-endindex - 1
+          evawuatefn(
+            vawue, rawr
+            knobs(stawtindex), ʘwʘ
+            knobvaws(stawtindex), 😳😳😳
+            knobs(endindex), ^^;;
+            knobvaws(endindex), o.O
+            p-powews(stawtindex), (///ˬ///✿)
             weight)
         }
       }
     }
   }
 
-  def safeEvaluateFn(
-    value: Double,
-    fnParams: ContinuousFunctionParam,
-    statsReceiver: StatsReceiver
-  ): Double = {
-    val totalStats = statsReceiver.counter("safe_evalfn_total")
-    val validStats =
-      statsReceiver.counter("safe_evalfn_valid")
-    val validEndCaseStats =
-      statsReceiver.counter("safe_evalfn_valid_endcase")
-    val invalidStats = statsReceiver.counter("safe_evalfn_invalid")
+  def s-safeevawuatefn(
+    vawue: doubwe, σωσ
+    f-fnpawams: c-continuousfunctionpawam, nyaa~~
+    statsweceivew: statsweceivew
+  ): d-doubwe = {
+    v-vaw totawstats = statsweceivew.countew("safe_evawfn_totaw")
+    v-vaw vawidstats =
+      s-statsweceivew.countew("safe_evawfn_vawid")
+    vaw vawidendcasestats =
+      statsweceivew.countew("safe_evawfn_vawid_endcase")
+    vaw invawidstats = s-statsweceivew.countew("safe_evawfn_invawid")
 
-    totalStats.incr()
+    t-totawstats.incw()
 
-    if (fnParams.validateParams()) {
-      val endIndex = fnParams.knobs.indexWhere(knob => knob > value)
-      validStats.incr()
-      endIndex match {
+    i-if (fnpawams.vawidatepawams()) {
+      vaw endindex = fnpawams.knobs.indexwhewe(knob => k-knob > vawue)
+      v-vawidstats.incw()
+      endindex m-match {
         case -1 => {
-          validEndCaseStats.incr()
-          fnParams.knobValues(fnParams.knobValues.size - 1) * fnParams.weight
+          vawidendcasestats.incw()
+          fnpawams.knobvawues(fnpawams.knobvawues.size - 1) * fnpawams.weight
         }
-        case 0 => {
-          validEndCaseStats.incr()
-          fnParams.knobValues(0) * fnParams.weight
+        c-case 0 => {
+          v-vawidendcasestats.incw()
+          fnpawams.knobvawues(0) * fnpawams.weight
         }
         case _ => {
-          val startIndex = endIndex - 1
-          evaluateFn(
-            value,
-            fnParams.knobs(startIndex),
-            fnParams.knobValues(startIndex),
-            fnParams.knobs(endIndex),
-            fnParams.knobValues(endIndex),
-            fnParams.powers(startIndex),
-            fnParams.weight
+          v-vaw stawtindex = e-endindex - 1
+          evawuatefn(
+            vawue, ^^;;
+            fnpawams.knobs(stawtindex), ^•ﻌ•^
+            f-fnpawams.knobvawues(stawtindex),
+            fnpawams.knobs(endindex), σωσ
+            fnpawams.knobvawues(endindex), -.-
+            fnpawams.powews(stawtindex), ^^;;
+            fnpawams.weight
           )
         }
       }
-    } else {
-      invalidStats.incr()
-      fnParams.defaultValue
+    } e-ewse {
+      invawidstats.incw()
+      fnpawams.defauwtvawue
     }
   }
 }

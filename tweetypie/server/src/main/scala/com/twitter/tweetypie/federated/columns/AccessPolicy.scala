@@ -1,40 +1,40 @@
-package com.twitter.tweetypie.federated.columns
+package com.twittew.tweetypie.fedewated.cowumns
 
-import com.twitter.passbird.bitfield.clientprivileges.thriftscala.{Constants => ClientAppPrivileges}
-import com.twitter.strato.access.Access.AuthenticatedTwitterUserNotSuspended
-import com.twitter.strato.access.Access.ClientApplicationPrivilege
-import com.twitter.strato.access.Access.TwitterUserNotSuspended
-import com.twitter.strato.access.ClientApplicationPrivilegeVariant
-import com.twitter.strato.config._
+impowt com.twittew.passbiwd.bitfiewd.cwientpwiviweges.thwiftscawa.{constants => c-cwientapppwiviweges}
+i-impowt com.twittew.stwato.access.access.authenticatedtwittewusewnotsuspended
+i-impowt com.twittew.stwato.access.access.cwientappwicationpwiviwege
+i-impowt com.twittew.stwato.access.access.twittewusewnotsuspended
+i-impowt com.twittew.stwato.access.cwientappwicationpwiviwegevawiant
+i-impowt com.twittew.stwato.config._
 
-object AccessPolicy {
+o-object a-accesspowicy {
 
   /**
-   * All Tweet Mutation operations require all of:
-   *   - Twitter user authentication
-   *   - Twitter user is not suspended
-   *   - Contributor user, if provided, is not suspended
-   *   - "Teams Access": user is acting their own behalf, or is a
-   *      contributor using a client with ClientAppPriviledges.CONTRIBUTORS
-   *   - Write privileges
+   * aww tweet mutation opewations wequiwe aww of:
+   *   - t-twittew usew authentication
+   *   - twittew u-usew is nyot suspended
+   *   - contwibutow usew, mya i-if pwovided, nyaa~~ is nyot suspended
+   *   - "teams access": usew is acting theiw o-own behawf, (⑅˘꒳˘) ow is a
+   *      contwibutow u-using a-a cwient with cwientapppwiviwedges.contwibutows
+   *   - wwite pwiviweges
    */
-  val TweetMutationCommonAccessPolicies: Policy =
-    AllOf(
-      Seq(
-        AllowTwitterUserId,
-        Has(
-          TwitterUserNotSuspended
-        ),
-        Has(
-          AuthenticatedTwitterUserNotSuspended
-        ),
-        AnyOf(
-          Seq(
-            TwitterUserContributingAsSelf,
-            Has(principal = ClientApplicationPrivilege(ClientApplicationPrivilegeVariant
-              .byId(ClientAppPrivileges.CONTRIBUTORS.toShort).get))
-          )),
-        AllowWritableAccessToken
+  vaw tweetmutationcommonaccesspowicies: powicy =
+    a-awwof(
+      seq(
+        awwowtwittewusewid, rawr x3
+        has(
+          twittewusewnotsuspended
+        ), (✿oωo)
+        h-has(
+          authenticatedtwittewusewnotsuspended
+        ), (ˆ ﻌ ˆ)♡
+        a-anyof(
+          seq(
+            t-twittewusewcontwibutingassewf, (˘ω˘)
+            h-has(pwincipaw = c-cwientappwicationpwiviwege(cwientappwicationpwiviwegevawiant
+              .byid(cwientapppwiviweges.contwibutows.toshowt).get))
+          )), (⑅˘꒳˘)
+        awwowwwitabweaccesstoken
       )
     )
 

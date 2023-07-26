@@ -1,42 +1,42 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.servo.util.Scribe
-import com.twitter.tweetypie.thriftscala.TweetMediaTagEvent
+impowt c-com.twittew.sewvo.utiw.scwibe
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetmediatagevent
 
 /**
- * Scribes thrift-encoded TweetMediaTagEvents (from tweet_events.thrift).
+ * s-scwibes thwift-encoded t-tweetmediatagevents (fwom t-tweet_events.thwift). mya
  */
-trait ScribeMediaTagStore extends TweetStoreBase[ScribeMediaTagStore] with AsyncInsertTweet.Store {
-  def wrap(w: TweetStore.Wrap): ScribeMediaTagStore =
-    new TweetStoreWrapper(w, this) with ScribeMediaTagStore with AsyncInsertTweet.StoreWrapper
+t-twait scwibemediatagstowe e-extends tweetstowebase[scwibemediatagstowe] with asyncinsewttweet.stowe {
+  def wwap(w: tweetstowe.wwap): s-scwibemediatagstowe =
+    nyew tweetstowewwappew(w, 🥺 t-this) with scwibemediatagstowe w-with asyncinsewttweet.stowewwappew
 }
 
-object ScribeMediaTagStore {
+object scwibemediatagstowe {
 
-  private def toMediaTagEvent(event: AsyncInsertTweet.Event): Option[TweetMediaTagEvent] = {
-    val tweet = event.tweet
-    val taggedUserIds = getMediaTagMap(tweet).values.flatten.flatMap(_.userId).toSet
-    val timestamp = Time.now.inMilliseconds
-    if (taggedUserIds.nonEmpty) {
-      Some(TweetMediaTagEvent(tweet.id, getUserId(tweet), taggedUserIds, Some(timestamp)))
-    } else {
-      None
+  pwivate d-def tomediatagevent(event: asyncinsewttweet.event): o-option[tweetmediatagevent] = {
+    v-vaw tweet = event.tweet
+    vaw taggedusewids = getmediatagmap(tweet).vawues.fwatten.fwatmap(_.usewid).toset
+    vaw t-timestamp = time.now.inmiwwiseconds
+    if (taggedusewids.nonempty) {
+      some(tweetmediatagevent(tweet.id, >_< getusewid(tweet), >_< taggedusewids, (⑅˘꒳˘) some(timestamp)))
+    } e-ewse {
+      nyone
     }
   }
 
-  def apply(
-    scribe: FutureEffect[String] = Scribe("tweetypie_media_tag_events")
-  ): ScribeMediaTagStore =
-    new ScribeMediaTagStore {
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
-        Scribe(TweetMediaTagEvent, scribe)
-          .contramapOption[AsyncInsertTweet.Event](toMediaTagEvent)
+  d-def appwy(
+    s-scwibe: futuweeffect[stwing] = s-scwibe("tweetypie_media_tag_events")
+  ): s-scwibemediatagstowe =
+    nyew scwibemediatagstowe {
+      ovewwide v-vaw asyncinsewttweet: futuweeffect[asyncinsewttweet.event] =
+        scwibe(tweetmediatagevent, /(^•ω•^) s-scwibe)
+          .contwamapoption[asyncinsewttweet.event](tomediatagevent)
 
-      // we don't retry this action
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
+      // we don't wetwy this action
+      ovewwide vaw wetwyasyncinsewttweet: futuweeffect[
+        tweetstowewetwyevent[asyncinsewttweet.event]
       ] =
-        FutureEffect.unit[TweetStoreRetryEvent[AsyncInsertTweet.Event]]
+        f-futuweeffect.unit[tweetstowewetwyevent[asyncinsewttweet.event]]
     }
 }

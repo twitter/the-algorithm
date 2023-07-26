@@ -1,58 +1,58 @@
-package com.twitter.tweetypie
-package media
+package com.twittew.tweetypie
+package m-media
 
-import com.twitter.mediaservices.commons.mediainformation.{thriftscala => mic}
-import com.twitter.mediaservices.commons.thriftscala.MediaKey
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
-import com.twitter.tweetypie.thriftscala._
-import java.nio.ByteBuffer
+impowt c-com.twittew.mediasewvices.commons.mediainfowmation.{thwiftscawa => m-mic}
+impowt c-com.twittew.mediasewvices.commons.thwiftscawa.mediakey
+i-impowt c-com.twittew.mediasewvices.commons.tweetmedia.thwiftscawa._
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
+impowt java.nio.bytebuffew
 
 /**
- * MediaMetadata encapsulates the metadata about tweet media that we receive from
- * the various media services backends on tweet create or on tweet read.  This data,
- * combined with data stored on the tweet, is sufficient to hydrate tweet media entities.
+ * mediametadata encapsuwates the metadata a-about tweet media that we weceive fwom
+ * the vawious m-media sewvices backends on t-tweet cweate ow on tweet wead. nyaa~~  this data, (✿oωo)
+ * combined with data s-stowed on the tweet, is sufficient t-to hydwate t-tweet media entities. ʘwʘ
  */
-case class MediaMetadata(
-  mediaKey: MediaKey,
-  assetUrlHttps: String,
-  sizes: Set[MediaSize],
-  mediaInfo: MediaInfo,
-  productMetadata: Option[mic.UserDefinedProductMetadata] = None,
-  extensionsReply: Option[ByteBuffer] = None,
-  additionalMetadata: Option[mic.AdditionalMetadata] = None) {
-  def assetUrlHttp: String = MediaUrl.httpsToHttp(assetUrlHttps)
+case cwass mediametadata(
+  mediakey: mediakey, (ˆ ﻌ ˆ)♡
+  assetuwwhttps: s-stwing, 😳😳😳
+  sizes: set[mediasize], :3
+  mediainfo: mediainfo, OwO
+  pwoductmetadata: option[mic.usewdefinedpwoductmetadata] = n-nyone, (U ﹏ U)
+  extensionswepwy: option[bytebuffew] = n-none, >w<
+  additionawmetadata: o-option[mic.additionawmetadata] = n-nyone) {
+  d-def assetuwwhttp: stwing = mediauww.httpstohttp(assetuwwhttps)
 
-  def attributableUserId: Option[UserId] =
-    additionalMetadata.flatMap(_.ownershipInfo).flatMap(_.attributableUserId)
+  d-def attwibutabweusewid: option[usewid] =
+    additionawmetadata.fwatmap(_.ownewshipinfo).fwatmap(_.attwibutabweusewid)
 
-  def updateEntity(
-    mediaEntity: MediaEntity,
-    tweetUserId: UserId,
-    includeAdditionalMetadata: Boolean
-  ): MediaEntity = {
-    // Abort if we accidentally try to replace the media. This
-    // indicates a logic error that caused mismatched media info.
-    // This could be internal or external to TweetyPie.
-    require(
-      mediaEntity.mediaId == mediaKey.mediaId,
-      "Tried to update media with mediaId=%s with mediaInfo.mediaId=%s"
-        .format(mediaEntity.mediaId, mediaKey.mediaId)
+  d-def updateentity(
+    mediaentity: mediaentity,
+    tweetusewid: usewid, (U ﹏ U)
+    incwudeadditionawmetadata: b-boowean
+  ): mediaentity = {
+    // a-abowt if we accidentawwy t-twy to w-wepwace the media. 😳 this
+    // indicates a wogic ewwow that caused m-mismatched media i-info. (ˆ ﻌ ˆ)♡
+    // this couwd be intewnaw o-ow extewnaw t-to tweetypie. 😳😳😳
+    wequiwe(
+      m-mediaentity.mediaid == mediakey.mediaid, (U ﹏ U)
+      "twied t-to update media with mediaid=%s with m-mediainfo.mediaid=%s"
+        .fowmat(mediaentity.mediaid, (///ˬ///✿) mediakey.mediaid)
     )
 
-    mediaEntity.copy(
-      mediaUrl = assetUrlHttp,
-      mediaUrlHttps = assetUrlHttps,
-      sizes = sizes,
-      mediaInfo = Some(mediaInfo),
-      extensionsReply = extensionsReply,
-      // the following two fields are deprecated and will be removed soon
-      nsfw = false,
-      mediaPath = MediaUrl.mediaPathFromUrl(assetUrlHttps),
-      metadata = productMetadata,
-      additionalMetadata = additionalMetadata.filter(_ => includeAdditionalMetadata),
-      // MIS allows media to be shared among authorized users so add in sourceUserId if it doesn't
-      // match the current tweet's userId.
-      sourceUserId = attributableUserId.filter(_ != tweetUserId)
+    m-mediaentity.copy(
+      mediauww = assetuwwhttp, 😳
+      mediauwwhttps = assetuwwhttps, 😳
+      s-sizes = sizes, σωσ
+      m-mediainfo = some(mediainfo), rawr x3
+      extensionswepwy = extensionswepwy, OwO
+      // the fowwowing two fiewds awe depwecated a-and wiww be wemoved s-soon
+      nysfw = fawse, /(^•ω•^)
+      m-mediapath = m-mediauww.mediapathfwomuww(assetuwwhttps), 😳😳😳
+      m-metadata = pwoductmetadata, ( ͡o ω ͡o )
+      additionawmetadata = additionawmetadata.fiwtew(_ => incwudeadditionawmetadata), >_<
+      // m-mis awwows media to be shawed among authowized usews so add in souwceusewid i-if it doesn't
+      // match t-the cuwwent t-tweet's usewid. >w<
+      s-souwceusewid = attwibutabweusewid.fiwtew(_ != t-tweetusewid)
     )
   }
 }

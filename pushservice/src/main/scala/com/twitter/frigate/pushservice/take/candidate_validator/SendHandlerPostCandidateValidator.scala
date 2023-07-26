@@ -1,26 +1,26 @@
-package com.twitter.frigate.pushservice.take.candidate_validator
+package com.twittew.fwigate.pushsewvice.take.candidate_vawidatow
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.take.predicates.candidate_map.SendHandlerCandidatePredicatesMap
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.config.config
+i-impowt c-com.twittew.fwigate.pushsewvice.take.pwedicates.candidate_map.sendhandwewcandidatepwedicatesmap
+i-impowt com.twittew.hewmit.pwedicate.pwedicate
+i-impowt com.twittew.utiw.futuwe
 
-class SendHandlerPostCandidateValidator(override val config: Config) extends CandidateValidator {
+c-cwass sendhandwewpostcandidatevawidatow(ovewwide v-vaw config: config) e-extends candidatevawidatow {
 
-  override protected val candidatePredicatesMap =
-    SendHandlerCandidatePredicatesMap.postCandidatePredicates(config)
+  ovewwide pwotected vaw candidatepwedicatesmap =
+    sendhandwewcandidatepwedicatesmap.postcandidatepwedicates(config)
 
-  private val sendHandlerPostCandidateValidatorStats =
-    statsReceiver.counter("sendHandlerPostCandidateValidator_stats")
+  pwivate v-vaw sendhandwewpostcandidatevawidatowstats =
+    statsweceivew.countew("sendhandwewpostcandidatevawidatow_stats")
 
-  override def validateCandidate[C <: PushCandidate](candidate: C): Future[Option[Predicate[C]]] = {
-    val candidatePredicates = getCRTPredicates(candidate.commonRecType)
-    val predicates = candidatePredicates ++ postPredicates
+  ovewwide d-def vawidatecandidate[c <: pushcandidate](candidate: c): futuwe[option[pwedicate[c]]] = {
+    v-vaw candidatepwedicates = getcwtpwedicates(candidate.commonwectype)
+    vaw pwedicates = candidatepwedicates ++ p-postpwedicates
 
-    sendHandlerPostCandidateValidatorStats.incr()
+    sendhandwewpostcandidatevawidatowstats.incw()
 
-    executeConcurrentPredicates(candidate, predicates)
-      .map(_.headOption)
+    e-exekawaii~concuwwentpwedicates(candidate, mya p-pwedicates)
+      .map(_.headoption)
   }
 }

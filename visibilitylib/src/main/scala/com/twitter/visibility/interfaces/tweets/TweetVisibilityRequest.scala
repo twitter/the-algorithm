@@ -1,14 +1,14 @@
-package com.twitter.visibility.interfaces.tweets
+package com.twittew.visibiwity.intewfaces.tweets
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+impowt com.twittew.tweetypie.thwiftscawa.tweet
+i-impowt com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.modews.viewewcontext
 
-case class TweetVisibilityRequest(
-  tweet: Tweet,
-  safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext,
-  isInnerQuotedTweet: Boolean,
-  isRetweet: Boolean,
-  hydrateConversationControl: Boolean = false,
-  isSourceTweet: Boolean = false)
+c-case cwass t-tweetvisibiwitywequest(
+  t-tweet: t-tweet, (U ﹏ U)
+  safetywevew: s-safetywevew, -.-
+  v-viewewcontext: viewewcontext, (ˆ ﻌ ˆ)♡
+  isinnewquotedtweet: boowean, (⑅˘꒳˘)
+  iswetweet: b-boowean, (U ᵕ U❁)
+  hydwateconvewsationcontwow: boowean = fawse, -.-
+  issouwcetweet: b-boowean = fawse)

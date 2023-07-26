@@ -1,15 +1,15 @@
-package com.twitter.unified_user_actions.client.config
+package com.twittew.unified_usew_actions.cwient.config
 
-sealed trait EnvironmentConfig {
-  val name: String
+seawed twait e-enviwonmentconfig {
+  v-vaw nyame: s-stwing
 }
 
-object Environments {
-  case object Prod extends EnvironmentConfig {
-    override val name: String = Constants.UuaProdEnv
+object e-enviwonments {
+  c-case object p-pwod extends e-enviwonmentconfig {
+    o-ovewwide vaw nyame: stwing = constants.uuapwodenv
   }
 
-  case object Staging extends EnvironmentConfig {
-    override val name: String = Constants.UuaStagingEnv
+  case object staging extends enviwonmentconfig {
+    o-ovewwide vaw nyame: stwing = constants.uuastagingenv
   }
 }

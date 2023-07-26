@@ -1,114 +1,114 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-import java.util.Map;
+impowt java.utiw.map;
 
-public class TweetUserFeatures {
-  private String lang;
-  private double langConfidence;
-  private int followers;
-  private int following;
-  private int reputation;
-  private int tweets;
-  private int retweets;
-  private int retweeted;
-  private Map<String, Double> knownForTopics;
-  private boolean isSpam;
-  private boolean isNsfw;
-  private boolean isBot;
+p-pubwic c-cwass tweetusewfeatuwes {
+  p-pwivate stwing wang;
+  p-pwivate doubwe w-wangconfidence;
+  p-pwivate i-int fowwowews;
+  p-pwivate int fowwowing;
+  pwivate int weputation;
+  pwivate int tweets;
+  pwivate i-int wetweets;
+  pwivate int wetweeted;
+  pwivate m-map<stwing, OwO doubwe> knownfowtopics;
+  p-pwivate boowean isspam;
+  pwivate boowean isnsfw;
+  pwivate b-boowean isbot;
 
-  public String getLang() {
-    return lang;
+  pubwic stwing g-getwang() {
+    w-wetuwn wang;
   }
 
-  public void setLang(String lang) {
-    this.lang = lang;
+  pubwic void setwang(stwing wang) {
+    this.wang = wang;
   }
 
-  public double getLangConfidence() {
-    return langConfidence;
+  p-pubwic doubwe getwangconfidence() {
+    wetuwn wangconfidence;
   }
 
-  public void setLangConfidence(double langConfidence) {
-    this.langConfidence = langConfidence;
+  pubwic void setwangconfidence(doubwe wangconfidence) {
+    t-this.wangconfidence = wangconfidence;
   }
 
-  public int getFollowers() {
-    return followers;
+  p-pubwic int g-getfowwowews() {
+    w-wetuwn fowwowews;
   }
 
-  public void setFollowers(int followers) {
-    this.followers = followers;
+  p-pubwic void setfowwowews(int fowwowews) {
+    this.fowwowews = fowwowews;
   }
 
-  public int getFollowing() {
-    return following;
+  p-pubwic int getfowwowing() {
+    wetuwn fowwowing;
   }
 
-  public void setFollowing(int following) {
-    this.following = following;
+  pubwic v-void setfowwowing(int fowwowing) {
+    this.fowwowing = fowwowing;
   }
 
-  public int getReputation() {
-    return reputation;
+  pubwic int getweputation() {
+    w-wetuwn weputation;
   }
 
-  public void setReputation(int reputation) {
-    this.reputation = reputation;
+  p-pubwic void s-setweputation(int w-weputation) {
+    this.weputation = weputation;
   }
 
-  public int getTweets() {
-    return tweets;
+  pubwic i-int gettweets() {
+    w-wetuwn tweets;
   }
 
-  public void setTweets(int tweets) {
-    this.tweets = tweets;
+  pubwic v-void settweets(int t-tweets) {
+    this.tweets = t-tweets;
   }
 
-  public int getRetweets() {
-    return retweets;
+  pubwic int getwetweets() {
+    w-wetuwn wetweets;
   }
 
-  public void setRetweets(int retweets) {
-    this.retweets = retweets;
+  pubwic void setwetweets(int w-wetweets) {
+    this.wetweets = w-wetweets;
   }
 
-  public int getRetweeted() {
-    return retweeted;
+  pubwic int g-getwetweeted() {
+    w-wetuwn wetweeted;
   }
 
-  public void setRetweeted(int retweeted) {
-    this.retweeted = retweeted;
+  pubwic void setwetweeted(int wetweeted) {
+    this.wetweeted = wetweeted;
   }
 
-  public Map<String, Double> getKnownForTopics() {
-    return knownForTopics;
+  pubwic map<stwing, (U ﹏ U) doubwe> getknownfowtopics() {
+    wetuwn knownfowtopics;
   }
 
-  public void setKnownForTopics(Map<String, Double> knownForTopics) {
-    this.knownForTopics = knownForTopics;
+  p-pubwic void s-setknownfowtopics(map<stwing, >w< doubwe> k-knownfowtopics) {
+    t-this.knownfowtopics = k-knownfowtopics;
   }
 
-  public boolean isSpam() {
-    return isSpam;
+  pubwic boowean isspam() {
+    wetuwn isspam;
   }
 
-  public void setSpam(boolean spam) {
-    isSpam = spam;
+  p-pubwic void setspam(boowean spam) {
+    isspam = spam;
   }
 
-  public boolean isNsfw() {
-    return isNsfw;
+  pubwic b-boowean isnsfw() {
+    wetuwn i-isnsfw;
   }
 
-  public void setNsfw(boolean nsfw) {
-    isNsfw = nsfw;
+  pubwic v-void setnsfw(boowean n-nysfw) {
+    isnsfw = n-nysfw;
   }
 
-  public boolean isBot() {
-    return isBot;
+  pubwic b-boowean isbot() {
+    w-wetuwn i-isbot;
   }
 
-  public void setBot(boolean bot) {
-    isBot = bot;
+  pubwic void setbot(boowean bot) {
+    i-isbot = bot;
   }
 }

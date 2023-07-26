@@ -1,55 +1,55 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.NotPinnableReplyPinState
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.PinnableReplyPinState
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.PinnedReplyPinState
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorBlockUser
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorMarkNotInterestedTopic
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorReplyPinState
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorReportList
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorReportTweet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowTopic
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowTopicV2
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowUser
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleMuteList
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleMuteUser
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.notpinnabwewepwypinstate
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.pinnabwewepwypinstate
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.pinnedwepwypinstate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowbwockusew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowmawknotintewestedtopic
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowwepwypinstate
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowwepowtwist
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowwepowttweet
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowtoggwefowwowtopic
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowtoggwefowwowtopicv2
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowtoggwefowwowusew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowtoggwemutewist
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wichfeedbackbehaviowtoggwemuteusew
+impowt c-com.twittew.timewines.wendew.{thwiftscawa => uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class RichFeedbackBehaviorMarshaller @Inject() () {
+@singweton
+c-cwass wichfeedbackbehaviowmawshawwew @inject() () {
 
-  def apply(richFeedbackBehavior: RichFeedbackBehavior): urt.RichFeedbackBehavior =
-    richFeedbackBehavior match {
-      case RichFeedbackBehaviorReportList(listId, userId) =>
-        urt.RichFeedbackBehavior.ReportList(urt.RichFeedbackBehaviorReportList(listId, userId))
-      case RichFeedbackBehaviorBlockUser(userId) =>
-        urt.RichFeedbackBehavior.BlockUser(urt.RichFeedbackBehaviorBlockUser(userId))
-      case RichFeedbackBehaviorToggleFollowTopic(topicId) =>
-        urt.RichFeedbackBehavior.ToggleFollowTopic(
-          urt.RichFeedbackBehaviorToggleFollowTopic(topicId))
-      case RichFeedbackBehaviorToggleFollowTopicV2(topicId) =>
-        urt.RichFeedbackBehavior.ToggleFollowTopicV2(
-          urt.RichFeedbackBehaviorToggleFollowTopicV2(topicId))
-      case RichFeedbackBehaviorToggleMuteList(listId) =>
-        urt.RichFeedbackBehavior.ToggleMuteList(urt.RichFeedbackBehaviorToggleMuteList(listId))
-      case RichFeedbackBehaviorMarkNotInterestedTopic(topicId) =>
-        urt.RichFeedbackBehavior.MarkNotInterestedTopic(
-          urt.RichFeedbackBehaviorMarkNotInterestedTopic(topicId))
-      case RichFeedbackBehaviorReplyPinState(replyPinState) =>
-        val pinState: urt.ReplyPinState = replyPinState match {
-          case PinnedReplyPinState => urt.ReplyPinState.Pinned
-          case PinnableReplyPinState => urt.ReplyPinState.Pinnable
-          case NotPinnableReplyPinState => urt.ReplyPinState.NotPinnable
+  def appwy(wichfeedbackbehaviow: wichfeedbackbehaviow): uwt.wichfeedbackbehaviow =
+    w-wichfeedbackbehaviow match {
+      case wichfeedbackbehaviowwepowtwist(wistid, 😳😳😳 usewid) =>
+        uwt.wichfeedbackbehaviow.wepowtwist(uwt.wichfeedbackbehaviowwepowtwist(wistid, 😳😳😳 u-usewid))
+      case wichfeedbackbehaviowbwockusew(usewid) =>
+        u-uwt.wichfeedbackbehaviow.bwockusew(uwt.wichfeedbackbehaviowbwockusew(usewid))
+      c-case wichfeedbackbehaviowtoggwefowwowtopic(topicid) =>
+        u-uwt.wichfeedbackbehaviow.toggwefowwowtopic(
+          u-uwt.wichfeedbackbehaviowtoggwefowwowtopic(topicid))
+      case wichfeedbackbehaviowtoggwefowwowtopicv2(topicid) =>
+        uwt.wichfeedbackbehaviow.toggwefowwowtopicv2(
+          u-uwt.wichfeedbackbehaviowtoggwefowwowtopicv2(topicid))
+      case wichfeedbackbehaviowtoggwemutewist(wistid) =>
+        uwt.wichfeedbackbehaviow.toggwemutewist(uwt.wichfeedbackbehaviowtoggwemutewist(wistid))
+      c-case wichfeedbackbehaviowmawknotintewestedtopic(topicid) =>
+        uwt.wichfeedbackbehaviow.mawknotintewestedtopic(
+          uwt.wichfeedbackbehaviowmawknotintewestedtopic(topicid))
+      case wichfeedbackbehaviowwepwypinstate(wepwypinstate) =>
+        v-vaw pinstate: uwt.wepwypinstate = wepwypinstate m-match {
+          case p-pinnedwepwypinstate => u-uwt.wepwypinstate.pinned
+          case pinnabwewepwypinstate => uwt.wepwypinstate.pinnabwe
+          c-case nyotpinnabwewepwypinstate => u-uwt.wepwypinstate.notpinnabwe
         }
-        urt.RichFeedbackBehavior.ReplyPinState(urt.RichFeedbackBehaviorReplyPinState(pinState))
-      case RichFeedbackBehaviorToggleMuteUser(userId) =>
-        urt.RichFeedbackBehavior.ToggleMuteUser(urt.RichFeedbackBehaviorToggleMuteUser(userId))
-      case RichFeedbackBehaviorToggleFollowUser(userId) =>
-        urt.RichFeedbackBehavior.ToggleFollowUser(urt.RichFeedbackBehaviorToggleFollowUser(userId))
-      case RichFeedbackBehaviorReportTweet(entryId) =>
-        urt.RichFeedbackBehavior.ReportTweet(urt.RichFeedbackBehaviorReportTweet(entryId))
+        uwt.wichfeedbackbehaviow.wepwypinstate(uwt.wichfeedbackbehaviowwepwypinstate(pinstate))
+      c-case wichfeedbackbehaviowtoggwemuteusew(usewid) =>
+        u-uwt.wichfeedbackbehaviow.toggwemuteusew(uwt.wichfeedbackbehaviowtoggwemuteusew(usewid))
+      case wichfeedbackbehaviowtoggwefowwowusew(usewid) =>
+        u-uwt.wichfeedbackbehaviow.toggwefowwowusew(uwt.wichfeedbackbehaviowtoggwefowwowusew(usewid))
+      case wichfeedbackbehaviowwepowttweet(entwyid) =>
+        u-uwt.wichfeedbackbehaviow.wepowttweet(uwt.wichfeedbackbehaviowwepowttweet(entwyid))
     }
 }

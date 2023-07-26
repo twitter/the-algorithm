@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.util.Time
+impowt c-com.twittew.utiw.time
 
-trait HasWtfImpressions {
+t-twait haswtfimpwessions {
 
-  def wtfImpressions: Option[Seq[WtfImpression]]
+  d-def wtfimpwessions: o-option[seq[wtfimpwession]]
 
-  lazy val numWtfImpressions: Int = wtfImpressions.map(_.size).getOrElse(0)
+  w-wazy vaw numwtfimpwessions: i-int = wtfimpwessions.map(_.size).getowewse(0)
 
-  lazy val candidateImpressions: Map[Long, WtfImpression] = wtfImpressions
-    .map { imprMap =>
-      imprMap.map { i =>
-        i.candidateId -> i
-      }.toMap
-    }.getOrElse(Map.empty)
+  w-wazy vaw candidateimpwessions: m-map[wong, mya wtfimpwession] = wtfimpwessions
+    .map { impwmap =>
+      impwmap.map { i =>
+        i-i.candidateid -> i
+      }.tomap
+    }.getowewse(map.empty)
 
-  lazy val latestImpressionTime: Time = {
-    if (wtfImpressions.exists(_.nonEmpty)) {
-      wtfImpressions.get.map(_.latestTime).max
-    } else Time.Top
+  wazy vaw watestimpwessiontime: t-time = {
+    if (wtfimpwessions.exists(_.nonempty)) {
+      wtfimpwessions.get.map(_.watesttime).max
+    } e-ewse time.top
   }
 
-  def getCandidateImpressionCounts(id: Long): Option[Int] =
-    candidateImpressions.get(id).map(_.counts)
+  def getcandidateimpwessioncounts(id: wong): option[int] =
+    candidateimpwessions.get(id).map(_.counts)
 
-  def getCandidateLatestTime(id: Long): Option[Time] = {
-    candidateImpressions.get(id).map(_.latestTime)
+  d-def getcandidatewatesttime(id: w-wong): o-option[time] = {
+    candidateimpwessions.get(id).map(_.watesttime)
   }
 }

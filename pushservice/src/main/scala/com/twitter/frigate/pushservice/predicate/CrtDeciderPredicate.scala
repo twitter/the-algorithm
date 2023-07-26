@@ -1,25 +1,25 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
+impowt com.twittew.decidew.decidew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt c-com.twittew.hewmit.pwedicate.namedpwedicate
+i-impowt c-com.twittew.hewmit.pwedicate.pwedicate
 
-object CrtDeciderPredicate {
-  val name = "crt_decider"
-  def apply(
-    decider: Decider
+o-object c-cwtdecidewpwedicate {
+  vaw nyame = "cwt_decidew"
+  def appwy(
+    decidew: decidew
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    Predicate
-      .from { (candidate: PushCandidate) =>
-        val prefix = "frigate_pushservice_"
-        val deciderKey = prefix + candidate.commonRecType
-        decider.feature(deciderKey).isAvailable
+    impwicit statsweceivew: s-statsweceivew
+  ): nyamedpwedicate[pushcandidate] = {
+    pwedicate
+      .fwom { (candidate: p-pushcandidate) =>
+        vaw pwefix = "fwigate_pushsewvice_"
+        v-vaw decidewkey = pwefix + candidate.commonwectype
+        decidew.featuwe(decidewkey).isavaiwabwe
       }
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .withstats(statsweceivew.scope(s"pwedicate_$name"))
+      .withname(name)
   }
 }

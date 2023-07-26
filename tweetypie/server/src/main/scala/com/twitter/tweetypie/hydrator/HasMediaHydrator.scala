@@ -1,14 +1,14 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object HasMediaHydrator {
-  type Type = ValueHydrator[Option[Boolean], Tweet]
+object h-hasmediahydwatow {
+  t-type t-type = vawuehydwatow[option[boowean], >_< t-tweet]
 
-  def apply(hasMedia: Tweet => Boolean): Type =
-    ValueHydrator
-      .map[Option[Boolean], Tweet] { (_, tweet) => ValueState.modified(Some(hasMedia(tweet))) }
-      .onlyIf((curr, ctx) => curr.isEmpty)
+  d-def appwy(hasmedia: tweet => boowean): type =
+    vawuehydwatow
+      .map[option[boowean], :3 tweet] { (_, (U ﹏ U) t-tweet) => vawuestate.modified(some(hasmedia(tweet))) }
+      .onwyif((cuww, -.- ctx) => cuww.isempty)
 }

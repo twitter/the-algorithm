@@ -1,26 +1,26 @@
-package com.twitter.unified_user_actions.service
+package com.twittew.unified_usew_actions.sewvice
 
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.ibis.thriftscala.NotificationScribe
-import com.twitter.inject.server.TwitterServer
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.unified_user_actions.service.module.KafkaProcessorEmailNotificationEventModule
+impowt com.twittew.finatwa.decidew.moduwes.decidewmoduwe
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt c-com.twittew.ibis.thwiftscawa.notificationscwibe
+i-impowt com.twittew.inject.sewvew.twittewsewvew
+impowt c-com.twittew.kafka.cwient.pwocessow.atweastoncepwocessow
+i-impowt c-com.twittew.unified_usew_actions.sewvice.moduwe.kafkapwocessowemaiwnotificationeventmoduwe
 
-object EmailNotificationEventServiceMain extends EmailNotificationEventService
+object emaiwnotificationeventsewvicemain extends emaiwnotificationeventsewvice
 
-class EmailNotificationEventService extends TwitterServer {
+cwass emaiwnotificationeventsewvice e-extends twittewsewvew {
 
-  override val modules = Seq(
-    KafkaProcessorEmailNotificationEventModule,
-    DeciderModule
+  ovewwide vaw moduwes = seq(
+    k-kafkapwocessowemaiwnotificationeventmoduwe,
+    decidewmoduwe
   )
 
-  override protected def setup(): Unit = {}
+  o-ovewwide pwotected def setup(): unit = {}
 
-  override protected def start(): Unit = {
-    val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, NotificationScribe]]
-    closeOnExit(processor)
-    processor.start()
+  ovewwide pwotected d-def stawt(): unit = {
+    vaw p-pwocessow = injectow.instance[atweastoncepwocessow[unkeyed, mya notificationscwibe]]
+    c-cwoseonexit(pwocessow)
+    pwocessow.stawt()
   }
 }

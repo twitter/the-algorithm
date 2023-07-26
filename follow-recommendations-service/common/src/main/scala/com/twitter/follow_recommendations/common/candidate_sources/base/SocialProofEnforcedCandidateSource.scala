@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProof
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.twansfowms.modify_sociaw_pwoof.modifysociawpwoof
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.configapi.haspawams
+impowt com.twittew.utiw.duwation
 
-abstract class SocialProofEnforcedCandidateSource(
-  candidateSource: CandidateSource[HasClientContext with HasParams, CandidateUser],
-  modifySocialProof: ModifySocialProof,
-  minNumSocialProofsRequired: Int,
-  override val identifier: CandidateSourceIdentifier,
-  baseStatsReceiver: StatsReceiver)
-    extends CandidateSource[HasClientContext with HasParams, CandidateUser] {
+abstwact c-cwass sociawpwoofenfowcedcandidatesouwce(
+  candidatesouwce: candidatesouwce[hascwientcontext with haspawams, (˘ω˘) c-candidateusew], >_<
+  modifysociawpwoof: m-modifysociawpwoof, -.-
+  minnumsociawpwoofswequiwed: int, 🥺
+  ovewwide vaw identifiew: c-candidatesouwceidentifiew, (U ﹏ U)
+  basestatsweceivew: s-statsweceivew)
+    e-extends candidatesouwce[hascwientcontext with haspawams, >w< candidateusew] {
 
-  val statsReceiver = baseStatsReceiver.scope(identifier.name)
+  vaw statsweceivew = b-basestatsweceivew.scope(identifiew.name)
 
-  override def apply(target: HasClientContext with HasParams): Stitch[Seq[CandidateUser]] = {
-    val mustCallSgs: Boolean = target.params(SocialProofEnforcedCandidateSourceParams.MustCallSgs)
-    val callSgsCachedColumn: Boolean =
-      target.params(SocialProofEnforcedCandidateSourceParams.CallSgsCachedColumn)
-    val QueryIntersectionIdsNum: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.QueryIntersectionIdsNum)
-    val MaxNumCandidatesToAnnotate: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.MaxNumCandidatesToAnnotate)
-    val gfsIntersectionIdsNum: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.GfsIntersectionIdsNum)
-    val sgsIntersectionIdsNum: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.SgsIntersectionIdsNum)
-    val gfsLagDuration: Duration =
-      target.params(SocialProofEnforcedCandidateSourceParams.GfsLagDurationInDays)
+  ovewwide def appwy(tawget: hascwientcontext with haspawams): s-stitch[seq[candidateusew]] = {
+    vaw mustcawwsgs: b-boowean = t-tawget.pawams(sociawpwoofenfowcedcandidatesouwcepawams.mustcawwsgs)
+    v-vaw cawwsgscachedcowumn: b-boowean =
+      tawget.pawams(sociawpwoofenfowcedcandidatesouwcepawams.cawwsgscachedcowumn)
+    vaw quewyintewsectionidsnum: int =
+      t-tawget.pawams(sociawpwoofenfowcedcandidatesouwcepawams.quewyintewsectionidsnum)
+    vaw maxnumcandidatestoannotate: int =
+      tawget.pawams(sociawpwoofenfowcedcandidatesouwcepawams.maxnumcandidatestoannotate)
+    v-vaw gfsintewsectionidsnum: int =
+      tawget.pawams(sociawpwoofenfowcedcandidatesouwcepawams.gfsintewsectionidsnum)
+    vaw sgsintewsectionidsnum: int =
+      tawget.pawams(sociawpwoofenfowcedcandidatesouwcepawams.sgsintewsectionidsnum)
+    v-vaw gfswagduwation: duwation =
+      t-tawget.pawams(sociawpwoofenfowcedcandidatesouwcepawams.gfswagduwationindays)
 
-    candidateSource(target)
-      .flatMap { candidates =>
-        val candidatesWithoutEnoughSocialProof = candidates
-          .collect {
-            case candidate if !candidate.followedBy.exists(_.size >= minNumSocialProofsRequired) =>
-              candidate
+    c-candidatesouwce(tawget)
+      .fwatmap { c-candidates =>
+        vaw candidateswithoutenoughsociawpwoof = candidates
+          .cowwect {
+            case candidate if !candidate.fowwowedby.exists(_.size >= m-minnumsociawpwoofswequiwed) =>
+              c-candidate
           }
-        statsReceiver
-          .stat("candidates_with_no_social_proofs").add(candidatesWithoutEnoughSocialProof.size)
-        val candidatesToAnnotate =
-          candidatesWithoutEnoughSocialProof.take(MaxNumCandidatesToAnnotate)
-        statsReceiver.stat("candidates_to_annotate").add(candidatesToAnnotate.size)
+        statsweceivew
+          .stat("candidates_with_no_sociaw_pwoofs").add(candidateswithoutenoughsociawpwoof.size)
+        v-vaw candidatestoannotate =
+          candidateswithoutenoughsociawpwoof.take(maxnumcandidatestoannotate)
+        s-statsweceivew.stat("candidates_to_annotate").add(candidatestoannotate.size)
 
-        val annotatedCandidatesMapStitch = target.getOptionalUserId
-          .map { userId =>
-            modifySocialProof
-              .hydrateSocialProof(
-                userId,
-                candidatesToAnnotate,
-                Some(QueryIntersectionIdsNum),
-                mustCallSgs,
-                callSgsCachedColumn,
-                gfsLagDuration = gfsLagDuration,
-                gfsIntersectionIds = gfsIntersectionIdsNum,
-                sgsIntersectionIds = sgsIntersectionIdsNum
-              ).map { annotatedCandidates =>
-                annotatedCandidates
-                  .map(annotatedCandidate => (annotatedCandidate.id, annotatedCandidate)).toMap
+        vaw annotatedcandidatesmapstitch = t-tawget.getoptionawusewid
+          .map { usewid =>
+            m-modifysociawpwoof
+              .hydwatesociawpwoof(
+                usewid,
+                candidatestoannotate, mya
+                s-some(quewyintewsectionidsnum), >w<
+                mustcawwsgs, nyaa~~
+                c-cawwsgscachedcowumn, (✿oωo)
+                gfswagduwation = g-gfswagduwation, ʘwʘ
+                g-gfsintewsectionids = gfsintewsectionidsnum, (ˆ ﻌ ˆ)♡
+                sgsintewsectionids = sgsintewsectionidsnum
+              ).map { annotatedcandidates =>
+                annotatedcandidates
+                  .map(annotatedcandidate => (annotatedcandidate.id, 😳😳😳 annotatedcandidate)).tomap
               }
-          }.getOrElse(Stitch.value(Map.empty[Long, CandidateUser]))
+          }.getowewse(stitch.vawue(map.empty[wong, :3 c-candidateusew]))
 
-        annotatedCandidatesMapStitch.map { annotatedCandidatesMap =>
-          candidates
-            .flatMap { candidate =>
-              if (candidate.followedBy.exists(_.size >= minNumSocialProofsRequired)) {
-                Some(candidate)
-              } else {
-                annotatedCandidatesMap.get(candidate.id).collect {
-                  case annotatedCandidate
-                      if annotatedCandidate.followedBy.exists(
-                        _.size >= minNumSocialProofsRequired) =>
-                    annotatedCandidate
+        a-annotatedcandidatesmapstitch.map { annotatedcandidatesmap =>
+          c-candidates
+            .fwatmap { c-candidate =>
+              i-if (candidate.fowwowedby.exists(_.size >= minnumsociawpwoofswequiwed)) {
+                some(candidate)
+              } ewse {
+                a-annotatedcandidatesmap.get(candidate.id).cowwect {
+                  case annotatedcandidate
+                      if annotatedcandidate.fowwowedby.exists(
+                        _.size >= minnumsociawpwoofswequiwed) =>
+                    annotatedcandidate
                 }
               }
-            }.map(_.withCandidateSource(identifier))
+            }.map(_.withcandidatesouwce(identifiew))
         }
       }
   }

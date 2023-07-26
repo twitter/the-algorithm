@@ -1,15 +1,15 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.flockdb.client.QuotersGraph
-import com.twitter.flockdb.client.TFlockClient
-import com.twitter.stitch.Stitch
+i-impowt com.twittew.fwockdb.cwient.quotewsgwaph
+i-impowt com.twittew.fwockdb.cwient.tfwockcwient
+impowt c-com.twittew.stitch.stitch
 
-object QuoterHasAlreadyQuotedRepository {
-  type Type = (TweetId, UserId) => Stitch[Boolean]
+o-object quotewhasawweadyquotedwepositowy {
+  t-type t-type = (tweetid, :3 u-usewid) => stitch[boowean]
 
-  def apply(
-    tflockReadClient: TFlockClient
-  ): Type =
-    (tweetId, userId) => Stitch.callFuture(tflockReadClient.contains(QuotersGraph, tweetId, userId))
+  def appwy(
+    tfwockweadcwient: tfwockcwient
+  ): type =
+    (tweetid, (U ﹏ U) u-usewid) => stitch.cawwfutuwe(tfwockweadcwient.contains(quotewsgwaph, tweetid, -.- u-usewid))
 }

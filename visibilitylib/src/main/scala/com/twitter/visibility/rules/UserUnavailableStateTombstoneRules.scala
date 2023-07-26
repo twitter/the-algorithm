@@ -1,120 +1,120 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.AuthorBlocksViewer
-import com.twitter.visibility.rules.Condition.DeactivatedAuthor
-import com.twitter.visibility.rules.Condition.ErasedAuthor
-import com.twitter.visibility.rules.Condition.IsQuotedInnerTweet
-import com.twitter.visibility.rules.Condition.OffboardedAuthor
-import com.twitter.visibility.rules.Condition.ProtectedAuthor
-import com.twitter.visibility.rules.Condition.Retweet
-import com.twitter.visibility.rules.Condition.SuspendedAuthor
-import com.twitter.visibility.rules.Condition.UnavailableAuthor
-import com.twitter.visibility.rules.Condition.ViewerBlocksAuthor
-import com.twitter.visibility.rules.Condition.ViewerMutesAuthor
+impowt com.twittew.visibiwity.configapi.pawams.wuwepawam
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams.enabweinnewquotedtweetviewewbwocksauthowintewstitiawwuwepawam
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.enabweinnewquotedtweetviewewmutesauthowintewstitiawwuwepawam
+i-impowt c-com.twittew.visibiwity.wuwes.condition.and
+impowt c-com.twittew.visibiwity.wuwes.condition.authowbwocksviewew
+i-impowt com.twittew.visibiwity.wuwes.condition.deactivatedauthow
+i-impowt com.twittew.visibiwity.wuwes.condition.ewasedauthow
+impowt com.twittew.visibiwity.wuwes.condition.isquotedinnewtweet
+impowt com.twittew.visibiwity.wuwes.condition.offboawdedauthow
+i-impowt com.twittew.visibiwity.wuwes.condition.pwotectedauthow
+impowt c-com.twittew.visibiwity.wuwes.condition.wetweet
+impowt com.twittew.visibiwity.wuwes.condition.suspendedauthow
+i-impowt com.twittew.visibiwity.wuwes.condition.unavaiwabweauthow
+impowt com.twittew.visibiwity.wuwes.condition.viewewbwocksauthow
+i-impowt com.twittew.visibiwity.wuwes.condition.viewewmutesauthow
 
-object UserUnavailableStateTombstoneRules {
-  abstract class UserUnavailableStateTweetTombstoneRule(epitaph: Epitaph, condition: Condition)
-      extends RuleWithConstantAction(Tombstone(epitaph), condition) {}
+object u-usewunavaiwabwestatetombstonewuwes {
+  a-abstwact cwass usewunavaiwabwestatetweettombstonewuwe(epitaph: epitaph, :3 condition: condition)
+      e-extends wuwewithconstantaction(tombstone(epitaph), ( ͡o ω ͡o ) condition) {}
 
-  abstract class UserUnavailableStateRetweetTombstoneRule(epitaph: Epitaph, condition: Condition)
-      extends RuleWithConstantAction(Tombstone(epitaph), And(Retweet, condition)) {}
+  abstwact cwass usewunavaiwabwestatewetweettombstonewuwe(epitaph: epitaph, mya condition: c-condition)
+      extends w-wuwewithconstantaction(tombstone(epitaph), a-and(wetweet, (///ˬ///✿) c-condition)) {}
 
-  abstract class UserUnavailableStateInnerQuotedTweetTombstoneRule(
-    epitaph: Epitaph,
-    condition: Condition)
-      extends RuleWithConstantAction(Tombstone(epitaph), And(IsQuotedInnerTweet, condition))
+  a-abstwact cwass usewunavaiwabwestateinnewquotedtweettombstonewuwe(
+    epitaph: epitaph, (˘ω˘)
+    c-condition: condition)
+      extends wuwewithconstantaction(tombstone(epitaph), ^^;; a-and(isquotedinnewtweet, (✿oωo) condition))
 
-  abstract class UserUnavailableStateInnerQuotedTweetInterstitialRule(
-    reason: Reason,
-    condition: Condition)
-      extends RuleWithConstantAction(Interstitial(reason), And(IsQuotedInnerTweet, condition))
+  abstwact cwass usewunavaiwabwestateinnewquotedtweetintewstitiawwuwe(
+    weason: weason, (U ﹏ U)
+    condition: condition)
+      e-extends wuwewithconstantaction(intewstitiaw(weason), -.- a-and(isquotedinnewtweet, ^•ﻌ•^ c-condition))
 
-  object SuspendedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Suspended, SuspendedAuthor)
+  o-object suspendedusewunavaiwabwetweettombstonewuwe
+      extends usewunavaiwabwestatetweettombstonewuwe(epitaph.suspended, rawr suspendedauthow)
 
-  object DeactivatedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Deactivated, DeactivatedAuthor)
+  o-object deactivatedusewunavaiwabwetweettombstonewuwe
+      e-extends usewunavaiwabwestatetweettombstonewuwe(epitaph.deactivated, (˘ω˘) d-deactivatedauthow)
 
-  object OffBoardedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Offboarded, OffboardedAuthor)
+  o-object offboawdedusewunavaiwabwetweettombstonewuwe
+      extends usewunavaiwabwestatetweettombstonewuwe(epitaph.offboawded, nyaa~~ o-offboawdedauthow)
 
-  object ErasedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
+  object ewasedusewunavaiwabwetweettombstonewuwe
+      e-extends usewunavaiwabwestatetweettombstonewuwe(epitaph.deactivated, ewasedauthow)
 
-  object ProtectedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
+  o-object pwotectedusewunavaiwabwetweettombstonewuwe
+      extends u-usewunavaiwabwestatetweettombstonewuwe(epitaph.pwotected, UwU pwotectedauthow)
 
-  object AuthorBlocksViewerUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.BlockedBy, AuthorBlocksViewer)
+  object a-authowbwocksviewewusewunavaiwabwetweettombstonewuwe
+      e-extends usewunavaiwabwestatetweettombstonewuwe(epitaph.bwockedby, :3 authowbwocksviewew)
 
-  object UserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Unavailable, UnavailableAuthor)
+  object usewunavaiwabwetweettombstonewuwe
+      extends usewunavaiwabwestatetweettombstonewuwe(epitaph.unavaiwabwe, (⑅˘꒳˘) unavaiwabweauthow)
 
-  object SuspendedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Suspended, SuspendedAuthor)
+  o-object suspendedusewunavaiwabwewetweettombstonewuwe
+      e-extends usewunavaiwabwestatewetweettombstonewuwe(epitaph.suspended, (///ˬ///✿) s-suspendedauthow)
 
-  object DeactivatedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Deactivated, DeactivatedAuthor)
+  o-object deactivatedusewunavaiwabwewetweettombstonewuwe
+      e-extends usewunavaiwabwestatewetweettombstonewuwe(epitaph.deactivated, ^^;; deactivatedauthow)
 
-  object OffBoardedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Offboarded, OffboardedAuthor)
+  object offboawdedusewunavaiwabwewetweettombstonewuwe
+      e-extends usewunavaiwabwestatewetweettombstonewuwe(epitaph.offboawded, offboawdedauthow)
 
-  object ErasedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
+  object ewasedusewunavaiwabwewetweettombstonewuwe
+      extends usewunavaiwabwestatewetweettombstonewuwe(epitaph.deactivated, >_< e-ewasedauthow)
 
-  object ProtectedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
+  object pwotectedusewunavaiwabwewetweettombstonewuwe
+      e-extends u-usewunavaiwabwestatewetweettombstonewuwe(epitaph.pwotected, rawr x3 p-pwotectedauthow)
 
-  object AuthorBlocksViewerUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.BlockedBy, AuthorBlocksViewer)
+  object authowbwocksviewewusewunavaiwabwewetweettombstonewuwe
+      e-extends usewunavaiwabwestatewetweettombstonewuwe(epitaph.bwockedby, /(^•ω•^) a-authowbwocksviewew)
 
-  object ViewerBlocksAuthorUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Unavailable, ViewerBlocksAuthor)
+  object v-viewewbwocksauthowusewunavaiwabwewetweettombstonewuwe
+      e-extends usewunavaiwabwestatewetweettombstonewuwe(epitaph.unavaiwabwe, :3 viewewbwocksauthow)
 
-  object ViewerMutesAuthorUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Unavailable, ViewerMutesAuthor)
+  object viewewmutesauthowusewunavaiwabwewetweettombstonewuwe
+      e-extends usewunavaiwabwestatewetweettombstonewuwe(epitaph.unavaiwabwe, (ꈍᴗꈍ) v-viewewmutesauthow)
 
-  object SuspendedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Suspended, SuspendedAuthor)
+  o-object s-suspendedusewunavaiwabweinnewquotedtweettombstonewuwe
+      e-extends usewunavaiwabwestateinnewquotedtweettombstonewuwe(epitaph.suspended, /(^•ω•^) suspendedauthow)
 
-  object DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(
-        Epitaph.Deactivated,
-        DeactivatedAuthor)
+  object deactivatedusewunavaiwabweinnewquotedtweettombstonewuwe
+      extends usewunavaiwabwestateinnewquotedtweettombstonewuwe(
+        e-epitaph.deactivated, (⑅˘꒳˘)
+        deactivatedauthow)
 
-  object OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(
-        Epitaph.Offboarded,
-        OffboardedAuthor)
+  object offboawdedusewunavaiwabweinnewquotedtweettombstonewuwe
+      extends usewunavaiwabwestateinnewquotedtweettombstonewuwe(
+        epitaph.offboawded, ( ͡o ω ͡o )
+        offboawdedauthow)
 
-  object ErasedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
+  o-object ewasedusewunavaiwabweinnewquotedtweettombstonewuwe
+      extends usewunavaiwabwestateinnewquotedtweettombstonewuwe(epitaph.deactivated, òωó ewasedauthow)
 
-  object ProtectedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
+  object pwotectedusewunavaiwabweinnewquotedtweettombstonewuwe
+      e-extends usewunavaiwabwestateinnewquotedtweettombstonewuwe(epitaph.pwotected, (⑅˘꒳˘) p-pwotectedauthow)
 
-  object AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(
-        Epitaph.BlockedBy,
-        AuthorBlocksViewer)
+  o-object authowbwocksviewewusewunavaiwabweinnewquotedtweettombstonewuwe
+      extends usewunavaiwabwestateinnewquotedtweettombstonewuwe(
+        e-epitaph.bwockedby, XD
+        authowbwocksviewew)
 
-  object ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      extends UserUnavailableStateInnerQuotedTweetInterstitialRule(
-        Reason.ViewerBlocksAuthor,
-        ViewerBlocksAuthor) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam)
+  o-object v-viewewbwocksauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe
+      extends usewunavaiwabwestateinnewquotedtweetintewstitiawwuwe(
+        weason.viewewbwocksauthow, -.-
+        viewewbwocksauthow) {
+    ovewwide d-def enabwed: seq[wuwepawam[boowean]] =
+      s-seq(enabweinnewquotedtweetviewewbwocksauthowintewstitiawwuwepawam)
   }
 
-  object ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      extends UserUnavailableStateInnerQuotedTweetInterstitialRule(
-        Reason.ViewerMutesAuthor,
-        ViewerMutesAuthor) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam)
+  object v-viewewmutesauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe
+      e-extends usewunavaiwabwestateinnewquotedtweetintewstitiawwuwe(
+        weason.viewewmutesauthow, :3
+        viewewmutesauthow) {
+    o-ovewwide d-def enabwed: seq[wuwepawam[boowean]] =
+      s-seq(enabweinnewquotedtweetviewewmutesauthowintewstitiawwuwepawam)
   }
 }

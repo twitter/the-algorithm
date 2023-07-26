@@ -1,25 +1,25 @@
-package com.twitter.follow_recommendations.common.feature_hydration.common
+package com.twittew.fowwow_wecommendations.common.featuwe_hydwation.common
 
-import com.twitter.follow_recommendations.common.models.HasMutualFollowedUserIds
-import com.twitter.follow_recommendations.common.models.HasWtfImpressions
-import com.twitter.follow_recommendations.common.models.WtfImpression
-import com.twitter.util.Time
+impowt c-com.twittew.fowwow_wecommendations.common.modews.hasmutuawfowwowedusewids
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.haswtfimpwessions
+i-impowt com.twittew.fowwow_wecommendations.common.modews.wtfimpwession
+i-impowt c-com.twittew.utiw.time
 
-trait HasPreFetchedFeature extends HasMutualFollowedUserIds with HasWtfImpressions {
+t-twait h-haspwefetchedfeatuwe extends hasmutuawfowwowedusewids with haswtfimpwessions {
 
-  lazy val followedImpressions: Seq[WtfImpression] = {
-    for {
-      wtfImprList <- wtfImpressions.toSeq
-      wtfImpr <- wtfImprList
-      if recentFollowedUserIds.exists(_.contains(wtfImpr.candidateId))
-    } yield wtfImpr
+  wazy vaw fowwowedimpwessions: seq[wtfimpwession] = {
+    f-fow {
+      wtfimpwwist <- wtfimpwessions.toseq
+      w-wtfimpw <- wtfimpwwist
+      if w-wecentfowwowedusewids.exists(_.contains(wtfimpw.candidateid))
+    } yiewd wtfimpw
   }
 
-  lazy val numFollowedImpressions: Int = followedImpressions.size
+  wazy vaw nyumfowwowedimpwessions: i-int = fowwowedimpwessions.size
 
-  lazy val lastFollowedImpressionDurationMs: Option[Long] = {
-    if (followedImpressions.nonEmpty) {
-      Some((Time.now - followedImpressions.map(_.latestTime).max).inMillis)
-    } else None
+  w-wazy v-vaw wastfowwowedimpwessionduwationms: option[wong] = {
+    if (fowwowedimpwessions.nonempty) {
+      some((time.now - fowwowedimpwessions.map(_.watesttime).max).inmiwwis)
+    } e-ewse nyone
   }
 }

@@ -1,39 +1,39 @@
-package com.twitter.home_mixer.product.scored_tweets.selector
+package com.twittew.home_mixew.pwoduct.scowed_tweets.sewectow
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.innetwowkfeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.scowefeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-case class KeepBestOutOfNetworkCandidatePerAuthorPerSuggestType(
-  override val pipelineScope: CandidateScope)
-    extends Selector[PipelineQuery] {
+case cwass keepbestoutofnetwowkcandidatepewauthowpewsuggesttype(
+  o-ovewwide vaw pipewinescope: candidatescope)
+    e-extends sewectow[pipewinequewy] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val (selectedCandidates, otherCandidates) =
-      remainingCandidates.partition(candidate =>
-        pipelineScope.contains(candidate) && !candidate.features.getOrElse(InNetworkFeature, true))
+  ovewwide d-def appwy(
+    quewy: pipewinequewy, nyaa~~
+    wemainingcandidates: seq[candidatewithdetaiws], (⑅˘꒳˘)
+    w-wesuwt: seq[candidatewithdetaiws]
+  ): sewectowwesuwt = {
+    v-vaw (sewectedcandidates, rawr x3 o-othewcandidates) =
+      wemainingcandidates.pawtition(candidate =>
+        pipewinescope.contains(candidate) && !candidate.featuwes.getowewse(innetwowkfeatuwe, (✿oωo) twue))
 
-    val filteredCandidates = selectedCandidates
-      .groupBy { candidate =>
+    vaw fiwtewedcandidates = s-sewectedcandidates
+      .gwoupby { candidate =>
         (
-          candidate.features.getOrElse(AuthorIdFeature, None),
-          candidate.features.getOrElse(SuggestTypeFeature, None)
+          candidate.featuwes.getowewse(authowidfeatuwe, (ˆ ﻌ ˆ)♡ nyone),
+          candidate.featuwes.getowewse(suggesttypefeatuwe, (˘ω˘) n-nyone)
         )
       }
-      .values.map(_.maxBy(_.features.getOrElse(ScoreFeature, None)))
-      .toSeq
+      .vawues.map(_.maxby(_.featuwes.getowewse(scowefeatuwe, (⑅˘꒳˘) nyone)))
+      .toseq
 
-    val updatedCandidates = otherCandidates ++ filteredCandidates
-    SelectorResult(remainingCandidates = updatedCandidates, result = result)
+    v-vaw updatedcandidates = o-othewcandidates ++ f-fiwtewedcandidates
+    s-sewectowwesuwt(wemainingcandidates = updatedcandidates, (///ˬ///✿) wesuwt = wesuwt)
   }
 }

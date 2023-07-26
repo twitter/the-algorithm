@@ -1,441 +1,441 @@
-package com.twitter.search.earlybird_root.routers;
+package com.twittew.seawch.eawwybiwd_woot.woutews;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+impowt java.utiw.awwaywist;
+impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.wist;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.futures.Futures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseMergeUtil;
-import com.twitter.search.earlybird.thrift.AdjustedRequestParams;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.ClientErrorException;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdServiceResponse;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.mergers.SuperRootResponseMerger;
-import com.twitter.search.queryparser.util.QueryUtil;
-import com.twitter.util.Function;
-import com.twitter.util.Function0;
-import com.twitter.util.Future;
+i-impowt com.twittew.common.utiw.cwock;
+impowt com.twittew.finagwe.sewvice;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.common.futuwes.futuwes;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.utiw.eawwybiwd.eawwybiwdwesponsemewgeutiw;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.adjustedwequestpawams;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwankingmode;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.seawch.eawwybiwd_woot.common.cwientewwowexception;
+i-impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdfeatuweschemamewgew;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestutiw;
+impowt c-com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdsewvicewesponse;
+impowt com.twittew.seawch.eawwybiwd_woot.fiwtews.eawwybiwdtimewangefiwtew;
+impowt com.twittew.seawch.eawwybiwd_woot.mewgews.supewwootwesponsemewgew;
+impowt com.twittew.seawch.quewypawsew.utiw.quewyutiw;
+i-impowt com.twittew.utiw.function;
+i-impowt com.twittew.utiw.function0;
+i-impowt com.twittew.utiw.futuwe;
 
 /**
- * For Recency traffic SuperRoot hits realtime and/or protected realtime first and then archive
+ * f-fow wecency t-twaffic supewwoot hits weawtime and/ow pwotected w-weawtime fiwst and then awchive
  */
-public abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRouter {
-  public static final String FULL_ARCHIVE_AVAILABLE_FOR_GET_PROTECTED_TWEETS_ONLY_DECIDER_KEY =
-      "superroot_full_archive_cluster_available_for_get_protected_tweets_only_requests";
-  public static final String FULL_ARCHIVE_AVAILABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DECIDER_KEY =
-      "superroot_full_archive_cluster_available_for_requests_without_enough_protected_results";
+pubwic a-abstwact cwass abstwactwecencyandwewevancewequestwoutew extends wequestwoutew {
+  pubwic static finaw stwing f-fuww_awchive_avaiwabwe_fow_get_pwotected_tweets_onwy_decidew_key =
+      "supewwoot_fuww_awchive_cwustew_avaiwabwe_fow_get_pwotected_tweets_onwy_wequests";
+  pubwic s-static finaw s-stwing fuww_awchive_avaiwabwe_fow_not_enough_pwotected_wesuwts_decidew_key =
+      "supewwoot_fuww_awchive_cwustew_avaiwabwe_fow_wequests_without_enough_pwotected_wesuwts";
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(AbstractRecencyAndRelevanceRequestRouter.class);
+  p-pwivate static finaw woggew wog =
+      woggewfactowy.getwoggew(abstwactwecencyandwewevancewequestwoutew.cwass);
 
-  private final String skipProtectedClusterDeciderKey;
-  private final String skipFullArchiveClusterDeciderKey;
+  pwivate finaw s-stwing skippwotectedcwustewdecidewkey;
+  p-pwivate finaw stwing s-skipfuwwawchivecwustewdecidewkey;
 
-  private final SearchCounter realtimeResponseInvalidCounter;
-  private final SearchCounter realtimeResponseSearchResultsNotSetCounter;
-  private final SearchCounter minSearchedStatusIdLargerThanRequestMaxIdCounter;
-  private final SearchCounter minSearchedStatusIdLargerThanRequestUntilTimeCounter;
+  p-pwivate finaw seawchcountew w-weawtimewesponseinvawidcountew;
+  pwivate finaw s-seawchcountew weawtimewesponseseawchwesuwtsnotsetcountew;
+  pwivate finaw seawchcountew m-minseawchedstatusidwawgewthanwequestmaxidcountew;
+  pwivate finaw seawchcountew m-minseawchedstatusidwawgewthanwequestuntiwtimecountew;
 
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> realtime;
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> protectedRealtime;
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive;
-  private final SuperRootResponseMerger responseMerger;
-  private final SearchDecider decider;
+  pwivate finaw s-sewvice<eawwybiwdwequestcontext, σωσ e-eawwybiwdwesponse> weawtime;
+  pwivate finaw sewvice<eawwybiwdwequestcontext, ^^;; eawwybiwdwesponse> pwotectedweawtime;
+  pwivate f-finaw sewvice<eawwybiwdwequestcontext, ʘwʘ e-eawwybiwdwesponse> fuwwawchive;
+  p-pwivate f-finaw supewwootwesponsemewgew w-wesponsemewgew;
+  pwivate finaw seawchdecidew decidew;
 
-  AbstractRecencyAndRelevanceRequestRouter(
-      Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
-      Service<EarlybirdRequestContext, EarlybirdResponse> protectedRealtime,
-      Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive,
-      EarlybirdTimeRangeFilter realtimeTimeRangeFilter,
-      EarlybirdTimeRangeFilter protectedTimeRangeFilter,
-      EarlybirdTimeRangeFilter fullArchiveTimeRangeFilter,
-      ThriftSearchRankingMode rankingMode,
-      Clock clock,
-      SearchDecider decider,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    LOG.info("Instantiating AbstractRecencyAndRelevanceRequestRouter");
-    this.realtime = realtimeTimeRangeFilter.andThen(realtime);
-    this.protectedRealtime = protectedTimeRangeFilter.andThen(protectedRealtime);
-    this.fullArchive = fullArchiveTimeRangeFilter.andThen(fullArchive);
-    this.responseMerger = new SuperRootResponseMerger(rankingMode, featureSchemaMerger, clock);
-    this.decider = decider;
+  abstwactwecencyandwewevancewequestwoutew(
+      s-sewvice<eawwybiwdwequestcontext, ^^ eawwybiwdwesponse> weawtime, nyaa~~
+      sewvice<eawwybiwdwequestcontext, (///ˬ///✿) eawwybiwdwesponse> pwotectedweawtime, XD
+      s-sewvice<eawwybiwdwequestcontext, :3 eawwybiwdwesponse> fuwwawchive, òωó
+      e-eawwybiwdtimewangefiwtew w-weawtimetimewangefiwtew, ^^
+      e-eawwybiwdtimewangefiwtew pwotectedtimewangefiwtew, ^•ﻌ•^
+      e-eawwybiwdtimewangefiwtew f-fuwwawchivetimewangefiwtew, σωσ
+      t-thwiftseawchwankingmode w-wankingmode, (ˆ ﻌ ˆ)♡
+      cwock cwock, nyaa~~
+      seawchdecidew d-decidew, ʘwʘ
+      e-eawwybiwdfeatuweschemamewgew f-featuweschemamewgew) {
+    w-wog.info("instantiating a-abstwactwecencyandwewevancewequestwoutew");
+    this.weawtime = weawtimetimewangefiwtew.andthen(weawtime);
+    this.pwotectedweawtime = p-pwotectedtimewangefiwtew.andthen(pwotectedweawtime);
+    this.fuwwawchive = fuwwawchivetimewangefiwtew.andthen(fuwwawchive);
+    this.wesponsemewgew = nyew supewwootwesponsemewgew(wankingmode, ^•ﻌ•^ featuweschemamewgew, rawr x3 c-cwock);
+    this.decidew = decidew;
 
-    String rankingModeForStats = rankingMode.name().toLowerCase();
-    skipProtectedClusterDeciderKey =
-        String.format("superroot_skip_protected_cluster_for_%s_requests", rankingModeForStats);
-    skipFullArchiveClusterDeciderKey =
-        String.format("superroot_skip_full_archive_cluster_for_%s_requests", rankingModeForStats);
+    stwing wankingmodefowstats = w-wankingmode.name().towowewcase();
+    s-skippwotectedcwustewdecidewkey =
+        s-stwing.fowmat("supewwoot_skip_pwotected_cwustew_fow_%s_wequests", 🥺 wankingmodefowstats);
+    s-skipfuwwawchivecwustewdecidewkey =
+        stwing.fowmat("supewwoot_skip_fuww_awchive_cwustew_fow_%s_wequests", ʘwʘ w-wankingmodefowstats);
 
-    realtimeResponseInvalidCounter =
-        SearchCounter.export(rankingModeForStats + "_realtime_response_invalid");
-    realtimeResponseSearchResultsNotSetCounter =
-        SearchCounter.export(rankingModeForStats + "_realtime_response_search_results_not_set");
-    minSearchedStatusIdLargerThanRequestMaxIdCounter = SearchCounter.export(
-        rankingModeForStats + "_min_searched_status_id_larger_than_request_max_id");
-    minSearchedStatusIdLargerThanRequestUntilTimeCounter = SearchCounter.export(
-        rankingModeForStats + "_min_searched_status_id_larger_than_request_until_time");
+    w-weawtimewesponseinvawidcountew =
+        seawchcountew.expowt(wankingmodefowstats + "_weawtime_wesponse_invawid");
+    weawtimewesponseseawchwesuwtsnotsetcountew =
+        seawchcountew.expowt(wankingmodefowstats + "_weawtime_wesponse_seawch_wesuwts_not_set");
+    minseawchedstatusidwawgewthanwequestmaxidcountew = seawchcountew.expowt(
+        wankingmodefowstats + "_min_seawched_status_id_wawgew_than_wequest_max_id");
+    minseawchedstatusidwawgewthanwequestuntiwtimecountew = s-seawchcountew.expowt(
+        wankingmodefowstats + "_min_seawched_status_id_wawgew_than_wequest_untiw_time");
   }
 
-  private void checkRequestPreconditions(EarlybirdRequest request) {
-    // CollectorParams should be set in EarlybirdRequestUtil.checkAndSetCollectorParams().
-    Preconditions.checkNotNull(request.getSearchQuery().getCollectorParams());
+  p-pwivate void checkwequestpweconditions(eawwybiwdwequest w-wequest) {
+    // c-cowwectowpawams shouwd be set in eawwybiwdwequestutiw.checkandsetcowwectowpawams(). (˘ω˘)
+    p-pweconditions.checknotnuww(wequest.getseawchquewy().getcowwectowpawams());
 
-    // return a Client error if the num results are less than 0
-    if (request.getSearchQuery().getNumResults() < 0) {
-      throw new ClientErrorException("The request.searchQuery.numResults field can't be negative");
+    // w-wetuwn a cwient ewwow if the nyum w-wesuwts awe wess t-than 0
+    if (wequest.getseawchquewy().getnumwesuwts() < 0) {
+      thwow nyew cwientewwowexception("the wequest.seawchquewy.numwesuwts fiewd c-can't be nyegative");
     }
 
-    if (request.getSearchQuery().getCollectorParams().getNumResultsToReturn() < 0) {
-      throw new ClientErrorException("The request.searchQuery.collectorParams.numResultsToReturn "
-          + "field can't be negative");
+    i-if (wequest.getseawchquewy().getcowwectowpawams().getnumwesuwtstowetuwn() < 0) {
+      t-thwow nyew cwientewwowexception("the wequest.seawchquewy.cowwectowpawams.numwesuwtstowetuwn "
+          + "fiewd c-can't b-be negative");
     }
   }
 
   /**
-   * Hit realtime and/or protected realtime first, if not enough results, then hit archive,
-   * merge the results.
+   * hit weawtime a-and/ow pwotected weawtime fiwst, o.O if nyot enough wesuwts, σωσ then hit awchive, (ꈍᴗꈍ)
+   * m-mewge the wesuwts. (ˆ ﻌ ˆ)♡
    */
-  @Override
-  public Future<EarlybirdResponse> route(final EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> woute(finaw e-eawwybiwdwequestcontext wequestcontext) {
+    e-eawwybiwdwequest wequest = wequestcontext.getwequest();
 
-    this.checkRequestPreconditions(request);
+    this.checkwequestpweconditions(wequest);
 
-    ArrayList<RequestResponse> savedRequestResponses = new ArrayList<>();
+    a-awwaywist<wequestwesponse> savedwequestwesponses = nyew awwaywist<>();
 
-    // If clients do not define numResults to return or the numResults requested are 0
-    // return an empty EarlyBirdResponse without hitting any service.
-    if (request.getSearchQuery().getNumResults() == 0
-        || request.getSearchQuery().getCollectorParams().getNumResultsToReturn() == 0) {
-      return Future.value(successNoResultsResponse());
+    // if cwients do nyot define nyumwesuwts t-to wetuwn ow the nyumwesuwts wequested awe 0
+    // w-wetuwn a-an empty eawwybiwdwesponse without hitting any sewvice. o.O
+    if (wequest.getseawchquewy().getnumwesuwts() == 0
+        || w-wequest.getseawchquewy().getcowwectowpawams().getnumwesuwtstowetuwn() == 0) {
+      w-wetuwn futuwe.vawue(successnowesuwtswesponse());
     }
 
-    // Realtime earlybird response is already required. Even if the service is not called
-    // the result passed to the mergers should be a valid one.
-    EarlybirdServiceResponse.ServiceState realtimeServiceState =
-        getRealtimeServiceState(requestContext);
-    final Future<EarlybirdServiceResponse> realtimeResponseFuture =
-        realtimeServiceState.serviceWasCalled()
-            ? getRealtimeResponse(savedRequestResponses, requestContext)
-            : Future.value(EarlybirdServiceResponse.serviceNotCalled(realtimeServiceState));
+    // weawtime eawwybiwd wesponse i-is awweady wequiwed. :3 even i-if the sewvice is nyot cawwed
+    // the wesuwt passed to the m-mewgews shouwd be a vawid one. -.-
+    e-eawwybiwdsewvicewesponse.sewvicestate w-weawtimesewvicestate =
+        getweawtimesewvicestate(wequestcontext);
+    f-finaw futuwe<eawwybiwdsewvicewesponse> weawtimewesponsefutuwe =
+        w-weawtimesewvicestate.sewvicewascawwed()
+            ? g-getweawtimewesponse(savedwequestwesponses, ( ͡o ω ͡o ) w-wequestcontext)
+            : futuwe.vawue(eawwybiwdsewvicewesponse.sewvicenotcawwed(weawtimesewvicestate));
 
-    // If no flock response (followedUserIds) is set, request wont be sent to protected.
-    EarlybirdServiceResponse.ServiceState protectedServiceState =
-        getProtectedServiceState(requestContext);
-    final Future<EarlybirdServiceResponse> protectedResponseFuture =
-        protectedServiceState.serviceWasCalled()
-            ? getProtectedResponse(savedRequestResponses, requestContext)
-            : Future.value(EarlybirdServiceResponse.serviceNotCalled(protectedServiceState));
+    // i-if nyo fwock w-wesponse (fowwowedusewids) is set, /(^•ω•^) wequest wont b-be sent to pwotected. (⑅˘꒳˘)
+    e-eawwybiwdsewvicewesponse.sewvicestate p-pwotectedsewvicestate =
+        getpwotectedsewvicestate(wequestcontext);
+    finaw f-futuwe<eawwybiwdsewvicewesponse> pwotectedwesponsefutuwe =
+        p-pwotectedsewvicestate.sewvicewascawwed()
+            ? g-getpwotectedwesponse(savedwequestwesponses, òωó wequestcontext)
+            : futuwe.vawue(eawwybiwdsewvicewesponse.sewvicenotcawwed(pwotectedsewvicestate));
 
-    final Future<EarlybirdServiceResponse> archiveResponseFuture =
-        Futures.flatMap(realtimeResponseFuture, protectedResponseFuture,
-            new Function0<Future<EarlybirdServiceResponse>>() {
-              @Override
-              public Future<EarlybirdServiceResponse> apply() {
-                EarlybirdServiceResponse realtimeResponse = Futures.get(realtimeResponseFuture);
-                EarlybirdServiceResponse protectedResponse = Futures.get(protectedResponseFuture);
-                EarlybirdServiceResponse.ServiceState fullArchiveServiceState =
-                    getFullArchiveServiceState(requestContext, realtimeResponse, protectedResponse);
-                return fullArchiveServiceState.serviceWasCalled()
-                    ? getFullArchiveResponse(savedRequestResponses, requestContext,
-                    realtimeResponse.getResponse(), protectedResponse.getResponse())
-                    : Future.value(
-                        EarlybirdServiceResponse.serviceNotCalled(fullArchiveServiceState));
+    finaw f-futuwe<eawwybiwdsewvicewesponse> a-awchivewesponsefutuwe =
+        f-futuwes.fwatmap(weawtimewesponsefutuwe, 🥺 p-pwotectedwesponsefutuwe, (ˆ ﻌ ˆ)♡
+            nyew function0<futuwe<eawwybiwdsewvicewesponse>>() {
+              @ovewwide
+              p-pubwic futuwe<eawwybiwdsewvicewesponse> appwy() {
+                eawwybiwdsewvicewesponse weawtimewesponse = futuwes.get(weawtimewesponsefutuwe);
+                eawwybiwdsewvicewesponse p-pwotectedwesponse = futuwes.get(pwotectedwesponsefutuwe);
+                e-eawwybiwdsewvicewesponse.sewvicestate fuwwawchivesewvicestate =
+                    g-getfuwwawchivesewvicestate(wequestcontext, -.- weawtimewesponse, σωσ p-pwotectedwesponse);
+                wetuwn fuwwawchivesewvicestate.sewvicewascawwed()
+                    ? getfuwwawchivewesponse(savedwequestwesponses, >_< w-wequestcontext, :3
+                    w-weawtimewesponse.getwesponse(), OwO p-pwotectedwesponse.getwesponse())
+                    : f-futuwe.vawue(
+                        e-eawwybiwdsewvicewesponse.sewvicenotcawwed(fuwwawchivesewvicestate));
               }
             }
         );
 
-    Future<EarlybirdResponse> mergedResponse = responseMerger.mergeResponseFutures(
-        requestContext, realtimeResponseFuture, protectedResponseFuture, archiveResponseFuture);
-    mergedResponse = mergedResponse
-        .map(RequestRouterUtil.checkMinSearchedStatusId(
-                 requestContext,
-                 "max_id",
-                 EarlybirdRequestUtil.getRequestMaxId(requestContext.getParsedQuery()),
-                 realtimeResponseFuture,
-                 protectedResponseFuture,
-                 archiveResponseFuture,
-                 minSearchedStatusIdLargerThanRequestMaxIdCounter))
-        .map(RequestRouterUtil.checkMinSearchedStatusId(
-                 requestContext,
-                 "until_time",
-                 EarlybirdRequestUtil.getRequestMaxIdFromUntilTime(requestContext.getParsedQuery()),
-                 realtimeResponseFuture,
-                 protectedResponseFuture,
-                 archiveResponseFuture,
-                 minSearchedStatusIdLargerThanRequestUntilTimeCounter));
+    futuwe<eawwybiwdwesponse> mewgedwesponse = wesponsemewgew.mewgewesponsefutuwes(
+        wequestcontext, rawr weawtimewesponsefutuwe, (///ˬ///✿) pwotectedwesponsefutuwe, ^^ a-awchivewesponsefutuwe);
+    m-mewgedwesponse = m-mewgedwesponse
+        .map(wequestwoutewutiw.checkminseawchedstatusid(
+                 wequestcontext, XD
+                 "max_id", UwU
+                 e-eawwybiwdwequestutiw.getwequestmaxid(wequestcontext.getpawsedquewy()), o.O
+                 weawtimewesponsefutuwe,
+                 pwotectedwesponsefutuwe, 😳
+                 awchivewesponsefutuwe, (˘ω˘)
+                 minseawchedstatusidwawgewthanwequestmaxidcountew))
+        .map(wequestwoutewutiw.checkminseawchedstatusid(
+                 w-wequestcontext, 🥺
+                 "untiw_time", ^^
+                 e-eawwybiwdwequestutiw.getwequestmaxidfwomuntiwtime(wequestcontext.getpawsedquewy()), >w<
+                 weawtimewesponsefutuwe, ^^;;
+                 p-pwotectedwesponsefutuwe, (˘ω˘)
+                 awchivewesponsefutuwe, OwO
+                 minseawchedstatusidwawgewthanwequestuntiwtimecountew));
 
-    return this.maybeAttachSentRequestsToDebugInfo(
-        savedRequestResponses,
-        requestContext,
-        mergedResponse
+    w-wetuwn t-this.maybeattachsentwequeststodebuginfo(
+        savedwequestwesponses, (ꈍᴗꈍ)
+        w-wequestcontext,
+        m-mewgedwesponse
     );
   }
 
-  private EarlybirdResponse successNoResultsResponse() {
-    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
-        .setSearchResults(new ThriftSearchResults().setResults(Collections.emptyList()));
+  pwivate eawwybiwdwesponse successnowesuwtswesponse() {
+    wetuwn nyew eawwybiwdwesponse(eawwybiwdwesponsecode.success, òωó 0)
+        .setseawchwesuwts(new thwiftseawchwesuwts().setwesuwts(cowwections.emptywist()));
   }
 
-  protected abstract boolean shouldSendRequestToFullArchiveCluster(
-      EarlybirdRequest request, EarlybirdResponse realtimeResponse);
+  pwotected abstwact b-boowean shouwdsendwequesttofuwwawchivecwustew(
+      e-eawwybiwdwequest w-wequest, ʘwʘ e-eawwybiwdwesponse w-weawtimewesponse);
 
-  /** Determines if the protected service is available and if a request should be sent to it. */
-  private EarlybirdServiceResponse.ServiceState getProtectedServiceState(
-      EarlybirdRequestContext requestContext) {
-    if (!requestContext.getRequest().isSetFollowedUserIds()
-        || requestContext.getRequest().getFollowedUserIds().isEmpty()) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED;
+  /** detewmines if the p-pwotected sewvice i-is avaiwabwe and if a wequest s-shouwd be sent t-to it. ʘwʘ */
+  pwivate eawwybiwdsewvicewesponse.sewvicestate g-getpwotectedsewvicestate(
+      eawwybiwdwequestcontext wequestcontext) {
+    i-if (!wequestcontext.getwequest().issetfowwowedusewids()
+        || wequestcontext.getwequest().getfowwowedusewids().isempty()) {
+      wetuwn e-eawwybiwdsewvicewesponse.sewvicestate.sewvice_not_wequested;
     }
 
-    if (decider.isAvailable(skipProtectedClusterDeciderKey)) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_AVAILABLE;
+    i-if (decidew.isavaiwabwe(skippwotectedcwustewdecidewkey)) {
+      wetuwn eawwybiwdsewvicewesponse.sewvicestate.sewvice_not_avaiwabwe;
     }
 
-    return EarlybirdServiceResponse.ServiceState.SERVICE_CALLED;
+    w-wetuwn eawwybiwdsewvicewesponse.sewvicestate.sewvice_cawwed;
   }
 
-  /** Determines if the realtime service is available and if a request should be sent to it. */
-  private EarlybirdServiceResponse.ServiceState getRealtimeServiceState(
-      EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
+  /** detewmines i-if the weawtime s-sewvice is avaiwabwe a-and if a wequest shouwd be sent to it. nyaa~~ */
+  pwivate eawwybiwdsewvicewesponse.sewvicestate g-getweawtimesewvicestate(
+      eawwybiwdwequestcontext wequestcontext) {
+    eawwybiwdwequest w-wequest = w-wequestcontext.getwequest();
 
-    // SERVICE_NOT_REQUESTED should always be returned before other states as
-    // SuperRootResponseMerger has special logic for this case.
-    if (request.isSetGetProtectedTweetsOnly() && request.isGetProtectedTweetsOnly()) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED;
+    // sewvice_not_wequested s-shouwd awways be wetuwned befowe o-othew states a-as
+    // supewwootwesponsemewgew has speciaw wogic fow this case. UwU
+    i-if (wequest.issetgetpwotectedtweetsonwy() && wequest.isgetpwotectedtweetsonwy()) {
+      wetuwn eawwybiwdsewvicewesponse.sewvicestate.sewvice_not_wequested;
     }
 
-    return EarlybirdServiceResponse.ServiceState.SERVICE_CALLED;
+    w-wetuwn eawwybiwdsewvicewesponse.sewvicestate.sewvice_cawwed;
   }
 
-  /** Determines if the full archive service is available and if a request should be sent to it. */
-  private EarlybirdServiceResponse.ServiceState getFullArchiveServiceState(
-      EarlybirdRequestContext requestContext,
-      EarlybirdServiceResponse publicServiceResponse,
-      EarlybirdServiceResponse protectedServiceResponse) {
+  /** d-detewmines if the fuww awchive s-sewvice is avaiwabwe and i-if a wequest shouwd b-be sent to it. (⑅˘꒳˘) */
+  p-pwivate eawwybiwdsewvicewesponse.sewvicestate getfuwwawchivesewvicestate(
+      eawwybiwdwequestcontext wequestcontext, (˘ω˘)
+      eawwybiwdsewvicewesponse pubwicsewvicewesponse, :3
+      eawwybiwdsewvicewesponse pwotectedsewvicewesponse) {
 
-    // SERVICE_NOT_REQUESTED should be always be returned before other states as
-    // SuperRootResponseMerger has special logic for this case.
-    if (!requestContext.getRequest().isSetGetOlderResults()
-        || !requestContext.getRequest().isGetOlderResults()) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED;
+    // sewvice_not_wequested shouwd be awways be wetuwned befowe othew states as
+    // supewwootwesponsemewgew h-has speciaw wogic f-fow this case. (˘ω˘)
+    if (!wequestcontext.getwequest().issetgetowdewwesuwts()
+        || !wequestcontext.getwequest().isgetowdewwesuwts()) {
+      wetuwn eawwybiwdsewvicewesponse.sewvicestate.sewvice_not_wequested;
     }
 
-    // allow requesting full archive service when decider is enabled
-    if (!decider.isAvailable(FULL_ARCHIVE_AVAILABLE_FOR_GET_PROTECTED_TWEETS_ONLY_DECIDER_KEY)
-        && requestContext.getRequest().isSetGetProtectedTweetsOnly()
-        && requestContext.getRequest().isGetProtectedTweetsOnly()) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED;
+    // a-awwow wequesting f-fuww awchive s-sewvice when decidew is enabwed
+    i-if (!decidew.isavaiwabwe(fuww_awchive_avaiwabwe_fow_get_pwotected_tweets_onwy_decidew_key)
+        && wequestcontext.getwequest().issetgetpwotectedtweetsonwy()
+        && w-wequestcontext.getwequest().isgetpwotectedtweetsonwy()) {
+      w-wetuwn eawwybiwdsewvicewesponse.sewvicestate.sewvice_not_wequested;
     }
 
-    if (decider.isAvailable(skipFullArchiveClusterDeciderKey)) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_AVAILABLE;
+    if (decidew.isavaiwabwe(skipfuwwawchivecwustewdecidewkey)) {
+      w-wetuwn eawwybiwdsewvicewesponse.sewvicestate.sewvice_not_avaiwabwe;
     }
 
-    boolean serviceWasCalledForPublic =
-        getFullArchiveServiceState(requestContext, publicServiceResponse).serviceWasCalled();
-    boolean serviceWasCalledForProtected =
-        decider.isAvailable(FULL_ARCHIVE_AVAILABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DECIDER_KEY)
-        && getFullArchiveServiceState(requestContext, protectedServiceResponse).serviceWasCalled();
-    if (!serviceWasCalledForPublic && !serviceWasCalledForProtected) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED;
+    boowean sewvicewascawwedfowpubwic =
+        g-getfuwwawchivesewvicestate(wequestcontext, nyaa~~ p-pubwicsewvicewesponse).sewvicewascawwed();
+    boowean sewvicewascawwedfowpwotected =
+        d-decidew.isavaiwabwe(fuww_awchive_avaiwabwe_fow_not_enough_pwotected_wesuwts_decidew_key)
+        && g-getfuwwawchivesewvicestate(wequestcontext, p-pwotectedsewvicewesponse).sewvicewascawwed();
+    i-if (!sewvicewascawwedfowpubwic && !sewvicewascawwedfowpwotected) {
+      w-wetuwn eawwybiwdsewvicewesponse.sewvicestate.sewvice_not_cawwed;
     }
 
-    return EarlybirdServiceResponse.ServiceState.SERVICE_CALLED;
+    wetuwn e-eawwybiwdsewvicewesponse.sewvicestate.sewvice_cawwed;
   }
 
-  private EarlybirdServiceResponse.ServiceState getFullArchiveServiceState(
-      EarlybirdRequestContext requestContext,
-      EarlybirdServiceResponse realtimeServiceResponse) {
-    EarlybirdResponse realtimeResponse = realtimeServiceResponse.getResponse();
+  p-pwivate eawwybiwdsewvicewesponse.sewvicestate g-getfuwwawchivesewvicestate(
+      e-eawwybiwdwequestcontext wequestcontext, (U ﹏ U)
+      e-eawwybiwdsewvicewesponse w-weawtimesewvicewesponse) {
+    e-eawwybiwdwesponse weawtimewesponse = w-weawtimesewvicewesponse.getwesponse();
 
-    if (!EarlybirdResponseMergeUtil.isValidResponse(realtimeResponse)) {
-      realtimeResponseInvalidCounter.increment();
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED;
+    if (!eawwybiwdwesponsemewgeutiw.isvawidwesponse(weawtimewesponse)) {
+      weawtimewesponseinvawidcountew.incwement();
+      w-wetuwn eawwybiwdsewvicewesponse.sewvicestate.sewvice_not_cawwed;
     }
 
-    if (!realtimeResponse.isSetSearchResults()) {
-      realtimeResponseSearchResultsNotSetCounter.increment();
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED;
+    if (!weawtimewesponse.issetseawchwesuwts()) {
+      w-weawtimewesponseseawchwesuwtsnotsetcountew.incwement();
+      w-wetuwn eawwybiwdsewvicewesponse.sewvicestate.sewvice_not_cawwed;
     }
 
-    if (!shouldSendRequestToFullArchiveCluster(requestContext.getRequest(), realtimeResponse)) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED;
+    i-if (!shouwdsendwequesttofuwwawchivecwustew(wequestcontext.getwequest(), nyaa~~ weawtimewesponse)) {
+      w-wetuwn eawwybiwdsewvicewesponse.sewvicestate.sewvice_not_cawwed;
     }
 
-    return EarlybirdServiceResponse.ServiceState.SERVICE_CALLED;
+    wetuwn eawwybiwdsewvicewesponse.sewvicestate.sewvice_cawwed;
   }
 
   /**
-   * Modify the original request context based on the followedUserId field and then send the
-   * request to the protected cluster.
+   * m-modify the owiginaw w-wequest context based on the fowwowedusewid f-fiewd and then send the
+   * wequest to the pwotected cwustew. ^^;;
    */
-  private Future<EarlybirdServiceResponse> getProtectedResponse(
-      ArrayList<RequestResponse> savedRequestResponses,
-      final EarlybirdRequestContext requestContext) {
-    EarlybirdRequestContext protectedRequestContext =
-        EarlybirdRequestContext.newContextWithRestrictFromUserIdFilter64(requestContext);
-    Preconditions.checkArgument(
-        protectedRequestContext.getRequest().getSearchQuery().isSetFromUserIDFilter64());
+  p-pwivate futuwe<eawwybiwdsewvicewesponse> getpwotectedwesponse(
+      a-awwaywist<wequestwesponse> s-savedwequestwesponses, OwO
+      finaw eawwybiwdwequestcontext wequestcontext) {
+    eawwybiwdwequestcontext pwotectedwequestcontext =
+        eawwybiwdwequestcontext.newcontextwithwestwictfwomusewidfiwtew64(wequestcontext);
+    p-pweconditions.checkawgument(
+        pwotectedwequestcontext.getwequest().getseawchquewy().issetfwomusewidfiwtew64());
 
-    // SERVICE_NOT_REQUESTED should be always be returned before other states as
-    // SuperRootResponseMerger has special logic for this case.
-    if (protectedRequestContext.getRequest().getSearchQuery().getFromUserIDFilter64().isEmpty()) {
-      return Future.value(EarlybirdServiceResponse.serviceNotCalled(
-          EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED));
+    // s-sewvice_not_wequested s-shouwd b-be awways be wetuwned befowe othew states as
+    // s-supewwootwesponsemewgew h-has speciaw wogic fow t-this case.
+    if (pwotectedwequestcontext.getwequest().getseawchquewy().getfwomusewidfiwtew64().isempty()) {
+      wetuwn futuwe.vawue(eawwybiwdsewvicewesponse.sewvicenotcawwed(
+          e-eawwybiwdsewvicewesponse.sewvicestate.sewvice_not_wequested));
     }
 
-    if (requestContext.getRequest().isSetAdjustedProtectedRequestParams()) {
-      adjustRequestParams(protectedRequestContext.getRequest(),
-                          requestContext.getRequest().getAdjustedProtectedRequestParams());
+    if (wequestcontext.getwequest().issetadjustedpwotectedwequestpawams()) {
+      a-adjustwequestpawams(pwotectedwequestcontext.getwequest(), nyaa~~
+                          w-wequestcontext.getwequest().getadjustedpwotectedwequestpawams());
     }
 
-    LOG.debug("Request sent to the protected cluster: {}", protectedRequestContext.getRequest());
-    return toEarlybirdServiceResponseFuture(
-        savedRequestResponses,
-        protectedRequestContext,
-        "protected",
-        this.protectedRealtime
+    w-wog.debug("wequest sent t-to the pwotected c-cwustew: {}", UwU p-pwotectedwequestcontext.getwequest());
+    w-wetuwn toeawwybiwdsewvicewesponsefutuwe(
+        s-savedwequestwesponses, 😳
+        p-pwotectedwequestcontext, 😳
+        "pwotected",
+        t-this.pwotectedweawtime
     );
   }
 
-  private Future<EarlybirdServiceResponse> getRealtimeResponse(
-      ArrayList<RequestResponse> savedRequestResponses,
-      EarlybirdRequestContext requestContext) {
-    return toEarlybirdServiceResponseFuture(
-        savedRequestResponses,
-        requestContext,
-        "realtime",
-        this.realtime);
+  p-pwivate futuwe<eawwybiwdsewvicewesponse> g-getweawtimewesponse(
+      a-awwaywist<wequestwesponse> s-savedwequestwesponses, (ˆ ﻌ ˆ)♡
+      e-eawwybiwdwequestcontext wequestcontext) {
+    w-wetuwn toeawwybiwdsewvicewesponsefutuwe(
+        savedwequestwesponses, (✿oωo)
+        w-wequestcontext, nyaa~~
+        "weawtime", ^^
+        this.weawtime);
   }
 
   /**
-   * Modifying the existing max id filter of the request or appending a new
-   * max id filter and then send the request to the full archive cluster.
+   * m-modifying t-the existing m-max id fiwtew of the wequest ow appending a nyew
+   * max id f-fiwtew and then s-send the wequest t-to the fuww awchive cwustew. (///ˬ///✿)
    */
-  private Future<EarlybirdServiceResponse> getFullArchiveResponse(
-      ArrayList<RequestResponse> savedRequestResponses,
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse realtimeResponse,
-      EarlybirdResponse protectedResponse) {
-    long realtimeMinId = getMinSearchedId(realtimeResponse);
-    long protectedMinId = getMinSearchedId(protectedResponse);
-    // if both realtime and protected min searched ids are available, the larger(newer) one is used
-    // to make sure no tweets are left out. However, this means it might introduce duplicates for
-    // the other response. The response merger will dedup the response. This logic is enabled
-    // when full archive cluster is available for requests without enough protected results.
-    long minId =
-        decider.isAvailable(FULL_ARCHIVE_AVAILABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DECIDER_KEY)
-            ? Math.max(realtimeMinId, protectedMinId) : realtimeMinId;
+  pwivate futuwe<eawwybiwdsewvicewesponse> getfuwwawchivewesponse(
+      a-awwaywist<wequestwesponse> s-savedwequestwesponses, 😳
+      eawwybiwdwequestcontext w-wequestcontext, òωó
+      e-eawwybiwdwesponse weawtimewesponse, ^^;;
+      eawwybiwdwesponse pwotectedwesponse) {
+    w-wong weawtimeminid = g-getminseawchedid(weawtimewesponse);
+    w-wong pwotectedminid = g-getminseawchedid(pwotectedwesponse);
+    // if both weawtime and pwotected m-min seawched i-ids awe avaiwabwe, rawr the wawgew(newew) one is u-used
+    // to make suwe nyo tweets awe weft out. (ˆ ﻌ ˆ)♡ h-howevew, XD this means it might intwoduce d-dupwicates f-fow
+    // the othew wesponse. >_< t-the wesponse m-mewgew wiww dedup the wesponse. (˘ω˘) t-this wogic is enabwed
+    // when f-fuww awchive cwustew i-is avaiwabwe f-fow wequests w-without enough pwotected wesuwts. 😳
+    w-wong minid =
+        d-decidew.isavaiwabwe(fuww_awchive_avaiwabwe_fow_not_enough_pwotected_wesuwts_decidew_key)
+            ? m-math.max(weawtimeminid, o.O pwotectedminid) : w-weawtimeminid;
 
-    if (minId <= 0) {
-      // If the realtime response doesn't have a minSearchedStatusID set, get all results from
-      // the full archive cluster.
-      minId = Long.MAX_VALUE;
+    if (minid <= 0) {
+      // if the w-weawtime wesponse d-doesn't have a-a minseawchedstatusid set, (ꈍᴗꈍ) get aww wesuwts fwom
+      // the fuww awchive cwustew. rawr x3
+      m-minid = wong.max_vawue;
     }
 
-    // The [max_id] operator is inclusive in earlybirds. This means that a query with [max_id X]
-    // will return tweet X, if X matches the rest of the query. So we should add a [max_id (X - 1)]
-    // operator to the full archive query (instead of [max_id X]). Otherwise, we could end up with
-    // duplicates. For example:
+    // t-the [max_id] opewatow i-is incwusive in eawwybiwds. ^^ this means that a-a quewy with [max_id x]
+    // w-wiww wetuwn tweet x-x, OwO if x matches t-the west of t-the quewy. ^^ so we s-shouwd add a [max_id (x - 1)]
+    // opewatow to the fuww awchive quewy (instead of [max_id x]). :3 o-othewwise, o.O we couwd end up with
+    // d-dupwicates. -.- fow exampwe:
     //
-    //  realtime response: results = [ 100, 90, 80 ], minSearchedStatusID = 80
-    //  full archive request: [max_id 80]
-    //  full archive response: results = [ 80, 70, 60 ]
+    //  weawtime wesponse: wesuwts = [ 100, (U ﹏ U) 90, 80 ], minseawchedstatusid = 80
+    //  f-fuww awchive wequest: [max_id 80]
+    //  fuww awchive wesponse: wesuwts = [ 80, o.O 70, 60 ]
     //
-    // In this case, tweet 80 would be returned from both the realtime and full archive clusters.
-    EarlybirdRequestContext archiveRequestContext =
-        EarlybirdRequestContext.copyRequestContext(
-            requestContext,
-            QueryUtil.addOrReplaceMaxIdFilter(
-                requestContext.getParsedQuery(),
-                minId - 1));
+    // in this c-case, OwO tweet 80 wouwd b-be wetuwned fwom both the weawtime a-and fuww awchive cwustews. ^•ﻌ•^
+    eawwybiwdwequestcontext awchivewequestcontext =
+        eawwybiwdwequestcontext.copywequestcontext(
+            w-wequestcontext, ʘwʘ
+            q-quewyutiw.addowwepwacemaxidfiwtew(
+                wequestcontext.getpawsedquewy(), :3
+                m-minid - 1));
 
-    if (requestContext.getRequest().isSetAdjustedFullArchiveRequestParams()) {
-      adjustRequestParams(archiveRequestContext.getRequest(),
-                          requestContext.getRequest().getAdjustedFullArchiveRequestParams());
+    if (wequestcontext.getwequest().issetadjustedfuwwawchivewequestpawams()) {
+      a-adjustwequestpawams(awchivewequestcontext.getwequest(), 😳
+                          wequestcontext.getwequest().getadjustedfuwwawchivewequestpawams());
     }
 
-    LOG.debug("Request sent to the full archive cluster: {},", archiveRequestContext.getRequest());
-    return toEarlybirdServiceResponseFuture(
-        savedRequestResponses,
-        archiveRequestContext,
-        "archive",
-        this.fullArchive
+    wog.debug("wequest sent t-to the fuww awchive cwustew: {},", òωó awchivewequestcontext.getwequest());
+    wetuwn t-toeawwybiwdsewvicewesponsefutuwe(
+        s-savedwequestwesponses, 🥺
+        awchivewequestcontext, rawr x3
+        "awchive", ^•ﻌ•^
+        t-this.fuwwawchive
     );
   }
 
-  private long getMinSearchedId(EarlybirdResponse response) {
-    return response != null && response.isSetSearchResults()
-        ? response.getSearchResults().getMinSearchedStatusID() : 0;
+  pwivate wong getminseawchedid(eawwybiwdwesponse wesponse) {
+    w-wetuwn wesponse != nyuww && wesponse.issetseawchwesuwts()
+        ? wesponse.getseawchwesuwts().getminseawchedstatusid() : 0;
   }
 
-  private void adjustRequestParams(EarlybirdRequest request,
-                                   AdjustedRequestParams adjustedRequestParams) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+  pwivate void adjustwequestpawams(eawwybiwdwequest w-wequest, :3
+                                   a-adjustedwequestpawams a-adjustedwequestpawams) {
+    t-thwiftseawchquewy seawchquewy = wequest.getseawchquewy();
 
-    if (adjustedRequestParams.isSetNumResults()) {
-      searchQuery.setNumResults(adjustedRequestParams.getNumResults());
-      if (searchQuery.isSetCollectorParams()) {
-        searchQuery.getCollectorParams().setNumResultsToReturn(
-            adjustedRequestParams.getNumResults());
+    i-if (adjustedwequestpawams.issetnumwesuwts()) {
+      s-seawchquewy.setnumwesuwts(adjustedwequestpawams.getnumwesuwts());
+      if (seawchquewy.issetcowwectowpawams()) {
+        seawchquewy.getcowwectowpawams().setnumwesuwtstowetuwn(
+            a-adjustedwequestpawams.getnumwesuwts());
       }
     }
 
-    if (adjustedRequestParams.isSetMaxHitsToProcess()) {
-      searchQuery.setMaxHitsToProcess(adjustedRequestParams.getMaxHitsToProcess());
-      if (searchQuery.isSetRelevanceOptions()) {
-        searchQuery.getRelevanceOptions().setMaxHitsToProcess(
-            adjustedRequestParams.getMaxHitsToProcess());
+    if (adjustedwequestpawams.issetmaxhitstopwocess()) {
+      seawchquewy.setmaxhitstopwocess(adjustedwequestpawams.getmaxhitstopwocess());
+      i-if (seawchquewy.issetwewevanceoptions()) {
+        seawchquewy.getwewevanceoptions().setmaxhitstopwocess(
+            adjustedwequestpawams.getmaxhitstopwocess());
       }
-      if (searchQuery.isSetCollectorParams()
-          && searchQuery.getCollectorParams().isSetTerminationParams()) {
-        searchQuery.getCollectorParams().getTerminationParams().setMaxHitsToProcess(
-            adjustedRequestParams.getMaxHitsToProcess());
+      i-if (seawchquewy.issetcowwectowpawams()
+          && s-seawchquewy.getcowwectowpawams().issettewminationpawams()) {
+        seawchquewy.getcowwectowpawams().gettewminationpawams().setmaxhitstopwocess(
+            a-adjustedwequestpawams.getmaxhitstopwocess());
       }
     }
 
-    if (adjustedRequestParams.isSetReturnAllResults()) {
-      if (searchQuery.isSetRelevanceOptions()) {
-        searchQuery.getRelevanceOptions().setReturnAllResults(
-            adjustedRequestParams.isReturnAllResults());
+    i-if (adjustedwequestpawams.issetwetuwnawwwesuwts()) {
+      i-if (seawchquewy.issetwewevanceoptions()) {
+        seawchquewy.getwewevanceoptions().setwetuwnawwwesuwts(
+            adjustedwequestpawams.iswetuwnawwwesuwts());
       }
     }
   }
 
-  private Future<EarlybirdServiceResponse> toEarlybirdServiceResponseFuture(
-      List<RequestResponse> savedRequestResponses,
-      EarlybirdRequestContext requestContext,
-      String sentTo,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Future<EarlybirdResponse> responseFuture = service.apply(requestContext);
-    this.saveRequestResponse(
-        savedRequestResponses, sentTo, requestContext, responseFuture
+  p-pwivate futuwe<eawwybiwdsewvicewesponse> toeawwybiwdsewvicewesponsefutuwe(
+      w-wist<wequestwesponse> savedwequestwesponses,
+      eawwybiwdwequestcontext wequestcontext, (ˆ ﻌ ˆ)♡
+      s-stwing s-sentto, (U ᵕ U❁)
+      s-sewvice<eawwybiwdwequestcontext, e-eawwybiwdwesponse> s-sewvice) {
+    futuwe<eawwybiwdwesponse> w-wesponsefutuwe = sewvice.appwy(wequestcontext);
+    this.savewequestwesponse(
+        savedwequestwesponses, :3 s-sentto, ^^;; wequestcontext, ( ͡o ω ͡o ) w-wesponsefutuwe
     );
 
-    return responseFuture.map(new Function<EarlybirdResponse, EarlybirdServiceResponse>() {
-      @Override
-      public EarlybirdServiceResponse apply(EarlybirdResponse response) {
-        return EarlybirdServiceResponse.serviceCalled(response);
+    wetuwn wesponsefutuwe.map(new f-function<eawwybiwdwesponse, o.O e-eawwybiwdsewvicewesponse>() {
+      @ovewwide
+      pubwic e-eawwybiwdsewvicewesponse appwy(eawwybiwdwesponse w-wesponse) {
+        w-wetuwn eawwybiwdsewvicewesponse.sewvicecawwed(wesponse);
       }
     });
   }

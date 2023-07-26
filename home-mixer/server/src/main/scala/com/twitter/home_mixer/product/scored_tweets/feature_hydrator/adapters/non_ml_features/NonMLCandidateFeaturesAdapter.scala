@@ -1,44 +1,44 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.non_ml_features
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.non_mw_featuwes
 
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import java.lang.{Long => JLong}
+impowt com.twittew.mw.api.constant.shawedfeatuwes
+i-impowt com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.featuwecontext
+i-impowt c-com.twittew.mw.api.wichdatawecowd
+i-impowt com.twittew.timewines.pwediction.common.adaptews.timewinesmutatingadaptewbase
+i-impowt c-com.twittew.timewines.pwediction.featuwes.common.timewinesshawedfeatuwes
+i-impowt java.wang.{wong => jwong}
 
-case class NonMLCandidateFeatures(
-  tweetId: Long,
-  sourceTweetId: Option[Long],
-  originalAuthorId: Option[Long],
+case cwass nyonmwcandidatefeatuwes(
+  tweetid: wong, (U ﹏ U)
+  s-souwcetweetid: option[wong], (⑅˘꒳˘)
+  owiginawauthowid: o-option[wong], òωó
 )
 
 /**
- * define non ml features adapter to create a data record which includes many non ml features
- * e.g. predictionRequestId, userId, tweetId to be used as joined key in batch pipeline.
+ * define n-nyon mw featuwes adaptew to cweate a data wecowd which incwudes m-many nyon mw featuwes
+ * e.g. ʘwʘ p-pwedictionwequestid, u-usewid, /(^•ω•^) tweetid to be used as joined key in batch pipewine. ʘwʘ
  */
-object NonMLCandidateFeaturesAdapter extends TimelinesMutatingAdapterBase[NonMLCandidateFeatures] {
+object nyonmwcandidatefeatuwesadaptew e-extends timewinesmutatingadaptewbase[nonmwcandidatefeatuwes] {
 
-  private val featureContext = new FeatureContext(
-    SharedFeatures.TWEET_ID,
-    // For Secondary Engagement data generation
-    TimelinesSharedFeatures.SOURCE_TWEET_ID,
-    TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID,
+  pwivate vaw featuwecontext = nyew f-featuwecontext(
+    shawedfeatuwes.tweet_id, σωσ
+    // f-fow secondawy e-engagement data g-genewation
+    t-timewinesshawedfeatuwes.souwce_tweet_id, OwO
+    timewinesshawedfeatuwes.owiginaw_authow_id, 😳😳😳
   )
 
-  override def getFeatureContext: FeatureContext = featureContext
+  ovewwide def getfeatuwecontext: f-featuwecontext = featuwecontext
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  ovewwide vaw c-commonfeatuwes: set[featuwe[_]] = set.empty
 
-  override def setFeatures(
-    nonMLCandidateFeatures: NonMLCandidateFeatures,
-    richDataRecord: RichDataRecord
-  ): Unit = {
-    richDataRecord.setFeatureValue[JLong](SharedFeatures.TWEET_ID, nonMLCandidateFeatures.tweetId)
-    nonMLCandidateFeatures.sourceTweetId.foreach(
-      richDataRecord.setFeatureValue[JLong](TimelinesSharedFeatures.SOURCE_TWEET_ID, _))
-    nonMLCandidateFeatures.originalAuthorId.foreach(
-      richDataRecord.setFeatureValue[JLong](TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID, _))
+  ovewwide def setfeatuwes(
+    nyonmwcandidatefeatuwes: nyonmwcandidatefeatuwes, 😳😳😳
+    w-wichdatawecowd: wichdatawecowd
+  ): u-unit = {
+    w-wichdatawecowd.setfeatuwevawue[jwong](shawedfeatuwes.tweet_id, o.O n-nyonmwcandidatefeatuwes.tweetid)
+    nyonmwcandidatefeatuwes.souwcetweetid.foweach(
+      wichdatawecowd.setfeatuwevawue[jwong](timewinesshawedfeatuwes.souwce_tweet_id, ( ͡o ω ͡o ) _))
+    nyonmwcandidatefeatuwes.owiginawauthowid.foweach(
+      w-wichdatawecowd.setfeatuwevawue[jwong](timewinesshawedfeatuwes.owiginaw_authow_id, (U ﹏ U) _))
   }
 }

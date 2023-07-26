@@ -1,146 +1,146 @@
-package com.twitter.search.common.schema.base;
+package com.twittew.seawch.common.schema.base;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.hashset;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.set;
 
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftdocument;
+i-impowt com.twittew.seawch.common.schema.thwiftjava.thwiftfiewd;
 
 /**
- * Utility APIs for ThriftDocument.
+ * u-utiwity apis fow thwiftdocument. rawr x3
  */
-public final class ThriftDocumentUtil {
-  private ThriftDocumentUtil() {
+pubwic finaw cwass thwiftdocumentutiw {
+  pwivate t-thwiftdocumentutiw() {
   }
 
   /**
-   * Get ThriftField out of a ThriftDocument.
+   * get thwiftfiewd out o-of a thwiftdocument. XD
    */
-  public static ThriftField getField(ThriftDocument thriftDoc,
-                                     String fieldName,
-                                     FieldNameToIdMapping idMap) {
-    int id = idMap.getFieldID(fieldName);
-    for (ThriftField field : thriftDoc.getFields()) {
-      int fieldId = field.getFieldConfigId();
-      if (fieldId == id) {
-        return field;
+  pubwic s-static thwiftfiewd getfiewd(thwiftdocument thwiftdoc,
+                                     stwing fiewdname, σωσ
+                                     fiewdnametoidmapping i-idmap) {
+    int id = i-idmap.getfiewdid(fiewdname);
+    f-fow (thwiftfiewd fiewd : thwiftdoc.getfiewds()) {
+      int fiewdid = fiewd.getfiewdconfigid();
+      if (fiewdid == i-id) {
+        wetuwn fiewd;
       }
     }
 
-    return null;
+    wetuwn nyuww;
   }
 
   /**
-   * Get all fields out of a ThriftDocument that match the given field name.
+   * get aww fiewds out of a thwiftdocument t-that match the given f-fiewd nyame. (U ᵕ U❁)
    */
-  public static List<ThriftField> getFields(
-      ThriftDocument thriftDoc, String fieldName, FieldNameToIdMapping idMap) {
+  p-pubwic static w-wist<thwiftfiewd> g-getfiewds(
+      thwiftdocument thwiftdoc, (U ﹏ U) s-stwing fiewdname, :3 fiewdnametoidmapping idmap) {
 
-    int id = idMap.getFieldID(fieldName);
-    List<ThriftField> result = new ArrayList<>();
+    i-int id = idmap.getfiewdid(fiewdname);
+    wist<thwiftfiewd> wesuwt = nyew awwaywist<>();
 
-    for (ThriftField field : thriftDoc.getFields()) {
-      int fieldId = field.getFieldConfigId();
-      if (fieldId == id) {
-        result.add(field);
+    fow (thwiftfiewd fiewd : thwiftdoc.getfiewds()) {
+      int fiewdid = fiewd.getfiewdconfigid();
+      i-if (fiewdid == id) {
+        w-wesuwt.add(fiewd);
       }
     }
 
-    return result;
+    w-wetuwn w-wesuwt;
   }
 
 
   /**
-   * Retrieve the long value from a thrift field
+   * wetwieve the wong vawue fwom a thwift f-fiewd
    */
-  public static long getLongValue(ThriftDocument thriftDoc,
-                                  String fieldName,
-                                  FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? 0L : f.getFieldData().getLongValue();
+  p-pubwic static wong getwongvawue(thwiftdocument thwiftdoc, ( ͡o ω ͡o )
+                                  s-stwing f-fiewdname, σωσ
+                                  fiewdnametoidmapping i-idmap) {
+    thwiftfiewd f = g-getfiewd(thwiftdoc, >w< fiewdname, 😳😳😳 idmap);
+    wetuwn f-f == nyuww ? 0w : f.getfiewddata().getwongvawue();
   }
 
   /**
-   * Retrieve the byte value from a thrift field
+   * w-wetwieve the byte vawue fwom a-a thwift fiewd
    */
-  public static byte getByteValue(ThriftDocument thriftDoc,
-                                  String fieldName,
-                                  FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? (byte) 0 : f.getFieldData().getByteValue();
+  p-pubwic static byte getbytevawue(thwiftdocument thwiftdoc, OwO
+                                  stwing fiewdname, 😳
+                                  fiewdnametoidmapping idmap) {
+    thwiftfiewd f = getfiewd(thwiftdoc, 😳😳😳 f-fiewdname, (˘ω˘) idmap);
+    w-wetuwn f == nyuww ? (byte) 0 : f-f.getfiewddata().getbytevawue();
   }
 
   /**
-   * Retrieve the bytes value from a thrift field
+   * w-wetwieve t-the bytes vawue fwom a thwift fiewd
    */
-  public static byte[] getBytesValue(ThriftDocument thriftDoc,
-                                     String fieldName,
-                                     FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? null : f.getFieldData().getBytesValue();
+  pubwic static byte[] g-getbytesvawue(thwiftdocument thwiftdoc, ʘwʘ
+                                     stwing fiewdname, ( ͡o ω ͡o )
+                                     fiewdnametoidmapping idmap) {
+    thwiftfiewd f-f = getfiewd(thwiftdoc, o.O fiewdname, i-idmap);
+    w-wetuwn f == nyuww ? n-nyuww : f.getfiewddata().getbytesvawue();
   }
 
   /**
-   * Retrieve the int value from a thrift field
+   * wetwieve the int v-vawue fwom a thwift f-fiewd
    */
-  public static int getIntValue(ThriftDocument thriftDoc,
-                                String fieldName,
-                                FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? 0 : f.getFieldData().getIntValue();
+  p-pubwic static i-int getintvawue(thwiftdocument thwiftdoc,
+                                stwing f-fiewdname, >w<
+                                f-fiewdnametoidmapping i-idmap) {
+    t-thwiftfiewd f = g-getfiewd(thwiftdoc, 😳 fiewdname, idmap);
+    wetuwn f == nyuww ? 0 : f-f.getfiewddata().getintvawue();
   }
 
   /**
-   * Retrieve the string value from a thrift field
+   * wetwieve the stwing vawue fwom a thwift fiewd
    */
-  public static String getStringValue(ThriftDocument thriftDoc,
-                                      String fieldName,
-                                      FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? null : f.getFieldData().getStringValue();
+  pubwic static stwing getstwingvawue(thwiftdocument t-thwiftdoc, 🥺
+                                      stwing fiewdname, rawr x3
+                                      fiewdnametoidmapping i-idmap) {
+    t-thwiftfiewd f-f = getfiewd(thwiftdoc, o.O fiewdname, i-idmap);
+    wetuwn f == nyuww ? n-nyuww : f.getfiewddata().getstwingvawue();
   }
 
   /**
-   * Retrieve the string values from all thrift fields with the given fieldName.
+   * w-wetwieve the stwing vawues fwom aww thwift fiewds with the given fiewdname. rawr
    */
-  public static List<String> getStringValues(
-      ThriftDocument thriftDoc,
-      String fieldName,
-      FieldNameToIdMapping idMap) {
-    List<ThriftField> fields = getFields(thriftDoc, fieldName, idMap);
-    List<String> fieldStrings = new ArrayList<>();
+  pubwic static w-wist<stwing> getstwingvawues(
+      t-thwiftdocument thwiftdoc, ʘwʘ
+      s-stwing fiewdname, 😳😳😳
+      fiewdnametoidmapping i-idmap) {
+    wist<thwiftfiewd> fiewds = getfiewds(thwiftdoc, ^^;; f-fiewdname, o.O idmap);
+    w-wist<stwing> fiewdstwings = n-nyew awwaywist<>();
 
-    for (ThriftField field : fields) {
-      fieldStrings.add(field.getFieldData().getStringValue());
+    f-fow (thwiftfiewd fiewd : fiewds) {
+      fiewdstwings.add(fiewd.getfiewddata().getstwingvawue());
     }
-    return fieldStrings;
+    wetuwn f-fiewdstwings;
   }
 
   /**
-   * Returns whether the specified document has duplicate fields.
+   * w-wetuwns w-whethew the specified document h-has dupwicate f-fiewds. (///ˬ///✿)
    */
-  public static boolean hasDuplicateFields(ThriftDocument thriftDoc) {
-    Set<Integer> seen = new HashSet<>();
-    for (ThriftField field : thriftDoc.getFields()) {
-      if (!seen.add(field.getFieldConfigId())) {
-        return true;
+  pubwic static b-boowean hasdupwicatefiewds(thwiftdocument thwiftdoc) {
+    set<integew> seen = nyew hashset<>();
+    f-fow (thwiftfiewd f-fiewd : thwiftdoc.getfiewds()) {
+      if (!seen.add(fiewd.getfiewdconfigid())) {
+        wetuwn twue;
       }
     }
-    return false;
+    w-wetuwn fawse;
   }
 
   /**
-   * Get ThriftField out of a ThriftDocument.
+   * g-get thwiftfiewd out of a thwiftdocument. σωσ
    */
-  public static ThriftField getField(ThriftDocument thriftDoc, int fieldId) {
-    for (ThriftField field : thriftDoc.getFields()) {
-      if (field.getFieldConfigId() == fieldId) {
-        return field;
+  pubwic static thwiftfiewd g-getfiewd(thwiftdocument thwiftdoc, int fiewdid) {
+    fow (thwiftfiewd fiewd : thwiftdoc.getfiewds()) {
+      if (fiewd.getfiewdconfigid() == f-fiewdid) {
+        wetuwn fiewd;
       }
     }
 
-    return null;
+    w-wetuwn n-nyuww;
   }
 }

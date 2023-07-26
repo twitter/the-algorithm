@@ -1,134 +1,134 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.OptionalInt;
-import java.util.concurrent.TimeUnit;
+impowt j-java.utiw.awways;
+i-impowt java.utiw.hashmap;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.optionawint;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.cowwect.immutabwewist;
+impowt com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.maps;
 
-import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.wucene.utiw.byteswef;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.LogFormatUtil;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+i-impowt com.twittew.seawch.common.utiw.wogfowmatutiw;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
 /**
- * A rather simple implementation of a MultiSegmentTermDictionary that just keeps all terms in a
- * java hash map, and all the termIds for a term in a java list.
+ * a wathew s-simpwe impwementation of a m-muwtisegmenttewmdictionawy t-that just keeps aww tewms in a
+ * java hash map, OwO and aww the tewmids f-fow a tewm in a java wist. 😳
  *
- * An alternate implementation could have an MPH for the map, and a IntBlockPool for storing
- * the term ids.
+ * an awtewnate impwementation couwd have an mph f-fow the map, 😳😳😳 and a intbwockpoow f-fow stowing
+ * the t-tewm ids. (˘ω˘)
  *
- * See UserIdMultiSegmentQuery class comment for more information on how this is used.
+ * s-see usewidmuwtisegmentquewy cwass c-comment fow mowe infowmation on how this is u-used. ʘwʘ
  */
-public class MultiSegmentTermDictionaryWithMap implements MultiSegmentTermDictionary {
-  private static final Logger LOG = LoggerFactory.getLogger(
-      MultiSegmentTermDictionaryWithMap.class);
+pubwic cwass muwtisegmenttewmdictionawywithmap impwements m-muwtisegmenttewmdictionawy {
+  pwivate static finaw woggew wog = woggewfactowy.getwoggew(
+      muwtisegmenttewmdictionawywithmap.cwass);
 
-  @VisibleForTesting
-  public static final SearchTimerStats TERM_DICTIONARY_CREATION_STATS =
-      SearchTimerStats.export("multi_segment_term_dictionary_with_map_creation",
-          TimeUnit.MILLISECONDS, false);
+  @visibwefowtesting
+  pubwic static f-finaw seawchtimewstats tewm_dictionawy_cweation_stats =
+      s-seawchtimewstats.expowt("muwti_segment_tewm_dictionawy_with_map_cweation", ( ͡o ω ͡o )
+          t-timeunit.miwwiseconds, o.O fawse);
 
-  private final ImmutableList<OptimizedMemoryIndex> indexes;
-  private final HashMap<BytesRef, List<IndexTerm>> termsMap;
-  private final int numTerms;
-  private final int numTermEntries;
+  p-pwivate finaw immutabwewist<optimizedmemowyindex> indexes;
+  pwivate finaw h-hashmap<byteswef, >w< w-wist<indextewm>> tewmsmap;
+  p-pwivate finaw i-int nyumtewms;
+  pwivate finaw i-int nyumtewmentwies;
 
-  private static class IndexTerm {
-    private int indexId;
-    private final int termId;
+  pwivate s-static cwass indextewm {
+    pwivate int indexid;
+    p-pwivate finaw int tewmid;
 
-    public IndexTerm(int indexId, int termId) {
-      this.indexId = indexId;
-      this.termId = termId;
+    p-pubwic indextewm(int indexid, 😳 i-int tewmid) {
+      t-this.indexid = indexid;
+      this.tewmid = tewmid;
     }
   }
 
   /**
-   * Creates a new multi-segment term dictionary backed by a regular java map.
+   * cweates a nyew muwti-segment tewm dictionawy backed b-by a weguwaw j-java map. 🥺
    */
-  public MultiSegmentTermDictionaryWithMap(
-      String field,
-      List<OptimizedMemoryIndex> indexes) {
+  pubwic muwtisegmenttewmdictionawywithmap(
+      s-stwing fiewd, rawr x3
+      w-wist<optimizedmemowyindex> i-indexes) {
 
-    this.indexes = ImmutableList.copyOf(indexes);
+    this.indexes = immutabwewist.copyof(indexes);
 
-    // Pre-size the map with estimate of max number of terms. It should be at least that big.
-    OptionalInt optionalMax = indexes.stream().mapToInt(OptimizedMemoryIndex::getNumTerms).max();
-    int maxNumTerms = optionalMax.orElse(0);
-    this.termsMap = Maps.newHashMapWithExpectedSize(maxNumTerms);
+    // pwe-size t-the map with estimate of max nyumbew of tewms. o.O it shouwd be at weast that big. rawr
+    o-optionawint optionawmax = i-indexes.stweam().maptoint(optimizedmemowyindex::getnumtewms).max();
+    i-int maxnumtewms = o-optionawmax.owewse(0);
+    this.tewmsmap = m-maps.newhashmapwithexpectedsize(maxnumtewms);
 
-    LOG.info("About to merge {} indexes for field {}, estimated {} terms",
-        indexes.size(), field, LogFormatUtil.formatInt(maxNumTerms));
-    long start = System.currentTimeMillis();
+    w-wog.info("about t-to mewge {} i-indexes fow fiewd {}, ʘwʘ estimated {} tewms", 😳😳😳
+        i-indexes.size(), ^^;; f-fiewd, o.O wogfowmatutiw.fowmatint(maxnumtewms));
+    w-wong stawt = s-system.cuwwenttimemiwwis();
 
-    BytesRef termText = new BytesRef();
-    long copiedBytes = 0;
-    for (int indexId = 0; indexId < indexes.size(); indexId++) {
-      // The inverted index for this field.
-      OptimizedMemoryIndex index = indexes.get(indexId);
+    b-byteswef tewmtext = nyew byteswef();
+    wong copiedbytes = 0;
+    f-fow (int indexid = 0; indexid < indexes.size(); indexid++) {
+      // the invewted index fow this fiewd. (///ˬ///✿)
+      o-optimizedmemowyindex index = indexes.get(indexid);
 
-      int indexNumTerms = index.getNumTerms();
-      for (int termId = 0; termId < indexNumTerms; termId++) {
-        index.getTerm(termId, termText);
+      int indexnumtewms = i-index.getnumtewms();
+      f-fow (int tewmid = 0; t-tewmid < indexnumtewms; tewmid++) {
+        i-index.gettewm(tewmid, σωσ tewmtext);
 
-        // This copies the underlying array to a new array.
-        BytesRef term = BytesRef.deepCopyOf(termText);
-        copiedBytes += term.length;
+        // t-this copies the u-undewwying awway to a nyew awway.
+        byteswef tewm = byteswef.deepcopyof(tewmtext);
+        copiedbytes += tewm.wength;
 
-        List<IndexTerm> indexTerms = termsMap.computeIfAbsent(term, k -> Lists.newArrayList());
+        w-wist<indextewm> indextewms = t-tewmsmap.computeifabsent(tewm, nyaa~~ k -> wists.newawwaywist());
 
-        indexTerms.add(new IndexTerm(indexId, termId));
+        i-indextewms.add(new i-indextewm(indexid, ^^;; tewmid));
       }
     }
 
-    this.numTerms = termsMap.size();
-    this.numTermEntries = indexes.stream().mapToInt(OptimizedMemoryIndex::getNumTerms).sum();
+    this.numtewms = t-tewmsmap.size();
+    this.numtewmentwies = i-indexes.stweam().maptoint(optimizedmemowyindex::getnumtewms).sum();
 
-    long elapsed = System.currentTimeMillis() - start;
-    TERM_DICTIONARY_CREATION_STATS.timerIncrement(elapsed);
-    LOG.info("Done merging {} indexes for field {} in {}ms - "
-      + "num terms: {}, num term entries: {}, copied bytes: {}",
-        indexes.size(), field, elapsed,
-        LogFormatUtil.formatInt(this.numTerms), LogFormatUtil.formatInt(this.numTermEntries),
-            LogFormatUtil.formatInt(copiedBytes));
+    wong e-ewapsed = system.cuwwenttimemiwwis() - s-stawt;
+    tewm_dictionawy_cweation_stats.timewincwement(ewapsed);
+    wog.info("done mewging {} indexes fow fiewd {} i-in {}ms - "
+      + "num t-tewms: {}, ^•ﻌ•^ n-nyum tewm entwies: {}, σωσ copied b-bytes: {}", -.-
+        i-indexes.size(), ^^;; fiewd, XD ewapsed,
+        w-wogfowmatutiw.fowmatint(this.numtewms), wogfowmatutiw.fowmatint(this.numtewmentwies), 🥺
+            wogfowmatutiw.fowmatint(copiedbytes));
   }
 
-  @Override
-  public int[] lookupTermIds(BytesRef term) {
-    int[] termIds = new int[indexes.size()];
-    Arrays.fill(termIds, EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND);
+  @ovewwide
+  pubwic int[] wookuptewmids(byteswef t-tewm) {
+    i-int[] tewmids = nyew int[indexes.size()];
+    awways.fiww(tewmids, òωó e-eawwybiwdindexsegmentatomicweadew.tewm_not_found);
 
-    List<IndexTerm> indexTerms = termsMap.get(term);
-    if (indexTerms != null) {
-      for (IndexTerm indexTerm : indexTerms) {
-        termIds[indexTerm.indexId] = indexTerm.termId;
+    w-wist<indextewm> indextewms = tewmsmap.get(tewm);
+    if (indextewms != n-nyuww) {
+      fow (indextewm indextewm : indextewms) {
+        tewmids[indextewm.indexid] = i-indextewm.tewmid;
       }
     }
 
-    return termIds;
+    wetuwn tewmids;
   }
 
-  @Override
-  public ImmutableList<? extends InvertedIndex> getSegmentIndexes() {
-    return indexes;
+  @ovewwide
+  p-pubwic immutabwewist<? e-extends invewtedindex> getsegmentindexes() {
+    wetuwn indexes;
   }
 
-  @Override
-  public int getNumTerms() {
-    return this.numTerms;
+  @ovewwide
+  p-pubwic i-int getnumtewms() {
+    wetuwn this.numtewms;
   }
 
-  @Override
-  public int getNumTermEntries() {
-    return this.numTermEntries;
+  @ovewwide
+  pubwic int getnumtewmentwies() {
+    w-wetuwn this.numtewmentwies;
   }
 }

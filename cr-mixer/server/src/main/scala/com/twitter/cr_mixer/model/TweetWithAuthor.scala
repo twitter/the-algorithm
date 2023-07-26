@@ -1,6 +1,6 @@
-package com.twitter.cr_mixer.model
+package com.twittew.cw_mixew.modew
 
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
+impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.common.usewid
 
-case class TweetWithAuthor(tweetId: TweetId, authorId: UserId)
+c-case cwass t-tweetwithauthow(tweetid: t-tweetid, òωó a-authowid: usewid)

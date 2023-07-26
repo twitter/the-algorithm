@@ -1,91 +1,91 @@
-package com.twitter.search.earlybird.search.queries;
+package com.twittew.seawch.eawwybiwd.seawch.quewies;
 
-import java.io.IOException;
-import java.util.Set;
+impowt java.io.ioexception;
+i-impowt java.utiw.set;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.index.weafweadewcontext;
+i-impowt owg.apache.wucene.index.tewm;
+i-impowt o-owg.apache.wucene.seawch.constantscowescowew;
+i-impowt owg.apache.wucene.seawch.expwanation;
+impowt o-owg.apache.wucene.seawch.indexseawchew;
+impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowew;
+impowt o-owg.apache.wucene.seawch.scowemode;
+impowt owg.apache.wucene.seawch.weight;
 
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.utiw.wangefiwtewdisi;
+impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsingwesegmentseawchew;
 
 /**
- * A MatchAllDocsQuery implementation that does not assume that doc IDs are assigned sequentially.
- * Instead, it wraps the EarlybirdIndexSegmentAtomicReader into a RangeFilterDISI, and uses
- * this iterator to traverse only the valid doc IDs in this segment.
+ * a-a matchawwdocsquewy impwementation that does nyot assume t-that doc ids awe assigned sequentiawwy. (ˆ ﻌ ˆ)♡
+ * i-instead, 😳😳😳 i-it wwaps the eawwybiwdindexsegmentatomicweadew into a wangefiwtewdisi, (U ﹏ U) and uses
+ * this itewatow t-to twavewse onwy the vawid doc ids in this segment. (///ˬ///✿)
  *
- * Note that org.apache.lucene.index.MatchAllDocsQuery is final, so we cannot extend it.
+ * nyote that owg.apache.wucene.index.matchawwdocsquewy i-is finaw, 😳 so we cannot extend i-it. 😳
  */
-public class MatchAllDocsQuery extends Query {
-  private static class MatchAllDocsWeight extends Weight {
-    private final Weight luceneWeight;
+pubwic c-cwass matchawwdocsquewy e-extends q-quewy {
+  pwivate static cwass matchawwdocsweight e-extends weight {
+    pwivate finaw weight w-wuceneweight;
 
-    public MatchAllDocsWeight(Query query, Weight luceneWeight) {
-      super(query);
-      this.luceneWeight = luceneWeight;
+    pubwic matchawwdocsweight(quewy quewy, σωσ weight wuceneweight) {
+      supew(quewy);
+      this.wuceneweight = wuceneweight;
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      luceneWeight.extractTerms(terms);
+    @ovewwide
+    p-pubwic void extwacttewms(set<tewm> t-tewms) {
+      w-wuceneweight.extwacttewms(tewms);
     }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return luceneWeight.explain(context, doc);
+    @ovewwide
+    p-pubwic expwanation expwain(weafweadewcontext context, rawr x3 int doc) thwows ioexception {
+      w-wetuwn w-wuceneweight.expwain(context, OwO doc);
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Preconditions.checkState(context.reader() instanceof EarlybirdIndexSegmentAtomicReader,
-                               "Expected an EarlybirdIndexSegmentAtomicReader, but got a "
-                               + context.reader().getClass().getName() + " instance.");
-      EarlybirdIndexSegmentAtomicReader reader =
-          (EarlybirdIndexSegmentAtomicReader) context.reader();
-      return new ConstantScoreScorer(
-          this, 1.0f, ScoreMode.COMPLETE_NO_SCORES, new RangeFilterDISI(reader));
+    @ovewwide
+    p-pubwic scowew scowew(weafweadewcontext c-context) thwows ioexception {
+      p-pweconditions.checkstate(context.weadew() instanceof e-eawwybiwdindexsegmentatomicweadew, /(^•ω•^)
+                               "expected an eawwybiwdindexsegmentatomicweadew, 😳😳😳 b-but got a "
+                               + context.weadew().getcwass().getname() + " i-instance.");
+      eawwybiwdindexsegmentatomicweadew weadew =
+          (eawwybiwdindexsegmentatomicweadew) c-context.weadew();
+      w-wetuwn nyew constantscowescowew(
+          this, ( ͡o ω ͡o ) 1.0f, scowemode.compwete_no_scowes, >_< nyew wangefiwtewdisi(weadew));
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return luceneWeight.isCacheable(ctx);
+    @ovewwide
+    pubwic boowean iscacheabwe(weafweadewcontext c-ctx) {
+      w-wetuwn wuceneweight.iscacheabwe(ctx);
     }
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    org.apache.lucene.search.MatchAllDocsQuery luceneMatchAllDocsQuery =
-        new org.apache.lucene.search.MatchAllDocsQuery();
-    Weight luceneWeight = luceneMatchAllDocsQuery.createWeight(searcher, scoreMode, boost);
-    if (!(searcher instanceof EarlybirdSingleSegmentSearcher)) {
-      return luceneWeight;
+  @ovewwide
+  pubwic weight c-cweateweight(indexseawchew s-seawchew, >w< s-scowemode scowemode, rawr fwoat boost) {
+    owg.apache.wucene.seawch.matchawwdocsquewy wucenematchawwdocsquewy =
+        n-nyew owg.apache.wucene.seawch.matchawwdocsquewy();
+    weight wuceneweight = wucenematchawwdocsquewy.cweateweight(seawchew, 😳 scowemode, >w< b-boost);
+    if (!(seawchew instanceof e-eawwybiwdsingwesegmentseawchew)) {
+      w-wetuwn wuceneweight;
     }
-    return new MatchAllDocsWeight(this, luceneWeight);
+    w-wetuwn nyew matchawwdocsweight(this, (⑅˘꒳˘) wuceneweight);
   }
 
-  @Override
-  public int hashCode() {
-    return 0;
+  @ovewwide
+  p-pubwic int h-hashcode() {
+    w-wetuwn 0;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return obj instanceof MatchAllDocsQuery;
+  @ovewwide
+  p-pubwic boowean equaws(object obj) {
+    wetuwn o-obj instanceof matchawwdocsquewy;
   }
 
-  // Copied from org.apache.lucene.search.MatchAllDocsWeight
-  @Override
-  public String toString(String field) {
-    return "*:*";
+  // c-copied f-fwom owg.apache.wucene.seawch.matchawwdocsweight
+  @ovewwide
+  p-pubwic stwing t-tostwing(stwing fiewd) {
+    wetuwn "*:*";
   }
 }

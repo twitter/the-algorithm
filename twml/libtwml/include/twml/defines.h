@@ -1,36 +1,36 @@
-#pragma once
-#include <stdbool.h>
-#ifdef __cplusplus
-extern "C" {
+#pwagma once
+#incwude <stdboow.h>
+#ifdef __cpwuspwus
+extewn "c" {
 #endif
-  typedef enum {
-    TWML_TYPE_FLOAT32 = 1,
-    TWML_TYPE_FLOAT64 = 2,
-    TWML_TYPE_INT32  = 3,
-    TWML_TYPE_INT64  = 4,
-    TWML_TYPE_INT8   = 5,
-    TWML_TYPE_UINT8  = 6,
-    TWML_TYPE_BOOL   = 7,
-    TWML_TYPE_STRING = 8,
-    TWML_TYPE_FLOAT  = TWML_TYPE_FLOAT32,
-    TWML_TYPE_DOUBLE = TWML_TYPE_FLOAT64,
-    TWML_TYPE_UNKNOWN = -1,
-  } twml_type;
+  t-typedef e-enum {
+    twmw_type_fwoat32 = 1, >_<
+    t-twmw_type_fwoat64 = 2, mya
+    t-twmw_type_int32  = 3, mya
+    t-twmw_type_int64  = 4, 😳
+    t-twmw_type_int8   = 5, XD
+    t-twmw_type_uint8  = 6, :3
+    t-twmw_type_boow   = 7, 😳😳😳
+    twmw_type_stwing = 8, -.-
+    twmw_type_fwoat  = twmw_type_fwoat32, ( ͡o ω ͡o )
+    twmw_type_doubwe = twmw_type_fwoat64, rawr x3
+    t-twmw_type_unknown = -1, nyaa~~
+  } twmw_type;
 
   typedef enum {
-    TWML_ERR_NONE = 1000,
-    TWML_ERR_SIZE = 1001,
-    TWML_ERR_TYPE = 1002,
-    TWML_ERR_THRIFT = 1100,
-    TWML_ERR_IO = 1200,
-    TWML_ERR_UNKNOWN = 1999,
-  } twml_err;
-#ifdef __cplusplus
+    t-twmw_eww_none = 1000, /(^•ω•^)
+    twmw_eww_size = 1001, rawr
+    t-twmw_eww_type = 1002,
+    twmw_eww_thwift = 1100, OwO
+    twmw_eww_io = 1200, (U ﹏ U)
+    twmw_eww_unknown = 1999, >_<
+  } twmw_eww;
+#ifdef __cpwuspwus
 }
 #endif
 
-#define TWMLAPI __attribute__((visibility("default")))
+#define t-twmwapi __attwibute__((visibiwity("defauwt")))
 
-#ifndef TWML_INDEX_BASE
-#define TWML_INDEX_BASE 0
+#ifndef twmw_index_base
+#define t-twmw_index_base 0
 #endif

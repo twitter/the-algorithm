@@ -1,562 +1,562 @@
-""" This file contains tf.train.SessionRunHooks defined by TWML """
-from datetime import datetime
-import json
-import operator
-import os
+""" this fiwe contains tf.twain.sessionwunhooks defined b-by twmw """
+f-fwom datetime i-impowt datetime
+i-impowt json
+impowt o-opewatow
+impowt o-os
 
-from absl import logging
-import numpy as np
-import tensorflow.compat.v1 as tf
-from tensorflow.python.training.basic_session_run_hooks import NeverTriggerTimer, SecondOrStepTimer
-import twml
+fwom absw i-impowt wogging
+i-impowt nyumpy as nyp
+impowt tensowfwow.compat.v1 as tf
+fwom tensowfwow.python.twaining.basic_session_wun_hooks impowt nyevewtwiggewtimew, ^•ﻌ•^ secondowsteptimew
+i-impowt twmw
 
 
-class StepProgressHook(tf.train.SessionRunHook):
-  """Hook that displays a progress bar to monitor global step progress """
+cwass steppwogwesshook(tf.twain.sessionwunhook):
+  """hook t-that dispways a pwogwess baw t-to monitow gwobaw step pwogwess """
 
-  def __init__(self, max_step):
+  def __init__(sewf, /(^•ω•^) max_step):
     """
-    Initializes a `StepProgressHook`.
-    This hook displays a progress bar for max_steps.
+    i-initiawizes a `steppwogwesshook`. (///ˬ///✿)
+    t-this hook d-dispways a pwogwess baw fow max_steps. mya
 
-    Note that this hook only works for training and calibration.
+    nyote that this hook onwy wowks f-fow twaining and cawibwation. o.O
 
-    Args:
+    awgs:
       max_steps:
-        maximum steps to monitor in progress bar.
-        When this many steps is reached, the progress bar will be full.
+        maximum steps to monitow in pwogwess b-baw. ^•ﻌ•^
+        when this many s-steps is weached, (U ᵕ U❁) t-the pwogwess b-baw wiww be fuww. :3
     """
-    self._max_step = max_step
-    self._start_step = 0
-    self._global_step_tensor = None
-    self._progress_bar = None
+    s-sewf._max_step = max_step
+    sewf._stawt_step = 0
+    sewf._gwobaw_step_tensow = n-nyone
+    sewf._pwogwess_baw = nyone
 
-  def begin(self):
-    """ sets the global_step_tensor """
-    self._global_step_tensor = tf.train.get_or_create_global_step()
-    if self._global_step_tensor is None:
-      raise RuntimeError("Global step should be created to use StepProgressHook.")
+  def begin(sewf):
+    """ sets the gwobaw_step_tensow """
+    s-sewf._gwobaw_step_tensow = tf.twain.get_ow_cweate_gwobaw_step()
+    if sewf._gwobaw_step_tensow is nyone:
+      waise wuntimeewwow("gwobaw step shouwd be c-cweated to use steppwogwesshook.")
 
-  def after_create_session(self, session, coord):
-    """ creates the progress bar and keeps track of the first global step upon session creation """
-    global_step = session.run(self._global_step_tensor)
-    self._start_step = global_step
-    self._progress_bar = tf.keras.utils.Progbar(self._max_step)
+  d-def aftew_cweate_session(sewf, (///ˬ///✿) s-session, (///ˬ///✿) coowd):
+    """ cweates t-the pwogwess baw and keeps twack of the fiwst gwobaw step u-upon session cweation """
+    gwobaw_step = s-session.wun(sewf._gwobaw_step_tensow)
+    sewf._stawt_step = g-gwobaw_step
+    s-sewf._pwogwess_baw = tf.kewas.utiws.pwogbaw(sewf._max_step)
 
-  def before_run(self, run_context):  # pylint: disable=unused-argument
-    """ invoked before calling session.run """
-    return tf.train.SessionRunArgs(self._global_step_tensor)
+  def befowe_wun(sewf, 🥺 w-wun_context):  # pywint: disabwe=unused-awgument
+    """ i-invoked befowe cawwing session.wun """
+    wetuwn tf.twain.sessionwunawgs(sewf._gwobaw_step_tensow)
 
-  def after_run(self, run_context, run_values):
-    """ invoked after run is called. Updates the progress bar. """
-    step = run_context.session.run(self._global_step_tensor)
-    self._progress_bar.update(step - self._start_step)
+  d-def aftew_wun(sewf, -.- w-wun_context, nyaa~~ wun_vawues):
+    """ invoked aftew w-wun is cawwed. (///ˬ///✿) u-updates the pwogwess baw. 🥺 """
+    step = wun_context.session.wun(sewf._gwobaw_step_tensow)
+    sewf._pwogwess_baw.update(step - sewf._stawt_step)
 
 
-class GetMetricsHook(tf.train.SessionRunHook):
+cwass getmetwicshook(tf.twain.sessionwunhook):
   """
-  Hook used to obtain evaluation metrics.
-  Typically used for early-stopping by obtaining the value of a
-  metric at the end of an epoch.
-  Note that the metric tensor and its commensurate update Op
-  are responsible for aggregating the metric during the session
-  (one session per epoch). Used for evaluation.
+  hook u-used to obtain e-evawuation metwics.
+  typicawwy u-used fow eawwy-stopping b-by obtaining t-the vawue of a
+  metwic at the end of an epoch. >w<
+  nyote that t-the metwic tensow and its commensuwate update op
+  awe wesponsibwe fow aggwegating t-the metwic duwing the session
+  (one s-session p-pew epoch). rawr x3 used f-fow evawuation. (⑅˘꒳˘)
   """
 
-  def __init__(self, get_metrics_fn):
-    """GetMetricsHook constructor.
+  def __init__(sewf, σωσ get_metwics_fn):
+    """getmetwicshook c-constwuctow. XD
 
-    Args:
-      get_metrics_fn:
-        Function that returns a dict mapping metric keys to
-        tensors as a tf.Tensor.
-        See Trainer.learn for an example use-case.
+    a-awgs:
+      g-get_metwics_fn:
+        f-function that wetuwns a dict mapping m-metwic keys to
+        t-tensows a-as a tf.tensow. -.-
+        s-see twainew.weawn f-fow an exampwe use-case. >_<
     """
 
-    self._get_metrics_fn = get_metrics_fn
-    self._metric_tensors = None
-    self.metric_values = None
+    sewf._get_metwics_fn = get_metwics_fn
+    s-sewf._metwic_tensows = nyone
+    sewf.metwic_vawues = nyone
 
-  def begin(self):
-    """ sets the global_step_tensor and metric tensor"""
-    self._metric_tensors = self._get_metrics_fn()
-    assert isinstance(self._metric_tensors, dict)
+  def begin(sewf):
+    """ sets the gwobaw_step_tensow and metwic tensow"""
+    s-sewf._metwic_tensows = sewf._get_metwics_fn()
+    assewt isinstance(sewf._metwic_tensows, rawr d-dict)
 
-  def end(self, session):
-    self.metric_values = session.run(self._metric_tensors)
+  def end(sewf, 😳😳😳 s-session):
+    s-sewf.metwic_vawues = session.wun(sewf._metwic_tensows)
 
 
-class EarlyStopHook(GetMetricsHook):
+cwass e-eawwystophook(getmetwicshook):
   """
-  A GetMetricsHook augmented with early-stopping logic for use
-  within the Trainer.learn method.
+  a getmetwicshook a-augmented w-with eawwy-stopping wogic fow use
+  within the twainew.weawn method. UwU
   """
 
-  def __init__(self,
-               metric,
-               patience,
-               minimize,
-               get_estimator_spec_fn,
-               checkpoint_dir,
-               file_path=None,
-               exit_on_end=True,
-               start_epoch=0,
-               tolerance=0):
+  def __init__(sewf, (U ﹏ U)
+               m-metwic, (˘ω˘)
+               patience, /(^•ω•^)
+               m-minimize, (U ﹏ U)
+               get_estimatow_spec_fn, ^•ﻌ•^
+               c-checkpoint_diw, >w<
+               f-fiwe_path=none, ʘwʘ
+               exit_on_end=twue, òωó
+               stawt_epoch=0, o.O
+               t-towewance=0):
     """
-    Prepare early-stopping hook and variables.
+    p-pwepawe eawwy-stopping h-hook and vawiabwes. ( ͡o ω ͡o )
 
-    Args:
-      metric:
-        String specifying the metric to early-stop on. Required with positive
-        ``early_stop_patience``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
-        The string is used to extract the relevant tensor Op from the dict returned by
-        the get_eval_metric_ops method. For ``metrics`` pass to the constructor,
-        the string is one of those. For multi-class (that is, multi-metric)
-        metrics, the string may be appended with a ``_0``, ``_1``, etc. or one
-        of the ``multi_metric_names`` (one per class).
+    a-awgs:
+      metwic:
+        stwing specifying the metwic to eawwy-stop o-on. mya wequiwed w-with positive
+        ``eawwy_stop_patience``. >_< f-fow exampwe, rawr 'accuwacy', 'accuwacy_0', >_< 'woss', (U ﹏ U) etc.
+        the s-stwing is used to e-extwact the wewevant tensow op f-fwom the dict wetuwned by
+        the get_evaw_metwic_ops method. rawr fow ``metwics`` p-pass to the constwuctow, (U ᵕ U❁)
+        t-the stwing is one of those. (ˆ ﻌ ˆ)♡ fow muwti-cwass (that i-is, >_< muwti-metwic)
+        m-metwics, ^^;; the stwing may be appended with a ``_0``, ʘwʘ ``_1``, etc. 😳😳😳 o-ow one
+        of the ``muwti_metwic_names`` (one pew cwass). UwU
       patience:
-        Maximum number of epochs to wait for an improvement in the early_stop_metric
-        before breaking off training. For example, a patience of 10 means that
-        training will have 10 epochs to improve the metric before it is killed.
-        Whenever the metric is improved before running out of patience,
-        patience is reset to ``early_stop_patience``.
-      minimize:
-        Set this to True for metrics that need to be minimized
-        (like ``loss``). Metrics like ``accuracy`` that need to be maximized
-        should set this to False.
-      tolerance:
-        A non-negative tolerance for comparing early_stop_metric.
-        e.g. when maximizing the condition is current_metric > best_metric + tolerance."
-        Defaults to 0.
-      get_estimator_spec_fn:
-        function that returns the current EstimatorSpec.
-        The EstimatorSpec is used to obtain the current eval_metric_ops.
-      checkpoint_dir:
-        path to directory containing the Estimator checkpoints.
-      file_path:
-        path to file that is used by this hook to communicate early-stopping
-        to StopIfExistsHook. This hook would be used for evaluation, while
-        the StopIfExistsHooks (the listeners) would be used for training.
-        When the file is created, the StopIfExistsHooks detect and terminate training.
-        This argument is used by ``Trainer.train_and_evaluate``.
-      exit_on_end:
-        when the end() method is called to indicate that the session is terminating,
-        and exit_on_end is True, twml.errors.EarlyStopError() is triggered to stop the evaluation job.
-        This is set to False by the trainer for non distributed jobs.
-      start_epoch:
-        Specifies the starting epoch number. This is used for logging purposes only.
+        maximum nyumbew o-of epochs to wait fow an impwovement in the e-eawwy_stop_metwic
+        b-befowe bweaking off twaining. OwO fow exampwe, :3 a patience o-of 10 means that
+        t-twaining wiww have 10 epochs to impwove the metwic befowe i-it is kiwwed. -.-
+        whenevew t-the metwic is impwoved befowe wunning out of patience, 🥺
+        p-patience is weset to ``eawwy_stop_patience``. -.-
+      m-minimize:
+        s-set this to twue fow metwics t-that nyeed to be minimized
+        (wike ``woss``). -.- m-metwics w-wike ``accuwacy`` t-that nyeed to be maximized
+        s-shouwd set t-this to fawse. (U ﹏ U)
+      towewance:
+        a non-negative t-towewance f-fow compawing e-eawwy_stop_metwic. rawr
+        e.g. mya when maximizing t-the condition is cuwwent_metwic > b-best_metwic + t-towewance."
+        defauwts to 0. ( ͡o ω ͡o )
+      get_estimatow_spec_fn:
+        function t-that wetuwns the c-cuwwent estimatowspec. /(^•ω•^)
+        t-the estimatowspec i-is used to obtain the cuwwent e-evaw_metwic_ops. >_<
+      checkpoint_diw:
+        path to diwectowy containing the estimatow checkpoints. (✿oωo)
+      fiwe_path:
+        path to fiwe that i-is used by this hook to communicate e-eawwy-stopping
+        to stopifexistshook. 😳😳😳 t-this hook wouwd be used fow e-evawuation, (ꈍᴗꈍ) whiwe
+        the stopifexistshooks (the w-wistenews) w-wouwd be used fow t-twaining. 🥺
+        w-when the fiwe i-is cweated, mya the stopifexistshooks detect and tewminate twaining. (ˆ ﻌ ˆ)♡
+        this awgument is used by ``twainew.twain_and_evawuate``.
+      e-exit_on_end:
+        when t-the end() method i-is cawwed to indicate that t-the session is tewminating,
+        and exit_on_end is twue, (⑅˘꒳˘) twmw.ewwows.eawwystopewwow() is twiggewed t-to stop the e-evawuation job. òωó
+        this i-is set to fawse by the twainew fow nyon distwibuted j-jobs. o.O
+      s-stawt_epoch:
+        specifies the s-stawting epoch n-nyumbew. XD this is used fow wogging puwposes onwy. (˘ω˘)
     """
-    if not isinstance(metric, str):
-      raise ValueError("Expecting string for metric arg")
-    if not isinstance(patience, int):
-      raise ValueError("Expecting positive number for metric arg")
+    if nyot isinstance(metwic, (ꈍᴗꈍ) stw):
+      w-waise vawueewwow("expecting s-stwing fow metwic a-awg")
+    if n-nyot isinstance(patience, >w< i-int):
+      waise vawueewwow("expecting p-positive nyumbew f-fow metwic awg")
 
-    self.should_stop = False
-    self._metric = metric
-    self._patience = patience
-    self._current_patience = patience
-    self._checkpoint_dir = checkpoint_dir
-    self._exit_on_end = exit_on_end
-    self._latest_checkpoint_path = None
-    # used for distributed training (tf.estimator.train_and_evaluate)
-    self._file_path = file_path
-    self._epoch = start_epoch
-    if self._file_path is not None:
-      # TODO try to read epoch from a file that we create
-      if tf.io.gfile.exists(self._file_path):
-        # delete the file if it exists (not sure this makes sense)
-        logging.info("EarlyStopHook: Removing existing file: %s.", self._file_path)
-        tf.io.gfile.remove(self._file_path)
+    sewf.shouwd_stop = f-fawse
+    s-sewf._metwic = metwic
+    s-sewf._patience = patience
+    sewf._cuwwent_patience = patience
+    s-sewf._checkpoint_diw = checkpoint_diw
+    sewf._exit_on_end = e-exit_on_end
+    s-sewf._watest_checkpoint_path = nyone
+    # used f-fow distwibuted twaining (tf.estimatow.twain_and_evawuate)
+    sewf._fiwe_path = f-fiwe_path
+    s-sewf._epoch = s-stawt_epoch
+    if sewf._fiwe_path is nyot nyone:
+      # todo twy t-to wead epoch fwom a fiwe that we cweate
+      i-if tf.io.gfiwe.exists(sewf._fiwe_path):
+        # d-dewete the fiwe if it exists (not s-suwe this makes sense)
+        w-wogging.info("eawwystophook: w-wemoving existing fiwe: %s.", sewf._fiwe_path)
+        t-tf.io.gfiwe.wemove(sewf._fiwe_path)
 
-    # best_checkpoint dir will contain the best checkpoint
-    self._best_checkpoint_path = os.path.join(checkpoint_dir, 'best_checkpoint')
-    self._eval_checkpoint_path = os.path.join(checkpoint_dir, 'eval_checkpoint')
-    self._best_metric_path = os.path.join(self._best_checkpoint_path, self._metric)
+    # best_checkpoint diw wiww contain t-the best checkpoint
+    s-sewf._best_checkpoint_path = os.path.join(checkpoint_diw, XD 'best_checkpoint')
+    s-sewf._evaw_checkpoint_path = os.path.join(checkpoint_diw, 'evaw_checkpoint')
+    sewf._best_metwic_path = o-os.path.join(sewf._best_checkpoint_path, -.- s-sewf._metwic)
 
-    if tf.io.gfile.exists(self._best_metric_path):
-      with tf.io.gfile.GFile(self._best_metric_path, mode="r") as f:
-        best_metric_from_file = float(f.read())
-    else:
-      best_metric_from_file = None
+    i-if tf.io.gfiwe.exists(sewf._best_metwic_path):
+      with tf.io.gfiwe.gfiwe(sewf._best_metwic_path, ^^;; mode="w") as f:
+        best_metwic_fwom_fiwe = fwoat(f.wead())
+    ewse:
+      best_metwic_fwom_fiwe = nyone
 
     if minimize:
-      # current < best : is better
-      self._is_better_than = operator.lt
-      # worse metric possible
-      if best_metric_from_file is None:
-        self._best_metric = np.inf
-      else:
-        self._best_metric = best_metric_from_file - tolerance
-      # used for printing
-      self._early_stop_name = "minimum"
-    else:
-      # current > best : is better
-      self._is_better_than = operator.gt
-      # worse metric possible
-      if best_metric_from_file is None:
-        self._best_metric = -np.inf
-      else:
-        self._best_metric = best_metric_from_file + tolerance
-      # used for printing
-      self._early_stop_name = "maximum"
+      # cuwwent < best : is bettew
+      sewf._is_bettew_than = opewatow.wt
+      # w-wowse m-metwic possibwe
+      if best_metwic_fwom_fiwe is nyone:
+        s-sewf._best_metwic = n-nyp.inf
+      e-ewse:
+        sewf._best_metwic = b-best_metwic_fwom_fiwe - towewance
+      # used fow pwinting
+      s-sewf._eawwy_stop_name = "minimum"
+    ewse:
+      # c-cuwwent > best : is b-bettew
+      sewf._is_bettew_than = opewatow.gt
+      # w-wowse metwic p-possibwe
+      if best_metwic_fwom_fiwe is n-nyone:
+        s-sewf._best_metwic = -np.inf
+      e-ewse:
+        s-sewf._best_metwic = b-best_metwic_fwom_fiwe + t-towewance
+      # u-used f-fow pwinting
+      s-sewf._eawwy_stop_name = "maximum"
 
-    def get_metrics_fn():
-      """ function to get metric tensors to early-stopping """
-      estimator_spec = get_estimator_spec_fn()
-      eval_metric_ops = estimator_spec.eval_metric_ops
-      if metric not in eval_metric_ops:
-        raise ValueError(
-          "Expecting early_stop_metric '%s' key in eval_metric_ops dict"
-          % (metric))
-      # get the value_op from the (value_op, update_op) value
-      return {k: v[0] for k, v in eval_metric_ops.items()}
+    def g-get_metwics_fn():
+      """ f-function t-to get metwic tensows to eawwy-stopping """
+      e-estimatow_spec = get_estimatow_spec_fn()
+      evaw_metwic_ops = e-estimatow_spec.evaw_metwic_ops
+      if m-metwic not in evaw_metwic_ops:
+        w-waise vawueewwow(
+          "expecting eawwy_stop_metwic '%s' k-key in evaw_metwic_ops dict"
+          % (metwic))
+      # g-get the vawue_op fwom the (vawue_op, XD u-update_op) vawue
+      wetuwn {k: v-v[0] fow k, v in evaw_metwic_ops.items()}
 
-    # initialize GetMetricsHook to get current value of metric from session
-    super(EarlyStopHook, self).__init__(get_metrics_fn=get_metrics_fn)
+    # i-initiawize getmetwicshook to get cuwwent vawue of metwic fwom session
+    s-supew(eawwystophook, :3 sewf).__init__(get_metwics_fn=get_metwics_fn)
 
-  def early_stop(self, epoch):
+  d-def eawwy_stop(sewf, e-epoch):
     """
-    Looks at the current value of the early stopping metric.
-    Decrements current patience. If metric improves, patience is reset
-    and latest checkpoint is moved to checkpoint_dir/best_checkpoint.
-    If current patience reaches zero, returns True.
+    wooks at the cuwwent vawue of the eawwy stopping m-metwic. σωσ
+    decwements cuwwent p-patience. XD if metwic i-impwoves, :3 p-patience is weset
+    and watest checkpoint is moved t-to checkpoint_diw/best_checkpoint. rawr
+    i-if cuwwent patience w-weaches zewo, wetuwns twue. 😳
 
-    Args:
+    awgs:
       epoch:
-        The current epoch number.
+        t-the cuwwent epoch nyumbew. 😳😳😳
 
-    Returns:
-      True when early-stopped. False otherwise.
+    w-wetuwns:
+      t-twue w-when eawwy-stopped. (ꈍᴗꈍ) fawse othewwise. 🥺
     """
-    # decrement patience
-    self._current_patience -= 1
+    # d-decwement patience
+    s-sewf._cuwwent_patience -= 1
 
-    # get the current metric value
-    current_metric = self.metric_values[self._metric]
+    # g-get t-the cuwwent metwic vawue
+    cuwwent_metwic = sewf.metwic_vawues[sewf._metwic]
 
-    if self._is_better_than(current_metric, self._best_metric):
-      # save best version of model
-      self._best_metric = current_metric
-      logging.info(
-        "Found new %s %s=%f @ epoch %d",
-        self._early_stop_name, self._metric, self._best_metric, epoch)
-      # backup the file to checkpoint_dir/best_checkpoint
-      assert self._latest_checkpoint_path, "expecting latest checkpoint"
-      logging.info("Backing up " + self._latest_checkpoint_path)
+    i-if sewf._is_bettew_than(cuwwent_metwic, ^•ﻌ•^ s-sewf._best_metwic):
+      # s-save best v-vewsion of modew
+      s-sewf._best_metwic = c-cuwwent_metwic
+      w-wogging.info(
+        "found n-nyew %s %s=%f @ epoch %d", XD
+        s-sewf._eawwy_stop_name, ^•ﻌ•^ sewf._metwic, ^^;; s-sewf._best_metwic, ʘwʘ epoch)
+      # b-backup t-the fiwe to checkpoint_diw/best_checkpoint
+      a-assewt sewf._watest_checkpoint_path, OwO "expecting watest checkpoint"
+      wogging.info("backing up " + sewf._watest_checkpoint_path)
 
-      try:
-        eval_checkpoint = tf.train.latest_checkpoint(self._eval_checkpoint_path)
-        twml.util.backup_checkpoint(
-          checkpoint_path_prefix=eval_checkpoint,
-          backup_path=self._best_checkpoint_path)
-      except twml.errors.CheckpointNotFoundError as ex:
-        msg = "Consider increasing 'keep_checkpoint_max' or 'save_checkpoint_secs'"
-        raise twml.errors.CheckpointNotFoundError(str(ex) + "\n" + msg)
+      t-twy:
+        e-evaw_checkpoint = t-tf.twain.watest_checkpoint(sewf._evaw_checkpoint_path)
+        twmw.utiw.backup_checkpoint(
+          checkpoint_path_pwefix=evaw_checkpoint, 🥺
+          backup_path=sewf._best_checkpoint_path)
+      e-except twmw.ewwows.checkpointnotfoundewwow a-as ex:
+        msg = "considew i-incweasing 'keep_checkpoint_max' o-ow 'save_checkpoint_secs'"
+        waise twmw.ewwows.checkpointnotfoundewwow(stw(ex) + "\n" + msg)
 
-      tf.io.gfile.makedirs(os.path.dirname(self._best_metric_path))
-      with tf.io.gfile.GFile(self._best_metric_path, mode="w") as f:
-        # Write with enough precision
-        f.write("%.8f" % self._best_metric)
+      tf.io.gfiwe.makediws(os.path.diwname(sewf._best_metwic_path))
+      w-with t-tf.io.gfiwe.gfiwe(sewf._best_metwic_path, (⑅˘꒳˘) m-mode="w") a-as f:
+        # wwite with enough pwecision
+        f-f.wwite("%.8f" % s-sewf._best_metwic)
 
-      # reset patience
-      self._current_patience = self._patience
+      # weset patience
+      sewf._cuwwent_patience = s-sewf._patience
 
-    elif self._current_patience > 0:
-      logging.info("No new %s found after %d epochs",
-                   self._early_stop_name, self._patience - self._current_patience)
-    elif self._current_patience == 0:
-      logging.info(
-        "No new %s found after %d epochs. Early-stopping experiment.",
-        self._early_stop_name, self._patience)
-      return True
+    ewif sewf._cuwwent_patience > 0:
+      wogging.info("no nyew %s f-found aftew %d epochs", (///ˬ///✿)
+                   s-sewf._eawwy_stop_name, (✿oωo) s-sewf._patience - sewf._cuwwent_patience)
+    e-ewif sewf._cuwwent_patience == 0:
+      w-wogging.info(
+        "no nyew %s f-found aftew %d epochs. nyaa~~ eawwy-stopping e-expewiment.", >w<
+        s-sewf._eawwy_stop_name, (///ˬ///✿) s-sewf._patience)
+      w-wetuwn twue
 
-    return False
+    wetuwn f-fawse
 
-  def cleanup_checkpoints(self):
+  def cweanup_checkpoints(sewf):
     """
-    makes it so that the best checkpoint is the only checkpoint
-    in checkpoint_dir.
+    m-makes it so t-that the best checkpoint is the o-onwy checkpoint
+    in checkpoint_diw. rawr
     """
-    raise NotImplementedError("cleanup_checkpoints is no longer supported")
+    waise nyotimpwementedewwow("cweanup_checkpoints i-is nyo wongew s-suppowted")
 
-  def end(self, session):
+  d-def end(sewf, (U ﹏ U) session):
     """
-    This method is called at the end of an evaluation/epoch.
-    When file_path constructor argument is provided, this
-    will call ``early_stop()``.
-    When ``early_stop()`` returns True, it creates the file_path,
-    which will be detected by StopIfExistsHooks
-    and stop training for all workers and the chief. It will
-    also call ``cleanup_checkpoints()``.
+    this method is cawwed at the end of an evawuation/epoch. ^•ﻌ•^
+    when fiwe_path c-constwuctow awgument is pwovided, (///ˬ///✿) t-this
+    wiww c-caww ``eawwy_stop()``. o.O
+    when ``eawwy_stop()`` wetuwns twue, i-it cweates the fiwe_path, >w<
+    which w-wiww be detected b-by stopifexistshooks
+    a-and s-stop twaining f-fow aww wowkews and the chief. nyaa~~ it wiww
+    awso caww ``cweanup_checkpoints()``. òωó
     """
-    super(EarlyStopHook, self).end(session)
+    supew(eawwystophook, (U ᵕ U❁) s-sewf).end(session)
 
-    # Checks for early stopping criteria and makes a backup
-    self.should_stop = self.early_stop(self._epoch)
+    # checks f-fow eawwy stopping cwitewia and makes a backup
+    sewf.shouwd_stop = s-sewf.eawwy_stop(sewf._epoch)
 
-    if self._file_path is not None:
-      if self.should_stop:
-        # create a file to inform workers
-        with tf.io.gfile.GFile(self._file_path, "wb") as gfile:
-          gfile.write("early-stop\n")
-        # makes the best checkpoint the only checkpoint in save_dir.
-        msg = "early-stopping evaluation at epoch %d" % self._epoch
-        logging.info(msg)
-        if self._exit_on_end:
-          raise twml.errors.EarlyStopError(msg)
-      else:
-        self._latest_checkpoint_path = None
+    if sewf._fiwe_path is nyot nyone:
+      if sewf.shouwd_stop:
+        # c-cweate a fiwe to i-infowm wowkews
+        with tf.io.gfiwe.gfiwe(sewf._fiwe_path, (///ˬ///✿) "wb") a-as gfiwe:
+          gfiwe.wwite("eawwy-stop\n")
+        # makes the best c-checkpoint the onwy c-checkpoint in save_diw. (✿oωo)
+        m-msg = "eawwy-stopping evawuation a-at epoch %d" % sewf._epoch
+        wogging.info(msg)
+        if sewf._exit_on_end:
+          w-waise twmw.ewwows.eawwystopewwow(msg)
+      ewse:
+        sewf._watest_checkpoint_path = n-nyone
 
-    self._epoch += 1
+    s-sewf._epoch += 1
 
-  def begin(self):
+  d-def begin(sewf):
     """
-    Saves the latest_checkpoint in case it gets superseded by another checkpoint.
-    Remember that when used with train_and_evaluate, the chief saves checkpoints
-    continuouly. The chief could save a checkpoint after evaluation started.
-    So saving the checkpoint at the beginning of evaluation ensures that we
-    later save the correct best checkpoint.
+    saves the watest_checkpoint i-in case it gets supewseded by anothew checkpoint. 😳😳😳
+    wemembew that when used w-with twain_and_evawuate, (✿oωo) t-the chief s-saves checkpoints
+    c-continuouwy. (U ﹏ U) the chief couwd save a checkpoint a-aftew evawuation s-stawted. (˘ω˘)
+    so saving the checkpoint a-at the beginning of evawuation ensuwes that we
+    w-watew save the cowwect best checkpoint. 😳😳😳
     """
-    super(EarlyStopHook, self).begin()
-    self._latest_checkpoint_path = tf.train.latest_checkpoint(self._checkpoint_dir)
+    supew(eawwystophook, (///ˬ///✿) s-sewf).begin()
+    s-sewf._watest_checkpoint_path = tf.twain.watest_checkpoint(sewf._checkpoint_diw)
 
-    assert self._latest_checkpoint_path, "expecting latest checkpoint"
-    # Backup to temporary directory
-    try:
-      twml.util.backup_checkpoint(
-        checkpoint_path_prefix=self._latest_checkpoint_path,
-        backup_path=self._eval_checkpoint_path)
-    except twml.errors.CheckpointNotFoundError as ex:
-      msg = "Consider increasing 'keep_checkpoint_max' or 'save_checkpoint_secs'"
-      raise twml.errors.CheckpointNotFoundError(str(ex) + "\n" + msg)
+    a-assewt sewf._watest_checkpoint_path, (U ᵕ U❁) "expecting w-watest checkpoint"
+    # b-backup to tempowawy diwectowy
+    twy:
+      t-twmw.utiw.backup_checkpoint(
+        checkpoint_path_pwefix=sewf._watest_checkpoint_path, >_<
+        backup_path=sewf._evaw_checkpoint_path)
+    e-except twmw.ewwows.checkpointnotfoundewwow as ex:
+      msg = "considew incweasing 'keep_checkpoint_max' ow 'save_checkpoint_secs'"
+      waise twmw.ewwows.checkpointnotfoundewwow(stw(ex) + "\n" + m-msg)
 
 
-class MetricsUpdateHook(GetMetricsHook):
+c-cwass metwicsupdatehook(getmetwicshook):
   """
-  A GetMetricsHook augmented with logic to map SessionRun events to metrics updates.
-  It is mainly used by `TrackRun` to persist model metrics via Model Repo.
+  a-a getmetwicshook a-augmented with w-wogic to map sessionwun events t-to metwics updates. (///ˬ///✿)
+  it is mainwy used by `twackwun` t-to pewsist modew metwics v-via modew wepo. (U ᵕ U❁)
   """
 
-  def __init__(self,
-               get_estimator_spec_fn,
-               add_metrics_fn,
-               every_n_iter=None,
-               every_n_secs=None
+  def __init__(sewf, >w<
+               get_estimatow_spec_fn, 😳😳😳
+               a-add_metwics_fn, (ˆ ﻌ ˆ)♡
+               e-evewy_n_itew=none, (ꈍᴗꈍ)
+               evewy_n_secs=none
                ):
     """
-    Args:
-      get_estimator_spec_fn:
-        function that returns the current EstimatorSpec.
-        The EstimatorSpec is used to obtain the current eval_metric_ops.
-      add_metrics_fn: `function` callback used to report metrics, called automatically
-        at the end of every epoch.
-      every_n_iter: `int`, log the metrics once every N local
-        steps taken in the current epoch.
-      every_n_secs: `int` or `float`, log the metrics once every N
-        seconds passed in the current epoch. Exactly one of `every_n_iter` and `every_n_secs`
-        should be provided.
-    Raises:
-      ValueError: if `every_n_iter` is non-positive or if not exactly one of `every_n_iter` and
-        `every_n_secs` is set when `add_progress_metrics_fn` is provided.
+    a-awgs:
+      get_estimatow_spec_fn:
+        function t-that wetuwns t-the cuwwent estimatowspec. 🥺
+        t-the estimatowspec i-is used to obtain the c-cuwwent evaw_metwic_ops. >_<
+      add_metwics_fn: `function` cawwback used to wepowt metwics, OwO cawwed a-automaticawwy
+        at the end o-of evewy epoch. ^^;;
+      evewy_n_itew: `int`, (✿oωo) wog t-the metwics once e-evewy ny wocaw
+        s-steps taken in the cuwwent e-epoch.
+      e-evewy_n_secs: `int` ow `fwoat`, UwU w-wog the metwics once evewy ny
+        s-seconds passed in the cuwwent e-epoch. ( ͡o ω ͡o ) exactwy o-one of `evewy_n_itew` and `evewy_n_secs`
+        shouwd be pwovided. (✿oωo)
+    waises:
+      vawueewwow: i-if `evewy_n_itew` i-is nyon-positive ow if nyot exactwy one of `evewy_n_itew` a-and
+        `evewy_n_secs` is set when `add_pwogwess_metwics_fn` i-is pwovided. mya
     """
-    only_log_at_end = (every_n_iter is None) and (every_n_secs is None)
+    o-onwy_wog_at_end = (evewy_n_itew is nyone) and (evewy_n_secs is nyone)
 
-    if (not only_log_at_end and every_n_iter and every_n_secs):
-      raise ValueError(
-        'exactly one of every_n_iter and every_n_secs must be provided'
+    if (not o-onwy_wog_at_end and evewy_n_itew and evewy_n_secs):
+      w-waise vawueewwow(
+        'exactwy o-one o-of evewy_n_itew and evewy_n_secs m-must be pwovided'
       )
 
-    # TODO: should have a minimum to avoid too many calls to ModelRepo?
-    if every_n_iter is not None and every_n_iter <= 0:
-      raise ValueError("invalid every_n_iter=%s." % every_n_iter)
+    # t-todo: shouwd h-have a minimum t-to avoid too many c-cawws to modewwepo?
+    i-if evewy_n_itew is nyot nyone and evewy_n_itew <= 0:
+      waise vawueewwow("invawid evewy_n_itew=%s." % evewy_n_itew)
 
-    self._timer = (
-      NeverTriggerTimer() if only_log_at_end else
-      SecondOrStepTimer(every_secs=every_n_secs, every_steps=every_n_iter)
+    sewf._timew = (
+      n-nyevewtwiggewtimew() i-if onwy_wog_at_end e-ewse
+      secondowsteptimew(evewy_secs=evewy_n_secs, ( ͡o ω ͡o ) e-evewy_steps=evewy_n_itew)
     )
 
-    self._should_trigger = False
-    self._iter_count = 0
+    sewf._shouwd_twiggew = f-fawse
+    s-sewf._itew_count = 0
 
-    self._add_metrics_fn = add_metrics_fn
+    sewf._add_metwics_fn = add_metwics_fn
 
-    def get_metrics_fn():
+    def get_metwics_fn():
       """
-      Function that returns the current EstimatorSpec.
-        The EstimatorSpec is used to obtain the current eval_metric_ops.
+      function t-that wetuwns t-the cuwwent estimatowspec. :3
+        the estimatowspec is used to obtain the cuwwent e-evaw_metwic_ops. 😳
       """
-      estimator_spec = get_estimator_spec_fn()
-      eval_metric_ops = estimator_spec.eval_metric_ops
-      # get the value_op from the (value_op, update_op) value
-      return {k: v[0] for k, v in eval_metric_ops.items()}
-    super(MetricsUpdateHook, self).__init__(get_metrics_fn=get_metrics_fn)
+      e-estimatow_spec = g-get_estimatow_spec_fn()
+      evaw_metwic_ops = estimatow_spec.evaw_metwic_ops
+      # g-get the vawue_op fwom the (vawue_op, (U ﹏ U) u-update_op) vawue
+      w-wetuwn {k: v[0] fow k, >w< v in evaw_metwic_ops.items()}
+    s-supew(metwicsupdatehook, UwU sewf).__init__(get_metwics_fn=get_metwics_fn)
 
-  def report_metrics(self):
+  d-def w-wepowt_metwics(sewf):
     """
-    Triggers a metrics report.
+    twiggews a metwics w-wepowt. 😳
     """
-    self._timer.update_last_triggered_step(self._iter_count)
-    if self.metric_values is not None:
-      self._add_metrics_fn(self.metric_values)
+    s-sewf._timew.update_wast_twiggewed_step(sewf._itew_count)
+    i-if sewf.metwic_vawues i-is nyot n-nyone:
+      s-sewf._add_metwics_fn(sewf.metwic_vawues)
 
-  def begin(self):
+  def b-begin(sewf):
     """
-    Triggered before each epoch.
+    t-twiggewed befowe each e-epoch. XD
     """
-    self._timer.reset()
-    self._iter_count = 0
-    return super(MetricsUpdateHook, self).begin()
+    sewf._timew.weset()
+    sewf._itew_count = 0
+    w-wetuwn supew(metwicsupdatehook, (✿oωo) sewf).begin()
 
-  def before_run(self, run_context):
+  d-def befowe_wun(sewf, ^•ﻌ•^ wun_context):
     """
-    Triggered before each step.
+    t-twiggewed befowe e-each step. mya
     """
-    self._should_trigger = self._timer.should_trigger_for_step(self._iter_count)
-    return super(MetricsUpdateHook, self).before_run(run_context)
+    sewf._shouwd_twiggew = sewf._timew.shouwd_twiggew_fow_step(sewf._itew_count)
+    w-wetuwn supew(metwicsupdatehook, (˘ω˘) sewf).befowe_wun(wun_context)
 
-  def after_run(self, run_context, run_values):
+  d-def a-aftew_wun(sewf, wun_context, nyaa~~ wun_vawues):
     """
-    Triggered after each step.
+    twiggewed a-aftew each step. :3
     """
-    if self._should_trigger:
-      self.report_metrics()
-    self._iter_count += 1
-    return super(MetricsUpdateHook, self).after_run(run_context, run_values)
+    if s-sewf._shouwd_twiggew:
+      sewf.wepowt_metwics()
+    s-sewf._itew_count += 1
+    wetuwn supew(metwicsupdatehook, (✿oωo) sewf).aftew_wun(wun_context, (U ﹏ U) wun_vawues)
 
-  def end(self, session):
+  d-def e-end(sewf, (ꈍᴗꈍ) session):
     """
-    Triggered after each epoch.
+    twiggewed aftew e-each epoch. (˘ω˘)
     """
-    self.report_metrics()
-    return super(MetricsUpdateHook, self).end(session)
+    s-sewf.wepowt_metwics()
+    wetuwn supew(metwicsupdatehook, sewf).end(session)
 
 
-class EarlyStopDuration(tf.train.SessionRunHook):
+c-cwass eawwystopduwation(tf.twain.sessionwunhook):
   """
-  Hook that can be used to terminate a job (training or validation) after a certain duration.
-  The hook is fault tolerant, i.e., if a job is allotted 1 hour to run and fails after 45 minutes,
-  then it will only run for 15 minutes once restarted.
+  h-hook that can b-be used to tewminate a-a job (twaining ow vawidation) aftew a cewtain duwation. ^^
+  the hook is fauwt towewant, (⑅˘꒳˘) i.e., if a job is awwotted 1 h-houw to w-wun and faiws a-aftew 45 minutes, rawr
+  t-then it wiww o-onwy wun fow 15 m-minutes once westawted. :3
 
-  Args:
-    max_duration: 
-      A float. When this argument is defined, the job will automatically terminate after
-      `max_duration` seconds if it has not already compeleted. 
+  awgs:
+    m-max_duwation: 
+      a-a fwoat. OwO when this awgument i-is defined, (ˆ ﻌ ˆ)♡ t-the job wiww automaticawwy tewminate aftew
+      `max_duwation` s-seconds if it has nyot awweady compeweted. :3 
     
-    overwrite:
-      A boolean. If set to True, this hook will overwrite the file containing the elapsed time
-      since the beginning of the job. In a distributed setting, this will be used so only one 
-      job writes to the file while all others will have read access. In a distributed setting,
-      if all executors have this parameter set to False, then it just means that the hook will 
-      not be fault tolerant. When restarted, the job will restart the clock from 0.
+    o-ovewwwite:
+      a boowean. i-if set to twue, -.- t-this hook wiww ovewwwite the f-fiwe containing t-the ewapsed time
+      s-since the beginning of the j-job. in a distwibuted s-setting, -.- this wiww be used s-so onwy one 
+      job wwites t-to the fiwe whiwe a-aww othews wiww h-have wead access. òωó in a distwibuted s-setting, 😳
+      if aww executows have this p-pawametew set to fawse, nyaa~~ then it just means that the hook wiww 
+      nyot be fauwt towewant. (⑅˘꒳˘) when westawted, 😳 the j-job wiww westawt the cwock fwom 0. (U ﹏ U)
       
-    save_dir:
-      String. A directory (located on a file system that is Tensorflow compatible) where 
-      we can store the file which contains the record of the elapsed time. This file is what makes 
-      the hook faul tolerant.
+    save_diw:
+      stwing. a diwectowy (wocated on a fiwe system that is tensowfwow c-compatibwe) whewe 
+      we can stowe the fiwe w-which contains the wecowd of the e-ewapsed time. /(^•ω•^) this fiwe is nyani makes 
+      the h-hook fauw towewant. OwO
 
     exit_on_end:
-      when exit_on_end is True, twml.errors.EarlyStopError() is triggered to stop the job.
-      This is usually set to True to kill a validation job in a distributed setting.
+      when e-exit_on_end is twue, ( ͡o ω ͡o ) twmw.ewwows.eawwystopewwow() i-is twiggewed t-to stop the job. XD
+      this is usuawwy set to t-twue to kiww a vawidation job in a distwibuted setting. /(^•ω•^)
    """
 
-  def __init__(self, max_duration: float, exit_on_end: bool, save_dir: str, overwrite: bool):
-    self._overwrite = overwrite
-    self._save_dir = save_dir
-    self._exit_on_end = exit_on_end
-    self._max_duration = max_duration
-    self._last_time_check = datetime.now()
+  d-def __init__(sewf, max_duwation: f-fwoat, /(^•ω•^) exit_on_end: boow, 😳😳😳 save_diw: s-stw, (ˆ ﻌ ˆ)♡ ovewwwite: boow):
+    s-sewf._ovewwwite = o-ovewwwite
+    sewf._save_diw = save_diw
+    s-sewf._exit_on_end = exit_on_end
+    sewf._max_duwation = m-max_duwation
+    sewf._wast_time_check = datetime.now()
 
-    # Initialize elapse time file
-    if overwrite:
-      self.elapsed_time()
+    # initiawize ewapse time f-fiwe
+    if ovewwwite:
+      s-sewf.ewapsed_time()
 
-  @property
-  def elapsed_file_path(self):
-    return os.path.join(self._save_dir, "early_stop_duration.txt")
+  @pwopewty
+  def ewapsed_fiwe_path(sewf):
+    w-wetuwn os.path.join(sewf._save_diw, :3 "eawwy_stop_duwation.txt")
 
-  def early_stop(self) -> bool:
-    return self.elapsed_time() > self._max_duration
+  d-def eawwy_stop(sewf) -> boow:
+    w-wetuwn sewf.ewapsed_time() > sewf._max_duwation
 
-  def elapsed_time(self) -> float:
-    # Recorded elapsed time is 0 unless it's been recorded in a file already
-    recorded_elapsed_time = 0
-    if tf.io.gfile.exists(self.elapsed_file_path):
-      with tf.io.gfile.GFile(self.elapsed_file_path, mode="r") as file:
-        recorded_elapsed_time = json.loads(file.read())["elapsed_time"]
+  def ewapsed_time(sewf) -> fwoat:
+    # wecowded ewapsed t-time is 0 unwess i-it's been wecowded in a fiwe awweady
+    w-wecowded_ewapsed_time = 0
+    i-if tf.io.gfiwe.exists(sewf.ewapsed_fiwe_path):
+      with t-tf.io.gfiwe.gfiwe(sewf.ewapsed_fiwe_path, òωó mode="w") as fiwe:
+        w-wecowded_ewapsed_time = json.woads(fiwe.wead())["ewapsed_time"]
 
-    elapsed_time = recorded_elapsed_time + (datetime.now() - self._last_time_check).total_seconds()
-    self._last_time_check = datetime.now()
+    ewapsed_time = wecowded_ewapsed_time + (datetime.now() - s-sewf._wast_time_check).totaw_seconds()
+    s-sewf._wast_time_check = datetime.now()
 
-    if self._overwrite:
-      # Record the actualized new elapsed time to the file
-      tf.io.gfile.makedirs(os.path.dirname(self.elapsed_file_path))
-      with tf.io.gfile.GFile(self.elapsed_file_path, mode="w") as file:
-        record = {
-          "elapsed_time": elapsed_time,
-          "max_duration": self._max_duration
+    if sewf._ovewwwite:
+      # w-wecowd the actuawized nyew ewapsed time to the fiwe
+      tf.io.gfiwe.makediws(os.path.diwname(sewf.ewapsed_fiwe_path))
+      with tf.io.gfiwe.gfiwe(sewf.ewapsed_fiwe_path, 🥺 mode="w") as fiwe:
+        w-wecowd = {
+          "ewapsed_time": e-ewapsed_time, (U ﹏ U)
+          "max_duwation": sewf._max_duwation
         }
-        file.write(json.dumps(record, indent=2))
+        f-fiwe.wwite(json.dumps(wecowd, XD i-indent=2))
 
-    return elapsed_time
+    wetuwn ewapsed_time
 
-  def before_run(self, run_context: tf.estimator.SessionRunContext) -> None:
-    if self.early_stop():
+  d-def befowe_wun(sewf, ^^ wun_context: tf.estimatow.sessionwuncontext) -> nyone:
+    if sewf.eawwy_stop():
       message = f"""
-        Stopping job which now exceeded the maximum duration of {self._max_duration} seconds. 
+        s-stopping job which nyow exceeded the maximum duwation of {sewf._max_duwation} s-seconds. o.O 
       """
-      logging.info(message)
-      run_context.request_stop()
+      w-wogging.info(message)
+      w-wun_context.wequest_stop()
 
-      if self._exit_on_end:
-        raise twml.errors.EarlyStopError(message)
+      if sewf._exit_on_end:
+        waise twmw.ewwows.eawwystopewwow(message)
 
 
-class StopAtStepHook(tf.train.StopAtStepHook):
+c-cwass s-stopatstephook(tf.twain.stopatstephook):
   """
-  Overrides ``tf.train.StopAtStepHook`` so that
-  a ``stop_requested`` property can be accessed to determine
-  if this hook requested a stop.
-  """
-
-  def __init__(self, *args, **kwargs):
-    super(StopAtStepHook, self).__init__(*args, **kwargs)
-    self._stop_requested = False
-
-  @property
-  def stop_requested(self):
-    """ true if this hook requested a stop """
-    return self._stop_requested
-
-  def after_run(self, run_context, run_values):
-    """ sets self.stop_requested to true when requesting a stop """
-    super(StopAtStepHook, self).after_run(run_context, run_values)
-    self._stop_requested = run_context.stop_requested
-
-
-class StopIfExistsHook(tf.train.SessionRunHook):
-  """
-  Hook that requests stop if a file exists.
-  This hook is used with the EarlyStopHook to implement
-  early-stopping for distributed training (tf.estimator.train_and_evaluate).
+  o-ovewwides ``tf.twain.stopatstephook`` so that
+  a-a ``stop_wequested`` pwopewty can b-be accessed to detewmine
+  if t-this hook wequested a stop. 😳😳😳
   """
 
-  def __init__(self, file_path):
+  d-def __init__(sewf, /(^•ω•^) *awgs, 😳😳😳 **kwawgs):
+    supew(stopatstephook, ^•ﻌ•^ sewf).__init__(*awgs, 🥺 **kwawgs)
+    sewf._stop_wequested = f-fawse
+
+  @pwopewty
+  def stop_wequested(sewf):
+    """ t-twue if this h-hook wequested a stop """
+    w-wetuwn sewf._stop_wequested
+
+  d-def aftew_wun(sewf, o.O wun_context, w-wun_vawues):
+    """ sets sewf.stop_wequested t-to twue when wequesting a stop """
+    s-supew(stopatstephook, (U ᵕ U❁) s-sewf).aftew_wun(wun_context, ^^ wun_vawues)
+    sewf._stop_wequested = w-wun_context.stop_wequested
+
+
+cwass stopifexistshook(tf.twain.sessionwunhook):
+  """
+  hook that wequests stop if a fiwe exists. (⑅˘꒳˘)
+  this hook is used with the eawwystophook t-to impwement
+  eawwy-stopping fow distwibuted t-twaining (tf.estimatow.twain_and_evawuate).
+  """
+
+  def __init__(sewf, :3 fiwe_path):
     """
-    Arguments:
-      file_path:
-        path to file. When this hook detects that the file exists,
-        it requests a stop, which effectively kills this worker.
+    a-awguments:
+      fiwe_path:
+        path t-to fiwe. (///ˬ///✿) when this hook detects that the fiwe e-exists, :3
+        it wequests a stop, 🥺 which effectivewy k-kiwws this wowkew. mya
     """
-    self._file_path = file_path
-    self._stop_requested = False
+    sewf._fiwe_path = f-fiwe_path
+    sewf._stop_wequested = fawse
 
-  def after_run(self, run_context, run_values):
-    if tf.io.gfile.exists(self._file_path):
-      logging.info("Early-stopping file detected; requesting stop")
-      run_context.request_stop()
-      self._stop_requested = True
+  d-def aftew_wun(sewf, w-wun_context, XD wun_vawues):
+    if tf.io.gfiwe.exists(sewf._fiwe_path):
+      w-wogging.info("eawwy-stopping f-fiwe detected; wequesting stop")
+      w-wun_context.wequest_stop()
+      s-sewf._stop_wequested = twue
 
-  @property
-  def stop_requested(self):
-    """ true if this hook requested a stop """
-    return self._stop_requested
+  @pwopewty
+  def stop_wequested(sewf):
+    """ t-twue if this hook wequested a stop """
+    wetuwn sewf._stop_wequested

@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.stringcenter
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.stwingcentew
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait BaseModuleStringCenterPlaceholderBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any]] {
+t-twait basemoduwestwingcentewpwacehowdewbuiwdew[
+  -quewy <: p-pipewinequewy, rawr x3
+  -candidate <: u-univewsawnoun[any]] {
 
-  def apply(query: Query, candidates: Seq[CandidateWithFeatures[Candidate]]): Map[String, Any]
+  d-def appwy(quewy: q-quewy, rawr candidates: seq[candidatewithfeatuwes[candidate]]): map[stwing, σωσ any]
 }

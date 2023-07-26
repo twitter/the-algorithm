@@ -1,129 +1,129 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.tweetypie.storage_internal.thriftscala._
-import com.twitter.tbird.{thriftscala => tbird}
+impowt com.twittew.tweetypie.stowage_intewnaw.thwiftscawa._
+i-impowt com.twittew.tbiwd.{thwiftscawa => t-tbiwd}
 
-object StatusConversions {
+o-object statusconvewsions {
 
   /**
-   * This is used only in Scribe.scala, when scribing to tbird_add_status
-   * Once we remove that, we can also remove this.
+   * t-this is u-used onwy in scwibe.scawa, :3 w-when s-scwibing to tbiwd_add_status
+   * o-once we wemove that, nyaa~~ we can awso wemove this. 😳
    */
-  def toTBirdStatus(tweet: StoredTweet): tbird.Status =
-    tbird.Status(
-      id = tweet.id,
-      userId = tweet.userId.get,
-      text = tweet.text.get,
-      createdVia = tweet.createdVia.get,
-      createdAtSec = tweet.createdAtSec.get,
-      reply = tweet.reply.map(toTBirdReply),
-      share = tweet.share.map(toTBirdShare),
-      contributorId = tweet.contributorId,
-      geo = tweet.geo.map(toTBirdGeo),
-      hasTakedown = tweet.hasTakedown.getOrElse(false),
-      nsfwUser = tweet.nsfwUser.getOrElse(false),
-      nsfwAdmin = tweet.nsfwAdmin.getOrElse(false),
-      media = tweet.media.map(_.map(toTBirdMedia)).getOrElse(Seq()),
-      narrowcast = tweet.narrowcast.map(toTBirdNarrowcast),
-      nullcast = tweet.nullcast.getOrElse(false),
-      trackingId = tweet.trackingId
+  def totbiwdstatus(tweet: stowedtweet): t-tbiwd.status =
+    tbiwd.status(
+      id = tweet.id, (⑅˘꒳˘)
+      u-usewid = tweet.usewid.get, nyaa~~
+      t-text = tweet.text.get, OwO
+      cweatedvia = tweet.cweatedvia.get, rawr x3
+      c-cweatedatsec = tweet.cweatedatsec.get, XD
+      w-wepwy = tweet.wepwy.map(totbiwdwepwy), σωσ
+      s-shawe = tweet.shawe.map(totbiwdshawe), (U ᵕ U❁)
+      contwibutowid = tweet.contwibutowid, (U ﹏ U)
+      geo = tweet.geo.map(totbiwdgeo), :3
+      h-hastakedown = tweet.hastakedown.getowewse(fawse), ( ͡o ω ͡o )
+      nysfwusew = tweet.nsfwusew.getowewse(fawse),
+      nysfwadmin = t-tweet.nsfwadmin.getowewse(fawse), σωσ
+      media = t-tweet.media.map(_.map(totbiwdmedia)).getowewse(seq()), >w<
+      n-nyawwowcast = t-tweet.nawwowcast.map(totbiwdnawwowcast), 😳😳😳
+      nyuwwcast = t-tweet.nuwwcast.getowewse(fawse), OwO
+      twackingid = tweet.twackingid
     )
 
   /**
-   * This is only used in a test, to verify that the above method `toTBirdStatus`
-   * works, so we can't remove it as long as the above method exists.
+   * this is onwy used i-in a test, 😳 to vewify that the above method `totbiwdstatus`
+   * w-wowks, 😳😳😳 so we can't wemove it as wong as the above method exists. (˘ω˘)
    */
-  def fromTBirdStatus(status: tbird.Status): StoredTweet = {
-    StoredTweet(
-      id = status.id,
-      userId = Some(status.userId),
-      text = Some(status.text),
-      createdVia = Some(status.createdVia),
-      createdAtSec = Some(status.createdAtSec),
-      reply = status.reply.map(fromTBirdReply),
-      share = status.share.map(fromTBirdShare),
-      contributorId = status.contributorId,
-      geo = status.geo.map(fromTBirdGeo),
-      hasTakedown = Some(status.hasTakedown),
-      nsfwUser = Some(status.nsfwUser),
-      nsfwAdmin = Some(status.nsfwAdmin),
-      media = Some(status.media.map(fromTBirdMedia)),
-      narrowcast = status.narrowcast.map(fromTBirdNarrowcast),
-      nullcast = Some(status.nullcast),
-      trackingId = status.trackingId
+  def fwomtbiwdstatus(status: t-tbiwd.status): stowedtweet = {
+    s-stowedtweet(
+      id = s-status.id, ʘwʘ
+      u-usewid = some(status.usewid), ( ͡o ω ͡o )
+      text = some(status.text), o.O
+      cweatedvia = s-some(status.cweatedvia), >w<
+      c-cweatedatsec = some(status.cweatedatsec), 😳
+      w-wepwy = status.wepwy.map(fwomtbiwdwepwy), 🥺
+      s-shawe = status.shawe.map(fwomtbiwdshawe), rawr x3
+      contwibutowid = s-status.contwibutowid, o.O
+      geo = status.geo.map(fwomtbiwdgeo), rawr
+      h-hastakedown = some(status.hastakedown), ʘwʘ
+      nysfwusew = s-some(status.nsfwusew), 😳😳😳
+      nysfwadmin = some(status.nsfwadmin), ^^;;
+      m-media = some(status.media.map(fwomtbiwdmedia)), o.O
+      n-nyawwowcast = s-status.nawwowcast.map(fwomtbiwdnawwowcast), (///ˬ///✿)
+      nyuwwcast = some(status.nuwwcast), σωσ
+      twackingid = status.twackingid
     )
   }
 
-  private def fromTBirdReply(reply: tbird.Reply): StoredReply =
-    StoredReply(
-      inReplyToStatusId = reply.inReplyToStatusId,
-      inReplyToUserId = reply.inReplyToUserId
+  pwivate def fwomtbiwdwepwy(wepwy: tbiwd.wepwy): s-stowedwepwy =
+    s-stowedwepwy(
+      inwepwytostatusid = w-wepwy.inwepwytostatusid, nyaa~~
+      i-inwepwytousewid = w-wepwy.inwepwytousewid
     )
 
-  private def fromTBirdShare(share: tbird.Share): StoredShare =
-    StoredShare(
-      sourceStatusId = share.sourceStatusId,
-      sourceUserId = share.sourceUserId,
-      parentStatusId = share.parentStatusId
+  pwivate def fwomtbiwdshawe(shawe: tbiwd.shawe): stowedshawe =
+    s-stowedshawe(
+      souwcestatusid = shawe.souwcestatusid, ^^;;
+      souwceusewid = shawe.souwceusewid, ^•ﻌ•^
+      p-pawentstatusid = shawe.pawentstatusid
     )
 
-  private def fromTBirdGeo(geo: tbird.Geo): StoredGeo =
-    StoredGeo(
-      latitude = geo.latitude,
-      longitude = geo.longitude,
-      geoPrecision = geo.geoPrecision,
-      entityId = geo.entityId
+  p-pwivate d-def fwomtbiwdgeo(geo: t-tbiwd.geo): stowedgeo =
+    s-stowedgeo(
+      w-watitude = g-geo.watitude, σωσ
+      w-wongitude = geo.wongitude, -.-
+      geopwecision = g-geo.geopwecision, ^^;;
+      e-entityid = g-geo.entityid
     )
 
-  private def fromTBirdMedia(media: tbird.MediaEntity): StoredMediaEntity =
-    StoredMediaEntity(
-      id = media.id,
-      mediaType = media.mediaType,
-      width = media.width,
-      height = media.height
+  p-pwivate d-def fwomtbiwdmedia(media: tbiwd.mediaentity): stowedmediaentity =
+    stowedmediaentity(
+      i-id = media.id, XD
+      mediatype = media.mediatype, 🥺
+      width = media.width, òωó
+      height = m-media.height
     )
 
-  private def fromTBirdNarrowcast(narrowcast: tbird.Narrowcast): StoredNarrowcast =
-    StoredNarrowcast(
-      language = Some(narrowcast.language),
-      location = Some(narrowcast.location),
-      ids = Some(narrowcast.ids)
+  pwivate def fwomtbiwdnawwowcast(nawwowcast: tbiwd.nawwowcast): s-stowednawwowcast =
+    s-stowednawwowcast(
+      w-wanguage = some(nawwowcast.wanguage), (ˆ ﻌ ˆ)♡
+      w-wocation = some(nawwowcast.wocation), -.-
+      ids = s-some(nawwowcast.ids)
     )
 
-  private def toTBirdReply(reply: StoredReply): tbird.Reply =
-    tbird.Reply(
-      inReplyToStatusId = reply.inReplyToStatusId,
-      inReplyToUserId = reply.inReplyToUserId
+  p-pwivate def totbiwdwepwy(wepwy: stowedwepwy): tbiwd.wepwy =
+    tbiwd.wepwy(
+      inwepwytostatusid = wepwy.inwepwytostatusid, :3
+      inwepwytousewid = w-wepwy.inwepwytousewid
     )
 
-  private def toTBirdShare(share: StoredShare): tbird.Share =
-    tbird.Share(
-      sourceStatusId = share.sourceStatusId,
-      sourceUserId = share.sourceUserId,
-      parentStatusId = share.parentStatusId
+  pwivate d-def totbiwdshawe(shawe: stowedshawe): t-tbiwd.shawe =
+    t-tbiwd.shawe(
+      souwcestatusid = shawe.souwcestatusid, ʘwʘ
+      s-souwceusewid = s-shawe.souwceusewid, 🥺
+      pawentstatusid = s-shawe.pawentstatusid
     )
 
-  private def toTBirdGeo(geo: StoredGeo): tbird.Geo =
-    tbird.Geo(
-      latitude = geo.latitude,
-      longitude = geo.longitude,
-      geoPrecision = geo.geoPrecision,
-      entityId = geo.entityId,
-      name = geo.name
+  p-pwivate def totbiwdgeo(geo: stowedgeo): tbiwd.geo =
+    tbiwd.geo(
+      watitude = g-geo.watitude, >_<
+      w-wongitude = g-geo.wongitude, ʘwʘ
+      geopwecision = g-geo.geopwecision,
+      e-entityid = geo.entityid, (˘ω˘)
+      nyame = geo.name
     )
 
-  private def toTBirdMedia(media: StoredMediaEntity): tbird.MediaEntity =
-    tbird.MediaEntity(
-      id = media.id,
-      mediaType = media.mediaType,
-      width = media.width,
-      height = media.height
+  p-pwivate def totbiwdmedia(media: stowedmediaentity): tbiwd.mediaentity =
+    tbiwd.mediaentity(
+      i-id = m-media.id, (✿oωo)
+      mediatype = media.mediatype, (///ˬ///✿)
+      width = media.width, rawr x3
+      h-height = media.height
     )
 
-  private def toTBirdNarrowcast(narrowcast: StoredNarrowcast): tbird.Narrowcast =
-    tbird.Narrowcast(
-      language = narrowcast.language.getOrElse(Nil),
-      location = narrowcast.location.getOrElse(Nil),
-      ids = narrowcast.ids.getOrElse(Nil)
+  p-pwivate def totbiwdnawwowcast(nawwowcast: stowednawwowcast): tbiwd.nawwowcast =
+    tbiwd.nawwowcast(
+      w-wanguage = nyawwowcast.wanguage.getowewse(niw),
+      wocation = nyawwowcast.wocation.getowewse(niw), -.-
+      ids = nyawwowcast.ids.getowewse(niw)
     )
 }

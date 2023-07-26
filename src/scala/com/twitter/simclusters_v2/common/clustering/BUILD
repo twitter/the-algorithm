@@ -1,11 +1,11 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "eventdetection/common/src/main/java/com/twitter/eventdetection/common/louvain",
-        "eventdetection/common/src/main/java/com/twitter/eventdetection/common/model",
-        "src/java/com/twitter/sbf/graph",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "eventdetection/common/swc/main/java/com/twittew/eventdetection/common/wouvain", òωó
+        "eventdetection/common/swc/main/java/com/twittew/eventdetection/common/modew", o.O
+        "swc/java/com/twittew/sbf/gwaph", (U ᵕ U❁)
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/common", (⑅˘꒳˘)
     ],
 )

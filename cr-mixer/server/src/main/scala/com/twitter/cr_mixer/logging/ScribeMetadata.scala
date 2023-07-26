@@ -1,45 +1,45 @@
-package com.twitter.cr_mixer.logging
+package com.twittew.cw_mixew.wogging
 
-import com.twitter.cr_mixer.model.AdsCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
+impowt com.twittew.cw_mixew.modew.adscandidategenewatowquewy
+i-impowt com.twittew.cw_mixew.modew.cwcandidategenewatowquewy
+i-impowt c-com.twittew.cw_mixew.modew.wewatedtweetcandidategenewatowquewy
+i-impowt com.twittew.cw_mixew.modew.utegtweetcandidategenewatowquewy
+i-impowt com.twittew.cw_mixew.thwiftscawa.pwoduct
+i-impowt com.twittew.pwoduct_mixew.cowe.thwiftscawa.cwientcontext
+i-impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
 
-case class ScribeMetadata(
-  requestUUID: Long,
-  userId: UserId,
-  product: Product)
+case cwass scwibemetadata(
+  wequestuuid: wong, (˘ω˘)
+  usewid: usewid, (⑅˘꒳˘)
+  p-pwoduct: pwoduct)
 
-object ScribeMetadata {
-  def from(query: CrCandidateGeneratorQuery): ScribeMetadata = {
-    ScribeMetadata(query.requestUUID, query.userId, query.product)
+object scwibemetadata {
+  def fwom(quewy: c-cwcandidategenewatowquewy): scwibemetadata = {
+    s-scwibemetadata(quewy.wequestuuid, (///ˬ///✿) quewy.usewid, 😳😳😳 quewy.pwoduct)
   }
 
-  def from(query: UtegTweetCandidateGeneratorQuery): ScribeMetadata = {
-    ScribeMetadata(query.requestUUID, query.userId, query.product)
+  def fwom(quewy: u-utegtweetcandidategenewatowquewy): scwibemetadata = {
+    s-scwibemetadata(quewy.wequestuuid, 🥺 q-quewy.usewid, mya quewy.pwoduct)
   }
 
-  def from(query: AdsCandidateGeneratorQuery): ScribeMetadata = {
-    ScribeMetadata(query.requestUUID, query.userId, query.product)
+  def fwom(quewy: adscandidategenewatowquewy): scwibemetadata = {
+    scwibemetadata(quewy.wequestuuid, 🥺 q-quewy.usewid, >_< quewy.pwoduct)
   }
 }
 
-case class RelatedTweetScribeMetadata(
-  requestUUID: Long,
-  internalId: InternalId,
-  clientContext: ClientContext,
-  product: Product)
+case cwass wewatedtweetscwibemetadata(
+  wequestuuid: wong, >_<
+  i-intewnawid: intewnawid, (⑅˘꒳˘)
+  cwientcontext: c-cwientcontext, /(^•ω•^)
+  p-pwoduct: p-pwoduct)
 
-object RelatedTweetScribeMetadata {
-  def from(query: RelatedTweetCandidateGeneratorQuery): RelatedTweetScribeMetadata = {
-    RelatedTweetScribeMetadata(
-      query.requestUUID,
-      query.internalId,
-      query.clientContext,
-      query.product)
+o-object wewatedtweetscwibemetadata {
+  def fwom(quewy: wewatedtweetcandidategenewatowquewy): w-wewatedtweetscwibemetadata = {
+    wewatedtweetscwibemetadata(
+      quewy.wequestuuid, rawr x3
+      quewy.intewnawid, (U ﹏ U)
+      q-quewy.cwientcontext, (U ﹏ U)
+      quewy.pwoduct)
   }
 }

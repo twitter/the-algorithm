@@ -1,16 +1,16 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.servo.cache.ScopedCacheKey
-import com.twitter.stitch.Stitch
-import com.twitter.util.Base64Long
+i-impowt com.twittew.sewvo.cache.scopedcachekey
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.utiw.base64wong
 
-case class GeoScrubTimestampKey(userId: UserId)
-    extends ScopedCacheKey("t", "gs", 1, Base64Long.toBase64(userId))
+c-case cwass geoscwubtimestampkey(usewid: u-usewid)
+    e-extends s-scopedcachekey("t", -.- "gs", 1, base64wong.tobase64(usewid))
 
-object GeoScrubTimestampRepository {
-  type Type = UserId => Stitch[Time]
+object geoscwubtimestampwepositowy {
+  type type = usewid => s-stitch[time]
 
-  def apply(getLastGeoScrubTime: UserId => Stitch[Option[Time]]): Type =
-    userId => getLastGeoScrubTime(userId).lowerFromOption()
+  def appwy(getwastgeoscwubtime: usewid => s-stitch[option[time]]): type =
+    u-usewid => getwastgeoscwubtime(usewid).wowewfwomoption()
 }

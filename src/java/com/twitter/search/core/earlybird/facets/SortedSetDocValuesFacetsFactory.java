@@ -1,45 +1,45 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.io.IOException;
-import java.util.List;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.wist;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.facet.Facets;
-import org.apache.lucene.facet.FacetsCollector;
-import org.apache.lucene.facet.sortedset.SortedSetDocValuesFacetCounts;
-import org.apache.lucene.facet.sortedset.SortedSetDocValuesReaderState;
+i-impowt owg.apache.wucene.facet.facets;
+i-impowt o-owg.apache.wucene.facet.facetscowwectow;
+i-impowt o-owg.apache.wucene.facet.sowtedset.sowtedsetdocvawuesfacetcounts;
+impowt owg.apache.wucene.facet.sowtedset.sowtedsetdocvawuesweadewstate;
 
-import com.twitter.search.common.facets.CountFacetSearchParam;
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.common.facets.FacetsFactory;
+impowt com.twittew.seawch.common.facets.countfacetseawchpawam;
+impowt c-com.twittew.seawch.common.facets.facetseawchpawam;
+impowt com.twittew.seawch.common.facets.facetsfactowy;
 
 /**
- * Factory for SortedSetDocValuesFacetCounts
+ * factowy fow s-sowtedsetdocvawuesfacetcounts
  */
-public class SortedSetDocValuesFacetsFactory implements FacetsFactory {
-  private final SortedSetDocValuesReaderState state;
+pubwic cwass sowtedsetdocvawuesfacetsfactowy impwements f-facetsfactowy {
+  pwivate finaw sowtedsetdocvawuesweadewstate state;
 
-  public SortedSetDocValuesFacetsFactory(SortedSetDocValuesReaderState state) {
-    this.state = state;
+  p-pubwic sowtedsetdocvawuesfacetsfactowy(sowtedsetdocvawuesweadewstate state) {
+    t-this.state = s-state;
   }
 
-  @Override
-  public Facets create(
-      List<FacetSearchParam> facetSearchParams,
-      FacetsCollector facetsCollector) throws IOException {
+  @ovewwide
+  pubwic facets cweate(
+      wist<facetseawchpawam> facetseawchpawams, (ˆ ﻌ ˆ)♡
+      f-facetscowwectow facetscowwectow) thwows ioexception {
 
-    Preconditions.checkNotNull(facetsCollector);
+    pweconditions.checknotnuww(facetscowwectow);
 
-    return new SortedSetDocValuesFacetCounts(state, facetsCollector);
+    wetuwn nyew s-sowtedsetdocvawuesfacetcounts(state, (˘ω˘) facetscowwectow);
   }
 
-  @Override
-  public boolean accept(FacetSearchParam facetSearchParam) {
-    return facetSearchParam instanceof CountFacetSearchParam
-        && (facetSearchParam.getFacetFieldRequest().getPath() == null
-            || facetSearchParam.getFacetFieldRequest().getPath().isEmpty())
-        && SortedSetDocValuesReaderStateHelper.isDimSupported(
-            state, facetSearchParam.getFacetFieldRequest().getField());
+  @ovewwide
+  p-pubwic b-boowean accept(facetseawchpawam f-facetseawchpawam) {
+    w-wetuwn facetseawchpawam instanceof countfacetseawchpawam
+        && (facetseawchpawam.getfacetfiewdwequest().getpath() == n-nyuww
+            || facetseawchpawam.getfacetfiewdwequest().getpath().isempty())
+        && sowtedsetdocvawuesweadewstatehewpew.isdimsuppowted(
+            s-state, (⑅˘꒳˘) facetseawchpawam.getfacetfiewdwequest().getfiewd());
   }
 }

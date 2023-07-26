@@ -1,111 +1,111 @@
-package com.twitter.search.feature_update_service.stats;
+package com.twittew.seawch.featuwe_update_sewvice.stats;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+impowt j-java.utiw.concuwwent.concuwwenthashmap;
+i-impowt java.utiw.concuwwent.concuwwentmap;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.featuwe_update_sewvice.thwiftjava.featuweupdatewesponsecode;
 
-/** Stat tracking for the feature update ingester service. */
-public class FeatureUpdateStats {
-  public static final String PREFIX = "feature_update_service_";
+/** s-stat t-twacking fow the f-featuwe update i-ingestew sewvice. ^•ﻌ•^ */
+pubwic cwass featuweupdatestats {
+  pubwic static finaw stwing p-pwefix = "featuwe_update_sewvice_";
 
-  private final SearchRateCounter requestRate = SearchRateCounter.export(
-      PREFIX + "requests");
+  pwivate finaw seawchwatecountew w-wequestwate = seawchwatecountew.expowt(
+      p-pwefix + "wequests");
 
-  private ConcurrentMap<String, SearchRateCounter> perClientRequestRate =
-      new ConcurrentHashMap<>();
+  pwivate concuwwentmap<stwing, (˘ω˘) seawchwatecountew> pewcwientwequestwate =
+      n-nyew concuwwenthashmap<>();
 
-  private ConcurrentMap<String, SearchRateCounter> responseCodeRate =
-      new ConcurrentHashMap<>();
+  pwivate concuwwentmap<stwing, :3 s-seawchwatecountew> w-wesponsecodewate =
+      nyew concuwwenthashmap<>();
 
-  private ConcurrentMap<String, SearchRateCounter> preClientResponseCodeRate =
-      new ConcurrentHashMap<>();
+  pwivate concuwwentmap<stwing, ^^;; seawchwatecountew> p-pwecwientwesponsecodewate =
+      nyew concuwwenthashmap<>();
 
   /**
-   * Record metrics for a single incoming request.
+   * wecowd metwics fow a singwe i-incoming wequest. 🥺
    */
-  public void clientRequest(String clientID) {
-    // 1. Track total request rate. It's better to precompute than compute the per client sum at
-    // query time.
-    requestRate.increment();
+  pubwic v-void cwientwequest(stwing c-cwientid) {
+    // 1. (⑅˘꒳˘) t-twack totaw wequest w-wate. nyaa~~ it's bettew to pwecompute than compute t-the pew cwient sum at
+    // quewy time. :3
+    wequestwate.incwement();
 
-    // 2. Track request rate per client.
-    incrementPerClientCounter(perClientRequestRate, clientRequestRateKey(clientID));
+    // 2. ( ͡o ω ͡o ) t-twack wequest wate pew cwient. mya
+    incwementpewcwientcountew(pewcwientwequestwate, (///ˬ///✿) cwientwequestwatekey(cwientid));
   }
 
   /**
-   * Record metrics for a single response.
+   * wecowd metwics fow a singwe w-wesponse. (˘ω˘)
    */
-  public void clientResponse(String clientID, FeatureUpdateResponseCode responseCode) {
-    String code = responseCode.toString().toLowerCase();
+  pubwic void c-cwientwesponse(stwing c-cwientid, ^^;; f-featuweupdatewesponsecode wesponsecode) {
+    stwing code = wesponsecode.tostwing().towowewcase();
 
-    // 1. Track rates per response code.
-    incrementPerClientCounter(responseCodeRate, responseCodeKey(code));
+    // 1. (✿oωo) twack wates pew wesponse c-code. (U ﹏ U)
+    i-incwementpewcwientcountew(wesponsecodewate, -.- wesponsecodekey(code));
 
-    // 2. Track rates per client per response code.
-    incrementPerClientCounter(preClientResponseCodeRate, clientResponseCodeKey(clientID, code));
+    // 2. ^•ﻌ•^ t-twack wates pew c-cwient pew wesponse code. rawr
+    incwementpewcwientcountew(pwecwientwesponsecodewate, c-cwientwesponsecodekey(cwientid, (˘ω˘) code));
   }
 
   /**
-   * Returns the total number of requests.
+   * w-wetuwns the totaw nyumbew of wequests. nyaa~~
    */
-  public long getRequestRateCount() {
-    return requestRate.getCount();
+  p-pubwic wong getwequestwatecount() {
+    w-wetuwn wequestwate.getcount();
   }
 
   /**
-   * Returns the total number of requests for the specified client.
+   * wetuwns the totaw n-nyumbew of wequests f-fow the specified cwient. UwU
    */
-  public long getClientRequestCount(String clientID)  {
-    String key = clientRequestRateKey(clientID);
-    if (perClientRequestRate.containsKey(key)) {
-      return perClientRequestRate.get(key).getCount();
+  pubwic wong getcwientwequestcount(stwing cwientid)  {
+    stwing key = cwientwequestwatekey(cwientid);
+    i-if (pewcwientwequestwate.containskey(key)) {
+      w-wetuwn pewcwientwequestwate.get(key).getcount();
     }
-    return 0;
+    wetuwn 0;
   }
 
   /**
-   * Returns the total number of responses with the specified code.
+   * w-wetuwns t-the totaw nyumbew o-of wesponses with the specified code. :3
    */
-  public long getResponseCodeCount(FeatureUpdateResponseCode responseCode) {
-    String code = responseCode.toString().toLowerCase();
-    String key = responseCodeKey(code);
-    if (responseCodeRate.containsKey(key)) {
-      return responseCodeRate.get(key).getCount();
+  pubwic wong g-getwesponsecodecount(featuweupdatewesponsecode wesponsecode) {
+    stwing code = wesponsecode.tostwing().towowewcase();
+    stwing k-key = wesponsecodekey(code);
+    if (wesponsecodewate.containskey(key)) {
+      w-wetuwn wesponsecodewate.get(key).getcount();
     }
-    return 0;
+    w-wetuwn 0;
   }
 
   /**
-   * Returns the total number of responses to the specified client with the specified code.
+   * w-wetuwns the totaw nyumbew of w-wesponses to the s-specified cwient w-with the specified c-code. (⑅˘꒳˘)
    */
-  public long getClientResponseCodeCount(String clientID, FeatureUpdateResponseCode responseCode) {
-    String code = responseCode.toString().toLowerCase();
-    String key = clientResponseCodeKey(clientID, code);
-    if (preClientResponseCodeRate.containsKey(key)) {
-      return preClientResponseCodeRate.get(key).getCount();
+  pubwic wong getcwientwesponsecodecount(stwing c-cwientid, (///ˬ///✿) featuweupdatewesponsecode w-wesponsecode) {
+    s-stwing c-code = wesponsecode.tostwing().towowewcase();
+    s-stwing key = cwientwesponsecodekey(cwientid, ^^;; code);
+    if (pwecwientwesponsecodewate.containskey(key)) {
+      wetuwn pwecwientwesponsecodewate.get(key).getcount();
     }
-    return 0;
+    w-wetuwn 0;
   }
 
-  private static String clientRequestRateKey(String clientID) {
-    return String.format(PREFIX + "requests_for_client_id_%s", clientID);
+  pwivate static stwing cwientwequestwatekey(stwing cwientid) {
+    wetuwn stwing.fowmat(pwefix + "wequests_fow_cwient_id_%s", >_< cwientid);
   }
 
-  private static String responseCodeKey(String responseCode) {
-    return String.format(PREFIX + "response_code_%s", responseCode);
+  p-pwivate static stwing wesponsecodekey(stwing wesponsecode) {
+    wetuwn stwing.fowmat(pwefix + "wesponse_code_%s", rawr x3 w-wesponsecode);
   }
 
-  private static String clientResponseCodeKey(String clientID, String responseCode) {
-    return String.format(PREFIX + "response_for_client_id_%s_code_%s", clientID, responseCode);
+  p-pwivate s-static stwing cwientwesponsecodekey(stwing c-cwientid, /(^•ω•^) stwing wesponsecode) {
+    w-wetuwn stwing.fowmat(pwefix + "wesponse_fow_cwient_id_%s_code_%s", :3 c-cwientid, wesponsecode);
   }
 
-  private void incrementPerClientCounter(
-      ConcurrentMap<String, SearchRateCounter> rates,
-      String key
+  pwivate void incwementpewcwientcountew(
+      concuwwentmap<stwing, (ꈍᴗꈍ) seawchwatecountew> wates, /(^•ω•^)
+      s-stwing key
   ) {
-    rates.putIfAbsent(key, SearchRateCounter.export(key));
-    rates.get(key).increment();
+    w-wates.putifabsent(key, (⑅˘꒳˘) seawchwatecountew.expowt(key));
+    w-wates.get(key).incwement();
   }
 }

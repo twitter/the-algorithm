@@ -1,43 +1,43 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
 /**
- * Provides functions for computing prescribed feature availability based
- * on some runtime condition(s). (e.g. watermark values)
+ * pwovides functions f-fow computing p-pwescwibed f-featuwe avaiwabiwity b-based
+ * o-on some wuntime c-condition(s). ( ͡o ω ͡o ) (e.g. w-watewmawk vawues)
  */
-object Availability {
+o-object avaiwabiwity {
 
   /**
-   * Stay at 100% available down to a high watermark success rate. Then
-   * between high and low watermarks, dial down availability to a provided
-   * minimum. Never go below this level because we need some requests to
-   * track the success rate going back up.
+   * stay at 100% avaiwabwe down to a high w-watewmawk success wate. (U ﹏ U) then
+   * between high a-and wow watewmawks, (///ˬ///✿) diaw down avaiwabiwity t-to a pwovided
+   * minimum. >w< nyevew go bewow this wevew b-because we nyeed some wequests t-to
+   * twack t-the success wate going back up. rawr
    *
-   * NOTE: watermarks and minAvailability must be between 0 and 1.
+   * nyote: watewmawks and minavaiwabiwity m-must be between 0 and 1. mya
    */
-  def linearlyScaled(
-    highWaterMark: Double,
-    lowWaterMark: Double,
-    minAvailability: Double
-  ): Double => Double = {
-    require(
-      highWaterMark >= lowWaterMark && highWaterMark <= 1,
-      s"highWaterMark ($highWaterMark) must be between lowWaterMark ($lowWaterMark) and 1, inclusive"
+  def wineawwyscawed(
+    highwatewmawk: doubwe, ^^
+    w-wowwatewmawk: doubwe, 😳😳😳
+    minavaiwabiwity: doubwe
+  ): d-doubwe => d-doubwe = {
+    w-wequiwe(
+      h-highwatewmawk >= wowwatewmawk && highwatewmawk <= 1,
+      s-s"highwatewmawk ($highwatewmawk) must be between wowwatewmawk ($wowwatewmawk) and 1, mya i-incwusive"
     )
-    require(
-      lowWaterMark >= minAvailability && lowWaterMark <= 1,
-      s"lowWaterMark ($lowWaterMark) must be between minAvailability ($minAvailability) and 1, inclusive"
+    wequiwe(
+      wowwatewmawk >= minavaiwabiwity && wowwatewmawk <= 1, 😳
+      s"wowwatewmawk ($wowwatewmawk) m-must be between minavaiwabiwity ($minavaiwabiwity) a-and 1, -.- incwusive"
     )
-    require(
-      minAvailability > 0 && minAvailability < 1,
-      s"minAvailability ($minAvailability) must be between 0 and 1, exclusive"
+    w-wequiwe(
+      m-minavaiwabiwity > 0 && minavaiwabiwity < 1,
+      s"minavaiwabiwity ($minavaiwabiwity) must be between 0 a-and 1, 🥺 e-excwusive"
     )
 
     {
-      case sr if sr >= highWaterMark => 1.0
-      case sr if sr <= lowWaterMark => minAvailability
-      case sr =>
-        val linearFraction = (sr - lowWaterMark) / (highWaterMark - lowWaterMark)
-        minAvailability + (1.0 - minAvailability) * linearFraction
+      case s-sw if sw >= highwatewmawk => 1.0
+      c-case sw if sw <= wowwatewmawk => m-minavaiwabiwity
+      case sw =>
+        v-vaw wineawfwaction = (sw - wowwatewmawk) / (highwatewmawk - wowwatewmawk)
+        minavaiwabiwity + (1.0 - minavaiwabiwity) * w-wineawfwaction
     }
   }
 }

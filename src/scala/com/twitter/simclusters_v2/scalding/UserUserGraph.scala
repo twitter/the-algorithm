@@ -1,142 +1,142 @@
-package com.twitter.simclusters_v2.scalding
+package com.twittew.simcwustews_v2.scawding
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, WriteExtension}
-import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
-  BatchDescription,
-  BatchFirstTime,
-  BatchIncrement,
-  TwitterScheduledExecutionApp
+impowt c-com.twittew.scawding._
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.dawwwite.{d, ( ͡o ω ͡o ) w-wwiteextension}
+i-impowt com.twittew.scawding_intewnaw.job.anawytics_batch.{
+  anawyticsbatchexecution, o.O
+  a-anawyticsbatchexecutionawgs, >w<
+  b-batchdescwiption, 😳
+  b-batchfiwsttime, 🥺
+  batchincwement, rawr x3
+  twittewscheduwedexecutionapp
 }
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.hdfs_sources.{
-  UserAndNeighborsFixedPathSource,
-  UserUserGraphScalaDataset
+impowt com.twittew.simcwustews_v2.scawding.common.utiw
+impowt com.twittew.simcwustews_v2.hdfs_souwces.{
+  usewandneighbowsfixedpathsouwce, o.O
+  u-usewusewgwaphscawadataset
 }
-import com.twitter.simclusters_v2.thriftscala.{NeighborWithWeights, UserAndNeighbors}
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import java.util.TimeZone
+impowt com.twittew.simcwustews_v2.thwiftscawa.{neighbowwithweights, rawr u-usewandneighbows}
+impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+i-impowt java.utiw.timezone
 
 /**
- * This is a scheduled version of the user_user_normalized_graph dataset generation job.
+ * this is a scheduwed vewsion of the u-usew_usew_nowmawized_gwaph dataset g-genewation j-job. ʘwʘ
  *
- * The key difference in this implementation is that we donot read the ProducerNormsAndCounts dataset.
- * So we no longer store the following producer normalized scores for the edges in the NeigborWithWeights thrift:
- * followScoreNormalizedByNeighborFollowersL2, favScoreHalfLife100DaysNormalizedByNeighborFaversL2 and logFavScoreL2Normalized
+ * the key diffewence in this impwementation is that we donot wead the pwoducewnowmsandcounts d-dataset. 😳😳😳
+ * so we nyo wongew stowe the fowwowing pwoducew nowmawized scowes f-fow the edges in the nyeigbowwithweights t-thwift:
+ * f-fowwowscowenowmawizedbyneighbowfowwowewsw2, ^^;; f-favscowehawfwife100daysnowmawizedbyneighbowfavewsw2 a-and wogfavscowew2nowmawized
  *
  */
-object UserUserGraph {
+object usewusewgwaph {
 
-  def getNeighborWithWeights(
-    inputEdge: Edge
-  ): NeighborWithWeights = {
-    val logFavScore = UserUserNormalizedGraph.logTransformation(inputEdge.favWeight)
-    NeighborWithWeights(
-      neighborId = inputEdge.destId,
-      isFollowed = Some(inputEdge.isFollowEdge),
-      favScoreHalfLife100Days = Some(inputEdge.favWeight),
-      logFavScore = Some(logFavScore),
+  d-def getneighbowwithweights(
+    inputedge: edge
+  ): nyeighbowwithweights = {
+    v-vaw wogfavscowe = usewusewnowmawizedgwaph.wogtwansfowmation(inputedge.favweight)
+    nyeighbowwithweights(
+      nyeighbowid = inputedge.destid, o.O
+      isfowwowed = s-some(inputedge.isfowwowedge), (///ˬ///✿)
+      favscowehawfwife100days = s-some(inputedge.favweight), σωσ
+      w-wogfavscowe = s-some(wogfavscowe), nyaa~~
     )
   }
 
-  def addWeightsAndAdjListify(
-    input: TypedPipe[Edge],
-    maxNeighborsPerUser: Int
+  def addweightsandadjwistify(
+    input: typedpipe[edge], ^^;;
+    maxneighbowspewusew: i-int
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[UserAndNeighbors] = {
-    val numUsersNeedingNeighborTruncation = Stat("num_users_needing_neighbor_truncation")
-    val numEdgesAfterTruncation = Stat("num_edges_after_truncation")
-    val numEdgesBeforeTruncation = Stat("num_edges_before_truncation")
-    val numFollowEdgesBeforeTruncation = Stat("num_follow_edges_before_truncation")
-    val numFavEdgesBeforeTruncation = Stat("num_fav_edges_before_truncation")
-    val numFollowEdgesAfterTruncation = Stat("num_follow_edges_after_truncation")
-    val numFavEdgesAfterTruncation = Stat("num_fav_edges_after_truncation")
-    val numRecordsInOutputGraph = Stat("num_records_in_output_graph")
+    i-impwicit uniqueid: uniqueid
+  ): t-typedpipe[usewandneighbows] = {
+    v-vaw nyumusewsneedingneighbowtwuncation = stat("num_usews_needing_neighbow_twuncation")
+    v-vaw nyumedgesaftewtwuncation = stat("num_edges_aftew_twuncation")
+    v-vaw nyumedgesbefowetwuncation = stat("num_edges_befowe_twuncation")
+    vaw numfowwowedgesbefowetwuncation = s-stat("num_fowwow_edges_befowe_twuncation")
+    vaw nyumfavedgesbefowetwuncation = s-stat("num_fav_edges_befowe_twuncation")
+    vaw nyumfowwowedgesaftewtwuncation = s-stat("num_fowwow_edges_aftew_twuncation")
+    v-vaw nyumfavedgesaftewtwuncation = stat("num_fav_edges_aftew_twuncation")
+    vaw numwecowdsinoutputgwaph = stat("num_wecowds_in_output_gwaph")
 
     input
       .map { edge =>
-        numEdgesBeforeTruncation.inc()
-        if (edge.isFollowEdge) numFollowEdgesBeforeTruncation.inc()
-        if (edge.favWeight > 0) numFavEdgesBeforeTruncation.inc()
-        (edge.srcId, getNeighborWithWeights(edge))
+        nyumedgesbefowetwuncation.inc()
+        i-if (edge.isfowwowedge) nyumfowwowedgesbefowetwuncation.inc()
+        i-if (edge.favweight > 0) nyumfavedgesbefowetwuncation.inc()
+        (edge.swcid, ^•ﻌ•^ g-getneighbowwithweights(edge))
       }
-      .group
-      //      .withReducers(10000)
-      .sortedReverseTake(maxNeighborsPerUser)(Ordering.by { x: NeighborWithWeights =>
-        x.favScoreHalfLife100Days.getOrElse(0.0)
+      .gwoup
+      //      .withweducews(10000)
+      .sowtedwevewsetake(maxneighbowspewusew)(owdewing.by { x: n-nyeighbowwithweights =>
+        x-x.favscowehawfwife100days.getowewse(0.0)
       })
       .map {
-        case (srcId, neighborList) =>
-          if (neighborList.size >= maxNeighborsPerUser) numUsersNeedingNeighborTruncation.inc()
-          neighborList.foreach { neighbor =>
-            numEdgesAfterTruncation.inc()
-            if (neighbor.favScoreHalfLife100Days.exists(_ > 0)) numFavEdgesAfterTruncation.inc()
-            if (neighbor.isFollowed.contains(true)) numFollowEdgesAfterTruncation.inc()
+        case (swcid, σωσ nyeighbowwist) =>
+          if (neighbowwist.size >= m-maxneighbowspewusew) nyumusewsneedingneighbowtwuncation.inc()
+          nyeighbowwist.foweach { nyeighbow =>
+            nyumedgesaftewtwuncation.inc()
+            if (neighbow.favscowehawfwife100days.exists(_ > 0)) n-numfavedgesaftewtwuncation.inc()
+            if (neighbow.isfowwowed.contains(twue)) n-nyumfowwowedgesaftewtwuncation.inc()
           }
-          numRecordsInOutputGraph.inc()
-          UserAndNeighbors(srcId, neighborList)
+          n-nyumwecowdsinoutputgwaph.inc()
+          u-usewandneighbows(swcid, nyeighbowwist)
       }
   }
 
-  def run(
-    followEdges: TypedPipe[(Long, Long)],
-    favEdges: TypedPipe[(Long, Long, Double)],
-    maxNeighborsPerUser: Int
+  d-def wun(
+    fowwowedges: t-typedpipe[(wong, -.- w-wong)], ^^;;
+    f-favedges: typedpipe[(wong, XD wong, doubwe)], 🥺
+    m-maxneighbowspewusew: i-int
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[UserAndNeighbors] = {
-    val combined = UserUserNormalizedGraph.combineFollowAndFav(followEdges, favEdges)
-    addWeightsAndAdjListify(
-      combined,
-      maxNeighborsPerUser
+    i-impwicit u-uniqueid: uniqueid
+  ): t-typedpipe[usewandneighbows] = {
+    vaw combined = usewusewnowmawizedgwaph.combinefowwowandfav(fowwowedges, òωó favedges)
+    addweightsandadjwistify(
+      c-combined, (ˆ ﻌ ˆ)♡
+      maxneighbowspewusew
     )
   }
 }
 
 /**
  *
- * capesospy-v2 update --build_locally --start_cron user_user_follow_fav_graph \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v2 update --buiwd_wocawwy --stawt_cwon usew_usew_fowwow_fav_gwaph \
+ * swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
 
-object UserUserGraphBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2021-04-24"
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(2)
-  private val halfLifeInDaysForFavScore = 100
+object usewusewgwaphbatch e-extends twittewscheduwedexecutionapp {
+  pwivate vaw fiwsttime: stwing = "2021-04-24"
+  i-impwicit v-vaw tz = dateops.utc
+  i-impwicit vaw pawsew = d-datepawsew.defauwt
+  pwivate vaw b-batchincwement: d-duwation = days(2)
+  pwivate vaw hawfwifeindaysfowfavscowe = 100
 
-  private val outputPath: String = "/user/cassowary/processed/user_user_graph"
+  pwivate vaw outputpath: stwing = "/usew/cassowawy/pwocessed/usew_usew_gwaph"
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pwivate vaw e-execawgs = anawyticsbatchexecutionawgs(
+    batchdesc = b-batchdescwiption(this.getcwass.getname.wepwace("$", -.- "")), :3
+    fiwsttime = b-batchfiwsttime(wichdate(fiwsttime)), ʘwʘ
+    w-wasttime = nyone, 🥺
+    batchincwement = b-batchincwement(batchincwement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
+  o-ovewwide def scheduwedjob: e-execution[unit] = a-anawyticsbatchexecution(execawgs) {
+    impwicit datewange =>
+      execution.withid { impwicit u-uniqueid =>
+        e-execution.withawgs { awgs =>
+          v-vaw maxneighbowspewusew = awgs.int("maxneighbowspewusew", >_< 2000)
 
-          Util.printCounters(
-            UserUserGraph
-              .run(
-                UserUserNormalizedGraph.getFollowEdges,
-                UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore),
-                maxNeighborsPerUser
+          u-utiw.pwintcountews(
+            u-usewusewgwaph
+              .wun(
+                usewusewnowmawizedgwaph.getfowwowedges, ʘwʘ
+                u-usewusewnowmawizedgwaph.getfavedges(hawfwifeindaysfowfavscowe),
+                maxneighbowspewusew
               )
-              .writeDALSnapshotExecution(
-                UserUserGraphScalaDataset,
-                D.Daily,
-                D.Suffix(outputPath),
-                D.EBLzo(),
-                dateRange.end)
+              .wwitedawsnapshotexecution(
+                usewusewgwaphscawadataset, (˘ω˘)
+                d.daiwy, (✿oωo)
+                d.suffix(outputpath), (///ˬ///✿)
+                d.ebwzo(), rawr x3
+                d-datewange.end)
           )
         }
       }
@@ -144,37 +144,37 @@ object UserUserGraphBatch extends TwitterScheduledExecutionApp {
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:user_user_graph-adhoc
-scalding remote run \
---user cassowary \
---keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
---principal service_acoount@TWITTER.BIZ \
---cluster bluebird-qus1 \
---main-class com.twitter.simclusters_v2.scalding.UserUserGraphAdhoc \
---target src/scala/com/twitter/simclusters_v2/scalding:user_user_graph-adhoc \
--- --date 2021-04-24 --outputDir "/user/cassowary/adhoc/user_user_graph_adhoc"
+./bazew b-bundwe swc/scawa/com/twittew/simcwustews_v2/scawding:usew_usew_gwaph-adhoc
+scawding wemote w-wun \
+--usew c-cassowawy \
+--keytab /vaw/wib/tss/keys/fwoofy/keytabs/cwient/cassowawy.keytab \
+--pwincipaw sewvice_acoount@twittew.biz \
+--cwustew bwuebiwd-qus1 \
+--main-cwass com.twittew.simcwustews_v2.scawding.usewusewgwaphadhoc \
+--tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding:usew_usew_gwaph-adhoc \
+-- --date 2021-04-24 --outputdiw "/usew/cassowawy/adhoc/usew_usew_gwaph_adhoc"
  */
-object UserUserGraphAdhoc extends AdhocExecutionApp {
-  override def runOnDateRange(
-    args: Args
+object usewusewgwaphadhoc extends adhocexecutionapp {
+  ovewwide def w-wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
-    val halfLifeInDaysForFavScore = 100
-    val outputDir = args("outputDir")
-    val userAndNeighbors =
-      UserUserGraph
-        .run(
-          UserUserNormalizedGraph.getFollowEdges,
-          UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore),
-          maxNeighborsPerUser)
+    impwicit d-datewange: datewange, -.-
+    t-timezone: timezone, ^^
+    uniqueid: uniqueid
+  ): execution[unit] = {
+    v-vaw maxneighbowspewusew = awgs.int("maxneighbowspewusew", (⑅˘꒳˘) 2000)
+    v-vaw hawfwifeindaysfowfavscowe = 100
+    vaw outputdiw = awgs("outputdiw")
+    vaw usewandneighbows =
+      u-usewusewgwaph
+        .wun(
+          usewusewnowmawizedgwaph.getfowwowedges, nyaa~~
+          u-usewusewnowmawizedgwaph.getfavedges(hawfwifeindaysfowfavscowe), /(^•ω•^)
+          maxneighbowspewusew)
 
-    Execution
+    execution
       .zip(
-        userAndNeighbors.writeExecution(UserAndNeighborsFixedPathSource(outputDir)),
-        userAndNeighbors.writeExecution(TypedTsv(outputDir + "_tsv"))).unit
+        usewandneighbows.wwiteexecution(usewandneighbowsfixedpathsouwce(outputdiw)), (U ﹏ U)
+        u-usewandneighbows.wwiteexecution(typedtsv(outputdiw + "_tsv"))).unit
   }
 }

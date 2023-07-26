@@ -1,73 +1,73 @@
-package com.twitter.recos.user_video_graph
+package com.twittew.wecos.usew_video_gwaph
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.tracing.TraceId
-import com.twitter.recos.decider.EndpointLoadShedder
-import com.twitter.recos.user_video_graph.thriftscala._
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import scala.concurrent.duration.MILLISECONDS
-import com.twitter.logging.Logger
-import com.twitter.recos.user_tweet_graph.relatedTweetHandlers.ConsumersBasedRelatedTweetsHandler
-import com.twitter.recos.user_video_graph.relatedTweetHandlers.ProducerBasedRelatedTweetsHandler
-import com.twitter.recos.user_video_graph.relatedTweetHandlers.TweetBasedRelatedTweetsHandler
+impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.finagwe.twacing.twace
+impowt c-com.twittew.finagwe.twacing.twaceid
+i-impowt c-com.twittew.wecos.decidew.endpointwoadsheddew
+impowt c-com.twittew.wecos.usew_video_gwaph.thwiftscawa._
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.timew
+impowt scawa.concuwwent.duwation.miwwiseconds
+impowt com.twittew.wogging.woggew
+impowt com.twittew.wecos.usew_tweet_gwaph.wewatedtweethandwews.consumewsbasedwewatedtweetshandwew
+i-impowt com.twittew.wecos.usew_video_gwaph.wewatedtweethandwews.pwoducewbasedwewatedtweetshandwew
+impowt com.twittew.wecos.usew_video_gwaph.wewatedtweethandwews.tweetbasedwewatedtweetshandwew
 
-object UserVideoGraph {
-  def traceId: TraceId = Trace.id
-  def clientId: Option[ClientId] = ClientId.current
+object usewvideogwaph {
+  d-def twaceid: twaceid = twace.id
+  d-def cwientid: option[cwientid] = cwientid.cuwwent
 }
 
-class UserVideoGraph(
-  tweetBasedRelatedTweetsHandler: TweetBasedRelatedTweetsHandler,
-  producerBasedRelatedTweetsHandler: ProducerBasedRelatedTweetsHandler,
-  consumersBasedRelatedTweetsHandler: ConsumersBasedRelatedTweetsHandler,
-  endpointLoadShedder: EndpointLoadShedder
+cwass usewvideogwaph(
+  t-tweetbasedwewatedtweetshandwew: tweetbasedwewatedtweetshandwew, mya
+  p-pwoducewbasedwewatedtweetshandwew: p-pwoducewbasedwewatedtweetshandwew, 😳
+  consumewsbasedwewatedtweetshandwew: consumewsbasedwewatedtweetshandwew, -.-
+  endpointwoadsheddew: endpointwoadsheddew
 )(
-  implicit timer: Timer)
-    extends thriftscala.UserVideoGraph.MethodPerEndpoint {
+  i-impwicit timew: timew)
+    extends thwiftscawa.usewvideogwaph.methodpewendpoint {
 
-  private val defaultTimeout: Duration = Duration(50, MILLISECONDS)
-  private val EmptyResponse = Future.value(RelatedTweetResponse())
-  private val log = Logger()
+  pwivate vaw defauwttimeout: d-duwation = duwation(50, 🥺 miwwiseconds)
+  p-pwivate v-vaw emptywesponse = f-futuwe.vawue(wewatedtweetwesponse())
+  p-pwivate vaw wog = woggew()
 
-  override def tweetBasedRelatedTweets(
-    request: TweetBasedRelatedTweetRequest
-  ): Future[RelatedTweetResponse] =
-    endpointLoadShedder("videoGraphTweetBasedRelatedTweets") {
-      tweetBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
-    }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
-        EmptyResponse
+  ovewwide d-def tweetbasedwewatedtweets(
+    wequest: tweetbasedwewatedtweetwequest
+  ): futuwe[wewatedtweetwesponse] =
+    e-endpointwoadsheddew("videogwaphtweetbasedwewatedtweets") {
+      tweetbasedwewatedtweetshandwew(wequest).waisewithin(defauwttimeout)
+    }.wescue {
+      case endpointwoadsheddew.woadsheddingexception =>
+        emptywesponse
       case e =>
-        log.info("user-video-graph_tweetBasedRelatedTweets" + e)
-        EmptyResponse
+        wog.info("usew-video-gwaph_tweetbasedwewatedtweets" + e-e)
+        emptywesponse
     }
 
-  override def producerBasedRelatedTweets(
-    request: ProducerBasedRelatedTweetRequest
-  ): Future[RelatedTweetResponse] =
-    endpointLoadShedder("producerBasedRelatedTweets") {
-      producerBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
-    }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
-        EmptyResponse
-      case e =>
-        log.info("user-video-graph_producerBasedRelatedTweets" + e)
-        EmptyResponse
+  o-ovewwide d-def pwoducewbasedwewatedtweets(
+    w-wequest: pwoducewbasedwewatedtweetwequest
+  ): futuwe[wewatedtweetwesponse] =
+    endpointwoadsheddew("pwoducewbasedwewatedtweets") {
+      pwoducewbasedwewatedtweetshandwew(wequest).waisewithin(defauwttimeout)
+    }.wescue {
+      c-case e-endpointwoadsheddew.woadsheddingexception =>
+        emptywesponse
+      c-case e =>
+        w-wog.info("usew-video-gwaph_pwoducewbasedwewatedtweets" + e)
+        e-emptywesponse
     }
 
-  override def consumersBasedRelatedTweets(
-    request: ConsumersBasedRelatedTweetRequest
-  ): Future[RelatedTweetResponse] =
-    endpointLoadShedder("consumersBasedRelatedTweets") {
-      consumersBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
-    }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
-        EmptyResponse
-      case e =>
-        log.info("user-video-graph_consumersBasedRelatedTweets" + e)
-        EmptyResponse
+  ovewwide d-def consumewsbasedwewatedtweets(
+    wequest: consumewsbasedwewatedtweetwequest
+  ): futuwe[wewatedtweetwesponse] =
+    e-endpointwoadsheddew("consumewsbasedwewatedtweets") {
+      consumewsbasedwewatedtweetshandwew(wequest).waisewithin(defauwttimeout)
+    }.wescue {
+      c-case endpointwoadsheddew.woadsheddingexception =>
+        emptywesponse
+      c-case e-e =>
+        wog.info("usew-video-gwaph_consumewsbasedwewatedtweets" + e)
+        emptywesponse
     }
 }

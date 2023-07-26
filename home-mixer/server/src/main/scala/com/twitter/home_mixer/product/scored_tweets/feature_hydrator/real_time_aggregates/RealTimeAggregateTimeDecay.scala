@@ -1,49 +1,49 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.weaw_time_aggwegates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.constant.SharedFeatures.TIMESTAMP
-import com.twitter.util.Duration
+impowt c-com.twittew.mw.api.datawecowd
+i-impowt com.twittew.mw.api.constant.shawedfeatuwes.timestamp
+i-impowt c-com.twittew.utiw.duwation
 
 /**
- * The default TimeDecay implementation for real time aggregates.
+ * t-the defauwt t-timedecay impwementation f-fow weaw t-time aggwegates. ( ͡o ω ͡o )
  *
- * @param featureIdToHalfLife A precomputed map from aggregate feature ids to their half lives.
- * @param timestampFeatureId A discrete timestamp feature id.
+ * @pawam featuweidtohawfwife a pwecomputed map fwom aggwegate featuwe ids t-to theiw hawf wives. (U ﹏ U)
+ * @pawam timestampfeatuweid a-a discwete timestamp featuwe i-id. (///ˬ///✿)
  */
-case class RealTimeAggregateTimeDecay(
-  featureIdToHalfLife: Map[Long, Duration],
-  timestampFeatureId: Long = TIMESTAMP.getFeatureId) {
+case cwass weawtimeaggwegatetimedecay(
+  featuweidtohawfwife: map[wong, >w< d-duwation], rawr
+  timestampfeatuweid: wong = timestamp.getfeatuweid) {
 
   /**
-   * Mutates the data record which is just a reference to the input.
+   * mutates t-the data w-wecowd which is just a wefewence to the input. mya
    *
-   * @param record    Data record to apply decay to (is mutated).
-   * @param timeNow   The current read time (in milliseconds) to decay counts forward to.
+   * @pawam wecowd    data wecowd to appwy decay t-to (is mutated). ^^
+   * @pawam timenow   the cuwwent wead time (in miwwiseconds) to decay counts f-fowwawd to.
    */
-  def apply(record: DataRecord, timeNow: Long): Unit = {
-    if (record.isSetDiscreteFeatures) {
-      val discreteFeatures = record.getDiscreteFeatures
-      if (discreteFeatures.containsKey(timestampFeatureId)) {
-        if (record.isSetContinuousFeatures) {
-          val ctsFeatures = record.getContinuousFeatures
+  def appwy(wecowd: d-datawecowd, 😳😳😳 t-timenow: wong): u-unit = {
+    i-if (wecowd.issetdiscwetefeatuwes) {
+      vaw discwetefeatuwes = w-wecowd.getdiscwetefeatuwes
+      if (discwetefeatuwes.containskey(timestampfeatuweid)) {
+        if (wecowd.issetcontinuousfeatuwes) {
+          v-vaw ctsfeatuwes = wecowd.getcontinuousfeatuwes
 
-          val storedTimestamp: Long = discreteFeatures.get(timestampFeatureId)
-          val scaledDt = if (timeNow > storedTimestamp) {
-            (timeNow - storedTimestamp).toDouble * math.log(2)
-          } else 0.0
-          featureIdToHalfLife.foreach {
-            case (featureId, halfLife) =>
-              if (ctsFeatures.containsKey(featureId)) {
-                val storedValue = ctsFeatures.get(featureId)
-                val alpha =
-                  if (halfLife.inMilliseconds != 0) math.exp(-scaledDt / halfLife.inMilliseconds)
-                  else 0
-                val decayedValue: Double = alpha * storedValue
-                record.putToContinuousFeatures(featureId, decayedValue)
+          vaw stowedtimestamp: wong = discwetefeatuwes.get(timestampfeatuweid)
+          vaw scaweddt = if (timenow > s-stowedtimestamp) {
+            (timenow - stowedtimestamp).todoubwe * m-math.wog(2)
+          } e-ewse 0.0
+          f-featuweidtohawfwife.foweach {
+            case (featuweid, mya hawfwife) =>
+              if (ctsfeatuwes.containskey(featuweid)) {
+                v-vaw s-stowedvawue = ctsfeatuwes.get(featuweid)
+                vaw awpha =
+                  i-if (hawfwife.inmiwwiseconds != 0) m-math.exp(-scaweddt / hawfwife.inmiwwiseconds)
+                  e-ewse 0
+                vaw decayedvawue: d-doubwe = awpha * stowedvawue
+                wecowd.puttocontinuousfeatuwes(featuweid, 😳 decayedvawue)
               }
           }
         }
-        discreteFeatures.remove(timestampFeatureId)
+        d-discwetefeatuwes.wemove(timestampfeatuweid)
       }
     }
   }

@@ -1,12 +1,12 @@
-package com.twitter.cr_mixer.model
+package com.twittew.cw_mixew.modew
 
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
+impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.wecos.wecos_common.thwiftscawa.sociawpwooftype
 
 /***
- * Bind a tweetId with a raw score and social proofs by type
+ * bind a-a tweetid with a-a waw scowe and s-sociaw pwoofs b-by type
  */
-case class TweetWithScoreAndSocialProof(
-  tweetId: TweetId,
-  score: Double,
-  socialProofByType: Map[SocialProofType, Seq[Long]])
+case c-cwass tweetwithscoweandsociawpwoof(
+  t-tweetid: t-tweetid, rawr x3
+  scowe: doubwe, rawr
+  sociawpwoofbytype: map[sociawpwooftype, σωσ seq[wong]])

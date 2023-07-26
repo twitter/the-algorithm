@@ -1,133 +1,133 @@
-package com.twitter.timelineranker.parameters.in_network_tweets
+package com.twittew.timewinewankew.pawametews.in_netwowk_tweets
 
-import com.twitter.timelineranker.parameters.recap.RecapQueryContext
-import com.twitter.timelines.configapi.decider._
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewinewankew.pawametews.wecap.wecapquewycontext
+i-impowt com.twittew.timewines.configapi.decidew._
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt c-com.twittew.timewines.configapi.pawam
 
-object InNetworkTweetParams {
-  import RecapQueryContext._
+o-object i-innetwowktweetpawams {
+  impowt wecapquewycontext._
 
   /**
-   * Controls limit on the number of followed users fetched from SGS.
+   * contwows wimit on the nyumbew of f-fowwowed usews fetched fwom sgs. (///ˬ///✿)
    *
-   * The specific default value below is for blender-timelines parity.
+   * the s-specific defauwt vawue bewow is f-fow bwendew-timewines pawity. (˘ω˘)
    */
-  object MaxFollowedUsersParam
-      extends FSBoundedParam[Int](
-        name = "recycled_max_followed_users",
-        default = MaxFollowedUsers.default,
-        min = MaxFollowedUsers.bounds.minInclusive,
-        max = MaxFollowedUsers.bounds.maxInclusive
+  object maxfowwowedusewspawam
+      extends f-fsboundedpawam[int](
+        nyame = "wecycwed_max_fowwowed_usews", ^^;;
+        d-defauwt = m-maxfowwowedusews.defauwt, (✿oωo)
+        min = maxfowwowedusews.bounds.minincwusive, (U ﹏ U)
+        max = maxfowwowedusews.bounds.maxincwusive
       )
 
   /**
-   * Controls limit on the number of hits for Earlybird.
+   * contwows w-wimit on the nyumbew of hits fow eawwybiwd. -.-
    *
    */
-  object RelevanceOptionsMaxHitsToProcessParam
-      extends FSBoundedParam[Int](
-        name = "recycled_relevance_options_max_hits_to_process",
-        default = 500,
-        min = 100,
-        max = 20000
+  object wewevanceoptionsmaxhitstopwocesspawam
+      e-extends fsboundedpawam[int](
+        nyame = "wecycwed_wewevance_options_max_hits_to_pwocess",
+        d-defauwt = 500, ^•ﻌ•^
+        min = 100, rawr
+        m-max = 20000
       )
 
   /**
-   * Fallback value for maximum number of search results, if not specified by query.maxCount
+   * f-fawwback vawue f-fow maximum nyumbew of seawch wesuwts, if nyot s-specified by quewy.maxcount
    */
-  object DefaultMaxTweetCount extends Param(200)
+  object defauwtmaxtweetcount extends pawam(200)
 
   /**
-   * We multiply maxCount (caller supplied value) by this multiplier and fetch those many
-   * candidates from search so that we are left with sufficient number of candidates after
-   * hydration and filtering.
+   * we m-muwtipwy maxcount (cawwew suppwied vawue) by this muwtipwiew and fetch those many
+   * candidates f-fwom seawch so that we awe weft w-with sufficient n-nyumbew of candidates a-aftew
+   * hydwation and fiwtewing. (˘ω˘)
    */
-  object MaxCountMultiplierParam
-      extends Param(MaxCountMultiplier.default)
-      with DeciderValueConverter[Double] {
-    override def convert: IntConverter[Double] =
-      OutputBoundIntConverter[Double](divideDeciderBy100 _, MaxCountMultiplier.bounds)
+  object maxcountmuwtipwiewpawam
+      e-extends p-pawam(maxcountmuwtipwiew.defauwt)
+      with d-decidewvawueconvewtew[doubwe] {
+    o-ovewwide def convewt: intconvewtew[doubwe] =
+      o-outputboundintconvewtew[doubwe](dividedecidewby100 _, nyaa~~ maxcountmuwtipwiew.bounds)
   }
 
   /**
-   * Enable [[SearchQueryBuilder.createExcludedSourceTweetIdsQuery]]
+   * e-enabwe [[seawchquewybuiwdew.cweateexcwudedsouwcetweetidsquewy]]
    */
-  object EnableExcludeSourceTweetIdsQueryParam
-      extends FSParam[Boolean](
-        name = "recycled_exclude_source_tweet_ids_query_enable",
-        default = false
+  object enabweexcwudesouwcetweetidsquewypawam
+      extends fspawam[boowean](
+        n-nyame = "wecycwed_excwude_souwce_tweet_ids_quewy_enabwe", UwU
+        defauwt = f-fawse
       )
 
-  object EnableEarlybirdReturnAllResultsParam
-      extends FSParam[Boolean](
-        name = "recycled_enable_earlybird_return_all_results",
-        default = true
+  object enabweeawwybiwdwetuwnawwwesuwtspawam
+      e-extends fspawam[boowean](
+        n-nyame = "wecycwed_enabwe_eawwybiwd_wetuwn_aww_wesuwts", :3
+        defauwt = twue
       )
 
   /**
-   * FS-controlled param to enable anti-dilution transform for DDG-16198
+   * fs-contwowwed pawam to enabwe anti-diwution twansfowm fow d-ddg-16198
    */
-  object RecycledMaxFollowedUsersEnableAntiDilutionParam
-      extends FSParam[Boolean](
-        name = "recycled_max_followed_users_enable_anti_dilution",
-        default = false
+  o-object wecycwedmaxfowwowedusewsenabweantidiwutionpawam
+      extends fspawam[boowean](
+        n-nyame = "wecycwed_max_fowwowed_usews_enabwe_anti_diwution", (⑅˘꒳˘)
+        d-defauwt = f-fawse
       )
 
   /**
-   * Enables semantic core, penguin, and tweetypie content features in recycled source.
+   * enabwes semantic cowe, (///ˬ///✿) penguin, and t-tweetypie content featuwes in wecycwed souwce. ^^;;
    */
-  object EnableContentFeaturesHydrationParam extends Param(default = true)
+  object enabwecontentfeatuweshydwationpawam extends pawam(defauwt = t-twue)
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * additionawwy e-enabwes t-tokens when hydwating c-content featuwes. >_<
    */
-  object EnableTokensInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recycled_enable_tokens_in_content_features_hydration",
-        default = false
-      )
-
-  /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
-   */
-  object EnableTweetTextInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recycled_enable_tweet_text_in_content_features_hydration",
-        default = false
+  object enabwetokensincontentfeatuweshydwationpawam
+      e-extends f-fspawam(
+        n-nyame = "wecycwed_enabwe_tokens_in_content_featuwes_hydwation", rawr x3
+        d-defauwt = fawse
       )
 
   /**
-   * Enables hydrating root tweet of in-network replies and extended replies
+   * additionawwy enabwes t-tweet text when h-hydwating content f-featuwes. /(^•ω•^)
+   * t-this onwy wowks i-if enabwecontentfeatuweshydwationpawam is set to twue
    */
-  object EnableReplyRootTweetHydrationParam
-      extends FSParam(
-        name = "recycled_enable_reply_root_tweet_hydration",
-        default = true
+  object enabwetweettextincontentfeatuweshydwationpawam
+      extends f-fspawam(
+        nyame = "wecycwed_enabwe_tweet_text_in_content_featuwes_hydwation", :3
+        defauwt = fawse
       )
 
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * enabwes hydwating woot tweet of in-netwowk w-wepwies and extended wepwies
    */
-  object EnableConversationControlInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "conversation_control_in_content_features_hydration_recycled_enable",
-        default = false
+  object enabwewepwywoottweethydwationpawam
+      extends f-fspawam(
+        n-nyame = "wecycwed_enabwe_wepwy_woot_tweet_hydwation", (ꈍᴗꈍ)
+        defauwt = t-twue
       )
 
-  object EnableTweetMediaHydrationParam
-      extends FSParam(
-        name = "tweet_media_hydration_recycled_enable",
-        default = false
+  /**
+   * additionawwy enabwes c-convewsationcontwow when h-hydwating content f-featuwes. /(^•ω•^)
+   * this onwy wowks if enabwecontentfeatuweshydwationpawam is set to twue
+   */
+  object enabweconvewsationcontwowincontentfeatuweshydwationpawam
+      e-extends fspawam(
+        nyame = "convewsation_contwow_in_content_featuwes_hydwation_wecycwed_enabwe", (⑅˘꒳˘)
+        d-defauwt = fawse
       )
 
-  object EnableEarlybirdRealtimeCgMigrationParam
-      extends FSParam(
-        name = "recycled_enable_earlybird_realtime_cg_migration",
-        default = false
+  object enabwetweetmediahydwationpawam
+      e-extends f-fspawam(
+        nyame = "tweet_media_hydwation_wecycwed_enabwe", ( ͡o ω ͡o )
+        defauwt = f-fawse
+      )
+
+  o-object enabweeawwybiwdweawtimecgmigwationpawam
+      extends f-fspawam(
+        n-nyame = "wecycwed_enabwe_eawwybiwd_weawtime_cg_migwation", òωó
+        defauwt = fawse
       )
 
 }

@@ -1,94 +1,94 @@
-package com.twitter.visibility.generators
+package com.twittew.visibiwity.genewatows
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common.actions.TombstoneReason
-import com.twitter.visibility.configapi.VisibilityParams
-import com.twitter.visibility.rules.Epitaph
-import com.twitter.visibility.rules.LocalizedTombstone
-import com.twitter.visibility.rules.Tombstone
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.utiw.memoizingstatsweceivew
+i-impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+i-impowt com.twittew.visibiwity.common.actions.tombstoneweason
+i-impowt com.twittew.visibiwity.configapi.visibiwitypawams
+i-impowt com.twittew.visibiwity.wuwes.epitaph
+impowt com.twittew.visibiwity.wuwes.wocawizedtombstone
+impowt com.twittew.visibiwity.wuwes.tombstone
 
-object TombstoneGenerator {
-  def apply(
-    visibilityParams: VisibilityParams,
-    countryNameGenerator: CountryNameGenerator,
-    statsReceiver: StatsReceiver
-  ): TombstoneGenerator = {
-    new TombstoneGenerator(visibilityParams, countryNameGenerator, statsReceiver)
+o-object tombstonegenewatow {
+  def appwy(
+    v-visibiwitypawams: visibiwitypawams, mya
+    c-countwynamegenewatow: countwynamegenewatow, (⑅˘꒳˘)
+    statsweceivew: statsweceivew
+  ): t-tombstonegenewatow = {
+    new tombstonegenewatow(visibiwitypawams, c-countwynamegenewatow, (U ﹏ U) s-statsweceivew)
   }
 }
 
-class TombstoneGenerator(
-  paramsFactory: VisibilityParams,
-  countryNameGenerator: CountryNameGenerator,
-  baseStatsReceiver: StatsReceiver) {
+cwass tombstonegenewatow(
+  pawamsfactowy: visibiwitypawams, mya
+  countwynamegenewatow: countwynamegenewatow, ʘwʘ
+  b-basestatsweceivew: statsweceivew) {
 
-  private[this] val statsReceiver = new MemoizingStatsReceiver(
-    baseStatsReceiver.scope("tombstone_generator"))
-  private[this] val deletedReceiver = statsReceiver.scope("deleted_state")
-  private[this] val authorStateReceiver = statsReceiver.scope("tweet_author_state")
-  private[this] val visResultReceiver = statsReceiver.scope("visibility_result")
+  pwivate[this] vaw statsweceivew = nyew memoizingstatsweceivew(
+    b-basestatsweceivew.scope("tombstone_genewatow"))
+  pwivate[this] v-vaw dewetedweceivew = s-statsweceivew.scope("deweted_state")
+  p-pwivate[this] v-vaw authowstateweceivew = statsweceivew.scope("tweet_authow_state")
+  pwivate[this] v-vaw viswesuwtweceivew = statsweceivew.scope("visibiwity_wesuwt")
 
-  def apply(
-    result: VisibilityResult,
-    language: String
-  ): VisibilityResult = {
+  def a-appwy(
+    wesuwt: visibiwitywesuwt, (˘ω˘)
+    wanguage: stwing
+  ): visibiwitywesuwt = {
 
-    result.verdict match {
-      case tombstone: Tombstone =>
-        val epitaph = tombstone.epitaph
-        visResultReceiver.scope("tombstone").counter(epitaph.name.toLowerCase())
+    wesuwt.vewdict m-match {
+      case tombstone: t-tombstone =>
+        v-vaw e-epitaph = tombstone.epitaph
+        viswesuwtweceivew.scope("tombstone").countew(epitaph.name.towowewcase())
 
-        val overriddenLanguage = epitaph match {
-          case Epitaph.LegalDemandsWithheldMedia | Epitaph.LocalLawsWithheldMedia => "en"
-          case _ => language
+        vaw ovewwiddenwanguage = epitaph match {
+          c-case epitaph.wegawdemandswithhewdmedia | e-epitaph.wocawwawswithhewdmedia => "en"
+          case _ => wanguage
         }
 
-        tombstone.applicableCountryCodes match {
-          case Some(countryCodes) => {
-            val countryNames = countryCodes.map(countryNameGenerator.getCountryName(_))
+        t-tombstone.appwicabwecountwycodes m-match {
+          case s-some(countwycodes) => {
+            vaw countwynames = c-countwycodes.map(countwynamegenewatow.getcountwyname(_))
 
-            result.copy(verdict = LocalizedTombstone(
-              reason = epitaphToTombstoneReason(epitaph),
-              message = EpitaphToLocalizedMessage(epitaph, overriddenLanguage, countryNames)))
+            wesuwt.copy(vewdict = wocawizedtombstone(
+              weason = e-epitaphtotombstoneweason(epitaph), (U ﹏ U)
+              message = epitaphtowocawizedmessage(epitaph, o-ovewwiddenwanguage, ^•ﻌ•^ countwynames)))
           }
-          case _ => {
-            result.copy(verdict = LocalizedTombstone(
-              reason = epitaphToTombstoneReason(epitaph),
-              message = EpitaphToLocalizedMessage(epitaph, overriddenLanguage)))
+          c-case _ => {
+            w-wesuwt.copy(vewdict = wocawizedtombstone(
+              weason = epitaphtotombstoneweason(epitaph), (˘ω˘)
+              message = epitaphtowocawizedmessage(epitaph, :3 ovewwiddenwanguage)))
           }
         }
       case _ =>
-        result
+        wesuwt
     }
   }
 
-  private def epitaphToTombstoneReason(epitaph: Epitaph): TombstoneReason = {
-    epitaph match {
-      case Epitaph.Deleted => TombstoneReason.Deleted
-      case Epitaph.Bounced => TombstoneReason.Bounced
-      case Epitaph.BounceDeleted => TombstoneReason.BounceDeleted
-      case Epitaph.Protected => TombstoneReason.ProtectedAuthor
-      case Epitaph.Suspended => TombstoneReason.SuspendedAuthor
-      case Epitaph.BlockedBy => TombstoneReason.AuthorBlocksViewer
-      case Epitaph.SuperFollowsContent => TombstoneReason.ExclusiveTweet
-      case Epitaph.Underage => TombstoneReason.NsfwViewerIsUnderage
-      case Epitaph.NoStatedAge => TombstoneReason.NsfwViewerHasNoStatedAge
-      case Epitaph.LoggedOutAge => TombstoneReason.NsfwLoggedOut
-      case Epitaph.Deactivated => TombstoneReason.DeactivatedAuthor
-      case Epitaph.CommunityTweetHidden => TombstoneReason.CommunityTweetHidden
-      case Epitaph.CommunityTweetCommunityIsSuspended =>
-        TombstoneReason.CommunityTweetCommunityIsSuspended
-      case Epitaph.DevelopmentOnly => TombstoneReason.DevelopmentOnly
-      case Epitaph.AdultMedia => TombstoneReason.AdultMedia
-      case Epitaph.ViolentMedia => TombstoneReason.ViolentMedia
-      case Epitaph.OtherSensitiveMedia => TombstoneReason.OtherSensitiveMedia
-      case Epitaph.DmcaWithheldMedia => TombstoneReason.DmcaWithheldMedia
-      case Epitaph.LegalDemandsWithheldMedia => TombstoneReason.LegalDemandsWithheldMedia
-      case Epitaph.LocalLawsWithheldMedia => TombstoneReason.LocalLawsWithheldMedia
-      case Epitaph.ToxicReplyFiltered => TombstoneReason.ReplyFiltered
-      case _ => TombstoneReason.Unspecified
+  p-pwivate def e-epitaphtotombstoneweason(epitaph: epitaph): tombstoneweason = {
+    e-epitaph match {
+      c-case e-epitaph.deweted => tombstoneweason.deweted
+      case epitaph.bounced => tombstoneweason.bounced
+      c-case epitaph.bouncedeweted => tombstoneweason.bouncedeweted
+      case epitaph.pwotected => tombstoneweason.pwotectedauthow
+      c-case epitaph.suspended => t-tombstoneweason.suspendedauthow
+      c-case e-epitaph.bwockedby => tombstoneweason.authowbwocksviewew
+      c-case e-epitaph.supewfowwowscontent => t-tombstoneweason.excwusivetweet
+      c-case epitaph.undewage => tombstoneweason.nsfwviewewisundewage
+      case e-epitaph.nostatedage => t-tombstoneweason.nsfwviewewhasnostatedage
+      c-case epitaph.woggedoutage => t-tombstoneweason.nsfwwoggedout
+      c-case epitaph.deactivated => tombstoneweason.deactivatedauthow
+      case epitaph.communitytweethidden => t-tombstoneweason.communitytweethidden
+      case epitaph.communitytweetcommunityissuspended =>
+        tombstoneweason.communitytweetcommunityissuspended
+      case epitaph.devewopmentonwy => tombstoneweason.devewopmentonwy
+      case epitaph.aduwtmedia => t-tombstoneweason.aduwtmedia
+      case epitaph.viowentmedia => tombstoneweason.viowentmedia
+      case epitaph.othewsensitivemedia => t-tombstoneweason.othewsensitivemedia
+      case e-epitaph.dmcawithhewdmedia => t-tombstoneweason.dmcawithhewdmedia
+      case epitaph.wegawdemandswithhewdmedia => t-tombstoneweason.wegawdemandswithhewdmedia
+      case epitaph.wocawwawswithhewdmedia => t-tombstoneweason.wocawwawswithhewdmedia
+      c-case epitaph.toxicwepwyfiwtewed => tombstoneweason.wepwyfiwtewed
+      case _ => tombstoneweason.unspecified
     }
   }
 }

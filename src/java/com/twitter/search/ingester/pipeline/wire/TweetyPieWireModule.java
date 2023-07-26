@@ -1,110 +1,110 @@
-package com.twitter.search.ingester.pipeline.wire;
+package com.twittew.seawch.ingestew.pipewine.wiwe;
 
-import java.util.concurrent.TimeoutException;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+impowt java.utiw.concuwwent.timeoutexception;
+i-impowt javax.naming.context;
+i-impowt j-javax.naming.initiawcontext;
+i-impowt javax.naming.namingexception;
 
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.thwift.pwotocow.tbinawypwotocow;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common_internal.zookeeper.TwitterServerSet;
-import com.twitter.finagle.Name;
-import com.twitter.finagle.Resolvers;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.builder.ClientBuilder;
-import com.twitter.finagle.builder.ClientConfig;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.mtls.client.MtlsThriftMuxClient;
-import com.twitter.finagle.mux.transport.OpportunisticTls;
-import com.twitter.finagle.service.RetryPolicy;
-import com.twitter.finagle.stats.DefaultStatsReceiver;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.servo.util.WaitForServerSets;
-import com.twitter.tweetypie.thriftjava.TweetService;
-import com.twitter.util.Await;
-import com.twitter.util.Duration;
+impowt com.twittew.common_intewnaw.zookeepew.twittewsewvewset;
+impowt com.twittew.finagwe.name;
+impowt com.twittew.finagwe.wesowvews;
+impowt c-com.twittew.finagwe.sewvice;
+impowt com.twittew.finagwe.thwiftmux;
+impowt com.twittew.finagwe.buiwdew.cwientbuiwdew;
+i-impowt com.twittew.finagwe.buiwdew.cwientconfig;
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew;
+i-impowt com.twittew.finagwe.mtws.cwient.mtwsthwiftmuxcwient;
+impowt com.twittew.finagwe.mux.twanspowt.oppowtunistictws;
+impowt com.twittew.finagwe.sewvice.wetwypowicy;
+i-impowt com.twittew.finagwe.stats.defauwtstatsweceivew;
+impowt com.twittew.finagwe.thwift.cwientid;
+i-impowt com.twittew.finagwe.thwift.thwiftcwientwequest;
+i-impowt com.twittew.sewvo.utiw.waitfowsewvewsets;
+impowt com.twittew.tweetypie.thwiftjava.tweetsewvice;
+impowt com.twittew.utiw.await;
+i-impowt com.twittew.utiw.duwation;
 
-final class TweetyPieWireModule {
-  private static final Logger LOG = LoggerFactory.getLogger(ProductionWireModule.class);
+finaw cwass tweetypiewiwemoduwe {
+  pwivate static finaw woggew w-wog = woggewfactowy.getwoggew(pwoductionwiwemoduwe.cwass);
 
-  private static final int TWEETYPIE_CONNECT_TIMEOUT_MS = 100;
-  private static final int TWEETYPIE_REQUEST_TIMEOUT_MS = 500;
+  pwivate static f-finaw int tweetypie_connect_timeout_ms = 100;
+  p-pwivate static f-finaw int tweetypie_wequest_timeout_ms = 500;
 
-  // This is actually the total tries count, so one initial try, and one more retry (if needed).
-  private static final int TWEETYPIE_REQUEST_NUM_TRIES = 3;
-  private static final int TWEETYPIE_TOTAL_TIMEOUT_MS =
-      TWEETYPIE_REQUEST_TIMEOUT_MS * TWEETYPIE_REQUEST_NUM_TRIES;
+  // t-this is actuawwy the totaw twies count, (˘ω˘) so one i-initiaw twy, :3 and one mowe wetwy (if nyeeded). ^^;;
+  p-pwivate static finaw int tweetypie_wequest_num_twies = 3;
+  pwivate static finaw int tweetypie_totaw_timeout_ms =
+      tweetypie_wequest_timeout_ms * tweetypie_wequest_num_twies;
 
-  private static final String TWEETYPIE_SD_ZK_ROLE =
-      WireModule.JNDI_PIPELINE_ROOT + "tweetypieSDZKRole";
-  private static final String TWEETYPIE_SD_ZK_ENV =
-      WireModule.JNDI_PIPELINE_ROOT + "tweetypieSDZKEnv";
-  private static final String TWEETYPIE_SD_ZK_NAME =
-      WireModule.JNDI_PIPELINE_ROOT + "tweetypieSDZKName";
+  p-pwivate static finaw stwing t-tweetypie_sd_zk_wowe =
+      w-wiwemoduwe.jndi_pipewine_woot + "tweetypiesdzkwowe";
+  p-pwivate static finaw stwing tweetypie_sd_zk_env =
+      wiwemoduwe.jndi_pipewine_woot + "tweetypiesdzkenv";
+  p-pwivate s-static finaw stwing tweetypie_sd_zk_name =
+      w-wiwemoduwe.jndi_pipewine_woot + "tweetypiesdzkname";
 
-  private TweetyPieWireModule() {
+  p-pwivate tweetypiewiwemoduwe() {
   }
 
-  private static TwitterServerSet.Service getTweetyPieZkServerSetService()
-      throws NamingException {
-    Context jndiContext = new InitialContext();
-    TwitterServerSet.Service service = new TwitterServerSet.Service(
-        (String) jndiContext.lookup(TWEETYPIE_SD_ZK_ROLE),
-        (String) jndiContext.lookup(TWEETYPIE_SD_ZK_ENV),
-        (String) jndiContext.lookup(TWEETYPIE_SD_ZK_NAME));
-    LOG.info("TweetyPie ZK path: {}", TwitterServerSet.getPath(service));
-    return service;
+  p-pwivate static twittewsewvewset.sewvice gettweetypiezksewvewsetsewvice()
+      thwows n-nyamingexception {
+    context jndicontext = n-nyew initiawcontext();
+    twittewsewvewset.sewvice s-sewvice = nyew twittewsewvewset.sewvice(
+        (stwing) j-jndicontext.wookup(tweetypie_sd_zk_wowe), 🥺
+        (stwing) j-jndicontext.wookup(tweetypie_sd_zk_env), (⑅˘꒳˘)
+        (stwing) jndicontext.wookup(tweetypie_sd_zk_name));
+    wog.info("tweetypie zk path: {}", nyaa~~ twittewsewvewset.getpath(sewvice));
+    wetuwn sewvice;
   }
 
-  static TweetService.ServiceToClient getTweetyPieClient(
-      String clientIdString, ServiceIdentifier serviceIdentifier) throws NamingException {
-    TwitterServerSet.Service service = getTweetyPieZkServerSetService();
+  static tweetsewvice.sewvicetocwient g-gettweetypiecwient(
+      s-stwing cwientidstwing, :3 sewviceidentifiew s-sewviceidentifiew) t-thwows nyamingexception {
+    t-twittewsewvewset.sewvice sewvice = gettweetypiezksewvewsetsewvice();
 
-    // Use explicit Name types so we can force a wait on resolution (COORD-479)
-    String destString = String.format("/cluster/local/%s/%s/%s",
-        service.getRole(), service.getEnv(), service.getName());
-    Name destination = Resolvers.eval(destString);
-    try {
-      Await.ready(WaitForServerSets.ready(destination, Duration.fromMilliseconds(10000)));
-    } catch (TimeoutException e) {
-      LOG.warn("Timed out while resolving Zookeeper ServerSet", e);
-    } catch (InterruptedException e) {
-      LOG.warn("Interrupted while resolving Zookeeper ServerSet", e);
-      Thread.currentThread().interrupt();
+    // use expwicit n-nyame types so we can fowce a wait on wesowution (coowd-479)
+    stwing deststwing = stwing.fowmat("/cwustew/wocaw/%s/%s/%s", ( ͡o ω ͡o )
+        s-sewvice.getwowe(), mya sewvice.getenv(), (///ˬ///✿) s-sewvice.getname());
+    n-nyame d-destination = wesowvews.evaw(deststwing);
+    twy {
+      await.weady(waitfowsewvewsets.weady(destination, (˘ω˘) d-duwation.fwommiwwiseconds(10000)));
+    } c-catch (timeoutexception e-e) {
+      w-wog.wawn("timed out whiwe wesowving zookeepew s-sewvewset", ^^;; e-e);
+    } catch (intewwuptedexception e-e) {
+      w-wog.wawn("intewwupted w-whiwe wesowving zookeepew sewvewset", (✿oωo) e);
+      thwead.cuwwentthwead().intewwupt();
     }
 
-    LOG.info("Creating Tweetypie client with ID: {}", clientIdString);
-    ClientId clientId = new ClientId(clientIdString);
+    w-wog.info("cweating tweetypie cwient with id: {}", (U ﹏ U) cwientidstwing);
+    cwientid cwientid = nyew cwientid(cwientidstwing);
 
-    MtlsThriftMuxClient mtlsThriftMuxClient = new MtlsThriftMuxClient(
-        ThriftMux.client().withClientId(clientId));
-    ThriftMux.Client tmuxClient = mtlsThriftMuxClient
-        .withMutualTls(serviceIdentifier)
-        .withOpportunisticTls(OpportunisticTls.Required());
+    m-mtwsthwiftmuxcwient mtwsthwiftmuxcwient = nyew mtwsthwiftmuxcwient(
+        thwiftmux.cwient().withcwientid(cwientid));
+    t-thwiftmux.cwient t-tmuxcwient = m-mtwsthwiftmuxcwient
+        .withmutuawtws(sewviceidentifiew)
+        .withoppowtunistictws(oppowtunistictws.wequiwed());
 
-    ClientBuilder<
-        ThriftClientRequest,
-        byte[],
-        ClientConfig.Yes,
-        ClientConfig.Yes,
-        ClientConfig.Yes> builder = ClientBuilder.get()
-        .stack(tmuxClient)
-        .name("retrieve_cards_tweetypie_client")
+    cwientbuiwdew<
+        t-thwiftcwientwequest, -.-
+        byte[], ^•ﻌ•^
+        c-cwientconfig.yes, rawr
+        cwientconfig.yes, (˘ω˘)
+        c-cwientconfig.yes> buiwdew = cwientbuiwdew.get()
+        .stack(tmuxcwient)
+        .name("wetwieve_cawds_tweetypie_cwient")
         .dest(destination)
-        .reportTo(DefaultStatsReceiver.get())
-        .connectTimeout(Duration.fromMilliseconds(TWEETYPIE_CONNECT_TIMEOUT_MS))
-        .requestTimeout(Duration.fromMilliseconds(TWEETYPIE_REQUEST_TIMEOUT_MS))
-        .timeout(Duration.fromMilliseconds(TWEETYPIE_TOTAL_TIMEOUT_MS))
-        .retryPolicy(RetryPolicy.tries(
-            TWEETYPIE_REQUEST_NUM_TRIES,
-            RetryPolicy.TimeoutAndWriteExceptionsOnly()));
+        .wepowtto(defauwtstatsweceivew.get())
+        .connecttimeout(duwation.fwommiwwiseconds(tweetypie_connect_timeout_ms))
+        .wequesttimeout(duwation.fwommiwwiseconds(tweetypie_wequest_timeout_ms))
+        .timeout(duwation.fwommiwwiseconds(tweetypie_totaw_timeout_ms))
+        .wetwypowicy(wetwypowicy.twies(
+            tweetypie_wequest_num_twies, nyaa~~
+            wetwypowicy.timeoutandwwiteexceptionsonwy()));
 
-    Service<ThriftClientRequest, byte[]> clientBuilder = ClientBuilder.safeBuild(builder);
+    sewvice<thwiftcwientwequest, UwU b-byte[]> cwientbuiwdew = cwientbuiwdew.safebuiwd(buiwdew);
 
-    return new TweetService.ServiceToClient(clientBuilder, new TBinaryProtocol.Factory());
+    w-wetuwn nyew tweetsewvice.sewvicetocwient(cwientbuiwdew, :3 n-nyew t-tbinawypwotocow.factowy());
   }
 }

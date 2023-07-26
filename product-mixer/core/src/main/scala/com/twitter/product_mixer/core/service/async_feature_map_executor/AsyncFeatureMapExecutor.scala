@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.core.service.async_feature_map_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.async_featuwe_map_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.Executor._
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.asyncfeatuwemap.asyncfeatuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow._
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
+impowt com.twittew.stitch.awwow
+i-impowt com.twittew.stitch.stitch
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class AsyncFeatureMapExecutor @Inject() (
-  override val statsReceiver: StatsReceiver)
-    extends Executor {
+@singweton
+cwass a-asyncfeatuwemapexecutow @inject() (
+  ovewwide vaw statsweceivew: statsweceivew)
+    e-extends executow {
 
   /**
-   * Forces an [[AsyncFeatureMap]] to hydrate and resolve into a [[FeatureMap]]
-   * containing all [[com.twitter.product_mixer.core.feature.Feature]]s that are
-   * supposed to be hydrated before `stepToHydrateBefore`.
+   * f-fowces an [[asyncfeatuwemap]] t-to hydwate and wesowve into a [[featuwemap]]
+   * containing aww [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]s t-that awe
+   * supposed to be hydwated befowe `steptohydwatebefowe`. 😳😳😳
    */
-  def arrow(
-    stepToHydrateFor: PipelineStepIdentifier,
-    currentStep: PipelineStepIdentifier,
-    context: Context
-  ): Arrow[AsyncFeatureMap, AsyncFeatureMapExecutorResults] = {
-    Arrow
-      .map[AsyncFeatureMap, Option[Stitch[FeatureMap]]](_.hydrate(stepToHydrateFor))
-      .andThen(
-        Arrow.choose(
-          Arrow.Choice.ifDefinedAt(
-            { case Some(stitchOfFeatureMap) => stitchOfFeatureMap },
-            // only stat if there's something to hydrate
-            wrapComponentWithExecutorBookkeeping(context, currentStep)(
-              Arrow
-                .flatMap[Stitch[FeatureMap], FeatureMap](identity)
-                .map(featureMap =>
-                  AsyncFeatureMapExecutorResults(Map(stepToHydrateFor -> featureMap)))
+  def awwow(
+    s-steptohydwatefow: pipewinestepidentifiew,
+    c-cuwwentstep: p-pipewinestepidentifiew, o.O
+    c-context: c-context
+  ): awwow[asyncfeatuwemap, ( ͡o ω ͡o ) asyncfeatuwemapexecutowwesuwts] = {
+    a-awwow
+      .map[asyncfeatuwemap, (U ﹏ U) option[stitch[featuwemap]]](_.hydwate(steptohydwatefow))
+      .andthen(
+        awwow.choose(
+          a-awwow.choice.ifdefinedat(
+            { case some(stitchoffeatuwemap) => stitchoffeatuwemap }, (///ˬ///✿)
+            // onwy stat if thewe's something to hydwate
+            w-wwapcomponentwithexecutowbookkeeping(context, >w< cuwwentstep)(
+              awwow
+                .fwatmap[stitch[featuwemap], rawr f-featuwemap](identity)
+                .map(featuwemap =>
+                  a-asyncfeatuwemapexecutowwesuwts(map(steptohydwatefow -> f-featuwemap)))
             )
-          ),
-          Arrow.Choice.otherwise(Arrow.value(AsyncFeatureMapExecutorResults(Map.empty)))
+          ), mya
+          awwow.choice.othewwise(awwow.vawue(asyncfeatuwemapexecutowwesuwts(map.empty)))
         )
       )
   }
 }
 
-case class AsyncFeatureMapExecutorResults(
-  featureMapsByStep: Map[PipelineStepIdentifier, FeatureMap])
-    extends ExecutorResult {
+case cwass asyncfeatuwemapexecutowwesuwts(
+  f-featuwemapsbystep: m-map[pipewinestepidentifiew, ^^ featuwemap])
+    e-extends e-executowwesuwt {
   def ++(
-    asyncFeatureMapExecutorResults: AsyncFeatureMapExecutorResults
-  ): AsyncFeatureMapExecutorResults =
-    AsyncFeatureMapExecutorResults(
-      featureMapsByStep ++ asyncFeatureMapExecutorResults.featureMapsByStep)
+    asyncfeatuwemapexecutowwesuwts: asyncfeatuwemapexecutowwesuwts
+  ): a-asyncfeatuwemapexecutowwesuwts =
+    asyncfeatuwemapexecutowwesuwts(
+      f-featuwemapsbystep ++ asyncfeatuwemapexecutowwesuwts.featuwemapsbystep)
 }

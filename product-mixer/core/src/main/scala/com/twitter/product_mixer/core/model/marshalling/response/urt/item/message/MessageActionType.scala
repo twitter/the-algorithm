@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message
 
-sealed trait MessageActionType
+seawed twait m-messageactiontype
 
-case object FollowAllMessageActionType extends MessageActionType
+c-case object fowwowawwmessageactiontype e-extends m-messageactiontype

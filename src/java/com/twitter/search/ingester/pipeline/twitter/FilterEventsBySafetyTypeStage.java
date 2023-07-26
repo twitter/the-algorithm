@@ -1,278 +1,278 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Nonnull;
+impowt java.utiw.map;
+i-impowt j-java.utiw.concuwwent.concuwwenthashmap;
+i-impowt j-java.utiw.concuwwent.timeunit;
+i-impowt javax.annotation.nonnuww;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.apache.commons.pipewine.stageexception;
+impowt owg.apache.commons.pipewine.vawidation.consumedtypes;
+impowt owg.apache.commons.pipewine.vawidation.pwoducedtypes;
+impowt o-owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchDelayStats;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.ingester.model.IngesterTweetEvent;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
-import com.twitter.tweetypie.thriftjava.Tweet;
-import com.twitter.tweetypie.thriftjava.TweetCreateEvent;
-import com.twitter.tweetypie.thriftjava.TweetEvent;
-import com.twitter.tweetypie.thriftjava.TweetEventData;
-import com.twitter.tweetypie.thriftjava.TweetEventFlags;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.metwics.seawchdewaystats;
+i-impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+impowt com.twittew.seawch.ingestew.modew.ingestewtweetevent;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestagewuntimeexception;
+impowt com.twittew.tweetypie.thwiftjava.tweet;
+i-impowt com.twittew.tweetypie.thwiftjava.tweetcweateevent;
+impowt c-com.twittew.tweetypie.thwiftjava.tweetevent;
+i-impowt com.twittew.tweetypie.thwiftjava.tweeteventdata;
+impowt com.twittew.tweetypie.thwiftjava.tweeteventfwags;
 
 /**
- * Only lets through the create events that match the specified safety type.
- * Also lets through all delete events.
+ * onwy wets thwough the c-cweate events that match the specified safety type. o.O
+ * awso wets thwough aww dewete e-events. (✿oωo)
  */
-@ConsumedTypes(IngesterTweetEvent.class)
-@ProducedTypes(IngesterTweetEvent.class)
-public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
-        <IngesterTweetEvent, IngesterTweetEvent> {
-  private static final Logger LOG = LoggerFactory.getLogger(FilterEventsBySafetyTypeStage.class);
+@consumedtypes(ingestewtweetevent.cwass)
+@pwoducedtypes(ingestewtweetevent.cwass)
+pubwic cwass fiwteweventsbysafetytypestage e-extends t-twittewbasestage
+        <ingestewtweetevent, :3 i-ingestewtweetevent> {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(fiwteweventsbysafetytypestage.cwass);
 
-  private SearchCounter totalEventsCount;
-  private SearchCounter createEventsCount;
-  private SearchCounter createPublicEventsCount;
-  private SearchCounter createProtectedEventsCount;
-  private SearchCounter createRestrictedEventsCount;
-  private SearchCounter createInvalidSafetyTypeCount;
-  private SearchCounter deleteEventsCount;
-  private SearchCounter deletePublicEventsCount;
-  private SearchCounter deleteProtectedEventsCount;
-  private SearchCounter deleteRestrictedEventsCount;
-  private SearchCounter deleteInvalidSafetyTypeCount;
-  private SearchCounter otherEventsCount;
+  p-pwivate seawchcountew totaweventscount;
+  p-pwivate seawchcountew cweateeventscount;
+  pwivate seawchcountew cweatepubwiceventscount;
+  pwivate seawchcountew cweatepwotectedeventscount;
+  p-pwivate seawchcountew cweatewestwictedeventscount;
+  p-pwivate s-seawchcountew c-cweateinvawidsafetytypecount;
+  pwivate seawchcountew deweteeventscount;
+  pwivate s-seawchcountew d-dewetepubwiceventscount;
+  pwivate seawchcountew d-dewetepwotectedeventscount;
+  p-pwivate seawchcountew dewetewestwictedeventscount;
+  p-pwivate seawchcountew deweteinvawidsafetytypecount;
+  p-pwivate seawchcountew otheweventscount;
 
-  private SearchDelayStats tweetCreateDelayStats;
+  p-pwivate seawchdewaystats t-tweetcweatedewaystats;
 
-  private long tweetCreateLatencyLogThresholdMillis = -1;
-  private SafetyType safetyType = null;
-  private Map<String, Map<String, SearchCounter>> invalidSafetyTypeByEventTypeStatMap =
-          new ConcurrentHashMap<>();
+  pwivate w-wong tweetcweatewatencywogthweshowdmiwwis = -1;
+  p-pwivate safetytype safetytype = nyuww;
+  pwivate map<stwing, 😳 map<stwing, (U ﹏ U) seawchcountew>> invawidsafetytypebyeventtypestatmap =
+          nyew concuwwenthashmap<>();
 
-  public FilterEventsBySafetyTypeStage() { }
+  pubwic f-fiwteweventsbysafetytypestage() { }
 
-  public FilterEventsBySafetyTypeStage(String safetyType, long tweetCreateLatencyThresholdMillis) {
-    setSafetyType(safetyType);
-    this.tweetCreateLatencyLogThresholdMillis = tweetCreateLatencyThresholdMillis;
+  p-pubwic fiwteweventsbysafetytypestage(stwing s-safetytype, mya w-wong tweetcweatewatencythweshowdmiwwis) {
+    s-setsafetytype(safetytype);
+    this.tweetcweatewatencywogthweshowdmiwwis = tweetcweatewatencythweshowdmiwwis;
   }
 
   /**
-   * To be called by XML config. Can be made private after we delete ACP code.
+   * to be cawwed by x-xmw config. can be made pwivate aftew we dewete acp code. (U ᵕ U❁)
    */
-  public void setSafetyType(@Nonnull String safetyTypeString) {
-    this.safetyType = SafetyType.valueOf(safetyTypeString);
-    if (this.safetyType == SafetyType.INVALID) {
-      throw new UnsupportedOperationException(
-              "Can't create a stage that permits 'INVALID' safetytypes");
+  pubwic void setsafetytype(@nonnuww s-stwing safetytypestwing) {
+    this.safetytype = s-safetytype.vawueof(safetytypestwing);
+    i-if (this.safetytype == s-safetytype.invawid) {
+      thwow nyew unsuppowtedopewationexception(
+              "can't c-cweate a stage t-that pewmits 'invawid' s-safetytypes");
     }
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @ovewwide
+  p-pwotected void initstats() {
+    supew.initstats();
+    innewsetupstats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    totalEventsCount = SearchCounter.export(getStageNamePrefix() + "_total_events_count");
-    createEventsCount = SearchCounter.export(getStageNamePrefix() + "_create_events_count");
-    createPublicEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_public_events_count");
-    createProtectedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_protected_events_count");
-    createRestrictedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_restricted_events_count");
-    createInvalidSafetyTypeCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_missing_or_unknown_safetytype");
-    deleteEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_events_count");
-    deletePublicEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_public_events_count");
-    deleteProtectedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_protected_events_count");
-    deleteRestrictedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_restricted_events_count");
-    deleteInvalidSafetyTypeCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_missing_or_unknown_safetytype");
-    otherEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_other_events_count");
+  @ovewwide
+  p-pwotected v-void innewsetupstats() {
+    t-totaweventscount = s-seawchcountew.expowt(getstagenamepwefix() + "_totaw_events_count");
+    c-cweateeventscount = seawchcountew.expowt(getstagenamepwefix() + "_cweate_events_count");
+    cweatepubwiceventscount =
+            seawchcountew.expowt(getstagenamepwefix() + "_cweate_pubwic_events_count");
+    c-cweatepwotectedeventscount =
+            seawchcountew.expowt(getstagenamepwefix() + "_cweate_pwotected_events_count");
+    cweatewestwictedeventscount =
+            seawchcountew.expowt(getstagenamepwefix() + "_cweate_westwicted_events_count");
+    cweateinvawidsafetytypecount =
+            seawchcountew.expowt(getstagenamepwefix() + "_cweate_missing_ow_unknown_safetytype");
+    deweteeventscount =
+            s-seawchcountew.expowt(getstagenamepwefix() + "_dewete_events_count");
+    dewetepubwiceventscount =
+            seawchcountew.expowt(getstagenamepwefix() + "_dewete_pubwic_events_count");
+    dewetepwotectedeventscount =
+            s-seawchcountew.expowt(getstagenamepwefix() + "_dewete_pwotected_events_count");
+    d-dewetewestwictedeventscount =
+            s-seawchcountew.expowt(getstagenamepwefix() + "_dewete_westwicted_events_count");
+    deweteinvawidsafetytypecount =
+            s-seawchcountew.expowt(getstagenamepwefix() + "_dewete_missing_ow_unknown_safetytype");
+    otheweventscount =
+            seawchcountew.expowt(getstagenamepwefix() + "_othew_events_count");
 
-    tweetCreateDelayStats = SearchDelayStats.export(
-            "create_histogram_" + getStageNamePrefix(), 90,
-            TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
+    t-tweetcweatedewaystats = s-seawchdewaystats.expowt(
+            "cweate_histogwam_" + getstagenamepwefix(), :3 90, mya
+            timeunit.seconds, OwO timeunit.miwwiseconds);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (obj instanceof IngesterTweetEvent) {
-      IngesterTweetEvent tweetEvent = (IngesterTweetEvent) obj;
-      if (tryToRecordCreateLatency(tweetEvent)) {
-        emitAndCount(tweetEvent);
+  @ovewwide
+  pubwic void innewpwocess(object o-obj) thwows stageexception {
+    if (obj i-instanceof ingestewtweetevent) {
+      i-ingestewtweetevent t-tweetevent = (ingestewtweetevent) obj;
+      if (twytowecowdcweatewatency(tweetevent)) {
+        emitandcount(tweetevent);
       }
-    } else {
-      throw new StageException(this, "Object is not a IngesterTweetEvent: " + obj);
+    } e-ewse {
+      t-thwow nyew stageexception(this, (ˆ ﻌ ˆ)♡ "object is n-nyot a ingestewtweetevent: " + o-obj);
     }
   }
 
-  @Override
-  protected IngesterTweetEvent innerRunStageV2(IngesterTweetEvent tweetEvent) {
-    if (!tryToRecordCreateLatency(tweetEvent)) {
-      throw new PipelineStageRuntimeException("Event does not have to pass to the next stage.");
+  @ovewwide
+  pwotected ingestewtweetevent innewwunstagev2(ingestewtweetevent tweetevent) {
+    if (!twytowecowdcweatewatency(tweetevent)) {
+      t-thwow nyew p-pipewinestagewuntimeexception("event d-does nyot have to pass to the n-nyext stage.");
     }
-    return tweetEvent;
+    w-wetuwn tweetevent;
   }
 
-  private boolean tryToRecordCreateLatency(IngesterTweetEvent tweetEvent) {
-    incrementCounters(tweetEvent);
-    boolean shouldEmit = shouldEmit(tweetEvent);
-    if (shouldEmit) {
-      if (isCreateEvent(tweetEvent.getData())) {
-        recordCreateLatency(tweetEvent.getData().getTweet_create_event());
-      }
-    }
-    return shouldEmit;
-  }
-
-  private void incrementCounters(@Nonnull TweetEvent tweetEvent) {
-    totalEventsCount.increment();
-    SafetyType eventSafetyType = getEventSafetyType(tweetEvent);
-
-    if (isCreateEvent(tweetEvent.getData())) {
-      createEventsCount.increment();
-      switch (eventSafetyType) {
-        case PUBLIC:
-          createPublicEventsCount.increment();
-          break;
-        case PROTECTED:
-          createProtectedEventsCount.increment();
-          break;
-        case RESTRICTED:
-          createRestrictedEventsCount.increment();
-          break;
-        default:
-          createInvalidSafetyTypeCount.increment();
-          incrementInvalidSafetyTypeStatMap(tweetEvent, "create");
-      }
-    } else if (isDeleteEvent(tweetEvent.getData())) {
-      deleteEventsCount.increment();
-      switch (eventSafetyType) {
-        case PUBLIC:
-          deletePublicEventsCount.increment();
-          break;
-        case PROTECTED:
-          deleteProtectedEventsCount.increment();
-          break;
-        case RESTRICTED:
-          deleteRestrictedEventsCount.increment();
-          break;
-        default:
-          deleteInvalidSafetyTypeCount.increment();
-          incrementInvalidSafetyTypeStatMap(tweetEvent, "delete");
-      }
-    } else {
-      otherEventsCount.increment();
-    }
-  }
-
-  private void incrementInvalidSafetyTypeStatMap(TweetEvent tweetEvent, String eventType) {
-    com.twitter.tweetypie.thriftjava.SafetyType thriftSafetyType =
-            tweetEvent.getFlags().getSafety_type();
-    String safetyTypeString =
-            thriftSafetyType == null ? "null" : thriftSafetyType.toString().toLowerCase();
-    invalidSafetyTypeByEventTypeStatMap.putIfAbsent(eventType, new ConcurrentHashMap<>());
-    SearchCounter stat = invalidSafetyTypeByEventTypeStatMap.get(eventType).computeIfAbsent(
-            safetyTypeString,
-            safetyTypeStr -> SearchCounter.export(
-                    getStageNamePrefix()
-                            + String.format("_%s_missing_or_unknown_safetytype_%s",
-                            eventType, safetyTypeStr)));
-    stat.increment();
-  }
-
-  @VisibleForTesting
-  boolean shouldEmit(@Nonnull TweetEvent tweetEvent) {
-    // Do not emit any undelete events.
-    if (isUndeleteEvent(tweetEvent.getData())) {
-      return false;
-    }
-
-    SafetyType eventSafetyType = getEventSafetyType(tweetEvent);
-    // Custom logic for REALTIME_CG cluster
-    if (safetyType == SafetyType.PUBLIC_OR_PROTECTED) {
-      return eventSafetyType == SafetyType.PUBLIC || eventSafetyType == SafetyType.PROTECTED;
-    } else {
-      return eventSafetyType == safetyType;
-    }
-  }
-
-  private SafetyType getEventSafetyType(@Nonnull TweetEvent tweetEvent) {
-    TweetEventFlags tweetEventFlags = tweetEvent.getFlags();
-    return SafetyType.fromThriftSafetyType(tweetEventFlags.getSafety_type());
-  }
-
-  private boolean isCreateEvent(@Nonnull TweetEventData tweetEventData) {
-    return tweetEventData.isSet(TweetEventData._Fields.TWEET_CREATE_EVENT);
-  }
-
-  private boolean isDeleteEvent(@Nonnull TweetEventData tweetEventData) {
-    return tweetEventData.isSet(TweetEventData._Fields.TWEET_DELETE_EVENT);
-  }
-
-  private boolean isUndeleteEvent(@Nonnull TweetEventData tweetEventData) {
-    return tweetEventData.isSet(TweetEventData._Fields.TWEET_UNDELETE_EVENT);
-  }
-
-  private void recordCreateLatency(TweetCreateEvent tweetCreateEvent) {
-    Tweet tweet = tweetCreateEvent.getTweet();
-    if (tweet != null) {
-      long tweetCreateLatency =
-              clock.nowMillis() - SnowflakeIdParser.getTimestampFromTweetId(tweet.getId());
-      tweetCreateDelayStats.recordLatency(tweetCreateLatency, TimeUnit.MILLISECONDS);
-      if (tweetCreateLatency < 0) {
-        LOG.warn("Received a tweet created in the future: {}", tweet);
-      } else if (tweetCreateLatencyLogThresholdMillis > 0
-              && tweetCreateLatency > tweetCreateLatencyLogThresholdMillis) {
-        LOG.debug("Found late incoming tweet: {}. Create latency: {}ms. Tweet: {}",
-                tweet.getId(), tweetCreateLatency, tweet);
+  p-pwivate boowean twytowecowdcweatewatency(ingestewtweetevent tweetevent) {
+    incwementcountews(tweetevent);
+    boowean s-shouwdemit = shouwdemit(tweetevent);
+    i-if (shouwdemit) {
+      if (iscweateevent(tweetevent.getdata())) {
+        wecowdcweatewatency(tweetevent.getdata().gettweet_cweate_event());
       }
     }
+    w-wetuwn s-shouwdemit;
   }
 
-  public void setTweetCreateLatencyLogThresholdMillis(long tweetCreateLatencyLogThresholdMillis) {
-    LOG.info("Setting tweetCreateLatencyLogThresholdMillis to {}.",
-            tweetCreateLatencyLogThresholdMillis);
-    this.tweetCreateLatencyLogThresholdMillis = tweetCreateLatencyLogThresholdMillis;
-  }
+  pwivate void incwementcountews(@nonnuww tweetevent t-tweetevent) {
+    totaweventscount.incwement();
+    safetytype eventsafetytype = geteventsafetytype(tweetevent);
 
-  public enum SafetyType {
-    PUBLIC,
-    PROTECTED,
-    RESTRICTED,
-    PUBLIC_OR_PROTECTED,
-    INVALID;
-
-    /** Converts a tweetypie SafetyType instance to an instance of this enum. */
-    @Nonnull
-    public static SafetyType fromThriftSafetyType(
-            com.twitter.tweetypie.thriftjava.SafetyType safetyType) {
-      if (safetyType == null) {
-        return INVALID;
+    i-if (iscweateevent(tweetevent.getdata())) {
+      cweateeventscount.incwement();
+      switch (eventsafetytype) {
+        c-case pubwic:
+          c-cweatepubwiceventscount.incwement();
+          bweak;
+        case pwotected:
+          cweatepwotectedeventscount.incwement();
+          b-bweak;
+        c-case westwicted:
+          cweatewestwictedeventscount.incwement();
+          bweak;
+        defauwt:
+          c-cweateinvawidsafetytypecount.incwement();
+          incwementinvawidsafetytypestatmap(tweetevent, ʘwʘ "cweate");
       }
-      switch(safetyType) {
-        case PRIVATE:
-          return PROTECTED;
-        case PUBLIC:
-          return PUBLIC;
-        case RESTRICTED:
-          return RESTRICTED;
-        default:
-          return INVALID;
+    } e-ewse if (isdeweteevent(tweetevent.getdata())) {
+      deweteeventscount.incwement();
+      switch (eventsafetytype) {
+        case p-pubwic:
+          dewetepubwiceventscount.incwement();
+          b-bweak;
+        c-case pwotected:
+          dewetepwotectedeventscount.incwement();
+          bweak;
+        c-case westwicted:
+          d-dewetewestwictedeventscount.incwement();
+          b-bweak;
+        d-defauwt:
+          deweteinvawidsafetytypecount.incwement();
+          i-incwementinvawidsafetytypestatmap(tweetevent, o.O "dewete");
+      }
+    } e-ewse {
+      otheweventscount.incwement();
+    }
+  }
+
+  pwivate void incwementinvawidsafetytypestatmap(tweetevent t-tweetevent, UwU s-stwing eventtype) {
+    com.twittew.tweetypie.thwiftjava.safetytype t-thwiftsafetytype =
+            tweetevent.getfwags().getsafety_type();
+    stwing safetytypestwing =
+            t-thwiftsafetytype == nyuww ? "nuww" : t-thwiftsafetytype.tostwing().towowewcase();
+    i-invawidsafetytypebyeventtypestatmap.putifabsent(eventtype, rawr x3 nyew concuwwenthashmap<>());
+    seawchcountew s-stat = i-invawidsafetytypebyeventtypestatmap.get(eventtype).computeifabsent(
+            s-safetytypestwing, 🥺
+            safetytypestw -> s-seawchcountew.expowt(
+                    getstagenamepwefix()
+                            + s-stwing.fowmat("_%s_missing_ow_unknown_safetytype_%s", :3
+                            eventtype, (ꈍᴗꈍ) safetytypestw)));
+    stat.incwement();
+  }
+
+  @visibwefowtesting
+  boowean shouwdemit(@nonnuww tweetevent t-tweetevent) {
+    // do nyot e-emit any undewete events. 🥺
+    i-if (isundeweteevent(tweetevent.getdata())) {
+      wetuwn fawse;
+    }
+
+    s-safetytype eventsafetytype = g-geteventsafetytype(tweetevent);
+    // c-custom wogic fow w-weawtime_cg cwustew
+    i-if (safetytype == s-safetytype.pubwic_ow_pwotected) {
+      wetuwn eventsafetytype == safetytype.pubwic || eventsafetytype == safetytype.pwotected;
+    } ewse {
+      wetuwn eventsafetytype == s-safetytype;
+    }
+  }
+
+  p-pwivate safetytype g-geteventsafetytype(@nonnuww tweetevent tweetevent) {
+    t-tweeteventfwags tweeteventfwags = tweetevent.getfwags();
+    wetuwn safetytype.fwomthwiftsafetytype(tweeteventfwags.getsafety_type());
+  }
+
+  p-pwivate b-boowean iscweateevent(@nonnuww tweeteventdata t-tweeteventdata) {
+    wetuwn tweeteventdata.isset(tweeteventdata._fiewds.tweet_cweate_event);
+  }
+
+  pwivate boowean i-isdeweteevent(@nonnuww t-tweeteventdata tweeteventdata) {
+    w-wetuwn tweeteventdata.isset(tweeteventdata._fiewds.tweet_dewete_event);
+  }
+
+  p-pwivate boowean isundeweteevent(@nonnuww tweeteventdata tweeteventdata) {
+    wetuwn tweeteventdata.isset(tweeteventdata._fiewds.tweet_undewete_event);
+  }
+
+  p-pwivate void wecowdcweatewatency(tweetcweateevent t-tweetcweateevent) {
+    t-tweet t-tweet = tweetcweateevent.gettweet();
+    i-if (tweet != nyuww) {
+      w-wong tweetcweatewatency =
+              c-cwock.nowmiwwis() - snowfwakeidpawsew.gettimestampfwomtweetid(tweet.getid());
+      t-tweetcweatedewaystats.wecowdwatency(tweetcweatewatency, (✿oωo) t-timeunit.miwwiseconds);
+      if (tweetcweatewatency < 0) {
+        w-wog.wawn("weceived a tweet cweated in the futuwe: {}", (U ﹏ U) t-tweet);
+      } ewse if (tweetcweatewatencywogthweshowdmiwwis > 0
+              && t-tweetcweatewatency > t-tweetcweatewatencywogthweshowdmiwwis) {
+        wog.debug("found w-wate incoming tweet: {}. :3 cweate watency: {}ms. ^^;; t-tweet: {}", rawr
+                t-tweet.getid(), 😳😳😳 t-tweetcweatewatency, (✿oωo) tweet);
+      }
+    }
+  }
+
+  pubwic void settweetcweatewatencywogthweshowdmiwwis(wong t-tweetcweatewatencywogthweshowdmiwwis) {
+    wog.info("setting tweetcweatewatencywogthweshowdmiwwis to {}.", OwO
+            t-tweetcweatewatencywogthweshowdmiwwis);
+    t-this.tweetcweatewatencywogthweshowdmiwwis = tweetcweatewatencywogthweshowdmiwwis;
+  }
+
+  p-pubwic enum safetytype {
+    p-pubwic,
+    p-pwotected, ʘwʘ
+    westwicted, (ˆ ﻌ ˆ)♡
+    pubwic_ow_pwotected, (U ﹏ U)
+    i-invawid;
+
+    /** convewts a tweetypie safetytype i-instance to an instance o-of this enum. UwU */
+    @nonnuww
+    p-pubwic static safetytype f-fwomthwiftsafetytype(
+            c-com.twittew.tweetypie.thwiftjava.safetytype s-safetytype) {
+      if (safetytype == nyuww) {
+        wetuwn invawid;
+      }
+      switch(safetytype) {
+        case pwivate:
+          wetuwn pwotected;
+        case pubwic:
+          wetuwn pubwic;
+        case westwicted:
+          wetuwn w-westwicted;
+        d-defauwt:
+          wetuwn invawid;
       }
     }
   }

@@ -1,223 +1,223 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.convewsion
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.TypedCountMetric
-import java.lang.{Double => JDouble}
-import scala.collection.JavaConverters._
+impowt com.googwe.common.annotations.visibwefowtesting
+i-impowt c-com.twittew.mw.api.utiw.swichdatawecowd
+i-impowt c-com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.mw.api._
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.aggwegationmetwiccommon
+i-impowt c-com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.metwics.typedcountmetwic
+impowt java.wang.{doubwe => jdoubwe}
+impowt scawa.cowwection.javaconvewtews._
 
-case class CombinedFeatures(
-  sum: Feature[JDouble],
-  nonzero: Feature[JDouble],
-  mean: Feature[JDouble],
-  topK: Seq[Feature[JDouble]])
+case cwass combinedfeatuwes(
+  sum: f-featuwe[jdoubwe], -.-
+  nyonzewo: featuwe[jdoubwe], (✿oωo)
+  m-mean: featuwe[jdoubwe], /(^•ω•^)
+  topk: seq[featuwe[jdoubwe]])
 
-trait CombineCountsBase {
-  val SparseSum = "sparse_sum"
-  val SparseNonzero = "sparse_nonzero"
-  val SparseMean = "sparse_mean"
-  val SparseTop = "sparse_top"
+t-twait combinecountsbase {
+  vaw spawsesum = "spawse_sum"
+  vaw spawsenonzewo = "spawse_nonzewo"
+  v-vaw spawsemean = "spawse_mean"
+  vaw spawsetop = "spawse_top"
 
-  def topK: Int
-  def hardLimit: Option[Int]
-  def precomputedCountFeatures: Seq[Feature[_]]
+  d-def topk: int
+  d-def hawdwimit: option[int]
+  def pwecomputedcountfeatuwes: seq[featuwe[_]]
 
-  lazy val precomputedFeaturesMap: Map[Feature[_], CombinedFeatures] =
-    precomputedCountFeatures.map { countFeature =>
-      val derivedPersonalDataTypes =
-        AggregationMetricCommon.derivePersonalDataTypes(Some(countFeature))
-      val sum = new Feature.Continuous(
-        countFeature.getDenseFeatureName + "." + SparseSum,
-        derivedPersonalDataTypes)
-      val nonzero = new Feature.Continuous(
-        countFeature.getDenseFeatureName + "." + SparseNonzero,
-        derivedPersonalDataTypes)
-      val mean = new Feature.Continuous(
-        countFeature.getDenseFeatureName + "." + SparseMean,
-        derivedPersonalDataTypes)
-      val topKFeatures = (1 to topK).map { k =>
-        new Feature.Continuous(
-          countFeature.getDenseFeatureName + "." + SparseTop + k,
-          derivedPersonalDataTypes)
+  wazy vaw pwecomputedfeatuwesmap: m-map[featuwe[_], 🥺 combinedfeatuwes] =
+    pwecomputedcountfeatuwes.map { countfeatuwe =>
+      vaw d-dewivedpewsonawdatatypes =
+        aggwegationmetwiccommon.dewivepewsonawdatatypes(some(countfeatuwe))
+      v-vaw s-sum = nyew featuwe.continuous(
+        c-countfeatuwe.getdensefeatuwename + "." + s-spawsesum, ʘwʘ
+        dewivedpewsonawdatatypes)
+      vaw nyonzewo = n-nyew featuwe.continuous(
+        countfeatuwe.getdensefeatuwename + "." + spawsenonzewo, UwU
+        d-dewivedpewsonawdatatypes)
+      vaw mean = nyew featuwe.continuous(
+        countfeatuwe.getdensefeatuwename + "." + spawsemean, XD
+        dewivedpewsonawdatatypes)
+      v-vaw topkfeatuwes = (1 t-to topk).map { k-k =>
+        n-nyew featuwe.continuous(
+          countfeatuwe.getdensefeatuwename + "." + spawsetop + k, (✿oωo)
+          d-dewivedpewsonawdatatypes)
       }
-      (countFeature, CombinedFeatures(sum, nonzero, mean, topKFeatures))
-    }.toMap
+      (countfeatuwe, :3 c-combinedfeatuwes(sum, (///ˬ///✿) nyonzewo, nyaa~~ mean, t-topkfeatuwes))
+    }.tomap
 
-  lazy val outputFeaturesPostMerge: Set[Feature[JDouble]] =
-    precomputedFeaturesMap.values.flatMap { combinedFeatures: CombinedFeatures =>
-      Seq(
-        combinedFeatures.sum,
-        combinedFeatures.nonzero,
-        combinedFeatures.mean
-      ) ++ combinedFeatures.topK
-    }.toSet
+  w-wazy vaw outputfeatuwespostmewge: set[featuwe[jdoubwe]] =
+    p-pwecomputedfeatuwesmap.vawues.fwatmap { combinedfeatuwes: c-combinedfeatuwes =>
+      seq(
+        combinedfeatuwes.sum, >w<
+        combinedfeatuwes.nonzewo, -.-
+        combinedfeatuwes.mean
+      ) ++ c-combinedfeatuwes.topk
+    }.toset
 
-  private case class ComputedStats(sum: Double, nonzero: Double, mean: Double)
+  pwivate case c-cwass computedstats(sum: doubwe, (✿oωo) n-nyonzewo: doubwe, (˘ω˘) m-mean: doubwe)
 
-  private def preComputeStats(featureValues: Seq[Double]): ComputedStats = {
-    val (sum, nonzero) = featureValues.foldLeft((0.0, 0.0)) {
-      case ((accSum, accNonzero), value) =>
-        (accSum + value, if (value > 0.0) accNonzero + 1.0 else accNonzero)
+  pwivate def pwecomputestats(featuwevawues: seq[doubwe]): computedstats = {
+    vaw (sum, rawr nyonzewo) = featuwevawues.fowdweft((0.0, 0.0)) {
+      case ((accsum, OwO a-accnonzewo), ^•ﻌ•^ v-vawue) =>
+        (accsum + vawue, UwU i-if (vawue > 0.0) a-accnonzewo + 1.0 e-ewse accnonzewo)
     }
-    ComputedStats(sum, nonzero, if (nonzero > 0.0) sum / nonzero else 0.0)
+    computedstats(sum, (˘ω˘) nyonzewo, (///ˬ///✿) if (nonzewo > 0.0) sum / nyonzewo e-ewse 0.0)
   }
 
-  private def computeSortedFeatureValues(featureValues: List[Double]): List[Double] =
-    featureValues.sortBy(-_)
+  pwivate def computesowtedfeatuwevawues(featuwevawues: wist[doubwe]): wist[doubwe] =
+    featuwevawues.sowtby(-_)
 
-  private def extractKth(sortedFeatureValues: Seq[Double], k: Int): Double =
-    sortedFeatureValues
-      .lift(k - 1)
-      .getOrElse(0.0)
+  p-pwivate def extwactkth(sowtedfeatuwevawues: s-seq[doubwe], σωσ k: i-int): doubwe =
+    s-sowtedfeatuwevawues
+      .wift(k - 1)
+      .getowewse(0.0)
 
-  private def setContinuousFeatureIfNonZero(
-    record: SRichDataRecord,
-    feature: Feature[JDouble],
-    value: Double
-  ): Unit =
-    if (value != 0.0) {
-      record.setFeatureValue(feature, value)
+  pwivate def s-setcontinuousfeatuweifnonzewo(
+    w-wecowd: swichdatawecowd, /(^•ω•^)
+    f-featuwe: featuwe[jdoubwe], 😳
+    v-vawue: doubwe
+  ): unit =
+    if (vawue != 0.0) {
+      wecowd.setfeatuwevawue(featuwe, 😳 v-vawue)
     }
 
-  def hydrateCountFeatures(
-    richRecord: SRichDataRecord,
-    features: Seq[Feature[_]],
-    featureValuesMap: Map[Feature[_], List[Double]]
-  ): Unit =
-    for {
-      feature <- features
-      featureValues <- featureValuesMap.get(feature)
+  d-def hydwatecountfeatuwes(
+    w-wichwecowd: s-swichdatawecowd, (⑅˘꒳˘)
+    f-featuwes: seq[featuwe[_]],
+    featuwevawuesmap: map[featuwe[_], 😳😳😳 w-wist[doubwe]]
+  ): unit =
+    fow {
+      featuwe <- featuwes
+      featuwevawues <- featuwevawuesmap.get(featuwe)
     } {
-      mergeRecordFromCountFeature(
-        countFeature = feature,
-        featureValues = featureValues,
-        richInputRecord = richRecord
+      m-mewgewecowdfwomcountfeatuwe(
+        countfeatuwe = featuwe, 😳
+        featuwevawues = f-featuwevawues, XD
+        w-wichinputwecowd = w-wichwecowd
       )
     }
 
-  def mergeRecordFromCountFeature(
-    richInputRecord: SRichDataRecord,
-    countFeature: Feature[_],
-    featureValues: List[Double]
-  ): Unit = {
-    // In majority of calls to this method from timeline scorer
-    // the featureValues list is empty.
-    // While with empty list each operation will be not that expensive, these
-    // small things do add up. By adding early stop here we can avoid sorting
-    // empty list, allocating several options and making multiple function
-    // calls. In addition to that, we won't iterate over [1, topK].
-    if (featureValues.nonEmpty) {
-      val sortedFeatureValues = hardLimit
-        .map { limit =>
-          computeSortedFeatureValues(featureValues).take(limit)
-        }.getOrElse(computeSortedFeatureValues(featureValues)).toIndexedSeq
-      val computed = preComputeStats(sortedFeatureValues)
+  def mewgewecowdfwomcountfeatuwe(
+    w-wichinputwecowd: swichdatawecowd, mya
+    c-countfeatuwe: f-featuwe[_], ^•ﻌ•^
+    featuwevawues: wist[doubwe]
+  ): unit = {
+    // in majowity of cawws t-to this method fwom timewine scowew
+    // t-the featuwevawues wist i-is empty. ʘwʘ
+    // w-whiwe with empty wist each opewation wiww be n-nyot that expensive, ( ͡o ω ͡o ) t-these
+    // smow things d-do add up. mya by adding e-eawwy stop hewe we can avoid sowting
+    // empty wist, o.O awwocating sevewaw o-options and making m-muwtipwe function
+    // c-cawws. (✿oωo) in addition to t-that, :3 we won't i-itewate ovew [1, 😳 topk]. (U ﹏ U)
+    if (featuwevawues.nonempty) {
+      v-vaw sowtedfeatuwevawues = hawdwimit
+        .map { wimit =>
+          computesowtedfeatuwevawues(featuwevawues).take(wimit)
+        }.getowewse(computesowtedfeatuwevawues(featuwevawues)).toindexedseq
+      vaw computed = pwecomputestats(sowtedfeatuwevawues)
 
-      val combinedFeatures = precomputedFeaturesMap(countFeature)
-      setContinuousFeatureIfNonZero(
-        richInputRecord,
-        combinedFeatures.sum,
-        computed.sum
+      v-vaw combinedfeatuwes = p-pwecomputedfeatuwesmap(countfeatuwe)
+      setcontinuousfeatuweifnonzewo(
+        wichinputwecowd, mya
+        c-combinedfeatuwes.sum, (U ᵕ U❁)
+        c-computed.sum
       )
-      setContinuousFeatureIfNonZero(
-        richInputRecord,
-        combinedFeatures.nonzero,
-        computed.nonzero
+      setcontinuousfeatuweifnonzewo(
+        wichinputwecowd, :3
+        combinedfeatuwes.nonzewo, mya
+        c-computed.nonzewo
       )
-      setContinuousFeatureIfNonZero(
-        richInputRecord,
-        combinedFeatures.mean,
+      setcontinuousfeatuweifnonzewo(
+        wichinputwecowd, OwO
+        combinedfeatuwes.mean, (ˆ ﻌ ˆ)♡
         computed.mean
       )
-      (1 to topK).foreach { k =>
-        setContinuousFeatureIfNonZero(
-          richInputRecord,
-          combinedFeatures.topK(k - 1),
-          extractKth(sortedFeatureValues, k)
+      (1 t-to topk).foweach { k =>
+        setcontinuousfeatuweifnonzewo(
+          w-wichinputwecowd, ʘwʘ
+          c-combinedfeatuwes.topk(k - 1),
+          extwactkth(sowtedfeatuwevawues, o.O k)
         )
       }
     }
   }
 }
 
-object CombineCountsPolicy {
-  def getCountFeatures(aggregateContext: FeatureContext): Seq[Feature[_]] =
-    aggregateContext.getAllFeatures.asScala.toSeq
-      .filter { feature =>
-        feature.getFeatureType == FeatureType.CONTINUOUS &&
-        feature.getDenseFeatureName.endsWith(TypedCountMetric[JDouble]().operatorName)
+object combinecountspowicy {
+  d-def getcountfeatuwes(aggwegatecontext: f-featuwecontext): seq[featuwe[_]] =
+    aggwegatecontext.getawwfeatuwes.asscawa.toseq
+      .fiwtew { featuwe =>
+        featuwe.getfeatuwetype == f-featuwetype.continuous &&
+        featuwe.getdensefeatuwename.endswith(typedcountmetwic[jdoubwe]().opewatowname)
       }
 
-  @VisibleForTesting
-  private[conversion] def getFeatureValues(
-    dataRecordsWithCounts: List[DataRecord],
-    countFeature: Feature[_]
-  ): List[Double] =
-    dataRecordsWithCounts.map(new SRichDataRecord(_)).flatMap { record =>
-      Option(record.getFeatureValue(countFeature)).map(_.asInstanceOf[JDouble].toDouble)
+  @visibwefowtesting
+  p-pwivate[convewsion] def getfeatuwevawues(
+    datawecowdswithcounts: wist[datawecowd], UwU
+    c-countfeatuwe: featuwe[_]
+  ): w-wist[doubwe] =
+    d-datawecowdswithcounts.map(new swichdatawecowd(_)).fwatmap { w-wecowd =>
+      option(wecowd.getfeatuwevawue(countfeatuwe)).map(_.asinstanceof[jdoubwe].todoubwe)
     }
 }
 
 /**
- * A merge policy that works whenever all aggregate features are
- * counts (computed using CountMetric), and typically represent
- * either impressions or engagements. For each such input count
- * feature, the policy outputs the following (3+k) derived features
- * into the output data record:
+ * a-a mewge powicy t-that wowks w-whenevew aww aggwegate featuwes a-awe
+ * counts (computed u-using countmetwic), and typicawwy wepwesent
+ * e-eithew impwessions o-ow engagements. rawr x3 f-fow each such input count
+ * featuwe, 🥺 t-the powicy outputs the fowwowing (3+k) d-dewived featuwes
+ * i-into the output data wecowd:
  *
- * Sum of the feature's value across all aggregate records
- * Number of aggregate records that have the feature set to non-zero
- * Mean of the feature's value across all aggregate records
- * topK values of the feature across all aggregate records
+ * sum of the featuwe's v-vawue acwoss a-aww aggwegate wecowds
+ * n-nyumbew o-of aggwegate wecowds that have t-the featuwe set to nyon-zewo
+ * mean of the featuwe's vawue acwoss aww aggwegate wecowds
+ * topk v-vawues of the featuwe acwoss aww a-aggwegate wecowds
  *
- * @param topK topK values to compute
- * @param hardLimit when set, records are sorted and only the top values will be used for aggregation if
- *                  the number of records are higher than this hard limit.
+ * @pawam topk topk vawues t-to compute
+ * @pawam hawdwimit w-when set, :3 wecowds awe sowted and o-onwy the top vawues w-wiww be used f-fow aggwegation i-if
+ *                  t-the nyumbew of wecowds awe highew than this hawd wimit. (ꈍᴗꈍ)
  */
-case class CombineCountsPolicy(
-  override val topK: Int,
-  aggregateContextToPrecompute: FeatureContext,
-  override val hardLimit: Option[Int] = None)
-    extends SparseBinaryMergePolicy
-    with CombineCountsBase {
-  import CombineCountsPolicy._
-  override val precomputedCountFeatures: Seq[Feature[_]] = getCountFeatures(
-    aggregateContextToPrecompute)
+case cwass combinecountspowicy(
+  ovewwide v-vaw topk: int, 🥺
+  a-aggwegatecontexttopwecompute: f-featuwecontext, (✿oωo)
+  ovewwide vaw hawdwimit: o-option[int] = nyone)
+    extends spawsebinawymewgepowicy
+    with combinecountsbase {
+  i-impowt combinecountspowicy._
+  o-ovewwide vaw pwecomputedcountfeatuwes: seq[featuwe[_]] = g-getcountfeatuwes(
+    aggwegatecontexttopwecompute)
 
-  override def mergeRecord(
-    mutableInputRecord: DataRecord,
-    aggregateRecords: List[DataRecord],
-    aggregateContext: FeatureContext
-  ): Unit = {
-    // Assumes aggregateContext === aggregateContextToPrecompute
-    mergeRecordFromCountFeatures(mutableInputRecord, aggregateRecords, precomputedCountFeatures)
+  ovewwide def mewgewecowd(
+    mutabweinputwecowd: d-datawecowd, (U ﹏ U)
+    a-aggwegatewecowds: wist[datawecowd], :3
+    a-aggwegatecontext: f-featuwecontext
+  ): unit = {
+    // assumes aggwegatecontext === aggwegatecontexttopwecompute
+    mewgewecowdfwomcountfeatuwes(mutabweinputwecowd, ^^;; aggwegatewecowds, rawr p-pwecomputedcountfeatuwes)
   }
 
-  def defaultMergeRecord(
-    mutableInputRecord: DataRecord,
-    aggregateRecords: List[DataRecord]
-  ): Unit = {
-    mergeRecordFromCountFeatures(mutableInputRecord, aggregateRecords, precomputedCountFeatures)
+  d-def defauwtmewgewecowd(
+    mutabweinputwecowd: d-datawecowd, 😳😳😳
+    a-aggwegatewecowds: w-wist[datawecowd]
+  ): unit = {
+    m-mewgewecowdfwomcountfeatuwes(mutabweinputwecowd, (✿oωo) a-aggwegatewecowds, OwO pwecomputedcountfeatuwes)
   }
 
-  def mergeRecordFromCountFeatures(
-    mutableInputRecord: DataRecord,
-    aggregateRecords: List[DataRecord],
-    countFeatures: Seq[Feature[_]]
-  ): Unit = {
-    val richInputRecord = new SRichDataRecord(mutableInputRecord)
-    countFeatures.foreach { countFeature =>
-      mergeRecordFromCountFeature(
-        richInputRecord = richInputRecord,
-        countFeature = countFeature,
-        featureValues = getFeatureValues(aggregateRecords, countFeature)
+  d-def m-mewgewecowdfwomcountfeatuwes(
+    mutabweinputwecowd: d-datawecowd, ʘwʘ
+    aggwegatewecowds: wist[datawecowd],
+    c-countfeatuwes: seq[featuwe[_]]
+  ): u-unit = {
+    vaw w-wichinputwecowd = nyew swichdatawecowd(mutabweinputwecowd)
+    c-countfeatuwes.foweach { countfeatuwe =>
+      mewgewecowdfwomcountfeatuwe(
+        w-wichinputwecowd = w-wichinputwecowd, (ˆ ﻌ ˆ)♡
+        c-countfeatuwe = countfeatuwe, (U ﹏ U)
+        featuwevawues = getfeatuwevawues(aggwegatewecowds, UwU countfeatuwe)
       )
     }
   }
 
-  override def aggregateFeaturesPostMerge(aggregateContext: FeatureContext): Set[Feature[_]] =
-    outputFeaturesPostMerge.map(_.asInstanceOf[Feature[_]])
+  o-ovewwide def aggwegatefeatuwespostmewge(aggwegatecontext: featuwecontext): s-set[featuwe[_]] =
+    o-outputfeatuwespostmewge.map(_.asinstanceof[featuwe[_]])
 }

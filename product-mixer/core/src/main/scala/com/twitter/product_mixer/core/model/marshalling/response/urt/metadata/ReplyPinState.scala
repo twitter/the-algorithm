@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-sealed trait ReplyPinState
+seawed twait wepwypinstate
 
-object PinnedReplyPinState extends ReplyPinState
-object PinnableReplyPinState extends ReplyPinState
-object NotPinnableReplyPinState extends ReplyPinState
+o-object p-pinnedwepwypinstate e-extends wepwypinstate
+o-object p-pinnabwewepwypinstate e-extends w-wepwypinstate
+object n-nyotpinnabwewepwypinstate extends wepwypinstate

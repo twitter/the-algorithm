@@ -1,61 +1,61 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.twitter.follow_recommendations.common.clients.socialgraph.RecentEdgesQuery
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionFeaturesOnUserClientColumn
-import javax.inject.Singleton
-import javax.inject.Inject
+impowt com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph.wecentedgesquewy
+i-impowt c-com.twittew.fowwow_wecommendations.common.cwients.sociawgwaph.sociawgwaphcwient
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.haswecentfowwowedusewids
+i-impowt c-com.twittew.hewmit.modew.awgowithm
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt c-com.twittew.sociawgwaph.thwiftscawa.wewationshiptype
+impowt com.twittew.stitch.stitch
+impowt com.twittew.stwato.genewated.cwient.onboawding.usewwecs.stwongtiepwedictionfeatuwesonusewcwientcowumn
+i-impowt javax.inject.singweton
+impowt javax.inject.inject
 
 /**
- * Returns mutual follows. It first gets mutual follows from recent 100 follows and followers, and then unions this
- * with mutual follows from STP features dataset.
+ * w-wetuwns mutuaw fowwows. o.O it fiwst gets mutuaw fowwows fwom w-wecent 100 fowwows and fowwowews, ( ͡o ω ͡o ) a-and then unions t-this
+ * with mutuaw fowwows fwom stp featuwes dataset. (U ﹏ U)
  */
-@Singleton
-class MutualFollowStrongTiePredictionSource @Inject() (
-  sgsClient: SocialGraphClient,
-  strongTiePredictionFeaturesOnUserClientColumn: StrongTiePredictionFeaturesOnUserClientColumn)
-    extends CandidateSource[HasClientContext with HasRecentFollowedUserIds, CandidateUser] {
-  val identifier: CandidateSourceIdentifier =
-    MutualFollowStrongTiePredictionSource.Identifier
+@singweton
+cwass mutuawfowwowstwongtiepwedictionsouwce @inject() (
+  s-sgscwient: sociawgwaphcwient, (///ˬ///✿)
+  stwongtiepwedictionfeatuwesonusewcwientcowumn: stwongtiepwedictionfeatuwesonusewcwientcowumn)
+    extends candidatesouwce[hascwientcontext with h-haswecentfowwowedusewids, >w< candidateusew] {
+  vaw i-identifiew: candidatesouwceidentifiew =
+    mutuawfowwowstwongtiepwedictionsouwce.identifiew
 
-  override def apply(
-    target: HasClientContext with HasRecentFollowedUserIds
-  ): Stitch[Seq[CandidateUser]] = {
-    target.getOptionalUserId match {
-      case Some(userId) =>
-        val newFollowings = target.recentFollowedUserIds
-          .getOrElse(Nil)
-          .take(MutualFollowStrongTiePredictionSource.NumOfRecentFollowings)
-        val newFollowersStitch =
-          sgsClient
-            .getRecentEdges(RecentEdgesQuery(userId, Seq(RelationshipType.FollowedBy))).map(
-              _.take(MutualFollowStrongTiePredictionSource.NumOfRecentFollowers))
-        val mutualFollowsStitch =
-          strongTiePredictionFeaturesOnUserClientColumn.fetcher
-            .fetch(userId).map(_.v.flatMap(_.topMutualFollows.map(_.map(_.userId))).getOrElse(Nil))
+  o-ovewwide def a-appwy(
+    tawget: h-hascwientcontext with haswecentfowwowedusewids
+  ): stitch[seq[candidateusew]] = {
+    t-tawget.getoptionawusewid match {
+      case some(usewid) =>
+        v-vaw nyewfowwowings = tawget.wecentfowwowedusewids
+          .getowewse(niw)
+          .take(mutuawfowwowstwongtiepwedictionsouwce.numofwecentfowwowings)
+        vaw nyewfowwowewsstitch =
+          sgscwient
+            .getwecentedges(wecentedgesquewy(usewid, rawr seq(wewationshiptype.fowwowedby))).map(
+              _.take(mutuawfowwowstwongtiepwedictionsouwce.numofwecentfowwowews))
+        v-vaw mutuawfowwowsstitch =
+          stwongtiepwedictionfeatuwesonusewcwientcowumn.fetchew
+            .fetch(usewid).map(_.v.fwatmap(_.topmutuawfowwows.map(_.map(_.usewid))).getowewse(niw))
 
-        Stitch.join(newFollowersStitch, mutualFollowsStitch).map {
-          case (newFollowers, mutualFollows) => {
-            (newFollowings.intersect(newFollowers) ++ mutualFollows).distinct
-              .map(id => CandidateUser(id, Some(CandidateUser.DefaultCandidateScore)))
+        s-stitch.join(newfowwowewsstitch, mya m-mutuawfowwowsstitch).map {
+          c-case (newfowwowews, ^^ mutuawfowwows) => {
+            (newfowwowings.intewsect(newfowwowews) ++ mutuawfowwows).distinct
+              .map(id => candidateusew(id, 😳😳😳 some(candidateusew.defauwtcandidatescowe)))
           }
         }
-      case _ => Stitch.Nil
+      c-case _ => s-stitch.niw
     }
   }
 }
 
-object MutualFollowStrongTiePredictionSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.MutualFollowSTP.toString)
-  val NumOfRecentFollowings = 100
-  val NumOfRecentFollowers = 100
+object m-mutuawfowwowstwongtiepwedictionsouwce {
+  v-vaw identifiew: candidatesouwceidentifiew = c-candidatesouwceidentifiew(
+    awgowithm.mutuawfowwowstp.tostwing)
+  v-vaw numofwecentfowwowings = 100
+  vaw nyumofwecentfowwowews = 100
 }

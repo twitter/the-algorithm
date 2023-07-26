@@ -1,38 +1,38 @@
-package com.twitter.tweetypie.store
-import com.twitter.tweetypie.FutureEffect
-import com.twitter.tweetypie.thriftscala.AsyncWriteAction
-import com.twitter.tweetypie.thriftscala.RetweetArchivalEvent
+package com.twittew.tweetypie.stowe
+impowt com.twittew.tweetypie.futuweeffect
+i-impowt c-com.twittew.tweetypie.thwiftscawa.asyncwwiteaction
+i-impowt com.twittew.tweetypie.thwiftscawa.wetweetawchivawevent
 
-trait RetweetArchivalEnqueueStore
-    extends TweetStoreBase[RetweetArchivalEnqueueStore]
-    with AsyncSetRetweetVisibility.Store {
-  def wrap(w: TweetStore.Wrap): RetweetArchivalEnqueueStore =
-    new TweetStoreWrapper(w, this)
-      with RetweetArchivalEnqueueStore
-      with AsyncSetRetweetVisibility.StoreWrapper
+t-twait wetweetawchivawenqueuestowe
+    e-extends t-tweetstowebase[wetweetawchivawenqueuestowe]
+    w-with asyncsetwetweetvisibiwity.stowe {
+  d-def wwap(w: tweetstowe.wwap): wetweetawchivawenqueuestowe =
+    nyew tweetstowewwappew(w, (˘ω˘) t-this)
+      with wetweetawchivawenqueuestowe
+      with asyncsetwetweetvisibiwity.stowewwappew
 }
 
-object RetweetArchivalEnqueueStore {
+o-object wetweetawchivawenqueuestowe {
 
-  def apply(enqueue: FutureEffect[RetweetArchivalEvent]): RetweetArchivalEnqueueStore =
-    new RetweetArchivalEnqueueStore {
-      override val asyncSetRetweetVisibility: FutureEffect[AsyncSetRetweetVisibility.Event] =
-        FutureEffect[AsyncSetRetweetVisibility.Event] { e =>
+  d-def appwy(enqueue: futuweeffect[wetweetawchivawevent]): wetweetawchivawenqueuestowe =
+    nyew w-wetweetawchivawenqueuestowe {
+      ovewwide vaw a-asyncsetwetweetvisibiwity: f-futuweeffect[asyncsetwetweetvisibiwity.event] =
+        futuweeffect[asyncsetwetweetvisibiwity.event] { e =>
           enqueue(
-            RetweetArchivalEvent(
-              retweetId = e.retweetId,
-              srcTweetId = e.srcId,
-              retweetUserId = e.retweetUserId,
-              srcTweetUserId = e.srcTweetUserId,
-              timestampMs = e.timestamp.inMillis,
-              isArchivingAction = Some(!e.visible)
+            wetweetawchivawevent(
+              w-wetweetid = e.wetweetid, (⑅˘꒳˘)
+              swctweetid = e.swcid, (///ˬ///✿)
+              wetweetusewid = e-e.wetweetusewid, 😳😳😳
+              swctweetusewid = e-e.swctweetusewid, 🥺
+              t-timestampms = e-e.timestamp.inmiwwis, mya
+              i-isawchivingaction = some(!e.visibwe)
             )
           )
         }
 
-      override val retryAsyncSetRetweetVisibility: FutureEffect[
-        TweetStoreRetryEvent[AsyncSetRetweetVisibility.Event]
+      ovewwide v-vaw wetwyasyncsetwetweetvisibiwity: futuweeffect[
+        tweetstowewetwyevent[asyncsetwetweetvisibiwity.event]
       ] =
-        TweetStore.retry(AsyncWriteAction.RetweetArchivalEnqueue, asyncSetRetweetVisibility)
+        t-tweetstowe.wetwy(asyncwwiteaction.wetweetawchivawenqueue, 🥺 asyncsetwetweetvisibiwity)
     }
 }

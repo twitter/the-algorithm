@@ -1,12 +1,12 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/thrift/com/twitter/dal/personal_data:personal_data-java",
-        "src/thrift/com/twitter/timelineservice/server/suggests/features/engagement_features:thrift-scala",
-        "timelines/data_processing/ml_util/aggregation_framework:common_types",
-        "timelines/data_processing/ml_util/transforms",
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "swc/java/com/twittew/mw/api:api-base", òωó
+        "swc/thwift/com/twittew/daw/pewsonaw_data:pewsonaw_data-java", o.O
+        "swc/thwift/com/twittew/timewinesewvice/sewvew/suggests/featuwes/engagement_featuwes:thwift-scawa", (U ᵕ U❁)
+        "timewines/data_pwocessing/mw_utiw/aggwegation_fwamewowk:common_types", (⑅˘꒳˘)
+        "timewines/data_pwocessing/mw_utiw/twansfowms", ( ͡o ω ͡o )
     ],
 )

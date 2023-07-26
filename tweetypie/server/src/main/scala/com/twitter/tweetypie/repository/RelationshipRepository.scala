@@ -1,53 +1,53 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.socialgraph.thriftscala._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
+i-impowt com.twittew.sewvo.utiw.futuweawwow
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa._
+i-impowt com.twittew.stitch.seqgwoup
+i-impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.compat.wegacyseqgwoup
 
-object RelationshipKey {
-  def blocks(sourceId: UserId, destinationId: UserId): RelationshipKey =
-    RelationshipKey(sourceId, destinationId, RelationshipType.Blocking)
+object wewationshipkey {
+  def bwocks(souwceid: u-usewid, 😳 destinationid: usewid): wewationshipkey =
+    w-wewationshipkey(souwceid, -.- destinationid, w-wewationshiptype.bwocking)
 
-  def follows(sourceId: UserId, destinationId: UserId): RelationshipKey =
-    RelationshipKey(sourceId, destinationId, RelationshipType.Following)
+  def fowwows(souwceid: usewid, 🥺 destinationid: usewid): w-wewationshipkey =
+    wewationshipkey(souwceid, o.O d-destinationid, /(^•ω•^) wewationshiptype.fowwowing)
 
-  def mutes(sourceId: UserId, destinationId: UserId): RelationshipKey =
-    RelationshipKey(sourceId, destinationId, RelationshipType.Muting)
+  d-def mutes(souwceid: usewid, nyaa~~ destinationid: usewid): wewationshipkey =
+    w-wewationshipkey(souwceid, destinationid, nyaa~~ wewationshiptype.muting)
 
-  def reported(sourceId: UserId, destinationId: UserId): RelationshipKey =
-    RelationshipKey(sourceId, destinationId, RelationshipType.ReportedAsSpam)
+  def wepowted(souwceid: u-usewid, :3 destinationid: usewid): w-wewationshipkey =
+    w-wewationshipkey(souwceid, 😳😳😳 d-destinationid, (˘ω˘) w-wewationshiptype.wepowtedasspam)
 }
 
-case class RelationshipKey(
-  sourceId: UserId,
-  destinationId: UserId,
-  relationship: RelationshipType) {
-  def asExistsRequest: ExistsRequest =
-    ExistsRequest(
-      source = sourceId,
-      target = destinationId,
-      relationships = Seq(Relationship(relationship))
+case cwass wewationshipkey(
+  s-souwceid: usewid, ^^
+  destinationid: usewid, :3
+  w-wewationship: wewationshiptype) {
+  def asexistswequest: existswequest =
+    existswequest(
+      souwce = souwceid, -.-
+      tawget = d-destinationid, 😳
+      wewationships = s-seq(wewationship(wewationship))
     )
 }
 
-object RelationshipRepository {
-  type Type = RelationshipKey => Stitch[Boolean]
+o-object wewationshipwepositowy {
+  t-type type = wewationshipkey => stitch[boowean]
 
-  def apply(
-    exists: FutureArrow[(Seq[ExistsRequest], Option[RequestContext]), Seq[ExistsResult]],
-    maxRequestSize: Int
-  ): Type = {
-    val relationshipGroup: SeqGroup[RelationshipKey, Boolean] =
-      new SeqGroup[RelationshipKey, Boolean] {
-        override def run(keys: Seq[RelationshipKey]): Future[Seq[Try[Boolean]]] =
-          LegacySeqGroup.liftToSeqTry(
-            exists((keys.map(_.asExistsRequest), None)).map(_.map(_.exists)))
-        override val maxSize: Int = maxRequestSize
+  def appwy(
+    e-exists: futuweawwow[(seq[existswequest], mya o-option[wequestcontext]), (˘ω˘) seq[existswesuwt]], >_<
+    m-maxwequestsize: i-int
+  ): type = {
+    vaw wewationshipgwoup: s-seqgwoup[wewationshipkey, -.- boowean] =
+      n-nyew seqgwoup[wewationshipkey, 🥺 boowean] {
+        ovewwide d-def wun(keys: seq[wewationshipkey]): f-futuwe[seq[twy[boowean]]] =
+          wegacyseqgwoup.wifttoseqtwy(
+            exists((keys.map(_.asexistswequest), (U ﹏ U) n-nyone)).map(_.map(_.exists)))
+        o-ovewwide vaw maxsize: int = maxwequestsize
       }
 
-    relationshipKey => Stitch.call(relationshipKey, relationshipGroup)
+    wewationshipkey => stitch.caww(wewationshipkey, >w< wewationshipgwoup)
   }
 }

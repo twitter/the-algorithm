@@ -1,12 +1,12 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.twittew.fwigate.pushsewvice.modew.ibis
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.util.InlineActionUtil
-import com.twitter.util.Future
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.utiw.inwineactionutiw
+i-impowt com.twittew.utiw.futuwe
 
-trait InlineActionIbis2Hydrator {
-  self: PushCandidate =>
+t-twait inwineactionibis2hydwatow {
+  s-sewf: pushcandidate =>
 
-  lazy val tweetInlineActionModelValue: Future[Map[String, String]] =
-    InlineActionUtil.getTweetInlineActionValue(target)
+  w-wazy vaw tweetinwineactionmodewvawue: f-futuwe[map[stwing, (⑅˘꒳˘) s-stwing]] =
+    i-inwineactionutiw.gettweetinwineactionvawue(tawget)
 }

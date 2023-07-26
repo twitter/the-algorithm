@@ -1,166 +1,166 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.scowew
 
-import com.twitter.dal.personal_data.{thriftjava => pd}
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.Scoring.ModelWeights
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordOptionalFeature
-import com.twitter.product_mixer.core.feature.datarecord.DoubleDataRecordCompatible
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
+impowt c-com.twittew.daw.pewsonaw_data.{thwiftjava => p-pd}
+impowt com.twittew.home_mixew.pwoduct.scowed_tweets.pawam.scowedtweetspawam.scowing.modewweights
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdoptionawfeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.doubwedatawecowdcompatibwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.timewines.configapi.fsboundedpawam
+impowt com.twittew.timewines.pwediction.featuwes.wecap.wecapfeatuwes
 
-sealed trait PredictedScoreFeature
-    extends DataRecordOptionalFeature[TweetCandidate, Double]
-    with DoubleDataRecordCompatible {
+seawed twait pwedictedscowefeatuwe
+    e-extends datawecowdoptionawfeatuwe[tweetcandidate, ^^ doubwe]
+    with doubwedatawecowdcompatibwe {
 
-  override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-  def statName: String
-  def modelWeightParam: FSBoundedParam[Double]
-  def extractScore: FeatureMap => Option[Double] = _.getOrElse(this, None)
+  o-ovewwide vaw pewsonawdatatypes: s-set[pd.pewsonawdatatype] = set.empty
+  def statname: stwing
+  def modewweightpawam: f-fsboundedpawam[doubwe]
+  def extwactscowe: f-featuwemap => o-option[doubwe] = _.getowewse(this, (⑅˘꒳˘) nyone)
 }
 
-object PredictedFavoriteScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_FAVORITED.getFeatureName
-  override val statName = "fav"
-  override val modelWeightParam = ModelWeights.FavParam
+object pwedictedfavowitescowefeatuwe extends pwedictedscowefeatuwe {
+  ovewwide v-vaw featuwename: stwing = wecapfeatuwes.pwedicted_is_favowited.getfeatuwename
+  ovewwide vaw statname = "fav"
+  ovewwide vaw modewweightpawam = modewweights.favpawam
 }
 
-object PredictedReplyScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_REPLIED.getFeatureName
-  override val statName = "reply"
-  override val modelWeightParam = ModelWeights.ReplyParam
+o-object pwedictedwepwyscowefeatuwe e-extends p-pwedictedscowefeatuwe {
+  ovewwide v-vaw featuwename: s-stwing = wecapfeatuwes.pwedicted_is_wepwied.getfeatuwename
+  ovewwide vaw s-statname = "wepwy"
+  ovewwide vaw modewweightpawam = m-modewweights.wepwypawam
 }
 
-object PredictedRetweetScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_RETWEETED.getFeatureName
-  override val statName = "retweet"
-  override val modelWeightParam = ModelWeights.RetweetParam
+object pwedictedwetweetscowefeatuwe extends pwedictedscowefeatuwe {
+  ovewwide vaw featuwename: stwing = wecapfeatuwes.pwedicted_is_wetweeted.getfeatuwename
+  o-ovewwide vaw statname = "wetweet"
+  ovewwide vaw m-modewweightpawam = m-modewweights.wetweetpawam
 }
 
-object PredictedReplyEngagedByAuthorScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR.getFeatureName
-  override val statName = "reply_engaged_by_author"
-  override val modelWeightParam = ModelWeights.ReplyEngagedByAuthorParam
+o-object pwedictedwepwyengagedbyauthowscowefeatuwe extends pwedictedscowefeatuwe {
+  ovewwide vaw featuwename: s-stwing =
+    wecapfeatuwes.pwedicted_is_wepwied_wepwy_engaged_by_authow.getfeatuwename
+  o-ovewwide vaw statname = "wepwy_engaged_by_authow"
+  o-ovewwide v-vaw modewweightpawam = modewweights.wepwyengagedbyauthowpawam
 }
 
-object PredictedGoodClickConvoDescFavoritedOrRepliedScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V1.getFeatureName
-  override val statName = "good_click_convo_desc_favorited_or_replied"
-  override val modelWeightParam = ModelWeights.GoodClickParam
+o-object pwedictedgoodcwickconvodescfavowitedowwepwiedscowefeatuwe extends p-pwedictedscowefeatuwe {
+  ovewwide vaw featuwename: s-stwing = wecapfeatuwes.pwedicted_is_good_cwicked_v1.getfeatuwename
+  ovewwide v-vaw statname = "good_cwick_convo_desc_favowited_ow_wepwied"
+  ovewwide vaw modewweightpawam = m-modewweights.goodcwickpawam
 
-  override def extractScore: FeatureMap => Option[Double] = { featureMap =>
-    val goodClickV1Opt = featureMap.getOrElse(this, None)
-    val goodClickV2Opt = featureMap.getOrElse(PredictedGoodClickConvoDescUamGt2ScoreFeature, None)
+  ovewwide d-def extwactscowe: featuwemap => option[doubwe] = { featuwemap =>
+    vaw goodcwickv1opt = featuwemap.getowewse(this, nyaa~~ n-nyone)
+    v-vaw goodcwickv2opt = featuwemap.getowewse(pwedictedgoodcwickconvodescuamgt2scowefeatuwe, /(^•ω•^) n-none)
 
-    (goodClickV1Opt, goodClickV2Opt) match {
-      case (Some(v1Score), Some(v2Score)) => Some(Math.max(v1Score, v2Score))
-      case _ => goodClickV1Opt.orElse(goodClickV2Opt)
+    (goodcwickv1opt, (U ﹏ U) g-goodcwickv2opt) m-match {
+      case (some(v1scowe), 😳😳😳 some(v2scowe)) => some(math.max(v1scowe, >w< v-v2scowe))
+      case _ => goodcwickv1opt.owewse(goodcwickv2opt)
     }
   }
 }
 
-object PredictedGoodClickConvoDescUamGt2ScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V2.getFeatureName
-  override val statName = "good_click_convo_desc_uam_gt_2"
-  override val modelWeightParam = ModelWeights.GoodClickV2Param
+object pwedictedgoodcwickconvodescuamgt2scowefeatuwe extends p-pwedictedscowefeatuwe {
+  ovewwide v-vaw featuwename: s-stwing = w-wecapfeatuwes.pwedicted_is_good_cwicked_v2.getfeatuwename
+  ovewwide v-vaw statname = "good_cwick_convo_desc_uam_gt_2"
+  o-ovewwide v-vaw modewweightpawam = m-modewweights.goodcwickv2pawam
 }
 
-object PredictedGoodProfileClickScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED.getFeatureName
-  override val statName = "good_profile_click"
-  override val modelWeightParam = ModelWeights.GoodProfileClickParam
+object pwedictedgoodpwofiwecwickscowefeatuwe extends pwedictedscowefeatuwe {
+  o-ovewwide v-vaw featuwename: s-stwing =
+    wecapfeatuwes.pwedicted_is_pwofiwe_cwicked_and_pwofiwe_engaged.getfeatuwename
+  o-ovewwide v-vaw statname = "good_pwofiwe_cwick"
+  ovewwide vaw modewweightpawam = modewweights.goodpwofiwecwickpawam
 }
 
-object PredictedVideoPlayback50ScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_VIDEO_PLAYBACK_50.getFeatureName
-  override val statName = "video_playback_50"
-  override val modelWeightParam = ModelWeights.VideoPlayback50Param
+o-object pwedictedvideopwayback50scowefeatuwe extends pwedictedscowefeatuwe {
+  ovewwide vaw featuwename: stwing = wecapfeatuwes.pwedicted_is_video_pwayback_50.getfeatuwename
+  ovewwide vaw statname = "video_pwayback_50"
+  o-ovewwide vaw modewweightpawam = modewweights.videopwayback50pawam
 }
 
-object PredictedTweetDetailDwellScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_TWEET_DETAIL_DWELLED_15_SEC.getFeatureName
-  override val statName = "tweet_detail_dwell"
-  override val modelWeightParam = ModelWeights.TweetDetailDwellParam
+object pwedictedtweetdetaiwdwewwscowefeatuwe extends pwedictedscowefeatuwe {
+  o-ovewwide vaw f-featuwename: stwing =
+    w-wecapfeatuwes.pwedicted_is_tweet_detaiw_dwewwed_15_sec.getfeatuwename
+  ovewwide vaw s-statname = "tweet_detaiw_dweww"
+  ovewwide vaw modewweightpawam = m-modewweights.tweetdetaiwdwewwpawam
 }
 
-object PredictedProfileDwelledScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_PROFILE_DWELLED_20_SEC.getFeatureName
-  override val statName = "profile_dwell"
-  override val modelWeightParam = ModelWeights.ProfileDwelledParam
+o-object pwedictedpwofiwedwewwedscowefeatuwe extends pwedictedscowefeatuwe {
+  ovewwide vaw featuwename: stwing =
+    wecapfeatuwes.pwedicted_is_pwofiwe_dwewwed_20_sec.getfeatuwename
+  ovewwide vaw statname = "pwofiwe_dweww"
+  o-ovewwide vaw modewweightpawam = m-modewweights.pwofiwedwewwedpawam
 }
 
-object PredictedBookmarkScoreFeature extends PredictedScoreFeature {
-  override val featureName: String = RecapFeatures.PREDICTED_IS_BOOKMARKED.getFeatureName
-  override val statName = "bookmark"
-  override val modelWeightParam = ModelWeights.BookmarkParam
+object p-pwedictedbookmawkscowefeatuwe e-extends pwedictedscowefeatuwe {
+  ovewwide vaw featuwename: stwing = w-wecapfeatuwes.pwedicted_is_bookmawked.getfeatuwename
+  o-ovewwide vaw statname = "bookmawk"
+  o-ovewwide vaw m-modewweightpawam = modewweights.bookmawkpawam
 }
 
-object PredictedShareScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_SHARED.getFeatureName
-  override val statName = "share"
-  override val modelWeightParam = ModelWeights.ShareParam
+object pwedictedshawescowefeatuwe extends pwedictedscowefeatuwe {
+  ovewwide vaw f-featuwename: stwing =
+    w-wecapfeatuwes.pwedicted_is_shawed.getfeatuwename
+  ovewwide v-vaw statname = "shawe"
+  ovewwide vaw modewweightpawam = m-modewweights.shawepawam
 }
 
-object PredictedShareMenuClickScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_SHARE_MENU_CLICKED.getFeatureName
-  override val statName = "share_menu_click"
-  override val modelWeightParam = ModelWeights.ShareMenuClickParam
+o-object pwedictedshawemenucwickscowefeatuwe e-extends pwedictedscowefeatuwe {
+  ovewwide vaw featuwename: stwing =
+    wecapfeatuwes.pwedicted_is_shawe_menu_cwicked.getfeatuwename
+  ovewwide v-vaw statname = "shawe_menu_cwick"
+  o-ovewwide vaw modewweightpawam = modewweights.shawemenucwickpawam
 }
 
-// Negative Engagements
-object PredictedNegativeFeedbackV2ScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_NEGATIVE_FEEDBACK_V2.getFeatureName
-  override val statName = "negative_feedback_v2"
-  override val modelWeightParam = ModelWeights.NegativeFeedbackV2Param
+// n-nyegative engagements
+o-object pwedictednegativefeedbackv2scowefeatuwe extends pwedictedscowefeatuwe {
+  o-ovewwide vaw featuwename: stwing =
+    wecapfeatuwes.pwedicted_is_negative_feedback_v2.getfeatuwename
+  ovewwide vaw statname = "negative_feedback_v2"
+  o-ovewwide vaw modewweightpawam = modewweights.negativefeedbackv2pawam
 }
 
-object PredictedReportedScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_REPORT_TWEET_CLICKED.getFeatureName
-  override val statName = "reported"
-  override val modelWeightParam = ModelWeights.ReportParam
+o-object p-pwedictedwepowtedscowefeatuwe extends pwedictedscowefeatuwe {
+  ovewwide vaw featuwename: stwing =
+    w-wecapfeatuwes.pwedicted_is_wepowt_tweet_cwicked.getfeatuwename
+  o-ovewwide vaw statname = "wepowted"
+  ovewwide vaw modewweightpawam = modewweights.wepowtpawam
 }
 
-object PredictedStrongNegativeFeedbackScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_STRONG_NEGATIVE_FEEDBACK.getFeatureName
-  override val statName = "strong_negative_feedback"
-  override val modelWeightParam = ModelWeights.StrongNegativeFeedbackParam
+object p-pwedictedstwongnegativefeedbackscowefeatuwe extends p-pwedictedscowefeatuwe {
+  ovewwide vaw featuwename: stwing =
+    wecapfeatuwes.pwedicted_is_stwong_negative_feedback.getfeatuwename
+  o-ovewwide vaw statname = "stwong_negative_feedback"
+  o-ovewwide vaw modewweightpawam = m-modewweights.stwongnegativefeedbackpawam
 }
 
-object PredictedWeakNegativeFeedbackScoreFeature extends PredictedScoreFeature {
-  override val featureName: String =
-    RecapFeatures.PREDICTED_IS_WEAK_NEGATIVE_FEEDBACK.getFeatureName
-  override val statName = "weak_negative_feedback"
-  override val modelWeightParam = ModelWeights.WeakNegativeFeedbackParam
+object p-pwedictedweaknegativefeedbackscowefeatuwe extends p-pwedictedscowefeatuwe {
+  o-ovewwide vaw featuwename: s-stwing =
+    wecapfeatuwes.pwedicted_is_weak_negative_feedback.getfeatuwename
+  o-ovewwide v-vaw statname = "weak_negative_feedback"
+  ovewwide vaw modewweightpawam = m-modewweights.weaknegativefeedbackpawam
 }
 
-object PredictedScoreFeature {
-  val PredictedScoreFeatures: Set[PredictedScoreFeature] = Set(
-    PredictedFavoriteScoreFeature,
-    PredictedReplyScoreFeature,
-    PredictedRetweetScoreFeature,
-    PredictedReplyEngagedByAuthorScoreFeature,
-    PredictedGoodClickConvoDescFavoritedOrRepliedScoreFeature,
-    PredictedGoodClickConvoDescUamGt2ScoreFeature,
-    PredictedGoodProfileClickScoreFeature,
-    PredictedVideoPlayback50ScoreFeature,
-    PredictedTweetDetailDwellScoreFeature,
-    PredictedProfileDwelledScoreFeature,
-    PredictedBookmarkScoreFeature,
-    PredictedShareScoreFeature,
-    PredictedShareMenuClickScoreFeature,
-    // Negative Engagements
-    PredictedNegativeFeedbackV2ScoreFeature,
-    PredictedReportedScoreFeature,
-    PredictedStrongNegativeFeedbackScoreFeature,
-    PredictedWeakNegativeFeedbackScoreFeature,
+o-object pwedictedscowefeatuwe {
+  v-vaw pwedictedscowefeatuwes: set[pwedictedscowefeatuwe] = set(
+    pwedictedfavowitescowefeatuwe, XD
+    p-pwedictedwepwyscowefeatuwe, o.O
+    pwedictedwetweetscowefeatuwe, mya
+    pwedictedwepwyengagedbyauthowscowefeatuwe, 🥺
+    p-pwedictedgoodcwickconvodescfavowitedowwepwiedscowefeatuwe, ^^;;
+    p-pwedictedgoodcwickconvodescuamgt2scowefeatuwe, :3
+    pwedictedgoodpwofiwecwickscowefeatuwe, (U ﹏ U)
+    pwedictedvideopwayback50scowefeatuwe, OwO
+    pwedictedtweetdetaiwdwewwscowefeatuwe, 😳😳😳
+    p-pwedictedpwofiwedwewwedscowefeatuwe, (ˆ ﻌ ˆ)♡
+    p-pwedictedbookmawkscowefeatuwe, XD
+    p-pwedictedshawescowefeatuwe, (ˆ ﻌ ˆ)♡
+    p-pwedictedshawemenucwickscowefeatuwe, ( ͡o ω ͡o )
+    // nyegative e-engagements
+    pwedictednegativefeedbackv2scowefeatuwe, rawr x3
+    pwedictedwepowtedscowefeatuwe, nyaa~~
+    pwedictedstwongnegativefeedbackscowefeatuwe, >_<
+    pwedictedweaknegativefeedbackscowefeatuwe, ^^;;
   )
 }

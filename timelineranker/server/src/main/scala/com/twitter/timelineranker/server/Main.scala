@@ -1,182 +1,182 @@
-package com.twitter.timelineranker.server
+package com.twittew.timewinewankew.sewvew
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.server.MtlsStackServer._
-import com.twitter.finagle.mux
-import com.twitter.finagle.param.Reporter
-import com.twitter.finagle.stats.DefaultStatsReceiver
-import com.twitter.finagle.util.NullReporterFactory
-import com.twitter.finagle.ListeningServer
-import com.twitter.finagle.ServiceFactory
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authorization.server.MtlsServerSessionTrackerFilter
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finatra.thrift.filters.LoggingMDCFilter
-import com.twitter.finatra.thrift.filters.ThriftMDCFilter
-import com.twitter.finatra.thrift.filters.TraceIdMDCFilter
-import com.twitter.logging.Logger
-import com.twitter.server.TwitterServer
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.thriftwebforms.MethodOptions
-import com.twitter.thriftwebforms.TwitterServerThriftWebForms
-import com.twitter.timelineranker.config.RuntimeConfigurationImpl
-import com.twitter.timelineranker.config.TimelineRankerFlags
-import com.twitter.timelineranker.thriftscala
-import com.twitter.timelines.config.DefaultDynamicConfigStoreFactory
-import com.twitter.timelines.config.EmptyDynamicConfigStoreFactory
-import com.twitter.timelines.config.Env
-import com.twitter.timelines.features.app.ForcibleFeatureValues
-import com.twitter.timelines.server.AdminMutableDeciders
-import com.twitter.timelines.warmup.NoWarmup
-import com.twitter.timelines.warmup.WarmupFlag
-import com.twitter.util.Await
-import java.net.SocketAddress
-import org.apache.thrift.protocol.TBinaryProtocol
-import org.apache.thrift.protocol.TCompactProtocol
-import org.apache.thrift.protocol.TProtocolFactory
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.mtws.sewvew.mtwsstacksewvew._
+i-impowt com.twittew.finagwe.mux
+impowt c-com.twittew.finagwe.pawam.wepowtew
+i-impowt c-com.twittew.finagwe.stats.defauwtstatsweceivew
+impowt c-com.twittew.finagwe.utiw.nuwwwepowtewfactowy
+i-impowt com.twittew.finagwe.wisteningsewvew
+impowt com.twittew.finagwe.sewvicefactowy
+impowt com.twittew.finagwe.thwiftmux
+impowt c-com.twittew.finagwe.mtws.authowization.sewvew.mtwssewvewsessiontwackewfiwtew
+impowt com.twittew.finagwe.ssw.oppowtunistictws
+impowt com.twittew.finatwa.thwift.fiwtews.woggingmdcfiwtew
+i-impowt com.twittew.finatwa.thwift.fiwtews.thwiftmdcfiwtew
+i-impowt com.twittew.finatwa.thwift.fiwtews.twaceidmdcfiwtew
+impowt com.twittew.wogging.woggew
+impowt com.twittew.sewvew.twittewsewvew
+impowt c-com.twittew.sewvo.utiw.memoizingstatsweceivew
+impowt com.twittew.thwiftwebfowms.methodoptions
+i-impowt com.twittew.thwiftwebfowms.twittewsewvewthwiftwebfowms
+i-impowt com.twittew.timewinewankew.config.wuntimeconfiguwationimpw
+impowt com.twittew.timewinewankew.config.timewinewankewfwags
+impowt com.twittew.timewinewankew.thwiftscawa
+i-impowt com.twittew.timewines.config.defauwtdynamicconfigstowefactowy
+impowt com.twittew.timewines.config.emptydynamicconfigstowefactowy
+impowt com.twittew.timewines.config.env
+impowt c-com.twittew.timewines.featuwes.app.fowcibwefeatuwevawues
+impowt c-com.twittew.timewines.sewvew.adminmutabwedecidews
+i-impowt com.twittew.timewines.wawmup.nowawmup
+i-impowt com.twittew.timewines.wawmup.wawmupfwag
+i-impowt com.twittew.utiw.await
+impowt java.net.socketaddwess
+i-impowt owg.apache.thwift.pwotocow.tbinawypwotocow
+impowt o-owg.apache.thwift.pwotocow.tcompactpwotocow
+impowt owg.apache.thwift.pwotocow.tpwotocowfactowy
 
-object Main extends TimelineRankerServer
+object main extends timewinewankewsewvew
 
-class TimelineRankerServer extends {
-  override val statsReceiver: MemoizingStatsReceiver = new MemoizingStatsReceiver(
-    DefaultStatsReceiver)
-} with TwitterServer with AdminMutableDeciders with ForcibleFeatureValues with WarmupFlag {
+cwass timewinewankewsewvew extends {
+  o-ovewwide vaw statsweceivew: m-memoizingstatsweceivew = n-nyew m-memoizingstatsweceivew(
+    defauwtstatsweceivew)
+} with twittewsewvew with adminmutabwedecidews w-with fowcibwefeatuwevawues w-with wawmupfwag {
 
-  val timelineRankerFlags: TimelineRankerFlags = new TimelineRankerFlags(flag)
-  lazy val mainLogger: Logger = Logger.get("Main")
+  v-vaw timewinewankewfwags: t-timewinewankewfwags = new timewinewankewfwags(fwag)
+  w-wazy vaw mainwoggew: woggew = woggew.get("main")
 
-  private[this] lazy val thriftWebFormsAccess = if (timelineRankerFlags.getEnv == Env.local) {
-    MethodOptions.Access.Default
-  } else {
-    MethodOptions.Access.ByLdapGroup(Seq("timeline-team", "timelineranker-twf-read"))
+  p-pwivate[this] wazy vaw thwiftwebfowmsaccess = if (timewinewankewfwags.getenv == e-env.wocaw) {
+    methodoptions.access.defauwt
+  } e-ewse {
+    methodoptions.access.bywdapgwoup(seq("timewine-team", (ˆ ﻌ ˆ)♡ "timewinewankew-twf-wead"))
   }
 
-  private[this] def mkThriftWebFormsRoutes() =
-    TwitterServerThriftWebForms[thriftscala.TimelineRanker.MethodPerEndpoint](
-      thriftServicePort = timelineRankerFlags.servicePort().getPort,
-      defaultMethodAccess = thriftWebFormsAccess,
-      methodOptions = TimelineRankerThriftWebForms.methodOptions,
-      serviceIdentifier = timelineRankerFlags.serviceIdentifier(),
-      opportunisticTlsLevel = OpportunisticTls.Required,
+  p-pwivate[this] d-def mkthwiftwebfowmswoutes() =
+    twittewsewvewthwiftwebfowms[thwiftscawa.timewinewankew.methodpewendpoint](
+      thwiftsewvicepowt = timewinewankewfwags.sewvicepowt().getpowt, -.-
+      defauwtmethodaccess = thwiftwebfowmsaccess, :3
+      methodoptions = t-timewinewankewthwiftwebfowms.methodoptions, ʘwʘ
+      s-sewviceidentifiew = timewinewankewfwags.sewviceidentifiew(), 🥺
+      o-oppowtunistictwswevew = o-oppowtunistictws.wequiwed, >_<
     )
 
-  override protected def failfastOnFlagsNotParsed = true
-  override val defaultCloseGracePeriod = 10.seconds
+  o-ovewwide pwotected def faiwfastonfwagsnotpawsed = twue
+  ovewwide vaw defauwtcwosegwacepewiod = 10.seconds
 
-  private[this] def mkServer(
-    labelSuffix: String,
-    socketAddress: SocketAddress,
-    protocolFactory: TProtocolFactory,
-    serviceFactory: ServiceFactory[Array[Byte], Array[Byte]],
-    opportunisticTlsLevel: OpportunisticTls.Level,
-  ): ListeningServer = {
-    val compressor = Seq(mux.transport.Compression.lz4Compressor(highCompression = false))
-    val decompressor = Seq(mux.transport.Compression.lz4Decompressor())
-    val compressionLevel =
-      if (timelineRankerFlags.enableThriftmuxCompression()) {
-        mux.transport.CompressionLevel.Desired
-      } else {
-        mux.transport.CompressionLevel.Off
+  p-pwivate[this] def mksewvew(
+    wabewsuffix: stwing, ʘwʘ
+    socketaddwess: socketaddwess, (˘ω˘)
+    p-pwotocowfactowy: tpwotocowfactowy, (✿oωo)
+    s-sewvicefactowy: s-sewvicefactowy[awway[byte], (///ˬ///✿) a-awway[byte]], rawr x3
+    oppowtunistictwswevew: o-oppowtunistictws.wevew, -.-
+  ): w-wisteningsewvew = {
+    v-vaw c-compwessow = seq(mux.twanspowt.compwession.wz4compwessow(highcompwession = fawse))
+    vaw decompwessow = s-seq(mux.twanspowt.compwession.wz4decompwessow())
+    v-vaw compwessionwevew =
+      i-if (timewinewankewfwags.enabwethwiftmuxcompwession()) {
+        m-mux.twanspowt.compwessionwevew.desiwed
+      } e-ewse {
+        mux.twanspowt.compwessionwevew.off
       }
 
-    val mtlsSessionTrackerFilter =
-      new MtlsServerSessionTrackerFilter[mux.Request, mux.Response](statsReceiver)
-    val loggingMDCFilter = { new LoggingMDCFilter }.toFilter[mux.Request, mux.Response]
-    val traceIdMDCFilter = { new TraceIdMDCFilter }.toFilter[mux.Request, mux.Response]
-    val thriftMDCFilter = { new ThriftMDCFilter }.toFilter[mux.Request, mux.Response]
-    val filters = mtlsSessionTrackerFilter
-      .andThen(loggingMDCFilter)
-      .andThen(traceIdMDCFilter)
-      .andThen(thriftMDCFilter)
+    vaw mtwssessiontwackewfiwtew =
+      n-nyew mtwssewvewsessiontwackewfiwtew[mux.wequest, ^^ mux.wesponse](statsweceivew)
+    vaw woggingmdcfiwtew = { nyew woggingmdcfiwtew }.tofiwtew[mux.wequest, (⑅˘꒳˘) mux.wesponse]
+    v-vaw twaceidmdcfiwtew = { nyew twaceidmdcfiwtew }.tofiwtew[mux.wequest, nyaa~~ mux.wesponse]
+    v-vaw thwiftmdcfiwtew = { n-nyew t-thwiftmdcfiwtew }.tofiwtew[mux.wequest, /(^•ω•^) mux.wesponse]
+    v-vaw fiwtews = mtwssessiontwackewfiwtew
+      .andthen(woggingmdcfiwtew)
+      .andthen(twaceidmdcfiwtew)
+      .andthen(thwiftmdcfiwtew)
 
-    ThriftMux.server
-    // By default, finagle logs exceptions to chickadee, which is deprecated and
-    // basically unused. To avoid wasted overhead, we explicitly disable the reporter.
-      .configured(Reporter(NullReporterFactory))
-      .withLabel("timelineranker." + labelSuffix)
-      .withMutualTls(timelineRankerFlags.getServiceIdentifier)
-      .withOpportunisticTls(opportunisticTlsLevel)
-      .withProtocolFactory(protocolFactory)
-      .withCompressionPreferences.compression(compressionLevel, compressor)
-      .withCompressionPreferences.decompression(compressionLevel, decompressor)
-      .filtered(filters)
-      .serve(socketAddress, serviceFactory)
+    t-thwiftmux.sewvew
+    // b-by defauwt, (U ﹏ U) finagwe wogs exceptions to chickadee, 😳😳😳 which is depwecated and
+    // basicawwy unused. >w< t-to avoid wasted ovewhead, XD we e-expwicitwy disabwe the wepowtew. o.O
+      .configuwed(wepowtew(nuwwwepowtewfactowy))
+      .withwabew("timewinewankew." + w-wabewsuffix)
+      .withmutuawtws(timewinewankewfwags.getsewviceidentifiew)
+      .withoppowtunistictws(oppowtunistictwswevew)
+      .withpwotocowfactowy(pwotocowfactowy)
+      .withcompwessionpwefewences.compwession(compwessionwevew, mya c-compwessow)
+      .withcompwessionpwefewences.decompwession(compwessionwevew, 🥺 decompwessow)
+      .fiwtewed(fiwtews)
+      .sewve(socketaddwess, ^^;; sewvicefactowy)
   }
 
-  def main(): Unit = {
-    try {
-      val parsedOpportunisticTlsLevel = OpportunisticTls.Values
+  d-def m-main(): unit = {
+    twy {
+      v-vaw pawsedoppowtunistictwswevew = o-oppowtunistictws.vawues
         .find(
-          _.value.toLowerCase == timelineRankerFlags.opportunisticTlsLevel().toLowerCase).getOrElse(
-          OpportunisticTls.Desired)
+          _.vawue.towowewcase == timewinewankewfwags.oppowtunistictwswevew().towowewcase).getowewse(
+          oppowtunistictws.desiwed)
 
-      TwitterServerThriftWebForms.addAdminRoutes(this, mkThriftWebFormsRoutes())
-      addAdminMutableDeciderRoutes(timelineRankerFlags.getEnv)
+      twittewsewvewthwiftwebfowms.addadminwoutes(this, :3 mkthwiftwebfowmswoutes())
+      a-addadminmutabwedecidewwoutes(timewinewankewfwags.getenv)
 
-      val configStoreFactory = if (timelineRankerFlags.getEnv == Env.local) {
-        EmptyDynamicConfigStoreFactory
-      } else {
-        new DefaultDynamicConfigStoreFactory
+      v-vaw configstowefactowy = i-if (timewinewankewfwags.getenv == env.wocaw) {
+        e-emptydynamicconfigstowefactowy
+      } e-ewse {
+        nyew defauwtdynamicconfigstowefactowy
       }
 
-      val runtimeConfiguration = new RuntimeConfigurationImpl(
-        timelineRankerFlags,
-        configStoreFactory,
-        decider,
-        forcedFeatureValues = getFeatureSwitchOverrides,
-        statsReceiver
+      v-vaw wuntimeconfiguwation = nyew wuntimeconfiguwationimpw(
+        timewinewankewfwags, (U ﹏ U)
+        configstowefactowy, OwO
+        decidew, 😳😳😳
+        f-fowcedfeatuwevawues = g-getfeatuweswitchovewwides, (ˆ ﻌ ˆ)♡
+        statsweceivew
       )
 
-      val timelineRankerBuilder = new TimelineRankerBuilder(runtimeConfiguration)
+      vaw timewinewankewbuiwdew = n-nyew timewinewankewbuiwdew(wuntimeconfiguwation)
 
-      val warmup = if (shouldWarmup) {
-        new Warmup(
-          timelineRankerBuilder.timelineRanker,
-          runtimeConfiguration.underlyingClients.timelineRankerForwardingClient,
-          mainLogger
+      v-vaw wawmup = if (shouwdwawmup) {
+        nyew wawmup(
+          timewinewankewbuiwdew.timewinewankew, XD
+          w-wuntimeconfiguwation.undewwyingcwients.timewinewankewfowwawdingcwient, (ˆ ﻌ ˆ)♡
+          mainwoggew
         )
-      } else {
-        new NoWarmup()
+      } ewse {
+        nyew nyowawmup()
       }
 
-      warmup.prebindWarmup()
+      wawmup.pwebindwawmup()
 
-      // Create Thrift services that use the binary Thrift protocol, and the compact one.
-      val server =
-        mkServer(
-          "binary",
-          timelineRankerFlags.servicePort(),
-          new TBinaryProtocol.Factory(),
-          timelineRankerBuilder.serviceFactory,
-          parsedOpportunisticTlsLevel,
+      // c-cweate thwift sewvices that use the binawy t-thwift pwotocow, ( ͡o ω ͡o ) a-and the compact one. rawr x3
+      vaw sewvew =
+        mksewvew(
+          "binawy", nyaa~~
+          t-timewinewankewfwags.sewvicepowt(), >_<
+          n-nyew tbinawypwotocow.factowy(), ^^;;
+          timewinewankewbuiwdew.sewvicefactowy, (ˆ ﻌ ˆ)♡
+          pawsedoppowtunistictwswevew,
         )
 
-      val compactServer =
-        mkServer(
-          "compact",
-          timelineRankerFlags.serviceCompactPort(),
-          new TCompactProtocol.Factory(),
-          timelineRankerBuilder.compactProtocolServiceFactory,
-          parsedOpportunisticTlsLevel,
+      v-vaw compactsewvew =
+        mksewvew(
+          "compact", ^^;;
+          timewinewankewfwags.sewvicecompactpowt(), (⑅˘꒳˘)
+          n-nyew tcompactpwotocow.factowy(), rawr x3
+          timewinewankewbuiwdew.compactpwotocowsewvicefactowy, (///ˬ///✿)
+          pawsedoppowtunistictwswevew, 🥺
         )
 
-      mainLogger.info(
-        s"Thrift binary server bound to service port [${timelineRankerFlags.servicePort()}]")
-      closeOnExit(server)
-      mainLogger.info(
-        s"Thrift compact server bound to service port [${timelineRankerFlags.serviceCompactPort()}]")
-      closeOnExit(compactServer)
+      m-mainwoggew.info(
+        s"thwift b-binawy sewvew b-bound to sewvice powt [${timewinewankewfwags.sewvicepowt()}]")
+      c-cwoseonexit(sewvew)
+      mainwoggew.info(
+        s-s"thwift c-compact sewvew b-bound to sewvice powt [${timewinewankewfwags.sewvicecompactpowt()}]")
+      c-cwoseonexit(compactsewvew)
 
-      warmup.warmupComplete()
+      w-wawmup.wawmupcompwete()
 
-      mainLogger.info("ready: server")
-      Await.ready(server)
-      Await.ready(compactServer)
-    } catch {
-      case e: Throwable =>
-        e.printStackTrace()
-        mainLogger.error(e, s"failure in main")
-        System.exit(1)
+      mainwoggew.info("weady: sewvew")
+      a-await.weady(sewvew)
+      a-await.weady(compactsewvew)
+    } c-catch {
+      case e: thwowabwe =>
+        e.pwintstacktwace()
+        m-mainwoggew.ewwow(e, >_< s"faiwuwe i-in main")
+        s-system.exit(1)
     }
   }
 }

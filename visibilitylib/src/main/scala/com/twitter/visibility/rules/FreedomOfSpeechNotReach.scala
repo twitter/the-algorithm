@@ -1,685 +1,685 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.spam.rtf.thriftscala.SafetyResultReason
-import com.twitter.util.Memoize
-import com.twitter.visibility.common.actions.AppealableReason
-import com.twitter.visibility.common.actions.AvoidReason.MightNotBeSuitableForAds
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.common.actions.SoftInterventionDisplayType
-import com.twitter.visibility.common.actions.SoftInterventionReason
-import com.twitter.visibility.common.actions.LimitedActionsPolicy
-import com.twitter.visibility.common.actions.LimitedAction
-import com.twitter.visibility.common.actions.converter.scala.LimitedActionTypeConverter
-import com.twitter.visibility.configapi.params.FSRuleParams.FosnrFallbackDropRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.FosnrRulesEnabledParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableFosnrRuleParam
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.TweetSafetyLabels
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.models.ViolationLevel
-import com.twitter.visibility.rules.ComposableActions.ComposableActionsWithInterstitialLimitedEngagements
-import com.twitter.visibility.rules.ComposableActions.ComposableActionsWithSoftIntervention
-import com.twitter.visibility.rules.ComposableActions.ComposableActionsWithAppealable
-import com.twitter.visibility.rules.ComposableActions.ComposableActionsWithInterstitial
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.NonAuthorViewer
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.ViewerDoesNotFollowAuthorOfFosnrViolatingTweet
-import com.twitter.visibility.rules.Condition.ViewerFollowsAuthorOfFosnrViolatingTweet
-import com.twitter.visibility.rules.FreedomOfSpeechNotReach.DefaultViolationLevel
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules.State.Evaluated
+impowt com.twittew.spam.wtf.thwiftscawa.safetywesuwtweason
+i-impowt com.twittew.utiw.memoize
+i-impowt com.twittew.visibiwity.common.actions.appeawabweweason
+i-impowt c-com.twittew.visibiwity.common.actions.avoidweason.mightnotbesuitabwefowads
+i-impowt com.twittew.visibiwity.common.actions.wimitedengagementweason
+i-impowt com.twittew.visibiwity.common.actions.softintewventiondispwaytype
+i-impowt c-com.twittew.visibiwity.common.actions.softintewventionweason
+impowt com.twittew.visibiwity.common.actions.wimitedactionspowicy
+impowt com.twittew.visibiwity.common.actions.wimitedaction
+impowt com.twittew.visibiwity.common.actions.convewtew.scawa.wimitedactiontypeconvewtew
+impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.fosnwfawwbackdwopwuwesenabwedpawam
+i-impowt com.twittew.visibiwity.configapi.pawams.fswuwepawams.fosnwwuwesenabwedpawam
+impowt com.twittew.visibiwity.configapi.pawams.wuwepawam
+i-impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.enabwefosnwwuwepawam
+impowt com.twittew.visibiwity.featuwes.featuwe
+i-impowt com.twittew.visibiwity.featuwes.tweetsafetywabews
+impowt com.twittew.visibiwity.modews.tweetsafetywabew
+impowt com.twittew.visibiwity.modews.tweetsafetywabewtype
+i-impowt com.twittew.visibiwity.modews.viowationwevew
+i-impowt c-com.twittew.visibiwity.wuwes.composabweactions.composabweactionswithintewstitiawwimitedengagements
+impowt com.twittew.visibiwity.wuwes.composabweactions.composabweactionswithsoftintewvention
+impowt com.twittew.visibiwity.wuwes.composabweactions.composabweactionswithappeawabwe
+impowt com.twittew.visibiwity.wuwes.composabweactions.composabweactionswithintewstitiaw
+i-impowt com.twittew.visibiwity.wuwes.condition.and
+impowt com.twittew.visibiwity.wuwes.condition.nonauthowviewew
+impowt com.twittew.visibiwity.wuwes.condition.not
+impowt com.twittew.visibiwity.wuwes.condition.viewewdoesnotfowwowauthowoffosnwviowatingtweet
+impowt com.twittew.visibiwity.wuwes.condition.viewewfowwowsauthowoffosnwviowatingtweet
+i-impowt com.twittew.visibiwity.wuwes.fweedomofspeechnotweach.defauwtviowationwevew
+impowt c-com.twittew.visibiwity.wuwes.weason._
+i-impowt com.twittew.visibiwity.wuwes.state.evawuated
 
-object FreedomOfSpeechNotReach {
+o-object f-fweedomofspeechnotweach {
 
-  val DefaultViolationLevel = ViolationLevel.Level1
+  vaw defauwtviowationwevew = viowationwevew.wevew1
 
-  def reasonToSafetyResultReason(reason: Reason): SafetyResultReason =
-    reason match {
-      case HatefulConduct => SafetyResultReason.FosnrHatefulConduct
-      case AbusiveBehavior => SafetyResultReason.FosnrAbusiveBehavior
-      case _ => SafetyResultReason.FosnrUnspecified
+  d-def weasontosafetywesuwtweason(weason: weason): safetywesuwtweason =
+    w-weason match {
+      case hatefuwconduct => safetywesuwtweason.fosnwhatefuwconduct
+      case abusivebehaviow => safetywesuwtweason.fosnwabusivebehaviow
+      c-case _ => safetywesuwtweason.fosnwunspecified
     }
 
-  def reasonToSafetyResultReason(reason: AppealableReason): SafetyResultReason =
-    reason match {
-      case AppealableReason.HatefulConduct(_) => SafetyResultReason.FosnrHatefulConduct
-      case AppealableReason.AbusiveBehavior(_) => SafetyResultReason.FosnrAbusiveBehavior
-      case _ => SafetyResultReason.FosnrUnspecified
+  d-def weasontosafetywesuwtweason(weason: a-appeawabweweason): s-safetywesuwtweason =
+    weason match {
+      case appeawabweweason.hatefuwconduct(_) => s-safetywesuwtweason.fosnwhatefuwconduct
+      c-case appeawabweweason.abusivebehaviow(_) => safetywesuwtweason.fosnwabusivebehaviow
+      case _ => s-safetywesuwtweason.fosnwunspecified
     }
 
-  val EligibleTweetSafetyLabelTypes: Seq[TweetSafetyLabelType] =
-    Seq(ViolationLevel.Level4, ViolationLevel.Level3, ViolationLevel.Level2, ViolationLevel.Level1)
+  v-vaw ewigibwetweetsafetywabewtypes: seq[tweetsafetywabewtype] =
+    s-seq(viowationwevew.wevew4, viowationwevew.wevew3, nyaa~~ v-viowationwevew.wevew2, viowationwevew.wevew1)
       .map {
-        ViolationLevel.violationLevelToSafetyLabels.get(_).getOrElse(Set()).toSeq
-      }.reduceLeft {
+        viowationwevew.viowationwevewtosafetywabews.get(_).getowewse(set()).toseq
+      }.weduceweft {
         _ ++ _
       }
 
-  private val EligibleTweetSafetyLabelTypesSet = EligibleTweetSafetyLabelTypes.toSet
+  p-pwivate vaw ewigibwetweetsafetywabewtypesset = e-ewigibwetweetsafetywabewtypes.toset
 
-  def extractTweetSafetyLabel(featureMap: Map[Feature[_], _]): Option[TweetSafetyLabel] = {
-    val tweetSafetyLabels = featureMap(TweetSafetyLabels)
-      .asInstanceOf[Seq[TweetSafetyLabel]]
-      .flatMap { tsl =>
-        if (FreedomOfSpeechNotReach.EligibleTweetSafetyLabelTypesSet.contains(tsl.labelType)) {
-          Some(tsl.labelType -> tsl)
-        } else {
-          None
+  def extwacttweetsafetywabew(featuwemap: m-map[featuwe[_], (⑅˘꒳˘) _]): o-option[tweetsafetywabew] = {
+    vaw tweetsafetywabews = featuwemap(tweetsafetywabews)
+      .asinstanceof[seq[tweetsafetywabew]]
+      .fwatmap { tsw =>
+        if (fweedomofspeechnotweach.ewigibwetweetsafetywabewtypesset.contains(tsw.wabewtype)) {
+          some(tsw.wabewtype -> tsw)
+        } e-ewse {
+          n-nyone
         }
       }
-      .toMap
+      .tomap
 
-    FreedomOfSpeechNotReach.EligibleTweetSafetyLabelTypes.flatMap(tweetSafetyLabels.get).headOption
+    fweedomofspeechnotweach.ewigibwetweetsafetywabewtypes.fwatmap(tweetsafetywabews.get).headoption
   }
 
-  def eligibleTweetSafetyLabelTypesToAppealableReason(
-    labelType: TweetSafetyLabelType,
-    violationLevel: ViolationLevel
-  ): AppealableReason = {
-    labelType match {
-      case TweetSafetyLabelType.FosnrHatefulConduct =>
-        AppealableReason.HatefulConduct(violationLevel.level)
-      case TweetSafetyLabelType.FosnrHatefulConductLowSeveritySlur =>
-        AppealableReason.HatefulConduct(violationLevel.level)
+  d-def ewigibwetweetsafetywabewtypestoappeawabweweason(
+    w-wabewtype: t-tweetsafetywabewtype, :3
+    viowationwevew: viowationwevew
+  ): appeawabweweason = {
+    w-wabewtype match {
+      case tweetsafetywabewtype.fosnwhatefuwconduct =>
+        appeawabweweason.hatefuwconduct(viowationwevew.wevew)
+      case tweetsafetywabewtype.fosnwhatefuwconductwowsevewityswuw =>
+        a-appeawabweweason.hatefuwconduct(viowationwevew.wevew)
       case _ =>
-        AppealableReason.Unspecified(violationLevel.level)
+        appeawabweweason.unspecified(viowationwevew.wevew)
     }
   }
 
-  def limitedActionConverter(
-    limitedActionStrings: Option[Seq[String]]
-  ): Option[LimitedActionsPolicy] = {
-    val limitedActions = limitedActionStrings.map { limitedActionString =>
-      limitedActionString
-        .map(action => LimitedActionTypeConverter.fromString(action)).map { action =>
-          action match {
-            case Some(a) => Some(LimitedAction(a, None))
-            case _ => None
+  d-def wimitedactionconvewtew(
+    w-wimitedactionstwings: o-option[seq[stwing]]
+  ): option[wimitedactionspowicy] = {
+    v-vaw wimitedactions = w-wimitedactionstwings.map { w-wimitedactionstwing =>
+      w-wimitedactionstwing
+        .map(action => wimitedactiontypeconvewtew.fwomstwing(action)).map { action =>
+          a-action match {
+            c-case some(a) => s-some(wimitedaction(a, ʘwʘ n-nyone))
+            c-case _ => nyone
           }
-        }.flatten
+        }.fwatten
     }
-    limitedActions.map(actions => LimitedActionsPolicy(actions))
+    wimitedactions.map(actions => wimitedactionspowicy(actions))
   }
 }
 
-object FreedomOfSpeechNotReachReason {
-  def unapply(softIntervention: SoftIntervention): Option[AppealableReason] = {
-    softIntervention.reason match {
-      case SoftInterventionReason.FosnrReason(appealableReason) => Some(appealableReason)
-      case _ => None
+o-object fweedomofspeechnotweachweason {
+  def unappwy(softintewvention: softintewvention): option[appeawabweweason] = {
+    softintewvention.weason match {
+      c-case softintewventionweason.fosnwweason(appeawabweweason) => some(appeawabweweason)
+      case _ => nyone
     }
   }
 
-  def unapply(
-    interstitialLimitedEngagements: InterstitialLimitedEngagements
-  ): Option[AppealableReason] = {
-    interstitialLimitedEngagements.limitedEngagementReason match {
-      case Some(LimitedEngagementReason.FosnrReason(appealableReason)) => Some(appealableReason)
-      case _ => None
+  def unappwy(
+    i-intewstitiawwimitedengagements: i-intewstitiawwimitedengagements
+  ): o-option[appeawabweweason] = {
+    intewstitiawwimitedengagements.wimitedengagementweason m-match {
+      case some(wimitedengagementweason.fosnwweason(appeawabweweason)) => s-some(appeawabweweason)
+      c-case _ => nyone
     }
   }
 
-  def unapply(
-    interstitial: Interstitial
-  ): Option[AppealableReason] = {
-    interstitial.reason match {
-      case Reason.FosnrReason(appealableReason) => Some(appealableReason)
-      case _ => None
+  def unappwy(
+    intewstitiaw: intewstitiaw
+  ): option[appeawabweweason] = {
+    i-intewstitiaw.weason match {
+      c-case weason.fosnwweason(appeawabweweason) => s-some(appeawabweweason)
+      c-case _ => nyone
     }
   }
 
-  def unapply(
-    appealable: Appealable
-  ): Option[AppealableReason] = {
-    Reason.toAppealableReason(appealable.reason, appealable.violationLevel)
+  def unappwy(
+    a-appeawabwe: a-appeawabwe
+  ): option[appeawabweweason] = {
+    w-weason.toappeawabweweason(appeawabwe.weason, rawr x3 a-appeawabwe.viowationwevew)
   }
 
-  def unapply(
-    action: Action
-  ): Option[AppealableReason] = {
+  def unappwy(
+    action: action
+  ): option[appeawabweweason] = {
     action match {
-      case a: SoftIntervention =>
-        a match {
-          case FreedomOfSpeechNotReachReason(r) => Some(r)
-          case _ => None
+      c-case a-a: softintewvention =>
+        a m-match {
+          case fweedomofspeechnotweachweason(w) => s-some(w)
+          c-case _ => nyone
         }
-      case a: InterstitialLimitedEngagements =>
+      c-case a: intewstitiawwimitedengagements =>
         a match {
-          case FreedomOfSpeechNotReachReason(r) => Some(r)
-          case _ => None
+          case fweedomofspeechnotweachweason(w) => some(w)
+          case _ => n-nyone
         }
-      case a: Interstitial =>
+      case a-a: intewstitiaw =>
         a match {
-          case FreedomOfSpeechNotReachReason(r) => Some(r)
-          case _ => None
+          case fweedomofspeechnotweachweason(w) => s-some(w)
+          c-case _ => nyone
         }
-      case a: Appealable =>
-        a match {
-          case FreedomOfSpeechNotReachReason(r) => Some(r)
-          case _ => None
+      case a: appeawabwe =>
+        a-a match {
+          case fweedomofspeechnotweachweason(w) => some(w)
+          case _ => nyone
         }
-      case ComposableActionsWithSoftIntervention(FreedomOfSpeechNotReachReason(appealableReason)) =>
-        Some(appealableReason)
-      case ComposableActionsWithInterstitialLimitedEngagements(
-            FreedomOfSpeechNotReachReason(appealableReason)) =>
-        Some(appealableReason)
-      case ComposableActionsWithInterstitial(FreedomOfSpeechNotReachReason(appealableReason)) =>
-        Some(appealableReason)
-      case ComposableActionsWithAppealable(FreedomOfSpeechNotReachReason(appealableReason)) =>
-        Some(appealableReason)
-      case _ => None
+      c-case composabweactionswithsoftintewvention(fweedomofspeechnotweachweason(appeawabweweason)) =>
+        some(appeawabweweason)
+      case c-composabweactionswithintewstitiawwimitedengagements(
+            f-fweedomofspeechnotweachweason(appeawabweweason)) =>
+        some(appeawabweweason)
+      case composabweactionswithintewstitiaw(fweedomofspeechnotweachweason(appeawabweweason)) =>
+        s-some(appeawabweweason)
+      c-case composabweactionswithappeawabwe(fweedomofspeechnotweachweason(appeawabweweason)) =>
+        some(appeawabweweason)
+      case _ => nyone
     }
   }
 }
 
-object FreedomOfSpeechNotReachActions {
+o-object fweedomofspeechnotweachactions {
 
-  trait FreedomOfSpeechNotReachActionBuilder[T <: Action] extends ActionBuilder[T] {
-    def withViolationLevel(violationLevel: ViolationLevel): FreedomOfSpeechNotReachActionBuilder[T]
+  t-twait fweedomofspeechnotweachactionbuiwdew[t <: action] extends actionbuiwdew[t] {
+    def withviowationwevew(viowationwevew: v-viowationwevew): fweedomofspeechnotweachactionbuiwdew[t]
   }
 
-  case class DropAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[Drop] {
+  c-case cwass dwopaction(viowationwevew: v-viowationwevew = defauwtviowationwevew)
+      e-extends fweedomofspeechnotweachactionbuiwdew[dwop] {
 
-    override def actionType: Class[_] = classOf[Drop]
+    ovewwide def actiontype: c-cwass[_] = c-cwassof[dwop]
 
-    override val actionSeverity = 16
-    private def toRuleResult: Reason => RuleResult = Memoize { r => RuleResult(Drop(r), Evaluated) }
+    o-ovewwide vaw actionsevewity = 16
+    p-pwivate d-def towuwewesuwt: weason => wuwewesuwt = memoize { w-w => wuwewesuwt(dwop(w), (///ˬ///✿) e-evawuated) }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    d-def buiwd(evawuationcontext: evawuationcontext, 😳😳😳 featuwemap: map[featuwe[_], XD _]): wuwewesuwt = {
+      v-vaw appeawabweweason =
+        fweedomofspeechnotweach.extwacttweetsafetywabew(featuwemap).map(_.wabewtype) m-match {
+          c-case some(wabew) =>
+            fweedomofspeechnotweach.ewigibwetweetsafetywabewtypestoappeawabweweason(
+              wabew, >_<
+              viowationwevew)
+          c-case _ =>
+            a-appeawabweweason.unspecified(viowationwevew.wevew)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      t-towuwewesuwt(weason.fwomappeawabweweason(appeawabweweason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    o-ovewwide def withviowationwevew(viowationwevew: v-viowationwevew) = {
+      copy(viowationwevew = viowationwevew)
     }
   }
 
-  case class AppealableAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  case cwass appeawabweaction(viowationwevew: viowationwevew = d-defauwtviowationwevew)
+      extends fweedomofspeechnotweachactionbuiwdew[tweetintewstitiaw] {
 
-    override def actionType: Class[_] = classOf[Appealable]
+    o-ovewwide def actiontype: c-cwass[_] = cwassof[appeawabwe]
 
-    override val actionSeverity = 17
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = None,
-          limitedEngagements = None,
-          downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = None,
-          appealable = Some(Appealable(r, violationLevel = violationLevel))
-        ),
-        Evaluated
+    ovewwide v-vaw actionsevewity = 17
+    pwivate d-def towuwewesuwt: w-weason => w-wuwewesuwt = memoize { w-w =>
+      w-wuwewesuwt(
+        tweetintewstitiaw(
+          intewstitiaw = nyone, >w<
+          softintewvention = nyone, /(^•ω•^)
+          wimitedengagements = n-nyone, :3
+          d-downwank = n-nyone, ʘwʘ
+          avoid = s-some(avoid(none)), (˘ω˘)
+          mediaintewstitiaw = nyone, (ꈍᴗꈍ)
+          tweetvisibiwitynudge = nyone, ^^
+          a-abusivequawity = n-nyone, ^^
+          appeawabwe = s-some(appeawabwe(w, ( ͡o ω ͡o ) viowationwevew = viowationwevew))
+        ), -.-
+        evawuated
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    d-def buiwd(evawuationcontext: e-evawuationcontext, ^^;; featuwemap: map[featuwe[_], ^•ﻌ•^ _]): w-wuwewesuwt = {
+      v-vaw appeawabweweason =
+        fweedomofspeechnotweach.extwacttweetsafetywabew(featuwemap).map(_.wabewtype) match {
+          case some(wabew) =>
+            fweedomofspeechnotweach.ewigibwetweetsafetywabewtypestoappeawabweweason(
+              w-wabew, (˘ω˘)
+              v-viowationwevew)
+          c-case _ =>
+            a-appeawabweweason.unspecified(viowationwevew.wevew)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      t-towuwewesuwt(weason.fwomappeawabweweason(appeawabweweason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovewwide d-def withviowationwevew(viowationwevew: v-viowationwevew) = {
+      copy(viowationwevew = v-viowationwevew)
     }
   }
 
-  case class AppealableAvoidLimitedEngagementsAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel,
-    limitedActionStrings: Option[Seq[String]])
-      extends FreedomOfSpeechNotReachActionBuilder[Appealable] {
+  c-case cwass appeawabweavoidwimitedengagementsaction(
+    v-viowationwevew: viowationwevew = defauwtviowationwevew, o.O
+    w-wimitedactionstwings: option[seq[stwing]])
+      e-extends f-fweedomofspeechnotweachactionbuiwdew[appeawabwe] {
 
-    override def actionType: Class[_] = classOf[AppealableAvoidLimitedEngagementsAction]
+    ovewwide d-def actiontype: cwass[_] = cwassof[appeawabweavoidwimitedengagementsaction]
 
-    override val actionSeverity = 17
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = None,
-          limitedEngagements = Some(
-            LimitedEngagements(
-              toLimitedEngagementReason(
-                Reason
-                  .toAppealableReason(r, violationLevel)
-                  .getOrElse(AppealableReason.Unspecified(violationLevel.level))),
-              FreedomOfSpeechNotReach.limitedActionConverter(limitedActionStrings)
-            )),
-          downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = None,
-          appealable = Some(Appealable(r, violationLevel = violationLevel))
-        ),
-        Evaluated
+    o-ovewwide v-vaw actionsevewity = 17
+    p-pwivate def towuwewesuwt: weason => wuwewesuwt = memoize { w-w =>
+      wuwewesuwt(
+        tweetintewstitiaw(
+          i-intewstitiaw = n-nyone, (✿oωo)
+          softintewvention = n-nyone, 😳😳😳
+          wimitedengagements = s-some(
+            w-wimitedengagements(
+              towimitedengagementweason(
+                weason
+                  .toappeawabweweason(w, (ꈍᴗꈍ) v-viowationwevew)
+                  .getowewse(appeawabweweason.unspecified(viowationwevew.wevew))),
+              fweedomofspeechnotweach.wimitedactionconvewtew(wimitedactionstwings)
+            )), σωσ
+          downwank = n-nyone, UwU
+          a-avoid = some(avoid(none)), ^•ﻌ•^
+          mediaintewstitiaw = n-nyone, mya
+          tweetvisibiwitynudge = n-nyone, /(^•ω•^)
+          a-abusivequawity = n-nyone, rawr
+          appeawabwe = some(appeawabwe(w, nyaa~~ viowationwevew = viowationwevew))
+        ), ( ͡o ω ͡o )
+        evawuated
       )
     }
 
-    def build(
-      evaluationContext: EvaluationContext,
-      featureMap: Map[Feature[_], _]
-    ): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    def buiwd(
+      evawuationcontext: evawuationcontext, σωσ
+      featuwemap: map[featuwe[_], (✿oωo) _]
+    ): wuwewesuwt = {
+      vaw appeawabweweason =
+        f-fweedomofspeechnotweach.extwacttweetsafetywabew(featuwemap).map(_.wabewtype) m-match {
+          case some(wabew) =>
+            fweedomofspeechnotweach.ewigibwetweetsafetywabewtypestoappeawabweweason(
+              w-wabew, (///ˬ///✿)
+              viowationwevew)
+          c-case _ =>
+            appeawabweweason.unspecified(viowationwevew.wevew)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      t-towuwewesuwt(weason.fwomappeawabweweason(appeawabweweason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovewwide d-def withviowationwevew(viowationwevew: viowationwevew) = {
+      c-copy(viowationwevew = v-viowationwevew)
     }
   }
 
-  case class AvoidAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[Avoid] {
+  case cwass a-avoidaction(viowationwevew: viowationwevew = defauwtviowationwevew)
+      e-extends f-fweedomofspeechnotweachactionbuiwdew[avoid] {
 
-    override def actionType: Class[_] = classOf[Avoid]
+    ovewwide def actiontype: c-cwass[_] = cwassof[avoid]
 
-    override val actionSeverity = 1
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(Avoid(None), Evaluated)
+    ovewwide v-vaw actionsevewity = 1
+    p-pwivate def towuwewesuwt: w-weason => w-wuwewesuwt = m-memoize { w =>
+      w-wuwewesuwt(avoid(none), σωσ e-evawuated)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
+    d-def buiwd(evawuationcontext: evawuationcontext, UwU f-featuwemap: m-map[featuwe[_], (⑅˘꒳˘) _]): w-wuwewesuwt = {
+      vaw a-appeawabweweason =
+        fweedomofspeechnotweach.extwacttweetsafetywabew(featuwemap).map(_.wabewtype) match {
+          c-case some(wabew) =>
+            f-fweedomofspeechnotweach.ewigibwetweetsafetywabewtypestoappeawabweweason(
+              w-wabew, /(^•ω•^)
+              v-viowationwevew)
           case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+            a-appeawabweweason.unspecified(viowationwevew.wevew)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      towuwewesuwt(weason.fwomappeawabweweason(appeawabweweason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    o-ovewwide def withviowationwevew(viowationwevew: viowationwevew) = {
+      c-copy(viowationwevew = viowationwevew)
     }
   }
 
-  case class LimitedEngagementsAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[LimitedEngagements] {
+  case c-cwass wimitedengagementsaction(viowationwevew: viowationwevew = defauwtviowationwevew)
+      extends fweedomofspeechnotweachactionbuiwdew[wimitedengagements] {
 
-    override def actionType: Class[_] = classOf[LimitedEngagements]
+    ovewwide d-def actiontype: cwass[_] = cwassof[wimitedengagements]
 
-    override val actionSeverity = 6
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(LimitedEngagements(LimitedEngagementReason.NonCompliant, None), Evaluated)
+    o-ovewwide v-vaw actionsevewity = 6
+    pwivate def towuwewesuwt: weason => wuwewesuwt = m-memoize { w =>
+      wuwewesuwt(wimitedengagements(wimitedengagementweason.noncompwiant, -.- n-nyone), e-evawuated)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    d-def buiwd(evawuationcontext: evawuationcontext, (ˆ ﻌ ˆ)♡ featuwemap: m-map[featuwe[_], nyaa~~ _]): w-wuwewesuwt = {
+      vaw appeawabweweason =
+        fweedomofspeechnotweach.extwacttweetsafetywabew(featuwemap).map(_.wabewtype) m-match {
+          case some(wabew) =>
+            f-fweedomofspeechnotweach.ewigibwetweetsafetywabewtypestoappeawabweweason(
+              wabew,
+              v-viowationwevew)
+          c-case _ =>
+            a-appeawabweweason.unspecified(viowationwevew.wevew)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      towuwewesuwt(weason.fwomappeawabweweason(appeawabweweason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    o-ovewwide def w-withviowationwevew(viowationwevew: v-viowationwevew) = {
+      copy(viowationwevew = v-viowationwevew)
     }
   }
 
-  case class InterstitialLimitedEngagementsAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[InterstitialLimitedEngagements] {
+  case cwass intewstitiawwimitedengagementsaction(
+    v-viowationwevew: v-viowationwevew = d-defauwtviowationwevew)
+      e-extends fweedomofspeechnotweachactionbuiwdew[intewstitiawwimitedengagements] {
 
-    override def actionType: Class[_] = classOf[InterstitialLimitedEngagements]
+    o-ovewwide d-def actiontype: c-cwass[_] = cwassof[intewstitiawwimitedengagements]
 
-    override val actionSeverity = 11
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(InterstitialLimitedEngagements(r, None), Evaluated)
+    o-ovewwide vaw actionsevewity = 11
+    pwivate d-def towuwewesuwt: weason => w-wuwewesuwt = memoize { w =>
+      w-wuwewesuwt(intewstitiawwimitedengagements(w, ʘwʘ n-nyone), :3 evawuated)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    d-def buiwd(evawuationcontext: evawuationcontext, (U ᵕ U❁) featuwemap: map[featuwe[_], (U ﹏ U) _]): wuwewesuwt = {
+      v-vaw appeawabweweason =
+        f-fweedomofspeechnotweach.extwacttweetsafetywabew(featuwemap).map(_.wabewtype) m-match {
+          case some(wabew) =>
+            fweedomofspeechnotweach.ewigibwetweetsafetywabewtypestoappeawabweweason(
+              wabew, ^^
+              v-viowationwevew)
+          c-case _ =>
+            appeawabweweason.unspecified(viowationwevew.wevew)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      t-towuwewesuwt(weason.fwomappeawabweweason(appeawabweweason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    o-ovewwide def withviowationwevew(viowationwevew: viowationwevew) = {
+      copy(viowationwevew = v-viowationwevew)
     }
   }
 
-  case class InterstitialLimitedEngagementsAvoidAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel,
-    limitedActionStrings: Option[Seq[String]])
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  c-case cwass i-intewstitiawwimitedengagementsavoidaction(
+    v-viowationwevew: viowationwevew = defauwtviowationwevew, òωó
+    w-wimitedactionstwings: o-option[seq[stwing]])
+      extends fweedomofspeechnotweachactionbuiwdew[tweetintewstitiaw] {
 
-    override def actionType: Class[_] = classOf[InterstitialLimitedEngagementsAvoidAction]
+    ovewwide def a-actiontype: cwass[_] = cwassof[intewstitiawwimitedengagementsavoidaction]
 
-    override val actionSeverity = 14
-    private def toRuleResult: AppealableReason => RuleResult = Memoize { r =>
-      RuleResult(
-        TweetInterstitial(
-          interstitial = Some(
-            Interstitial(
-              reason = FosnrReason(r),
-              localizedMessage = None,
-            )),
-          softIntervention = None,
-          limitedEngagements = Some(
-            LimitedEngagements(
-              reason = toLimitedEngagementReason(r),
-              policy = FreedomOfSpeechNotReach.limitedActionConverter(limitedActionStrings))),
-          downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None
-        ),
-        Evaluated
+    ovewwide vaw actionsevewity = 14
+    p-pwivate def towuwewesuwt: a-appeawabweweason => w-wuwewesuwt = memoize { w =>
+      w-wuwewesuwt(
+        t-tweetintewstitiaw(
+          intewstitiaw = s-some(
+            intewstitiaw(
+              w-weason = fosnwweason(w), /(^•ω•^)
+              w-wocawizedmessage = nyone, 😳😳😳
+            )), :3
+          s-softintewvention = n-nyone, (///ˬ///✿)
+          wimitedengagements = s-some(
+            w-wimitedengagements(
+              w-weason = towimitedengagementweason(w), rawr x3
+              p-powicy = fweedomofspeechnotweach.wimitedactionconvewtew(wimitedactionstwings))), (U ᵕ U❁)
+          downwank = nyone, (⑅˘꒳˘)
+          a-avoid = s-some(avoid(none)), (˘ω˘)
+          m-mediaintewstitiaw = nyone, :3
+          tweetvisibiwitynudge = nyone
+        ), XD
+        evawuated
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              labelType = label,
-              violationLevel = violationLevel)
+    d-def buiwd(evawuationcontext: evawuationcontext, >_< f-featuwemap: map[featuwe[_], (✿oωo) _]): w-wuwewesuwt = {
+      vaw appeawabweweason =
+        fweedomofspeechnotweach.extwacttweetsafetywabew(featuwemap).map(_.wabewtype) m-match {
+          case some(wabew) =>
+            f-fweedomofspeechnotweach.ewigibwetweetsafetywabewtypestoappeawabweweason(
+              w-wabewtype = w-wabew, (ꈍᴗꈍ)
+              v-viowationwevew = v-viowationwevew)
           case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+            appeawabweweason.unspecified(viowationwevew.wevew)
         }
 
-      toRuleResult(appealableReason)
+      towuwewesuwt(appeawabweweason)
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovewwide d-def withviowationwevew(viowationwevew: viowationwevew) = {
+      c-copy(viowationwevew = viowationwevew)
     }
   }
 
-  case class SoftInterventionAvoidAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  case cwass softintewventionavoidaction(viowationwevew: viowationwevew = d-defauwtviowationwevew)
+      extends fweedomofspeechnotweachactionbuiwdew[tweetintewstitiaw] {
 
-    override def actionType: Class[_] = classOf[SoftInterventionAvoidAction]
+    ovewwide def actiontype: cwass[_] = c-cwassof[softintewventionavoidaction]
 
-    override val actionSeverity = 8
-    private def toRuleResult: AppealableReason => RuleResult = Memoize { r =>
-      RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = Some(
-            SoftIntervention(
-              reason = toSoftInterventionReason(r),
-              engagementNudge = false,
-              suppressAutoplay = true,
-              warning = None,
-              detailsUrl = None,
-              displayType = Some(SoftInterventionDisplayType.Fosnr)
-            )),
-          limitedEngagements = None,
-          downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = None
-        ),
-        Evaluated
+    o-ovewwide vaw actionsevewity = 8
+    pwivate def t-towuwewesuwt: appeawabweweason => wuwewesuwt = m-memoize { w =>
+      w-wuwewesuwt(
+        tweetintewstitiaw(
+          i-intewstitiaw = nyone, XD
+          s-softintewvention = some(
+            softintewvention(
+              weason = t-tosoftintewventionweason(w), :3
+              engagementnudge = fawse, mya
+              s-suppwessautopway = t-twue, òωó
+              w-wawning = nyone, nyaa~~
+              detaiwsuww = n-nyone, 🥺
+              dispwaytype = some(softintewventiondispwaytype.fosnw)
+            )), -.-
+          wimitedengagements = nyone, 🥺
+          downwank = nyone, (˘ω˘)
+          a-avoid = some(avoid(none)), òωó
+          m-mediaintewstitiaw = n-nyone, UwU
+          t-tweetvisibiwitynudge = nyone, ^•ﻌ•^
+          abusivequawity = n-nyone
+        ), mya
+        e-evawuated
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    def buiwd(evawuationcontext: evawuationcontext, f-featuwemap: map[featuwe[_], (✿oωo) _]): wuwewesuwt = {
+      v-vaw appeawabweweason =
+        fweedomofspeechnotweach.extwacttweetsafetywabew(featuwemap).map(_.wabewtype) match {
+          case s-some(wabew) =>
+            f-fweedomofspeechnotweach.ewigibwetweetsafetywabewtypestoappeawabweweason(
+              wabew, XD
+              v-viowationwevew)
+          c-case _ =>
+            a-appeawabweweason.unspecified(viowationwevew.wevew)
         }
 
-      toRuleResult(appealableReason)
+      towuwewesuwt(appeawabweweason)
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovewwide d-def withviowationwevew(viowationwevew: viowationwevew) = {
+      copy(viowationwevew = v-viowationwevew)
     }
   }
 
-  case class SoftInterventionAvoidLimitedEngagementsAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel,
-    limitedActionStrings: Option[Seq[String]])
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  case cwass softintewventionavoidwimitedengagementsaction(
+    viowationwevew: v-viowationwevew = d-defauwtviowationwevew, :3
+    wimitedactionstwings: o-option[seq[stwing]])
+      e-extends fweedomofspeechnotweachactionbuiwdew[tweetintewstitiaw] {
 
-    override def actionType: Class[_] = classOf[SoftInterventionAvoidLimitedEngagementsAction]
+    o-ovewwide def actiontype: c-cwass[_] = cwassof[softintewventionavoidwimitedengagementsaction]
 
-    override val actionSeverity = 13
-    private def toRuleResult: AppealableReason => RuleResult = Memoize { r =>
-      RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = Some(
-            SoftIntervention(
-              reason = toSoftInterventionReason(r),
-              engagementNudge = false,
-              suppressAutoplay = true,
-              warning = None,
-              detailsUrl = None,
-              displayType = Some(SoftInterventionDisplayType.Fosnr)
-            )),
-          limitedEngagements = Some(
-            LimitedEngagements(
-              toLimitedEngagementReason(r),
-              FreedomOfSpeechNotReach.limitedActionConverter(limitedActionStrings))),
-          downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = None
-        ),
-        Evaluated
+    ovewwide vaw actionsevewity = 13
+    p-pwivate def towuwewesuwt: a-appeawabweweason => wuwewesuwt = memoize { w-w =>
+      wuwewesuwt(
+        t-tweetintewstitiaw(
+          intewstitiaw = n-nyone, (U ﹏ U)
+          softintewvention = s-some(
+            s-softintewvention(
+              weason = tosoftintewventionweason(w), UwU
+              e-engagementnudge = f-fawse, ʘwʘ
+              suppwessautopway = t-twue, >w<
+              wawning = nyone, 😳😳😳
+              detaiwsuww = nyone, rawr
+              d-dispwaytype = some(softintewventiondispwaytype.fosnw)
+            )), ^•ﻌ•^
+          w-wimitedengagements = some(
+            wimitedengagements(
+              t-towimitedengagementweason(w), σωσ
+              f-fweedomofspeechnotweach.wimitedactionconvewtew(wimitedactionstwings))), :3
+          d-downwank = nyone,
+          a-avoid = s-some(avoid(none)), rawr x3
+          mediaintewstitiaw = n-nyone,
+          tweetvisibiwitynudge = n-nyone, nyaa~~
+          abusivequawity = n-nyone
+        ), :3
+        e-evawuated
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    def buiwd(evawuationcontext: evawuationcontext, >w< featuwemap: map[featuwe[_], rawr _]): wuwewesuwt = {
+      v-vaw appeawabweweason =
+        f-fweedomofspeechnotweach.extwacttweetsafetywabew(featuwemap).map(_.wabewtype) match {
+          case some(wabew) =>
+            fweedomofspeechnotweach.ewigibwetweetsafetywabewtypestoappeawabweweason(
+              w-wabew, 😳
+              viowationwevew)
+          c-case _ =>
+            a-appeawabweweason.unspecified(viowationwevew.wevew)
         }
 
-      toRuleResult(appealableReason)
+      towuwewesuwt(appeawabweweason)
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovewwide def withviowationwevew(viowationwevew: viowationwevew) = {
+      copy(viowationwevew = viowationwevew)
     }
   }
 
-  case class SoftInterventionAvoidAbusiveQualityReplyAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  case c-cwass softintewventionavoidabusivequawitywepwyaction(
+    viowationwevew: viowationwevew = d-defauwtviowationwevew)
+      extends f-fweedomofspeechnotweachactionbuiwdew[tweetintewstitiaw] {
 
-    override def actionType: Class[_] = classOf[SoftInterventionAvoidAbusiveQualityReplyAction]
+    o-ovewwide def actiontype: cwass[_] = c-cwassof[softintewventionavoidabusivequawitywepwyaction]
 
-    override val actionSeverity = 13
-    private def toRuleResult: AppealableReason => RuleResult = Memoize { r =>
-      RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = Some(
-            SoftIntervention(
-              reason = toSoftInterventionReason(r),
-              engagementNudge = false,
-              suppressAutoplay = true,
-              warning = None,
-              detailsUrl = None,
-              displayType = Some(SoftInterventionDisplayType.Fosnr)
-            )),
-          limitedEngagements = None,
-          downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = Some(ConversationSectionAbusiveQuality)
-        ),
-        Evaluated
+    o-ovewwide vaw actionsevewity = 13
+    p-pwivate def t-towuwewesuwt: a-appeawabweweason => w-wuwewesuwt = memoize { w =>
+      wuwewesuwt(
+        tweetintewstitiaw(
+          intewstitiaw = nyone, 😳
+          s-softintewvention = s-some(
+            s-softintewvention(
+              w-weason = t-tosoftintewventionweason(w), 🥺
+              e-engagementnudge = fawse, rawr x3
+              suppwessautopway = twue, ^^
+              wawning = n-nyone, ( ͡o ω ͡o )
+              d-detaiwsuww = nyone, XD
+              dispwaytype = some(softintewventiondispwaytype.fosnw)
+            )), ^^
+          wimitedengagements = nyone, (⑅˘꒳˘)
+          d-downwank = n-nyone, (⑅˘꒳˘)
+          a-avoid = some(avoid(none)), ^•ﻌ•^
+          mediaintewstitiaw = nyone, ( ͡o ω ͡o )
+          t-tweetvisibiwitynudge = nyone, ( ͡o ω ͡o )
+          abusivequawity = s-some(convewsationsectionabusivequawity)
+        ), (✿oωo)
+        evawuated
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    d-def buiwd(evawuationcontext: evawuationcontext, 😳😳😳 f-featuwemap: map[featuwe[_], OwO _]): w-wuwewesuwt = {
+      v-vaw appeawabweweason =
+        fweedomofspeechnotweach.extwacttweetsafetywabew(featuwemap).map(_.wabewtype) m-match {
+          c-case some(wabew) =>
+            f-fweedomofspeechnotweach.ewigibwetweetsafetywabewtypestoappeawabweweason(
+              w-wabew, ^^
+              v-viowationwevew)
+          c-case _ =>
+            appeawabweweason.unspecified(viowationwevew.wevew)
         }
 
-      toRuleResult(appealableReason)
+      t-towuwewesuwt(appeawabweweason)
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    o-ovewwide def withviowationwevew(viowationwevew: v-viowationwevew) = {
+      copy(viowationwevew = viowationwevew)
     }
   }
 }
 
-object FreedomOfSpeechNotReachRules {
+o-object fweedomofspeechnotweachwuwes {
 
-  abstract class OnlyWhenAuthorViewerRule(
-    actionBuilder: ActionBuilder[_ <: Action],
-    condition: Condition)
-      extends Rule(actionBuilder, And(Not(NonAuthorViewer), condition))
+  abstwact cwass onwywhenauthowviewewwuwe(
+    a-actionbuiwdew: actionbuiwdew[_ <: action], rawr x3
+    c-condition: c-condition)
+      extends wuwe(actionbuiwdew, 🥺 a-and(not(nonauthowviewew), (ˆ ﻌ ˆ)♡ condition))
 
-  abstract class OnlyWhenNonAuthorViewerRule(
-    actionBuilder: ActionBuilder[_ <: Action],
-    condition: Condition)
-      extends Rule(actionBuilder, And(NonAuthorViewer, condition))
+  abstwact c-cwass onwywhennonauthowviewewwuwe(
+    a-actionbuiwdew: actionbuiwdew[_ <: action], ( ͡o ω ͡o )
+    condition: c-condition)
+      e-extends wuwe(actionbuiwdew, >w< a-and(nonauthowviewew, /(^•ω•^) condition))
 
-  case class ViewerIsAuthorAndTweetHasViolationOfLevel(
-    violationLevel: ViolationLevel,
-    override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenAuthorViewerRule(
-        actionBuilder,
-        Condition.TweetHasViolationOfLevel(violationLevel)
+  case cwass v-viewewisauthowandtweethasviowationofwevew(
+    v-viowationwevew: viowationwevew, 😳😳😳
+    o-ovewwide vaw a-actionbuiwdew: actionbuiwdew[_ <: action])
+      e-extends onwywhenauthowviewewwuwe(
+        a-actionbuiwdew, (U ᵕ U❁)
+        c-condition.tweethasviowationofwevew(viowationwevew)
       ) {
-    override lazy val name: String = s"ViewerIsAuthorAndTweetHasViolationOf$violationLevel"
+    o-ovewwide wazy vaw nyame: stwing = s"viewewisauthowandtweethasviowationof$viowationwevew"
 
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
+    ovewwide def enabwed: seq[wuwepawam[boowean]] =
+      seq(enabwefosnwwuwepawam, (˘ω˘) fosnwwuwesenabwedpawam)
   }
 
-  case class ViewerIsFollowerAndTweetHasViolationOfLevel(
-    violationLevel: ViolationLevel,
-    override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenNonAuthorViewerRule(
-        actionBuilder,
-        And(
-          Condition.TweetHasViolationOfLevel(violationLevel),
-          ViewerFollowsAuthorOfFosnrViolatingTweet)
+  c-case cwass viewewisfowwowewandtweethasviowationofwevew(
+    viowationwevew: viowationwevew, 😳
+    o-ovewwide vaw a-actionbuiwdew: actionbuiwdew[_ <: a-action])
+      e-extends onwywhennonauthowviewewwuwe(
+        a-actionbuiwdew, (ꈍᴗꈍ)
+        and(
+          c-condition.tweethasviowationofwevew(viowationwevew), :3
+          v-viewewfowwowsauthowoffosnwviowatingtweet)
       ) {
-    override lazy val name: String = s"ViewerIsFollowerAndTweetHasViolationOf$violationLevel"
+    ovewwide w-wazy vaw nyame: s-stwing = s"viewewisfowwowewandtweethasviowationof$viowationwevew"
 
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
+    ovewwide def enabwed: s-seq[wuwepawam[boowean]] =
+      seq(enabwefosnwwuwepawam, /(^•ω•^) fosnwwuwesenabwedpawam)
 
-    override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-      new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+    o-ovewwide vaw fawwbackactionbuiwdew: o-option[actionbuiwdew[_ <: a-action]] = some(
+      nyew c-constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
   }
 
-  case class ViewerIsNonFollowerNonAuthorAndTweetHasViolationOfLevel(
-    violationLevel: ViolationLevel,
-    override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenNonAuthorViewerRule(
-        actionBuilder,
-        And(
-          Condition.TweetHasViolationOfLevel(violationLevel),
-          ViewerDoesNotFollowAuthorOfFosnrViolatingTweet)
+  c-case cwass v-viewewisnonfowwowewnonauthowandtweethasviowationofwevew(
+    viowationwevew: v-viowationwevew, ^^;;
+    o-ovewwide vaw actionbuiwdew: actionbuiwdew[_ <: a-action])
+      extends onwywhennonauthowviewewwuwe(
+        a-actionbuiwdew, o.O
+        a-and(
+          c-condition.tweethasviowationofwevew(viowationwevew), 😳
+          viewewdoesnotfowwowauthowoffosnwviowatingtweet)
       ) {
-    override lazy val name: String =
-      s"ViewerIsNonFollowerNonAuthorAndTweetHasViolationOf$violationLevel"
+    ovewwide w-wazy vaw nyame: stwing =
+      s"viewewisnonfowwowewnonauthowandtweethasviowationof$viowationwevew"
 
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
+    o-ovewwide def enabwed: seq[wuwepawam[boowean]] =
+      seq(enabwefosnwwuwepawam, UwU fosnwwuwesenabwedpawam)
 
-    override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-      new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+    ovewwide vaw fawwbackactionbuiwdew: option[actionbuiwdew[_ <: a-action]] = some(
+      nyew constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
   }
 
-  case class ViewerIsNonAuthorAndTweetHasViolationOfLevel(
-    violationLevel: ViolationLevel,
-    override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenNonAuthorViewerRule(
-        actionBuilder,
-        Condition.TweetHasViolationOfLevel(violationLevel)
+  case cwass viewewisnonauthowandtweethasviowationofwevew(
+    viowationwevew: viowationwevew, >w<
+    o-ovewwide vaw actionbuiwdew: actionbuiwdew[_ <: a-action])
+      extends o-onwywhennonauthowviewewwuwe(
+        actionbuiwdew, o.O
+        condition.tweethasviowationofwevew(viowationwevew)
       ) {
-    override lazy val name: String =
-      s"ViewerIsNonAuthorAndTweetHasViolationOf$violationLevel"
+    o-ovewwide wazy vaw nyame: stwing =
+      s-s"viewewisnonauthowandtweethasviowationof$viowationwevew"
 
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
+    ovewwide d-def enabwed: seq[wuwepawam[boowean]] =
+      s-seq(enabwefosnwwuwepawam, (˘ω˘) fosnwwuwesenabwedpawam)
 
-    override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-      new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+    ovewwide vaw f-fawwbackactionbuiwdew: option[actionbuiwdew[_ <: action]] = some(
+      new constantactionbuiwdew(avoid(some(mightnotbesuitabwefowads))))
   }
 
-  case object TweetHasViolationOfAnyLevelFallbackDropRule
-      extends RuleWithConstantAction(
-        Drop(reason = NotSupportedOnDevice),
-        Condition.TweetHasViolationOfAnyLevel
+  c-case object tweethasviowationofanywevewfawwbackdwopwuwe
+      extends wuwewithconstantaction(
+        d-dwop(weason = nyotsuppowtedondevice), òωó
+        c-condition.tweethasviowationofanywevew
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableFosnrRuleParam, FosnrFallbackDropRulesEnabledParam)
+    ovewwide d-def enabwed: s-seq[wuwepawam[boowean]] =
+      seq(enabwefosnwwuwepawam, nyaa~~ fosnwfawwbackdwopwuwesenabwedpawam)
   }
 }

@@ -1,260 +1,260 @@
-package com.twitter.visibility.interfaces.conversations
+package com.twittew.visibiwity.intewfaces.convewsations
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.servo.repository.KeyValueResult
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.spam.rtf.thriftscala.SafetyLabelValue
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Stopwatch
-import com.twitter.util.Try
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.tweets.TweetIdFeatures
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.VerdictLogger
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.FosnrPefetchedLabelsRelationshipFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.AuthorUserLabels
-import com.twitter.visibility.features.ConversationRootAuthorIsVerified
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.features.HasInnerCircleOfFriendsRelationship
-import com.twitter.visibility.features.TweetConversationId
-import com.twitter.visibility.features.TweetParentId
-import com.twitter.visibility.logging.thriftscala.VFLibType
-import com.twitter.visibility.models.ContentId.TweetId
-import com.twitter.visibility.models.SafetyLevel.TimelineConversationsDownranking
-import com.twitter.visibility.models.SafetyLevel.TimelineConversationsDownrankingMinimal
-import com.twitter.visibility.models.SafetyLevel.toThrift
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.UnitOfDiversion
+impowt com.twittew.decidew.decidew
+i-impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.wabew
+i-impowt c-com.twittew.sewvo.wepositowy.keyvawuewesuwt
+impowt com.twittew.sewvo.utiw.gate
+impowt com.twittew.spam.wtf.thwiftscawa.safetywabew
+impowt com.twittew.spam.wtf.thwiftscawa.safetywabewtype
+impowt c-com.twittew.spam.wtf.thwiftscawa.safetywabewvawue
+impowt com.twittew.stitch.stitch
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.stopwatch
+i-impowt com.twittew.utiw.twy
+impowt com.twittew.visibiwity.visibiwitywibwawy
+impowt com.twittew.visibiwity.buiwdew.tweets.tweetidfeatuwes
+impowt com.twittew.visibiwity.buiwdew.featuwemapbuiwdew
+i-impowt com.twittew.visibiwity.buiwdew.vewdictwoggew
+i-impowt c-com.twittew.visibiwity.buiwdew.visibiwitywesuwt
+impowt com.twittew.visibiwity.buiwdew.tweets.fosnwpefetchedwabewswewationshipfeatuwes
+impowt com.twittew.visibiwity.buiwdew.usews.authowfeatuwes
+impowt com.twittew.visibiwity.common.usewwewationshipsouwce
+i-impowt com.twittew.visibiwity.common.usewsouwce
+impowt com.twittew.visibiwity.configapi.configs.visibiwitydecidewgates
+impowt com.twittew.visibiwity.featuwes.authowusewwabews
+impowt com.twittew.visibiwity.featuwes.convewsationwootauthowisvewified
+impowt com.twittew.visibiwity.featuwes.featuwemap
+i-impowt com.twittew.visibiwity.featuwes.hasinnewciwcweoffwiendswewationship
+i-impowt com.twittew.visibiwity.featuwes.tweetconvewsationid
+i-impowt com.twittew.visibiwity.featuwes.tweetpawentid
+i-impowt com.twittew.visibiwity.wogging.thwiftscawa.vfwibtype
+i-impowt com.twittew.visibiwity.modews.contentid.tweetid
+impowt com.twittew.visibiwity.modews.safetywevew.timewineconvewsationsdownwanking
+impowt c-com.twittew.visibiwity.modews.safetywevew.timewineconvewsationsdownwankingminimaw
+impowt com.twittew.visibiwity.modews.safetywevew.tothwift
+impowt c-com.twittew.visibiwity.modews.contentid
+impowt com.twittew.visibiwity.modews.safetywevew
+impowt com.twittew.visibiwity.modews.tweetsafetywabew
+impowt com.twittew.visibiwity.modews.unitofdivewsion
 
-object TimelineConversationsVisibilityLibrary {
-  type Type =
-    TimelineConversationsVisibilityRequest => Stitch[TimelineConversationsVisibilityResponse]
+o-object timewineconvewsationsvisibiwitywibwawy {
+  t-type t-type =
+    timewineconvewsationsvisibiwitywequest => s-stitch[timewineconvewsationsvisibiwitywesponse]
 
-  def apply(
-    visibilityLibrary: VisibilityLibrary,
-    batchSafetyLabelRepository: BatchSafetyLabelRepository,
-    decider: Decider,
-    userRelationshipSource: UserRelationshipSource = UserRelationshipSource.empty,
-    userSource: UserSource = UserSource.empty
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val tweetIdFeatures = new TweetIdFeatures(
-      statsReceiver = libraryStatsReceiver,
-      enableStitchProfiling = Gate.False
+  def appwy(
+    visibiwitywibwawy: visibiwitywibwawy, /(^•ω•^)
+    b-batchsafetywabewwepositowy: b-batchsafetywabewwepositowy, 🥺
+    decidew: d-decidew, ʘwʘ
+    u-usewwewationshipsouwce: usewwewationshipsouwce = u-usewwewationshipsouwce.empty,
+    usewsouwce: u-usewsouwce = usewsouwce.empty
+  ): type = {
+    vaw wibwawystatsweceivew = v-visibiwitywibwawy.statsweceivew
+    vaw tweetidfeatuwes = n-nyew tweetidfeatuwes(
+      statsweceivew = w-wibwawystatsweceivew, UwU
+      enabwestitchpwofiwing = g-gate.fawse
     )
-    val tweetIdFeaturesMinimal = new TweetIdFeatures(
-      statsReceiver = libraryStatsReceiver,
-      enableStitchProfiling = Gate.False
+    vaw tweetidfeatuwesminimaw = nyew tweetidfeatuwes(
+      statsweceivew = wibwawystatsweceivew, XD
+      enabwestitchpwofiwing = g-gate.fawse
     )
-    val vfLatencyOverallStat = libraryStatsReceiver.stat("vf_latency_overall")
-    val vfLatencyStitchBuildStat = libraryStatsReceiver.stat("vf_latency_stitch_build")
-    val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
+    v-vaw vfwatencyovewawwstat = w-wibwawystatsweceivew.stat("vf_watency_ovewaww")
+    v-vaw v-vfwatencystitchbuiwdstat = wibwawystatsweceivew.stat("vf_watency_stitch_buiwd")
+    vaw vfwatencystitchwunstat = wibwawystatsweceivew.stat("vf_watency_stitch_wun")
 
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
-    val verdictLogger =
-      createVerdictLogger(
-        visibilityDeciderGates.enableVerdictLoggerTCVL,
-        decider,
-        libraryStatsReceiver)
+    v-vaw visibiwitydecidewgates = visibiwitydecidewgates(decidew)
+    vaw vewdictwoggew =
+      cweatevewdictwoggew(
+        visibiwitydecidewgates.enabwevewdictwoggewtcvw, (✿oωo)
+        d-decidew, :3
+        wibwawystatsweceivew)
 
-    request: TimelineConversationsVisibilityRequest =>
-      val elapsed = Stopwatch.start()
-      var runStitchStartMs = 0L
+    w-wequest: timewineconvewsationsvisibiwitywequest =>
+      vaw e-ewapsed = stopwatch.stawt()
+      v-vaw wunstitchstawtms = 0w
 
-      val future = request.prefetchedSafetyLabels match {
-        case Some(labels) => Future.value(labels)
+      vaw futuwe = w-wequest.pwefetchedsafetywabews m-match {
+        c-case some(wabews) => f-futuwe.vawue(wabews)
         case _ =>
-          batchSafetyLabelRepository((request.conversationId, request.tweetIds))
+          batchsafetywabewwepositowy((wequest.convewsationid, w-wequest.tweetids))
       }
 
-      val fosnrPefetchedLabelsRelationshipFeatures =
-        new FosnrPefetchedLabelsRelationshipFeatures(
-          userRelationshipSource = userRelationshipSource,
-          statsReceiver = libraryStatsReceiver)
+      v-vaw f-fosnwpefetchedwabewswewationshipfeatuwes =
+        n-nyew fosnwpefetchedwabewswewationshipfeatuwes(
+          u-usewwewationshipsouwce = usewwewationshipsouwce, (///ˬ///✿)
+          statsweceivew = wibwawystatsweceivew)
 
-      val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
+      v-vaw authowfeatuwes = nyew authowfeatuwes(usewsouwce, nyaa~~ wibwawystatsweceivew)
 
-      Stitch.callFuture(future).flatMap {
-        kvr: KeyValueResult[Long, scala.collection.Map[SafetyLabelType, SafetyLabel]] =>
-          val featureMapProvider: (ContentId, SafetyLevel) => FeatureMap = {
-            case (TweetId(tweetId), safetyLevel) =>
-              val constantTweetSafetyLabels: Seq[TweetSafetyLabel] =
-                kvr.found.getOrElse(tweetId, Map.empty).toSeq.map {
-                  case (safetyLabelType, safetyLabel) =>
-                    TweetSafetyLabel.fromThrift(SafetyLabelValue(safetyLabelType, safetyLabel))
+      stitch.cawwfutuwe(futuwe).fwatmap {
+        kvw: keyvawuewesuwt[wong, >w< s-scawa.cowwection.map[safetywabewtype, -.- safetywabew]] =>
+          vaw featuwemappwovidew: (contentid, (✿oωo) safetywevew) => f-featuwemap = {
+            c-case (tweetid(tweetid), (˘ω˘) s-safetywevew) =>
+              vaw constanttweetsafetywabews: s-seq[tweetsafetywabew] =
+                kvw.found.getowewse(tweetid, rawr m-map.empty).toseq.map {
+                  c-case (safetywabewtype, OwO safetywabew) =>
+                    tweetsafetywabew.fwomthwift(safetywabewvawue(safetywabewtype, ^•ﻌ•^ safetywabew))
                 }
 
-              val replyAuthor = request.tweetAuthors.flatMap {
-                _(tweetId) match {
-                  case Return(Some(userId)) => Some(userId)
-                  case _ => None
+              vaw wepwyauthow = wequest.tweetauthows.fwatmap {
+                _(tweetid) m-match {
+                  case wetuwn(some(usewid)) => s-some(usewid)
+                  case _ => n-nyone
                 }
               }
 
-              val fosnrPefetchedLabelsRelationshipFeatureConf = replyAuthor match {
-                case Some(authorId) if visibilityLibrary.isReleaseCandidateEnabled =>
-                  fosnrPefetchedLabelsRelationshipFeatures
-                    .forTweetWithSafetyLabelsAndAuthorId(
-                      safetyLabels = constantTweetSafetyLabels,
-                      authorId = authorId,
-                      viewerId = request.viewerContext.userId)
-                case _ => fosnrPefetchedLabelsRelationshipFeatures.forNonFosnr()
+              v-vaw fosnwpefetchedwabewswewationshipfeatuweconf = wepwyauthow m-match {
+                c-case some(authowid) if visibiwitywibwawy.isweweasecandidateenabwed =>
+                  f-fosnwpefetchedwabewswewationshipfeatuwes
+                    .fowtweetwithsafetywabewsandauthowid(
+                      s-safetywabews = constanttweetsafetywabews, UwU
+                      authowid = authowid, (˘ω˘)
+                      viewewid = wequest.viewewcontext.usewid)
+                c-case _ => f-fosnwpefetchedwabewswewationshipfeatuwes.fownonfosnw()
               }
 
-              val authorFeatureConf = replyAuthor match {
-                case Some(authorId) if visibilityLibrary.isReleaseCandidateEnabled =>
-                  authorFeatures.forAuthorId(authorId)
-                case _ => authorFeatures.forNoAuthor()
+              v-vaw authowfeatuweconf = wepwyauthow match {
+                c-case some(authowid) i-if visibiwitywibwawy.isweweasecandidateenabwed =>
+                  authowfeatuwes.fowauthowid(authowid)
+                c-case _ => authowfeatuwes.fownoauthow()
               }
 
-              val baseBuilderArguments = (safetyLevel match {
-                case TimelineConversationsDownranking =>
-                  Seq(tweetIdFeatures.forTweetId(tweetId, constantTweetSafetyLabels))
-                case TimelineConversationsDownrankingMinimal =>
-                  Seq(tweetIdFeaturesMinimal.forTweetId(tweetId, constantTweetSafetyLabels))
-                case _ => Nil
-              }) :+ fosnrPefetchedLabelsRelationshipFeatureConf :+ authorFeatureConf
+              vaw basebuiwdewawguments = (safetywevew match {
+                case timewineconvewsationsdownwanking =>
+                  seq(tweetidfeatuwes.fowtweetid(tweetid, (///ˬ///✿) c-constanttweetsafetywabews))
+                c-case timewineconvewsationsdownwankingminimaw =>
+                  seq(tweetidfeatuwesminimaw.fowtweetid(tweetid, σωσ constanttweetsafetywabews))
+                c-case _ => nyiw
+              }) :+ f-fosnwpefetchedwabewswewationshipfeatuweconf :+ authowfeatuweconf
 
-              val tweetAuthorUserLabels: Option[Seq[Label]] =
-                request.prefetchedTweetAuthorUserLabels.flatMap {
-                  _.apply(tweetId) match {
-                    case Return(Some(labelMap)) =>
-                      Some(labelMap.values.toSeq)
+              vaw tweetauthowusewwabews: option[seq[wabew]] =
+                w-wequest.pwefetchedtweetauthowusewwabews.fwatmap {
+                  _.appwy(tweetid) match {
+                    case wetuwn(some(wabewmap)) =>
+                      some(wabewmap.vawues.toseq)
                     case _ =>
-                      None
+                      n-nyone
                   }
                 }
 
-              val hasInnerCircleOfFriendsRelationship: Boolean =
-                request.innerCircleOfFriendsRelationships match {
-                  case Some(keyValueResult) =>
-                    keyValueResult(tweetId) match {
-                      case Return(Some(true)) => true
-                      case _ => false
+              vaw hasinnewciwcweoffwiendswewationship: boowean =
+                wequest.innewciwcweoffwiendswewationships m-match {
+                  c-case some(keyvawuewesuwt) =>
+                    keyvawuewesuwt(tweetid) match {
+                      c-case wetuwn(some(twue)) => twue
+                      c-case _ => fawse
                     }
-                  case None => false
+                  case nyone => fawse
                 }
 
-              val builderArguments: Seq[FeatureMapBuilder => FeatureMapBuilder] =
-                tweetAuthorUserLabels match {
-                  case Some(labels) =>
-                    baseBuilderArguments :+ { (fmb: FeatureMapBuilder) =>
-                      fmb.withConstantFeature(AuthorUserLabels, labels)
+              v-vaw buiwdewawguments: seq[featuwemapbuiwdew => f-featuwemapbuiwdew] =
+                tweetauthowusewwabews match {
+                  case s-some(wabews) =>
+                    basebuiwdewawguments :+ { (fmb: f-featuwemapbuiwdew) =>
+                      f-fmb.withconstantfeatuwe(authowusewwabews, /(^•ω•^) wabews)
                     }
 
-                  case None =>
-                    baseBuilderArguments :+ { (fmb: FeatureMapBuilder) =>
-                      fmb.withConstantFeature(AuthorUserLabels, Seq.empty)
+                  c-case nyone =>
+                    b-basebuiwdewawguments :+ { (fmb: f-featuwemapbuiwdew) =>
+                      f-fmb.withconstantfeatuwe(authowusewwabews, 😳 seq.empty)
                     }
-                  case _ =>
-                    baseBuilderArguments
+                  c-case _ =>
+                    b-basebuiwdewawguments
                 }
 
-              val tweetParentIdOpt: Option[Long] =
-                request.tweetParentIdMap.flatMap(tweetParentIdMap => tweetParentIdMap(tweetId))
+              vaw tweetpawentidopt: option[wong] =
+                wequest.tweetpawentidmap.fwatmap(tweetpawentidmap => t-tweetpawentidmap(tweetid))
 
-              visibilityLibrary.featureMapBuilder(builderArguments :+ { (fmb: FeatureMapBuilder) =>
-                fmb.withConstantFeature(
-                  HasInnerCircleOfFriendsRelationship,
-                  hasInnerCircleOfFriendsRelationship)
-                fmb.withConstantFeature(TweetConversationId, request.conversationId)
-                fmb.withConstantFeature(TweetParentId, tweetParentIdOpt)
-                fmb.withConstantFeature(
-                  ConversationRootAuthorIsVerified,
-                  request.rootAuthorIsVerified)
+              v-visibiwitywibwawy.featuwemapbuiwdew(buiwdewawguments :+ { (fmb: f-featuwemapbuiwdew) =>
+                fmb.withconstantfeatuwe(
+                  hasinnewciwcweoffwiendswewationship, 😳
+                  hasinnewciwcweoffwiendswewationship)
+                f-fmb.withconstantfeatuwe(tweetconvewsationid, (⑅˘꒳˘) wequest.convewsationid)
+                f-fmb.withconstantfeatuwe(tweetpawentid, 😳😳😳 t-tweetpawentidopt)
+                fmb.withconstantfeatuwe(
+                  convewsationwootauthowisvewified, 😳
+                  wequest.wootauthowisvewified)
               })
-            case _ =>
-              visibilityLibrary.featureMapBuilder(Nil)
+            c-case _ =>
+              v-visibiwitywibwawy.featuwemapbuiwdew(niw)
           }
-          val safetyLevel =
-            if (request.minimalSectioningOnly) TimelineConversationsDownrankingMinimal
-            else TimelineConversationsDownranking
+          v-vaw safetywevew =
+            i-if (wequest.minimawsectioningonwy) timewineconvewsationsdownwankingminimaw
+            ewse t-timewineconvewsationsdownwanking
 
-          val evaluationContextBuilder = visibilityLibrary
-            .evaluationContextBuilder(request.viewerContext)
-            .withUnitOfDiversion(UnitOfDiversion.ConversationId(request.conversationId))
+          vaw evawuationcontextbuiwdew = visibiwitywibwawy
+            .evawuationcontextbuiwdew(wequest.viewewcontext)
+            .withunitofdivewsion(unitofdivewsion.convewsationid(wequest.convewsationid))
 
-          visibilityLibrary
-            .runRuleEngineBatch(
-              request.tweetIds.map(TweetId),
-              featureMapProvider,
-              evaluationContextBuilder,
-              safetyLevel
+          visibiwitywibwawy
+            .wunwuweenginebatch(
+              wequest.tweetids.map(tweetid), XD
+              featuwemappwovidew, mya
+              evawuationcontextbuiwdew, ^•ﻌ•^
+              s-safetywevew
             )
-            .map { results: Seq[Try[VisibilityResult]] =>
-              val (succeededRequests, _) = results.partition(_.exists(_.finished))
-              val visibilityResultMap = succeededRequests.flatMap {
-                case Return(result) =>
-                  scribeVisibilityVerdict(
-                    result,
-                    visibilityDeciderGates.enableVerdictScribingTCVL,
-                    verdictLogger,
-                    request.viewerContext.userId,
-                    safetyLevel)
-                  result.contentId match {
-                    case TweetId(id) => Some((id, result))
-                    case _ => None
+            .map { wesuwts: s-seq[twy[visibiwitywesuwt]] =>
+              vaw (succeededwequests, ʘwʘ _) = w-wesuwts.pawtition(_.exists(_.finished))
+              vaw visibiwitywesuwtmap = s-succeededwequests.fwatmap {
+                case wetuwn(wesuwt) =>
+                  s-scwibevisibiwityvewdict(
+                    w-wesuwt, ( ͡o ω ͡o )
+                    v-visibiwitydecidewgates.enabwevewdictscwibingtcvw, mya
+                    v-vewdictwoggew, o.O
+                    w-wequest.viewewcontext.usewid, (✿oωo)
+                    safetywevew)
+                  wesuwt.contentid match {
+                    case tweetid(id) => some((id, :3 wesuwt))
+                    c-case _ => n-nyone
                   }
-                case _ => None
-              }.toMap
-              val failedTweetIds = request.tweetIds diff visibilityResultMap.keys.toSeq
-              val response = TimelineConversationsVisibilityResponse(
-                visibilityResults = visibilityResultMap,
-                failedTweetIds = failedTweetIds
+                c-case _ => nyone
+              }.tomap
+              v-vaw faiwedtweetids = wequest.tweetids diff visibiwitywesuwtmap.keys.toseq
+              vaw wesponse = t-timewineconvewsationsvisibiwitywesponse(
+                v-visibiwitywesuwts = visibiwitywesuwtmap, 😳
+                f-faiwedtweetids = faiwedtweetids
               )
 
-              runStitchStartMs = elapsed().inMilliseconds
-              val buildStitchStatMs = elapsed().inMilliseconds
-              vfLatencyStitchBuildStat.add(buildStitchStatMs)
+              wunstitchstawtms = e-ewapsed().inmiwwiseconds
+              v-vaw buiwdstitchstatms = ewapsed().inmiwwiseconds
+              v-vfwatencystitchbuiwdstat.add(buiwdstitchstatms)
 
-              response
+              w-wesponse
             }
-            .onSuccess(_ => {
-              val overallStatMs = elapsed().inMilliseconds
-              vfLatencyOverallStat.add(overallStatMs)
-              val runStitchEndMs = elapsed().inMilliseconds
-              vfLatencyStitchRunStat.add(runStitchEndMs - runStitchStartMs)
+            .onsuccess(_ => {
+              vaw ovewawwstatms = ewapsed().inmiwwiseconds
+              vfwatencyovewawwstat.add(ovewawwstatms)
+              vaw wunstitchendms = ewapsed().inmiwwiseconds
+              v-vfwatencystitchwunstat.add(wunstitchendms - w-wunstitchstawtms)
             })
       }
   }
 
-  def scribeVisibilityVerdict(
-    visibilityResult: VisibilityResult,
-    enableVerdictScribing: Gate[Unit],
-    verdictLogger: VerdictLogger,
-    viewerId: Option[Long],
-    safetyLevel: SafetyLevel
-  ): Unit = if (enableVerdictScribing()) {
-    verdictLogger.scribeVerdict(
-      visibilityResult = visibilityResult,
-      viewerId = viewerId,
-      safetyLevel = toThrift(safetyLevel),
-      vfLibType = VFLibType.TimelineConversationsVisibilityLibrary)
+  d-def s-scwibevisibiwityvewdict(
+    v-visibiwitywesuwt: visibiwitywesuwt, (U ﹏ U)
+    e-enabwevewdictscwibing: g-gate[unit], mya
+    vewdictwoggew: v-vewdictwoggew, (U ᵕ U❁)
+    viewewid: o-option[wong], :3
+    safetywevew: s-safetywevew
+  ): unit = if (enabwevewdictscwibing()) {
+    v-vewdictwoggew.scwibevewdict(
+      visibiwitywesuwt = v-visibiwitywesuwt, mya
+      v-viewewid = viewewid, OwO
+      safetywevew = t-tothwift(safetywevew), (ˆ ﻌ ˆ)♡
+      vfwibtype = vfwibtype.timewineconvewsationsvisibiwitywibwawy)
   }
 
-  def createVerdictLogger(
-    enableVerdictLogger: Gate[Unit],
-    decider: Decider,
-    statsReceiver: StatsReceiver
-  ): VerdictLogger = {
-    if (enableVerdictLogger()) {
-      VerdictLogger(statsReceiver, decider)
-    } else {
-      VerdictLogger.Empty
+  d-def c-cweatevewdictwoggew(
+    e-enabwevewdictwoggew: gate[unit], ʘwʘ
+    decidew: decidew, o.O
+    s-statsweceivew: statsweceivew
+  ): vewdictwoggew = {
+    i-if (enabwevewdictwoggew()) {
+      vewdictwoggew(statsweceivew, UwU d-decidew)
+    } ewse {
+      v-vewdictwoggew.empty
     }
   }
 }

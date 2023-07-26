@@ -1,48 +1,48 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.util.List;
+impowt java.utiw.wist;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+i-impowt c-com.googwe.common.cowwect.immutabwewist;
+i-impowt c-com.googwe.common.cowwect.wists;
+i-impowt com.googwe.common.cowwect.sets;
 
-import org.apache.commons.lang.StringUtils;
+i-impowt o-owg.apache.commons.wang.stwingutiws;
 
-import com.twitter.escherbird.thriftjava.TweetEntityAnnotation;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
+i-impowt com.twittew.eschewbiwd.thwiftjava.tweetentityannotation;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdfiewdconstants.eawwybiwdfiewdconstant;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwt;
 
-public class EntityAnnotationCollector extends AbstractFacetTermCollector {
-  private List<TweetEntityAnnotation> annotations = Lists.newArrayList();
+pubwic cwass entityannotationcowwectow e-extends abstwactfacettewmcowwectow {
+  pwivate w-wist<tweetentityannotation> annotations = wists.newawwaywist();
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
+  @ovewwide
+  pubwic boowean cowwect(int d-docid, 😳😳😳 wong tewmid, 🥺 int f-fiewdid) {
 
-    String term = getTermFromFacet(termID, fieldID,
-        Sets.newHashSet(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName()));
-    if (StringUtils.isEmpty(term)) {
-      return false;
+    s-stwing tewm = gettewmfwomfacet(tewmid, mya fiewdid,
+        sets.newhashset(eawwybiwdfiewdconstant.entity_id_fiewd.getfiewdname()));
+    if (stwingutiws.isempty(tewm)) {
+      wetuwn f-fawse;
     }
 
-    String[] idParts = term.split("\\.");
+    stwing[] idpawts = tewm.spwit("\\.");
 
-    // Only include the full three-part form of the entity ID: "groupId.domainId.entityId"
-    // Exclude the less-specific forms we index: "domainId.entityId" and "entityId"
-    if (idParts.length < 3) {
-      return false;
+    // onwy incwude the fuww thwee-pawt f-fowm of the entity id: "gwoupid.domainid.entityid"
+    // e-excwude the wess-specific f-fowms w-we index: "domainid.entityid" and "entityid"
+    i-if (idpawts.wength < 3) {
+      wetuwn fawse;
     }
 
-    annotations.add(new TweetEntityAnnotation(
-        Long.valueOf(idParts[0]),
-        Long.valueOf(idParts[1]),
-        Long.valueOf(idParts[2])));
+    annotations.add(new tweetentityannotation(
+        w-wong.vawueof(idpawts[0]), 🥺
+        wong.vawueof(idpawts[1]), >_<
+        wong.vawueof(idpawts[2])));
 
-    return true;
+    w-wetuwn twue;
   }
 
-  @Override
-  public void fillResultAndClear(ThriftSearchResult result) {
-    getExtraMetadata(result).setEntityAnnotations(ImmutableList.copyOf(annotations));
-    annotations.clear();
+  @ovewwide
+  pubwic void fiwwwesuwtandcweaw(thwiftseawchwesuwt wesuwt) {
+    getextwametadata(wesuwt).setentityannotations(immutabwewist.copyof(annotations));
+    annotations.cweaw();
   }
 }

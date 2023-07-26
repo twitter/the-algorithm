@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtPlaceholderCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.PlaceholderTopCursorBuilder.DefaultPlaceholderCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtpwacehowdewcuwsow
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.cuwsow.uwtcuwsowsewiawizew
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew.pwacehowdewtopcuwsowbuiwdew.defauwtpwacehowdewcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowtype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.topcuwsow
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinecuwsowsewiawizew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.uwtpipewinecuwsow
 
-object PlaceholderTopCursorBuilder {
-  val DefaultPlaceholderCursor = UrtPlaceholderCursor()
+object p-pwacehowdewtopcuwsowbuiwdew {
+  vaw defauwtpwacehowdewcuwsow = uwtpwacehowdewcuwsow()
 }
 
 /**
- * Top cursor builder that can be used when the Product does not support paging up. The URT spec
- * requires that both bottom and top cursors always be present on each page. Therefore, if the
- * product does not support paging up, then we can use a cursor value that is not deserializable.
- * This way if the client submits a TopCursor, the backend will treat the the request as if no
- * cursor was submitted.
+ * t-top cuwsow buiwdew that can b-be used when the pwoduct does nyot suppowt paging up. rawr x3 the uwt s-spec
+ * wequiwes that both bottom a-and top cuwsows a-awways be pwesent on each page. (U ﹏ U) thewefowe, (U ﹏ U) if the
+ * pwoduct does nyot suppowt p-paging up, (⑅˘꒳˘) then we can use a cuwsow vawue that is nyot desewiawizabwe. òωó
+ * this w-way if the cwient submits a topcuwsow, ʘwʘ t-the backend w-wiww tweat the t-the wequest as i-if nyo
+ * cuwsow was submitted. /(^•ω•^)
  */
-case class PlaceholderTopCursorBuilder(
-  serializer: PipelineCursorSerializer[UrtPipelineCursor] = UrtCursorSerializer)
-    extends UrtCursorBuilder[PipelineQuery with HasPipelineCursor[UrtPipelineCursor]] {
-  override val cursorType: CursorType = TopCursor
+case cwass p-pwacehowdewtopcuwsowbuiwdew(
+  sewiawizew: pipewinecuwsowsewiawizew[uwtpipewinecuwsow] = uwtcuwsowsewiawizew)
+    e-extends uwtcuwsowbuiwdew[pipewinequewy with haspipewinecuwsow[uwtpipewinecuwsow]] {
+  ovewwide vaw cuwsowtype: cuwsowtype = topcuwsow
 
-  override def cursorValue(
-    query: PipelineQuery with HasPipelineCursor[UrtPipelineCursor],
-    timelineEntries: Seq[TimelineEntry]
-  ): String = serializer.serializeCursor(DefaultPlaceholderCursor)
+  ovewwide d-def cuwsowvawue(
+    quewy: p-pipewinequewy with h-haspipewinecuwsow[uwtpipewinecuwsow], ʘwʘ
+    t-timewineentwies: seq[timewineentwy]
+  ): stwing = sewiawizew.sewiawizecuwsow(defauwtpwacehowdewcuwsow)
 }

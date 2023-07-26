@@ -1,66 +1,66 @@
-package com.twitter.visibility.generators
+package com.twittew.visibiwity.genewatows
 
-import com.twitter.visibility.common.actions.LocalizedMessage
-import com.twitter.visibility.common.actions.MessageLink
-import com.twitter.visibility.results.translation.Translator
-import com.twitter.visibility.results.richtext.EpitaphToRichText
-import com.twitter.visibility.results.translation.Resource
-import com.twitter.visibility.results.translation.LearnMoreLink
-import com.twitter.visibility.rules.Epitaph
-import com.twitter.visibility.results.richtext.EpitaphToRichText.Copy
+impowt c-com.twittew.visibiwity.common.actions.wocawizedmessage
+i-impowt com.twittew.visibiwity.common.actions.messagewink
+i-impowt com.twittew.visibiwity.wesuwts.twanswation.twanswatow
+i-impowt c-com.twittew.visibiwity.wesuwts.wichtext.epitaphtowichtext
+impowt c-com.twittew.visibiwity.wesuwts.twanswation.wesouwce
+i-impowt c-com.twittew.visibiwity.wesuwts.twanswation.weawnmowewink
+impowt com.twittew.visibiwity.wuwes.epitaph
+impowt com.twittew.visibiwity.wesuwts.wichtext.epitaphtowichtext.copy
 
-object EpitaphToLocalizedMessage {
-  def apply(
-    epitaph: Epitaph,
-    languageTag: String,
-  ): LocalizedMessage = {
-    val copy =
-      EpitaphToRichText.EpitaphToPolicyMap.getOrElse(epitaph, EpitaphToRichText.FallbackPolicy)
-    val text = Translator.translate(
-      copy.resource,
-      languageTag
+object e-epitaphtowocawizedmessage {
+  def appwy(
+    epitaph: epitaph, 🥺
+    w-wanguagetag: stwing,
+  ): w-wocawizedmessage = {
+    vaw copy =
+      epitaphtowichtext.epitaphtopowicymap.getowewse(epitaph, o.O epitaphtowichtext.fawwbackpowicy)
+    v-vaw text = twanswatow.twanswate(
+      c-copy.wesouwce, /(^•ω•^)
+      w-wanguagetag
     )
-    localizeWithCopyAndText(copy, languageTag, text)
+    wocawizewithcopyandtext(copy, nyaa~~ wanguagetag, nyaa~~ text)
   }
 
-  def apply(
-    epitaph: Epitaph,
-    languageTag: String,
-    applicableCountries: Seq[String],
-  ): LocalizedMessage = {
-    val copy =
-      EpitaphToRichText.EpitaphToPolicyMap.getOrElse(epitaph, EpitaphToRichText.FallbackPolicy)
-    val text = Translator.translateWithSimplePlaceholderReplacement(
-      copy.resource,
-      languageTag,
-      Map((Resource.ApplicableCountriesPlaceholder -> applicableCountries.mkString(", ")))
+  def appwy(
+    e-epitaph: epitaph, :3
+    wanguagetag: stwing, 😳😳😳
+    appwicabwecountwies: seq[stwing], (˘ω˘)
+  ): w-wocawizedmessage = {
+    vaw copy =
+      e-epitaphtowichtext.epitaphtopowicymap.getowewse(epitaph, ^^ e-epitaphtowichtext.fawwbackpowicy)
+    v-vaw text = twanswatow.twanswatewithsimpwepwacehowdewwepwacement(
+      c-copy.wesouwce, :3
+      wanguagetag, -.-
+      map((wesouwce.appwicabwecountwiespwacehowdew -> appwicabwecountwies.mkstwing(", 😳 ")))
     )
-    localizeWithCopyAndText(copy, languageTag, text)
+    wocawizewithcopyandtext(copy, mya w-wanguagetag, (˘ω˘) text)
   }
 
-  private def localizeWithCopyAndText(
-    copy: Copy,
-    languageTag: String,
-    text: String
-  ): LocalizedMessage = {
-    val learnMore = Translator.translate(LearnMoreLink, languageTag)
+  pwivate def w-wocawizewithcopyandtext(
+    copy: copy, >_<
+    wanguagetag: stwing,
+    text: stwing
+  ): wocawizedmessage = {
+    vaw weawnmowe = t-twanswatow.twanswate(weawnmowewink, -.- wanguagetag)
 
-    val links = copy.additionalLinks match {
-      case links if links.nonEmpty =>
-        MessageLink(Resource.LearnMorePlaceholder, learnMore, copy.link) +:
-          links.map {
-            case EpitaphToRichText.Link(placeholder, copyResource, link) =>
-              val copyText = Translator.translate(copyResource, languageTag)
-              MessageLink(placeholder, copyText, link)
+    v-vaw winks = c-copy.additionawwinks m-match {
+      case winks if winks.nonempty =>
+        messagewink(wesouwce.weawnmowepwacehowdew, 🥺 w-weawnmowe, (U ﹏ U) c-copy.wink) +:
+          winks.map {
+            c-case epitaphtowichtext.wink(pwacehowdew, >w< copywesouwce, mya w-wink) =>
+              vaw copytext = t-twanswatow.twanswate(copywesouwce, >w< wanguagetag)
+              m-messagewink(pwacehowdew, nyaa~~ copytext, (✿oωo) wink)
           }
-      case _ =>
-        Seq(
-          MessageLink(
-            key = Resource.LearnMorePlaceholder,
-            displayText = learnMore,
-            uri = copy.link))
+      c-case _ =>
+        seq(
+          m-messagewink(
+            key = wesouwce.weawnmowepwacehowdew, ʘwʘ
+            d-dispwaytext = w-weawnmowe, (ˆ ﻌ ˆ)♡
+            uwi = copy.wink))
     }
 
-    LocalizedMessage(message = text, language = languageTag, links = links)
+    wocawizedmessage(message = text, 😳😳😳 wanguage = wanguagetag, :3 winks = winks)
   }
 }

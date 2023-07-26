@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.twittew.home_mixew.functionaw_component.fiwtew
 
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.home_mixer.util.TweetImpressionsHelper
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.home_mixew.utiw.candidatesutiw
+i-impowt c-com.twittew.home_mixew.utiw.tweetimpwessionshewpew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.stitch.stitch
 
 /**
- * Filter out users' previously seen tweets from 2 sources:
- * 1. Heron Topology Impression Store in Memcache;
- * 2. Manhattan Impression Store;
+ * fiwtew out usews' pweviouswy seen t-tweets fwom 2 souwces:
+ * 1. (✿oωo) hewon t-topowogy impwession stowe in memcache;
+ * 2. (ˆ ﻌ ˆ)♡ manhattan impwession s-stowe;
  */
-object PreviouslySeenTweetsFilter extends Filter[PipelineQuery, TweetCandidate] {
+object pweviouswyseentweetsfiwtew e-extends fiwtew[pipewinequewy, (˘ω˘) t-tweetcandidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("PreviouslySeenTweets")
+  ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew("pweviouswyseentweets")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
+  ovewwide d-def appwy(
+    quewy: pipewinequewy, (⑅˘꒳˘)
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[fiwtewwesuwt[tweetcandidate]] = {
 
-    val seenTweetIds =
-      query.features.map(TweetImpressionsHelper.tweetImpressions).getOrElse(Set.empty)
+    vaw seentweetids =
+      q-quewy.featuwes.map(tweetimpwessionshewpew.tweetimpwessions).getowewse(set.empty)
 
-    val (removed, kept) = candidates.partition { candidate =>
-      val tweetIdAndSourceId = CandidatesUtil.getTweetIdAndSourceId(candidate)
-      tweetIdAndSourceId.exists(seenTweetIds.contains)
+    vaw (wemoved, (///ˬ///✿) k-kept) = candidates.pawtition { c-candidate =>
+      v-vaw tweetidandsouwceid = c-candidatesutiw.gettweetidandsouwceid(candidate)
+      tweetidandsouwceid.exists(seentweetids.contains)
     }
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    stitch.vawue(fiwtewwesuwt(kept = k-kept.map(_.candidate), 😳😳😳 wemoved = wemoved.map(_.candidate)))
   }
 }

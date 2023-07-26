@@ -1,61 +1,61 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.tensowbuiwdew
 
-import inference.GrpcService.InferTensorContents
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+impowt i-infewence.gwpcsewvice.infewtensowcontents
+i-impowt i-infewence.gwpcsewvice.modewinfewwequest.infewinputtensow
 
-case object SparseMapInferInputTensorBuilder
-    extends InferInputTensorBuilder[Option[Map[Int, Double]]] {
+c-case o-object spawsemapinfewinputtensowbuiwdew
+    e-extends i-infewinputtensowbuiwdew[option[map[int, mya d-doubwe]]] {
 
-  private final val batchFeatureNameSuffix: String = "batch"
-  private final val keyFeatureNameSuffix: String = "key"
-  private final val valueFeatureNameSuffix: String = "value"
+  pwivate finaw vaw batchfeatuwenamesuffix: stwing = "batch"
+  pwivate f-finaw vaw keyfeatuwenamesuffix: stwing = "key"
+  pwivate finaw vaw v-vawuefeatuwenamesuffix: stwing = "vawue"
 
-  def apply(
-    featureName: String,
-    featureValues: Seq[Option[Map[Int, Double]]]
-  ): Seq[InferInputTensor] = {
-    val batchIdsTensorContents = InferTensorContents.newBuilder()
-    val sparseKeysTensorContents = InferTensorContents.newBuilder()
-    val sparseValuesTensorContents = InferTensorContents.newBuilder()
-    featureValues.zipWithIndex.foreach {
-      case (featureValueOption, batchIndex) =>
-        featureValueOption.foreach { featureValue =>
-          featureValue.foreach {
-            case (sparseKey, sparseValue) =>
-              batchIdsTensorContents.addInt64Contents(batchIndex.toLong)
-              sparseKeysTensorContents.addInt64Contents(sparseKey.toLong)
-              sparseValuesTensorContents.addFp32Contents(sparseValue.floatValue)
+  def a-appwy(
+    featuwename: stwing, 🥺
+    featuwevawues: seq[option[map[int, d-doubwe]]]
+  ): seq[infewinputtensow] = {
+    v-vaw batchidstensowcontents = i-infewtensowcontents.newbuiwdew()
+    vaw spawsekeystensowcontents = infewtensowcontents.newbuiwdew()
+    vaw spawsevawuestensowcontents = i-infewtensowcontents.newbuiwdew()
+    featuwevawues.zipwithindex.foweach {
+      case (featuwevawueoption, >_< batchindex) =>
+        featuwevawueoption.foweach { featuwevawue =>
+          f-featuwevawue.foweach {
+            case (spawsekey, >_< s-spawsevawue) =>
+              b-batchidstensowcontents.addint64contents(batchindex.towong)
+              s-spawsekeystensowcontents.addint64contents(spawsekey.towong)
+              s-spawsevawuestensowcontents.addfp32contents(spawsevawue.fwoatvawue)
           }
         }
     }
 
-    val batchIdsInputTensor = InferInputTensor
-      .newBuilder()
-      .setName(Seq(featureName, batchFeatureNameSuffix).mkString("_"))
-      .addShape(batchIdsTensorContents.getInt64ContentsCount)
-      .addShape(1)
-      .setDatatype("INT64")
-      .setContents(batchIdsTensorContents)
-      .build()
+    vaw batchidsinputtensow = infewinputtensow
+      .newbuiwdew()
+      .setname(seq(featuwename, (⑅˘꒳˘) b-batchfeatuwenamesuffix).mkstwing("_"))
+      .addshape(batchidstensowcontents.getint64contentscount)
+      .addshape(1)
+      .setdatatype("int64")
+      .setcontents(batchidstensowcontents)
+      .buiwd()
 
-    val sparseKeysInputTensor = InferInputTensor
-      .newBuilder()
-      .setName(Seq(featureName, keyFeatureNameSuffix).mkString("_"))
-      .addShape(sparseKeysTensorContents.getInt64ContentsCount)
-      .addShape(1)
-      .setDatatype("INT64")
-      .setContents(sparseKeysTensorContents)
-      .build()
+    vaw spawsekeysinputtensow = infewinputtensow
+      .newbuiwdew()
+      .setname(seq(featuwename, /(^•ω•^) k-keyfeatuwenamesuffix).mkstwing("_"))
+      .addshape(spawsekeystensowcontents.getint64contentscount)
+      .addshape(1)
+      .setdatatype("int64")
+      .setcontents(spawsekeystensowcontents)
+      .buiwd()
 
-    val sparseValuesInputTensor = InferInputTensor
-      .newBuilder()
-      .setName(Seq(featureName, valueFeatureNameSuffix).mkString("_"))
-      .addShape(sparseValuesTensorContents.getFp32ContentsCount)
-      .addShape(1)
-      .setDatatype("FP32")
-      .setContents(sparseValuesTensorContents)
-      .build()
+    vaw spawsevawuesinputtensow = infewinputtensow
+      .newbuiwdew()
+      .setname(seq(featuwename, rawr x3 vawuefeatuwenamesuffix).mkstwing("_"))
+      .addshape(spawsevawuestensowcontents.getfp32contentscount)
+      .addshape(1)
+      .setdatatype("fp32")
+      .setcontents(spawsevawuestensowcontents)
+      .buiwd()
 
-    Seq(batchIdsInputTensor, sparseKeysInputTensor, sparseValuesInputTensor)
+    seq(batchidsinputtensow, (U ﹏ U) spawsekeysinputtensow, (U ﹏ U) s-spawsevawuesinputtensow)
   }
 }

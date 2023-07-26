@@ -1,53 +1,53 @@
-package com.twitter.search.earlybird_root;
+package com.twittew.seawch.eawwybiwd_woot;
 
-import java.util.Map;
+impowt j-java.utiw.map;
 
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.earlybird_root.visitors.MultiTermDisjunctionPerPartitionVisitor;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+i-impowt com.twittew.seawch.common.pawtitioning.base.pawtitionmappingmanagew;
+i-impowt com.twittew.seawch.eawwybiwd_woot.visitows.muwtitewmdisjunctionpewpawtitionvisitow;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
 
-public final class EarlybirdRootQueryUtils {
+pubwic finaw cwass e-eawwybiwdwootquewyutiws {
 
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdRootQueryUtils.class);
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(eawwybiwdwootquewyutiws.cwass);
 
-  private EarlybirdRootQueryUtils() {
+  pwivate e-eawwybiwdwootquewyutiws() {
   }
 
   /**
-   * Rewrite 'multi_term_disjunction from_user_id' or 'multi_term_disjunction id' based on partition
-   * for USER_ID/TWEET_ID partitioned cluster
-   * @return a map with partition id as key and rewritten query as value.
-   * If there is no 'multi_term_disjunction from_user_id/id' in query, the map will be empty; if all
-   * ids are truncated for a partition, it will add a NO_MATCH_CONJUNCTION here.
+   * wewwite 'muwti_tewm_disjunction fwom_usew_id' ow 'muwti_tewm_disjunction i-id' based on pawtition
+   * f-fow usew_id/tweet_id p-pawtitioned cwustew
+   * @wetuwn a map with pawtition id as key and w-wewwitten quewy as vawue. -.-
+   * if thewe is nyo 'muwti_tewm_disjunction fwom_usew_id/id' in quewy, t-the map wiww be empty; if aww
+   * i-ids awe twuncated f-fow a pawtition, 🥺 i-it wiww a-add a nyo_match_conjunction hewe. o.O
    */
-  public static Map<Integer, Query> rewriteMultiTermDisjunctionPerPartitionFilter(
-      Query query, PartitionMappingManager partitionMappingManager, int numPartitions) {
-    Map<Integer, Query> m = Maps.newHashMap();
-    // If there is no parsed query, just return
-    if (query == null) {
-      return m;
+  pubwic s-static map<integew, /(^•ω•^) quewy> wewwitemuwtitewmdisjunctionpewpawtitionfiwtew(
+      quewy quewy, nyaa~~ pawtitionmappingmanagew p-pawtitionmappingmanagew, nyaa~~ int nyumpawtitions) {
+    map<integew, :3 quewy> m = maps.newhashmap();
+    // if thewe i-is nyo pawsed quewy, 😳😳😳 just wetuwn
+    i-if (quewy == n-nyuww) {
+      w-wetuwn m;
     }
-    for (int i = 0; i < numPartitions; ++i) {
-      MultiTermDisjunctionPerPartitionVisitor visitor =
-          new MultiTermDisjunctionPerPartitionVisitor(partitionMappingManager, i);
-      try {
-        Query q = query.accept(visitor);
-        if (q != null && q != query) {
-          m.put(i, q);
+    fow (int i = 0; i < nyumpawtitions; ++i) {
+      muwtitewmdisjunctionpewpawtitionvisitow v-visitow =
+          n-nyew muwtitewmdisjunctionpewpawtitionvisitow(pawtitionmappingmanagew, (˘ω˘) i);
+      t-twy {
+        q-quewy q = quewy.accept(visitow);
+        if (q != n-nuww && q != quewy) {
+          m-m.put(i, ^^ q);
         }
-      } catch (QueryParserException e) {
-        // Should not happen, put and log error here just in case
-        m.put(i, query);
-        LOG.error(
-            "MultiTermDisjuctionPerPartitionVisitor cannot process query: " + query.serialize());
+      } catch (quewypawsewexception e) {
+        // s-shouwd nyot happen, :3 put and wog e-ewwow hewe just in case
+        m-m.put(i, quewy);
+        w-wog.ewwow(
+            "muwtitewmdisjuctionpewpawtitionvisitow cannot pwocess quewy: " + quewy.sewiawize());
       }
     }
-    return m;
+    wetuwn m;
   }
 }

@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.parameters.recap_author
+package com.twittew.timewinewankew.pawametews.wecap_authow
 
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelineranker.parameters.recap_author.RecapAuthorParams._
-import com.twitter.timelineranker.parameters.util.ConfigHelper
-import com.twitter.timelines.configapi._
+impowt c-com.twittew.sewvo.decidew.decidewgatebuiwdew
+impowt c-com.twittew.sewvo.decidew.decidewkeyname
+impowt c-com.twittew.timewinewankew.decidew.decidewkey
+i-impowt com.twittew.timewinewankew.pawametews.wecap_authow.wecapauthowpawams._
+i-impowt com.twittew.timewinewankew.pawametews.utiw.confighewpew
+i-impowt com.twittew.timewines.configapi._
 
-object RecapAuthorProduction {
-  val deciderByParam: Map[Param[_], DeciderKeyName] = Map[Param[_], DeciderKeyName](
-    EnableContentFeaturesHydrationParam -> DeciderKey.RecapAuthorEnableContentFeaturesHydration
+o-object w-wecapauthowpwoduction {
+  vaw decidewbypawam: map[pawam[_], mya decidewkeyname] = map[pawam[_], nyaa~~ decidewkeyname](
+    e-enabwecontentfeatuweshydwationpawam -> decidewkey.wecapauthowenabwecontentfeatuweshydwation
   )
 
-  val booleanParams: Seq[EnableContentFeaturesHydrationParam.type] = Seq(
-    EnableContentFeaturesHydrationParam
+  vaw booweanpawams: s-seq[enabwecontentfeatuweshydwationpawam.type] = seq(
+    e-enabwecontentfeatuweshydwationpawam
   )
 
-  val booleanFeatureSwitchParams: Seq[FSParam[Boolean]] = Seq(
-    EnableTokensInContentFeaturesHydrationParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
-    EnableConversationControlInContentFeaturesHydrationParam,
-    EnableTweetMediaHydrationParam,
-    EnableEarlybirdRealtimeCgMigrationParam
+  vaw booweanfeatuweswitchpawams: seq[fspawam[boowean]] = s-seq(
+    enabwetokensincontentfeatuweshydwationpawam, (⑅˘꒳˘)
+    enabwetweettextincontentfeatuweshydwationpawam, rawr x3
+    enabweconvewsationcontwowincontentfeatuweshydwationpawam, (✿oωo)
+    e-enabwetweetmediahydwationpawam, (ˆ ﻌ ˆ)♡
+    e-enabweeawwybiwdweawtimecgmigwationpawam
   )
 }
 
-class RecapAuthorProduction(deciderGateBuilder: DeciderGateBuilder) {
-  val configHelper: ConfigHelper =
-    new ConfigHelper(RecapAuthorProduction.deciderByParam, deciderGateBuilder)
-  val booleanOverrides: Seq[OptionalOverride[Boolean]] =
-    configHelper.createDeciderBasedBooleanOverrides(RecapAuthorProduction.booleanParams)
+cwass wecapauthowpwoduction(decidewgatebuiwdew: decidewgatebuiwdew) {
+  vaw confighewpew: confighewpew =
+    n-nyew confighewpew(wecapauthowpwoduction.decidewbypawam, (˘ω˘) decidewgatebuiwdew)
+  vaw booweanovewwides: seq[optionawuvwwide[boowean]] =
+    confighewpew.cweatedecidewbasedbooweanovewwides(wecapauthowpwoduction.booweanpawams)
 
-  val booleanFeatureSwitchOverrides: Seq[OptionalOverride[Boolean]] =
-    FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      RecapAuthorProduction.booleanFeatureSwitchParams: _*
+  v-vaw booweanfeatuweswitchovewwides: seq[optionawuvwwide[boowean]] =
+    f-featuweswitchovewwideutiw.getbooweanfsovewwides(
+      wecapauthowpwoduction.booweanfeatuweswitchpawams: _*
     )
 
-  val config: BaseConfig = new BaseConfigBuilder()
+  v-vaw c-config: baseconfig = n-nyew baseconfigbuiwdew()
     .set(
-      booleanOverrides: _*
+      booweanovewwides: _*
     ).set(
-      booleanFeatureSwitchOverrides: _*
+      booweanfeatuweswitchovewwides: _*
     )
-    .build(RecapAuthorProduction.getClass.getSimpleName)
+    .buiwd(wecapauthowpwoduction.getcwass.getsimpwename)
 }

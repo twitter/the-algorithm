@@ -1,181 +1,181 @@
-package com.twitter.recosinjector.uua_processors
+package com.twittew.wecosinjectow.uua_pwocessows
 
-import org.apache.kafka.clients.consumer.ConsumerRecord
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recos.util.Action.Action
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.recosinjector.edges.UnifiedUserActionToUserVideoGraphBuilder
-import com.twitter.recosinjector.edges.UnifiedUserActionToUserAdGraphBuilder
-import com.twitter.recosinjector.edges.UnifiedUserActionToUserTweetGraphPlusBuilder
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.recosinjector.filters.UserFilter
-import com.twitter.recosinjector.publishers.KafkaEventPublisher
-import com.twitter.recosinjector.util.TweetDetails
-import com.twitter.recosinjector.util.UserTweetEngagement
-import com.twitter.recosinjector.util.UuaEngagementEventDetails
-import com.twitter.unified_user_actions.thriftscala.NotificationContent
-import com.twitter.unified_user_actions.thriftscala.NotificationInfo
-import com.twitter.util.Future
+impowt owg.apache.kafka.cwients.consumew.consumewwecowd
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wecos.utiw.action
+i-impowt c-com.twittew.wecos.utiw.action.action
+i-impowt com.twittew.wecosinjectow.cwients.gizmoduck
+i-impowt com.twittew.wecosinjectow.cwients.tweetypie
+impowt com.twittew.wecosinjectow.edges.unifiedusewactiontousewvideogwaphbuiwdew
+impowt c-com.twittew.wecosinjectow.edges.unifiedusewactiontousewadgwaphbuiwdew
+impowt com.twittew.wecosinjectow.edges.unifiedusewactiontousewtweetgwaphpwusbuiwdew
+impowt c-com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+impowt com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.item
+impowt com.twittew.wecosinjectow.fiwtews.usewfiwtew
+impowt com.twittew.wecosinjectow.pubwishews.kafkaeventpubwishew
+i-impowt com.twittew.wecosinjectow.utiw.tweetdetaiws
+impowt com.twittew.wecosinjectow.utiw.usewtweetengagement
+i-impowt c-com.twittew.wecosinjectow.utiw.uuaengagementeventdetaiws
+impowt com.twittew.unified_usew_actions.thwiftscawa.notificationcontent
+impowt com.twittew.unified_usew_actions.thwiftscawa.notificationinfo
+impowt c-com.twittew.utiw.futuwe
 
-class UnifiedUserActionProcessor(
-  gizmoduck: Gizmoduck,
-  tweetypie: Tweetypie,
-  kafkaEventPublisher: KafkaEventPublisher,
-  userVideoGraphTopic: String,
-  userVideoGraphBuilder: UnifiedUserActionToUserVideoGraphBuilder,
-  userAdGraphTopic: String,
-  userAdGraphBuilder: UnifiedUserActionToUserAdGraphBuilder,
-  userTweetGraphPlusTopic: String,
-  userTweetGraphPlusBuilder: UnifiedUserActionToUserTweetGraphPlusBuilder
+cwass unifiedusewactionpwocessow(
+  gizmoduck: gizmoduck, (U ﹏ U)
+  tweetypie: t-tweetypie, OwO
+  kafkaeventpubwishew: kafkaeventpubwishew, 😳😳😳
+  u-usewvideogwaphtopic: s-stwing, (ˆ ﻌ ˆ)♡
+  usewvideogwaphbuiwdew: u-unifiedusewactiontousewvideogwaphbuiwdew, XD
+  u-usewadgwaphtopic: stwing, (ˆ ﻌ ˆ)♡
+  usewadgwaphbuiwdew: unifiedusewactiontousewadgwaphbuiwdew, ( ͡o ω ͡o )
+  u-usewtweetgwaphpwustopic: stwing, rawr x3
+  usewtweetgwaphpwusbuiwdew: unifiedusewactiontousewtweetgwaphpwusbuiwdew
 )(
-  implicit statsReceiver: StatsReceiver) {
+  i-impwicit statsweceivew: statsweceivew) {
 
-  val messagesProcessedCount = statsReceiver.counter("messages_processed")
+  vaw messagespwocessedcount = statsweceivew.countew("messages_pwocessed")
 
-  val eventsByTypeCounts = statsReceiver.scope("events_by_type")
-  private val numSelfEngageCounter = statsReceiver.counter("num_self_engage_event")
-  private val numTweetFailSafetyLevelCounter = statsReceiver.counter("num_fail_tweetypie_safety")
-  private val numNullCastTweetCounter = statsReceiver.counter("num_null_cast_tweet")
-  private val numEngageUserUnsafeCounter = statsReceiver.counter("num_engage_user_unsafe")
-  private val engageUserFilter = new UserFilter(gizmoduck)(statsReceiver.scope("engage_user"))
-  private val numNoProcessTweetCounter = statsReceiver.counter("num_no_process_tweet")
-  private val numProcessTweetCounter = statsReceiver.counter("num_process_tweet")
+  vaw eventsbytypecounts = statsweceivew.scope("events_by_type")
+  pwivate v-vaw nyumsewfengagecountew = statsweceivew.countew("num_sewf_engage_event")
+  p-pwivate vaw n-numtweetfaiwsafetywevewcountew = s-statsweceivew.countew("num_faiw_tweetypie_safety")
+  pwivate vaw nyumnuwwcasttweetcountew = statsweceivew.countew("num_nuww_cast_tweet")
+  p-pwivate v-vaw nyumengageusewunsafecountew = statsweceivew.countew("num_engage_usew_unsafe")
+  p-pwivate v-vaw engageusewfiwtew = nyew usewfiwtew(gizmoduck)(statsweceivew.scope("engage_usew"))
+  p-pwivate vaw nyumnopwocesstweetcountew = s-statsweceivew.countew("num_no_pwocess_tweet")
+  pwivate vaw nyumpwocesstweetcountew = statsweceivew.countew("num_pwocess_tweet")
 
-  private def getUuaEngagementEventDetails(
-    unifiedUserAction: UnifiedUserAction
-  ): Option[Future[UuaEngagementEventDetails]] = {
-    val userIdOpt = unifiedUserAction.userIdentifier.userId
-    val tweetIdOpt = unifiedUserAction.item match {
-      case Item.TweetInfo(tweetInfo) => Some(tweetInfo.actionTweetId)
-      case Item.NotificationInfo(
-            NotificationInfo(_, NotificationContent.TweetNotification(notification))) =>
-        Some(notification.tweetId)
-      case _ => None
+  p-pwivate def getuuaengagementeventdetaiws(
+    u-unifiedusewaction: unifiedusewaction
+  ): o-option[futuwe[uuaengagementeventdetaiws]] = {
+    v-vaw usewidopt = unifiedusewaction.usewidentifiew.usewid
+    vaw tweetidopt = unifiedusewaction.item match {
+      case item.tweetinfo(tweetinfo) => some(tweetinfo.actiontweetid)
+      c-case item.notificationinfo(
+            n-nyotificationinfo(_, nyaa~~ nyotificationcontent.tweetnotification(notification))) =>
+        s-some(notification.tweetid)
+      c-case _ => n-nyone
     }
-    val timestamp = unifiedUserAction.eventMetadata.sourceTimestampMs
-    val action = getTweetAction(unifiedUserAction.actionType)
+    vaw timestamp = unifiedusewaction.eventmetadata.souwcetimestampms
+    vaw action = g-gettweetaction(unifiedusewaction.actiontype)
 
-    tweetIdOpt
-      .flatMap { tweetId =>
-        userIdOpt.map { engageUserId =>
-          val tweetFut = tweetypie.getTweet(tweetId)
-          tweetFut.map { tweetOpt =>
-            val tweetDetailsOpt = tweetOpt.map(TweetDetails)
-            val engagement = UserTweetEngagement(
-              engageUserId = engageUserId,
-              action = action,
-              engagementTimeMillis = Some(timestamp),
-              tweetId = tweetId,
-              engageUser = None,
-              tweetDetails = tweetDetailsOpt
+    tweetidopt
+      .fwatmap { tweetid =>
+        usewidopt.map { engageusewid =>
+          v-vaw tweetfut = tweetypie.gettweet(tweetid)
+          t-tweetfut.map { t-tweetopt =>
+            v-vaw tweetdetaiwsopt = tweetopt.map(tweetdetaiws)
+            v-vaw engagement = u-usewtweetengagement(
+              e-engageusewid = e-engageusewid, >_<
+              action = action, ^^;;
+              engagementtimemiwwis = s-some(timestamp), (ˆ ﻌ ˆ)♡
+              t-tweetid = t-tweetid, ^^;;
+              e-engageusew = n-nyone, (⑅˘꒳˘)
+              tweetdetaiws = tweetdetaiwsopt
             )
-            UuaEngagementEventDetails(engagement)
+            uuaengagementeventdetaiws(engagement)
           }
         }
       }
   }
 
-  private def getTweetAction(action: ActionType): Action = {
+  p-pwivate def gettweetaction(action: actiontype): action = {
     action match {
-      case ActionType.ClientTweetVideoPlayback50 => Action.VideoPlayback50
-      case ActionType.ClientTweetClick => Action.Click
-      case ActionType.ClientTweetVideoPlayback75 => Action.VideoPlayback75
-      case ActionType.ClientTweetVideoQualityView => Action.VideoQualityView
-      case ActionType.ServerTweetFav => Action.Favorite
-      case ActionType.ServerTweetReply => Action.Reply
-      case ActionType.ServerTweetRetweet => Action.Retweet
-      case ActionType.ClientTweetQuote => Action.Quote
-      case ActionType.ClientNotificationOpen => Action.NotificationOpen
-      case ActionType.ClientTweetEmailClick => Action.EmailClick
-      case ActionType.ClientTweetShareViaBookmark => Action.Share
-      case ActionType.ClientTweetShareViaCopyLink => Action.Share
-      case ActionType.ClientTweetSeeFewer => Action.TweetSeeFewer
-      case ActionType.ClientTweetNotRelevant => Action.TweetNotRelevant
-      case ActionType.ClientTweetNotInterestedIn => Action.TweetNotInterestedIn
-      case ActionType.ServerTweetReport => Action.TweetReport
-      case ActionType.ClientTweetMuteAuthor => Action.TweetMuteAuthor
-      case ActionType.ClientTweetBlockAuthor => Action.TweetBlockAuthor
-      case _ => Action.UnDefined
+      case actiontype.cwienttweetvideopwayback50 => action.videopwayback50
+      c-case actiontype.cwienttweetcwick => action.cwick
+      case actiontype.cwienttweetvideopwayback75 => action.videopwayback75
+      c-case actiontype.cwienttweetvideoquawityview => a-action.videoquawityview
+      c-case actiontype.sewvewtweetfav => action.favowite
+      c-case actiontype.sewvewtweetwepwy => action.wepwy
+      case a-actiontype.sewvewtweetwetweet => a-action.wetweet
+      case actiontype.cwienttweetquote => action.quote
+      case actiontype.cwientnotificationopen => action.notificationopen
+      case actiontype.cwienttweetemaiwcwick => a-action.emaiwcwick
+      case actiontype.cwienttweetshaweviabookmawk => a-action.shawe
+      case a-actiontype.cwienttweetshaweviacopywink => a-action.shawe
+      case actiontype.cwienttweetseefewew => a-action.tweetseefewew
+      c-case actiontype.cwienttweetnotwewevant => action.tweetnotwewevant
+      c-case actiontype.cwienttweetnotintewestedin => a-action.tweetnotintewestedin
+      case actiontype.sewvewtweetwepowt => action.tweetwepowt
+      case actiontype.cwienttweetmuteauthow => action.tweetmuteauthow
+      case a-actiontype.cwienttweetbwockauthow => a-action.tweetbwockauthow
+      c-case _ => action.undefined
     }
   }
-  private def shouldProcessTweetEngagement(
-    event: UuaEngagementEventDetails,
-    isAdsUseCase: Boolean = false
-  ): Future[Boolean] = {
-    val engagement = event.userTweetEngagement
-    val engageUserId = engagement.engageUserId
-    val authorIdOpt = engagement.tweetDetails.flatMap(_.authorId)
+  pwivate d-def shouwdpwocesstweetengagement(
+    e-event: uuaengagementeventdetaiws, rawr x3
+    isadsusecase: b-boowean = fawse
+  ): futuwe[boowean] = {
+    vaw engagement = event.usewtweetengagement
+    v-vaw engageusewid = e-engagement.engageusewid
+    vaw authowidopt = engagement.tweetdetaiws.fwatmap(_.authowid)
 
-    val isSelfEngage = authorIdOpt.contains(engageUserId)
-    val isNullCastTweet = engagement.tweetDetails.forall(_.isNullCastTweet)
-    val isEngageUserSafeFut = engageUserFilter.filterByUserId(engageUserId)
-    val isTweetPassSafety =
-      engagement.tweetDetails.isDefined // Tweetypie can fetch a tweet object successfully
+    v-vaw issewfengage = a-authowidopt.contains(engageusewid)
+    vaw isnuwwcasttweet = engagement.tweetdetaiws.fowaww(_.isnuwwcasttweet)
+    vaw isengageusewsafefut = e-engageusewfiwtew.fiwtewbyusewid(engageusewid)
+    vaw istweetpasssafety =
+      engagement.tweetdetaiws.isdefined // tweetypie can fetch a-a tweet object successfuwwy
 
-    isEngageUserSafeFut.map { isEngageUserSafe =>
-      if (isSelfEngage) numSelfEngageCounter.incr()
-      if (isNullCastTweet) numNullCastTweetCounter.incr()
-      if (!isEngageUserSafe) numEngageUserUnsafeCounter.incr()
-      if (!isTweetPassSafety) numTweetFailSafetyLevelCounter.incr()
+    isengageusewsafefut.map { isengageusewsafe =>
+      i-if (issewfengage) n-nyumsewfengagecountew.incw()
+      if (isnuwwcasttweet) nyumnuwwcasttweetcountew.incw()
+      if (!isengageusewsafe) n-nyumengageusewunsafecountew.incw()
+      i-if (!istweetpasssafety) nyumtweetfaiwsafetywevewcountew.incw()
 
-      !isSelfEngage && (!isNullCastTweet && !isAdsUseCase || isNullCastTweet && isAdsUseCase) && isEngageUserSafe && isTweetPassSafety
+      !issewfengage && (!isnuwwcasttweet && !isadsusecase || isnuwwcasttweet && isadsusecase) && i-isengageusewsafe && istweetpasssafety
     }
   }
 
-  def apply(record: ConsumerRecord[UnKeyed, UnifiedUserAction]): Future[Unit] = {
+  d-def appwy(wecowd: consumewwecowd[unkeyed, (///ˬ///✿) unifiedusewaction]): futuwe[unit] = {
 
-    messagesProcessedCount.incr()
-    val unifiedUserAction = record.value
-    eventsByTypeCounts.counter(unifiedUserAction.actionType.toString).incr()
+    m-messagespwocessedcount.incw()
+    vaw unifiedusewaction = w-wecowd.vawue
+    e-eventsbytypecounts.countew(unifiedusewaction.actiontype.tostwing).incw()
 
-    getTweetAction(unifiedUserAction.actionType) match {
-      case Action.UnDefined =>
-        numNoProcessTweetCounter.incr()
-        Future.Unit
-      case action =>
-        getUuaEngagementEventDetails(unifiedUserAction)
+    gettweetaction(unifiedusewaction.actiontype) m-match {
+      case action.undefined =>
+        n-nyumnopwocesstweetcountew.incw()
+        f-futuwe.unit
+      c-case action =>
+        getuuaengagementeventdetaiws(unifiedusewaction)
           .map {
-            _.flatMap { detail =>
-              // The following cases are set up specifically for an ads relevance demo.
-              val actionForAds = Set(Action.Click, Action.Favorite, Action.VideoPlayback75)
-              if (actionForAds.contains(action))
-                shouldProcessTweetEngagement(detail, isAdsUseCase = true).map {
-                  case true =>
-                    userAdGraphBuilder.processEvent(detail).map { edges =>
-                      edges.foreach { edge =>
-                        kafkaEventPublisher
-                          .publish(edge.convertToRecosHoseMessage, userAdGraphTopic)
+            _.fwatmap { d-detaiw =>
+              // t-the fowwowing cases awe set up specificawwy f-fow an a-ads wewevance demo. 🥺
+              v-vaw actionfowads = set(action.cwick, >_< action.favowite, UwU a-action.videopwayback75)
+              if (actionfowads.contains(action))
+                s-shouwdpwocesstweetengagement(detaiw, >_< i-isadsusecase = twue).map {
+                  case twue =>
+                    usewadgwaphbuiwdew.pwocessevent(detaiw).map { e-edges =>
+                      e-edges.foweach { e-edge =>
+                        k-kafkaeventpubwishew
+                          .pubwish(edge.convewttowecoshosemessage, usewadgwaphtopic)
                       }
                     }
-                    numProcessTweetCounter.incr()
+                    n-nyumpwocesstweetcountew.incw()
                   case _ =>
                 }
 
-              shouldProcessTweetEngagement(detail).map {
-                case true =>
-                  userVideoGraphBuilder.processEvent(detail).map { edges =>
-                    edges.foreach { edge =>
-                      kafkaEventPublisher
-                        .publish(edge.convertToRecosHoseMessage, userVideoGraphTopic)
+              shouwdpwocesstweetengagement(detaiw).map {
+                case twue =>
+                  usewvideogwaphbuiwdew.pwocessevent(detaiw).map { edges =>
+                    e-edges.foweach { edge =>
+                      k-kafkaeventpubwishew
+                        .pubwish(edge.convewttowecoshosemessage, -.- usewvideogwaphtopic)
                     }
                   }
 
-                  userTweetGraphPlusBuilder.processEvent(detail).map { edges =>
-                    edges.foreach { edge =>
-                      kafkaEventPublisher
-                        .publish(edge.convertToRecosHoseMessage, userTweetGraphPlusTopic)
+                  u-usewtweetgwaphpwusbuiwdew.pwocessevent(detaiw).map { edges =>
+                    e-edges.foweach { edge =>
+                      k-kafkaeventpubwishew
+                        .pubwish(edge.convewttowecoshosemessage, mya u-usewtweetgwaphpwustopic)
                     }
                   }
-                  numProcessTweetCounter.incr()
-                case _ =>
+                  numpwocesstweetcountew.incw()
+                c-case _ =>
               }
             }
-          }.getOrElse(Future.Unit)
+          }.getowewse(futuwe.unit)
     }
   }
 }

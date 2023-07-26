@@ -1,138 +1,138 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.twittew.cw_mixew.simiwawity_engine
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.search.earlybird.thriftscala.ThriftSearchQuery
-import com.twitter.util.Time
-import com.twitter.search.common.query.thriftjava.thriftscala.CollectorParams
-import com.twitter.search.common.ranking.thriftscala.ThriftRankingParams
-import com.twitter.search.common.ranking.thriftscala.ThriftScoringFunctionType
-import com.twitter.search.earlybird.thriftscala.ThriftSearchRelevanceOptions
-import javax.inject.Inject
-import javax.inject.Singleton
-import EarlybirdSimilarityEngineBase._
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.similarity_engine.EarlybirdTensorflowBasedSimilarityEngine.EarlybirdTensorflowBasedSearchQuery
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.EarlybirdClientId
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.FacetsToFetch
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetCollectorTerminationParams
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetEarlybirdQuery
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.MetadataOptions
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetNamedDisjunctions
-import com.twitter.search.earlybird.thriftscala.ThriftSearchRankingMode
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Duration
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdwequest
+impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdsewvice
+i-impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchquewy
+i-impowt com.twittew.utiw.time
+impowt c-com.twittew.seawch.common.quewy.thwiftjava.thwiftscawa.cowwectowpawams
+i-impowt c-com.twittew.seawch.common.wanking.thwiftscawa.thwiftwankingpawams
+impowt com.twittew.seawch.common.wanking.thwiftscawa.thwiftscowingfunctiontype
+impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwewevanceoptions
+impowt javax.inject.inject
+impowt j-javax.inject.singweton
+impowt eawwybiwdsimiwawityenginebase._
+i-impowt com.twittew.cw_mixew.config.timeoutconfig
+impowt com.twittew.cw_mixew.simiwawity_engine.eawwybiwdtensowfwowbasedsimiwawityengine.eawwybiwdtensowfwowbasedseawchquewy
+i-impowt com.twittew.cw_mixew.utiw.eawwybiwdseawchutiw.eawwybiwdcwientid
+impowt com.twittew.cw_mixew.utiw.eawwybiwdseawchutiw.facetstofetch
+impowt com.twittew.cw_mixew.utiw.eawwybiwdseawchutiw.getcowwectowtewminationpawams
+i-impowt com.twittew.cw_mixew.utiw.eawwybiwdseawchutiw.geteawwybiwdquewy
+i-impowt com.twittew.cw_mixew.utiw.eawwybiwdseawchutiw.metadataoptions
+i-impowt com.twittew.cw_mixew.utiw.eawwybiwdseawchutiw.getnameddisjunctions
+impowt com.twittew.seawch.eawwybiwd.thwiftscawa.thwiftseawchwankingmode
+impowt com.twittew.simcwustews_v2.common.tweetid
+impowt c-com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.utiw.duwation
 
-@Singleton
-case class EarlybirdTensorflowBasedSimilarityEngine @Inject() (
-  earlybirdSearchClient: EarlybirdService.MethodPerEndpoint,
-  timeoutConfig: TimeoutConfig,
-  stats: StatsReceiver)
-    extends EarlybirdSimilarityEngineBase[EarlybirdTensorflowBasedSearchQuery] {
-  import EarlybirdTensorflowBasedSimilarityEngine._
-  override val statsReceiver: StatsReceiver = stats.scope(this.getClass.getSimpleName)
-  override def getEarlybirdRequest(
-    query: EarlybirdTensorflowBasedSearchQuery
-  ): Option[EarlybirdRequest] = {
-    if (query.seedUserIds.nonEmpty)
-      Some(
-        EarlybirdRequest(
-          searchQuery = getThriftSearchQuery(query, timeoutConfig.earlybirdServerTimeout),
-          clientHost = None,
-          clientRequestID = None,
-          clientId = Some(EarlybirdClientId),
-          clientRequestTimeMs = Some(Time.now.inMilliseconds),
-          cachingParams = None,
-          timeoutMs = timeoutConfig.earlybirdServerTimeout.inMilliseconds.intValue(),
-          facetRequest = None,
-          termStatisticsRequest = None,
-          debugMode = 0,
-          debugOptions = None,
-          searchSegmentId = None,
-          returnStatusType = None,
-          successfulResponseThreshold = None,
-          querySource = None,
-          getOlderResults = Some(false),
-          followedUserIds = Some(query.seedUserIds),
-          adjustedProtectedRequestParams = None,
-          adjustedFullArchiveRequestParams = None,
-          getProtectedTweetsOnly = Some(false),
-          retokenizeSerializedQuery = None,
-          skipVeryRecentTweets = true,
-          experimentClusterToUse = None
+@singweton
+case cwass eawwybiwdtensowfwowbasedsimiwawityengine @inject() (
+  e-eawwybiwdseawchcwient: eawwybiwdsewvice.methodpewendpoint, 😳
+  t-timeoutconfig: t-timeoutconfig, 🥺
+  s-stats: statsweceivew)
+    e-extends eawwybiwdsimiwawityenginebase[eawwybiwdtensowfwowbasedseawchquewy] {
+  impowt eawwybiwdtensowfwowbasedsimiwawityengine._
+  ovewwide vaw s-statsweceivew: statsweceivew = stats.scope(this.getcwass.getsimpwename)
+  ovewwide def geteawwybiwdwequest(
+    q-quewy: eawwybiwdtensowfwowbasedseawchquewy
+  ): option[eawwybiwdwequest] = {
+    if (quewy.seedusewids.nonempty)
+      some(
+        eawwybiwdwequest(
+          seawchquewy = getthwiftseawchquewy(quewy, rawr x3 t-timeoutconfig.eawwybiwdsewvewtimeout),
+          cwienthost = n-nyone,
+          c-cwientwequestid = n-nyone, o.O
+          cwientid = some(eawwybiwdcwientid), rawr
+          cwientwequesttimems = s-some(time.now.inmiwwiseconds), ʘwʘ
+          c-cachingpawams = nyone, 😳😳😳
+          t-timeoutms = t-timeoutconfig.eawwybiwdsewvewtimeout.inmiwwiseconds.intvawue(), ^^;;
+          facetwequest = n-nyone, o.O
+          tewmstatisticswequest = n-nyone,
+          debugmode = 0, (///ˬ///✿)
+          debugoptions = n-nyone, σωσ
+          seawchsegmentid = n-none, nyaa~~
+          wetuwnstatustype = n-nyone, ^^;;
+          s-successfuwwesponsethweshowd = nyone, ^•ﻌ•^
+          quewysouwce = nyone, σωσ
+          getowdewwesuwts = some(fawse), -.-
+          fowwowedusewids = s-some(quewy.seedusewids), ^^;;
+          a-adjustedpwotectedwequestpawams = nyone, XD
+          a-adjustedfuwwawchivewequestpawams = n-nyone, 🥺
+          g-getpwotectedtweetsonwy = some(fawse), òωó
+          wetokenizesewiawizedquewy = nyone,
+          s-skipvewywecenttweets = twue, (ˆ ﻌ ˆ)♡
+          expewimentcwustewtouse = nyone
         ))
-    else None
+    ewse nyone
   }
 }
 
-object EarlybirdTensorflowBasedSimilarityEngine {
-  case class EarlybirdTensorflowBasedSearchQuery(
-    searcherUserId: Option[UserId],
-    seedUserIds: Seq[UserId],
-    maxNumTweets: Int,
-    beforeTweetIdExclusive: Option[TweetId],
-    afterTweetIdExclusive: Option[TweetId],
-    filterOutRetweetsAndReplies: Boolean,
-    useTensorflowRanking: Boolean,
-    excludedTweetIds: Set[TweetId],
-    maxNumHitsPerShard: Int)
-      extends EarlybirdSearchQuery
+object eawwybiwdtensowfwowbasedsimiwawityengine {
+  c-case cwass eawwybiwdtensowfwowbasedseawchquewy(
+    seawchewusewid: o-option[usewid], -.-
+    s-seedusewids: s-seq[usewid], :3
+    maxnumtweets: i-int, ʘwʘ
+    b-befowetweetidexcwusive: o-option[tweetid], 🥺
+    a-aftewtweetidexcwusive: option[tweetid], >_<
+    fiwtewoutwetweetsandwepwies: b-boowean, ʘwʘ
+    u-usetensowfwowwanking: b-boowean, (˘ω˘)
+    e-excwudedtweetids: s-set[tweetid], (✿oωo)
+    maxnumhitspewshawd: int)
+      extends e-eawwybiwdseawchquewy
 
-  private def getThriftSearchQuery(
-    query: EarlybirdTensorflowBasedSearchQuery,
-    processingTimeout: Duration
-  ): ThriftSearchQuery =
-    ThriftSearchQuery(
-      serializedQuery = GetEarlybirdQuery(
-        query.beforeTweetIdExclusive,
-        query.afterTweetIdExclusive,
-        query.excludedTweetIds,
-        query.filterOutRetweetsAndReplies).map(_.serialize),
-      fromUserIDFilter64 = Some(query.seedUserIds),
-      numResults = query.maxNumTweets,
-      // Whether to collect conversation IDs. Remove it for now.
-      // collectConversationId = Gate.True(), // true for Home
-      rankingMode = ThriftSearchRankingMode.Relevance,
-      relevanceOptions = Some(getRelevanceOptions),
-      collectorParams = Some(
-        CollectorParams(
-          // numResultsToReturn defines how many results each EB shard will return to search root
-          numResultsToReturn = 1000,
-          // terminationParams.maxHitsToProcess is used for early terminating per shard results fetching.
-          terminationParams =
-            GetCollectorTerminationParams(query.maxNumHitsPerShard, processingTimeout)
-        )),
-      facetFieldNames = Some(FacetsToFetch),
-      resultMetadataOptions = Some(MetadataOptions),
-      searcherId = query.searcherUserId,
-      searchStatusIds = None,
-      namedDisjunctionMap = GetNamedDisjunctions(query.excludedTweetIds)
+  pwivate def getthwiftseawchquewy(
+    quewy: eawwybiwdtensowfwowbasedseawchquewy, (///ˬ///✿)
+    pwocessingtimeout: duwation
+  ): thwiftseawchquewy =
+    t-thwiftseawchquewy(
+      sewiawizedquewy = geteawwybiwdquewy(
+        quewy.befowetweetidexcwusive, rawr x3
+        q-quewy.aftewtweetidexcwusive, -.-
+        q-quewy.excwudedtweetids, ^^
+        q-quewy.fiwtewoutwetweetsandwepwies).map(_.sewiawize), (⑅˘꒳˘)
+      fwomusewidfiwtew64 = s-some(quewy.seedusewids), nyaa~~
+      nyumwesuwts = q-quewy.maxnumtweets, /(^•ω•^)
+      // w-whethew to cowwect convewsation ids. (U ﹏ U) wemove it fow nyow. 😳😳😳
+      // cowwectconvewsationid = gate.twue(), >w< // t-twue fow home
+      w-wankingmode = thwiftseawchwankingmode.wewevance, XD
+      wewevanceoptions = s-some(getwewevanceoptions), o.O
+      c-cowwectowpawams = some(
+        cowwectowpawams(
+          // n-nyumwesuwtstowetuwn d-defines how many wesuwts e-each eb shawd w-wiww wetuwn to seawch woot
+          nyumwesuwtstowetuwn = 1000, mya
+          // tewminationpawams.maxhitstopwocess is used fow e-eawwy tewminating p-pew shawd wesuwts f-fetching. 🥺
+          tewminationpawams =
+            g-getcowwectowtewminationpawams(quewy.maxnumhitspewshawd, ^^;; p-pwocessingtimeout)
+        )), :3
+      facetfiewdnames = s-some(facetstofetch), (U ﹏ U)
+      wesuwtmetadataoptions = some(metadataoptions), OwO
+      seawchewid = quewy.seawchewusewid, 😳😳😳
+      s-seawchstatusids = n-nyone, (ˆ ﻌ ˆ)♡
+      nyameddisjunctionmap = getnameddisjunctions(quewy.excwudedtweetids)
     )
 
-  // The specific values of recap relevance/reranking options correspond to
-  // experiment: enable_recap_reranking_2988,timeline_internal_disable_recap_filter
-  // bucket    : enable_rerank,disable_filter
-  private def getRelevanceOptions: ThriftSearchRelevanceOptions = {
-    ThriftSearchRelevanceOptions(
-      proximityScoring = true,
-      maxConsecutiveSameUser = Some(2),
-      rankingParams = Some(getTensorflowBasedRankingParams),
-      maxHitsToProcess = Some(500),
-      maxUserBlendCount = Some(3),
-      proximityPhraseWeight = 9.0,
-      returnAllResults = Some(true)
+  // t-the specific vawues o-of wecap wewevance/wewanking options cowwespond to
+  // expewiment: enabwe_wecap_wewanking_2988,timewine_intewnaw_disabwe_wecap_fiwtew
+  // b-bucket    : enabwe_wewank,disabwe_fiwtew
+  pwivate def getwewevanceoptions: thwiftseawchwewevanceoptions = {
+    thwiftseawchwewevanceoptions(
+      p-pwoximityscowing = twue, XD
+      maxconsecutivesameusew = s-some(2), (ˆ ﻌ ˆ)♡
+      w-wankingpawams = some(gettensowfwowbasedwankingpawams), ( ͡o ω ͡o )
+      maxhitstopwocess = some(500), rawr x3
+      m-maxusewbwendcount = s-some(3), nyaa~~
+      pwoximityphwaseweight = 9.0, >_<
+      wetuwnawwwesuwts = some(twue)
     )
   }
 
-  private def getTensorflowBasedRankingParams: ThriftRankingParams = {
-    ThriftRankingParams(
-      `type` = Some(ThriftScoringFunctionType.TensorflowBased),
-      selectedTensorflowModel = Some("timelines_rectweet_replica"),
-      minScore = -1.0e100,
-      applyBoosts = false,
-      authorSpecificScoreAdjustments = None
+  pwivate d-def gettensowfwowbasedwankingpawams: thwiftwankingpawams = {
+    t-thwiftwankingpawams(
+      `type` = some(thwiftscowingfunctiontype.tensowfwowbased), ^^;;
+      sewectedtensowfwowmodew = some("timewines_wectweet_wepwica"), (ˆ ﻌ ˆ)♡
+      m-minscowe = -1.0e100,
+      appwyboosts = f-fawse, ^^;;
+      authowspecificscoweadjustments = n-nyone
     )
   }
 }

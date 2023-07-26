@@ -1,146 +1,146 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+package com.twittew.fowwow_wecommendations.common.pwedicates.sgs
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasProfileId
-import com.twitter.follow_recommendations.common.models.FilterReason.FailOpen
-import com.twitter.follow_recommendations.common.models.FilterReason.InvalidRelationshipTypes
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.socialgraph.thriftscala.ExistsRequest
-import com.twitter.socialgraph.thriftscala.ExistsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
-import com.twitter.socialgraph.thriftscala.Relationship
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.TimeoutException
-import com.twitter.util.logging.Logging
+impowt com.googwe.common.annotations.visibwefowtesting
+i-impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.pwedicate
+i-impowt c-com.twittew.fowwow_wecommendations.common.base.pwedicatewesuwt
+i-impowt com.twittew.fowwow_wecommendations.common.modews.candidateusew
+impowt com.twittew.fowwow_wecommendations.common.modews.haspwofiweid
+impowt com.twittew.fowwow_wecommendations.common.modews.fiwtewweason.faiwopen
+impowt c-com.twittew.fowwow_wecommendations.common.modews.fiwtewweason.invawidwewationshiptypes
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.sociawgwaph.thwiftscawa.existswequest
+i-impowt com.twittew.sociawgwaph.thwiftscawa.existswesuwt
+impowt c-com.twittew.sociawgwaph.thwiftscawa.wookupcontext
+impowt com.twittew.sociawgwaph.thwiftscawa.wewationship
+impowt com.twittew.sociawgwaph.thwiftscawa.wewationshiptype
+i-impowt com.twittew.stitch.stitch
+impowt com.twittew.stitch.sociawgwaph.sociawgwaph
+i-impowt c-com.twittew.timewines.configapi.haspawams
+impowt com.twittew.utiw.timeoutexception
+impowt com.twittew.utiw.wogging.wogging
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-case class RelationshipMapping(
-  relationshipType: RelationshipType,
-  includeBasedOnRelationship: Boolean)
+case cwass wewationshipmapping(
+  wewationshiptype: w-wewationshiptype, XD
+  incwudebasedonwewationship: b-boowean)
 
-class SgsRelationshipsPredicate(
-  socialGraph: SocialGraph,
-  relationshipMappings: Seq[RelationshipMapping],
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Predicate[(HasClientContext with HasParams, CandidateUser)]
-    with Logging {
+c-cwass sgswewationshipspwedicate(
+  s-sociawgwaph: s-sociawgwaph, -.-
+  wewationshipmappings: seq[wewationshipmapping], :3
+  s-statsweceivew: statsweceivew = nyuwwstatsweceivew)
+    e-extends pwedicate[(hascwientcontext with haspawams, nyaa~~ candidateusew)]
+    with wogging {
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
+  pwivate vaw s-stats: statsweceivew = statsweceivew.scope(this.getcwass.getsimpwename)
 
-  override def apply(
-    pair: (HasClientContext with HasParams, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (target, candidate) = pair
-    val timeout = target.params(SgsPredicateParams.SgsRelationshipsPredicateTimeout)
-    SgsRelationshipsPredicate
-      .extractUserId(target)
+  o-ovewwide d-def appwy(
+    p-paiw: (hascwientcontext with haspawams, 😳 candidateusew)
+  ): stitch[pwedicatewesuwt] = {
+    v-vaw (tawget, (⑅˘꒳˘) candidate) = p-paiw
+    vaw timeout = t-tawget.pawams(sgspwedicatepawams.sgswewationshipspwedicatetimeout)
+    s-sgswewationshipspwedicate
+      .extwactusewid(tawget)
       .map { id =>
-        val relationships = relationshipMappings.map { relationshipMapping: RelationshipMapping =>
-          Relationship(
-            relationshipMapping.relationshipType,
-            relationshipMapping.includeBasedOnRelationship)
+        v-vaw wewationships = wewationshipmappings.map { wewationshipmapping: wewationshipmapping =>
+          w-wewationship(
+            wewationshipmapping.wewationshiptype,
+            wewationshipmapping.incwudebasedonwewationship)
         }
-        val existsRequest = ExistsRequest(
-          id,
-          candidate.id,
-          relationships = relationships,
-          context = SgsRelationshipsPredicate.UnionLookupContext
+        v-vaw existswequest = e-existswequest(
+          id, nyaa~~
+          c-candidate.id, OwO
+          w-wewationships = wewationships, rawr x3
+          context = sgswewationshipspwedicate.unionwookupcontext
         )
-        socialGraph
-          .exists(existsRequest).map { existsResult: ExistsResult =>
-            if (existsResult.exists) {
-              PredicateResult.Invalid(Set(InvalidRelationshipTypes(relationshipMappings
-                .map { relationshipMapping: RelationshipMapping =>
-                  relationshipMapping.relationshipType
-                }.mkString(", "))))
-            } else {
-              PredicateResult.Valid
+        sociawgwaph
+          .exists(existswequest).map { existswesuwt: existswesuwt =>
+            i-if (existswesuwt.exists) {
+              p-pwedicatewesuwt.invawid(set(invawidwewationshiptypes(wewationshipmappings
+                .map { wewationshipmapping: wewationshipmapping =>
+                  w-wewationshipmapping.wewationshiptype
+                }.mkstwing(", XD "))))
+            } ewse {
+              p-pwedicatewesuwt.vawid
             }
           }
-          .within(timeout)(com.twitter.finagle.util.DefaultTimer)
+          .within(timeout)(com.twittew.finagwe.utiw.defauwttimew)
       }
-      // if no user id is present, return true by default
-      .getOrElse(Stitch.value(PredicateResult.Valid))
-      .rescue {
-        case e: TimeoutException =>
-          stats.counter("timeout").incr()
-          Stitch(PredicateResult.Invalid(Set(FailOpen)))
-        case e: Exception =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          Stitch(PredicateResult.Invalid(Set(FailOpen)))
+      // i-if nyo usew id is pwesent, σωσ wetuwn twue by defauwt
+      .getowewse(stitch.vawue(pwedicatewesuwt.vawid))
+      .wescue {
+        c-case e: timeoutexception =>
+          stats.countew("timeout").incw()
+          stitch(pwedicatewesuwt.invawid(set(faiwopen)))
+        case e: exception =>
+          s-stats.countew(e.getcwass.getsimpwename).incw()
+          stitch(pwedicatewesuwt.invawid(set(faiwopen)))
       }
 
   }
 }
 
-object SgsRelationshipsPredicate {
-  // OR Operation
-  @VisibleForTesting
-  private[follow_recommendations] val UnionLookupContext = Some(
-    LookupContext(performUnion = Some(true)))
+o-object sgswewationshipspwedicate {
+  // o-ow o-opewation
+  @visibwefowtesting
+  pwivate[fowwow_wecommendations] v-vaw unionwookupcontext = s-some(
+    w-wookupcontext(pewfowmunion = s-some(twue)))
 
-  private def extractUserId(target: HasClientContext with HasParams): Option[Long] = target match {
-    case profRequest: HasProfileId => Some(profRequest.profileId)
-    case userRequest: HasClientContext with HasParams => userRequest.getOptionalUserId
-    case _ => None
+  pwivate def extwactusewid(tawget: hascwientcontext w-with haspawams): o-option[wong] = t-tawget match {
+    c-case pwofwequest: h-haspwofiweid => some(pwofwequest.pwofiweid)
+    case usewwequest: hascwientcontext w-with haspawams => usewwequest.getoptionawusewid
+    case _ => nyone
   }
 }
 
-@Singleton
-class InvalidTargetCandidateRelationshipTypesPredicate @Inject() (
-  socialGraph: SocialGraph)
-    extends SgsRelationshipsPredicate(
-      socialGraph,
-      InvalidRelationshipTypesPredicate.InvalidRelationshipTypes) {}
+@singweton
+cwass invawidtawgetcandidatewewationshiptypespwedicate @inject() (
+  sociawgwaph: sociawgwaph)
+    e-extends sgswewationshipspwedicate(
+      sociawgwaph, (U ᵕ U❁)
+      invawidwewationshiptypespwedicate.invawidwewationshiptypes) {}
 
-@Singleton
-class NoteworthyAccountsSgsPredicate @Inject() (
-  socialGraph: SocialGraph)
-    extends SgsRelationshipsPredicate(
-      socialGraph,
-      InvalidRelationshipTypesPredicate.NoteworthyAccountsInvalidRelationshipTypes)
+@singweton
+cwass n-notewowthyaccountssgspwedicate @inject() (
+  sociawgwaph: s-sociawgwaph)
+    e-extends sgswewationshipspwedicate(
+      s-sociawgwaph, (U ﹏ U)
+      invawidwewationshiptypespwedicate.notewowthyaccountsinvawidwewationshiptypes)
 
-object InvalidRelationshipTypesPredicate {
+o-object invawidwewationshiptypespwedicate {
 
-  val InvalidRelationshipTypesExcludeFollowing: Seq[RelationshipMapping] = Seq(
-    RelationshipMapping(RelationshipType.HideRecommendations, true),
-    RelationshipMapping(RelationshipType.Blocking, true),
-    RelationshipMapping(RelationshipType.BlockedBy, true),
-    RelationshipMapping(RelationshipType.Muting, true),
-    RelationshipMapping(RelationshipType.MutedBy, true),
-    RelationshipMapping(RelationshipType.ReportedAsSpam, true),
-    RelationshipMapping(RelationshipType.ReportedAsSpamBy, true),
-    RelationshipMapping(RelationshipType.ReportedAsAbuse, true),
-    RelationshipMapping(RelationshipType.ReportedAsAbuseBy, true)
+  v-vaw invawidwewationshiptypesexcwudefowwowing: seq[wewationshipmapping] = seq(
+    wewationshipmapping(wewationshiptype.hidewecommendations, twue), :3
+    wewationshipmapping(wewationshiptype.bwocking, ( ͡o ω ͡o ) twue), σωσ
+    wewationshipmapping(wewationshiptype.bwockedby, >w< t-twue),
+    wewationshipmapping(wewationshiptype.muting, 😳😳😳 twue), OwO
+    w-wewationshipmapping(wewationshiptype.mutedby, 😳 twue), 😳😳😳
+    w-wewationshipmapping(wewationshiptype.wepowtedasspam, (˘ω˘) t-twue), ʘwʘ
+    wewationshipmapping(wewationshiptype.wepowtedasspamby, twue), ( ͡o ω ͡o )
+    w-wewationshipmapping(wewationshiptype.wepowtedasabuse, o.O t-twue),
+    wewationshipmapping(wewationshiptype.wepowtedasabuseby, >w< t-twue)
   )
 
-  val InvalidRelationshipTypes: Seq[RelationshipMapping] = Seq(
-    RelationshipMapping(RelationshipType.FollowRequestOutgoing, true),
-    RelationshipMapping(RelationshipType.Following, true),
-    RelationshipMapping(
-      RelationshipType.UsedToFollow,
-      true
-    ) // this data is accessible for 90 days.
-  ) ++ InvalidRelationshipTypesExcludeFollowing
+  v-vaw invawidwewationshiptypes: seq[wewationshipmapping] = seq(
+    wewationshipmapping(wewationshiptype.fowwowwequestoutgoing, 😳 twue),
+    wewationshipmapping(wewationshiptype.fowwowing, 🥺 t-twue),
+    wewationshipmapping(
+      w-wewationshiptype.usedtofowwow, rawr x3
+      twue
+    ) // t-this data is accessibwe f-fow 90 days. o.O
+  ) ++ i-invawidwewationshiptypesexcwudefowwowing
 
-  val NoteworthyAccountsInvalidRelationshipTypes: Seq[RelationshipMapping] = Seq(
-    RelationshipMapping(RelationshipType.Blocking, true),
-    RelationshipMapping(RelationshipType.BlockedBy, true),
-    RelationshipMapping(RelationshipType.Muting, true),
-    RelationshipMapping(RelationshipType.MutedBy, true),
-    RelationshipMapping(RelationshipType.ReportedAsSpam, true),
-    RelationshipMapping(RelationshipType.ReportedAsSpamBy, true),
-    RelationshipMapping(RelationshipType.ReportedAsAbuse, true),
-    RelationshipMapping(RelationshipType.ReportedAsAbuseBy, true)
+  vaw nyotewowthyaccountsinvawidwewationshiptypes: s-seq[wewationshipmapping] = seq(
+    wewationshipmapping(wewationshiptype.bwocking, rawr twue),
+    wewationshipmapping(wewationshiptype.bwockedby, ʘwʘ twue), 😳😳😳
+    wewationshipmapping(wewationshiptype.muting, ^^;; t-twue),
+    w-wewationshipmapping(wewationshiptype.mutedby, o.O twue),
+    wewationshipmapping(wewationshiptype.wepowtedasspam, (///ˬ///✿) t-twue),
+    w-wewationshipmapping(wewationshiptype.wepowtedasspamby, σωσ twue),
+    wewationshipmapping(wewationshiptype.wepowtedasabuse, nyaa~~ twue), ^^;;
+    w-wewationshipmapping(wewationshiptype.wepowtedasabuseby, ^•ﻌ•^ twue)
   )
 }

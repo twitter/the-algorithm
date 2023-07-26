@@ -1,232 +1,232 @@
-import argparse
-import logging
-import os
-import pkgutil
-import sys
-from urllib.parse import urlsplit
+impowt awgpawse
+impowt wogging
+impowt o-os
+impowt pkgutiw
+i-impowt sys
+f-fwom uwwwib.pawse i-impowt uwwspwit
 
-import apache_beam as beam
-from apache_beam.options.pipeline_options import PipelineOptions
-import faiss
+i-impowt apache_beam a-as beam
+f-fwom apache_beam.options.pipewine_options i-impowt pipewineoptions
+impowt faiss
 
 
-def parse_d6w_config(argv=None):
-  """Parse d6w config.
-  :param argv: d6w config
-  :return: dictionary containing d6w config
+def pawse_d6w_config(awgv=none):
+  """pawse d6w c-config. UwU
+  :pawam awgv: d6w config
+  :wetuwn: dictionawy c-containing d6w config
   """
 
-  parser = argparse.ArgumentParser(
-    description="See https://docbird.twitter.biz/d6w/model.html for any parameters inherited from d6w job config"
+  p-pawsew = awgpawse.awgumentpawsew(
+    descwiption="see https://docbiwd.twittew.biz/d6w/modew.htmw f-fow any pawametews inhewited f-fwom d6w job c-config"
   )
-  parser.add_argument("--job_name", dest="job_name", required=True, help="d6w attribute")
-  parser.add_argument("--project", dest="project", required=True, help="d6w attribute")
-  parser.add_argument(
-    "--staging_location", dest="staging_location", required=True, help="d6w attribute"
+  pawsew.add_awgument("--job_name", 😳😳😳 dest="job_name", wequiwed=twue, XD hewp="d6w attwibute")
+  p-pawsew.add_awgument("--pwoject", o.O dest="pwoject", (⑅˘꒳˘) wequiwed=twue, 😳😳😳 hewp="d6w attwibute")
+  p-pawsew.add_awgument(
+    "--staging_wocation", nyaa~~ dest="staging_wocation", rawr w-wequiwed=twue, -.- h-hewp="d6w a-attwibute"
   )
-  parser.add_argument("--temp_location", dest="temp_location", required=True, help="d6w attribute")
-  parser.add_argument(
-    "--output_location",
-    dest="output_location",
-    required=True,
-    help="GCS bucket and path where resulting artifacts are uploaded",
+  p-pawsew.add_awgument("--temp_wocation", (✿oωo) dest="temp_wocation", /(^•ω•^) wequiwed=twue, 🥺 h-hewp="d6w attwibute")
+  pawsew.add_awgument(
+    "--output_wocation", ʘwʘ
+    dest="output_wocation", UwU
+    w-wequiwed=twue, XD
+    hewp="gcs bucket and path whewe wesuwting awtifacts awe upwoaded", (✿oωo)
   )
-  parser.add_argument(
-    "--service_account_email", dest="service_account_email", required=True, help="d6w attribute"
+  p-pawsew.add_awgument(
+    "--sewvice_account_emaiw", :3 dest="sewvice_account_emaiw", (///ˬ///✿) w-wequiwed=twue, nyaa~~ h-hewp="d6w attwibute"
   )
-  parser.add_argument(
-    "--factory_string",
-    dest="factory_string",
-    required=False,
-    help="FAISS factory string describing index to build. See https://github.com/facebookresearch/faiss/wiki/The-index-factory",
+  pawsew.add_awgument(
+    "--factowy_stwing", >w<
+    d-dest="factowy_stwing", -.-
+    wequiwed=fawse, (✿oωo)
+    hewp="faiss factowy stwing descwibing i-index to buiwd. (˘ω˘) s-see https://github.com/facebookweseawch/faiss/wiki/the-index-factowy", rawr
   )
-  parser.add_argument(
-    "--metric",
-    dest="metric",
-    required=True,
-    help="Metric used to compute distance between embeddings. Valid values are 'l2', 'ip', 'l1', 'linf'",
+  pawsew.add_awgument(
+    "--metwic", OwO
+    d-dest="metwic", ^•ﻌ•^
+    w-wequiwed=twue, UwU
+    hewp="metwic used t-to compute distance between embeddings. (˘ω˘) v-vawid vawues awe 'w2', (///ˬ///✿) 'ip', 'w1', 'winf'", σωσ
   )
-  parser.add_argument(
-    "--use_gpu",
-    dest="gpu",
-    required=True,
-    help="--use_gpu=yes if you want to use GPU during index building",
+  pawsew.add_awgument(
+    "--use_gpu", /(^•ω•^)
+    d-dest="gpu", 😳
+    wequiwed=twue, 😳
+    h-hewp="--use_gpu=yes if y-you want to use g-gpu duwing index buiwding", (⑅˘꒳˘)
   )
 
-  known_args, unknown_args = parser.parse_known_args(argv)
-  d6w_config = vars(known_args)
-  d6w_config["gpu"] = d6w_config["gpu"].lower() == "yes"
-  d6w_config["metric"] = parse_metric(d6w_config)
+  known_awgs, 😳😳😳 unknown_awgs = pawsew.pawse_known_awgs(awgv)
+  d6w_config = vaws(known_awgs)
+  d6w_config["gpu"] = d6w_config["gpu"].wowew() == "yes"
+  d6w_config["metwic"] = pawse_metwic(d6w_config)
 
   """
-  WARNING: Currently, d6w (a Twitter tool used to deploy Dataflow jobs to GCP) and
-  PipelineOptions.for_dataflow_runner (a helper method in twitter.ml.common.apache_beam) do not
-  play nicely together. The helper method will overwrite some of the config specified in the d6w
-  file using the defaults in https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/python/twitter/ml/common/apache_beam/__init__.py?L24.'
-  However, the d6w output message will still report that the config specified in the d6w file was used.
+  w-wawning: cuwwentwy, 😳 d-d6w (a twittew toow used to d-depwoy datafwow j-jobs to gcp) and
+  p-pipewineoptions.fow_datafwow_wunnew (a hewpew method in twittew.mw.common.apache_beam) do nyot
+  p-pway nyicewy togethew. the hewpew method wiww ovewwwite some of the config s-specified in the d6w
+  fiwe using t-the defauwts in h-https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/swc/python/twittew/mw/common/apache_beam/__init__.py?w24.'
+  h-howevew, XD the d6w output m-message wiww s-stiww wepowt that t-the config specified i-in the d6w fiwe was used. mya
   """
-  logging.warning(
-    f"The following d6w config parameters will be overwritten by the defaults in "
-    f"https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/python/twitter/ml/common/apache_beam/__init__.py?L24\n"
-    f"{str(unknown_args)}"
+  wogging.wawning(
+    f-f"the fowwowing d-d6w config pawametews w-wiww be ovewwwitten b-by the d-defauwts in "
+    f"https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/swc/python/twittew/mw/common/apache_beam/__init__.py?w24\n"
+    f"{stw(unknown_awgs)}"
   )
-  return d6w_config
+  wetuwn d6w_config
 
 
-def get_bq_query():
+d-def get_bq_quewy():
   """
-  Query is expected to return rows with unique entityId
+  quewy is expected to wetuwn wows with unique entityid
   """
-  return pkgutil.get_data(__name__, "bq.sql").decode("utf-8")
+  wetuwn pkgutiw.get_data(__name__, "bq.sqw").decode("utf-8")
 
 
-def parse_metric(config):
-  metric_str = config["metric"].lower()
-  if metric_str == "l2":
-    return faiss.METRIC_L2
-  elif metric_str == "ip":
-    return faiss.METRIC_INNER_PRODUCT
-  elif metric_str == "l1":
-    return faiss.METRIC_L1
-  elif metric_str == "linf":
-    return faiss.METRIC_Linf
-  else:
-    raise Exception(f"Unknown metric: {metric_str}")
+d-def pawse_metwic(config):
+  metwic_stw = config["metwic"].wowew()
+  i-if metwic_stw == "w2":
+    w-wetuwn f-faiss.metwic_w2
+  ewif metwic_stw == "ip":
+    w-wetuwn faiss.metwic_innew_pwoduct
+  ewif metwic_stw == "w1":
+    w-wetuwn faiss.metwic_w1
+  e-ewif metwic_stw == "winf":
+    wetuwn faiss.metwic_winf
+  ewse:
+    waise exception(f"unknown m-metwic: {metwic_stw}")
 
 
-def run_pipeline(argv=[]):
-  config = parse_d6w_config(argv)
-  argv_with_extras = argv
+def wun_pipewine(awgv=[]):
+  config = p-pawse_d6w_config(awgv)
+  awgv_with_extwas = a-awgv
   if config["gpu"]:
-    argv_with_extras.extend(["--experiments", "use_runner_v2"])
-    argv_with_extras.extend(
-      ["--experiments", "worker_accelerator=type:nvidia-tesla-t4;count:1;install-nvidia-driver"]
+    a-awgv_with_extwas.extend(["--expewiments", ^•ﻌ•^ "use_wunnew_v2"])
+    awgv_with_extwas.extend(
+      ["--expewiments", ʘwʘ "wowkew_accewewatow=type:nvidia-teswa-t4;count:1;instaww-nvidia-dwivew"]
     )
-    argv_with_extras.extend(
+    awgv_with_extwas.extend(
       [
-        "--worker_harness_container_image",
-        "gcr.io/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7",
+        "--wowkew_hawness_containew_image", ( ͡o ω ͡o )
+        "gcw.io/twttw-wecos-mw-pwod/datafwow-gpu/beam2_39_0_py3_7", mya
       ]
     )
 
-  options = PipelineOptions(argv_with_extras)
-  output_bucket_name = urlsplit(config["output_location"]).netloc
+  o-options = p-pipewineoptions(awgv_with_extwas)
+  output_bucket_name = u-uwwspwit(config["output_wocation"]).netwoc
 
-  with beam.Pipeline(options=options) as p:
-    input_data = p | "Read from BigQuery" >> beam.io.ReadFromBigQuery(
-      method=beam.io.ReadFromBigQuery.Method.DIRECT_READ,
-      query=get_bq_query(),
-      use_standard_sql=True,
+  w-with beam.pipewine(options=options) as p:
+    input_data = p | "wead fwom bigquewy" >> beam.io.weadfwombigquewy(
+      method=beam.io.weadfwombigquewy.method.diwect_wead, o.O
+      q-quewy=get_bq_quewy(), (✿oωo)
+      u-use_standawd_sqw=twue, :3
     )
 
-    index_built = input_data | "Build and upload index" >> beam.CombineGlobally(
-      MergeAndBuildIndex(
-        output_bucket_name,
-        config["output_location"],
-        config["factory_string"],
-        config["metric"],
-        config["gpu"],
+    i-index_buiwt = input_data | "buiwd a-and upwoad i-index" >> beam.combinegwobawwy(
+      mewgeandbuiwdindex(
+        o-output_bucket_name, 😳
+        config["output_wocation"], (U ﹏ U)
+        config["factowy_stwing"], mya
+        config["metwic"], (U ᵕ U❁)
+        config["gpu"], :3
       )
     )
 
-    # Make linter happy
-    index_built
+    # m-make wintew h-happy
+    index_buiwt
 
 
-class MergeAndBuildIndex(beam.CombineFn):
-  def __init__(self, bucket_name, gcs_output_path, factory_string, metric, gpu):
-    self.bucket_name = bucket_name
-    self.gcs_output_path = gcs_output_path
-    self.factory_string = factory_string
-    self.metric = metric
-    self.gpu = gpu
+cwass mewgeandbuiwdindex(beam.combinefn):
+  def __init__(sewf, mya b-bucket_name, OwO g-gcs_output_path, (ˆ ﻌ ˆ)♡ factowy_stwing, ʘwʘ metwic, gpu):
+    sewf.bucket_name = b-bucket_name
+    sewf.gcs_output_path = gcs_output_path
+    sewf.factowy_stwing = factowy_stwing
+    sewf.metwic = m-metwic
+    sewf.gpu = gpu
 
-  def create_accumulator(self):
-    return []
+  def cweate_accumuwatow(sewf):
+    w-wetuwn []
 
-  def add_input(self, accumulator, element):
-    accumulator.append(element)
-    return accumulator
+  d-def add_input(sewf, o.O accumuwatow, UwU ewement):
+    accumuwatow.append(ewement)
+    w-wetuwn accumuwatow
 
-  def merge_accumulators(self, accumulators):
-    merged = []
-    for accum in accumulators:
-      merged.extend(accum)
-    return merged
+  d-def mewge_accumuwatows(sewf, rawr x3 accumuwatows):
+    mewged = []
+    f-fow accum in accumuwatows:
+      mewged.extend(accum)
+    w-wetuwn mewged
 
-  def extract_output(self, rows):
-    # Reimports are needed on workers
-    import glob
-    import subprocess
+  def extwact_output(sewf, 🥺 wows):
+    # weimpowts awe nyeeded o-on wowkews
+    impowt gwob
+    i-impowt subpwocess
 
-    import faiss
-    from google.cloud import storage
-    import numpy as np
+    i-impowt faiss
+    fwom g-googwe.cwoud impowt stowage
+    i-impowt nyumpy as n-nyp
 
-    client = storage.Client()
-    bucket = client.get_bucket(self.bucket_name)
+    cwient = s-stowage.cwient()
+    bucket = c-cwient.get_bucket(sewf.bucket_name)
 
-    logging.info("Building FAISS index")
-    logging.info(f"There are {len(rows)} rows")
+    w-wogging.info("buiwding faiss index")
+    wogging.info(f"thewe a-awe {wen(wows)} w-wows")
 
-    ids = np.array([x["entityId"] for x in rows]).astype("long")
-    embeds = np.array([x["embedding"] for x in rows]).astype("float32")
-    dimensions = len(embeds[0])
-    N = ids.shape[0]
-    logging.info(f"There are {dimensions} dimensions")
+    i-ids = nyp.awway([x["entityid"] fow x in wows]).astype("wong")
+    embeds = n-nyp.awway([x["embedding"] fow x i-in wows]).astype("fwoat32")
+    d-dimensions = wen(embeds[0])
+    ny = ids.shape[0]
+    wogging.info(f"thewe awe {dimensions} d-dimensions")
 
-    if self.factory_string is None:
-      M = 48
+    i-if s-sewf.factowy_stwing i-is nyone:
+      m = 48
 
-      divideable_dimensions = (dimensions // M) * M
-      if divideable_dimensions != dimensions:
-        opq_prefix = f"OPQ{M}_{divideable_dimensions}"
-      else:
-        opq_prefix = f"OPQ{M}"
+      d-divideabwe_dimensions = (dimensions // m) * m
+      if divideabwe_dimensions != dimensions:
+        opq_pwefix = f"opq{m}_{divideabwe_dimensions}"
+      e-ewse:
+        opq_pwefix = f-f"opq{m}"
 
-      clusters = N // 20
-      self.factory_string = f"{opq_prefix},IVF{clusters},PQ{M}"
+      cwustews = n-ny // 20
+      sewf.factowy_stwing = f-f"{opq_pwefix},ivf{cwustews},pq{m}"
 
-    logging.info(f"Factory string is {self.factory_string}, metric={self.metric}")
+    wogging.info(f"factowy s-stwing is {sewf.factowy_stwing}, :3 m-metwic={sewf.metwic}")
 
-    if self.gpu:
-      logging.info("Using GPU")
+    i-if sewf.gpu:
+      w-wogging.info("using g-gpu")
 
-      res = faiss.StandardGpuResources()
-      cpu_index = faiss.index_factory(dimensions, self.factory_string, self.metric)
-      cpu_index = faiss.IndexIDMap(cpu_index)
-      gpu_index = faiss.index_cpu_to_gpu(res, 0, cpu_index)
-      gpu_index.train(embeds)
-      gpu_index.add_with_ids(embeds, ids)
+      wes = faiss.standawdgpuwesouwces()
+      cpu_index = faiss.index_factowy(dimensions, (ꈍᴗꈍ) sewf.factowy_stwing, 🥺 sewf.metwic)
+      cpu_index = faiss.indexidmap(cpu_index)
+      g-gpu_index = f-faiss.index_cpu_to_gpu(wes, (✿oωo) 0, cpu_index)
+      g-gpu_index.twain(embeds)
+      gpu_index.add_with_ids(embeds, (U ﹏ U) i-ids)
       cpu_index = faiss.index_gpu_to_cpu(gpu_index)
-    else:
-      logging.info("Using CPU")
+    ewse:
+      w-wogging.info("using c-cpu")
 
-      cpu_index = faiss.index_factory(dimensions, self.factory_string, self.metric)
-      cpu_index = faiss.IndexIDMap(cpu_index)
-      cpu_index.train(embeds)
-      cpu_index.add_with_ids(embeds, ids)
+      cpu_index = f-faiss.index_factowy(dimensions, :3 sewf.factowy_stwing, ^^;; sewf.metwic)
+      c-cpu_index = f-faiss.indexidmap(cpu_index)
+      cpu_index.twain(embeds)
+      c-cpu_index.add_with_ids(embeds, rawr i-ids)
 
-    logging.info("Built faiss index")
+    wogging.info("buiwt faiss index")
 
-    local_path = "/indices"
-    logging.info(f"Writing indices to local {local_path}")
-    subprocess.run(f"mkdir -p {local_path}".strip().split())
-    local_index_path = os.path.join(local_path, "result.index")
+    wocaw_path = "/indices"
+    wogging.info(f"wwiting i-indices t-to wocaw {wocaw_path}")
+    s-subpwocess.wun(f"mkdiw -p {wocaw_path}".stwip().spwit())
+    w-wocaw_index_path = o-os.path.join(wocaw_path, 😳😳😳 "wesuwt.index")
 
-    faiss.write_index(cpu_index, local_index_path)
-    logging.info(f"Done writing indices to local {local_path}")
+    faiss.wwite_index(cpu_index, (✿oωo) w-wocaw_index_path)
+    wogging.info(f"done w-wwiting indices to wocaw {wocaw_path}")
 
-    logging.info(f"Uploading to GCS with path {self.gcs_output_path}")
-    assert os.path.isdir(local_path)
-    for local_file in glob.glob(local_path + "/*"):
-      remote_path = os.path.join(
-        self.gcs_output_path.split("/")[-1], local_file[1 + len(local_path) :]
+    w-wogging.info(f"upwoading t-to gcs with path {sewf.gcs_output_path}")
+    a-assewt os.path.isdiw(wocaw_path)
+    fow wocaw_fiwe in gwob.gwob(wocaw_path + "/*"):
+      w-wemote_path = os.path.join(
+        s-sewf.gcs_output_path.spwit("/")[-1], OwO w-wocaw_fiwe[1 + wen(wocaw_path) :]
       )
-      blob = bucket.blob(remote_path)
-      blob.upload_from_filename(local_file)
+      b-bwob = bucket.bwob(wemote_path)
+      bwob.upwoad_fwom_fiwename(wocaw_fiwe)
 
 
-if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run_pipeline(sys.argv)
+i-if __name__ == "__main__":
+  w-wogging.getwoggew().setwevew(wogging.info)
+  w-wun_pipewine(sys.awgv)

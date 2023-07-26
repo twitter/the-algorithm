@@ -1,38 +1,38 @@
-#pragma once
-#ifdef __cplusplus
+#pwagma once
+#ifdef __cpwuspwus
 
-#include <twml/defines.h>
-#include <twml/DataRecord.h>
-#include <twml/TensorRecordWriter.h>
+#incwude <twmw/defines.h>
+#incwude <twmw/datawecowd.h>
+#incwude <twmw/tensowwecowdwwitew.h>
 
-namespace twml {
+nyamespace t-twmw {
 
-// Encodes DataRecords as binary Thrift. BatchPredictionResponse
-// uses this class to encode prediction responses through our
-// TensorFlow response writer operator.
-class TWMLAPI DataRecordWriter {
-  private:
-    uint32_t m_records_written;
-    twml::ThriftWriter &m_thrift_writer;
-    twml::TensorRecordWriter m_tensor_writer;
+// e-encodes datawecowds a-as binawy t-thwift. /(^•ω•^) batchpwedictionwesponse
+// u-uses this cwass t-to encode pwediction w-wesponses t-thwough ouw
+// tensowfwow wesponse wwitew opewatow. rawr
+cwass twmwapi datawecowdwwitew {
+  p-pwivate:
+    uint32_t m_wecowds_wwitten;
+    t-twmw::thwiftwwitew &m_thwift_wwitew;
+    twmw::tensowwecowdwwitew m-m_tensow_wwitew;
 
-    void writeBinary(twml::DataRecord &record);
-    void writeContinuous(twml::DataRecord &record);
-    void writeDiscrete(twml::DataRecord &record);
-    void writeString(twml::DataRecord &record);
-    void writeSparseBinaryFeatures(twml::DataRecord &record);
-    void writeSparseContinuousFeatures(twml::DataRecord &record);
-    void writeBlobFeatures(twml::DataRecord &record);
-    void writeDenseTensors(twml::DataRecord &record);
+    void wwitebinawy(twmw::datawecowd &wecowd);
+    void wwitecontinuous(twmw::datawecowd &wecowd);
+    void wwitediscwete(twmw::datawecowd &wecowd);
+    v-void wwitestwing(twmw::datawecowd &wecowd);
+    void wwitespawsebinawyfeatuwes(twmw::datawecowd &wecowd);
+    v-void wwitespawsecontinuousfeatuwes(twmw::datawecowd &wecowd);
+    v-void wwitebwobfeatuwes(twmw::datawecowd &wecowd);
+    void wwitedensetensows(twmw::datawecowd &wecowd);
 
-  public:
-    DataRecordWriter(twml::ThriftWriter &thrift_writer):
-      m_records_written(0),
-      m_thrift_writer(thrift_writer),
-      m_tensor_writer(twml::TensorRecordWriter(thrift_writer)) { }
+  pubwic:
+    datawecowdwwitew(twmw::thwiftwwitew &thwift_wwitew):
+      m_wecowds_wwitten(0), OwO
+      m-m_thwift_wwitew(thwift_wwitew), (U ﹏ U)
+      m_tensow_wwitew(twmw::tensowwecowdwwitew(thwift_wwitew)) { }
 
-    uint32_t getRecordsWritten();
-    uint64_t write(twml::DataRecord &record);
+    uint32_t getwecowdswwitten();
+    uint64_t w-wwite(twmw::datawecowd &wecowd);
 };
 
 }

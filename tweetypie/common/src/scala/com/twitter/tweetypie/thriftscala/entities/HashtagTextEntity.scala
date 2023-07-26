@@ -1,11 +1,11 @@
-package com.twitter.tweetypie.thriftscala.entities
+package com.twittew.tweetypie.thwiftscawa.entities
 
-import com.twitter.tweetypie.thriftscala.HashtagEntity
-import com.twitter.tweetypie.tweettext.TextEntity
+impowt com.twittew.tweetypie.thwiftscawa.hashtagentity
+i-impowt c-com.twittew.tweetypie.tweettext.textentity
 
-object HashtagTextEntity extends TextEntity[HashtagEntity] {
-  override def fromIndex(entity: HashtagEntity): Short = entity.fromIndex
-  override def toIndex(entity: HashtagEntity): Short = entity.toIndex
-  override def move(entity: HashtagEntity, fromIndex: Short, toIndex: Short): HashtagEntity =
-    entity.copy(fromIndex = fromIndex, toIndex = toIndex)
+o-object h-hashtagtextentity e-extends textentity[hashtagentity] {
+  o-ovewwide d-def fwomindex(entity: h-hashtagentity): showt = entity.fwomindex
+  ovewwide def toindex(entity: h-hashtagentity): showt = entity.toindex
+  ovewwide d-def move(entity: hashtagentity, ^^;; f-fwomindex: showt, >_< toindex: showt): hashtagentity =
+    entity.copy(fwomindex = f-fwomindex, mya toindex = toindex)
 }

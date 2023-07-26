@@ -1,123 +1,123 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.twittew.cw_mixew.simiwawity_engine
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.contentrecommender.thriftscala.AlgorithmType
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TopicTweetWithScore
-import com.twitter.cr_mixer.param.TopicTweetParams
-import com.twitter.cr_mixer.similarity_engine.SkitTopicTweetSimilarityEngine._
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.topic_recos.thriftscala.TopicTweet
-import com.twitter.topic_recos.thriftscala.TopicTweetPartitionFlatKey
-import com.twitter.util.Future
+impowt com.googwe.inject.inject
+impowt c-com.googwe.inject.singweton
+i-impowt com.googwe.inject.name.named
+i-impowt com.twittew.contentwecommendew.thwiftscawa.awgowithmtype
+i-impowt com.twittew.cw_mixew.modew.moduwenames
+i-impowt com.twittew.cw_mixew.modew.topictweetwithscowe
+i-impowt c-com.twittew.cw_mixew.pawam.topictweetpawams
+i-impowt com.twittew.cw_mixew.simiwawity_engine.skittopictweetsimiwawityengine._
+impowt com.twittew.cw_mixew.thwiftscawa.simiwawityenginetype
+impowt c-com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.fwigate.common.utiw.statsutiw
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+impowt com.twittew.simcwustews_v2.thwiftscawa.topicid
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.timewines.configapi
+impowt c-com.twittew.topic_wecos.thwiftscawa.topictweet
+impowt com.twittew.topic_wecos.thwiftscawa.topictweetpawtitionfwatkey
+i-impowt c-com.twittew.utiw.futuwe
 
-@Singleton
-case class SkitHighPrecisionTopicTweetSimilarityEngine @Inject() (
-  @Named(ModuleNames.SkitStratoStoreName) skitStratoStore: ReadableStore[
-    TopicTweetPartitionFlatKey,
-    Seq[TopicTweet]
-  ],
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[EngineQuery[Query], Seq[TopicTweetWithScore]] {
+@singweton
+case cwass skithighpwecisiontopictweetsimiwawityengine @inject() (
+  @named(moduwenames.skitstwatostowename) skitstwatostowe: weadabwestowe[
+    topictweetpawtitionfwatkey, (⑅˘꒳˘)
+    s-seq[topictweet]
+  ], (U ﹏ U)
+  statsweceivew: statsweceivew)
+    extends weadabwestowe[enginequewy[quewy], mya s-seq[topictweetwithscowe]] {
 
-  private val name: String = this.getClass.getSimpleName
-  private val stats = statsReceiver.scope(name)
+  pwivate vaw n-nyame: stwing = t-this.getcwass.getsimpwename
+  p-pwivate vaw stats = s-statsweceivew.scope(name)
 
-  override def get(query: EngineQuery[Query]): Future[Option[Seq[TopicTweetWithScore]]] = {
-    StatsUtil.trackOptionItemsStats(stats) {
-      fetch(query).map { tweets =>
-        val topTweets =
-          tweets
-            .sortBy(-_.favCount)
-            .take(query.storeQuery.maxCandidates)
+  ovewwide def get(quewy: enginequewy[quewy]): futuwe[option[seq[topictweetwithscowe]]] = {
+    s-statsutiw.twackoptionitemsstats(stats) {
+      fetch(quewy).map { tweets =>
+        vaw toptweets =
+          t-tweets
+            .sowtby(-_.favcount)
+            .take(quewy.stowequewy.maxcandidates)
             .map { tweet =>
-              TopicTweetWithScore(
-                tweetId = tweet.tweetId,
-                score = tweet.favCount,
-                similarityEngineType = SimilarityEngineType.SkitHighPrecisionTopicTweet
+              topictweetwithscowe(
+                tweetid = tweet.tweetid, ʘwʘ
+                scowe = tweet.favcount, (˘ω˘)
+                s-simiwawityenginetype = simiwawityenginetype.skithighpwecisiontopictweet
               )
             }
-        Some(topTweets)
+        some(toptweets)
       }
     }
   }
 
-  private def fetch(query: EngineQuery[Query]): Future[Seq[SkitTopicTweet]] = {
-    val latestTweetTimeInHour = System.currentTimeMillis() / 1000 / 60 / 60
+  p-pwivate d-def fetch(quewy: e-enginequewy[quewy]): futuwe[seq[skittopictweet]] = {
+    vaw watesttweettimeinhouw = s-system.cuwwenttimemiwwis() / 1000 / 60 / 60
 
-    val earliestTweetTimeInHour = latestTweetTimeInHour -
-      math.min(MaxTweetAgeInHours, query.storeQuery.maxTweetAge.inHours)
-    val timedKeys = for (timePartition <- earliestTweetTimeInHour to latestTweetTimeInHour) yield {
+    v-vaw eawwiesttweettimeinhouw = watesttweettimeinhouw -
+      m-math.min(maxtweetageinhouws, (U ﹏ U) q-quewy.stowequewy.maxtweetage.inhouws)
+    vaw t-timedkeys = fow (timepawtition <- eawwiesttweettimeinhouw t-to watesttweettimeinhouw) yiewd {
 
-      TopicTweetPartitionFlatKey(
-        entityId = query.storeQuery.topicId.entityId,
-        timePartition = timePartition,
-        algorithmType = Some(AlgorithmType.SemanticCoreTweet),
-        tweetEmbeddingType = Some(EmbeddingType.LogFavBasedTweet),
-        language = query.storeQuery.topicId.language.getOrElse("").toLowerCase,
-        country = None, // Disable country. It is not used.
-        semanticCoreAnnotationVersionId = Some(query.storeQuery.semanticCoreVersionId)
+      topictweetpawtitionfwatkey(
+        e-entityid = quewy.stowequewy.topicid.entityid, ^•ﻌ•^
+        t-timepawtition = timepawtition, (˘ω˘)
+        a-awgowithmtype = s-some(awgowithmtype.semanticcowetweet), :3
+        tweetembeddingtype = some(embeddingtype.wogfavbasedtweet), ^^;;
+        wanguage = quewy.stowequewy.topicid.wanguage.getowewse("").towowewcase, 🥺
+        countwy = nyone, // disabwe c-countwy. (⑅˘꒳˘) it is n-nyot used. nyaa~~
+        semanticcoweannotationvewsionid = s-some(quewy.stowequewy.semanticcowevewsionid)
       )
     }
 
-    getTweetsForKeys(
-      timedKeys,
-      query.storeQuery.topicId
+    g-gettweetsfowkeys(
+      timedkeys, :3
+      q-quewy.stowequewy.topicid
     )
   }
 
   /**
-   * Given a set of keys, multiget the underlying Strato store, combine and flatten the results.
+   * given a set of keys, ( ͡o ω ͡o ) muwtiget the undewwying stwato s-stowe, mya combine and fwatten the wesuwts. (///ˬ///✿)
    */
-  private def getTweetsForKeys(
-    keys: Seq[TopicTweetPartitionFlatKey],
-    sourceTopic: TopicId
-  ): Future[Seq[SkitTopicTweet]] = {
-    Future
-      .collect { skitStratoStore.multiGet(keys.toSet).values.toSeq }
-      .map { combinedResults =>
-        val topTweets = combinedResults.flatten.flatten
-        topTweets.map { tweet =>
-          SkitTopicTweet(
-            tweetId = tweet.tweetId,
-            favCount = tweet.scores.favCount.getOrElse(0L),
-            cosineSimilarityScore = tweet.scores.cosineSimilarity.getOrElse(0.0),
-            sourceTopic = sourceTopic
+  pwivate def gettweetsfowkeys(
+    keys: seq[topictweetpawtitionfwatkey],
+    s-souwcetopic: topicid
+  ): futuwe[seq[skittopictweet]] = {
+    f-futuwe
+      .cowwect { s-skitstwatostowe.muwtiget(keys.toset).vawues.toseq }
+      .map { c-combinedwesuwts =>
+        vaw toptweets = c-combinedwesuwts.fwatten.fwatten
+        t-toptweets.map { t-tweet =>
+          s-skittopictweet(
+            tweetid = tweet.tweetid, (˘ω˘)
+            f-favcount = t-tweet.scowes.favcount.getowewse(0w), ^^;;
+            c-cosinesimiwawityscowe = t-tweet.scowes.cosinesimiwawity.getowewse(0.0), (✿oωo)
+            s-souwcetopic = souwcetopic
           )
         }
       }
   }
 }
 
-object SkitHighPrecisionTopicTweetSimilarityEngine {
+object skithighpwecisiontopictweetsimiwawityengine {
 
-  def fromParams(
-    topicId: TopicId,
-    isVideoOnly: Boolean,
-    params: configapi.Params,
-  ): EngineQuery[Query] = {
-    val maxCandidates = if (isVideoOnly) {
-      params(TopicTweetParams.MaxSkitHighPrecisionCandidatesParam) * 2
-    } else {
-      params(TopicTweetParams.MaxSkitHighPrecisionCandidatesParam)
+  d-def fwompawams(
+    topicid: topicid, (U ﹏ U)
+    isvideoonwy: boowean, -.-
+    pawams: configapi.pawams, ^•ﻌ•^
+  ): enginequewy[quewy] = {
+    v-vaw maxcandidates = if (isvideoonwy) {
+      pawams(topictweetpawams.maxskithighpwecisioncandidatespawam) * 2
+    } ewse {
+      p-pawams(topictweetpawams.maxskithighpwecisioncandidatespawam)
     }
 
-    EngineQuery(
-      Query(
-        topicId = topicId,
-        maxCandidates = maxCandidates,
-        maxTweetAge = params(TopicTweetParams.MaxTweetAge),
-        semanticCoreVersionId = params(TopicTweetParams.SemanticCoreVersionIdParam)
-      ),
-      params
+    e-enginequewy(
+      q-quewy(
+        topicid = t-topicid, rawr
+        maxcandidates = m-maxcandidates, (˘ω˘)
+        m-maxtweetage = pawams(topictweetpawams.maxtweetage),
+        semanticcowevewsionid = pawams(topictweetpawams.semanticcowevewsionidpawam)
+      ), nyaa~~
+      pawams
     )
   }
 }

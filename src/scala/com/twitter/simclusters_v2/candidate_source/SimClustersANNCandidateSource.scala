@@ -1,637 +1,637 @@
-package com.twitter.simclusters_v2.candidate_source
+package com.twittew.simcwustews_v2.candidate_souwce
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.Stats
-import com.twitter.simclusters_v2.candidate_source.HeavyRanker.UniformScoreStoreRanker
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersANNConfig
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.summingbird.stores.ClusterKey
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingPairScoreId
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId}
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import scala.collection.mutable
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base.candidatesouwce
+i-impowt com.twittew.fwigate.common.base.stats
+i-impowt com.twittew.simcwustews_v2.candidate_souwce.heavywankew.unifowmscowestowewankew
+i-impowt c-com.twittew.simcwustews_v2.candidate_souwce.simcwustewsanncandidatesouwce.simcwustewsannconfig
+i-impowt com.twittew.simcwustews_v2.candidate_souwce.simcwustewsanncandidatesouwce.simcwustewstweetcandidate
+i-impowt com.twittew.simcwustews_v2.common.modewvewsions._
+impowt com.twittew.simcwustews_v2.common.cwustewid
+impowt com.twittew.simcwustews_v2.common.simcwustewsembedding
+impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.summingbiwd.stowes.cwustewkey
+impowt com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scoweintewnawid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.scowingawgowithm
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingpaiwscoweid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.{scowe => thwiftscowe}
+impowt com.twittew.simcwustews_v2.thwiftscawa.{scoweid => thwiftscoweid}
+impowt c-com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.time
+i-impowt scawa.cowwection.mutabwe
 
 /**
- * This store looks for tweets whose similarity is close to a Source SimClustersEmbeddingId.
+ * t-this stowe w-wooks fow tweets w-whose simiwawity i-is cwose to a souwce simcwustewsembeddingid. XD
  *
- * Approximate cosine similarity is the core algorithm to drive this store.
+ * appwoximate c-cosine simiwawity is the cowe awgowithm to dwive t-this stowe. -.-
  *
- * Step 1 - 4 are in "fetchCandidates" method.
- * 1. Retrieve the SimClusters Embedding by the SimClustersEmbeddingId
- * 2. Fetch top N clusters' top tweets from the clusterTweetCandidatesStore (TopTweetsPerCluster index).
- * 3. Calculate all the tweet candidates' dot-product or approximate cosine similarity to source tweets.
- * 4. Take top M tweet candidates by the step 3's score
- * Step 5-6 are in "reranking" method.
- * 5. Calculate the similarity score between source and candidates.
- * 6. Return top N candidates by the step 5's score.
+ * step 1 - 4 awe in "fetchcandidates" method. >_<
+ * 1. rawr wetwieve the simcwustews e-embedding by the simcwustewsembeddingid
+ * 2. 😳😳😳 f-fetch t-top ny cwustews' t-top tweets fwom the cwustewtweetcandidatesstowe (toptweetspewcwustew index). UwU
+ * 3. cawcuwate a-aww the tweet c-candidates' dot-pwoduct ow appwoximate c-cosine simiwawity t-to souwce tweets. (U ﹏ U)
+ * 4. t-take top m tweet candidates by t-the step 3's scowe
+ * step 5-6 awe in "wewanking" m-method. (˘ω˘)
+ * 5. /(^•ω•^) cawcuwate the simiwawity s-scowe between souwce and c-candidates. (U ﹏ U)
+ * 6. w-wetuwn top ny candidates by the step 5's scowe. ^•ﻌ•^
  *
- * Warning: Only turn off the step 5 for User InterestedIn candidate generation. It's the only use
- * case in Recos that we use dot-product to rank the tweet candidates.
+ * wawning: onwy tuwn off the step 5 fow usew intewestedin c-candidate genewation. >w< i-it's the onwy use
+ * case i-in wecos that w-we use dot-pwoduct t-to wank the tweet candidates. ʘwʘ
  */
-case class SimClustersANNCandidateSource(
-  clusterTweetCandidatesStore: ReadableStore[ClusterKey, Seq[(TweetId, Double)]],
-  simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-  heavyRanker: HeavyRanker.HeavyRanker,
-  configs: Map[EmbeddingType, SimClustersANNConfig],
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[SimClustersANNCandidateSource.Query, SimClustersTweetCandidate] {
+case cwass simcwustewsanncandidatesouwce(
+  c-cwustewtweetcandidatesstowe: weadabwestowe[cwustewkey, òωó seq[(tweetid, o.O doubwe)]], ( ͡o ω ͡o )
+  simcwustewsembeddingstowe: w-weadabwestowe[simcwustewsembeddingid, mya simcwustewsembedding], >_<
+  h-heavywankew: h-heavywankew.heavywankew, rawr
+  c-configs: map[embeddingtype, >_< simcwustewsannconfig], (U ﹏ U)
+  s-statsweceivew: s-statsweceivew)
+    e-extends c-candidatesouwce[simcwustewsanncandidatesouwce.quewy, rawr simcwustewstweetcandidate] {
 
-  import SimClustersANNCandidateSource._
+  impowt s-simcwustewsanncandidatesouwce._
 
-  override val name: String = this.getClass.getName
-  private val stats = statsReceiver.scope(this.getClass.getName)
+  o-ovewwide vaw n-nyame: stwing = t-this.getcwass.getname
+  p-pwivate vaw stats = statsweceivew.scope(this.getcwass.getname)
 
-  private val fetchSourceEmbeddingStat = stats.scope("fetchSourceEmbedding")
-  protected val fetchCandidateEmbeddingsStat = stats.scope("fetchCandidateEmbeddings")
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
-  private val rerankingStat = stats.scope("reranking")
+  pwivate vaw fetchsouwceembeddingstat = s-stats.scope("fetchsouwceembedding")
+  pwotected vaw fetchcandidateembeddingsstat = stats.scope("fetchcandidateembeddings")
+  pwivate vaw fetchcandidatesstat = s-stats.scope("fetchcandidates")
+  pwivate vaw wewankingstat = stats.scope("wewanking")
 
-  override def get(
-    query: SimClustersANNCandidateSource.Query
-  ): Future[Option[Seq[SimClustersTweetCandidate]]] = {
-    val sourceEmbeddingId = query.sourceEmbeddingId
-    loadConfig(query) match {
-      case Some(config) =>
-        for {
-          maybeSimClustersEmbedding <- Stats.track(fetchSourceEmbeddingStat) {
-            simClustersEmbeddingStore.get(query.sourceEmbeddingId)
+  ovewwide d-def get(
+    quewy: s-simcwustewsanncandidatesouwce.quewy
+  ): futuwe[option[seq[simcwustewstweetcandidate]]] = {
+    v-vaw souwceembeddingid = quewy.souwceembeddingid
+    w-woadconfig(quewy) match {
+      c-case some(config) =>
+        f-fow {
+          maybesimcwustewsembedding <- stats.twack(fetchsouwceembeddingstat) {
+            simcwustewsembeddingstowe.get(quewy.souwceembeddingid)
           }
-          maybeFilteredCandidates <- maybeSimClustersEmbedding match {
-            case Some(sourceEmbedding) =>
-              for {
-                rawCandidates <- Stats.trackSeq(fetchCandidatesStat) {
-                  fetchCandidates(sourceEmbeddingId, config, sourceEmbedding)
+          maybefiwtewedcandidates <- maybesimcwustewsembedding m-match {
+            case s-some(souwceembedding) =>
+              fow {
+                w-wawcandidates <- s-stats.twackseq(fetchcandidatesstat) {
+                  fetchcandidates(souwceembeddingid, (U ᵕ U❁) config, s-souwceembedding)
                 }
-                rankedCandidates <- Stats.trackSeq(rerankingStat) {
-                  reranking(sourceEmbeddingId, config, rawCandidates)
+                w-wankedcandidates <- stats.twackseq(wewankingstat) {
+                  w-wewanking(souwceembeddingid, (ˆ ﻌ ˆ)♡ c-config, wawcandidates)
                 }
-              } yield {
-                fetchCandidatesStat
+              } yiewd {
+                fetchcandidatesstat
                   .stat(
-                    sourceEmbeddingId.embeddingType.name,
-                    sourceEmbeddingId.modelVersion.name).add(rankedCandidates.size)
-                Some(rankedCandidates)
+                    souwceembeddingid.embeddingtype.name,
+                    s-souwceembeddingid.modewvewsion.name).add(wankedcandidates.size)
+                s-some(wankedcandidates)
               }
-            case None =>
-              fetchCandidatesStat
+            c-case nyone =>
+              fetchcandidatesstat
                 .stat(
-                  sourceEmbeddingId.embeddingType.name,
-                  sourceEmbeddingId.modelVersion.name).add(0)
-              Future.None
+                  s-souwceembeddingid.embeddingtype.name, >_<
+                  s-souwceembeddingid.modewvewsion.name).add(0)
+              futuwe.none
           }
-        } yield {
-          maybeFilteredCandidates
+        } y-yiewd {
+          maybefiwtewedcandidates
         }
       case _ =>
-        // Skip over queries whose config is not defined
-        Future.None
+        // skip ovew quewies whose config i-is nyot defined
+        f-futuwe.none
     }
   }
 
-  private def fetchCandidates(
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    config: SimClustersANNConfig,
-    sourceEmbedding: SimClustersEmbedding
-  ): Future[Seq[SimClustersTweetCandidate]] = {
-    val now = Time.now
-    val earliestTweetId = SnowflakeId.firstIdFor(now - config.maxTweetCandidateAge)
-    val latestTweetId = SnowflakeId.firstIdFor(now - config.minTweetCandidateAge)
-    val clusterIds =
-      sourceEmbedding
-        .truncate(config.maxScanClusters).clusterIds
-        .map { clusterId: ClusterId =>
-          ClusterKey(clusterId, sourceEmbeddingId.modelVersion, config.candidateEmbeddingType)
-        }.toSet
+  pwivate def fetchcandidates(
+    s-souwceembeddingid: s-simcwustewsembeddingid, ^^;;
+    config: simcwustewsannconfig, ʘwʘ
+    souwceembedding: simcwustewsembedding
+  ): f-futuwe[seq[simcwustewstweetcandidate]] = {
+    vaw nyow = time.now
+    vaw eawwiesttweetid = snowfwakeid.fiwstidfow(now - config.maxtweetcandidateage)
+    vaw w-watesttweetid = snowfwakeid.fiwstidfow(now - config.mintweetcandidateage)
+    vaw c-cwustewids =
+      s-souwceembedding
+        .twuncate(config.maxscancwustews).cwustewids
+        .map { cwustewid: cwustewid =>
+          cwustewkey(cwustewid, 😳😳😳 s-souwceembeddingid.modewvewsion, UwU c-config.candidateembeddingtype)
+        }.toset
 
-    Future
-      .collect {
-        clusterTweetCandidatesStore.multiGet(clusterIds)
-      }.map { clusterTweetsMap =>
-        // Use Mutable map to optimize performance. The method is thread-safe.
-        // Set initial map size to around p75 of map size distribution to avoid too many copying
-        // from extending the size of the mutable hashmap
-        val candidateScoresMap =
-          new SimClustersANNCandidateSource.HashMap[TweetId, Double](InitialCandidateMapSize)
-        val candidateNormalizationMap =
-          new SimClustersANNCandidateSource.HashMap[TweetId, Double](InitialCandidateMapSize)
+    futuwe
+      .cowwect {
+        cwustewtweetcandidatesstowe.muwtiget(cwustewids)
+      }.map { cwustewtweetsmap =>
+        // u-use mutabwe map to optimize p-pewfowmance. OwO the method is thwead-safe. :3
+        // set initiaw map size to awound p-p75 of map size distwibution to a-avoid too many c-copying
+        // fwom extending t-the size of the mutabwe hashmap
+        v-vaw candidatescowesmap =
+          n-nyew s-simcwustewsanncandidatesouwce.hashmap[tweetid, -.- doubwe](initiawcandidatemapsize)
+        v-vaw candidatenowmawizationmap =
+          n-nyew simcwustewsanncandidatesouwce.hashmap[tweetid, 🥺 doubwe](initiawcandidatemapsize)
 
-        clusterTweetsMap.foreach {
-          case (ClusterKey(clusterId, _, _, _), Some(tweetScores))
-              if sourceEmbedding.contains(clusterId) =>
-            val sourceClusterScore = sourceEmbedding.getOrElse(clusterId)
+        cwustewtweetsmap.foweach {
+          c-case (cwustewkey(cwustewid, -.- _, _, _), -.- s-some(tweetscowes))
+              if s-souwceembedding.contains(cwustewid) =>
+            vaw souwcecwustewscowe = souwceembedding.getowewse(cwustewid)
 
-            for (i <- 0 until Math.min(tweetScores.size, config.maxTopTweetsPerCluster)) {
-              val (tweetId, score) = tweetScores(i)
+            f-fow (i <- 0 untiw math.min(tweetscowes.size, (U ﹏ U) c-config.maxtoptweetspewcwustew)) {
+              v-vaw (tweetid, rawr scowe) = tweetscowes(i)
 
-              if (!parseTweetId(sourceEmbeddingId).contains(tweetId) &&
-                tweetId >= earliestTweetId && tweetId <= latestTweetId) {
-                candidateScoresMap.put(
-                  tweetId,
-                  candidateScoresMap.getOrElse(tweetId, 0.0) + score * sourceClusterScore)
-                if (config.enablePartialNormalization) {
-                  candidateNormalizationMap
-                    .put(tweetId, candidateNormalizationMap.getOrElse(tweetId, 0.0) + score * score)
+              if (!pawsetweetid(souwceembeddingid).contains(tweetid) &&
+                t-tweetid >= e-eawwiesttweetid && t-tweetid <= w-watesttweetid) {
+                candidatescowesmap.put(
+                  t-tweetid, mya
+                  candidatescowesmap.getowewse(tweetid, ( ͡o ω ͡o ) 0.0) + scowe * souwcecwustewscowe)
+                if (config.enabwepawtiawnowmawization) {
+                  candidatenowmawizationmap
+                    .put(tweetid, /(^•ω•^) candidatenowmawizationmap.getowewse(tweetid, >_< 0.0) + scowe * s-scowe)
                 }
               }
             }
           case _ => ()
         }
 
-        stats.stat("candidateScoresMap").add(candidateScoresMap.size)
-        stats.stat("candidateNormalizationMap").add(candidateNormalizationMap.size)
+        s-stats.stat("candidatescowesmap").add(candidatescowesmap.size)
+        stats.stat("candidatenowmawizationmap").add(candidatenowmawizationmap.size)
 
-        // Re-Rank the candidate by configuration
-        val processedCandidateScores = candidateScoresMap.map {
-          case (candidateId, score) =>
-            // Enable Partial Normalization
-            val processedScore =
-              if (config.enablePartialNormalization) {
-                // We applied the "log" version of partial normalization when we rank candidates
-                // by log cosine similarity
-                if (config.rankingAlgorithm == ScoringAlgorithm.PairEmbeddingLogCosineSimilarity) {
-                  score / sourceEmbedding.l2norm / math.log(
-                    1 + candidateNormalizationMap(candidateId))
-                } else {
-                  score / sourceEmbedding.l2norm / math.sqrt(candidateNormalizationMap(candidateId))
+        // w-we-wank the candidate by configuwation
+        v-vaw pwocessedcandidatescowes = candidatescowesmap.map {
+          c-case (candidateid, (✿oωo) s-scowe) =>
+            // e-enabwe pawtiaw n-nyowmawization
+            v-vaw pwocessedscowe =
+              if (config.enabwepawtiawnowmawization) {
+                // we appwied the "wog" vewsion of pawtiaw nyowmawization w-when we wank c-candidates
+                // b-by wog cosine simiwawity
+                i-if (config.wankingawgowithm == scowingawgowithm.paiwembeddingwogcosinesimiwawity) {
+                  scowe / souwceembedding.w2nowm / m-math.wog(
+                    1 + c-candidatenowmawizationmap(candidateid))
+                } ewse {
+                  s-scowe / souwceembedding.w2nowm / math.sqwt(candidatenowmawizationmap(candidateid))
                 }
-              } else score
-            SimClustersTweetCandidate(candidateId, processedScore, sourceEmbeddingId)
-        }.toSeq
+              } ewse scowe
+            simcwustewstweetcandidate(candidateid, p-pwocessedscowe, 😳😳😳 s-souwceembeddingid)
+        }.toseq
 
-        processedCandidateScores
-          .sortBy(-_.score)
+        pwocessedcandidatescowes
+          .sowtby(-_.scowe)
       }
   }
 
-  private def reranking(
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    config: SimClustersANNConfig,
-    candidates: Seq[SimClustersTweetCandidate]
-  ): Future[Seq[SimClustersTweetCandidate]] = {
-    val rankedCandidates = if (config.enableHeavyRanking) {
-      heavyRanker
-        .rank(
-          scoringAlgorithm = config.rankingAlgorithm,
-          sourceEmbeddingId = sourceEmbeddingId,
-          candidateEmbeddingType = config.candidateEmbeddingType,
-          minScore = config.minScore,
-          candidates = candidates.take(config.maxReRankingCandidates)
-        ).map(_.sortBy(-_.score))
-    } else {
-      Future.value(candidates)
+  p-pwivate def w-wewanking(
+    souwceembeddingid: simcwustewsembeddingid, (ꈍᴗꈍ)
+    config: simcwustewsannconfig,
+    candidates: seq[simcwustewstweetcandidate]
+  ): f-futuwe[seq[simcwustewstweetcandidate]] = {
+    v-vaw wankedcandidates = i-if (config.enabweheavywanking) {
+      heavywankew
+        .wank(
+          s-scowingawgowithm = c-config.wankingawgowithm, 🥺
+          souwceembeddingid = s-souwceembeddingid, mya
+          c-candidateembeddingtype = config.candidateembeddingtype, (ˆ ﻌ ˆ)♡
+          m-minscowe = c-config.minscowe, (⑅˘꒳˘)
+          candidates = c-candidates.take(config.maxwewankingcandidates)
+        ).map(_.sowtby(-_.scowe))
+    } ewse {
+      futuwe.vawue(candidates)
     }
-    rankedCandidates.map(_.take(config.maxNumResults))
+    w-wankedcandidates.map(_.take(config.maxnumwesuwts))
   }
 
-  private[candidate_source] def loadConfig(query: Query): Option[SimClustersANNConfig] = {
-    configs.get(query.sourceEmbeddingId.embeddingType).map { baseConfig =>
-      // apply overrides if any
-      query.overrideConfig match {
-        case Some(overrides) =>
-          baseConfig.copy(
-            maxNumResults = overrides.maxNumResults.getOrElse(baseConfig.maxNumResults),
-            maxTweetCandidateAge =
-              overrides.maxTweetCandidateAge.getOrElse(baseConfig.maxTweetCandidateAge),
-            minScore = overrides.minScore.getOrElse(baseConfig.minScore),
-            candidateEmbeddingType =
-              overrides.candidateEmbeddingType.getOrElse(baseConfig.candidateEmbeddingType),
-            enablePartialNormalization =
-              overrides.enablePartialNormalization.getOrElse(baseConfig.enablePartialNormalization),
-            enableHeavyRanking =
-              overrides.enableHeavyRanking.getOrElse(baseConfig.enableHeavyRanking),
-            rankingAlgorithm = overrides.rankingAlgorithm.getOrElse(baseConfig.rankingAlgorithm),
-            maxReRankingCandidates =
-              overrides.maxReRankingCandidates.getOrElse(baseConfig.maxReRankingCandidates),
-            maxTopTweetsPerCluster =
-              overrides.maxTopTweetsPerCluster.getOrElse(baseConfig.maxTopTweetsPerCluster),
-            maxScanClusters = overrides.maxScanClusters.getOrElse(baseConfig.maxScanClusters),
-            minTweetCandidateAge =
-              overrides.minTweetCandidateAge.getOrElse(baseConfig.minTweetCandidateAge)
+  pwivate[candidate_souwce] d-def woadconfig(quewy: q-quewy): option[simcwustewsannconfig] = {
+    configs.get(quewy.souwceembeddingid.embeddingtype).map { b-baseconfig =>
+      // appwy ovewwides if a-any
+      quewy.ovewwideconfig m-match {
+        c-case some(ovewwides) =>
+          baseconfig.copy(
+            maxnumwesuwts = ovewwides.maxnumwesuwts.getowewse(baseconfig.maxnumwesuwts),
+            maxtweetcandidateage =
+              ovewwides.maxtweetcandidateage.getowewse(baseconfig.maxtweetcandidateage), òωó
+            m-minscowe = ovewwides.minscowe.getowewse(baseconfig.minscowe), o.O
+            candidateembeddingtype =
+              ovewwides.candidateembeddingtype.getowewse(baseconfig.candidateembeddingtype), XD
+            e-enabwepawtiawnowmawization =
+              o-ovewwides.enabwepawtiawnowmawization.getowewse(baseconfig.enabwepawtiawnowmawization), (˘ω˘)
+            enabweheavywanking =
+              o-ovewwides.enabweheavywanking.getowewse(baseconfig.enabweheavywanking), (ꈍᴗꈍ)
+            wankingawgowithm = o-ovewwides.wankingawgowithm.getowewse(baseconfig.wankingawgowithm), >w<
+            m-maxwewankingcandidates =
+              ovewwides.maxwewankingcandidates.getowewse(baseconfig.maxwewankingcandidates), XD
+            maxtoptweetspewcwustew =
+              ovewwides.maxtoptweetspewcwustew.getowewse(baseconfig.maxtoptweetspewcwustew), -.-
+            m-maxscancwustews = ovewwides.maxscancwustews.getowewse(baseconfig.maxscancwustews), ^^;;
+            mintweetcandidateage =
+              o-ovewwides.mintweetcandidateage.getowewse(baseconfig.mintweetcandidateage)
           )
-        case _ => baseConfig
+        c-case _ => baseconfig
       }
     }
   }
 }
 
-object SimClustersANNCandidateSource {
+o-object simcwustewsanncandidatesouwce {
 
-  final val ProductionMaxNumResults = 200
-  final val InitialCandidateMapSize = 16384
+  finaw vaw pwoductionmaxnumwesuwts = 200
+  f-finaw v-vaw initiawcandidatemapsize = 16384
 
-  def apply(
-    clusterTweetCandidatesStore: ReadableStore[ClusterKey, Seq[(TweetId, Double)]],
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-    uniformScoringStore: ReadableStore[ThriftScoreId, ThriftScore],
-    configs: Map[EmbeddingType, SimClustersANNConfig],
-    statsReceiver: StatsReceiver
-  ) = new SimClustersANNCandidateSource(
-    clusterTweetCandidatesStore = clusterTweetCandidatesStore,
-    simClustersEmbeddingStore = simClustersEmbeddingStore,
-    heavyRanker = new UniformScoreStoreRanker(uniformScoringStore, statsReceiver),
-    configs = configs,
-    statsReceiver = statsReceiver
+  d-def appwy(
+    cwustewtweetcandidatesstowe: weadabwestowe[cwustewkey, XD seq[(tweetid, :3 doubwe)]], σωσ
+    simcwustewsembeddingstowe: weadabwestowe[simcwustewsembeddingid, XD simcwustewsembedding],
+    unifowmscowingstowe: weadabwestowe[thwiftscoweid, :3 thwiftscowe], rawr
+    configs: map[embeddingtype, 😳 s-simcwustewsannconfig], 😳😳😳
+    s-statsweceivew: statsweceivew
+  ) = nyew simcwustewsanncandidatesouwce(
+    c-cwustewtweetcandidatesstowe = c-cwustewtweetcandidatesstowe, (ꈍᴗꈍ)
+    s-simcwustewsembeddingstowe = simcwustewsembeddingstowe, 🥺
+    h-heavywankew = nyew unifowmscowestowewankew(unifowmscowingstowe, s-statsweceivew), ^•ﻌ•^
+    c-configs = configs, XD
+    s-statsweceivew = statsweceivew
   )
 
-  private def parseTweetId(embeddingId: SimClustersEmbeddingId): Option[TweetId] = {
-    embeddingId.internalId match {
-      case InternalId.TweetId(tweetId) =>
-        Some(tweetId)
-      case _ =>
-        None
+  p-pwivate def p-pawsetweetid(embeddingid: simcwustewsembeddingid): option[tweetid] = {
+    e-embeddingid.intewnawid m-match {
+      c-case intewnawid.tweetid(tweetid) =>
+        s-some(tweetid)
+      c-case _ =>
+        n-nyone
     }
   }
 
-  case class Query(
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    // Only override the config in DDG and Debuggers.
-    // Use Post-filter for the holdbacks for better cache hit rate.
-    overrideConfig: Option[SimClustersANNConfigOverride] = None)
+  c-case cwass q-quewy(
+    souwceembeddingid: s-simcwustewsembeddingid, ^•ﻌ•^
+    // onwy ovewwide the c-config in ddg and d-debuggews. ^^;;
+    // u-use post-fiwtew fow the howdbacks f-fow bettew cache hit wate.
+    ovewwideconfig: o-option[simcwustewsannconfigovewwide] = nyone)
 
-  case class SimClustersTweetCandidate(
-    tweetId: TweetId,
-    score: Double,
-    sourceEmbeddingId: SimClustersEmbeddingId)
+  c-case cwass s-simcwustewstweetcandidate(
+    t-tweetid: tweetid, ʘwʘ
+    scowe: doubwe, OwO
+    s-souwceembeddingid: simcwustewsembeddingid)
 
-  class HashMap[A, B](initSize: Int) extends mutable.HashMap[A, B] {
-    override def initialSize: Int = initSize // 16 - by default
+  c-cwass hashmap[a, 🥺 b](initsize: i-int) extends mutabwe.hashmap[a, (⑅˘꒳˘) b-b] {
+    ovewwide def initiawsize: int = initsize // 16 - by defauwt
   }
 
   /**
-   * The Configuration of Each SimClusters ANN Candidate Source.
-   * Expect One SimClusters Embedding Type mapping to a SimClusters ANN Configuration in Production.
+   * the configuwation o-of each simcwustews a-ann candidate souwce. (///ˬ///✿)
+   * e-expect one simcwustews embedding type mapping to a simcwustews a-ann configuwation in p-pwoduction. (✿oωo)
    */
-  case class SimClustersANNConfig(
-    // The max number of candidates for a ANN Query
-    // Please don't override this value in Production.
-    maxNumResults: Int = ProductionMaxNumResults,
-    // The max tweet candidate duration from now.
-    maxTweetCandidateAge: Duration,
-    // The min score of the candidates
-    minScore: Double,
-    // The Candidate Embedding Type of Tweet.
-    candidateEmbeddingType: EmbeddingType,
-    // Enables normalization of approximate SimClusters vectors to remove popularity bias
-    enablePartialNormalization: Boolean,
-    // Whether to enable Embedding Similarity ranking
-    enableHeavyRanking: Boolean,
-    // The ranking algorithm for Source Candidate Similarity
-    rankingAlgorithm: ScoringAlgorithm,
-    // The max number of candidates in ReRanking Step
-    maxReRankingCandidates: Int,
-    // The max number of Top Tweets from every cluster tweet index
-    maxTopTweetsPerCluster: Int,
-    // The max number of Clusters in the source Embeddings.
-    maxScanClusters: Int,
-    // The min tweet candidate duration from now.
-    minTweetCandidateAge: Duration)
+  c-case cwass simcwustewsannconfig(
+    // t-the max nyumbew of candidates fow a a-ann quewy
+    // p-pwease don't ovewwide this vawue i-in pwoduction. nyaa~~
+    maxnumwesuwts: int = pwoductionmaxnumwesuwts, >w<
+    // t-the max tweet candidate d-duwation fwom n-nyow. (///ˬ///✿)
+    maxtweetcandidateage: d-duwation, rawr
+    // the min scowe of t-the candidates
+    m-minscowe: doubwe, (U ﹏ U)
+    // t-the c-candidate embedding type of tweet. ^•ﻌ•^
+    c-candidateembeddingtype: e-embeddingtype, (///ˬ///✿)
+    // e-enabwes nowmawization o-of a-appwoximate simcwustews v-vectows t-to wemove popuwawity b-bias
+    enabwepawtiawnowmawization: boowean, o.O
+    // w-whethew to enabwe embedding s-simiwawity wanking
+    enabweheavywanking: b-boowean, >w<
+    // t-the wanking awgowithm f-fow souwce candidate simiwawity
+    wankingawgowithm: scowingawgowithm, nyaa~~
+    // t-the max nyumbew o-of candidates i-in wewanking step
+    maxwewankingcandidates: int, òωó
+    // the max nyumbew of t-top tweets fwom e-evewy cwustew tweet index
+    maxtoptweetspewcwustew: i-int, (U ᵕ U❁)
+    // t-the max nyumbew of cwustews in the souwce embeddings. (///ˬ///✿)
+    maxscancwustews: i-int, (✿oωo)
+    // t-the min t-tweet candidate d-duwation fwom nyow. 😳😳😳
+    mintweetcandidateage: duwation)
 
   /**
-   * Contains same fields as [[SimClustersANNConfig]], to specify which fields are to be overriden
-   * for experimental purposes.
+   * c-contains same f-fiewds as [[simcwustewsannconfig]], (✿oωo) to specify which fiewds a-awe to be ovewwiden
+   * fow expewimentaw puwposes. (U ﹏ U)
    *
-   * All fields in this class must be optional.
+   * a-aww fiewds in this c-cwass must be optionaw. (˘ω˘)
    */
-  case class SimClustersANNConfigOverride(
-    maxNumResults: Option[Int] = None,
-    maxTweetCandidateAge: Option[Duration] = None,
-    minScore: Option[Double] = None,
-    candidateEmbeddingType: Option[EmbeddingType] = None,
-    enablePartialNormalization: Option[Boolean] = None,
-    enableHeavyRanking: Option[Boolean] = None,
-    rankingAlgorithm: Option[ScoringAlgorithm] = None,
-    maxReRankingCandidates: Option[Int] = None,
-    maxTopTweetsPerCluster: Option[Int] = None,
-    maxScanClusters: Option[Int] = None,
-    minTweetCandidateAge: Option[Duration] = None,
-    enableLookbackSource: Option[Boolean] = None)
+  c-case cwass simcwustewsannconfigovewwide(
+    maxnumwesuwts: o-option[int] = n-nyone, 😳😳😳
+    maxtweetcandidateage: o-option[duwation] = nyone, (///ˬ///✿)
+    minscowe: o-option[doubwe] = n-none, (U ᵕ U❁)
+    candidateembeddingtype: o-option[embeddingtype] = nyone,
+    e-enabwepawtiawnowmawization: option[boowean] = n-nyone, >_<
+    e-enabweheavywanking: o-option[boowean] = nyone, (///ˬ///✿)
+    w-wankingawgowithm: option[scowingawgowithm] = nyone, (U ᵕ U❁)
+    maxwewankingcandidates: o-option[int] = n-nyone, >w<
+    maxtoptweetspewcwustew: o-option[int] = nyone, 😳😳😳
+    maxscancwustews: option[int] = nyone, (ˆ ﻌ ˆ)♡
+    mintweetcandidateage: option[duwation] = n-nyone, (ꈍᴗꈍ)
+    enabwewookbacksouwce: option[boowean] = n-nyone)
 
-  final val DefaultMaxTopTweetsPerCluster = 200
-  final val DefaultEnableHeavyRanking = false
-  object SimClustersANNConfig {
-    val DefaultSimClustersANNConfig: SimClustersANNConfig =
-      SimClustersANNConfig(
-        maxTweetCandidateAge = 1.days,
-        minScore = 0.7,
-        candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-        enablePartialNormalization = true,
-        enableHeavyRanking = false,
-        rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-        maxReRankingCandidates = 250,
-        maxTopTweetsPerCluster = 200,
-        maxScanClusters = 50,
-        minTweetCandidateAge = 0.seconds
+  finaw v-vaw defauwtmaxtoptweetspewcwustew = 200
+  finaw vaw defauwtenabweheavywanking = f-fawse
+  object simcwustewsannconfig {
+    v-vaw d-defauwtsimcwustewsannconfig: simcwustewsannconfig =
+      s-simcwustewsannconfig(
+        m-maxtweetcandidateage = 1.days, 🥺
+        m-minscowe = 0.7, >_<
+        candidateembeddingtype = embeddingtype.wogfavbasedtweet, OwO
+        enabwepawtiawnowmawization = twue, ^^;;
+        e-enabweheavywanking = fawse, (✿oωo)
+        w-wankingawgowithm = scowingawgowithm.paiwembeddingcosinesimiwawity, UwU
+        maxwewankingcandidates = 250, ( ͡o ω ͡o )
+        maxtoptweetspewcwustew = 200, (✿oωo)
+        m-maxscancwustews = 50, mya
+        mintweetcandidateage = 0.seconds
       )
   }
 
-  val LookbackMediaMinDays: Int = 0
-  val LookbackMediaMaxDays: Int = 2
-  val LookbackMediaMaxTweetsPerDay: Int = 2000
-  val maxTopTweetsPerCluster: Int =
-    (LookbackMediaMaxDays - LookbackMediaMinDays + 1) * LookbackMediaMaxTweetsPerDay
+  vaw wookbackmediamindays: int = 0
+  v-vaw wookbackmediamaxdays: i-int = 2
+  vaw wookbackmediamaxtweetspewday: i-int = 2000
+  vaw maxtoptweetspewcwustew: int =
+    (wookbackmediamaxdays - w-wookbackmediamindays + 1) * wookbackmediamaxtweetspewday
 
-  val LookbackMediaTweetConfig: Map[EmbeddingType, SimClustersANNConfig] = {
-    val candidateEmbeddingType = EmbeddingType.LogFavLongestL2EmbeddingTweet
-    val minTweetAge = LookbackMediaMinDays.days
-    val maxTweetAge =
-      LookbackMediaMaxDays.days - 1.hour // To compensate for the cache TTL that might push the tweet age beyond max age
-    val rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity
+  vaw w-wookbackmediatweetconfig: map[embeddingtype, ( ͡o ω ͡o ) s-simcwustewsannconfig] = {
+    vaw c-candidateembeddingtype = embeddingtype.wogfavwongestw2embeddingtweet
+    vaw mintweetage = wookbackmediamindays.days
+    v-vaw maxtweetage =
+      wookbackmediamaxdays.days - 1.houw // to compensate f-fow the cache t-ttw that might p-push the tweet age beyond max age
+    vaw wankingawgowithm = s-scowingawgowithm.paiwembeddingcosinesimiwawity
 
-    val maxScanClusters = 50
-    val minScore = 0.5
-    Map(
-      EmbeddingType.FavBasedProducer -> SimClustersANNConfig(
-        minTweetCandidateAge = minTweetAge,
-        maxTweetCandidateAge = maxTweetAge,
-        minScore =
-          minScore, // for twistly candidates. To specify a higher threshold, use a post-filter
-        candidateEmbeddingType = candidateEmbeddingType,
-        enablePartialNormalization = true,
-        enableHeavyRanking = DefaultEnableHeavyRanking,
-        rankingAlgorithm = rankingAlgorithm,
-        maxReRankingCandidates = 250,
-        maxTopTweetsPerCluster = maxTopTweetsPerCluster,
-        maxScanClusters = maxScanClusters,
+    vaw maxscancwustews = 50
+    vaw minscowe = 0.5
+    map(
+      embeddingtype.favbasedpwoducew -> s-simcwustewsannconfig(
+        m-mintweetcandidateage = m-mintweetage, :3
+        m-maxtweetcandidateage = maxtweetage, 😳
+        minscowe =
+          m-minscowe, (U ﹏ U) // fow t-twistwy candidates. >w< to specify a highew thweshowd, UwU u-use a post-fiwtew
+        candidateembeddingtype = candidateembeddingtype, 😳
+        enabwepawtiawnowmawization = t-twue, XD
+        enabweheavywanking = defauwtenabweheavywanking, (✿oωo)
+        w-wankingawgowithm = w-wankingawgowithm, ^•ﻌ•^
+        maxwewankingcandidates = 250, mya
+        m-maxtoptweetspewcwustew = m-maxtoptweetspewcwustew, (˘ω˘)
+        m-maxscancwustews = maxscancwustews, nyaa~~
+      ), :3
+      embeddingtype.wogfavwongestw2embeddingtweet -> s-simcwustewsannconfig(
+        mintweetcandidateage = mintweetage,
+        m-maxtweetcandidateage = maxtweetage, (✿oωo)
+        minscowe =
+          minscowe, (U ﹏ U) // f-fow twistwy candidates. (ꈍᴗꈍ) t-to specify a-a highew thweshowd, (˘ω˘) u-use a post-fiwtew
+        c-candidateembeddingtype = candidateembeddingtype, ^^
+        e-enabwepawtiawnowmawization = twue, (⑅˘꒳˘)
+        enabweheavywanking = d-defauwtenabweheavywanking, rawr
+        wankingawgowithm = w-wankingawgowithm, :3
+        maxwewankingcandidates = 250,
+        maxtoptweetspewcwustew = m-maxtoptweetspewcwustew, OwO
+        m-maxscancwustews = maxscancwustews, (ˆ ﻌ ˆ)♡
+      ), :3
+      e-embeddingtype.favtfgtopic -> simcwustewsannconfig(
+        m-mintweetcandidateage = m-mintweetage, -.-
+        maxtweetcandidateage = m-maxtweetage, -.-
+        m-minscowe = minscowe, òωó
+        c-candidateembeddingtype = candidateembeddingtype, 😳
+        enabwepawtiawnowmawization = twue, nyaa~~
+        enabweheavywanking = d-defauwtenabweheavywanking, (⑅˘꒳˘)
+        wankingawgowithm = w-wankingawgowithm, 😳
+        maxwewankingcandidates = 400, (U ﹏ U)
+        maxtoptweetspewcwustew = 200, /(^•ω•^)
+        m-maxscancwustews = m-maxscancwustews, OwO
       ),
-      EmbeddingType.LogFavLongestL2EmbeddingTweet -> SimClustersANNConfig(
-        minTweetCandidateAge = minTweetAge,
-        maxTweetCandidateAge = maxTweetAge,
-        minScore =
-          minScore, // for twistly candidates. To specify a higher threshold, use a post-filter
-        candidateEmbeddingType = candidateEmbeddingType,
-        enablePartialNormalization = true,
-        enableHeavyRanking = DefaultEnableHeavyRanking,
-        rankingAlgorithm = rankingAlgorithm,
-        maxReRankingCandidates = 250,
-        maxTopTweetsPerCluster = maxTopTweetsPerCluster,
-        maxScanClusters = maxScanClusters,
-      ),
-      EmbeddingType.FavTfgTopic -> SimClustersANNConfig(
-        minTweetCandidateAge = minTweetAge,
-        maxTweetCandidateAge = maxTweetAge,
-        minScore = minScore,
-        candidateEmbeddingType = candidateEmbeddingType,
-        enablePartialNormalization = true,
-        enableHeavyRanking = DefaultEnableHeavyRanking,
-        rankingAlgorithm = rankingAlgorithm,
-        maxReRankingCandidates = 400,
-        maxTopTweetsPerCluster = 200,
-        maxScanClusters = maxScanClusters,
-      ),
-      EmbeddingType.LogFavBasedKgoApeTopic -> SimClustersANNConfig(
-        minTweetCandidateAge = minTweetAge,
-        maxTweetCandidateAge = maxTweetAge,
-        minScore = minScore,
-        candidateEmbeddingType = candidateEmbeddingType,
-        enablePartialNormalization = true,
-        enableHeavyRanking = DefaultEnableHeavyRanking,
-        rankingAlgorithm = rankingAlgorithm,
-        maxReRankingCandidates = 400,
-        maxTopTweetsPerCluster = 200,
-        maxScanClusters = maxScanClusters,
+      e-embeddingtype.wogfavbasedkgoapetopic -> simcwustewsannconfig(
+        m-mintweetcandidateage = mintweetage,
+        m-maxtweetcandidateage = maxtweetage, ( ͡o ω ͡o )
+        m-minscowe = minscowe, XD
+        candidateembeddingtype = c-candidateembeddingtype, /(^•ω•^)
+        enabwepawtiawnowmawization = t-twue, /(^•ω•^)
+        e-enabweheavywanking = defauwtenabweheavywanking, 😳😳😳
+        wankingawgowithm = wankingawgowithm, (ˆ ﻌ ˆ)♡
+        maxwewankingcandidates = 400, :3
+        m-maxtoptweetspewcwustew = 200, òωó
+        m-maxscancwustews = maxscancwustews, 🥺
       ),
     )
   }
 
-  val DefaultConfigMappings: Map[EmbeddingType, SimClustersANNConfig] = Map(
-    EmbeddingType.FavBasedProducer -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+  vaw defauwtconfigmappings: map[embeddingtype, (U ﹏ U) s-simcwustewsannconfig] = map(
+    embeddingtype.favbasedpwoducew -> s-simcwustewsannconfig(
+      m-maxtweetcandidateage = 1.days, XD
+      minscowe = 0.0, ^^ // fow twistwy candidates. to specify a highew thweshowd, o.O u-use a post-fiwtew
+      candidateembeddingtype = embeddingtype.wogfavbasedtweet, 😳😳😳
+      enabwepawtiawnowmawization = t-twue, /(^•ω•^)
+      enabweheavywanking = d-defauwtenabweheavywanking, 😳😳😳
+      w-wankingawgowithm = scowingawgowithm.paiwembeddingcosinesimiwawity,
+      m-maxwewankingcandidates = 250, ^•ﻌ•^
+      m-maxtoptweetspewcwustew = d-defauwtmaxtoptweetspewcwustew, 🥺
+      m-maxscancwustews = 50, o.O
+      m-mintweetcandidateage = 0.seconds
+    ), (U ᵕ U❁)
+    e-embeddingtype.wogfavbasedusewintewestedmaxpoowingaddwessbookfwomiiape -> simcwustewsannconfig(
+      maxtweetcandidateage = 1.days,
+      minscowe = 0.0, ^^ // fow twistwy candidates. (⑅˘꒳˘) t-to specify a-a highew thweshowd, :3 u-use a post-fiwtew
+      c-candidateembeddingtype = e-embeddingtype.wogfavbasedtweet, (///ˬ///✿)
+      e-enabwepawtiawnowmawization = twue, :3
+      enabweheavywanking = defauwtenabweheavywanking, 🥺
+      wankingawgowithm = s-scowingawgowithm.paiwembeddingcosinesimiwawity, mya
+      m-maxwewankingcandidates = 250, XD
+      maxtoptweetspewcwustew = defauwtmaxtoptweetspewcwustew, -.-
+      maxscancwustews = 50, o.O
+      m-mintweetcandidateage = 0.seconds
+    ), (˘ω˘)
+    e-embeddingtype.wogfavbasedusewintewestedavewageaddwessbookfwomiiape -> s-simcwustewsannconfig(
+      maxtweetcandidateage = 1.days,
+      minscowe = 0.0, (U ᵕ U❁) // fow twistwy c-candidates. rawr to specify a highew thweshowd, 🥺 use a-a post-fiwtew
+      c-candidateembeddingtype = embeddingtype.wogfavbasedtweet, rawr x3
+      enabwepawtiawnowmawization = twue,
+      enabweheavywanking = d-defauwtenabweheavywanking, ( ͡o ω ͡o )
+      wankingawgowithm = s-scowingawgowithm.paiwembeddingcosinesimiwawity, σωσ
+      m-maxwewankingcandidates = 250, rawr x3
+      maxtoptweetspewcwustew = d-defauwtmaxtoptweetspewcwustew, (ˆ ﻌ ˆ)♡
+      maxscancwustews = 50, rawr
+      m-mintweetcandidateage = 0.seconds
+    ), :3
+    e-embeddingtype.wogfavbasedusewintewestedbooktypemaxpoowingaddwessbookfwomiiape -> s-simcwustewsannconfig(
+      m-maxtweetcandidateage = 1.days, rawr
+      m-minscowe = 0.0, (˘ω˘) // fow t-twistwy candidates. t-to specify a highew thweshowd, (ˆ ﻌ ˆ)♡ u-use a post-fiwtew
+      candidateembeddingtype = embeddingtype.wogfavbasedtweet, mya
+      e-enabwepawtiawnowmawization = twue, (U ᵕ U❁)
+      e-enabweheavywanking = defauwtenabweheavywanking, mya
+      w-wankingawgowithm = s-scowingawgowithm.paiwembeddingcosinesimiwawity, ʘwʘ
+      maxwewankingcandidates = 250, (˘ω˘)
+      maxtoptweetspewcwustew = defauwtmaxtoptweetspewcwustew, 😳
+      m-maxscancwustews = 50, òωó
+      mintweetcandidateage = 0.seconds
+    ), nyaa~~
+    embeddingtype.wogfavbasedusewintewestedwawgestdimmaxpoowingaddwessbookfwomiiape -> simcwustewsannconfig(
+      m-maxtweetcandidateage = 1.days, o.O
+      m-minscowe = 0.0, nyaa~~ // fow twistwy candidates. (U ᵕ U❁) to specify a-a highew thweshowd, 😳😳😳 u-use a post-fiwtew
+      c-candidateembeddingtype = embeddingtype.wogfavbasedtweet, (U ﹏ U)
+      enabwepawtiawnowmawization = t-twue, ^•ﻌ•^
+      e-enabweheavywanking = defauwtenabweheavywanking, (⑅˘꒳˘)
+      wankingawgowithm = s-scowingawgowithm.paiwembeddingcosinesimiwawity, >_<
+      m-maxwewankingcandidates = 250, (⑅˘꒳˘)
+      maxtoptweetspewcwustew = defauwtmaxtoptweetspewcwustew, σωσ
+      m-maxscancwustews = 50, 🥺
+      m-mintweetcandidateage = 0.seconds
+    ), :3
+    e-embeddingtype.wogfavbasedusewintewestedwouvainmaxpoowingaddwessbookfwomiiape -> s-simcwustewsannconfig(
+      maxtweetcandidateage = 1.days, (ꈍᴗꈍ)
+      minscowe = 0.0, ^•ﻌ•^ // fow twistwy candidates. (˘ω˘) to specify a highew thweshowd, 🥺 use a post-fiwtew
+      c-candidateembeddingtype = embeddingtype.wogfavbasedtweet, (✿oωo)
+      e-enabwepawtiawnowmawization = t-twue, XD
+      enabweheavywanking = d-defauwtenabweheavywanking, (///ˬ///✿)
+      w-wankingawgowithm = s-scowingawgowithm.paiwembeddingcosinesimiwawity, ( ͡o ω ͡o )
+      maxwewankingcandidates = 250, ʘwʘ
+      m-maxtoptweetspewcwustew = d-defauwtmaxtoptweetspewcwustew, rawr
+      maxscancwustews = 50, o.O
+      mintweetcandidateage = 0.seconds
+    ), ^•ﻌ•^
+    e-embeddingtype.wogfavbasedusewintewestedconnectedmaxpoowingaddwessbookfwomiiape -> s-simcwustewsannconfig(
+      maxtweetcandidateage = 1.days, (///ˬ///✿)
+      minscowe = 0.0, (ˆ ﻌ ˆ)♡ // f-fow twistwy candidates. XD to specify a-a highew thweshowd, use a post-fiwtew
+      c-candidateembeddingtype = e-embeddingtype.wogfavbasedtweet, (✿oωo)
+      enabwepawtiawnowmawization = t-twue,
+      e-enabweheavywanking = d-defauwtenabweheavywanking, -.-
+      wankingawgowithm = s-scowingawgowithm.paiwembeddingcosinesimiwawity, XD
+      m-maxwewankingcandidates = 250, (✿oωo)
+      maxtoptweetspewcwustew = d-defauwtmaxtoptweetspewcwustew, (˘ω˘)
+      maxscancwustews = 50, (ˆ ﻌ ˆ)♡
+      m-mintweetcandidateage = 0.seconds
+    ), >_<
+    e-embeddingtype.wewaxedaggwegatabwewogfavbasedpwoducew -> s-simcwustewsannconfig(
+      maxtweetcandidateage = 1.days, -.-
+      m-minscowe = 0.25, (///ˬ///✿) // fow twistwy candidates. XD t-to specify a highew thweshowd, ^^;; use a post-fiwtew
+      candidateembeddingtype = embeddingtype.wogfavbasedtweet, rawr x3
+      enabwepawtiawnowmawization = twue, OwO
+      e-enabweheavywanking = defauwtenabweheavywanking, ʘwʘ
+      wankingawgowithm = scowingawgowithm.paiwembeddingcosinesimiwawity, rawr
+      maxwewankingcandidates = 250, UwU
+      maxtoptweetspewcwustew = defauwtmaxtoptweetspewcwustew, (ꈍᴗꈍ)
+      m-maxscancwustews = 50, (✿oωo)
+      mintweetcandidateage = 0.seconds
     ),
-    EmbeddingType.LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+    embeddingtype.wogfavwongestw2embeddingtweet -> s-simcwustewsannconfig(
+      maxtweetcandidateage = 1.days,
+      m-minscowe = 0.3, (⑅˘꒳˘) // fow twistwy candidates. OwO t-to specify a highew thweshowd, 🥺 u-use a post-fiwtew
+      candidateembeddingtype = e-embeddingtype.wogfavbasedtweet, >_<
+      e-enabwepawtiawnowmawization = twue, (ꈍᴗꈍ)
+      enabweheavywanking = d-defauwtenabweheavywanking, 😳
+      wankingawgowithm = scowingawgowithm.paiwembeddingcosinesimiwawity, 🥺
+      maxwewankingcandidates = 400, nyaa~~
+      m-maxtoptweetspewcwustew = defauwtmaxtoptweetspewcwustew, ^•ﻌ•^
+      m-maxscancwustews = 50, (ˆ ﻌ ˆ)♡
+      mintweetcandidateage = 0.seconds
+    ), (U ᵕ U❁)
+    e-embeddingtype.fiwtewedusewintewestedinfwompe -> simcwustewsannconfig(
+      m-maxtweetcandidateage = 1.days, mya
+      m-minscowe = 0.7, // unused, 😳 heavy wanking disabwed
+      c-candidateembeddingtype = embeddingtype.wogfavbasedtweet, σωσ
+      enabwepawtiawnowmawization = fawse, ( ͡o ω ͡o )
+      enabweheavywanking = d-defauwtenabweheavywanking, XD
+      wankingawgowithm =
+        scowingawgowithm.paiwembeddingcosinesimiwawity, :3 // unused, :3 heavy wanking disabwed
+      m-maxwewankingcandidates = 150, (⑅˘꒳˘) // u-unused, òωó heavy wanking disabwed
+      m-maxtoptweetspewcwustew = d-defauwtmaxtoptweetspewcwustew, mya
+      maxscancwustews = 50,
+      m-mintweetcandidateage = 0.seconds
     ),
-    EmbeddingType.LogFavBasedUserInterestedAverageAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.RelaxedAggregatableLogFavBasedProducer -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.25, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.LogFavLongestL2EmbeddingTweet -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.3, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 400,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.FilteredUserInterestedInFromPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.7, // unused, heavy ranking disabled
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = false,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm =
-        ScoringAlgorithm.PairEmbeddingCosineSimilarity, // Unused, heavy ranking disabled
-      maxReRankingCandidates = 150, // unused, heavy ranking disabled
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.FilteredUserInterestedIn -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.7, // unused, heavy ranking disabled
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = false,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm =
-        ScoringAlgorithm.PairEmbeddingCosineSimilarity, // Unused, heavy ranking disabled
-      maxReRankingCandidates = 150, // unused, heavy ranking disabled
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.UnfilteredUserInterestedIn -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingLogCosineSimilarity,
-      maxReRankingCandidates = 400,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.FollowBasedUserInterestedInFromAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 200,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.LogFavBasedUserInterestedInFromAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 200,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.FavTfgTopic -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.5,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 400,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.LogFavBasedKgoApeTopic -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.5,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 400,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
-    ),
-    EmbeddingType.UserNextInterestedIn -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 200,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+    embeddingtype.fiwtewedusewintewestedin -> simcwustewsannconfig(
+      maxtweetcandidateage = 1.days, 😳😳😳
+      minscowe = 0.7, :3 // unused, >_< heavy w-wanking disabwed
+      c-candidateembeddingtype = embeddingtype.wogfavbasedtweet, 🥺
+      e-enabwepawtiawnowmawization = f-fawse, (ꈍᴗꈍ)
+      enabweheavywanking = d-defauwtenabweheavywanking, rawr x3
+      wankingawgowithm =
+        scowingawgowithm.paiwembeddingcosinesimiwawity, (U ﹏ U) // u-unused, ( ͡o ω ͡o ) heavy wanking disabwed
+      maxwewankingcandidates = 150, 😳😳😳 // u-unused, h-heavy wanking disabwed
+      maxtoptweetspewcwustew = defauwtmaxtoptweetspewcwustew, 🥺
+      m-maxscancwustews = 50, òωó
+      mintweetcandidateage = 0.seconds
+    ), XD
+    embeddingtype.unfiwtewedusewintewestedin -> simcwustewsannconfig(
+      maxtweetcandidateage = 1.days, XD
+      minscowe = 0.0, ( ͡o ω ͡o )
+      candidateembeddingtype = embeddingtype.wogfavbasedtweet, >w<
+      e-enabwepawtiawnowmawization = t-twue,
+      enabweheavywanking = d-defauwtenabweheavywanking, mya
+      w-wankingawgowithm = scowingawgowithm.paiwembeddingwogcosinesimiwawity, (ꈍᴗꈍ)
+      m-maxwewankingcandidates = 400, -.-
+      maxtoptweetspewcwustew = defauwtmaxtoptweetspewcwustew, (⑅˘꒳˘)
+      maxscancwustews = 50, (U ﹏ U)
+      mintweetcandidateage = 0.seconds
+    ), σωσ
+    embeddingtype.fowwowbasedusewintewestedinfwomape -> simcwustewsannconfig(
+      m-maxtweetcandidateage = 1.days, :3
+      minscowe = 0.0, /(^•ω•^)
+      candidateembeddingtype = embeddingtype.wogfavbasedtweet, σωσ
+      enabwepawtiawnowmawization = t-twue, (U ᵕ U❁)
+      enabweheavywanking = d-defauwtenabweheavywanking, 😳
+      w-wankingawgowithm = scowingawgowithm.paiwembeddingcosinesimiwawity, ʘwʘ
+      maxwewankingcandidates = 200,
+      maxtoptweetspewcwustew = d-defauwtmaxtoptweetspewcwustew,
+      m-maxscancwustews = 50, (⑅˘꒳˘)
+      m-mintweetcandidateage = 0.seconds
+    ), ^•ﻌ•^
+    embeddingtype.wogfavbasedusewintewestedinfwomape -> s-simcwustewsannconfig(
+      maxtweetcandidateage = 1.days, nyaa~~
+      m-minscowe = 0.0, XD
+      candidateembeddingtype = e-embeddingtype.wogfavbasedtweet, /(^•ω•^)
+      enabwepawtiawnowmawization = twue, (U ᵕ U❁)
+      e-enabweheavywanking = defauwtenabweheavywanking, mya
+      wankingawgowithm = s-scowingawgowithm.paiwembeddingcosinesimiwawity, (ˆ ﻌ ˆ)♡
+      maxwewankingcandidates = 200, (✿oωo)
+      m-maxtoptweetspewcwustew = d-defauwtmaxtoptweetspewcwustew, (✿oωo)
+      maxscancwustews = 50, òωó
+      m-mintweetcandidateage = 0.seconds
+    ), (˘ω˘)
+    e-embeddingtype.favtfgtopic -> simcwustewsannconfig(
+      m-maxtweetcandidateage = 1.days, (ˆ ﻌ ˆ)♡
+      minscowe = 0.5,
+      c-candidateembeddingtype = embeddingtype.wogfavbasedtweet, ( ͡o ω ͡o )
+      e-enabwepawtiawnowmawization = t-twue, rawr x3
+      enabweheavywanking = defauwtenabweheavywanking, (˘ω˘)
+      w-wankingawgowithm = scowingawgowithm.paiwembeddingcosinesimiwawity, òωó
+      maxwewankingcandidates = 400, ( ͡o ω ͡o )
+      maxtoptweetspewcwustew = defauwtmaxtoptweetspewcwustew, σωσ
+      maxscancwustews = 50, (U ﹏ U)
+      mintweetcandidateage = 0.seconds
+    ), rawr
+    embeddingtype.wogfavbasedkgoapetopic -> simcwustewsannconfig(
+      m-maxtweetcandidateage = 1.days, -.-
+      minscowe = 0.5, ( ͡o ω ͡o )
+      candidateembeddingtype = e-embeddingtype.wogfavbasedtweet, >_<
+      enabwepawtiawnowmawization = t-twue, o.O
+      enabweheavywanking = defauwtenabweheavywanking, σωσ
+      w-wankingawgowithm = scowingawgowithm.paiwembeddingcosinesimiwawity, -.-
+      maxwewankingcandidates = 400, σωσ
+      maxtoptweetspewcwustew = d-defauwtmaxtoptweetspewcwustew, :3
+      maxscancwustews = 50, ^^
+      mintweetcandidateage = 0.seconds
+    ), òωó
+    e-embeddingtype.usewnextintewestedin -> simcwustewsannconfig(
+      maxtweetcandidateage = 1.days, (ˆ ﻌ ˆ)♡
+      minscowe = 0.0, XD
+      c-candidateembeddingtype = embeddingtype.wogfavbasedtweet, òωó
+      enabwepawtiawnowmawization = twue, (ꈍᴗꈍ)
+      enabweheavywanking = d-defauwtenabweheavywanking, UwU
+      w-wankingawgowithm = scowingawgowithm.paiwembeddingcosinesimiwawity, >w<
+      maxwewankingcandidates = 200, ʘwʘ
+      m-maxtoptweetspewcwustew = d-defauwtmaxtoptweetspewcwustew, :3
+      maxscancwustews = 50, ^•ﻌ•^
+      mintweetcandidateage = 0.seconds
     )
   )
 
   /**
-   * Only cache the candidates if it's not Consumer-source. For example, TweetSource, ProducerSource,
-   * TopicSource. We don't cache consumer-sources (e.g. UserInterestedIn) since a cached consumer
-   * object is going rarely hit, since it can't be shared by multiple users.
+   * o-onwy cache the c-candidates if it's nyot consumew-souwce. (ˆ ﻌ ˆ)♡ fow exampwe, 🥺 t-tweetsouwce, OwO pwoducewsouwce, 🥺
+   * topicsouwce. OwO we don't cache c-consumew-souwces (e.g. usewintewestedin) since a cached consumew
+   * o-object i-is going wawewy h-hit, (U ᵕ U❁) since it can't be shawed by muwtipwe usews. ( ͡o ω ͡o )
    */
-  val CacheableShortTTLEmbeddingTypes: Set[EmbeddingType] =
-    Set(
-      EmbeddingType.FavBasedProducer,
-      EmbeddingType.LogFavLongestL2EmbeddingTweet,
+  vaw cacheabweshowtttwembeddingtypes: s-set[embeddingtype] =
+    set(
+      e-embeddingtype.favbasedpwoducew, ^•ﻌ•^
+      embeddingtype.wogfavwongestw2embeddingtweet, o.O
     )
 
-  val CacheableLongTTLEmbeddingTypes: Set[EmbeddingType] =
-    Set(
-      EmbeddingType.FavTfgTopic,
-      EmbeddingType.LogFavBasedKgoApeTopic
+  v-vaw cacheabwewongttwembeddingtypes: s-set[embeddingtype] =
+    set(
+      embeddingtype.favtfgtopic, (⑅˘꒳˘)
+      embeddingtype.wogfavbasedkgoapetopic
     )
 }

@@ -1,113 +1,113 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import com.google.common.annotations.VisibleForTesting;
+impowt com.googwe.common.annotations.visibwefowtesting;
 
-import com.twitter.search.common.partitioning.base.Segment;
+i-impowt c-com.twittew.seawch.common.pawtitioning.base.segment;
 
 /**
- * Representation for segment sync state, the local and hdfs file locations, as well as the
- * current in-memory sync states maintained by earlybirds.
+ * w-wepwesentation f-fow s-segment sync state, (˘ω˘) t-the wocaw and h-hdfs fiwe wocations, :3 a-as weww as the
+ * cuwwent in-memowy sync states maintained by eawwybiwds. ^^;;
  */
-public class SegmentSyncInfo {
-  // Is this segment loaded from disk?
-  private volatile boolean loaded = false;
-  // Has this segment been flushed to disk, and uploaded to HDFS if uploading is enabled?
-  private volatile boolean flushed = false;
-  // Time when the segment was flushed to local disk
-  private volatile long flushTimeMillis = 0;
+p-pubwic cwass segmentsyncinfo {
+  // is this s-segment woaded fwom disk?
+  pwivate v-vowatiwe boowean woaded = fawse;
+  // has this segment been f-fwushed to disk, 🥺 and upwoaded to h-hdfs if upwoading i-is enabwed?
+  pwivate vowatiwe boowean fwushed = fawse;
+  // time when the segment w-was fwushed to wocaw disk
+  pwivate vowatiwe wong fwushtimemiwwis = 0;
 
-  private final Segment segment;
-  private final SegmentSyncConfig syncConfig;
-  private final String localSyncDir;
-  private final String hdfsFlushDir;
-  private final String hdfsSyncDirPrefix;
-  private final String hdfsUploadDirPrefix;
-  private final String hdfsTempFlushDir;
+  pwivate finaw segment s-segment;
+  pwivate finaw s-segmentsyncconfig s-syncconfig;
+  p-pwivate finaw stwing w-wocawsyncdiw;
+  pwivate finaw stwing hdfsfwushdiw;
+  p-pwivate finaw stwing hdfssyncdiwpwefix;
+  pwivate finaw s-stwing hdfsupwoaddiwpwefix;
+  pwivate finaw stwing hdfstempfwushdiw;
 
-  @VisibleForTesting
-  public SegmentSyncInfo(SegmentSyncConfig syncConfig, Segment segment) {
-    this.segment = segment;
-    this.syncConfig = syncConfig;
-    this.localSyncDir = syncConfig.getLocalSyncDirName(segment);
-    this.hdfsSyncDirPrefix = syncConfig.getHdfsSyncDirNamePrefix(segment);
-    this.hdfsUploadDirPrefix = syncConfig.getHdfsUploadDirNamePrefix(segment);
-    this.hdfsFlushDir = syncConfig.getHdfsFlushDirName(segment);
-    this.hdfsTempFlushDir = syncConfig.getHdfsTempFlushDirName(segment);
+  @visibwefowtesting
+  pubwic segmentsyncinfo(segmentsyncconfig syncconfig, segment segment) {
+    t-this.segment = segment;
+    t-this.syncconfig = s-syncconfig;
+    t-this.wocawsyncdiw = syncconfig.getwocawsyncdiwname(segment);
+    this.hdfssyncdiwpwefix = syncconfig.gethdfssyncdiwnamepwefix(segment);
+    t-this.hdfsupwoaddiwpwefix = s-syncconfig.gethdfsupwoaddiwnamepwefix(segment);
+    this.hdfsfwushdiw = s-syncconfig.gethdfsfwushdiwname(segment);
+    t-this.hdfstempfwushdiw = syncconfig.gethdfstempfwushdiwname(segment);
   }
 
-  public boolean isLoaded() {
-    return loaded;
+  p-pubwic boowean iswoaded() {
+    w-wetuwn woaded;
   }
 
-  public boolean isFlushed() {
-    return flushed;
+  pubwic boowean isfwushed() {
+    w-wetuwn fwushed;
   }
 
-  public long getFlushTimeMillis() {
-    return flushTimeMillis;
+  pubwic wong getfwushtimemiwwis() {
+    w-wetuwn fwushtimemiwwis;
   }
 
-  public String getLocalSyncDir() {
-    return localSyncDir;
+  pubwic stwing g-getwocawsyncdiw() {
+    w-wetuwn wocawsyncdiw;
   }
 
-  public SegmentSyncConfig getSegmentSyncConfig() {
-    return syncConfig;
+  pubwic segmentsyncconfig getsegmentsyncconfig() {
+    wetuwn syncconfig;
   }
 
-  public String getLocalLuceneSyncDir() {
-    // For archive search this name depends on the end date of the segment, which can change,
-    // so we cannot pre-compute this in the constructor.
-    // This should only be used in the on-disk archive.
-    return syncConfig.getLocalLuceneSyncDirName(segment);
+  pubwic stwing g-getwocawwucenesyncdiw() {
+    // f-fow awchive seawch this nyame d-depends on the e-end date of the s-segment, (⑅˘꒳˘) which can change,
+    // so we cannot pwe-compute this i-in the constwuctow. nyaa~~
+    // this shouwd onwy be used in the on-disk awchive. :3
+    w-wetuwn syncconfig.getwocawwucenesyncdiwname(segment);
   }
 
-  public String getHdfsFlushDir() {
-    return hdfsFlushDir;
+  pubwic stwing gethdfsfwushdiw() {
+    w-wetuwn hdfsfwushdiw;
   }
 
-  public String getHdfsSyncDirPrefix() {
-    return hdfsSyncDirPrefix;
+  p-pubwic stwing g-gethdfssyncdiwpwefix() {
+    wetuwn h-hdfssyncdiwpwefix;
   }
 
-  public String getHdfsUploadDirPrefix() {
-    return hdfsUploadDirPrefix;
+  p-pubwic s-stwing gethdfsupwoaddiwpwefix() {
+    w-wetuwn hdfsupwoaddiwpwefix;
   }
 
-  public String getHdfsTempFlushDir() {
-    return hdfsTempFlushDir;
+  pubwic s-stwing gethdfstempfwushdiw() {
+    w-wetuwn hdfstempfwushdiw;
   }
 
-  public void setLoaded(boolean isLoaded) {
-    this.loaded = isLoaded;
-  }
-
-  /**
-   * Stores the flushing state for this segment.
-   */
-  public void setFlushed(boolean isFlushed) {
-    if (isFlushed) {
-      this.flushTimeMillis = System.currentTimeMillis();
-    }
-    this.flushed = isFlushed;
+  p-pubwic void s-setwoaded(boowean i-iswoaded) {
+    this.woaded = iswoaded;
   }
 
   /**
-   * Adds debug information about the loaded and flushed status of this segment to the given
-   * StringBuilder.
+   * stowes t-the fwushing state fow this segment. ( ͡o ω ͡o )
    */
-  public void addDebugInfo(StringBuilder builder) {
-    builder.append("[");
-    int startLength = builder.length();
-    if (loaded) {
-      builder.append("loaded, ");
+  pubwic void setfwushed(boowean isfwushed) {
+    if (isfwushed) {
+      t-this.fwushtimemiwwis = system.cuwwenttimemiwwis();
     }
-    if (flushed) {
-      builder.append("flushed, ");
+    this.fwushed = isfwushed;
+  }
+
+  /**
+   * a-adds debug infowmation a-about the w-woaded and fwushed status of this s-segment to the given
+   * stwingbuiwdew. mya
+   */
+  p-pubwic void a-adddebuginfo(stwingbuiwdew buiwdew) {
+    buiwdew.append("[");
+    int stawtwength = buiwdew.wength();
+    if (woaded) {
+      buiwdew.append("woaded, (///ˬ///✿) ");
     }
-    if (startLength < builder.length()) {
-      builder.setLength(builder.length() - 2);
+    i-if (fwushed) {
+      buiwdew.append("fwushed, (˘ω˘) ");
     }
-    builder.append("]");
+    i-if (stawtwength < buiwdew.wength()) {
+      b-buiwdew.setwength(buiwdew.wength() - 2);
+    }
+    b-buiwdew.append("]");
   }
 }

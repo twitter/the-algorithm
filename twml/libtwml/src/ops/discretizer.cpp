@@ -1,293 +1,293 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#incwude "tensowfwow/cowe/fwamewowk/op.h"
+#incwude "tensowfwow/cowe/fwamewowk/shape_infewence.h"
+#incwude "tensowfwow/cowe/fwamewowk/op_kewnew.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#incwude <twmw.h>
+#incwude "tensowfwow_utiws.h"
 
-using namespace tensorflow;
+using nyamespace tensowfwow;
 
 
-void ComputeDiscretizers(OpKernelContext* context, const bool return_bin_indices = false) {
-  const Tensor& keys = context->input(0);
-  const Tensor& vals = context->input(1);
-  const Tensor& bin_ids = context->input(2);
-  const Tensor& bin_vals = context->input(3);
-  const Tensor& feature_offsets = context->input(4);
+v-void computediscwetizews(opkewnewcontext* c-context, nyaa~~ c-const boow w-wetuwn_bin_indices = f-fawse) {
+  c-const tensow& keys = c-context->input(0);
+  c-const tensow& vaws = context->input(1);
+  const tensow& bin_ids = context->input(2);
+  const tensow& bin_vaws = c-context->input(3);
+  const tensow& featuwe_offsets = context->input(4);
 
-  Tensor* new_keys = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, keys.shape(),
+  tensow* nyew_keys = n-nyuwwptw;
+  op_wequiwes_ok(context, 🥺 c-context->awwocate_output(0, rawr x3 keys.shape(), σωσ
                                                    &new_keys));
-  Tensor* new_vals = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(1, keys.shape(),
-                                                   &new_vals));
+  tensow* nyew_vaws = nyuwwptw;
+  o-op_wequiwes_ok(context, (///ˬ///✿) context->awwocate_output(1, (U ﹏ U) k-keys.shape(), ^^;;
+                                                   &new_vaws));
 
-  try {
-    twml::Tensor out_keys_ = TFTensor_to_twml_tensor(*new_keys);
-    twml::Tensor out_vals_ = TFTensor_to_twml_tensor(*new_vals);
+  t-twy {
+    twmw::tensow out_keys_ = tftensow_to_twmw_tensow(*new_keys);
+    twmw::tensow o-out_vaws_ = tftensow_to_twmw_tensow(*new_vaws);
 
-    const twml::Tensor in_keys_ = TFTensor_to_twml_tensor(keys);
-    const twml::Tensor in_vals_ = TFTensor_to_twml_tensor(vals);
-    const twml::Tensor bin_ids_ = TFTensor_to_twml_tensor(bin_ids);
-    const twml::Tensor bin_vals_ = TFTensor_to_twml_tensor(bin_vals);
-    const twml::Tensor feature_offsets_ = TFTensor_to_twml_tensor(feature_offsets);
-    twml::mdlInfer(out_keys_, out_vals_,
-                   in_keys_, in_vals_,
-                   bin_ids_, bin_vals_,
-                   feature_offsets_,
-                   return_bin_indices);
-  }  catch (const std::exception &e) {
-    context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    const twmw::tensow in_keys_ = tftensow_to_twmw_tensow(keys);
+    c-const twmw::tensow in_vaws_ = t-tftensow_to_twmw_tensow(vaws);
+    c-const t-twmw::tensow b-bin_ids_ = tftensow_to_twmw_tensow(bin_ids);
+    const twmw::tensow bin_vaws_ = t-tftensow_to_twmw_tensow(bin_vaws);
+    const twmw::tensow featuwe_offsets_ = t-tftensow_to_twmw_tensow(featuwe_offsets);
+    twmw::mdwinfew(out_keys_, 🥺 out_vaws_,
+                   in_keys_, òωó in_vaws_, XD
+                   bin_ids_, bin_vaws_, :3
+                   f-featuwe_offsets_, (U ﹏ U)
+                   wetuwn_bin_indices);
+  }  c-catch (const std::exception &e) {
+    c-context->ctxfaiwuwewithwawning(ewwows::invawidawgument(e.nani()));
   }
 }
 
-REGISTER_OP("MDL")
-.Attr("T: {float, double}")
-.Input("keys: int64")
-.Input("vals: T")
-.Input("bin_ids: int64")
-.Input("bin_vals: T")
-.Input("feature_offsets: int64")
-.Output("new_keys: int64")
-.Output("new_vals: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    // TODO: check sizes
-    c->set_output(0, c->input(0));
+w-wegistew_op("mdw")
+.attw("t: {fwoat, >w< doubwe}")
+.input("keys: int64")
+.input("vaws: t")
+.input("bin_ids: i-int64")
+.input("bin_vaws: t-t")
+.input("featuwe_offsets: int64")
+.output("new_keys: i-int64")
+.output("new_vaws: t-t")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    // t-todo: check sizes
+    c->set_output(0, /(^•ω•^) c-c->input(0));
     c->set_output(1, c->input(0));
-    return Status::OK();
-}).Doc(R"doc(
+    wetuwn status::ok();
+}).doc(w"doc(
 
-This operation discretizes a tensor containing continuous features.
+t-this opewation discwetizes a-a tensow containing continuous f-featuwes.
 
-Input
-  keys: A tensor containing feature ids.
-  vals: A tensor containing values at corresponding feature ids.
-  bin_ids: A tensor containing the discretized feature id for a given bin.
-  bin_vals: A tensor containing the bin boundaries for value at a given feature id.
-  feature_offsets: Specifies the starting location of bins for a given feature id.
+input
+  k-keys: a tensow containing featuwe ids. (⑅˘꒳˘)
+  vaws: a tensow containing vawues at cowwesponding featuwe ids. ʘwʘ
+  bin_ids: a-a tensow containing t-the discwetized featuwe i-id fow a given b-bin. rawr x3
+  bin_vaws: a-a tensow containing the bin boundawies fow vawue at a given featuwe i-id. (˘ω˘)
+  featuwe_offsets: specifies the stawting wocation of bins fow a given f-featuwe id. o.O
 
-Expected Sizes:
-  keys, vals: [N].
-  bin_ids, bin_vals: [sum_{n=1}^{n=num_classes} num_bins(n)]
+expected sizes:
+  k-keys, 😳 vaws: [n]. o.O
+  b-bin_ids, ^^;; bin_vaws: [sum_{n=1}^{n=num_cwasses} n-nyum_bins(n)]
 
-  where
-  - N is the number of sparse features in the current batch.
-  - [0, num_classes) represents the range each feature id can take.
-  - num_bins(n) is the number of bins for a given feature id.
-  - If num_bins is fixed, then xs, ys are of size [num_classes * num_bins].
+  whewe
+  - ny is t-the numbew of s-spawse featuwes i-in the cuwwent batch. ( ͡o ω ͡o )
+  - [0, n-nyum_cwasses) wepwesents the wange e-each featuwe id c-can take. ^^;;
+  - nyum_bins(n) i-is the n-nyumbew of bins f-fow a given featuwe id. ^^;;
+  - if nyum_bins is fixed, XD then xs, ys a-awe of size [num_cwasses * nyum_bins]. 🥺
 
-Expected Types:
-  keys, bin_ids: int64.
-  vals: float or double.
-  bin_vals: same as vals.
+expected types:
+  keys, (///ˬ///✿) bin_ids: int64. (U ᵕ U❁)
+  vaws: fwoat o-ow doubwe. ^^;;
+  bin_vaws: same as vaws. ^^;;
 
-Before using MDL, you should use a hashmap to get the intersection of
-input `keys` with the features that MDL knows about:
+befowe using mdw, rawr you shouwd u-use a hashmap t-to get the intewsection o-of
+input `keys` with the f-featuwes that mdw knows about:
 ::
-  keys, vals # keys can be in range [0, 1 << 63)
-  mdl_keys = hashmap.find(keys) # mdl_keys are now in range [0, num_classes_from_calibration)
-  mdl_keys = where (mdl_keys != -1) # Ignore keys not found
+  k-keys, (˘ω˘) vaws # k-keys can be in wange [0, 🥺 1 << 63)
+  mdw_keys = hashmap.find(keys) # mdw_keys awe nyow in wange [0, nyaa~~ n-nyum_cwasses_fwom_cawibwation)
+  mdw_keys = w-whewe (mdw_keys != -1) # ignowe k-keys nyot found
 
 
-Inside MDL, the following is happening:
+i-inside mdw, :3 the fowwowing is happening:
 ::
-  start = offsets[key[i]]
-  end = offsets[key[i] + 1]
-  idx = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
+  s-stawt = offsets[key[i]]
+  e-end = offsets[key[i] + 1]
+  i-idx = binawy_seawch f-fow vaw[i] in [bin_vaws[stawt], /(^•ω•^) bin_vaws[end]]
 
-  result_keys[i] = bin_ids[idx]
-  val[i] = 1 # binary feature value
+  wesuwt_keys[i] = bin_ids[idx]
+  v-vaw[i] = 1 # b-binawy f-featuwe vawue
 
-Outputs
-  new_keys: The discretized feature ids with same shape and size as keys.
-  new_vals: The discretized values with the same shape and size as vals.
+outputs
+  nyew_keys: t-the discwetized f-featuwe ids with same shape a-and size as keys. ^•ﻌ•^
+  nyew_vaws: the discwetized vawues with the same shape and size a-as vaws. UwU
 
 )doc");
 
 
-template<typename T>
-class MDL : public OpKernel {
- public:
-  explicit MDL(OpKernelConstruction* context) : OpKernel(context) {
+t-tempwate<typename t>
+cwass mdw : pubwic o-opkewnew {
+ pubwic:
+  e-expwicit mdw(opkewnewconstwuction* context) : opkewnew(context) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeDiscretizers(context);
+  void compute(opkewnewcontext* c-context) ovewwide {
+    computediscwetizews(context);
   }
 };
 
-REGISTER_OP("PercentileDiscretizer")
-.Attr("T: {float, double}")
-.Input("keys: int64")
-.Input("vals: T")
-.Input("bin_ids: int64")
-.Input("bin_vals: T")
-.Input("feature_offsets: int64")
-.Output("new_keys: int64")
-.Output("new_vals: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    // TODO: check sizes
-    c->set_output(0, c->input(0));
-    c->set_output(1, c->input(0));
-    return Status::OK();
-}).Doc(R"doc(
+wegistew_op("pewcentiwediscwetizew")
+.attw("t: {fwoat, 😳😳😳 doubwe}")
+.input("keys: i-int64")
+.input("vaws: t")
+.input("bin_ids: int64")
+.input("bin_vaws: t")
+.input("featuwe_offsets: i-int64")
+.output("new_keys: i-int64")
+.output("new_vaws: t")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c) {
+    // todo: check sizes
+    c-c->set_output(0, OwO c-c->input(0));
+    c->set_output(1, ^•ﻌ•^ c->input(0));
+    wetuwn s-status::ok();
+}).doc(w"doc(
 
-This operation discretizes a tensor containing continuous features.
+this opewation d-discwetizes a tensow containing continuous featuwes. (ꈍᴗꈍ)
 
-Input
-  keys: A tensor containing feature ids.
-  vals: A tensor containing values at corresponding feature ids.
-  bin_ids: A tensor containing the discretized feature id for a given bin.
-  bin_vals: A tensor containing the bin boundaries for value at a given feature id.
-  feature_offsets: Specifies the starting location of bins for a given feature id.
+input
+  keys: a-a tensow containing featuwe i-ids. (⑅˘꒳˘)
+  vaws: a t-tensow containing vawues at cowwesponding f-featuwe ids. (⑅˘꒳˘)
+  bin_ids: a-a tensow containing t-the discwetized f-featuwe id fow a given bin. (ˆ ﻌ ˆ)♡
+  b-bin_vaws: a t-tensow containing the bin boundawies fow vawue at a-a given featuwe i-id. /(^•ω•^)
+  featuwe_offsets: s-specifies the stawting wocation of bins f-fow a given featuwe id. òωó
 
-Expected Sizes:
-  keys, vals: [N].
-  bin_ids, bin_vals: [sum_{n=1}^{n=num_classes} num_bins(n)]
+expected s-sizes:
+  keys, v-vaws: [n]. (⑅˘꒳˘)
+  bin_ids, (U ᵕ U❁) bin_vaws: [sum_{n=1}^{n=num_cwasses} nyum_bins(n)]
 
-  where
-  - N is the number of sparse features in the current batch.
-  - [0, num_classes) represents the range each feature id can take.
-  - num_bins(n) is the number of bins for a given feature id.
-  - If num_bins is fixed, then xs, ys are of size [num_classes * num_bins].
+  whewe
+  - n-ny is the n-numbew of spawse f-featuwes in the c-cuwwent batch. >w<
+  - [0, σωσ nyum_cwasses) w-wepwesents the wange each featuwe id can take. -.-
+  - nyum_bins(n) is the nyumbew of bins fow a-a given featuwe id. o.O
+  - if nyum_bins i-is fixed, then xs, ^^ ys awe o-of size [num_cwasses * nyum_bins]. >_<
 
-Expected Types:
-  keys, bin_ids: int64.
-  vals: float or double.
-  bin_vals: same as vals.
+e-expected types:
+  keys, bin_ids: i-int64. >w<
+  v-vaws: fwoat ow doubwe. >_<
+  b-bin_vaws: s-same as vaws. >w<
 
-Before using PercentileDiscretizer, you should use a hashmap to get the intersection of
-input `keys` with the features that PercentileDiscretizer knows about:
+b-befowe using pewcentiwediscwetizew, rawr you shouwd use a hashmap to get the intewsection of
+input `keys` with the featuwes that pewcentiwediscwetizew k-knows about:
 ::
-  keys, vals # keys can be in range [0, 1 << 63)
-  percentile_discretizer_keys = hashmap.find(keys) # percentile_discretizer_keys are now in range [0, num_classes_from_calibration)
-  percentile_discretizer_keys = where (percentile_discretizer_keys != -1) # Ignore keys not found
+  k-keys, rawr x3 vaws # k-keys can be in wange [0, ( ͡o ω ͡o ) 1 << 63)
+  p-pewcentiwe_discwetizew_keys = hashmap.find(keys) # pewcentiwe_discwetizew_keys awe nyow in w-wange [0, (˘ω˘) nyum_cwasses_fwom_cawibwation)
+  p-pewcentiwe_discwetizew_keys = whewe (pewcentiwe_discwetizew_keys != -1) # i-ignowe keys nyot found
 
 
-Inside PercentileDiscretizer, the following is happening:
+inside pewcentiwediscwetizew, 😳 t-the f-fowwowing is happening:
 ::
-  start = offsets[key[i]]
-  end = offsets[key[i] + 1]
-  idx = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
+  stawt = offsets[key[i]]
+  e-end = offsets[key[i] + 1]
+  i-idx = binawy_seawch fow vaw[i] in [bin_vaws[stawt], OwO bin_vaws[end]]
 
-  result_keys[i] = bin_ids[idx]
-  val[i] = 1 # binary feature value
+  wesuwt_keys[i] = b-bin_ids[idx]
+  v-vaw[i] = 1 # b-binawy featuwe v-vawue
 
-Outputs
-  new_keys: The discretized feature ids with same shape and size as keys.
-  new_vals: The discretized values with the same shape and size as vals.
+outputs
+  n-nyew_keys: the discwetized f-featuwe ids with s-same shape and size as keys. (˘ω˘)
+  n-nyew_vaws: the d-discwetized vawues with the same s-shape and size as vaws. òωó
 
 )doc");
 
-template<typename T>
-class PercentileDiscretizer : public OpKernel {
- public:
-  explicit PercentileDiscretizer(OpKernelConstruction* context) : OpKernel(context) {
+tempwate<typename t-t>
+cwass pewcentiwediscwetizew : p-pubwic opkewnew {
+ p-pubwic:
+  expwicit pewcentiwediscwetizew(opkewnewconstwuction* c-context) : opkewnew(context) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeDiscretizers(context);
+  void compute(opkewnewcontext* c-context) o-ovewwide {
+    c-computediscwetizews(context);
   }
 };
 
 
-REGISTER_OP("PercentileDiscretizerBinIndices")
-.Attr("T: {float, double}")
-.Input("keys: int64")
-.Input("vals: T")
-.Input("bin_ids: int64")
-.Input("bin_vals: T")
-.Input("feature_offsets: int64")
-.Output("new_keys: int64")
-.Output("new_vals: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    // TODO: check sizes
-    c->set_output(0, c->input(0));
-    c->set_output(1, c->input(0));
-    return Status::OK();
-}).Doc(R"doc(
+wegistew_op("pewcentiwediscwetizewbinindices")
+.attw("t: {fwoat, ( ͡o ω ͡o ) doubwe}")
+.input("keys: int64")
+.input("vaws: t-t")
+.input("bin_ids: int64")
+.input("bin_vaws: t")
+.input("featuwe_offsets: i-int64")
+.output("new_keys: i-int64")
+.output("new_vaws: t")
+.setshapefn([](::tensowfwow::shape_infewence::infewencecontext* c-c) {
+    // todo: check sizes
+    c-c->set_output(0, UwU c-c->input(0));
+    c->set_output(1, /(^•ω•^) c->input(0));
+    w-wetuwn status::ok();
+}).doc(w"doc(
 
-This operation discretizes a tensor containing continuous features.
-If the feature id and bin id of the discretized value is the same on multiple runs, they
-will always be assigned to the same output key and value, regardless of the bin_id assigned during
-calibration.
+this o-opewation discwetizes a-a tensow containing continuous f-featuwes. (ꈍᴗꈍ)
+if the featuwe i-id and bin id of t-the discwetized v-vawue is the same on muwtipwe wuns, 😳 they
+wiww awways be assigned to the same output key and vawue, mya wegawdwess of the bin_id assigned duwing
+cawibwation. mya
 
-Input
-  keys: A tensor containing feature ids.
-  vals: A tensor containing values at corresponding feature ids.
-  bin_ids: A tensor containing the discretized feature id for a given bin.
-  bin_vals: A tensor containing the bin boundaries for value at a given feature id.
-  feature_offsets: Specifies the starting location of bins for a given feature id.
+input
+  keys: a tensow containing featuwe ids. /(^•ω•^)
+  vaws: a-a tensow containing v-vawues at cowwesponding featuwe ids. ^^;;
+  bin_ids: a-a tensow c-containing the discwetized f-featuwe id fow a given b-bin. 🥺
+  bin_vaws: a tensow containing t-the bin boundawies f-fow vawue at a given featuwe i-id. ^^
+  featuwe_offsets: specifies t-the stawting w-wocation of bins fow a given featuwe id. ^•ﻌ•^
 
-Expected Sizes:
-  keys, vals: [N].
-  bin_ids, bin_vals: [sum_{n=1}^{n=num_classes} num_bins(n)]
+expected s-sizes:
+  k-keys, /(^•ω•^) vaws: [n]. ^^
+  b-bin_ids, 🥺 bin_vaws: [sum_{n=1}^{n=num_cwasses} n-nyum_bins(n)]
 
-  where
-  - N is the number of sparse features in the current batch.
-  - [0, num_classes) represents the range each feature id can take.
-  - num_bins(n) is the number of bins for a given feature id.
-  - If num_bins is fixed, then xs, ys are of size [num_classes * num_bins].
+  w-whewe
+  - n is t-the nyumbew of s-spawse featuwes i-in the cuwwent b-batch. (U ᵕ U❁)
+  - [0, 😳😳😳 nyum_cwasses) wepwesents t-the wange e-each featuwe id c-can take. nyaa~~
+  - nyum_bins(n) is t-the nyumbew of bins fow a given featuwe id. (˘ω˘)
+  - i-if nyum_bins is fixed, >_< then xs, y-ys awe of size [num_cwasses * n-nyum_bins]. XD
 
-Expected Types:
-  keys, bin_ids: int64.
-  vals: float or double.
-  bin_vals: same as vals.
+e-expected types:
+  keys, rawr x3 b-bin_ids: int64. ( ͡o ω ͡o )
+  vaws: fwoat o-ow doubwe. :3
+  bin_vaws: same as v-vaws. mya
 
-Before using PercentileDiscretizerBinIndices, you should use a hashmap to get the intersection of
-input `keys` with the features that PercentileDiscretizerBinIndices knows about:
+befowe using pewcentiwediscwetizewbinindices, σωσ y-you shouwd use a hashmap to get the intewsection of
+input `keys` with the featuwes t-that pewcentiwediscwetizewbinindices knows a-about:
 ::
-  keys, vals # keys can be in range [0, 1 << 63)
-  percentile_discretizer_keys = hashmap.find(keys) # percentile_discretizer_keys are now in range [0, num_classes_from_calibration)
-  percentile_discretizer_keys = where (percentile_discretizer_keys != -1) # Ignore keys not found
+  keys, (ꈍᴗꈍ) v-vaws # keys can be in wange [0, OwO 1 << 63)
+  pewcentiwe_discwetizew_keys = hashmap.find(keys) # p-pewcentiwe_discwetizew_keys awe now in wange [0, o.O n-nyum_cwasses_fwom_cawibwation)
+  p-pewcentiwe_discwetizew_keys = w-whewe (pewcentiwe_discwetizew_keys != -1) # ignowe keys nyot found
 
 
-Inside PercentileDiscretizerBinIndices, the following is happening:
+inside pewcentiwediscwetizewbinindices, 😳😳😳 t-the fowwowing is h-happening:
 ::
-  start = offsets[key[i]]
-  end = offsets[key[i] + 1]
-  idx = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
+  stawt = offsets[key[i]]
+  e-end = offsets[key[i] + 1]
+  idx = binawy_seawch f-fow vaw[i] in [bin_vaws[stawt], /(^•ω•^) b-bin_vaws[end]]
 
-  result_keys[i] = bin_ids[idx]
-  val[i] = 1 # binary feature value
+  w-wesuwt_keys[i] = b-bin_ids[idx]
+  vaw[i] = 1 # b-binawy f-featuwe vawue
 
-Outputs
-  new_keys: The discretized feature ids with same shape and size as keys.
-  new_vals: The discretized values with the same shape and size as vals.
+o-outputs
+  nyew_keys: t-the discwetized featuwe ids w-with same shape a-and size as keys. OwO
+  n-nyew_vaws: t-the discwetized v-vawues with the s-same shape and size a-as vaws. ^^
 
 )doc");
 
-template<typename T>
-class PercentileDiscretizerBinIndices : public OpKernel {
- public:
-  explicit PercentileDiscretizerBinIndices(OpKernelConstruction* context) : OpKernel(context) {
+t-tempwate<typename t>
+cwass p-pewcentiwediscwetizewbinindices : pubwic opkewnew {
+ p-pubwic:
+  expwicit pewcentiwediscwetizewbinindices(opkewnewconstwuction* c-context) : opkewnew(context) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeDiscretizers(context, true);
+  v-void compute(opkewnewcontext* c-context) ovewwide {
+    computediscwetizews(context, (///ˬ///✿) twue);
   }
 };
 
 
-#define REGISTER(Type)              \
+#define wegistew(type)              \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("PercentileDiscretizerBinIndices")   \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    PercentileDiscretizerBinIndices<Type>);   \
+  w-wegistew_kewnew_buiwdew(          \
+    nyame("pewcentiwediscwetizewbinindices")   \
+    .device(device_cpu)             \
+    .typeconstwaint<type>("t"),     \
+    p-pewcentiwediscwetizewbinindices<type>);   \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("PercentileDiscretizer")   \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    PercentileDiscretizer<Type>);   \
+  w-wegistew_kewnew_buiwdew(          \
+    name("pewcentiwediscwetizew")   \
+    .device(device_cpu)             \
+    .typeconstwaint<type>("t"), (///ˬ///✿)     \
+    pewcentiwediscwetizew<type>);   \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("MDL")                     \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    MDL<Type>);                     \
+  wegistew_kewnew_buiwdew(          \
+    n-nyame("mdw")                     \
+    .device(device_cpu)             \
+    .typeconstwaint<type>("t"), (///ˬ///✿)     \
+    mdw<type>);                     \
 
-REGISTER(float);
-REGISTER(double);
+w-wegistew(fwoat);
+wegistew(doubwe);

@@ -1,183 +1,183 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.twittew.cw_mixew.simiwawity_engine
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.TweetBasedUserTweetGraphParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.recos.user_tweet_graph.thriftscala.RelatedTweetResponse
-import com.twitter.recos.user_tweet_graph.thriftscala.TweetBasedRelatedTweetRequest
-import com.twitter.recos.user_tweet_graph.thriftscala.ConsumersBasedRelatedTweetRequest
-import com.twitter.recos.user_tweet_graph.thriftscala.UserTweetGraph
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.twistly.thriftscala.TweetRecentEngagedUsers
-import com.twitter.util.Future
-import javax.inject.Singleton
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.timelines.configapi
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import scala.concurrent.duration.HOURS
+impowt com.twittew.cw_mixew.modew.simiwawityengineinfo
+i-impowt com.twittew.cw_mixew.modew.tweetwithscowe
+i-impowt com.twittew.cw_mixew.pawam.gwobawpawams
+i-impowt com.twittew.cw_mixew.pawam.tweetbasedusewtweetgwaphpawams
+i-impowt com.twittew.cw_mixew.thwiftscawa.simiwawityenginetype
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.utiw.statsutiw
+i-impowt com.twittew.wecos.usew_tweet_gwaph.thwiftscawa.wewatedtweetwesponse
+impowt c-com.twittew.wecos.usew_tweet_gwaph.thwiftscawa.tweetbasedwewatedtweetwequest
+impowt com.twittew.wecos.usew_tweet_gwaph.thwiftscawa.consumewsbasedwewatedtweetwequest
+impowt com.twittew.wecos.usew_tweet_gwaph.thwiftscawa.usewtweetgwaph
+impowt com.twittew.simcwustews_v2.common.tweetid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.twistwy.thwiftscawa.tweetwecentengagedusews
+impowt com.twittew.utiw.futuwe
+i-impowt javax.inject.singweton
+impowt com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.timewines.configapi
+i-impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.time
+i-impowt scawa.concuwwent.duwation.houws
 
 /**
- * This store looks for similar tweets from UserTweetGraph for a Source TweetId
- * For a query tweet,User Tweet Graph (UTG),
- * lets us find out which other tweets share a lot of the same engagers with the query tweet
- * one-pager: go/UTG
+ * t-this stowe wooks fow simiwaw tweets fwom usewtweetgwaph fow a souwce tweetid
+ * f-fow a quewy tweet,usew tweet gwaph (utg), ^•ﻌ•^
+ * wets us find out which othew tweets s-shawe a wot of the same engagews w-with the quewy t-tweet
+ * one-pagew: g-go/utg
  */
-@Singleton
-case class TweetBasedUserTweetGraphSimilarityEngine(
-  userTweetGraphService: UserTweetGraph.MethodPerEndpoint,
-  tweetEngagedUsersStore: ReadableStore[TweetId, TweetRecentEngagedUsers],
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[
-      TweetBasedUserTweetGraphSimilarityEngine.Query,
-      Seq[TweetWithScore]
+@singweton
+c-case cwass tweetbasedusewtweetgwaphsimiwawityengine(
+  usewtweetgwaphsewvice: u-usewtweetgwaph.methodpewendpoint, σωσ
+  tweetengagedusewsstowe: weadabwestowe[tweetid, -.- t-tweetwecentengagedusews], ^^;;
+  statsweceivew: statsweceivew)
+    extends weadabwestowe[
+      tweetbasedusewtweetgwaphsimiwawityengine.quewy, XD
+      s-seq[tweetwithscowe]
     ] {
 
-  import TweetBasedUserTweetGraphSimilarityEngine._
+  impowt t-tweetbasedusewtweetgwaphsimiwawityengine._
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
-  private val fetchCoverageExpansionCandidatesStat = stats.scope("fetchCoverageExpansionCandidates")
+  p-pwivate vaw stats = s-statsweceivew.scope(this.getcwass.getsimpwename)
+  pwivate vaw fetchcandidatesstat = stats.scope("fetchcandidates")
+  p-pwivate v-vaw fetchcovewageexpansioncandidatesstat = stats.scope("fetchcovewageexpansioncandidates")
 
-  override def get(
-    query: TweetBasedUserTweetGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    query.sourceId match {
-      case InternalId.TweetId(tweetId) if query.enableCoverageExpansionAllTweet =>
-        getCoverageExpansionCandidates(tweetId, query)
+  ovewwide def get(
+    q-quewy: tweetbasedusewtweetgwaphsimiwawityengine.quewy
+  ): f-futuwe[option[seq[tweetwithscowe]]] = {
+    quewy.souwceid match {
+      c-case intewnawid.tweetid(tweetid) i-if quewy.enabwecovewageexpansionawwtweet =>
+        getcovewageexpansioncandidates(tweetid, 🥺 q-quewy)
 
-      case InternalId.TweetId(tweetId) if query.enableCoverageExpansionOldTweet => // For Home
-        if (isOldTweet(tweetId)) getCoverageExpansionCandidates(tweetId, query)
-        else getCandidates(tweetId, query)
+      case intewnawid.tweetid(tweetid) i-if quewy.enabwecovewageexpansionowdtweet => // fow home
+        i-if (isowdtweet(tweetid)) g-getcovewageexpansioncandidates(tweetid, òωó quewy)
+        ewse getcandidates(tweetid, (ˆ ﻌ ˆ)♡ quewy)
 
-      case InternalId.TweetId(tweetId) => getCandidates(tweetId, query)
-      case _ =>
-        Future.value(None)
+      case intewnawid.tweetid(tweetid) => getcandidates(tweetid, -.- quewy)
+      c-case _ =>
+        f-futuwe.vawue(none)
     }
   }
 
-  // This is the main candidate source
-  private def getCandidates(
-    tweetId: TweetId,
-    query: TweetBasedUserTweetGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    StatsUtil.trackOptionItemsStats(fetchCandidatesStat) {
-      val tweetBasedRelatedTweetRequest = {
-        TweetBasedRelatedTweetRequest(
-          tweetId,
-          maxResults = Some(query.maxResults),
-          minCooccurrence = Some(query.minCooccurrence),
-          excludeTweetIds = Some(Seq(tweetId)),
-          minScore = Some(query.tweetBasedMinScore),
-          maxTweetAgeInHours = Some(query.maxTweetAgeInHours)
+  // this is the main c-candidate souwce
+  p-pwivate def getcandidates(
+    t-tweetid: tweetid, :3
+    quewy: tweetbasedusewtweetgwaphsimiwawityengine.quewy
+  ): futuwe[option[seq[tweetwithscowe]]] = {
+    statsutiw.twackoptionitemsstats(fetchcandidatesstat) {
+      vaw t-tweetbasedwewatedtweetwequest = {
+        tweetbasedwewatedtweetwequest(
+          tweetid,
+          maxwesuwts = some(quewy.maxwesuwts), ʘwʘ
+          m-mincooccuwwence = some(quewy.mincooccuwwence), 🥺
+          e-excwudetweetids = s-some(seq(tweetid)), >_<
+          m-minscowe = some(quewy.tweetbasedminscowe), ʘwʘ
+          m-maxtweetageinhouws = s-some(quewy.maxtweetageinhouws)
         )
       }
-      toTweetWithScore(
-        userTweetGraphService.tweetBasedRelatedTweets(tweetBasedRelatedTweetRequest).map {
-          Some(_)
+      totweetwithscowe(
+        u-usewtweetgwaphsewvice.tweetbasedwewatedtweets(tweetbasedwewatedtweetwequest).map {
+          s-some(_)
         })
     }
   }
 
-  // function for DDGs, for coverage expansion algo, we first fetch tweet's recent engaged users as consumeSeedSet from MH store,
-  // and query consumersBasedUTG using the consumeSeedSet
-  private def getCoverageExpansionCandidates(
-    tweetId: TweetId,
-    query: TweetBasedUserTweetGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    StatsUtil
-      .trackOptionItemsStats(fetchCoverageExpansionCandidatesStat) {
-        tweetEngagedUsersStore
-          .get(tweetId).flatMap {
-            _.map { tweetRecentEngagedUsers =>
-              val consumerSeedSet =
-                tweetRecentEngagedUsers.recentEngagedUsers
-                  .map { _.userId }.take(query.maxConsumerSeedsNum)
-              val consumersBasedRelatedTweetRequest =
-                ConsumersBasedRelatedTweetRequest(
-                  consumerSeedSet = consumerSeedSet,
-                  maxResults = Some(query.maxResults),
-                  minCooccurrence = Some(query.minCooccurrence),
-                  excludeTweetIds = Some(Seq(tweetId)),
-                  minScore = Some(query.consumersBasedMinScore),
-                  maxTweetAgeInHours = Some(query.maxTweetAgeInHours)
+  // function fow ddgs, fow c-covewage expansion a-awgo, (˘ω˘) we fiwst f-fetch tweet's w-wecent engaged usews a-as consumeseedset fwom mh stowe, (✿oωo)
+  // and quewy consumewsbasedutg u-using the consumeseedset
+  pwivate def getcovewageexpansioncandidates(
+    tweetid: tweetid, (///ˬ///✿)
+    quewy: tweetbasedusewtweetgwaphsimiwawityengine.quewy
+  ): futuwe[option[seq[tweetwithscowe]]] = {
+    statsutiw
+      .twackoptionitemsstats(fetchcovewageexpansioncandidatesstat) {
+        t-tweetengagedusewsstowe
+          .get(tweetid).fwatmap {
+            _.map { tweetwecentengagedusews =>
+              vaw consumewseedset =
+                t-tweetwecentengagedusews.wecentengagedusews
+                  .map { _.usewid }.take(quewy.maxconsumewseedsnum)
+              vaw c-consumewsbasedwewatedtweetwequest =
+                c-consumewsbasedwewatedtweetwequest(
+                  consumewseedset = c-consumewseedset, rawr x3
+                  maxwesuwts = some(quewy.maxwesuwts),
+                  m-mincooccuwwence = s-some(quewy.mincooccuwwence), -.-
+                  excwudetweetids = some(seq(tweetid)), ^^
+                  minscowe = some(quewy.consumewsbasedminscowe), (⑅˘꒳˘)
+                  maxtweetageinhouws = some(quewy.maxtweetageinhouws)
                 )
 
-              toTweetWithScore(userTweetGraphService
-                .consumersBasedRelatedTweets(consumersBasedRelatedTweetRequest).map { Some(_) })
-            }.getOrElse(Future.value(None))
+              t-totweetwithscowe(usewtweetgwaphsewvice
+                .consumewsbasedwewatedtweets(consumewsbasedwewatedtweetwequest).map { some(_) })
+            }.getowewse(futuwe.vawue(none))
           }
       }
   }
 
 }
 
-object TweetBasedUserTweetGraphSimilarityEngine {
+o-object tweetbasedusewtweetgwaphsimiwawityengine {
 
-  def toSimilarityEngineInfo(score: Double): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.TweetBasedUserTweetGraph,
-      modelId = None,
-      score = Some(score))
+  def t-tosimiwawityengineinfo(scowe: d-doubwe): simiwawityengineinfo = {
+    simiwawityengineinfo(
+      s-simiwawityenginetype = s-simiwawityenginetype.tweetbasedusewtweetgwaph,
+      modewid = n-nyone, nyaa~~
+      s-scowe = some(scowe))
   }
 
-  private val oldTweetCap: Duration = Duration(48, HOURS)
+  pwivate vaw owdtweetcap: duwation = duwation(48, /(^•ω•^) houws)
 
-  private def toTweetWithScore(
-    relatedTweetResponseFut: Future[Option[RelatedTweetResponse]]
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    relatedTweetResponseFut.map { relatedTweetResponseOpt =>
-      relatedTweetResponseOpt.map { relatedTweetResponse =>
-        val candidates =
-          relatedTweetResponse.tweets.map(tweet => TweetWithScore(tweet.tweetId, tweet.score))
+  pwivate d-def totweetwithscowe(
+    w-wewatedtweetwesponsefut: f-futuwe[option[wewatedtweetwesponse]]
+  ): futuwe[option[seq[tweetwithscowe]]] = {
+    wewatedtweetwesponsefut.map { w-wewatedtweetwesponseopt =>
+      w-wewatedtweetwesponseopt.map { wewatedtweetwesponse =>
+        v-vaw candidates =
+          wewatedtweetwesponse.tweets.map(tweet => tweetwithscowe(tweet.tweetid, (U ﹏ U) tweet.scowe))
         candidates
       }
     }
   }
 
-  private def isOldTweet(tweetId: TweetId): Boolean = {
-    SnowflakeId
-      .timeFromIdOpt(tweetId).forall { tweetTime => tweetTime < Time.now - oldTweetCap }
-    // If there's no snowflake timestamp, we have no idea when this tweet happened.
+  p-pwivate def isowdtweet(tweetid: t-tweetid): boowean = {
+    snowfwakeid
+      .timefwomidopt(tweetid).fowaww { tweettime => t-tweettime < t-time.now - owdtweetcap }
+    // if thewe's nyo snowfwake timestamp, 😳😳😳 w-we have nyo idea when this tweet happened. >w<
   }
 
-  case class Query(
-    sourceId: InternalId,
-    maxResults: Int,
-    minCooccurrence: Int,
-    tweetBasedMinScore: Double,
-    consumersBasedMinScore: Double,
-    maxTweetAgeInHours: Int,
-    maxConsumerSeedsNum: Int,
-    enableCoverageExpansionOldTweet: Boolean,
-    enableCoverageExpansionAllTweet: Boolean,
+  case cwass quewy(
+    s-souwceid: intewnawid, XD
+    maxwesuwts: int, o.O
+    m-mincooccuwwence: i-int, mya
+    tweetbasedminscowe: doubwe, 🥺
+    consumewsbasedminscowe: doubwe, ^^;;
+    maxtweetageinhouws: int, :3
+    maxconsumewseedsnum: i-int, (U ﹏ U)
+    enabwecovewageexpansionowdtweet: b-boowean, OwO
+    enabwecovewageexpansionawwtweet: boowean,
   )
 
-  def fromParams(
-    sourceId: InternalId,
-    params: configapi.Params,
-  ): EngineQuery[Query] = {
-    EngineQuery(
-      Query(
-        sourceId = sourceId,
-        maxResults = params(GlobalParams.MaxCandidateNumPerSourceKeyParam),
-        minCooccurrence = params(TweetBasedUserTweetGraphParams.MinCoOccurrenceParam),
-        tweetBasedMinScore = params(TweetBasedUserTweetGraphParams.TweetBasedMinScoreParam),
-        consumersBasedMinScore = params(TweetBasedUserTweetGraphParams.ConsumersBasedMinScoreParam),
-        maxTweetAgeInHours = params(GlobalParams.MaxTweetAgeHoursParam).inHours,
-        maxConsumerSeedsNum = params(TweetBasedUserTweetGraphParams.MaxConsumerSeedsNumParam),
-        enableCoverageExpansionOldTweet =
-          params(TweetBasedUserTweetGraphParams.EnableCoverageExpansionOldTweetParam),
-        enableCoverageExpansionAllTweet =
-          params(TweetBasedUserTweetGraphParams.EnableCoverageExpansionAllTweetParam),
+  def fwompawams(
+    s-souwceid: intewnawid, 😳😳😳
+    p-pawams: configapi.pawams, (ˆ ﻌ ˆ)♡
+  ): enginequewy[quewy] = {
+    enginequewy(
+      quewy(
+        s-souwceid = souwceid, XD
+        maxwesuwts = pawams(gwobawpawams.maxcandidatenumpewsouwcekeypawam), (ˆ ﻌ ˆ)♡
+        m-mincooccuwwence = p-pawams(tweetbasedusewtweetgwaphpawams.mincooccuwwencepawam), ( ͡o ω ͡o )
+        tweetbasedminscowe = p-pawams(tweetbasedusewtweetgwaphpawams.tweetbasedminscowepawam), rawr x3
+        consumewsbasedminscowe = p-pawams(tweetbasedusewtweetgwaphpawams.consumewsbasedminscowepawam), nyaa~~
+        m-maxtweetageinhouws = p-pawams(gwobawpawams.maxtweetagehouwspawam).inhouws, >_<
+        maxconsumewseedsnum = p-pawams(tweetbasedusewtweetgwaphpawams.maxconsumewseedsnumpawam), ^^;;
+        e-enabwecovewageexpansionowdtweet =
+          pawams(tweetbasedusewtweetgwaphpawams.enabwecovewageexpansionowdtweetpawam), (ˆ ﻌ ˆ)♡
+        enabwecovewageexpansionawwtweet =
+          p-pawams(tweetbasedusewtweetgwaphpawams.enabwecovewageexpansionawwtweetpawam), ^^;;
       ),
-      params
+      p-pawams
     )
   }
 

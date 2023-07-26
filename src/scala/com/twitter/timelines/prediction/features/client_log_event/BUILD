@@ -1,11 +1,11 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/suggests/controller_data",
-        "src/thrift/com/twitter/dal/personal_data:personal_data-java",
-        "src/thrift/com/twitter/timelineservice/server/suggests/logging:thrift-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], ^•ﻌ•^
+    pwatfowm = "java8", OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "swc/java/com/twittew/mw/api:api-base", òωó
+        "swc/scawa/com/twittew/suggests/contwowwew_data", o.O
+        "swc/thwift/com/twittew/daw/pewsonaw_data:pewsonaw_data-java", (U ᵕ U❁)
+        "swc/thwift/com/twittew/timewinesewvice/sewvew/suggests/wogging:thwift-scawa", (⑅˘꒳˘)
     ],
 )

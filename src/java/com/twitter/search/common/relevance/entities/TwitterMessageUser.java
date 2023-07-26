@@ -1,231 +1,231 @@
-package com.twitter.search.common.relevance.entities;
+package com.twittew.seawch.common.wewevance.entities;
 
-import java.util.Optional;
-import javax.annotation.Nonnull;
+impowt java.utiw.optionaw;
+i-impowt javax.annotation.nonnuww;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.lucene.analysis.TokenStream;
+i-impowt owg.apache.commons.wang3.buiwdew.equawsbuiwdew;
+i-impowt owg.apache.commons.wang3.buiwdew.hashcodebuiwdew;
+i-impowt owg.apache.wucene.anawysis.tokenstweam;
 
-import com.twitter.search.common.util.text.TokenizerHelper;
+i-impowt com.twittew.seawch.common.utiw.text.tokenizewhewpew;
 
-// Represents from-user, to-user, mentions and audioSpace admins in TwitterMessage.
-public final class TwitterMessageUser {
+// w-wepwesents fwom-usew, (✿oωo) t-to-usew, mentions and audiospace admins in twittewmessage. ^^
+pubwic finaw cwass t-twittewmessageusew {
 
-  @Nonnull private final Optional<String> screenName;  // a.k.a. user handle or username
-  @Nonnull private final Optional<String> displayName;
+  @nonnuww pwivate finaw optionaw<stwing> s-scweenname;  // a.k.a. usew h-handwe ow usewname
+  @nonnuww pwivate finaw optionaw<stwing> dispwayname;
 
-  @Nonnull private Optional<TokenStream> tokenizedScreenName;
+  @nonnuww pwivate optionaw<tokenstweam> t-tokenizedscweenname;
 
-  @Nonnull private final Optional<Long> id; // twitter ID
+  @nonnuww pwivate finaw o-optionaw<wong> i-id; // twittew id
 
-  public static final class Builder {
-    @Nonnull private Optional<String> screenName = Optional.empty();
-    @Nonnull private Optional<String> displayName = Optional.empty();
-    @Nonnull private Optional<TokenStream> tokenizedScreenName = Optional.empty();
-    @Nonnull private Optional<Long> id = Optional.empty();
+  pubwic static finaw cwass buiwdew {
+    @nonnuww pwivate o-optionaw<stwing> scweenname = optionaw.empty();
+    @nonnuww pwivate optionaw<stwing> dispwayname = o-optionaw.empty();
+    @nonnuww pwivate optionaw<tokenstweam> t-tokenizedscweenname = o-optionaw.empty();
+    @nonnuww p-pwivate optionaw<wong> i-id = optionaw.empty();
 
-    public Builder() {
+    pubwic b-buiwdew() {
     }
 
     /**
-     * Initialized Builder based on an existing TwitterMessageUser
+     * initiawized buiwdew based on a-an existing twittewmessageusew
      */
-    public Builder(TwitterMessageUser user) {
-      this.screenName = user.screenName;
-      this.displayName = user.displayName;
-      this.tokenizedScreenName = user.tokenizedScreenName;
-      this.id = user.id;
+    pubwic buiwdew(twittewmessageusew usew) {
+      this.scweenname = usew.scweenname;
+      t-this.dispwayname = usew.dispwayname;
+      this.tokenizedscweenname = u-usew.tokenizedscweenname;
+      t-this.id = u-usew.id;
     }
 
     /**
-     * Initialized Builder screen name (handle/the name following the "@") and do tokenization
-     * for it.
+     * initiawized buiwdew scween nyame (handwe/the name fowwowing the "@") a-and do tokenization
+     * f-fow it. ^•ﻌ•^
      */
-    public Builder withScreenName(Optional<String> newScreenName) {
-      this.screenName = newScreenName;
-      if (newScreenName.isPresent()) {
-        this.tokenizedScreenName = Optional.of(
-            TokenizerHelper.getNormalizedCamelcaseTokenStream(newScreenName.get()));
+    pubwic buiwdew w-withscweenname(optionaw<stwing> n-nyewscweenname) {
+      this.scweenname = n-nyewscweenname;
+      if (newscweenname.ispwesent()) {
+        this.tokenizedscweenname = o-optionaw.of(
+            tokenizewhewpew.getnowmawizedcamewcasetokenstweam(newscweenname.get()));
       }
-      return this;
+      wetuwn t-this;
     }
 
     /**
-     * Initialized Builder display name
+     * initiawized b-buiwdew dispway nyame
      */
-    public Builder withDisplayName(Optional<String> newDisplayName) {
-      this.displayName = newDisplayName;
-      return this;
+    p-pubwic b-buiwdew withdispwayname(optionaw<stwing> nyewdispwayname) {
+      this.dispwayname = nyewdispwayname;
+      wetuwn this;
     }
 
-    public Builder withId(Optional<Long> newId) {
-      this.id = newId;
-      return this;
+    pubwic buiwdew w-withid(optionaw<wong> n-nyewid) {
+      this.id = n-nyewid;
+      w-wetuwn this;
     }
 
-    public TwitterMessageUser build() {
-      return new TwitterMessageUser(
-          screenName, displayName, tokenizedScreenName, id);
+    p-pubwic twittewmessageusew buiwd() {
+      wetuwn nyew t-twittewmessageusew(
+          scweenname, XD dispwayname, :3 tokenizedscweenname, (ꈍᴗꈍ) id);
     }
   }
 
-  /** Creates a TwitterMessageUser instance with the given screen name. */
-  public static TwitterMessageUser createWithScreenName(@Nonnull String screenName) {
-    Preconditions.checkNotNull(screenName, "Don't set a null screen name");
-    return new Builder()
-        .withScreenName(Optional.of(screenName))
-        .build();
+  /** cweates a twittewmessageusew i-instance with the given scween nyame. :3 */
+  p-pubwic s-static twittewmessageusew c-cweatewithscweenname(@nonnuww stwing s-scweenname) {
+    p-pweconditions.checknotnuww(scweenname, (U ﹏ U) "don't s-set a nyuww scween n-nyame");
+    wetuwn nyew buiwdew()
+        .withscweenname(optionaw.of(scweenname))
+        .buiwd();
   }
 
-  /** Creates a TwitterMessageUser instance with the given display name. */
-  public static TwitterMessageUser createWithDisplayName(@Nonnull String displayName) {
-    Preconditions.checkNotNull(displayName, "Don't set a null display name");
-    return new Builder()
-        .withDisplayName(Optional.of(displayName))
-        .build();
+  /** cweates a twittewmessageusew i-instance with t-the given dispway n-nyame. UwU */
+  pubwic s-static twittewmessageusew cweatewithdispwayname(@nonnuww s-stwing dispwayname) {
+    pweconditions.checknotnuww(dispwayname, 😳😳😳 "don't set a nuww d-dispway nyame");
+    wetuwn new buiwdew()
+        .withdispwayname(optionaw.of(dispwayname))
+        .buiwd();
   }
 
-  /** Creates a TwitterMessageUser instance with the given ID. */
-  public static TwitterMessageUser createWithId(long id) {
-    Preconditions.checkArgument(id >= 0, "Don't sent a negative user ID");
-    return new Builder()
-        .withId(Optional.of(id))
-        .build();
+  /** cweates a twittewmessageusew instance w-with the given id. XD */
+  pubwic static twittewmessageusew cweatewithid(wong i-id) {
+    p-pweconditions.checkawgument(id >= 0, o.O "don't s-sent a nyegative usew id");
+    w-wetuwn nyew buiwdew()
+        .withid(optionaw.of(id))
+        .buiwd();
   }
 
-  /** Creates a TwitterMessageUser instance with the given parameters. */
-  public static TwitterMessageUser createWithNamesAndId(
-      @Nonnull String screenName,
-      @Nonnull String displayName,
-      long id) {
-    Preconditions.checkNotNull(screenName, "Use another method instead of passing null name");
-    Preconditions.checkNotNull(displayName, "Use another method instead of passing null name");
-    Preconditions.checkArgument(id >= 0, "Use another method instead of passing negative ID");
-    return new Builder()
-        .withScreenName(Optional.of(screenName))
-        .withDisplayName(Optional.of(displayName))
-        .withId(Optional.of(id))
-        .build();
+  /** cweates a t-twittewmessageusew i-instance with the given pawametews. (⑅˘꒳˘) */
+  pubwic static twittewmessageusew cweatewithnamesandid(
+      @nonnuww stwing scweenname, 😳😳😳
+      @nonnuww s-stwing dispwayname, nyaa~~
+      wong id) {
+    pweconditions.checknotnuww(scweenname, rawr "use a-anothew method instead o-of passing nyuww n-nyame");
+    pweconditions.checknotnuww(dispwayname, -.- "use anothew method instead o-of passing nyuww n-nyame");
+    pweconditions.checkawgument(id >= 0, "use a-anothew m-method instead of passing nyegative id");
+    wetuwn nyew buiwdew()
+        .withscweenname(optionaw.of(scweenname))
+        .withdispwayname(optionaw.of(dispwayname))
+        .withid(optionaw.of(id))
+        .buiwd();
   }
 
-  /** Creates a TwitterMessageUser instance with the given parameters. */
-  public static TwitterMessageUser createWithNames(
-      @Nonnull String screenName,
-      @Nonnull String displayName) {
-    Preconditions.checkNotNull(screenName, "Use another method instead of passing null name");
-    Preconditions.checkNotNull(displayName, "Use another method instead of passing null name");
-    return new Builder()
-        .withScreenName(Optional.of(screenName))
-        .withDisplayName(Optional.of(displayName))
-        .build();
+  /** cweates a-a twittewmessageusew i-instance with t-the given pawametews. (✿oωo) */
+  pubwic static twittewmessageusew c-cweatewithnames(
+      @nonnuww s-stwing scweenname, /(^•ω•^)
+      @nonnuww stwing dispwayname) {
+    p-pweconditions.checknotnuww(scweenname, 🥺 "use anothew method instead of passing nyuww nyame");
+    pweconditions.checknotnuww(dispwayname, ʘwʘ "use a-anothew m-method instead of passing nyuww nyame");
+    wetuwn n-nyew buiwdew()
+        .withscweenname(optionaw.of(scweenname))
+        .withdispwayname(optionaw.of(dispwayname))
+        .buiwd();
   }
 
-  /** Creates a TwitterMessageUser instance with the given parameters. */
-  public static TwitterMessageUser createWithOptionalNamesAndId(
-      @Nonnull Optional<String> optScreenName,
-      @Nonnull Optional<String> optDisplayName,
-      @Nonnull Optional<Long> optId) {
-    Preconditions.checkNotNull(optScreenName, "Pass Optional.absent() instead of null");
-    Preconditions.checkNotNull(optDisplayName, "Pass Optional.absent() instead of null");
-    Preconditions.checkNotNull(optId, "Pass Optional.absent() instead of null");
-    return new Builder()
-        .withScreenName(optScreenName)
-        .withDisplayName(optDisplayName)
-        .withId(optId)
-        .build();
+  /** c-cweates a twittewmessageusew instance with the given pawametews. UwU */
+  p-pubwic static twittewmessageusew cweatewithoptionawnamesandid(
+      @nonnuww optionaw<stwing> optscweenname, XD
+      @nonnuww o-optionaw<stwing> optdispwayname,
+      @nonnuww optionaw<wong> o-optid) {
+    p-pweconditions.checknotnuww(optscweenname, (✿oωo) "pass optionaw.absent() instead of nyuww");
+    pweconditions.checknotnuww(optdispwayname, :3 "pass o-optionaw.absent() i-instead of nyuww");
+    pweconditions.checknotnuww(optid, (///ˬ///✿) "pass optionaw.absent() instead of nyuww");
+    w-wetuwn nyew buiwdew()
+        .withscweenname(optscweenname)
+        .withdispwayname(optdispwayname)
+        .withid(optid)
+        .buiwd();
   }
 
-  private TwitterMessageUser(
-      @Nonnull Optional<String> screenName,
-      @Nonnull Optional<String> displayName,
-      @Nonnull Optional<TokenStream> tokenizedScreenName,
-      @Nonnull Optional<Long> id) {
-    this.screenName = screenName;
-    this.displayName = displayName;
-    this.tokenizedScreenName = tokenizedScreenName;
-    this.id = id;
+  p-pwivate twittewmessageusew(
+      @nonnuww optionaw<stwing> scweenname, nyaa~~
+      @nonnuww optionaw<stwing> d-dispwayname, >w<
+      @nonnuww optionaw<tokenstweam> t-tokenizedscweenname, -.-
+      @nonnuww o-optionaw<wong> id) {
+    this.scweenname = s-scweenname;
+    this.dispwayname = d-dispwayname;
+    this.tokenizedscweenname = t-tokenizedscweenname;
+    t-this.id = id;
   }
 
-  /** Creates a copy of this TwitterMessageUser instance, with the given screen name. */
-  public TwitterMessageUser copyWithScreenName(@Nonnull String newScreenName) {
-    Preconditions.checkNotNull(newScreenName, "Don't set a null screen name");
-    return new Builder(this)
-        .withScreenName(Optional.of(newScreenName))
-        .build();
+  /** cweates a-a copy of this t-twittewmessageusew instance, (✿oωo) with the given scween n-nyame. (˘ω˘) */
+  p-pubwic twittewmessageusew c-copywithscweenname(@nonnuww stwing nyewscweenname) {
+    pweconditions.checknotnuww(newscweenname, rawr "don't s-set a nyuww scween nyame");
+    w-wetuwn nyew b-buiwdew(this)
+        .withscweenname(optionaw.of(newscweenname))
+        .buiwd();
   }
 
-  /** Creates a copy of this TwitterMessageUser instance, with the given display name. */
-  public TwitterMessageUser copyWithDisplayName(@Nonnull String newDisplayName) {
-    Preconditions.checkNotNull(newDisplayName, "Don't set a null display name");
-    return new Builder(this)
-        .withDisplayName(Optional.of(newDisplayName))
-        .build();
+  /** cweates a copy of this twittewmessageusew instance, OwO w-with the given d-dispway nyame. ^•ﻌ•^ */
+  p-pubwic twittewmessageusew c-copywithdispwayname(@nonnuww stwing nyewdispwayname) {
+    p-pweconditions.checknotnuww(newdispwayname, UwU "don't set a nyuww dispway nyame");
+    wetuwn nyew buiwdew(this)
+        .withdispwayname(optionaw.of(newdispwayname))
+        .buiwd();
   }
 
-  /** Creates a copy of this TwitterMessageUser instance, with the given ID. */
-  public TwitterMessageUser copyWithId(long newId) {
-    Preconditions.checkArgument(newId >= 0, "Don't set a negative user ID");
-    return new Builder(this)
-        .withId(Optional.of(newId))
-        .build();
+  /** cweates a copy of this t-twittewmessageusew instance, (˘ω˘) w-with the given id. (///ˬ///✿) */
+  pubwic t-twittewmessageusew copywithid(wong n-nyewid) {
+    pweconditions.checkawgument(newid >= 0, σωσ "don't s-set a nyegative u-usew id");
+    wetuwn n-nyew buiwdew(this)
+        .withid(optionaw.of(newid))
+        .buiwd();
   }
 
-  public Optional<String> getScreenName() {
-    return screenName;
+  p-pubwic optionaw<stwing> g-getscweenname() {
+    wetuwn scweenname;
   }
 
-  public Optional<String> getDisplayName() {
-    return displayName;
+  pubwic optionaw<stwing> getdispwayname() {
+    wetuwn dispwayname;
   }
 
-  public Optional<TokenStream> getTokenizedScreenName() {
-    return tokenizedScreenName;
+  p-pubwic optionaw<tokenstweam> g-gettokenizedscweenname() {
+    w-wetuwn tokenizedscweenname;
   }
 
-  public Optional<Long> getId() {
-    return id;
+  pubwic optionaw<wong> g-getid() {
+    wetuwn id;
   }
 
-  @Override
-  public String toString() {
-    return "[" + screenName + ", " + displayName + ", " + id + "]";
+  @ovewwide
+  pubwic s-stwing tostwing() {
+    w-wetuwn "[" + scweenname + ", /(^•ω•^) " + d-dispwayname + ", 😳 " + id + "]";
   }
 
   /**
-   * Compares this TwitterMessageUser instance to the given object.
+   * compawes t-this twittewmessageusew i-instance to the given object. 😳
    *
-   * @deprecated deprecated.
+   * @depwecated d-depwecated. (⑅˘꒳˘)
    */
-  @Deprecated
-  @Override
-  public boolean equals(Object o) {
-    if (o == null) {
-      return false;
+  @depwecated
+  @ovewwide
+  p-pubwic boowean equaws(object o) {
+    if (o == nyuww) {
+      wetuwn f-fawse;
     }
-    if (o == this) {
-      return true;
+    i-if (o == this) {
+      w-wetuwn twue;
     }
-    if (o.getClass() != getClass()) {
-      return false;
+    if (o.getcwass() != g-getcwass()) {
+      w-wetuwn fawse;
     }
-    TwitterMessageUser other = (TwitterMessageUser) o;
-    return new EqualsBuilder()
-        .append(screenName, other.screenName)
-        .append(displayName, other.displayName)
-        .isEquals();
+    twittewmessageusew othew = (twittewmessageusew) o;
+    w-wetuwn new e-equawsbuiwdew()
+        .append(scweenname, 😳😳😳 othew.scweenname)
+        .append(dispwayname, 😳 o-othew.dispwayname)
+        .isequaws();
   }
 
   /**
-   * Returns a hash code for this TwitterMessageUser instance.
+   * w-wetuwns a hash code fow this t-twittewmessageusew instance. XD
    *
-   * @deprecated deprecated.
+   * @depwecated depwecated. mya
    */
-  @Deprecated
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+  @depwecated
+  @ovewwide
+  p-pubwic int hashcode() {
+    wetuwn h-hashcodebuiwdew.wefwectionhashcode(this);
   }
 }

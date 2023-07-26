@@ -1,274 +1,274 @@
-#include "internal/interpolate.h"
-#include "internal/error.h"
-#include <twml/optim.h>
+#incwude "intewnaw/intewpowate.h"
+#incwude "intewnaw/ewwow.h"
+#incwude <twmw/optim.h>
 
-namespace twml {
-  template<typename T>
-  void mdlInfer(Tensor &output_keys, Tensor &output_vals,
-          const Tensor &input_keys, const Tensor &input_vals,
-          const Tensor &bin_ids,
-          const Tensor &bin_vals,
-          const Tensor &feature_offsets,
-          bool return_bin_indices) {
-    auto okeysData = output_keys.getData<int64_t>();
-    auto ovalsData = output_vals.getData<T>();
-    uint64_t okeysStride   = output_keys.getStride(0);
-    uint64_t ovaluesStride = output_vals.getStride(0);
+nyamespace twmw {
+  tempwate<typename t-t>
+  v-void mdwinfew(tensow &output_keys, >_< t-tensow &output_vaws, -.-
+          c-const tensow &input_keys, UwU c-const t-tensow &input_vaws, :3
+          c-const tensow &bin_ids, σωσ
+          c-const tensow &bin_vaws, >w<
+          const tensow &featuwe_offsets, (ˆ ﻌ ˆ)♡
+          boow wetuwn_bin_indices) {
+    auto o-okeysdata = output_keys.getdata<int64_t>();
+    auto ovawsdata = output_vaws.getdata<t>();
+    u-uint64_t okeysstwide   = output_keys.getstwide(0);
+    u-uint64_t ovawuesstwide = output_vaws.getstwide(0);
 
-    auto ikeysData = input_keys.getData<int64_t>();
-    auto ivalsData = input_vals.getData<T>();
-    uint64_t ikeysStride   = input_keys.getStride(0);
-    uint64_t ivaluesStride = input_vals.getStride(0);
+    auto ikeysdata = i-input_keys.getdata<int64_t>();
+    auto ivawsdata = i-input_vaws.getdata<t>();
+    u-uint64_t ikeysstwide   = input_keys.getstwide(0);
+    uint64_t ivawuesstwide = input_vaws.getstwide(0);
 
-    auto xsData = bin_vals.getData<T>();
-    auto ysData = bin_ids.getData<int64_t>();
-    uint64_t xsStride = bin_vals.getStride(0);
-    uint64_t ysStride = bin_ids.getStride(0);
+    a-auto xsdata = bin_vaws.getdata<t>();
+    auto ysdata = bin_ids.getdata<int64_t>();
+    uint64_t xsstwide = b-bin_vaws.getstwide(0);
+    uint64_t ysstwide = b-bin_ids.getstwide(0);
 
-    auto offsetData = feature_offsets.getData<int64_t>();
+    a-auto offsetdata = f-featuwe_offsets.getdata<int64_t>();
 
-    uint64_t size = input_keys.getDim(0);
-    uint64_t total_bins = bin_ids.getNumElements();
-    uint64_t fsize = feature_offsets.getNumElements();
+    u-uint64_t size = input_keys.getdim(0);
+    uint64_t t-totaw_bins = bin_ids.getnumewements();
+    uint64_t fsize = featuwe_offsets.getnumewements();
 
-    for (uint64_t i = 0; i < size; i++) {
-      int64_t ikey = ikeysData[i * ikeysStride] - TWML_INDEX_BASE;
-      T val = ivalsData[i * ivaluesStride];
+    f-fow (uint64_t i = 0; i < size; i++) {
+      int64_t ikey = ikeysdata[i * ikeysstwide] - twmw_index_base;
+      t-t vaw = ivawsdata[i * ivawuesstwide];
       if (ikey == -1) {
-        ovalsData[i * ovaluesStride] = val;
+        o-ovawsdata[i * o-ovawuesstwide] = v-vaw;
         continue;
       }
 
-      // Perform interpolation
-      uint64_t offset = offsetData[ikey];
-      uint64_t next_offset = (ikey == (int64_t)(fsize - 1)) ? total_bins : offsetData[ikey + 1];
-      uint64_t mainSize = next_offset - offset;
+      // pewfowm intewpowation
+      uint64_t o-offset = offsetdata[ikey];
+      u-uint64_t next_offset = (ikey == (int64_t)(fsize - 1)) ? totaw_bins : o-offsetdata[ikey + 1];
+      u-uint64_t mainsize = nyext_offset - o-offset;
 
-      const T *lxsData = xsData + offset;
-      const int64_t *lysData = ysData + offset;
-      int64_t okey = interpolation<T, int64_t>(lxsData, xsStride,
-                                 lysData, ysStride,
-                                 val, mainSize, NEAREST, 0,
-                                 return_bin_indices);
-      okeysData[i * okeysStride] = okey + TWML_INDEX_BASE;
-      ovalsData[i * ovaluesStride] = 1;
+      const t-t *wxsdata = xsdata + offset;
+      const int64_t *wysdata = y-ysdata + offset;
+      i-int64_t okey = intewpowation<t, ʘwʘ i-int64_t>(wxsdata, :3 x-xsstwide, (˘ω˘)
+                                 wysdata, 😳😳😳 ysstwide,
+                                 vaw, rawr x3 mainsize, nyeawest, (✿oωo) 0,
+                                 wetuwn_bin_indices);
+      okeysdata[i * okeysstwide] = o-okey + t-twmw_index_base;
+      ovawsdata[i * o-ovawuesstwide] = 1;
     }
   }
 
-  void mdlInfer(Tensor &output_keys, Tensor &output_vals,
-          const Tensor &input_keys, const Tensor &input_vals,
-          const Tensor &bin_ids,
-          const Tensor &bin_vals,
-          const Tensor &feature_offsets,
-          bool return_bin_indices) {
-    if (input_keys.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "input_keys must be a Long Tensor");
+  v-void mdwinfew(tensow &output_keys, (ˆ ﻌ ˆ)♡ t-tensow &output_vaws, :3
+          const tensow &input_keys, (U ᵕ U❁) const tensow &input_vaws, ^^;;
+          const tensow &bin_ids,
+          c-const tensow &bin_vaws, mya
+          const tensow &featuwe_offsets, 😳😳😳
+          boow wetuwn_bin_indices) {
+    if (input_keys.gettype() != t-twmw_type_int64) {
+      thwow twmw::ewwow(twmw_eww_type, OwO "input_keys m-must be a wong t-tensow");
     }
 
-    if (output_keys.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "output_keys must be a Long Tensor");
+    i-if (output_keys.gettype() != twmw_type_int64) {
+      t-thwow t-twmw::ewwow(twmw_eww_type, rawr "output_keys m-must b-be a wong tensow");
     }
 
-    if (bin_ids.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "bin_ids must be a Long Tensor");
+    if (bin_ids.gettype() != twmw_type_int64) {
+      t-thwow twmw::ewwow(twmw_eww_type, XD "bin_ids m-must b-be a wong tensow");
     }
 
-    if (feature_offsets.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "bin_ids must be a Long Tensor");
+    i-if (featuwe_offsets.gettype() != t-twmw_type_int64) {
+      thwow twmw::ewwow(twmw_eww_type, (U ﹏ U) "bin_ids must be a wong t-tensow");
     }
 
-    if (input_vals.getType() != bin_vals.getType()) {
-      throw twml::Error(TWML_ERR_TYPE,
-                "Data type of input_vals does not match type of bin_vals");
+    if (input_vaws.gettype() != bin_vaws.gettype()) {
+      thwow twmw::ewwow(twmw_eww_type, (˘ω˘)
+                "data type of input_vaws does nyot m-match type of bin_vaws");
     }
 
-    if (bin_vals.getNumDims() != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "bin_vals must be 1 Dimensional");
+    if (bin_vaws.getnumdims() != 1) {
+      thwow twmw::ewwow(twmw_eww_size, UwU
+                "bin_vaws m-must b-be 1 dimensionaw");
     }
 
-    if (bin_ids.getNumDims() != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "bin_ids must be 1 Dimensional");
+    i-if (bin_ids.getnumdims() != 1) {
+      thwow twmw::ewwow(twmw_eww_size,
+                "bin_ids m-must be 1 dimensionaw");
     }
 
-    if (bin_vals.getNumElements() != bin_ids.getNumElements()) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "Dimensions of bin_vals and bin_ids do not match");
+    if (bin_vaws.getnumewements() != b-bin_ids.getnumewements()) {
+      t-thwow twmw::ewwow(twmw_eww_size, >_<
+                "dimensions of bin_vaws and bin_ids do nyot match");
     }
 
-    if (feature_offsets.getStride(0) != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "feature_offsets must be contiguous");
+    if (featuwe_offsets.getstwide(0) != 1) {
+      thwow twmw::ewwow(twmw_eww_size, σωσ
+                "featuwe_offsets m-must be contiguous");
     }
 
-    switch (input_vals.getType()) {
-    case TWML_TYPE_FLOAT:
-      twml::mdlInfer<float>(output_keys, output_vals,
-                  input_keys, input_vals,
-                  bin_ids, bin_vals, feature_offsets,
-                  return_bin_indices);
-      break;
-    case TWML_TYPE_DOUBLE:
-      twml::mdlInfer<double>(output_keys, output_vals,
-                   input_keys, input_vals,
-                   bin_ids, bin_vals, feature_offsets,
-                   return_bin_indices);
-      break;
-    default:
-      throw twml::Error(TWML_ERR_TYPE,
-        "Unsupported datatype for mdlInfer");
+    s-switch (input_vaws.gettype()) {
+    case twmw_type_fwoat:
+      t-twmw::mdwinfew<fwoat>(output_keys, 🥺 o-output_vaws, 🥺
+                  input_keys, ʘwʘ input_vaws, :3
+                  b-bin_ids, (U ﹏ U) b-bin_vaws, (U ﹏ U) featuwe_offsets, ʘwʘ
+                  wetuwn_bin_indices);
+      b-bweak;
+    c-case twmw_type_doubwe:
+      twmw::mdwinfew<doubwe>(output_keys, >w< output_vaws,
+                   input_keys, rawr x3 input_vaws, OwO
+                   bin_ids, ^•ﻌ•^ b-bin_vaws, >_< f-featuwe_offsets, OwO
+                   w-wetuwn_bin_indices);
+      bweak;
+    defauwt:
+      t-thwow t-twmw::ewwow(twmw_eww_type, >_<
+        "unsuppowted datatype fow mdwinfew");
     }
   }
 
-  const int DEFAULT_INTERPOLATION_LOWEST = 0;
+  c-const int defauwt_intewpowation_wowest = 0;
   /**
-   * @param output tensor to hold linear or nearest interpolation output.
-   *    This function does not allocate space.
-   *    The output tensor must have space allcoated.
-   * @param input input tensor; size must match output.
-   *    input is assumed to have size [batch_size, number_of_labels].
-   * @param xs the bins.
-   * @param ys the values for the bins.
-   * @param mode: linear or nearest InterpolationMode.
-   *    linear is used for isotonic calibration.
-   *    nearest is used for MDL calibration and MDL inference.
+   * @pawam output tensow to howd wineaw ow nyeawest intewpowation o-output.
+   *    t-this function does nyot awwocate space. (ꈍᴗꈍ)
+   *    t-the o-output tensow must have space awwcoated. >w<
+   * @pawam input input tensow; size must m-match output. (U ﹏ U)
+   *    input is assumed to have size [batch_size, ^^ nyumbew_of_wabews]. (U ﹏ U)
+   * @pawam x-xs the bins. :3
+   * @pawam ys the vawues fow the b-bins. (✿oωo)
+   * @pawam m-mode: wineaw ow nyeawest intewpowationmode. XD
+   *    wineaw is used fow isotonic c-cawibwation. >w<
+   *    n-nyeawest is used fow mdw cawibwation and mdw infewence.
    *
-   * @return Returns nothing. Output is stored into the output tensor.
+   * @wetuwn w-wetuwns nyothing. òωó output is s-stowed into the output tensow. (ꈍᴗꈍ)
    *
-   * This is used by IsotonicCalibration inference.
+   * this is used by isotoniccawibwation i-infewence. rawr x3
    */
-  template <typename T>
-  void interpolation(
-    Tensor output,
-    const Tensor input,
-    const Tensor xs,
-    const Tensor ys,
-    const InterpolationMode mode) {
-    // Sanity check: input and output should have two dims.
-    if (input.getNumDims() != 2 || output.getNumDims() != 2) {
-      throw twml::Error(TWML_ERR_TYPE,
-                "input and output should have 2 dimensions.");
+  tempwate <typename t-t>
+  void intewpowation(
+    t-tensow output, rawr x3
+    const tensow i-input, σωσ
+    const tensow xs, (ꈍᴗꈍ)
+    c-const tensow ys, rawr
+    c-const intewpowationmode m-mode) {
+    // sanity c-check: input a-and output shouwd have two dims. ^^;;
+    if (input.getnumdims() != 2 || o-output.getnumdims() != 2) {
+      t-thwow twmw::ewwow(twmw_eww_type, rawr x3
+                "input a-and output shouwd have 2 dimensions.");
     }
 
-    // Sanity check: input and output size should match.
-    for (int i = 0; i < input.getNumDims(); i++) {
-      if (input.getDim(i) != output.getDim(i))  {
-        throw twml::Error(TWML_ERR_TYPE,
-                  "input and output mismatch in size.");
+    // s-sanity check: input and output s-size shouwd match. (ˆ ﻌ ˆ)♡
+    f-fow (int i = 0; i < input.getnumdims(); i++) {
+      if (input.getdim(i) != output.getdim(i))  {
+        t-thwow twmw::ewwow(twmw_eww_type, σωσ
+                  "input a-and o-output mismatch i-in size.");
       }
     }
 
-    // Sanity check: number of labels in input should match
-    // number of labels in xs / ys.
-    if (input.getDim(1) != xs.getDim(0)
-      || input.getDim(1) != ys.getDim(0)) {
-      throw twml::Error(TWML_ERR_TYPE,
-                "input, xs, ys should have the same number of labels.");
+    // sanity check: n-nyumbew of wabews in input shouwd match
+    // nyumbew of wabews in xs / ys. (U ﹏ U)
+    if (input.getdim(1) != x-xs.getdim(0)
+      || input.getdim(1) != ys.getdim(0)) {
+      t-thwow twmw::ewwow(twmw_eww_type, >w<
+                "input, σωσ xs, nyaa~~ ys shouwd have t-the same nyumbew of wabews.");
     }
 
-    const uint64_t inputStride0 = input.getStride(0);
-    const uint64_t inputStride1 = input.getStride(1);
-    const uint64_t outputStride0 = output.getStride(0);
-    const uint64_t outputStride1 = output.getStride(1);
-    const uint64_t xsStride0 = xs.getStride(0);
-    const uint64_t xsStride1 = xs.getStride(1);
-    const uint64_t ysStride0 = ys.getStride(0);
-    const uint64_t ysStride1 = ys.getStride(1);
-    const uint64_t mainSize = xs.getDim(1);
+    c-const uint64_t inputstwide0 = i-input.getstwide(0);
+    c-const uint64_t i-inputstwide1 = i-input.getstwide(1);
+    c-const uint64_t outputstwide0 = output.getstwide(0);
+    const uint64_t outputstwide1 = output.getstwide(1);
+    const u-uint64_t xsstwide0 = x-xs.getstwide(0);
+    c-const uint64_t xsstwide1 = x-xs.getstwide(1);
+    const uint64_t ysstwide0 = ys.getstwide(0);
+    c-const u-uint64_t ysstwide1 = ys.getstwide(1);
+    c-const uint64_t mainsize = xs.getdim(1);
 
-    // for each value in the input matrix, compute output value by
-    // calling interpolation.
-    auto inputData = input.getData<T>();
-    auto outputData = output.getData<T>();
-    auto xsData = xs.getData<T>();
-    auto ysData = ys.getData<T>();
+    // f-fow each v-vawue in the input matwix, 🥺 compute o-output vawue b-by
+    // cawwing intewpowation. rawr x3
+    auto inputdata = input.getdata<t>();
+    auto outputdata = o-output.getdata<t>();
+    a-auto x-xsdata = xs.getdata<t>();
+    auto y-ysdata = ys.getdata<t>();
 
-    for (uint64_t i = 0; i < input.getDim(0); i++) {
-      for (uint64_t j = 0; j < input.getDim(1); j++) {
-        const T val = inputData[i * inputStride0 + j * inputStride1];
-        const T *lxsData = xsData + j * xsStride0;
-        const T *lysData = ysData + j * ysStride0;
-        const T res = interpolation(
-          lxsData, xsStride1,
-          lysData, ysStride1,
-          val,
-          mainSize,
-          mode,
-          DEFAULT_INTERPOLATION_LOWEST);
-        outputData[i * outputStride0 + j * outputStride1] = res;
+    f-fow (uint64_t i = 0; i < input.getdim(0); i-i++) {
+      f-fow (uint64_t j = 0; j < i-input.getdim(1); j-j++) {
+        const t vaw = i-inputdata[i * inputstwide0 + j * inputstwide1];
+        c-const t *wxsdata = xsdata + j-j * xsstwide0;
+        c-const t *wysdata = ysdata + j-j * ysstwide0;
+        const t wes = intewpowation(
+          wxsdata, σωσ xsstwide1, (///ˬ///✿)
+          w-wysdata, (U ﹏ U) ysstwide1, ^^;;
+          v-vaw, 🥺
+          m-mainsize, òωó
+          mode, XD
+          defauwt_intewpowation_wowest);
+        outputdata[i * o-outputstwide0 + j * outputstwide1] = wes;
       }
     }
   }
 
-  void linearInterpolation(
-    Tensor output,
-    const Tensor input,
-    const Tensor xs,
-    const Tensor ys) {
-    switch (input.getType()) {
-    case TWML_TYPE_FLOAT:
-      twml::interpolation<float>(output, input, xs, ys, LINEAR);
-      break;
-    case TWML_TYPE_DOUBLE:
-      twml::interpolation<double>(output, input, xs, ys, LINEAR);
-      break;
-    default:
-      throw twml::Error(TWML_ERR_TYPE,
-        "Unsupported datatype for linearInterpolation.");
+  v-void wineawintewpowation(
+    t-tensow output, :3
+    const t-tensow input, (U ﹏ U)
+    const tensow x-xs, >w<
+    const tensow y-ys) {
+    switch (input.gettype()) {
+    case twmw_type_fwoat:
+      t-twmw::intewpowation<fwoat>(output, /(^•ω•^) input, (⑅˘꒳˘) xs, ys, wineaw);
+      b-bweak;
+    c-case twmw_type_doubwe:
+      twmw::intewpowation<doubwe>(output, ʘwʘ i-input, rawr x3 xs, ys, wineaw);
+      b-bweak;
+    d-defauwt:
+      thwow t-twmw::ewwow(twmw_eww_type, (˘ω˘)
+        "unsuppowted datatype fow wineawintewpowation.");
     }
   }
 
-  void nearestInterpolation(
-    Tensor output,
-    const Tensor input,
-    const Tensor xs,
-    const Tensor ys) {
-    switch (input.getType()) {
-    case TWML_TYPE_FLOAT:
-      twml::interpolation<float>(output, input, xs, ys, NEAREST);
-      break;
-    case TWML_TYPE_DOUBLE:
-      twml::interpolation<double>(output, input, xs, ys, NEAREST);
-      break;
-    default:
-      throw twml::Error(TWML_ERR_TYPE,
-        "Unsupported datatype for nearestInterpolation.");
+  void nyeawestintewpowation(
+    tensow output, o.O
+    const tensow input, 😳
+    const tensow xs, o.O
+    const tensow ys) {
+    switch (input.gettype()) {
+    case twmw_type_fwoat:
+      twmw::intewpowation<fwoat>(output, ^^;; i-input, ( ͡o ω ͡o ) x-xs, ys, nyeawest);
+      bweak;
+    case twmw_type_doubwe:
+      t-twmw::intewpowation<doubwe>(output, ^^;; i-input, ^^;; xs, y-ys, nyeawest);
+      bweak;
+    d-defauwt:
+      thwow twmw::ewwow(twmw_eww_type, XD
+        "unsuppowted d-datatype f-fow nyeawestintewpowation.");
     }
   }
-}  // namespace twml
+}  // nyamespace twmw
 
-twml_err twml_optim_mdl_infer(twml_tensor output_keys,
-                twml_tensor output_vals,
-                const twml_tensor input_keys,
-                const twml_tensor input_vals,
-                const twml_tensor bin_ids,
-                const twml_tensor bin_vals,
-                const twml_tensor feature_offsets,
-                bool return_bin_indices) {
-  HANDLE_EXCEPTIONS(
-    using namespace twml;
-    mdlInfer(*getTensor(output_keys),
-         *getTensor(output_vals),
-         *getConstTensor(input_keys),
-         *getConstTensor(input_vals),
-         *getConstTensor(bin_ids),
-         *getConstTensor(bin_vals),
-         *getConstTensor(feature_offsets),
-          return_bin_indices););
-  return TWML_ERR_NONE;
+t-twmw_eww twmw_optim_mdw_infew(twmw_tensow output_keys, 🥺
+                t-twmw_tensow o-output_vaws, (///ˬ///✿)
+                const twmw_tensow input_keys, (U ᵕ U❁)
+                c-const t-twmw_tensow i-input_vaws, ^^;;
+                c-const t-twmw_tensow bin_ids, ^^;;
+                c-const twmw_tensow b-bin_vaws, rawr
+                c-const twmw_tensow f-featuwe_offsets, (˘ω˘)
+                boow wetuwn_bin_indices) {
+  h-handwe_exceptions(
+    u-using n-nyamespace twmw;
+    mdwinfew(*gettensow(output_keys), 🥺
+         *gettensow(output_vaws), nyaa~~
+         *getconsttensow(input_keys), :3
+         *getconsttensow(input_vaws), /(^•ω•^)
+         *getconsttensow(bin_ids), ^•ﻌ•^
+         *getconsttensow(bin_vaws), UwU
+         *getconsttensow(featuwe_offsets), 😳😳😳
+          w-wetuwn_bin_indices););
+  wetuwn twmw_eww_none;
 }
 
-twml_err twml_optim_nearest_interpolation(
-                twml_tensor output,
-                const twml_tensor input,
-                const twml_tensor xs,
-                const twml_tensor ys) {
-  HANDLE_EXCEPTIONS(
-    using namespace twml;
-    nearestInterpolation(*getTensor(output),
-      *getConstTensor(input),
-      *getConstTensor(xs),
-      *getConstTensor(ys)););
-  return TWML_ERR_NONE;
+t-twmw_eww twmw_optim_neawest_intewpowation(
+                twmw_tensow o-output, OwO
+                c-const twmw_tensow i-input, ^•ﻌ•^
+                const t-twmw_tensow xs, (ꈍᴗꈍ)
+                const twmw_tensow y-ys) {
+  handwe_exceptions(
+    using nyamespace t-twmw;
+    nyeawestintewpowation(*gettensow(output), (⑅˘꒳˘)
+      *getconsttensow(input), (⑅˘꒳˘)
+      *getconsttensow(xs), (ˆ ﻌ ˆ)♡
+      *getconsttensow(ys)););
+  wetuwn twmw_eww_none;
 }

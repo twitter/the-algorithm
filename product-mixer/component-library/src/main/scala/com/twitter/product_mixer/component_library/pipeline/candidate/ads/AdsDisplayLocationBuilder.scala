@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.adsewvew.{thwiftscawa => a-ads}
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.quewy.ads.adsquewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait AdsDisplayLocationBuilder[-Query <: PipelineQuery with AdsQuery] {
+t-twait adsdispwaywocationbuiwdew[-quewy <: p-pipewinequewy with a-adsquewy] {
 
-  def apply(query: Query): ads.DisplayLocation
+  d-def appwy(quewy: quewy): ads.dispwaywocation
 }
 
-case class StaticAdsDisplayLocationBuilder(displayLocation: ads.DisplayLocation)
-    extends AdsDisplayLocationBuilder[PipelineQuery with AdsQuery] {
+case cwass staticadsdispwaywocationbuiwdew(dispwaywocation: ads.dispwaywocation)
+    extends adsdispwaywocationbuiwdew[pipewinequewy w-with adsquewy] {
 
-  def apply(query: PipelineQuery with AdsQuery): ads.DisplayLocation = displayLocation
+  def appwy(quewy: pipewinequewy w-with adsquewy): ads.dispwaywocation = d-dispwaywocation
 }

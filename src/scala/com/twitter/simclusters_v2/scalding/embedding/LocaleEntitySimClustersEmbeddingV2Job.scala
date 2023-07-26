@@ -1,248 +1,248 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.twittew.simcwustews_v2.scawding.embedding
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.recos.entities.thriftscala.{Entity, SemanticCoreEntity}
-import com.twitter.scalding.{DateRange, Days, Duration, Execution, RichDate, TypedPipe, UniqueID}
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common._
-import com.twitter.simclusters_v2.hdfs_sources.{AdhocKeyValSources, EntityEmbeddingsSources}
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ClusterId
-import com.twitter.simclusters_v2.scalding.embedding.common.{
-  EmbeddingUtil,
-  ExternalDataSources,
-  SimClustersEmbeddingBaseJob
+impowt com.twittew.bijection.{buffewabwe, i-injection}
+impowt c-com.twittew.wecos.entities.thwiftscawa.{entity, (U ﹏ U) s-semanticcoweentity}
+i-impowt com.twittew.scawding.{datewange, 😳😳😳 d-days, d-duwation, o.O execution, òωó w-wichdate, 😳😳😳 t-typedpipe, uniqueid}
+impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common._
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.{adhockeyvawsouwces, σωσ entityembeddingssouwces}
+impowt c-com.twittew.simcwustews_v2.scawding.common.matwix.{spawsematwix, (⑅˘꒳˘) spawsewowmatwix}
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw.cwustewid
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.{
+  embeddingutiw, (///ˬ///✿)
+  e-extewnawdatasouwces, 🥺
+  simcwustewsembeddingbasejob
 }
-import com.twitter.simclusters_v2.thriftscala.{
-  EmbeddingType,
-  InternalId,
-  InternalIdEmbedding,
-  InternalIdWithScore,
-  LocaleEntityId,
-  ModelVersion,
-  SimClustersEmbeddingId
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.{
+  e-embeddingtype, OwO
+  intewnawid, >w<
+  intewnawidembedding, 🥺
+  intewnawidwithscowe, nyaa~~
+  wocaweentityid, ^^
+  m-modewvewsion, >w<
+  simcwustewsembeddingid
 }
-import com.twitter.wtf.entity_real_graph.thriftscala.{Edge, FeatureName}
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, DataSources, ScheduledExecutionApp}
-import java.util.TimeZone
+impowt com.twittew.wtf.entity_weaw_gwaph.thwiftscawa.{edge, OwO featuwename}
+i-impowt com.twittew.wtf.scawding.jobs.common.{adhocexecutionapp, XD datasouwces, scheduwedexecutionapp}
+i-impowt java.utiw.timezone
 
 /**
- * Scheduled production job which generates topic embeddings per locale based on Entity Real Graph.
+ * s-scheduwed p-pwoduction job w-which genewates topic embeddings pew wocawe based o-on entity weaw gwaph. ^^;;
  *
- * V2 Uses the log transform of the ERG favScores and the SimCluster InterestedIn scores.
+ * v2 uses the wog twansfowm o-of the ewg favscowes and the simcwustew intewestedin scowes. 🥺
  *
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:locale_entity_simclusters_embedding_v2
+ * $ ./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/embedding:wocawe_entity_simcwustews_embedding_v2
  * $ capesospy-v2 update \
-  --build_locally \
-  --start_cron locale_entity_simclusters_embedding_v2 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+  --buiwd_wocawwy \
+  --stawt_cwon w-wocawe_entity_simcwustews_embedding_v2 swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object LocaleEntitySimClustersEmbeddingV2ScheduledApp
-    extends LocaleEntitySimClustersEmbeddingV2Job
-    with ScheduledExecutionApp {
+o-object w-wocaweentitysimcwustewsembeddingv2scheduwedapp
+    e-extends wocaweentitysimcwustewsembeddingv2job
+    with scheduwedexecutionapp {
 
-  override val firstTime: RichDate = RichDate("2020-04-08")
+  ovewwide vaw fiwsttime: wichdate = w-wichdate("2020-04-08")
 
-  override val batchIncrement: Duration = Days(1)
+  o-ovewwide vaw batchincwement: duwation = days(1)
 
-  override def writeNounToClustersIndex(
-    output: TypedPipe[(LocaleEntity, Seq[(ClusterId, Double)])]
+  o-ovewwide def w-wwitenountocwustewsindex(
+    output: typedpipe[(wocaweentity, XD s-seq[(cwustewid, (U ᵕ U❁) doubwe)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    i-impwicit datewange: datewange, :3
+    timezone: t-timezone, ( ͡o ω ͡o )
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
 
     output
       .map {
-        case ((entityId, lang), clustersWithScores) =>
-          KeyVal(
-            SimClustersEmbeddingId(
-              EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-              ModelVersion.Model20m145kUpdated,
-              InternalId.LocaleEntityId(LocaleEntityId(entityId, lang))
-            ),
-            SimClustersEmbedding(clustersWithScores).toThrift
+        c-case ((entityid, òωó w-wang), cwustewswithscowes) =>
+          keyvaw(
+            simcwustewsembeddingid(
+              embeddingtype.wogfavbasedwocawesemanticcoweentity, σωσ
+              modewvewsion.modew20m145kupdated, (U ᵕ U❁)
+              intewnawid.wocaweentityid(wocaweentityid(entityid, (✿oωo) w-wang))
+            ), ^^
+            s-simcwustewsembedding(cwustewswithscowes).tothwift
           )
       }
-      .writeDALVersionedKeyValExecution(
-        EntityEmbeddingsSources.LogFavSemanticCorePerLanguageSimClustersEmbeddingsDataset,
-        D.Suffix(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = false,
-            isManhattanKeyVal = true,
-            ModelVersion.Model20m145kUpdated,
-            pathSuffix = "log_fav_erg_based_embeddings"))
+      .wwitedawvewsionedkeyvawexecution(
+        entityembeddingssouwces.wogfavsemanticcowepewwanguagesimcwustewsembeddingsdataset, ^•ﻌ•^
+        d-d.suffix(
+          e-embeddingutiw.gethdfspath(
+            i-isadhoc = fawse, XD
+            ismanhattankeyvaw = twue, :3
+            modewvewsion.modew20m145kupdated, (ꈍᴗꈍ)
+            p-pathsuffix = "wog_fav_ewg_based_embeddings"))
       )
   }
 
-  override def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[(LocaleEntity, Double)])]
+  ovewwide def wwitecwustewtonounsindex(
+    output: typedpipe[(cwustewid, :3 seq[(wocaweentity, (U ﹏ U) d-doubwe)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    output
+    impwicit datewange: d-datewange, UwU
+    t-timezone: timezone, 😳😳😳
+    u-uniqueid: uniqueid
+  ): e-execution[unit] = {
+    o-output
       .map {
-        case (clusterId, nounsWithScore) =>
-          KeyVal(
-            SimClustersEmbeddingId(
-              EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-              ModelVersion.Model20m145kUpdated,
-              InternalId.ClusterId(clusterId)
-            ),
-            InternalIdEmbedding(nounsWithScore.map {
-              case ((entityId, lang), score) =>
-                InternalIdWithScore(
-                  InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)),
-                  score)
+        c-case (cwustewid, XD n-nyounswithscowe) =>
+          keyvaw(
+            simcwustewsembeddingid(
+              e-embeddingtype.wogfavbasedwocawesemanticcoweentity, o.O
+              m-modewvewsion.modew20m145kupdated, (⑅˘꒳˘)
+              i-intewnawid.cwustewid(cwustewid)
+            ), 😳😳😳
+            i-intewnawidembedding(nounswithscowe.map {
+              c-case ((entityid, nyaa~~ wang), scowe) =>
+                intewnawidwithscowe(
+                  intewnawid.wocaweentityid(wocaweentityid(entityid, rawr w-wang)), -.-
+                  scowe)
             })
           )
       }
-      .writeDALVersionedKeyValExecution(
-        EntityEmbeddingsSources.LogFavReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset,
-        D.Suffix(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = false,
-            isManhattanKeyVal = true,
-            ModelVersion.Model20m145kUpdated,
-            pathSuffix = "reverse_index_log_fav_erg_based_embeddings"))
+      .wwitedawvewsionedkeyvawexecution(
+        entityembeddingssouwces.wogfavwevewseindexsemanticcowepewwanguagesimcwustewsembeddingsdataset, (✿oωo)
+        d.suffix(
+          embeddingutiw.gethdfspath(
+            isadhoc = f-fawse, /(^•ω•^)
+            ismanhattankeyvaw = twue,
+            modewvewsion.modew20m145kupdated, 🥺
+            p-pathsuffix = "wevewse_index_wog_fav_ewg_based_embeddings"))
       )
   }
 }
 
 /**
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:locale_entity_simclusters_embedding_v2-adhoc
+ * $ ./bazew b-bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/embedding:wocawe_entity_simcwustews_embedding_v2-adhoc
  *
- * $ scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.LocaleEntitySimClustersEmbeddingV2AdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding:locale_entity_simclusters_embedding_v2-adhoc \
-  --user recos-platform --reducers 2000\
+ * $ s-scawding wemote wun \
+  --main-cwass c-com.twittew.simcwustews_v2.scawding.embedding.wocaweentitysimcwustewsembeddingv2adhocapp \
+  --tawget swc/scawa/com/twittew/simcwustews_v2/scawding/embedding:wocawe_entity_simcwustews_embedding_v2-adhoc \
+  --usew w-wecos-pwatfowm --weducews 2000\
   -- --date 2020-04-06
  */
-object LocaleEntitySimClustersEmbeddingV2AdhocApp
-    extends LocaleEntitySimClustersEmbeddingV2Job
-    with AdhocExecutionApp {
+o-object wocaweentitysimcwustewsembeddingv2adhocapp
+    extends wocaweentitysimcwustewsembeddingv2job
+    with adhocexecutionapp {
 
-  override def writeNounToClustersIndex(
-    output: TypedPipe[(LocaleEntity, Seq[(ClusterId, Double)])]
+  ovewwide def wwitenountocwustewsindex(
+    output: t-typedpipe[(wocaweentity, ʘwʘ seq[(cwustewid, UwU d-doubwe)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: d-datewange, XD
+    t-timezone: timezone, (✿oωo)
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
 
-    output
+    o-output
       .map {
-        case ((entityId, lang), clustersWithScores) =>
-          SimClustersEmbeddingId(
-            EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-            ModelVersion.Model20m145kUpdated,
-            InternalId.LocaleEntityId(LocaleEntityId(entityId, lang))
-          ) -> SimClustersEmbedding(clustersWithScores).toThrift
+        case ((entityid, :3 w-wang), c-cwustewswithscowes) =>
+          simcwustewsembeddingid(
+            embeddingtype.wogfavbasedwocawesemanticcoweentity, (///ˬ///✿)
+            modewvewsion.modew20m145kupdated, nyaa~~
+            intewnawid.wocaweentityid(wocaweentityid(entityid, >w< w-wang))
+          ) -> s-simcwustewsembedding(cwustewswithscowes).tothwift
 
-      }.writeExecution(
-        AdhocKeyValSources.entityToClustersSource(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = true,
-            isManhattanKeyVal = true,
-            ModelVersion.Model20m145kUpdated,
-            pathSuffix = "log_fav_erg_based_embeddings")))
+      }.wwiteexecution(
+        a-adhockeyvawsouwces.entitytocwustewssouwce(
+          embeddingutiw.gethdfspath(
+            i-isadhoc = t-twue, -.-
+            ismanhattankeyvaw = t-twue, (✿oωo)
+            modewvewsion.modew20m145kupdated, (˘ω˘)
+            pathsuffix = "wog_fav_ewg_based_embeddings")))
   }
 
-  override def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[(LocaleEntity, Double)])]
+  ovewwide def wwitecwustewtonounsindex(
+    output: t-typedpipe[(cwustewid, rawr s-seq[(wocaweentity, OwO doubwe)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: d-datewange, ^•ﻌ•^
+    t-timezone: timezone, UwU
+    uniqueid: uniqueid
+  ): execution[unit] = {
 
-    output
+    o-output
       .map {
-        case (clusterId, nounsWithScore) =>
-          SimClustersEmbeddingId(
-            EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-            ModelVersion.Model20m145kUpdated,
-            InternalId.ClusterId(clusterId)
+        case (cwustewid, (˘ω˘) nyounswithscowe) =>
+          simcwustewsembeddingid(
+            embeddingtype.wogfavbasedwocawesemanticcoweentity, (///ˬ///✿)
+            m-modewvewsion.modew20m145kupdated, σωσ
+            intewnawid.cwustewid(cwustewid)
           ) ->
-            InternalIdEmbedding(nounsWithScore.map {
-              case ((entityId, lang), score) =>
-                InternalIdWithScore(
-                  InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)),
-                  score)
+            intewnawidembedding(nounswithscowe.map {
+              c-case ((entityid, /(^•ω•^) w-wang), scowe) =>
+                intewnawidwithscowe(
+                  intewnawid.wocaweentityid(wocaweentityid(entityid, 😳 w-wang)),
+                  s-scowe)
             })
       }
-      .writeExecution(
-        AdhocKeyValSources.clusterToEntitiesSource(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = true,
-            isManhattanKeyVal = true,
-            ModelVersion.Model20m145kUpdated,
-            pathSuffix = "reverse_index_log_fav_erg_based_embeddings")))
+      .wwiteexecution(
+        adhockeyvawsouwces.cwustewtoentitiessouwce(
+          embeddingutiw.gethdfspath(
+            isadhoc = twue, 😳
+            i-ismanhattankeyvaw = twue, (⑅˘꒳˘)
+            m-modewvewsion.modew20m145kupdated, 😳😳😳
+            pathsuffix = "wevewse_index_wog_fav_ewg_based_embeddings")))
   }
 }
 
-trait LocaleEntitySimClustersEmbeddingV2Job extends SimClustersEmbeddingBaseJob[LocaleEntity] {
+twait wocaweentitysimcwustewsembeddingv2job extends s-simcwustewsembeddingbasejob[wocaweentity] {
 
-  override val numClustersPerNoun = 100
+  ovewwide vaw n-nyumcwustewspewnoun = 100
 
-  override val numNounsPerClusters = 100
+  o-ovewwide vaw nyumnounspewcwustews = 100
 
-  override val thresholdForEmbeddingScores: Double = 0.001
+  o-ovewwide vaw thweshowdfowembeddingscowes: d-doubwe = 0.001
 
-  override val numReducersOpt: Option[Int] = Some(8000)
+  o-ovewwide vaw n-nyumweducewsopt: option[int] = s-some(8000)
 
-  private val DefaultERGHalfLifeInDays = 14
+  pwivate v-vaw defauwtewghawfwifeindays = 14
 
-  private val MinInterestedInLogFavScore = 0.0
+  pwivate vaw minintewestedinwogfavscowe = 0.0
 
-  implicit val inj: Injection[LocaleEntity, Array[Byte]] = Bufferable.injectionOf[LocaleEntity]
+  i-impwicit v-vaw inj: injection[wocaweentity, 😳 a-awway[byte]] = buffewabwe.injectionof[wocaweentity]
 
-  override def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[LocaleEntity, UserId, Double] = {
+  ovewwide d-def pwepawenountousewmatwix(
+    impwicit datewange: d-datewange, XD
+    t-timezone: timezone, mya
+    uniqueid: uniqueid
+  ): spawsematwix[wocaweentity, ^•ﻌ•^ u-usewid, doubwe] = {
 
-    val erg: TypedPipe[(SemanticCoreEntityId, (UserId, Double))] =
-      DataSources.entityRealGraphAggregationDataSetSource(dateRange.embiggen(Days(7))).flatMap {
-        case Edge(
-              userId,
-              Entity.SemanticCore(SemanticCoreEntity(entityId, _)),
-              consumerFeatures,
-              _,
-              _) if consumerFeatures.exists(_.exists(_.featureName == FeatureName.Favorites)) =>
-          for {
-            features <- consumerFeatures
-            favFeatures <- features.find(_.featureName == FeatureName.Favorites)
-            ewmaMap <- favFeatures.featureValues.ewmaMap
-            favScore <- ewmaMap.get(DefaultERGHalfLifeInDays)
-          } yield (entityId, (userId, Math.log(favScore + 1)))
+    v-vaw e-ewg: typedpipe[(semanticcoweentityid, ʘwʘ (usewid, ( ͡o ω ͡o ) d-doubwe))] =
+      datasouwces.entityweawgwaphaggwegationdatasetsouwce(datewange.embiggen(days(7))).fwatmap {
+        c-case edge(
+              usewid,
+              entity.semanticcowe(semanticcoweentity(entityid, mya _)), o.O
+              consumewfeatuwes, (✿oωo)
+              _, :3
+              _) if consumewfeatuwes.exists(_.exists(_.featuwename == featuwename.favowites)) =>
+          f-fow {
+            featuwes <- c-consumewfeatuwes
+            favfeatuwes <- f-featuwes.find(_.featuwename == featuwename.favowites)
+            ewmamap <- favfeatuwes.featuwevawues.ewmamap
+            f-favscowe <- ewmamap.get(defauwtewghawfwifeindays)
+          } y-yiewd (entityid, 😳 (usewid, (U ﹏ U) m-math.wog(favscowe + 1)))
 
-        case _ => None
+        c-case _ => nyone
       }
 
-    SparseMatrix[LocaleEntity, UserId, Double](
-      erg
-        .hashJoin(ExternalDataSources.uttEntitiesSource().asKeys).map {
-          case (entityId, ((userId, score), _)) => (userId, (entityId, score))
-        }.join(ExternalDataSources.userSource).map {
-          case (userId, ((entityId, score), (_, language))) =>
-            ((entityId, language), userId, score)
+    s-spawsematwix[wocaweentity, mya u-usewid, (U ᵕ U❁) doubwe](
+      ewg
+        .hashjoin(extewnawdatasouwces.uttentitiessouwce().askeys).map {
+          case (entityid, :3 ((usewid, scowe), mya _)) => (usewid, OwO (entityid, (ˆ ﻌ ˆ)♡ scowe))
+        }.join(extewnawdatasouwces.usewsouwce).map {
+          case (usewid, ʘwʘ ((entityid, o.O s-scowe), (_, UwU w-wanguage))) =>
+            ((entityid, rawr x3 w-wanguage), 🥺 usewid, scowe)
         }
     )
   }
 
-  override def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] = {
-    SparseRowMatrix(
-      ExternalDataSources.simClustersInterestInLogFavSource(MinInterestedInLogFavScore),
-      isSkinnyMatrix = true
+  o-ovewwide def pwepaweusewtocwustewmatwix(
+    impwicit datewange: datewange, :3
+    t-timezone: t-timezone, (ꈍᴗꈍ)
+    uniqueid: uniqueid
+  ): s-spawsewowmatwix[usewid, 🥺 cwustewid, (✿oωo) doubwe] = {
+    spawsewowmatwix(
+      extewnawdatasouwces.simcwustewsintewestinwogfavsouwce(minintewestedinwogfavscowe), (U ﹏ U)
+      isskinnymatwix = t-twue
     )
   }
 }

@@ -1,129 +1,129 @@
-enable_recommendations:
-  comment: Proportion of requests where we return an actual response as part. Decreasing the value will increase the portion of empty responses (in order to disable the service) as part of the graceful degradation.
-  default_availability: 10000
-enable_score_user_candidates:
-  comment: Proportion of requests where score user candidates from the scoreUserCandidates endpoint
-  default_availability: 10000
-enable_profile_sidebar_product:
-  comment: Proportion of requests where we return an actual response for profile sidebar product
-  default_availability: 10000
-enable_magic_recs_product:
-  comment: Proportion of requests where we return an actual response for magic recs product
-  default_availability: 10000
-enable_rux_landing_page_product:
-  comment: Proportion of requests where we return an actual response for rux landing page product
-  default_availability: 10000
-enable_rux_pymk_product:
-  comment: Proportion of requests where we return an actual response for rux pymk product
-  default_availability: 10000
-enable_profile_bonus_follow_product:
-  comment: Proportion of requests where we return an actual response for profile bonus follow product
-  default_availability: 10000
-enable_election_explore_wtf_product:
-  comment: Proportion of requests where we return an actual response for election explore wtf product
-  default_availability: 10000
-enable_cluster_follow_product:
-  comment: Proportion of requests where we return an actual response for cluster follow product
-  default_availability: 10000
-enable_home_timeline_product:
-  comment: Proportion of requests where we return an actual response for htl wtf product
-  default_availability: 10000
-enable_htl_bonus_follow_product:
-  comment: Proportion of requests where we return an actual response for htl bonus follow product
-  default_availability: 10000
-enable_explore_tab_product:
-  comment: Proportion of requests where we return an actual response for explore tab product
-  default_availability: 10000
-enable_sidebar_product:
-  comment: Proportion of requests where we return an actual response for sidebar product
-  default_availability: 10000
-enable_campaign_form_product:
-  comment: Proportion of requests where we return an actual response for campaign form product
-  default_availability: 10000
-enable_reactive_follow_product:
-  comment: Proportion of requests where we return an actual response for reactive follow product
-  default_availability: 10000
-enable_nux_pymk_product:
-  comment: Proportion of requests where we return an actual response for nux pymk product
-  default_availability: 10000
-enable_nux_interests_product:
-  comment: Proportion of requests where we return an actual response for nux interests product
-  default_availability: 10000
-enable_nux_topic_bonus_follow_product:
-  comment: Proportion of requests where we return an actual response for nux topic-based bonus follow product
-  default_availability: 10000
-enable_india_covid19_curated_accounts_wtf_product:
-  comment: Proportion of requests where we return an actual response for india covid19 curated accounts wtf product
-  default_availability: 10000
-enable_ab_upload_product:
-  comment: Proportion of requests where we return an actual response for the address book upload product
-  default_availability: 10000
-enable_people_plus_plus_product:
-  comment: Proportion of requests where we return an actual response for the PeoplePlusPlus/Connect Tab product
-  default_availability: 10000
-enable_tweet_notification_recs_product:
-  comment: Proportion of requests where we return an actual response for the Tweet Notification Recommendations product
-  default_availability: 10000
-enable_profile_device_follow_product:
-  comment: Proportion of requests where we return an actual response for the ProfileDeviceFollow product
-  default_availability: 10000
-enable_diffy_module_dark_reading:
-  comment: Percentage of dark read traffic routed to diffy thrift
-  default_availability: 0
-enable_recos_backfill_product:
-  comment: Proportion of requests where we return an actual response for the RecosBackfill product
-  default_availability: 10000
-enable_post_nux_follow_task_product:
-  comment: Proportion of requests where we return an actual response for post NUX follow task product
-  default_availability: 10000
-enable_curated_space_hosts_product:
-  comment: Proportion of requests where we return an actual response for curated space hosts product
-  default_availability: 10000
-enable_nux_geo_category_product:
-  comment: Proportion of requests where we return an actual response for nux geo category product
-  default_availability: 10000
-enable_nux_interests_category_product:
-  comment: Proportion of requests where we return an actual response for nux interests category product
-  default_availability: 10000
-enable_nux_pymk_category_product:
-  comment: Proportion of requests where we return an actual response for nux pymk category product
-  default_availability: 10000
-enable_home_timeline_tweet_recs_product:
-  comment: Proportion of requests where we return an actual response for the Home Timeline Tweet Recs product
-  default_availability: 10000
-enable_htl_bulk_friend_follows_product:
-  comment: Proportion of requests where we return an actual response for the HTL bulk friend follows product
-  default_availability: 10000
-enable_nux_auto_follow_product:
-  comment: Proportion of requests where we return an actual response for the NUX auto follow product
-  default_availability: 10000
-enable_search_bonus_follow_product:
-  comment: Proportion of requests where we return an actual response for search bonus follow product
-  default_availability: 10000
-enable_fetch_user_in_request_builder:
-  comment: Proportion of requests where we fetch user object from gizmoduck in request builder
-  default_availability: 0
-enable_product_mixer_magic_recs_product:
-  comment: Proportion of requests where we enable the product mixer magic recs product
-  default_availability: 10000
-enable_home_timeline_reverse_chron_product:
-  comment: Proportion of requests where we return an actual response for Home timeline reverse chron product
-  default_availability: 10000
-enable_product_mixer_pipeline_magic_recs_dark_read:
-  comment: Compare product mixer pipeline responses to current FRS pipeline responses for Magic Recs
-  default_availability: 0
-enable_experimental_caching:
-  comment: Proportion of requests we use experimental caching for data caching
-  default_availability: 0
-enable_distributed_caching:
-  comment: Proportion of requests we use a distributed cache cluster for data caching
-  default_availability: 10000
-enable_gizmoduck_caching:
-  comment: Proportion of requests we use a distributed cache cluster for data caching in Gizmoduck
-  default_availability: 10000
-enable_traffic_dark_reading:
-  comment: Proportion of requests where we replicate the request for traffic dark reading
-  default_availability: 0
-enable_graph_feature_service_requests:
-  comment: Proportion of requests where we allow request calls to Graph Feature Service
-  default_availability: 10000
+enabwe_wecommendations:
+  comment: pwopowtion of w-wequests whewe we w-wetuwn an actuaw w-wesponse as pawt. mya d-decweasing t-the vawue wiww incwease t-the powtion o-of empty wesponses (in o-owdew to disabwe the sewvice) as pawt of the gwacefuw degwadation. (U ᵕ U❁)
+  d-defauwt_avaiwabiwity: 10000
+enabwe_scowe_usew_candidates:
+  comment: p-pwopowtion of wequests whewe s-scowe usew candidates fwom the scoweusewcandidates endpoint
+  d-defauwt_avaiwabiwity: 10000
+enabwe_pwofiwe_sidebaw_pwoduct:
+  c-comment: p-pwopowtion of wequests whewe we wetuwn an actuaw wesponse fow pwofiwe sidebaw p-pwoduct
+  defauwt_avaiwabiwity: 10000
+enabwe_magic_wecs_pwoduct:
+  comment: pwopowtion of wequests whewe we w-wetuwn an actuaw wesponse fow magic w-wecs pwoduct
+  d-defauwt_avaiwabiwity: 10000
+e-enabwe_wux_wanding_page_pwoduct:
+  c-comment: pwopowtion of wequests whewe we wetuwn a-an actuaw wesponse fow wux wanding page pwoduct
+  d-defauwt_avaiwabiwity: 10000
+enabwe_wux_pymk_pwoduct:
+  comment: pwopowtion of wequests whewe we wetuwn an actuaw w-wesponse fow wux pymk pwoduct
+  d-defauwt_avaiwabiwity: 10000
+e-enabwe_pwofiwe_bonus_fowwow_pwoduct:
+  c-comment: pwopowtion of wequests whewe we wetuwn an actuaw w-wesponse fow p-pwofiwe bonus fowwow pwoduct
+  defauwt_avaiwabiwity: 10000
+e-enabwe_ewection_expwowe_wtf_pwoduct:
+  c-comment: pwopowtion of wequests w-whewe we wetuwn an actuaw wesponse f-fow ewection expwowe wtf pwoduct
+  defauwt_avaiwabiwity: 10000
+e-enabwe_cwustew_fowwow_pwoduct:
+  comment: pwopowtion o-of wequests whewe we wetuwn a-an actuaw wesponse f-fow cwustew fowwow pwoduct
+  defauwt_avaiwabiwity: 10000
+enabwe_home_timewine_pwoduct:
+  comment: pwopowtion of wequests whewe we wetuwn a-an actuaw wesponse f-fow htw wtf pwoduct
+  defauwt_avaiwabiwity: 10000
+e-enabwe_htw_bonus_fowwow_pwoduct:
+  c-comment: p-pwopowtion of wequests whewe we wetuwn an actuaw wesponse fow h-htw bonus fowwow pwoduct
+  defauwt_avaiwabiwity: 10000
+enabwe_expwowe_tab_pwoduct:
+  comment: pwopowtion of wequests w-whewe we wetuwn an actuaw wesponse f-fow expwowe t-tab pwoduct
+  d-defauwt_avaiwabiwity: 10000
+enabwe_sidebaw_pwoduct:
+  c-comment: p-pwopowtion of wequests w-whewe we w-wetuwn an actuaw wesponse fow sidebaw pwoduct
+  d-defauwt_avaiwabiwity: 10000
+e-enabwe_campaign_fowm_pwoduct:
+  c-comment: p-pwopowtion o-of wequests whewe we wetuwn an actuaw wesponse fow campaign fowm p-pwoduct
+  defauwt_avaiwabiwity: 10000
+enabwe_weactive_fowwow_pwoduct:
+  comment: pwopowtion of wequests whewe we wetuwn an actuaw w-wesponse fow weactive fowwow pwoduct
+  defauwt_avaiwabiwity: 10000
+enabwe_nux_pymk_pwoduct:
+  c-comment: pwopowtion o-of wequests w-whewe we wetuwn an actuaw wesponse f-fow nyux pymk pwoduct
+  defauwt_avaiwabiwity: 10000
+e-enabwe_nux_intewests_pwoduct:
+  c-comment: pwopowtion of wequests whewe we wetuwn an actuaw wesponse fow nux intewests pwoduct
+  d-defauwt_avaiwabiwity: 10000
+enabwe_nux_topic_bonus_fowwow_pwoduct:
+  c-comment: pwopowtion o-of wequests whewe w-we wetuwn an actuaw wesponse fow nyux topic-based b-bonus fowwow p-pwoduct
+  defauwt_avaiwabiwity: 10000
+enabwe_india_covid19_cuwated_accounts_wtf_pwoduct:
+  c-comment: p-pwopowtion of wequests whewe we wetuwn an actuaw wesponse fow india covid19 c-cuwated accounts w-wtf pwoduct
+  d-defauwt_avaiwabiwity: 10000
+enabwe_ab_upwoad_pwoduct:
+  c-comment: p-pwopowtion of wequests whewe we w-wetuwn an actuaw wesponse fow the addwess book upwoad pwoduct
+  defauwt_avaiwabiwity: 10000
+e-enabwe_peopwe_pwus_pwus_pwoduct:
+  c-comment: pwopowtion of wequests whewe we wetuwn a-an actuaw wesponse f-fow the peopwepwuspwus/connect tab pwoduct
+  defauwt_avaiwabiwity: 10000
+enabwe_tweet_notification_wecs_pwoduct:
+  c-comment: pwopowtion of wequests whewe we wetuwn an actuaw wesponse fow the t-tweet nyotification wecommendations pwoduct
+  d-defauwt_avaiwabiwity: 10000
+e-enabwe_pwofiwe_device_fowwow_pwoduct:
+  comment: pwopowtion of wequests whewe we wetuwn a-an actuaw wesponse f-fow the pwofiwedevicefowwow pwoduct
+  defauwt_avaiwabiwity: 10000
+enabwe_diffy_moduwe_dawk_weading:
+  comment: p-pewcentage of dawk wead twaffic w-wouted to diffy thwift
+  defauwt_avaiwabiwity: 0
+enabwe_wecos_backfiww_pwoduct:
+  comment: p-pwopowtion of wequests whewe we w-wetuwn an actuaw w-wesponse fow the wecosbackfiww p-pwoduct
+  defauwt_avaiwabiwity: 10000
+enabwe_post_nux_fowwow_task_pwoduct:
+  c-comment: p-pwopowtion o-of wequests whewe we wetuwn an a-actuaw wesponse f-fow post nyux fowwow task pwoduct
+  defauwt_avaiwabiwity: 10000
+e-enabwe_cuwated_space_hosts_pwoduct:
+  c-comment: p-pwopowtion of wequests whewe we wetuwn an actuaw w-wesponse fow cuwated space hosts p-pwoduct
+  defauwt_avaiwabiwity: 10000
+e-enabwe_nux_geo_categowy_pwoduct:
+  comment: pwopowtion of wequests whewe w-we wetuwn an actuaw w-wesponse fow n-nyux geo categowy p-pwoduct
+  defauwt_avaiwabiwity: 10000
+enabwe_nux_intewests_categowy_pwoduct:
+  c-comment: pwopowtion of wequests whewe we wetuwn an actuaw wesponse fow nyux intewests categowy p-pwoduct
+  defauwt_avaiwabiwity: 10000
+enabwe_nux_pymk_categowy_pwoduct:
+  c-comment: pwopowtion o-of wequests whewe we wetuwn an actuaw w-wesponse fow nyux pymk categowy p-pwoduct
+  d-defauwt_avaiwabiwity: 10000
+e-enabwe_home_timewine_tweet_wecs_pwoduct:
+  c-comment: p-pwopowtion of wequests whewe we wetuwn an actuaw wesponse fow the home timewine tweet wecs pwoduct
+  defauwt_avaiwabiwity: 10000
+e-enabwe_htw_buwk_fwiend_fowwows_pwoduct:
+  c-comment: p-pwopowtion of wequests whewe w-we wetuwn an actuaw wesponse fow the htw buwk fwiend fowwows pwoduct
+  d-defauwt_avaiwabiwity: 10000
+e-enabwe_nux_auto_fowwow_pwoduct:
+  comment: pwopowtion o-of wequests whewe we wetuwn an actuaw w-wesponse fow the n-nyux auto fowwow pwoduct
+  defauwt_avaiwabiwity: 10000
+e-enabwe_seawch_bonus_fowwow_pwoduct:
+  c-comment: pwopowtion of wequests whewe we wetuwn an actuaw wesponse f-fow seawch bonus f-fowwow pwoduct
+  d-defauwt_avaiwabiwity: 10000
+enabwe_fetch_usew_in_wequest_buiwdew:
+  c-comment: p-pwopowtion of wequests whewe we f-fetch usew object f-fwom gizmoduck in wequest buiwdew
+  d-defauwt_avaiwabiwity: 0
+e-enabwe_pwoduct_mixew_magic_wecs_pwoduct:
+  comment: p-pwopowtion of wequests whewe we enabwe the pwoduct m-mixew magic wecs pwoduct
+  d-defauwt_avaiwabiwity: 10000
+e-enabwe_home_timewine_wevewse_chwon_pwoduct:
+  comment: p-pwopowtion of wequests whewe we wetuwn an actuaw w-wesponse fow h-home timewine wevewse c-chwon pwoduct
+  defauwt_avaiwabiwity: 10000
+enabwe_pwoduct_mixew_pipewine_magic_wecs_dawk_wead:
+  comment: c-compawe pwoduct mixew pipewine wesponses to cuwwent f-fws pipewine w-wesponses fow magic wecs
+  defauwt_avaiwabiwity: 0
+e-enabwe_expewimentaw_caching:
+  comment: pwopowtion o-of wequests w-we use expewimentaw caching fow data caching
+  d-defauwt_avaiwabiwity: 0
+enabwe_distwibuted_caching:
+  comment: p-pwopowtion of w-wequests we use a distwibuted cache c-cwustew fow data caching
+  d-defauwt_avaiwabiwity: 10000
+e-enabwe_gizmoduck_caching:
+  c-comment: pwopowtion of wequests we use a distwibuted cache cwustew fow data caching in gizmoduck
+  defauwt_avaiwabiwity: 10000
+enabwe_twaffic_dawk_weading:
+  comment: pwopowtion of wequests whewe we wepwicate the wequest fow twaffic d-dawk weading
+  d-defauwt_avaiwabiwity: 0
+enabwe_gwaph_featuwe_sewvice_wequests:
+  comment: pwopowtion o-of wequests w-whewe we awwow w-wequest cawws to gwaph featuwe sewvice
+  d-defauwt_avaiwabiwity: 10000

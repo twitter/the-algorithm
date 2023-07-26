@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.shared_library.http_client
+package com.twittew.pwoduct_mixew.shawed_wibwawy.http_cwient
 
-case class HttpHostPort(host: String, port: Int) {
-  override val toString: String = s"$host:$port"
+case c-cwass httphostpowt(host: s-stwing, o.O p-powt: int) {
+  o-ovewwide vaw tostwing: s-stwing = s-s"$host:$powt"
 }

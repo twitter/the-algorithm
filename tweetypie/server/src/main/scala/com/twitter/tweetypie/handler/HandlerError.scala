@@ -1,45 +1,45 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.exception.thriftscala.ClientErrorCause
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.FilteredState.Unavailable._
+impowt c-com.twittew.sewvo.exception.thwiftscawa.cwientewwow
+i-impowt c-com.twittew.sewvo.exception.thwiftscawa.cwientewwowcause
+i-impowt c-com.twittew.stitch.notfound
+i-impowt c-com.twittew.stitch.stitch
+impowt com.twittew.tweetypie.cowe.fiwtewedstate.unavaiwabwe._
 
-private[tweetypie] object HandlerError {
+pwivate[tweetypie] object handwewewwow {
 
-  def translateNotFoundToClientError[U](tweetId: TweetId): PartialFunction[Throwable, Stitch[U]] = {
-    case NotFound =>
-      Stitch.exception(HandlerError.tweetNotFound(tweetId))
-    case TweetDeleted | BounceDeleted =>
-      Stitch.exception(HandlerError.tweetNotFound(tweetId, true))
-    case SourceTweetNotFound(deleted) =>
-      Stitch.exception(HandlerError.tweetNotFound(tweetId, deleted))
+  d-def twanswatenotfoundtocwientewwow[u](tweetid: tweetid): pawtiawfunction[thwowabwe, rawr x3 s-stitch[u]] = {
+    case nyotfound =>
+      s-stitch.exception(handwewewwow.tweetnotfound(tweetid))
+    case tweetdeweted | bouncedeweted =>
+      stitch.exception(handwewewwow.tweetnotfound(tweetid, (U ﹏ U) t-twue))
+    case souwcetweetnotfound(deweted) =>
+      s-stitch.exception(handwewewwow.tweetnotfound(tweetid, (U ﹏ U) d-deweted))
   }
 
-  def tweetNotFound(tweetId: TweetId, deleted: Boolean = false): ClientError =
-    ClientError(
-      ClientErrorCause.BadRequest,
-      s"tweet ${if (deleted) "deleted" else "not found"}: $tweetId"
+  def tweetnotfound(tweetid: tweetid, (⑅˘꒳˘) deweted: boowean = f-fawse): cwientewwow =
+    cwientewwow(
+      cwientewwowcause.badwequest, òωó
+      s"tweet ${if (deweted) "deweted" ewse "not found"}: $tweetid"
     )
 
-  def userNotFound(userId: UserId): ClientError =
-    ClientError(ClientErrorCause.BadRequest, s"user not found: $userId")
+  d-def usewnotfound(usewid: usewid): cwientewwow =
+    cwientewwow(cwientewwowcause.badwequest, ʘwʘ s-s"usew nyot f-found: $usewid")
 
-  def tweetNotFoundException(tweetId: TweetId): Future[Nothing] =
-    Future.exception(tweetNotFound(tweetId))
+  d-def tweetnotfoundexception(tweetid: t-tweetid): futuwe[nothing] =
+    futuwe.exception(tweetnotfound(tweetid))
 
-  def userNotFoundException(userId: UserId): Future[Nothing] =
-    Future.exception(userNotFound(userId))
+  d-def usewnotfoundexception(usewid: usewid): futuwe[nothing] =
+    f-futuwe.exception(usewnotfound(usewid))
 
-  def getRequired[A, B](
-    optionFutureArrow: FutureArrow[A, Option[B]],
-    notFound: A => Future[B]
-  ): FutureArrow[A, B] =
-    FutureArrow(key =>
-      optionFutureArrow(key).flatMap {
-        case Some(x) => Future.value(x)
-        case None => notFound(key)
+  def getwequiwed[a, /(^•ω•^) b](
+    optionfutuweawwow: futuweawwow[a, ʘwʘ option[b]], σωσ
+    nyotfound: a => f-futuwe[b]
+  ): futuweawwow[a, OwO b] =
+    f-futuweawwow(key =>
+      o-optionfutuweawwow(key).fwatmap {
+        c-case some(x) => futuwe.vawue(x)
+        case nyone => nyotfound(key)
       })
 }

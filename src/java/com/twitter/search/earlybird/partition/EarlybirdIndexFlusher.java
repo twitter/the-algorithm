@@ -1,371 +1,371 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.TimeoutException;
+impowt java.io.fiwe;
+i-impowt java.io.ioexception;
+i-impowt java.io.outputstweamwwitew;
+i-impowt java.text.datefowmat;
+i-impowt java.text.pawseexception;
+i-impowt java.text.simpwedatefowmat;
+i-impowt java.time.duwation;
+i-impowt java.utiw.awwaywist;
+i-impowt java.utiw.date;
+impowt java.utiw.sowtedmap;
+impowt java.utiw.tweemap;
+impowt j-java.utiw.concuwwent.timeoutexception;
 
-import scala.runtime.BoxedUnit;
+impowt scawa.wuntime.boxedunit;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.compwess.utiws.wists;
+i-impowt owg.apache.commons.wang.wandomstwingutiws;
+impowt owg.apache.hadoop.fs.fsdataoutputstweam;
+impowt o-owg.apache.hadoop.fs.fiwestatus;
+impowt owg.apache.hadoop.fs.fiwesystem;
+i-impowt o-owg.apache.hadoop.fs.path;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.earlybird.FlushVersion;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.util.ActionLogger;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionInterface;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionLockFailed;
-import com.twitter.search.earlybird.util.ParallelUtil;
+impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.config.config;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.schema.eawwybiwd.fwushvewsion;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+i-impowt com.twittew.seawch.eawwybiwd.common.nonpagingassewt;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.actionwoggew;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.coowdinatedeawwybiwdactionintewface;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.coowdinatedeawwybiwdactionwockfaiwed;
+impowt com.twittew.seawch.eawwybiwd.utiw.pawawwewutiw;
 
 /**
- * Flushes an EarlybirdIndex to HDFS, so that when Earlybird starts, it can read the index from
- * HDFS instead of indexing from scratch.
+ * fwushes an eawwybiwdindex t-to hdfs, so that when eawwybiwd stawts, ^^ i-it can wead the index fwom
+ * hdfs instead of indexing fwom scwatch. ^•ﻌ•^
  *
- * The path looks like:
- * /smf1/rt2/user/search/earlybird/loadtest/realtime/indexes/flush_version_158/partition_8/index_2020_02_25_02
+ * the path wooks wike:
+ * /smf1/wt2/usew/seawch/eawwybiwd/woadtest/weawtime/indexes/fwush_vewsion_158/pawtition_8/index_2020_02_25_02
  */
-public class EarlybirdIndexFlusher {
-  public enum FlushAttemptResult {
-    CHECKED_RECENTLY,
-    FOUND_INDEX,
-    FLUSH_ATTEMPT_MADE,
-    FAILED_LOCK_ATTEMPT,
-    HADOOP_TIMEOUT
+p-pubwic cwass eawwybiwdindexfwushew {
+  pubwic e-enum fwushattemptwesuwt {
+    c-checked_wecentwy, mya
+    f-found_index, UwU
+    fwush_attempt_made, >_<
+    faiwed_wock_attempt, /(^•ω•^)
+    hadoop_timeout
   }
 
-  @FunctionalInterface
-  public interface PostFlushOperation {
+  @functionawintewface
+  p-pubwic i-intewface postfwushopewation {
     /**
-     * Run this after we finish flushing an index, before we rejoin the serverset.
+     * wun t-this aftew we f-finish fwushing an index, òωó befowe w-we wejoin the sewvewset. σωσ
      */
-    void execute();
+    void exekawaii~();
   }
 
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdIndexFlusher.class);
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(eawwybiwdindexfwushew.cwass);
 
-  private static final SearchCounter FLUSH_SUCCESS_COUNTER =
-      SearchCounter.export("successfully_flushed_index");
+  p-pwivate static finaw s-seawchcountew fwush_success_countew =
+      seawchcountew.expowt("successfuwwy_fwushed_index");
 
-  public static final String TWEET_KAFKA_OFFSET = "tweet_kafka_offset";
-  public static final String UPDATE_KAFKA_OFFSET = "update_kafka_offset";
-  public static final String FLUSHED_FROM_REPLICA = "flushed_from_replica";
-  public static final String SEGMENTS = "segments";
-  public static final String TIMESLICE_ID = "timeslice_id";
+  p-pubwic static f-finaw stwing tweet_kafka_offset = "tweet_kafka_offset";
+  pubwic static finaw stwing update_kafka_offset = "update_kafka_offset";
+  pubwic static finaw stwing fwushed_fwom_wepwica = "fwushed_fwom_wepwica";
+  p-pubwic static finaw s-stwing segments = "segments";
+  pubwic static f-finaw stwing t-timeswice_id = "timeswice_id";
 
-  public static final String DATA_SUFFIX = ".data";
-  public static final String INFO_SUFFIX = ".info";
-  public static final String INDEX_INFO = "earlybird_index.info";
+  p-pubwic static finaw stwing data_suffix = ".data";
+  pubwic static finaw stwing i-info_suffix = ".info";
+  pubwic static finaw stwing index_info = "eawwybiwd_index.info";
 
-  private static final String INDEX_PATH_FORMAT = "%s/flush_version_%d/partition_%d";
-  public static final DateFormat INDEX_DATE_SUFFIX = new SimpleDateFormat("yyyy_MM_dd_HH");
-  public static final String INDEX_PREFIX = "index_";
-  public static final String TMP_PREFIX = "tmp_";
+  pwivate s-static finaw stwing index_path_fowmat = "%s/fwush_vewsion_%d/pawtition_%d";
+  p-pubwic static f-finaw datefowmat i-index_date_suffix = nyew simpwedatefowmat("yyyy_mm_dd_hh");
+  p-pubwic static finaw s-stwing index_pwefix = "index_";
+  p-pubwic static f-finaw stwing tmp_pwefix = "tmp_";
 
-  // Check if we need to flush every five minutes.
-  private static final long FLUSH_CHECK_PERIOD = Duration.ofMinutes(5).toMillis();
+  // check i-if we nyeed to f-fwush evewy five m-minutes. ( ͡o ω ͡o )
+  pwivate s-static finaw w-wong fwush_check_pewiod = duwation.ofminutes(5).tomiwwis();
 
-  // Make sure we don't keep more than 3 copies of the index in HDFS, so that we don't run out of
-  // HDFS space.
-  private static final int INDEX_COPIES = 3;
+  // make suwe we don't keep mowe t-than 3 copies of the index in hdfs, nyaa~~ so that we don't wun out of
+  // hdfs space. :3
+  pwivate static f-finaw int index_copies = 3;
 
-  private static final NonPagingAssert FLUSHING_TOO_MANY_NON_OPTIMIZED_SEGMENTS =
-          new NonPagingAssert("flushing_too_many_non_optimized_segments");
+  pwivate static finaw nyonpagingassewt fwushing_too_many_non_optimized_segments =
+          n-nyew n-nyonpagingassewt("fwushing_too_many_non_optimized_segments");
 
-  private final CoordinatedEarlybirdActionInterface actionCoordinator;
-  private final FileSystem fileSystem;
-  private final Path indexPath;
-  private final Clock clock;
-  private final SegmentManager segmentManager;
-  private final int replicaId;
-  private final TimeLimitedHadoopExistsCall timeLimitedHadoopExistsCall;
-  private final OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock;
+  p-pwivate finaw coowdinatedeawwybiwdactionintewface a-actioncoowdinatow;
+  pwivate f-finaw fiwesystem f-fiwesystem;
+  pwivate finaw path indexpath;
+  pwivate finaw cwock cwock;
+  pwivate finaw segmentmanagew s-segmentmanagew;
+  pwivate f-finaw int wepwicaid;
+  pwivate f-finaw timewimitedhadoopexistscaww t-timewimitedhadoopexistscaww;
+  pwivate finaw optimizationandfwushingcoowdinationwock o-optimizationandfwushingcoowdinationwock;
 
-  private long checkedAt = 0;
+  p-pwivate wong checkedat = 0;
 
-  public EarlybirdIndexFlusher(
-      CoordinatedEarlybirdActionInterface actionCoordinator,
-      FileSystem fileSystem,
-      String indexHDFSPath,
-      SegmentManager segmentManager,
-      PartitionConfig partitionConfig,
-      Clock clock,
-      TimeLimitedHadoopExistsCall timeLimitedHadoopExistsCall,
-      OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock
+  p-pubwic eawwybiwdindexfwushew(
+      c-coowdinatedeawwybiwdactionintewface actioncoowdinatow, UwU
+      fiwesystem fiwesystem, o.O
+      stwing indexhdfspath, (ˆ ﻌ ˆ)♡
+      s-segmentmanagew segmentmanagew, ^^;;
+      p-pawtitionconfig p-pawtitionconfig, ʘwʘ
+      cwock c-cwock, σωσ
+      timewimitedhadoopexistscaww t-timewimitedhadoopexistscaww,
+      optimizationandfwushingcoowdinationwock o-optimizationandfwushingcoowdinationwock
   ) {
-    this.actionCoordinator = actionCoordinator;
-    this.fileSystem = fileSystem;
-    this.indexPath = buildPathToIndexes(indexHDFSPath, partitionConfig);
-    this.segmentManager = segmentManager;
-    this.clock = clock;
-    this.replicaId = partitionConfig.getHostPositionWithinHashPartition();
-    this.timeLimitedHadoopExistsCall = timeLimitedHadoopExistsCall;
-    this.optimizationAndFlushingCoordinationLock = optimizationAndFlushingCoordinationLock;
+    this.actioncoowdinatow = actioncoowdinatow;
+    this.fiwesystem = fiwesystem;
+    t-this.indexpath = b-buiwdpathtoindexes(indexhdfspath, ^^;; pawtitionconfig);
+    this.segmentmanagew = s-segmentmanagew;
+    t-this.cwock = cwock;
+    this.wepwicaid = pawtitionconfig.gethostpositionwithinhashpawtition();
+    t-this.timewimitedhadoopexistscaww = timewimitedhadoopexistscaww;
+    this.optimizationandfwushingcoowdinationwock = optimizationandfwushingcoowdinationwock;
   }
 
   /**
-   * Periodically checks if an index needs to be uploaded to HDFS, and uploads it if necessary.
-   * Skips flush if unable to acquire the optimizationAndFlushingCoordinationLock.
+   * pewiodicawwy c-checks if an index nyeeds to be upwoaded t-to hdfs, ʘwʘ and upwoads i-it if nyecessawy. ^^
+   * skips fwush if unabwe to acquiwe the o-optimizationandfwushingcoowdinationwock. nyaa~~
    */
-  public FlushAttemptResult flushIfNecessary(
-      long tweetOffset,
-      long updateOffset,
-      PostFlushOperation postFlushOperation) throws Exception {
-    long now = clock.nowMillis();
-    if (now - checkedAt < FLUSH_CHECK_PERIOD) {
-      return FlushAttemptResult.CHECKED_RECENTLY;
+  p-pubwic fwushattemptwesuwt fwushifnecessawy(
+      wong tweetoffset, (///ˬ///✿)
+      wong u-updateoffset, XD
+      postfwushopewation p-postfwushopewation) thwows exception {
+    wong nyow = c-cwock.nowmiwwis();
+    if (now - c-checkedat < fwush_check_pewiod) {
+      w-wetuwn fwushattemptwesuwt.checked_wecentwy;
     }
 
-    checkedAt = now;
+    c-checkedat = nyow;
 
-    // Try to aqcuire lock to ensure that we are not in the gc_before_optimization or the
-    // post_optimization_rebuilds step of optimization. If the lock is not available, then skip
-    // flushing.
-    if (!optimizationAndFlushingCoordinationLock.tryLock()) {
-      return FlushAttemptResult.FAILED_LOCK_ATTEMPT;
+    // twy to a-aqcuiwe wock to e-ensuwe that we a-awe nyot in the gc_befowe_optimization o-ow the
+    // p-post_optimization_webuiwds step of optimization. :3 if the wock i-is nyot avaiwabwe, òωó t-then skip
+    // f-fwushing. ^^
+    if (!optimizationandfwushingcoowdinationwock.twywock()) {
+      wetuwn fwushattemptwesuwt.faiwed_wock_attempt;
     }
-    // Acquired the lock, so wrap the flush in a try/finally block to ensure we release the lock
-    try {
-      Path flushPath = pathForHour();
+    // a-acquiwed the wock, so wwap the f-fwush in a twy/finawwy b-bwock to ensuwe we wewease the wock
+    twy {
+      path f-fwushpath = pathfowhouw();
 
-      try {
-        // If this doesn't execute on time, it will throw an exception and this function
-        // finishes its execution.
-        boolean result = timeLimitedHadoopExistsCall.exists(flushPath);
+      t-twy {
+        // i-if this doesn't e-exekawaii~ on time, ^•ﻌ•^ it wiww thwow a-an exception and this function
+        // finishes its execution. σωσ
+        boowean wesuwt = timewimitedhadoopexistscaww.exists(fwushpath);
 
-        if (result) {
-          return FlushAttemptResult.FOUND_INDEX;
+        if (wesuwt) {
+          w-wetuwn fwushattemptwesuwt.found_index;
         }
-      } catch (TimeoutException e) {
-        LOG.warn("Timeout while calling hadoop", e);
-        return FlushAttemptResult.HADOOP_TIMEOUT;
+      } catch (timeoutexception e-e) {
+        wog.wawn("timeout whiwe cawwing hadoop", (ˆ ﻌ ˆ)♡ e-e);
+        wetuwn fwushattemptwesuwt.hadoop_timeout;
       }
 
-      boolean flushedIndex = false;
-      try {
-        // this function returns a boolean.
-        actionCoordinator.execute("index_flushing", isCoordinated ->
-            flushIndex(flushPath, isCoordinated, tweetOffset, updateOffset, postFlushOperation));
-        flushedIndex = true;
-      } catch (CoordinatedEarlybirdActionLockFailed e) {
-        // This only happens when we fail to grab the lock, which is fine because another Earlybird
-        // is already working on flushing this index, so we don't need to.
-        LOG.debug("Failed to grab lock", e);
+      b-boowean fwushedindex = f-fawse;
+      t-twy {
+        // t-this function wetuwns a-a boowean. nyaa~~
+        a-actioncoowdinatow.exekawaii~("index_fwushing", ʘwʘ iscoowdinated ->
+            fwushindex(fwushpath, ^•ﻌ•^ iscoowdinated, rawr x3 tweetoffset, 🥺 updateoffset, ʘwʘ postfwushopewation));
+        f-fwushedindex = t-twue;
+      } c-catch (coowdinatedeawwybiwdactionwockfaiwed e) {
+        // t-this onwy happens when we faiw to gwab the wock, (˘ω˘) which i-is fine because a-anothew eawwybiwd
+        // is awweady wowking o-on fwushing this index, o.O so we don't nyeed to. σωσ
+        w-wog.debug("faiwed t-to gwab wock", (ꈍᴗꈍ) e);
       }
 
-      if (flushedIndex) {
-        // We don't return with a guarantee that we actually flushed something. It's possible
-        // that the .execute() function above was not able to leave the server set to flush.
-        return FlushAttemptResult.FLUSH_ATTEMPT_MADE;
-      } else {
-        return FlushAttemptResult.FAILED_LOCK_ATTEMPT;
+      i-if (fwushedindex) {
+        // w-we don't wetuwn with a guawantee that we actuawwy fwushed something. (ˆ ﻌ ˆ)♡ i-it's possibwe
+        // t-that t-the .exekawaii~() f-function above w-was nyot abwe to weave the sewvew s-set to fwush. o.O
+        w-wetuwn fwushattemptwesuwt.fwush_attempt_made;
+      } ewse {
+        w-wetuwn f-fwushattemptwesuwt.faiwed_wock_attempt;
       }
-    } finally {
-      optimizationAndFlushingCoordinationLock.unlock();
+    } finawwy {
+      o-optimizationandfwushingcoowdinationwock.unwock();
     }
   }
 
   /**
-   * Create a subpath to the directory with many indexes in it. Will have an index for each hour.
+   * cweate a subpath to the diwectowy w-with many indexes in it. :3 wiww h-have an index f-fow each houw. -.-
    */
-  public static Path buildPathToIndexes(String root, PartitionConfig partitionConfig) {
-    return new Path(String.format(
-        INDEX_PATH_FORMAT,
-        root,
-        FlushVersion.CURRENT_FLUSH_VERSION.getVersionNumber(),
-        partitionConfig.getIndexingHashPartitionID()));
+  pubwic static p-path buiwdpathtoindexes(stwing woot, ( ͡o ω ͡o ) pawtitionconfig pawtitionconfig) {
+    w-wetuwn nyew path(stwing.fowmat(
+        i-index_path_fowmat, /(^•ω•^)
+        w-woot, (⑅˘꒳˘)
+        fwushvewsion.cuwwent_fwush_vewsion.getvewsionnumbew(), òωó
+        pawtitionconfig.getindexinghashpawtitionid()));
   }
 
 
   /**
-   * Returns a sorted map from the unix time in millis an index was flushed to the path of an index.
-   * The last element will be the path of the most recent index.
+   * wetuwns a sowted m-map fwom the unix time in miwwis an index was f-fwushed to the p-path of an index. 🥺
+   * the wast e-ewement wiww be the path of the m-most wecent index. (ˆ ﻌ ˆ)♡
    */
-  public static SortedMap<Long, Path> getIndexPathsByTime(
-      Path indexPath,
-      FileSystem fileSystem
-  ) throws IOException, ParseException {
-    LOG.info("Getting index paths from file system: {}", fileSystem.getUri().toASCIIString());
+  p-pubwic static sowtedmap<wong, -.- path> g-getindexpathsbytime(
+      path indexpath, σωσ
+      f-fiwesystem fiwesystem
+  ) t-thwows ioexception, >_< pawseexception {
+    w-wog.info("getting index paths f-fwom fiwe system: {}", :3 f-fiwesystem.getuwi().toasciistwing());
 
-    SortedMap<Long, Path> pathByTime = new TreeMap<>();
-    Path globPattern = indexPath.suffix("/" + EarlybirdIndexFlusher.INDEX_PREFIX + "*");
-    LOG.info("Lookup glob pattern: {}", globPattern);
+    s-sowtedmap<wong, OwO path> pathbytime = nyew tweemap<>();
+    path gwobpattewn = indexpath.suffix("/" + eawwybiwdindexfwushew.index_pwefix + "*");
+    wog.info("wookup gwob pattewn: {}", rawr gwobpattewn);
 
-    for (FileStatus indexDir : fileSystem.globStatus(globPattern)) {
-      String name = new File(indexDir.getPath().toString()).getName();
-      String dateString = name.substring(EarlybirdIndexFlusher.INDEX_PREFIX.length());
-      Date date = EarlybirdIndexFlusher.INDEX_DATE_SUFFIX.parse(dateString);
-      pathByTime.put(date.getTime(), indexDir.getPath());
+    fow (fiwestatus indexdiw : fiwesystem.gwobstatus(gwobpattewn)) {
+      s-stwing nyame = n-nyew fiwe(indexdiw.getpath().tostwing()).getname();
+      stwing datestwing = n-nyame.substwing(eawwybiwdindexfwushew.index_pwefix.wength());
+      d-date date = e-eawwybiwdindexfwushew.index_date_suffix.pawse(datestwing);
+      pathbytime.put(date.gettime(), (///ˬ///✿) i-indexdiw.getpath());
     }
-    LOG.info("Found {} files matching the pattern.", pathByTime.size());
+    wog.info("found {} f-fiwes matching t-the pattewn.", ^^ pathbytime.size());
 
-    return pathByTime;
+    w-wetuwn pathbytime;
   }
 
-  private boolean flushIndex(
-      Path flushPath,
-      boolean isCoordinated,
-      long tweetOffset,
-      long updateOffset,
-      PostFlushOperation postFlushOperation
-  ) throws Exception {
-    Preconditions.checkState(isCoordinated);
+  p-pwivate boowean f-fwushindex(
+      path fwushpath, XD
+      boowean i-iscoowdinated, UwU
+      w-wong tweetoffset, o.O
+      w-wong updateoffset, 😳
+      p-postfwushopewation p-postfwushopewation
+  ) t-thwows exception {
+    p-pweconditions.checkstate(iscoowdinated);
 
-    if (fileSystem.exists(flushPath)) {
-      return false;
+    i-if (fiwesystem.exists(fwushpath)) {
+      w-wetuwn fawse;
     }
 
-    LOG.info("Starting index flush");
+    wog.info("stawting index f-fwush");
 
-    // In case the process is killed suddenly, we wouldn't be able to clean up the temporary
-    // directory, and we don't want other processes to reuse it, so add some randomness.
-    Path tmpPath = indexPath.suffix("/" + TMP_PREFIX + RandomStringUtils.randomAlphabetic(8));
-    boolean creationSucceed = fileSystem.mkdirs(tmpPath);
-    if (!creationSucceed) {
-      throw new IOException("Couldn't create HDFS directory at " + flushPath);
+    // i-in case the p-pwocess is kiwwed suddenwy, (˘ω˘) we w-wouwdn't be abwe to cwean up the tempowawy
+    // d-diwectowy, 🥺 and we don't want o-othew pwocesses t-to weuse it, ^^ so a-add some wandomness. >w<
+    path tmppath = i-indexpath.suffix("/" + tmp_pwefix + wandomstwingutiws.wandomawphabetic(8));
+    b-boowean cweationsucceed = f-fiwesystem.mkdiws(tmppath);
+    if (!cweationsucceed) {
+      t-thwow nyew ioexception("couwdn't cweate hdfs diwectowy at " + fwushpath);
     }
 
-    LOG.info("Temp path: {}", tmpPath);
-    try {
-      ArrayList<SegmentInfo> segmentInfos = Lists.newArrayList(segmentManager.getSegmentInfos(
-          SegmentManager.Filter.Enabled, SegmentManager.Order.NEW_TO_OLD).iterator());
-      segmentManager.logState("Before flushing");
-      EarlybirdIndex index = new EarlybirdIndex(segmentInfos, tweetOffset, updateOffset);
-      ActionLogger.run(
-          "Flushing index to " + tmpPath,
-          () -> flushIndex(tmpPath, index));
-    } catch (Exception e) {
-      LOG.error("Exception while flushing index. Rethrowing.");
+    wog.info("temp path: {}", ^^;; tmppath);
+    t-twy {
+      awwaywist<segmentinfo> s-segmentinfos = wists.newawwaywist(segmentmanagew.getsegmentinfos(
+          s-segmentmanagew.fiwtew.enabwed, (˘ω˘) segmentmanagew.owdew.new_to_owd).itewatow());
+      segmentmanagew.wogstate("befowe fwushing");
+      eawwybiwdindex index = nyew eawwybiwdindex(segmentinfos, OwO t-tweetoffset, (ꈍᴗꈍ) updateoffset);
+      a-actionwoggew.wun(
+          "fwushing i-index to " + tmppath, òωó
+          () -> f-fwushindex(tmppath, ʘwʘ index));
+    } catch (exception e-e) {
+      w-wog.ewwow("exception whiwe f-fwushing index. ʘwʘ wethwowing.");
 
-      if (fileSystem.delete(tmpPath, true)) {
-        LOG.info("Successfully deleted temp output");
-      } else {
-        LOG.error("Couldn't delete temp output");
+      if (fiwesystem.dewete(tmppath, nyaa~~ t-twue)) {
+        wog.info("successfuwwy deweted t-temp output");
+      } e-ewse {
+        w-wog.ewwow("couwdn't dewete temp output");
       }
 
-      throw e;
+      t-thwow e;
     }
 
-    // We flush it to a temporary directory, then rename the temporary directory so that it the
-    // change is atomic, and other Earlybirds will either see the old indexes, or the new, complete
-    // index, but never an in progress index.
-    boolean renameSucceeded = fileSystem.rename(tmpPath, flushPath);
-    if (!renameSucceeded) {
-      throw new IOException("Couldn't rename HDFS from " + tmpPath + " to " + flushPath);
+    // w-we f-fwush it to a tempowawy d-diwectowy, UwU then wename the t-tempowawy diwectowy s-so that it t-the
+    // change i-is atomic, (⑅˘꒳˘) and o-othew eawwybiwds w-wiww eithew s-see the owd indexes, (˘ω˘) o-ow the nyew, :3 compwete
+    // i-index, (˘ω˘) but nyevew an in pwogwess i-index.
+    boowean wenamesucceeded = f-fiwesystem.wename(tmppath, nyaa~~ f-fwushpath);
+    i-if (!wenamesucceeded) {
+      thwow nyew ioexception("couwdn't wename hdfs fwom " + tmppath + " t-to " + fwushpath);
     }
-    LOG.info("Flushed index to {}", flushPath);
+    w-wog.info("fwushed i-index to {}", (U ﹏ U) fwushpath);
 
-    cleanupOldIndexes();
+    cweanupowdindexes();
 
-    FLUSH_SUCCESS_COUNTER.increment();
+    fwush_success_countew.incwement();
 
-    LOG.info("Executing post flush operation...");
-    postFlushOperation.execute();
+    w-wog.info("executing p-post fwush opewation...");
+    p-postfwushopewation.exekawaii~();
 
-    return true;
+    w-wetuwn twue;
   }
 
-  private void cleanupOldIndexes() throws Exception {
-    LOG.info("Looking up whether we need to clean up old indexes...");
-    SortedMap<Long, Path> pathsByTime =
-        EarlybirdIndexFlusher.getIndexPathsByTime(indexPath, fileSystem);
+  pwivate void cweanupowdindexes() thwows exception {
+    w-wog.info("wooking u-up whethew w-we nyeed to c-cwean up owd indexes...");
+    sowtedmap<wong, nyaa~~ path> pathsbytime =
+        e-eawwybiwdindexfwushew.getindexpathsbytime(indexpath, ^^;; f-fiwesystem);
 
-    while (pathsByTime.size() > INDEX_COPIES) {
-      Long key = pathsByTime.firstKey();
-      Path oldestHourPath = pathsByTime.remove(key);
-      LOG.info("Deleting old index at path '{}'.", oldestHourPath);
+    whiwe (pathsbytime.size() > index_copies) {
+      wong key = p-pathsbytime.fiwstkey();
+      path owdesthouwpath = p-pathsbytime.wemove(key);
+      wog.info("deweting o-owd index a-at path '{}'.", OwO owdesthouwpath);
 
-      if (fileSystem.delete(oldestHourPath, true)) {
-        LOG.info("Successfully deleted old index");
-      } else {
-        LOG.error("Couldn't delete old index");
+      i-if (fiwesystem.dewete(owdesthouwpath, nyaa~~ t-twue)) {
+        wog.info("successfuwwy deweted owd i-index");
+      } ewse {
+        w-wog.ewwow("couwdn't d-dewete owd i-index");
       }
     }
   }
 
-  private Path pathForHour() {
-    Date date = new Date(clock.nowMillis());
-    String time = INDEX_DATE_SUFFIX.format(date);
-    return indexPath.suffix("/" + INDEX_PREFIX + time);
+  pwivate p-path pathfowhouw() {
+    date date = nyew d-date(cwock.nowmiwwis());
+    s-stwing t-time = index_date_suffix.fowmat(date);
+    wetuwn indexpath.suffix("/" + i-index_pwefix + time);
   }
 
-  private void flushIndex(Path flushPath, EarlybirdIndex index) throws Exception {
-    int numOfNonOptimized = index.numOfNonOptimizedSegments();
-    if (numOfNonOptimized > EarlybirdIndex.MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS) {
-      LOG.error(
-              "Found {} non-optimized segments when flushing to disk!", numOfNonOptimized);
-      FLUSHING_TOO_MANY_NON_OPTIMIZED_SEGMENTS.assertFailed();
+  pwivate v-void fwushindex(path f-fwushpath, UwU e-eawwybiwdindex index) thwows exception {
+    int nyumofnonoptimized = index.numofnonoptimizedsegments();
+    i-if (numofnonoptimized > eawwybiwdindex.max_num_of_non_optimized_segments) {
+      w-wog.ewwow(
+              "found {} n-nyon-optimized segments when fwushing to disk!", 😳 n-nyumofnonoptimized);
+      fwushing_too_many_non_optimized_segments.assewtfaiwed();
     }
 
-    int numSegments = index.getSegmentInfoList().size();
-    int flushingThreadPoolSize = numSegments;
+    i-int nyumsegments = i-index.getsegmentinfowist().size();
+    int f-fwushingthweadpoowsize = n-numsegments;
 
-    if (Config.environmentIsTest()) {
-      // SEARCH-33763: Limit the thread pool size for tests to avoid using too much memory on scoot.
-      flushingThreadPoolSize = 2;
+    i-if (config.enviwonmentistest()) {
+      // seawch-33763: wimit the thwead poow size fow tests to avoid u-using too much memowy on scoot. 😳
+      f-fwushingthweadpoowsize = 2;
     }
 
-    LOG.info("Flushing index using a thread pool size of {}", flushingThreadPoolSize);
+    wog.info("fwushing index using a thwead poow size o-of {}", (ˆ ﻌ ˆ)♡ fwushingthweadpoowsize);
 
-    ParallelUtil.parmap("flush-index", flushingThreadPoolSize, si -> ActionLogger.call(
-        "Flushing segment " + si.getSegmentName(),
-        () -> flushSegment(flushPath, si)), index.getSegmentInfoList());
+    pawawwewutiw.pawmap("fwush-index", (✿oωo) fwushingthweadpoowsize, nyaa~~ si -> actionwoggew.caww(
+        "fwushing segment " + si.getsegmentname(), ^^
+        () -> fwushsegment(fwushpath, (///ˬ///✿) s-si)), 😳 index.getsegmentinfowist());
 
-    FlushInfo indexInfo = new FlushInfo();
-    indexInfo.addLongProperty(UPDATE_KAFKA_OFFSET, index.getUpdateOffset());
-    indexInfo.addLongProperty(TWEET_KAFKA_OFFSET, index.getTweetOffset());
-    indexInfo.addIntProperty(FLUSHED_FROM_REPLICA, replicaId);
+    fwushinfo i-indexinfo = nyew fwushinfo();
+    i-indexinfo.addwongpwopewty(update_kafka_offset, òωó index.getupdateoffset());
+    indexinfo.addwongpwopewty(tweet_kafka_offset, ^^;; i-index.gettweetoffset());
+    i-indexinfo.addintpwopewty(fwushed_fwom_wepwica, rawr wepwicaid);
 
-    FlushInfo segmentFlushInfos = indexInfo.newSubProperties(SEGMENTS);
-    for (SegmentInfo segmentInfo : index.getSegmentInfoList()) {
-      FlushInfo segmentFlushInfo = segmentFlushInfos.newSubProperties(segmentInfo.getSegmentName());
-      segmentFlushInfo.addLongProperty(TIMESLICE_ID, segmentInfo.getTimeSliceID());
+    f-fwushinfo segmentfwushinfos = indexinfo.newsubpwopewties(segments);
+    f-fow (segmentinfo segmentinfo : index.getsegmentinfowist()) {
+      fwushinfo s-segmentfwushinfo = segmentfwushinfos.newsubpwopewties(segmentinfo.getsegmentname());
+      segmentfwushinfo.addwongpwopewty(timeswice_id, (ˆ ﻌ ˆ)♡ s-segmentinfo.gettimeswiceid());
     }
 
-    Path indexInfoPath = flushPath.suffix("/" + INDEX_INFO);
-    try (FSDataOutputStream infoOutputStream = fileSystem.create(indexInfoPath)) {
-      OutputStreamWriter infoFileWriter = new OutputStreamWriter(infoOutputStream);
-      FlushInfo.flushAsYaml(indexInfo, infoFileWriter);
+    p-path i-indexinfopath = fwushpath.suffix("/" + index_info);
+    t-twy (fsdataoutputstweam infooutputstweam = fiwesystem.cweate(indexinfopath)) {
+      outputstweamwwitew infofiwewwitew = n-nyew outputstweamwwitew(infooutputstweam);
+      f-fwushinfo.fwushasyamw(indexinfo, XD i-infofiwewwitew);
     }
   }
 
-  private BoxedUnit flushSegment(Path flushPath, SegmentInfo segmentInfo) throws Exception {
-    Path segmentPrefix = flushPath.suffix("/" + segmentInfo.getSegmentName());
-    Path segmentPath = segmentPrefix.suffix(DATA_SUFFIX);
+  p-pwivate boxedunit fwushsegment(path fwushpath, >_< s-segmentinfo segmentinfo) t-thwows exception {
+    path segmentpwefix = f-fwushpath.suffix("/" + segmentinfo.getsegmentname());
+    path segmentpath = s-segmentpwefix.suffix(data_suffix);
 
-    FlushInfo flushInfo = new FlushInfo();
+    fwushinfo fwushinfo = n-nyew fwushinfo();
 
-    try (FSDataOutputStream outputStream = fileSystem.create(segmentPath)) {
-      DataSerializer out = new DataSerializer(segmentPath.toString(), outputStream);
-      segmentInfo.getIndexSegment().flush(flushInfo, out);
+    t-twy (fsdataoutputstweam outputstweam = fiwesystem.cweate(segmentpath)) {
+      d-datasewiawizew o-out = nyew d-datasewiawizew(segmentpath.tostwing(), (˘ω˘) outputstweam);
+      segmentinfo.getindexsegment().fwush(fwushinfo, o-out);
     }
 
-    Path infoPath = segmentPrefix.suffix(INFO_SUFFIX);
+    path infopath = segmentpwefix.suffix(info_suffix);
 
-    try (FSDataOutputStream infoOutputStream = fileSystem.create(infoPath)) {
-      OutputStreamWriter infoFileWriter = new OutputStreamWriter(infoOutputStream);
-      FlushInfo.flushAsYaml(flushInfo, infoFileWriter);
+    t-twy (fsdataoutputstweam infooutputstweam = fiwesystem.cweate(infopath)) {
+      outputstweamwwitew i-infofiwewwitew = n-nyew outputstweamwwitew(infooutputstweam);
+      f-fwushinfo.fwushasyamw(fwushinfo, 😳 i-infofiwewwitew);
     }
-    return BoxedUnit.UNIT;
+    w-wetuwn boxedunit.unit;
   }
 }

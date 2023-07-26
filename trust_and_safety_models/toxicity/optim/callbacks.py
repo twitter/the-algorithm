@@ -1,220 +1,220 @@
-from collections import defaultdict
-import os
+fwom cowwections impowt defauwtdict
+i-impowt os
 
-from toxicity_ml_pipeline.settings.default_settings_tox import REMOTE_LOGDIR
-from toxicity_ml_pipeline.settings.default_settings_abs import LABEL_NAMES
-from toxicity_ml_pipeline.utils.absv_utils import parse_labeled_data
-from toxicity_ml_pipeline.utils.helpers import compute_precision_fixed_recall, execute_command
+fwom t-toxicity_mw_pipewine.settings.defauwt_settings_tox i-impowt wemote_wogdiw
+f-fwom t-toxicity_mw_pipewine.settings.defauwt_settings_abs i-impowt wabew_names
+f-fwom toxicity_mw_pipewine.utiws.absv_utiws i-impowt pawse_wabewed_data
+fwom toxicity_mw_pipewine.utiws.hewpews impowt compute_pwecision_fixed_wecaww, 🥺 exekawaii~_command
 
-from sklearn.metrics import average_precision_score, roc_auc_score
-import tensorflow as tf
-import wandb
-
-
-class NothingCallback(tf.keras.callbacks.Callback):
-  def on_epoch_begin(self, epoch, logs=None):
-    print("ici, ", epoch)
-
-  def on_epoch_end(self, epoch, logs=None):
-    print("fin ", epoch)
-
-  def on_train_batch_end(self, batch, logs=None):
-    print("fin de batch ", batch)
+f-fwom skweawn.metwics impowt avewage_pwecision_scowe, XD w-woc_auc_scowe
+impowt tensowfwow a-as tf
+impowt wandb
 
 
-class ControlledStoppingCheckpointCallback(tf.keras.callbacks.ModelCheckpoint):
-  def __init__(self, stopping_epoch, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    self.stopping_epoch = stopping_epoch
+cwass nyothingcawwback(tf.kewas.cawwbacks.cawwback):
+  def on_epoch_begin(sewf, (U ᵕ U❁) epoch, :3 wogs=none):
+    pwint("ici, ( ͡o ω ͡o ) ", e-epoch)
 
-  def on_epoch_end(self, epoch, logs=None):
-    super().on_epoch_end(epoch, logs)
-    if epoch == self.stopping_epoch:
-      self.model.stop_training = True
+  def on_epoch_end(sewf, òωó epoch, w-wogs=none):
+    p-pwint("fin ", epoch)
 
-
-class SyncingTensorBoard(tf.keras.callbacks.TensorBoard):
-  def __init__(self, remote_logdir=None, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    self.remote_logdir = remote_logdir if remote_logdir is not None else REMOTE_LOGDIR
-
-  def on_epoch_end(self, epoch, logs=None):
-    super().on_epoch_end(epoch, logs=logs)
-    self.synchronize()
-
-  def synchronize(self):
-    base_dir = os.path.dirname(self.log_dir)
-    cmd = f"gsutil -m rsync -r {base_dir} {self.remote_logdir}"
-    execute_command(cmd)
+  def on_twain_batch_end(sewf, σωσ batch, wogs=none):
+    p-pwint("fin de batch ", (U ᵕ U❁) batch)
 
 
-class GradientLoggingTensorBoard(SyncingTensorBoard):
-  def __init__(self, loader, val_data, freq, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    val_dataset = loader.get_balanced_dataset(
-      training_data=val_data, size_limit=50, return_as_batch=False
+cwass contwowwedstoppingcheckpointcawwback(tf.kewas.cawwbacks.modewcheckpoint):
+  def __init__(sewf, (✿oωo) stopping_epoch, ^^ *awgs, **kwawgs):
+    s-supew().__init__(*awgs, ^•ﻌ•^ **kwawgs)
+    sewf.stopping_epoch = s-stopping_epoch
+
+  d-def on_epoch_end(sewf, XD e-epoch, wogs=none):
+    s-supew().on_epoch_end(epoch, :3 wogs)
+    if epoch == sewf.stopping_epoch:
+      s-sewf.modew.stop_twaining = twue
+
+
+cwass syncingtensowboawd(tf.kewas.cawwbacks.tensowboawd):
+  def __init__(sewf, (ꈍᴗꈍ) w-wemote_wogdiw=none, :3 *awgs, **kwawgs):
+    supew().__init__(*awgs, (U ﹏ U) **kwawgs)
+    sewf.wemote_wogdiw = wemote_wogdiw if wemote_wogdiw is nyot n-nyone ewse wemote_wogdiw
+
+  def on_epoch_end(sewf, UwU e-epoch, wogs=none):
+    s-supew().on_epoch_end(epoch, 😳😳😳 w-wogs=wogs)
+    sewf.synchwonize()
+
+  def synchwonize(sewf):
+    b-base_diw = o-os.path.diwname(sewf.wog_diw)
+    cmd = f"gsutiw -m w-wsync -w {base_diw} {sewf.wemote_wogdiw}"
+    e-exekawaii~_command(cmd)
+
+
+cwass gwadientwoggingtensowboawd(syncingtensowboawd):
+  d-def __init__(sewf, XD woadew, o.O v-vaw_data, fweq, (⑅˘꒳˘) *awgs, **kwawgs):
+    supew().__init__(*awgs, 😳😳😳 **kwawgs)
+    vaw_dataset = woadew.get_bawanced_dataset(
+      t-twaining_data=vaw_data, nyaa~~ size_wimit=50, rawr w-wetuwn_as_batch=fawse
     )
-    data_args = list(val_dataset.batch(32).take(1))[0]
-    self.x_batch, self.y_batch = data_args[0], data_args[1]
-    self.freq = freq
-    self.counter = 0
+    data_awgs = w-wist(vaw_dataset.batch(32).take(1))[0]
+    s-sewf.x_batch, -.- sewf.y_batch = data_awgs[0], (✿oωo) data_awgs[1]
+    sewf.fweq = fweq
+    sewf.countew = 0
 
-  def _log_gradients(self):
-    writer = self._train_writer
+  def _wog_gwadients(sewf):
+    w-wwitew = sewf._twain_wwitew
 
-    with writer.as_default():
-      with tf.GradientTape() as tape:
-        y_pred = self.model(self.x_batch)
-        loss = self.model.compiled_loss(y_true=self.y_batch, y_pred=y_pred)
-        gradient_norm = tf.linalg.global_norm(tape.gradient(loss, self.model.trainable_weights))
+    w-with wwitew.as_defauwt():
+      with tf.gwadienttape() a-as tape:
+        y-y_pwed = s-sewf.modew(sewf.x_batch)
+        woss = sewf.modew.compiwed_woss(y_twue=sewf.y_batch, /(^•ω•^) y_pwed=y_pwed)
+        gwadient_nowm = t-tf.winawg.gwobaw_nowm(tape.gwadient(woss, 🥺 sewf.modew.twainabwe_weights))
 
-      tf.summary.scalar("gradient_norm", data=gradient_norm, step=self.counter)
-    writer.flush()
+      tf.summawy.scawaw("gwadient_nowm", ʘwʘ data=gwadient_nowm, UwU step=sewf.countew)
+    w-wwitew.fwush()
 
-  def on_train_batch_end(self, batch, logs=None):
-    super().on_batch_end(batch, logs=logs)
-    self.counter += 1
-    if batch % self.freq == 0:
-      self._log_gradients()
+  def on_twain_batch_end(sewf, XD b-batch, w-wogs=none):
+    s-supew().on_batch_end(batch, (✿oωo) wogs=wogs)
+    sewf.countew += 1
+    i-if batch % s-sewf.fweq == 0:
+      s-sewf._wog_gwadients()
 
 
-class AdditionalResultLogger(tf.keras.callbacks.Callback):
+c-cwass additionawwesuwtwoggew(tf.kewas.cawwbacks.cawwback):
   def __init__(
-    self,
-    data,
-    set_,
-    fixed_recall=0.85,
-    from_logits=False,
-    dataset_transform_func=None,
-    batch_size=64,
-    dual_head=None,
-    *args,
-    **kwargs,
+    s-sewf, :3
+    d-data, (///ˬ///✿)
+    s-set_, nyaa~~
+    fixed_wecaww=0.85, >w<
+    f-fwom_wogits=fawse, -.-
+    d-dataset_twansfowm_func=none, (✿oωo)
+    batch_size=64, (˘ω˘)
+    duaw_head=none, rawr
+    *awgs, OwO
+    **kwawgs, ^•ﻌ•^
   ):
-    super().__init__(*args, **kwargs)
-    self.set_ = set_
-    if data is None:
-      return None    
+    supew().__init__(*awgs, UwU **kwawgs)
+    sewf.set_ = s-set_
+    if data is nyone:
+      wetuwn nyone    
 
-    self.single_head = True
-    try:
-      self.labels = data.int_label.values
-    except AttributeError:
-      self.labels = data.to_dataframe()[LABEL_NAMES].values.astype('int')
-      self.data = data.to_tf_dataset().map(parse_labeled_data).batch(batch_size)
-      self.label_names = LABEL_NAMES
-    else:
-      self.label_names = ['']
-      if dual_head:
-        self.label_names = [f'{e}_label' for e in dual_head]
-        self.labels = {f'{e}_output': data[f'{e}_label'].values for e in dual_head}
-        self.single_head = False
-      if dataset_transform_func is None:
-        self.data = data.text.values
-      else:
-        self.data = dataset_transform_func(data, mb_size=batch_size, shuffle=False)
+    sewf.singwe_head = twue
+    twy:
+      sewf.wabews = d-data.int_wabew.vawues
+    except attwibuteewwow:
+      sewf.wabews = data.to_datafwame()[wabew_names].vawues.astype('int')
+      s-sewf.data = d-data.to_tf_dataset().map(pawse_wabewed_data).batch(batch_size)
+      sewf.wabew_names = w-wabew_names
+    ewse:
+      sewf.wabew_names = ['']
+      i-if duaw_head:
+        sewf.wabew_names = [f'{e}_wabew' f-fow e in duaw_head]
+        sewf.wabews = {f'{e}_output': d-data[f'{e}_wabew'].vawues fow e in duaw_head}
+        sewf.singwe_head = fawse
+      if dataset_twansfowm_func i-is nyone:
+        sewf.data = d-data.text.vawues
+      ewse:
+        sewf.data = d-dataset_twansfowm_func(data, (˘ω˘) m-mb_size=batch_size, (///ˬ///✿) shuffwe=fawse)
         
-    finally:
-      if len(self.label_names) == 1:
-        self.metric_kw = {}
-      else:
-        self.metric_kw = {'average': None}
+    finawwy:
+      i-if wen(sewf.wabew_names) == 1:
+        s-sewf.metwic_kw = {}
+      ewse:
+        s-sewf.metwic_kw = {'avewage': n-nyone}
 
-      self.counter = 0
-      self.best_metrics = defaultdict(float)
-      self.from_logits = from_logits
-      print(f"Loaded callback for {set_}, from_logits: {from_logits}, labels {self.label_names}")
+      sewf.countew = 0
+      sewf.best_metwics = defauwtdict(fwoat)
+      sewf.fwom_wogits = f-fwom_wogits
+      p-pwint(f"woaded c-cawwback fow {set_}, σωσ fwom_wogits: {fwom_wogits}, /(^•ω•^) w-wabews {sewf.wabew_names}")
 
-      if 1 < fixed_recall <= 100:
-        fixed_recall = fixed_recall / 100
-      elif not (0 < fixed_recall <= 100):
-        raise ValueError("Threshold should be between 0 and 1, or 0 and 100")
-      self.fixed_recall = fixed_recall
-      self.batch_size = batch_size
+      i-if 1 < fixed_wecaww <= 100:
+        f-fixed_wecaww = fixed_wecaww / 100
+      ewif nyot (0 < fixed_wecaww <= 100):
+        waise vawueewwow("thweshowd s-shouwd be between 0 a-and 1, 😳 ow 0 and 100")
+      sewf.fixed_wecaww = f-fixed_wecaww
+      s-sewf.batch_size = batch_size
 
-  def compute_precision_fixed_recall(self, labels, preds):
-    result, _ = compute_precision_fixed_recall(labels=labels, preds=preds,
-      fixed_recall=self.fixed_recall)
+  def compute_pwecision_fixed_wecaww(sewf, 😳 wabews, pweds):
+    w-wesuwt, (⑅˘꒳˘) _ = compute_pwecision_fixed_wecaww(wabews=wabews, 😳😳😳 pweds=pweds, 😳
+      fixed_wecaww=sewf.fixed_wecaww)
 
-    return result
+    wetuwn wesuwt
 
-  def on_epoch_end(self, epoch, logs=None):
-    self.additional_evaluations(step=epoch, eval_time="epoch")
+  d-def on_epoch_end(sewf, XD epoch, wogs=none):
+    sewf.additionaw_evawuations(step=epoch, mya evaw_time="epoch")
 
-  def on_train_batch_end(self, batch, logs=None):
-    self.counter += 1
-    if self.counter % 2000 == 0:
-      self.additional_evaluations(step=self.counter, eval_time="batch")
+  d-def on_twain_batch_end(sewf, ^•ﻌ•^ b-batch, ʘwʘ wogs=none):
+    sewf.countew += 1
+    if sewf.countew % 2000 == 0:
+      sewf.additionaw_evawuations(step=sewf.countew, ( ͡o ω ͡o ) e-evaw_time="batch")
 
-  def _binary_evaluations(self, preds, label_name=None, class_index=None):
-    mask = None
-    curr_labels = self.labels
-    if label_name is not None:
-      curr_labels = self.labels[label_name]
-      if class_index is not None:
-        curr_labels = (curr_labels == class_index).astype(int)
+  d-def _binawy_evawuations(sewf, mya pweds, wabew_name=none, o.O cwass_index=none):
+    mask = nyone
+    c-cuww_wabews = sewf.wabews
+    i-if wabew_name is nyot none:
+      cuww_wabews = sewf.wabews[wabew_name]
+      i-if cwass_index is nyot nyone:
+        c-cuww_wabews = (cuww_wabews == c-cwass_index).astype(int)
 
-    if -1 in curr_labels:
-      mask = curr_labels != -1   
-      curr_labels = curr_labels[mask]
-      preds = preds[mask] 
+    if -1 in cuww_wabews:
+      mask = c-cuww_wabews != -1   
+      cuww_wabews = cuww_wabews[mask]
+      p-pweds = pweds[mask] 
     
-    return {
-        f"precision_recall{self.fixed_recall}": self.compute_precision_fixed_recall(
-          labels=curr_labels, preds=preds
-        ),
-        "pr_auc": average_precision_score(y_true=curr_labels, y_score=preds),
-        "roc_auc": roc_auc_score(y_true=curr_labels, y_score=preds),
+    w-wetuwn {
+        f-f"pwecision_wecaww{sewf.fixed_wecaww}": sewf.compute_pwecision_fixed_wecaww(
+          w-wabews=cuww_wabews, (✿oωo) p-pweds=pweds
+        ), :3
+        "pw_auc": avewage_pwecision_scowe(y_twue=cuww_wabews, 😳 y_scowe=pweds), (U ﹏ U)
+        "woc_auc": w-woc_auc_scowe(y_twue=cuww_wabews, mya y-y_scowe=pweds), (U ᵕ U❁)
       }
 
 
-  def _multiclass_evaluations(self, preds):
-    pr_auc_l = average_precision_score(y_true=self.labels, y_score=preds, **self.metric_kw)
-    roc_auc_l = roc_auc_score(y_true=self.labels, y_score=preds, **self.metric_kw)
-    metrics = {}
-    for i, label in enumerate(self.label_names):
-      metrics[f'pr_auc_{label}'] = pr_auc_l[i]
-      metrics[f'roc_auc_{label}'] = roc_auc_l[i]
+  d-def _muwticwass_evawuations(sewf, :3 pweds):
+    pw_auc_w = a-avewage_pwecision_scowe(y_twue=sewf.wabews, mya y_scowe=pweds, OwO **sewf.metwic_kw)
+    w-woc_auc_w = woc_auc_scowe(y_twue=sewf.wabews, (ˆ ﻌ ˆ)♡ y_scowe=pweds, ʘwʘ **sewf.metwic_kw)
+    m-metwics = {}
+    fow i, o.O wabew in enumewate(sewf.wabew_names):
+      metwics[f'pw_auc_{wabew}'] = p-pw_auc_w[i]
+      m-metwics[f'woc_auc_{wabew}'] = w-woc_auc_w[i]
 
-    return metrics
+    w-wetuwn metwics
   
-  def additional_evaluations(self, step, eval_time):
-    print("Evaluating ", self.set_, eval_time, step)
+  def additionaw_evawuations(sewf, UwU s-step, evaw_time):
+    pwint("evawuating ", rawr x3 sewf.set_, evaw_time, 🥺 step)
 
-    preds = self.model.predict(x=self.data, batch_size=self.batch_size)
-    if self.from_logits:
-      preds = tf.keras.activations.sigmoid(preds.logits).numpy()
+    pweds = s-sewf.modew.pwedict(x=sewf.data, :3 batch_size=sewf.batch_size)
+    i-if sewf.fwom_wogits:
+      pweds = t-tf.kewas.activations.sigmoid(pweds.wogits).numpy()
     
-    if self.single_head:
-      if len(self.label_names) == 1:
-        metrics = self._binary_evaluations(preds)
-      else:
-        metrics = self._multiclass_evaluations(preds)
-    else:
-      if preds[0].shape[1] == 1:
-        binary_preds = preds[0]
-        multic_preds = preds[1]
-      else:
-        binary_preds = preds[1]
-        multic_preds = preds[0]
+    if sewf.singwe_head:
+      i-if wen(sewf.wabew_names) == 1:
+        metwics = sewf._binawy_evawuations(pweds)
+      e-ewse:
+        metwics = s-sewf._muwticwass_evawuations(pweds)
+    e-ewse:
+      if p-pweds[0].shape[1] == 1:
+        b-binawy_pweds = pweds[0]
+        muwtic_pweds = pweds[1]
+      ewse:
+        binawy_pweds = pweds[1]
+        muwtic_pweds = pweds[0]
 
-      binary_metrics = self._binary_evaluations(binary_preds, label_name='target_output')
-      metrics = {f'{k}_target': v for k, v in binary_metrics.items()}
-      num_classes = multic_preds.shape[1]
-      for class_ in range(num_classes):
-        binary_metrics = self._binary_evaluations(multic_preds[:, class_], label_name='content_output', class_index=class_)
-        metrics.update({f'{k}_content_{class_}': v for k, v in binary_metrics.items()})
+      b-binawy_metwics = s-sewf._binawy_evawuations(binawy_pweds, (ꈍᴗꈍ) w-wabew_name='tawget_output')
+      metwics = {f'{k}_tawget': v f-fow k, 🥺 v in binawy_metwics.items()}
+      num_cwasses = muwtic_pweds.shape[1]
+      fow cwass_ i-in wange(num_cwasses):
+        binawy_metwics = s-sewf._binawy_evawuations(muwtic_pweds[:, (✿oωo) cwass_], w-wabew_name='content_output', (U ﹏ U) cwass_index=cwass_)
+        metwics.update({f'{k}_content_{cwass_}': v fow k, :3 v in b-binawy_metwics.items()})
 
-    for k, v in metrics.items():
-      self.best_metrics[f"max_{k}"] = max(v, self.best_metrics[f"max_{k}"])
+    f-fow k, ^^;; v in metwics.items():
+      sewf.best_metwics[f"max_{k}"] = m-max(v, rawr sewf.best_metwics[f"max_{k}"])
 
-    self.log_metrics(metrics, step=step, eval_time=eval_time)
+    s-sewf.wog_metwics(metwics, 😳😳😳 step=step, (✿oωo) evaw_time=evaw_time)
 
-  def log_metrics(self, metrics_d, step, eval_time):
-    commit = False if self.set_ == "validation" else True
-    to_report = {self.set_: {**metrics_d, **self.best_metrics}}
+  def wog_metwics(sewf, OwO metwics_d, step, ʘwʘ e-evaw_time):
+    c-commit = fawse i-if sewf.set_ == "vawidation" e-ewse t-twue
+    to_wepowt = {sewf.set_: {**metwics_d, (ˆ ﻌ ˆ)♡ **sewf.best_metwics}}
 
-    if eval_time == "epoch":
-      to_report["epoch"] = step
+    if e-evaw_time == "epoch":
+      t-to_wepowt["epoch"] = step
 
-    wandb.log(to_report, commit=commit)
+    wandb.wog(to_wepowt, c-commit=commit)

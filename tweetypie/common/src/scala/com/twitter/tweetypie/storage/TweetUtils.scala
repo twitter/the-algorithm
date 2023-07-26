@@ -1,265 +1,265 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.logging.Logger
-import com.twitter.scrooge.TFieldBlob
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
-import com.twitter.storage.client.manhattan.kv.ManhattanException
-import com.twitter.tweetypie.storage.Response._
-import com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+impowt com.twittew.wogging.woggew
+i-impowt com.twittew.scwooge.tfiewdbwob
+i-impowt c-com.twittew.snowfwake.id.snowfwakeid
+i-impowt c-com.twittew.stowage.cwient.manhattan.kv.deniedmanhattanexception
+i-impowt com.twittew.stowage.cwient.manhattan.kv.manhattanexception
+i-impowt com.twittew.tweetypie.stowage.wesponse._
+i-impowt com.twittew.tweetypie.stowage_intewnaw.thwiftscawa.stowedtweet
+impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+i-impowt com.twittew.utiw.twy
 
-object TweetUtils {
-  val log: Logger = Logger("com.twitter.tweetypie.storage.TweetStorageLibrary")
-  import FieldResponseCodec.ValueNotFoundException
-
-  /**
-   * It's rare, but we have seen tweets with userId=0, which is likely the result of a
-   * failed/partial delete. Treat these as invalid tweets, which are returned to callers
-   * as not found.
-   */
-  def isValid(tweet: StoredTweet): Boolean =
-    tweet.userId.exists(_ != 0) && tweet.text.nonEmpty &&
-      tweet.createdVia.nonEmpty && tweet.createdAtSec.nonEmpty
+object tweetutiws {
+  vaw wog: w-woggew = woggew("com.twittew.tweetypie.stowage.tweetstowagewibwawy")
+  impowt f-fiewdwesponsecodec.vawuenotfoundexception
 
   /**
-   * Helper function to extract Scrubbed field Ids from the result returned by reading entire tweet prefix
-   * function.
-   *
-   * @param records The sequence of MH records for the given tweetId
-   *
-   * @return The set of scrubbed field ids
+   * it's wawe, σωσ but we have seen tweets with usewid=0, (U ﹏ U) w-which is wikewy the wesuwt o-of a
+   * faiwed/pawtiaw d-dewete. >w< tweat these as invawid tweets, which awe wetuwned to cawwews
+   * a-as nyot found. σωσ
    */
-  private[tweetypie] def extractScrubbedFields(records: Seq[TweetManhattanRecord]): Set[Short] =
-    records
-      .map(r => r.lkey)
-      .collect { case TweetKey.LKey.ScrubbedFieldKey(fieldId) => fieldId }
-      .toSet
-
-  private[tweetypie] val expectedFields =
-    TweetFields.requiredFieldIds.toSet - TweetFields.tweetIdField
+  def isvawid(tweet: stowedtweet): boowean =
+    tweet.usewid.exists(_ != 0) && t-tweet.text.nonempty &&
+      tweet.cweatedvia.nonempty && t-tweet.cweatedatsec.nonempty
 
   /**
-   * Find the timestamp from a tweetId and a list of MH records. This is used when
-   * you need a timestamp and you aren't sure that tweetId is a snowflake id.
+   * h-hewpew f-function to e-extwact scwubbed fiewd ids fwom the wesuwt wetuwned b-by weading entiwe tweet pwefix
+   * function. nyaa~~
    *
-   * @param tweetId A tweetId you want the timestamp for.
-   * @param records Tbird_mh records keyed on tweetId, one of which should be the
-   * core fields record.
-   * @return A milliseconds timestamp if one could be found.
+   * @pawam w-wecowds the sequence of mh wecowds fow the given tweetid
+   *
+   * @wetuwn the set of scwubbed fiewd ids
    */
-  private[tweetypie] def creationTimeFromTweetIdOrMHRecords(
-    tweetId: Long,
-    records: Seq[TweetManhattanRecord]
-  ): Option[Long] =
-    SnowflakeId
-      .unixTimeMillisOptFromId(tweetId).orElse({
-        records
-          .find(_.lkey == TweetKey.LKey.CoreFieldsKey)
-          .flatMap { coreFields =>
-            CoreFieldsCodec
-              .fromTFieldBlob(
-                TFieldBlobCodec.fromByteBuffer(coreFields.value.contents)
-              ).createdAtSec.map(seconds => seconds * 1000)
+  p-pwivate[tweetypie] def extwactscwubbedfiewds(wecowds: s-seq[tweetmanhattanwecowd]): s-set[showt] =
+    w-wecowds
+      .map(w => w.wkey)
+      .cowwect { case tweetkey.wkey.scwubbedfiewdkey(fiewdid) => fiewdid }
+      .toset
+
+  p-pwivate[tweetypie] v-vaw expectedfiewds =
+    tweetfiewds.wequiwedfiewdids.toset - tweetfiewds.tweetidfiewd
+
+  /**
+   * f-find the t-timestamp fwom a tweetid and a w-wist of mh wecowds. 🥺 this is used w-when
+   * you need a timestamp and you awen't s-suwe that tweetid is a snowfwake i-id. rawr x3
+   *
+   * @pawam tweetid a t-tweetid you want t-the timestamp fow. σωσ
+   * @pawam wecowds tbiwd_mh wecowds keyed on tweetid, (///ˬ///✿) one of which shouwd be the
+   * cowe fiewds wecowd. (U ﹏ U)
+   * @wetuwn a-a miwwiseconds t-timestamp if one couwd b-be found. ^^;;
+   */
+  p-pwivate[tweetypie] d-def cweationtimefwomtweetidowmhwecowds(
+    tweetid: wong, 🥺
+    wecowds: seq[tweetmanhattanwecowd]
+  ): option[wong] =
+    s-snowfwakeid
+      .unixtimemiwwisoptfwomid(tweetid).owewse({
+        wecowds
+          .find(_.wkey == tweetkey.wkey.cowefiewdskey)
+          .fwatmap { cowefiewds =>
+            cowefiewdscodec
+              .fwomtfiewdbwob(
+                t-tfiewdbwobcodec.fwombytebuffew(cowefiewds.vawue.contents)
+              ).cweatedatsec.map(seconds => seconds * 1000)
           }
       })
 
   /**
-   * Helper function used to parse manhattan results for fields in a tweet (given in the form of
-   * Sequence of (FieldKey, Try[Unit]) pairs) and build a TweetResponse object.
+   * h-hewpew f-function used to p-pawse manhattan wesuwts fow fiewds i-in a tweet (given i-in the fowm o-of
+   * sequence o-of (fiewdkey, òωó twy[unit]) paiws) and buiwd a t-tweetwesponse object. XD
    *
-   * @param callerName The name of the caller function. Used for error messages
-   * @param tweetId Id of the Tweet for which TweetResponse is being built
-   * @param fieldResults Sequence of (FieldKey, Try[Unit]).
+   * @pawam c-cawwewname t-the nyame of the c-cawwew function. u-used fow ewwow messages
+   * @pawam tweetid id of the tweet f-fow which tweetwesponse is being buiwt
+   * @pawam fiewdwesuwts sequence of (fiewdkey, :3 twy[unit]). (U ﹏ U)
    *
-   * @return TweetResponse object
+   * @wetuwn t-tweetwesponse object
    */
-  private[tweetypie] def buildTweetResponse(
-    callerName: String,
-    tweetId: Long,
-    fieldResults: Map[FieldId, Try[Unit]]
-  ): TweetResponse = {
-    // Count Found/Not Found
-    val successCount =
-      fieldResults.foldLeft(0) {
-        case (count, (_, Return(_))) => count + 1
-        case (count, (_, Throw(_: ValueNotFoundException))) => count + 1
-        case (count, _) => count
+  pwivate[tweetypie] def buiwdtweetwesponse(
+    c-cawwewname: stwing, >w<
+    t-tweetid: w-wong,
+    fiewdwesuwts: map[fiewdid, /(^•ω•^) t-twy[unit]]
+  ): tweetwesponse = {
+    // c-count found/not f-found
+    vaw successcount =
+      fiewdwesuwts.fowdweft(0) {
+        case (count, (⑅˘꒳˘) (_, wetuwn(_))) => count + 1
+        case (count, ʘwʘ (_, t-thwow(_: vawuenotfoundexception))) => count + 1
+        c-case (count, _) => count
       }
 
-    val fieldResponsesMap = getFieldResponses(callerName, tweetId, fieldResults)
+    v-vaw fiewdwesponsesmap = getfiewdwesponses(cawwewname, rawr x3 t-tweetid, fiewdwesuwts)
 
-    val overallCode = if (successCount > 0 && successCount == fieldResults.size) {
-      TweetResponseCode.Success
-    } else {
+    vaw ovewawwcode = i-if (successcount > 0 && s-successcount == fiewdwesuwts.size) {
+      t-tweetwesponsecode.success
+    } e-ewse {
 
-      // If any field was rate limited, then we consider the entire tweet to be rate limited. So first we scan
-      // the field results to check such an occurrence.
-      val wasRateLimited = fieldResults.exists { fieldResult =>
-        fieldResult._2 match {
-          case Throw(e: DeniedManhattanException) => true
-          case _ => false
+      // if any fiewd was wate wimited, (˘ω˘) then we considew the entiwe tweet t-to be wate wimited. o.O s-so fiwst we s-scan
+      // the fiewd wesuwts t-to check such an o-occuwwence. 😳
+      vaw waswatewimited = f-fiewdwesuwts.exists { fiewdwesuwt =>
+        fiewdwesuwt._2 match {
+          case thwow(e: d-deniedmanhattanexception) => t-twue
+          case _ => fawse
         }
       }
 
-      // Were we rate limited for any of the additional fields?
-      if (wasRateLimited) {
-        TweetResponseCode.OverCapacity
-      } else if (successCount == 0) {
-        // successCount is < fieldResults.size at this point. So if allOrNone is true or
-        // if successCount == 0 (i.e failed on all Fields), the overall code should be 'Failure'
-        TweetResponseCode.Failure
-      } else {
-        // allOrNone == false AND successCount > 0 at this point. Clearly the overallCode should be Partial
-        TweetResponseCode.Partial
+      // wewe w-we wate wimited f-fow any of the additionaw fiewds?
+      if (waswatewimited) {
+        tweetwesponsecode.ovewcapacity
+      } e-ewse if (successcount == 0) {
+        // successcount is < fiewdwesuwts.size at this p-point. so if awwownone is twue ow
+        // i-if successcount == 0 (i.e f-faiwed on aww fiewds), o.O the ovewaww code shouwd be 'faiwuwe'
+        t-tweetwesponsecode.faiwuwe
+      } e-ewse {
+        // awwownone == fawse and successcount > 0 at this p-point. ^^;; cweawwy the ovewawwcode s-shouwd be pawtiaw
+        tweetwesponsecode.pawtiaw
       }
     }
 
-    TweetResponse(tweetId, overallCode, Some(fieldResponsesMap))
+    tweetwesponse(tweetid, ( ͡o ω ͡o ) ovewawwcode, some(fiewdwesponsesmap))
 
   }
 
   /**
-   * Helper function to convert manhattan results into a Map[FieldId, FieldResponse]
+   * h-hewpew function to convewt m-manhattan wesuwts i-into a map[fiewdid, ^^;; fiewdwesponse]
    *
-   * @param fieldResults Sequence of (TweetKey, TFieldBlob).
+   * @pawam f-fiewdwesuwts sequence of (tweetkey, ^^;; t-tfiewdbwob). XD
    */
-  private[tweetypie] def getFieldResponses(
-    callerName: String,
-    tweetId: TweetId,
-    fieldResults: Map[FieldId, Try[_]]
-  ): Map[FieldId, FieldResponse] =
-    fieldResults.map {
-      case (fieldId, resp) =>
-        def keyStr = TweetKey.fieldKey(tweetId, fieldId).toString
-        resp match {
-          case Return(_) =>
-            fieldId -> FieldResponse(FieldResponseCode.Success, None)
-          case Throw(mhException: ManhattanException) =>
-            val errMsg = s"Exception in $callerName. Key: $keyStr. Error: $mhException"
-            mhException match {
-              case _: ValueNotFoundException => // ValueNotFound is not an error
-              case _ => log.error(errMsg)
+  p-pwivate[tweetypie] d-def getfiewdwesponses(
+    cawwewname: s-stwing, 🥺
+    t-tweetid: tweetid, (///ˬ///✿)
+    fiewdwesuwts: map[fiewdid, (U ᵕ U❁) t-twy[_]]
+  ): m-map[fiewdid, ^^;; f-fiewdwesponse] =
+    fiewdwesuwts.map {
+      case (fiewdid, ^^;; wesp) =>
+        def k-keystw = tweetkey.fiewdkey(tweetid, rawr fiewdid).tostwing
+        w-wesp match {
+          c-case wetuwn(_) =>
+            fiewdid -> fiewdwesponse(fiewdwesponsecode.success, (˘ω˘) nyone)
+          c-case t-thwow(mhexception: m-manhattanexception) =>
+            v-vaw ewwmsg = s"exception in $cawwewname. 🥺 key: $keystw. nyaa~~ e-ewwow: $mhexception"
+            mhexception match {
+              case _: vawuenotfoundexception => // vawuenotfound is nyot an ewwow
+              c-case _ => wog.ewwow(ewwmsg)
             }
-            fieldId -> FieldResponseCodec.fromThrowable(mhException, Some(errMsg))
-          case Throw(e) =>
-            val errMsg = s"Exception in $callerName. Key: $keyStr. Error: $e"
-            log.error(errMsg)
-            fieldId -> FieldResponse(FieldResponseCode.Error, Some(errMsg))
+            fiewdid -> f-fiewdwesponsecodec.fwomthwowabwe(mhexception, :3 some(ewwmsg))
+          c-case thwow(e) =>
+            vaw ewwmsg = s-s"exception in $cawwewname. /(^•ω•^) key: $keystw. ewwow: $e"
+            w-wog.ewwow(ewwmsg)
+            f-fiewdid -> fiewdwesponse(fiewdwesponsecode.ewwow, ^•ﻌ•^ s-some(ewwmsg))
         }
     }
 
   /**
-   * Helper function to build a TweetResponse object when being rate limited. Its possible that only some of the fields
-   * got rate limited, so we indicate which fields got processed successfully, and which encountered some sort of error.
+   * h-hewpew f-function to buiwd a tweetwesponse object when being wate wimited. UwU its possibwe that onwy some of the fiewds
+   * g-got wate wimited, 😳😳😳 s-so we indicate w-which fiewds got pwocessed s-successfuwwy, OwO and which encountewed some sowt of ewwow. ^•ﻌ•^
    *
-   * @param tweetId Tweet id
-   * @param callerName name of API calling this function
-   * @param fieldResponses field responses for the case where
+   * @pawam t-tweetid t-tweet id
+   * @pawam cawwewname n-name of api cawwing this function
+   * @pawam fiewdwesponses f-fiewd wesponses f-fow the case whewe
    *
-   * @return The TweetResponse object
+   * @wetuwn the tweetwesponse o-object
    */
-  private[tweetypie] def buildTweetOverCapacityResponse(
-    callerName: String,
-    tweetId: Long,
-    fieldResponses: Map[FieldId, Try[Unit]]
+  p-pwivate[tweetypie] def buiwdtweetovewcapacitywesponse(
+    cawwewname: stwing, (ꈍᴗꈍ)
+    tweetid: wong, (⑅˘꒳˘)
+    fiewdwesponses: m-map[fiewdid, (⑅˘꒳˘) t-twy[unit]]
   ) = {
-    val fieldResponsesMap = getFieldResponses(callerName, tweetId, fieldResponses)
-    TweetResponse(tweetId, TweetResponseCode.OverCapacity, Some(fieldResponsesMap))
+    v-vaw fiewdwesponsesmap = g-getfiewdwesponses(cawwewname, t-tweetid, (ˆ ﻌ ˆ)♡ fiewdwesponses)
+    tweetwesponse(tweetid, /(^•ω•^) t-tweetwesponsecode.ovewcapacity, òωó s-some(fiewdwesponsesmap))
   }
 
   /**
-   * Build a StoredTweet from a Seq of records. Core fields are handled specially.
+   * buiwd a stowedtweet f-fwom a seq o-of wecowds. (⑅˘꒳˘) cowe fiewds awe handwed s-speciawwy. (U ᵕ U❁)
    */
-  private[tweetypie] def buildStoredTweet(
-    tweetId: TweetId,
-    records: Seq[TweetManhattanRecord],
-    includeScrubbed: Boolean = false,
-  ): StoredTweet = {
-    getStoredTweetBlobs(records, includeScrubbed)
-      .flatMap { fieldBlob =>
-        // When fieldId == TweetFields.rootCoreFieldId, we have further work to do since the
-        // 'value' is really serialized/packed version of all core fields. In this case we'll have
-        // to unpack it into many TFieldBlobs.
-        if (fieldBlob.id == TweetFields.rootCoreFieldId) {
-          // We won't throw any error in this function and instead let the caller function handle this
-          // condition (i.e If the caller function does not find any values for the core-fields in
-          // the returned map, it should assume that the tweet is not found)
-          CoreFieldsCodec.unpackFields(fieldBlob).values.toSeq
-        } else {
-          Seq(fieldBlob)
+  pwivate[tweetypie] def b-buiwdstowedtweet(
+    tweetid: tweetid,
+    w-wecowds: s-seq[tweetmanhattanwecowd], >w<
+    incwudescwubbed: b-boowean = fawse, σωσ
+  ): stowedtweet = {
+    getstowedtweetbwobs(wecowds, -.- incwudescwubbed)
+      .fwatmap { f-fiewdbwob =>
+        // w-when fiewdid == t-tweetfiewds.wootcowefiewdid, o.O we have fuwthew wowk to do since the
+        // 'vawue' i-is weawwy sewiawized/packed vewsion of a-aww cowe fiewds. ^^ i-in this case we'ww have
+        // t-to unpack it into many tfiewdbwobs. >_<
+        i-if (fiewdbwob.id == t-tweetfiewds.wootcowefiewdid) {
+          // we won't thwow any ewwow in this f-function and instead wet the cawwew function h-handwe this
+          // c-condition (i.e if the cawwew f-function does nyot find any v-vawues fow the c-cowe-fiewds in
+          // t-the wetuwned map, >w< it shouwd assume that the tweet is nyot found)
+          cowefiewdscodec.unpackfiewds(fiewdbwob).vawues.toseq
+        } ewse {
+          seq(fiewdbwob)
         }
-      }.foldLeft(StoredTweet(tweetId))(_.setField(_))
+      }.fowdweft(stowedtweet(tweetid))(_.setfiewd(_))
   }
 
-  private[tweetypie] def buildValidStoredTweet(
-    tweetId: TweetId,
-    records: Seq[TweetManhattanRecord]
-  ): Option[StoredTweet] = {
-    val storedTweet = buildStoredTweet(tweetId, records)
-    if (storedTweet.getFieldBlobs(expectedFields).nonEmpty && isValid(storedTweet)) {
-      Some(storedTweet)
-    } else {
-      None
+  pwivate[tweetypie] def buiwdvawidstowedtweet(
+    tweetid: tweetid,
+    wecowds: seq[tweetmanhattanwecowd]
+  ): option[stowedtweet] = {
+    v-vaw stowedtweet = b-buiwdstowedtweet(tweetid, >_< wecowds)
+    if (stowedtweet.getfiewdbwobs(expectedfiewds).nonempty && i-isvawid(stowedtweet)) {
+      s-some(stowedtweet)
+    } e-ewse {
+      nyone
     }
   }
 
   /**
-   * Return a TFieldBlob for each StoredTweet field defined in this set of records.
-   * @param includeScrubbed when false, result will not include scrubbed fields even
-   *                        if the data is present in the set of records.
+   * w-wetuwn a tfiewdbwob f-fow each stowedtweet f-fiewd defined in this set of w-wecowds. >w<
+   * @pawam incwudescwubbed w-when fawse, rawr w-wesuwt wiww nyot incwude scwubbed fiewds even
+   *                        i-if t-the data is pwesent i-in the set of w-wecowds. rawr x3
    */
-  private[tweetypie] def getStoredTweetBlobs(
-    records: Seq[TweetManhattanRecord],
-    includeScrubbed: Boolean = false,
-  ): Seq[TFieldBlob] = {
-    val scrubbed = extractScrubbedFields(records)
+  p-pwivate[tweetypie] d-def getstowedtweetbwobs(
+    w-wecowds: seq[tweetmanhattanwecowd], ( ͡o ω ͡o )
+    i-incwudescwubbed: b-boowean = fawse, (˘ω˘)
+  ): s-seq[tfiewdbwob] = {
+    v-vaw scwubbed = e-extwactscwubbedfiewds(wecowds)
 
-    records
-      .flatMap { r =>
-        // extract LKey.FieldKey records if they are not scrubbed and get their TFieldBlobs
-        r.key match {
-          case fullKey @ TweetKey(_, key: TweetKey.LKey.FieldKey)
-              if includeScrubbed || !scrubbed.contains(key.fieldId) =>
-            try {
-              val fieldBlob = TFieldBlobCodec.fromByteBuffer(r.value.contents)
-              if (fieldBlob.field.id != key.fieldId) {
-                throw new AssertionError(
-                  s"Blob stored for $fullKey has unexpected id ${fieldBlob.field.id}"
+    wecowds
+      .fwatmap { w-w =>
+        // extwact wkey.fiewdkey wecowds i-if they awe nyot scwubbed and g-get theiw tfiewdbwobs
+        w-w.key match {
+          c-case fuwwkey @ tweetkey(_, 😳 k-key: tweetkey.wkey.fiewdkey)
+              if i-incwudescwubbed || !scwubbed.contains(key.fiewdid) =>
+            twy {
+              v-vaw fiewdbwob = tfiewdbwobcodec.fwombytebuffew(w.vawue.contents)
+              i-if (fiewdbwob.fiewd.id != key.fiewdid) {
+                thwow nyew assewtionewwow(
+                  s"bwob stowed fow $fuwwkey h-has unexpected id ${fiewdbwob.fiewd.id}"
                 )
               }
-              Some(fieldBlob)
-            } catch {
-              case e: VersionMismatchError =>
-                log.error(
-                  s"Failed to decode bytebuffer for $fullKey: ${e.getMessage}"
+              s-some(fiewdbwob)
+            } c-catch {
+              case e: vewsionmismatchewwow =>
+                wog.ewwow(
+                  s"faiwed to decode b-bytebuffew fow $fuwwkey: ${e.getmessage}"
                 )
-                throw e
+                thwow e
             }
-          case _ => None
+          c-case _ => nyone
         }
       }
   }
 
   /**
-   * Its important to bubble up rate limiting exceptions as they would likely be the root cause for other issues
-   * (timeouts etc.), so we scan for this particular exception, and if found, we bubble that up specifically
+   * i-its impowtant t-to bubbwe up wate wimiting exceptions as they wouwd w-wikewy be the w-woot cause fow othew issues
+   * (timeouts e-etc.), OwO so we scan fow this pawticuwaw e-exception, (˘ω˘) and if found, we bubbwe t-that up specificawwy
    *
-   * @param seqOfTries The sequence of tries which may contain within it a rate limit exception
+   * @pawam s-seqoftwies t-the sequence of twies which m-may contain within i-it a wate w-wimit exception
    *
-   * @return if a rate limiting exn was detected, this will be a Throw(e: DeniedManhattanException)
-   *         otherwise it will be a Return(_) only if all individual tries succeeded
+   * @wetuwn i-if a wate wimiting exn was detected, òωó t-this wiww b-be a thwow(e: deniedmanhattanexception)
+   *         o-othewwise i-it wiww be a wetuwn(_) o-onwy if aww i-individuaw twies s-succeeded
    */
-  private[tweetypie] def collectWithRateLimitCheck(seqOfTries: Seq[Try[Unit]]): Try[Unit] = {
-    val rateLimitThrowOpt = seqOfTries.find {
-      case Throw(e: DeniedManhattanException) => true
-      case _ => false
+  p-pwivate[tweetypie] def cowwectwithwatewimitcheck(seqoftwies: s-seq[twy[unit]]): twy[unit] = {
+    v-vaw watewimitthwowopt = seqoftwies.find {
+      c-case thwow(e: d-deniedmanhattanexception) => t-twue
+      case _ => fawse
     }
 
-    rateLimitThrowOpt.getOrElse(
-      Try.collect(seqOfTries).map(_ => ())
-    ) // Operation is considered successful only if all the deletions are successful
+    watewimitthwowopt.getowewse(
+      twy.cowwect(seqoftwies).map(_ => ())
+    ) // o-opewation i-is considewed s-successfuw onwy if aww the dewetions awe successfuw
   }
 }

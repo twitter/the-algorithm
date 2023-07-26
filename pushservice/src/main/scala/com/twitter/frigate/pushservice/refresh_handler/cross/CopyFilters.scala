@@ -1,41 +1,41 @@
-package com.twitter.frigate.pushservice.refresh_handler.cross
+package com.twittew.fwigate.pushsewvice.wefwesh_handwew.cwoss
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.util.MRPushCopy
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base._
+i-impowt com.twittew.fwigate.common.utiw.mwpushcopy
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+i-impowt c-com.twittew.hewmit.pwedicate.pwedicate
+i-impowt com.twittew.utiw.futuwe
 
-private[cross] class CopyFilters(statsReceiver: StatsReceiver) {
+pwivate[cwoss] cwass copyfiwtews(statsweceivew: statsweceivew) {
 
-  private val copyPredicates = new CopyPredicates(statsReceiver.scope("copy_predicate"))
+  p-pwivate vaw copypwedicates = nyew c-copypwedicates(statsweceivew.scope("copy_pwedicate"))
 
-  def execute(rawCandidate: RawCandidate, pushCopies: Seq[MRPushCopy]): Future[Seq[MRPushCopy]] = {
-    val candidateCopyPairs: Seq[CandidateCopyPair] =
-      pushCopies.map(CandidateCopyPair(rawCandidate, _))
+  def exekawaii~(wawcandidate: w-wawcandidate, ʘwʘ pushcopies: seq[mwpushcopy]): futuwe[seq[mwpushcopy]] = {
+    v-vaw candidatecopypaiws: seq[candidatecopypaiw] =
+      p-pushcopies.map(candidatecopypaiw(wawcandidate, /(^•ω•^) _))
 
-    val compositePredicate: Predicate[CandidateCopyPair] = rawCandidate match {
-      case _: F1FirstDegree | _: OutOfNetworkTweetCandidate | _: EventCandidate |
-          _: TopicProofTweetCandidate | _: ListPushCandidate | _: HermitInterestBasedUserFollow |
-          _: UserFollowWithoutSocialContextCandidate | _: DiscoverTwitterCandidate |
-          _: TopTweetImpressionsCandidate | _: TrendTweetCandidate |
-          _: SubscribedSearchTweetCandidate | _: DigestCandidate =>
-        copyPredicates.alwaysTruePredicate
+    v-vaw compositepwedicate: pwedicate[candidatecopypaiw] = wawcandidate match {
+      case _: f1fiwstdegwee | _: o-outofnetwowktweetcandidate | _: eventcandidate |
+          _: topicpwooftweetcandidate | _: wistpushcandidate | _: hewmitintewestbasedusewfowwow |
+          _: u-usewfowwowwithoutsociawcontextcandidate | _: discovewtwittewcandidate |
+          _: t-toptweetimpwessionscandidate | _: t-twendtweetcandidate |
+          _: s-subscwibedseawchtweetcandidate | _: d-digestcandidate =>
+        copypwedicates.awwaystwuepwedicate
 
-      case _: SocialContextActions => copyPredicates.displaySocialContextPredicate
+      case _: sociawcontextactions => c-copypwedicates.dispwaysociawcontextpwedicate
 
-      case _ => copyPredicates.unrecognizedCandidatePredicate // block unrecognised candidates
+      case _ => copypwedicates.unwecognizedcandidatepwedicate // bwock unwecognised c-candidates
     }
 
-    // apply predicate to all [[MRPushCopy]] objects
-    val filterResults: Future[Seq[Boolean]] = compositePredicate(candidateCopyPairs)
-    filterResults.map { results: Seq[Boolean] =>
-      val seqBuilder = Seq.newBuilder[MRPushCopy]
-      results.zip(pushCopies).foreach {
-        case (result, pushCopy) => if (result) seqBuilder += pushCopy
+    // appwy pwedicate to aww [[mwpushcopy]] objects
+    vaw fiwtewwesuwts: futuwe[seq[boowean]] = c-compositepwedicate(candidatecopypaiws)
+    fiwtewwesuwts.map { w-wesuwts: s-seq[boowean] =>
+      v-vaw seqbuiwdew = seq.newbuiwdew[mwpushcopy]
+      wesuwts.zip(pushcopies).foweach {
+        case (wesuwt, ʘwʘ p-pushcopy) => if (wesuwt) s-seqbuiwdew += pushcopy
       }
-      seqBuilder.result()
+      s-seqbuiwdew.wesuwt()
     }
   }
 }

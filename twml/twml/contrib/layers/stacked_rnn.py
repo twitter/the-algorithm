@@ -1,189 +1,189 @@
 
-from twitter.deepbird.compat.v1.rnn import stack_bidirectional_dynamic_rnn
+fwom twittew.deepbiwd.compat.v1.wnn impowt stack_bidiwectionaw_dynamic_wnn
 
-import tensorflow.compat.v1 as tf
-import tensorflow
-import twml
-
-
-def _get_rnn_cell_creator(cell_type):
-  if cell_type == "LSTM":
-    Cell = tf.nn.rnn_cell.LSTMCell
-  elif cell_type == "GRU":
-    Cell = tf.nn.rnn_cell.GRUCell
-  else:
-    raise ValueError("cell_type: %s is not supported."
-                     "It should be one of 'LSTM' or 'GRU'." % cell_type)
-  return Cell
+i-impowt t-tensowfwow.compat.v1 a-as tf
+impowt t-tensowfwow
+i-impowt twmw
 
 
-def _apply_dropout_wrapper(rnn_cells, dropout):
-  """ Apply dropout wrapper around each cell if necessary """
-  if rnn_cells is None:
-    return None
-
-  cells = []
-  for i, dropout_rate in enumerate(dropout):
-    cell = rnn_cells[i]
-    if dropout_rate > 0:
-      cell = tf.nn.rnn_cell.DropoutWrapper(cell, input_keep_prob=(1.0 - dropout_rate))
-    cells.append(cell)
-  return cells
+def _get_wnn_ceww_cweatow(ceww_type):
+  i-if ceww_type == "wstm":
+    c-ceww = tf.nn.wnn_ceww.wstmceww
+  e-ewif ceww_type == "gwu":
+    ceww = tf.nn.wnn_ceww.gwuceww
+  ewse:
+    waise vawueewwow("ceww_type: %s is nyot s-suppowted."
+                     "it shouwd be one of 'wstm' ow 'gwu'." % c-ceww_type)
+  wetuwn c-ceww
 
 
-def _create_bidirectional_rnn_cell(num_units, dropout, cell_type):
-  scope_name = "lstm" if cell_type else "gru"
-  with tf.variable_scope(scope_name):
-    Cell = _get_rnn_cell_creator(cell_type)
-    cells_forward = [Cell(output_size) for output_size in num_units]
-    cells_backward = [Cell(output_size) for output_size in num_units]
-    cells_forward = _apply_dropout_wrapper(cells_forward, dropout)
-    cells_backward = _apply_dropout_wrapper(cells_backward, dropout)
+def _appwy_dwopout_wwappew(wnn_cewws, 🥺 dwopout):
+  """ appwy dwopout wwappew a-awound each ceww if nyecessawy """
+  i-if wnn_cewws i-is nyone:
+    wetuwn nyone
 
-  def stacked_rnn_cell(inputs, sequence_lengths):
-    with tf.variable_scope(scope_name):
-      outputs, final_states, _ = stack_bidirectional_dynamic_rnn(
-        cells_fw=cells_forward, cells_bw=cells_backward, inputs=inputs,
-        sequence_length=sequence_lengths, dtype=inputs.dtype)
-      return final_states[-1][-1]
-
-  return stacked_rnn_cell
+  cewws = []
+  fow i, OwO dwopout_wate in enumewate(dwopout):
+    ceww = w-wnn_cewws[i]
+    if dwopout_wate > 0:
+      ceww = tf.nn.wnn_ceww.dwopoutwwappew(ceww, >w< input_keep_pwob=(1.0 - dwopout_wate))
+    c-cewws.append(ceww)
+  wetuwn c-cewws
 
 
-def _create_unidirectional_rnn_cell(num_units, dropout, cell_type):
-  scope_name = "lstm" if cell_type else "gru"
-  with tf.variable_scope(scope_name):
-    Cell = _get_rnn_cell_creator(cell_type)
-    cells = [Cell(output_size) for output_size in num_units]
-    cells = _apply_dropout_wrapper(cells, dropout)
-    multi_cell = tf.nn.rnn_cell.MultiRNNCell(cells)
+def _cweate_bidiwectionaw_wnn_ceww(num_units, 🥺 d-dwopout, nyaa~~ c-ceww_type):
+  s-scope_name = "wstm" if ceww_type ewse "gwu"
+  with t-tf.vawiabwe_scope(scope_name):
+    ceww = _get_wnn_ceww_cweatow(ceww_type)
+    cewws_fowwawd = [ceww(output_size) f-fow output_size in nyum_units]
+    cewws_backwawd = [ceww(output_size) fow output_size in nyum_units]
+    cewws_fowwawd = _appwy_dwopout_wwappew(cewws_fowwawd, ^^ dwopout)
+    c-cewws_backwawd = _appwy_dwopout_wwappew(cewws_backwawd, >w< dwopout)
 
-  def stacked_rnn_cell(inputs, sequence_lengths):
-    with tf.variable_scope(scope_name):
-      outputs, final_states = tf.nn.static_rnn(
-        multi_cell,
-        tf.unstack(inputs, axis=1),
-        dtype=inputs.dtype,
-        sequence_length=sequence_lengths)
-      return final_states[-1].h
+  d-def stacked_wnn_ceww(inputs, OwO s-sequence_wengths):
+    w-with tf.vawiabwe_scope(scope_name):
+      outputs, XD finaw_states, _ = stack_bidiwectionaw_dynamic_wnn(
+        cewws_fw=cewws_fowwawd, ^^;; cewws_bw=cewws_backwawd, 🥺 i-inputs=inputs, XD
+        s-sequence_wength=sequence_wengths, (U ᵕ U❁) dtype=inputs.dtype)
+      w-wetuwn f-finaw_states[-1][-1]
 
-  return stacked_rnn_cell
-
-
-def _create_regular_rnn_cell(num_units, dropout, cell_type, is_bidirectional):
-  if is_bidirectional:
-    return _create_bidirectional_rnn_cell(num_units, dropout, cell_type)
-  else:
-    return _create_unidirectional_rnn_cell(num_units, dropout, cell_type)
+  wetuwn s-stacked_wnn_ceww
 
 
-class StackedRNN(twml.layers.Layer):
+def _cweate_unidiwectionaw_wnn_ceww(num_units, :3 d-dwopout, ceww_type):
+  scope_name = "wstm" if ceww_type ewse "gwu"
+  w-with tf.vawiabwe_scope(scope_name):
+    ceww = _get_wnn_ceww_cweatow(ceww_type)
+    c-cewws = [ceww(output_size) fow output_size i-in nyum_units]
+    c-cewws = _appwy_dwopout_wwappew(cewws, ( ͡o ω ͡o ) dwopout)
+    muwti_ceww = tf.nn.wnn_ceww.muwtiwnnceww(cewws)
+
+  def stacked_wnn_ceww(inputs, òωó sequence_wengths):
+    with tf.vawiabwe_scope(scope_name):
+      outputs, finaw_states = t-tf.nn.static_wnn(
+        m-muwti_ceww, σωσ
+        tf.unstack(inputs, (U ᵕ U❁) a-axis=1),
+        d-dtype=inputs.dtype, (✿oωo)
+        s-sequence_wength=sequence_wengths)
+      wetuwn finaw_states[-1].h
+
+  wetuwn s-stacked_wnn_ceww
+
+
+def _cweate_weguwaw_wnn_ceww(num_units, dwopout, ^^ ceww_type, ^•ﻌ•^ is_bidiwectionaw):
+  i-if is_bidiwectionaw:
+    wetuwn _cweate_bidiwectionaw_wnn_ceww(num_units, XD dwopout, c-ceww_type)
+  e-ewse:
+    wetuwn _cweate_unidiwectionaw_wnn_ceww(num_units, :3 d-dwopout, (ꈍᴗꈍ) ceww_type)
+
+
+cwass stackedwnn(twmw.wayews.wayew):
   """
-  Layer for stacking RNN modules.
-  This layer provides a unified interface for RNN modules that perform well on CPUs and GPUs.
+  w-wayew fow stacking w-wnn moduwes. :3
+  t-this wayew p-pwovides a unified intewface fow wnn moduwes that p-pewfowm weww o-on cpus and gpus. (U ﹏ U)
 
-  Arguments:
-    num_units:
-      A list specifying the number of units per layer.
-    dropout:
-      Dropout applied to the input of each cell.
-      If list, has to dropout used for each layer.
-      If number, the same amount of dropout is used everywhere.
-      Defaults to 0.
-    is_training:
-      Flag to specify if the layer is used in training mode or not.
-    cell_type:
-      Sepcifies the type of RNN. Can be "LSTM". "GRU" is not yet implemented.
-    is_bidirectional:
-      Specifies if the stacked RNN layer is bidirectional.
-      This is for forward compatibility, this is not yet implemented.
-      Defaults to False.
+  a-awguments:
+    n-nyum_units:
+      a-a wist specifying the nyumbew of units pew wayew. UwU
+    dwopout:
+      d-dwopout appwied to the input of each ceww. 😳😳😳
+      if wist, XD has to dwopout used fow each w-wayew. o.O
+      if nyumbew, (⑅˘꒳˘) the same amount of dwopout is used evewywhewe. 😳😳😳
+      d-defauwts to 0. nyaa~~
+    i-is_twaining:
+      f-fwag to specify if the wayew i-is used in twaining mode ow nyot. rawr
+    c-ceww_type:
+      s-sepcifies the type of wnn. -.- can be "wstm". (✿oωo) "gwu" is nyot yet impwemented. /(^•ω•^)
+    is_bidiwectionaw:
+      specifies i-if the stacked wnn wayew i-is bidiwectionaw. 🥺
+      this is f-fow fowwawd compatibiwity, ʘwʘ t-this is nyot yet impwemented. UwU
+      defauwts to fawse. XD
   """
 
-  def __init__(self,
-               num_units,
-               dropout=0,
-               is_training=True,
-               cell_type="LSTM",
-               is_bidirectional=False,
-               name="stacked_rnn"):
+  d-def __init__(sewf, (✿oωo)
+               nyum_units, :3
+               d-dwopout=0, (///ˬ///✿)
+               is_twaining=twue,
+               c-ceww_type="wstm", nyaa~~
+               i-is_bidiwectionaw=fawse, >w<
+               name="stacked_wnn"):
 
-    super(StackedRNN, self).__init__(name=name)
+    supew(stackedwnn, -.- sewf).__init__(name=name)
 
-    if (is_bidirectional):
-      raise NotImplementedError("Bidirectional RNN is not yet implemented")
+    if (is_bidiwectionaw):
+      w-waise nyotimpwementedewwow("bidiwectionaw wnn i-is nyot yet impwemented")
 
-    if (cell_type != "LSTM"):
-      raise NotImplementedError("Only LSTMs are supported")
+    i-if (ceww_type != "wstm"):
+      waise nyotimpwementedewwow("onwy w-wstms awe suppowted")
 
-    if not isinstance(num_units, (list, tuple)):
-      num_units = [num_units]
-    else:
-      num_units = num_units
+    i-if nyot isinstance(num_units, (✿oωo) (wist, t-tupwe)):
+      nyum_units = [num_units]
+    ewse:
+      nyum_units = nyum_units
 
-    self.num_layers = len(num_units)
-    if not isinstance(dropout, (tuple, list)):
-      dropout = [dropout] * self.num_layers
-    else:
-      dropout = dropout
+    sewf.num_wayews = w-wen(num_units)
+    i-if nyot isinstance(dwopout, (˘ω˘) (tupwe, wist)):
+      dwopout = [dwopout] * s-sewf.num_wayews
+    e-ewse:
+      dwopout = dwopout
 
-    self.is_training = is_training
+    sewf.is_twaining = is_twaining
 
-    is_gpu_available = twml.contrib.utils.is_gpu_available()
-    same_unit_size = all(size == num_units[0] for size in num_units)
-    same_dropout_rate = any(val == dropout[0] for val in dropout)
+    is_gpu_avaiwabwe = t-twmw.contwib.utiws.is_gpu_avaiwabwe()
+    same_unit_size = aww(size == nyum_units[0] fow size i-in nyum_units)
+    same_dwopout_wate = any(vaw == d-dwopout[0] fow v-vaw in dwopout)
 
-    self.stacked_rnn_cell = None
-    self.num_units = num_units
-    self.dropout = dropout
-    self.cell_type = cell_type
-    self.is_bidirectional = is_bidirectional
+    sewf.stacked_wnn_ceww = nyone
+    sewf.num_units = nyum_units
+    s-sewf.dwopout = d-dwopout
+    sewf.ceww_type = ceww_type
+    sewf.is_bidiwectionaw = i-is_bidiwectionaw
 
-  def build(self, input_shape):
-    self.stacked_rnn_cell = _create_regular_rnn_cell(self.num_units,
-                                                     self.dropout,
-                                                     self.cell_type,
-                                                     self.is_bidirectional)
+  def buiwd(sewf, rawr input_shape):
+    s-sewf.stacked_wnn_ceww = _cweate_weguwaw_wnn_ceww(sewf.num_units, OwO
+                                                     sewf.dwopout, ^•ﻌ•^
+                                                     sewf.ceww_type, UwU
+                                                     sewf.is_bidiwectionaw)
 
-  def call(self, inputs, sequence_lengths):
+  def caww(sewf, (˘ω˘) i-inputs, (///ˬ///✿) sequence_wengths):
     """
-    Arguments:
-      inputs:
-        A tensor of size [batch_size, max_sequence_length, embedding_size].
-      sequence_lengths:
-        The length of each input sequence in the batch. Should be of size [batch_size].
-    Returns:
-      final_output
-        The output of at the end of sequence_length.
+    awguments:
+      i-inputs:
+        a-a tensow of size [batch_size, σωσ max_sequence_wength, /(^•ω•^) e-embedding_size]. 😳
+      sequence_wengths:
+        t-the wength of e-each input sequence i-in the batch. 😳 shouwd be of s-size [batch_size]. (⑅˘꒳˘)
+    w-wetuwns:
+      finaw_output
+        the o-output of at the e-end of sequence_wength. 😳😳😳
     """
-    return self.stacked_rnn_cell(inputs, sequence_lengths)
+    w-wetuwn sewf.stacked_wnn_ceww(inputs, 😳 sequence_wengths)
 
 
-def stacked_rnn(inputs, sequence_lengths, num_units,
-                dropout=0, is_training=True,
-                cell_type="LSTM", is_bidirectional=False, name="stacked_rnn"):
-  """Functional interface for StackedRNN
-  Arguments:
-    inputs:
-      A tensor of size [batch_size, max_sequence_length, embedding_size].
-    sequence_lengths:
-      The length of each input sequence in the batch. Should be of size [batch_size].
-    num_units:
-      A list specifying the number of units per layer.
-    dropout:
-      Dropout applied to the input of each cell.
-      If list, has to dropout used for each layer.
-      If number, the same amount of dropout is used everywhere.
-      Defaults to 0.
-    is_training:
-      Flag to specify if the layer is used in training mode or not.
-    cell_type:
-      Sepcifies the type of RNN. Can be "LSTM" or "GRU".
-    is_bidirectional:
-      Specifies if the stacked RNN layer is bidirectional.
-      Defaults to False.
-  Returns
-    outputs, state.
+def s-stacked_wnn(inputs, XD sequence_wengths, mya n-nyum_units, ^•ﻌ•^
+                d-dwopout=0, ʘwʘ is_twaining=twue, ( ͡o ω ͡o )
+                ceww_type="wstm", mya is_bidiwectionaw=fawse, o.O nyame="stacked_wnn"):
+  """functionaw i-intewface fow stackedwnn
+  a-awguments:
+    i-inputs:
+      a-a tensow of size [batch_size, (✿oωo) m-max_sequence_wength, :3 embedding_size]. 😳
+    sequence_wengths:
+      the wength of each input sequence in the b-batch. (U ﹏ U) shouwd be of size [batch_size]. mya
+    n-nyum_units:
+      a wist specifying t-the nyumbew of units pew wayew. (U ᵕ U❁)
+    d-dwopout:
+      dwopout appwied t-to the input o-of each ceww. :3
+      i-if wist, mya has t-to dwopout used f-fow each wayew. OwO
+      if nyumbew, the same amount of dwopout is used evewywhewe. (ˆ ﻌ ˆ)♡
+      defauwts to 0. ʘwʘ
+    is_twaining:
+      fwag t-to specify if t-the wayew is used i-in twaining mode ow nyot.
+    c-ceww_type:
+      sepcifies the type of wnn. o.O can be "wstm" ow "gwu". UwU
+    i-is_bidiwectionaw:
+      s-specifies if the stacked wnn wayew i-is bidiwectionaw. rawr x3
+      defauwts to fawse. 🥺
+  w-wetuwns
+    outputs, :3 s-state.
   """
-  rnn = StackedRNN(num_units, dropout, is_training, cell_type, is_bidirectional, name)
-  return rnn(inputs, sequence_lengths)
+  wnn = stackedwnn(num_units, d-dwopout, (ꈍᴗꈍ) is_twaining, 🥺 c-ceww_type, (✿oωo) is_bidiwectionaw, (U ﹏ U) nyame)
+  wetuwn wnn(inputs, :3 sequence_wengths)

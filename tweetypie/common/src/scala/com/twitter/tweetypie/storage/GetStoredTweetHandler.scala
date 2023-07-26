@@ -1,126 +1,126 @@
-package com.twitter.tweetypie.storage
+package com.twittew.tweetypie.stowage
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.StitchSeqGroup
-import com.twitter.tweetypie.storage.TweetStorageClient.GetStoredTweet
-import com.twitter.tweetypie.storage.TweetStorageClient.GetStoredTweet.Error
-import com.twitter.tweetypie.storage.TweetStorageClient.GetStoredTweet.Response._
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Time
-import com.twitter.util.Try
-import scala.collection.mutable
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.stitchseqgwoup
+i-impowt c-com.twittew.tweetypie.stowage.tweetstowagecwient.getstowedtweet
+i-impowt com.twittew.tweetypie.stowage.tweetstowagecwient.getstowedtweet.ewwow
+i-impowt com.twittew.tweetypie.stowage.tweetstowagecwient.getstowedtweet.wesponse._
+i-impowt com.twittew.tweetypie.stowage.tweetutiws._
+impowt com.twittew.tweetypie.thwiftscawa.tweet
+impowt com.twittew.utiw.time
+impowt com.twittew.utiw.twy
+impowt s-scawa.cowwection.mutabwe
 
-object GetStoredTweetHandler {
-  private[this] object DeletedState {
-    def unapply(stateRecord: Option[TweetStateRecord]): Option[TweetStateRecord] =
-      stateRecord match {
-        case state @ (Some(_: TweetStateRecord.SoftDeleted) | Some(
-              _: TweetStateRecord.HardDeleted) | Some(_: TweetStateRecord.BounceDeleted)) =>
+object getstowedtweethandwew {
+  p-pwivate[this] object d-dewetedstate {
+    def unappwy(statewecowd: option[tweetstatewecowd]): option[tweetstatewecowd] =
+      statewecowd m-match {
+        case state @ (some(_: t-tweetstatewecowd.softdeweted) | s-some(
+              _: tweetstatewecowd.hawddeweted) | some(_: tweetstatewecowd.bouncedeweted)) =>
           state
-        case _ => None
+        case _ => n-nyone
       }
   }
 
-  private[this] def deletedAtMs(stateRecord: Option[TweetStateRecord]): Option[Long] =
-    stateRecord match {
-      case Some(d: TweetStateRecord.SoftDeleted) => Some(d.createdAt)
-      case Some(d: TweetStateRecord.BounceDeleted) => Some(d.createdAt)
-      case Some(d: TweetStateRecord.HardDeleted) => Some(d.deletedAt)
-      case _ => None
+  pwivate[this] def dewetedatms(statewecowd: option[tweetstatewecowd]): option[wong] =
+    s-statewecowd match {
+      case some(d: t-tweetstatewecowd.softdeweted) => s-some(d.cweatedat)
+      c-case some(d: tweetstatewecowd.bouncedeweted) => s-some(d.cweatedat)
+      case some(d: tweetstatewecowd.hawddeweted) => s-some(d.dewetedat)
+      case _ => nyone
     }
 
-  private[this] def tweetResponseFromRecords(
-    tweetId: TweetId,
-    mhRecords: Seq[TweetManhattanRecord],
-    statsReceiver: StatsReceiver,
-  ): GetStoredTweet.Response = {
-    val errs =
-      mutable.Buffer[Error]()
+  p-pwivate[this] def tweetwesponsefwomwecowds(
+    tweetid: tweetid, UwU
+    mhwecowds: seq[tweetmanhattanwecowd], :3
+    statsweceivew: s-statsweceivew, (⑅˘꒳˘)
+  ): getstowedtweet.wesponse = {
+    v-vaw ewws =
+      m-mutabwe.buffew[ewwow]()
 
-    val hasStoredTweetFields: Boolean = mhRecords.exists {
-      case TweetManhattanRecord(TweetKey(_, _: TweetKey.LKey.FieldKey), _) => true
-      case _ => false
+    v-vaw hasstowedtweetfiewds: boowean = mhwecowds.exists {
+      case tweetmanhattanwecowd(tweetkey(_, (///ˬ///✿) _: tweetkey.wkey.fiewdkey), ^^;; _) => t-twue
+      c-case _ => fawse
     }
 
-    val storedTweet = if (hasStoredTweetFields) {
-      Try(buildStoredTweet(tweetId, mhRecords, includeScrubbed = true))
-        .onFailure(_ => errs.append(Error.TweetIsCorrupt))
-        .toOption
-    } else {
-      None
+    v-vaw stowedtweet = i-if (hasstowedtweetfiewds) {
+      twy(buiwdstowedtweet(tweetid, >_< m-mhwecowds, incwudescwubbed = t-twue))
+        .onfaiwuwe(_ => ewws.append(ewwow.tweetiscowwupt))
+        .tooption
+    } ewse {
+      n-nyone
     }
 
-    val scrubbedFields: Set[FieldId] = extractScrubbedFields(mhRecords)
-    val tweet: Option[Tweet] = storedTweet.map(StorageConversions.fromStoredTweetAllowInvalid)
-    val stateRecords: Seq[TweetStateRecord] = TweetStateRecord.fromTweetMhRecords(mhRecords)
-    val tweetState: Option[TweetStateRecord] = TweetStateRecord.mostRecent(mhRecords)
+    vaw scwubbedfiewds: s-set[fiewdid] = extwactscwubbedfiewds(mhwecowds)
+    v-vaw tweet: option[tweet] = s-stowedtweet.map(stowageconvewsions.fwomstowedtweetawwowinvawid)
+    vaw statewecowds: seq[tweetstatewecowd] = tweetstatewecowd.fwomtweetmhwecowds(mhwecowds)
+    vaw tweetstate: option[tweetstatewecowd] = tweetstatewecowd.mostwecent(mhwecowds)
 
-    storedTweet.foreach { storedTweet =>
-      val storedExpectedFields = storedTweet.getFieldBlobs(expectedFields)
-      val missingExpectedFields = expectedFields.filterNot(storedExpectedFields.contains)
-      if (missingExpectedFields.nonEmpty || !isValid(storedTweet)) {
-        errs.append(Error.TweetFieldsMissingOrInvalid)
+    s-stowedtweet.foweach { s-stowedtweet =>
+      vaw stowedexpectedfiewds = s-stowedtweet.getfiewdbwobs(expectedfiewds)
+      v-vaw missingexpectedfiewds = e-expectedfiewds.fiwtewnot(stowedexpectedfiewds.contains)
+      if (missingexpectedfiewds.nonempty || !isvawid(stowedtweet)) {
+        ewws.append(ewwow.tweetfiewdsmissingowinvawid)
       }
 
-      val invalidScrubbedFields = storedTweet.getFieldBlobs(scrubbedFields).keys
-      if (invalidScrubbedFields.nonEmpty) {
-        errs.append(Error.ScrubbedFieldsPresent)
+      vaw invawidscwubbedfiewds = s-stowedtweet.getfiewdbwobs(scwubbedfiewds).keys
+      if (invawidscwubbedfiewds.nonempty) {
+        ewws.append(ewwow.scwubbedfiewdspwesent)
       }
 
-      if (deletedAtMs(tweetState).exists(_ < Time.now.inMilliseconds - 14.days.inMilliseconds)) {
-        errs.append(Error.TweetShouldBeHardDeleted)
+      if (dewetedatms(tweetstate).exists(_ < time.now.inmiwwiseconds - 14.days.inmiwwiseconds)) {
+        e-ewws.append(ewwow.tweetshouwdbehawddeweted)
       }
     }
 
-    val err = Option(errs.toList).filter(_.nonEmpty)
+    vaw eww = option(ewws.towist).fiwtew(_.nonempty)
 
-    (tweet, tweetState, err) match {
-      case (None, None, None) =>
-        statsReceiver.counter("not_found").incr()
-        NotFound(tweetId)
+    (tweet, rawr x3 t-tweetstate, /(^•ω•^) eww) m-match {
+      c-case (none, :3 nyone, nyone) =>
+        s-statsweceivew.countew("not_found").incw()
+        n-nyotfound(tweetid)
 
-      case (None, Some(tweetState: TweetStateRecord.HardDeleted), None) =>
-        statsReceiver.counter("hard_deleted").incr()
-        HardDeleted(tweetId, Some(tweetState), stateRecords, scrubbedFields)
+      c-case (none, some(tweetstate: tweetstatewecowd.hawddeweted), n-nyone) =>
+        statsweceivew.countew("hawd_deweted").incw()
+        hawddeweted(tweetid, (ꈍᴗꈍ) s-some(tweetstate), /(^•ω•^) s-statewecowds, (⑅˘꒳˘) s-scwubbedfiewds)
 
-      case (None, _, Some(errs)) =>
-        statsReceiver.counter("failed").incr()
-        Failed(tweetId, tweetState, stateRecords, scrubbedFields, errs)
+      c-case (none, ( ͡o ω ͡o ) _, s-some(ewws)) =>
+        statsweceivew.countew("faiwed").incw()
+        faiwed(tweetid, òωó tweetstate, s-statewecowds, scwubbedfiewds, ewws)
 
-      case (Some(tweet), _, Some(errs)) =>
-        statsReceiver.counter("found_invalid").incr()
-        FoundWithErrors(tweet, tweetState, stateRecords, scrubbedFields, errs)
+      case (some(tweet), _, (⑅˘꒳˘) some(ewws)) =>
+        statsweceivew.countew("found_invawid").incw()
+        foundwithewwows(tweet, XD t-tweetstate, -.- statewecowds, :3 scwubbedfiewds, nyaa~~ ewws)
 
-      case (Some(tweet), DeletedState(state), None) =>
-        statsReceiver.counter("deleted").incr()
-        FoundDeleted(tweet, Some(state), stateRecords, scrubbedFields)
+      case (some(tweet), 😳 d-dewetedstate(state), (⑅˘꒳˘) n-none) =>
+        s-statsweceivew.countew("deweted").incw()
+        founddeweted(tweet, nyaa~~ s-some(state), OwO statewecowds, s-scwubbedfiewds)
 
-      case (Some(tweet), _, None) =>
-        statsReceiver.counter("found").incr()
-        Found(tweet, tweetState, stateRecords, scrubbedFields)
+      c-case (some(tweet), rawr x3 _, XD nyone) =>
+        statsweceivew.countew("found").incw()
+        found(tweet, σωσ tweetstate, (U ᵕ U❁) statewecowds, (U ﹏ U) scwubbedfiewds)
     }
   }
 
-  def apply(read: ManhattanOperations.Read, statsReceiver: StatsReceiver): GetStoredTweet = {
+  d-def appwy(wead: manhattanopewations.wead, :3 s-statsweceivew: statsweceivew): g-getstowedtweet = {
 
-    object mhGroup extends StitchSeqGroup[TweetId, Seq[TweetManhattanRecord]] {
-      override def run(tweetIds: Seq[TweetId]): Stitch[Seq[Seq[TweetManhattanRecord]]] = {
-        Stats.addWidthStat("getStoredTweet", "tweetIds", tweetIds.size, statsReceiver)
-        Stitch.traverse(tweetIds)(read(_))
+    o-object mhgwoup extends stitchseqgwoup[tweetid, ( ͡o ω ͡o ) seq[tweetmanhattanwecowd]] {
+      o-ovewwide d-def wun(tweetids: seq[tweetid]): s-stitch[seq[seq[tweetmanhattanwecowd]]] = {
+        s-stats.addwidthstat("getstowedtweet", σωσ "tweetids", >w< tweetids.size, 😳😳😳 statsweceivew)
+        stitch.twavewse(tweetids)(wead(_))
       }
     }
 
-    tweetId =>
-      if (tweetId <= 0) {
-        Stitch.NotFound
-      } else {
-        Stitch
-          .call(tweetId, mhGroup)
-          .map(mhRecords =>
-            tweetResponseFromRecords(tweetId, mhRecords, statsReceiver.scope("getStoredTweet")))
+    tweetid =>
+      i-if (tweetid <= 0) {
+        s-stitch.notfound
+      } e-ewse {
+        stitch
+          .caww(tweetid, OwO m-mhgwoup)
+          .map(mhwecowds =>
+            t-tweetwesponsefwomwecowds(tweetid, 😳 mhwecowds, s-statsweceivew.scope("getstowedtweet")))
       }
   }
 }

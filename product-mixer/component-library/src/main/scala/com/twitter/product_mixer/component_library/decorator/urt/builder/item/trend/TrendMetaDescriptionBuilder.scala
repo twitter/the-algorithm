@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.twend
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter.Str
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendAdvertiserNameFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendTweetCount
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.trends.trending_content.util.CompactingNumberLocalizer
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.stwingcentew.stw
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.pwomotedtwendadvewtisewnamefeatuwe
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.twends_events.twendtweetcount
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.twends.twending_content.utiw.compactingnumbewwocawizew
 
-case class TrendMetaDescriptionBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  promotedByMetaDescriptionStr: Str[PipelineQuery, UniversalNoun[Any]],
-  tweetCountMetaDescriptionStr: Str[PipelineQuery, UniversalNoun[Any]],
-  compactingNumberLocalizer: CompactingNumberLocalizer) {
+c-case cwass twendmetadescwiptionbuiwdew[-quewy <: pipewinequewy, >_< -candidate <: univewsawnoun[any]](
+  pwomotedbymetadescwiptionstw: stw[pipewinequewy, rawr x3 univewsawnoun[any]], mya
+  t-tweetcountmetadescwiptionstw: stw[pipewinequewy, nyaa~~ univewsawnoun[any]], (⑅˘꒳˘)
+  compactingnumbewwocawizew: c-compactingnumbewwocawizew) {
 
-  def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[String] = {
-    val promotedMetaDescription =
-      candidateFeatures.getOrElse(PromotedTrendAdvertiserNameFeature, None).map { advertiserName =>
-        promotedByMetaDescriptionStr(query, candidate, candidateFeatures).format(advertiserName)
+  def appwy(
+    q-quewy: quewy, rawr x3
+    candidate: candidate, (✿oωo)
+    candidatefeatuwes: featuwemap
+  ): option[stwing] = {
+    vaw pwomotedmetadescwiption =
+      c-candidatefeatuwes.getowewse(pwomotedtwendadvewtisewnamefeatuwe, (ˆ ﻌ ˆ)♡ nyone).map { a-advewtisewname =>
+        p-pwomotedbymetadescwiptionstw(quewy, (˘ω˘) candidate, candidatefeatuwes).fowmat(advewtisewname)
       }
 
-    val organicMetaDescription = candidateFeatures.getOrElse(TrendTweetCount, None).map {
-      tweetCount =>
-        val compactedTweetCount = compactingNumberLocalizer.localizeAndCompact(
-          query.getLanguageCode
-            .getOrElse("en"),
-          tweetCount)
-        tweetCountMetaDescriptionStr(query, candidate, candidateFeatures).format(
-          compactedTweetCount)
+    vaw owganicmetadescwiption = candidatefeatuwes.getowewse(twendtweetcount, (⑅˘꒳˘) n-nyone).map {
+      tweetcount =>
+        vaw compactedtweetcount = compactingnumbewwocawizew.wocawizeandcompact(
+          quewy.getwanguagecode
+            .getowewse("en"), (///ˬ///✿)
+          t-tweetcount)
+        tweetcountmetadescwiptionstw(quewy, 😳😳😳 c-candidate, candidatefeatuwes).fowmat(
+          c-compactedtweetcount)
     }
 
-    promotedMetaDescription.orElse(organicMetaDescription)
+    p-pwomotedmetadescwiption.owewse(owganicmetadescwiption)
   }
 }

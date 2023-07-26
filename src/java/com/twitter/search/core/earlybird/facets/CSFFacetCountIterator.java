@@ -1,56 +1,56 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.NumericDocValues;
+i-impowt o-owg.apache.wucene.index.numewicdocvawues;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+impowt c-com.twittew.seawch.common.schema.base.schema;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
 
 /**
- * An iterator that looks up the termID from the appropriate CSF
+ * a-an i-itewatow that wooks u-up the tewmid fwom the appwopwiate csf
  */
-public class CSFFacetCountIterator extends FacetCountIterator {
-  private final int fieldID;
-  private final NumericDocValues numericDocValues;
+pubwic cwass csffacetcountitewatow extends facetcountitewatow {
+  p-pwivate finaw int fiewdid;
+  pwivate finaw nyumewicdocvawues nyumewicdocvawues;
 
   /**
-   * Creates a new iterator for the given facet csf field.
+   * c-cweates a nyew itewatow f-fow the given facet csf fiewd. 😳
    */
-  public CSFFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo facetFieldInfo) throws IOException {
-    FacetIDMap.FacetField facetField = reader.getFacetIDMap().getFacetField(facetFieldInfo);
-    Preconditions.checkNotNull(facetField);
-    this.fieldID = facetField.getFacetId();
-    numericDocValues = reader.getNumericDocValues(facetFieldInfo.getName());
-    Preconditions.checkNotNull(numericDocValues);
+  pubwic csffacetcountitewatow(
+      e-eawwybiwdindexsegmentatomicweadew weadew, -.-
+      s-schema.fiewdinfo f-facetfiewdinfo) thwows ioexception {
+    facetidmap.facetfiewd facetfiewd = weadew.getfacetidmap().getfacetfiewd(facetfiewdinfo);
+    pweconditions.checknotnuww(facetfiewd);
+    t-this.fiewdid = facetfiewd.getfacetid();
+    nyumewicdocvawues = weadew.getnumewicdocvawues(facetfiewdinfo.getname());
+    pweconditions.checknotnuww(numewicdocvawues);
   }
 
-  @Override
-  public void collect(int internalDocID) throws IOException {
-    if (numericDocValues.advanceExact(internalDocID)) {
-      long termID = numericDocValues.longValue();
-      if (shouldCollect(internalDocID, termID)) {
-        collect(internalDocID, termID, fieldID);
+  @ovewwide
+  pubwic v-void cowwect(int intewnawdocid) t-thwows ioexception {
+    if (numewicdocvawues.advanceexact(intewnawdocid)) {
+      w-wong tewmid = n-nyumewicdocvawues.wongvawue();
+      i-if (shouwdcowwect(intewnawdocid, 🥺 tewmid)) {
+        cowwect(intewnawdocid, o.O t-tewmid, /(^•ω•^) fiewdid);
       }
     }
   }
 
   /**
-   * Subclasses should override if they need to restrict the docs or termIDs
-   * that they collect on. For example, these may need to override if
-   *  1) Not all docs set this field, so we should not collect on
-   *     the default value of 0
-   *  2) The same CSF field means different things (in particular, shared_status_id means
-   *     retweet OR reply parent id) so we need to do some other check to determine if we should
-   *     collect
+   * subcwasses shouwd ovewwide i-if they nyeed to westwict the docs ow tewmids
+   * that they cowwect on. nyaa~~ fow exampwe, nyaa~~ these may n-nyeed to ovewwide if
+   *  1) n-nyot aww docs set t-this fiewd, so w-we shouwd nyot cowwect on
+   *     the defauwt vawue of 0
+   *  2) t-the same csf f-fiewd means diffewent things (in p-pawticuwaw, :3 shawed_status_id means
+   *     w-wetweet ow wepwy pawent i-id) so we nyeed to do some o-othew check to detewmine if we shouwd
+   *     c-cowwect
    *
-   * @return whether we should collect on this doc/termID
+   * @wetuwn whethew w-we shouwd cowwect on this doc/tewmid
    */
-  protected boolean shouldCollect(int internalDocID, long termID) throws IOException {
-    return true;
+  pwotected b-boowean s-shouwdcowwect(int intewnawdocid, 😳😳😳 wong tewmid) thwows ioexception {
+    wetuwn twue;
   }
 }

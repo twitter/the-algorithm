@@ -1,16 +1,16 @@
-package com.twitter.frigate.pushservice.module
+package com.twittew.fwigate.pushsewvice.moduwe
 
-import com.google.inject.Provides
-import javax.inject.Singleton
-import com.twitter.discovery.common.nackwarmupfilter.NackWarmupFilter
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.Duration
+impowt com.googwe.inject.pwovides
+i-impowt javax.inject.singweton
+impowt c-com.twittew.discovewy.common.nackwawmupfiwtew.nackwawmupfiwtew
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.inject.annotations.fwag
+i-impowt com.twittew.utiw.duwation
 
-object FilterModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesNackWarmupFilter(
-    @Flag(FlagName.nackWarmupDuration) warmupDuration: Duration
-  ): NackWarmupFilter = new NackWarmupFilter(warmupDuration)
+o-object f-fiwtewmoduwe extends twittewmoduwe {
+  @singweton
+  @pwovides
+  def pwovidesnackwawmupfiwtew(
+    @fwag(fwagname.nackwawmupduwation) wawmupduwation: duwation
+  ): n-nyackwawmupfiwtew = nyew nyackwawmupfiwtew(wawmupduwation)
 }

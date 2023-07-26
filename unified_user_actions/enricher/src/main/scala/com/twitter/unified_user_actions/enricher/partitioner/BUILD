@@ -1,18 +1,18 @@
-scala_library(
-    name = "default",
-    sources = ["DefaultPartitioner.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":base",
-        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
+scawa_wibwawy(
+    nyame = "defauwt", (U ᵕ U❁)
+    souwces = ["defauwtpawtitionew.scawa"], (⑅˘꒳˘)
+    t-tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [
+        ":base", UwU
+        "unified_usew_actions/enwichew/swc/main/thwift/com/twittew/unified_usew_actions/enwichew/intewnaw:intewnaw-scawa", rawr x3
     ],
 )
 
-scala_library(
-    name = "base",
-    sources = ["Partitioner.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
+s-scawa_wibwawy(
+    n-name = "base", rawr
+    s-souwces = ["pawtitionew.scawa"], σωσ
+    t-tags = ["bazew-compatibwe"], σωσ
+    d-dependencies = [
+        "unified_usew_actions/enwichew/swc/main/thwift/com/twittew/unified_usew_actions/enwichew/intewnaw:intewnaw-scawa", >_<
     ],
 )

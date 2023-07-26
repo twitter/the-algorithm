@@ -1,64 +1,64 @@
-namespace java com.twitter.recos.user_video_graph.thriftjava
-namespace py gen.twitter.recos.user_video_graph
-#@namespace scala com.twitter.recos.user_video_graph.thriftscala
-#@namespace strato com.twitter.recos.user_video_graph
-namespace rb UserVideoGraph
+namespace java com.twittew.wecos.usew_video_gwaph.thwiftjava
+nyamespace p-py gen.twittew.wecos.usew_video_gwaph
+#@namespace s-scawa com.twittew.wecos.usew_video_gwaph.thwiftscawa
+#@namespace s-stwato c-com.twittew.wecos.usew_video_gwaph
+n-nyamespace wb u-usewvideogwaph
 
-include "com/twitter/recos/features/tweet.thrift"
-include "com/twitter/recos/recos_common.thrift"
+i-incwude "com/twittew/wecos/featuwes/tweet.thwift"
+i-incwude "com/twittew/wecos/wecos_common.thwift"
 
 
-struct TweetBasedRelatedTweetRequest {
-  1: required i64                                   tweetId               // query tweet id
-  2: optional i32                                   maxResults            // number of suggested results to return
-  3: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  4: optional i32                                   minQueryDegree        // min degree of query tweet
-  5: optional i32                                   maxNumSamplesPerNeighbor // max number of sampled users who engaged with the query tweet
-  6: optional i32                                   minCooccurrence       // min co-occurrence of related tweet candidate 
-  7: optional i32                                   minResultDegree       // min degree of related tweet candidate 
-  8: optional double                                minScore              // min score of related tweet candidate
-  9: optional i32                                   maxTweetAgeInHours    // max tweet age in hours of related tweet candidate 
+stwuct tweetbasedwewatedtweetwequest {
+  1: wequiwed i64                                   tweetid               // quewy t-tweet id
+  2: optionaw i32                                   maxwesuwts            // n-nyumbew of suggested wesuwts t-to wetuwn
+  3: optionaw wist<i64>                             excwudetweetids       // wist of t-tweet ids to excwude fwom wesponse
+  4: o-optionaw i-i32                                   minquewydegwee        // min degwee of quewy tweet
+  5: optionaw i32                                   m-maxnumsampwespewneighbow // max nyumbew of sampwed usews who engaged with the quewy t-tweet
+  6: optionaw i32                                   m-mincooccuwwence       // m-min co-occuwwence o-of wewated t-tweet candidate 
+  7: optionaw i32                                   m-minwesuwtdegwee       // min degwee of wewated tweet candidate 
+  8: o-optionaw doubwe                                minscowe              // min scowe of wewated tweet candidate
+  9: o-optionaw i32                                   maxtweetageinhouws    // max tweet a-age in houws of w-wewated tweet c-candidate 
 }
 
-struct ProducerBasedRelatedTweetRequest {
-  1: required i64                                   producerId            // query producer id
-  2: optional i32                                   maxResults            // number of suggested results to return
-  3: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  4: optional i32                                   minQueryDegree        // min degree of query producer, e.g. number of followers
-  5: optional i32                                   maxNumFollowers       // max number of sampled users who follow the query producer 
-  6: optional i32                                   minCooccurrence       // min co-occurrence of related tweet candidate 
-  7: optional i32                                   minResultDegree       // min degree of related tweet candidate 
-  8: optional double                                minScore              // min score of related tweet candidate
-  9: optional i32                                   maxTweetAgeInHours    // max tweet age in hours of related tweet candidate 
+stwuct pwoducewbasedwewatedtweetwequest {
+  1: wequiwed i64                                   p-pwoducewid            // q-quewy pwoducew id
+  2: optionaw i-i32                                   m-maxwesuwts            // nyumbew of suggested w-wesuwts to wetuwn
+  3: o-optionaw wist<i64>                             excwudetweetids       // wist of tweet ids to excwude f-fwom wesponse
+  4: optionaw i-i32                                   minquewydegwee        // m-min degwee of quewy p-pwoducew, (///ˬ///✿) e.g. nyumbew of fowwowews
+  5: optionaw i32                                   maxnumfowwowews       // max nyumbew of sampwed usews w-who fowwow the q-quewy pwoducew 
+  6: optionaw i32                                   m-mincooccuwwence       // m-min c-co-occuwwence of wewated tweet candidate 
+  7: optionaw i32                                   m-minwesuwtdegwee       // min degwee of wewated tweet candidate 
+  8: optionaw doubwe                                m-minscowe              // min s-scowe of wewated t-tweet candidate
+  9: o-optionaw i32                                   m-maxtweetageinhouws    // max t-tweet age in h-houws of wewated t-tweet candidate 
 }
 
-struct ConsumersBasedRelatedTweetRequest {
-  1: required list<i64>                             consumerSeedSet       // query consumer userId set
-  2: optional i32                                   maxResults            // number of suggested results to return
-  3: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  4: optional i32                                   minCooccurrence       // min co-occurrence of related tweet candidate 
-  5: optional i32                                   minResultDegree       // min degree of related tweet candidate  
-  6: optional double                                minScore              // min score of related tweet candidate
-  7: optional i32                                   maxTweetAgeInHours    // max tweet age in hours of related tweet candidate
+stwuct consumewsbasedwewatedtweetwequest {
+  1: wequiwed wist<i64>                             c-consumewseedset       // q-quewy c-consumew usewid s-set
+  2: optionaw i-i32                                   maxwesuwts            // nyumbew of suggested wesuwts t-to wetuwn
+  3: optionaw wist<i64>                             excwudetweetids       // wist of tweet ids to excwude fwom wesponse
+  4: optionaw i-i32                                   mincooccuwwence       // min co-occuwwence of wewated tweet c-candidate 
+  5: o-optionaw i32                                   m-minwesuwtdegwee       // min degwee o-of wewated tweet candidate  
+  6: o-optionaw d-doubwe                                minscowe              // min scowe of wewated tweet candidate
+  7: optionaw i32                                   m-maxtweetageinhouws    // max tweet age i-in houws of wewated tweet candidate
 }
 
-struct RelatedTweet {
-  1: required i64                          tweetId
-  2: required double                       score
-  3: optional tweet.GraphFeaturesForTweet  relatedTweetGraphFeatures
+s-stwuct wewatedtweet {
+  1: w-wequiwed i64                          tweetid
+  2: wequiwed doubwe                       s-scowe
+  3: o-optionaw tweet.gwaphfeatuwesfowtweet  wewatedtweetgwaphfeatuwes
 }
 
-struct RelatedTweetResponse {
-  1: required list<RelatedTweet>           tweets
-  2: optional tweet.GraphFeaturesForQuery  queryTweetGraphFeatures
+s-stwuct w-wewatedtweetwesponse {
+  1: wequiwed wist<wewatedtweet>           tweets
+  2: optionaw tweet.gwaphfeatuwesfowquewy  q-quewytweetgwaphfeatuwes
 }
 
 /**
- * The main interface-definition for UserVideoGraph.
+ * t-the main intewface-definition f-fow usewvideogwaph. ^^;;
  */
-service UserVideoGraph {
-  RelatedTweetResponse tweetBasedRelatedTweets (TweetBasedRelatedTweetRequest request)
-  RelatedTweetResponse producerBasedRelatedTweets (ProducerBasedRelatedTweetRequest request)
-  RelatedTweetResponse consumersBasedRelatedTweets (ConsumersBasedRelatedTweetRequest request)
+sewvice u-usewvideogwaph {
+  w-wewatedtweetwesponse tweetbasedwewatedtweets (tweetbasedwewatedtweetwequest w-wequest)
+  wewatedtweetwesponse pwoducewbasedwewatedtweets (pwoducewbasedwewatedtweetwequest wequest)
+  wewatedtweetwesponse consumewsbasedwewatedtweets (consumewsbasedwewatedtweetwequest wequest)
 }
 

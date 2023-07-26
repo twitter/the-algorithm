@@ -1,251 +1,251 @@
-package com.twitter.search.core.earlybird.index;
+package com.twittew.seawch.cowe.eawwybiwd.index;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.map;
+i-impowt java.utiw.concuwwent.concuwwenthashmap;
 
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.IndexSearcher;
+i-impowt o-owg.apache.wucene.index.indexwwitewconfig;
+i-impowt o-owg.apache.wucene.seawch.indexseawchew;
 
-import com.twitter.search.common.schema.SearchWhitespaceAnalyzer;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.facets.EarlybirdFacetDocValueSet;
-import com.twitter.search.core.earlybird.facets.FacetCountingArray;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetUtil;
-import com.twitter.search.core.earlybird.facets.OptimizedFacetCountingArray;
-import com.twitter.search.core.earlybird.index.column.DocValuesManager;
-import com.twitter.search.core.earlybird.index.column.OptimizedDocValuesManager;
-import com.twitter.search.core.earlybird.index.column.UnoptimizedDocValuesManager;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdRealtimeIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.inverted.DeletedDocs;
-import com.twitter.search.core.earlybird.index.inverted.IndexOptimizer;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+impowt com.twittew.seawch.common.schema.seawchwhitespaceanawyzew;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.common.utiw.io.fwushabwe.datadesewiawizew;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.datasewiawizew;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushinfo;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.abstwactfacetcountingawway;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.eawwybiwdfacetdocvawueset;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetcountingawway;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetidmap;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetutiw;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.optimizedfacetcountingawway;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.docvawuesmanagew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.optimizeddocvawuesmanagew;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.index.cowumn.unoptimizeddocvawuesmanagew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdindexextensionsfactowy;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.extensions.eawwybiwdweawtimeindexextensionsdata;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.deweteddocs;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.invewted.indexoptimizew;
+impowt c-com.twittew.seawch.cowe.eawwybiwd.index.invewted.invewtedindex;
 
 /**
- * Implements {@link EarlybirdIndexSegmentData} for real-time in-memory Earlybird segments.
+ * impwements {@wink e-eawwybiwdindexsegmentdata} f-fow weaw-time i-in-memowy e-eawwybiwd segments. (✿oωo)
  */
-public class EarlybirdRealtimeIndexSegmentData extends EarlybirdIndexSegmentData {
-  private final EarlybirdRealtimeIndexExtensionsData indexExtension;
+pubwic cwass eawwybiwdweawtimeindexsegmentdata e-extends eawwybiwdindexsegmentdata {
+  pwivate finaw eawwybiwdweawtimeindexextensionsdata i-indexextension;
 
-  private EarlybirdFacetDocValueSet facetDocValueSet;
+  pwivate eawwybiwdfacetdocvawueset facetdocvawueset;
 
   /**
-   * Creates a new empty real-time SegmentData instance.
+   * cweates a nyew empty weaw-time segmentdata i-instance. /(^•ω•^)
    */
-  public EarlybirdRealtimeIndexSegmentData(
-      int maxSegmentSize,
-      long timeSliceID,
-      Schema schema,
-      DocIDToTweetIDMapper docIdToTweetIdMapper,
-      TimeMapper timeMapper,
-      EarlybirdIndexExtensionsFactory indexExtensionsFactory) {
-    this(
-        maxSegmentSize,
-        timeSliceID,
-        schema,
-        false, // isOptimized
-        Integer.MAX_VALUE,
-        new ConcurrentHashMap<>(),
-        new FacetCountingArray(maxSegmentSize),
-        new UnoptimizedDocValuesManager(schema, maxSegmentSize),
-        Maps.newHashMapWithExpectedSize(schema.getNumFacetFields()),
-        FacetIDMap.build(schema),
-        new DeletedDocs.Default(maxSegmentSize),
-        docIdToTweetIdMapper,
-        timeMapper,
-        indexExtensionsFactory == null
-            ? null
-            : indexExtensionsFactory.newRealtimeIndexExtensionsData());
+  pubwic eawwybiwdweawtimeindexsegmentdata(
+      i-int maxsegmentsize, 🥺
+      w-wong t-timeswiceid, ʘwʘ
+      schema schema, UwU
+      docidtotweetidmappew docidtotweetidmappew, XD
+      timemappew t-timemappew, (✿oωo)
+      e-eawwybiwdindexextensionsfactowy indexextensionsfactowy) {
+    t-this(
+        m-maxsegmentsize,
+        timeswiceid, :3
+        s-schema, (///ˬ///✿)
+        fawse, nyaa~~ // isoptimized
+        integew.max_vawue,
+        n-nyew concuwwenthashmap<>(), >w<
+        nyew facetcountingawway(maxsegmentsize), -.-
+        nyew u-unoptimizeddocvawuesmanagew(schema, (✿oωo) maxsegmentsize), (˘ω˘)
+        m-maps.newhashmapwithexpectedsize(schema.getnumfacetfiewds()), rawr
+        facetidmap.buiwd(schema), OwO
+        n-nyew deweteddocs.defauwt(maxsegmentsize), ^•ﻌ•^
+        d-docidtotweetidmappew, UwU
+        timemappew, (˘ω˘)
+        indexextensionsfactowy == nyuww
+            ? nyuww
+            : indexextensionsfactowy.newweawtimeindexextensionsdata());
   }
 
   /**
-   * Creates a new real-time SegmentData instance using the passed in data structures. Usually this
-   * constructor is used by the FlushHandler after a segment was loaded from disk, but also the
-   * {@link IndexOptimizer} uses it to create an
-   * optimized segment.
+   * cweates a-a nyew weaw-time s-segmentdata instance using the p-passed in data stwuctuwes. (///ˬ///✿) u-usuawwy t-this
+   * constwuctow is used by the fwushhandwew aftew a segment w-was woaded fwom disk, σωσ but awso the
+   * {@wink indexoptimizew} uses it to cweate a-an
+   * optimized segment. /(^•ω•^)
    */
-  public EarlybirdRealtimeIndexSegmentData(
-      int maxSegmentSize,
-      long timeSliceID,
-      Schema schema,
-      boolean isOptimized,
-      int smallestDocID,
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-      AbstractFacetCountingArray facetCountingArray,
-      DocValuesManager docValuesManager,
-      Map<String, FacetLabelProvider> facetLabelProviders,
-      FacetIDMap facetIDMap,
-      DeletedDocs deletedDocs,
-      DocIDToTweetIDMapper docIdToTweetIdMapper,
-      TimeMapper timeMapper,
-      EarlybirdRealtimeIndexExtensionsData indexExtension) {
-    super(maxSegmentSize,
-          timeSliceID,
-          schema,
-          isOptimized,
-          smallestDocID,
-          perFieldMap,
-          new ConcurrentHashMap<>(),
-          facetCountingArray,
-          docValuesManager,
-          facetLabelProviders,
-          facetIDMap,
-          deletedDocs,
-          docIdToTweetIdMapper,
-          timeMapper);
-    this.indexExtension = indexExtension;
-    this.facetDocValueSet = null;
+  p-pubwic e-eawwybiwdweawtimeindexsegmentdata(
+      i-int maxsegmentsize, 😳
+      wong timeswiceid, 😳
+      s-schema s-schema, (⑅˘꒳˘)
+      b-boowean isoptimized, 😳😳😳
+      i-int smowestdocid, 😳
+      concuwwenthashmap<stwing, XD invewtedindex> p-pewfiewdmap, mya
+      abstwactfacetcountingawway f-facetcountingawway, ^•ﻌ•^
+      d-docvawuesmanagew d-docvawuesmanagew, ʘwʘ
+      m-map<stwing, ( ͡o ω ͡o ) facetwabewpwovidew> facetwabewpwovidews,
+      facetidmap f-facetidmap, mya
+      deweteddocs deweteddocs, o.O
+      docidtotweetidmappew docidtotweetidmappew, (✿oωo)
+      timemappew t-timemappew, :3
+      eawwybiwdweawtimeindexextensionsdata indexextension) {
+    supew(maxsegmentsize, 😳
+          t-timeswiceid, (U ﹏ U)
+          s-schema, mya
+          i-isoptimized, (U ᵕ U❁)
+          smowestdocid, :3
+          p-pewfiewdmap, mya
+          nyew c-concuwwenthashmap<>(), OwO
+          f-facetcountingawway, (ˆ ﻌ ˆ)♡
+          docvawuesmanagew,
+          facetwabewpwovidews, ʘwʘ
+          facetidmap, o.O
+          deweteddocs, UwU
+          docidtotweetidmappew, rawr x3
+          t-timemappew);
+    this.indexextension = indexextension;
+    t-this.facetdocvawueset = nyuww;
   }
 
-  @Override
-  public EarlybirdRealtimeIndexExtensionsData getIndexExtensionsData() {
-    return indexExtension;
+  @ovewwide
+  p-pubwic eawwybiwdweawtimeindexextensionsdata g-getindexextensionsdata() {
+    wetuwn indexextension;
   }
 
   /**
-   * For realtime segments, this wraps a facet datastructure into a SortedSetDocValues to
-   * comply to Lucene facet api.
+   * fow weawtime s-segments, 🥺 this w-wwaps a facet datastwuctuwe into a-a sowtedsetdocvawues t-to
+   * compwy to wucene facet api. :3
    */
-  public EarlybirdFacetDocValueSet getFacetDocValueSet() {
-    if (facetDocValueSet == null) {
-      AbstractFacetCountingArray facetCountingArray = getFacetCountingArray();
-      if (facetCountingArray != null) {
-        facetDocValueSet = new EarlybirdFacetDocValueSet(
-            facetCountingArray, getFacetLabelProviders(), getFacetIDMap());
+  pubwic eawwybiwdfacetdocvawueset getfacetdocvawueset() {
+    i-if (facetdocvawueset == n-nyuww) {
+      a-abstwactfacetcountingawway facetcountingawway = g-getfacetcountingawway();
+      i-if (facetcountingawway != nyuww) {
+        f-facetdocvawueset = nyew eawwybiwdfacetdocvawueset(
+            facetcountingawway, getfacetwabewpwovidews(), (ꈍᴗꈍ) getfacetidmap());
       }
     }
-    return facetDocValueSet;
+    w-wetuwn facetdocvawueset;
   }
 
-  @Override
-  protected EarlybirdIndexSegmentAtomicReader doCreateAtomicReader() {
-    return new EarlybirdRealtimeIndexSegmentAtomicReader(this);
+  @ovewwide
+  p-pwotected eawwybiwdindexsegmentatomicweadew docweateatomicweadew() {
+    wetuwn n-nyew eawwybiwdweawtimeindexsegmentatomicweadew(this);
   }
 
   /**
-   * Convenience method for creating an EarlybirdIndexSegmentWriter for this segment with a default
-   * IndexSegmentWriter config.
+   * c-convenience method fow cweating an eawwybiwdindexsegmentwwitew fow this segment w-with a defauwt
+   * indexsegmentwwitew config. 🥺
    */
-  public EarlybirdIndexSegmentWriter createEarlybirdIndexSegmentWriter() {
-    return createEarlybirdIndexSegmentWriter(
-        new IndexWriterConfig(new SearchWhitespaceAnalyzer()).setSimilarity(
-            IndexSearcher.getDefaultSimilarity()));
+  pubwic eawwybiwdindexsegmentwwitew c-cweateeawwybiwdindexsegmentwwitew() {
+    wetuwn cweateeawwybiwdindexsegmentwwitew(
+        n-nyew i-indexwwitewconfig(new seawchwhitespaceanawyzew()).setsimiwawity(
+            indexseawchew.getdefauwtsimiwawity()));
   }
 
-  @Override
-  public EarlybirdIndexSegmentWriter createEarlybirdIndexSegmentWriter(
-      IndexWriterConfig indexWriterConfig) {
-    // Prepare the in-memory segment with all enabled CSF fields.
-    DocValuesManager docValuesManager = getDocValuesManager();
-    for (Schema.FieldInfo fieldInfo : getSchema().getFieldInfos()) {
-      if (fieldInfo.getFieldType().getCsfType() != null) {
-        docValuesManager.addColumnStrideField(fieldInfo.getName(), fieldInfo.getFieldType());
+  @ovewwide
+  pubwic e-eawwybiwdindexsegmentwwitew c-cweateeawwybiwdindexsegmentwwitew(
+      indexwwitewconfig indexwwitewconfig) {
+    // pwepawe the in-memowy s-segment with aww enabwed c-csf fiewds.
+    docvawuesmanagew docvawuesmanagew = getdocvawuesmanagew();
+    f-fow (schema.fiewdinfo fiewdinfo : g-getschema().getfiewdinfos()) {
+      i-if (fiewdinfo.getfiewdtype().getcsftype() != nyuww) {
+        d-docvawuesmanagew.addcowumnstwidefiewd(fiewdinfo.getname(), (✿oωo) fiewdinfo.getfiewdtype());
       }
     }
 
-    return new EarlybirdRealtimeIndexSegmentWriter(
-        this,
-        indexWriterConfig.getAnalyzer(),
-        indexWriterConfig.getSimilarity());
+    wetuwn n-nyew eawwybiwdweawtimeindexsegmentwwitew(
+        t-this, (U ﹏ U)
+        i-indexwwitewconfig.getanawyzew(), :3
+        indexwwitewconfig.getsimiwawity());
   }
 
-  @Override
-  public EarlybirdIndexSegmentData.AbstractSegmentDataFlushHandler getFlushHandler() {
-    return new InMemorySegmentDataFlushHandler(this);
+  @ovewwide
+  pubwic eawwybiwdindexsegmentdata.abstwactsegmentdatafwushhandwew g-getfwushhandwew() {
+    wetuwn n-nyew inmemowysegmentdatafwushhandwew(this);
   }
 
-  public static class InMemorySegmentDataFlushHandler
-      extends AbstractSegmentDataFlushHandler<EarlybirdRealtimeIndexExtensionsData> {
-    public InMemorySegmentDataFlushHandler(EarlybirdIndexSegmentData objectToFlush) {
-      super(objectToFlush);
+  pubwic static cwass inmemowysegmentdatafwushhandwew
+      e-extends abstwactsegmentdatafwushhandwew<eawwybiwdweawtimeindexextensionsdata> {
+    p-pubwic inmemowysegmentdatafwushhandwew(eawwybiwdindexsegmentdata o-objecttofwush) {
+      supew(objecttofwush);
     }
 
-    public InMemorySegmentDataFlushHandler(
-        Schema schema,
-        EarlybirdIndexExtensionsFactory factory,
-        Flushable.Handler<? extends DocIDToTweetIDMapper> docIdMapperFlushHandler,
-        Flushable.Handler<? extends TimeMapper> timeMapperFlushHandler) {
-      super(schema, factory, docIdMapperFlushHandler, timeMapperFlushHandler);
+    pubwic inmemowysegmentdatafwushhandwew(
+        schema schema, ^^;;
+        e-eawwybiwdindexextensionsfactowy factowy, rawr
+        f-fwushabwe.handwew<? e-extends docidtotweetidmappew> docidmappewfwushhandwew, 😳😳😳
+        fwushabwe.handwew<? extends t-timemappew> t-timemappewfwushhandwew) {
+      s-supew(schema, (✿oωo) f-factowy, OwO docidmappewfwushhandwew, ʘwʘ timemappewfwushhandwew);
     }
 
-    @Override
-    protected EarlybirdRealtimeIndexExtensionsData newIndexExtension() {
-      return indexExtensionsFactory.newRealtimeIndexExtensionsData();
+    @ovewwide
+    p-pwotected eawwybiwdweawtimeindexextensionsdata nyewindexextension() {
+      wetuwn indexextensionsfactowy.newweawtimeindexextensionsdata();
     }
 
-    @Override
-    protected void flushAdditionalDataStructures(
-        FlushInfo flushInfo,
-        DataSerializer out,
-        EarlybirdIndexSegmentData segmentData) throws IOException {
-      segmentData.getFacetCountingArray().getFlushHandler()
-          .flush(flushInfo.newSubProperties("facet_counting_array"), out);
+    @ovewwide
+    pwotected void fwushadditionawdatastwuctuwes(
+        fwushinfo fwushinfo, (ˆ ﻌ ˆ)♡
+        d-datasewiawizew out, (U ﹏ U)
+        e-eawwybiwdindexsegmentdata segmentdata) t-thwows ioexception {
+      segmentdata.getfacetcountingawway().getfwushhandwew()
+          .fwush(fwushinfo.newsubpwopewties("facet_counting_awway"), UwU o-out);
 
-      // flush all column stride fields
-      segmentData.getDocValuesManager().getFlushHandler()
-          .flush(flushInfo.newSubProperties("doc_values"), out);
+      // fwush aww c-cowumn stwide fiewds
+      s-segmentdata.getdocvawuesmanagew().getfwushhandwew()
+          .fwush(fwushinfo.newsubpwopewties("doc_vawues"), o-out);
 
-      segmentData.getFacetIDMap().getFlushHandler()
-          .flush(flushInfo.newSubProperties("facet_id_map"), out);
+      s-segmentdata.getfacetidmap().getfwushhandwew()
+          .fwush(fwushinfo.newsubpwopewties("facet_id_map"), XD o-out);
 
-      segmentData.getDeletedDocs().getFlushHandler()
-          .flush(flushInfo.newSubProperties("deleted_docs"), out);
+      segmentdata.getdeweteddocs().getfwushhandwew()
+          .fwush(fwushinfo.newsubpwopewties("deweted_docs"), ʘwʘ out);
     }
 
-    @Override
-    protected EarlybirdIndexSegmentData constructSegmentData(
-        FlushInfo flushInfo,
-        ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-        int maxSegmentSize,
-        EarlybirdRealtimeIndexExtensionsData indexExtension,
-        DocIDToTweetIDMapper docIdToTweetIdMapper,
-        TimeMapper timeMapper,
-        DataDeserializer in) throws IOException {
-      boolean isOptimized = flushInfo.getBooleanProperty(IS_OPTIMIZED_PROP_NAME);
+    @ovewwide
+    pwotected eawwybiwdindexsegmentdata constwuctsegmentdata(
+        fwushinfo fwushinfo, rawr x3
+        c-concuwwenthashmap<stwing, ^^;; i-invewtedindex> p-pewfiewdmap, ʘwʘ
+        int maxsegmentsize, (U ﹏ U)
+        e-eawwybiwdweawtimeindexextensionsdata indexextension, (˘ω˘)
+        docidtotweetidmappew docidtotweetidmappew, (ꈍᴗꈍ)
+        t-timemappew timemappew,
+        d-datadesewiawizew in) thwows ioexception {
+      b-boowean isoptimized = fwushinfo.getbooweanpwopewty(is_optimized_pwop_name);
 
-      Flushable.Handler<? extends AbstractFacetCountingArray> facetLoader = isOptimized
-          ? new OptimizedFacetCountingArray.FlushHandler()
-          : new FacetCountingArray.FlushHandler(maxSegmentSize);
-      AbstractFacetCountingArray facetCountingArray =
-          facetLoader.load(flushInfo.getSubProperties("facet_counting_array"), in);
+      fwushabwe.handwew<? e-extends a-abstwactfacetcountingawway> facetwoadew = i-isoptimized
+          ? n-nyew optimizedfacetcountingawway.fwushhandwew()
+          : nyew facetcountingawway.fwushhandwew(maxsegmentsize);
+      abstwactfacetcountingawway facetcountingawway =
+          facetwoadew.woad(fwushinfo.getsubpwopewties("facet_counting_awway"), /(^•ω•^) i-in);
 
-      Flushable.Handler<? extends DocValuesManager> docValuesLoader = isOptimized
-          ? new OptimizedDocValuesManager.OptimizedFlushHandler(schema)
-          : new UnoptimizedDocValuesManager.UnoptimizedFlushHandler(schema);
-      DocValuesManager docValuesManager =
-          docValuesLoader.load(flushInfo.getSubProperties("doc_values"), in);
+      f-fwushabwe.handwew<? e-extends d-docvawuesmanagew> d-docvawueswoadew = isoptimized
+          ? n-nyew o-optimizeddocvawuesmanagew.optimizedfwushhandwew(schema)
+          : nyew unoptimizeddocvawuesmanagew.unoptimizedfwushhandwew(schema);
+      docvawuesmanagew d-docvawuesmanagew =
+          d-docvawueswoadew.woad(fwushinfo.getsubpwopewties("doc_vawues"), in);
 
-      FacetIDMap facetIDMap = new FacetIDMap.FlushHandler(schema)
-          .load(flushInfo.getSubProperties("facet_id_map"), in);
+      f-facetidmap facetidmap = nyew facetidmap.fwushhandwew(schema)
+          .woad(fwushinfo.getsubpwopewties("facet_id_map"), >_< i-in);
 
-      DeletedDocs.Default deletedDocs = new DeletedDocs.Default.FlushHandler(maxSegmentSize)
-          .load(flushInfo.getSubProperties("deleted_docs"), in);
+      deweteddocs.defauwt deweteddocs = nyew d-deweteddocs.defauwt.fwushhandwew(maxsegmentsize)
+          .woad(fwushinfo.getsubpwopewties("deweted_docs"), σωσ i-in);
 
-      return new EarlybirdRealtimeIndexSegmentData(
-          maxSegmentSize,
-          flushInfo.getLongProperty(TIME_SLICE_ID_PROP_NAME),
-          schema,
-          isOptimized,
-          flushInfo.getIntProperty(SMALLEST_DOCID_PROP_NAME),
-          perFieldMap,
-          facetCountingArray,
-          docValuesManager,
-          FacetUtil.getFacetLabelProviders(schema, perFieldMap),
-          facetIDMap,
-          deletedDocs,
-          docIdToTweetIdMapper,
-          timeMapper,
-          indexExtension);
+      wetuwn nyew eawwybiwdweawtimeindexsegmentdata(
+          m-maxsegmentsize, ^^;;
+          fwushinfo.getwongpwopewty(time_swice_id_pwop_name), 😳
+          schema, >_<
+          i-isoptimized, -.-
+          f-fwushinfo.getintpwopewty(smowest_docid_pwop_name), UwU
+          p-pewfiewdmap, :3
+          facetcountingawway, σωσ
+          docvawuesmanagew, >w<
+          facetutiw.getfacetwabewpwovidews(schema, (ˆ ﻌ ˆ)♡ p-pewfiewdmap), ʘwʘ
+          facetidmap, :3
+          deweteddocs, (˘ω˘)
+          d-docidtotweetidmappew, 😳😳😳
+          t-timemappew, rawr x3
+          indexextension);
     }
   }
 }

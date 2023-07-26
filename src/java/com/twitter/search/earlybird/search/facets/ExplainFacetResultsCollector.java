@@ -1,158 +1,158 @@
-package com.twitter.search.earlybird.search.facets;
+package com.twittew.seawch.eawwybiwd.seawch.facets;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+impowt java.io.ioexception;
+i-impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.hashmap;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.map;
 
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.cowwect.maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftFacetResults;
+impowt com.twittew.common.cowwections.paiw;
+impowt com.twittew.common.utiw.cwock;
+i-impowt com.twittew.seawch.common.schema.base.immutabweschemaintewface;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetidmap;
+i-impowt com.twittew.seawch.cowe.eawwybiwd.facets.facetwabewpwovidew;
+impowt com.twittew.seawch.cowe.eawwybiwd.index.eawwybiwdindexsegmentatomicweadew;
+i-impowt com.twittew.seawch.eawwybiwd.seawch.antigamingfiwtew;
+impowt com.twittew.seawch.eawwybiwd.stats.eawwybiwdseawchewstats;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcount;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetcountmetadata;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftfacetfiewdwesuwts;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.thwiftfacetwesuwts;
 
-public class ExplainFacetResultsCollector extends FacetResultsCollector {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ExplainFacetResultsCollector.class.getName());
+p-pubwic cwass expwainfacetwesuwtscowwectow extends facetwesuwtscowwectow {
+  pwivate static finaw woggew w-wog =
+      woggewfactowy.getwoggew(expwainfacetwesuwtscowwectow.cwass.getname());
 
-  protected final List<Pair<Integer, Long>> proofs;
-  protected final Map<String, Map<String, List<Long>>> proofAccumulators;
+  pwotected finaw wist<paiw<integew, ^^;; wong>> pwoofs;
+  pwotected f-finaw map<stwing, XD map<stwing, 🥺 w-wist<wong>>> p-pwoofaccumuwatows;
 
-  protected Map<String, FacetLabelProvider> facetLabelProviders;
-  private FacetIDMap facetIDMap;
+  p-pwotected m-map<stwing, òωó facetwabewpwovidew> facetwabewpwovidews;
+  pwivate f-facetidmap facetidmap;
 
   /**
-   * Creates a new facet collector with the ability to provide explanations for the search results.
+   * cweates a nyew facet cowwectow w-with the abiwity to pwovide expwanations fow the seawch wesuwts.
    */
-  public ExplainFacetResultsCollector(
-      ImmutableSchemaInterface schema,
-      FacetSearchRequestInfo searchRequestInfo,
-      AntiGamingFilter antiGamingFilter,
-      EarlybirdSearcherStats searcherStats,
-      Clock clock,
-      int requestDebugMode) throws IOException {
-    super(schema, searchRequestInfo, antiGamingFilter, searcherStats, clock, requestDebugMode);
+  pubwic expwainfacetwesuwtscowwectow(
+      i-immutabweschemaintewface schema, (ˆ ﻌ ˆ)♡
+      facetseawchwequestinfo s-seawchwequestinfo, -.-
+      a-antigamingfiwtew antigamingfiwtew, :3
+      e-eawwybiwdseawchewstats seawchewstats, ʘwʘ
+      cwock cwock, 🥺
+      int wequestdebugmode) t-thwows i-ioexception {
+    supew(schema, >_< s-seawchwequestinfo, a-antigamingfiwtew, ʘwʘ seawchewstats, (˘ω˘) c-cwock, wequestdebugmode);
 
-    proofs = new ArrayList<>(128);
+    pwoofs = nyew a-awwaywist<>(128);
 
-    proofAccumulators = Maps.newHashMap();
-    for (Schema.FieldInfo facetField : schema.getFacetFields()) {
-      HashMap<String, List<Long>> fieldLabelToTweetIdsMap = new HashMap<>();
-      proofAccumulators.put(facetField.getFieldType().getFacetName(), fieldLabelToTweetIdsMap);
+    pwoofaccumuwatows = maps.newhashmap();
+    fow (schema.fiewdinfo f-facetfiewd : schema.getfacetfiewds()) {
+      h-hashmap<stwing, (✿oωo) wist<wong>> f-fiewdwabewtotweetidsmap = n-nyew hashmap<>();
+      pwoofaccumuwatows.put(facetfiewd.getfiewdtype().getfacetname(), fiewdwabewtotweetidsmap);
     }
   }
 
-  @Override
-  protected Accumulator newPerSegmentAccumulator(EarlybirdIndexSegmentAtomicReader indexReader) {
-    Accumulator accumulator = super.newPerSegmentAccumulator(indexReader);
-    accumulator.accessor.setProofs(proofs);
-    facetLabelProviders = indexReader.getFacetLabelProviders();
-    facetIDMap = indexReader.getFacetIDMap();
+  @ovewwide
+  pwotected accumuwatow nyewpewsegmentaccumuwatow(eawwybiwdindexsegmentatomicweadew indexweadew) {
+    a-accumuwatow accumuwatow = s-supew.newpewsegmentaccumuwatow(indexweadew);
+    accumuwatow.accessow.setpwoofs(pwoofs);
+    f-facetwabewpwovidews = i-indexweadew.getfacetwabewpwovidews();
+    f-facetidmap = indexweadew.getfacetidmap();
 
-    return accumulator;
+    wetuwn accumuwatow;
   }
 
-  @Override
-  public void doCollect(long tweetID) throws IOException {
-    proofs.clear();
+  @ovewwide
+  pubwic v-void docowwect(wong tweetid) thwows ioexception {
+    pwoofs.cweaw();
 
-    // FacetResultsCollector.doCollect() calls FacetScorer.incrementCounts(),
-    // FacetResultsCollector.doCollect() creates a FacetResultsCollector.Accumulator, if
-    // necessary, which contains the accessor (a CompositeFacetIterator) and accumulators
-    // (FacetAccumulator of each field)
-    super.doCollect(tweetID);
+    // facetwesuwtscowwectow.docowwect() c-cawws facetscowew.incwementcounts(), (///ˬ///✿)
+    // facetwesuwtscowwectow.docowwect() c-cweates a facetwesuwtscowwectow.accumuwatow, rawr x3 if
+    // n-nyecessawy, -.- w-which contains the accessow (a c-compositefacetitewatow) a-and a-accumuwatows
+    // (facetaccumuwatow o-of each fiewd)
+    supew.docowwect(tweetid);
 
-    for (Pair<Integer, Long> fieldIdTermIdPair : proofs) {
-      int fieldID = fieldIdTermIdPair.getFirst();
-      long termID = fieldIdTermIdPair.getSecond();
+    fow (paiw<integew, ^^ w-wong> f-fiewdidtewmidpaiw : p-pwoofs) {
+      i-int fiewdid = f-fiewdidtewmidpaiw.getfiwst();
+      wong tewmid = fiewdidtewmidpaiw.getsecond();
 
-      // Convert term ID to the term text, a.k.a. facet label
-      String facetName = facetIDMap.getFacetFieldByFacetID(fieldID).getFacetName();
-      if (facetName != null) {
-        String facetLabel = facetLabelProviders.get(facetName)
-                .getLabelAccessor().getTermText(termID);
+      // convewt t-tewm id to the tewm text, a.k.a. (⑅˘꒳˘) facet wabew
+      stwing facetname = facetidmap.getfacetfiewdbyfacetid(fiewdid).getfacetname();
+      if (facetname != n-nyuww) {
+        stwing facetwabew = facetwabewpwovidews.get(facetname)
+                .getwabewaccessow().gettewmtext(tewmid);
 
-        List<Long> tweetIDs = proofAccumulators.get(facetName).get(facetLabel);
-        if (tweetIDs == null) {
-          tweetIDs = new ArrayList<>();
-          proofAccumulators.get(facetName).put(facetLabel, tweetIDs);
+        wist<wong> t-tweetids = pwoofaccumuwatows.get(facetname).get(facetwabew);
+        i-if (tweetids == n-nyuww) {
+          tweetids = n-new awwaywist<>();
+          pwoofaccumuwatows.get(facetname).put(facetwabew, nyaa~~ t-tweetids);
         }
 
-        tweetIDs.add(tweetID);
+        t-tweetids.add(tweetid);
       }
     }
 
-    // clear it again just to be sure
-    proofs.clear();
+    // cweaw it again just to be suwe
+    pwoofs.cweaw();
   }
 
   /**
-   * Sets explanations for the facet results.
+   * sets expwanations fow the facet w-wesuwts. /(^•ω•^)
    */
-  public void setExplanations(ThriftFacetResults facetResults) {
-    StringBuilder explanation = new StringBuilder();
+  pubwic void setexpwanations(thwiftfacetwesuwts f-facetwesuwts) {
+    stwingbuiwdew e-expwanation = n-nyew stwingbuiwdew();
 
-    for (Map.Entry<String, ThriftFacetFieldResults> facetFieldResultsEntry
-            : facetResults.getFacetFields().entrySet()) {
-      String facetName = facetFieldResultsEntry.getKey();
-      ThriftFacetFieldResults facetFieldResults = facetFieldResultsEntry.getValue();
+    fow (map.entwy<stwing, (U ﹏ U) thwiftfacetfiewdwesuwts> f-facetfiewdwesuwtsentwy
+            : f-facetwesuwts.getfacetfiewds().entwyset()) {
+      stwing facetname = f-facetfiewdwesuwtsentwy.getkey();
+      t-thwiftfacetfiewdwesuwts facetfiewdwesuwts = facetfiewdwesuwtsentwy.getvawue();
 
-      Map<String, List<Long>> proofAccumulator = proofAccumulators.get(facetName);
+      map<stwing, 😳😳😳 wist<wong>> pwoofaccumuwatow = pwoofaccumuwatows.get(facetname);
 
-      if (proofAccumulator == null) {
-        // did not accumulate explanation for this facet type? a bug?
-        LOG.warn("No explanation accumulated for facet type " + facetName);
+      i-if (pwoofaccumuwatow == n-nyuww) {
+        // d-did not accumuwate expwanation f-fow this facet t-type? a bug?
+        wog.wawn("no e-expwanation accumuwated fow facet type " + facetname);
         continue;
       }
 
-      for (ThriftFacetCount facetCount : facetFieldResults.getTopFacets()) {
-        String facetLabel = facetCount.getFacetLabel(); // a.k.a. term text
-        ThriftFacetCountMetadata metadata = facetCount.getMetadata();
+      fow (thwiftfacetcount f-facetcount : facetfiewdwesuwts.gettopfacets()) {
+        s-stwing facetwabew = facetcount.getfacetwabew(); // a.k.a. >w< t-tewm text
+        t-thwiftfacetcountmetadata metadata = facetcount.getmetadata();
 
-        List<Long> tweetIDs = proofAccumulator.get(facetLabel);
-        if (tweetIDs == null) {
-          // did not accumulate explanation for this facet label? a bug?
-          LOG.warn("No explanation accumulated for " + facetLabel + " of facet type " + facetName);
+        wist<wong> tweetids = p-pwoofaccumuwatow.get(facetwabew);
+        if (tweetids == nyuww) {
+          // did nyot accumuwate expwanation f-fow this facet wabew? a bug?
+          wog.wawn("no e-expwanation a-accumuwated fow " + facetwabew + " of facet type " + facetname);
           continue;
         }
 
-        explanation.setLength(0);
-        String oldExplanation = null;
-        if (metadata.isSetExplanation()) {
-          // save the old explanation from TwitterInMemoryIndexSearcher.fillTermMetadata()
-          oldExplanation = metadata.getExplanation();
-          // as of 2012/05/29, we have 18 digits tweet IDs
-          explanation.ensureCapacity(oldExplanation.length() + (18 + 2) + 10);
-        } else {
-          // as of 2012/05/29, we have 18 digits tweet IDs
-          explanation.ensureCapacity(tweetIDs.size() * (18 + 2) + 10);
+        e-expwanation.setwength(0);
+        s-stwing owdexpwanation = nyuww;
+        if (metadata.issetexpwanation()) {
+          // s-save the owd expwanation fwom t-twittewinmemowyindexseawchew.fiwwtewmmetadata()
+          owdexpwanation = metadata.getexpwanation();
+          // as of 2012/05/29, XD w-we have 18 digits tweet i-ids
+          expwanation.ensuwecapacity(owdexpwanation.wength() + (18 + 2) + 10);
+        } e-ewse {
+          // as of 2012/05/29, o.O w-we have 18 digits tweet ids
+          e-expwanation.ensuwecapacity(tweetids.size() * (18 + 2) + 10);
         }
 
-        explanation.append("[");
-        for (Long tweetID : tweetIDs) {
-          explanation.append(tweetID)
-                  .append(", ");
+        e-expwanation.append("[");
+        f-fow (wong tweetid : tweetids) {
+          e-expwanation.append(tweetid)
+                  .append(", mya ");
         }
-        explanation.setLength(explanation.length() - 2); // remove the last ", "
-        explanation.append("]\n");
-        if (oldExplanation != null) {
-          explanation.append(oldExplanation);
+        e-expwanation.setwength(expwanation.wength() - 2); // wemove the wast ", 🥺 "
+        e-expwanation.append("]\n");
+        i-if (owdexpwanation != n-nyuww) {
+          expwanation.append(owdexpwanation);
         }
-        metadata.setExplanation(explanation.toString());
+        metadata.setexpwanation(expwanation.tostwing());
       }
     }
   }

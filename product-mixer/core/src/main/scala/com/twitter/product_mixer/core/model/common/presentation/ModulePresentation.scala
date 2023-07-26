@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.common.presentation
+package com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation
 
-trait ModulePresentation extends UniversalPresentation
+twait moduwepwesentation e-extends u-univewsawpwesentation

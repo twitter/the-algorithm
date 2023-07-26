@@ -1,31 +1,31 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelines.earlybird.common.utils.EarlybirdFeaturesHydrator
-import com.twitter.util.Future
+impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.hydwatedcandidatesandfeatuwesenvewope
+i-impowt com.twittew.timewines.eawwybiwd.common.utiws.eawwybiwdfeatuweshydwatow
+impowt c-com.twittew.utiw.futuwe
 
-object OutOfNetworkTweetsSearchFeaturesHydrationTransform
-    extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+object o-outofnetwowktweetsseawchfeatuweshydwationtwansfowm
+    e-extends f-futuweawwow[
+      h-hydwatedcandidatesandfeatuwesenvewope, rawr x3
+      hydwatedcandidatesandfeatuwesenvewope
     ] {
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
-    val featuresByTweetId = EarlybirdFeaturesHydrator.hydrate(
-      searcherUserId = request.candidateEnvelope.query.userId,
-      searcherProfileInfo = request.userProfileInfo,
-      followedUserIds = Seq.empty,
-      mutuallyFollowingUserIds = Set.empty,
-      userLanguages = request.userLanguages,
-      uiLanguageCode = request.candidateEnvelope.query.deviceContext.flatMap(_.languageCode),
-      searchResults = request.candidateEnvelope.searchResults,
-      sourceTweetSearchResults = Seq.empty,
-      tweets = request.candidateEnvelope.hydratedTweets.outerTweets,
-      sourceTweets = Seq.empty
+  ovewwide def appwy(
+    wequest: hydwatedcandidatesandfeatuwesenvewope
+  ): f-futuwe[hydwatedcandidatesandfeatuwesenvewope] = {
+    vaw featuwesbytweetid = eawwybiwdfeatuweshydwatow.hydwate(
+      seawchewusewid = w-wequest.candidateenvewope.quewy.usewid, nyaa~~
+      seawchewpwofiweinfo = w-wequest.usewpwofiweinfo, /(^•ω•^)
+      fowwowedusewids = seq.empty, rawr
+      mutuawwyfowwowingusewids = set.empty, OwO
+      u-usewwanguages = wequest.usewwanguages, (U ﹏ U)
+      u-uiwanguagecode = w-wequest.candidateenvewope.quewy.devicecontext.fwatmap(_.wanguagecode), >_<
+      seawchwesuwts = wequest.candidateenvewope.seawchwesuwts, rawr x3
+      souwcetweetseawchwesuwts = seq.empty, mya
+      t-tweets = wequest.candidateenvewope.hydwatedtweets.outewtweets, nyaa~~
+      souwcetweets = seq.empty
     )
 
-    Future.value(request.copy(features = featuresByTweetId))
+    futuwe.vawue(wequest.copy(featuwes = featuwesbytweetid))
   }
 }

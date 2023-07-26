@@ -1,54 +1,54 @@
-# pylint: disable=useless-super-delegation
+# pywint: disabwe=usewess-supew-dewegation
 """
-Implementing Stitch Layer
+impwementing s-stitch w-wayew
 """
 
 
-from .layer import Layer
+fwom .wayew i-impowt w-wayew
 
-import tensorflow.compat.v1 as tf
+impowt tensowfwow.compat.v1 a-as tf
 
 
-class Stitch(Layer):
+cwass s-stitch(wayew):
   """
-  This layer is responsible for stitching a partioned layer together.
+  t-this wayew i-is wesponsibwe fow stitching a pawtioned wayew togethew. >w<
 
-  Output:
-    A layer that performs stitching
+  output:
+    a wayew t-that pewfowms stitching
   """
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(sewf, rawr i-input_shape):
+    """computes the output shape o-of the wayew given the input shape. mya
 
-    Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+    awgs:
+      input_shape: a-a (possibwy nyested tupwe of) `tensowshape`. ^^  i-it nyeed nyot
+        b-be fuwwy defined (e.g. 😳😳😳 the batch size may be unknown). mya
 
-    Raises NotImplementedError.
+    waises nyotimpwementedewwow. 😳
 
     """
-    raise NotImplementedError
+    waise n-nyotimpwementedewwow
 
-  def call(self, partioned_val, partioned_keys,
-           partioned_indices, **kwargs):  # pylint: disable=unused-argument, arguments-differ
+  def caww(sewf, -.- pawtioned_vaw, 🥺 pawtioned_keys, o.O
+           pawtioned_indices, /(^•ω•^) **kwawgs):  # p-pywint: disabwe=unused-awgument, nyaa~~ awguments-diffew
     """
-    This layer is responsible for stitching a partioned layer together.
+    t-this wayew i-is wesponsibwe fow s-stitching a pawtioned w-wayew togethew. nyaa~~
 
-    Input:
-      partioned_val:
-        a list of partioned Tensors which represent the vals of the hashmap
-      partioned_keys:
-        a list of partioned Tensors which represent the keys of the hashmap
-      partioned_indices:
-        a list of partioned Tensors which represent the indices of the hashmap
-    Output:
-      List which contains: [output_vals, output_keys]
-        output_vals:
-          Values of the HashMap (float)
-        output_keys:
-          Keys of HashMap (float)
+    input:
+      pawtioned_vaw:
+        a-a wist of pawtioned tensows which wepwesent the v-vaws of the hashmap
+      pawtioned_keys:
+        a wist of pawtioned tensows which wepwesent the keys of the h-hashmap
+      pawtioned_indices:
+        a wist o-of pawtioned tensows w-which wepwesent t-the indices of the hashmap
+    output:
+      wist which contains: [output_vaws, :3 o-output_keys]
+        o-output_vaws:
+          vawues of the hashmap (fwoat)
+        o-output_keys:
+          k-keys of hashmap (fwoat)
     """
-    indices = [tf.to_int32(index) for index in partioned_indices]
-    concat_keys = tf.dynamic_stitch(indices, partioned_keys)
-    concat_vals = tf.dynamic_stitch(indices, partioned_val)
-    return [concat_vals, concat_keys]
+    i-indices = [tf.to_int32(index) fow index in pawtioned_indices]
+    c-concat_keys = tf.dynamic_stitch(indices, 😳😳😳 pawtioned_keys)
+    c-concat_vaws = tf.dynamic_stitch(indices, (˘ω˘) pawtioned_vaw)
+    w-wetuwn [concat_vaws, ^^ concat_keys]

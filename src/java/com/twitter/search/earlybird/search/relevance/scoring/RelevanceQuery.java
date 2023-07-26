@@ -1,164 +1,164 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.twittew.seawch.eawwybiwd.seawch.wewevance.scowing;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Set;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.objects;
+i-impowt java.utiw.set;
 
-import javax.annotation.Nullable;
+i-impowt j-javax.annotation.nuwwabwe;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.apache.wucene.index.indexweadew;
+i-impowt o-owg.apache.wucene.index.weafweadewcontext;
+impowt owg.apache.wucene.index.tewm;
+impowt owg.apache.wucene.seawch.expwanation;
+impowt owg.apache.wucene.seawch.indexseawchew;
+i-impowt owg.apache.wucene.seawch.quewy;
+impowt owg.apache.wucene.seawch.scowew;
+i-impowt owg.apache.wucene.seawch.scowemode;
+i-impowt owg.apache.wucene.seawch.weight;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
+i-impowt com.twittew.seawch.common.wesuwts.thwiftjava.fiewdhitattwibution;
 
 /**
- * A wrapper for a Lucene query which first computes Lucene's query score
- * and then delegates to a {@link ScoringFunction} for final score computation.
+ * a-a wwappew f-fow a wucene quewy which fiwst computes wucene's quewy scowe
+ * and then dewegates t-to a {@wink scowingfunction} fow finaw scowe computation.
  */
-public class RelevanceQuery extends Query {
-  private static final Logger LOG = LoggerFactory.getLogger(RelevanceQuery.class.getName());
+pubwic cwass w-wewevancequewy extends quewy {
+  p-pwivate static f-finaw woggew w-wog = woggewfactowy.getwoggew(wewevancequewy.cwass.getname());
 
-  protected final Query luceneQuery;
-  protected final ScoringFunction scoringFunction;
+  p-pwotected finaw quewy wucenequewy;
+  pwotected f-finaw scowingfunction scowingfunction;
 
-  // True when the lucene query's score should be ignored for debug explanations.
-  protected final boolean ignoreLuceneQueryScoreExplanation;
+  // twue w-when the wucene quewy's scowe shouwd be ignowed fow debug expwanations. rawr x3
+  pwotected finaw boowean i-ignowewucenequewyscoweexpwanation;
 
-  public RelevanceQuery(Query luceneQuery, ScoringFunction scoringFunction) {
-    this(luceneQuery, scoringFunction, false);
+  pubwic w-wewevancequewy(quewy w-wucenequewy, -.- s-scowingfunction scowingfunction) {
+    this(wucenequewy, ^^ scowingfunction, (⑅˘꒳˘) f-fawse);
   }
 
-  public RelevanceQuery(Query luceneQuery,
-                        ScoringFunction scoringFunction,
-                        boolean ignoreLuceneQueryScoreExplanation) {
-    this.luceneQuery = luceneQuery;
-    this.scoringFunction = scoringFunction;
-    this.ignoreLuceneQueryScoreExplanation = ignoreLuceneQueryScoreExplanation;
+  p-pubwic wewevancequewy(quewy w-wucenequewy,
+                        s-scowingfunction scowingfunction, nyaa~~
+                        b-boowean ignowewucenequewyscoweexpwanation) {
+    this.wucenequewy = w-wucenequewy;
+    this.scowingfunction = scowingfunction;
+    t-this.ignowewucenequewyscoweexpwanation = ignowewucenequewyscoweexpwanation;
   }
 
-  public ScoringFunction getScoringFunction() {
-    return scoringFunction;
+  p-pubwic scowingfunction g-getscowingfunction() {
+    w-wetuwn scowingfunction;
   }
 
-  public Query getLuceneQuery() {
-    return luceneQuery;
+  pubwic quewy getwucenequewy() {
+    wetuwn wucenequewy;
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewritten = luceneQuery.rewrite(reader);
-    if (rewritten == luceneQuery) {
-      return this;
+  @ovewwide
+  pubwic quewy wewwite(indexweadew w-weadew) t-thwows ioexception {
+    quewy wewwitten = w-wucenequewy.wewwite(weadew);
+    i-if (wewwitten == w-wucenequewy) {
+      wetuwn this;
     }
-    return new RelevanceQuery(rewritten, scoringFunction, ignoreLuceneQueryScoreExplanation);
+    wetuwn nyew wewevancequewy(wewwitten, /(^•ω•^) scowingfunction, (U ﹏ U) i-ignowewucenequewyscoweexpwanation);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    Weight luceneWeight = luceneQuery.createWeight(searcher, scoreMode, boost);
-    if (luceneWeight == null) {
-      return null;
+  @ovewwide
+  pubwic weight cweateweight(indexseawchew seawchew, 😳😳😳 scowemode scowemode, >w< fwoat b-boost)
+      thwows ioexception {
+    w-weight w-wuceneweight = w-wucenequewy.cweateweight(seawchew, scowemode, XD boost);
+    i-if (wuceneweight == nyuww) {
+      w-wetuwn n-nyuww;
     }
-    return new RelevanceWeight(searcher, luceneWeight);
+    w-wetuwn nyew wewevanceweight(seawchew, wuceneweight);
   }
 
-  public class RelevanceWeight extends Weight {
-    private final Weight luceneWeight;
+  p-pubwic cwass wewevanceweight extends w-weight {
+    p-pwivate finaw w-weight wuceneweight;
 
-    public RelevanceWeight(IndexSearcher searcher, Weight luceneWeight) {
-      super(RelevanceQuery.this);
-      this.luceneWeight = luceneWeight;
-    }
-
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      this.luceneWeight.extractTerms(terms);
+    p-pubwic wewevanceweight(indexseawchew seawchew, o.O weight wuceneweight) {
+      s-supew(wewevancequewy.this);
+      this.wuceneweight = wuceneweight;
     }
 
+    @ovewwide
+    pubwic void extwacttewms(set<tewm> tewms) {
+      t-this.wuceneweight.extwacttewms(tewms);
+    }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return explain(context, doc, null);
+
+    @ovewwide
+    pubwic expwanation expwain(weafweadewcontext context, int d-doc) thwows ioexception {
+      w-wetuwn expwain(context, d-doc, mya nyuww);
     }
 
     /**
-     * Returns an explanation of the scoring for the given document.
+     * wetuwns a-an expwanation of the scowing f-fow the given d-document. 🥺
      *
-     * @param context The context of the reader that returned this document.
-     * @param doc The document.
-     * @param fieldHitAttribution Per-hit field attribution information.
-     * @return An explanation of the scoring for the given document.
+     * @pawam context the context of the weadew that wetuwned this document. ^^;;
+     * @pawam doc t-the document. :3
+     * @pawam fiewdhitattwibution p-pew-hit fiewd attwibution infowmation. (U ﹏ U)
+     * @wetuwn a-an expwanation o-of the scowing fow the given document. OwO
      */
-    public Explanation explain(LeafReaderContext context, int doc,
-        @Nullable FieldHitAttribution fieldHitAttribution) throws IOException {
+    p-pubwic e-expwanation expwain(weafweadewcontext context, 😳😳😳 int d-doc, (ˆ ﻌ ˆ)♡
+        @nuwwabwe f-fiewdhitattwibution fiewdhitattwibution) thwows ioexception {
 
-      Explanation luceneExplanation = Explanation.noMatch("LuceneQuery explain skipped");
-      if (!ignoreLuceneQueryScoreExplanation) {
-        // get Lucene score
-        try {
-          luceneExplanation = luceneWeight.explain(context, doc);
-        } catch (Exception e) {
-          // We sometimes see exceptions resulting from term queries that do not store
-          // utf8-text, which TermQuery.toString() assumes.  Catch here and allow at least
-          // scoring function explanations to be returned.
-          LOG.error("Exception in explain", e);
-          luceneExplanation = Explanation.noMatch("LuceneQuery explain failed");
+      expwanation wuceneexpwanation = expwanation.nomatch("wucenequewy expwain skipped");
+      i-if (!ignowewucenequewyscoweexpwanation) {
+        // g-get w-wucene scowe
+        twy {
+          w-wuceneexpwanation = w-wuceneweight.expwain(context, XD doc);
+        } c-catch (exception e) {
+          // we sometimes see exceptions wesuwting f-fwom tewm quewies t-that do nyot stowe
+          // utf8-text, (ˆ ﻌ ˆ)♡ which t-tewmquewy.tostwing() a-assumes. ( ͡o ω ͡o )  catch hewe and awwow at weast
+          // scowing function e-expwanations to be wetuwned. rawr x3
+          wog.ewwow("exception in expwain", nyaa~~ e);
+          w-wuceneexpwanation = expwanation.nomatch("wucenequewy expwain f-faiwed");
         }
       }
 
-      Explanation scoringFunctionExplanation;
-      scoringFunction.setFieldHitAttribution(fieldHitAttribution);
-      scoringFunctionExplanation = scoringFunction.explain(
-          context.reader(), doc, luceneExplanation.getValue().floatValue());
+      e-expwanation scowingfunctionexpwanation;
+      scowingfunction.setfiewdhitattwibution(fiewdhitattwibution);
+      scowingfunctionexpwanation = s-scowingfunction.expwain(
+          c-context.weadew(), >_< doc, wuceneexpwanation.getvawue().fwoatvawue());
 
-      // just add a wrapper for a better structure of the final explanation
-      Explanation luceneExplanationWrapper = Explanation.match(
-          luceneExplanation.getValue(), "LuceneQuery", luceneExplanation);
+      // just add a wwappew fow a bettew s-stwuctuwe of the finaw expwanation
+      e-expwanation wuceneexpwanationwwappew = expwanation.match(
+          wuceneexpwanation.getvawue(), ^^;; "wucenequewy", (ˆ ﻌ ˆ)♡ wuceneexpwanation);
 
-      return Explanation.match(scoringFunctionExplanation.getValue(), "RelevanceQuery",
-              scoringFunctionExplanation, luceneExplanationWrapper);
+      w-wetuwn expwanation.match(scowingfunctionexpwanation.getvawue(), ^^;; "wewevancequewy",
+              s-scowingfunctionexpwanation, (⑅˘꒳˘) w-wuceneexpwanationwwappew);
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      return luceneWeight.scorer(context);
+    @ovewwide
+    pubwic s-scowew scowew(weafweadewcontext context) thwows i-ioexception {
+      w-wetuwn wuceneweight.scowew(context);
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return luceneWeight.isCacheable(ctx);
+    @ovewwide
+    p-pubwic boowean iscacheabwe(weafweadewcontext c-ctx) {
+      wetuwn w-wuceneweight.iscacheabwe(ctx);
     }
   }
 
-  @Override
-  public int hashCode() {
-    return (luceneQuery == null ? 0 : luceneQuery.hashCode())
-        + (scoringFunction == null ? 0 : scoringFunction.hashCode()) * 13;
+  @ovewwide
+  pubwic int hashcode() {
+    w-wetuwn (wucenequewy == nyuww ? 0 : w-wucenequewy.hashcode())
+        + (scowingfunction == n-nyuww ? 0 : scowingfunction.hashcode()) * 13;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof RelevanceQuery)) {
-      return false;
+  @ovewwide
+  pubwic boowean equaws(object obj) {
+    i-if (!(obj instanceof wewevancequewy)) {
+      w-wetuwn fawse;
     }
 
-    RelevanceQuery query = RelevanceQuery.class.cast(obj);
-    return Objects.equals(luceneQuery, query.luceneQuery)
-        && Objects.equals(scoringFunction, query.scoringFunction);
+    w-wewevancequewy quewy = wewevancequewy.cwass.cast(obj);
+    wetuwn objects.equaws(wucenequewy, rawr x3 quewy.wucenequewy)
+        && o-objects.equaws(scowingfunction, (///ˬ///✿) q-quewy.scowingfunction);
   }
 
-  @Override
-  public String toString(String field) {
-    return "RelevanceQuery[q=" + luceneQuery.toString(field) + "]";
+  @ovewwide
+  p-pubwic stwing t-tostwing(stwing fiewd) {
+    w-wetuwn "wewevancequewy[q=" + wucenequewy.tostwing(fiewd) + "]";
   }
 }

@@ -1,61 +1,61 @@
-package com.twitter.usersignalservice
+package com.twittew.usewsignawsewvice
 package base
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.data.Conv
-import com.twitter.twistly.common.UserId
-import com.twitter.util.Future
+i-impowt com.twittew.fwigate.common.stowe.stwato.stwatofetchabwestowe
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.stwato.cwient.cwient
+i-impowt c-com.twittew.stwato.data.conv
+i-impowt c-com.twittew.twistwy.common.usewid
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * A Strato signal fetcher extending BaseSignalFetcher to provide an interface to fetch signals from
- * Strato Column.
+ * a stwato signaw fetchew extending basesignawfetchew to pwovide an intewface t-to fetch signaws fwom
+ * stwato cowumn. o.O
  *
- * Extends this when the underlying store is a single Strato column.
- * @tparam StratoKeyType
- * @tparam StratoViewType
- * @tparam StratoValueType
+ * e-extends this when the undewwying s-stowe is a singwe stwato cowumn. /(^•ω•^)
+ * @tpawam stwatokeytype
+ * @tpawam s-stwatoviewtype
+ * @tpawam stwatovawuetype
  */
-trait StratoSignalFetcher[StratoKeyType, StratoViewType, StratoValueType]
-    extends BaseSignalFetcher {
+t-twait s-stwatosignawfetchew[stwatokeytype, stwatoviewtype, stwatovawuetype]
+    extends basesignawfetchew {
   /*
-    Define the meta info of the strato column
+    d-define the meta info of the stwato cowumn
    */
-  def stratoClient: Client
-  def stratoColumnPath: String
-  def stratoView: StratoViewType
+  def stwatocwient: c-cwient
+  def stwatocowumnpath: stwing
+  def stwatoview: s-stwatoviewtype
 
   /**
-   * Override these vals and remove the implicit key words.
-   * @return
+   * o-ovewwide these v-vaws and wemove t-the impwicit key wowds. nyaa~~
+   * @wetuwn
    */
-  protected implicit def keyConv: Conv[StratoKeyType]
-  protected implicit def viewConv: Conv[StratoViewType]
-  protected implicit def valueConv: Conv[StratoValueType]
+  pwotected impwicit d-def keyconv: conv[stwatokeytype]
+  pwotected i-impwicit def viewconv: conv[stwatoviewtype]
+  pwotected impwicit def vawueconv: conv[stwatovawuetype]
 
   /**
-   * Adapter to transform the userId to the StratoKeyType
-   * @param userId
-   * @return StratoKeyType
+   * adaptew to twansfowm t-the usewid to the stwatokeytype
+   * @pawam u-usewid
+   * @wetuwn s-stwatokeytype
    */
-  protected def toStratoKey(userId: UserId): StratoKeyType
+  p-pwotected def tostwatokey(usewid: usewid): stwatokeytype
 
   /**
-   * Adapter to transform the StratoValueType to a Seq of RawSignalType
-   * @param stratoValue
-   * @return Seq[RawSignalType]
+   * adaptew to twansfowm t-the stwatovawuetype t-to a seq of wawsignawtype
+   * @pawam s-stwatovawue
+   * @wetuwn s-seq[wawsignawtype]
    */
-  protected def toRawSignals(stratoValue: StratoValueType): Seq[RawSignalType]
+  pwotected d-def towawsignaws(stwatovawue: stwatovawuetype): s-seq[wawsignawtype]
 
-  protected final lazy val underlyingStore: ReadableStore[UserId, Seq[RawSignalType]] =
-    StratoFetchableStore
-      .withView[StratoKeyType, StratoViewType, StratoValueType](
-        stratoClient,
-        stratoColumnPath,
-        stratoView)
-      .composeKeyMapping(toStratoKey)
-      .mapValues(toRawSignals)
+  pwotected finaw wazy vaw undewwyingstowe: w-weadabwestowe[usewid, nyaa~~ seq[wawsignawtype]] =
+    s-stwatofetchabwestowe
+      .withview[stwatokeytype, :3 stwatoviewtype, 😳😳😳 s-stwatovawuetype](
+        s-stwatocwient, (˘ω˘)
+        stwatocowumnpath, ^^
+        stwatoview)
+      .composekeymapping(tostwatokey)
+      .mapvawues(towawsignaws)
 
-  override final def getRawSignals(userId: UserId): Future[Option[Seq[RawSignalType]]] =
-    underlyingStore.get(userId)
+  ovewwide finaw def getwawsignaws(usewid: usewid): futuwe[option[seq[wawsignawtype]]] =
+    u-undewwyingstowe.get(usewid)
 }

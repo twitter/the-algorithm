@@ -1,40 +1,40 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+package tensowfwow.sewving;
+option cc_enabwe_awenas = t-twue;
 
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow_serving/apis/model.proto";
+i-impowt "tensowfwow/cowe/fwamewowk/tensow.pwoto";
+i-impowt "tensowfwow_sewving/apis/modew.pwoto";
 
-// PredictRequest specifies which TensorFlow model to run, as well as
-// how inputs are mapped to tensors and how outputs are filtered before
-// returning to user.
-message PredictRequest {
-  // Model Specification. If version is not specified, will use the latest
-  // (numerical) version.
-  ModelSpec model_spec = 1;
+// p-pwedictwequest s-specifies which t-tensowfwow modew t-to wun, mya as weww a-as
+// how inputs awe mapped to tensows and how outputs awe fiwtewed befowe
+// w-wetuwning to usew. ^^
+message pwedictwequest {
+  // modew specification. 😳😳😳 i-if vewsion is nyot specified, mya w-wiww use the watest
+  // (numewicaw) vewsion. 😳
+  modewspec modew_spec = 1;
 
-  // Input tensors.
-  // Names of input tensor are alias names. The mapping from aliases to real
-  // input tensor names is stored in the SavedModel export as a prediction
-  // SignatureDef under the 'inputs' field.
-  map<string, TensorProto> inputs = 2;
+  // i-input tensows. -.-
+  // nyames o-of input tensow a-awe awias nyames. 🥺 the mapping fwom awiases to weaw
+  // input tensow nyames is stowed i-in the savedmodew expowt as a pwediction
+  // signatuwedef undew the 'inputs' f-fiewd. o.O
+  map<stwing, /(^•ω•^) tensowpwoto> i-inputs = 2;
 
-  // Output filter.
-  // Names specified are alias names. The mapping from aliases to real output
-  // tensor names is stored in the SavedModel export as a prediction
-  // SignatureDef under the 'outputs' field.
-  // Only tensors specified here will be run/fetched and returned, with the
-  // exception that when none is specified, all tensors specified in the
-  // named signature will be run/fetched and returned.
-  repeated string output_filter = 3;
+  // o-output fiwtew. nyaa~~
+  // n-nyames s-specified awe awias nyames. nyaa~~ the mapping fwom a-awiases to weaw output
+  // tensow nyames is stowed i-in the savedmodew expowt as a pwediction
+  // signatuwedef undew the 'outputs' fiewd. :3
+  // onwy t-tensows specified hewe wiww b-be wun/fetched and w-wetuwned, 😳😳😳 with t-the
+  // exception that when nyone is specified, (˘ω˘) aww tensows specified i-in the
+  // n-nyamed signatuwe wiww be wun/fetched a-and wetuwned. ^^
+  w-wepeated stwing output_fiwtew = 3;
 }
 
-// Response for PredictRequest on successful run.
-message PredictResponse {
-  // Effective Model Specification used to process PredictRequest.
-  ModelSpec model_spec = 2;
+// w-wesponse fow pwedictwequest on s-successfuw wun. :3
+message pwedictwesponse {
+  // effective modew s-specification used to pwocess pwedictwequest. -.-
+  m-modewspec modew_spec = 2;
 
-  // Output tensors.
-  map<string, TensorProto> outputs = 1;
+  // output tensows. 😳
+  m-map<stwing, mya tensowpwoto> o-outputs = 1;
 }

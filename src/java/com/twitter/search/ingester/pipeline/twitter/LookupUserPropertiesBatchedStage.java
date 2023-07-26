@@ -1,60 +1,60 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.util.Collection;
-import javax.naming.NamingException;
+impowt java.utiw.cowwection;
+i-impowt javax.naming.namingexception;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+i-impowt o-owg.apache.commons.pipewine.stageexception;
+i-impowt o-owg.apache.commons.pipewine.vawidation.consumedtypes;
+i-impowt o-owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
 
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.util.UserPropertiesManager;
-import com.twitter.util.Future;
+i-impowt com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.batchedewement;
+impowt c-com.twittew.seawch.ingestew.pipewine.utiw.pipewinestageexception;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.usewpwopewtiesmanagew;
+impowt c-com.twittew.utiw.futuwe;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class LookupUserPropertiesBatchedStage extends TwitterBatchedBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
+@consumedtypes(ingestewtwittewmessage.cwass)
+@pwoducesconsumed
+pubwic c-cwass wookupusewpwopewtiesbatchedstage extends twittewbatchedbasestage
+    <ingestewtwittewmessage, ʘwʘ ingestewtwittewmessage> {
 
-  protected UserPropertiesManager userPropertiesManager;
+  p-pwotected usewpwopewtiesmanagew usewpwopewtiesmanagew;
 
-  @Override
-  protected Class<IngesterTwitterMessage> getQueueObjectType() {
-    return IngesterTwitterMessage.class;
+  @ovewwide
+  p-pwotected c-cwass<ingestewtwittewmessage> getqueueobjecttype() {
+    wetuwn ingestewtwittewmessage.cwass;
   }
 
-  @Override
-  protected Future<Collection<IngesterTwitterMessage>> innerProcessBatch(Collection<BatchedElement
-      <IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
-    Collection<IngesterTwitterMessage> batchedElements = extractOnlyElementsFromBatch(batch);
-    return userPropertiesManager.populateUserProperties(batchedElements);
+  @ovewwide
+  pwotected f-futuwe<cowwection<ingestewtwittewmessage>> innewpwocessbatch(cowwection<batchedewement
+      <ingestewtwittewmessage, σωσ ingestewtwittewmessage>> batch) {
+    cowwection<ingestewtwittewmessage> batchedewements = extwactonwyewementsfwombatch(batch);
+    w-wetuwn usewpwopewtiesmanagew.popuwateusewpwopewties(batchedewements);
   }
 
-  @Override
-  protected boolean needsToBeBatched(IngesterTwitterMessage element) {
-    return true;
+  @ovewwide
+  p-pwotected boowean n-nyeedstobebatched(ingestewtwittewmessage e-ewement) {
+    w-wetuwn twue;
   }
 
-  @Override
-  protected IngesterTwitterMessage transform(IngesterTwitterMessage element) {
-    return element;
+  @ovewwide
+  pwotected i-ingestewtwittewmessage twansfowm(ingestewtwittewmessage ewement) {
+    wetuwn e-ewement;
   }
 
-  @Override
-  public synchronized void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @ovewwide
+  pubwic synchwonized void doinnewpwepwocess() thwows stageexception, OwO nyamingexception {
+    s-supew.doinnewpwepwocess();
+    commoninnewsetup();
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    super.innerSetup();
-    commonInnerSetup();
+  @ovewwide
+  p-pwotected void i-innewsetup() thwows p-pipewinestageexception, 😳😳😳 nyamingexception {
+    supew.innewsetup();
+    commoninnewsetup();
   }
 
-  private void commonInnerSetup() throws NamingException {
-    userPropertiesManager = new UserPropertiesManager(wireModule.getMetastoreClient());
+  p-pwivate void c-commoninnewsetup() thwows nyamingexception {
+    u-usewpwopewtiesmanagew = n-nyew usewpwopewtiesmanagew(wiwemoduwe.getmetastowecwient());
   }
 }

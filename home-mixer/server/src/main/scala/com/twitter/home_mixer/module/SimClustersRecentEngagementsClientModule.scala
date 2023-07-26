@@ -1,23 +1,23 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.BatchedStratoClientWithModerateTimeout
-import com.twitter.inject.TwitterModule
-import com.twitter.strato.client.Client
-import com.twitter.timelines.clients.strato.twistly.SimClustersRecentEngagementSimilarityClient
-import com.twitter.timelines.clients.strato.twistly.SimClustersRecentEngagementSimilarityClientImpl
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.batchedstwatocwientwithmodewatetimeout
+i-impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.stwato.cwient.cwient
+i-impowt c-com.twittew.timewines.cwients.stwato.twistwy.simcwustewswecentengagementsimiwawitycwient
+i-impowt com.twittew.timewines.cwients.stwato.twistwy.simcwustewswecentengagementsimiwawitycwientimpw
+impowt javax.inject.named
+impowt javax.inject.singweton
 
-object SimClustersRecentEngagementsClientModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesSimilarityClient(
-    @Named(BatchedStratoClientWithModerateTimeout)
-    stratoClient: Client,
-    statsReceiver: StatsReceiver
-  ): SimClustersRecentEngagementSimilarityClient = {
-    new SimClustersRecentEngagementSimilarityClientImpl(stratoClient, statsReceiver)
+o-object simcwustewswecentengagementscwientmoduwe extends twittewmoduwe {
+  @singweton
+  @pwovides
+  def pwovidessimiwawitycwient(
+    @named(batchedstwatocwientwithmodewatetimeout)
+    stwatocwient: c-cwient, (U ᵕ U❁)
+    statsweceivew: s-statsweceivew
+  ): simcwustewswecentengagementsimiwawitycwient = {
+    new simcwustewswecentengagementsimiwawitycwientimpw(stwatocwient, -.- statsweceivew)
   }
 }

@@ -1,68 +1,68 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk
 
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureType
+impowt c-com.twittew.mw.api.constant.shawedfeatuwes
+i-impowt c-com.twittew.mw.api.featuwe
+i-impowt com.twittew.mw.api.featuwetype
 
 /**
- * Convenience class to describe the stores that make up a particular type of aggregate.
+ * c-convenience c-cwass t-to descwibe the s-stowes that make up a pawticuwaw type of aggwegate. (˘ω˘)
  *
- * For example, as of 2018/07, user aggregates are generate by merging the individual
- * "user_aggregates", "rectweet_user_aggregates", and, "twitter_wide_user_aggregates".
+ * fow exampwe, >_< as of 2018/07, -.- u-usew aggwegates awe genewate by mewging the i-individuaw
+ * "usew_aggwegates", 🥺 "wectweet_usew_aggwegates", (U ﹏ U) and, "twittew_wide_usew_aggwegates". >w<
  *
- * @param storeNames Name of the stores.
- * @param aggregateType Type of aggregate, usually differentiated by the aggregation key.
- * @param shouldHash Used at TimelineRankingAggregatesUtil.extractSecondary when extracting the
- *                   secondary key value.
+ * @pawam stowenames nyame o-of the stowes. mya
+ * @pawam aggwegatetype type of aggwegate, >w< usuawwy d-diffewentiated by the aggwegation k-key. nyaa~~
+ * @pawam s-shouwdhash used at timewinewankingaggwegatesutiw.extwactsecondawy when extwacting the
+ *                   secondawy key vawue. (✿oωo)
  */
-case class StoreConfig[T](
-  storeNames: Set[String],
-  aggregateType: AggregateType.Value,
-  shouldHash: Boolean = false
+c-case cwass stoweconfig[t](
+  stowenames: set[stwing], ʘwʘ
+  aggwegatetype: a-aggwegatetype.vawue, (ˆ ﻌ ˆ)♡
+  shouwdhash: b-boowean = fawse
 )(
-  implicit storeMerger: StoreMerger) {
-  require(storeMerger.isValidToMerge(storeNames))
+  i-impwicit s-stowemewgew: stowemewgew) {
+  wequiwe(stowemewgew.isvawidtomewge(stowenames))
 
-  private val representativeStore = storeNames.head
+  p-pwivate vaw wepwesentativestowe = stowenames.head
 
-  val aggregationKeyIds: Set[Long] = storeMerger.getAggregateKeys(representativeStore)
-  val aggregationKeyFeatures: Set[Feature[_]] =
-    storeMerger.getAggregateKeyFeatures(representativeStore)
-  val secondaryKeyFeatureOpt: Option[Feature[_]] = storeMerger.getSecondaryKey(representativeStore)
+  vaw aggwegationkeyids: s-set[wong] = stowemewgew.getaggwegatekeys(wepwesentativestowe)
+  vaw a-aggwegationkeyfeatuwes: set[featuwe[_]] =
+    stowemewgew.getaggwegatekeyfeatuwes(wepwesentativestowe)
+  vaw secondawykeyfeatuweopt: option[featuwe[_]] = stowemewgew.getsecondawykey(wepwesentativestowe)
 }
 
-trait StoreMerger {
-  def aggregationConfig: AggregationConfig
+t-twait stowemewgew {
+  def aggwegationconfig: a-aggwegationconfig
 
-  def getAggregateKeyFeatures(storeName: String): Set[Feature[_]] =
-    aggregationConfig.aggregatesToCompute
-      .filter(_.outputStore.name == storeName)
-      .flatMap(_.keysToAggregate)
+  d-def getaggwegatekeyfeatuwes(stowename: s-stwing): set[featuwe[_]] =
+    aggwegationconfig.aggwegatestocompute
+      .fiwtew(_.outputstowe.name == stowename)
+      .fwatmap(_.keystoaggwegate)
 
-  def getAggregateKeys(storeName: String): Set[Long] =
-    TypedAggregateGroup.getKeyFeatureIds(getAggregateKeyFeatures(storeName))
+  d-def getaggwegatekeys(stowename: s-stwing): set[wong] =
+    typedaggwegategwoup.getkeyfeatuweids(getaggwegatekeyfeatuwes(stowename))
 
-  def getSecondaryKey(storeName: String): Option[Feature[_]] = {
-    val keys = getAggregateKeyFeatures(storeName)
-    require(keys.size <= 2, "Only singleton or binary aggregation keys are supported.")
-    require(keys.contains(SharedFeatures.USER_ID), "USER_ID must be one of the aggregation keys.")
-    keys
-      .filterNot(_ == SharedFeatures.USER_ID)
-      .headOption
-      .map { possiblySparseKey =>
-        if (possiblySparseKey.getFeatureType != FeatureType.SPARSE_BINARY) {
-          possiblySparseKey
-        } else {
-          TypedAggregateGroup.sparseFeature(possiblySparseKey)
+  d-def getsecondawykey(stowename: s-stwing): option[featuwe[_]] = {
+    vaw keys = g-getaggwegatekeyfeatuwes(stowename)
+    wequiwe(keys.size <= 2, 😳😳😳 "onwy s-singweton ow binawy aggwegation keys awe s-suppowted.")
+    wequiwe(keys.contains(shawedfeatuwes.usew_id), :3 "usew_id m-must be one of the aggwegation k-keys.")
+    k-keys
+      .fiwtewnot(_ == shawedfeatuwes.usew_id)
+      .headoption
+      .map { possibwyspawsekey =>
+        if (possibwyspawsekey.getfeatuwetype != featuwetype.spawse_binawy) {
+          possibwyspawsekey
+        } ewse {
+          t-typedaggwegategwoup.spawsefeatuwe(possibwyspawsekey)
         }
       }
   }
 
   /**
-   * Stores may only be merged if they have the same aggregation key.
+   * s-stowes may onwy be mewged i-if they have t-the same aggwegation k-key. OwO
    */
-  def isValidToMerge(storeNames: Set[String]): Boolean = {
-    val expectedKeyOpt = storeNames.headOption.map(getAggregateKeys)
-    storeNames.forall(v => getAggregateKeys(v) == expectedKeyOpt.get)
+  def isvawidtomewge(stowenames: set[stwing]): boowean = {
+    vaw expectedkeyopt = s-stowenames.headoption.map(getaggwegatekeys)
+    stowenames.fowaww(v => getaggwegatekeys(v) == expectedkeyopt.get)
   }
 }

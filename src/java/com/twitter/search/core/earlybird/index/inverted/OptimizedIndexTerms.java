@@ -1,57 +1,57 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
+impowt o-owg.apache.wucene.index.tewms;
+i-impowt owg.apache.wucene.index.tewmsenum;
 
-public class OptimizedIndexTerms extends Terms {
-  private final OptimizedMemoryIndex index;
+p-pubwic c-cwass optimizedindextewms e-extends t-tewms {
+  pwivate f-finaw optimizedmemowyindex i-index;
 
-  public OptimizedIndexTerms(OptimizedMemoryIndex index) {
+  pubwic optimizedindextewms(optimizedmemowyindex index) {
     this.index = index;
   }
 
-  @Override
-  public long size() {
-    return index.getNumTerms();
+  @ovewwide
+  pubwic w-wong size() {
+    wetuwn index.getnumtewms();
   }
 
-  @Override
-  public TermsEnum iterator() {
-    return index.createTermsEnum(index.getMaxPublishedPointer());
+  @ovewwide
+  pubwic tewmsenum i-itewatow() {
+    wetuwn i-index.cweatetewmsenum(index.getmaxpubwishedpointew());
   }
 
-  @Override
-  public long getSumTotalTermFreq() {
-    return index.getSumTotalTermFreq();
+  @ovewwide
+  pubwic wong getsumtotawtewmfweq() {
+    wetuwn index.getsumtotawtewmfweq();
   }
 
-  @Override
-  public long getSumDocFreq() {
-    return index.getSumTermDocFreq();
+  @ovewwide
+  p-pubwic wong getsumdocfweq() {
+    w-wetuwn i-index.getsumtewmdocfweq();
   }
 
-  @Override
-  public int getDocCount() {
-    return index.getNumDocs();
+  @ovewwide
+  pubwic int getdoccount() {
+    wetuwn index.getnumdocs();
   }
 
-  @Override
-  public boolean hasFreqs() {
-    return false;
+  @ovewwide
+  pubwic boowean hasfweqs() {
+    w-wetuwn fawse;
   }
 
-  @Override
-  public boolean hasOffsets() {
-    return false;
+  @ovewwide
+  pubwic boowean hasoffsets() {
+    wetuwn fawse;
   }
 
-  @Override
-  public boolean hasPositions() {
-    return true;
+  @ovewwide
+  p-pubwic boowean haspositions() {
+    w-wetuwn twue;
   }
 
-  @Override
-  public boolean hasPayloads() {
-    return false;
+  @ovewwide
+  p-pubwic boowean h-haspaywoads() {
+    w-wetuwn fawse;
   }
 }

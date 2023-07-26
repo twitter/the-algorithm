@@ -1,217 +1,217 @@
-package com.twitter.home_mixer.federated
+package com.twittew.home_mixew.fedewated
 
-import com.twitter.gizmoduck.{thriftscala => gd}
-import com.twitter.home_mixer.marshaller.request.HomeMixerRequestUnmarshaller
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.{thriftscala => hm}
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineResult
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.product_mixer.core.{thriftscala => pm}
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.strato.callcontext.CallContext
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config._
-import com.twitter.strato.data._
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.generated.client.auth_context.AuditIpClientColumn
-import com.twitter.strato.generated.client.gizmoduck.CompositeOnUserClientColumn
-import com.twitter.strato.graphql.timelines.{thriftscala => gql}
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.timelines.render.{thriftscala => tr}
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.gizmoduck.{thwiftscawa => g-gd}
+impowt c-com.twittew.home_mixew.mawshawwew.wequest.homemixewwequestunmawshawwew
+i-impowt com.twittew.home_mixew.modew.wequest.homemixewwequest
+i-impowt com.twittew.home_mixew.{thwiftscawa => h-hm}
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.pawamsbuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewinewequest
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pwoduct.pwoductpipewinewesuwt
+impowt com.twittew.pwoduct_mixew.cowe.pwoduct.wegistwy.pwoductpipewinewegistwy
+impowt com.twittew.pwoduct_mixew.cowe.{thwiftscawa => pm}
+impowt c-com.twittew.stitch.awwow
+impowt com.twittew.stitch.stitch
+impowt c-com.twittew.stwato.cawwcontext.cawwcontext
+impowt com.twittew.stwato.catawog.opmetadata
+i-impowt com.twittew.stwato.config._
+impowt com.twittew.stwato.data._
+impowt com.twittew.stwato.fed.stwatofed
+i-impowt com.twittew.stwato.genewated.cwient.auth_context.auditipcwientcowumn
+i-impowt com.twittew.stwato.genewated.cwient.gizmoduck.compositeonusewcwientcowumn
+i-impowt com.twittew.stwato.gwaphqw.timewines.{thwiftscawa => gqw}
+impowt com.twittew.stwato.thwift.scwoogeconv
+impowt com.twittew.timewines.wendew.{thwiftscawa => tw}
+impowt com.twittew.utiw.twy
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class HomeMixerColumn @Inject() (
-  homeMixerRequestUnmarshaller: HomeMixerRequestUnmarshaller,
-  compositeOnUserClientColumn: CompositeOnUserClientColumn,
-  auditIpClientColumn: AuditIpClientColumn,
-  paramsBuilder: ParamsBuilder,
-  productPipelineRegistry: ProductPipelineRegistry)
-    extends StratoFed.Column(HomeMixerColumn.Path)
-    with StratoFed.Fetch.Arrow {
+@singweton
+cwass homemixewcowumn @inject() (
+  h-homemixewwequestunmawshawwew: homemixewwequestunmawshawwew, XD
+  c-compositeonusewcwientcowumn: c-compositeonusewcwientcowumn, (ˆ ﻌ ˆ)♡
+  a-auditipcwientcowumn: a-auditipcwientcowumn, ( ͡o ω ͡o )
+  pawamsbuiwdew: pawamsbuiwdew, rawr x3
+  p-pwoductpipewinewegistwy: pwoductpipewinewegistwy)
+    extends s-stwatofed.cowumn(homemixewcowumn.path)
+    with stwatofed.fetch.awwow {
 
-  override val contactInfo: ContactInfo = ContactInfo(
-    contactEmail = "",
-    ldapGroup = "",
-    slackRoomId = ""
+  ovewwide vaw contactinfo: contactinfo = contactinfo(
+    contactemaiw = "", nyaa~~
+    w-wdapgwoup = "", >_<
+    swackwoomid = ""
   )
 
-  override val metadata: OpMetadata =
-    OpMetadata(
-      lifecycle = Some(Lifecycle.Production),
-      description =
-        Some(Description.PlainText("Federated Strato column for Timelines served via Home Mixer"))
+  o-ovewwide v-vaw metadata: o-opmetadata =
+    opmetadata(
+      wifecycwe = some(wifecycwe.pwoduction), ^^;;
+      d-descwiption =
+        s-some(descwiption.pwaintext("fedewated stwato cowumn fow t-timewines sewved v-via home mixew"))
     )
 
-  private val bouncerAccess: Seq[Policy] = Seq(BouncerAccess())
-  private val finatraTestServiceIdentifiers: Seq[Policy] = Seq(
-    ServiceIdentifierPattern(
-      role = "",
-      service = "",
-      env = "",
-      zone = Seq(""))
+  pwivate vaw bouncewaccess: s-seq[powicy] = seq(bouncewaccess())
+  pwivate v-vaw finatwatestsewviceidentifiews: seq[powicy] = seq(
+    s-sewviceidentifiewpattewn(
+      wowe = "", (ˆ ﻌ ˆ)♡
+      s-sewvice = "", ^^;;
+      env = "", (⑅˘꒳˘)
+      z-zone = seq(""))
   )
 
-  override val policy: Policy = AnyOf(bouncerAccess ++ finatraTestServiceIdentifiers)
+  o-ovewwide vaw powicy: powicy = anyof(bouncewaccess ++ finatwatestsewviceidentifiews)
 
-  override type Key = gql.TimelineKey
-  override type View = gql.HomeTimelineView
-  override type Value = tr.Timeline
+  ovewwide type key = gqw.timewinekey
+  ovewwide t-type view = gqw.hometimewineview
+  o-ovewwide type vawue = tw.timewine
 
-  override val keyConv: Conv[Key] = ScroogeConv.fromStruct[gql.TimelineKey]
-  override val viewConv: Conv[View] = ScroogeConv.fromStruct[gql.HomeTimelineView]
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[tr.Timeline]
+  o-ovewwide v-vaw keyconv: c-conv[key] = scwoogeconv.fwomstwuct[gqw.timewinekey]
+  ovewwide vaw viewconv: conv[view] = scwoogeconv.fwomstwuct[gqw.hometimewineview]
+  o-ovewwide vaw vawueconv: conv[vawue] = scwoogeconv.fwomstwuct[tw.timewine]
 
-  private def createHomeMixerRequestArrow(
-    compositeOnUserClientColumn: CompositeOnUserClientColumn,
-    auditIpClientColumn: AuditIpClientColumn
-  ): Arrow[(Key, View), hm.HomeMixerRequest] = {
+  pwivate def c-cweatehomemixewwequestawwow(
+    compositeonusewcwientcowumn: c-compositeonusewcwientcowumn, rawr x3
+    a-auditipcwientcowumn: a-auditipcwientcowumn
+  ): awwow[(key, (///ˬ///✿) view), h-hm.homemixewwequest] = {
 
-    val populateUserRolesAndIp: Arrow[(Key, View), (Option[Set[String]], Option[String])] = {
-      val gizmoduckView: (gd.LookupContext, Set[gd.QueryFields]) =
-        (gd.LookupContext(), Set(gd.QueryFields.Roles))
+    v-vaw popuwateusewwowesandip: a-awwow[(key, 🥺 v-view), >_< (option[set[stwing]], UwU option[stwing])] = {
+      vaw gizmoduckview: (gd.wookupcontext, >_< s-set[gd.quewyfiewds]) =
+        (gd.wookupcontext(), -.- s-set(gd.quewyfiewds.wowes))
 
-      val populateUserRoles = Arrow
-        .flatMap[(Key, View), Option[Set[String]]] { _ =>
-          Stitch.collect {
-            CallContext.twitterUserId.map { userId =>
-              compositeOnUserClientColumn.fetcher
-                .callStack(HomeMixerColumn.FetchCallstack)
-                .fetch(userId, gizmoduckView).map(_.v)
+      v-vaw p-popuwateusewwowes = a-awwow
+        .fwatmap[(key, view), mya option[set[stwing]]] { _ =>
+          stitch.cowwect {
+            cawwcontext.twittewusewid.map { usewid =>
+              c-compositeonusewcwientcowumn.fetchew
+                .cawwstack(homemixewcowumn.fetchcawwstack)
+                .fetch(usewid, >w< gizmoduckview).map(_.v)
                 .map {
-                  _.flatMap(_.roles.map(_.roles.toSet)).getOrElse(Set.empty)
+                  _.fwatmap(_.wowes.map(_.wowes.toset)).getowewse(set.empty)
                 }
             }
           }
         }
 
-      val populateIpAddress = Arrow
-        .flatMap[(Key, View), Option[String]](_ =>
-          auditIpClientColumn.fetcher
-            .callStack(HomeMixerColumn.FetchCallstack)
+      vaw popuwateipaddwess = awwow
+        .fwatmap[(key, view), (U ﹏ U) option[stwing]](_ =>
+          auditipcwientcowumn.fetchew
+            .cawwstack(homemixewcowumn.fetchcawwstack)
             .fetch((), ()).map(_.v))
 
-      Arrow.join(
-        populateUserRoles,
-        populateIpAddress
+      a-awwow.join(
+        popuwateusewwowes, 😳😳😳
+        popuwateipaddwess
       )
     }
 
-    Arrow.zipWithArg(populateUserRolesAndIp).map {
-      case ((key, view), (roles, ipAddress)) =>
-        val deviceContextOpt = Some(
-          hm.DeviceContext(
-            isPolling = CallContext.isPolling,
-            requestContext = view.requestContext,
-            latestControlAvailable = view.latestControlAvailable,
-            autoplayEnabled = view.autoplayEnabled
+    awwow.zipwithawg(popuwateusewwowesandip).map {
+      c-case ((key, o.O v-view), òωó (wowes, i-ipaddwess)) =>
+        vaw devicecontextopt = s-some(
+          hm.devicecontext(
+            i-ispowwing = c-cawwcontext.ispowwing, 😳😳😳
+            wequestcontext = view.wequestcontext, σωσ
+            watestcontwowavaiwabwe = view.watestcontwowavaiwabwe, (⑅˘꒳˘)
+            autopwayenabwed = view.autopwayenabwed
           ))
-        val seenTweetIds = view.seenTweetIds.filter(_.nonEmpty)
+        v-vaw seentweetids = view.seentweetids.fiwtew(_.nonempty)
 
-        val (product, productContext) = key match {
-          case gql.TimelineKey.HomeTimeline(_) | gql.TimelineKey.HomeTimelineV2(_) =>
+        v-vaw (pwoduct, (///ˬ///✿) pwoductcontext) = k-key match {
+          c-case gqw.timewinekey.hometimewine(_) | gqw.timewinekey.hometimewinev2(_) =>
             (
-              hm.Product.ForYou,
-              hm.ProductContext.ForYou(
-                hm.ForYou(
-                  deviceContextOpt,
-                  seenTweetIds,
-                  view.dspClientContext,
-                  view.pushToHomeTweetId
+              h-hm.pwoduct.fowyou, 🥺
+              h-hm.pwoductcontext.fowyou(
+                hm.fowyou(
+                  d-devicecontextopt, OwO
+                  seentweetids, >w<
+                  view.dspcwientcontext, 🥺
+                  v-view.pushtohometweetid
                 )
               ))
-          case gql.TimelineKey.HomeLatestTimeline(_) | gql.TimelineKey.HomeLatestTimelineV2(_) =>
+          case gqw.timewinekey.homewatesttimewine(_) | gqw.timewinekey.homewatesttimewinev2(_) =>
             (
-              hm.Product.Following,
-              hm.ProductContext.Following(
-                hm.Following(deviceContextOpt, seenTweetIds, view.dspClientContext)))
-          case gql.TimelineKey.CreatorSubscriptionsTimeline(_) =>
+              hm.pwoduct.fowwowing, nyaa~~
+              h-hm.pwoductcontext.fowwowing(
+                h-hm.fowwowing(devicecontextopt, ^^ s-seentweetids, >w< view.dspcwientcontext)))
+          case gqw.timewinekey.cweatowsubscwiptionstimewine(_) =>
             (
-              hm.Product.Subscribed,
-              hm.ProductContext.Subscribed(hm.Subscribed(deviceContextOpt, seenTweetIds)))
-          case _ => throw new UnsupportedOperationException(s"Unknown product: $key")
+              h-hm.pwoduct.subscwibed, OwO
+              h-hm.pwoductcontext.subscwibed(hm.subscwibed(devicecontextopt, XD seentweetids)))
+          c-case _ => thwow nyew unsuppowtedopewationexception(s"unknown pwoduct: $key")
         }
 
-        val clientContext = pm.ClientContext(
-          userId = CallContext.twitterUserId,
-          guestId = CallContext.guestId,
-          guestIdAds = CallContext.guestIdAds,
-          guestIdMarketing = CallContext.guestIdMarketing,
-          appId = CallContext.clientApplicationId,
-          ipAddress = ipAddress,
-          userAgent = CallContext.userAgent,
-          countryCode = CallContext.requestCountryCode,
-          languageCode = CallContext.requestLanguageCode,
-          isTwoffice = CallContext.isInternalOrTwoffice,
-          userRoles = roles,
-          deviceId = CallContext.deviceId,
-          mobileDeviceId = CallContext.mobileDeviceId,
-          mobileDeviceAdId = CallContext.adId,
-          limitAdTracking = CallContext.limitAdTracking
+        vaw cwientcontext = pm.cwientcontext(
+          u-usewid = cawwcontext.twittewusewid, ^^;;
+          guestid = c-cawwcontext.guestid, 🥺
+          guestidads = cawwcontext.guestidads, XD
+          g-guestidmawketing = c-cawwcontext.guestidmawketing, (U ᵕ U❁)
+          appid = cawwcontext.cwientappwicationid, :3
+          ipaddwess = ipaddwess, ( ͡o ω ͡o )
+          u-usewagent = cawwcontext.usewagent, òωó
+          countwycode = cawwcontext.wequestcountwycode, σωσ
+          wanguagecode = c-cawwcontext.wequestwanguagecode, (U ᵕ U❁)
+          istwoffice = cawwcontext.isintewnawowtwoffice, (✿oωo)
+          u-usewwowes = w-wowes, ^^
+          deviceid = cawwcontext.deviceid, ^•ﻌ•^
+          mobiwedeviceid = c-cawwcontext.mobiwedeviceid, XD
+          m-mobiwedeviceadid = cawwcontext.adid,
+          wimitadtwacking = cawwcontext.wimitadtwacking
         )
 
-        hm.HomeMixerRequest(
-          clientContext = clientContext,
-          product = product,
-          productContext = Some(productContext),
-          maxResults = Try(view.count.get.toInt).toOption.orElse(HomeMixerColumn.MaxCount),
-          cursor = view.cursor.filter(_.nonEmpty)
+        h-hm.homemixewwequest(
+          cwientcontext = c-cwientcontext, :3
+          pwoduct = pwoduct, (ꈍᴗꈍ)
+          pwoductcontext = some(pwoductcontext), :3
+          m-maxwesuwts = twy(view.count.get.toint).tooption.owewse(homemixewcowumn.maxcount), (U ﹏ U)
+          cuwsow = v-view.cuwsow.fiwtew(_.nonempty)
         )
     }
   }
 
-  override val fetch: Arrow[(Key, View), Result[Value]] = {
-    val transformThriftIntoPipelineRequest: Arrow[
-      (Key, View),
-      ProductPipelineRequest[HomeMixerRequest]
+  o-ovewwide vaw fetch: a-awwow[(key, UwU view), wesuwt[vawue]] = {
+    v-vaw t-twansfowmthwiftintopipewinewequest: a-awwow[
+      (key, 😳😳😳 view),
+      p-pwoductpipewinewequest[homemixewwequest]
     ] = {
-      Arrow
-        .identity[(Key, View)]
-        .andThen {
-          createHomeMixerRequestArrow(compositeOnUserClientColumn, auditIpClientColumn)
+      a-awwow
+        .identity[(key, XD view)]
+        .andthen {
+          cweatehomemixewwequestawwow(compositeonusewcwientcowumn, o.O auditipcwientcowumn)
         }
         .map {
-          case thriftRequest =>
-            val request = homeMixerRequestUnmarshaller(thriftRequest)
-            val params = paramsBuilder.build(
-              clientContext = request.clientContext,
-              product = request.product,
-              featureOverrides =
-                request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty),
+          c-case thwiftwequest =>
+            v-vaw wequest = h-homemixewwequestunmawshawwew(thwiftwequest)
+            vaw pawams = pawamsbuiwdew.buiwd(
+              c-cwientcontext = wequest.cwientcontext, (⑅˘꒳˘)
+              p-pwoduct = w-wequest.pwoduct, 😳😳😳
+              featuweovewwides =
+                wequest.debugpawams.fwatmap(_.featuweovewwides).getowewse(map.empty), nyaa~~
             )
-            ProductPipelineRequest(request, params)
+            pwoductpipewinewequest(wequest, rawr p-pawams)
         }
     }
 
-    val underlyingProduct: Arrow[
-      ProductPipelineRequest[HomeMixerRequest],
-      ProductPipelineResult[tr.TimelineResponse]
-    ] = Arrow
-      .identity[ProductPipelineRequest[HomeMixerRequest]]
-      .map { pipelineRequest =>
-        val pipelineArrow = productPipelineRegistry
-          .getProductPipeline[HomeMixerRequest, tr.TimelineResponse](
-            pipelineRequest.request.product)
-          .arrow
-        (pipelineArrow, pipelineRequest)
-      }.applyArrow
+    v-vaw undewwyingpwoduct: a-awwow[
+      p-pwoductpipewinewequest[homemixewwequest], -.-
+      pwoductpipewinewesuwt[tw.timewinewesponse]
+    ] = a-awwow
+      .identity[pwoductpipewinewequest[homemixewwequest]]
+      .map { pipewinewequest =>
+        vaw pipewineawwow = pwoductpipewinewegistwy
+          .getpwoductpipewine[homemixewwequest, (✿oωo) tw.timewinewesponse](
+            pipewinewequest.wequest.pwoduct)
+          .awwow
+        (pipewineawwow, /(^•ω•^) p-pipewinewequest)
+      }.appwyawwow
 
-    transformThriftIntoPipelineRequest.andThen(underlyingProduct).map {
-      _.result match {
-        case Some(result) => found(result.timeline)
-        case _ => missing
+    twansfowmthwiftintopipewinewequest.andthen(undewwyingpwoduct).map {
+      _.wesuwt m-match {
+        case some(wesuwt) => f-found(wesuwt.timewine)
+        case _ => m-missing
       }
     }
   }
 }
 
-object HomeMixerColumn {
-  val Path = "home-mixer/homeMixer.Timeline"
-  private val FetchCallstack = s"$Path:fetch"
-  private val MaxCount: Option[Int] = Some(100)
+object homemixewcowumn {
+  vaw p-path = "home-mixew/homemixew.timewine"
+  p-pwivate v-vaw fetchcawwstack = s-s"$path:fetch"
+  p-pwivate vaw maxcount: option[int] = some(100)
 }

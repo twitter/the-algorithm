@@ -1,28 +1,28 @@
-package com.twitter.unified_user_actions.adapter.ads_callback_engagements
+package com.twittew.unified_usew_actions.adaptew.ads_cawwback_engagements
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
+impowt c-com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.finatwa.kafka.sewde.unkeyed
+i-impowt c-com.twittew.unified_usew_actions.adaptew.abstwactadaptew
+i-impowt com.twittew.ads.spendsewvew.thwiftscawa.spendsewvewevent
+impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
 
-class AdsCallbackEngagementsAdapter
-    extends AbstractAdapter[SpendServerEvent, UnKeyed, UnifiedUserAction] {
+cwass adscawwbackengagementsadaptew
+    e-extends abstwactadaptew[spendsewvewevent, rawr x3 unkeyed, unifiedusewaction] {
 
-  import AdsCallbackEngagementsAdapter._
+  i-impowt adscawwbackengagementsadaptew._
 
-  override def adaptOneToKeyedMany(
-    input: SpendServerEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(input).map { e => (UnKeyed, e) }
+  ovewwide def adaptonetokeyedmany(
+    i-input: spendsewvewevent, nyaa~~
+    statsweceivew: statsweceivew = nyuwwstatsweceivew
+  ): s-seq[(unkeyed, /(^•ω•^) unifiedusewaction)] =
+    a-adaptevent(input).map { e-e => (unkeyed, rawr e) }
 }
 
-object AdsCallbackEngagementsAdapter {
-  def adaptEvent(input: SpendServerEvent): Seq[UnifiedUserAction] = {
-    val baseEngagements: Seq[BaseAdsCallbackEngagement] =
-      EngagementTypeMappings.getEngagementMappings(Option(input).flatMap(_.engagementEvent))
-    baseEngagements.flatMap(_.getUUA(input))
+object adscawwbackengagementsadaptew {
+  def adaptevent(input: spendsewvewevent): seq[unifiedusewaction] = {
+    v-vaw baseengagements: seq[baseadscawwbackengagement] =
+      engagementtypemappings.getengagementmappings(option(input).fwatmap(_.engagementevent))
+    baseengagements.fwatmap(_.getuua(input))
   }
 }

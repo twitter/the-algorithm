@@ -1,65 +1,65 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.util.CommunityUtil
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt c-com.twittew.tweetypie.utiw.communityutiw
 
-object TweetVisibilityHydrator {
-  type Type = ValueHydrator[Option[FilteredState.Suppress], Ctx]
+object t-tweetvisibiwityhydwatow {
+  t-type type = vawuehydwatow[option[fiwtewedstate.suppwess], 🥺 ctx]
 
-  case class Ctx(tweet: Tweet, underlyingTweetCtx: TweetCtx) extends TweetCtx.Proxy
+  case cwass ctx(tweet: tweet, (U ﹏ U) undewwyingtweetctx: t-tweetctx) extends tweetctx.pwoxy
 
-  def apply(
-    repo: TweetVisibilityRepository.Type,
-    failClosedInVF: Gate[Unit],
-    stats: StatsReceiver
-  ): Type = {
-    val outcomeScope = stats.scope("outcome")
-    val unavailable = outcomeScope.counter("unavailable")
-    val suppress = outcomeScope.counter("suppress")
-    val allow = outcomeScope.counter("allow")
-    val failClosed = outcomeScope.counter("fail_closed")
-    val communityFailClosed = outcomeScope.counter("community_fail_closed")
-    val failOpen = outcomeScope.counter("fail_open")
+  def appwy(
+    w-wepo: tweetvisibiwitywepositowy.type, >w<
+    faiwcwosedinvf: g-gate[unit], mya
+    stats: statsweceivew
+  ): type = {
+    vaw outcomescope = s-stats.scope("outcome")
+    vaw unavaiwabwe = o-outcomescope.countew("unavaiwabwe")
+    v-vaw suppwess = outcomescope.countew("suppwess")
+    vaw awwow = outcomescope.countew("awwow")
+    vaw faiwcwosed = o-outcomescope.countew("faiw_cwosed")
+    vaw communityfaiwcwosed = outcomescope.countew("community_faiw_cwosed")
+    vaw faiwopen = o-outcomescope.countew("faiw_open")
 
-    ValueHydrator[Option[FilteredState.Suppress], Ctx] { (curr, ctx) =>
-      val request = TweetVisibilityRepository.Request(
-        tweet = ctx.tweet,
-        viewerId = ctx.opts.forUserId,
-        safetyLevel = ctx.opts.safetyLevel,
-        isInnerQuotedTweet = ctx.opts.isInnerQuotedTweet,
-        isRetweet = ctx.isRetweet,
-        hydrateConversationControl = ctx.tweetFieldRequested(Tweet.ConversationControlField),
-        isSourceTweet = ctx.opts.isSourceTweet
+    vawuehydwatow[option[fiwtewedstate.suppwess], >w< c-ctx] { (cuww, nyaa~~ c-ctx) =>
+      v-vaw wequest = t-tweetvisibiwitywepositowy.wequest(
+        tweet = ctx.tweet, (✿oωo)
+        viewewid = c-ctx.opts.fowusewid, ʘwʘ
+        safetywevew = ctx.opts.safetywevew, (ˆ ﻌ ˆ)♡
+        isinnewquotedtweet = c-ctx.opts.isinnewquotedtweet, 😳😳😳
+        iswetweet = ctx.iswetweet,
+        hydwateconvewsationcontwow = ctx.tweetfiewdwequested(tweet.convewsationcontwowfiewd), :3
+        issouwcetweet = c-ctx.opts.issouwcetweet
       )
 
-      repo(request).liftToTry.flatMap {
-        // If FilteredState.Unavailable is returned from repo then throw it
-        case Return(Some(fs: FilteredState.Unavailable)) =>
-          unavailable.incr()
-          Stitch.exception(fs)
-        // If FilteredState.Suppress is returned from repo then return it
-        case Return(Some(fs: FilteredState.Suppress)) =>
-          suppress.incr()
-          Stitch.value(ValueState.modified(Some(fs)))
-        // If None is returned from repo then return unmodified
-        case Return(None) =>
-          allow.incr()
-          ValueState.StitchUnmodifiedNone
-        // Propagate thrown exceptions if fail closed
-        case Throw(e) if failClosedInVF() =>
-          failClosed.incr()
-          Stitch.exception(e)
-        // Community tweets are special cased to fail closed to avoid
-        // leaking tweets expected to be private to a community.
-        case Throw(e) if CommunityUtil.hasCommunity(request.tweet.communities) =>
-          communityFailClosed.incr()
-          Stitch.exception(e)
-        case Throw(_) =>
-          failOpen.incr()
-          Stitch.value(ValueState.unmodified(curr))
+      wepo(wequest).wifttotwy.fwatmap {
+        // i-if f-fiwtewedstate.unavaiwabwe i-is wetuwned fwom wepo then thwow it
+        case wetuwn(some(fs: f-fiwtewedstate.unavaiwabwe)) =>
+          u-unavaiwabwe.incw()
+          stitch.exception(fs)
+        // i-if fiwtewedstate.suppwess i-is wetuwned fwom wepo t-then wetuwn it
+        case wetuwn(some(fs: f-fiwtewedstate.suppwess)) =>
+          suppwess.incw()
+          stitch.vawue(vawuestate.modified(some(fs)))
+        // i-if nyone is wetuwned fwom wepo t-then wetuwn unmodified
+        case wetuwn(none) =>
+          a-awwow.incw()
+          v-vawuestate.stitchunmodifiednone
+        // pwopagate thwown exceptions if faiw cwosed
+        case thwow(e) if faiwcwosedinvf() =>
+          faiwcwosed.incw()
+          s-stitch.exception(e)
+        // c-community tweets awe speciaw cased t-to faiw cwosed t-to avoid
+        // w-weaking tweets expected to be pwivate to a community. OwO
+        c-case thwow(e) if communityutiw.hascommunity(wequest.tweet.communities) =>
+          communityfaiwcwosed.incw()
+          stitch.exception(e)
+        case thwow(_) =>
+          f-faiwopen.incw()
+          stitch.vawue(vawuestate.unmodified(cuww))
       }
     }
   }

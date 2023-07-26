@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.commewce
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce.CommerceProductGroupCandidateUrtItemBuilder.CommerceProductGroupClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.CommerceProductGroupCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductGroupItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.commewce.commewcepwoductgwoupcandidateuwtitembuiwdew.commewcepwoductgwoupcwienteventinfoewement
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.commewcepwoductgwoupcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.commewce.commewcepwoductgwoupitem
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object CommerceProductGroupCandidateUrtItemBuilder {
-  val CommerceProductGroupClientEventInfoElement: String = "commerce-product-group"
+object commewcepwoductgwoupcandidateuwtitembuiwdew {
+  v-vaw commewcepwoductgwoupcwienteventinfoewement: stwing = "commewce-pwoduct-gwoup"
 }
 
-case class CommerceProductGroupCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, CommerceProductGroupCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, CommerceProductGroupCandidate]
-  ]) extends CandidateUrtEntryBuilder[
-      Query,
-      CommerceProductGroupCandidate,
-      CommerceProductGroupItem
+case cwass c-commewcepwoductgwoupcandidateuwtitembuiwdew[-quewy <: pipewinequewy](
+  c-cwienteventinfobuiwdew: basecwienteventinfobuiwdew[quewy, (ˆ ﻌ ˆ)♡ commewcepwoductgwoupcandidate], (˘ω˘)
+  feedbackactioninfobuiwdew: o-option[
+    basefeedbackactioninfobuiwdew[quewy, (⑅˘꒳˘) commewcepwoductgwoupcandidate]
+  ]) e-extends candidateuwtentwybuiwdew[
+      quewy,
+      c-commewcepwoductgwoupcandidate, (///ˬ///✿)
+      commewcepwoductgwoupitem
     ] {
 
-  override def apply(
-    query: Query,
-    candidate: CommerceProductGroupCandidate,
-    candidateFeatures: FeatureMap
-  ): CommerceProductGroupItem =
-    CommerceProductGroupItem(
+  ovewwide def appwy(
+    quewy: quewy, 😳😳😳
+    candidate: c-commewcepwoductgwoupcandidate, 🥺
+    candidatefeatuwes: featuwemap
+  ): commewcepwoductgwoupitem =
+    commewcepwoductgwoupitem(
       id = candidate.id,
-      sortIndex = None,
-      clientEventInfo = clientEventInfoBuilder(
-        query,
-        candidate,
-        candidateFeatures,
-        Some(CommerceProductGroupClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures))
+      s-sowtindex = nyone, mya
+      c-cwienteventinfo = c-cwienteventinfobuiwdew(
+        q-quewy,
+        c-candidate, 🥺
+        candidatefeatuwes,
+        some(commewcepwoductgwoupcwienteventinfoewement)), >_<
+      f-feedbackactioninfo =
+        feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, >_< candidate, c-candidatefeatuwes))
     )
 }

@@ -1,47 +1,47 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.twittew.home_mixew.functionaw_component.fiwtew
 
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtewwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.conditionawwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.fiwtewidentifiew
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.stitch.stitch
 
-trait FilterPredicate[-Query <: PipelineQuery] {
-  def apply(query: Query): Boolean
+twait f-fiwtewpwedicate[-quewy <: pipewinequewy] {
+  d-def appwy(quewy: quewy): boowean
 }
 
 /**
- * A [[Filter]] with [[Conditionally]] based on a [[FilterPredicate]]
+ * a [[fiwtew]] w-with [[conditionawwy]] based o-on a [[fiwtewpwedicate]]
  *
- * @param predicate the predicate to turn this filter on and off
- * @param filter the underlying filter to run when `predicate` is true
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
+ * @pawam p-pwedicate the pwedicate to tuwn this fiwtew on and off
+ * @pawam fiwtew t-the undewwying fiwtew to wun when `pwedicate` is twue
+ * @tpawam quewy the domain m-modew fow the quewy ow wequest
+ * @tpawam c-candidate t-the type of t-the candidates
  */
-case class PredicateGatedFilter[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  predicate: FilterPredicate[Query],
-  filter: Filter[Query, Candidate])
-    extends Filter[Query, Candidate]
-    with Filter.Conditionally[Query, Candidate] {
+c-case cwass pwedicategatedfiwtew[-quewy <: pipewinequewy, >w< candidate <: u-univewsawnoun[any]](
+  pwedicate: fiwtewpwedicate[quewy], rawr
+  fiwtew: fiwtew[quewy, mya c-candidate])
+    extends fiwtew[quewy, ^^ candidate]
+    with fiwtew.conditionawwy[quewy, 😳😳😳 candidate] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier(
-    PredicateGatedFilter.IdentifierPrefix + filter.identifier.name)
+  o-ovewwide vaw identifiew: fiwtewidentifiew = fiwtewidentifiew(
+    p-pwedicategatedfiwtew.identifiewpwefix + f-fiwtew.identifiew.name)
 
-  override val alerts: Seq[Alert] = filter.alerts
+  o-ovewwide vaw awewts: seq[awewt] = fiwtew.awewts
 
-  override def onlyIf(query: Query, candidates: Seq[CandidateWithFeatures[Candidate]]): Boolean =
-    Conditionally.and(Filter.Input(query, candidates), filter, predicate(query))
+  ovewwide d-def onwyif(quewy: q-quewy, mya candidates: seq[candidatewithfeatuwes[candidate]]): b-boowean =
+    conditionawwy.and(fiwtew.input(quewy, 😳 c-candidates), -.- fiwtew, 🥺 pwedicate(quewy))
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = filter.apply(query, candidates)
+  ovewwide d-def appwy(
+    quewy: quewy, o.O
+    c-candidates: seq[candidatewithfeatuwes[candidate]]
+  ): stitch[fiwtewwesuwt[candidate]] = f-fiwtew.appwy(quewy, /(^•ω•^) candidates)
 }
 
-object PredicateGatedFilter {
-  val IdentifierPrefix = "PredicateGated"
+o-object pwedicategatedfiwtew {
+  vaw identifiewpwefix = "pwedicategated"
 }

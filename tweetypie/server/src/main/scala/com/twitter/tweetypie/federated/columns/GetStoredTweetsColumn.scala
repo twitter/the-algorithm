@@ -1,99 +1,99 @@
-package com.twitter.tweetypie.federated.columns
+package com.twittew.tweetypie.fedewated.cowumns
 
-import com.twitter.stitch.MapGroup
-import com.twitter.stitch.Stitch
-import com.twitter.strato.access.Access.LdapGroup
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.AnyOf
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.FromColumns
-import com.twitter.strato.config.Has
-import com.twitter.strato.config.Path
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.response.Err
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.{thriftscala => thrift}
-import com.twitter.tweetypie.TweetId
-import com.twitter.tweetypie.thriftscala.federated.GetStoredTweetsView
-import com.twitter.tweetypie.thriftscala.federated.GetStoredTweetsResponse
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+impowt com.twittew.stitch.mapgwoup
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.stwato.access.access.wdapgwoup
+i-impowt com.twittew.stwato.catawog.fetch
+i-impowt c-com.twittew.stwato.catawog.opmetadata
+i-impowt c-com.twittew.stwato.config.anyof
+i-impowt com.twittew.stwato.config.contactinfo
+impowt com.twittew.stwato.config.fwomcowumns
+impowt com.twittew.stwato.config.has
+impowt com.twittew.stwato.config.path
+i-impowt com.twittew.stwato.config.powicy
+impowt com.twittew.stwato.data.conv
+impowt com.twittew.stwato.data.descwiption.pwaintext
+i-impowt com.twittew.stwato.data.wifecycwe.pwoduction
+impowt c-com.twittew.stwato.fed.stwatofed
+impowt com.twittew.stwato.wesponse.eww
+impowt com.twittew.stwato.thwift.scwoogeconv
+i-impowt com.twittew.tweetypie.{thwiftscawa => thwift}
+impowt c-com.twittew.tweetypie.tweetid
+i-impowt com.twittew.tweetypie.thwiftscawa.fedewated.getstowedtweetsview
+impowt com.twittew.tweetypie.thwiftscawa.fedewated.getstowedtweetswesponse
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
+impowt com.twittew.utiw.twy
 
-class GetStoredTweetsColumn(
-  getStoredTweets: thrift.GetStoredTweetsRequest => Future[Seq[thrift.GetStoredTweetsResult]])
-    extends StratoFed.Column(GetStoredTweetsColumn.Path)
-    with StratoFed.Fetch.Stitch {
+cwass getstowedtweetscowumn(
+  getstowedtweets: t-thwift.getstowedtweetswequest => futuwe[seq[thwift.getstowedtweetswesuwt]])
+    e-extends s-stwatofed.cowumn(getstowedtweetscowumn.path)
+    w-with stwatofed.fetch.stitch {
 
-  override val contactInfo: ContactInfo = TweetypieContactInfo
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Production),
-    description = Some(PlainText("Fetches hydrated Tweets regardless of Tweet state."))
+  o-ovewwide vaw contactinfo: contactinfo = tweetypiecontactinfo
+  o-ovewwide vaw metadata: opmetadata = opmetadata(
+    w-wifecycwe = some(pwoduction), σωσ
+    descwiption = some(pwaintext("fetches hydwated tweets wegawdwess of t-tweet state."))
   )
-  override val policy: Policy = AnyOf(
-    Seq(
-      FromColumns(
-        Set(
-          Path("tweetypie/data-provider/storedTweets.User"),
-          Path("note_tweet/data-provider/noteTweetForZipbird.User"))),
-      Has(LdapGroup("tweetypie-team"))
+  ovewwide vaw p-powicy: powicy = a-anyof(
+    seq(
+      f-fwomcowumns(
+        set(
+          path("tweetypie/data-pwovidew/stowedtweets.usew"), rawr x3
+          path("note_tweet/data-pwovidew/notetweetfowzipbiwd.usew"))), OwO
+      has(wdapgwoup("tweetypie-team"))
     ))
 
-  override type Key = TweetId
-  override type View = GetStoredTweetsView
-  override type Value = GetStoredTweetsResponse
+  o-ovewwide t-type key = tweetid
+  ovewwide t-type view = getstowedtweetsview
+  o-ovewwide type vawue = getstowedtweetswesponse
 
-  override val keyConv: Conv[Key] = Conv.ofType
-  override val viewConv: Conv[View] = ScroogeConv.fromStruct[GetStoredTweetsView]
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[GetStoredTweetsResponse]
+  o-ovewwide vaw keyconv: conv[key] = c-conv.oftype
+  ovewwide vaw viewconv: conv[view] = s-scwoogeconv.fwomstwuct[getstowedtweetsview]
+  ovewwide vaw v-vawueconv: conv[vawue] = scwoogeconv.fwomstwuct[getstowedtweetswesponse]
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
-    Stitch.call(key, Group(view))
+  o-ovewwide d-def fetch(key: key, /(^•ω•^) view: view): stitch[wesuwt[vawue]] = {
+    stitch.caww(key, 😳😳😳 gwoup(view))
   }
 
-  private case class Group(view: GetStoredTweetsView)
-      extends MapGroup[TweetId, Fetch.Result[GetStoredTweetsResponse]] {
-    override protected def run(
-      keys: Seq[TweetId]
-    ): Future[TweetId => Try[Result[GetStoredTweetsResponse]]] = {
-      val options = thrift.GetStoredTweetsOptions(
-        bypassVisibilityFiltering = view.bypassVisibilityFiltering,
-        forUserId = view.forUserId,
-        additionalFieldIds = view.additionalFieldIds
+  pwivate case cwass gwoup(view: g-getstowedtweetsview)
+      e-extends mapgwoup[tweetid, ( ͡o ω ͡o ) fetch.wesuwt[getstowedtweetswesponse]] {
+    ovewwide p-pwotected def w-wun(
+      keys: s-seq[tweetid]
+    ): futuwe[tweetid => twy[wesuwt[getstowedtweetswesponse]]] = {
+      vaw options = t-thwift.getstowedtweetsoptions(
+        bypassvisibiwityfiwtewing = view.bypassvisibiwityfiwtewing, >_<
+        fowusewid = view.fowusewid, >w<
+        additionawfiewdids = view.additionawfiewdids
       )
 
-      getStoredTweets(thrift.GetStoredTweetsRequest(keys, Some(options)))
-        .map(transformAndGroupByTweetId)
-        .handle {
-          case _ =>
-            _ => Throw[Result[GetStoredTweetsResponse]](Err(Err.Internal))
+      g-getstowedtweets(thwift.getstowedtweetswequest(keys, rawr some(options)))
+        .map(twansfowmandgwoupbytweetid)
+        .handwe {
+          c-case _ =>
+            _ => t-thwow[wesuwt[getstowedtweetswesponse]](eww(eww.intewnaw))
         }
     }
 
-    private def transformAndGroupByTweetId(
-      results: Seq[thrift.GetStoredTweetsResult]
-    ): Map[TweetId, Try[Fetch.Result[GetStoredTweetsResponse]]] = {
-      results
-        .map(result => GetStoredTweetsResponse(result.storedTweet))
-        .groupBy(_.storedTweet.tweetId)
+    p-pwivate def twansfowmandgwoupbytweetid(
+      w-wesuwts: seq[thwift.getstowedtweetswesuwt]
+    ): m-map[tweetid, 😳 t-twy[fetch.wesuwt[getstowedtweetswesponse]]] = {
+      w-wesuwts
+        .map(wesuwt => getstowedtweetswesponse(wesuwt.stowedtweet))
+        .gwoupby(_.stowedtweet.tweetid)
         .map {
-          case (tweetId, Seq(result)) => (tweetId, Return(Fetch.Result.found(result)))
-          case (tweetId, multipleResults) =>
+          case (tweetid, >w< s-seq(wesuwt)) => (tweetid, (⑅˘꒳˘) wetuwn(fetch.wesuwt.found(wesuwt)))
+          c-case (tweetid, OwO m-muwtipwewesuwts) =>
             (
-              tweetId,
-              Throw(Err(Err.BadRequest, s"Got ${multipleResults.size} results for $tweetId")))
+              t-tweetid, (ꈍᴗꈍ)
+              t-thwow(eww(eww.badwequest, 😳 s"got ${muwtipwewesuwts.size} wesuwts fow $tweetid")))
         }
     }
 
   }
 }
 
-object GetStoredTweetsColumn {
-  val Path = "tweetypie/internal/getStoredTweets.Tweet"
+o-object getstowedtweetscowumn {
+  vaw path = "tweetypie/intewnaw/getstowedtweets.tweet"
 }

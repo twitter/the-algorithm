@@ -1,231 +1,231 @@
-package com.twitter.timelineranker.parameters.recap
+package com.twittew.timewinewankew.pawametews.wecap
 
-import com.twitter.timelines.configapi.decider._
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.util.bounds.BoundsWithDefault
+impowt com.twittew.timewines.configapi.decidew._
+i-impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt c-com.twittew.timewines.configapi.pawam
+i-impowt com.twittew.timewines.utiw.bounds.boundswithdefauwt
 
-object RecapParams {
-  val MaxFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](1, 3000, 1000)
-  val MaxCountMultiplier: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.1, 2.0, 2.0)
-  val MaxRealGraphAndFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](0, 2000, 1000)
-  val ProbabilityRandomTweet: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.0, 1.0, 0.0)
+o-object wecappawams {
+  v-vaw maxfowwowedusews: boundswithdefauwt[int] = boundswithdefauwt[int](1, (✿oωo) 3000, 1000)
+  vaw maxcountmuwtipwiew: boundswithdefauwt[doubwe] = b-boundswithdefauwt[doubwe](0.1, :3 2.0, 2.0)
+  vaw maxweawgwaphandfowwowedusews: boundswithdefauwt[int] = b-boundswithdefauwt[int](0, (///ˬ///✿) 2000, 1000)
+  vaw pwobabiwitywandomtweet: boundswithdefauwt[doubwe] = b-boundswithdefauwt[doubwe](0.0, 1.0, nyaa~~ 0.0)
 
   /**
-   * Controls limit on the number of followed users fetched from SGS.
+   * contwows wimit on the nyumbew of fowwowed usews f-fetched fwom sgs. >w<
    *
-   * The specific default value below is for blender-timelines parity.
+   * the s-specific defauwt v-vawue bewow is fow bwendew-timewines pawity. -.-
    */
-  object MaxFollowedUsersParam
-      extends FSBoundedParam[Int](
-        name = "recap_max_followed_users",
-        default = MaxFollowedUsers.default,
-        min = MaxFollowedUsers.bounds.minInclusive,
-        max = MaxFollowedUsers.bounds.maxInclusive
+  object maxfowwowedusewspawam
+      extends f-fsboundedpawam[int](
+        nyame = "wecap_max_fowwowed_usews",
+        defauwt = maxfowwowedusews.defauwt, (✿oωo)
+        min = maxfowwowedusews.bounds.minincwusive,
+        m-max = maxfowwowedusews.bounds.maxincwusive
       )
 
   /**
-   * Controls limit on the number of hits for Earlybird.
-   * We added it solely for backward compatibility, to align with recycled.
-   * RecapSource is deprecated, but, this param is used by RecapAuthor source
+   * c-contwows w-wimit on the nyumbew o-of hits fow e-eawwybiwd. (˘ω˘)
+   * we added it sowewy fow backwawd c-compatibiwity, rawr to awign with wecycwed. OwO
+   * wecapsouwce i-is depwecated, ^•ﻌ•^ but, this pawam is used by wecapauthow souwce
    */
-  object RelevanceOptionsMaxHitsToProcessParam
-      extends FSBoundedParam[Int](
-        name = "recap_relevance_options_max_hits_to_process",
-        default = 500,
-        min = 100,
-        max = 20000
+  object wewevanceoptionsmaxhitstopwocesspawam
+      e-extends fsboundedpawam[int](
+        nyame = "wecap_wewevance_options_max_hits_to_pwocess", UwU
+        d-defauwt = 500, (˘ω˘)
+        m-min = 100, (///ˬ///✿)
+        m-max = 20000
       )
 
   /**
-   * Enables fetching author seedset from real graph users. Only used if user follows >= 1000.
-   * If true, expands author seedset with real graph users and recent followed users.
-   * Otherwise, user seedset only includes followed users.
+   * enabwes fetching authow seedset fwom weaw gwaph u-usews. σωσ onwy used i-if usew fowwows >= 1000. /(^•ω•^)
+   * if twue, 😳 expands a-authow seedset w-with weaw gwaph usews and wecent f-fowwowed usews. 😳
+   * othewwise, (⑅˘꒳˘) u-usew seedset onwy incwudes fowwowed usews. 😳😳😳
    */
-  object EnableRealGraphUsersParam extends Param(false)
+  o-object enabweweawgwaphusewspawam extends pawam(fawse)
 
   /**
-   * Only used if EnableRealGraphUsersParam is true and OnlyRealGraphUsersParam is false.
-   * Maximum number of real graph users and recent followed users when mixing recent/real-graph users.
+   * o-onwy used if enabweweawgwaphusewspawam i-is t-twue and onwyweawgwaphusewspawam is fawse. 😳
+   * maximum nyumbew of weaw gwaph usews and wecent fowwowed usews when mixing wecent/weaw-gwaph u-usews. XD
    */
-  object MaxRealGraphAndFollowedUsersParam
-      extends Param(MaxRealGraphAndFollowedUsers.default)
-      with DeciderValueConverter[Int] {
-    override def convert: IntConverter[Int] =
-      OutputBoundIntConverter(MaxRealGraphAndFollowedUsers.bounds)
+  o-object maxweawgwaphandfowwowedusewspawam
+      e-extends p-pawam(maxweawgwaphandfowwowedusews.defauwt)
+      w-with decidewvawueconvewtew[int] {
+    ovewwide def convewt: intconvewtew[int] =
+      o-outputboundintconvewtew(maxweawgwaphandfowwowedusews.bounds)
   }
 
   /**
-   * FS-controlled param to override the MaxRealGraphAndFollowedUsersParam decider value for experiments
+   * fs-contwowwed pawam to ovewwide the maxweawgwaphandfowwowedusewspawam decidew v-vawue fow expewiments
    */
-  object MaxRealGraphAndFollowedUsersFSOverrideParam
-      extends FSBoundedParam[Option[Int]](
-        name = "max_real_graph_and_followers_users_fs_override_param",
-        default = None,
-        min = Some(100),
-        max = Some(10000)
+  object maxweawgwaphandfowwowedusewsfsovewwidepawam
+      e-extends f-fsboundedpawam[option[int]](
+        n-nyame = "max_weaw_gwaph_and_fowwowews_usews_fs_ovewwide_pawam", mya
+        defauwt = nyone, ^•ﻌ•^
+        m-min = s-some(100), ʘwʘ
+        m-max = some(10000)
       )
 
   /**
-   * Experimental params for leveling the playing field between user folowees received from
-   * real-graph and follow-graph stores.
-   * Author relevance scores returned by real-graph are currently being used for light-ranking
-   * in-network tweet candidates.
-   * Follow-graph store returns the most recent followees without any relevance scores
-   * We are trying to impute the missing scores by using aggregated statistics (min, avg, p50, etc.)
-   * of real-graph scores.
+   * e-expewimentaw pawams fow wevewing the pwaying f-fiewd between u-usew fowowees w-weceived fwom
+   * w-weaw-gwaph a-and fowwow-gwaph stowes. ( ͡o ω ͡o )
+   * authow wewevance scowes wetuwned by w-weaw-gwaph awe cuwwentwy being used fow wight-wanking
+   * in-netwowk tweet candidates. mya
+   * fowwow-gwaph stowe w-wetuwns the most wecent fowwowees without any wewevance scowes
+   * w-we awe twying t-to impute the m-missing scowes by using aggwegated s-statistics (min, avg, o.O p50, e-etc.)
+   * of weaw-gwaph s-scowes. (✿oωo)
    */
-  object ImputeRealGraphAuthorWeightsParam
-      extends FSParam(name = "impute_real_graph_author_weights", default = false)
+  object imputeweawgwaphauthowweightspawam
+      extends fspawam(name = "impute_weaw_gwaph_authow_weights", :3 defauwt = fawse)
 
-  object ImputeRealGraphAuthorWeightsPercentileParam
-      extends FSBoundedParam[Int](
-        name = "impute_real_graph_author_weights_percentile",
-        default = 50,
-        min = 0,
-        max = 99)
-
-  /**
-   * Enable running the new pipeline for recap author source
-   */
-  object EnableNewRecapAuthorPipeline extends Param(false)
+  o-object imputeweawgwaphauthowweightspewcentiwepawam
+      extends fsboundedpawam[int](
+        n-nyame = "impute_weaw_gwaph_authow_weights_pewcentiwe", 😳
+        defauwt = 50, (U ﹏ U)
+        m-min = 0, mya
+        m-max = 99)
 
   /**
-   * Fallback value for maximum number of search results, if not specified by query.maxCount
+   * enabwe wunning the nyew pipewine f-fow wecap authow s-souwce
    */
-  object DefaultMaxTweetCount extends Param(200)
+  object enabwenewwecapauthowpipewine e-extends pawam(fawse)
 
   /**
-   * We multiply maxCount (caller supplied value) by this multiplier and fetch those many
-   * candidates from search so that we are left with sufficient number of candidates after
-   * hydration and filtering.
+   * f-fawwback vawue fow maximum nyumbew of seawch wesuwts, (U ᵕ U❁) if nyot specified by q-quewy.maxcount
    */
-  object MaxCountMultiplierParam
-      extends Param(MaxCountMultiplier.default)
-      with DeciderValueConverter[Double] {
-    override def convert: IntConverter[Double] =
-      OutputBoundIntConverter[Double](divideDeciderBy100 _, MaxCountMultiplier.bounds)
+  o-object d-defauwtmaxtweetcount extends pawam(200)
+
+  /**
+   * w-we muwtipwy m-maxcount (cawwew suppwied vawue) b-by this muwtipwiew and fetch those many
+   * candidates fwom seawch so that we a-awe weft with sufficient n-nyumbew of candidates aftew
+   * hydwation a-and fiwtewing. :3
+   */
+  o-object maxcountmuwtipwiewpawam
+      extends pawam(maxcountmuwtipwiew.defauwt)
+      with decidewvawueconvewtew[doubwe] {
+    o-ovewwide def convewt: intconvewtew[doubwe] =
+      outputboundintconvewtew[doubwe](dividedecidewby100 _, mya maxcountmuwtipwiew.bounds)
   }
 
   /**
-   * Enables return all results from search index.
+   * enabwes w-wetuwn aww wesuwts fwom seawch index. OwO
    */
-  object EnableReturnAllResultsParam
-      extends FSParam(name = "recap_enable_return_all_results", default = false)
+  o-object enabwewetuwnawwwesuwtspawam
+      e-extends fspawam(name = "wecap_enabwe_wetuwn_aww_wesuwts", defauwt = fawse)
 
   /**
-   * Includes one or multiple random tweets in the response.
+   * i-incwudes one o-ow muwtipwe wandom tweets in the wesponse. (ˆ ﻌ ˆ)♡
    */
-  object IncludeRandomTweetParam
-      extends FSParam(name = "recap_include_random_tweet", default = false)
+  object incwudewandomtweetpawam
+      e-extends fspawam(name = "wecap_incwude_wandom_tweet", ʘwʘ d-defauwt = fawse)
 
   /**
-   * One single random tweet (true) or tag tweet as random with given probability (false).
+   * one singwe wandom tweet (twue) o-ow tag tweet as wandom w-with given pwobabiwity (fawse). o.O
    */
-  object IncludeSingleRandomTweetParam
-      extends FSParam(name = "recap_include_random_tweet_single", default = true)
+  o-object incwudesingwewandomtweetpawam
+      extends fspawam(name = "wecap_incwude_wandom_tweet_singwe", UwU defauwt = t-twue)
 
   /**
-   * Probability to tag a tweet as random (will not be ranked).
+   * pwobabiwity t-to tag a t-tweet as wandom (wiww n-nyot be wanked). rawr x3
    */
-  object ProbabilityRandomTweetParam
-      extends FSBoundedParam(
-        name = "recap_include_random_tweet_probability",
-        default = ProbabilityRandomTweet.default,
-        min = ProbabilityRandomTweet.bounds.minInclusive,
-        max = ProbabilityRandomTweet.bounds.maxInclusive)
+  object pwobabiwitywandomtweetpawam
+      e-extends f-fsboundedpawam(
+        nyame = "wecap_incwude_wandom_tweet_pwobabiwity", 🥺
+        defauwt = pwobabiwitywandomtweet.defauwt,
+        m-min = pwobabiwitywandomtweet.bounds.minincwusive, :3
+        m-max = p-pwobabiwitywandomtweet.bounds.maxincwusive)
 
   /**
-   * Enable extra sorting by score for search results.
+   * enabwe extwa sowting b-by scowe fow seawch wesuwts. (ꈍᴗꈍ)
    */
-  object EnableExtraSortingInSearchResultParam extends Param(true)
+  o-object enabweextwasowtinginseawchwesuwtpawam e-extends pawam(twue)
 
   /**
-   * Enables semantic core, penguin, and tweetypie content features in recap source.
+   * enabwes semantic cowe, 🥺 penguin, (✿oωo) and tweetypie c-content featuwes i-in wecap souwce. (U ﹏ U)
    */
-  object EnableContentFeaturesHydrationParam extends Param(true)
+  o-object e-enabwecontentfeatuweshydwationpawam extends pawam(twue)
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * a-additionawwy enabwes tokens when hydwating content featuwes. :3
    */
-  object EnableTokensInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recap_enable_tokens_in_content_features_hydration",
-        default = false
+  object enabwetokensincontentfeatuweshydwationpawam
+      e-extends fspawam(
+        name = "wecap_enabwe_tokens_in_content_featuwes_hydwation", ^^;;
+        d-defauwt = fawse
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * additionawwy e-enabwes tweet text when hydwating c-content featuwes. rawr
+   * this o-onwy wowks if enabwecontentfeatuweshydwationpawam i-is set to twue
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recap_enable_tweet_text_in_content_features_hydration",
-        default = false
+  o-object e-enabwetweettextincontentfeatuweshydwationpawam
+      e-extends fspawam(
+        nyame = "wecap_enabwe_tweet_text_in_content_featuwes_hydwation", 😳😳😳
+        defauwt = fawse
       )
 
   /**
-   * Enables hydrating in-network inReplyToTweet features
+   * enabwes hydwating in-netwowk inwepwytotweet f-featuwes
    */
-  object EnableInNetworkInReplyToTweetFeaturesHydrationParam
-      extends FSParam(
-        name = "recap_enable_in_network_in_reply_to_tweet_features_hydration",
-        default = false
+  o-object enabweinnetwowkinwepwytotweetfeatuweshydwationpawam
+      e-extends fspawam(
+        n-nyame = "wecap_enabwe_in_netwowk_in_wepwy_to_tweet_featuwes_hydwation", (✿oωo)
+        defauwt = fawse
       )
 
   /**
-   * Enables hydrating root tweet of in-network replies and extended replies
+   * enabwes hydwating woot tweet o-of in-netwowk w-wepwies and extended wepwies
    */
-  object EnableReplyRootTweetHydrationParam
-      extends FSParam(
-        name = "recap_enable_reply_root_tweet_hydration",
-        default = false
+  o-object enabwewepwywoottweethydwationpawam
+      extends fspawam(
+        name = "wecap_enabwe_wepwy_woot_tweet_hydwation", OwO
+        defauwt = f-fawse
       )
 
   /**
-   * Enable setting tweetTypes in search queries with TweetKindOption in RecapQuery
+   * e-enabwe setting tweettypes i-in seawch q-quewies with tweetkindoption in wecapquewy
    */
-  object EnableSettingTweetTypesWithTweetKindOption
-      extends FSParam(
-        name = "recap_enable_setting_tweet_types_with_tweet_kind_option",
-        default = false
+  object enabwesettingtweettypeswithtweetkindoption
+      extends f-fspawam(
+        n-nyame = "wecap_enabwe_setting_tweet_types_with_tweet_kind_option", ʘwʘ
+        d-defauwt = fawse
       )
 
   /**
-   * Enable relevance search, otherwise recency search from earlybird.
+   * e-enabwe wewevance s-seawch, (ˆ ﻌ ˆ)♡ othewwise wecency seawch f-fwom eawwybiwd. (U ﹏ U)
    */
-  object EnableRelevanceSearchParam
-      extends FSParam(
-        name = "recap_enable_relevance_search",
-        default = true
+  o-object enabwewewevanceseawchpawam
+      e-extends fspawam(
+        nyame = "wecap_enabwe_wewevance_seawch", UwU
+        d-defauwt = twue
       )
 
-  object EnableExpandedExtendedRepliesFilterParam
-      extends FSParam(
-        name = "recap_enable_expanded_extended_replies_filter",
-        default = false
+  object e-enabweexpandedextendedwepwiesfiwtewpawam
+      extends fspawam(
+        nyame = "wecap_enabwe_expanded_extended_wepwies_fiwtew", XD
+        d-defauwt = fawse
       )
 
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * a-additionawwy e-enabwes convewsationcontwow w-when hydwating content featuwes. ʘwʘ
+   * this o-onwy wowks if e-enabwecontentfeatuweshydwationpawam i-is set to twue
    */
-  object EnableConversationControlInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "conversation_control_in_content_features_hydration_recap_enable",
-        default = false
+  object enabweconvewsationcontwowincontentfeatuweshydwationpawam
+      extends fspawam(
+        n-nyame = "convewsation_contwow_in_content_featuwes_hydwation_wecap_enabwe", rawr x3
+        defauwt = fawse
       )
 
-  object EnableTweetMediaHydrationParam
-      extends FSParam(
-        name = "tweet_media_hydration_recap_enable",
-        default = false
+  o-object enabwetweetmediahydwationpawam
+      e-extends fspawam(
+        nyame = "tweet_media_hydwation_wecap_enabwe", ^^;;
+        d-defauwt = fawse
       )
 
-  object EnableExcludeSourceTweetIdsQueryParam
-      extends FSParam[Boolean](
-        name = "recap_exclude_source_tweet_ids_query_enable",
-        default = false
+  object e-enabweexcwudesouwcetweetidsquewypawam
+      e-extends fspawam[boowean](
+        nyame = "wecap_excwude_souwce_tweet_ids_quewy_enabwe", ʘwʘ
+        defauwt = fawse
       )
 }

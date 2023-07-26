@@ -1,57 +1,57 @@
-package com.twitter.search.core.earlybird.facets;
+package com.twittew.seawch.cowe.eawwybiwd.facets;
 
-import java.io.IOException;
-import java.util.List;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.wist;
 
-import com.twitter.common.collections.Pair;
+i-impowt com.twittew.common.cowwections.paiw;
 
 /**
- * The collect() method is called for every document for which facets shall be counted.
- * This iterator then calls the FacetAccumulators for all facets that belong to the
- * current document.
+ * t-the cowwect() m-method is c-cawwed fow evewy d-document fow w-which facets shaww be counted. mya
+ * this itewatow then cawws the facetaccumuwatows fow aww facets t-that bewong to the
+ * cuwwent document. 😳
  */
-public abstract class FacetCountIterator implements FacetTermCollector {
+pubwic a-abstwact cwass facetcountitewatow i-impwements facettewmcowwectow {
 
-  public static class IncrementData {
-    public FacetAccumulator[] accumulators;
-    public int weightedCountIncrement;
-    public int penaltyIncrement;
-    public int tweepCred;
-    public int languageId;
+  pubwic static cwass incwementdata {
+    p-pubwic facetaccumuwatow[] accumuwatows;
+    p-pubwic i-int weightedcountincwement;
+    pubwic int penawtyincwement;
+    pubwic int tweepcwed;
+    pubwic int wanguageid;
   }
 
-  public IncrementData incrementData = new IncrementData();
+  p-pubwic incwementdata incwementdata = nyew incwementdata();
 
-  private List<Pair<Integer, Long>> proofs = null;
+  pwivate w-wist<paiw<integew, -.- wong>> pwoofs = n-nyuww;
 
-  void setIncrementData(IncrementData incrementData) {
-    this.incrementData = incrementData;
+  void s-setincwementdata(incwementdata i-incwementdata) {
+    t-this.incwementdata = incwementdata;
   }
 
-  public void setProofs(List<Pair<Integer, Long>> proofs) {
-    this.proofs = proofs;
+  pubwic void setpwoofs(wist<paiw<integew, 🥺 w-wong>> pwoofs) {
+    this.pwoofs = pwoofs;
   }
 
-  // interface method that collects a specific term in a specific field for this document.
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
-    FacetAccumulator accumulator = incrementData.accumulators[fieldID];
-    accumulator.add(termID, incrementData.weightedCountIncrement, incrementData.penaltyIncrement,
-                    incrementData.tweepCred);
-    accumulator.recordLanguage(incrementData.languageId);
+  // i-intewface method that cowwects a specific tewm in a specific fiewd fow this document. o.O
+  @ovewwide
+  pubwic boowean c-cowwect(int docid, /(^•ω•^) wong tewmid, nyaa~~ i-int fiewdid) {
+    f-facetaccumuwatow a-accumuwatow = incwementdata.accumuwatows[fiewdid];
+    accumuwatow.add(tewmid, nyaa~~ incwementdata.weightedcountincwement, :3 incwementdata.penawtyincwement, 😳😳😳
+                    i-incwementdata.tweepcwed);
+    accumuwatow.wecowdwanguage(incwementdata.wanguageid);
 
-    if (proofs != null) {
-      addProof(docID, termID, fieldID);
+    i-if (pwoofs != nyuww) {
+      a-addpwoof(docid, (˘ω˘) t-tewmid, fiewdid);
     }
-    return true;
+    wetuwn twue;
   }
 
-  protected void addProof(int docID, long termID, int fieldID) {
-    proofs.add(new Pair<>(fieldID, termID));
+  p-pwotected void addpwoof(int d-docid, ^^ wong tewmid, :3 int fiewdid) {
+    pwoofs.add(new p-paiw<>(fiewdid, -.- tewmid));
   }
 
   /**
-   * Collected facets for the given document.
+   * c-cowwected facets fow the given d-document. 😳
    */
-  public abstract void collect(int docID) throws IOException;
+  p-pubwic abstwact void cowwect(int docid) thwows ioexception;
 }

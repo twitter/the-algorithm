@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HasClientEventInfo
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.hascwienteventinfo
 
-sealed trait PageHeader
+s-seawed twait p-pageheadew
 
-case class TopicPageHeader(
-  topicId: String,
-  facepile: Option[TopicPageHeaderFacepile] = None,
-  override val clientEventInfo: Option[ClientEventInfo] = None,
-  landingContext: Option[String] = None,
-  displayType: Option[TopicPageHeaderDisplayType] = Some(BasicTopicPageHeaderDisplayType))
-    extends PageHeader
-    with HasClientEventInfo
+case c-cwass topicpageheadew(
+  t-topicid: s-stwing, (⑅˘꒳˘)
+  f-facepiwe: option[topicpageheadewfacepiwe] = n-nyone, (U ᵕ U❁)
+  ovewwide vaw cwienteventinfo: option[cwienteventinfo] = nyone, -.-
+  w-wandingcontext: option[stwing] = nyone,
+  d-dispwaytype: option[topicpageheadewdispwaytype] = some(basictopicpageheadewdispwaytype))
+    e-extends pageheadew
+    with hascwienteventinfo

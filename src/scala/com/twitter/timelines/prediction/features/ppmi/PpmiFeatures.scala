@@ -1,7 +1,7 @@
-package com.twitter.timelines.prediction.features.ppmi
+package com.twittew.timewines.pwediction.featuwes.ppmi
 
-import com.twitter.ml.api.Feature.Continuous
+impowt com.twittew.mw.api.featuwe.continuous
 
-object PpmiDataRecordFeatures {
-  val PPMI_SCORE = new Continuous("ppmi.source_author.score")
+o-object ppmidatawecowdfeatuwes {
+  v-vaw ppmi_scowe = n-nyew continuous("ppmi.souwce_authow.scowe")
 }

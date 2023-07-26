@@ -1,66 +1,66 @@
-package com.twitter.product_mixer.core.service.pipeline_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.pipewine_executow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.InvalidPipelineSelected
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
-import com.twitter.util.logging.Logging
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.invawidpipewinesewected
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.quawity_factow.quawityfactowobsewvew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.stitch.awwow
+impowt com.twittew.utiw.wogging.wogging
 
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
 /**
- * PipelineExecutor executes a single pipeline (of any type)
- * It does not currently support fail open/closed policies like CandidatePipelineExecutor does
- * In the future, maybe they can be merged.
+ * pipewineexecutow exekawaii~s a singwe p-pipewine (of any type)
+ * it d-does nyot cuwwentwy suppowt faiw open/cwosed powicies wike candidatepipewineexecutow d-does
+ * in the futuwe, 😳😳😳 maybe t-they can be mewged. :3
  */
 
-case class PipelineExecutorRequest[Query](query: Query, pipelineIdentifier: ComponentIdentifier)
+c-case cwass pipewineexecutowwequest[quewy](quewy: quewy, pipewineidentifiew: componentidentifiew)
 
-@Singleton
-class PipelineExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor
-    with Logging {
+@singweton
+c-cwass pipewineexecutow @inject() (ovewwide vaw statsweceivew: statsweceivew)
+    extends executow
+    with w-wogging {
 
-  def arrow[Query, ResultType](
-    pipelineByIdentifier: Map[ComponentIdentifier, Pipeline[Query, ResultType]],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
-    context: Executor.Context
-  ): Arrow[PipelineExecutorRequest[Query], PipelineExecutorResult[ResultType]] = {
+  def awwow[quewy, OwO w-wesuwttype](
+    p-pipewinebyidentifiew: m-map[componentidentifiew, (U ﹏ U) p-pipewine[quewy, >w< wesuwttype]], (U ﹏ U)
+    quawityfactowobsewvewbypipewine: m-map[componentidentifiew, 😳 quawityfactowobsewvew],
+    context: e-executow.context
+  ): awwow[pipewineexecutowwequest[quewy], (ˆ ﻌ ˆ)♡ pipewineexecutowwesuwt[wesuwttype]] = {
 
-    val wrappedPipelineArrowsByIdentifier = pipelineByIdentifier.mapValues { pipeline =>
-      wrapPipelineWithExecutorBookkeeping(
-        context,
-        pipeline.identifier,
-        qualityFactorObserverByPipeline.get(pipeline.identifier))(pipeline.arrow)
+    vaw wwappedpipewineawwowsbyidentifiew = pipewinebyidentifiew.mapvawues { pipewine =>
+      w-wwappipewinewithexecutowbookkeeping(
+        context, 😳😳😳
+        p-pipewine.identifiew, (U ﹏ U)
+        q-quawityfactowobsewvewbypipewine.get(pipewine.identifiew))(pipewine.awwow)
     }
 
-    val appliedPipelineArrow = Arrow
-      .identity[PipelineExecutorRequest[Query]]
+    v-vaw appwiedpipewineawwow = awwow
+      .identity[pipewineexecutowwequest[quewy]]
       .map {
-        case PipelineExecutorRequest(query, pipelineIdentifier) =>
-          val pipeline = wrappedPipelineArrowsByIdentifier.getOrElse(
-            pipelineIdentifier,
-            // throwing instead of returning a `Throw(_)` and then `.lowerFromTry` because this is an exceptional case and we want to emphasize that by explicitly throwing
-            // this case should never happen since this is checked in the `PipelineSelectorExecutor` but we check it anyway
-            throw PipelineFailure(
-              InvalidPipelineSelected,
-              s"${context.componentStack.peek} attempted to execute $pipelineIdentifier",
-              // the `componentStack` includes the missing pipeline so it can show up in metrics easier
-              componentStack = Some(context.componentStack.push(pipelineIdentifier))
+        case pipewineexecutowwequest(quewy, (///ˬ///✿) p-pipewineidentifiew) =>
+          v-vaw pipewine = wwappedpipewineawwowsbyidentifiew.getowewse(
+            p-pipewineidentifiew, 😳
+            // t-thwowing instead of w-wetuwning a `thwow(_)` and then `.wowewfwomtwy` b-because this is an exceptionaw case and we want t-to emphasize that by expwicitwy t-thwowing
+            // this case s-shouwd nyevew h-happen since this is checked in the `pipewinesewectowexecutow` but we check it anyway
+            thwow pipewinefaiwuwe(
+              invawidpipewinesewected, 😳
+              s"${context.componentstack.peek} a-attempted to exekawaii~ $pipewineidentifiew", σωσ
+              // the `componentstack` i-incwudes the missing pipewine s-so it can show u-up in metwics easiew
+              c-componentstack = some(context.componentstack.push(pipewineidentifiew))
             )
           )
-          (pipeline, query)
+          (pipewine, rawr x3 quewy)
       }
-      // less efficient than an `andThen` but since we dispatch this dynamically we need to use either `applyArrow` or `flatMap` and this is the better of those options
-      .applyArrow
-      .map(PipelineExecutorResult(_))
+      // wess efficient t-than an `andthen` but since we dispatch this dynamicawwy we nyeed to use eithew `appwyawwow` o-ow `fwatmap` and this i-is the bettew o-of those options
+      .appwyawwow
+      .map(pipewineexecutowwesuwt(_))
 
-    // no additional error handling needed since we populate the component stack above already
-    appliedPipelineArrow
+    // n-nyo additionaw ewwow handwing n-nyeeded since we p-popuwate the component s-stack above a-awweady
+    appwiedpipewineawwow
   }
 }

@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.card
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.cawd
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.card.CardCandidateUtrItemBuilder.CardClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.CardCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card.CardDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card.CardItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.cawd.cawdcandidateutwitembuiwdew.cawdcwienteventinfoewement
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.cawdcandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.candidateuwtentwybuiwdew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basecwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basefeedbackactioninfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.basestw
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.metadata.baseuwwbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.cawd.cawddispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.cawd.cawditem
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object CardCandidateUtrItemBuilder {
-  val CardClientEventInfoElement: String = "card"
+o-object cawdcandidateutwitembuiwdew {
+  v-vaw cawdcwienteventinfoewement: stwing = "cawd"
 }
 
-case class CardCandidateUtrItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, CardCandidate],
-  cardUrlBuilder: BaseStr[Query, CardCandidate],
-  textBuilder: Option[BaseStr[Query, CardCandidate]],
-  subtextBuilder: Option[BaseStr[Query, CardCandidate]],
-  urlBuilder: Option[BaseUrlBuilder[Query, CardCandidate]],
-  cardDisplayType: Option[CardDisplayType],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, CardCandidate],
-  ] = None)
-    extends CandidateUrtEntryBuilder[Query, CardCandidate, CardItem] {
+case cwass cawdcandidateutwitembuiwdew[-quewy <: pipewinequewy](
+  c-cwienteventinfobuiwdew: basecwienteventinfobuiwdew[quewy, 😳 cawdcandidate], -.-
+  c-cawduwwbuiwdew: b-basestw[quewy, 🥺 cawdcandidate], o.O
+  textbuiwdew: option[basestw[quewy, /(^•ω•^) cawdcandidate]], nyaa~~
+  s-subtextbuiwdew: option[basestw[quewy, nyaa~~ cawdcandidate]], :3
+  uwwbuiwdew: option[baseuwwbuiwdew[quewy, 😳😳😳 cawdcandidate]], (˘ω˘)
+  cawddispwaytype: o-option[cawddispwaytype], ^^
+  feedbackactioninfobuiwdew: o-option[
+    b-basefeedbackactioninfobuiwdew[quewy, :3 c-cawdcandidate], -.-
+  ] = n-nyone)
+    extends candidateuwtentwybuiwdew[quewy, 😳 c-cawdcandidate, mya cawditem] {
 
-  override def apply(
-    query: Query,
-    cardCandidate: CardCandidate,
-    candidateFeatures: FeatureMap
-  ): CardItem = CardItem(
-    id = cardCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      cardCandidate,
-      candidateFeatures,
-      Some(CardClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, cardCandidate, candidateFeatures)),
-    cardUrl = cardUrlBuilder(query, cardCandidate, candidateFeatures),
-    text = textBuilder.map(_.apply(query, cardCandidate, candidateFeatures)),
-    subtext = textBuilder.map(_.apply(query, cardCandidate, candidateFeatures)),
-    url = urlBuilder.map(_.apply(query, cardCandidate, candidateFeatures)),
-    displayType = cardDisplayType
+  ovewwide def appwy(
+    q-quewy: quewy,
+    cawdcandidate: cawdcandidate, (˘ω˘)
+    candidatefeatuwes: featuwemap
+  ): cawditem = c-cawditem(
+    id = cawdcandidate.id, >_<
+    s-sowtindex = nyone, -.- // s-sowt indexes a-awe automaticawwy set in the domain mawshawwew phase
+    cwienteventinfo = cwienteventinfobuiwdew(
+      q-quewy, 🥺
+      c-cawdcandidate, (U ﹏ U)
+      candidatefeatuwes, >w<
+      some(cawdcwienteventinfoewement)), mya
+    feedbackactioninfo =
+      f-feedbackactioninfobuiwdew.fwatmap(_.appwy(quewy, >w< c-cawdcandidate, nyaa~~ candidatefeatuwes)), (✿oωo)
+    c-cawduww = cawduwwbuiwdew(quewy, ʘwʘ cawdcandidate, c-candidatefeatuwes), (ˆ ﻌ ˆ)♡
+    text = textbuiwdew.map(_.appwy(quewy, c-cawdcandidate, 😳😳😳 candidatefeatuwes)), :3
+    subtext = t-textbuiwdew.map(_.appwy(quewy, OwO cawdcandidate, (U ﹏ U) c-candidatefeatuwes)), >w<
+    u-uww = uwwbuiwdew.map(_.appwy(quewy, (U ﹏ U) cawdcandidate, 😳 candidatefeatuwes)), (ˆ ﻌ ˆ)♡
+    dispwaytype = cawddispwaytype
   )
 }

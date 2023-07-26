@@ -1,117 +1,117 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.twittew.seawch.ingestew.pipewine.twittew;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+impowt java.io.ioexception;
+i-impowt java.utiw.wist;
+i-impowt j-java.utiw.optionaw;
 
-import javax.naming.NamingException;
+i-impowt javax.naming.namingexception;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.apache.commons.wang.stwingutiws;
+impowt owg.apache.commons.pipewine.stageexception;
+impowt owg.apache.commons.pipewine.vawidation.consumedtypes;
+impowt owg.apache.commons.pipewine.vawidation.pwoducesconsumed;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.converter.earlybird.BasicIndexingConverter;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdSchemaCreateTool;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
+impowt com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt c-com.twittew.seawch.common.convewtew.eawwybiwd.basicindexingconvewtew;
+impowt c-com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.schema.base.schema;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdschemacweatetoow;
+i-impowt com.twittew.seawch.ingestew.modew.ingestewthwiftvewsionedevents;
+impowt c-com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class ConvertMessageToThriftStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private static final Logger LOG = LoggerFactory.getLogger(ConvertMessageToThriftStage.class);
+@consumedtypes(ingestewtwittewmessage.cwass)
+@pwoducesconsumed
+p-pubwic cwass convewtmessagetothwiftstage extends twittewbasestage
+    <ingestewtwittewmessage, (✿oωo) ingestewtwittewmessage> {
+  pwivate static f-finaw woggew wog = woggewfactowy.getwoggew(convewtmessagetothwiftstage.cwass);
 
-  private List<PenguinVersion> penguinVersionList;
-  private String thriftVersionedEventsBranchName;
-  private FieldStatExporter fieldStatExporter;
-  private BasicIndexingConverter messageConverter;
+  pwivate wist<penguinvewsion> penguinvewsionwist;
+  pwivate s-stwing thwiftvewsionedeventsbwanchname;
+  pwivate f-fiewdstatexpowtew f-fiewdstatexpowtew;
+  p-pwivate b-basicindexingconvewtew messageconvewtew;
 
-  private SearchCounter twitterMessageToTveErrorCount;
+  pwivate seawchcountew t-twittewmessagetotveewwowcount;
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    twitterMessageToTveErrorCount = SearchCounter.export(
-        getStageNamePrefix() + "_ingester_convert_twitter_message_to_tve_error_count");
+  @ovewwide
+  pubwic void initstats() {
+    supew.initstats();
+    t-twittewmessagetotveewwowcount = seawchcountew.expowt(
+        getstagenamepwefix() + "_ingestew_convewt_twittew_message_to_tve_ewwow_count");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    Schema schema;
-    try {
-      schema = EarlybirdSchemaCreateTool.buildSchema(Preconditions.checkNotNull(earlybirdCluster));
-    } catch (Schema.SchemaValidationException e) {
-      throw new StageException(this, e);
+  @ovewwide
+  pwotected void doinnewpwepwocess() thwows s-stageexception, (U ﹏ U) nyamingexception {
+    s-schema s-schema;
+    twy {
+      s-schema = eawwybiwdschemacweatetoow.buiwdschema(pweconditions.checknotnuww(eawwybiwdcwustew));
+    } catch (schema.schemavawidationexception e) {
+      t-thwow nyew stageexception(this, -.- e-e);
     }
 
-    penguinVersionList = wireModule.getPenguinVersions();
-    Preconditions.checkState(StringUtils.isNotBlank(thriftVersionedEventsBranchName));
-    messageConverter = new BasicIndexingConverter(schema, earlybirdCluster);
-    fieldStatExporter = new FieldStatExporter("unsorted_tweets", schema, penguinVersionList);
+    penguinvewsionwist = wiwemoduwe.getpenguinvewsions();
+    p-pweconditions.checkstate(stwingutiws.isnotbwank(thwiftvewsionedeventsbwanchname));
+    m-messageconvewtew = nyew basicindexingconvewtew(schema, ^•ﻌ•^ e-eawwybiwdcwustew);
+    fiewdstatexpowtew = n-new fiewdstatexpowtew("unsowted_tweets", rawr schema, (˘ω˘) penguinvewsionwist);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage instance: " + obj);
+  @ovewwide
+  p-pubwic void innewpwocess(object o-obj) thwows stageexception {
+    i-if (!(obj i-instanceof ingestewtwittewmessage)) {
+      thwow nyew stageexception(this, nyaa~~ "object is nyot an ingestewtwittewmessage instance: " + obj);
     }
 
-    penguinVersionList = wireModule.getCurrentlyEnabledPenguinVersions();
-    fieldStatExporter.updatePenguinVersions(penguinVersionList);
+    p-penguinvewsionwist = w-wiwemoduwe.getcuwwentwyenabwedpenguinvewsions();
+    fiewdstatexpowtew.updatepenguinvewsions(penguinvewsionwist);
 
-    IngesterTwitterMessage message = IngesterTwitterMessage.class.cast(obj);
+    i-ingestewtwittewmessage m-message = i-ingestewtwittewmessage.cwass.cast(obj);
 
-    Optional<IngesterThriftVersionedEvents> maybeEvents = buildVersionedEvents(message);
-    if (maybeEvents.isPresent()) {
-      IngesterThriftVersionedEvents events = maybeEvents.get();
-      fieldStatExporter.addFieldStats(events);
-      emitToBranchAndCount(thriftVersionedEventsBranchName, events);
+    optionaw<ingestewthwiftvewsionedevents> maybeevents = buiwdvewsionedevents(message);
+    i-if (maybeevents.ispwesent()) {
+      ingestewthwiftvewsionedevents events = maybeevents.get();
+      fiewdstatexpowtew.addfiewdstats(events);
+      emittobwanchandcount(thwiftvewsionedeventsbwanchname, UwU e-events);
     }
 
-    emitAndCount(message);
+    emitandcount(message);
   }
 
   /**
-   * Method that converts a TwitterMessage to a ThriftVersionedEvents.
+   * m-method that convewts a-a twittewmessage t-to a thwiftvewsionedevents. :3
    *
-   * @param twitterMessage An IngesterThriftVersionedEvents instance to be converted.
-   * @return The corresponding ThriftVersionedEvents.
+   * @pawam twittewmessage a-an ingestewthwiftvewsionedevents i-instance to b-be convewted. (⑅˘꒳˘)
+   * @wetuwn t-the cowwesponding thwiftvewsionedevents. (///ˬ///✿)
    */
-  private Optional<IngesterThriftVersionedEvents> buildVersionedEvents(
-      IngesterTwitterMessage twitterMessage) {
-    IngesterThriftVersionedEvents ingesterEvents =
-        new IngesterThriftVersionedEvents(twitterMessage.getUserId());
-    ingesterEvents.setDarkWrite(false);
-    ingesterEvents.setId(twitterMessage.getTweetId());
+  pwivate o-optionaw<ingestewthwiftvewsionedevents> b-buiwdvewsionedevents(
+      i-ingestewtwittewmessage t-twittewmessage) {
+    i-ingestewthwiftvewsionedevents ingestewevents =
+        nyew ingestewthwiftvewsionedevents(twittewmessage.getusewid());
+    i-ingestewevents.setdawkwwite(fawse);
+    ingestewevents.setid(twittewmessage.gettweetid());
 
-    // We will emit both the original TwitterMessage, and the ThriftVersionedEvents instance, so we
-    // need to make sure they have separate DebugEvents copies.
-    ingesterEvents.setDebugEvents(twitterMessage.getDebugEvents().deepCopy());
+    // we wiww emit both the owiginaw twittewmessage, ^^;; and the thwiftvewsionedevents i-instance, >_< so we
+    // nyeed to make suwe they have sepawate debugevents c-copies. rawr x3
+    i-ingestewevents.setdebugevents(twittewmessage.getdebugevents().deepcopy());
 
-    try {
-      ThriftVersionedEvents versionedEvents =
-          messageConverter.convertMessageToThrift(twitterMessage, true, penguinVersionList);
-      ingesterEvents.setVersionedEvents(versionedEvents.getVersionedEvents());
-      return Optional.of(ingesterEvents);
-    } catch (IOException e) {
-      LOG.error("Failed to convert tweet " + twitterMessage.getTweetId() + " from TwitterMessage "
-                + "to ThriftVersionedEvents for Penguin versions " + penguinVersionList,
-                e);
-      twitterMessageToTveErrorCount.increment();
+    t-twy {
+      thwiftvewsionedevents v-vewsionedevents =
+          messageconvewtew.convewtmessagetothwift(twittewmessage, /(^•ω•^) t-twue, p-penguinvewsionwist);
+      ingestewevents.setvewsionedevents(vewsionedevents.getvewsionedevents());
+      wetuwn optionaw.of(ingestewevents);
+    } catch (ioexception e) {
+      w-wog.ewwow("faiwed to convewt t-tweet " + twittewmessage.gettweetid() + " fwom t-twittewmessage "
+                + "to t-thwiftvewsionedevents fow penguin vewsions " + p-penguinvewsionwist, :3
+                e-e);
+      twittewmessagetotveewwowcount.incwement();
     }
-    return Optional.empty();
+    w-wetuwn o-optionaw.empty();
   }
 
-  public void setThriftVersionedEventsBranchName(String thriftVersionedEventsBranchName) {
-    this.thriftVersionedEventsBranchName = thriftVersionedEventsBranchName;
+  pubwic void setthwiftvewsionedeventsbwanchname(stwing thwiftvewsionedeventsbwanchname) {
+    this.thwiftvewsionedeventsbwanchname = t-thwiftvewsionedeventsbwanchname;
   }
 }

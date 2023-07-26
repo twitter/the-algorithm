@@ -1,90 +1,90 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.concuwwent.cawwabwe;
+i-impowt java.utiw.concuwwent.executowsewvice;
+impowt j-java.utiw.concuwwent.executows;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.util.concurrent.SimpleTimeLimiter;
-import com.google.common.util.concurrent.TimeLimiter;
+i-impowt c-com.googwe.common.utiw.concuwwent.simpwetimewimitew;
+i-impowt com.googwe.common.utiw.concuwwent.timewimitew;
 
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+impowt owg.apache.hadoop.fs.fiwesystem;
+impowt owg.apache.hadoop.fs.path;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
+impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchtimew;
+impowt c-com.twittew.seawch.common.metwics.seawchtimewstats;
 
 /**
- * Abstracts details of making time limited calls to hadoop.
+ * abstwacts d-detaiws of making time wimited cawws to hadoop. (///ˬ///✿)
  *
- * During IM-3556 we discovered that hadoop API calls can take a long time (seconds, minutes)
- * if the Hadoop clsuter is in a bad state. Our code was generally not prepared for that and
- * this caused various issues. This class is a fix on top of the Hadoop API's exists call and
- * it introduces a timeout.
+ * duwing i-im-3556 we discovewed that hadoop a-api cawws can t-take a wong time (seconds, (˘ω˘) minutes)
+ * if the hadoop cwsutew is in a bad state. ^^;; o-ouw code was genewawwy nyot pwepawed fow that and
+ * this caused vawious issues. (✿oωo) t-this cwass is a fix on top of t-the hadoop api's e-exists caww and
+ * i-it intwoduces a-a timeout. (U ﹏ U)
  *
- * The main motivation for having this as an external class is for testability.
+ * the main motivation fow having t-this as an extewnaw cwass is fow testabiwity. -.-
  */
-public class TimeLimitedHadoopExistsCall {
-  private final TimeLimiter hadoopCallsTimeLimiter;
-  private final FileSystem fileSystem;
-  private final int timeLimitInSeconds;
+p-pubwic cwass timewimitedhadoopexistscaww {
+  pwivate finaw timewimitew hadoopcawwstimewimitew;
+  pwivate finaw fiwesystem f-fiwesystem;
+  pwivate finaw int t-timewimitinseconds;
 
-  private static final SearchTimerStats EXISTS_CALLS_TIMER =
-      SearchTimerStats.export("hadoop_exists_calls");
+  p-pwivate static f-finaw seawchtimewstats exists_cawws_timew =
+      seawchtimewstats.expowt("hadoop_exists_cawws");
 
-  private static final SearchCounter EXISTS_CALLS_EXCEPTION =
-      SearchCounter.export("hadoop_exists_calls_exception");
+  pwivate s-static finaw s-seawchcountew exists_cawws_exception =
+      seawchcountew.expowt("hadoop_exists_cawws_exception");
 
-  public TimeLimitedHadoopExistsCall(FileSystem fileSystem) {
-    // This times varies. Sometimes it's very quick, sometimes it takes some amount of seconds.
-    // Do a rate on hadoop_exists_calls_latency_ms to see for yourself.
-    this(fileSystem, 30);
+  p-pubwic timewimitedhadoopexistscaww(fiwesystem f-fiwesystem) {
+    // this times v-vawies. ^•ﻌ•^ sometimes it's vewy q-quick, rawr sometimes it takes some amount of seconds. (˘ω˘)
+    // d-do a wate on hadoop_exists_cawws_watency_ms t-to see fow youwsewf. nyaa~~
+    this(fiwesystem, UwU 30);
   }
 
-  public TimeLimitedHadoopExistsCall(FileSystem fileSystem, int timeLimitInSeconds) {
-    // We do hadoop calls once every "FLUSH_CHECK_PERIOD" minutes. If a call takes
-    // a long time (say 10 minutes), we'll use a new thread for the next call, to give it
-    // a chance to complete.
+  p-pubwic t-timewimitedhadoopexistscaww(fiwesystem fiwesystem, :3 int timewimitinseconds) {
+    // we do hadoop cawws once evewy "fwush_check_pewiod" minutes. (⑅˘꒳˘) if a caww takes
+    // a-a wong t-time (say 10 minutes), (///ˬ///✿) we'ww use a-a nyew thwead f-fow the nyext caww, ^^;; t-to give it
+    // a chance to compwete. >_<
     //
-    // Let's say every call takes 2 hours. After 5 calls, the 6th call won't be able
-    // to take a thread out of the thread pool and it will time out. That's fair, we don't
-    // want to keep sending requests to Hadoop if the situation is so dire.
-    ExecutorService executorService = Executors.newFixedThreadPool(5);
-    this.hadoopCallsTimeLimiter = SimpleTimeLimiter.create(executorService);
-    this.fileSystem = fileSystem;
-    this.timeLimitInSeconds = timeLimitInSeconds;
+    // wet's s-say evewy caww takes 2 houws. rawr x3 aftew 5 cawws, /(^•ω•^) the 6th caww won't be abwe
+    // to t-take a thwead out of the thwead p-poow and it wiww t-time out. :3 that's f-faiw, (ꈍᴗꈍ) we don't
+    // want to k-keep sending wequests t-to hadoop i-if the situation i-is so diwe. /(^•ω•^)
+    executowsewvice executowsewvice = e-executows.newfixedthweadpoow(5);
+    t-this.hadoopcawwstimewimitew = s-simpwetimewimitew.cweate(executowsewvice);
+    t-this.fiwesystem = f-fiwesystem;
+    this.timewimitinseconds = timewimitinseconds;
   }
 
 
-  protected boolean hadoopExistsCall(Path path) throws IOException {
-    SearchTimer timer = EXISTS_CALLS_TIMER.startNewTimer();
-    boolean res =  fileSystem.exists(path);
-    EXISTS_CALLS_TIMER.stopTimerAndIncrement(timer);
-    return res;
+  pwotected boowean h-hadoopexistscaww(path path) thwows ioexception {
+    seawchtimew timew = exists_cawws_timew.stawtnewtimew();
+    boowean wes =  f-fiwesystem.exists(path);
+    exists_cawws_timew.stoptimewandincwement(timew);
+    wetuwn wes;
   }
 
   /**
-   * Checks if a path exists on Hadoop.
+   * checks if a path e-exists on hadoop. (⑅˘꒳˘)
    *
-   * @return true if the path exists.
-   * @throws Exception see exceptions thrown by callWithTimeout
+   * @wetuwn t-twue if the p-path exists. ( ͡o ω ͡o )
+   * @thwows exception s-see exceptions thwown by cawwwithtimeout
    */
-  boolean exists(Path path) throws Exception {
-    try {
-      boolean result = hadoopCallsTimeLimiter.callWithTimeout(new Callable<Boolean>() {
-        @Override
-        public Boolean call() throws Exception {
-          return hadoopExistsCall(path);
+  b-boowean exists(path p-path) thwows exception {
+    twy {
+      boowean wesuwt = hadoopcawwstimewimitew.cawwwithtimeout(new cawwabwe<boowean>() {
+        @ovewwide
+        p-pubwic boowean caww() t-thwows exception {
+          wetuwn hadoopexistscaww(path);
         }
-      }, timeLimitInSeconds, TimeUnit.SECONDS);
+      }, òωó t-timewimitinseconds, (⑅˘꒳˘) t-timeunit.seconds);
 
-      return result;
-    } catch (Exception ex) {
-      EXISTS_CALLS_EXCEPTION.increment();
-      // No need to print and rethrow, it will be printed when caught upstream.
-      throw ex;
+      wetuwn wesuwt;
+    } catch (exception e-ex) {
+      e-exists_cawws_exception.incwement();
+      // nyo nyeed to pwint a-and wethwow, XD i-it wiww be pwinted when caught upstweam. -.-
+      thwow ex;
     }
   }
 }

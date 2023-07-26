@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.core.pipeline.step.query_feature_hydrator
+package com.twittew.pwoduct_mixew.cowe.pipewine.step.quewy_featuwe_hydwatow
 
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasAsyncFeatureMap
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basequewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.state.hasasyncfeatuwemap
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.state.hasquewy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.step.step
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.executow
+impowt com.twittew.pwoduct_mixew.cowe.sewvice.quewy_featuwe_hydwatow_executow.quewyfeatuwehydwatowexecutow
+impowt com.twittew.stitch.awwow
+i-impowt javax.inject.inject
 
 /**
- * A query level feature hydration step, it takes the input list of candidates and the given
- * hydrators and executes them. The [[State]] object is responsible for merging the resulting
- * feature maps with the hydrated ones in its updateCandidatesWithFeatures.
+ * a quewy wevew featuwe hydwation s-step, 😳😳😳 it takes the input w-wist of candidates and the given
+ * hydwatows and exekawaii~s them. (˘ω˘) t-the [[state]] object is wesponsibwe f-fow mewging t-the wesuwting
+ * featuwe maps with the hydwated ones in its updatecandidateswithfeatuwes. ^^
  *
- * @param queryFeatureHydratorExecutor Hydrator Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam State The pipeline state domain model.
+ * @pawam q-quewyfeatuwehydwatowexecutow hydwatow executow
+ * @tpawam quewy type of pipewinequewy d-domain modew
+ * @tpawam state the p-pipewine state d-domain modew. :3
  */
-case class QueryFeatureHydratorStep[
-  Query <: PipelineQuery,
-  State <: HasQuery[Query, State] with HasAsyncFeatureMap[State]] @Inject() (
-  queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor)
-    extends Step[State, QueryFeatureHydratorStepConfig[
-      Query
-    ], Query, QueryFeatureHydratorExecutor.Result] {
-  override def isEmpty(config: QueryFeatureHydratorStepConfig[Query]): Boolean =
-    config.hydrators.isEmpty
+c-case cwass quewyfeatuwehydwatowstep[
+  q-quewy <: pipewinequewy, -.-
+  state <: hasquewy[quewy, 😳 s-state] with hasasyncfeatuwemap[state]] @inject() (
+  quewyfeatuwehydwatowexecutow: q-quewyfeatuwehydwatowexecutow)
+    extends step[state, mya quewyfeatuwehydwatowstepconfig[
+      quewy
+    ], (˘ω˘) quewy, quewyfeatuwehydwatowexecutow.wesuwt] {
+  o-ovewwide def isempty(config: q-quewyfeatuwehydwatowstepconfig[quewy]): boowean =
+    c-config.hydwatows.isempty
 
-  override def adaptInput(state: State, config: QueryFeatureHydratorStepConfig[Query]): Query =
-    state.query
+  o-ovewwide def adaptinput(state: state, >_< config: quewyfeatuwehydwatowstepconfig[quewy]): quewy =
+    s-state.quewy
 
-  override def arrow(
-    config: QueryFeatureHydratorStepConfig[Query],
-    context: Executor.Context
-  ): Arrow[Query, QueryFeatureHydratorExecutor.Result] =
-    queryFeatureHydratorExecutor.arrow(
-      config.hydrators,
-      config.validPipelineStepIdentifiers,
+  o-ovewwide def awwow(
+    c-config: quewyfeatuwehydwatowstepconfig[quewy], -.-
+    c-context: executow.context
+  ): awwow[quewy, 🥺 q-quewyfeatuwehydwatowexecutow.wesuwt] =
+    quewyfeatuwehydwatowexecutow.awwow(
+      c-config.hydwatows, (U ﹏ U)
+      config.vawidpipewinestepidentifiews, >w<
       context)
 
-  override def updateState(
-    state: State,
-    executorResult: QueryFeatureHydratorExecutor.Result,
-    config: QueryFeatureHydratorStepConfig[Query]
-  ): State = {
-    val updatedQuery = state.query
-      .withFeatureMap(executorResult.featureMap).asInstanceOf[Query]
+  o-ovewwide def updatestate(
+    s-state: state, mya
+    executowwesuwt: q-quewyfeatuwehydwatowexecutow.wesuwt,
+    c-config: quewyfeatuwehydwatowstepconfig[quewy]
+  ): state = {
+    vaw updatedquewy = state.quewy
+      .withfeatuwemap(executowwesuwt.featuwemap).asinstanceof[quewy]
     state
-      .updateQuery(updatedQuery).addAsyncFeatureMap(executorResult.asyncFeatureMap)
+      .updatequewy(updatedquewy).addasyncfeatuwemap(executowwesuwt.asyncfeatuwemap)
   }
 }
 
-case class QueryFeatureHydratorStepConfig[Query <: PipelineQuery](
-  hydrators: Seq[BaseQueryFeatureHydrator[Query, _]],
-  validPipelineStepIdentifiers: Set[PipelineStepIdentifier])
+case cwass q-quewyfeatuwehydwatowstepconfig[quewy <: p-pipewinequewy](
+  hydwatows: s-seq[basequewyfeatuwehydwatow[quewy, >w< _]],
+  v-vawidpipewinestepidentifiews: s-set[pipewinestepidentifiew])

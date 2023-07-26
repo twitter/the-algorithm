@@ -1,66 +1,66 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.dataproducts.enrichments.thriftscala._
-import com.twitter.gizmoduck.thriftscala.UserResponseState._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.GnipEnricherator
-import com.twitter.tweetypie.thriftscala.GeoCoordinates
+i-impowt com.twittew.datapwoducts.enwichments.thwiftscawa._
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.usewwesponsestate._
+i-impowt com.twittew.stitch.seqgwoup
+i-impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.stitch.compat.wegacyseqgwoup
+impowt com.twittew.tweetypie.backends.gnipenwichewatow
+impowt com.twittew.tweetypie.thwiftscawa.geocoowdinates
 
-case class ProfileGeoKey(tweetId: TweetId, userId: Option[UserId], coords: Option[GeoCoordinates]) {
-  def key: TweetData =
-    TweetData(
-      tweetId = tweetId,
-      userId = userId,
-      coordinates = coords.map(ProfileGeoRepository.convertGeo)
+c-case cwass pwofiwegeokey(tweetid: tweetid, o.O u-usewid: option[usewid], /(^•ω•^) coowds: option[geocoowdinates]) {
+  d-def key: tweetdata =
+    tweetdata(
+      tweetid = tweetid, nyaa~~
+      u-usewid = usewid, nyaa~~
+      coowdinates = c-coowds.map(pwofiwegeowepositowy.convewtgeo)
     )
 }
 
-object ProfileGeoRepository {
-  type Type = ProfileGeoKey => Stitch[ProfileGeoEnrichment]
+o-object pwofiwegeowepositowy {
+  type type = pwofiwegeokey => stitch[pwofiwegeoenwichment]
 
-  case class UnexpectedState(state: EnrichmentHydrationState) extends Exception(state.name)
+  case cwass unexpectedstate(state: enwichmenthydwationstate) e-extends exception(state.name)
 
-  def convertGeo(coords: GeoCoordinates): TweetyPieGeoCoordinates =
-    TweetyPieGeoCoordinates(
-      latitude = coords.latitude,
-      longitude = coords.longitude,
-      geoPrecision = coords.geoPrecision,
-      display = coords.display
+  def convewtgeo(coowds: geocoowdinates): tweetypiegeocoowdinates =
+    t-tweetypiegeocoowdinates(
+      watitude = coowds.watitude, :3
+      w-wongitude = coowds.wongitude, 😳😳😳
+      g-geopwecision = c-coowds.geopwecision, (˘ω˘)
+      dispway = c-coowds.dispway
     )
 
-  def apply(hydrateProfileGeo: GnipEnricherator.HydrateProfileGeo): Type = {
-    import EnrichmentHydrationState._
+  def appwy(hydwatepwofiwegeo: gnipenwichewatow.hydwatepwofiwegeo): t-type = {
+    impowt enwichmenthydwationstate._
 
-    val emptyEnrichmentStitch = Stitch.value(ProfileGeoEnrichment())
+    vaw emptyenwichmentstitch = s-stitch.vawue(pwofiwegeoenwichment())
 
-    val profileGeoGroup = SeqGroup[TweetData, ProfileGeoResponse] { keys: Seq[TweetData] =>
-      // Gnip ignores writePath and treats all requests as reads
-      LegacySeqGroup.liftToSeqTry(
-        hydrateProfileGeo(ProfileGeoRequest(requests = keys, writePath = false))
+    vaw pwofiwegeogwoup = seqgwoup[tweetdata, ^^ pwofiwegeowesponse] { keys: s-seq[tweetdata] =>
+      // gnip i-ignowes wwitepath a-and tweats a-aww wequests as weads
+      wegacyseqgwoup.wifttoseqtwy(
+        hydwatepwofiwegeo(pwofiwegeowequest(wequests = keys, :3 wwitepath = f-fawse))
       )
     }
 
-    (geoKey: ProfileGeoKey) =>
-      Stitch
-        .call(geoKey.key, profileGeoGroup)
-        .flatMap {
-          case ProfileGeoResponse(_, Success, Some(enrichment), _) =>
-            Stitch.value(enrichment)
-          case ProfileGeoResponse(_, Success, None, _) =>
-            // when state is Success enrichment should always be Some, but default to be safe
-            emptyEnrichmentStitch
-          case ProfileGeoResponse(
-                _,
-                UserLookupError,
-                _,
-                Some(DeactivatedUser | SuspendedUser | NotFound)
+    (geokey: p-pwofiwegeokey) =>
+      stitch
+        .caww(geokey.key, -.- pwofiwegeogwoup)
+        .fwatmap {
+          c-case p-pwofiwegeowesponse(_, 😳 success, s-some(enwichment), mya _) =>
+            stitch.vawue(enwichment)
+          c-case pwofiwegeowesponse(_, (˘ω˘) success, nyone, >_< _) =>
+            // when state i-is success enwichment shouwd a-awways be some, -.- but defauwt to be s-safe
+            e-emptyenwichmentstitch
+          case pwofiwegeowesponse(
+                _, 🥺
+                usewwookupewwow, (U ﹏ U)
+                _, >w<
+                some(deactivatedusew | suspendedusew | nyotfound)
               ) =>
-            emptyEnrichmentStitch
-          case r =>
-            Stitch.exception(UnexpectedState(r.state))
+            emptyenwichmentstitch
+          case w =>
+            s-stitch.exception(unexpectedstate(w.state))
         }
   }
 }

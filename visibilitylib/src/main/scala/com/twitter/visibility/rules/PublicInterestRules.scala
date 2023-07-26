@@ -1,327 +1,327 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.guano.commons.thriftscala.PolicyInViolation
-import com.twitter.spam.rtf.thriftscala.SafetyResultReason
-import com.twitter.util.Memoize
-import com.twitter.util.Time
-import com.twitter.visibility.common.actions.ComplianceTweetNoticeEventType
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableSearchIpiSafeSearchWithoutUserInQueryDropRule
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.TweetSafetyLabels
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.LoggedOutOrViewerOptInFiltering
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.Or
-import com.twitter.visibility.rules.Condition.SearchQueryHasUser
-import com.twitter.visibility.rules.Condition.TweetComposedAfter
-import com.twitter.visibility.rules.Condition.TweetHasLabel
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules.State.Evaluated
+impowt com.twittew.guano.commons.thwiftscawa.powicyinviowation
+i-impowt com.twittew.spam.wtf.thwiftscawa.safetywesuwtweason
+impowt c-com.twittew.utiw.memoize
+impowt c-com.twittew.utiw.time
+i-impowt c-com.twittew.visibiwity.common.actions.compwiancetweetnoticeeventtype
+i-impowt com.twittew.visibiwity.common.actions.wimitedengagementweason
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawam
+impowt com.twittew.visibiwity.configapi.pawams.wuwepawams.enabweseawchipisafeseawchwithoutusewinquewydwopwuwe
+impowt com.twittew.visibiwity.featuwes.featuwe
+impowt com.twittew.visibiwity.featuwes.tweetsafetywabews
+impowt c-com.twittew.visibiwity.modews.tweetsafetywabew
+impowt com.twittew.visibiwity.modews.tweetsafetywabewtype
+impowt c-com.twittew.visibiwity.wuwes.condition.and
+impowt c-com.twittew.visibiwity.wuwes.condition.woggedoutowviewewoptinfiwtewing
+impowt com.twittew.visibiwity.wuwes.condition.not
+impowt c-com.twittew.visibiwity.wuwes.condition.ow
+impowt com.twittew.visibiwity.wuwes.condition.seawchquewyhasusew
+i-impowt com.twittew.visibiwity.wuwes.condition.tweetcomposedaftew
+i-impowt com.twittew.visibiwity.wuwes.condition.tweethaswabew
+impowt com.twittew.visibiwity.wuwes.weason._
+impowt com.twittew.visibiwity.wuwes.state.evawuated
 
-object PublicInterest {
-  object PolicyConfig {
-    val LowQualityProxyLabelStart: Time = Time.fromMilliseconds(1554076800000L)
-    val DefaultReason: (Reason, Option[LimitedEngagementReason]) =
-      (OneOff, Some(LimitedEngagementReason.NonCompliant))
-    val DefaultPolicyInViolation: PolicyInViolation = PolicyInViolation.OneOff
+object p-pubwicintewest {
+  object powicyconfig {
+    vaw wowquawitypwoxywabewstawt: time = time.fwommiwwiseconds(1554076800000w)
+    v-vaw defauwtweason: (weason, /(^•ω•^) option[wimitedengagementweason]) =
+      (oneoff, >_< some(wimitedengagementweason.noncompwiant))
+    v-vaw defauwtpowicyinviowation: powicyinviowation = p-powicyinviowation.oneoff
   }
 
-  val policyInViolationToReason: Map[PolicyInViolation, Reason] = Map(
-    PolicyInViolation.AbusePolicyEpisodic -> AbuseEpisodic,
-    PolicyInViolation.AbusePolicyEpisodicEncourageSelfharm -> AbuseEpisodicEncourageSelfHarm,
-    PolicyInViolation.AbusePolicyEpisodicHatefulConduct -> AbuseEpisodicHatefulConduct,
-    PolicyInViolation.AbusePolicyGratuitousGore -> AbuseGratuitousGore,
-    PolicyInViolation.AbusePolicyGlorificationofViolence -> AbuseGlorificationOfViolence,
-    PolicyInViolation.AbusePolicyEncourageMobHarassment -> AbuseMobHarassment,
-    PolicyInViolation.AbusePolicyMomentofDeathDeceasedUser -> AbuseMomentOfDeathOrDeceasedUser,
-    PolicyInViolation.AbusePolicyPrivateInformation -> AbusePrivateInformation,
-    PolicyInViolation.AbusePolicyRighttoPrivacy -> AbuseRightToPrivacy,
-    PolicyInViolation.AbusePolicyThreattoExpose -> AbuseThreatToExpose,
-    PolicyInViolation.AbusePolicyViolentSexualConduct -> AbuseViolentSexualConduct,
-    PolicyInViolation.AbusePolicyViolentThreatsHatefulConduct -> AbuseViolentThreatHatefulConduct,
-    PolicyInViolation.AbusePolicyViolentThreatorBounty -> AbuseViolentThreatOrBounty,
-    PolicyInViolation.OneOff -> OneOff,
-    PolicyInViolation.AbusePolicyElectionInterference -> VotingMisinformation,
-    PolicyInViolation.MisinformationVoting -> VotingMisinformation,
-    PolicyInViolation.HackedMaterials -> HackedMaterials,
-    PolicyInViolation.Scam -> Scams,
-    PolicyInViolation.PlatformManipulation -> PlatformManipulation,
-    PolicyInViolation.MisinformationCivic -> MisinfoCivic,
-    PolicyInViolation.AbusePolicyUkraineCrisisMisinformation -> MisinfoCrisis,
-    PolicyInViolation.MisinformationGeneric -> MisinfoGeneric,
-    PolicyInViolation.MisinformationMedical -> MisinfoMedical,
+  v-vaw powicyinviowationtoweason: m-map[powicyinviowation, σωσ weason] = map(
+    powicyinviowation.abusepowicyepisodic -> a-abuseepisodic, ^^;;
+    powicyinviowation.abusepowicyepisodicencouwagesewfhawm -> abuseepisodicencouwagesewfhawm, 😳
+    p-powicyinviowation.abusepowicyepisodichatefuwconduct -> abuseepisodichatefuwconduct, >_<
+    powicyinviowation.abusepowicygwatuitousgowe -> abusegwatuitousgowe, -.-
+    powicyinviowation.abusepowicygwowificationofviowence -> abusegwowificationofviowence, UwU
+    p-powicyinviowation.abusepowicyencouwagemobhawassment -> abusemobhawassment, :3
+    powicyinviowation.abusepowicymomentofdeathdeceasedusew -> a-abusemomentofdeathowdeceasedusew, σωσ
+    powicyinviowation.abusepowicypwivateinfowmation -> a-abusepwivateinfowmation, >w<
+    powicyinviowation.abusepowicywighttopwivacy -> a-abusewighttopwivacy, (ˆ ﻌ ˆ)♡
+    powicyinviowation.abusepowicythweattoexpose -> abusethweattoexpose, ʘwʘ
+    powicyinviowation.abusepowicyviowentsexuawconduct -> abuseviowentsexuawconduct, :3
+    p-powicyinviowation.abusepowicyviowentthweatshatefuwconduct -> a-abuseviowentthweathatefuwconduct, (˘ω˘)
+    powicyinviowation.abusepowicyviowentthweatowbounty -> a-abuseviowentthweatowbounty, 😳😳😳
+    p-powicyinviowation.oneoff -> oneoff, rawr x3
+    p-powicyinviowation.abusepowicyewectionintewfewence -> votingmisinfowmation, (✿oωo)
+    p-powicyinviowation.misinfowmationvoting -> votingmisinfowmation, (ˆ ﻌ ˆ)♡
+    powicyinviowation.hackedmatewiaws -> h-hackedmatewiaws, :3
+    powicyinviowation.scam -> s-scams, (U ᵕ U❁)
+    powicyinviowation.pwatfowmmanipuwation -> p-pwatfowmmanipuwation, ^^;;
+    p-powicyinviowation.misinfowmationcivic -> misinfocivic, mya
+    powicyinviowation.abusepowicyukwainecwisismisinfowmation -> misinfocwisis, 😳😳😳
+    powicyinviowation.misinfowmationgenewic -> misinfogenewic, OwO
+    powicyinviowation.misinfowmationmedicaw -> misinfomedicaw, rawr
   )
 
-  val reasonToPolicyInViolation: Map[Reason, PolicyInViolation] = Map(
-    AbuseEpisodic -> PolicyInViolation.AbusePolicyEpisodic,
-    AbuseEpisodicEncourageSelfHarm -> PolicyInViolation.AbusePolicyEpisodicEncourageSelfharm,
-    AbuseEpisodicHatefulConduct -> PolicyInViolation.AbusePolicyEpisodicHatefulConduct,
-    AbuseGratuitousGore -> PolicyInViolation.AbusePolicyGratuitousGore,
-    AbuseGlorificationOfViolence -> PolicyInViolation.AbusePolicyGlorificationofViolence,
-    AbuseMobHarassment -> PolicyInViolation.AbusePolicyEncourageMobHarassment,
-    AbuseMomentOfDeathOrDeceasedUser -> PolicyInViolation.AbusePolicyMomentofDeathDeceasedUser,
-    AbusePrivateInformation -> PolicyInViolation.AbusePolicyPrivateInformation,
-    AbuseRightToPrivacy -> PolicyInViolation.AbusePolicyRighttoPrivacy,
-    AbuseThreatToExpose -> PolicyInViolation.AbusePolicyThreattoExpose,
-    AbuseViolentSexualConduct -> PolicyInViolation.AbusePolicyViolentSexualConduct,
-    AbuseViolentThreatHatefulConduct -> PolicyInViolation.AbusePolicyViolentThreatsHatefulConduct,
-    AbuseViolentThreatOrBounty -> PolicyInViolation.AbusePolicyViolentThreatorBounty,
-    OneOff -> PolicyInViolation.OneOff,
-    VotingMisinformation -> PolicyInViolation.MisinformationVoting,
-    HackedMaterials -> PolicyInViolation.HackedMaterials,
-    Scams -> PolicyInViolation.Scam,
-    PlatformManipulation -> PolicyInViolation.PlatformManipulation,
-    MisinfoCivic -> PolicyInViolation.MisinformationCivic,
-    MisinfoCrisis -> PolicyInViolation.AbusePolicyUkraineCrisisMisinformation,
-    MisinfoGeneric -> PolicyInViolation.MisinformationGeneric,
-    MisinfoMedical -> PolicyInViolation.MisinformationMedical,
+  v-vaw weasontopowicyinviowation: m-map[weason, XD powicyinviowation] = m-map(
+    abuseepisodic -> powicyinviowation.abusepowicyepisodic, (U ﹏ U)
+    a-abuseepisodicencouwagesewfhawm -> p-powicyinviowation.abusepowicyepisodicencouwagesewfhawm, (˘ω˘)
+    abuseepisodichatefuwconduct -> powicyinviowation.abusepowicyepisodichatefuwconduct, UwU
+    abusegwatuitousgowe -> p-powicyinviowation.abusepowicygwatuitousgowe, >_<
+    abusegwowificationofviowence -> powicyinviowation.abusepowicygwowificationofviowence, σωσ
+    abusemobhawassment -> powicyinviowation.abusepowicyencouwagemobhawassment, 🥺
+    a-abusemomentofdeathowdeceasedusew -> powicyinviowation.abusepowicymomentofdeathdeceasedusew, 🥺
+    a-abusepwivateinfowmation -> p-powicyinviowation.abusepowicypwivateinfowmation, ʘwʘ
+    a-abusewighttopwivacy -> powicyinviowation.abusepowicywighttopwivacy, :3
+    a-abusethweattoexpose -> p-powicyinviowation.abusepowicythweattoexpose, (U ﹏ U)
+    a-abuseviowentsexuawconduct -> p-powicyinviowation.abusepowicyviowentsexuawconduct, (U ﹏ U)
+    abuseviowentthweathatefuwconduct -> powicyinviowation.abusepowicyviowentthweatshatefuwconduct, ʘwʘ
+    a-abuseviowentthweatowbounty -> p-powicyinviowation.abusepowicyviowentthweatowbounty, >w<
+    o-oneoff -> p-powicyinviowation.oneoff, rawr x3
+    v-votingmisinfowmation -> powicyinviowation.misinfowmationvoting, OwO
+    hackedmatewiaws -> powicyinviowation.hackedmatewiaws, ^•ﻌ•^
+    s-scams -> powicyinviowation.scam, >_<
+    pwatfowmmanipuwation -> powicyinviowation.pwatfowmmanipuwation, OwO
+    misinfocivic -> powicyinviowation.misinfowmationcivic, >_<
+    misinfocwisis -> p-powicyinviowation.abusepowicyukwainecwisismisinfowmation, (ꈍᴗꈍ)
+    misinfogenewic -> powicyinviowation.misinfowmationgenewic, >w<
+    misinfomedicaw -> p-powicyinviowation.misinfowmationmedicaw, (U ﹏ U)
   )
 
-  val ReasonToSafetyResultReason: Map[Reason, SafetyResultReason] = Map(
-    AbuseEpisodic -> SafetyResultReason.Episodic,
-    AbuseEpisodicEncourageSelfHarm -> SafetyResultReason.AbuseEpisodicEncourageSelfHarm,
-    AbuseEpisodicHatefulConduct -> SafetyResultReason.AbuseEpisodicHatefulConduct,
-    AbuseGratuitousGore -> SafetyResultReason.AbuseGratuitousGore,
-    AbuseGlorificationOfViolence -> SafetyResultReason.AbuseGlorificationOfViolence,
-    AbuseMobHarassment -> SafetyResultReason.AbuseMobHarassment,
-    AbuseMomentOfDeathOrDeceasedUser -> SafetyResultReason.AbuseMomentOfDeathOrDeceasedUser,
-    AbusePrivateInformation -> SafetyResultReason.AbusePrivateInformation,
-    AbuseRightToPrivacy -> SafetyResultReason.AbuseRightToPrivacy,
-    AbuseThreatToExpose -> SafetyResultReason.AbuseThreatToExpose,
-    AbuseViolentSexualConduct -> SafetyResultReason.AbuseViolentSexualConduct,
-    AbuseViolentThreatHatefulConduct -> SafetyResultReason.AbuseViolentThreatHatefulConduct,
-    AbuseViolentThreatOrBounty -> SafetyResultReason.AbuseViolentThreatOrBounty,
-    OneOff -> SafetyResultReason.OneOff,
-    VotingMisinformation -> SafetyResultReason.VotingMisinformation,
-    HackedMaterials -> SafetyResultReason.HackedMaterials,
-    Scams -> SafetyResultReason.Scams,
-    PlatformManipulation -> SafetyResultReason.PlatformManipulation,
-    MisinfoCivic -> SafetyResultReason.MisinfoCivic,
-    MisinfoCrisis -> SafetyResultReason.MisinfoCrisis,
-    MisinfoGeneric -> SafetyResultReason.MisinfoGeneric,
-    MisinfoMedical -> SafetyResultReason.MisinfoMedical,
-    IpiDevelopmentOnly -> SafetyResultReason.DevelopmentOnlyPublicInterest
+  v-vaw weasontosafetywesuwtweason: m-map[weason, ^^ safetywesuwtweason] = m-map(
+    abuseepisodic -> s-safetywesuwtweason.episodic, (U ﹏ U)
+    a-abuseepisodicencouwagesewfhawm -> safetywesuwtweason.abuseepisodicencouwagesewfhawm, :3
+    abuseepisodichatefuwconduct -> safetywesuwtweason.abuseepisodichatefuwconduct, (✿oωo)
+    abusegwatuitousgowe -> safetywesuwtweason.abusegwatuitousgowe, XD
+    a-abusegwowificationofviowence -> safetywesuwtweason.abusegwowificationofviowence, >w<
+    a-abusemobhawassment -> safetywesuwtweason.abusemobhawassment, òωó
+    abusemomentofdeathowdeceasedusew -> s-safetywesuwtweason.abusemomentofdeathowdeceasedusew, (ꈍᴗꈍ)
+    a-abusepwivateinfowmation -> safetywesuwtweason.abusepwivateinfowmation, rawr x3
+    abusewighttopwivacy -> s-safetywesuwtweason.abusewighttopwivacy, rawr x3
+    a-abusethweattoexpose -> safetywesuwtweason.abusethweattoexpose, σωσ
+    a-abuseviowentsexuawconduct -> s-safetywesuwtweason.abuseviowentsexuawconduct, (ꈍᴗꈍ)
+    abuseviowentthweathatefuwconduct -> safetywesuwtweason.abuseviowentthweathatefuwconduct, rawr
+    abuseviowentthweatowbounty -> safetywesuwtweason.abuseviowentthweatowbounty, ^^;;
+    o-oneoff -> safetywesuwtweason.oneoff, rawr x3
+    v-votingmisinfowmation -> s-safetywesuwtweason.votingmisinfowmation, (ˆ ﻌ ˆ)♡
+    hackedmatewiaws -> s-safetywesuwtweason.hackedmatewiaws,
+    s-scams -> safetywesuwtweason.scams, σωσ
+    p-pwatfowmmanipuwation -> safetywesuwtweason.pwatfowmmanipuwation,
+    misinfocivic -> safetywesuwtweason.misinfocivic, (U ﹏ U)
+    misinfocwisis -> safetywesuwtweason.misinfocwisis, >w<
+    m-misinfogenewic -> s-safetywesuwtweason.misinfogenewic, σωσ
+    misinfomedicaw -> safetywesuwtweason.misinfomedicaw, nyaa~~
+    ipidevewopmentonwy -> s-safetywesuwtweason.devewopmentonwypubwicintewest
   )
 
-  val Reasons: Set[Reason] = ReasonToSafetyResultReason.keySet
-  val SafetyResultReasons: Set[SafetyResultReason] = ReasonToSafetyResultReason.values.toSet
+  v-vaw weasons: set[weason] = weasontosafetywesuwtweason.keyset
+  vaw safetywesuwtweasons: s-set[safetywesuwtweason] = weasontosafetywesuwtweason.vawues.toset
 
-  val SafetyResultReasonToReason: Map[SafetyResultReason, Reason] =
-    ReasonToSafetyResultReason.map(t => t._2 -> t._1)
+  vaw safetywesuwtweasontoweason: map[safetywesuwtweason, 🥺 weason] =
+    w-weasontosafetywesuwtweason.map(t => t._2 -> t._1)
 
-  val EligibleTweetSafetyLabelTypes: Seq[TweetSafetyLabelType] = Seq(
-    TweetSafetyLabelType.LowQuality,
-    TweetSafetyLabelType.MisinfoCivic,
-    TweetSafetyLabelType.MisinfoGeneric,
-    TweetSafetyLabelType.MisinfoMedical,
-    TweetSafetyLabelType.MisinfoCrisis,
-    TweetSafetyLabelType.IpiDevelopmentOnly
+  vaw e-ewigibwetweetsafetywabewtypes: s-seq[tweetsafetywabewtype] = seq(
+    tweetsafetywabewtype.wowquawity, rawr x3
+    tweetsafetywabewtype.misinfocivic, σωσ
+    t-tweetsafetywabewtype.misinfogenewic, (///ˬ///✿)
+    t-tweetsafetywabewtype.misinfomedicaw, (U ﹏ U)
+    tweetsafetywabewtype.misinfocwisis, ^^;;
+    tweetsafetywabewtype.ipidevewopmentonwy
   )
 
-  private val EligibleTweetSafetyLabelTypesSet = EligibleTweetSafetyLabelTypes.toSet
+  pwivate v-vaw ewigibwetweetsafetywabewtypesset = ewigibwetweetsafetywabewtypes.toset
 
-  def extractTweetSafetyLabel(featureMap: Map[Feature[_], _]): Option[TweetSafetyLabel] = {
-    val tweetSafetyLabels = featureMap(TweetSafetyLabels)
-      .asInstanceOf[Seq[TweetSafetyLabel]]
-      .flatMap { tsl =>
-        if (PublicInterest.EligibleTweetSafetyLabelTypesSet.contains(tsl.labelType)) {
-          Some(tsl.labelType -> tsl)
-        } else {
-          None
+  d-def extwacttweetsafetywabew(featuwemap: map[featuwe[_], 🥺 _]): option[tweetsafetywabew] = {
+    vaw tweetsafetywabews = f-featuwemap(tweetsafetywabews)
+      .asinstanceof[seq[tweetsafetywabew]]
+      .fwatmap { tsw =>
+        i-if (pubwicintewest.ewigibwetweetsafetywabewtypesset.contains(tsw.wabewtype)) {
+          s-some(tsw.wabewtype -> tsw)
+        } ewse {
+          none
         }
       }
-      .toMap
+      .tomap
 
-    PublicInterest.EligibleTweetSafetyLabelTypes.flatMap(tweetSafetyLabels.get).headOption
+    p-pubwicintewest.ewigibwetweetsafetywabewtypes.fwatmap(tweetsafetywabews.get).headoption
   }
 
-  def policyToReason(policy: PolicyInViolation): Reason =
-    policyInViolationToReason.get(policy).getOrElse(PolicyConfig.DefaultReason._1)
+  def powicytoweason(powicy: p-powicyinviowation): w-weason =
+    p-powicyinviowationtoweason.get(powicy).getowewse(powicyconfig.defauwtweason._1)
 
-  def reasonToPolicy(reason: Reason): PolicyInViolation =
-    reasonToPolicyInViolation.get(reason).getOrElse(PolicyConfig.DefaultPolicyInViolation)
+  def weasontopowicy(weason: weason): p-powicyinviowation =
+    w-weasontopowicyinviowation.get(weason).getowewse(powicyconfig.defauwtpowicyinviowation)
 }
 
-class PublicInterestActionBuilder[T <: Action]() extends ActionBuilder[T] {
-  def actionType: Class[_] = classOf[InterstitialLimitedEngagements]
+cwass pubwicintewestactionbuiwdew[t <: a-action]() extends a-actionbuiwdew[t] {
+  d-def actiontype: cwass[_] = cwassof[intewstitiawwimitedengagements]
 
-  override val actionSeverity = 11
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-    val (reason, limitedEngagementReason) =
-      PublicInterest.extractTweetSafetyLabel(featureMap).map { tweetSafetyLabel =>
-        (tweetSafetyLabel.labelType, tweetSafetyLabel.source)
+  o-ovewwide vaw actionsevewity = 11
+  d-def buiwd(evawuationcontext: e-evawuationcontext, òωó featuwemap: map[featuwe[_], XD _]): wuwewesuwt = {
+    vaw (weason, :3 w-wimitedengagementweason) =
+      p-pubwicintewest.extwacttweetsafetywabew(featuwemap).map { t-tweetsafetywabew =>
+        (tweetsafetywabew.wabewtype, (U ﹏ U) t-tweetsafetywabew.souwce)
       } match {
-        case Some((TweetSafetyLabelType.LowQuality, source)) =>
-          source match {
-            case Some(source) =>
-              SafetyResultReason.valueOf(source.name) match {
-                case Some(matchedReason)
-                    if PublicInterest.SafetyResultReasonToReason.contains(matchedReason) =>
+        c-case some((tweetsafetywabewtype.wowquawity, >w< souwce)) =>
+          souwce match {
+            case some(souwce) =>
+              safetywesuwtweason.vawueof(souwce.name) match {
+                c-case some(matchedweason)
+                    if pubwicintewest.safetywesuwtweasontoweason.contains(matchedweason) =>
                   (
-                    PublicInterest.SafetyResultReasonToReason(matchedReason),
-                    Some(LimitedEngagementReason.NonCompliant))
-                case _ => PublicInterest.PolicyConfig.DefaultReason
+                    p-pubwicintewest.safetywesuwtweasontoweason(matchedweason), /(^•ω•^)
+                    some(wimitedengagementweason.noncompwiant))
+                c-case _ => pubwicintewest.powicyconfig.defauwtweason
               }
-            case _ => PublicInterest.PolicyConfig.DefaultReason
+            c-case _ => pubwicintewest.powicyconfig.defauwtweason
           }
 
 
-        case Some((TweetSafetyLabelType.MisinfoCivic, source)) =>
-          (Reason.MisinfoCivic, LimitedEngagementReason.fromString(source.map(_.name)))
+        c-case some((tweetsafetywabewtype.misinfocivic, (⑅˘꒳˘) s-souwce)) =>
+          (weason.misinfocivic, ʘwʘ w-wimitedengagementweason.fwomstwing(souwce.map(_.name)))
 
-        case Some((TweetSafetyLabelType.MisinfoCrisis, source)) =>
-          (Reason.MisinfoCrisis, LimitedEngagementReason.fromString(source.map(_.name)))
+        c-case some((tweetsafetywabewtype.misinfocwisis, rawr x3 s-souwce)) =>
+          (weason.misinfocwisis, (˘ω˘) wimitedengagementweason.fwomstwing(souwce.map(_.name)))
 
-        case Some((TweetSafetyLabelType.MisinfoGeneric, source)) =>
-          (Reason.MisinfoGeneric, LimitedEngagementReason.fromString(source.map(_.name)))
+        case some((tweetsafetywabewtype.misinfogenewic, o.O souwce)) =>
+          (weason.misinfogenewic, 😳 wimitedengagementweason.fwomstwing(souwce.map(_.name)))
 
-        case Some((TweetSafetyLabelType.MisinfoMedical, source)) =>
-          (Reason.MisinfoMedical, LimitedEngagementReason.fromString(source.map(_.name)))
+        case some((tweetsafetywabewtype.misinfomedicaw, o.O souwce)) =>
+          (weason.misinfomedicaw, ^^;; w-wimitedengagementweason.fwomstwing(souwce.map(_.name)))
 
-        case Some((TweetSafetyLabelType.IpiDevelopmentOnly, _)) =>
-          (Reason.IpiDevelopmentOnly, Some(LimitedEngagementReason.NonCompliant))
+        c-case s-some((tweetsafetywabewtype.ipidevewopmentonwy, ( ͡o ω ͡o ) _)) =>
+          (weason.ipidevewopmentonwy, some(wimitedengagementweason.noncompwiant))
 
-        case _ =>
-          PublicInterest.PolicyConfig.DefaultReason
+        c-case _ =>
+          pubwicintewest.powicyconfig.defauwtweason
       }
 
-    RuleResult(InterstitialLimitedEngagements(reason, limitedEngagementReason), Evaluated)
+    wuwewesuwt(intewstitiawwimitedengagements(weason, ^^;; wimitedengagementweason), ^^;; e-evawuated)
   }
 }
 
-class PublicInterestComplianceTweetNoticeActionBuilder
-    extends ActionBuilder[ComplianceTweetNoticePreEnrichment] {
+c-cwass pubwicintewestcompwiancetweetnoticeactionbuiwdew
+    e-extends actionbuiwdew[compwiancetweetnoticepweenwichment] {
 
-  override def actionType: Class[_] = classOf[ComplianceTweetNoticePreEnrichment]
+  ovewwide def actiontype: cwass[_] = c-cwassof[compwiancetweetnoticepweenwichment]
 
-  override val actionSeverity = 2
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-    val reason =
-      PublicInterest.extractTweetSafetyLabel(featureMap).map { tweetSafetyLabel =>
-        (tweetSafetyLabel.labelType, tweetSafetyLabel.source)
-      } match {
-        case Some((TweetSafetyLabelType.LowQuality, source)) =>
-          source match {
-            case Some(source) =>
-              SafetyResultReason.valueOf(source.name) match {
-                case Some(matchedReason)
-                    if PublicInterest.SafetyResultReasonToReason.contains(matchedReason) =>
-                  PublicInterest.SafetyResultReasonToReason(matchedReason)
-                case _ => PublicInterest.PolicyConfig.DefaultReason._1
+  o-ovewwide vaw actionsevewity = 2
+  d-def buiwd(evawuationcontext: e-evawuationcontext, XD featuwemap: map[featuwe[_], 🥺 _]): wuwewesuwt = {
+    vaw weason =
+      p-pubwicintewest.extwacttweetsafetywabew(featuwemap).map { t-tweetsafetywabew =>
+        (tweetsafetywabew.wabewtype, (///ˬ///✿) t-tweetsafetywabew.souwce)
+      } m-match {
+        c-case some((tweetsafetywabewtype.wowquawity, (U ᵕ U❁) souwce)) =>
+          s-souwce match {
+            c-case some(souwce) =>
+              safetywesuwtweason.vawueof(souwce.name) m-match {
+                c-case some(matchedweason)
+                    if pubwicintewest.safetywesuwtweasontoweason.contains(matchedweason) =>
+                  p-pubwicintewest.safetywesuwtweasontoweason(matchedweason)
+                case _ => pubwicintewest.powicyconfig.defauwtweason._1
               }
-            case _ => PublicInterest.PolicyConfig.DefaultReason._1
+            case _ => p-pubwicintewest.powicyconfig.defauwtweason._1
           }
 
 
-        case Some((TweetSafetyLabelType.MisinfoCivic, _)) =>
-          Reason.MisinfoCivic
+        case some((tweetsafetywabewtype.misinfocivic, ^^;; _)) =>
+          w-weason.misinfocivic
 
-        case Some((TweetSafetyLabelType.MisinfoCrisis, _)) =>
-          Reason.MisinfoCrisis
+        c-case some((tweetsafetywabewtype.misinfocwisis, ^^;; _)) =>
+          weason.misinfocwisis
 
-        case Some((TweetSafetyLabelType.MisinfoGeneric, _)) =>
-          Reason.MisinfoGeneric
+        case s-some((tweetsafetywabewtype.misinfogenewic, rawr _)) =>
+          weason.misinfogenewic
 
-        case Some((TweetSafetyLabelType.MisinfoMedical, _)) =>
-          Reason.MisinfoMedical
+        case some((tweetsafetywabewtype.misinfomedicaw, (˘ω˘) _)) =>
+          w-weason.misinfomedicaw
 
-        case Some((TweetSafetyLabelType.IpiDevelopmentOnly, _)) =>
-          Reason.IpiDevelopmentOnly
+        case s-some((tweetsafetywabewtype.ipidevewopmentonwy, 🥺 _)) =>
+          w-weason.ipidevewopmentonwy
 
         case _ =>
-          PublicInterest.PolicyConfig.DefaultReason._1
+          pubwicintewest.powicyconfig.defauwtweason._1
       }
 
-    RuleResult(
-      ComplianceTweetNoticePreEnrichment(reason, ComplianceTweetNoticeEventType.PublicInterest),
-      Evaluated)
+    wuwewesuwt(
+      c-compwiancetweetnoticepweenwichment(weason, nyaa~~ compwiancetweetnoticeeventtype.pubwicintewest), :3
+      evawuated)
   }
 }
 
-class PublicInterestDropActionBuilder extends ActionBuilder[Drop] {
+c-cwass p-pubwicintewestdwopactionbuiwdew extends actionbuiwdew[dwop] {
 
-  override def actionType: Class[_] = classOf[Drop]
+  o-ovewwide def actiontype: cwass[_] = c-cwassof[dwop]
 
-  override val actionSeverity = 16
-  private def toRuleResult: Reason => RuleResult = Memoize { r => RuleResult(Drop(r), Evaluated) }
+  o-ovewwide vaw actionsevewity = 16
+  pwivate d-def towuwewesuwt: weason => wuwewesuwt = memoize { w-w => wuwewesuwt(dwop(w), /(^•ω•^) e-evawuated) }
 
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-    val reason = PublicInterest.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-      case Some(TweetSafetyLabelType.LowQuality) =>
-        Reason.OneOff
+  def b-buiwd(evawuationcontext: evawuationcontext, ^•ﻌ•^ f-featuwemap: m-map[featuwe[_], UwU _]): w-wuwewesuwt = {
+    vaw weason = pubwicintewest.extwacttweetsafetywabew(featuwemap).map(_.wabewtype) match {
+      case some(tweetsafetywabewtype.wowquawity) =>
+        weason.oneoff
 
-      case Some(TweetSafetyLabelType.MisinfoCivic) =>
-        Reason.MisinfoCivic
+      case some(tweetsafetywabewtype.misinfocivic) =>
+        weason.misinfocivic
 
-      case Some(TweetSafetyLabelType.MisinfoCrisis) =>
-        Reason.MisinfoCrisis
+      case some(tweetsafetywabewtype.misinfocwisis) =>
+        weason.misinfocwisis
 
-      case Some(TweetSafetyLabelType.MisinfoGeneric) =>
-        Reason.MisinfoGeneric
+      case some(tweetsafetywabewtype.misinfogenewic) =>
+        weason.misinfogenewic
 
-      case Some(TweetSafetyLabelType.MisinfoMedical) =>
-        Reason.MisinfoMedical
+      c-case some(tweetsafetywabewtype.misinfomedicaw) =>
+        w-weason.misinfomedicaw
 
       case _ =>
-        Reason.OneOff
+        weason.oneoff
     }
 
-    toRuleResult(reason)
+    t-towuwewesuwt(weason)
   }
 }
 
-object PublicInterestRules {
+o-object pubwicintewestwuwes {
 
-  object AbusePolicyEpisodicTweetLabelInterstitialRule
-      extends Rule(
-        new PublicInterestActionBuilder(),
-        And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
-          Or(
-            PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
+  o-object abusepowicyepisodictweetwabewintewstitiawwuwe
+      extends wuwe(
+        n-nyew pubwicintewestactionbuiwdew(), 😳😳😳
+        and(
+          t-tweetcomposedaftew(pubwicintewest.powicyconfig.wowquawitypwoxywabewstawt), OwO
+          o-ow(
+            pubwicintewest.ewigibwetweetsafetywabewtypes.map(tweethaswabew(_)): _*
           )
         )
       )
 
-  object AbusePolicyEpisodicTweetLabelComplianceTweetNoticeRule
-      extends Rule(
-        new PublicInterestComplianceTweetNoticeActionBuilder(),
-        And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
-          Or(
-            PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
+  o-object abusepowicyepisodictweetwabewcompwiancetweetnoticewuwe
+      extends wuwe(
+        n-nyew p-pubwicintewestcompwiancetweetnoticeactionbuiwdew(), ^•ﻌ•^
+        and(
+          tweetcomposedaftew(pubwicintewest.powicyconfig.wowquawitypwoxywabewstawt), (ꈍᴗꈍ)
+          o-ow(
+            p-pubwicintewest.ewigibwetweetsafetywabewtypes.map(tweethaswabew(_)): _*
           )
         )
       )
 
-  object AbusePolicyEpisodicTweetLabelDropRule
-      extends Rule(
-        new PublicInterestDropActionBuilder(),
-        And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
-          Or(
-            PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
+  o-object abusepowicyepisodictweetwabewdwopwuwe
+      e-extends w-wuwe(
+        n-new pubwicintewestdwopactionbuiwdew(), (⑅˘꒳˘)
+        a-and(
+          tweetcomposedaftew(pubwicintewest.powicyconfig.wowquawitypwoxywabewstawt), (⑅˘꒳˘)
+          o-ow(
+            p-pubwicintewest.ewigibwetweetsafetywabewtypes.map(tweethaswabew(_)): _*
           )
         )
       )
 
-  object SearchIpiSafeSearchWithoutUserInQueryDropRule
-      extends Rule(
-        new PublicInterestDropActionBuilder(),
-        And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
-          Or(
-            PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
-          ),
-          LoggedOutOrViewerOptInFiltering,
-          Not(SearchQueryHasUser)
+  object s-seawchipisafeseawchwithoutusewinquewydwopwuwe
+      e-extends wuwe(
+        n-nyew pubwicintewestdwopactionbuiwdew(), (ˆ ﻌ ˆ)♡
+        a-and(
+          tweetcomposedaftew(pubwicintewest.powicyconfig.wowquawitypwoxywabewstawt), /(^•ω•^)
+          ow(
+            p-pubwicintewest.ewigibwetweetsafetywabewtypes.map(tweethaswabew(_)): _*
+          ), òωó
+          woggedoutowviewewoptinfiwtewing,
+          nyot(seawchquewyhasusew)
         )
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(
-      EnableSearchIpiSafeSearchWithoutUserInQueryDropRule)
+    o-ovewwide d-def enabwed: s-seq[wuwepawam[boowean]] = seq(
+      e-enabweseawchipisafeseawchwithoutusewinquewydwopwuwe)
   }
 }

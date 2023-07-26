@@ -1,102 +1,102 @@
-package com.twitter.tweetypie
-package handler
+package com.twittew.tweetypie
+package h-handwew
 
-import com.twitter.tco_util.TcoUrl
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.thriftscala.entities.EntityExtractor
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.tweettext.IndexConverter
-import com.twitter.tweetypie.tweettext.Offset
-import com.twitter.tweetypie.tweettext.Preprocessor._
+impowt c-com.twittew.tco_utiw.tcouww
+i-impowt com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.thwiftscawa.entities.entityextwactow
+i-impowt com.twittew.tweetypie.thwiftscawa._
+i-impowt com.twittew.tweetypie.tweettext.indexconvewtew
+i-impowt com.twittew.tweetypie.tweettext.offset
+i-impowt com.twittew.tweetypie.tweettext.pwepwocessow._
 
-object UrlEntityBuilder {
-  import UpstreamFailure.UrlShorteningFailure
-  import UrlShortener.Context
+object uwwentitybuiwdew {
+  impowt upstweamfaiwuwe.uwwshowteningfaiwuwe
+  i-impowt uwwshowtenew.context
 
   /**
-   * Extracts URLs from the given tweet text, shortens them, and returns an updated tweet
-   * text that contains the shortened URLs, along with the generated `UrlEntity`s.
+   * extwacts uwws fwom the given tweet t-text, (U ﹏ U) showtens them, mya and wetuwns a-an updated tweet
+   * text that contains the showtened uwws, ʘwʘ a-awong with the genewated `uwwentity`s. (˘ω˘)
    */
-  type Type = FutureArrow[(String, Context), (String, Seq[UrlEntity])]
+  type type = futuweawwow[(stwing, (U ﹏ U) c-context), ^•ﻌ•^ (stwing, s-seq[uwwentity])]
 
-  def fromShortener(shortener: UrlShortener.Type): Type =
-    FutureArrow {
-      case (text, ctx) =>
-        Future
-          .collect(EntityExtractor.extractAllUrls(text).map(shortenEntity(shortener, _, ctx)))
-          .map(_.flatMap(_.toSeq))
-          .map(updateTextAndUrls(text, _)(replaceInvisiblesWithWhitespace))
+  def fwomshowtenew(showtenew: uwwshowtenew.type): type =
+    futuweawwow {
+      c-case (text, (˘ω˘) ctx) =>
+        futuwe
+          .cowwect(entityextwactow.extwactawwuwws(text).map(showtenentity(showtenew, :3 _, ctx)))
+          .map(_.fwatmap(_.toseq))
+          .map(updatetextanduwws(text, ^^;; _)(wepwaceinvisibweswithwhitespace))
     }
 
   /**
-   * Update a url entity with tco-ed url
+   * update a-a uww entity with tco-ed uww
    *
-   * @param urlEntity an url entity with long url in the `url` field
-   * @param ctx additional data needed to build the shortener request
-   * @return an updated url entity with tco-ed url in the `url` field,
-   *         and long url in the `expanded` field
+   * @pawam uwwentity a-an uww e-entity with wong u-uww in the `uww` f-fiewd
+   * @pawam ctx additionaw data nyeeded t-to buiwd the showtenew wequest
+   * @wetuwn an updated u-uww entity with tco-ed uww in the `uww` fiewd, 🥺
+   *         and wong uww in the `expanded` fiewd
    */
-  private def shortenEntity(
-    shortener: UrlShortener.Type,
-    entity: UrlEntity,
-    ctx: Context
-  ): Future[Option[UrlEntity]] =
-    shortener((TcoUrl.normalizeProtocol(entity.url), ctx))
-      .map { urlData =>
-        Some(
-          entity.copy(
-            url = urlData.shortUrl,
-            expanded = Some(urlData.longUrl),
-            display = Some(urlData.displayText)
+  p-pwivate def showtenentity(
+    showtenew: uwwshowtenew.type, (⑅˘꒳˘)
+    e-entity: uwwentity, nyaa~~
+    c-ctx: context
+  ): f-futuwe[option[uwwentity]] =
+    showtenew((tcouww.nowmawizepwotocow(entity.uww), :3 ctx))
+      .map { uwwdata =>
+        s-some(
+          e-entity.copy(
+            uww = u-uwwdata.showtuww, ( ͡o ω ͡o )
+            e-expanded = some(uwwdata.wonguww), mya
+            d-dispway = some(uwwdata.dispwaytext)
           )
         )
       }
-      .rescue {
-        // fail tweets with invalid urls
-        case UrlShortener.InvalidUrlError =>
-          Future.exception(TweetCreateFailure.State(TweetCreateState.InvalidUrl))
-        // fail tweets with malware urls
-        case UrlShortener.MalwareUrlError =>
-          Future.exception(TweetCreateFailure.State(TweetCreateState.MalwareUrl))
-        // propagate OverCapacity
-        case e @ OverCapacity(_) => Future.exception(e)
-        // convert any other failure into UrlShorteningFailure
-        case e => Future.exception(UrlShorteningFailure(e))
+      .wescue {
+        // f-faiw tweets with invawid uwws
+        case u-uwwshowtenew.invawiduwwewwow =>
+          futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.invawiduww))
+        // f-faiw tweets with mawwawe uwws
+        c-case uwwshowtenew.mawwaweuwwewwow =>
+          f-futuwe.exception(tweetcweatefaiwuwe.state(tweetcweatestate.mawwaweuww))
+        // pwopagate ovewcapacity
+        case e @ ovewcapacity(_) => futuwe.exception(e)
+        // convewt any othew f-faiwuwe into u-uwwshowteningfaiwuwe
+        case e => futuwe.exception(uwwshowteningfaiwuwe(e))
       }
 
   /**
-   * Applies a text-modification function to all parts of the text not found within a UrlEntity,
-   * and then updates all the UrlEntity indices as necessary.
+   * a-appwies a t-text-modification f-function to aww pawts of the text nyot found within a uwwentity, (///ˬ///✿)
+   * a-and then updates aww the uwwentity indices as nyecessawy. (˘ω˘)
    */
-  def updateTextAndUrls(
-    text: String,
-    urlEntities: Seq[UrlEntity]
+  def updatetextanduwws(
+    t-text: stwing, ^^;;
+    uwwentities: s-seq[uwwentity]
   )(
-    textMod: String => String
-  ): (String, Seq[UrlEntity]) = {
-    var offsetInText = Offset.CodePoint(0)
-    var offsetInNewText = Offset.CodePoint(0)
-    val newText = new StringBuilder
-    val newUrlEntities = Seq.newBuilder[UrlEntity]
-    val indexConverter = new IndexConverter(text)
+    t-textmod: s-stwing => stwing
+  ): (stwing, (✿oωo) s-seq[uwwentity]) = {
+    v-vaw o-offsetintext = o-offset.codepoint(0)
+    vaw offsetinnewtext = offset.codepoint(0)
+    v-vaw nyewtext = n-nyew stwingbuiwdew
+    v-vaw n-nyewuwwentities = s-seq.newbuiwdew[uwwentity]
+    vaw indexconvewtew = new indexconvewtew(text)
 
-    urlEntities.foreach { e =>
-      val nonUrl = textMod(indexConverter.substringByCodePoints(offsetInText.toInt, e.fromIndex))
-      newText.append(nonUrl)
-      newText.append(e.url)
-      offsetInText = Offset.CodePoint(e.toIndex.toInt)
+    uwwentities.foweach { e-e =>
+      vaw nyonuww = textmod(indexconvewtew.substwingbycodepoints(offsetintext.toint, (U ﹏ U) e.fwomindex))
+      nyewtext.append(nonuww)
+      nyewtext.append(e.uww)
+      o-offsetintext = offset.codepoint(e.toindex.toint)
 
-      val urlFrom = offsetInNewText + Offset.CodePoint.length(nonUrl)
-      val urlTo = urlFrom + Offset.CodePoint.length(e.url)
-      val newEntity =
-        e.copy(fromIndex = urlFrom.toShort, toIndex = urlTo.toShort)
+      vaw uwwfwom = offsetinnewtext + o-offset.codepoint.wength(nonuww)
+      v-vaw uwwto = uwwfwom + o-offset.codepoint.wength(e.uww)
+      vaw nyewentity =
+        e-e.copy(fwomindex = uwwfwom.toshowt, -.- t-toindex = u-uwwto.toshowt)
 
-      newUrlEntities += newEntity
-      offsetInNewText = urlTo
+      nyewuwwentities += nyewentity
+      offsetinnewtext = uwwto
     }
 
-    newText.append(textMod(indexConverter.substringByCodePoints(offsetInText.toInt)))
+    nyewtext.append(textmod(indexconvewtew.substwingbycodepoints(offsetintext.toint)))
 
-    (newText.toString, newUrlEntities.result())
+    (newtext.tostwing, ^•ﻌ•^ nyewuwwentities.wesuwt())
   }
 }

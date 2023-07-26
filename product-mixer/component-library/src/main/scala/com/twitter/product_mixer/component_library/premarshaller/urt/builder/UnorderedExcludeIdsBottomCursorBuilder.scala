@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwt.buiwdew
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtunowdewedexcwudeidscuwsow
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.cuwsow.uwtcuwsowsewiawizew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinecuwsowsewiawizew
+i-impowt com.twittew.timewines.configapi.pawam
 
 /**
- * Builds [[UrtUnorderedExcludeIdsCursor]] in the Bottom position
+ * buiwds [[uwtunowdewedexcwudeidscuwsow]] in the bottom position
  *
- * @param excludedIdsMaxLengthParam The maximum length of the cursor
- * @param excludeIdsSelector Specifies the entry Ids to populate on the `excludedIds` field
- * @param serializer Converts the cursor to an encoded string
+ * @pawam excwudedidsmaxwengthpawam the m-maximum wength of the cuwsow
+ * @pawam excwudeidssewectow s-specifies the entwy i-ids to popuwate on the `excwudedids` fiewd
+ * @pawam sewiawizew c-convewts the cuwsow to an encoded s-stwing
  */
-case class UnorderedExcludeIdsBottomCursorBuilder(
-  override val excludedIdsMaxLengthParam: Param[Int],
-  excludeIdsSelector: PartialFunction[UniversalNoun[_], Long],
-  override val serializer: PipelineCursorSerializer[UrtUnorderedExcludeIdsCursor] =
-    UrtCursorSerializer)
-    extends BaseUnorderedExcludeIdsBottomCursorBuilder {
+case c-cwass unowdewedexcwudeidsbottomcuwsowbuiwdew(
+  ovewwide vaw excwudedidsmaxwengthpawam: pawam[int], rawr x3
+  excwudeidssewectow: pawtiawfunction[univewsawnoun[_], mya w-wong], nyaa~~
+  ovewwide vaw sewiawizew: pipewinecuwsowsewiawizew[uwtunowdewedexcwudeidscuwsow] =
+    uwtcuwsowsewiawizew)
+    e-extends baseunowdewedexcwudeidsbottomcuwsowbuiwdew {
 
-  override def excludeEntriesCollector(entries: Seq[TimelineEntry]): Seq[Long] =
-    entries.collect(excludeIdsSelector)
+  ovewwide d-def excwudeentwiescowwectow(entwies: s-seq[timewineentwy]): s-seq[wong] =
+    e-entwies.cowwect(excwudeidssewectow)
 }

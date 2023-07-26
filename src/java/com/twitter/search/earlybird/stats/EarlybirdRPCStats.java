@@ -1,55 +1,55 @@
-package com.twitter.search.earlybird.stats;
+package com.twittew.seawch.eawwybiwd.stats;
 
-import java.util.concurrent.TimeUnit;
+impowt j-java.utiw.concuwwent.timeunit;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchRequestStats;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt c-com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.common.metwics.seawchwequeststats;
 
 /**
- * SearchRequestStats with earlybird-specific additional stats.
+ * s-seawchwequeststats with e-eawwybiwd-specific a-additionaw stats. -.-
  */
-public final class EarlybirdRPCStats {
-  private final SearchRequestStats requestStats;
-  // Number of queries that were terminated early.
-  private final SearchCounter earlyTerminatedRequests;
+pubwic finaw cwass eawwybiwdwpcstats {
+  pwivate finaw s-seawchwequeststats wequeststats;
+  // nyumbew o-of quewies that wewe tewminated e-eawwy. 😳
+  pwivate finaw seawchcountew eawwytewminatedwequests;
 
-  // We do not count client error in the response error rate, but track it separately.
-  private final SearchRateCounter responseClientErrors;
+  // we do nyot c-count cwient ewwow in the wesponse e-ewwow wate, mya b-but twack it sepawatewy. (˘ω˘)
+  pwivate finaw seawchwatecountew wesponsecwientewwows;
 
-  public EarlybirdRPCStats(String name) {
-    requestStats = SearchRequestStats.export(name, TimeUnit.MICROSECONDS, true, true);
-    earlyTerminatedRequests = SearchCounter.export(name + "_early_terminated");
-    responseClientErrors = SearchRateCounter.export(name + "_client_error");
+  pubwic eawwybiwdwpcstats(stwing n-nyame) {
+    wequeststats = seawchwequeststats.expowt(name, >_< timeunit.micwoseconds, -.- twue, twue);
+    e-eawwytewminatedwequests = seawchcountew.expowt(name + "_eawwy_tewminated");
+    w-wesponsecwientewwows = seawchwatecountew.expowt(name + "_cwient_ewwow");
   }
 
-  public long getRequestRate() {
-    return (long) (double) requestStats.getRequestRate().read();
+  p-pubwic wong g-getwequestwate() {
+    w-wetuwn (wong) (doubwe) wequeststats.getwequestwate().wead();
   }
 
-  public long getAverageLatency() {
-    return (long) (double) requestStats.getTimerStats().read();
+  pubwic wong getavewagewatency() {
+    w-wetuwn (wong) (doubwe) wequeststats.gettimewstats().wead();
   }
 
   /**
-   * Records a completed earlybird request.
-   * @param latencyUs how long the request took to complete, in microseconds.
-   * @param resultsCount how many results were returned.
-   * @param success whether the request was successful or not.
-   * @param earlyTerminated whether the request terminated early or not.
-   * @param clientError whether the request failure is caused by client errors
+   * wecowds a compweted e-eawwybiwd wequest. 🥺
+   * @pawam watencyus how wong the wequest took to compwete, (U ﹏ U) in micwoseconds. >w<
+   * @pawam wesuwtscount how m-many wesuwts wewe wetuwned. mya
+   * @pawam s-success w-whethew the wequest w-was successfuw ow nyot. >w<
+   * @pawam eawwytewminated whethew t-the wequest tewminated e-eawwy ow not.
+   * @pawam c-cwientewwow w-whethew the wequest faiwuwe is caused b-by cwient ewwows
    */
-  public void requestComplete(long latencyUs, long resultsCount, boolean success,
-                              boolean earlyTerminated, boolean clientError) {
-    // We treat client errors as successes for top-line metrics to prevent bad client requests (like
-    // malformed queries) from dropping our success rate and generating alerts.
-    requestStats.requestComplete(latencyUs, resultsCount, success || clientError);
+  pubwic v-void wequestcompwete(wong watencyus, nyaa~~ wong wesuwtscount, (✿oωo) boowean s-success, ʘwʘ
+                              boowean e-eawwytewminated, (ˆ ﻌ ˆ)♡ boowean cwientewwow) {
+    // w-we tweat cwient e-ewwows as successes fow top-wine metwics to pwevent bad cwient wequests (wike
+    // mawfowmed quewies) fwom d-dwopping ouw success w-wate and genewating awewts. 😳😳😳
+    w-wequeststats.wequestcompwete(watencyus, :3 w-wesuwtscount, OwO s-success || cwientewwow);
 
-    if (earlyTerminated) {
-      earlyTerminatedRequests.increment();
+    if (eawwytewminated) {
+      eawwytewminatedwequests.incwement();
     }
-    if (clientError) {
-      responseClientErrors.increment();
+    i-if (cwientewwow) {
+      wesponsecwientewwows.incwement();
     }
   }
 }

@@ -1,361 +1,361 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.fwexibwe_injection_pipewine
 
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CenterCoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorDismiss
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorNavigate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCta
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCtaBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverImage
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon._
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.FollowAllMessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.LargeUserFacepileDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageImage
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepile
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Bounce
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.ButtonStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Default
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Primary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Secondary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Text
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Destructive
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Neutral
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveSecondary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DeepLink
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Dismiss
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DismissInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FollowGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageAnimationType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FullWidth
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.IconSmall
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpoint
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpointOptions
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Center
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Natural
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextCashtag
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextHashtag
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextList
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextMention
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextUser
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
+impowt com.twittew.onboawding.injections.{thwiftscawa => onboawdingthwift}
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.centewcovewhawfcovewdispwaytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewbehaviowdismiss
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewbehaviownavigate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewcta
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewctabehaviow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewhawfcovewdispwaytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.covewimage
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.hawfcovewdispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.icon._
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.fowwowawwmessageactiontype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.wawgeusewfacepiwedispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messageaction
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messageactiontype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messageimage
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messagetextaction
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.usewfacepiwe
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.bounce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.buttonstywe
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.defauwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.pwimawy
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.secondawy
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.text
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.destwuctive
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.neutwaw
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.destwuctivesecondawy
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button.destwuctivetext
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cawwback
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.deepwink
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.dismiss
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.dismissinfo
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.extewnawuww
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackaction
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.fowwowgenewawcontexttype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.genewawcontext
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imageanimationtype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagedispwaytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagevawiant
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.fuwwwidth
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.icon
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.iconsmow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.sociawcontext
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uwtendpoint
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uwtendpointoptions
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.centew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.natuwaw
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.pwain
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wefewenceobject
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextawignment
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextentity
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextfowmat
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextcashtag
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtexthashtag
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextwist
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextmention
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtextusew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.stwong
 
 /***
- * Helper class to convert onboarding thrift to product-mixer models
+ * h-hewpew cwass t-to convewt onboawding thwift to p-pwoduct-mixew m-modews
  */
-object OnboardingInjectionConversions {
+object o-onboawdinginjectionconvewsions {
 
-  def convertFeedbackInfo(
-    feedbackInfo: onboardingthrift.FeedbackInfo
-  ): FeedbackActionInfo = {
-    val actions = feedbackInfo.actions.map {
-      case onboardingthrift.FeedbackAction.DismissAction(dismissAction) =>
-        FeedbackAction(
-          Dismiss,
-          prompt = dismissAction.prompt,
-          confirmation = dismissAction.confirmation,
-          hasUndoAction = dismissAction.hasUndoAction,
-          feedbackUrl = dismissAction.feedbackUrl,
-          childFeedbackActions =
-            None, 
-          confirmationDisplayType = None,
-          clientEventInfo = None,
-          icon = None,
-          richBehavior = None,
-          subprompt = None,
-          encodedFeedbackRequest = None
+  def convewtfeedbackinfo(
+    feedbackinfo: onboawdingthwift.feedbackinfo
+  ): f-feedbackactioninfo = {
+    vaw actions = feedbackinfo.actions.map {
+      case onboawdingthwift.feedbackaction.dismissaction(dismissaction) =>
+        feedbackaction(
+          d-dismiss, (ꈍᴗꈍ)
+          pwompt = d-dismissaction.pwompt, (⑅˘꒳˘)
+          c-confiwmation = d-dismissaction.confiwmation, (⑅˘꒳˘)
+          hasundoaction = d-dismissaction.hasundoaction, (ˆ ﻌ ˆ)♡
+          f-feedbackuww = d-dismissaction.feedbackuww, /(^•ω•^)
+          c-chiwdfeedbackactions =
+            nyone, òωó 
+          confiwmationdispwaytype = nyone, (⑅˘꒳˘)
+          c-cwienteventinfo = n-nyone, (U ᵕ U❁)
+          i-icon = nyone, >w<
+          w-wichbehaviow = n-nyone, σωσ
+          subpwompt = nyone, -.-
+          encodedfeedbackwequest = n-nyone
         )
-      case onboardingthrift.FeedbackAction.UnknownUnionField(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+      case onboawdingthwift.feedbackaction.unknownunionfiewd(vawue) =>
+        thwow new unsuppowtedopewationexception(s"unknown pwoduct: $vawue")
     }
 
-    FeedbackActionInfo(
-      feedbackActions = actions,
-      feedbackMetadata = None,
-      displayContext = None,
-      clientEventInfo = None)
+    feedbackactioninfo(
+      feedbackactions = actions, o.O
+      f-feedbackmetadata = nyone, ^^
+      dispwaycontext = nyone, >_<
+      c-cwienteventinfo = n-nyone)
   }
 
-  def convertClientEventInfo(input: onboardingthrift.ClientEventInfo): ClientEventInfo =
-    ClientEventInfo(
-      component = input.component,
-      element = input.element,
-      details = None,
-      action = input.action,
-      entityToken = None)
+  d-def convewtcwienteventinfo(input: onboawdingthwift.cwienteventinfo): c-cwienteventinfo =
+    cwienteventinfo(
+      c-component = i-input.component, >w<
+      ewement = input.ewement, >_<
+      detaiws = nyone, >w<
+      action = input.action, rawr
+      e-entitytoken = nyone)
 
-  def convertCallback(callback: onboardingthrift.Callback): Callback =
-    Callback(callback.endpoint)
+  def convewtcawwback(cawwback: o-onboawdingthwift.cawwback): cawwback =
+    c-cawwback(cawwback.endpoint)
 
-  def convertImage(image: onboardingthrift.Image): MessageImage =
-    MessageImage(
-      Set(convertImageVariant(image.image)),
-      backgroundColor =
-        None 
+  d-def convewtimage(image: onboawdingthwift.image): messageimage =
+    m-messageimage(
+      s-set(convewtimagevawiant(image.image)), rawr x3
+      backgwoundcowow =
+        nyone 
     )
 
-  def convertCoverImage(image: onboardingthrift.Image): CoverImage =
-    CoverImage(
-      convertImageVariant(image.image),
-      imageDisplayType = convertImageDisplayType(image.imageDisplayType),
-      imageAnimationType = image.imageAnimationType.map(convertImageAnimationType),
+  def c-convewtcovewimage(image: o-onboawdingthwift.image): covewimage =
+    covewimage(
+      convewtimagevawiant(image.image), ( ͡o ω ͡o )
+      imagedispwaytype = c-convewtimagedispwaytype(image.imagedispwaytype), (˘ω˘)
+      i-imageanimationtype = image.imageanimationtype.map(convewtimageanimationtype), 😳
     )
 
-  def convertImageDisplayType(
-    imageDisplayType: onboardingthrift.ImageDisplayType
-  ): ImageDisplayType =
-    imageDisplayType match {
-      case onboardingthrift.ImageDisplayType.Icon => Icon
-      case onboardingthrift.ImageDisplayType.FullWidth => FullWidth
-      case onboardingthrift.ImageDisplayType.IconSmall => IconSmall
-      case onboardingthrift.ImageDisplayType.EnumUnknownImageDisplayType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  d-def convewtimagedispwaytype(
+    imagedispwaytype: o-onboawdingthwift.imagedispwaytype
+  ): i-imagedispwaytype =
+    imagedispwaytype m-match {
+      case onboawdingthwift.imagedispwaytype.icon => icon
+      case onboawdingthwift.imagedispwaytype.fuwwwidth => fuwwwidth
+      case onboawdingthwift.imagedispwaytype.iconsmow => i-iconsmow
+      c-case onboawdingthwift.imagedispwaytype.enumunknownimagedispwaytype(vawue) =>
+        thwow new unsuppowtedopewationexception(s"unknown p-pwoduct: $vawue")
     }
 
-  private def convertImageAnimationType(
-    imageAnimationType: onboardingthrift.ImageAnimationType
-  ): ImageAnimationType =
-    imageAnimationType match {
-      case onboardingthrift.ImageAnimationType.Bounce => Bounce
-      case onboardingthrift.ImageAnimationType.EnumUnknownImageAnimationType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  p-pwivate def convewtimageanimationtype(
+    imageanimationtype: onboawdingthwift.imageanimationtype
+  ): imageanimationtype =
+    i-imageanimationtype match {
+      case onboawdingthwift.imageanimationtype.bounce => bounce
+      case onboawdingthwift.imageanimationtype.enumunknownimageanimationtype(vawue) =>
+        t-thwow nyew unsuppowtedopewationexception(s"unknown pwoduct: $vawue")
     }
 
-  def convertImageVariant(imageVariant: onboardingthrift.ImageVariant): ImageVariant =
-    ImageVariant(
-      url = imageVariant.url,
-      width = imageVariant.width,
-      height = imageVariant.height,
-      palette = None)
+  d-def c-convewtimagevawiant(imagevawiant: onboawdingthwift.imagevawiant): imagevawiant =
+    imagevawiant(
+      u-uww = imagevawiant.uww, OwO
+      w-width = imagevawiant.width, (˘ω˘)
+      height = imagevawiant.height, òωó
+      pawette = n-nyone)
 
-  def convertButtonAction(
-    buttonAction: onboardingthrift.ButtonAction
-  ): MessageTextAction =
-    MessageTextAction(
-      buttonAction.text,
-      MessageAction(
-        dismissOnClick = buttonAction.dismissOnClick.getOrElse(true),
-        url = getActionUrl(buttonAction),
-        clientEventInfo = Some(convertClientEventInfo(buttonAction.clientEventInfo)),
-        onClickCallbacks = buttonAction.callbacks.map(_.map(convertCallback).toList)
+  def convewtbuttonaction(
+    b-buttonaction: onboawdingthwift.buttonaction
+  ): messagetextaction =
+    messagetextaction(
+      buttonaction.text, ( ͡o ω ͡o )
+      m-messageaction(
+        dismissoncwick = b-buttonaction.dismissoncwick.getowewse(twue), UwU
+        u-uww = getactionuww(buttonaction),
+        cwienteventinfo = s-some(convewtcwienteventinfo(buttonaction.cwienteventinfo)), /(^•ω•^)
+        oncwickcawwbacks = b-buttonaction.cawwbacks.map(_.map(convewtcawwback).towist)
       )
     )
 
-  private def getActionUrl(buttonAction: onboardingthrift.ButtonAction) =
-    buttonAction.buttonBehavior match {
-      case onboardingthrift.ButtonBehavior.Navigate(navigate) => Some(navigate.url.url)
-      case onboardingthrift.ButtonBehavior.Dismiss(_) => None
-      case onboardingthrift.ButtonBehavior.UnknownUnionField(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  p-pwivate def g-getactionuww(buttonaction: onboawdingthwift.buttonaction) =
+    b-buttonaction.buttonbehaviow m-match {
+      case onboawdingthwift.buttonbehaviow.navigate(navigate) => some(navigate.uww.uww)
+      c-case onboawdingthwift.buttonbehaviow.dismiss(_) => n-nyone
+      c-case onboawdingthwift.buttonbehaviow.unknownunionfiewd(vawue) =>
+        thwow nyew unsuppowtedopewationexception(s"unknown p-pwoduct: $vawue")
     }
 
-  def convertRichText(
-    richText: com.twitter.onboarding.injections.thriftscala.RichText
-  ): RichText = {
-    val entities = richText.entities.map(entity =>
-      RichTextEntity(
-        entity.fromIndex,
-        entity.toIndex,
-        entity.ref.map(convertRef),
-        entity.format.map(convertFormat)))
-    RichText(
-      text = richText.text,
-      entities = entities.toList,
-      rtl = richText.rtl,
-      alignment = richText.alignment.map(convertAlignment))
+  def convewtwichtext(
+    w-wichtext: com.twittew.onboawding.injections.thwiftscawa.wichtext
+  ): w-wichtext = {
+    vaw entities = wichtext.entities.map(entity =>
+      wichtextentity(
+        e-entity.fwomindex, (ꈍᴗꈍ)
+        entity.toindex, 😳
+        e-entity.wef.map(convewtwef), mya
+        e-entity.fowmat.map(convewtfowmat)))
+    w-wichtext(
+      text = wichtext.text,
+      e-entities = entities.towist, mya
+      wtw = wichtext.wtw, /(^•ω•^)
+      awignment = wichtext.awignment.map(convewtawignment))
   }
 
-  private def convertAlignment(alignment: onboardingthrift.RichTextAlignment): RichTextAlignment =
-    alignment match {
-      case onboardingthrift.RichTextAlignment.Natural => Natural
-      case onboardingthrift.RichTextAlignment.Center => Center
-      case onboardingthrift.RichTextAlignment.EnumUnknownRichTextAlignment(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  pwivate def c-convewtawignment(awignment: onboawdingthwift.wichtextawignment): wichtextawignment =
+    a-awignment match {
+      c-case onboawdingthwift.wichtextawignment.natuwaw => nyatuwaw
+      c-case onboawdingthwift.wichtextawignment.centew => centew
+      c-case onboawdingthwift.wichtextawignment.enumunknownwichtextawignment(vawue) =>
+        t-thwow n-nyew unsuppowtedopewationexception(s"unknown pwoduct: $vawue")
     }
 
-  private def convertRef(ref: onboardingthrift.ReferenceObject): ReferenceObject =
-    ref match {
-      case onboardingthrift.ReferenceObject.User(user) => RichTextUser(user.id)
-      case onboardingthrift.ReferenceObject.Mention(mention) =>
-        RichTextMention(mention.id, mention.screenName)
-      case onboardingthrift.ReferenceObject.Hashtag(hashtag) => RichTextHashtag(hashtag.text)
+  p-pwivate d-def convewtwef(wef: onboawdingthwift.wefewenceobject): wefewenceobject =
+    wef match {
+      case onboawdingthwift.wefewenceobject.usew(usew) => wichtextusew(usew.id)
+      case onboawdingthwift.wefewenceobject.mention(mention) =>
+        w-wichtextmention(mention.id, ^^;; mention.scweenname)
+      c-case onboawdingthwift.wefewenceobject.hashtag(hashtag) => w-wichtexthashtag(hashtag.text)
 
-      case onboardingthrift.ReferenceObject.Cashtag(cashtag) => RichTextCashtag(cashtag.text)
-      case onboardingthrift.ReferenceObject.TwitterList(twList) =>
-        RichTextList(twList.id, twList.url)
-      case onboardingthrift.ReferenceObject.Url(url) => RichTextHashtag(url.url)
-      case onboardingthrift.ReferenceObject.UnknownUnionField(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+      case onboawdingthwift.wefewenceobject.cashtag(cashtag) => w-wichtextcashtag(cashtag.text)
+      case onboawdingthwift.wefewenceobject.twittewwist(twwist) =>
+        wichtextwist(twwist.id, 🥺 twwist.uww)
+      c-case onboawdingthwift.wefewenceobject.uww(uww) => w-wichtexthashtag(uww.uww)
+      case onboawdingthwift.wefewenceobject.unknownunionfiewd(vawue) =>
+        t-thwow nyew unsuppowtedopewationexception(s"unknown pwoduct: $vawue")
     }
 
-  private def convertFormat(format: onboardingthrift.RichTextFormat): RichTextFormat =
-    format match {
-      case onboardingthrift.RichTextFormat.Plain => Plain
-      case onboardingthrift.RichTextFormat.Strong => Strong
-      case onboardingthrift.RichTextFormat.EnumUnknownRichTextFormat(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  pwivate d-def convewtfowmat(fowmat: o-onboawdingthwift.wichtextfowmat): wichtextfowmat =
+    f-fowmat match {
+      c-case onboawdingthwift.wichtextfowmat.pwain => pwain
+      case onboawdingthwift.wichtextfowmat.stwong => stwong
+      c-case onboawdingthwift.wichtextfowmat.enumunknownwichtextfowmat(vawue) =>
+        t-thwow nyew unsuppowtedopewationexception(s"unknown p-pwoduct: $vawue")
     }
 
-  // Specific to Message prompt
-  def convertSocialContext(socialContext: onboardingthrift.RichText): SocialContext =
-    GeneralContext(
-      contextType = FollowGeneralContextType,
-      text = socialContext.text,
-      url = None,
-      contextImageUrls = None,
-      landingUrl = None)
+  // s-specific to m-message pwompt
+  def convewtsociawcontext(sociawcontext: o-onboawdingthwift.wichtext): s-sociawcontext =
+    genewawcontext(
+      contexttype = f-fowwowgenewawcontexttype, ^^
+      t-text = sociawcontext.text, ^•ﻌ•^
+      u-uww = none,
+      contextimageuwws = n-nyone, /(^•ω•^)
+      wandinguww = nyone)
 
-  def convertUserFacePile(
-    userFacepile: onboardingthrift.PromptUserFacepile
-  ): UserFacepile =
-    UserFacepile(
-      userIds = userFacepile.userIds.toList,
-      featuredUserIds = userFacepile.featuredUserIds.toList,
-      action = userFacepile.action.map(convertButtonAction),
-      actionType = userFacepile.actionType.map(convertUserFacePileActionType),
-      displaysFeaturingText = userFacepile.displaysFeaturingText,
-      displayType = Some(LargeUserFacepileDisplayType)
+  d-def convewtusewfacepiwe(
+    u-usewfacepiwe: onboawdingthwift.pwomptusewfacepiwe
+  ): u-usewfacepiwe =
+    usewfacepiwe(
+      usewids = usewfacepiwe.usewids.towist, ^^
+      featuwedusewids = u-usewfacepiwe.featuwedusewids.towist, 🥺
+      a-action = u-usewfacepiwe.action.map(convewtbuttonaction), (U ᵕ U❁)
+      actiontype = usewfacepiwe.actiontype.map(convewtusewfacepiweactiontype), 😳😳😳
+      dispwaysfeatuwingtext = u-usewfacepiwe.dispwaysfeatuwingtext, nyaa~~
+      dispwaytype = some(wawgeusewfacepiwedispwaytype)
     )
 
-  private def convertUserFacePileActionType(
-    actionType: onboardingthrift.FacepileActionType
-  ): MessageActionType =
-    actionType match {
-      case onboardingthrift.FacepileActionType.FollowAll => FollowAllMessageActionType
-      case onboardingthrift.FacepileActionType.EnumUnknownFacepileActionType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  p-pwivate def c-convewtusewfacepiweactiontype(
+    actiontype: onboawdingthwift.facepiweactiontype
+  ): m-messageactiontype =
+    actiontype match {
+      c-case onboawdingthwift.facepiweactiontype.fowwowaww => fowwowawwmessageactiontype
+      c-case onboawdingthwift.facepiweactiontype.enumunknownfacepiweactiontype(vawue) =>
+        thwow nyew unsuppowtedopewationexception(s"unknown p-pwoduct: $vawue")
     }
 
-  // Specific to Cover
+  // specific to covew
 
-  def convertHalfCoverDisplayType(
-    displayType: onboardingthrift.HalfCoverDisplayType
-  ): HalfCoverDisplayType =
-    displayType match {
-      case onboardingthrift.HalfCoverDisplayType.Cover => CoverHalfCoverDisplayType
-      case onboardingthrift.HalfCoverDisplayType.CenterCover =>
-        CenterCoverHalfCoverDisplayType
-      case onboardingthrift.HalfCoverDisplayType.EnumUnknownHalfCoverDisplayType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  def c-convewthawfcovewdispwaytype(
+    d-dispwaytype: onboawdingthwift.hawfcovewdispwaytype
+  ): h-hawfcovewdispwaytype =
+    dispwaytype m-match {
+      c-case onboawdingthwift.hawfcovewdispwaytype.covew => c-covewhawfcovewdispwaytype
+      case onboawdingthwift.hawfcovewdispwaytype.centewcovew =>
+        centewcovewhawfcovewdispwaytype
+      case onboawdingthwift.hawfcovewdispwaytype.enumunknownhawfcovewdispwaytype(vawue) =>
+        thwow nyew unsuppowtedopewationexception(s"unknown pwoduct: $vawue")
     }
 
-  def convertDismissInfo(dismissInfo: onboardingthrift.DismissInfo): DismissInfo =
-    DismissInfo(dismissInfo.callbacks.map(_.map(convertCallback)))
+  def convewtdismissinfo(dismissinfo: onboawdingthwift.dismissinfo): dismissinfo =
+    dismissinfo(dismissinfo.cawwbacks.map(_.map(convewtcawwback)))
 
-  def convertCoverCta(
-    buttonAction: onboardingthrift.ButtonAction
-  ): CoverCta =
-    CoverCta(
-      buttonAction.text,
-      ctaBehavior = convertCoverCtaBehavior(buttonAction.buttonBehavior),
-      callbacks = buttonAction.callbacks.map(_.map(convertCallback).toList),
-      clientEventInfo = Some(convertClientEventInfo(buttonAction.clientEventInfo)),
-      icon = buttonAction.icon.map(covertHorizonIcon),
-      buttonStyle = buttonAction.buttonStyle.map(covertButtonStyle)
+  def convewtcovewcta(
+    b-buttonaction: o-onboawdingthwift.buttonaction
+  ): covewcta =
+    covewcta(
+      b-buttonaction.text, (˘ω˘)
+      c-ctabehaviow = convewtcovewctabehaviow(buttonaction.buttonbehaviow), >_<
+      c-cawwbacks = buttonaction.cawwbacks.map(_.map(convewtcawwback).towist), XD
+      c-cwienteventinfo = some(convewtcwienteventinfo(buttonaction.cwienteventinfo)),
+      i-icon = b-buttonaction.icon.map(covewthowizonicon), rawr x3
+      buttonstywe = b-buttonaction.buttonstywe.map(covewtbuttonstywe)
     )
 
-  private def convertCoverCtaBehavior(
-    behavior: onboardingthrift.ButtonBehavior
-  ): CoverCtaBehavior =
-    behavior match {
-      case onboardingthrift.ButtonBehavior.Navigate(navigate) =>
-        CoverBehaviorNavigate(convertUrl(navigate.url))
-      case onboardingthrift.ButtonBehavior.Dismiss(dismiss) =>
-        CoverBehaviorDismiss(dismiss.feedbackMessage.map(convertRichText))
-      case onboardingthrift.ButtonBehavior.UnknownUnionField(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  pwivate d-def convewtcovewctabehaviow(
+    b-behaviow: onboawdingthwift.buttonbehaviow
+  ): covewctabehaviow =
+    behaviow m-match {
+      c-case onboawdingthwift.buttonbehaviow.navigate(navigate) =>
+        c-covewbehaviownavigate(convewtuww(navigate.uww))
+      c-case onboawdingthwift.buttonbehaviow.dismiss(dismiss) =>
+        c-covewbehaviowdismiss(dismiss.feedbackmessage.map(convewtwichtext))
+      c-case onboawdingthwift.buttonbehaviow.unknownunionfiewd(vawue) =>
+        t-thwow n-nyew unsuppowtedopewationexception(s"unknown pwoduct: $vawue")
     }
 
-  private def covertButtonStyle(bStyle: onboardingthrift.CtaButtonStyle): ButtonStyle =
-    bStyle match {
-      case onboardingthrift.CtaButtonStyle.Default => Default
-      case onboardingthrift.CtaButtonStyle.Primary => Primary
-      case onboardingthrift.CtaButtonStyle.Secondary => Secondary
-      case onboardingthrift.CtaButtonStyle.Text => Text
-      case onboardingthrift.CtaButtonStyle.Destructive => Destructive
-      case onboardingthrift.CtaButtonStyle.Neutral => Neutral
-      case onboardingthrift.CtaButtonStyle.DestructiveSecondary => DestructiveSecondary
-      case onboardingthrift.CtaButtonStyle.DestructiveText => DestructiveText
-      case onboardingthrift.CtaButtonStyle.EnumUnknownCtaButtonStyle(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  p-pwivate def covewtbuttonstywe(bstywe: o-onboawdingthwift.ctabuttonstywe): b-buttonstywe =
+    b-bstywe match {
+      case onboawdingthwift.ctabuttonstywe.defauwt => d-defauwt
+      case onboawdingthwift.ctabuttonstywe.pwimawy => pwimawy
+      c-case onboawdingthwift.ctabuttonstywe.secondawy => secondawy
+      c-case onboawdingthwift.ctabuttonstywe.text => t-text
+      case o-onboawdingthwift.ctabuttonstywe.destwuctive => destwuctive
+      c-case onboawdingthwift.ctabuttonstywe.neutwaw => nyeutwaw
+      c-case onboawdingthwift.ctabuttonstywe.destwuctivesecondawy => destwuctivesecondawy
+      c-case onboawdingthwift.ctabuttonstywe.destwuctivetext => d-destwuctivetext
+      case onboawdingthwift.ctabuttonstywe.enumunknownctabuttonstywe(vawue) =>
+        thwow nyew unsuppowtedopewationexception(s"unknown pwoduct: $vawue")
     }
 
-  private def covertHorizonIcon(icon: onboardingthrift.HorizonIcon): HorizonIcon =
+  p-pwivate def covewthowizonicon(icon: o-onboawdingthwift.howizonicon): h-howizonicon =
     icon match {
-      case onboardingthrift.HorizonIcon.Bookmark => Bookmark
-      case onboardingthrift.HorizonIcon.Moment => Moment
-      case onboardingthrift.HorizonIcon.Debug => Debug
-      case onboardingthrift.HorizonIcon.Error => Error
-      case onboardingthrift.HorizonIcon.Follow => Follow
-      case onboardingthrift.HorizonIcon.Unfollow => Unfollow
-      case onboardingthrift.HorizonIcon.Smile => Smile
-      case onboardingthrift.HorizonIcon.Frown => Frown
-      case onboardingthrift.HorizonIcon.Help => Help
-      case onboardingthrift.HorizonIcon.Link => Link
-      case onboardingthrift.HorizonIcon.Message => Message
-      case onboardingthrift.HorizonIcon.No => No
-      case onboardingthrift.HorizonIcon.Outgoing => Outgoing
-      case onboardingthrift.HorizonIcon.Pin => Pin
-      case onboardingthrift.HorizonIcon.Retweet => Retweet
-      case onboardingthrift.HorizonIcon.Speaker => Speaker
-      case onboardingthrift.HorizonIcon.Trashcan => Trashcan
-      case onboardingthrift.HorizonIcon.Feedback => Feedback
-      case onboardingthrift.HorizonIcon.FeedbackClose => FeedbackClose
-      case onboardingthrift.HorizonIcon.EyeOff => EyeOff
-      case onboardingthrift.HorizonIcon.Moderation => Moderation
-      case onboardingthrift.HorizonIcon.Topic => Topic
-      case onboardingthrift.HorizonIcon.TopicClose => TopicClose
-      case onboardingthrift.HorizonIcon.Flag => Flag
-      case onboardingthrift.HorizonIcon.TopicFilled => TopicFilled
-      case onboardingthrift.HorizonIcon.NotificationsFollow => NotificationsFollow
-      case onboardingthrift.HorizonIcon.Person => Person
-      case onboardingthrift.HorizonIcon.Logo => Logo
-      case onboardingthrift.HorizonIcon.EnumUnknownHorizonIcon(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+      case onboawdingthwift.howizonicon.bookmawk => bookmawk
+      c-case onboawdingthwift.howizonicon.moment => m-moment
+      c-case onboawdingthwift.howizonicon.debug => d-debug
+      case onboawdingthwift.howizonicon.ewwow => ewwow
+      c-case onboawdingthwift.howizonicon.fowwow => f-fowwow
+      case onboawdingthwift.howizonicon.unfowwow => u-unfowwow
+      case onboawdingthwift.howizonicon.smiwe => s-smiwe
+      case onboawdingthwift.howizonicon.fwown => f-fwown
+      c-case onboawdingthwift.howizonicon.hewp => h-hewp
+      case onboawdingthwift.howizonicon.wink => w-wink
+      c-case onboawdingthwift.howizonicon.message => m-message
+      case o-onboawdingthwift.howizonicon.no => nyo
+      c-case onboawdingthwift.howizonicon.outgoing => o-outgoing
+      c-case o-onboawdingthwift.howizonicon.pin => p-pin
+      c-case onboawdingthwift.howizonicon.wetweet => w-wetweet
+      c-case onboawdingthwift.howizonicon.speakew => s-speakew
+      case onboawdingthwift.howizonicon.twashcan => t-twashcan
+      case onboawdingthwift.howizonicon.feedback => f-feedback
+      c-case onboawdingthwift.howizonicon.feedbackcwose => f-feedbackcwose
+      case onboawdingthwift.howizonicon.eyeoff => eyeoff
+      case onboawdingthwift.howizonicon.modewation => m-modewation
+      c-case onboawdingthwift.howizonicon.topic => t-topic
+      case onboawdingthwift.howizonicon.topiccwose => topiccwose
+      case onboawdingthwift.howizonicon.fwag => f-fwag
+      case o-onboawdingthwift.howizonicon.topicfiwwed => topicfiwwed
+      case onboawdingthwift.howizonicon.notificationsfowwow => n-nyotificationsfowwow
+      c-case onboawdingthwift.howizonicon.pewson => pewson
+      case onboawdingthwift.howizonicon.wogo => wogo
+      c-case onboawdingthwift.howizonicon.enumunknownhowizonicon(vawue) =>
+        t-thwow n-nyew unsuppowtedopewationexception(s"unknown p-pwoduct: $vawue")
 
     }
 
-  def convertUrl(url: onboardingthrift.Url): Url = {
-    val urlType = url.urlType match {
-      case onboardingthrift.UrlType.ExternalUrl => ExternalUrl
-      case onboardingthrift.UrlType.DeepLink => DeepLink
-      case onboardingthrift.UrlType.UrtEndpoint => UrtEndpoint
-      case onboardingthrift.UrlType.EnumUnknownUrlType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  def convewtuww(uww: o-onboawdingthwift.uww): u-uww = {
+    vaw uwwtype = uww.uwwtype match {
+      c-case onboawdingthwift.uwwtype.extewnawuww => extewnawuww
+      c-case onboawdingthwift.uwwtype.deepwink => d-deepwink
+      c-case onboawdingthwift.uwwtype.uwtendpoint => uwtendpoint
+      c-case onboawdingthwift.uwwtype.enumunknownuwwtype(vawue) =>
+        t-thwow nyew unsuppowtedopewationexception(s"unknown p-pwoduct: $vawue")
     }
-    Url(urlType, url.url, url.urtEndpointOptions.map(convertUrtEndpointOptions))
+    uww(uwwtype, ( ͡o ω ͡o ) u-uww.uww, :3 uww.uwtendpointoptions.map(convewtuwtendpointoptions))
   }
 
-  private def convertUrtEndpointOptions(
-    urtEndpointOptions: onboardingthrift.UrtEndpointOptions
-  ): UrtEndpointOptions =
-    UrtEndpointOptions(
-      requestParams = urtEndpointOptions.requestParams.map(_.toMap),
-      title = urtEndpointOptions.title,
-      cacheId = urtEndpointOptions.cacheId,
-      subtitle = urtEndpointOptions.subtitle
+  p-pwivate d-def convewtuwtendpointoptions(
+    u-uwtendpointoptions: onboawdingthwift.uwtendpointoptions
+  ): u-uwtendpointoptions =
+    u-uwtendpointoptions(
+      w-wequestpawams = uwtendpointoptions.wequestpawams.map(_.tomap), mya
+      t-titwe = uwtendpointoptions.titwe, σωσ
+      cacheid = uwtendpointoptions.cacheid, (ꈍᴗꈍ)
+      s-subtitwe = u-uwtendpointoptions.subtitwe
     )
 
 }

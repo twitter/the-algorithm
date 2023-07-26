@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagevawiant
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
 
-object TileItem {
-  val TileEntryNamespace = EntryNamespace("tile")
+object tiweitem {
+  vaw tiweentwynamespace = entwynamespace("tiwe")
 }
 
-case class TileItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  title: String,
-  supportingText: String,
-  url: Option[Url],
-  image: Option[ImageVariant],
-  content: TileContent)
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = TileItem.TileEntryNamespace
+c-case cwass tiweitem(
+  ovewwide vaw i-id: wong, mya
+  ovewwide vaw sowtindex: o-option[wong], nyaa~~
+  ovewwide vaw cwienteventinfo: option[cwienteventinfo], (⑅˘꒳˘)
+  o-ovewwide vaw feedbackactioninfo: option[feedbackactioninfo], rawr x3
+  t-titwe: s-stwing, (✿oωo)
+  suppowtingtext: stwing, (ˆ ﻌ ˆ)♡
+  uww: option[uww], (˘ω˘)
+  image: option[imagevawiant], (⑅˘꒳˘)
+  c-content: tiwecontent)
+    extends timewineitem {
+  ovewwide vaw entwynamespace: e-entwynamespace = tiweitem.tiweentwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  o-ovewwide d-def withsowtindex(sowtindex: w-wong): timewineentwy = c-copy(sowtindex = some(sowtindex))
 }

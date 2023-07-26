@@ -1,6 +1,6 @@
-package com.twitter.servo
+package com.twittew.sewvo
 
-package object util {
-  /* aliases to preserve compatibility after classes moved to different package */
-  val Memoize = com.twitter.util.Memoize
+package o-object utiw {
+  /* a-awiases to p-pwesewve compatibiwity a-aftew cwasses m-moved to diffewent p-package */
+  v-vaw memoize = c-com.twittew.utiw.memoize
 }

@@ -1,36 +1,36 @@
-package com.twitter.servo
+package com.twittew.sewvo
 
-import com.twitter.finagle.partitioning.PartitionNode
-import com.twitter.servo.util.Transformer
-import com.twitter.util.Try
+impowt c-com.twittew.finagwe.pawtitioning.pawtitionnode
+i-impowt com.twittew.sewvo.utiw.twansfowmew
+i-impowt c-com.twittew.utiw.twy
 
-package object cache {
-  type CachedValue = thriftscala.CachedValue
-  val CachedValue = thriftscala.CachedValue
-  type CachedValueStatus = thriftscala.CachedValueStatus
-  val CachedValueStatus = thriftscala.CachedValueStatus
+p-package object c-cache {
+  t-type cachedvawue = t-thwiftscawa.cachedvawue
+  vaw cachedvawue = thwiftscawa.cachedvawue
+  type cachedvawuestatus = thwiftscawa.cachedvawuestatus
+  v-vaw cachedvawuestatus = thwiftscawa.cachedvawuestatus
 
-  type KeyTransformer[K] = K => String
-  type CsKeyValueResult[K, V] = KeyValueResult[K, (Try[V], Checksum)]
+  type k-keytwansfowmew[k] = k => stwing
+  t-type cskeyvawuewesuwt[k, rawr x3 v] = keyvawuewesuwt[k, (✿oωo) (twy[v], (ˆ ﻌ ˆ)♡ checksum)]
 
-  type KeyValueResult[K, V] = keyvalue.KeyValueResult[K, V]
-  val KeyValueResult = keyvalue.KeyValueResult
+  t-type keyvawuewesuwt[k, (˘ω˘) v] = keyvawue.keyvawuewesuwt[k, (⑅˘꒳˘) v-v]
+  vaw keyvawuewesuwt = k-keyvawue.keyvawuewesuwt
 
-  @deprecated("Use com.twitter.finagle.partitioning.PartitionNode instead", "1/7/2013")
-  type WeightedHost = PartitionNode
+  @depwecated("use com.twittew.finagwe.pawtitioning.pawtitionnode instead", (///ˬ///✿) "1/7/2013")
+  type weightedhost = p-pawtitionnode
 
-  type Serializer[T] = Transformer[T, Array[Byte]]
+  type sewiawizew[t] = twansfowmew[t, 😳😳😳 awway[byte]]
 
   /**
-   * Like a companion object, but for a type alias!
+   * wike a companion o-object, 🥺 but fow a type awias! mya
    */
-  val Serializer = Serializers
+  v-vaw sewiawizew = s-sewiawizews
 
-  type MemcacheFactory = (() => Memcache)
+  t-type memcachefactowy = (() => m-memcache)
 }
 
 package cache {
-  package object constants {
-    val Colon = ":"
+  package object c-constants {
+    vaw cowon = ":"
   }
 }

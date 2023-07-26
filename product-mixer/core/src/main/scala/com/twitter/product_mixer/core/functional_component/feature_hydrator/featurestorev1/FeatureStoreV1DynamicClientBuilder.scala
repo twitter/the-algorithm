@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.featuwestowev1
 
-import com.twitter.ml.featurestore.lib.dynamic.BaseDynamicHydrationConfig
-import com.twitter.ml.featurestore.lib.dynamic.BaseGatedFeatures
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.mw.featuwestowe.wib.dynamic.basedynamichydwationconfig
+i-impowt com.twittew.mw.featuwestowe.wib.dynamic.basegatedfeatuwes
+i-impowt com.twittew.mw.featuwestowe.wib.dynamic.dynamicfeatuwestowecwient
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait FeatureStoreV1DynamicClientBuilder {
-  def build[Query <: PipelineQuery](
-    dynamicHydrationConfig: BaseDynamicHydrationConfig[Query, _ <: BaseGatedFeatures[Query]]
-  ): DynamicFeatureStoreClient[Query]
+t-twait f-featuwestowev1dynamiccwientbuiwdew {
+  d-def buiwd[quewy <: p-pipewinequewy](
+    dynamichydwationconfig: basedynamichydwationconfig[quewy, rawr _ <: basegatedfeatuwes[quewy]]
+  ): dynamicfeatuwestowecwient[quewy]
 }

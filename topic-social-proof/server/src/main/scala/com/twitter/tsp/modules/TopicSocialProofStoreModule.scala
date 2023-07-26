@@ -1,68 +1,68 @@
-package com.twitter.tsp.modules
+package com.twittew.tsp.moduwes
 
-import com.google.inject.Module
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.{Client => MemClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.Score
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tsp.stores.SemanticCoreAnnotationStore
-import com.twitter.tsp.stores.TopicSocialProofStore
-import com.twitter.tsp.stores.TopicSocialProofStore.TopicSocialProof
-import com.twitter.tsp.utils.LZ4Injection
-import com.twitter.tsp.utils.SeqObjectInjection
+impowt com.googwe.inject.moduwe
+i-impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.singweton
+i-impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.memcached.{cwient => m-memcwient}
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.hewmit.stowe.common.obsewvedcachedweadabwestowe
+impowt com.twittew.hewmit.stowe.common.obsewvedmemcachedweadabwestowe
+impowt com.twittew.hewmit.stowe.common.obsewvedweadabwestowe
+impowt com.twittew.inject.twittewmoduwe
+impowt c-com.twittew.simcwustews_v2.common.tweetid
+impowt com.twittew.simcwustews_v2.thwiftscawa.scowe
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.scoweid
+impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.stwato.cwient.{cwient => stwatocwient}
+impowt com.twittew.tsp.stowes.semanticcoweannotationstowe
+i-impowt com.twittew.tsp.stowes.topicsociawpwoofstowe
+impowt com.twittew.tsp.stowes.topicsociawpwoofstowe.topicsociawpwoof
+i-impowt c-com.twittew.tsp.utiws.wz4injection
+impowt com.twittew.tsp.utiws.seqobjectinjection
 
-object TopicSocialProofStoreModule extends TwitterModule {
-  override def modules: Seq[Module] = Seq(UnifiedCacheClient)
+object topicsociawpwoofstowemoduwe extends twittewmoduwe {
+  o-ovewwide def moduwes: seq[moduwe] = seq(unifiedcachecwient)
 
-  @Provides
-  @Singleton
-  def providesTopicSocialProofStore(
-    representationScorerStore: ReadableStore[ScoreId, Score],
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-    tspUnifiedCacheClient: MemClient,
-  ): ReadableStore[TopicSocialProofStore.Query, Seq[TopicSocialProof]] = {
-    val semanticCoreAnnotationStore: ReadableStore[TweetId, Seq[
-      SemanticCoreAnnotationStore.TopicAnnotation
-    ]] = ObservedReadableStore(
-      SemanticCoreAnnotationStore(SemanticCoreAnnotationStore.getStratoStore(stratoClient))
-    )(statsReceiver.scope("SemanticCoreAnnotationStore"))
+  @pwovides
+  @singweton
+  def pwovidestopicsociawpwoofstowe(
+    w-wepwesentationscowewstowe: weadabwestowe[scoweid, 😳 scowe],
+    s-statsweceivew: s-statsweceivew, -.-
+    s-stwatocwient: s-stwatocwient, 🥺
+    tspunifiedcachecwient: memcwient, o.O
+  ): w-weadabwestowe[topicsociawpwoofstowe.quewy, seq[topicsociawpwoof]] = {
+    vaw semanticcoweannotationstowe: w-weadabwestowe[tweetid, /(^•ω•^) seq[
+      semanticcoweannotationstowe.topicannotation
+    ]] = obsewvedweadabwestowe(
+      semanticcoweannotationstowe(semanticcoweannotationstowe.getstwatostowe(stwatocwient))
+    )(statsweceivew.scope("semanticcoweannotationstowe"))
 
-    val underlyingStore = TopicSocialProofStore(
-      representationScorerStore,
-      semanticCoreAnnotationStore
-    )(statsReceiver.scope("TopicSocialProofStore"))
+    vaw undewwyingstowe = t-topicsociawpwoofstowe(
+      wepwesentationscowewstowe, nyaa~~
+      s-semanticcoweannotationstowe
+    )(statsweceivew.scope("topicsociawpwoofstowe"))
 
-    val memcachedStore = ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = underlyingStore,
-      cacheClient = tspUnifiedCacheClient,
-      ttl = 15.minutes,
-      asyncUpdate = true
+    v-vaw memcachedstowe = o-obsewvedmemcachedweadabwestowe.fwomcachecwient(
+      backingstowe = undewwyingstowe, nyaa~~
+      cachecwient = t-tspunifiedcachecwient, :3
+      t-ttw = 15.minutes, 😳😳😳
+      asyncupdate = t-twue
     )(
-      valueInjection = LZ4Injection.compose(SeqObjectInjection[TopicSocialProof]()),
-      statsReceiver = statsReceiver.scope("memCachedTopicSocialProofStore"),
-      keyToString = { k: TopicSocialProofStore.Query => s"tsps/${k.cacheableQuery}" }
+      v-vawueinjection = wz4injection.compose(seqobjectinjection[topicsociawpwoof]()), (˘ω˘)
+      s-statsweceivew = statsweceivew.scope("memcachedtopicsociawpwoofstowe"), ^^
+      k-keytostwing = { k: topicsociawpwoofstowe.quewy => s-s"tsps/${k.cacheabwequewy}" }
     )
 
-    val inMemoryCachedStore =
-      ObservedCachedReadableStore.from[TopicSocialProofStore.Query, Seq[TopicSocialProof]](
-        memcachedStore,
-        ttl = 10.minutes,
-        maxKeys = 16777215, // ~ avg 160B, < 3000MB
-        cacheName = "topic_social_proof_cache",
-        windowSize = 10000L
-      )(statsReceiver.scope("InMemoryCachedTopicSocialProofStore"))
+    vaw inmemowycachedstowe =
+      o-obsewvedcachedweadabwestowe.fwom[topicsociawpwoofstowe.quewy, :3 seq[topicsociawpwoof]](
+        m-memcachedstowe, -.-
+        ttw = 10.minutes, 😳
+        m-maxkeys = 16777215, mya // ~ avg 160b, (˘ω˘) < 3000mb
+        cachename = "topic_sociaw_pwoof_cache", >_<
+        windowsize = 10000w
+      )(statsweceivew.scope("inmemowycachedtopicsociawpwoofstowe"))
 
-    inMemoryCachedStore
+    inmemowycachedstowe
   }
 }

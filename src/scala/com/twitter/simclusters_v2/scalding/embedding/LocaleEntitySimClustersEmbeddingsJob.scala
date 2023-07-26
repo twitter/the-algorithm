@@ -1,437 +1,437 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.twittew.simcwustews_v2.scawding.embedding
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.recos.entities.thriftscala.Entity
-import com.twitter.recos.entities.thriftscala.Hashtag
-import com.twitter.recos.entities.thriftscala.SemanticCoreEntity
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.hdfs_sources.presto_hdfs_sources._
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.EntityEmbeddingsSources
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.embedding.LocaleEntitySimClustersEmbeddingsJob._
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.scalding.embedding.common.EntityEmbeddingUtil._
-import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingJob._
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersEmbedding => ThriftSimClustersEmbedding,
+impowt com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt c-com.twittew.wecos.entities.thwiftscawa.entity
+i-impowt com.twittew.wecos.entities.thwiftscawa.hashtag
+i-impowt com.twittew.wecos.entities.thwiftscawa.semanticcoweentity
+i-impowt c-com.twittew.scawding._
+i-impowt com.twittew.scawding_intewnaw.dawv2.dawwwite._
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.modewvewsions
+impowt com.twittew.simcwustews_v2.common.simcwustewsembedding
+i-impowt com.twittew.simcwustews_v2.hdfs_souwces.pwesto_hdfs_souwces._
+impowt com.twittew.simcwustews_v2.hdfs_souwces.adhockeyvawsouwces
+impowt c-com.twittew.simcwustews_v2.hdfs_souwces.entityembeddingssouwces
+impowt com.twittew.simcwustews_v2.hdfs_souwces.intewestedinsouwces
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.wocaweentitysimcwustewsembeddingsjob._
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw
+impowt com.twittew.simcwustews_v2.scawding.embedding.common.extewnawdatasouwces
+impowt c-com.twittew.simcwustews_v2.scawding.embedding.common.embeddingutiw._
+impowt c-com.twittew.simcwustews_v2.scawding.embedding.common.entityembeddingutiw._
+i-impowt com.twittew.simcwustews_v2.scawding.embedding.common.simcwustewsembeddingjob._
+impowt com.twittew.simcwustews_v2.thwiftscawa.{
+  simcwustewsembedding => thwiftsimcwustewsembedding, ^•ﻌ•^
   _
 }
-import com.twitter.wtf.entity_real_graph.common.EntityUtil
-import com.twitter.wtf.entity_real_graph.thriftscala.Edge
-import com.twitter.wtf.entity_real_graph.thriftscala.EntityType
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.DataSources
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+impowt c-com.twittew.wtf.entity_weaw_gwaph.common.entityutiw
+impowt com.twittew.wtf.entity_weaw_gwaph.thwiftscawa.edge
+impowt com.twittew.wtf.entity_weaw_gwaph.thwiftscawa.entitytype
+impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+i-impowt com.twittew.wtf.scawding.jobs.common.datasouwces
+impowt c-com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+i-impowt j-java.utiw.timezone
 
 /**
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_per_language_embeddings_job-adhoc
+ * $ ./bazew b-bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/embedding:entity_pew_wanguage_embeddings_job-adhoc
  *
- * ---------------------- Deploy to atla ----------------------
- * $ scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.LocaleEntitySimClustersEmbeddingAdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_per_language_embeddings_job-adhoc \
-  --user recos-platform \
-  -- --date 2019-12-17 --model-version 20M_145K_updated --entity-type SemanticCore
+ * ---------------------- depwoy to atwa ----------------------
+ * $ s-scawding wemote wun \
+  --main-cwass com.twittew.simcwustews_v2.scawding.embedding.wocaweentitysimcwustewsembeddingadhocapp \
+  --tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/embedding:entity_pew_wanguage_embeddings_job-adhoc \
+  --usew wecos-pwatfowm \
+  -- --date 2019-12-17 --modew-vewsion 20m_145k_updated --entity-type semanticcowe
  */
-object LocaleEntitySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
+object wocaweentitysimcwustewsembeddingadhocapp extends adhocexecutionapp {
 
-  // Import implicits
+  // impowt impwicits
 
-  import EntityUtil._
+  i-impowt entityutiw._
 
-  def writeOutput(
-    embeddings: TypedPipe[(SimClustersEmbeddingId, (ClusterId, EmbeddingScore))],
-    topKEmbeddings: TypedPipe[(SimClustersEmbeddingId, Seq[(ClusterId, EmbeddingScore)])],
-    jobConfig: EntityEmbeddingsJobConfig
-  ): Execution[Unit] = {
+  d-def wwiteoutput(
+    e-embeddings: t-typedpipe[(simcwustewsembeddingid, (ꈍᴗꈍ) (cwustewid, (⑅˘꒳˘) embeddingscowe))], (⑅˘꒳˘)
+    topkembeddings: typedpipe[(simcwustewsembeddingid, s-seq[(cwustewid, (ˆ ﻌ ˆ)♡ e-embeddingscowe)])], /(^•ω•^)
+    jobconfig: entityembeddingsjobconfig
+  ): e-execution[unit] = {
 
-    val toSimClusterEmbeddingExec = topKEmbeddings
-      .mapValues(SimClustersEmbedding.apply(_).toThrift)
-      .writeExecution(
-        AdhocKeyValSources.entityToClustersSource(
-          LocaleEntitySimClustersEmbeddingsJob.getHdfsPath(
-            isAdhoc = true,
-            isManhattanKeyVal = true,
-            isReverseIndex = false,
-            isLogFav = false,
-            jobConfig.modelVersion,
-            jobConfig.entityType)))
+    v-vaw tosimcwustewembeddingexec = topkembeddings
+      .mapvawues(simcwustewsembedding.appwy(_).tothwift)
+      .wwiteexecution(
+        a-adhockeyvawsouwces.entitytocwustewssouwce(
+          wocaweentitysimcwustewsembeddingsjob.gethdfspath(
+            i-isadhoc = twue, òωó
+            ismanhattankeyvaw = twue, (⑅˘꒳˘)
+            i-iswevewseindex = fawse, (U ᵕ U❁)
+            i-iswogfav = fawse, >w<
+            j-jobconfig.modewvewsion, σωσ
+            j-jobconfig.entitytype)))
 
-    val fromSimClusterEmbeddingExec =
-      toReverseIndexSimClusterEmbedding(embeddings, jobConfig.topK)
-        .writeExecution(
-          AdhocKeyValSources.clusterToEntitiesSource(
-            LocaleEntitySimClustersEmbeddingsJob.getHdfsPath(
-              isAdhoc = true,
-              isManhattanKeyVal = true,
-              isReverseIndex = true,
-              isLogFav = false,
-              jobConfig.modelVersion,
-              jobConfig.entityType)))
+    vaw fwomsimcwustewembeddingexec =
+      towevewseindexsimcwustewembedding(embeddings, -.- jobconfig.topk)
+        .wwiteexecution(
+          adhockeyvawsouwces.cwustewtoentitiessouwce(
+            wocaweentitysimcwustewsembeddingsjob.gethdfspath(
+              isadhoc = twue, o.O
+              i-ismanhattankeyvaw = t-twue, ^^
+              iswevewseindex = t-twue, >_<
+              i-iswogfav = fawse, >w<
+              j-jobconfig.modewvewsion, >_<
+              jobconfig.entitytype)))
 
-    Execution.zip(toSimClusterEmbeddingExec, fromSimClusterEmbeddingExec).unit
+    execution.zip(tosimcwustewembeddingexec, fwomsimcwustewembeddingexec).unit
   }
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide def wunondatewange(
+    awgs: awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit datewange: d-datewange, >w<
+    timezone: timezone, rawr
+    u-uniqueid: u-uniqueid
+  ): execution[unit] = {
 
-    val jobConfig = EntityEmbeddingsJobConfig(args, isAdhoc = true)
+    v-vaw jobconfig = entityembeddingsjobconfig(awgs, rawr x3 i-isadhoc = t-twue)
 
-    val numReducers = args.getOrElse("m", "2000").toInt
+    vaw n-nyumweducews = a-awgs.getowewse("m", ( ͡o ω ͡o ) "2000").toint
 
     /*
-      Can use the ERG daily dataset in the adhoc job for quick prototyping, note that there may be
-      issues with scaling the job when productionizing on ERG aggregated dataset.
+      can use the ewg daiwy dataset in t-the adhoc job fow q-quick pwototyping, (˘ω˘) n-nyote that t-thewe may be
+      i-issues with scawing the job when pwoductionizing on ewg aggwegated d-dataset.
      */
-    val userEntityMatrix: TypedPipe[(UserId, (Entity, Double))] =
-      getUserEntityMatrix(
-        jobConfig,
-        DataSources.entityRealGraphAggregationDataSetSource(dateRange.embiggen(Days(7))),
-        Some(ExternalDataSources.uttEntitiesSource())
-      ).forceToDisk
+    vaw usewentitymatwix: typedpipe[(usewid, 😳 (entity, doubwe))] =
+      getusewentitymatwix(
+        j-jobconfig, OwO
+        datasouwces.entityweawgwaphaggwegationdatasetsouwce(datewange.embiggen(days(7))), (˘ω˘)
+        some(extewnawdatasouwces.uttentitiessouwce())
+      ).fowcetodisk
 
-    //determine which data source to use based on model version
-    val simClustersSource = jobConfig.modelVersion match {
-      case ModelVersion.Model20m145kUpdated =>
-        InterestedInSources.simClustersInterestedInUpdatedSource(dateRange, timeZone)
-      case modelVersion =>
-        throw new IllegalArgumentException(
-          s"SimClusters model version not supported ${modelVersion.name}")
+    //detewmine which d-data souwce to u-use based on modew v-vewsion
+    vaw simcwustewssouwce = j-jobconfig.modewvewsion match {
+      case m-modewvewsion.modew20m145kupdated =>
+        intewestedinsouwces.simcwustewsintewestedinupdatedsouwce(datewange, òωó t-timezone)
+      case modewvewsion =>
+        thwow nyew iwwegawawgumentexception(
+          s"simcwustews modew vewsion nyot suppowted ${modewvewsion.name}")
     }
 
-    val entityPerLanguage = userEntityMatrix.join(ExternalDataSources.userSource).map {
-      case (userId, ((entity, score), (_, language))) =>
-        ((entity, language), (userId, score))
+    v-vaw entitypewwanguage = u-usewentitymatwix.join(extewnawdatasouwces.usewsouwce).map {
+      case (usewid, ( ͡o ω ͡o ) ((entity, s-scowe), UwU (_, w-wanguage))) =>
+        ((entity, /(^•ω•^) wanguage), (usewid, (ꈍᴗꈍ) scowe))
     }
 
-    val normalizedUserEntityMatrix =
-      getNormalizedTransposeInputMatrix(entityPerLanguage, numReducers = Some(numReducers))
+    vaw nyowmawizedusewentitymatwix =
+      g-getnowmawizedtwansposeinputmatwix(entitypewwanguage, 😳 nyumweducews = s-some(numweducews))
 
-    val embeddings = computeEmbeddings[(Entity, String)](
-      simClustersSource,
-      normalizedUserEntityMatrix,
-      scoreExtractors,
-      ModelVersion.Model20m145kUpdated,
-      toSimClustersEmbeddingId(jobConfig.modelVersion),
-      numReducers = Some(numReducers * 2)
+    vaw embeddings = c-computeembeddings[(entity, mya s-stwing)](
+      simcwustewssouwce, mya
+      nyowmawizedusewentitymatwix, /(^•ω•^)
+      scoweextwactows, ^^;;
+      modewvewsion.modew20m145kupdated, 🥺
+      t-tosimcwustewsembeddingid(jobconfig.modewvewsion), ^^
+      n-nyumweducews = s-some(numweducews * 2)
     )
 
-    val topKEmbeddings =
-      embeddings.group
-        .sortedReverseTake(jobConfig.topK)(Ordering.by(_._2))
-        .withReducers(numReducers)
+    vaw topkembeddings =
+      e-embeddings.gwoup
+        .sowtedwevewsetake(jobconfig.topk)(owdewing.by(_._2))
+        .withweducews(numweducews)
 
-    writeOutput(embeddings, topKEmbeddings, jobConfig)
+    w-wwiteoutput(embeddings, ^•ﻌ•^ topkembeddings, /(^•ω•^) jobconfig)
   }
 }
 
 /**
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:semantic_core_entity_embeddings_per_language_job
- * $ capesospy-v2 update \
-  --build_locally \
-  --start_cron semantic_core_entity_embeddings_per_language_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * $ ./bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/embedding:semantic_cowe_entity_embeddings_pew_wanguage_job
+ * $ c-capesospy-v2 update \
+  --buiwd_wocawwy \
+  --stawt_cwon semantic_cowe_entity_embeddings_pew_wanguage_job swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc3.yamw
  */
-object LocaleEntitySimClustersEmbeddingScheduledApp extends ScheduledExecutionApp {
+object w-wocaweentitysimcwustewsembeddingscheduwedapp e-extends scheduwedexecutionapp {
 
-  // Import implicits
+  // impowt impwicits
 
-  import EmbeddingUtil._
-  import EntityUtil._
+  i-impowt embeddingutiw._
+  i-impowt entityutiw._
 
-  override val firstTime: RichDate = RichDate("2019-10-22")
+  ovewwide vaw fiwsttime: wichdate = wichdate("2019-10-22")
 
-  override val batchIncrement: Duration = Days(7)
+  o-ovewwide vaw batchincwement: duwation = days(7)
 
-  private def writeOutput(
-    embeddings: TypedPipe[(SimClustersEmbeddingId, (ClusterId, EmbeddingScore))],
-    topKEmbeddings: TypedPipe[(SimClustersEmbeddingId, Seq[(ClusterId, EmbeddingScore)])],
-    jobConfig: EntityEmbeddingsJobConfig,
-    clusterEmbeddingsDataset: KeyValDALDataset[
-      KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
-    ],
-    entityEmbeddingsDataset: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]]
+  pwivate def wwiteoutput(
+    e-embeddings: typedpipe[(simcwustewsembeddingid, ^^ (cwustewid, 🥺 embeddingscowe))], (U ᵕ U❁)
+    topkembeddings: t-typedpipe[(simcwustewsembeddingid, 😳😳😳 s-seq[(cwustewid, nyaa~~ embeddingscowe)])], (˘ω˘)
+    jobconfig: entityembeddingsjobconfig, >_<
+    cwustewembeddingsdataset: k-keyvawdawdataset[
+      k-keyvaw[simcwustewsembeddingid, XD thwiftsimcwustewsembedding]
+    ], rawr x3
+    entityembeddingsdataset: keyvawdawdataset[keyvaw[simcwustewsembeddingid, ( ͡o ω ͡o ) i-intewnawidembedding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): Execution[Unit] = {
+    impwicit d-datewange: datewange, :3
+    timezone: timezone
+  ): execution[unit] = {
 
-    val thriftSimClustersEmbedding = topKEmbeddings
-      .mapValues(SimClustersEmbedding.apply(_).toThrift)
+    vaw t-thwiftsimcwustewsembedding = topkembeddings
+      .mapvawues(simcwustewsembedding.appwy(_).tothwift)
 
-    val writeSimClustersEmbeddingKeyValDataset =
-      thriftSimClustersEmbedding
+    v-vaw w-wwitesimcwustewsembeddingkeyvawdataset =
+      thwiftsimcwustewsembedding
         .map {
-          case (entityId, topSimClusters) => KeyVal(entityId, topSimClusters)
+          c-case (entityid, mya topsimcwustews) => k-keyvaw(entityid, σωσ t-topsimcwustews)
         }
-        .writeDALVersionedKeyValExecution(
-          clusterEmbeddingsDataset,
-          D.Suffix(
-            LocaleEntitySimClustersEmbeddingsJob.getHdfsPath(
-              isAdhoc = false,
-              isManhattanKeyVal = true,
-              isReverseIndex = false,
-              isLogFav = false,
-              jobConfig.modelVersion,
-              jobConfig.entityType))
+        .wwitedawvewsionedkeyvawexecution(
+          c-cwustewembeddingsdataset, (ꈍᴗꈍ)
+          d.suffix(
+            w-wocaweentitysimcwustewsembeddingsjob.gethdfspath(
+              i-isadhoc = fawse, OwO
+              ismanhattankeyvaw = twue, o.O
+              i-iswevewseindex = f-fawse, 😳😳😳
+              i-iswogfav = fawse, /(^•ω•^)
+              jobconfig.modewvewsion,
+              j-jobconfig.entitytype))
         )
 
-    val writeSimClustersEmbeddingDataset = thriftSimClustersEmbedding
+    vaw wwitesimcwustewsembeddingdataset = t-thwiftsimcwustewsembedding
       .map {
-        case (embeddingId, embedding) => SimClustersEmbeddingWithId(embeddingId, embedding)
+        c-case (embeddingid, OwO embedding) => simcwustewsembeddingwithid(embeddingid, ^^ embedding)
       }
-      .writeDALSnapshotExecution(
-        SemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset,
-        D.Daily,
-        D.Suffix(
-          LocaleEntitySimClustersEmbeddingsJob.getHdfsPath(
-            isAdhoc = false,
-            isManhattanKeyVal = false,
-            isReverseIndex = false,
-            isLogFav = false,
-            jobConfig.modelVersion,
-            jobConfig.entityType)),
-        D.EBLzo(),
-        dateRange.end
+      .wwitedawsnapshotexecution(
+        s-semanticcowepewwanguagesimcwustewsembeddingspwestoscawadataset, (///ˬ///✿)
+        d.daiwy, (///ˬ///✿)
+        d-d.suffix(
+          w-wocaweentitysimcwustewsembeddingsjob.gethdfspath(
+            i-isadhoc = fawse, (///ˬ///✿)
+            ismanhattankeyvaw = fawse, ʘwʘ
+            i-iswevewseindex = fawse, ^•ﻌ•^
+            iswogfav = fawse, OwO
+            jobconfig.modewvewsion, (U ﹏ U)
+            jobconfig.entitytype)), (ˆ ﻌ ˆ)♡
+        d-d.ebwzo(), (⑅˘꒳˘)
+        datewange.end
       )
 
-    val thriftReversedSimclustersEmbeddings =
-      toReverseIndexSimClusterEmbedding(embeddings, jobConfig.topK)
+    vaw thwiftwevewsedsimcwustewsembeddings =
+      t-towevewseindexsimcwustewembedding(embeddings, (U ﹏ U) jobconfig.topk)
 
-    val writeReverseSimClustersEmbeddingKeyValDataset =
-      thriftReversedSimclustersEmbeddings
+    v-vaw wwitewevewsesimcwustewsembeddingkeyvawdataset =
+      t-thwiftwevewsedsimcwustewsembeddings
         .map {
-          case (embeddingId, internalIdsWithScore) =>
-            KeyVal(embeddingId, internalIdsWithScore)
+          case (embeddingid, o.O i-intewnawidswithscowe) =>
+            k-keyvaw(embeddingid, mya i-intewnawidswithscowe)
         }
-        .writeDALVersionedKeyValExecution(
-          entityEmbeddingsDataset,
-          D.Suffix(
-            LocaleEntitySimClustersEmbeddingsJob.getHdfsPath(
-              isAdhoc = false,
-              isManhattanKeyVal = true,
-              isReverseIndex = true,
-              isLogFav = false,
-              jobConfig.modelVersion,
-              jobConfig.entityType))
+        .wwitedawvewsionedkeyvawexecution(
+          e-entityembeddingsdataset, XD
+          d-d.suffix(
+            wocaweentitysimcwustewsembeddingsjob.gethdfspath(
+              isadhoc = fawse, òωó
+              ismanhattankeyvaw = twue, (˘ω˘)
+              iswevewseindex = t-twue, :3
+              i-iswogfav = f-fawse, OwO
+              jobconfig.modewvewsion, mya
+              j-jobconfig.entitytype))
         )
 
-    val writeReverseSimClustersEmbeddingDataset =
-      thriftReversedSimclustersEmbeddings
+    vaw wwitewevewsesimcwustewsembeddingdataset =
+      thwiftwevewsedsimcwustewsembeddings
         .map {
-          case (embeddingId, embedding) => InternalIdEmbeddingWithId(embeddingId, embedding)
-        }.writeDALSnapshotExecution(
-          ReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset,
-          D.Daily,
-          D.Suffix(
-            LocaleEntitySimClustersEmbeddingsJob.getHdfsPath(
-              isAdhoc = false,
-              isManhattanKeyVal = false,
-              isReverseIndex = true,
-              isLogFav = false,
-              jobConfig.modelVersion,
-              jobConfig.entityType)),
-          D.EBLzo(),
-          dateRange.end
+          case (embeddingid, (˘ω˘) e-embedding) => i-intewnawidembeddingwithid(embeddingid, o.O embedding)
+        }.wwitedawsnapshotexecution(
+          wevewseindexsemanticcowepewwanguagesimcwustewsembeddingspwestoscawadataset, (✿oωo)
+          d.daiwy,
+          d-d.suffix(
+            wocaweentitysimcwustewsembeddingsjob.gethdfspath(
+              isadhoc = f-fawse, (ˆ ﻌ ˆ)♡
+              i-ismanhattankeyvaw = fawse,
+              i-iswevewseindex = t-twue, ^^;;
+              iswogfav = fawse, OwO
+              jobconfig.modewvewsion, 🥺
+              jobconfig.entitytype)), mya
+          d-d.ebwzo(), 😳
+          d-datewange.end
         )
 
-    Execution
+    execution
       .zip(
-        writeSimClustersEmbeddingDataset,
-        writeSimClustersEmbeddingKeyValDataset,
-        writeReverseSimClustersEmbeddingDataset,
-        writeReverseSimClustersEmbeddingKeyValDataset
+        w-wwitesimcwustewsembeddingdataset, òωó
+        w-wwitesimcwustewsembeddingkeyvawdataset, /(^•ω•^)
+        w-wwitewevewsesimcwustewsembeddingdataset, -.-
+        wwitewevewsesimcwustewsembeddingkeyvawdataset
       ).unit
   }
 
-  override def runOnDateRange(
-    args: Args
+  o-ovewwide d-def wunondatewange(
+    awgs: a-awgs
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    impwicit d-datewange: datewange, òωó
+    t-timezone: timezone, /(^•ω•^)
+    uniqueid: uniqueid
+  ): e-execution[unit] = {
 
-    val jobConfig = EntityEmbeddingsJobConfig(args, isAdhoc = false)
+    vaw jobconfig = e-entityembeddingsjobconfig(awgs, /(^•ω•^) i-isadhoc = fawse)
 
-    val embeddingsDataset = EntityEmbeddingsSources.getEntityEmbeddingsDataset(
-      jobConfig.entityType,
-      ModelVersions.toKnownForModelVersion(jobConfig.modelVersion),
-      isEmbeddingsPerLocale = true
+    v-vaw embeddingsdataset = entityembeddingssouwces.getentityembeddingsdataset(
+      jobconfig.entitytype, 😳
+      modewvewsions.toknownfowmodewvewsion(jobconfig.modewvewsion), :3
+      i-isembeddingspewwocawe = t-twue
     )
 
-    val reverseIndexEmbeddingsDataset =
-      EntityEmbeddingsSources.getReverseIndexedEntityEmbeddingsDataset(
-        jobConfig.entityType,
-        ModelVersions.toKnownForModelVersion(jobConfig.modelVersion),
-        isEmbeddingsPerLocale = true
+    v-vaw wevewseindexembeddingsdataset =
+      entityembeddingssouwces.getwevewseindexedentityembeddingsdataset(
+        jobconfig.entitytype, (U ᵕ U❁)
+        modewvewsions.toknownfowmodewvewsion(jobconfig.modewvewsion), ʘwʘ
+        isembeddingspewwocawe = t-twue
       )
 
-    val userEntityMatrix: TypedPipe[(UserId, (Entity, Double))] =
-      getUserEntityMatrix(
-        jobConfig,
-        DataSources.entityRealGraphAggregationDataSetSource(dateRange.embiggen(Days(7))),
-        Some(ExternalDataSources.uttEntitiesSource())
-      ).forceToDisk
+    vaw usewentitymatwix: t-typedpipe[(usewid, o.O (entity, ʘwʘ doubwe))] =
+      g-getusewentitymatwix(
+        jobconfig, ^^
+        d-datasouwces.entityweawgwaphaggwegationdatasetsouwce(datewange.embiggen(days(7))), ^•ﻌ•^
+        some(extewnawdatasouwces.uttentitiessouwce())
+      ).fowcetodisk
 
-    //determine which data source to use based on model version
-    val simClustersSource = jobConfig.modelVersion match {
-      case ModelVersion.Model20m145kUpdated =>
-        InterestedInSources.simClustersInterestedInUpdatedSource(dateRange, timeZone)
-      case modelVersion =>
-        throw new IllegalArgumentException(
-          s"SimClusters model version not supported ${modelVersion.name}")
+    //detewmine w-which d-data souwce to use based on modew vewsion
+    v-vaw simcwustewssouwce = jobconfig.modewvewsion match {
+      case m-modewvewsion.modew20m145kupdated =>
+        i-intewestedinsouwces.simcwustewsintewestedinupdatedsouwce(datewange, mya timezone)
+      c-case modewvewsion =>
+        thwow new iwwegawawgumentexception(
+          s"simcwustews m-modew v-vewsion nyot s-suppowted ${modewvewsion.name}")
     }
 
-    val entityPerLanguage = userEntityMatrix.join(ExternalDataSources.userSource).map {
-      case (userId, ((entity, score), (_, language))) =>
-        ((entity, language), (userId, score))
+    vaw entitypewwanguage = usewentitymatwix.join(extewnawdatasouwces.usewsouwce).map {
+      case (usewid, UwU ((entity, scowe), >_< (_, wanguage))) =>
+        ((entity, /(^•ω•^) wanguage), òωó (usewid, scowe))
     }
 
-    val normalizedUserEntityMatrix =
-      getNormalizedTransposeInputMatrix(entityPerLanguage, numReducers = Some(3000))
+    vaw nyowmawizedusewentitymatwix =
+      getnowmawizedtwansposeinputmatwix(entitypewwanguage, σωσ nyumweducews = some(3000))
 
-    val simClustersEmbedding = jobConfig.modelVersion match {
-      case ModelVersion.Model20m145kUpdated =>
-        computeEmbeddings(
-          simClustersSource,
-          normalizedUserEntityMatrix,
-          scoreExtractors,
-          ModelVersion.Model20m145kUpdated,
-          toSimClustersEmbeddingId(ModelVersion.Model20m145kUpdated),
-          numReducers = Some(8000)
+    vaw simcwustewsembedding = jobconfig.modewvewsion m-match {
+      case m-modewvewsion.modew20m145kupdated =>
+        computeembeddings(
+          simcwustewssouwce, ( ͡o ω ͡o )
+          n-nowmawizedusewentitymatwix, nyaa~~
+          s-scoweextwactows, :3
+          m-modewvewsion.modew20m145kupdated, UwU
+          tosimcwustewsembeddingid(modewvewsion.modew20m145kupdated), o.O
+          n-nyumweducews = some(8000)
         )
-      case modelVersion =>
-        throw new IllegalArgumentException(
-          s"SimClusters model version not supported ${modelVersion.name}")
+      c-case modewvewsion =>
+        t-thwow nyew iwwegawawgumentexception(
+          s"simcwustews m-modew vewsion nyot suppowted ${modewvewsion.name}")
     }
 
-    val topKEmbeddings =
-      simClustersEmbedding.group.sortedReverseTake(jobConfig.topK)(Ordering.by(_._2))
+    v-vaw topkembeddings =
+      s-simcwustewsembedding.gwoup.sowtedwevewsetake(jobconfig.topk)(owdewing.by(_._2))
 
-    writeOutput(
-      simClustersEmbedding,
-      topKEmbeddings,
-      jobConfig,
-      embeddingsDataset,
-      reverseIndexEmbeddingsDataset)
+    wwiteoutput(
+      simcwustewsembedding, (ˆ ﻌ ˆ)♡
+      topkembeddings, ^^;;
+      j-jobconfig, ʘwʘ
+      e-embeddingsdataset, σωσ
+      wevewseindexembeddingsdataset)
   }
 }
 
-object LocaleEntitySimClustersEmbeddingsJob {
+o-object wocaweentitysimcwustewsembeddingsjob {
 
-  def getUserEntityMatrix(
-    jobConfig: EntityEmbeddingsJobConfig,
-    entityRealGraphSource: TypedPipe[Edge],
-    semanticCoreEntityIdsToKeep: Option[TypedPipe[Long]],
-    applyLogTransform: Boolean = false
-  ): TypedPipe[(UserId, (Entity, Double))] =
-    jobConfig.entityType match {
-      case EntityType.SemanticCore =>
-        semanticCoreEntityIdsToKeep match {
-          case Some(entityIdsToKeep) =>
-            getEntityUserMatrix(entityRealGraphSource, jobConfig.halfLife, EntityType.SemanticCore)
+  d-def getusewentitymatwix(
+    j-jobconfig: entityembeddingsjobconfig, ^^;;
+    e-entityweawgwaphsouwce: t-typedpipe[edge], ʘwʘ
+    s-semanticcoweentityidstokeep: o-option[typedpipe[wong]], ^^
+    appwywogtwansfowm: b-boowean = f-fawse
+  ): typedpipe[(usewid, nyaa~~ (entity, (///ˬ///✿) d-doubwe))] =
+    jobconfig.entitytype m-match {
+      case entitytype.semanticcowe =>
+        semanticcoweentityidstokeep m-match {
+          case some(entityidstokeep) =>
+            g-getentityusewmatwix(entityweawgwaphsouwce, XD j-jobconfig.hawfwife, :3 e-entitytype.semanticcowe)
               .map {
-                case (entity, (userId, score)) =>
-                  entity match {
-                    case Entity.SemanticCore(SemanticCoreEntity(entityId, _)) =>
-                      if (applyLogTransform) {
-                        (entityId, (userId, (entity, Math.log(score + 1))))
-                      } else {
-                        (entityId, (userId, (entity, score)))
+                case (entity, òωó (usewid, ^^ s-scowe)) =>
+                  entity m-match {
+                    case e-entity.semanticcowe(semanticcoweentity(entityid, _)) =>
+                      if (appwywogtwansfowm) {
+                        (entityid, ^•ﻌ•^ (usewid, σωσ (entity, math.wog(scowe + 1))))
+                      } e-ewse {
+                        (entityid, (ˆ ﻌ ˆ)♡ (usewid, (entity, nyaa~~ scowe)))
                       }
                     case _ =>
-                      throw new IllegalArgumentException(
-                        "Job config specified EntityType.SemanticCore, but non-semantic core entity was found.")
+                      thwow nyew iwwegawawgumentexception(
+                        "job config specified entitytype.semanticcowe, ʘwʘ b-but nyon-semantic cowe e-entity was found.")
                   }
-              }.hashJoin(entityIdsToKeep.asKeys).values.map {
-                case ((userId, (entity, score)), _) => (userId, (entity, score))
+              }.hashjoin(entityidstokeep.askeys).vawues.map {
+                c-case ((usewid, ^•ﻌ•^ (entity, rawr x3 scowe)), _) => (usewid, 🥺 (entity, ʘwʘ scowe))
               }
           case _ =>
-            getEntityUserMatrix(entityRealGraphSource, jobConfig.halfLife, EntityType.SemanticCore)
-              .map { case (entity, (userId, score)) => (userId, (entity, score)) }
+            g-getentityusewmatwix(entityweawgwaphsouwce, (˘ω˘) jobconfig.hawfwife, o.O e-entitytype.semanticcowe)
+              .map { c-case (entity, σωσ (usewid, (ꈍᴗꈍ) s-scowe)) => (usewid, (ˆ ﻌ ˆ)♡ (entity, o.O scowe)) }
         }
-      case EntityType.Hashtag =>
-        getEntityUserMatrix(entityRealGraphSource, jobConfig.halfLife, EntityType.Hashtag)
-          .map { case (entity, (userId, score)) => (userId, (entity, score)) }
+      case entitytype.hashtag =>
+        g-getentityusewmatwix(entityweawgwaphsouwce, j-jobconfig.hawfwife, :3 entitytype.hashtag)
+          .map { c-case (entity, -.- (usewid, ( ͡o ω ͡o ) scowe)) => (usewid, /(^•ω•^) (entity, (⑅˘꒳˘) scowe)) }
       case _ =>
-        throw new IllegalArgumentException(
-          s"Argument [--entity-type] must be provided. Supported options [${EntityType.SemanticCore.name}, ${EntityType.Hashtag.name}]")
+        thwow nyew iwwegawawgumentexception(
+          s-s"awgument [--entity-type] must b-be pwovided. òωó suppowted o-options [${entitytype.semanticcowe.name}, 🥺 ${entitytype.hashtag.name}]")
     }
 
-  def toSimClustersEmbeddingId(
-    modelVersion: ModelVersion
-  ): ((Entity, String), ScoreType.ScoreType) => SimClustersEmbeddingId = {
-    case ((Entity.SemanticCore(SemanticCoreEntity(entityId, _)), lang), ScoreType.FavScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.FavBasedSematicCoreEntity,
-        modelVersion,
-        InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)))
-    case ((Entity.SemanticCore(SemanticCoreEntity(entityId, _)), lang), ScoreType.FollowScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.FollowBasedSematicCoreEntity,
-        modelVersion,
-        InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)))
-    case ((Entity.SemanticCore(SemanticCoreEntity(entityId, _)), lang), ScoreType.LogFavScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-        modelVersion,
-        InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)))
-    case ((Entity.Hashtag(Hashtag(hashtag)), _), ScoreType.FavScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.FavBasedHashtagEntity,
-        modelVersion,
-        InternalId.Hashtag(hashtag))
-    case ((Entity.Hashtag(Hashtag(hashtag)), _), ScoreType.FollowScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.FollowBasedHashtagEntity,
-        modelVersion,
-        InternalId.Hashtag(hashtag))
-    case (scoreType, entity) =>
-      throw new IllegalArgumentException(
-        s"(ScoreType, Entity) ($scoreType, ${entity.toString}) not supported")
+  d-def tosimcwustewsembeddingid(
+    modewvewsion: m-modewvewsion
+  ): ((entity, s-stwing), (ˆ ﻌ ˆ)♡ scowetype.scowetype) => s-simcwustewsembeddingid = {
+    c-case ((entity.semanticcowe(semanticcoweentity(entityid, -.- _)), σωσ wang), scowetype.favscowe) =>
+      s-simcwustewsembeddingid(
+        e-embeddingtype.favbasedsematiccoweentity, >_<
+        m-modewvewsion, :3
+        i-intewnawid.wocaweentityid(wocaweentityid(entityid, OwO wang)))
+    c-case ((entity.semanticcowe(semanticcoweentity(entityid, rawr _)), (///ˬ///✿) w-wang), scowetype.fowwowscowe) =>
+      simcwustewsembeddingid(
+        embeddingtype.fowwowbasedsematiccoweentity, ^^
+        m-modewvewsion, XD
+        i-intewnawid.wocaweentityid(wocaweentityid(entityid, UwU wang)))
+    c-case ((entity.semanticcowe(semanticcoweentity(entityid, o.O _)), wang), scowetype.wogfavscowe) =>
+      s-simcwustewsembeddingid(
+        embeddingtype.wogfavbasedwocawesemanticcoweentity, 😳
+        m-modewvewsion, (˘ω˘)
+        i-intewnawid.wocaweentityid(wocaweentityid(entityid, 🥺 w-wang)))
+    case ((entity.hashtag(hashtag(hashtag)), ^^ _), scowetype.favscowe) =>
+      simcwustewsembeddingid(
+        embeddingtype.favbasedhashtagentity, >w<
+        m-modewvewsion, ^^;;
+        i-intewnawid.hashtag(hashtag))
+    c-case ((entity.hashtag(hashtag(hashtag)), (˘ω˘) _), scowetype.fowwowscowe) =>
+      simcwustewsembeddingid(
+        embeddingtype.fowwowbasedhashtagentity, OwO
+        m-modewvewsion, (ꈍᴗꈍ)
+        i-intewnawid.hashtag(hashtag))
+    case (scowetype, òωó entity) =>
+      t-thwow nyew iwwegawawgumentexception(
+        s-s"(scowetype, ʘwʘ entity) ($scowetype, ʘwʘ ${entity.tostwing}) nyot suppowted")
   }
 
   /**
-   * Generates the output path for the Entity Embeddings Job.
+   * genewates the o-output path fow t-the entity embeddings j-job. nyaa~~
    *
-   * Example Adhoc: /user/recos-platform/processed/adhoc/simclusters_embeddings/hashtag_per_language/model_20m_145k_updated
-   * Example Prod: /atla/proc/user/cassowary/processed/simclusters_embeddings/semantic_core_per_language/model_20m_145k_updated
+   * e-exampwe adhoc: /usew/wecos-pwatfowm/pwocessed/adhoc/simcwustews_embeddings/hashtag_pew_wanguage/modew_20m_145k_updated
+   * exampwe pwod: /atwa/pwoc/usew/cassowawy/pwocessed/simcwustews_embeddings/semantic_cowe_pew_wanguage/modew_20m_145k_updated
    *
    */
-  def getHdfsPath(
-    isAdhoc: Boolean,
-    isManhattanKeyVal: Boolean,
-    isReverseIndex: Boolean,
-    isLogFav: Boolean,
-    modelVersion: ModelVersion,
-    entityType: EntityType
-  ): String = {
+  d-def g-gethdfspath(
+    isadhoc: boowean, UwU
+    ismanhattankeyvaw: b-boowean, (⑅˘꒳˘)
+    iswevewseindex: boowean, (˘ω˘)
+    i-iswogfav: boowean, :3
+    modewvewsion: m-modewvewsion, (˘ω˘)
+    e-entitytype: entitytype
+  ): s-stwing = {
 
-    val reverseIndex = if (isReverseIndex) "reverse_index/" else ""
+    v-vaw wevewseindex = if (iswevewseindex) "wevewse_index/" ewse ""
 
-    val logFav = if (isLogFav) "log_fav/" else ""
+    v-vaw wogfav = if (iswogfav) "wog_fav/" e-ewse ""
 
-    val entityTypeSuffix = entityType match {
-      case EntityType.SemanticCore => "semantic_core_per_language"
-      case EntityType.Hashtag => "hashtag_per_language"
-      case _ => "unknown_per_language"
+    vaw e-entitytypesuffix = e-entitytype m-match {
+      case entitytype.semanticcowe => "semantic_cowe_pew_wanguage"
+      c-case entitytype.hashtag => "hashtag_pew_wanguage"
+      c-case _ => "unknown_pew_wanguage"
     }
 
-    val pathSuffix = s"$logFav$reverseIndex$entityTypeSuffix"
+    v-vaw pathsuffix = s"$wogfav$wevewseindex$entitytypesuffix"
 
-    EmbeddingUtil.getHdfsPath(isAdhoc, isManhattanKeyVal, modelVersion, pathSuffix)
+    e-embeddingutiw.gethdfspath(isadhoc, nyaa~~ ismanhattankeyvaw, (U ﹏ U) modewvewsion, nyaa~~ p-pathsuffix)
   }
 }

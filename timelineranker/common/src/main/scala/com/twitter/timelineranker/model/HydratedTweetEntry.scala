@@ -1,21 +1,21 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.tweetypie.{thriftscala => tweetypie}
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
+i-impowt com.twittew.timewines.modew.tweet.hydwatedtweet
+i-impowt c-com.twittew.tweetypie.{thwiftscawa => t-tweetypie}
 
 /**
- * Enables HydratedTweet entries to be included in a Timeline.
+ * e-enabwes h-hydwatedtweet entwies to be incwuded in a timewine. XD
  */
-class HydratedTweetEntry(tweet: tweetypie.Tweet) extends HydratedTweet(tweet) with TimelineEntry {
+cwass hydwatedtweetentwy(tweet: t-tweetypie.tweet) extends hydwatedtweet(tweet) w-with timewineentwy {
 
-  def this(hydratedTweet: HydratedTweet) = this(hydratedTweet.tweet)
+  def this(hydwatedtweet: h-hydwatedtweet) = this(hydwatedtweet.tweet)
 
-  override def toTimelineEntryThrift: thrift.TimelineEntry = {
-    thrift.TimelineEntry.TweetypieTweet(tweet)
+  ovewwide def totimewineentwythwift: t-thwift.timewineentwy = {
+    thwift.timewineentwy.tweetypietweet(tweet)
   }
 
-  override def throwIfInvalid(): Unit = {
-    // No validation performed.
+  o-ovewwide d-def thwowifinvawid(): unit = {
+    // nyo vawidation pewfowmed. :3
   }
 }

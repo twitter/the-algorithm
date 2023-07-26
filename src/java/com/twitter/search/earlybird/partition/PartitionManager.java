@@ -1,254 +1,254 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.concuwwent.timeunit;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.segment.SegmentDataProvider;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.earlybird.util.OneTaskScheduledExecutorManager;
-import com.twitter.search.earlybird.util.PeriodicActionParams;
-import com.twitter.search.earlybird.util.ShutdownWaitTimeParams;
-import com.twitter.search.queryparser.query.QueryParserException;
+i-impowt c-com.twittew.seawch.common.concuwwent.scheduwedexecutowsewvicefactowy;
+i-impowt com.twittew.seawch.common.config.config;
+i-impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt com.twittew.seawch.eawwybiwd.eawwybiwdstatus;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+impowt com.twittew.seawch.eawwybiwd.exception.eawwybiwdstawtupexception;
+i-impowt com.twittew.seawch.eawwybiwd.quewycache.quewycachemanagew;
+impowt com.twittew.seawch.eawwybiwd.segment.segmentdatapwovidew;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdstatuscode;
+impowt com.twittew.seawch.eawwybiwd.utiw.onetaskscheduwedexecutowmanagew;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.pewiodicactionpawams;
+impowt com.twittew.seawch.eawwybiwd.utiw.shutdownwaittimepawams;
+i-impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
 
 /**
- * PartitionManager is responsible for indexing data for a partition, including Tweets and Users.
+ * p-pawtitionmanagew is wesponsibwe fow indexing data fow a pawtition, mya i-incwuding tweets and usews. (U ᵕ U❁)
  */
-public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(PartitionManager.class);
+pubwic abstwact cwass pawtitionmanagew extends onetaskscheduwedexecutowmanagew {
+  p-pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(pawtitionmanagew.cwass);
 
-  private static final SearchCounter IGNORED_EXCEPTIONS =
-      SearchCounter.export("partition_manager_ignored_exceptions");
+  p-pwivate s-static finaw seawchcountew i-ignowed_exceptions =
+      seawchcountew.expowt("pawtition_managew_ignowed_exceptions");
 
-  private static final String PARTITION_MANAGER_THREAD_NAME = "PartitionManager";
-  private static final boolean THREAD_IS_DAEMON = true;
-  protected static final String INDEX_CURRENT_SEGMENT = "indexing the current segment";
-  protected static final String SETUP_QUERY_CACHE = "setting up query cache";
+  pwivate s-static finaw stwing pawtition_managew_thwead_name = "pawtitionmanagew";
+  pwivate s-static finaw boowean thwead_is_daemon = twue;
+  pwotected static finaw stwing index_cuwwent_segment = "indexing t-the cuwwent segment";
+  pwotected s-static finaw s-stwing setup_quewy_cache = "setting u-up quewy cache";
 
-  protected final SegmentManager segmentManager;
-  protected final QueryCacheManager queryCacheManager;
-  // Should be updated by info read from ZK
-  protected final DynamicPartitionConfig dynamicPartitionConfig;
+  pwotected finaw segmentmanagew segmentmanagew;
+  p-pwotected f-finaw quewycachemanagew quewycachemanagew;
+  // s-shouwd be updated b-by info wead fwom zk
+  pwotected f-finaw dynamicpawtitionconfig dynamicpawtitionconfig;
 
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  pwivate f-finaw seawchindexingmetwicset seawchindexingmetwicset;
 
-  private boolean partitionManagerFirstLoop = true;
+  pwivate boowean p-pawtitionmanagewfiwstwoop = twue;
 
-  public PartitionManager(QueryCacheManager queryCacheManager,
-                          SegmentManager segmentManager,
-                          DynamicPartitionConfig dynamicPartitionConfig,
-                          ScheduledExecutorServiceFactory executorServiceFactory,
-                          SearchIndexingMetricSet searchIndexingMetricSet,
-                          SearchStatsReceiver searchStatsReceiver,
-                          CriticalExceptionHandler criticalExceptionHandler) {
-    super(
-        executorServiceFactory,
-        PARTITION_MANAGER_THREAD_NAME,
-        THREAD_IS_DAEMON,
-        PeriodicActionParams.withFixedDelay(
-          EarlybirdConfig.getInt("time_slice_roll_check_interval_ms", 500),
-          TimeUnit.MILLISECONDS),
-        ShutdownWaitTimeParams.indefinitely(),
-        searchStatsReceiver,
-        criticalExceptionHandler);
+  p-pubwic pawtitionmanagew(quewycachemanagew quewycachemanagew, :3
+                          s-segmentmanagew s-segmentmanagew, mya
+                          dynamicpawtitionconfig dynamicpawtitionconfig, OwO
+                          scheduwedexecutowsewvicefactowy executowsewvicefactowy, (ˆ ﻌ ˆ)♡
+                          seawchindexingmetwicset seawchindexingmetwicset, ʘwʘ
+                          seawchstatsweceivew seawchstatsweceivew, o.O
+                          cwiticawexceptionhandwew c-cwiticawexceptionhandwew) {
+    s-supew(
+        executowsewvicefactowy, UwU
+        p-pawtition_managew_thwead_name, rawr x3
+        t-thwead_is_daemon,
+        p-pewiodicactionpawams.withfixeddeway(
+          eawwybiwdconfig.getint("time_swice_woww_check_intewvaw_ms", 🥺 500),
+          timeunit.miwwiseconds), :3
+        shutdownwaittimepawams.indefinitewy(), (ꈍᴗꈍ)
+        s-seawchstatsweceivew, 🥺
+        cwiticawexceptionhandwew);
 
-    this.segmentManager = segmentManager;
-    this.queryCacheManager = queryCacheManager;
-    this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+    this.segmentmanagew = segmentmanagew;
+    this.quewycachemanagew = quewycachemanagew;
+    this.dynamicpawtitionconfig = d-dynamicpawtitionconfig;
+    this.seawchindexingmetwicset = s-seawchindexingmetwicset;
   }
 
   /**
-   * Runs the partition manager.
+   * w-wuns t-the pawtition managew. (✿oωo)
    */
-  public final void runImpl() {
-    if (partitionManagerFirstLoop) {
-      try {
-        testHookBeforeStartUp();
-        startUp();
-        validateSegments();
-        segmentManager.logState("After startUp");
-      } catch (Throwable t) {
-        criticalExceptionHandler.handle(this, t);
-        shutDownIndexing();
-        throw new RuntimeException("PartitionManager unhandled exception, stopping scheduler", t);
+  pubwic finaw void w-wunimpw() {
+    i-if (pawtitionmanagewfiwstwoop) {
+      t-twy {
+        t-testhookbefowestawtup();
+        stawtup();
+        vawidatesegments();
+        s-segmentmanagew.wogstate("aftew s-stawtup");
+      } c-catch (thwowabwe t-t) {
+        c-cwiticawexceptionhandwew.handwe(this, (U ﹏ U) t);
+        shutdownindexing();
+        thwow nyew wuntimeexception("pawtitionmanagew u-unhandwed exception, :3 stopping scheduwew", ^^;; t);
       }
     }
 
-    try {
-      testHookAfterSleep();
-      indexingLoop(partitionManagerFirstLoop);
-    } catch (InterruptedException e) {
-      LOG.warn("PartitionManager thread interrupted, stoping scheduler", e);
-      shutDownIndexing();
-      throw new RuntimeException("PartitionManager thread interrupted", e);
-    } catch (Exception e) {
-      LOG.error("Exception in indexing PartitionManager loop", e);
-      IGNORED_EXCEPTIONS.increment();
-    } catch (Throwable t) {
-      LOG.error("Unhandled exception in indexing PartitionManager loop", t);
-      criticalExceptionHandler.handle(this, t);
-      shutDownIndexing();
-      throw new RuntimeException("PartitionManager unhandled exception, stopping scheduler", t);
-    } finally {
-      partitionManagerFirstLoop = false;
+    twy {
+      testhookaftewsweep();
+      indexingwoop(pawtitionmanagewfiwstwoop);
+    } catch (intewwuptedexception e-e) {
+      wog.wawn("pawtitionmanagew thwead intewwupted, rawr s-stoping scheduwew", 😳😳😳 e-e);
+      shutdownindexing();
+      t-thwow nyew wuntimeexception("pawtitionmanagew t-thwead intewwupted", (✿oωo) e);
+    } c-catch (exception e-e) {
+      wog.ewwow("exception in indexing pawtitionmanagew woop", OwO e);
+      ignowed_exceptions.incwement();
+    } c-catch (thwowabwe t) {
+      w-wog.ewwow("unhandwed exception i-in indexing p-pawtitionmanagew woop", ʘwʘ t);
+      cwiticawexceptionhandwew.handwe(this, (ˆ ﻌ ˆ)♡ t-t);
+      s-shutdownindexing();
+      thwow n-nyew wuntimeexception("pawtitionmanagew u-unhandwed exception, (U ﹏ U) stopping scheduwew", UwU t);
+    } finawwy {
+      pawtitionmanagewfiwstwoop = fawse;
     }
   }
 
   /**
-   * Returns the SegmentDataProvider instance that will be used to fetch the information for all
-   * segments.
+   * w-wetuwns t-the segmentdatapwovidew i-instance that wiww be used t-to fetch the i-infowmation fow aww
+   * segments. XD
    */
-  public abstract SegmentDataProvider getSegmentDataProvider();
+  p-pubwic abstwact segmentdatapwovidew getsegmentdatapwovidew();
 
   /**
-   * Starts up this partition manager.
+   * stawts up this pawtition managew. ʘwʘ
    */
-  protected abstract void startUp() throws Exception;
+  pwotected abstwact v-void stawtup() t-thwows exception;
 
   /**
-   * Runs one indexing iteration.
+   * wuns one indexing itewation. rawr x3
    *
-   * @param firstLoop Determines if this is the first time the indexing loop is running.
+   * @pawam f-fiwstwoop d-detewmines if this is the fiwst time the indexing woop is w-wunning. ^^;;
    */
-  protected abstract void indexingLoop(boolean firstLoop) throws Exception;
+  pwotected abstwact void indexingwoop(boowean fiwstwoop) thwows exception;
 
   /**
-   * Shuts down all indexing.
+   * s-shuts down aww indexing. ʘwʘ
    */
-  protected abstract void shutDownIndexing();
+  pwotected a-abstwact void s-shutdownindexing();
 
-  @Override
-  public void shutdownComponent() {
-    shutDownIndexing();
-  }
-
-  /**
-   * Notifies all other threads that the partition manager has become current (ie. has indexed all
-   * available events).
-   */
-  public void becomeCurrent() {
-    LOG.info("PartitionManager became current");
-    if (EarlybirdStatus.isStarting()) {
-      EarlybirdStatus.setStatus(EarlybirdStatusCode.CURRENT);
-    } else {
-      LOG.warn("Could not set statusCode to CURRENT from " + EarlybirdStatus.getStatusCode());
-    }
-
-    // Now that we're done starting up, set the query cache thread pool size to one.
-    queryCacheManager.setWorkerPoolSizeAfterStartup();
-  }
-
-  protected void setupQueryCacheIfNeeded() throws QueryParserException {
-    queryCacheManager.setupTasksIfNeeded(segmentManager);
-  }
-
-  // Only for tests, used for testing exception handling
-  private static TestHook testHookBeforeStartUp;
-  private static TestHook testHookAfterSleep;
-
-  private static void testHookBeforeStartUp() throws Exception {
-    if (Config.environmentIsTest() && testHookBeforeStartUp != null) {
-      testHookBeforeStartUp.run();
-    }
-  }
-
-  private static void testHookAfterSleep() throws Exception {
-    if (Config.environmentIsTest() && testHookAfterSleep != null) {
-      testHookAfterSleep.run();
-    }
-  }
-
-  @Override
-  protected void runOneIteration() {
-    try {
-      runImpl();
-    } catch (Throwable t) {
-      LOG.error("Unhandled exception in PartitionManager loop", t);
-      throw new RuntimeException(t.getMessage());
-    }
-  }
-
-  public SearchIndexingMetricSet getSearchIndexingMetricSet() {
-    return searchIndexingMetricSet;
+  @ovewwide
+  pubwic void shutdowncomponent() {
+    shutdownindexing();
   }
 
   /**
-   * Allows tests to run code before the partition manager starts up.
+   * n-nyotifies a-aww othew thweads that the pawtition managew has become c-cuwwent (ie. (U ﹏ U) has indexed aww
+   * a-avaiwabwe events). (˘ω˘)
+   */
+  pubwic void becomecuwwent() {
+    wog.info("pawtitionmanagew became c-cuwwent");
+    if (eawwybiwdstatus.isstawting()) {
+      e-eawwybiwdstatus.setstatus(eawwybiwdstatuscode.cuwwent);
+    } e-ewse {
+      wog.wawn("couwd n-nyot set statuscode to cuwwent f-fwom " + eawwybiwdstatus.getstatuscode());
+    }
+
+    // n-nyow t-that we'we done stawting up, (ꈍᴗꈍ) set t-the quewy cache t-thwead poow size to one.
+    quewycachemanagew.setwowkewpoowsizeaftewstawtup();
+  }
+
+  p-pwotected v-void setupquewycacheifneeded() t-thwows quewypawsewexception {
+    quewycachemanagew.setuptasksifneeded(segmentmanagew);
+  }
+
+  // onwy fow tests, /(^•ω•^) u-used fow testing exception h-handwing
+  pwivate s-static testhook testhookbefowestawtup;
+  pwivate static testhook t-testhookaftewsweep;
+
+  p-pwivate s-static void testhookbefowestawtup() t-thwows exception {
+    if (config.enviwonmentistest() && t-testhookbefowestawtup != nyuww) {
+      testhookbefowestawtup.wun();
+    }
+  }
+
+  pwivate static void testhookaftewsweep() thwows e-exception {
+    if (config.enviwonmentistest() && t-testhookaftewsweep != nyuww) {
+      t-testhookaftewsweep.wun();
+    }
+  }
+
+  @ovewwide
+  pwotected v-void wunoneitewation() {
+    twy {
+      wunimpw();
+    } c-catch (thwowabwe t-t) {
+      wog.ewwow("unhandwed e-exception in pawtitionmanagew woop", >_< t-t);
+      t-thwow nyew wuntimeexception(t.getmessage());
+    }
+  }
+
+  pubwic seawchindexingmetwicset getseawchindexingmetwicset() {
+    wetuwn seawchindexingmetwicset;
+  }
+
+  /**
+   * awwows t-tests to wun c-code befowe the p-pawtition managew stawts up. σωσ
    *
-   * @param testHook The code to run before the start up.
+   * @pawam t-testhook the code to wun befowe the stawt up.
    */
-  @VisibleForTesting
-  public static void setTestHookBeforeStartUp(TestHook testHook) {
-    if (Config.environmentIsTest()) {
-      testHookBeforeStartUp = testHook;
-    } else {
-      throw new RuntimeException("Trying to set startup test hook in non-test code!!");
+  @visibwefowtesting
+  p-pubwic s-static void settesthookbefowestawtup(testhook testhook) {
+    i-if (config.enviwonmentistest()) {
+      testhookbefowestawtup = testhook;
+    } e-ewse {
+      t-thwow nyew wuntimeexception("twying to s-set stawtup test h-hook in nyon-test code!!");
     }
   }
 
   /**
-   * Allows tests to run code before the indexing loop.
+   * awwows tests to wun code befowe the indexing w-woop. ^^;;
    *
-   * @param testHook The code to run before the indexing loop.
+   * @pawam t-testhook t-the code to wun b-befowe the indexing w-woop. 😳
    */
-  @VisibleForTesting
-  public static void setTestHookAfterSleep(TestHook testHook) {
-    if (Config.environmentIsTest()) {
-      testHookAfterSleep = testHook;
-    } else {
-      throw new RuntimeException("Trying to set test hook in non-test code!!");
+  @visibwefowtesting
+  pubwic s-static void settesthookaftewsweep(testhook t-testhook) {
+    if (config.enviwonmentistest()) {
+      t-testhookaftewsweep = t-testhook;
+    } ewse {
+      t-thwow nyew wuntimeexception("twying to set t-test hook in nyon-test code!!");
     }
   }
 
   /**
-   * An interface that allows tests to run code at various points in the PartitionManager's
-   * lyfecycle.
+   * a-an intewface t-that awwows tests to wun code a-at vawious points in the pawtitionmanagew's
+   * wyfecycwe. >_<
    */
-  @VisibleForTesting
-  public interface TestHook {
+  @visibwefowtesting
+  p-pubwic i-intewface testhook {
     /**
-     * Defines the code that should be run.
+     * d-defines the code that shouwd be wun. -.-
      */
-    void run() throws Exception;
+    void wun() t-thwows exception;
   }
 
   /**
-   * Allows tests to determine if this partition manager is all caught up.
+   * awwows tests to detewmine if t-this pawtition m-managew is aww caught up. UwU
    *
-   * @return {@code true} if this partition manager is caught up, {@code false} otherwise.
+   * @wetuwn {@code t-twue} if this pawtition managew i-is caught up, :3 {@code f-fawse} othewwise. σωσ
    */
-  @VisibleForTesting
-  public abstract boolean isCaughtUpForTests();
+  @visibwefowtesting
+  pubwic abstwact boowean iscaughtupfowtests();
 
-  @VisibleForTesting
-  protected void validateSegments() throws EarlybirdStartupException {
-    // This is necessary because many tests rely on starting partition manager but not indexing any
-    // tweets. However, we do not want Earlybirds to start in production if they are not serving any
-    // tweets. (SEARCH-24238)
-    if (Config.environmentIsTest()) {
-      return;
+  @visibwefowtesting
+  p-pwotected void vawidatesegments() thwows eawwybiwdstawtupexception {
+    // t-this is n-nyecessawy because many tests wewy o-on stawting pawtition managew b-but nyot indexing a-any
+    // tweets. >w< h-howevew, we do nyot want eawwybiwds to stawt in pwoduction if they awe nyot sewving any
+    // tweets. (ˆ ﻌ ˆ)♡ (seawch-24238)
+    if (config.enviwonmentistest()) {
+      wetuwn;
     }
-    validateSegmentsForNonTest();
+    vawidatesegmentsfownontest();
   }
 
-  @VisibleForTesting
-  protected void validateSegmentsForNonTest() throws EarlybirdStartupException {
-    // Subclasses can override this and provide additional checks.
-    if (segmentManager.getNumIndexedDocuments() == 0) {
-      throw new EarlybirdStartupException("Earlybird has zero indexed documents.");
+  @visibwefowtesting
+  pwotected void vawidatesegmentsfownontest() thwows eawwybiwdstawtupexception {
+    // s-subcwasses c-can ovewwide this and pwovide additionaw checks. ʘwʘ
+    i-if (segmentmanagew.getnumindexeddocuments() == 0) {
+      t-thwow nyew e-eawwybiwdstawtupexception("eawwybiwd has zewo indexed d-documents.");
     }
   }
 }

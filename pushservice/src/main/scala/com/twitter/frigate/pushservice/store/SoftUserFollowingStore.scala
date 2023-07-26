@@ -1,61 +1,61 @@
-package com.twitter.frigate.pushservice.store
+package com.twittew.fwigate.pushsewvice.stowe
 
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.UserId
-import com.twitter.strato.config.FlockCursors.BySource.Begin
-import com.twitter.strato.config.FlockCursors.Continue
-import com.twitter.strato.config.FlockCursors.End
-import com.twitter.strato.config.FlockPage
-import com.twitter.strato.generated.client.socialgraph.service.soft_users.softUserFollows.EdgeBySourceClientColumn
-import com.twitter.util.Future
+impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.usewtype
+i-impowt c-com.twittew.stitch.stitch
+impowt c-com.twittew.stowehaus.weadabwestowe
+i-impowt c-com.twittew.stwato.cwient.cwient
+impowt com.twittew.stwato.cwient.usewid
+impowt com.twittew.stwato.config.fwockcuwsows.bysouwce.begin
+impowt com.twittew.stwato.config.fwockcuwsows.continue
+i-impowt com.twittew.stwato.config.fwockcuwsows.end
+impowt com.twittew.stwato.config.fwockpage
+i-impowt com.twittew.stwato.genewated.cwient.sociawgwaph.sewvice.soft_usews.softusewfowwows.edgebysouwcecwientcowumn
+i-impowt com.twittew.utiw.futuwe
 
-object SoftUserFollowingStore {
-  type ViewerFollowingCursor = EdgeBySourceClientColumn.Cursor
-  val MaxPagesToFetch = 2
-  val PageLimit = 50
+object softusewfowwowingstowe {
+  t-type viewewfowwowingcuwsow = edgebysouwcecwientcowumn.cuwsow
+  vaw m-maxpagestofetch = 2
+  v-vaw pagewimit = 50
 }
 
-class SoftUserFollowingStore(stratoClient: Client) extends ReadableStore[User, Seq[Long]] {
-  import SoftUserFollowingStore._
-  private val softUserFollowingEdgesPaginator = new EdgeBySourceClientColumn(stratoClient).paginator
+cwass softusewfowwowingstowe(stwatocwient: cwient) extends weadabwestowe[usew, nyaa~~ seq[wong]] {
+  i-impowt softusewfowwowingstowe._
+  pwivate vaw softusewfowwowingedgespaginatow = nyew edgebysouwcecwientcowumn(stwatocwient).paginatow
 
-  private def accumulateIds(cursor: ViewerFollowingCursor, pagesToFetch: Int): Stitch[Seq[Long]] =
-    softUserFollowingEdgesPaginator.paginate(cursor).flatMap {
-      case FlockPage(data, next, _) =>
-        next match {
-          case cont: Continue if pagesToFetch > 1 =>
-            Stitch
+  p-pwivate def accumuwateids(cuwsow: v-viewewfowwowingcuwsow, :3 pagestofetch: i-int): s-stitch[seq[wong]] =
+    s-softusewfowwowingedgespaginatow.paginate(cuwsow).fwatmap {
+      case fwockpage(data, 😳😳😳 n-nyext, (˘ω˘) _) =>
+        nyext match {
+          case c-cont: continue if pagestofetch > 1 =>
+            stitch
               .join(
-                Stitch.value(data.map(_.to).map(_.value)),
-                accumulateIds(cont, pagesToFetch - 1))
+                stitch.vawue(data.map(_.to).map(_.vawue)), ^^
+                accumuwateids(cont, :3 pagestofetch - 1))
               .map {
-                case (a, b) => a ++ b
+                c-case (a, -.- b) => a ++ b
               }
 
-          case _: End | _: Continue =>
-            // end pagination if last page has been fetched or [[MaxPagesToFetch]] have been fetched
-            Stitch.value(data.map(_.to).map(_.value))
+          c-case _: e-end | _: continue =>
+            // e-end pagination if wast page has been fetched ow [[maxpagestofetch]] h-have been f-fetched
+            stitch.vawue(data.map(_.to).map(_.vawue))
         }
     }
 
-  private def softFollowingFromStrato(
-    sourceId: Long,
-    pageLimit: Int,
-    pagesToFetch: Int
-  ): Stitch[Seq[Long]] = {
-    val begin = Begin[UserId, UserId](UserId(sourceId), pageLimit)
-    accumulateIds(begin, pagesToFetch)
+  p-pwivate def s-softfowwowingfwomstwato(
+    souwceid: w-wong, 😳
+    pagewimit: int, mya
+    p-pagestofetch: int
+  ): stitch[seq[wong]] = {
+    vaw begin = b-begin[usewid, (˘ω˘) usewid](usewid(souwceid), >_< p-pagewimit)
+    accumuwateids(begin, -.- p-pagestofetch)
   }
 
-  override def get(user: User): Future[Option[Seq[Long]]] = {
-    user.userType match {
-      case UserType.Soft =>
-        Stitch.run(softFollowingFromStrato(user.id, PageLimit, MaxPagesToFetch)).map(Option(_))
-      case _ => Future.None
+  o-ovewwide def get(usew: usew): futuwe[option[seq[wong]]] = {
+    usew.usewtype match {
+      case usewtype.soft =>
+        stitch.wun(softfowwowingfwomstwato(usew.id, 🥺 p-pagewimit, m-maxpagestofetch)).map(option(_))
+      case _ => f-futuwe.none
     }
   }
 }

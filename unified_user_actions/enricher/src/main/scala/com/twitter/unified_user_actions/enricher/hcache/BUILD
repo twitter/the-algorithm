@@ -1,11 +1,11 @@
-scala_library(
-    name = "hcache",
-    sources = ["*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "util/util-cache-guava/src/main/scala",
-        "util/util-cache/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
-    ],
+scawa_wibwawy(
+    nyame = "hcache", ^•ﻌ•^
+    souwces = ["*.scawa"], OwO
+    t-tags = ["bazew-compatibwe"], 🥺
+    d-dependencies = [
+        "3wdpawty/jvm/com/googwe/guava", òωó
+        "utiw/utiw-cache-guava/swc/main/scawa", o.O
+        "utiw/utiw-cache/swc/main/scawa", (U ᵕ U❁)
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats",
+    ], (⑅˘꒳˘)
 )

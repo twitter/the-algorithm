@@ -1,116 +1,116 @@
-package com.twitter.ann.service.loadtest
+package com.twittew.ann.sewvice.woadtest
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Queryable
-import com.twitter.ann.common.RuntimeParams
-import com.twitter.concurrent.AsyncMeter
-import com.twitter.concurrent.AsyncStream
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.logging.Logger
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
-import com.twitter.util.Timer
-import com.twitter.util.Try
-import java.util.concurrent.atomic.AtomicInteger
+impowt c-com.googwe.common.annotations.visibwefowtesting
+i-impowt com.twittew.ann.common.distance
+i-impowt com.twittew.ann.common.quewyabwe
+impowt c-com.twittew.ann.common.wuntimepawams
+i-impowt c-com.twittew.concuwwent.asyncmetew
+i-impowt com.twittew.concuwwent.asyncstweam
+i-impowt com.twittew.finagwe.utiw.defauwttimew
+impowt com.twittew.wogging.woggew
+impowt c-com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.stopwatch
+impowt c-com.twittew.utiw.timew
+impowt com.twittew.utiw.twy
+impowt j-java.utiw.concuwwent.atomic.atomicintegew
 
-object QueryTimeConfiguration {
-  val ResultHeader =
-    "params\tnumNeighbors\trecall@1\trecall@10\trecall\tavgLatencyMicros\tp50LatencyMicros\tp90LatencyMicros\tp99LatencyMicros\tavgRPS"
+object q-quewytimeconfiguwation {
+  v-vaw wesuwtheadew =
+    "pawams\tnumneighbows\twecaww@1\twecaww@10\twecaww\tavgwatencymicwos\tp50watencymicwos\tp90watencymicwos\tp99watencymicwos\tavgwps"
 }
 
-case class QueryTimeConfiguration[T, P <: RuntimeParams](
-  recorder: LoadTestQueryRecorder[T],
-  param: P,
-  numberOfNeighbors: Int,
-  private val results: InMemoryLoadTestQueryRecorder[T]) {
-  override def toString: String =
-    s"QueryTimeConfiguration(param = $param, numberOfNeighbors = $numberOfNeighbors)"
+case cwass quewytimeconfiguwation[t, (⑅˘꒳˘) p <: wuntimepawams](
+  w-wecowdew: woadtestquewywecowdew[t], nyaa~~
+  pawam: p, OwO
+  nyumbewofneighbows: int,
+  p-pwivate vaw wesuwts: inmemowywoadtestquewywecowdew[t]) {
+  ovewwide d-def tostwing: s-stwing =
+    s-s"quewytimeconfiguwation(pawam = $pawam, rawr x3 n-nyumbewofneighbows = $numbewofneighbows)"
 
-  def printResults: String = {
-    val snapshot = results.computeSnapshot()
-    s"$param\t$numberOfNeighbors\t${results.top1Recall}\t${results.top10Recall}\t${results.recall}\t${snapshot.avgQueryLatencyMicros}\t${snapshot.p50QueryLatencyMicros}\t${snapshot.p90QueryLatencyMicros}\t${snapshot.p99QueryLatencyMicros}\t${results.avgRPS}"
+  def pwintwesuwts: stwing = {
+    v-vaw snapshot = wesuwts.computesnapshot()
+    s"$pawam\t$numbewofneighbows\t${wesuwts.top1wecaww}\t${wesuwts.top10wecaww}\t${wesuwts.wecaww}\t${snapshot.avgquewywatencymicwos}\t${snapshot.p50quewywatencymicwos}\t${snapshot.p90quewywatencymicwos}\t${snapshot.p99quewywatencymicwos}\t${wesuwts.avgwps}"
   }
 }
 
 /**
- * Basic worker for ANN benchmark, send query with configured QPS and record results
+ * b-basic wowkew fow ann benchmawk, send quewy with configuwed qps and wecowd wesuwts
  */
-class AnnLoadTestWorker(
-  timer: Timer = DefaultTimer) {
-  private val logger = Logger()
+cwass a-annwoadtestwowkew(
+  timew: timew = d-defauwttimew) {
+  p-pwivate vaw w-woggew = woggew()
 
   /**
-   * @param queries List of tuple of query embedding and corresponding list of truth set of ids associated with the embedding
-   * @param qps the maximum number of request per second to send to the queryable. Note that if you
-   *            do not set the concurrency level high enough you may not be able to achieve this.
-   * @param duration         how long to perform the load test.
-   * @param configuration    Query configuration encapsulating runtime params and recorder.
-   * @param concurrencyLevel The maximum number of concurrent requests to the queryable at a time.
-   *                         Note that you may not be able to achieve this number of concurrent
-   *                         requests if you do not have the QPS set high enough.
+   * @pawam quewies wist of tupwe of quewy embedding a-and cowwesponding w-wist of twuth set of ids associated w-with the embedding
+   * @pawam q-qps the maximum nyumbew of w-wequest pew second to send to the q-quewyabwe. XD nyote that if you
+   *            do nyot set the concuwwency w-wevew high enough you m-may nyot be abwe to achieve this. σωσ
+   * @pawam duwation         h-how wong to pewfowm t-the woad test. (U ᵕ U❁)
+   * @pawam configuwation    quewy configuwation encapsuwating wuntime pawams and wecowdew. (U ﹏ U)
+   * @pawam concuwwencywevew the m-maximum nyumbew o-of concuwwent wequests to the quewyabwe a-at a time. :3
+   *                         n-nyote that you may n-nyot be abwe to achieve this nyumbew of concuwwent
+   *                         wequests if you d-do nyot have the qps set high enough. ( ͡o ω ͡o )
    *
-   * @return a Future that completes when the load test is over. It contains the number of requests
-   *         sent.
+   * @wetuwn a futuwe that compwetes w-when the woad test is ovew. σωσ it c-contains the nyumbew o-of wequests
+   *         s-sent. >w<
    */
-  def runWithQps[T, P <: RuntimeParams, D <: Distance[D]](
-    queryable: Queryable[T, P, D],
-    queries: Seq[Query[T]],
-    qps: Int,
-    duration: Duration,
-    configuration: QueryTimeConfiguration[T, P],
-    concurrencyLevel: Int
-  ): Future[Int] = {
-    val elapsed = Stopwatch.start()
-    val atomicInteger = new AtomicInteger(0)
-    val fullStream = Stream.continually {
-      if (elapsed() <= duration) {
-        logger.ifDebug(s"running with config: $configuration")
-        Some(atomicInteger.getAndIncrement() % queries.size)
-      } else {
-        logger.ifDebug(s"stopping with config: $configuration")
-        None
+  def wunwithqps[t, 😳😳😳 p-p <: wuntimepawams, OwO d-d <: distance[d]](
+    q-quewyabwe: q-quewyabwe[t, 😳 p, d],
+    quewies: seq[quewy[t]], 😳😳😳
+    q-qps: int, (˘ω˘)
+    d-duwation: d-duwation, ʘwʘ
+    c-configuwation: quewytimeconfiguwation[t, ( ͡o ω ͡o ) p-p],
+    concuwwencywevew: int
+  ): futuwe[int] = {
+    vaw ewapsed = stopwatch.stawt()
+    v-vaw atomicintegew = nyew atomicintegew(0)
+    vaw fuwwstweam = stweam.continuawwy {
+      if (ewapsed() <= duwation) {
+        woggew.ifdebug(s"wunning w-with config: $configuwation")
+        some(atomicintegew.getandincwement() % quewies.size)
+      } ewse {
+        w-woggew.ifdebug(s"stopping w-with config: $configuwation")
+        n-nyone
       }
     }
-    val limitedStream = fullStream.takeWhile(_.isDefined).flatten
-    // at most we will have concurrencyLevel concurrent requests. So we should never have more than
-    // concurrency level waiters.
-    val asyncMeter = AsyncMeter.perSecond(qps, concurrencyLevel)(timer)
+    vaw wimitedstweam = f-fuwwstweam.takewhiwe(_.isdefined).fwatten
+    // at most w-we wiww have c-concuwwencywevew concuwwent wequests. o.O so we shouwd nyevew have mowe than
+    // concuwwency wevew w-waitews. >w<
+    vaw asyncmetew = a-asyncmetew.pewsecond(qps, 😳 concuwwencywevew)(timew)
 
-    Future.Unit.before {
-      AsyncStream
-        .fromSeq(limitedStream).mapConcurrent(concurrencyLevel) { index =>
-          asyncMeter.await(1).flatMap { _ =>
-            performQuery(configuration, queryable, queries(index))
+    f-futuwe.unit.befowe {
+      a-asyncstweam
+        .fwomseq(wimitedstweam).mapconcuwwent(concuwwencywevew) { index =>
+          asyncmetew.await(1).fwatmap { _ =>
+            p-pewfowmquewy(configuwation, 🥺 quewyabwe, rawr x3 q-quewies(index))
           }
         }.size
     }
   }
 
-  @VisibleForTesting
-  private[loadtest] def performQuery[T, P <: RuntimeParams, D <: Distance[D]](
-    configuration: QueryTimeConfiguration[T, P],
-    queryable: Queryable[T, P, D],
-    query: Query[T]
-  ): Future[Try[Unit]] = {
-    val elapsed = Stopwatch.start()
-    queryable
-      .query(query.embedding, configuration.numberOfNeighbors, configuration.param)
-      .onSuccess { res: List[T] =>
-        // underneath LoadTestRecorder will record results for load test
-        // knnMap should be truncated to be same size as query result
-        configuration.recorder.recordQueryResult(
-          query.trueNeighbours,
-          res,
-          elapsed.apply()
+  @visibwefowtesting
+  pwivate[woadtest] d-def pewfowmquewy[t, o.O p-p <: wuntimepawams, rawr d <: distance[d]](
+    configuwation: quewytimeconfiguwation[t, ʘwʘ p-p], 😳😳😳
+    quewyabwe: q-quewyabwe[t, ^^;; p-p, d],
+    quewy: quewy[t]
+  ): f-futuwe[twy[unit]] = {
+    v-vaw ewapsed = stopwatch.stawt()
+    quewyabwe
+      .quewy(quewy.embedding, o.O c-configuwation.numbewofneighbows, (///ˬ///✿) configuwation.pawam)
+      .onsuccess { wes: wist[t] =>
+        // undewneath woadtestwecowdew w-wiww wecowd w-wesuwts fow woad test
+        // knnmap shouwd b-be twuncated to b-be same size as quewy wesuwt
+        configuwation.wecowdew.wecowdquewywesuwt(
+          quewy.twueneighbouws, σωσ
+          w-wes, nyaa~~
+          ewapsed.appwy()
         )
-        logger.ifDebug(s"Successful query for $query")
+        woggew.ifdebug(s"successfuw quewy fow $quewy")
       }
-      .onFailure { e =>
-        logger.error(s"Failed query for $query: " + e)
+      .onfaiwuwe { e =>
+        w-woggew.ewwow(s"faiwed quewy fow $quewy: " + e)
       }
       .unit
-      .liftToTry
+      .wifttotwy
   }
 }

@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.premarshaller.urp.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.uwp.buiwdew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageBody
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageHeader
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageNavBar
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.pagebody
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.pageheadew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwp.pagenavbaw
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinescwibeconfig
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Trait for our builder which given a query and page info will return an `Option[TimelineScribeConfig]`
+ * twait fow ouw buiwdew which given a quewy and page info w-wiww wetuwn an `option[timewinescwibeconfig]`
  *
- * @tparam Query
+ * @tpawam quewy
  */
-trait TimelineScribeConfigBuilder[-Query <: PipelineQuery] {
+twait timewinescwibeconfigbuiwdew[-quewy <: pipewinequewy] {
 
-  def build(
-    query: Query,
-    pageBody: PageBody,
-    pageHeader: Option[PageHeader],
-    pageNavBar: Option[PageNavBar]
-  ): Option[TimelineScribeConfig]
+  d-def buiwd(
+    quewy: quewy, ^^;;
+    p-pagebody: pagebody, >_<
+    pageheadew: option[pageheadew], mya
+    pagenavbaw: o-option[pagenavbaw]
+  ): option[timewinescwibeconfig]
 }

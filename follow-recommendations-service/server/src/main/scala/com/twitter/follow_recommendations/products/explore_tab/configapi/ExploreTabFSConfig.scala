@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.products.explore_tab.configapi
+package com.twittew.fowwow_wecommendations.pwoducts.expwowe_tab.configapi
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.follow_recommendations.products.explore_tab.configapi.ExploreTabParams._
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt c-com.twittew.fowwow_wecommendations.pwoducts.expwowe_tab.configapi.expwowetabpawams._
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.pawam
+i-impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class ExploreTabFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
-    Seq(EnableProductForSoftUser)
+@singweton
+cwass expwowetabfsconfig @inject() () extends featuweswitchconfig {
+  ovewwide v-vaw booweanfspawams: seq[pawam[boowean] with f-fsname] =
+    seq(enabwepwoductfowsoftusew)
 }

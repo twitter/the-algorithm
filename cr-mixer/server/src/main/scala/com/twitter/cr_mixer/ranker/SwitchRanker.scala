@@ -1,46 +1,46 @@
-package com.twitter.cr_mixer.ranker
+package com.twittew.cw_mixew.wankew
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Time
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.cw_mixew.modew.bwendedcandidate
+i-impowt com.twittew.cw_mixew.modew.cwcandidategenewatowquewy
+i-impowt com.twittew.cw_mixew.modew.wankedcandidate
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.javatimew
+i-impowt com.twittew.utiw.time
+i-impowt com.twittew.utiw.timew
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * CR-Mixer internal ranker
+ * cw-mixew intewnaw wankew
  */
-@Singleton
-class SwitchRanker @Inject() (
-  defaultRanker: DefaultRanker,
-  globalStats: StatsReceiver) {
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  implicit val timer: Timer = new JavaTimer(true)
+@singweton
+c-cwass switchwankew @inject() (
+  defauwtwankew: defauwtwankew, (⑅˘꒳˘)
+  g-gwobawstats: statsweceivew) {
+  p-pwivate vaw stats: statsweceivew = gwobawstats.scope(this.getcwass.getcanonicawname)
+  impwicit vaw timew: t-timew = nyew javatimew(twue)
 
-  def rank(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[BlendedCandidate],
-  ): Future[Seq[RankedCandidate]] = {
-    defaultRanker.rank(candidates)
+  d-def wank(
+    q-quewy: cwcandidategenewatowquewy, (///ˬ///✿)
+    candidates: seq[bwendedcandidate], 😳😳😳
+  ): futuwe[seq[wankedcandidate]] = {
+    defauwtwankew.wank(candidates)
   }
 
 }
 
-object SwitchRanker {
+o-object switchwankew {
 
-  /** Prefers candidates generated from sources with the latest timestamps.
-   * The newer the source signal, the higher a candidate ranks.
-   * This ordering biases against consumer-based candidates because their timestamp defaults to 0
+  /** pwefews candidates genewated fwom souwces w-with the watest timestamps.
+   * t-the nyewew t-the souwce signaw, 🥺 t-the highew a c-candidate wanks. mya
+   * this owdewing biases against c-consumew-based candidates because theiw timestamp d-defauwts to 0
    */
-  val TimestampOrder: Ordering[RankedCandidate] =
-    math.Ordering
-      .by[RankedCandidate, Time](
-        _.reasonChosen.sourceInfoOpt
-          .flatMap(_.sourceEventTime)
-          .getOrElse(Time.fromMilliseconds(0L)))
-      .reverse
+  vaw timestampowdew: owdewing[wankedcandidate] =
+    math.owdewing
+      .by[wankedcandidate, 🥺 time](
+        _.weasonchosen.souwceinfoopt
+          .fwatmap(_.souwceeventtime)
+          .getowewse(time.fwommiwwiseconds(0w)))
+      .wevewse
 }

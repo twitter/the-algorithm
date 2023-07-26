@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.highlight.HighlightedSectionMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetHighlights
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.highwight.highwightedsectionmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet.tweethighwights
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TweetHighlightsMarshaller @Inject() (
-  highlightedSectionMarshaller: HighlightedSectionMarshaller) {
+@singweton
+c-cwass t-tweethighwightsmawshawwew @inject() (
+  highwightedsectionmawshawwew: highwightedsectionmawshawwew) {
 
-  def apply(tweetHighlights: TweetHighlights): urt.TweetHighlights =
-    urt.TweetHighlights(
-      textHighlights = tweetHighlights.textHighlights
-        .map(_.map(highlightedSectionMarshaller(_))),
-      cardTitleHighlights = tweetHighlights.cardTitleHighlights
-        .map(_.map(highlightedSectionMarshaller(_))),
-      cardDescriptionHighlights = tweetHighlights.cardDescriptionHighlights
-        .map(_.map(highlightedSectionMarshaller(_)))
+  def appwy(tweethighwights: tweethighwights): u-uwt.tweethighwights =
+    uwt.tweethighwights(
+      texthighwights = t-tweethighwights.texthighwights
+        .map(_.map(highwightedsectionmawshawwew(_))), -.-
+      cawdtitwehighwights = tweethighwights.cawdtitwehighwights
+        .map(_.map(highwightedsectionmawshawwew(_))), (ˆ ﻌ ˆ)♡
+      cawddescwiptionhighwights = t-tweethighwights.cawddescwiptionhighwights
+        .map(_.map(highwightedsectionmawshawwew(_)))
     )
 }

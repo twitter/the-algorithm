@@ -1,26 +1,26 @@
-package com.twitter.recosinjector.clients
+package com.twittew.wecosinjectow.cwients
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.logging.Logger
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.wogging.woggew
+i-impowt c-com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.utiw.futuwe
 
-class Gizmoduck(
-  userStore: ReadableStore[Long, User]
+c-cwass gizmoduck(
+  usewstowe: weadabwestowe[wong, mya usew]
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val log = Logger()
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+  impwicit statsweceivew: s-statsweceivew) {
+  pwivate vaw wog = woggew()
+  p-pwivate vaw stats = statsweceivew.scope(this.getcwass.getsimpwename)
 
-  def getUser(userId: Long): Future[Option[User]] = {
-    userStore
-      .get(userId)
-      .rescue {
-        case e =>
-          stats.scope("getUserFailure").counter(e.getClass.getSimpleName).incr()
-          log.error(s"Failed with message ${e.toString}")
-          Future.None
+  d-def getusew(usewid: wong): futuwe[option[usew]] = {
+    usewstowe
+      .get(usewid)
+      .wescue {
+        case e-e =>
+          stats.scope("getusewfaiwuwe").countew(e.getcwass.getsimpwename).incw()
+          w-wog.ewwow(s"faiwed w-with message ${e.tostwing}")
+          futuwe.none
       }
   }
 }

@@ -1,30 +1,30 @@
-package com.twitter.interaction_graph.scio.common
+package com.twittew.intewaction_gwaph.scio.common
 
-import com.twitter.interaction_graph.thriftscala.FeatureName
+impowt com.twittew.intewaction_gwaph.thwiftscawa.featuwename
 
-object FeatureGroups {
+o-object featuwegwoups {
 
-  val HEALTH_FEATURE_LIST: Set[FeatureName] = Set(
-    FeatureName.NumMutes,
-    FeatureName.NumBlocks,
-    FeatureName.NumReportAsSpams,
-    FeatureName.NumReportAsAbuses
+  v-vaw heawth_featuwe_wist: s-set[featuwename] = s-set(
+    featuwename.nummutes, ^^;;
+    f-featuwename.numbwocks, >_<
+    f-featuwename.numwepowtasspams, mya
+    f-featuwename.numwepowtasabuses
   )
 
-  val STATUS_FEATURE_LIST: Set[FeatureName] = Set(
-    FeatureName.AddressBookEmail,
-    FeatureName.AddressBookPhone,
-    FeatureName.AddressBookInBoth,
-    FeatureName.AddressBookMutualEdgeEmail,
-    FeatureName.AddressBookMutualEdgePhone,
-    FeatureName.AddressBookMutualEdgeInBoth,
-    FeatureName.NumFollows,
-    FeatureName.NumUnfollows,
-    FeatureName.NumMutualFollows
-  ) ++ HEALTH_FEATURE_LIST
+  v-vaw status_featuwe_wist: set[featuwename] = set(
+    featuwename.addwessbookemaiw, mya
+    featuwename.addwessbookphone,
+    f-featuwename.addwessbookinboth, 😳
+    featuwename.addwessbookmutuawedgeemaiw, XD
+    featuwename.addwessbookmutuawedgephone, :3
+    featuwename.addwessbookmutuawedgeinboth, 😳😳😳
+    f-featuwename.numfowwows, -.-
+    featuwename.numunfowwows, ( ͡o ω ͡o )
+    f-featuwename.nummutuawfowwows
+  ) ++ heawth_featuwe_wist
 
-  val DWELL_TIME_FEATURE_LIST: Set[FeatureName] = Set(
-    FeatureName.TotalDwellTime,
-    FeatureName.NumInspectedStatuses
+  vaw dweww_time_featuwe_wist: set[featuwename] = s-set(
+    featuwename.totawdwewwtime, rawr x3
+    featuwename.numinspectedstatuses
   )
 }

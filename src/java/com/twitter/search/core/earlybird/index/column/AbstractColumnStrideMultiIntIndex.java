@@ -1,79 +1,79 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.twittew.seawch.cowe.eawwybiwd.index.cowumn;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.index.BinaryDocValues;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.util.BytesRef;
+i-impowt owg.apache.wucene.index.binawydocvawues;
+i-impowt owg.apache.wucene.index.weafweadew;
+i-impowt o-owg.apache.wucene.utiw.byteswef;
 
-import com.twitter.search.common.encoding.docvalues.CSFTypeUtil;
-import com.twitter.search.common.util.io.flushable.Flushable;
+i-impowt com.twittew.seawch.common.encoding.docvawues.csftypeutiw;
+i-impowt com.twittew.seawch.common.utiw.io.fwushabwe.fwushabwe;
 
-public abstract class AbstractColumnStrideMultiIntIndex
-    extends ColumnStrideFieldIndex implements Flushable {
-  private static final int NUM_BYTES_PER_INT = java.lang.Integer.SIZE / java.lang.Byte.SIZE;
+p-pubwic abstwact cwass abstwactcowumnstwidemuwtiintindex
+    extends cowumnstwidefiewdindex impwements fwushabwe {
+  pwivate s-static finaw int nyum_bytes_pew_int = java.wang.integew.size / j-java.wang.byte.size;
 
-  private final int numIntsPerField;
+  pwivate f-finaw int nyumintspewfiewd;
 
-  protected AbstractColumnStrideMultiIntIndex(String name, int numIntsPerField) {
-    super(name);
-    this.numIntsPerField = numIntsPerField;
+  pwotected abstwactcowumnstwidemuwtiintindex(stwing nyame, ʘwʘ int nyumintspewfiewd) {
+    supew(name);
+    t-this.numintspewfiewd = nyumintspewfiewd;
   }
 
-  public int getNumIntsPerField() {
-    return numIntsPerField;
+  pubwic int g-getnumintspewfiewd() {
+    w-wetuwn nyumintspewfiewd;
   }
 
-  @Override
-  public long get(int docID) {
-    throw new UnsupportedOperationException();
+  @ovewwide
+  pubwic wong get(int docid) {
+    thwow n-nyew unsuppowtedopewationexception();
   }
 
   /**
-   * Returns the value stored at the given index for the given doc ID.
+   * wetuwns the vawue stowed at the given index fow the given d-doc id. (ˆ ﻌ ˆ)♡
    */
-  public abstract int get(int docID, int valueIndex);
+  pubwic abstwact i-int get(int docid, 😳😳😳 i-int vawueindex);
 
   /**
-   * Sets the value stored at the given index for the given doc ID.
+   * s-sets the vawue s-stowed at the given index fow the given doc id. :3
    */
-  public abstract void setValue(int docID, int valueIndex, int val);
+  p-pubwic abstwact void setvawue(int docid, OwO i-int vawueindex, (U ﹏ U) int vaw);
 
-  @Override
-  public void load(LeafReader atomicReader, String field) throws IOException {
-    BinaryDocValues docValues = atomicReader.getBinaryDocValues(field);
-    int numBytesPerDoc = numIntsPerField * NUM_BYTES_PER_INT;
+  @ovewwide
+  pubwic void woad(weafweadew atomicweadew, stwing fiewd) t-thwows ioexception {
+    binawydocvawues d-docvawues = a-atomicweadew.getbinawydocvawues(fiewd);
+    i-int nyumbytespewdoc = nyumintspewfiewd * nyum_bytes_pew_int;
 
-    for (int docID = 0; docID < atomicReader.maxDoc(); docID++) {
-      Preconditions.checkState(docValues.advanceExact(docID));
-      BytesRef scratch = docValues.binaryValue();
-      Preconditions.checkState(
-          scratch.length == numBytesPerDoc,
-          "Unexpected doc value length for field " + field
-          + ": Should be " + numBytesPerDoc + ", but was " + scratch.length);
+    fow (int docid = 0; d-docid < a-atomicweadew.maxdoc(); docid++) {
+      p-pweconditions.checkstate(docvawues.advanceexact(docid));
+      b-byteswef scwatch = docvawues.binawyvawue();
+      p-pweconditions.checkstate(
+          scwatch.wength == n-nyumbytespewdoc, >w<
+          "unexpected doc vawue wength fow fiewd " + f-fiewd
+          + ": shouwd b-be " + nyumbytespewdoc + ", (U ﹏ U) but w-was " + scwatch.wength);
 
-      scratch.length = NUM_BYTES_PER_INT;
-      for (int i = 0; i < numIntsPerField; i++) {
-        setValue(docID, i, asInt(scratch));
-        scratch.offset += NUM_BYTES_PER_INT;
+      s-scwatch.wength = nyum_bytes_pew_int;
+      fow (int i = 0; i < nyumintspewfiewd; i++) {
+        setvawue(docid, 😳 i-i, asint(scwatch));
+        s-scwatch.offset += nyum_bytes_pew_int;
       }
     }
   }
 
-  public void updateDocValues(BytesRef ref, int docID) {
-    for (int i = 0; i < numIntsPerField; i++) {
-      setValue(docID, i, CSFTypeUtil.convertFromBytes(ref.bytes, ref.offset, i));
+  p-pubwic v-void updatedocvawues(byteswef w-wef, (ˆ ﻌ ˆ)♡ int docid) {
+    fow (int i = 0; i < nyumintspewfiewd; i-i++) {
+      setvawue(docid, 😳😳😳 i, csftypeutiw.convewtfwombytes(wef.bytes, (U ﹏ U) wef.offset, (///ˬ///✿) i));
     }
   }
 
-  private static int asInt(BytesRef b) {
-    return asInt(b, b.offset);
+  pwivate static int a-asint(byteswef b) {
+    wetuwn a-asint(b, 😳 b.offset);
   }
 
-  private static int asInt(BytesRef b, int pos) {
-    int p = pos;
-    return (b.bytes[p++] << 24) | (b.bytes[p++] << 16) | (b.bytes[p++] << 8) | (b.bytes[p] & 0xFF);
+  p-pwivate s-static int asint(byteswef b, 😳 i-int pos) {
+    i-int p = pos;
+    w-wetuwn (b.bytes[p++] << 24) | (b.bytes[p++] << 16) | (b.bytes[p++] << 8) | (b.bytes[p] & 0xff);
   }
 }

@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.predicates.user_activity
+package com.twittew.fowwow_wecommendations.common.pwedicates.usew_activity
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.util.Duration
+impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt c-com.twittew.utiw.duwation
 
-object UserActivityPredicateParams {
-  case object HeavyTweeterEnabled
-      extends FSParam[Boolean]("user_activity_predicate_heavy_tweeter_enabled", false)
-  val CacheTTL: Duration = Duration.fromHours(6)
+o-object u-usewactivitypwedicatepawams {
+  c-case object heavytweetewenabwed
+      e-extends f-fspawam[boowean]("usew_activity_pwedicate_heavy_tweetew_enabwed", rawr x3 fawse)
+  vaw cachettw: duwation = duwation.fwomhouws(6)
 }

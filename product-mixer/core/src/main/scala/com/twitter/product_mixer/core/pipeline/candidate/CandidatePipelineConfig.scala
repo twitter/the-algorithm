@@ -1,264 +1,264 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+package com.twittew.pwoduct_mixew.cowe.pipewine.candidate
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.functional_component.transformer._
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.PipelineConfigCompanion
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.basecandidatesouwce
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.awewt
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basecandidatefeatuwehydwatow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.basequewyfeatuwehydwatow
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.fiwtew.fiwtew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.basegate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatefeatuwetwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew._
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.univewsawnoun
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.componentidentifiewstack
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.pipewinestepidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewineconfig
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewineconfigcompanion
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewine_faiwuwe.pipewinefaiwuwe
+i-impowt com.twittew.timewines.configapi.fspawam
+impowt com.twittew.timewines.configapi.decidew.decidewpawam
 
-sealed trait BaseCandidatePipelineConfig[
-  -Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Result <: UniversalNoun[Any]]
-    extends PipelineConfig {
+seawed twait basecandidatepipewineconfig[
+  -quewy <: pipewinequewy, 🥺
+  c-candidatesouwcequewy,
+  candidatesouwcewesuwt, (///ˬ///✿)
+  w-wesuwt <: u-univewsawnoun[any]]
+    e-extends p-pipewineconfig {
 
-  val identifier: CandidatePipelineIdentifier
+  vaw identifiew: candidatepipewineidentifiew
 
   /**
-   * A candidate pipeline can fetch query-level features for use within the candidate source. It's
-   * generally recommended to set a hydrator in the parent recos or mixer pipeline if multiple
-   * candidate pipelines share the same feature but if a specific query feature hydrator is used
-   * by one pipeline and you don't want to block the others, you could explicitly set it here.
-   * If a feature is hydrated both in the parent pipeline or here, this one takes priority.
+   * a-a candidate pipewine can fetch quewy-wevew featuwes f-fow use within the candidate souwce. (U ᵕ U❁) it's
+   * genewawwy wecommended to set a hydwatow in the p-pawent wecos ow mixew pipewine i-if muwtipwe
+   * c-candidate pipewines s-shawe the same featuwe but if a specific quewy featuwe hydwatow i-is used
+   * b-by one pipewine and you don't w-want to bwock t-the othews, ^^;; you couwd expwicitwy s-set it hewe. ^^;;
+   * if a featuwe i-is hydwated both in the pawent pipewine ow hewe, rawr t-this one takes pwiowity. (˘ω˘)
    */
-  def queryFeatureHydration: Seq[BaseQueryFeatureHydrator[Query, _]] = Seq.empty
+  d-def quewyfeatuwehydwation: seq[basequewyfeatuwehydwatow[quewy, 🥺 _]] = s-seq.empty
 
   /**
-   * For query-level features that are dependent on query-level features from [[queryFeatureHydration]]
+   * f-fow quewy-wevew featuwes that awe dependent on quewy-wevew featuwes fwom [[quewyfeatuwehydwation]]
    */
-  def queryFeatureHydrationPhase2: Seq[BaseQueryFeatureHydrator[Query, _]] = Seq.empty
+  def quewyfeatuwehydwationphase2: s-seq[basequewyfeatuwehydwatow[quewy, nyaa~~ _]] = s-seq.empty
 
   /**
-   * When these Params are defined, they will automatically be added as Gates in the pipeline
-   * by the CandidatePipelineBuilder
+   * when these p-pawams awe defined, :3 t-they wiww a-automaticawwy be added as gates in the pipewine
+   * by the candidatepipewinebuiwdew
    *
-   * The enabled decider param can to be used to quickly disable a Candidate Pipeline via Decider
+   * t-the enabwed decidew pawam can to be used to quickwy disabwe a candidate pipewine v-via decidew
    */
-  val enabledDeciderParam: Option[DeciderParam[Boolean]] = None
+  vaw enabweddecidewpawam: option[decidewpawam[boowean]] = none
 
   /**
-   * This supported client feature switch param can be used with a Feature Switch to control the
-   * rollout of a new Candidate Pipeline from dogfood to experiment to production
+   * t-this suppowted cwient f-featuwe switch p-pawam can be used with a featuwe s-switch to c-contwow the
+   * w-wowwout of a nyew c-candidate pipewine fwom dogfood to expewiment t-to pwoduction
    */
-  val supportedClientParam: Option[FSParam[Boolean]] = None
+  v-vaw suppowtedcwientpawam: o-option[fspawam[boowean]] = n-nyone
 
-  /** [[Gate]]s that are applied sequentially, the pipeline will only run if all the Gates are open */
-  def gates: Seq[BaseGate[Query]] = Seq.empty
+  /** [[gate]]s t-that awe appwied sequentiawwy, the pipewine wiww onwy wun if a-aww the gates awe open */
+  def gates: seq[basegate[quewy]] = seq.empty
 
   /**
-   * A pair of transforms to adapt the underlying candidate source to the pipeline's query and result types
-   * Complex use cases such as those that need access to features should construct their own transformer, but
-   * for simple use cases, you can pass in an anonymous function.
-   * @example
-   * {{{ override val queryTransformer: CandidatePipelineQueryTransformer[Query, CandidateSourceQuery] = { query =>
-   *   query.toExampleThrift
+   * a paiw of twansfowms to adapt t-the undewwying candidate souwce to the pipewine's quewy and wesuwt t-types
+   * c-compwex use cases s-such as those that nyeed access t-to featuwes shouwd constwuct theiw o-own twansfowmew, /(^•ω•^) b-but
+   * fow simpwe use cases, ^•ﻌ•^ you can pass in an anonymous function. UwU
+   * @exampwe
+   * {{{ ovewwide vaw q-quewytwansfowmew: candidatepipewinequewytwansfowmew[quewy, 😳😳😳 c-candidatesouwcequewy] = { quewy =>
+   *   q-quewy.toexampwethwift
    *  }
    * }}}
    */
-  def queryTransformer: BaseCandidatePipelineQueryTransformer[
-    Query,
-    CandidateSourceQuery
+  d-def quewytwansfowmew: basecandidatepipewinequewytwansfowmew[
+    quewy, OwO
+    c-candidatesouwcequewy
   ]
 
-  /** Source for Candidates for this Pipeline */
-  def candidateSource: BaseCandidateSource[CandidateSourceQuery, CandidateSourceResult]
+  /** s-souwce fow candidates fow this pipewine */
+  d-def c-candidatesouwce: basecandidatesouwce[candidatesouwcequewy, ^•ﻌ•^ candidatesouwcewesuwt]
 
   /**
-   * [[CandidateFeatureTransformer]] allow you to define [[com.twitter.product_mixer.core.feature.Feature]] extraction logic from your [[CandidateSource]] results.
-   * If your candidate sources return [[com.twitter.product_mixer.core.feature.Feature]]s alongside the candidate that might be useful later on,
-   * add transformers for constructing feature maps.
+   * [[candidatefeatuwetwansfowmew]] awwow you to define [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]] extwaction w-wogic fwom youw [[candidatesouwce]] w-wesuwts.
+   * i-if youw candidate souwces wetuwn [[com.twittew.pwoduct_mixew.cowe.featuwe.featuwe]]s a-awongside t-the candidate that might be usefuw w-watew on, (ꈍᴗꈍ)
+   * add twansfowmews fow constwucting featuwe maps. (⑅˘꒳˘)
    *
-   * @note If multiple transformers extract the same feature, the last one takes priority and is kept.
+   * @note if muwtipwe t-twansfowmews extwact t-the same featuwe, (⑅˘꒳˘) the wast one takes pwiowity a-and is kept.
    */
-  def featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[CandidateSourceResult]
-  ] = Seq.empty
+  d-def featuwesfwomcandidatesouwcetwansfowmews: seq[
+    candidatefeatuwetwansfowmew[candidatesouwcewesuwt]
+  ] = seq.empty
 
   /**
-   * a result Transformer may throw PipelineFailure for candidates that are malformed and
-   * should be removed. This should be exceptional behavior, and not a replacement for adding a Filter.
-   * Complex use cases such as those that need access to features should construct their own transformer, but
-   * for simple use cases, you can pass in an anonymous function.
-   * @example
-   * {{{ override val queryTransformer: CandidatePipelineResultsTransformer[CandidateSourceResult, Result] = { sourceResult =>
-   *   ExampleCandidate(sourceResult.id)
+   * a wesuwt t-twansfowmew may thwow pipewinefaiwuwe fow candidates that awe mawfowmed and
+   * s-shouwd be wemoved. this shouwd be exceptionaw b-behaviow, (ˆ ﻌ ˆ)♡ and n-nyot a wepwacement fow adding a fiwtew. /(^•ω•^)
+   * compwex use cases s-such as those t-that nyeed access to featuwes shouwd constwuct theiw own twansfowmew, òωó b-but
+   * fow simpwe use cases, (⑅˘꒳˘) y-you can pass in an anonymous function. (U ᵕ U❁)
+   * @exampwe
+   * {{{ ovewwide vaw q-quewytwansfowmew: candidatepipewinewesuwtstwansfowmew[candidatesouwcewesuwt, >w< w-wesuwt] = { s-souwcewesuwt =>
+   *   exampwecandidate(souwcewesuwt.id)
    *  }
    * }}}
    *
    */
-  val resultTransformer: CandidatePipelineResultsTransformer[CandidateSourceResult, Result]
+  v-vaw wesuwttwansfowmew: candidatepipewinewesuwtstwansfowmew[candidatesouwcewesuwt, σωσ w-wesuwt]
 
   /**
-   * Before filters are run, you can fetch features for each candidate.
+   * b-befowe fiwtews a-awe wun, -.- you can fetch featuwes f-fow each candidate. o.O
    *
-   * Uses Stitch, so you're encouraged to use a working Stitch Adaptor to batch between candidates.
+   * u-uses stitch, ^^ so you'we encouwaged to use a wowking s-stitch adaptow t-to batch between c-candidates. >_<
    *
-   * The existing features (from the candidate source) are passed in as an input. You are not expected
-   * to put them into the resulting feature map yourself - they will be merged for you by the platform.
+   * the existing featuwes (fwom t-the candidate souwce) awe p-passed in as an i-input. >w< you awe nyot expected
+   * to put them into the wesuwting f-featuwe map youwsewf - t-they wiww b-be mewged fow y-you by the pwatfowm. >_<
    *
-   * This API is likely to change when Product Mixer does managed feature hydration
+   * this api is wikewy t-to change when pwoduct mixew does managed featuwe hydwation
    */
-  val preFilterFeatureHydrationPhase1: Seq[BaseCandidateFeatureHydrator[Query, Result, _]] =
-    Seq.empty
+  vaw pwefiwtewfeatuwehydwationphase1: seq[basecandidatefeatuwehydwatow[quewy, >w< w-wesuwt, rawr _]] =
+    seq.empty
 
   /**
-   * A second phase of feature hydration that can be run before filtering and after the first phase
-   * of [[preFilterFeatureHydrationPhase1]]. You are not expected to put them into the resulting
-   * feature map yourself - they will be merged for you by the platform.
+   * a-a second phase of featuwe h-hydwation that can be wun b-befowe fiwtewing and aftew the f-fiwst phase
+   * o-of [[pwefiwtewfeatuwehydwationphase1]]. rawr x3 y-you awe n-nyot expected to p-put them into the wesuwting
+   * featuwe map youwsewf - they wiww be mewged fow you by the pwatfowm. ( ͡o ω ͡o )
    */
-  val preFilterFeatureHydrationPhase2: Seq[BaseCandidateFeatureHydrator[Query, Result, _]] =
-    Seq.empty
+  vaw pwefiwtewfeatuwehydwationphase2: s-seq[basecandidatefeatuwehydwatow[quewy, (˘ω˘) w-wesuwt, 😳 _]] =
+    s-seq.empty
 
-  /** A list of filters to apply. Filters will be applied in sequential order. */
-  def filters: Seq[Filter[Query, Result]] = Seq.empty
+  /** a wist of fiwtews t-to appwy. OwO fiwtews wiww be appwied in sequentiaw owdew. (˘ω˘) */
+  def f-fiwtews: seq[fiwtew[quewy, òωó w-wesuwt]] = seq.empty
 
   /**
-   * After filters are run, you can fetch features for each candidate.
+   * a-aftew fiwtews awe wun, ( ͡o ω ͡o ) you can fetch f-featuwes fow each c-candidate. UwU
    *
-   * Uses Stitch, so you're encouraged to use a working Stitch Adaptor to batch between candidates.
+   * uses stitch, /(^•ω•^) s-so you'we e-encouwaged to use a wowking stitch adaptow to batch between candidates. (ꈍᴗꈍ)
    *
-   * The existing features (from the candidate source) & pre-filtering are passed in as an input.
-   * You are not expected to put them into the resulting feature map yourself -
-   * they will be merged for you by the platform.
+   * the existing featuwes (fwom t-the c-candidate souwce) & p-pwe-fiwtewing a-awe passed in a-as an input. 😳
+   * you awe nyot e-expected to put t-them into the wesuwting featuwe m-map youwsewf -
+   * t-they wiww be mewged fow you b-by the pwatfowm. mya
    *
-   * This API is likely to change when Product Mixer does managed feature hydration
+   * this api is wikewy to c-change when pwoduct mixew does m-managed featuwe h-hydwation
    */
-  val postFilterFeatureHydration: Seq[BaseCandidateFeatureHydrator[Query, Result, _]] = Seq.empty
+  vaw postfiwtewfeatuwehydwation: s-seq[basecandidatefeatuwehydwatow[quewy, mya wesuwt, /(^•ω•^) _]] = seq.empty
 
   /**
-   * Decorators allow for adding Presentations to candidates. While the Presentation can contain any
-   * arbitrary data, Decorators are often used to add a UrtItemPresentation for URT item support, or
-   * a UrtModulePresentation for grouping the candidates in a URT module.
+   * decowatows a-awwow f-fow adding pwesentations t-to candidates. ^^;; whiwe the pwesentation can contain any
+   * a-awbitwawy data, 🥺 decowatows awe often used to a-add a uwtitempwesentation f-fow uwt item suppowt, ^^ o-ow
+   * a uwtmoduwepwesentation fow gwouping the c-candidates in a-a uwt moduwe. ^•ﻌ•^
    */
-  val decorator: Option[CandidateDecorator[Query, Result]] = None
+  vaw decowatow: option[candidatedecowatow[quewy, /(^•ω•^) w-wesuwt]] = nyone
 
   /**
-   * A candidate pipeline can define a partial function to rescue failures here. They will be treated as failures
-   * from a monitoring standpoint, and cancellation exceptions will always be propagated (they cannot be caught here).
+   * a candidate pipewine c-can define a-a pawtiaw function to wescue f-faiwuwes hewe. ^^ they wiww be tweated a-as faiwuwes
+   * f-fwom a monitowing s-standpoint, 🥺 and cancewwation exceptions wiww awways be pwopagated (they cannot be caught hewe). (U ᵕ U❁)
    */
-  def failureClassifier: PartialFunction[Throwable, PipelineFailure] = PartialFunction.empty
+  def faiwuwecwassifiew: pawtiawfunction[thwowabwe, 😳😳😳 pipewinefaiwuwe] = pawtiawfunction.empty
 
   /**
-   * Scorers for candidates. Scorers are executed in parallel. Order does not matter.
+   * scowews fow candidates. nyaa~~ scowews awe exekawaii~d i-in pawawwew. (˘ω˘) o-owdew does nyot mattew. >_<
    */
-  def scorers: Seq[Scorer[Query, Result]] = Seq.empty
+  def scowews: s-seq[scowew[quewy, XD w-wesuwt]] = seq.empty
 
   /**
-   * Alerts can be used to indicate the pipeline's service level objectives. Alerts and
-   * dashboards will be automatically created based on this information.
+   * a-awewts can be used to indicate t-the pipewine's sewvice wevew objectives. rawr x3 a-awewts a-and
+   * dashboawds wiww be automaticawwy c-cweated based on this i-infowmation. ( ͡o ω ͡o )
    */
-  val alerts: Seq[Alert] = Seq.empty
+  v-vaw awewts: seq[awewt] = seq.empty
 
   /**
-   * This method is used by the product mixer framework to build the pipeline.
+   * t-this method i-is used by the p-pwoduct mixew fwamewowk t-to buiwd t-the pipewine. :3
    */
-  private[core] final def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    factory: CandidatePipelineBuilderFactory
-  ): CandidatePipeline[Query] = {
-    factory.get.build(parentComponentIdentifierStack, this)
+  p-pwivate[cowe] f-finaw def b-buiwd(
+    pawentcomponentidentifiewstack: c-componentidentifiewstack, mya
+    factowy: c-candidatepipewinebuiwdewfactowy
+  ): c-candidatepipewine[quewy] = {
+    f-factowy.get.buiwd(pawentcomponentidentifiewstack, σωσ this)
   }
 }
 
-trait CandidatePipelineConfig[
-  -Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Result <: UniversalNoun[Any]]
-    extends BaseCandidatePipelineConfig[
-      Query,
-      CandidateSourceQuery,
-      CandidateSourceResult,
-      Result
+t-twait candidatepipewineconfig[
+  -quewy <: pipewinequewy, (ꈍᴗꈍ)
+  candidatesouwcequewy, OwO
+  c-candidatesouwcewesuwt, o.O
+  wesuwt <: univewsawnoun[any]]
+    e-extends basecandidatepipewineconfig[
+      q-quewy, 😳😳😳
+      candidatesouwcequewy, /(^•ω•^)
+      c-candidatesouwcewesuwt, OwO
+      wesuwt
     ] {
-  override val gates: Seq[Gate[Query]] = Seq.empty
+  o-ovewwide vaw gates: seq[gate[quewy]] = seq.empty
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    Query,
-    CandidateSourceQuery
+  o-ovewwide vaw quewytwansfowmew: c-candidatepipewinequewytwansfowmew[
+    quewy, ^^
+    candidatesouwcequewy
   ]
 }
 
-trait DependentCandidatePipelineConfig[
-  -Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Result <: UniversalNoun[Any]]
-    extends BaseCandidatePipelineConfig[
-      Query,
-      CandidateSourceQuery,
-      CandidateSourceResult,
-      Result
+t-twait dependentcandidatepipewineconfig[
+  -quewy <: pipewinequewy, (///ˬ///✿)
+  candidatesouwcequewy, (///ˬ///✿)
+  candidatesouwcewesuwt, (///ˬ///✿)
+  wesuwt <: univewsawnoun[any]]
+    e-extends basecandidatepipewineconfig[
+      quewy, ʘwʘ
+      c-candidatesouwcequewy, ^•ﻌ•^
+      c-candidatesouwcewesuwt,
+      wesuwt
     ]
 
 /**
- * Contains [[PipelineStepIdentifier]]s for the Steps that are available for all [[BaseCandidatePipelineConfig]]s
+ * contains [[pipewinestepidentifiew]]s fow t-the steps that awe avaiwabwe fow a-aww [[basecandidatepipewineconfig]]s
  */
-object CandidatePipelineConfig extends PipelineConfigCompanion {
-  val gatesStep: PipelineStepIdentifier = PipelineStepIdentifier("Gates")
-  val fetchQueryFeaturesStep: PipelineStepIdentifier = PipelineStepIdentifier("FetchQueryFeatures")
-  val fetchQueryFeaturesPhase2Step: PipelineStepIdentifier = PipelineStepIdentifier(
-    "FetchQueryFeaturesPhase2")
-  val candidateSourceStep: PipelineStepIdentifier = PipelineStepIdentifier("CandidateSource")
-  val preFilterFeatureHydrationPhase1Step: PipelineStepIdentifier =
-    PipelineStepIdentifier("PreFilterFeatureHydration")
-  val preFilterFeatureHydrationPhase2Step: PipelineStepIdentifier =
-    PipelineStepIdentifier("PreFilterFeatureHydrationPhase2")
-  val filtersStep: PipelineStepIdentifier = PipelineStepIdentifier("Filters")
-  val postFilterFeatureHydrationStep: PipelineStepIdentifier =
-    PipelineStepIdentifier("PostFilterFeatureHydration")
-  val scorersStep: PipelineStepIdentifier = PipelineStepIdentifier("Scorer")
-  val decoratorStep: PipelineStepIdentifier = PipelineStepIdentifier("Decorator")
-  val resultStep: PipelineStepIdentifier = PipelineStepIdentifier("Result")
+o-object c-candidatepipewineconfig extends pipewineconfigcompanion {
+  v-vaw g-gatesstep: pipewinestepidentifiew = pipewinestepidentifiew("gates")
+  v-vaw fetchquewyfeatuwesstep: pipewinestepidentifiew = pipewinestepidentifiew("fetchquewyfeatuwes")
+  v-vaw fetchquewyfeatuwesphase2step: pipewinestepidentifiew = p-pipewinestepidentifiew(
+    "fetchquewyfeatuwesphase2")
+  v-vaw candidatesouwcestep: p-pipewinestepidentifiew = pipewinestepidentifiew("candidatesouwce")
+  v-vaw p-pwefiwtewfeatuwehydwationphase1step: p-pipewinestepidentifiew =
+    p-pipewinestepidentifiew("pwefiwtewfeatuwehydwation")
+  vaw pwefiwtewfeatuwehydwationphase2step: p-pipewinestepidentifiew =
+    p-pipewinestepidentifiew("pwefiwtewfeatuwehydwationphase2")
+  v-vaw f-fiwtewsstep: pipewinestepidentifiew = p-pipewinestepidentifiew("fiwtews")
+  v-vaw postfiwtewfeatuwehydwationstep: p-pipewinestepidentifiew =
+    p-pipewinestepidentifiew("postfiwtewfeatuwehydwation")
+  vaw scowewsstep: p-pipewinestepidentifiew = pipewinestepidentifiew("scowew")
+  vaw d-decowatowstep: pipewinestepidentifiew = p-pipewinestepidentifiew("decowatow")
+  v-vaw wesuwtstep: p-pipewinestepidentifiew = pipewinestepidentifiew("wesuwt")
 
-  /** All the steps which are executed by a [[CandidatePipeline]] in the order in which they are run */
-  override val stepsInOrder: Seq[PipelineStepIdentifier] = Seq(
-    gatesStep,
-    fetchQueryFeaturesStep,
-    fetchQueryFeaturesPhase2Step,
-    asyncFeaturesStep(candidateSourceStep),
-    candidateSourceStep,
-    asyncFeaturesStep(preFilterFeatureHydrationPhase1Step),
-    preFilterFeatureHydrationPhase1Step,
-    asyncFeaturesStep(preFilterFeatureHydrationPhase2Step),
-    preFilterFeatureHydrationPhase2Step,
-    asyncFeaturesStep(filtersStep),
-    filtersStep,
-    asyncFeaturesStep(postFilterFeatureHydrationStep),
-    postFilterFeatureHydrationStep,
-    asyncFeaturesStep(scorersStep),
-    scorersStep,
-    asyncFeaturesStep(decoratorStep),
-    decoratorStep,
-    resultStep
+  /** aww the steps which awe exekawaii~d b-by a [[candidatepipewine]] i-in the owdew in w-which they awe wun */
+  ovewwide vaw stepsinowdew: seq[pipewinestepidentifiew] = s-seq(
+    gatesstep, OwO
+    f-fetchquewyfeatuwesstep, (U ﹏ U)
+    fetchquewyfeatuwesphase2step, (ˆ ﻌ ˆ)♡
+    a-asyncfeatuwesstep(candidatesouwcestep), (⑅˘꒳˘)
+    c-candidatesouwcestep, (U ﹏ U)
+    asyncfeatuwesstep(pwefiwtewfeatuwehydwationphase1step), o.O
+    pwefiwtewfeatuwehydwationphase1step, mya
+    asyncfeatuwesstep(pwefiwtewfeatuwehydwationphase2step), XD
+    p-pwefiwtewfeatuwehydwationphase2step, òωó
+    a-asyncfeatuwesstep(fiwtewsstep), (˘ω˘)
+    f-fiwtewsstep, :3
+    a-asyncfeatuwesstep(postfiwtewfeatuwehydwationstep), OwO
+    postfiwtewfeatuwehydwationstep, mya
+    asyncfeatuwesstep(scowewsstep), (˘ω˘)
+    s-scowewsstep, o.O
+    a-asyncfeatuwesstep(decowatowstep), (✿oωo)
+    decowatowstep, (ˆ ﻌ ˆ)♡
+    wesuwtstep
   )
 
-  override val stepsAsyncFeatureHydrationCanBeCompletedBy: Set[PipelineStepIdentifier] = Set(
-    candidateSourceStep,
-    preFilterFeatureHydrationPhase1Step,
-    preFilterFeatureHydrationPhase2Step,
-    filtersStep,
-    postFilterFeatureHydrationStep,
-    scorersStep,
-    decoratorStep
+  o-ovewwide vaw stepsasyncfeatuwehydwationcanbecompwetedby: set[pipewinestepidentifiew] = s-set(
+    candidatesouwcestep, ^^;;
+    p-pwefiwtewfeatuwehydwationphase1step, OwO
+    p-pwefiwtewfeatuwehydwationphase2step, 🥺
+    fiwtewsstep, mya
+    p-postfiwtewfeatuwehydwationstep, 😳
+    s-scowewsstep, òωó
+    decowatowstep
   )
 }

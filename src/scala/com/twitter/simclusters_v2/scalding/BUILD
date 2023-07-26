@@ -1,521 +1,521 @@
-scala_library(
-    sources = ["*.scala"],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/fasterxml/jackson:jackson-module-scala",
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-core",
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-databind",
-        "3rdparty/jvm/com/fasterxml/jackson/module:jackson-module-scala",
-        "3rdparty/jvm/com/googlecode/matrix-toolkits-java",
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "escherbird/src/scala/com/twitter/escherbird/scalding/source",
-        "flockdb-tools/datasets/flock:flock-follows-edges-scala",
-        "src/java/com/twitter/ml/api/constant",
-        "src/java/com/twitter/sbf/core",
-        "src/java/com/twitter/sbf/graph",
-        "src/scala/com/twitter/frigate/user_sampler/common",
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/bq",
-        "src/scala/com/twitter/pluck/source/cassowary:sims",
-        "src/scala/com/twitter/pluck/source/core_workflows/user_model:condensed_user_state-scala",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/source",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/simclusters_v2/candidate_source",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/summingbird/common",
-        "src/scala/com/twitter/timelines/prediction/features/common",
-        "src/scala/com/twitter/timelines/prediction/features/itl",
-        "src/scala/com/twitter/timelines/prediction/features/recap",
-        "src/scala/com/twitter/wtf/entity_real_graph/scalding/common",
-        "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
-        "src/thrift/com/twitter/wtf/scalding/sims:sims-thrift-scala",
-        "twadoop_config/configuration/log_categories/group/recos-platform:content_recommender_get_content_recommendations-scala",
-        "twadoop_config/configuration/log_categories/group/recos-platform:content_recommender_get_topic_tweets_recommendations-scala",
-        "twadoop_config/configuration/log_categories/group/timeline:timeline_service_favorites-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
-        "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
-        "util/util-core:util-core-util",
+scawa_wibwawy(
+    souwces = ["*.scawa"], o.O
+    pwatfowm = "java8", (///ˬ///✿)
+    t-tags = ["bazew-compatibwe"], σωσ
+    d-dependencies = [
+        "3wdpawty/jvm/com/fastewxmw/jackson:jackson-moduwe-scawa", nyaa~~
+        "3wdpawty/jvm/com/fastewxmw/jackson/cowe:jackson-cowe", ^^;;
+        "3wdpawty/jvm/com/fastewxmw/jackson/cowe:jackson-databind", ^•ﻌ•^
+        "3wdpawty/jvm/com/fastewxmw/jackson/moduwe:jackson-moduwe-scawa", σωσ
+        "3wdpawty/jvm/com/googwecode/matwix-toowkits-java", -.-
+        "3wdpawty/jvm/com/twittew/stowehaus:awgebwa", ^^;;
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", XD
+        "eschewbiwd/swc/scawa/com/twittew/eschewbiwd/scawding/souwce", 🥺
+        "fwockdb-toows/datasets/fwock:fwock-fowwows-edges-scawa", òωó
+        "swc/java/com/twittew/mw/api/constant", (ˆ ﻌ ˆ)♡
+        "swc/java/com/twittew/sbf/cowe", -.-
+        "swc/java/com/twittew/sbf/gwaph", :3
+        "swc/scawa/com/twittew/fwigate/usew_sampwew/common", ʘwʘ
+        "swc/scawa/com/twittew/mw/api:api-base", 🥺
+        "swc/scawa/com/twittew/mw/api/bq", >_<
+        "swc/scawa/com/twittew/pwuck/souwce/cassowawy:sims", ʘwʘ
+        "swc/scawa/com/twittew/pwuck/souwce/cowe_wowkfwows/usew_modew:condensed_usew_state-scawa", (˘ω˘)
+        "swc/scawa/com/twittew/scawding_intewnaw/dawv2", (✿oωo)
+        "swc/scawa/com/twittew/scawding_intewnaw/job", (///ˬ///✿)
+        "swc/scawa/com/twittew/scawding_intewnaw/job/anawytics_batch", rawr x3
+        "swc/scawa/com/twittew/scawding_intewnaw/souwce", -.-
+        "swc/scawa/com/twittew/scawding_intewnaw/souwce/wzo_scwooge", ^^
+        "swc/scawa/com/twittew/simcwustews_v2/candidate_souwce", (⑅˘꒳˘)
+        "swc/scawa/com/twittew/simcwustews_v2/hdfs_souwces", nyaa~~
+        "swc/scawa/com/twittew/simcwustews_v2/scawding/common", /(^•ω•^)
+        "swc/scawa/com/twittew/simcwustews_v2/summingbiwd/common", (U ﹏ U)
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/common", 😳😳😳
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/itw", >w<
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/wecap", XD
+        "swc/scawa/com/twittew/wtf/entity_weaw_gwaph/scawding/common", o.O
+        "swc/thwift/com/twittew/hewmit/candidate:hewmit-candidate-scawa", mya
+        "swc/thwift/com/twittew/wtf/scawding/sims:sims-thwift-scawa", 🥺
+        "twadoop_config/configuwation/wog_categowies/gwoup/wecos-pwatfowm:content_wecommendew_get_content_wecommendations-scawa", ^^;;
+        "twadoop_config/configuwation/wog_categowies/gwoup/wecos-pwatfowm:content_wecommendew_get_topic_tweets_wecommendations-scawa", :3
+        "twadoop_config/configuwation/wog_categowies/gwoup/timewine:timewine_sewvice_favowites-scawa", (U ﹏ U)
+        "usewsouwce/snapshot/swc/main/scawa/com/twittew/usewsouwce/snapshot/fwat:usewsouwce_fwat-scawa", OwO
+        "usewsouwce/snapshot/swc/main/thwift/com/twittew/usewsouwce/snapshot/fwat:fwat-scawa", 😳😳😳
+        "utiw/utiw-cowe:utiw-cowe-utiw", (ˆ ﻌ ˆ)♡
     ],
 )
 
-hadoop_binary(
-    name = "evd_cluster_similarity",
-    main = "com.twitter.simclusters_v2.scalding.EigenVectorsForClusterSimilarityAdhoc",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    n-nyame = "evd_cwustew_simiwawity", XD
+    m-main = "com.twittew.simcwustews_v2.scawding.eigenvectowsfowcwustewsimiwawityadhoc", (ˆ ﻌ ˆ)♡
+    p-pwatfowm = "java8", ( ͡o ω ͡o )
+    w-wuntime_pwatfowm = "java8", rawr x3
+    t-tags = [
+        "bazew-compatibwe", nyaa~~
+        "bazew-compatibwe:migwated", >_<
+        "bazew-onwy", ^^;;
+    ],
+    dependencies = [
+        ":scawding", (ˆ ﻌ ˆ)♡
+    ],
+)
+
+hadoop_binawy(
+    nyame = "cwustew_evawuation", ^^;;
+    main = "com.twittew.simcwustews_v2.scawding.cwustewevawuationadhoc", (⑅˘꒳˘)
+    p-pwatfowm = "java8", rawr x3
+    wuntime_pwatfowm = "java8", (///ˬ///✿)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", 🥺
+        "bazew-compatibwe:migwated",
+        "bazew-onwy", >_<
     ],
     dependencies = [
-        ":scalding",
+        ":scawding", UwU
     ],
 )
 
-hadoop_binary(
-    name = "cluster_evaluation",
-    main = "com.twitter.simclusters_v2.scalding.ClusterEvaluationAdhoc",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    n-nyame = "cwustew_evawuation_20m_145k", >_<
+    main = "com.twittew.simcwustews_v2.scawding.cwustewevawuationfow20m145k", -.-
+    p-pwatfowm = "java8", mya
+    wuntime_pwatfowm = "java8", >w<
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", (U ﹏ U)
+        "bazew-compatibwe:migwated", 😳😳😳
+        "bazew-onwy", o.O
     ],
     dependencies = [
-        ":scalding",
-    ],
+        ":scawding", òωó
+    ], 😳😳😳
 )
 
-hadoop_binary(
-    name = "cluster_evaluation_20m_145k",
-    main = "com.twitter.simclusters_v2.scalding.ClusterEvaluationFor20M145K",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    nyame = "cwustew_evawuation_20m_145k_2020", σωσ
+    m-main = "com.twittew.simcwustews_v2.scawding.cwustewevawuationfow20m145k2020", (⑅˘꒳˘)
+    p-pwatfowm = "java8", (///ˬ///✿)
+    wuntime_pwatfowm = "java8", 🥺
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", OwO
+        "bazew-compatibwe:migwated", >w<
+        "bazew-onwy", 🥺
     ],
     dependencies = [
-        ":scalding",
+        ":scawding", nyaa~~
     ],
 )
 
-hadoop_binary(
-    name = "cluster_evaluation_20m_145k_2020",
-    main = "com.twitter.simclusters_v2.scalding.ClusterEvaluationFor20M145K2020",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    n-nyame = "bp_cwustew_evawuation", ^^
+    main = "com.twittew.simcwustews_v2.scawding.bipawtitecwustewevawuation", >w<
+    pwatfowm = "java8", OwO
+    wuntime_pwatfowm = "java8", XD
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", ^^;;
+        "bazew-compatibwe:migwated", 🥺
+        "bazew-onwy", XD
     ],
-    dependencies = [
-        ":scalding",
+    d-dependencies = [
+        ":scawding", (U ᵕ U❁)
     ],
 )
 
-hadoop_binary(
-    name = "bp_cluster_evaluation",
-    main = "com.twitter.simclusters_v2.scalding.BipartiteClusterEvaluation",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    n-nyame = "update_knownfow", :3
+    m-main = "com.twittew.simcwustews_v2.scawding.updateknownfowadhoc", ( ͡o ω ͡o )
+    p-pwatfowm = "java8",
+    w-wuntime_pwatfowm = "java8", òωó
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", σωσ
+        "bazew-compatibwe:migwated",
+        "bazew-onwy", (U ᵕ U❁)
     ],
     dependencies = [
-        ":scalding",
+        ":scawding", (✿oωo)
     ],
 )
 
-hadoop_binary(
-    name = "update_knownfor",
-    main = "com.twitter.simclusters_v2.scalding.UpdateKnownForAdhoc",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    nyame = "update_knownfow_pwod", ^^
+    main = "com.twittew.simcwustews_v2.scawding.updateknownfow20m145k", ^•ﻌ•^
+    p-pwatfowm = "java8", XD
+    wuntime_pwatfowm = "java8", :3
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+        "bazew-compatibwe", (ꈍᴗꈍ)
+        "bazew-compatibwe:migwated", :3
+        "bazew-onwy", (U ﹏ U)
+    ], UwU
     dependencies = [
-        ":scalding",
-    ],
+        ":scawding", 😳😳😳
+    ], XD
 )
 
-hadoop_binary(
-    name = "update_knownfor_prod",
-    main = "com.twitter.simclusters_v2.scalding.UpdateKnownFor20M145K",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    nyame = "cwustew_detaiws", o.O
+    m-main = "com.twittew.simcwustews_v2.scawding.cwustewdetaiwsbatch", (⑅˘꒳˘)
+    pwatfowm = "java8", 😳😳😳
+    w-wuntime_pwatfowm = "java8", nyaa~~
+    t-tags = [
+        "bazew-compatibwe", rawr
+        "bazew-compatibwe:migwated", -.-
+        "bazew-onwy", (✿oωo)
+    ], /(^•ω•^)
+    d-dependencies = [
+        ":scawding",
+    ], 🥺
+)
+
+hadoop_binawy(
+    nyame = "cwustew_detaiws_20m_145k_updated", ʘwʘ
+    main = "com.twittew.simcwustews_v2.scawding.cwustewdetaiws20m145kupdated", UwU
+    p-pwatfowm = "java8", XD
+    w-wuntime_pwatfowm = "java8", (✿oωo)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", :3
+        "bazew-compatibwe:migwated", (///ˬ///✿)
+        "bazew-onwy", nyaa~~
     ],
-    dependencies = [
-        ":scalding",
-    ],
+    d-dependencies = [
+        ":scawding", >w<
+    ], -.-
 )
 
-hadoop_binary(
-    name = "cluster_details",
-    main = "com.twitter.simclusters_v2.scalding.ClusterDetailsBatch",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    nyame = "cwustew_detaiws_20m_145k_2020", (✿oωo)
+    m-main = "com.twittew.simcwustews_v2.scawding.cwustewdetaiws20m145k2020", (˘ω˘)
+    pwatfowm = "java8", rawr
+    wuntime_pwatfowm = "java8", OwO
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
-    ],
+        "bazew-compatibwe", ^•ﻌ•^
+        "bazew-compatibwe:migwated", UwU
+        "bazew-onwy", (˘ω˘)
+    ], (///ˬ///✿)
+    d-dependencies = [
+        ":scawding",
+    ], σωσ
 )
 
-hadoop_binary(
-    name = "cluster_details_20m_145k_updated",
-    main = "com.twitter.simclusters_v2.scalding.ClusterDetails20M145KUpdated",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    nyame = "cwustew_detaiws-adhoc", /(^•ω•^)
+    m-main = "com.twittew.simcwustews_v2.scawding.cwustewdetaiwsadhoc", 😳
+    pwatfowm = "java8", 😳
+    w-wuntime_pwatfowm = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", (⑅˘꒳˘)
+        "bazew-compatibwe:migwated", 😳😳😳
+        "bazew-onwy", 😳
     ],
-    dependencies = [
-        ":scalding",
+    d-dependencies = [
+        ":scawding", XD
     ],
 )
 
-hadoop_binary(
-    name = "cluster_details_20m_145k_2020",
-    main = "com.twitter.simclusters_v2.scalding.ClusterDetails20M145K2020",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    nyame = "cwustew_detaiws-dump", mya
+    main = "com.twittew.simcwustews_v2.scawding.dumpcwustewdetaiwsadhoc",
+    pwatfowm = "java8", ^•ﻌ•^
+    wuntime_pwatfowm = "java8", ʘwʘ
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", ( ͡o ω ͡o )
+        "bazew-compatibwe:migwated", mya
+        "bazew-onwy", o.O
+    ], (✿oωo)
+    dependencies = [
+        ":scawding", :3
+    ], 😳
+)
+
+hadoop_binawy(
+    nyame = "intewested_in", (U ﹏ U)
+    main = "com.twittew.simcwustews_v2.scawding.intewestedinfwomknownfowbatch", mya
+    pwatfowm = "java8", (U ᵕ U❁)
+    w-wuntime_pwatfowm = "java8", :3
+    t-tags = [
+        "bazew-compatibwe", mya
+        "bazew-compatibwe:migwated", OwO
+        "bazew-onwy", (ˆ ﻌ ˆ)♡
     ],
     dependencies = [
-        ":scalding",
+        ":scawding", ʘwʘ
     ],
 )
 
-hadoop_binary(
-    name = "cluster_details-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.ClusterDetailsAdhoc",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    n-nyame = "intewested_in_fwom_pwoducew_embeddings", o.O
+    m-main = "com.twittew.simcwustews_v2.scawding.intewestedinfwompwoducewembeddingsbatchapp", UwU
+    pwatfowm = "java8", rawr x3
+    wuntime_pwatfowm = "java8", 🥺
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", :3
+        "bazew-compatibwe:migwated", (ꈍᴗꈍ)
+        "bazew-onwy", 🥺
     ],
-    dependencies = [
-        ":scalding",
+    d-dependencies = [
+        ":scawding", (✿oωo)
     ],
 )
 
-hadoop_binary(
-    name = "cluster_details-dump",
-    main = "com.twitter.simclusters_v2.scalding.DumpClusterDetailsAdhoc",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    nyame = "empwoyee_gwaph_fwom_usew_usew", (U ﹏ U)
+    main = "com.twittew.simcwustews_v2.scawding.empwoyeegwaphfwomusewusew", :3
+    pwatfowm = "java8", ^^;;
+    wuntime_pwatfowm = "java8", rawr
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", 😳😳😳
+        "bazew-compatibwe:migwated", (✿oωo)
+        "bazew-onwy", OwO
     ],
-    dependencies = [
-        ":scalding",
+    d-dependencies = [
+        ":scawding", ʘwʘ
     ],
 )
 
-hadoop_binary(
-    name = "interested_in",
-    main = "com.twitter.simclusters_v2.scalding.InterestedInFromKnownForBatch",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    n-nyame = "intewested_in_20m_145k_updated", (ˆ ﻌ ˆ)♡
+    m-main = "com.twittew.simcwustews_v2.scawding.intewestedinfwomknownfow20m145kupdated", (U ﹏ U)
+    p-pwatfowm = "java8", UwU
+    wuntime_pwatfowm = "java8", XD
+    t-tags = [
+        "bazew-compatibwe", ʘwʘ
+        "bazew-compatibwe:migwated", rawr x3
+        "bazew-onwy", ^^;;
+    ], ʘwʘ
+    d-dependencies = [
+        ":scawding", (U ﹏ U)
+    ], (˘ω˘)
+)
+
+h-hadoop_binawy(
+    n-nyame = "intewested_in_20m_145k_2020", (ꈍᴗꈍ)
+    main = "com.twittew.simcwustews_v2.scawding.intewestedinfwomknownfow20m145k2020", /(^•ω•^)
+    pwatfowm = "java8", >_<
+    w-wuntime_pwatfowm = "java8", σωσ
+    t-tags = [
+        "bazew-compatibwe",
+        "bazew-compatibwe:migwated", ^^;;
+        "bazew-onwy", 😳
+    ], >_<
+    d-dependencies = [
+        ":scawding", -.-
+    ], UwU
+)
+
+h-hadoop_binawy(
+    n-nyame = "intewested_in_wite_20m_145k_2020", :3
+    main = "com.twittew.simcwustews_v2.scawding.intewestedinfwomknownfowwite20m145k2020", σωσ
+    pwatfowm = "java8", >w<
+    wuntime_pwatfowm = "java8", (ˆ ﻌ ˆ)♡
+    t-tags = [
+        "bazew-compatibwe", ʘwʘ
+        "bazew-compatibwe:migwated", :3
+        "bazew-onwy", (˘ω˘)
+    ],
+    dependencies = [
+        ":scawding", 😳😳😳
+    ],
+)
+
+hadoop_binawy(
+    name = "intewested_in_wite_20m_145k_2020-adhoc", rawr x3
+    main = "com.twittew.simcwustews_v2.scawding.intewestedinfwomknownfowwite20m145k2020adhoc", (✿oωo)
+    pwatfowm = "java8", (ˆ ﻌ ˆ)♡
+    w-wuntime_pwatfowm = "java8", :3
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+        "bazew-compatibwe", (U ᵕ U❁)
+        "bazew-compatibwe:migwated", ^^;;
+        "bazew-onwy", mya
+    ], 😳😳😳
     dependencies = [
-        ":scalding",
+        ":scawding",
+    ], OwO
+)
+
+hadoop_binawy(
+    n-nyame = "intewested_in_fwom_ape_2020-adhoc", rawr
+    m-main = "com.twittew.simcwustews_v2.scawding.intewestedinfwomape2020adhocapp",
+    p-pwatfowm = "java8", XD
+    wuntime_pwatfowm = "java8", (U ﹏ U)
+    t-tags = [
+        "bazew-compatibwe", (˘ω˘)
+        "bazew-compatibwe:migwated", UwU
+        "bazew-onwy",
+    ], >_<
+    dependencies = [
+        ":scawding", σωσ
     ],
 )
 
-hadoop_binary(
-    name = "interested_in_from_producer_embeddings",
-    main = "com.twitter.simclusters_v2.scalding.InterestedInFromProducerEmbeddingsBatchApp",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    n-nyame = "intewested_in_fwom_ape_2020", 🥺
+    main = "com.twittew.simcwustews_v2.scawding.intewestedinfwomape2020batchapp", 🥺
+    pwatfowm = "java8", ʘwʘ
+    wuntime_pwatfowm = "java8", :3
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", (U ﹏ U)
+        "bazew-compatibwe:migwated", (U ﹏ U)
+        "bazew-onwy", ʘwʘ
     ],
     dependencies = [
-        ":scalding",
+        ":scawding", >w<
     ],
 )
 
-hadoop_binary(
-    name = "employee_graph_from_user_user",
-    main = "com.twitter.simclusters_v2.scalding.EmployeeGraphFromUserUser",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    n-nyame = "known_fow_to_mh", rawr x3
+    main = "com.twittew.simcwustews_v2.scawding.knownfowtomhbatch", OwO
+    p-pwatfowm = "java8",
+    wuntime_pwatfowm = "java8",
+    t-tags = [
+        "bazew-compatibwe", ^•ﻌ•^
+        "bazew-compatibwe:migwated",
+        "bazew-onwy", >_<
+    ],
+    d-dependencies = [
+        ":scawding", OwO
+    ],
+)
+
+hadoop_binawy(
+    nyame = "usew_usew_nowmawized_gwaph", >_<
+    m-main = "com.twittew.simcwustews_v2.scawding.usewusewnowmawizedgwaphbatch", (ꈍᴗꈍ)
+    p-pwatfowm = "java8", >w<
+    wuntime_pwatfowm = "java8", (U ﹏ U)
+    t-tags = [
+        "bazew-compatibwe", ^^
+        "bazew-compatibwe:migwated", (U ﹏ U)
+        "bazew-onwy", :3
+    ], (✿oωo)
+    d-dependencies = [
+        ":scawding",
+    ], XD
+)
+
+hadoop_binawy(
+    nyame = "usew_usew_gwaph", >w<
+    main = "com.twittew.simcwustews_v2.scawding.usewusewgwaphbatch", òωó
+    pwatfowm = "java8", (ꈍᴗꈍ)
+    wuntime_pwatfowm = "java8", rawr x3
+    t-tags = [
+        "bazew-compatibwe",
+        "bazew-compatibwe:migwated", rawr x3
+        "bazew-onwy", σωσ
+    ], (ꈍᴗꈍ)
+    d-dependencies = [
+        ":scawding", rawr
+    ], ^^;;
+)
+
+h-hadoop_binawy(
+    nyame = "usew_usew_gwaph-adhoc", rawr x3
+    m-main = "com.twittew.simcwustews_v2.scawding.usewusewgwaphadhoc", (ˆ ﻌ ˆ)♡
+    p-pwatfowm = "java8", σωσ
+    wuntime_pwatfowm = "java8", (U ﹏ U)
+    t-tags = [
+        "bazew-compatibwe", >w<
+        "bazew-compatibwe:migwated", σωσ
+        "bazew-onwy", nyaa~~
+    ],
+    dependencies = [
+        ":scawding", 🥺
+    ],
+)
+
+hadoop_binawy(
+    nyame = "pwoducew_nowms_and_counts", rawr x3
+    main = "com.twittew.simcwustews_v2.scawding.pwoducewnowmsandcountsbatch", σωσ
+    p-pwatfowm = "java8",
+    w-wuntime_pwatfowm = "java8", (///ˬ///✿)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", (U ﹏ U)
+        "bazew-compatibwe:migwated",
+        "bazew-onwy", ^^;;
     ],
     dependencies = [
-        ":scalding",
+        ":scawding", 🥺
     ],
 )
 
-hadoop_binary(
-    name = "interested_in_20m_145k_updated",
-    main = "com.twitter.simclusters_v2.scalding.InterestedInFromKnownFor20M145KUpdated",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    n-nyame = "fav_gwaph", òωó
+    main = "com.twittew.simcwustews_v2.scawding.usewusewfavgwaphbatch", XD
+    pwatfowm = "java8", :3
+    wuntime_pwatfowm = "java8", (U ﹏ U)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe", >w<
+        "bazew-compatibwe:migwated", /(^•ω•^)
+        "bazew-onwy", (⑅˘꒳˘)
     ],
     dependencies = [
-        ":scalding",
+        ":scawding", ʘwʘ
     ],
 )
 
-hadoop_binary(
-    name = "interested_in_20m_145k_2020",
-    main = "com.twitter.simclusters_v2.scalding.InterestedInFromKnownFor20M145K2020",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    n-nyame = "top_usews_simiwawity_gwaph", rawr x3
+    main = "com.twittew.simcwustews_v2.scawding.topusewssimiwawitygwaphapp", (˘ω˘)
+    pwatfowm = "java8", o.O
+    wuntime_pwatfowm = "java8", 😳
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
+        "bazew-compatibwe", o.O
+        "bazew-compatibwe:migwated", ^^;;
+        "bazew-onwy",
+    ], ( ͡o ω ͡o )
+    d-dependencies = [
+        ":scawding", ^^;;
     ],
 )
 
-hadoop_binary(
-    name = "interested_in_lite_20m_145k_2020",
-    main = "com.twitter.simclusters_v2.scalding.InterestedInFromKnownForLite20M145K2020",
-    platform = "java8",
-    runtime_platform = "java8",
+hadoop_binawy(
+    name = "top_usews_onwy", ^^;;
+    m-main = "com.twittew.simcwustews_v2.scawding.topusewsonwyapp", XD
+    p-pwatfowm = "java8", 🥺
+    wuntime_pwatfowm = "java8", (///ˬ///✿)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+        "bazew-compatibwe",
+        "bazew-compatibwe:migwated", (U ᵕ U❁)
+        "bazew-onwy", ^^;;
+    ], ^^;;
     dependencies = [
-        ":scalding",
-    ],
+        ":scawding", rawr
+    ], (˘ω˘)
 )
 
-hadoop_binary(
-    name = "interested_in_lite_20m_145k_2020-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.InterestedInFromKnownForLite20M145K2020Adhoc",
-    platform = "java8",
-    runtime_platform = "java8",
+h-hadoop_binawy(
+    nyame = "dump_fav_gwaph_adhoc", 🥺
+    m-main = "com.twittew.simcwustews_v2.scawding.dumpfavgwaphadhoc", nyaa~~
+    pwatfowm = "java8", :3
+    wuntime_pwatfowm = "java8", /(^•ω•^)
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
+        "bazew-compatibwe", ^•ﻌ•^
+        "bazew-compatibwe:migwated", UwU
+        "bazew-onwy", 😳😳😳
+    ], OwO
     dependencies = [
-        ":scalding",
-    ],
+        ":scawding", ^•ﻌ•^
+    ], (ꈍᴗꈍ)
 )
 
-hadoop_binary(
-    name = "interested_in_from_ape_2020-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.InterestedInFromAPE2020AdhocApp",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
-    ],
-)
-
-hadoop_binary(
-    name = "interested_in_from_ape_2020",
-    main = "com.twitter.simclusters_v2.scalding.InterestedInFromAPE2020BatchApp",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
-    ],
-)
-
-hadoop_binary(
-    name = "known_for_to_mh",
-    main = "com.twitter.simclusters_v2.scalding.KnownForToMHBatch",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
-    ],
-)
-
-hadoop_binary(
-    name = "user_user_normalized_graph",
-    main = "com.twitter.simclusters_v2.scalding.UserUserNormalizedGraphBatch",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
-    ],
-)
-
-hadoop_binary(
-    name = "user_user_graph",
-    main = "com.twitter.simclusters_v2.scalding.UserUserGraphBatch",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
-    ],
-)
-
-hadoop_binary(
-    name = "user_user_graph-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.UserUserGraphAdhoc",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
-    ],
-)
-
-hadoop_binary(
-    name = "producer_norms_and_counts",
-    main = "com.twitter.simclusters_v2.scalding.ProducerNormsAndCountsBatch",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
-    ],
-)
-
-hadoop_binary(
-    name = "fav_graph",
-    main = "com.twitter.simclusters_v2.scalding.UserUserFavGraphBatch",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
-    ],
-)
-
-hadoop_binary(
-    name = "top_users_similarity_graph",
-    main = "com.twitter.simclusters_v2.scalding.TopUsersSimilarityGraphApp",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
-    ],
-)
-
-hadoop_binary(
-    name = "top_users_only",
-    main = "com.twitter.simclusters_v2.scalding.TopUsersOnlyApp",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
-    ],
-)
-
-hadoop_binary(
-    name = "dump_fav_graph_adhoc",
-    main = "com.twitter.simclusters_v2.scalding.DumpFavGraphAdhoc",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":scalding",
-    ],
-)
-
-# Generated with `capesospy-v2 create_target interested_in_for_20M_145k_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml`, config hash 8f19bf.
-scalding_job(
-    name = "interested_in_for_20M_145k_2020",
-    main = "com.twitter.simclusters_v2.scalding.InterestedInFromKnownFor20M145K2020",
-    args = ["--socialProofThreshold 2 --maxClustersPerUser 50"],
+# genewated w-with `capesospy-v2 cweate_tawget i-intewested_in_fow_20m_145k_2020 swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw`, (⑅˘꒳˘) config hash 8f19bf. (⑅˘꒳˘)
+s-scawding_job(
+    nyame = "intewested_in_fow_20m_145k_2020", (ˆ ﻌ ˆ)♡
+    m-main = "com.twittew.simcwustews_v2.scawding.intewestedinfwomknownfow20m145k2020", /(^•ω•^)
+    a-awgs = ["--sociawpwoofthweshowd 2 --maxcwustewspewusew 50"], òωó
     config = [
-        ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
-    ],
-    cron = "14 * * * *",
-    hadoop_cluster = "atla-proc",
-    platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
+        ("hadoop.combine-input", (⑅˘꒳˘) "twue"), (U ᵕ U❁)
+        ("hadoop.map.jvm.totaw-memowy", >w< "3072m"), σωσ
+        ("hadoop.weduce.jvm.totaw-memowy", -.- "3072m"),
+        ("hadoop.submittew.jvm.totaw-memowy", o.O "5120m"), ^^
+        ("submittew.tiew", >_< "pweemptibwe"), >w<
+    ], >_<
+    c-cwon = "14 * * * *", >w<
+    hadoop_cwustew = "atwa-pwoc", rawr
+    p-pwatfowm = "java8", rawr x3
+    w-wowe = "cassowawy", ( ͡o ω ͡o )
+    w-wuntime_pwatfowm = "java8", (˘ω˘)
     tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazew-compatibwe:migwated", 😳
+        "bazew-onwy", OwO
     ],
-    dependencies = [
-        ":scalding",
+    d-dependencies = [
+        ":scawding", (˘ω˘)
     ],
 )

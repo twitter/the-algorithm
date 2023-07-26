@@ -1,32 +1,32 @@
-namespace java com.twitter.tweetypie.thriftjava.federated
-#@namespace scala com.twitter.tweetypie.thriftscala.federated
-#@namespace strato com.twitter.tweetypie.federated
+namespace java com.twittew.tweetypie.thwiftjava.fedewated
+#@namespace scawa com.twittew.tweetypie.thwiftscawa.fedewated
+#@namespace s-stwato com.twittew.tweetypie.fedewated
 
-include "com/twitter/tweetypie/stored_tweet_info.thrift"
+i-incwude "com/twittew/tweetypie/stowed_tweet_info.thwift"
 
-typedef i16 FieldId
+t-typedef i16 f-fiewdid
 
-struct GetStoredTweetsView {
-  1: bool bypass_visibility_filtering = 0
-  2: optional i64 for_user_id
-  3: list<FieldId> additional_field_ids = []
+stwuct g-getstowedtweetsview {
+  1: b-boow b-bypass_visibiwity_fiwtewing = 0
+  2: o-optionaw i64 fow_usew_id
+  3: wist<fiewdid> additionaw_fiewd_ids = []
 }
 
-struct GetStoredTweetsResponse {
-  1: stored_tweet_info.StoredTweetInfo stored_tweet
+stwuct getstowedtweetswesponse {
+  1: s-stowed_tweet_info.stowedtweetinfo stowed_tweet
 }
 
-struct GetStoredTweetsByUserView {
-  1: bool bypass_visibility_filtering = 0
-  2: bool set_for_user_id = 0
-  3: optional i64 start_time_msec
-  4: optional i64 end_time_msec
-  5: optional i64 cursor
-  6: bool start_from_oldest = 0
-  7: list<FieldId> additional_field_ids = []
+stwuct getstowedtweetsbyusewview {
+  1: boow b-bypass_visibiwity_fiwtewing = 0
+  2: boow set_fow_usew_id = 0
+  3: o-optionaw i64 stawt_time_msec
+  4: optionaw i64 end_time_msec
+  5: o-optionaw i64 cuwsow
+  6: b-boow stawt_fwom_owdest = 0
+  7: w-wist<fiewdid> additionaw_fiewd_ids = []
 }
 
-struct GetStoredTweetsByUserResponse {
-  1: required list<stored_tweet_info.StoredTweetInfo> stored_tweets
-  2: optional i64 cursor
+stwuct getstowedtweetsbyusewwesponse {
+  1: wequiwed w-wist<stowed_tweet_info.stowedtweetinfo> stowed_tweets
+  2: optionaw i64 cuwsow
 }

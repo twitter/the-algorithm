@@ -1,46 +1,46 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.scowew
 
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.stitch.Stitch
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.scowefeatuwe
+i-impowt c-com.twittew.home_mixew.pwoduct.scowed_tweets.modew.scowedtweetsquewy
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.scowew.scowew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.scowewidentifiew
+i-impowt com.twittew.stitch.stitch
 
 /**
- * Apply various heuristics to the model score
+ * appwy vawious h-heuwistics to the modew scowe
  */
-object HeuristicScorer extends Scorer[ScoredTweetsQuery, TweetCandidate] {
+o-object heuwisticscowew extends scowew[scowedtweetsquewy, (⑅˘꒳˘) tweetcandidate] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("Heuristic")
+  o-ovewwide vaw identifiew: scowewidentifiew = s-scowewidentifiew("heuwistic")
 
-  override val features: Set[Feature[_, _]] = Set(ScoreFeature)
+  o-ovewwide vaw featuwes: set[featuwe[_, /(^•ω•^) _]] = set(scowefeatuwe)
 
-  override def apply(
-    query: ScoredTweetsQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val rescorers = Seq(
-      RescoreOutOfNetwork,
-      RescoreReplies,
-      RescoreBlueVerified,
-      RescoreCreators,
-      RescoreMTLNormalization,
-      RescoreAuthorDiversity(AuthorDiversityDiscountProvider(candidates)),
-      RescoreFeedbackFatigue(query)
+  ovewwide def appwy(
+    quewy: s-scowedtweetsquewy, rawr x3
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): stitch[seq[featuwemap]] = {
+    vaw wescowews = s-seq(
+      wescoweoutofnetwowk, (U ﹏ U)
+      w-wescowewepwies, (U ﹏ U)
+      w-wescowebwuevewified, (⑅˘꒳˘)
+      w-wescowecweatows, òωó
+      w-wescowemtwnowmawization, ʘwʘ
+      wescoweauthowdivewsity(authowdivewsitydiscountpwovidew(candidates)), /(^•ω•^)
+      wescowefeedbackfatigue(quewy)
     )
 
-    val updatedScores = candidates.map { candidate =>
-      val score = candidate.features.getOrElse(ScoreFeature, None)
-      val scaleFactor = rescorers.map(_(query, candidate)).product
-      val updatedScore = score.map(_ * scaleFactor)
-      FeatureMapBuilder().add(ScoreFeature, updatedScore).build()
+    v-vaw updatedscowes = candidates.map { candidate =>
+      v-vaw scowe = candidate.featuwes.getowewse(scowefeatuwe, ʘwʘ nyone)
+      vaw scawefactow = wescowews.map(_(quewy, σωσ candidate)).pwoduct
+      v-vaw updatedscowe = scowe.map(_ * s-scawefactow)
+      f-featuwemapbuiwdew().add(scowefeatuwe, OwO updatedscowe).buiwd()
     }
 
-    Stitch.value(updatedScores)
+    s-stitch.vawue(updatedscowes)
   }
 }

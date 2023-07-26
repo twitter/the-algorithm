@@ -1,63 +1,63 @@
-package com.twitter.interaction_graph.scio.ml.labels
+package com.twittew.intewaction_gwaph.scio.mw.wabews
 
-import com.spotify.scio.ScioMetrics
-import com.twitter.interaction_graph.thriftscala.EdgeFeature
-import com.twitter.interaction_graph.thriftscala.EdgeLabel
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.{Edge => TEdge}
-import com.twitter.socialgraph.event.thriftscala.FollowEvent
+impowt com.spotify.scio.sciometwics
+i-impowt c-com.twittew.intewaction_gwaph.thwiftscawa.edgefeatuwe
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.edgewabew
+i-impowt com.twittew.intewaction_gwaph.thwiftscawa.featuwename
+i-impowt c-com.twittew.intewaction_gwaph.thwiftscawa.{edge => t-tedge}
+impowt c-com.twittew.sociawgwaph.event.thwiftscawa.fowwowevent
 
-object LabelUtil {
+object wabewutiw {
 
-  val LabelExplicit = Set(
-    FeatureName.NumFollows,
-    FeatureName.NumFavorites,
-    FeatureName.NumRetweets,
-    FeatureName.NumMentions,
-    FeatureName.NumTweetQuotes,
-    FeatureName.NumPhotoTags,
-    FeatureName.NumRtFavories,
-    FeatureName.NumRtReplies,
-    FeatureName.NumRtTweetQuotes,
-    FeatureName.NumRtRetweets,
-    FeatureName.NumRtMentions,
-    FeatureName.NumShares,
-    FeatureName.NumReplies,
+  vaw wabewexpwicit = set(
+    f-featuwename.numfowwows, 😳😳😳
+    featuwename.numfavowites, o.O
+    featuwename.numwetweets, ( ͡o ω ͡o )
+    f-featuwename.nummentions, (U ﹏ U)
+    featuwename.numtweetquotes, (///ˬ///✿)
+    f-featuwename.numphototags, >w<
+    featuwename.numwtfavowies, rawr
+    featuwename.numwtwepwies, mya
+    featuwename.numwttweetquotes, ^^
+    featuwename.numwtwetweets, 😳😳😳
+    f-featuwename.numwtmentions, mya
+    featuwename.numshawes, 😳
+    featuwename.numwepwies, -.-
   )
 
-  val LabelImplicit = Set(
-    FeatureName.NumTweetClicks,
-    FeatureName.NumProfileViews,
-    FeatureName.NumLinkClicks,
-    FeatureName.NumPushOpens,
-    FeatureName.NumNtabClicks,
-    FeatureName.NumRtTweetClicks,
-    FeatureName.NumRtLinkClicks,
-    FeatureName.NumEmailOpen,
-    FeatureName.NumEmailClick,
+  v-vaw wabewimpwicit = s-set(
+    featuwename.numtweetcwicks, 🥺
+    featuwename.numpwofiweviews, o.O
+    featuwename.numwinkcwicks, /(^•ω•^)
+    featuwename.numpushopens, nyaa~~
+    f-featuwename.numntabcwicks, nyaa~~
+    featuwename.numwttweetcwicks, :3
+    featuwename.numwtwinkcwicks,
+    featuwename.numemaiwopen, 😳😳😳
+    featuwename.numemaiwcwick, (˘ω˘)
   )
 
-  val LabelSet = (LabelExplicit ++ LabelImplicit).map(_.value)
+  v-vaw wabewset = (wabewexpwicit ++ wabewimpwicit).map(_.vawue)
 
-  def fromFollowEvent(f: FollowEvent): Option[EdgeLabel] = {
-    for {
-      srcId <- f.sourceId
-      destId <- f.targetId
-    } yield EdgeLabel(srcId, destId, labels = Set(FeatureName.NumFollows))
+  d-def fwomfowwowevent(f: f-fowwowevent): o-option[edgewabew] = {
+    f-fow {
+      swcid <- f.souwceid
+      destid <- f-f.tawgetid
+    } yiewd edgewabew(swcid, ^^ destid, w-wabews = set(featuwename.numfowwows))
   }
 
-  def fromInteractionGraphEdge(e: TEdge): Option[EdgeLabel] = {
-    val labels = e.features.collect {
-      case EdgeFeature(featureName: FeatureName, _) if LabelSet.contains(featureName.value) =>
-        ScioMetrics.counter("fromInteractionGraphEdge", featureName.toString).inc()
-        featureName
-    }.toSet
-    if (labels.nonEmpty) {
-      Some(EdgeLabel(e.sourceId, e.destinationId, labels))
-    } else None
+  def fwomintewactiongwaphedge(e: tedge): option[edgewabew] = {
+    vaw wabews = e.featuwes.cowwect {
+      case e-edgefeatuwe(featuwename: featuwename, :3 _) i-if wabewset.contains(featuwename.vawue) =>
+        s-sciometwics.countew("fwomintewactiongwaphedge", -.- f-featuwename.tostwing).inc()
+        featuwename
+    }.toset
+    if (wabews.nonempty) {
+      some(edgewabew(e.souwceid, 😳 e-e.destinationid, mya w-wabews))
+    } ewse nyone
   }
 
-  def toTEdge(e: EdgeLabel): EdgeLabel = {
-    EdgeLabel(e.sourceId, e.destinationId, labels = e.labels)
+  d-def totedge(e: e-edgewabew): edgewabew = {
+    e-edgewabew(e.souwceid, (˘ω˘) e.destinationid, >_< w-wabews = e.wabews)
   }
 }

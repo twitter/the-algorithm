@@ -1,57 +1,57 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
+package com.twittew.simcwustews_v2.scawding.topic_wecommendations.modew_based_topic_wecommendations
 
-import com.twitter.ml.api.{Feature, FeatureContext}
-import com.twitter.ml.api.constant.SharedFeatures
+impowt com.twittew.mw.api.{featuwe, ʘwʘ f-featuwecontext}
+i-impowt com.twittew.mw.api.constant.shawedfeatuwes
 
-object UserFeatures {
-  val UserIdFeature = SharedFeatures.USER_ID // User-id
+o-object u-usewfeatuwes {
+  v-vaw usewidfeatuwe = s-shawedfeatuwes.usew_id // u-usew-id
 
-  val UserSimClusterFeatures =
-    new Feature.SparseContinuous(
-      "user.simclusters.interested_in"
-    ) // User's interestedIn simcluster embeddding
+  vaw u-usewsimcwustewfeatuwes =
+    nyew featuwe.spawsecontinuous(
+      "usew.simcwustews.intewested_in"
+    ) // usew's intewestedin s-simcwustew embeddding
 
-  val UserCountryFeature = new Feature.Text("user.country") // user's country code
+  vaw usewcountwyfeatuwe = nyew featuwe.text("usew.countwy") // u-usew's countwy code
 
-  val UserLanguageFeature = new Feature.Text("user.language") // user's language
+  vaw u-usewwanguagefeatuwe = nyew featuwe.text("usew.wanguage") // usew's wanguage
 
-  val FollowedTopicIdFeatures =
-    new Feature.SparseBinary(
-      "followed_topics.id"
-    ) // SparseBinary features for the set of followed topics
+  v-vaw fowwowedtopicidfeatuwes =
+    nyew featuwe.spawsebinawy(
+      "fowwowed_topics.id"
+    ) // s-spawsebinawy featuwes f-fow the set of fowwowed topics
 
-  val NotInterestedTopicIdFeatures =
-    new Feature.SparseBinary(
-      "not_interested_topics.id"
-    ) // SparseBinary features for the set of not-interested topics
+  vaw nyotintewestedtopicidfeatuwes =
+    nyew featuwe.spawsebinawy(
+      "not_intewested_topics.id"
+    ) // spawsebinawy f-featuwes fow the set of nyot-intewested topics
 
-  val FollowedTopicSimClusterAvgFeatures =
-    new Feature.SparseContinuous(
-      "followed_topics.simclusters.avg"
-    ) // Average SimCluster Embedding of the followed topics
+  vaw fowwowedtopicsimcwustewavgfeatuwes =
+    nyew featuwe.spawsecontinuous(
+      "fowwowed_topics.simcwustews.avg"
+    ) // a-avewage simcwustew embedding o-of the fowwowed t-topics
 
-  val NotInterestedTopicSimClusterAvgFeatures =
-    new Feature.SparseContinuous(
-      "not_interested_topics.simclusters.avg"
-    ) // Average SimCluster Embedding of the followed topics
+  vaw nyotintewestedtopicsimcwustewavgfeatuwes =
+    n-nyew f-featuwe.spawsecontinuous(
+      "not_intewested_topics.simcwustews.avg"
+    ) // avewage simcwustew embedding o-of the fowwowed topics
 
-  val TargetTopicIdFeatures = new Feature.Discrete("target_topic.id") // target topic-id
+  vaw tawgettopicidfeatuwes = nyew featuwe.discwete("tawget_topic.id") // t-tawget topic-id
 
-  val TargetTopicSimClustersFeature =
-    new Feature.SparseContinuous(
-      "target_topic.simclusters"
-    ) // SimCluster embedding of the target topic
+  vaw tawgettopicsimcwustewsfeatuwe =
+    nyew featuwe.spawsecontinuous(
+      "tawget_topic.simcwustews"
+    ) // simcwustew embedding of the t-tawget topic
 
-  val FeatureContext = new FeatureContext(
-    UserIdFeature,
-    UserSimClusterFeatures,
-    UserCountryFeature,
-    UserLanguageFeature,
-    FollowedTopicIdFeatures,
-    NotInterestedTopicIdFeatures,
-    FollowedTopicSimClusterAvgFeatures,
-    NotInterestedTopicSimClusterAvgFeatures,
-    TargetTopicIdFeatures,
-    TargetTopicSimClustersFeature
+  vaw featuwecontext = n-nyew featuwecontext(
+    u-usewidfeatuwe, /(^•ω•^)
+    u-usewsimcwustewfeatuwes, ʘwʘ
+    usewcountwyfeatuwe, σωσ
+    usewwanguagefeatuwe,
+    fowwowedtopicidfeatuwes, OwO
+    nyotintewestedtopicidfeatuwes,
+    f-fowwowedtopicsimcwustewavgfeatuwes, 😳😳😳
+    n-nyotintewestedtopicsimcwustewavgfeatuwes, 😳😳😳
+    tawgettopicidfeatuwes, o.O
+    t-tawgettopicsimcwustewsfeatuwe
   )
 }

@@ -1,19 +1,19 @@
-package com.twitter.unified_user_actions.adapter
+package com.twittew.unified_usew_actions.adaptew
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.adapter.TestFixtures.EmailNotificationEventFixture
-import com.twitter.unified_user_actions.adapter.email_notification_event.EmailNotificationEventAdapter
-import com.twitter.util.Time
+impowt com.twittew.inject.test
+i-impowt com.twittew.unified_usew_actions.adaptew.testfixtuwes.emaiwnotificationeventfixtuwe
+i-impowt c-com.twittew.unified_usew_actions.adaptew.emaiw_notification_event.emaiwnotificationeventadaptew
+i-impowt com.twittew.utiw.time
 
-class EmailNotificationEventAdapterSpec extends Test {
+c-cwass emaiwnotificationeventadaptewspec e-extends t-test {
 
-  test("Notifications with click event") {
-    new EmailNotificationEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual = EmailNotificationEventAdapter.adaptEvent(notificationEvent)
-        assert(expectedUua == actual.head)
-        assert(EmailNotificationEventAdapter.adaptEvent(notificationEventWOTweetId).isEmpty)
-        assert(EmailNotificationEventAdapter.adaptEvent(notificationEventWOImpressionId).isEmpty)
+  test("notifications w-with cwick event") {
+    nyew emaiwnotificationeventfixtuwe {
+      time.withtimeat(fwozentime) { _ =>
+        vaw a-actuaw = emaiwnotificationeventadaptew.adaptevent(notificationevent)
+        assewt(expecteduua == actuaw.head)
+        a-assewt(emaiwnotificationeventadaptew.adaptevent(notificationeventwotweetid).isempty)
+        assewt(emaiwnotificationeventadaptew.adaptevent(notificationeventwoimpwessionid).isempty)
       }
     }
   }

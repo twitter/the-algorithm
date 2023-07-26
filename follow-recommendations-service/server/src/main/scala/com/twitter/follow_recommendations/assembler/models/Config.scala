@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.twittew.fowwow_wecommendations.assembwew.modews
 
-import com.twitter.stringcenter.client.core.ExternalString
+impowt c-com.twittew.stwingcentew.cwient.cowe.extewnawstwing
 
-case class HeaderConfig(title: TitleConfig)
-case class TitleConfig(text: ExternalString)
-case class FooterConfig(actionConfig: Option[ActionConfig])
-case class ActionConfig(footerText: ExternalString, actionURL: String)
+c-case cwass h-headewconfig(titwe: t-titweconfig)
+c-case cwass titweconfig(text: e-extewnawstwing)
+c-case cwass footewconfig(actionconfig: o-option[actionconfig])
+case cwass actionconfig(footewtext: extewnawstwing, rawr actionuww: stwing)

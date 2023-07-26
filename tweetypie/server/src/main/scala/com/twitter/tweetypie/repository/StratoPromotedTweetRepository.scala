@@ -1,19 +1,19 @@
-package com.twitter.tweetypie.repository
+package com.twittew.tweetypie.wepositowy
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.tweetypie.TweetId
-import com.twitter.strato.client.{Client => StratoClient}
+impowt c-com.twittew.stitch.stitch
+i-impowt c-com.twittew.stwato.cwient.fetchew
+i-impowt com.twittew.tweetypie.tweetid
+i-impowt com.twittew.stwato.cwient.{cwient => s-stwatocwient}
 
-object StratoPromotedTweetRepository {
-  type Type = TweetId => Stitch[Boolean]
+o-object stwatopwomotedtweetwepositowy {
+  t-type type = tweetid => stitch[boowean]
 
-  val column = "tweetypie/isPromoted.Tweet"
+  vaw cowumn = "tweetypie/ispwomoted.tweet"
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[TweetId, Unit, Boolean] =
-      client.fetcher[TweetId, Boolean](column)
+  def appwy(cwient: s-stwatocwient): type = {
+    vaw fetchew: fetchew[tweetid, (ˆ ﻌ ˆ)♡ unit, b-boowean] =
+      cwient.fetchew[tweetid, (⑅˘꒳˘) b-boowean](cowumn)
 
-    tweetId => fetcher.fetch(tweetId).map(f => f.v.getOrElse(false))
+    tweetid => fetchew.fetch(tweetid).map(f => f.v.getowewse(fawse))
   }
 }

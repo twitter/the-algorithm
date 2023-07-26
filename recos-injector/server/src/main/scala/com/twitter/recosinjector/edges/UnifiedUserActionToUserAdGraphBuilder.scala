@@ -1,44 +1,44 @@
-package com.twitter.recosinjector.edges
+package com.twittew.wecosinjectow.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.UuaEngagementEventDetails
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wecos.utiw.action
+i-impowt c-com.twittew.wecosinjectow.utiw.uuaengagementeventdetaiws
+i-impowt c-com.twittew.utiw.futuwe
 
-class UnifiedUserActionToUserAdGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
+c-cwass u-unifiedusewactiontousewadgwaphbuiwdew(
+  u-usewtweetentityedgebuiwdew: usewtweetentityedgebuiwdew
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[UuaEngagementEventDetails, UserTweetEntityEdge] {
+  ovewwide impwicit vaw statsweceivew: statsweceivew)
+    extends e-eventtomessagebuiwdew[uuaengagementeventdetaiws, >_< usewtweetentityedge] {
 
-  override def shouldProcessEvent(event: UuaEngagementEventDetails): Future[Boolean] = {
-    event.userTweetEngagement.action match {
-      case Action.Click | Action.VideoPlayback75 | Action.Favorite => Future(true)
-      case _ => Future(false)
+  ovewwide def shouwdpwocessevent(event: u-uuaengagementeventdetaiws): futuwe[boowean] = {
+    e-event.usewtweetengagement.action match {
+      case action.cwick | a-action.videopwayback75 | action.favowite => f-futuwe(twue)
+      case _ => f-futuwe(fawse)
     }
   }
 
-  override def buildEdges(details: UuaEngagementEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val engagement = details.userTweetEngagement
-    val tweetDetails = engagement.tweetDetails
+  ovewwide def buiwdedges(detaiws: uuaengagementeventdetaiws): futuwe[seq[usewtweetentityedge]] = {
+    v-vaw engagement = detaiws.usewtweetengagement
+    vaw tweetdetaiws = engagement.tweetdetaiws
 
-    Future.value(
-      Seq(
-        UserTweetEntityEdge(
-          sourceUser = engagement.engageUserId,
-          targetTweet = engagement.tweetId,
-          action = engagement.action,
-          metadata = engagement.engagementTimeMillis,
-          cardInfo = engagement.tweetDetails.map(_.cardInfo.toByte),
-          entitiesMap = None,
-          tweetDetails = tweetDetails
+    futuwe.vawue(
+      seq(
+        u-usewtweetentityedge(
+          souwceusew = e-engagement.engageusewid, >_<
+          t-tawgettweet = e-engagement.tweetid, (⑅˘꒳˘)
+          a-action = engagement.action, /(^•ω•^)
+          metadata = e-engagement.engagementtimemiwwis, rawr x3
+          cawdinfo = engagement.tweetdetaiws.map(_.cawdinfo.tobyte), (U ﹏ U)
+          entitiesmap = n-nyone, (U ﹏ U)
+          tweetdetaiws = tweetdetaiws
         )))
   }
 
-  override def filterEdges(
-    event: UuaEngagementEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
-    Future(edges)
+  ovewwide def fiwtewedges(
+    event: uuaengagementeventdetaiws, (⑅˘꒳˘)
+    e-edges: seq[usewtweetentityedge]
+  ): futuwe[seq[usewtweetentityedge]] = {
+    f-futuwe(edges)
   }
 }

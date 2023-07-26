@@ -1,26 +1,26 @@
-package com.twitter.visibility.configapi.configs
+package com.twittew.visibiwity.configapi.configs
 
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.ExperimentConfigBuilder
-import com.twitter.timelines.configapi.Param
-import com.twitter.visibility.configapi.params.VisibilityExperiment
-import com.twitter.visibility.models.SafetyLevel
+impowt com.twittew.timewines.configapi.config
+impowt c-com.twittew.timewines.configapi.expewimentconfigbuiwdew
+i-impowt c-com.twittew.timewines.configapi.pawam
+i-impowt c-com.twittew.visibiwity.configapi.pawams.visibiwityexpewiment
+impowt c-com.twittew.visibiwity.modews.safetywevew
 
-object ExperimentsHelper {
+o-object expewimentshewpew {
 
-  def mkABExperimentConfig(experiment: VisibilityExperiment, param: Param[Boolean]): Config = {
-    ExperimentConfigBuilder(experiment)
-      .addBucket(
-        experiment.ControlBucket,
-        param := true
+  def m-mkabexpewimentconfig(expewiment: visibiwityexpewiment, ^^;; pawam: pawam[boowean]): config = {
+    e-expewimentconfigbuiwdew(expewiment)
+      .addbucket(
+        expewiment.contwowbucket, >_<
+        pawam := twue
       )
-      .addBucket(
-        experiment.TreatmentBucket,
-        param := false
+      .addbucket(
+        expewiment.tweatmentbucket, mya
+        p-pawam := fawse
       )
-      .build
+      .buiwd
   }
 
-  def mkABExperimentConfig(experiment: VisibilityExperiment, safetyLevel: SafetyLevel): Config =
-    mkABExperimentConfig(experiment, safetyLevel.enabledParam)
+  def mkabexpewimentconfig(expewiment: v-visibiwityexpewiment, mya safetywevew: safetywevew): config =
+    m-mkabexpewimentconfig(expewiment, 😳 safetywevew.enabwedpawam)
 }

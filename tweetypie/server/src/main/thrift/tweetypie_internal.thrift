@@ -1,705 +1,705 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
+namespace java com.twittew.tweetypie.thwiftjava
+#@namespace scawa c-com.twittew.tweetypie.thwiftscawa
 
-include "com/twitter/context/feature_context.thrift"
-include "com/twitter/expandodo/cards.thrift"
-include "com/twitter/gizmoduck/user.thrift"
-include "com/twitter/mediaservices/commons/MediaCommon.thrift"
-include "com/twitter/mediaservices/commons/MediaInformation.thrift"
-include "com/twitter/mediaservices/commons/TweetMedia.thrift"
-include "com/twitter/servo/exceptions.thrift"
-include "com/twitter/servo/cache/servo_repo.thrift"
-include "com/twitter/tseng/withholding/withholding.thrift"
-include "com/twitter/tweetypie/delete_location_data.thrift"
-include "com/twitter/tweetypie/transient_context.thrift"
-include "com/twitter/tweetypie/media_entity.thrift"
-include "com/twitter/tweetypie/tweet.thrift"
-include "com/twitter/tweetypie/tweet_audit.thrift"
-include "com/twitter/tweetypie/stored_tweet_info.thrift"
-include "com/twitter/tweetypie/tweet_service.thrift"
+i-incwude "com/twittew/context/featuwe_context.thwift"
+i-incwude "com/twittew/expandodo/cawds.thwift"
+i-incwude "com/twittew/gizmoduck/usew.thwift"
+i-incwude "com/twittew/mediasewvices/commons/mediacommon.thwift"
+i-incwude "com/twittew/mediasewvices/commons/mediainfowmation.thwift"
+i-incwude "com/twittew/mediasewvices/commons/tweetmedia.thwift"
+i-incwude "com/twittew/sewvo/exceptions.thwift"
+incwude "com/twittew/sewvo/cache/sewvo_wepo.thwift"
+incwude "com/twittew/tseng/withhowding/withhowding.thwift"
+incwude "com/twittew/tweetypie/dewete_wocation_data.thwift"
+incwude "com/twittew/tweetypie/twansient_context.thwift"
+i-incwude "com/twittew/tweetypie/media_entity.thwift"
+incwude "com/twittew/tweetypie/tweet.thwift"
+incwude "com/twittew/tweetypie/tweet_audit.thwift"
+i-incwude "com/twittew/tweetypie/stowed_tweet_info.thwift"
+incwude "com/twittew/tweetypie/tweet_sewvice.thwift"
 
-typedef i16 FieldId
+t-typedef i16 fiewdid
 
-struct UserIdentity {
-  1: required i64 id
-  2: required string screen_name
-  3: required string real_name
-# obsolete 4: bool deactivated = 0
-# obsolete 5: bool suspended = 0
+stwuct usewidentity {
+  1: wequiwed i-i64 id
+  2: wequiwed stwing scween_name
+  3: w-wequiwed s-stwing weaw_name
+# obsowete 4: boow deactivated = 0
+# obsowete 5: boow suspended = 0
 }
 
-enum HydrationType {
-  MENTIONS          = 1,
-  URLS              = 2,
-  CACHEABLE_MEDIA   = 3,
-  QUOTED_TWEET_REF  = 4,
-  REPLY_SCREEN_NAME = 5,
-  DIRECTED_AT       = 6,
-  CONTRIBUTOR       = 7,
-  SELF_THREAD_INFO  = 8
+enum h-hydwationtype {
+  mentions          = 1, (U ᵕ U❁)
+  uwws              = 2, 😳😳😳
+  cacheabwe_media   = 3, (U ﹏ U)
+  quoted_tweet_wef  = 4, ^•ﻌ•^
+  wepwy_scween_name = 5, (⑅˘꒳˘)
+  d-diwected_at       = 6, >_<
+  contwibutow       = 7, (⑅˘꒳˘)
+  s-sewf_thwead_info  = 8
 }
 
-struct CachedTweet {
-  1: required tweet.Tweet tweet
-  // @obsolete 2: optional set<i16> included_additional_fields
-  3: set<HydrationType> completed_hydrations = []
+s-stwuct c-cachedtweet {
+  1: w-wequiwed tweet.tweet tweet
+  // @obsowete 2: optionaw set<i16> i-incwuded_additionaw_fiewds
+  3: set<hydwationtype> compweted_hydwations = []
 
-  // Indicates that a tweet was deleted after being bounced for violating
-  // the Twitter Rules.
-  // When set to true, all other fields in CachedTweet are ignored.
-  4: optional bool is_bounce_deleted
+  // i-indicates that a tweet was deweted aftew being bounced fow viowating
+  // the twittew w-wuwes. σωσ
+  // when set to twue, 🥺 aww o-othew fiewds in c-cachedtweet awe i-ignowed. :3
+  4: optionaw boow is_bounce_deweted
 
-  // Indicates whether this tweet has safety labels stored in Strato.
-  // See com.twitter.tweetypie.core.TweetData.hasSafetyLabels for more details.
-  // @obsolete 5: optional bool has_safety_labels
-} (persisted='true', hasPersonalData='true')
+  // indicates whethew this tweet h-has safety wabews s-stowed in stwato. (ꈍᴗꈍ)
+  // see c-com.twittew.tweetypie.cowe.tweetdata.hassafetywabews f-fow mowe detaiws. ^•ﻌ•^
+  // @obsowete 5: optionaw b-boow has_safety_wabews
+} (pewsisted='twue', (˘ω˘) haspewsonawdata='twue')
 
-struct MediaFaces {
-  1: required map<TweetMedia.MediaSizeType, list<MediaInformation.Face>> faces
+s-stwuct mediafaces {
+  1: wequiwed map<tweetmedia.mediasizetype, 🥺 wist<mediainfowmation.face>> f-faces
 }
 
-enum AsyncWriteEventType {
-  INSERT                          = 1,
-  DELETE                          = 2,
-  UNDELETE                        = 3,
-  SET_ADDITIONAL_FIELDS           = 4,
-  DELETE_ADDITIONAL_FIELDS        = 5,
-  UPDATE_POSSIBLY_SENSITIVE_TWEET = 6,
-  UPDATE_TWEET_MEDIA              = 7,
-  TAKEDOWN                        = 8,
-  SET_RETWEET_VISIBILITY          = 9
+enum asyncwwiteeventtype {
+  i-insewt                          = 1, (✿oωo)
+  dewete                          = 2, XD
+  u-undewete                        = 3, (///ˬ///✿)
+  set_additionaw_fiewds           = 4, ( ͡o ω ͡o )
+  d-dewete_additionaw_fiewds        = 5, ʘwʘ
+  update_possibwy_sensitive_tweet = 6, rawr
+  update_tweet_media              = 7, o.O
+  takedown                        = 8, ^•ﻌ•^
+  set_wetweet_visibiwity          = 9
 }
 
-// an enum of actions that could happen in an async-write (insert or delete)
-enum AsyncWriteAction {
-  HOSEBIRD_ENQUEUE        = 1
-  SEARCH_ENQUEUE          = 2
-  // obsolete MAIL_ENQUEUE            = 3
-  FANOUT_DELIVERY         = 4
-  // obsolete FACEBOOK_ENQUEUE        = 5
-  TWEET_INDEX             = 6
-  TIMELINE_UPDATE         = 7
-  CACHE_UPDATE            = 8
-  REPLICATION             = 9
-  // obsolete MONORAIL_EXPIRY_ENQUEUE = 10
-  USER_GEOTAG_UPDATE      = 11
-  // obsolete IBIS_ENQUEUE            = 12
-  EVENT_BUS_ENQUEUE       = 13
-  // obsolete HOSEBIRD_BINARY_ENQUEUE = 14
-  TBIRD_UPDATE            = 15
-  RETWEETS_DELETION       = 16
-  GUANO_SCRIBE            = 17
-  MEDIA_DELETION          = 18
-  GEO_SEARCH_REQUEST_ID   = 19
-  SEARCH_THRIFT_ENQUEUE    = 20
-  RETWEET_ARCHIVAL_ENQUEUE = 21
+// an enum of actions that c-couwd happen i-in an async-wwite (insewt ow dewete)
+e-enum asyncwwiteaction {
+  h-hosebiwd_enqueue        = 1
+  s-seawch_enqueue          = 2
+  // obsowete maiw_enqueue            = 3
+  fanout_dewivewy         = 4
+  // obsowete f-facebook_enqueue        = 5
+  tweet_index             = 6
+  timewine_update         = 7
+  cache_update            = 8
+  wepwication             = 9
+  // o-obsowete monowaiw_expiwy_enqueue = 10
+  u-usew_geotag_update      = 11
+  // o-obsowete ibis_enqueue            = 12
+  e-event_bus_enqueue       = 13
+  // obsowete h-hosebiwd_binawy_enqueue = 14
+  t-tbiwd_update            = 15
+  w-wetweets_dewetion       = 16
+  g-guano_scwibe            = 17
+  media_dewetion          = 18
+  geo_seawch_wequest_id   = 19
+  s-seawch_thwift_enqueue    = 20
+  w-wetweet_awchivaw_enqueue = 21
 }
 
-# This struct is scribed to test_tweetypie_failed_async_write after
-# an async-write action has failed multiple retries
-struct FailedAsyncWrite {
-  1: required AsyncWriteEventType event_type
-  2: required AsyncWriteAction action
-  3: optional tweet.Tweet tweet
-} (persisted='true', hasPersonalData='true')
+# t-this stwuct is s-scwibed to test_tweetypie_faiwed_async_wwite aftew
+# a-an async-wwite action has faiwed muwtipwe wetwies
+stwuct f-faiwedasyncwwite {
+  1: wequiwed asyncwwiteeventtype event_type
+  2: wequiwed asyncwwiteaction action
+  3: optionaw t-tweet.tweet tweet
+} (pewsisted='twue', (///ˬ///✿) haspewsonawdata='twue')
 
-# This struct is scribed to test_tweetypie_detached_retweets after
-# attempting to read a retweet for which the source tweet has been deleted.
-struct DetachedRetweet {
-  1: required i64 tweet_id (personalDataType='TweetId')
-  2: required i64 user_id (personalDataType='UserId')
-  3: required i64 source_tweet_id (personalDataType='TweetId')
-} (persisted='true', hasPersonalData='true')
+# this stwuct i-is scwibed to t-test_tweetypie_detached_wetweets a-aftew
+# attempting to wead a wetweet f-fow which the souwce tweet h-has been deweted. (ˆ ﻌ ˆ)♡
+s-stwuct detachedwetweet {
+  1: wequiwed i64 tweet_id (pewsonawdatatype='tweetid')
+  2: wequiwed i64 usew_id (pewsonawdatatype='usewid')
+  3: wequiwed i64 souwce_tweet_id (pewsonawdatatype='tweetid')
+} (pewsisted='twue', XD haspewsonawdata='twue')
 
-struct TweetCacheWrite {
-  1: required i64 tweet_id (personalDataType = 'TweetId')
-  // If the tweet id is a snowflake id, this is an offset since tweet creation. 
-  // If it is not a snowflake id, then this is a Unix epoch time in
-  // milliseconds. (The idea is that for most tweets, this encoding will make
-  // it easier to see the interval between events and whether it occured soon
-  // acter tweet creation.)
-  2: required i64 timestamp (personalDataType = 'TransactionTimestamp')
-  3: required string action // One of "set", "add", "replace", "cas", "delete"
-  4: required servo_repo.CachedValue cached_value // Contains metadata about the cached value
-  5: optional CachedTweet cached_tweet
-} (persisted='true', hasPersonalData='true')
+s-stwuct tweetcachewwite {
+  1: wequiwed i64 t-tweet_id (pewsonawdatatype = 'tweetid')
+  // if the tweet id is a-a snowfwake id, (✿oωo) t-this is an offset since tweet cweation. 
+  // i-if it is nyot a s-snowfwake id, -.- then this is a unix e-epoch time in
+  // m-miwwiseconds. XD (the idea is that fow most tweets, (✿oωo) this encoding wiww make
+  // i-it easiew to s-see the intewvaw b-between events and whethew it occuwed s-soon
+  // a-actew tweet cweation.)
+  2: wequiwed i-i64 timestamp (pewsonawdatatype = 'twansactiontimestamp')
+  3: wequiwed stwing action // one of "set", (˘ω˘) "add", "wepwace", (ˆ ﻌ ˆ)♡ "cas", "dewete"
+  4: wequiwed sewvo_wepo.cachedvawue c-cached_vawue // c-contains metadata about the cached vawue
+  5: o-optionaw cachedtweet c-cached_tweet
+} (pewsisted='twue', >_< haspewsonawdata='twue')
 
-struct AsyncInsertRequest {
-  12: required tweet.Tweet tweet
-  18: required user.User user
-  21: required i64 timestamp
-  // the cacheable version of tweet from field 12
-  29: required CachedTweet cached_tweet
-  # 13: obsolete tweet.Tweet internal_tweet
-  19: optional tweet.Tweet source_tweet
-  20: optional user.User source_user
-  // Used for quote tweet feature
-  22: optional tweet.Tweet quoted_tweet
-  23: optional user.User quoted_user
-  28: optional i64 parent_user_id
-  // Used for delivering the requestId of a geotagged tweet
-  24: optional string geo_search_request_id
-  # 7: obsolete
-  # if not specified, all async insert actions are performed. if specified, only
-  # the specified action is performed; this is used for retrying specific actions
-  # that failed on a previous attempt.
-  10: optional AsyncWriteAction retry_action
-  # 11: obsolete: bool from_monorail = 0
-  # 14: obsolete
-  15: optional feature_context.FeatureContext feature_context
-  # 16: obsolete
-  # 17: obsolete
-  # 26: obsolete: optional tweet.Tweet debug_tweet_copy
-  27: optional map<tweet.TweetCreateContextKey, string> additional_context
-  30: optional transient_context.TransientCreateContext transient_context
-  // Used to check whether the same tweet has been quoted multiple
-  // times by a given user.
-  31: optional bool quoter_has_already_quoted_tweet
-  32: optional InitialTweetUpdateRequest initialTweetUpdateRequest
-  // User ids of users mentioned in note tweet. Used for tls events
-  33: optional list<i64> note_tweet_mentioned_user_ids
+stwuct asyncinsewtwequest {
+  12: wequiwed tweet.tweet t-tweet
+  18: wequiwed usew.usew usew
+  21: wequiwed i64 timestamp
+  // the c-cacheabwe vewsion of tweet fwom fiewd 12
+  29: w-wequiwed cachedtweet c-cached_tweet
+  # 13: obsowete tweet.tweet intewnaw_tweet
+  19: o-optionaw tweet.tweet s-souwce_tweet
+  20: optionaw usew.usew souwce_usew
+  // u-used fow quote tweet featuwe
+  22: o-optionaw tweet.tweet quoted_tweet
+  23: optionaw usew.usew q-quoted_usew
+  28: optionaw i64 pawent_usew_id
+  // u-used fow dewivewing t-the wequestid of a geotagged t-tweet
+  24: optionaw stwing g-geo_seawch_wequest_id
+  # 7: o-obsowete
+  # i-if nyot specified, -.- aww a-async insewt actions a-awe pewfowmed. (///ˬ///✿) if specified, XD onwy
+  # the s-specified action i-is pewfowmed; this i-is used fow wetwying specific actions
+  # that f-faiwed on a pwevious attempt. ^^;;
+  10: o-optionaw a-asyncwwiteaction wetwy_action
+  # 11: obsowete: boow fwom_monowaiw = 0
+  # 14: obsowete
+  15: o-optionaw f-featuwe_context.featuwecontext f-featuwe_context
+  # 16: o-obsowete
+  # 17: obsowete
+  # 26: obsowete: optionaw t-tweet.tweet debug_tweet_copy
+  27: optionaw map<tweet.tweetcweatecontextkey, rawr x3 stwing> additionaw_context
+  30: optionaw twansient_context.twansientcweatecontext twansient_context
+  // used to c-check whethew the same tweet has b-been quoted muwtipwe
+  // times b-by a given usew. OwO
+  31: optionaw b-boow quotew_has_awweady_quoted_tweet
+  32: optionaw i-initiawtweetupdatewequest i-initiawtweetupdatewequest
+  // u-usew ids of usews m-mentioned in nyote t-tweet. ʘwʘ used fow tws events
+  33: optionaw wist<i64> nyote_tweet_mentioned_usew_ids
 }
 
-struct AsyncUpdatePossiblySensitiveTweetRequest {
-  1: required tweet.Tweet tweet
-  2: required user.User user
-  3: required i64 by_user_id
-  4: required i64 timestamp
-  5: optional bool nsfw_admin_change
-  6: optional bool nsfw_user_change
-  7: optional string note
-  8: optional string host
-  9: optional AsyncWriteAction action
+stwuct asyncupdatepossibwysensitivetweetwequest {
+  1: wequiwed tweet.tweet t-tweet
+  2: w-wequiwed usew.usew u-usew
+  3: wequiwed i64 by_usew_id
+  4: w-wequiwed i64 timestamp
+  5: optionaw boow nysfw_admin_change
+  6: o-optionaw b-boow nysfw_usew_change
+  7: optionaw stwing n-nyote
+  8: optionaw stwing host
+  9: optionaw a-asyncwwiteaction a-action
 }
 
-struct AsyncUpdateTweetMediaRequest {
-  1: required i64 tweet_id
-  2: required list<media_entity.MediaEntity> orphaned_media
-  3: optional AsyncWriteAction retry_action
-  4: optional list<MediaCommon.MediaKey> media_keys
+stwuct asyncupdatetweetmediawequest {
+  1: w-wequiwed i-i64 tweet_id
+  2: wequiwed wist<media_entity.mediaentity> owphaned_media
+  3: optionaw asyncwwiteaction w-wetwy_action
+  4: o-optionaw w-wist<mediacommon.mediakey> m-media_keys
 }
 
-struct AsyncSetAdditionalFieldsRequest {
-  1: required tweet.Tweet additional_fields
-  3: required i64 timestamp
-  4: required i64 user_id
-  2: optional AsyncWriteAction retry_action
+s-stwuct asyncsetadditionawfiewdswequest {
+  1: w-wequiwed t-tweet.tweet additionaw_fiewds
+  3: wequiwed i64 t-timestamp
+  4: w-wequiwed i64 usew_id
+  2: optionaw a-asyncwwiteaction wetwy_action
 }
 
-struct AsyncSetRetweetVisibilityRequest {
-  1: required i64 retweet_id
-  // Whether to archive or unarchive(visible=true) the retweet_id edge in the RetweetsGraph.
-  2: required bool visible
-  3: required i64 src_id
-  5: required i64 retweet_user_id
-  6: required i64 source_tweet_user_id
-  7: required i64 timestamp
-  4: optional AsyncWriteAction retry_action
+stwuct asyncsetwetweetvisibiwitywequest {
+  1: w-wequiwed i64 wetweet_id
+  // w-whethew to awchive o-ow unawchive(visibwe=twue) the wetweet_id edge i-in the wetweetsgwaph. rawr
+  2: wequiwed boow visibwe
+  3: wequiwed i-i64 swc_id
+  5: w-wequiwed i64 w-wetweet_usew_id
+  6: wequiwed i64 souwce_tweet_usew_id
+  7: wequiwed i-i64 timestamp
+  4: optionaw asyncwwiteaction w-wetwy_action
 }
 
-struct SetRetweetVisibilityRequest {
-  1: required i64 retweet_id
-  // Whether to archive or unarchive(visible=true) the retweet_id edge in the RetweetsGraph.
-  2: required bool visible
+s-stwuct setwetweetvisibiwitywequest {
+  1: wequiwed i-i64 wetweet_id
+  // whethew t-to awchive ow unawchive(visibwe=twue) t-the wetweet_id edge in the wetweetsgwaph. UwU
+  2: w-wequiwed boow visibwe
 }
 
-struct AsyncEraseUserTweetsRequest {
-  1: required i64 user_id
-  3: required i64 flock_cursor
-  4: required i64 start_timestamp
-  5: required i64 tweet_count
+stwuct asyncewaseusewtweetswequest {
+  1: w-wequiwed i-i64 usew_id
+  3: wequiwed i64 f-fwock_cuwsow
+  4: wequiwed i64 stawt_timestamp
+  5: w-wequiwed i64 t-tweet_count
 }
 
-struct AsyncDeleteRequest {
-  4: required tweet.Tweet tweet
-  11: required i64 timestamp
-  2: optional user.User user
-  9: optional i64 by_user_id
-  12: optional tweet_audit.AuditDeleteTweet audit_passthrough
-  13: optional i64 cascaded_from_tweet_id
-  # if not specified, all async-delete actions are performed. if specified, only
-  # the specified action is performed; this is used for retrying specific actions
-  # that failed on a previous attempt.
-  3: optional AsyncWriteAction retry_action
-  5: bool delete_media = 1
-  6: bool delete_retweets = 1
-  8: bool scribe_for_audit = 1
-  15: bool is_user_erasure = 0
-  17: bool is_bounce_delete = 0
-  18: optional bool is_last_quote_of_quoter
-  19: optional bool is_admin_delete
+s-stwuct asyncdewetewequest {
+  4: wequiwed tweet.tweet tweet
+  11: wequiwed i64 timestamp
+  2: optionaw usew.usew usew
+  9: optionaw i64 by_usew_id
+  12: optionaw tweet_audit.auditdewetetweet audit_passthwough
+  13: optionaw i64 cascaded_fwom_tweet_id
+  # if nyot specified, a-aww async-dewete a-actions awe pewfowmed. (ꈍᴗꈍ) if specified, (✿oωo) onwy
+  # t-the specified action i-is pewfowmed; t-this is used fow wetwying specific a-actions
+  # that faiwed on a-a pwevious attempt. (⑅˘꒳˘)
+  3: o-optionaw asyncwwiteaction w-wetwy_action
+  5: boow dewete_media = 1
+  6: b-boow dewete_wetweets = 1
+  8: b-boow scwibe_fow_audit = 1
+  15: boow is_usew_ewasuwe = 0
+  17: boow is_bounce_dewete = 0
+  18: optionaw b-boow is_wast_quote_of_quotew
+  19: o-optionaw b-boow is_admin_dewete
 }
 
-struct AsyncUndeleteTweetRequest {
-  1: required tweet.Tweet tweet
-  3: required user.User user
-  4: required i64 timestamp
-  // the cacheable version of tweet from field 1
-  12: required CachedTweet cached_tweet
-  # 2: obsolete tweet.Tweet internal_tweet
-  5: optional AsyncWriteAction retry_action
-  6: optional i64 deleted_at
-  7: optional tweet.Tweet source_tweet
-  8: optional user.User source_user
-  9: optional tweet.Tweet quoted_tweet
-  10: optional user.User quoted_user
-  11: optional i64 parent_user_id
-  13: optional bool quoter_has_already_quoted_tweet
+s-stwuct a-asyncundewetetweetwequest {
+  1: w-wequiwed tweet.tweet t-tweet
+  3: w-wequiwed usew.usew u-usew
+  4: wequiwed i64 timestamp
+  // t-the c-cacheabwe vewsion o-of tweet fwom fiewd 1
+  12: wequiwed c-cachedtweet cached_tweet
+  # 2: obsowete t-tweet.tweet intewnaw_tweet
+  5: optionaw asyncwwiteaction w-wetwy_action
+  6: o-optionaw i-i64 deweted_at
+  7: optionaw t-tweet.tweet souwce_tweet
+  8: optionaw usew.usew s-souwce_usew
+  9: optionaw tweet.tweet q-quoted_tweet
+  10: optionaw u-usew.usew quoted_usew
+  11: optionaw i64 pawent_usew_id
+  13: optionaw boow quotew_has_awweady_quoted_tweet
 }
 
-struct AsyncIncrFavCountRequest {
-  1: required i64 tweet_id
-  2: required i32 delta
+s-stwuct asyncincwfavcountwequest {
+  1: wequiwed i-i64 tweet_id
+  2: w-wequiwed i32 dewta
 }
 
-struct AsyncIncrBookmarkCountRequest {
-  1: required i64 tweet_id
-  2: required i32 delta
+stwuct asyncincwbookmawkcountwequest {
+  1: wequiwed i-i64 tweet_id
+  2: wequiwed i32 d-dewta
 }
 
-struct AsyncDeleteAdditionalFieldsRequest {
-  6: required i64 tweet_id
-  7: required list<i16> field_ids
-  4: required i64 timestamp
-  5: required i64 user_id
-  3: optional AsyncWriteAction retry_action
+stwuct a-asyncdeweteadditionawfiewdswequest {
+  6: w-wequiwed i64 tweet_id
+  7: wequiwed wist<i16> f-fiewd_ids
+  4: w-wequiwed i64 timestamp
+  5: w-wequiwed i64 usew_id
+  3: optionaw asyncwwiteaction w-wetwy_action
 }
 
-// Used for both tweet and user takedowns.
-// user will be None for user takedowns because user is only used when scribe_for_audit or
-// eventbus_enqueue are true, which is never the case for user takedown.
-struct AsyncTakedownRequest {
-  1: required tweet.Tweet tweet
+// used f-fow both tweet and u-usew takedowns. OwO
+// u-usew wiww be nyone fow usew t-takedowns because u-usew is onwy u-used when scwibe_fow_audit o-ow
+// eventbus_enqueue a-awe twue, 🥺 which i-is nyevew the c-case fow usew takedown. >_<
+s-stwuct a-asynctakedownwequest {
+  1: w-wequiwed t-tweet.tweet t-tweet
 
-  // Author of the tweet.  Used when scribe_for_audit or eventbus_enqueue are true which is the case
-  // for tweet takedown but not user takedown.
-  2: optional user.User user
+  // authow of the tweet. (ꈍᴗꈍ)  u-used when scwibe_fow_audit ow e-eventbus_enqueue awe twue which i-is the case
+  // f-fow tweet takedown b-but not usew takedown. 😳
+  2: optionaw usew.usew usew
 
-  // This field is the resulting list of takedown country codes on the tweet after the
-  // countries_to_add and countries_to_remove changes have been applied.
-  13: list<withholding.TakedownReason> takedown_reasons = []
+  // this f-fiewd is the w-wesuwting wist o-of takedown countwy codes on the tweet aftew the
+  // countwies_to_add a-and countwies_to_wemove changes h-have been appwied.
+  13: w-wist<withhowding.takedownweason> t-takedown_weasons = []
 
-  // This field is the list of takedown reaons to add to the tweet.
-  14: list<withholding.TakedownReason> reasons_to_add = []
+  // this fiewd is the wist of takedown w-weaons to add to t-the tweet. 🥺
+  14: w-wist<withhowding.takedownweason> w-weasons_to_add = []
 
-  // This field is the list of takedown reasons to remove from the tweet.
-  15: list<withholding.TakedownReason> reasons_to_remove = []
+  // this fiewd is the wist o-of takedown w-weasons to wemove fwom the tweet. nyaa~~
+  15: wist<withhowding.takedownweason> w-weasons_to_wemove = []
 
-  // This field determines whether or not Tweetypie should write takedown audits
-  // for this request to Guano.
-  6: required bool scribe_for_audit
+  // this fiewd detewmines whethew o-ow nyot tweetypie shouwd wwite t-takedown audits
+  // f-fow this wequest to guano. ^•ﻌ•^
+  6: w-wequiwed b-boow scwibe_fow_audit
 
-  // This field determines whether or not Tweetypie should enqueue a
-  // TweetTakedownEvent to EventBus and Hosebird for this request.
-  7: required bool eventbus_enqueue
+  // this f-fiewd detewmines whethew ow nyot t-tweetypie shouwd e-enqueue a
+  // t-tweettakedownevent t-to eventbus and hosebiwd fow t-this wequest. (ˆ ﻌ ˆ)♡
+  7: w-wequiwed boow e-eventbus_enqueue
 
-  // This field is sent as part of the takedown audit that's written to Guano,
-  // and is not persisted with the takedown itself.
-  8: optional string audit_note
+  // this f-fiewd is sent as pawt of the takedown audit that's w-wwitten to guano, (U ᵕ U❁)
+  // a-and is n-nyot pewsisted with the takedown itsewf. mya
+  8: optionaw stwing audit_note
 
-  // This field is the ID of the user who initiated the takedown.  It is used
-  // when auditing the takedown in Guano.  If unset, it will be logged as -1.
-  9: optional i64 by_user_id
+  // this fiewd is the i-id of the usew who initiated the t-takedown. 😳  it i-is used
+  // when auditing the takedown in guano. σωσ  i-if unset, it wiww be wogged a-as -1. ( ͡o ω ͡o )
+  9: optionaw i-i64 by_usew_id
 
-  // This field is the host where the request originated or the remote IP that
-  // is associated with the request.  It is used when auditing the takedown in
-  // Guano.  If unset, it will be logged as "<unknown>".
-  10: optional string host
+  // t-this fiewd i-is the host w-whewe the wequest owiginated ow the wemote ip that
+  // is associated with the w-wequest. XD  it is used when auditing t-the takedown in
+  // guano. :3  if unset, :3 it wiww be wogged as "<unknown>". (⑅˘꒳˘)
+  10: o-optionaw stwing host
 
-  11: optional AsyncWriteAction retry_action
-  12: required i64 timestamp
+  11: optionaw asyncwwiteaction wetwy_action
+  12: wequiwed i-i64 timestamp
 }
 
-struct SetTweetUserTakedownRequest {
-  1: required i64 tweet_id
-  2: required bool has_takedown
-  3: optional i64 user_id
+s-stwuct settweetusewtakedownwequest {
+  1: wequiwed i64 tweet_id
+  2: w-wequiwed boow has_takedown
+  3: optionaw i-i64 usew_id
 }
 
-enum DataErrorCause {
-  UNKNOWN = 0
-  // Returned on set_tweet_user_takedown when
-  // the SetTweetUserTakedownRequest.user_id does not match the author
-  // of the tweet identified by SetTweetUserTakedownRequest.tweet_id.
-  USER_TWEET_RELATIONSHIP = 1
+e-enum dataewwowcause {
+  unknown = 0
+  // w-wetuwned on set_tweet_usew_takedown when
+  // t-the settweetusewtakedownwequest.usew_id does nyot match the authow
+  // of the tweet identified b-by settweetusewtakedownwequest.tweet_id. òωó
+  usew_tweet_wewationship = 1
 }
 
 /**
- * DataError is returned for operations that perform data changes,
- * but encountered an inconsistency, and the operation cannot
- * be meaninfully performed.
+ * dataewwow i-is wetuwned f-fow opewations that p-pewfowm data changes, mya
+ * but encountewed an i-inconsistency, 😳😳😳 and the opewation cannot
+ * be meaninfuwwy pewfowmed. :3
  */
-exception DataError {
-  1: required string message
-  2: optional DataErrorCause errorCause
+exception d-dataewwow {
+  1: w-wequiwed stwing m-message
+  2: o-optionaw dataewwowcause ewwowcause
 }
 
-struct ReplicatedDeleteAdditionalFieldsRequest {
-  /** is a map for backwards compatibility, but will only contain a single tweet id */
-  1: required map<i64, list<i16>> fields_map
+stwuct wepwicateddeweteadditionawfiewdswequest {
+  /** i-is a-a map fow backwawds compatibiwity, >_< but wiww onwy c-contain a singwe tweet id */
+  1: wequiwed map<i64, 🥺 w-wist<i16>> fiewds_map
 }
 
-struct CascadedDeleteTweetRequest {
-  1: required i64 tweet_id
-  2: required i64 cascaded_from_tweet_id
-  3: optional tweet_audit.AuditDeleteTweet audit_passthrough
+stwuct cascadeddewetetweetwequest {
+  1: w-wequiwed i-i64 tweet_id
+  2: wequiwed i64 c-cascaded_fwom_tweet_id
+  3: o-optionaw t-tweet_audit.auditdewetetweet audit_passthwough
 }
 
-struct QuotedTweetDeleteRequest {
+stwuct quotedtweetdewetewequest {
+  1: i-i64 quoting_tweet_id
+  2: i64 quoted_tweet_id
+  3: i-i64 quoted_usew_id
+}
+
+stwuct quotedtweettakedownwequest {
   1: i64 quoting_tweet_id
   2: i64 quoted_tweet_id
-  3: i64 quoted_user_id
+  3: i-i64 quoted_usew_id
+  4: w-wist<stwing> t-takedown_countwy_codes = []
+  5: w-wist<withhowding.takedownweason> t-takedown_weasons = []
 }
 
-struct QuotedTweetTakedownRequest {
-  1: i64 quoting_tweet_id
-  2: i64 quoted_tweet_id
-  3: i64 quoted_user_id
-  4: list<string> takedown_country_codes = []
-  5: list<withholding.TakedownReason> takedown_reasons = []
+stwuct wepwicatedinsewttweet2wequest {
+  1: wequiwed c-cachedtweet cached_tweet
+  // used to check w-whethew the same tweet has been q-quoted by a usew. (ꈍᴗꈍ)
+  2: optionaw boow quotew_has_awweady_quoted_tweet
+  3: o-optionaw i-initiawtweetupdatewequest initiawtweetupdatewequest
 }
 
-struct ReplicatedInsertTweet2Request {
-  1: required CachedTweet cached_tweet
-  // Used to check whether the same tweet has been quoted by a user.
-  2: optional bool quoter_has_already_quoted_tweet
-  3: optional InitialTweetUpdateRequest initialTweetUpdateRequest
+s-stwuct wepwicateddewetetweet2wequest {
+  1: w-wequiwed t-tweet.tweet tweet
+  2: wequiwed b-boow is_ewasuwe
+  3: w-wequiwed boow is_bounce_dewete
+  4: o-optionaw boow is_wast_quote_of_quotew
 }
 
-struct ReplicatedDeleteTweet2Request {
-  1: required tweet.Tweet tweet
-  2: required bool is_erasure
-  3: required bool is_bounce_delete
-  4: optional bool is_last_quote_of_quoter
+stwuct wepwicatedsetwetweetvisibiwitywequest {
+  1: wequiwed i-i64 swc_id
+  // whethew to awchive o-ow unawchive(visibwe=twue) the wetweet_id edge in the wetweetsgwaph. rawr x3
+  2: wequiwed b-boow visibwe
 }
 
-struct ReplicatedSetRetweetVisibilityRequest {
-  1: required i64 src_id
-  // Whether to archive or unarchive(visible=true) the retweet_id edge in the RetweetsGraph.
-  2: required bool visible
+s-stwuct wepwicatedundewetetweet2wequest {
+  1: w-wequiwed cachedtweet cached_tweet
+  2: o-optionaw b-boow quotew_has_awweady_quoted_tweet
 }
 
-struct ReplicatedUndeleteTweet2Request {
-  1: required CachedTweet cached_tweet
-  2: optional bool quoter_has_already_quoted_tweet
+stwuct g-getstowedtweetsoptions {
+  1: boow bypass_visibiwity_fiwtewing = 0
+  2: o-optionaw i64 fow_usew_id
+  3: w-wist<fiewdid> a-additionaw_fiewd_ids = []
 }
 
-struct GetStoredTweetsOptions {
-  1: bool bypass_visibility_filtering = 0
-  2: optional i64 for_user_id
-  3: list<FieldId> additional_field_ids = []
+stwuct getstowedtweetswequest {
+  1: wequiwed wist<i64> tweet_ids
+  2: optionaw g-getstowedtweetsoptions o-options
 }
 
-struct GetStoredTweetsRequest {
-  1: required list<i64> tweet_ids
-  2: optional GetStoredTweetsOptions options
+stwuct getstowedtweetswesuwt {
+  1: wequiwed stowed_tweet_info.stowedtweetinfo s-stowed_tweet
 }
 
-struct GetStoredTweetsResult {
-  1: required stored_tweet_info.StoredTweetInfo stored_tweet
+stwuct getstowedtweetsbyusewoptions {
+  1: b-boow bypass_visibiwity_fiwtewing = 0
+  2: b-boow set_fow_usew_id = 0
+  3: optionaw i64 stawt_time_msec
+  4: optionaw i-i64 end_time_msec
+  5: optionaw i64 cuwsow
+  6: b-boow stawt_fwom_owdest = 0
+  7: wist<fiewdid> a-additionaw_fiewd_ids = []
 }
 
-struct GetStoredTweetsByUserOptions {
-  1: bool bypass_visibility_filtering = 0
-  2: bool set_for_user_id = 0
-  3: optional i64 start_time_msec
-  4: optional i64 end_time_msec
-  5: optional i64 cursor
-  6: bool start_from_oldest = 0
-  7: list<FieldId> additional_field_ids = []
+s-stwuct getstowedtweetsbyusewwequest {
+  1: wequiwed i-i64 usew_id
+  2: o-optionaw getstowedtweetsbyusewoptions o-options
 }
 
-struct GetStoredTweetsByUserRequest {
-  1: required i64 user_id
-  2: optional GetStoredTweetsByUserOptions options
+s-stwuct getstowedtweetsbyusewwesuwt {
+  1: w-wequiwed wist<stowed_tweet_info.stowedtweetinfo> s-stowed_tweets
+  2: optionaw i64 cuwsow
 }
 
-struct GetStoredTweetsByUserResult {
-  1: required list<stored_tweet_info.StoredTweetInfo> stored_tweets
-  2: optional i64 cursor
-}
-
-/* This is a request to update an initial tweet based on the creation of a edit tweet
- * initialTweetId: The tweet to be updated
- * editTweetId: The tweet being created, which is an edit of initialTweetId
- * selfPermalink: A self permalink for initialTweetId
+/* this is a wequest to update an initiaw tweet based o-on the cweation o-of a edit tweet
+ * i-initiawtweetid: t-the tweet to b-be updated
+ * edittweetid: t-the tweet being cweated, (U ﹏ U) which is an edit of initiawtweetid
+ * sewfpewmawink: a-a sewf p-pewmawink fow initiawtweetid
  */
-struct InitialTweetUpdateRequest {
-  1: required i64 initialTweetId
-  2: required i64 editTweetId
-  3: optional tweet.ShortenedUrl selfPermalink
+stwuct initiawtweetupdatewequest {
+  1: wequiwed i64 initiawtweetid
+  2: w-wequiwed i-i64 edittweetid
+  3: o-optionaw tweet.showteneduww sewfpewmawink
 }
 
-service TweetServiceInternal extends tweet_service.TweetService {
+s-sewvice tweetsewviceintewnaw extends tweet_sewvice.tweetsewvice {
 
   /**
-   * Performs the async portion of TweetService.erase_user_tweets.
-   * Only tweetypie itself can call this.
+   * pewfowms the a-async powtion of t-tweetsewvice.ewase_usew_tweets. ( ͡o ω ͡o )
+   * onwy tweetypie itsewf can c-caww this. 😳😳😳
    */
-  void async_erase_user_tweets(1: AsyncEraseUserTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void async_ewase_usew_tweets(1: a-asyncewaseusewtweetswequest w-wequest) thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, 🥺
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Performs the async portion of TweetService.post_tweet.
-   * Only tweetypie itself can call this.
+   * p-pewfowms the a-async powtion o-of tweetsewvice.post_tweet. òωó
+   * onwy tweetypie i-itsewf can caww t-this. XD
    */
-  void async_insert(1: AsyncInsertRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void async_insewt(1: a-asyncinsewtwequest wequest) thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow, XD
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Performs the async portion of TweetService.delete_tweets.
-   * Only tweetypie itself can call this.
+   * p-pewfowms t-the async powtion of tweetsewvice.dewete_tweets. ( ͡o ω ͡o )
+   * onwy t-tweetypie itsewf can caww this. >w<
    */
-  void async_delete(1: AsyncDeleteRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void async_dewete(1: a-asyncdewetewequest w-wequest) thwows (
+    1: exceptions.cwientewwow cwient_ewwow, mya
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Performs the async portion of TweetService.undelete_tweet.
-   * Only tweetypie itself can call this.
+   * pewfowms t-the async powtion of tweetsewvice.undewete_tweet. (ꈍᴗꈍ)
+   * onwy tweetypie i-itsewf can c-caww this. -.-
    */
-  void async_undelete_tweet(1: AsyncUndeleteTweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void async_undewete_tweet(1: a-asyncundewetetweetwequest w-wequest) thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, (⑅˘꒳˘)
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Performs the async portion of TweetService.update_possibly_sensitive_tweet.
-   * Only tweetypie itself can call this.
+   * p-pewfowms the async powtion of tweetsewvice.update_possibwy_sensitive_tweet. (U ﹏ U)
+   * onwy tweetypie itsewf can caww this. σωσ
    */
-  void async_update_possibly_sensitive_tweet(1: AsyncUpdatePossiblySensitiveTweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void async_update_possibwy_sensitive_tweet(1: asyncupdatepossibwysensitivetweetwequest w-wequest) thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, :3
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Performs the async portion of TweetService.incr_tweet_fav_count.
-   * Only tweetypie itself can call this.
+   * p-pewfowms t-the async powtion of tweetsewvice.incw_tweet_fav_count. /(^•ω•^)
+   * o-onwy tweetypie i-itsewf can caww this. σωσ
    */
-  void async_incr_fav_count(1: AsyncIncrFavCountRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void a-async_incw_fav_count(1: a-asyncincwfavcountwequest wequest) thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, (U ᵕ U❁)
+    2: exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Performs the async portion of TweetService.incr_tweet_bookmark_count.
-   * Only tweetypie itself can call this.
+   * p-pewfowms the async powtion o-of tweetsewvice.incw_tweet_bookmawk_count. 😳
+   * o-onwy tweetypie itsewf can c-caww this. ʘwʘ
    */
-  void async_incr_bookmark_count(1: AsyncIncrBookmarkCountRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void async_incw_bookmawk_count(1: a-asyncincwbookmawkcountwequest wequest) thwows (
+    1: e-exceptions.cwientewwow c-cwient_ewwow, (⑅˘꒳˘)
+    2: exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Performs the async portion of TweetService.set_additional_fields.
-   * Only tweetypie itself can call this.
+   * p-pewfowms the async powtion o-of tweetsewvice.set_additionaw_fiewds. ^•ﻌ•^
+   * o-onwy tweetypie itsewf c-can caww this. nyaa~~
    */
-  void async_set_additional_fields(1: AsyncSetAdditionalFieldsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void a-async_set_additionaw_fiewds(1: asyncsetadditionawfiewdswequest wequest) thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow, XD
+    2: exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Performs the async portion of TweetServiceInternal.set_retweet_visibility.
-   * Only tweetypie itself can call this.
+   * pewfowms the async powtion of tweetsewviceintewnaw.set_wetweet_visibiwity. /(^•ω•^)
+   * o-onwy tweetypie itsewf can caww this. (U ᵕ U❁)
    */
-  void async_set_retweet_visibility(1: AsyncSetRetweetVisibilityRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void async_set_wetweet_visibiwity(1: asyncsetwetweetvisibiwitywequest wequest) thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow, mya
+    2: exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Set whether the specified retweet ID should be included in its source tweet's retweet count.
-   * This endpoint is invoked from a tweetypie-daemon to adjust retweet counts for all tweets a
-   * suspended or fraudulent (e.g. ROPO-'d) user has retweeted to disincentivize their false engagement.
+   * s-set whethew the specified wetweet i-id shouwd be incwuded in its souwce tweet's wetweet c-count. (ˆ ﻌ ˆ)♡
+   * this endpoint i-is invoked fwom a tweetypie-daemon t-to adjust wetweet c-counts fow aww tweets a
+   * suspended ow fwauduwent (e.g. (✿oωo) w-wopo-'d) usew has wetweeted to disincentivize theiw fawse engagement. (✿oωo)
    */
-  void set_retweet_visibility(1: SetRetweetVisibilityRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void set_wetweet_visibiwity(1: s-setwetweetvisibiwitywequest wequest) t-thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, òωó
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Performs the async portion of TweetService.delete_additional_fields.
-   * Only tweetypie itself can call this.
+   * pewfowms the async p-powtion of tweetsewvice.dewete_additionaw_fiewds. (˘ω˘)
+   * onwy tweetypie itsewf can c-caww this. (ˆ ﻌ ˆ)♡
    */
-  void async_delete_additional_fields(1: AsyncDeleteAdditionalFieldsRequest field_delete) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void async_dewete_additionaw_fiewds(1: asyncdeweteadditionawfiewdswequest fiewd_dewete) thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, ( ͡o ω ͡o )
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Performs the async portion of TweetService.takedown.
-   * Only tweetypie itself can call this.
+   * p-pewfowms t-the async powtion of tweetsewvice.takedown. rawr x3
+   * o-onwy tweetypie itsewf can caww this. (˘ω˘)
    */
-  void async_takedown(1: AsyncTakedownRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void async_takedown(1: asynctakedownwequest w-wequest) t-thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, òωó
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Update the tweet's takedown fields when a user is taken down.
-   * Only tweetypie's UserTakedownChange daemon can call this.
+   * u-update the tweet's takedown fiewds when a usew i-is taken down. ( ͡o ω ͡o )
+   * onwy tweetypie's usewtakedownchange d-daemon c-can caww this. σωσ
    */
-  void set_tweet_user_takedown(1: SetTweetUserTakedownRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error,
-    3: DataError data_error)
+  void set_tweet_usew_takedown(1: settweetusewtakedownwequest w-wequest) thwows (
+    1: exceptions.cwientewwow cwient_ewwow, (U ﹏ U)
+    2: exceptions.sewvewewwow sewvew_ewwow, rawr
+    3: dataewwow data_ewwow)
 
   /**
-   * Cascade delete tweet is the logic for removing tweets that are detached
-   * from their dependency which has been deleted. They are already filtered
-   * out from serving, so this operation reconciles storage with the view
-   * presented by Tweetypie.
-   * This RPC call is delegated from daemons or batch jobs. Currently there
-   * are two use-cases when this call is issued:
-   * *   Deleting detached retweets after the source tweet was deleted.
-   *     This is done through RetweetsDeletion daemon and the
-   *     CleanupDetachedRetweets job.
-   * *   Deleting edits of an initial tweet that has been deleted.
-   *     This is done by CascadedEditedTweetDelete daemon.
-   *     Note that, when serving the original delete request for an edit,
-   *     the initial tweet is only deleted, which makes all edits hidden.
+   * cascade d-dewete tweet is t-the wogic fow wemoving tweets that a-awe detached
+   * f-fwom theiw dependency which h-has been deweted. -.- they awe awweady fiwtewed
+   * out fwom sewving, so this opewation weconciwes s-stowage with the view
+   * pwesented by tweetypie. ( ͡o ω ͡o )
+   * this wpc caww is dewegated f-fwom daemons o-ow batch jobs. >_< c-cuwwentwy thewe
+   * awe two use-cases when this caww is issued:
+   * *   d-deweting d-detached wetweets a-aftew the souwce tweet was d-deweted. o.O
+   *     this is done thwough w-wetweetsdewetion daemon and t-the
+   *     cweanupdetachedwetweets j-job. σωσ
+   * *   deweting edits of an initiaw t-tweet that has been deweted. -.-
+   *     t-this is d-done by cascadededitedtweetdewete daemon. σωσ
+   *     n-nyote that, :3 w-when sewving the owiginaw dewete w-wequest fow an edit, ^^
+   *     the i-initiaw tweet is onwy deweted, òωó w-which makes aww e-edits hidden. (ˆ ﻌ ˆ)♡
    */
-  void cascaded_delete_tweet(1: CascadedDeleteTweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void cascaded_dewete_tweet(1: cascadeddewetetweetwequest w-wequest) thwows (
+    1: exceptions.cwientewwow cwient_ewwow, XD
+    2: exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Update the timestamp of the user's most recent request to delete
-   * location data on their tweets. This does not actually remove the
-   * geo information from the user's tweets, but it will prevent the geo
-   * information for this user's tweets from being returned by
-   * Tweetypie.
+   * update the timestamp of the usew's most wecent w-wequest to dewete
+   * wocation data on theiw t-tweets. òωó this does nyot actuawwy w-wemove the
+   * geo infowmation fwom the usew's t-tweets, (ꈍᴗꈍ) but it wiww pwevent the geo
+   * infowmation f-fow this usew's tweets fwom being wetuwned b-by
+   * tweetypie. UwU
    */
-  void scrub_geo_update_user_timestamp(1: delete_location_data.DeleteLocationData request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void scwub_geo_update_usew_timestamp(1: dewete_wocation_data.dewetewocationdata wequest) t-thwows (
+    1: exceptions.cwientewwow cwient_ewwow, >w<
+    2: exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Look up tweets quoting a tweet that has been deleted and enqueue a compliance event.
-   * Only tweetypie's QuotedTweetDelete daemon can call this.
+   * w-wook up tweets quoting a tweet that has been d-deweted and enqueue a-a compwiance event. ʘwʘ
+   * onwy t-tweetypie's q-quotedtweetdewete daemon can caww this. :3
   **/
-  void quoted_tweet_delete(1: QuotedTweetDeleteRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void quoted_tweet_dewete(1: quotedtweetdewetewequest wequest) thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, ^•ﻌ•^
+    2: exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Look up tweets quoting a tweet that has been taken down and enqueue a compliance event.
-   * Only tweetypie's QuotedTweetTakedown daemon can call this.
+   * wook u-up tweets quoting a-a tweet that has b-been taken down and enqueue a compwiance event. (ˆ ﻌ ˆ)♡
+   * onwy tweetypie's q-quotedtweettakedown daemon c-can caww this. 🥺
   **/
-  void quoted_tweet_takedown(1: QuotedTweetTakedownRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void q-quoted_tweet_takedown(1: q-quotedtweettakedownwequest wequest) thwows (
+    1: exceptions.cwientewwow cwient_ewwow, OwO
+    2: exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Replicates TweetService.get_tweet_counts from another cluster.
+   * w-wepwicates t-tweetsewvice.get_tweet_counts fwom anothew cwustew. 🥺
    */
-  void replicated_get_tweet_counts(1: tweet_service.GetTweetCountsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void wepwicated_get_tweet_counts(1: tweet_sewvice.gettweetcountswequest wequest) t-thwows (
+    1: e-exceptions.cwientewwow c-cwient_ewwow, OwO
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Replicates TweetService.get_tweet_fields from another cluster.
+   * wepwicates t-tweetsewvice.get_tweet_fiewds fwom anothew cwustew. (U ᵕ U❁)
    */
-  void replicated_get_tweet_fields(1: tweet_service.GetTweetFieldsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void wepwicated_get_tweet_fiewds(1: t-tweet_sewvice.gettweetfiewdswequest w-wequest) t-thwows (
+    1: e-exceptions.cwientewwow c-cwient_ewwow, ( ͡o ω ͡o )
+    2: exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Replicates TweetService.get_tweets from another cluster.
+   * w-wepwicates tweetsewvice.get_tweets f-fwom anothew cwustew. ^•ﻌ•^
    */
-  void replicated_get_tweets(1: tweet_service.GetTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void wepwicated_get_tweets(1: t-tweet_sewvice.gettweetswequest wequest) thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, o.O
+    2: exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Replicates a TweetService.post_tweet InsertTweet event from another cluster.
-   * Note: v1 version of this endpoint previously just took a Tweet which is why it was replaced
+   * w-wepwicates a-a tweetsewvice.post_tweet insewttweet event fwom anothew cwustew. (⑅˘꒳˘)
+   * n-nyote: v-v1 vewsion of this endpoint pweviouswy j-just took a-a tweet which is why it was wepwaced
    */
-  void replicated_insert_tweet2(1: ReplicatedInsertTweet2Request request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void wepwicated_insewt_tweet2(1: wepwicatedinsewttweet2wequest w-wequest) t-thwows (
+    1: exceptions.cwientewwow cwient_ewwow, (ˆ ﻌ ˆ)♡
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Replicates a TweetService.delete_tweets DeleteTweet event from another cluster.
+   * wepwicates a tweetsewvice.dewete_tweets d-dewetetweet event fwom anothew cwustew. :3
    */
-  void replicated_delete_tweet2(1: ReplicatedDeleteTweet2Request request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void wepwicated_dewete_tweet2(1: wepwicateddewetetweet2wequest w-wequest) thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, /(^•ω•^)
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Replicates a TweetService.incr_tweet_fav_count event from another cluster.
+   * wepwicates a tweetsewvice.incw_tweet_fav_count e-event fwom anothew c-cwustew. òωó
    */
-  void replicated_incr_fav_count(1: i64 tweet_id, 2: i32 delta) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void wepwicated_incw_fav_count(1: i-i64 tweet_id, :3 2: i-i32 dewta) thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, (˘ω˘)
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Replicates a TweetService.incr_tweet_bookmark_count event from another cluster.
+   * wepwicates a tweetsewvice.incw_tweet_bookmawk_count e-event fwom anothew c-cwustew. 😳
    */
-  void replicated_incr_bookmark_count(1: i64 tweet_id, 2: i32 delta) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void wepwicated_incw_bookmawk_count(1: i64 t-tweet_id, σωσ 2: i32 d-dewta) thwows (
+    1: e-exceptions.cwientewwow c-cwient_ewwow, UwU
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Replicates a TweetServiceInternal.set_retweet_visibility event from another cluster.
+   * w-wepwicates a tweetsewviceintewnaw.set_wetweet_visibiwity e-event fwom anothew c-cwustew. -.-
    */
-  void replicated_set_retweet_visibility(1: ReplicatedSetRetweetVisibilityRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void wepwicated_set_wetweet_visibiwity(1: wepwicatedsetwetweetvisibiwitywequest wequest) thwows (
+    1: e-exceptions.cwientewwow c-cwient_ewwow, 🥺
+    2: exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Replicates a TweetService.scrub_geo from another cluster.
+   * w-wepwicates a tweetsewvice.scwub_geo fwom a-anothew cwustew. 😳😳😳
    */
-  void replicated_scrub_geo(1: list<i64> tweet_ids) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void w-wepwicated_scwub_geo(1: w-wist<i64> t-tweet_ids) thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow, 🥺
+    2: exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Replicates a TweetService.set_additional_fields event from another cluster.
+   * wepwicates a tweetsewvice.set_additionaw_fiewds event fwom anothew cwustew. ^^
    */
-  void replicated_set_additional_fields(
-    1: tweet_service.SetAdditionalFieldsRequest request
-  ) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void w-wepwicated_set_additionaw_fiewds(
+    1: t-tweet_sewvice.setadditionawfiewdswequest wequest
+  ) thwows (
+    1: exceptions.cwientewwow c-cwient_ewwow, ^^;;
+    2: e-exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Replicates a TweetService.delete_additional_fields event from another cluster.
+   * wepwicates a tweetsewvice.dewete_additionaw_fiewds e-event fwom anothew cwustew. >w<
    */
-  void replicated_delete_additional_fields(
-    1: ReplicatedDeleteAdditionalFieldsRequest request
-  ) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void wepwicated_dewete_additionaw_fiewds(
+    1: w-wepwicateddeweteadditionawfiewdswequest wequest
+  ) t-thwows (
+    1: exceptions.cwientewwow cwient_ewwow, σωσ
+    2: exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Replicates a TweetService.undelete_tweet event from another cluster.
-   * Note: v1 version of this endpoint previously just took a Tweet which is why it was replaced
+   * wepwicates a-a tweetsewvice.undewete_tweet event fwom anothew c-cwustew. >w<
+   * nyote: v1 vewsion of this endpoint p-pweviouswy just took a tweet w-which is why it was wepwaced
    */
-  void replicated_undelete_tweet2(1: ReplicatedUndeleteTweet2Request request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  void wepwicated_undewete_tweet2(1: w-wepwicatedundewetetweet2wequest wequest) t-thwows (
+    1: exceptions.cwientewwow cwient_ewwow, (⑅˘꒳˘)
+    2: exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-   * Replicates a TweetService.takedown event from another cluster.
+   * wepwicates a tweetsewvice.takedown event fwom anothew cwustew. òωó
    */
-  void replicated_takedown(1: tweet.Tweet tweet) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void wepwicated_takedown(1: t-tweet.tweet tweet) t-thwows (
+    1: e-exceptions.cwientewwow cwient_ewwow, (⑅˘꒳˘)
+    2: exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Replicates a TweetService.update_possibly_sensitive_tweet event from another cluster.
+   * wepwicates a tweetsewvice.update_possibwy_sensitive_tweet event f-fwom anothew c-cwustew. (ꈍᴗꈍ)
    */
-  void replicated_update_possibly_sensitive_tweet(1: tweet.Tweet tweet) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  v-void wepwicated_update_possibwy_sensitive_tweet(1: t-tweet.tweet tweet) thwows (
+    1: exceptions.cwientewwow cwient_ewwow,
+    2: exceptions.sewvewewwow s-sewvew_ewwow)
 
   /**
-   * Fetches hydrated Tweets and some metadata irrespective of the Tweets' state.
+   * f-fetches hydwated tweets and some metadata iwwespective of the t-tweets' state. rawr x3
    */
-  list<GetStoredTweetsResult> get_stored_tweets(1: GetStoredTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  wist<getstowedtweetswesuwt> g-get_stowed_tweets(1: g-getstowedtweetswequest w-wequest) thwows (
+    1: exceptions.cwientewwow cwient_ewwow, ( ͡o ω ͡o )
+    2: exceptions.sewvewewwow sewvew_ewwow)
 
   /**
-  * Fetches hydrated Tweets and some metadata for a particular user, irrespective of the Tweets'
-  * state.
+  * fetches hydwated t-tweets and some metadata f-fow a pawticuwaw usew, UwU iwwespective of the tweets'
+  * state. ^^
   */
-  GetStoredTweetsByUserResult get_stored_tweets_by_user(1: GetStoredTweetsByUserRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+  g-getstowedtweetsbyusewwesuwt get_stowed_tweets_by_usew(1: g-getstowedtweetsbyusewwequest wequest) thwows (
+    1: e-exceptions.cwientewwow c-cwient_ewwow, (˘ω˘)
+    2: e-exceptions.sewvewewwow s-sewvew_ewwow)
 }

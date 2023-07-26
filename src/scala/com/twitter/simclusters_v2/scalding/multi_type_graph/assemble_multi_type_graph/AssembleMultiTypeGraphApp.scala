@@ -1,74 +1,74 @@
-package com.twitter.simclusters_v2.scalding
-package multi_type_graph.assemble_multi_type_graph
+package com.twittew.simcwustews_v2.scawding
+package m-muwti_type_gwaph.assembwe_muwti_type_gwaph
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.RichDate
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.thriftscala.LeftNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList
-import com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources._
+impowt c-com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt com.twittew.daw.cwient.dataset.snapshotdawdataset
+impowt c-com.twittew.scawding.days
+i-impowt com.twittew.scawding.duwation
+i-impowt com.twittew.scawding.wichdate
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.thwiftscawa.weftnode
+impowt com.twittew.simcwustews_v2.thwiftscawa.wightnodetypestwuct
+impowt com.twittew.simcwustews_v2.thwiftscawa.wightnodewithedgeweightwist
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.nounwithfwequencywist
+impowt com.twittew.simcwustews_v2.thwiftscawa.muwtitypegwaphedge
+impowt com.twittew.wtf.scawding.jobs.common.adhocexecutionapp
+i-impowt com.twittew.wtf.scawding.jobs.common.scheduwedexecutionapp
+impowt com.twittew.simcwustews_v2.hdfs_souwces._
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph:multi_type_graph-adhoc
-scalding remote run \
---user cassowary \
---keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
---principal service_acoount@TWITTER.BIZ \
---cluster bluebird-qus1 \
---main-class com.twitter.simclusters_v2.scalding.multi_type_graph.assemble_multi_type_graph.AssembleMultiTypeGraphAdhocApp \
---target src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph:multi_type_graph-adhoc \
---hadoop-properties "mapreduce.reduce.memory.mb=8192 mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.java.opts='-Xmx7618M' mapreduce.task.timeout=3600000" \
--- --date 2021-07-10 --outputDir /gcs/user/cassowary/adhoc/your_ldap/multi_type/multi_type
+./bazew b-bundwe swc/scawa/com/twittew/simcwustews_v2/scawding/muwti_type_gwaph/assembwe_muwti_type_gwaph:muwti_type_gwaph-adhoc
+scawding wemote wun \
+--usew cassowawy \
+--keytab /vaw/wib/tss/keys/fwoofy/keytabs/cwient/cassowawy.keytab \
+--pwincipaw s-sewvice_acoount@twittew.biz \
+--cwustew bwuebiwd-qus1 \
+--main-cwass c-com.twittew.simcwustews_v2.scawding.muwti_type_gwaph.assembwe_muwti_type_gwaph.assembwemuwtitypegwaphadhocapp \
+--tawget s-swc/scawa/com/twittew/simcwustews_v2/scawding/muwti_type_gwaph/assembwe_muwti_type_gwaph:muwti_type_gwaph-adhoc \
+--hadoop-pwopewties "mapweduce.weduce.memowy.mb=8192 mapweduce.map.memowy.mb=8192 mapweduce.map.java.opts='-xmx7618m' mapweduce.weduce.java.opts='-xmx7618m' mapweduce.task.timeout=3600000" \
+-- --date 2021-07-10 --outputdiw /gcs/usew/cassowawy/adhoc/youw_wdap/muwti_type/muwti_type
 
-To run using scalding_job target:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph:multi_type_graph-adhoc
+t-to wun using scawding_job tawget:
+scawding wemote wun --tawget swc/scawa/com/twittew/simcwustews_v2/scawding/muwti_type_gwaph/assembwe_muwti_type_gwaph:muwti_type_gwaph-adhoc
  */
 
-object AssembleMultiTypeGraphAdhocApp extends AssembleMultiTypeGraphBaseApp with AdhocExecutionApp {
-  override val isAdhoc: Boolean = true
-  override val truncatedMultiTypeGraphMHOutputPath: String = "truncated_graph_mh"
-  override val topKRightNounsMHOutputPath: String = "top_k_right_nouns_mh"
-  override val fullMultiTypeGraphThriftOutputPath: String = "full_graph_thrift"
-  override val truncatedMultiTypeGraphKeyValDataset: KeyValDALDataset[
-    KeyVal[LeftNode, RightNodeWithEdgeWeightList]
-  ] = TruncatedMultiTypeGraphAdhocScalaDataset
-  override val topKRightNounsKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
-  ] = TopKRightNounsAdhocScalaDataset
-  override val fullMultiTypeGraphSnapshotDataset: SnapshotDALDataset[MultiTypeGraphEdge] =
-    FullMultiTypeGraphAdhocScalaDataset
+o-object assembwemuwtitypegwaphadhocapp extends a-assembwemuwtitypegwaphbaseapp w-with adhocexecutionapp {
+  o-ovewwide v-vaw isadhoc: boowean = twue
+  ovewwide vaw t-twuncatedmuwtitypegwaphmhoutputpath: stwing = "twuncated_gwaph_mh"
+  ovewwide vaw t-topkwightnounsmhoutputpath: stwing = "top_k_wight_nouns_mh"
+  ovewwide vaw fuwwmuwtitypegwaphthwiftoutputpath: stwing = "fuww_gwaph_thwift"
+  ovewwide vaw twuncatedmuwtitypegwaphkeyvawdataset: keyvawdawdataset[
+    k-keyvaw[weftnode, (✿oωo) wightnodewithedgeweightwist]
+  ] = t-twuncatedmuwtitypegwaphadhocscawadataset
+  o-ovewwide v-vaw topkwightnounskeyvawdataset: keyvawdawdataset[
+    keyvaw[wightnodetypestwuct, ʘwʘ nyounwithfwequencywist]
+  ] = t-topkwightnounsadhocscawadataset
+  o-ovewwide vaw fuwwmuwtitypegwaphsnapshotdataset: s-snapshotdawdataset[muwtitypegwaphedge] =
+    f-fuwwmuwtitypegwaphadhocscawadataset
 }
 
 /**
-To deploy the job:
+to depwoy t-the job:
 
-capesospy-v2 update --build_locally \
- --start_cron assemble_multi_type_graph \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capesospy-v2 update --buiwd_wocawwy \
+ --stawt_cwon a-assembwe_muwti_type_gwaph \
+ swc/scawa/com/twittew/simcwustews_v2/capesos_config/atwa_pwoc.yamw
  */
-object AssembleMultiTypeGraphBatchApp
-    extends AssembleMultiTypeGraphBaseApp
-    with ScheduledExecutionApp {
-  override val isAdhoc: Boolean = false
-  override val truncatedMultiTypeGraphMHOutputPath: String = "truncated_graph_mh"
-  override val topKRightNounsMHOutputPath: String = "top_k_right_nouns_mh"
-  override val fullMultiTypeGraphThriftOutputPath: String = "full_graph_thrift"
-  override val truncatedMultiTypeGraphKeyValDataset: KeyValDALDataset[
-    KeyVal[LeftNode, RightNodeWithEdgeWeightList]
-  ] = TruncatedMultiTypeGraphScalaDataset
-  override val topKRightNounsKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
-  ] = TopKRightNounsScalaDataset
-  override val fullMultiTypeGraphSnapshotDataset: SnapshotDALDataset[MultiTypeGraphEdge] =
-    FullMultiTypeGraphScalaDataset
-  override val firstTime: RichDate = RichDate("2021-08-21")
-  override val batchIncrement: Duration = Days(7)
+object assembwemuwtitypegwaphbatchapp
+    e-extends assembwemuwtitypegwaphbaseapp
+    with s-scheduwedexecutionapp {
+  ovewwide v-vaw isadhoc: b-boowean = fawse
+  ovewwide vaw twuncatedmuwtitypegwaphmhoutputpath: stwing = "twuncated_gwaph_mh"
+  ovewwide vaw topkwightnounsmhoutputpath: stwing = "top_k_wight_nouns_mh"
+  o-ovewwide vaw fuwwmuwtitypegwaphthwiftoutputpath: s-stwing = "fuww_gwaph_thwift"
+  ovewwide vaw twuncatedmuwtitypegwaphkeyvawdataset: k-keyvawdawdataset[
+    k-keyvaw[weftnode, (ˆ ﻌ ˆ)♡ w-wightnodewithedgeweightwist]
+  ] = twuncatedmuwtitypegwaphscawadataset
+  ovewwide vaw topkwightnounskeyvawdataset: k-keyvawdawdataset[
+    keyvaw[wightnodetypestwuct, 😳😳😳 nyounwithfwequencywist]
+  ] = topkwightnounsscawadataset
+  ovewwide vaw fuwwmuwtitypegwaphsnapshotdataset: s-snapshotdawdataset[muwtitypegwaphedge] =
+    fuwwmuwtitypegwaphscawadataset
+  o-ovewwide v-vaw fiwsttime: w-wichdate = wichdate("2021-08-21")
+  ovewwide vaw b-batchincwement: d-duwation = days(7)
 }

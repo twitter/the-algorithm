@@ -1,34 +1,34 @@
-package com.twitter.cr_mixer.module
+package com.twittew.cw_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweet
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import javax.inject.Named
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.cw_mixew.modew.moduwenames
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.stowe.stwato.stwatofetchabwestowe
+i-impowt com.twittew.hewmit.stowe.common.obsewvedweadabwestowe
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.stwato.cwient.{cwient => stwatocwient}
+impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twiptweet
+impowt com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twiptweets
+impowt c-com.twittew.twends.twip_v1.twip_tweets.thwiftscawa.twipdomain
+impowt javax.inject.named
 
-object TripCandidateStoreModule extends TwitterModule {
-  private val stratoColumn = "trends/trip/tripTweetsDataflowProd"
+object t-twipcandidatestowemoduwe extends t-twittewmoduwe {
+  pwivate vaw stwatocowumn = "twends/twip/twiptweetsdatafwowpwod"
 
-  @Provides
-  @Named(ModuleNames.TripCandidateStore)
-  def providesSimClustersTripCandidateStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient
-  ): ReadableStore[TripDomain, Seq[TripTweet]] = {
-    val tripCandidateStratoFetchableStore =
-      StratoFetchableStore
-        .withUnitView[TripDomain, TripTweets](stratoClient, stratoColumn)
-        .mapValues(_.tweets)
+  @pwovides
+  @named(moduwenames.twipcandidatestowe)
+  def p-pwovidessimcwustewstwipcandidatestowe(
+    statsweceivew: s-statsweceivew, nyaa~~
+    s-stwatocwient: stwatocwient
+  ): weadabwestowe[twipdomain, /(^•ω•^) seq[twiptweet]] = {
+    vaw twipcandidatestwatofetchabwestowe =
+      s-stwatofetchabwestowe
+        .withunitview[twipdomain, rawr twiptweets](stwatocwient, OwO stwatocowumn)
+        .mapvawues(_.tweets)
 
-    ObservedReadableStore(
-      tripCandidateStratoFetchableStore
-    )(statsReceiver.scope("simclusters_trip_candidate_store"))
+    obsewvedweadabwestowe(
+      twipcandidatestwatofetchabwestowe
+    )(statsweceivew.scope("simcwustews_twip_candidate_stowe"))
   }
 }

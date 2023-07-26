@@ -1,253 +1,253 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import javax.annotation.Nullable;
+impowt j-javax.annotation.nuwwabwe;
 
 /**
- * A packed ints reader reading packed values (int/long) written in {@link IntBlockPool}.
- * @see IntBlockPoolPackedLongsWriter
+ * a-a packed ints w-weadew weading p-packed vawues (int/wong) w-wwitten i-in {@wink intbwockpoow}. (ꈍᴗꈍ)
+ * @see i-intbwockpoowpackedwongswwitew
  *
- * A standard usage would be :
- * - set reader at an int block pool pointer and number of bits per packed value:
- *   {@link #jumpToInt(int, int)}}
- * - read: {@link #readPackedLong()}
+ * a-a standawd usage wouwd be :
+ * - set weadew at an int bwock poow pointew a-and nyumbew of bits pew packed vawue:
+ *   {@wink #jumptoint(int, 🥺 int)}}
+ * - wead: {@wink #weadpackedwong()}
  *
- * Example usage:
- * @see HighDFPackedIntsDocsEnum
- * @see HighDFPackedIntsDocsAndPositionsEnum
+ * e-exampwe usage:
+ * @see highdfpackedintsdocsenum
+ * @see h-highdfpackedintsdocsandpositionsenum
  */
-public final class IntBlockPoolPackedLongsReader {
+pubwic finaw cwass intbwockpoowpackedwongsweadew {
   /**
-   * Mask used to convert an int to a long. We cannot just cast because it will fill in the higher
-   * 32 bits with the sign bit, but we need the higher 32 bits to be 0 instead.
+   * mask used to c-convewt an int to a wong. (✿oωo) we cannot j-just cast because i-it wiww fiww in the highew
+   * 32 bits with the sign bit, (U ﹏ U) but we nyeed the h-highew 32 bits to be 0 instead.
    */
-  private static final long LONG_MASK = 0xFFFFFFFFL;
+  pwivate static finaw wong wong_mask = 0xffffffffw;
 
-  /** The int block pool from which packed ints will be read. */
-  private final IntBlockPool intBlockPool;
+  /** t-the int bwock poow fwom which p-packed ints wiww b-be wead. */
+  p-pwivate finaw intbwockpoow i-intbwockpoow;
 
-  /** Pre-computed shifts, masks, and start int indices used to decode packed ints. */
-  private final PackedLongsReaderPreComputedValues preComputedValues;
+  /** pwe-computed shifts, :3 masks, ^^;; and s-stawt int indices used to decode packed ints. rawr */
+  p-pwivate finaw packedwongsweadewpwecomputedvawues pwecomputedvawues;
 
   /**
-   * The underlying {@link #intBlockPool} will be read block by blocks. The current read
-   * block will be identified by {@link #startPointerForCurrentBlock} and assigned to
-   * {@link #currentBlock}. {@link #indexInCurrentBlock} will be used access values from the
-   * {@link #currentBlock}.
+   * the undewwying {@wink #intbwockpoow} wiww be wead bwock by bwocks. 😳😳😳 t-the cuwwent wead
+   * bwock w-wiww be identified b-by {@wink #stawtpointewfowcuwwentbwock} a-and assigned to
+   * {@wink #cuwwentbwock}. (✿oωo) {@wink #indexincuwwentbwock} wiww be used access vawues f-fwom the
+   * {@wink #cuwwentbwock}. OwO
    */
-  private int[] currentBlock;
-  private int indexInCurrentBlock;
-  private int startPointerForCurrentBlock = -1;
+  pwivate i-int[] cuwwentbwock;
+  pwivate i-int indexincuwwentbwock;
+  p-pwivate int stawtpointewfowcuwwentbwock = -1;
 
   /**
-   * Whether the decoded packed values are spanning more than 1 int.
-   * @see #readPackedLong()
+   * whethew t-the decoded packed vawues awe s-spanning mowe than 1 int. ʘwʘ
+   * @see #weadpackedwong()
    */
-  private boolean packedValueNeedsLong;
+  pwivate b-boowean packedvawueneedswong;
 
   /**
-   * Masks used to extract packed values.
-   * @see #readPackedLong()
+   * masks used to extwact p-packed vawues. (ˆ ﻌ ˆ)♡
+   * @see #weadpackedwong()
    */
-  private long packedValueMask;
+  pwivate w-wong packedvawuemask;
 
-  /** PRE-COMPUTED: The index of the first int that has a specific packed values. */
-  private int[] packedValueStartIndices;
+  /** p-pwe-computed: the index of the fiwst int that has a specific packed vawues. (U ﹏ U) */
+  pwivate int[] packedvawuestawtindices;
 
-  /** PRE-COMPUTED: The shifts and masks used to decode packed values. */
-  private int[] packedValueLowBitsRightShift;
-  private int[] packedValueMiddleBitsLeftShift;
-  private int[] packedValueMiddleBitsMask;
-  private int[] packedValueHighBitsLeftShift;
-  private int[] packedValueHighBitsMask;
+  /** p-pwe-computed: t-the shifts and masks u-used to decode packed v-vawues. UwU */
+  p-pwivate int[] packedvawuewowbitswightshift;
+  pwivate int[] packedvawuemiddwebitsweftshift;
+  pwivate int[] packedvawuemiddwebitsmask;
+  p-pwivate int[] packedvawuehighbitsweftshift;
+  pwivate int[] packedvawuehighbitsmask;
 
-  /** Index of packed values. */
-  private int packedValueIndex;
+  /** index of p-packed vawues. XD */
+  pwivate int p-packedvawueindex;
 
   /**
-   * The {@link #indexInCurrentBlock} and {@link #startPointerForCurrentBlock} of the first int
-   * that holds packed values. This two values together uniquely form a int block pool pointer
-   * --- {@link #packedValueStartBlockStart} + {@link #packedValueStartBlockIndex} --- that points
-   * to the first int that has pointer.
+   * the {@wink #indexincuwwentbwock} a-and {@wink #stawtpointewfowcuwwentbwock} o-of the fiwst int
+   * that h-howds packed v-vawues. ʘwʘ this two v-vawues togethew u-uniquewy fowm a int bwock poow pointew
+   * --- {@wink #packedvawuestawtbwockstawt} + {@wink #packedvawuestawtbwockindex} --- t-that points
+   * t-to the fiwst int t-that has pointew. rawr x3
    *
-   * @see #jumpToInt(int, int)
+   * @see #jumptoint(int, ^^;; i-int)
    */
-  private int packedValueStartBlockIndex;
-  private int packedValueStartBlockStart;
+  p-pwivate int packedvawuestawtbwockindex;
+  pwivate int packedvawuestawtbwockstawt;
 
-  /** Current int read from {@link #currentBlock}. */
-  private int currentInt;
+  /** cuwwent i-int wead fwom {@wink #cuwwentbwock}. ʘwʘ */
+  pwivate int cuwwentint;
 
   /**
-   * If given, query cost will be tracked every time a int block is loaded.
-   * @see #loadNextBlock()
+   * if given, (U ﹏ U) quewy cost wiww be twacked evewy time a i-int bwock is woaded. (˘ω˘)
+   * @see #woadnextbwock()
    */
-  private final QueryCostTracker queryCostTracker;
-  private final QueryCostTracker.CostType queryCostType;
+  pwivate finaw quewycosttwackew quewycosttwackew;
+  p-pwivate f-finaw quewycosttwackew.costtype q-quewycosttype;
 
   /**
-   * Default constructor.
+   * defauwt constwuctow. (ꈍᴗꈍ)
    *
-   * @param intBlockPool from which packed ints will be read
-   * @param preComputedValues pre-computed shifts, masks, and start int
-   * @param queryCostTracker optional, query cost tracker used while loading a new block
-   * @param queryCostType optional, query cost type will be tracked while loading a new block
+   * @pawam i-intbwockpoow fwom which packed i-ints wiww be w-wead
+   * @pawam pwecomputedvawues pwe-computed shifts, /(^•ω•^) masks, and stawt int
+   * @pawam quewycosttwackew o-optionaw, >_< quewy cost t-twackew used whiwe woading a nyew b-bwock
+   * @pawam q-quewycosttype optionaw, σωσ quewy cost type wiww b-be twacked whiwe w-woading a nyew bwock
    */
-  public IntBlockPoolPackedLongsReader(
-      IntBlockPool intBlockPool,
-      PackedLongsReaderPreComputedValues preComputedValues,
-      @Nullable QueryCostTracker queryCostTracker,
-      @Nullable QueryCostTracker.CostType queryCostType) {
-    this.intBlockPool = intBlockPool;
-    this.preComputedValues = preComputedValues;
+  pubwic i-intbwockpoowpackedwongsweadew(
+      i-intbwockpoow intbwockpoow, ^^;;
+      packedwongsweadewpwecomputedvawues pwecomputedvawues,
+      @nuwwabwe quewycosttwackew quewycosttwackew, 😳
+      @nuwwabwe q-quewycosttwackew.costtype quewycosttype) {
+    t-this.intbwockpoow = i-intbwockpoow;
+    this.pwecomputedvawues = p-pwecomputedvawues;
 
-    // For query cost tracking.
-    this.queryCostTracker = queryCostTracker;
-    this.queryCostType = queryCostType;
+    // f-fow quewy cost twacking. >_<
+    t-this.quewycosttwackew = quewycosttwackew;
+    this.quewycosttype = quewycosttype;
   }
 
   /**
-   * Constructor with {@link #queryCostTracker} and {@link #queryCostType} set to null.
+   * constwuctow w-with {@wink #quewycosttwackew} a-and {@wink #quewycosttype} set to nyuww. -.-
    *
-   * @param intBlockPool from which packed ints will be read
-   * @param preComputedValues pre-computed shifts, masks, and start int
+   * @pawam intbwockpoow fwom w-which packed i-ints wiww be wead
+   * @pawam pwecomputedvawues pwe-computed shifts, UwU masks, and stawt int
    */
-  public IntBlockPoolPackedLongsReader(
-      IntBlockPool intBlockPool,
-      PackedLongsReaderPreComputedValues preComputedValues) {
-    this(intBlockPool, preComputedValues, null, null);
+  p-pubwic intbwockpoowpackedwongsweadew(
+      intbwockpoow intbwockpoow, :3
+      packedwongsweadewpwecomputedvawues pwecomputedvawues) {
+    this(intbwockpoow, σωσ pwecomputedvawues, >w< n-nyuww, nyuww);
   }
 
   /**
-   * 1. Set the reader to starting reading at the given int block pool pointer. Correct block will
-   *    be loaded if the given pointer points to the different block than {@link #currentBlock}.
-   * 2. Update shifts, masks, and start int indices based on given number of bits per packed value.
-   * 3. Reset packed value sequence start data.
+   * 1. (ˆ ﻌ ˆ)♡ set the weadew to stawting weading a-at the given i-int bwock poow pointew. ʘwʘ cowwect bwock wiww
+   *    be woaded i-if the given pointew p-points to the diffewent bwock than {@wink #cuwwentbwock}. :3
+   * 2. (˘ω˘) update shifts, 😳😳😳 m-masks, and stawt int indices b-based on given nyumbew of bits pew packed vawue. rawr x3
+   * 3. weset p-packed vawue sequence stawt data. (✿oωo)
    *
-   * @param intBlockPoolPointer points to the int from which this reader will start reading
-   * @param bitsPerPackedValue number of bits per packed value.
+   * @pawam i-intbwockpoowpointew p-points to the int fwom w-which this weadew wiww stawt weading
+   * @pawam b-bitspewpackedvawue n-nyumbew of b-bits pew packed vawue. (ˆ ﻌ ˆ)♡
    */
-  public void jumpToInt(int intBlockPoolPointer, int bitsPerPackedValue) {
-    assert  bitsPerPackedValue <= Long.SIZE;
+  pubwic v-void jumptoint(int i-intbwockpoowpointew, :3 int bitspewpackedvawue) {
+    a-assewt  b-bitspewpackedvawue <= w-wong.size;
 
-    // Update indexInCurrentBlock and load a different index if needed.
-    int newBlockStart = IntBlockPool.getBlockStart(intBlockPoolPointer);
-    indexInCurrentBlock = IntBlockPool.getOffsetInBlock(intBlockPoolPointer);
+    // update indexincuwwentbwock a-and woad a diffewent index i-if nyeeded. (U ᵕ U❁)
+    i-int nyewbwockstawt = intbwockpoow.getbwockstawt(intbwockpoowpointew);
+    indexincuwwentbwock = intbwockpoow.getoffsetinbwock(intbwockpoowpointew);
 
-    if (startPointerForCurrentBlock != newBlockStart) {
-      startPointerForCurrentBlock = newBlockStart;
-      loadNextBlock();
+    i-if (stawtpointewfowcuwwentbwock != nyewbwockstawt) {
+      s-stawtpointewfowcuwwentbwock = n-nyewbwockstawt;
+      w-woadnextbwock();
     }
 
-    // Re-set shifts, masks, and start int indices for the given number bits per packed value.
-    packedValueNeedsLong = bitsPerPackedValue > Integer.SIZE;
-    packedValueMask =
-        bitsPerPackedValue == Long.SIZE ? 0xFFFFFFFFFFFFFFFFL : (1L << bitsPerPackedValue) - 1;
-    packedValueStartIndices = preComputedValues.getStartIntIndices(bitsPerPackedValue);
-    packedValueLowBitsRightShift = preComputedValues.getLowBitsRightShift(bitsPerPackedValue);
-    packedValueMiddleBitsLeftShift = preComputedValues.getMiddleBitsLeftShift(bitsPerPackedValue);
-    packedValueMiddleBitsMask = preComputedValues.getMiddleBitsMask(bitsPerPackedValue);
-    packedValueHighBitsLeftShift = preComputedValues.getHighBitsLeftShift(bitsPerPackedValue);
-    packedValueHighBitsMask = preComputedValues.getHighBitsMask(bitsPerPackedValue);
+    // we-set s-shifts, ^^;; masks, and stawt int indices fow the given nyumbew bits pew packed vawue. mya
+    packedvawueneedswong = b-bitspewpackedvawue > integew.size;
+    p-packedvawuemask =
+        bitspewpackedvawue == wong.size ? 0xffffffffffffffffw : (1w << b-bitspewpackedvawue) - 1;
+    packedvawuestawtindices = p-pwecomputedvawues.getstawtintindices(bitspewpackedvawue);
+    packedvawuewowbitswightshift = p-pwecomputedvawues.getwowbitswightshift(bitspewpackedvawue);
+    p-packedvawuemiddwebitsweftshift = p-pwecomputedvawues.getmiddwebitsweftshift(bitspewpackedvawue);
+    p-packedvawuemiddwebitsmask = p-pwecomputedvawues.getmiddwebitsmask(bitspewpackedvawue);
+    packedvawuehighbitsweftshift = pwecomputedvawues.gethighbitsweftshift(bitspewpackedvawue);
+    packedvawuehighbitsmask = pwecomputedvawues.gethighbitsmask(bitspewpackedvawue);
 
-    // Update packed values sequence start data.
-    packedValueIndex = 0;
-    packedValueStartBlockIndex = indexInCurrentBlock;
-    packedValueStartBlockStart = startPointerForCurrentBlock;
+    // update packed vawues sequence s-stawt data. 😳😳😳
+    p-packedvawueindex = 0;
+    p-packedvawuestawtbwockindex = indexincuwwentbwock;
+    p-packedvawuestawtbwockstawt = stawtpointewfowcuwwentbwock;
 
-    // Load an int to prepare for readPackedLong.
-    loadInt();
+    // woad an int to pwepawe fow w-weadpackedwong. OwO
+    w-woadint();
   }
 
   /**
-   * Read next packed value as a long.
+   * wead nyext packed v-vawue as a wong. rawr
    *
-   * Caller could cast the returned long to an int if needed.
-   * NOTICE! Be careful of overflow while casting a long to an int.
+   * cawwew couwd cast the w-wetuwned wong t-to an int if needed. XD
+   * nyotice! (U ﹏ U) b-be cawefuw of o-ovewfwow whiwe casting a wong to an int. (˘ω˘)
    *
-   * @return next packed value in a long.
+   * @wetuwn nyext packed vawue i-in a wong. UwU
    */
-  public long readPackedLong() {
-    long packedValue;
+  p-pubwic wong weadpackedwong() {
+    w-wong packedvawue;
 
-    if (packedValueNeedsLong) {
-      packedValue =
-          (LONG_MASK & currentInt)
-              >>> packedValueLowBitsRightShift[packedValueIndex] & packedValueMask;
-      packedValue |=
-          (LONG_MASK & loadInt()
-              & packedValueMiddleBitsMask[packedValueIndex])
-              << packedValueMiddleBitsLeftShift[packedValueIndex];
-      if (packedValueHighBitsLeftShift[packedValueIndex] != 0) {
-        packedValue |=
-            (LONG_MASK & loadInt()
-                & packedValueHighBitsMask[packedValueIndex])
-                << packedValueHighBitsLeftShift[packedValueIndex];
+    i-if (packedvawueneedswong) {
+      packedvawue =
+          (wong_mask & c-cuwwentint)
+              >>> packedvawuewowbitswightshift[packedvawueindex] & p-packedvawuemask;
+      p-packedvawue |=
+          (wong_mask & woadint()
+              & p-packedvawuemiddwebitsmask[packedvawueindex])
+              << p-packedvawuemiddwebitsweftshift[packedvawueindex];
+      if (packedvawuehighbitsweftshift[packedvawueindex] != 0) {
+        p-packedvawue |=
+            (wong_mask & woadint()
+                & packedvawuehighbitsmask[packedvawueindex])
+                << p-packedvawuehighbitsweftshift[packedvawueindex];
       }
-    } else {
-      packedValue =
-          currentInt >>> packedValueLowBitsRightShift[packedValueIndex] & packedValueMask;
-      if (packedValueMiddleBitsLeftShift[packedValueIndex] != 0) {
-        packedValue |=
-            (loadInt()
-                & packedValueMiddleBitsMask[packedValueIndex])
-                << packedValueMiddleBitsLeftShift[packedValueIndex];
+    } ewse {
+      p-packedvawue =
+          c-cuwwentint >>> packedvawuewowbitswightshift[packedvawueindex] & p-packedvawuemask;
+      if (packedvawuemiddwebitsweftshift[packedvawueindex] != 0) {
+        packedvawue |=
+            (woadint()
+                & packedvawuemiddwebitsmask[packedvawueindex])
+                << p-packedvawuemiddwebitsweftshift[packedvawueindex];
       }
     }
 
-    packedValueIndex++;
-    return packedValue;
+    p-packedvawueindex++;
+    w-wetuwn packedvawue;
   }
 
   /**
-   * A simple getter of {@link #packedValueIndex}.
+   * a simpwe gettew of {@wink #packedvawueindex}. >_<
    */
-  public int getPackedValueIndex() {
-    return packedValueIndex;
+  p-pubwic int getpackedvawueindex() {
+    wetuwn packedvawueindex;
   }
 
   /**
-   * A setter of {@link #packedValueIndex}. This setter will also set the correct
-   * {@link #indexInCurrentBlock} based on {@link #packedValueStartIndices}.
+   * a-a settew of {@wink #packedvawueindex}. σωσ t-this settew wiww awso s-set the cowwect
+   * {@wink #indexincuwwentbwock} based on {@wink #packedvawuestawtindices}. 🥺
    */
-  public void setPackedValueIndex(int packedValueIndex) {
-    this.packedValueIndex = packedValueIndex;
-    this.indexInCurrentBlock =
-        packedValueStartBlockIndex + packedValueStartIndices[packedValueIndex];
-    this.startPointerForCurrentBlock = packedValueStartBlockStart;
-    loadInt();
+  p-pubwic void s-setpackedvawueindex(int packedvawueindex) {
+    this.packedvawueindex = p-packedvawueindex;
+    this.indexincuwwentbwock =
+        packedvawuestawtbwockindex + packedvawuestawtindices[packedvawueindex];
+    this.stawtpointewfowcuwwentbwock = p-packedvawuestawtbwockstawt;
+    w-woadint();
   }
 
   /**************************
-   * Private Helper Methods *
+   * pwivate hewpew m-methods *
    **************************/
 
   /**
-   * Load a new int block, specified by {@link #startPointerForCurrentBlock}, from
-   * {@link #intBlockPool}. If {@link #queryCostTracker} is given, query cost with type
-   * {@link #queryCostType} will be tracked as well.
+   * woad a nyew i-int bwock, 🥺 specified b-by {@wink #stawtpointewfowcuwwentbwock}, ʘwʘ f-fwom
+   * {@wink #intbwockpoow}. :3 if {@wink #quewycosttwackew} is given, (U ﹏ U) quewy cost with type
+   * {@wink #quewycosttype} wiww be twacked as weww. (U ﹏ U)
    */
-  private void loadNextBlock() {
-    if (queryCostTracker != null) {
-      assert queryCostType != null;
-      queryCostTracker.track(queryCostType);
+  pwivate void woadnextbwock() {
+    if (quewycosttwackew != nyuww) {
+      assewt quewycosttype != nyuww;
+      quewycosttwackew.twack(quewycosttype);
     }
 
-    currentBlock = intBlockPool.getBlock(startPointerForCurrentBlock);
+    cuwwentbwock = i-intbwockpoow.getbwock(stawtpointewfowcuwwentbwock);
   }
 
   /**
-   * Load an int from {@link #currentBlock}. The loaded int will be returned as well.
-   * If the {@link #currentBlock} is used up, next block will be automatically loaded.
+   * w-woad an int fwom {@wink #cuwwentbwock}. ʘwʘ the woaded int wiww be wetuwned a-as weww. >w<
+   * i-if the {@wink #cuwwentbwock} i-is used up, rawr x3 nyext bwock wiww b-be automaticawwy woaded. OwO
    */
-  private int loadInt() {
-    while (indexInCurrentBlock >= IntBlockPool.BLOCK_SIZE) {
-      startPointerForCurrentBlock += IntBlockPool.BLOCK_SIZE;
-      loadNextBlock();
+  p-pwivate int woadint() {
+    w-whiwe (indexincuwwentbwock >= intbwockpoow.bwock_size) {
+      s-stawtpointewfowcuwwentbwock += intbwockpoow.bwock_size;
+      w-woadnextbwock();
 
-      indexInCurrentBlock = Math.max(indexInCurrentBlock - IntBlockPool.BLOCK_SIZE, 0);
+      i-indexincuwwentbwock = math.max(indexincuwwentbwock - intbwockpoow.bwock_size, ^•ﻌ•^ 0);
     }
 
-    currentInt = currentBlock[indexInCurrentBlock++];
-    return currentInt;
+    cuwwentint = c-cuwwentbwock[indexincuwwentbwock++];
+    w-wetuwn cuwwentint;
   }
 }

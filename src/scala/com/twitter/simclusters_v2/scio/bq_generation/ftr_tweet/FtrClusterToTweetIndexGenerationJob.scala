@@ -1,264 +1,264 @@
-package com.twitter.simclusters_v2
-package scio.bq_generation.ftr_tweet
+package com.twittew.simcwustews_v2
+package scio.bq_genewation.ftw_tweet
 
-import com.google.api.services.bigquery.model.TimePartitioning
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.PathLayout
-import com.twitter.simclusters_v2.scio.bq_generation.common.IndexGenerationUtil.parseClusterTopKTweetsFn
-import java.time.Instant
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
-import com.twitter.simclusters_v2.thriftscala.ClusterIdToTopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.tcdc.bqblaster.beam.syntax._
-import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
-import com.twitter.tcdc.bqblaster.core.transform.RootTransform
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
+i-impowt com.googwe.api.sewvices.bigquewy.modew.timepawtitioning
+i-impowt com.twittew.convewsions.duwationops.wichduwationfwomint
+i-impowt com.spotify.scio.sciocontext
+i-impowt c-com.spotify.scio.codews.codew
+impowt c-com.twittew.beam.io.daw.daw
+i-impowt com.twittew.beam.io.daw.daw.pathwayout
+i-impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.indexgenewationutiw.pawsecwustewtopktweetsfn
+impowt java.time.instant
+impowt com.twittew.beam.job.datewangeoptions
+impowt com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.scio_intewnaw.codews.thwiftstwuctwazybinawyscwoogecodew
+i-impowt com.twittew.scio_intewnaw.job.sciobeamjob
+impowt com.twittew.scwooge.thwiftstwuct
+i-impowt com.twittew.simcwustews_v2.scio.bq_genewation.common.bqtabwedetaiws
+impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewidtotopktweetswithscowes
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.fuwwcwustewid
+impowt com.twittew.simcwustews_v2.thwiftscawa.topktweetswithscowes
+i-impowt com.twittew.tcdc.bqbwastew.beam.syntax._
+i-impowt com.twittew.tcdc.bqbwastew.cowe.avwo.typedpwojection
+impowt com.twittew.tcdc.bqbwastew.cowe.twansfowm.woottwansfowm
+impowt com.twittew.wtf.beam.bq_embedding_expowt.bqquewyutiws
+impowt owg.apache.beam.sdk.io.gcp.bigquewy.bigquewyio
 
-trait FTRClusterToTweetIndexGenerationJob extends ScioBeamJob[DateRangeOptions] {
-  val isAdhoc: Boolean
+twait ftwcwustewtotweetindexgenewationjob e-extends sciobeamjob[datewangeoptions] {
+  vaw isadhoc: boowean
 
-  val outputTable: BQTableDetails
-  val keyValDatasetOutputPath: String
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+  vaw outputtabwe: bqtabwedetaiws
+  v-vaw keyvawdatasetoutputpath: stwing
+  vaw cwustewtotweetindexsnapshotdataset: k-keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, :3 topktweetswithscowes]
   ]
 
-  // Base configs
-  val projectId = "twttr-recos-ml-prod"
-  val environment: DAL.Env = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+  // base c-configs
+  vaw p-pwojectid = "twttw-wecos-mw-pwod"
+  vaw enviwonment: daw.env = i-if (isadhoc) daw.enviwonment.dev ewse daw.enviwonment.pwod
 
-  // Variables for Tweet Embedding SQL
-  val scoreKey: String
-  val scoreColumn: String
+  // vawiabwes fow t-tweet embedding sqw
+  vaw scowekey: stwing
+  vaw scowecowumn: stwing
 
-  // Variables for spam treatment
-  val maxTweetFTR: Double
-  val maxUserFTR: Double
+  // vawiabwes fow spam tweatment
+  v-vaw maxtweetftw: doubwe
+  v-vaw maxusewftw: d-doubwe
 
-  // Tweet embeddings parameters
-  val tweetEmbeddingsLength: Int = Config.SimClustersTweetEmbeddingsGenerationEmbeddingLength
+  // t-tweet embeddings pawametews
+  vaw tweetembeddingswength: int = c-config.simcwustewstweetembeddingsgenewationembeddingwength
 
-  // Clusters-to-tweet index parameters
-  val clusterTopKTweets: Int = Config.clusterTopKTweets
-  val maxTweetAgeHours: Int = Config.maxTweetAgeHours
+  // c-cwustews-to-tweet index pawametews
+  v-vaw cwustewtopktweets: i-int = config.cwustewtopktweets
+  v-vaw maxtweetagehouws: i-int = config.maxtweetagehouws
 
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
+  ovewwide impwicit def scwoogecodew[t <: t-thwiftstwuct: manifest]: c-codew[t] =
+    thwiftstwuctwazybinawyscwoogecodew.scwoogecodew
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    // The time when the job is scheduled
-    val queryTimestamp = opts.interval.getEnd
+  o-ovewwide d-def configuwepipewine(sc: sciocontext, opts: datewangeoptions): unit = {
+    // the time when the job is scheduwed
+    vaw quewytimestamp = o-opts.intewvaw.getend
 
-    val tweetEmbeddingTemplateVariables =
-      Map(
-        "START_TIME" -> queryTimestamp.minusDays(1).toString(),
-        "END_TIME" -> queryTimestamp.toString(),
-        "TWEET_SAMPLE_RATE" -> Config.TweetSampleRate.toString,
-        "ENG_SAMPLE_RATE" -> Config.EngSampleRate.toString,
-        "MIN_TWEET_FAVS" -> Config.MinTweetFavs.toString,
-        "MIN_TWEET_IMPS" -> Config.MinTweetImps.toString,
-        "MAX_TWEET_FTR" -> maxTweetFTR.toString,
-        "MAX_USER_LOG_N_IMPS" -> Config.MaxUserLogNImps.toString,
-        "MAX_USER_LOG_N_FAVS" -> Config.MaxUserLogNFavs.toString,
-        "MAX_USER_FTR" -> maxUserFTR.toString,
-        "TWEET_EMBEDDING_LENGTH" -> Config.SimClustersTweetEmbeddingsGenerationEmbeddingLength.toString,
-        "HALFLIFE" -> Config.SimClustersTweetEmbeddingsGenerationHalfLife.toString,
-        "SCORE_COLUMN" -> scoreColumn,
-        "SCORE_KEY" -> scoreKey,
+    v-vaw tweetembeddingtempwatevawiabwes =
+      map(
+        "stawt_time" -> q-quewytimestamp.minusdays(1).tostwing(), (///ˬ///✿)
+        "end_time" -> q-quewytimestamp.tostwing(), nyaa~~
+        "tweet_sampwe_wate" -> c-config.tweetsampwewate.tostwing, >w<
+        "eng_sampwe_wate" -> config.engsampwewate.tostwing, -.-
+        "min_tweet_favs" -> config.mintweetfavs.tostwing, (✿oωo)
+        "min_tweet_imps" -> config.mintweetimps.tostwing, (˘ω˘)
+        "max_tweet_ftw" -> m-maxtweetftw.tostwing, rawr
+        "max_usew_wog_n_imps" -> config.maxusewwognimps.tostwing,
+        "max_usew_wog_n_favs" -> config.maxusewwognfavs.tostwing, OwO
+        "max_usew_ftw" -> maxusewftw.tostwing, ^•ﻌ•^
+        "tweet_embedding_wength" -> config.simcwustewstweetembeddingsgenewationembeddingwength.tostwing, UwU
+        "hawfwife" -> c-config.simcwustewstweetembeddingsgenewationhawfwife.tostwing,
+        "scowe_cowumn" -> scowecowumn, (˘ω˘)
+        "scowe_key" -> s-scowekey, (///ˬ///✿)
       )
-    val tweetEmbeddingSql = BQQueryUtils.getBQQueryFromSqlFile(
-      "/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/sql/ftr_tweet_embeddings.sql",
-      tweetEmbeddingTemplateVariables)
+    v-vaw t-tweetembeddingsqw = bqquewyutiws.getbqquewyfwomsqwfiwe(
+      "/com/twittew/simcwustews_v2/scio/bq_genewation/ftw_tweet/sqw/ftw_tweet_embeddings.sqw", σωσ
+      tweetembeddingtempwatevawiabwes)
 
-    val clusterTopTweetsTemplateVariables =
-      Map(
-        "CLUSTER_TOP_K_TWEETS" -> Config.clusterTopKTweets.toString,
-        "TWEET_EMBEDDING_SQL" -> tweetEmbeddingSql
+    v-vaw cwustewtoptweetstempwatevawiabwes =
+      m-map(
+        "cwustew_top_k_tweets" -> c-config.cwustewtopktweets.tostwing, /(^•ω•^)
+        "tweet_embedding_sqw" -> t-tweetembeddingsqw
       )
 
-    val clusterTopTweetsSql = BQQueryUtils.getBQQueryFromSqlFile(
-      "/com/twitter/simclusters_v2/scio/bq_generation/sql/cluster_top_tweets.sql",
-      clusterTopTweetsTemplateVariables
+    vaw cwustewtoptweetssqw = b-bqquewyutiws.getbqquewyfwomsqwfiwe(
+      "/com/twittew/simcwustews_v2/scio/bq_genewation/sqw/cwustew_top_tweets.sqw", 😳
+      c-cwustewtoptweetstempwatevawiabwes
     )
 
-    // Generate SimClusters cluster-to-tweet index
-    val topKtweetsForClusterKey = sc.customInput(
-      s"SimClusters cluster-to-tweet index generation BQ job",
-      BigQueryIO
-        .read(parseClusterTopKTweetsFn(Config.TweetEmbeddingHalfLife))
-        .fromQuery(clusterTopTweetsSql)
-        .usingStandardSql()
+    // g-genewate simcwustews c-cwustew-to-tweet i-index
+    vaw topktweetsfowcwustewkey = sc.custominput(
+      s"simcwustews c-cwustew-to-tweet index genewation bq job", 😳
+      bigquewyio
+        .wead(pawsecwustewtopktweetsfn(config.tweetembeddinghawfwife))
+        .fwomquewy(cwustewtoptweetssqw)
+        .usingstandawdsqw()
     )
 
-    // Setup BQ writer
-    val ingestionTime = opts.getDate().value.getEnd.toDate
-    val bqFieldsTransform = RootTransform
-      .Builder()
-      .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionTime))
-    val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("dateHour").setExpirationMs(3.days.inMilliseconds)
-    val bqWriter = BigQueryIO
-      .write[ClusterIdToTopKTweetsWithScores]
-      .to(outputTable.toString)
-      .withExtendedErrorInfo()
-      .withTimePartitioning(timePartitioning)
-      .withLoadJobProjectId(projectId)
-      .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
-      .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
-      .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND)
+    // setup bq wwitew
+    vaw i-ingestiontime = opts.getdate().vawue.getend.todate
+    vaw bqfiewdstwansfowm = woottwansfowm
+      .buiwdew()
+      .withpwependedfiewds("datehouw" -> t-typedpwojection.fwomconstant(ingestiontime))
+    v-vaw timepawtitioning = n-nyew timepawtitioning()
+      .settype("houw").setfiewd("datehouw").setexpiwationms(3.days.inmiwwiseconds)
+    vaw bqwwitew = b-bigquewyio
+      .wwite[cwustewidtotopktweetswithscowes]
+      .to(outputtabwe.tostwing)
+      .withextendedewwowinfo()
+      .withtimepawtitioning(timepawtitioning)
+      .withwoadjobpwojectid(pwojectid)
+      .withthwiftsuppowt(bqfiewdstwansfowm.buiwd(), (⑅˘꒳˘) avwoconvewtew.wegacy)
+      .withcweatedisposition(bigquewyio.wwite.cweatedisposition.cweate_if_needed)
+      .withwwitedisposition(bigquewyio.wwite.wwitedisposition.wwite_append)
 
-    // Save SimClusters index to a BQ table
-    topKtweetsForClusterKey
-      .map { clusterIdToTopKTweets =>
+    // s-save s-simcwustews index to a bq tabwe
+    topktweetsfowcwustewkey
+      .map { cwustewidtotopktweets =>
         {
-          ClusterIdToTopKTweetsWithScores(
-            clusterId = clusterIdToTopKTweets.clusterId,
-            topKTweetsWithScores = clusterIdToTopKTweets.topKTweetsWithScores
+          cwustewidtotopktweetswithscowes(
+            cwustewid = c-cwustewidtotopktweets.cwustewid, 😳😳😳
+            topktweetswithscowes = c-cwustewidtotopktweets.topktweetswithscowes
           )
         }
       }
-      .saveAsCustomOutput(s"WriteToBQTable - $outputTable", bqWriter)
+      .saveascustomoutput(s"wwitetobqtabwe - $outputtabwe", 😳 bqwwitew)
 
-    // Save SimClusters index as a KeyValSnapshotDataset
-    topKtweetsForClusterKey
-      .map { clusterIdToTopKTweets =>
-        KeyVal(clusterIdToTopKTweets.clusterId, clusterIdToTopKTweets.topKTweetsWithScores)
-      }.saveAsCustomOutput(
-        name = s"WriteClusterToKeyIndexToKeyValDataset at $keyValDatasetOutputPath",
-        DAL.writeVersionedKeyVal(
-          clusterToTweetIndexSnapshotDataset,
-          PathLayout.VersionedPath(prefix =
-            ((if (!isAdhoc)
-                Config.FTRRootMHPath
-              else
-                Config.FTRAdhocpath)
-              + keyValDatasetOutputPath)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = environment,
+    // s-save s-simcwustews index as a keyvawsnapshotdataset
+    topktweetsfowcwustewkey
+      .map { c-cwustewidtotopktweets =>
+        k-keyvaw(cwustewidtotopktweets.cwustewid, XD cwustewidtotopktweets.topktweetswithscowes)
+      }.saveascustomoutput(
+        n-name = s"wwitecwustewtokeyindextokeyvawdataset at $keyvawdatasetoutputpath", mya
+        d-daw.wwitevewsionedkeyvaw(
+          cwustewtotweetindexsnapshotdataset, ^•ﻌ•^
+          pathwayout.vewsionedpath(pwefix =
+            ((if (!isadhoc)
+                config.ftwwootmhpath
+              ewse
+                c-config.ftwadhocpath)
+              + k-keyvawdatasetoutputpath)), ʘwʘ
+          i-instant = instant.ofepochmiwwi(opts.intewvaw.getendmiwwis - 1w), ( ͡o ω ͡o )
+          e-enviwonmentovewwide = e-enviwonment, mya
         )
       )
   }
 }
 
-object FTRClusterToTweetIndexGenerationAdhoc extends FTRClusterToTweetIndexGenerationJob {
-  override val isAdhoc: Boolean = true
-  override val outputTable: BQTableDetails =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simcluster_adhoc_test_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath: String =
-    "ftr_tweets_adhoc/ftr_cluster_to_tweet_adhoc"
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = SimclustersFtrAdhocClusterToTweetIndexScalaDataset
-  override val scoreColumn = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding"
-  override val scoreKey = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1"
-  override val maxUserFTR: Double = Config.MaxUserFTR
-  override val maxTweetFTR: Double = Config.MaxTweetFTR
+object f-ftwcwustewtotweetindexgenewationadhoc extends ftwcwustewtotweetindexgenewationjob {
+  ovewwide vaw isadhoc: b-boowean = twue
+  o-ovewwide vaw outputtabwe: bqtabwedetaiws =
+    bqtabwedetaiws(
+      "twttw-wecos-mw-pwod", o.O
+      "simcwustews", (✿oωo)
+      "simcwustew_adhoc_test_cwustew_to_tweet_index")
+  o-ovewwide v-vaw keyvawdatasetoutputpath: stwing =
+    "ftw_tweets_adhoc/ftw_cwustew_to_tweet_adhoc"
+  ovewwide vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, :3 topktweetswithscowes]
+  ] = simcwustewsftwadhoccwustewtotweetindexscawadataset
+  ovewwide vaw scowecowumn = "ftwat5_decayed_pop_bias_1000_wank_decay_1_1_embedding"
+  o-ovewwide vaw scowekey = "ftwat5_decayed_pop_bias_1000_wank_decay_1_1"
+  ovewwide vaw maxusewftw: d-doubwe = config.maxusewftw
+  ovewwide v-vaw maxtweetftw: doubwe = config.maxtweetftw
 
 }
 
-object OONFTRClusterToTweetIndexGenerationAdhoc extends FTRClusterToTweetIndexGenerationJob {
-  override val isAdhoc: Boolean = true
-  override val outputTable: BQTableDetails =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simcluster_adhoc_test_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath: String =
-    "oon_ftr_tweets_adhoc/oon_ftr_cluster_to_tweet_adhoc"
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = SimclustersOonFtrAdhocClusterToTweetIndexScalaDataset
-  override val scoreColumn = "oon_ftrat5_decayed_pop_bias_1000_rank_decay_embedding"
-  override val scoreKey = "oon_ftrat5_decayed_pop_bias_1000_rank_decay"
-  override val maxUserFTR: Double = Config.MaxUserFTR
-  override val maxTweetFTR: Double = Config.MaxTweetFTR
+object o-oonftwcwustewtotweetindexgenewationadhoc e-extends ftwcwustewtotweetindexgenewationjob {
+  ovewwide vaw isadhoc: boowean = t-twue
+  ovewwide vaw outputtabwe: b-bqtabwedetaiws =
+    bqtabwedetaiws(
+      "twttw-wecos-mw-pwod", 😳
+      "simcwustews", (U ﹏ U)
+      "simcwustew_adhoc_test_cwustew_to_tweet_index")
+  ovewwide vaw keyvawdatasetoutputpath: stwing =
+    "oon_ftw_tweets_adhoc/oon_ftw_cwustew_to_tweet_adhoc"
+  ovewwide vaw c-cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, mya t-topktweetswithscowes]
+  ] = simcwustewsoonftwadhoccwustewtotweetindexscawadataset
+  o-ovewwide vaw scowecowumn = "oon_ftwat5_decayed_pop_bias_1000_wank_decay_embedding"
+  o-ovewwide v-vaw scowekey = "oon_ftwat5_decayed_pop_bias_1000_wank_decay"
+  o-ovewwide vaw maxusewftw: doubwe = c-config.maxusewftw
+  o-ovewwide vaw maxtweetftw: doubwe = config.maxtweetftw
 }
 
-object FTRPop1000RankDecay11ClusterToTweetIndexGenerationBatch
-    extends FTRClusterToTweetIndexGenerationJob {
-  override val isAdhoc: Boolean = false
-  override val outputTable: BQTableDetails =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_ftr_pop1000_rnkdecay11_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath: String =
-    Config.FTRPop1000RankDecay11ClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = SimclustersFtrPop1000Rnkdecay11ClusterToTweetIndexScalaDataset
-  override val scoreColumn = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding"
-  override val scoreKey = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1"
-  override val maxUserFTR: Double = Config.MaxUserFTR
-  override val maxTweetFTR: Double = Config.MaxTweetFTR
+o-object ftwpop1000wankdecay11cwustewtotweetindexgenewationbatch
+    e-extends ftwcwustewtotweetindexgenewationjob {
+  o-ovewwide vaw isadhoc: boowean = fawse
+  ovewwide v-vaw outputtabwe: bqtabwedetaiws =
+    b-bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod", (U ᵕ U❁)
+      "usew", :3
+      "simcwustews_ftw_pop1000_wnkdecay11_cwustew_to_tweet_index")
+  ovewwide v-vaw keyvawdatasetoutputpath: stwing =
+    config.ftwpop1000wankdecay11cwustewtotweetindexoutputpath
+  ovewwide v-vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, mya t-topktweetswithscowes]
+  ] = s-simcwustewsftwpop1000wnkdecay11cwustewtotweetindexscawadataset
+  ovewwide v-vaw scowecowumn = "ftwat5_decayed_pop_bias_1000_wank_decay_1_1_embedding"
+  ovewwide vaw scowekey = "ftwat5_decayed_pop_bias_1000_wank_decay_1_1"
+  ovewwide vaw maxusewftw: doubwe = config.maxusewftw
+  o-ovewwide vaw maxtweetftw: d-doubwe = config.maxtweetftw
 }
 
-object FTRPop10000RankDecay11ClusterToTweetIndexGenerationBatch
-    extends FTRClusterToTweetIndexGenerationJob {
-  override val isAdhoc: Boolean = false
-  override val outputTable: BQTableDetails =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_ftr_pop10000_rnkdecay11_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath: String =
-    Config.FTRPop10000RankDecay11ClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = SimclustersFtrPop10000Rnkdecay11ClusterToTweetIndexScalaDataset
-  override val scoreColumn = "ftrat5_decayed_pop_bias_10000_rank_decay_1_1_embedding"
-  override val scoreKey = "ftrat5_decayed_pop_bias_10000_rank_decay_1_1"
-  override val maxUserFTR: Double = Config.MaxUserFTR
-  override val maxTweetFTR: Double = Config.MaxTweetFTR
+object ftwpop10000wankdecay11cwustewtotweetindexgenewationbatch
+    e-extends ftwcwustewtotweetindexgenewationjob {
+  o-ovewwide vaw isadhoc: boowean = f-fawse
+  o-ovewwide vaw outputtabwe: b-bqtabwedetaiws =
+    bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod", OwO
+      "usew", (ˆ ﻌ ˆ)♡
+      "simcwustews_ftw_pop10000_wnkdecay11_cwustew_to_tweet_index")
+  o-ovewwide vaw k-keyvawdatasetoutputpath: stwing =
+    config.ftwpop10000wankdecay11cwustewtotweetindexoutputpath
+  ovewwide vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    keyvaw[fuwwcwustewid, ʘwʘ t-topktweetswithscowes]
+  ] = s-simcwustewsftwpop10000wnkdecay11cwustewtotweetindexscawadataset
+  ovewwide v-vaw scowecowumn = "ftwat5_decayed_pop_bias_10000_wank_decay_1_1_embedding"
+  ovewwide vaw s-scowekey = "ftwat5_decayed_pop_bias_10000_wank_decay_1_1"
+  ovewwide vaw maxusewftw: doubwe = c-config.maxusewftw
+  o-ovewwide vaw maxtweetftw: doubwe = c-config.maxtweetftw
 }
 
-object OONFTRPop1000RankDecayClusterToTweetIndexGenerationBatch
-    extends FTRClusterToTweetIndexGenerationJob {
-  override val isAdhoc: Boolean = false
-  override val outputTable: BQTableDetails =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_oon_ftr_pop1000_rnkdecay_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath: String =
-    Config.OONFTRPop1000RankDecayClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = SimclustersOonFtrPop1000RnkdecayClusterToTweetIndexScalaDataset
-  override val scoreColumn = "oon_ftrat5_decayed_pop_bias_1000_rank_decay_embedding"
-  override val scoreKey = "oon_ftrat5_decayed_pop_bias_1000_rank_decay"
-  override val maxUserFTR: Double = Config.MaxUserFTR
-  override val maxTweetFTR: Double = Config.MaxTweetFTR
+object oonftwpop1000wankdecaycwustewtotweetindexgenewationbatch
+    e-extends ftwcwustewtotweetindexgenewationjob {
+  o-ovewwide vaw isadhoc: boowean = f-fawse
+  ovewwide v-vaw outputtabwe: bqtabwedetaiws =
+    bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod", o.O
+      "usew", UwU
+      "simcwustews_oon_ftw_pop1000_wnkdecay_cwustew_to_tweet_index")
+  ovewwide vaw keyvawdatasetoutputpath: s-stwing =
+    c-config.oonftwpop1000wankdecaycwustewtotweetindexoutputpath
+  o-ovewwide v-vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, rawr x3 topktweetswithscowes]
+  ] = s-simcwustewsoonftwpop1000wnkdecaycwustewtotweetindexscawadataset
+  o-ovewwide vaw scowecowumn = "oon_ftwat5_decayed_pop_bias_1000_wank_decay_embedding"
+  o-ovewwide v-vaw scowekey = "oon_ftwat5_decayed_pop_bias_1000_wank_decay"
+  ovewwide vaw m-maxusewftw: doubwe = config.maxusewftw
+  ovewwide v-vaw maxtweetftw: doubwe = config.maxtweetftw
 }
 
-object DecayedSumClusterToTweetIndexGenerationBatch extends FTRClusterToTweetIndexGenerationJob {
-  override val isAdhoc: Boolean = false
-  override val outputTable: BQTableDetails =
-    BQTableDetails(
-      "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_decayed_sum_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath: String =
-    Config.DecayedSumClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = SimclustersDecayedSumClusterToTweetIndexScalaDataset
-  override val scoreColumn = "dec_sum_logfavScoreClusterNormalizedOnly_embedding"
-  override val scoreKey = "dec_sum_logfavScoreClusterNormalizedOnly"
-  override val maxUserFTR = 1.0
-  override val maxTweetFTR = 1.0
+o-object decayedsumcwustewtotweetindexgenewationbatch e-extends ftwcwustewtotweetindexgenewationjob {
+  o-ovewwide vaw isadhoc: boowean = fawse
+  o-ovewwide vaw outputtabwe: b-bqtabwedetaiws =
+    b-bqtabwedetaiws(
+      "twttw-bq-cassowawy-pwod", 🥺
+      "usew", :3
+      "simcwustews_decayed_sum_cwustew_to_tweet_index")
+  ovewwide vaw keyvawdatasetoutputpath: stwing =
+    config.decayedsumcwustewtotweetindexoutputpath
+  o-ovewwide vaw cwustewtotweetindexsnapshotdataset: keyvawdawdataset[
+    k-keyvaw[fuwwcwustewid, (ꈍᴗꈍ) t-topktweetswithscowes]
+  ] = simcwustewsdecayedsumcwustewtotweetindexscawadataset
+  o-ovewwide vaw scowecowumn = "dec_sum_wogfavscowecwustewnowmawizedonwy_embedding"
+  ovewwide v-vaw scowekey = "dec_sum_wogfavscowecwustewnowmawizedonwy"
+  o-ovewwide vaw maxusewftw = 1.0
+  ovewwide vaw m-maxtweetftw = 1.0
 }

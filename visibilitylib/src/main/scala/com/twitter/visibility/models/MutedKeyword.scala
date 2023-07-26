@@ -1,3 +1,3 @@
-package com.twitter.visibility.models
+package com.twittew.visibiwity.modews
 
-case class MutedKeyword(keyword: Option[String])
+case cwass m-mutedkeywowd(keywowd: o-option[stwing])

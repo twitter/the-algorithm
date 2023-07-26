@@ -1,54 +1,54 @@
-package com.twitter.tweetypie.hydrator
+package com.twittew.tweetypie.hydwatow
 
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
-import com.twitter.mediaservices.commons.thriftscala._
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.thriftscala._
+impowt com.twittew.mediasewvices.commons.tweetmedia.thwiftscawa._
+i-impowt c-com.twittew.mediasewvices.commons.thwiftscawa._
+i-impowt com.twittew.tweetypie.cowe.vawuestate
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object MediaKeyHydrator {
-  type Ctx = MediaEntityHydrator.Uncacheable.Ctx
-  type Type = MediaEntityHydrator.Uncacheable.Type
+o-object m-mediakeyhydwatow {
+  t-type ctx = mediaentityhydwatow.uncacheabwe.ctx
+  type type = mediaentityhydwatow.uncacheabwe.type
 
-  def apply(): Type =
-    ValueHydrator
-      .map[MediaEntity, Ctx] { (curr, ctx) =>
-        val mediaKey = infer(ctx.mediaKeys, curr)
-        ValueState.modified(curr.copy(mediaKey = Some(mediaKey)))
+  def appwy(): t-type =
+    vawuehydwatow
+      .map[mediaentity, 🥺 ctx] { (cuww, mya c-ctx) =>
+        vaw mediakey = i-infew(ctx.mediakeys, cuww)
+        vawuestate.modified(cuww.copy(mediakey = some(mediakey)))
       }
-      .onlyIf((curr, ctx) => curr.mediaKey.isEmpty)
+      .onwyif((cuww, 🥺 ctx) => c-cuww.mediakey.isempty)
 
-  def infer(mediaKeys: Option[Seq[MediaKey]], mediaEntity: MediaEntity): MediaKey = {
+  def infew(mediakeys: o-option[seq[mediakey]], >_< m-mediaentity: mediaentity): mediakey = {
 
-    def inferByMediaId =
-      mediaKeys
-        .flatMap(_.find(_.mediaId == mediaEntity.mediaId))
+    def infewbymediaid =
+      mediakeys
+        .fwatmap(_.find(_.mediaid == m-mediaentity.mediaid))
 
-    def contentType =
-      mediaEntity.sizes.find(_.sizeType == MediaSizeType.Orig).map(_.deprecatedContentType)
+    def contenttype =
+      mediaentity.sizes.find(_.sizetype == mediasizetype.owig).map(_.depwecatedcontenttype)
 
-    def inferByContentType =
-      contentType.map { tpe =>
-        val category =
-          tpe match {
-            case MediaContentType.VideoMp4 => MediaCategory.TweetGif
-            case MediaContentType.VideoGeneric => MediaCategory.TweetVideo
-            case _ => MediaCategory.TweetImage
+    def infewbycontenttype =
+      c-contenttype.map { tpe =>
+        v-vaw categowy =
+          t-tpe match {
+            c-case mediacontenttype.videomp4 => m-mediacategowy.tweetgif
+            case mediacontenttype.videogenewic => mediacategowy.tweetvideo
+            c-case _ => mediacategowy.tweetimage
           }
-        MediaKey(category, mediaEntity.mediaId)
+        mediakey(categowy, >_< mediaentity.mediaid)
       }
 
-    def fail =
-      throw new IllegalStateException(
+    def f-faiw =
+      thwow nyew iwwegawstateexception(
         s"""
-           |Can't infer media key.
-           | mediaKeys:'$mediaKeys'
-           | mediaEntity:'$mediaEntity'
-          """.stripMargin
+           |can't infew media key. (⑅˘꒳˘)
+           | mediakeys:'$mediakeys'
+           | mediaentity:'$mediaentity'
+          """.stwipmawgin
       )
 
-    mediaEntity.mediaKey
-      .orElse(inferByMediaId)
-      .orElse(inferByContentType)
-      .getOrElse(fail)
+    mediaentity.mediakey
+      .owewse(infewbymediaid)
+      .owewse(infewbycontenttype)
+      .getowewse(faiw)
   }
 }

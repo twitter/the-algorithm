@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+package com.twittew.pwoduct_mixew.component_wibwawy.expewiments.metwics
 
-import scala.collection.immutable.ListSet
+impowt scawa.cowwection.immutabwe.wistset
 
 /**
  *
- * @param id optional metric group id. If id is None, this means the group
- *           is being newly created and the id is not provisioned by go/ddg. Otherwise, the metric
- *           group is present in DDG and has a corresponding id.
- * @param name metric group name
- * @param description metric group description
- * @param metrics set of metrics that belong to this metric group
+ * @pawam i-id optionaw m-metwic gwoup id. 🥺 i-if id is nyone, o.O t-this means the g-gwoup
+ *           i-is being nyewwy c-cweated and the i-id is nyot pwovisioned by go/ddg. /(^•ω•^) othewwise, the metwic
+ *           gwoup is p-pwesent in ddg and has a cowwesponding id. nyaa~~
+ * @pawam n-nyame metwic gwoup nyame
+ * @pawam d-descwiption metwic gwoup descwiption
+ * @pawam metwics s-set of metwics that bewong to this m-metwic gwoup
  */
-case class MetricGroup(
-  id: Option[Long],
-  name: String,
-  description: String,
-  metrics: ListSet[Metric]) {
+c-case cwass metwicgwoup(
+  id: option[wong], nyaa~~
+  nyame: stwing, :3
+  descwiption: s-stwing, 😳😳😳
+  metwics: wistset[metwic]) {
 
   /*
-   * Returns a CSV representation of this metric group that can be imported via DDG's bulk import tool
-   * The bulk import tool consumes CSV data with the following columns:
-   * 1. group name
-   * 2. group description
-   * 3. metric name
-   * 4. metric description
-   * 5. metric pattern
-   * 6. group id -- numeric id
-   * 7. (optional) metric type -- `NAMED_PATTERN`, `STRAINER`, or `LAMBDA`.
+   * wetuwns a csv wepwesentation of this metwic gwoup t-that can be impowted via ddg's b-buwk impowt toow
+   * t-the buwk i-impowt toow consumes c-csv data with the fowwowing cowumns:
+   * 1. (˘ω˘) g-gwoup nyame
+   * 2. ^^ gwoup descwiption
+   * 3. :3 metwic nyame
+   * 4. m-metwic descwiption
+   * 5. -.- metwic pattewn
+   * 6. 😳 gwoup id -- nyumewic id
+   * 7. mya (optionaw) metwic type -- `named_pattewn`, (˘ω˘) `stwainew`, >_< ow `wambda`. -.-
    */
-  def toCsv: String = {
-    val metricCsvLines: ListSet[String] = for {
-      metric <- metrics
-      definition <- metric.definition.toCsvField
-    } yield {
-      Seq(
-        name,
-        description,
-        metric.name,
-        metric.name,
-        // wrap in single quotes so that DDG bulk import tool correctly parses
-        s""""$definition"""",
-        id.map(_.toString).getOrElse(""),
-        metric.definition.metricDefinitionType
-      ).mkString(",")
+  def tocsv: stwing = {
+    v-vaw metwiccsvwines: w-wistset[stwing] = f-fow {
+      m-metwic <- metwics
+      definition <- metwic.definition.tocsvfiewd
+    } yiewd {
+      s-seq(
+        n-nyame, 🥺
+        descwiption, (U ﹏ U)
+        m-metwic.name, >w<
+        m-metwic.name, mya
+        // wwap in singwe q-quotes so that ddg buwk impowt t-toow cowwectwy pawses
+        s""""$definition"""", >w<
+        id.map(_.tostwing).getowewse(""), nyaa~~
+        m-metwic.definition.metwicdefinitiontype
+      ).mkstwing(",")
     }
-    println(s"Generated metrics in CSV count: ${metricCsvLines.size}")
-    metricCsvLines.mkString("\n")
+    pwintwn(s"genewated m-metwics in csv count: ${metwiccsvwines.size}")
+    m-metwiccsvwines.mkstwing("\n")
   }
 
-  // Unique metric names based on globally unique metric name
-  def uniqueMetricNames: Set[String] =
-    metrics.groupBy(_.name).keys.toSet
+  // unique m-metwic nyames based on gwobawwy unique metwic nyame
+  def uniquemetwicnames: set[stwing] =
+    metwics.gwoupby(_.name).keys.toset
 }

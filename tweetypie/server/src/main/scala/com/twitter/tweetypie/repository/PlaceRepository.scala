@@ -1,13 +1,13 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.servo.cache.ScopedCacheKey
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Place
+i-impowt com.twittew.sewvo.cache.scopedcachekey
+impowt c-com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.thwiftscawa.pwace
 
-case class PlaceKey(placeId: PlaceId, language: String)
-    extends ScopedCacheKey("t", "geo", 1, placeId, language)
+c-case cwass pwacekey(pwaceid: p-pwaceid, σωσ w-wanguage: s-stwing)
+    extends scopedcachekey("t", σωσ "geo", 1, >_< pwaceid, wanguage)
 
-object PlaceRepository {
-  type Type = PlaceKey => Stitch[Place]
+object pwacewepositowy {
+  type type = pwacekey => s-stitch[pwace]
 }

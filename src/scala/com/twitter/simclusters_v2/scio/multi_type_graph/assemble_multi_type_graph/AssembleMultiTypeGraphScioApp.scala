@@ -1,39 +1,39 @@
-package com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph
+package com.twittew.simcwustews_v2.scio.muwti_type_gwaph.assembwe_muwti_type_gwaph
 
 /**
-Build:
-./bazel bundle src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph:assemble-multi-type-graph-scio-adhoc-app
+buiwd:
+./bazew b-bundwe swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/assembwe_muwti_type_gwaph:assembwe-muwti-type-gwaph-scio-adhoc-app
 
-To kick off an adhoc run:
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/assemble-multi-type-graph-scio-adhoc-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph/assemble-multi-type-graph-scio-adhoc.d6w \
-  --jar dist/assemble-multi-type-graph-scio-adhoc-app.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=${USER} \
-  --bind=profile.date="2021-11-04" \
-  --bind=profile.machine="n2-highmem-16"
+t-to kick o-off an adhoc w-wun:
+bin/d6w cweate \
+  ${gcp_pwoject_name}/us-centwaw1/assembwe-muwti-type-gwaph-scio-adhoc-app \
+  s-swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/assembwe_muwti_type_gwaph/assembwe-muwti-type-gwaph-scio-adhoc.d6w \
+  --jaw d-dist/assembwe-muwti-type-gwaph-scio-adhoc-app.jaw \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=${usew} \
+  --bind=pwofiwe.date="2021-11-04" \
+  --bind=pwofiwe.machine="n2-highmem-16"
  */
 
-object AssembleMultiTypeGraphScioAdhocApp extends AssembleMultiTypeGraphScioBaseApp {
-  override val isAdhoc: Boolean = true
-  override val rootMHPath: String = Config.AdhocRootPath
-  override val rootThriftPath: String = Config.AdhocRootPath
+o-object a-assembwemuwtitypegwaphscioadhocapp extends assembwemuwtitypegwaphsciobaseapp {
+  ovewwide vaw isadhoc: boowean = twue
+  ovewwide v-vaw wootmhpath: stwing = config.adhocwootpath
+  ovewwide vaw wootthwiftpath: s-stwing = config.adhocwootpath
 }
 
 /**
-To deploy the job:
+t-to depwoy the job:
 
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/assemble-multi-type-graph-scio-batch-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph/assemble-multi-type-graph-scio-batch.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=recos-platform \
-  --bind=profile.date="2021-11-04" \
-  --bind=profile.machine="n2-highmem-16"
+bin/d6w scheduwe \
+  ${gcp_pwoject_name}/us-centwaw1/assembwe-muwti-type-gwaph-scio-batch-app \
+  swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/assembwe_muwti_type_gwaph/assembwe-muwti-type-gwaph-scio-batch.d6w \
+  --bind=pwofiwe.pwoject=${gcp_pwoject_name} \
+  --bind=pwofiwe.usew_name=wecos-pwatfowm \
+  --bind=pwofiwe.date="2021-11-04" \
+  --bind=pwofiwe.machine="n2-highmem-16"
  */
-object AssembleMultiTypeGraphScioBatchApp extends AssembleMultiTypeGraphScioBaseApp {
-  override val isAdhoc: Boolean = false
-  override val rootMHPath: String = Config.RootMHPath
-  override val rootThriftPath: String = Config.RootThriftPath
+object assembwemuwtitypegwaphsciobatchapp e-extends assembwemuwtitypegwaphsciobaseapp {
+  ovewwide v-vaw isadhoc: b-boowean = fawse
+  ovewwide vaw wootmhpath: stwing = config.wootmhpath
+  ovewwide v-vaw wootthwiftpath: stwing = config.wootthwiftpath
 }

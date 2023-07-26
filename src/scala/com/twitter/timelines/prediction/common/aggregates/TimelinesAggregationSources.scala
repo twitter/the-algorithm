@@ -1,45 +1,45 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.twittew.timewines.pwediction.common.aggwegates
 
-import com.twitter.ml.api.constant.SharedFeatures.TIMESTAMP
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.OfflineAggregateSource
-import com.twitter.timelines.prediction.features.p_home_latest.HomeLatestUserAggregatesFeatures
-import timelines.data_processing.ad_hoc.recap.data_record_preparation.RecapDataRecordsAggMinimalJavaDataset
+impowt c-com.twittew.mw.api.constant.shawedfeatuwes.timestamp
+i-impowt com.twittew.timewines.data_pwocessing.mw_utiw.aggwegation_fwamewowk.offwineaggwegatesouwce
+i-impowt c-com.twittew.timewines.pwediction.featuwes.p_home_watest.homewatestusewaggwegatesfeatuwes
+i-impowt t-timewines.data_pwocessing.ad_hoc.wecap.data_wecowd_pwepawation.wecapdatawecowdsaggminimawjavadataset
 
 /**
- * Any update here should be in sync with [[TimelinesFeatureGroups]] and [[AggMinimalDataRecordGeneratorJob]].
+ * a-any u-update hewe shouwd be in sync with [[timewinesfeatuwegwoups]] and [[aggminimawdatawecowdgenewatowjob]]. >_<
  */
-object TimelinesAggregationSources {
+object timewinesaggwegationsouwces {
 
   /**
-   * This is the recap data records after post-processing in [[GenerateRecapAggMinimalDataRecordsJob]]
+   * this i-is the wecap data wecowds aftew post-pwocessing i-in [[genewatewecapaggminimawdatawecowdsjob]]
    */
-  val timelinesDailyRecapMinimalSource = OfflineAggregateSource(
-    name = "timelines_daily_recap",
-    timestampFeature = TIMESTAMP,
-    dalDataSet = Some(RecapDataRecordsAggMinimalJavaDataset),
-    scaldingSuffixType = Some("dal"),
-    withValidation = true
+  vaw timewinesdaiwywecapminimawsouwce = offwineaggwegatesouwce(
+    n-nyame = "timewines_daiwy_wecap", (⑅˘꒳˘)
+    timestampfeatuwe = timestamp, /(^•ω•^)
+    dawdataset = some(wecapdatawecowdsaggminimawjavadataset), rawr x3
+    s-scawdingsuffixtype = some("daw"), (U ﹏ U)
+    w-withvawidation = t-twue
   )
-  val timelinesDailyTwitterWideSource = OfflineAggregateSource(
-    name = "timelines_daily_twitter_wide",
-    timestampFeature = TIMESTAMP,
-    scaldingHdfsPath = Some("/user/timelines/processed/suggests/recap/twitter_wide_data_records"),
-    scaldingSuffixType = Some("daily"),
-    withValidation = true
-  )
-
-  val timelinesDailyListTimelineSource = OfflineAggregateSource(
-    name = "timelines_daily_list_timeline",
-    timestampFeature = TIMESTAMP,
-    scaldingHdfsPath = Some("/user/timelines/processed/suggests/recap/all_features/list"),
-    scaldingSuffixType = Some("hourly"),
-    withValidation = true
+  vaw timewinesdaiwytwittewwidesouwce = offwineaggwegatesouwce(
+    nyame = "timewines_daiwy_twittew_wide", (U ﹏ U)
+    timestampfeatuwe = t-timestamp, (⑅˘꒳˘)
+    scawdinghdfspath = some("/usew/timewines/pwocessed/suggests/wecap/twittew_wide_data_wecowds"), òωó
+    scawdingsuffixtype = some("daiwy"), ʘwʘ
+    w-withvawidation = twue
   )
 
-  val timelinesDailyHomeLatestSource = OfflineAggregateSource(
-    name = "timelines_daily_home_latest",
-    timestampFeature = HomeLatestUserAggregatesFeatures.AGGREGATE_TIMESTAMP_MS,
-    scaldingHdfsPath = Some("/user/timelines/processed/p_home_latest/user_aggregates"),
-    scaldingSuffixType = Some("daily")
+  v-vaw timewinesdaiwywisttimewinesouwce = o-offwineaggwegatesouwce(
+    n-nyame = "timewines_daiwy_wist_timewine", /(^•ω•^)
+    t-timestampfeatuwe = timestamp,
+    scawdinghdfspath = some("/usew/timewines/pwocessed/suggests/wecap/aww_featuwes/wist"), ʘwʘ
+    s-scawdingsuffixtype = some("houwwy"), σωσ
+    withvawidation = t-twue
+  )
+
+  vaw timewinesdaiwyhomewatestsouwce = offwineaggwegatesouwce(
+    nyame = "timewines_daiwy_home_watest", OwO
+    timestampfeatuwe = homewatestusewaggwegatesfeatuwes.aggwegate_timestamp_ms, 😳😳😳
+    s-scawdinghdfspath = some("/usew/timewines/pwocessed/p_home_watest/usew_aggwegates"), 😳😳😳
+    s-scawdingsuffixtype = s-some("daiwy")
   )
 }

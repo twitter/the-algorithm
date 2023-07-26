@@ -1,24 +1,23 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/fasterxml/jackson:jackson-module-scala",
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-annotations",
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/identifier",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/pipeline_failure",
-        "util/util-core:util-core-util",
+scawa_wibwawy(
+    souwces = ["*.scawa"], òωó
+    compiwew_option_sets = ["fataw_wawnings"], o.O
+    p-pwatfowm = "java8", (U ᵕ U❁)
+    s-stwict_deps = t-twue, (⑅˘꒳˘)
+    tags = ["bazew-compatibwe"], ( ͡o ω ͡o )
+    d-dependencies = [
+        "3wdpawty/jvm/javax/inject:javax.inject", UwU
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe", rawr x3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common", rawr
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common/pwesentation", σωσ
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine",
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine/pipewine_faiwuwe", σωσ
     ],
-    exports = [
-        "3rdparty/jvm/com/fasterxml/jackson:jackson-module-scala",
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-annotations",
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling",
-        "util/util-core:util-core-util",
-    ],
+    e-expowts = [
+        "3wdpawty/jvm/javax/inject:javax.inject", >_<
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/featuwe", :3
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common", (U ﹏ U)
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/modew/common/pwesentation", -.-
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine", (ˆ ﻌ ˆ)♡
+        "pwoduct-mixew/cowe/swc/main/scawa/com/twittew/pwoduct_mixew/cowe/pipewine/pipewine_faiwuwe", (⑅˘꒳˘)
+    ], (U ᵕ U❁)
 )

@@ -1,60 +1,60 @@
-package com.twitter.home_mixer.product.for_you.param
+package com.twittew.home_mixew.pwoduct.fow_you.pawam
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.for_you.param.ForYouParam._
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.pawam.decidew.decidewkey
+i-impowt c-com.twittew.home_mixew.pwoduct.fow_you.pawam.fowyoupawam._
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pwoduct.pwoductpawamconfig
+impowt c-com.twittew.sewvo.decidew.decidewkeyname
+impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class ForYouParamConfig @Inject() () extends ProductParamConfig {
-  override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableForYouProduct
-  override val supportedClientFSName: String = SupportedClientFSName
+@singweton
+cwass fowyoupawamconfig @inject() () extends pwoductpawamconfig {
+  ovewwide v-vaw enabweddecidewkey: decidewkeyname = decidewkey.enabwefowyoupwoduct
+  o-ovewwide vaw suppowtedcwientfsname: s-stwing = suppowtedcwientfsname
 
-  override val booleanDeciderOverrides = Seq(
-    EnableScoredTweetsCandidatePipelineParam
+  ovewwide vaw booweandecidewovewwides = seq(
+    e-enabwescowedtweetscandidatepipewinepawam
   )
 
-  override val booleanFSOverrides = Seq(
-    ClearCacheOnPtr.EnableParam,
-    EnableFlipInjectionModuleCandidatePipelineParam,
-    EnablePushToHomeMixerPipelineParam,
-    EnableScoredTweetsMixerPipelineParam,
-    EnableServedCandidateKafkaPublishingParam,
-    EnableTimelineScorerCandidatePipelineParam,
-    EnableTopicSocialContextFilterParam,
-    EnableVerifiedAuthorSocialContextBypassParam,
-    EnableWhoToFollowCandidatePipelineParam,
-    EnableWhoToSubscribeCandidatePipelineParam,
-    EnableTweetPreviewsCandidatePipelineParam,
-    EnableClearCacheOnPushToHome
+  ovewwide vaw booweanfsovewwides = s-seq(
+    cweawcacheonptw.enabwepawam, rawr x3
+    e-enabwefwipinjectionmoduwecandidatepipewinepawam, (U ﹏ U)
+    enabwepushtohomemixewpipewinepawam, (U ﹏ U)
+    enabwescowedtweetsmixewpipewinepawam, (⑅˘꒳˘)
+    enabwesewvedcandidatekafkapubwishingpawam, òωó
+    enabwetimewinescowewcandidatepipewinepawam, ʘwʘ
+    e-enabwetopicsociawcontextfiwtewpawam, /(^•ω•^)
+    enabwevewifiedauthowsociawcontextbypasspawam, ʘwʘ
+    enabwewhotofowwowcandidatepipewinepawam, σωσ
+    enabwewhotosubscwibecandidatepipewinepawam, OwO
+    enabwetweetpweviewscandidatepipewinepawam, 😳😳😳
+    e-enabwecweawcacheonpushtohome
   )
 
-  override val boundedIntFSOverrides = Seq(
-    AdsNumOrganicItemsParam,
-    ClearCacheOnPtr.MinEntriesParam,
-    FlipInlineInjectionModulePosition,
-    ServerMaxResultsParam,
-    WhoToFollowPositionParam,
-    WhoToSubscribePositionParam,
-    TweetPreviewsPositionParam,
-    TweetPreviewsMaxCandidatesParam
+  ovewwide v-vaw boundedintfsovewwides = s-seq(
+    adsnumowganicitemspawam, 😳😳😳
+    c-cweawcacheonptw.minentwiespawam, o.O
+    f-fwipinwineinjectionmoduweposition, ( ͡o ω ͡o )
+    sewvewmaxwesuwtspawam, (U ﹏ U)
+    whotofowwowpositionpawam, (///ˬ///✿)
+    whotosubscwibepositionpawam, >w<
+    t-tweetpweviewspositionpawam, rawr
+    tweetpweviewsmaxcandidatespawam
   )
 
-  override val stringFSOverrides = Seq(
-    WhoToFollowDisplayLocationParam,
-    ExperimentStatsParam
+  ovewwide vaw s-stwingfsovewwides = seq(
+    whotofowwowdispwaywocationpawam, mya
+    expewimentstatspawam
   )
 
-  override val boundedDurationFSOverrides = Seq(
-    WhoToFollowMinInjectionIntervalParam,
-    WhoToSubscribeMinInjectionIntervalParam,
-    TweetPreviewsMinInjectionIntervalParam
+  ovewwide vaw boundedduwationfsovewwides = seq(
+    whotofowwowmininjectionintewvawpawam, ^^
+    w-whotosubscwibemininjectionintewvawpawam, 😳😳😳
+    tweetpweviewsmininjectionintewvawpawam
   )
 
-  override val enumFSOverrides = Seq(
-    WhoToFollowDisplayTypeIdParam,
-    WhoToSubscribeDisplayTypeIdParam
+  o-ovewwide v-vaw enumfsovewwides = s-seq(
+    whotofowwowdispwaytypeidpawam, mya
+    whotosubscwibedispwaytypeidpawam
   )
 }

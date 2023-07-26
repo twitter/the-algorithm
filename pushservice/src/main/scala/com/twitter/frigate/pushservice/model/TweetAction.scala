@@ -1,26 +1,26 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.SocialContextActions
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.common.base.TweetDetails
-import com.twitter.frigate.pushservice.model.PushTypes._
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.predicate._
-import com.twitter.frigate.pushservice.take.predicates.BasicTweetPredicatesForRFPH
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.sociawcontextactions
+i-impowt c-com.twittew.fwigate.common.base.tweetcandidate
+impowt c-com.twittew.fwigate.common.base.tweetdetaiws
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes._
+i-impowt com.twittew.fwigate.pushsewvice.config.config
+impowt com.twittew.fwigate.pushsewvice.pwedicate._
+impowt com.twittew.fwigate.pushsewvice.take.pwedicates.basictweetpwedicatesfowwfph
 
-case class TweetActionCandidatePredicates(override val config: Config)
-    extends BasicTweetPredicatesForRFPH[
-      PushCandidate with TweetCandidate with TweetDetails with SocialContextActions
+case cwass t-tweetactioncandidatepwedicates(ovewwide vaw config: config)
+    e-extends basictweetpwedicatesfowwfph[
+      pushcandidate w-with tweetcandidate with tweetdetaiws with sociawcontextactions
     ] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  i-impwicit vaw statsweceivew: s-statsweceivew = c-config.statsweceivew.scope(getcwass.getsimpwename)
 
-  override val preCandidateSpecificPredicates = List(PredicatesForCandidate.minSocialContext(1))
+  ovewwide vaw pwecandidatespecificpwedicates = wist(pwedicatesfowcandidate.minsociawcontext(1))
 
-  override val postCandidateSpecificPredicates = List(
-    PredicatesForCandidate.socialContextBeingFollowed(config.edgeStore),
-    PredicatesForCandidate.socialContextBlockingOrMuting(config.edgeStore),
-    PredicatesForCandidate.socialContextNotRetweetFollowing(config.edgeStore)
+  ovewwide v-vaw postcandidatespecificpwedicates = wist(
+    pwedicatesfowcandidate.sociawcontextbeingfowwowed(config.edgestowe), nyaa~~
+    pwedicatesfowcandidate.sociawcontextbwockingowmuting(config.edgestowe), /(^•ω•^)
+    pwedicatesfowcandidate.sociawcontextnotwetweetfowwowing(config.edgestowe)
   )
 }

@@ -1,41 +1,41 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.twittew.cw_mixew.simiwawity_engine
 
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
+impowt com.twittew.cw_mixew.modew.souwceinfo
+i-impowt c-com.twittew.cw_mixew.modew.tweetwithscowe
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.snowfwake.id.snowfwakeid
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.time
 
-object FilterUtil {
+o-object fiwtewutiw {
 
-  /** Returns a list of tweets that are generated less than `maxTweetAgeHours` hours ago */
-  def tweetAgeFilter(
-    candidates: Seq[TweetWithScore],
-    maxTweetAgeHours: Duration
-  ): Seq[TweetWithScore] = {
-    // Tweet IDs are approximately chronological (see http://go/snowflake),
-    // so we are building the earliest tweet id once
-    // The per-candidate logic here then be candidate.tweetId > earliestPermittedTweetId, which is far cheaper.
-    // See @cyao's phab on CrMixer generic age filter for reference https://phabricator.twitter.biz/D903188
-    val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetAgeHours)
-    candidates.filter { candidate => candidate.tweetId >= earliestTweetId }
+  /** wetuwns a wist of tweets that awe genewated wess than `maxtweetagehouws` h-houws ago */
+  def tweetagefiwtew(
+    candidates: s-seq[tweetwithscowe], -.-
+    maxtweetagehouws: d-duwation
+  ): seq[tweetwithscowe] = {
+    // tweet ids awe appwoximatewy chwonowogicaw (see http://go/snowfwake), 🥺
+    // s-so we awe buiwding the e-eawwiest tweet i-id once
+    // the pew-candidate wogic hewe then be candidate.tweetid > eawwiestpewmittedtweetid, w-which is faw cheapew. o.O
+    // see @cyao's phab on cwmixew genewic age fiwtew f-fow wefewence https://phabwicatow.twittew.biz/d903188
+    vaw eawwiesttweetid = s-snowfwakeid.fiwstidfow(time.now - m-maxtweetagehouws)
+    c-candidates.fiwtew { c-candidate => candidate.tweetid >= eawwiesttweetid }
   }
 
-  /** Returns a list of tweet sources that are generated less than `maxTweetAgeHours` hours ago */
-  def tweetSourceAgeFilter(
-    candidates: Seq[SourceInfo],
-    maxTweetSignalAgeHoursParam: Duration
-  ): Seq[SourceInfo] = {
-    // Tweet IDs are approximately chronological (see http://go/snowflake),
-    // so we are building the earliest tweet id once
-    // This filter applies to source signals. Some candidate source calls can be avoided if source signals
-    // can be filtered.
-    val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetSignalAgeHoursParam)
-    candidates.filter { candidate =>
-      candidate.internalId match {
-        case InternalId.TweetId(tweetId) => tweetId >= earliestTweetId
-        case _ => false
+  /** w-wetuwns a wist of tweet souwces that a-awe genewated wess than `maxtweetagehouws` houws ago */
+  def tweetsouwceagefiwtew(
+    candidates: seq[souwceinfo], /(^•ω•^)
+    m-maxtweetsignawagehouwspawam: duwation
+  ): s-seq[souwceinfo] = {
+    // tweet i-ids awe appwoximatewy c-chwonowogicaw (see http://go/snowfwake), nyaa~~
+    // so we awe buiwding the e-eawwiest tweet i-id once
+    // this fiwtew appwies t-to souwce signaws. nyaa~~ s-some candidate souwce cawws c-can be avoided if souwce signaws
+    // c-can be fiwtewed. :3
+    vaw eawwiesttweetid = s-snowfwakeid.fiwstidfow(time.now - maxtweetsignawagehouwspawam)
+    c-candidates.fiwtew { candidate =>
+      c-candidate.intewnawid m-match {
+        case intewnawid.tweetid(tweetid) => tweetid >= eawwiesttweetid
+        case _ => fawse
       }
     }
   }

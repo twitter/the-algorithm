@@ -1,83 +1,83 @@
-package com.twitter.frigate.pushservice.take.candidate_validator
+package com.twittew.fwigate.pushsewvice.take.candidate_vawidatow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.take.predicates.TakeCommonPredicates
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.hermit.predicate.ConcurrentPredicate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hermit.predicate.SequentialPredicate
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.woggew.mwwoggew
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt c-com.twittew.fwigate.pushsewvice.take.pwedicates.takecommonpwedicates
+i-impowt c-com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+i-impowt com.twittew.hewmit.pwedicate.concuwwentpwedicate
+impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.hewmit.pwedicate.pwedicate
+impowt com.twittew.hewmit.pwedicate.sequentiawpwedicate
+i-impowt com.twittew.utiw.futuwe
 
-trait CandidateValidator extends TakeCommonPredicates {
+twait c-candidatevawidatow extends takecommonpwedicates {
 
-  override implicit val statsReceiver: StatsReceiver = config.statsReceiver
+  o-ovewwide impwicit vaw statsweceivew: statsweceivew = config.statsweceivew
 
-  protected val log = MRLogger("CandidateValidator")
+  p-pwotected vaw wog = mwwoggew("candidatevawidatow")
 
-  private lazy val skipFiltersCounter = statsReceiver.counter("enable_skip_filters")
-  private lazy val emailUserSkipFiltersCounter =
-    statsReceiver.counter("email_user_enable_skip_filters")
-  private lazy val enablePredicatesCounter = statsReceiver.counter("enable_predicates")
+  p-pwivate w-wazy vaw skipfiwtewscountew = statsweceivew.countew("enabwe_skip_fiwtews")
+  pwivate wazy vaw emaiwusewskipfiwtewscountew =
+    statsweceivew.countew("emaiw_usew_enabwe_skip_fiwtews")
+  p-pwivate wazy vaw enabwepwedicatescountew = statsweceivew.countew("enabwe_pwedicates")
 
-  protected def enabledPredicates[C <: PushCandidate](
-    candidate: C,
-    predicates: List[NamedPredicate[C]]
-  ): List[NamedPredicate[C]] = {
-    val target = candidate.target
-    val skipFilters: Boolean =
-      target.pushContext.flatMap(_.skipFilters).getOrElse(false) || target.params(
-        PushFeatureSwitchParams.SkipPostRankingFilters)
+  pwotected def enabwedpwedicates[c <: p-pushcandidate](
+    candidate: c-c, (U ﹏ U)
+    pwedicates: w-wist[namedpwedicate[c]]
+  ): w-wist[namedpwedicate[c]] = {
+    v-vaw tawget = candidate.tawget
+    vaw skipfiwtews: b-boowean =
+      tawget.pushcontext.fwatmap(_.skipfiwtews).getowewse(fawse) || tawget.pawams(
+        pushfeatuweswitchpawams.skippostwankingfiwtews)
 
-    if (skipFilters) {
-      skipFiltersCounter.incr()
-      if (target.isEmailUser) emailUserSkipFiltersCounter.incr()
+    i-if (skipfiwtews) {
+      skipfiwtewscountew.incw()
+      if (tawget.isemaiwusew) emaiwusewskipfiwtewscountew.incw()
 
-      val predicatesToEnable = target.pushContext.flatMap(_.predicatesToEnable).getOrElse(Nil)
-      if (predicatesToEnable.nonEmpty) enablePredicatesCounter.incr()
+      vaw pwedicatestoenabwe = tawget.pushcontext.fwatmap(_.pwedicatestoenabwe).getowewse(niw)
+      i-if (pwedicatestoenabwe.nonempty) enabwepwedicatescountew.incw()
 
-      // if we skip predicates on pushContext, only enable the explicitly specified predicates
-      predicates.filter(predicatesToEnable.contains)
-    } else predicates
+      // if we skip p-pwedicates on p-pushcontext, onwy e-enabwe the expwicitwy specified pwedicates
+      pwedicates.fiwtew(pwedicatestoenabwe.contains)
+    } e-ewse pwedicates
   }
 
-  protected def executeSequentialPredicates[C <: PushCandidate](
-    candidate: C,
-    predicates: List[NamedPredicate[C]]
-  ): Future[Option[Predicate[C]]] = {
-    val predicatesEnabled = enabledPredicates(candidate, predicates)
-    val sequentialPredicate = new SequentialPredicate(predicatesEnabled)
+  p-pwotected def exekawaii~sequentiawpwedicates[c <: pushcandidate](
+    c-candidate: c-c,
+    pwedicates: wist[namedpwedicate[c]]
+  ): f-futuwe[option[pwedicate[c]]] = {
+    vaw pwedicatesenabwed = e-enabwedpwedicates(candidate, >w< pwedicates)
+    vaw sequentiawpwedicate = n-nyew sequentiawpwedicate(pwedicatesenabwed)
 
-    sequentialPredicate.track(Seq(candidate)).map(_.head)
+    sequentiawpwedicate.twack(seq(candidate)).map(_.head)
   }
 
-  protected def executeConcurrentPredicates[C <: PushCandidate](
-    candidate: C,
-    predicates: List[NamedPredicate[C]]
-  ): Future[List[Predicate[C]]] = {
-    val predicatesEnabled = enabledPredicates(candidate, predicates)
-    val concurrentPredicate: ConcurrentPredicate[C] = new ConcurrentPredicate[C](predicatesEnabled)
-    concurrentPredicate.track(Seq(candidate)).map(_.head)
+  p-pwotected def exekawaii~concuwwentpwedicates[c <: p-pushcandidate](
+    c-candidate: c, (U ﹏ U)
+    pwedicates: wist[namedpwedicate[c]]
+  ): futuwe[wist[pwedicate[c]]] = {
+    vaw pwedicatesenabwed = enabwedpwedicates(candidate, 😳 pwedicates)
+    vaw c-concuwwentpwedicate: c-concuwwentpwedicate[c] = nyew c-concuwwentpwedicate[c](pwedicatesenabwed)
+    c-concuwwentpwedicate.twack(seq(candidate)).map(_.head)
   }
 
-  protected val candidatePredicatesMap: Map[CommonRecommendationType, List[
-    NamedPredicate[_ <: PushCandidate]
+  p-pwotected vaw candidatepwedicatesmap: map[commonwecommendationtype, (ˆ ﻌ ˆ)♡ wist[
+    nyamedpwedicate[_ <: p-pushcandidate]
   ]]
 
-  protected def getCRTPredicates[C <: PushCandidate](
-    CRT: CommonRecommendationType
-  ): List[NamedPredicate[C]] = {
-    candidatePredicatesMap.get(CRT) match {
-      case Some(predicates) =>
-        predicates.asInstanceOf[List[NamedPredicate[C]]]
+  pwotected def getcwtpwedicates[c <: pushcandidate](
+    cwt: commonwecommendationtype
+  ): w-wist[namedpwedicate[c]] = {
+    candidatepwedicatesmap.get(cwt) m-match {
+      c-case some(pwedicates) =>
+        p-pwedicates.asinstanceof[wist[namedpwedicate[c]]]
       case _ =>
-        throw new IllegalStateException(
-          s"Unknown CommonRecommendationType for Predicates: ${CRT.name}")
+        t-thwow n-nyew iwwegawstateexception(
+          s-s"unknown c-commonwecommendationtype fow pwedicates: ${cwt.name}")
     }
   }
 
-  def validateCandidate[C <: PushCandidate](candidate: C): Future[Option[Predicate[C]]]
+  def vawidatecandidate[c <: p-pushcandidate](candidate: c-c): futuwe[option[pwedicate[c]]]
 }

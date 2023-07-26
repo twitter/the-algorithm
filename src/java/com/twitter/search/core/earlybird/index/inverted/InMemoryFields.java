@@ -1,44 +1,44 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.twittew.seawch.cowe.eawwybiwd.index.invewted;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+impowt j-java.utiw.hashmap;
+i-impowt java.utiw.itewatow;
+impowt j-java.utiw.map;
 
-import org.apache.lucene.index.Fields;
-import org.apache.lucene.index.Terms;
+i-impowt owg.apache.wucene.index.fiewds;
+i-impowt o-owg.apache.wucene.index.tewms;
 
-public class InMemoryFields extends Fields {
-  private final Map<InvertedIndex, Terms> termsCache = new HashMap<>();
-  private final Map<String, InvertedIndex> perFields;
-  private final Map<InvertedIndex, Integer> pointerIndex;
+p-pubwic cwass i-inmemowyfiewds extends fiewds {
+  pwivate finaw map<invewtedindex, 🥺 tewms> tewmscache = n-nyew hashmap<>();
+  pwivate finaw map<stwing, mya i-invewtedindex> pewfiewds;
+  p-pwivate finaw map<invewtedindex, 🥺 integew> pointewindex;
 
   /**
-   * Returns a new {@link Fields} instance for the provided {@link InvertedIndex}es.
+   * wetuwns a n-new {@wink fiewds} instance fow t-the pwovided {@wink i-invewtedindex}es. >_<
    */
-  public InMemoryFields(Map<String, InvertedIndex> perFields,
-                        Map<InvertedIndex, Integer> pointerIndex) {
-    this.perFields = perFields;
-    this.pointerIndex = pointerIndex;
+  pubwic inmemowyfiewds(map<stwing, >_< invewtedindex> pewfiewds, (⑅˘꒳˘)
+                        map<invewtedindex, /(^•ω•^) i-integew> pointewindex) {
+    this.pewfiewds = pewfiewds;
+    this.pointewindex = pointewindex;
   }
 
-  @Override
-  public Iterator<String> iterator() {
-    return perFields.keySet().iterator();
+  @ovewwide
+  p-pubwic itewatow<stwing> itewatow() {
+    wetuwn pewfiewds.keyset().itewatow();
   }
 
-  @Override
-  public Terms terms(String field) {
-    InvertedIndex invertedIndex = perFields.get(field);
-    if (invertedIndex == null) {
-      return null;
+  @ovewwide
+  p-pubwic t-tewms tewms(stwing f-fiewd) {
+    i-invewtedindex invewtedindex = pewfiewds.get(fiewd);
+    if (invewtedindex == n-nyuww) {
+      wetuwn nyuww;
     }
 
-    return termsCache.computeIfAbsent(invertedIndex,
-        index -> index.createTerms(pointerIndex.getOrDefault(invertedIndex, -1)));
+    w-wetuwn tewmscache.computeifabsent(invewtedindex, rawr x3
+        index -> index.cweatetewms(pointewindex.getowdefauwt(invewtedindex, (U ﹏ U) -1)));
   }
 
-  @Override
-  public int size() {
-    return perFields.size();
+  @ovewwide
+  pubwic int size() {
+    wetuwn pewfiewds.size();
   }
 }

@@ -1,33 +1,33 @@
-class Profile(Struct):
-  project = Required(String)
-  date = Required(String)
-  environment = Default(String, 'dev')
-  machine = Default(String, 'n2d-highmem-16')
+cwass pwofiwe(stwuct):
+  pwoject = w-wequiwed(stwing)
+  d-date = wequiwed(stwing)
+  enviwonment = d-defauwt(stwing, mya 'dev')
+  m-machine = d-defauwt(stwing, mya 'n2d-highmem-16')
 
-job = Job(
-  name='multi-type-graph-sim-hash-scio-adhoc-app',
-  project='{{profile.project}}',
-  staging_bucket='{{profile.project}}',
-  service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-  region='us-central1',
-  worker_config=WorkerConfig(
-    num_workers=2,
-    worker_machine_type='{{profile.machine}}',
-    worker_disk_type=WorkerDiskType('HDD'),
-  ),
-  extra_args={
-    "environment": '{{profile.environment}}',
-    "date": Quote('{{profile.date}}'),
+j-job = job(
+  n-nyame='muwti-type-gwaph-sim-hash-scio-adhoc-app',
+  p-pwoject='{{pwofiwe.pwoject}}', 😳
+  staging_bucket='{{pwofiwe.pwoject}}', XD
+  sewvice_account='{{pwofiwe.usew_name}}-shdw@twttw-dp-svc-accounts.iam.gsewviceaccount.com', :3
+  wegion='us-centwaw1', 😳😳😳
+  wowkew_config=wowkewconfig(
+    n-nyum_wowkews=2, -.-
+    wowkew_machine_type='{{pwofiwe.machine}}', ( ͡o ω ͡o )
+    wowkew_disk_type=wowkewdisktype('hdd'),
+  ), rawr x3
+  e-extwa_awgs={
+    "enviwonment": '{{pwofiwe.enviwonment}}', nyaa~~
+    "date": quote('{{pwofiwe.date}}'), /(^•ω•^)
   },
-  deployment_config=BatchDeploymentConfig(
-    role='{{profile.user_name}}',
-    build_target='src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims:multi-type-graph-sim-hash-scio-adhoc-app',
-    gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-    statebird_config=StatebirdConfig(
-      batch_width='PT1H',
-      first_time='{{profile.date}}'
+  d-depwoyment_config=batchdepwoymentconfig(
+    wowe='{{pwofiwe.usew_name}}', rawr
+    buiwd_tawget='swc/scawa/com/twittew/simcwustews_v2/scio/muwti_type_gwaph/muwti_type_gwaph_sims:muwti-type-gwaph-sim-hash-scio-adhoc-app', OwO
+    gcp_depwoyment_cwedentiaws='/vaw/wib/tss/keys/{{pwofiwe.usew_name}}/cwoud/gcp/dp/shadow.json',
+    s-statebiwd_config=statebiwdconfig(
+      batch_width='pt1h', (U ﹏ U)
+      f-fiwst_time='{{pwofiwe.date}}'
     )
   )
 )
 
-jobs=[job]
+j-jobs=[job]

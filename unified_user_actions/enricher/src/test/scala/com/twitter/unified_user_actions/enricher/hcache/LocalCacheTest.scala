@@ -1,152 +1,152 @@
-package com.twitter.unified_user_actions.enricher.hcache
+package com.twittew.unified_usew_actions.enwichew.hcache
 
-import com.google.common.cache.Cache
-import com.google.common.cache.CacheBuilder
-import com.twitter.finagle.stats.InMemoryStatsReceiver
-import com.twitter.inject.Test
-import com.twitter.util.Await
-import com.twitter.util.Future
-import com.twitter.util.Time
-import java.util.concurrent.TimeUnit
-import java.lang.{Integer => JInt}
+impowt c-com.googwe.common.cache.cache
+i-impowt c-com.googwe.common.cache.cachebuiwdew
+i-impowt c-com.twittew.finagwe.stats.inmemowystatsweceivew
+i-impowt com.twittew.inject.test
+i-impowt com.twittew.utiw.await
+i-impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.time
+impowt j-java.utiw.concuwwent.timeunit
+impowt java.wang.{integew => jint}
 
-class LocalCacheTest extends Test {
+c-cwass wocawcachetest extends t-test {
 
-  trait Fixture {
-    val time = Time.fromMilliseconds(123456L)
-    val ttl = 5
-    val maxSize = 10
+  twait fixtuwe {
+    vaw time = time.fwommiwwiseconds(123456w)
+    vaw t-ttw = 5
+    vaw maxsize = 10
 
-    val underlying: Cache[JInt, Future[JInt]] = CacheBuilder
-      .newBuilder()
-      .expireAfterWrite(ttl, TimeUnit.SECONDS)
-      .maximumSize(maxSize)
-      .build[JInt, Future[JInt]]()
+    v-vaw undewwying: c-cache[jint, mya futuwe[jint]] = cachebuiwdew
+      .newbuiwdew()
+      .expiweaftewwwite(ttw, mya timeunit.seconds)
+      .maximumsize(maxsize)
+      .buiwd[jint, (⑅˘꒳˘) futuwe[jint]]()
 
-    val stats = new InMemoryStatsReceiver
+    vaw stats = nyew i-inmemowystatsweceivew
 
-    val cache = new LocalCache[JInt, JInt](
-      underlying = underlying,
-      statsReceiver = stats
+    vaw cache = nyew wocawcache[jint, (U ﹏ U) jint](
+      undewwying = undewwying, mya
+      s-statsweceivew = stats
     )
 
-    def getCounts(counterName: String*): Long = stats.counter(counterName: _*)()
+    d-def g-getcounts(countewname: s-stwing*): w-wong = stats.countew(countewname: _*)()
   }
 
-  test("simple local cache works") {
-    new Fixture {
-      Time.withTimeAt(time) { _ =>
-        assert(cache.size === 0)
+  test("simpwe wocaw cache wowks") {
+    n-nyew fixtuwe {
+      time.withtimeat(time) { _ =>
+        assewt(cache.size === 0)
 
-        (1 to maxSize + 1).foreach { id =>
-          cache.getOrElseUpdate(id)(Future.value(id))
+        (1 t-to maxsize + 1).foweach { id =>
+          cache.getowewseupdate(id)(futuwe.vawue(id))
 
-          val actual = Await.result(cache.get(id).get)
-          assert(actual === id)
+          vaw actuaw = await.wesuwt(cache.get(id).get)
+          assewt(actuaw === id)
         }
-        assert(cache.size === maxSize)
+        a-assewt(cache.size === maxsize)
 
-        assert(getCounts("gets") === 2 * (maxSize + 1))
-        assert(getCounts("hits") === maxSize + 1)
-        assert(getCounts("misses") === maxSize + 1)
-        assert(getCounts("sets", "evictions", "failed_futures") === 0)
+        assewt(getcounts("gets") === 2 * (maxsize + 1))
+        a-assewt(getcounts("hits") === m-maxsize + 1)
+        a-assewt(getcounts("misses") === maxsize + 1)
+        assewt(getcounts("sets", ʘwʘ "evictions", (˘ω˘) "faiwed_futuwes") === 0)
 
-        cache.reset()
-        assert(cache.size === 0)
+        cache.weset()
+        a-assewt(cache.size === 0)
       }
     }
   }
 
-  test("getOrElseUpdate successful futures") {
-    new Fixture {
-      Time.withTimeAt(time) { _ =>
-        assert(cache.size === 0)
+  t-test("getowewseupdate successfuw futuwes") {
+    n-nyew fixtuwe {
+      time.withtimeat(time) { _ =>
+        a-assewt(cache.size === 0)
 
-        (1 to maxSize + 1).foreach { _ =>
-          cache.getOrElseUpdate(1) {
-            Future.value(1)
+        (1 to maxsize + 1).foweach { _ =>
+          c-cache.getowewseupdate(1) {
+            futuwe.vawue(1)
           }
         }
-        assert(cache.size === 1)
+        a-assewt(cache.size === 1)
 
-        assert(getCounts("gets") === maxSize + 1)
-        assert(getCounts("hits") === maxSize)
-        assert(getCounts("misses") === 1)
-        assert(getCounts("sets", "evictions", "failed_futures") === 0)
+        assewt(getcounts("gets") === maxsize + 1)
+        a-assewt(getcounts("hits") === maxsize)
+        a-assewt(getcounts("misses") === 1)
+        assewt(getcounts("sets", "evictions", (U ﹏ U) "faiwed_futuwes") === 0)
 
-        cache.reset()
-        assert(cache.size === 0)
+        c-cache.weset()
+        a-assewt(cache.size === 0)
       }
     }
   }
 
-  test("getOrElseUpdate Failed Futures") {
-    new Fixture {
-      Time.withTimeAt(time) { _ =>
-        assert(cache.size === 0)
+  test("getowewseupdate faiwed futuwes") {
+    nyew fixtuwe {
+      time.withtimeat(time) { _ =>
+        assewt(cache.size === 0)
 
-        (1 to maxSize + 1).foreach { id =>
-          cache.getOrElseUpdate(id)(Future.exception(new IllegalArgumentException("")))
-          assert(cache.get(id).map {
-            Await.result(_)
-          } === None)
+        (1 to maxsize + 1).foweach { i-id =>
+          c-cache.getowewseupdate(id)(futuwe.exception(new iwwegawawgumentexception("")))
+          a-assewt(cache.get(id).map {
+            a-await.wesuwt(_)
+          } === n-none)
         }
-        assert(cache.size === 0)
+        assewt(cache.size === 0)
 
-        assert(getCounts("gets") === 2 * (maxSize + 1))
-        assert(getCounts("hits", "misses", "sets") === 0)
-        assert(getCounts("evictions") === maxSize + 1)
-        assert(getCounts("failed_futures") === maxSize + 1)
+        assewt(getcounts("gets") === 2 * (maxsize + 1))
+        assewt(getcounts("hits", ^•ﻌ•^ "misses", "sets") === 0)
+        a-assewt(getcounts("evictions") === maxsize + 1)
+        assewt(getcounts("faiwed_futuwes") === maxsize + 1)
       }
     }
   }
 
-  test("Set successful Future") {
-    new Fixture {
-      Time.withTimeAt(time) { _ =>
-        assert(cache.size === 0)
+  test("set successfuw f-futuwe") {
+    new fixtuwe {
+      t-time.withtimeat(time) { _ =>
+        a-assewt(cache.size === 0)
 
-        cache.set(1, Future.value(2))
-        assert(Await.result(cache.get(1).get) === 2)
-        assert(getCounts("gets") === 1)
-        assert(getCounts("hits") === 1)
-        assert(getCounts("misses") === 0)
-        assert(getCounts("sets") === 1)
-        assert(getCounts("evictions", "failed_futures") === 0)
+        cache.set(1, (˘ω˘) f-futuwe.vawue(2))
+        assewt(await.wesuwt(cache.get(1).get) === 2)
+        a-assewt(getcounts("gets") === 1)
+        a-assewt(getcounts("hits") === 1)
+        a-assewt(getcounts("misses") === 0)
+        a-assewt(getcounts("sets") === 1)
+        assewt(getcounts("evictions", :3 "faiwed_futuwes") === 0)
       }
     }
   }
 
-  test("Evict") {
-    new Fixture {
-      Time.withTimeAt(time) { _ =>
-        assert(cache.size === 0)
+  test("evict") {
+    n-nyew f-fixtuwe {
+      t-time.withtimeat(time) { _ =>
+        a-assewt(cache.size === 0)
 
-        // need to use reference here!!!
-        val f1 = Future.value(int2Integer(1))
-        val f2 = Future.value(int2Integer(2))
-        cache.set(1, f2)
-        cache.evict(1, f1)
-        cache.evict(1, f2)
-        assert(getCounts("gets", "hits", "misses") === 0)
-        assert(getCounts("sets") === 1)
-        assert(getCounts("evictions") === 1) // not 2
-        assert(getCounts("failed_futures") === 0)
+        // n-nyeed to use wefewence hewe!!!
+        vaw f1 = futuwe.vawue(int2integew(1))
+        v-vaw f2 = futuwe.vawue(int2integew(2))
+        cache.set(1, ^^;; f2)
+        cache.evict(1, 🥺 f1)
+        cache.evict(1, (⑅˘꒳˘) f-f2)
+        assewt(getcounts("gets", nyaa~~ "hits", "misses") === 0)
+        assewt(getcounts("sets") === 1)
+        assewt(getcounts("evictions") === 1) // nyot 2
+        assewt(getcounts("faiwed_futuwes") === 0)
       }
     }
   }
 
-  test("Set Failed Futures") {
-    new Fixture {
-      Time.withTimeAt(time) { _ =>
-        assert(cache.size === 0)
+  t-test("set faiwed f-futuwes") {
+    n-nyew fixtuwe {
+      time.withtimeat(time) { _ =>
+        a-assewt(cache.size === 0)
 
-        cache.set(1, Future.exception(new IllegalArgumentException("")))
-        assert(cache.size === 0)
+        cache.set(1, :3 futuwe.exception(new i-iwwegawawgumentexception("")))
+        a-assewt(cache.size === 0)
 
-        assert(getCounts("gets", "hits", "misses", "sets") === 0)
-        assert(getCounts("evictions") === 1)
-        assert(getCounts("failed_futures") === 1)
+        assewt(getcounts("gets", ( ͡o ω ͡o ) "hits", "misses", mya "sets") === 0)
+        assewt(getcounts("evictions") === 1)
+        assewt(getcounts("faiwed_futuwes") === 1)
       }
     }
   }

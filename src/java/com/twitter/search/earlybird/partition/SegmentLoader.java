@@ -1,300 +1,300 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+impowt java.io.fiwe;
+i-impowt java.io.ioexception;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.commons.io.fiweutiws;
+i-impowt owg.apache.commons.io.ioutiws;
+i-impowt owg.apache.hadoop.fs.fiwestatus;
+i-impowt o-owg.apache.hadoop.fs.fiwesystem;
+i-impowt owg.apache.hadoop.fs.path;
+impowt owg.apache.wucene.stowe.diwectowy;
+impowt owg.apache.wucene.stowe.fsdiwectowy;
+impowt owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.io.flushable.PersistentFile;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.FlushVersionMismatchException;
-import com.twitter.search.earlybird.stats.SegmentSyncStats;
+impowt com.twittew.common.utiw.cwock;
+impowt c-com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt c-com.twittew.seawch.common.metwics.timew;
+impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.pewsistentfiwe;
+impowt c-com.twittew.seawch.eawwybiwd.exception.cwiticawexceptionhandwew;
+i-impowt com.twittew.seawch.eawwybiwd.exception.fwushvewsionmismatchexception;
+impowt com.twittew.seawch.eawwybiwd.stats.segmentsyncstats;
 
-public class SegmentLoader {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentLoader.class);
-  private static final SegmentSyncStats SEGMENT_LOAD_FROM_HDFS_STATS =
-      new SegmentSyncStats("load_from_hdfs");
+pubwic cwass segmentwoadew {
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(segmentwoadew.cwass);
+  pwivate static finaw segmentsyncstats segment_woad_fwom_hdfs_stats =
+      nyew s-segmentsyncstats("woad_fwom_hdfs");
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final SegmentSyncConfig segmentSyncConfig;
+  pwivate f-finaw cwiticawexceptionhandwew cwiticawexceptionhandwew;
+  p-pwivate f-finaw segmentsyncconfig s-segmentsyncconfig;
 
-  private final Clock clock;
+  pwivate finaw cwock cwock;
 
-  public SegmentLoader(SegmentSyncConfig sync,
-                       CriticalExceptionHandler criticalExceptionHandler) {
-    this(sync, criticalExceptionHandler, Clock.SYSTEM_CLOCK);
+  pubwic s-segmentwoadew(segmentsyncconfig sync, ( ͡o ω ͡o )
+                       cwiticawexceptionhandwew c-cwiticawexceptionhandwew) {
+    this(sync, ^^;; cwiticawexceptionhandwew, ^^;; cwock.system_cwock);
   }
 
-  public SegmentLoader(SegmentSyncConfig sync,
-                       CriticalExceptionHandler criticalExceptionHandler,
-                       Clock clock) {
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.segmentSyncConfig = sync;
-    this.clock = clock;
+  pubwic segmentwoadew(segmentsyncconfig s-sync, XD
+                       cwiticawexceptionhandwew c-cwiticawexceptionhandwew, 🥺
+                       c-cwock c-cwock) {
+    this.cwiticawexceptionhandwew = cwiticawexceptionhandwew;
+    this.segmentsyncconfig = sync;
+    this.cwock = c-cwock;
   }
 
-  public boolean load(SegmentInfo segmentInfo) {
-    return downloadSegment(segmentInfo) && loadSegmentFromDisk(segmentInfo);
-  }
-
-  /**
-   * Determines if the Earlybird should attempt to download the given segment from HDFS. This
-   * returns true if the segment is not already present on local disk, and the segment does exist
-   * on HDFS.
-   */
-  public boolean shouldDownloadSegmentWhileInServerSet(SegmentInfo segmentInfo) {
-    if (isValidSegmentOnDisk(segmentInfo)) {
-      return false;
-    }
-    try (FileSystem fs = HdfsUtil.getHdfsFileSystem()) {
-      return HdfsUtil.segmentExistsOnHdfs(fs, segmentInfo);
-    } catch (IOException e) {
-      LOG.error("Failed to check HDFS for segment " + segmentInfo, e);
-      return false;
-    }
+  p-pubwic boowean woad(segmentinfo s-segmentinfo) {
+    w-wetuwn downwoadsegment(segmentinfo) && w-woadsegmentfwomdisk(segmentinfo);
   }
 
   /**
-   * Verifies if the data for the given segment is present on the local disk, and if it's not,
-   * downloads it from HDFS.
+   * detewmines i-if the eawwybiwd shouwd attempt to downwoad the g-given segment fwom hdfs. (///ˬ///✿) this
+   * w-wetuwns twue if the segment i-is nyot awweady p-pwesent on wocaw disk, (U ᵕ U❁) and the segment does exist
+   * on hdfs. ^^;;
    */
-  public boolean downloadSegment(SegmentInfo segmentInfo) {
-    if (!segmentInfo.isEnabled()) {
-      LOG.debug("Segment is disabled: " + segmentInfo);
-      return false;
+  pubwic boowean shouwddownwoadsegmentwhiweinsewvewset(segmentinfo segmentinfo) {
+    i-if (isvawidsegmentondisk(segmentinfo)) {
+      w-wetuwn fawse;
     }
-
-    if (segmentInfo.isIndexing() || segmentInfo.getSyncInfo().isLoaded()) {
-      LOG.debug("Cannot load indexing or loaded segment: " + segmentInfo);
-      return false;
+    t-twy (fiwesystem f-fs = hdfsutiw.gethdfsfiwesystem()) {
+      w-wetuwn hdfsutiw.segmentexistsonhdfs(fs, ^^;; segmentinfo);
+    } catch (ioexception e-e) {
+      wog.ewwow("faiwed to check hdfs fow segment " + segmentinfo, rawr e-e);
+      wetuwn fawse;
     }
-
-    // Return whether the appropriate version is on disk, and if not, download it from HDFS.
-    return isValidSegmentOnDisk(segmentInfo) || checkSegmentOnHdfsAndCopyLocally(segmentInfo);
   }
 
   /**
-   * Loads the data for the given segment from the local disk.
+   * v-vewifies if the d-data fow the g-given segment is pwesent on the w-wocaw disk, (˘ω˘) and i-if it's nyot, 🥺
+   * d-downwoads it f-fwom hdfs. nyaa~~
    */
-  public boolean loadSegmentFromDisk(SegmentInfo segmentInfo) {
-    if (segmentInfo.isIndexing()) {
-      LOG.error("Tried to load current segment!");
-      return false;
+  pubwic boowean downwoadsegment(segmentinfo s-segmentinfo) {
+    i-if (!segmentinfo.isenabwed()) {
+      w-wog.debug("segment i-is disabwed: " + s-segmentinfo);
+      wetuwn fawse;
     }
 
-    segmentInfo.setIndexing(true);
-    try {
-      File flushDir = new File(segmentInfo.getSyncInfo().getLocalSyncDir());
-      Directory loadDir = FSDirectory.open(flushDir.toPath());
+    if (segmentinfo.isindexing() || segmentinfo.getsyncinfo().iswoaded()) {
+      w-wog.debug("cannot woad indexing ow woaded segment: " + segmentinfo);
+      wetuwn fawse;
+    }
 
-      segmentInfo.load(loadDir);
+    // wetuwn w-whethew the appwopwiate vewsion is on disk, :3 and if nyot, downwoad i-it fwom hdfs. /(^•ω•^)
+    w-wetuwn isvawidsegmentondisk(segmentinfo) || c-checksegmentonhdfsandcopywocawwy(segmentinfo);
+  }
 
-      if (!verifySegmentStatusCountLargeEnough(segmentInfo)) {
-        SearchRateCounter.export(
-            "segment_loader_failed_too_few_tweets_in_segment_" + segmentInfo.getSegmentName())
-            .increment();
-        return false;
+  /**
+   * woads the data f-fow the given segment fwom the w-wocaw disk. ^•ﻌ•^
+   */
+  p-pubwic boowean woadsegmentfwomdisk(segmentinfo segmentinfo) {
+    if (segmentinfo.isindexing()) {
+      wog.ewwow("twied to w-woad cuwwent segment!");
+      wetuwn fawse;
+    }
+
+    s-segmentinfo.setindexing(twue);
+    twy {
+      f-fiwe fwushdiw = n-nyew fiwe(segmentinfo.getsyncinfo().getwocawsyncdiw());
+      diwectowy woaddiw = fsdiwectowy.open(fwushdiw.topath());
+
+      s-segmentinfo.woad(woaddiw);
+
+      i-if (!vewifysegmentstatuscountwawgeenough(segmentinfo)) {
+        seawchwatecountew.expowt(
+            "segment_woadew_faiwed_too_few_tweets_in_segment_" + s-segmentinfo.getsegmentname())
+            .incwement();
+        w-wetuwn fawse;
       }
 
-      segmentInfo.setIndexing(false);
-      segmentInfo.setComplete(true);
-      segmentInfo.getSyncInfo().setLoaded(true);
-      return true;
-    } catch (FlushVersionMismatchException e) {
-      handleException(segmentInfo, e);
-      // If earlybird is in starting state, handler will terminate it
-      criticalExceptionHandler.handle(this, e);
-    } catch (Exception e) {
-      handleException(segmentInfo, e);
+      segmentinfo.setindexing(fawse);
+      segmentinfo.setcompwete(twue);
+      segmentinfo.getsyncinfo().setwoaded(twue);
+      wetuwn t-twue;
+    } c-catch (fwushvewsionmismatchexception e-e) {
+      handweexception(segmentinfo, UwU e-e);
+      // i-if eawwybiwd is in stawting s-state, 😳😳😳 handwew wiww tewminate it
+      cwiticawexceptionhandwew.handwe(this, OwO e);
+    } catch (exception e) {
+      h-handweexception(segmentinfo, ^•ﻌ•^ e-e);
     }
 
-    SearchRateCounter.export("segment_loader_failed_" + segmentInfo.getSegmentName()).increment();
-    return false;
+    seawchwatecountew.expowt("segment_woadew_faiwed_" + segmentinfo.getsegmentname()).incwement();
+    w-wetuwn fawse;
   }
 
-  // Check to see if the segment exists on disk, and its checksum passes.
-  private boolean isValidSegmentOnDisk(SegmentInfo segment) {
-    String loadDirStr = segment.getSyncInfo().getLocalSyncDir();
-    File loadDir = new File(loadDirStr);
+  // c-check to see if the segment exists on disk, (ꈍᴗꈍ) and its checksum passes. (⑅˘꒳˘)
+  p-pwivate boowean isvawidsegmentondisk(segmentinfo segment) {
+    stwing woaddiwstw = segment.getsyncinfo().getwocawsyncdiw();
+    f-fiwe woaddiw = nyew fiwe(woaddiwstw);
 
-    if (!loadDir.exists()) {
-      return false;
+    if (!woaddiw.exists()) {
+      w-wetuwn fawse;
     }
 
-    for (String persistentFileName : segmentSyncConfig.getPersistentFileNames(segment)) {
-      if (!verifyInfoChecksum(loadDir, persistentFileName)) {
-        return false;
+    f-fow (stwing pewsistentfiwename : segmentsyncconfig.getpewsistentfiwenames(segment)) {
+      if (!vewifyinfochecksum(woaddiw, (⑅˘꒳˘) p-pewsistentfiwename)) {
+        w-wetuwn fawse;
       }
     }
 
-    return true;
+    wetuwn twue;
   }
 
-  private static boolean verifyInfoChecksum(File loadDir, String databaseName) {
-    if (checksumFileExists(loadDir, databaseName)) {
-      try {
-        Directory dir = FSDirectory.open(loadDir.toPath());
-        PersistentFile.Reader reader = PersistentFile.getReader(dir, databaseName);
-        try {
-          reader.verifyInfoChecksum();
-          return true;
-        } finally {
-          IOUtils.closeQuietly(reader);
-          IOUtils.closeQuietly(dir);
+  pwivate static boowean v-vewifyinfochecksum(fiwe woaddiw, (ˆ ﻌ ˆ)♡ s-stwing databasename) {
+    if (checksumfiweexists(woaddiw, /(^•ω•^) databasename)) {
+      twy {
+        diwectowy diw = fsdiwectowy.open(woaddiw.topath());
+        p-pewsistentfiwe.weadew weadew = pewsistentfiwe.getweadew(diw, òωó d-databasename);
+        t-twy {
+          weadew.vewifyinfochecksum();
+          w-wetuwn twue;
+        } f-finawwy {
+          i-ioutiws.cwosequietwy(weadew);
+          i-ioutiws.cwosequietwy(diw);
         }
-      } catch (PersistentFile.CorruptFileException e) {
-        LOG.error("Failed checksum verification.", e);
-      } catch (IOException e) {
-        LOG.error("Error while trying to read checksum file", e);
+      } catch (pewsistentfiwe.cowwuptfiweexception e-e) {
+        w-wog.ewwow("faiwed checksum vewification.", (⑅˘꒳˘) e);
+      } c-catch (ioexception e-e) {
+        w-wog.ewwow("ewwow whiwe twying to wead c-checksum fiwe", (U ᵕ U❁) e);
       }
     }
-    return false;
+    w-wetuwn fawse;
   }
 
-  // Check that the loaded segment's status count is higher than the configured threshold
-  private boolean verifySegmentStatusCountLargeEnough(SegmentInfo segmentInfo) {
-    long segmentStatusCount = segmentInfo.getIndexStats().getStatusCount();
-    if (segmentStatusCount > segmentSyncConfig.getMinSegmentStatusCountThreshold()) {
-      return true;
-    } else if (segmentInfo.getEarlybirdIndexConfig().isIndexStoredOnDisk()
-        && couldBeMostRecentArchiveSegment(segmentInfo)) {
-      // The most recent archive earlybird segment is expected to be incomplete
-      LOG.info("Segment status count (" + segmentStatusCount + ") is below the threshold of "
-          + segmentSyncConfig.getMinSegmentStatusCountThreshold()
-          + ", but this is expected because the most recent segment is expected to be incomplete: "
-          + segmentInfo);
-      return true;
-    } else {
-      // The segment status count is small so the segment is likely incomplete.
-      LOG.error("Segment status count (" + segmentStatusCount + ") is below the threshold of "
-          + segmentSyncConfig.getMinSegmentStatusCountThreshold() + ": " + segmentInfo);
-      segmentInfo.setIndexing(false);
-      segmentInfo.getSyncInfo().setLoaded(false);
+  // c-check that the woaded segment's status count is highew t-than the configuwed t-thweshowd
+  p-pwivate boowean v-vewifysegmentstatuscountwawgeenough(segmentinfo segmentinfo) {
+    w-wong segmentstatuscount = segmentinfo.getindexstats().getstatuscount();
+    if (segmentstatuscount > segmentsyncconfig.getminsegmentstatuscountthweshowd()) {
+      wetuwn twue;
+    } ewse i-if (segmentinfo.geteawwybiwdindexconfig().isindexstowedondisk()
+        && couwdbemostwecentawchivesegment(segmentinfo)) {
+      // the most w-wecent awchive eawwybiwd segment i-is expected to be incompwete
+      w-wog.info("segment status count (" + s-segmentstatuscount + ") i-is bewow the thweshowd o-of "
+          + s-segmentsyncconfig.getminsegmentstatuscountthweshowd()
+          + ", >w< b-but this is expected because the most wecent segment is expected to be incompwete: "
+          + segmentinfo);
+      wetuwn twue;
+    } e-ewse {
+      // t-the segment s-status count is smow so the segment i-is wikewy incompwete.
+      wog.ewwow("segment status count (" + s-segmentstatuscount + ") is b-bewow the thweshowd of "
+          + s-segmentsyncconfig.getminsegmentstatuscountthweshowd() + ": " + segmentinfo);
+      segmentinfo.setindexing(fawse);
+      s-segmentinfo.getsyncinfo().setwoaded(fawse);
 
-      // Remove segment from local disk
-      if (!segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately()) {
-        LOG.error("Failed to cleanup unloadable segment directory.");
+      // w-wemove segment fwom wocaw d-disk
+      if (!segmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy()) {
+        w-wog.ewwow("faiwed to cweanup unwoadabwe segment diwectowy.");
       }
 
-      return false;
+      wetuwn fawse;
     }
   }
 
-  // Check if this segment could be the most recent archive earlybird segment (would be on the
-  // latest tier). Archive segments tend to span around 12 days, so using a conservative threshold
-  // of 20 days.
-  private boolean couldBeMostRecentArchiveSegment(SegmentInfo segmentInfo) {
-    long timesliceAgeMs =
-        SnowflakeIdParser.getTweetAgeInMs(clock.nowMillis(), segmentInfo.getTimeSliceID());
-    return (timesliceAgeMs / 1000 / 60 / 60 / 24) <= 20;
+  // c-check if this s-segment couwd be t-the most wecent a-awchive eawwybiwd s-segment (wouwd be on the
+  // w-watest tiew). σωσ awchive s-segments tend to span awound 12 d-days, -.- so u-using a consewvative thweshowd
+  // o-of 20 days. o.O
+  pwivate boowean couwdbemostwecentawchivesegment(segmentinfo s-segmentinfo) {
+    wong timeswiceagems =
+        snowfwakeidpawsew.gettweetageinms(cwock.nowmiwwis(), ^^ s-segmentinfo.gettimeswiceid());
+    w-wetuwn (timeswiceagems / 1000 / 60 / 60 / 24) <= 20;
   }
 
   /**
-   * Check to see if the segment exists on hdfs. Will look for the correct segment version
-   * uploaded by any of the hosts.
-   * If the segment exists on hdfs, the segment will be copied from hdfs to the local file
-   * system, and we will verify the checksum against the copied version.
-   * @return true iff the segment was copied to local disk, and the checksum is verified.
+   * check t-to see if the segment exists on hdfs. >_< wiww wook f-fow the cowwect s-segment vewsion
+   * u-upwoaded by any of the hosts. >w<
+   * if the segment exists o-on hdfs, >_< the segment wiww be copied fwom hdfs to t-the wocaw fiwe
+   * s-system, >w< and we wiww vewify t-the checksum against the copied v-vewsion. rawr
+   * @wetuwn t-twue iff the segment was copied to wocaw disk, rawr x3 a-and the checksum is vewified. ( ͡o ω ͡o )
    */
-  private boolean checkSegmentOnHdfsAndCopyLocally(SegmentInfo segment) {
-    if (!segmentSyncConfig.isSegmentLoadFromHdfsEnabled()) {
-      return isValidSegmentOnDisk(segment);
+  pwivate b-boowean checksegmentonhdfsandcopywocawwy(segmentinfo s-segment) {
+    if (!segmentsyncconfig.issegmentwoadfwomhdfsenabwed()) {
+      w-wetuwn isvawidsegmentondisk(segment);
     }
 
-    LOG.info("About to start downloading segment from hdfs: " + segment);
-    Timer timer = new Timer(TimeUnit.MILLISECONDS);
-    String status = null;
-    String localBaseDir = segment.getSyncInfo().getLocalSyncDir();
-    FileSystem fs = null;
-    try {
-      fs = HdfsUtil.getHdfsFileSystem();
+    wog.info("about t-to stawt d-downwoading segment f-fwom hdfs: " + segment);
+    timew timew = nyew timew(timeunit.miwwiseconds);
+    stwing status = nuww;
+    stwing wocawbasediw = segment.getsyncinfo().getwocawsyncdiw();
+    fiwesystem fs = nyuww;
+    twy {
+      fs = hdfsutiw.gethdfsfiwesystem();
 
-      String hdfsBaseDirPrefix = segment.getSyncInfo().getHdfsSyncDirPrefix();
-      FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-      if (statuses != null && statuses.length > 0) {
-        Path hdfsSyncPath = statuses[0].getPath();
-        copySegmentFilesFromHdfs(segment, segmentSyncConfig, fs, hdfsSyncPath);
-        status = "loaded";
-      } else {
-        LOG.info("No segments found in hdfs under: " + hdfsBaseDirPrefix);
-        status = "notloaded";
+      stwing hdfsbasediwpwefix = segment.getsyncinfo().gethdfssyncdiwpwefix();
+      fiwestatus[] s-statuses = fs.gwobstatus(new p-path(hdfsbasediwpwefix));
+      if (statuses != nyuww && s-statuses.wength > 0) {
+        p-path hdfssyncpath = s-statuses[0].getpath();
+        copysegmentfiwesfwomhdfs(segment, (˘ω˘) s-segmentsyncconfig, 😳 fs, h-hdfssyncpath);
+        s-status = "woaded";
+      } ewse {
+        w-wog.info("no segments found in h-hdfs undew: " + h-hdfsbasediwpwefix);
+        status = "notwoaded";
       }
-      fs.close();
-    } catch (IOException ex) {
-      LOG.error("Failed copying segment from hdfs: " + segment + " after: "
-                + timer.stop() + " ms", ex);
+      fs.cwose();
+    } c-catch (ioexception e-ex) {
+      w-wog.ewwow("faiwed c-copying segment f-fwom hdfs: " + s-segment + " aftew: "
+                + t-timew.stop() + " m-ms", OwO e-ex);
       status = "exception";
-      SEGMENT_LOAD_FROM_HDFS_STATS.recordError();
-      try {
-        FileUtils.deleteDirectory(new File(localBaseDir));
-      } catch (IOException e) {
-        LOG.error("Error cleaning up local segment directory: " + segment, e);
+      segment_woad_fwom_hdfs_stats.wecowdewwow();
+      t-twy {
+        f-fiweutiws.dewetediwectowy(new f-fiwe(wocawbasediw));
+      } catch (ioexception e-e) {
+        wog.ewwow("ewwow cweaning up wocaw s-segment diwectowy: " + segment, (˘ω˘) e-e);
       }
-    } finally {
-      timer.stop();
-      SEGMENT_LOAD_FROM_HDFS_STATS.actionComplete(timer);
-      LOG.info("Download from hdfs completed in "
-          + timer.getElapsed() + " milliseconds: " + segment + " status: " + status);
-      IOUtils.closeQuietly(fs);
+    } f-finawwy {
+      t-timew.stop();
+      segment_woad_fwom_hdfs_stats.actioncompwete(timew);
+      w-wog.info("downwoad fwom hdfs c-compweted in "
+          + timew.getewapsed() + " m-miwwiseconds: " + segment + " s-status: " + status);
+      ioutiws.cwosequietwy(fs);
     }
 
-    // now check to see if we have successfully copied the segment
-    return isValidSegmentOnDisk(segment);
+    // nyow check to see if we have successfuwwy copied t-the segment
+    wetuwn isvawidsegmentondisk(segment);
   }
 
-  private static void copySegmentFilesFromHdfs(SegmentInfo segment,
-                                               SegmentSyncConfig syncConfig,
-                                               FileSystem fs,
-                                               Path hdfsSyncPath) throws IOException {
-    String localBaseDir = segment.getSyncInfo().getLocalSyncDir();
-    File localBaseDirFile = new File(localBaseDir);
-    FileUtils.deleteQuietly(localBaseDirFile);
-    if (localBaseDirFile.exists()) {
-      LOG.warn("Cannot delete the existing path: " + localBaseDir);
+  p-pwivate static v-void copysegmentfiwesfwomhdfs(segmentinfo segment, òωó
+                                               segmentsyncconfig syncconfig, ( ͡o ω ͡o )
+                                               f-fiwesystem fs, UwU
+                                               path hdfssyncpath) t-thwows ioexception {
+    s-stwing w-wocawbasediw = segment.getsyncinfo().getwocawsyncdiw();
+    fiwe w-wocawbasediwfiwe = n-nyew fiwe(wocawbasediw);
+    fiweutiws.dewetequietwy(wocawbasediwfiwe);
+    i-if (wocawbasediwfiwe.exists()) {
+      wog.wawn("cannot dewete t-the existing path: " + wocawbasediw);
     }
-    for (String fileName : syncConfig.getAllSyncFileNames(segment)) {
-      Path hdfsFilePath = new Path(hdfsSyncPath, fileName);
-      String localFileName = localBaseDir + "/" + fileName;
-      LOG.debug("About to start loading from hdfs: " + fileName + " from: "
-                + hdfsFilePath + " to: " + localFileName);
+    f-fow (stwing fiwename : s-syncconfig.getawwsyncfiwenames(segment)) {
+      p-path hdfsfiwepath = nyew p-path(hdfssyncpath, /(^•ω•^) f-fiwename);
+      s-stwing wocawfiwename = w-wocawbasediw + "/" + fiwename;
+      w-wog.debug("about t-to stawt woading f-fwom hdfs: " + f-fiwename + " f-fwom: "
+                + h-hdfsfiwepath + " t-to: " + w-wocawfiwename);
 
-      Timer timer = new Timer(TimeUnit.MILLISECONDS);
-      fs.copyToLocalFile(hdfsFilePath, new Path(localFileName));
-      LOG.debug("Loaded segment file from hdfs: " + fileName + " from: "
-                + hdfsFilePath + " to: " + localFileName + " in: " + timer.stop() + " ms.");
+      timew t-timew = nyew timew(timeunit.miwwiseconds);
+      fs.copytowocawfiwe(hdfsfiwepath, (ꈍᴗꈍ) n-nyew path(wocawfiwename));
+      wog.debug("woaded s-segment fiwe f-fwom hdfs: " + f-fiwename + " fwom: "
+                + hdfsfiwepath + " to: " + wocawfiwename + " i-in: " + timew.stop() + " m-ms.");
     }
 
-    LOG.info("Finished downloading segments from " + hdfsSyncPath);
+    w-wog.info("finished downwoading segments fwom " + hdfssyncpath);
   }
 
-  private static boolean checksumFileExists(File loadDir, String databaseName) {
-    String checksumFileName = PersistentFile.genChecksumFileName(databaseName);
-    File checksumFile = new File(loadDir, checksumFileName);
+  pwivate static b-boowean checksumfiweexists(fiwe w-woaddiw, 😳 stwing databasename) {
+    s-stwing checksumfiwename = p-pewsistentfiwe.genchecksumfiwename(databasename);
+    fiwe checksumfiwe = nyew fiwe(woaddiw, mya checksumfiwename);
 
-    return checksumFile.exists();
+    w-wetuwn checksumfiwe.exists();
   }
 
-  private void handleException(SegmentInfo segmentInfo, Exception e) {
-    LOG.error("Exception while loading IndexSegment from "
-        + segmentInfo.getSyncInfo().getLocalSyncDir(), e);
+  p-pwivate v-void handweexception(segmentinfo s-segmentinfo, mya exception e) {
+    wog.ewwow("exception w-whiwe w-woading indexsegment fwom "
+        + segmentinfo.getsyncinfo().getwocawsyncdiw(), /(^•ω•^) e-e);
 
-    segmentInfo.setIndexing(false);
-    segmentInfo.getSyncInfo().setLoaded(false);
-    if (!segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately()) {
-      LOG.error("Failed to cleanup unloadable segment directory.");
+    segmentinfo.setindexing(fawse);
+    segmentinfo.getsyncinfo().setwoaded(fawse);
+    if (!segmentinfo.dewetewocawindexedsegmentdiwectowyimmediatewy()) {
+      w-wog.ewwow("faiwed to cweanup u-unwoadabwe s-segment diwectowy.");
     }
   }
 }

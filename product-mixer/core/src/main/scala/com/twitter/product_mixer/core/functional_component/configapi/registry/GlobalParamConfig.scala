@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.functional_component.configapi.registry
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.wegistwy
 
 /**
- * Register Params that do not relate to a specific product.
- * See [[ParamConfig]] for hooks to register Params based on type.
+ * wegistew pawams t-that do nyot w-wewate to a specific p-pwoduct. UwU
+ * s-see [[pawamconfig]] f-fow hooks t-to wegistew pawams b-based on type. rawr x3
  */
-trait GlobalParamConfig extends ParamConfig with ParamConfigBuilder
+t-twait gwobawpawamconfig extends pawamconfig with pawamconfigbuiwdew

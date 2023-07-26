@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.functional_component.common.access_policy
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.access_powicy
 
 /**
- * Controls how access policies are applied to allow/reject a request
+ * contwows h-how access powicies a-awe appwied t-to awwow/weject a-a wequest
  */
-object AccessPolicyEvaluator {
-  def evaluate(productAccessPolicies: Set[AccessPolicy], userLdapGroups: Set[String]): Boolean =
-    productAccessPolicies.exists {
-      case AllowedLdapGroups(allowedGroups) => allowedGroups.exists(userLdapGroups.contains)
-      case _: BlockEverything => false
+object a-accesspowicyevawuatow {
+  d-def evawuate(pwoductaccesspowicies: s-set[accesspowicy], >_< u-usewwdapgwoups: set[stwing]): boowean =
+    pwoductaccesspowicies.exists {
+      case awwowedwdapgwoups(awwowedgwoups) => a-awwowedgwoups.exists(usewwdapgwoups.contains)
+      case _: bwockevewything => fawse
     }
 }

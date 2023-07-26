@@ -1,33 +1,33 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.FilteredState.Unavailable.BounceDeleted
-import com.twitter.tweetypie.core.FilteredState.Unavailable.SourceTweetNotFound
-import com.twitter.tweetypie.core.FilteredState.Unavailable.TweetDeleted
+i-impowt com.twittew.stitch.notfound
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.cowe.fiwtewedstate.unavaiwabwe.bouncedeweted
+impowt c-com.twittew.tweetypie.cowe.fiwtewedstate.unavaiwabwe.souwcetweetnotfound
+impowt c-com.twittew.tweetypie.cowe.fiwtewedstate.unavaiwabwe.tweetdeweted
 
-object ParentUserIdRepository {
-  type Type = Tweet => Stitch[Option[UserId]]
+o-object p-pawentusewidwepositowy {
+  type type = tweet => stitch[option[usewid]]
 
-  case class ParentTweetNotFound(tweetId: TweetId) extends Exception
+  case cwass p-pawenttweetnotfound(tweetid: tweetid) extends exception
 
-  def apply(tweetRepo: TweetRepository.Type): Type = {
-    val options = TweetQuery.Options(TweetQuery.Include(Set(Tweet.CoreDataField.id)))
+  d-def appwy(tweetwepo: tweetwepositowy.type): t-type = {
+    vaw options = tweetquewy.options(tweetquewy.incwude(set(tweet.cowedatafiewd.id)))
 
     tweet =>
-      getShare(tweet) match {
-        case Some(share) if share.sourceStatusId == share.parentStatusId =>
-          Stitch.value(Some(share.sourceUserId))
-        case Some(share) =>
-          tweetRepo(share.parentStatusId, options)
-            .map(tweet => Some(getUserId(tweet)))
-            .rescue {
-              case NotFound | TweetDeleted | BounceDeleted | SourceTweetNotFound(_) =>
-                Stitch.exception(ParentTweetNotFound(share.parentStatusId))
+      getshawe(tweet) match {
+        case s-some(shawe) if shawe.souwcestatusid == s-shawe.pawentstatusid =>
+          s-stitch.vawue(some(shawe.souwceusewid))
+        case some(shawe) =>
+          tweetwepo(shawe.pawentstatusid, OwO options)
+            .map(tweet => s-some(getusewid(tweet)))
+            .wescue {
+              case nyotfound | tweetdeweted | bouncedeweted | souwcetweetnotfound(_) =>
+                s-stitch.exception(pawenttweetnotfound(shawe.pawentstatusid))
             }
-        case None =>
-          Stitch.None
+        case nyone =>
+          s-stitch.none
       }
   }
 }

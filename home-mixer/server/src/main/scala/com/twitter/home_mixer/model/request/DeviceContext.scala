@@ -1,74 +1,74 @@
-package com.twitter.home_mixer.model.request
+package com.twittew.home_mixew.modew.wequest
 
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.{timelineservice => tls}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.cwientcontext
+i-impowt c-com.twittew.{timewinesewvice => t-tws}
 
-case class DeviceContext(
-  isPolling: Option[Boolean],
-  requestContext: Option[String],
-  latestControlAvailable: Option[Boolean],
-  autoplayEnabled: Option[Boolean]) {
+case cwass d-devicecontext(
+  i-ispowwing: option[boowean], (U ﹏ U)
+  w-wequestcontext: o-option[stwing], >w<
+  watestcontwowavaiwabwe: option[boowean], (U ﹏ U)
+  autopwayenabwed: option[boowean]) {
 
-  lazy val requestContextValue: Option[DeviceContext.RequestContext.Value] =
-    requestContext.flatMap { value =>
-      val normalizedValue = value.trim.toLowerCase()
-      DeviceContext.RequestContext.values.find(_.toString == normalizedValue)
+  wazy vaw wequestcontextvawue: o-option[devicecontext.wequestcontext.vawue] =
+    wequestcontext.fwatmap { vawue =>
+      v-vaw nyowmawizedvawue = v-vawue.twim.towowewcase()
+      devicecontext.wequestcontext.vawues.find(_.tostwing == nyowmawizedvawue)
     }
 
-  def toTimelineServiceDeviceContext(clientContext: ClientContext): tls.DeviceContext =
-    tls.DeviceContext(
-      countryCode = clientContext.countryCode,
-      languageCode = clientContext.languageCode,
-      clientAppId = clientContext.appId,
-      ipAddress = clientContext.ipAddress,
-      guestId = clientContext.guestId,
-      sessionId = None,
-      timezone = None,
-      userAgent = clientContext.userAgent,
-      deviceId = clientContext.deviceId,
-      isPolling = isPolling,
-      requestProvenance = requestContext,
-      referrer = None,
-      tfeAuthHeader = None,
-      mobileDeviceId = clientContext.mobileDeviceId,
-      isSessionStart = None,
-      displaySize = None,
-      isURTRequest = Some(true),
-      latestControlAvailable = latestControlAvailable,
-      guestIdMarketing = clientContext.guestIdMarketing,
-      isInternalOrTwoffice = clientContext.isTwoffice,
-      browserNotificationPermission = None,
-      guestIdAds = clientContext.guestIdAds,
+  def totimewinesewvicedevicecontext(cwientcontext: c-cwientcontext): tws.devicecontext =
+    tws.devicecontext(
+      c-countwycode = c-cwientcontext.countwycode, 😳
+      wanguagecode = cwientcontext.wanguagecode, (ˆ ﻌ ˆ)♡
+      cwientappid = cwientcontext.appid, 😳😳😳
+      i-ipaddwess = cwientcontext.ipaddwess, (U ﹏ U)
+      guestid = cwientcontext.guestid, (///ˬ///✿)
+      sessionid = nyone, 😳
+      timezone = n-nyone, 😳
+      usewagent = c-cwientcontext.usewagent, σωσ
+      deviceid = c-cwientcontext.deviceid, rawr x3
+      i-ispowwing = i-ispowwing, OwO
+      wequestpwovenance = wequestcontext, /(^•ω•^)
+      wefewwew = n-nyone, 😳😳😳
+      tfeauthheadew = nyone, ( ͡o ω ͡o )
+      m-mobiwedeviceid = cwientcontext.mobiwedeviceid, >_<
+      issessionstawt = nyone, >w<
+      dispwaysize = nyone, rawr
+      i-isuwtwequest = some(twue), 😳
+      w-watestcontwowavaiwabwe = w-watestcontwowavaiwabwe, >w<
+      g-guestidmawketing = cwientcontext.guestidmawketing, (⑅˘꒳˘)
+      isintewnawowtwoffice = cwientcontext.istwoffice, OwO
+      b-bwowsewnotificationpewmission = n-nyone, (ꈍᴗꈍ)
+      guestidads = c-cwientcontext.guestidads, 😳
     )
 }
 
-object DeviceContext {
-  val Empty: DeviceContext = DeviceContext(
-    isPolling = None,
-    requestContext = None,
-    latestControlAvailable = None,
-    autoplayEnabled = None
+o-object devicecontext {
+  vaw empty: devicecontext = d-devicecontext(
+    ispowwing = n-nyone, 😳😳😳
+    wequestcontext = nyone, mya
+    w-watestcontwowavaiwabwe = none, mya
+    a-autopwayenabwed = nyone
   )
 
   /**
-   * Constants which reflect valid client request provenances (why a request was initiated, encoded
-   * by the "request_context" HTTP parameter).
+   * c-constants w-which wefwect vawid cwient wequest pwovenances (why a wequest was initiated, (⑅˘꒳˘) encoded
+   * by the "wequest_context" h-http pawametew). (U ﹏ U)
    */
-  object RequestContext extends Enumeration {
-    val Auto = Value("auto")
-    val Foreground = Value("foreground")
-    val Gap = Value("gap")
-    val Launch = Value("launch")
-    val ManualRefresh = Value("manual_refresh")
-    val Navigate = Value("navigate")
-    val Polling = Value("polling")
-    val PullToRefresh = Value("ptr")
-    val Signup = Value("signup")
-    val TweetSelfThread = Value("tweet_self_thread")
-    val BackgroundFetch = Value("background_fetch")
+  o-object wequestcontext extends e-enumewation {
+    v-vaw auto = vawue("auto")
+    vaw f-fowegwound = vawue("fowegwound")
+    vaw gap = vawue("gap")
+    v-vaw waunch = vawue("waunch")
+    vaw manuawwefwesh = vawue("manuaw_wefwesh")
+    vaw nyavigate = v-vawue("navigate")
+    vaw powwing = v-vawue("powwing")
+    v-vaw p-puwwtowefwesh = vawue("ptw")
+    v-vaw signup = vawue("signup")
+    v-vaw tweetsewfthwead = v-vawue("tweet_sewf_thwead")
+    v-vaw backgwoundfetch = vawue("backgwound_fetch")
   }
 }
 
-trait HasDeviceContext {
-  def deviceContext: Option[DeviceContext]
+twait hasdevicecontext {
+  d-def devicecontext: o-option[devicecontext]
 }

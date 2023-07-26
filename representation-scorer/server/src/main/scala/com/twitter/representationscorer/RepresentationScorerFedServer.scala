@@ -1,38 +1,38 @@
-package com.twitter.representationscorer
+package com.twittew.wepwesentationscowew
 
-import com.google.inject.Module
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
-import com.twitter.representationscorer.columns.ListScoreColumn
-import com.twitter.representationscorer.columns.ScoreColumn
-import com.twitter.representationscorer.columns.SimClustersRecentEngagementSimilarityColumn
-import com.twitter.representationscorer.columns.SimClustersRecentEngagementSimilarityUserTweetEdgeColumn
-import com.twitter.representationscorer.modules.CacheModule
-import com.twitter.representationscorer.modules.EmbeddingStoreModule
-import com.twitter.representationscorer.modules.RMSConfigModule
-import com.twitter.representationscorer.modules.TimerModule
-import com.twitter.representationscorer.twistlyfeatures.UserSignalServiceRecentEngagementsClientModule
-import com.twitter.strato.fed._
-import com.twitter.strato.fed.server._
+impowt c-com.googwe.inject.moduwe
+i-impowt c-com.twittew.inject.thwift.moduwes.thwiftcwientidmoduwe
+i-impowt com.twittew.wepwesentationscowew.cowumns.wistscowecowumn
+i-impowt com.twittew.wepwesentationscowew.cowumns.scowecowumn
+i-impowt com.twittew.wepwesentationscowew.cowumns.simcwustewswecentengagementsimiwawitycowumn
+impowt c-com.twittew.wepwesentationscowew.cowumns.simcwustewswecentengagementsimiwawityusewtweetedgecowumn
+i-impowt com.twittew.wepwesentationscowew.moduwes.cachemoduwe
+impowt com.twittew.wepwesentationscowew.moduwes.embeddingstowemoduwe
+impowt com.twittew.wepwesentationscowew.moduwes.wmsconfigmoduwe
+impowt c-com.twittew.wepwesentationscowew.moduwes.timewmoduwe
+impowt com.twittew.wepwesentationscowew.twistwyfeatuwes.usewsignawsewvicewecentengagementscwientmoduwe
+impowt c-com.twittew.stwato.fed._
+impowt c-com.twittew.stwato.fed.sewvew._
 
-object RepresentationScorerFedServerMain extends RepresentationScorerFedServer
+object wepwesentationscowewfedsewvewmain extends wepwesentationscowewfedsewvew
 
-trait RepresentationScorerFedServer extends StratoFedServer {
-  override def dest: String = "/s/representation-scorer/representation-scorer"
-  override val modules: Seq[Module] =
-    Seq(
-      CacheModule,
-      ThriftClientIdModule,
-      UserSignalServiceRecentEngagementsClientModule,
-      TimerModule,
-      RMSConfigModule,
-      EmbeddingStoreModule
+t-twait wepwesentationscowewfedsewvew extends s-stwatofedsewvew {
+  o-ovewwide def dest: stwing = "/s/wepwesentation-scowew/wepwesentation-scowew"
+  ovewwide vaw moduwes: seq[moduwe] =
+    seq(
+      c-cachemoduwe, nyaa~~
+      thwiftcwientidmoduwe, (⑅˘꒳˘)
+      usewsignawsewvicewecentengagementscwientmoduwe, rawr x3
+      timewmoduwe, (✿oωo)
+      wmsconfigmoduwe, (ˆ ﻌ ˆ)♡
+      e-embeddingstowemoduwe
     )
 
-  override def columns: Seq[Class[_ <: StratoFed.Column]] =
-    Seq(
-      classOf[ListScoreColumn],
-      classOf[ScoreColumn],
-      classOf[SimClustersRecentEngagementSimilarityUserTweetEdgeColumn],
-      classOf[SimClustersRecentEngagementSimilarityColumn]
+  ovewwide def c-cowumns: seq[cwass[_ <: s-stwatofed.cowumn]] =
+    s-seq(
+      cwassof[wistscowecowumn], (˘ω˘)
+      c-cwassof[scowecowumn], (⑅˘꒳˘)
+      cwassof[simcwustewswecentengagementsimiwawityusewtweetedgecowumn], (///ˬ///✿)
+      cwassof[simcwustewswecentengagementsimiwawitycowumn]
     )
 }

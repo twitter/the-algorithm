@@ -1,86 +1,86 @@
-package com.twitter.home_mixer.param
+package com.twittew.home_mixew.pawam
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
 
 /**
- * Instantiate Params that do not relate to a specific product.
+ * i-instantiate pawams t-that do nyot w-wewate to a specific p-pwoduct. 🥺
  *
- * @see [[com.twitter.product_mixer.core.product.ProductParamConfig.supportedClientFSName]]
+ * @see [[com.twittew.pwoduct_mixew.cowe.pwoduct.pwoductpawamconfig.suppowtedcwientfsname]]
  */
-object HomeGlobalParams {
+o-object homegwobawpawams {
 
   /**
-   * This param is used to disable ads injection for timelines served by home-mixer.
-   * It is currently used to maintain user-role based no-ads lists for automation accounts,
-   * and should NOT be used for other purposes.
+   * t-this pawam is used to disabwe ads injection fow timewines sewved by home-mixew. o.O
+   * i-it is cuwwentwy used to maintain usew-wowe b-based nyo-ads wists fow a-automation accounts, /(^•ω•^)
+   * and shouwd nyot be used fow othew puwposes. nyaa~~
    */
-  object AdsDisableInjectionBasedOnUserRoleParam
-      extends FSParam("home_mixer_ads_disable_injection_based_on_user_role", false)
+  object a-adsdisabweinjectionbasedonusewwowepawam
+      extends fspawam("home_mixew_ads_disabwe_injection_based_on_usew_wowe", nyaa~~ f-fawse)
 
-  object EnableSendScoresToClient
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_send_scores_to_client",
-        default = false
+  o-object enabwesendscowestocwient
+      extends fspawam[boowean](
+        nyame = "home_mixew_enabwe_send_scowes_to_cwient", :3
+        defauwt = f-fawse
       )
 
-  object EnableNahFeedbackInfoParam
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_nah_feedback_info",
-        default = false
+  object enabwenahfeedbackinfopawam
+      extends fspawam[boowean](
+        nyame = "home_mixew_enabwe_nah_feedback_info", 😳😳😳
+        d-defauwt = fawse
       )
 
-  object MaxNumberReplaceInstructionsParam
-      extends FSBoundedParam[Int](
-        name = "home_mixer_max_number_replace_instructions",
-        default = 100,
-        min = 0,
+  object maxnumbewwepwaceinstwuctionspawam
+      e-extends f-fsboundedpawam[int](
+        n-nyame = "home_mixew_max_numbew_wepwace_instwuctions", (˘ω˘)
+        d-defauwt = 100, ^^
+        min = 0, :3
         max = 200
       )
 
-  object TimelinesPersistenceStoreMaxEntriesPerClient
-      extends FSBoundedParam[Int](
-        name = "home_mixer_timelines_persistence_store_max_entries_per_client",
-        default = 1800,
-        min = 500,
+  o-object timewinespewsistencestowemaxentwiespewcwient
+      extends f-fsboundedpawam[int](
+        nyame = "home_mixew_timewines_pewsistence_stowe_max_entwies_pew_cwient", -.-
+        defauwt = 1800, 😳
+        min = 500, mya
         max = 5000
       )
 
-  object EnableNewTweetsPillAvatarsParam
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_new_tweets_pill_avatars",
-        default = true
+  object enabwenewtweetspiwwavatawspawam
+      e-extends fspawam[boowean](
+        n-nyame = "home_mixew_enabwe_new_tweets_piww_avataws", (˘ω˘)
+        d-defauwt = t-twue
       )
 
-  object EnableSocialContextParam
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_social_context",
-        default = true
+  object enabwesociawcontextpawam
+      extends fspawam[boowean](
+        n-nyame = "home_mixew_enabwe_sociaw_context", >_<
+        d-defauwt = twue
       )
 
-  object EnableAdvertiserBrandSafetySettingsFeatureHydratorParam
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_advertiser_brand_safety_settings_feature_hydrator",
-        default = true
+  object e-enabweadvewtisewbwandsafetysettingsfeatuwehydwatowpawam
+      e-extends fspawam[boowean](
+        nyame = "home_mixew_enabwe_advewtisew_bwand_safety_settings_featuwe_hydwatow", -.-
+        d-defauwt = twue
       )
 
-  object EnableImpressionBloomFilter
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_impression_bloom_filter",
-        default = false
+  o-object enabweimpwessionbwoomfiwtew
+      extends fspawam[boowean](
+        n-nyame = "home_mixew_enabwe_impwession_bwoom_fiwtew", 🥺
+        defauwt = f-fawse
       )
 
-  object ImpressionBloomFilterFalsePositiveRateParam
-      extends FSBoundedParam[Double](
-        name = "home_mixer_impression_bloom_filter_false_positive_rate",
-        default = 0.005,
-        min = 0.001,
+  object impwessionbwoomfiwtewfawsepositivewatepawam
+      extends f-fsboundedpawam[doubwe](
+        n-nyame = "home_mixew_impwession_bwoom_fiwtew_fawse_positive_wate", (U ﹏ U)
+        defauwt = 0.005, >w<
+        min = 0.001, mya
         max = 0.01
       )
 
-  object EnableScribeServedCandidatesParam
-      extends FSParam[Boolean](
-        name = "home_mixer_served_tweets_enable_scribing",
-        default = true
+  object enabwescwibesewvedcandidatespawam
+      extends fspawam[boowean](
+        nyame = "home_mixew_sewved_tweets_enabwe_scwibing", >w<
+        defauwt = twue
       )
 }

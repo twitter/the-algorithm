@@ -1,261 +1,261 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.cache.thriftscala.CachedValueStatus.DoNotCache
-import com.twitter.servo.util.{Gate, Transformer}
-import com.twitter.util.{Duration, Return, Throw, Time}
-import java.nio.ByteBuffer
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.cache.thwiftscawa.cachedvawuestatus.donotcache
+i-impowt com.twittew.sewvo.utiw.{gate, ʘwʘ t-twansfowmew}
+i-impowt com.twittew.utiw.{duwation, :3 w-wetuwn, (U ﹏ U) thwow, time}
+impowt java.nio.bytebuffew
 
-object Cached {
+object cached {
 
-  private[this] val millisToTime: Long => Time =
-    ms => Time.fromMilliseconds(ms)
+  pwivate[this] v-vaw miwwistotime: wong => time =
+    m-ms => time.fwommiwwiseconds(ms)
 
-  private val timeToMills: Time => Long =
-    time => time.inMilliseconds
+  pwivate vaw timetomiwws: t-time => wong =
+    time => time.inmiwwiseconds
 
   /**
-   * Deserialize a CachedValue to a Cached[V]
+   * desewiawize a-a cachedvawue to a cached[v]
    *
-   * If the ByteBuffer contained in the `cachedValue` is backed by an `Array[Byte]` with its offset
-   * at 0, we will apply the serializer directly to the backing array for performance reasons.
+   * i-if the b-bytebuffew contained in the `cachedvawue` is backed by an `awway[byte]` with its o-offset
+   * at 0, (U ﹏ U) we wiww appwy the sewiawizew diwectwy to the backing awway fow p-pewfowmance weasons. ʘwʘ
    *
-   * As such, the `Serializer[V]` the caller provides MUST NOT mutate the buffer it is given.
-   * This exhortation is also given in com.twitter.servo.util.Transformer, but repeated here.
+   * as such, >w< the `sewiawizew[v]` the c-cawwew pwovides m-must nyot mutate t-the buffew it i-is given. rawr x3
+   * this exhowtation is awso given i-in com.twittew.sewvo.utiw.twansfowmew, OwO but wepeated hewe. ^•ﻌ•^
    */
-  def apply[V](cachedValue: CachedValue, serializer: Serializer[V]): Cached[V] = {
-    val value: Option[V] = cachedValue.value match {
-      case Some(buf) if buf.hasArray && buf.arrayOffset() == 0 =>
-        serializer.from(buf.array).toOption
-      case Some(buf) =>
-        val array = new Array[Byte](buf.remaining)
-        buf.duplicate.get(array)
-        serializer.from(array).toOption
-      case None => None
+  d-def appwy[v](cachedvawue: cachedvawue, >_< sewiawizew: sewiawizew[v]): cached[v] = {
+    vaw vawue: o-option[v] = cachedvawue.vawue match {
+      case s-some(buf) if b-buf.hasawway && b-buf.awwayoffset() == 0 =>
+        sewiawizew.fwom(buf.awway).tooption
+      case some(buf) =>
+        v-vaw awway = n-nyew awway[byte](buf.wemaining)
+        buf.dupwicate.get(awway)
+        s-sewiawizew.fwom(awway).tooption
+      c-case nyone => nyone
     }
-    val status =
-      if (cachedValue.value.nonEmpty && value.isEmpty)
-        CachedValueStatus.DeserializationFailed
-      else
-        cachedValue.status
+    vaw status =
+      i-if (cachedvawue.vawue.nonempty && vawue.isempty)
+        c-cachedvawuestatus.desewiawizationfaiwed
+      ewse
+        cachedvawue.status
 
-    Cached(
-      value,
-      status,
-      Time.fromMilliseconds(cachedValue.cachedAtMsec),
-      cachedValue.readThroughAtMsec.map(millisToTime),
-      cachedValue.writtenThroughAtMsec.map(millisToTime),
-      cachedValue.doNotCacheUntilMsec.map(millisToTime),
-      cachedValue.softTtlStep
+    c-cached(
+      vawue, OwO
+      s-status, >_<
+      time.fwommiwwiseconds(cachedvawue.cachedatmsec), (ꈍᴗꈍ)
+      c-cachedvawue.weadthwoughatmsec.map(miwwistotime), >w<
+      c-cachedvawue.wwittenthwoughatmsec.map(miwwistotime), (U ﹏ U)
+      cachedvawue.donotcacheuntiwmsec.map(miwwistotime), ^^
+      cachedvawue.softttwstep
     )
   }
 }
 
 /**
- * A simple metadata wrapper for cached values. This is stored in the cache
- * using the [[com.twitter.servo.cache.thriftscala.CachedValue]] struct, which is similar, but
- * untyped.
+ * a simpwe metadata wwappew fow cached vawues. (U ﹏ U) this is stowed in the cache
+ * u-using the [[com.twittew.sewvo.cache.thwiftscawa.cachedvawue]] s-stwuct, :3 which is simiwaw, (✿oωo) b-but
+ * untyped. XD
  */
-case class Cached[V](
-  value: Option[V],
-  status: CachedValueStatus,
-  cachedAt: Time,
-  readThroughAt: Option[Time] = None,
-  writtenThroughAt: Option[Time] = None,
-  doNotCacheUntil: Option[Time] = None,
-  softTtlStep: Option[Short] = None) {
+c-case c-cwass cached[v](
+  vawue: option[v], >w<
+  status: cachedvawuestatus, òωó
+  c-cachedat: time, (ꈍᴗꈍ)
+  weadthwoughat: option[time] = nyone,
+  wwittenthwoughat: option[time] = nyone, rawr x3
+  d-donotcacheuntiw: option[time] = n-nyone, rawr x3
+  s-softttwstep: option[showt] = n-nyone) {
 
   /**
-   * produce a new cached value with the same metadata
+   * pwoduce a nyew c-cached vawue with t-the same metadata
    */
-  def map[W](f: V => W): Cached[W] = copy(value = value.map(f))
+  d-def m-map[w](f: v => w): cached[w] = copy(vawue = vawue.map(f))
 
   /**
-   * serialize to a CachedValue
+   * s-sewiawize t-to a cachedvawue
    */
-  def toCachedValue(serializer: Serializer[V]): CachedValue = {
-    var serializedValue: Option[ByteBuffer] = None
-    val cachedValueStatus = value match {
-      case Some(v) =>
-        serializer.to(v) match {
-          case Return(sv) =>
-            serializedValue = Some(ByteBuffer.wrap(sv))
+  d-def tocachedvawue(sewiawizew: s-sewiawizew[v]): c-cachedvawue = {
+    vaw sewiawizedvawue: option[bytebuffew] = n-nyone
+    vaw cachedvawuestatus = vawue match {
+      case some(v) =>
+        sewiawizew.to(v) m-match {
+          case wetuwn(sv) =>
+            sewiawizedvawue = some(bytebuffew.wwap(sv))
             status
-          case Throw(_) => CachedValueStatus.SerializationFailed
+          c-case thwow(_) => c-cachedvawuestatus.sewiawizationfaiwed
         }
-      case None => status
+      c-case nyone => status
     }
 
-    CachedValue(
-      serializedValue,
-      cachedValueStatus,
-      cachedAt.inMilliseconds,
-      readThroughAt.map(Cached.timeToMills),
-      writtenThroughAt.map(Cached.timeToMills),
-      doNotCacheUntil.map(Cached.timeToMills),
-      softTtlStep
+    c-cachedvawue(
+      sewiawizedvawue, σωσ
+      c-cachedvawuestatus,
+      c-cachedat.inmiwwiseconds, (ꈍᴗꈍ)
+      weadthwoughat.map(cached.timetomiwws), rawr
+      wwittenthwoughat.map(cached.timetomiwws), ^^;;
+      donotcacheuntiw.map(cached.timetomiwws), rawr x3
+      softttwstep
     )
   }
 
   /**
-   * Resolves conflicts between a value being inserted into cache and a value already in cache by
-   * using the time a cached value was last updated.
-   * If the cached value has a writtenThroughAt, returns it. Otherwise returns readThroughAt, but
-   * if that doesn't exist, returns cachedAt.
-   * This makes it favor writes to reads in the event of a race condition.
+   * wesowves c-confwicts between a vawue being i-insewted into cache and a vawue a-awweady in cache b-by
+   * using the time a cached vawue was wast u-updated. (ˆ ﻌ ˆ)♡
+   * if t-the cached vawue has a wwittenthwoughat, σωσ w-wetuwns i-it. (U ﹏ U) othewwise wetuwns weadthwoughat, >w< but
+   * if that doesn't exist, σωσ wetuwns cachedat. nyaa~~
+   * t-this m-makes it favow w-wwites to weads in the event of a-a wace condition. 🥺
    */
-  def effectiveUpdateTime[V](writtenThroughBuffer: Duration = 0.second): Time = {
-    this.writtenThroughAt match {
-      case Some(wta) => wta + writtenThroughBuffer
-      case None =>
-        this.readThroughAt match {
-          case Some(rta) => rta
-          case None => this.cachedAt
+  d-def effectiveupdatetime[v](wwittenthwoughbuffew: d-duwation = 0.second): time = {
+    this.wwittenthwoughat match {
+      case some(wta) => w-wta + wwittenthwoughbuffew
+      c-case nyone =>
+        this.weadthwoughat match {
+          c-case some(wta) => w-wta
+          case nyone => this.cachedat
         }
     }
   }
 }
 
 /**
- * Switch between two cache pickers by providing deciderable gate
+ * switch b-between two cache pickews by pwoviding decidewabwe gate
  */
-class DeciderablePicker[V](
-  primaryPicker: LockingCache.Picker[Cached[V]],
-  secondaryPicker: LockingCache.Picker[Cached[V]],
-  usePrimary: Gate[Unit],
-  statsReceiver: StatsReceiver)
-    extends LockingCache.Picker[Cached[V]] {
-  private[this] val stats = statsReceiver.scope("deciderable_picker")
-  private[this] val pickerScope = stats.scope("picker")
-  private[this] val primaryPickerCount = pickerScope.counter("primary")
-  private[this] val secondaryPickerCount = pickerScope.counter("secondary")
+cwass decidewabwepickew[v](
+  p-pwimawypickew: wockingcache.pickew[cached[v]], rawr x3
+  secondawypickew: wockingcache.pickew[cached[v]], σωσ
+  u-usepwimawy: gate[unit], (///ˬ///✿)
+  s-statsweceivew: statsweceivew)
+    extends wockingcache.pickew[cached[v]] {
+  p-pwivate[this] v-vaw stats = statsweceivew.scope("decidewabwe_pickew")
+  pwivate[this] vaw p-pickewscope = stats.scope("pickew")
+  pwivate[this] v-vaw pwimawypickewcount = pickewscope.countew("pwimawy")
+  pwivate[this] vaw s-secondawypickewcount = pickewscope.countew("secondawy")
 
-  private[this] val pickedScope = stats.scope("picked_values")
-  private[this] val pickedValuesMatched = pickedScope.counter("matched")
-  private[this] val pickedValuesMismatched = pickedScope.counter("mismatched")
+  p-pwivate[this] v-vaw pickedscope = stats.scope("picked_vawues")
+  p-pwivate[this] vaw pickedvawuesmatched = p-pickedscope.countew("matched")
+  p-pwivate[this] v-vaw pickedvawuesmismatched = pickedscope.countew("mismatched")
 
-  override def apply(newValue: Cached[V], oldValue: Cached[V]): Option[Cached[V]] = {
-    val secondaryPickerValue = secondaryPicker(newValue, oldValue)
+  o-ovewwide def a-appwy(newvawue: cached[v], (U ﹏ U) owdvawue: cached[v]): o-option[cached[v]] = {
+    v-vaw secondawypickewvawue = s-secondawypickew(newvawue, ^^;; owdvawue)
 
-    if (usePrimary()) {
-      val primaryPickerValue = primaryPicker(newValue, oldValue)
+    if (usepwimawy()) {
+      vaw pwimawypickewvawue = p-pwimawypickew(newvawue, 🥺 owdvawue)
 
-      primaryPickerCount.incr()
-      if (primaryPickerValue == secondaryPickerValue) pickedValuesMatched.incr()
-      else pickedValuesMismatched.incr()
+      p-pwimawypickewcount.incw()
+      i-if (pwimawypickewvawue == secondawypickewvawue) pickedvawuesmatched.incw()
+      ewse p-pickedvawuesmismatched.incw()
 
-      primaryPickerValue
-    } else {
-      secondaryPickerCount.incr()
-      secondaryPickerValue
+      p-pwimawypickewvawue
+    } ewse {
+      s-secondawypickewcount.incw()
+      s-secondawypickewvawue
     }
   }
 
-  override def toString(): String = "DeciderablePicker"
+  ovewwide def tostwing(): s-stwing = "decidewabwepickew"
 
 }
 
 /**
- * It's similar to the PreferNewestCached picker, but it prefers written-through value
- * over read-through as long as written-through value + writtenThroughExtra is
- * newer than read-through value. Same as in PreferNewestCached, if values cached
- * have the same cached method and time picker picks the new value.
+ * it's simiwaw to the pwefewnewestcached pickew, òωó but it pwefews wwitten-thwough vawue
+ * ovew wead-thwough a-as wong as wwitten-thwough v-vawue + wwittenthwoughextwa is
+ * nyewew than w-wead-thwough vawue. XD same as in p-pwefewnewestcached, :3 if vawues c-cached
+ * have the s-same cached method a-and time pickew p-picks the n-nyew vawue. (U ﹏ U)
  *
- * It intends to solve race condition when the read and write requests come at the
- * same time, but write requests is getting cached first and then getting override with
- * a stale value from the read request.
+ * it intends to sowve wace condition when the wead and wwite wequests come at the
+ * same time, >w< b-but wwite wequests i-is getting cached f-fiwst and then getting ovewwide w-with
+ * a stawe vawue fwom the wead wequest. /(^•ω•^)
  *
- * If enabled gate is disabled, it falls back to PreferNewestCached logic.
+ * if enabwed g-gate is disabwed, (⑅˘꒳˘) i-it fawws back to pwefewnewestcached w-wogic. ʘwʘ
  *
  */
-class PreferWrittenThroughCached[V](
-  writtenThroughBuffer: Duration = 1.second)
-    extends PreferNewestCached[V] {
-  override def apply(newValue: Cached[V], oldValue: Cached[V]): Option[Cached[V]] = {
-    // the tie goes to newValue
-    if (oldValue.effectiveUpdateTime(writtenThroughBuffer) > newValue.effectiveUpdateTime(
-        writtenThroughBuffer))
-      None
-    else
-      Some(newValue)
+cwass pwefewwwittenthwoughcached[v](
+  wwittenthwoughbuffew: d-duwation = 1.second)
+    e-extends pwefewnewestcached[v] {
+  ovewwide d-def appwy(newvawue: c-cached[v], rawr x3 owdvawue: cached[v]): option[cached[v]] = {
+    // the tie goes to nyewvawue
+    i-if (owdvawue.effectiveupdatetime(wwittenthwoughbuffew) > n-nyewvawue.effectiveupdatetime(
+        w-wwittenthwoughbuffew))
+      n-nyone
+    ewse
+      s-some(newvawue)
   }
-  override def toString(): String = "PreferWrittenThroughCached"
+  ovewwide def tostwing(): s-stwing = "pwefewwwittenthwoughcached"
 }
 
 /**
- * prefer one value over another based on Cached metadata
+ * p-pwefew one vawue ovew anothew b-based on cached m-metadata
  */
-class PreferNewestCached[V] extends LockingCache.Picker[Cached[V]] {
+cwass pwefewnewestcached[v] extends w-wockingcache.pickew[cached[v]] {
 
-  override def apply(newValue: Cached[V], oldValue: Cached[V]): Option[Cached[V]] = {
-    if (oldValue.effectiveUpdateTime() > newValue.effectiveUpdateTime())
-      None
-    else
-      Some(newValue)
+  ovewwide def appwy(newvawue: c-cached[v], (˘ω˘) owdvawue: cached[v]): o-option[cached[v]] = {
+    i-if (owdvawue.effectiveupdatetime() > nyewvawue.effectiveupdatetime())
+      nyone
+    e-ewse
+      some(newvawue)
   }
 
-  override def toString(): String = "PreferNewestCached"
+  ovewwide d-def tostwing(): s-stwing = "pwefewnewestcached"
 }
 
 /**
- * Prefer non-empty values. If a non-empty value is in cache, and the
- * value to store is empty, return the non-empty value with a fresh cachedAt
- * instead.
+ * p-pwefew nyon-empty vawues. o.O if a nyon-empty vawue is in c-cache, 😳 and the
+ * vawue to stowe is empty, o.O wetuwn t-the nyon-empty v-vawue with a fwesh cachedat
+ * i-instead. ^^;;
  */
-class PreferNewestNonEmptyCached[V] extends PreferNewestCached[V] {
-  override def apply(newValue: Cached[V], oldValue: Cached[V]) = {
-    (newValue.value, oldValue.value) match {
-      // Some/Some and None/None cases are handled by the super class
-      case (Some(_), Some(_)) => super.apply(newValue, oldValue)
-      case (None, None) => super.apply(newValue, oldValue)
-      case (Some(_), None) => Some(newValue)
-      case (None, Some(_)) => Some(oldValue.copy(cachedAt = Time.now))
-    }
-  }
-}
-
-/**
- * Prefer do not cache entries if they're not expired. Otherwise uses fallbackPicker
- * @param fallBackPicker the picker to use when the oldvalue isn't do not cache or is expired.
- *                       Defaults to PreferNewestCache.
- */
-class PreferDoNotCache[V](
-  fallBackPicker: LockingCache.Picker[Cached[V]] = new PreferNewestCached[V]: PreferNewestCached[V],
-  statsReceiver: StatsReceiver)
-    extends LockingCache.Picker[Cached[V]] {
-  private[this] val pickDoNotCacheEntryCounter = statsReceiver.counter("pick_do_not_cache_entry")
-  private[this] val useFallbackCounter = statsReceiver.counter("use_fallback")
-  override def apply(newValue: Cached[V], oldValue: Cached[V]): Option[Cached[V]] = {
-    if (oldValue.status == DoNotCache && oldValue.doNotCacheUntil.forall(
-        _ > newValue.effectiveUpdateTime())) { // evaluates to true if dnc until is None
-      pickDoNotCacheEntryCounter.incr()
-      None
-    } else {
-      useFallbackCounter.incr()
-      fallBackPicker.apply(newValue, oldValue)
+cwass pwefewnewestnonemptycached[v] e-extends pwefewnewestcached[v] {
+  o-ovewwide def appwy(newvawue: cached[v], ( ͡o ω ͡o ) owdvawue: c-cached[v]) = {
+    (newvawue.vawue, ^^;; owdvawue.vawue) match {
+      // s-some/some a-and nyone/none cases awe handwed b-by the supew cwass
+      case (some(_), ^^;; s-some(_)) => s-supew.appwy(newvawue, XD o-owdvawue)
+      case (none, 🥺 nyone) => supew.appwy(newvawue, (///ˬ///✿) owdvawue)
+      case (some(_), (U ᵕ U❁) nyone) => some(newvawue)
+      case (none, ^^;; some(_)) => some(owdvawue.copy(cachedat = time.now))
     }
   }
 }
 
 /**
- * A Transformer of Cached values composed of a Transformer of the underlying values.
+ * pwefew do not cache entwies if they'we n-nyot expiwed. ^^;; o-othewwise uses fawwbackpickew
+ * @pawam fawwbackpickew t-the pickew t-to use when t-the owdvawue isn't do nyot cache o-ow is expiwed. rawr
+ *                       defauwts t-to pwefewnewestcache. (˘ω˘)
  */
-class CachedTransformer[A, B](underlying: Transformer[A, B])
-    extends Transformer[Cached[A], Cached[B]] {
-  def to(cachedA: Cached[A]) = cachedA.value match {
-    case None => Return(cachedA.copy(value = None))
-    case Some(a) =>
-      underlying.to(a) map { b =>
-        cachedA.copy(value = Some(b))
+c-cwass pwefewdonotcache[v](
+  f-fawwbackpickew: wockingcache.pickew[cached[v]] = n-nyew p-pwefewnewestcached[v]: pwefewnewestcached[v], 🥺
+  statsweceivew: s-statsweceivew)
+    e-extends wockingcache.pickew[cached[v]] {
+  p-pwivate[this] v-vaw p-pickdonotcacheentwycountew = s-statsweceivew.countew("pick_do_not_cache_entwy")
+  p-pwivate[this] vaw u-usefawwbackcountew = s-statsweceivew.countew("use_fawwback")
+  ovewwide def appwy(newvawue: c-cached[v], nyaa~~ o-owdvawue: c-cached[v]): option[cached[v]] = {
+    if (owdvawue.status == d-donotcache && owdvawue.donotcacheuntiw.fowaww(
+        _ > nyewvawue.effectiveupdatetime())) { // e-evawuates to twue if dnc untiw is n-nyone
+      pickdonotcacheentwycountew.incw()
+      n-nyone
+    } e-ewse {
+      usefawwbackcountew.incw()
+      fawwbackpickew.appwy(newvawue, :3 owdvawue)
+    }
+  }
+}
+
+/**
+ * a-a twansfowmew of cached v-vawues composed of a twansfowmew o-of the undewwying vawues. /(^•ω•^)
+ */
+c-cwass cachedtwansfowmew[a, ^•ﻌ•^ b](undewwying: twansfowmew[a, UwU b])
+    extends twansfowmew[cached[a], 😳😳😳 c-cached[b]] {
+  def to(cacheda: c-cached[a]) = cacheda.vawue m-match {
+    case nyone => wetuwn(cacheda.copy(vawue = nyone))
+    case s-some(a) =>
+      undewwying.to(a) m-map { b =>
+        c-cacheda.copy(vawue = s-some(b))
       }
   }
 
-  def from(cachedB: Cached[B]) = cachedB.value match {
-    case None => Return(cachedB.copy(value = None))
-    case Some(b) =>
-      underlying.from(b) map { a =>
-        cachedB.copy(value = Some(a))
+  def fwom(cachedb: cached[b]) = c-cachedb.vawue m-match {
+    case nyone => wetuwn(cachedb.copy(vawue = n-nyone))
+    case some(b) =>
+      undewwying.fwom(b) m-map { a =>
+        c-cachedb.copy(vawue = s-some(a))
       }
   }
 }

@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.event
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.event
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.imagevawiant
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
 
-object EventSummaryItem {
-  val EventSummaryItemEntryNamespace = EntryNamespace("eventsummary")
+object eventsummawyitem {
+  vaw eventsummawyitementwynamespace = entwynamespace("eventsummawy")
 }
 
-case class EventSummaryItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  title: String,
-  displayType: EventSummaryDisplayType,
-  url: Url,
-  image: Option[ImageVariant],
-  timeString: Option[String])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace =
-    EventSummaryItem.EventSummaryItemEntryNamespace
+case cwass e-eventsummawyitem(
+  ovewwide vaw id: wong, rawr x3
+  o-ovewwide vaw sowtindex: option[wong], mya
+  o-ovewwide vaw cwienteventinfo: option[cwienteventinfo], nyaa~~
+  ovewwide vaw f-feedbackactioninfo: option[feedbackactioninfo], (⑅˘꒳˘)
+  t-titwe: stwing, rawr x3
+  d-dispwaytype: eventsummawydispwaytype, (✿oωo)
+  uww: uww, (ˆ ﻌ ˆ)♡
+  image: option[imagevawiant],
+  timestwing: o-option[stwing])
+    extends timewineitem {
+  ovewwide vaw entwynamespace: entwynamespace =
+    eventsummawyitem.eventsummawyitementwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  o-ovewwide def withsowtindex(sowtindex: w-wong): t-timewineentwy = c-copy(sowtindex = s-some(sowtindex))
 }

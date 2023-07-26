@@ -1,51 +1,51 @@
-package com.twitter.recos.user_user_graph
+package com.twittew.wecos.usew_usew_gwaph
 
-import com.twitter.logging.Logger
-import com.twitter.recos.user_user_graph.thriftscala._
-import com.twitter.util.Future
+impowt c-com.twittew.wogging.woggew
+i-impowt c-com.twittew.wecos.usew_usew_gwaph.thwiftscawa._
+i-impowt com.twittew.utiw.futuwe
 
-trait LoggingUserUserGraph extends thriftscala.UserUserGraph.MethodPerEndpoint {
-  private[this] val accessLog = Logger("access")
+t-twait woggingusewusewgwaph e-extends t-thwiftscawa.usewusewgwaph.methodpewendpoint {
+  p-pwivate[this] vaw accesswog = woggew("access")
 
-  abstract override def recommendUsers(
-    request: RecommendUserRequest
-  ): Future[RecommendUserResponse] = {
-    val time = System.currentTimeMillis
-    super.recommendUsers(request) onSuccess { resp =>
-      val timeTaken = System.currentTimeMillis - time
-      val logText =
-        s"In ${timeTaken}ms, recommendUsers(${requestToString(request)}), response ${responseToString(resp)}"
-      accessLog.info(logText)
-    } onFailure { exc =>
-      val timeTaken = System.currentTimeMillis - time
-      val logText = s"In ${timeTaken}ms, recommendUsers(${requestToString(request)} returned error"
-      accessLog.error(exc, logText)
+  abstwact ovewwide def wecommendusews(
+    w-wequest: wecommendusewwequest
+  ): futuwe[wecommendusewwesponse] = {
+    vaw time = s-system.cuwwenttimemiwwis
+    supew.wecommendusews(wequest) o-onsuccess { wesp =>
+      vaw timetaken = system.cuwwenttimemiwwis - time
+      v-vaw wogtext =
+        s"in ${timetaken}ms, òωó w-wecommendusews(${wequesttostwing(wequest)}), ʘwʘ w-wesponse ${wesponsetostwing(wesp)}"
+      accesswog.info(wogtext)
+    } onfaiwuwe { exc =>
+      vaw timetaken = system.cuwwenttimemiwwis - t-time
+      vaw wogtext = s"in ${timetaken}ms, /(^•ω•^) wecommendusews(${wequesttostwing(wequest)} wetuwned ewwow"
+      a-accesswog.ewwow(exc, ʘwʘ wogtext)
     }
   }
 
-  private def requestToString(request: RecommendUserRequest): String = {
-    Seq(
-      request.requesterId,
-      request.displayLocation,
-      request.seedsWithWeights.size,
-      request.seedsWithWeights.take(5),
-      request.excludedUserIds.map(_.size).getOrElse(0),
-      request.excludedUserIds.map(_.take(5)),
-      request.maxNumResults,
-      request.maxNumSocialProofs,
-      request.minUserPerSocialProof,
-      request.socialProofTypes,
-      request.maxEdgeEngagementAgeInMillis
-    ).mkString(",")
+  pwivate d-def wequesttostwing(wequest: w-wecommendusewwequest): s-stwing = {
+    s-seq(
+      wequest.wequestewid, σωσ
+      wequest.dispwaywocation, OwO
+      wequest.seedswithweights.size, 😳😳😳
+      w-wequest.seedswithweights.take(5),
+      wequest.excwudedusewids.map(_.size).getowewse(0), 😳😳😳
+      wequest.excwudedusewids.map(_.take(5)), o.O
+      w-wequest.maxnumwesuwts, ( ͡o ω ͡o )
+      wequest.maxnumsociawpwoofs, (U ﹏ U)
+      wequest.minusewpewsociawpwoof, (///ˬ///✿)
+      wequest.sociawpwooftypes, >w<
+      wequest.maxedgeengagementageinmiwwis
+    ).mkstwing(",")
   }
 
-  private def responseToString(response: RecommendUserResponse): String = {
-    response.recommendedUsers.toList.map { recUser =>
-      val socialProof = recUser.socialProofs.map {
-        case (proofType, proofs) =>
-          (proofType, proofs)
+  pwivate def wesponsetostwing(wesponse: w-wecommendusewwesponse): stwing = {
+    w-wesponse.wecommendedusews.towist.map { w-wecusew =>
+      v-vaw sociawpwoof = wecusew.sociawpwoofs.map {
+        case (pwooftype, rawr pwoofs) =>
+          (pwooftype, mya p-pwoofs)
       }
-      (recUser.userId, recUser.score, socialProof)
-    }.toString
+      (wecusew.usewid, w-wecusew.scowe, ^^ sociawpwoof)
+    }.tostwing
   }
 }

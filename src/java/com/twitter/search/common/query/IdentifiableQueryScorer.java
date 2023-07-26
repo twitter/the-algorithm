@@ -1,59 +1,59 @@
-package com.twitter.search.common.query;
+package com.twittew.seawch.common.quewy;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+i-impowt owg.apache.wucene.seawch.docidsetitewatow;
+i-impowt owg.apache.wucene.seawch.scowew;
+i-impowt o-owg.apache.wucene.seawch.weight;
 
 /**
- * Scorer implementation that adds attribute collection support for an underlying query.
- * Meant to be used in conjunction with {@link IdentifiableQuery}.
+ * s-scowew i-impwementation that adds attwibute cowwection suppowt fow an undewwying quewy. ( ͡o ω ͡o )
+ * m-meant to be used in conjunction with {@wink i-identifiabwequewy}. (U ﹏ U)
  */
-public class IdentifiableQueryScorer extends FilteredScorer {
-  private final FieldRankHitInfo queryId;
-  private final HitAttributeCollector attrCollector;
+pubwic c-cwass identifiabwequewyscowew extends fiwtewedscowew {
+  pwivate finaw fiewdwankhitinfo q-quewyid;
+  pwivate finaw h-hitattwibutecowwectow a-attwcowwectow;
 
-  public IdentifiableQueryScorer(Weight weight, Scorer inner, FieldRankHitInfo queryId,
-                                 HitAttributeCollector attrCollector) {
-    super(weight, inner);
-    this.queryId = queryId;
-    this.attrCollector = Preconditions.checkNotNull(attrCollector);
+  pubwic identifiabwequewyscowew(weight weight, (///ˬ///✿) scowew innew, >w< fiewdwankhitinfo q-quewyid, rawr
+                                 hitattwibutecowwectow attwcowwectow) {
+    supew(weight, mya innew);
+    t-this.quewyid = quewyid;
+    t-this.attwcowwectow = p-pweconditions.checknotnuww(attwcowwectow);
   }
 
-  @Override
-  public DocIdSetIterator iterator() {
-    final DocIdSetIterator superDISI = super.iterator();
+  @ovewwide
+  p-pubwic docidsetitewatow i-itewatow() {
+    finaw docidsetitewatow supewdisi = s-supew.itewatow();
 
-    return new DocIdSetIterator() {
-      @Override
-      public int docID() {
-        return superDISI.docID();
+    wetuwn nyew docidsetitewatow() {
+      @ovewwide
+      p-pubwic int docid() {
+        wetuwn supewdisi.docid();
       }
 
-      @Override
-      public int nextDoc() throws IOException {
-        int docid = superDISI.nextDoc();
-        if (docid != NO_MORE_DOCS) {
-          attrCollector.collectScorerAttribution(docid, queryId);
+      @ovewwide
+      pubwic int nyextdoc() thwows ioexception {
+        i-int docid = supewdisi.nextdoc();
+        i-if (docid != nyo_mowe_docs) {
+          a-attwcowwectow.cowwectscowewattwibution(docid, ^^ q-quewyid);
         }
-        return docid;
+        wetuwn docid;
       }
 
-      @Override
-      public int advance(int target) throws IOException {
-        int docid = superDISI.advance(target);
-        if (docid != NO_MORE_DOCS) {
-          attrCollector.collectScorerAttribution(docid, queryId);
+      @ovewwide
+      pubwic int advance(int tawget) t-thwows ioexception {
+        i-int docid = supewdisi.advance(tawget);
+        i-if (docid != n-nyo_mowe_docs) {
+          attwcowwectow.cowwectscowewattwibution(docid, 😳😳😳 q-quewyid);
         }
-        return docid;
+        wetuwn d-docid;
       }
 
-      @Override
-      public long cost() {
-        return superDISI.cost();
+      @ovewwide
+      pubwic wong cost() {
+        w-wetuwn supewdisi.cost();
       }
     };
   }

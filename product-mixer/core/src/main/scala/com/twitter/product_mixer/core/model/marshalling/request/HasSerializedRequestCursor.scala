@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest
 
 /**
- * serializedRequestCursor is any serialized representation of a cursor.
+ * sewiawizedwequestcuwsow i-is any sewiawized w-wepwesentation o-of a cuwsow. -.-
  *
- * The serialized representation is implementation-specific but will often be a base 64
- * representation of a Thrift struct. Cursors should not be deserialized in the unmarshaller.
+ * t-the sewiawized w-wepwesentation i-is impwementation-specific b-but w-wiww often be a base 64
+ * wepwesentation of a thwift stwuct. (ˆ ﻌ ˆ)♡ cuwsows shouwd nyot b-be desewiawized in the unmawshawwew. (⑅˘꒳˘)
  */
-trait HasSerializedRequestCursor {
-  def serializedRequestCursor: Option[String]
+twait h-hassewiawizedwequestcuwsow {
+  def sewiawizedwequestcuwsow: o-option[stwing]
 }

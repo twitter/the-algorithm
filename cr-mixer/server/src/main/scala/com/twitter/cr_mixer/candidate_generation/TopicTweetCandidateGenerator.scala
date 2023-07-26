@@ -1,230 +1,230 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.twittew.cw_mixew.candidate_genewation
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TopicTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.TopicTweetWithScore
-import com.twitter.cr_mixer.param.TopicTweetParams
-import com.twitter.cr_mixer.similarity_engine.CertoTopicTweetSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SkitHighPrecisionTopicTweetSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SkitTopicTweetSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.TopicTweet
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.contentwecommendew.thwiftscawa.tweetinfo
+i-impowt c-com.twittew.cw_mixew.config.timeoutconfig
+impowt c-com.twittew.cw_mixew.modew.candidategenewationinfo
+i-impowt c-com.twittew.cw_mixew.modew.initiawcandidate
+i-impowt c-com.twittew.cw_mixew.modew.simiwawityengineinfo
+i-impowt com.twittew.cw_mixew.modew.topictweetcandidategenewatowquewy
+impowt com.twittew.cw_mixew.modew.topictweetwithscowe
+impowt com.twittew.cw_mixew.pawam.topictweetpawams
+impowt com.twittew.cw_mixew.simiwawity_engine.cewtotopictweetsimiwawityengine
+i-impowt com.twittew.cw_mixew.simiwawity_engine.skithighpwecisiontopictweetsimiwawityengine
+impowt com.twittew.cw_mixew.simiwawity_engine.skittopictweetsimiwawityengine
+i-impowt com.twittew.cw_mixew.thwiftscawa.simiwawityenginetype
+impowt com.twittew.cw_mixew.thwiftscawa.topictweet
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.finagwe.utiw.defauwttimew
+impowt com.twittew.fwigate.common.utiw.statsutiw
+impowt com.twittew.sewvo.utiw.memoizingstatsweceivew
+i-impowt com.twittew.simcwustews_v2.common.tweetid
+impowt com.twittew.simcwustews_v2.thwiftscawa.topicid
+i-impowt c-com.twittew.snowfwake.id.snowfwakeid
+impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.duwation
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.time
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * Formerly CrTopic in legacy Content Recommender. This generator finds top Tweets per Topic.
+ * fowmewwy cwtopic i-in wegacy content wecommendew. -.- t-this genewatow f-finds top tweets p-pew topic. mya
  */
-@Singleton
-class TopicTweetCandidateGenerator @Inject() (
-  certoTopicTweetSimilarityEngine: CertoTopicTweetSimilarityEngine,
-  skitTopicTweetSimilarityEngine: SkitTopicTweetSimilarityEngine,
-  skitHighPrecisionTopicTweetSimilarityEngine: SkitHighPrecisionTopicTweetSimilarityEngine,
-  tweetInfoStore: ReadableStore[TweetId, TweetInfo],
-  timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver) {
-  private val timer = DefaultTimer
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val filterCandidatesStats = stats.scope("filterCandidates")
-  private val tweetyPieFilteredStats = filterCandidatesStats.stat("tweetypie_filtered")
-  private val memoizedStatsReceiver = new MemoizingStatsReceiver(stats)
+@singweton
+c-cwass topictweetcandidategenewatow @inject() (
+  cewtotopictweetsimiwawityengine: cewtotopictweetsimiwawityengine, >w<
+  s-skittopictweetsimiwawityengine: skittopictweetsimiwawityengine, (U ﹏ U)
+  skithighpwecisiontopictweetsimiwawityengine: s-skithighpwecisiontopictweetsimiwawityengine, 😳😳😳
+  tweetinfostowe: weadabwestowe[tweetid, o.O tweetinfo],
+  timeoutconfig: timeoutconfig, òωó
+  g-gwobawstats: statsweceivew) {
+  p-pwivate vaw t-timew = defauwttimew
+  p-pwivate vaw stats: statsweceivew = gwobawstats.scope(this.getcwass.getcanonicawname)
+  pwivate vaw fetchcandidatesstats = s-stats.scope("fetchcandidates")
+  p-pwivate vaw fiwtewcandidatesstats = stats.scope("fiwtewcandidates")
+  p-pwivate v-vaw tweetypiefiwtewedstats = fiwtewcandidatesstats.stat("tweetypie_fiwtewed")
+  p-pwivate vaw memoizedstatsweceivew = nyew memoizingstatsweceivew(stats)
 
-  def get(
-    query: TopicTweetCandidateGeneratorQuery
-  ): Future[Map[Long, Seq[TopicTweet]]] = {
-    val maxTweetAge = query.params(TopicTweetParams.MaxTweetAge)
-    val product = query.product
-    val allStats = memoizedStatsReceiver.scope("all")
-    val perProductStats = memoizedStatsReceiver.scope("perProduct", product.name)
-    StatsUtil.trackMapValueStats(allStats) {
-      StatsUtil.trackMapValueStats(perProductStats) {
-        val result = for {
-          retrievedTweets <- fetchCandidates(query)
-          initialTweetCandidates <- convertToInitialCandidates(retrievedTweets)
-          filteredTweetCandidates <- filterCandidates(
-            initialTweetCandidates,
-            maxTweetAge,
-            query.isVideoOnly,
-            query.impressedTweetList)
-          rankedTweetCandidates = rankCandidates(filteredTweetCandidates)
-          hydratedTweetCandidates = hydrateCandidates(rankedTweetCandidates)
-        } yield {
-          hydratedTweetCandidates.map {
-            case (topicId, topicTweets) =>
-              val topKTweets = topicTweets.take(query.maxNumResults)
-              topicId -> topKTweets
+  d-def get(
+    quewy: topictweetcandidategenewatowquewy
+  ): futuwe[map[wong, 😳😳😳 s-seq[topictweet]]] = {
+    vaw maxtweetage = q-quewy.pawams(topictweetpawams.maxtweetage)
+    vaw pwoduct = q-quewy.pwoduct
+    v-vaw awwstats = memoizedstatsweceivew.scope("aww")
+    vaw pewpwoductstats = memoizedstatsweceivew.scope("pewpwoduct", pwoduct.name)
+    statsutiw.twackmapvawuestats(awwstats) {
+      statsutiw.twackmapvawuestats(pewpwoductstats) {
+        v-vaw wesuwt = fow {
+          w-wetwievedtweets <- fetchcandidates(quewy)
+          i-initiawtweetcandidates <- c-convewttoinitiawcandidates(wetwievedtweets)
+          f-fiwtewedtweetcandidates <- fiwtewcandidates(
+            initiawtweetcandidates, σωσ
+            maxtweetage, (⑅˘꒳˘)
+            quewy.isvideoonwy, (///ˬ///✿)
+            q-quewy.impwessedtweetwist)
+          wankedtweetcandidates = wankcandidates(fiwtewedtweetcandidates)
+          hydwatedtweetcandidates = hydwatecandidates(wankedtweetcandidates)
+        } yiewd {
+          h-hydwatedtweetcandidates.map {
+            case (topicid, 🥺 t-topictweets) =>
+              v-vaw topktweets = t-topictweets.take(quewy.maxnumwesuwts)
+              topicid -> topktweets
           }
         }
-        result.raiseWithin(timeoutConfig.topicTweetEndpointTimeout)(timer)
+        w-wesuwt.waisewithin(timeoutconfig.topictweetendpointtimeout)(timew)
       }
     }
   }
 
-  private def fetchCandidates(
-    query: TopicTweetCandidateGeneratorQuery
-  ): Future[Map[TopicId, Option[Seq[TopicTweetWithScore]]]] = {
-    Future.collect {
-      query.topicIds.map { topicId =>
-        topicId -> StatsUtil.trackOptionStats(fetchCandidatesStats) {
-          Future
+  p-pwivate d-def fetchcandidates(
+    q-quewy: topictweetcandidategenewatowquewy
+  ): futuwe[map[topicid, OwO option[seq[topictweetwithscowe]]]] = {
+    f-futuwe.cowwect {
+      q-quewy.topicids.map { t-topicid =>
+        t-topicid -> s-statsutiw.twackoptionstats(fetchcandidatesstats) {
+          futuwe
             .join(
-              certoTopicTweetSimilarityEngine.get(CertoTopicTweetSimilarityEngine
-                .fromParams(topicId, query.isVideoOnly, query.params)),
-              skitTopicTweetSimilarityEngine
-                .get(SkitTopicTweetSimilarityEngine
-                  .fromParams(topicId, query.isVideoOnly, query.params)),
-              skitHighPrecisionTopicTweetSimilarityEngine
-                .get(SkitHighPrecisionTopicTweetSimilarityEngine
-                  .fromParams(topicId, query.isVideoOnly, query.params))
+              cewtotopictweetsimiwawityengine.get(cewtotopictweetsimiwawityengine
+                .fwompawams(topicid, quewy.isvideoonwy, >w< q-quewy.pawams)), 🥺
+              skittopictweetsimiwawityengine
+                .get(skittopictweetsimiwawityengine
+                  .fwompawams(topicid, nyaa~~ quewy.isvideoonwy, quewy.pawams)),
+              skithighpwecisiontopictweetsimiwawityengine
+                .get(skithighpwecisiontopictweetsimiwawityengine
+                  .fwompawams(topicid, ^^ quewy.isvideoonwy, >w< q-quewy.pawams))
             ).map {
-              case (certoTopicTweets, skitTfgTopicTweets, skitHighPrecisionTopicTweets) =>
-                val uniqueCandidates = (certoTopicTweets.getOrElse(Nil) ++
-                  skitTfgTopicTweets.getOrElse(Nil) ++
-                  skitHighPrecisionTopicTweets.getOrElse(Nil))
-                  .groupBy(_.tweetId).map {
-                    case (_, dupCandidates) => dupCandidates.head
-                  }.toSeq
-                Some(uniqueCandidates)
+              case (cewtotopictweets, skittfgtopictweets, OwO skithighpwecisiontopictweets) =>
+                v-vaw uniquecandidates = (cewtotopictweets.getowewse(niw) ++
+                  s-skittfgtopictweets.getowewse(niw) ++
+                  s-skithighpwecisiontopictweets.getowewse(niw))
+                  .gwoupby(_.tweetid).map {
+                    case (_, XD dupcandidates) => dupcandidates.head
+                  }.toseq
+                s-some(uniquecandidates)
             }
         }
-      }.toMap
+      }.tomap
     }
   }
 
-  private def convertToInitialCandidates(
-    candidatesMap: Map[TopicId, Option[Seq[TopicTweetWithScore]]]
-  ): Future[Map[TopicId, Seq[InitialCandidate]]] = {
-    val initialCandidates = candidatesMap.map {
-      case (topicId, candidatesOpt) =>
-        val candidates = candidatesOpt.getOrElse(Nil)
-        val tweetIds = candidates.map(_.tweetId).toSet
-        val numTweetsPreFilter = tweetIds.size
-        Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
+  pwivate def c-convewttoinitiawcandidates(
+    c-candidatesmap: map[topicid, ^^;; option[seq[topictweetwithscowe]]]
+  ): futuwe[map[topicid, 🥺 seq[initiawcandidate]]] = {
+    vaw initiawcandidates = candidatesmap.map {
+      c-case (topicid, XD candidatesopt) =>
+        v-vaw candidates = candidatesopt.getowewse(niw)
+        v-vaw tweetids = c-candidates.map(_.tweetid).toset
+        vaw nyumtweetspwefiwtew = tweetids.size
+        f-futuwe.cowwect(tweetinfostowe.muwtiget(tweetids)).map { t-tweetinfos =>
           /** *
-           * If tweetInfo does not exist, we will filter out this tweet candidate.
+           * if tweetinfo d-does nyot exist, (U ᵕ U❁) w-we wiww fiwtew out this tweet candidate. :3
            */
-          val tweetyPieFilteredInitialCandidates = candidates.collect {
-            case candidate if tweetInfos.getOrElse(candidate.tweetId, None).isDefined =>
-              val tweetInfo = tweetInfos(candidate.tweetId)
-                .getOrElse(throw new IllegalStateException("Check previous line's condition"))
+          vaw tweetypiefiwtewedinitiawcandidates = candidates.cowwect {
+            c-case c-candidate if tweetinfos.getowewse(candidate.tweetid, ( ͡o ω ͡o ) n-nyone).isdefined =>
+              vaw tweetinfo = t-tweetinfos(candidate.tweetid)
+                .getowewse(thwow n-nyew iwwegawstateexception("check pwevious w-wine's condition"))
 
-              InitialCandidate(
-                tweetId = candidate.tweetId,
-                tweetInfo = tweetInfo,
-                CandidateGenerationInfo(
-                  None,
-                  SimilarityEngineInfo(
-                    similarityEngineType = candidate.similarityEngineType,
-                    modelId = None,
-                    score = Some(candidate.score)),
-                  Seq.empty
+              initiawcandidate(
+                tweetid = candidate.tweetid, òωó
+                tweetinfo = t-tweetinfo, σωσ
+                c-candidategenewationinfo(
+                  nyone, (U ᵕ U❁)
+                  simiwawityengineinfo(
+                    s-simiwawityenginetype = c-candidate.simiwawityenginetype, (✿oωo)
+                    modewid = nyone, ^^
+                    scowe = some(candidate.scowe)), ^•ﻌ•^
+                  s-seq.empty
                 )
               )
           }
-          val numTweetsPostFilter = tweetyPieFilteredInitialCandidates.size
-          tweetyPieFilteredStats.add(numTweetsPreFilter - numTweetsPostFilter)
-          topicId -> tweetyPieFilteredInitialCandidates
+          vaw nyumtweetspostfiwtew = tweetypiefiwtewedinitiawcandidates.size
+          tweetypiefiwtewedstats.add(numtweetspwefiwtew - n-nyumtweetspostfiwtew)
+          topicid -> tweetypiefiwtewedinitiawcandidates
         }
     }
 
-    Future.collect(initialCandidates.toSeq).map(_.toMap)
+    f-futuwe.cowwect(initiawcandidates.toseq).map(_.tomap)
   }
 
-  private def filterCandidates(
-    topicTweetMap: Map[TopicId, Seq[InitialCandidate]],
-    maxTweetAge: Duration,
-    isVideoOnly: Boolean,
-    excludeTweetIds: Set[TweetId]
-  ): Future[Map[TopicId, Seq[InitialCandidate]]] = {
+  p-pwivate def fiwtewcandidates(
+    topictweetmap: map[topicid, XD s-seq[initiawcandidate]], :3
+    m-maxtweetage: duwation, (ꈍᴗꈍ)
+    isvideoonwy: boowean, :3
+    excwudetweetids: s-set[tweetid]
+  ): futuwe[map[topicid, s-seq[initiawcandidate]]] = {
 
-    val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetAge)
+    vaw eawwiesttweetid = snowfwakeid.fiwstidfow(time.now - maxtweetage)
 
-    val filteredResults = topicTweetMap.map {
-      case (topicId, tweetsWithScore) =>
-        topicId -> StatsUtil.trackItemsStats(filterCandidatesStats) {
+    v-vaw fiwtewedwesuwts = topictweetmap.map {
+      c-case (topicid, t-tweetswithscowe) =>
+        topicid -> s-statsutiw.twackitemsstats(fiwtewcandidatesstats) {
 
-          val timeFilteredTweets =
-            tweetsWithScore.filter { tweetWithScore =>
-              tweetWithScore.tweetId >= earliestTweetId && !excludeTweetIds.contains(
-                tweetWithScore.tweetId)
+          vaw timefiwtewedtweets =
+            t-tweetswithscowe.fiwtew { t-tweetwithscowe =>
+              t-tweetwithscowe.tweetid >= eawwiesttweetid && !excwudetweetids.contains(
+                t-tweetwithscowe.tweetid)
             }
 
-          filterCandidatesStats
-            .stat("exclude_and_time_filtered").add(tweetsWithScore.size - timeFilteredTweets.size)
+          f-fiwtewcandidatesstats
+            .stat("excwude_and_time_fiwtewed").add(tweetswithscowe.size - timefiwtewedtweets.size)
 
-          val tweetNudityFilteredTweets =
-            timeFilteredTweets.collect {
-              case tweet if tweet.tweetInfo.isPassTweetMediaNudityTag.contains(true) => tweet
+          vaw tweetnudityfiwtewedtweets =
+            t-timefiwtewedtweets.cowwect {
+              c-case tweet if tweet.tweetinfo.ispasstweetmedianuditytag.contains(twue) => t-tweet
             }
 
-          filterCandidatesStats
-            .stat("tweet_nudity_filtered").add(
-              timeFilteredTweets.size - tweetNudityFilteredTweets.size)
+          fiwtewcandidatesstats
+            .stat("tweet_nudity_fiwtewed").add(
+              timefiwtewedtweets.size - t-tweetnudityfiwtewedtweets.size)
 
-          val userNudityFilteredTweets =
-            tweetNudityFilteredTweets.collect {
-              case tweet if tweet.tweetInfo.isPassUserNudityRateStrict.contains(true) => tweet
+          vaw usewnudityfiwtewedtweets =
+            t-tweetnudityfiwtewedtweets.cowwect {
+              c-case tweet if tweet.tweetinfo.ispassusewnuditywatestwict.contains(twue) => tweet
             }
 
-          filterCandidatesStats
-            .stat("user_nudity_filtered").add(
-              tweetNudityFilteredTweets.size - userNudityFilteredTweets.size)
+          fiwtewcandidatesstats
+            .stat("usew_nudity_fiwtewed").add(
+              tweetnudityfiwtewedtweets.size - u-usewnudityfiwtewedtweets.size)
 
-          val videoFilteredTweets = {
-            if (isVideoOnly) {
-              userNudityFilteredTweets.collect {
-                case tweet if tweet.tweetInfo.hasVideo.contains(true) => tweet
+          v-vaw videofiwtewedtweets = {
+            i-if (isvideoonwy) {
+              u-usewnudityfiwtewedtweets.cowwect {
+                case tweet if t-tweet.tweetinfo.hasvideo.contains(twue) => tweet
               }
-            } else {
-              userNudityFilteredTweets
+            } ewse {
+              usewnudityfiwtewedtweets
             }
           }
 
-          Future.value(videoFilteredTweets)
+          futuwe.vawue(videofiwtewedtweets)
         }
     }
-    Future.collect(filteredResults)
+    futuwe.cowwect(fiwtewedwesuwts)
   }
 
-  private def rankCandidates(
-    tweetCandidatesMap: Map[TopicId, Seq[InitialCandidate]]
-  ): Map[TopicId, Seq[InitialCandidate]] = {
-    tweetCandidatesMap.mapValues { tweetCandidates =>
-      tweetCandidates.sortBy { candidate =>
-        -candidate.tweetInfo.favCount
+  p-pwivate def wankcandidates(
+    tweetcandidatesmap: m-map[topicid, seq[initiawcandidate]]
+  ): m-map[topicid, (U ﹏ U) seq[initiawcandidate]] = {
+    t-tweetcandidatesmap.mapvawues { tweetcandidates =>
+      t-tweetcandidates.sowtby { c-candidate =>
+        -candidate.tweetinfo.favcount
       }
     }
   }
 
-  private def hydrateCandidates(
-    topicCandidatesMap: Map[TopicId, Seq[InitialCandidate]]
-  ): Map[Long, Seq[TopicTweet]] = {
-    topicCandidatesMap.map {
-      case (topicId, tweetsWithScore) =>
-        topicId.entityId ->
-          tweetsWithScore.map { tweetWithScore =>
-            val similarityEngineType: SimilarityEngineType =
-              tweetWithScore.candidateGenerationInfo.similarityEngineInfo.similarityEngineType
-            TopicTweet(
-              tweetId = tweetWithScore.tweetId,
-              score = tweetWithScore.getSimilarityScore,
-              similarityEngineType = similarityEngineType
+  p-pwivate def hydwatecandidates(
+    t-topiccandidatesmap: m-map[topicid, UwU seq[initiawcandidate]]
+  ): map[wong, 😳😳😳 seq[topictweet]] = {
+    topiccandidatesmap.map {
+      case (topicid, tweetswithscowe) =>
+        topicid.entityid ->
+          t-tweetswithscowe.map { t-tweetwithscowe =>
+            v-vaw simiwawityenginetype: simiwawityenginetype =
+              t-tweetwithscowe.candidategenewationinfo.simiwawityengineinfo.simiwawityenginetype
+            topictweet(
+              tweetid = tweetwithscowe.tweetid, XD
+              s-scowe = t-tweetwithscowe.getsimiwawityscowe, o.O
+              simiwawityenginetype = s-simiwawityenginetype
             )
           }
     }

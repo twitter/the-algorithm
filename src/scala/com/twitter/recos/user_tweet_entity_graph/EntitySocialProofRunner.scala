@@ -1,167 +1,167 @@
-package com.twitter.recos.user_tweet_entity_graph
+package com.twittew.wecos.usew_tweet_entity_gwaph
 
-import java.util.Random
-import com.twitter.concurrent.AsyncQueue
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
-import com.twitter.graphjet.algorithms.{
-  RecommendationInfo,
-  RecommendationType => JavaRecommendationType
+impowt java.utiw.wandom
+i-impowt c-com.twittew.concuwwent.asyncqueue
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.gwaphjet.bipawtite.nodemetadataweftindexedpowewwawmuwtisegmentbipawtitegwaph
+i-impowt com.twittew.gwaphjet.awgowithms.{
+  w-wecommendationinfo, ^^;;
+  w-wecommendationtype => j-javawecommendationtype
 }
-import com.twitter.graphjet.algorithms.socialproof.{
-  NodeMetadataSocialProofGenerator,
-  NodeMetadataSocialProofResult,
-  NodeMetadataSocialProofRequest => SocialProofJavaRequest,
-  SocialProofResponse => SocialProofJavaResponse
+impowt com.twittew.gwaphjet.awgowithms.sociawpwoof.{
+  nyodemetadatasociawpwoofgenewatow, :3
+  nyodemetadatasociawpwoofwesuwt, (U ﹏ U)
+  nyodemetadatasociawpwoofwequest => s-sociawpwoofjavawequest, OwO
+  sociawpwoofwesponse => sociawpwoofjavawesponse
 }
-import com.twitter.logging.Logger
-import com.twitter.recos.model.SalsaQueryRunner.SalsaRunnerConfig
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  RecommendationType => ThriftRecommendationType,
-  RecommendationSocialProofRequest => SocialProofThriftRequest
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.wecos.modew.sawsaquewywunnew.sawsawunnewconfig
+impowt com.twittew.wecos.usew_tweet_entity_gwaph.thwiftscawa.{
+  wecommendationtype => thwiftwecommendationtype, 😳😳😳
+  w-wecommendationsociawpwoofwequest => sociawpwoofthwiftwequest
 }
-import com.twitter.util.{Future, Try}
-import it.unimi.dsi.fastutil.bytes.{Byte2ObjectArrayMap, Byte2ObjectMap}
-import it.unimi.dsi.fastutil.ints.{IntOpenHashSet, IntSet}
-import it.unimi.dsi.fastutil.longs.{Long2DoubleMap, Long2DoubleOpenHashMap}
-import scala.collection.JavaConverters._
+i-impowt com.twittew.utiw.{futuwe, (ˆ ﻌ ˆ)♡ t-twy}
+impowt it.unimi.dsi.fastutiw.bytes.{byte2objectawwaymap, XD byte2objectmap}
+impowt it.unimi.dsi.fastutiw.ints.{intopenhashset, (ˆ ﻌ ˆ)♡ intset}
+impowt i-it.unimi.dsi.fastutiw.wongs.{wong2doubwemap, wong2doubweopenhashmap}
+impowt scawa.cowwection.javaconvewtews._
 
 /**
- * EntitySocialProofRunner creates a queue of reader threads, NodeMetadataProofGenerator,
- * and each one reads from the graph and computes social proofs.
+ * entitysociawpwoofwunnew c-cweates a queue of weadew thweads, ( ͡o ω ͡o ) n-nyodemetadatapwoofgenewatow, rawr x3
+ * a-and each one w-weads fwom the g-gwaph and computes sociaw pwoofs. nyaa~~
  */
-class EntitySocialProofRunner(
-  graph: NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph,
-  salsaRunnerConfig: SalsaRunnerConfig,
-  statsReceiver: StatsReceiver) {
-  private val log: Logger = Logger()
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val socialProofSizeStat = stats.stat("socialProofSize")
+cwass entitysociawpwoofwunnew(
+  g-gwaph: nyodemetadataweftindexedpowewwawmuwtisegmentbipawtitegwaph, >_<
+  sawsawunnewconfig: s-sawsawunnewconfig,
+  statsweceivew: statsweceivew) {
+  pwivate vaw wog: woggew = woggew()
+  pwivate v-vaw stats = statsweceivew.scope(this.getcwass.getsimpwename)
+  p-pwivate vaw s-sociawpwoofsizestat = s-stats.stat("sociawpwoofsize")
 
-  private val socialProofFailureCounter = stats.counter("failure")
-  private val pollCounter = stats.counter("poll")
-  private val pollTimeoutCounter = stats.counter("pollTimeout")
-  private val offerCounter = stats.counter("offer")
-  private val pollLatencyStat = stats.stat("pollLatency")
-  private val socialProofRunnerPool = initSocialProofRunnerPool()
+  pwivate vaw sociawpwooffaiwuwecountew = stats.countew("faiwuwe")
+  pwivate v-vaw powwcountew = s-stats.countew("poww")
+  pwivate v-vaw powwtimeoutcountew = s-stats.countew("powwtimeout")
+  pwivate v-vaw offewcountew = stats.countew("offew")
+  p-pwivate vaw powwwatencystat = stats.stat("powwwatency")
+  pwivate v-vaw sociawpwoofwunnewpoow = initsociawpwoofwunnewpoow()
 
-  private def initSocialProofRunnerPool(): AsyncQueue[NodeMetadataSocialProofGenerator] = {
-    val socialProofQueue = new AsyncQueue[NodeMetadataSocialProofGenerator]
-    (0 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
-      socialProofQueue.offer(new NodeMetadataSocialProofGenerator(graph))
+  p-pwivate def initsociawpwoofwunnewpoow(): a-asyncqueue[nodemetadatasociawpwoofgenewatow] = {
+    v-vaw sociawpwoofqueue = nyew asyncqueue[nodemetadatasociawpwoofgenewatow]
+    (0 untiw sawsawunnewconfig.numsawsawunnews).foweach { _ =>
+      sociawpwoofqueue.offew(new nyodemetadatasociawpwoofgenewatow(gwaph))
     }
-    socialProofQueue
+    sociawpwoofqueue
   }
 
   /**
-   * Helper method to interpret the output of SocialProofJavaResponse
+   * h-hewpew m-method to intewpwet the output of s-sociawpwoofjavawesponse
    *
-   * @param socialProofResponse is the response from running NodeMetadataSocialProof
-   * @return a sequence of SocialProofResult
+   * @pawam s-sociawpwoofwesponse is t-the wesponse fwom wunning nyodemetadatasociawpwoof
+   * @wetuwn a sequence of sociawpwoofwesuwt
    */
-  private def transformSocialProofResponse(
-    socialProofResponse: Option[SocialProofJavaResponse]
-  ): Seq[RecommendationInfo] = {
-    socialProofResponse match {
-      case Some(response) =>
-        val scalaResponse = response.getRankedRecommendations.asScala
-        scalaResponse.foreach { result =>
-          socialProofSizeStat.add(
-            result.asInstanceOf[NodeMetadataSocialProofResult].getSocialProofSize)
+  p-pwivate def twansfowmsociawpwoofwesponse(
+    sociawpwoofwesponse: option[sociawpwoofjavawesponse]
+  ): seq[wecommendationinfo] = {
+    s-sociawpwoofwesponse match {
+      c-case some(wesponse) =>
+        v-vaw scawawesponse = w-wesponse.getwankedwecommendations.asscawa
+        scawawesponse.foweach { w-wesuwt =>
+          s-sociawpwoofsizestat.add(
+            w-wesuwt.asinstanceof[nodemetadatasociawpwoofwesuwt].getsociawpwoofsize)
         }
-        scalaResponse.toSeq
-      case _ => Nil
+        s-scawawesponse.toseq
+      case _ => niw
     }
   }
 
   /**
-   * Helper method to run social proof computation and convert the results to Option
+   * h-hewpew method to w-wun sociaw pwoof c-computation and c-convewt the wesuwts t-to option
    *
-   * @param socialProof is socialProof reader on bipartite graph
-   * @param request is the socialProof request
-   * @return is an option of SocialProofJavaResponse
+   * @pawam sociawpwoof is sociawpwoof weadew on bipawtite g-gwaph
+   * @pawam wequest is the sociawpwoof wequest
+   * @wetuwn is an option of sociawpwoofjavawesponse
    */
-  private def getSocialProofResponse(
-    socialProof: NodeMetadataSocialProofGenerator,
-    request: SocialProofJavaRequest,
-    random: Random
+  pwivate def getsociawpwoofwesponse(
+    s-sociawpwoof: nyodemetadatasociawpwoofgenewatow, ^^;;
+    wequest: sociawpwoofjavawequest, (ˆ ﻌ ˆ)♡
+    wandom: wandom
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Option[SocialProofJavaResponse] = {
-    val attempt = Try(socialProof.computeRecommendations(request, random)).onFailure { e =>
-      socialProofFailureCounter.incr()
-      log.error(e, "SocialProof computation failed")
+    i-impwicit s-statsweceivew: s-statsweceivew
+  ): option[sociawpwoofjavawesponse] = {
+    vaw a-attempt = twy(sociawpwoof.computewecommendations(wequest, ^^;; wandom)).onfaiwuwe { e-e =>
+      sociawpwooffaiwuwecountew.incw()
+      w-wog.ewwow(e, (⑅˘꒳˘) "sociawpwoof computation faiwed")
     }
-    attempt.toOption
+    attempt.tooption
   }
 
   /**
-   * Attempt to retrieve a NodeMetadataSocialProof thread from the runner pool
-   * to execute a socialProofRequest
+   * attempt to wetwieve a-a nyodemetadatasociawpwoof thwead f-fwom the wunnew poow
+   * to e-exekawaii~ a sociawpwoofwequest
    */
-  private def handleSocialProofRequest(socialProofRequest: SocialProofJavaRequest) = {
-    pollCounter.incr()
-    val t0 = System.currentTimeMillis()
-    socialProofRunnerPool.poll().map { entitySocialProof =>
-      val pollTime = System.currentTimeMillis - t0
-      pollLatencyStat.add(pollTime)
-      val socialProofResponse = Try {
-        if (pollTime < salsaRunnerConfig.timeoutSalsaRunner) {
-          val response =
-            getSocialProofResponse(entitySocialProof, socialProofRequest, new Random())(
-              statsReceiver
+  p-pwivate def handwesociawpwoofwequest(sociawpwoofwequest: sociawpwoofjavawequest) = {
+    p-powwcountew.incw()
+    v-vaw t0 = system.cuwwenttimemiwwis()
+    s-sociawpwoofwunnewpoow.poww().map { e-entitysociawpwoof =>
+      vaw powwtime = system.cuwwenttimemiwwis - t0
+      powwwatencystat.add(powwtime)
+      vaw sociawpwoofwesponse = t-twy {
+        if (powwtime < s-sawsawunnewconfig.timeoutsawsawunnew) {
+          vaw w-wesponse =
+            getsociawpwoofwesponse(entitysociawpwoof, rawr x3 s-sociawpwoofwequest, (///ˬ///✿) n-nyew wandom())(
+              statsweceivew
             )
-          transformSocialProofResponse(response)
-        } else {
-          // if we did not get a social proof in time, then fail fast here and immediately put it back
-          log.warning("socialProof polling timeout")
-          pollTimeoutCounter.incr()
-          throw new RuntimeException("socialProof poll timeout")
-          Nil
+          t-twansfowmsociawpwoofwesponse(wesponse)
+        } ewse {
+          // if we did nyot get a sociaw pwoof in time, 🥺 then f-faiw fast hewe a-and immediatewy put it back
+          wog.wawning("sociawpwoof powwing t-timeout")
+          p-powwtimeoutcountew.incw()
+          thwow nyew wuntimeexception("sociawpwoof poww timeout")
+          nyiw
         }
-      } ensure {
-        socialProofRunnerPool.offer(entitySocialProof)
-        offerCounter.incr()
+      } e-ensuwe {
+        sociawpwoofwunnewpoow.offew(entitysociawpwoof)
+        offewcountew.incw()
       }
-      socialProofResponse.toOption getOrElse Nil
+      sociawpwoofwesponse.tooption getowewse nyiw
     }
   }
 
   /**
-   * This apply() supports requests coming from the new social proof endpoint in UTEG that works for
-   * tweet social proof generation, as well as hashtag and url social proof generation.
-   * Currently this endpoint supports url social proof generation for Guide.
+   * t-this appwy() suppowts wequests coming fwom the n-nyew sociaw pwoof e-endpoint in uteg that wowks fow
+   * tweet sociaw pwoof genewation, >_< a-as weww a-as hashtag and uww sociaw pwoof genewation. UwU
+   * cuwwentwy this e-endpoint suppowts uww sociaw pwoof g-genewation fow guide. >_<
    */
-  def apply(request: SocialProofThriftRequest): Future[Seq[RecommendationInfo]] = {
-    val nodeMetadataTypeToIdsMap: Byte2ObjectMap[IntSet] = new Byte2ObjectArrayMap[IntSet]()
-    request.recommendationIdsForSocialProof.collect {
-      case (ThriftRecommendationType.Url, urlIds) =>
-        // We must convert the Long url ids into type Int since the underlying library expects Int type metadata ids.
-        val urlIntIds = urlIds.map(_.toInt)
-        nodeMetadataTypeToIdsMap.put(
-          JavaRecommendationType.URL.getValue.toByte,
-          new IntOpenHashSet(urlIntIds.toArray)
+  def appwy(wequest: sociawpwoofthwiftwequest): f-futuwe[seq[wecommendationinfo]] = {
+    vaw nyodemetadatatypetoidsmap: b-byte2objectmap[intset] = n-new byte2objectawwaymap[intset]()
+    wequest.wecommendationidsfowsociawpwoof.cowwect {
+      c-case (thwiftwecommendationtype.uww, -.- uwwids) =>
+        // w-we must c-convewt the wong u-uww ids into type int since the u-undewwying wibwawy e-expects int type metadata ids. mya
+        vaw uwwintids = u-uwwids.map(_.toint)
+        n-nyodemetadatatypetoidsmap.put(
+          j-javawecommendationtype.uww.getvawue.tobyte, >w<
+          nyew intopenhashset(uwwintids.toawway)
         )
-      case (ThriftRecommendationType.Hashtag, hashtagIds) =>
-        // We must convert the Long hashtag ids into type Int since the underlying library expects Int type metadata ids.
-        val hashtagIntIds = hashtagIds.map(_.toInt)
-        nodeMetadataTypeToIdsMap.put(
-          JavaRecommendationType.HASHTAG.getValue.toByte,
-          new IntOpenHashSet(hashtagIntIds.toArray)
+      case (thwiftwecommendationtype.hashtag, (U ﹏ U) h-hashtagids) =>
+        // we must convewt the w-wong hashtag i-ids into type int since the undewwying wibwawy expects int type m-metadata ids.
+        v-vaw hashtagintids = h-hashtagids.map(_.toint)
+        n-nyodemetadatatypetoidsmap.put(
+          javawecommendationtype.hashtag.getvawue.tobyte, 😳😳😳
+          n-nyew intopenhashset(hashtagintids.toawway)
         )
     }
 
-    val leftSeedNodes: Long2DoubleMap = new Long2DoubleOpenHashMap(
-      request.seedsWithWeights.keys.toArray,
-      request.seedsWithWeights.values.toArray
+    vaw weftseednodes: wong2doubwemap = nyew wong2doubweopenhashmap(
+      w-wequest.seedswithweights.keys.toawway, o.O
+      wequest.seedswithweights.vawues.toawway
     )
 
-    val socialProofRequest = new SocialProofJavaRequest(
-      nodeMetadataTypeToIdsMap,
-      leftSeedNodes,
-      UserTweetEdgeTypeMask.getUserTweetGraphSocialProofTypes(request.socialProofTypes)
+    v-vaw sociawpwoofwequest = nyew s-sociawpwoofjavawequest(
+      nyodemetadatatypetoidsmap, òωó
+      w-weftseednodes, 😳😳😳
+      usewtweetedgetypemask.getusewtweetgwaphsociawpwooftypes(wequest.sociawpwooftypes)
     )
 
-    handleSocialProofRequest(socialProofRequest)
+    h-handwesociawpwoofwequest(sociawpwoofwequest)
   }
 }

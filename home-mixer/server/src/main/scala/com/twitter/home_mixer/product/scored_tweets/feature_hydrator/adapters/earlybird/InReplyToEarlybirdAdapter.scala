@@ -1,206 +1,206 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.earlybird
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.eawwybiwd
 
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.util.DataRecordConverters.RichDataRecordWrapper
-import com.twitter.search.common.features.{thriftscala => sc}
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.features.common.InReplyToTweetTimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.recap.InReplyToRecapFeatures
-import java.lang.{Boolean => JBoolean}
-import java.lang.{Double => JDouble}
+impowt c-com.twittew.mw.api.featuwe
+i-impowt c-com.twittew.mw.api.featuwecontext
+i-impowt com.twittew.mw.api.wichdatawecowd
+i-impowt c-com.twittew.mw.api.utiw.datawecowdconvewtews.wichdatawecowdwwappew
+i-impowt com.twittew.seawch.common.featuwes.{thwiftscawa => s-sc}
+impowt com.twittew.timewines.pwediction.common.adaptews.timewinesmutatingadaptewbase
+impowt com.twittew.timewines.pwediction.featuwes.common.inwepwytotweettimewinesshawedfeatuwes
+impowt com.twittew.timewines.pwediction.featuwes.wecap.inwepwytowecapfeatuwes
+impowt java.wang.{boowean => j-jboowean}
+impowt java.wang.{doubwe => jdoubwe}
 
-object InReplyToEarlybirdAdapter
-    extends TimelinesMutatingAdapterBase[Option[sc.ThriftTweetFeatures]] {
+o-object inwepwytoeawwybiwdadaptew
+    extends t-timewinesmutatingadaptewbase[option[sc.thwifttweetfeatuwes]] {
 
-  override val getFeatureContext: FeatureContext = new FeatureContext(
-    // TextFeatures
-    InReplyToTweetTimelinesSharedFeatures.WEIGHTED_FAV_COUNT,
-    InReplyToTweetTimelinesSharedFeatures.WEIGHTED_RETWEET_COUNT,
-    InReplyToTweetTimelinesSharedFeatures.WEIGHTED_REPLY_COUNT,
-    InReplyToTweetTimelinesSharedFeatures.WEIGHTED_QUOTE_COUNT,
-    InReplyToTweetTimelinesSharedFeatures.DECAYED_FAVORITE_COUNT,
-    InReplyToTweetTimelinesSharedFeatures.DECAYED_RETWEET_COUNT,
-    InReplyToTweetTimelinesSharedFeatures.DECAYED_REPLY_COUNT,
-    InReplyToTweetTimelinesSharedFeatures.DECAYED_QUOTE_COUNT,
-    InReplyToTweetTimelinesSharedFeatures.QUOTE_COUNT,
-    InReplyToTweetTimelinesSharedFeatures.HAS_QUOTE,
-    InReplyToTweetTimelinesSharedFeatures.EARLYBIRD_SCORE,
-    InReplyToRecapFeatures.PREV_USER_TWEET_ENGAGEMENT,
-    InReplyToRecapFeatures.IS_SENSITIVE,
-    InReplyToRecapFeatures.IS_AUTHOR_NEW,
-    InReplyToRecapFeatures.NUM_MENTIONS,
-    InReplyToRecapFeatures.HAS_MENTION,
-    InReplyToRecapFeatures.HAS_HASHTAG,
-    InReplyToRecapFeatures.IS_AUTHOR_NSFW,
-    InReplyToRecapFeatures.IS_AUTHOR_SPAM,
-    InReplyToRecapFeatures.IS_AUTHOR_BOT,
-    InReplyToRecapFeatures.FROM_MUTUAL_FOLLOW,
-    InReplyToRecapFeatures.USER_REP,
-    InReplyToRecapFeatures.FROM_VERIFIED_ACCOUNT,
-    InReplyToRecapFeatures.HAS_IMAGE,
-    InReplyToRecapFeatures.HAS_NEWS,
-    InReplyToRecapFeatures.HAS_VIDEO,
-    InReplyToRecapFeatures.HAS_VISIBLE_LINK,
-    InReplyToRecapFeatures.IS_OFFENSIVE,
-    InReplyToRecapFeatures.IS_REPLY,
-    InReplyToRecapFeatures.BIDIRECTIONAL_REPLY_COUNT,
-    InReplyToRecapFeatures.UNIDIRECTIONAL_REPLY_COUNT,
-    InReplyToRecapFeatures.BIDIRECTIONAL_RETWEET_COUNT,
-    InReplyToRecapFeatures.UNIDIRECTIONAL_RETWEET_COUNT,
-    InReplyToRecapFeatures.BIDIRECTIONAL_FAV_COUNT,
-    InReplyToRecapFeatures.UNIDIRECTIONAL_FAV_COUNT,
-    InReplyToRecapFeatures.CONVERSATIONAL_COUNT,
-    InReplyToRecapFeatures.REPLY_COUNT,
-    InReplyToRecapFeatures.RETWEET_COUNT,
-    InReplyToRecapFeatures.FAV_COUNT,
-    InReplyToRecapFeatures.TEXT_SCORE,
-    InReplyToRecapFeatures.FAV_COUNT_V2,
-    InReplyToRecapFeatures.RETWEET_COUNT_V2,
-    InReplyToRecapFeatures.REPLY_COUNT_V2)
+  ovewwide vaw getfeatuwecontext: featuwecontext = nyew featuwecontext(
+    // textfeatuwes
+    i-inwepwytotweettimewinesshawedfeatuwes.weighted_fav_count, ( ͡o ω ͡o )
+    inwepwytotweettimewinesshawedfeatuwes.weighted_wetweet_count, òωó
+    i-inwepwytotweettimewinesshawedfeatuwes.weighted_wepwy_count, (⑅˘꒳˘)
+    i-inwepwytotweettimewinesshawedfeatuwes.weighted_quote_count, XD
+    inwepwytotweettimewinesshawedfeatuwes.decayed_favowite_count, -.-
+    inwepwytotweettimewinesshawedfeatuwes.decayed_wetweet_count, :3
+    inwepwytotweettimewinesshawedfeatuwes.decayed_wepwy_count, nyaa~~
+    inwepwytotweettimewinesshawedfeatuwes.decayed_quote_count, 😳
+    i-inwepwytotweettimewinesshawedfeatuwes.quote_count, (⑅˘꒳˘)
+    inwepwytotweettimewinesshawedfeatuwes.has_quote, nyaa~~
+    inwepwytotweettimewinesshawedfeatuwes.eawwybiwd_scowe, OwO
+    inwepwytowecapfeatuwes.pwev_usew_tweet_engagement, rawr x3
+    inwepwytowecapfeatuwes.is_sensitive, XD
+    inwepwytowecapfeatuwes.is_authow_new, σωσ
+    i-inwepwytowecapfeatuwes.num_mentions, (U ᵕ U❁)
+    inwepwytowecapfeatuwes.has_mention, (U ﹏ U)
+    i-inwepwytowecapfeatuwes.has_hashtag, :3
+    i-inwepwytowecapfeatuwes.is_authow_nsfw, ( ͡o ω ͡o )
+    i-inwepwytowecapfeatuwes.is_authow_spam, σωσ
+    i-inwepwytowecapfeatuwes.is_authow_bot, >w<
+    inwepwytowecapfeatuwes.fwom_mutuaw_fowwow, 😳😳😳
+    inwepwytowecapfeatuwes.usew_wep, OwO
+    inwepwytowecapfeatuwes.fwom_vewified_account, 😳
+    i-inwepwytowecapfeatuwes.has_image, 😳😳😳
+    inwepwytowecapfeatuwes.has_news, (˘ω˘)
+    inwepwytowecapfeatuwes.has_video, ʘwʘ
+    i-inwepwytowecapfeatuwes.has_visibwe_wink, ( ͡o ω ͡o )
+    inwepwytowecapfeatuwes.is_offensive,
+    inwepwytowecapfeatuwes.is_wepwy, o.O
+    inwepwytowecapfeatuwes.bidiwectionaw_wepwy_count, >w<
+    inwepwytowecapfeatuwes.unidiwectionaw_wepwy_count, 😳
+    inwepwytowecapfeatuwes.bidiwectionaw_wetweet_count, 🥺
+    inwepwytowecapfeatuwes.unidiwectionaw_wetweet_count, rawr x3
+    i-inwepwytowecapfeatuwes.bidiwectionaw_fav_count, o.O
+    inwepwytowecapfeatuwes.unidiwectionaw_fav_count, rawr
+    inwepwytowecapfeatuwes.convewsationaw_count, ʘwʘ
+    i-inwepwytowecapfeatuwes.wepwy_count, 😳😳😳
+    i-inwepwytowecapfeatuwes.wetweet_count, ^^;;
+    i-inwepwytowecapfeatuwes.fav_count, o.O
+    inwepwytowecapfeatuwes.text_scowe, (///ˬ///✿)
+    inwepwytowecapfeatuwes.fav_count_v2, σωσ
+    inwepwytowecapfeatuwes.wetweet_count_v2, nyaa~~
+    i-inwepwytowecapfeatuwes.wepwy_count_v2)
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  o-ovewwide vaw commonfeatuwes: s-set[featuwe[_]] = s-set.empty
 
-  override def setFeatures(
-    ebFeatures: Option[sc.ThriftTweetFeatures],
-    richDataRecord: RichDataRecord
-  ): Unit = {
-    if (ebFeatures.nonEmpty) {
-      val features = ebFeatures.get
+  ovewwide def setfeatuwes(
+    e-ebfeatuwes: option[sc.thwifttweetfeatuwes], ^^;;
+    w-wichdatawecowd: wichdatawecowd
+  ): unit = {
+    if (ebfeatuwes.nonempty) {
+      v-vaw featuwes = ebfeatuwes.get
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.WEIGHTED_FAV_COUNT,
-        features.weightedFavoriteCount.map(_.toDouble)
+      wichdatawecowd.setfeatuwevawuefwomoption(
+        i-inwepwytotweettimewinesshawedfeatuwes.weighted_fav_count, ^•ﻌ•^
+        featuwes.weightedfavowitecount.map(_.todoubwe)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.WEIGHTED_RETWEET_COUNT,
-        features.weightedRetweetCount.map(_.toDouble)
+      w-wichdatawecowd.setfeatuwevawuefwomoption(
+        i-inwepwytotweettimewinesshawedfeatuwes.weighted_wetweet_count, σωσ
+        featuwes.weightedwetweetcount.map(_.todoubwe)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.WEIGHTED_REPLY_COUNT,
-        features.weightedReplyCount.map(_.toDouble)
+      wichdatawecowd.setfeatuwevawuefwomoption(
+        inwepwytotweettimewinesshawedfeatuwes.weighted_wepwy_count, -.-
+        featuwes.weightedwepwycount.map(_.todoubwe)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.WEIGHTED_QUOTE_COUNT,
-        features.weightedQuoteCount.map(_.toDouble)
+      wichdatawecowd.setfeatuwevawuefwomoption(
+        inwepwytotweettimewinesshawedfeatuwes.weighted_quote_count, ^^;;
+        featuwes.weightedquotecount.map(_.todoubwe)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.DECAYED_FAVORITE_COUNT,
-        features.decayedFavoriteCount.map(_.toDouble)
+      wichdatawecowd.setfeatuwevawuefwomoption(
+        i-inwepwytotweettimewinesshawedfeatuwes.decayed_favowite_count, XD
+        f-featuwes.decayedfavowitecount.map(_.todoubwe)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.DECAYED_RETWEET_COUNT,
-        features.decayedRetweetCount.map(_.toDouble)
+      wichdatawecowd.setfeatuwevawuefwomoption(
+        i-inwepwytotweettimewinesshawedfeatuwes.decayed_wetweet_count,
+        f-featuwes.decayedwetweetcount.map(_.todoubwe)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.DECAYED_REPLY_COUNT,
-        features.decayedReplyCount.map(_.toDouble)
+      w-wichdatawecowd.setfeatuwevawuefwomoption(
+        inwepwytotweettimewinesshawedfeatuwes.decayed_wepwy_count, 🥺
+        featuwes.decayedwepwycount.map(_.todoubwe)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.DECAYED_QUOTE_COUNT,
-        features.decayedQuoteCount.map(_.toDouble)
+      wichdatawecowd.setfeatuwevawuefwomoption(
+        i-inwepwytotweettimewinesshawedfeatuwes.decayed_quote_count, òωó
+        featuwes.decayedquotecount.map(_.todoubwe)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.QUOTE_COUNT,
-        features.quoteCount.map(_.toDouble)
+      wichdatawecowd.setfeatuwevawuefwomoption(
+        inwepwytotweettimewinesshawedfeatuwes.quote_count, (ˆ ﻌ ˆ)♡
+        featuwes.quotecount.map(_.todoubwe)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.HAS_QUOTE,
-        features.hasQuote
+      w-wichdatawecowd.setfeatuwevawuefwomoption(
+        inwepwytotweettimewinesshawedfeatuwes.has_quote, -.-
+        featuwes.hasquote
       )
 
-      if (features.earlybirdScore > 0)
-        richDataRecord.setFeatureValue[JDouble](
-          InReplyToTweetTimelinesSharedFeatures.EARLYBIRD_SCORE,
-          features.earlybirdScore
+      i-if (featuwes.eawwybiwdscowe > 0)
+        w-wichdatawecowd.setfeatuwevawue[jdoubwe](
+          i-inwepwytotweettimewinesshawedfeatuwes.eawwybiwd_scowe, :3
+          featuwes.eawwybiwdscowe
         )
 
-      richDataRecord.setFeatureValue[JDouble](
-        InReplyToRecapFeatures.PREV_USER_TWEET_ENGAGEMENT,
-        features.prevUserTweetEngagement.toDouble
+      w-wichdatawecowd.setfeatuwevawue[jdoubwe](
+        i-inwepwytowecapfeatuwes.pwev_usew_tweet_engagement, ʘwʘ
+        f-featuwes.pwevusewtweetengagement.todoubwe
       )
 
-      richDataRecord
-        .setFeatureValue[JBoolean](InReplyToRecapFeatures.IS_SENSITIVE, features.isSensitiveContent)
-      richDataRecord
-        .setFeatureValue[JBoolean](InReplyToRecapFeatures.IS_AUTHOR_NEW, features.isAuthorNew)
-      richDataRecord.setFeatureValue[JDouble](
-        InReplyToRecapFeatures.NUM_MENTIONS,
-        features.numMentions.toDouble)
-      richDataRecord
-        .setFeatureValue[JBoolean](InReplyToRecapFeatures.HAS_MENTION, (features.numMentions > 0))
-      richDataRecord
-        .setFeatureValue[JBoolean](InReplyToRecapFeatures.HAS_HASHTAG, (features.numHashtags > 0))
-      richDataRecord
-        .setFeatureValue[JBoolean](InReplyToRecapFeatures.IS_AUTHOR_NSFW, features.isAuthorNSFW)
-      richDataRecord
-        .setFeatureValue[JBoolean](InReplyToRecapFeatures.IS_AUTHOR_SPAM, features.isAuthorSpam)
-      richDataRecord
-        .setFeatureValue[JBoolean](InReplyToRecapFeatures.IS_AUTHOR_BOT, features.isAuthorBot)
-      richDataRecord.setFeatureValue[JBoolean](
-        InReplyToRecapFeatures.FROM_MUTUAL_FOLLOW,
-        features.fromMutualFollow)
-      richDataRecord.setFeatureValue[JDouble](InReplyToRecapFeatures.USER_REP, features.userRep)
-      richDataRecord.setFeatureValue[JBoolean](
-        InReplyToRecapFeatures.FROM_VERIFIED_ACCOUNT,
-        features.fromVerifiedAccount)
-      richDataRecord.setFeatureValue[JBoolean](InReplyToRecapFeatures.HAS_IMAGE, features.hasImage)
-      richDataRecord.setFeatureValue[JBoolean](InReplyToRecapFeatures.HAS_NEWS, features.hasNews)
-      richDataRecord.setFeatureValue[JBoolean](InReplyToRecapFeatures.HAS_VIDEO, features.hasVideo)
-      richDataRecord
-        .setFeatureValue[JBoolean](InReplyToRecapFeatures.HAS_VISIBLE_LINK, features.hasVisibleLink)
-      richDataRecord
-        .setFeatureValue[JBoolean](InReplyToRecapFeatures.IS_OFFENSIVE, features.isOffensive)
-      richDataRecord.setFeatureValue[JBoolean](InReplyToRecapFeatures.IS_REPLY, features.isReply)
-      richDataRecord.setFeatureValue[JDouble](
-        InReplyToRecapFeatures.BIDIRECTIONAL_REPLY_COUNT,
-        features.bidirectionalReplyCount)
-      richDataRecord.setFeatureValue[JDouble](
-        InReplyToRecapFeatures.UNIDIRECTIONAL_REPLY_COUNT,
-        features.unidirectionalReplyCount)
-      richDataRecord.setFeatureValue[JDouble](
-        InReplyToRecapFeatures.BIDIRECTIONAL_RETWEET_COUNT,
-        features.bidirectionalRetweetCount)
-      richDataRecord.setFeatureValue[JDouble](
-        InReplyToRecapFeatures.UNIDIRECTIONAL_RETWEET_COUNT,
-        features.unidirectionalRetweetCount)
-      richDataRecord.setFeatureValue[JDouble](
-        InReplyToRecapFeatures.BIDIRECTIONAL_FAV_COUNT,
-        features.bidirectionalFavCount)
-      richDataRecord.setFeatureValue[JDouble](
-        InReplyToRecapFeatures.UNIDIRECTIONAL_FAV_COUNT,
-        features.unidirectionalFavCount)
-      richDataRecord.setFeatureValue[JDouble](
-        InReplyToRecapFeatures.CONVERSATIONAL_COUNT,
-        features.conversationCount)
-      richDataRecord
-        .setFeatureValue[JDouble](InReplyToRecapFeatures.REPLY_COUNT, features.replyCount.toDouble)
-      richDataRecord.setFeatureValue[JDouble](
-        InReplyToRecapFeatures.RETWEET_COUNT,
-        features.retweetCount.toDouble)
-      richDataRecord
-        .setFeatureValue[JDouble](InReplyToRecapFeatures.FAV_COUNT, features.favCount.toDouble)
-      richDataRecord.setFeatureValue[JDouble](InReplyToRecapFeatures.TEXT_SCORE, features.textScore)
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToRecapFeatures.FAV_COUNT_V2,
-        features.favCountV2.map(_.toDouble))
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToRecapFeatures.RETWEET_COUNT_V2,
-        features.retweetCountV2.map(_.toDouble)
+      w-wichdatawecowd
+        .setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.is_sensitive, 🥺 featuwes.issensitivecontent)
+      wichdatawecowd
+        .setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.is_authow_new, >_< f-featuwes.isauthownew)
+      w-wichdatawecowd.setfeatuwevawue[jdoubwe](
+        i-inwepwytowecapfeatuwes.num_mentions, ʘwʘ
+        f-featuwes.nummentions.todoubwe)
+      w-wichdatawecowd
+        .setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.has_mention, (featuwes.nummentions > 0))
+      wichdatawecowd
+        .setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.has_hashtag, (˘ω˘) (featuwes.numhashtags > 0))
+      wichdatawecowd
+        .setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.is_authow_nsfw, (✿oωo) featuwes.isauthownsfw)
+      w-wichdatawecowd
+        .setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.is_authow_spam, (///ˬ///✿) featuwes.isauthowspam)
+      wichdatawecowd
+        .setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.is_authow_bot, featuwes.isauthowbot)
+      wichdatawecowd.setfeatuwevawue[jboowean](
+        inwepwytowecapfeatuwes.fwom_mutuaw_fowwow, rawr x3
+        f-featuwes.fwommutuawfowwow)
+      wichdatawecowd.setfeatuwevawue[jdoubwe](inwepwytowecapfeatuwes.usew_wep, -.- featuwes.usewwep)
+      wichdatawecowd.setfeatuwevawue[jboowean](
+        i-inwepwytowecapfeatuwes.fwom_vewified_account, ^^
+        f-featuwes.fwomvewifiedaccount)
+      wichdatawecowd.setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.has_image, f-featuwes.hasimage)
+      wichdatawecowd.setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.has_news, (⑅˘꒳˘) f-featuwes.hasnews)
+      wichdatawecowd.setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.has_video, nyaa~~ f-featuwes.hasvideo)
+      w-wichdatawecowd
+        .setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.has_visibwe_wink, /(^•ω•^) featuwes.hasvisibwewink)
+      wichdatawecowd
+        .setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.is_offensive, (U ﹏ U) featuwes.isoffensive)
+      wichdatawecowd.setfeatuwevawue[jboowean](inwepwytowecapfeatuwes.is_wepwy, 😳😳😳 featuwes.iswepwy)
+      w-wichdatawecowd.setfeatuwevawue[jdoubwe](
+        inwepwytowecapfeatuwes.bidiwectionaw_wepwy_count, >w<
+        f-featuwes.bidiwectionawwepwycount)
+      wichdatawecowd.setfeatuwevawue[jdoubwe](
+        i-inwepwytowecapfeatuwes.unidiwectionaw_wepwy_count, XD
+        f-featuwes.unidiwectionawwepwycount)
+      wichdatawecowd.setfeatuwevawue[jdoubwe](
+        inwepwytowecapfeatuwes.bidiwectionaw_wetweet_count, o.O
+        f-featuwes.bidiwectionawwetweetcount)
+      w-wichdatawecowd.setfeatuwevawue[jdoubwe](
+        inwepwytowecapfeatuwes.unidiwectionaw_wetweet_count, mya
+        f-featuwes.unidiwectionawwetweetcount)
+      w-wichdatawecowd.setfeatuwevawue[jdoubwe](
+        inwepwytowecapfeatuwes.bidiwectionaw_fav_count, 🥺
+        featuwes.bidiwectionawfavcount)
+      wichdatawecowd.setfeatuwevawue[jdoubwe](
+        inwepwytowecapfeatuwes.unidiwectionaw_fav_count, ^^;;
+        featuwes.unidiwectionawfavcount)
+      w-wichdatawecowd.setfeatuwevawue[jdoubwe](
+        i-inwepwytowecapfeatuwes.convewsationaw_count,
+        f-featuwes.convewsationcount)
+      wichdatawecowd
+        .setfeatuwevawue[jdoubwe](inwepwytowecapfeatuwes.wepwy_count, :3 f-featuwes.wepwycount.todoubwe)
+      w-wichdatawecowd.setfeatuwevawue[jdoubwe](
+        inwepwytowecapfeatuwes.wetweet_count,
+        f-featuwes.wetweetcount.todoubwe)
+      wichdatawecowd
+        .setfeatuwevawue[jdoubwe](inwepwytowecapfeatuwes.fav_count, (U ﹏ U) featuwes.favcount.todoubwe)
+      wichdatawecowd.setfeatuwevawue[jdoubwe](inwepwytowecapfeatuwes.text_scowe, featuwes.textscowe)
+      w-wichdatawecowd.setfeatuwevawuefwomoption(
+        i-inwepwytowecapfeatuwes.fav_count_v2, OwO
+        featuwes.favcountv2.map(_.todoubwe))
+      wichdatawecowd.setfeatuwevawuefwomoption(
+        inwepwytowecapfeatuwes.wetweet_count_v2, 😳😳😳
+        f-featuwes.wetweetcountv2.map(_.todoubwe)
       )
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToRecapFeatures.REPLY_COUNT_V2,
-        features.replyCountV2.map(_.toDouble))
+      w-wichdatawecowd.setfeatuwevawuefwomoption(
+        inwepwytowecapfeatuwes.wepwy_count_v2, (ˆ ﻌ ˆ)♡
+        featuwes.wepwycountv2.map(_.todoubwe))
     }
   }
 }

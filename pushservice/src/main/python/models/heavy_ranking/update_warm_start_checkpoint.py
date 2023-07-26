@@ -1,145 +1,145 @@
 """
-Model for modifying the checkpoints of the magic recs cnn Model with addition, deletion, and reordering
-of continuous and binary features.
+modew fow modifying the checkpoints o-of the magic w-wecs cnn modew w-with addition, ^^;; d-dewetion, 🥺 and w-weowdewing
+of continuous a-and binawy f-featuwes. (⑅˘꒳˘)
 """
 
-import os
+i-impowt os
 
-from twitter.deepbird.projects.magic_recs.libs.get_feat_config import FEATURE_LIST_DEFAULT_PATH
-from twitter.deepbird.projects.magic_recs.libs.warm_start_utils_v11 import (
-  get_feature_list_for_heavy_ranking,
-  mkdirp,
-  rename_dir,
-  rmdir,
-  warm_start_checkpoint,
+fwom twittew.deepbiwd.pwojects.magic_wecs.wibs.get_feat_config impowt featuwe_wist_defauwt_path
+fwom t-twittew.deepbiwd.pwojects.magic_wecs.wibs.wawm_stawt_utiws_v11 impowt (
+  get_featuwe_wist_fow_heavy_wanking, nyaa~~
+  mkdiwp,
+  wename_diw, :3
+  w-wmdiw, ( ͡o ω ͡o )
+  wawm_stawt_checkpoint, mya
 )
-import twml
-from twml.trainers import DataRecordTrainer
+i-impowt twmw
+fwom twmw.twainews impowt datawecowdtwainew
 
-import tensorflow.compat.v1 as tf
-from tensorflow.compat.v1 import logging
+i-impowt tensowfwow.compat.v1 as tf
+fwom tensowfwow.compat.v1 i-impowt wogging
 
 
-def get_arg_parser():
-  parser = DataRecordTrainer.add_parser_arguments()
-  parser.add_argument(
-    "--model_type",
-    default="deepnorm_gbdt_inputdrop2_rescale",
-    type=str,
-    help="specify the model type to use.",
+d-def get_awg_pawsew():
+  pawsew = datawecowdtwainew.add_pawsew_awguments()
+  pawsew.add_awgument(
+    "--modew_type", (///ˬ///✿)
+    defauwt="deepnowm_gbdt_inputdwop2_wescawe", (˘ω˘)
+    type=stw, ^^;;
+    h-hewp="specify the modew type to use.", (✿oωo)
   )
 
-  parser.add_argument(
-    "--model_trainer_name",
-    default="None",
-    type=str,
-    help="deprecated, added here just for api compatibility.",
+  pawsew.add_awgument(
+    "--modew_twainew_name", (U ﹏ U)
+    defauwt="none", -.-
+    t-type=stw, ^•ﻌ•^
+    hewp="depwecated, rawr added hewe just f-fow api compatibiwity.", (˘ω˘)
   )
 
-  parser.add_argument(
-    "--warm_start_base_dir",
-    default="none",
-    type=str,
-    help="latest ckpt in this folder will be used.",
+  p-pawsew.add_awgument(
+    "--wawm_stawt_base_diw", nyaa~~
+    d-defauwt="none", UwU
+    t-type=stw, :3
+    hewp="watest ckpt in this f-fowdew wiww be used.", (⑅˘꒳˘)
   )
 
-  parser.add_argument(
-    "--output_checkpoint_dir",
-    default="none",
-    type=str,
-    help="Output folder for warm started ckpt. If none, it will move warm_start_base_dir to backup, and overwrite it",
+  pawsew.add_awgument(
+    "--output_checkpoint_diw", (///ˬ///✿)
+    d-defauwt="none", ^^;;
+    type=stw, >_<
+    hewp="output fowdew fow wawm stawted ckpt. rawr x3 if nyone, i-it wiww move wawm_stawt_base_diw to backup, /(^•ω•^) and o-ovewwwite it", :3
   )
 
-  parser.add_argument(
-    "--feature_list",
-    default="none",
-    type=str,
-    help="Which features to use for training",
+  p-pawsew.add_awgument(
+    "--featuwe_wist", (ꈍᴗꈍ)
+    d-defauwt="none", /(^•ω•^)
+    type=stw, (⑅˘꒳˘)
+    hewp="which featuwes to use f-fow twaining", ( ͡o ω ͡o )
   )
 
-  parser.add_argument(
-    "--old_feature_list",
-    default="none",
-    type=str,
-    help="Which features to use for training",
+  p-pawsew.add_awgument(
+    "--owd_featuwe_wist",
+    defauwt="none", òωó
+    t-type=stw, (⑅˘꒳˘)
+    hewp="which f-featuwes to use fow twaining", XD
   )
 
-  return parser
+  w-wetuwn pawsew
 
 
-def get_params(args=None):
-  parser = get_arg_parser()
-  if args is None:
-    return parser.parse_args()
-  else:
-    return parser.parse_args(args)
+def get_pawams(awgs=none):
+  p-pawsew = get_awg_pawsew()
+  if awgs i-is nyone:
+    wetuwn pawsew.pawse_awgs()
+  e-ewse:
+    wetuwn pawsew.pawse_awgs(awgs)
 
 
-def _main():
-  opt = get_params()
-  logging.info("parse is: ")
-  logging.info(opt)
+d-def _main():
+  o-opt = get_pawams()
+  wogging.info("pawse is: ")
+  wogging.info(opt)
 
-  if opt.feature_list == "none":
-    feature_list_path = FEATURE_LIST_DEFAULT_PATH
-  else:
-    feature_list_path = opt.feature_list
+  if opt.featuwe_wist == "none":
+    featuwe_wist_path = featuwe_wist_defauwt_path
+  e-ewse:
+    featuwe_wist_path = o-opt.featuwe_wist
 
-  if opt.warm_start_base_dir != "none" and tf.io.gfile.exists(opt.warm_start_base_dir):
-    if opt.output_checkpoint_dir == "none" or opt.output_checkpoint_dir == opt.warm_start_base_dir:
-      _warm_start_base_dir = os.path.normpath(opt.warm_start_base_dir) + "_backup_warm_start"
-      _output_folder_dir = opt.warm_start_base_dir
+  if opt.wawm_stawt_base_diw != "none" a-and tf.io.gfiwe.exists(opt.wawm_stawt_base_diw):
+    i-if opt.output_checkpoint_diw == "none" o-ow opt.output_checkpoint_diw == opt.wawm_stawt_base_diw:
+      _wawm_stawt_base_diw = os.path.nowmpath(opt.wawm_stawt_base_diw) + "_backup_wawm_stawt"
+      _output_fowdew_diw = opt.wawm_stawt_base_diw
 
-      rename_dir(opt.warm_start_base_dir, _warm_start_base_dir)
-      tf.logging.info(f"moved {opt.warm_start_base_dir} to {_warm_start_base_dir}")
-    else:
-      _warm_start_base_dir = opt.warm_start_base_dir
-      _output_folder_dir = opt.output_checkpoint_dir
+      w-wename_diw(opt.wawm_stawt_base_diw, -.- _wawm_stawt_base_diw)
+      tf.wogging.info(f"moved {opt.wawm_stawt_base_diw} to {_wawm_stawt_base_diw}")
+    ewse:
+      _wawm_stawt_base_diw = opt.wawm_stawt_base_diw
+      _output_fowdew_diw = o-opt.output_checkpoint_diw
 
-    continuous_binary_feat_list_save_path = os.path.join(
-      _warm_start_base_dir, "continuous_binary_feat_list.json"
+    continuous_binawy_feat_wist_save_path = o-os.path.join(
+      _wawm_stawt_base_diw, :3 "continuous_binawy_feat_wist.json"
     )
 
-    if opt.old_feature_list != "none":
-      tf.logging.info("getting old continuous_binary_feat_list")
-      continuous_binary_feat_list = get_feature_list_for_heavy_ranking(
-        opt.old_feature_list, opt.data_spec
+    i-if opt.owd_featuwe_wist != "none":
+      t-tf.wogging.info("getting owd c-continuous_binawy_feat_wist")
+      c-continuous_binawy_feat_wist = g-get_featuwe_wist_fow_heavy_wanking(
+        opt.owd_featuwe_wist, nyaa~~ o-opt.data_spec
       )
-      rmdir(continuous_binary_feat_list_save_path)
-      twml.util.write_file(
-        continuous_binary_feat_list_save_path, continuous_binary_feat_list, encode="json"
+      wmdiw(continuous_binawy_feat_wist_save_path)
+      twmw.utiw.wwite_fiwe(
+        c-continuous_binawy_feat_wist_save_path, 😳 c-continuous_binawy_feat_wist, (⑅˘꒳˘) e-encode="json"
       )
-      tf.logging.info(f"Finish writting files to {continuous_binary_feat_list_save_path}")
+      t-tf.wogging.info(f"finish w-wwitting fiwes to {continuous_binawy_feat_wist_save_path}")
 
-    warm_start_folder = os.path.join(_warm_start_base_dir, "best_checkpoint")
-    if not tf.io.gfile.exists(warm_start_folder):
-      warm_start_folder = _warm_start_base_dir
+    wawm_stawt_fowdew = os.path.join(_wawm_stawt_base_diw, nyaa~~ "best_checkpoint")
+    i-if nyot tf.io.gfiwe.exists(wawm_stawt_fowdew):
+      wawm_stawt_fowdew = _wawm_stawt_base_diw
 
-    rmdir(_output_folder_dir)
-    mkdirp(_output_folder_dir)
+    wmdiw(_output_fowdew_diw)
+    mkdiwp(_output_fowdew_diw)
 
-    new_ckpt = warm_start_checkpoint(
-      warm_start_folder,
-      continuous_binary_feat_list_save_path,
-      feature_list_path,
-      opt.data_spec,
-      _output_folder_dir,
-      opt.model_type,
+    nyew_ckpt = wawm_stawt_checkpoint(
+      w-wawm_stawt_fowdew, OwO
+      continuous_binawy_feat_wist_save_path, rawr x3
+      featuwe_wist_path, XD
+      opt.data_spec, σωσ
+      _output_fowdew_diw, (U ᵕ U❁)
+      o-opt.modew_type, (U ﹏ U)
     )
-    logging.info(f"Created new ckpt {new_ckpt} from {warm_start_folder}")
+    w-wogging.info(f"cweated n-new ckpt {new_ckpt} fwom {wawm_stawt_fowdew}")
 
-    tf.logging.info("getting new continuous_binary_feat_list")
-    new_continuous_binary_feat_list_save_path = os.path.join(
-      _output_folder_dir, "continuous_binary_feat_list.json"
+    t-tf.wogging.info("getting nyew continuous_binawy_feat_wist")
+    n-nyew_continuous_binawy_feat_wist_save_path = o-os.path.join(
+      _output_fowdew_diw, :3 "continuous_binawy_feat_wist.json"
     )
-    continuous_binary_feat_list = get_feature_list_for_heavy_ranking(
-      feature_list_path, opt.data_spec
+    continuous_binawy_feat_wist = get_featuwe_wist_fow_heavy_wanking(
+      featuwe_wist_path, ( ͡o ω ͡o ) opt.data_spec
     )
-    rmdir(new_continuous_binary_feat_list_save_path)
-    twml.util.write_file(
-      new_continuous_binary_feat_list_save_path, continuous_binary_feat_list, encode="json"
+    wmdiw(new_continuous_binawy_feat_wist_save_path)
+    t-twmw.utiw.wwite_fiwe(
+      nyew_continuous_binawy_feat_wist_save_path, σωσ c-continuous_binawy_feat_wist, >w< encode="json"
     )
-    tf.logging.info(f"Finish writting files to {new_continuous_binary_feat_list_save_path}")
+    t-tf.wogging.info(f"finish w-wwitting fiwes to {new_continuous_binawy_feat_wist_save_path}")
 
 
 if __name__ == "__main__":

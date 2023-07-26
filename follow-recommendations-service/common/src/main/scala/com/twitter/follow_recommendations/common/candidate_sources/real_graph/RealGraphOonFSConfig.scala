@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.candidate_sources.real_graph
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.weaw_gwaph
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt c-com.twittew.timewines.configapi.fsboundedpawam
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.pawam
+impowt j-javax.inject.inject
+i-impowt j-javax.inject.singweton
 
-@Singleton
-class RealGraphOonFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
-    Seq(
-      RealGraphOonParams.IncludeRealGraphOonCandidates,
-      RealGraphOonParams.TryToReadRealGraphOonCandidates,
-      RealGraphOonParams.UseV2
+@singweton
+c-cwass weawgwaphoonfsconfig @inject() () extends featuweswitchconfig {
+  ovewwide vaw booweanfspawams: s-seq[pawam[boowean] with fsname] =
+    s-seq(
+      weawgwaphoonpawams.incwudeweawgwaphooncandidates, XD
+      weawgwaphoonpawams.twytoweadweawgwaphooncandidates, :3
+      w-weawgwaphoonpawams.usev2
     )
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] =
-    Seq(
-      RealGraphOonParams.ScoreThreshold
+  ovewwide vaw doubwefspawams: seq[fsboundedpawam[doubwe]] =
+    s-seq(
+      weawgwaphoonpawams.scowethweshowd
     )
-  override val intFSParams: Seq[FSBoundedParam[Int]] =
-    Seq(
-      RealGraphOonParams.RealGraphOonResultCountThreshold,
-      RealGraphOonParams.MaxResults,
+  o-ovewwide vaw intfspawams: s-seq[fsboundedpawam[int]] =
+    seq(
+      weawgwaphoonpawams.weawgwaphoonwesuwtcountthweshowd, 😳😳😳
+      weawgwaphoonpawams.maxwesuwts, -.-
     )
 }

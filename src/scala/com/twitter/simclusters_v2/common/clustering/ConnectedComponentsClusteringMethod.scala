@@ -1,67 +1,67 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.twittew.simcwustews_v2.common.cwustewing
 
-import com.twitter.sbf.graph.ConnectedComponents
-import com.twitter.sbf.graph.Graph
-import com.twitter.util.Stopwatch
-import it.unimi.dsi.fastutil.ints.IntSet
-import scala.collection.SortedMap
-import scala.jdk.CollectionConverters._
+impowt com.twittew.sbf.gwaph.connectedcomponents
+i-impowt com.twittew.sbf.gwaph.gwaph
+i-impowt c-com.twittew.utiw.stopwatch
+i-impowt i-it.unimi.dsi.fastutiw.ints.intset
+i-impowt scawa.cowwection.sowtedmap
+i-impowt scawa.jdk.cowwectionconvewtews._
 
 /**
- * Aggregate entities into clusters such that a cluster contains all embeddings with a similarity
- * above a configurable threshold to any other embedding.
+ * a-aggwegate entities into cwustews such that a cwustew contains aww embeddings w-with a simiwawity
+ * above a configuwabwe thweshowd t-to any othew embedding. -.-
  *
- * @param similarityThreshold: When building the edges between entities, edges with weight
- * less than or equal to this threshold will be filtered out.
+ * @pawam s-simiwawitythweshowd: when buiwding the edges between entities, 😳 edges w-with weight
+ * wess than ow equaw t-to this thweshowd w-wiww be fiwtewed out. mya
  */
-class ConnectedComponentsClusteringMethod(
-  similarityThreshold: Double)
-    extends ClusteringMethod {
+cwass connectedcomponentscwustewingmethod(
+  simiwawitythweshowd: doubwe)
+    extends c-cwustewingmethod {
 
-  import ClusteringStatistics._
+  impowt cwustewingstatistics._
 
-  def cluster[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit = (_, _) => ()
-  ): Set[Set[Long]] = {
+  def cwustew[t](
+    e-embeddings: map[wong, (˘ω˘) t],
+    simiwawityfn: (t, t-t) => doubwe,
+    w-wecowdstatcawwback: (stwing, >_< wong) => u-unit = (_, -.- _) => ()
+  ): s-set[set[wong]] = {
 
-    val timeSinceGraphBuildStart = Stopwatch.start()
-    // com.twitter.sbf.graph.Graph expects neighbors to be sorted in ascending order.
-    val sourcesById = SortedMap(embeddings.zipWithIndex.map {
-      case (source, idx) => idx -> source
-    }.toSeq: _*)
+    vaw timesincegwaphbuiwdstawt = stopwatch.stawt()
+    // c-com.twittew.sbf.gwaph.gwaph expects nyeighbows t-to be sowted in ascending owdew. 🥺
+    vaw souwcesbyid = sowtedmap(embeddings.zipwithindex.map {
+      case (souwce, (U ﹏ U) idx) => idx -> s-souwce
+    }.toseq: _*)
 
-    val neighbours = sourcesById.map {
-      case (srcIdx, (_, src)) =>
-        sourcesById
-          .collect {
-            case (dstIdx, (_, dst)) if srcIdx != dstIdx => // avoid self-edges
-              val similarity = similarityFn(src, dst)
-              recordStatCallback(
-                StatComputedSimilarityBeforeFilter,
-                (similarity * 100).toLong // preserve up to two decimal points
+    vaw nyeighbouws = s-souwcesbyid.map {
+      c-case (swcidx, >w< (_, s-swc)) =>
+        souwcesbyid
+          .cowwect {
+            case (dstidx, mya (_, dst)) i-if swcidx != dstidx => // a-avoid sewf-edges
+              v-vaw simiwawity = s-simiwawityfn(swc, >w< dst)
+              w-wecowdstatcawwback(
+                statcomputedsimiwawitybefowefiwtew, nyaa~~
+                (simiwawity * 100).towong // p-pwesewve up to two decimaw points
               )
-              if (similarity > similarityThreshold)
-                Some(dstIdx)
-              else None
-          }.flatten.toArray
-    }.toArray
+              i-if (simiwawity > simiwawitythweshowd)
+                s-some(dstidx)
+              ewse nyone
+          }.fwatten.toawway
+    }.toawway
 
-    recordStatCallback(StatSimilarityGraphTotalBuildTime, timeSinceGraphBuildStart().inMilliseconds)
+    w-wecowdstatcawwback(statsimiwawitygwaphtotawbuiwdtime, (✿oωo) t-timesincegwaphbuiwdstawt().inmiwwiseconds)
 
-    val timeSinceClusteringAlgRunStart = Stopwatch.start()
-    val nEdges = neighbours.map(_.length).sum / 2 // Graph expects count of undirected edges
-    val graph = new Graph(sourcesById.size, nEdges, neighbours)
+    vaw timesincecwustewingawgwunstawt = stopwatch.stawt()
+    vaw nyedges = nyeighbouws.map(_.wength).sum / 2 // gwaph expects count of undiwected edges
+    v-vaw gwaph = nyew g-gwaph(souwcesbyid.size, ʘwʘ nyedges, n-nyeighbouws)
 
-    val clusters = ConnectedComponents
-      .connectedComponents(graph).asScala.toSet
-      .map { i: IntSet => i.asScala.map(sourcesById(_)._1).toSet }
+    v-vaw cwustews = c-connectedcomponents
+      .connectedcomponents(gwaph).asscawa.toset
+      .map { i: intset => i.asscawa.map(souwcesbyid(_)._1).toset }
 
-    recordStatCallback(
-      StatClusteringAlgorithmRunTime,
-      timeSinceClusteringAlgRunStart().inMilliseconds)
+    wecowdstatcawwback(
+      statcwustewingawgowithmwuntime, (ˆ ﻌ ˆ)♡
+      timesincecwustewingawgwunstawt().inmiwwiseconds)
 
-    clusters
+    c-cwustews
   }
 }

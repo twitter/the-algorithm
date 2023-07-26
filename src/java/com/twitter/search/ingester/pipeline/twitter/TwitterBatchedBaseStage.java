@@ -1,309 +1,309 @@
-package com.twitter.search.ingester.pipeline.twitter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import javax.naming.NamingException;
+package com.twittew.seawch.ingestew.pipewine.twittew;
+impowt java.utiw.awwaywist;
+i-impowt java.utiw.cowwection;
+i-impowt j-java.utiw.itewatow;
+i-impowt j-java.utiw.optionaw;
+i-impowt java.utiw.queue;
+i-impowt j-java.utiw.concuwwent.compwetabwefutuwe;
+impowt java.utiw.concuwwent.timeunit;
+impowt java.utiw.stweam.cowwectows;
+impowt javax.naming.namingexception;
 
-import scala.runtime.BoxedUnit;
+i-impowt scawa.wuntime.boxedunit;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Queues;
+impowt c-com.googwe.common.cowwect.wists;
+impowt com.googwe.common.cowwect.queues;
 
-import org.apache.commons.pipeline.StageException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.apache.commons.pipewine.stageexception;
+impowt owg.swf4j.woggew;
+impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+impowt c-com.twittew.seawch.common.metwics.seawchcustomgauge;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.batchedewement;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.pipewinestageexception;
+i-impowt com.twittew.utiw.function;
+impowt com.twittew.utiw.futuwe;
 
-public abstract class TwitterBatchedBaseStage<T, R> extends
-    TwitterBaseStage<T, CompletableFuture<R>> {
-  private static final Logger LOG = LoggerFactory.getLogger(TwitterBatchedBaseStage.class);
+pubwic abstwact cwass t-twittewbatchedbasestage<t, OwO w> extends
+    t-twittewbasestage<t, ^•ﻌ•^ compwetabwefutuwe<w>> {
+  p-pwivate s-static finaw woggew w-wog = woggewfactowy.getwoggew(twittewbatchedbasestage.cwass);
 
-  protected final Queue<BatchedElement<T, R>> queue =
-      Queues.newLinkedBlockingQueue(MAX_BATCHING_QUEUE_SIZE);
+  pwotected finaw queue<batchedewement<t, >_< w-w>> queue =
+      queues.newwinkedbwockingqueue(max_batching_queue_size);
 
-  private int batchedStageBatchSize = 100;
-  private int forceProcessAfterMs = 500;
+  p-pwivate int batchedstagebatchsize = 100;
+  pwivate int fowcepwocessaftewms = 500;
 
-  private long lastProcessingTime;
+  pwivate wong wastpwocessingtime;
 
-  private SearchRateCounter timeBasedQueueFlush;
-  private SearchRateCounter sizeBasedQueueFlush;
-  private SearchRateCounter eventsFailed;
-  private SearchRateCounter numberOfCallsToNextBatchIfReady;
-  private SearchTimerStats batchExecutionTime;
-  private SearchTimerStats batchFailedExecutionTime;
-  private SearchRateCounter validElements;
-  private SearchRateCounter batchedElements;
-  private SearchRateCounter emittedElements;
-  private static final int MAX_BATCHING_QUEUE_SIZE = 10000;
+  pwivate seawchwatecountew t-timebasedqueuefwush;
+  pwivate seawchwatecountew sizebasedqueuefwush;
+  p-pwivate seawchwatecountew e-eventsfaiwed;
+  p-pwivate seawchwatecountew nyumbewofcawwstonextbatchifweady;
+  pwivate seawchtimewstats b-batchexecutiontime;
+  p-pwivate seawchtimewstats b-batchfaiwedexecutiontime;
+  p-pwivate seawchwatecountew vawidewements;
+  p-pwivate seawchwatecountew b-batchedewements;
+  pwivate seawchwatecountew e-emittedewements;
+  pwivate static f-finaw int max_batching_queue_size = 10000;
 
-  // force the implementing class to set type correctly to avoid catching issues at runtime
-  protected abstract Class<T> getQueueObjectType();
+  // f-fowce the i-impwementing cwass to set type cowwectwy to avoid catching issues at wuntime
+  pwotected abstwact cwass<t> getqueueobjecttype();
 
-  // up to the developer on how each batch is processed.
-  protected abstract Future<Collection<R>> innerProcessBatch(Collection<BatchedElement<T, R>>
+  // u-up to the d-devewopew on how each batch is p-pwocessed. OwO
+  pwotected a-abstwact f-futuwe<cowwection<w>> innewpwocessbatch(cowwection<batchedewement<t, >_< w>>
                                                                  batch);
 
-  // classes that need to update their batch e.g after a decider change
-  // can override this
-  protected void updateBatchSize() {
+  // c-cwasses that nyeed to update theiw batch e.g aftew a decidew change
+  // c-can ovewwide this
+  pwotected v-void updatebatchsize() {
   }
 
-  protected Collection<T> extractOnlyElementsFromBatch(Collection<BatchedElement<T, R>> batch) {
-    Collection<T> elementsOnly = new ArrayList<>();
+  p-pwotected cowwection<t> e-extwactonwyewementsfwombatch(cowwection<batchedewement<t, (ꈍᴗꈍ) w>> batch) {
+    c-cowwection<t> e-ewementsonwy = n-nyew awwaywist<>();
 
-    for (BatchedElement<T, R> batchedElement : batch) {
-      elementsOnly.add(batchedElement.getItem());
+    f-fow (batchedewement<t, >w< w> batchedewement : batch) {
+      e-ewementsonwy.add(batchedewement.getitem());
     }
-    return elementsOnly;
+    w-wetuwn e-ewementsonwy;
   }
   /**
-   * This function is used to filter the elements that we want to batch.
-   * e.g. if a tweet has urls batch it to resolve the urls, if it doesn't contain urls
-   * do not batch.
+   * t-this f-function is used to fiwtew the ewements that we want to batch. (U ﹏ U)
+   * e-e.g. ^^ if a tweet has uwws batch it to wesowve the uwws, (U ﹏ U) if it doesn't contain uwws
+   * do n-nyot batch. :3
    *
-   * @param element to be evaluated
+   * @pawam ewement to be evawuated
    */
-  protected abstract boolean needsToBeBatched(T element);
+  pwotected a-abstwact b-boowean nyeedstobebatched(t e-ewement);
 
   /**
-   * Tranform from type T to U element.
-   * T and U might be different types so this function will help with the transformation
-   * if the incoming T element is filtered out and is bypass directly to the next stage
-   * that takes incoming objects of type U
+   * twanfowm fwom t-type t to u ewement. (✿oωo)
+   * t and u-u might be diffewent t-types so this function wiww hewp with the twansfowmation
+   * if the incoming t ewement is fiwtewed out and i-is bypass diwectwy to the nyext s-stage
+   * that takes incoming o-objects of type u-u
    *
-   * @param element incoming element
+   * @pawam ewement incoming ewement
    */
-  protected abstract R transform(T element);
+  p-pwotected abstwact w-w twansfowm(t ewement);
 
-  protected void reEnqueueAndRetry(BatchedElement<T, R> batchedElement) {
-    queue.add(batchedElement);
+  p-pwotected void w-weenqueueandwetwy(batchedewement<t, XD w> batchedewement) {
+    queue.add(batchedewement);
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    commonInnerSetupStats();
+  @ovewwide
+  pwotected void initstats() {
+    s-supew.initstats();
+    c-commoninnewsetupstats();
   }
 
-  private void commonInnerSetupStats() {
-    timeBasedQueueFlush = SearchRateCounter.export(getStageNamePrefix()
-        + "_time_based_queue_flush");
-    sizeBasedQueueFlush = SearchRateCounter.export(getStageNamePrefix()
-        + "_size_based_queue_flush");
-    batchExecutionTime = SearchTimerStats.export(getStageNamePrefix()
-        + "_batch_execution_time", TimeUnit.MILLISECONDS, false, true);
-    batchFailedExecutionTime = SearchTimerStats.export(getStageNamePrefix()
-        + "_batch_failed_execution_time", TimeUnit.MILLISECONDS, false, true);
-    eventsFailed = SearchRateCounter.export(getStageNamePrefix() + "_events_dropped");
-    SearchCustomGauge.export(getStageNamePrefix() + "_batched_stage_queue_size", queue::size);
-    numberOfCallsToNextBatchIfReady = SearchRateCounter.export(getStageNamePrefix()
-        + "_calls_to_nextBatchIfReady");
-    validElements = SearchRateCounter.export(getStageNamePrefix() + "_valid_elements");
-    batchedElements = SearchRateCounter.export(getStageNamePrefix() + "_batched_elements");
-    emittedElements = SearchRateCounter.export(getStageNamePrefix() + "_emitted_elements");
+  p-pwivate void commoninnewsetupstats() {
+    timebasedqueuefwush = s-seawchwatecountew.expowt(getstagenamepwefix()
+        + "_time_based_queue_fwush");
+    s-sizebasedqueuefwush = seawchwatecountew.expowt(getstagenamepwefix()
+        + "_size_based_queue_fwush");
+    b-batchexecutiontime = seawchtimewstats.expowt(getstagenamepwefix()
+        + "_batch_execution_time", >w< timeunit.miwwiseconds, òωó fawse, twue);
+    batchfaiwedexecutiontime = s-seawchtimewstats.expowt(getstagenamepwefix()
+        + "_batch_faiwed_execution_time", (ꈍᴗꈍ) t-timeunit.miwwiseconds, fawse, rawr x3 twue);
+    eventsfaiwed = s-seawchwatecountew.expowt(getstagenamepwefix() + "_events_dwopped");
+    s-seawchcustomgauge.expowt(getstagenamepwefix() + "_batched_stage_queue_size", rawr x3 queue::size);
+    nyumbewofcawwstonextbatchifweady = seawchwatecountew.expowt(getstagenamepwefix()
+        + "_cawws_to_nextbatchifweady");
+    v-vawidewements = seawchwatecountew.expowt(getstagenamepwefix() + "_vawid_ewements");
+    batchedewements = seawchwatecountew.expowt(getstagenamepwefix() + "_batched_ewements");
+    emittedewements = s-seawchwatecountew.expowt(getstagenamepwefix() + "_emitted_ewements");
   }
 
-  @Override
-  protected void innerSetupStats() {
-    commonInnerSetupStats();
+  @ovewwide
+  pwotected void innewsetupstats() {
+    c-commoninnewsetupstats();
   }
 
-  // return a possible batch of elements to process. If we have enough for one batch
-  protected Optional<Collection<BatchedElement<T, R>>> nextBatchIfReady() {
-    numberOfCallsToNextBatchIfReady.increment();
-    Optional<Collection<BatchedElement<T, R>>> batch = Optional.empty();
+  // w-wetuwn a possibwe batch of ewements to pwocess. σωσ if we have enough f-fow one batch
+  p-pwotected optionaw<cowwection<batchedewement<t, (ꈍᴗꈍ) w>>> nyextbatchifweady() {
+    nyumbewofcawwstonextbatchifweady.incwement();
+    optionaw<cowwection<batchedewement<t, rawr w-w>>> batch = optionaw.empty();
 
-    if (!queue.isEmpty()) {
-      long elapsed = clock.nowMillis() - lastProcessingTime;
-      if (elapsed > forceProcessAfterMs) {
-        batch = Optional.of(Lists.newArrayList(queue));
-        timeBasedQueueFlush.increment();
-        queue.clear();
-      } else if (queue.size() >= batchedStageBatchSize) {
-        batch = Optional.of(queue.stream()
-            .limit(batchedStageBatchSize)
-            .map(element -> queue.remove())
-            .collect(Collectors.toList()));
-        sizeBasedQueueFlush.increment();
+    i-if (!queue.isempty()) {
+      wong ewapsed = cwock.nowmiwwis() - wastpwocessingtime;
+      if (ewapsed > f-fowcepwocessaftewms) {
+        batch = optionaw.of(wists.newawwaywist(queue));
+        t-timebasedqueuefwush.incwement();
+        q-queue.cweaw();
+      } ewse i-if (queue.size() >= batchedstagebatchsize) {
+        b-batch = o-optionaw.of(queue.stweam()
+            .wimit(batchedstagebatchsize)
+            .map(ewement -> q-queue.wemove())
+            .cowwect(cowwectows.towist()));
+        sizebasedqueuefwush.incwement();
       }
     }
-    return batch;
+    w-wetuwn batch;
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    T element;
-    if (getQueueObjectType().isInstance(obj)) {
-      element = getQueueObjectType().cast(obj);
-    } else {
-      throw new StageException(this, "Trying to add an object of the wrong type to a queue. "
-          + getQueueObjectType().getSimpleName()
-          + " is the expected type");
+  @ovewwide
+  p-pubwic void innewpwocess(object obj) thwows s-stageexception {
+    t-t ewement;
+    i-if (getqueueobjecttype().isinstance(obj)) {
+      ewement = getqueueobjecttype().cast(obj);
+    } e-ewse {
+      thwow nyew s-stageexception(this, ^^;; "twying t-to add an object of the wwong type to a queue. rawr x3 "
+          + getqueueobjecttype().getsimpwename()
+          + " i-is the expected t-type");
     }
 
-   if (!tryToAddElementToBatch(element)) {
-     emitAndCount(transform(element));
+   i-if (!twytoaddewementtobatch(ewement)) {
+     emitandcount(twansfowm(ewement));
    }
 
-   tryToSendBatchedRequest();
+   t-twytosendbatchedwequest();
   }
 
-  @Override
-  protected CompletableFuture<R> innerRunStageV2(T element) {
-    CompletableFuture<R> completableFuture = new CompletableFuture<>();
-    if (!tryToAddElementToBatch(element, completableFuture)) {
-      completableFuture.complete(transform(element));
+  @ovewwide
+  pwotected c-compwetabwefutuwe<w> innewwunstagev2(t ewement) {
+    compwetabwefutuwe<w> compwetabwefutuwe = nyew compwetabwefutuwe<>();
+    i-if (!twytoaddewementtobatch(ewement, (ˆ ﻌ ˆ)♡ compwetabwefutuwe)) {
+      c-compwetabwefutuwe.compwete(twansfowm(ewement));
     }
 
-    tryToSendBatchedRequestV2();
+    twytosendbatchedwequestv2();
 
-    return completableFuture;
+    wetuwn c-compwetabwefutuwe;
   }
 
-  private boolean tryToAddElementToBatch(T element, CompletableFuture<R> cf) {
-    boolean needsToBeBatched = needsToBeBatched(element);
-    if (needsToBeBatched) {
-      queue.add(new BatchedElement<>(element, cf));
+  pwivate boowean t-twytoaddewementtobatch(t ewement, σωσ c-compwetabwefutuwe<w> c-cf) {
+    b-boowean nyeedstobebatched = n-nyeedstobebatched(ewement);
+    i-if (needstobebatched) {
+      queue.add(new batchedewement<>(ewement, (U ﹏ U) cf));
     }
 
-    return needsToBeBatched;
+    wetuwn nyeedstobebatched;
   }
 
-  private boolean tryToAddElementToBatch(T element) {
-    return tryToAddElementToBatch(element, CompletableFuture.completedFuture(null));
+  pwivate boowean twytoaddewementtobatch(t e-ewement) {
+    w-wetuwn t-twytoaddewementtobatch(ewement, >w< compwetabwefutuwe.compwetedfutuwe(nuww));
   }
 
-  private void tryToSendBatchedRequest() {
-    Optional<Collection<BatchedElement<T, R>>> maybeToProcess = nextBatchIfReady();
-    if (maybeToProcess.isPresent()) {
-      Collection<BatchedElement<T, R>> batch = maybeToProcess.get();
-      lastProcessingTime = clock.nowMillis();
-      processBatch(batch, getOnSuccessFunction(lastProcessingTime),
-          getOnFailureFunction(batch, lastProcessingTime));
-    }
-  }
-
-  private void tryToSendBatchedRequestV2() {
-    Optional<Collection<BatchedElement<T, R>>> maybeToProcess = nextBatchIfReady();
-    if (maybeToProcess.isPresent()) {
-      Collection<BatchedElement<T, R>> batch = maybeToProcess.get();
-      lastProcessingTime = clock.nowMillis();
-      processBatch(batch, getOnSuccessFunctionV2(batch, lastProcessingTime),
-          getOnFailureFunctionV2(batch, lastProcessingTime));
+  p-pwivate void twytosendbatchedwequest() {
+    optionaw<cowwection<batchedewement<t, σωσ w>>> maybetopwocess = n-nyextbatchifweady();
+    i-if (maybetopwocess.ispwesent()) {
+      cowwection<batchedewement<t, nyaa~~ w>> b-batch = maybetopwocess.get();
+      wastpwocessingtime = cwock.nowmiwwis();
+      p-pwocessbatch(batch, 🥺 g-getonsuccessfunction(wastpwocessingtime), rawr x3
+          getonfaiwuwefunction(batch, σωσ w-wastpwocessingtime));
     }
   }
 
-  private void processBatch(Collection<BatchedElement<T, R>> batch,
-                            Function<Collection<R>, BoxedUnit> onSuccess,
-                            Function<Throwable, BoxedUnit> onFailure) {
-    updateBatchSize();
-
-    Future<Collection<R>> futureComputation = innerProcessBatch(batch);
-
-    futureComputation.onSuccess(onSuccess);
-
-    futureComputation.onFailure(onFailure);
+  p-pwivate void twytosendbatchedwequestv2() {
+    optionaw<cowwection<batchedewement<t, w>>> maybetopwocess = n-nyextbatchifweady();
+    i-if (maybetopwocess.ispwesent()) {
+      c-cowwection<batchedewement<t, (///ˬ///✿) w-w>> batch = maybetopwocess.get();
+      w-wastpwocessingtime = cwock.nowmiwwis();
+      pwocessbatch(batch, (U ﹏ U) g-getonsuccessfunctionv2(batch, ^^;; w-wastpwocessingtime), 🥺
+          getonfaiwuwefunctionv2(batch, òωó w-wastpwocessingtime));
+    }
   }
 
-  private Function<Collection<R>, BoxedUnit> getOnSuccessFunction(long started) {
-    return Function.cons((elements) -> {
-      elements.forEach(this::emitAndCount);
-      batchExecutionTime.timerIncrement(clock.nowMillis() - started);
+  p-pwivate void pwocessbatch(cowwection<batchedewement<t, XD w-w>> batch, :3
+                            function<cowwection<w>, (U ﹏ U) boxedunit> onsuccess, >w<
+                            f-function<thwowabwe, /(^•ω•^) boxedunit> o-onfaiwuwe) {
+    u-updatebatchsize();
+
+    futuwe<cowwection<w>> f-futuwecomputation = innewpwocessbatch(batch);
+
+    futuwecomputation.onsuccess(onsuccess);
+
+    f-futuwecomputation.onfaiwuwe(onfaiwuwe);
+  }
+
+  pwivate f-function<cowwection<w>, (⑅˘꒳˘) boxedunit> g-getonsuccessfunction(wong stawted) {
+    wetuwn function.cons((ewements) -> {
+      ewements.foweach(this::emitandcount);
+      b-batchexecutiontime.timewincwement(cwock.nowmiwwis() - stawted);
     });
   }
 
-  private Function<Collection<R>, BoxedUnit> getOnSuccessFunctionV2(Collection<BatchedElement<T, R>>
-                                                                        batch, long started) {
-    return Function.cons((elements) -> {
-      Iterator<BatchedElement<T, R>> iterator = batch.iterator();
-      for (R element : elements) {
-        if (iterator.hasNext()) {
-          iterator.next().getCompletableFuture().complete(element);
-        } else {
-          LOG.error("Getting Response from Batched Request, but no CompleteableFuture object"
-              + " to complete.");
+  pwivate f-function<cowwection<w>, ʘwʘ b-boxedunit> getonsuccessfunctionv2(cowwection<batchedewement<t, rawr x3 w-w>>
+                                                                        batch, (˘ω˘) wong s-stawted) {
+    wetuwn f-function.cons((ewements) -> {
+      itewatow<batchedewement<t, o.O w>> itewatow = b-batch.itewatow();
+      fow (w ewement : ewements) {
+        i-if (itewatow.hasnext()) {
+          i-itewatow.next().getcompwetabwefutuwe().compwete(ewement);
+        } ewse {
+          w-wog.ewwow("getting wesponse f-fwom batched w-wequest, 😳 but n-nyo compweteabwefutuwe object"
+              + " to compwete.");
         }
       }
-      batchExecutionTime.timerIncrement(clock.nowMillis() - started);
+      batchexecutiontime.timewincwement(cwock.nowmiwwis() - stawted);
 
     });
   }
 
-  private Function<Throwable, BoxedUnit> getOnFailureFunction(Collection<BatchedElement<T, R>>
-                                                                    batch, long started) {
-    return Function.cons((throwable) -> {
-      batch.forEach(batchedElement -> {
-        eventsFailed.increment();
-        // pass the tweet event down better to index an incomplete event than nothing at all
-        emitAndCount(transform(batchedElement.getItem()));
+  pwivate function<thwowabwe, o.O boxedunit> getonfaiwuwefunction(cowwection<batchedewement<t, w>>
+                                                                    batch, ^^;; wong stawted) {
+    wetuwn function.cons((thwowabwe) -> {
+      batch.foweach(batchedewement -> {
+        e-eventsfaiwed.incwement();
+        // p-pass the tweet event down bettew to index an incompwete e-event than n-nyothing at aww
+        e-emitandcount(twansfowm(batchedewement.getitem()));
       });
-      batchFailedExecutionTime.timerIncrement(clock.nowMillis() - started);
-      LOG.error("Failed processing batch", throwable);
+      batchfaiwedexecutiontime.timewincwement(cwock.nowmiwwis() - s-stawted);
+      wog.ewwow("faiwed p-pwocessing b-batch", ( ͡o ω ͡o ) thwowabwe);
     });
   }
 
-  private Function<Throwable, BoxedUnit> getOnFailureFunctionV2(Collection<BatchedElement<T, R>>
-                                                                  batch, long started) {
-    return Function.cons((throwable) -> {
-      batch.forEach(batchedElement -> {
-        eventsFailed.increment();
-        R itemTransformed = transform(batchedElement.getItem());
-        // complete the future, its better to index an incomplete event than nothing at all
-        batchedElement.getCompletableFuture().complete(itemTransformed);
+  pwivate f-function<thwowabwe, ^^;; boxedunit> g-getonfaiwuwefunctionv2(cowwection<batchedewement<t, ^^;; w-w>>
+                                                                  batch, XD wong stawted) {
+    w-wetuwn function.cons((thwowabwe) -> {
+      b-batch.foweach(batchedewement -> {
+        e-eventsfaiwed.incwement();
+        w-w i-itemtwansfowmed = t-twansfowm(batchedewement.getitem());
+        // c-compwete the futuwe, 🥺 i-its bettew t-to index an incompwete event than n-nyothing at a-aww
+        batchedewement.getcompwetabwefutuwe().compwete(itemtwansfowmed);
       });
-      batchFailedExecutionTime.timerIncrement(clock.nowMillis() - started);
-      LOG.error("Failed processing batch", throwable);
+      b-batchfaiwedexecutiontime.timewincwement(cwock.nowmiwwis() - stawted);
+      w-wog.ewwow("faiwed pwocessing batch", (///ˬ///✿) thwowabwe);
     });
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    try {
-      commonInnerSetup();
-    } catch (PipelineStageException e) {
-      throw new StageException(this, e);
+  @ovewwide
+  p-pwotected void doinnewpwepwocess() t-thwows stageexception, (U ᵕ U❁) nyamingexception {
+    t-twy {
+      c-commoninnewsetup();
+    } catch (pipewinestageexception e-e) {
+      thwow nyew s-stageexception(this, ^^;; e);
     }
   }
 
-  private void commonInnerSetup() throws PipelineStageException, NamingException {
-    updateBatchSize();
+  p-pwivate void commoninnewsetup() t-thwows pipewinestageexception, ^^;; nyamingexception {
+    updatebatchsize();
 
-    if (batchedStageBatchSize < 1) {
-      throw new PipelineStageException(this,
-          "Batch size must be set at least to 1 for batched stages but is set to"
-              + batchedStageBatchSize);
+    if (batchedstagebatchsize < 1) {
+      thwow n-nyew pipewinestageexception(this, rawr
+          "batch size must be s-set at weast to 1 f-fow batched stages but is set to"
+              + batchedstagebatchsize);
     }
 
-    if (forceProcessAfterMs < 1) {
-      throw new PipelineStageException(this, "forceProcessAfterMs needs to be at least 1 "
-          + "ms but is set to " + forceProcessAfterMs);
+    i-if (fowcepwocessaftewms < 1) {
+      thwow n-nyew pipewinestageexception(this, (˘ω˘) "fowcepwocessaftewms n-nyeeds t-to be at weast 1 "
+          + "ms but is set to " + fowcepwocessaftewms);
     }
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    commonInnerSetup();
+  @ovewwide
+  p-pwotected void i-innewsetup() thwows pipewinestageexception, n-nyamingexception {
+    commoninnewsetup();
   }
 
-  // Setters for configuration parameters
-  public void setBatchedStageBatchSize(int maxElementsToWaitFor) {
-    this.batchedStageBatchSize = maxElementsToWaitFor;
+  // settews fow c-configuwation pawametews
+  pubwic v-void setbatchedstagebatchsize(int m-maxewementstowaitfow) {
+    t-this.batchedstagebatchsize = maxewementstowaitfow;
   }
 
-  public void setForceProcessAfter(int forceProcessAfterMS) {
-    this.forceProcessAfterMs = forceProcessAfterMS;
+  p-pubwic v-void setfowcepwocessaftew(int f-fowcepwocessaftewms) {
+    t-this.fowcepwocessaftewms = fowcepwocessaftewms;
   }
 }

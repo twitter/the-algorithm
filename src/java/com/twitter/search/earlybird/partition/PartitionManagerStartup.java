@@ -1,57 +1,57 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.Closeable;
+impowt java.io.cwoseabwe;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.earlybird.EarlybirdServer;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt c-com.twittew.seawch.eawwybiwd.eawwybiwdsewvew;
+i-impowt com.twittew.seawch.eawwybiwd.eawwybiwdstatus;
+i-impowt com.twittew.seawch.eawwybiwd.exception.eawwybiwdstawtupexception;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdstatuscode;
 
 /**
- * Handles starting and indexing data for a partition, using a PartitionManager.
+ * handwes stawting and indexing d-data fow a pawtition, /(^•ω•^) using a pawtitionmanagew. ʘwʘ
  */
-public class PartitionManagerStartup implements EarlybirdStartup {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdServer.class);
+p-pubwic cwass pawtitionmanagewstawtup i-impwements eawwybiwdstawtup {
+  pwivate static finaw w-woggew wog = woggewfactowy.getwoggew(eawwybiwdsewvew.cwass);
 
-  private final Clock clock;
-  private final PartitionManager partitionManager;
+  pwivate finaw c-cwock cwock;
+  pwivate f-finaw pawtitionmanagew pawtitionmanagew;
 
-  public PartitionManagerStartup(
-      Clock clock,
-      PartitionManager partitionManager
+  pubwic pawtitionmanagewstawtup(
+      cwock cwock, σωσ
+      pawtitionmanagew p-pawtitionmanagew
   ) {
-    this.clock = clock;
-    this.partitionManager = partitionManager;
+    this.cwock = cwock;
+    this.pawtitionmanagew = pawtitionmanagew;
   }
 
-  @Override
-  public Closeable start() throws EarlybirdStartupException {
-    partitionManager.schedule();
+  @ovewwide
+  p-pubwic cwoseabwe stawt() t-thwows eawwybiwdstawtupexception {
+    p-pawtitionmanagew.scheduwe();
 
-    int count = 0;
+    int c-count = 0;
 
-    while (EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.CURRENT) {
-      if (EarlybirdStatus.getStatusCode() == EarlybirdStatusCode.STOPPING) {
-        return partitionManager;
+    w-whiwe (eawwybiwdstatus.getstatuscode() != eawwybiwdstatuscode.cuwwent) {
+      if (eawwybiwdstatus.getstatuscode() == e-eawwybiwdstatuscode.stopping) {
+        wetuwn pawtitionmanagew;
       }
 
-      try {
-        clock.waitFor(1000);
-      } catch (InterruptedException e) {
-        LOG.info("Sleep interrupted, quitting earlybird");
-        throw new EarlybirdStartupException("Sleep interrupted");
+      twy {
+        c-cwock.waitfow(1000);
+      } catch (intewwuptedexception e) {
+        wog.info("sweep intewwupted, OwO quitting eawwybiwd");
+        t-thwow nyew eawwybiwdstawtupexception("sweep i-intewwupted");
       }
 
-      // Log every 120 seconds.
+      // w-wog evewy 120 s-seconds.
       if (count++ % 120 == 0) {
-        LOG.info("Thrift port closed until Earlybird, both indexing and query cache, is current");
+        wog.info("thwift powt cwosed u-untiw eawwybiwd, 😳😳😳 b-both indexing and quewy cache, 😳😳😳 i-is cuwwent");
       }
     }
 
-    return partitionManager;
+    w-wetuwn pawtitionmanagew;
   }
 }

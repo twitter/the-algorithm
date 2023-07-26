@@ -1,11 +1,11 @@
-package com.twitter.search.earlybird.exception;
+package com.twittew.seawch.eawwybiwd.exception;
 
-public class ClientException extends Exception {
-  public ClientException(Throwable t) {
-    super(t);
+pubwic cwass cwientexception e-extends e-exception {
+  p-pubwic cwientexception(thwowabwe t-t) {
+    supew(t);
   }
 
-  public ClientException(String message) {
-    super(message);
+  p-pubwic c-cwientexception(stwing m-message) {
+    s-supew(message);
   }
 }

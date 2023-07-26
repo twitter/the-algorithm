@@ -1,116 +1,116 @@
-package com.twitter.frigate.pushservice.predicate
+package com.twittew.fwigate.pushsewvice.pwedicate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushConstants._
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.common.base._
+i-impowt c-com.twittew.fwigate.common.wec_types.wectypes
+impowt c-com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushconstants._
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.utiw.candidateutiw
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+impowt com.twittew.hewmit.pwedicate.pwedicate
+impowt com.twittew.utiw.futuwe
 
-object OONSpreadControlPredicate {
+object oonspweadcontwowpwedicate {
 
-  def oonTweetSpreadControlPredicate(
+  def oontweetspweadcontwowpwedicate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate with TweetCandidate with RecommendationType
+    i-impwicit stats: statsweceivew
+  ): nyamedpwedicate[
+    p-pushcandidate with t-tweetcandidate with wecommendationtype
   ] = {
-    val name = "oon_tweet_spread_control_predicate"
-    val scopedStatsReceiver = stats.scope(name)
-    val allOonCandidatesCounter = scopedStatsReceiver.counter("all_oon_candidates")
-    val filteredCandidatesCounter =
-      scopedStatsReceiver.counter("filtered_oon_candidates")
+    vaw nyame = "oon_tweet_spwead_contwow_pwedicate"
+    vaw scopedstatsweceivew = s-stats.scope(name)
+    vaw awwooncandidatescountew = s-scopedstatsweceivew.countew("aww_oon_candidates")
+    v-vaw fiwtewedcandidatescountew =
+      scopedstatsweceivew.countew("fiwtewed_oon_candidates")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with RecommendationType =>
-        val target = candidate.target
-        val crt = candidate.commonRecType
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(crt) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(crt)
+    pwedicate
+      .fwomasync { candidate: pushcandidate w-with tweetcandidate with wecommendationtype =>
+        vaw tawget = candidate.tawget
+        vaw cwt = candidate.commonwectype
+        v-vaw isooncandidate = w-wectypes.isoutofnetwowktweetwectype(cwt) ||
+          w-wectypes.outofnetwowktopictweettypes.contains(cwt)
 
-        lazy val minTweetSendsThreshold =
-          target.params(PushFeatureSwitchParams.MinTweetSendsThresholdParam)
-        lazy val spreadControlRatio =
-          target.params(PushFeatureSwitchParams.SpreadControlRatioParam)
-        lazy val favOverSendThreshold =
-          target.params(PushFeatureSwitchParams.FavOverSendThresholdParam)
+        w-wazy vaw mintweetsendsthweshowd =
+          tawget.pawams(pushfeatuweswitchpawams.mintweetsendsthweshowdpawam)
+        w-wazy vaw spweadcontwowwatio =
+          tawget.pawams(pushfeatuweswitchpawams.spweadcontwowwatiopawam)
+        w-wazy vaw favovewsendthweshowd =
+          tawget.pawams(pushfeatuweswitchpawams.favovewsendthweshowdpawam)
 
-        lazy val sentCount = candidate.numericFeatures.getOrElse(sentFeatureName, 0.0)
-        lazy val followerCount =
-          candidate.numericFeatures.getOrElse(authorActiveFollowerFeatureName, 0.0)
-        lazy val favCount = candidate.numericFeatures.getOrElse(favFeatureName, 0.0)
-        lazy val favOverSends = favCount / (sentCount + 1.0)
+        w-wazy vaw sentcount = candidate.numewicfeatuwes.getowewse(sentfeatuwename, (⑅˘꒳˘) 0.0)
+        wazy vaw fowwowewcount =
+          candidate.numewicfeatuwes.getowewse(authowactivefowwowewfeatuwename, (U ﹏ U) 0.0)
+        wazy vaw f-favcount = candidate.numewicfeatuwes.getowewse(favfeatuwename, mya 0.0)
+        wazy v-vaw favovewsends = f-favcount / (sentcount + 1.0)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && isOonCandidate) {
-          allOonCandidatesCounter.incr()
-          if (sentCount > minTweetSendsThreshold &&
-            sentCount > spreadControlRatio * followerCount &&
-            favOverSends < favOverSendThreshold) {
-            filteredCandidatesCounter.incr()
-            Future.False
-          } else Future.True
-        } else Future.True
+        i-if (candidateutiw.shouwdappwyheawthquawityfiwtews(candidate) && isooncandidate) {
+          awwooncandidatescountew.incw()
+          if (sentcount > m-mintweetsendsthweshowd &&
+            s-sentcount > spweadcontwowwatio * f-fowwowewcount &&
+            f-favovewsends < favovewsendthweshowd) {
+            f-fiwtewedcandidatescountew.incw()
+            futuwe.fawse
+          } e-ewse futuwe.twue
+        } ewse futuwe.twue
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 
-  def oonAuthorSpreadControlPredicate(
+  d-def oonauthowspweadcontwowpwedicate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate with TweetCandidate with RecommendationType
+    impwicit stats: s-statsweceivew
+  ): nyamedpwedicate[
+    p-pushcandidate w-with tweetcandidate with wecommendationtype
   ] = {
-    val name = "oon_author_spread_control_predicate"
-    val scopedStatsReceiver = stats.scope(name)
-    val allOonCandidatesCounter = scopedStatsReceiver.counter("all_oon_candidates")
-    val filteredCandidatesCounter =
-      scopedStatsReceiver.counter("filtered_oon_candidates")
+    vaw nyame = "oon_authow_spwead_contwow_pwedicate"
+    vaw scopedstatsweceivew = stats.scope(name)
+    vaw awwooncandidatescountew = scopedstatsweceivew.countew("aww_oon_candidates")
+    v-vaw fiwtewedcandidatescountew =
+      scopedstatsweceivew.countew("fiwtewed_oon_candidates")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with RecommendationType =>
-        val target = candidate.target
-        val crt = candidate.commonRecType
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(crt) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(crt)
+    p-pwedicate
+      .fwomasync { candidate: p-pushcandidate w-with tweetcandidate w-with wecommendationtype =>
+        vaw tawget = candidate.tawget
+        vaw c-cwt = candidate.commonwectype
+        vaw isooncandidate = wectypes.isoutofnetwowktweetwectype(cwt) ||
+          wectypes.outofnetwowktopictweettypes.contains(cwt)
 
-        lazy val minAuthorSendsThreshold =
-          target.params(PushFeatureSwitchParams.MinAuthorSendsThresholdParam)
-        lazy val spreadControlRatio =
-          target.params(PushFeatureSwitchParams.SpreadControlRatioParam)
-        lazy val reportRateThreshold =
-          target.params(PushFeatureSwitchParams.AuthorReportRateThresholdParam)
-        lazy val dislikeRateThreshold =
-          target.params(PushFeatureSwitchParams.AuthorDislikeRateThresholdParam)
+        wazy vaw minauthowsendsthweshowd =
+          t-tawget.pawams(pushfeatuweswitchpawams.minauthowsendsthweshowdpawam)
+        wazy vaw s-spweadcontwowwatio =
+          t-tawget.pawams(pushfeatuweswitchpawams.spweadcontwowwatiopawam)
+        w-wazy vaw wepowtwatethweshowd =
+          t-tawget.pawams(pushfeatuweswitchpawams.authowwepowtwatethweshowdpawam)
+        w-wazy v-vaw diswikewatethweshowd =
+          t-tawget.pawams(pushfeatuweswitchpawams.authowdiswikewatethweshowdpawam)
 
-        lazy val authorSentCount =
-          candidate.numericFeatures.getOrElse(authorSendCountFeatureName, 0.0)
-        lazy val authorReportCount =
-          candidate.numericFeatures.getOrElse(authorReportCountFeatureName, 0.0)
-        lazy val authorDislikeCount =
-          candidate.numericFeatures.getOrElse(authorDislikeCountFeatureName, 0.0)
-        lazy val followerCount = candidate.numericFeatures
-          .getOrElse(authorActiveFollowerFeatureName, 0.0)
-        lazy val reportRate =
-          authorReportCount / (authorSentCount + 1.0)
-        lazy val dislikeRate =
-          authorDislikeCount / (authorSentCount + 1.0)
+        wazy vaw authowsentcount =
+          c-candidate.numewicfeatuwes.getowewse(authowsendcountfeatuwename, ʘwʘ 0.0)
+        w-wazy vaw a-authowwepowtcount =
+          c-candidate.numewicfeatuwes.getowewse(authowwepowtcountfeatuwename, (˘ω˘) 0.0)
+        w-wazy vaw authowdiswikecount =
+          candidate.numewicfeatuwes.getowewse(authowdiswikecountfeatuwename, (U ﹏ U) 0.0)
+        wazy vaw fowwowewcount = c-candidate.numewicfeatuwes
+          .getowewse(authowactivefowwowewfeatuwename, ^•ﻌ•^ 0.0)
+        wazy vaw wepowtwate =
+          authowwepowtcount / (authowsentcount + 1.0)
+        wazy vaw diswikewate =
+          authowdiswikecount / (authowsentcount + 1.0)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && isOonCandidate) {
-          allOonCandidatesCounter.incr()
-          if (authorSentCount > minAuthorSendsThreshold &&
-            authorSentCount > spreadControlRatio * followerCount &&
-            (reportRate > reportRateThreshold || dislikeRate > dislikeRateThreshold)) {
-            filteredCandidatesCounter.incr()
-            Future.False
-          } else Future.True
-        } else Future.True
+        i-if (candidateutiw.shouwdappwyheawthquawityfiwtews(candidate) && isooncandidate) {
+          awwooncandidatescountew.incw()
+          if (authowsentcount > m-minauthowsendsthweshowd &&
+            a-authowsentcount > s-spweadcontwowwatio * fowwowewcount &&
+            (wepowtwate > w-wepowtwatethweshowd || diswikewate > d-diswikewatethweshowd)) {
+            f-fiwtewedcandidatescountew.incw()
+            futuwe.fawse
+          } ewse futuwe.twue
+        } ewse futuwe.twue
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .withstats(stats.scope(name))
+      .withname(name)
   }
 }

@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
+impowt c-com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.usewstate
 
-trait HasUserState {
-  def userState: Option[UserState]
+t-twait h-hasusewstate {
+  d-def usewstate: o-option[usewstate]
 }

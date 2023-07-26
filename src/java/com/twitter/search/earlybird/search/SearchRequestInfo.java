@@ -1,180 +1,180 @@
-package com.twitter.search.earlybird.search;
+package com.twittew.seawch.eawwybiwd.seawch;
 
-import java.util.List;
-import javax.annotation.Nullable;
+impowt j-java.utiw.wist;
+i-impowt javax.annotation.nuwwabwe;
 
-import com.google.common.base.Preconditions;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.apache.lucene.search.Query;
+i-impowt owg.apache.wucene.seawch.quewy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.QualityFactor;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+i-impowt c-com.twittew.seawch.common.metwics.seawchcountew;
+i-impowt com.twittew.seawch.common.quewy.hitattwibutehewpew;
+i-impowt com.twittew.seawch.common.seawch.tewminationtwackew;
+impowt com.twittew.seawch.eawwybiwd.quawityfactow;
+impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchquewy;
+impowt c-com.twittew.seawch.quewypawsew.utiw.idtimewanges;
 
-public class SearchRequestInfo {
-  private final ThriftSearchQuery searchQuery;
-  private final Query luceneQuery;
-  private final boolean collectConversationId;
-  private final boolean collectResultLocation;
-  private final boolean getInReplyToStatusId;
-  private final boolean getReferenceAuthorId;
-  private final boolean getFromUserId;
-  private final boolean collectExclusiveConversationAuthorId;
+pubwic cwass seawchwequestinfo {
+  p-pwivate finaw thwiftseawchquewy s-seawchquewy;
+  pwivate finaw quewy wucenequewy;
+  pwivate f-finaw boowean cowwectconvewsationid;
+  p-pwivate f-finaw boowean cowwectwesuwtwocation;
+  pwivate finaw boowean getinwepwytostatusid;
+  p-pwivate finaw boowean getwefewenceauthowid;
+  pwivate finaw boowean getfwomusewid;
+  pwivate f-finaw boowean cowwectexcwusiveconvewsationauthowid;
 
-  private final int numResultsRequested;
-  private final int maxHitsToProcess;
-  private final List<String> facetFieldNames;
-  private long timestamp;
+  p-pwivate f-finaw int nyumwesuwtswequested;
+  p-pwivate finaw i-int maxhitstopwocess;
+  pwivate finaw wist<stwing> f-facetfiewdnames;
+  pwivate wong timestamp;
 
-  private final TerminationTracker terminationTracker;
+  p-pwivate finaw tewminationtwackew tewminationtwackew;
 
-  protected final QualityFactor qualityFactor;
+  pwotected finaw quawityfactow quawityfactow;
 
-  // Set if we want to collect per-field hit attributes for this request.
-  @Nullable
-  private HitAttributeHelper hitAttributeHelper;
+  // s-set if we want to cowwect pew-fiewd h-hit attwibutes f-fow this wequest. σωσ
+  @nuwwabwe
+  p-pwivate hitattwibutehewpew hitattwibutehewpew;
 
-  private IdTimeRanges idTimeRanges;
+  pwivate idtimewanges idtimewanges;
 
-  private static final int DEFAULT_MAX_HITS = 1000;
+  p-pwivate s-static finaw int defauwt_max_hits = 1000;
 
-  private static final SearchCounter RESET_MAX_HITS_TO_PROCESS_COUNTER =
-      SearchCounter.export("search_request_info_reset_max_hits_to_process");
+  p-pwivate static finaw s-seawchcountew weset_max_hits_to_pwocess_countew =
+      s-seawchcountew.expowt("seawch_wequest_info_weset_max_hits_to_pwocess");
 
-  public SearchRequestInfo(
-      ThriftSearchQuery searchQuery,
-      Query luceneQuery,
-      TerminationTracker terminationTracker) {
-    this(searchQuery, luceneQuery, terminationTracker, null);
+  pubwic seawchwequestinfo(
+      t-thwiftseawchquewy seawchquewy, nyaa~~
+      quewy w-wucenequewy, ^^;;
+      tewminationtwackew t-tewminationtwackew) {
+    this(seawchquewy, ^•ﻌ•^ w-wucenequewy, σωσ t-tewminationtwackew, -.- nyuww);
   }
 
-  public SearchRequestInfo(
-      ThriftSearchQuery searchQuery,
-      Query luceneQuery,
-      TerminationTracker terminationTracker,
-      QualityFactor qualityFactor) {
-    Preconditions.checkNotNull(searchQuery.getCollectorParams());
-    Preconditions.checkNotNull(terminationTracker);
+  pubwic seawchwequestinfo(
+      thwiftseawchquewy seawchquewy, ^^;;
+      quewy wucenequewy, XD
+      tewminationtwackew t-tewminationtwackew, 🥺
+      quawityfactow q-quawityfactow) {
+    pweconditions.checknotnuww(seawchquewy.getcowwectowpawams());
+    p-pweconditions.checknotnuww(tewminationtwackew);
 
-    this.searchQuery = searchQuery;
-    this.luceneQuery = luceneQuery;
-    this.collectConversationId = searchQuery.isCollectConversationId();
-    if (searchQuery.isSetResultMetadataOptions()) {
-      this.collectResultLocation = searchQuery.getResultMetadataOptions().isGetResultLocation();
-      this.getInReplyToStatusId = searchQuery.getResultMetadataOptions().isGetInReplyToStatusId();
-      this.getReferenceAuthorId =
-          searchQuery.getResultMetadataOptions().isGetReferencedTweetAuthorId();
-      this.getFromUserId = searchQuery.getResultMetadataOptions().isGetFromUserId();
-      this.collectExclusiveConversationAuthorId =
-          searchQuery.getResultMetadataOptions().isGetExclusiveConversationAuthorId();
-    } else {
-      this.collectResultLocation = false;
-      this.getInReplyToStatusId = false;
-      this.getReferenceAuthorId = false;
-      this.getFromUserId = false;
-      this.collectExclusiveConversationAuthorId = false;
+    t-this.seawchquewy = s-seawchquewy;
+    this.wucenequewy = wucenequewy;
+    this.cowwectconvewsationid = s-seawchquewy.iscowwectconvewsationid();
+    if (seawchquewy.issetwesuwtmetadataoptions()) {
+      this.cowwectwesuwtwocation = seawchquewy.getwesuwtmetadataoptions().isgetwesuwtwocation();
+      this.getinwepwytostatusid = seawchquewy.getwesuwtmetadataoptions().isgetinwepwytostatusid();
+      t-this.getwefewenceauthowid =
+          seawchquewy.getwesuwtmetadataoptions().isgetwefewencedtweetauthowid();
+      t-this.getfwomusewid = s-seawchquewy.getwesuwtmetadataoptions().isgetfwomusewid();
+      t-this.cowwectexcwusiveconvewsationauthowid =
+          seawchquewy.getwesuwtmetadataoptions().isgetexcwusiveconvewsationauthowid();
+    } e-ewse {
+      t-this.cowwectwesuwtwocation = f-fawse;
+      t-this.getinwepwytostatusid = fawse;
+      this.getwefewenceauthowid = f-fawse;
+      this.getfwomusewid = f-fawse;
+      this.cowwectexcwusiveconvewsationauthowid = f-fawse;
     }
 
-    this.qualityFactor = qualityFactor;
+    t-this.quawityfactow = q-quawityfactow;
 
-    this.numResultsRequested = searchQuery.getCollectorParams().getNumResultsToReturn();
-    this.maxHitsToProcess = calculateMaxHitsToProcess(searchQuery);
-    this.terminationTracker = terminationTracker;
-    this.facetFieldNames = searchQuery.getFacetFieldNames();
+    this.numwesuwtswequested = seawchquewy.getcowwectowpawams().getnumwesuwtstowetuwn();
+    this.maxhitstopwocess = cawcuwatemaxhitstopwocess(seawchquewy);
+    t-this.tewminationtwackew = tewminationtwackew;
+    this.facetfiewdnames = seawchquewy.getfacetfiewdnames();
   }
 
   /**
-   * Gets the value to be used as max hits to process for this query. The base class gets it from
-   * the searchQuery directly, and uses a default if that's not set.
+   * gets the vawue to b-be used as max hits to pwocess fow this quewy. òωó the base cwass gets i-it fwom
+   * t-the seawchquewy d-diwectwy, (ˆ ﻌ ˆ)♡ and uses a defauwt if t-that's nyot set. -.-
    *
-   * Subclasses can override this to compute a different value for max hits to process.
+   * subcwasses c-can ovewwide t-this to compute a diffewent vawue fow max hits to pwocess. :3
    */
-  protected int calculateMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
-    int maxHits = thriftSearchQuery.getCollectorParams().isSetTerminationParams()
-        ? thriftSearchQuery.getCollectorParams().getTerminationParams().getMaxHitsToProcess() : 0;
+  pwotected int cawcuwatemaxhitstopwocess(thwiftseawchquewy t-thwiftseawchquewy) {
+    int maxhits = t-thwiftseawchquewy.getcowwectowpawams().issettewminationpawams()
+        ? thwiftseawchquewy.getcowwectowpawams().gettewminationpawams().getmaxhitstopwocess() : 0;
 
-    if (maxHits <= 0) {
-      maxHits = DEFAULT_MAX_HITS;
-      RESET_MAX_HITS_TO_PROCESS_COUNTER.increment();
+    if (maxhits <= 0) {
+      m-maxhits = d-defauwt_max_hits;
+      weset_max_hits_to_pwocess_countew.incwement();
     }
-    return maxHits;
+    wetuwn maxhits;
   }
 
-  public final ThriftSearchQuery getSearchQuery() {
-    return this.searchQuery;
+  p-pubwic f-finaw thwiftseawchquewy getseawchquewy() {
+    w-wetuwn this.seawchquewy;
   }
 
-  public Query getLuceneQuery() {
-    return luceneQuery;
+  p-pubwic quewy getwucenequewy() {
+    wetuwn wucenequewy;
   }
 
-  public final int getNumResultsRequested() {
-    return numResultsRequested;
+  pubwic finaw int getnumwesuwtswequested() {
+    wetuwn nyumwesuwtswequested;
   }
 
-  public final int getMaxHitsToProcess() {
-    return maxHitsToProcess;
+  p-pubwic finaw i-int getmaxhitstopwocess() {
+    w-wetuwn maxhitstopwocess;
   }
 
-  public boolean isCollectConversationId() {
-    return collectConversationId;
+  pubwic boowean i-iscowwectconvewsationid() {
+    w-wetuwn cowwectconvewsationid;
   }
 
-  public boolean isCollectResultLocation() {
-    return collectResultLocation;
+  pubwic boowean i-iscowwectwesuwtwocation() {
+    wetuwn cowwectwesuwtwocation;
   }
 
-  public boolean isGetInReplyToStatusId() {
-    return getInReplyToStatusId;
+  pubwic boowean isgetinwepwytostatusid() {
+    wetuwn getinwepwytostatusid;
   }
 
-  public boolean isGetReferenceAuthorId() {
-    return getReferenceAuthorId;
+  p-pubwic b-boowean isgetwefewenceauthowid() {
+    wetuwn getwefewenceauthowid;
   }
 
-  public boolean isCollectExclusiveConversationAuthorId() {
-    return collectExclusiveConversationAuthorId;
+  p-pubwic b-boowean iscowwectexcwusiveconvewsationauthowid() {
+    wetuwn cowwectexcwusiveconvewsationauthowid;
   }
 
-  public final IdTimeRanges getIdTimeRanges() {
-    return idTimeRanges;
+  pubwic finaw idtimewanges g-getidtimewanges() {
+    wetuwn idtimewanges;
   }
 
-  public SearchRequestInfo setIdTimeRanges(IdTimeRanges newIdTimeRanges) {
-    this.idTimeRanges = newIdTimeRanges;
-    return this;
+  pubwic seawchwequestinfo setidtimewanges(idtimewanges n-newidtimewanges) {
+    this.idtimewanges = nyewidtimewanges;
+    w-wetuwn this;
   }
 
-  public SearchRequestInfo setTimestamp(long newTimestamp) {
-    this.timestamp = newTimestamp;
-    return this;
+  p-pubwic seawchwequestinfo settimestamp(wong nyewtimestamp) {
+    this.timestamp = n-nyewtimestamp;
+    w-wetuwn this;
   }
 
-  public long getTimestamp() {
-    return timestamp;
+  pubwic wong gettimestamp() {
+    wetuwn timestamp;
   }
 
-  public TerminationTracker getTerminationTracker() {
-    return this.terminationTracker;
+  p-pubwic tewminationtwackew g-gettewminationtwackew() {
+    wetuwn this.tewminationtwackew;
   }
 
-  @Nullable
-  public HitAttributeHelper getHitAttributeHelper() {
-    return hitAttributeHelper;
+  @nuwwabwe
+  pubwic hitattwibutehewpew gethitattwibutehewpew() {
+    wetuwn h-hitattwibutehewpew;
   }
 
-  public void setHitAttributeHelper(@Nullable HitAttributeHelper hitAttributeHelper) {
-    this.hitAttributeHelper = hitAttributeHelper;
+  pubwic void sethitattwibutehewpew(@nuwwabwe h-hitattwibutehewpew h-hitattwibutehewpew) {
+    this.hitattwibutehewpew = h-hitattwibutehewpew;
   }
 
-  public List<String> getFacetFieldNames() {
-    return facetFieldNames;
+  pubwic w-wist<stwing> g-getfacetfiewdnames() {
+    w-wetuwn facetfiewdnames;
   }
 
-  public boolean isGetFromUserId() {
-    return getFromUserId;
+  p-pubwic b-boowean isgetfwomusewid() {
+    wetuwn getfwomusewid;
   }
 }

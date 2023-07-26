@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.suggestion
 
 /**
- * Represents the different types of Spelling Suggestion items.
+ * wepwesents t-the diffewent t-types of spewwing s-suggestion i-items. 🥺
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/SpellingActionType.html
+ * u-uwt api wefewence: h-https://docbiwd.twittew.biz/unified_wich_timewines_uwt/gen/com/twittew/timewines/wendew/thwiftscawa/spewwingactiontype.htmw
  */
-sealed trait SpellingActionType
+s-seawed twait s-spewwingactiontype
 
 /**
- * Used when the original query is replaced completed by another query in the backend.
- * Clients use the text 'Searching instead for …' to display this suggestion.
+ * used when the owiginaw quewy is wepwaced compweted by a-anothew quewy in the backend. mya
+ * cwients use the t-text 'seawching instead fow …' t-to dispway this suggestion. 🥺
  */
-case object ReplaceSpellingActionType extends SpellingActionType
+case object wepwacespewwingactiontype extends s-spewwingactiontype
 
 /**
- * Used when the original query is expanded by a suggestion when performing the search.
- * Clients use the text 'Including results for …' to display this suggestion.
+ * used w-when the owiginaw q-quewy is expanded by a suggestion when pewfowming the seawch. >_<
+ * cwients use t-the text 'incwuding wesuwts fow …' to dispway this suggestion. >_<
  */
-case object ExpandSpellingActionType extends SpellingActionType
+case object e-expandspewwingactiontype extends s-spewwingactiontype
 
 /**
- * Used when the search query is not changed and a suggestion is displayed as an alternative query.
- * Clients use the text 'Did you mean … ?' to display the suggestion.
+ * u-used w-when the seawch q-quewy is nyot changed and a suggestion is dispwayed a-as an awtewnative quewy. (⑅˘꒳˘)
+ * cwients use the t-text 'did you mean … ?' to dispway the suggestion. /(^•ω•^)
  */
-case object SuggestSpellingActionType extends SpellingActionType
+case object suggestspewwingactiontype extends spewwingactiontype

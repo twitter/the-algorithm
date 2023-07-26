@@ -1,101 +1,101 @@
-package com.twitter.search.earlybird.querycache;
+package com.twittew.seawch.eawwybiwd.quewycache;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
+impowt java.io.fiwe;
+i-impowt java.io.fiwenotfoundexception;
+i-impowt j-java.io.fiweweadew;
+i-impowt java.io.weadew;
+i-impowt j-java.utiw.awwaywist;
+i-impowt j-java.utiw.wist;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
+impowt owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
+impowt o-owg.yamw.snakeyamw.typedescwiption;
+impowt owg.yamw.snakeyamw.yamw;
+impowt owg.yamw.snakeyamw.constwuctow.constwuctow;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
+i-impowt com.twittew.seawch.common.config.config;
+i-impowt com.twittew.seawch.common.metwics.seawchstatsweceivew;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
 
-// QueryCacheConfig is not thread safe. *Do not* attempt to create multiple QueryCacheConfig
-// in different threads
-public class QueryCacheConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(QueryCacheConfig.class);
-  private static final String DEFAULT_CONFIG_FILE = "querycache.yml";
-  private final SearchStatsReceiver statsReceiver;
+// quewycacheconfig is nyot thwead safe. (˘ω˘) *do n-nyot* attempt to cweate m-muwtipwe quewycacheconfig
+// i-in diffewent thweads
+pubwic cwass quewycacheconfig {
+  pwivate static f-finaw woggew wog = woggewfactowy.getwoggew(quewycacheconfig.cwass);
+  pwivate static finaw stwing defauwt_config_fiwe = "quewycache.ymw";
+  p-pwivate finaw seawchstatsweceivew statsweceivew;
 
-  private List<QueryCacheFilter> filters;
+  p-pwivate wist<quewycachefiwtew> f-fiwtews;
 
-  public QueryCacheConfig(SearchStatsReceiver statsReceiver) {
-    this(locateConfigFile(EarlybirdConfig.getString("query_cache_config_file_name",
-                                                    DEFAULT_CONFIG_FILE)), statsReceiver);
+  pubwic q-quewycacheconfig(seawchstatsweceivew s-statsweceivew) {
+    this(wocateconfigfiwe(eawwybiwdconfig.getstwing("quewy_cache_config_fiwe_name", :3
+                                                    defauwt_config_fiwe)), ^^;; s-statsweceivew);
   }
 
-  // package protected constructor for unit test only
-  QueryCacheConfig(Reader reader, SearchStatsReceiver statsReceiver) {
-    this.statsReceiver = statsReceiver;
-    if (reader == null) {
-      throw new RuntimeException("Query cache config not loaded");
+  // package pwotected constwuctow f-fow unit test onwy
+  quewycacheconfig(weadew weadew, 🥺 seawchstatsweceivew statsweceivew) {
+    this.statsweceivew = statsweceivew;
+    i-if (weadew == nyuww) {
+      t-thwow nyew w-wuntimeexception("quewy c-cache config nyot woaded");
     }
-    loadConfig(reader);
+    woadconfig(weadew);
   }
 
-  public List<QueryCacheFilter> filters() {
-    return filters;
+  pubwic wist<quewycachefiwtew> f-fiwtews() {
+    w-wetuwn fiwtews;
   }
 
-  int getFilterSize() {
-    return filters.size();
+  int getfiwtewsize() {
+    w-wetuwn f-fiwtews.size();
   }
 
-  private static FileReader locateConfigFile(String configFileName) {
-    File configFile = null;
-    String dir = Config.locateSearchConfigDir(EarlybirdConfig.EARLYBIRD_CONFIG_DIR, configFileName);
-    if (dir != null) {
-      configFile = openConfigFile(dir + "/" + configFileName);
+  pwivate static f-fiweweadew wocateconfigfiwe(stwing c-configfiwename) {
+    fiwe configfiwe = nyuww;
+    stwing d-diw = config.wocateseawchconfigdiw(eawwybiwdconfig.eawwybiwd_config_diw, (⑅˘꒳˘) configfiwename);
+    i-if (diw != nyuww) {
+      configfiwe = o-openconfigfiwe(diw + "/" + c-configfiwename);
     }
-    if (configFile != null) {
-      try {
-        return new FileReader(configFile);
-      } catch (FileNotFoundException e) {
-        // This should not happen as the caller should make sure that the file exists before
-        // calling this function.
-        LOG.error("Unexpected exception", e);
-        throw new RuntimeException("Query cache config file not loaded!", e);
+    if (configfiwe != nyuww) {
+      twy {
+        wetuwn nyew fiweweadew(configfiwe);
+      } catch (fiwenotfoundexception e) {
+        // t-this shouwd n-nyot happen as the cawwew shouwd m-make suwe that t-the fiwe exists b-befowe
+        // cawwing this function. nyaa~~
+        wog.ewwow("unexpected e-exception", :3 e);
+        thwow nyew wuntimeexception("quewy cache config fiwe nyot woaded!", ( ͡o ω ͡o ) e-e);
       }
     }
-    return null;
+    wetuwn n-nyuww;
   }
 
-  private static File openConfigFile(String configFilePath) {
-    File configFile = new File(configFilePath);
-    if (!configFile.exists()) {
-      LOG.warn("QueryCache config file [" + configFile + "] not found");
-      configFile = null;
-    } else {
-      LOG.info("Opened QueryCacheFilter config file [" + configFile + "]");
+  p-pwivate static fiwe o-openconfigfiwe(stwing configfiwepath) {
+    f-fiwe configfiwe = n-nyew fiwe(configfiwepath);
+    i-if (!configfiwe.exists()) {
+      w-wog.wawn("quewycache config fiwe [" + configfiwe + "] n-nyot found");
+      c-configfiwe = n-nyuww;
+    } e-ewse {
+      w-wog.info("opened quewycachefiwtew config fiwe [" + configfiwe + "]");
     }
-    return configFile;
+    w-wetuwn configfiwe;
   }
 
-  private void loadConfig(Reader reader) {
-    TypeDescription qcEntryDescription = new TypeDescription(QueryCacheFilter.class);
-    Constructor constructor = new Constructor(qcEntryDescription);
-    Yaml yaml = new Yaml(constructor);
+  pwivate void woadconfig(weadew weadew) {
+    typedescwiption qcentwydescwiption = n-nyew typedescwiption(quewycachefiwtew.cwass);
+    constwuctow constwuctow = nyew constwuctow(qcentwydescwiption);
+    y-yamw yamw = n-nyew yamw(constwuctow);
 
-    filters = new ArrayList<>();
+    fiwtews = n-nyew awwaywist<>();
 
-    for (Object data : yaml.loadAll(reader)) {
-      QueryCacheFilter cacheFilter = (QueryCacheFilter) data;
-      try {
-        cacheFilter.sanityCheck();
-      } catch (QueryCacheFilter.InvalidEntryException e) {
-        throw new RuntimeException(e);
+    fow (object data : y-yamw.woadaww(weadew)) {
+      quewycachefiwtew c-cachefiwtew = (quewycachefiwtew) d-data;
+      twy {
+        cachefiwtew.sanitycheck();
+      } catch (quewycachefiwtew.invawidentwyexception e) {
+        thwow new wuntimeexception(e);
       }
-      cacheFilter.createQueryCounter(statsReceiver);
-      filters.add(cacheFilter);
-      LOG.info("Loaded filter from config {}", cacheFilter.toString());
+      cachefiwtew.cweatequewycountew(statsweceivew);
+      fiwtews.add(cachefiwtew);
+      wog.info("woaded f-fiwtew fwom config {}", mya cachefiwtew.tostwing());
     }
-    LOG.info("Total filters loaded: {}", filters.size());
+    w-wog.info("totaw fiwtews w-woaded: {}", (///ˬ///✿) f-fiwtews.size());
   }
 }

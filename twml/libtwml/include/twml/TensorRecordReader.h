@@ -1,33 +1,33 @@
-#pragma once
-#ifdef __cplusplus
+#pwagma once
+#ifdef __cpwuspwus
 
-#include <twml/defines.h>
-#include <twml/TensorRecord.h>
-#include <twml/ThriftReader.h>
+#incwude <twmw/defines.h>
+#incwude <twmw/tensowwecowd.h>
+#incwude <twmw/thwiftweadew.h>
 
-#include <cstdint>
+#incwude <cstdint>
 
-#include <vector>
-#include <string>
-#include <unordered_map>
+#incwude <vectow>
+#incwude <stwing>
+#incwude <unowdewed_map>
 
-namespace twml {
+nyamespace t-twmw {
 
-// Class that parses the thrift objects as defined in tensor.thrift
-class TWMLAPI TensorRecordReader : public ThriftReader {
+// c-cwass that pawses t-the thwift objects a-as defined i-in tensow.thwift
+c-cwass twmwapi t-tensowwecowdweadew : p-pubwic thwiftweadew {
 
-  std::vector<uint64_t> readShape();
-  template<typename T> RawTensor readTypedTensor();
-  RawTensor readRawTypedTensor();
-  RawTensor readStringTensor();
-  RawTensor readGeneralTensor();
-  RawSparseTensor readCOOSparseTensor();
+  std::vectow<uint64_t> weadshape();
+  tempwate<typename t> wawtensow w-weadtypedtensow();
+  wawtensow weadwawtypedtensow();
+  w-wawtensow weadstwingtensow();
+  w-wawtensow weadgenewawtensow();
+  wawspawsetensow weadcoospawsetensow();
 
-public:
-  void readTensor(const int feature_type, TensorRecord *record);
-  void readSparseTensor(const int feature_type, TensorRecord *record);
+p-pubwic:
+  void weadtensow(const i-int featuwe_type, ( ͡o ω ͡o ) t-tensowwecowd *wecowd);
+  void weadspawsetensow(const int featuwe_type, rawr x3 tensowwecowd *wecowd);
 
-  TensorRecordReader(const uint8_t *buffer) : ThriftReader(buffer) {}
+  t-tensowwecowdweadew(const uint8_t *buffew) : thwiftweadew(buffew) {}
 };
 
 }

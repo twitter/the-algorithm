@@ -1,56 +1,56 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.serving;
+package tensowfwow.sewving;
 
-import "tensorflow/core/protobuf/config.proto";
-import "tensorflow/core/protobuf/named_tensor.proto";
-import "tensorflow_serving/apis/model.proto";
+impowt "tensowfwow/cowe/pwotobuf/config.pwoto";
+i-impowt "tensowfwow/cowe/pwotobuf/named_tensow.pwoto";
+i-impowt "tensowfwow_sewving/apis/modew.pwoto";
 
-option cc_enable_arenas = true;
+o-option cc_enabwe_awenas = twue;
 
-message SessionRunRequest {
-  // Model Specification. If version is not specified, will use the latest
-  // (numerical) version.
-  ModelSpec model_spec = 1;
+m-message sessionwunwequest {
+  // m-modew specification. (ˆ ﻌ ˆ)♡ i-if vewsion i-is nyot specified, 😳😳😳 w-wiww use the watest
+  // (numewicaw) vewsion. :3
+  modewspec modew_spec = 1;
 
-  // Tensors to be fed in the step. Each feed is a named tensor.
-  repeated NamedTensorProto feed = 2;
+  // tensows t-to be fed in the step. OwO each feed is a nyamed tensow. (U ﹏ U)
+  w-wepeated nyamedtensowpwoto f-feed = 2;
 
-  // Fetches. A list of tensor names. The caller expects a tensor to
-  // be returned for each fetch[i] (see RunResponse.tensor). The
-  // order of specified fetches does not change the execution order.
-  repeated string fetch = 3;
+  // fetches. >w< a wist of tensow nyames. (U ﹏ U) the cawwew e-expects a tensow to
+  // be wetuwned f-fow each fetch[i] (see w-wunwesponse.tensow). 😳 the
+  // owdew of specified fetches does nyot change the execution o-owdew. (ˆ ﻌ ˆ)♡
+  wepeated stwing fetch = 3;
 
-  // Target Nodes. A list of node names. The named nodes will be run
-  // to but their outputs will not be fetched.
-  repeated string target = 4;
+  // tawget nyodes. 😳😳😳 a wist of nyode nyames. (U ﹏ U) the nyamed n-nyodes wiww be wun
+  // to but t-theiw outputs wiww n-nyot be fetched. (///ˬ///✿)
+  w-wepeated stwing t-tawget = 4;
 
-  // If true, treat names in feed/fetch/target as alias names than actual tensor
-  // names (that appear in the TF graph). Alias names are resolved to actual
-  // names using `SignatureDef` in SavedModel associated with the model.
-  bool tensor_name_is_alias = 6;
+  // if twue, 😳 tweat nyames in f-feed/fetch/tawget as awias nyames than actuaw tensow
+  // n-nyames (that appeaw in the tf gwaph). 😳 awias nyames awe wesowved to actuaw
+  // nyames u-using `signatuwedef` in savedmodew a-associated with t-the modew. σωσ
+  b-boow tensow_name_is_awias = 6;
 
-  // Options for the run call. **Currently ignored.**
-  RunOptions options = 5;
+  // options fow the wun caww. rawr x3 **cuwwentwy ignowed.**
+  w-wunoptions o-options = 5;
 }
 
-message SessionRunResponse {
-  // Effective Model Specification used for session run.
-  ModelSpec model_spec = 3;
+message sessionwunwesponse {
+  // e-effective m-modew specification used fow session w-wun. OwO
+  modewspec modew_spec = 3;
 
-  // NOTE: The order of the returned tensors may or may not match
-  // the fetch order specified in RunRequest.
-  repeated NamedTensorProto tensor = 1;
+  // n-nyote: the owdew of the wetuwned tensows m-may ow may not match
+  // the f-fetch owdew specified in wunwequest. /(^•ω•^)
+  w-wepeated n-nyamedtensowpwoto tensow = 1;
 
-  // Returned metadata if requested in the options.
-  RunMetadata metadata = 2;
+  // wetuwned metadata if wequested in the options. 😳😳😳
+  wunmetadata metadata = 2;
 }
 
-// SessionService defines a service with which a client can interact to execute
-// Tensorflow model inference. The SessionService::SessionRun method is similar
-// to MasterService::RunStep of Tensorflow, except that all sessions are ready
-// to run, and you request a specific model/session with ModelSpec.
-service SessionService {
-  // Runs inference of a given model.
-  rpc SessionRun(SessionRunRequest) returns (SessionRunResponse);
+// s-sessionsewvice d-defines a sewvice with which a-a cwient can i-intewact to exekawaii~
+// t-tensowfwow modew infewence. ( ͡o ω ͡o ) the sessionsewvice::sessionwun method is s-simiwaw
+// to mastewsewvice::wunstep of tensowfwow, >_< except that aww sessions awe weady
+// to wun, >w< a-and you wequest a specific modew/session w-with m-modewspec. rawr
+sewvice s-sessionsewvice {
+  // wuns infewence o-of a given m-modew. 😳
+  wpc s-sessionwun(sessionwunwequest) w-wetuwns (sessionwunwesponse);
 }

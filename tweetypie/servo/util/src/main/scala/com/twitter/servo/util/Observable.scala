@@ -1,22 +1,22 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.thrift.ClientId
+impowt com.twittew.finagwe.thwift.cwientid
 
 /**
- * A trait defining contextual information necessary to authorize
- * and observe a request.
+ * a-a twait defining c-contextuaw infowmation n-nyecessawy t-to authowize
+ * a-and obsewve a-a wequest. 😳
  */
-trait Observable {
-  val requestName: String
-  val clientId: Option[ClientId]
+t-twait obsewvabwe {
+  v-vaw wequestname: stwing
+  vaw cwientid: option[cwientid]
 
   /**
-   * An Option[String] representation of the request-issuer's ClientId.
+   * an option[stwing] wepwesentation o-of the wequest-issuew's cwientid. XD
    */
-  lazy val clientIdString: Option[String] =
-    // It's possible for `ClientId.name` to be `null`, so we wrap it in
-    // `Option()` to force such cases to be None.
-    clientId flatMap { cid =>
-      Option(cid.name)
+  w-wazy vaw cwientidstwing: option[stwing] =
+    // i-it's possibwe fow `cwientid.name` to be `nuww`, :3 so we wwap i-it in
+    // `option()` to fowce s-such cases to b-be nyone. 😳😳😳
+    cwientid fwatmap { cid =>
+      option(cid.name)
     }
 }

@@ -1,67 +1,67 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.util.SearchResultUtil
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewinewankew.modew.wecapquewy.dependencypwovidew
+i-impowt com.twittew.timewinewankew.utiw.seawchwesuwtutiw
+i-impowt com.twittew.utiw.futuwe
 
 /**
- * Truncate the search results by score. Assumes that the search results are sorted in
- * score-descending order unless extraSortBeforeTruncation is set to true.
+ * twuncate the seawch wesuwts by scowe. OwO assumes that t-the seawch wesuwts awe sowted in
+ * scowe-descending o-owdew unwess extwasowtbefowetwuncation i-is set to twue. /(^•ω•^)
  *
- * This transform has two main use cases:
+ * this twansfowm has two main use cases:
  *
- * - when returnAllResults is set to true, earlybird returns (numResultsPerShard * number of shards)
- *   results. this transform is then used to further truncate the result, so that the size will be the
- *   same as when returnAllResults is set to false.
+ * - w-when wetuwnawwwesuwts is set t-to twue, 😳😳😳 eawwybiwd w-wetuwns (numwesuwtspewshawd * nyumbew of shawds)
+ *   wesuwts. this twansfowm is then used t-to fuwthew twuncate the wesuwt, ( ͡o ω ͡o ) so that the size wiww be the
+ *   same as when wetuwnawwwesuwts i-is set to fawse. >_<
  *
- * - we retrieve extra number of results from earlybird, as specified in MaxCountMultiplierParam,
- *   so that we are left with sufficient number of candidates after hydration and filtering.
- *   this transform will be used to get rid of extra results we ended up not using.
+ * - we wetwieve e-extwa nyumbew o-of wesuwts fwom e-eawwybiwd, >w< as s-specified in maxcountmuwtipwiewpawam, rawr
+ *   so that we awe weft w-with sufficient nyumbew of candidates aftew hydwation a-and fiwtewing. 😳
+ *   this twansfowm wiww be used to get wid of extwa wesuwts we ended up nyot u-using. >w<
  */
-class RecapSearchResultsTruncationTransform(
-  extraSortBeforeTruncationGate: DependencyProvider[Boolean],
-  maxCountProvider: DependencyProvider[Int],
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  private[this] val postTruncationSizeStat = statsReceiver.stat("postTruncationSize")
-  private[this] val earlybirdScoreX100Stat = statsReceiver.stat("earlybirdScoreX100")
+cwass wecapseawchwesuwtstwuncationtwansfowm(
+  e-extwasowtbefowetwuncationgate: d-dependencypwovidew[boowean], (⑅˘꒳˘)
+  m-maxcountpwovidew: dependencypwovidew[int], OwO
+  statsweceivew: statsweceivew)
+    e-extends f-futuweawwow[candidateenvewope, (ꈍᴗꈍ) candidateenvewope] {
+  p-pwivate[this] v-vaw posttwuncationsizestat = statsweceivew.stat("posttwuncationsize")
+  p-pwivate[this] vaw e-eawwybiwdscowex100stat = statsweceivew.stat("eawwybiwdscowex100")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val sortBeforeTruncation = extraSortBeforeTruncationGate(envelope.query)
-    val maxCount = maxCountProvider(envelope.query)
-    val searchResults = envelope.searchResults
+  ovewwide def a-appwy(envewope: candidateenvewope): f-futuwe[candidateenvewope] = {
+    vaw sowtbefowetwuncation = e-extwasowtbefowetwuncationgate(envewope.quewy)
+    v-vaw maxcount = maxcountpwovidew(envewope.quewy)
+    vaw seawchwesuwts = envewope.seawchwesuwts
 
-    // set aside results that are marked by isRandomTweet field
-    val (randomTweetSeq, searchResultsExcludingRandom) = searchResults.partition { result =>
-      result.tweetFeatures.flatMap(_.isRandomTweet).getOrElse(false)
+    // set aside wesuwts that awe mawked by i-iswandomtweet fiewd
+    v-vaw (wandomtweetseq, 😳 seawchwesuwtsexcwudingwandom) = s-seawchwesuwts.pawtition { w-wesuwt =>
+      w-wesuwt.tweetfeatuwes.fwatmap(_.iswandomtweet).getowewse(fawse)
     }
 
-    // sort and truncate searchResults other than the random tweet
-    val maxCountExcludingRandom = Math.max(0, maxCount - randomTweetSeq.size)
+    // sowt and twuncate seawchwesuwts othew than t-the wandom tweet
+    vaw maxcountexcwudingwandom = math.max(0, 😳😳😳 maxcount - wandomtweetseq.size)
 
-    val truncatedResultsExcludingRandom =
-      if (sortBeforeTruncation || searchResultsExcludingRandom.size > maxCountExcludingRandom) {
-        val sorted = if (sortBeforeTruncation) {
-          searchResultsExcludingRandom.sortWith(
-            SearchResultUtil.getScore(_) > SearchResultUtil.getScore(_))
-        } else searchResultsExcludingRandom
-        sorted.take(maxCountExcludingRandom)
-      } else searchResultsExcludingRandom
+    vaw twuncatedwesuwtsexcwudingwandom =
+      i-if (sowtbefowetwuncation || seawchwesuwtsexcwudingwandom.size > m-maxcountexcwudingwandom) {
+        v-vaw sowted = i-if (sowtbefowetwuncation) {
+          seawchwesuwtsexcwudingwandom.sowtwith(
+            s-seawchwesuwtutiw.getscowe(_) > s-seawchwesuwtutiw.getscowe(_))
+        } e-ewse seawchwesuwtsexcwudingwandom
+        s-sowted.take(maxcountexcwudingwandom)
+      } ewse seawchwesuwtsexcwudingwandom
 
-    // put back the random tweet set aside previously
-    val allTruncatedResults = truncatedResultsExcludingRandom ++ randomTweetSeq
+    // put back the wandom t-tweet set aside p-pweviouswy
+    v-vaw awwtwuncatedwesuwts = t-twuncatedwesuwtsexcwudingwandom ++ w-wandomtweetseq
 
     // stats
-    postTruncationSizeStat.add(allTruncatedResults.size)
-    allTruncatedResults.foreach { result =>
-      val earlybirdScoreX100 =
-        result.metadata.flatMap(_.score).getOrElse(0.0).toFloat * 100
-      earlybirdScoreX100Stat.add(earlybirdScoreX100)
+    posttwuncationsizestat.add(awwtwuncatedwesuwts.size)
+    awwtwuncatedwesuwts.foweach { w-wesuwt =>
+      vaw eawwybiwdscowex100 =
+        wesuwt.metadata.fwatmap(_.scowe).getowewse(0.0).tofwoat * 100
+      eawwybiwdscowex100stat.add(eawwybiwdscowex100)
     }
 
-    Future.value(envelope.copy(searchResults = allTruncatedResults))
+    futuwe.vawue(envewope.copy(seawchwesuwts = awwtwuncatedwesuwts))
   }
 }

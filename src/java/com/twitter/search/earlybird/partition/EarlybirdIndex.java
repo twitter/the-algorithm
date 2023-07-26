@@ -1,65 +1,65 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.cowwections;
+i-impowt j-java.utiw.wist;
 
-public class EarlybirdIndex {
-  private final List<SegmentInfo> segmentInfoList;
+p-pubwic cwass eawwybiwdindex {
+  p-pwivate finaw w-wist<segmentinfo> s-segmentinfowist;
 
-  public static final int MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS = 2;
+  pubwic static finaw int max_num_of_non_optimized_segments = 2;
 
-  // The Kafka offsets for the tweet create stream and the tweet update stream. Indexing should
-  // start from these offsets when it resumes.
-  private final long tweetOffset;
-  private final long updateOffset;
-  private final long maxIndexedTweetId;
+  // the kafka offsets fow t-the tweet cweate stweam and the tweet update stweam. mya i-indexing shouwd
+  // stawt f-fwom these offsets when it wesumes. 😳
+  pwivate finaw wong tweetoffset;
+  p-pwivate finaw wong updateoffset;
+  p-pwivate f-finaw wong maxindexedtweetid;
 
-  public EarlybirdIndex(
-      List<SegmentInfo> segmentInfoList,
-      long tweetOffset,
-      long updateOffset,
-      long maxIndexedTweetId
+  pubwic eawwybiwdindex(
+      wist<segmentinfo> segmentinfowist, -.-
+      wong t-tweetoffset, 🥺
+      wong updateoffset, o.O
+      wong maxindexedtweetid
   ) {
-    List<SegmentInfo> segmentInfos = new ArrayList<>(segmentInfoList);
-    Collections.sort(segmentInfos);
-    this.segmentInfoList = segmentInfos;
-    this.tweetOffset = tweetOffset;
-    this.updateOffset = updateOffset;
-    this.maxIndexedTweetId = maxIndexedTweetId;
+    wist<segmentinfo> segmentinfos = n-nyew awwaywist<>(segmentinfowist);
+    c-cowwections.sowt(segmentinfos);
+    t-this.segmentinfowist = s-segmentinfos;
+    t-this.tweetoffset = tweetoffset;
+    this.updateoffset = u-updateoffset;
+    this.maxindexedtweetid = maxindexedtweetid;
   }
 
-  public EarlybirdIndex(List<SegmentInfo> segmentInfoList, long tweetOffset, long updateOffset) {
-    this(segmentInfoList, tweetOffset, updateOffset, -1);
+  pubwic e-eawwybiwdindex(wist<segmentinfo> segmentinfowist, /(^•ω•^) wong tweetoffset, nyaa~~ wong updateoffset) {
+    this(segmentinfowist, nyaa~~ tweetoffset, :3 u-updateoffset, 😳😳😳 -1);
   }
 
-  public List<SegmentInfo> getSegmentInfoList() {
-    return segmentInfoList;
+  pubwic wist<segmentinfo> g-getsegmentinfowist() {
+    w-wetuwn segmentinfowist;
   }
 
-  public long getTweetOffset() {
-    return tweetOffset;
+  p-pubwic wong gettweetoffset() {
+    wetuwn tweetoffset;
   }
 
-  public long getUpdateOffset() {
-    return updateOffset;
+  pubwic wong getupdateoffset() {
+    wetuwn updateoffset;
   }
 
-  public long getMaxIndexedTweetId() {
-    return maxIndexedTweetId;
+  p-pubwic wong getmaxindexedtweetid() {
+    w-wetuwn maxindexedtweetid;
   }
 
   /**
-   * Returns the number of non-optimized segments in this index.
-   * @return the number of non-optimized segments in this index.
+   * w-wetuwns the n-numbew of nyon-optimized segments i-in this index. (˘ω˘)
+   * @wetuwn the n-nyumbew of nyon-optimized segments in this index. ^^
    */
-  public int numOfNonOptimizedSegments() {
-    int numNonOptimized = 0;
-    for (SegmentInfo segmentInfo : segmentInfoList) {
-      if (!segmentInfo.isOptimized()) {
-        numNonOptimized++;
+  p-pubwic int nyumofnonoptimizedsegments() {
+    i-int nyumnonoptimized = 0;
+    fow (segmentinfo s-segmentinfo : s-segmentinfowist) {
+      if (!segmentinfo.isoptimized()) {
+        nyumnonoptimized++;
       }
     }
-    return numNonOptimized;
+    wetuwn nyumnonoptimized;
   }
 }

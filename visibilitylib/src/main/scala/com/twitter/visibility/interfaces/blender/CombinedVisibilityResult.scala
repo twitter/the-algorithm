@@ -1,7 +1,7 @@
-package com.twitter.visibility.interfaces.blender
+package com.twittew.visibiwity.intewfaces.bwendew
 
-import com.twitter.visibility.builder.VisibilityResult
+impowt com.twittew.visibiwity.buiwdew.visibiwitywesuwt
 
-case class CombinedVisibilityResult(
-  tweetVisibilityResult: VisibilityResult,
-  quotedTweetVisibilityResult: Option[VisibilityResult])
+c-case cwass c-combinedvisibiwitywesuwt(
+  t-tweetvisibiwitywesuwt: v-visibiwitywesuwt, o.O
+  q-quotedtweetvisibiwitywesuwt: o-option[visibiwitywesuwt])

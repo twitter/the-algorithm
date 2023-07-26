@@ -1,13 +1,13 @@
-package com.twitter.tweetypie
-package repository
+package com.twittew.tweetypie
+package w-wepositowy
 
-import com.twitter.service.gen.scarecrow.{thriftscala => scarecrow}
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.backends.Scarecrow
+i-impowt com.twittew.sewvice.gen.scawecwow.{thwiftscawa => s-scawecwow}
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.backends.scawecwow
 
-object RetweetSpamCheckRepository {
-  type Type = scarecrow.Retweet => Stitch[scarecrow.TieredAction]
+o-object wetweetspamcheckwepositowy {
+  t-type t-type = scawecwow.wetweet => stitch[scawecwow.tiewedaction]
 
-  def apply(checkRetweet: Scarecrow.CheckRetweet): Type =
-    retweet => Stitch.callFuture(checkRetweet(retweet))
+  def appwy(checkwetweet: scawecwow.checkwetweet): type =
+    wetweet => s-stitch.cawwfutuwe(checkwetweet(wetweet))
 }

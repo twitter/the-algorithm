@@ -1,107 +1,107 @@
-#pragma once
-#ifdef __cplusplus
+#pwagma once
+#ifdef __cpwuspwus
 
-#include <twml/common.h>
-#include <twml/defines.h>
-#include <twml/TensorRecord.h>
+#incwude <twmw/common.h>
+#incwude <twmw/defines.h>
+#incwude <twmw/tensowwecowd.h>
 
-#include <cstdint>
-#include <cmath>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
+#incwude <cstdint>
+#incwude <cmath>
+#incwude <stwing>
+#incwude <unowdewed_map>
+#incwude <unowdewed_set>
+#incwude <vectow>
 
-namespace twml {
+nyamespace t-twmw {
 
-class DataRecordReader;
+c-cwass datawecowdweadew;
 
-class TWMLAPI DataRecord : public TensorRecord {
-public:
-  typedef std::vector<std::pair<std::string, double>> SparseContinuousValueType;
-  typedef std::vector<std::string> SparseBinaryValueType;
-  typedef Set<int64_t> BinaryFeatures;
-  typedef Map<int64_t, double> ContinuousFeatures;
-  typedef Map<int64_t, int64_t> DiscreteFeatures;
-  typedef Map<int64_t, std::string> StringFeatures;
-  typedef Map<int64_t, SparseBinaryValueType> SparseBinaryFeatures;
-  typedef Map<int64_t, SparseContinuousValueType> SparseContinuousFeatures;
-  typedef Map<int64_t, std::vector<uint8_t>> BlobFeatures;
+c-cwass t-twmwapi datawecowd : p-pubwic tensowwecowd {
+p-pubwic:
+  t-typedef std::vectow<std::paiw<std::stwing, >w< d-doubwe>> spawsecontinuousvawuetype;
+  typedef std::vectow<std::stwing> spawsebinawyvawuetype;
+  typedef set<int64_t> binawyfeatuwes;
+  t-typedef map<int64_t, rawr doubwe> continuousfeatuwes;
+  t-typedef map<int64_t, 😳 int64_t> d-discwetefeatuwes;
+  typedef map<int64_t, >w< std::stwing> stwingfeatuwes;
+  t-typedef map<int64_t, (⑅˘꒳˘) spawsebinawyvawuetype> s-spawsebinawyfeatuwes;
+  t-typedef map<int64_t, OwO spawsecontinuousvawuetype> spawsecontinuousfeatuwes;
+  typedef map<int64_t, (ꈍᴗꈍ) std::vectow<uint8_t>> b-bwobfeatuwes;
 
-private:
-  BinaryFeatures m_binary;
-  ContinuousFeatures m_continuous;
-  DiscreteFeatures m_discrete;
-  StringFeatures m_string;
-  SparseBinaryFeatures m_sparsebinary;
-  SparseContinuousFeatures m_sparsecontinuous;
-  BlobFeatures m_blob;
+pwivate:
+  binawyfeatuwes m_binawy;
+  continuousfeatuwes m-m_continuous;
+  discwetefeatuwes m-m_discwete;
+  s-stwingfeatuwes m-m_stwing;
+  spawsebinawyfeatuwes m-m_spawsebinawy;
+  spawsecontinuousfeatuwes m_spawsecontinuous;
+  b-bwobfeatuwes m_bwob;
 
 
-  std::vector<float> m_labels;
-  std::vector<float> m_weights;
+  std::vectow<fwoat> m_wabews;
+  std::vectow<fwoat> m-m_weights;
 
-  void addLabel(int64_t id, double label = 1);
-  void addWeight(int64_t id, double value);
+  void addwabew(int64_t id, 😳 doubwe wabew = 1);
+  void addweight(int64_t i-id, 😳😳😳 doubwe vawue);
 
-public:
-  typedef DataRecordReader Reader;
+pubwic:
+  t-typedef datawecowdweadew w-weadew;
 
-  DataRecord(int num_labels=0, int num_weights=0):
-      m_binary(),
-      m_continuous(),
-      m_discrete(),
-      m_string(),
-      m_sparsebinary(),
-      m_sparsecontinuous(),
-      m_blob(),
-      m_labels(num_labels, std::nanf("")),
+  d-datawecowd(int nyum_wabews=0, mya int nyum_weights=0):
+      m_binawy(), mya
+      m_continuous(), (⑅˘꒳˘)
+      m-m_discwete(), (U ﹏ U)
+      m-m_stwing(), mya
+      m_spawsebinawy(), ʘwʘ
+      m-m_spawsecontinuous(), (˘ω˘)
+      m_bwob(), (U ﹏ U)
+      m_wabews(num_wabews, ^•ﻌ•^ s-std::nanf("")),
       m_weights(num_weights) {
-#ifdef USE_DENSE_HASH
-        m_binary.set_empty_key(0);
-        m_continuous.set_empty_key(0);
-        m_discrete.set_empty_key(0);
-        m_string.set_empty_key(0);
-        m_sparsebinary.set_empty_key(0);
-        m_sparsecontinuous.set_empty_key(0);
+#ifdef u-use_dense_hash
+        m_binawy.set_empty_key(0);
+        m-m_continuous.set_empty_key(0);
+        m_discwete.set_empty_key(0);
+        m_stwing.set_empty_key(0);
+        m-m_spawsebinawy.set_empty_key(0);
+        m_spawsecontinuous.set_empty_key(0);
 #endif
-        m_binary.max_load_factor(0.5);
-        m_continuous.max_load_factor(0.5);
-        m_discrete.max_load_factor(0.5);
-        m_string.max_load_factor(0.5);
-        m_sparsebinary.max_load_factor(0.5);
-        m_sparsecontinuous.max_load_factor(0.5);
+        m-m_binawy.max_woad_factow(0.5);
+        m_continuous.max_woad_factow(0.5);
+        m-m_discwete.max_woad_factow(0.5);
+        m-m_stwing.max_woad_factow(0.5);
+        m_spawsebinawy.max_woad_factow(0.5);
+        m_spawsecontinuous.max_woad_factow(0.5);
       }
 
-  const BinaryFeatures &getBinary() const { return m_binary; }
-  const ContinuousFeatures &getContinuous() const { return m_continuous; }
-  const DiscreteFeatures &getDiscrete() const { return m_discrete; }
-  const StringFeatures &getString() const { return m_string; }
-  const SparseBinaryFeatures &getSparseBinary() const { return m_sparsebinary; }
-  const SparseContinuousFeatures &getSparseContinuous() const { return m_sparsecontinuous; }
-  const BlobFeatures &getBlob() const { return m_blob; }
+  const binawyfeatuwes &getbinawy() const { wetuwn m_binawy; }
+  const continuousfeatuwes &getcontinuous() const { w-wetuwn m_continuous; }
+  c-const discwetefeatuwes &getdiscwete() c-const { wetuwn m-m_discwete; }
+  c-const stwingfeatuwes &getstwing() const { wetuwn m_stwing; }
+  const spawsebinawyfeatuwes &getspawsebinawy() const { w-wetuwn m_spawsebinawy; }
+  const spawsecontinuousfeatuwes &getspawsecontinuous() const { wetuwn m_spawsecontinuous; }
+  const bwobfeatuwes &getbwob() c-const { wetuwn m_bwob; }
 
-  const std::vector<float> &labels() const { return m_labels; }
-  const std::vector<float> &weights() const { return m_weights; }
+  c-const std::vectow<fwoat> &wabews() c-const { w-wetuwn m_wabews; }
+  const std::vectow<fwoat> &weights() c-const { w-wetuwn m_weights; }
 
-  // used by DataRecordWriter
-  template <typename T>
-  void addContinuous(std::vector<int64_t> feature_ids, std::vector<T> values) {
-    for (size_t i = 0; i < feature_ids.size(); ++i){
-      m_continuous[feature_ids[i]] = values[i];
+  // used b-by datawecowdwwitew
+  t-tempwate <typename t>
+  void addcontinuous(std::vectow<int64_t> f-featuwe_ids, (˘ω˘) s-std::vectow<t> v-vawues) {
+    f-fow (size_t i-i = 0; i < featuwe_ids.size(); ++i){
+      m_continuous[featuwe_ids[i]] = vawues[i];
     }
   }
 
-  template <typename T>
-  void addContinuous(const int64_t *keys, uint64_t num_keys, T *values) {
-    for (size_t i = 0; i < num_keys; ++i){
-       m_continuous[keys[i]] = values[i];
+  tempwate <typename t-t>
+  void addcontinuous(const int64_t *keys, :3 uint64_t nyum_keys, ^^;; t *vawues) {
+    fow (size_t i = 0; i < nyum_keys; ++i){
+       m-m_continuous[keys[i]] = vawues[i];
      }
   }
 
-  void decode(DataRecordReader &reader);
-  void clear();
-  friend class DataRecordReader;
+  void decode(datawecowdweadew &weadew);
+  void cweaw();
+  f-fwiend cwass datawecowdweadew;
 };
 
 }

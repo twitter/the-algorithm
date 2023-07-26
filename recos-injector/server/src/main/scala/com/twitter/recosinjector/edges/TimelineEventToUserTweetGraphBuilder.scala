@@ -1,54 +1,54 @@
-package com.twitter.recosinjector.edges
+package com.twittew.wecosinjectow.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.TweetFavoriteEventDetails
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.wecos.utiw.action
+i-impowt c-com.twittew.wecosinjectow.utiw.tweetfavowiteeventdetaiws
+i-impowt c-com.twittew.utiw.futuwe
 
-class TimelineEventToUserTweetGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
+c-cwass t-timewineeventtousewtweetgwaphbuiwdew(
+  u-usewtweetentityedgebuiwdew: usewtweetentityedgebuiwdew
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetFavoriteEventDetails, UserTweetEntityEdge] {
+  ovewwide impwicit vaw statsweceivew: statsweceivew)
+    e-extends eventtomessagebuiwdew[tweetfavowiteeventdetaiws, (U ﹏ U) usewtweetentityedge] {
 
-  override def shouldProcessEvent(event: TweetFavoriteEventDetails): Future[Boolean] = {
-    Future(true)
+  o-ovewwide def shouwdpwocessevent(event: tweetfavowiteeventdetaiws): f-futuwe[boowean] = {
+    futuwe(twue)
   }
 
-  override def buildEdges(details: TweetFavoriteEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val engagement = details.userTweetEngagement
+  ovewwide def buiwdedges(detaiws: tweetfavowiteeventdetaiws): f-futuwe[seq[usewtweetentityedge]] = {
+    vaw engagement = d-detaiws.usewtweetengagement
 
-    engagement.action match {
-      case Action.Favorite =>
-        val tweetDetails = engagement.tweetDetails
+    e-engagement.action match {
+      case action.favowite =>
+        vaw tweetdetaiws = engagement.tweetdetaiws
 
-        val entitiesMapFut = userTweetEntityEdgeBuilder.getEntitiesMapAndUpdateCache(
-          tweetId = engagement.tweetId,
-          tweetDetails = tweetDetails
+        v-vaw entitiesmapfut = usewtweetentityedgebuiwdew.getentitiesmapandupdatecache(
+          tweetid = engagement.tweetid,
+          tweetdetaiws = t-tweetdetaiws
         )
 
-        entitiesMapFut
-          .map { entitiesMap =>
-            UserTweetEntityEdge(
-              sourceUser = engagement.engageUserId,
-              targetTweet = engagement.tweetId,
-              action = engagement.action,
-              metadata = engagement.engagementTimeMillis,
-              cardInfo = engagement.tweetDetails.map(_.cardInfo.toByte),
-              entitiesMap = entitiesMap,
-              tweetDetails = tweetDetails
+        entitiesmapfut
+          .map { e-entitiesmap =>
+            u-usewtweetentityedge(
+              s-souwceusew = e-engagement.engageusewid, (⑅˘꒳˘)
+              tawgettweet = engagement.tweetid, òωó
+              a-action = engagement.action, ʘwʘ
+              metadata = e-engagement.engagementtimemiwwis, /(^•ω•^)
+              cawdinfo = engagement.tweetdetaiws.map(_.cawdinfo.tobyte), ʘwʘ
+              entitiesmap = entitiesmap, σωσ
+              tweetdetaiws = tweetdetaiws
             )
           }
-          .map(Seq(_))
+          .map(seq(_))
 
-      case _ => Future.Nil
+      c-case _ => futuwe.niw
     }
   }
 
-  override def filterEdges(
-    event: TweetFavoriteEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
-    Future(edges)
+  o-ovewwide d-def fiwtewedges(
+    e-event: tweetfavowiteeventdetaiws, OwO
+    edges: seq[usewtweetentityedge]
+  ): futuwe[seq[usewtweetentityedge]] = {
+    f-futuwe(edges)
   }
 }

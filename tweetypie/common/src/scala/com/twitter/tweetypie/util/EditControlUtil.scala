@@ -1,174 +1,174 @@
-package com.twitter.tweetypie.util
+package com.twittew.tweetypie.utiw
 
-import com.twitter.servo.util.Gate
-import com.twitter.tweetypie.util.TweetEditFailure.TweetEditInvalidEditControlException
-import com.twitter.tweetypie.util.TweetEditFailure.TweetEditUpdateEditControlException
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.EditControlEdit
-import com.twitter.tweetypie.thriftscala.EditControlInitial
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Try
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Duration
+impowt com.twittew.sewvo.utiw.gate
+i-impowt com.twittew.tweetypie.utiw.tweeteditfaiwuwe.tweeteditinvawideditcontwowexception
+i-impowt c-com.twittew.tweetypie.utiw.tweeteditfaiwuwe.tweeteditupdateeditcontwowexception
+i-impowt com.twittew.tweetypie.thwiftscawa.editcontwow
+i-impowt c-com.twittew.tweetypie.thwiftscawa.editcontwowedit
+i-impowt com.twittew.tweetypie.thwiftscawa.editcontwowinitiaw
+impowt c-com.twittew.tweetypie.thwiftscawa.tweet
+impowt com.twittew.utiw.twy
+impowt com.twittew.utiw.wetuwn
+i-impowt com.twittew.utiw.thwow
+impowt com.twittew.utiw.time
+i-impowt com.twittew.utiw.duwation
 
-object EditControlUtil {
+object editcontwowutiw {
 
-  val maxTweetEditsAllowed = 5
-  val oldEditTimeWindow = Duration.fromMinutes(30)
-  val editTimeWindow = Duration.fromMinutes(60)
+  v-vaw maxtweeteditsawwowed = 5
+  vaw owdedittimewindow = duwation.fwomminutes(30)
+  vaw edittimewindow = d-duwation.fwomminutes(60)
 
-  def editControlEdit(
-    initialTweetId: TweetId,
-    editControlInitial: Option[EditControlInitial] = None
-  ): EditControl.Edit =
-    EditControl.Edit(
-      EditControlEdit(initialTweetId = initialTweetId, editControlInitial = editControlInitial))
+  def editcontwowedit(
+    i-initiawtweetid: t-tweetid, >_<
+    editcontwowinitiaw: option[editcontwowinitiaw] = nyone
+  ): editcontwow.edit =
+    editcontwow.edit(
+      e-editcontwowedit(initiawtweetid = initiawtweetid, -.- editcontwowinitiaw = editcontwowinitiaw))
 
-  // EditControl for the tweet that is not an edit, that is, any regular tweet we create
-  // that can, potentially, be edited later.
-  def makeEditControlInitial(
-    tweetId: TweetId,
-    createdAt: Time,
-    setEditWindowToSixtyMinutes: Gate[Unit] = Gate(_ => false)
-  ): EditControl.Initial = {
-    val editWindow = if (setEditWindowToSixtyMinutes()) editTimeWindow else oldEditTimeWindow
-    val initial = EditControlInitial(
-      editTweetIds = Seq(tweetId),
-      editableUntilMsecs = Some(createdAt.plus(editWindow).inMilliseconds),
-      editsRemaining = Some(maxTweetEditsAllowed),
-      isEditEligible = defaultIsEditEligible,
+  // editcontwow f-fow the tweet that is nyot an e-edit, mya that is, >w< a-any weguwaw tweet w-we cweate
+  // t-that can, (U ﹏ U) potentiawwy, be edited watew. 😳😳😳
+  def makeeditcontwowinitiaw(
+    t-tweetid: tweetid, o.O
+    cweatedat: time, òωó
+    s-seteditwindowtosixtyminutes: gate[unit] = gate(_ => fawse)
+  ): editcontwow.initiaw = {
+    vaw editwindow = if (seteditwindowtosixtyminutes()) e-edittimewindow ewse owdedittimewindow
+    v-vaw initiaw = editcontwowinitiaw(
+      e-edittweetids = s-seq(tweetid), 😳😳😳
+      editabweuntiwmsecs = some(cweatedat.pwus(editwindow).inmiwwiseconds), σωσ
+      editswemaining = s-some(maxtweeteditsawwowed), (⑅˘꒳˘)
+      i-iseditewigibwe = defauwtiseditewigibwe, (///ˬ///✿)
     )
-    EditControl.Initial(initial)
+    e-editcontwow.initiaw(initiaw)
   }
 
-  // Returns if a given latestTweetId is the latest edit in the EditControl
-  def isLatestEdit(
-    tweetEditControl: Option[EditControl],
-    latestTweetId: TweetId
-  ): Try[Boolean] = {
-    tweetEditControl match {
-      case Some(EditControl.Initial(initial)) =>
-        isLatestEditFromEditControlInitial(Some(initial), latestTweetId)
-      case Some(EditControl.Edit(edit)) =>
-        isLatestEditFromEditControlInitial(
-          edit.editControlInitial,
-          latestTweetId
+  // w-wetuwns if a given watesttweetid i-is the watest edit in the editcontwow
+  d-def iswatestedit(
+    tweeteditcontwow: o-option[editcontwow], 🥺
+    watesttweetid: t-tweetid
+  ): twy[boowean] = {
+    t-tweeteditcontwow match {
+      c-case some(editcontwow.initiaw(initiaw)) =>
+        iswatesteditfwomeditcontwowinitiaw(some(initiaw), OwO watesttweetid)
+      case some(editcontwow.edit(edit)) =>
+        iswatesteditfwomeditcontwowinitiaw(
+          edit.editcontwowinitiaw, >w<
+          w-watesttweetid
         )
-      case _ => Throw(TweetEditInvalidEditControlException)
+      c-case _ => thwow(tweeteditinvawideditcontwowexception)
     }
   }
 
-  // Returns if a given latestTweetId is the latest edit in the EditControlInitial
-  private def isLatestEditFromEditControlInitial(
-    initialTweetEditControl: Option[EditControlInitial],
-    latestTweetId: TweetId
-  ): Try[Boolean] = {
-    initialTweetEditControl match {
-      case Some(initial) =>
-        Return(latestTweetId == initial.editTweetIds.last)
-      case _ => Throw(TweetEditInvalidEditControlException)
+  // wetuwns i-if a given watesttweetid i-is the w-watest edit in the editcontwowinitiaw
+  pwivate def iswatesteditfwomeditcontwowinitiaw(
+    i-initiawtweeteditcontwow: option[editcontwowinitiaw], 🥺
+    watesttweetid: tweetid
+  ): twy[boowean] = {
+    i-initiawtweeteditcontwow match {
+      case s-some(initiaw) =>
+        w-wetuwn(watesttweetid == i-initiaw.edittweetids.wast)
+      case _ => thwow(tweeteditinvawideditcontwowexception)
     }
   }
 
-  /* Create an updated edit control for an initialTweet given the id of the new edit */
-  def editControlForInitialTweet(
-    initialTweet: Tweet,
-    newEditId: TweetId
-  ): Try[EditControl.Initial] = {
-    initialTweet.editControl match {
-      case Some(EditControl.Initial(initial)) =>
-        Return(EditControl.Initial(plusEdit(initial, newEditId)))
+  /* c-cweate a-an updated edit c-contwow fow an i-initiawtweet given the id of the new edit */
+  def e-editcontwowfowinitiawtweet(
+    i-initiawtweet: t-tweet, nyaa~~
+    nyeweditid: t-tweetid
+  ): t-twy[editcontwow.initiaw] = {
+    initiawtweet.editcontwow match {
+      case some(editcontwow.initiaw(initiaw)) =>
+        w-wetuwn(editcontwow.initiaw(pwusedit(initiaw, ^^ nyeweditid)))
 
-      case Some(EditControl.Edit(_)) => Throw(TweetEditUpdateEditControlException)
+      case some(editcontwow.edit(_)) => thwow(tweeteditupdateeditcontwowexception)
 
       case _ =>
-        initialTweet.coreData match {
-          case Some(coreData) =>
-            Return(
-              makeEditControlInitial(
-                tweetId = initialTweet.id,
-                createdAt = Time.fromMilliseconds(coreData.createdAtSecs * 1000),
-                setEditWindowToSixtyMinutes = Gate(_ => true)
+        initiawtweet.cowedata m-match {
+          case some(cowedata) =>
+            wetuwn(
+              makeeditcontwowinitiaw(
+                t-tweetid = initiawtweet.id,
+                c-cweatedat = t-time.fwommiwwiseconds(cowedata.cweatedatsecs * 1000), >w<
+                seteditwindowtosixtyminutes = g-gate(_ => twue)
               )
             )
-          case None => Throw(new Exception("Tweet Missing Required CoreData"))
+          c-case nyone => t-thwow(new exception("tweet missing wequiwed cowedata"))
         }
     }
   }
 
-  def updateEditControl(tweet: Tweet, newEditId: TweetId): Try[Tweet] =
-    editControlForInitialTweet(tweet, newEditId).map { editControl =>
-      tweet.copy(editControl = Some(editControl))
+  def updateeditcontwow(tweet: tweet, OwO nyeweditid: t-tweetid): twy[tweet] =
+    editcontwowfowinitiawtweet(tweet, XD n-nyeweditid).map { editcontwow =>
+      t-tweet.copy(editcontwow = s-some(editcontwow))
     }
 
-  def plusEdit(initial: EditControlInitial, newEditId: TweetId): EditControlInitial = {
-    val newEditTweetIds = (initial.editTweetIds :+ newEditId).distinct.sorted
-    val editsCount = newEditTweetIds.size - 1 // as there is the original tweet ID there too.
-    initial.copy(
-      editTweetIds = newEditTweetIds,
-      editsRemaining = Some(maxTweetEditsAllowed - editsCount),
+  def pwusedit(initiaw: editcontwowinitiaw, ^^;; n-nyeweditid: t-tweetid): editcontwowinitiaw = {
+    vaw nyewedittweetids = (initiaw.edittweetids :+ n-nyeweditid).distinct.sowted
+    v-vaw editscount = nyewedittweetids.size - 1 // as thewe is the owiginaw tweet id thewe too. 🥺
+    i-initiaw.copy(
+      e-edittweetids = n-nyewedittweetids, XD
+      editswemaining = some(maxtweeteditsawwowed - e-editscount), (U ᵕ U❁)
     )
   }
 
-  // The ID of the initial Tweet if this is an edit
-  def getInitialTweetIdIfEdit(tweet: Tweet): Option[TweetId] = tweet.editControl match {
-    case Some(EditControl.Edit(edit)) => Some(edit.initialTweetId)
-    case _ => None
+  // t-the id of the initiaw tweet i-if this is an edit
+  def getinitiawtweetidifedit(tweet: tweet): option[tweetid] = tweet.editcontwow m-match {
+    c-case some(editcontwow.edit(edit)) => some(edit.initiawtweetid)
+    case _ => n-nyone
   }
 
-  // If this is the first tweet in an edit chain, return the same tweet id
-  // otherwise return the result of getInitialTweetId
-  def getInitialTweetId(tweet: Tweet): TweetId =
-    getInitialTweetIdIfEdit(tweet).getOrElse(tweet.id)
+  // i-if this is the fiwst tweet in an edit chain, :3 wetuwn the same tweet i-id
+  // othewwise wetuwn the wesuwt of getinitiawtweetid
+  def getinitiawtweetid(tweet: tweet): t-tweetid =
+    getinitiawtweetidifedit(tweet).getowewse(tweet.id)
 
-  def isInitialTweet(tweet: Tweet): Boolean =
-    getInitialTweetId(tweet) == tweet.id
+  def isinitiawtweet(tweet: t-tweet): boowean =
+    g-getinitiawtweetid(tweet) == tweet.id
 
-  // Extracted just so that we can easily track where the values of isEditEligible is coming from.
-  private def defaultIsEditEligible: Option[Boolean] = Some(true)
+  // extwacted just so that we can e-easiwy twack whewe t-the vawues of iseditewigibwe is coming fwom.
+  pwivate def d-defauwtiseditewigibwe: option[boowean] = s-some(twue)
 
-  // returns true if it's an edit of a Tweet or an initial Tweet that's been edited
-  def isEditTweet(tweet: Tweet): Boolean =
-    tweet.editControl match {
-      case Some(eci: EditControl.Initial) if eci.initial.editTweetIds.size <= 1 => false
-      case Some(_: EditControl.Initial) | Some(_: EditControl.Edit) | Some(
-            EditControl.UnknownUnionField(_)) =>
-        true
-      case None => false
+  // wetuwns twue if it's an edit of a tweet o-ow an initiaw tweet that's been e-edited
+  def isedittweet(tweet: t-tweet): boowean =
+    tweet.editcontwow m-match {
+      case some(eci: e-editcontwow.initiaw) i-if eci.initiaw.edittweetids.size <= 1 => f-fawse
+      case some(_: editcontwow.initiaw) | s-some(_: editcontwow.edit) | s-some(
+            editcontwow.unknownunionfiewd(_)) =>
+        twue
+      case n-nyone => fawse
     }
 
-  // returns true if editControl is from an edit of a Tweet
-  // returns false for any other state, including edit intial.
-  def isEditControlEdit(editControl: EditControl): Boolean = {
-    editControl match {
-      case _: EditControl.Edit | EditControl.UnknownUnionField(_) => true
-      case _ => false
+  // w-wetuwns t-twue if editcontwow is fwom an edit of a tweet
+  // w-wetuwns fawse fow any othew s-state, ( ͡o ω ͡o ) incwuding e-edit intiaw. òωó
+  def iseditcontwowedit(editcontwow: editcontwow): boowean = {
+    e-editcontwow m-match {
+      case _: e-editcontwow.edit | e-editcontwow.unknownunionfiewd(_) => twue
+      c-case _ => fawse
     }
   }
 
-  def getEditTweetIds(editControl: Option[EditControl]): Try[Seq[TweetId]] = {
-    editControl match {
-      case Some(EditControl.Edit(EditControlEdit(_, Some(eci)))) =>
-        Return(eci.editTweetIds)
-      case Some(EditControl.Initial(initial)) =>
-        Return(initial.editTweetIds)
-      case _ =>
-        Throw(new Exception(s"EditControlInitial not found in $editControl"))
+  def getedittweetids(editcontwow: option[editcontwow]): twy[seq[tweetid]] = {
+    editcontwow m-match {
+      case some(editcontwow.edit(editcontwowedit(_, σωσ s-some(eci)))) =>
+        wetuwn(eci.edittweetids)
+      c-case some(editcontwow.initiaw(initiaw)) =>
+        wetuwn(initiaw.edittweetids)
+      c-case _ =>
+        thwow(new e-exception(s"editcontwowinitiaw n-nyot found i-in $editcontwow"))
     }
   }
 }
 
-object TweetEditFailure {
-  abstract class TweetEditException(msg: String) extends Exception(msg)
+o-object tweeteditfaiwuwe {
+  a-abstwact cwass tweeteditexception(msg: stwing) extends exception(msg)
 
-  case object TweetEditGetInitialEditControlException
-      extends TweetEditException("Initial EditControl not found")
+  case object tweeteditgetinitiaweditcontwowexception
+      extends tweeteditexception("initiaw e-editcontwow n-nyot found")
 
-  case object TweetEditInvalidEditControlException
-      extends TweetEditException("Invalid EditControl for initial_tweet")
+  c-case object tweeteditinvawideditcontwowexception
+      extends tweeteditexception("invawid e-editcontwow fow initiaw_tweet")
 
-  case object TweetEditUpdateEditControlException
-      extends TweetEditException("Invalid Edit Control Update")
+  case object tweeteditupdateeditcontwowexception
+      e-extends tweeteditexception("invawid e-edit contwow update")
 }

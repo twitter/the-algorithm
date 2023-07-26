@@ -1,6 +1,6 @@
-# RealGraph Candidate Source
-Provides out-of-network RealGraph candidates for a given user. RealGraph is a user-user graph dataset that aims to measure the strength of the relationship between two users.
+# weawgwaph candidate souwce
+pwovides o-out-of-netwowk w-weawgwaph candidates f-fow a given u-usew. (⑅˘꒳˘) weawgwaph i-is a usew-usew g-gwaph dataset t-that aims to measuwe t-the stwength of the wewationship between two usews. (///ˬ///✿)
 
-RealGraph comprises two components: a real-time pipeline that tracks various counts and relationships between user-user edges (such as the number of favorites, replies, retweets, clicks, whether followed, muted, or blocked), and an offline pipeline of a larger set of such user-user edge counts and relationships. Currently, the top k in-network scores have been exported for use by various teams.
+weawgwaph compwises t-two components: a weaw-time pipewine that twacks v-vawious counts and wewationships b-between usew-usew edges (such as the nyumbew of favowites, 😳😳😳 wepwies, w-wetweets, 🥺 cwicks, whethew f-fowwowed, mya muted, o-ow bwocked), 🥺 and an offwine pipewine of a wawgew set of such usew-usew edge counts a-and wewationships. >_< cuwwentwy, the top k in-netwowk scowes have been expowted f-fow use by vawious teams. >_<
 
-The RealGraph dataset is used to predict user interactions at Twitter, and is based on the paper "[Realgraph: User interaction prediction at Twitter](http://www.ueo-workshop.com/wp-content/uploads/2014/04/sig-alternate.pdf)" by the UEO workshop at KDD'14.
+the w-weawgwaph dataset i-is used to pwedict u-usew intewactions a-at twittew, (⑅˘꒳˘) and is based on the papew "[weawgwaph: u-usew intewaction pwediction at twittew](http://www.ueo-wowkshop.com/wp-content/upwoads/2014/04/sig-awtewnate.pdf)" b-by the ueo wowkshop at kdd'14. /(^•ω•^)

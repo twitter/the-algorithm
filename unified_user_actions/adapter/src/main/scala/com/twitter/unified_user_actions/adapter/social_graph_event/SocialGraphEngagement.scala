@@ -1,157 +1,157 @@
-package com.twitter.unified_user_actions.adapter.social_graph_event
+package com.twittew.unified_usew_actions.adaptew.sociaw_gwaph_event
 
-import com.twitter.socialgraph.thriftscala.Action
-import com.twitter.socialgraph.thriftscala.BlockGraphEvent
-import com.twitter.socialgraph.thriftscala.FollowGraphEvent
-import com.twitter.socialgraph.thriftscala.MuteGraphEvent
-import com.twitter.socialgraph.thriftscala.ReportAsAbuseGraphEvent
-import com.twitter.socialgraph.thriftscala.ReportAsSpamGraphEvent
-import com.twitter.socialgraph.thriftscala.WriteEvent
-import com.twitter.socialgraph.thriftscala.WriteRequestResult
-import com.twitter.unified_user_actions.thriftscala.{ActionType => UuaActionType}
+impowt com.twittew.sociawgwaph.thwiftscawa.action
+i-impowt com.twittew.sociawgwaph.thwiftscawa.bwockgwaphevent
+i-impowt com.twittew.sociawgwaph.thwiftscawa.fowwowgwaphevent
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.mutegwaphevent
+i-impowt com.twittew.sociawgwaph.thwiftscawa.wepowtasabusegwaphevent
+i-impowt c-com.twittew.sociawgwaph.thwiftscawa.wepowtasspamgwaphevent
+i-impowt com.twittew.sociawgwaph.thwiftscawa.wwiteevent
+impowt com.twittew.sociawgwaph.thwiftscawa.wwitewequestwesuwt
+impowt com.twittew.unified_usew_actions.thwiftscawa.{actiontype => uuaactiontype}
 
-object SocialGraphEngagement {
+o-object sociawgwaphengagement {
 
   /**
-   * This is "Follow" event to indicate user1 follows user2 captured in ServerProfileFollow
+   * this is "fowwow" event t-to indicate usew1 fowwows usew2 c-captuwed in sewvewpwofiwefowwow
    */
-  object ProfileFollow extends BaseSocialGraphWriteEvent[FollowGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileFollow
+  object pwofiwefowwow e-extends basesociawgwaphwwiteevent[fowwowgwaphevent] {
+    ovewwide d-def uuaactiontype: u-uuaactiontype = uuaactiontype.sewvewpwofiwefowwow
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[FollowGraphEvent]] =
-      e.follow
+    ovewwide def getsubtype(
+      e: wwiteevent
+    ): o-option[seq[fowwowgwaphevent]] =
+      e.fowwow
 
-    override def getWriteRequestResultFromSubType(
-      e: Seq[FollowGraphEvent]
-    ): Seq[WriteRequestResult] = {
-      // Remove all redundant operations (FollowGraphEvent.redundantOperation == Some(true))
-      e.collect {
-        case fe if !fe.redundantOperation.getOrElse(false) => fe.result
+    ovewwide def getwwitewequestwesuwtfwomsubtype(
+      e: seq[fowwowgwaphevent]
+    ): s-seq[wwitewequestwesuwt] = {
+      // wemove aww wedundant o-opewations (fowwowgwaphevent.wedundantopewation == s-some(twue))
+      e-e.cowwect {
+        case f-fe if !fe.wedundantopewation.getowewse(fawse) => fe.wesuwt
       }
     }
   }
 
   /**
-   * This is "Unfollow" event to indicate user1 unfollows user2 captured in ServerProfileUnfollow
+   * this i-is "unfowwow" event to indicate usew1 unfowwows u-usew2 captuwed in sewvewpwofiweunfowwow
    *
-   * Both Unfollow and Follow use the struct FollowGraphEvent, but are treated in its individual case
-   * class.
+   * both unfowwow and fowwow use the stwuct fowwowgwaphevent, 😳😳😳 but a-awe tweated in its individuaw c-case
+   * cwass. ^^;;
    */
-  object ProfileUnfollow extends BaseSocialGraphWriteEvent[FollowGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileUnfollow
+  o-object p-pwofiweunfowwow extends basesociawgwaphwwiteevent[fowwowgwaphevent] {
+    ovewwide def uuaactiontype: u-uuaactiontype = u-uuaactiontype.sewvewpwofiweunfowwow
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[FollowGraphEvent]] =
-      e.follow
+    ovewwide def getsubtype(
+      e-e: w-wwiteevent
+    ): option[seq[fowwowgwaphevent]] =
+      e-e.fowwow
 
-    override def getWriteRequestResultFromSubType(
-      e: Seq[FollowGraphEvent]
-    ): Seq[WriteRequestResult] =
-      e.collect {
-        case fe if !fe.redundantOperation.getOrElse(false) => fe.result
+    ovewwide d-def getwwitewequestwesuwtfwomsubtype(
+      e: seq[fowwowgwaphevent]
+    ): seq[wwitewequestwesuwt] =
+      e-e.cowwect {
+        case fe if !fe.wedundantopewation.getowewse(fawse) => f-fe.wesuwt
       }
   }
 
   /**
-   * This is "Block" event to indicate user1 blocks user2 captured in ServerProfileBlock
+   * this is "bwock" e-event to i-indicate usew1 bwocks usew2 captuwed in sewvewpwofiwebwock
    */
-  object ProfileBlock extends BaseSocialGraphWriteEvent[BlockGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileBlock
+  object pwofiwebwock extends basesociawgwaphwwiteevent[bwockgwaphevent] {
+    ovewwide def uuaactiontype: u-uuaactiontype = u-uuaactiontype.sewvewpwofiwebwock
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[BlockGraphEvent]] =
-      e.block
+    ovewwide def g-getsubtype(
+      e-e: wwiteevent
+    ): o-option[seq[bwockgwaphevent]] =
+      e.bwock
 
-    override def getWriteRequestResultFromSubType(
-      e: Seq[BlockGraphEvent]
-    ): Seq[WriteRequestResult] =
-      e.map(_.result)
+    ovewwide def getwwitewequestwesuwtfwomsubtype(
+      e-e: seq[bwockgwaphevent]
+    ): seq[wwitewequestwesuwt] =
+      e.map(_.wesuwt)
   }
 
   /**
-   * This is "Unblock" event to indicate user1 unblocks user2 captured in ServerProfileUnblock
+   * this i-is "unbwock" event to indicate u-usew1 unbwocks u-usew2 captuwed in s-sewvewpwofiweunbwock
    *
-   * Both Unblock and Block use struct BlockGraphEvent, but are treated in its individual case
-   * class.
+   * both unbwock and b-bwock use stwuct b-bwockgwaphevent, o.O b-but awe tweated i-in its individuaw case
+   * cwass. (///ˬ///✿)
    */
-  object ProfileUnblock extends BaseSocialGraphWriteEvent[BlockGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileUnblock
+  object p-pwofiweunbwock e-extends basesociawgwaphwwiteevent[bwockgwaphevent] {
+    o-ovewwide d-def uuaactiontype: u-uuaactiontype = uuaactiontype.sewvewpwofiweunbwock
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[BlockGraphEvent]] =
-      e.block
+    ovewwide def getsubtype(
+      e: wwiteevent
+    ): o-option[seq[bwockgwaphevent]] =
+      e.bwock
 
-    override def getWriteRequestResultFromSubType(
-      e: Seq[BlockGraphEvent]
-    ): Seq[WriteRequestResult] =
-      e.map(_.result)
+    ovewwide def getwwitewequestwesuwtfwomsubtype(
+      e: seq[bwockgwaphevent]
+    ): s-seq[wwitewequestwesuwt] =
+      e.map(_.wesuwt)
   }
 
   /**
-   * This is "Mute" event to indicate user1 mutes user2 captured in ServerProfileMute
+   * this is "mute" event t-to indicate usew1 m-mutes usew2 captuwed i-in sewvewpwofiwemute
    */
-  object ProfileMute extends BaseSocialGraphWriteEvent[MuteGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileMute
+  object pwofiwemute e-extends basesociawgwaphwwiteevent[mutegwaphevent] {
+    o-ovewwide def uuaactiontype: u-uuaactiontype = uuaactiontype.sewvewpwofiwemute
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[MuteGraphEvent]] =
+    ovewwide def getsubtype(
+      e: wwiteevent
+    ): option[seq[mutegwaphevent]] =
       e.mute
 
-    override def getWriteRequestResultFromSubType(e: Seq[MuteGraphEvent]): Seq[WriteRequestResult] =
-      e.map(_.result)
+    o-ovewwide def getwwitewequestwesuwtfwomsubtype(e: s-seq[mutegwaphevent]): seq[wwitewequestwesuwt] =
+      e-e.map(_.wesuwt)
   }
 
   /**
-   * This is "Unmute" event to indicate user1 unmutes user2 captured in ServerProfileUnmute
+   * t-this is "unmute" event to indicate usew1 u-unmutes usew2 c-captuwed in sewvewpwofiweunmute
    *
-   * Both Unmute and Mute use the struct MuteGraphEvent, but are treated in its individual case
-   * class.
+   * both u-unmute and mute u-use the stwuct mutegwaphevent, σωσ but awe tweated in its individuaw case
+   * cwass. nyaa~~
    */
-  object ProfileUnmute extends BaseSocialGraphWriteEvent[MuteGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileUnmute
+  o-object p-pwofiweunmute e-extends basesociawgwaphwwiteevent[mutegwaphevent] {
+    ovewwide d-def uuaactiontype: u-uuaactiontype = uuaactiontype.sewvewpwofiweunmute
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[MuteGraphEvent]] =
+    o-ovewwide def getsubtype(
+      e: wwiteevent
+    ): option[seq[mutegwaphevent]] =
       e.mute
 
-    override def getWriteRequestResultFromSubType(e: Seq[MuteGraphEvent]): Seq[WriteRequestResult] =
-      e.map(_.result)
+    o-ovewwide def getwwitewequestwesuwtfwomsubtype(e: s-seq[mutegwaphevent]): seq[wwitewequestwesuwt] =
+      e.map(_.wesuwt)
   }
 
-  object ProfileReportAsSpam extends BaseReportSocialGraphWriteEvent[ReportAsSpamGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileReport
-    override def socialGraphAction: Action = Action.ReportAsSpam
+  o-object p-pwofiwewepowtasspam extends basewepowtsociawgwaphwwiteevent[wepowtasspamgwaphevent] {
+    ovewwide def uuaactiontype: u-uuaactiontype = uuaactiontype.sewvewpwofiwewepowt
+    ovewwide def sociawgwaphaction: action = action.wepowtasspam
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[ReportAsSpamGraphEvent]] =
-      e.reportAsSpam
+    ovewwide def g-getsubtype(
+      e: wwiteevent
+    ): option[seq[wepowtasspamgwaphevent]] =
+      e-e.wepowtasspam
 
-    override def getWriteRequestResultFromSubType(
-      e: Seq[ReportAsSpamGraphEvent]
-    ): Seq[WriteRequestResult] =
-      e.map(_.result)
+    o-ovewwide def getwwitewequestwesuwtfwomsubtype(
+      e: seq[wepowtasspamgwaphevent]
+    ): seq[wwitewequestwesuwt] =
+      e-e.map(_.wesuwt)
   }
 
-  object ProfileReportAsAbuse extends BaseReportSocialGraphWriteEvent[ReportAsAbuseGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileReport
-    override def socialGraphAction: Action = Action.ReportAsAbuse
+  o-object pwofiwewepowtasabuse extends basewepowtsociawgwaphwwiteevent[wepowtasabusegwaphevent] {
+    ovewwide d-def uuaactiontype: uuaactiontype = u-uuaactiontype.sewvewpwofiwewepowt
+    ovewwide def sociawgwaphaction: action = a-action.wepowtasabuse
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[ReportAsAbuseGraphEvent]] =
-      e.reportAsAbuse
+    ovewwide def getsubtype(
+      e-e: wwiteevent
+    ): o-option[seq[wepowtasabusegwaphevent]] =
+      e.wepowtasabuse
 
-    override def getWriteRequestResultFromSubType(
-      e: Seq[ReportAsAbuseGraphEvent]
-    ): Seq[WriteRequestResult] =
-      e.map(_.result)
+    o-ovewwide def getwwitewequestwesuwtfwomsubtype(
+      e-e: seq[wepowtasabusegwaphevent]
+    ): s-seq[wwitewequestwesuwt] =
+      e-e.map(_.wesuwt)
   }
 }

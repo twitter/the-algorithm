@@ -1,85 +1,85 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.Collections;
-import java.util.Map;
+impowt java.utiw.cowwections;
+i-impowt java.utiw.map;
 
-import javax.inject.Inject;
+i-impowt javax.inject.inject;
 
-import com.google.common.collect.Maps;
+i-impowt com.googwe.common.cowwect.maps;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Future;
+i-impowt c-com.twittew.finagwe.sewvice;
+i-impowt com.twittew.finagwe.simpwefiwtew;
+i-impowt c-com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
+i-impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequesttype;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * A Finagle filter that determines if a certain cluster is available to the SuperRoot.
+ * a finagwe fiwtew t-that detewmines if a cewtain c-cwustew is avaiwabwe t-to the supewwoot. >w<
  *
- * Normally, all clusters should be available. However, if there's a problem with our systems, and
- * our search clusters are causing issues for other services (time outs, for example), then we might
- * want to be disable them, and return errors to our clients.
+ * nyowmawwy, (⑅˘꒳˘) aww cwustews shouwd be avaiwabwe. OwO howevew, (ꈍᴗꈍ) if thewe's a-a pwobwem with ouw systems, 😳 and
+ * ouw seawch cwustews awe causing issues fow othew s-sewvices (time outs, 😳😳😳 fow exampwe), mya t-then we m-might
+ * want to b-be disabwe them, mya a-and wetuwn ewwows to ouw cwients. (⑅˘꒳˘)
  */
-public class EarlybirdClusterAvailableFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private final SearchDecider decider;
-  private final EarlybirdCluster cluster;
-  private final String allRequestsDeciderKey;
-  private final Map<EarlybirdRequestType, String> requestTypeDeciderKeys;
-  private final Map<EarlybirdRequestType, SearchCounter> disabledRequests;
+pubwic cwass e-eawwybiwdcwustewavaiwabwefiwtew
+    extends simpwefiwtew<eawwybiwdwequestcontext, (U ﹏ U) e-eawwybiwdwesponse> {
+  pwivate finaw seawchdecidew decidew;
+  pwivate finaw eawwybiwdcwustew c-cwustew;
+  pwivate finaw stwing a-awwwequestsdecidewkey;
+  p-pwivate f-finaw map<eawwybiwdwequesttype, mya stwing> wequesttypedecidewkeys;
+  pwivate finaw map<eawwybiwdwequesttype, ʘwʘ seawchcountew> d-disabwedwequests;
 
   /**
-   * Creates a new EarlybirdClusterAvailableFilter instance.
+   * c-cweates a nyew eawwybiwdcwustewavaiwabwefiwtew i-instance. (˘ω˘)
    *
-   * @param decider The decider to use to determine if this cluster is available.
-   * @param cluster The cluster.
+   * @pawam d-decidew the decidew to use t-to detewmine if this cwustew is a-avaiwabwe. (U ﹏ U)
+   * @pawam cwustew the cwustew. ^•ﻌ•^
    */
-  @Inject
-  public EarlybirdClusterAvailableFilter(SearchDecider decider, EarlybirdCluster cluster) {
-    this.decider = decider;
-    this.cluster = cluster;
+  @inject
+  pubwic e-eawwybiwdcwustewavaiwabwefiwtew(seawchdecidew decidew, (˘ω˘) eawwybiwdcwustew c-cwustew) {
+    this.decidew = d-decidew;
+    t-this.cwustew = cwustew;
 
-    String clusterName = cluster.getNameForStats();
-    this.allRequestsDeciderKey = "superroot_" + clusterName + "_cluster_available_for_all_requests";
+    stwing cwustewname = cwustew.getnamefowstats();
+    this.awwwequestsdecidewkey = "supewwoot_" + cwustewname + "_cwustew_avaiwabwe_fow_aww_wequests";
 
-    Map<EarlybirdRequestType, String> tempDeciderKeys = Maps.newEnumMap(EarlybirdRequestType.class);
-    Map<EarlybirdRequestType, SearchCounter> tempCounters =
-      Maps.newEnumMap(EarlybirdRequestType.class);
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      String requestTypeName = requestType.getNormalizedName();
-      tempDeciderKeys.put(requestType, "superroot_" + clusterName + "_cluster_available_for_"
-                          + requestTypeName + "_requests");
-      tempCounters.put(requestType, SearchCounter.export(
-                           "cluster_available_filter_" + clusterName + "_"
-                           + requestTypeName + "_disabled_requests"));
+    map<eawwybiwdwequesttype, :3 s-stwing> t-tempdecidewkeys = maps.newenummap(eawwybiwdwequesttype.cwass);
+    m-map<eawwybiwdwequesttype, ^^;; seawchcountew> t-tempcountews =
+      m-maps.newenummap(eawwybiwdwequesttype.cwass);
+    fow (eawwybiwdwequesttype wequesttype : eawwybiwdwequesttype.vawues()) {
+      s-stwing wequesttypename = wequesttype.getnowmawizedname();
+      tempdecidewkeys.put(wequesttype, 🥺 "supewwoot_" + cwustewname + "_cwustew_avaiwabwe_fow_"
+                          + wequesttypename + "_wequests");
+      t-tempcountews.put(wequesttype, (⑅˘꒳˘) seawchcountew.expowt(
+                           "cwustew_avaiwabwe_fiwtew_" + c-cwustewname + "_"
+                           + w-wequesttypename + "_disabwed_wequests"));
     }
-    requestTypeDeciderKeys = Collections.unmodifiableMap(tempDeciderKeys);
-    disabledRequests = Collections.unmodifiableMap(tempCounters);
+    w-wequesttypedecidewkeys = cowwections.unmodifiabwemap(tempdecidewkeys);
+    d-disabwedwequests = c-cowwections.unmodifiabwemap(tempcountews);
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
-    if (!decider.isAvailable(allRequestsDeciderKey)
-        || !decider.isAvailable(requestTypeDeciderKeys.get(requestType))) {
-      disabledRequests.get(requestType).increment();
-      return Future.value(
-          errorResponse("The " + cluster.getNameForStats() + " cluster is not available for "
-                        + requestType.getNormalizedName() + " requests."));
+  @ovewwide
+  p-pubwic f-futuwe<eawwybiwdwesponse> appwy(
+      eawwybiwdwequestcontext wequestcontext, nyaa~~
+      s-sewvice<eawwybiwdwequestcontext, :3 e-eawwybiwdwesponse> s-sewvice) {
+    e-eawwybiwdwequesttype w-wequesttype = wequestcontext.geteawwybiwdwequesttype();
+    if (!decidew.isavaiwabwe(awwwequestsdecidewkey)
+        || !decidew.isavaiwabwe(wequesttypedecidewkeys.get(wequesttype))) {
+      disabwedwequests.get(wequesttype).incwement();
+      w-wetuwn futuwe.vawue(
+          ewwowwesponse("the " + cwustew.getnamefowstats() + " cwustew is nyot avaiwabwe fow "
+                        + wequesttype.getnowmawizedname() + " wequests."));
     }
 
-    return service.apply(requestContext);
+    w-wetuwn sewvice.appwy(wequestcontext);
   }
 
-  private EarlybirdResponse errorResponse(String debugMessage) {
-    return new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 0)
-      .setDebugString(debugMessage);
+  pwivate eawwybiwdwesponse e-ewwowwesponse(stwing d-debugmessage) {
+    w-wetuwn new eawwybiwdwesponse(eawwybiwdwesponsecode.pewsistent_ewwow, ( ͡o ω ͡o ) 0)
+      .setdebugstwing(debugmessage);
   }
 }

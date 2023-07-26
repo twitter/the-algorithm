@@ -1,58 +1,58 @@
-package com.twitter.usersignalservice.base
+package com.twittew.usewsignawsewvice.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats
-import com.twitter.storehaus.ReadableStore
-import com.twitter.twistly.common.UserId
-import com.twitter.usersignalservice.base.BaseSignalFetcher.Timeout
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Future
-import com.twitter.util.Timer
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.stats
+i-impowt com.twittew.stowehaus.weadabwestowe
+i-impowt com.twittew.twistwy.common.usewid
+i-impowt c-com.twittew.usewsignawsewvice.base.basesignawfetchew.timeout
+impowt c-com.twittew.usewsignawsewvice.thwiftscawa.signaw
+impowt com.twittew.usewsignawsewvice.thwiftscawa.signawtype
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.timew
 
-case class AggregatedSignalController(
-  signalsAggregationInfo: Seq[SignalAggregatedInfo],
-  signalsWeightMapInfo: Map[SignalType, Double],
-  stats: StatsReceiver,
-  timer: Timer)
-    extends ReadableStore[Query, Seq[Signal]] {
+case cwass aggwegatedsignawcontwowwew(
+  s-signawsaggwegationinfo: seq[signawaggwegatedinfo], /(^•ω•^)
+  signawsweightmapinfo: map[signawtype, ʘwʘ d-doubwe], σωσ
+  stats: statsweceivew, OwO
+  t-timew: timew)
+    extends weadabwestowe[quewy, 😳😳😳 seq[signaw]] {
 
-  val name: String = this.getClass.getCanonicalName
-  val statsReceiver: StatsReceiver = stats.scope(name)
+  v-vaw nyame: stwing = this.getcwass.getcanonicawname
+  v-vaw s-statsweceivew: statsweceivew = stats.scope(name)
 
-  override def get(query: Query): Future[Option[Seq[Signal]]] = {
-    Stats
-      .trackItems(statsReceiver) {
-        val allSignalsFut =
-          Future
-            .collect(signalsAggregationInfo.map(_.getSignals(query.userId))).map(_.flatten.flatten)
-        val aggregatedSignals =
-          allSignalsFut.map { allSignals =>
-            allSignals
-              .groupBy(_.targetInternalId).collect {
-                case (Some(internalId), signals) =>
-                  val mostRecentEnagementTime = signals.map(_.timestamp).max
-                  val totalWeight =
-                    signals
-                      .map(signal => signalsWeightMapInfo.getOrElse(signal.signalType, 0.0)).sum
-                  (Signal(query.signalType, mostRecentEnagementTime, Some(internalId)), totalWeight)
-              }.toSeq.sortBy { case (signal, weight) => (-weight, -signal.timestamp) }
+  ovewwide def get(quewy: quewy): f-futuwe[option[seq[signaw]]] = {
+    stats
+      .twackitems(statsweceivew) {
+        vaw awwsignawsfut =
+          futuwe
+            .cowwect(signawsaggwegationinfo.map(_.getsignaws(quewy.usewid))).map(_.fwatten.fwatten)
+        vaw a-aggwegatedsignaws =
+          awwsignawsfut.map { a-awwsignaws =>
+            a-awwsignaws
+              .gwoupby(_.tawgetintewnawid).cowwect {
+                c-case (some(intewnawid), 😳😳😳 s-signaws) =>
+                  vaw mostwecentenagementtime = signaws.map(_.timestamp).max
+                  vaw t-totawweight =
+                    signaws
+                      .map(signaw => signawsweightmapinfo.getowewse(signaw.signawtype, o.O 0.0)).sum
+                  (signaw(quewy.signawtype, ( ͡o ω ͡o ) m-mostwecentenagementtime, (U ﹏ U) some(intewnawid)), (///ˬ///✿) totawweight)
+              }.toseq.sowtby { case (signaw, >w< weight) => (-weight, rawr -signaw.timestamp) }
               .map(_._1)
-              .take(query.maxResults.getOrElse(Int.MaxValue))
+              .take(quewy.maxwesuwts.getowewse(int.maxvawue))
           }
-        aggregatedSignals.map(Some(_))
-      }.raiseWithin(Timeout)(timer).handle {
-        case e =>
-          statsReceiver.counter(e.getClass.getCanonicalName).incr()
-          Some(Seq.empty[Signal])
+        aggwegatedsignaws.map(some(_))
+      }.waisewithin(timeout)(timew).handwe {
+        c-case e =>
+          statsweceivew.countew(e.getcwass.getcanonicawname).incw()
+          s-some(seq.empty[signaw])
       }
   }
 }
 
-case class SignalAggregatedInfo(
-  signalType: SignalType,
-  signalFetcher: ReadableStore[Query, Seq[Signal]]) {
-  def getSignals(userId: UserId): Future[Option[Seq[Signal]]] = {
-    signalFetcher.get(Query(userId, signalType, None))
+c-case cwass s-signawaggwegatedinfo(
+  signawtype: signawtype, mya
+  signawfetchew: w-weadabwestowe[quewy, ^^ s-seq[signaw]]) {
+  def getsignaws(usewid: u-usewid): futuwe[option[seq[signaw]]] = {
+    signawfetchew.get(quewy(usewid, 😳😳😳 signawtype, mya n-nyone))
   }
 }

@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cawwback
 
-object PromptItem {
-  val PromptEntryNamespace = EntryNamespace("relevanceprompt")
+o-object pwomptitem {
+  v-vaw pwomptentwynamespace = entwynamespace("wewevancepwompt")
 }
 
-case class PromptItem(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo] = None,
-  content: PromptContent,
-  impressionCallbacks: Option[List[Callback]])
-    extends TimelineItem {
+case cwass pwomptitem(
+  ovewwide vaw id: s-stwing, /(^•ω•^)
+  ovewwide vaw sowtindex: option[wong], rawr
+  o-ovewwide vaw cwienteventinfo: o-option[cwienteventinfo], OwO
+  ovewwide vaw feedbackactioninfo: option[feedbackactioninfo] = n-nyone, (U ﹏ U)
+  content: pwomptcontent, >_<
+  i-impwessioncawwbacks: o-option[wist[cawwback]])
+    extends timewineitem {
 
-  override val entryNamespace: EntryNamespace = PromptItem.PromptEntryNamespace
+  ovewwide vaw entwynamespace: entwynamespace = p-pwomptitem.pwomptentwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovewwide def withsowtindex(sowtindex: wong): timewineentwy = copy(sowtindex = s-some(sowtindex))
 }

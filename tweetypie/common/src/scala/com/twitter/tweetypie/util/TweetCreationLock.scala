@@ -1,203 +1,203 @@
-package com.twitter.tweetypie.util
+package com.twittew.tweetypie.utiw
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.logging.Logger
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.UserDefinedProductMetadata
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.servo.cache.ScopedCacheKey
-import com.twitter.servo.util.Transformer
-import com.twitter.tweetypie.thriftscala.PostTweetRequest
-import com.twitter.util.Base64Long
-import com.twitter.util.Time
-import java.nio.ByteBuffer
-import java.security.MessageDigest
-import org.apache.commons.codec.binary.Base64
-import scala.collection.immutable.SortedMap
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.mediasewvices.commons.mediainfowmation.thwiftscawa.usewdefinedpwoductmetadata
+i-impowt com.twittew.scwooge.binawythwiftstwuctsewiawizew
+i-impowt c-com.twittew.sewvo.cache.scopedcachekey
+i-impowt c-com.twittew.sewvo.utiw.twansfowmew
+i-impowt com.twittew.tweetypie.thwiftscawa.posttweetwequest
+impowt com.twittew.utiw.base64wong
+impowt com.twittew.utiw.time
+impowt j-java.nio.bytebuffew
+impowt java.secuwity.messagedigest
+impowt o-owg.apache.commons.codec.binawy.base64
+impowt s-scawa.cowwection.immutabwe.sowtedmap
 
-object TweetCreationLock {
-  case class Key private (userId: UserId, typeCode: String, idOrMd5: String)
-      extends ScopedCacheKey("t", "locker", 2, Base64Long.toBase64(userId), typeCode, idOrMd5) {
-    def uniquenessId: Option[String] =
-      if (typeCode == Key.TypeCode.UniquenessId) Some(idOrMd5) else None
+object tweetcweationwock {
+  case cwass key pwivate (usewid: u-usewid, 😳😳😳 typecode: stwing, nyaa~~ idowmd5: s-stwing)
+      e-extends scopedcachekey("t", rawr "wockew", -.- 2, base64wong.tobase64(usewid), (✿oωo) typecode, idowmd5) {
+    def uniquenessid: o-option[stwing] =
+      if (typecode == key.typecode.uniquenessid) some(idowmd5) ewse nyone
   }
 
-  object Key {
-    private[this] val log = Logger(getClass)
+  o-object key {
+    pwivate[this] v-vaw wog = w-woggew(getcwass)
 
-    object TypeCode {
-      val SourceTweetId = "r"
-      val UniquenessId = "u"
-      val PostTweetRequest = "p"
+    o-object typecode {
+      v-vaw souwcetweetid = "w"
+      vaw u-uniquenessid = "u"
+      vaw posttweetwequest = "p"
     }
 
-    private[this] val serializer = BinaryThriftStructSerializer(PostTweetRequest)
+    pwivate[this] vaw s-sewiawizew = binawythwiftstwuctsewiawizew(posttweetwequest)
 
-    // normalize the representation of no media ids.
-    private[util] def sanitizeMediaUploadIds(mediaUploadIds: Option[Seq[Long]]) =
-      mediaUploadIds.filter(_.nonEmpty)
+    // nyowmawize the wepwesentation of nyo media ids. /(^•ω•^)
+    pwivate[utiw] def sanitizemediaupwoadids(mediaupwoadids: o-option[seq[wong]]) =
+      mediaupwoadids.fiwtew(_.nonempty)
 
     /**
-     * Request deduplication depends on the hash of a serialized Thrift value.
+     * wequest d-dedupwication d-depends on t-the hash of a sewiawized thwift vawue. 🥺
      *
-     * In order to guarantee that a Map has a reproducible serialized form,
-     * it's necessary to fix the ordering of its keys.
+     * in owdew to g-guawantee that a-a map has a wepwoducibwe sewiawized f-fowm, ʘwʘ
+     * i-it's nyecessawy to fix the owdewing o-of its keys.
      */
-    private[util] def sanitizeMediaMetadata(
-      mediaMetadata: Option[scala.collection.Map[MediaId, UserDefinedProductMetadata]]
-    ): Option[scala.collection.Map[MediaId, UserDefinedProductMetadata]] =
-      mediaMetadata.map(m => SortedMap(m.toSeq: _*))
+    pwivate[utiw] d-def sanitizemediametadata(
+      mediametadata: o-option[scawa.cowwection.map[mediaid, UwU usewdefinedpwoductmetadata]]
+    ): o-option[scawa.cowwection.map[mediaid, XD usewdefinedpwoductmetadata]] =
+      mediametadata.map(m => s-sowtedmap(m.toseq: _*))
 
     /**
-     *  Make sure to sanitize request fields with map/set since serialized
-     *  bytes ordering is not guaranteed for same thrift values.
+     *  make s-suwe to sanitize wequest fiewds with map/set since sewiawized
+     *  bytes owdewing is nyot guawanteed fow s-same thwift vawues. (✿oωo)
      */
-    private[util] def sanitizeRequest(request: PostTweetRequest): PostTweetRequest =
-      PostTweetRequest(
-        userId = request.userId,
-        text = request.text,
-        createdVia = "",
-        inReplyToTweetId = request.inReplyToTweetId,
-        geo = request.geo,
-        mediaUploadIds = sanitizeMediaUploadIds(request.mediaUploadIds),
-        narrowcast = request.narrowcast,
-        nullcast = request.nullcast,
-        additionalFields = request.additionalFields,
-        attachmentUrl = request.attachmentUrl,
-        mediaMetadata = sanitizeMediaMetadata(request.mediaMetadata),
-        conversationControl = request.conversationControl,
-        underlyingCreativesContainerId = request.underlyingCreativesContainerId,
-        editOptions = request.editOptions,
-        noteTweetOptions = request.noteTweetOptions
+    p-pwivate[utiw] def sanitizewequest(wequest: p-posttweetwequest): p-posttweetwequest =
+      p-posttweetwequest(
+        usewid = wequest.usewid, :3
+        text = wequest.text, (///ˬ///✿)
+        cweatedvia = "", nyaa~~
+        inwepwytotweetid = w-wequest.inwepwytotweetid, >w<
+        geo = wequest.geo, -.-
+        mediaupwoadids = sanitizemediaupwoadids(wequest.mediaupwoadids), (✿oωo)
+        n-nyawwowcast = wequest.nawwowcast, (˘ω˘)
+        nyuwwcast = w-wequest.nuwwcast, rawr
+        a-additionawfiewds = w-wequest.additionawfiewds, OwO
+        attachmentuww = w-wequest.attachmentuww, ^•ﻌ•^
+        m-mediametadata = s-sanitizemediametadata(wequest.mediametadata), UwU
+        c-convewsationcontwow = wequest.convewsationcontwow, (˘ω˘)
+        undewwyingcweativescontainewid = w-wequest.undewwyingcweativescontainewid, (///ˬ///✿)
+        e-editoptions = w-wequest.editoptions, σωσ
+        n-nyotetweetoptions = w-wequest.notetweetoptions
       )
 
-    def bySourceTweetId(userId: UserId, sourceTweetId: TweetId): Key =
-      Key(userId, TypeCode.SourceTweetId, Base64Long.toBase64(sourceTweetId))
+    def bysouwcetweetid(usewid: usewid, /(^•ω•^) s-souwcetweetid: tweetid): key =
+      key(usewid, 😳 typecode.souwcetweetid, 😳 base64wong.tobase64(souwcetweetid))
 
-    def byRequest(request: PostTweetRequest): Key =
-      request.uniquenessId match {
-        case Some(uqid) =>
-          byUniquenessId(request.userId, uqid)
-        case None =>
-          val sanitized = sanitizeRequest(request)
-          val sanitizedBytes = serializer.toBytes(sanitized)
-          val digested = MessageDigest.getInstance("SHA-256").digest(sanitizedBytes)
-          val base64Digest = Base64.encodeBase64String(digested)
-          val key = Key(request.userId, TypeCode.PostTweetRequest, base64Digest)
-          log.ifDebug(s"Generated key $key from request:\n${sanitized}")
+    def bywequest(wequest: p-posttweetwequest): key =
+      wequest.uniquenessid match {
+        c-case s-some(uqid) =>
+          b-byuniquenessid(wequest.usewid, (⑅˘꒳˘) uqid)
+        c-case nyone =>
+          vaw sanitized = sanitizewequest(wequest)
+          v-vaw sanitizedbytes = s-sewiawizew.tobytes(sanitized)
+          vaw digested = messagedigest.getinstance("sha-256").digest(sanitizedbytes)
+          vaw base64digest = base64.encodebase64stwing(digested)
+          vaw key = key(wequest.usewid, 😳😳😳 typecode.posttweetwequest, 😳 b-base64digest)
+          wog.ifdebug(s"genewated k-key $key fwom wequest:\n${sanitized}")
           key
       }
 
     /**
-     * Key for tweets that have a uniqueness id set. There is only one
-     * namespace of uniqueness ids, across all clients. They are
-     * expected to be Snowflake ids, in order to avoid cache
-     * collisions.
+     * k-key fow t-tweets that have a uniqueness id set. XD thewe is o-onwy one
+     * n-nyamespace of uniqueness ids, mya a-acwoss aww cwients. t-they awe
+     * expected to be snowfwake ids, in owdew to avoid cache
+     * c-cowwisions. ^•ﻌ•^
      */
-    def byUniquenessId(userId: UserId, uniquenessId: Long): Key =
-      Key(userId, TypeCode.UniquenessId, Base64Long.toBase64(uniquenessId))
+    d-def byuniquenessid(usewid: u-usewid, uniquenessid: wong): k-key =
+      key(usewid, ʘwʘ t-typecode.uniquenessid, ( ͡o ω ͡o ) base64wong.tobase64(uniquenessid))
   }
 
   /**
-   * The state of tweet creation for a given Key (request).
+   * t-the state of tweet cweation fow a given key (wequest). mya
    */
-  sealed trait State
+  seawed twait state
 
-  object State {
-
-    /**
-     * There is no tweet creation currently in progress. (This can
-     * either be represented by no entry in the cache, or this special
-     * marker. This lets us use checkAndSet for deletion to avoid
-     * accidentally overwriting other process' values.)
-     */
-    case object Unlocked extends State
+  object state {
 
     /**
-     * Some process is attempting to create the tweet.
+     * t-thewe is n-nyo tweet cweation cuwwentwy in pwogwess. o.O (this c-can
+     * eithew b-be wepwesented by nyo entwy in the cache, (✿oωo) ow this speciaw
+     * m-mawkew. :3 this wets us use checkandset fow dewetion to avoid
+     * accidentawwy o-ovewwwiting othew pwocess' vawues.)
      */
-    case class InProgress(token: Long, timestamp: Time) extends State
+    case object unwocked e-extends state
 
     /**
-     * The tweet has already been successfully created, and has the
-     * specified id.
+     * s-some pwocess is attempting to cweate the tweet. 😳
      */
-    case class AlreadyCreated(tweetId: TweetId, timestamp: Time) extends State
+    case cwass inpwogwess(token: w-wong, t-timestamp: time) extends state
 
     /**
-     * When stored in cache, each state is prefixed by a byte
-     * indicating the type of the entry.
+     * the tweet has awweady been successfuwwy c-cweated, (U ﹏ U) and has the
+     * s-specified id. mya
      */
-    object TypeCode {
-      val Unlocked: Byte = 0.toByte
-      val InProgress: Byte = 1.toByte // + random long + timestamp
-      val AlreadyCreated: Byte = 2.toByte // + tweet id + timestamp
+    case cwass awweadycweated(tweetid: tweetid, (U ᵕ U❁) timestamp: t-time) extends state
+
+    /**
+     * w-when s-stowed in cache, :3 each state is p-pwefixed by a byte
+     * indicating t-the type of t-the entwy. mya
+     */
+    o-object typecode {
+      vaw unwocked: byte = 0.tobyte
+      v-vaw inpwogwess: b-byte = 1.tobyte // + wandom wong + timestamp
+      v-vaw awweadycweated: b-byte = 2.tobyte // + t-tweet id + timestamp
     }
 
-    private[this] val BufferSize = 17 // type byte + 64-bit value + 64-bit timestamp
+    pwivate[this] vaw buffewsize = 17 // t-type byte + 64-bit vawue + 64-bit t-timestamp
 
-    // Constant buffer to use for storing the serialized form on
-    // Unlocked.
-    private[this] val UnlockedBuf = Array[Byte](TypeCode.Unlocked)
+    // c-constant buffew to use fow stowing the sewiawized fowm o-on
+    // unwocked. OwO
+    p-pwivate[this] v-vaw unwockedbuf = a-awway[byte](typecode.unwocked)
 
-    // Store the serialization function in a ThreadLocal so that we can
-    // reuse the buffer between invocations.
-    private[this] val threadLocalSerialize = new ThreadLocal[State => Array[Byte]] {
-      override def initialValue(): State => Array[Byte] = {
-        // Allocate the thread-local state
-        val ary = new Array[Byte](BufferSize)
-        val buf = ByteBuffer.wrap(ary)
+    // stowe the sewiawization f-function in a thweadwocaw so that we can
+    // weuse the buffew between invocations. (ˆ ﻌ ˆ)♡
+    p-pwivate[this] vaw thweadwocawsewiawize = n-nyew thweadwocaw[state => awway[byte]] {
+      o-ovewwide def initiawvawue(): s-state => awway[byte] = {
+        // awwocate t-the thwead-wocaw s-state
+        v-vaw awy = new a-awway[byte](buffewsize)
+        v-vaw buf = bytebuffew.wwap(awy)
 
         {
-          case Unlocked => UnlockedBuf
-          case InProgress(token, timestamp) =>
-            buf.clear()
+          case unwocked => unwockedbuf
+          case inpwogwess(token, ʘwʘ timestamp) =>
+            buf.cweaw()
+            b-buf
+              .put(typecode.inpwogwess)
+              .putwong(token)
+              .putwong(timestamp.sinceepoch.innanoseconds)
+            a-awy
+          c-case awweadycweated(tweetid, o.O timestamp) =>
+            b-buf.cweaw()
             buf
-              .put(TypeCode.InProgress)
-              .putLong(token)
-              .putLong(timestamp.sinceEpoch.inNanoseconds)
-            ary
-          case AlreadyCreated(tweetId, timestamp) =>
-            buf.clear()
-            buf
-              .put(TypeCode.AlreadyCreated)
-              .putLong(tweetId)
-              .putLong(timestamp.sinceEpoch.inNanoseconds)
-            ary
+              .put(typecode.awweadycweated)
+              .putwong(tweetid)
+              .putwong(timestamp.sinceepoch.innanoseconds)
+            awy
         }
       }
     }
 
     /**
-     * Convert this State to the cache representation.
+     * convewt this s-state to the cache w-wepwesentation. UwU
      */
-    private[this] def toBytes(state: State): Array[Byte] =
-      threadLocalSerialize.get()(state)
+    pwivate[this] def t-tobytes(state: state): awway[byte] =
+      thweadwocawsewiawize.get()(state)
 
     /**
-     * Convert this byte array into a LockState.
+     * c-convewt this byte a-awway into a wockstate. rawr x3
      *
-     * @throws RuntimeException if the buffer is not of the right size
-     *   and format
+     * @thwows wuntimeexception i-if the buffew is n-nyot of the wight size
+     *   and fowmat
      */
-    private[this] def fromBytes(bytes: Array[Byte]): State = {
-      val buf = ByteBuffer.wrap(bytes)
-      val result = buf.get() match {
-        case TypeCode.Unlocked => Unlocked
-        case TypeCode.InProgress => InProgress(buf.getLong(), buf.getLong().nanoseconds.afterEpoch)
-        case TypeCode.AlreadyCreated =>
-          AlreadyCreated(buf.getLong(), buf.getLong().nanoseconds.afterEpoch)
-        case other => throw new RuntimeException("Invalid type code: " + other)
+    pwivate[this] def fwombytes(bytes: a-awway[byte]): s-state = {
+      v-vaw buf = b-bytebuffew.wwap(bytes)
+      v-vaw wesuwt = buf.get() match {
+        c-case typecode.unwocked => u-unwocked
+        case typecode.inpwogwess => inpwogwess(buf.getwong(), 🥺 b-buf.getwong().nanoseconds.aftewepoch)
+        c-case typecode.awweadycweated =>
+          awweadycweated(buf.getwong(), :3 buf.getwong().nanoseconds.aftewepoch)
+        c-case othew => thwow nyew wuntimeexception("invawid t-type code: " + othew)
       }
-      if (buf.remaining != 0) {
-        throw new RuntimeException("Extra data in buffer: " + bytes)
+      if (buf.wemaining != 0) {
+        t-thwow nyew w-wuntimeexception("extwa data in b-buffew: " + bytes)
       }
-      result
+      wesuwt
     }
 
     /**
-     * How to serialize the State for storage in cache.
+     * how to sewiawize t-the state fow stowage i-in cache. (ꈍᴗꈍ)
      */
-    val Serializer: Transformer[State, Array[Byte]] =
-      Transformer[State, Array[Byte]](tTo = toBytes _, tFrom = fromBytes _)
+    v-vaw sewiawizew: twansfowmew[state, 🥺 awway[byte]] =
+      twansfowmew[state, (✿oωo) awway[byte]](tto = t-tobytes _, (U ﹏ U) tfwom = fwombytes _)
   }
 }

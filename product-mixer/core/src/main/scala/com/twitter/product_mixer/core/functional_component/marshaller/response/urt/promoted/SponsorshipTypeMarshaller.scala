@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.pwomoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DirectSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.IndirectSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.NoSponsorshipSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.SponsorshipType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.diwectsponsowshiptype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.indiwectsponsowshiptype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.nosponsowshipsponsowshiptype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.pwomoted.sponsowshiptype
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class SponsorshipTypeMarshaller @Inject() () {
+@singweton
+cwass sponsowshiptypemawshawwew @inject() () {
 
-  def apply(sponsorshipType: SponsorshipType): urt.SponsorshipType = sponsorshipType match {
-    case DirectSponsorshipType => urt.SponsorshipType.Direct
-    case IndirectSponsorshipType => urt.SponsorshipType.Indirect
-    case NoSponsorshipSponsorshipType => urt.SponsorshipType.NoSponsorship
+  def appwy(sponsowshiptype: sponsowshiptype): u-uwt.sponsowshiptype = sponsowshiptype match {
+    case d-diwectsponsowshiptype => uwt.sponsowshiptype.diwect
+    c-case indiwectsponsowshiptype => uwt.sponsowshiptype.indiwect
+    case n-nyosponsowshipsponsowshiptype => uwt.sponsowshiptype.nosponsowship
   }
 }

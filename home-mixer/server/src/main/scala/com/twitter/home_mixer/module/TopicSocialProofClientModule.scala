@@ -1,22 +1,22 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.BatchedStratoClientWithModerateTimeout
-import com.twitter.inject.TwitterModule
-import com.twitter.strato.client.Client
-import com.twitter.timelines.clients.strato.topics.TopicSocialProofClient
-import com.twitter.timelines.clients.strato.topics.TopicSocialProofClientImpl
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.home_mixew.pawam.homemixewinjectionnames.batchedstwatocwientwithmodewatetimeout
+i-impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.stwato.cwient.cwient
+i-impowt c-com.twittew.timewines.cwients.stwato.topics.topicsociawpwoofcwient
+i-impowt com.twittew.timewines.cwients.stwato.topics.topicsociawpwoofcwientimpw
+impowt javax.inject.named
+impowt javax.inject.singweton
 
-object TopicSocialProofClientModule extends TwitterModule {
+object t-topicsociawpwoofcwientmoduwe extends twittewmoduwe {
 
-  @Singleton
-  @Provides
-  def providesSimilarityClient(
-    @Named(BatchedStratoClientWithModerateTimeout)
-    stratoClient: Client,
-    statsReceiver: StatsReceiver
-  ): TopicSocialProofClient = new TopicSocialProofClientImpl(stratoClient, statsReceiver)
+  @singweton
+  @pwovides
+  def pwovidessimiwawitycwient(
+    @named(batchedstwatocwientwithmodewatetimeout)
+    s-stwatocwient: cwient, ^^;;
+    s-statsweceivew: statsweceivew
+  ): topicsociawpwoofcwient = nyew t-topicsociawpwoofcwientimpw(stwatocwient, >_< statsweceivew)
 }

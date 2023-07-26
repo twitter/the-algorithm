@@ -1,86 +1,86 @@
-package com.twitter.frigate.pushservice.model
+package com.twittew.fwigate.pushsewvice.modew
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.ScheduledSpaceSubscriberCandidate
-import com.twitter.frigate.common.base.SpaceCandidateFanoutDetails
-import com.twitter.frigate.common.util.FeatureSwitchParams
-import com.twitter.frigate.magic_events.thriftscala.SpaceMetadata
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.ScheduledSpaceSubscriberIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.ScheduledSpaceSubscriberNTabRequestHydrator
-import com.twitter.frigate.pushservice.predicate._
-import com.twitter.frigate.pushservice.take.predicates.BasicSendHandlerPredicates
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.storehaus.ReadableStore
-import com.twitter.ubs.thriftscala.AudioSpace
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.scheduwedspacesubscwibewcandidate
+i-impowt com.twittew.fwigate.common.base.spacecandidatefanoutdetaiws
+i-impowt c-com.twittew.fwigate.common.utiw.featuweswitchpawams
+i-impowt com.twittew.fwigate.magic_events.thwiftscawa.spacemetadata
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.wawcandidate
+impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.tawget
+impowt c-com.twittew.fwigate.pushsewvice.config.config
+impowt com.twittew.fwigate.pushsewvice.mw.pushmwmodewscowew
+impowt c-com.twittew.fwigate.pushsewvice.modew.candidate.copyids
+impowt c-com.twittew.fwigate.pushsewvice.modew.ibis.scheduwedspacesubscwibewibis2hydwatow
+impowt com.twittew.fwigate.pushsewvice.modew.ntab.scheduwedspacesubscwibewntabwequesthydwatow
+impowt com.twittew.fwigate.pushsewvice.pwedicate._
+impowt com.twittew.fwigate.pushsewvice.take.pwedicates.basicsendhandwewpwedicates
+i-impowt com.twittew.fwigate.thwiftscawa.fwigatenotification
+impowt com.twittew.gizmoduck.thwiftscawa.usew
+i-impowt com.twittew.hewmit.pwedicate.namedpwedicate
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.ubs.thwiftscawa.audiospace
+impowt com.twittew.utiw.futuwe
 
-class ScheduledSpaceSubscriberPushCandidate(
-  candidate: RawCandidate with ScheduledSpaceSubscriberCandidate,
-  hostUser: Option[User],
-  copyIds: CopyIds,
-  audioSpaceStore: ReadableStore[String, AudioSpace]
+cwass s-scheduwedspacesubscwibewpushcandidate(
+  candidate: wawcandidate with scheduwedspacesubscwibewcandidate, 😳😳😳
+  hostusew: o-option[usew], (U ﹏ U)
+  copyids: c-copyids, (///ˬ///✿)
+  audiospacestowe: w-weadabwestowe[stwing, 😳 a-audiospace]
 )(
-  implicit val statsScoped: StatsReceiver,
-  pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with ScheduledSpaceSubscriberCandidate
-    with SpaceCandidateFanoutDetails
-    with ScheduledSpaceSubscriberIbis2Hydrator
-    with ScheduledSpaceSubscriberNTabRequestHydrator {
+  i-impwicit vaw statsscoped: statsweceivew, 😳
+  pushmodewscowew: pushmwmodewscowew)
+    e-extends pushcandidate
+    with scheduwedspacesubscwibewcandidate
+    with s-spacecandidatefanoutdetaiws
+    with scheduwedspacesubscwibewibis2hydwatow
+    with scheduwedspacesubscwibewntabwequesthydwatow {
 
-  override val startTime: Long = candidate.startTime
+  ovewwide vaw stawttime: wong = candidate.stawttime
 
-  override val hydratedHost: Option[User] = hostUser
+  o-ovewwide vaw hydwatedhost: o-option[usew] = h-hostusew
 
-  override val spaceId: String = candidate.spaceId
+  o-ovewwide vaw spaceid: stwing = candidate.spaceid
 
-  override val hostId: Option[Long] = candidate.hostId
+  ovewwide vaw h-hostid: option[wong] = c-candidate.hostid
 
-  override val speakerIds: Option[Seq[Long]] = candidate.speakerIds
+  ovewwide v-vaw speakewids: o-option[seq[wong]] = candidate.speakewids
 
-  override val listenerIds: Option[Seq[Long]] = candidate.listenerIds
+  o-ovewwide vaw wistenewids: option[seq[wong]] = c-candidate.wistenewids
 
-  override val frigateNotification: FrigateNotification = candidate.frigateNotification
+  ovewwide vaw fwigatenotification: f-fwigatenotification = candidate.fwigatenotification
 
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
+  o-ovewwide vaw pushcopyid: option[int] = c-copyids.pushcopyid
 
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
+  o-ovewwide vaw nytabcopyid: option[int] = copyids.ntabcopyid
 
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
+  ovewwide vaw copyaggwegationid: option[stwing] = copyids.aggwegationid
 
-  override val target: Target = candidate.target
+  ovewwide v-vaw tawget: tawget = c-candidate.tawget
 
-  override lazy val audioSpaceFut: Future[Option[AudioSpace]] = audioSpaceStore.get(spaceId)
+  ovewwide w-wazy vaw audiospacefut: f-futuwe[option[audiospace]] = a-audiospacestowe.get(spaceid)
 
-  override val spaceFanoutMetadata: Option[SpaceMetadata] = None
+  ovewwide vaw spacefanoutmetadata: option[spacemetadata] = n-nyone
 
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
+  ovewwide vaw weightedopenowntabcwickmodewscowew: pushmwmodewscowew = pushmodewscowew
 
-  override val statsReceiver: StatsReceiver =
-    statsScoped.scope("ScheduledSpaceSubscriberCandidate")
+  ovewwide vaw s-statsweceivew: statsweceivew =
+    statsscoped.scope("scheduwedspacesubscwibewcandidate")
 }
 
-case class ScheduledSpaceSubscriberCandidatePredicates(config: Config)
-    extends BasicSendHandlerPredicates[ScheduledSpaceSubscriberPushCandidate] {
+c-case c-cwass scheduwedspacesubscwibewcandidatepwedicates(config: c-config)
+    extends b-basicsendhandwewpwedicates[scheduwedspacesubscwibewpushcandidate] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+  i-impwicit v-vaw statsweceivew: s-statsweceivew = config.statsweceivew.scope(getcwass.getsimpwename)
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[ScheduledSpaceSubscriberPushCandidate]
+  ovewwide v-vaw pwecandidatespecificpwedicates: w-wist[
+    n-nyamedpwedicate[scheduwedspacesubscwibewpushcandidate]
   ] =
-    List(
-      PredicatesForCandidate.paramPredicate(FeatureSwitchParams.EnableScheduledSpaceSubscribers),
-      SpacePredicate.narrowCastSpace,
-      SpacePredicate.targetInSpace(config.audioSpaceParticipantsStore),
-      SpacePredicate.spaceHostTargetUserBlocking(config.edgeStore),
-      PredicatesForCandidate.duplicateSpacesPredicate
+    w-wist(
+      pwedicatesfowcandidate.pawampwedicate(featuweswitchpawams.enabwescheduwedspacesubscwibews), σωσ
+      spacepwedicate.nawwowcastspace, rawr x3
+      s-spacepwedicate.tawgetinspace(config.audiospacepawticipantsstowe), OwO
+      spacepwedicate.spacehosttawgetusewbwocking(config.edgestowe), /(^•ω•^)
+      pwedicatesfowcandidate.dupwicatespacespwedicate
     )
 }

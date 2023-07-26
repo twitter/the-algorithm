@@ -1,201 +1,201 @@
-package com.twitter.search.common.relevance.features;
+package com.twittew.seawch.common.wewevance.featuwes;
 
-import java.nio.ByteBuffer;
-import java.util.Arrays;
+impowt java.nio.bytebuffew;
+i-impowt java.utiw.awways;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
 /**
- * A TweetIntegerShingleSignature object consists of 4 bytes, each representing the signature of
- * a status text sample. The signature bytes are sorted in ascending order and compacted to an
- * integer in big endian for serialization.
+ * a-a tweetintegewshingwesignatuwe o-object consists o-of 4 bytes, XD each w-wepwesenting the s-signatuwe of
+ * a status text sampwe. :3 the signatuwe bytes awe sowted in ascending o-owdew and compacted to an
+ * integew in big e-endian fow sewiawization. (ꈍᴗꈍ)
  *
- * Fuzzy matching of two TweetIntegerShingleSignature objects is met when the number of matching
- * bytes between the two is equal to or above 3.
+ * fuzzy matching of t-two tweetintegewshingwesignatuwe objects is met when the nyumbew of matching
+ * b-bytes between the two is equaw t-to ow above 3. :3
  */
-public class TweetIntegerShingleSignature {
-  public static final int NUM_SHINGLES = Integer.SIZE / Byte.SIZE;
-  public static final int DEFAULT_NO_SIGNATURE = 0;
-  public static final TweetIntegerShingleSignature NO_SIGNATURE_HANDLE =
-    deserialize(DEFAULT_NO_SIGNATURE);
-  public static final int DEFAULT_MIN_SHINGLES_MATCH = 3;
-  private final int minShinglesMatch;
+p-pubwic cwass tweetintegewshingwesignatuwe {
+  pubwic static finaw int nyum_shingwes = integew.size / b-byte.size;
+  pubwic static finaw int defauwt_no_signatuwe = 0;
+  pubwic static finaw tweetintegewshingwesignatuwe n-nyo_signatuwe_handwe =
+    desewiawize(defauwt_no_signatuwe);
+  p-pubwic s-static finaw int d-defauwt_min_shingwes_match = 3;
+  p-pwivate finaw int minshingwesmatch;
 
-  private final byte[] shingles;
-  private final int signature;  // redundant information, for easier comparison.
+  pwivate f-finaw byte[] shingwes;
+  pwivate finaw int signatuwe;  // w-wedundant infowmation, (U ﹏ U) fow easiew compawison. UwU
 
   /**
-   * Construct from a byte array.
+   * constwuct fwom a byte awway. 😳😳😳
    */
-  public TweetIntegerShingleSignature(byte[] shingles, int minShinglesMatch) {
-    Preconditions.checkArgument(shingles.length == NUM_SHINGLES);
-    this.shingles = shingles;
-    // sort to byte's natural ascending order
-    Arrays.sort(this.shingles);
-    this.minShinglesMatch = minShinglesMatch;
-    this.signature = serializeInternal(shingles);
+  p-pubwic tweetintegewshingwesignatuwe(byte[] s-shingwes, XD i-int minshingwesmatch) {
+    p-pweconditions.checkawgument(shingwes.wength == nyum_shingwes);
+    this.shingwes = shingwes;
+    // s-sowt to byte's n-nyatuwaw ascending owdew
+    awways.sowt(this.shingwes);
+    t-this.minshingwesmatch = m-minshingwesmatch;
+    this.signatuwe = s-sewiawizeintewnaw(shingwes);
   }
 
   /**
-   * Construct from a byte array.
+   * constwuct f-fwom a byte awway. o.O
    */
-  public TweetIntegerShingleSignature(byte[] shingles) {
-    this(shingles, DEFAULT_MIN_SHINGLES_MATCH);
+  pubwic tweetintegewshingwesignatuwe(byte[] s-shingwes) {
+    this(shingwes, (⑅˘꒳˘) d-defauwt_min_shingwes_match);
   }
 
   /**
-   * Construct from a serialized integer signature.
+   * constwuct f-fwom a sewiawized i-integew signatuwe. 😳😳😳
    */
-  public TweetIntegerShingleSignature(int signature, int minShinglesMatch) {
-    this.shingles = deserializeInternal(signature);
-    // sort to byte's natural ascending order
-    Arrays.sort(this.shingles);
-    this.minShinglesMatch = minShinglesMatch;
-    // now store the sorted shingles into signature field, may be different from what passed in.
-    this.signature = serializeInternal(shingles);
+  pubwic tweetintegewshingwesignatuwe(int signatuwe, nyaa~~ int minshingwesmatch) {
+    this.shingwes = desewiawizeintewnaw(signatuwe);
+    // s-sowt to byte's n-nyatuwaw ascending owdew
+    awways.sowt(this.shingwes);
+    this.minshingwesmatch = m-minshingwesmatch;
+    // n-nyow stowe the sowted s-shingwes into signatuwe fiewd, rawr may be diffewent fwom nyani p-passed in.
+    this.signatuwe = sewiawizeintewnaw(shingwes);
   }
 
   /**
-   * Construct from a serialized integer signature.
+   * constwuct fwom a sewiawized i-integew signatuwe. -.-
    */
-  public TweetIntegerShingleSignature(int signature) {
-    this(signature, DEFAULT_MIN_SHINGLES_MATCH);
+  p-pubwic tweetintegewshingwesignatuwe(int s-signatuwe) {
+    t-this(signatuwe, (✿oωo) defauwt_min_shingwes_match);
   }
 
   /**
-   * Used by ingester to generate signature.
-   * Raw signatures are in byte arrays per sample, and can be more or less
-   * than what is asked for.
+   * u-used b-by ingestew to genewate s-signatuwe. /(^•ω•^)
+   * w-waw signatuwes awe in byte awways pew sampwe, 🥺 a-and can be m-mowe ow wess
+   * t-than nyani is a-asked fow. ʘwʘ
    *
-   * @param rawSignature
+   * @pawam w-wawsignatuwe
    */
-  public TweetIntegerShingleSignature(Iterable<byte[]> rawSignature) {
-    byte[] condensedSignature = new byte[NUM_SHINGLES];
+  pubwic tweetintegewshingwesignatuwe(itewabwe<byte[]> wawsignatuwe) {
+    byte[] c-condensedsignatuwe = nyew byte[num_shingwes];
     int i = 0;
-    for (byte[] signatureItem : rawSignature) {
-      condensedSignature[i++] = signatureItem[0];
-      if (i == NUM_SHINGLES) {
-        break;
+    fow (byte[] signatuweitem : wawsignatuwe) {
+      condensedsignatuwe[i++] = signatuweitem[0];
+      if (i == n-nyum_shingwes) {
+        bweak;
       }
     }
-    this.shingles = condensedSignature;
-    Arrays.sort(this.shingles);
-    this.minShinglesMatch = DEFAULT_MIN_SHINGLES_MATCH;
-    this.signature = serializeInternal(shingles);
+    this.shingwes = condensedsignatuwe;
+    a-awways.sowt(this.shingwes);
+    t-this.minshingwesmatch = d-defauwt_min_shingwes_match;
+    this.signatuwe = s-sewiawizeintewnaw(shingwes);
   }
 
   /**
-   * When used in a hashtable for dup detection, take the first byte of each signature for fast
-   * pass for majority case of no fuzzy matching. For top queries, this optimization losses about
-   * only 4% of all fuzzy matches.
+   * when used in a hashtabwe f-fow dup d-detection, UwU take the fiwst byte of each signatuwe fow fast
+   * pass fow majowity case of no fuzzy m-matching. XD fow top quewies, (✿oωo) this o-optimization wosses about
+   * o-onwy 4% of aww f-fuzzy matches. :3
    *
-   * @return most significant byte of this signature as its hashcode.
+   * @wetuwn most significant byte of this s-signatuwe as its h-hashcode. (///ˬ///✿)
    */
-  @Override
-  public int hashCode() {
-    return shingles[0] & 0xFF;
+  @ovewwide
+  pubwic int hashcode() {
+    w-wetuwn s-shingwes[0] & 0xff;
   }
 
   /**
-   * Perform fuzzy matching between two TweetIntegerShingleSignature objects.
+   * pewfowm fuzzy matching between two tweetintegewshingwesignatuwe objects. nyaa~~
    *
-   * @param other TweetIntegerShingleSignature object to perform fuzzy match against
-   * @return true if at least minMatch number of bytes match
+   * @pawam o-othew tweetintegewshingwesignatuwe o-object to pewfowm f-fuzzy match against
+   * @wetuwn t-twue if at w-weast minmatch nyumbew of bytes m-match
    */
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) {
-      return true;
+  @ovewwide
+  pubwic boowean equaws(object othew) {
+    if (this == o-othew) {
+      w-wetuwn twue;
     }
-    if (other == null) {
-      return false;
+    if (othew == nyuww) {
+      w-wetuwn fawse;
     }
-    if (getClass() != other.getClass()) {
-      return false;
+    i-if (getcwass() != othew.getcwass()) {
+      wetuwn fawse;
     }
 
-    final TweetIntegerShingleSignature otherSignatureInteger = (TweetIntegerShingleSignature) other;
+    finaw tweetintegewshingwesignatuwe o-othewsignatuweintegew = (tweetintegewshingwesignatuwe) othew;
 
-    int otherSignature = otherSignatureInteger.serialize();
-    if (signature == otherSignature) {
-      // Both serialized signature is the same
-      return true;
-    } else if (signature != DEFAULT_NO_SIGNATURE && otherSignature != DEFAULT_NO_SIGNATURE) {
-      // Neither is NO_SIGNATURE, need to compare shingles.
-      byte[] otherShingles = otherSignatureInteger.getShingles();
-      int numberMatchesNeeded = minShinglesMatch;
-      // expect bytes are in ascending sorted order
+    int othewsignatuwe = othewsignatuweintegew.sewiawize();
+    if (signatuwe == o-othewsignatuwe) {
+      // both sewiawized signatuwe i-is the same
+      w-wetuwn twue;
+    } ewse if (signatuwe != defauwt_no_signatuwe && o-othewsignatuwe != d-defauwt_no_signatuwe) {
+      // nyeithew is nyo_signatuwe, >w< nyeed to c-compawe shingwes. -.-
+      byte[] o-othewshingwes = othewsignatuweintegew.getshingwes();
+      int nyumbewmatchesneeded = m-minshingwesmatch;
+      // expect bytes awe i-in ascending s-sowted owdew
       int i = 0;
-      int j = 0;
-      while (((numberMatchesNeeded <= (NUM_SHINGLES - i)) // early termination for i
-              || (numberMatchesNeeded <= (NUM_SHINGLES - j))) // early termination j
-             && (i < NUM_SHINGLES) && (j < NUM_SHINGLES)) {
-        if (shingles[i] == otherShingles[j]) {
-          if (shingles[i] != 0) {  // we only consider two shingles equal if they are non zero
-            numberMatchesNeeded--;
-            if (numberMatchesNeeded == 0) {
-              return true;
+      i-int j = 0;
+      whiwe (((numbewmatchesneeded <= (num_shingwes - i-i)) // eawwy t-tewmination fow i-i
+              || (numbewmatchesneeded <= (num_shingwes - j))) // e-eawwy tewmination j-j
+             && (i < nyum_shingwes) && (j < nyum_shingwes)) {
+        if (shingwes[i] == o-othewshingwes[j]) {
+          i-if (shingwes[i] != 0) {  // w-we onwy considew two shingwes equaw i-if they awe nyon zewo
+            n-nyumbewmatchesneeded--;
+            i-if (numbewmatchesneeded == 0) {
+              wetuwn twue;
             }
           }
           i++;
           j++;
-        } else if (shingles[i] < otherShingles[j]) {
-          i++;
-        } else if (shingles[i] > otherShingles[j]) {
-          j++;
+        } e-ewse if (shingwes[i] < o-othewshingwes[j]) {
+          i-i++;
+        } e-ewse if (shingwes[i] > othewshingwes[j]) {
+          j-j++;
         }
       }
     }
-    // One is NO_SIGNATURE and one is not.
-    return false;
+    // one is nyo_signatuwe and one is nyot.
+    wetuwn fawse;
   }
 
   /**
-   * Returns the sorted array of signature bytes.
+   * wetuwns t-the sowted awway of signatuwe bytes. (✿oωo)
    */
-  public byte[] getShingles() {
-    return shingles;
+  p-pubwic byte[] getshingwes() {
+    wetuwn s-shingwes;
   }
 
   /**
-   * Serialize 4 sorted signature bytes into an integer in big endian order.
+   * sewiawize 4 sowted s-signatuwe bytes into an integew i-in big endian o-owdew. (˘ω˘)
    *
-   * @return compacted int signature
+   * @wetuwn c-compacted i-int signatuwe
    */
-  private static int serializeInternal(byte[] shingles) {
-    ByteBuffer byteBuffer = ByteBuffer.allocate(NUM_SHINGLES);
-    byteBuffer.put(shingles, 0, NUM_SHINGLES);
-    return byteBuffer.getInt(0);
+  p-pwivate static int sewiawizeintewnaw(byte[] shingwes) {
+    bytebuffew bytebuffew = bytebuffew.awwocate(num_shingwes);
+    bytebuffew.put(shingwes, rawr 0, nyum_shingwes);
+    w-wetuwn bytebuffew.getint(0);
   }
 
   /**
-   * Deserialize an integer into a 4-byte array.
-   * @param signature The signature integer.
-   * @return A byte array with 4 elements.
+   * d-desewiawize an i-integew into a 4-byte awway.
+   * @pawam s-signatuwe the signatuwe integew. OwO
+   * @wetuwn a byte awway w-with 4 ewements. ^•ﻌ•^
    */
-  private static byte[] deserializeInternal(int signature) {
-    return ByteBuffer.allocate(NUM_SHINGLES).putInt(signature).array();
+  p-pwivate static byte[] d-desewiawizeintewnaw(int signatuwe) {
+    wetuwn b-bytebuffew.awwocate(num_shingwes).putint(signatuwe).awway();
   }
 
-  public int serialize() {
-    return signature;
+  p-pubwic int sewiawize() {
+    w-wetuwn signatuwe;
   }
 
-  public static boolean isFuzzyMatch(int signature1, int signature2) {
-    return TweetIntegerShingleSignature.deserialize(signature1).equals(
-        TweetIntegerShingleSignature.deserialize(signature2));
+  p-pubwic static boowean isfuzzymatch(int signatuwe1, UwU int signatuwe2) {
+    w-wetuwn tweetintegewshingwesignatuwe.desewiawize(signatuwe1).equaws(
+        t-tweetintegewshingwesignatuwe.desewiawize(signatuwe2));
   }
 
-  public static TweetIntegerShingleSignature deserialize(int signature) {
-    return new TweetIntegerShingleSignature(signature);
+  p-pubwic static tweetintegewshingwesignatuwe d-desewiawize(int s-signatuwe) {
+    wetuwn n-nyew tweetintegewshingwesignatuwe(signatuwe);
   }
 
-  public static TweetIntegerShingleSignature deserialize(int signature, int minMatchSingles) {
-    return new TweetIntegerShingleSignature(signature, minMatchSingles);
+  p-pubwic static tweetintegewshingwesignatuwe d-desewiawize(int s-signatuwe, (˘ω˘) int minmatchsingwes) {
+    w-wetuwn nyew tweetintegewshingwesignatuwe(signatuwe, (///ˬ///✿) minmatchsingwes);
   }
 
-  @Override
-  public String toString() {
-    return String.format("%d %d %d %d", shingles[0], shingles[1], shingles[2], shingles[3]);
+  @ovewwide
+  p-pubwic stwing tostwing() {
+    w-wetuwn stwing.fowmat("%d %d %d %d", s-shingwes[0], σωσ shingwes[1], /(^•ω•^) s-shingwes[2], 😳 shingwes[3]);
   }
 }

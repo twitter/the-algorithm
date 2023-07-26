@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.clients.addressbook.models
+package com.twittew.fowwow_wecommendations.common.cwients.addwessbook.modews
 
-import com.twitter.addressbook.{thriftscala => t}
+impowt c-com.twittew.addwessbook.{thwiftscawa => t-t}
 
-case class QueryOption(
-  onlyDiscoverableInExpansion: Boolean,
-  onlyConfirmedInExpansion: Boolean,
-  onlyDiscoverableInResult: Boolean,
-  onlyConfirmedInResult: Boolean,
-  fetchGlobalApiNamespace: Boolean,
-  isDebugRequest: Boolean,
-  resolveEmails: Boolean,
-  resolvePhoneNumbers: Boolean) {
-  def toThrift: t.QueryOption = t.QueryOption(
-    onlyDiscoverableInExpansion,
-    onlyConfirmedInExpansion,
-    onlyDiscoverableInResult,
-    onlyConfirmedInResult,
-    fetchGlobalApiNamespace,
-    isDebugRequest,
-    resolveEmails,
-    resolvePhoneNumbers
+c-case cwass quewyoption(
+  o-onwydiscovewabweinexpansion: b-boowean, mya
+  o-onwyconfiwmedinexpansion: b-boowean, 😳
+  o-onwydiscovewabweinwesuwt: boowean, XD
+  onwyconfiwmedinwesuwt: boowean, :3
+  fetchgwobawapinamespace: boowean,
+  isdebugwequest: b-boowean, 😳😳😳
+  wesowveemaiws: boowean, -.-
+  wesowvephonenumbews: b-boowean) {
+  def tothwift: t-t.quewyoption = t.quewyoption(
+    onwydiscovewabweinexpansion, ( ͡o ω ͡o )
+    onwyconfiwmedinexpansion, rawr x3
+    o-onwydiscovewabweinwesuwt, nyaa~~
+    onwyconfiwmedinwesuwt, /(^•ω•^)
+    f-fetchgwobawapinamespace, rawr
+    isdebugwequest, OwO
+    w-wesowveemaiws, (U ﹏ U)
+    wesowvephonenumbews
   )
 }

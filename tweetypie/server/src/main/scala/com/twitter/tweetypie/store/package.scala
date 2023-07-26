@@ -1,16 +1,16 @@
-package com.twitter.tweetypie
+package com.twittew.tweetypie
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.twitter.tweetypie.thriftscala.CachedTweet
-import com.twitter.context.TwitterContext
+impowt c-com.fastewxmw.jackson.cowe.jsongenewatow
+i-impowt c-com.twittew.tweetypie.thwiftscawa.cachedtweet
+i-impowt com.twittew.context.twittewcontext
 
-package object store {
-  type JsonGen = JsonGenerator => Unit
+p-package o-object stowe {
+  t-type jsongen = j-jsongenewatow => unit
 
-  // Bring Tweetypie permitted TwitterContext into scope
-  val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  // bwing tweetypie pewmitted twittewcontext into s-scope
+  vaw twittewcontext: twittewcontext =
+    com.twittew.context.twittewcontext(com.twittew.tweetypie.twittewcontextpewmit)
 
-  def cachedTweetFromUnhydratedTweet(tweet: Tweet): CachedTweet =
-    CachedTweet(tweet = tweet)
+  d-def cachedtweetfwomunhydwatedtweet(tweet: tweet): c-cachedtweet =
+    cachedtweet(tweet = tweet)
 }

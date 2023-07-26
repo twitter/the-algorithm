@@ -1,20 +1,20 @@
-package com.twitter.timelineranker.model
+package com.twittew.timewinewankew.modew
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+impowt c-com.twittew.timewinewankew.{thwiftscawa => t-thwift}
 
-object TimelineQueryOptions {
-  def fromThrift(options: thrift.TimelineQueryOptions): TimelineQueryOptions = {
-    options match {
-      case thrift.TimelineQueryOptions.RankedTimelineQueryOptions(r) =>
-        RankedTimelineQueryOptions.fromThrift(r)
-      case thrift.TimelineQueryOptions.ReverseChronTimelineQueryOptions(r) =>
-        ReverseChronTimelineQueryOptions.fromThrift(r)
-      case _ => throw new IllegalArgumentException(s"Unsupported type: $options")
+o-object timewinequewyoptions {
+  d-def fwomthwift(options: t-thwift.timewinequewyoptions): t-timewinequewyoptions = {
+    o-options match {
+      c-case thwift.timewinequewyoptions.wankedtimewinequewyoptions(w) =>
+        wankedtimewinequewyoptions.fwomthwift(w)
+      case thwift.timewinequewyoptions.wevewsechwontimewinequewyoptions(w) =>
+        wevewsechwontimewinequewyoptions.fwomthwift(w)
+      c-case _ => thwow nyew iwwegawawgumentexception(s"unsuppowted t-type: $options")
     }
   }
 }
 
-trait TimelineQueryOptions {
-  def toTimelineQueryOptionsThrift: thrift.TimelineQueryOptions
-  def throwIfInvalid(): Unit
+twait timewinequewyoptions {
+  d-def totimewinequewyoptionsthwift: thwift.timewinequewyoptions
+  def thwowifinvawid(): unit
 }

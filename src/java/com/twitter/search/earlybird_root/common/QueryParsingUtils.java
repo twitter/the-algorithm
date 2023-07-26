@@ -1,86 +1,86 @@
-package com.twitter.search.earlybird_root.common;
+package com.twittew.seawch.eawwybiwd_woot.common;
 
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.concuwwent.timeunit;
 
-import javax.annotation.Nullable;
+i-impowt j-javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.annotations.visibwefowtesting;
+i-impowt com.googwe.common.base.pweconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt owg.swf4j.woggew;
+i-impowt o-owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.queryparser.parser.SerializedQueryParser;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.util.Future;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt c-com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+impowt c-com.twittew.seawch.quewypawsew.pawsew.sewiawizedquewypawsew;
+impowt com.twittew.seawch.quewypawsew.quewy.quewy;
+impowt com.twittew.seawch.quewypawsew.quewy.quewypawsewexception;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * Common utils for parsing serialized queries, and handling query parser exceptions.
+ * c-common utiws fow pawsing s-sewiawized q-quewies, 😳 and handwing quewy pawsew exceptions. 😳
  */
-public final class QueryParsingUtils {
+pubwic finaw cwass quewypawsingutiws {
 
-  private static final Logger LOG = LoggerFactory.getLogger(QueryParsingUtils.class);
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(quewypawsingutiws.cwass);
 
-  @VisibleForTesting
-  public static final SearchCounter QUERYPARSE_COUNT =
-      SearchCounter.export("root_queryparse_count");
-  private static final SearchTimerStats QUERYPARSE_TIMER =
-      SearchTimerStats.export("root_queryparse_time", TimeUnit.NANOSECONDS, false, true);
-  private static final SearchCounter NO_PARSED_QUERY_COUNT =
-      SearchCounter.export("root_no_parsed_query_count");
+  @visibwefowtesting
+  pubwic s-static finaw seawchcountew quewypawse_count =
+      s-seawchcountew.expowt("woot_quewypawse_count");
+  p-pwivate static f-finaw seawchtimewstats q-quewypawse_timew =
+      seawchtimewstats.expowt("woot_quewypawse_time", σωσ timeunit.nanoseconds, rawr x3 f-fawse, twue);
+  pwivate static finaw s-seawchcountew nyo_pawsed_quewy_count =
+      seawchcountew.expowt("woot_no_pawsed_quewy_count");
 
-  private QueryParsingUtils() { }
+  pwivate quewypawsingutiws() { }
 
   /**
-   * Takes an earlybird request, and parses its serialized query (if it is set).
-   * Expects the required ThriftSearchQuery to be set on the passed in EarlybirdRequest.
+   * takes an eawwybiwd wequest, OwO and pawses its sewiawized q-quewy (if it is set). /(^•ω•^)
+   * e-expects the wequiwed t-thwiftseawchquewy t-to be set on the passed in eawwybiwdwequest. 😳😳😳
    *
-   * @param request the earlybird request to parse.
-   * @return null if the request does not specify a serialized query.
-   * @throws QueryParserException if querry parsing fails.
+   * @pawam wequest the e-eawwybiwd wequest t-to pawse. ( ͡o ω ͡o )
+   * @wetuwn nyuww i-if the wequest d-does nyot specify a sewiawized quewy. >_<
+   * @thwows q-quewypawsewexception if quewwy p-pawsing faiws. >w<
    */
-  @Nullable
-  static Query getParsedQuery(EarlybirdRequest request) throws QueryParserException {
-    // searchQuery is required on EarlybirdRequest.
-    Preconditions.checkState(request.isSetSearchQuery());
-    Query parsedQuery;
-    if (request.getSearchQuery().isSetSerializedQuery()) {
-      long startTime = System.nanoTime();
-      try {
-        String serializedQuery = request.getSearchQuery().getSerializedQuery();
+  @nuwwabwe
+  static quewy getpawsedquewy(eawwybiwdwequest w-wequest) thwows quewypawsewexception {
+    // s-seawchquewy is wequiwed on eawwybiwdwequest. rawr
+    p-pweconditions.checkstate(wequest.issetseawchquewy());
+    q-quewy pawsedquewy;
+    if (wequest.getseawchquewy().issetsewiawizedquewy()) {
+      wong stawttime = system.nanotime();
+      twy {
+        stwing sewiawizedquewy = w-wequest.getseawchquewy().getsewiawizedquewy();
 
-        parsedQuery = new SerializedQueryParser().parse(serializedQuery);
-      } finally {
-        QUERYPARSE_COUNT.increment();
-        QUERYPARSE_TIMER.timerIncrement(System.nanoTime() - startTime);
+        p-pawsedquewy = nyew sewiawizedquewypawsew().pawse(sewiawizedquewy);
+      } f-finawwy {
+        q-quewypawse_count.incwement();
+        q-quewypawse_timew.timewincwement(system.nanotime() - stawttime);
       }
-    } else {
-      NO_PARSED_QUERY_COUNT.increment();
-      parsedQuery = null;
+    } ewse {
+      nyo_pawsed_quewy_count.incwement();
+      pawsedquewy = nyuww;
     }
-    return parsedQuery;
+    wetuwn p-pawsedquewy;
   }
 
   /**
-   * Creates a new EarlybirdResponse with a CLIENT_ERROR response code, to be used as a response
-   * to a request where we failed to parse a user passed in serialized query.
+   * cweates a nyew eawwybiwdwesponse with a cwient_ewwow wesponse c-code, 😳 to be used as a wesponse
+   * t-to a wequest w-whewe we faiwed t-to pawse a usew passed in sewiawized q-quewy. >w<
    */
-  public static Future<EarlybirdResponse> newClientErrorResponse(
-      EarlybirdRequest request,
-      QueryParserException e) {
+  p-pubwic static f-futuwe<eawwybiwdwesponse> n-nyewcwientewwowwesponse(
+      eawwybiwdwequest wequest, (⑅˘꒳˘)
+      q-quewypawsewexception e-e) {
 
-    String msg = "Failed to parse query";
-    LOG.warn(msg, e);
+    stwing m-msg = "faiwed t-to pawse quewy";
+    w-wog.wawn(msg, OwO e);
 
-    EarlybirdResponse errorResponse =
-        new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 0);
-    errorResponse.setDebugString(msg + ": " + e.getMessage());
-    return Future.value(errorResponse);
+    eawwybiwdwesponse ewwowwesponse =
+        new eawwybiwdwesponse(eawwybiwdwesponsecode.cwient_ewwow, (ꈍᴗꈍ) 0);
+    ewwowwesponse.setdebugstwing(msg + ": " + e-e.getmessage());
+    wetuwn futuwe.vawue(ewwowwesponse);
   }
 }

@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineOperation
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewinemoduwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineopewation
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class TimelineEntryContentMarshaller @Inject() (
-  timelineItemMarshaller: TimelineItemMarshaller,
-  timelineModuleMarshaller: TimelineModuleMarshaller,
-  timelineOperationMarshaller: TimelineOperationMarshaller) {
+@singweton
+cwass timewineentwycontentmawshawwew @inject() (
+  timewineitemmawshawwew: timewineitemmawshawwew, :3
+  t-timewinemoduwemawshawwew: timewinemoduwemawshawwew, 😳😳😳
+  timewineopewationmawshawwew: t-timewineopewationmawshawwew) {
 
-  def apply(entry: TimelineEntry): urt.TimelineEntryContent = entry match {
-    case item: TimelineItem =>
-      urt.TimelineEntryContent.Item(timelineItemMarshaller(item))
-    case module: TimelineModule =>
-      urt.TimelineEntryContent.TimelineModule(timelineModuleMarshaller(module))
-    case operation: TimelineOperation =>
-      urt.TimelineEntryContent.Operation(timelineOperationMarshaller(operation))
+  def a-appwy(entwy: timewineentwy): uwt.timewineentwycontent = entwy match {
+    case item: t-timewineitem =>
+      uwt.timewineentwycontent.item(timewineitemmawshawwew(item))
+    c-case m-moduwe: timewinemoduwe =>
+      uwt.timewineentwycontent.timewinemoduwe(timewinemoduwemawshawwew(moduwe))
+    case opewation: timewineopewation =>
+      uwt.timewineentwycontent.opewation(timewineopewationmawshawwew(opewation))
   }
 }

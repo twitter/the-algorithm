@@ -1,51 +1,51 @@
-package com.twitter.unified_user_actions.adapter.tweetypie_event
+package com.twittew.unified_usew_actions.adaptew.tweetypie_event
 
-import com.twitter.tweetypie.thriftscala.TweetEventFlags
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala.UserIdentifier
+impowt com.twittew.tweetypie.thwiftscawa.tweeteventfwags
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.actiontype
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.eventmetadata
+i-impowt c-com.twittew.unified_usew_actions.thwiftscawa.item
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.unifiedusewaction
+i-impowt com.twittew.unified_usew_actions.thwiftscawa.usewidentifiew
 
 /**
- * Base class for Tweetypie Tweet Event.
- * Extends this class if you need to implement the parser for a new Tweetypie Tweet Event Type.
- * @see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/tweetypie/tweet_events.thrift?L225
+ * base cwass fow tweetypie tweet event. 😳😳😳
+ * extends t-this cwass if you nyeed to impwement the pawsew f-fow a nyew tweetypie tweet e-event type. 😳😳😳
+ * @see https://souwcegwaph.twittew.biz/git.twittew.biz/souwce/-/bwob/swc/thwift/com/twittew/tweetypie/tweet_events.thwift?w225
  */
-trait BaseTweetypieTweetEvent[T] {
+twait basetweetypietweetevent[t] {
 
   /**
-   * Returns an Optional UnifiedUserAction from the event.
+   * wetuwns an optionaw u-unifiedusewaction fwom the event. o.O
    */
-  def getUnifiedUserAction(event: T, flags: TweetEventFlags): Option[UnifiedUserAction]
+  d-def g-getunifiedusewaction(event: t, ( ͡o ω ͡o ) fwags: tweeteventfwags): option[unifiedusewaction]
 
   /**
-   * Returns UnifiedUserAction.ActionType for each type of event.
+   * wetuwns unifiedusewaction.actiontype f-fow each type of event. (U ﹏ U)
    */
-  protected def actionType: ActionType
+  pwotected def actiontype: actiontype
 
   /**
-   * Output type of the predicate. Could be an input of getItem.
+   * output type o-of the pwedicate. (///ˬ///✿) couwd be an i-input of getitem. >w<
    */
-  type ExtractedEvent
+  t-type extwactedevent
 
   /**
-   * Returns Some(ExtractedEvent) if the event is valid and None otherwise.
+   * w-wetuwns s-some(extwactedevent) if the event is vawid and n-none othewwise. rawr
    */
-  protected def extract(event: T): Option[ExtractedEvent]
+  pwotected def extwact(event: t-t): option[extwactedevent]
 
   /**
-   * Get the UnifiedUserAction.Item from the event.
+   * get the unifiedusewaction.item fwom the event. mya
    */
-  protected def getItem(extractedEvent: ExtractedEvent, event: T): Item
+  pwotected def g-getitem(extwactedevent: extwactedevent, ^^ e-event: t-t): item
 
   /**
-   * Get the UnifiedUserAction.UserIdentifier from the event.
+   * g-get the unifiedusewaction.usewidentifiew fwom the event. 😳😳😳
    */
-  protected def getUserIdentifier(event: T): UserIdentifier
+  pwotected def getusewidentifiew(event: t-t): u-usewidentifiew
 
   /**
-   * Get UnifiedUserAction.EventMetadata from the event.
+   * get u-unifiedusewaction.eventmetadata f-fwom the event. mya
    */
-  protected def getEventMetadata(event: T, flags: TweetEventFlags): EventMetadata
+  pwotected d-def geteventmetadata(event: t, fwags: tweeteventfwags): e-eventmetadata
 }

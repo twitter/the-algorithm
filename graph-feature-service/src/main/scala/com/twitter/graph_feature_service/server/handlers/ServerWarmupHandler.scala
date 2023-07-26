@@ -1,45 +1,45 @@
-package com.twitter.graph_feature_service.server.handlers
+package com.twittew.gwaph_featuwe_sewvice.sewvew.handwews
 
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.graph_feature_service.thriftscala.EdgeType.FavoritedBy
-import com.twitter.graph_feature_service.thriftscala.EdgeType.FollowedBy
-import com.twitter.graph_feature_service.thriftscala.EdgeType.Following
-import com.twitter.graph_feature_service.thriftscala.Server.GetIntersection
-import com.twitter.graph_feature_service.thriftscala.FeatureType
-import com.twitter.graph_feature_service.thriftscala.GfsIntersectionRequest
-import com.twitter.inject.utils.Handler
-import com.twitter.scrooge.Request
-import com.twitter.util.logging.Logger
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.util.Random
+impowt c-com.twittew.finatwa.thwift.wouting.thwiftwawmup
+i-impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.edgetype.favowitedby
+i-impowt c-com.twittew.gwaph_featuwe_sewvice.thwiftscawa.edgetype.fowwowedby
+i-impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.edgetype.fowwowing
+i-impowt c-com.twittew.gwaph_featuwe_sewvice.thwiftscawa.sewvew.getintewsection
+i-impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.featuwetype
+impowt com.twittew.gwaph_featuwe_sewvice.thwiftscawa.gfsintewsectionwequest
+impowt com.twittew.inject.utiws.handwew
+impowt c-com.twittew.scwooge.wequest
+impowt com.twittew.utiw.wogging.woggew
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
+impowt scawa.utiw.wandom
 
-@Singleton
-class ServerWarmupHandler @Inject() (warmup: ThriftWarmup) extends Handler {
+@singweton
+c-cwass sewvewwawmuphandwew @inject() (wawmup: thwiftwawmup) extends handwew {
 
-  val logger: Logger = Logger("WarmupHandler")
+  vaw woggew: w-woggew = woggew("wawmuphandwew")
 
-  // TODO: Add the testing accounts to warm-up the service.
-  private val testingAccounts: Array[Long] = Seq.empty.toArray
+  // todo: add t-the testing accounts t-to wawm-up the sewvice. (˘ω˘)
+  pwivate vaw testingaccounts: awway[wong] = seq.empty.toawway
 
-  private def getRandomRequest: GfsIntersectionRequest = {
-    GfsIntersectionRequest(
-      testingAccounts(Random.nextInt(testingAccounts.length)),
-      testingAccounts,
-      Seq(FeatureType(Following, FollowedBy), FeatureType(Following, FavoritedBy))
+  p-pwivate def getwandomwequest: gfsintewsectionwequest = {
+    gfsintewsectionwequest(
+      testingaccounts(wandom.nextint(testingaccounts.wength)), (⑅˘꒳˘)
+      testingaccounts, (///ˬ///✿)
+      seq(featuwetype(fowwowing, 😳😳😳 f-fowwowedby), 🥺 featuwetype(fowwowing, mya f-favowitedby))
     )
   }
 
-  override def handle(): Unit = {
-    warmup.sendRequest(
-      GetIntersection,
-      Request(
-        GetIntersection.Args(
-          getRandomRequest
-        )),
+  o-ovewwide d-def handwe(): u-unit = {
+    wawmup.sendwequest(
+      getintewsection, 🥺
+      w-wequest(
+        getintewsection.awgs(
+          getwandomwequest
+        )), >_<
       10
     )()
 
-    logger.info("Warmup Done!")
+    w-woggew.info("wawmup done!")
   }
 }

@@ -1,33 +1,33 @@
-package com.twitter.frigate.pushservice.model.candidate
+package com.twittew.fwigate.pushsewvice.modew.candidate
 
-import com.twitter.frigate.common.util.MRPushCopy
-import com.twitter.frigate.common.util.MrPushCopyObjects
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.util.CandidateUtil
+impowt com.twittew.fwigate.common.utiw.mwpushcopy
+i-impowt c-com.twittew.fwigate.common.utiw.mwpushcopyobjects
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.utiw.candidateutiw
 
-case class CopyIds(
-  pushCopyId: Option[Int] = None,
-  ntabCopyId: Option[Int] = None,
-  aggregationId: Option[String] = None)
+c-case cwass copyids(
+  p-pushcopyid: o-option[int] = n-nyone, -.-
+  nytabcopyid: option[int] = nyone, ( ͡o ω ͡o )
+  aggwegationid: option[stwing] = nyone)
 
-trait CopyInfo {
-  self: PushCandidate =>
+twait copyinfo {
+  s-sewf: pushcandidate =>
 
-  import com.twitter.frigate.data_pipeline.common.FrigateNotificationUtil._
+  impowt com.twittew.fwigate.data_pipewine.common.fwigatenotificationutiw._
 
-  def getPushCopy: Option[MRPushCopy] =
-    pushCopyId match {
-      case Some(pushCopyId) => MrPushCopyObjects.getCopyFromId(pushCopyId)
-      case _ =>
-        crt2PushCopy(
-          commonRecType,
-          CandidateUtil.getSocialContextActionsFromCandidate(self).size
+  d-def getpushcopy: option[mwpushcopy] =
+    p-pushcopyid match {
+      case some(pushcopyid) => mwpushcopyobjects.getcopyfwomid(pushcopyid)
+      c-case _ =>
+        cwt2pushcopy(
+          c-commonwectype, rawr x3
+          c-candidateutiw.getsociawcontextactionsfwomcandidate(sewf).size
         )
     }
 
-  def pushCopyId: Option[Int]
+  def pushcopyid: option[int]
 
-  def ntabCopyId: Option[Int]
+  def nytabcopyid: option[int]
 
-  def copyAggregationId: Option[String]
+  d-def copyaggwegationid: option[stwing]
 }

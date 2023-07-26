@@ -1,484 +1,484 @@
-package com.twitter.servo.cache
+package com.twittew.sewvo.cache
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.partitioning.FailureAccrualException
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.stats.{NullStatsReceiver, Stat, StatsReceiver}
-import com.twitter.logging.{Level, Logger}
-import com.twitter.servo.util.{ExceptionCounter, RateLimitingLogger}
-import com.twitter.util._
-import scala.util.control.NoStackTrace
+impowt com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.sewvice.wetwypowicy
+i-impowt c-com.twittew.finagwe.pawtitioning.faiwuweaccwuawexception
+i-impowt c-com.twittew.finagwe.backoff
+impowt c-com.twittew.finagwe.stats.{nuwwstatsweceivew, (⑅˘꒳˘) s-stat, statsweceivew}
+impowt com.twittew.wogging.{wevew, nyaa~~ woggew}
+impowt com.twittew.sewvo.utiw.{exceptioncountew, UwU w-watewimitingwoggew}
+impowt com.twittew.utiw._
+i-impowt scawa.utiw.contwow.nostacktwace
 
-object LockingCache {
-
-  /**
-   * first argument is value to store, second argument is value in cache,
-   * returns an Option of the value to be stored. None should be interpreted
-   * as "don't store anything"
-   */
-  type Picker[V] = (V, V) => Option[V]
+object w-wockingcache {
 
   /**
-   * argument is value, if any, in cache.
-   * return type is value, if any, to be stored in cache.
-   * returning None means nothing will be done.
+   * fiwst awgument is vawue to stowe, (˘ω˘) second a-awgument is vawue in cache, rawr x3
+   * w-wetuwns an o-option of the vawue to be stowed. nyone shouwd be intewpweted
+   * as "don't stowe a-anything"
    */
-  type Handler[V] = Option[V] => Option[V]
+  type pickew[v] = (v, (///ˬ///✿) v) => option[v]
 
-  case class AlwaysSetHandler[V](value: Option[V]) extends Handler[V] {
-    override def apply(ignored: Option[V]) = value
+  /**
+   * awgument i-is vawue, 😳😳😳 if any, (///ˬ///✿) in cache.
+   * w-wetuwn type is v-vawue, ^^;; if any, ^^ t-to be stowed in c-cache. (///ˬ///✿)
+   * wetuwning nyone means nyothing wiww b-be done. -.-
+   */
+  type handwew[v] = option[v] => o-option[v]
+
+  case cwass awwayssethandwew[v](vawue: option[v]) extends handwew[v] {
+    ovewwide def appwy(ignowed: o-option[v]) = vawue
   }
 
-  case class PickingHandler[V](newValue: V, pick: Picker[V]) extends Handler[V] {
-    override def apply(inCache: Option[V]): Option[V] =
-      inCache match {
-        case None =>
-          // if nothing in cache, go ahead and store!
-          Some(newValue)
-        case Some(oldValue) =>
-          // if something in cache, store a picked value based on
-          // what's in cache and what's being stored
-          pick(newValue, oldValue)
+  case c-cwass pickinghandwew[v](newvawue: v-v, /(^•ω•^) pick: pickew[v]) e-extends handwew[v] {
+    ovewwide def appwy(incache: option[v]): o-option[v] =
+      i-incache match {
+        c-case nyone =>
+          // i-if nyothing in cache, g-go ahead and stowe! UwU
+          s-some(newvawue)
+        case some(owdvawue) =>
+          // if s-something in cache, (⑅˘꒳˘) stowe a picked v-vawue based on
+          // nyani's in cache a-and nyani's being s-stowed
+          pick(newvawue, ʘwʘ owdvawue)
       }
 
-    // apparently case classes that extend functions don't get pretty toString methods
-    override lazy val toString = "PickingHandler(%s, %s)".format(newValue, pick)
+    // appawentwy case cwasses that extend functions don't g-get pwetty tostwing m-methods
+    ovewwide wazy vaw t-tostwing = "pickinghandwew(%s, σωσ %s)".fowmat(newvawue, ^^ p-pick)
   }
 
-  case class UpdateOnlyPickingHandler[V](newValue: V, pick: Picker[V]) extends Handler[V] {
-    override def apply(inCache: Option[V]): Option[V] =
-      inCache match {
-        case None =>
-          // if nothing in cache, do not update
-          None
-        case Some(oldValue) =>
-          // if something in cache, store a picked value based on
-          // what's in cache and what's being stored
-          pick(newValue, oldValue)
+  c-case cwass updateonwypickinghandwew[v](newvawue: v, OwO pick: pickew[v]) extends handwew[v] {
+    o-ovewwide def appwy(incache: option[v]): option[v] =
+      incache match {
+        c-case nyone =>
+          // if nyothing in cache, (ˆ ﻌ ˆ)♡ d-do not update
+          n-nyone
+        c-case some(owdvawue) =>
+          // if s-something in cache, o.O s-stowe a picked v-vawue based o-on
+          // nyani's in cache and nyani's being s-stowed
+          p-pick(newvawue, (˘ω˘) o-owdvawue)
       }
 
-    // apparently case classes that extend functions don't get pretty toString methods
-    override lazy val toString = "UpdateOnlyPickingHandler(%s, %s)".format(newValue, pick)
+    // a-appawentwy c-case cwasses that extend functions don't get pwetty tostwing m-methods
+    ovewwide wazy vaw tostwing = "updateonwypickinghandwew(%s, 😳 %s)".fowmat(newvawue, (U ᵕ U❁) pick)
   }
 }
 
-trait LockingCacheFactory {
-  def apply[K, V](cache: Cache[K, V]): LockingCache[K, V]
-  def scope(scopes: String*): LockingCacheFactory
+twait wockingcachefactowy {
+  def a-appwy[k, :3 v](cache: cache[k, v]): wockingcache[k, o.O v]
+  def scope(scopes: s-stwing*): w-wockingcachefactowy
 }
 
 /**
- * A cache that enforces a consistent view of values between the time when a set
- * is initiated and when the value is actually updated in cache.
+ * a-a cache that enfowces a consistent v-view of vawues between the t-time when a set
+ * i-is initiated and when the vawue is actuawwy updated in cache. (///ˬ///✿)
  */
-trait LockingCache[K, V] extends Cache[K, V] {
+twait wockingcache[k, OwO v] extends c-cache[k, >w< v] {
 
   /**
-   * Look up a value and dispatch based on the result. The particular locking
-   * approach is defined by the implementing class. May call handler multiple
-   * times as part of more elaborate locking and retry looping.
+   * wook up a vawue a-and dispatch based on the wesuwt. ^^ t-the pawticuwaw w-wocking
+   * appwoach is defined by the impwementing c-cwass. (⑅˘꒳˘) may c-caww handwew muwtipwe
+   * times a-as pawt of mowe e-ewabowate wocking and wetwy wooping. ʘwʘ
    *
-   * Overview of semantics:
-   *   `handler(None)` is called if no value is present in cache.
-   *   `handler(Some(value))` is called if a value is present.
-   *   `handler(x)` should return None if nothing should be done and `Some(value)`
-   *   if a value should be set.
+   * ovewview of semantics:
+   *   `handwew(none)` is cawwed if nyo vawue is pwesent i-in cache. (///ˬ///✿)
+   *   `handwew(some(vawue))` i-is cawwed i-if a vawue is pwesent. XD
+   *   `handwew(x)` s-shouwd w-wetuwn none if nyothing shouwd b-be done and `some(vawue)`
+   *   if a vawue shouwd be set. 😳
    *
-   * @return the value that was actually set
+   * @wetuwn the vawue that was actuawwy set
    */
-  def lockAndSet(key: K, handler: LockingCache.Handler[V]): Future[Option[V]]
+  d-def wockandset(key: k-k, >w< handwew: wockingcache.handwew[v]): futuwe[option[v]]
 }
 
-class OptimisticLockingCacheObserver(statsReceiver: StatsReceiver) {
-  import OptimisticLockingCache._
+c-cwass optimisticwockingcacheobsewvew(statsweceivew: s-statsweceivew) {
+  impowt optimisticwockingcache._
 
-  private[this] val scopedReceiver = statsReceiver.scope("locking_cache")
+  pwivate[this] vaw scopedweceivew = s-statsweceivew.scope("wocking_cache")
 
-  private[this] val successCounter = scopedReceiver.counter("success")
-  private[this] val failureCounter = scopedReceiver.counter("failure")
-  private[this] val exceptionCounter = new ExceptionCounter(scopedReceiver)
-  private[this] val lockAndSetStat = scopedReceiver.stat("lockAndSet")
+  pwivate[this] vaw successcountew = scopedweceivew.countew("success")
+  pwivate[this] v-vaw faiwuwecountew = scopedweceivew.countew("faiwuwe")
+  pwivate[this] v-vaw exceptioncountew = n-nyew exceptioncountew(scopedweceivew)
+  pwivate[this] vaw wockandsetstat = scopedweceivew.stat("wockandset")
 
-  def time[V](f: => Future[Option[V]]): Future[Option[V]] = {
-    Stat.timeFuture(lockAndSetStat) {
+  d-def time[v](f: => f-futuwe[option[v]]): futuwe[option[v]] = {
+    stat.timefutuwe(wockandsetstat) {
       f
     }
   }
 
-  def success(attempts: Seq[FailedAttempt]): Unit = {
-    successCounter.incr()
-    countAttempts(attempts)
+  d-def success(attempts: seq[faiwedattempt]): u-unit = {
+    successcountew.incw()
+    countattempts(attempts)
   }
 
-  def failure(attempts: Seq[FailedAttempt]): Unit = {
-    failureCounter.incr()
-    countAttempts(attempts)
+  def faiwuwe(attempts: seq[faiwedattempt]): u-unit = {
+    faiwuwecountew.incw()
+    c-countattempts(attempts)
   }
 
-  def scope(s: String*): OptimisticLockingCacheObserver =
-    s.toList match {
-      case Nil => this
-      case head :: tail =>
-        new OptimisticLockingCacheObserver(statsReceiver.scope(head)).scope(tail: _*)
+  d-def scope(s: stwing*): o-optimisticwockingcacheobsewvew =
+    s.towist match {
+      c-case n-nyiw => this
+      c-case head :: taiw =>
+        n-nyew optimisticwockingcacheobsewvew(statsweceivew.scope(head)).scope(taiw: _*)
     }
 
-  private[this] def countAttempts(attempts: Seq[FailedAttempt]): Unit = {
-    attempts foreach { attempt =>
-      val name = attempt.getClass.getSimpleName
-      scopedReceiver.counter(name).incr()
-      attempt.maybeThrowable foreach { t =>
-        exceptionCounter(t)
-        scopedReceiver.scope(name).counter(t.getClass.getName).incr()
+  p-pwivate[this] def countattempts(attempts: seq[faiwedattempt]): u-unit = {
+    a-attempts foweach { a-attempt =>
+      vaw nyame = attempt.getcwass.getsimpwename
+      s-scopedweceivew.countew(name).incw()
+      attempt.maybethwowabwe f-foweach { t-t =>
+        exceptioncountew(t)
+        scopedweceivew.scope(name).countew(t.getcwass.getname).incw()
       }
     }
   }
 }
 
-case class OptimisticLockingCacheFactory(
-  backoffs: Backoff,
-  observer: OptimisticLockingCacheObserver = new OptimisticLockingCacheObserver(NullStatsReceiver),
-  timer: Timer = new NullTimer,
-  // Enabling key logging may unintentionally cause inclusion of sensitive data
-  // in service logs and any accompanying log sinks such as Splunk. By default, this is disabled,
-  // however may be optionally enabled for the purpose of debugging. Caution is warranted.
-  enableKeyLogging: Boolean = false)
-    extends LockingCacheFactory {
+case cwass optimisticwockingcachefactowy(
+  b-backoffs: b-backoff, (˘ω˘)
+  o-obsewvew: optimisticwockingcacheobsewvew = n-nyew optimisticwockingcacheobsewvew(nuwwstatsweceivew), nyaa~~
+  t-timew: timew = nyew nyuwwtimew, 😳😳😳
+  // enabwing key wogging may unintentionawwy cause incwusion o-of sensitive data
+  // in sewvice w-wogs and any accompanying w-wog sinks such as spwunk. (U ﹏ U) by defauwt, (˘ω˘) t-this is disabwed, :3
+  // howevew m-may be optionawwy e-enabwed f-fow the puwpose o-of debugging. >w< caution i-is wawwanted.
+  enabwekeywogging: boowean = fawse)
+    extends wockingcachefactowy {
   def this(
-    backoffs: Backoff,
-    statsReceiver: StatsReceiver,
-    timer: Timer,
-    enableKeyLogging: Boolean
-  ) = this(backoffs, new OptimisticLockingCacheObserver(statsReceiver), timer, enableKeyLogging)
+    backoffs: b-backoff, ^^
+    s-statsweceivew: s-statsweceivew, 😳😳😳
+    timew: timew, nyaa~~
+    e-enabwekeywogging: boowean
+  ) = this(backoffs, (⑅˘꒳˘) nyew optimisticwockingcacheobsewvew(statsweceivew), :3 t-timew, ʘwʘ e-enabwekeywogging)
 
-  override def apply[K, V](cache: Cache[K, V]): LockingCache[K, V] = {
-    new OptimisticLockingCache(cache, backoffs, observer, timer, enableKeyLogging)
+  ovewwide def a-appwy[k, rawr x3 v](cache: cache[k, (///ˬ///✿) v]): wockingcache[k, 😳😳😳 v-v] = {
+    nyew o-optimisticwockingcache(cache, XD backoffs, >_< obsewvew, >w< t-timew, enabwekeywogging)
   }
 
-  override def scope(scopes: String*): LockingCacheFactory = {
-    new OptimisticLockingCacheFactory(backoffs, observer.scope(scopes: _*), timer)
+  o-ovewwide def scope(scopes: stwing*): wockingcachefactowy = {
+    new optimisticwockingcachefactowy(backoffs, /(^•ω•^) obsewvew.scope(scopes: _*), t-timew)
   }
 }
 
-object OptimisticLockingCache {
-  private[this] val FutureNone = Future.value(None)
+o-object o-optimisticwockingcache {
+  p-pwivate[this] v-vaw futuwenone = futuwe.vawue(none)
 
-  def emptyFutureNone[V] = FutureNone.asInstanceOf[Future[Option[V]]]
+  d-def emptyfutuwenone[v] = f-futuwenone.asinstanceof[futuwe[option[v]]]
 
-  sealed abstract class FailedAttempt(val maybeThrowable: Option[Throwable])
-      extends Exception
-      with NoStackTrace
-  case class GetWithChecksumException(t: Throwable) extends FailedAttempt(Some(t))
-  case object GetWithChecksumEmpty extends FailedAttempt(None)
-  case object CheckAndSetFailed extends FailedAttempt(None)
-  case class CheckAndSetException(t: Throwable) extends FailedAttempt(Some(t))
-  case class AddException(t: Throwable) extends FailedAttempt(Some(t))
+  seawed a-abstwact cwass f-faiwedattempt(vaw maybethwowabwe: o-option[thwowabwe])
+      extends exception
+      w-with nyostacktwace
+  case cwass g-getwithchecksumexception(t: thwowabwe) e-extends faiwedattempt(some(t))
+  c-case object getwithchecksumempty extends f-faiwedattempt(none)
+  c-case object c-checkandsetfaiwed extends faiwedattempt(none)
+  case cwass c-checkandsetexception(t: thwowabwe) extends faiwedattempt(some(t))
+  c-case cwass a-addexception(t: thwowabwe) extends f-faiwedattempt(some(t))
 
-  case class LockAndSetFailure(str: String, attempts: Seq[FailedAttempt])
-      extends Exception(
-        str,
-        // if the last exception was an RPC exception, try to recover the stack trace
-        attempts.lastOption.flatMap(_.maybeThrowable).orNull
+  case c-cwass wockandsetfaiwuwe(stw: stwing, :3 a-attempts: seq[faiwedattempt])
+      extends e-exception(
+        stw, ʘwʘ
+        // if the wast e-exception was a-an wpc exception, (˘ω˘) twy to wecovew t-the stack twace
+        attempts.wastoption.fwatmap(_.maybethwowabwe).ownuww
       )
 
-  private def retryPolicy(backoffs: Backoff): RetryPolicy[Try[Nothing]] =
-    RetryPolicy.backoff(backoffs) {
-      case Throw(_: FailureAccrualException) => false
-      case _ => true
+  p-pwivate d-def wetwypowicy(backoffs: b-backoff): wetwypowicy[twy[nothing]] =
+    wetwypowicy.backoff(backoffs) {
+      case thwow(_: faiwuweaccwuawexception) => fawse
+      case _ => twue
     }
 }
 
 /**
- * Implementation of a LockingCache using add/getWithChecksum/checkAndSet.
+ * impwementation of a wockingcache using add/getwithchecksum/checkandset. (ꈍᴗꈍ)
  */
-class OptimisticLockingCache[K, V](
-  override val underlyingCache: Cache[K, V],
-  retryPolicy: RetryPolicy[Try[Nothing]],
-  observer: OptimisticLockingCacheObserver,
-  timer: Timer,
-  enableKeyLogging: Boolean)
-    extends LockingCache[K, V]
-    with CacheWrapper[K, V] {
-  import LockingCache._
-  import OptimisticLockingCache._
+cwass optimisticwockingcache[k, ^^ v](
+  o-ovewwide vaw undewwyingcache: c-cache[k, ^^ v],
+  wetwypowicy: wetwypowicy[twy[nothing]], ( ͡o ω ͡o )
+  obsewvew: o-optimisticwockingcacheobsewvew, -.-
+  t-timew: timew, ^^;;
+  e-enabwekeywogging: boowean)
+    e-extends wockingcache[k, ^•ﻌ•^ v]
+    w-with cachewwappew[k, (˘ω˘) v-v] {
+  impowt wockingcache._
+  i-impowt optimisticwockingcache._
 
   def this(
-    underlyingCache: Cache[K, V],
-    retryPolicy: RetryPolicy[Try[Nothing]],
-    observer: OptimisticLockingCacheObserver,
-    timer: Timer,
+    u-undewwyingcache: c-cache[k, o.O v],
+    wetwypowicy: wetwypowicy[twy[nothing]], (✿oωo)
+    o-obsewvew: o-optimisticwockingcacheobsewvew, 😳😳😳
+    t-timew: timew, (ꈍᴗꈍ)
   ) =
-    this(
-      underlyingCache: Cache[K, V],
-      retryPolicy: RetryPolicy[Try[Nothing]],
-      observer: OptimisticLockingCacheObserver,
-      timer: Timer,
-      false
+    t-this(
+      u-undewwyingcache: c-cache[k, σωσ v-v],
+      wetwypowicy: w-wetwypowicy[twy[nothing]], UwU
+      o-obsewvew: optimisticwockingcacheobsewvew, ^•ﻌ•^
+      t-timew: t-timew, mya
+      fawse
     )
 
-  def this(
-    underlyingCache: Cache[K, V],
-    backoffs: Backoff,
-    observer: OptimisticLockingCacheObserver,
-    timer: Timer
+  d-def this(
+    undewwyingcache: c-cache[k, /(^•ω•^) v],
+    backoffs: backoff, rawr
+    o-obsewvew: optimisticwockingcacheobsewvew, nyaa~~
+    timew: timew
   ) =
-    this(
-      underlyingCache,
-      OptimisticLockingCache.retryPolicy(backoffs),
-      observer,
-      timer,
-      false
+    t-this(
+      u-undewwyingcache, ( ͡o ω ͡o )
+      o-optimisticwockingcache.wetwypowicy(backoffs),
+      obsewvew,
+      t-timew, σωσ
+      fawse
     )
 
-  def this(
-    underlyingCache: Cache[K, V],
-    backoffs: Backoff,
-    observer: OptimisticLockingCacheObserver,
-    timer: Timer,
-    enableKeyLogging: Boolean
+  def t-this(
+    undewwyingcache: cache[k, (✿oωo) v-v], (///ˬ///✿)
+    backoffs: backoff, σωσ
+    o-obsewvew: optimisticwockingcacheobsewvew, UwU
+    timew: timew, (⑅˘꒳˘)
+    enabwekeywogging: boowean
   ) =
     this(
-      underlyingCache,
-      OptimisticLockingCache.retryPolicy(backoffs),
-      observer,
-      timer,
-      enableKeyLogging
+      u-undewwyingcache, /(^•ω•^)
+      optimisticwockingcache.wetwypowicy(backoffs), -.-
+      o-obsewvew, (ˆ ﻌ ˆ)♡
+      t-timew, nyaa~~
+      enabwekeywogging
     )
 
-  private[this] val log = Logger.get("OptimisticLockingCache")
-  private[this] val rateLimitedLogger = new RateLimitingLogger(logger = log)
+  pwivate[this] vaw wog = woggew.get("optimisticwockingcache")
+  p-pwivate[this] vaw watewimitedwoggew = n-nyew watewimitingwoggew(woggew = w-wog)
 
-  @deprecated("use RetryPolicy-based constructor", "0.1.2")
-  def this(underlyingCache: Cache[K, V], maxTries: Int = 10, enableKeyLogging: Boolean) = {
+  @depwecated("use w-wetwypowicy-based constwuctow", "0.1.2")
+  def this(undewwyingcache: c-cache[k, v-v], ʘwʘ maxtwies: int = 10, :3 enabwekeywogging: b-boowean) = {
     this(
-      underlyingCache,
-      Backoff.const(0.milliseconds).take(maxTries),
-      new OptimisticLockingCacheObserver(NullStatsReceiver),
-      new NullTimer,
-      enableKeyLogging
+      undewwyingcache, (U ᵕ U❁)
+      b-backoff.const(0.miwwiseconds).take(maxtwies), (U ﹏ U)
+      nyew optimisticwockingcacheobsewvew(nuwwstatsweceivew),
+      n-nyew nyuwwtimew, ^^
+      e-enabwekeywogging
     )
   }
 
-  override def lockAndSet(key: K, handler: Handler[V]): Future[Option[V]] = {
-    observer.time {
-      dispatch(key, handler, retryPolicy, Nil)
+  o-ovewwide def wockandset(key: k-k, òωó handwew: h-handwew[v]): futuwe[option[v]] = {
+    o-obsewvew.time {
+      d-dispatch(key, /(^•ω•^) handwew, 😳😳😳 w-wetwypowicy, :3 n-nyiw)
     }
   }
 
   /**
-   * @param key
-   *   The key to look up in cache
-   * @param handler
-   *   The handler that is applied to values from cache
-   * @param retryPolicy
-   *   Used to determine if more attempts should be made.
-   * @param attempts
-   *   Contains representations of the causes of previous dispatch failures
+   * @pawam k-key
+   *   the k-key to wook up i-in cache
+   * @pawam h-handwew
+   *   t-the handwew t-that is appwied to vawues fwom c-cache
+   * @pawam wetwypowicy
+   *   u-used to detewmine if mowe a-attempts shouwd b-be made. (///ˬ///✿)
+   * @pawam a-attempts
+   *   contains wepwesentations of the causes of pwevious d-dispatch f-faiwuwes
    */
-  protected[this] def retry(
-    key: K,
-    failure: Try[Nothing],
-    handler: Handler[V],
-    retryPolicy: RetryPolicy[Try[Nothing]],
-    attempts: Seq[FailedAttempt]
-  ): Future[Option[V]] =
-    retryPolicy(failure) match {
-      case None =>
-        observer.failure(attempts)
-        if (enableKeyLogging) {
-          rateLimitedLogger.log(
-            s"failed attempts for ${key}:\n ${attempts.mkString("\n ")}",
-            level = Level.INFO)
-          Future.exception(LockAndSetFailure("lockAndSet failed for " + key, attempts))
-        } else {
-          Future.exception(LockAndSetFailure("lockAndSet failed", attempts))
+  p-pwotected[this] def wetwy(
+    key: k, rawr x3
+    faiwuwe: twy[nothing], (U ᵕ U❁)
+    h-handwew: h-handwew[v], (⑅˘꒳˘)
+    wetwypowicy: wetwypowicy[twy[nothing]], (˘ω˘)
+    a-attempts: s-seq[faiwedattempt]
+  ): futuwe[option[v]] =
+    wetwypowicy(faiwuwe) match {
+      case nyone =>
+        o-obsewvew.faiwuwe(attempts)
+        i-if (enabwekeywogging) {
+          w-watewimitedwoggew.wog(
+            s-s"faiwed attempts fow ${key}:\n ${attempts.mkstwing("\n ")}", :3
+            wevew = wevew.info)
+          f-futuwe.exception(wockandsetfaiwuwe("wockandset faiwed f-fow " + key, XD attempts))
+        } ewse {
+          f-futuwe.exception(wockandsetfaiwuwe("wockandset faiwed", >_< attempts))
         }
 
-      case Some((backoff, tailPolicy)) =>
-        timer
-          .doLater(backoff) {
-            dispatch(key, handler, tailPolicy, attempts)
+      c-case some((backoff, (✿oωo) t-taiwpowicy)) =>
+        t-timew
+          .dowatew(backoff) {
+            dispatch(key, (ꈍᴗꈍ) h-handwew, t-taiwpowicy, XD attempts)
           }
-          .flatten
+          .fwatten
     }
 
   /**
-   * @param key
-   *   The key to look up in cache
-   * @param handler
-   *   The handler that is applied to values from cache
-   * @param retryPolicy
-   *   Used to determine if more attempts should be made.
-   * @param attempts
-   *   Contains representations of the causes of previous dispatch failures
+   * @pawam key
+   *   t-the key to wook up in cache
+   * @pawam h-handwew
+   *   t-the handwew that i-is appwied to vawues f-fwom cache
+   * @pawam wetwypowicy
+   *   u-used to detewmine i-if mowe attempts s-shouwd be made. :3
+   * @pawam attempts
+   *   contains wepwesentations o-of the causes of pwevious dispatch faiwuwes
    */
-  protected[this] def dispatch(
-    key: K,
-    handler: Handler[V],
-    retryPolicy: RetryPolicy[Try[Nothing]],
-    attempts: Seq[FailedAttempt]
-  ): Future[Option[V]] = {
-    // get the value if nothing's there
-    handler(None) match {
-      case None =>
-        // if nothing should be done when missing, go straight to getAndConditionallySet,
-        // since there's nothing to attempt an add with
-        getAndConditionallySet(key, handler, retryPolicy, attempts)
+  p-pwotected[this] d-def d-dispatch(
+    key: k,
+    handwew: handwew[v], mya
+    wetwypowicy: wetwypowicy[twy[nothing]], òωó
+    attempts: s-seq[faiwedattempt]
+  ): futuwe[option[v]] = {
+    // g-get t-the vawue if nyothing's thewe
+    handwew(none) m-match {
+      case nyone =>
+        // i-if nyothing s-shouwd be done w-when missing, nyaa~~ g-go stwaight to g-getandconditionawwyset, 🥺
+        // since thewe's nyothing to attempt an add with
+        getandconditionawwyset(key, -.- h-handwew, wetwypowicy, 🥺 attempts)
 
-      case some @ Some(value) =>
-        // otherwise, try to do an atomic add, which will return false if something's there
-        underlyingCache.add(key, value) transform {
-          case Return(added) =>
-            if (added) {
-              // if added, return the value
-              observer.success(attempts)
-              Future.value(some)
-            } else {
-              // otherwise, do a checkAndSet based on the current value
-              getAndConditionallySet(key, handler, retryPolicy, attempts)
+      c-case some @ some(vawue) =>
+        // othewwise, (˘ω˘) twy to do an atomic a-add, òωó which wiww wetuwn fawse if something's thewe
+        undewwyingcache.add(key, UwU vawue) twansfowm {
+          c-case wetuwn(added) =>
+            i-if (added) {
+              // if added, ^•ﻌ•^ wetuwn t-the vawue
+              obsewvew.success(attempts)
+              futuwe.vawue(some)
+            } e-ewse {
+              // o-othewwise, mya do a checkandset b-based on the cuwwent vawue
+              g-getandconditionawwyset(key, (✿oωo) handwew, XD wetwypowicy, :3 attempts)
             }
 
-          case Throw(t) =>
-            // count exception against retries
-            if (enableKeyLogging)
-              rateLimitedLogger.logThrowable(t, s"add($key) returned exception. will retry")
-            retry(key, Throw(t), handler, retryPolicy, attempts :+ AddException(t))
+          c-case thwow(t) =>
+            // count exception against wetwies
+            i-if (enabwekeywogging)
+              w-watewimitedwoggew.wogthwowabwe(t, (U ﹏ U) s-s"add($key) wetuwned exception. UwU wiww wetwy")
+            w-wetwy(key, ʘwʘ thwow(t), >w< handwew, wetwypowicy, 😳😳😳 attempts :+ addexception(t))
         }
     }
   }
 
   /**
-   * @param key
-   *   The key to look up in cache
-   * @param handler
-   *   The handler that is applied to values from cache
-   * @param retryPolicy
-   *   Used to determine if more attempts should be made.
-   * @param attempts
-   *   Contains representations of the causes of previous dispatch failures
+   * @pawam key
+   *   the k-key to wook up in c-cache
+   * @pawam h-handwew
+   *   t-the handwew that is appwied to vawues fwom cache
+   * @pawam w-wetwypowicy
+   *   u-used to detewmine if mowe attempts shouwd be m-made. rawr
+   * @pawam attempts
+   *   contains wepwesentations o-of the causes of pwevious dispatch faiwuwes
    */
-  protected[this] def getAndConditionallySet(
-    key: K,
-    handler: Handler[V],
-    retryPolicy: RetryPolicy[Try[Nothing]],
-    attempts: Seq[FailedAttempt]
-  ): Future[Option[V]] = {
-    // look in the cache to see what's there
-    underlyingCache.getWithChecksum(Seq(key)) handle {
-      case t =>
-        // treat global failure as key-based failure
-        KeyValueResult(failed = Map(key -> t))
-    } flatMap { lr =>
-      lr(key) match {
-        case Return.None =>
-          handler(None) match {
-            case Some(_) =>
-              // if there's nothing in the cache now, but handler(None) return Some,
-              // that means something has changed since we attempted the add, so try again
-              val failure = GetWithChecksumEmpty
-              retry(key, Throw(failure), handler, retryPolicy, attempts :+ failure)
+  pwotected[this] def g-getandconditionawwyset(
+    key: k-k, ^•ﻌ•^
+    handwew: handwew[v], σωσ
+    w-wetwypowicy: w-wetwypowicy[twy[nothing]], :3
+    a-attempts: seq[faiwedattempt]
+  ): futuwe[option[v]] = {
+    // wook in the cache t-to see nyani's thewe
+    undewwyingcache.getwithchecksum(seq(key)) handwe {
+      c-case t =>
+        // tweat gwobaw faiwuwe as key-based faiwuwe
+        k-keyvawuewesuwt(faiwed = m-map(key -> t))
+    } f-fwatmap { w-ww =>
+      ww(key) m-match {
+        case wetuwn.none =>
+          h-handwew(none) match {
+            case some(_) =>
+              // i-if thewe's nyothing in the c-cache nyow, rawr x3 but handwew(none) wetuwn some, nyaa~~
+              // t-that m-means something has changed since w-we attempted the add, :3 so twy a-again
+              v-vaw faiwuwe = getwithchecksumempty
+              w-wetwy(key, >w< t-thwow(faiwuwe), rawr handwew, wetwypowicy, 😳 a-attempts :+ faiwuwe)
 
-            case None =>
-              // if there's nothing in the cache now, but handler(None) returns None,
-              // that means we don't want to store anything when there's nothing already
-              // in cache, so return None
-              observer.success(attempts)
-              emptyFutureNone
+            case nyone =>
+              // if thewe's n-nyothing in the cache nyow, 😳 but h-handwew(none) wetuwns nyone, 🥺
+              // that means we don't w-want to stowe a-anything when t-thewe's nyothing awweady
+              // i-in cache, rawr x3 s-so wetuwn nyone
+              obsewvew.success(attempts)
+              e-emptyfutuwenone
           }
 
-        case Return(Some((Return(current), checksum))) =>
-          // the cache entry is present
-          dispatchCheckAndSet(Some(current), checksum, key, handler, retryPolicy, attempts)
+        case wetuwn(some((wetuwn(cuwwent), ^^ c-checksum))) =>
+          // the cache entwy i-is pwesent
+          d-dispatchcheckandset(some(cuwwent), ( ͡o ω ͡o ) checksum, key, XD handwew, wetwypowicy, ^^ attempts)
 
-        case Return(Some((Throw(t), checksum))) =>
-          // the cache entry failed to deserialize; treat it as a None and overwrite.
-          if (enableKeyLogging)
-            rateLimitedLogger.logThrowable(
-              t,
-              s"getWithChecksum(${key}) returned a bad value. overwriting.")
-          dispatchCheckAndSet(None, checksum, key, handler, retryPolicy, attempts)
+        case wetuwn(some((thwow(t), (⑅˘꒳˘) c-checksum))) =>
+          // t-the cache entwy faiwed to desewiawize; tweat it as a nyone a-and ovewwwite. (⑅˘꒳˘)
+          if (enabwekeywogging)
+            w-watewimitedwoggew.wogthwowabwe(
+              t-t, ^•ﻌ•^
+              s"getwithchecksum(${key}) wetuwned a bad vawue. ( ͡o ω ͡o ) ovewwwiting.")
+          dispatchcheckandset(none, ( ͡o ω ͡o ) c-checksum, (✿oωo) key, handwew, 😳😳😳 wetwypowicy, attempts)
 
-        case Throw(t) =>
-          // lookup failure counts against numTries
-          if (enableKeyLogging)
-            rateLimitedLogger.logThrowable(
-              t,
-              s"getWithChecksum(${key}) returned exception. will retry.")
-          retry(key, Throw(t), handler, retryPolicy, attempts :+ GetWithChecksumException(t))
+        c-case thwow(t) =>
+          // wookup faiwuwe c-counts against n-nyumtwies
+          if (enabwekeywogging)
+            w-watewimitedwoggew.wogthwowabwe(
+              t-t, OwO
+              s-s"getwithchecksum(${key}) w-wetuwned exception. ^^ w-wiww wetwy.")
+          wetwy(key, rawr x3 t-thwow(t), handwew, 🥺 wetwypowicy, (ˆ ﻌ ˆ)♡ attempts :+ getwithchecksumexception(t))
       }
     }
   }
 
   /**
-   * @param current
-   *   The value currently cached under key `key`, if any
-   * @param checksum
-   *   The checksum of the currently-cached value
-   * @param key
-   *   The key mapping to `current`
-   * @param handler
-   *   The handler that is applied to values from cache
-   * @param retryPolicy
-   *   Used to determine if more attempts should be made.
-   * @param attempts
-   *   Contains representations of the causes of previous dispatch failures
+   * @pawam cuwwent
+   *   the vawue c-cuwwentwy cached u-undew key `key`, ( ͡o ω ͡o ) i-if any
+   * @pawam c-checksum
+   *   t-the checksum o-of the cuwwentwy-cached vawue
+   * @pawam key
+   *   the key mapping to `cuwwent`
+   * @pawam h-handwew
+   *   t-the handwew that is appwied to vawues fwom cache
+   * @pawam wetwypowicy
+   *   u-used to detewmine i-if mowe attempts s-shouwd be made. >w<
+   * @pawam attempts
+   *   contains wepwesentations of the causes o-of pwevious dispatch faiwuwes
    */
-  protected[this] def dispatchCheckAndSet(
-    current: Option[V],
-    checksum: Checksum,
-    key: K,
-    handler: Handler[V],
-    retryPolicy: RetryPolicy[Try[Nothing]],
-    attempts: Seq[FailedAttempt]
-  ): Future[Option[V]] = {
-    handler(current) match {
-      case None =>
-        // if nothing should be done based on the current value, don't do anything
-        observer.success(attempts)
-        emptyFutureNone
+  pwotected[this] d-def d-dispatchcheckandset(
+    cuwwent: option[v], /(^•ω•^)
+    c-checksum: checksum, 😳😳😳
+    key: k, (U ᵕ U❁)
+    h-handwew: handwew[v], (˘ω˘)
+    w-wetwypowicy: wetwypowicy[twy[nothing]], 😳
+    a-attempts: s-seq[faiwedattempt]
+  ): f-futuwe[option[v]] = {
+    h-handwew(cuwwent) m-match {
+      c-case nyone =>
+        // if n-nyothing shouwd b-be done based on the cuwwent vawue, (ꈍᴗꈍ) d-don't do anything
+        obsewvew.success(attempts)
+        emptyfutuwenone
 
-      case some @ Some(value) =>
-        // otherwise, try a check and set with the checksum
-        underlyingCache.checkAndSet(key, value, checksum) transform {
-          case Return(added) =>
-            if (added) {
-              // if added, return the value
-              observer.success(attempts)
-              Future.value(some)
-            } else {
-              // otherwise, something has changed, try again
-              val failure = CheckAndSetFailed
-              retry(key, Throw(failure), handler, retryPolicy, attempts :+ failure)
+      case some @ s-some(vawue) =>
+        // othewwise, :3 twy a c-check and set with the checksum
+        u-undewwyingcache.checkandset(key, /(^•ω•^) v-vawue, ^^;; checksum) twansfowm {
+          case wetuwn(added) =>
+            i-if (added) {
+              // if added, o.O wetuwn the vawue
+              o-obsewvew.success(attempts)
+              f-futuwe.vawue(some)
+            } ewse {
+              // othewwise, 😳 s-something h-has changed, UwU twy again
+              v-vaw faiwuwe = checkandsetfaiwed
+              wetwy(key, >w< thwow(faiwuwe), o.O h-handwew, w-wetwypowicy, (˘ω˘) attempts :+ f-faiwuwe)
             }
 
-          case Throw(t) =>
-            // count exception against retries
-            if (enableKeyLogging)
-              rateLimitedLogger.logThrowable(
-                t,
-                s"checkAndSet(${key}) returned exception. will retry.")
-            retry(key, Throw(t), handler, retryPolicy, attempts :+ CheckAndSetException(t))
+          c-case thwow(t) =>
+            // count exception against wetwies
+            i-if (enabwekeywogging)
+              w-watewimitedwoggew.wogthwowabwe(
+                t-t, òωó
+                s-s"checkandset(${key}) wetuwned exception. nyaa~~ wiww wetwy.")
+            wetwy(key, ( ͡o ω ͡o ) thwow(t), 😳😳😳 handwew, wetwypowicy, ^•ﻌ•^ a-attempts :+ c-checkandsetexception(t))
         }
     }
   }
 }
 
-object NonLockingCacheFactory extends LockingCacheFactory {
-  override def apply[K, V](cache: Cache[K, V]): LockingCache[K, V] = new NonLockingCache(cache)
-  override def scope(scopes: String*) = this
+o-object nyonwockingcachefactowy extends w-wockingcachefactowy {
+  ovewwide d-def appwy[k, (˘ω˘) v-v](cache: cache[k, (˘ω˘) v]): wockingcache[k, -.- v-v] = n-nyew nyonwockingcache(cache)
+  ovewwide def scope(scopes: s-stwing*) = t-this
 }
 
-class NonLockingCache[K, V](override val underlyingCache: Cache[K, V])
-    extends LockingCache[K, V]
-    with CacheWrapper[K, V] {
-  override def lockAndSet(key: K, handler: LockingCache.Handler[V]): Future[Option[V]] = {
-    handler(None) match {
-      case None =>
-        // if nothing should be done when nothing's there, don't do anything
-        Future.value(None)
+cwass nyonwockingcache[k, ^•ﻌ•^ v](ovewwide v-vaw undewwyingcache: cache[k, /(^•ω•^) v])
+    extends w-wockingcache[k, (///ˬ///✿) v]
+    with cachewwappew[k, mya v] {
+  o-ovewwide def w-wockandset(key: k, o.O handwew: wockingcache.handwew[v]): f-futuwe[option[v]] = {
+    h-handwew(none) m-match {
+      case nyone =>
+        // i-if nyothing s-shouwd be done when nyothing's t-thewe, ^•ﻌ•^ don't do anything
+        f-futuwe.vawue(none)
 
-      case some @ Some(value) =>
-        set(key, value) map { _ =>
+      c-case s-some @ some(vawue) =>
+        set(key, (U ᵕ U❁) vawue) m-map { _ =>
           some
         }
     }

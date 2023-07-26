@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.subscribed.param
+package com.twittew.home_mixew.pwoduct.subscwibed.pawam
 
-import com.twitter.timelines.configapi.FSBoundedParam
+impowt com.twittew.timewines.configapi.fsboundedpawam
 
-object SubscribedParam {
-  val SupportedClientFSName = "subscribed_supported_client"
+object s-subscwibedpawam {
+  v-vaw suppowtedcwientfsname = "subscwibed_suppowted_cwient"
 
-  object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "subscribed_server_max_results",
-        default = 100,
-        min = 1,
-        max = 500
+  o-object sewvewmaxwesuwtspawam
+      e-extends f-fsboundedpawam[int](
+        name = "subscwibed_sewvew_max_wesuwts", (U ᵕ U❁)
+        defauwt = 100, (⑅˘꒳˘)
+        m-min = 1, ( ͡o ω ͡o )
+        m-max = 500
       )
 }

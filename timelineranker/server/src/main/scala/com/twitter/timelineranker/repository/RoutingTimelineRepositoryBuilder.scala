@@ -1,18 +1,18 @@
-package com.twitter.timelineranker.repository
+package com.twittew.timewinewankew.wepositowy
 
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.parameters.ConfigBuilder
+impowt c-com.twittew.timewinewankew.config.wuntimeconfiguwation
+i-impowt c-com.twittew.timewinewankew.pawametews.configbuiwdew
 
-object RoutingTimelineRepositoryBuilder {
-  def apply(
-    config: RuntimeConfiguration,
-    configBuilder: ConfigBuilder
-  ): RoutingTimelineRepository = {
+o-object woutingtimewinewepositowybuiwdew {
+  d-def appwy(
+    c-config: wuntimeconfiguwation, (U ﹏ U)
+    c-configbuiwdew: c-configbuiwdew
+  ): woutingtimewinewepositowy = {
 
-    val reverseChronTimelineRepository =
-      new ReverseChronHomeTimelineRepositoryBuilder(config, configBuilder).apply
-    val rankedTimelineRepository = new RankedHomeTimelineRepository
+    vaw wevewsechwontimewinewepositowy =
+      nyew wevewsechwonhometimewinewepositowybuiwdew(config, -.- configbuiwdew).appwy
+    v-vaw wankedtimewinewepositowy = nyew wankedhometimewinewepositowy
 
-    new RoutingTimelineRepository(reverseChronTimelineRepository, rankedTimelineRepository)
+    nyew w-woutingtimewinewepositowy(wevewsechwontimewinewepositowy, (ˆ ﻌ ˆ)♡ wankedtimewinewepositowy)
   }
 }

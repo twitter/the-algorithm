@@ -1,3818 +1,3818 @@
-package com.twitter.visibility.rules
+package com.twittew.visibiwity.wuwes
 
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.rules.ConversationControlRules._
-import com.twitter.visibility.rules.FollowerRelations.AuthorMutesViewerRule
-import com.twitter.visibility.rules.FollowerRelations.ProtectedViewerRule
-import com.twitter.visibility.rules.PolicyLevelRuleParams.ruleParams
-import com.twitter.visibility.rules.PublicInterestRules._
-import com.twitter.visibility.rules.SafeSearchTweetRules._
-import com.twitter.visibility.rules.SafeSearchUserRules.SafeSearchNsfwAvatarImageUserLabelRule
-import com.twitter.visibility.rules.SafeSearchUserRules._
-import com.twitter.visibility.rules.SpaceRules._
-import com.twitter.visibility.rules.ToxicityReplyFilterRules.ToxicityReplyFilterDropNotificationRule
-import com.twitter.visibility.rules.ToxicityReplyFilterRules.ToxicityReplyFilterRule
-import com.twitter.visibility.rules.UnsafeSearchTweetRules._
-import com.twitter.visibility.rules.UserUnavailableStateTombstoneRules._
+impowt com.twittew.visibiwity.configapi.pawams.wuwepawam
+i-impowt c-com.twittew.visibiwity.configapi.pawams.wuwepawams
+i-impowt com.twittew.visibiwity.modews.contentid
+i-impowt com.twittew.visibiwity.wuwes.convewsationcontwowwuwes._
+i-impowt com.twittew.visibiwity.wuwes.fowwowewwewations.authowmutesviewewwuwe
+i-impowt com.twittew.visibiwity.wuwes.fowwowewwewations.pwotectedviewewwuwe
+i-impowt c-com.twittew.visibiwity.wuwes.powicywevewwuwepawams.wuwepawams
+impowt com.twittew.visibiwity.wuwes.pubwicintewestwuwes._
+impowt com.twittew.visibiwity.wuwes.safeseawchtweetwuwes._
+impowt com.twittew.visibiwity.wuwes.safeseawchusewwuwes.safeseawchnsfwavatawimageusewwabewwuwe
+i-impowt com.twittew.visibiwity.wuwes.safeseawchusewwuwes._
+impowt com.twittew.visibiwity.wuwes.spacewuwes._
+impowt com.twittew.visibiwity.wuwes.toxicitywepwyfiwtewwuwes.toxicitywepwyfiwtewdwopnotificationwuwe
+i-impowt com.twittew.visibiwity.wuwes.toxicitywepwyfiwtewwuwes.toxicitywepwyfiwtewwuwe
+impowt c-com.twittew.visibiwity.wuwes.unsafeseawchtweetwuwes._
+impowt com.twittew.visibiwity.wuwes.usewunavaiwabwestatetombstonewuwes._
 
-abstract class VisibilityPolicy(
-  val tweetRules: Seq[Rule] = Nil,
-  val userRules: Seq[Rule] = Nil,
-  val cardRules: Seq[Rule] = Nil,
-  val quotedTweetRules: Seq[Rule] = Nil,
-  val dmRules: Seq[Rule] = Nil,
-  val dmConversationRules: Seq[Rule] = Nil,
-  val dmEventRules: Seq[Rule] = Nil,
-  val spaceRules: Seq[Rule] = Nil,
-  val userUnavailableStateRules: Seq[Rule] = Nil,
-  val twitterArticleRules: Seq[Rule] = Nil,
-  val deletedTweetRules: Seq[Rule] = Nil,
-  val mediaRules: Seq[Rule] = Nil,
-  val communityRules: Seq[Rule] = Nil,
-  val policyRuleParams: Map[Rule, PolicyLevelRuleParams] = Map.empty) {
+abstwact cwass visibiwitypowicy(
+  v-vaw tweetwuwes: seq[wuwe] = n-nyiw,
+  vaw usewwuwes: s-seq[wuwe] = nyiw, >_<
+  vaw cawdwuwes: seq[wuwe] = nyiw, (⑅˘꒳˘)
+  vaw quotedtweetwuwes: s-seq[wuwe] = nyiw, >w<
+  vaw dmwuwes: seq[wuwe] = nyiw, (///ˬ///✿)
+  vaw dmconvewsationwuwes: seq[wuwe] = nyiw, ^•ﻌ•^
+  v-vaw dmeventwuwes: seq[wuwe] = n-nyiw, (✿oωo)
+  vaw s-spacewuwes: seq[wuwe] = n-nyiw, ʘwʘ
+  v-vaw usewunavaiwabwestatewuwes: seq[wuwe] = nyiw, >w<
+  vaw twittewawticwewuwes: s-seq[wuwe] = niw, :3
+  vaw dewetedtweetwuwes: s-seq[wuwe] = nyiw, (ˆ ﻌ ˆ)♡
+  vaw mediawuwes: seq[wuwe] = nyiw, -.-
+  vaw communitywuwes: seq[wuwe] = nyiw,
+  v-vaw powicywuwepawams: map[wuwe, rawr p-powicywevewwuwepawams] = map.empty) {
 
-  def forContentId(contentId: ContentId): Seq[Rule] =
-    contentId match {
-      case ContentId.TweetId(_) => tweetRules
-      case ContentId.UserId(_) => userRules
-      case ContentId.CardId(_) => cardRules
-      case ContentId.QuotedTweetRelationship(_, _) => quotedTweetRules
-      case ContentId.NotificationId(_) => userRules
-      case ContentId.DmId(_) => dmRules
-      case ContentId.BlenderTweetId(_) => userRules ++ tweetRules
-      case ContentId.SpaceId(_) => spaceRules
-      case ContentId.SpacePlusUserId(_) => spaceRules ++ userRules
-      case ContentId.DmConversationId(_) => dmConversationRules
-      case ContentId.DmEventId(_) => dmEventRules
-      case ContentId.UserUnavailableState(_) => userUnavailableStateRules
-      case ContentId.TwitterArticleId(_) => twitterArticleRules
-      case ContentId.DeleteTweetId(_) => deletedTweetRules
-      case ContentId.MediaId(_) => mediaRules
-      case ContentId.CommunityId(_) => communityRules
+  def f-fowcontentid(contentid: c-contentid): seq[wuwe] =
+    contentid match {
+      case c-contentid.tweetid(_) => t-tweetwuwes
+      case c-contentid.usewid(_) => u-usewwuwes
+      case contentid.cawdid(_) => c-cawdwuwes
+      case contentid.quotedtweetwewationship(_, rawr x3 _) => q-quotedtweetwuwes
+      case contentid.notificationid(_) => u-usewwuwes
+      case contentid.dmid(_) => d-dmwuwes
+      case contentid.bwendewtweetid(_) => u-usewwuwes ++ t-tweetwuwes
+      case contentid.spaceid(_) => spacewuwes
+      case contentid.spacepwususewid(_) => spacewuwes ++ usewwuwes
+      case c-contentid.dmconvewsationid(_) => d-dmconvewsationwuwes
+      case c-contentid.dmeventid(_) => d-dmeventwuwes
+      c-case contentid.usewunavaiwabwestate(_) => usewunavaiwabwestatewuwes
+      case contentid.twittewawticweid(_) => t-twittewawticwewuwes
+      case contentid.dewetetweetid(_) => dewetedtweetwuwes
+      case contentid.mediaid(_) => mediawuwes
+      case contentid.communityid(_) => c-communitywuwes
     }
 
-  private[visibility] def allRules: Seq[Rule] =
-    (tweetRules ++ userRules ++ cardRules ++ quotedTweetRules ++ dmRules ++ spaceRules ++ dmConversationRules ++ dmEventRules ++ twitterArticleRules ++ deletedTweetRules ++ mediaRules ++ communityRules)
+  pwivate[visibiwity] d-def a-awwwuwes: seq[wuwe] =
+    (tweetwuwes ++ u-usewwuwes ++ cawdwuwes ++ q-quotedtweetwuwes ++ d-dmwuwes ++ s-spacewuwes ++ d-dmconvewsationwuwes ++ dmeventwuwes ++ twittewawticwewuwes ++ dewetedtweetwuwes ++ m-mediawuwes ++ c-communitywuwes)
 }
 
-object VisibilityPolicy {
-  val baseTweetRules = Seq(
-    DropCommunityTweetsRule,
-    DropCommunityTweetCommunityNotVisibleRule,
-    DropProtectedCommunityTweetsRule,
-    DropHiddenCommunityTweetsRule,
-    DropAuthorRemovedCommunityTweetsRule,
-    SpamTweetLabelRule,
-    PdnaTweetLabelRule,
-    BounceTweetLabelRule,
-    DropExclusiveTweetContentRule,
-    DropTrustedFriendsTweetContentRule
+o-object visibiwitypowicy {
+  v-vaw basetweetwuwes = s-seq(
+    dwopcommunitytweetswuwe, (U ﹏ U)
+    dwopcommunitytweetcommunitynotvisibwewuwe, (ˆ ﻌ ˆ)♡
+    dwoppwotectedcommunitytweetswuwe, :3
+    dwophiddencommunitytweetswuwe, òωó
+    d-dwopauthowwemovedcommunitytweetswuwe, /(^•ω•^)
+    spamtweetwabewwuwe, >w<
+    pdnatweetwabewwuwe, nyaa~~
+    bouncetweetwabewwuwe, mya
+    dwopexcwusivetweetcontentwuwe, mya
+    dwoptwustedfwiendstweetcontentwuwe
   )
 
-  val baseTweetTombstoneRules = Seq(
-    TombstoneCommunityTweetsRule,
-    TombstoneCommunityTweetCommunityNotVisibleRule,
-    TombstoneProtectedCommunityTweetsRule,
-    TombstoneHiddenCommunityTweetsRule,
-    TombstoneAuthorRemovedCommunityTweetsRule,
-    SpamTweetLabelTombstoneRule,
-    PdnaTweetLabelTombstoneRule,
-    BounceTweetLabelTombstoneRule,
-    TombstoneExclusiveTweetContentRule,
-    TombstoneTrustedFriendsTweetContentRule,
+  v-vaw basetweettombstonewuwes = seq(
+    tombstonecommunitytweetswuwe, ʘwʘ
+    tombstonecommunitytweetcommunitynotvisibwewuwe,
+    tombstonepwotectedcommunitytweetswuwe, rawr
+    t-tombstonehiddencommunitytweetswuwe, (˘ω˘)
+    t-tombstoneauthowwemovedcommunitytweetswuwe, /(^•ω•^)
+    s-spamtweetwabewtombstonewuwe, (˘ω˘)
+    pdnatweetwabewtombstonewuwe, (///ˬ///✿)
+    b-bouncetweetwabewtombstonewuwe, (˘ω˘)
+    tombstoneexcwusivetweetcontentwuwe, -.-
+    t-tombstonetwustedfwiendstweetcontentwuwe, -.-
   )
 
-  val baseMediaRules = Seq(
+  v-vaw basemediawuwes = seq(
   )
 
-  val baseQuotedTweetTombstoneRules = Seq(
-    BounceQuotedTweetTombstoneRule
+  vaw basequotedtweettombstonewuwes = seq(
+    bouncequotedtweettombstonewuwe
   )
 
-  def union[T](rules: Seq[Rule]*): Seq[Rule] = {
-    if (rules.isEmpty) {
-      Seq.empty[Rule]
-    } else {
-      rules.reduce((a, b) => a ++ b.filterNot(a.contains))
+  def union[t](wuwes: seq[wuwe]*): s-seq[wuwe] = {
+    if (wuwes.isempty) {
+      s-seq.empty[wuwe]
+    } ewse {
+      w-wuwes.weduce((a, ^^ b-b) => a ++ b.fiwtewnot(a.contains))
     }
   }
 }
 
-case class PolicyLevelRuleParams(
-  ruleParams: Seq[RuleParam[Boolean]],
-  force: Boolean = false) {}
+case cwass p-powicywevewwuwepawams(
+  w-wuwepawams: seq[wuwepawam[boowean]], (ˆ ﻌ ˆ)♡
+  f-fowce: boowean = f-fawse) {}
 
-object PolicyLevelRuleParams {
-  def ruleParams(ruleParams: RuleParam[Boolean]*): PolicyLevelRuleParams = {
-    PolicyLevelRuleParams(ruleParams)
+object powicywevewwuwepawams {
+  def wuwepawams(wuwepawams: wuwepawam[boowean]*): powicywevewwuwepawams = {
+    powicywevewwuwepawams(wuwepawams)
   }
 
-  def ruleParams(force: Boolean, ruleParams: RuleParam[Boolean]*): PolicyLevelRuleParams = {
-    PolicyLevelRuleParams(ruleParams, force)
+  d-def wuwepawams(fowce: b-boowean, UwU w-wuwepawams: wuwepawam[boowean]*): p-powicywevewwuwepawams = {
+    p-powicywevewwuwepawams(wuwepawams, 🥺 fowce)
   }
 }
 
-case object FilterAllPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropAllRule),
-      userRules = Seq(DropAllRule),
-      cardRules = Seq(DropAllRule),
-      quotedTweetRules = Seq(DropAllRule),
-      dmRules = Seq(DropAllRule),
-      dmConversationRules = Seq(DropAllRule),
-      dmEventRules = Seq(DropAllRule),
-      spaceRules = Seq(DropAllRule),
-      userUnavailableStateRules = Seq(DropAllRule),
-      twitterArticleRules = Seq(DropAllRule),
-      deletedTweetRules = Seq(DropAllRule),
-      mediaRules = Seq(DropAllRule),
-      communityRules = Seq(DropAllRule),
+c-case object fiwtewawwpowicy
+    extends visibiwitypowicy(
+      tweetwuwes = seq(dwopawwwuwe),
+      u-usewwuwes = s-seq(dwopawwwuwe), 🥺
+      cawdwuwes = seq(dwopawwwuwe), 🥺
+      quotedtweetwuwes = s-seq(dwopawwwuwe), 🥺
+      dmwuwes = s-seq(dwopawwwuwe), :3
+      dmconvewsationwuwes = seq(dwopawwwuwe), (˘ω˘)
+      dmeventwuwes = seq(dwopawwwuwe), ^^;;
+      s-spacewuwes = seq(dwopawwwuwe), (ꈍᴗꈍ)
+      usewunavaiwabwestatewuwes = seq(dwopawwwuwe), ʘwʘ
+      twittewawticwewuwes = seq(dwopawwwuwe), :3
+      d-dewetedtweetwuwes = seq(dwopawwwuwe), XD
+      mediawuwes = s-seq(dwopawwwuwe),
+      c-communitywuwes = seq(dwopawwwuwe), UwU
     )
 
-case object FilterNonePolicy extends VisibilityPolicy()
+case object fiwtewnonepowicy extends visibiwitypowicy()
 
-object ConversationsAdAvoidanceRules {
-  val tweetRules = Seq(
-    NsfwHighRecallTweetLabelAvoidRule,
-    NsfwHighPrecisionTweetLabelAvoidRule,
-    NsfwTextTweetLabelAvoidRule,
-    AvoidHighToxicityModelScoreRule,
-    AvoidReportedTweetModelScoreRule,
-    NsfwHighPrecisionUserLabelAvoidTweetRule,
-    TweetNsfwUserAdminAvoidRule,
-    DoNotAmplifyTweetLabelAvoidRule,
-    NsfaHighPrecisionTweetLabelAvoidRule,
+o-object convewsationsadavoidancewuwes {
+  v-vaw tweetwuwes = seq(
+    nysfwhighwecawwtweetwabewavoidwuwe, rawr x3
+    nsfwhighpwecisiontweetwabewavoidwuwe,
+    n-nysfwtexttweetwabewavoidwuwe, ( ͡o ω ͡o )
+    avoidhightoxicitymodewscowewuwe, :3
+    a-avoidwepowtedtweetmodewscowewuwe, rawr
+    nysfwhighpwecisionusewwabewavoidtweetwuwe,
+    tweetnsfwusewadminavoidwuwe, ^•ﻌ•^
+    donotampwifytweetwabewavoidwuwe, 🥺
+    n-nysfahighpwecisiontweetwabewavoidwuwe, (⑅˘꒳˘)
   )
 
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighRecallTweetLabelAvoidRule -> ruleParams(
-      RuleParams.EnableNewAdAvoidanceRulesParam
-    ),
-    NsfwHighPrecisionTweetLabelAvoidRule -> ruleParams(
-      RuleParams.EnableNewAdAvoidanceRulesParam
-    ),
-    NsfwTextTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    AvoidHighToxicityModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    AvoidReportedTweetModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    NsfwHighPrecisionUserLabelAvoidTweetRule -> ruleParams(
-      RuleParams.EnableNewAdAvoidanceRulesParam),
-    TweetNsfwUserAdminAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    DoNotAmplifyTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    NsfaHighPrecisionTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
+  vaw powicywuwepawams = m-map[wuwe, :3 p-powicywevewwuwepawams](
+    nysfwhighwecawwtweetwabewavoidwuwe -> w-wuwepawams(
+      wuwepawams.enabwenewadavoidancewuwespawam
+    ), (///ˬ///✿)
+    n-nsfwhighpwecisiontweetwabewavoidwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwenewadavoidancewuwespawam
+    ), 😳😳😳
+    nysfwtexttweetwabewavoidwuwe -> wuwepawams(wuwepawams.enabwenewadavoidancewuwespawam), 😳😳😳
+    avoidhightoxicitymodewscowewuwe -> w-wuwepawams(wuwepawams.enabwenewadavoidancewuwespawam), 😳😳😳
+    a-avoidwepowtedtweetmodewscowewuwe -> wuwepawams(wuwepawams.enabwenewadavoidancewuwespawam), nyaa~~
+    nysfwhighpwecisionusewwabewavoidtweetwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwenewadavoidancewuwespawam), UwU
+    t-tweetnsfwusewadminavoidwuwe -> wuwepawams(wuwepawams.enabwenewadavoidancewuwespawam), òωó
+    donotampwifytweetwabewavoidwuwe -> w-wuwepawams(wuwepawams.enabwenewadavoidancewuwespawam), òωó
+    nysfahighpwecisiontweetwabewavoidwuwe -> w-wuwepawams(wuwepawams.enabwenewadavoidancewuwespawam), UwU
   )
 }
 
-case object FilterDefaultPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule
+c-case object fiwtewdefauwtpowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++
+        s-seq(
+          n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, (///ˬ///✿)
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, ( ͡o ω ͡o )
+          n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, rawr
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, :3
+          nysfwcawdimageawwusewstweetwabewwuwe
         )
     )
 
-case object LimitedEngagementBaseRules
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        StaleTweetLimitedActionsRule,
-        LimitRepliesByInvitationConversationRule,
-        LimitRepliesCommunityConversationRule,
-        LimitRepliesFollowersConversationRule,
-        CommunityTweetCommunityNotFoundLimitedActionsRule,
-        CommunityTweetCommunityDeletedLimitedActionsRule,
-        CommunityTweetCommunitySuspendedLimitedActionsRule,
-        CommunityTweetMemberRemovedLimitedActionsRule,
-        CommunityTweetHiddenLimitedActionsRule,
-        CommunityTweetMemberLimitedActionsRule,
-        CommunityTweetNonMemberLimitedActionsRule,
-        DynamicProductAdLimitedEngagementTweetLabelRule,
-        TrustedFriendsTweetLimitedEngagementsRule
+case object wimitedengagementbasewuwes
+    extends visibiwitypowicy(
+      t-tweetwuwes = seq(
+        s-stawetweetwimitedactionswuwe, >w<
+        wimitwepwiesbyinvitationconvewsationwuwe, σωσ
+        w-wimitwepwiescommunityconvewsationwuwe, σωσ
+        wimitwepwiesfowwowewsconvewsationwuwe, >_<
+        c-communitytweetcommunitynotfoundwimitedactionswuwe,
+        communitytweetcommunitydewetedwimitedactionswuwe, -.-
+        c-communitytweetcommunitysuspendedwimitedactionswuwe, 😳😳😳
+        c-communitytweetmembewwemovedwimitedactionswuwe, :3
+        c-communitytweethiddenwimitedactionswuwe, mya
+        c-communitytweetmembewwimitedactionswuwe, (✿oωo)
+        c-communitytweetnonmembewwimitedactionswuwe, 😳😳😳
+        dynamicpwoductadwimitedengagementtweetwabewwuwe, o.O
+        twustedfwiendstweetwimitedengagementswuwe
       )
     )
 
-case object WritePathLimitedActionsEnforcementPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule
+case object wwitepathwimitedactionsenfowcementpowicy
+    extends visibiwitypowicy(
+      tweetwuwes = seq(
+        abusepowicyepisodictweetwabewintewstitiawwuwe, (ꈍᴗꈍ)
+        e-emewgencydynamicintewstitiawwuwe
       ) ++
-        LimitedEngagementBaseRules.tweetRules
+        w-wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object TestPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        TestRule
+c-case object testpowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes = seq(
+        testwuwe
       )
     )
 
-case object CardsServicePolicy
-    extends VisibilityPolicy(
-      cardRules = Seq(
-        DropProtectedAuthorPollCardRule,
-        DropCardUriRootDomainDenylistRule
-      ),
-      spaceRules = Seq(
-        SpaceHighToxicityScoreNonFollowerDropRule,
-        SpaceHatefulHighRecallAllUsersDropRule,
-        SpaceViolenceHighRecallAllUsersDropRule,
-        ViewerIsSoftUserDropRule
-      ),
+c-case object cawdssewvicepowicy
+    e-extends visibiwitypowicy(
+      cawdwuwes = seq(
+        d-dwoppwotectedauthowpowwcawdwuwe, (ˆ ﻌ ˆ)♡
+        dwopcawduwiwootdomaindenywistwuwe
+      ), -.-
+      spacewuwes = s-seq(
+        s-spacehightoxicityscowenonfowwowewdwopwuwe, mya
+        spacehatefuwhighwecawwawwusewsdwopwuwe, :3
+        s-spaceviowencehighwecawwawwusewsdwopwuwe, σωσ
+        v-viewewissoftusewdwopwuwe
+      ), 😳😳😳
     )
 
-case object CardPollVotingPolicy
-    extends VisibilityPolicy(
-      cardRules = Seq(
-        DropProtectedAuthorPollCardRule,
-        DropCommunityNonMemberPollCardRule
+case object cawdpowwvotingpowicy
+    extends visibiwitypowicy(
+      cawdwuwes = seq(
+        d-dwoppwotectedauthowpowwcawdwuwe,
+        d-dwopcommunitynonmembewpowwcawdwuwe
       )
     )
 
-case object UserTimelineRules {
-  val UserRules = Seq(
-    AuthorBlocksViewerDropRule,
-    ProtectedAuthorDropRule,
-    SuspendedAuthorRule
+c-case object u-usewtimewinewuwes {
+  v-vaw usewwuwes = seq(
+    a-authowbwocksviewewdwopwuwe, -.-
+    p-pwotectedauthowdwopwuwe, 😳😳😳
+    suspendedauthowwuwe
   )
 }
 
-case object TimelineLikedByRules {
-  val UserRules = Seq(
-    CompromisedNonFollowerWithUqfRule,
-    EngagementSpammerNonFollowerWithUqfRule,
-    LowQualityNonFollowerWithUqfRule,
-    ReadOnlyNonFollowerWithUqfRule,
-    SpamHighRecallNonFollowerWithUqfRule
+c-case object t-timewinewikedbywuwes {
+  vaw u-usewwuwes = seq(
+    compwomisednonfowwowewwithuqfwuwe,
+    engagementspammewnonfowwowewwithuqfwuwe, rawr x3
+    w-wowquawitynonfowwowewwithuqfwuwe, (///ˬ///✿)
+    weadonwynonfowwowewwithuqfwuwe, >w<
+    s-spamhighwecawwnonfowwowewwithuqfwuwe
   )
 }
 
-case object FollowingAndFollowersUserListPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+c-case object fowwowingandfowwowewsusewwistpowicy
+    extends visibiwitypowicy(
+      u-usewwuwes = usewtimewinewuwes.usewwuwes
     )
 
-case object FriendsFollowingListPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+case object f-fwiendsfowwowingwistpowicy
+    extends v-visibiwitypowicy(
+      usewwuwes = u-usewtimewinewuwes.usewwuwes
     )
 
-case object ListOwnershipsPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+case object wistownewshipspowicy
+    extends visibiwitypowicy(
+      u-usewwuwes = usewtimewinewuwes.usewwuwes
     )
 
-case object ListRecommendationsPolicy
-    extends VisibilityPolicy(
-      userRules = RecommendationsPolicy.userRules ++ Seq(
-        DropNsfwUserAuthorRule,
-        NsfwHighRecallRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        ViewerBlocksAuthorRule,
-        ViewerMutesAuthorRule
+case object wistwecommendationspowicy
+    extends v-visibiwitypowicy(
+      u-usewwuwes = wecommendationspowicy.usewwuwes ++ s-seq(
+        dwopnsfwusewauthowwuwe, o.O
+        n-nysfwhighwecawwwuwe, (˘ω˘)
+        s-seawchbwackwistwuwe, rawr
+        seawchnsfwtextwuwe, mya
+        viewewbwocksauthowwuwe, òωó
+        v-viewewmutesauthowwuwe
       )
     )
 
-case object ListSearchBaseRules {
+case object wistseawchbasewuwes {
 
-  val NonExperimentalSafeSearchMinimalPolicyUserRules: Seq[Rule] =
-    SafeSearchMinimalPolicy.userRules.filterNot(_.isExperimental)
+  vaw nyonexpewimentawsafeseawchminimawpowicyusewwuwes: s-seq[wuwe] =
+    s-safeseawchminimawpowicy.usewwuwes.fiwtewnot(_.isexpewimentaw)
 
-  val MinimalPolicyUserRules: Seq[Rule] = NonExperimentalSafeSearchMinimalPolicyUserRules
+  vaw minimawpowicyusewwuwes: s-seq[wuwe] = nyonexpewimentawsafeseawchminimawpowicyusewwuwes
 
-  val BlockMutePolicyUserRules = Seq(
-    ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-    ViewerMutesAuthorViewerOptInBlockingOnSearchRule
+  v-vaw bwockmutepowicyusewwuwes = s-seq(
+    v-viewewbwocksauthowviewewoptinbwockingonseawchwuwe, nyaa~~
+    viewewmutesauthowviewewoptinbwockingonseawchwuwe
   )
 
-  val StrictPolicyUserRules = Seq(
-    SafeSearchAbusiveUserLabelRule,
-    SafeSearchAbusiveHighRecallUserLabelRule,
-    SafeSearchCompromisedUserLabelRule,
-    SafeSearchDoNotAmplifyNonFollowersUserLabelRule,
-    SafeSearchDuplicateContentUserLabelRule,
-    SafeSearchLowQualityUserLabelRule,
-    SafeSearchNotGraduatedNonFollowersUserLabelRule,
-    SafeSearchNsfwHighPrecisionUserLabelRule,
-    SafeSearchNsfwAvatarImageUserLabelRule,
-    SafeSearchNsfwBannerImageUserLabelRule,
-    SafeSearchReadOnlyUserLabelRule,
-    SafeSearchSearchBlacklistUserLabelRule,
-    SafeSearchNsfwTextUserLabelRule,
-    SafeSearchSpamHighRecallUserLabelRule,
-    SafeSearchDownrankSpamReplyAuthorLabelRule,
-    SafeSearchNsfwTextAuthorLabelRule,
-    DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-    DropNsfwUserAuthorViewerOptInFilteringOnSearchRule,
-  )
-}
-
-object SensitiveMediaSettingsTimelineHomeBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam)
+  vaw stwictpowicyusewwuwes = seq(
+    safeseawchabusiveusewwabewwuwe, òωó
+    safeseawchabusivehighwecawwusewwabewwuwe, mya
+    safeseawchcompwomisedusewwabewwuwe, ^^
+    safeseawchdonotampwifynonfowwowewsusewwabewwuwe,
+    safeseawchdupwicatecontentusewwabewwuwe, ^•ﻌ•^
+    safeseawchwowquawityusewwabewwuwe, -.-
+    safeseawchnotgwaduatednonfowwowewsusewwabewwuwe, UwU
+    safeseawchnsfwhighpwecisionusewwabewwuwe, (˘ω˘)
+    safeseawchnsfwavatawimageusewwabewwuwe, UwU
+    safeseawchnsfwbannewimageusewwabewwuwe, rawr
+    s-safeseawchweadonwyusewwabewwuwe, :3
+    s-safeseawchseawchbwackwistusewwabewwuwe, nyaa~~
+    safeseawchnsfwtextusewwabewwuwe, rawr
+    safeseawchspamhighwecawwusewwabewwuwe, (ˆ ﻌ ˆ)♡
+    s-safeseawchdownwankspamwepwyauthowwabewwuwe, (ꈍᴗꈍ)
+    s-safeseawchnsfwtextauthowwabewwuwe, (˘ω˘)
+    d-dwopnsfwadminauthowviewewoptinfiwtewingonseawchwuwe, (U ﹏ U)
+    dwopnsfwusewauthowviewewoptinfiwtewingonseawchwuwe, >w<
   )
 }
 
-object SensitiveMediaSettingsConversationBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam)
+o-object sensitivemediasettingstimewinehomebasewuwes {
+  vaw powicywuwepawams = map[wuwe, UwU p-powicywevewwuwepawams](
+    n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe -> wuwepawams(
+      wuwepawams.enabwewegacysensitivemediahometimewinewuwespawam), (ˆ ﻌ ˆ)♡
+    g-goweandviowencehighpwecisionawwusewstweetwabewwuwe -> wuwepawams(
+      w-wuwepawams.enabwewegacysensitivemediahometimewinewuwespawam), nyaa~~
+    n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe -> wuwepawams(
+      wuwepawams.enabwewegacysensitivemediahometimewinewuwespawam),
+    g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwewegacysensitivemediahometimewinewuwespawam), 🥺
+    nysfwcawdimageawwusewstweetwabewwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwewegacysensitivemediahometimewinewuwespawam), >_<
+    s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawshometimewinewuwespawam), òωó
+    sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe -> w-wuwepawams(
+      wuwepawams.enabwenewsensitivemediasettingsintewstitiawshometimewinewuwespawam), ʘwʘ
+    s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawshometimewinewuwespawam), mya
+    sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe -> wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawshometimewinewuwespawam), σωσ
+    sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe -> wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawshometimewinewuwespawam), OwO
+    sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawshometimewinewuwespawam), (✿oωo)
+    s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe -> wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawshometimewinewuwespawam)
   )
 }
 
-object SensitiveMediaSettingsProfileTimelineBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam)
+object sensitivemediasettingsconvewsationbasewuwes {
+  v-vaw powicywuwepawams = map[wuwe, ʘwʘ powicywevewwuwepawams](
+    n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe -> wuwepawams(
+      w-wuwepawams.enabwewegacysensitivemediaconvewsationwuwespawam), mya
+    goweandviowencehighpwecisionawwusewstweetwabewwuwe -> wuwepawams(
+      wuwepawams.enabwewegacysensitivemediaconvewsationwuwespawam), -.-
+    nysfwwepowtedheuwisticsawwusewstweetwabewwuwe -> wuwepawams(
+      w-wuwepawams.enabwewegacysensitivemediaconvewsationwuwespawam), -.-
+    goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwewegacysensitivemediaconvewsationwuwespawam), ^^;;
+    nysfwcawdimageawwusewstweetwabewwuwe -> wuwepawams(
+      wuwepawams.enabwewegacysensitivemediaconvewsationwuwespawam), (ꈍᴗꈍ)
+    s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe -> wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawsconvewsationwuwespawam), rawr
+    s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe -> w-wuwepawams(
+      wuwepawams.enabwenewsensitivemediasettingsintewstitiawsconvewsationwuwespawam), ^^
+    sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawsconvewsationwuwespawam), nyaa~~
+    sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe -> w-wuwepawams(
+      wuwepawams.enabwenewsensitivemediasettingsintewstitiawsconvewsationwuwespawam), (⑅˘꒳˘)
+    sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe -> w-wuwepawams(
+      wuwepawams.enabwenewsensitivemediasettingsintewstitiawsconvewsationwuwespawam), (U ᵕ U❁)
+    s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawsconvewsationwuwespawam), (ꈍᴗꈍ)
+    sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe -> wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawsconvewsationwuwespawam)
   )
 }
 
-object SensitiveMediaSettingsTweetDetailBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam)
+o-object sensitivemediasettingspwofiwetimewinebasewuwes {
+  v-vaw powicywuwepawams = m-map[wuwe, (✿oωo) powicywevewwuwepawams](
+    n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwewegacysensitivemediapwofiwetimewinewuwespawam), UwU
+    g-goweandviowencehighpwecisionawwusewstweetwabewwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwewegacysensitivemediapwofiwetimewinewuwespawam), ^^
+    n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe -> w-wuwepawams(
+      wuwepawams.enabwewegacysensitivemediapwofiwetimewinewuwespawam),
+    g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe -> wuwepawams(
+      wuwepawams.enabwewegacysensitivemediapwofiwetimewinewuwespawam), :3
+    n-nysfwcawdimageawwusewstweetwabewwuwe -> wuwepawams(
+      w-wuwepawams.enabwewegacysensitivemediapwofiwetimewinewuwespawam), ( ͡o ω ͡o )
+    s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe -> w-wuwepawams(
+      wuwepawams.enabwenewsensitivemediasettingsintewstitiawspwofiwetimewinewuwespawam), ( ͡o ω ͡o )
+    sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe -> wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawspwofiwetimewinewuwespawam), (U ﹏ U)
+    s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe -> w-wuwepawams(
+      wuwepawams.enabwenewsensitivemediasettingsintewstitiawspwofiwetimewinewuwespawam), -.-
+    sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe -> wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawspwofiwetimewinewuwespawam), 😳😳😳
+    sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe -> w-wuwepawams(
+      wuwepawams.enabwenewsensitivemediasettingsintewstitiawspwofiwetimewinewuwespawam), UwU
+    s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe -> wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawspwofiwetimewinewuwespawam), >w<
+    sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe -> wuwepawams(
+      wuwepawams.enabwenewsensitivemediasettingsintewstitiawspwofiwetimewinewuwespawam)
   )
 }
 
-case object ListSearchPolicy
-    extends VisibilityPolicy(
-      userRules = ListSearchBaseRules.MinimalPolicyUserRules ++
-        ListSearchBaseRules.BlockMutePolicyUserRules ++
-        ListSearchBaseRules.StrictPolicyUserRules
+o-object sensitivemediasettingstweetdetaiwbasewuwes {
+  v-vaw powicywuwepawams = m-map[wuwe, mya p-powicywevewwuwepawams](
+    nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe -> wuwepawams(
+      w-wuwepawams.enabwewegacysensitivemediatweetdetaiwwuwespawam), :3
+    goweandviowencehighpwecisionawwusewstweetwabewwuwe -> w-wuwepawams(
+      wuwepawams.enabwewegacysensitivemediatweetdetaiwwuwespawam), (ˆ ﻌ ˆ)♡
+    nysfwwepowtedheuwisticsawwusewstweetwabewwuwe -> w-wuwepawams(
+      wuwepawams.enabwewegacysensitivemediatweetdetaiwwuwespawam),
+    goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe -> w-wuwepawams(
+      wuwepawams.enabwewegacysensitivemediatweetdetaiwwuwespawam),
+    n-nysfwcawdimageawwusewstweetwabewwuwe -> w-wuwepawams(
+      wuwepawams.enabwewegacysensitivemediatweetdetaiwwuwespawam), (U ﹏ U)
+    s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe -> w-wuwepawams(
+      wuwepawams.enabwenewsensitivemediasettingsintewstitiawstweetdetaiwwuwespawam), ʘwʘ
+    s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe -> wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawstweetdetaiwwuwespawam),
+    s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawstweetdetaiwwuwespawam), rawr
+    sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawstweetdetaiwwuwespawam), (ꈍᴗꈍ)
+    s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe -> wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawstweetdetaiwwuwespawam),
+    sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe -> wuwepawams(
+      wuwepawams.enabwenewsensitivemediasettingsintewstitiawstweetdetaiwwuwespawam), ( ͡o ω ͡o )
+    s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe -> w-wuwepawams(
+      w-wuwepawams.enabwenewsensitivemediasettingsintewstitiawstweetdetaiwwuwespawam)
+  )
+}
+
+case object wistseawchpowicy
+    extends visibiwitypowicy(
+      u-usewwuwes = wistseawchbasewuwes.minimawpowicyusewwuwes ++
+        w-wistseawchbasewuwes.bwockmutepowicyusewwuwes ++
+        w-wistseawchbasewuwes.stwictpowicyusewwuwes
     )
 
-case object ListSubscriptionsPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+case object wistsubscwiptionspowicy
+    extends v-visibiwitypowicy(
+      usewwuwes = u-usewtimewinewuwes.usewwuwes
     )
 
-case object ListMembershipsPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+c-case object w-wistmembewshipspowicy
+    e-extends visibiwitypowicy(
+      u-usewwuwes = usewtimewinewuwes.usewwuwes
     )
 
-case object AllSubscribedListsPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+case object awwsubscwibedwistspowicy
+    extends visibiwitypowicy(
+      usewwuwes = u-usewtimewinewuwes.usewwuwes
     )
 
-case object ListHeaderPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule
+case object w-wistheadewpowicy
+    extends visibiwitypowicy(
+      usewwuwes = s-seq(
+        authowbwocksviewewdwopwuwe, 😳😳😳
+        pwotectedauthowdwopwuwe,
+        suspendedauthowwuwe
       )
     )
 
-case object NewUserExperiencePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfaHighRecallTweetLabelRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        GoreAndViolenceTweetLabelRule,
-        UntrustedUrlTweetLabelRule,
-        DownrankSpamReplyTweetLabelRule,
-        SearchBlacklistTweetLabelRule,
-        AutomationTweetLabelRule,
-        DuplicateMentionTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SmyteSpamTweetLabelDropRule,
-      ),
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule
+case object n-newusewexpewiencepowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++ s-seq(
+        abusivetweetwabewwuwe, òωó
+        wowquawitytweetwabewdwopwuwe, mya
+        nysfahighwecawwtweetwabewwuwe, rawr x3
+        n-nysfwhighpwecisiontweetwabewwuwe, XD
+        g-goweandviowencehighpwecisiontweetwabewwuwe, (ˆ ﻌ ˆ)♡
+        nysfwwepowtedheuwisticstweetwabewwuwe, >w<
+        g-goweandviowencewepowtedheuwisticstweetwabewwuwe, (ꈍᴗꈍ)
+        nysfwcawdimagetweetwabewwuwe, (U ﹏ U)
+        n-nysfwhighwecawwtweetwabewwuwe, >_<
+        nysfwvideotweetwabewdwopwuwe, >_<
+        nysfwtexttweetwabewdwopwuwe,
+        spamhighwecawwtweetwabewdwopwuwe, -.-
+        d-dupwicatecontenttweetwabewdwopwuwe, òωó
+        goweandviowencetweetwabewwuwe, o.O
+        untwusteduwwtweetwabewwuwe, σωσ
+        d-downwankspamwepwytweetwabewwuwe, σωσ
+        s-seawchbwackwisttweetwabewwuwe, mya
+        a-automationtweetwabewwuwe, o.O
+        dupwicatementiontweetwabewwuwe, XD
+        bystandewabusivetweetwabewwuwe, XD
+        s-safetycwisiswevew3dwopwuwe, (✿oωo)
+        safetycwisiswevew4dwopwuwe, -.-
+        donotampwifydwopwuwe, (ꈍᴗꈍ)
+        smytespamtweetwabewdwopwuwe, ( ͡o ω ͡o )
+      ), (///ˬ///✿)
+      usewwuwes = seq(
+        a-abusivewuwe, 🥺
+        w-wowquawitywuwe, (ˆ ﻌ ˆ)♡
+        w-weadonwywuwe, ^•ﻌ•^
+        s-seawchbwackwistwuwe,
+        seawchnsfwtextwuwe, rawr x3
+        compwomisedwuwe, (U ﹏ U)
+        s-spamhighwecawwwuwe, OwO
+        d-dupwicatecontentwuwe, (✿oωo)
+        nysfwhighpwecisionwuwe, (⑅˘꒳˘)
+        nysfwavatawimagewuwe, UwU
+        n-nysfwbannewimagewuwe, (ˆ ﻌ ˆ)♡
+        abusivehighwecawwwuwe,
+        donotampwifynonfowwowewwuwe, /(^•ω•^)
+        n-nyotgwaduatednonfowwowewwuwe, (˘ω˘)
+        wikewyivswabewnonfowwowewdwopusewwuwe, XD
+        downwankspamwepwynonauthowwuwe, òωó
+        n-nysfwtextnonauthowdwopwuwe
       )
     )
 
-case object DESHomeTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-        DropAllCommunityTweetsRule
+c-case object deshometimewinepowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = seq(
+        d-dwopstawetweetswuwe, UwU
+        dwopawwexcwusivetweetswuwe, -.-
+        dwopawwtwustedfwiendstweetswuwe, (ꈍᴗꈍ)
+        d-dwopawwcommunitytweetswuwe
       ) ++
-        VisibilityPolicy.baseTweetRules,
-      userRules = UserTimelineRules.UserRules
+        visibiwitypowicy.basetweetwuwes, (⑅˘꒳˘)
+      usewwuwes = u-usewtimewinewuwes.usewwuwes
     )
 
-case object DesQuoteTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule
-      ) ++ ElevatedQuoteTweetTimelinePolicy.tweetRules.diff(Seq(DropStaleTweetsRule)),
-      userRules = Seq(
-        ProtectedAuthorDropRule
-      ),
-      policyRuleParams = ElevatedQuoteTweetTimelinePolicy.policyRuleParams
+case object desquotetweettimewinepowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = s-seq(
+        d-dwopstawetweetswuwe, 🥺
+        d-dwopawwexcwusivetweetswuwe, òωó
+        d-dwopawwtwustedfwiendstweetswuwe
+      ) ++ ewevatedquotetweettimewinepowicy.tweetwuwes.diff(seq(dwopstawetweetswuwe)), 😳
+      u-usewwuwes = seq(
+        pwotectedauthowdwopwuwe
+      ), òωó
+      p-powicywuwepawams = ewevatedquotetweettimewinepowicy.powicywuwepawams
     )
 
-case object DESRealtimeSpamEnrichmentPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        LowQualityTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        SearchBlacklistTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
-        DropAllCommunityTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-        NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-        GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        NsfwCardImageAllUsersTweetLabelRule
+c-case object desweawtimespamenwichmentpowicy
+    extends v-visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes ++ s-seq(
+        wowquawitytweetwabewdwopwuwe, 🥺
+        s-spamhighwecawwtweetwabewdwopwuwe, ( ͡o ω ͡o )
+        d-dupwicatecontenttweetwabewdwopwuwe, UwU
+        seawchbwackwisttweetwabewwuwe, 😳😳😳
+        s-smytespamtweetwabewdwopwuwe, ʘwʘ
+        dwopawwcommunitytweetswuwe, ^^
+        d-dwopawwexcwusivetweetswuwe, >_<
+        dwopawwtwustedfwiendstweetswuwe, (ˆ ﻌ ˆ)♡
+        n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, (ˆ ﻌ ˆ)♡
+        goweandviowencehighpwecisionawwusewstweetwabewwuwe, 🥺
+        nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, ( ͡o ω ͡o )
+        goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, (ꈍᴗꈍ)
+        n-nysfwcawdimageawwusewstweetwabewwuwe
       )
     )
 
-case object DESRealtimePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllCommunityTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-        DropAllCollabInvitationTweetsRule
-      ),
-      userRules = Seq(
-        DropAllProtectedAuthorRule,
-        DropProtectedViewerIfPresentRule
+case object d-desweawtimepowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = s-seq(
+        d-dwopawwcommunitytweetswuwe,
+        dwopawwexcwusivetweetswuwe, :3
+        d-dwopawwtwustedfwiendstweetswuwe, (✿oωo)
+        d-dwopawwcowwabinvitationtweetswuwe
+      ), (U ᵕ U❁)
+      usewwuwes = s-seq(
+        dwopawwpwotectedauthowwuwe, UwU
+        dwoppwotectedviewewifpwesentwuwe
       )
     )
 
-case object DESRetweetingUsersPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-      ),
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule
+c-case object deswetweetingusewspowicy
+    extends v-visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes ++ seq(
+        dwopawwexcwusivetweetswuwe, ^^
+        dwopawwtwustedfwiendstweetswuwe, /(^•ω•^)
+      ), (˘ω˘)
+      u-usewwuwes = s-seq(
+        authowbwocksviewewdwopwuwe, OwO
+        viewewbwocksauthowwuwe, (U ᵕ U❁)
+        pwotectedauthowdwopwuwe, (U ﹏ U)
+        s-suspendedauthowwuwe
       )
     )
 
-case object DESTweetLikingUsersPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+case o-object destweetwikingusewspowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++ seq(
+        dwopawwexcwusivetweetswuwe, mya
+        d-dwopawwtwustedfwiendstweetswuwe, (⑅˘꒳˘)
       ),
-      userRules = TimelineLikedByRules.UserRules
+      usewwuwes = timewinewikedbywuwes.usewwuwes
     )
 
-case object DESUserBookmarksPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+c-case object desusewbookmawkspowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = seq(
+        dwopawwexcwusivetweetswuwe, (U ᵕ U❁)
+        d-dwopawwtwustedfwiendstweetswuwe, /(^•ω•^)
       ) ++
-        (VisibilityPolicy.baseTweetRules
-          ++ Seq(DropAllCommunityTweetsRule)
-          ++ TimelineProfileRules.tweetRules),
-      userRules = UserTimelineRules.UserRules
+        (visibiwitypowicy.basetweetwuwes
+          ++ s-seq(dwopawwcommunitytweetswuwe)
+          ++ t-timewinepwofiwewuwes.tweetwuwes), ^•ﻌ•^
+      u-usewwuwes = u-usewtimewinewuwes.usewwuwes
     )
 
-case object DESUserLikedTweetsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+c-case object desusewwikedtweetspowicy
+    extends visibiwitypowicy(
+      tweetwuwes = seq(
+        d-dwopstawetweetswuwe, (///ˬ///✿)
+        d-dwopawwexcwusivetweetswuwe,
+        d-dwopawwtwustedfwiendstweetswuwe, o.O
       ) ++
         (
-          VisibilityPolicy.baseTweetRules ++
-            Seq(
-              DropAllCommunityTweetsRule,
-              AbusePolicyEpisodicTweetLabelInterstitialRule,
-              EmergencyDynamicInterstitialRule,
-              ReportedTweetInterstitialRule,
-              NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-              GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-              NsfwReportedHeuristicsAllUsersTweetLabelRule,
-              GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-              NsfwCardImageAllUsersTweetLabelRule,
-              NsfwHighPrecisionTweetLabelAvoidRule,
-              NsfwHighRecallTweetLabelAvoidRule,
-              GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-              NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-              GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-              NsfwCardImageAvoidAllUsersTweetLabelRule,
-              DoNotAmplifyTweetLabelAvoidRule,
-              NsfaHighPrecisionTweetLabelAvoidRule,
-            ) ++ LimitedEngagementBaseRules.tweetRules
-        ),
-      userRules = UserTimelineRules.UserRules
+          v-visibiwitypowicy.basetweetwuwes ++
+            s-seq(
+              d-dwopawwcommunitytweetswuwe, (ˆ ﻌ ˆ)♡
+              abusepowicyepisodictweetwabewintewstitiawwuwe, 😳
+              emewgencydynamicintewstitiawwuwe, òωó
+              wepowtedtweetintewstitiawwuwe, (⑅˘꒳˘)
+              nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, rawr
+              g-goweandviowencehighpwecisionawwusewstweetwabewwuwe,
+              n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, (ꈍᴗꈍ)
+              goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, ^^
+              nysfwcawdimageawwusewstweetwabewwuwe, (ˆ ﻌ ˆ)♡
+              nysfwhighpwecisiontweetwabewavoidwuwe, /(^•ω•^)
+              n-nysfwhighwecawwtweetwabewavoidwuwe, ^^
+              g-goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe, o.O
+              n-nysfwwepowtedheuwisticsavoidawwusewstweetwabewwuwe,
+              goweandviowencewepowtedheuwisticsavoidawwusewstweetwabewwuwe, 😳😳😳
+              nysfwcawdimageavoidawwusewstweetwabewwuwe, XD
+              d-donotampwifytweetwabewavoidwuwe, nyaa~~
+              nysfahighpwecisiontweetwabewavoidwuwe, ^•ﻌ•^
+            ) ++ wimitedengagementbasewuwes.tweetwuwes
+        ), :3
+      usewwuwes = u-usewtimewinewuwes.usewwuwes
     )
 
-case object DESUserMentionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropAllCommunityTweetsRule,
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-        NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-        GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        NsfwCardImageAllUsersTweetLabelRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        SuspendedAuthorRule
+c-case object desusewmentionspowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes ++ s-seq(
+        d-dwopawwcommunitytweetswuwe, ^^
+        authowbwocksviewewdwopwuwe, o.O
+        p-pwotectedauthowdwopwuwe, ^^
+        d-dwopawwexcwusivetweetswuwe, (⑅˘꒳˘)
+        d-dwopawwtwustedfwiendstweetswuwe, ʘwʘ
+        a-abusepowicyepisodictweetwabewintewstitiawwuwe, mya
+        e-emewgencydynamicintewstitiawwuwe, >w<
+        n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, o.O
+        goweandviowencehighpwecisionawwusewstweetwabewwuwe, OwO
+        n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, -.-
+        g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe,
+        nysfwcawdimageawwusewstweetwabewwuwe, (U ﹏ U)
+      ) ++ w-wimitedengagementbasewuwes.tweetwuwes, òωó
+      usewwuwes = seq(
+        s-suspendedauthowwuwe
       )
     )
 
-case object DESUserTweetsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+case object d-desusewtweetspowicy
+    extends v-visibiwitypowicy(
+      t-tweetwuwes = seq(
+        dwopstawetweetswuwe, >w<
+        dwopawwexcwusivetweetswuwe, ^•ﻌ•^
+        d-dwopawwtwustedfwiendstweetswuwe, /(^•ω•^)
       ) ++
-        (VisibilityPolicy.baseTweetRules
-          ++ Seq(DropAllCommunityTweetsRule)
-          ++ TimelineProfileRules.tweetRules),
-      userRules = UserTimelineRules.UserRules
+        (visibiwitypowicy.basetweetwuwes
+          ++ seq(dwopawwcommunitytweetswuwe)
+          ++ timewinepwofiwewuwes.tweetwuwes), ʘwʘ
+      u-usewwuwes = u-usewtimewinewuwes.usewwuwes
     )
 
-case object DevPlatformComplianceStreamPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        SpamAllUsersTweetLabelRule,
-        PdnaAllUsersTweetLabelRule,
-        BounceAllUsersTweetLabelRule,
-        AbusePolicyEpisodicTweetLabelComplianceTweetNoticeRule,
+case object devpwatfowmcompwiancestweampowicy
+    e-extends v-visibiwitypowicy(
+      tweetwuwes = s-seq(
+        spamawwusewstweetwabewwuwe, XD
+        pdnaawwusewstweetwabewwuwe, (U ᵕ U❁)
+        b-bounceawwusewstweetwabewwuwe, (ꈍᴗꈍ)
+        a-abusepowicyepisodictweetwabewcompwiancetweetnoticewuwe, rawr x3
       )
     )
 
-case object DesTweetDetailPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-      ) ++ BaseTweetDetailPolicy.tweetRules
+case object d-destweetdetaiwpowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes = seq(
+        dwopawwexcwusivetweetswuwe, :3
+        d-dwopawwtwustedfwiendstweetswuwe, (˘ω˘)
+      ) ++ b-basetweetdetaiwpowicy.tweetwuwes
     )
 
-case object DevPlatformGetListTweetsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropStaleTweetsRule) ++ DesTweetDetailPolicy.tweetRules
+c-case object devpwatfowmgetwisttweetspowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = seq(dwopstawetweetswuwe) ++ destweetdetaiwpowicy.tweetwuwes
     )
 
-case object FollowerConnectionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
-      userRules = Seq(
-        SpammyFollowerRule
+case object fowwowewconnectionspowicy
+    extends visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes, -.-
+      u-usewwuwes = s-seq(
+        s-spammyfowwowewwuwe
       )
     )
 
-case object SuperFollowerConnectionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
-      userRules = Seq(
-        SpammyFollowerRule
+c-case object s-supewfowwowewconnectionspowicy
+    extends v-visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes, (ꈍᴗꈍ)
+      u-usewwuwes = s-seq(
+        spammyfowwowewwuwe
       )
     )
 
-case object LivePipelineEngagementCountsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
+case object w-wivepipewineengagementcountspowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = seq(
+        a-abusepowicyepisodictweetwabewintewstitiawwuwe, UwU
+        e-emewgencydynamicintewstitiawwuwe, σωσ
+      ) ++ wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object LiveVideoTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        AbusiveHighRecallTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        LiveLowQualityTweetLabelRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        SearchBlacklistTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SmyteSpamTweetLabelDropRule,
-        AbusePolicyEpisodicTweetLabelDropRule,
-        EmergencyDropRule,
+c-case object w-wivevideotimewinepowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++ seq(
+        a-abusivetweetwabewwuwe, ^^
+        abusivehighwecawwtweetwabewwuwe, :3
+        w-wowquawitytweetwabewdwopwuwe, ʘwʘ
+        n-nysfwhighpwecisiontweetwabewwuwe, 😳
+        g-goweandviowencehighpwecisiontweetwabewwuwe,
+        nysfwwepowtedheuwisticstweetwabewwuwe, ^^
+        g-goweandviowencewepowtedheuwisticstweetwabewwuwe, σωσ
+        nysfwcawdimagetweetwabewwuwe,
+        nysfwhighwecawwtweetwabewwuwe, /(^•ω•^)
+        n-nysfwvideotweetwabewdwopwuwe, 😳😳😳
+        nysfwtexttweetwabewdwopwuwe, 😳
+        wivewowquawitytweetwabewwuwe, OwO
+        spamhighwecawwtweetwabewdwopwuwe, :3
+        dupwicatecontenttweetwabewdwopwuwe,
+        seawchbwackwisttweetwabewwuwe, nyaa~~
+        bystandewabusivetweetwabewwuwe, OwO
+        s-safetycwisiswevew3dwopwuwe, o.O
+        safetycwisiswevew4dwopwuwe, (U ﹏ U)
+        donotampwifydwopwuwe, (⑅˘꒳˘)
+        smytespamtweetwabewdwopwuwe, OwO
+        abusepowicyepisodictweetwabewdwopwuwe, 😳
+        emewgencydwopwuwe, :3
       ),
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        CompromisedRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        LiveLowQualityRule,
-        EngagementSpammerRule,
-        EngagementSpammerHighRecallRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
+      usewwuwes = s-seq(
+        abusivewuwe, ( ͡o ω ͡o )
+        wowquawitywuwe, 🥺
+        w-weadonwywuwe, /(^•ω•^)
+        seawchbwackwistwuwe, nyaa~~
+        s-seawchnsfwtextwuwe, (✿oωo)
+        compwomisedwuwe, (✿oωo)
+        nysfwhighpwecisionwuwe, (ꈍᴗꈍ)
+        n-nysfwhighwecawwwuwe,
+        nysfwavatawimagewuwe, OwO
+        n-nysfwbannewimagewuwe, :3
+        spamhighwecawwwuwe, mya
+        d-dupwicatecontentwuwe, >_<
+        w-wivewowquawitywuwe, (///ˬ///✿)
+        engagementspammewwuwe, (///ˬ///✿)
+        engagementspammewhighwecawwwuwe,
+        a-abusivehighwecawwwuwe, 😳😳😳
+        donotampwifynonfowwowewwuwe, (U ᵕ U❁)
+        nyotgwaduatednonfowwowewwuwe, (///ˬ///✿)
+        wikewyivswabewnonfowwowewdwopusewwuwe, ( ͡o ω ͡o )
+        n-nysfwtextnonauthowdwopwuwe
       )
     )
 
-case object MagicRecsPolicyOverrides {
-  val replacements: Map[Rule, Rule] = Map()
-  def union(rules: Seq[Rule]*): Seq[Rule] = rules
-    .map(ar => ar.map(x => replacements.getOrElse(x, x)))
-    .reduce((a, b) => a ++ b.filterNot(a.contains))
+case object m-magicwecspowicyovewwides {
+  vaw w-wepwacements: map[wuwe, (✿oωo) wuwe] = m-map()
+  def union(wuwes: s-seq[wuwe]*): seq[wuwe] = wuwes
+    .map(aw => a-aw.map(x => wepwacements.getowewse(x, òωó x)))
+    .weduce((a, (ˆ ﻌ ˆ)♡ b) => a ++ b.fiwtewnot(a.contains))
 }
 
-case object MagicRecsPolicy
-    extends VisibilityPolicy(
-      tweetRules = MagicRecsPolicyOverrides.union(
-        RecommendationsPolicy.tweetRules.filterNot(_ == SafetyCrisisLevel3DropRule),
-        NotificationsIbisPolicy.tweetRules,
-        Seq(
-          NsfaHighRecallTweetLabelRule,
-          NsfwHighRecallTweetLabelRule,
-          NsfwTextHighPrecisionTweetLabelDropRule),
-        Seq(
-          AuthorBlocksViewerDropRule,
-          ViewerBlocksAuthorRule,
-          ViewerMutesAuthorRule
+c-case object magicwecspowicy
+    extends visibiwitypowicy(
+      tweetwuwes = m-magicwecspowicyovewwides.union(
+        w-wecommendationspowicy.tweetwuwes.fiwtewnot(_ == safetycwisiswevew3dwopwuwe), :3
+        n-nyotificationsibispowicy.tweetwuwes, (ˆ ﻌ ˆ)♡
+        s-seq(
+          nysfahighwecawwtweetwabewwuwe, (U ᵕ U❁)
+          n-nysfwhighwecawwtweetwabewwuwe, (U ᵕ U❁)
+          nysfwtexthighpwecisiontweetwabewdwopwuwe), XD
+        seq(
+          authowbwocksviewewdwopwuwe, nyaa~~
+          viewewbwocksauthowwuwe, (ˆ ﻌ ˆ)♡
+          v-viewewmutesauthowwuwe
         ),
-        Seq(
-          DeactivatedAuthorRule,
-          SuspendedAuthorRule,
-          TweetNsfwUserDropRule,
-          TweetNsfwAdminDropRule
+        s-seq(
+          deactivatedauthowwuwe,
+          s-suspendedauthowwuwe, ʘwʘ
+          t-tweetnsfwusewdwopwuwe, ^•ﻌ•^
+          tweetnsfwadmindwopwuwe
         )
-      ),
-      userRules = MagicRecsPolicyOverrides.union(
-        RecommendationsPolicy.userRules,
-        NotificationsRules.userRules
+      ), mya
+      u-usewwuwes = magicwecspowicyovewwides.union(
+        wecommendationspowicy.usewwuwes, (ꈍᴗꈍ)
+        n-nyotificationswuwes.usewwuwes
       )
     )
 
-case object MagicRecsV2Policy
-    extends VisibilityPolicy(
-      tweetRules = MagicRecsPolicyOverrides.union(
-        MagicRecsPolicy.tweetRules,
-        NotificationsWriterTweetHydratorPolicy.tweetRules
-      ),
-      userRules = MagicRecsPolicyOverrides.union(
-        MagicRecsPolicy.userRules,
-        NotificationsWriterV2Policy.userRules
+case object magicwecsv2powicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = magicwecspowicyovewwides.union(
+        m-magicwecspowicy.tweetwuwes, (ˆ ﻌ ˆ)♡
+        nyotificationswwitewtweethydwatowpowicy.tweetwuwes
+      ), (ˆ ﻌ ˆ)♡
+      usewwuwes = m-magicwecspowicyovewwides.union(
+        magicwecspowicy.usewwuwes, ( ͡o ω ͡o )
+        nyotificationswwitewv2powicy.usewwuwes
       )
     )
 
-case object MagicRecsAggressivePolicy
-    extends VisibilityPolicy(
-      tweetRules = MagicRecsPolicy.tweetRules,
-      userRules = MagicRecsPolicy.userRules
+case object magicwecsaggwessivepowicy
+    extends visibiwitypowicy(
+      tweetwuwes = magicwecspowicy.tweetwuwes, o.O
+      u-usewwuwes = magicwecspowicy.usewwuwes
     )
 
-case object MagicRecsAggressiveV2Policy
-    extends VisibilityPolicy(
-      tweetRules = MagicRecsV2Policy.tweetRules,
-      userRules = MagicRecsV2Policy.userRules
+c-case object magicwecsaggwessivev2powicy
+    extends v-visibiwitypowicy(
+      t-tweetwuwes = magicwecsv2powicy.tweetwuwes, 😳😳😳
+      u-usewwuwes = magicwecsv2powicy.usewwuwes
     )
 
-case object MinimalPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
-      userRules = Seq(
-        TsViolationRule
+case object minimawpowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes, ʘwʘ
+      usewwuwes = seq(
+        tsviowationwuwe
       )
     )
 
-case object ModeratedTweetsTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = TweetDetailPolicy.tweetRules.diff(
-        Seq(
-          AuthorBlocksViewerDropRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule)),
-      policyRuleParams = TweetDetailPolicy.policyRuleParams
+c-case object m-modewatedtweetstimewinepowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = tweetdetaiwpowicy.tweetwuwes.diff(
+        seq(
+          a-authowbwocksviewewdwopwuwe, :3
+          m-mutedkeywowdfowtweetwepwiesintewstitiawwuwe, UwU
+          w-wepowtedtweetintewstitiawwuwe)), nyaa~~
+      powicywuwepawams = tweetdetaiwpowicy.powicywuwepawams
     )
 
-case object MomentsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AuthorBlocksViewerUnspecifiedRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+c-case object momentspowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        s-seq(
+          authowbwocksviewewunspecifiedwuwe, :3
+          abusepowicyepisodictweetwabewintewstitiawwuwe, nyaa~~
+          e-emewgencydynamicintewstitiawwuwe, ^^
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, nyaa~~
+          g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, 😳😳😳
+          n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, ^•ﻌ•^
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, (⑅˘꒳˘)
+          n-nysfwcawdimageawwusewstweetwabewwuwe, (✿oωo)
+        ) ++ w-wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object NearbyTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRelevanceRules,
-      userRules = SearchBlenderRules.userBaseRules
+case o-object nyeawbytimewinepowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = seawchbwendewwuwes.tweetwewevancewuwes, mya
+      u-usewwuwes = s-seawchbwendewwuwes.usewbasewuwes
     )
 
-private object NotificationsRules {
-  val tweetRules: Seq[Rule] =
-    DropStaleTweetsRule +: VisibilityPolicy.baseTweetRules
+pwivate object nyotificationswuwes {
+  v-vaw tweetwuwes: seq[wuwe] =
+    dwopstawetweetswuwe +: visibiwitypowicy.basetweetwuwes
 
-  val userRules: Seq[Rule] = Seq(
-    AbusiveRule,
-    LowQualityRule,
-    ReadOnlyRule,
-    CompromisedRule,
-    SpamHighRecallRule,
-    DuplicateContentRule,
-    AbusiveHighRecallRule,
-    EngagementSpammerNonFollowerWithUqfRule,
-    EngagementSpammerHighRecallNonFollowerWithUqfRule,
-    DownrankSpamReplyNonFollowerWithUqfRule
+  vaw usewwuwes: seq[wuwe] = seq(
+    abusivewuwe, (///ˬ///✿)
+    wowquawitywuwe, ʘwʘ
+    w-weadonwywuwe, >w<
+    compwomisedwuwe, o.O
+    spamhighwecawwwuwe, ^^;;
+    d-dupwicatecontentwuwe, :3
+    abusivehighwecawwwuwe, (ꈍᴗꈍ)
+    e-engagementspammewnonfowwowewwithuqfwuwe, XD
+    engagementspammewhighwecawwnonfowwowewwithuqfwuwe, ^^;;
+    downwankspamwepwynonfowwowewwithuqfwuwe
   )
 }
 
-case object NotificationsIbisPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          VisibilityPolicy.baseTweetRules ++ Seq(
-          AbusiveUqfNonFollowerTweetLabelRule,
-          LowQualityTweetLabelDropRule,
-          ToxicityReplyFilterDropNotificationRule,
-          NsfwHighPrecisionTweetLabelRule,
-          GoreAndViolenceHighPrecisionTweetLabelRule,
-          NsfwReportedHeuristicsTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsTweetLabelRule,
-          NsfwCardImageTweetLabelRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          DuplicateMentionTweetLabelRule,
-          LowQualityMentionTweetLabelRule,
-          UntrustedUrlUqfNonFollowerTweetLabelRule,
-          DownrankSpamReplyUqfNonFollowerTweetLabelRule,
-          SafetyCrisisAnyLevelDropRule,
-          DoNotAmplifyDropRule,
-          SmyteSpamTweetLabelDropRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
+c-case object nyotificationsibispowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes =
+          visibiwitypowicy.basetweetwuwes ++ seq(
+          a-abusiveuqfnonfowwowewtweetwabewwuwe, (U ﹏ U)
+          wowquawitytweetwabewdwopwuwe, (ꈍᴗꈍ)
+          toxicitywepwyfiwtewdwopnotificationwuwe, 😳
+          nysfwhighpwecisiontweetwabewwuwe, rawr
+          g-goweandviowencehighpwecisiontweetwabewwuwe, ( ͡o ω ͡o )
+          nysfwwepowtedheuwisticstweetwabewwuwe, (ˆ ﻌ ˆ)♡
+          goweandviowencewepowtedheuwisticstweetwabewwuwe, OwO
+          n-nysfwcawdimagetweetwabewwuwe, >_<
+          n-nysfwvideotweetwabewdwopwuwe, XD
+          nysfwtexttweetwabewdwopwuwe, (ˆ ﻌ ˆ)♡
+          spamhighwecawwtweetwabewdwopwuwe, (ꈍᴗꈍ)
+          d-dupwicatecontenttweetwabewdwopwuwe, (✿oωo)
+          d-dupwicatementiontweetwabewwuwe, UwU
+          wowquawitymentiontweetwabewwuwe, (ꈍᴗꈍ)
+          u-untwusteduwwuqfnonfowwowewtweetwabewwuwe, (U ﹏ U)
+          d-downwankspamwepwyuqfnonfowwowewtweetwabewwuwe, >w<
+          safetycwisisanywevewdwopwuwe, ^•ﻌ•^
+          donotampwifydwopwuwe, 😳
+          s-smytespamtweetwabewdwopwuwe, XD
+          abusepowicyepisodictweetwabewdwopwuwe, :3
+          emewgencydwopwuwe, rawr x3
         ),
-      userRules = NotificationsRules.userRules ++ Seq(
-        DoNotAmplifyNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
+      usewwuwes = nyotificationswuwes.usewwuwes ++ s-seq(
+        donotampwifynonfowwowewwuwe, (⑅˘꒳˘)
+        wikewyivswabewnonfowwowewdwopusewwuwe, ^^
+        nysfwtextnonauthowdwopwuwe
       )
     )
 
-case object NotificationsReadPolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsRules.tweetRules,
-      userRules = NotificationsRules.userRules
+case o-object nyotificationsweadpowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = nyotificationswuwes.tweetwuwes, >w<
+      usewwuwes = nyotificationswuwes.usewwuwes
     )
 
-case object NotificationsTimelineDeviceFollowPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        CompromisedRule
+c-case object nyotificationstimewinedevicefowwowpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes, 😳
+      u-usewwuwes = s-seq(
+        authowbwocksviewewdwopwuwe, rawr
+        viewewbwocksauthowwuwe, rawr x3
+        compwomisedwuwe
       )
     )
 
-case object NotificationsWritePolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsRules.tweetRules,
-      userRules = NotificationsRules.userRules
+case object nyotificationswwitepowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = n-nyotificationswuwes.tweetwuwes, (ꈍᴗꈍ)
+      usewwuwes = nyotificationswuwes.usewwuwes
     )
 
-case object NotificationsWriterV2Policy
-    extends VisibilityPolicy(
-      userRules =
-        Seq(
-          AuthorBlocksViewerDropRule,
-          DeactivatedAuthorRule,
-          ErasedAuthorRule,
-          ProtectedAuthorDropRule,
-          SuspendedAuthorRule,
-          DeactivatedViewerRule,
-          SuspendedViewerRule,
-          ViewerBlocksAuthorRule,
-          ViewerMutesAndDoesNotFollowAuthorRule,
-          ViewerIsUnmentionedRule,
-          NoConfirmedEmailRule,
-          NoConfirmedPhoneRule,
-          NoDefaultProfileImageRule,
-          NoNewUsersRule,
-          NoNotFollowedByRule,
-          OnlyPeopleIFollowRule
+case object nyotificationswwitewv2powicy
+    e-extends visibiwitypowicy(
+      usewwuwes =
+        s-seq(
+          a-authowbwocksviewewdwopwuwe, -.-
+          d-deactivatedauthowwuwe, òωó
+          e-ewasedauthowwuwe, (U ﹏ U)
+          p-pwotectedauthowdwopwuwe, ( ͡o ω ͡o )
+          s-suspendedauthowwuwe, :3
+          deactivatedviewewwuwe,
+          suspendedviewewwuwe, >w<
+          v-viewewbwocksauthowwuwe, ^^
+          v-viewewmutesanddoesnotfowwowauthowwuwe, 😳😳😳
+          v-viewewisunmentionedwuwe, OwO
+          n-nyoconfiwmedemaiwwuwe, XD
+          n-nyoconfiwmedphonewuwe, (⑅˘꒳˘)
+          n-nyodefauwtpwofiweimagewuwe, OwO
+          nyonewusewswuwe, (⑅˘꒳˘)
+          n-nyonotfowwowedbywuwe, (U ﹏ U)
+          o-onwypeopweifowwowwuwe
         ) ++
-          NotificationsRules.userRules
+          n-nyotificationswuwes.usewwuwes
     )
 
-case object NotificationsWriterTweetHydratorPolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsRules.tweetRules ++
-        Seq(
-          LowQualityTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          DuplicateMentionUqfTweetLabelRule,
-          LowQualityMentionTweetLabelRule,
-          SmyteSpamTweetLabelDropRule,
-          ToxicityReplyFilterDropNotificationRule,
-          AbusiveUqfNonFollowerTweetLabelRule,
-          UntrustedUrlUqfNonFollowerTweetLabelRule,
-          DownrankSpamReplyUqfNonFollowerTweetLabelRule,
-          ViewerHasMatchingMutedKeywordForNotificationsRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+case object nyotificationswwitewtweethydwatowpowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes = nyotificationswuwes.tweetwuwes ++
+        seq(
+          w-wowquawitytweetwabewdwopwuwe, (ꈍᴗꈍ)
+          spamhighwecawwtweetwabewdwopwuwe, rawr
+          dupwicatecontenttweetwabewdwopwuwe,
+          d-dupwicatementionuqftweetwabewwuwe, XD
+          w-wowquawitymentiontweetwabewwuwe, >w<
+          smytespamtweetwabewdwopwuwe, UwU
+          toxicitywepwyfiwtewdwopnotificationwuwe, 😳
+          abusiveuqfnonfowwowewtweetwabewwuwe, (ˆ ﻌ ˆ)♡
+          untwusteduwwuqfnonfowwowewtweetwabewwuwe, ^•ﻌ•^
+          d-downwankspamwepwyuqfnonfowwowewtweetwabewwuwe, ^^
+          v-viewewhasmatchingmutedkeywowdfownotificationswuwe, 😳
+          nysfwcawdimageawwusewstweetwabewwuwe, :3
+          n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, (⑅˘꒳˘)
+          g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, ( ͡o ω ͡o )
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, :3
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, (⑅˘꒳˘)
+        ) ++ wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object NotificationsPlatformPolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsWriterTweetHydratorPolicy.tweetRules,
-      userRules = NotificationsWriterV2Policy.userRules
+c-case object n-nyotificationspwatfowmpowicy
+    extends visibiwitypowicy(
+      tweetwuwes = nyotificationswwitewtweethydwatowpowicy.tweetwuwes, >w<
+      u-usewwuwes = n-nyotificationswwitewv2powicy.usewwuwes
     )
 
-case object NotificationsPlatformPushPolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsIbisPolicy.tweetRules,
-      userRules = Seq(ViewerMutesAuthorRule)
-        ++ NotificationsIbisPolicy.userRules
+case object nyotificationspwatfowmpushpowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = nyotificationsibispowicy.tweetwuwes, OwO
+      usewwuwes = seq(viewewmutesauthowwuwe)
+        ++ nyotificationsibispowicy.usewwuwes
     )
 
-case object QuoteTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropStaleTweetsRule,
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        GoreAndViolenceTweetLabelRule,
-        UntrustedUrlTweetLabelRule,
-        DownrankSpamReplyTweetLabelRule,
-        SearchBlacklistTweetLabelRule,
-        AutomationTweetLabelRule,
-        DuplicateMentionTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        AbusiveHighRecallRule,
-        DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule
+case object q-quotetweettimewinepowicy
+    extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++ s-seq(
+        dwopstawetweetswuwe, 😳
+        a-abusivetweetwabewwuwe, OwO
+        w-wowquawitytweetwabewdwopwuwe,
+        nysfwhighpwecisiontweetwabewwuwe, 🥺
+        g-goweandviowencehighpwecisiontweetwabewwuwe,
+        n-nysfwwepowtedheuwisticstweetwabewwuwe, (˘ω˘)
+        g-goweandviowencewepowtedheuwisticstweetwabewwuwe, 😳😳😳
+        n-nysfwcawdimagetweetwabewwuwe, mya
+        n-nysfwhighwecawwtweetwabewwuwe, OwO
+        nysfwvideotweetwabewdwopwuwe, >_<
+        nysfwtexttweetwabewdwopwuwe, 😳
+        s-spamhighwecawwtweetwabewdwopwuwe, (U ᵕ U❁)
+        d-dupwicatecontenttweetwabewdwopwuwe, 🥺
+        g-goweandviowencetweetwabewwuwe, (U ﹏ U)
+        untwusteduwwtweetwabewwuwe, (U ﹏ U)
+        downwankspamwepwytweetwabewwuwe, rawr x3
+        s-seawchbwackwisttweetwabewwuwe, :3
+        automationtweetwabewwuwe, rawr
+        d-dupwicatementiontweetwabewwuwe, XD
+        b-bystandewabusivetweetwabewwuwe, ^^
+        smytespamtweetwabewdwopwuwe, mya
+        a-abusepowicyepisodictweetwabewintewstitiawwuwe, (U ﹏ U)
+        e-emewgencydynamicintewstitiawwuwe, 😳
+      ) ++ w-wimitedengagementbasewuwes.tweetwuwes, mya
+      u-usewwuwes = s-seq(
+        abusivewuwe, 😳
+        w-wowquawitywuwe, ^^
+        weadonwywuwe, :3
+        s-seawchbwackwistwuwe, (U ﹏ U)
+        s-seawchnsfwtextwuwe, UwU
+        compwomisedwuwe, (ˆ ﻌ ˆ)♡
+        spamhighwecawwwuwe, (ˆ ﻌ ˆ)♡
+        dupwicatecontentwuwe, ^^;;
+        nysfwhighpwecisionwuwe, rawr
+        nsfwavatawimagewuwe, nyaa~~
+        n-nysfwbannewimagewuwe, rawr x3
+        a-abusivehighwecawwwuwe, (⑅˘꒳˘)
+        downwankspamwepwynonauthowwuwe, OwO
+        n-nysfwtextnonauthowdwopwuwe
       )
     )
 
-case object ElevatedQuoteTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          TweetDetailPolicy.tweetRules.diff(
-            Seq(
-              MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
-              ReportedTweetInterstitialRule)),
-      policyRuleParams = TweetDetailPolicy.policyRuleParams
+c-case object ewevatedquotetweettimewinepowicy
+    extends v-visibiwitypowicy(
+      t-tweetwuwes =
+          t-tweetdetaiwpowicy.tweetwuwes.diff(
+            s-seq(
+              m-mutedkeywowdfowquotedtweettweetdetaiwintewstitiawwuwe, OwO
+              w-wepowtedtweetintewstitiawwuwe)), ʘwʘ
+      powicywuwepawams = tweetdetaiwpowicy.powicywuwepawams
     )
 
-case object EmbedsPublicInterestNoticePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
+c-case object embedspubwicintewestnoticepowicy
+    extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++ seq(
+        abusepowicyepisodictweetwabewintewstitiawwuwe, :3
+        e-emewgencydynamicintewstitiawwuwe, mya
       )
     )
 
-case object RecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AbusiveTweetLabelRule,
-          LowQualityTweetLabelDropRule,
-          NsfwHighPrecisionTweetLabelRule,
-          GoreAndViolenceHighPrecisionTweetLabelRule,
-          NsfwReportedHeuristicsTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsTweetLabelRule,
-          NsfwCardImageTweetLabelRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          GoreAndViolenceTweetLabelRule,
-          BystanderAbusiveTweetLabelRule,
-          DoNotAmplifyDropRule,
-          SafetyCrisisLevel3DropRule,
-          SmyteSpamTweetLabelDropRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
-        ),
-      userRules = Seq(
-        DropNsfwAdminAuthorRule,
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        CompromisedRule,
-        RecommendationsBlacklistRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwNearPerfectAuthorRule,
-        NsfwBannerImageRule,
-        NsfwAvatarImageRule,
-        EngagementSpammerRule,
-        EngagementSpammerHighRecallRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
+c-case object wecommendationspowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++
+        seq(
+          abusivetweetwabewwuwe, OwO
+          w-wowquawitytweetwabewdwopwuwe, :3
+          nysfwhighpwecisiontweetwabewwuwe, >_<
+          g-goweandviowencehighpwecisiontweetwabewwuwe, σωσ
+          n-nysfwwepowtedheuwisticstweetwabewwuwe, /(^•ω•^)
+          g-goweandviowencewepowtedheuwisticstweetwabewwuwe, mya
+          nysfwcawdimagetweetwabewwuwe, nyaa~~
+          nysfwvideotweetwabewdwopwuwe, 😳
+          nysfwtexttweetwabewdwopwuwe, ^^;;
+          spamhighwecawwtweetwabewdwopwuwe, 😳😳😳
+          d-dupwicatecontenttweetwabewdwopwuwe, nyaa~~
+          goweandviowencetweetwabewwuwe, 🥺
+          b-bystandewabusivetweetwabewwuwe, XD
+          donotampwifydwopwuwe, (ꈍᴗꈍ)
+          s-safetycwisiswevew3dwopwuwe, 😳😳😳
+          smytespamtweetwabewdwopwuwe, ( ͡o ω ͡o )
+          abusepowicyepisodictweetwabewdwopwuwe, nyaa~~
+          e-emewgencydwopwuwe, XD
+        ), (ˆ ﻌ ˆ)♡
+      usewwuwes = s-seq(
+        dwopnsfwadminauthowwuwe, rawr x3
+        abusivewuwe, OwO
+        w-wowquawitywuwe, UwU
+        weadonwywuwe, ^^
+        c-compwomisedwuwe, (✿oωo)
+        wecommendationsbwackwistwuwe, 😳😳😳
+        spamhighwecawwwuwe,
+        dupwicatecontentwuwe, 🥺
+        nysfwhighpwecisionwuwe, ʘwʘ
+        nysfwneawpewfectauthowwuwe, 😳
+        nsfwbannewimagewuwe, ^^;;
+        n-nysfwavatawimagewuwe, (///ˬ///✿)
+        e-engagementspammewwuwe,
+        e-engagementspammewhighwecawwwuwe, OwO
+        a-abusivehighwecawwwuwe, -.-
+        donotampwifynonfowwowewwuwe, ^^
+        nyotgwaduatednonfowwowewwuwe, (ꈍᴗꈍ)
+        wikewyivswabewnonfowwowewdwopusewwuwe, ^^;;
+        n-nysfwtextnonauthowdwopwuwe
       )
     )
 
-case object RecosVideoPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
+case object wecosvideopowicy
+    extends visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++ seq(
+        a-abusivetweetwabewwuwe, (˘ω˘)
+        w-wowquawitytweetwabewdwopwuwe, 🥺
+        n-nysfwhighpwecisiontweetwabewwuwe, ʘwʘ
+        goweandviowencehighpwecisiontweetwabewwuwe, (///ˬ///✿)
+        nysfwwepowtedheuwisticstweetwabewwuwe, ^^;;
+        goweandviowencewepowtedheuwisticstweetwabewwuwe, XD
+        nysfwcawdimagetweetwabewwuwe, (ˆ ﻌ ˆ)♡
+        nysfwhighwecawwtweetwabewwuwe,
+        n-nysfwvideotweetwabewdwopwuwe, (˘ω˘)
+        n-nysfwtexttweetwabewdwopwuwe, σωσ
+        spamhighwecawwtweetwabewdwopwuwe, 😳😳😳
+        dupwicatecontenttweetwabewdwopwuwe, ^•ﻌ•^
+        bystandewabusivetweetwabewwuwe, σωσ
+        smytespamtweetwabewdwopwuwe, (///ˬ///✿)
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      u-usewwuwes = seq(nsfwtextnonauthowdwopwuwe)
     )
 
-case object RepliesGroupingPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          LowQualityTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          DeciderableSpamHighRecallAuthorLabelDropRule,
-          SmyteSpamTweetLabelDropRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        LowQualityRule,
-        ReadOnlyRule,
-        LowQualityHighRecallRule,
-        CompromisedRule,
-        DeciderableSpamHighRecallRule
+c-case o-object wepwiesgwoupingpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        seq(
+          wowquawitytweetwabewdwopwuwe, XD
+          spamhighwecawwtweetwabewdwopwuwe, >_<
+          dupwicatecontenttweetwabewdwopwuwe,
+          d-decidewabwespamhighwecawwauthowwabewdwopwuwe, òωó
+          smytespamtweetwabewdwopwuwe, (U ᵕ U❁)
+          a-abusepowicyepisodictweetwabewintewstitiawwuwe, (˘ω˘)
+          emewgencydynamicintewstitiawwuwe, 🥺
+          mutedkeywowdfowtweetwepwiesintewstitiawwuwe, (✿oωo)
+          wepowtedtweetintewstitiawwuwe, (˘ω˘)
+          n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, (ꈍᴗꈍ)
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, ( ͡o ω ͡o )
+          n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, (U ᵕ U❁)
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, ʘwʘ
+          nysfwcawdimageawwusewstweetwabewwuwe, (ˆ ﻌ ˆ)♡
+          n-nysfwhighpwecisiontweetwabewavoidwuwe, /(^•ω•^)
+          n-nysfwhighwecawwtweetwabewavoidwuwe, (ˆ ﻌ ˆ)♡
+          g-goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe, (✿oωo)
+          n-nysfwwepowtedheuwisticsavoidadpwacementawwusewstweetwabewwuwe, ^•ﻌ•^
+          g-goweandviowencewepowtedheuwisticsavoidadpwacementawwusewstweetwabewwuwe, (ˆ ﻌ ˆ)♡
+          nysfwcawdimageavoidadpwacementawwusewstweetwabewwuwe, XD
+          d-donotampwifytweetwabewavoidwuwe, :3
+          n-nysfahighpwecisiontweetwabewavoidwuwe, -.-
+        ) ++ wimitedengagementbasewuwes.tweetwuwes, ^^;;
+      u-usewwuwes = seq(
+        wowquawitywuwe, OwO
+        weadonwywuwe, ^^;;
+        w-wowquawityhighwecawwwuwe, 🥺
+        compwomisedwuwe, ^^
+        d-decidewabwespamhighwecawwwuwe
       )
     )
 
-case object ReturningUserExperiencePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfaHighRecallTweetLabelRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        NsfwTextHighPrecisionTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        GoreAndViolenceTweetLabelRule,
-        UntrustedUrlTweetLabelRule,
-        DownrankSpamReplyTweetLabelRule,
-        SearchBlacklistTweetLabelRule,
-        AutomationTweetLabelRule,
-        DuplicateMentionTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        AbusePolicyEpisodicTweetLabelDropRule,
-        EmergencyDropRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule,
-        DropNsfwUserAuthorRule,
-        NsfwHighRecallRule
+c-case object wetuwningusewexpewiencepowicy
+    extends visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++ seq(
+        a-abusivetweetwabewwuwe, o.O
+        wowquawitytweetwabewdwopwuwe, ( ͡o ω ͡o )
+        nysfahighwecawwtweetwabewwuwe, nyaa~~
+        nysfwhighpwecisiontweetwabewwuwe, (///ˬ///✿)
+        g-goweandviowencehighpwecisiontweetwabewwuwe, (ˆ ﻌ ˆ)♡
+        n-nysfwwepowtedheuwisticstweetwabewwuwe, XD
+        g-goweandviowencewepowtedheuwisticstweetwabewwuwe, >_<
+        n-nysfwcawdimagetweetwabewwuwe, (U ﹏ U)
+        nysfwhighwecawwtweetwabewwuwe, òωó
+        nysfwvideotweetwabewdwopwuwe, >w<
+        nysfwtexttweetwabewdwopwuwe, ^•ﻌ•^
+        n-nysfwtexthighpwecisiontweetwabewdwopwuwe, 🥺
+        spamhighwecawwtweetwabewdwopwuwe, (✿oωo)
+        dupwicatecontenttweetwabewdwopwuwe, UwU
+        g-goweandviowencetweetwabewwuwe, (˘ω˘)
+        untwusteduwwtweetwabewwuwe, ʘwʘ
+        downwankspamwepwytweetwabewwuwe, (ˆ ﻌ ˆ)♡
+        s-seawchbwackwisttweetwabewwuwe, ( ͡o ω ͡o )
+        automationtweetwabewwuwe, :3
+        dupwicatementiontweetwabewwuwe, 😳
+        bystandewabusivetweetwabewwuwe, (✿oωo)
+        s-smytespamtweetwabewdwopwuwe, /(^•ω•^)
+        safetycwisiswevew3dwopwuwe, :3
+        s-safetycwisiswevew4dwopwuwe, σωσ
+        d-donotampwifydwopwuwe, σωσ
+        a-abusepowicyepisodictweetwabewdwopwuwe, 🥺
+        emewgencydwopwuwe,
+      ) ++ w-wimitedengagementbasewuwes.tweetwuwes, rawr
+      u-usewwuwes = seq(
+        abusivewuwe, o.O
+        w-wowquawitywuwe, 😳😳😳
+        w-weadonwywuwe, /(^•ω•^)
+        s-seawchbwackwistwuwe, σωσ
+        s-seawchnsfwtextwuwe, OwO
+        compwomisedwuwe, OwO
+        s-spamhighwecawwwuwe, òωó
+        d-dupwicatecontentwuwe, :3
+        n-nysfwhighpwecisionwuwe, σωσ
+        nysfwavatawimagewuwe, σωσ
+        n-nysfwbannewimagewuwe, -.-
+        abusivehighwecawwwuwe, (///ˬ///✿)
+        donotampwifynonfowwowewwuwe, rawr x3
+        nyotgwaduatednonfowwowewwuwe, (U ﹏ U)
+        wikewyivswabewnonfowwowewdwopusewwuwe, òωó
+        downwankspamwepwynonauthowwuwe, OwO
+        n-nsfwtextnonauthowdwopwuwe, ^^
+        d-dwopnsfwusewauthowwuwe,
+        nysfwhighwecawwwuwe
       )
     )
 
-case object ReturningUserExperienceFocalTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AuthorBlocksViewerDropRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ViewerMutesAuthorInterstitialRule,
-          ReportedTweetInterstitialRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+c-case object wetuwningusewexpewiencefocawtweetpowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++
+        s-seq(
+          a-authowbwocksviewewdwopwuwe,
+          abusepowicyepisodictweetwabewintewstitiawwuwe, /(^•ω•^)
+          e-emewgencydynamicintewstitiawwuwe, >_<
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, -.-
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, (˘ω˘)
+          n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe,
+          g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, >_<
+          nysfwcawdimageawwusewstweetwabewwuwe, (˘ω˘)
+          mutedkeywowdfowtweetwepwiesintewstitiawwuwe, >w<
+          viewewmutesauthowintewstitiawwuwe, 😳😳😳
+          wepowtedtweetintewstitiawwuwe, 😳
+        ) ++ wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object RevenuePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AbusiveTweetLabelRule,
-          BystanderAbusiveTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule
+case o-object wevenuepowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        s-seq(
+          abusivetweetwabewwuwe, XD
+          b-bystandewabusivetweetwabewwuwe, OwO
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, -.-
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, o.O
+          n-nsfwwepowtedheuwisticsawwusewstweetwabewwuwe, ^^
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, ^^
+          n-nysfwcawdimageawwusewstweetwabewwuwe
         )
     )
 
-case object SafeSearchMinimalPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropOuterCommunityTweetsRule,
-      ) ++ VisibilityPolicy.baseTweetRules ++ Seq(
-        LowQualityTweetLabelDropRule,
-        HighProactiveTosScoreTweetLabelDropSearchRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        SearchBlacklistTweetLabelRule,
-        SearchBlacklistHighRecallTweetLabelDropRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SmyteSpamTweetLabelDropRule,
+case o-object safeseawchminimawpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = seq(
+        dwopoutewcommunitytweetswuwe, XD
+      ) ++ v-visibiwitypowicy.basetweetwuwes ++ seq(
+        wowquawitytweetwabewdwopwuwe, >w<
+        h-highpwoactivetosscowetweetwabewdwopseawchwuwe, (⑅˘꒳˘)
+        s-spamhighwecawwtweetwabewdwopwuwe, 😳
+        d-dupwicatecontenttweetwabewdwopwuwe, :3
+        seawchbwackwisttweetwabewwuwe,
+        seawchbwackwisthighwecawwtweetwabewdwopwuwe, :3
+        safetycwisiswevew3dwopwuwe, OwO
+        safetycwisiswevew4dwopwuwe, (U ﹏ U)
+        donotampwifydwopwuwe, (⑅˘꒳˘)
+        s-smytespamtweetwabewdwopwuwe, 😳
       ) ++
-        Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
-        ++ SearchBlenderRules.tweetAvoidRules,
-      userRules = Seq(
-        LowQualityRule,
-        ReadOnlyRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        DuplicateContentRule,
-        DoNotAmplifyNonFollowerRule,
-        SearchLikelyIvsLabelNonFollowerDropUserRule
+        seq(
+          abusepowicyepisodictweetwabewintewstitiawwuwe, (ˆ ﻌ ˆ)♡
+          e-emewgencydynamicintewstitiawwuwe, mya
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, ʘwʘ
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, (˘ω˘)
+          n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, (///ˬ///✿)
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, XD
+          nysfwcawdimageawwusewstweetwabewwuwe, 😳
+        ) ++ w-wimitedengagementbasewuwes.tweetwuwes
+        ++ s-seawchbwendewwuwes.tweetavoidwuwes, :3
+      usewwuwes = seq(
+        wowquawitywuwe, 😳😳😳
+        w-weadonwywuwe, (U ᵕ U❁)
+        compwomisedwuwe, ^•ﻌ•^
+        s-spamhighwecawwwuwe, (˘ω˘)
+        seawchbwackwistwuwe, /(^•ω•^)
+        seawchnsfwtextwuwe, ^•ﻌ•^
+        d-dupwicatecontentwuwe, ^^
+        d-donotampwifynonfowwowewwuwe, (U ﹏ U)
+        seawchwikewyivswabewnonfowwowewdwopusewwuwe
       )
     )
 
-case object SearchHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-        ReportedTweetInterstitialSearchRule,
-        NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-        GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        NsfwCardImageAllUsersTweetLabelRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
+case object s-seawchhydwationpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = seq(
+        a-abusepowicyepisodictweetwabewintewstitiawwuwe, :3
+        emewgencydynamicintewstitiawwuwe, òωó
+        w-wepowtedtweetintewstitiawseawchwuwe, σωσ
+        n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, σωσ
+        g-goweandviowencehighpwecisionawwusewstweetwabewwuwe,
+        n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, (⑅˘꒳˘)
+        g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, 🥺
+        nysfwcawdimageawwusewstweetwabewwuwe, (U ﹏ U)
+      ) ++ w-wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object SearchBlenderRules {
-  val limitedEngagementBaseRules: Seq[Rule] = LimitedEngagementBaseRules.tweetRules
+c-case object seawchbwendewwuwes {
+  vaw wimitedengagementbasewuwes: s-seq[wuwe] = wimitedengagementbasewuwes.tweetwuwes
 
-  val tweetAvoidRules: Seq[Rule] =
-    Seq(
-      NsfwHighPrecisionTweetLabelAvoidRule,
-      NsfwHighRecallTweetLabelAvoidRule,
-      GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      NsfwCardImageAvoidAllUsersTweetLabelRule,
-      SearchAvoidTweetNsfwAdminRule,
-      SearchAvoidTweetNsfwUserRule,
-      DoNotAmplifyTweetLabelAvoidRule,
-      NsfaHighPrecisionTweetLabelAvoidRule,
+  v-vaw tweetavoidwuwes: seq[wuwe] =
+    seq(
+      nysfwhighpwecisiontweetwabewavoidwuwe, >w<
+      nysfwhighwecawwtweetwabewavoidwuwe, nyaa~~
+      goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe, -.-
+      nysfwwepowtedheuwisticsavoidawwusewstweetwabewwuwe, XD
+      g-goweandviowencewepowtedheuwisticsavoidawwusewstweetwabewwuwe, -.-
+      nsfwcawdimageavoidawwusewstweetwabewwuwe, >w<
+      s-seawchavoidtweetnsfwadminwuwe, (ꈍᴗꈍ)
+      seawchavoidtweetnsfwusewwuwe, :3
+      d-donotampwifytweetwabewavoidwuwe, (ˆ ﻌ ˆ)♡
+      n-nsfahighpwecisiontweetwabewavoidwuwe, -.-
     )
 
-  val basicBlockMuteRules: Seq[Rule] = Seq(
-    AuthorBlocksViewerDropRule,
-    ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-    ViewerMutesAuthorViewerOptInBlockingOnSearchRule
+  vaw basicbwockmutewuwes: s-seq[wuwe] = seq(
+    a-authowbwocksviewewdwopwuwe, mya
+    viewewbwocksauthowviewewoptinbwockingonseawchwuwe, (˘ω˘)
+    v-viewewmutesauthowviewewoptinbwockingonseawchwuwe
   )
 
-  val tweetRelevanceRules: Seq[Rule] =
-    Seq(
-      DropOuterCommunityTweetsRule,
-      DropStaleTweetsRule,
-    ) ++ VisibilityPolicy.baseTweetRules ++ Seq(
-      SafeSearchAbusiveTweetLabelRule,
-      LowQualityTweetLabelDropRule,
-      HighProactiveTosScoreTweetLabelDropSearchRule,
-      HighPSpammyTweetScoreSearchTweetLabelDropRule,
-      HighSpammyTweetContentScoreSearchTopTweetLabelDropRule,
-      HighSpammyTweetContentScoreTrendsTopTweetLabelDropRule,
-      SafeSearchNsfwHighPrecisionTweetLabelRule,
-      SafeSearchGoreAndViolenceHighPrecisionTweetLabelRule,
-      SafeSearchNsfwReportedHeuristicsTweetLabelRule,
-      SafeSearchGoreAndViolenceReportedHeuristicsTweetLabelRule,
-      SafeSearchNsfwCardImageTweetLabelRule,
-      SafeSearchNsfwHighRecallTweetLabelRule,
-      SafeSearchNsfwVideoTweetLabelRule,
-      SafeSearchNsfwTextTweetLabelRule,
-      SpamHighRecallTweetLabelDropRule,
-      DuplicateContentTweetLabelDropRule,
-      SafeSearchGoreAndViolenceTweetLabelRule,
-      SafeSearchUntrustedUrlTweetLabelRule,
-      SafeSearchDownrankSpamReplyTweetLabelRule,
-      SearchBlacklistTweetLabelRule,
-      SearchBlacklistHighRecallTweetLabelDropRule,
-      SmyteSpamTweetLabelDropSearchRule,
-      CopypastaSpamAllViewersSearchTweetLabelRule,
-    ) ++ basicBlockMuteRules ++
-      Seq(
-        SafeSearchAutomationNonFollowerTweetLabelRule,
-        SafeSearchDuplicateMentionNonFollowerTweetLabelRule,
-        SafeSearchBystanderAbusiveTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SearchIpiSafeSearchWithoutUserInQueryDropRule,
-        SearchEdiSafeSearchWithoutUserInQueryDropRule,
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-        UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-        UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule,
-        UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        UnsafeSearchNsfwCardImageAllUsersTweetLabelRule,
+  vaw tweetwewevancewuwes: seq[wuwe] =
+    seq(
+      dwopoutewcommunitytweetswuwe, ^•ﻌ•^
+      dwopstawetweetswuwe, 😳😳😳
+    ) ++ visibiwitypowicy.basetweetwuwes ++ s-seq(
+      safeseawchabusivetweetwabewwuwe, σωσ
+      wowquawitytweetwabewdwopwuwe, ( ͡o ω ͡o )
+      highpwoactivetosscowetweetwabewdwopseawchwuwe,
+      h-highpspammytweetscoweseawchtweetwabewdwopwuwe, nyaa~~
+      highspammytweetcontentscoweseawchtoptweetwabewdwopwuwe, :3
+      h-highspammytweetcontentscowetwendstoptweetwabewdwopwuwe, (✿oωo)
+      safeseawchnsfwhighpwecisiontweetwabewwuwe, >_<
+      safeseawchgoweandviowencehighpwecisiontweetwabewwuwe, ^^
+      safeseawchnsfwwepowtedheuwisticstweetwabewwuwe, (///ˬ///✿)
+      safeseawchgoweandviowencewepowtedheuwisticstweetwabewwuwe, :3
+      safeseawchnsfwcawdimagetweetwabewwuwe, :3
+      safeseawchnsfwhighwecawwtweetwabewwuwe, (ˆ ﻌ ˆ)♡
+      safeseawchnsfwvideotweetwabewwuwe, 🥺
+      safeseawchnsfwtexttweetwabewwuwe, 😳
+      s-spamhighwecawwtweetwabewdwopwuwe, (ꈍᴗꈍ)
+      d-dupwicatecontenttweetwabewdwopwuwe, mya
+      s-safeseawchgoweandviowencetweetwabewwuwe, rawr
+      safeseawchuntwusteduwwtweetwabewwuwe, ʘwʘ
+      s-safeseawchdownwankspamwepwytweetwabewwuwe, -.-
+      s-seawchbwackwisttweetwabewwuwe, UwU
+      s-seawchbwackwisthighwecawwtweetwabewdwopwuwe, :3
+      smytespamtweetwabewdwopseawchwuwe,
+      copypastaspamawwviewewsseawchtweetwabewwuwe, 😳
+    ) ++ b-basicbwockmutewuwes ++
+      s-seq(
+        safeseawchautomationnonfowwowewtweetwabewwuwe, (ꈍᴗꈍ)
+        s-safeseawchdupwicatementionnonfowwowewtweetwabewwuwe, mya
+        s-safeseawchbystandewabusivetweetwabewwuwe, nyaa~~
+        s-safetycwisiswevew3dwopwuwe, o.O
+        s-safetycwisiswevew4dwopwuwe, òωó
+        d-donotampwifydwopwuwe, ^•ﻌ•^
+        seawchipisafeseawchwithoutusewinquewydwopwuwe, (˘ω˘)
+        s-seawchedisafeseawchwithoutusewinquewydwopwuwe, òωó
+        a-abusepowicyepisodictweetwabewintewstitiawwuwe, mya
+        e-emewgencydynamicintewstitiawwuwe, ^^
+        unsafeseawchnsfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, rawr
+        u-unsafeseawchgoweandviowencehighpwecisionawwusewstweetwabewwuwe,
+        u-unsafeseawchnsfwwepowtedheuwisticsawwusewstweetwabewwuwe, >_<
+        u-unsafeseawchgoweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, (U ᵕ U❁)
+        unsafeseawchnsfwcawdimageawwusewstweetwabewwuwe, /(^•ω•^)
       ) ++
-      limitedEngagementBaseRules ++
-      tweetAvoidRules
+      w-wimitedengagementbasewuwes ++
+      t-tweetavoidwuwes
 
-    VisibilityPolicy.baseTweetRules ++ Seq(
-    SafeSearchAbusiveTweetLabelRule,
-    LowQualityTweetLabelDropRule,
-    HighProactiveTosScoreTweetLabelDropSearchRule,
-    HighSpammyTweetContentScoreSearchLatestTweetLabelDropRule,
-    HighSpammyTweetContentScoreTrendsLatestTweetLabelDropRule,
-    SafeSearchNsfwHighPrecisionTweetLabelRule,
-    SafeSearchGoreAndViolenceHighPrecisionTweetLabelRule,
-    SafeSearchNsfwReportedHeuristicsTweetLabelRule,
-    SafeSearchGoreAndViolenceReportedHeuristicsTweetLabelRule,
-    SafeSearchNsfwCardImageTweetLabelRule,
-    SafeSearchNsfwHighRecallTweetLabelRule,
-    SafeSearchNsfwVideoTweetLabelRule,
-    SafeSearchNsfwTextTweetLabelRule,
-    SpamHighRecallTweetLabelDropRule,
-    DuplicateContentTweetLabelDropRule,
-    SafeSearchGoreAndViolenceTweetLabelRule,
-    SafeSearchUntrustedUrlTweetLabelRule,
-    SafeSearchDownrankSpamReplyTweetLabelRule,
-    SearchBlacklistTweetLabelRule,
-    SearchBlacklistHighRecallTweetLabelDropRule,
-    SmyteSpamTweetLabelDropSearchRule,
-    CopypastaSpamNonFollowerSearchTweetLabelRule,
+    v-visibiwitypowicy.basetweetwuwes ++ s-seq(
+    safeseawchabusivetweetwabewwuwe, mya
+    wowquawitytweetwabewdwopwuwe, OwO
+    highpwoactivetosscowetweetwabewdwopseawchwuwe,
+    h-highspammytweetcontentscoweseawchwatesttweetwabewdwopwuwe, UwU
+    highspammytweetcontentscowetwendswatesttweetwabewdwopwuwe,
+    safeseawchnsfwhighpwecisiontweetwabewwuwe, 🥺
+    s-safeseawchgoweandviowencehighpwecisiontweetwabewwuwe, (✿oωo)
+    safeseawchnsfwwepowtedheuwisticstweetwabewwuwe, rawr
+    safeseawchgoweandviowencewepowtedheuwisticstweetwabewwuwe, rawr
+    s-safeseawchnsfwcawdimagetweetwabewwuwe, ( ͡o ω ͡o )
+    s-safeseawchnsfwhighwecawwtweetwabewwuwe, /(^•ω•^)
+    s-safeseawchnsfwvideotweetwabewwuwe, -.-
+    safeseawchnsfwtexttweetwabewwuwe, >w<
+    s-spamhighwecawwtweetwabewdwopwuwe,
+    d-dupwicatecontenttweetwabewdwopwuwe, ( ͡o ω ͡o )
+    safeseawchgoweandviowencetweetwabewwuwe, (˘ω˘)
+    safeseawchuntwusteduwwtweetwabewwuwe, /(^•ω•^)
+    safeseawchdownwankspamwepwytweetwabewwuwe,
+    seawchbwackwisttweetwabewwuwe, (˘ω˘)
+    seawchbwackwisthighwecawwtweetwabewdwopwuwe, o.O
+    s-smytespamtweetwabewdwopseawchwuwe, nyaa~~
+    copypastaspamnonfowwowewseawchtweetwabewwuwe, :3
   ) ++
-    basicBlockMuteRules ++
-    Seq(
-      SafeSearchAutomationNonFollowerTweetLabelRule,
-      SafeSearchDuplicateMentionNonFollowerTweetLabelRule,
-      SafeSearchBystanderAbusiveTweetLabelRule,
-      SafetyCrisisLevel3DropRule,
-      SafetyCrisisLevel4DropRule,
-      SearchIpiSafeSearchWithoutUserInQueryDropRule,
-      SearchEdiSafeSearchWithoutUserInQueryDropRule,
-      AbusePolicyEpisodicTweetLabelInterstitialRule,
-      EmergencyDynamicInterstitialRule,
-      UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-      UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-      UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule,
-      UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-      UnsafeSearchNsfwCardImageAllUsersTweetLabelRule,
-    ) ++ limitedEngagementBaseRules ++ tweetAvoidRules
+    basicbwockmutewuwes ++
+    seq(
+      safeseawchautomationnonfowwowewtweetwabewwuwe, (///ˬ///✿)
+      s-safeseawchdupwicatementionnonfowwowewtweetwabewwuwe, (U ﹏ U)
+      s-safeseawchbystandewabusivetweetwabewwuwe, o.O
+      safetycwisiswevew3dwopwuwe,
+      s-safetycwisiswevew4dwopwuwe, ^^;;
+      s-seawchipisafeseawchwithoutusewinquewydwopwuwe, ʘwʘ
+      s-seawchedisafeseawchwithoutusewinquewydwopwuwe, (///ˬ///✿)
+      a-abusepowicyepisodictweetwabewintewstitiawwuwe, σωσ
+      emewgencydynamicintewstitiawwuwe, ^^;;
+      u-unsafeseawchnsfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, UwU
+      u-unsafeseawchgoweandviowencehighpwecisionawwusewstweetwabewwuwe, mya
+      u-unsafeseawchnsfwwepowtedheuwisticsawwusewstweetwabewwuwe, ^•ﻌ•^
+      unsafeseawchgoweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, (⑅˘꒳˘)
+      unsafeseawchnsfwcawdimageawwusewstweetwabewwuwe, nyaa~~
+    ) ++ wimitedengagementbasewuwes ++ t-tweetavoidwuwes
 
-  val userBaseRules: Seq[ConditionWithUserLabelRule] = Seq(
-    SafeSearchAbusiveUserLabelRule,
-    LowQualityRule,
-    ReadOnlyRule,
-    SearchBlacklistRule,
-    CompromisedRule,
-    SpamHighRecallRule,
-    DuplicateContentRule,
-    DoNotAmplifyNonFollowerRule,
-    SearchLikelyIvsLabelNonFollowerDropUserRule,
-    SafeSearchNsfwHighPrecisionUserLabelRule,
-    SafeSearchNsfwAvatarImageUserLabelRule,
-    SafeSearchNsfwBannerImageUserLabelRule,
-    SafeSearchAbusiveHighRecallUserLabelRule,
-    SafeSearchDownrankSpamReplyAuthorLabelRule,
-    SafeSearchNotGraduatedNonFollowersUserLabelRule,
-    SafeSearchNsfwTextAuthorLabelRule
+  vaw usewbasewuwes: s-seq[conditionwithusewwabewwuwe] = seq(
+    safeseawchabusiveusewwabewwuwe, ^^;;
+    w-wowquawitywuwe, 🥺
+    w-weadonwywuwe, ^^;;
+    seawchbwackwistwuwe, nyaa~~
+    c-compwomisedwuwe, 🥺
+    spamhighwecawwwuwe, (ˆ ﻌ ˆ)♡
+    dupwicatecontentwuwe, ( ͡o ω ͡o )
+    d-donotampwifynonfowwowewwuwe, nyaa~~
+    s-seawchwikewyivswabewnonfowwowewdwopusewwuwe, ( ͡o ω ͡o )
+    s-safeseawchnsfwhighpwecisionusewwabewwuwe, ^^;;
+    s-safeseawchnsfwavatawimageusewwabewwuwe, rawr x3
+    safeseawchnsfwbannewimageusewwabewwuwe, ^^;;
+    s-safeseawchabusivehighwecawwusewwabewwuwe, ^•ﻌ•^
+    s-safeseawchdownwankspamwepwyauthowwabewwuwe,
+    s-safeseawchnotgwaduatednonfowwowewsusewwabewwuwe, 🥺
+    safeseawchnsfwtextauthowwabewwuwe
   )
 
-  val userRules: Seq[ConditionWithUserLabelRule] = userBaseRules
+  v-vaw usewwuwes: seq[conditionwithusewwabewwuwe] = usewbasewuwes
 
-  val userRelevanceBaseRules = userBaseRules ++ basicBlockMuteRules
+  vaw usewwewevancebasewuwes = usewbasewuwes ++ basicbwockmutewuwes
 
-  val userRelevanceRules = userRelevanceBaseRules
+  vaw usewwewevancewuwes = usewwewevancebasewuwes
 
-  val userRecencyBaseRules = userBaseRules.filterNot(
-    Seq(DoNotAmplifyNonFollowerRule, SearchLikelyIvsLabelNonFollowerDropUserRule).contains
-  ) ++ basicBlockMuteRules
+  v-vaw usewwecencybasewuwes = u-usewbasewuwes.fiwtewnot(
+    seq(donotampwifynonfowwowewwuwe, (ꈍᴗꈍ) seawchwikewyivswabewnonfowwowewdwopusewwuwe).contains
+  ) ++ basicbwockmutewuwes
 
-  val searchQueryMatchesTweetAuthorRules: Seq[ConditionWithUserLabelRule] =
-    userBaseRules
+  vaw s-seawchquewymatchestweetauthowwuwes: s-seq[conditionwithusewwabewwuwe] =
+    usewbasewuwes
 
-  val basicBlockMutePolicyRuleParam: Map[Rule, PolicyLevelRuleParams] =
-    SearchBlenderRules.basicBlockMuteRules
-      .map(rule => rule -> ruleParams(RuleParams.EnableSearchBasicBlockMuteRulesParam)).toMap
+  vaw basicbwockmutepowicywuwepawam: map[wuwe, ^•ﻌ•^ p-powicywevewwuwepawams] =
+    s-seawchbwendewwuwes.basicbwockmutewuwes
+      .map(wuwe => wuwe -> wuwepawams(wuwepawams.enabweseawchbasicbwockmutewuwespawam)).tomap
 }
 
-case object SearchBlenderUserRulesPolicy
-    extends VisibilityPolicy(
-      userRules = SearchBlenderRules.userRules
+c-case o-object seawchbwendewusewwuwespowicy
+    extends v-visibiwitypowicy(
+      usewwuwes = s-seawchbwendewwuwes.usewwuwes
     )
 
-case object SearchLatestUserRulesPolicy
-    extends VisibilityPolicy(
-      userRules = SearchLatestPolicy.userRules
+c-case object seawchwatestusewwuwespowicy
+    extends visibiwitypowicy(
+      usewwuwes = s-seawchwatestpowicy.usewwuwes
     )
 
-case object UserSearchSrpPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-        ViewerMutesAuthorViewerOptInBlockingOnSearchRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        SafeSearchAbusiveUserLabelRule,
-        SafeSearchHighRecallUserLabelRule,
-        SafeSearchNsfwNearPerfectAuthorRule,
-        SafeSearchNsfwHighPrecisionUserLabelRule,
-        SafeSearchNsfwAvatarImageUserLabelRule,
-        SafeSearchNsfwBannerImageUserLabelRule,
-        SafeSearchAbusiveHighRecallUserLabelRule,
-        SafeSearchNsfwTextAuthorLabelRule
+c-case object u-usewseawchswppowicy
+    e-extends visibiwitypowicy(
+      u-usewwuwes = s-seq(
+        a-authowbwocksviewewdwopwuwe, :3
+        v-viewewbwocksauthowviewewoptinbwockingonseawchwuwe, (˘ω˘)
+        viewewmutesauthowviewewoptinbwockingonseawchwuwe, ^^
+        dwopnsfwadminauthowviewewoptinfiwtewingonseawchwuwe, /(^•ω•^)
+        s-safeseawchabusiveusewwabewwuwe, σωσ
+        s-safeseawchhighwecawwusewwabewwuwe, òωó
+        safeseawchnsfwneawpewfectauthowwuwe, >w<
+        safeseawchnsfwhighpwecisionusewwabewwuwe, (˘ω˘)
+        safeseawchnsfwavatawimageusewwabewwuwe, ^•ﻌ•^
+        safeseawchnsfwbannewimageusewwabewwuwe, >_<
+        s-safeseawchabusivehighwecawwusewwabewwuwe, -.-
+        s-safeseawchnsfwtextauthowwabewwuwe
       )
     )
 
-case object UserSearchTypeaheadPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        SafeSearchAbusiveUserLabelRule,
-        SafeSearchHighRecallUserLabelRule,
-        SafeSearchNsfwNearPerfectAuthorRule,
-        SafeSearchNsfwHighPrecisionUserLabelRule,
-        SafeSearchNsfwAvatarImageUserLabelRule,
-        SafeSearchNsfwBannerImageUserLabelRule,
-        SafeSearchAbusiveHighRecallUserLabelRule,
-        SafeSearchNsfwTextAuthorLabelRule
-      ),
-      tweetRules = Seq(DropAllRule)
+case object usewseawchtypeaheadpowicy
+    e-extends visibiwitypowicy(
+      usewwuwes = seq(
+        s-safeseawchabusiveusewwabewwuwe, òωó
+        s-safeseawchhighwecawwusewwabewwuwe, ( ͡o ω ͡o )
+        s-safeseawchnsfwneawpewfectauthowwuwe,
+        safeseawchnsfwhighpwecisionusewwabewwuwe, (ˆ ﻌ ˆ)♡
+        s-safeseawchnsfwavatawimageusewwabewwuwe, :3
+        s-safeseawchnsfwbannewimageusewwabewwuwe, ^•ﻌ•^
+        safeseawchabusivehighwecawwusewwabewwuwe, ( ͡o ω ͡o )
+        safeseawchnsfwtextauthowwabewwuwe
+      ), ^•ﻌ•^
+      t-tweetwuwes = s-seq(dwopawwwuwe)
     )
 
-case object SearchMixerSrpMinimalPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-        ViewerMutesAuthorViewerOptInBlockingOnSearchRule
+c-case o-object seawchmixewswpminimawpowicy
+    e-extends v-visibiwitypowicy(
+      usewwuwes = seq(
+        authowbwocksviewewdwopwuwe, ʘwʘ
+        viewewbwocksauthowviewewoptinbwockingonseawchwuwe, :3
+        viewewmutesauthowviewewoptinbwockingonseawchwuwe
       )
     )
 
-case object SearchMixerSrpStrictPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-        ViewerMutesAuthorViewerOptInBlockingOnSearchRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        NsfwNearPerfectAuthorRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwSensitiveRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule
-      ) ++ SearchBlenderRules.searchQueryMatchesTweetAuthorRules
-        .diff(Seq(SafeSearchNotGraduatedNonFollowersUserLabelRule))
+c-case object seawchmixewswpstwictpowicy
+    extends v-visibiwitypowicy(
+      u-usewwuwes = seq(
+        authowbwocksviewewdwopwuwe, >_<
+        viewewbwocksauthowviewewoptinbwockingonseawchwuwe, rawr
+        v-viewewmutesauthowviewewoptinbwockingonseawchwuwe, 🥺
+        d-dwopnsfwadminauthowviewewoptinfiwtewingonseawchwuwe, (✿oωo)
+        nysfwneawpewfectauthowwuwe, (U ﹏ U)
+        n-nysfwhighpwecisionwuwe, rawr x3
+        nysfwhighwecawwwuwe, (✿oωo)
+        n-nysfwsensitivewuwe, (U ᵕ U❁)
+        nysfwavatawimagewuwe, -.-
+        nysfwbannewimagewuwe
+      ) ++ seawchbwendewwuwes.seawchquewymatchestweetauthowwuwes
+        .diff(seq(safeseawchnotgwaduatednonfowwowewsusewwabewwuwe))
     )
 
-case object SearchPeopleSrpPolicy
-    extends VisibilityPolicy(
-      userRules = SearchBlenderRules.searchQueryMatchesTweetAuthorRules
+c-case object seawchpeopweswppowicy
+    extends visibiwitypowicy(
+      usewwuwes = s-seawchbwendewwuwes.seawchquewymatchestweetauthowwuwes
     )
 
-case object SearchPeopleTypeaheadPolicy
-    extends VisibilityPolicy(
-      userRules = SearchBlenderRules.searchQueryMatchesTweetAuthorRules
+c-case object s-seawchpeopwetypeaheadpowicy
+    e-extends visibiwitypowicy(
+      usewwuwes = seawchbwendewwuwes.seawchquewymatchestweetauthowwuwes
         .diff(
-          Seq(
-            SafeSearchNotGraduatedNonFollowersUserLabelRule
-          )),
-      tweetRules = Seq(DropAllRule)
+          seq(
+            s-safeseawchnotgwaduatednonfowwowewsusewwabewwuwe
+          )), /(^•ω•^)
+      tweetwuwes = seq(dwopawwwuwe)
     )
 
-case object SearchPhotoPolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRelevanceRules,
-      userRules = SearchBlenderRules.userRelevanceRules,
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+c-case object seawchphotopowicy
+    extends v-visibiwitypowicy(
+      t-tweetwuwes = s-seawchbwendewwuwes.tweetwewevancewuwes, OwO
+      usewwuwes = seawchbwendewwuwes.usewwewevancewuwes, rawr x3
+      powicywuwepawams = seawchbwendewwuwes.basicbwockmutepowicywuwepawam
     )
 
-case object SearchTrendTakeoverPromotedTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules
+c-case object seawchtwendtakeovewpwomotedtweetpowicy
+    extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes
     )
 
-case object SearchVideoPolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRelevanceRules,
-      userRules = SearchBlenderRules.userRelevanceRules,
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+case object seawchvideopowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = seawchbwendewwuwes.tweetwewevancewuwes, σωσ
+      usewwuwes = seawchbwendewwuwes.usewwewevancewuwes,
+      powicywuwepawams = seawchbwendewwuwes.basicbwockmutepowicywuwepawam
     )
 
-case object SearchLatestPolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRecencyRules,
-      userRules = SearchBlenderRules.userRecencyBaseRules,
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+case object seawchwatestpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = seawchbwendewwuwes.tweetwecencywuwes, ʘwʘ
+      usewwuwes = s-seawchbwendewwuwes.usewwecencybasewuwes, -.-
+      p-powicywuwepawams = s-seawchbwendewwuwes.basicbwockmutepowicywuwepawam
     )
 
-case object SearchTopPolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRelevanceRules,
-      userRules = Seq(SpammyUserModelHighPrecisionDropTweetRule) ++
-        SearchBlenderRules.basicBlockMuteRules ++
-        SearchBlenderRules.searchQueryMatchesTweetAuthorRules,
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+c-case object seawchtoppowicy
+    extends visibiwitypowicy(
+      tweetwuwes = seawchbwendewwuwes.tweetwewevancewuwes, 😳
+      usewwuwes = seq(spammyusewmodewhighpwecisiondwoptweetwuwe) ++
+        s-seawchbwendewwuwes.basicbwockmutewuwes ++
+        s-seawchbwendewwuwes.seawchquewymatchestweetauthowwuwes, 😳😳😳
+      p-powicywuwepawams = s-seawchbwendewwuwes.basicbwockmutepowicywuwepawam
     )
 
-case object SearchTopQigPolicy
-    extends VisibilityPolicy(
-      tweetRules = BaseQigPolicy.tweetRules ++
-        Seq(
-          UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule,
-          UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule,
-          UnsafeSearchNsfwCardImageAllUsersTweetLabelDropRule,
-          UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelDropRule,
-          UnsafeSearchNsfwHighPrecisionAllUsersTweetLabelDropRule
+case object seawchtopqigpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = b-baseqigpowicy.tweetwuwes ++
+        seq(
+          unsafeseawchgoweandviowencehighpwecisionawwusewstweetwabewdwopwuwe, OwO
+          unsafeseawchgoweandviowencewepowtedheuwisticsawwusewstweetwabewdwopwuwe, ^•ﻌ•^
+          u-unsafeseawchnsfwcawdimageawwusewstweetwabewdwopwuwe, rawr
+          u-unsafeseawchnsfwwepowtedheuwisticsawwusewstweetwabewdwopwuwe, (✿oωo)
+          u-unsafeseawchnsfwhighpwecisionawwusewstweetwabewdwopwuwe
         ) ++
-        SearchTopPolicy.tweetRules.diff(
-          Seq(
-            SearchIpiSafeSearchWithoutUserInQueryDropRule,
-            SearchEdiSafeSearchWithoutUserInQueryDropRule,
-            HighSpammyTweetContentScoreTrendsTopTweetLabelDropRule,
-            UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            UnsafeSearchNsfwCardImageAllUsersTweetLabelRule,
-            UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule
+        s-seawchtoppowicy.tweetwuwes.diff(
+          seq(
+            s-seawchipisafeseawchwithoutusewinquewydwopwuwe, ^^
+            seawchedisafeseawchwithoutusewinquewydwopwuwe, -.-
+            h-highspammytweetcontentscowetwendstoptweetwabewdwopwuwe, (✿oωo)
+            unsafeseawchnsfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, o.O
+            unsafeseawchgoweandviowencehighpwecisionawwusewstweetwabewwuwe, :3
+            unsafeseawchgoweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, rawr x3
+            u-unsafeseawchnsfwcawdimageawwusewstweetwabewwuwe, (U ᵕ U❁)
+            u-unsafeseawchnsfwwepowtedheuwisticsawwusewstweetwabewwuwe
           ) ++
-            SearchTopPolicy.tweetRules.intersect(BaseQigPolicy.tweetRules)),
-      userRules = BaseQigPolicy.userRules ++ Seq(
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        NsfwNearPerfectAuthorRule,
-      ) ++ SearchTopPolicy.userRules.diff(
-        SearchTopPolicy.userRules.intersect(BaseQigPolicy.userRules)),
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+            seawchtoppowicy.tweetwuwes.intewsect(baseqigpowicy.tweetwuwes)), :3
+      usewwuwes = baseqigpowicy.usewwuwes ++ seq(
+        d-dwopnsfwadminauthowviewewoptinfiwtewingonseawchwuwe, 🥺
+        nysfwneawpewfectauthowwuwe, XD
+      ) ++ s-seawchtoppowicy.usewwuwes.diff(
+        s-seawchtoppowicy.usewwuwes.intewsect(baseqigpowicy.usewwuwes)), >_<
+      p-powicywuwepawams = seawchbwendewwuwes.basicbwockmutepowicywuwepawam
     )
 
-case object SafeSearchStrictPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropOuterCommunityTweetsRule,
-      ) ++ VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        HighProactiveTosScoreTweetLabelDropSearchRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        GoreAndViolenceTweetLabelRule,
-        UntrustedUrlTweetLabelRule,
-        DownrankSpamReplyTweetLabelRule,
-        SearchBlacklistTweetLabelRule,
-        SearchBlacklistHighRecallTweetLabelDropRule,
-        AutomationTweetLabelRule,
-        DuplicateMentionTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SmyteSpamTweetLabelDropRule,
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
-        ++ SearchBlenderRules.tweetAvoidRules,
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        SearchLikelyIvsLabelNonFollowerDropUserRule,
-        DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule,
+case object safeseawchstwictpowicy
+    extends visibiwitypowicy(
+      tweetwuwes = seq(
+        d-dwopoutewcommunitytweetswuwe, (ꈍᴗꈍ)
+      ) ++ visibiwitypowicy.basetweetwuwes ++ s-seq(
+        abusivetweetwabewwuwe, ( ͡o ω ͡o )
+        wowquawitytweetwabewdwopwuwe, (˘ω˘)
+        highpwoactivetosscowetweetwabewdwopseawchwuwe, (˘ω˘)
+        n-nysfwhighpwecisiontweetwabewwuwe, UwU
+        goweandviowencehighpwecisiontweetwabewwuwe, (ˆ ﻌ ˆ)♡
+        n-nysfwwepowtedheuwisticstweetwabewwuwe, (///ˬ///✿)
+        g-goweandviowencewepowtedheuwisticstweetwabewwuwe, (ꈍᴗꈍ)
+        n-nysfwcawdimagetweetwabewwuwe, -.-
+        n-nysfwhighwecawwtweetwabewwuwe, 😳😳😳
+        n-nysfwvideotweetwabewdwopwuwe, (///ˬ///✿)
+        nysfwtexttweetwabewdwopwuwe, UwU
+        spamhighwecawwtweetwabewdwopwuwe, 😳
+        d-dupwicatecontenttweetwabewdwopwuwe,
+        goweandviowencetweetwabewwuwe, /(^•ω•^)
+        untwusteduwwtweetwabewwuwe, òωó
+        downwankspamwepwytweetwabewwuwe, >w<
+        seawchbwackwisttweetwabewwuwe, -.-
+        s-seawchbwackwisthighwecawwtweetwabewdwopwuwe, (⑅˘꒳˘)
+        automationtweetwabewwuwe, (˘ω˘)
+        dupwicatementiontweetwabewwuwe, (U ᵕ U❁)
+        b-bystandewabusivetweetwabewwuwe, ^^
+        s-safetycwisiswevew3dwopwuwe, ^^
+        s-safetycwisiswevew4dwopwuwe, rawr x3
+        donotampwifydwopwuwe,
+        smytespamtweetwabewdwopwuwe, >w<
+        abusepowicyepisodictweetwabewintewstitiawwuwe, (U ᵕ U❁)
+        emewgencydynamicintewstitiawwuwe, 🥺
+      ) ++ w-wimitedengagementbasewuwes.tweetwuwes
+        ++ s-seawchbwendewwuwes.tweetavoidwuwes, (⑅˘꒳˘)
+      u-usewwuwes = s-seq(
+        abusivewuwe, OwO
+        wowquawitywuwe, 😳
+        weadonwywuwe, òωó
+        seawchbwackwistwuwe, (ˆ ﻌ ˆ)♡
+        seawchnsfwtextwuwe, ʘwʘ
+        compwomisedwuwe, ^^;;
+        spamhighwecawwwuwe, ʘwʘ
+        d-dupwicatecontentwuwe, òωó
+        nysfwhighpwecisionwuwe, ( ͡o ω ͡o )
+        nysfwavatawimagewuwe, ʘwʘ
+        n-nysfwbannewimagewuwe, >w<
+        a-abusivehighwecawwwuwe, 😳😳😳
+        d-donotampwifynonfowwowewwuwe, σωσ
+        nyotgwaduatednonfowwowewwuwe, -.-
+        s-seawchwikewyivswabewnonfowwowewdwopusewwuwe, 🥺
+        downwankspamwepwynonauthowwuwe, >w<
+        nysfwtextnonauthowdwopwuwe, (///ˬ///✿)
       )
     )
 
-case object StickersTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        CompromisedRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        DuplicateContentRule,
-        EngagementSpammerRule,
-        EngagementSpammerHighRecallRule,
-        NsfwSensitiveRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule
+case object stickewstimewinepowicy
+    extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes, UwU
+      usewwuwes = seq(
+        a-abusivewuwe, ( ͡o ω ͡o )
+        wowquawitywuwe, (ˆ ﻌ ˆ)♡
+        weadonwywuwe, ^^;;
+        c-compwomisedwuwe,
+        s-seawchbwackwistwuwe, (U ᵕ U❁)
+        seawchnsfwtextwuwe, XD
+        d-dupwicatecontentwuwe, (ꈍᴗꈍ)
+        e-engagementspammewwuwe, -.-
+        engagementspammewhighwecawwwuwe, >_<
+        nysfwsensitivewuwe, (ˆ ﻌ ˆ)♡
+        s-spamhighwecawwwuwe, ( ͡o ω ͡o )
+        a-abusivehighwecawwwuwe
       )
     )
 
-case object StratoExtLimitedEngagementsPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        VisibilityPolicy.baseTweetRules ++ LimitedEngagementBaseRules.tweetRules
+case object stwatoextwimitedengagementspowicy
+    e-extends v-visibiwitypowicy(
+      t-tweetwuwes =
+        visibiwitypowicy.basetweetwuwes ++ w-wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object InternalPromotedContentPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules
+case object intewnawpwomotedcontentpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes
     )
 
-case object StreamServicesPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule
-      ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+c-case object stweamsewvicespowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++ seq(
+        abusivetweetwabewwuwe, rawr x3
+        wowquawitytweetwabewdwopwuwe, òωó
+        nysfwhighpwecisiontweetwabewwuwe, 😳
+        g-goweandviowencehighpwecisiontweetwabewwuwe, (ˆ ﻌ ˆ)♡
+        nysfwwepowtedheuwisticstweetwabewwuwe, 🥺
+        g-goweandviowencewepowtedheuwisticstweetwabewwuwe, ^^
+        nysfwcawdimagetweetwabewwuwe, /(^•ω•^)
+        n-nysfwvideotweetwabewdwopwuwe,
+        nysfwtexttweetwabewdwopwuwe, o.O
+        spamhighwecawwtweetwabewdwopwuwe, òωó
+        dupwicatecontenttweetwabewdwopwuwe, XD
+        b-bystandewabusivetweetwabewwuwe, rawr x3
+        smytespamtweetwabewdwopwuwe
+      ), (˘ω˘)
+      usewwuwes = seq(nsfwtextnonauthowdwopwuwe)
     )
 
-case object SuperLikePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusePolicyEpisodicTweetLabelDropRule,
-        EmergencyDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule
-      ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+c-case object supewwikepowicy
+    e-extends v-visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes ++ seq(
+        a-abusepowicyepisodictweetwabewdwopwuwe, :3
+        e-emewgencydwopwuwe, (U ᵕ U❁)
+        n-nysfwhighpwecisiontweetwabewwuwe, rawr
+        g-goweandviowencehighpwecisiontweetwabewwuwe, OwO
+        nysfwwepowtedheuwisticstweetwabewwuwe, ʘwʘ
+        goweandviowencewepowtedheuwisticstweetwabewwuwe, XD
+        n-nysfwcawdimagetweetwabewwuwe, rawr x3
+        n-nysfwvideotweetwabewdwopwuwe, OwO
+        n-nysfwtexttweetwabewdwopwuwe
+      ), nyaa~~
+      u-usewwuwes = s-seq(nsfwtextnonauthowdwopwuwe)
     )
 
-case object TimelineFocalTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
+case object timewinefocawtweetpowicy
+    extends v-visibiwitypowicy(
+      t-tweetwuwes = seq(
+        abusepowicyepisodictweetwabewintewstitiawwuwe,
+        e-emewgencydynamicintewstitiawwuwe, ʘwʘ
+      ) ++ w-wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object TimelineBookmarkPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        Seq(
-          DropCommunityTweetsRule,
-          DropCommunityTweetCommunityNotVisibleRule,
-          DropProtectedCommunityTweetsRule,
-          DropHiddenCommunityTweetsRule,
-          DropAuthorRemovedCommunityTweetsRule,
-          SpamTweetLabelRule,
-          PdnaTweetLabelRule,
-          BounceOuterTweetTombstoneRule,
-          BounceQuotedTweetTombstoneRule,
-          DropExclusiveTweetContentRule,
-          DropTrustedFriendsTweetContentRule,
+c-case object timewinebookmawkpowicy
+    e-extends v-visibiwitypowicy(
+      tweetwuwes =
+        s-seq(
+          dwopcommunitytweetswuwe, rawr
+          dwopcommunitytweetcommunitynotvisibwewuwe, ^^
+          dwoppwotectedcommunitytweetswuwe, rawr
+          d-dwophiddencommunitytweetswuwe, nyaa~~
+          d-dwopauthowwemovedcommunitytweetswuwe, nyaa~~
+          s-spamtweetwabewwuwe, o.O
+          p-pdnatweetwabewwuwe, òωó
+          b-bounceoutewtweettombstonewuwe, ^^;;
+          bouncequotedtweettombstonewuwe, rawr
+          d-dwopexcwusivetweetcontentwuwe, ^•ﻌ•^
+          d-dwoptwustedfwiendstweetcontentwuwe, nyaa~~
         ) ++
-          Seq(
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
-            ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedTweetRule,
-        TombstoneDeletedQuotedTweetRule
-      ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        UserUnavailableTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      ),
+          s-seq(
+            abusepowicyepisodictweetwabewintewstitiawwuwe, nyaa~~
+            emewgencydynamicintewstitiawwuwe, 😳😳😳
+            nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, 😳😳😳
+            goweandviowencehighpwecisionawwusewstweetwabewwuwe, σωσ
+            n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, o.O
+            goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, σωσ
+            viewewbwocksauthowinnewquotedtweetintewstitiawwuwe, nyaa~~
+            v-viewewmutesauthowinnewquotedtweetintewstitiawwuwe,
+            nysfwcawdimageawwusewstweetwabewwuwe, rawr x3
+          ) ++ w-wimitedengagementbasewuwes.tweetwuwes, (///ˬ///✿)
+      dewetedtweetwuwes = seq(
+        tombstonebouncedewetedtweetwuwe, o.O
+        t-tombstonedewetedquotedtweetwuwe
+      ), òωó
+      usewunavaiwabwestatewuwes = seq(
+        s-suspendedusewunavaiwabwetweettombstonewuwe, OwO
+        d-deactivatedusewunavaiwabwetweettombstonewuwe, σωσ
+        offboawdedusewunavaiwabwetweettombstonewuwe, nyaa~~
+        ewasedusewunavaiwabwetweettombstonewuwe,
+        pwotectedusewunavaiwabwetweettombstonewuwe, OwO
+        authowbwocksviewewusewunavaiwabweinnewquotedtweettombstonewuwe, ^^
+        u-usewunavaiwabwetweettombstonewuwe, (///ˬ///✿)
+        viewewbwocksauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe, σωσ
+        viewewmutesauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe
+      ), rawr x3
     )
 
-case object TimelineListsPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        Seq(
-          DropOuterCommunityTweetsRule,
-          DropStaleTweetsRule,
+case object timewinewistspowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes =
+        seq(
+          d-dwopoutewcommunitytweetswuwe, (ˆ ﻌ ˆ)♡
+          dwopstawetweetswuwe, 🥺
         ) ++
-          VisibilityPolicy.baseTweetRules ++
-          Seq(
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
-            GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            NsfwCardImageAvoidAllUsersTweetLabelRule,
-            DoNotAmplifyTweetLabelAvoidRule,
-            NsfaHighPrecisionTweetLabelAvoidRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules
+          v-visibiwitypowicy.basetweetwuwes ++
+          s-seq(
+            a-abusepowicyepisodictweetwabewintewstitiawwuwe,
+            emewgencydynamicintewstitiawwuwe, (⑅˘꒳˘)
+            nsfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, 😳😳😳
+            g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, /(^•ω•^)
+            nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, >w<
+            goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, ^•ﻌ•^
+            n-nsfwcawdimageawwusewstweetwabewwuwe, 😳😳😳
+            nysfwhighpwecisiontweetwabewavoidwuwe, :3
+            nysfwhighwecawwtweetwabewavoidwuwe, (ꈍᴗꈍ)
+            goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe, ^•ﻌ•^
+            nysfwwepowtedheuwisticsavoidawwusewstweetwabewwuwe, >w<
+            goweandviowencewepowtedheuwisticsavoidawwusewstweetwabewwuwe, ^^;;
+            n-nsfwcawdimageavoidawwusewstweetwabewwuwe, (✿oωo)
+            donotampwifytweetwabewavoidwuwe, òωó
+            n-nysfahighpwecisiontweetwabewavoidwuwe,
+          ) ++ wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object TimelineFavoritesPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        Seq(
-          DropOuterCommunityTweetsRule,
-          DropStaleTweetsRule,
+c-case o-object timewinefavowitespowicy
+    extends visibiwitypowicy(
+      tweetwuwes =
+        seq(
+          d-dwopoutewcommunitytweetswuwe, ^^
+          d-dwopstawetweetswuwe, ^^
         )
-          ++ TimelineProfileRules.baseTweetRules
-          ++ Seq(
-            DynamicProductAdDropTweetLabelRule,
-            NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            ReportedTweetInterstitialRule,
-            ViewerMutesAuthorInterstitialRule,
-            ViewerBlocksAuthorInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
-            GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            NsfwCardImageAvoidAllUsersTweetLabelRule,
-            DoNotAmplifyTweetLabelAvoidRule,
-            NsfaHighPrecisionTweetLabelAvoidRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
-      ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      ),
-      policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
+          ++ timewinepwofiwewuwes.basetweetwuwes
+          ++ s-seq(
+            d-dynamicpwoductaddwoptweetwabewwuwe, rawr
+            nysfwhighpwecisiontombstoneinnewquotedtweetwabewwuwe,
+            s-sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwhighpwecisiontweetwabewdwopsettingwevewtombstonewuwe, XD
+            sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencehighpwecisiondwopsettingwevetombstonewuwe, rawr
+            s-sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwwepowtedheuwisticstweetwabewdwopsettingwevewtombstonewuwe, 😳
+            sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencewepowtedheuwisticsdwopsettingwevewtombstonewuwe, 🥺
+            sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwcawdimagetweetwabewdwopsettingwevewtombstonewuwe, (U ᵕ U❁)
+            s-sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwusewtweetfwagdwopsettingwevewtombstonewuwe, 😳
+            sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwadmintweetfwagdwopsettingwevewtombstonewuwe, 🥺
+            a-abusepowicyepisodictweetwabewintewstitiawwuwe, (///ˬ///✿)
+            emewgencydynamicintewstitiawwuwe, mya
+            w-wepowtedtweetintewstitiawwuwe, (✿oωo)
+            v-viewewmutesauthowintewstitiawwuwe, ^•ﻌ•^
+            viewewbwocksauthowintewstitiawwuwe, o.O
+            nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, o.O
+            goweandviowencehighpwecisionawwusewstweetwabewwuwe, XD
+            nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, ^•ﻌ•^
+            goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, ʘwʘ
+            nysfwcawdimageawwusewstweetwabewwuwe, (U ﹏ U)
+            sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe, 😳😳😳
+            s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe,
+            s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe, 🥺
+            sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe, (///ˬ///✿)
+            sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe, (˘ω˘)
+            sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe, :3
+            s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe, /(^•ω•^)
+            n-nysfwhighpwecisiontweetwabewavoidwuwe, :3
+            n-nysfwhighwecawwtweetwabewavoidwuwe, mya
+            goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe,
+            nysfwwepowtedheuwisticsavoidawwusewstweetwabewwuwe,
+            goweandviowencewepowtedheuwisticsavoidawwusewstweetwabewwuwe, XD
+            n-nysfwcawdimageavoidawwusewstweetwabewwuwe, (///ˬ///✿)
+            donotampwifytweetwabewavoidwuwe,
+            nysfahighpwecisiontweetwabewavoidwuwe, 🥺
+          ) ++ wimitedengagementbasewuwes.tweetwuwes, o.O
+      dewetedtweetwuwes = seq(
+        t-tombstonedewetedquotedtweetwuwe, mya
+        tombstonebouncedewetedquotedtweetwuwe
+      ), rawr x3
+      u-usewunavaiwabwestatewuwes = s-seq(
+        s-suspendedusewunavaiwabweinnewquotedtweettombstonewuwe, 😳
+        deactivatedusewunavaiwabweinnewquotedtweettombstonewuwe, 😳😳😳
+        o-offboawdedusewunavaiwabweinnewquotedtweettombstonewuwe, >_<
+        e-ewasedusewunavaiwabweinnewquotedtweettombstonewuwe, >w<
+        pwotectedusewunavaiwabweinnewquotedtweettombstonewuwe, rawr x3
+        a-authowbwocksviewewusewunavaiwabweinnewquotedtweettombstonewuwe,
+        v-viewewbwocksauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe, XD
+        viewewmutesauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe
+      ), ^^
+      powicywuwepawams = s-sensitivemediasettingspwofiwetimewinebasewuwes.powicywuwepawams
     )
 
-case object ProfileMixerFavoritesPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropExclusiveTweetContentRule,
-        DropOuterCommunityTweetsRule,
+c-case o-object pwofiwemixewfavowitespowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = seq(
+        dwopstawetweetswuwe, (✿oωo)
+        dwopexcwusivetweetcontentwuwe, >w<
+        d-dwopoutewcommunitytweetswuwe, 😳😳😳
       ),
-      deletedTweetRules = Seq(
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
+      dewetedtweetwuwes = seq(
+        tombstonedewetedquotedtweetwuwe, (ꈍᴗꈍ)
+        tombstonebouncedewetedquotedtweetwuwe
       )
     )
 
-case object TimelineMediaPolicy
-    extends VisibilityPolicy(
-        TimelineProfileRules.baseTweetRules
-        ++ Seq(
-          NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          ReportedTweetInterstitialRule,
-          ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
-          ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
-      ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      ),
-      policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
+case object timewinemediapowicy
+    e-extends visibiwitypowicy(
+        timewinepwofiwewuwes.basetweetwuwes
+        ++ seq(
+          nysfwhighpwecisiontombstoneinnewquotedtweetwabewwuwe, (✿oωo)
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwhighpwecisiontweetwabewdwopsettingwevewtombstonewuwe, (˘ω˘)
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencehighpwecisiondwopsettingwevetombstonewuwe, nyaa~~
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwwepowtedheuwisticstweetwabewdwopsettingwevewtombstonewuwe, ( ͡o ω ͡o )
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencewepowtedheuwisticsdwopsettingwevewtombstonewuwe, 🥺
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwcawdimagetweetwabewdwopsettingwevewtombstonewuwe,
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwusewtweetfwagdwopsettingwevewtombstonewuwe, (U ﹏ U)
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwadmintweetfwagdwopsettingwevewtombstonewuwe, ( ͡o ω ͡o )
+          abusepowicyepisodictweetwabewintewstitiawwuwe, (///ˬ///✿)
+          e-emewgencydynamicintewstitiawwuwe, (///ˬ///✿)
+          w-wepowtedtweetintewstitiawwuwe, (✿oωo)
+          viewewmutesauthowinnewquotedtweetintewstitiawwuwe, (U ᵕ U❁)
+          viewewbwocksauthowinnewquotedtweetintewstitiawwuwe, ʘwʘ
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, ʘwʘ
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, XD
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, (✿oωo)
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, ^•ﻌ•^
+          n-nysfwcawdimageawwusewstweetwabewwuwe, ^•ﻌ•^
+          sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe, >_<
+          s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe, mya
+          sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe, σωσ
+          s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe, rawr
+          s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe, (✿oωo)
+          sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe, :3
+          sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe, rawr x3
+          n-nysfwhighpwecisiontweetwabewavoidwuwe, ^^
+          n-nysfwhighwecawwtweetwabewavoidwuwe, ^^
+          goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe, OwO
+          n-nysfwwepowtedheuwisticsavoidawwusewstweetwabewwuwe, ʘwʘ
+          g-goweandviowencewepowtedheuwisticsavoidawwusewstweetwabewwuwe, /(^•ω•^)
+          nysfwcawdimageavoidawwusewstweetwabewwuwe, ʘwʘ
+          donotampwifytweetwabewavoidwuwe, (⑅˘꒳˘)
+          nysfahighpwecisiontweetwabewavoidwuwe, UwU
+        ) ++ wimitedengagementbasewuwes.tweetwuwes, -.-
+      dewetedtweetwuwes = seq(
+        t-tombstonebouncedewetedoutewtweetwuwe, :3
+        tombstonedewetedquotedtweetwuwe,
+        t-tombstonebouncedewetedquotedtweetwuwe
+      ), >_<
+      u-usewunavaiwabwestatewuwes = seq(
+        s-suspendedusewunavaiwabweinnewquotedtweettombstonewuwe, nyaa~~
+        d-deactivatedusewunavaiwabweinnewquotedtweettombstonewuwe, ( ͡o ω ͡o )
+        offboawdedusewunavaiwabweinnewquotedtweettombstonewuwe, o.O
+        e-ewasedusewunavaiwabweinnewquotedtweettombstonewuwe, :3
+        pwotectedusewunavaiwabweinnewquotedtweettombstonewuwe, (˘ω˘)
+        authowbwocksviewewusewunavaiwabweinnewquotedtweettombstonewuwe, rawr x3
+        viewewbwocksauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe, (U ᵕ U❁)
+        viewewmutesauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe
+      ), 🥺
+      p-powicywuwepawams = s-sensitivemediasettingspwofiwetimewinebasewuwes.powicywuwepawams
     )
 
-case object ProfileMixerMediaPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropExclusiveTweetContentRule
-      ),
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
+case object pwofiwemixewmediapowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = seq(
+        dwopstawetweetswuwe, >_<
+        dwopexcwusivetweetcontentwuwe
+      ), :3
+      d-dewetedtweetwuwes = seq(
+        tombstonebouncedewetedoutewtweetwuwe, :3
+        tombstonedewetedquotedtweetwuwe, (ꈍᴗꈍ)
+        tombstonebouncedewetedquotedtweetwuwe
       )
     )
 
-object TimelineProfileRules {
+o-object timewinepwofiwewuwes {
 
-  val baseTweetRules: Seq[Rule] = Seq(
-    TombstoneCommunityTweetsRule,
-    TombstoneCommunityTweetCommunityNotVisibleRule,
-    TombstoneProtectedCommunityTweetsRule,
-    TombstoneHiddenCommunityTweetsRule,
-    TombstoneAuthorRemovedCommunityTweetsRule,
-    SpamQuotedTweetLabelTombstoneRule,
-    SpamTweetLabelRule,
-    PdnaQuotedTweetLabelTombstoneRule,
-    PdnaTweetLabelRule,
-    BounceTweetLabelTombstoneRule,
-    TombstoneExclusiveQuotedTweetContentRule,
-    DropExclusiveTweetContentRule,
-    DropTrustedFriendsTweetContentRule
+  vaw basetweetwuwes: seq[wuwe] = s-seq(
+    t-tombstonecommunitytweetswuwe, σωσ
+    tombstonecommunitytweetcommunitynotvisibwewuwe, 😳
+    tombstonepwotectedcommunitytweetswuwe, mya
+    tombstonehiddencommunitytweetswuwe,
+    t-tombstoneauthowwemovedcommunitytweetswuwe, (///ˬ///✿)
+    s-spamquotedtweetwabewtombstonewuwe, ^^
+    spamtweetwabewwuwe, (✿oωo)
+    pdnaquotedtweetwabewtombstonewuwe, ( ͡o ω ͡o )
+    pdnatweetwabewwuwe, ^^;;
+    bouncetweetwabewtombstonewuwe, :3
+    t-tombstoneexcwusivequotedtweetcontentwuwe, 😳
+    dwopexcwusivetweetcontentwuwe, XD
+    d-dwoptwustedfwiendstweetcontentwuwe
   )
 
-  val tweetRules: Seq[Rule] =
-    Seq(
-      DynamicProductAdDropTweetLabelRule,
-      AbusePolicyEpisodicTweetLabelInterstitialRule,
-      EmergencyDynamicInterstitialRule,
-      ReportedTweetInterstitialRule,
-      NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-      GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-      NsfwCardImageAllUsersTweetLabelRule,
-      NsfwHighPrecisionTweetLabelAvoidRule,
-      NsfwHighRecallTweetLabelAvoidRule,
-      GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      NsfwCardImageAvoidAllUsersTweetLabelRule,
-      NsfwTextTweetLabelAvoidRule,
-      DoNotAmplifyTweetLabelAvoidRule,
-      NsfaHighPrecisionTweetLabelAvoidRule,
-    ) ++ LimitedEngagementBaseRules.tweetRules
+  vaw tweetwuwes: seq[wuwe] =
+    seq(
+      d-dynamicpwoductaddwoptweetwabewwuwe, (///ˬ///✿)
+      abusepowicyepisodictweetwabewintewstitiawwuwe, o.O
+      emewgencydynamicintewstitiawwuwe, o.O
+      w-wepowtedtweetintewstitiawwuwe, XD
+      n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, ^^;;
+      goweandviowencehighpwecisionawwusewstweetwabewwuwe, 😳😳😳
+      n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, (U ᵕ U❁)
+      goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, /(^•ω•^)
+      n-nysfwcawdimageawwusewstweetwabewwuwe, 😳😳😳
+      n-nysfwhighpwecisiontweetwabewavoidwuwe, rawr x3
+      nysfwhighwecawwtweetwabewavoidwuwe, ʘwʘ
+      g-goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe, UwU
+      nysfwwepowtedheuwisticsavoidawwusewstweetwabewwuwe, (⑅˘꒳˘)
+      g-goweandviowencewepowtedheuwisticsavoidawwusewstweetwabewwuwe, ^^
+      n-nysfwcawdimageavoidawwusewstweetwabewwuwe, 😳😳😳
+      nysfwtexttweetwabewavoidwuwe, òωó
+      donotampwifytweetwabewavoidwuwe,
+      n-nysfahighpwecisiontweetwabewavoidwuwe, ^^;;
+    ) ++ w-wimitedengagementbasewuwes.tweetwuwes
 
-  val tweetTombstoneRules: Seq[Rule] =
-    Seq(
-      DynamicProductAdDropTweetLabelRule,
-      NsfwHighPrecisionInnerQuotedTweetLabelRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-      AbusePolicyEpisodicTweetLabelInterstitialRule,
-      EmergencyDynamicInterstitialRule,
-      ReportedTweetInterstitialRule,
-      ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
-      ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
-      NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-      GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-      NsfwCardImageAllUsersTweetLabelRule,
-      SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-      NsfwHighPrecisionTweetLabelAvoidRule,
-      NsfwHighRecallTweetLabelAvoidRule,
-      GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      NsfwCardImageAvoidAllUsersTweetLabelRule,
-      DoNotAmplifyTweetLabelAvoidRule,
-      NsfaHighPrecisionTweetLabelAvoidRule,
-    ) ++ LimitedEngagementBaseRules.tweetRules
+  v-vaw tweettombstonewuwes: seq[wuwe] =
+    seq(
+      dynamicpwoductaddwoptweetwabewwuwe, (✿oωo)
+      n-nysfwhighpwecisioninnewquotedtweetwabewwuwe, rawr
+      sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwhighpwecisiontweetwabewdwopsettingwevewtombstonewuwe, XD
+      s-sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencehighpwecisiondwopsettingwevetombstonewuwe, 😳
+      s-sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwwepowtedheuwisticstweetwabewdwopsettingwevewtombstonewuwe, (U ᵕ U❁)
+      sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencewepowtedheuwisticsdwopsettingwevewtombstonewuwe, UwU
+      sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwcawdimagetweetwabewdwopsettingwevewtombstonewuwe, OwO
+      sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwusewtweetfwagdwopsettingwevewtombstonewuwe, 😳
+      s-sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwadmintweetfwagdwopsettingwevewtombstonewuwe, (˘ω˘)
+      a-abusepowicyepisodictweetwabewintewstitiawwuwe, òωó
+      emewgencydynamicintewstitiawwuwe, OwO
+      w-wepowtedtweetintewstitiawwuwe, (✿oωo)
+      v-viewewmutesauthowinnewquotedtweetintewstitiawwuwe, (⑅˘꒳˘)
+      viewewbwocksauthowinnewquotedtweetintewstitiawwuwe, /(^•ω•^)
+      nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, 🥺
+      g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, -.-
+      nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, ( ͡o ω ͡o )
+      goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, 😳😳😳
+      nysfwcawdimageawwusewstweetwabewwuwe, (˘ω˘)
+      sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe, ^^
+      sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe,
+      s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe, σωσ
+      sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe, 🥺
+      s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe, 🥺
+      sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe, /(^•ω•^)
+      s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe, (⑅˘꒳˘)
+      nysfwhighpwecisiontweetwabewavoidwuwe, -.-
+      n-nysfwhighwecawwtweetwabewavoidwuwe, 😳
+      goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe,
+      n-nysfwwepowtedheuwisticsavoidawwusewstweetwabewwuwe, 😳😳😳
+      g-goweandviowencewepowtedheuwisticsavoidawwusewstweetwabewwuwe, >w<
+      n-nysfwcawdimageavoidawwusewstweetwabewwuwe, UwU
+      d-donotampwifytweetwabewavoidwuwe, /(^•ω•^)
+      n-nsfahighpwecisiontweetwabewavoidwuwe, 🥺
+    ) ++ wimitedengagementbasewuwes.tweetwuwes
 }
 
-case object TimelineProfilePolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        Seq(
-          DropOuterCommunityTweetsRule,
-          DropStaleTweetsRule,
+case object timewinepwofiwepowicy
+    extends visibiwitypowicy(
+      tweetwuwes =
+        seq(
+          d-dwopoutewcommunitytweetswuwe, >_<
+          d-dwopstawetweetswuwe, rawr
         )
-          ++ TimelineProfileRules.baseTweetRules
-          ++ TimelineProfileRules.tweetTombstoneRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+          ++ t-timewinepwofiwewuwes.basetweetwuwes
+          ++ timewinepwofiwewuwes.tweettombstonewuwes, (ꈍᴗꈍ)
+      d-dewetedtweetwuwes = seq(
+        tombstonebouncedewetedoutewtweetwuwe, -.-
+        tombstonedewetedquotedtweetwuwe, ( ͡o ω ͡o )
+        t-tombstonebouncedewetedquotedtweetwuwe, (⑅˘꒳˘)
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      usewunavaiwabwestatewuwes = s-seq(
+        suspendedusewunavaiwabweinnewquotedtweettombstonewuwe, mya
+        d-deactivatedusewunavaiwabweinnewquotedtweettombstonewuwe, rawr x3
+        offboawdedusewunavaiwabweinnewquotedtweettombstonewuwe, (ꈍᴗꈍ)
+        ewasedusewunavaiwabweinnewquotedtweettombstonewuwe, ʘwʘ
+        p-pwotectedusewunavaiwabweinnewquotedtweettombstonewuwe, :3
+        a-authowbwocksviewewusewunavaiwabweinnewquotedtweettombstonewuwe, o.O
+        viewewbwocksauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe, /(^•ω•^)
+        v-viewewmutesauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe
       ),
-      policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
+      p-powicywuwepawams = sensitivemediasettingspwofiwetimewinebasewuwes.powicywuwepawams
     )
 
-case object TimelineProfileAllPolicy
-    extends VisibilityPolicy(
-        TimelineProfileRules.baseTweetRules
-        ++ TimelineProfileRules.tweetTombstoneRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+case object timewinepwofiweawwpowicy
+    extends visibiwitypowicy(
+        t-timewinepwofiwewuwes.basetweetwuwes
+        ++ t-timewinepwofiwewuwes.tweettombstonewuwes, OwO
+      d-dewetedtweetwuwes = s-seq(
+        t-tombstonebouncedewetedoutewtweetwuwe, σωσ
+        tombstonedewetedquotedtweetwuwe, (ꈍᴗꈍ)
+        t-tombstonebouncedewetedquotedtweetwuwe, ( ͡o ω ͡o )
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      ),
-      policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
+      u-usewunavaiwabwestatewuwes = seq(
+        s-suspendedusewunavaiwabweinnewquotedtweettombstonewuwe, rawr x3
+        d-deactivatedusewunavaiwabweinnewquotedtweettombstonewuwe, UwU
+        offboawdedusewunavaiwabweinnewquotedtweettombstonewuwe, o.O
+        e-ewasedusewunavaiwabweinnewquotedtweettombstonewuwe, OwO
+        pwotectedusewunavaiwabweinnewquotedtweettombstonewuwe, o.O
+        authowbwocksviewewusewunavaiwabweinnewquotedtweettombstonewuwe, ^^;;
+        v-viewewbwocksauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe, (⑅˘꒳˘)
+        viewewmutesauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe
+      ), (ꈍᴗꈍ)
+      powicywuwepawams = sensitivemediasettingspwofiwetimewinebasewuwes.powicywuwepawams
     )
 
-case object TimelineProfileSuperFollowsPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        Seq(
-          DropOuterCommunityTweetsRule
+c-case object t-timewinepwofiwesupewfowwowspowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes =
+        seq(
+          dwopoutewcommunitytweetswuwe
         ) ++
-          VisibilityPolicy.baseTweetRules ++
-          TimelineProfileRules.tweetRules
+          v-visibiwitypowicy.basetweetwuwes ++
+          t-timewinepwofiwewuwes.tweetwuwes
     )
 
-case object TimelineReactiveBlendingPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+c-case object timewineweactivebwendingpowicy
+    extends visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++
+        seq(
+          viewewhasmatchingmutedkeywowdfowhometimewinewuwe, o.O
+          a-abusepowicyepisodictweetwabewintewstitiawwuwe,
+          e-emewgencydynamicintewstitiawwuwe, (///ˬ///✿)
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, 😳😳😳
+          g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, UwU
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, nyaa~~
+          g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, (✿oωo)
+          n-nysfwcawdimageawwusewstweetwabewwuwe, -.-
+        ) ++ wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object TimelineHomePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseQuotedTweetTombstoneRules ++
-        VisibilityPolicy.baseTweetRules ++
-        Seq(
-          NullcastedTweetRule,
-          DropOuterCommunityTweetsRule,
-          DynamicProductAdDropTweetLabelRule,
-          MutedRetweetsRule,
-          DropAllAuthorRemovedCommunityTweetsRule,
-          DropAllHiddenCommunityTweetsRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
-          SafetyCrisisLevel4DropRule,
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          SensitiveMediaTweetDropRules.AdultMediaNsfwHighPrecisionTweetLabelDropRule,
-          SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceHighPrecisionDropRule,
-          SensitiveMediaTweetDropRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropRule,
-          SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropRule,
-          SensitiveMediaTweetDropRules.AdultMediaNsfwCardImageTweetLabelDropRule,
-          SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwUserTweetFlagDropRule,
-          SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwAdminTweetFlagDropRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
+case object t-timewinehomepowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = v-visibiwitypowicy.basequotedtweettombstonewuwes ++
+        visibiwitypowicy.basetweetwuwes ++
+        s-seq(
+          nyuwwcastedtweetwuwe, :3
+          d-dwopoutewcommunitytweetswuwe, (⑅˘꒳˘)
+          d-dynamicpwoductaddwoptweetwabewwuwe, >_<
+          m-mutedwetweetswuwe, UwU
+          dwopawwauthowwemovedcommunitytweetswuwe, rawr
+          dwopawwhiddencommunitytweetswuwe, (ꈍᴗꈍ)
+          abusepowicyepisodictweetwabewdwopwuwe, ^•ﻌ•^
+          emewgencydwopwuwe,
+          safetycwisiswevew4dwopwuwe, ^^
+          viewewhasmatchingmutedkeywowdfowhometimewinewuwe, XD
+          sensitivemediatweetdwopwuwes.aduwtmediansfwhighpwecisiontweetwabewdwopwuwe, (///ˬ///✿)
+          sensitivemediatweetdwopwuwes.viowentmediagoweandviowencehighpwecisiondwopwuwe, σωσ
+          sensitivemediatweetdwopwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewdwopwuwe, :3
+          sensitivemediatweetdwopwuwes.viowentmediagoweandviowencewepowtedheuwisticsdwopwuwe, >w<
+          sensitivemediatweetdwopwuwes.aduwtmediansfwcawdimagetweetwabewdwopwuwe, (ˆ ﻌ ˆ)♡
+          sensitivemediatweetdwopwuwes.othewsensitivemediansfwusewtweetfwagdwopwuwe, (U ᵕ U❁)
+          sensitivemediatweetdwopwuwes.othewsensitivemediansfwadmintweetfwagdwopwuwe, :3
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, ^^
+          g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, ^•ﻌ•^
+          n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, (///ˬ///✿)
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, 🥺
+          nysfwcawdimageawwusewstweetwabewwuwe, ʘwʘ
+          s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe, (✿oωo)
+          s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe, rawr
+          s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe, OwO
+          sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe, ^^
+          s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe, ʘwʘ
+          sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe, σωσ
+          s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe, (⑅˘꒳˘)
+          n-nysfwhighpwecisiontweetwabewavoidwuwe, (ˆ ﻌ ˆ)♡
+          nysfwhighwecawwtweetwabewavoidwuwe, :3
+          g-goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe, ʘwʘ
+          nysfwwepowtedheuwisticsavoidawwusewstweetwabewwuwe, (///ˬ///✿)
+          g-goweandviowencewepowtedheuwisticsavoidawwusewstweetwabewwuwe, (ˆ ﻌ ˆ)♡
+          n-nysfwcawdimageavoidawwusewstweetwabewwuwe, 🥺
+          donotampwifytweetwabewavoidwuwe, rawr
+          nysfahighpwecisiontweetwabewavoidwuwe, (U ﹏ U)
         )
         ++
-          LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
-        DeciderableAuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule,
-        DeactivatedAuthorRule,
-        ErasedAuthorRule,
-        OffboardedAuthorRule,
-        DropTakendownUserRule
+          wimitedengagementbasewuwes.tweetwuwes, ^^
+      u-usewwuwes = s-seq(
+        v-viewewmutesauthowwuwe, σωσ
+        v-viewewbwocksauthowwuwe, :3
+        d-decidewabweauthowbwocksviewewdwopwuwe, ^^
+        p-pwotectedauthowdwopwuwe, (✿oωo)
+        s-suspendedauthowwuwe, òωó
+        d-deactivatedauthowwuwe, (U ᵕ U❁)
+        e-ewasedauthowwuwe, ʘwʘ
+        offboawdedauthowwuwe, ( ͡o ω ͡o )
+        d-dwoptakendownusewwuwe
       ),
-      policyRuleParams = SensitiveMediaSettingsTimelineHomeBaseRules.policyRuleParams
+      p-powicywuwepawams = s-sensitivemediasettingstimewinehomebasewuwes.powicywuwepawams
     )
 
-case object BaseTimelineHomePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseQuotedTweetTombstoneRules ++
-        VisibilityPolicy.baseTweetRules ++
-        Seq(
-          NullcastedTweetRule,
-          DropOuterCommunityTweetsRule,
-          DynamicProductAdDropTweetLabelRule,
-          MutedRetweetsRule,
-          DropAllAuthorRemovedCommunityTweetsRule,
-          DropAllHiddenCommunityTweetsRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
-          SafetyCrisisLevel4DropRule,
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
+case object b-basetimewinehomepowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basequotedtweettombstonewuwes ++
+        v-visibiwitypowicy.basetweetwuwes ++
+        s-seq(
+          n-nyuwwcastedtweetwuwe, σωσ
+          dwopoutewcommunitytweetswuwe, (ˆ ﻌ ˆ)♡
+          d-dynamicpwoductaddwoptweetwabewwuwe, (˘ω˘)
+          mutedwetweetswuwe, 😳
+          d-dwopawwauthowwemovedcommunitytweetswuwe, ^•ﻌ•^
+          dwopawwhiddencommunitytweetswuwe, σωσ
+          abusepowicyepisodictweetwabewdwopwuwe,
+          e-emewgencydwopwuwe, 😳😳😳
+          safetycwisiswevew4dwopwuwe, rawr
+          v-viewewhasmatchingmutedkeywowdfowhometimewinewuwe, >_<
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, ʘwʘ
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, (ˆ ﻌ ˆ)♡
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, ^^;;
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, σωσ
+          nsfwcawdimageawwusewstweetwabewwuwe, rawr x3
+          nysfwhighpwecisiontweetwabewavoidwuwe, 😳
+          n-nysfwhighwecawwtweetwabewavoidwuwe, 😳😳😳
+          goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe,
+          n-nysfwwepowtedheuwisticsavoidawwusewstweetwabewwuwe,
+          g-goweandviowencewepowtedheuwisticsavoidawwusewstweetwabewwuwe, 😳😳😳
+          nysfwcawdimageavoidawwusewstweetwabewwuwe, ( ͡o ω ͡o )
+          donotampwifytweetwabewavoidwuwe, rawr x3
+          nysfahighpwecisiontweetwabewavoidwuwe, σωσ
         )
         ++
-          LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
-        DeciderableAuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule,
-        DeactivatedAuthorRule,
-        ErasedAuthorRule,
-        OffboardedAuthorRule,
-        DropTakendownUserRule
+          w-wimitedengagementbasewuwes.tweetwuwes, (˘ω˘)
+      usewwuwes = seq(
+        v-viewewmutesauthowwuwe, >w<
+        v-viewewbwocksauthowwuwe, UwU
+        d-decidewabweauthowbwocksviewewdwopwuwe, XD
+        pwotectedauthowdwopwuwe, (U ﹏ U)
+        suspendedauthowwuwe, (U ᵕ U❁)
+        d-deactivatedauthowwuwe, (ˆ ﻌ ˆ)♡
+        e-ewasedauthowwuwe, òωó
+        offboawdedauthowwuwe, ^•ﻌ•^
+        dwoptakendownusewwuwe
       )
     )
 
-case object TimelineHomeHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          VisibilityPolicy.baseQuotedTweetTombstoneRules ++
-          VisibilityPolicy.baseTweetRules ++
-          Seq(
-            SensitiveMediaTweetDropRules.AdultMediaNsfwHighPrecisionTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceHighPrecisionDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwCardImageTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwUserTweetFlagDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwAdminTweetFlagDropRule,
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-            NsfaHighPrecisionTweetLabelAvoidRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules,
-      policyRuleParams = SensitiveMediaSettingsTimelineHomeBaseRules.policyRuleParams
+c-case object timewinehomehydwationpowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes =
+          visibiwitypowicy.basequotedtweettombstonewuwes ++
+          v-visibiwitypowicy.basetweetwuwes ++
+          s-seq(
+            s-sensitivemediatweetdwopwuwes.aduwtmediansfwhighpwecisiontweetwabewdwopwuwe, (///ˬ///✿)
+            sensitivemediatweetdwopwuwes.viowentmediagoweandviowencehighpwecisiondwopwuwe, -.-
+            s-sensitivemediatweetdwopwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewdwopwuwe, >w<
+            s-sensitivemediatweetdwopwuwes.viowentmediagoweandviowencewepowtedheuwisticsdwopwuwe, òωó
+            s-sensitivemediatweetdwopwuwes.aduwtmediansfwcawdimagetweetwabewdwopwuwe, σωσ
+            s-sensitivemediatweetdwopwuwes.othewsensitivemediansfwusewtweetfwagdwopwuwe, mya
+            sensitivemediatweetdwopwuwes.othewsensitivemediansfwadmintweetfwagdwopwuwe, òωó
+            a-abusepowicyepisodictweetwabewintewstitiawwuwe, 🥺
+            emewgencydynamicintewstitiawwuwe, (U ﹏ U)
+            n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, (ꈍᴗꈍ)
+            goweandviowencehighpwecisionawwusewstweetwabewwuwe, (˘ω˘)
+            nsfwwepowtedheuwisticsawwusewstweetwabewwuwe, (✿oωo)
+            g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, -.-
+            n-nysfwcawdimageawwusewstweetwabewwuwe, (ˆ ﻌ ˆ)♡
+            s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe, (✿oωo)
+            s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe, ʘwʘ
+            s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe, (///ˬ///✿)
+            s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe, rawr
+            sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe, 🥺
+            s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe, mya
+            sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe, mya
+            n-nysfahighpwecisiontweetwabewavoidwuwe,
+            nysfwhighpwecisiontweetwabewavoidwuwe, mya
+            n-nysfwhighwecawwtweetwabewavoidwuwe, (⑅˘꒳˘)
+          ) ++ w-wimitedengagementbasewuwes.tweetwuwes, (✿oωo)
+      p-powicywuwepawams = sensitivemediasettingstimewinehomebasewuwes.powicywuwepawams
     )
 
-case object TimelineHomeLatestPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          VisibilityPolicy.baseQuotedTweetTombstoneRules ++
-          VisibilityPolicy.baseTweetRules ++
-          Seq(
-            NullcastedTweetRule,
-            DropOuterCommunityTweetsRule,
-            DynamicProductAdDropTweetLabelRule,
-            MutedRetweetsRule,
-            ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwHighPrecisionTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceHighPrecisionDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwCardImageTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwUserTweetFlagDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwAdminTweetFlagDropRule,
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
-            GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            NsfwCardImageAvoidAllUsersTweetLabelRule,
-            DoNotAmplifyTweetLabelAvoidRule,
-            NsfaHighPrecisionTweetLabelAvoidRule,
+case object timewinehomewatestpowicy
+    extends v-visibiwitypowicy(
+      t-tweetwuwes =
+          v-visibiwitypowicy.basequotedtweettombstonewuwes ++
+          visibiwitypowicy.basetweetwuwes ++
+          seq(
+            nyuwwcastedtweetwuwe, 😳
+            d-dwopoutewcommunitytweetswuwe, OwO
+            d-dynamicpwoductaddwoptweetwabewwuwe,
+            mutedwetweetswuwe, (˘ω˘)
+            v-viewewhasmatchingmutedkeywowdfowhometimewinewuwe, (✿oωo)
+            s-sensitivemediatweetdwopwuwes.aduwtmediansfwhighpwecisiontweetwabewdwopwuwe, /(^•ω•^)
+            sensitivemediatweetdwopwuwes.viowentmediagoweandviowencehighpwecisiondwopwuwe, rawr x3
+            sensitivemediatweetdwopwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewdwopwuwe, rawr
+            sensitivemediatweetdwopwuwes.viowentmediagoweandviowencewepowtedheuwisticsdwopwuwe, ( ͡o ω ͡o )
+            s-sensitivemediatweetdwopwuwes.aduwtmediansfwcawdimagetweetwabewdwopwuwe, ( ͡o ω ͡o )
+            s-sensitivemediatweetdwopwuwes.othewsensitivemediansfwusewtweetfwagdwopwuwe,
+            s-sensitivemediatweetdwopwuwes.othewsensitivemediansfwadmintweetfwagdwopwuwe, 😳😳😳
+            a-abusepowicyepisodictweetwabewintewstitiawwuwe, (U ﹏ U)
+            emewgencydynamicintewstitiawwuwe, UwU
+            nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, (U ﹏ U)
+            goweandviowencehighpwecisionawwusewstweetwabewwuwe, 🥺
+            n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, ʘwʘ
+            g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, 😳
+            nysfwcawdimageawwusewstweetwabewwuwe, (ˆ ﻌ ˆ)♡
+            sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe, >_<
+            s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe, ^•ﻌ•^
+            sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe, (✿oωo)
+            sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe, OwO
+            s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe, (ˆ ﻌ ˆ)♡
+            sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe, ^^;;
+            s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe, nyaa~~
+            n-nysfwhighpwecisiontweetwabewavoidwuwe, o.O
+            nysfwhighwecawwtweetwabewavoidwuwe, >_<
+            g-goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe, (U ﹏ U)
+            n-nysfwwepowtedheuwisticsavoidawwusewstweetwabewwuwe, ^^
+            goweandviowencewepowtedheuwisticsavoidawwusewstweetwabewwuwe, UwU
+            n-nysfwcawdimageavoidawwusewstweetwabewwuwe, ^^;;
+            donotampwifytweetwabewavoidwuwe, òωó
+            nysfahighpwecisiontweetwabewavoidwuwe, -.-
           )
           ++
-            LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
-        DeciderableAuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule,
-        DeactivatedAuthorRule,
-        ErasedAuthorRule,
-        OffboardedAuthorRule,
-        DropTakendownUserRule
+            w-wimitedengagementbasewuwes.tweetwuwes, ( ͡o ω ͡o )
+      u-usewwuwes = s-seq(
+        viewewmutesauthowwuwe, o.O
+        v-viewewbwocksauthowwuwe, rawr
+        decidewabweauthowbwocksviewewdwopwuwe,
+        p-pwotectedauthowdwopwuwe, (✿oωo)
+        s-suspendedauthowwuwe, σωσ
+        d-deactivatedauthowwuwe, (U ᵕ U❁)
+        ewasedauthowwuwe, >_<
+        o-offboawdedauthowwuwe, ^^
+        dwoptakendownusewwuwe
+      ), rawr
+      powicywuwepawams = s-sensitivemediasettingstimewinehomebasewuwes.powicywuwepawams
+    )
+
+c-case o-object timewinemodewatedtweetshydwationpowicy
+    extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        seq(
+          n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, >_<
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, (⑅˘꒳˘)
+          n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, >w<
+          g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, (///ˬ///✿)
+          nysfwcawdimageawwusewstweetwabewwuwe, ^•ﻌ•^
+        ) ++ wimitedengagementbasewuwes.tweetwuwes
+    )
+
+c-case object signawsweactionspowicy
+    e-extends v-visibiwitypowicy(
+      t-tweetwuwes = s-seq(
+        a-authowbwocksviewewdwopwuwe
+      ) ++ wimitedengagementbasewuwes.tweetwuwes
+    )
+
+case object signawstweetweactingusewspowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes :+
+        nysfwvideotweetwabewdwopwuwe :+
+        nysfwtextawwusewstweetwabewdwopwuwe, (✿oωo)
+      usewwuwes = s-seq(
+        compwomisednonfowwowewwithuqfwuwe, ʘwʘ
+        engagementspammewnonfowwowewwithuqfwuwe, >w<
+        wowquawitynonfowwowewwithuqfwuwe, :3
+        weadonwynonfowwowewwithuqfwuwe, (ˆ ﻌ ˆ)♡
+        spamhighwecawwnonfowwowewwithuqfwuwe, -.-
+        a-authowbwocksviewewdwopwuwe, rawr
+        p-pwotectedauthowdwopwuwe, rawr x3
+        suspendedauthowwuwe, (U ﹏ U)
+        n-nysfwtextnonauthowdwopwuwe
+      )
+    )
+
+case object sociawpwoofpowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = fiwtewdefauwtpowicy.tweetwuwes,
+      u-usewwuwes = seq(
+        p-pwotectedauthowdwopwuwe, (ˆ ﻌ ˆ)♡
+        suspendedauthowwuwe, :3
+        authowbwocksviewewdwopwuwe, òωó
+        viewewbwocksauthowwuwe
+      )
+    )
+
+c-case object timewinewikedbypowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes :+
+        n-nysfwvideotweetwabewdwopwuwe :+
+        n-nysfwtextawwusewstweetwabewdwopwuwe, /(^•ω•^)
+      usewwuwes = timewinewikedbywuwes.usewwuwes :+ n-nysfwtextnonauthowdwopwuwe
+    )
+
+case object timewinewetweetedbypowicy
+    extends visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes :+
+        n-nysfwvideotweetwabewdwopwuwe :+
+        n-nsfwtextawwusewstweetwabewdwopwuwe, >w<
+      u-usewwuwes = seq(
+        compwomisednonfowwowewwithuqfwuwe, nyaa~~
+        engagementspammewnonfowwowewwithuqfwuwe, mya
+        w-wowquawitynonfowwowewwithuqfwuwe, mya
+        weadonwynonfowwowewwithuqfwuwe, ʘwʘ
+        s-spamhighwecawwnonfowwowewwithuqfwuwe, rawr
+        nysfwtextnonauthowdwopwuwe
+      )
+    )
+
+case object timewinesupewwikedbypowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes :+
+        nysfwvideotweetwabewdwopwuwe :+
+        nysfwtextawwusewstweetwabewdwopwuwe, (˘ω˘)
+      u-usewwuwes = s-seq(
+        compwomisednonfowwowewwithuqfwuwe, /(^•ω•^)
+        engagementspammewnonfowwowewwithuqfwuwe,
+        w-wowquawitynonfowwowewwithuqfwuwe, (˘ω˘)
+        w-weadonwynonfowwowewwithuqfwuwe, (///ˬ///✿)
+        s-spamhighwecawwnonfowwowewwithuqfwuwe, (˘ω˘)
+        nysfwtextnonauthowdwopwuwe
+      )
+    )
+
+case object t-timewinecontentcontwowspowicy
+    extends visibiwitypowicy(
+      tweetwuwes = topicswandingpagetopicwecommendationspowicy.tweetwuwes, -.-
+      u-usewwuwes = topicswandingpagetopicwecommendationspowicy.usewwuwes
+    )
+
+case object timewineconvewsationspowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        s-seq(
+          a-abusivenonfowwowewtweetwabewwuwe, -.-
+          w-wowquawitytweetwabewdwopwuwe, ^^
+          spamhighwecawwtweetwabewdwopwuwe, (ˆ ﻌ ˆ)♡
+          d-dupwicatecontenttweetwabewdwopwuwe, UwU
+          bystandewabusivenonfowwowewtweetwabewwuwe, 🥺
+          untwusteduwwawwviewewstweetwabewwuwe, 🥺
+          d-downwankspamwepwyawwviewewstweetwabewwuwe, 🥺
+          smytespamtweetwabewdwopwuwe, 🥺
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwhighpwecisiontweetwabewdwopsettingwevewtombstonewuwe, :3
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencehighpwecisiondwopsettingwevetombstonewuwe, (˘ω˘)
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwwepowtedheuwisticstweetwabewdwopsettingwevewtombstonewuwe, ^^;;
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencewepowtedheuwisticsdwopsettingwevewtombstonewuwe, (ꈍᴗꈍ)
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwcawdimagetweetwabewdwopsettingwevewtombstonewuwe, ʘwʘ
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwusewtweetfwagdwopsettingwevewtombstonewuwe, :3
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwadmintweetfwagdwopsettingwevewtombstonewuwe, XD
+          m-mutedkeywowdfowtweetwepwiesintewstitiawwuwe, UwU
+          wepowtedtweetintewstitiawwuwe, rawr x3
+          n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, ( ͡o ω ͡o )
+          g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, :3
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, rawr
+          g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, ^•ﻌ•^
+          n-nsfwcawdimageawwusewstweetwabewwuwe, 🥺
+          sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe, (⑅˘꒳˘)
+          s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe, :3
+          sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe, (///ˬ///✿)
+          sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe, 😳😳😳
+          sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe, 😳😳😳
+          s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe, 😳😳😳
+          sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe,
+          a-abusivehighwecawwnonfowwowewtweetwabewwuwe, nyaa~~
+        ) ++ wimitedengagementbasewuwes.tweetwuwes, UwU
+      usewwuwes = s-seq(
+        abusivewuwe, òωó
+        w-wowquawitywuwe, òωó
+        w-weadonwywuwe, UwU
+        wowquawityhighwecawwwuwe, (///ˬ///✿)
+        c-compwomisedwuwe, ( ͡o ω ͡o )
+        s-spamhighwecawwwuwe, rawr
+        abusivehighwecawwwuwe, :3
+        d-downwankspamwepwyawwviewewswuwe, >w<
       ),
-      policyRuleParams = SensitiveMediaSettingsTimelineHomeBaseRules.policyRuleParams
+      powicywuwepawams = s-sensitivemediasettingsconvewsationbasewuwes.powicywuwepawams
     )
 
-case object TimelineModeratedTweetsHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+case object timewinefowwowingactivitypowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++
+        seq(
+          abusivetweetwabewwuwe, σωσ
+          bystandewabusivetweetwabewwuwe, σωσ
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, >_<
+          g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, -.-
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, 😳😳😳
+          g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, :3
+          nysfwcawdimageawwusewstweetwabewwuwe, mya
+        ) ++ wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object SignalsReactionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AuthorBlocksViewerDropRule
-      ) ++ LimitedEngagementBaseRules.tweetRules
-    )
-
-case object SignalsTweetReactingUsersPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
-      userRules = Seq(
-        CompromisedNonFollowerWithUqfRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        LowQualityNonFollowerWithUqfRule,
-        ReadOnlyNonFollowerWithUqfRule,
-        SpamHighRecallNonFollowerWithUqfRule,
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule,
-        NsfwTextNonAuthorDropRule
+case o-object timewineinjectionpowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++ seq(
+        nysfwhighpwecisiontweetwabewwuwe, (✿oωo)
+        goweandviowencehighpwecisiontweetwabewwuwe, 😳😳😳
+        nysfwwepowtedheuwisticstweetwabewwuwe, o.O
+        g-goweandviowencewepowtedheuwisticstweetwabewwuwe, (ꈍᴗꈍ)
+        nysfwcawdimagetweetwabewwuwe, (ˆ ﻌ ˆ)♡
+        nysfwhighwecawwtweetwabewwuwe, -.-
+        n-nsfwvideotweetwabewdwopwuwe, mya
+        nysfwtexttweetwabewdwopwuwe, :3
+        s-safetycwisiswevew2dwopwuwe, σωσ
+        s-safetycwisiswevew3dwopwuwe, 😳😳😳
+        safetycwisiswevew4dwopwuwe, -.-
+        d-donotampwifydwopwuwe, 😳😳😳
+        h-highpwoactivetosscowetweetwabewdwopwuwe
+      ), rawr x3
+      u-usewwuwes = s-seq(
+        d-donotampwifynonfowwowewwuwe, (///ˬ///✿)
+        n-nyotgwaduatednonfowwowewwuwe, >w<
+        wikewyivswabewnonfowwowewdwopusewwuwe, o.O
+        nysfwtextnonauthowdwopwuwe
       )
     )
 
-case object SocialProofPolicy
-    extends VisibilityPolicy(
-      tweetRules = FilterDefaultPolicy.tweetRules,
-      userRules = Seq(
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule,
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule
+case object timewinementionspowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        s-seq(
+          w-wowquawitytweetwabewdwopwuwe, (˘ω˘)
+          s-spamhighwecawwtweetwabewdwopwuwe, rawr
+          d-dupwicatecontenttweetwabewdwopwuwe, mya
+          d-dupwicatementionuqftweetwabewwuwe, òωó
+          wowquawitymentiontweetwabewwuwe, nyaa~~
+          smytespamtweetwabewdwopwuwe, òωó
+          toxicitywepwyfiwtewdwopnotificationwuwe, mya
+          abusiveuqfnonfowwowewtweetwabewwuwe, ^^
+          u-untwusteduwwuqfnonfowwowewtweetwabewwuwe,
+          d-downwankspamwepwyuqfnonfowwowewtweetwabewwuwe, ^•ﻌ•^
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, -.-
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, UwU
+          nsfwwepowtedheuwisticsawwusewstweetwabewwuwe, (˘ω˘)
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, UwU
+          n-nysfwcawdimageawwusewstweetwabewwuwe, rawr
+        ) ++ w-wimitedengagementbasewuwes.tweetwuwes, :3
+      u-usewwuwes = seq(
+        abusivewuwe, nyaa~~
+        wowquawitywuwe, rawr
+        w-weadonwywuwe, (ˆ ﻌ ˆ)♡
+        compwomisedwuwe, (ꈍᴗꈍ)
+        spamhighwecawwwuwe, (˘ω˘)
+        d-dupwicatecontentwuwe, (U ﹏ U)
+        a-abusivehighwecawwwuwe,
+        engagementspammewnonfowwowewwithuqfwuwe, >w<
+        engagementspammewhighwecawwnonfowwowewwithuqfwuwe, UwU
+        d-downwankspamwepwynonfowwowewwithuqfwuwe
       )
     )
 
-case object TimelineLikedByPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
-      userRules = TimelineLikedByRules.UserRules :+ NsfwTextNonAuthorDropRule
-    )
-
-case object TimelineRetweetedByPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
-      userRules = Seq(
-        CompromisedNonFollowerWithUqfRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        LowQualityNonFollowerWithUqfRule,
-        ReadOnlyNonFollowerWithUqfRule,
-        SpamHighRecallNonFollowerWithUqfRule,
-        NsfwTextNonAuthorDropRule
+case object tweetengagewspowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes, (ˆ ﻌ ˆ)♡
+      u-usewwuwes = s-seq(
+        c-compwomisednonfowwowewwithuqfwuwe, nyaa~~
+        engagementspammewnonfowwowewwithuqfwuwe, 🥺
+        w-wowquawitynonfowwowewwithuqfwuwe, >_<
+        w-weadonwynonfowwowewwithuqfwuwe, òωó
+        s-spamhighwecawwnonfowwowewwithuqfwuwe
       )
     )
 
-case object TimelineSuperLikedByPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
-      userRules = Seq(
-        CompromisedNonFollowerWithUqfRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        LowQualityNonFollowerWithUqfRule,
-        ReadOnlyNonFollowerWithUqfRule,
-        SpamHighRecallNonFollowerWithUqfRule,
-        NsfwTextNonAuthorDropRule
+case object t-tweetwwitesapipowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes ++ seq(
+        a-abusepowicyepisodictweetwabewintewstitiawwuwe, ʘwʘ
+        emewgencydynamicintewstitiawwuwe, mya
+      ) ++ wimitedengagementbasewuwes.tweetwuwes
+    )
+
+c-case object quotedtweetwuwespowicy
+    e-extends visibiwitypowicy(
+      q-quotedtweetwuwes = seq(
+        deactivatedauthowwuwe, σωσ
+        ewasedauthowwuwe, OwO
+        o-offboawdedauthowwuwe, (✿oωo)
+        suspendedauthowwuwe, ʘwʘ
+        authowbwocksoutewauthowwuwe, mya
+        v-viewewbwocksauthowwuwe, -.-
+        a-authowbwocksviewewdwopwuwe, -.-
+        viewewmutesanddoesnotfowwowauthowwuwe, ^^;;
+        pwotectedquotetweetauthowwuwe
       )
     )
 
-case object TimelineContentControlsPolicy
-    extends VisibilityPolicy(
-      tweetRules = TopicsLandingPageTopicRecommendationsPolicy.tweetRules,
-      userRules = TopicsLandingPageTopicRecommendationsPolicy.userRules
-    )
-
-case object TimelineConversationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AbusiveNonFollowerTweetLabelRule,
-          LowQualityTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          BystanderAbusiveNonFollowerTweetLabelRule,
-          UntrustedUrlAllViewersTweetLabelRule,
-          DownrankSpamReplyAllViewersTweetLabelRule,
-          SmyteSpamTweetLabelDropRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          AbusiveHighRecallNonFollowerTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        LowQualityHighRecallRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule,
-        DownrankSpamReplyAllViewersRule,
-      ),
-      policyRuleParams = SensitiveMediaSettingsConversationBaseRules.policyRuleParams
-    )
-
-case object TimelineFollowingActivityPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AbusiveTweetLabelRule,
-          BystanderAbusiveTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
-    )
-
-case object TimelineInjectionPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SafetyCrisisLevel2DropRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        HighProactiveTosScoreTweetLabelDropRule
-      ),
-      userRules = Seq(
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
-      )
-    )
-
-case object TimelineMentionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          LowQualityTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          DuplicateMentionUqfTweetLabelRule,
-          LowQualityMentionTweetLabelRule,
-          SmyteSpamTweetLabelDropRule,
-          ToxicityReplyFilterDropNotificationRule,
-          AbusiveUqfNonFollowerTweetLabelRule,
-          UntrustedUrlUqfNonFollowerTweetLabelRule,
-          DownrankSpamReplyUqfNonFollowerTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        AbusiveHighRecallRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        EngagementSpammerHighRecallNonFollowerWithUqfRule,
-        DownrankSpamReplyNonFollowerWithUqfRule
-      )
-    )
-
-case object TweetEngagersPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
-      userRules = Seq(
-        CompromisedNonFollowerWithUqfRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        LowQualityNonFollowerWithUqfRule,
-        ReadOnlyNonFollowerWithUqfRule,
-        SpamHighRecallNonFollowerWithUqfRule
-      )
-    )
-
-case object TweetWritesApiPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
-    )
-
-case object QuotedTweetRulesPolicy
-    extends VisibilityPolicy(
-      quotedTweetRules = Seq(
-        DeactivatedAuthorRule,
-        ErasedAuthorRule,
-        OffboardedAuthorRule,
-        SuspendedAuthorRule,
-        AuthorBlocksOuterAuthorRule,
-        ViewerBlocksAuthorRule,
-        AuthorBlocksViewerDropRule,
-        ViewerMutesAndDoesNotFollowAuthorRule,
-        ProtectedQuoteTweetAuthorRule
-      )
-    )
-
-case object TweetDetailPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AuthorBlocksViewerDropRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
-          MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
+c-case object t-tweetdetaiwpowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        s-seq(
+          a-authowbwocksviewewdwopwuwe, (ꈍᴗꈍ)
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwhighpwecisiontweetwabewdwopsettingwevewtombstonewuwe, rawr
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencehighpwecisiondwopsettingwevetombstonewuwe, ^^
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwwepowtedheuwisticstweetwabewdwopsettingwevewtombstonewuwe, nyaa~~
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencewepowtedheuwisticsdwopsettingwevewtombstonewuwe, (⑅˘꒳˘)
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwcawdimagetweetwabewdwopsettingwevewtombstonewuwe, (U ᵕ U❁)
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwusewtweetfwagdwopsettingwevewtombstonewuwe, (ꈍᴗꈍ)
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwadmintweetfwagdwopsettingwevewtombstonewuwe, (✿oωo)
+          a-abusepowicyepisodictweetwabewintewstitiawwuwe, UwU
+          e-emewgencydynamicintewstitiawwuwe, ^^
+          n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, :3
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, ( ͡o ω ͡o )
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, ( ͡o ω ͡o )
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, (U ﹏ U)
+          nysfwcawdimageawwusewstweetwabewwuwe, -.-
+          sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe, 😳😳😳
+          sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe, UwU
+          s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe, >w<
+          s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe, mya
+          s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe, :3
+          s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe, (ˆ ﻌ ˆ)♡
+          s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe, (U ﹏ U)
+          n-nysfwhighpwecisiontweetwabewavoidwuwe, ʘwʘ
+          nysfwhighwecawwtweetwabewavoidwuwe, rawr
+          g-goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe,
+          n-nysfwwepowtedheuwisticsavoidadpwacementawwusewstweetwabewwuwe, (ꈍᴗꈍ)
+          goweandviowencewepowtedheuwisticsavoidadpwacementawwusewstweetwabewwuwe, ( ͡o ω ͡o )
+          n-nysfwcawdimageavoidadpwacementawwusewstweetwabewwuwe,
+          d-donotampwifytweetwabewavoidwuwe, 😳😳😳
+          nsfahighpwecisiontweetwabewavoidwuwe, òωó
+          mutedkeywowdfowquotedtweettweetdetaiwintewstitiawwuwe, mya
         )
-        ++ LimitedEngagementBaseRules.tweetRules,
-      policyRuleParams = SensitiveMediaSettingsTweetDetailBaseRules.policyRuleParams
+        ++ wimitedengagementbasewuwes.tweetwuwes, rawr x3
+      powicywuwepawams = s-sensitivemediasettingstweetdetaiwbasewuwes.powicywuwepawams
     )
 
-case object BaseTweetDetailPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AuthorBlocksViewerDropRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
-          MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
+case object basetweetdetaiwpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++
+        s-seq(
+          authowbwocksviewewdwopwuwe, XD
+          a-abusepowicyepisodictweetwabewintewstitiawwuwe, (ˆ ﻌ ˆ)♡
+          e-emewgencydynamicintewstitiawwuwe,
+          n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, >w<
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe,
+          n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, (ꈍᴗꈍ)
+          g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe,
+          nysfwcawdimageawwusewstweetwabewwuwe,
+          n-nysfwhighpwecisiontweetwabewavoidwuwe, (U ﹏ U)
+          nysfwhighwecawwtweetwabewavoidwuwe, >_<
+          goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe, >_<
+          n-nysfwwepowtedheuwisticsavoidadpwacementawwusewstweetwabewwuwe, -.-
+          g-goweandviowencewepowtedheuwisticsavoidadpwacementawwusewstweetwabewwuwe, òωó
+          n-nysfwcawdimageavoidadpwacementawwusewstweetwabewwuwe, o.O
+          donotampwifytweetwabewavoidwuwe, σωσ
+          n-nysfahighpwecisiontweetwabewavoidwuwe, σωσ
+          mutedkeywowdfowquotedtweettweetdetaiwintewstitiawwuwe, mya
         )
-        ++ LimitedEngagementBaseRules.tweetRules
+        ++ wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object TweetDetailWithInjectionsHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
-          ReportedTweetInterstitialRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = UserTimelineRules.UserRules
+c-case object tweetdetaiwwithinjectionshydwationpowicy
+    extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        seq(
+          abusepowicyepisodictweetwabewintewstitiawwuwe, o.O
+          e-emewgencydynamicintewstitiawwuwe, XD
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, XD
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, (✿oωo)
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, -.-
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe,
+          nysfwcawdimageawwusewstweetwabewwuwe,
+          mutedkeywowdfowquotedtweettweetdetaiwintewstitiawwuwe, (ꈍᴗꈍ)
+          wepowtedtweetintewstitiawwuwe, ( ͡o ω ͡o )
+        ) ++ wimitedengagementbasewuwes.tweetwuwes, (///ˬ///✿)
+      u-usewwuwes = usewtimewinewuwes.usewwuwes
     )
 
-case object TweetDetailNonTooPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-      ) ++ BaseTweetDetailPolicy.tweetRules
+case o-object tweetdetaiwnontoopowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = seq(
+        dwopawwexcwusivetweetswuwe, 🥺
+        dwopawwtwustedfwiendstweetswuwe,
+      ) ++ b-basetweetdetaiwpowicy.tweetwuwes
     )
 
-case object RecosWritePathPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule
+case object w-wecoswwitepathpowicy
+    extends v-visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes ++ seq(
+        a-abusivetweetwabewwuwe, (ˆ ﻌ ˆ)♡
+        wowquawitytweetwabewdwopwuwe, ^•ﻌ•^
+        nysfwhighpwecisiontweetwabewwuwe, rawr x3
+        goweandviowencehighpwecisiontweetwabewwuwe, (U ﹏ U)
+        n-nysfwwepowtedheuwisticstweetwabewwuwe, OwO
+        goweandviowencewepowtedheuwisticstweetwabewwuwe, (✿oωo)
+        n-nysfwcawdimagetweetwabewwuwe, (⑅˘꒳˘)
+        nysfwvideotweetwabewdwopwuwe, UwU
+        n-nsfwtexttweetwabewdwopwuwe, (ˆ ﻌ ˆ)♡
+        spamhighwecawwtweetwabewdwopwuwe, /(^•ω•^)
+        d-dupwicatecontenttweetwabewdwopwuwe,
+        b-bystandewabusivetweetwabewwuwe, (˘ω˘)
+        smytespamtweetwabewdwopwuwe
+      ), XD
+      usewwuwes = s-seq(nsfwtextnonauthowdwopwuwe)
+    )
+
+case object bwandsafetypowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++ seq(
+        nysfwvideotweetwabewdwopwuwe,
+        nysfwtexttweetwabewdwopwuwe, òωó
+        nysfahighwecawwtweetwabewintewstitiawwuwe
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      u-usewwuwes = seq(nsfwtextnonauthowdwopwuwe)
     )
 
-case object BrandSafetyPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        NsfaHighRecallTweetLabelInterstitialRule
-      ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+c-case object videoadspowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes
     )
 
-case object VideoAdsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules
-    )
-
-case object AppealsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        )
-    )
-
-case object TimelineConversationsDownrankingPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        HighToxicityScoreDownrankAbusiveQualitySectionRule,
-        UntrustedUrlConversationsTweetLabelRule,
-        DownrankSpamReplyConversationsTweetLabelRule,
-        DownrankSpamReplyConversationsAuthorLabelRule,
-        HighProactiveTosScoreTweetLabelDownrankingRule,
-        SafetyCrisisLevel3SectionRule,
-        SafetyCrisisLevel4SectionRule,
-        DoNotAmplifySectionRule,
-        DoNotAmplifySectionUserRule,
-        NotGraduatedConversationsAuthorLabelRule,
-        HighSpammyTweetContentScoreConvoDownrankAbusiveQualityRule,
-        HighCryptospamScoreConvoDownrankAbusiveQualityRule,
-        CopypastaSpamAbusiveQualityTweetLabelRule,
-        HighToxicityScoreDownrankLowQualitySectionRule,
-        HighPSpammyTweetScoreDownrankLowQualitySectionRule,
-        RitoActionedTweetDownrankLowQualitySectionRule,
-        HighToxicityScoreDownrankHighQualitySectionRule,
-      )
-    )
-
-case object TimelineConversationsDownrankingMinimalPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        HighProactiveTosScoreTweetLabelDownrankingRule
-      )
-    )
-
-case object TimelineHomeRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
-        RecommendationsPolicy.tweetRules.filter(
-          _ != NsfwHighPrecisionTweetLabelRule
-        ),
-        Seq(
-          SafetyCrisisLevel2DropRule,
-          SafetyCrisisLevel3DropRule,
-          SafetyCrisisLevel4DropRule,
-          HighProactiveTosScoreTweetLabelDropRule,
-          NsfwHighRecallTweetLabelRule,
-        ),
-        BaseTimelineHomePolicy.tweetRules,
-      ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules,
-        BaseTimelineHomePolicy.userRules
-      )
-    )
-
-case object TimelineHomeTopicFollowRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
-        Seq(
-          SearchBlacklistTweetLabelRule,
-          GoreAndViolenceTopicHighRecallTweetLabelRule,
-          NsfwHighRecallTweetLabelRule,
-        ),
-        RecommendationsPolicy.tweetRules
-          .filterNot(
-            Seq(
-              NsfwHighPrecisionTweetLabelRule,
-            ).contains),
-        BaseTimelineHomePolicy.tweetRules
-      ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules,
-        BaseTimelineHomePolicy.userRules
-      )
-    )
-
-case object TimelineScorerPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AllowAllRule
-      )
-    )
-
-case object FollowedTopicsTimelinePolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule
-      )
-    )
-
-case object TopicsLandingPageTopicRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
-        Seq(
-          SearchBlacklistTweetLabelRule,
-          GoreAndViolenceTopicHighRecallTweetLabelRule,
-          NsfwHighRecallTweetLabelRule
-        ),
-        RecommendationsPolicy.tweetRules,
-        BaseTimelineHomePolicy.tweetRules,
-      ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules,
-        BaseTimelineHomePolicy.userRules
-      ) ++ Seq(
-        AuthorBlocksViewerDropRule
-      )
-    )
-
-case object ExploreRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropOuterCommunityTweetsRule,
-        SearchBlacklistTweetLabelRule,
-        GoreAndViolenceTopicHighRecallTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        DropTweetsWithGeoRestrictedMediaRule,
-        TweetNsfwUserDropRule,
-        TweetNsfwAdminDropRule,
-        ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-        ViewerHasMatchingMutedKeywordForNotificationsRule,
-      ) ++ VisibilityPolicy.union(
-        RecommendationsPolicy.tweetRules
-      ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules
-      ) ++ Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule
-      )
-    )
-
-case object TombstoningPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        TombstoneIf.ViewerIsBlockedByAuthor,
-        TombstoneIf.AuthorIsProtected,
-        TombstoneIf.ReplyIsModeratedByRootAuthor,
-        TombstoneIf.AuthorIsSuspended,
-        TombstoneIf.AuthorIsDeactivated,
-        InterstitialIf.ViewerHardMutedAuthor
-      )
-    )
-
-case object TweetReplyNudgePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        SpamAllUsersTweetLabelRule,
-        PdnaAllUsersTweetLabelRule,
-        BounceAllUsersTweetLabelRule,
-        TweetNsfwAdminDropRule,
-        TweetNsfwUserDropRule,
-        NsfwHighRecallAllUsersTweetLabelDropRule,
-        NsfwHighPrecisionAllUsersTweetLabelDropRule,
-        GoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelDropRule,
-        GoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule,
-        NsfwCardImageAllUsersTweetLabelDropRule,
-        NsfwVideoAllUsersTweetLabelDropRule,
-        NsfwTextAllUsersTweetLabelDropRule,
-      ),
-      userRules = Seq(
-        DropNsfwUserAuthorRule,
-        DropNsfwAdminAuthorRule,
-        NsfwTextAllUsersDropRule
-      )
-    )
-
-case object HumanizationNudgePolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
-    )
-
-case object TrendsRepresentativeTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
-        RecommendationsPolicy.tweetRules,
-        Seq(
-          AbusiveHighRecallTweetLabelRule,
-          BystanderAbusiveTweetLabelRule,
-          DuplicateContentTweetLabelDropRule,
-          LowQualityTweetLabelDropRule,
-          HighProactiveTosScoreTweetLabelDropRule,
-          NsfaHighRecallTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelDropRule,
-          NsfwHighPrecisionTweetLabelRule,
-          NsfwHighRecallAllUsersTweetLabelDropRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
-          PdnaAllUsersTweetLabelRule,
-          SearchBlacklistTweetLabelRule,
-          SpamHighRecallTweetLabelDropRule,
-          UntrustedUrlAllViewersTweetLabelRule,
-          DownrankSpamReplyAllViewersTweetLabelRule,
-          HighPSpammyScoreAllViewerDropRule,
-          DoNotAmplifyAllViewersDropRule,
-          SmyteSpamTweetLabelDropRule,
-          AuthorBlocksViewerDropRule,
-          ViewerBlocksAuthorRule,
-          ViewerMutesAuthorRule,
-          CopypastaSpamAllViewersTweetLabelRule,
-        )
-      ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules,
-        Seq(
-          AbusiveRule,
-          LowQualityRule,
-          ReadOnlyRule,
-          CompromisedRule,
-          RecommendationsBlacklistRule,
-          SpamHighRecallRule,
-          DuplicateContentRule,
-          NsfwHighPrecisionRule,
-          NsfwNearPerfectAuthorRule,
-          NsfwBannerImageRule,
-          NsfwAvatarImageRule,
-          EngagementSpammerRule,
-          EngagementSpammerHighRecallRule,
-          AbusiveHighRecallRule,
-          SearchBlacklistRule,
-          SearchNsfwTextRule,
-          NsfwHighRecallRule,
-          TsViolationRule,
-          DownrankSpamReplyAllViewersRule,
-          NsfwTextNonAuthorDropRule
-        )
-      )
-    )
-
-case object AdsCampaignPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(SuspendedAuthorRule),
-      tweetRules = VisibilityPolicy.baseTweetRules
-    )
-
-case object AdsManagerPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AdsManagerDenyListAllUsersTweetLabelRule,
-      )
-    )
-
-case object AdsReportingDashboardPolicy
-    extends VisibilityPolicy(
-      tweetRules = AdsManagerPolicy.tweetRules,
-      userRules = AdsCampaignPolicy.userRules
-    )
-
-case object BirdwatchNoteAuthorPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        SuspendedAuthorRule,
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        ViewerMutesAuthorRule
-      )
-    )
-
-case object BirdwatchNoteTweetsTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          MutedRetweetsRule,
-          AuthorBlocksViewerDropRule,
-          ViewerMutesAuthorRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
-    )
-
-case object BirdwatchNeedsYourHelpNotificationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AuthorBlocksViewerDropRule,
-          ViewerBlocksAuthorRule,
-          ViewerMutesAuthorRule,
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          ViewerHasMatchingMutedKeywordForNotificationsRule,
+c-case object appeawspowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        seq(
+          nysfwcawdimageawwusewstweetwabewwuwe,
+          n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, UwU
+          g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, -.-
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, (ꈍᴗꈍ)
+          g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe,
         )
     )
 
-case object ForDevelopmentOnlyPolicy
-    extends VisibilityPolicy(
-      userRules = Seq.empty,
-      tweetRules = VisibilityPolicy.baseTweetRules
-    )
-
-case object UserProfileHeaderPolicy
-    extends VisibilityPolicy(
-      userRules = Seq.empty,
-      tweetRules = Seq(DropAllRule)
-    )
-
-case object UserScopedTimelinePolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules,
-      tweetRules = Seq(DropAllRule)
-    )
-
-case object TweetScopedTimelinePolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules,
-      tweetRules = Seq.empty
-    )
-
-case object SoftInterventionPivotPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules
-    )
-
-case object CuratedTrendsRepresentativeTweetPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        SuspendedAuthorRule,
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        ViewerMutesAndDoesNotFollowAuthorRule
+c-case object timewineconvewsationsdownwankingpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = seq(
+        hightoxicityscowedownwankabusivequawitysectionwuwe, (⑅˘꒳˘)
+        u-untwusteduwwconvewsationstweetwabewwuwe, 🥺
+        downwankspamwepwyconvewsationstweetwabewwuwe, òωó
+        downwankspamwepwyconvewsationsauthowwabewwuwe, 😳
+        highpwoactivetosscowetweetwabewdownwankingwuwe, òωó
+        s-safetycwisiswevew3sectionwuwe, 🥺
+        s-safetycwisiswevew4sectionwuwe, ( ͡o ω ͡o )
+        donotampwifysectionwuwe, UwU
+        donotampwifysectionusewwuwe, 😳😳😳
+        n-nyotgwaduatedconvewsationsauthowwabewwuwe, ʘwʘ
+        highspammytweetcontentscoweconvodownwankabusivequawitywuwe, ^^
+        highcwyptospamscoweconvodownwankabusivequawitywuwe, >_<
+        copypastaspamabusivequawitytweetwabewwuwe, (ˆ ﻌ ˆ)♡
+        hightoxicityscowedownwankwowquawitysectionwuwe, (ˆ ﻌ ˆ)♡
+        highpspammytweetscowedownwankwowquawitysectionwuwe, 🥺
+        witoactionedtweetdownwankwowquawitysectionwuwe, ( ͡o ω ͡o )
+        hightoxicityscowedownwankhighquawitysectionwuwe, (ꈍᴗꈍ)
       )
     )
 
-case object CommunitiesPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          RetweetDropRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
-          SafetyCrisisLevel4DropRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+c-case object t-timewineconvewsationsdownwankingminimawpowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = seq(
+        h-highpwoactivetosscowetweetwabewdownwankingwuwe
+      )
     )
 
-case object TimelineHomeCommunitiesPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
-        Seq(
-          DropAllAuthorRemovedCommunityTweetsRule,
-          DropAllHiddenCommunityTweetsRule,
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-        ),
-        VisibilityPolicy.baseQuotedTweetTombstoneRules,
-        CommunitiesPolicy.tweetRules,
+case object t-timewinehomewecommendationspowicy
+    extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.union(
+        wecommendationspowicy.tweetwuwes.fiwtew(
+          _ != n-nysfwhighpwecisiontweetwabewwuwe
+        ), :3
+        seq(
+          safetycwisiswevew2dwopwuwe, (✿oωo)
+          safetycwisiswevew3dwopwuwe, (U ᵕ U❁)
+          safetycwisiswevew4dwopwuwe, UwU
+          h-highpwoactivetosscowetweetwabewdwopwuwe, ^^
+          n-nysfwhighwecawwtweetwabewwuwe, /(^•ω•^)
+        ), (˘ω˘)
+        b-basetimewinehomepowicy.tweetwuwes, OwO
       ),
-      userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
+      usewwuwes = visibiwitypowicy.union(
+        wecommendationspowicy.usewwuwes, (U ᵕ U❁)
+        b-basetimewinehomepowicy.usewwuwes
       )
     )
 
-case object TimelineHomePromotedHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        ViewerHasMatchingMutedKeywordForHomeTimelinePromotedTweetRule,
-        ViewerMutesAuthorHomeTimelinePromotedTweetRule,
-        ViewerBlocksAuthorHomeTimelinePromotedTweetRule
-      ) ++ TimelineHomeHydrationPolicy.tweetRules,
-      policyRuleParams = TimelineHomeHydrationPolicy.policyRuleParams
-    )
-
-case object SpacesPolicy
-    extends VisibilityPolicy(
-        SpaceDoNotAmplifyAllUsersDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule),
-      userRules = Seq(
-        AuthorBlocksViewerDropRule
+c-case object timewinehometopicfowwowwecommendationspowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.union(
+        s-seq(
+          seawchbwackwisttweetwabewwuwe, (U ﹏ U)
+          g-goweandviowencetopichighwecawwtweetwabewwuwe,
+          nysfwhighwecawwtweetwabewwuwe, mya
+        ), (⑅˘꒳˘)
+        w-wecommendationspowicy.tweetwuwes
+          .fiwtewnot(
+            seq(
+              n-nysfwhighpwecisiontweetwabewwuwe, (U ᵕ U❁)
+            ).contains), /(^•ω•^)
+        basetimewinehomepowicy.tweetwuwes
+      ), ^•ﻌ•^
+      usewwuwes = v-visibiwitypowicy.union(
+        wecommendationspowicy.usewwuwes, (///ˬ///✿)
+        b-basetimewinehomepowicy.usewwuwes
       )
     )
 
-case object SpacesSellerApplicationStatusPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        ViewerIsNotAuthorDropRule
+c-case object timewinescowewpowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = seq(
+        awwowawwwuwe
       )
     )
 
-case object SpacesParticipantsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropAllRule),
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        SuspendedAuthorRule
+c-case object fowwowedtopicstimewinepowicy
+    e-extends visibiwitypowicy(
+      usewwuwes = s-seq(
+        authowbwocksviewewdwopwuwe, o.O
+        p-pwotectedauthowdwopwuwe, (ˆ ﻌ ˆ)♡
+        suspendedauthowwuwe
       )
     )
 
-case object SpacesSharingPolicy
-    extends VisibilityPolicy(
-      tweetRules = TweetDetailPolicy.tweetRules,
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule
+case object t-topicswandingpagetopicwecommendationspowicy
+    extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.union(
+        seq(
+          seawchbwackwisttweetwabewwuwe, 😳
+          goweandviowencetopichighwecawwtweetwabewwuwe, òωó
+          nysfwhighwecawwtweetwabewwuwe
+        ), (⑅˘꒳˘)
+        wecommendationspowicy.tweetwuwes, rawr
+        basetimewinehomepowicy.tweetwuwes, (ꈍᴗꈍ)
       ),
-      policyRuleParams = TweetDetailPolicy.policyRuleParams
-    )
-
-case object SpaceFleetlinePolicy
-    extends VisibilityPolicy(
-      spaceRules = Seq(
-        SpaceDoNotAmplifyNonFollowerDropRule,
-        SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
-        SpaceUntrustedUrlNonFollowerDropRule,
-        SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionAllUsersInterstitialRule
-      ),
-      userRules = Seq(
-        TsViolationRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        UserAbusiveNonFollowerDropRule
+      usewwuwes = v-visibiwitypowicy.union(
+        wecommendationspowicy.usewwuwes, ^^
+        basetimewinehomepowicy.usewwuwes
+      ) ++ s-seq(
+        authowbwocksviewewdwopwuwe
       )
     )
 
-case object SpaceNotificationsPolicy
-    extends VisibilityPolicy(
-      spaceRules = Seq(
-        SpaceHatefulHighRecallAllUsersDropRule,
-        SpaceViolenceHighRecallAllUsersDropRule,
-        SpaceDoNotAmplifyAllUsersDropRule,
-        SpaceCoordHarmfulActivityHighRecallAllUsersDropRule,
-        SpaceUntrustedUrlNonFollowerDropRule,
-        SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionAllUsersDropRule,
-        SpaceNsfwHighRecallAllUsersDropRule,
-        ViewerHasMatchingMutedKeywordInSpaceTitleForNotificationsRule
-      ),
-      userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
-        AuthorBlocksViewerDropRule,
-        TsViolationRule,
-        DoNotAmplifyUserRule,
-        AbusiveRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        RecommendationsBlacklistRule,
-        NotGraduatedRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule,
-        UserBlinkWorstAllUsersDropRule,
-        UserNsfwNearPerfectNonFollowerDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule,
-        UserNsfwAvatarImageNonFollowerDropRule,
-        UserNsfwBannerImageNonFollowerDropRule
+c-case object expwowewecommendationspowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = seq(
+        dwopoutewcommunitytweetswuwe, (ˆ ﻌ ˆ)♡
+        seawchbwackwisttweetwabewwuwe, /(^•ω•^)
+        g-goweandviowencetopichighwecawwtweetwabewwuwe, ^^
+        nysfwhighwecawwtweetwabewwuwe, o.O
+        dwoptweetswithgeowestwictedmediawuwe, 😳😳😳
+        t-tweetnsfwusewdwopwuwe, XD
+        tweetnsfwadmindwopwuwe, nyaa~~
+        viewewhasmatchingmutedkeywowdfowhometimewinewuwe, ^•ﻌ•^
+        v-viewewhasmatchingmutedkeywowdfownotificationswuwe, :3
+      ) ++ visibiwitypowicy.union(
+        wecommendationspowicy.tweetwuwes
+      ), ^^
+      u-usewwuwes = v-visibiwitypowicy.union(
+        wecommendationspowicy.usewwuwes
+      ) ++ seq(
+        authowbwocksviewewdwopwuwe, o.O
+        v-viewewmutesauthowwuwe, ^^
+        v-viewewbwocksauthowwuwe
       )
     )
 
-case object SpaceTweetAvatarHomeTimelinePolicy
-    extends VisibilityPolicy(
-      spaceRules = Seq(
-        SpaceDoNotAmplifyNonFollowerDropRule,
-        SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
-        SpaceUntrustedUrlNonFollowerDropRule,
-        SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionAllUsersDropRule,
-        SpaceNsfwHighPrecisionAllUsersInterstitialRule
-      ),
-      userRules = Seq(
-        TsViolationRule,
-        DoNotAmplifyUserRule,
-        NotGraduatedNonFollowerRule,
-        AbusiveRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        RecommendationsBlacklistRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule,
-        UserBlinkWorstAllUsersDropRule,
-        UserNsfwNearPerfectNonFollowerDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule,
-        UserNsfwAvatarImageNonFollowerDropRule,
-        UserNsfwBannerImageNonFollowerDropRule
+case object t-tombstoningpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = s-seq(
+        tombstoneif.viewewisbwockedbyauthow, (⑅˘꒳˘)
+        tombstoneif.authowispwotected, ʘwʘ
+        tombstoneif.wepwyismodewatedbywootauthow, mya
+        t-tombstoneif.authowissuspended, >w<
+        tombstoneif.authowisdeactivated, o.O
+        intewstitiawif.viewewhawdmutedauthow
       )
     )
 
-case object SpaceHomeTimelineUprankingPolicy
-    extends VisibilityPolicy(
-      spaceRules = Seq(
-        SpaceDoNotAmplifyNonFollowerDropRule,
-        SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
-        SpaceUntrustedUrlNonFollowerDropRule,
-        SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule,
-        SpaceNsfwHighPrecisionSafeSearchNonFollowerDropRule,
-        SpaceNsfwHighRecallSafeSearchNonFollowerDropRule
-      ),
-      userRules = Seq(
-        TsViolationRule,
-        DoNotAmplifyUserRule,
-        NotGraduatedRule,
-        AbusiveRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        RecommendationsBlacklistRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule,
-        UserBlinkWorstAllUsersDropRule,
-        UserNsfwNearPerfectNonFollowerDropRule,
-        UserNsfwAvatarImageNonFollowerDropRule,
-        UserNsfwBannerImageNonFollowerDropRule
+case o-object tweetwepwynudgepowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = seq(
+        spamawwusewstweetwabewwuwe, OwO
+        pdnaawwusewstweetwabewwuwe, -.-
+        bounceawwusewstweetwabewwuwe, (U ﹏ U)
+        t-tweetnsfwadmindwopwuwe, òωó
+        tweetnsfwusewdwopwuwe, >w<
+        n-nysfwhighwecawwawwusewstweetwabewdwopwuwe, ^•ﻌ•^
+        nysfwhighpwecisionawwusewstweetwabewdwopwuwe, /(^•ω•^)
+        g-goweandviowencehighpwecisionawwusewstweetwabewdwopwuwe, ʘwʘ
+        n-nysfwwepowtedheuwisticsawwusewstweetwabewdwopwuwe, XD
+        goweandviowencewepowtedheuwisticsawwusewstweetwabewdwopwuwe, (U ᵕ U❁)
+        nysfwcawdimageawwusewstweetwabewdwopwuwe, (ꈍᴗꈍ)
+        nysfwvideoawwusewstweetwabewdwopwuwe, rawr x3
+        nysfwtextawwusewstweetwabewdwopwuwe, :3
+      ), (˘ω˘)
+      usewwuwes = s-seq(
+        d-dwopnsfwusewauthowwuwe, -.-
+        dwopnsfwadminauthowwuwe, (ꈍᴗꈍ)
+        nsfwtextawwusewsdwopwuwe
       )
     )
 
-case object SpaceJoinScreenPolicy
-    extends VisibilityPolicy(
-      spaceRules = Seq(
-        SpaceNsfwHighPrecisionAllUsersInterstitialRule
-      )
+c-case object humanizationnudgepowicy
+    extends visibiwitypowicy(
+      u-usewwuwes = usewtimewinewuwes.usewwuwes
     )
 
-case object KitchenSinkDevelopmentPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules.diff(
-        Seq(
-          BounceTweetLabelRule,
-          DropExclusiveTweetContentRule,
-          DropTrustedFriendsTweetContentRule
+c-case object twendswepwesentativetweetpowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.union(
+        w-wecommendationspowicy.tweetwuwes, UwU
+        s-seq(
+          abusivehighwecawwtweetwabewwuwe, σωσ
+          bystandewabusivetweetwabewwuwe, ^^
+          d-dupwicatecontenttweetwabewdwopwuwe, :3
+          w-wowquawitytweetwabewdwopwuwe, ʘwʘ
+          h-highpwoactivetosscowetweetwabewdwopwuwe, 😳
+          n-nysfahighwecawwtweetwabewwuwe, ^^
+          n-nysfwcawdimageawwusewstweetwabewdwopwuwe, σωσ
+          n-nysfwhighpwecisiontweetwabewwuwe, /(^•ω•^)
+          nysfwhighwecawwawwusewstweetwabewdwopwuwe, 😳😳😳
+          n-nysfwvideotweetwabewdwopwuwe, 😳
+          n-nysfwtexttweetwabewdwopwuwe, OwO
+          p-pdnaawwusewstweetwabewwuwe, :3
+          seawchbwackwisttweetwabewwuwe, nyaa~~
+          spamhighwecawwtweetwabewdwopwuwe, OwO
+          u-untwusteduwwawwviewewstweetwabewwuwe, o.O
+          downwankspamwepwyawwviewewstweetwabewwuwe, (U ﹏ U)
+          highpspammyscoweawwviewewdwopwuwe, (⑅˘꒳˘)
+          d-donotampwifyawwviewewsdwopwuwe, OwO
+          smytespamtweetwabewdwopwuwe, 😳
+          authowbwocksviewewdwopwuwe, :3
+          viewewbwocksauthowwuwe, ( ͡o ω ͡o )
+          v-viewewmutesauthowwuwe, 🥺
+          c-copypastaspamawwviewewstweetwabewwuwe, /(^•ω•^)
         )
-      ) ++ Seq(
-        BounceTweetLabelTombstoneRule,
-        TombstoneExclusiveTweetContentRule,
-        TombstoneTrustedFriendsTweetContentRule)
-        ++ Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          ViewerReportsAuthorInterstitialRule,
-          ViewerMutesAuthorInterstitialRule,
-          ViewerBlocksAuthorInterstitialRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          ExperimentalNudgeLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorTombstoneRule,
-        SuspendedAuthorRule
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableRetweetTombstoneRule,
-        DeactivatedUserUnavailableRetweetTombstoneRule,
-        OffBoardedUserUnavailableRetweetTombstoneRule,
-        ErasedUserUnavailableRetweetTombstoneRule,
-        ProtectedUserUnavailableRetweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableRetweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableRetweetTombstoneRule,
-        ViewerMutesAuthorUserUnavailableRetweetTombstoneRule,
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      ),
-      deletedTweetRules = Seq(
-        TombstoneDeletedOuterTweetRule,
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
-      ),
-      mediaRules = VisibilityPolicy.baseMediaRules
-    )
-
-case object CurationPolicyViolationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DoNotAmplifyAllViewersDropRule,
-      ),
-      userRules = Seq(
-        DoNotAmplifyUserRule,
-        TsViolationRule
-      )
-    )
-
-case object GraphqlDefaultPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
-    )
-
-case object GryphonDecksAndColumnsSharingPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule
-      ),
-      tweetRules = Seq(DropAllRule)
-    )
-
-case object UserSettingsPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(ViewerIsNotAuthorDropRule),
-      tweetRules = Seq(DropAllRule)
-    )
-
-case object BlockMuteUsersTimelinePolicy
-    extends VisibilityPolicy(
-      userRules = Seq(SuspendedAuthorRule),
-      tweetRules = Seq(DropAllRule)
-    )
-
-case object TopicRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        Seq(
-          NsfwHighRecallTweetLabelRule,
-          NsfwTextHighPrecisionTweetLabelDropRule
+      usewwuwes = visibiwitypowicy.union(
+        wecommendationspowicy.usewwuwes, nyaa~~
+        s-seq(
+          a-abusivewuwe, (✿oωo)
+          wowquawitywuwe, (✿oωo)
+          w-weadonwywuwe, (ꈍᴗꈍ)
+          c-compwomisedwuwe, OwO
+          wecommendationsbwackwistwuwe, :3
+          spamhighwecawwwuwe, mya
+          dupwicatecontentwuwe, >_<
+          n-nysfwhighpwecisionwuwe, (///ˬ///✿)
+          n-nsfwneawpewfectauthowwuwe, (///ˬ///✿)
+          nysfwbannewimagewuwe, 😳😳😳
+          nysfwavatawimagewuwe, (U ᵕ U❁)
+          e-engagementspammewwuwe,
+          e-engagementspammewhighwecawwwuwe, (///ˬ///✿)
+          abusivehighwecawwwuwe, ( ͡o ω ͡o )
+          seawchbwackwistwuwe, (✿oωo)
+          s-seawchnsfwtextwuwe, òωó
+          nysfwhighwecawwwuwe, (ˆ ﻌ ˆ)♡
+          tsviowationwuwe, :3
+          downwankspamwepwyawwviewewswuwe, (ˆ ﻌ ˆ)♡
+          nysfwtextnonauthowdwopwuwe
         )
-          ++ RecommendationsPolicy.tweetRules,
-      userRules = RecommendationsPolicy.userRules
+      )
     )
 
-case object RitoActionedTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        VisibilityPolicy.baseTweetTombstoneRules
-          ++ Seq(
-            AuthorBlocksViewerTombstoneRule,
-            ProtectedAuthorTombstoneRule
-          ),
-      deletedTweetRules = Seq(
-        TombstoneDeletedOuterTweetRule,
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
-      ),
+case object adscampaignpowicy
+    e-extends visibiwitypowicy(
+      usewwuwes = seq(suspendedauthowwuwe), (U ᵕ U❁)
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes
     )
 
-case object EmbeddedTweetsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetTombstoneRules
-        ++ Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
+c-case object adsmanagewpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++ s-seq(
+        a-adsmanagewdenywistawwusewstweetwabewwuwe, (U ᵕ U❁)
+      )
+    )
+
+c-case object a-adswepowtingdashboawdpowicy
+    extends visibiwitypowicy(
+      tweetwuwes = a-adsmanagewpowicy.tweetwuwes, XD
+      u-usewwuwes = a-adscampaignpowicy.usewwuwes
+    )
+
+case object b-biwdwatchnoteauthowpowicy
+    e-extends v-visibiwitypowicy(
+      usewwuwes = s-seq(
+        s-suspendedauthowwuwe, nyaa~~
+        a-authowbwocksviewewdwopwuwe, (ˆ ﻌ ˆ)♡
+        v-viewewbwocksauthowwuwe, ʘwʘ
+        v-viewewmutesauthowwuwe
+      )
+    )
+
+case o-object biwdwatchnotetweetstimewinepowicy
+    extends visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes ++
+        s-seq(
+          mutedwetweetswuwe, ^•ﻌ•^
+          authowbwocksviewewdwopwuwe, mya
+          viewewmutesauthowwuwe, (ꈍᴗꈍ)
+          a-abusepowicyepisodictweetwabewintewstitiawwuwe, (ˆ ﻌ ˆ)♡
+          e-emewgencydynamicintewstitiawwuwe, (ˆ ﻌ ˆ)♡
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, ( ͡o ω ͡o )
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, o.O
+          nsfwwepowtedheuwisticsawwusewstweetwabewwuwe, 😳😳😳
+          g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, ʘwʘ
+          n-nysfwcawdimageawwusewstweetwabewwuwe, :3
+        ) ++ wimitedengagementbasewuwes.tweetwuwes
+    )
+
+case object b-biwdwatchneedsyouwhewpnotificationspowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        s-seq(
+          a-authowbwocksviewewdwopwuwe, UwU
+          viewewbwocksauthowwuwe, nyaa~~
+          v-viewewmutesauthowwuwe, :3
+          viewewhasmatchingmutedkeywowdfowhometimewinewuwe, nyaa~~
+          viewewhasmatchingmutedkeywowdfownotificationswuwe, ^^
         )
-        ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneDeletedOuterTweetRule,
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
-      ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
+    )
+
+c-case object fowdevewopmentonwypowicy
+    extends visibiwitypowicy(
+      usewwuwes = seq.empty, nyaa~~
+      t-tweetwuwes = v-visibiwitypowicy.basetweetwuwes
+    )
+
+case object usewpwofiweheadewpowicy
+    extends visibiwitypowicy(
+      u-usewwuwes = s-seq.empty, 😳😳😳
+      tweetwuwes = seq(dwopawwwuwe)
+    )
+
+case object u-usewscopedtimewinepowicy
+    extends visibiwitypowicy(
+      usewwuwes = u-usewtimewinewuwes.usewwuwes, ^•ﻌ•^
+      t-tweetwuwes = s-seq(dwopawwwuwe)
+    )
+
+case object tweetscopedtimewinepowicy
+    extends visibiwitypowicy(
+      u-usewwuwes = usewtimewinewuwes.usewwuwes, (⑅˘꒳˘)
+      t-tweetwuwes = seq.empty
+    )
+
+c-case object softintewventionpivotpowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes
+    )
+
+c-case object cuwatedtwendswepwesentativetweetpowicy
+    extends visibiwitypowicy(
+      u-usewwuwes = seq(
+        suspendedauthowwuwe, (✿oωo)
+        a-authowbwocksviewewdwopwuwe, mya
+        viewewbwocksauthowwuwe, (///ˬ///✿)
+        viewewmutesanddoesnotfowwowauthowwuwe
       )
     )
 
-case object EmbedTweetMarkupPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropStaleTweetsRule) ++
-        VisibilityPolicy.baseTweetTombstoneRules
-        ++ Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
+case object communitiespowicy
+    extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        seq(
+          w-wetweetdwopwuwe, ʘwʘ
+          a-abusepowicyepisodictweetwabewdwopwuwe, >w<
+          e-emewgencydwopwuwe,
+          s-safetycwisiswevew4dwopwuwe, o.O
+          wepowtedtweetintewstitiawwuwe, ^^;;
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, :3
+          g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, (ꈍᴗꈍ)
+          nsfwwepowtedheuwisticsawwusewstweetwabewwuwe, XD
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, ^^;;
+          nysfwcawdimageawwusewstweetwabewwuwe, (U ﹏ U)
+        ) ++ wimitedengagementbasewuwes.tweetwuwes
+    )
+
+c-case object t-timewinehomecommunitiespowicy
+    e-extends v-visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.union(
+        seq(
+          dwopawwauthowwemovedcommunitytweetswuwe, (ꈍᴗꈍ)
+          d-dwopawwhiddencommunitytweetswuwe, 😳
+          v-viewewhasmatchingmutedkeywowdfowhometimewinewuwe, rawr
+        ), ( ͡o ω ͡o )
+        visibiwitypowicy.basequotedtweettombstonewuwes,
+        communitiespowicy.tweetwuwes, (ˆ ﻌ ˆ)♡
+      ),
+      usewwuwes = s-seq(
+        viewewmutesauthowwuwe, OwO
+        v-viewewbwocksauthowwuwe, >_<
+      )
+    )
+
+c-case o-object timewinehomepwomotedhydwationpowicy
+    extends visibiwitypowicy(
+      tweetwuwes = seq(
+        viewewhasmatchingmutedkeywowdfowhometimewinepwomotedtweetwuwe, XD
+        viewewmutesauthowhometimewinepwomotedtweetwuwe, (ˆ ﻌ ˆ)♡
+        viewewbwocksauthowhometimewinepwomotedtweetwuwe
+      ) ++ t-timewinehomehydwationpowicy.tweetwuwes, (ꈍᴗꈍ)
+      powicywuwepawams = t-timewinehomehydwationpowicy.powicywuwepawams
+    )
+
+case object spacespowicy
+    extends visibiwitypowicy(
+        s-spacedonotampwifyawwusewsdwopwuwe, (✿oωo)
+        spacensfwhighpwecisionnonfowwowewdwopwuwe), UwU
+      u-usewwuwes = seq(
+        authowbwocksviewewdwopwuwe
+      )
+    )
+
+case object s-spacessewwewappwicationstatuspowicy
+    e-extends v-visibiwitypowicy(
+      u-usewwuwes = s-seq(
+        viewewisnotauthowdwopwuwe
+      )
+    )
+
+c-case o-object spacespawticipantspowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = seq(dwopawwwuwe), (ꈍᴗꈍ)
+      usewwuwes = s-seq(
+        authowbwocksviewewdwopwuwe, (U ﹏ U)
+        s-suspendedauthowwuwe
+      )
+    )
+
+c-case object spacesshawingpowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = tweetdetaiwpowicy.tweetwuwes, >w<
+      usewwuwes = seq(
+        authowbwocksviewewdwopwuwe, ^•ﻌ•^
+        pwotectedauthowdwopwuwe, 😳
+        suspendedauthowwuwe
+      ), XD
+      p-powicywuwepawams = t-tweetdetaiwpowicy.powicywuwepawams
+    )
+
+case o-object spacefweetwinepowicy
+    e-extends visibiwitypowicy(
+      spacewuwes = seq(
+        spacedonotampwifynonfowwowewdwopwuwe, :3
+        spacecoowdhawmfuwactivityhighwecawwnonfowwowewdwopwuwe, rawr x3
+        s-spaceuntwusteduwwnonfowwowewdwopwuwe, (⑅˘꒳˘)
+        spacemisweadinghighwecawwnonfowwowewdwopwuwe, ^^
+        spacensfwhighpwecisionawwusewsintewstitiawwuwe
+      ), >w<
+      u-usewwuwes = seq(
+        tsviowationwuwe, 😳
+        d-donotampwifynonfowwowewwuwe, rawr
+        nyotgwaduatednonfowwowewwuwe, rawr x3
+        wikewyivswabewnonfowwowewdwopusewwuwe, (ꈍᴗꈍ)
+        usewabusivenonfowwowewdwopwuwe
+      )
+    )
+
+c-case object spacenotificationspowicy
+    e-extends visibiwitypowicy(
+      s-spacewuwes = seq(
+        s-spacehatefuwhighwecawwawwusewsdwopwuwe, -.-
+        spaceviowencehighwecawwawwusewsdwopwuwe, òωó
+        s-spacedonotampwifyawwusewsdwopwuwe, (U ﹏ U)
+        s-spacecoowdhawmfuwactivityhighwecawwawwusewsdwopwuwe, ( ͡o ω ͡o )
+        spaceuntwusteduwwnonfowwowewdwopwuwe, :3
+        s-spacemisweadinghighwecawwnonfowwowewdwopwuwe, >w<
+        s-spacensfwhighpwecisionawwusewsdwopwuwe,
+        s-spacensfwhighwecawwawwusewsdwopwuwe, ^^
+        v-viewewhasmatchingmutedkeywowdinspacetitwefownotificationswuwe
+      ),
+      usewwuwes = seq(
+        v-viewewmutesauthowwuwe, 😳😳😳
+        v-viewewbwocksauthowwuwe, OwO
+        a-authowbwocksviewewdwopwuwe,
+        tsviowationwuwe, XD
+        d-donotampwifyusewwuwe, (⑅˘꒳˘)
+        abusivewuwe, OwO
+        seawchbwackwistwuwe, (⑅˘꒳˘)
+        seawchnsfwtextwuwe, (U ﹏ U)
+        wecommendationsbwackwistwuwe, (ꈍᴗꈍ)
+        nyotgwaduatedwuwe, rawr
+        s-spamhighwecawwwuwe, XD
+        a-abusivehighwecawwwuwe, >w<
+        usewbwinkwowstawwusewsdwopwuwe, UwU
+        usewnsfwneawpewfectnonfowwowewdwopwuwe, 😳
+        s-spacensfwhighpwecisionnonfowwowewdwopwuwe, (ˆ ﻌ ˆ)♡
+        usewnsfwavatawimagenonfowwowewdwopwuwe, ^•ﻌ•^
+        usewnsfwbannewimagenonfowwowewdwopwuwe
+      )
+    )
+
+c-case object spacetweetavatawhometimewinepowicy
+    e-extends visibiwitypowicy(
+      s-spacewuwes = s-seq(
+        spacedonotampwifynonfowwowewdwopwuwe, ^^
+        spacecoowdhawmfuwactivityhighwecawwnonfowwowewdwopwuwe, 😳
+        s-spaceuntwusteduwwnonfowwowewdwopwuwe, :3
+        spacemisweadinghighwecawwnonfowwowewdwopwuwe, (⑅˘꒳˘)
+        spacensfwhighpwecisionawwusewsdwopwuwe, ( ͡o ω ͡o )
+        spacensfwhighpwecisionawwusewsintewstitiawwuwe
+      ), :3
+      usewwuwes = s-seq(
+        t-tsviowationwuwe, (⑅˘꒳˘)
+        donotampwifyusewwuwe, >w<
+        nyotgwaduatednonfowwowewwuwe, OwO
+        abusivewuwe,
+        seawchbwackwistwuwe, 😳
+        s-seawchnsfwtextwuwe, OwO
+        wecommendationsbwackwistwuwe, 🥺
+        s-spamhighwecawwwuwe, (˘ω˘)
+        abusivehighwecawwwuwe, 😳😳😳
+        usewbwinkwowstawwusewsdwopwuwe, mya
+        u-usewnsfwneawpewfectnonfowwowewdwopwuwe, OwO
+        spacensfwhighpwecisionnonfowwowewdwopwuwe, >_<
+        u-usewnsfwavatawimagenonfowwowewdwopwuwe, 😳
+        usewnsfwbannewimagenonfowwowewdwopwuwe
+      )
+    )
+
+case object spacehometimewineupwankingpowicy
+    e-extends visibiwitypowicy(
+      spacewuwes = s-seq(
+        spacedonotampwifynonfowwowewdwopwuwe,
+        spacecoowdhawmfuwactivityhighwecawwnonfowwowewdwopwuwe,
+        s-spaceuntwusteduwwnonfowwowewdwopwuwe,
+        s-spacemisweadinghighwecawwnonfowwowewdwopwuwe, (U ᵕ U❁)
+        spacensfwhighpwecisionnonfowwowewdwopwuwe, 🥺
+        spacensfwhighpwecisionsafeseawchnonfowwowewdwopwuwe, (U ﹏ U)
+        s-spacensfwhighwecawwsafeseawchnonfowwowewdwopwuwe
+      ), (U ﹏ U)
+      usewwuwes = seq(
+        tsviowationwuwe, rawr x3
+        d-donotampwifyusewwuwe, :3
+        n-nyotgwaduatedwuwe, rawr
+        a-abusivewuwe,
+        seawchbwackwistwuwe, XD
+        seawchnsfwtextwuwe, ^^
+        wecommendationsbwackwistwuwe, mya
+        spamhighwecawwwuwe, (U ﹏ U)
+        abusivehighwecawwwuwe, 😳
+        usewbwinkwowstawwusewsdwopwuwe, mya
+        u-usewnsfwneawpewfectnonfowwowewdwopwuwe, 😳
+        usewnsfwavatawimagenonfowwowewdwopwuwe, ^^
+        usewnsfwbannewimagenonfowwowewdwopwuwe
+      )
+    )
+
+c-case object s-spacejoinscweenpowicy
+    extends visibiwitypowicy(
+      s-spacewuwes = s-seq(
+        spacensfwhighpwecisionawwusewsintewstitiawwuwe
+      )
+    )
+
+case object kitchensinkdevewopmentpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweetwuwes.diff(
+        seq(
+          bouncetweetwabewwuwe, :3
+          d-dwopexcwusivetweetcontentwuwe, (U ﹏ U)
+          d-dwoptwustedfwiendstweetcontentwuwe
         )
-        ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneDeletedOuterTweetRule,
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+      ) ++ seq(
+        b-bouncetweetwabewtombstonewuwe, UwU
+        t-tombstoneexcwusivetweetcontentwuwe, (ˆ ﻌ ˆ)♡
+        tombstonetwustedfwiendstweetcontentwuwe)
+        ++ s-seq(
+          abusepowicyepisodictweetwabewintewstitiawwuwe,
+          e-emewgencydynamicintewstitiawwuwe, (ˆ ﻌ ˆ)♡
+          v-viewewwepowtsauthowintewstitiawwuwe, ^^;;
+          v-viewewmutesauthowintewstitiawwuwe, rawr
+          v-viewewbwocksauthowintewstitiawwuwe, nyaa~~
+          m-mutedkeywowdfowtweetwepwiesintewstitiawwuwe, rawr x3
+          wepowtedtweetintewstitiawwuwe,
+          n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, (⑅˘꒳˘)
+          g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, OwO
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, OwO
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, ʘwʘ
+          n-nysfwcawdimageawwusewstweetwabewwuwe,
+          expewimentawnudgewabewwuwe, :3
+        ) ++ w-wimitedengagementbasewuwes.tweetwuwes, mya
+      usewwuwes = seq(
+        authowbwocksviewewdwopwuwe, OwO
+        pwotectedauthowtombstonewuwe, :3
+        suspendedauthowwuwe
+      ), >_<
+      usewunavaiwabwestatewuwes = seq(
+        suspendedusewunavaiwabwewetweettombstonewuwe, σωσ
+        d-deactivatedusewunavaiwabwewetweettombstonewuwe, /(^•ω•^)
+        offboawdedusewunavaiwabwewetweettombstonewuwe,
+        e-ewasedusewunavaiwabwewetweettombstonewuwe, mya
+        pwotectedusewunavaiwabwewetweettombstonewuwe, nyaa~~
+        a-authowbwocksviewewusewunavaiwabwewetweettombstonewuwe, 😳
+        v-viewewbwocksauthowusewunavaiwabwewetweettombstonewuwe, ^^;;
+        viewewmutesauthowusewunavaiwabwewetweettombstonewuwe, 😳😳😳
+        s-suspendedusewunavaiwabweinnewquotedtweettombstonewuwe, nyaa~~
+        deactivatedusewunavaiwabweinnewquotedtweettombstonewuwe, 🥺
+        o-offboawdedusewunavaiwabweinnewquotedtweettombstonewuwe, XD
+        ewasedusewunavaiwabweinnewquotedtweettombstonewuwe, (ꈍᴗꈍ)
+        p-pwotectedusewunavaiwabweinnewquotedtweettombstonewuwe, 😳😳😳
+        authowbwocksviewewusewunavaiwabweinnewquotedtweettombstonewuwe, ( ͡o ω ͡o )
+        suspendedusewunavaiwabwetweettombstonewuwe, nyaa~~
+        deactivatedusewunavaiwabwetweettombstonewuwe, XD
+        offboawdedusewunavaiwabwetweettombstonewuwe, (ˆ ﻌ ˆ)♡
+        ewasedusewunavaiwabwetweettombstonewuwe, rawr x3
+        pwotectedusewunavaiwabwetweettombstonewuwe, OwO
+        a-authowbwocksviewewusewunavaiwabwetweettombstonewuwe, UwU
+        viewewbwocksauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe, ^^
+        viewewmutesauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe
+      ), (✿oωo)
+      d-dewetedtweetwuwes = seq(
+        t-tombstonedewetedoutewtweetwuwe, 😳😳😳
+        tombstonebouncedewetedoutewtweetwuwe, 🥺
+        tombstonedewetedquotedtweetwuwe, ʘwʘ
+        tombstonebouncedewetedquotedtweetwuwe
+      ), 😳
+      mediawuwes = visibiwitypowicy.basemediawuwes
+    )
+
+case object cuwationpowicyviowationspowicy
+    extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++ seq(
+        donotampwifyawwviewewsdwopwuwe, ^^;;
       ),
-    )
-
-case object ArticleTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          VisibilityPolicy.baseTweetRules ++
-          Seq(
-            ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        ViewerMutesAuthorRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule
+      u-usewwuwes = s-seq(
+        d-donotampwifyusewwuwe, (///ˬ///✿)
+        tsviowationwuwe
       )
     )
 
-case object ConversationFocalPrehydrationPolicy
-    extends VisibilityPolicy(
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
-      )
+c-case object gwaphqwdefauwtpowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        seq(
+          abusepowicyepisodictweetwabewintewstitiawwuwe, OwO
+          e-emewgencydynamicintewstitiawwuwe, -.-
+          n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, ^^
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, (ꈍᴗꈍ)
+          n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, ^^;;
+          g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, (˘ω˘)
+          n-nysfwcawdimageawwusewstweetwabewwuwe, 🥺
+        ) ++ w-wimitedengagementbasewuwes.tweetwuwes
     )
 
-case object ConversationFocalTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetTombstoneRules
-        ++ Seq(
-          DynamicProductAdDropTweetLabelRule,
-          AuthorBlocksViewerTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
-          MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
-          ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
-          ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
+case object gwyphondecksandcowumnsshawingpowicy
+    extends visibiwitypowicy(
+      u-usewwuwes = s-seq(
+        authowbwocksviewewdwopwuwe, òωó
+        p-pwotectedauthowdwopwuwe, (⑅˘꒳˘)
+        s-suspendedauthowwuwe
+      ), (U ᵕ U❁)
+      t-tweetwuwes = s-seq(dwopawwwuwe)
+    )
+
+c-case o-object usewsettingspowicy
+    extends visibiwitypowicy(
+      usewwuwes = seq(viewewisnotauthowdwopwuwe), >w<
+      tweetwuwes = seq(dwopawwwuwe)
+    )
+
+case object b-bwockmuteusewstimewinepowicy
+    extends visibiwitypowicy(
+      usewwuwes = seq(suspendedauthowwuwe), σωσ
+      tweetwuwes = s-seq(dwopawwwuwe)
+    )
+
+case object t-topicwecommendationspowicy
+    extends visibiwitypowicy(
+      tweetwuwes =
+        seq(
+          nysfwhighwecawwtweetwabewwuwe, -.-
+          n-nysfwtexthighpwecisiontweetwabewdwopwuwe
         )
-        ++ LimitedEngagementBaseRules.tweetRules
-        ++ ConversationsAdAvoidanceRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
-      ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        UserUnavailableTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      ),
-      policyRuleParams = ConversationsAdAvoidanceRules.policyRuleParams
-        ++ SensitiveMediaSettingsConversationBaseRules.policyRuleParams
+          ++ wecommendationspowicy.tweetwuwes, o.O
+      u-usewwuwes = w-wecommendationspowicy.usewwuwes
     )
 
-case object ConversationReplyPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetTombstoneRules
-        ++ Seq(
-          LowQualityTweetLabelTombstoneRule,
-          SpamHighRecallTweetLabelTombstoneRule,
-          DuplicateContentTweetLabelTombstoneRule,
-          DeciderableSpamHighRecallAuthorLabelTombstoneRule,
-          SmyteSpamTweetLabelTombstoneRule,
-          AuthorBlocksViewerTombstoneRule,
-          ToxicityReplyFilterRule,
-          DynamicProductAdDropTweetLabelRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule,
-          ViewerBlocksAuthorInterstitialRule,
-          ViewerMutesAuthorInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
+case object witoactionedtweettimewinepowicy
+    extends visibiwitypowicy(
+      tweetwuwes =
+        v-visibiwitypowicy.basetweettombstonewuwes
+          ++ seq(
+            authowbwocksviewewtombstonewuwe, ^^
+            pwotectedauthowtombstonewuwe
+          ), >_<
+      dewetedtweetwuwes = s-seq(
+        tombstonedewetedoutewtweetwuwe, >w<
+        t-tombstonebouncedewetedoutewtweetwuwe, >_<
+        t-tombstonedewetedquotedtweetwuwe, >w<
+        t-tombstonebouncedewetedquotedtweetwuwe, rawr
+      ), rawr x3
+    )
+
+c-case object embeddedtweetspowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweettombstonewuwes
+        ++ s-seq(
+          abusepowicyepisodictweetwabewintewstitiawwuwe, ( ͡o ω ͡o )
+          emewgencydynamicintewstitiawwuwe, (˘ω˘)
+          nsfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, 😳
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe,
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, OwO
+          g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, (˘ω˘)
+          nysfwcawdimageawwusewstweetwabewwuwe, òωó
         )
-        ++ LimitedEngagementBaseRules.tweetRules
-        ++ ConversationsAdAvoidanceRules.tweetRules,
-      userRules = Seq(
-        LowQualityRule,
-        ReadOnlyRule,
-        LowQualityHighRecallRule,
-        CompromisedRule,
-        DeciderableSpamHighRecallRule
-      ),
-      deletedTweetRules = Seq(
-        TombstoneDeletedOuterTweetRule,
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
-      ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        UserUnavailableTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      ),
-      policyRuleParams = ConversationsAdAvoidanceRules.policyRuleParams
-        ++ SensitiveMediaSettingsConversationBaseRules.policyRuleParams
-    )
-
-case object AdsBusinessSettingsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropAllRule)
-    )
-
-case object UserMilestoneRecommendationPolicy
-    extends VisibilityPolicy(
-      userRules = RecommendationsPolicy.userRules ++ Seq(
+        ++ w-wimitedengagementbasewuwes.tweetwuwes, ( ͡o ω ͡o )
+      d-dewetedtweetwuwes = s-seq(
+        tombstonedewetedoutewtweetwuwe, UwU
+        tombstonebouncedewetedoutewtweetwuwe, /(^•ω•^)
+        tombstonedewetedquotedtweetwuwe, (ꈍᴗꈍ)
+        t-tombstonebouncedewetedquotedtweetwuwe, 😳
+      ), mya
+      u-usewunavaiwabwestatewuwes = seq(
+        s-suspendedusewunavaiwabwetweettombstonewuwe, mya
+        d-deactivatedusewunavaiwabwetweettombstonewuwe, /(^•ω•^)
+        offboawdedusewunavaiwabwetweettombstonewuwe, ^^;;
+        e-ewasedusewunavaiwabwetweettombstonewuwe, 🥺
+        pwotectedusewunavaiwabwetweettombstonewuwe, ^^
+        a-authowbwocksviewewusewunavaiwabweinnewquotedtweettombstonewuwe, ^•ﻌ•^
       )
     )
 
-case object TrustedFriendsUserListPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropAllRule),
-      userRules = Seq(
-        ViewerBlocksAuthorRule
+case object embedtweetmawkuppowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = seq(dwopstawetweetswuwe) ++
+        v-visibiwitypowicy.basetweettombstonewuwes
+        ++ s-seq(
+          abusepowicyepisodictweetwabewintewstitiawwuwe, /(^•ω•^)
+          emewgencydynamicintewstitiawwuwe, ^^
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, 🥺
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe,
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, (U ᵕ U❁)
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, 😳😳😳
+          nysfwcawdimageawwusewstweetwabewwuwe, nyaa~~
+        )
+        ++ w-wimitedengagementbasewuwes.tweetwuwes, (˘ω˘)
+      d-dewetedtweetwuwes = seq(
+        t-tombstonedewetedoutewtweetwuwe, >_<
+        tombstonebouncedewetedoutewtweetwuwe, XD
+        t-tombstonedewetedquotedtweetwuwe, rawr x3
+        t-tombstonebouncedewetedquotedtweetwuwe, ( ͡o ω ͡o )
+      ), :3
+    )
+
+case object awticwetweettimewinepowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes =
+          visibiwitypowicy.basetweetwuwes ++
+          seq(
+            viewewhasmatchingmutedkeywowdfowhometimewinewuwe, mya
+            abusepowicyepisodictweetwabewintewstitiawwuwe, σωσ
+            e-emewgencydynamicintewstitiawwuwe, (ꈍᴗꈍ)
+            nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe,
+            g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, OwO
+            n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, o.O
+            g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, 😳😳😳
+            nysfwcawdimageawwusewstweetwabewwuwe, /(^•ω•^)
+          ) ++ w-wimitedengagementbasewuwes.tweetwuwes,
+      u-usewwuwes = s-seq(
+        a-authowbwocksviewewdwopwuwe, OwO
+        viewewbwocksauthowwuwe, ^^
+        viewewmutesauthowwuwe,
+        p-pwotectedauthowdwopwuwe, (///ˬ///✿)
+        s-suspendedauthowwuwe
       )
     )
 
-case object TwitterDelegateUserListPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        ViewerBlocksAuthorRule,
-        ViewerIsAuthorDropRule,
-        DeactivatedAuthorRule,
-        AuthorBlocksViewerDropRule
-      ),
-      tweetRules = Seq(DropAllRule)
+c-case object c-convewsationfocawpwehydwationpowicy
+    e-extends visibiwitypowicy(
+      dewetedtweetwuwes = seq(
+        tombstonebouncedewetedoutewtweetwuwe, (///ˬ///✿)
+        t-tombstonebouncedewetedquotedtweetwuwe, (///ˬ///✿)
+      )
     )
 
-case object QuickPromoteTweetEligibilityPolicy
-    extends VisibilityPolicy(
-      tweetRules = TweetDetailPolicy.tweetRules,
-      userRules = UserTimelineRules.UserRules,
-      policyRuleParams = TweetDetailPolicy.policyRuleParams
+case object convewsationfocawtweetpowicy
+    extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweettombstonewuwes
+        ++ seq(
+          d-dynamicpwoductaddwoptweetwabewwuwe, ʘwʘ
+          authowbwocksviewewtombstonewuwe, ^•ﻌ•^
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwhighpwecisiontweetwabewdwopsettingwevewtombstonewuwe, OwO
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencehighpwecisiondwopsettingwevetombstonewuwe, (U ﹏ U)
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwwepowtedheuwisticstweetwabewdwopsettingwevewtombstonewuwe, (ˆ ﻌ ˆ)♡
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencewepowtedheuwisticsdwopsettingwevewtombstonewuwe, (⑅˘꒳˘)
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwcawdimagetweetwabewdwopsettingwevewtombstonewuwe,
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwusewtweetfwagdwopsettingwevewtombstonewuwe, (U ﹏ U)
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwadmintweetfwagdwopsettingwevewtombstonewuwe, o.O
+          abusepowicyepisodictweetwabewintewstitiawwuwe, mya
+          e-emewgencydynamicintewstitiawwuwe, XD
+          w-wepowtedtweetintewstitiawwuwe, òωó
+          nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, (˘ω˘)
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, :3
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, OwO
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, mya
+          nysfwcawdimageawwusewstweetwabewwuwe, (˘ω˘)
+          sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe, o.O
+          sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe, (✿oωo)
+          sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe, (ˆ ﻌ ˆ)♡
+          s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe, ^^;;
+          sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe, OwO
+          s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe,
+          sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe, 🥺
+          g-goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe, mya
+          n-nysfwwepowtedheuwisticsavoidadpwacementawwusewstweetwabewwuwe, 😳
+          goweandviowencewepowtedheuwisticsavoidadpwacementawwusewstweetwabewwuwe, òωó
+          nsfwcawdimageavoidadpwacementawwusewstweetwabewwuwe, /(^•ω•^)
+          m-mutedkeywowdfowquotedtweettweetdetaiwintewstitiawwuwe, -.-
+          v-viewewmutesauthowinnewquotedtweetintewstitiawwuwe, òωó
+          viewewbwocksauthowinnewquotedtweetintewstitiawwuwe, /(^•ω•^)
+        )
+        ++ w-wimitedengagementbasewuwes.tweetwuwes
+        ++ c-convewsationsadavoidancewuwes.tweetwuwes, /(^•ω•^)
+      dewetedtweetwuwes = seq(
+        tombstonebouncedewetedoutewtweetwuwe, 😳
+        tombstonedewetedquotedtweetwuwe, :3
+        t-tombstonebouncedewetedquotedtweetwuwe, (U ᵕ U❁)
+      ),
+      u-usewunavaiwabwestatewuwes = s-seq(
+        suspendedusewunavaiwabwetweettombstonewuwe, ʘwʘ
+        deactivatedusewunavaiwabwetweettombstonewuwe, o.O
+        o-offboawdedusewunavaiwabwetweettombstonewuwe, ʘwʘ
+        e-ewasedusewunavaiwabwetweettombstonewuwe, ^^
+        pwotectedusewunavaiwabwetweettombstonewuwe, ^•ﻌ•^
+        authowbwocksviewewusewunavaiwabweinnewquotedtweettombstonewuwe, mya
+        u-usewunavaiwabwetweettombstonewuwe, UwU
+        viewewbwocksauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe, >_<
+        viewewmutesauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe
+      ), /(^•ω•^)
+      powicywuwepawams = convewsationsadavoidancewuwes.powicywuwepawams
+        ++ s-sensitivemediasettingsconvewsationbasewuwes.powicywuwepawams
     )
 
-case object ReportCenterPolicy
-    extends VisibilityPolicy(
-      tweetRules = ConversationFocalTweetPolicy.tweetRules.diff(
-        ConversationsAdAvoidanceRules.tweetRules
-      ),
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
-        TombstoneDeletedOuterTweetRule,
-      ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        UserUnavailableTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      ),
-      policyRuleParams = ConversationFocalTweetPolicy.policyRuleParams
+c-case object convewsationwepwypowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = v-visibiwitypowicy.basetweettombstonewuwes
+        ++ seq(
+          wowquawitytweetwabewtombstonewuwe, òωó
+          spamhighwecawwtweetwabewtombstonewuwe, σωσ
+          d-dupwicatecontenttweetwabewtombstonewuwe, ( ͡o ω ͡o )
+          decidewabwespamhighwecawwauthowwabewtombstonewuwe, nyaa~~
+          smytespamtweetwabewtombstonewuwe, :3
+          authowbwocksviewewtombstonewuwe, UwU
+          toxicitywepwyfiwtewwuwe, o.O
+          d-dynamicpwoductaddwoptweetwabewwuwe, (ˆ ﻌ ˆ)♡
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwhighpwecisiontweetwabewdwopsettingwevewtombstonewuwe, ^^;;
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencehighpwecisiondwopsettingwevetombstonewuwe, ʘwʘ
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwwepowtedheuwisticstweetwabewdwopsettingwevewtombstonewuwe, σωσ
+          s-sensitivemediatweetdwopsettingwevewtombstonewuwes.viowentmediagoweandviowencewepowtedheuwisticsdwopsettingwevewtombstonewuwe, ^^;;
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.aduwtmediansfwcawdimagetweetwabewdwopsettingwevewtombstonewuwe, ʘwʘ
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwusewtweetfwagdwopsettingwevewtombstonewuwe, ^^
+          sensitivemediatweetdwopsettingwevewtombstonewuwes.othewsensitivemediansfwadmintweetfwagdwopsettingwevewtombstonewuwe, nyaa~~
+          a-abusepowicyepisodictweetwabewintewstitiawwuwe, (///ˬ///✿)
+          emewgencydynamicintewstitiawwuwe, XD
+          m-mutedkeywowdfowtweetwepwiesintewstitiawwuwe, :3
+          wepowtedtweetintewstitiawwuwe, òωó
+          viewewbwocksauthowintewstitiawwuwe, ^^
+          viewewmutesauthowintewstitiawwuwe, ^•ﻌ•^
+          n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, σωσ
+          goweandviowencehighpwecisionawwusewstweetwabewwuwe, (ˆ ﻌ ˆ)♡
+          n-nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, nyaa~~
+          goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, ʘwʘ
+          nysfwcawdimageawwusewstweetwabewwuwe, ^•ﻌ•^
+          sensitivemediatweetintewstitiawwuwes.aduwtmediansfwhighpwecisiontweetwabewintewstitiawwuwe, rawr x3
+          s-sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencehighpwecisionintewstitiawwuwe, 🥺
+          sensitivemediatweetintewstitiawwuwes.aduwtmediansfwwepowtedheuwisticstweetwabewintewstitiawwuwe, ʘwʘ
+          sensitivemediatweetintewstitiawwuwes.viowentmediagoweandviowencewepowtedheuwisticsintewstitiawwuwe, (˘ω˘)
+          s-sensitivemediatweetintewstitiawwuwes.aduwtmediansfwcawdimagetweetwabewintewstitiawwuwe, o.O
+          s-sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwusewtweetfwagintewstitiawwuwe, σωσ
+          sensitivemediatweetintewstitiawwuwes.othewsensitivemediansfwadmintweetfwagintewstitiawwuwe, (ꈍᴗꈍ)
+          goweandviowencehighpwecisionavoidawwusewstweetwabewwuwe, (ˆ ﻌ ˆ)♡
+          n-nysfwwepowtedheuwisticsavoidadpwacementawwusewstweetwabewwuwe, o.O
+          goweandviowencewepowtedheuwisticsavoidadpwacementawwusewstweetwabewwuwe, :3
+          n-nysfwcawdimageavoidadpwacementawwusewstweetwabewwuwe, -.-
+        )
+        ++ wimitedengagementbasewuwes.tweetwuwes
+        ++ c-convewsationsadavoidancewuwes.tweetwuwes, ( ͡o ω ͡o )
+      u-usewwuwes = seq(
+        wowquawitywuwe, /(^•ω•^)
+        w-weadonwywuwe, (⑅˘꒳˘)
+        w-wowquawityhighwecawwwuwe, òωó
+        compwomisedwuwe, 🥺
+        decidewabwespamhighwecawwwuwe
+      ), (ˆ ﻌ ˆ)♡
+      dewetedtweetwuwes = s-seq(
+        t-tombstonedewetedoutewtweetwuwe, -.-
+        t-tombstonebouncedewetedoutewtweetwuwe, σωσ
+        tombstonedewetedquotedtweetwuwe, >_<
+        tombstonebouncedewetedquotedtweetwuwe,
+      ), :3
+      usewunavaiwabwestatewuwes = s-seq(
+        suspendedusewunavaiwabwetweettombstonewuwe, OwO
+        deactivatedusewunavaiwabwetweettombstonewuwe, rawr
+        o-offboawdedusewunavaiwabwetweettombstonewuwe, (///ˬ///✿)
+        e-ewasedusewunavaiwabwetweettombstonewuwe, ^^
+        pwotectedusewunavaiwabwetweettombstonewuwe, XD
+        authowbwocksviewewusewunavaiwabweinnewquotedtweettombstonewuwe, UwU
+        usewunavaiwabwetweettombstonewuwe, o.O
+        v-viewewbwocksauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe, 😳
+        v-viewewmutesauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe
+      ), (˘ω˘)
+      p-powicywuwepawams = c-convewsationsadavoidancewuwes.powicywuwepawams
+        ++ sensitivemediasettingsconvewsationbasewuwes.powicywuwepawams
     )
 
-case object ConversationInjectedTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
+c-case object adsbusinesssettingspowicy
+    extends visibiwitypowicy(
+      tweetwuwes = seq(dwopawwwuwe)
+    )
+
+case object usewmiwestonewecommendationpowicy
+    e-extends visibiwitypowicy(
+      usewwuwes = wecommendationspowicy.usewwuwes ++ s-seq(
+      )
+    )
+
+case object t-twustedfwiendsusewwistpowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = seq(dwopawwwuwe), 🥺
+      usewwuwes = s-seq(
+        v-viewewbwocksauthowwuwe
+      )
+    )
+
+c-case object t-twittewdewegateusewwistpowicy
+    e-extends visibiwitypowicy(
+      usewwuwes = seq(
+        viewewbwocksauthowwuwe, ^^
+        viewewisauthowdwopwuwe, >w<
+        deactivatedauthowwuwe,
+        authowbwocksviewewdwopwuwe
+      ), ^^;;
+      tweetwuwes = s-seq(dwopawwwuwe)
+    )
+
+c-case o-object quickpwomotetweetewigibiwitypowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes = tweetdetaiwpowicy.tweetwuwes, (˘ω˘)
+      usewwuwes = usewtimewinewuwes.usewwuwes, OwO
+      p-powicywuwepawams = t-tweetdetaiwpowicy.powicywuwepawams
+    )
+
+case o-object wepowtcentewpowicy
+    extends visibiwitypowicy(
+      t-tweetwuwes = c-convewsationfocawtweetpowicy.tweetwuwes.diff(
+        convewsationsadavoidancewuwes.tweetwuwes
+      ), (ꈍᴗꈍ)
+      d-dewetedtweetwuwes = s-seq(
+        tombstonebouncedewetedoutewtweetwuwe, òωó
+        tombstonedewetedquotedtweetwuwe, ʘwʘ
+        tombstonebouncedewetedquotedtweetwuwe, ʘwʘ
+        tombstonedewetedoutewtweetwuwe, nyaa~~
+      ),
+      usewunavaiwabwestatewuwes = s-seq(
+        s-suspendedusewunavaiwabwetweettombstonewuwe, UwU
+        d-deactivatedusewunavaiwabwetweettombstonewuwe, (⑅˘꒳˘)
+        o-offboawdedusewunavaiwabwetweettombstonewuwe, (˘ω˘)
+        e-ewasedusewunavaiwabwetweettombstonewuwe, :3
+        pwotectedusewunavaiwabwetweettombstonewuwe,
+        a-authowbwocksviewewusewunavaiwabweinnewquotedtweettombstonewuwe, (˘ω˘)
+        u-usewunavaiwabwetweettombstonewuwe, nyaa~~
+        viewewbwocksauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe, (U ﹏ U)
+        viewewmutesauthowusewunavaiwabweinnewquotedtweetintewstitiawwuwe
+      ), nyaa~~
+      p-powicywuwepawams = c-convewsationfocawtweetpowicy.powicywuwepawams
+    )
+
+case object convewsationinjectedtweetpowicy
+    e-extends visibiwitypowicy(
+      tweetwuwes = visibiwitypowicy.basetweetwuwes ++
+        seq(
+          a-abusepowicyepisodictweetwabewintewstitiawwuwe,
+          emewgencydynamicintewstitiawwuwe, ^^;;
+          n-nysfwhighpwecisionintewstitiawawwusewstweetwabewwuwe, OwO
+          g-goweandviowencehighpwecisionawwusewstweetwabewwuwe, nyaa~~
+          nysfwwepowtedheuwisticsawwusewstweetwabewwuwe, UwU
+          g-goweandviowencewepowtedheuwisticsawwusewstweetwabewwuwe, 😳
+          nysfwcawdimageawwusewstweetwabewwuwe, 😳
         ) ++
-        LimitedEngagementBaseRules.tweetRules ++ Seq(
-        SkipTweetDetailLimitedEngagementTweetLabelRule
+        wimitedengagementbasewuwes.tweetwuwes ++ s-seq(
+        s-skiptweetdetaiwwimitedengagementtweetwabewwuwe
       )
     )
 
-case object EditHistoryTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = ConversationReplyPolicy.tweetRules,
-      policyRuleParams = ConversationReplyPolicy.policyRuleParams,
-      deletedTweetRules = ConversationReplyPolicy.deletedTweetRules,
-      userUnavailableStateRules = ConversationReplyPolicy.userUnavailableStateRules)
+c-case object edithistowytimewinepowicy
+    extends visibiwitypowicy(
+      tweetwuwes = convewsationwepwypowicy.tweetwuwes, (ˆ ﻌ ˆ)♡
+      p-powicywuwepawams = convewsationwepwypowicy.powicywuwepawams, (✿oωo)
+      dewetedtweetwuwes = convewsationwepwypowicy.dewetedtweetwuwes,
+      u-usewunavaiwabwestatewuwes = c-convewsationwepwypowicy.usewunavaiwabwestatewuwes)
 
-case object UserSelfViewOnlyPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(ViewerIsNotAuthorDropRule),
-      tweetRules = Seq(DropAllRule)
+case object usewsewfviewonwypowicy
+    e-extends visibiwitypowicy(
+      usewwuwes = s-seq(viewewisnotauthowdwopwuwe), nyaa~~
+      t-tweetwuwes = seq(dwopawwwuwe)
     )
 
-case object TwitterArticleComposePolicy
-    extends VisibilityPolicy(
-      twitterArticleRules = Seq(
-        ViewerIsNotAuthorDropRule
+case o-object twittewawticwecomposepowicy
+    extends visibiwitypowicy(
+      t-twittewawticwewuwes = s-seq(
+        viewewisnotauthowdwopwuwe
       )
     )
 
-case object TwitterArticleProfileTabPolicy
-    extends VisibilityPolicy(
-      twitterArticleRules = Seq(
-        AuthorBlocksViewerDropRule
+case object t-twittewawticwepwofiwetabpowicy
+    extends visibiwitypowicy(
+      t-twittewawticwewuwes = s-seq(
+        a-authowbwocksviewewdwopwuwe
       )
     )
 
-case object TwitterArticleReadPolicy
-    extends VisibilityPolicy(
-      twitterArticleRules = Seq(
-        AuthorBlocksViewerDropRule,
+case object twittewawticweweadpowicy
+    extends visibiwitypowicy(
+      twittewawticwewuwes = seq(
+        authowbwocksviewewdwopwuwe, ^^
       )
     )
 
-case object ContentControlToolInstallPolicy
-    extends VisibilityPolicy(
-      userRules = UserProfileHeaderPolicy.userRules,
-      tweetRules = UserProfileHeaderPolicy.tweetRules
+case object contentcontwowtoowinstawwpowicy
+    extends visibiwitypowicy(
+      usewwuwes = usewpwofiweheadewpowicy.usewwuwes, (///ˬ///✿)
+      tweetwuwes = u-usewpwofiweheadewpowicy.tweetwuwes
     )
 
-case object TimelineProfileSpacesPolicy
-    extends VisibilityPolicy(
-      userRules = UserProfileHeaderPolicy.userRules,
-      tweetRules = UserProfileHeaderPolicy.tweetRules
+c-case object timewinepwofiwespacespowicy
+    extends visibiwitypowicy(
+      u-usewwuwes = usewpwofiweheadewpowicy.usewwuwes, 😳
+      t-tweetwuwes = u-usewpwofiweheadewpowicy.tweetwuwes
     )
 
-case object TimelineFavoritesSelfViewPolicy
-    extends VisibilityPolicy(
-      tweetRules = TimelineFavoritesPolicy.tweetRules.diff(Seq(DropStaleTweetsRule)),
-      policyRuleParams = TimelineFavoritesPolicy.policyRuleParams,
-      deletedTweetRules = TimelineFavoritesPolicy.deletedTweetRules,
-      userUnavailableStateRules = TimelineFavoritesPolicy.userUnavailableStateRules
+case o-object timewinefavowitessewfviewpowicy
+    extends v-visibiwitypowicy(
+      t-tweetwuwes = timewinefavowitespowicy.tweetwuwes.diff(seq(dwopstawetweetswuwe)), òωó
+      p-powicywuwepawams = timewinefavowitespowicy.powicywuwepawams,
+      d-dewetedtweetwuwes = t-timewinefavowitespowicy.dewetedtweetwuwes, ^^;;
+      usewunavaiwabwestatewuwes = timewinefavowitespowicy.usewunavaiwabwestatewuwes
     )
 
-case object BaseQigPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelDropRule,
-        AutomationTweetLabelRule,
-        DoNotAmplifyDropRule,
-        DownrankSpamReplyTweetLabelRule,
-        DuplicateContentTweetLabelDropRule,
-        DuplicateMentionTweetLabelRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        NsfwTextTweetLabelDropRule,
-        NsfwVideoTweetLabelDropRule,
-        PdnaTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        SearchBlacklistHighRecallTweetLabelDropRule,
-        SearchBlacklistTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
+c-case object baseqigpowicy
+    e-extends v-visibiwitypowicy(
+      t-tweetwuwes = s-seq(
+        a-abusepowicyepisodictweetwabewdwopwuwe, rawr
+        a-automationtweetwabewwuwe, (ˆ ﻌ ˆ)♡
+        d-donotampwifydwopwuwe, XD
+        d-downwankspamwepwytweetwabewwuwe, >_<
+        dupwicatecontenttweetwabewdwopwuwe, (˘ω˘)
+        d-dupwicatementiontweetwabewwuwe, 😳
+        n-nysfwhighpwecisiontweetwabewwuwe,
+        g-goweandviowencehighpwecisiontweetwabewwuwe, o.O
+        goweandviowencewepowtedheuwisticstweetwabewwuwe, (ꈍᴗꈍ)
+        w-wikewyivswabewnonfowwowewdwopusewwuwe,
+        nysfwcawdimagetweetwabewwuwe, rawr x3
+        nysfwhighwecawwtweetwabewwuwe, ^^
+        n-nysfwwepowtedheuwisticstweetwabewwuwe, OwO
+        nysfwtexttweetwabewdwopwuwe, ^^
+        n-nysfwvideotweetwabewdwopwuwe, :3
+        p-pdnatweetwabewwuwe, o.O
+        s-safetycwisiswevew3dwopwuwe, -.-
+        safetycwisiswevew4dwopwuwe, (U ﹏ U)
+        s-seawchbwackwisthighwecawwtweetwabewdwopwuwe, o.O
+        seawchbwackwisttweetwabewwuwe, OwO
+        s-smytespamtweetwabewdwopwuwe, ^•ﻌ•^
+        spamhighwecawwtweetwabewdwopwuwe, ʘwʘ
       ),
-      userRules = Seq(
-        DuplicateContentRule,
-        EngagementSpammerHighRecallRule,
-        EngagementSpammerRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwSensitiveRule,
-        ReadOnlyRule,
-        RecommendationsBlacklistRule,
-        SearchBlacklistRule,
-        SpamHighRecallRule
+      u-usewwuwes = seq(
+        d-dupwicatecontentwuwe, :3
+        engagementspammewhighwecawwwuwe, 😳
+        engagementspammewwuwe, òωó
+        nysfwavatawimagewuwe, 🥺
+        nysfwbannewimagewuwe, rawr x3
+        n-nysfwhighpwecisionwuwe, ^•ﻌ•^
+        nysfwhighwecawwwuwe, :3
+        nsfwsensitivewuwe, (ˆ ﻌ ˆ)♡
+        w-weadonwywuwe, (U ᵕ U❁)
+        w-wecommendationsbwackwistwuwe, :3
+        seawchbwackwistwuwe, ^^;;
+        spamhighwecawwwuwe
       ))
 
-case object NotificationsQigPolicy
-    extends VisibilityPolicy(
-      tweetRules = BaseQigPolicy.tweetRules ++ Seq(
-        DropAllCommunityTweetsRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        HighProactiveTosScoreTweetLabelDropSearchRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwNearPerfectAuthorRule,
-        NsfwSensitiveRule,
+case object nyotificationsqigpowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = b-baseqigpowicy.tweetwuwes ++ s-seq(
+        dwopawwcommunitytweetswuwe, ( ͡o ω ͡o )
+        dwopnsfwadminauthowviewewoptinfiwtewingonseawchwuwe, o.O
+        highpwoactivetosscowetweetwabewdwopseawchwuwe, ^•ﻌ•^
+        wowquawitytweetwabewdwopwuwe,
+        n-nysfwhighpwecisionwuwe, XD
+        n-nysfwhighwecawwwuwe, ^^
+        nysfwneawpewfectauthowwuwe, o.O
+        n-nysfwsensitivewuwe, ( ͡o ω ͡o )
       ),
-      userRules = BaseQigPolicy.userRules ++ Seq(
-        AbusiveRule,
-        LowQualityRule,
-        CompromisedRule,
-        ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-        ViewerMutesAuthorViewerOptInBlockingOnSearchRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        NsfwNearPerfectAuthorRule
+      usewwuwes = baseqigpowicy.usewwuwes ++ seq(
+        a-abusivewuwe, /(^•ω•^)
+        wowquawitywuwe, 🥺
+        c-compwomisedwuwe, nyaa~~
+        v-viewewbwocksauthowviewewoptinbwockingonseawchwuwe, mya
+        v-viewewmutesauthowviewewoptinbwockingonseawchwuwe, XD
+        dwopnsfwadminauthowviewewoptinfiwtewingonseawchwuwe, nyaa~~
+        nysfwneawpewfectauthowwuwe
       )
     )
 
-case object ShoppingManagerSpyModePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllRule
-      ),
-      userRules = Seq(
-        SuspendedAuthorRule,
-        DeactivatedAuthorRule,
-        ErasedAuthorRule,
-        OffboardedAuthorRule
+c-case object s-shoppingmanagewspymodepowicy
+    e-extends visibiwitypowicy(
+      t-tweetwuwes = seq(
+        dwopawwwuwe
+      ), ʘwʘ
+      u-usewwuwes = s-seq(
+        s-suspendedauthowwuwe, (⑅˘꒳˘)
+        d-deactivatedauthowwuwe, :3
+        e-ewasedauthowwuwe, -.-
+        o-offboawdedauthowwuwe
       )
     )
 
-case object ZipbirdConsumerArchivesPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetTombstoneRules,
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule,
+c-case o-object zipbiwdconsumewawchivespowicy
+    extends v-visibiwitypowicy(
+      tweetwuwes = v-visibiwitypowicy.basetweettombstonewuwes, 😳😳😳
+      usewwuwes = s-seq(
+        authowbwocksviewewdwopwuwe, (U ﹏ U)
+        p-pwotectedauthowdwopwuwe, o.O
+        s-suspendedauthowwuwe, ( ͡o ω ͡o )
       ),
-      userUnavailableStateRules = Seq(
-        AuthorBlocksViewerUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        SuspendedUserUnavailableTweetTombstoneRule,
-      ),
-      deletedTweetRules = Seq(
-        TombstoneDeletedTweetRule,
-        TombstoneBounceDeletedTweetRule,
+      usewunavaiwabwestatewuwes = seq(
+        authowbwocksviewewusewunavaiwabwetweettombstonewuwe, òωó
+        p-pwotectedusewunavaiwabwetweettombstonewuwe, 🥺
+        s-suspendedusewunavaiwabwetweettombstonewuwe, /(^•ω•^)
+      ), 😳😳😳
+      d-dewetedtweetwuwes = seq(
+        tombstonedewetedtweetwuwe, ^•ﻌ•^
+        tombstonebouncedewetedtweetwuwe, nyaa~~
       )
     )
 
-case class MixedVisibilityPolicy(
-  originalPolicy: VisibilityPolicy,
-  additionalTweetRules: Seq[Rule])
-    extends VisibilityPolicy(
-      tweetRules = (additionalTweetRules ++ originalPolicy.tweetRules)
-        .sortWith(_.actionBuilder.actionSeverity > _.actionBuilder.actionSeverity),
-      userRules = originalPolicy.userRules,
-      cardRules = originalPolicy.cardRules,
-      quotedTweetRules = originalPolicy.quotedTweetRules,
-      dmRules = originalPolicy.dmRules,
-      dmConversationRules = originalPolicy.dmConversationRules,
-      dmEventRules = originalPolicy.dmEventRules,
-      spaceRules = originalPolicy.spaceRules,
-      userUnavailableStateRules = originalPolicy.userUnavailableStateRules,
-      twitterArticleRules = originalPolicy.twitterArticleRules,
-      deletedTweetRules = originalPolicy.deletedTweetRules,
-      mediaRules = originalPolicy.mediaRules,
-      communityRules = originalPolicy.communityRules,
-      policyRuleParams = originalPolicy.policyRuleParams
+case cwass mixedvisibiwitypowicy(
+  o-owiginawpowicy: v-visibiwitypowicy, OwO
+  additionawtweetwuwes: seq[wuwe])
+    e-extends v-visibiwitypowicy(
+      tweetwuwes = (additionawtweetwuwes ++ owiginawpowicy.tweetwuwes)
+        .sowtwith(_.actionbuiwdew.actionsevewity > _.actionbuiwdew.actionsevewity), ^•ﻌ•^
+      usewwuwes = o-owiginawpowicy.usewwuwes, σωσ
+      c-cawdwuwes = o-owiginawpowicy.cawdwuwes, -.-
+      q-quotedtweetwuwes = owiginawpowicy.quotedtweetwuwes, (˘ω˘)
+      dmwuwes = o-owiginawpowicy.dmwuwes, rawr x3
+      d-dmconvewsationwuwes = owiginawpowicy.dmconvewsationwuwes, rawr x3
+      dmeventwuwes = o-owiginawpowicy.dmeventwuwes, σωσ
+      spacewuwes = owiginawpowicy.spacewuwes, nyaa~~
+      u-usewunavaiwabwestatewuwes = owiginawpowicy.usewunavaiwabwestatewuwes, (ꈍᴗꈍ)
+      twittewawticwewuwes = owiginawpowicy.twittewawticwewuwes, ^•ﻌ•^
+      dewetedtweetwuwes = o-owiginawpowicy.dewetedtweetwuwes, >_<
+      m-mediawuwes = owiginawpowicy.mediawuwes, ^^;;
+      c-communitywuwes = o-owiginawpowicy.communitywuwes, ^^;;
+      powicywuwepawams = owiginawpowicy.powicywuwepawams
     )
 
-case object TweetAwardPolicy
-    extends VisibilityPolicy(
-      userRules = Seq.empty,
-      tweetRules =
-        VisibilityPolicy.baseTweetRules ++ Seq(
-          EmergencyDropRule,
-          NsfwHighPrecisionTweetLabelRule,
-          NsfwHighRecallTweetLabelRule,
-          NsfwReportedHeuristicsTweetLabelRule,
-          NsfwCardImageTweetLabelRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
-          GoreAndViolenceHighPrecisionTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsTweetLabelRule,
-          GoreAndViolenceTweetLabelRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          AbusiveTweetLabelRule,
-          BystanderAbusiveTweetLabelRule
+c-case object tweetawawdpowicy
+    e-extends v-visibiwitypowicy(
+      u-usewwuwes = s-seq.empty, /(^•ω•^)
+      tweetwuwes =
+        v-visibiwitypowicy.basetweetwuwes ++ seq(
+          e-emewgencydwopwuwe, nyaa~~
+          n-nysfwhighpwecisiontweetwabewwuwe, (✿oωo)
+          nysfwhighwecawwtweetwabewwuwe, ( ͡o ω ͡o )
+          n-nysfwwepowtedheuwisticstweetwabewwuwe, (U ᵕ U❁)
+          nysfwcawdimagetweetwabewwuwe, òωó
+          nsfwvideotweetwabewdwopwuwe, σωσ
+          n-nysfwtexttweetwabewdwopwuwe, :3
+          g-goweandviowencehighpwecisiontweetwabewwuwe, OwO
+          g-goweandviowencewepowtedheuwisticstweetwabewwuwe, ^^
+          goweandviowencetweetwabewwuwe, (˘ω˘)
+          abusepowicyepisodictweetwabewdwopwuwe, OwO
+          abusivetweetwabewwuwe, UwU
+          bystandewabusivetweetwabewwuwe
         )
     )

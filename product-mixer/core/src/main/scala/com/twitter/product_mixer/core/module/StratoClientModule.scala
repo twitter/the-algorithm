@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.core.module
+package com.twittew.pwoduct_mixew.cowe.moduwe
 
-import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.StratoLocalRequestTimeout
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.Strato
-import com.twitter.util.Duration
-import javax.inject.Singleton
+impowt c-com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.ssw.oppowtunistictws
+i-impowt com.twittew.inject.twittewmoduwe
+i-impowt c-com.twittew.inject.annotations.fwag
+i-impowt com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags.pwoductmixewfwagmoduwe.sewvicewocaw
+i-impowt com.twittew.pwoduct_mixew.cowe.moduwe.pwoduct_mixew_fwags.pwoductmixewfwagmoduwe.stwatowocawwequesttimeout
+impowt com.twittew.stwato.cwient.cwient
+impowt com.twittew.stwato.cwient.stwato
+i-impowt com.twittew.utiw.duwation
+impowt j-javax.inject.singweton
 
 /**
- * Product Mixer prefers to use a single strato client module over having a variety with different
- * timeouts. Latency Budgets in Product Mixer systems should be defined at the application layer.
+ * pwoduct mixew p-pwefews to use a singwe stwato cwient moduwe ovew having a vawiety w-with diffewent
+ * timeouts. òωó watency b-budgets in p-pwoduct mixew systems shouwd be defined at the appwication wayew.
  */
-object StratoClientModule extends TwitterModule {
+object stwatocwientmoduwe e-extends twittewmoduwe {
 
-  @Provides
-  @Singleton
-  def providesStratoClient(
-    serviceIdentifier: ServiceIdentifier,
-    @Flag(ServiceLocal) isServiceLocal: Boolean,
-    @Flag(StratoLocalRequestTimeout) timeout: Option[Duration]
-  ): Client = {
-    val stratoClient = Strato.client.withMutualTls(serviceIdentifier, OpportunisticTls.Required)
+  @pwovides
+  @singweton
+  def pwovidesstwatocwient(
+    sewviceidentifiew: sewviceidentifiew, ʘwʘ
+    @fwag(sewvicewocaw) issewvicewocaw: b-boowean, /(^•ω•^)
+    @fwag(stwatowocawwequesttimeout) timeout: option[duwation]
+  ): cwient = {
+    v-vaw s-stwatocwient = s-stwato.cwient.withmutuawtws(sewviceidentifiew, ʘwʘ o-oppowtunistictws.wequiwed)
 
-    // For local development it can be useful to have a larger timeout than the Strato default of
-    // 280ms. We strongly discourage setting client-level timeouts outside of this use-case. We
-    // recommend setting an overall timeout for your pipeline's end-to-end running time.
-    if (isServiceLocal && timeout.isDefined)
-      stratoClient.withRequestTimeout(timeout.get).build()
-    else {
-      stratoClient.build()
+    // fow wocaw devewopment it can b-be usefuw to have a wawgew timeout than the stwato d-defauwt of
+    // 280ms. σωσ we stwongwy discouwage setting cwient-wevew timeouts outside of this u-use-case. OwO we
+    // wecommend setting a-an ovewaww t-timeout fow youw p-pipewine's end-to-end wunning time. 😳😳😳
+    if (issewvicewocaw && timeout.isdefined)
+      s-stwatocwient.withwequesttimeout(timeout.get).buiwd()
+    e-ewse {
+      stwatocwient.buiwd()
     }
   }
 }

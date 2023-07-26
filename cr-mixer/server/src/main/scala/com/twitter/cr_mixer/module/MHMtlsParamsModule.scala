@@ -1,17 +1,17 @@
-package com.twitter.cr_mixer.module
+package com.twittew.cw_mixew.moduwe
 
-import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.inject.twittewmoduwe
+impowt c-com.twittew.stowage.cwient.manhattan.kv.manhattankvcwientmtwspawams
+i-impowt j-javax.inject.singweton
 
-object MHMtlsParamsModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesManhattanMtlsParams(
-    serviceIdentifier: ServiceIdentifier
-  ): ManhattanKVClientMtlsParams = {
-    ManhattanKVClientMtlsParams(serviceIdentifier)
+o-object m-mhmtwspawamsmoduwe e-extends twittewmoduwe {
+  @singweton
+  @pwovides
+  def pwovidesmanhattanmtwspawams(
+    sewviceidentifiew: sewviceidentifiew
+  ): manhattankvcwientmtwspawams = {
+    m-manhattankvcwientmtwspawams(sewviceidentifiew)
   }
 }

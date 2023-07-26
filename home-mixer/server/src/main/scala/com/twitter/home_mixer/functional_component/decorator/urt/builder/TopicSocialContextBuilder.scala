@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicContextFunctionalityTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.innetwowkfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.topiccontextfunctionawitytypefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.topicidsociawcontextfeatuwe
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.sociaw_context.basesociawcontextbuiwdew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.sociawcontext
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.topiccontext
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class TopicSocialContextBuilder @Inject() ()
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@singweton
+c-case cwass topicsociawcontextbuiwdew @inject() ()
+    e-extends basesociawcontextbuiwdew[pipewinequewy, 😳😳😳 tweetcandidate] {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
-    val inNetwork = candidateFeatures.getOrElse(InNetworkFeature, true)
-    if (!inNetwork) {
-      val topicIdSocialContextOpt = candidateFeatures.getOrElse(TopicIdSocialContextFeature, None)
-      val topicContextFunctionalityTypeOpt =
-        candidateFeatures.getOrElse(TopicContextFunctionalityTypeFeature, None)
-      (topicIdSocialContextOpt, topicContextFunctionalityTypeOpt) match {
-        case (Some(topicId), Some(topicContextFunctionalityType)) =>
-          Some(
-            TopicContext(
-              topicId = topicId.toString,
-              functionalityType = Some(topicContextFunctionalityType)
+  def appwy(
+    q-quewy: pipewinequewy, 🥺
+    candidate: t-tweetcandidate,
+    c-candidatefeatuwes: featuwemap
+  ): option[sociawcontext] = {
+    vaw innetwowk = candidatefeatuwes.getowewse(innetwowkfeatuwe, mya t-twue)
+    if (!innetwowk) {
+      vaw topicidsociawcontextopt = candidatefeatuwes.getowewse(topicidsociawcontextfeatuwe, nyone)
+      vaw t-topiccontextfunctionawitytypeopt =
+        candidatefeatuwes.getowewse(topiccontextfunctionawitytypefeatuwe, n-none)
+      (topicidsociawcontextopt, 🥺 t-topiccontextfunctionawitytypeopt) m-match {
+        c-case (some(topicid), >_< some(topiccontextfunctionawitytype)) =>
+          some(
+            topiccontext(
+              t-topicid = topicid.tostwing, >_<
+              functionawitytype = s-some(topiccontextfunctionawitytype)
             ))
-        case _ => None
+        case _ => none
       }
-    } else {
-      None
+    } ewse {
+      none
     }
   }
 }

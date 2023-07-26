@@ -1,130 +1,130 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.commerce.CommerceProductGroupItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.commerce.CommerceProductItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article.ArticleItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.audio_space.AudioSpaceItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.card.CardItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event.EventSummaryItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item.GenericSummaryItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.icon_label.IconLabelItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label.LabelItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message.MessagePromptItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.moment.MomentAnnotationItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt.PromptItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion.SpellingItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.thread.ThreadHeaderItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile.TileItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone.TombstoneItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicFollowPromptItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.trend.TrendItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TweetItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer.TweetComposerItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.twitter_list.TwitterListItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user.UserItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item.VerticalGridItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorItemMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space.AudioSpaceItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card.CardItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductGroupItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.icon_label.IconLabelItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.label.LabelItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.moment.MomentAnnotationItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion.SpellingItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.thread.ThreadHeaderItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFollowPromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.TrendItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.TweetComposerItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.twanspowtmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.commewce.commewcepwoductgwoupitemmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.commewce.commewcepwoductitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.awticwe.awticweitemmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.audio_space.audiospaceitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.cawd.cawditemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.event.eventsummawyitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.genewic_summawy_item.genewicsummawyitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.icon_wabew.iconwabewitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.wabew.wabewitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.message.messagepwomptitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.moment.momentannotationitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.pwompt.pwomptitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.suggestion.spewwingitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.thwead.thweadheadewitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tiwe.tiweitemmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tombstone.tombstoneitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.topic.topicfowwowpwomptitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.topic.topicitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.twend.twenditemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet.tweetitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet_composew.tweetcomposewitemmawshawwew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.twittew_wist.twittewwistitemmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.usew.usewitemmawshawwew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.opewation.cuwsowitemmawshawwew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.awticwe.awticweitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.audio_space.audiospaceitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.cawd.cawditem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.commewce.commewcepwoductgwoupitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.commewce.commewcepwoductitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.event.eventsummawyitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.genewic_summawy.genewicsummawyitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.icon_wabew.iconwabewitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.wabew.wabewitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.messagepwomptitem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.moment.momentannotationitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.pwompt.pwomptitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.suggestion.spewwingitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.thwead.thweadheadewitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tiwe.tiweitem
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tombstone.tombstoneitem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicfowwowpwomptitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic.topicitem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twend.twenditem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet.tweetitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet_composew.tweetcomposewitem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.twittew_wist.twittewwistitem
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usewitem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.vewticaw_gwid_item.vewticawgwiditem
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.opewation.cuwsowitem
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class TimelineItemContentMarshaller @Inject() (
-  articleItemMarshaller: ArticleItemMarshaller,
-  audioSpaceItemMarshaller: AudioSpaceItemMarshaller,
-  cardItemMarshaller: CardItemMarshaller,
-  cursorItemMarshaller: CursorItemMarshaller,
-  eventSummaryItemMarshaller: EventSummaryItemMarshaller,
-  iconLabelItemMarshaller: IconLabelItemMarshaller,
-  labelItemMarshaller: LabelItemMarshaller,
-  messagePromptItemMarshaller: MessagePromptItemMarshaller,
-  tileItemMarshaller: TileItemMarshaller,
-  tombstoneItemMarshaller: TombstoneItemMarshaller,
-  topicFollowPromptItemMarshaller: TopicFollowPromptItemMarshaller,
-  topicItemMarshaller: TopicItemMarshaller,
-  tweetComposerItemMarshaller: TweetComposerItemMarshaller,
-  tweetItemMarshaller: TweetItemMarshaller,
-  twitterListItemMarshaller: TwitterListItemMarshaller,
-  userItemMarshaller: UserItemMarshaller,
-  verticalGridItemMarshaller: VerticalGridItemMarshaller,
-  threadHeaderItemMarshaller: ThreadHeaderItemMarshaller,
-  promptItemMarshaller: PromptItemMarshaller,
-  spellingItemMarshaller: SpellingItemMarshaller,
-  momentAnnotationItemMarshaller: MomentAnnotationItemMarshaller,
-  genericSummaryItemMarshaller: GenericSummaryItemMarshaller,
-  commerceProductItemMarshaller: CommerceProductItemMarshaller,
-  commerceProductGroupItemMarshaller: CommerceProductGroupItemMarshaller,
-  trendItemMarshaller: TrendItemMarshaller) {
+@singweton
+cwass timewineitemcontentmawshawwew @inject() (
+  awticweitemmawshawwew: awticweitemmawshawwew, (ˆ ﻌ ˆ)♡
+  a-audiospaceitemmawshawwew: a-audiospaceitemmawshawwew, -.-
+  cawditemmawshawwew: c-cawditemmawshawwew,
+  c-cuwsowitemmawshawwew: c-cuwsowitemmawshawwew, :3
+  eventsummawyitemmawshawwew: eventsummawyitemmawshawwew, ʘwʘ
+  iconwabewitemmawshawwew: i-iconwabewitemmawshawwew, 🥺
+  wabewitemmawshawwew: wabewitemmawshawwew, >_<
+  messagepwomptitemmawshawwew: messagepwomptitemmawshawwew, ʘwʘ
+  t-tiweitemmawshawwew: tiweitemmawshawwew, (˘ω˘)
+  t-tombstoneitemmawshawwew: t-tombstoneitemmawshawwew, (✿oωo)
+  t-topicfowwowpwomptitemmawshawwew: topicfowwowpwomptitemmawshawwew, (///ˬ///✿)
+  t-topicitemmawshawwew: topicitemmawshawwew, rawr x3
+  t-tweetcomposewitemmawshawwew: t-tweetcomposewitemmawshawwew, -.-
+  t-tweetitemmawshawwew: tweetitemmawshawwew,
+  twittewwistitemmawshawwew: t-twittewwistitemmawshawwew, ^^
+  u-usewitemmawshawwew: u-usewitemmawshawwew, (⑅˘꒳˘)
+  v-vewticawgwiditemmawshawwew: v-vewticawgwiditemmawshawwew, nyaa~~
+  thweadheadewitemmawshawwew: thweadheadewitemmawshawwew,
+  pwomptitemmawshawwew: p-pwomptitemmawshawwew,
+  spewwingitemmawshawwew: spewwingitemmawshawwew, /(^•ω•^)
+  momentannotationitemmawshawwew: momentannotationitemmawshawwew, (U ﹏ U)
+  genewicsummawyitemmawshawwew: g-genewicsummawyitemmawshawwew, 😳😳😳
+  commewcepwoductitemmawshawwew: commewcepwoductitemmawshawwew, >w<
+  commewcepwoductgwoupitemmawshawwew: c-commewcepwoductgwoupitemmawshawwew,
+  t-twenditemmawshawwew: t-twenditemmawshawwew) {
 
-  def apply(item: TimelineItem): urt.TimelineItemContent = item match {
-    case articleItem: ArticleItem => articleItemMarshaller(articleItem)
-    case audioSpaceItem: AudioSpaceItem => audioSpaceItemMarshaller(audioSpaceItem)
-    case cardItem: CardItem => cardItemMarshaller(cardItem)
-    case cursorItem: CursorItem => cursorItemMarshaller(cursorItem)
-    case eventSummaryItem: EventSummaryItem => eventSummaryItemMarshaller(eventSummaryItem)
-    case genericSummaryItem: GenericSummaryItem => genericSummaryItemMarshaller(genericSummaryItem)
-    case iconLabelItem: IconLabelItem => iconLabelItemMarshaller(iconLabelItem)
-    case labelItem: LabelItem => labelItemMarshaller(labelItem)
-    case messagePromptItem: MessagePromptItem => messagePromptItemMarshaller(messagePromptItem)
-    case tileItem: TileItem => tileItemMarshaller(tileItem)
-    case tombstoneItem: TombstoneItem => tombstoneItemMarshaller(tombstoneItem)
-    case topicFollowPromptItem: TopicFollowPromptItem =>
-      topicFollowPromptItemMarshaller(topicFollowPromptItem)
-    case topicItem: TopicItem => topicItemMarshaller(topicItem)
-    case tweetComposerItem: TweetComposerItem => tweetComposerItemMarshaller(tweetComposerItem)
-    case tweetItem: TweetItem => tweetItemMarshaller(tweetItem)
-    case twitterListItem: TwitterListItem => twitterListItemMarshaller(twitterListItem)
-    case userItem: UserItem => userItemMarshaller(userItem)
-    case verticalGridItem: VerticalGridItem => verticalGridItemMarshaller(verticalGridItem)
-    case threadHeaderItem: ThreadHeaderItem => threadHeaderItemMarshaller(threadHeaderItem)
-    case promptItem: PromptItem => promptItemMarshaller(promptItem)
-    case spellingItem: SpellingItem => spellingItemMarshaller(spellingItem)
-    case momentAnnotationItem: MomentAnnotationItem =>
-      momentAnnotationItemMarshaller(momentAnnotationItem)
-    case commerceProductItem: CommerceProductItem =>
-      commerceProductItemMarshaller(commerceProductItem)
-    case commerceProductGroupItem: CommerceProductGroupItem =>
-      commerceProductGroupItemMarshaller(commerceProductGroupItem)
-    case trendItem: TrendItem => trendItemMarshaller(trendItem)
-    case _: Cover => throw TimelineCoverNotFilteredException
-    case _ => throw new UnsupportedTimelineItemException(item)
+  def a-appwy(item: timewineitem): uwt.timewineitemcontent = i-item match {
+    c-case awticweitem: awticweitem => awticweitemmawshawwew(awticweitem)
+    case audiospaceitem: audiospaceitem => audiospaceitemmawshawwew(audiospaceitem)
+    c-case cawditem: cawditem => cawditemmawshawwew(cawditem)
+    case c-cuwsowitem: cuwsowitem => cuwsowitemmawshawwew(cuwsowitem)
+    c-case eventsummawyitem: e-eventsummawyitem => eventsummawyitemmawshawwew(eventsummawyitem)
+    case genewicsummawyitem: g-genewicsummawyitem => g-genewicsummawyitemmawshawwew(genewicsummawyitem)
+    case iconwabewitem: i-iconwabewitem => i-iconwabewitemmawshawwew(iconwabewitem)
+    case wabewitem: wabewitem => wabewitemmawshawwew(wabewitem)
+    case messagepwomptitem: m-messagepwomptitem => m-messagepwomptitemmawshawwew(messagepwomptitem)
+    c-case tiweitem: tiweitem => tiweitemmawshawwew(tiweitem)
+    case t-tombstoneitem: t-tombstoneitem => tombstoneitemmawshawwew(tombstoneitem)
+    case t-topicfowwowpwomptitem: topicfowwowpwomptitem =>
+      topicfowwowpwomptitemmawshawwew(topicfowwowpwomptitem)
+    case topicitem: topicitem => t-topicitemmawshawwew(topicitem)
+    c-case tweetcomposewitem: tweetcomposewitem => tweetcomposewitemmawshawwew(tweetcomposewitem)
+    c-case tweetitem: t-tweetitem => tweetitemmawshawwew(tweetitem)
+    case twittewwistitem: twittewwistitem => t-twittewwistitemmawshawwew(twittewwistitem)
+    case usewitem: usewitem => usewitemmawshawwew(usewitem)
+    case vewticawgwiditem: v-vewticawgwiditem => vewticawgwiditemmawshawwew(vewticawgwiditem)
+    case thweadheadewitem: t-thweadheadewitem => t-thweadheadewitemmawshawwew(thweadheadewitem)
+    case pwomptitem: pwomptitem => pwomptitemmawshawwew(pwomptitem)
+    c-case spewwingitem: s-spewwingitem => spewwingitemmawshawwew(spewwingitem)
+    case momentannotationitem: momentannotationitem =>
+      m-momentannotationitemmawshawwew(momentannotationitem)
+    case commewcepwoductitem: c-commewcepwoductitem =>
+      commewcepwoductitemmawshawwew(commewcepwoductitem)
+    case commewcepwoductgwoupitem: commewcepwoductgwoupitem =>
+      c-commewcepwoductgwoupitemmawshawwew(commewcepwoductgwoupitem)
+    case twenditem: t-twenditem => t-twenditemmawshawwew(twenditem)
+    case _: covew => t-thwow timewinecovewnotfiwtewedexception
+    case _ => thwow n-nyew unsuppowtedtimewineitemexception(item)
   }
 }
 
-class UnsupportedTimelineItemException(timelineItem: TimelineItem)
-    extends UnsupportedOperationException(
-      "Unsupported timeline item " + TransportMarshaller.getSimpleName(timelineItem.getClass))
+c-cwass unsuppowtedtimewineitemexception(timewineitem: t-timewineitem)
+    extends u-unsuppowtedopewationexception(
+      "unsuppowted t-timewine item " + twanspowtmawshawwew.getsimpwename(timewineitem.getcwass))
 
-object TimelineCoverNotFilteredException
-    extends UnsupportedOperationException("AddEntriesInstructionBuilder does not support Cover. " +
-      "ShowCoverInstructionBuilder should be used with AddEntriesWithShowCoverInstructionBuilder " +
-      "in order to filter out the Cover.")
+object timewinecovewnotfiwtewedexception
+    e-extends u-unsuppowtedopewationexception("addentwiesinstwuctionbuiwdew d-does nyot suppowt covew. XD " +
+      "showcovewinstwuctionbuiwdew shouwd be used w-with addentwieswithshowcovewinstwuctionbuiwdew " +
+      "in owdew t-to fiwtew out t-the covew.")

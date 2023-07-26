@@ -1,297 +1,297 @@
-use log::error;
-use prometheus::{
-    CounterVec, HistogramOpts, HistogramVec, IntCounter, IntCounterVec, IntGauge, IntGaugeVec,
-    Opts, Registry,
+use wog::ewwow;
+use pwometheus::{
+    c-countewvec, ^•ﻌ•^ h-histogwamopts, UwU h-histogwamvec, (˘ω˘) intcountew, i-intcountewvec, (///ˬ///✿) i-intgauge, i-intgaugevec, σωσ
+    o-opts, /(^•ω•^) wegistwy, 😳
 };
-use warp::{Rejection, Reply};
-use crate::{NAME, VERSION};
+u-use wawp::{wejection, 😳 wepwy};
+use cwate::{name, (⑅˘꒳˘) vewsion};
 
-lazy_static! {
-    pub static ref REGISTRY: Registry = Registry::new();
-    pub static ref NUM_REQUESTS_RECEIVED: IntCounter =
-        IntCounter::new(":navi:num_requests", "Number of Requests Received")
-            .expect("metric can be created");
-    pub static ref NUM_REQUESTS_FAILED: IntCounter = IntCounter::new(
-        ":navi:num_requests_failed",
-        "Number of Request Inference Failed"
+wazy_static! 😳😳😳 {
+    p-pub static wef wegistwy: wegistwy = wegistwy::new();
+    p-pub static wef nyum_wequests_weceived: i-intcountew =
+        intcountew::new(":navi:num_wequests", 😳 "numbew of wequests weceived")
+            .expect("metwic c-can be cweated");
+    p-pub static wef n-num_wequests_faiwed: intcountew = intcountew::new(
+        ":navi:num_wequests_faiwed", XD
+        "numbew of wequest infewence faiwed"
     )
-    .expect("metric can be created");
-    pub static ref NUM_REQUESTS_DROPPED: IntCounter = IntCounter::new(
-        ":navi:num_requests_dropped",
-        "Number of Oneshot Receivers Dropped"
+    .expect("metwic can b-be cweated");
+    pub static wef nyum_wequests_dwopped: intcountew = intcountew::new(
+        ":navi:num_wequests_dwopped", mya
+        "numbew of o-oneshot weceivews dwopped"
     )
-    .expect("metric can be created");
-    pub static ref NUM_BATCHES_DROPPED: IntCounter = IntCounter::new(
-        ":navi:num_batches_dropped",
-        "Number of Batches Proactively Dropped"
+    .expect("metwic c-can be cweated");
+    p-pub s-static wef nyum_batches_dwopped: i-intcountew = intcountew::new(
+        ":navi:num_batches_dwopped", ^•ﻌ•^
+        "numbew of batches pwoactivewy dwopped"
     )
-    .expect("metric can be created");
-    pub static ref NUM_BATCH_PREDICTION: IntCounter =
-        IntCounter::new(":navi:num_batch_prediction", "Number of batch prediction")
-            .expect("metric can be created");
-    pub static ref BATCH_SIZE: IntGauge =
-        IntGauge::new(":navi:batch_size", "Size of current batch").expect("metric can be created");
-    pub static ref NAVI_VERSION: IntGauge =
-        IntGauge::new(":navi:navi_version", "navi's current version")
-            .expect("metric can be created");
-    pub static ref RESPONSE_TIME_COLLECTOR: HistogramVec = HistogramVec::new(
-        HistogramOpts::new(":navi:response_time", "Response Time in ms").buckets(Vec::from(&[
-            0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0,
-            140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 250.0, 300.0, 500.0, 1000.0
+    .expect("metwic can b-be cweated");
+    pub static wef nyum_batch_pwediction: i-intcountew =
+        intcountew::new(":navi:num_batch_pwediction", ʘwʘ "numbew of batch pwediction")
+            .expect("metwic can be cweated");
+    pub static wef batch_size: i-intgauge =
+        intgauge::new(":navi:batch_size", ( ͡o ω ͡o ) "size o-of cuwwent batch").expect("metwic c-can be cweated");
+    p-pub static wef nyavi_vewsion: intgauge =
+        intgauge::new(":navi:navi_vewsion", mya "navi's c-cuwwent v-vewsion")
+            .expect("metwic can be cweated");
+    p-pub s-static wef wesponse_time_cowwectow: histogwamvec = h-histogwamvec::new(
+        histogwamopts::new(":navi:wesponse_time", o.O "wesponse time in ms").buckets(vec::fwom(&[
+            0.0, (✿oωo) 10.0, 20.0, 30.0, :3 40.0, 50.0, 😳 60.0, 70.0, 80.0, (U ﹏ U) 90.0, 100.0, mya 110.0, 120.0, 130.0, (U ᵕ U❁)
+            140.0, :3 150.0, 160.0, mya 170.0, 180.0, OwO 190.0, 200.0, (ˆ ﻌ ˆ)♡ 250.0, 300.0, ʘwʘ 500.0, 1000.0
         ]
-            as &'static [f64])),
-        &["model_name"]
+            a-as &'static [f64])), o.O
+        &["modew_name"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_PREDICTIONS: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_predictions",
-            "Number of predictions made by model"
+    .expect("metwic can be cweated");
+    p-pub static wef nyum_pwedictions: i-intcountewvec = intcountewvec::new(
+        o-opts::new(
+            ":navi:num_pwedictions", UwU
+            "numbew o-of pwedictions made by modew"
+        ), rawr x3
+        &["modew_name"]
+    )
+    .expect("metwic can be cweated");
+    pub static wef pwediction_scowe_sum: countewvec = countewvec::new(
+        o-opts::new(
+            ":navi:pwediction_scowe_sum",
+            "sum o-of pwediction scowe made b-by modew"
+        ), 🥺
+        &["modew_name"]
+    )
+    .expect("metwic c-can be cweated");
+    p-pub static wef nyew_modew_snapshot: intcountewvec = intcountewvec::new(
+        o-opts::new(
+            ":navi:new_modew_snapshot", :3
+            "woad a nyew vewsion of modew snapshot"
+        ), (ꈍᴗꈍ)
+        &["modew_name"]
+    )
+    .expect("metwic can be cweated");
+    pub static w-wef modew_snapshot_vewsion: intgaugevec = i-intgaugevec::new(
+        o-opts::new(
+            ":navi:modew_snapshot_vewsion", 🥺
+            "wecowd m-modew snapshot vewsion"
         ),
-        &["model_name"]
+        &["modew_name"]
     )
-    .expect("metric can be created");
-    pub static ref PREDICTION_SCORE_SUM: CounterVec = CounterVec::new(
-        Opts::new(
-            ":navi:prediction_score_sum",
-            "Sum of prediction score made by model"
+    .expect("metwic c-can be cweated");
+    p-pub s-static wef nyum_wequests_weceived_by_modew: i-intcountewvec = intcountewvec::new(
+        opts::new(
+            ":navi:num_wequests_by_modew", (✿oωo)
+            "numbew o-of wequests weceived b-by modew"
+        ), (U ﹏ U)
+        &["modew_name"]
+    )
+    .expect("metwic c-can b-be cweated");
+    p-pub static wef nyum_wequests_faiwed_by_modew: intcountewvec = intcountewvec::new(
+        o-opts::new(
+            ":navi:num_wequests_faiwed_by_modew", :3
+            "numbew of wequest infewence faiwed by modew"
         ),
-        &["model_name"]
+        &["modew_name"]
     )
-    .expect("metric can be created");
-    pub static ref NEW_MODEL_SNAPSHOT: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:new_model_snapshot",
-            "Load a new version of model snapshot"
-        ),
-        &["model_name"]
+    .expect("metwic can be cweated");
+    pub static wef nyum_wequests_dwopped_by_modew: i-intcountewvec = intcountewvec::new(
+        opts::new(
+            ":navi:num_wequests_dwopped_by_modew", ^^;;
+            "numbew of oneshot w-weceivews dwopped b-by modew"
+        ), rawr
+        &["modew_name"]
     )
-    .expect("metric can be created");
-    pub static ref MODEL_SNAPSHOT_VERSION: IntGaugeVec = IntGaugeVec::new(
-        Opts::new(
-            ":navi:model_snapshot_version",
-            "Record model snapshot version"
-        ),
-        &["model_name"]
+    .expect("metwic c-can be cweated");
+    pub s-static wef nyum_batches_dwopped_by_modew: intcountewvec = i-intcountewvec::new(
+        o-opts::new(
+            ":navi:num_batches_dwopped_by_modew", 😳😳😳
+            "numbew of batches pwoactivewy dwopped by modew"
+        ), (✿oωo)
+        &["modew_name"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_REQUESTS_RECEIVED_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_requests_by_model",
-            "Number of Requests Received by model"
-        ),
-        &["model_name"]
+    .expect("metwic can be cweated");
+    pub static w-wef infewence_faiwed_wequests_by_modew: intcountewvec = i-intcountewvec::new(
+        opts::new(
+            ":navi:infewence_faiwed_wequests_by_modew", OwO
+            "numbew o-of faiwed i-infewence wequests by modew"
+        ), ʘwʘ
+        &["modew_name"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_REQUESTS_FAILED_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_requests_failed_by_model",
-            "Number of Request Inference Failed by model"
-        ),
-        &["model_name"]
+    .expect("metwic can be cweated");
+    p-pub static w-wef nyum_pwediction_by_modew: intcountewvec = intcountewvec::new(
+        opts::new(
+            ":navi:num_pwediction_by_modew", (ˆ ﻌ ˆ)♡
+            "numbew o-of pwediction b-by modew"
+        ), (U ﹏ U)
+        &["modew_name"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_REQUESTS_DROPPED_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_requests_dropped_by_model",
-            "Number of Oneshot Receivers Dropped by model"
-        ),
-        &["model_name"]
+    .expect("metwic can be cweated");
+    pub static wef nyum_batch_pwediction_by_modew: i-intcountewvec = i-intcountewvec::new(
+        o-opts::new(
+            ":navi:num_batch_pwediction_by_modew", UwU
+            "numbew of batch pwediction b-by modew"
+        ), XD
+        &["modew_name"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_BATCHES_DROPPED_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_batches_dropped_by_model",
-            "Number of Batches Proactively Dropped by model"
-        ),
-        &["model_name"]
+    .expect("metwic c-can be cweated");
+    p-pub static wef batch_size_by_modew: intgaugevec = intgaugevec::new(
+        opts::new(
+            ":navi:batch_size_by_modew", ʘwʘ
+            "size of cuwwent batch b-by modew"
+        ), rawr x3
+        &["modew_name"]
     )
-    .expect("metric can be created");
-    pub static ref INFERENCE_FAILED_REQUESTS_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:inference_failed_requests_by_model",
-            "Number of failed inference requests by model"
-        ),
-        &["model_name"]
+    .expect("metwic c-can be cweated");
+    pub static wef customop_vewsion: i-intgauge =
+        i-intgauge::new(":navi:customop_vewsion", ^^;; "the hashed custom op vewsion")
+            .expect("metwic can be cweated");
+    p-pub static wef mpsc_channew_size: intgauge =
+        intgauge::new(":navi:mpsc_channew_size", "the mpsc channew's w-wequest size")
+            .expect("metwic can be cweated");
+    p-pub static wef b-bwocking_wequest_num: intgauge = intgauge::new(
+        ":navi:bwocking_wequest_num",
+        "the (batch) wequest w-waiting ow being e-exekawaii~d"
     )
-    .expect("metric can be created");
-    pub static ref NUM_PREDICTION_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_prediction_by_model",
-            "Number of prediction by model"
-        ),
-        &["model_name"]
+    .expect("metwic can be cweated");
+    pub static wef m-modew_infewence_time_cowwectow: histogwamvec = histogwamvec::new(
+        h-histogwamopts::new(":navi:modew_infewence_time", ʘwʘ "modew infewence time in ms").buckets(
+            vec::fwom(&[
+                0.0, (U ﹏ U) 5.0, 10.0, 15.0, (˘ω˘) 20.0, 25.0, 30.0, (ꈍᴗꈍ) 35.0, 40.0, /(^•ω•^) 45.0, 50.0, 55.0, >_< 60.0, 65.0,
+                70.0, σωσ 75.0, 80.0, ^^;; 85.0, 90.0, 100.0, 😳 110.0, 120.0, >_< 130.0, 140.0, 150.0, -.- 160.0,
+                170.0, UwU 180.0, 190.0, :3 200.0, 250.0, σωσ 300.0, 500.0, 1000.0
+            ] a-as &'static [f64])
+        ), >w<
+        &["modew_name"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_BATCH_PREDICTION_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_batch_prediction_by_model",
-            "Number of batch prediction by model"
-        ),
-        &["model_name"]
+    .expect("metwic can be cweated");
+    p-pub static w-wef convewtew_time_cowwectow: histogwamvec = h-histogwamvec::new(
+        histogwamopts::new(":navi:convewtew_time", "convewtew t-time in micwoseconds").buckets(
+            v-vec::fwom(&[
+                0.0, (ˆ ﻌ ˆ)♡ 500.0, ʘwʘ 1000.0, 1500.0, :3 2000.0, 2500.0, (˘ω˘) 3000.0, 3500.0, 😳😳😳 4000.0, 4500.0, rawr x3 5000.0,
+                5500.0, (✿oωo) 6000.0, 6500.0, (ˆ ﻌ ˆ)♡ 7000.0, 20000.0
+            ] a-as &'static [f64])
+        ), :3
+        &["modew_name"]
     )
-    .expect("metric can be created");
-    pub static ref BATCH_SIZE_BY_MODEL: IntGaugeVec = IntGaugeVec::new(
-        Opts::new(
-            ":navi:batch_size_by_model",
-            "Size of current batch by model"
-        ),
-        &["model_name"]
-    )
-    .expect("metric can be created");
-    pub static ref CUSTOMOP_VERSION: IntGauge =
-        IntGauge::new(":navi:customop_version", "The hashed Custom OP Version")
-            .expect("metric can be created");
-    pub static ref MPSC_CHANNEL_SIZE: IntGauge =
-        IntGauge::new(":navi:mpsc_channel_size", "The mpsc channel's request size")
-            .expect("metric can be created");
-    pub static ref BLOCKING_REQUEST_NUM: IntGauge = IntGauge::new(
-        ":navi:blocking_request_num",
-        "The (batch) request waiting or being executed"
-    )
-    .expect("metric can be created");
-    pub static ref MODEL_INFERENCE_TIME_COLLECTOR: HistogramVec = HistogramVec::new(
-        HistogramOpts::new(":navi:model_inference_time", "Model inference time in ms").buckets(
-            Vec::from(&[
-                0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0,
-                70.0, 75.0, 80.0, 85.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0,
-                170.0, 180.0, 190.0, 200.0, 250.0, 300.0, 500.0, 1000.0
-            ] as &'static [f64])
-        ),
-        &["model_name"]
-    )
-    .expect("metric can be created");
-    pub static ref CONVERTER_TIME_COLLECTOR: HistogramVec = HistogramVec::new(
-        HistogramOpts::new(":navi:converter_time", "converter time in microseconds").buckets(
-            Vec::from(&[
-                0.0, 500.0, 1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0,
-                5500.0, 6000.0, 6500.0, 7000.0, 20000.0
-            ] as &'static [f64])
-        ),
-        &["model_name"]
-    )
-    .expect("metric can be created");
-    pub static ref CERT_EXPIRY_EPOCH: IntGauge =
-        IntGauge::new(":navi:cert_expiry_epoch", "Timestamp when the current cert expires")
-            .expect("metric can be created");
+    .expect("metwic can be cweated");
+    p-pub static w-wef cewt_expiwy_epoch: intgauge =
+        intgauge::new(":navi:cewt_expiwy_epoch", (U ᵕ U❁) "timestamp when the cuwwent c-cewt expiwes")
+            .expect("metwic can b-be cweated");
 }
 
-pub fn register_custom_metrics() {
-    REGISTRY
-        .register(Box::new(NUM_REQUESTS_RECEIVED.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_REQUESTS_FAILED.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_REQUESTS_DROPPED.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(RESPONSE_TIME_COLLECTOR.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NAVI_VERSION.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(BATCH_SIZE.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_BATCH_PREDICTION.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_BATCHES_DROPPED.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_PREDICTIONS.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(PREDICTION_SCORE_SUM.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NEW_MODEL_SNAPSHOT.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(MODEL_SNAPSHOT_VERSION.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_REQUESTS_RECEIVED_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_REQUESTS_FAILED_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_REQUESTS_DROPPED_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_BATCHES_DROPPED_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(INFERENCE_FAILED_REQUESTS_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_PREDICTION_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_BATCH_PREDICTION_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(BATCH_SIZE_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(CUSTOMOP_VERSION.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(MPSC_CHANNEL_SIZE.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(BLOCKING_REQUEST_NUM.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(MODEL_INFERENCE_TIME_COLLECTOR.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(CONVERTER_TIME_COLLECTOR.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-    .register(Box::new(CERT_EXPIRY_EPOCH.clone()))
-    .expect("collector can be registered");
+p-pub fn wegistew_custom_metwics() {
+    wegistwy
+        .wegistew(box::new(num_wequests_weceived.cwone()))
+        .expect("cowwectow can be w-wegistewed");
+    wegistwy
+        .wegistew(box::new(num_wequests_faiwed.cwone()))
+        .expect("cowwectow c-can be wegistewed");
+    w-wegistwy
+        .wegistew(box::new(num_wequests_dwopped.cwone()))
+        .expect("cowwectow can be wegistewed");
+    wegistwy
+        .wegistew(box::new(wesponse_time_cowwectow.cwone()))
+        .expect("cowwectow can be wegistewed");
+    w-wegistwy
+        .wegistew(box::new(navi_vewsion.cwone()))
+        .expect("cowwectow c-can be wegistewed");
+    w-wegistwy
+        .wegistew(box::new(batch_size.cwone()))
+        .expect("cowwectow c-can be wegistewed");
+    w-wegistwy
+        .wegistew(box::new(num_batch_pwediction.cwone()))
+        .expect("cowwectow can be wegistewed");
+    wegistwy
+        .wegistew(box::new(num_batches_dwopped.cwone()))
+        .expect("cowwectow can be wegistewed");
+    wegistwy
+        .wegistew(box::new(num_pwedictions.cwone()))
+        .expect("cowwectow c-can be wegistewed");
+    w-wegistwy
+        .wegistew(box::new(pwediction_scowe_sum.cwone()))
+        .expect("cowwectow can be wegistewed");
+    w-wegistwy
+        .wegistew(box::new(new_modew_snapshot.cwone()))
+        .expect("cowwectow can be wegistewed");
+    w-wegistwy
+        .wegistew(box::new(modew_snapshot_vewsion.cwone()))
+        .expect("cowwectow can be wegistewed");
+    w-wegistwy
+        .wegistew(box::new(num_wequests_weceived_by_modew.cwone()))
+        .expect("cowwectow c-can be wegistewed");
+    w-wegistwy
+        .wegistew(box::new(num_wequests_faiwed_by_modew.cwone()))
+        .expect("cowwectow c-can be wegistewed");
+    w-wegistwy
+        .wegistew(box::new(num_wequests_dwopped_by_modew.cwone()))
+        .expect("cowwectow can be wegistewed");
+    wegistwy
+        .wegistew(box::new(num_batches_dwopped_by_modew.cwone()))
+        .expect("cowwectow can be wegistewed");
+    wegistwy
+        .wegistew(box::new(infewence_faiwed_wequests_by_modew.cwone()))
+        .expect("cowwectow can be wegistewed");
+    wegistwy
+        .wegistew(box::new(num_pwediction_by_modew.cwone()))
+        .expect("cowwectow can b-be wegistewed");
+    w-wegistwy
+        .wegistew(box::new(num_batch_pwediction_by_modew.cwone()))
+        .expect("cowwectow can b-be wegistewed");
+    wegistwy
+        .wegistew(box::new(batch_size_by_modew.cwone()))
+        .expect("cowwectow c-can be wegistewed");
+    wegistwy
+        .wegistew(box::new(customop_vewsion.cwone()))
+        .expect("cowwectow can be wegistewed");
+    wegistwy
+        .wegistew(box::new(mpsc_channew_size.cwone()))
+        .expect("cowwectow c-can b-be wegistewed");
+    wegistwy
+        .wegistew(box::new(bwocking_wequest_num.cwone()))
+        .expect("cowwectow c-can be wegistewed");
+    wegistwy
+        .wegistew(box::new(modew_infewence_time_cowwectow.cwone()))
+        .expect("cowwectow can be wegistewed");
+    w-wegistwy
+        .wegistew(box::new(convewtew_time_cowwectow.cwone()))
+        .expect("cowwectow can b-be wegistewed");
+    wegistwy
+    .wegistew(box::new(cewt_expiwy_epoch.cwone()))
+    .expect("cowwectow c-can be w-wegistewed");
 
 }
 
-pub fn register_dynamic_metrics(c: &HistogramVec) {
-    REGISTRY
-        .register(Box::new(c.clone()))
-        .expect("dynamic metric collector cannot be registered");
+pub fn wegistew_dynamic_metwics(c: &histogwamvec) {
+    wegistwy
+        .wegistew(box::new(c.cwone()))
+        .expect("dynamic metwic cowwectow cannot be w-wegistewed");
 }
 
-pub async fn metrics_handler() -> Result<impl Reply, Rejection> {
-    use prometheus::Encoder;
-    let encoder = prometheus::TextEncoder::new();
+p-pub async fn metwics_handwew() -> w-wesuwt<impw wepwy, ^^;; w-wejection> {
+    u-use pwometheus::encodew;
+    wet encodew = p-pwometheus::textencodew::new();
 
-    let mut buffer = Vec::new();
-    if let Err(e) = encoder.encode(&REGISTRY.gather(), &mut buffer) {
-        error!("could not encode custom metrics: {}", e);
+    w-wet mut buffew = vec::new();
+    i-if wet eww(e) = e-encodew.encode(&wegistwy.gathew(), mya &mut buffew) {
+        e-ewwow!("couwd nyot encode custom metwics: {}", 😳😳😳 e-e);
     };
-    let mut res = match String::from_utf8(buffer) {
-        Ok(v) => format!("#{}:{}\n{}", NAME, VERSION, v),
-        Err(e) => {
-            error!("custom metrics could not be from_utf8'd: {}", e);
-            String::default()
+    wet mut wes = match s-stwing::fwom_utf8(buffew) {
+        o-ok(v) => fowmat!("#{}:{}\n{}", OwO n-nyame, vewsion, rawr v),
+        eww(e) => {
+            e-ewwow!("custom m-metwics c-couwd nyot be fwom_utf8'd: {}", XD e);
+            stwing::defauwt()
         }
     };
 
-    buffer = Vec::new();
-    if let Err(e) = encoder.encode(&prometheus::gather(), &mut buffer) {
-        error!("could not encode prometheus metrics: {}", e);
+    b-buffew = vec::new();
+    if wet eww(e) = e-encodew.encode(&pwometheus::gathew(), (U ﹏ U) &mut b-buffew) {
+        ewwow!("couwd nyot e-encode pwometheus metwics: {}", (˘ω˘) e-e);
     };
-    let res_custom = match String::from_utf8(buffer) {
-        Ok(v) => v,
-        Err(e) => {
-            error!("prometheus metrics could not be from_utf8'd: {}", e);
-            String::default()
+    w-wet wes_custom = match stwing::fwom_utf8(buffew) {
+        ok(v) => v-v, UwU
+        eww(e) => {
+            ewwow!("pwometheus m-metwics c-couwd nyot be fwom_utf8'd: {}", >_< e-e);
+            stwing::defauwt()
         }
     };
 
-    res.push_str(&res_custom);
-    Ok(res)
+    w-wes.push_stw(&wes_custom);
+    o-ok(wes)
 }

@@ -1,53 +1,53 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.twittew.home_mixew.functionaw_component.decowatow.uwt.buiwdew
 
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.NotRelevant
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.timelines.common.{thriftscala => tlc}
-import com.twitter.timelineservice.model.FeedbackInfo
-import com.twitter.timelineservice.model.FeedbackMetadata
-import com.twitter.timelineservice.{thriftscala => tlst}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.suggesttypefeatuwe
+i-impowt c-com.twittew.home_mixew.pwoduct.fowwowing.modew.homemixewextewnawstwings
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.chiwdfeedbackaction
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.notwewevant
+impowt com.twittew.pwoduct_mixew.cowe.pwoduct.guice.scope.pwoductscoped
+impowt com.twittew.stwingcentew.cwient.stwingcentew
+impowt com.twittew.timewines.common.{thwiftscawa => twc}
+i-impowt com.twittew.timewinesewvice.modew.feedbackinfo
+impowt com.twittew.timewinesewvice.modew.feedbackmetadata
+i-impowt com.twittew.timewinesewvice.{thwiftscawa => twst}
+impowt j-javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-case class NotRelevantChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@singweton
+case cwass nyotwewevantchiwdfeedbackactionbuiwdew @inject() (
+  @pwoductscoped stwingcentew: stwingcentew, ʘwʘ
+  extewnawstwings: h-homemixewextewnawstwings) {
 
-  def apply(
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[ChildFeedbackAction] = {
-    val prompt = stringCenter.prepare(externalStrings.notRelevantString)
-    val confirmation = stringCenter.prepare(externalStrings.notRelevantConfirmationString)
-    val feedbackMetadata = FeedbackMetadata(
-      engagementType = None,
-      entityIds = Seq(tlc.FeedbackEntity.TweetId(candidate.id)),
-      ttl = Some(FeedbackUtil.FeedbackTtl))
-    val feedbackUrl = FeedbackInfo.feedbackUrl(
-      feedbackType = tlst.FeedbackType.NotRelevant,
-      feedbackMetadata = feedbackMetadata,
-      injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None)
+  def appwy(
+    candidate: t-tweetcandidate, σωσ
+    c-candidatefeatuwes: featuwemap
+  ): option[chiwdfeedbackaction] = {
+    vaw pwompt = stwingcentew.pwepawe(extewnawstwings.notwewevantstwing)
+    v-vaw confiwmation = stwingcentew.pwepawe(extewnawstwings.notwewevantconfiwmationstwing)
+    vaw feedbackmetadata = feedbackmetadata(
+      engagementtype = n-nyone, OwO
+      entityids = s-seq(twc.feedbackentity.tweetid(candidate.id)), 😳😳😳
+      t-ttw = some(feedbackutiw.feedbackttw))
+    v-vaw feedbackuww = f-feedbackinfo.feedbackuww(
+      feedbacktype = twst.feedbacktype.notwewevant, 😳😳😳
+      f-feedbackmetadata = feedbackmetadata, o.O
+      injectiontype = c-candidatefeatuwes.getowewse(suggesttypefeatuwe, ( ͡o ω ͡o ) none)
     )
 
-    Some(
-      ChildFeedbackAction(
-        feedbackType = NotRelevant,
-        prompt = Some(prompt),
-        confirmation = Some(confirmation),
-        feedbackUrl = Some(feedbackUrl),
-        hasUndoAction = Some(true),
-        confirmationDisplayType = None,
-        clientEventInfo = None,
-        icon = None,
-        richBehavior = None,
-        subprompt = None
+    some(
+      chiwdfeedbackaction(
+        feedbacktype = nyotwewevant, (U ﹏ U)
+        pwompt = some(pwompt), (///ˬ///✿)
+        confiwmation = s-some(confiwmation),
+        feedbackuww = s-some(feedbackuww), >w<
+        h-hasundoaction = s-some(twue), rawr
+        confiwmationdispwaytype = nyone, mya
+        cwienteventinfo = n-nyone, ^^
+        i-icon = nyone, 😳😳😳
+        wichbehaviow = n-nyone, mya
+        s-subpwompt = nyone
       )
     )
   }

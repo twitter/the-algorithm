@@ -1,88 +1,88 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.component_library.selector.DropSelector.dropDuplicates
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector._
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.sewectow.dwopsewectow.dwopdupwicates
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awwpipewines
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewine
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.specificpipewines
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow._
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.moduwecandidatewithdetaiws
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-object DropDuplicateModuleItemCandidates {
+object dwopdupwicatemoduweitemcandidates {
 
   /**
-   * Limit the number of module item candidates (for 1 or more modules) from a certain candidate
-   * source. See [[DropDuplicateModuleItemCandidates]] for more details.
+   * w-wimit the nyumbew of moduwe item c-candidates (fow 1 ow mowe moduwes) fwom a cewtain candidate
+   * s-souwce. (⑅˘꒳˘) see [[dwopdupwicatemoduweitemcandidates]] fow mowe detaiws. XD
    *
-   * @param candidatePipeline pipelines on which to run the selector
+   * @pawam c-candidatepipewine p-pipewines on which to wun the sewectow
    *
-   * @note Scala doesn't allow overloaded methods with default arguments. Users wanting to customize
-   *       the de-dupe logic should use the default constructor. We could provide multiple
-   *       constructors but that seemed more confusing (five ways to instantiate the selector) or not
-   *       necessarily less verbose (if we picked specific use-cases rather than trying to support
-   *       everything).
+   * @note scawa doesn't awwow ovewwoaded m-methods with defauwt awguments. -.- usews wanting to customize
+   *       the de-dupe w-wogic shouwd use the defauwt constwuctow. :3 w-we couwd p-pwovide muwtipwe
+   *       c-constwuctows but t-that seemed mowe confusing (five ways to instantiate t-the sewectow) ow nyot
+   *       nyecessawiwy w-wess vewbose (if we picked specific use-cases wathew than twying to suppowt
+   *       evewything). nyaa~~
    */
-  def apply(candidatePipeline: CandidatePipelineIdentifier) = new DropDuplicateModuleItemCandidates(
-    SpecificPipeline(candidatePipeline),
-    IdAndClassDuplicationKey,
-    PickFirstCandidateMerger)
+  d-def appwy(candidatepipewine: candidatepipewineidentifiew) = n-nyew d-dwopdupwicatemoduweitemcandidates(
+    s-specificpipewine(candidatepipewine), 😳
+    idandcwassdupwicationkey,
+    pickfiwstcandidatemewgew)
 
-  def apply(candidatePipelines: Set[CandidatePipelineIdentifier]) =
-    new DropDuplicateModuleItemCandidates(
-      SpecificPipelines(candidatePipelines),
-      IdAndClassDuplicationKey,
-      PickFirstCandidateMerger)
+  def a-appwy(candidatepipewines: s-set[candidatepipewineidentifiew]) =
+    new dwopdupwicatemoduweitemcandidates(
+      s-specificpipewines(candidatepipewines), (⑅˘꒳˘)
+      i-idandcwassdupwicationkey, nyaa~~
+      pickfiwstcandidatemewgew)
 }
 
 /**
- * Limit the number of module item candidates (for 1 or more modules) from certain candidate
- * pipelines.
+ * w-wimit the nyumbew of moduwe item c-candidates (fow 1 ow mowe moduwes) fwom cewtain c-candidate
+ * pipewines. OwO
  *
- * This acts like a [[DropDuplicateCandidates]] but for modules in `remainingCandidates`
- * from any of the provided [[candidatePipelines]]. Similar to [[DropDuplicateCandidates]], it
- * keeps only the first instance of a candidate within a module as determined by comparing
- * the contained candidate ID and class type.
+ * this acts wike a [[dwopdupwicatecandidates]] b-but fow moduwes in `wemainingcandidates`
+ * f-fwom any o-of the pwovided [[candidatepipewines]]. rawr x3 simiwaw to [[dwopdupwicatecandidates]], XD it
+ * keeps onwy the fiwst instance of a candidate within a moduwe a-as detewmined b-by compawing
+ * the contained c-candidate id and c-cwass type. σωσ
  *
- * @param pipelineScope pipeline scope on which to run the selector
- * @param duplicationKey how to generate the key used to identify duplicate candidates (by default use id and class name)
- * @param mergeStrategy how to merge two candidates with the same key (by default pick the first one)
+ * @pawam p-pipewinescope pipewine scope on which to wun the sewectow
+ * @pawam dupwicationkey h-how to genewate the key used to identify dupwicate candidates (by d-defauwt use id and cwass nyame)
+ * @pawam m-mewgestwategy h-how to mewge t-two candidates with the same k-key (by defauwt p-pick the fiwst o-one)
  *
- * For example, if a candidatePipeline returned 5 modules each
- * containing duplicate items in the candidate pool, then the module items in each of the
- * 5 modules will be filtered to the unique items within each module.
+ * fow e-exampwe, (U ᵕ U❁) if a candidatepipewine wetuwned 5 moduwes each
+ * containing d-dupwicate i-items in the candidate p-poow, (U ﹏ U) then t-the moduwe items i-in each of the
+ * 5 moduwes wiww be fiwtewed to the unique items w-within each moduwe. :3
  *
- * Another example is if you have 2 modules each with the same items as the other,
- * it won't deduplicate across modules.
+ * anothew exampwe is if you have 2 moduwes each with the same items a-as the othew,
+ * it won't dedupwicate acwoss moduwes. ( ͡o ω ͡o )
  *
- * @note this updates the module in the `remainingCandidates`
+ * @note this updates the m-moduwe in the `wemainingcandidates`
  */
-case class DropDuplicateModuleItemCandidates(
-  override val pipelineScope: CandidateScope,
-  duplicationKey: DeduplicationKey[_] = IdAndClassDuplicationKey,
-  mergeStrategy: CandidateMergeStrategy = PickFirstCandidateMerger)
-    extends Selector[PipelineQuery] {
+c-case c-cwass dwopdupwicatemoduweitemcandidates(
+  ovewwide v-vaw pipewinescope: candidatescope, σωσ
+  d-dupwicationkey: d-dedupwicationkey[_] = idandcwassdupwicationkey, >w<
+  mewgestwategy: candidatemewgestwategy = pickfiwstcandidatemewgew)
+    extends sewectow[pipewinequewy] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
+  ovewwide def a-appwy(
+    quewy: pipewinequewy, 😳😳😳
+    w-wemainingcandidates: seq[candidatewithdetaiws], OwO
+    w-wesuwt: s-seq[candidatewithdetaiws]
+  ): sewectowwesuwt = {
 
-    val remainingCandidatesLimited = remainingCandidates.map {
-      case module: ModuleCandidateWithDetails if pipelineScope.contains(module) =>
-        // this applies to all candidates in a module, even if they are from a different
-        // candidate source, which can happen if items are added to a module during selection
-        module.copy(candidates = dropDuplicates(
-          pipelineScope = AllPipelines,
-          candidates = module.candidates,
-          duplicationKey = duplicationKey,
-          mergeStrategy = mergeStrategy))
-      case candidate => candidate
+    vaw wemainingcandidateswimited = w-wemainingcandidates.map {
+      c-case moduwe: moduwecandidatewithdetaiws i-if pipewinescope.contains(moduwe) =>
+        // t-this appwies to aww candidates in a moduwe, 😳 even if they awe fwom a diffewent
+        // c-candidate s-souwce, 😳😳😳 which c-can happen if items awe added t-to a moduwe duwing s-sewection
+        moduwe.copy(candidates = d-dwopdupwicates(
+          pipewinescope = awwpipewines, (˘ω˘)
+          candidates = moduwe.candidates, ʘwʘ
+          d-dupwicationkey = d-dupwicationkey, ( ͡o ω ͡o )
+          mewgestwategy = mewgestwategy))
+      c-case c-candidate => candidate
     }
 
-    SelectorResult(remainingCandidates = remainingCandidatesLimited, result = result)
+    sewectowwesuwt(wemainingcandidates = wemainingcandidateswimited, o.O w-wesuwt = wesuwt)
   }
 }

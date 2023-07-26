@@ -1,25 +1,25 @@
-package com.twitter.home_mixer.marshaller.request
+package com.twittew.home_mixew.mawshawwew.wequest
 
-import com.twitter.home_mixer.model.request.HomeMixerDebugOptions
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.marshaller.request.FeatureValueUnmarshaller
-import com.twitter.product_mixer.core.model.marshalling.request.DebugParams
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.home_mixew.modew.wequest.homemixewdebugoptions
+i-impowt com.twittew.home_mixew.{thwiftscawa => t-t}
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wequest.featuwevawueunmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.debugpawams
+i-impowt com.twittew.utiw.time
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class HomeMixerDebugParamsUnmarshaller @Inject() (
-  featureValueUnmarshaller: FeatureValueUnmarshaller) {
+@singweton
+c-cwass homemixewdebugpawamsunmawshawwew @inject() (
+  featuwevawueunmawshawwew: featuwevawueunmawshawwew) {
 
-  def apply(debugParams: t.DebugParams): DebugParams = {
-    DebugParams(
-      featureOverrides = debugParams.featureOverrides.map { map =>
-        map.mapValues(featureValueUnmarshaller(_)).toMap
-      },
-      debugOptions = debugParams.debugOptions.map { options =>
-        HomeMixerDebugOptions(
-          requestTimeOverride = options.requestTimeOverrideMillis.map(Time.fromMilliseconds)
+  def appwy(debugpawams: t.debugpawams): debugpawams = {
+    debugpawams(
+      f-featuweovewwides = debugpawams.featuweovewwides.map { map =>
+        m-map.mapvawues(featuwevawueunmawshawwew(_)).tomap
+      }, -.-
+      debugoptions = d-debugpawams.debugoptions.map { options =>
+        homemixewdebugoptions(
+          wequesttimeovewwide = o-options.wequesttimeovewwidemiwwis.map(time.fwommiwwiseconds)
         )
       }
     )

@@ -1,193 +1,193 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import scala.collection.mutable
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.utiw.futuwe
+i-impowt s-scawa.cowwection.mutabwe
 
 /**
- * Categorizes an exception according to some criteria.
- * n.b. Implemented in terms of lift rather than apply to avoid extra allocations when
- * used when lifting the effect.
+ * c-categowizes a-an exception accowding t-to some c-cwitewia. σωσ
+ * ny.b. (U ᵕ U❁) impwemented in tewms of wift wathew than appwy to avoid extwa a-awwocations when
+ * used when wifting the effect. (✿oωo)
  */
-trait ExceptionCategorizer {
-  import ExceptionCategorizer._
+t-twait exceptioncategowizew {
+  impowt exceptioncategowizew._
 
-  def lift(effect: Effect[Category]): Effect[Throwable]
+  d-def wift(effect: effect[categowy]): effect[thwowabwe]
 
-  def apply(t: Throwable): Set[Category] = {
-    val s = mutable.Set.empty[Category]
-    lift(Effect(s += _))(t)
-    s.toSet
+  def appwy(t: thwowabwe): s-set[categowy] = {
+    vaw s = mutabwe.set.empty[categowy]
+    w-wift(effect(s += _))(t)
+    s-s.toset
   }
 
   /**
-   * construct a new categorizer that prepends scope to all categories returned by this categorizer
+   * constwuct a nyew categowizew that pwepends scope to aww c-categowies wetuwned by this categowizew
    */
-  def scoped(scope: Seq[String]): ExceptionCategorizer =
-    if (scope.isEmpty) {
+  def scoped(scope: seq[stwing]): exceptioncategowizew =
+    i-if (scope.isempty) {
       this
-    } else {
-      val scopeIt: Category => Category = Memoize(scope ++ _)
-      fromLift(effect => lift(effect.contramap(scopeIt)))
+    } e-ewse {
+      v-vaw scopeit: categowy => c-categowy = m-memoize(scope ++ _)
+      fwomwift(effect => wift(effect.contwamap(scopeit)))
     }
 
   /**
-   * construct a new categorizer that returns the union of the categories returned by this and that
+   * constwuct a n-new categowizew that wetuwns the union of the categowies w-wetuwned by this and that
    */
-  def ++(that: ExceptionCategorizer): ExceptionCategorizer =
-    fromLift(effect => this.lift(effect).also(that.lift(effect)))
+  def ++(that: exceptioncategowizew): exceptioncategowizew =
+    fwomwift(effect => t-this.wift(effect).awso(that.wift(effect)))
 
   /**
-   * construct a new categorizer that only returns categories for throwables matching pred
+   * constwuct a n-new categowizew t-that onwy wetuwns c-categowies fow thwowabwes matching pwed
    */
-  def onlyIf(pred: Throwable => Boolean): ExceptionCategorizer =
-    fromLift(lift(_).onlyIf(pred))
+  def onwyif(pwed: t-thwowabwe => b-boowean): exceptioncategowizew =
+    fwomwift(wift(_).onwyif(pwed))
 }
 
-object ExceptionCategorizer {
-  type Category = Seq[String]
+o-object exceptioncategowizew {
+  t-type categowy = seq[stwing]
 
-  def const(categories: Set[Category]): ExceptionCategorizer = ExceptionCategorizer(_ => categories)
-  def const(c: Category): ExceptionCategorizer = const(Set(c))
-  def const(s: String): ExceptionCategorizer = const(Seq(s))
+  d-def const(categowies: set[categowy]): e-exceptioncategowizew = exceptioncategowizew(_ => categowies)
+  d-def const(c: categowy): e-exceptioncategowizew = const(set(c))
+  d-def const(s: s-stwing): exceptioncategowizew = const(seq(s))
 
-  def apply(fn: Throwable => Set[Category]): ExceptionCategorizer =
-    new ExceptionCategorizer {
-      def lift(effect: Effect[Category]) = Effect[Throwable](t => fn(t).foreach(effect))
-      override def apply(t: Throwable) = fn(t)
+  def appwy(fn: thwowabwe => set[categowy]): exceptioncategowizew =
+    nyew e-exceptioncategowizew {
+      d-def wift(effect: effect[categowy]) = e-effect[thwowabwe](t => f-fn(t).foweach(effect))
+      o-ovewwide def appwy(t: thwowabwe) = fn(t)
     }
 
-  def fromLift(fn: Effect[Category] => Effect[Throwable]): ExceptionCategorizer =
-    new ExceptionCategorizer {
-      def lift(effect: Effect[Category]) = fn(effect)
+  def f-fwomwift(fn: effect[categowy] => effect[thwowabwe]): exceptioncategowizew =
+    nyew exceptioncategowizew {
+      def wift(effect: e-effect[categowy]) = fn(effect)
     }
 
-  def singular(fn: Throwable => Category): ExceptionCategorizer =
-    fromLift(_.contramap(fn))
+  d-def singuwaw(fn: t-thwowabwe => c-categowy): exceptioncategowizew =
+    fwomwift(_.contwamap(fn))
 
-  def simple(fn: Throwable => String): ExceptionCategorizer =
-    singular(fn.andThen(Seq(_)))
+  d-def s-simpwe(fn: thwowabwe => s-stwing): e-exceptioncategowizew =
+    singuwaw(fn.andthen(seq(_)))
 
-  def default(
-    name: Category = Seq("exceptions"),
-    sanitizeClassnameChain: Throwable => Seq[String] = ThrowableHelper.sanitizeClassnameChain
-  ): ExceptionCategorizer =
-    ExceptionCategorizer.const(name) ++
-      ExceptionCategorizer.singular(sanitizeClassnameChain).scoped(name)
+  def d-defauwt(
+    nyame: c-categowy = seq("exceptions"), ^^
+    s-sanitizecwassnamechain: t-thwowabwe => s-seq[stwing] = thwowabwehewpew.sanitizecwassnamechain
+  ): exceptioncategowizew =
+    exceptioncategowizew.const(name) ++
+      e-exceptioncategowizew.singuwaw(sanitizecwassnamechain).scoped(name)
 }
 
 /**
- * Increments a counter for each category returned by the exception categorizer
+ * incwements a countew fow each categowy wetuwned by the exception categowizew
  *
- * @param statsReceiver
- *   the unscoped statsReceiver on which to hang the counters
- * @param categorizer
- *   A function that returns a list of category names that a throwable should be counted under.
+ * @pawam s-statsweceivew
+ *   the unscoped statsweceivew on which to hang t-the countews
+ * @pawam c-categowizew
+ *   a-a function that wetuwns a-a wist of categowy nyames that a t-thwowabwe shouwd b-be counted undew. ^•ﻌ•^
  */
-class ExceptionCounter(statsReceiver: StatsReceiver, categorizer: ExceptionCategorizer) {
+cwass exceptioncountew(statsweceivew: statsweceivew, XD categowizew: exceptioncategowizew) {
 
   /**
-   * alternative constructor for backwards compatibility
+   * awtewnative c-constwuctow fow backwawds c-compatibiwity
    *
-   * @param statsReceiver
-   *   the unscoped statsReceiver on which to hang the counters
-   * @param name
-   *   the counter name for total exceptions, and scope for individual
-   *   exception counters. default value is `exceptions`
-   * @param sanitizeClassnameChain
-   *   A function that can be used to cleanup classnames before passing them to the StatsReceiver.
+   * @pawam statsweceivew
+   *   t-the unscoped s-statsweceivew on which to hang the countews
+   * @pawam n-nyame
+   *   t-the countew name fow totaw e-exceptions, :3 a-and scope fow individuaw
+   *   exception countews. (ꈍᴗꈍ) defauwt vawue is `exceptions`
+   * @pawam sanitizecwassnamechain
+   *   a function t-that can b-be used to cweanup c-cwassnames befowe passing them t-to the statsweceivew. :3
    */
-  def this(
-    statsReceiver: StatsReceiver,
-    name: String,
-    sanitizeClassnameChain: Throwable => Seq[String]
+  d-def this(
+    statsweceivew: statsweceivew, (U ﹏ U)
+    n-nyame: stwing, UwU
+    sanitizecwassnamechain: thwowabwe => seq[stwing]
   ) =
-    this(statsReceiver, ExceptionCategorizer.default(List(name), sanitizeClassnameChain))
+    this(statsweceivew, 😳😳😳 exceptioncategowizew.defauwt(wist(name), XD s-sanitizecwassnamechain))
 
   /**
-   * provided for backwards compatibility
+   * p-pwovided fow backwawds compatibiwity
    */
-  def this(statsReceiver: StatsReceiver) =
-    this(statsReceiver, ExceptionCategorizer.default())
+  def t-this(statsweceivew: s-statsweceivew) =
+    this(statsweceivew, o.O exceptioncategowizew.defauwt())
 
   /**
-   * provided for backwards compatibility
+   * pwovided fow backwawds c-compatibiwity
    */
-  def this(statsReceiver: StatsReceiver, name: String) =
-    this(statsReceiver, ExceptionCategorizer.default(List(name)))
+  def this(statsweceivew: statsweceivew, (⑅˘꒳˘) nyame: stwing) =
+    this(statsweceivew, 😳😳😳 e-exceptioncategowizew.defauwt(wist(name)))
 
   /**
-   * provided for backwards compatibility
+   * pwovided fow backwawds c-compatibiwity
    */
-  def this(statsReceiver: StatsReceiver, sanitizeClassnameChain: Throwable => Seq[String]) =
-    this(
-      statsReceiver,
-      ExceptionCategorizer.default(sanitizeClassnameChain = sanitizeClassnameChain)
+  d-def this(statsweceivew: statsweceivew, nyaa~~ sanitizecwassnamechain: thwowabwe => s-seq[stwing]) =
+    t-this(
+      statsweceivew, rawr
+      exceptioncategowizew.defauwt(sanitizecwassnamechain = sanitizecwassnamechain)
     )
 
-  private[this] val counter = categorizer.lift(Effect(statsReceiver.counter(_: _*).incr()))
+  p-pwivate[this] vaw countew = categowizew.wift(effect(statsweceivew.countew(_: _*).incw()))
 
   /**
-   * count one or more throwables
+   * c-count one ow mowe thwowabwes
    */
-  def apply(t: Throwable, throwables: Throwable*): Unit = {
-    counter(t)
-    if (throwables.nonEmpty) apply(throwables)
+  def appwy(t: thwowabwe, -.- t-thwowabwes: thwowabwe*): unit = {
+    c-countew(t)
+    i-if (thwowabwes.nonempty) appwy(thwowabwes)
   }
 
   /**
-   * count n throwables
+   * c-count ny thwowabwes
    */
-  def apply(throwables: Iterable[Throwable]): Unit = {
-    throwables.foreach(counter)
+  def appwy(thwowabwes: i-itewabwe[thwowabwe]): u-unit = {
+    t-thwowabwes.foweach(countew)
   }
 
   /**
-   * wrap around a Future to capture exceptions
+   * wwap awound a-a futuwe to captuwe e-exceptions
    */
-  def apply[T](f: => Future[T]): Future[T] = {
-    f onFailure { case t => apply(t) }
+  def appwy[t](f: => futuwe[t]): f-futuwe[t] = {
+    f-f onfaiwuwe { c-case t => appwy(t) }
   }
 }
 
 /**
- * A memoized exception counter factory.
+ * a memoized e-exception countew factowy. (✿oωo)
  *
- * @param stats
- *   the unscoped statsReceiver on which to hang the counters
- * @param categorizer
- *   A function that returns a list of category names that a throwable should be counted under.
+ * @pawam s-stats
+ *   t-the unscoped statsweceivew on which to hang the countews
+ * @pawam c-categowizew
+ *   a-a function t-that wetuwns a-a wist of categowy nyames that a-a thwowabwe shouwd be counted undew. /(^•ω•^)
  */
-class MemoizedExceptionCounterFactory(stats: StatsReceiver, categorizer: ExceptionCategorizer) {
+cwass memoizedexceptioncountewfactowy(stats: statsweceivew, 🥺 categowizew: e-exceptioncategowizew) {
 
   /**
-   * A memoized exception counter factory using the default categorizer.
+   * a memoized e-exception countew factowy using t-the defauwt categowizew. ʘwʘ
    *
-   * @param stats
-   *   the unscoped statsReceiver on which to hang the counters
+   * @pawam stats
+   *   t-the unscoped statsweceivew o-on which t-to hang the countews
    */
-  def this(stats: StatsReceiver) =
-    this(stats, ExceptionCategorizer.default())
+  d-def t-this(stats: statsweceivew) =
+    t-this(stats, UwU exceptioncategowizew.defauwt())
 
   /**
-   * A memoized exception counter factory using a categorizer with the given suffix.
+   * a memoized exception countew factowy using a categowizew with the given suffix. XD
    *
-   * @param stats
-   *   the unscoped statsReceiver on which to hang the counters
-   * @param suffix
-   *   All created exception counters will have the
-   *   specified suffix added. This allows compatibility with
-   *   Servo's ExceptionCounter's name param (allows creating
-   *   exception counters that default to the "exceptions" namespace
-   *   as well as those with an otherwise-specified scope).
+   * @pawam s-stats
+   *   t-the unscoped s-statsweceivew on which to hang t-the countews
+   * @pawam suffix
+   *   aww cweated exception c-countews wiww have t-the
+   *   specified suffix a-added. (✿oωo) this awwows compatibiwity with
+   *   sewvo's e-exceptioncountew's n-nyame pawam (awwows cweating
+   *   e-exception c-countews that defauwt to the "exceptions" nyamespace
+   *   as weww as those with an othewwise-specified scope). :3
    */
-  def this(stats: StatsReceiver, suffix: Seq[String]) =
-    this(stats, ExceptionCategorizer.default(suffix))
+  def t-this(stats: statsweceivew, (///ˬ///✿) s-suffix: s-seq[stwing]) =
+    t-this(stats, nyaa~~ e-exceptioncategowizew.defauwt(suffix))
 
-  private[this] val getCounter =
-    Memoize { (path: Seq[String]) =>
-      new ExceptionCounter(stats, categorizer.scoped(path))
+  pwivate[this] v-vaw g-getcountew =
+    memoize { (path: s-seq[stwing]) =>
+      n-nyew exceptioncountew(stats, >w< categowizew.scoped(path))
     }
 
-  def apply(path: String*): ExceptionCounter = getCounter(path)
+  d-def appwy(path: stwing*): exceptioncountew = g-getcountew(path)
 }

@@ -1,24 +1,24 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy._
+i-impowt c-com.twittew.tweetypie.thwiftscawa._
 
-object LanguageHydrator {
-  type Type = ValueHydrator[Option[Language], TweetCtx]
+o-object w-wanguagehydwatow {
+  t-type type = vawuehydwatow[option[wanguage], nyaa~~ tweetctx]
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.LanguageField)
+  vaw hydwatedfiewd: fiewdbypath = fiewdbypath(tweet.wanguagefiewd)
 
-  private[this] def isApplicable(curr: Option[Language], ctx: TweetCtx) =
-    ctx.tweetFieldRequested(Tweet.LanguageField) && !ctx.isRetweet && curr.isEmpty
+  p-pwivate[this] def isappwicabwe(cuww: option[wanguage], /(^•ω•^) c-ctx: tweetctx) =
+    ctx.tweetfiewdwequested(tweet.wanguagefiewd) && !ctx.iswetweet && cuww.isempty
 
-  def apply(repo: LanguageRepository.Type): Type =
-    ValueHydrator[Option[Language], TweetCtx] { (langOpt, ctx) =>
-      repo(ctx.text).liftToTry.map {
-        case Return(Some(l)) => ValueState.modified(Some(l))
-        case Return(None) => ValueState.unmodified(langOpt)
-        case Throw(_) => ValueState.partial(None, hydratedField)
+  d-def appwy(wepo: wanguagewepositowy.type): type =
+    vawuehydwatow[option[wanguage], rawr t-tweetctx] { (wangopt, OwO ctx) =>
+      w-wepo(ctx.text).wifttotwy.map {
+        c-case wetuwn(some(w)) => vawuestate.modified(some(w))
+        case wetuwn(none) => vawuestate.unmodified(wangopt)
+        c-case thwow(_) => vawuestate.pawtiaw(none, (U ﹏ U) hydwatedfiewd)
       }
-    }.onlyIf((curr, ctx) => isApplicable(curr, ctx))
+    }.onwyif((cuww, >_< ctx) => isappwicabwe(cuww, rawr x3 ctx))
 }

@@ -1,110 +1,110 @@
-package com.twitter.recos.decider
+package com.twittew.wecos.decidew
 
-import com.twitter.decider.Decider
-import com.twitter.decider.DeciderFactory
-import com.twitter.decider.RandomRecipient
-import com.twitter.decider.Recipient
-import com.twitter.decider.SimpleRecipient
-import com.twitter.recos.util.TeamUsers
+impowt com.twittew.decidew.decidew
+i-impowt com.twittew.decidew.decidewfactowy
+impowt c-com.twittew.decidew.wandomwecipient
+i-impowt c-com.twittew.decidew.wecipient
+impowt c-com.twittew.decidew.simpwewecipient
+i-impowt c-com.twittew.wecos.utiw.teamusews
 
-case class GuestRecipient(id: Long) extends Recipient {
-  override def isGuest: Boolean = true
+c-case cwass guestwecipient(id: wong) extends wecipient {
+  ovewwide def isguest: boowean = twue
 }
 
-sealed trait BaseDecider {
-  def baseConfig: Option[String] = None
+s-seawed twait basedecidew {
+  def baseconfig: o-option[stwing] = nyone
 
-  def overlayConfig: Option[String] = None
+  def o-ovewwayconfig: option[stwing] = none
 
-  lazy val decider: Decider = DeciderFactory(baseConfig, overlayConfig)()
+  wazy vaw decidew: decidew = decidewfactowy(baseconfig, ^•ﻌ•^ ovewwayconfig)()
 
-  def isAvailable(feature: String, recipient: Option[Recipient]): Boolean =
-    decider.isAvailable(feature, recipient)
+  d-def isavaiwabwe(featuwe: stwing, rawr w-wecipient: option[wecipient]): b-boowean =
+    decidew.isavaiwabwe(featuwe, (˘ω˘) wecipient)
 
-  def isAvailable(feature: String): Boolean = isAvailable(feature, None)
+  def isavaiwabwe(featuwe: s-stwing): boowean = isavaiwabwe(featuwe, nyaa~~ nyone)
 
-  def isAvailableExceptTeam(feature: String, id: Long, isUser: Boolean = true): Boolean = {
-    if (isUser) TeamUsers.team.contains(id) || isAvailable(feature, Some(SimpleRecipient(id)))
-    else isAvailable(feature, Some(GuestRecipient(id)))
+  def isavaiwabweexceptteam(featuwe: stwing, i-id: wong, UwU isusew: boowean = twue): b-boowean = {
+    i-if (isusew) t-teamusews.team.contains(id) || i-isavaiwabwe(featuwe, :3 some(simpwewecipient(id)))
+    ewse isavaiwabwe(featuwe, (⑅˘꒳˘) s-some(guestwecipient(id)))
   }
 }
 
-case class RecosDecider(env: String, cluster: String = "atla") extends BaseDecider {
-  override val baseConfig = Some("/com/twitter/recos/config/decider.yml")
-  override val overlayConfig = Some(
-    s"/usr/local/config/overlays/recos/service/prod/$cluster/decider_overlay.yml"
+case cwass wecosdecidew(env: stwing, (///ˬ///✿) c-cwustew: stwing = "atwa") extends basedecidew {
+  ovewwide vaw baseconfig = some("/com/twittew/wecos/config/decidew.ymw")
+  o-ovewwide vaw ovewwayconfig = some(
+    s-s"/usw/wocaw/config/ovewways/wecos/sewvice/pwod/$cwustew/decidew_ovewway.ymw"
   )
 
-  def shouldCompute(id: Long, displayLocation: String, isUser: Boolean = true): Boolean = {
-    isAvailableExceptTeam(RecosDecider.recosIncomingTraffic + "_" + displayLocation, id, isUser)
+  d-def s-shouwdcompute(id: wong, ^^;; dispwaywocation: stwing, >_< isusew: boowean = t-twue): boowean = {
+    i-isavaiwabweexceptteam(wecosdecidew.wecosincomingtwaffic + "_" + dispwaywocation, rawr x3 i-id, isusew)
   }
 
-  def shouldReturn(id: Long, displayLocation: String, isUser: Boolean = true): Boolean = {
-    isAvailableExceptTeam(RecosDecider.recosShouldReturn + "_" + displayLocation, id, isUser)
+  d-def shouwdwetuwn(id: w-wong, /(^•ω•^) dispwaywocation: stwing, i-isusew: boowean = twue): boowean = {
+    isavaiwabweexceptteam(wecosdecidew.wecosshouwdwetuwn + "_" + d-dispwaywocation, :3 id, isusew)
   }
 
-  def shouldDarkmode(experiment: String): Boolean = {
-    isAvailable(RecosDecider.recosShouldDark + "_exp_" + experiment, None)
+  d-def shouwddawkmode(expewiment: s-stwing): b-boowean = {
+    isavaiwabwe(wecosdecidew.wecosshouwddawk + "_exp_" + expewiment, (ꈍᴗꈍ) nyone)
   }
 
-  def shouldScribe(id: Long, isUser: Boolean = true): Boolean = {
-    if (isUser) (id > 0) && isAvailableExceptTeam(RecosDecider.recosShouldScribe, id, isUser)
-    else false // TODO: define the behavior for guests
+  def shouwdscwibe(id: wong, /(^•ω•^) isusew: boowean = t-twue): boowean = {
+    i-if (isusew) (id > 0) && isavaiwabweexceptteam(wecosdecidew.wecosshouwdscwibe, (⑅˘꒳˘) id, isusew)
+    e-ewse fawse // t-todo: define t-the behaviow fow guests
   }
 
-  def shouldWriteMomentCapsuleOpenEdge(): Boolean = {
-    val capsuleOpenDecider = env match {
-      case "prod" => RecosDecider.recosShouldWriteMomentCapsuleOpenEdge
-      case _ => RecosDecider.recosShouldWriteMomentCapsuleOpenEdge + RecosDecider.testSuffix
+  def shouwdwwitemomentcapsuweopenedge(): boowean = {
+    v-vaw capsuweopendecidew = env match {
+      case "pwod" => wecosdecidew.wecosshouwdwwitemomentcapsuweopenedge
+      case _ => w-wecosdecidew.wecosshouwdwwitemomentcapsuweopenedge + wecosdecidew.testsuffix
     }
 
-    isAvailable(capsuleOpenDecider, Some(RandomRecipient))
+    i-isavaiwabwe(capsuweopendecidew, ( ͡o ω ͡o ) s-some(wandomwecipient))
   }
 }
 
-object RecosDecider {
-  val testSuffix = "_test"
+o-object wecosdecidew {
+  v-vaw testsuffix = "_test"
 
-  val recosIncomingTraffic: String = "recos_incoming_traffic"
-  val recosShouldReturn: String = "recos_should_return"
-  val recosShouldDark: String = "recos_should_dark"
-  val recosRealtimeBlacklist: String = "recos_realtime_blacklist"
-  val recosRealtimeDeveloperlist: String = "recos_realtime_developerlist"
-  val recosShouldScribe: String = "recos_should_scribe"
-  val recosShouldWriteMomentCapsuleOpenEdge: String = "recos_should_write_moment_capsule_open_edge"
+  v-vaw w-wecosincomingtwaffic: s-stwing = "wecos_incoming_twaffic"
+  vaw wecosshouwdwetuwn: s-stwing = "wecos_shouwd_wetuwn"
+  v-vaw wecosshouwddawk: s-stwing = "wecos_shouwd_dawk"
+  v-vaw wecosweawtimebwackwist: s-stwing = "wecos_weawtime_bwackwist"
+  vaw wecosweawtimedevewopewwist: stwing = "wecos_weawtime_devewopewwist"
+  vaw wecosshouwdscwibe: s-stwing = "wecos_shouwd_scwibe"
+  vaw wecosshouwdwwitemomentcapsuweopenedge: stwing = "wecos_shouwd_wwite_moment_capsuwe_open_edge"
 }
 
-trait GraphDecider extends BaseDecider {
-  val graphNamePrefix: String
+twait gwaphdecidew extends basedecidew {
+  v-vaw gwaphnamepwefix: stwing
 
-  override val baseConfig = Some("/com/twitter/recos/config/decider.yml")
-  override val overlayConfig = Some(
-    "/usr/local/config/overlays/recos/service/prod/atla/decider_overlay.yml"
+  ovewwide vaw baseconfig = s-some("/com/twittew/wecos/config/decidew.ymw")
+  o-ovewwide vaw o-ovewwayconfig = some(
+    "/usw/wocaw/config/ovewways/wecos/sewvice/pwod/atwa/decidew_ovewway.ymw"
   )
 }
 
-case class UserTweetEntityGraphDecider() extends GraphDecider {
-  override val graphNamePrefix: String = "user_tweet_entity_graph"
+c-case cwass usewtweetentitygwaphdecidew() e-extends gwaphdecidew {
+  o-ovewwide vaw gwaphnamepwefix: stwing = "usew_tweet_entity_gwaph"
 
-  def tweetSocialProof: Boolean = {
-    isAvailable("user_tweet_entity_graph_tweet_social_proof")
+  def tweetsociawpwoof: boowean = {
+    isavaiwabwe("usew_tweet_entity_gwaph_tweet_sociaw_pwoof")
   }
 
-  def entitySocialProof: Boolean = {
-    isAvailable("user_tweet_entity_graph_entity_social_proof")
+  d-def entitysociawpwoof: boowean = {
+    i-isavaiwabwe("usew_tweet_entity_gwaph_entity_sociaw_pwoof")
   }
 
 }
 
-case class UserUserGraphDecider() extends GraphDecider {
-  override val graphNamePrefix: String = "user_user_graph"
+case cwass usewusewgwaphdecidew() e-extends gwaphdecidew {
+  o-ovewwide vaw gwaphnamepwefix: stwing = "usew_usew_gwaph"
 }
 
-case class UserTweetGraphDecider(env: String, dc: String) extends GraphDecider {
-  override val graphNamePrefix: String = "user-tweet-graph"
+c-case cwass u-usewtweetgwaphdecidew(env: stwing, òωó dc: stwing) e-extends gwaphdecidew {
+  o-ovewwide vaw gwaphnamepwefix: stwing = "usew-tweet-gwaph"
 
-  override val baseConfig = Some("/com/twitter/recos/config/user-tweet-graph_decider.yml")
-  override val overlayConfig = Some(
-    s"/usr/local/config/overlays/user-tweet-graph/user-tweet-graph/$env/$dc/decider_overlay.yml"
+  ovewwide vaw baseconfig = s-some("/com/twittew/wecos/config/usew-tweet-gwaph_decidew.ymw")
+  o-ovewwide vaw o-ovewwayconfig = some(
+    s"/usw/wocaw/config/ovewways/usew-tweet-gwaph/usew-tweet-gwaph/$env/$dc/decidew_ovewway.ymw"
   )
 }

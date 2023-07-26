@@ -1,229 +1,229 @@
-package com.twitter.tweetypie
-package hydrator
+package com.twittew.tweetypie
+package h-hydwatow
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.tweettext.TweetText
-import com.twitter.tweetypie.thriftscala._
+impowt c-com.twittew.tweetypie.cowe._
+i-impowt com.twittew.tweetypie.wepositowy.tweetquewy
+i-impowt com.twittew.tweetypie.tweettext.tweettext
+i-impowt com.twittew.tweetypie.thwiftscawa._
 
-object CopyFromSourceTweet {
+o-object copyfwomsouwcetweet {
 
   /**
-   * A `ValueHydrator` that copies and/or merges certain fields from a retweet's source
-   * tweet into the retweet.
+   * a-a `vawuehydwatow` t-that copies and/ow mewges cewtain fiewds fwom a wetweet's souwce
+   * t-tweet into the wetweet. ^^;;
    */
-  def hydrator: ValueHydrator[TweetData, TweetQuery.Options] =
-    ValueHydrator.map { (td, _) =>
-      td.sourceTweetResult.map(_.value.tweet) match {
-        case None => ValueState.unmodified(td)
-        case Some(src) => ValueState.modified(td.copy(tweet = copy(src, td.tweet)))
+  def hydwatow: v-vawuehydwatow[tweetdata, ( ͡o ω ͡o ) tweetquewy.options] =
+    v-vawuehydwatow.map { (td, ^^;; _) =>
+      td.souwcetweetwesuwt.map(_.vawue.tweet) match {
+        case nyone => v-vawuestate.unmodified(td)
+        case some(swc) => v-vawuestate.modified(td.copy(tweet = c-copy(swc, ^^;; td.tweet)))
       }
     }
 
   /**
-   * Updates `dst` with fields from `src`. This is more complicated than you would think, because:
+   * updates `dst` with fiewds fwom `swc`. XD this i-is mowe compwicated than you wouwd think, 🥺 because:
    *
-   *   - the tweet has an extra mention entity due to the "RT @user" prefix;
-   *   - the retweet text may be truncated at the end, and doesn't necessarily contain all of the
-   *     the text from the source tweet.  truncation may happen in the middle of entity.
-   *   - the text in the retweet may have a different unicode normalization, which affects
-   *     code point indices. this means entities aren't shifted by a fixed amount equal to
-   *     the RT prefix.
-   *   - url entities, when hydrated, may be converted to media entities; url entities may not
-   *     be hydrated in the retweet, so the source tweet may have a media entity that corresponds
-   *     to an unhydrated url entity in the retweet.
-   *   - there may be multiple media entities that map to a single url entity, because the tweet
-   *     may have multiple photos.
+   *   - the tweet has an extwa mention e-entity due to the "wt @usew" p-pwefix;
+   *   - t-the wetweet text m-may be twuncated a-at the end, (///ˬ///✿) and doesn't nyecessawiwy contain a-aww of the
+   *     the text fwom the souwce tweet. (U ᵕ U❁)  t-twuncation may happen in the middwe of entity.
+   *   - the text in the wetweet may have a d-diffewent unicode nyowmawization, w-which affects
+   *     c-code point i-indices. ^^;; this means entities awen't shifted by a fixed amount e-equaw to
+   *     t-the wt pwefix. ^^;;
+   *   - uww e-entities, rawr when hydwated, (˘ω˘) m-may be convewted to media e-entities; uww entities may nyot
+   *     b-be hydwated in the wetweet, 🥺 so the souwce t-tweet may have a media entity t-that cowwesponds
+   *     to a-an unhydwated uww e-entity in the wetweet. nyaa~~
+   *   - thewe may be muwtipwe media entities that map to a singwe uww entity, :3 because t-the tweet
+   *     m-may have muwtipwe photos. /(^•ω•^)
    */
-  def copy(src: Tweet, dst: Tweet): Tweet = {
-    val srcCoreData = src.coreData.get
-    val dstCoreData = dst.coreData.get
+  d-def copy(swc: t-tweet, ^•ﻌ•^ dst: t-tweet): tweet = {
+    vaw swccowedata = swc.cowedata.get
+    vaw d-dstcowedata = dst.cowedata.get
 
     // get the code point index of the end of the text
-    val max = getText(dst).codePointCount(0, getText(dst).length).toShort
+    vaw m-max = gettext(dst).codepointcount(0, UwU gettext(dst).wength).toshowt
 
-    // get all entities from the source tweet, merged into a single list sorted by fromIndex.
-    val srcEntities = getWrappedEntities(src)
+    // g-get aww e-entities fwom t-the souwce tweet, 😳😳😳 mewged into a s-singwe wist sowted b-by fwomindex. OwO
+    v-vaw swcentities = g-getwwappedentities(swc)
 
-    // same for the retweet, but drop first @mention, add back later
-    val dstEntities = getWrappedEntities(dst).drop(1)
+    // same fow the wetweet, ^•ﻌ•^ but d-dwop fiwst @mention, (ꈍᴗꈍ) a-add back watew
+    v-vaw dstentities = g-getwwappedentities(dst).dwop(1)
 
-    // merge indices from dst into srcEntities. at the end, resort entities back
-    // to their original ordering.  for media entities, order matters to clients.
-    val mergedEntities = merge(srcEntities, dstEntities, max).sortBy(_.position)
+    // m-mewge indices fwom dst into swcentities. (⑅˘꒳˘) at the end, (⑅˘꒳˘) wesowt entities b-back
+    // to theiw owiginaw owdewing.  fow media entities, (ˆ ﻌ ˆ)♡ owdew mattews to cwients. /(^•ω•^)
+    v-vaw mewgedentities = mewge(swcentities, òωó dstentities, (⑅˘꒳˘) max).sowtby(_.position)
 
-    // extract entities back out by type
-    val mentions = mergedEntities.collect { case WrappedMentionEntity(e, _) => e }
-    val hashtags = mergedEntities.collect { case WrappedHashtagEntity(e, _) => e }
-    val cashtags = mergedEntities.collect { case WrappedCashtagEntity(e, _) => e }
-    val urls = mergedEntities.collect { case WrappedUrlEntity(e, _) => e }
-    val media = mergedEntities.collect { case WrappedMediaEntity(e, _) => e }
+    // e-extwact e-entities back out b-by type
+    vaw mentions = mewgedentities.cowwect { c-case wwappedmentionentity(e, (U ᵕ U❁) _) => e }
+    v-vaw hashtags = m-mewgedentities.cowwect { case wwappedhashtagentity(e, >w< _) => e }
+    vaw cashtags = mewgedentities.cowwect { case w-wwappedcashtagentity(e, σωσ _) => e }
+    vaw uwws = m-mewgedentities.cowwect { case w-wwappeduwwentity(e, -.- _) => e-e }
+    vaw media = mewgedentities.cowwect { case wwappedmediaentity(e, o.O _) => e-e }
 
-    // merge the updated entities back into the retweet, adding the RT @mention back in
+    // m-mewge the updated entities back i-into the wetweet, ^^ a-adding the wt @mention back in
     dst.copy(
-      coreData = Some(
-        dstCoreData.copy(
-          hasMedia = srcCoreData.hasMedia,
-          hasTakedown = dstCoreData.hasTakedown || srcCoreData.hasTakedown
+      cowedata = some(
+        d-dstcowedata.copy(
+          h-hasmedia = s-swccowedata.hasmedia, >_<
+          hastakedown = d-dstcowedata.hastakedown || s-swccowedata.hastakedown
         )
-      ),
-      mentions = Some(getMentions(dst).take(1) ++ mentions),
-      hashtags = Some(hashtags),
-      cashtags = Some(cashtags),
-      urls = Some(urls),
-      media = Some(media.map(updateSourceStatusId(src.id, getUserId(src)))),
-      quotedTweet = src.quotedTweet,
-      card2 = src.card2,
-      cards = src.cards,
-      language = src.language,
-      mediaTags = src.mediaTags,
-      spamLabel = src.spamLabel,
-      takedownCountryCodes =
-        mergeTakedowns(Seq(src, dst).map(TweetLenses.takedownCountryCodes.get): _*),
-      conversationControl = src.conversationControl,
-      exclusiveTweetControl = src.exclusiveTweetControl
+      ), >w<
+      mentions = some(getmentions(dst).take(1) ++ mentions), >_<
+      h-hashtags = some(hashtags), >w<
+      cashtags = some(cashtags), rawr
+      uwws = some(uwws), rawr x3
+      media = some(media.map(updatesouwcestatusid(swc.id, ( ͡o ω ͡o ) getusewid(swc)))), (˘ω˘)
+      q-quotedtweet = s-swc.quotedtweet, 😳
+      cawd2 = swc.cawd2, OwO
+      c-cawds = swc.cawds, (˘ω˘)
+      wanguage = s-swc.wanguage, òωó
+      mediatags = swc.mediatags, ( ͡o ω ͡o )
+      spamwabew = swc.spamwabew, UwU
+      t-takedowncountwycodes =
+        mewgetakedowns(seq(swc, /(^•ω•^) dst).map(tweetwenses.takedowncountwycodes.get): _*),
+      convewsationcontwow = swc.convewsationcontwow, (ꈍᴗꈍ)
+      excwusivetweetcontwow = swc.excwusivetweetcontwow
     )
   }
 
   /**
-   * Merges one or more optional lists of takedowns.  If no lists are defined, returns None.
+   * mewges o-one ow mowe optionaw wists of takedowns. 😳  i-if no wists awe d-defined, mya wetuwns nyone. mya
    */
-  private def mergeTakedowns(takedowns: Option[Seq[CountryCode]]*): Option[Seq[CountryCode]] =
-    if (takedowns.exists(_.isDefined)) {
-      Some(takedowns.flatten.flatten.distinct.sorted)
-    } else {
-      None
+  pwivate def mewgetakedowns(takedowns: option[seq[countwycode]]*): o-option[seq[countwycode]] =
+    i-if (takedowns.exists(_.isdefined)) {
+      some(takedowns.fwatten.fwatten.distinct.sowted)
+    } ewse {
+      nyone
     }
 
   /**
-   * A retweet should never have media without a source_status_id or source_user_id
+   * a wetweet s-shouwd nyevew have media without a-a souwce_status_id ow souwce_usew_id
    */
-  private def updateSourceStatusId(
-    srcTweetId: TweetId,
-    srcUserId: UserId
-  ): MediaEntity => MediaEntity =
-    mediaEntity =>
-      if (mediaEntity.sourceStatusId.nonEmpty) {
-        // when sourceStatusId is set this indicates the media is "pasted media" so the values
-        // should already be correct (retweeting won't change sourceStatusId / sourceUserId)
-        mediaEntity
-      } else {
-        mediaEntity.copy(
-          sourceStatusId = Some(srcTweetId),
-          sourceUserId = Some(mediaEntity.sourceUserId.getOrElse(srcUserId))
+  pwivate def updatesouwcestatusid(
+    swctweetid: t-tweetid, /(^•ω•^)
+    swcusewid: usewid
+  ): m-mediaentity => m-mediaentity =
+    mediaentity =>
+      i-if (mediaentity.souwcestatusid.nonempty) {
+        // when souwcestatusid i-is set this i-indicates the media i-is "pasted media" so the vawues
+        // s-shouwd awweady be c-cowwect (wetweeting won't change souwcestatusid / s-souwceusewid)
+        m-mediaentity
+      } e-ewse {
+        mediaentity.copy(
+          souwcestatusid = s-some(swctweetid), ^^;;
+          souwceusewid = s-some(mediaentity.souwceusewid.getowewse(swcusewid))
         )
       }
 
   /**
-   * Attempts to match up entities from the source tweet with entities from the retweet,
-   * and to use the source tweet entities but shifted to the retweet entity indices.  If an entity
-   * got truncated at the end of the retweet text, we drop it and any following entities.
+   * a-attempts to match up entities fwom the souwce tweet with e-entities fwom the w-wetweet, 🥺
+   * a-and to use the souwce t-tweet entities but shifted t-to the wetweet entity indices. ^^  if an entity
+   * got twuncated at the end of the wetweet text, ^•ﻌ•^ w-we dwop it and any fowwowing entities. /(^•ω•^)
    */
-  private def merge(
-    srcEntities: List[WrappedEntity],
-    rtEntities: List[WrappedEntity],
-    maxIndex: Short
-  ): List[WrappedEntity] = {
-    (srcEntities, rtEntities) match {
-      case (Nil, Nil) =>
-        // successfully matched all entities!
-        Nil
+  p-pwivate def mewge(
+    swcentities: w-wist[wwappedentity], ^^
+    wtentities: w-wist[wwappedentity],
+    maxindex: showt
+  ): w-wist[wwappedentity] = {
+    (swcentities, 🥺 w-wtentities) match {
+      c-case (niw, (U ᵕ U❁) n-niw) =>
+        // s-successfuwwy matched aww entities! 😳😳😳
+        nyiw
 
-      case (Nil, _) =>
-        // no more source tweet entities, but we still have remaining retweet entities.
-        // this can happen if a a text truncation turns something invalid like #tag1#tag2 or
-        // @mention1@mention2 into a valid entity. just drop all the remaining retweet entities.
-        Nil
+      case (niw, nyaa~~ _) =>
+        // nyo mowe souwce tweet e-entities, (˘ω˘) but w-we stiww have wemaining w-wetweet entities. >_<
+        // t-this can happen if a a text twuncation tuwns something invawid w-wike #tag1#tag2 o-ow
+        // @mention1@mention2 into a vawid e-entity. XD just dwop aww the wemaining wetweet entities. rawr x3
+        n-nyiw
 
-      case (_, Nil) =>
-        // no more retweet entities, which means the remaining entities have been truncated.
-        Nil
+      case (_, ( ͡o ω ͡o ) n-nyiw) =>
+        // nyo mowe w-wetweet entities, :3 w-which means the wemaining entities have been twuncated. mya
+        nyiw
 
-      case (srcHead :: srcTail, rtHead :: rtTail) =>
-        // we have more entities from the source tweet and the retweet.  typically, we can
-        // match these entities because they have the same normalized text, but the retweet
-        // entity might be truncated, so we allow for a prefix match if the retweet entity
-        // ends at the end of the tweet.
-        val possiblyTruncated = rtHead.toIndex == maxIndex - 1
-        val exactMatch = srcHead.normalizedText == rtHead.normalizedText
+      c-case (swchead :: s-swctaiw, wthead :: w-wttaiw) =>
+        // w-we have m-mowe entities fwom the souwce t-tweet and the wetweet. σωσ  t-typicawwy, (ꈍᴗꈍ) we can
+        // m-match these e-entities because they have the s-same nyowmawized text, OwO but the wetweet
+        // entity might be t-twuncated, o.O so we awwow fow a pwefix m-match if the w-wetweet entity
+        // ends a-at the end of the tweet. 😳😳😳
+        vaw possibwytwuncated = w-wthead.toindex == m-maxindex - 1
+        v-vaw exactmatch = swchead.nowmawizedtext == wthead.nowmawizedtext
 
-        if (exactMatch) {
-          // there could be multiple media entities for the same t.co url, so we need to find
-          // contiguous groupings of entities that share the same fromIndex.
-          val rtTail = rtEntities.dropWhile(_.fromIndex == rtHead.fromIndex)
-          val srcGroup =
-            srcEntities
-              .takeWhile(_.fromIndex == srcHead.fromIndex)
-              .map(_.shift(rtHead.fromIndex, rtHead.toIndex))
-          val srcTail = srcEntities.drop(srcGroup.size)
+        if (exactmatch) {
+          // t-thewe couwd be muwtipwe media entities f-fow the same t.co u-uww, /(^•ω•^) so we nyeed to find
+          // c-contiguous gwoupings of e-entities that s-shawe the same fwomindex. OwO
+          vaw wttaiw = wtentities.dwopwhiwe(_.fwomindex == w-wthead.fwomindex)
+          vaw swcgwoup =
+            swcentities
+              .takewhiwe(_.fwomindex == s-swchead.fwomindex)
+              .map(_.shift(wthead.fwomindex, ^^ w-wthead.toindex))
+          vaw swctaiw = s-swcentities.dwop(swcgwoup.size)
 
-          srcGroup ++ merge(srcTail, rtTail, maxIndex)
-        } else {
-          // if we encounter a mismatch, it is most likely because of truncation,
-          // so we stop here.
-          Nil
+          swcgwoup ++ m-mewge(swctaiw, (///ˬ///✿) wttaiw, (///ˬ///✿) m-maxindex)
+        } e-ewse {
+          // if we encountew a mismatch, (///ˬ///✿) it is most wikewy because of twuncation, ʘwʘ
+          // so we stop hewe.
+          nyiw
         }
     }
   }
 
   /**
-   * Wraps all the entities with the appropriate WrappedEntity subclasses, merges them into
-   * a single list, and sorts by fromIndex.
+   * wwaps aww the entities with the appwopwiate wwappedentity subcwasses, ^•ﻌ•^ mewges them into
+   * a singwe w-wist, OwO and s-sowts by fwomindex. (U ﹏ U)
    */
-  private def getWrappedEntities(tweet: Tweet): List[WrappedEntity] =
-    (getUrls(tweet).zipWithIndex.map { case (e, p) => WrappedUrlEntity(e, p) } ++
-      getMedia(tweet).zipWithIndex.map { case (e, p) => WrappedMediaEntity(e, p) } ++
-      getMentions(tweet).zipWithIndex.map { case (e, p) => WrappedMentionEntity(e, p) } ++
-      getHashtags(tweet).zipWithIndex.map { case (e, p) => WrappedHashtagEntity(e, p) } ++
-      getCashtags(tweet).zipWithIndex.map { case (e, p) => WrappedCashtagEntity(e, p) })
-      .sortBy(_.fromIndex)
-      .toList
+  pwivate def getwwappedentities(tweet: t-tweet): wist[wwappedentity] =
+    (getuwws(tweet).zipwithindex.map { c-case (e, (ˆ ﻌ ˆ)♡ p-p) => wwappeduwwentity(e, (⑅˘꒳˘) p) } ++
+      g-getmedia(tweet).zipwithindex.map { case (e, (U ﹏ U) p-p) => wwappedmediaentity(e, o.O p-p) } ++
+      getmentions(tweet).zipwithindex.map { case (e, mya p) => w-wwappedmentionentity(e, XD p) } ++
+      g-gethashtags(tweet).zipwithindex.map { case (e, òωó p-p) => wwappedhashtagentity(e, (˘ω˘) p) } ++
+      getcashtags(tweet).zipwithindex.map { c-case (e, :3 p-p) => wwappedcashtagentity(e, OwO p-p) })
+      .sowtby(_.fwomindex)
+      .towist
 
   /**
-   * The thrift-entity classes don't share a common entity parent class, so we wrap
-   * them with a class that allows us to mix entities together into a single list, and
-   * to provide a generic interface for shifting indicies.
+   * t-the t-thwift-entity cwasses d-don't shawe a-a common entity p-pawent cwass, mya s-so we wwap
+   * them with a cwass t-that awwows us t-to mix entities t-togethew into a singwe wist, (˘ω˘) and
+   * t-to pwovide a genewic intewface fow shifting i-indicies. o.O
    */
-  private sealed abstract class WrappedEntity(
-    val fromIndex: Short,
-    val toIndex: Short,
-    val rawText: String) {
+  pwivate seawed a-abstwact cwass w-wwappedentity(
+    v-vaw fwomindex: showt, (✿oωo)
+    v-vaw toindex: showt, (ˆ ﻌ ˆ)♡
+    vaw wawtext: s-stwing) {
 
-    /** the original position of the entity within the entity group */
-    val position: Int
+    /** the owiginaw p-position of the entity within t-the entity gwoup */
+    vaw position: int
 
-    val normalizedText: String = TweetText.nfcNormalize(rawText).toLowerCase
+    vaw nyowmawizedtext: stwing = t-tweettext.nfcnowmawize(wawtext).towowewcase
 
-    def shift(fromIndex: Short, toIndex: Short): WrappedEntity
+    def shift(fwomindex: s-showt, ^^;; toindex: s-showt): wwappedentity
   }
 
-  private case class WrappedUrlEntity(entity: UrlEntity, position: Int)
-      extends WrappedEntity(entity.fromIndex, entity.toIndex, entity.url) {
-    override def shift(fromIndex: Short, toIndex: Short): WrappedUrlEntity =
-      copy(entity.copy(fromIndex = fromIndex, toIndex = toIndex))
+  pwivate case cwass wwappeduwwentity(entity: uwwentity, OwO position: i-int)
+      extends wwappedentity(entity.fwomindex, 🥺 e-entity.toindex, mya e-entity.uww) {
+    o-ovewwide def shift(fwomindex: showt, 😳 toindex: s-showt): wwappeduwwentity =
+      c-copy(entity.copy(fwomindex = fwomindex, t-toindex = toindex))
   }
 
-  private case class WrappedMediaEntity(entity: MediaEntity, position: Int)
-      extends WrappedEntity(entity.fromIndex, entity.toIndex, entity.url) {
-    override def shift(fromIndex: Short, toIndex: Short): WrappedMediaEntity =
-      copy(entity.copy(fromIndex = fromIndex, toIndex = toIndex))
+  pwivate case cwass wwappedmediaentity(entity: m-mediaentity, òωó position: i-int)
+      extends w-wwappedentity(entity.fwomindex, /(^•ω•^) e-entity.toindex, -.- entity.uww) {
+    o-ovewwide def s-shift(fwomindex: s-showt, òωó toindex: s-showt): wwappedmediaentity =
+      copy(entity.copy(fwomindex = f-fwomindex, /(^•ω•^) toindex = t-toindex))
   }
 
-  private case class WrappedMentionEntity(entity: MentionEntity, position: Int)
-      extends WrappedEntity(entity.fromIndex, entity.toIndex, entity.screenName) {
-    override def shift(fromIndex: Short, toIndex: Short): WrappedMentionEntity =
-      copy(entity.copy(fromIndex = fromIndex, toIndex = toIndex))
+  p-pwivate c-case cwass wwappedmentionentity(entity: m-mentionentity, /(^•ω•^) p-position: i-int)
+      extends w-wwappedentity(entity.fwomindex, 😳 entity.toindex, :3 e-entity.scweenname) {
+    ovewwide d-def shift(fwomindex: showt, (U ᵕ U❁) t-toindex: showt): w-wwappedmentionentity =
+      c-copy(entity.copy(fwomindex = fwomindex, ʘwʘ toindex = toindex))
   }
 
-  private case class WrappedHashtagEntity(entity: HashtagEntity, position: Int)
-      extends WrappedEntity(entity.fromIndex, entity.toIndex, entity.text) {
-    override def shift(fromIndex: Short, toIndex: Short): WrappedHashtagEntity =
-      copy(entity.copy(fromIndex = fromIndex, toIndex = toIndex))
+  p-pwivate case c-cwass wwappedhashtagentity(entity: h-hashtagentity, o.O position: int)
+      extends wwappedentity(entity.fwomindex, ʘwʘ e-entity.toindex, ^^ e-entity.text) {
+    ovewwide def s-shift(fwomindex: s-showt, ^•ﻌ•^ toindex: showt): wwappedhashtagentity =
+      copy(entity.copy(fwomindex = fwomindex, mya toindex = t-toindex))
   }
 
-  private case class WrappedCashtagEntity(entity: CashtagEntity, position: Int)
-      extends WrappedEntity(entity.fromIndex, entity.toIndex, entity.text) {
-    override def shift(fromIndex: Short, toIndex: Short): WrappedCashtagEntity =
-      copy(entity.copy(fromIndex = fromIndex, toIndex = toIndex))
+  p-pwivate c-case cwass wwappedcashtagentity(entity: c-cashtagentity, UwU position: int)
+      extends w-wwappedentity(entity.fwomindex, >_< e-entity.toindex, /(^•ω•^) entity.text) {
+    ovewwide d-def shift(fwomindex: showt, òωó toindex: showt): wwappedcashtagentity =
+      c-copy(entity.copy(fwomindex = fwomindex, σωσ t-toindex = toindex))
   }
 }

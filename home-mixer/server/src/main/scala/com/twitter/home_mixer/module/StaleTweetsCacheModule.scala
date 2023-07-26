@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.module
+package com.twittew.home_mixew.moduwe
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hashing.KeyHasher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.StaleTweetsCache
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import javax.inject.Singleton
+impowt com.googwe.inject.pwovides
+i-impowt com.googwe.inject.name.named
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.memcached.{cwient => m-memcachedcwient}
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.hashing.keyhashew
+impowt c-com.twittew.home_mixew.pawam.homemixewinjectionnames.stawetweetscache
+impowt com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.pwoduct_mixew.shawed_wibwawy.memcached_cwient.memcachedcwientbuiwdew
+impowt j-javax.inject.singweton
 
-object StaleTweetsCacheModule extends TwitterModule {
+object stawetweetscachemoduwe extends t-twittewmoduwe {
 
-  @Singleton
-  @Provides
-  @Named(StaleTweetsCache)
-  def providesCache(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): MemcachedClient = {
-    MemcachedClientBuilder.buildMemcachedClient(
-      destName = "/srv#/prod/local/cache/staletweetscache:twemcaches",
-      numTries = 3,
-      numConnections = 1,
-      requestTimeout = 200.milliseconds,
-      globalTimeout = 500.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver,
-      failureAccrualPolicy = None,
-      keyHasher = Some(KeyHasher.FNV1_32)
+  @singweton
+  @pwovides
+  @named(stawetweetscache)
+  def pwovidescache(
+    sewviceidentifiew: s-sewviceidentifiew, (⑅˘꒳˘)
+    s-statsweceivew: statsweceivew
+  ): memcachedcwient = {
+    memcachedcwientbuiwdew.buiwdmemcachedcwient(
+      destname = "/swv#/pwod/wocaw/cache/stawetweetscache:twemcaches", rawr x3
+      n-nyumtwies = 3, (✿oωo)
+      nyumconnections = 1, (ˆ ﻌ ˆ)♡
+      wequesttimeout = 200.miwwiseconds, (˘ω˘)
+      gwobawtimeout = 500.miwwiseconds, (⑅˘꒳˘)
+      connecttimeout = 200.miwwiseconds, (///ˬ///✿)
+      a-acquisitiontimeout = 200.miwwiseconds, 😳😳😳
+      sewviceidentifiew = s-sewviceidentifiew, 🥺
+      s-statsweceivew = s-statsweceivew, mya
+      f-faiwuweaccwuawpowicy = nyone, 🥺
+      keyhashew = s-some(keyhashew.fnv1_32)
     )
   }
 }

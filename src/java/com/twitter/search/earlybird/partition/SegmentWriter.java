@@ -1,239 +1,239 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+impowt java.io.ioexception;
+i-impowt j-java.utiw.enummap;
+i-impowt java.utiw.concuwwent.timeunit;
+i-impowt j-java.utiw.concuwwent.atomic.atomicwong;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
+i-impowt c-com.googwe.common.cowwect.hashbasedtabwe;
+i-impowt com.googwe.common.cowwect.tabwe;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.util.Time;
+impowt com.twittew.seawch.common.indexing.thwiftjava.thwiftvewsionedevents;
+impowt com.twittew.seawch.common.metwics.pewcentiwe;
+impowt com.twittew.seawch.common.metwics.pewcentiweutiw;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+impowt com.twittew.seawch.common.metwics.seawchtimew;
+i-impowt com.twittew.seawch.common.metwics.seawchtimewstats;
+impowt c-com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingevent;
+impowt com.twittew.seawch.common.schema.thwiftjava.thwiftindexingeventtype;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.document.documentfactowy;
+i-impowt com.twittew.seawch.eawwybiwd.document.tweetdocument;
+impowt c-com.twittew.seawch.eawwybiwd.index.eawwybiwdsegment;
+impowt com.twittew.utiw.time;
 
-public class SegmentWriter implements ISegmentWriter {
+pubwic cwass segmentwwitew i-impwements isegmentwwitew {
 
-  // helper, used for collecting stats
-  enum FailureReason {
-    FAILED_INSERT,
-    FAILED_FOR_TWEET_IN_INDEX,
-    FAILED_FOR_COMPLETE_SEGMENT
+  // hewpew, (U ﹏ U) used fow cowwecting stats
+  enum f-faiwuweweason {
+    faiwed_insewt, UwU
+    f-faiwed_fow_tweet_in_index, XD
+    f-faiwed_fow_compwete_segment
   }
 
-  private static final String STAT_PREFIX = "segment_writer_";
-  private static final String EVENT_COUNTER = STAT_PREFIX + "%s_%s_segment_%s";
-  private static final String EVENT_COUNTER_ALL_SEGMENTS = STAT_PREFIX + "%s_%s_all_segments";
-  private static final String EVENT_TIMERS = STAT_PREFIX + "%s_timing";
-  private static final String DROPPED_UPDATES_FOR_DISABLED_SEGMENTS =
-      STAT_PREFIX + "%s_dropped_updates_for_disabled_segments";
-  private static final String INDEXING_LATENCY =
-      STAT_PREFIX + "%s_indexing_latency_ms";
+  p-pwivate s-static finaw stwing stat_pwefix = "segment_wwitew_";
+  pwivate s-static finaw stwing event_countew = stat_pwefix + "%s_%s_segment_%s";
+  p-pwivate static finaw stwing event_countew_aww_segments = stat_pwefix + "%s_%s_aww_segments";
+  pwivate static finaw stwing e-event_timews = stat_pwefix + "%s_timing";
+  pwivate s-static finaw s-stwing dwopped_updates_fow_disabwed_segments =
+      s-stat_pwefix + "%s_dwopped_updates_fow_disabwed_segments";
+  pwivate static finaw stwing indexing_watency =
+      s-stat_pwefix + "%s_indexing_watency_ms";
 
-  private final byte penguinVersion;
-  private final DocumentFactory<ThriftIndexingEvent> updateFactory;
-  private final DocumentFactory<ThriftIndexingEvent> documentFactory;
-  private final SearchRateCounter missingPenguinVersion;
-  private final EarlybirdSegment earlybirdSegment;
-  private final SegmentInfo segmentInfo;
-  // Stores per segment counters for each (indexing event type, result) pair
-  // Example stat name
-  // "segment_writer_partial_update_success_segment_twttr_search_test_start_%d_p_0_of_1"
-  private final Table<ThriftIndexingEventType, Result, SearchRateCounter> statsForUpdateType =
-      HashBasedTable.create();
-  // Stores aggregated counters for each (indexing event type, result) pair across all segments
-  // Example stat name
-  // "segment_writer_partial_update_success_all_segments"
-  private final Table<ThriftIndexingEventType, Result, SearchRateCounter>
-      aggregateStatsForUpdateType = HashBasedTable.create();
-  // Stores per segment counters for each (indexing event type, non-retryable failure reason) pair
-  // Example stat name
-  // "segment_writer_partial_update_failed_for_tweet_in_index_segment_twttr_search_t_%d_p_0_of_1"
-  private final Table<ThriftIndexingEventType, FailureReason, SearchRateCounter>
-      failureStatsForUpdateType = HashBasedTable.create();
-  // Stores aggregated counters for each (indexing event type, non-retryable failure reason) pair
-  // Example stat name
-  // "segment_writer_partial_update_failed_for_tweet_in_index_all_segments"
-  private final Table<ThriftIndexingEventType, FailureReason, SearchRateCounter>
-      aggregateFailureStatsForUpdateType = HashBasedTable.create();
-  private final EnumMap<ThriftIndexingEventType, SearchTimerStats> eventTimers =
-      new EnumMap<>(ThriftIndexingEventType.class);
-  private final EnumMap<ThriftIndexingEventType, SearchRateCounter>
-    droppedUpdatesForDisabledSegments = new EnumMap<>(ThriftIndexingEventType.class);
-  // We pass this stat from the SearchIndexingMetricSet so that we can share the atomic longs
-  // between all SegmentWriters and export the largest freshness value across all segments.
-  private final EnumMap<ThriftIndexingEventType, AtomicLong> updateFreshness;
-  private final EnumMap<ThriftIndexingEventType, Percentile<Long>> indexingLatency =
-      new EnumMap<>(ThriftIndexingEventType.class);
+  p-pwivate finaw byte penguinvewsion;
+  p-pwivate f-finaw documentfactowy<thwiftindexingevent> updatefactowy;
+  p-pwivate finaw documentfactowy<thwiftindexingevent> d-documentfactowy;
+  pwivate finaw seawchwatecountew m-missingpenguinvewsion;
+  pwivate f-finaw eawwybiwdsegment eawwybiwdsegment;
+  p-pwivate finaw segmentinfo s-segmentinfo;
+  // stowes pew segment countews fow each (indexing event type, ʘwʘ wesuwt) paiw
+  // exampwe s-stat nyame
+  // "segment_wwitew_pawtiaw_update_success_segment_twttw_seawch_test_stawt_%d_p_0_of_1"
+  p-pwivate finaw tabwe<thwiftindexingeventtype, w-wesuwt, rawr x3 seawchwatecountew> statsfowupdatetype =
+      h-hashbasedtabwe.cweate();
+  // s-stowes aggwegated countews fow each (indexing event type, ^^;; w-wesuwt) paiw acwoss aww segments
+  // exampwe stat nyame
+  // "segment_wwitew_pawtiaw_update_success_aww_segments"
+  pwivate finaw t-tabwe<thwiftindexingeventtype, ʘwʘ wesuwt, (U ﹏ U) seawchwatecountew>
+      a-aggwegatestatsfowupdatetype = h-hashbasedtabwe.cweate();
+  // s-stowes pew segment countews fow e-each (indexing e-event type, (˘ω˘) nyon-wetwyabwe f-faiwuwe w-weason) paiw
+  // exampwe stat name
+  // "segment_wwitew_pawtiaw_update_faiwed_fow_tweet_in_index_segment_twttw_seawch_t_%d_p_0_of_1"
+  p-pwivate f-finaw tabwe<thwiftindexingeventtype, f-faiwuweweason, (ꈍᴗꈍ) s-seawchwatecountew>
+      f-faiwuwestatsfowupdatetype = hashbasedtabwe.cweate();
+  // stowes aggwegated countews f-fow each (indexing event type, /(^•ω•^) nyon-wetwyabwe faiwuwe weason) paiw
+  // exampwe stat nyame
+  // "segment_wwitew_pawtiaw_update_faiwed_fow_tweet_in_index_aww_segments"
+  p-pwivate finaw tabwe<thwiftindexingeventtype, >_< faiwuweweason, σωσ seawchwatecountew>
+      a-aggwegatefaiwuwestatsfowupdatetype = h-hashbasedtabwe.cweate();
+  p-pwivate finaw enummap<thwiftindexingeventtype, ^^;; s-seawchtimewstats> eventtimews =
+      n-nyew enummap<>(thwiftindexingeventtype.cwass);
+  p-pwivate finaw enummap<thwiftindexingeventtype, 😳 seawchwatecountew>
+    dwoppedupdatesfowdisabwedsegments = nyew enummap<>(thwiftindexingeventtype.cwass);
+  // we pass this stat fwom the s-seawchindexingmetwicset so that w-we can shawe the atomic wongs
+  // b-between aww s-segmentwwitews and expowt the wawgest fweshness v-vawue acwoss aww s-segments. >_<
+  pwivate finaw enummap<thwiftindexingeventtype, -.- a-atomicwong> u-updatefweshness;
+  pwivate finaw enummap<thwiftindexingeventtype, UwU pewcentiwe<wong>> indexingwatency =
+      n-nyew enummap<>(thwiftindexingeventtype.cwass);
 
-  public SegmentWriter(
-      SegmentInfo segmentInfo,
-      EnumMap<ThriftIndexingEventType, AtomicLong> updateFreshness
+  p-pubwic segmentwwitew(
+      s-segmentinfo segmentinfo,
+      enummap<thwiftindexingeventtype, :3 a-atomicwong> updatefweshness
   ) {
-    this.segmentInfo = segmentInfo;
-    this.updateFreshness = updateFreshness;
-    this.earlybirdSegment = segmentInfo.getIndexSegment();
-    this.penguinVersion = EarlybirdConfig.getPenguinVersionByte();
-    this.updateFactory = segmentInfo.getEarlybirdIndexConfig().createUpdateFactory();
-    this.documentFactory = segmentInfo.getEarlybirdIndexConfig().createDocumentFactory();
+    t-this.segmentinfo = segmentinfo;
+    t-this.updatefweshness = updatefweshness;
+    this.eawwybiwdsegment = segmentinfo.getindexsegment();
+    this.penguinvewsion = e-eawwybiwdconfig.getpenguinvewsionbyte();
+    t-this.updatefactowy = segmentinfo.geteawwybiwdindexconfig().cweateupdatefactowy();
+    this.documentfactowy = s-segmentinfo.geteawwybiwdindexconfig().cweatedocumentfactowy();
 
-    String segmentName = segmentInfo.getSegmentName();
-    for (ThriftIndexingEventType type : ThriftIndexingEventType.values()) {
-      for (Result result : Result.values()) {
-        String stat = String.format(EVENT_COUNTER, type, result, segmentName).toLowerCase();
-        statsForUpdateType.put(type, result, SearchRateCounter.export(stat));
+    s-stwing segmentname = segmentinfo.getsegmentname();
+    fow (thwiftindexingeventtype type : thwiftindexingeventtype.vawues()) {
+      f-fow (wesuwt wesuwt : wesuwt.vawues()) {
+        stwing stat = stwing.fowmat(event_countew, σωσ t-type, >w< wesuwt, segmentname).towowewcase();
+        statsfowupdatetype.put(type, (ˆ ﻌ ˆ)♡ w-wesuwt, ʘwʘ seawchwatecountew.expowt(stat));
 
-        String aggregateStat =
-            String.format(EVENT_COUNTER_ALL_SEGMENTS, type, result).toLowerCase();
-        aggregateStatsForUpdateType.put(type, result, SearchRateCounter.export(aggregateStat));
+        s-stwing aggwegatestat =
+            stwing.fowmat(event_countew_aww_segments, type, :3 wesuwt).towowewcase();
+        a-aggwegatestatsfowupdatetype.put(type, (˘ω˘) w-wesuwt, 😳😳😳 seawchwatecountew.expowt(aggwegatestat));
       }
 
-      for (FailureReason reason : FailureReason.values()) {
-        String stat = String.format(EVENT_COUNTER, type, reason, segmentName).toLowerCase();
-        failureStatsForUpdateType.put(type, reason, SearchRateCounter.export(stat));
+      fow (faiwuweweason weason : faiwuweweason.vawues()) {
+        stwing stat = stwing.fowmat(event_countew, rawr x3 t-type, (✿oωo) weason, segmentname).towowewcase();
+        f-faiwuwestatsfowupdatetype.put(type, (ˆ ﻌ ˆ)♡ weason, seawchwatecountew.expowt(stat));
 
-        String aggregateStat =
-            String.format(EVENT_COUNTER_ALL_SEGMENTS, type, reason).toLowerCase();
-        aggregateFailureStatsForUpdateType.put(
-            type, reason, SearchRateCounter.export(aggregateStat));
+        stwing aggwegatestat =
+            stwing.fowmat(event_countew_aww_segments, :3 t-type, weason).towowewcase();
+        aggwegatefaiwuwestatsfowupdatetype.put(
+            t-type, (U ᵕ U❁) weason, s-seawchwatecountew.expowt(aggwegatestat));
       }
 
-      eventTimers.put(type, SearchTimerStats.export(
-          String.format(EVENT_TIMERS, type).toLowerCase(),
-          TimeUnit.MICROSECONDS,
-          false));
-      droppedUpdatesForDisabledSegments.put(
-          type,
-          SearchRateCounter.export(
-              String.format(DROPPED_UPDATES_FOR_DISABLED_SEGMENTS, type).toLowerCase()));
-      indexingLatency.put(
-          type,
-           PercentileUtil.createPercentile(
-              String.format(INDEXING_LATENCY, type).toLowerCase()));
+      eventtimews.put(type, ^^;; s-seawchtimewstats.expowt(
+          stwing.fowmat(event_timews, mya t-type).towowewcase(), 😳😳😳
+          t-timeunit.micwoseconds, OwO
+          f-fawse));
+      dwoppedupdatesfowdisabwedsegments.put(
+          t-type, rawr
+          s-seawchwatecountew.expowt(
+              stwing.fowmat(dwopped_updates_fow_disabwed_segments, XD type).towowewcase()));
+      indexingwatency.put(
+          t-type, (U ﹏ U)
+           pewcentiweutiw.cweatepewcentiwe(
+              s-stwing.fowmat(indexing_watency, (˘ω˘) t-type).towowewcase()));
     }
 
-    this.missingPenguinVersion = SearchRateCounter.export(
-        "documents_without_current_penguin_version_" + penguinVersion + "_" + segmentName);
+    this.missingpenguinvewsion = seawchwatecountew.expowt(
+        "documents_without_cuwwent_penguin_vewsion_" + p-penguinvewsion + "_" + segmentname);
   }
 
-  @Override
-  public synchronized Result indexThriftVersionedEvents(ThriftVersionedEvents tve)
-      throws IOException {
-    if (!tve.getVersionedEvents().containsKey(penguinVersion)) {
-      missingPenguinVersion.increment();
-      return Result.FAILURE_NOT_RETRYABLE;
+  @ovewwide
+  p-pubwic synchwonized w-wesuwt indexthwiftvewsionedevents(thwiftvewsionedevents tve)
+      thwows ioexception {
+    i-if (!tve.getvewsionedevents().containskey(penguinvewsion)) {
+      m-missingpenguinvewsion.incwement();
+      w-wetuwn wesuwt.faiwuwe_not_wetwyabwe;
     }
 
-    ThriftIndexingEvent tie = tve.getVersionedEvents().get(penguinVersion);
-    ThriftIndexingEventType eventType = tie.getEventType();
+    t-thwiftindexingevent tie = tve.getvewsionedevents().get(penguinvewsion);
+    t-thwiftindexingeventtype eventtype = tie.geteventtype();
 
-    if (!segmentInfo.isEnabled()) {
-      droppedUpdatesForDisabledSegments.get(eventType).increment();
-      return Result.SUCCESS;
+    if (!segmentinfo.isenabwed()) {
+      dwoppedupdatesfowdisabwedsegments.get(eventtype).incwement();
+      wetuwn wesuwt.success;
     }
 
-    SearchTimerStats timerStats = eventTimers.get(eventType);
-    SearchTimer timer = timerStats.startNewTimer();
+    s-seawchtimewstats timewstats = e-eventtimews.get(eventtype);
+    seawchtimew t-timew = timewstats.stawtnewtimew();
 
-    long tweetId = tve.getId();
-    Result result = tryApplyIndexingEvent(tweetId, tie);
+    wong tweetid = t-tve.getid();
+    wesuwt w-wesuwt = twyappwyindexingevent(tweetid, UwU t-tie);
 
-    if (result == Result.SUCCESS) {
-      long tweetAgeInMs = SnowflakeIdParser.getTimestampFromTweetId(tweetId);
+    i-if (wesuwt == w-wesuwt.success) {
+      w-wong tweetageinms = snowfwakeidpawsew.gettimestampfwomtweetid(tweetid);
 
-      AtomicLong freshness = updateFreshness.get(tie.getEventType());
-      // Note that this is racy at startup because we don't do an atomic swap, but it will be
-      // approximately accurate, and this stat doesn't matter until we are current.
-      if (freshness.get() < tweetAgeInMs) {
-        freshness.set(tweetAgeInMs);
+      atomicwong fweshness = updatefweshness.get(tie.geteventtype());
+      // nyote that this is wacy at stawtup b-because we d-don't do an atomic s-swap, >_< but it wiww be
+      // a-appwoximatewy accuwate, σωσ and this stat doesn't mattew untiw we awe c-cuwwent. 🥺
+      i-if (fweshness.get() < tweetageinms) {
+        f-fweshness.set(tweetageinms);
       }
 
-      if (tie.isSetCreateTimeMillis()) {
-        long age = Time.now().inMillis() - tie.getCreateTimeMillis();
-        indexingLatency.get(tie.getEventType()).record(age);
+      if (tie.issetcweatetimemiwwis()) {
+        wong age = t-time.now().inmiwwis() - t-tie.getcweatetimemiwwis();
+        indexingwatency.get(tie.geteventtype()).wecowd(age);
       }
     }
 
-    statsForUpdateType.get(eventType, result).increment();
-    aggregateStatsForUpdateType.get(eventType, result).increment();
-    timerStats.stopTimerAndIncrement(timer);
+    s-statsfowupdatetype.get(eventtype, 🥺 w-wesuwt).incwement();
+    aggwegatestatsfowupdatetype.get(eventtype, ʘwʘ wesuwt).incwement();
+    timewstats.stoptimewandincwement(timew);
 
-    return result;
+    wetuwn wesuwt;
   }
 
-  public SegmentInfo getSegmentInfo() {
-    return segmentInfo;
+  p-pubwic segmentinfo g-getsegmentinfo() {
+    w-wetuwn segmentinfo;
   }
 
-  public boolean hasTweet(long tweetId) throws IOException {
-    return earlybirdSegment.hasDocument(tweetId);
+  p-pubwic b-boowean hastweet(wong tweetid) t-thwows ioexception {
+    w-wetuwn eawwybiwdsegment.hasdocument(tweetid);
   }
 
-  private Result tryApplyIndexingEvent(long tweetId, ThriftIndexingEvent tie) throws IOException {
-    if (applyIndexingEvent(tie, tweetId)) {
-      return Result.SUCCESS;
+  p-pwivate wesuwt t-twyappwyindexingevent(wong tweetid, :3 t-thwiftindexingevent tie) thwows ioexception {
+    i-if (appwyindexingevent(tie, (U ﹏ U) tweetid)) {
+      w-wetuwn wesuwt.success;
     }
 
-    if (tie.getEventType() == ThriftIndexingEventType.INSERT) {
-      // We don't retry inserts
-      incrementFailureStats(tie, FailureReason.FAILED_INSERT);
-      return Result.FAILURE_NOT_RETRYABLE;
+    i-if (tie.geteventtype() == thwiftindexingeventtype.insewt) {
+      // w-we don't wetwy insewts
+      incwementfaiwuwestats(tie, (U ﹏ U) f-faiwuweweason.faiwed_insewt);
+      w-wetuwn wesuwt.faiwuwe_not_wetwyabwe;
     }
 
-    if (earlybirdSegment.hasDocument(tweetId)) {
-      // An update fails to be applied for a tweet that is in the index.
-      incrementFailureStats(tie, FailureReason.FAILED_FOR_TWEET_IN_INDEX);
-      return Result.FAILURE_NOT_RETRYABLE;
+    i-if (eawwybiwdsegment.hasdocument(tweetid)) {
+      // an update faiws to be appwied fow a t-tweet that is in the index. ʘwʘ
+      incwementfaiwuwestats(tie, >w< f-faiwuweweason.faiwed_fow_tweet_in_index);
+      w-wetuwn wesuwt.faiwuwe_not_wetwyabwe;
     }
 
-    if (segmentInfo.isComplete()) {
-      // An update is directed at a tweet that is not in the segment (hasDocument(tweetId) failed),
-      // and the segment is complete (i.e. there will never be new tweets for this segment).
-      incrementFailureStats(tie, FailureReason.FAILED_FOR_COMPLETE_SEGMENT);
-      return Result.FAILURE_NOT_RETRYABLE;
+    i-if (segmentinfo.iscompwete()) {
+      // an update i-is diwected at a-a tweet that is nyot in the segment (hasdocument(tweetid) faiwed), rawr x3
+      // a-and the segment is compwete (i.e. thewe w-wiww nevew be n-nyew tweets fow this segment). OwO
+      i-incwementfaiwuwestats(tie, ^•ﻌ•^ faiwuweweason.faiwed_fow_compwete_segment);
+      w-wetuwn wesuwt.faiwuwe_not_wetwyabwe;
     }
 
-    // The tweet may arrive later for this event, so it's possible a later try will succeed
-    return Result.FAILURE_RETRYABLE;
+    // t-the tweet m-may awwive watew fow this event, so it's possibwe a watew twy wiww succeed
+    wetuwn wesuwt.faiwuwe_wetwyabwe;
   }
 
-  private void incrementFailureStats(ThriftIndexingEvent tie, FailureReason failureReason) {
-    failureStatsForUpdateType.get(tie.getEventType(), failureReason).increment();
-    aggregateFailureStatsForUpdateType.get(tie.getEventType(), failureReason).increment();
+  pwivate void incwementfaiwuwestats(thwiftindexingevent tie, >_< faiwuweweason faiwuweweason) {
+    faiwuwestatsfowupdatetype.get(tie.geteventtype(), OwO faiwuweweason).incwement();
+    aggwegatefaiwuwestatsfowupdatetype.get(tie.geteventtype(), >_< f-faiwuweweason).incwement();
   }
 
-  private boolean applyIndexingEvent(ThriftIndexingEvent tie, long tweetId) throws IOException {
-    switch (tie.getEventType()) {
-      case OUT_OF_ORDER_APPEND:
-        return earlybirdSegment.appendOutOfOrder(updateFactory.newDocument(tie), tweetId);
-      case PARTIAL_UPDATE:
-        return earlybirdSegment.applyPartialUpdate(tie);
-      case DELETE:
-        return earlybirdSegment.delete(tweetId);
-      case INSERT:
-        earlybirdSegment.addDocument(buildInsertDocument(tie, tweetId));
-        return true;
-      default:
-        throw new IllegalArgumentException("Unexpected update type: " + tie.getEventType());
+  p-pwivate boowean appwyindexingevent(thwiftindexingevent tie, (ꈍᴗꈍ) w-wong tweetid) t-thwows ioexception {
+    s-switch (tie.geteventtype()) {
+      case o-out_of_owdew_append:
+        wetuwn eawwybiwdsegment.appendoutofowdew(updatefactowy.newdocument(tie), >w< t-tweetid);
+      c-case pawtiaw_update:
+        wetuwn eawwybiwdsegment.appwypawtiawupdate(tie);
+      c-case dewete:
+        w-wetuwn eawwybiwdsegment.dewete(tweetid);
+      c-case insewt:
+        eawwybiwdsegment.adddocument(buiwdinsewtdocument(tie, tweetid));
+        wetuwn t-twue;
+      d-defauwt:
+        t-thwow nyew iwwegawawgumentexception("unexpected u-update type: " + t-tie.geteventtype());
     }
   }
 
-  private TweetDocument buildInsertDocument(ThriftIndexingEvent tie, long tweetId) {
-    return new TweetDocument(
-        tweetId,
-        segmentInfo.getTimeSliceID(),
-        tie.getCreateTimeMillis(),
-        documentFactory.newDocument(tie));
+  p-pwivate tweetdocument b-buiwdinsewtdocument(thwiftindexingevent t-tie, (U ﹏ U) wong tweetid) {
+    w-wetuwn nyew tweetdocument(
+        t-tweetid, ^^
+        s-segmentinfo.gettimeswiceid(), (U ﹏ U)
+        t-tie.getcweatetimemiwwis(), :3
+        documentfactowy.newdocument(tie));
   }
 }

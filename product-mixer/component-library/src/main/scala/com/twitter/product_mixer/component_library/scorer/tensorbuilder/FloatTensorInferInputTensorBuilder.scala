@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.twittew.pwoduct_mixew.component_wibwawy.scowew.tensowbuiwdew
 
-import com.twitter.ml.api.thriftscala.FloatTensor
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+impowt c-com.twittew.mw.api.thwiftscawa.fwoattensow
+i-impowt i-infewence.gwpcsewvice.modewinfewwequest.infewinputtensow
 
-case object FloatTensorInferInputTensorBuilder extends InferInputTensorBuilder[FloatTensor] {
+c-case o-object fwoattensowinfewinputtensowbuiwdew e-extends i-infewinputtensowbuiwdew[fwoattensow] {
 
-  private[tensorbuilder] def extractTensorShape(featureValues: Seq[FloatTensor]): Seq[Int] = {
-    val headFloatTensor = featureValues.head
-    if (headFloatTensor.shape.isEmpty) {
-      Seq(
-        featureValues.size,
-        featureValues.head.floats.size
+  p-pwivate[tensowbuiwdew] def extwacttensowshape(featuwevawues: seq[fwoattensow]): seq[int] = {
+    vaw h-headfwoattensow = featuwevawues.head
+    if (headfwoattensow.shape.isempty) {
+      s-seq(
+        featuwevawues.size, (⑅˘꒳˘)
+        featuwevawues.head.fwoats.size
       )
-    } else {
-      Seq(featureValues.size) ++ headFloatTensor.shape.get.map(_.toInt)
+    } e-ewse {
+      seq(featuwevawues.size) ++ headfwoattensow.shape.get.map(_.toint)
     }
   }
 
-  def apply(
-    featureName: String,
-    featureValues: Seq[FloatTensor]
-  ): Seq[InferInputTensor] = {
-    if (featureValues.isEmpty) throw new EmptyFloatTensorException(featureName)
-    val tensorShape = extractTensorShape(featureValues)
-    val floatValues = featureValues.flatMap { featureValue =>
-      featureValue.floats.map(_.toFloat)
+  def appwy(
+    f-featuwename: stwing, rawr x3
+    f-featuwevawues: seq[fwoattensow]
+  ): s-seq[infewinputtensow] = {
+    if (featuwevawues.isempty) thwow nyew emptyfwoattensowexception(featuwename)
+    vaw tensowshape = e-extwacttensowshape(featuwevawues)
+    vaw fwoatvawues = featuwevawues.fwatmap { featuwevawue =>
+      featuwevawue.fwoats.map(_.tofwoat)
     }
-    InferInputTensorBuilder.buildFloat32InferInputTensor(featureName, floatValues, tensorShape)
+    i-infewinputtensowbuiwdew.buiwdfwoat32infewinputtensow(featuwename, (✿oωo) fwoatvawues, (ˆ ﻌ ˆ)♡ t-tensowshape)
   }
 }
-class EmptyFloatTensorException(featureName: String)
-    extends RuntimeException(s"FloatTensor in feature $featureName is empty!")
+c-cwass e-emptyfwoattensowexception(featuwename: s-stwing)
+    extends wuntimeexception(s"fwoattensow in featuwe $featuwename i-is empty!")

@@ -1,28 +1,28 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.twittew.timewinewankew.uteg_wiked_by_tweets
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.util.Future
+impowt com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.hydwatedcandidatesandfeatuwesenvewope
+impowt c-com.twittew.utiw.futuwe
 
-object SocialProofAndUTEGScoreHydrationTransform
-    extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+object s-sociawpwoofandutegscowehydwationtwansfowm
+    e-extends futuweawwow[
+      hydwatedcandidatesandfeatuwesenvewope, (U ᵕ U❁)
+      h-hydwatedcandidatesandfeatuwesenvewope
     ] {
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
+  o-ovewwide d-def appwy(
+    w-wequest: hydwatedcandidatesandfeatuwesenvewope
+  ): futuwe[hydwatedcandidatesandfeatuwesenvewope] = {
 
-    val updatedFeatures = request.features.map {
-      case (tweetId, features) =>
-        tweetId ->
-          features.copy(
-            utegSocialProofByType =
-              request.candidateEnvelope.utegResults.get(tweetId).map(_.socialProofByType),
-            utegScore = request.candidateEnvelope.utegResults.get(tweetId).map(_.score)
+    vaw updatedfeatuwes = wequest.featuwes.map {
+      case (tweetid, -.- f-featuwes) =>
+        tweetid ->
+          featuwes.copy(
+            u-utegsociawpwoofbytype =
+              wequest.candidateenvewope.utegwesuwts.get(tweetid).map(_.sociawpwoofbytype), ^^;;
+            u-utegscowe = wequest.candidateenvewope.utegwesuwts.get(tweetid).map(_.scowe)
           )
     }
 
-    Future.value(request.copy(features = updatedFeatures))
+    futuwe.vawue(wequest.copy(featuwes = updatedfeatuwes))
   }
 }

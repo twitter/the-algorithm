@@ -1,91 +1,91 @@
-package com.twitter.ann.scalding.offline
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Metric
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+package com.twittew.ann.scawding.offwine
+impowt com.twittew.ann.common.distance
+impowt c-com.twittew.ann.common.metwic
+i-impowt com.twittew.cowtex.mw.embeddings.common.entitykind
+i-impowt c-com.twittew.mw.featuwestowe.wib.entityid
+i-impowt c-com.twittew.scawding.typed.typedpipe
+i-impowt c-com.twittew.scawding._
+impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
 
 /**
- * This job do an exhaustive search for nearest neighbours helpful for debugging recommendations
- * for a given list of sample queryIds and entity embeddings for the recos to be made.
- * Sample job script:
-  ./bazel bundle ann/src/main/scala/com/twitter/ann/scalding/offline:ann-offline-deploy
+ * this job do an exhaustive seawch fow n-nyeawest nyeighbouws hewpfuw fow debugging wecommendations
+ * f-fow a given wist of sampwe quewyids a-and entity embeddings fow the wecos to be made. 😳
+ * sampwe job s-scwipt:
+  ./bazew bundwe ann/swc/main/scawa/com/twittew/ann/scawding/offwine:ann-offwine-depwoy
 
-  oscar hdfs \
-  --screen --tee log.txt \
-  --hadoop-client-memory 6000 \
-  --hadoop-properties "yarn.app.mapreduce.am.resource.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map.memory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce.memory.mb=7500;mapred.task.timeout=36000000;" \
-  --bundle ann-offline-deploy \
-  --min-split-size 284217728 \
-  --host hadoopnest1.smf1.twitter.com \
-  --tool com.twitter.ann.scalding.offline.KnnEntityRecoDebugJob -- \
-  --neighbors 10 \
-  --metric InnerProduct \
-  --query_entity_kind user \
-  --search_space_entity_kind user \
-  --query.embedding_path /user/apoorvs/sample_embeddings \
-  --query.embedding_format tab \
-  --search_space.embedding_path /user/apoorvs/sample_embeddings \
-  --search_space.embedding_format tab \
-  --query_ids 974308319300149248 988871266244464640 2719685122 2489777564 \
-  --output_path /user/apoorvs/adhochadoop/test \
-  --reducers 100
+  o-oscaw hdfs \
+  --scween --tee w-wog.txt \
+  --hadoop-cwient-memowy 6000 \
+  --hadoop-pwopewties "yawn.app.mapweduce.am.wesouwce.mb=6000;yawn.app.mapweduce.am.command-opts='-xmx7500m';mapweduce.map.memowy.mb=7500;mapweduce.weduce.java.opts='-xmx6000m';mapweduce.weduce.memowy.mb=7500;mapwed.task.timeout=36000000;" \
+  --bundwe ann-offwine-depwoy \
+  --min-spwit-size 284217728 \
+  --host hadoopnest1.smf1.twittew.com \
+  --toow com.twittew.ann.scawding.offwine.knnentitywecodebugjob -- \
+  --neighbows 10 \
+  --metwic innewpwoduct \
+  --quewy_entity_kind usew \
+  --seawch_space_entity_kind u-usew \
+  --quewy.embedding_path /usew/apoowvs/sampwe_embeddings \
+  --quewy.embedding_fowmat tab \
+  --seawch_space.embedding_path /usew/apoowvs/sampwe_embeddings \
+  --seawch_space.embedding_fowmat tab \
+  --quewy_ids 974308319300149248 988871266244464640 2719685122 2489777564 \
+  --output_path /usew/apoowvs/adhochadoop/test \
+  --weducews 100
  */
-object KnnEntityRecoDebugJob extends TwitterExecutionApp {
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
-      val queryEntityKind = EntityKind.getEntityKind(args("query_entity_kind"))
-      val searchSpaceEntityKind = EntityKind.getEntityKind(args("search_space_entity_kind"))
-      val metric = Metric.fromString(args("metric"))
-      run(queryEntityKind, searchSpaceEntityKind, metric, args)
+object knnentitywecodebugjob extends twittewexecutionapp {
+  o-ovewwide def job: e-execution[unit] = e-execution.withid { i-impwicit uniqueid =>
+    e-execution.getawgs.fwatmap { awgs: awgs =>
+      vaw q-quewyentitykind = entitykind.getentitykind(awgs("quewy_entity_kind"))
+      vaw s-seawchspaceentitykind = entitykind.getentitykind(awgs("seawch_space_entity_kind"))
+      vaw metwic = metwic.fwomstwing(awgs("metwic"))
+      wun(quewyentitykind, (ˆ ﻌ ˆ)♡ seawchspaceentitykind, 😳😳😳 m-metwic, (U ﹏ U) awgs)
     }
   }
 
-  private[this] def run[A <: EntityId, B <: EntityId, D <: Distance[D]](
-    uncastQueryEntityKind: EntityKind[_],
-    uncastSearchSpaceEntityKind: EntityKind[_],
-    uncastMetric: Metric[_],
-    args: Args
+  p-pwivate[this] d-def wun[a <: e-entityid, b <: entityid, (///ˬ///✿) d <: distance[d]](
+    uncastquewyentitykind: e-entitykind[_], 😳
+    u-uncastseawchspaceentitykind: entitykind[_],
+    u-uncastmetwic: m-metwic[_], 😳
+    awgs: awgs
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import KnnHelper._
+    i-impwicit uniqueid: u-uniqueid
+  ): execution[unit] = {
+    impowt knnhewpew._
 
-    val numNeighbors = args.int("neighbors")
-    val reducers = args.getOrElse("reducers", "100").toInt
+    vaw n-nyumneighbows = awgs.int("neighbows")
+    v-vaw weducews = awgs.getowewse("weducews", σωσ "100").toint
 
-    val queryEntityKind = uncastQueryEntityKind.asInstanceOf[EntityKind[A]]
-    val searchSpaceEntityKind = uncastSearchSpaceEntityKind.asInstanceOf[EntityKind[B]]
-    val metric = uncastMetric.asInstanceOf[Metric[D]]
+    v-vaw quewyentitykind = u-uncastquewyentitykind.asinstanceof[entitykind[a]]
+    vaw seawchspaceentitykind = uncastseawchspaceentitykind.asinstanceof[entitykind[b]]
+    vaw metwic = uncastmetwic.asinstanceof[metwic[d]]
 
-    // Filter the query entity embeddings with the queryIds
-    val queryIds = args.list("query_ids")
-    assert(queryIds.nonEmpty)
-    val filterQueryIds: TypedPipe[A] = TypedPipe
-      .from(queryIds)
-      .map(queryEntityKind.stringInjection.invert(_).get)
-    val queryEmbeddings = queryEntityKind.parser.getEmbeddingFormat(args, "query").getEmbeddings
+    // fiwtew the quewy entity embeddings w-with the q-quewyids
+    vaw quewyids = awgs.wist("quewy_ids")
+    a-assewt(quewyids.nonempty)
+    v-vaw fiwtewquewyids: t-typedpipe[a] = typedpipe
+      .fwom(quewyids)
+      .map(quewyentitykind.stwinginjection.invewt(_).get)
+    vaw quewyembeddings = quewyentitykind.pawsew.getembeddingfowmat(awgs, "quewy").getembeddings
 
-    // Get the neighbour embeddings
-    val searchSpaceEmbeddings =
-      searchSpaceEntityKind.parser.getEmbeddingFormat(args, "search_space").getEmbeddings
+    // g-get the nyeighbouw embeddings
+    vaw seawchspaceembeddings =
+      seawchspaceentitykind.pawsew.getembeddingfowmat(awgs, rawr x3 "seawch_space").getembeddings
 
-    val nearestNeighborString = findNearestNeighbours(
-      queryEmbeddings,
-      searchSpaceEmbeddings,
-      metric,
-      numNeighbors,
-      Some(filterQueryIds),
-      reducers
-    )(queryEntityKind.ordering, uniqueID).map(
-      nearestNeighborsToString(_, queryEntityKind, searchSpaceEntityKind)
+    v-vaw nyeawestneighbowstwing = findneawestneighbouws(
+      q-quewyembeddings, OwO
+      s-seawchspaceembeddings, /(^•ω•^)
+      m-metwic, 😳😳😳
+      nyumneighbows, ( ͡o ω ͡o )
+      s-some(fiwtewquewyids), >_<
+      w-weducews
+    )(quewyentitykind.owdewing, u-uniqueid).map(
+      n-neawestneighbowstostwing(_, >w< quewyentitykind, rawr seawchspaceentitykind)
     )
 
-    // Write the nearest neighbor string to one part file.
-    nearestNeighborString
-      .shard(1)
-      .writeExecution(TypedTsv(args("output_path")))
+    // w-wwite the n-nyeawest nyeighbow s-stwing to one p-pawt fiwe. 😳
+    n-nyeawestneighbowstwing
+      .shawd(1)
+      .wwiteexecution(typedtsv(awgs("output_path")))
   }
 }

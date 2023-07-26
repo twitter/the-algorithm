@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.tweet_composew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.Reply
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.TweetComposerDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.TweetComposerSelfThread
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet_composew.wepwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet_composew.tweetcomposewdispwaytype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tweet_composew.tweetcomposewsewfthwead
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class TweetComposerDisplayTypeMarshaller @Inject() () {
+@singweton
+cwass tweetcomposewdispwaytypemawshawwew @inject() () {
 
-  def apply(displayType: TweetComposerDisplayType): urt.TweetComposerDisplayType =
-    displayType match {
-      case TweetComposerSelfThread => urt.TweetComposerDisplayType.SelfThread
-      case Reply => urt.TweetComposerDisplayType.Reply
+  def appwy(dispwaytype: tweetcomposewdispwaytype): u-uwt.tweetcomposewdispwaytype =
+    dispwaytype match {
+      c-case tweetcomposewsewfthwead => uwt.tweetcomposewdispwaytype.sewfthwead
+      c-case wepwy => uwt.tweetcomposewdispwaytype.wepwy
     }
 }

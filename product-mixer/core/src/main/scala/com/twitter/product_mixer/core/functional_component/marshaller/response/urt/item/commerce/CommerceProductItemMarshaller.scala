@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.commerce
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.commewce
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.commewce.commewcepwoductitem
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => u-uwt}
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class CommerceProductItemMarshaller @Inject() () {
+@singweton
+c-cwass commewcepwoductitemmawshawwew @inject() () {
 
-  def apply(commerceProductItem: CommerceProductItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.CommerceProduct(urt.CommerceProduct(commerceProductItem.id))
+  d-def appwy(commewcepwoductitem: c-commewcepwoductitem): uwt.timewineitemcontent =
+    uwt.timewineitemcontent.commewcepwoduct(uwt.commewcepwoduct(commewcepwoductitem.id))
 }

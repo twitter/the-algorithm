@@ -1,123 +1,123 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.twittew.cw_mixew.thwiftjava
+#@namespace scawa c-com.twittew.cw_mixew.thwiftscawa
+#@namespace s-stwato c-com.twittew.cw_mixew
 
-// Due to legacy reason, SourceType used to represent both SourceSignalType and SimilarityEngineType
-// Hence, you can see several SourceType such as UserInterestedIn, HashSpace, etc.
-// Moving forward, SourceType will be used for SourceSignalType ONLY. eg., TweetFavorite, UserFollow
-// We will create a new SimilarityEngineType to separate them. eg., SimClustersANN
-enum SourceType {
-  // Tweet based Source Signal
-  TweetFavorite       = 0
-  Retweet             = 1
-  TrafficAttribution  = 2 // Traffic Attribution will be migrated over in Q3
-  OriginalTweet       = 3
-  Reply               = 4
-  TweetShare          = 5
-  GoodTweetClick      = 6 // total dwell time > N seconds after click on the tweet
-  VideoTweetQualityView = 7
-  VideoTweetPlayback50  = 8
+// d-due t-to wegacy weason, nyaa~~ s-souwcetype used t-to wepwesent b-both souwcesignawtype and simiwawityenginetype
+// hence, :3 you can see sevewaw souwcetype such as u-usewintewestedin, ( ͡o ω ͡o ) hashspace, etc. mya
+// moving fowwawd, (///ˬ///✿) s-souwcetype wiww be used fow s-souwcesignawtype onwy. (˘ω˘) eg., tweetfavowite, ^^;; usewfowwow
+// we wiww c-cweate a nyew simiwawityenginetype t-to sepawate t-them. (✿oωo) eg., simcwustewsann
+enum souwcetype {
+  // tweet based souwce signaw
+  tweetfavowite       = 0
+  w-wetweet             = 1
+  twafficattwibution  = 2 // twaffic attwibution wiww be migwated o-ovew in q3
+  owiginawtweet       = 3
+  wepwy               = 4
+  t-tweetshawe          = 5
+  g-goodtweetcwick      = 6 // t-totaw dweww t-time > ny seconds aftew cwick on the tweet
+  v-videotweetquawityview = 7
+  videotweetpwayback50  = 8
 
-  // UserId based Source Signal (includes both Producer/Consumer)
-  UserFollow               = 101
-  UserRepeatedProfileVisit = 102
+  // usewid b-based souwce signaw (incwudes both pwoducew/consumew)
+  usewfowwow               = 101
+  usewwepeatedpwofiwevisit = 102
 
-  CurrentUser_DEPRECATED   = 103
+  cuwwentusew_depwecated   = 103
 
-  RealGraphOon             = 104
-  FollowRecommendation     = 105
+  weawgwaphoon             = 104
+  f-fowwowwecommendation     = 105
 
-  TwiceUserId              = 106
-  UserTrafficAttributionProfileVisit = 107
-  GoodProfileClick         = 108 // total dwell time > N seconds after click into the profile page
+  twiceusewid              = 106
+  u-usewtwafficattwibutionpwofiwevisit = 107
+  g-goodpwofiwecwick         = 108 // t-totaw dweww time > ny seconds aftew cwick into the pwofiwe page
 
-  // (Notification) Tweet based Source Signal
-  NotificationClick   = 201
+  // (notification) t-tweet based s-souwce signaw
+  nyotificationcwick   = 201
 
-  // (Home) Tweet based Source Signal
-  HomeTweetClick       = 301
-  HomeVideoView        = 302
-  HomeSongbirdShowMore = 303
+  // (home) t-tweet b-based souwce signaw
+  hometweetcwick       = 301
+  h-homevideoview        = 302
+  homesongbiwdshowmowe = 303
 
-  // Topic based Source Signal
-  TopicFollow         = 401 // Deprecated
-  PopularTopic        = 402 // Deprecated
+  // t-topic based souwce signaw
+  topicfowwow         = 401 // depwecated
+  p-popuwawtopic        = 402 // depwecated
 
-  // Old CR code
-  UserInterestedIn    = 501 // Deprecated
-  TwiceInterestedIn   = 502 // Deprecated
-  MBCG                = 503 // Deprecated
-  HashSpace           = 504 // Deprecated
+  // o-owd cw code
+  usewintewestedin    = 501 // d-depwecated
+  twiceintewestedin   = 502 // d-depwecated
+  mbcg                = 503 // depwecated
+  hashspace           = 504 // depwecated
 
-  // Old CR code
-  Cluster             = 601 // Deprecated
+  // owd cw code
+  cwustew             = 601 // depwecated
 
-  // Search based Source Signal
-  SearchProfileClick  = 701 // Deprecated
-  SearchTweetClick    = 702 // Deprecated
+  // seawch b-based souwce s-signaw
+  seawchpwofiwecwick  = 701 // depwecated
+  s-seawchtweetcwick    = 702 // d-depwecated
 
-  // Graph based Source
-  StrongTiePrediction      = 801 // STP
-  TwiceClustersMembers     = 802
-  Lookalike                = 803 // Deprecated
-  RealGraphIn              = 804
+  // g-gwaph based souwce
+  stwongtiepwediction      = 801 // stp
+  twicecwustewsmembews     = 802
+  wookawike                = 803 // depwecated
+  weawgwaphin              = 804
 
-  // Current requester User Id. It is only used for scribing. Placeholder value
-  RequestUserId       = 1001
-  // Current request Tweet Id used in RelatedTweet. Placeholder value
-  RequestTweetId      = 1002
+  // c-cuwwent wequestew usew id. (U ﹏ U) it is onwy used fow scwibing. pwacehowdew vawue
+  w-wequestusewid       = 1001
+  // cuwwent wequest t-tweet id used in w-wewatedtweet. -.- pwacehowdew v-vawue
+  wequesttweetid      = 1002
 
-  // Negative Signals
-  TweetReport = 1101
-  TweetDontLike = 1102
-  TweetSeeFewer = 1103
-  AccountBlock = 1104
-  AccountMute = 1105
+  // n-nyegative signaws
+  t-tweetwepowt = 1101
+  t-tweetdontwike = 1102
+  t-tweetseefewew = 1103
+  accountbwock = 1104
+  accountmute = 1105
 
-  // Aggregated Signals
-  TweetAggregation = 1201
-  ProducerAggregation = 1202
-} (persisted='true', hasPersonalData='true')
+  // a-aggwegated s-signaws
+  tweetaggwegation = 1201
+  p-pwoducewaggwegation = 1202
+} (pewsisted='twue', ^•ﻌ•^ h-haspewsonawdata='twue')
 
-enum SimilarityEngineType {
-  SimClustersANN              = 1
-  TweetBasedUserTweetGraph    = 2
-  TweetBasedTwHINANN          = 3
-  Follow2VecANN               = 4 // ConsumerEmbeddingBasedFollow2Vec
-  QIG                         = 5
-  OfflineSimClustersANN       = 6
-  LookalikeUTG_DEPRECATED     = 7
-  ProducerBasedUserTweetGraph = 8
-  FrsUTG_DEPRECATED           = 9
-  RealGraphOonUTG_DEPRECATED  = 10
-  ConsumerEmbeddingBasedTwHINANN = 11
-  TwhinCollabFilter           = 12
-  TwiceUTG_DEPRECATED         = 13
-  ConsumerEmbeddingBasedTwoTowerANN = 14
-  TweetBasedBeTANN            = 15
-  StpUTG_DEPRECATED           = 16
-  UTEG                        = 17
-  ROMR                        = 18
-  ConsumersBasedUserTweetGraph  = 19
-  TweetBasedUserVideoGraph    = 20
-  CertoTopicTweet             = 24
-  ConsumersBasedUserAdGraph   = 25
-  TweetBasedUserAdGraph       = 26
-  SkitTfgTopicTweet           = 27
-  ConsumerBasedWalsANN        = 28
-  ProducerBasedUserAdGraph    = 29
-  SkitHighPrecisionTopicTweet = 30
-  SkitInterestBrowserTopicTweet = 31
-  SkitProducerBasedTopicTweet   = 32
-  ExploreTripOfflineSimClustersTweets = 33
-  DiffusionBasedTweet = 34
-  ConsumersBasedUserVideoGraph  = 35
+e-enum simiwawityenginetype {
+  simcwustewsann              = 1
+  tweetbasedusewtweetgwaph    = 2
+  tweetbasedtwhinann          = 3
+  f-fowwow2vecann               = 4 // consumewembeddingbasedfowwow2vec
+  qig                         = 5
+  offwinesimcwustewsann       = 6
+  wookawikeutg_depwecated     = 7
+  pwoducewbasedusewtweetgwaph = 8
+  f-fwsutg_depwecated           = 9
+  weawgwaphoonutg_depwecated  = 10
+  consumewembeddingbasedtwhinann = 11
+  twhincowwabfiwtew           = 12
+  twiceutg_depwecated         = 13
+  c-consumewembeddingbasedtwotowewann = 14
+  t-tweetbasedbetann            = 15
+  s-stputg_depwecated           = 16
+  uteg                        = 17
+  w-womw                        = 18
+  consumewsbasedusewtweetgwaph  = 19
+  tweetbasedusewvideogwaph    = 20
+  c-cewtotopictweet             = 24
+  c-consumewsbasedusewadgwaph   = 25
+  tweetbasedusewadgwaph       = 26
+  skittfgtopictweet           = 27
+  consumewbasedwawsann        = 28
+  pwoducewbasedusewadgwaph    = 29
+  skithighpwecisiontopictweet = 30
+  s-skitintewestbwowsewtopictweet = 31
+  skitpwoducewbasedtopictweet   = 32
+  e-expwowetwipoffwinesimcwustewstweets = 33
+  diffusionbasedtweet = 34
+  c-consumewsbasedusewvideogwaph  = 35
 
-  // In network
-  EarlybirdRecencyBasedSimilarityEngine = 21
-  EarlybirdModelBasedSimilarityEngine = 22
-  EarlybirdTensorflowBasedSimilarityEngine = 23
-  // Composite
-  TweetBasedUnifiedSimilarityEngine    = 1001
-  ProducerBasedUnifiedSimilarityEngine = 1002
-} (persisted='true')
+  // i-in nyetwowk
+  eawwybiwdwecencybasedsimiwawityengine = 21
+  eawwybiwdmodewbasedsimiwawityengine = 22
+  eawwybiwdtensowfwowbasedsimiwawityengine = 23
+  // c-composite
+  t-tweetbasedunifiedsimiwawityengine    = 1001
+  pwoducewbasedunifiedsimiwawityengine = 1002
+} (pewsisted='twue')

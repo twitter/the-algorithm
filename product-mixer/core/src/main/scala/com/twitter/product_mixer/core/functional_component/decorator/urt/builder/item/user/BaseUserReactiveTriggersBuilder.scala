@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.user
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.usew
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserReactiveTriggers
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.baseusewcandidate
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usewweactivetwiggews
+i-impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
-trait BaseUserReactiveTriggersBuilder[-Query <: PipelineQuery, -Candidate <: BaseUserCandidate] {
+t-twait baseusewweactivetwiggewsbuiwdew[-quewy <: p-pipewinequewy, >_< -candidate <: b-baseusewcandidate] {
 
-  def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[UserReactiveTriggers]
+  def appwy(
+    quewy: quewy, :3
+    candidate: candidate, (U ﹏ U)
+    c-candidatefeatuwes: featuwemap
+  ): option[usewweactivetwiggews]
 }

@@ -1,19 +1,19 @@
-package com.twitter.timelines.prediction.features.escherbird
+package com.twittew.timewines.pwediction.featuwes.eschewbiwd
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.ml.api.Feature
-import java.util.{Set => JSet}
-import scala.collection.JavaConverters._
+impowt c-com.twittew.daw.pewsonaw_data.thwiftjava.pewsonawdatatype._
+i-impowt com.twittew.mw.api.featuwe
+i-impowt java.utiw.{set => j-jset}
+i-impowt scawa.cowwection.javaconvewtews._
 
-object EscherbirdFeatures {
-  val TweetGroupIds = new Feature.SparseBinary("escherbird.tweet_group_ids")
-  val TweetDomainIds = new Feature.SparseBinary("escherbird.tweet_domain_ids", Set(DomainId).asJava)
-  val TweetEntityIds =
-    new Feature.SparseBinary("escherbird.tweet_entity_ids", Set(SemanticcoreClassification).asJava)
+o-object e-eschewbiwdfeatuwes {
+  v-vaw tweetgwoupids = nyew featuwe.spawsebinawy("eschewbiwd.tweet_gwoup_ids")
+  vaw tweetdomainids = nyew f-featuwe.spawsebinawy("eschewbiwd.tweet_domain_ids", mya set(domainid).asjava)
+  vaw t-tweetentityids =
+    nyew featuwe.spawsebinawy("eschewbiwd.tweet_entity_ids", 😳 set(semanticcowecwassification).asjava)
 }
 
-case class EscherbirdFeatures(
-  tweetId: Long,
-  tweetGroupIds: JSet[String],
-  tweetDomainIds: JSet[String],
-  tweetEntityIds: JSet[String])
+c-case cwass eschewbiwdfeatuwes(
+  tweetid: wong,
+  tweetgwoupids: j-jset[stwing], XD
+  tweetdomainids: j-jset[stwing], :3
+  t-tweetentityids: jset[stwing])

@@ -1,42 +1,42 @@
-package com.twitter.search.core.earlybird.index.util;
+package com.twittew.seawch.cowe.eawwybiwd.index.utiw;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
-public abstract class SearchSortUtils {
-  public interface Comparator<T> {
+p-pubwic abstwact c-cwass seawchsowtutiws {
+  p-pubwic i-intewface compawatow<t> {
     /**
-     *  Compares the item represented by the given index with the provided value.
+     *  compawes t-the item w-wepwesented by t-the given index w-with the pwovided vawue. ʘwʘ
      */
-    int compare(int index, T value);
+    int compawe(int index, /(^•ω•^) t vawue);
   }
 
   /**
-   * Performs a binary search using the given comparator, and returns the index of the item that
-   * was found. If foundLow is true, the greatest item that's lower than the provided key
-   * is returned. Otherwise, the lowest item that's greater than the provided key is returned.
+   * pewfowms a b-binawy seawch using the given compawatow, ʘwʘ and wetuwns t-the index of the item that
+   * w-was found. σωσ if foundwow is twue, OwO the gweatest item that's w-wowew than the pwovided key
+   * i-is wetuwned. 😳😳😳 othewwise, 😳😳😳 t-the wowest item that's gweatew than the pwovided key is wetuwned. o.O
    */
-  public static <T> int binarySearch(Comparator<T> comparator, final int begin, final int end,
-      final T key, boolean findLow) {
-    int low = begin;
-    int high = end;
-    Preconditions.checkState(comparator.compare(low, key) <= comparator.compare(high, key));
-    while (low <= high) {
-      int mid = (low + high) >>> 1;
-      int result = comparator.compare(mid, key);
-      if (result < 0) {
-        low = mid + 1;
-      } else if (result > 0) {
-        high = mid - 1;
-      } else {
-        return mid;
-      } // key found
+  p-pubwic static <t> int binawyseawch(compawatow<t> compawatow, ( ͡o ω ͡o ) finaw int begin, (U ﹏ U) finaw int end, (///ˬ///✿)
+      f-finaw t key, >w< boowean findwow) {
+    i-int wow = b-begin;
+    int h-high = end;
+    p-pweconditions.checkstate(compawatow.compawe(wow, rawr key) <= compawatow.compawe(high, mya key));
+    w-whiwe (wow <= high) {
+      int mid = (wow + high) >>> 1;
+      i-int wesuwt = compawatow.compawe(mid, ^^ key);
+      if (wesuwt < 0) {
+        wow = mid + 1;
+      } ewse if (wesuwt > 0) {
+        h-high = mid - 1;
+      } ewse {
+        w-wetuwn mid;
+      } // key f-found
     }
 
-    assert low > high;
-    if (findLow) {
-      return high < begin ? begin : high;
-    } else {
-      return low > end ? end : low;
+    a-assewt wow > high;
+    if (findwow) {
+      wetuwn high < begin ? begin : high;
+    } e-ewse {
+      w-wetuwn wow > end ? end : w-wow;
     }
   }
 }

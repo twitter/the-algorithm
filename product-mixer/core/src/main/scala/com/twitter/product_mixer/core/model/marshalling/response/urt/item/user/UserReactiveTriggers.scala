@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.user
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.reaction.TimelineReaction
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.weaction.timewineweaction
 
-case class UserReactiveTriggers(onFollow: Option[TimelineReaction])
+c-case cwass usewweactivetwiggews(onfowwow: o-option[timewineweaction])

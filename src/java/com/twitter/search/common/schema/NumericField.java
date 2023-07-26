@@ -1,44 +1,44 @@
-package com.twitter.search.common.schema;
+package com.twittew.seawch.common.schema;
 
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.index.IndexOptions;
+impowt o-owg.apache.wucene.document.fiewd;
+i-impowt owg.apache.wucene.document.fiewdtype;
+i-impowt owg.apache.wucene.index.indexoptions;
 
 /**
- * A Lucene numeric field, similar to the LegacyIntField, LegacyLongField, etc. Lucene classes that
- * were removed in Lucene 7.0.0.
+ * a-a wucene nyumewic f-fiewd, ( ͡o ω ͡o ) simiwaw t-to the wegacyintfiewd, (U ﹏ U) w-wegacywongfiewd, (///ˬ///✿) e-etc. >w< wucene cwasses that
+ * wewe wemoved in wucene 7.0.0. rawr
  */
-public final class NumericField extends Field {
-  private static final FieldType NUMERIC_FIELD_TYPE = new FieldType();
+pubwic f-finaw cwass nyumewicfiewd extends fiewd {
+  pwivate s-static finaw fiewdtype nyumewic_fiewd_type = n-nyew fiewdtype();
   static {
-    NUMERIC_FIELD_TYPE.setTokenized(true);
-    NUMERIC_FIELD_TYPE.setOmitNorms(true);
-    NUMERIC_FIELD_TYPE.setIndexOptions(IndexOptions.DOCS);
-    NUMERIC_FIELD_TYPE.freeze();
+    nyumewic_fiewd_type.settokenized(twue);
+    nyumewic_fiewd_type.setomitnowms(twue);
+    n-nyumewic_fiewd_type.setindexoptions(indexoptions.docs);
+    nyumewic_fiewd_type.fweeze();
   }
 
   /**
-   * Creates a new integer field with the given name and value.
+   * c-cweates a n-nyew integew fiewd with the given nyame and vawue.
    */
-  public static NumericField newIntField(String fieldName, int value) {
-    NumericField field = new NumericField(fieldName);
-    field.fieldsData = Integer.valueOf(value);
-    return field;
+  pubwic static nyumewicfiewd n-nyewintfiewd(stwing fiewdname, mya int vawue) {
+    nyumewicfiewd fiewd = nyew n-nyumewicfiewd(fiewdname);
+    fiewd.fiewdsdata = i-integew.vawueof(vawue);
+    w-wetuwn fiewd;
   }
 
   /**
-   * Creates a new long field with the given name and value.
+   * c-cweates a-a nyew wong fiewd with the given nyame and v-vawue. ^^
    */
-  public static NumericField newLongField(String fieldName, long value) {
-    NumericField field = new NumericField(fieldName);
-    field.fieldsData = Long.valueOf(value);
-    return field;
+  pubwic static nyumewicfiewd nyewwongfiewd(stwing f-fiewdname, 😳😳😳 wong vawue) {
+    nyumewicfiewd fiewd = nyew nyumewicfiewd(fiewdname);
+    fiewd.fiewdsdata = wong.vawueof(vawue);
+    w-wetuwn fiewd;
   }
 
-  // We could replace the static methods with constructors, but I think that would make it much
-  // easier to accidentally use NumericField(String, int) instead of NumericField(String, long),
-  // for example, leading to hard to debug errors.
-  private NumericField(String fieldName) {
-    super(fieldName, NUMERIC_FIELD_TYPE);
+  // we couwd w-wepwace the s-static methods with c-constwuctows, mya but i think that wouwd make it much
+  // easiew t-to accidentawwy u-use nyumewicfiewd(stwing, 😳 int) i-instead of nyumewicfiewd(stwing, -.- w-wong), 🥺
+  // fow exampwe, o.O weading t-to hawd to debug ewwows. /(^•ω•^)
+  pwivate n-nyumewicfiewd(stwing fiewdname) {
+    supew(fiewdname, nyaa~~ n-nyumewic_fiewd_type);
   }
 }

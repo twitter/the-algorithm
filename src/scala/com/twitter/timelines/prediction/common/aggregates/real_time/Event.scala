@@ -1,11 +1,11 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.twittew.timewines.pwediction.common.aggwegates.weaw_time
 
-private[real_time] sealed trait Event[T] { def event: T }
+pwivate[weaw_time] s-seawed twait e-event[t] { d-def event: t }
 
-private[real_time] case class HomeEvent[T](override val event: T) extends Event[T]
+p-pwivate[weaw_time] c-case cwass homeevent[t](ovewwide v-vaw event: t) e-extends event[t]
 
-private[real_time] case class ProfileEvent[T](override val event: T) extends Event[T]
+p-pwivate[weaw_time] case cwass pwofiweevent[t](ovewwide vaw event: t) extends e-event[t]
 
-private[real_time] case class SearchEvent[T](override val event: T) extends Event[T]
+pwivate[weaw_time] case cwass seawchevent[t](ovewwide v-vaw event: t) extends event[t]
 
-private[real_time] case class UuaEvent[T](override val event: T) extends Event[T]
+p-pwivate[weaw_time] case cwass uuaevent[t](ovewwide vaw event: t) extends event[t]

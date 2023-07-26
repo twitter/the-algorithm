@@ -1,90 +1,90 @@
-package com.twitter.tweetypie
-package store
+package com.twittew.tweetypie
+package s-stowe
 
-import com.twitter.tweetypie.store.TweetStoreEvent.NoRetry
-import com.twitter.tweetypie.store.TweetStoreEvent.RetryStrategy
-import com.twitter.tweetypie.thriftscala.AsyncIncrBookmarkCountRequest
-import com.twitter.tweetypie.thriftscala.AsyncWriteAction
+impowt c-com.twittew.tweetypie.stowe.tweetstoweevent.nowetwy
+i-impowt com.twittew.tweetypie.stowe.tweetstoweevent.wetwystwategy
+i-impowt com.twittew.tweetypie.thwiftscawa.asyncincwbookmawkcountwequest
+impowt c-com.twittew.tweetypie.thwiftscawa.asyncwwiteaction
 
-object IncrBookmarkCount extends TweetStore.SyncModule {
-  case class Event(tweetId: TweetId, delta: Int, timestamp: Time)
-      extends SyncTweetStoreEvent("incr_bookmark_count") {
-    val toAsyncRequest: AsyncIncrBookmarkCountRequest =
-      AsyncIncrBookmarkCountRequest(tweetId = tweetId, delta = delta)
+o-object i-incwbookmawkcount e-extends tweetstowe.syncmoduwe {
+  case cwass event(tweetid: tweetid, (ˆ ﻌ ˆ)♡ dewta: int, 😳😳😳 timestamp: time)
+      e-extends synctweetstoweevent("incw_bookmawk_count") {
+    vaw toasyncwequest: a-asyncincwbookmawkcountwequest =
+      asyncincwbookmawkcountwequest(tweetid = t-tweetid, (U ﹏ U) dewta = dewta)
   }
 
-  trait Store {
-    val incrBookmarkCount: FutureEffect[Event]
+  twait stowe {
+    vaw incwbookmawkcount: f-futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val incrBookmarkCount: FutureEffect[Event] = wrap(underlying.incrBookmarkCount)
+  twait stowewwappew e-extends s-stowe { sewf: tweetstowewwappew[stowe] =>
+    ovewwide vaw incwbookmawkcount: futuweeffect[event] = wwap(undewwying.incwbookmawkcount)
   }
 
-  object Store {
-    def apply(
-      asyncEnqueueStore: AsyncEnqueueStore,
-      replicatingStore: ReplicatingTweetStore
-    ): Store = {
-      new Store {
-        override val incrBookmarkCount: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            asyncEnqueueStore.incrBookmarkCount,
-            replicatingStore.incrBookmarkCount
+  o-object stowe {
+    def appwy(
+      asyncenqueuestowe: asyncenqueuestowe, (///ˬ///✿)
+      wepwicatingstowe: w-wepwicatingtweetstowe
+    ): stowe = {
+      n-nyew stowe {
+        o-ovewwide vaw i-incwbookmawkcount: f-futuweeffect[event] =
+          futuweeffect.inpawawwew(
+            asyncenqueuestowe.incwbookmawkcount, 😳
+            w-wepwicatingstowe.incwbookmawkcount
           )
       }
     }
   }
 }
 
-object AsyncIncrBookmarkCount extends TweetStore.AsyncModule {
-  case class Event(tweetId: TweetId, delta: Int, timestamp: Time)
-      extends AsyncTweetStoreEvent("async_incr_bookmark_event") {
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      Future.Unit
+object asyncincwbookmawkcount extends t-tweetstowe.asyncmoduwe {
+  case cwass event(tweetid: tweetid, dewta: int, 😳 timestamp: time)
+      extends asynctweetstoweevent("async_incw_bookmawk_event") {
+    o-ovewwide def enqueuewetwy(sewvice: t-thwifttweetsewvice, σωσ a-action: a-asyncwwiteaction): futuwe[unit] =
+      futuwe.unit
 
-    override def retryStrategy: RetryStrategy = NoRetry
+    ovewwide def wetwystwategy: w-wetwystwategy = n-nyowetwy
   }
 
-  trait Store {
-    def asyncIncrBookmarkCount: FutureEffect[Event]
+  twait s-stowe {
+    def a-asyncincwbookmawkcount: futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncIncrBookmarkCount: FutureEffect[Event] = wrap(
-      underlying.asyncIncrBookmarkCount)
+  t-twait stowewwappew extends stowe { s-sewf: tweetstowewwappew[stowe] =>
+    ovewwide vaw asyncincwbookmawkcount: f-futuweeffect[event] = wwap(
+      u-undewwying.asyncincwbookmawkcount)
   }
 
-  object Store {
-    def apply(tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore): Store = {
-      new Store {
-        override def asyncIncrBookmarkCount: FutureEffect[AsyncIncrBookmarkCount.Event] =
-          tweetCountsUpdatingStore.asyncIncrBookmarkCount
+  object s-stowe {
+    d-def appwy(tweetcountsupdatingstowe: tweetcountscacheupdatingstowe): stowe = {
+      nyew stowe {
+        ovewwide def asyncincwbookmawkcount: futuweeffect[asyncincwbookmawkcount.event] =
+          tweetcountsupdatingstowe.asyncincwbookmawkcount
       }
     }
   }
 }
 
-object ReplicatedIncrBookmarkCount extends TweetStore.ReplicatedModule {
-  case class Event(tweetId: TweetId, delta: Int)
-      extends ReplicatedTweetStoreEvent("replicated_incr_bookmark_count") {
-    override def retryStrategy: RetryStrategy = NoRetry
+o-object w-wepwicatedincwbookmawkcount extends t-tweetstowe.wepwicatedmoduwe {
+  c-case cwass e-event(tweetid: tweetid, rawr x3 dewta: int)
+      extends wepwicatedtweetstoweevent("wepwicated_incw_bookmawk_count") {
+    o-ovewwide def wetwystwategy: wetwystwategy = nyowetwy
   }
 
-  trait Store {
-    val replicatedIncrBookmarkCount: FutureEffect[Event]
+  twait stowe {
+    v-vaw wepwicatedincwbookmawkcount: futuweeffect[event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedIncrBookmarkCount: FutureEffect[Event] = wrap(
-      underlying.replicatedIncrBookmarkCount)
+  twait s-stowewwappew e-extends stowe { s-sewf: tweetstowewwappew[stowe] =>
+    ovewwide v-vaw wepwicatedincwbookmawkcount: f-futuweeffect[event] = w-wwap(
+      u-undewwying.wepwicatedincwbookmawkcount)
   }
 
-  object Store {
-    def apply(tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore): Store = {
-      new Store {
-        override val replicatedIncrBookmarkCount: FutureEffect[Event] = {
-          tweetCountsUpdatingStore.replicatedIncrBookmarkCount
+  object stowe {
+    def appwy(tweetcountsupdatingstowe: t-tweetcountscacheupdatingstowe): s-stowe = {
+      n-nyew stowe {
+        ovewwide v-vaw wepwicatedincwbookmawkcount: f-futuweeffect[event] = {
+          tweetcountsupdatingstowe.wepwicatedincwbookmawkcount
         }
       }
     }

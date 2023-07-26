@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.tombstone
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.wichtext.wichtext
 
-case class TombstoneInfo(
-  text: String,
-  richText: Option[RichText],
-  richRevealText: Option[RichText])
+c-case c-cwass tombstoneinfo(
+  t-text: stwing, (U ᵕ U❁)
+  w-wichtext: o-option[wichtext], (⑅˘꒳˘)
+  w-wichweveawtext: o-option[wichtext])

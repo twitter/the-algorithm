@@ -1,16 +1,16 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
 /**
- * Exception used to cause a ScheduledExecutorService to stop executing. Used when the
- * success condition of the class has been achieved.
+ * exception u-used to cause a s-scheduwedexecutowsewvice t-to stop e-executing. :3 used w-when the
+ * success c-condition o-of the cwass has b-been achieved.
  */
-public class FlowControlException extends RuntimeException {
+pubwic cwass fwowcontwowexception extends wuntimeexception {
 
-  public FlowControlException() {
-    super();
+  pubwic fwowcontwowexception() {
+    s-supew();
   }
 
-  public FlowControlException(String message) {
-    super(message);
+  pubwic fwowcontwowexception(stwing message) {
+    s-supew(message);
   }
 }

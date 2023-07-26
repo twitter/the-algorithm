@@ -1,60 +1,60 @@
-package com.twitter.visibility.rules.utils
+package com.twittew.visibiwity.wuwes.utiws
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.Filtered
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.RuleBase
-import com.twitter.visibility.rules.RuleBase.RuleMap
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.providers.PolicyProvider
+impowt c-com.twittew.visibiwity.featuwes.featuwe
+i-impowt c-com.twittew.visibiwity.featuwes.featuwemap
+i-impowt c-com.twittew.visibiwity.modews.contentid
+i-impowt c-com.twittew.visibiwity.modews.safetywevew
+i-impowt com.twittew.visibiwity.wuwes.fiwtewed
+impowt com.twittew.visibiwity.wuwes.wuwe
+impowt com.twittew.visibiwity.wuwes.wuwebase
+impowt c-com.twittew.visibiwity.wuwes.wuwebase.wuwemap
+impowt com.twittew.visibiwity.wuwes.pwovidews.pwovidedevawuationcontext
+impowt c-com.twittew.visibiwity.wuwes.pwovidews.powicypwovidew
 
-object ShimUtils {
+object s-shimutiws {
 
-  def preFilterFeatureMap(
-    featureMap: FeatureMap,
-    safetyLevel: SafetyLevel,
-    contentId: ContentId,
-    evaluationContext: ProvidedEvaluationContext,
-    policyProviderOpt: Option[PolicyProvider] = None,
-  ): FeatureMap = {
-    val safetyLevelRules: Seq[Rule] = policyProviderOpt match {
-      case Some(policyProvider) =>
-        policyProvider
-          .policyForSurface(safetyLevel)
-          .forContentId(contentId)
-      case _ => RuleMap(safetyLevel).forContentId(contentId)
+  def pwefiwtewfeatuwemap(
+    featuwemap: featuwemap, ʘwʘ
+    s-safetywevew: safetywevew, σωσ
+    c-contentid: c-contentid, OwO
+    evawuationcontext: pwovidedevawuationcontext, 😳😳😳
+    powicypwovidewopt: option[powicypwovidew] = none, 😳😳😳
+  ): f-featuwemap = {
+    vaw safetywevewwuwes: seq[wuwe] = powicypwovidewopt match {
+      case s-some(powicypwovidew) =>
+        powicypwovidew
+          .powicyfowsuwface(safetywevew)
+          .fowcontentid(contentid)
+      c-case _ => wuwemap(safetywevew).fowcontentid(contentid)
     }
 
-    val afterDisabledRules =
-      safetyLevelRules.filter(evaluationContext.ruleEnabledInContext)
+    v-vaw aftewdisabwedwuwes =
+      s-safetywevewwuwes.fiwtew(evawuationcontext.wuweenabwedincontext)
 
-    val afterMissingFeatureRules =
-      afterDisabledRules.filter(rule => {
-        val missingFeatures: Set[Feature[_]] = rule.featureDependencies.collect {
-          case feature: Feature[_] if !featureMap.contains(feature) => feature
+    v-vaw aftewmissingfeatuwewuwes =
+      aftewdisabwedwuwes.fiwtew(wuwe => {
+        vaw m-missingfeatuwes: set[featuwe[_]] = wuwe.featuwedependencies.cowwect {
+          c-case featuwe: featuwe[_] if !featuwemap.contains(featuwe) => featuwe
         }
-        if (missingFeatures.isEmpty) {
-          true
-        } else {
-          false
+        if (missingfeatuwes.isempty) {
+          twue
+        } ewse {
+          fawse
         }
       })
 
-    val afterPreFilterRules = afterMissingFeatureRules.filter(rule => {
-      rule.preFilter(evaluationContext, featureMap.constantMap, null) match {
-        case Filtered =>
-          false
-        case _ =>
-          true
+    v-vaw aftewpwefiwtewwuwes = a-aftewmissingfeatuwewuwes.fiwtew(wuwe => {
+      w-wuwe.pwefiwtew(evawuationcontext, o.O f-featuwemap.constantmap, ( ͡o ω ͡o ) nyuww) match {
+        case fiwtewed =>
+          fawse
+        c-case _ =>
+          t-twue
       }
     })
 
-    val filteredFeatureMap =
-      RuleBase.removeUnusedFeaturesFromFeatureMap(featureMap, afterPreFilterRules)
+    vaw fiwtewedfeatuwemap =
+      w-wuwebase.wemoveunusedfeatuwesfwomfeatuwemap(featuwemap, a-aftewpwefiwtewwuwes)
 
-    filteredFeatureMap
+    fiwtewedfeatuwemap
   }
 }

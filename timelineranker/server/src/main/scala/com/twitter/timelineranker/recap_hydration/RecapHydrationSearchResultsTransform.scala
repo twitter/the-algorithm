@@ -1,15 +1,15 @@
-package com.twitter.timelineranker.recap_hydration
+package com.twittew.timewinewankew.wecap_hydwation
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelineranker.common.RecapHydrationSearchResultsTransformBase
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.model.TweetId
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.timewinewankew.common.wecaphydwationseawchwesuwtstwansfowmbase
+i-impowt com.twittew.timewinewankew.cowe.candidateenvewope
+i-impowt c-com.twittew.timewines.cwients.wewevance_seawch.seawchcwient
+i-impowt com.twittew.timewines.modew.tweetid
 
-class RecapHydrationSearchResultsTransform(
-  override protected val searchClient: SearchClient,
-  override protected val statsReceiver: StatsReceiver)
-    extends RecapHydrationSearchResultsTransformBase {
-  override def tweetIdsToHydrate(envelope: CandidateEnvelope): Seq[TweetId] =
-    envelope.query.tweetIds.get
+c-cwass w-wecaphydwationseawchwesuwtstwansfowm(
+  o-ovewwide pwotected vaw seawchcwient: seawchcwient, (⑅˘꒳˘)
+  ovewwide pwotected vaw statsweceivew: s-statsweceivew)
+    extends wecaphydwationseawchwesuwtstwansfowmbase {
+  o-ovewwide def tweetidstohydwate(envewope: c-candidateenvewope): seq[tweetid] =
+    envewope.quewy.tweetids.get
 }

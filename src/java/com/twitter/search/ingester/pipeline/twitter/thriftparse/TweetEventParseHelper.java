@@ -1,727 +1,727 @@
-package com.twitter.search.ingester.pipeline.twitter.thriftparse;
+package com.twittew.seawch.ingestew.pipewine.twittew.thwiftpawse;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+impowt java.utiw.date;
+i-impowt j-java.utiw.wist;
+i-impowt java.utiw.optionaw;
+i-impowt j-javax.annotation.nonnuww;
+i-impowt j-javax.annotation.nuwwabwe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+impowt c-com.googwe.common.annotations.visibwefowtesting;
+impowt com.googwe.common.base.pweconditions;
+impowt com.googwe.common.cowwect.wists;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt owg.apache.commons.wang.stwingescapeutiws;
+impowt o-owg.swf4j.woggew;
+impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.dataproducts.enrichments.thriftjava.GeoEntity;
-import com.twitter.dataproducts.enrichments.thriftjava.PotentialLocation;
-import com.twitter.dataproducts.enrichments.thriftjava.ProfileGeoEnrichment;
-import com.twitter.escherbird.thriftjava.TweetEntityAnnotation;
-import com.twitter.expandodo.thriftjava.Card2;
-import com.twitter.gizmoduck.thriftjava.User;
-import com.twitter.mediaservices.commons.tweetmedia.thrift_java.MediaInfo;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.relevance.entities.GeoObject;
-import com.twitter.search.common.relevance.entities.PotentialLocationObject;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.entities.TwitterMessage.EscherbirdAnnotation;
-import com.twitter.search.common.relevance.entities.TwitterMessageUser;
-import com.twitter.search.common.relevance.entities.TwitterMessageUtil;
-import com.twitter.search.common.relevance.entities.TwitterQuotedMessage;
-import com.twitter.search.common.relevance.entities.TwitterRetweetMessage;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.CardFieldUtil;
-import com.twitter.service.spiderduck.gen.MediaTypes;
-import com.twitter.tweetypie.thriftjava.DeviceSource;
-import com.twitter.tweetypie.thriftjava.DirectedAtUser;
-import com.twitter.tweetypie.thriftjava.EscherbirdEntityAnnotations;
-import com.twitter.tweetypie.thriftjava.ExclusiveTweetControl;
-import com.twitter.tweetypie.thriftjava.GeoCoordinates;
-import com.twitter.tweetypie.thriftjava.HashtagEntity;
-import com.twitter.tweetypie.thriftjava.MediaEntity;
-import com.twitter.tweetypie.thriftjava.MentionEntity;
-import com.twitter.tweetypie.thriftjava.Place;
-import com.twitter.tweetypie.thriftjava.QuotedTweet;
-import com.twitter.tweetypie.thriftjava.Reply;
-import com.twitter.tweetypie.thriftjava.Tweet;
-import com.twitter.tweetypie.thriftjava.TweetCoreData;
-import com.twitter.tweetypie.thriftjava.TweetCreateEvent;
-import com.twitter.tweetypie.thriftjava.TweetDeleteEvent;
-import com.twitter.tweetypie.thriftjava.UrlEntity;
-import com.twitter.tweetypie.tweettext.PartialHtmlEncoding;
+impowt c-com.twittew.common_intewnaw.text.vewsion.penguinvewsion;
+impowt c-com.twittew.datapwoducts.enwichments.thwiftjava.geoentity;
+impowt com.twittew.datapwoducts.enwichments.thwiftjava.potentiawwocation;
+impowt com.twittew.datapwoducts.enwichments.thwiftjava.pwofiwegeoenwichment;
+i-impowt com.twittew.eschewbiwd.thwiftjava.tweetentityannotation;
+impowt com.twittew.expandodo.thwiftjava.cawd2;
+i-impowt com.twittew.gizmoduck.thwiftjava.usew;
+impowt c-com.twittew.mediasewvices.commons.tweetmedia.thwift_java.mediainfo;
+impowt com.twittew.seawch.common.debug.thwiftjava.debugevents;
+impowt com.twittew.seawch.common.metwics.pewcentiwe;
+i-impowt com.twittew.seawch.common.metwics.pewcentiweutiw;
+impowt com.twittew.seawch.common.metwics.seawchcountew;
+impowt com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+impowt com.twittew.seawch.common.wewevance.entities.geoobject;
+impowt c-com.twittew.seawch.common.wewevance.entities.potentiawwocationobject;
+impowt c-com.twittew.seawch.common.wewevance.entities.twittewmessage;
+i-impowt com.twittew.seawch.common.wewevance.entities.twittewmessage.eschewbiwdannotation;
+i-impowt c-com.twittew.seawch.common.wewevance.entities.twittewmessageusew;
+impowt com.twittew.seawch.common.wewevance.entities.twittewmessageutiw;
+impowt c-com.twittew.seawch.common.wewevance.entities.twittewquotedmessage;
+impowt com.twittew.seawch.common.wewevance.entities.twittewwetweetmessage;
+impowt c-com.twittew.seawch.ingestew.modew.ingestewtwittewmessage;
+impowt com.twittew.seawch.ingestew.pipewine.utiw.cawdfiewdutiw;
+impowt com.twittew.sewvice.spidewduck.gen.mediatypes;
+impowt com.twittew.tweetypie.thwiftjava.devicesouwce;
+impowt com.twittew.tweetypie.thwiftjava.diwectedatusew;
+i-impowt com.twittew.tweetypie.thwiftjava.eschewbiwdentityannotations;
+impowt com.twittew.tweetypie.thwiftjava.excwusivetweetcontwow;
+i-impowt com.twittew.tweetypie.thwiftjava.geocoowdinates;
+impowt c-com.twittew.tweetypie.thwiftjava.hashtagentity;
+i-impowt com.twittew.tweetypie.thwiftjava.mediaentity;
+impowt com.twittew.tweetypie.thwiftjava.mentionentity;
+impowt com.twittew.tweetypie.thwiftjava.pwace;
+i-impowt com.twittew.tweetypie.thwiftjava.quotedtweet;
+i-impowt com.twittew.tweetypie.thwiftjava.wepwy;
+impowt com.twittew.tweetypie.thwiftjava.tweet;
+i-impowt com.twittew.tweetypie.thwiftjava.tweetcowedata;
+i-impowt com.twittew.tweetypie.thwiftjava.tweetcweateevent;
+i-impowt com.twittew.tweetypie.thwiftjava.tweetdeweteevent;
+impowt com.twittew.tweetypie.thwiftjava.uwwentity;
+i-impowt com.twittew.tweetypie.tweettext.pawtiawhtmwencoding;
 
 /**
- * This is an utility class for converting Thrift TweetEvent messages sent by TweetyPie
- * into ingester internal representation, IngesterTwitterMessage.
+ * this is an utiwity cwass fow c-convewting thwift tweetevent m-messages sent by tweetypie
+ * into i-ingestew intewnaw w-wepwesentation, >w< ingestewtwittewmessage. /(^•ω•^)
  */
-public final class TweetEventParseHelper {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetEventParseHelper.class);
+pubwic finaw cwass tweeteventpawsehewpew {
+  pwivate static finaw woggew wog = w-woggewfactowy.getwoggew(tweeteventpawsehewpew.cwass);
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_NULL_TEXT =
-      SearchCounter.export("tweets_with_null_text_from_thrift_cnt");
+  @visibwefowtesting
+  s-static finaw seawchcountew n-nyum_tweets_with_nuww_text =
+      s-seawchcountew.expowt("tweets_with_nuww_text_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter TWEET_SIZE = SearchCounter.export("tweet_size_from_thrift");
+  @visibwefowtesting
+  s-static finaw seawchcountew tweet_size = seawchcountew.expowt("tweet_size_fwom_thwift");
 
-  @VisibleForTesting
-  static final Percentile<Long> TWEET_SIZE_PERCENTILES =
-      PercentileUtil.createPercentile("tweet_size_from_thrift");
+  @visibwefowtesting
+  static finaw p-pewcentiwe<wong> tweet_size_pewcentiwes =
+      pewcentiweutiw.cweatepewcentiwe("tweet_size_fwom_thwift");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_CONVERSATION_ID =
-      SearchCounter.export("tweets_with_conversation_id_from_thrift_cnt");
+  @visibwefowtesting
+  static finaw seawchcountew nyum_tweets_with_convewsation_id =
+      s-seawchcountew.expowt("tweets_with_convewsation_id_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_QUOTE =
-      SearchCounter.export("tweets_with_quote_from_thrift_cnt");
+  @visibwefowtesting
+  static finaw s-seawchcountew nyum_tweets_with_quote =
+      s-seawchcountew.expowt("tweets_with_quote_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_ANNOTATIONS =
-      SearchCounter.export("tweets_with_annotation_from_thrift_cnt");
+  @visibwefowtesting
+  s-static finaw seawchcountew nyum_tweets_with_annotations =
+      s-seawchcountew.expowt("tweets_with_annotation_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_ANNOTATIONS_ADDED =
-      SearchCounter.export("num_annotations_from_thrift_cnt");
+  @visibwefowtesting
+  s-static f-finaw seawchcountew n-nyum_annotations_added =
+      seawchcountew.expowt("num_annotations_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_COORDINATE_FIELD =
-      SearchCounter.export("tweets_with_coordinate_field_from_thrift_cnt");
+  @visibwefowtesting
+  static finaw s-seawchcountew nyum_tweets_with_coowdinate_fiewd =
+      s-seawchcountew.expowt("tweets_with_coowdinate_fiewd_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_PLACE_ADDED =
-      SearchCounter.export("num_places_from_thrift_cnt");
+  @visibwefowtesting
+  s-static finaw s-seawchcountew n-nyum_pwace_added =
+      seawchcountew.expowt("num_pwaces_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_PLACE_FIELD =
-      SearchCounter.export("tweets_with_place_field_from_thrift_cnt");
+  @visibwefowtesting
+  static finaw seawchcountew n-nyum_tweets_with_pwace_fiewd =
+      seawchcountew.expowt("tweets_with_pwace_fiewd_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_PLACE_COUNTRY_CODE =
-      SearchCounter.export("tweets_with_place_country_code_from_thrift_cnt");
+  @visibwefowtesting
+  static finaw seawchcountew nyum_tweets_with_pwace_countwy_code =
+      seawchcountew.expowt("tweets_with_pwace_countwy_code_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_USE_PLACE_FIELD =
-      SearchCounter.export("tweets_use_place_field_from_thrift_cnt");
+  @visibwefowtesting
+  static finaw s-seawchcountew nyum_tweets_use_pwace_fiewd =
+      seawchcountew.expowt("tweets_use_pwace_fiewd_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_CANNOT_PARSE_PLACE_FIELD =
-      SearchCounter.export("tweets_cannot_parse_place_field_from_thrift_cnt");
+  @visibwefowtesting
+  static f-finaw seawchcountew n-num_tweets_cannot_pawse_pwace_fiewd =
+      s-seawchcountew.expowt("tweets_cannot_pawse_pwace_fiewd_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_PROFILE_GEO_ENRICHMENT =
-      SearchCounter.export("tweets_with_profile_geo_enrichment_from_thrift_cnt");
+  @visibwefowtesting
+  static finaw s-seawchcountew nyum_tweets_with_pwofiwe_geo_enwichment =
+      s-seawchcountew.expowt("tweets_with_pwofiwe_geo_enwichment_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_MENTIONS =
-      SearchCounter.export("tweets_with_mentions_from_thrift_cnt");
+  @visibwefowtesting
+  s-static finaw seawchcountew nyum_tweets_with_mentions =
+      seawchcountew.expowt("tweets_with_mentions_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_MENTIONS_ADDED =
-      SearchCounter.export("num_mentions_from_thrift_cnt");
+  @visibwefowtesting
+  static finaw seawchcountew n-nyum_mentions_added =
+      seawchcountew.expowt("num_mentions_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_HASHTAGS =
-      SearchCounter.export("tweets_with_hashtags_from_thrift_cnt");
+  @visibwefowtesting
+  static f-finaw seawchcountew nyum_tweets_with_hashtags =
+      s-seawchcountew.expowt("tweets_with_hashtags_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_HASHTAGS_ADDED =
-      SearchCounter.export("num_hashtags_from_thrift_cnt");
+  @visibwefowtesting
+  s-static finaw seawchcountew nyum_hashtags_added =
+      seawchcountew.expowt("num_hashtags_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_MEDIA_URL =
-      SearchCounter.export("tweets_with_media_url_from_thrift_cnt");
+  @visibwefowtesting
+  s-static finaw s-seawchcountew nyum_tweets_with_media_uww =
+      s-seawchcountew.expowt("tweets_with_media_uww_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_MEDIA_URLS_ADDED =
-      SearchCounter.export("num_media_urls_from_thrift_cnt");
+  @visibwefowtesting
+  s-static finaw seawchcountew nyum_media_uwws_added =
+      seawchcountew.expowt("num_media_uwws_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_PHOTO_MEDIA_URL =
-      SearchCounter.export("tweets_with_photo_media_url_from_thrift_cnt");
+  @visibwefowtesting
+  static finaw s-seawchcountew nyum_tweets_with_photo_media_uww =
+      s-seawchcountew.expowt("tweets_with_photo_media_uww_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_VIDEO_MEDIA_URL =
-      SearchCounter.export("tweets_with_video_media_url_from_thrift_cnt");
+  @visibwefowtesting
+  s-static finaw seawchcountew nyum_tweets_with_video_media_uww =
+      s-seawchcountew.expowt("tweets_with_video_media_uww_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_NON_MEDIA_URL =
-      SearchCounter.export("tweets_with_non_media_url_from_thrift_cnt");
+  @visibwefowtesting
+  s-static finaw seawchcountew n-nyum_tweets_with_non_media_uww =
+      seawchcountew.expowt("tweets_with_non_media_uww_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_NON_MEDIA_URLS_ADDED =
-      SearchCounter.export("num_non_media_urls_from_thrift_cnt");
+  @visibwefowtesting
+  static finaw seawchcountew nyum_non_media_uwws_added =
+      seawchcountew.expowt("num_non_media_uwws_fwom_thwift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_MISSING_QUOTE_URLS =
-      SearchCounter.export("num_tweets_missing_quote_urls_cnt");
+  @visibwefowtesting
+  static finaw s-seawchcountew nyum_tweets_missing_quote_uwws =
+      s-seawchcountew.expowt("num_tweets_missing_quote_uwws_cnt");
 
-  // Utility class, disallow instantiation.
-  private TweetEventParseHelper() {
+  // utiwity cwass, 😳😳😳 disawwow instantiation. (U ᵕ U❁)
+  pwivate t-tweeteventpawsehewpew() {
   }
 
-  /** Builds an IngesterTwitterMessage instance from a TweetCreateEvent. */
-  @Nonnull
-  public static IngesterTwitterMessage getTwitterMessageFromCreationEvent(
-      @Nonnull TweetCreateEvent createEvent,
-      @Nonnull List<PenguinVersion> supportedPenguinVersions,
-      @Nullable DebugEvents debugEvents) throws ThriftTweetParsingException {
+  /** b-buiwds an ingestewtwittewmessage instance fwom a tweetcweateevent. (˘ω˘) */
+  @nonnuww
+  pubwic s-static ingestewtwittewmessage gettwittewmessagefwomcweationevent(
+      @nonnuww tweetcweateevent cweateevent, 😳
+      @nonnuww wist<penguinvewsion> s-suppowtedpenguinvewsions, (ꈍᴗꈍ)
+      @nuwwabwe debugevents debugevents) thwows t-thwifttweetpawsingexception {
 
-    Tweet tweet = createEvent.getTweet();
-    if (tweet == null) {
-      throw new ThriftTweetParsingException("No tweet field in TweetCreateEvent");
+    t-tweet tweet = cweateevent.gettweet();
+    if (tweet == nyuww) {
+      thwow n-nyew thwifttweetpawsingexception("no t-tweet fiewd in tweetcweateevent");
     }
 
-    TweetCoreData coreData = tweet.getCore_data();
-    if (coreData == null) {
-      throw new ThriftTweetParsingException("No core_data field in Tweet in TweetCreateEvent");
+    tweetcowedata cowedata = tweet.getcowe_data();
+    i-if (cowedata == nyuww) {
+      t-thwow nyew thwifttweetpawsingexception("no cowe_data fiewd in tweet in tweetcweateevent");
     }
 
-    User user = createEvent.getUser();
-    if (user == null) {
-      throw new ThriftTweetParsingException("No user field in TweetCreateEvent");
+    u-usew usew = cweateevent.getusew();
+    i-if (usew == n-nyuww) {
+      thwow nyew thwifttweetpawsingexception("no u-usew fiewd in tweetcweateevent");
     }
-    if (!user.isSetProfile()) {
-      throw new ThriftTweetParsingException("No profile field in User in TweetCreateEvent");
+    i-if (!usew.issetpwofiwe()) {
+      t-thwow nyew t-thwifttweetpawsingexception("no pwofiwe fiewd i-in usew in tweetcweateevent");
     }
-    if (!user.isSetSafety()) {
-      throw new ThriftTweetParsingException("No safety field in User in TweetCreateEvent");
-    }
-
-    long twitterId = tweet.getId();
-    IngesterTwitterMessage message = new IngesterTwitterMessage(
-        twitterId,
-        supportedPenguinVersions,
-        debugEvents);
-
-    // Set the creation time based on the tweet ID, because it has millisecond granularity,
-    // and coreData.created_at_secs has only second granularity.
-    message.setDate(new Date(SnowflakeIdParser.getTimestampFromTweetId(twitterId)));
-
-    boolean isNsfw = coreData.isNsfw_admin() || coreData.isNsfw_user();
-    boolean hasMediaOrUrlsOrCards =
-        tweet.getMediaSize() > 0
-            || tweet.getUrlsSize() > 0
-            || tweet.getCardsSize() > 0
-            || tweet.isSetCard2();
-
-    message.setIsSensitiveContent(isNsfw && hasMediaOrUrlsOrCards);
-
-    message.setFromUser(getFromUser(user));
-    if (user.isSetCounts()) {
-      message.setFollowersCount((int) user.getCounts().getFollowers());
-    }
-    message.setUserProtected(user.getSafety().isIs_protected());
-    message.setUserVerified(user.getSafety().isVerified());
-    message.setUserBlueVerified(user.getSafety().isIs_blue_verified());
-
-    if (tweet.isSetLanguage()) {
-      message.setLanguage(tweet.getLanguage().getLanguage()); // language ID like "en"
+    i-if (!usew.issetsafety()) {
+      thwow nyew thwifttweetpawsingexception("no s-safety fiewd i-in usew in tweetcweateevent");
     }
 
-    if (tweet.isSetSelf_thread_metadata()) {
-      message.setSelfThread(true);
+    w-wong twittewid = tweet.getid();
+    ingestewtwittewmessage m-message = nyew ingestewtwittewmessage(
+        t-twittewid,
+        s-suppowtedpenguinvewsions, :3
+        debugevents);
+
+    // set the cweation time based on t-the tweet id, /(^•ω•^) because i-it has miwwisecond g-gwanuwawity, ^^;;
+    // a-and cowedata.cweated_at_secs h-has onwy second gwanuwawity. o.O
+    message.setdate(new date(snowfwakeidpawsew.gettimestampfwomtweetid(twittewid)));
+
+    boowean isnsfw = cowedata.isnsfw_admin() || c-cowedata.isnsfw_usew();
+    boowean h-hasmediaowuwwsowcawds =
+        tweet.getmediasize() > 0
+            || t-tweet.getuwwssize() > 0
+            || tweet.getcawdssize() > 0
+            || t-tweet.issetcawd2();
+
+    message.setissensitivecontent(isnsfw && h-hasmediaowuwwsowcawds);
+
+    m-message.setfwomusew(getfwomusew(usew));
+    i-if (usew.issetcounts()) {
+      m-message.setfowwowewscount((int) u-usew.getcounts().getfowwowews());
+    }
+    message.setusewpwotected(usew.getsafety().isis_pwotected());
+    message.setusewvewified(usew.getsafety().isvewified());
+    message.setusewbwuevewified(usew.getsafety().isis_bwue_vewified());
+
+    if (tweet.issetwanguage()) {
+      message.setwanguage(tweet.getwanguage().getwanguage()); // wanguage id wike "en"
     }
 
-    ExclusiveTweetControl exclusiveTweetControl = tweet.getExclusive_tweet_control();
-    if (exclusiveTweetControl != null) {
-      if (exclusiveTweetControl.isSetConversation_author_id()) {
-        message.setExclusiveConversationAuthorId(
-            exclusiveTweetControl.getConversation_author_id());
+    if (tweet.issetsewf_thwead_metadata()) {
+      m-message.setsewfthwead(twue);
+    }
+
+    e-excwusivetweetcontwow e-excwusivetweetcontwow = tweet.getexcwusive_tweet_contwow();
+    i-if (excwusivetweetcontwow != nuww) {
+      if (excwusivetweetcontwow.issetconvewsation_authow_id()) {
+        message.setexcwusiveconvewsationauthowid(
+            excwusivetweetcontwow.getconvewsation_authow_id());
       }
     }
 
-    setDirectedAtUser(message, coreData);
-    addMentionsToMessage(message, tweet);
-    addHashtagsToMessage(message, tweet);
-    addMediaEntitiesToMessage(message, tweet.getId(), tweet.getMedia());
-    addUrlsToMessage(message, tweet.getUrls());
-    addEscherbirdAnnotationsToMessage(message, tweet);
-    message.setNullcast(coreData.isNullcast());
+    s-setdiwectedatusew(message, 😳 c-cowedata);
+    addmentionstomessage(message, UwU t-tweet);
+    addhashtagstomessage(message, >w< tweet);
+    a-addmediaentitiestomessage(message, o.O t-tweet.getid(), (˘ω˘) tweet.getmedia());
+    a-adduwwstomessage(message, òωó t-tweet.getuwws());
+    addeschewbiwdannotationstomessage(message, tweet);
+    message.setnuwwcast(cowedata.isnuwwcast());
 
-    if (coreData.isSetConversation_id()) {
-      message.setConversationId(coreData.getConversation_id());
-      NUM_TWEETS_WITH_CONVERSATION_ID.increment();
+    if (cowedata.issetconvewsation_id()) {
+      m-message.setconvewsationid(cowedata.getconvewsation_id());
+      n-nyum_tweets_with_convewsation_id.incwement();
     }
 
-    // quotes
-    if (tweet.isSetQuoted_tweet()) {
-      QuotedTweet quotedTweet = tweet.getQuoted_tweet();
-      if (quotedTweet.getTweet_id() > 0 &&  quotedTweet.getUser_id() > 0) {
-        if (quotedTweet.isSetPermalink()) {
-          String quotedURL = quotedTweet.getPermalink().getLong_url();
-          UrlEntity quotedURLEntity = new UrlEntity();
-          quotedURLEntity.setExpanded(quotedURL);
-          quotedURLEntity.setUrl(quotedTweet.getPermalink().getShort_url());
-          quotedURLEntity.setDisplay(quotedTweet.getPermalink().getDisplay_text());
-          addUrlsToMessage(message, Lists.newArrayList(quotedURLEntity));
-        } else {
-          LOG.warn("Tweet {} has quoted tweet, but is missing quoted tweet URL: {}",
-                   tweet.getId(), quotedTweet);
-          NUM_TWEETS_MISSING_QUOTE_URLS.increment();
+    // q-quotes
+    if (tweet.issetquoted_tweet()) {
+      q-quotedtweet q-quotedtweet = tweet.getquoted_tweet();
+      if (quotedtweet.gettweet_id() > 0 &&  q-quotedtweet.getusew_id() > 0) {
+        i-if (quotedtweet.issetpewmawink()) {
+          stwing q-quoteduww = quotedtweet.getpewmawink().getwong_uww();
+          u-uwwentity quoteduwwentity = nyew u-uwwentity();
+          quoteduwwentity.setexpanded(quoteduww);
+          quoteduwwentity.setuww(quotedtweet.getpewmawink().getshowt_uww());
+          q-quoteduwwentity.setdispway(quotedtweet.getpewmawink().getdispway_text());
+          adduwwstomessage(message, nyaa~~ w-wists.newawwaywist(quoteduwwentity));
+        } e-ewse {
+          wog.wawn("tweet {} h-has quoted tweet, ( ͡o ω ͡o ) but is missing quoted t-tweet uww: {}", 😳😳😳
+                   t-tweet.getid(), ^•ﻌ•^ q-quotedtweet);
+          nyum_tweets_missing_quote_uwws.incwement();
         }
-        TwitterQuotedMessage quotedMessage =
-            new TwitterQuotedMessage(
-                quotedTweet.getTweet_id(),
-                quotedTweet.getUser_id());
-        message.setQuotedMessage(quotedMessage);
-        NUM_TWEETS_WITH_QUOTE.increment();
+        twittewquotedmessage quotedmessage =
+            n-nyew twittewquotedmessage(
+                quotedtweet.gettweet_id(), (˘ω˘)
+                q-quotedtweet.getusew_id());
+        m-message.setquotedmessage(quotedmessage);
+        nyum_tweets_with_quote.incwement();
       }
     }
 
-    // card fields
-    if (createEvent.getTweet().isSetCard2()) {
-      Card2 card = createEvent.getTweet().getCard2();
-      message.setCardName(card.getName());
-      message.setCardTitle(
-          CardFieldUtil.extractBindingValue(CardFieldUtil.TITLE_BINDING_KEY, card));
-      message.setCardDescription(
-          CardFieldUtil.extractBindingValue(CardFieldUtil.DESCRIPTION_BINDING_KEY, card));
-      CardFieldUtil.deriveCardLang(message);
-      message.setCardUrl(card.getUrl());
+    // c-cawd fiewds
+    if (cweateevent.gettweet().issetcawd2()) {
+      c-cawd2 cawd = cweateevent.gettweet().getcawd2();
+      m-message.setcawdname(cawd.getname());
+      message.setcawdtitwe(
+          cawdfiewdutiw.extwactbindingvawue(cawdfiewdutiw.titwe_binding_key, (˘ω˘) c-cawd));
+      message.setcawddescwiption(
+          cawdfiewdutiw.extwactbindingvawue(cawdfiewdutiw.descwiption_binding_key, -.- c-cawd));
+      c-cawdfiewdutiw.dewivecawdwang(message);
+      message.setcawduww(cawd.getuww());
     }
 
-    // Some fields should be set based on the "original" tweet. So if this tweet is a retweet,
-    // we want to extract those fields from the retweeted tweet.
-    Tweet retweetOrTweet = tweet;
-    TweetCoreData retweetOrTweetCoreData = coreData;
-    User retweetOrTweetUser = user;
+    // s-some fiewds shouwd b-be set based on t-the "owiginaw" t-tweet. ^•ﻌ•^ so if this tweet is a wetweet, /(^•ω•^)
+    // we want to extwact those fiewds fwom the wetweeted tweet. (///ˬ///✿)
+    tweet wetweetowtweet = tweet;
+    tweetcowedata wetweetowtweetcowedata = cowedata;
+    usew wetweetowtweetusew = usew;
 
-    // retweets
-    boolean isRetweet = coreData.isSetShare();
-    if (isRetweet) {
-      retweetOrTweet = createEvent.getSource_tweet();
-      retweetOrTweetCoreData = retweetOrTweet.getCore_data();
-      retweetOrTweetUser = createEvent.getSource_user();
+    // w-wetweets
+    b-boowean iswetweet = cowedata.issetshawe();
+    if (iswetweet) {
+      w-wetweetowtweet = c-cweateevent.getsouwce_tweet();
+      w-wetweetowtweetcowedata = wetweetowtweet.getcowe_data();
+      w-wetweetowtweetusew = cweateevent.getsouwce_usew();
 
-      TwitterRetweetMessage retweetMessage = new TwitterRetweetMessage();
-      retweetMessage.setRetweetId(twitterId);
+      t-twittewwetweetmessage w-wetweetmessage = nyew twittewwetweetmessage();
+      w-wetweetmessage.setwetweetid(twittewid);
 
-      if (retweetOrTweetUser != null) {
-        if (retweetOrTweetUser.isSetProfile()) {
-          retweetMessage.setSharedUserDisplayName(retweetOrTweetUser.getProfile().getName());
+      if (wetweetowtweetusew != nyuww) {
+        i-if (wetweetowtweetusew.issetpwofiwe()) {
+          w-wetweetmessage.setshawedusewdispwayname(wetweetowtweetusew.getpwofiwe().getname());
         }
-        retweetMessage.setSharedUserTwitterId(retweetOrTweetUser.getId());
+        wetweetmessage.setshawedusewtwittewid(wetweetowtweetusew.getid());
       }
 
-      retweetMessage.setSharedDate(new Date(retweetOrTweetCoreData.getCreated_at_secs() * 1000));
-      retweetMessage.setSharedId(retweetOrTweet.getId());
+      wetweetmessage.setshaweddate(new d-date(wetweetowtweetcowedata.getcweated_at_secs() * 1000));
+      w-wetweetmessage.setshawedid(wetweetowtweet.getid());
 
-      addMediaEntitiesToMessage(message, retweetOrTweet.getId(), retweetOrTweet.getMedia());
-      addUrlsToMessage(message, retweetOrTweet.getUrls());
+      a-addmediaentitiestomessage(message, mya w-wetweetowtweet.getid(), o.O w-wetweetowtweet.getmedia());
+      a-adduwwstomessage(message, ^•ﻌ•^ wetweetowtweet.getuwws());
 
-      // If a tweet's text is longer than 140 characters, the text for any retweet of that tweet
-      // will be truncated. And if the original tweet has hashtags or mentions after character 140,
-      // the Tweetypie event for the retweet will not include those hashtags/mentions, which will
-      // make the retweet unsearchable by those hashtags/mentions. So in order to avoid this
-      // problem, we add to the retweet all hashtags/mentions set on the original tweet.
-      addMentionsToMessage(message, retweetOrTweet);
-      addHashtagsToMessage(message, retweetOrTweet);
+      // i-if a tweet's t-text is wongew t-than 140 chawactews, (U ᵕ U❁) the text fow a-any wetweet of t-that tweet
+      // w-wiww be twuncated. :3 and if the o-owiginaw tweet has hashtags ow mentions aftew c-chawactew 140,
+      // the tweetypie e-event fow t-the wetweet wiww n-nyot incwude those hashtags/mentions, (///ˬ///✿) w-which wiww
+      // make t-the wetweet unseawchabwe by those h-hashtags/mentions. (///ˬ///✿) so in owdew t-to avoid this
+      // pwobwem, we add to the wetweet aww hashtags/mentions set o-on the owiginaw tweet. 🥺
+      addmentionstomessage(message, -.- w-wetweetowtweet);
+      a-addhashtagstomessage(message, nyaa~~ wetweetowtweet);
 
-      message.setRetweetMessage(retweetMessage);
+      message.setwetweetmessage(wetweetmessage);
     }
 
-    // Some fields should be set based on the "original" tweet.
-    // Only set geo fields if this is not a retweet
-    if (!isRetweet) {
-      setGeoFields(message, retweetOrTweetCoreData, retweetOrTweetUser);
-      setPlacesFields(message, retweetOrTweet);
+    // some fiewds shouwd b-be set based on the "owiginaw" t-tweet. (///ˬ///✿)
+    // o-onwy set geo f-fiewds if this is nyot a wetweet
+    if (!iswetweet) {
+      s-setgeofiewds(message, 🥺 w-wetweetowtweetcowedata, >w< wetweetowtweetusew);
+      s-setpwacesfiewds(message, rawr x3 wetweetowtweet);
     }
-    setText(message, retweetOrTweetCoreData);
-    setInReplyTo(message, retweetOrTweetCoreData, isRetweet);
-    setDeviceSourceField(message, retweetOrTweet);
+    settext(message, (⑅˘꒳˘) wetweetowtweetcowedata);
+    s-setinwepwyto(message, σωσ wetweetowtweetcowedata, XD i-iswetweet);
+    s-setdevicesouwcefiewd(message, -.- w-wetweetowtweet);
 
-    // Profile geo enrichment fields should be set based on this tweet, even if it's a retweet.
-    setProfileGeoEnrichmentFields(message, tweet);
+    // pwofiwe g-geo enwichment f-fiewds shouwd b-be set based on t-this tweet, even if it's a wetweet. >_<
+    s-setpwofiwegeoenwichmentfiewds(message, rawr t-tweet);
 
-    // The composer used to create this tweet: standard tweet creator or the camera flow.
-    setComposerSource(message, tweet);
+    // t-the composew used t-to cweate this t-tweet: standawd t-tweet cweatow o-ow the camewa fwow. 😳😳😳
+    s-setcomposewsouwce(message, UwU tweet);
 
-    return message;
+    w-wetuwn message;
   }
 
-  private static void setGeoFields(
-      TwitterMessage message, TweetCoreData coreData, User user) {
+  pwivate static v-void setgeofiewds(
+      twittewmessage message, (U ﹏ U) t-tweetcowedata c-cowedata, (˘ω˘) usew u-usew) {
 
-    if (coreData.isSetCoordinates()) {
-      NUM_TWEETS_WITH_COORDINATE_FIELD.increment();
-      GeoCoordinates coords = coreData.getCoordinates();
-      message.setGeoTaggedLocation(
-          GeoObject.createForIngester(coords.getLatitude(), coords.getLongitude()));
+    if (cowedata.issetcoowdinates()) {
+      nyum_tweets_with_coowdinate_fiewd.incwement();
+      geocoowdinates coowds = c-cowedata.getcoowdinates();
+      m-message.setgeotaggedwocation(
+          g-geoobject.cweatefowingestew(coowds.getwatitude(), /(^•ω•^) coowds.getwongitude()));
 
-      String location =
-          String.format("GeoAPI:%.4f,%.4f", coords.getLatitude(), coords.getLongitude());
-      TwitterMessageUtil.setAndTruncateLocationOnMessage(message, location);
+      stwing wocation =
+          stwing.fowmat("geoapi:%.4f,%.4f", (U ﹏ U) c-coowds.getwatitude(), ^•ﻌ•^ c-coowds.getwongitude());
+      twittewmessageutiw.setandtwuncatewocationonmessage(message, >w< w-wocation);
     }
 
-    // If the location was not set from the coordinates.
-    if ((message.getOrigLocation() == null) && (user != null) && user.isSetProfile()) {
-      TwitterMessageUtil.setAndTruncateLocationOnMessage(message, user.getProfile().getLocation());
-    }
-  }
-
-  private static void setPlacesFields(TwitterMessage message, Tweet tweet) {
-    if (!tweet.isSetPlace()) {
-      return;
-    }
-
-    Place place = tweet.getPlace();
-
-    if (place.isSetContainers() && place.getContainersSize() > 0) {
-      NUM_TWEETS_WITH_PLACE_FIELD.increment();
-      NUM_PLACE_ADDED.add(place.getContainersSize());
-
-      for (String placeId : place.getContainers()) {
-        message.addPlace(placeId);
-      }
-    }
-
-    Preconditions.checkArgument(place.isSetId(), "Tweet.Place without id.");
-    message.setPlaceId(place.getId());
-    Preconditions.checkArgument(place.isSetFull_name(), "Tweet.Place without full_name.");
-    message.setPlaceFullName(place.getFull_name());
-    if (place.isSetCountry_code()) {
-      message.setPlaceCountryCode(place.getCountry_code());
-      NUM_TWEETS_WITH_PLACE_COUNTRY_CODE.increment();
-    }
-
-    if (message.getGeoTaggedLocation() == null) {
-      Optional<GeoObject> location = GeoObject.fromPlace(place);
-
-      if (location.isPresent()) {
-        NUM_TWEETS_USE_PLACE_FIELD.increment();
-        message.setGeoTaggedLocation(location.get());
-      } else {
-        NUM_TWEETS_CANNOT_PARSE_PLACE_FIELD.increment();
-      }
+    // i-if the wocation was nyot set fwom the coowdinates. ʘwʘ
+    if ((message.getowigwocation() == n-nyuww) && (usew != n-nyuww) && usew.issetpwofiwe()) {
+      t-twittewmessageutiw.setandtwuncatewocationonmessage(message, òωó u-usew.getpwofiwe().getwocation());
     }
   }
 
-  private static void setText(TwitterMessage message, TweetCoreData coreData) {
+  pwivate static void setpwacesfiewds(twittewmessage m-message, o.O t-tweet tweet) {
+    if (!tweet.issetpwace()) {
+      wetuwn;
+    }
+
+    p-pwace pwace = tweet.getpwace();
+
+    if (pwace.issetcontainews() && pwace.getcontainewssize() > 0) {
+      n-nyum_tweets_with_pwace_fiewd.incwement();
+      nyum_pwace_added.add(pwace.getcontainewssize());
+
+      f-fow (stwing p-pwaceid : pwace.getcontainews()) {
+        m-message.addpwace(pwaceid);
+      }
+    }
+
+    p-pweconditions.checkawgument(pwace.issetid(), ( ͡o ω ͡o ) "tweet.pwace without i-id.");
+    message.setpwaceid(pwace.getid());
+    pweconditions.checkawgument(pwace.issetfuww_name(), mya "tweet.pwace w-without fuww_name.");
+    m-message.setpwacefuwwname(pwace.getfuww_name());
+    i-if (pwace.issetcountwy_code()) {
+      m-message.setpwacecountwycode(pwace.getcountwy_code());
+      nyum_tweets_with_pwace_countwy_code.incwement();
+    }
+
+    i-if (message.getgeotaggedwocation() == n-nyuww) {
+      o-optionaw<geoobject> wocation = g-geoobject.fwompwace(pwace);
+
+      if (wocation.ispwesent()) {
+        num_tweets_use_pwace_fiewd.incwement();
+        message.setgeotaggedwocation(wocation.get());
+      } ewse {
+        n-nyum_tweets_cannot_pawse_pwace_fiewd.incwement();
+      }
+    }
+  }
+
+  p-pwivate s-static void settext(twittewmessage message, >_< tweetcowedata cowedata) {
     /**
-     * TweetyPie doesn't do a full HTML escaping of the text, only a partial escaping
-     * so we use their code to unescape it first, then we do
-     * a second unescaping because when the tweet text itself has HTML escape
-     * sequences, we want to index the unescaped version, not the escape sequence itself.
+     * tweetypie doesn't do a fuww h-htmw escaping of the text, rawr onwy a-a pawtiaw escaping
+     * s-so we use theiw code to unescape it f-fiwst, >_< then we do
+     * a second u-unescaping because w-when the t-tweet text itsewf h-has htmw escape
+     * s-sequences, we want to index the unescaped vewsion, (U ﹏ U) nyot the escape sequence i-itsewf. rawr
      * --
-     * Yes, we *double* unescape html. About 1-2 tweets per second are double escaped,
-     * and we probably want to index the real text and not things like '&#9733;'.
-     * Unescaping already unescaped text seems safe in practice.
+     * yes, (U ᵕ U❁) w-we *doubwe* unescape htmw. (ˆ ﻌ ˆ)♡ about 1-2 tweets pew second awe doubwe e-escaped,
+     * and we pwobabwy want to index the weaw text and nyot things w-wike '&#9733;'. >_<
+     * u-unescaping awweady unescaped t-text seems safe in pwactice. ^^;;
      * --
      *
-     * This may seem wrong, because one thinks we should index whatever the user posts,
-     * but given punctuation stripping this creates odd behavior:
+     * this may s-seem wwong, ʘwʘ because o-one thinks we shouwd index n-nanievew the usew posts, 😳😳😳
+     * b-but given punctuation stwipping this cweates odd behaviow:
      *
-     * If someone tweets &amp; they won't be able to find it by searching for '&amp;' because
-     * the tweet will be indexed as 'amp'
+     * i-if someone tweets &amp; they won't be a-abwe to find it b-by seawching fow '&amp;' b-because
+     * the tweet wiww be indexed a-as 'amp'
      *
-     * It would also prevent some tweets from surfacing for certain searches, for example:
+     * it wouwd awso pwevent some tweets fwom suwfacing fow cewtain s-seawches, UwU f-fow exampwe:
      *
-     * User Tweets: John Mayer &amp; Dave Chappelle
-     * We Unescape To: John Mayer & Dave Chappelle
-     * We Strip/Normalize To: john mayer dave chappelle
+     * u-usew t-tweets: john mayew &amp; dave chappewwe
+     * we unescape to: j-john mayew & dave c-chappewwe
+     * we stwip/nowmawize to: john mayew d-dave chappewwe
      *
-     * A user searching for 'John Mayer Dave Chappelle' would get the above tweet.
+     * a usew seawching fow 'john mayew d-dave chappewwe' wouwd get the above tweet. OwO
      *
-     * If we didn't double unescape
+     * i-if we d-didn't doubwe unescape
      *
-     * User Tweets: John Mayer &amp; Dave Chappelle
-     * We Strip/Normalize To: john mayer amp dave chappelle
+     * u-usew tweets: j-john mayew &amp; d-dave chappewwe
+     * we stwip/nowmawize to: j-john mayew amp dave chappewwe
      *
-     * A user searching for 'John Mayer Dave Chappelle' would miss the above tweet.
+     * a u-usew seawching fow 'john mayew dave chappewwe' wouwd miss the above t-tweet. :3
      *
-     * Second example
+     * s-second e-exampwe
      *
-     * User Tweets: L'Humanit&eacute;
-     * We Unescape To: L'Humanité
-     * We Strip/Normalize To: l humanite
+     * u-usew tweets: w-w'humanit&eakawaii~;
+     * we unescape to: w'humanité
+     * w-we stwip/nowmawize to: w humanite
      *
-     * If we didn't double escape
+     * if we didn't doubwe e-escape
      *
-     * User Tweets: L'Humanit&eacute;
-     * We Strip/Normalize To: l humanit eacute
+     * usew t-tweets: w'humanit&eakawaii~;
+     * we stwip/nowmawize to: w humanit e-eakawaii~
      *
      */
 
-    String text = coreData.isSetText()
-        ? StringEscapeUtils.unescapeHtml(PartialHtmlEncoding.decode(coreData.getText()))
-        : coreData.getText();
-    message.setText(text);
-    if (text != null) {
-      long tweetLength = text.length();
-      TWEET_SIZE.add(tweetLength);
-      TWEET_SIZE_PERCENTILES.record(tweetLength);
-    } else {
-      NUM_TWEETS_WITH_NULL_TEXT.increment();
+    s-stwing text = cowedata.issettext()
+        ? s-stwingescapeutiws.unescapehtmw(pawtiawhtmwencoding.decode(cowedata.gettext()))
+        : cowedata.gettext();
+    m-message.settext(text);
+    i-if (text != nyuww) {
+      w-wong tweetwength = t-text.wength();
+      tweet_size.add(tweetwength);
+      tweet_size_pewcentiwes.wecowd(tweetwength);
+    } e-ewse {
+      nyum_tweets_with_nuww_text.incwement();
     }
   }
 
-  private static void setInReplyTo(
-      TwitterMessage message, TweetCoreData coreData, boolean isRetweet) {
-    Reply reply = coreData.getReply();
-    if (!isRetweet && reply != null) {
-      String inReplyToScreenName = reply.getIn_reply_to_screen_name();
-      long inReplyToUserId = reply.getIn_reply_to_user_id();
-      message.replaceToUserWithInReplyToUserIfNeeded(inReplyToScreenName, inReplyToUserId);
+  pwivate static void setinwepwyto(
+      t-twittewmessage message, t-tweetcowedata cowedata, -.- boowean iswetweet) {
+    w-wepwy wepwy = c-cowedata.getwepwy();
+    i-if (!iswetweet && wepwy != nyuww) {
+      s-stwing inwepwytoscweenname = w-wepwy.getin_wepwy_to_scween_name();
+      wong inwepwytousewid = w-wepwy.getin_wepwy_to_usew_id();
+      message.wepwacetousewwithinwepwytousewifneeded(inwepwytoscweenname, 🥺 i-inwepwytousewid);
     }
 
-    if ((reply != null) && reply.isSetIn_reply_to_status_id()) {
-      message.setInReplyToStatusId(reply.getIn_reply_to_status_id());
+    if ((wepwy != n-nyuww) && w-wepwy.issetin_wepwy_to_status_id()) {
+      message.setinwepwytostatusid(wepwy.getin_wepwy_to_status_id());
     }
   }
 
-  private static void setProfileGeoEnrichmentFields(TwitterMessage message, Tweet tweet) {
-    if (!tweet.isSetProfile_geo_enrichment()) {
-      return;
+  pwivate static void setpwofiwegeoenwichmentfiewds(twittewmessage message, -.- t-tweet tweet) {
+    i-if (!tweet.issetpwofiwe_geo_enwichment()) {
+      wetuwn;
     }
 
-    ProfileGeoEnrichment profileGeoEnrichment = tweet.getProfile_geo_enrichment();
-    List<PotentialLocation> thriftPotentialLocations =
-        profileGeoEnrichment.getPotential_locations();
-    if (!thriftPotentialLocations.isEmpty()) {
-      NUM_TWEETS_WITH_PROFILE_GEO_ENRICHMENT.increment();
-      List<PotentialLocationObject> potentialLocations = Lists.newArrayList();
-      for (PotentialLocation potentialLocation : thriftPotentialLocations) {
-        GeoEntity geoEntity = potentialLocation.getGeo_entity();
-        potentialLocations.add(new PotentialLocationObject(geoEntity.getCountry_code(),
-                                                           geoEntity.getRegion(),
-                                                           geoEntity.getLocality()));
+    pwofiwegeoenwichment pwofiwegeoenwichment = t-tweet.getpwofiwe_geo_enwichment();
+    wist<potentiawwocation> t-thwiftpotentiawwocations =
+        p-pwofiwegeoenwichment.getpotentiaw_wocations();
+    if (!thwiftpotentiawwocations.isempty()) {
+      nyum_tweets_with_pwofiwe_geo_enwichment.incwement();
+      wist<potentiawwocationobject> potentiawwocations = w-wists.newawwaywist();
+      fow (potentiawwocation potentiawwocation : t-thwiftpotentiawwocations) {
+        geoentity g-geoentity = p-potentiawwocation.getgeo_entity();
+        potentiawwocations.add(new p-potentiawwocationobject(geoentity.getcountwy_code(), -.-
+                                                           g-geoentity.getwegion(), (U ﹏ U)
+                                                           g-geoentity.getwocawity()));
       }
 
-      message.setPotentialLocations(potentialLocations);
+      m-message.setpotentiawwocations(potentiawwocations);
     }
   }
 
-  private static void setDeviceSourceField(TwitterMessage message, Tweet tweet) {
-    DeviceSource deviceSource = tweet.getDevice_source();
-    TwitterMessageUtil.setSourceOnMessage(message, modifyDeviceSourceWithNofollow(deviceSource));
+  p-pwivate static v-void setdevicesouwcefiewd(twittewmessage message, tweet tweet) {
+    devicesouwce devicesouwce = tweet.getdevice_souwce();
+    t-twittewmessageutiw.setsouwceonmessage(message, rawr m-modifydevicesouwcewithnofowwow(devicesouwce));
   }
 
-  /** Builds an IngesterTwitterMessage instance from a TweetDeleteEvent. */
-  @Nonnull
-  public static IngesterTwitterMessage getTwitterMessageFromDeletionEvent(
-      @Nonnull TweetDeleteEvent deleteEvent,
-      @Nonnull List<PenguinVersion> supportedPenguinVersions,
-      @Nullable DebugEvents debugEvents) throws ThriftTweetParsingException {
+  /** b-buiwds a-an ingestewtwittewmessage i-instance f-fwom a tweetdeweteevent. mya */
+  @nonnuww
+  pubwic static ingestewtwittewmessage gettwittewmessagefwomdewetionevent(
+      @nonnuww tweetdeweteevent d-deweteevent, ( ͡o ω ͡o )
+      @nonnuww w-wist<penguinvewsion> suppowtedpenguinvewsions, /(^•ω•^)
+      @nuwwabwe debugevents debugevents) thwows t-thwifttweetpawsingexception {
 
-    Tweet tweet = deleteEvent.getTweet();
-    if (tweet == null) {
-      throw new ThriftTweetParsingException("No tweet field in TweetDeleteEvent");
+    t-tweet tweet = d-deweteevent.gettweet();
+    if (tweet == nyuww) {
+      t-thwow nyew thwifttweetpawsingexception("no tweet fiewd i-in tweetdeweteevent");
     }
-    long tweetId = tweet.getId();
+    w-wong tweetid = tweet.getid();
 
-    TweetCoreData coreData = tweet.getCore_data();
-    if (coreData == null) {
-      throw new ThriftTweetParsingException("No TweetCoreData in TweetDeleteEvent");
+    tweetcowedata c-cowedata = tweet.getcowe_data();
+    if (cowedata == n-nyuww) {
+      t-thwow nyew thwifttweetpawsingexception("no t-tweetcowedata i-in tweetdeweteevent");
     }
-    long userId = coreData.getUser_id();
+    w-wong usewid = cowedata.getusew_id();
 
-    IngesterTwitterMessage message = new IngesterTwitterMessage(
-        tweetId,
-        supportedPenguinVersions,
-        debugEvents);
-    message.setDeleted(true);
-    message.setText("delete");
-    message.setFromUser(TwitterMessageUser.createWithNamesAndId("delete", "delete", userId));
+    i-ingestewtwittewmessage m-message = nyew i-ingestewtwittewmessage(
+        tweetid, >_<
+        s-suppowtedpenguinvewsions, (✿oωo)
+        d-debugevents);
+    message.setdeweted(twue);
+    m-message.settext("dewete");
+    message.setfwomusew(twittewmessageusew.cweatewithnamesandid("dewete", 😳😳😳 "dewete", (ꈍᴗꈍ) usewid));
 
-    return message;
+    w-wetuwn message;
   }
 
-  private static TwitterMessageUser getFromUser(User user) {
-    String screenName = user.getProfile().getScreen_name();
-    long id = user.getId();
-    String displayName = user.getProfile().getName();
-    return TwitterMessageUser.createWithNamesAndId(screenName, displayName, id);
+  pwivate s-static twittewmessageusew getfwomusew(usew u-usew) {
+    s-stwing scweenname = usew.getpwofiwe().getscween_name();
+    wong id = usew.getid();
+    s-stwing dispwayname = usew.getpwofiwe().getname();
+    wetuwn twittewmessageusew.cweatewithnamesandid(scweenname, 🥺 d-dispwayname, mya id);
   }
 
-  private static void addMentionsToMessage(IngesterTwitterMessage message, Tweet tweet) {
-    List<MentionEntity> mentions = tweet.getMentions();
-    if (mentions != null) {
-      NUM_TWEETS_WITH_MENTIONS.increment();
-      NUM_MENTIONS_ADDED.add(mentions.size());
-      for (MentionEntity mention : mentions) {
-        addMention(message, mention);
-      }
-    }
-  }
-
-  private static void addMention(IngesterTwitterMessage message, MentionEntity mention) {
-    // Default values. They are weird, but are consistent with JSON parsing behavior.
-    Optional<Long> id = Optional.of(-1L);
-    Optional<String> screenName = Optional.of("");
-    Optional<String> displayName = Optional.of("");
-
-    if (mention.isSetUser_id()) {
-      id = Optional.of(mention.getUser_id());
-    }
-
-    if (mention.isSetScreen_name()) {
-      screenName = Optional.of(mention.getScreen_name());
-    }
-
-    if (mention.isSetName()) {
-      displayName = Optional.of(mention.getName());
-    }
-
-    TwitterMessageUser mentionedUser = TwitterMessageUser
-        .createWithOptionalNamesAndId(screenName, displayName, id);
-
-    if (isToUser(mention, message.getToUserObject())) {
-      message.setToUserObject(mentionedUser);
-    }
-    message.addUserToMentions(mentionedUser);
-  }
-
-  private static boolean isToUser(
-      MentionEntity mention, Optional<TwitterMessageUser> optionalToUser) {
-    if (mention.getFrom_index() == 0) {
-      return true;
-    }
-    if (optionalToUser.isPresent()) {
-      TwitterMessageUser toUser = optionalToUser.get();
-      if (toUser.getId().isPresent()) {
-        long toUserId = toUser.getId().get();
-        return mention.getUser_id() == toUserId;
-      }
-    }
-    return false;
-  }
-
-  private static void addHashtagsToMessage(IngesterTwitterMessage message, Tweet tweet) {
-    List<HashtagEntity> hashtags = tweet.getHashtags();
-    if (hashtags != null) {
-      NUM_TWEETS_WITH_HASHTAGS.increment();
-      NUM_HASHTAGS_ADDED.add(hashtags.size());
-      for (HashtagEntity hashtag : hashtags) {
-        addHashtag(message, hashtag);
+  p-pwivate static void addmentionstomessage(ingestewtwittewmessage message, (ˆ ﻌ ˆ)♡ t-tweet tweet) {
+    w-wist<mentionentity> mentions = t-tweet.getmentions();
+    if (mentions != nyuww) {
+      n-num_tweets_with_mentions.incwement();
+      n-nyum_mentions_added.add(mentions.size());
+      fow (mentionentity m-mention : m-mentions) {
+        addmention(message, (⑅˘꒳˘) mention);
       }
     }
   }
 
-  private static void addHashtag(IngesterTwitterMessage message, HashtagEntity hashtag) {
-    String hashtagString = hashtag.getText();
-    message.addHashtag(hashtagString);
+  p-pwivate s-static void a-addmention(ingestewtwittewmessage m-message, mentionentity mention) {
+    // defauwt vawues. they awe weiwd, but awe consistent with json pawsing b-behaviow. òωó
+    optionaw<wong> i-id = o-optionaw.of(-1w);
+    o-optionaw<stwing> s-scweenname = o-optionaw.of("");
+    optionaw<stwing> d-dispwayname = o-optionaw.of("");
+
+    if (mention.issetusew_id()) {
+      i-id = optionaw.of(mention.getusew_id());
+    }
+
+    i-if (mention.issetscween_name()) {
+      scweenname = optionaw.of(mention.getscween_name());
+    }
+
+    if (mention.issetname()) {
+      dispwayname = optionaw.of(mention.getname());
+    }
+
+    t-twittewmessageusew mentionedusew = twittewmessageusew
+        .cweatewithoptionawnamesandid(scweenname, o.O d-dispwayname, XD id);
+
+    if (istousew(mention, (˘ω˘) m-message.gettousewobject())) {
+      m-message.settousewobject(mentionedusew);
+    }
+    message.addusewtomentions(mentionedusew);
   }
 
-  /** Add the given media entities to the given message. */
-  public static void addMediaEntitiesToMessage(
-      IngesterTwitterMessage message,
-      long photoStatusId,
-      @Nullable List<MediaEntity> medias) {
+  p-pwivate static b-boowean istousew(
+      m-mentionentity mention, (ꈍᴗꈍ) o-optionaw<twittewmessageusew> o-optionawtousew) {
+    if (mention.getfwom_index() == 0) {
+      w-wetuwn twue;
+    }
+    if (optionawtousew.ispwesent()) {
+      twittewmessageusew t-tousew = optionawtousew.get();
+      i-if (tousew.getid().ispwesent()) {
+        w-wong tousewid = tousew.getid().get();
+        wetuwn m-mention.getusew_id() == tousewid;
+      }
+    }
+    wetuwn f-fawse;
+  }
 
-    if (medias != null) {
-      NUM_TWEETS_WITH_MEDIA_URL.increment();
-      NUM_MEDIA_URLS_ADDED.add(medias.size());
+  pwivate static void addhashtagstomessage(ingestewtwittewmessage message, >w< tweet tweet) {
+    wist<hashtagentity> hashtags = tweet.gethashtags();
+    if (hashtags != n-nyuww) {
+      nyum_tweets_with_hashtags.incwement();
+      nyum_hashtags_added.add(hashtags.size());
+      fow (hashtagentity hashtag : hashtags) {
+        addhashtag(message, XD hashtag);
+      }
+    }
+  }
 
-      boolean hasPhotoMediaUrl = false;
-      boolean hasVideoMediaUrl = false;
-      for (MediaEntity media : medias) {
-        MediaTypes mediaType = null;
-        if (media.isSetMedia_info()) {
-          MediaInfo mediaInfo = media.getMedia_info();
-          if (mediaInfo != null) {
-            if (mediaInfo.isSet(MediaInfo._Fields.IMAGE_INFO)) {
-              mediaType = MediaTypes.NATIVE_IMAGE;
-              String mediaUrl = media.getMedia_url_https();
-              if (mediaUrl != null) {
-                hasPhotoMediaUrl = true;
-                message.addPhotoUrl(photoStatusId, mediaUrl);
-                // Add this link to the expanded URLs too, so that the HAS_NATIVE_IMAGE_FLAG is set
-                // correctly too. See EncodedFeatureBuilder.updateLinkEncodedFeatures().
+  pwivate static void addhashtag(ingestewtwittewmessage m-message, -.- hashtagentity hashtag) {
+    stwing h-hashtagstwing = hashtag.gettext();
+    m-message.addhashtag(hashtagstwing);
+  }
+
+  /** add the given media entities t-to the given message. ^^;; */
+  p-pubwic static void addmediaentitiestomessage(
+      i-ingestewtwittewmessage m-message, XD
+      wong photostatusid, :3
+      @nuwwabwe w-wist<mediaentity> medias) {
+
+    if (medias != nyuww) {
+      nyum_tweets_with_media_uww.incwement();
+      n-nyum_media_uwws_added.add(medias.size());
+
+      boowean h-hasphotomediauww = fawse;
+      b-boowean hasvideomediauww = fawse;
+      fow (mediaentity media : m-medias) {
+        m-mediatypes mediatype = nyuww;
+        if (media.issetmedia_info()) {
+          m-mediainfo mediainfo = media.getmedia_info();
+          if (mediainfo != nyuww) {
+            i-if (mediainfo.isset(mediainfo._fiewds.image_info)) {
+              mediatype = mediatypes.native_image;
+              stwing mediauww = media.getmedia_uww_https();
+              i-if (mediauww != n-nyuww) {
+                hasphotomediauww = t-twue;
+                m-message.addphotouww(photostatusid, σωσ mediauww);
+                // a-add this wink to the expanded uwws too, XD so that the has_native_image_fwag is set
+                // c-cowwectwy t-too. :3 see encodedfeatuwebuiwdew.updatewinkencodedfeatuwes(). rawr
               }
-            } else if (mediaInfo.isSet(MediaInfo._Fields.VIDEO_INFO)) {
-              mediaType = MediaTypes.VIDEO;
-              hasVideoMediaUrl = true;
+            } e-ewse if (mediainfo.isset(mediainfo._fiewds.video_info)) {
+              m-mediatype = mediatypes.video;
+              h-hasvideomediauww = twue;
             }
           }
         }
-        String originalUrl = media.getUrl();
-        String expandedUrl = media.getExpanded_url();
-        message.addExpandedMediaUrl(originalUrl, expandedUrl, mediaType);
+        stwing o-owiginawuww = media.getuww();
+        stwing expandeduww = m-media.getexpanded_uww();
+        m-message.addexpandedmediauww(owiginawuww, 😳 expandeduww, 😳😳😳 mediatype);
       }
 
-      if (hasPhotoMediaUrl) {
-        NUM_TWEETS_WITH_PHOTO_MEDIA_URL.increment();
+      if (hasphotomediauww) {
+        nyum_tweets_with_photo_media_uww.incwement();
       }
-      if (hasVideoMediaUrl) {
-        NUM_TWEETS_WITH_VIDEO_MEDIA_URL.increment();
-      }
-    }
-  }
-
-  /** Adds the given urls to the given message. */
-  public static void addUrlsToMessage(
-      IngesterTwitterMessage message,
-      @Nullable List<UrlEntity> urls) {
-
-    if (urls != null) {
-      NUM_TWEETS_WITH_NON_MEDIA_URL.increment();
-      NUM_NON_MEDIA_URLS_ADDED.add(urls.size());
-      for (UrlEntity url : urls) {
-        String originalUrl = url.getUrl();
-        String expandedUrl = url.getExpanded();
-        message.addExpandedNonMediaUrl(originalUrl, expandedUrl);
+      i-if (hasvideomediauww) {
+        nyum_tweets_with_video_media_uww.incwement();
       }
     }
   }
 
-  private static void addEscherbirdAnnotationsToMessage(
-      IngesterTwitterMessage message, Tweet tweet) {
-    if (tweet.isSetEscherbird_entity_annotations()) {
-      EscherbirdEntityAnnotations entityAnnotations = tweet.getEscherbird_entity_annotations();
-      if (entityAnnotations.isSetEntity_annotations()) {
-        NUM_TWEETS_WITH_ANNOTATIONS.increment();
-        NUM_ANNOTATIONS_ADDED.add(entityAnnotations.getEntity_annotationsSize());
-        for (TweetEntityAnnotation entityAnnotation : entityAnnotations.getEntity_annotations()) {
-          EscherbirdAnnotation escherbirdAnnotation =
-              new EscherbirdAnnotation(entityAnnotation.getGroupId(),
-                  entityAnnotation.getDomainId(),
-                  entityAnnotation.getEntityId());
-          message.addEscherbirdAnnotation(escherbirdAnnotation);
+  /** adds the given uwws to the given message. (ꈍᴗꈍ) */
+  pubwic static void adduwwstomessage(
+      ingestewtwittewmessage m-message,
+      @nuwwabwe w-wist<uwwentity> uwws) {
+
+    i-if (uwws != n-nyuww) {
+      nyum_tweets_with_non_media_uww.incwement();
+      n-nyum_non_media_uwws_added.add(uwws.size());
+      fow (uwwentity uww : uwws) {
+        stwing owiginawuww = uww.getuww();
+        s-stwing expandeduww = uww.getexpanded();
+        message.addexpandednonmediauww(owiginawuww, 🥺 expandeduww);
+      }
+    }
+  }
+
+  pwivate static v-void addeschewbiwdannotationstomessage(
+      i-ingestewtwittewmessage m-message, ^•ﻌ•^ tweet tweet) {
+    if (tweet.isseteschewbiwd_entity_annotations()) {
+      eschewbiwdentityannotations entityannotations = tweet.geteschewbiwd_entity_annotations();
+      if (entityannotations.issetentity_annotations()) {
+        n-nyum_tweets_with_annotations.incwement();
+        n-nyum_annotations_added.add(entityannotations.getentity_annotationssize());
+        fow (tweetentityannotation e-entityannotation : entityannotations.getentity_annotations()) {
+          e-eschewbiwdannotation eschewbiwdannotation =
+              n-new eschewbiwdannotation(entityannotation.getgwoupid(), XD
+                  e-entityannotation.getdomainid(), ^•ﻌ•^
+                  entityannotation.getentityid());
+          m-message.addeschewbiwdannotation(eschewbiwdannotation);
         }
       }
     }
   }
 
-  private static void setComposerSource(IngesterTwitterMessage message, Tweet tweet) {
-    if (tweet.isSetComposer_source()) {
-      message.setComposerSource(tweet.getComposer_source());
+  pwivate static void setcomposewsouwce(ingestewtwittewmessage m-message, ^^;; tweet tweet) {
+    i-if (tweet.issetcomposew_souwce()) {
+      m-message.setcomposewsouwce(tweet.getcomposew_souwce());
     }
   }
 
-  private static String modifyDeviceSourceWithNofollow(@Nullable DeviceSource deviceSource) {
-    if (deviceSource != null) {
-      String source = deviceSource.getDisplay();
-      int i = source.indexOf("\">");
-      if (i == -1) {
-        return source;
-      } else {
-        return source.substring(0, i) + "\" rel=\"nofollow\">" + source.substring(i + 2);
+  pwivate static s-stwing modifydevicesouwcewithnofowwow(@nuwwabwe d-devicesouwce devicesouwce) {
+    if (devicesouwce != n-nyuww) {
+      stwing souwce = d-devicesouwce.getdispway();
+      int i = souwce.indexof("\">");
+      i-if (i == -1) {
+        w-wetuwn souwce;
+      } ewse {
+        wetuwn souwce.substwing(0, ʘwʘ i-i) + "\" wew=\"nofowwow\">" + souwce.substwing(i + 2);
       }
-    } else {
-      return "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter</a>";
+    } ewse {
+      wetuwn "<a hwef=\"http://twittew.com\" wew=\"nofowwow\">twittew</a>";
     }
   }
 
-  private static void setDirectedAtUser(
-      IngesterTwitterMessage message,
-      TweetCoreData tweetCoreData) {
-    if (!tweetCoreData.isSetDirected_at_user()) {
-      return;
+  pwivate static void setdiwectedatusew(
+      i-ingestewtwittewmessage message, OwO
+      tweetcowedata t-tweetcowedata) {
+    if (!tweetcowedata.issetdiwected_at_usew()) {
+      w-wetuwn;
     }
 
-    DirectedAtUser directedAtUser = tweetCoreData.getDirected_at_user();
+    diwectedatusew diwectedatusew = t-tweetcowedata.getdiwected_at_usew();
 
-    if (!directedAtUser.isSetUser_id()) {
-      return;
+    if (!diwectedatusew.issetusew_id()) {
+      wetuwn;
     }
 
-    message.setDirectedAtUserId(Optional.of(directedAtUser.getUser_id()));
+    message.setdiwectedatusewid(optionaw.of(diwectedatusew.getusew_id()));
   }
 }

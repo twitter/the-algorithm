@@ -1,18 +1,18 @@
-package com.twitter.simclusters_v2.common
+package com.twittew.simcwustews_v2.common
 
-import com.twitter.algebird.Monoid
+impowt c-com.twittew.awgebiwd.monoid
 
-case class SimClustersEmbeddingMonoid() extends Monoid[SimClustersEmbedding] {
+c-case c-cwass simcwustewsembeddingmonoid() e-extends monoid[simcwustewsembedding] {
 
-  override val zero: SimClustersEmbedding = SimClustersEmbedding.EmptyEmbedding
+  o-ovewwide vaw zewo: s-simcwustewsembedding = s-simcwustewsembedding.emptyembedding
 
-  override def plus(x: SimClustersEmbedding, y: SimClustersEmbedding): SimClustersEmbedding = {
+  o-ovewwide def pwus(x: simcwustewsembedding, :3 y: simcwustewsembedding): simcwustewsembedding = {
     x.sum(y)
   }
 }
 
-object SimClustersEmbeddingMonoid {
+o-object simcwustewsembeddingmonoid {
 
-  val monoid: Monoid[SimClustersEmbedding] = SimClustersEmbeddingMonoid()
+  vaw monoid: monoid[simcwustewsembedding] = s-simcwustewsembeddingmonoid()
 
 }

@@ -1,53 +1,53 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twittew.simcwustews_v2.hdfs_souwces.injections
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
-  ScalaCompactThrift,
-  StringUtf8
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection
+i-impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvawinjection.{
+  w-wong2bigendian, rawr
+  scawacompactthwift, OwO
+  s-stwingutf8
 }
-import com.twitter.recos.entities.thriftscala.{
-  SemanticCoreEntityScoreList,
-  SemanticCoreEntityWithLocale,
-  UserIdWithLocale,
-  UserScoreList
+i-impowt com.twittew.wecos.entities.thwiftscawa.{
+  s-semanticcoweentityscowewist, (U ﹏ U)
+  s-semanticcoweentitywithwocawe, >_<
+  usewidwithwocawe, rawr x3
+  usewscowewist
 }
 
-object SemanticCoreEntitiesInjections {
+object semanticcoweentitiesinjections {
 
-  final val StringToSemanticCoreEntityScoreListInjection: KeyValInjection[
-    String,
-    SemanticCoreEntityScoreList
+  finaw vaw stwingtosemanticcoweentityscowewistinjection: k-keyvawinjection[
+    stwing, mya
+    semanticcoweentityscowewist
   ] =
-    KeyValInjection(
-      StringUtf8,
-      ScalaCompactThrift(SemanticCoreEntityScoreList)
+    keyvawinjection(
+      s-stwingutf8, nyaa~~
+      scawacompactthwift(semanticcoweentityscowewist)
     )
 
-  final val LongToSemanticCoreEntityScoreListInjection: KeyValInjection[
-    Long,
-    SemanticCoreEntityScoreList
+  f-finaw vaw wongtosemanticcoweentityscowewistinjection: keyvawinjection[
+    wong, (⑅˘꒳˘)
+    semanticcoweentityscowewist
   ] =
-    KeyValInjection(
-      Long2BigEndian,
-      ScalaCompactThrift(SemanticCoreEntityScoreList)
+    keyvawinjection(
+      wong2bigendian, rawr x3
+      s-scawacompactthwift(semanticcoweentityscowewist)
     )
 
-  final val UserWithLocaleToSemanticCoreEntityScoreListInjection: KeyValInjection[
-    UserIdWithLocale,
-    SemanticCoreEntityScoreList
+  finaw vaw usewwithwocawetosemanticcoweentityscowewistinjection: k-keyvawinjection[
+    u-usewidwithwocawe, (✿oωo)
+    semanticcoweentityscowewist
   ] =
-    KeyValInjection(
-      ScalaCompactThrift(UserIdWithLocale),
-      ScalaCompactThrift(SemanticCoreEntityScoreList)
+    keyvawinjection(
+      scawacompactthwift(usewidwithwocawe), (ˆ ﻌ ˆ)♡
+      scawacompactthwift(semanticcoweentityscowewist)
     )
 
-  final val SemanticCoreEntityWithLocaleToUsersScoreListInjection: KeyValInjection[
-    SemanticCoreEntityWithLocale,
-    UserScoreList
+  f-finaw vaw semanticcoweentitywithwocawetousewsscowewistinjection: keyvawinjection[
+    semanticcoweentitywithwocawe, (˘ω˘)
+    usewscowewist
   ] =
-    KeyValInjection(
-      ScalaCompactThrift(SemanticCoreEntityWithLocale),
-      ScalaCompactThrift(UserScoreList)
+    keyvawinjection(
+      s-scawacompactthwift(semanticcoweentitywithwocawe), (⑅˘꒳˘)
+      scawacompactthwift(usewscowewist)
     )
 }

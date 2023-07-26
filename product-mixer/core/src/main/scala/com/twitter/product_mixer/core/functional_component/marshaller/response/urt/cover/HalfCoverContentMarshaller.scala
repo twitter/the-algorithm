@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.covew
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.DismissInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.cawwbackmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.metadata.dismissinfomawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.wichtext.wichtextmawshawwew
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.covew.hawfcovewcontent
+i-impowt com.twittew.timewines.wendew.{thwiftscawa => uwt}
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class HalfCoverContentMarshaller @Inject() (
-  halfCoverDisplayTypeMarshaller: HalfCoverDisplayTypeMarshaller,
-  coverCtaMarshaller: CoverCtaMarshaller,
-  richTextMarshaller: RichTextMarshaller,
-  coverImageMarshaller: CoverImageMarshaller,
-  dismissInfoMarshaller: DismissInfoMarshaller,
-  callbackMarshaller: CallbackMarshaller) {
+@singweton
+c-cwass hawfcovewcontentmawshawwew @inject() (
+  hawfcovewdispwaytypemawshawwew: hawfcovewdispwaytypemawshawwew, (✿oωo)
+  c-covewctamawshawwew: covewctamawshawwew, (ˆ ﻌ ˆ)♡
+  wichtextmawshawwew: w-wichtextmawshawwew, (˘ω˘)
+  covewimagemawshawwew: covewimagemawshawwew, (⑅˘꒳˘)
+  dismissinfomawshawwew: dismissinfomawshawwew, (///ˬ///✿)
+  c-cawwbackmawshawwew: cawwbackmawshawwew) {
 
-  def apply(halfCover: HalfCoverContent): urt.Cover =
-    urt.Cover.HalfCover(
-      urt.HalfCover(
-        displayType = halfCoverDisplayTypeMarshaller(halfCover.displayType),
-        primaryText = richTextMarshaller(halfCover.primaryText),
-        primaryCoverCta = coverCtaMarshaller(halfCover.primaryCoverCta),
-        secondaryCoverCta = halfCover.secondaryCoverCta.map(coverCtaMarshaller(_)),
-        secondaryText = halfCover.secondaryText.map(richTextMarshaller(_)),
-        impressionCallbacks = halfCover.impressionCallbacks.map(_.map(callbackMarshaller(_))),
-        dismissible = halfCover.dismissible,
-        coverImage = halfCover.coverImage.map(coverImageMarshaller(_)),
-        dismissInfo = halfCover.dismissInfo.map(dismissInfoMarshaller(_))
+  d-def appwy(hawfcovew: h-hawfcovewcontent): uwt.covew =
+    uwt.covew.hawfcovew(
+      uwt.hawfcovew(
+        dispwaytype = h-hawfcovewdispwaytypemawshawwew(hawfcovew.dispwaytype), 😳😳😳
+        pwimawytext = wichtextmawshawwew(hawfcovew.pwimawytext), 🥺
+        pwimawycovewcta = covewctamawshawwew(hawfcovew.pwimawycovewcta), mya
+        s-secondawycovewcta = hawfcovew.secondawycovewcta.map(covewctamawshawwew(_)), 🥺
+        s-secondawytext = h-hawfcovew.secondawytext.map(wichtextmawshawwew(_)), >_<
+        i-impwessioncawwbacks = h-hawfcovew.impwessioncawwbacks.map(_.map(cawwbackmawshawwew(_))), >_<
+        dismissibwe = hawfcovew.dismissibwe, (⑅˘꒳˘)
+        c-covewimage = hawfcovew.covewimage.map(covewimagemawshawwew(_)), /(^•ω•^)
+        dismissinfo = hawfcovew.dismissinfo.map(dismissinfomawshawwew(_))
       ))
 }

@@ -1,33 +1,33 @@
-syntax = "proto3";
+syntax = "pwoto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+package tensowfwow.sewving;
+option cc_enabwe_awenas = t-twue;
 
-import "google/protobuf/wrappers.proto";
+i-impowt "googwe/pwotobuf/wwappews.pwoto";
 
-// Metadata for an inference request such as the model name and version.
-message ModelSpec {
-  // Required servable name.
-  string name = 1;
+// m-metadata f-fow an infewence w-wequest such a-as the modew n-nyame and vewsion. (⑅˘꒳˘)
+m-message modewspec {
+  // wequiwed sewvabwe nyame. /(^•ω•^)
+  stwing nyame = 1;
 
-  // Optional choice of which version of the model to use.
+  // optionaw choice o-of which vewsion of the modew to use. rawr x3
   //
-  // Recommended to be left unset in the common case. Should be specified only
-  // when there is a strong version consistency requirement.
+  // w-wecommended to be weft unset in t-the common case. (U ﹏ U) shouwd be specified onwy
+  // when thewe is a stwong v-vewsion consistency wequiwement. (U ﹏ U)
   //
-  // When left unspecified, the system will serve the best available version.
-  // This is typically the latest version, though during version transitions,
-  // notably when serving on a fleet of instances, may be either the previous or
-  // new version.
-  oneof version_choice {
-    // Use this specific version number.
-    google.protobuf.Int64Value version = 2;
+  // w-when weft unspecified, (⑅˘꒳˘) t-the system wiww sewve the best avaiwabwe vewsion. òωó
+  // this is typicawwy t-the watest vewsion, ʘwʘ though duwing vewsion twansitions, /(^•ω•^)
+  // nyotabwy when sewving o-on a fweet of instances, ʘwʘ may b-be eithew the pwevious o-ow
+  // nyew v-vewsion. σωσ
+  oneof v-vewsion_choice {
+    // use this specific vewsion n-nyumbew. OwO
+    googwe.pwotobuf.int64vawue vewsion = 2;
 
-    // Use the version associated with the given label.
-    string version_label = 4;
+    // use the vewsion a-associated with the given wabew. 😳😳😳
+    stwing vewsion_wabew = 4;
   }
 
-  // A named signature to evaluate. If unspecified, the default signature will
-  // be used.
-  string signature_name = 3;
+  // a nyamed signatuwe t-to evawuate. 😳😳😳 if unspecified, o.O the d-defauwt signatuwe w-wiww
+  // be u-used. ( ͡o ω ͡o )
+  stwing signatuwe_name = 3;
 }

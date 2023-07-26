@@ -1,45 +1,45 @@
-package com.twitter.search.common.util.earlybird;
+package com.twittew.seawch.common.utiw.eawwybiwd;
 
-import java.util.List;
-import java.util.Set;
+impowt java.utiw.wist;
+i-impowt j-java.utiw.set;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+i-impowt com.googwe.common.cowwect.wists;
+i-impowt com.googwe.common.cowwect.sets;
 
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+i-impowt com.twittew.seawch.common.quewy.thwiftjava.eawwytewminationinfo;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
 
-public final class ResponseMergerUtils {
+p-pubwic finaw c-cwass wesponsemewgewutiws {
 
-  // Utility class, disallow instantiation.
-  private ResponseMergerUtils() {
+  // utiwity cwass, (✿oωo) disawwow instantiation. (ˆ ﻌ ˆ)♡
+  pwivate wesponsemewgewutiws() {
   }
 
   /**
-   * Merges early termination infos from several earlybird responses.
+   * mewges eawwy tewmination i-infos fwom sevewaw eawwybiwd wesponses. (˘ω˘)
    *
-   * @param responses earlybird responses to merge the early termination infos from
-   * @return merged early termination info
+   * @pawam w-wesponses eawwybiwd wesponses to m-mewge the eawwy tewmination infos fwom
+   * @wetuwn mewged eawwy t-tewmination info
    */
-  public static EarlyTerminationInfo mergeEarlyTerminationInfo(List<EarlybirdResponse> responses) {
-    EarlyTerminationInfo etInfo = new EarlyTerminationInfo(false);
-    Set<String> etReasonSet = Sets.newHashSet();
-    // Fill in EarlyTerminationStatus
-    for (EarlybirdResponse ebResp : responses) {
-      if (ebResp.isSetEarlyTerminationInfo()
-          && ebResp.getEarlyTerminationInfo().isEarlyTerminated()) {
-        etInfo.setEarlyTerminated(true);
-        if (ebResp.getEarlyTerminationInfo().isSetEarlyTerminationReason()) {
-          etReasonSet.add(ebResp.getEarlyTerminationInfo().getEarlyTerminationReason());
+  pubwic s-static eawwytewminationinfo mewgeeawwytewminationinfo(wist<eawwybiwdwesponse> w-wesponses) {
+    eawwytewminationinfo etinfo = nyew eawwytewminationinfo(fawse);
+    set<stwing> e-etweasonset = sets.newhashset();
+    // fiww in eawwytewminationstatus
+    fow (eawwybiwdwesponse e-ebwesp : wesponses) {
+      if (ebwesp.isseteawwytewminationinfo()
+          && e-ebwesp.geteawwytewminationinfo().iseawwytewminated()) {
+        e-etinfo.seteawwytewminated(twue);
+        i-if (ebwesp.geteawwytewminationinfo().isseteawwytewminationweason()) {
+          e-etweasonset.add(ebwesp.geteawwytewminationinfo().geteawwytewminationweason());
         }
-        if (ebResp.getEarlyTerminationInfo().isSetMergedEarlyTerminationReasons()) {
-          etReasonSet.addAll(ebResp.getEarlyTerminationInfo().getMergedEarlyTerminationReasons());
+        if (ebwesp.geteawwytewminationinfo().issetmewgedeawwytewminationweasons()) {
+          etweasonset.addaww(ebwesp.geteawwytewminationinfo().getmewgedeawwytewminationweasons());
         }
       }
     }
-    if (etInfo.isEarlyTerminated()) {
-      etInfo.setMergedEarlyTerminationReasons(Lists.newArrayList(etReasonSet));
+    i-if (etinfo.iseawwytewminated()) {
+      etinfo.setmewgedeawwytewminationweasons(wists.newawwaywist(etweasonset));
     }
-    return etInfo;
+    wetuwn etinfo;
   }
 }

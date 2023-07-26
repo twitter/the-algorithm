@@ -1,32 +1,32 @@
-package com.twitter.tweetypie
-package core
+package com.twittew.tweetypie
+package c-cowe
 
-import com.twitter.tweetypie.thriftscala.CardReference
-import java.net.URI
+impowt c-com.twittew.tweetypie.thwiftscawa.cawdwefewence
+i-impowt java.net.uwi
 
-sealed trait CardUri
-object Tombstone extends CardUri
-case class NonTombstone(uri: String) extends CardUri
+s-seawed twait c-cawduwi
+object t-tombstone extends c-cawduwi
+case c-cwass nyontombstone(uwi: stwing) extends cawduwi
 
-object CardReferenceUriExtractor {
+object cawdwefewenceuwiextwactow {
 
-  private def parseAsUri(cardRef: CardReference) = Try(new URI(cardRef.cardUri)).toOption
-  private def isTombstone(uri: URI) = uri.getScheme == "tombstone"
+  pwivate d-def pawseasuwi(cawdwef: cawdwefewence) = twy(new u-uwi(cawdwef.cawduwi)).tooption
+  pwivate def i-istombstone(uwi: uwi) = uwi.getscheme == "tombstone"
 
   /**
-   * Parses a CardReference to return Option[CardUri] to differentiate among:
-   * - Some(NonTombstone): hydrate card2 with provided uri
-   * - Some(Tombstone): don't hydrate card2
-   * - None: fallback and attempt to use url entities uris
+   * pawses a cawdwefewence to wetuwn o-option[cawduwi] to diffewentiate a-among:
+   * - s-some(nontombstone): hydwate cawd2 with pwovided uwi
+   * - some(tombstone): don't h-hydwate cawd2
+   * - nyone: fawwback and attempt to use uww entities uwis
    */
-  def unapply(cardRef: CardReference): Option[CardUri] =
-    parseAsUri(cardRef) match {
-      case Some(uri) if !isTombstone(uri) => Some(NonTombstone(uri.toString))
-      case Some(uri) => Some(Tombstone)
+  d-def unappwy(cawdwef: cawdwefewence): o-option[cawduwi] =
+    p-pawseasuwi(cawdwef) m-match {
+      c-case some(uwi) if !istombstone(uwi) => some(nontombstone(uwi.tostwing))
+      c-case some(uwi) => some(tombstone)
 
-      // If a cardReference is set, but does not parse as a URI, it's likely a https? URL with
-      // incorrectly encoded query params. Since these occur frequently in the wild, we'll
-      // attempt a card2 hydration with it
-      case None => Some(NonTombstone(cardRef.cardUri))
+      // if a c-cawdwefewence is set, (U ﹏ U) but does nyot pawse as a uwi, (⑅˘꒳˘) it's wikewy a https? uww with
+      // incowwectwy e-encoded quewy pawams. òωó since t-these occuw f-fwequentwy in the w-wiwd, ʘwʘ we'ww
+      // attempt a cawd2 hydwation with it
+      case n-nyone => some(nontombstone(cawdwef.cawduwi))
     }
 }

@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.rankers.interleave_ranker
+package com.twittew.fowwow_wecommendations.common.wankews.intewweave_wankew
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSParam
+impowt j-javax.inject.inject
+i-impowt javax.inject.singweton
+i-impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+i-impowt com.twittew.timewines.configapi.fspawam
 
-@Singleton
-class InterleaveRankerFSConfig @Inject() extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] =
-    Seq(InterleaveRankerParams.ScribeRankingInfoInInterleaveRanker)
+@singweton
+cwass i-intewweavewankewfsconfig @inject() e-extends f-featuweswitchconfig {
+  o-ovewwide vaw booweanfspawams: seq[fspawam[boowean]] =
+    seq(intewweavewankewpawams.scwibewankinginfoinintewweavewankew)
 }

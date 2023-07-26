@@ -1,34 +1,34 @@
-package com.twitter.representationscorer.modules
+package com.twittew.wepwesentationscowew.moduwes
 
-import com.google.inject.Provides
-import com.twitter.finagle.memcached.Client
-import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.inject.TwitterModule
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.ClientName
-import com.twitter.storehaus_internal.util.ZkEndPoint
+impowt com.googwe.inject.pwovides
+i-impowt com.twittew.finagwe.memcached.cwient
+impowt j-javax.inject.singweton
+i-impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.inject.twittewmoduwe
+i-impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.stowehaus_intewnaw.memcache.memcachestowe
+impowt com.twittew.stowehaus_intewnaw.utiw.cwientname
+impowt com.twittew.stowehaus_intewnaw.utiw.zkendpoint
 
-object CacheModule extends TwitterModule {
+object c-cachemoduwe extends twittewmoduwe {
 
-  private val cacheDest = flag[String]("cache_module.dest", "Path to memcache service")
-  private val timeout = flag[Int]("memcache.timeout", "Memcache client timeout")
-  private val retries = flag[Int]("memcache.retries", "Memcache timeout retries")
+  pwivate v-vaw cachedest = fwag[stwing]("cache_moduwe.dest", nyaa~~ "path t-to memcache sewvice")
+  pwivate vaw timeout = fwag[int]("memcache.timeout", (⑅˘꒳˘) "memcache c-cwient timeout")
+  pwivate vaw wetwies = f-fwag[int]("memcache.wetwies", rawr x3 "memcache t-timeout wetwies")
 
-  @Singleton
-  @Provides
-  def providesCache(
-    serviceIdentifier: ServiceIdentifier,
-    stats: StatsReceiver
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache_representation_manager"),
-      dest = ZkEndPoint(cacheDest()),
-      timeout = timeout().milliseconds,
-      retries = retries(),
-      statsReceiver = stats.scope("cache_client"),
-      serviceIdentifier = serviceIdentifier
+  @singweton
+  @pwovides
+  def pwovidescache(
+    sewviceidentifiew: sewviceidentifiew, (✿oωo)
+    stats: statsweceivew
+  ): c-cwient =
+    memcachestowe.memcachedcwient(
+      nyame = cwientname("memcache_wepwesentation_managew"), (ˆ ﻌ ˆ)♡
+      dest = z-zkendpoint(cachedest()), (˘ω˘)
+      timeout = timeout().miwwiseconds, (⑅˘꒳˘)
+      w-wetwies = w-wetwies(),
+      s-statsweceivew = s-stats.scope("cache_cwient"), (///ˬ///✿)
+      sewviceidentifiew = sewviceidentifiew
     )
 }

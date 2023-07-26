@@ -1,92 +1,92 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.online_store
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twittew.simcwustews_v2.thwiftjava
+nyamespace py g-gen.twittew.simcwustews_v2.onwine_stowe
+#@namespace s-scawa com.twittew.simcwustews_v2.thwiftscawa
+#@namespace stwato c-com.twittew.simcwustews_v2
 
-include "entity.thrift"
-include "com/twitter/algebird_internal/algebird.thrift"
-
-/**
- * A SimClusters model version.
- **/
-enum ModelVersion {
-	MODEL_20M_145K_dec11 = 1, // DEPRECATED
-	MODEL_20M_145K_updated = 2, // DEPRECATED
-  MODEL_20M_145K_2020 = 3,
-  RESERVED_4 = 4,
-  RESERVED_5 = 5,
-  RESERVED_6 = 6
-}(persisted = 'true', hasPersonalData = 'false')
+i-incwude "entity.thwift"
+i-incwude "com/twittew/awgebiwd_intewnaw/awgebiwd.thwift"
 
 /**
- * Uniquely identifies a SimCluster. All fields are required as this is used as a memcache key.
+ * a-a simcwustews m-modew vewsion. 😳😳😳
  **/
-struct FullClusterId {
-  1: required ModelVersion modelVersion
-  2: required i32 clusterId
-}(persisted='true', hasPersonalData = 'false')
+e-enum modewvewsion {
+	modew_20m_145k_dec11 = 1, mya // depwecated
+	modew_20m_145k_updated = 2, mya // d-depwecated
+  modew_20m_145k_2020 = 3, (⑅˘꒳˘)
+  wesewved_4 = 4, (U ﹏ U)
+  w-wesewved_5 = 5, mya
+  wesewved_6 = 6
+}(pewsisted = 'twue', ʘwʘ h-haspewsonawdata = 'fawse')
 
 /**
- * Contains a set of scores per cluster.
+ * uniquewy identifies a simcwustew. (˘ω˘) aww f-fiewds awe wequiwed as this is u-used as a memcache k-key. (U ﹏ U)
  **/
-struct Scores {
-  1: optional algebird.DecayedValue favClusterNormalized8HrHalfLifeScore
-  2: optional algebird.DecayedValue followClusterNormalized8HrHalfLifeScore
-}(hasPersonalData = 'false')
+stwuct fuwwcwustewid {
+  1: wequiwed modewvewsion modewvewsion
+  2: w-wequiwed i32 cwustewid
+}(pewsisted='twue', ^•ﻌ•^ haspewsonawdata = 'fawse')
 
 /**
- * A combination of entity and model. All fields are required as this is used as a memcache key.
+ * contains a set of scowes pew cwustew. (˘ω˘)
  **/
-struct EntityWithVersion {
-  1: required entity.SimClusterEntity entity
-  2: required ModelVersion version
-}(hasPersonalData = 'true')
+s-stwuct scowes {
+  1: o-optionaw awgebiwd.decayedvawue f-favcwustewnowmawized8hwhawfwifescowe
+  2: o-optionaw a-awgebiwd.decayedvawue fowwowcwustewnowmawized8hwhawfwifescowe
+}(haspewsonawdata = 'fawse')
 
 /**
- * Contains top K clusters with corresponding scores. We're representing clusters purely using ints, and
- * omitting the modelVersion, since that is included in the memcache key.
+ * a combination o-of entity and modew. :3 aww fiewds awe wequiwed a-as this is used as a memcache key.
  **/
-struct TopKClustersWithScores {
-  1: optional map<i32, Scores> topClustersByFavClusterNormalizedScore(personalDataTypeKey = 'InferredInterests')
-  2: optional map<i32, Scores> topClustersByFollowClusterNormalizedScore(personalDataTypeKey = 'InferredInterests')
-}(hasPersonalData = 'true')
+stwuct entitywithvewsion {
+  1: wequiwed entity.simcwustewentity e-entity
+  2: wequiwed modewvewsion v-vewsion
+}(haspewsonawdata = 'twue')
 
 /**
- * Contains top K text entities with corresponding scores.  We're omitting the modelVersion,
- * since that is included in the memcache key.
+ * c-contains t-top k cwustews with cowwesponding scowes. ^^;; we'we wepwesenting cwustews p-puwewy using i-ints, 🥺 and
+ * omitting the modewvewsion, (⑅˘꒳˘) s-since t-that is incwuded in the memcache k-key. nyaa~~
  **/
-struct TopKEntitiesWithScores {
-  1: optional map<entity.TweetTextEntity, Scores> topEntitiesByFavClusterNormalizedScore
-  2: optional map<entity.TweetTextEntity, Scores> topEntitiesByFollowClusterNormalizedScore
-}(hasPersonalData = 'true')
+stwuct topkcwustewswithscowes {
+  1: o-optionaw map<i32, :3 scowes> topcwustewsbyfavcwustewnowmawizedscowe(pewsonawdatatypekey = 'infewwedintewests')
+  2: optionaw map<i32, ( ͡o ω ͡o ) s-scowes> topcwustewsbyfowwowcwustewnowmawizedscowe(pewsonawdatatypekey = 'infewwedintewests')
+}(haspewsonawdata = 'twue')
 
 /**
- * Contains top K tweets with corresponding scores. We're omitting the modelVersion,
- * since that is included in the memcache key.
+ * contains top k-k text entities with cowwesponding s-scowes. mya  we'we o-omitting the modewvewsion, (///ˬ///✿)
+ * since that is incwuded in the memcache key. (˘ω˘)
  **/
-struct TopKTweetsWithScores {
-  1: optional map<i64, Scores> topTweetsByFavClusterNormalizedScore(personalDataTypeKey='TweetId')
-  2: optional map<i64, Scores> topTweetsByFollowClusterNormalizedScore(personalDataTypeKey='TweetId')
-}(hasPersonalData = 'true')
+stwuct topkentitieswithscowes {
+  1: optionaw m-map<entity.tweettextentity, ^^;; s-scowes> topentitiesbyfavcwustewnowmawizedscowe
+  2: o-optionaw map<entity.tweettextentity, (✿oωo) s-scowes> topentitiesbyfowwowcwustewnowmawizedscowe
+}(haspewsonawdata = 'twue')
 
 /**
- * Contains FullClusterId and the corresponding top K tweets and scores.
+ * c-contains top k tweets with cowwesponding scowes. we'we o-omitting the modewvewsion, (U ﹏ U)
+ * since that is incwuded in the memcache key. -.-
  **/
-struct ClusterIdToTopKTweetsWithScores {
-  1: required FullClusterId clusterId
-  2: required TopKTweetsWithScores topKTweetsWithScores
-}(hasPersonalData = 'true')
+s-stwuct topktweetswithscowes {
+  1: optionaw map<i64, ^•ﻌ•^ s-scowes> t-toptweetsbyfavcwustewnowmawizedscowe(pewsonawdatatypekey='tweetid')
+  2: o-optionaw map<i64, rawr scowes> t-toptweetsbyfowwowcwustewnowmawizedscowe(pewsonawdatatypekey='tweetid')
+}(haspewsonawdata = 'twue')
 
 /**
- * Contains a map of Model Version to top K clusters with corresponding scores.
+ * c-contains f-fuwwcwustewid a-and the cowwesponding top k tweets and scowes. (˘ω˘)
  **/
-struct MultiModelTopKClustersWithScores {
-  1: optional map<ModelVersion, TopKClustersWithScores> multiModelTopKClustersWithScores
-}(hasPersonalData = 'true')
+s-stwuct c-cwustewidtotopktweetswithscowes {
+  1: w-wequiwed f-fuwwcwustewid cwustewid
+  2: w-wequiwed topktweetswithscowes topktweetswithscowes
+}(haspewsonawdata = 'twue')
 
 /**
- * Contains a map of Model Version top K tweets with corresponding scores.
+ * contains a map o-of modew vewsion to top k cwustews with cowwesponding scowes. nyaa~~
  **/
-struct MultiModelTopKTweetsWithScores {
-  1: optional map<ModelVersion, TopKTweetsWithScores> multiModelTopKTweetsWithScores
-}(hasPersonalData = 'true')
+stwuct muwtimodewtopkcwustewswithscowes {
+  1: optionaw map<modewvewsion, t-topkcwustewswithscowes> muwtimodewtopkcwustewswithscowes
+}(haspewsonawdata = 'twue')
+
+/**
+ * contains a map of modew v-vewsion top k-k tweets with cowwesponding s-scowes. UwU
+ **/
+stwuct m-muwtimodewtopktweetswithscowes {
+  1: optionaw m-map<modewvewsion, :3 t-topktweetswithscowes> muwtimodewtopktweetswithscowes
+}(haspewsonawdata = 'twue')

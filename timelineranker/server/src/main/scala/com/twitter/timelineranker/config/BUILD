@@ -1,65 +1,65 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "abdecider",
-        "cortex-tweet-annotate/service/src/main/thrift:thrift-scala",
-        "decider",
-        "featureswitches/featureswitches-core/src/main/scala",
-        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-memcached/src/main/scala",
-        "finagle/finagle-stats",
-        "finagle/finagle-thrift/src/main/java",
-        "finagle/finagle-thrift/src/main/scala",
-        "finagle/finagle-thriftmux/src/main/scala",
-        "loglens/loglens-logging/src/main/scala",
-        "merlin/util/src/main/scala",
-        "servo/decider",
-        "servo/request/src/main/scala",
-        "src/thrift/com/twitter/gizmoduck:thrift-scala",
-        "src/thrift/com/twitter/manhattan:v1-scala",
-        "src/thrift/com/twitter/merlin:thrift-scala",
-        "src/thrift/com/twitter/recos/user_tweet_entity_graph:user_tweet_entity_graph-scala",
-        "src/thrift/com/twitter/search:earlybird-scala",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
-        "src/thrift/com/twitter/timelineranker:thrift-scala",
-        "src/thrift/com/twitter/timelineservice:thrift-scala",
-        "src/thrift/com/twitter/tweetypie:service-scala",
-        "src/thrift/com/twitter/tweetypie:tweet-scala",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "timelineranker/server/config",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/clients",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/clients/content_features_cache",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/decider",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/recap/model",
-        "timelines:authorization",
-        "timelines:config",
-        "timelines:features",
-        "timelines:util",
-        "timelines:visibility",
-        "timelines/src/main/scala/com/twitter/timelines/clients/gizmoduck",
-        "timelines/src/main/scala/com/twitter/timelines/clients/manhattan",
-        "timelines/src/main/scala/com/twitter/timelines/clients/memcache_common",
-        "timelines/src/main/scala/com/twitter/timelines/clients/socialgraph",
-        "timelines/src/main/scala/com/twitter/timelines/clients/strato/realgraph",
-        "timelines/src/main/scala/com/twitter/timelines/clients/tweetypie",
-        "timelines/src/main/scala/com/twitter/timelines/config/configapi",
-        "timelines/src/main/scala/com/twitter/timelines/util",
-        "timelines/src/main/scala/com/twitter/timelines/util/logging",
-        "timelines/src/main/scala/com/twitter/timelines/util/stats",
-        "timelineservice/common/src/main/scala/com/twitter/timelineservice/model",
-        "twitter-server-internal",
-        "util/util-app",
-        "util/util-core:util-core-util",
-        "util/util-core/src/main/scala/com/twitter/conversions",
-        "util/util-stats/src/main/scala",
-    ],
-    exports = [
-        "src/thrift/com/twitter/recos/user_tweet_entity_graph:user_tweet_entity_graph-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "3wdpawty/jvm/com/twittew/stowehaus:cowe", (⑅˘꒳˘)
+        "3wdpawty/jvm/owg/apache/thwift:wibthwift", ( ͡o ω ͡o )
+        "abdecidew", UwU
+        "cowtex-tweet-annotate/sewvice/swc/main/thwift:thwift-scawa",
+        "decidew", rawr x3
+        "featuweswitches/featuweswitches-cowe/swc/main/scawa", rawr
+        "finagwe-intewnaw/mtws/swc/main/scawa/com/twittew/finagwe/mtws/authentication", σωσ
+        "finagwe/finagwe-cowe/swc/main", σωσ
+        "finagwe/finagwe-memcached/swc/main/scawa", >_<
+        "finagwe/finagwe-stats", :3
+        "finagwe/finagwe-thwift/swc/main/java", (U ﹏ U)
+        "finagwe/finagwe-thwift/swc/main/scawa", -.-
+        "finagwe/finagwe-thwiftmux/swc/main/scawa", (ˆ ﻌ ˆ)♡
+        "wogwens/wogwens-wogging/swc/main/scawa", (⑅˘꒳˘)
+        "mewwin/utiw/swc/main/scawa", (U ᵕ U❁)
+        "sewvo/decidew", -.-
+        "sewvo/wequest/swc/main/scawa", ^^;;
+        "swc/thwift/com/twittew/gizmoduck:thwift-scawa", >_<
+        "swc/thwift/com/twittew/manhattan:v1-scawa", mya
+        "swc/thwift/com/twittew/mewwin:thwift-scawa", mya
+        "swc/thwift/com/twittew/wecos/usew_tweet_entity_gwaph:usew_tweet_entity_gwaph-scawa", 😳
+        "swc/thwift/com/twittew/seawch:eawwybiwd-scawa", XD
+        "swc/thwift/com/twittew/sociawgwaph:thwift-scawa", :3
+        "swc/thwift/com/twittew/timewinewankew:thwift-scawa", 😳😳😳
+        "swc/thwift/com/twittew/timewinesewvice:thwift-scawa", -.-
+        "swc/thwift/com/twittew/tweetypie:sewvice-scawa", ( ͡o ω ͡o )
+        "swc/thwift/com/twittew/tweetypie:tweet-scawa", rawr x3
+        "stwato/swc/main/scawa/com/twittew/stwato/cwient", nyaa~~
+        "timewinewankew/sewvew/config", /(^•ω•^)
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/cwients", rawr
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/cwients/content_featuwes_cache", OwO
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/decidew", (U ﹏ U)
+        "timewinewankew/sewvew/swc/main/scawa/com/twittew/timewinewankew/wecap/modew", >_<
+        "timewines:authowization", rawr x3
+        "timewines:config", mya
+        "timewines:featuwes", nyaa~~
+        "timewines:utiw", (⑅˘꒳˘)
+        "timewines:visibiwity", rawr x3
+        "timewines/swc/main/scawa/com/twittew/timewines/cwients/gizmoduck", (✿oωo)
+        "timewines/swc/main/scawa/com/twittew/timewines/cwients/manhattan", (ˆ ﻌ ˆ)♡
+        "timewines/swc/main/scawa/com/twittew/timewines/cwients/memcache_common", (˘ω˘)
+        "timewines/swc/main/scawa/com/twittew/timewines/cwients/sociawgwaph", (⑅˘꒳˘)
+        "timewines/swc/main/scawa/com/twittew/timewines/cwients/stwato/weawgwaph", (///ˬ///✿)
+        "timewines/swc/main/scawa/com/twittew/timewines/cwients/tweetypie", 😳😳😳
+        "timewines/swc/main/scawa/com/twittew/timewines/config/configapi", 🥺
+        "timewines/swc/main/scawa/com/twittew/timewines/utiw", mya
+        "timewines/swc/main/scawa/com/twittew/timewines/utiw/wogging", 🥺
+        "timewines/swc/main/scawa/com/twittew/timewines/utiw/stats", >_<
+        "timewinesewvice/common/swc/main/scawa/com/twittew/timewinesewvice/modew", >_<
+        "twittew-sewvew-intewnaw", (⑅˘꒳˘)
+        "utiw/utiw-app", /(^•ω•^)
+        "utiw/utiw-cowe:utiw-cowe-utiw", rawr x3
+        "utiw/utiw-cowe/swc/main/scawa/com/twittew/convewsions", (U ﹏ U)
+        "utiw/utiw-stats/swc/main/scawa", (U ﹏ U)
+    ], (⑅˘꒳˘)
+    expowts = [
+        "swc/thwift/com/twittew/wecos/usew_tweet_entity_gwaph:usew_tweet_entity_gwaph-scawa", òωó
     ],
 )

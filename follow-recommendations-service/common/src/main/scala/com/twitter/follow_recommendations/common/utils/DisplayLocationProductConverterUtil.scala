@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.utils
+package com.twittew.fowwow_wecommendations.common.utiws
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Product
-import com.twitter.product_mixer.core.model.marshalling.request.Product
+impowt com.twittew.fowwow_wecommendations.common.modews.dispwaywocation
+i-impowt com.twittew.fowwow_wecommendations.common.modews.pwoduct
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.pwoduct
 
-object DisplayLocationProductConverterUtil {
-  def productToDisplayLocation(product: Product): DisplayLocation = {
-    product match {
-      case Product.MagicRecs => DisplayLocation.MagicRecs
+o-object d-dispwaywocationpwoductconvewtewutiw {
+  d-def pwoducttodispwaywocation(pwoduct: p-pwoduct): d-dispwaywocation = {
+    p-pwoduct match {
+      case pwoduct.magicwecs => dispwaywocation.magicwecs
       case _ =>
-        throw UnconvertibleProductMixerProductException(
-          s"Cannot convert Product Mixer Product ${product.identifier.name} into a FRS DisplayLocation.")
+        thwow unconvewtibwepwoductmixewpwoductexception(
+          s-s"cannot convewt pwoduct mixew pwoduct ${pwoduct.identifiew.name} into a-a fws dispwaywocation.")
     }
   }
 
-  def displayLocationToProduct(displayLocation: DisplayLocation): Product = {
-    displayLocation match {
-      case DisplayLocation.MagicRecs => Product.MagicRecs
-      case _ =>
-        throw UnconvertibleProductMixerProductException(
-          s"Cannot convert DisplayLocation ${displayLocation.toFsName} into a Product Mixer Product.")
+  def dispwaywocationtopwoduct(dispwaywocation: d-dispwaywocation): pwoduct = {
+    dispwaywocation match {
+      c-case dispwaywocation.magicwecs => pwoduct.magicwecs
+      c-case _ =>
+        t-thwow unconvewtibwepwoductmixewpwoductexception(
+          s"cannot convewt dispwaywocation ${dispwaywocation.tofsname} into a pwoduct mixew p-pwoduct.")
     }
   }
 }
 
-case class UnconvertibleProductMixerProductException(message: String) extends Exception(message)
+case cwass unconvewtibwepwoductmixewpwoductexception(message: stwing) extends exception(message)

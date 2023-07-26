@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.selector
+package com.twittew.pwoduct_mixew.component_wibwawy.sewectow
 
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awwpipewines
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt com.twittew.timewines.configapi.pawam
 
 /**
- * Limit the number of results
+ * wimit the nyumbew o-of wesuwts
  *
- * For example, if maxResultsParam is 3, and the results contain 10 items, then these items will be
- * reduced to the first 3 selected items. Note that the ordering of results is determined by the
- * selector configuration.
+ * fow exampwe, OwO if maxwesuwtspawam i-is 3, 😳😳😳 and the wesuwts contain 10 i-items, 😳😳😳 then these items wiww be
+ * weduced to the fiwst 3 s-sewected items. o.O nyote that the o-owdewing of wesuwts i-is detewmined by the
+ * sewectow configuwation. ( ͡o ω ͡o )
  *
- * Another example, if maxResultsParam is 3, and the results contain 10 modules, then these will be
- * reduced to the first 3 modules. The items inside the modules will not be affected by this
- * selector.
+ * anothew exampwe, (U ﹏ U) if maxwesuwtspawam is 3, (///ˬ///✿) a-and the wesuwts contain 10 moduwes, >w< then these wiww be
+ * weduced to the fiwst 3 m-moduwes. rawr the items inside t-the moduwes wiww n-not be affected b-by this
+ * sewectow. mya
  */
-case class DropMaxResults(
-  maxResultsParam: Param[Int])
-    extends Selector[PipelineQuery] {
+c-case cwass dwopmaxwesuwts(
+  maxwesuwtspawam: p-pawam[int])
+    extends sewectow[pipewinequewy] {
 
-  override val pipelineScope: CandidateScope = AllPipelines
+  o-ovewwide vaw pipewinescope: candidatescope = awwpipewines
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val maxResults = query.params(maxResultsParam)
-    assert(maxResults > 0, "Max results must be greater than zero")
+  ovewwide def appwy(
+    q-quewy: pipewinequewy, ^^
+    wemainingcandidates: s-seq[candidatewithdetaiws], 😳😳😳
+    w-wesuwt: seq[candidatewithdetaiws]
+  ): s-sewectowwesuwt = {
+    vaw maxwesuwts = quewy.pawams(maxwesuwtspawam)
+    assewt(maxwesuwts > 0, mya "max w-wesuwts m-must be gweatew than zewo")
 
-    val resultUpdated = DropSelector.takeUntil(maxResults, result)
+    v-vaw wesuwtupdated = d-dwopsewectow.takeuntiw(maxwesuwts, 😳 wesuwt)
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = resultUpdated)
+    s-sewectowwesuwt(wemainingcandidates = wemainingcandidates, -.- wesuwt = wesuwtupdated)
   }
 }

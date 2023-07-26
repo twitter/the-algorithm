@@ -1,475 +1,475 @@
-package com.twitter.tweetypie
-package config
+package com.twittew.tweetypie
+package c-config
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.memcached.exp.localMemcachedPort
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.flockdb.client.thriftscala.Priority
-import com.twitter.servo.repository.CachedResult
-import com.twitter.servo.util.Availability
-import com.twitter.tweetypie.backends._
-import com.twitter.tweetypie.caching.SoftTtl
-import com.twitter.tweetypie.handler.DuplicateTweetFinder
-import com.twitter.tweetypie.repository.TombstoneTtl
-import com.twitter.tweetypie.service._
-import com.twitter.tweetypie.storage.ManhattanTweetStorageClient
-import com.twitter.util.Duration
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt c-com.twittew.finagwe.backoff
+i-impowt c-com.twittew.finagwe.memcached.exp.wocawmemcachedpowt
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+impowt com.twittew.finagwe.ssw.oppowtunistictws
+impowt com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.fwockdb.cwient.thwiftscawa.pwiowity
+impowt com.twittew.sewvo.wepositowy.cachedwesuwt
+i-impowt com.twittew.sewvo.utiw.avaiwabiwity
+i-impowt com.twittew.tweetypie.backends._
+impowt com.twittew.tweetypie.caching.softttw
+impowt com.twittew.tweetypie.handwew.dupwicatetweetfindew
+i-impowt com.twittew.tweetypie.wepositowy.tombstonettw
+impowt c-com.twittew.tweetypie.sewvice._
+i-impowt com.twittew.tweetypie.stowage.manhattantweetstowagecwient
+impowt com.twittew.utiw.duwation
 
-case class InProcessCacheConfig(ttl: Duration, maximumSize: Int)
+case cwass inpwocesscacheconfig(ttw: duwation, 😳😳😳 m-maximumsize: int)
 
-class TweetServiceSettings(val flags: TweetServiceFlags) {
+cwass tweetsewvicesettings(vaw fwags: tweetsewvicefwags) {
 
   /**
-   * Convert a Boolean to an Option
-   * > optional(true, "my value")
-   * res: Some(my value)
+   * convewt a boowean to an option
+   * > o-optionaw(twue, ^•ﻌ•^ "my vawue")
+   * w-wes: some(my v-vawue)
    *
-   * > optional(false, "my value")
-   * res: None
+   * > o-optionaw(fawse, nyaa~~ "my v-vawue")
+   * wes: nyone
    */
-  def optional[T](b: Boolean, a: => T): Option[T] = if (b) Some(a) else None
+  def optionaw[t](b: b-boowean, OwO a: => t): option[t] = if (b) s-some(a) ewse nyone
 
-  /** atla, localhost, etc. */
-  val zone: String = flags.zone()
+  /** atwa, ^•ﻌ•^ wocawhost, σωσ etc. */
+  vaw zone: stwing = fwags.zone()
 
-  /** dc is less specific than zone, zone=atla, dc=atl */
-  val dc: String = zone.dropRight(1)
+  /** dc i-is wess specific than zone, -.- zone=atwa, (˘ω˘) d-dc=atw */
+  v-vaw dc: stwing = z-zone.dwopwight(1)
 
-  /** one of: prod, staging, dev, testbox */
-  val env: Env.Value = flags.env()
+  /** one of: pwod, staging, rawr x3 dev, testbox */
+  v-vaw env: e-env.vawue = fwags.env()
 
-  /** instanceId of this aurora instance */
-  lazy val instanceId: Int = flags.instanceId()
+  /** instanceid of this a-auwowa instance */
+  w-wazy vaw instanceid: int = f-fwags.instanceid()
 
-  /** total number of tweetypie aurora instances */
-  val instanceCount: Int = flags.instanceCount()
+  /** totaw n-nyumbew of tweetypie auwowa instances */
+  vaw i-instancecount: int = fwags.instancecount()
 
-  /** The Name to resolve to find the memcached cluster */
-  val twemcacheDest: String =
-    // If twemcacheDest is explicitly set, always prefer that to
-    // localMemcachedPort.
-    flags.twemcacheDest.get
-    // Testbox uses this global flag to specify the location of the
-    // local memcached instance.
-      .orElse(localMemcachedPort().map("/$/inet/localhost/" + _))
-      // If no explicit Name is specified, use the default.
-      .getOrElse(flags.twemcacheDest())
+  /** t-the nyame to wesowve to find t-the memcached cwustew */
+  v-vaw twemcachedest: stwing =
+    // if twemcachedest is expwicitwy set, rawr x3 awways pwefew that to
+    // wocawmemcachedpowt. σωσ
+    f-fwags.twemcachedest.get
+    // t-testbox uses this gwobaw fwag t-to specify the w-wocation of the
+    // w-wocaw memcached instance. nyaa~~
+      .owewse(wocawmemcachedpowt().map("/$/inet/wocawhost/" + _))
+      // if nyo expwicit nyame is specified, (ꈍᴗꈍ) u-use the defauwt. ^•ﻌ•^
+      .getowewse(fwags.twemcachedest())
 
-  /** Read/write data through Cache */
-  val withCache: Boolean = flags.withCache()
+  /** wead/wwite data thwough cache */
+  vaw withcache: boowean = fwags.withcache()
 
   /**
-   * The TFlock queue to use for background indexing operations. For
-   * production, this should always be the low priority queue, to
-   * allow foreground operations to be processed first.
+   * t-the tfwock queue to u-use fow backgwound i-indexing opewations. >_< f-fow
+   * pwoduction, ^^;; this s-shouwd awways b-be the wow pwiowity q-queue, ^^;; to
+   * a-awwow fowegwound opewations to be pwocessed f-fiwst. /(^•ω•^)
    */
-  val backgroundIndexingPriority: Priority = flags.backgroundIndexingPriority()
+  vaw b-backgwoundindexingpwiowity: pwiowity = f-fwags.backgwoundindexingpwiowity()
 
-  /** Set certain decider gates to this overridden value */
-  val deciderOverrides: Map[String, Boolean] =
-    flags.deciderOverrides()
+  /** s-set cewtain d-decidew gates to this ovewwidden vawue */
+  vaw decidewovewwides: m-map[stwing, nyaa~~ boowean] =
+    fwags.decidewovewwides()
 
-  /** use per host stats? */
-  val clientHostStats: Boolean =
-    flags.clientHostStats()
+  /** use pew host stats? */
+  vaw cwienthoststats: boowean =
+    f-fwags.cwienthoststats()
 
-  val warmupRequestsSettings: Option[WarmupQueriesSettings] =
-    optional(flags.enableWarmupRequests(), WarmupQueriesSettings())
+  vaw wawmupwequestssettings: option[wawmupquewiessettings] =
+    optionaw(fwags.enabwewawmupwequests(), (✿oωo) w-wawmupquewiessettings())
 
-  /** enables request authorization via a allowlist */
-  val allowlistingRequired: Boolean =
-    flags.allowlist.get.getOrElse(env == Env.prod)
+  /** e-enabwes w-wequest authowization via a awwowwist */
+  v-vaw awwowwistingwequiwed: b-boowean =
+    f-fwags.awwowwist.get.getowewse(env == env.pwod)
 
-  /** read rate limit for unknown clients (when allowlistingRequired is enabled) */
-  val nonAllowListedClientRateLimitPerSec: Double =
-    flags.grayListRateLimit()
+  /** wead wate wimit fow unknown cwients (when awwowwistingwequiwed i-is enabwed) */
+  vaw n-nyonawwowwistedcwientwatewimitpewsec: doubwe =
+    f-fwags.gwaywistwatewimit()
 
-  /** enables requests from production clients */
-  val allowProductionClients: Boolean =
-    env == Env.prod
+  /** e-enabwes wequests fwom pwoduction cwients */
+  v-vaw awwowpwoductioncwients: b-boowean =
+    env == e-env.pwod
 
-  /** enables replication via DRPC */
-  val enableReplication: Boolean = flags.enableReplication()
+  /** e-enabwes wepwication via dwpc */
+  vaw enabwewepwication: boowean = fwags.enabwewepwication()
 
-  /** enables forking of some traffic to configured target */
-  val trafficForkingEnabled: Boolean =
-    env == Env.prod
+  /** e-enabwes fowking o-of some twaffic t-to configuwed tawget */
+  v-vaw twafficfowkingenabwed: b-boowean =
+    env == e-env.pwod
 
-  val scribeUniquenessIds: Boolean =
-    env == Env.prod
+  vaw scwibeuniquenessids: boowean =
+    env == env.pwod
 
-  /** ClientId to send to backend services */
-  val thriftClientId: ClientId =
-    flags.clientId.get.map(ClientId(_)).getOrElse {
-      env match {
-        case Env.dev | Env.staging => ClientId("tweetypie.staging")
-        case Env.prod => ClientId("tweetypie.prod")
+  /** cwientid t-to send to backend s-sewvices */
+  vaw thwiftcwientid: cwientid =
+    f-fwags.cwientid.get.map(cwientid(_)).getowewse {
+      e-env match {
+        case env.dev | env.staging => c-cwientid("tweetypie.staging")
+        case env.pwod => cwientid("tweetypie.pwod")
       }
     }
 
   /**
-   * Instead of using DRPC for calling into the async code path, call back into the
-   * current instance. Used for development and test to ensure logic in the current
-   * instance is being tested.
+   * instead of using dwpc f-fow cawwing into the async code path, ( ͡o ω ͡o ) caww back i-into the
+   * c-cuwwent instance. (U ᵕ U❁) used fow devewopment and test to ensuwe wogic i-in the cuwwent
+   * i-instance is being tested. òωó
    */
-  val simulateDeferredrpcCallbacks: Boolean = flags.simulateDeferredrpcCallbacks()
+  vaw simuwatedefewwedwpccawwbacks: boowean = f-fwags.simuwatedefewwedwpccawwbacks()
 
   /**
-   * ClientId to set in 'asynchronous' requests when simulateDeferredrpcCallbacks is
-   * true and Tweetypie ends up just calling itself synchronously.
+   * cwientid to set i-in 'asynchwonous' wequests when simuwatedefewwedwpccawwbacks is
+   * twue and t-tweetypie ends up just cawwing i-itsewf synchwonouswy. σωσ
    */
-  val deferredrpcClientId: ClientId = ClientId("deferredrpc.prod")
+  v-vaw defewwedwpccwientid: c-cwientid = cwientid("defewwedwpc.pwod")
 
   /**
-   * ServiceIdentifier used to enable mTLS
+   * s-sewviceidentifiew u-used t-to enabwe mtws
    */
-  val serviceIdentifier: ServiceIdentifier = flags.serviceIdentifier()
+  vaw sewviceidentifiew: s-sewviceidentifiew = f-fwags.sewviceidentifiew()
 
   /**
-   * Decider settings
+   * decidew settings
    */
-  val deciderBaseFilename: Option[String] = Option(flags.deciderBase())
-  val deciderOverlayFilename: Option[String] = Option(flags.deciderOverlay())
-  val vfDeciderOverlayFilename: Option[String] = flags.vfDeciderOverlay.get
+  v-vaw decidewbasefiwename: o-option[stwing] = o-option(fwags.decidewbase())
+  vaw decidewovewwayfiwename: option[stwing] = o-option(fwags.decidewovewway())
+  vaw vfdecidewovewwayfiwename: o-option[stwing] = f-fwags.vfdecidewovewway.get
 
   /**
-   * Used to determine whether we should fail requests for Tweets that are likely too young
-   * to return a non-partial response. We return NotFound for Tweets that are deemed too young.
-   * Used by [[com.twitter.tweetypie.repository.ManhattanTweetRepository]].
+   * used to detewmine whethew we shouwd faiw wequests f-fow tweets that a-awe wikewy too y-young
+   * to wetuwn a-a nyon-pawtiaw wesponse. :3 we w-wetuwn nyotfound fow tweets that awe deemed too young. OwO
+   * used by [[com.twittew.tweetypie.wepositowy.manhattantweetwepositowy]]. ^^
    */
-  val shortCircuitLikelyPartialTweetReads: Gate[Duration] = {
-    // interpret the flag as a duration in milliseconds
-    val ageCeiling: Duration = flags.shortCircuitLikelyPartialTweetReadsMs().milliseconds
-    Gate(tweetAge => tweetAge < ageCeiling)
+  vaw s-showtciwcuitwikewypawtiawtweetweads: gate[duwation] = {
+    // intewpwet t-the fwag as a duwation i-in miwwiseconds
+    vaw ageceiwing: d-duwation = fwags.showtciwcuitwikewypawtiawtweetweadsms().miwwiseconds
+    gate(tweetage => tweetage < a-ageceiwing)
   }
 
-  // tweet-service internal settings
+  // t-tweet-sewvice intewnaw s-settings
 
-  val tweetKeyCacheVersion = 1
+  v-vaw tweetkeycachevewsion = 1
 
-  /** how often to flush aggregated count updates for tweet counts */
-  val aggregatedTweetCountsFlushInterval: Duration = 5.seconds
+  /** h-how often to fwush aggwegated count updates fow tweet counts */
+  vaw aggwegatedtweetcountsfwushintewvaw: duwation = 5.seconds
 
-  /** maximum number of keys for which aggregated cached count updates may be cached */
-  val maxAggregatedCountsSize = 1000
+  /** maximum n-nyumbew of k-keys fow which aggwegated c-cached count updates may b-be cached */
+  vaw maxaggwegatedcountssize = 1000
 
-  /** ramp up period for decidering up forked traffic (if enabled) to the full decidered value */
-  val forkingRampUp: Duration = 3.minutes
+  /** wamp up pewiod fow decidewing u-up fowked t-twaffic (if enabwed) to the f-fuww decidewed vawue */
+  vaw fowkingwampup: duwation = 3.minutes
 
-  /** how long to wait after startup for serversets to resolve before giving up and moving on */
-  val waitForServerSetsTimeout: Duration = 120.seconds
+  /** h-how wong t-to wait aftew stawtup fow sewvewsets t-to wesowve b-befowe giving up and moving on */
+  vaw waitfowsewvewsetstimeout: duwation = 120.seconds
 
-  /** number of threads to use in thread pool for language identification */
-  val numPenguinThreads = 4
+  /** nyumbew of thweads t-to use in thwead p-poow fow wanguage i-identification */
+  v-vaw n-nyumpenguinthweads = 4
 
-  /** maximum number of tweets that clients can request per getTweets RPC call */
-  val maxGetTweetsRequestSize = 200
+  /** maximum n-nyumbew of t-tweets that cwients can wequest p-pew gettweets wpc c-caww */
+  vaw maxgettweetswequestsize = 200
 
-  /** maximum batch size for any batched request (getTweets is exempt, it has its own limiting) */
-  val maxRequestSize = 200
+  /** m-maximum batch size fow any batched wequest (gettweets i-is exempt, (˘ω˘) it has its o-own wimiting) */
+  v-vaw maxwequestsize = 200
 
   /**
-   * maximum size to allow the thrift response buffer to grow before resetting it.  this is set to
-   * approximately the current value of `srv/thrift/response_payload_bytes.p999`, meaning roughly
-   * 1 out of 1000 requests will cause the buffer to be reset.
+   * maximum s-size to awwow the thwift wesponse buffew to gwow b-befowe wesetting i-it. OwO  this is s-set to
+   * appwoximatewy the cuwwent vawue of `swv/thwift/wesponse_paywoad_bytes.p999`, UwU meaning w-woughwy
+   * 1 out of 1000 wequests wiww cause t-the buffew to be w-weset. ^•ﻌ•^
    */
-  val maxThriftBufferSize: Int = 200 * 1024
+  vaw maxthwiftbuffewsize: i-int = 200 * 1024
 
-  // ********* timeouts and backoffs **********
+  // ********* timeouts a-and backoffs **********
 
-  /** backoffs for OptimisticLockingCache lockAndSet operations */
-  val lockingCacheBackoffs: Stream[Duration] =
-    Backoff.exponentialJittered(10.millisecond, 50.milliseconds).take(3).toStream
+  /** b-backoffs fow optimisticwockingcache wockandset o-opewations */
+  vaw wockingcachebackoffs: stweam[duwation] =
+    b-backoff.exponentiawjittewed(10.miwwisecond, (ꈍᴗꈍ) 50.miwwiseconds).take(3).tostweam
 
-  /** retry once on timeout with no backoff */
-  val defaultTimeoutBackoffs: Stream[Duration] = Stream(0.milliseconds).toStream
+  /** w-wetwy once on timeout with n-nyo backoff */
+  vaw defauwttimeoutbackoffs: s-stweam[duwation] = s-stweam(0.miwwiseconds).tostweam
 
-  /** backoffs when user view is missing */
-  val gizmoduckMissingUserViewBackoffs: Stream[Duration] = Backoff.const(10.millis).take(3).toStream
+  /** b-backoffs when usew view is missing */
+  vaw gizmoduckmissingusewviewbackoffs: stweam[duwation] = backoff.const(10.miwwis).take(3).tostweam
 
-  /** backoffs for retrying failed async-write actions after first retry failure */
-  val asyncWriteRetryBackoffs: Stream[Duration] =
-    Backoff.exponential(10.milliseconds, 2).take(9).toStream.map(_ min 1.second)
+  /** backoffs fow wetwying faiwed async-wwite actions aftew fiwst wetwy faiwuwe */
+  vaw asyncwwitewetwybackoffs: s-stweam[duwation] =
+    b-backoff.exponentiaw(10.miwwiseconds, /(^•ω•^) 2).take(9).tostweam.map(_ min 1.second)
 
-  /** backoffs for retrying failed deferredrpc enqueues */
-  val deferredrpcBackoffs: Stream[Duration] =
-    Backoff.exponential(10.milliseconds, 2).take(3).toStream
+  /** backoffs fow wetwying faiwed d-defewwedwpc enqueues */
+  v-vaw defewwedwpcbackoffs: s-stweam[duwation] =
+    backoff.exponentiaw(10.miwwiseconds, (U ᵕ U❁) 2).take(3).tostweam
 
-  /** backoffs for retrying failed cache updates for replicated events */
-  val replicatedEventCacheBackoffs: Stream[Duration] =
-    Backoff.exponential(100.milliseconds, 2).take(10).toStream
+  /** b-backoffs fow wetwying f-faiwed cache updates f-fow wepwicated events */
+  v-vaw wepwicatedeventcachebackoffs: stweam[duwation] =
+    b-backoff.exponentiaw(100.miwwiseconds, (✿oωo) 2).take(10).tostweam
 
-  val escherbirdConfig: Escherbird.Config =
-    Escherbird.Config(
-      requestTimeout = 200.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs
+  v-vaw eschewbiwdconfig: eschewbiwd.config =
+    eschewbiwd.config(
+      wequesttimeout = 200.miwwiseconds, OwO
+      t-timeoutbackoffs = d-defauwttimeoutbackoffs
     )
 
-  val expandodoConfig: Expandodo.Config =
-    Expandodo.Config(
-      requestTimeout = 300.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs,
-      serverErrorBackoffs = Backoff.const(0.millis).take(3).toStream
+  v-vaw expandodoconfig: expandodo.config =
+    e-expandodo.config(
+      w-wequesttimeout = 300.miwwiseconds, :3
+      t-timeoutbackoffs = d-defauwttimeoutbackoffs, nyaa~~
+      s-sewvewewwowbackoffs = b-backoff.const(0.miwwis).take(3).tostweam
     )
 
-  val creativesContainerServiceConfig: CreativesContainerService.Config =
-    CreativesContainerService.Config(
-      requestTimeout = 300.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs,
-      serverErrorBackoffs = Backoff.const(0.millis).take(3).toStream
+  vaw cweativescontainewsewviceconfig: c-cweativescontainewsewvice.config =
+    c-cweativescontainewsewvice.config(
+      w-wequesttimeout = 300.miwwiseconds, ^•ﻌ•^
+      timeoutbackoffs = d-defauwttimeoutbackoffs, ( ͡o ω ͡o )
+      sewvewewwowbackoffs = backoff.const(0.miwwis).take(3).tostweam
     )
 
-  val geoScrubEventStoreConfig: GeoScrubEventStore.Config =
-    GeoScrubEventStore.Config(
-      read = GeoScrubEventStore.EndpointConfig(
-        requestTimeout = 200.milliseconds,
-        maxRetryCount = 1
-      ),
-      write = GeoScrubEventStore.EndpointConfig(
-        requestTimeout = 1.second,
-        maxRetryCount = 1
+  v-vaw geoscwubeventstoweconfig: geoscwubeventstowe.config =
+    g-geoscwubeventstowe.config(
+      w-wead = geoscwubeventstowe.endpointconfig(
+        w-wequesttimeout = 200.miwwiseconds, ^^;;
+        maxwetwycount = 1
+      ), mya
+      w-wwite = geoscwubeventstowe.endpointconfig(
+        wequesttimeout = 1.second, (U ᵕ U❁)
+        m-maxwetwycount = 1
       )
     )
 
-  val gizmoduckConfig: Gizmoduck.Config =
-    Gizmoduck.Config(
-      readTimeout = 300.milliseconds,
-      writeTimeout = 300.milliseconds,
-      // We bump the timeout value to 800ms because modifyAndGet is called only in async request path in GeoScrub daemon
-      // and we do not expect sync/realtime apps calling this thrift method
-      modifyAndGetTimeout = 800.milliseconds,
-      modifyAndGetTimeoutBackoffs = Backoff.const(0.millis).take(3).toStream,
-      defaultTimeoutBackoffs = defaultTimeoutBackoffs,
-      gizmoduckExceptionBackoffs = Backoff.const(0.millis).take(3).toStream
+  vaw gizmoduckconfig: gizmoduck.config =
+    g-gizmoduck.config(
+      weadtimeout = 300.miwwiseconds, ^•ﻌ•^
+      w-wwitetimeout = 300.miwwiseconds, (U ﹏ U)
+      // we bump the timeout vawue to 800ms because modifyandget i-is cawwed onwy in async wequest p-path in geoscwub d-daemon
+      // and we do nyot expect sync/weawtime apps c-cawwing this thwift method
+      m-modifyandgettimeout = 800.miwwiseconds, /(^•ω•^)
+      modifyandgettimeoutbackoffs = b-backoff.const(0.miwwis).take(3).tostweam, ʘwʘ
+      d-defauwttimeoutbackoffs = defauwttimeoutbackoffs, XD
+      gizmoduckexceptionbackoffs = b-backoff.const(0.miwwis).take(3).tostweam
     )
 
-  val limiterBackendConfig: LimiterBackend.Config =
-    LimiterBackend.Config(
-      requestTimeout = 300.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs
+  v-vaw wimitewbackendconfig: wimitewbackend.config =
+    w-wimitewbackend.config(
+      wequesttimeout = 300.miwwiseconds, (⑅˘꒳˘)
+      timeoutbackoffs = defauwttimeoutbackoffs
     )
 
-  val mediaInfoServiceConfig: MediaInfoService.Config =
-    MediaInfoService.Config(
-      requestTimeout = 300.milliseconds,
-      totalTimeout = 500.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs
+  v-vaw mediainfosewviceconfig: mediainfosewvice.config =
+    m-mediainfosewvice.config(
+      w-wequesttimeout = 300.miwwiseconds, nyaa~~
+      t-totawtimeout = 500.miwwiseconds, UwU
+      timeoutbackoffs = d-defauwttimeoutbackoffs
     )
 
-  val scarecrowConfig: Scarecrow.Config =
-    Scarecrow.Config(
-      readTimeout = 100.milliseconds,
-      writeTimeout = 400.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs,
-      scarecrowExceptionBackoffs = Backoff.const(0.millis).take(3).toStream
+  v-vaw s-scawecwowconfig: s-scawecwow.config =
+    scawecwow.config(
+      w-weadtimeout = 100.miwwiseconds, (˘ω˘)
+      w-wwitetimeout = 400.miwwiseconds, rawr x3
+      t-timeoutbackoffs = defauwttimeoutbackoffs, (///ˬ///✿)
+      s-scawecwowexceptionbackoffs = b-backoff.const(0.miwwis).take(3).tostweam
     )
 
-  val socialGraphSeviceConfig: SocialGraphService.Config =
-    SocialGraphService.Config(
-      socialGraphTimeout = 250.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs
+  v-vaw s-sociawgwaphseviceconfig: s-sociawgwaphsewvice.config =
+    sociawgwaphsewvice.config(
+      s-sociawgwaphtimeout = 250.miwwiseconds, 😳😳😳
+      timeoutbackoffs = d-defauwttimeoutbackoffs
     )
 
-  val talonConfig: Talon.Config =
-    Talon.Config(
-      shortenTimeout = 500.milliseconds,
-      expandTimeout = 150.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs,
-      transientErrorBackoffs = Backoff.const(0.millis).take(3).toStream
+  vaw tawonconfig: t-tawon.config =
+    t-tawon.config(
+      s-showtentimeout = 500.miwwiseconds,
+      expandtimeout = 150.miwwiseconds, (///ˬ///✿)
+      timeoutbackoffs = defauwttimeoutbackoffs, ^^;;
+      t-twansientewwowbackoffs = b-backoff.const(0.miwwis).take(3).tostweam
     )
 
   /**
-   * page size when retrieving tflock pages for tweet deletion and undeletion
-   * tweet erasures have their own page size eraseUserTweetsPageSize
+   * p-page size when wetwieving tfwock pages fow tweet dewetion a-and undewetion
+   * t-tweet ewasuwes have theiw own p-page size ewaseusewtweetspagesize
    */
-  val tflockPageSize: Int = flags.tflockPageSize()
+  v-vaw tfwockpagesize: int = fwags.tfwockpagesize()
 
-  val tflockReadConfig: TFlock.Config =
-    TFlock.Config(
-      requestTimeout = 300.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs,
-      flockExceptionBackoffs = Backoff.const(0.millis).take(3).toStream,
-      overCapacityBackoffs = Stream.empty,
-      defaultPageSize = tflockPageSize
+  vaw tfwockweadconfig: t-tfwock.config =
+    t-tfwock.config(
+      wequesttimeout = 300.miwwiseconds,
+      t-timeoutbackoffs = d-defauwttimeoutbackoffs, ^^
+      fwockexceptionbackoffs = backoff.const(0.miwwis).take(3).tostweam, (///ˬ///✿)
+      o-ovewcapacitybackoffs = s-stweam.empty, -.-
+      defauwtpagesize = tfwockpagesize
     )
 
-  val tflockWriteConfig: TFlock.Config =
-    TFlock.Config(
-      requestTimeout = 400.milliseconds,
-      timeoutBackoffs = defaultTimeoutBackoffs,
-      flockExceptionBackoffs = Backoff.const(0.millis).take(3).toStream,
-      overCapacityBackoffs = Backoff.exponential(10.millis, 2).take(3).toStream
+  v-vaw tfwockwwiteconfig: tfwock.config =
+    tfwock.config(
+      w-wequesttimeout = 400.miwwiseconds, /(^•ω•^)
+      timeoutbackoffs = defauwttimeoutbackoffs, UwU
+      fwockexceptionbackoffs = b-backoff.const(0.miwwis).take(3).tostweam, (⑅˘꒳˘)
+      o-ovewcapacitybackoffs = backoff.exponentiaw(10.miwwis, ʘwʘ 2).take(3).tostweam
     )
 
-  val timelineServiceConfig: TimelineService.Config = {
-    val tlsExceptionBackoffs = Backoff.const(0.millis).take(3).toStream
-    TimelineService.Config(
-      writeRequestPolicy =
-        Backend.TimeoutPolicy(4.seconds) >>>
-          TimelineService.FailureBackoffsPolicy(
-            timeoutBackoffs = defaultTimeoutBackoffs,
-            tlsExceptionBackoffs = tlsExceptionBackoffs
-          ),
-      readRequestPolicy =
-        Backend.TimeoutPolicy(400.milliseconds) >>>
-          TimelineService.FailureBackoffsPolicy(
-            timeoutBackoffs = defaultTimeoutBackoffs,
-            tlsExceptionBackoffs = tlsExceptionBackoffs
+  vaw timewinesewviceconfig: t-timewinesewvice.config = {
+    v-vaw twsexceptionbackoffs = backoff.const(0.miwwis).take(3).tostweam
+    t-timewinesewvice.config(
+      wwitewequestpowicy =
+        b-backend.timeoutpowicy(4.seconds) >>>
+          t-timewinesewvice.faiwuwebackoffspowicy(
+            t-timeoutbackoffs = d-defauwttimeoutbackoffs,
+            twsexceptionbackoffs = t-twsexceptionbackoffs
+          ), σωσ
+      weadwequestpowicy =
+        b-backend.timeoutpowicy(400.miwwiseconds) >>>
+          t-timewinesewvice.faiwuwebackoffspowicy(
+            timeoutbackoffs = d-defauwttimeoutbackoffs, ^^
+            twsexceptionbackoffs = twsexceptionbackoffs
           )
     )
   }
 
-  val tweetStorageConfig: ManhattanTweetStorageClient.Config = {
-    val remoteZone = zone match {
-      case "atla" => "pdxa"
-      case "pdxa" => "atla"
-      case "atla" | "localhost" => "atla"
-      case _ =>
-        throw new IllegalArgumentException(s"Cannot configure remote DC for unknown zone '$zone'")
+  vaw t-tweetstowageconfig: m-manhattantweetstowagecwient.config = {
+    v-vaw wemotezone = zone match {
+      case "atwa" => "pdxa"
+      case "pdxa" => "atwa"
+      case "atwa" | "wocawhost" => "atwa"
+      c-case _ =>
+        thwow n-nyew iwwegawawgumentexception(s"cannot c-configuwe wemote dc fow unknown zone '$zone'")
     }
-    ManhattanTweetStorageClient.Config(
-      applicationId = "tbird_mh",
-      localDestination = "/s/manhattan/cylon.native-thrift",
-      localTimeout = 290.milliseconds,
-      remoteDestination = s"/srv#/prod/$remoteZone/manhattan/cylon.native-thrift",
-      remoteTimeout = 1.second,
-      maxRequestsPerBatch = 25,
-      serviceIdentifier = serviceIdentifier,
-      opportunisticTlsLevel = OpportunisticTls.Required
+    m-manhattantweetstowagecwient.config(
+      appwicationid = "tbiwd_mh", OwO
+      w-wocawdestination = "/s/manhattan/cywon.native-thwift", (ˆ ﻌ ˆ)♡
+      w-wocawtimeout = 290.miwwiseconds,
+      w-wemotedestination = s-s"/swv#/pwod/$wemotezone/manhattan/cywon.native-thwift", o.O
+      w-wemotetimeout = 1.second, (˘ω˘)
+      maxwequestspewbatch = 25, 😳
+      sewviceidentifiew = sewviceidentifiew, (U ᵕ U❁)
+      oppowtunistictwswevew = o-oppowtunistictws.wequiwed
     )
   }
 
-  val userImageServiceConfig: UserImageService.Config =
-    UserImageService.Config(
-      processTweetMediaTimeout = 5.seconds,
-      updateTweetMediaTimeout = 2.seconds,
-      timeoutBackoffs = defaultTimeoutBackoffs
+  vaw usewimagesewviceconfig: u-usewimagesewvice.config =
+    usewimagesewvice.config(
+      pwocesstweetmediatimeout = 5.seconds, :3
+      updatetweetmediatimeout = 2.seconds, o.O
+      timeoutbackoffs = d-defauwttimeoutbackoffs
     )
 
-  val adsLoggingClientTopicName = env match {
-    case Env.prod => "ads_client_callback_prod"
-    case Env.dev | Env.staging => "ads_client_callback_staging"
+  vaw adswoggingcwienttopicname = env match {
+    case env.pwod => "ads_cwient_cawwback_pwod"
+    case env.dev | e-env.staging => "ads_cwient_cawwback_staging"
   }
 
-  /** Delay between successive cascadedDeleteTweet calls when deleting retweets.  Applied via decider. */
-  val retweetDeletionDelay: Duration = 20.milliseconds
+  /** d-deway between successive c-cascadeddewetetweet cawws when deweting wetweets. (///ˬ///✿)  a-appwied via d-decidew. OwO */
+  vaw wetweetdewetiondeway: d-duwation = 20.miwwiseconds
 
   /**
-   * Delay to sleep before each tweet deletion of an eraseUserTweets request.
-   * This is a simple rate limiting mechanism. The long term solution is
-   * to move async endpoints like user erasures and retweet deletions out
-   * of the the main tweetypie cluster and into an async cluster with first class
-   * rate limiting support
+   * deway to sweep befowe e-each tweet dewetion of an ewaseusewtweets wequest. >w<
+   * this is a simpwe wate w-wimiting mechanism. ^^ the wong tewm sowution is
+   * t-to move async e-endpoints wike u-usew ewasuwes and wetweet dewetions out
+   * o-of the the main tweetypie cwustew and into an async cwustew with fiwst cwass
+   * w-wate wimiting s-suppowt
    */
-  val eraseUserTweetsDelay: Duration = 100.milliseconds
+  v-vaw ewaseusewtweetsdeway: d-duwation = 100.miwwiseconds
 
-  val eraseUserTweetsPageSize = 100
+  vaw ewaseusewtweetspagesize = 100
 
-  val getStoredTweetsByUserPageSize = 20
-  val getStoredTweetsByUserMaxPages = 30
+  vaw g-getstowedtweetsbyusewpagesize = 20
+  v-vaw getstowedtweetsbyusewmaxpages = 30
 
-  // ********* ttls **********
+  // ********* ttws **********
 
-  // Unfortunately, this tombstone TTL applies equally to the case
-  // where the tweet was deleted and the case that the tweet does not
-  // exist or is unavailable. If we could differentiate between those
-  // cases, we'd cache deleted for a long time and not
-  // found/unavailable for a short time. We chose 100
-  // milliseconds for the minimum TTL because there are known cases in
-  // which a not found result can be erroneously written to cache on
-  // tweet creation. This minimum TTL is a trade-off between a
-  // thundering herd of database requests from clients that just got
-  // the fanned-out tweet and the window for which these inconsistent
-  // results will be available.
-  val tweetTombstoneTtl: CachedResult.CachedNotFound[TweetId] => Duration =
-    TombstoneTtl.linear(min = 100.milliseconds, max = 1.day, from = 5.minutes, to = 5.hours)
+  // unfowtunatewy, (⑅˘꒳˘) t-this tombstone ttw appwies equawwy to the case
+  // w-whewe the tweet was deweted and the case t-that the tweet does n-nyot
+  // exist ow is unavaiwabwe. ʘwʘ i-if we couwd d-diffewentiate b-between those
+  // cases, (///ˬ///✿) we'd cache deweted fow a-a wong time and nyot
+  // found/unavaiwabwe fow a-a showt time. XD we chose 100
+  // miwwiseconds fow the minimum ttw b-because thewe a-awe known cases i-in
+  // which a n-not found wesuwt c-can be ewwoneouswy wwitten to c-cache on
+  // tweet cweation. 😳 this minimum ttw is a-a twade-off between a
+  // thundewing h-hewd of database wequests fwom cwients that j-just got
+  // t-the fanned-out tweet and the window f-fow which these inconsistent
+  // w-wesuwts w-wiww be avaiwabwe. >w<
+  vaw tweettombstonettw: c-cachedwesuwt.cachednotfound[tweetid] => d-duwation =
+    tombstonettw.wineaw(min = 100.miwwiseconds, (˘ω˘) max = 1.day, nyaa~~ f-fwom = 5.minutes, 😳😳😳 to = 5.houws)
 
-  val tweetMemcacheTtl: Duration = 14.days
-  val urlMemcacheTtl: Duration = 1.hour
-  val urlMemcacheSoftTtl: Duration = 1.hour
-  val deviceSourceMemcacheTtl: Duration = 12.hours
-  val deviceSourceMemcacheSoftTtl: SoftTtl.ByAge[Nothing] =
-    SoftTtl.ByAge(softTtl = 1.hour, jitter = 1.minute)
-  val deviceSourceInProcessTtl: Duration = 8.hours
-  val deviceSourceInProcessSoftTtl: Duration = 30.minutes
-  val placeMemcacheTtl: Duration = 1.day
-  val placeMemcacheSoftTtl: SoftTtl.ByAge[Nothing] =
-    SoftTtl.ByAge(softTtl = 3.hours, jitter = 1.minute)
-  val cardMemcacheTtl: Duration = 20.minutes
-  val cardMemcacheSoftTtl: Duration = 30.seconds
-  val tweetCreateLockingMemcacheTtl: Duration = 10.seconds
-  val tweetCreateLockingMemcacheLongTtl: Duration = 12.hours
-  val geoScrubMemcacheTtl: Duration = 30.minutes
+  vaw tweetmemcachettw: duwation = 14.days
+  v-vaw uwwmemcachettw: duwation = 1.houw
+  v-vaw uwwmemcachesoftttw: duwation = 1.houw
+  vaw d-devicesouwcememcachettw: d-duwation = 12.houws
+  v-vaw devicesouwcememcachesoftttw: softttw.byage[nothing] =
+    softttw.byage(softttw = 1.houw, (U ﹏ U) jittew = 1.minute)
+  v-vaw devicesouwceinpwocessttw: d-duwation = 8.houws
+  vaw devicesouwceinpwocesssoftttw: d-duwation = 30.minutes
+  vaw pwacememcachettw: d-duwation = 1.day
+  vaw pwacememcachesoftttw: s-softttw.byage[nothing] =
+    s-softttw.byage(softttw = 3.houws, jittew = 1.minute)
+  vaw cawdmemcachettw: duwation = 20.minutes
+  vaw cawdmemcachesoftttw: d-duwation = 30.seconds
+  v-vaw tweetcweatewockingmemcachettw: duwation = 10.seconds
+  vaw tweetcweatewockingmemcachewongttw: duwation = 12.houws
+  v-vaw geoscwubmemcachettw: d-duwation = 30.minutes
 
-  val tweetCountsMemcacheTtl: Duration = 24.hours
-  val tweetCountsMemcacheNonZeroSoftTtl: Duration = 3.hours
-  val tweetCountsMemcacheZeroSoftTtl: Duration = 7.hours
+  vaw t-tweetcountsmemcachettw: duwation = 24.houws
+  vaw tweetcountsmemcachenonzewosoftttw: duwation = 3.houws
+  vaw t-tweetcountsmemcachezewosoftttw: duwation = 7.houws
 
-  val cacheClientPendingRequestLimit: Int = flags.memcachePendingRequestLimit()
+  vaw cachecwientpendingwequestwimit: i-int = fwags.memcachependingwequestwimit()
 
-  val deviceSourceInProcessCacheMaxSize = 10000
+  v-vaw devicesouwceinpwocesscachemaxsize = 10000
 
-  val inProcessCacheConfigOpt: Option[InProcessCacheConfig] =
-    if (flags.enableInProcessCache()) {
-      Some(
-        InProcessCacheConfig(
-          ttl = flags.inProcessCacheTtlMs().milliseconds,
-          maximumSize = flags.inProcessCacheSize()
+  v-vaw inpwocesscacheconfigopt: option[inpwocesscacheconfig] =
+    i-if (fwags.enabweinpwocesscache()) {
+      s-some(
+        i-inpwocesscacheconfig(
+          t-ttw = fwags.inpwocesscachettwms().miwwiseconds, (˘ω˘)
+          m-maximumsize = f-fwags.inpwocesscachesize()
         )
       )
-    } else {
-      None
+    } ewse {
+      nyone
     }
 
-  // Begin returning OverCapacity for tweet repo when cache SR falls below 95%,
-  // Scale to rejecting 95% of requests when cache SR <= 80%
-  val tweetCacheAvailabilityFromSuccessRate: Double => Double =
-    Availability.linearlyScaled(0.95, 0.80, 0.05)
+  // begin wetuwning ovewcapacity fow tweet w-wepo when cache s-sw fawws bewow 95%, :3
+  // s-scawe t-to wejecting 95% o-of wequests when c-cache sw <= 80%
+  vaw tweetcacheavaiwabiwityfwomsuccesswate: doubwe => doubwe =
+    avaiwabiwity.wineawwyscawed(0.95, >w< 0.80, 0.05)
 
-  // ******* repository chunking size ********
+  // ******* wepositowy chunking s-size ********
 
-  val tweetCountsRepoChunkSize = 6
-  // n times `tweetCountsRepoChunkSize`, so chunking at higher level does not
-  // generate small batches at lower level.
-  val tweetCountsCacheChunkSize = 18
+  v-vaw tweetcountswepochunksize = 6
+  // ny times `tweetcountswepochunksize`, ^^ so chunking at h-highew wevew does n-nyot
+  // genewate s-smow batches at wowew wevew. 😳😳😳
+  vaw tweetcountscachechunksize = 18
 
-  val duplicateTweetFinderSettings: DuplicateTweetFinder.Settings =
-    DuplicateTweetFinder.Settings(numTweetsToCheck = 10, maxDuplicateAge = 12.hours)
+  v-vaw dupwicatetweetfindewsettings: dupwicatetweetfindew.settings =
+    d-dupwicatetweetfindew.settings(numtweetstocheck = 10, nyaa~~ m-maxdupwicateage = 12.houws)
 
-  val backendWarmupSettings: Warmup.Settings =
-    Warmup.Settings(
-      // Try for twenty seconds to warm up the backends before giving
-      // up.
-      maxWarmupDuration = 20.seconds,
-      // Only allow up to 50 outstanding warmup requests of any kind
-      // to be outstanding at a time.
-      maxOutstandingRequests = 50,
-      // These timeouts are just over the p999 latency observed in ATLA
-      // for requests to these backends.
-      requestTimeouts = Map(
-        "expandodo" -> 120.milliseconds,
-        "geo_relevance" -> 50.milliseconds,
-        "gizmoduck" -> 200.milliseconds,
-        "memcache" -> 50.milliseconds,
-        "scarecrow" -> 120.milliseconds,
-        "socialgraphservice" -> 180.milliseconds,
-        "talon" -> 70.milliseconds,
-        "tflock" -> 320.milliseconds,
-        "timelineservice" -> 200.milliseconds,
-        "tweetstorage" -> 50.milliseconds
-      ),
-      reliability = Warmup.Reliably(
-        // Consider a backend warmed up if 99% of requests are succeeding.
-        reliabilityThreshold = 0.99,
-        // When performing warmup, use a maximum of 10 concurrent
-        // requests to each backend.
-        concurrency = 10,
-        // Do not allow more than this many attempts to perform the
-        // warmup action before giving up.
-        maxAttempts = 1000
+  vaw backendwawmupsettings: wawmup.settings =
+    w-wawmup.settings(
+      // twy fow twenty s-seconds to wawm u-up the backends befowe giving
+      // u-up. (⑅˘꒳˘)
+      m-maxwawmupduwation = 20.seconds, :3
+      // o-onwy awwow u-up to 50 outstanding w-wawmup w-wequests of any kind
+      // to b-be outstanding a-at a time. ʘwʘ
+      maxoutstandingwequests = 50, rawr x3
+      // t-these timeouts awe just ovew the p999 watency o-obsewved in atwa
+      // f-fow wequests to these backends. (///ˬ///✿)
+      w-wequesttimeouts = m-map(
+        "expandodo" -> 120.miwwiseconds, 😳😳😳
+        "geo_wewevance" -> 50.miwwiseconds, XD
+        "gizmoduck" -> 200.miwwiseconds, >_<
+        "memcache" -> 50.miwwiseconds, >w<
+        "scawecwow" -> 120.miwwiseconds, /(^•ω•^)
+        "sociawgwaphsewvice" -> 180.miwwiseconds, :3
+        "tawon" -> 70.miwwiseconds, ʘwʘ
+        "tfwock" -> 320.miwwiseconds, (˘ω˘)
+        "timewinesewvice" -> 200.miwwiseconds, (ꈍᴗꈍ)
+        "tweetstowage" -> 50.miwwiseconds
+      ), ^^
+      wewiabiwity = wawmup.wewiabwy(
+        // considew a-a backend wawmed up if 99% of wequests awe succeeding. ^^
+        w-wewiabiwitythweshowd = 0.99, ( ͡o ω ͡o )
+        // w-when pewfowming wawmup, -.- use a maximum of 10 c-concuwwent
+        // w-wequests to each backend. ^^;;
+        c-concuwwency = 10, ^•ﻌ•^
+        // do nyot awwow mowe than t-this many attempts t-to pewfowm the
+        // wawmup a-action befowe g-giving up. (˘ω˘)
+        maxattempts = 1000
       )
     )
 }

@@ -1,86 +1,86 @@
-package com.twitter.usersignalservice.signals
+package com.twittew.usewsignawsewvice.signaws
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.strato.client.Client
-import com.twitter.strato.data.Conv
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.twistly.common.TwistlyProfile
-import com.twitter.twistly.thriftscala.EngagementMetadata.FavoriteMetadata
-import com.twitter.twistly.thriftscala.RecentEngagedTweet
-import com.twitter.twistly.thriftscala.UserRecentEngagedTweets
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.base.StratoSignalFetcher
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.simcwustews_v2.common.usewid
+i-impowt c-com.twittew.simcwustews_v2.thwiftscawa.intewnawid
+i-impowt com.twittew.stwato.cwient.cwient
+i-impowt c-com.twittew.stwato.data.conv
+impowt com.twittew.stwato.thwift.scwoogeconv
+impowt com.twittew.twistwy.common.twistwypwofiwe
+impowt com.twittew.twistwy.thwiftscawa.engagementmetadata.favowitemetadata
+impowt c-com.twittew.twistwy.thwiftscawa.wecentengagedtweet
+impowt com.twittew.twistwy.thwiftscawa.usewwecentengagedtweets
+impowt com.twittew.usewsignawsewvice.base.quewy
+i-impowt com.twittew.usewsignawsewvice.base.stwatosignawfetchew
+impowt com.twittew.usewsignawsewvice.thwiftscawa.signaw
+i-impowt com.twittew.usewsignawsewvice.thwiftscawa.signawtype
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.utiw.timew
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-case class TweetFavoritesFetcher @Inject() (
-  stratoClient: Client,
-  timer: Timer,
-  stats: StatsReceiver)
-    extends StratoSignalFetcher[(UserId, Long), Unit, UserRecentEngagedTweets] {
-  import TweetFavoritesFetcher._
-  override type RawSignalType = RecentEngagedTweet
-  override val name: String = this.getClass.getCanonicalName
-  override val statsReceiver: StatsReceiver = stats.scope(name)
+@singweton
+c-case cwass tweetfavowitesfetchew @inject() (
+  stwatocwient: cwient, σωσ
+  timew: timew, rawr x3
+  stats: s-statsweceivew)
+    extends stwatosignawfetchew[(usewid, OwO wong), /(^•ω•^) unit, usewwecentengagedtweets] {
+  i-impowt tweetfavowitesfetchew._
+  ovewwide t-type wawsignawtype = w-wecentengagedtweet
+  o-ovewwide v-vaw nyame: stwing = this.getcwass.getcanonicawname
+  ovewwide v-vaw statsweceivew: statsweceivew = stats.scope(name)
 
-  override val stratoColumnPath: String =
-    TwistlyProfile.TwistlyProdProfile.userRecentEngagedStorePath
-  override val stratoView: Unit = None
+  o-ovewwide vaw stwatocowumnpath: stwing =
+    twistwypwofiwe.twistwypwodpwofiwe.usewwecentengagedstowepath
+  ovewwide vaw stwatoview: unit = n-nyone
 
-  override protected val keyConv: Conv[(UserId, Long)] = Conv.ofType
-  override protected val viewConv: Conv[Unit] = Conv.ofType
-  override protected val valueConv: Conv[UserRecentEngagedTweets] =
-    ScroogeConv.fromStruct[UserRecentEngagedTweets]
+  ovewwide pwotected v-vaw keyconv: conv[(usewid, 😳😳😳 w-wong)] = c-conv.oftype
+  ovewwide pwotected vaw viewconv: conv[unit] = c-conv.oftype
+  o-ovewwide pwotected vaw vawueconv: c-conv[usewwecentengagedtweets] =
+    s-scwoogeconv.fwomstwuct[usewwecentengagedtweets]
 
-  override protected def toStratoKey(userId: UserId): (UserId, Long) = (userId, DefaultVersion)
+  ovewwide p-pwotected def tostwatokey(usewid: u-usewid): (usewid, ( ͡o ω ͡o ) wong) = (usewid, >_< defauwtvewsion)
 
-  override protected def toRawSignals(
-    userRecentEngagedTweets: UserRecentEngagedTweets
-  ): Seq[RawSignalType] =
-    userRecentEngagedTweets.recentEngagedTweets
+  o-ovewwide pwotected def t-towawsignaws(
+    usewwecentengagedtweets: u-usewwecentengagedtweets
+  ): s-seq[wawsignawtype] =
+    usewwecentengagedtweets.wecentengagedtweets
 
-  override def process(
-    query: Query,
-    rawSignals: Future[Option[Seq[RawSignalType]]]
-  ): Future[Option[Seq[Signal]]] = {
-    rawSignals.map {
-      _.map { signals =>
-        val lookBackWindowFilteredSignals =
-          SignalFilter.lookBackWindow90DayFilter(signals, query.signalType)
-        lookBackWindowFilteredSignals
-          .filter { recentEngagedTweet =>
-            recentEngagedTweet.features.statusCounts
-              .flatMap(_.favoriteCount).exists(_ >= MinFavCount)
-          }.filter { recentEngagedTweet =>
-            applySignalTweetTypeFilter(query.signalType, recentEngagedTweet)
-          }.collect {
-            case RecentEngagedTweet(tweetId, engagedAt, _: FavoriteMetadata, _) =>
-              Signal(query.signalType, engagedAt, Some(InternalId.TweetId(tweetId)))
-          }.take(query.maxResults.getOrElse(Int.MaxValue))
+  ovewwide def pwocess(
+    quewy: quewy, >w<
+    wawsignaws: futuwe[option[seq[wawsignawtype]]]
+  ): futuwe[option[seq[signaw]]] = {
+    w-wawsignaws.map {
+      _.map { s-signaws =>
+        vaw wookbackwindowfiwtewedsignaws =
+          s-signawfiwtew.wookbackwindow90dayfiwtew(signaws, rawr q-quewy.signawtype)
+        wookbackwindowfiwtewedsignaws
+          .fiwtew { w-wecentengagedtweet =>
+            wecentengagedtweet.featuwes.statuscounts
+              .fwatmap(_.favowitecount).exists(_ >= minfavcount)
+          }.fiwtew { wecentengagedtweet =>
+            a-appwysignawtweettypefiwtew(quewy.signawtype, 😳 wecentengagedtweet)
+          }.cowwect {
+            case wecentengagedtweet(tweetid, >w< engagedat, (⑅˘꒳˘) _: favowitemetadata, OwO _) =>
+              s-signaw(quewy.signawtype, (ꈍᴗꈍ) engagedat, 😳 s-some(intewnawid.tweetid(tweetid)))
+          }.take(quewy.maxwesuwts.getowewse(int.maxvawue))
       }
     }
   }
-  private def applySignalTweetTypeFilter(
-    signal: SignalType,
-    recentEngagedTweet: RecentEngagedTweet
-  ): Boolean = {
-    // Perform specific filters for particular signal types.
-    signal match {
-      case SignalType.AdFavorite => SignalFilter.isPromotedTweet(recentEngagedTweet)
-      case _ => true
+  p-pwivate def appwysignawtweettypefiwtew(
+    s-signaw: signawtype, 😳😳😳
+    w-wecentengagedtweet: w-wecentengagedtweet
+  ): b-boowean = {
+    // p-pewfowm specific fiwtews fow pawticuwaw signaw t-types. mya
+    signaw m-match {
+      c-case signawtype.adfavowite => s-signawfiwtew.ispwomotedtweet(wecentengagedtweet)
+      c-case _ => twue
     }
   }
 }
 
-object TweetFavoritesFetcher {
-  private val MinFavCount = 10
-  // see com.twitter.twistly.store.UserRecentEngagedTweetsStore
-  private val DefaultVersion = 0
+object tweetfavowitesfetchew {
+  pwivate vaw m-minfavcount = 10
+  // see com.twittew.twistwy.stowe.usewwecentengagedtweetsstowe
+  pwivate vaw defauwtvewsion = 0
 }

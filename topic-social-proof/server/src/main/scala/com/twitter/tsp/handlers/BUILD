@@ -1,14 +1,14 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], (ꈍᴗꈍ)
     tags = [
-        "bazel-compatible",
+        "bazew-compatibwe", ^•ﻌ•^
     ],
-    dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-        "stitch/stitch-storehaus",
-        "topic-social-proof/server/src/main/scala/com/twitter/tsp/common",
-        "topic-social-proof/server/src/main/scala/com/twitter/tsp/stores",
-        "topic-social-proof/server/src/main/thrift:thrift-scala",
-        "topiclisting/topiclisting-core/src/main/scala/com/twitter/topiclisting",
-    ],
+    d-dependencies = [
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", OwO
+        "stitch/stitch-stowehaus", 🥺
+        "topic-sociaw-pwoof/sewvew/swc/main/scawa/com/twittew/tsp/common", òωó
+        "topic-sociaw-pwoof/sewvew/swc/main/scawa/com/twittew/tsp/stowes", o.O
+        "topic-sociaw-pwoof/sewvew/swc/main/thwift:thwift-scawa", (U ᵕ U❁)
+        "topicwisting/topicwisting-cowe/swc/main/scawa/com/twittew/topicwisting", (⑅˘꒳˘)
+    ], ( ͡o ω ͡o )
 )

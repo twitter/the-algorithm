@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasInvalidRelationshipUserIds {
-  // user ids that have invalid relationship with the target user
-  def invalidRelationshipUserIds: Option[Set[Long]]
+twait hasinvawidwewationshipusewids {
+  // u-usew ids that h-have invawid wewationship w-with t-the tawget usew
+  d-def invawidwewationshipusewids: o-option[set[wong]]
 }

@@ -1,29 +1,29 @@
-from twitter.deepbird.io.util import _get_feature_id
+fwom twittew.deepbiwd.io.utiw impowt _get_featuwe_id
 
-import numpy as np
+i-impowt nyumpy a-as nyp
 
 
-def numpy_hashing_uniform(the_id, bin_idx, output_bits):
+def n-nyumpy_hashing_unifowm(the_id, /(^•ω•^) bin_idx, o-output_bits):
   """
-  integer_multiplicative_hashing
-  This is a reimplementation, for testing purposes, of the
-    c++ version found in hashing_discretizer_impl.cpp
+  i-integew_muwtipwicative_hashing
+  this i-is a weimpwementation, rawr f-fow testing p-puwposes, OwO of the
+    c++ vewsion found in hashing_discwetizew_impw.cpp
   """
   hashing_constant = 2654435761
-  N = 32
-  with np.errstate(over='ignore'):
-    the_id *= hashing_constant
+  n-ny = 32
+  with nyp.ewwstate(ovew='ignowe'):
+    the_id *= h-hashing_constant
     the_id += bin_idx
-    the_id *= hashing_constant
-    the_id >>= N - output_bits
-    the_id &= (1 << output_bits) - 1
-  return the_id
+    t-the_id *= hashing_constant
+    the_id >>= ny - output_bits
+    t-the_id &= (1 << output_bits) - 1
+  w-wetuwn t-the_id
 
 
-def make_feature_id(name, num_bits):
-  feature_id = _get_feature_id(name)
-  return np.int64(limit_bits(feature_id, num_bits))
+def make_featuwe_id(name, (U ﹏ U) nyum_bits):
+  featuwe_id = _get_featuwe_id(name)
+  wetuwn n-nyp.int64(wimit_bits(featuwe_id, nyum_bits))
 
 
-def limit_bits(value, num_bits):
-  return value & ((2 ** num_bits) - 1)
+def wimit_bits(vawue, >_< nyum_bits):
+  wetuwn vawue & ((2 ** n-nyum_bits) - 1)

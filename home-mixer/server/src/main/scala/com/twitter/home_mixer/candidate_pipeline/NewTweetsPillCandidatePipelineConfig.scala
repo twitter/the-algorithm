@@ -1,123 +1,123 @@
-package com.twitter.home_mixer.candidate_pipeline
+package com.twittew.home_mixew.candidate_pipewine
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.functional_component.gate.RequestContextNotGate
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.DurationParamBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.ShowAlertCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.StaticShowAlertColorConfigurationBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.StaticShowAlertDisplayLocationBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.StaticShowAlertIconDisplayInfoBuilder
-import com.twitter.product_mixer.component_library.gate.FeatureGate
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.candidate_source.StaticCandidateSource
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseDurationBuilder
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.NewTweets
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertColorConfiguration
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIconDisplayInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Top
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.UpArrow
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.TwitterBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.WhiteRosettaColor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.convewsions.duwationops._
+impowt c-com.twittew.home_mixew.functionaw_component.gate.wequestcontextnotgate
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.getnewewfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.wequest.devicecontext
+i-impowt com.twittew.home_mixew.modew.wequest.hasdevicecontext
+i-impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.uwtitemcandidatedecowatow
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.awewt.duwationpawambuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.awewt.showawewtcandidateuwtitembuiwdew
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.awewt.staticshowawewtcowowconfiguwationbuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.awewt.staticshowawewtdispwaywocationbuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.awewt.staticshowawewticondispwayinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.gate.featuwegate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.showawewtcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.staticcandidatesouwce
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.configapi.staticpawam
+i-impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.candidatedecowatow
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.decowatow.uwt.buiwdew.item.awewt.baseduwationbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.gate.gate
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinequewytwansfowmew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.twansfowmew.candidatepipewinewesuwtstwansfowmew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.newtweets
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.showawewtcowowconfiguwation
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.showawewticondispwayinfo
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.top
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.awewt.upawwow
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.twittewbwuewosettacowow
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.cowow.whitewosettacowow
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+impowt c-com.twittew.pwoduct_mixew.cowe.pipewine.candidate.dependentcandidatepipewineconfig
+impowt com.twittew.utiw.duwation
+impowt javax.inject.inject
+impowt javax.inject.singweton
 
 /**
- * Candidate Pipeline Config that creates the New Tweets Pill
+ * candidate pipewine config that c-cweates the nyew tweets piww
  */
-@Singleton
-class NewTweetsPillCandidatePipelineConfig[Query <: PipelineQuery with HasDeviceContext] @Inject() (
-) extends DependentCandidatePipelineConfig[
-      Query,
-      Unit,
-      ShowAlertCandidate,
-      ShowAlertCandidate
+@singweton
+c-cwass nyewtweetspiwwcandidatepipewineconfig[quewy <: p-pipewinequewy w-with hasdevicecontext] @inject() (
+) extends dependentcandidatepipewineconfig[
+      quewy, :3
+      u-unit, ^^;;
+      s-showawewtcandidate, 🥺
+      showawewtcandidate
     ] {
-  import NewTweetsPillCandidatePipelineConfig._
+  i-impowt nyewtweetspiwwcandidatepipewineconfig._
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("NewTweetsPill")
+  o-ovewwide vaw identifiew: c-candidatepipewineidentifiew =
+    candidatepipewineidentifiew("newtweetspiww")
 
-  override val gates: Seq[Gate[Query]] = Seq(
-    RequestContextNotGate(Seq(DeviceContext.RequestContext.PullToRefresh)),
-    FeatureGate.fromFeature(GetNewerFeature)
+  o-ovewwide vaw gates: seq[gate[quewy]] = seq(
+    w-wequestcontextnotgate(seq(devicecontext.wequestcontext.puwwtowefwesh)), (⑅˘꒳˘)
+    featuwegate.fwomfeatuwe(getnewewfeatuwe)
   )
 
-  override val candidateSource: CandidateSource[Unit, ShowAlertCandidate] =
-    StaticCandidateSource(
-      CandidateSourceIdentifier(identifier.name),
-      Seq(ShowAlertCandidate(id = identifier.name, userIds = Seq.empty))
+  o-ovewwide vaw candidatesouwce: candidatesouwce[unit, nyaa~~ showawewtcandidate] =
+    staticcandidatesouwce(
+      c-candidatesouwceidentifiew(identifiew.name), :3
+      s-seq(showawewtcandidate(id = identifiew.name, ( ͡o ω ͡o ) usewids = seq.empty))
     )
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[Query, Unit] = { _ => Unit }
+  ovewwide vaw quewytwansfowmew: candidatepipewinequewytwansfowmew[quewy, mya u-unit] = { _ => u-unit }
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    ShowAlertCandidate,
-    ShowAlertCandidate
+  ovewwide vaw wesuwttwansfowmew: c-candidatepipewinewesuwtstwansfowmew[
+    s-showawewtcandidate, (///ˬ///✿)
+    s-showawewtcandidate
   ] = { candidate => candidate }
 
-  override val decorator: Option[CandidateDecorator[Query, ShowAlertCandidate]] = {
-    val triggerDelayBuilder = new BaseDurationBuilder[Query] {
-      override def apply(
-        query: Query,
-        candidate: ShowAlertCandidate,
-        features: FeatureMap
-      ): Option[Duration] = {
-        val delay = query.deviceContext.flatMap(_.requestContextValue) match {
-          case Some(DeviceContext.RequestContext.TweetSelfThread) => 0.millis
-          case Some(DeviceContext.RequestContext.ManualRefresh) => 0.millis
-          case _ => TriggerDelay
+  ovewwide vaw d-decowatow: option[candidatedecowatow[quewy, showawewtcandidate]] = {
+    vaw twiggewdewaybuiwdew = nyew baseduwationbuiwdew[quewy] {
+      ovewwide d-def appwy(
+        quewy: quewy, (˘ω˘)
+        c-candidate: s-showawewtcandidate, ^^;;
+        f-featuwes: featuwemap
+      ): option[duwation] = {
+        vaw d-deway = quewy.devicecontext.fwatmap(_.wequestcontextvawue) m-match {
+          c-case some(devicecontext.wequestcontext.tweetsewfthwead) => 0.miwwis
+          c-case some(devicecontext.wequestcontext.manuawwefwesh) => 0.miwwis
+          case _ => t-twiggewdeway
         }
 
-        Some(delay)
+        s-some(deway)
       }
     }
 
-    val homeShowAlertCandidateBuilder = ShowAlertCandidateUrtItemBuilder(
-      alertType = NewTweets,
-      colorConfigBuilder = StaticShowAlertColorConfigurationBuilder(DefaultColorConfig),
-      displayLocationBuilder = StaticShowAlertDisplayLocationBuilder(Top),
-      triggerDelayBuilder = Some(triggerDelayBuilder),
-      displayDurationBuilder = Some(DurationParamBuilder(StaticParam(DisplayDuration))),
-      iconDisplayInfoBuilder = Some(StaticShowAlertIconDisplayInfoBuilder(DefaultIconDisplayInfo))
+    v-vaw homeshowawewtcandidatebuiwdew = s-showawewtcandidateuwtitembuiwdew(
+      awewttype = n-nyewtweets, (✿oωo)
+      cowowconfigbuiwdew = staticshowawewtcowowconfiguwationbuiwdew(defauwtcowowconfig), (U ﹏ U)
+      dispwaywocationbuiwdew = staticshowawewtdispwaywocationbuiwdew(top), -.-
+      t-twiggewdewaybuiwdew = some(twiggewdewaybuiwdew), ^•ﻌ•^
+      dispwayduwationbuiwdew = some(duwationpawambuiwdew(staticpawam(dispwayduwation))), rawr
+      icondispwayinfobuiwdew = some(staticshowawewticondispwayinfobuiwdew(defauwticondispwayinfo))
     )
 
-    Some(UrtItemCandidateDecorator(homeShowAlertCandidateBuilder))
+    s-some(uwtitemcandidatedecowatow(homeshowawewtcandidatebuiwdew))
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(),
-    HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
+  ovewwide vaw awewts = seq(
+    homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(), (˘ω˘)
+    homemixewawewtconfig.businesshouws.defauwtemptywesponsewateawewt()
   )
 }
 
-object NewTweetsPillCandidatePipelineConfig {
-  val DefaultColorConfig: ShowAlertColorConfiguration = ShowAlertColorConfiguration(
-    background = TwitterBlueRosettaColor,
-    text = WhiteRosettaColor,
-    border = Some(WhiteRosettaColor)
+o-object n-nyewtweetspiwwcandidatepipewineconfig {
+  v-vaw defauwtcowowconfig: showawewtcowowconfiguwation = s-showawewtcowowconfiguwation(
+    backgwound = twittewbwuewosettacowow, nyaa~~
+    t-text = w-whitewosettacowow, UwU
+    bowdew = some(whitewosettacowow)
   )
 
-  val DefaultIconDisplayInfo: ShowAlertIconDisplayInfo =
-    ShowAlertIconDisplayInfo(icon = UpArrow, tint = WhiteRosettaColor)
+  vaw defauwticondispwayinfo: showawewticondispwayinfo =
+    showawewticondispwayinfo(icon = u-upawwow, :3 tint = whitewosettacowow)
 
-  // Unlimited display time (until user takes action)
-  val DisplayDuration = -1.millisecond
-  val TriggerDelay = 4.minutes
+  // u-unwimited dispway time (untiw u-usew takes action)
+  v-vaw dispwayduwation = -1.miwwisecond
+  vaw twiggewdeway = 4.minutes
 }

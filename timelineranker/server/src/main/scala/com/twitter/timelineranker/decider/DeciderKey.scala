@@ -1,83 +1,83 @@
-package com.twitter.timelineranker.decider
+package com.twittew.timewinewankew.decidew
 
-import com.twitter.servo.decider.DeciderKeyEnum
+impowt c-com.twittew.sewvo.decidew.decidewkeyenum
 
-object DeciderKey extends DeciderKeyEnum {
-  // Deciders that can be used to control load on TLR or its backends.
-  val EnableMaxConcurrencyLimiting: Value = Value("enable_max_concurrency_limiting")
+o-object d-decidewkey extends d-decidewkeyenum {
+  // d-decidews t-that can be u-used to contwow w-woad on tww ow its backends. (///ˬ///✿)
+  vaw enabwemaxconcuwwencywimiting: vawue = vawue("enabwe_max_concuwwency_wimiting")
 
-  // Deciders related to testing / debugging.
-  val EnableRoutingToRankerDevProxy: Value = Value("enable_routing_to_ranker_dev_proxy")
+  // decidews w-wewated to testing / debugging. (˘ω˘)
+  vaw enabwewoutingtowankewdevpwoxy: v-vawue = vawue("enabwe_wouting_to_wankew_dev_pwoxy")
 
-  // Deciders related to authorization.
-  val ClientRequestAuthorization: Value = Value("client_request_authorization")
-  val ClientWriteWhitelist: Value = Value("client_write_whitelist")
-  val AllowTimelineMixerRecapProd: Value = Value("allow_timeline_mixer_recap_prod")
-  val AllowTimelineMixerRecycledProd: Value = Value("allow_timeline_mixer_recycled_prod")
-  val AllowTimelineMixerHydrateProd: Value = Value("allow_timeline_mixer_hydrate_prod")
-  val AllowTimelineMixerHydrateRecosProd: Value = Value("allow_timeline_mixer_hydrate_recos_prod")
-  val AllowTimelineMixerSeedAuthorsProd: Value = Value("allow_timeline_mixer_seed_authors_prod")
-  val AllowTimelineMixerSimclusterProd: Value = Value("allow_timeline_mixer_simcluster_prod")
-  val AllowTimelineMixerEntityTweetsProd: Value = Value("allow_timeline_mixer_entity_tweets_prod")
-  val AllowTimelineMixerListProd: Value = Value("allow_timeline_mixer_list_prod")
-  val AllowTimelineMixerListTweetProd: Value = Value("allow_timeline_mixer_list_tweet_prod")
-  val AllowTimelineMixerCommunityProd: Value = Value("allow_timeline_mixer_community_prod")
-  val AllowTimelineMixerCommunityTweetProd: Value = Value(
-    "allow_timeline_mixer_community_tweet_prod")
-  val AllowTimelineScorerRecommendedTrendTweetProd: Value = Value(
-    "allow_timeline_scorer_recommended_trend_tweet_prod")
-  val AllowTimelineMixerUtegLikedByTweetsProd: Value = Value(
-    "allow_timeline_mixer_uteg_liked_by_tweets_prod")
-  val AllowTimelineMixerStaging: Value = Value("allow_timeline_mixer_staging")
-  val AllowTimelineRankerProxy: Value = Value("allow_timeline_ranker_proxy")
-  val AllowTimelineRankerWarmup: Value = Value("allow_timeline_ranker_warmup")
-  val AllowTimelineScorerRecTopicTweetsProd: Value =
-    Value("allow_timeline_scorer_rec_topic_tweets_prod")
-  val AllowTimelineScorerPopularTopicTweetsProd: Value =
-    Value("allow_timeline_scorer_popular_topic_tweets_prod")
-  val AllowTimelineScorerHydrateTweetScoringProd: Value = Value(
-    "allow_timelinescorer_hydrate_tweet_scoring_prod")
-  val AllowTimelineServiceProd: Value = Value("allow_timeline_service_prod")
-  val AllowTimelineServiceStaging: Value = Value("allow_timeline_service_staging")
-  val RateLimitOverrideUnknown: Value = Value("rate_limit_override_unknown")
+  // decidews wewated t-to authowization. ^^;;
+  vaw cwientwequestauthowization: vawue = vawue("cwient_wequest_authowization")
+  vaw cwientwwitewhitewist: v-vawue = vawue("cwient_wwite_whitewist")
+  vaw awwowtimewinemixewwecappwod: v-vawue = v-vawue("awwow_timewine_mixew_wecap_pwod")
+  vaw awwowtimewinemixewwecycwedpwod: vawue = vawue("awwow_timewine_mixew_wecycwed_pwod")
+  vaw awwowtimewinemixewhydwatepwod: v-vawue = vawue("awwow_timewine_mixew_hydwate_pwod")
+  vaw awwowtimewinemixewhydwatewecospwod: vawue = vawue("awwow_timewine_mixew_hydwate_wecos_pwod")
+  v-vaw awwowtimewinemixewseedauthowspwod: vawue = v-vawue("awwow_timewine_mixew_seed_authows_pwod")
+  v-vaw awwowtimewinemixewsimcwustewpwod: v-vawue = v-vawue("awwow_timewine_mixew_simcwustew_pwod")
+  vaw awwowtimewinemixewentitytweetspwod: vawue = v-vawue("awwow_timewine_mixew_entity_tweets_pwod")
+  vaw awwowtimewinemixewwistpwod: vawue = vawue("awwow_timewine_mixew_wist_pwod")
+  v-vaw awwowtimewinemixewwisttweetpwod: vawue = vawue("awwow_timewine_mixew_wist_tweet_pwod")
+  vaw awwowtimewinemixewcommunitypwod: vawue = vawue("awwow_timewine_mixew_community_pwod")
+  v-vaw awwowtimewinemixewcommunitytweetpwod: vawue = v-vawue(
+    "awwow_timewine_mixew_community_tweet_pwod")
+  v-vaw a-awwowtimewinescowewwecommendedtwendtweetpwod: vawue = vawue(
+    "awwow_timewine_scowew_wecommended_twend_tweet_pwod")
+  vaw awwowtimewinemixewutegwikedbytweetspwod: v-vawue = vawue(
+    "awwow_timewine_mixew_uteg_wiked_by_tweets_pwod")
+  v-vaw awwowtimewinemixewstaging: v-vawue = v-vawue("awwow_timewine_mixew_staging")
+  vaw a-awwowtimewinewankewpwoxy: vawue = v-vawue("awwow_timewine_wankew_pwoxy")
+  vaw awwowtimewinewankewwawmup: vawue = v-vawue("awwow_timewine_wankew_wawmup")
+  vaw awwowtimewinescowewwectopictweetspwod: v-vawue =
+    vawue("awwow_timewine_scowew_wec_topic_tweets_pwod")
+  vaw awwowtimewinescowewpopuwawtopictweetspwod: v-vawue =
+    v-vawue("awwow_timewine_scowew_popuwaw_topic_tweets_pwod")
+  vaw awwowtimewinescowewhydwatetweetscowingpwod: vawue = vawue(
+    "awwow_timewinescowew_hydwate_tweet_scowing_pwod")
+  vaw awwowtimewinesewvicepwod: vawue = vawue("awwow_timewine_sewvice_pwod")
+  v-vaw awwowtimewinesewvicestaging: v-vawue = vawue("awwow_timewine_sewvice_staging")
+  vaw watewimitovewwideunknown: v-vawue = vawue("wate_wimit_ovewwide_unknown")
 
-  // Deciders related to reverse-chron home timeline materialization.
-  val MultiplierOfMaterializationTweetsFetched: Value = Value(
-    "multiplier_of_materialization_tweets_fetched"
+  // d-decidews wewated t-to wevewse-chwon home timewine matewiawization. (✿oωo)
+  vaw muwtipwiewofmatewiawizationtweetsfetched: v-vawue = vawue(
+    "muwtipwiew_of_matewiawization_tweets_fetched"
   )
-  val BackfillFilteredEntries: Value = Value("enable_backfill_filtered_entries")
-  val TweetsFilteringLossageThreshold: Value = Value("tweets_filtering_lossage_threshold")
-  val TweetsFilteringLossageLimit: Value = Value("tweets_filtering_lossage_limit")
-  val SupplementFollowsWithRealGraph: Value = Value("supplement_follows_with_real_graph")
+  vaw backfiwwfiwtewedentwies: vawue = vawue("enabwe_backfiww_fiwtewed_entwies")
+  vaw t-tweetsfiwtewingwossagethweshowd: vawue = vawue("tweets_fiwtewing_wossage_thweshowd")
+  v-vaw tweetsfiwtewingwossagewimit: v-vawue = v-vawue("tweets_fiwtewing_wossage_wimit")
+  vaw s-suppwementfowwowswithweawgwaph: v-vawue = vawue("suppwement_fowwows_with_weaw_gwaph")
 
-  // Deciders related to recap.
-  val RecapEnableContentFeaturesHydration: Value = Value("recap_enable_content_features_hydration")
-  val RecapMaxCountMultiplier: Value = Value("recap_max_count_multiplier")
-  val RecapEnableExtraSortingInResults: Value = Value("recap_enable_extra_sorting_in_results")
+  // d-decidews w-wewated to wecap. (U ﹏ U)
+  vaw wecapenabwecontentfeatuweshydwation: vawue = vawue("wecap_enabwe_content_featuwes_hydwation")
+  v-vaw w-wecapmaxcountmuwtipwiew: v-vawue = v-vawue("wecap_max_count_muwtipwiew")
+  v-vaw wecapenabweextwasowtinginwesuwts: vawue = vawue("wecap_enabwe_extwa_sowting_in_wesuwts")
 
-  // Deciders related to recycled tweets.
-  val RecycledMaxCountMultiplier: Value = Value("recycled_max_count_multiplier")
-  val RecycledEnableContentFeaturesHydration: Value = Value(
-    "recycled_enable_content_features_hydration")
+  // decidews w-wewated to wecycwed tweets. -.-
+  vaw wecycwedmaxcountmuwtipwiew: vawue = vawue("wecycwed_max_count_muwtipwiew")
+  vaw wecycwedenabwecontentfeatuweshydwation: vawue = v-vawue(
+    "wecycwed_enabwe_content_featuwes_hydwation")
 
-  // Deciders related to entity tweets.
-  val EntityTweetsEnableContentFeaturesHydration: Value = Value(
-    "entity_tweets_enable_content_features_hydration")
+  // decidews wewated to entity tweets. ^•ﻌ•^
+  vaw entitytweetsenabwecontentfeatuweshydwation: v-vawue = v-vawue(
+    "entity_tweets_enabwe_content_featuwes_hydwation")
 
-  // Deciders related to both recap and recycled tweets
-  val EnableRealGraphUsers: Value = Value("enable_real_graph_users")
-  val MaxRealGraphAndFollowedUsers: Value = Value("max_real_graph_and_followed_users")
+  // d-decidews wewated to both wecap a-and wecycwed tweets
+  vaw enabweweawgwaphusews: v-vawue = vawue("enabwe_weaw_gwaph_usews")
+  v-vaw maxweawgwaphandfowwowedusews: vawue = vawue("max_weaw_gwaph_and_fowwowed_usews")
 
-  // Deciders related to recap author
-  val RecapAuthorEnableNewPipeline: Value = Value("recap_author_enable_new_pipeline")
-  val RecapAuthorEnableContentFeaturesHydration: Value = Value(
-    "recap_author_enable_content_features_hydration")
+  // decidews wewated to wecap authow
+  vaw wecapauthowenabwenewpipewine: v-vawue = vawue("wecap_authow_enabwe_new_pipewine")
+  vaw wecapauthowenabwecontentfeatuweshydwation: v-vawue = vawue(
+    "wecap_authow_enabwe_content_featuwes_hydwation")
 
-  // Deciders related to recap hydration (rectweet and ranked organic).
-  val RecapHydrationEnableContentFeaturesHydration: Value = Value(
-    "recap_hydration_enable_content_features_hydration")
+  // decidews w-wewated to w-wecap hydwation (wectweet and wanked owganic). rawr
+  v-vaw wecaphydwationenabwecontentfeatuweshydwation: v-vawue = vawue(
+    "wecap_hydwation_enabwe_content_featuwes_hydwation")
 
-  // Deciders related to uteg liked by tweets
-  val UtegLikedByTweetsEnableContentFeaturesHydration: Value = Value(
-    "uteg_liked_by_tweets_enable_content_features_hydration")
+  // decidews wewated t-to uteg wiked b-by tweets
+  vaw utegwikedbytweetsenabwecontentfeatuweshydwation: vawue = vawue(
+    "uteg_wiked_by_tweets_enabwe_content_featuwes_hydwation")
 }

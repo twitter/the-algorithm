@@ -1,94 +1,94 @@
-package com.twitter.home_mixer.product.for_you
+package com.twittew.home_mixew.pwoduct.fow_you
 
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.ParamGatedCandidateFeatureHydrator
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeAdsClientEventDetailsBuilder
-import com.twitter.home_mixer.functional_component.gate.ExcludeSoftUserGate
-import com.twitter.home_mixer.param.HomeGlobalParams
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableAdvertiserBrandSafetySettingsFeatureHydratorParam
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.AdsNumOrganicItemsParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.candidate_source.ads.AdsProdThriftCandidateSource
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.ad.AdsCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.ads.AdvertiserBrandSafetySettingsFeatureHydrator
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineConfigBuilder
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.StaticAdsDisplayLocationBuilder
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.ValidAdImpressionIdFilter
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.gate.ParamNotGate
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineHomePromotedHydrationSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.pawam_gated.pawamgatedcandidatefeatuwehydwatow
+i-impowt c-com.twittew.adsewvew.{thwiftscawa => a-ads}
+impowt c-com.twittew.home_mixew.functionaw_component.decowatow.buiwdew.homeadscwienteventdetaiwsbuiwdew
+i-impowt com.twittew.home_mixew.functionaw_component.gate.excwudesoftusewgate
+impowt c-com.twittew.home_mixew.pawam.homegwobawpawams
+i-impowt com.twittew.home_mixew.pawam.homegwobawpawams.enabweadvewtisewbwandsafetysettingsfeatuwehydwatowpawam
+i-impowt com.twittew.home_mixew.pwoduct.fow_you.modew.fowyouquewy
+impowt com.twittew.home_mixew.pwoduct.fow_you.pawam.fowyoupawam.adsnumowganicitemspawam
+impowt com.twittew.home_mixew.sewvice.homemixewawewtconfig
+impowt com.twittew.pwoduct_mixew.component_wibwawy.candidate_souwce.ads.adspwodthwiftcandidatesouwce
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.uwtitemcandidatedecowatow
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.contextuaw_wef.contextuawtweetwefbuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.item.ad.adscandidateuwtitembuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.decowatow.uwt.buiwdew.metadata.cwienteventinfobuiwdew
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.featuwe_hydwatow.candidate.ads.advewtisewbwandsafetysettingsfeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.ads.adscandidate
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads.adscandidatepipewineconfig
+i-impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads.adscandidatepipewineconfigbuiwdew
+impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads.staticadsdispwaywocationbuiwdew
+impowt com.twittew.pwoduct_mixew.component_wibwawy.pipewine.candidate.ads.vawidadimpwessionidfiwtew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.common.candidatescope
+i-impowt com.twittew.pwoduct_mixew.cowe.gate.pawamnotgate
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatepipewineidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.wtf.safety_wevew.timewinehomepwomotedhydwationsafetywevew
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.contextuaw_wef.tweethydwationcontext
+impowt com.twittew.timewines.injection.scwibe.injectionscwibeutiw
+i-impowt com.twittew.timewinesewvice.suggests.{thwiftscawa => s-st}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class ForYouAdsCandidatePipelineBuilder @Inject() (
-  adsCandidatePipelineConfigBuilder: AdsCandidatePipelineConfigBuilder,
-  adsCandidateSource: AdsProdThriftCandidateSource,
-  advertiserBrandSafetySettingsFeatureHydrator: AdvertiserBrandSafetySettingsFeatureHydrator[
-    ForYouQuery,
-    AdsCandidate
+@singweton
+c-cwass fowyouadscandidatepipewinebuiwdew @inject() (
+  adscandidatepipewineconfigbuiwdew: a-adscandidatepipewineconfigbuiwdew, (ˆ ﻌ ˆ)♡
+  adscandidatesouwce: adspwodthwiftcandidatesouwce, 😳😳😳
+  a-advewtisewbwandsafetysettingsfeatuwehydwatow: advewtisewbwandsafetysettingsfeatuwehydwatow[
+    fowyouquewy, :3
+    adscandidate
   ]) {
 
-  private val identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("ForYouAds")
+  pwivate vaw identifiew: candidatepipewineidentifiew = candidatepipewineidentifiew("fowyouads")
 
-  private val suggestType = st.SuggestType.Promoted
+  p-pwivate vaw suggesttype = s-st.suggesttype.pwomoted
 
-  private val clientEventInfoBuilder = ClientEventInfoBuilder(
-    component = InjectionScribeUtil.scribeComponent(suggestType).get,
-    detailsBuilder = Some(HomeAdsClientEventDetailsBuilder(Some(suggestType.name)))
+  p-pwivate v-vaw cwienteventinfobuiwdew = cwienteventinfobuiwdew(
+    component = injectionscwibeutiw.scwibecomponent(suggesttype).get, OwO
+    d-detaiwsbuiwdew = s-some(homeadscwienteventdetaiwsbuiwdew(some(suggesttype.name)))
   )
 
-  private val contextualTweetRefBuilder = ContextualTweetRefBuilder(
-    TweetHydrationContext(
-      safetyLevelOverride = Some(TimelineHomePromotedHydrationSafetyLevel),
-      outerTweetContext = None
+  pwivate v-vaw contextuawtweetwefbuiwdew = c-contextuawtweetwefbuiwdew(
+    tweethydwationcontext(
+      safetywevewuvwwide = s-some(timewinehomepwomotedhydwationsafetywevew), (U ﹏ U)
+      outewtweetcontext = n-nyone
     ))
 
-  private val decorator = UrtItemCandidateDecorator(
-    AdsCandidateUrtItemBuilder(
-      tweetClientEventInfoBuilder = Some(clientEventInfoBuilder),
-      contextualTweetRefBuilder = Some(contextualTweetRefBuilder)
+  pwivate vaw decowatow = u-uwtitemcandidatedecowatow(
+    adscandidateuwtitembuiwdew(
+      t-tweetcwienteventinfobuiwdew = some(cwienteventinfobuiwdew), >w<
+      c-contextuawtweetwefbuiwdew = s-some(contextuawtweetwefbuiwdew)
     ))
 
-  private val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(),
-    HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
+  pwivate vaw awewts = seq(
+    homemixewawewtconfig.businesshouws.defauwtsuccesswateawewt(), (U ﹏ U)
+    homemixewawewtconfig.businesshouws.defauwtemptywesponsewateawewt()
   )
 
-  def build(
-    organicCandidatePipelines: Option[CandidateScope] = None
-  ): AdsCandidatePipelineConfig[ForYouQuery] =
-    adsCandidatePipelineConfigBuilder.build[ForYouQuery](
-      adsCandidateSource = adsCandidateSource,
-      identifier = identifier,
-      adsDisplayLocationBuilder = StaticAdsDisplayLocationBuilder(ads.DisplayLocation.TimelineHome),
-      estimateNumOrganicItems = _.params(AdsNumOrganicItemsParam).toShort,
-      gates = Seq(
-        ParamNotGate(
-          name = "AdsDisableInjectionBasedOnUserRole",
-          param = HomeGlobalParams.AdsDisableInjectionBasedOnUserRoleParam
-        ),
-        ExcludeSoftUserGate
-      ),
-      filters = Seq(ValidAdImpressionIdFilter),
-      postFilterFeatureHydration = Seq(
-        ParamGatedCandidateFeatureHydrator(
-          EnableAdvertiserBrandSafetySettingsFeatureHydratorParam,
-          advertiserBrandSafetySettingsFeatureHydrator
+  def buiwd(
+    owganiccandidatepipewines: option[candidatescope] = nyone
+  ): a-adscandidatepipewineconfig[fowyouquewy] =
+    a-adscandidatepipewineconfigbuiwdew.buiwd[fowyouquewy](
+      adscandidatesouwce = a-adscandidatesouwce, 😳
+      i-identifiew = identifiew, (ˆ ﻌ ˆ)♡
+      adsdispwaywocationbuiwdew = s-staticadsdispwaywocationbuiwdew(ads.dispwaywocation.timewinehome),
+      estimatenumowganicitems = _.pawams(adsnumowganicitemspawam).toshowt, 😳😳😳
+      gates = seq(
+        pawamnotgate(
+          n-nyame = "adsdisabweinjectionbasedonusewwowe", (U ﹏ U)
+          pawam = homegwobawpawams.adsdisabweinjectionbasedonusewwowepawam
+        ), (///ˬ///✿)
+        excwudesoftusewgate
+      ), 😳
+      fiwtews = seq(vawidadimpwessionidfiwtew), 😳
+      p-postfiwtewfeatuwehydwation = seq(
+        p-pawamgatedcandidatefeatuwehydwatow(
+          e-enabweadvewtisewbwandsafetysettingsfeatuwehydwatowpawam, σωσ
+          a-advewtisewbwandsafetysettingsfeatuwehydwatow
         )
-      ),
-      decorator = Some(decorator),
-      alerts = alerts,
-      urtRequest = Some(true),
+      ), rawr x3
+      decowatow = s-some(decowatow), OwO
+      awewts = a-awewts,
+      u-uwtwequest = s-some(twue), /(^•ω•^)
     )
 }

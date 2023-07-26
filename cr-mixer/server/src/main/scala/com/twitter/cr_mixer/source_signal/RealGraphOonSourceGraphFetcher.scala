@@ -1,54 +1,54 @@
-package com.twitter.cr_mixer.source_signal
+package com.twittew.cw_mixew.souwce_signaw
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.param.RealGraphOonParams
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt c-com.twittew.cw_mixew.config.timeoutconfig
+i-impowt c-com.twittew.cw_mixew.modew.gwaphsouwceinfo
+i-impowt c-com.twittew.cw_mixew.modew.moduwenames
+i-impowt c-com.twittew.cw_mixew.pawam.weawgwaphoonpawams
+i-impowt com.twittew.cw_mixew.souwce_signaw.souwcefetchew.fetchewquewy
+impowt com.twittew.cw_mixew.thwiftscawa.souwcetype
+impowt com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.simcwustews_v2.common.usewid
+i-impowt com.twittew.stowehaus.weadabwestowe
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.wtf.candidate.thwiftscawa.candidateseq
+i-impowt javax.inject.inject
+i-impowt javax.inject.named
+impowt javax.inject.singweton
 
 /**
- * This store fetch user recommendations from RealGraphOON (go/realgraph) for a given userId
+ * this stowe fetch usew wecommendations f-fwom weawgwaphoon (go/weawgwaph) f-fow a-a given usewid
  */
-@Singleton
-case class RealGraphOonSourceGraphFetcher @Inject() (
-  @Named(ModuleNames.RealGraphOonStore) realGraphOonStore: ReadableStore[UserId, CandidateSeq],
-  override val timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver)
-    extends SourceGraphFetcher {
+@singweton
+case cwass weawgwaphoonsouwcegwaphfetchew @inject() (
+  @named(moduwenames.weawgwaphoonstowe) weawgwaphoonstowe: weadabwestowe[usewid, ʘwʘ candidateseq], /(^•ω•^)
+  o-ovewwide vaw timeoutconfig: timeoutconfig, ʘwʘ
+  gwobawstats: statsweceivew)
+    e-extends souwcegwaphfetchew {
 
-  override protected val stats: StatsReceiver = globalStats.scope(identifier)
-  override protected val graphSourceType: SourceType = SourceType.RealGraphOon
+  ovewwide pwotected v-vaw stats: s-statsweceivew = g-gwobawstats.scope(identifiew)
+  o-ovewwide pwotected vaw gwaphsouwcetype: souwcetype = s-souwcetype.weawgwaphoon
 
-  override def isEnabled(query: FetcherQuery): Boolean = {
-    query.params(RealGraphOonParams.EnableSourceGraphParam)
+  ovewwide def isenabwed(quewy: f-fetchewquewy): boowean = {
+    quewy.pawams(weawgwaphoonpawams.enabwesouwcegwaphpawam)
   }
 
-  override def fetchAndProcess(
-    query: FetcherQuery,
-  ): Future[Option[GraphSourceInfo]] = {
-    val rawSignals = trackPerItemStats(query)(
-      realGraphOonStore.get(query.userId).map {
-        _.map { candidateSeq =>
-          candidateSeq.candidates
+  ovewwide def fetchandpwocess(
+    quewy: fetchewquewy, σωσ
+  ): futuwe[option[gwaphsouwceinfo]] = {
+    v-vaw wawsignaws = twackpewitemstats(quewy)(
+      w-weawgwaphoonstowe.get(quewy.usewid).map {
+        _.map { c-candidateseq =>
+          c-candidateseq.candidates
             .map { candidate =>
-              // Bundle the userId with its score
-              (candidate.userId, candidate.score)
-            }.take(query.params(RealGraphOonParams.MaxConsumerSeedsNumParam))
+              // bundwe the usewid with its scowe
+              (candidate.usewid, OwO c-candidate.scowe)
+            }.take(quewy.pawams(weawgwaphoonpawams.maxconsumewseedsnumpawam))
         }
       }
     )
-    rawSignals.map {
-      _.map { userWithScores =>
-        convertGraphSourceInfo(userWithScores)
+    w-wawsignaws.map {
+      _.map { usewwithscowes =>
+        c-convewtgwaphsouwceinfo(usewwithscowes)
       }
     }
   }

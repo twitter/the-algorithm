@@ -1,60 +1,60 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.io.IOException;
+impowt java.io.ioexception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+i-impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.earlybird.EarlybirdStatus;
+i-impowt com.twittew.seawch.eawwybiwd.eawwybiwdstatus;
 
-public final class SegmentOptimizer {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentOptimizer.class);
+p-pubwic f-finaw cwass s-segmentoptimizew {
+  p-pwivate static finaw woggew wog = woggewfactowy.getwoggew(segmentoptimizew.cwass);
 
-  private static final String OPTIMIZING_SEGMENT_EVENT_PATTERN = "optimizing segment %s";
-  private static final String OPTIMIZING_SEGMENT_GAUGE_PATTERN = "optimizing_segment_%s";
+  pwivate static finaw s-stwing optimizing_segment_event_pattewn = "optimizing segment %s";
+  pwivate static f-finaw stwing optimizing_segment_gauge_pattewn = "optimizing_segment_%s";
 
-  private SegmentOptimizer() {
+  p-pwivate segmentoptimizew() {
   }
 
   /**
-   * Optimize a segment. Returns whether optimization was successful.
+   * optimize a segment. ( ͡o ω ͡o ) wetuwns whethew o-optimization was successfuw. (U ﹏ U)
    */
-  public static boolean optimize(SegmentInfo segmentInfo) {
-    try {
-      return optimizeThrowing(segmentInfo);
-    } catch (Exception e) {
-      // This is a bad situation, as earlybird can't run with too many un-optimized
-      // segments in memory.
-      LOG.error("Exception while optimizing segment " + segmentInfo.getSegmentName() + ": ", e);
-      segmentInfo.setFailedOptimize();
-      return false;
+  p-pubwic static b-boowean optimize(segmentinfo segmentinfo) {
+    twy {
+      wetuwn optimizethwowing(segmentinfo);
+    } catch (exception e-e) {
+      // this is a bad situation, (///ˬ///✿) as eawwybiwd can't wun with t-too many un-optimized
+      // segments in memowy. >w<
+      w-wog.ewwow("exception w-whiwe o-optimizing segment " + s-segmentinfo.getsegmentname() + ": ", rawr e);
+      segmentinfo.setfaiwedoptimize();
+      wetuwn fawse;
     }
   }
 
-  public static boolean needsOptimization(SegmentInfo segmentInfo) {
-    return segmentInfo.isComplete() && !segmentInfo.isOptimized()
-        && !segmentInfo.isFailedOptimize() && !segmentInfo.isIndexing();
+  p-pubwic static boowean nyeedsoptimization(segmentinfo s-segmentinfo) {
+    wetuwn segmentinfo.iscompwete() && !segmentinfo.isoptimized()
+        && !segmentinfo.isfaiwedoptimize() && !segmentinfo.isindexing();
   }
 
-  private static boolean optimizeThrowing(SegmentInfo segmentInfo) throws IOException {
-    if (!needsOptimization(segmentInfo)) {
-      return false;
+  pwivate static boowean optimizethwowing(segmentinfo segmentinfo) thwows ioexception {
+    i-if (!needsoptimization(segmentinfo)) {
+      wetuwn f-fawse;
     }
 
-    String gaugeName =
-        String.format(OPTIMIZING_SEGMENT_GAUGE_PATTERN, segmentInfo.getSegmentName());
-    SearchIndexingMetricSet.StartupMetric metric =
-        new SearchIndexingMetricSet.StartupMetric(gaugeName);
+    s-stwing gaugename =
+        s-stwing.fowmat(optimizing_segment_gauge_pattewn, mya segmentinfo.getsegmentname());
+    seawchindexingmetwicset.stawtupmetwic metwic =
+        n-nyew seawchindexingmetwicset.stawtupmetwic(gaugename);
 
-    String eventName =
-        String.format(OPTIMIZING_SEGMENT_EVENT_PATTERN, segmentInfo.getSegmentName());
-    EarlybirdStatus.beginEvent(eventName, metric);
-    try {
-      segmentInfo.getIndexSegment().optimizeIndexes();
-    } finally {
-      EarlybirdStatus.endEvent(eventName, metric);
+    s-stwing eventname =
+        stwing.fowmat(optimizing_segment_event_pattewn, ^^ s-segmentinfo.getsegmentname());
+    e-eawwybiwdstatus.beginevent(eventname, 😳😳😳 metwic);
+    t-twy {
+      segmentinfo.getindexsegment().optimizeindexes();
+    } f-finawwy {
+      eawwybiwdstatus.endevent(eventname, mya metwic);
     }
 
-    return true;
+    wetuwn t-twue;
   }
 }

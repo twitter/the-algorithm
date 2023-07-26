@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.marshaller.timeline_logging
+package com.twittew.home_mixew.mawshawwew.timewine_wogging
 
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.itemcandidatewithdetaiws
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.usew.usewitem
+i-impowt c-com.twittew.timewines.timewine_wogging.{thwiftscawa => t-thwiftwog}
 
-object WhoToFollowDetailsMarshaller {
+o-object whotofowwowdetaiwsmawshawwew {
 
-  def apply(entry: UserItem, candidate: ItemCandidateWithDetails): thriftlog.WhoToFollowDetails =
-    thriftlog.WhoToFollowDetails(
-      enableReactiveBlending = entry.enableReactiveBlending,
-      impressionId = entry.promotedMetadata.flatMap(_.impressionString),
-      advertiserId = entry.promotedMetadata.map(_.advertiserId)
+  def a-appwy(entwy: u-usewitem, (U ﹏ U) candidate: itemcandidatewithdetaiws): thwiftwog.whotofowwowdetaiws =
+    thwiftwog.whotofowwowdetaiws(
+      enabweweactivebwending = e-entwy.enabweweactivebwending,
+      impwessionid = entwy.pwomotedmetadata.fwatmap(_.impwessionstwing), -.-
+      a-advewtisewid = entwy.pwomotedmetadata.map(_.advewtisewid)
     )
 }

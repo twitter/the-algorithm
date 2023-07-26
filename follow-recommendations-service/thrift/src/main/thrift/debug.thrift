@@ -1,73 +1,73 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendation
+namespace java com.twittew.fowwow_wecommendations.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.thwiftscawa
+#@namespace s-stwato c-com.twittew.fowwow_wecommendation
 
-// These are broken into their own union
-// because we can have features that are
-// complex flavors of these (such as Seq)
-union PrimitiveFeatureValue {
-    1: i32 intValue
-    2: i64 longValue
-    3: string strValue
-    4: bool boolValue
+// t-these awe b-bwoken into theiw o-own union
+// because w-we can have f-featuwes that a-awe
+// compwex fwavows of these (such as seq)
+union pwimitivefeatuwevawue {
+    1: i32 intvawue
+    2: i-i64 wongvawue
+    3: stwing stwvawue
+    4: b-boow boowvawue
 }
 
-union FeatureValue {
-    1: PrimitiveFeatureValue primitiveValue
+union featuwevawue {
+    1: p-pwimitivefeatuwevawue pwimitivevawue
 }
 
-struct DebugParams {
-    1: optional map<string, FeatureValue> featureOverrides
-    2: optional i64 randomizationSeed
-    3: optional bool includeDebugInfoInResults
-    4: optional bool doNotLog
+stwuct debugpawams {
+    1: o-optionaw map<stwing, ^^ featuwevawue> f-featuweovewwides
+    2: o-optionaw i64 wandomizationseed
+    3: optionaw boow incwudedebuginfoinwesuwts
+    4: optionaw boow donotwog
 }
 
-enum DebugCandidateSourceIdentifier {
-  UTT_INTERESTS_RELATED_USERS_SOURCE = 0
-  UTT_PRODUCER_EXPANSION_SOURCE = 1
-  UTT_SEED_ACCOUNT_SOURCE = 2
-  BYF_USER_FOLLOW_CLUSTER_SIMS_SOURCE = 3
-  BYF_USER_FOLLOW_CLUSTER_SOURCE = 4
-  USER_FOLLOW_CLUSTER_SOURCE = 5
-  RECENT_SEARCH_BASED_SOURCE = 6
-  PEOPLE_ACTIVITY_RECENT_ENGAGEMENT_SOURCE = 7
-  PEOPLE_ACTIVITY_RECENT_ENGAGEMENT_SIMS_SOURCE = 8,
-  REVERSE_PHONE_BOOK_SOURCE = 9,
-  REVERSE_EMAIL_BOOK_SOURCE = 10,
-  SIMS_DEBUG_STORE = 11,
-  UTT_PRODUCER_ONLINE_MBCG_SOURCE = 12,
-  BONUS_FOLLOW_CONDITIONAL_ENGAGEMENT_STORE = 13,
-  // 14 (BONUS_FOLLOW_PMI_STORE) was deleted as it's not used anymore
-  FOLLOW2VEC_NEAREST_NEIGHBORS_STORE = 15,
-  OFFLINE_STP = 16,
-  OFFLINE_STP_BIG = 17,
-  OFFLINE_MUTUAL_FOLLOW_EXPANSION = 18,
-  REPEATED_PROFILE_VISITS = 19,
-  TIME_DECAY_FOLLOW2VEC_NEAREST_NEIGHBORS_STORE = 20,
-  LINEAR_REGRESSION_FOLLOW2VEC_NEAREST_NEIGHBORS_STORE = 21,
-  REAL_GRAPH_EXPANSION_SOURCE = 22,
-  RELATABLE_ACCOUNTS_BY_INTEREST = 23,
-  EMAIL_TWEET_CLICK = 24,
-  GOOD_TWEET_CLICK_ENGAGEMENTS = 25,
-  ENGAGED_FOLLOWER_RATIO = 26,
-  TWEET_SHARE_ENGAGEMENTS = 27,
-  BULK_FRIEND_FOLLOWS = 28,
-  REAL_GRAPH_OON_V2_SOURCE = 30,
-  CROWD_SEARCH_ACCOUNTS = 31,
-  POP_GEOHASH = 32,
-  POP_COUNTRY = 33,
-  POP_COUNTRY_BACKFILL = 34,
-  TWEET_SHARER_TO_SHARE_RECIPIENT_ENGAGEMENTS = 35,
-  TWEET_AUTHOR_TO_SHARE_RECIPIENT_ENGAGEMENTS = 36,
-  BULK_FRIEND_FOLLOWS_NEW_USER = 37,
-  ONLINE_STP_EPSCORER = 38,
-  ORGANIC_FOLLOW_ACCOUNTS = 39,
-  NUX_LO_HISTORY = 40,
-  TRAFFIC_ATTRIBUTION_ACCOUNTS = 41,
-  ONLINE_STP_RAW_ADDRESS_BOOK = 42,
-  POP_GEOHASH_QUALITY_FOLLOW = 43,
-  NOTIFICATION_ENGAGEMENT = 44,
-  EFR_BY_WORLDWIDE_PICTURE_PRODUCER = 45,
-  POP_GEOHASH_REAL_GRAPH = 46,
+e-enum debugcandidatesouwceidentifiew {
+  utt_intewests_wewated_usews_souwce = 0
+  utt_pwoducew_expansion_souwce = 1
+  utt_seed_account_souwce = 2
+  byf_usew_fowwow_cwustew_sims_souwce = 3
+  b-byf_usew_fowwow_cwustew_souwce = 4
+  usew_fowwow_cwustew_souwce = 5
+  w-wecent_seawch_based_souwce = 6
+  p-peopwe_activity_wecent_engagement_souwce = 7
+  p-peopwe_activity_wecent_engagement_sims_souwce = 8, 😳😳😳
+  w-wevewse_phone_book_souwce = 9, mya
+  wevewse_emaiw_book_souwce = 10, 😳
+  sims_debug_stowe = 11, -.-
+  u-utt_pwoducew_onwine_mbcg_souwce = 12, 🥺
+  bonus_fowwow_conditionaw_engagement_stowe = 13, o.O
+  // 14 (bonus_fowwow_pmi_stowe) was d-deweted as it's nyot used anymowe
+  fowwow2vec_neawest_neighbows_stowe = 15, /(^•ω•^)
+  offwine_stp = 16, nyaa~~
+  offwine_stp_big = 17, nyaa~~
+  offwine_mutuaw_fowwow_expansion = 18, :3
+  w-wepeated_pwofiwe_visits = 19,
+  time_decay_fowwow2vec_neawest_neighbows_stowe = 20, 😳😳😳
+  w-wineaw_wegwession_fowwow2vec_neawest_neighbows_stowe = 21, (˘ω˘)
+  w-weaw_gwaph_expansion_souwce = 22, ^^
+  w-wewatabwe_accounts_by_intewest = 23, :3
+  emaiw_tweet_cwick = 24, -.-
+  good_tweet_cwick_engagements = 25, 😳
+  engaged_fowwowew_watio = 26, mya
+  t-tweet_shawe_engagements = 27, (˘ω˘)
+  b-buwk_fwiend_fowwows = 28, >_<
+  weaw_gwaph_oon_v2_souwce = 30, -.-
+  c-cwowd_seawch_accounts = 31, 🥺
+  p-pop_geohash = 32, (U ﹏ U)
+  pop_countwy = 33, >w<
+  pop_countwy_backfiww = 34, mya
+  t-tweet_shawew_to_shawe_wecipient_engagements = 35,
+  tweet_authow_to_shawe_wecipient_engagements = 36, >w<
+  b-buwk_fwiend_fowwows_new_usew = 37, nyaa~~
+  onwine_stp_epscowew = 38, (✿oωo)
+  owganic_fowwow_accounts = 39, ʘwʘ
+  n-nyux_wo_histowy = 40, (ˆ ﻌ ˆ)♡
+  twaffic_attwibution_accounts = 41, 😳😳😳
+  o-onwine_stp_waw_addwess_book = 42, :3
+  pop_geohash_quawity_fowwow = 43, OwO
+  n-nyotification_engagement = 44, (U ﹏ U)
+  e-efw_by_wowwdwide_pictuwe_pwoducew = 45, >w<
+  pop_geohash_weaw_gwaph = 46, (U ﹏ U)
 }

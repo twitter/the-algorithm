@@ -1,38 +1,38 @@
-package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.wecent_engagement
 
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.fowwow_wecommendations.common.cwients.weaw_time_weaw_gwaph.weawtimeweawgwaphcwient
+i-impowt c-com.twittew.fowwow_wecommendations.common.modews.candidateusew
+i-impowt com.twittew.hewmit.modew.awgowithm
+i-impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce.candidatesouwce
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.candidatesouwceidentifiew
+i-impowt com.twittew.stitch.stitch
+i-impowt javax.inject.inject
+impowt javax.inject.singweton
 
-@Singleton
-class RecentEngagementDirectFollowSource @Inject() (
-  realTimeRealGraphClient: RealTimeRealGraphClient)
-    extends CandidateSource[Long, CandidateUser] {
+@singweton
+cwass wecentengagementdiwectfowwowsouwce @inject() (
+  weawtimeweawgwaphcwient: w-weawtimeweawgwaphcwient)
+    extends candidatesouwce[wong, (U ﹏ U) candidateusew] {
 
-  val identifier: CandidateSourceIdentifier =
-    RecentEngagementDirectFollowSource.Identifier
+  v-vaw identifiew: candidatesouwceidentifiew =
+    w-wecentengagementdiwectfowwowsouwce.identifiew
 
   /**
-   * Generate a list of candidates for the target using RealtimeGraphClient
-   * and RecentEngagementStore.
+   * genewate a wist of candidates fow the tawget using w-weawtimegwaphcwient
+   * and wecentengagementstowe. >_<
    */
-  override def apply(targetUserId: Long): Stitch[Seq[CandidateUser]] = {
-    realTimeRealGraphClient
-      .getUsersRecentlyEngagedWith(
-        userId = targetUserId,
-        engagementScoreMap = RealTimeRealGraphClient.EngagementScoreMap,
-        includeDirectFollowCandidates = true,
-        includeNonDirectFollowCandidates = false
+  o-ovewwide d-def appwy(tawgetusewid: wong): stitch[seq[candidateusew]] = {
+    weawtimeweawgwaphcwient
+      .getusewswecentwyengagedwith(
+        usewid = tawgetusewid,
+        e-engagementscowemap = weawtimeweawgwaphcwient.engagementscowemap, rawr x3
+        incwudediwectfowwowcandidates = twue, mya
+        incwudenondiwectfowwowcandidates = f-fawse
       )
-      .map(_.map(_.withCandidateSource(identifier)).sortBy(-_.score.getOrElse(0.0)))
+      .map(_.map(_.withcandidatesouwce(identifiew)).sowtby(-_.scowe.getowewse(0.0)))
   }
 }
 
-object RecentEngagementDirectFollowSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.RecentEngagementDirectFollow.toString)
+object wecentengagementdiwectfowwowsouwce {
+  v-vaw i-identifiew = candidatesouwceidentifiew(awgowithm.wecentengagementdiwectfowwow.tostwing)
 }

@@ -1,63 +1,63 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.date;
+i-impowt j-java.utiw.concuwwent.timeunit;
 
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.date.DateUtil;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+i-impowt com.twittew.seawch.common.decidew.seawchdecidew;
+i-impowt c-com.twittew.seawch.common.pawtitioning.snowfwakepawsew.snowfwakeidpawsew;
+i-impowt c-com.twittew.seawch.common.utiw.date.dateutiw;
+impowt c-com.twittew.seawch.eawwybiwd.config.sewvingwange;
+impowt com.twittew.seawch.eawwybiwd_woot.common.eawwybiwdwequestcontext;
 
-public class FullArchiveServingRangeProvider implements ServingRangeProvider {
+pubwic cwass fuwwawchivesewvingwangepwovidew impwements sewvingwangepwovidew {
 
-  public static final Date FULL_ARCHIVE_START_DATE = DateUtil.toDate(2006, 3, 21);
-  private static final int DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO = 48;
+  pubwic static f-finaw date fuww_awchive_stawt_date = dateutiw.todate(2006, 😳😳😳 3, 😳😳😳 21);
+  pwivate static f-finaw int defauwt_sewving_wange_boundawy_houws_ago = 48;
 
-  private final SearchDecider decider;
-  private final String deciderKey;
+  p-pwivate finaw seawchdecidew decidew;
+  pwivate finaw stwing decidewkey;
 
-  public FullArchiveServingRangeProvider(
-      SearchDecider decider, String deciderKey) {
-    this.decider = decider;
-    this.deciderKey = deciderKey;
+  p-pubwic fuwwawchivesewvingwangepwovidew(
+      s-seawchdecidew d-decidew, o.O stwing decidewkey) {
+    this.decidew = decidew;
+    this.decidewkey = d-decidewkey;
   }
 
-  @Override
-  public ServingRange getServingRange(
-      final EarlybirdRequestContext requestContext, boolean useBoundaryOverride) {
-    return new ServingRange() {
-      @Override
-      public long getServingRangeSinceId() {
-        // we use 1 instead of 0, because the since_id operator is inclusive in earlybirds.
-        return 1L;
+  @ovewwide
+  pubwic sewvingwange getsewvingwange(
+      finaw eawwybiwdwequestcontext wequestcontext, ( ͡o ω ͡o ) b-boowean useboundawyovewwide) {
+    wetuwn nyew s-sewvingwange() {
+      @ovewwide
+      p-pubwic wong g-getsewvingwangesinceid() {
+        // w-we use 1 instead of 0, (U ﹏ U) because the since_id o-opewatow is incwusive in eawwybiwds. (///ˬ///✿)
+        wetuwn 1w;
       }
 
-      @Override
-      public long getServingRangeMaxId() {
-        long servingRangeEndMillis = TimeUnit.HOURS.toMillis(
-            (decider.featureExists(deciderKey))
-                ? decider.getAvailability(deciderKey)
-                : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
+      @ovewwide
+      p-pubwic wong getsewvingwangemaxid() {
+        wong sewvingwangeendmiwwis = timeunit.houws.tomiwwis(
+            (decidew.featuweexists(decidewkey))
+                ? decidew.getavaiwabiwity(decidewkey)
+                : defauwt_sewving_wange_boundawy_houws_ago);
 
-        long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeEndMillis;
-        return SnowflakeIdParser.generateValidStatusId(boundaryTime, 0);
+        w-wong boundawytime = wequestcontext.getcweatedtimemiwwis() - s-sewvingwangeendmiwwis;
+        w-wetuwn snowfwakeidpawsew.genewatevawidstatusid(boundawytime, >w< 0);
       }
 
-      @Override
-      public long getServingRangeSinceTimeSecondsFromEpoch() {
-        return FULL_ARCHIVE_START_DATE.getTime() / 1000;
+      @ovewwide
+      p-pubwic wong getsewvingwangesincetimesecondsfwomepoch() {
+        wetuwn fuww_awchive_stawt_date.gettime() / 1000;
       }
 
-      @Override
-      public long getServingRangeUntilTimeSecondsFromEpoch() {
-        long servingRangeEndMillis = TimeUnit.HOURS.toMillis(
-            (decider.featureExists(deciderKey))
-                ? decider.getAvailability(deciderKey)
-                : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
+      @ovewwide
+      pubwic wong g-getsewvingwangeuntiwtimesecondsfwomepoch() {
+        w-wong sewvingwangeendmiwwis = timeunit.houws.tomiwwis(
+            (decidew.featuweexists(decidewkey))
+                ? d-decidew.getavaiwabiwity(decidewkey)
+                : d-defauwt_sewving_wange_boundawy_houws_ago);
 
-        long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeEndMillis;
-        return boundaryTime / 1000;
+        wong boundawytime = w-wequestcontext.getcweatedtimemiwwis() - sewvingwangeendmiwwis;
+        w-wetuwn boundawytime / 1000;
       }
     };
   }

@@ -1,61 +1,61 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.twittew.fwigate.pushsewvice.modew.ntab
 
-import com.twitter.frigate.common.base.TrendTweetCandidate
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.exception.TweetNTabRequestHydratorException
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.frigate.pushservice.util.EmailLandingPageExperimentUtil
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.util.Future
+impowt com.twittew.fwigate.common.base.twendtweetcandidate
+i-impowt c-com.twittew.fwigate.common.base.tweetauthowdetaiws
+i-impowt com.twittew.fwigate.common.base.tweetcandidate
+i-impowt c-com.twittew.fwigate.pushsewvice.exception.tweetntabwequesthydwatowexception
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.pushsewvice.take.notificationsewvicesendew
+impowt com.twittew.fwigate.pushsewvice.utiw.emaiwwandingpageexpewimentutiw
+impowt com.twittew.notificationsewvice.thwiftscawa.dispwaytext
+i-impowt com.twittew.notificationsewvice.thwiftscawa.dispwaytextentity
+impowt com.twittew.notificationsewvice.thwiftscawa.textvawue
+i-impowt com.twittew.utiw.futuwe
 
-trait TrendTweetNtabHydrator extends TweetNTabRequestHydrator {
-  self: PushCandidate with TrendTweetCandidate with TweetCandidate with TweetAuthorDetails =>
+t-twait twendtweetntabhydwatow extends tweetntabwequesthydwatow {
+  s-sewf: pushcandidate with twendtweetcandidate w-with t-tweetcandidate with tweetauthowdetaiws =>
 
-  private lazy val trendTweetNtabStats = self.statsReceiver.scope("trend_tweet_ntab")
+  pwivate wazy vaw twendtweetntabstats = sewf.statsweceivew.scope("twend_tweet_ntab")
 
-  private lazy val ruxLandingOnNtabCounter =
-    trendTweetNtabStats.counter("use_rux_landing_on_ntab")
+  p-pwivate wazy vaw wuxwandingonntabcountew =
+    twendtweetntabstats.countew("use_wux_wanding_on_ntab")
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
-    NotificationServiceSender
-      .getDisplayTextEntityFromUser(tweetAuthor, fieldName = "author_name", isBold = true)
+  ovewwide wazy vaw dispwaytextentitiesfut: f-futuwe[seq[dispwaytextentity]] =
+    nyotificationsewvicesendew
+      .getdispwaytextentityfwomusew(tweetauthow, :3 f-fiewdname = "authow_name", 😳😳😳 i-isbowd = twue)
       .map(
-        _.toSeq :+ DisplayTextEntity(
-          name = "trend_name",
-          value = TextValue.Text(trendName),
-          emphasis = true)
+        _.toseq :+ d-dispwaytextentity(
+          n-name = "twend_name", (˘ω˘)
+          vawue = textvawue.text(twendname), ^^
+          emphasis = t-twue)
       )
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = senderIdFut.map(Seq(_))
+  ovewwide wazy vaw facepiweusewsfut: f-futuwe[seq[wong]] = sendewidfut.map(seq(_))
 
-  override lazy val socialProofDisplayText: Option[DisplayText] = None
+  ovewwide wazy vaw sociawpwoofdispwaytext: option[dispwaytext] = nyone
 
-  override def refreshableType: Option[String] = ntabCopy.refreshableType
+  o-ovewwide def wefweshabwetype: o-option[stwing] = n-nytabcopy.wefweshabwetype
 
-  override lazy val tapThroughFut: Future[String] = {
-    Future.join(tweetAuthor, target.deviceInfo).map {
-      case (Some(author), Some(deviceInfo)) =>
-        val enableRuxLandingPage = deviceInfo.isRuxLandingPageEligible && target.params(
-          PushFeatureSwitchParams.EnableNTabRuxLandingPage)
-        val authorProfile = author.profile.getOrElse(
-          throw new TweetNTabRequestHydratorException(
-            s"Unable to obtain author profile for: ${author.id}"))
+  o-ovewwide wazy vaw tapthwoughfut: futuwe[stwing] = {
+    futuwe.join(tweetauthow, :3 t-tawget.deviceinfo).map {
+      c-case (some(authow), -.- some(deviceinfo)) =>
+        v-vaw enabwewuxwandingpage = d-deviceinfo.iswuxwandingpageewigibwe && tawget.pawams(
+          p-pushfeatuweswitchpawams.enabwentabwuxwandingpage)
+        vaw authowpwofiwe = a-authow.pwofiwe.getowewse(
+          thwow nyew tweetntabwequesthydwatowexception(
+            s-s"unabwe to obtain authow p-pwofiwe fow: ${authow.id}"))
 
-        if (enableRuxLandingPage) {
-          ruxLandingOnNtabCounter.incr()
-          EmailLandingPageExperimentUtil.createNTabRuxLandingURI(authorProfile.screenName, tweetId)
-        } else {
-          s"${authorProfile.screenName}/status/${tweetId.toString}"
+        if (enabwewuxwandingpage) {
+          w-wuxwandingonntabcountew.incw()
+          e-emaiwwandingpageexpewimentutiw.cweatentabwuxwandinguwi(authowpwofiwe.scweenname, tweetid)
+        } ewse {
+          s"${authowpwofiwe.scweenname}/status/${tweetid.tostwing}"
         }
 
       case _ =>
-        throw new TweetNTabRequestHydratorException(
-          s"Unable to obtain author and target details to generate tap through for Tweet: $tweetId")
+        thwow nyew tweetntabwequesthydwatowexception(
+          s-s"unabwe to obtain a-authow and tawget detaiws to g-genewate tap thwough f-fow tweet: $tweetid")
     }
   }
 }

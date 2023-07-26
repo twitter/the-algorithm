@@ -1,61 +1,61 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.adapters.realtime_interaction_graph.RealTimeInteractionGraphFeaturesAdapter
-import com.twitter.timelines.prediction.features.realtime_interaction_graph.RealTimeInteractionGraphEdgeFeatures
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+impowt com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt com.twittew.mw.api.datawecowd
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.pwediction.adaptews.weawtime_intewaction_gwaph.weawtimeintewactiongwaphfeatuwesadaptew
+impowt com.twittew.timewines.pwediction.featuwes.weawtime_intewaction_gwaph.weawtimeintewactiongwaphedgefeatuwes
+i-impowt com.twittew.utiw.time
+impowt javax.inject.inject
+i-impowt j-javax.inject.singweton
+impowt scawa.cowwection.javaconvewtews._
 
-object RealTimeInteractionGraphEdgeFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object weawtimeintewactiongwaphedgefeatuwe
+    extends datawecowdinafeatuwe[tweetcandidate]
+    w-with featuwewithdefauwtonfaiwuwe[tweetcandidate, (///ˬ///✿) datawecowd] {
+  ovewwide def defauwtvawue: datawecowd = new d-datawecowd()
 }
 
-@Singleton
-class RealTimeInteractionGraphEdgeFeatureHydrator @Inject() ()
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@singweton
+cwass w-weawtimeintewactiongwaphedgefeatuwehydwatow @inject() ()
+    e-extends buwkcandidatefeatuwehydwatow[pipewinequewy, >w< t-tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RealTimeInteractionGraphEdge")
+  o-ovewwide vaw identifiew: featuwehydwatowidentifiew =
+    f-featuwehydwatowidentifiew("weawtimeintewactiongwaphedge")
 
-  override val features: Set[Feature[_, _]] = Set(RealTimeInteractionGraphEdgeFeature)
+  ovewwide vaw featuwes: set[featuwe[_, _]] = s-set(weawtimeintewactiongwaphedgefeatuwe)
 
-  private val realTimeInteractionGraphFeaturesAdapter = new RealTimeInteractionGraphFeaturesAdapter
+  pwivate vaw weawtimeintewactiongwaphfeatuwesadaptew = nyew weawtimeintewactiongwaphfeatuwesadaptew
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offload {
-    val userVertex =
-      query.features.flatMap(_.getOrElse(RealTimeInteractionGraphUserVertexQueryFeature, None))
-    val realTimeInteractionGraphFeaturesMap =
-      userVertex.map(RealTimeInteractionGraphEdgeFeatures(_, Time.now))
+  ovewwide d-def appwy(
+    quewy: pipewinequewy, rawr
+    c-candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = o-offwoadfutuwepoows.offwoad {
+    vaw usewvewtex =
+      quewy.featuwes.fwatmap(_.getowewse(weawtimeintewactiongwaphusewvewtexquewyfeatuwe, mya nyone))
+    vaw w-weawtimeintewactiongwaphfeatuwesmap =
+      u-usewvewtex.map(weawtimeintewactiongwaphedgefeatuwes(_, ^^ time.now))
 
-    candidates.map { candidate =>
-      val feature = candidate.features.getOrElse(AuthorIdFeature, None).flatMap { authorId =>
-        realTimeInteractionGraphFeaturesMap.flatMap(_.get(authorId))
+    c-candidates.map { c-candidate =>
+      vaw featuwe = c-candidate.featuwes.getowewse(authowidfeatuwe, 😳😳😳 nyone).fwatmap { a-authowid =>
+        weawtimeintewactiongwaphfeatuwesmap.fwatmap(_.get(authowid))
       }
 
-      val dataRecordFeature =
-        realTimeInteractionGraphFeaturesAdapter.adaptToDataRecords(feature).asScala.head
+      vaw datawecowdfeatuwe =
+        w-weawtimeintewactiongwaphfeatuwesadaptew.adapttodatawecowds(featuwe).asscawa.head
 
-      FeatureMapBuilder().add(RealTimeInteractionGraphEdgeFeature, dataRecordFeature).build()
+      featuwemapbuiwdew().add(weawtimeintewactiongwaphedgefeatuwe, mya d-datawecowdfeatuwe).buiwd()
     }
   }
 }

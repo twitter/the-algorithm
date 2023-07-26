@@ -1,35 +1,35 @@
-package com.twitter.follow_recommendations.configapi.params
+package com.twittew.fowwow_wecommendations.configapi.pawams
 
-import com.twitter.follow_recommendations.models.CandidateSourceType
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
+impowt c-com.twittew.fowwow_wecommendations.modews.candidatesouwcetype
+i-impowt com.twittew.timewines.configapi.fsenumpawam
+i-impowt com.twittew.timewines.configapi.fspawam
 
 /**
- * When adding Producer side experiments, make sure to register the FS Key in [[ProducerFeatureFilter]]
- * in [[FeatureSwitchesModule]], otherwise, the FS will not work.
+ * w-when a-adding pwoducew s-side expewiments, (U ﹏ U) m-make suwe to wegistew t-the fs key in [[pwoducewfeatuwefiwtew]]
+ * in [[featuweswitchesmoduwe]], >_< othewwise, the fs wiww nyot wowk. rawr x3
  */
-object GlobalParams {
+o-object gwobawpawams {
 
-  object EnableCandidateParamHydrations
-      extends FSParam[Boolean]("frs_receiver_enable_candidate_params", false)
+  object enabwecandidatepawamhydwations
+      extends f-fspawam[boowean]("fws_weceivew_enabwe_candidate_pawams", mya fawse)
 
-  object KeepUserCandidate
-      extends FSParam[Boolean]("frs_receiver_holdback_keep_user_candidate", true)
+  o-object keepusewcandidate
+      extends fspawam[boowean]("fws_weceivew_howdback_keep_usew_candidate", nyaa~~ twue)
 
-  object KeepSocialUserCandidate
-      extends FSParam[Boolean]("frs_receiver_holdback_keep_social_user_candidate", true)
+  object keepsociawusewcandidate
+      e-extends fspawam[boowean]("fws_weceivew_howdback_keep_sociaw_usew_candidate", (⑅˘꒳˘) t-twue)
 
-  case object EnableGFSSocialProofTransform
-      extends FSParam("social_proof_transform_use_graph_feature_service", true)
+  c-case object enabwegfssociawpwooftwansfowm
+      extends fspawam("sociaw_pwoof_twansfowm_use_gwaph_featuwe_sewvice", twue)
 
-  case object EnableWhoToFollowProducts extends FSParam("who_to_follow_product_enabled", true)
+  case object enabwewhotofowwowpwoducts extends fspawam("who_to_fowwow_pwoduct_enabwed", t-twue)
 
-  case object CandidateSourcesToFilter
-      extends FSEnumParam[CandidateSourceType.type](
-        "candidate_sources_type_filter_id",
-        CandidateSourceType.None,
-        CandidateSourceType)
+  case object candidatesouwcestofiwtew
+      extends fsenumpawam[candidatesouwcetype.type](
+        "candidate_souwces_type_fiwtew_id", rawr x3
+        candidatesouwcetype.none, (✿oωo)
+        c-candidatesouwcetype)
 
-  object EnableRecommendationFlowLogs
-      extends FSParam[Boolean]("frs_recommendation_flow_logs_enabled", false)
+  object enabwewecommendationfwowwogs
+      extends f-fspawam[boowean]("fws_wecommendation_fwow_wogs_enabwed", (ˆ ﻌ ˆ)♡ f-fawse)
 }

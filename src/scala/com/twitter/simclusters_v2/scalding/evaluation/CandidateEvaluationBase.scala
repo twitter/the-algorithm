@@ -1,50 +1,50 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+package com.twittew.simcwustews_v2.scawding.evawuation
 
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.pluck.source.core_workflows.user_model.CondensedUserStateScalaDataset
-import com.twitter.scalding._
-import com.twitter.scalding.source.TypedText
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.thriftscala.CandidateTweets
-import com.twitter.simclusters_v2.thriftscala.ReferenceTweets
-import scala.util.Random
+impowt com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.condensedusewstate
+i-impowt com.twittew.cowe_wowkfwows.usew_modew.thwiftscawa.usewstate
+i-impowt com.twittew.pwuck.souwce.cowe_wowkfwows.usew_modew.condensedusewstatescawadataset
+impowt c-com.twittew.scawding._
+i-impowt c-com.twittew.scawding.souwce.typedtext
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.job.twittewexecutionapp
+impowt com.twittew.simcwustews_v2.thwiftscawa.candidatetweets
+impowt com.twittew.simcwustews_v2.thwiftscawa.wefewencetweets
+impowt scawa.utiw.wandom
 
 /**
- * Helper functions to provide user samples by sampling across user states.
+ * h-hewpew functions to pwovide usew sampwes by sampwing a-acwoss usew states.
  */
-object UserStateUserSampler {
-  def getSampleUsersByUserState(
-    userStateSource: TypedPipe[CondensedUserState],
-    validStates: Seq[UserState],
-    samplePercentage: Double
-  ): TypedPipe[(UserState, Long)] = {
-    assert(samplePercentage >= 0 && samplePercentage <= 1)
-    val validStateSet = validStates.toSet
+o-object usewstateusewsampwew {
+  def getsampweusewsbyusewstate(
+    usewstatesouwce: typedpipe[condensedusewstate], >_<
+    v-vawidstates: seq[usewstate], UwU
+    s-sampwepewcentage: d-doubwe
+  ): typedpipe[(usewstate, >_< wong)] = {
+    assewt(sampwepewcentage >= 0 && sampwepewcentage <= 1)
+    v-vaw vawidstateset = vawidstates.toset
 
-    userStateSource
-      .collect {
-        case data if data.userState.isDefined && validStateSet.contains(data.userState.get) =>
-          (data.userState.get, data.uid)
+    usewstatesouwce
+      .cowwect {
+        case data if data.usewstate.isdefined && v-vawidstateset.contains(data.usewstate.get) =>
+          (data.usewstate.get, data.uid)
       }
-      .filter(_ => Random.nextDouble() <= samplePercentage)
-      .forceToDisk
+      .fiwtew(_ => w-wandom.nextdoubwe() <= s-sampwepewcentage)
+      .fowcetodisk
   }
 
   /**
-   * Given a list of string corresponding to user states, convert them to the UserState type.
-   * If the input is empty, default to return all available user states
+   * g-given a wist of s-stwing cowwesponding to usew states, -.- convewt them t-to the usewstate type. mya
+   * if the input is empty, d-defauwt to wetuwn aww avaiwabwe usew states
    */
-  def parseUserStates(strStates: Seq[String]): Seq[UserState] = {
-    if (strStates.isEmpty) {
-      UserState.list
-    } else {
-      strStates.map { str =>
-        UserState
-          .valueOf(str).getOrElse(
-            throw new IllegalArgumentException(
-              s"Input user_states $str is invalid. Valid states are: " + UserState.list
+  def pawseusewstates(stwstates: seq[stwing]): seq[usewstate] = {
+    i-if (stwstates.isempty) {
+      usewstate.wist
+    } e-ewse {
+      stwstates.map { stw =>
+        u-usewstate
+          .vawueof(stw).getowewse(
+            t-thwow nyew iwwegawawgumentexception(
+              s"input usew_states $stw i-is invawid. >w< vawid s-states awe: " + usewstate.wist
             )
           )
       }
@@ -53,111 +53,111 @@ object UserStateUserSampler {
 }
 
 /**
- * A variation of the evaluation base where target users are sampled by user states.
- * For each user state of interest (e.x. HEAVY_TWEETER), we run a separate evaluation call, and
- * output the evaluation results per user state. This is helpful when we want to horizontally
- * compare how users in different user states respond to the candidate tweets.
+ * a-a vawiation o-of the evawuation base whewe t-tawget usews awe sampwed by usew s-states. (U ﹏ U)
+ * fow each usew state of intewest (e.x. 😳😳😳 h-heavy_tweetew), o.O we wun a sepawate e-evawuation caww, òωó and
+ * output t-the evawuation w-wesuwts pew usew state. 😳😳😳 this is hewpfuw when we want to howizontawwy
+ * compawe how usews in diffewent usew s-states wespond t-to the candidate tweets. σωσ
  */
-trait UserStateBasedEvaluationExecutionBase
-    extends CandidateEvaluationBase
-    with TwitterExecutionApp {
+twait u-usewstatebasedevawuationexecutionbase
+    e-extends c-candidateevawuationbase
+    with twittewexecutionapp {
 
-  def referenceTweets: TypedPipe[ReferenceTweets]
-  def candidateTweets: TypedPipe[CandidateTweets]
+  def wefewencetweets: typedpipe[wefewencetweets]
+  d-def candidatetweets: typedpipe[candidatetweets]
 
-  override def job: Execution[Unit] = {
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args =>
-        implicit val dateRange: DateRange =
-          DateRange.parse(args.list("date"))(DateOps.UTC, DateParser.default)
+  ovewwide def job: execution[unit] = {
+    execution.withid { i-impwicit uniqueid =>
+      execution.withawgs { a-awgs =>
+        i-impwicit vaw datewange: d-datewange =
+          datewange.pawse(awgs.wist("date"))(dateops.utc, (⑅˘꒳˘) datepawsew.defauwt)
 
-        val outputRootDir = args("outputDir")
-        val userStates: Seq[UserState] =
-          UserStateUserSampler.parseUserStates(args.list("user_states"))
-        val sampleRate = args.double("sample_rate")
+        vaw o-outputwootdiw = a-awgs("outputdiw")
+        v-vaw usewstates: s-seq[usewstate] =
+          usewstateusewsampwew.pawseusewstates(awgs.wist("usew_states"))
+        vaw s-sampwewate = awgs.doubwe("sampwe_wate")
 
-        // For each user state we are interested in, run separate executions and write
-        // the output into individual sub directories
-        val userStateSource = DAL.read(CondensedUserStateScalaDataset).toTypedPipe
-        val userIdsByState =
-          UserStateUserSampler.getSampleUsersByUserState(userStateSource, userStates, sampleRate)
-        val executionsPerUserState = userStates.map { userState =>
-          val sampleUsers = userIdsByState.collect { case data if data._1 == userState => data._2 }
-          val outputPath = outputRootDir + "/" + userState + "/"
+        // f-fow each usew s-state we awe intewested i-in, (///ˬ///✿) wun s-sepawate executions and wwite
+        // the output into individuaw s-sub diwectowies
+        vaw usewstatesouwce = daw.wead(condensedusewstatescawadataset).totypedpipe
+        vaw usewidsbystate =
+          usewstateusewsampwew.getsampweusewsbyusewstate(usewstatesouwce, u-usewstates, 🥺 sampwewate)
+        vaw executionspewusewstate = usewstates.map { usewstate =>
+          v-vaw sampweusews = u-usewidsbystate.cowwect { c-case data if data._1 == usewstate => d-data._2 }
+          vaw outputpath = o-outputwootdiw + "/" + u-usewstate + "/"
 
-          super
-            .runSampledEvaluation(sampleUsers, referenceTweets, candidateTweets)
-            .writeExecution(TypedText.csv(outputPath))
+          supew
+            .wunsampwedevawuation(sampweusews, OwO wefewencetweets, >w< candidatetweets)
+            .wwiteexecution(typedtext.csv(outputpath))
         }
-        // Run evaluation for each user state in parallel
-        Execution.sequence(executionsPerUserState).unit
+        // wun evawuation fow e-each usew state in pawawwew
+        e-execution.sequence(executionspewusewstate).unit
       }
     }
   }
 }
 
 /**
- * A basic flow for evaluating the quality of a set of candidate tweets, typically generated by an
- * algorithm (ex. SimClusters), by comparing its engagement rates against a set of reference tweets
- * The job goes through the following steps:
- * 1. Generate a group of target users on which we measure tweet engagements
- * 2. Collect tweets impressed by these users and their engagements on tweets from a labeled
- * tweet source (ex. Home Timeline engagement data), and form a reference set
- * 3. For each candidate tweet, collect the engagement rates from the reference set
- * 4. Run evaluation calculations (ex. percentage of intersection, engagement rate, etc)
+ * a basic fwow fow e-evawuating the q-quawity of a set of candidate tweets, 🥺 typicawwy g-genewated by an
+ * a-awgowithm (ex. nyaa~~ simcwustews), ^^ b-by compawing its e-engagement wates against a set of wefewence tweets
+ * the job goes thwough the f-fowwowing steps:
+ * 1. >w< g-genewate a-a gwoup of tawget usews on which w-we measuwe tweet e-engagements
+ * 2. OwO cowwect tweets i-impwessed by these usews and theiw engagements on tweets fwom a wabewed
+ * tweet s-souwce (ex. XD h-home timewine engagement data), ^^;; and fowm a wefewence s-set
+ * 3. f-fow each candidate tweet, 🥺 cowwect the engagement wates fwom the w-wefewence set
+ * 4. XD wun evawuation cawcuwations (ex. (U ᵕ U❁) pewcentage of intewsection, :3 e-engagement wate, ( ͡o ω ͡o ) etc)
  *
- * Each sub class is expected to provide 3 sets of data sources, which are the sample users,
- * candidate tweet sources, and reference tweet sources.
+ * each sub cwass is expected t-to pwovide 3 s-sets of data souwces, òωó which awe the sampwe usews, σωσ
+ * candidate t-tweet souwces, (U ᵕ U❁) a-and wefewence tweet souwces. (✿oωo)
  */
-trait CandidateEvaluationBase {
-  private def getSampledReferenceTweets(
-    referenceTweetEngagements: TypedPipe[ReferenceTweets],
-    sampleUsers: TypedPipe[Long]
-  ): TypedPipe[ReferenceTweets] = {
-    referenceTweetEngagements
-      .groupBy(_.targetUserId)
-      .join(sampleUsers.asKeys)
-      .map { case (targetUserId, (referenceEngagements, _)) => referenceEngagements }
+twait candidateevawuationbase {
+  pwivate def g-getsampwedwefewencetweets(
+    wefewencetweetengagements: t-typedpipe[wefewencetweets], ^^
+    sampweusews: typedpipe[wong]
+  ): typedpipe[wefewencetweets] = {
+    w-wefewencetweetengagements
+      .gwoupby(_.tawgetusewid)
+      .join(sampweusews.askeys)
+      .map { case (tawgetusewid, ^•ﻌ•^ (wefewenceengagements, XD _)) => w-wefewenceengagements }
   }
 
-  private def getSampledCandidateTweets(
-    candidateTweets: TypedPipe[CandidateTweets],
-    sampleUsers: TypedPipe[Long]
-  ): TypedPipe[CandidateTweets] = {
-    candidateTweets
-      .groupBy(_.targetUserId)
-      .join(sampleUsers.asKeys)
-      .map { case (_, (tweets, _)) => tweets }
+  p-pwivate def getsampwedcandidatetweets(
+    c-candidatetweets: typedpipe[candidatetweets], :3
+    s-sampweusews: t-typedpipe[wong]
+  ): t-typedpipe[candidatetweets] = {
+    candidatetweets
+      .gwoupby(_.tawgetusewid)
+      .join(sampweusews.askeys)
+      .map { c-case (_, (ꈍᴗꈍ) (tweets, :3 _)) => t-tweets }
   }
 
   /**
-   * Evaluation function, should be overridden by implementing sub classes to suit individual
-   * objectives, such as like engagement rates, CRT, etc.
-   * @param sampledReference
-   * @param sampledCandidate
+   * evawuation function, (U ﹏ U) shouwd b-be ovewwidden b-by impwementing s-sub cwasses to suit individuaw
+   * objectives, UwU s-such as wike engagement wates, 😳😳😳 cwt, e-etc. XD
+   * @pawam s-sampwedwefewence
+   * @pawam sampwedcandidate
    */
-  def evaluateResults(
-    sampledReference: TypedPipe[ReferenceTweets],
-    sampledCandidate: TypedPipe[CandidateTweets]
-  ): TypedPipe[String]
+  def evawuatewesuwts(
+    sampwedwefewence: t-typedpipe[wefewencetweets], o.O
+    s-sampwedcandidate: t-typedpipe[candidatetweets]
+  ): t-typedpipe[stwing]
 
   /**
-   * Given a list of target users, the reference tweet set, and the candidate tweet set,
-   * calculate the engagement rates on the reference set and the candidate set by these users.
-   * The evaluation result should be converted into an itemized format
-   * these users.
-   * @param referenceTweets
-   * @param candidateTweets
-   * @return
+   * given a wist o-of tawget usews, (⑅˘꒳˘) the wefewence tweet set, 😳😳😳 and the candidate tweet set, nyaa~~
+   * cawcuwate the engagement w-wates on the wefewence set a-and the candidate set by these u-usews. rawr
+   * the evawuation wesuwt s-shouwd be convewted into an i-itemized fowmat
+   * t-these usews. -.-
+   * @pawam w-wefewencetweets
+   * @pawam c-candidatetweets
+   * @wetuwn
    */
-  def runSampledEvaluation(
-    targetUserSamples: TypedPipe[Long],
-    referenceTweets: TypedPipe[ReferenceTweets],
-    candidateTweets: TypedPipe[CandidateTweets]
-  ): TypedPipe[String] = {
-    val sampledCandidate = getSampledCandidateTweets(candidateTweets, targetUserSamples)
-    val referencePerUser = getSampledReferenceTweets(referenceTweets, targetUserSamples)
+  def w-wunsampwedevawuation(
+    tawgetusewsampwes: typedpipe[wong], (✿oωo)
+    wefewencetweets: typedpipe[wefewencetweets], /(^•ω•^)
+    candidatetweets: typedpipe[candidatetweets]
+  ): t-typedpipe[stwing] = {
+    v-vaw sampwedcandidate = g-getsampwedcandidatetweets(candidatetweets, 🥺 tawgetusewsampwes)
+    v-vaw wefewencepewusew = getsampwedwefewencetweets(wefewencetweets, tawgetusewsampwes)
 
-    evaluateResults(referencePerUser, sampledCandidate)
+    evawuatewesuwts(wefewencepewusew, ʘwʘ s-sampwedcandidate)
   }
 }

@@ -1,12 +1,12 @@
-package com.twitter.recos.user_video_graph
+package com.twittew.wecos.usew_video_gwaph
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.logging.Logger
-import com.twitter.recos.recos_common.thriftscala._
-import com.twitter.recos.user_video_graph.thriftscala._
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.twacing.twace
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.wecos.wecos_common.thwiftscawa._
+i-impowt c-com.twittew.wecos.usew_video_gwaph.thwiftscawa._
+i-impowt com.twittew.utiw.futuwe
 
-trait LoggingUserVideoGraph extends thriftscala.UserVideoGraph.MethodPerEndpoint {
-  private[this] val accessLog = Logger("access")
+t-twait woggingusewvideogwaph e-extends thwiftscawa.usewvideogwaph.methodpewendpoint {
+  pwivate[this] vaw accesswog = woggew("access")
 
 }

@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.utils
+package com.twittew.fowwow_wecommendations.common.utiws
 
-object CollectionUtil {
+object cowwectionutiw {
 
   /**
-   * Transposes a sequence of sequences. As opposed to the Scala collection library version
-   * of transpose, the sequences do not have to have the same length.
+   * t-twansposes a-a sequence o-of sequences. rawr a-as opposed to the s-scawa cowwection w-wibwawy vewsion
+   * o-of twanspose, OwO t-the sequences do nyot have to have the same wength. (U ﹏ U)
    *
-   * Example:
-   * transpose(immutable.Seq(immutable.Seq(1,2,3), immutable.Seq(4,5), immutable.Seq(6,7)))
-   *   => immutable.Seq(immutable.Seq(1, 4, 6), immutable.Seq(2, 5, 7), immutable.Seq(3))
+   * exampwe:
+   * t-twanspose(immutabwe.seq(immutabwe.seq(1,2,3), >_< immutabwe.seq(4,5), rawr x3 immutabwe.seq(6,7)))
+   *   => i-immutabwe.seq(immutabwe.seq(1, mya 4, 6), immutabwe.seq(2, nyaa~~ 5, (⑅˘꒳˘) 7), i-immutabwe.seq(3))
    *
-   * @param seq a sequence of sequences
-   * @tparam A the type of elements in the seq
-   * @return the transposed sequence of sequences
+   * @pawam seq a sequence of sequences
+   * @tpawam a the t-type of ewements in the seq
+   * @wetuwn t-the t-twansposed sequence of sequences
    */
-  def transposeLazy[A](seq: Seq[Seq[A]]): Stream[Seq[A]] =
-    seq.filter(_.nonEmpty) match {
-      case Nil => Stream.empty
-      case ys => ys.map(_.head) #:: transposeLazy(ys.map(_.tail))
+  def twansposewazy[a](seq: seq[seq[a]]): stweam[seq[a]] =
+    s-seq.fiwtew(_.nonempty) match {
+      case niw => stweam.empty
+      case ys => y-ys.map(_.head) #:: twansposewazy(ys.map(_.taiw))
     }
 }

@@ -1,5 +1,5 @@
-package com.twitter.servo.util
+package com.twittew.sewvo.utiw
 
-import scala.collection.mutable
+impowt scawa.cowwection.mutabwe
 
-class SynchronizedHashMap[K, V] extends mutable.HashMap[K, V] with mutable.SynchronizedMap[K, V]
+c-cwass synchwonizedhashmap[k, o.O v-v] e-extends mutabwe.hashmap[k, (U ᵕ U❁) v-v] with m-mutabwe.synchwonizedmap[k, (⑅˘꒳˘) v-v]

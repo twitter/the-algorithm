@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.candidate_souwce
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
 
 /**
- * Results from a candidate source, optionally carrying extracted query level features to add
- * to the query's feature map (e.g, extracting reusable features from the thrift response of thrift
- * call).
- * @param candidates The candidates returned from the underlying CandidateSoure
- * @param features [[FeatureMap]] containing the features from the candidate source
- *                                    to merge back into the PipelineQuery FeatureMap.
- * @tparam Candidate The type of result
+ * w-wesuwts f-fwom a candidate s-souwce, nyaa~~ optionawwy c-cawwying extwacted q-quewy wevew f-featuwes to a-add
+ * to the quewy's featuwe map (e.g, /(^•ω•^) extwacting weusabwe featuwes fwom the thwift w-wesponse of thwift
+ * caww). rawr
+ * @pawam candidates t-the candidates wetuwned fwom t-the undewwying candidatesouwe
+ * @pawam featuwes [[featuwemap]] containing the f-featuwes fwom the candidate souwce
+ *                                    t-to mewge b-back into the pipewinequewy featuwemap. OwO
+ * @tpawam candidate the type of wesuwt
  */
-case class CandidatesWithSourceFeatures[+Candidate](
-  candidates: Seq[Candidate],
-  features: FeatureMap)
+c-case cwass candidateswithsouwcefeatuwes[+candidate](
+  candidates: seq[candidate], (U ﹏ U)
+  featuwes: featuwemap)

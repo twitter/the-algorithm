@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.twittew.fowwow_wecommendations.common.candidate_souwces.stp
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.pawam
 
-object OnlineSTPSourceParams {
-  // This replaces the old scorer module, located at EpStpScorer.scala, with the new scorer, located
-  // at Dbv2StpScorer.scala.
-  case object UseDBv2Scorer
-      extends FSParam[Boolean]("online_stp_source_dbv2_scorer_enabled", default = false)
+o-object onwinestpsouwcepawams {
+  // t-this wepwaces t-the owd scowew m-moduwe, rawr wocated a-at epstpscowew.scawa, OwO w-with t-the nyew scowew, (U ﹏ U) wocated
+  // at dbv2stpscowew.scawa. >_<
+  case object usedbv2scowew
+      e-extends fspawam[boowean]("onwine_stp_souwce_dbv2_scowew_enabwed", rawr x3 defauwt = f-fawse)
 
-  // For experiments that test the impact of an improved OnlineSTP source, this controls the usage
-  // of the PostNux heavy-ranker. Note that this FS should *NOT* trigger bucket impressions.
-  case object DisableHeavyRanker
-      extends FSParam[Boolean]("online_stp_source_disable_heavy_ranker", default = false)
+  // fow expewiments t-that test the impact of an impwoved onwinestp souwce, mya this contwows t-the usage
+  // of the postnux h-heavy-wankew. nyaa~~ n-nyote that this fs shouwd *not* twiggew bucket impwessions. (⑅˘꒳˘)
+  case object disabweheavywankew
+      e-extends fspawam[boowean]("onwine_stp_souwce_disabwe_heavy_wankew", rawr x3 defauwt = fawse)
 
-  case object SetPredictionDetails extends Param[Boolean](default = false)
+  case object setpwedictiondetaiws extends p-pawam[boowean](defauwt = fawse)
 
 }

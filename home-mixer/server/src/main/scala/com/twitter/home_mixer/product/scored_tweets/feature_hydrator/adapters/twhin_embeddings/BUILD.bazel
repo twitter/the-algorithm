@@ -1,16 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/timelines/prediction/common/adapters:base",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "src/thrift/com/twitter/ml/api:data-scala",
-        "src/thrift/com/twitter/ml/api:embedding-java",
-        "src/thrift/com/twitter/ml/api:embedding-scala",
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    s-stwict_deps = t-twue, o.O
+    t-tags = ["bazew-compatibwe"], (U ᵕ U❁)
+    d-dependencies = [
+        "swc/java/com/twittew/mw/api:api-base", (⑅˘꒳˘)
+        "swc/java/com/twittew/mw/api/constant", ( ͡o ω ͡o )
+        "swc/scawa/com/twittew/mw/api/utiw", UwU
+        "swc/scawa/com/twittew/timewines/pwediction/common/adaptews:base", rawr x3
+        "swc/scawa/com/twittew/timewines/pwediction/featuwes/common", rawr
+        "swc/thwift/com/twittew/mw/api:data-java", σωσ
+        "swc/thwift/com/twittew/timewines/authow_featuwes:thwift-java", σωσ
     ],
 )

@@ -1,15 +1,15 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/predicate/socialgraph",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/scala/com/twitter/twistly/common",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
-        "user-signal-service/thrift/src/main/thrift:thrift-scala",
-        "util/util-core:util-core-util",
-        "util/util-core/src/main/java/com/twitter/util",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+scawa_wibwawy(
+    compiwew_option_sets = ["fataw_wawnings"], (ꈍᴗꈍ)
+    tags = ["bazew-compatibwe"], ^•ﻌ•^
+    d-dependencies = [
+        "hewmit/hewmit-cowe/swc/main/scawa/com/twittew/hewmit/pwedicate/sociawgwaph", OwO
+        "swc/scawa/com/twittew/simcwustews_v2/common", 🥺
+        "swc/scawa/com/twittew/twistwy/common", òωó
+        "swc/thwift/com/twittew/simcwustews_v2:simcwustews_v2-thwift-scawa", o.O
+        "swc/thwift/com/twittew/sociawgwaph:thwift-scawa", (U ᵕ U❁)
+        "usew-signaw-sewvice/thwift/swc/main/thwift:thwift-scawa", (⑅˘꒳˘)
+        "utiw/utiw-cowe:utiw-cowe-utiw", ( ͡o ω ͡o )
+        "utiw/utiw-cowe/swc/main/java/com/twittew/utiw", UwU
+        "utiw/utiw-stats/swc/main/scawa/com/twittew/finagwe/stats", rawr x3
     ],
 )

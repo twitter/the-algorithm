@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.button
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.button
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.icon.howizonicon
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.uww
 
-sealed trait CtaButton
+s-seawed twait c-ctabutton
 
-case class TextCtaButton(buttonText: String, url: Url) extends CtaButton
+case c-cwass textctabutton(buttontext: s-stwing, σωσ uww: u-uww) extends ctabutton
 
-case class IconCtaButton(buttonIcon: HorizonIcon, accessibilityLabel: String, url: Url)
-    extends CtaButton
+c-case cwass iconctabutton(buttonicon: howizonicon, >_< accessibiwitywabew: stwing, :3 u-uww: uww)
+    extends ctabutton

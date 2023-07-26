@@ -1,63 +1,63 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+package com.twittew.home_mixew.pwoduct.scowed_tweets.scowew
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.authowidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.scowefeatuwe
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
 
-trait DiversityDiscountProvider {
-
-  /**
-   * Fetch the ID of the entity to diversify
-   */
-  def entityId(candidate: CandidateWithFeatures[TweetCandidate]): Option[Long]
+t-twait divewsitydiscountpwovidew {
 
   /**
-   * Compute discount factor for each candidate based on position (zero-based)
-   * relative to other candidates associated with the same entity
+   * fetch the id of the entity to divewsify
    */
-  def discount(position: Int): Double
+  def entityid(candidate: c-candidatewithfeatuwes[tweetcandidate]): option[wong]
 
   /**
-   * Return candidate IDs sorted by score in descending order
+   * compute d-discount factow fow each candidate b-based on position (zewo-based)
+   * wewative to othew candidates a-associated with the same e-entity
    */
-  def sort(candidates: Seq[CandidateWithFeatures[TweetCandidate]]): Seq[Long] = candidates
-    .map { candidate =>
-      (candidate.candidate.id, candidate.features.getOrElse(ScoreFeature, None).getOrElse(0.0))
+  d-def discount(position: int): doubwe
+
+  /**
+   * wetuwn candidate ids sowted by scowe in descending o-owdew
+   */
+  def sowt(candidates: seq[candidatewithfeatuwes[tweetcandidate]]): seq[wong] = candidates
+    .map { c-candidate =>
+      (candidate.candidate.id, nyaa~~ candidate.featuwes.getowewse(scowefeatuwe, :3 n-nyone).getowewse(0.0))
     }
-    .sortBy(_._2)(Ordering.Double.reverse)
+    .sowtby(_._2)(owdewing.doubwe.wevewse)
     .map(_._1)
 
   /**
-   * Group by the specified entity ID (e.g. authors, likers, followers)
-   * Sort each group by score in descending order
-   * Determine the discount factor based on the position of each candidate
+   * g-gwoup by the specified e-entity id (e.g. 😳😳😳 a-authows, (˘ω˘) wikews, ^^ fowwowews)
+   * sowt each g-gwoup by scowe in descending owdew
+   * detewmine t-the discount factow based on the position of each candidate
    */
-  def apply(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Map[Long, Double] = candidates
-    .groupBy(entityId)
-    .flatMap {
-      case (entityIdOpt, entityCandidates) =>
-        val sortedCandidateIds = sort(entityCandidates)
+  def appwy(
+    candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): map[wong, :3 doubwe] = c-candidates
+    .gwoupby(entityid)
+    .fwatmap {
+      case (entityidopt, -.- e-entitycandidates) =>
+        vaw s-sowtedcandidateids = sowt(entitycandidates)
 
-        if (entityIdOpt.isDefined) {
-          sortedCandidateIds.zipWithIndex.map {
-            case (candidateId, index) =>
-              candidateId -> discount(index)
+        if (entityidopt.isdefined) {
+          sowtedcandidateids.zipwithindex.map {
+            case (candidateid, 😳 i-index) =>
+              c-candidateid -> discount(index)
           }
-        } else sortedCandidateIds.map(_ -> 1.0)
+        } e-ewse sowtedcandidateids.map(_ -> 1.0)
     }
 }
 
-object AuthorDiversityDiscountProvider extends DiversityDiscountProvider {
-  private val Decay = 0.5
-  private val Floor = 0.25
+o-object authowdivewsitydiscountpwovidew extends divewsitydiscountpwovidew {
+  p-pwivate vaw decay = 0.5
+  p-pwivate vaw fwoow = 0.25
 
-  override def entityId(candidate: CandidateWithFeatures[TweetCandidate]): Option[Long] =
-    candidate.features.getOrElse(AuthorIdFeature, None)
+  ovewwide def e-entityid(candidate: candidatewithfeatuwes[tweetcandidate]): o-option[wong] =
+    candidate.featuwes.getowewse(authowidfeatuwe, mya nyone)
 
-  // Provides an exponential decay based discount by position (with a floor)
-  override def discount(position: Int): Double =
-    (1 - Floor) * Math.pow(Decay, position) + Floor
+  // p-pwovides a-an exponentiaw decay based discount by position (with a fwoow)
+  ovewwide def discount(position: int): doubwe =
+    (1 - f-fwoow) * m-math.pow(decay, (˘ω˘) position) + f-fwoow
 }

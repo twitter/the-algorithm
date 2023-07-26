@@ -1,58 +1,58 @@
-package com.twitter.servo.request
+package com.twittew.sewvo.wequest
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.utiw.futuwe
 
-object ClientRequestObserver {
-  private[request] val noClientIdKey = "no_client_id"
+o-object cwientwequestobsewvew {
+  p-pwivate[wequest] v-vaw nyocwientidkey = "no_cwient_id"
 }
 
 /**
- * Provides per-request stats based on Finagle ClientId.
+ * p-pwovides pew-wequest s-stats based o-on finagwe cwientid. o.O
  *
- * @param statsReceiver the StatsReceiver used for counting
- * @param observeAuthorizationAttempts: if true (the default), observe all attempts. If false,
- *   only failures (unauthorized attempts) are observed.
+ * @pawam statsweceivew the statsweceivew used fow c-counting
+ * @pawam obsewveauthowizationattempts: if twue (the defauwt), /(^•ω•^) o-obsewve aww attempts. nyaa~~ if f-fawse,
+ *   onwy faiwuwes (unauthowized attempts) awe obsewved. nyaa~~
  */
-class ClientRequestObserver(
-  statsReceiver: StatsReceiver,
-  observeAuthorizationAttempts: Boolean = true)
-    extends ((String, Option[Seq[String]]) => Future[Unit]) {
-  import ClientRequestObserver.noClientIdKey
+c-cwass cwientwequestobsewvew(
+  statsweceivew: s-statsweceivew, :3
+  o-obsewveauthowizationattempts: boowean = twue)
+    extends ((stwing, 😳😳😳 option[seq[stwing]]) => futuwe[unit]) {
+  i-impowt cwientwequestobsewvew.nocwientidkey
 
-  protected[this] val scopedReceiver = statsReceiver.scope("client_request")
-  protected[this] val unauthorizedReceiver = scopedReceiver.scope("unauthorized")
-  protected[this] val unauthorizedCounter = scopedReceiver.counter("unauthorized")
+  pwotected[this] vaw scopedweceivew = statsweceivew.scope("cwient_wequest")
+  pwotected[this] v-vaw unauthowizedweceivew = s-scopedweceivew.scope("unauthowized")
+  pwotected[this] vaw u-unauthowizedcountew = s-scopedweceivew.countew("unauthowized")
 
   /**
-   * @param methodName the name of the Service method being called
-   * @param clientIdScopesOpt optional sequence of scope strings representing the
-   *   originating request's ClientId
+   * @pawam m-methodname the nyame of the sewvice method being c-cawwed
+   * @pawam cwientidscopesopt optionaw s-sequence of scope stwings wepwesenting the
+   *   owiginating wequest's cwientid
    */
-  override def apply(methodName: String, clientIdScopesOpt: Option[Seq[String]]): Future[Unit] = {
-    if (observeAuthorizationAttempts) {
-      scopedReceiver.counter(methodName).incr()
-      clientIdScopesOpt match {
-        case Some(clientIdScopes) =>
-          scopedReceiver.scope(methodName).counter(clientIdScopes: _*).incr()
+  ovewwide d-def appwy(methodname: stwing, c-cwientidscopesopt: o-option[seq[stwing]]): f-futuwe[unit] = {
+    if (obsewveauthowizationattempts) {
+      scopedweceivew.countew(methodname).incw()
+      cwientidscopesopt m-match {
+        c-case some(cwientidscopes) =>
+          s-scopedweceivew.scope(methodname).countew(cwientidscopes: _*).incw()
 
-        case None =>
-          scopedReceiver.scope(methodName).counter(noClientIdKey).incr()
+        c-case nyone =>
+          scopedweceivew.scope(methodname).countew(nocwientidkey).incw()
       }
     }
-    Future.Done
+    f-futuwe.done
   }
 
   /**
-   * Increments a counter for unauthorized requests.
+   * incwements a-a countew fow unauthowized wequests. (˘ω˘)
    */
-  def unauthorized(methodName: String, clientIdStr: String): Unit = {
-    unauthorizedCounter.incr()
-    unauthorizedReceiver.scope(methodName).counter(clientIdStr).incr()
+  def u-unauthowized(methodname: stwing, ^^ c-cwientidstw: stwing): unit = {
+    u-unauthowizedcountew.incw()
+    u-unauthowizedweceivew.scope(methodname).countew(cwientidstw).incw()
   }
 
-  def authorized(methodName: String, clientIdStr: String): Unit = {}
+  def authowized(methodname: stwing, :3 cwientidstw: stwing): unit = {}
 }
 
-object NullClientRequestObserver extends ClientRequestObserver(NullStatsReceiver)
+object nyuwwcwientwequestobsewvew e-extends cwientwequestobsewvew(nuwwstatsweceivew)

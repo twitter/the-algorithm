@@ -1,40 +1,40 @@
-package com.twitter.timelineranker.common
+package com.twittew.timewinewankew.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.CandidateTweet
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.util.Future
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.sewvo.utiw.futuweawwow
+i-impowt com.twittew.timewinewankew.cowe.hydwatedcandidatesandfeatuwesenvewope
+i-impowt com.twittew.timewinewankew.modew.candidatetweet
+i-impowt com.twittew.timewinewankew.modew.candidatetweetswesuwt
+i-impowt com.twittew.utiw.futuwe
 
-class CandidateGenerationTransform(statsReceiver: StatsReceiver)
-    extends FutureArrow[HydratedCandidatesAndFeaturesEnvelope, CandidateTweetsResult] {
-  private[this] val numCandidateTweetsStat = statsReceiver.stat("numCandidateTweets")
-  private[this] val numSourceTweetsStat = statsReceiver.stat("numSourceTweets")
+c-cwass candidategenewationtwansfowm(statsweceivew: statsweceivew)
+    extends futuweawwow[hydwatedcandidatesandfeatuwesenvewope, nyaa~~ candidatetweetswesuwt] {
+  p-pwivate[this] vaw nyumcandidatetweetsstat = statsweceivew.stat("numcandidatetweets")
+  p-pwivate[this] vaw nyumsouwcetweetsstat = s-statsweceivew.stat("numsouwcetweets")
 
-  override def apply(
-    candidatesAndFeaturesEnvelope: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[CandidateTweetsResult] = {
-    val hydratedTweets = candidatesAndFeaturesEnvelope.candidateEnvelope.hydratedTweets.outerTweets
+  ovewwide def appwy(
+    candidatesandfeatuwesenvewope: h-hydwatedcandidatesandfeatuwesenvewope
+  ): futuwe[candidatetweetswesuwt] = {
+    v-vaw hydwatedtweets = c-candidatesandfeatuwesenvewope.candidateenvewope.hydwatedtweets.outewtweets
 
-    if (hydratedTweets.nonEmpty) {
-      val candidates = hydratedTweets.map { hydratedTweet =>
-        CandidateTweet(hydratedTweet, candidatesAndFeaturesEnvelope.features(hydratedTweet.tweetId))
+    if (hydwatedtweets.nonempty) {
+      vaw candidates = hydwatedtweets.map { hydwatedtweet =>
+        c-candidatetweet(hydwatedtweet, (⑅˘꒳˘) candidatesandfeatuwesenvewope.featuwes(hydwatedtweet.tweetid))
       }
-      numCandidateTweetsStat.add(candidates.size)
+      nyumcandidatetweetsstat.add(candidates.size)
 
-      val sourceTweets =
-        candidatesAndFeaturesEnvelope.candidateEnvelope.sourceHydratedTweets.outerTweets.map {
-          hydratedTweet =>
-            CandidateTweet(
-              hydratedTweet,
-              candidatesAndFeaturesEnvelope.features(hydratedTweet.tweetId))
+      vaw souwcetweets =
+        candidatesandfeatuwesenvewope.candidateenvewope.souwcehydwatedtweets.outewtweets.map {
+          h-hydwatedtweet =>
+            candidatetweet(
+              h-hydwatedtweet, rawr x3
+              c-candidatesandfeatuwesenvewope.featuwes(hydwatedtweet.tweetid))
         }
-      numSourceTweetsStat.add(sourceTweets.size)
+      n-nyumsouwcetweetsstat.add(souwcetweets.size)
 
-      Future.value(CandidateTweetsResult(candidates, sourceTweets))
-    } else {
-      Future.value(CandidateTweetsResult.Empty)
+      futuwe.vawue(candidatetweetswesuwt(candidates, (✿oωo) s-souwcetweets))
+    } ewse {
+      futuwe.vawue(candidatetweetswesuwt.empty)
     }
   }
 }

@@ -1,35 +1,35 @@
-package com.twitter.servo
+package com.twittew.sewvo
 
-import com.twitter.servo.util.FutureArrow
+impowt c-com.twittew.sewvo.utiw.futuweawwow
 
-package object request {
-
-  /**
-   * RequestFilters provide a mechanism for composing a chain of actions
-   * (e.g. logging, authentication, replication, etc) to be performed per
-   * request. The intention is for a series of RequestFilters are terminated in a
-   * RequestHandler, which returns an object of some response type.
-   *
-   * Upon completion of a filter's work, the convention is to either:
-   *
-   * a) Return a Future of a request object of type `A` to be passed to the next
-   *    member of the filter/handler chain.
-   * b) Return a Future response outright in cases where request handling must
-   *    be halted at the current filter (i.e. returning `Future.exception(...)`.
-   *
-   * @tparam A
-   *   A type encapsulating all context and data required to satisfy a request.
-   */
-  type RequestFilter[A] = FutureArrow[A, A]
+p-package object w-wequest {
 
   /**
-   * A handler of requests parameterized on the request and response types.
+   * w-wequestfiwtews p-pwovide a-a mechanism fow c-composing a chain o-of actions
+   * (e.g. OwO wogging, 😳😳😳 authentication, 😳😳😳 wepwication, etc) to be pewfowmed p-pew
+   * wequest. o.O the intention is fow a sewies o-of wequestfiwtews awe tewminated i-in a
+   * wequesthandwew, ( ͡o ω ͡o ) which wetuwns an object of some wesponse type. (U ﹏ U)
    *
-   * @tparam A
-   *   A type encapsulating all context and data required to satisfy a request.
+   * u-upon compwetion of a fiwtew's w-wowk, (///ˬ///✿) the c-convention is to eithew:
    *
-   * @tparam B
-   *   A response type.
+   * a) wetuwn a futuwe of a wequest object of type `a` t-to be passed to the nyext
+   *    membew of the fiwtew/handwew chain. >w<
+   * b-b) wetuwn a futuwe wesponse outwight i-in cases whewe w-wequest handwing m-must
+   *    b-be hawted at the cuwwent fiwtew (i.e. rawr wetuwning `futuwe.exception(...)`. mya
+   *
+   * @tpawam a-a
+   *   a type encapsuwating aww c-context and data wequiwed to satisfy a wequest. ^^
    */
-  type RequestHandler[-A, +B] = FutureArrow[A, B]
+  type wequestfiwtew[a] = futuweawwow[a, 😳😳😳 a]
+
+  /**
+   * a h-handwew of wequests pawametewized o-on the wequest a-and wesponse types. mya
+   *
+   * @tpawam a-a
+   *   a type encapsuwating aww context and data wequiwed t-to satisfy a w-wequest. 😳
+   *
+   * @tpawam b
+   *   a-a wesponse type. -.-
+   */
+  t-type wequesthandwew[-a, 🥺 +b] = f-futuweawwow[a, o.O b]
 }

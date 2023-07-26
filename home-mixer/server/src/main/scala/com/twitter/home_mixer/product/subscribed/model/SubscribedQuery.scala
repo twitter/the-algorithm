@@ -1,31 +1,31 @@
-package com.twitter.home_mixer.product.subscribed.model
+package com.twittew.home_mixew.pwoduct.subscwibed.modew
 
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request._
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Params
+impowt com.twittew.home_mixew.modew.wequest.devicecontext
+i-impowt com.twittew.home_mixew.modew.wequest.hasdevicecontext
+impowt c-com.twittew.home_mixew.modew.wequest.hasseentweetids
+i-impowt c-com.twittew.home_mixew.modew.wequest.subscwibedpwoduct
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.uwtowdewedcuwsow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest._
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.timewines.configapi.pawams
 
-case class SubscribedQuery(
-  override val params: Params,
-  override val clientContext: ClientContext,
-  override val pipelineCursor: Option[UrtOrderedCursor],
-  override val requestedMaxResults: Option[Int],
-  override val debugOptions: Option[DebugOptions],
-  override val features: Option[FeatureMap],
-  override val deviceContext: Option[DeviceContext],
-  override val seenTweetIds: Option[Seq[Long]])
-    extends PipelineQuery
-    with HasPipelineCursor[UrtOrderedCursor]
-    with HasDeviceContext
-    with HasSeenTweetIds {
-  override val product: Product = SubscribedProduct
+case c-cwass subscwibedquewy(
+  ovewwide v-vaw pawams: pawams, (///ˬ///✿)
+  ovewwide vaw cwientcontext: cwientcontext, 😳😳😳
+  o-ovewwide vaw pipewinecuwsow: o-option[uwtowdewedcuwsow], 🥺
+  o-ovewwide vaw wequestedmaxwesuwts: option[int], mya
+  ovewwide vaw debugoptions: option[debugoptions], 🥺
+  ovewwide vaw f-featuwes: option[featuwemap], >_<
+  ovewwide vaw devicecontext: option[devicecontext], >_<
+  ovewwide vaw seentweetids: o-option[seq[wong]])
+    extends p-pipewinequewy
+    w-with haspipewinecuwsow[uwtowdewedcuwsow]
+    with h-hasdevicecontext
+    w-with hasseentweetids {
+  ovewwide vaw pwoduct: pwoduct = s-subscwibedpwoduct
 
-  override def withFeatureMap(features: FeatureMap): SubscribedQuery =
-    copy(features = Some(features))
+  ovewwide def withfeatuwemap(featuwes: f-featuwemap): subscwibedquewy =
+    copy(featuwes = some(featuwes))
 }

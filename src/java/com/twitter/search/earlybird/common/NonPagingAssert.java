@@ -1,34 +1,34 @@
-package com.twitter.search.earlybird.common;
+package com.twittew.seawch.eawwybiwd.common;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+impowt o-owg.swf4j.woggew;
+i-impowt owg.swf4j.woggewfactowy;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
+i-impowt com.twittew.seawch.common.metwics.seawchwatecountew;
 
 /**
- * When incremented, a non-paging alert will be triggered. Use this to assert for bad conditions
- * that should generally never happen.
+ * w-when i-incwemented, rawr x3 a non-paging a-awewt w-wiww be twiggewed. mya u-use this to assewt fow bad conditions
+ * that shouwd genewawwy nyevew happen. nyaa~~
  */
-public class NonPagingAssert {
-    private static final Logger LOG = LoggerFactory.getLogger(NonPagingAssert.class);
+p-pubwic cwass nyonpagingassewt {
+    pwivate s-static finaw woggew wog = woggewfactowy.getwoggew(nonpagingassewt.cwass);
 
-    private static final String ASSERT_STAT_PREFIX = "non_paging_assert_";
+    p-pwivate static finaw stwing assewt_stat_pwefix = "non_paging_assewt_";
 
-    private final String name;
-    private final SearchRateCounter assertCounter;
+    pwivate finaw stwing n-name;
+    pwivate finaw seawchwatecountew a-assewtcountew;
 
-    public NonPagingAssert(String name) {
-        this.name = name;
-        this.assertCounter = SearchRateCounter.export(ASSERT_STAT_PREFIX + name);
+    pubwic n-nyonpagingassewt(stwing nyame) {
+        this.name = nyame;
+        this.assewtcountew = seawchwatecountew.expowt(assewt_stat_pwefix + nyame);
     }
 
-    public void assertFailed() {
-        LOG.error("NonPagingAssert failed: {}", name);
-        assertCounter.increment();
+    p-pubwic void assewtfaiwed() {
+        wog.ewwow("nonpagingassewt faiwed: {}", (⑅˘꒳˘) nyame);
+        assewtcountew.incwement();
     }
 
-    public static void assertFailed(String name) {
-        NonPagingAssert nonPagingAssert = new NonPagingAssert(name);
-        nonPagingAssert.assertFailed();
+    pubwic static v-void assewtfaiwed(stwing nyame) {
+        n-nyonpagingassewt n-nyonpagingassewt = nyew n-nyonpagingassewt(name);
+        n-nyonpagingassewt.assewtfaiwed();
     }
 }

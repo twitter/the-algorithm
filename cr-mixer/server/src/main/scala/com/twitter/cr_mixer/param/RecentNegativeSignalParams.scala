@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.param
+package com.twittew.cw_mixew.pawam
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.finagwe.stats.nuwwstatsweceivew
+i-impowt com.twittew.wogging.woggew
+i-impowt com.twittew.timewines.configapi.baseconfig
+i-impowt c-com.twittew.timewines.configapi.baseconfigbuiwdew
+i-impowt com.twittew.timewines.configapi.fsname
+i-impowt com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.featuweswitchovewwideutiw
+i-impowt com.twittew.timewines.configapi.pawam
 
-object RecentNegativeSignalParams {
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "twistly_recentnegativesignals_enable_source",
-        default = false
+object wecentnegativesignawpawams {
+  object enabwesouwcepawam
+      extends fspawam[boowean](
+        nyame = "twistwy_wecentnegativesignaws_enabwe_souwce", :3
+        d-defauwt = fawse
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam
+  vaw awwpawams: seq[pawam[_] with f-fsname] = seq(
+    enabwesouwcepawam
   )
 
-  lazy val config: BaseConfig = {
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
-      Logger(getClass),
+  w-wazy vaw config: baseconfig = {
+    vaw enumovewwides = featuweswitchovewwideutiw.getenumfsovewwides(
+      n-nyuwwstatsweceivew, 😳😳😳
+      woggew(getcwass), -.-
     )
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam
+    v-vaw booweanovewwides = f-featuweswitchovewwideutiw.getbooweanfsovewwides(
+      enabwesouwcepawam
     )
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides()
+    vaw doubweovewwides =
+      featuweswitchovewwideutiw.getboundeddoubwefsovewwides()
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*).set(doubleOverrides: _*).set(enumOverrides: _*).build()
+    baseconfigbuiwdew()
+      .set(booweanovewwides: _*).set(doubweovewwides: _*).set(enumovewwides: _*).buiwd()
   }
 }

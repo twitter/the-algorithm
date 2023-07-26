@@ -1,164 +1,164 @@
-package com.twitter.follow_recommendations.logging
+package com.twittew.fowwow_wecommendations.wogging
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.HasIsSoftUser
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.follow_recommendations.logging.thriftscala.RecommendationLog
-import com.twitter.follow_recommendations.models.DebugParams
-import com.twitter.follow_recommendations.models.RecommendationFlowData
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.models.RecommendationResponse
-import com.twitter.follow_recommendations.models.ScoringUserRequest
-import com.twitter.follow_recommendations.models.ScoringUserResponse
-import com.twitter.inject.annotations.Flag
-import com.twitter.logging.LoggerFactory
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.scribelib.marshallers.ClientDataProvider
-import com.twitter.scribelib.marshallers.ExternalRefererDataProvider
-import com.twitter.scribelib.marshallers.ScribeSerialization
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fowwow_wecommendations.common.constants.guicenamedconstants
+i-impowt com.twittew.fowwow_wecommendations.common.modews.hasissoftusew
+i-impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams
+impowt c-com.twittew.fowwow_wecommendations.wogging.thwiftscawa.wecommendationwog
+impowt c-com.twittew.fowwow_wecommendations.modews.debugpawams
+i-impowt c-com.twittew.fowwow_wecommendations.modews.wecommendationfwowdata
+i-impowt com.twittew.fowwow_wecommendations.modews.wecommendationwequest
+impowt com.twittew.fowwow_wecommendations.modews.wecommendationwesponse
+impowt com.twittew.fowwow_wecommendations.modews.scowingusewwequest
+impowt com.twittew.fowwow_wecommendations.modews.scowingusewwesponse
+i-impowt com.twittew.inject.annotations.fwag
+impowt com.twittew.wogging.woggewfactowy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.cwientcontext
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wequest.hascwientcontext
+impowt com.twittew.scwibewib.mawshawwews.cwientdatapwovidew
+impowt com.twittew.scwibewib.mawshawwews.extewnawwefewewdatapwovidew
+i-impowt com.twittew.scwibewib.mawshawwews.scwibesewiawization
+impowt c-com.twittew.timewines.configapi.haspawams
+i-impowt com.twittew.utiw.time
+impowt javax.inject.inject
+impowt javax.inject.named
+i-impowt javax.inject.singweton
 
 /**
- * This is the standard logging class we use to log data into:
- * 1) logs.follow_recommendations_logs
+ * this is the standawd wogging cwass we use to wog data into:
+ * 1) w-wogs.fowwow_wecommendations_wogs
  *
- * This logger logs data for 2 endpoints: getRecommendations, scoreUserCandidates
- * All data scribed via this logger have to be converted into the same thrift type: RecommendationLog
+ * this woggew wogs d-data fow 2 endpoints: g-getwecommendations, (///ˬ///✿) s-scoweusewcandidates
+ * a-aww data scwibed via this woggew have to be convewted i-into the same thwift type: wecommendationwog
  *
- * 2) logs.frs_recommendation_flow_logs
+ * 2) w-wogs.fws_wecommendation_fwow_wogs
  *
- * This logger logs recommendation flow data for getRecommendations requests
- * All data scribed via this logger have to be converted into the same thrift type: FrsRecommendationFlowLog
+ * this woggew wogs wecommendation fwow data fow getwecommendations wequests
+ * a-aww data scwibed via this woggew h-have to be convewted i-into the s-same thwift type: fwswecommendationfwowwog
  */
-@Singleton
-class FrsLogger @Inject() (
-  @Named(GuiceNamedConstants.REQUEST_LOGGER) loggerFactory: LoggerFactory,
-  @Named(GuiceNamedConstants.FLOW_LOGGER) flowLoggerFactory: LoggerFactory,
-  stats: StatsReceiver,
-  @Flag("log_results") serviceShouldLogResults: Boolean)
-    extends ScribeSerialization {
-  private val logger = loggerFactory.apply()
-  private val flowLogger = flowLoggerFactory.apply()
-  private val logRecommendationCounter = stats.counter("scribe_recommendation")
-  private val logScoringCounter = stats.counter("scribe_scoring")
-  private val logRecommendationFlowCounter = stats.counter("scribe_recommendation_flow")
+@singweton
+cwass fwswoggew @inject() (
+  @named(guicenamedconstants.wequest_woggew) w-woggewfactowy: w-woggewfactowy, 🥺
+  @named(guicenamedconstants.fwow_woggew) fwowwoggewfactowy: woggewfactowy, >_<
+  s-stats: statsweceivew,
+  @fwag("wog_wesuwts") s-sewviceshouwdwogwesuwts: boowean)
+    e-extends scwibesewiawization {
+  pwivate vaw woggew = w-woggewfactowy.appwy()
+  pwivate vaw fwowwoggew = fwowwoggewfactowy.appwy()
+  p-pwivate vaw wogwecommendationcountew = s-stats.countew("scwibe_wecommendation")
+  pwivate vaw w-wogscowingcountew = s-stats.countew("scwibe_scowing")
+  pwivate vaw wogwecommendationfwowcountew = stats.countew("scwibe_wecommendation_fwow")
 
-  def logRecommendationResult(
-    request: RecommendationRequest,
-    response: RecommendationResponse
-  ): Unit = {
-    if (!request.isSoftUser) {
-      val log =
-        RecommendationLog(request.toOfflineThrift, response.toOfflineThrift, Time.now.inMillis)
-      logRecommendationCounter.incr()
-      logger.info(
-        serializeThrift(
-          log,
-          FrsLogger.LogCategory,
-          FrsLogger.mkProvider(request.clientContext)
+  def wogwecommendationwesuwt(
+    wequest: wecommendationwequest, UwU
+    wesponse: w-wecommendationwesponse
+  ): u-unit = {
+    if (!wequest.issoftusew) {
+      v-vaw wog =
+        w-wecommendationwog(wequest.tooffwinethwift, >_< w-wesponse.tooffwinethwift, -.- time.now.inmiwwis)
+      wogwecommendationcountew.incw()
+      woggew.info(
+        s-sewiawizethwift(
+          wog, mya
+          fwswoggew.wogcategowy, >w<
+          fwswoggew.mkpwovidew(wequest.cwientcontext)
         ))
     }
   }
 
-  def logScoringResult(request: ScoringUserRequest, response: ScoringUserResponse): Unit = {
-    if (!request.isSoftUser) {
-      val log =
-        RecommendationLog(
-          request.toRecommendationRequest.toOfflineThrift,
-          response.toRecommendationResponse.toOfflineThrift,
-          Time.now.inMillis)
-      logScoringCounter.incr()
-      logger.info(
-        serializeThrift(
-          log,
-          FrsLogger.LogCategory,
-          FrsLogger.mkProvider(request.toRecommendationRequest.clientContext)
+  def wogscowingwesuwt(wequest: scowingusewwequest, (U ﹏ U) w-wesponse: scowingusewwesponse): u-unit = {
+    i-if (!wequest.issoftusew) {
+      v-vaw wog =
+        wecommendationwog(
+          w-wequest.towecommendationwequest.tooffwinethwift, 😳😳😳
+          w-wesponse.towecommendationwesponse.tooffwinethwift, o.O
+          t-time.now.inmiwwis)
+      w-wogscowingcountew.incw()
+      woggew.info(
+        sewiawizethwift(
+          w-wog, òωó
+          f-fwswoggew.wogcategowy, 😳😳😳
+          f-fwswoggew.mkpwovidew(wequest.towecommendationwequest.cwientcontext)
         ))
     }
   }
 
-  def logRecommendationFlowData[Target <: HasClientContext with HasIsSoftUser with HasParams](
-    request: Target,
-    flowData: RecommendationFlowData[Target]
-  ): Unit = {
-    if (!request.isSoftUser && request.params(GlobalParams.EnableRecommendationFlowLogs)) {
-      val log = flowData.toRecommendationFlowLogOfflineThrift
-      logRecommendationFlowCounter.incr()
-      flowLogger.info(
-        serializeThrift(
-          log,
-          FrsLogger.FlowLogCategory,
-          FrsLogger.mkProvider(request.clientContext)
+  def w-wogwecommendationfwowdata[tawget <: h-hascwientcontext with hasissoftusew with haspawams](
+    w-wequest: tawget, σωσ
+    fwowdata: wecommendationfwowdata[tawget]
+  ): unit = {
+    if (!wequest.issoftusew && wequest.pawams(gwobawpawams.enabwewecommendationfwowwogs)) {
+      vaw w-wog = fwowdata.towecommendationfwowwogoffwinethwift
+      wogwecommendationfwowcountew.incw()
+      fwowwoggew.info(
+        sewiawizethwift(
+          wog, (⑅˘꒳˘)
+          f-fwswoggew.fwowwogcategowy, (///ˬ///✿)
+          f-fwswoggew.mkpwovidew(wequest.cwientcontext)
         ))
     }
   }
 
-  // We prefer the settings given in the user request, and if none provided we default to the
-  // aurora service configuration.
-  def shouldLog(debugParamsOpt: Option[DebugParams]): Boolean =
-    debugParamsOpt match {
-      case Some(debugParams) =>
-        debugParams.debugOptions match {
-          case Some(debugOptions) =>
-            !debugOptions.doNotLog
-          case None =>
-            serviceShouldLogResults
+  // w-we pwefew the settings given i-in the usew wequest, 🥺 and if nyone p-pwovided we d-defauwt to the
+  // auwowa sewvice configuwation.
+  def shouwdwog(debugpawamsopt: option[debugpawams]): boowean =
+    d-debugpawamsopt match {
+      c-case some(debugpawams) =>
+        debugpawams.debugoptions m-match {
+          c-case some(debugoptions) =>
+            !debugoptions.donotwog
+          case nyone =>
+            sewviceshouwdwogwesuwts
         }
-      case None =>
-        serviceShouldLogResults
+      c-case nyone =>
+        s-sewviceshouwdwogwesuwts
     }
 
 }
 
-object FrsLogger {
-  val LogCategory = "follow_recommendations_logs"
-  val FlowLogCategory = "frs_recommendation_flow_logs"
+object fwswoggew {
+  v-vaw wogcategowy = "fowwow_wecommendations_wogs"
+  v-vaw fwowwogcategowy = "fws_wecommendation_fwow_wogs"
 
-  def mkProvider(clientContext: ClientContext) = new ClientDataProvider {
+  def mkpwovidew(cwientcontext: cwientcontext) = nyew cwientdatapwovidew {
 
-    /** The id of the current user. When the user is logged out, this method should return None. */
-    override val userId: Option[Long] = clientContext.userId
+    /** the id of the cuwwent usew. OwO when t-the usew is w-wogged out, >w< this m-method shouwd wetuwn nyone. 🥺 */
+    o-ovewwide vaw u-usewid: option[wong] = cwientcontext.usewid
 
-    /** The id of the guest, which is present in logged-in or loged-out states */
-    override val guestId: Option[Long] = clientContext.guestId
+    /** t-the id of the guest, nyaa~~ which is pwesent in wogged-in ow woged-out states */
+    o-ovewwide vaw g-guestid: option[wong] = cwientcontext.guestid
 
-    /** The personalization id (pid) of the user, used to personalize Twitter services */
-    override val personalizationId: Option[String] = None
+    /** the pewsonawization i-id (pid) o-of the usew, ^^ used to pewsonawize twittew sewvices */
+    ovewwide v-vaw pewsonawizationid: option[stwing] = nyone
 
-    /** The id of the individual device the user is currently using. This id will be unique for different users' devices. */
-    override val deviceId: Option[String] = clientContext.deviceId
+    /** the id of the individuaw device the u-usew is cuwwentwy using. >w< this id wiww be unique f-fow diffewent u-usews' devices. OwO */
+    ovewwide vaw deviceid: option[stwing] = cwientcontext.deviceid
 
-    /** The OAuth application id of the application the user is currently using */
-    override val clientApplicationId: Option[Long] = clientContext.appId
+    /** the oauth appwication i-id of the appwication t-the usew is cuwwentwy using */
+    ovewwide vaw cwientappwicationid: o-option[wong] = cwientcontext.appid
 
-    /** The OAuth parent application id of the application the user is currently using */
-    override val parentApplicationId: Option[Long] = None
+    /** the o-oauth pawent appwication id of the appwication the usew is cuwwentwy u-using */
+    ovewwide vaw pawentappwicationid: o-option[wong] = n-nyone
 
-    /** The two-letter, upper-case country code used to designate the country from which the scribe event occurred */
-    override val countryCode: Option[String] = clientContext.countryCode
+    /** the two-wettew, XD u-uppew-case countwy code used to d-designate the c-countwy fwom which t-the scwibe event occuwwed */
+    o-ovewwide vaw c-countwycode: option[stwing] = cwientcontext.countwycode
 
-    /** The two-letter, lower-case language code used to designate the probably language spoken by the scribe event initiator */
-    override val languageCode: Option[String] = clientContext.languageCode
+    /** the two-wettew, ^^;; wowew-case wanguage c-code used t-to designate the p-pwobabwy wanguage spoken by the scwibe event initiatow */
+    ovewwide v-vaw wanguagecode: option[stwing] = c-cwientcontext.wanguagecode
 
-    /** The user-agent header used to identify the client browser or device that the user is currently active on */
-    override val userAgent: Option[String] = clientContext.userAgent
+    /** the u-usew-agent headew used to identify the cwient bwowsew ow device t-that the usew i-is cuwwentwy active o-on */
+    ovewwide v-vaw usewagent: option[stwing] = c-cwientcontext.usewagent
 
-    /** Whether the user is accessing Twitter via a secured connection */
-    override val isSsl: Option[Boolean] = Some(true)
+    /** whethew the usew is accessing twittew via a secuwed connection */
+    ovewwide vaw isssw: o-option[boowean] = some(twue)
 
-    /** The referring URL to the current page for web-based clients, if applicable */
-    override val referer: Option[String] = None
+    /** t-the wefewwing uww to the c-cuwwent page fow web-based cwients, 🥺 i-if appwicabwe */
+    ovewwide v-vaw wefewew: o-option[stwing] = n-nyone
 
     /**
-     * The external site, partner, or email that lead to the current Twitter application. Returned value consists of a
-     * tuple including the encrypted referral data and the type of referral
+     * t-the extewnaw s-site, XD pawtnew, ow emaiw that wead to the cuwwent twittew appwication. (U ᵕ U❁) wetuwned vawue consists of a
+     * tupwe i-incwuding the e-encwypted wefewwaw d-data and the type of wefewwaw
      */
-    override val externalReferer: Option[ExternalRefererDataProvider] = None
+    o-ovewwide vaw extewnawwefewew: option[extewnawwefewewdatapwovidew] = nyone
   }
 }

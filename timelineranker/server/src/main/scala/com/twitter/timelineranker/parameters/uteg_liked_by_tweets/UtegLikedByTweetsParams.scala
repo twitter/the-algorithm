@@ -1,174 +1,174 @@
-package com.twitter.timelineranker.parameters.uteg_liked_by_tweets
+package com.twittew.timewinewankew.pawametews.uteg_wiked_by_tweets
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.util.bounds.BoundsWithDefault
+impowt com.twittew.timewines.configapi.fsboundedpawam
+i-impowt c-com.twittew.timewines.configapi.fspawam
+i-impowt com.twittew.timewines.configapi.pawam
+i-impowt com.twittew.timewines.utiw.bounds.boundswithdefauwt
 
-object UtegLikedByTweetsParams {
+o-object utegwikedbytweetspawams {
 
-  val ProbabilityRandomTweet: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.0, 1.0, 0.0)
+  v-vaw pwobabiwitywandomtweet: b-boundswithdefauwt[doubwe] = b-boundswithdefauwt[doubwe](0.0, >w< 1.0, 😳😳😳 0.0)
 
-  object DefaultUTEGInNetworkCount extends Param(200)
+  object defauwtuteginnetwowkcount extends pawam(200)
 
-  object DefaultUTEGOutOfNetworkCount extends Param(800)
+  o-object defauwtutegoutofnetwowkcount extends pawam(800)
 
-  object DefaultMaxTweetCount extends Param(200)
-
-  /**
-   * Enables semantic core, penguin, and tweetypie content features in uteg liked by tweets source.
-   */
-  object EnableContentFeaturesHydrationParam extends Param(false)
+  object d-defauwtmaxtweetcount extends pawam(200)
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * e-enabwes semantic cowe, OwO penguin, and tweetypie content featuwes i-in uteg wiked by tweets souwce. 😳
    */
-  object EnableTokensInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "uteg_liked_by_tweets_enable_tokens_in_content_features_hydration",
-        default = false
+  o-object e-enabwecontentfeatuweshydwationpawam extends pawam(fawse)
+
+  /**
+   * additionawwy enabwes tokens when hydwating c-content featuwes. 😳😳😳
+   */
+  object enabwetokensincontentfeatuweshydwationpawam
+      extends fspawam(
+        name = "uteg_wiked_by_tweets_enabwe_tokens_in_content_featuwes_hydwation", (˘ω˘)
+        defauwt = fawse
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * a-additionawwy enabwes tweet t-text when hydwating c-content featuwes. ʘwʘ
+   * t-this o-onwy wowks if enabwecontentfeatuweshydwationpawam is set to twue
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "uteg_liked_by_tweets_enable_tweet_text_in_content_features_hydration",
-        default = false
+  object e-enabwetweettextincontentfeatuweshydwationpawam
+      extends fspawam(
+        name = "uteg_wiked_by_tweets_enabwe_tweet_text_in_content_featuwes_hydwation", ( ͡o ω ͡o )
+        defauwt = f-fawse
       )
 
   /**
-   * A multiplier for earlybird score when combining earlybird score and real graph score for ranking.
-   * Note multiplier for realgraph score := 1.0, and only change earlybird score multiplier.
+   * a muwtipwiew fow eawwybiwd scowe when combining eawwybiwd scowe and weaw g-gwaph scowe fow wanking. o.O
+   * n-nyote muwtipwiew f-fow weawgwaph s-scowe := 1.0, >w< and onwy change eawwybiwd scowe muwtipwiew. 😳
    */
-  object EarlybirdScoreMultiplierParam
-      extends FSBoundedParam(
-        "uteg_liked_by_tweets_earlybird_score_multiplier_param",
-        1.0,
-        0,
+  object eawwybiwdscowemuwtipwiewpawam
+      e-extends f-fsboundedpawam(
+        "uteg_wiked_by_tweets_eawwybiwd_scowe_muwtipwiew_pawam", 🥺
+        1.0, rawr x3
+        0, o.O
         20.0
       )
 
-  object UTEGRecommendationsFilter {
+  object utegwecommendationsfiwtew {
 
     /**
-     * enable filtering of UTEG recommendations based on social proof type
+     * e-enabwe f-fiwtewing of uteg wecommendations b-based on sociaw pwoof type
      */
-    object EnableParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_enable",
-          false
+    o-object enabwepawam
+        extends fspawam(
+          "uteg_wiked_by_tweets_uteg_wecommendations_fiwtew_enabwe", rawr
+          f-fawse
         )
 
     /**
-     * filters out UTEG recommendations that have been tweeted by someone the user follows
+     * fiwtews out u-uteg wecommendations that have been t-tweeted by someone t-the usew fowwows
      */
-    object ExcludeTweetParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_tweet",
-          false
+    object excwudetweetpawam
+        extends fspawam(
+          "uteg_wiked_by_tweets_uteg_wecommendations_fiwtew_excwude_tweet", ʘwʘ
+          fawse
         )
 
     /**
-     * filters out UTEG recommendations that have been retweeted by someone the user follows
+     * fiwtews out uteg wecommendations t-that h-have been wetweeted by someone t-the usew fowwows
      */
-    object ExcludeRetweetParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_retweet",
-          false
+    o-object e-excwudewetweetpawam
+        extends fspawam(
+          "uteg_wiked_by_tweets_uteg_wecommendations_fiwtew_excwude_wetweet", 😳😳😳
+          fawse
         )
 
     /**
-     * filters out UTEG recommendations that have been replied to by someone the user follows
-     * not filtering out the replies
+     * fiwtews o-out uteg wecommendations that have been wepwied to by someone the usew fowwows
+     * n-nyot fiwtewing out the wepwies
      */
-    object ExcludeReplyParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_reply",
-          false
+    o-object excwudewepwypawam
+        e-extends fspawam(
+          "uteg_wiked_by_tweets_uteg_wecommendations_fiwtew_excwude_wepwy", ^^;;
+          f-fawse
         )
 
     /**
-     * filters out UTEG recommendations that have been quoted by someone the user follows
+     * fiwtews o-out uteg wecommendations t-that h-have been quoted b-by someone the usew fowwows
      */
-    object ExcludeQuoteTweetParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_quote",
-          false
+    object e-excwudequotetweetpawam
+        e-extends fspawam(
+          "uteg_wiked_by_tweets_uteg_wecommendations_fiwtew_excwude_quote", o.O
+          f-fawse
         )
 
     /**
-     * filters out recommended replies that have been directed at out of network users.
+     * f-fiwtews out w-wecommended wepwies that have been diwected at out of nyetwowk u-usews. (///ˬ///✿)
      */
-    object ExcludeRecommendedRepliesToNonFollowedUsersParam
-        extends FSParam(
-          name =
-            "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_recommended_replies_to_non_followed_users",
-          default = false
+    object excwudewecommendedwepwiestononfowwowedusewspawam
+        extends fspawam(
+          nyame =
+            "uteg_wiked_by_tweets_uteg_wecommendations_fiwtew_excwude_wecommended_wepwies_to_non_fowwowed_usews", σωσ
+          defauwt = fawse
         )
   }
 
   /**
-   * Minimum number of favorited-by users required for recommended tweets.
+   * minimum n-nyumbew of favowited-by usews wequiwed fow wecommended tweets. nyaa~~
    */
-  object MinNumFavoritedByUserIdsParam extends Param(1)
+  o-object m-minnumfavowitedbyusewidspawam e-extends pawam(1)
 
   /**
-   * Includes one or multiple random tweets in the response.
+   * incwudes one ow muwtipwe w-wandom tweets in the wesponse. ^^;;
    */
-  object IncludeRandomTweetParam
-      extends FSParam(name = "uteg_liked_by_tweets_include_random_tweet", default = false)
+  object i-incwudewandomtweetpawam
+      e-extends fspawam(name = "uteg_wiked_by_tweets_incwude_wandom_tweet", ^•ﻌ•^ defauwt = fawse)
 
   /**
-   * One single random tweet (true) or tag tweet as random with given probability (false).
+   * one singwe wandom tweet (twue) ow tag tweet a-as wandom with given pwobabiwity (fawse). σωσ
    */
-  object IncludeSingleRandomTweetParam
-      extends FSParam(name = "uteg_liked_by_tweets_include_random_tweet_single", default = false)
+  o-object incwudesingwewandomtweetpawam
+      extends f-fspawam(name = "uteg_wiked_by_tweets_incwude_wandom_tweet_singwe", -.- d-defauwt = fawse)
 
   /**
-   * Probability to tag a tweet as random (will not be ranked).
+   * pwobabiwity t-to tag a tweet a-as wandom (wiww nyot be wanked). ^^;;
    */
-  object ProbabilityRandomTweetParam
-      extends FSBoundedParam(
-        name = "uteg_liked_by_tweets_include_random_tweet_probability",
-        default = ProbabilityRandomTweet.default,
-        min = ProbabilityRandomTweet.bounds.minInclusive,
-        max = ProbabilityRandomTweet.bounds.maxInclusive)
+  o-object p-pwobabiwitywandomtweetpawam
+      extends fsboundedpawam(
+        nyame = "uteg_wiked_by_tweets_incwude_wandom_tweet_pwobabiwity", XD
+        defauwt = pwobabiwitywandomtweet.defauwt, 🥺
+        m-min = p-pwobabiwitywandomtweet.bounds.minincwusive, òωó
+        m-max = pwobabiwitywandomtweet.bounds.maxincwusive)
 
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * additionawwy e-enabwes convewsationcontwow when h-hydwating content featuwes. (ˆ ﻌ ˆ)♡
+   * t-this onwy wowks if enabwecontentfeatuweshydwationpawam is set to twue
    */
 
-  object EnableConversationControlInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "conversation_control_in_content_features_hydration_uteg_liked_by_tweets_enable",
-        default = false
+  object enabweconvewsationcontwowincontentfeatuweshydwationpawam
+      e-extends f-fspawam(
+        nyame = "convewsation_contwow_in_content_featuwes_hydwation_uteg_wiked_by_tweets_enabwe", -.-
+        defauwt = fawse
       )
 
-  object EnableTweetMediaHydrationParam
-      extends FSParam(
-        name = "tweet_media_hydration_uteg_liked_by_tweets_enable",
-        default = false
+  o-object enabwetweetmediahydwationpawam
+      e-extends fspawam(
+        nyame = "tweet_media_hydwation_uteg_wiked_by_tweets_enabwe", :3
+        defauwt = f-fawse
       )
 
-  object NumAdditionalRepliesParam
-      extends FSBoundedParam(
-        name = "uteg_liked_by_tweets_num_additional_replies",
-        default = 0,
+  object nyumadditionawwepwiespawam
+      extends fsboundedpawam(
+        nyame = "uteg_wiked_by_tweets_num_additionaw_wepwies", ʘwʘ
+        d-defauwt = 0, 🥺
         min = 0,
         max = 1000
       )
 
   /**
-   * Enable relevance search, otherwise recency search from earlybird.
+   * e-enabwe wewevance s-seawch, >_< othewwise wecency seawch fwom eawwybiwd. ʘwʘ
    */
-  object EnableRelevanceSearchParam
-      extends FSParam(
-        name = "uteg_liked_by_tweets_enable_relevance_search",
-        default = true
+  object e-enabwewewevanceseawchpawam
+      e-extends fspawam(
+        nyame = "uteg_wiked_by_tweets_enabwe_wewevance_seawch", (˘ω˘)
+        defauwt = twue
       )
 
 }

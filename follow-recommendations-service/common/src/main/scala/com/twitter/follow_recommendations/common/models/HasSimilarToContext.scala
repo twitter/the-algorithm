@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.models
+package com.twittew.fowwow_wecommendations.common.modews
 
-trait HasSimilarToContext {
+twait hassimiwawtocontext {
 
-  // user ids that are used to generate similar to recommendations
-  def similarToUserIds: Seq[Long]
+  // u-usew i-ids that awe used t-to genewate simiwaw t-to wecommendations
+  d-def simiwawtousewids: s-seq[wong]
 }

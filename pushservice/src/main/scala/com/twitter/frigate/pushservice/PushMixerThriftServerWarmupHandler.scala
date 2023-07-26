@@ -1,93 +1,93 @@
-package com.twitter.frigate.pushservice
+package com.twittew.fwigate.pushsewvice
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.util.logging.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.frigate.pushservice.{thriftscala => t}
-import com.twitter.frigate.thriftscala.NotificationDisplayLocation
-import com.twitter.util.Stopwatch
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+impowt com.googwe.inject.inject
+i-impowt com.googwe.inject.singweton
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.thwift.cwientid
+i-impowt com.twittew.finatwa.thwift.wouting.thwiftwawmup
+i-impowt c-com.twittew.utiw.wogging.wogging
+impowt com.twittew.inject.utiws.handwew
+impowt com.twittew.fwigate.pushsewvice.{thwiftscawa => t}
+impowt com.twittew.fwigate.thwiftscawa.notificationdispwaywocation
+i-impowt com.twittew.utiw.stopwatch
+impowt c-com.twittew.scwooge.wequest
+impowt com.twittew.scwooge.wesponse
+i-impowt com.twittew.utiw.wetuwn
+impowt com.twittew.utiw.thwow
+impowt com.twittew.utiw.twy
 
 /**
- * Warms up the refresh request path.
- * If service is running as pushservice-send then the warmup does nothing.
+ * wawms up the w-wefwesh wequest path.
+ * if sewvice i-is wunning a-as pushsewvice-send then the wawmup does nyothing.
  *
- * When making the warmup refresh requests we
- *  - Set skipFilters to true to execute as much of the request path as possible
- *  - Set darkWrite to true to prevent sending a push
+ * when making the wawmup w-wefwesh wequests we
+ *  - set skipfiwtews to twue to exekawaii~ as much of the w-wequest path as possibwe
+ *  - set d-dawkwwite to t-twue to pwevent s-sending a push
  */
-@Singleton
-class PushMixerThriftServerWarmupHandler @Inject() (
-  warmup: ThriftWarmup,
-  serviceIdentifier: ServiceIdentifier)
-    extends Handler
-    with Logging {
+@singweton
+c-cwass pushmixewthwiftsewvewwawmuphandwew @inject() (
+  wawmup: thwiftwawmup, (U ﹏ U)
+  s-sewviceidentifiew: sewviceidentifiew)
+    extends handwew
+    w-with wogging {
 
-  private val clientId = ClientId("thrift-warmup-client")
+  pwivate vaw cwientid = cwientid("thwift-wawmup-cwient")
 
-  def handle(): Unit = {
-    val refreshServices = Set(
-      "frigate-pushservice",
-      "frigate-pushservice-canary",
-      "frigate-pushservice-canary-control",
-      "frigate-pushservice-canary-treatment"
+  def handwe(): unit = {
+    v-vaw wefweshsewvices = set(
+      "fwigate-pushsewvice", 😳
+      "fwigate-pushsewvice-canawy", (ˆ ﻌ ˆ)♡
+      "fwigate-pushsewvice-canawy-contwow", 😳😳😳
+      "fwigate-pushsewvice-canawy-tweatment"
     )
-    val isRefresh = refreshServices.contains(serviceIdentifier.service)
-    if (isRefresh && !serviceIdentifier.isLocal) refreshWarmup()
+    v-vaw iswefwesh = w-wefweshsewvices.contains(sewviceidentifiew.sewvice)
+    i-if (iswefwesh && !sewviceidentifiew.iswocaw) wefweshwawmup()
   }
 
-  def refreshWarmup(): Unit = {
-    val elapsed = Stopwatch.start()
-    val testIds = Seq(
-      1,
-      2,
+  def wefweshwawmup(): u-unit = {
+    v-vaw ewapsed = stopwatch.stawt()
+    vaw testids = s-seq(
+      1, (U ﹏ U)
+      2, (///ˬ///✿)
       3
     )
-    try {
-      clientId.asCurrent {
-        testIds.foreach { id =>
-          val warmupReq = warmupQuery(id)
-          info(s"Sending warm-up request to service with query: $warmupReq")
-          warmup.sendRequest(
-            method = t.PushService.Refresh,
-            req = Request(t.PushService.Refresh.Args(warmupReq)))(assertWarmupResponse)
+    t-twy {
+      cwientid.ascuwwent {
+        t-testids.foweach { id =>
+          v-vaw wawmupweq = wawmupquewy(id)
+          info(s"sending wawm-up w-wequest to sewvice with quewy: $wawmupweq")
+          w-wawmup.sendwequest(
+            method = t-t.pushsewvice.wefwesh, 😳
+            w-weq = wequest(t.pushsewvice.wefwesh.awgs(wawmupweq)))(assewtwawmupwesponse)
         }
       }
     } catch {
-      case e: Throwable =>
-        error(e.getMessage, e)
+      case e: thwowabwe =>
+        ewwow(e.getmessage, 😳 e)
     }
-    info(s"Warm up complete. Time taken: ${elapsed().toString}")
+    info(s"wawm u-up compwete. σωσ t-time taken: ${ewapsed().tostwing}")
   }
 
-  private def warmupQuery(userId: Long): t.RefreshRequest = {
-    t.RefreshRequest(
-      userId = userId,
-      notificationDisplayLocation = NotificationDisplayLocation.PushToMobileDevice,
-      context = Some(
-        t.PushContext(
-          skipFilters = Some(true),
-          darkWrite = Some(true)
+  pwivate d-def wawmupquewy(usewid: w-wong): t-t.wefweshwequest = {
+    t.wefweshwequest(
+      usewid = usewid, rawr x3
+      nyotificationdispwaywocation = n-nyotificationdispwaywocation.pushtomobiwedevice,
+      context = some(
+        t.pushcontext(
+          skipfiwtews = some(twue), OwO
+          d-dawkwwite = some(twue)
         ))
     )
   }
 
-  private def assertWarmupResponse(
-    result: Try[Response[t.PushService.Refresh.SuccessType]]
-  ): Unit = {
-    result match {
-      case Return(_) => // ok
-      case Throw(exception) =>
-        warn("Error performing warm-up request.")
-        error(exception.getMessage, exception)
+  p-pwivate def a-assewtwawmupwesponse(
+    w-wesuwt: twy[wesponse[t.pushsewvice.wefwesh.successtype]]
+  ): u-unit = {
+    w-wesuwt match {
+      c-case w-wetuwn(_) => // ok
+      case thwow(exception) =>
+        wawn("ewwow p-pewfowming w-wawm-up wequest.")
+        e-ewwow(exception.getmessage, /(^•ω•^) e-exception)
     }
   }
 }

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.mawshawwew.wesponse.uwt.item.message
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.LargeUserFacepileDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.CompactUserFacepileDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepileDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.wawgeusewfacepiwedispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.compactusewfacepiwedispwaytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.message.usewfacepiwedispwaytype
+i-impowt c-com.twittew.timewines.wendew.{thwiftscawa => uwt}
+i-impowt javax.inject.inject
+impowt j-javax.inject.singweton
 
-@Singleton
-class UserFacepileDisplayTypeMarshaller @Inject() () {
+@singweton
+c-cwass usewfacepiwedispwaytypemawshawwew @inject() () {
 
-  def apply(userFacepileDisplayType: UserFacepileDisplayType): urt.UserFacepileDisplayType =
-    userFacepileDisplayType match {
-      case LargeUserFacepileDisplayType => urt.UserFacepileDisplayType.Large
-      case CompactUserFacepileDisplayType => urt.UserFacepileDisplayType.Compact
+  d-def appwy(usewfacepiwedispwaytype: usewfacepiwedispwaytype): uwt.usewfacepiwedispwaytype =
+    usewfacepiwedispwaytype match {
+      c-case wawgeusewfacepiwedispwaytype => uwt.usewfacepiwedispwaytype.wawge
+      case compactusewfacepiwedispwaytype => u-uwt.usewfacepiwedispwaytype.compact
     }
 }

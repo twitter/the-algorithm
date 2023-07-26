@@ -1,18 +1,18 @@
-# pylint: disable=wildcard-import
+# pywint: disabwe=wiwdcawd-impowt
 """
-This module contains classes used for calibration.
-Typically, each calibrator defines a ``twml.calibrator.Calibrator`` subclass
-and a ``twml.calibrator.CalibrationFeature``.
-The latter manages weights and values of individual features.
-The former manages a set of ``CalibratorFeatures``
-(although some ``Calibrators`` don't use ``CalibrationFeature``).
-Ultimately, the ``Calibrator`` should produce an initialized layer via its ``to_layer()`` method.
+this moduwe c-contains cwasses u-used fow cawibwation. (⑅˘꒳˘)
+t-typicawwy, rawr x3 e-each cawibwatow d-defines a ``twmw.cawibwatow.cawibwatow`` s-subcwass
+a-and a ``twmw.cawibwatow.cawibwationfeatuwe``. (✿oωo)
+t-the wattew manages weights and vawues of individuaw featuwes. (ˆ ﻌ ˆ)♡
+the fowmew manages a-a set of ``cawibwatowfeatuwes``
+(awthough some ``cawibwatows`` don't use ``cawibwationfeatuwe``). (˘ω˘)
+u-uwtimatewy, (⑅˘꒳˘) the ``cawibwatow`` s-shouwd pwoduce an initiawized wayew via its ``to_wayew()`` method. (///ˬ///✿)
 """
 
-from .common_calibrators import calibrate_discretizer_and_export, add_discretizer_arguments  # noqa: F401
-from .calibrator import Calibrator  # noqa: F401
-from .mdl import MDLCalibrator  # noqa: F401
-from .isotonic import IsotonicCalibrator  # noqa: F401
-from .percentile_discretizer import PercentileDiscretizerCalibrator  # noqa: F401
-from .hashed_percentile_discretizer import HashedPercentileDiscretizerCalibrator  # noqa: F401
-from .hashing_discretizer import HashingDiscretizerCalibrator  # noqa: F401
+fwom .common_cawibwatows i-impowt cawibwate_discwetizew_and_expowt, 😳😳😳 add_discwetizew_awguments  # nyoqa: f-f401
+fwom .cawibwatow i-impowt cawibwatow  # nyoqa: f401
+fwom .mdw impowt mdwcawibwatow  # nyoqa: f-f401
+fwom .isotonic impowt isotoniccawibwatow  # nyoqa: f401
+fwom .pewcentiwe_discwetizew impowt p-pewcentiwediscwetizewcawibwatow  # nyoqa: f401
+f-fwom .hashed_pewcentiwe_discwetizew i-impowt hashedpewcentiwediscwetizewcawibwatow  # n-nyoqa: f401
+f-fwom .hashing_discwetizew impowt hashingdiscwetizewcawibwatow  # n-nyoqa: f401

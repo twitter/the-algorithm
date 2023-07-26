@@ -1,34 +1,34 @@
-package com.twitter.usersignalservice.module
+package com.twittew.usewsignawsewvice.moduwe
 
-import com.google.inject.Provides
-import javax.inject.Singleton
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.conversions.DurationOps._
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.ZkEndPoint
-import com.twitter.storehaus_internal.util.ClientName
+impowt c-com.googwe.inject.pwovides
+impowt j-javax.inject.singweton
+i-impowt c-com.twittew.finagwe.memcached.cwient
+i-impowt c-com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt c-com.twittew.finagwe.stats.statsweceivew
+impowt com.twittew.inject.twittewmoduwe
+impowt com.twittew.convewsions.duwationops._
+impowt c-com.twittew.stowehaus_intewnaw.memcache.memcachestowe
+impowt com.twittew.stowehaus_intewnaw.utiw.zkendpoint
+i-impowt com.twittew.stowehaus_intewnaw.utiw.cwientname
 
-object CacheModule extends TwitterModule {
-  private val cacheDest =
-    flag[String](name = "cache_module.dest", help = "Path to memcache service")
-  private val timeout =
-    flag[Int](name = "memcache.timeout", help = "Memcache client timeout")
+object cachemoduwe e-extends twittewmoduwe {
+  pwivate vaw cachedest =
+    f-fwag[stwing](name = "cache_moduwe.dest", (˘ω˘) hewp = "path t-to memcache s-sewvice")
+  pwivate vaw timeout =
+    fwag[int](name = "memcache.timeout", (⑅˘꒳˘) hewp = "memcache cwient timeout")
 
-  @Singleton
-  @Provides
-  def providesCache(
-    serviceIdentifier: ServiceIdentifier,
-    stats: StatsReceiver
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache_user_signal_service"),
-      dest = ZkEndPoint(cacheDest()),
-      timeout = timeout().milliseconds,
-      retries = 0,
-      statsReceiver = stats.scope("memcache"),
-      serviceIdentifier = serviceIdentifier
+  @singweton
+  @pwovides
+  d-def pwovidescache(
+    sewviceidentifiew: sewviceidentifiew, (///ˬ///✿)
+    stats: s-statsweceivew
+  ): cwient =
+    m-memcachestowe.memcachedcwient(
+      n-nyame = c-cwientname("memcache_usew_signaw_sewvice"), 😳😳😳
+      d-dest = zkendpoint(cachedest()), 🥺
+      timeout = timeout().miwwiseconds, mya
+      w-wetwies = 0, 🥺
+      statsweceivew = stats.scope("memcache"), >_<
+      s-sewviceidentifiew = sewviceidentifiew
     )
 }

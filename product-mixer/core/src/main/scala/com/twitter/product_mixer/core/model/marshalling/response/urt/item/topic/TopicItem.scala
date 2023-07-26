@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.topic
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
 
-object TopicItem {
-  val TopicEntryNamespace = EntryNamespace("topic")
+o-object t-topicitem {
+  vaw t-topicentwynamespace = e-entwynamespace("topic")
 }
 
-case class TopicItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  topicFunctionalityType: Option[TopicFunctionalityType],
-  topicDisplayType: Option[TopicDisplayType])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = TopicItem.TopicEntryNamespace
+case cwass topicitem(
+  ovewwide vaw id: wong, rawr x3
+  ovewwide vaw s-sowtindex: option[wong], nyaa~~
+  ovewwide vaw cwienteventinfo: o-option[cwienteventinfo], /(^•ω•^)
+  ovewwide vaw f-feedbackactioninfo: option[feedbackactioninfo], rawr
+  topicfunctionawitytype: option[topicfunctionawitytype], OwO
+  topicdispwaytype: o-option[topicdispwaytype])
+    extends timewineitem {
+  o-ovewwide v-vaw entwynamespace: entwynamespace = topicitem.topicentwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovewwide def withsowtindex(sowtindex: w-wong): timewineentwy = copy(sowtindex = some(sowtindex))
 }

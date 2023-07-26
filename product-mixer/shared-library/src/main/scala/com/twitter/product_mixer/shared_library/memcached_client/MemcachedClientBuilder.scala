@@ -1,117 +1,117 @@
-package com.twitter.product_mixer.shared_library.memcached_client
+package com.twittew.pwoduct_mixew.shawed_wibwawy.memcached_cwient
 
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.memcached.protocol.Command
-import com.twitter.finagle.memcached.protocol.Response
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.service.RetryExceptionsFilter
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.service.TimeoutFilter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.finagle.GlobalRequestTimeoutException
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.liveness.FailureAccrualFactory
-import com.twitter.finagle.liveness.FailureAccrualPolicy
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.hashing.KeyHasher
-import com.twitter.util.Duration
+impowt com.twittew.finagwe.memcached.cwient
+i-impowt c-com.twittew.finagwe.memcached.pwotocow.command
+i-impowt com.twittew.finagwe.memcached.pwotocow.wesponse
+i-impowt c-com.twittew.finagwe.mtws.cwient.mtwsstackcwient._
+i-impowt com.twittew.finagwe.sewvice.wetwyexceptionsfiwtew
+i-impowt c-com.twittew.finagwe.sewvice.wetwypowicy
+impowt com.twittew.finagwe.sewvice.timeoutfiwtew
+impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.finagwe.utiw.defauwttimew
+impowt c-com.twittew.finagwe.gwobawwequesttimeoutexception
+impowt com.twittew.finagwe.memcached
+i-impowt com.twittew.finagwe.wiveness.faiwuweaccwuawfactowy
+impowt com.twittew.finagwe.wiveness.faiwuweaccwuawpowicy
+impowt com.twittew.finagwe.mtws.authentication.sewviceidentifiew
+i-impowt com.twittew.hashing.keyhashew
+i-impowt com.twittew.utiw.duwation
 
-object MemcachedClientBuilder {
+o-object memcachedcwientbuiwdew {
 
   /**
-   * Build a Finagle Memcached [[Client]].
+   * buiwd a finagwe memcached [[cwient]].
    *
-   * @param destName             Destination as a Wily path e.g. "/s/sample/sample".
-   * @param numTries             Maximum number of times to try.
-   * @param requestTimeout       Thrift client timeout per request. The Finagle default
-   *                             is unbounded which is almost never optimal.
-   * @param globalTimeout        Thrift client total timeout. The Finagle default is
-   *                             unbounded which is almost never optimal.
-   * @param connectTimeout       Thrift client transport connect timeout. The Finagle
-   *                             default of one second is reasonable but we lower this
-   *                             to match acquisitionTimeout for consistency.
-   * @param acquisitionTimeout   Thrift client session acquisition timeout. The Finagle
-   *                             default is unbounded which is almost never optimal.
-   * @param serviceIdentifier    Service ID used to S2S Auth.
-   * @param statsReceiver        Stats.
-   * @param failureAccrualPolicy Policy to determine when to mark a cache server as dead.
-   *                             Memcached client will use default failure accrual policy
-   *                             if it is not set.
-   * @param keyHasher            Hash algorithm that hashes a key into a 32-bit or 64-bit
-   *                             number. Memcached client will use default hash algorithm
-   *                             if it is not set.
+   * @pawam destname             destination a-as a wiwy path e.g. XD "/s/sampwe/sampwe". -.-
+   * @pawam nyumtwies             maximum nyumbew of times to twy. :3
+   * @pawam w-wequesttimeout       thwift cwient t-timeout pew wequest. nyaa~~ t-the finagwe d-defauwt
+   *                             i-is unbounded which is awmost nyevew optimaw. 😳
+   * @pawam g-gwobawtimeout        thwift cwient totaw timeout. (⑅˘꒳˘) t-the finagwe defauwt is
+   *                             unbounded which is awmost nyevew optimaw. nyaa~~
+   * @pawam connecttimeout       t-thwift cwient twanspowt c-connect timeout. OwO t-the finagwe
+   *                             d-defauwt of one second is weasonabwe but we wowew this
+   *                             t-to match acquisitiontimeout f-fow consistency. rawr x3
+   * @pawam acquisitiontimeout   t-thwift cwient s-session acquisition timeout. XD the f-finagwe
+   *                             defauwt i-is unbounded which is awmost nyevew optimaw.
+   * @pawam s-sewviceidentifiew    sewvice id used t-to s2s auth. σωσ
+   * @pawam statsweceivew        stats. (U ᵕ U❁)
+   * @pawam f-faiwuweaccwuawpowicy p-powicy to detewmine when to mawk a cache sewvew as dead. (U ﹏ U)
+   *                             memcached cwient wiww use defauwt faiwuwe accwuaw p-powicy
+   *                             i-if it is not set. :3
+   * @pawam k-keyhashew            h-hash a-awgowithm that hashes a key into a 32-bit ow 64-bit
+   *                             nyumbew. ( ͡o ω ͡o ) m-memcached cwient wiww use defauwt hash awgowithm
+   *                             if it is nyot set. σωσ
    *
-   * @see [[https://confluence.twitter.biz/display/CACHE/Finagle-memcached+User+Guide user guide]]
-   * @return Finagle Memcached [[Client]]
+   * @see [[https://confwuence.twittew.biz/dispway/cache/finagwe-memcached+usew+guide u-usew guide]]
+   * @wetuwn finagwe m-memcached [[cwient]]
    */
-  def buildMemcachedClient(
-    destName: String,
-    numTries: Int,
-    requestTimeout: Duration,
-    globalTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-    failureAccrualPolicy: Option[FailureAccrualPolicy] = None,
-    keyHasher: Option[KeyHasher] = None
-  ): Client = {
-    buildRawMemcachedClient(
-      numTries,
-      requestTimeout,
-      globalTimeout,
-      connectTimeout,
-      acquisitionTimeout,
-      serviceIdentifier,
-      statsReceiver,
-      failureAccrualPolicy,
-      keyHasher
-    ).newRichClient(destName)
+  d-def buiwdmemcachedcwient(
+    d-destname: stwing, >w<
+    n-nyumtwies: int, 😳😳😳
+    w-wequesttimeout: d-duwation, OwO
+    g-gwobawtimeout: duwation, 😳
+    connecttimeout: d-duwation, 😳😳😳
+    a-acquisitiontimeout: d-duwation, (˘ω˘)
+    s-sewviceidentifiew: s-sewviceidentifiew, ʘwʘ
+    statsweceivew: statsweceivew, ( ͡o ω ͡o )
+    faiwuweaccwuawpowicy: option[faiwuweaccwuawpowicy] = n-nyone, o.O
+    keyhashew: option[keyhashew] = nyone
+  ): cwient = {
+    buiwdwawmemcachedcwient(
+      nyumtwies, >w<
+      w-wequesttimeout, 😳
+      gwobawtimeout, 🥺
+      connecttimeout, rawr x3
+      acquisitiontimeout, o.O
+      s-sewviceidentifiew, rawr
+      s-statsweceivew, ʘwʘ
+      f-faiwuweaccwuawpowicy, 😳😳😳
+      keyhashew
+    ).newwichcwient(destname)
   }
 
-  def buildRawMemcachedClient(
-    numTries: Int,
-    requestTimeout: Duration,
-    globalTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-    failureAccrualPolicy: Option[FailureAccrualPolicy] = None,
-    keyHasher: Option[KeyHasher] = None
-  ): Memcached.Client = {
-    val globalTimeoutFilter = new TimeoutFilter[Command, Response](
-      timeout = globalTimeout,
-      exception = new GlobalRequestTimeoutException(globalTimeout),
-      timer = DefaultTimer)
-    val retryFilter = new RetryExceptionsFilter[Command, Response](
-      RetryPolicy.tries(numTries),
-      DefaultTimer,
-      statsReceiver)
+  d-def buiwdwawmemcachedcwient(
+    n-nyumtwies: i-int, ^^;;
+    wequesttimeout: duwation, o.O
+    gwobawtimeout: duwation, (///ˬ///✿)
+    connecttimeout: duwation, σωσ
+    a-acquisitiontimeout: duwation, nyaa~~
+    s-sewviceidentifiew: sewviceidentifiew, ^^;;
+    statsweceivew: s-statsweceivew, ^•ﻌ•^
+    f-faiwuweaccwuawpowicy: option[faiwuweaccwuawpowicy] = nyone, σωσ
+    k-keyhashew: o-option[keyhashew] = nyone
+  ): m-memcached.cwient = {
+    v-vaw gwobawtimeoutfiwtew = nyew timeoutfiwtew[command, -.- wesponse](
+      timeout = gwobawtimeout, ^^;;
+      exception = nyew g-gwobawwequesttimeoutexception(gwobawtimeout),
+      t-timew = defauwttimew)
+    v-vaw wetwyfiwtew = nyew wetwyexceptionsfiwtew[command, XD w-wesponse](
+      w-wetwypowicy.twies(numtwies), 🥺
+      defauwttimew,
+      s-statsweceivew)
 
-    val client = Memcached.client.withTransport
-      .connectTimeout(connectTimeout)
-      .withMutualTls(serviceIdentifier)
-      .withSession
-      .acquisitionTimeout(acquisitionTimeout)
-      .withRequestTimeout(requestTimeout)
-      .withStatsReceiver(statsReceiver)
-      .filtered(globalTimeoutFilter.andThen(retryFilter))
+    vaw cwient = memcached.cwient.withtwanspowt
+      .connecttimeout(connecttimeout)
+      .withmutuawtws(sewviceidentifiew)
+      .withsession
+      .acquisitiontimeout(acquisitiontimeout)
+      .withwequesttimeout(wequesttimeout)
+      .withstatsweceivew(statsweceivew)
+      .fiwtewed(gwobawtimeoutfiwtew.andthen(wetwyfiwtew))
 
-    (keyHasher, failureAccrualPolicy) match {
-      case (Some(hasher), Some(policy)) =>
-        client
-          .withKeyHasher(hasher)
-          .configured(FailureAccrualFactory.Param(() => policy))
-      case (Some(hasher), None) =>
-        client
-          .withKeyHasher(hasher)
-      case (None, Some(policy)) =>
-        client
-          .configured(FailureAccrualFactory.Param(() => policy))
-      case _ =>
-        client
+    (keyhashew, òωó faiwuweaccwuawpowicy) match {
+      case (some(hashew), (ˆ ﻌ ˆ)♡ some(powicy)) =>
+        c-cwient
+          .withkeyhashew(hashew)
+          .configuwed(faiwuweaccwuawfactowy.pawam(() => p-powicy))
+      case (some(hashew), -.- nyone) =>
+        c-cwient
+          .withkeyhashew(hashew)
+      c-case (none, :3 some(powicy)) =>
+        cwient
+          .configuwed(faiwuweaccwuawfactowy.pawam(() => powicy))
+      c-case _ =>
+        cwient
     }
   }
 }

@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+impowt c-com.fastewxmw.jackson.annotation.jsonsubtypes
+i-impowt c-com.fastewxmw.jackson.annotation.jsontypeinfo
 
 /**
- * where the metric originates from, such as from the server or from a client
+ * w-whewe t-the metwic owiginates f-fwom, mya such a-as fwom the sewvew o-ow fwom a cwient
  *
- * @note implementations must be simple case classes with unique structures for serialization
+ * @note impwementations must be simpwe case cwasses with unique stwuctuwes f-fow sewiawization
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-@JsonSubTypes(
-  Array(
-    new JsonSubTypes.Type(value = classOf[Server], name = "Server"),
-    new JsonSubTypes.Type(value = classOf[Strato], name = "Strato"),
-    new JsonSubTypes.Type(value = classOf[GenericClient], name = "GenericClient")
+@jsontypeinfo(use = jsontypeinfo.id.name, (˘ω˘) incwude = jsontypeinfo.as.pwopewty)
+@jsonsubtypes(
+  awway(
+    n-nyew jsonsubtypes.type(vawue = cwassof[sewvew], >_< n-nyame = "sewvew"), -.-
+    nyew jsonsubtypes.type(vawue = cwassof[stwato], 🥺 n-nyame = "stwato"), (U ﹏ U)
+    new jsonsubtypes.type(vawue = c-cwassof[genewiccwient], >w< n-nyame = "genewiccwient")
   )
 )
-sealed trait Source
+seawed twait souwce
 
-/** metrics for the Product Mixer server */
-case class Server() extends Source
+/** metwics fow the pwoduct mixew sewvew */
+c-case cwass sewvew() extends souwce
 
-/** metrics from the perspective of a Strato column */
-case class Strato(stratoColumnPath: String, stratoColumnOp: String) extends Source
+/** metwics fwom the pewspective of a-a stwato cowumn */
+case cwass stwato(stwatocowumnpath: s-stwing, mya s-stwatocowumnop: s-stwing) extends s-souwce
 
 /**
- * metrics from the perspective of a generic client
+ * metwics fwom the pewspective of a g-genewic cwient
  *
- * @param displayName human readable name for the client
- * @param service service referenced in the query, of the form <role>.<env>.<job>
- * @param metricSource the source of the metric query, usually of the form sd.<role>.<env>.<job>
- * @param failureMetric the name of the metric indicating a client failure
- * @param requestMetric the name of the metric indicating a request has been made
- * @param latencyMetric the name of the metric measuring a request's latency
+ * @pawam dispwayname human weadabwe n-nyame fow the cwient
+ * @pawam sewvice sewvice wefewenced in the quewy, >w< of the fowm <wowe>.<env>.<job>
+ * @pawam m-metwicsouwce the souwce o-of the metwic quewy, nyaa~~ u-usuawwy of t-the fowm sd.<wowe>.<env>.<job>
+ * @pawam faiwuwemetwic the nyame of the metwic i-indicating a cwient f-faiwuwe
+ * @pawam wequestmetwic t-the nyame of t-the metwic indicating a wequest h-has been made
+ * @pawam watencymetwic t-the nyame of the metwic measuwing a wequest's w-watency
  *
- * @note We strongly recommend the use of [[Strato]] where possible. [[GenericClient]] is provided as a
- *       catch-all source for teams that have unusual legacy call paths (such as Macaw).
+ * @note we stwongwy w-wecommend the use of [[stwato]] w-whewe possibwe. (✿oωo) [[genewiccwient]] i-is pwovided as a
+ *       catch-aww souwce fow teams that have unusuaw wegacy caww paths (such as macaw). ʘwʘ
  */
-case class GenericClient(
-  displayName: String,
-  service: String,
-  metricSource: String,
-  failureMetric: String,
-  requestMetric: String,
-  latencyMetric: String)
-    extends Source
+c-case cwass g-genewiccwient(
+  dispwayname: stwing, (ˆ ﻌ ˆ)♡
+  s-sewvice: s-stwing, 😳😳😳
+  metwicsouwce: s-stwing, :3
+  faiwuwemetwic: stwing, OwO
+  wequestmetwic: stwing, (U ﹏ U)
+  w-watencymetwic: stwing)
+    extends souwce

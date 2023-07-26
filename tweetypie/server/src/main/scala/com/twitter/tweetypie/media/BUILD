@@ -1,21 +1,21 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "image-fetcher-service/thrift/src/main/thrift:thrift-scala",
-        "mediaservices/commons/src/main/thrift:thrift-scala",
-        "mediaservices/mediainfo-server/thrift/src/main/thrift:thrift-scala",
-        "tweetypie/servo/util",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:media-entity-scala",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:tweet-scala",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/backends",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/core",
-        "tweetypie/common/src/scala/com/twitter/tweetypie/media",
-        "user-image-service/thrift/src/main/thrift:thrift-scala",
-        "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",
-    ],
+scawa_wibwawy(
+    souwces = ["*.scawa"], 🥺
+    compiwew_option_sets = ["fataw_wawnings"], òωó
+    p-pwatfowm = "java8", o.O
+    s-stwict_deps = t-twue, (U ᵕ U❁)
+    tags = ["bazew-compatibwe"], (⑅˘꒳˘)
+    d-dependencies = [
+        "image-fetchew-sewvice/thwift/swc/main/thwift:thwift-scawa", ( ͡o ω ͡o )
+        "mediasewvices/commons/swc/main/thwift:thwift-scawa", UwU
+        "mediasewvices/mediainfo-sewvew/thwift/swc/main/thwift:thwift-scawa", rawr x3
+        "tweetypie/sewvo/utiw", rawr
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:media-entity-scawa", σωσ
+        "tweetypie/common/swc/thwift/com/twittew/tweetypie:tweet-scawa",
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie", σωσ
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie/backends", >_<
+        "tweetypie/sewvew/swc/main/scawa/com/twittew/tweetypie/cowe", :3
+        "tweetypie/common/swc/scawa/com/twittew/tweetypie/media", (U ﹏ U)
+        "usew-image-sewvice/thwift/swc/main/thwift:thwift-scawa", -.-
+        "utiw/utiw-swf4j-api/swc/main/scawa/com/twittew/utiw/wogging", (ˆ ﻌ ˆ)♡
+    ], (⑅˘꒳˘)
 )

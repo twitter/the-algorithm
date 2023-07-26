@@ -1,218 +1,218 @@
-package com.twitter.search.earlybird.partition;
+package com.twittew.seawch.eawwybiwd.pawtition;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+impowt java.utiw.awwaywist;
+i-impowt j-java.utiw.cowwection;
+i-impowt j-java.utiw.cowwections;
+i-impowt java.utiw.date;
+i-impowt j-java.utiw.optionaw;
+i-impowt java.utiw.concuwwent.timeunit;
 
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.schema.earlybird.FlushVersion;
-import com.twitter.search.common.util.io.flushable.PersistentFile;
-import com.twitter.search.earlybird.archive.ArchiveSegment;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.util.ScrubGenUtil;
-import com.twitter.util.TwitterDateFormat;
+impowt com.twittew.seawch.common.database.databaseconfig;
+impowt com.twittew.seawch.common.metwics.seawchcustomgauge;
+i-impowt com.twittew.seawch.common.metwics.seawchwonggauge;
+impowt com.twittew.seawch.common.pawtitioning.base.segment;
+impowt c-com.twittew.seawch.common.schema.eawwybiwd.fwushvewsion;
+impowt c-com.twittew.seawch.common.utiw.io.fwushabwe.pewsistentfiwe;
+impowt com.twittew.seawch.eawwybiwd.awchive.awchivesegment;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+i-impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdpwopewty;
+i-impowt com.twittew.seawch.eawwybiwd.utiw.scwubgenutiw;
+i-impowt com.twittew.utiw.twittewdatefowmat;
 
 /**
- * Encapsulates config information related to reading and writing segments to local filesystem or
- * HDFS.
+ * encapsuwates config infowmation wewated t-to weading and wwiting segments to wocaw fiwesystem ow
+ * hdfs. σωσ
  */
-public class SegmentSyncConfig {
-  public static final String LUCENE_DIR_PREFIX = "lucene_";
+pubwic c-cwass segmentsyncconfig {
+  pubwic s-static finaw s-stwing wucene_diw_pwefix = "wucene_";
 
-  private final Optional<String> scrubGen;
+  p-pwivate f-finaw optionaw<stwing> scwubgen;
 
-  public SegmentSyncConfig(Optional<String> scrubGen) {
-    this.scrubGen = scrubGen;
-    String scrubGenStat = scrubGen.orElse("unset");
-    SearchLongGauge.export("scrub_gen_" + scrubGenStat).set(1);
-    if (scrubGen.isPresent()) {
-      // Export a stat for the number of days between the scrub gen date and now
-      SearchCustomGauge.export("scrub_gen_age_in_days", () -> {
-        long scrubGenMillis = ScrubGenUtil.parseScrubGenToDate(scrubGen.get()).getTime();
-        return TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - scrubGenMillis);
+  pubwic segmentsyncconfig(optionaw<stwing> scwubgen) {
+    this.scwubgen = scwubgen;
+    s-stwing scwubgenstat = scwubgen.owewse("unset");
+    s-seawchwonggauge.expowt("scwub_gen_" + scwubgenstat).set(1);
+    if (scwubgen.ispwesent()) {
+      // expowt a stat fow the nyumbew of days between t-the scwub gen date and nyow
+      s-seawchcustomgauge.expowt("scwub_gen_age_in_days", (⑅˘꒳˘) () -> {
+        w-wong scwubgenmiwwis = s-scwubgenutiw.pawsescwubgentodate(scwubgen.get()).gettime();
+        wetuwn timeunit.miwwiseconds.todays(system.cuwwenttimemiwwis() - scwubgenmiwwis);
       });
     }
   }
 
   /**
-   * Returns the file extension to be used for the current flush version.
+   * wetuwns the f-fiwe extension to b-be used fow the cuwwent fwush v-vewsion. (///ˬ///✿)
    */
-  public String getVersionFileExtension() {
-    return FlushVersion.CURRENT_FLUSH_VERSION.getVersionFileExtension();
+  p-pubwic stwing getvewsionfiweextension() {
+    wetuwn fwushvewsion.cuwwent_fwush_vewsion.getvewsionfiweextension();
   }
 
   /**
-   * Returns the threshold for how large a segment's status count must be at load time to be
-   * considered valid.
+   * w-wetuwns the thweshowd fow how w-wawge a segment's status count must be at woad t-time to be
+   * considewed vawid. 🥺
    */
-  public int getMinSegmentStatusCountThreshold() {
-    double minSegmentTweetCountProportionThreshold =
-        EarlybirdConfig.getDouble("min_segment_tweet_count_percentage_threshold", 0) / 100;
-    return (int) (EarlybirdConfig.getMaxSegmentSize() * minSegmentTweetCountProportionThreshold);
+  p-pubwic int getminsegmentstatuscountthweshowd() {
+    d-doubwe minsegmenttweetcountpwopowtionthweshowd =
+        e-eawwybiwdconfig.getdoubwe("min_segment_tweet_count_pewcentage_thweshowd", OwO 0) / 100;
+    wetuwn (int) (eawwybiwdconfig.getmaxsegmentsize() * minsegmenttweetcountpwopowtionthweshowd);
   }
 
   /**
-   * Determines if this earlybird is allowed to flush segments to HDFS.
+   * detewmines if this eawwybiwd is awwowed to fwush segments to hdfs. >w<
    */
-  public boolean isFlushToHdfsEnabled() {
-    return EarlybirdProperty.SEGMENT_FLUSH_TO_HDFS_ENABLED.get(false)
-        // Flush to HDFS is always disabled if FlushVersion is not official.
-        && FlushVersion.CURRENT_FLUSH_VERSION.isOfficial();
+  p-pubwic b-boowean isfwushtohdfsenabwed() {
+    wetuwn eawwybiwdpwopewty.segment_fwush_to_hdfs_enabwed.get(fawse)
+        // f-fwush to hdfs i-is awways disabwed i-if fwushvewsion is nyot officiaw. 🥺
+        && fwushvewsion.cuwwent_fwush_vewsion.isofficiaw();
   }
 
   /**
-   * Determines if this earlybird is allowed to load segments from HDFS.
+   * detewmines if t-this eawwybiwd is awwowed to woad segments fwom hdfs. nyaa~~
    */
-  public boolean isSegmentLoadFromHdfsEnabled() {
-    return EarlybirdProperty.SEGMENT_LOAD_FROM_HDFS_ENABLED.get(false);
+  pubwic boowean issegmentwoadfwomhdfsenabwed() {
+    w-wetuwn eawwybiwdpwopewty.segment_woad_fwom_hdfs_enabwed.get(fawse);
   }
 
   /**
-   * Determines if this earlybird is allowed to delete flushed segments.
+   * detewmines i-if this eawwybiwd i-is awwowed to d-dewete fwushed segments. ^^
    */
-  public boolean isDeleteFlushedSegmentsEnabled() {
-    return EarlybirdConfig.getBool("segment_dropper_delete_flushed", true);
+  p-pubwic boowean i-isdewetefwushedsegmentsenabwed() {
+    w-wetuwn eawwybiwdconfig.getboow("segment_dwoppew_dewete_fwushed", >w< t-twue);
   }
 
   /**
-   * Returns the root of the segment directory on the local disk.
+   * wetuwns the woot of the segment d-diwectowy on the w-wocaw disk. OwO
    */
-  public String getLocalSegmentSyncRootDir() {
-    return EarlybirdConfig.getString("segment_sync_dir", "partitions")
-        + getScrubGenFlushDirSuffix();
+  p-pubwic stwing g-getwocawsegmentsyncwootdiw() {
+    w-wetuwn eawwybiwdconfig.getstwing("segment_sync_diw", XD "pawtitions")
+        + getscwubgenfwushdiwsuffix();
   }
 
   /**
-   * Returns the root of the segment directory on HDFS.
+   * wetuwns the woot of the segment d-diwectowy on hdfs. ^^;;
    */
-  public String getHdfsSegmentSyncRootDir() {
-    return EarlybirdProperty.HDFS_SEGMENT_SYNC_DIR.get("partitions")
-        + getScrubGenFlushDirSuffix();
+  pubwic stwing gethdfssegmentsyncwootdiw() {
+    wetuwn eawwybiwdpwopewty.hdfs_segment_sync_diw.get("pawtitions")
+        + getscwubgenfwushdiwsuffix();
   }
 
   /**
-   * Returns the HDFS root directory where all segments should be uploaded.
+   * w-wetuwns the hdfs woot diwectowy whewe aww segments shouwd be u-upwoaded. 🥺
    */
-  public String getHdfsSegmentUploadRootDir() {
-    String hdfsSegmentUploadDir = EarlybirdProperty.HDFS_SEGMENT_UPLOAD_DIR.get(null);
-    return hdfsSegmentUploadDir != null
-        ? hdfsSegmentUploadDir + getScrubGenFlushDirSuffix()
-        : getHdfsSegmentSyncRootDir();
+  p-pubwic stwing g-gethdfssegmentupwoadwootdiw() {
+    stwing hdfssegmentupwoaddiw = e-eawwybiwdpwopewty.hdfs_segment_upwoad_diw.get(nuww);
+    wetuwn h-hdfssegmentupwoaddiw != n-nyuww
+        ? hdfssegmentupwoaddiw + getscwubgenfwushdiwsuffix()
+        : gethdfssegmentsyncwootdiw();
   }
 
   /**
-   * Returns the ZooKeeper path used for segment sync'ing.
+   * wetuwns the zookeepew path used f-fow segment sync'ing. XD
    */
-  public String getZooKeeperSyncFullPath() {
-    return EarlybirdProperty.ZK_APP_ROOT.get() + "/"
-        + EarlybirdConfig.getString("segment_flush_sync_relative_path", "segment_flush_sync");
+  p-pubwic stwing getzookeepewsyncfuwwpath() {
+    w-wetuwn eawwybiwdpwopewty.zk_app_woot.get() + "/"
+        + e-eawwybiwdconfig.getstwing("segment_fwush_sync_wewative_path", "segment_fwush_sync");
   }
 
   /**
-   * Returns the list of directories that should be persisted for this segment.
+   * wetuwns the wist of diwectowies t-that shouwd be p-pewsisted fow this segment. (U ᵕ U❁)
    */
-  public Collection<String> getPersistentFileNames(SegmentInfo segment) {
-    return Collections.singleton(segment.getSegmentName());
+  p-pubwic cowwection<stwing> g-getpewsistentfiwenames(segmentinfo segment) {
+    wetuwn cowwections.singweton(segment.getsegmentname());
   }
 
   /**
-   * Returns the list of all files that should be sync'ed for this segment.
+   * wetuwns the wist of aww f-fiwes that shouwd b-be sync'ed fow t-this segment. :3
    */
-  public Collection<String> getAllSyncFileNames(SegmentInfo segment) {
-    Collection<String> allFileNames = PersistentFile.getAllFileNames(segment.getSegmentName());
-    if (segment.getEarlybirdIndexConfig().isIndexStoredOnDisk()) {
-      allFileNames = new ArrayList<>(allFileNames);
-      // Just the file name, not the full path
-      allFileNames.add(getLocalLuceneSyncDirFileName(segment.getSegment()));
+  pubwic cowwection<stwing> g-getawwsyncfiwenames(segmentinfo s-segment) {
+    cowwection<stwing> a-awwfiwenames = pewsistentfiwe.getawwfiwenames(segment.getsegmentname());
+    if (segment.geteawwybiwdindexconfig().isindexstowedondisk()) {
+      awwfiwenames = nyew awwaywist<>(awwfiwenames);
+      // j-just t-the fiwe nyame, nyot the fuww path
+      awwfiwenames.add(getwocawwucenesyncdiwfiwename(segment.getsegment()));
     }
-    return allFileNames;
+    w-wetuwn a-awwfiwenames;
   }
 
   /**
-   * Returns the local sync directory for the given segment.
+   * wetuwns the wocaw sync diwectowy fow the given s-segment. ( ͡o ω ͡o )
    */
-  public String getLocalSyncDirName(Segment segment) {
-    return getLocalSegmentSyncRootDir() + "/" + segment.getSegmentName()
-        + getVersionFileExtension();
+  pubwic stwing getwocawsyncdiwname(segment segment) {
+    wetuwn getwocawsegmentsyncwootdiw() + "/" + s-segment.getsegmentname()
+        + getvewsionfiweextension();
   }
 
   /**
-   * Returns the local Lucene directory for the given segment.
+   * wetuwns the w-wocaw wucene diwectowy f-fow the given segment. òωó
    */
-  public String getLocalLuceneSyncDirName(Segment segment) {
-    return getLocalSyncDirName(segment) + "/" + getLocalLuceneSyncDirFileName(segment);
+  pubwic stwing getwocawwucenesyncdiwname(segment s-segment) {
+    w-wetuwn getwocawsyncdiwname(segment) + "/" + getwocawwucenesyncdiwfiwename(segment);
   }
 
   /**
-   * Returns the name (not the path) of the Lucene directory for the given segment.
+   * wetuwns the nyame (not t-the path) of the wucene diwectowy f-fow the given segment. σωσ
    */
-  private String getLocalLuceneSyncDirFileName(Segment segment) {
-    if (segment instanceof ArchiveSegment) {
-      Date endDate = ((ArchiveSegment) segment).getDataEndDate();
-      String endDateString = TwitterDateFormat.apply("yyyyMMdd").format(endDate);
-      return LUCENE_DIR_PREFIX + endDateString;
-    } else {
-      return LUCENE_DIR_PREFIX + "realtime";
+  pwivate stwing getwocawwucenesyncdiwfiwename(segment s-segment) {
+    if (segment i-instanceof awchivesegment) {
+      d-date enddate = ((awchivesegment) segment).getdataenddate();
+      s-stwing enddatestwing = twittewdatefowmat.appwy("yyyymmdd").fowmat(enddate);
+      w-wetuwn wucene_diw_pwefix + e-enddatestwing;
+    } e-ewse {
+      wetuwn wucene_diw_pwefix + "weawtime";
     }
   }
 
   /**
-   * Returns the HDFS sync directory for the given segment.
+   * w-wetuwns the hdfs s-sync diwectowy fow the given segment. (U ᵕ U❁)
    */
-  public String getHdfsSyncDirNamePrefix(Segment segment) {
-    return getHdfsSegmentSyncRootDir() + "/" + segment.getSegmentName()
-        + getVersionFileExtension() + "*";
+  p-pubwic stwing gethdfssyncdiwnamepwefix(segment s-segment) {
+    wetuwn g-gethdfssegmentsyncwootdiw() + "/" + segment.getsegmentname()
+        + getvewsionfiweextension() + "*";
   }
 
   /**
-   * Returns the prefix of the HDFS directory where the files for this segment should be uploaded.
+   * w-wetuwns the pwefix o-of the hdfs diwectowy w-whewe the fiwes fow this segment shouwd be upwoaded. (✿oωo)
    */
-  public String getHdfsUploadDirNamePrefix(Segment segment) {
-    return getHdfsSegmentUploadRootDir() + "/" + segment.getSegmentName()
-        + getVersionFileExtension() + "*";
+  p-pubwic stwing g-gethdfsupwoaddiwnamepwefix(segment s-segment) {
+    w-wetuwn gethdfssegmentupwoadwootdiw() + "/" + segment.getsegmentname()
+        + g-getvewsionfiweextension() + "*";
   }
 
   /**
-   * Returns the HDFS directory where the files for this segment should be uploaded.
+   * wetuwns the hdfs diwectowy whewe the fiwes fow this segment shouwd be upwoaded. ^^
    */
-  public String getHdfsFlushDirName(Segment segment) {
-    return getHdfsSegmentUploadRootDir() + "/" + segment.getSegmentName()
-        + getVersionFileExtension() + "_" + DatabaseConfig.getLocalHostname();
+  p-pubwic stwing gethdfsfwushdiwname(segment s-segment) {
+    wetuwn gethdfssegmentupwoadwootdiw() + "/" + s-segment.getsegmentname()
+        + getvewsionfiweextension() + "_" + d-databaseconfig.getwocawhostname();
   }
 
   /**
-   * Returns a temp HDFS directory to be used for this segment.
+   * wetuwns a-a temp hdfs diwectowy t-to be used f-fow this segment. ^•ﻌ•^
    */
-  public String getHdfsTempFlushDirName(Segment segment) {
-    return getHdfsSegmentUploadRootDir() + "/temp_"
-        + DatabaseConfig.getLocalHostname() + "_" + segment.getSegmentName()
-        + getVersionFileExtension();
+  p-pubwic s-stwing gethdfstempfwushdiwname(segment segment) {
+    wetuwn gethdfssegmentupwoadwootdiw() + "/temp_"
+        + databaseconfig.getwocawhostname() + "_" + segment.getsegmentname()
+        + getvewsionfiweextension();
   }
 
   /**
-   * Concatenates the name of this segment with the flush version extension.
+   * concatenates t-the nyame o-of this segment w-with the fwush vewsion extension. XD
    */
-  public String getVersionedName(Segment segment) {
-    return segment.getSegmentName() + getVersionFileExtension();
+  p-pubwic stwing getvewsionedname(segment segment) {
+    wetuwn segment.getsegmentname() + g-getvewsionfiweextension();
   }
 
-  private String getScrubGenFlushDirSuffix() {
-    return scrubGen
-        .map(s -> "/scrubbed/" + s)
-        .orElse("");
+  p-pwivate stwing getscwubgenfwushdiwsuffix() {
+    w-wetuwn scwubgen
+        .map(s -> "/scwubbed/" + s)
+        .owewse("");
   }
 
   /**
-   * Returns the scrub gen set for this earlybird.
+   * w-wetuwns the scwub g-gen set fow this eawwybiwd. :3
    */
-  public Optional<String> getScrubGen() {
-    return scrubGen;
+  p-pubwic optionaw<stwing> g-getscwubgen() {
+    wetuwn scwubgen;
   }
 }

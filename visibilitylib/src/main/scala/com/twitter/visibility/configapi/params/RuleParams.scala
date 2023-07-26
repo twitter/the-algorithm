@@ -1,164 +1,164 @@
-package com.twitter.visibility.configapi.params
+package com.twittew.visibiwity.configapi.pawams
 
-import com.twitter.timelines.configapi.EnumParam
-import com.twitter.timelines.configapi.Param
+impowt com.twittew.timewines.configapi.enumpawam
+i-impowt com.twittew.timewines.configapi.pawam
 
-abstract class RuleParam[T](override val default: T) extends Param(default) {
-  override val statName: String = s"RuleParam/${this.getClass.getSimpleName}"
+abstwact c-cwass wuwepawam[t](ovewwide v-vaw defauwt: t-t) extends pawam(defauwt) {
+  ovewwide v-vaw statname: s-stwing = s"wuwepawam/${this.getcwass.getsimpwename}"
 }
 
-abstract class EnumRuleParam[T <: Enumeration](override val default: T#Value, override val enum: T)
-    extends EnumParam(default, enum) {
-  override val statName: String = s"RuleParam/${this.getClass.getSimpleName}"
+a-abstwact c-cwass enumwuwepawam[t <: enumewation](ovewwide vaw defauwt: t#vawue, 🥺 ovewwide vaw enum: t)
+    e-extends enumpawam(defauwt, >_< enum) {
+  ovewwide vaw statname: s-stwing = s"wuwepawam/${this.getcwass.getsimpwename}"
 }
 
-private[visibility] object RuleParams {
-  object True extends RuleParam(true)
-  object False extends RuleParam(false)
+pwivate[visibiwity] o-object wuwepawams {
+  object twue extends wuwepawam(twue)
+  o-object fawse extends wuwepawam(fawse)
 
-  object TestHoldbackParam extends RuleParam(true)
+  o-object testhowdbackpawam e-extends wuwepawam(twue)
 
-  object TweetConversationControlEnabledParam extends RuleParam(default = false)
+  object tweetconvewsationcontwowenabwedpawam extends wuwepawam(defauwt = fawse)
 
-  object EnableLimitRepliesFollowersConversationRule extends RuleParam(default = false)
+  object e-enabwewimitwepwiesfowwowewsconvewsationwuwe extends wuwepawam(defauwt = fawse)
 
-  object CommunityTweetsEnabledParam extends RuleParam(default = false)
+  object communitytweetsenabwedpawam e-extends wuwepawam(defauwt = fawse)
 
-  object DropCommunityTweetWithUndefinedCommunityRuleEnabledParam extends RuleParam(default = false)
+  object d-dwopcommunitytweetwithundefinedcommunitywuweenabwedpawam e-extends w-wuwepawam(defauwt = f-fawse)
 
-  object EnableHighPSpammyTweetScoreSearchTweetLabelDropRuleParam extends RuleParam(false)
+  object enabwehighpspammytweetscoweseawchtweetwabewdwopwuwepawam extends wuwepawam(fawse)
 
-  object EnableSmyteSpamTweetRuleParam extends RuleParam(false)
+  o-object enabwesmytespamtweetwuwepawam extends wuwepawam(fawse)
 
-  object EnableHighSpammyTweetContentScoreSearchLatestTweetLabelDropRuleParam
-      extends RuleParam(false)
+  o-object enabwehighspammytweetcontentscoweseawchwatesttweetwabewdwopwuwepawam
+      extends wuwepawam(fawse)
 
-  object EnableHighSpammyTweetContentScoreSearchTopTweetLabelDropRuleParam extends RuleParam(false)
+  object enabwehighspammytweetcontentscoweseawchtoptweetwabewdwopwuwepawam extends wuwepawam(fawse)
 
-  object NotGraduatedUserLabelRuleHoldbackExperimentParam extends RuleParam(default = false)
+  o-object nyotgwaduatedusewwabewwuwehowdbackexpewimentpawam extends w-wuwepawam(defauwt = f-fawse)
 
-  object EnableGoreAndViolenceTopicHighRecallTweetLabelRule extends RuleParam(default = false)
+  o-object enabwegoweandviowencetopichighwecawwtweetwabewwuwe extends wuwepawam(defauwt = fawse)
 
-  object EnableBlinkBadDownrankingRuleParam extends RuleParam(false)
-  object EnableBlinkWorstDownrankingRuleParam extends RuleParam(false)
+  o-object enabwebwinkbaddownwankingwuwepawam e-extends wuwepawam(fawse)
+  o-object enabwebwinkwowstdownwankingwuwepawam e-extends wuwepawam(fawse)
 
-  object EnableHighSpammyTweetContentScoreTrendsTopTweetLabelDropRuleParam
-      extends RuleParam(default = false)
+  object e-enabwehighspammytweetcontentscowetwendstoptweetwabewdwopwuwepawam
+      extends w-wuwepawam(defauwt = fawse)
 
-  object EnableHighSpammyTweetContentScoreTrendsLatestTweetLabelDropRuleParam
-      extends RuleParam(default = false)
+  object enabwehighspammytweetcontentscowetwendswatesttweetwabewdwopwuwepawam
+      e-extends wuwepawam(defauwt = fawse)
 
-  object EnableCopypastaSpamDownrankConvosAbusiveQualityRule extends RuleParam(default = false)
-  object EnableCopypastaSpamSearchDropRule extends RuleParam(default = false)
+  object e-enabwecopypastaspamdownwankconvosabusivequawitywuwe extends wuwepawam(defauwt = f-fawse)
+  object e-enabwecopypastaspamseawchdwopwuwe extends wuwepawam(defauwt = fawse)
 
-  object EnableSpammyUserModelTweetDropRuleParam extends RuleParam(default = false)
+  object enabwespammyusewmodewtweetdwopwuwepawam extends wuwepawam(defauwt = fawse)
 
-  object EnableAvoidNsfwRulesParam extends RuleParam(false)
+  object e-enabweavoidnsfwwuwespawam extends w-wuwepawam(fawse)
 
-  object EnableReportedTweetInterstitialRule extends RuleParam(default = false)
+  object e-enabwewepowtedtweetintewstitiawwuwe e-extends wuwepawam(defauwt = f-fawse)
 
-  object EnableReportedTweetInterstitialSearchRule extends RuleParam(default = false)
+  object enabwewepowtedtweetintewstitiawseawchwuwe extends wuwepawam(defauwt = f-fawse)
 
-  object EnableDropExclusiveTweetContentRule extends RuleParam(default = false)
+  object enabwedwopexcwusivetweetcontentwuwe extends wuwepawam(defauwt = fawse)
 
-  object EnableDropExclusiveTweetContentRuleFailClosed extends RuleParam(default = false)
+  o-object enabwedwopexcwusivetweetcontentwuwefaiwcwosed extends w-wuwepawam(defauwt = f-fawse)
 
-  object EnableTombstoneExclusiveQtProfileTimelineParam extends RuleParam(default = false)
+  object e-enabwetombstoneexcwusiveqtpwofiwetimewinepawam extends wuwepawam(defauwt = f-fawse)
 
-  object EnableDropAllExclusiveTweetsRuleParam extends RuleParam(false)
-  object EnableDropAllExclusiveTweetsRuleFailClosedParam extends RuleParam(false)
+  object e-enabwedwopawwexcwusivetweetswuwepawam e-extends w-wuwepawam(fawse)
+  object enabwedwopawwexcwusivetweetswuwefaiwcwosedpawam extends w-wuwepawam(fawse)
 
-  object EnableDownrankSpamReplySectioningRuleParam extends RuleParam(default = false)
-  object EnableNsfwTextSectioningRuleParam extends RuleParam(default = false)
+  o-object enabwedownwankspamwepwysectioningwuwepawam e-extends w-wuwepawam(defauwt = f-fawse)
+  object enabwensfwtextsectioningwuwepawam extends wuwepawam(defauwt = fawse)
 
-  object EnableSearchIpiSafeSearchWithoutUserInQueryDropRule extends RuleParam(false)
+  object e-enabweseawchipisafeseawchwithoutusewinquewydwopwuwe extends wuwepawam(fawse)
 
-  object PromotedTweetHealthEnforcementHoldback extends RuleParam(default = true)
-  object EnableTimelineHomePromotedTweetHealthEnforcementRules extends RuleParam(default = false)
+  object pwomotedtweetheawthenfowcementhowdback extends wuwepawam(defauwt = twue)
+  object enabwetimewinehomepwomotedtweetheawthenfowcementwuwes e-extends wuwepawam(defauwt = fawse)
 
-  object EnableMutedKeywordFilteringSpaceTitleNotificationsRuleParam extends RuleParam(false)
+  object enabwemutedkeywowdfiwtewingspacetitwenotificationswuwepawam extends w-wuwepawam(fawse)
 
-  object EnableDropTweetsWithGeoRestrictedMediaRuleParam extends RuleParam(default = false)
+  o-object enabwedwoptweetswithgeowestwictedmediawuwepawam e-extends wuwepawam(defauwt = f-fawse)
 
-  object EnableDropAllTrustedFriendsTweetsRuleParam extends RuleParam(false)
-  object EnableDropTrustedFriendsTweetContentRuleParam extends RuleParam(false)
+  object enabwedwopawwtwustedfwiendstweetswuwepawam e-extends wuwepawam(fawse)
+  o-object enabwedwoptwustedfwiendstweetcontentwuwepawam extends wuwepawam(fawse)
 
-  object EnableDropAllCollabInvitationTweetsRuleParam extends RuleParam(false)
+  object enabwedwopawwcowwabinvitationtweetswuwepawam extends wuwepawam(fawse)
 
-  object EnableNsfwTextHighPrecisionDropRuleParam extends RuleParam(false)
+  object enabwensfwtexthighpwecisiondwopwuwepawam extends wuwepawam(fawse)
 
-  object EnableLikelyIvsUserLabelDropRule extends RuleParam(false)
+  o-object enabwewikewyivsusewwabewdwopwuwe e-extends wuwepawam(fawse)
 
-  object EnableCardUriRootDomainCardDenylistRule extends RuleParam(false)
-  object EnableCommunityNonMemberPollCardRule extends RuleParam(false)
-  object EnableCommunityNonMemberPollCardRuleFailClosed extends RuleParam(false)
+  object enabwecawduwiwootdomaincawddenywistwuwe e-extends wuwepawam(fawse)
+  o-object enabwecommunitynonmembewpowwcawdwuwe extends w-wuwepawam(fawse)
+  o-object enabwecommunitynonmembewpowwcawdwuwefaiwcwosed extends w-wuwepawam(fawse)
 
-  object EnableExperimentalNudgeEnabledParam extends RuleParam(false)
+  o-object enabweexpewimentawnudgeenabwedpawam extends wuwepawam(fawse)
 
-  object NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam extends RuleParam(default = false)
+  object nysfwhighpwecisionusewwabewavoidtweetwuweenabwedpawam extends w-wuwepawam(defauwt = f-fawse)
 
-  object EnableNewAdAvoidanceRulesParam extends RuleParam(false)
+  object e-enabwenewadavoidancewuwespawam extends wuwepawam(fawse)
 
-  object EnableNsfaHighRecallAdAvoidanceParam extends RuleParam(false)
+  o-object enabwensfahighwecawwadavoidancepawam e-extends wuwepawam(fawse)
 
-  object EnableNsfaKeywordsHighPrecisionAdAvoidanceParam extends RuleParam(false)
+  o-object enabwensfakeywowdshighpwecisionadavoidancepawam extends wuwepawam(fawse)
 
-  object EnableStaleTweetDropRuleParam extends RuleParam(false)
-  object EnableStaleTweetDropRuleFailClosedParam extends RuleParam(false)
+  object enabwestawetweetdwopwuwepawam e-extends wuwepawam(fawse)
+  o-object enabwestawetweetdwopwuwefaiwcwosedpawam extends w-wuwepawam(fawse)
 
-  object EnableDeleteStateTweetRulesParam extends RuleParam(default = false)
+  o-object enabwedewetestatetweetwuwespawam extends wuwepawam(defauwt = fawse)
 
-  object EnableSpacesSharingNsfwDropRulesParam extends RuleParam(default = true)
+  object enabwespacesshawingnsfwdwopwuwespawam e-extends wuwepawam(defauwt = twue)
 
-  object EnableViewerIsSoftUserDropRuleParam extends RuleParam(default = false)
+  object enabweviewewissoftusewdwopwuwepawam extends wuwepawam(defauwt = fawse)
 
-  object EnablePdnaQuotedTweetTombstoneRuleParam extends RuleParam(default = true)
-  object EnableSpamQuotedTweetTombstoneRuleParam extends RuleParam(default = true)
+  o-object enabwepdnaquotedtweettombstonewuwepawam extends wuwepawam(defauwt = twue)
+  object e-enabwespamquotedtweettombstonewuwepawam e-extends wuwepawam(defauwt = twue)
 
-  object EnableNsfwHpQuotedTweetDropRuleParam extends RuleParam(default = false)
-  object EnableNsfwHpQuotedTweetTombstoneRuleParam extends RuleParam(default = false)
+  object enabwensfwhpquotedtweetdwopwuwepawam e-extends w-wuwepawam(defauwt = fawse)
+  object enabwensfwhpquotedtweettombstonewuwepawam extends wuwepawam(defauwt = f-fawse)
 
-  object EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam
-      extends RuleParam(default = false)
-  object EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam
-      extends RuleParam(default = false)
+  object enabweinnewquotedtweetviewewbwocksauthowintewstitiawwuwepawam
+      e-extends wuwepawam(defauwt = fawse)
+  object enabweinnewquotedtweetviewewmutesauthowintewstitiawwuwepawam
+      extends wuwepawam(defauwt = f-fawse)
 
 
-  object EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam extends RuleParam(false)
+  object enabwenewsensitivemediasettingsintewstitiawshometimewinewuwespawam e-extends wuwepawam(fawse)
 
-  object EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam extends RuleParam(false)
+  o-object enabwenewsensitivemediasettingsintewstitiawsconvewsationwuwespawam e-extends wuwepawam(fawse)
 
-  object EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam
-      extends RuleParam(false)
+  o-object enabwenewsensitivemediasettingsintewstitiawspwofiwetimewinewuwespawam
+      e-extends wuwepawam(fawse)
 
-  object EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam extends RuleParam(false)
+  o-object enabwenewsensitivemediasettingsintewstitiawstweetdetaiwwuwespawam extends w-wuwepawam(fawse)
 
-  object EnableLegacySensitiveMediaHomeTimelineRulesParam extends RuleParam(true)
+  o-object enabwewegacysensitivemediahometimewinewuwespawam extends wuwepawam(twue)
 
-  object EnableLegacySensitiveMediaConversationRulesParam extends RuleParam(true)
+  object e-enabwewegacysensitivemediaconvewsationwuwespawam e-extends wuwepawam(twue)
 
-  object EnableLegacySensitiveMediaProfileTimelineRulesParam extends RuleParam(true)
+  o-object enabwewegacysensitivemediapwofiwetimewinewuwespawam extends w-wuwepawam(twue)
 
-  object EnableLegacySensitiveMediaTweetDetailRulesParam extends RuleParam(true)
+  object enabwewegacysensitivemediatweetdetaiwwuwespawam e-extends w-wuwepawam(twue)
 
-  object EnableLegacySensitiveMediaDirectMessagesRulesParam extends RuleParam(true)
+  object enabwewegacysensitivemediadiwectmessageswuwespawam extends wuwepawam(twue)
 
-  object EnableToxicReplyFilteringConversationRulesParam extends RuleParam(false)
-  object EnableToxicReplyFilteringNotificationsRulesParam extends RuleParam(false)
+  object e-enabwetoxicwepwyfiwtewingconvewsationwuwespawam e-extends wuwepawam(fawse)
+  o-object e-enabwetoxicwepwyfiwtewingnotificationswuwespawam extends wuwepawam(fawse)
 
-  object EnableSearchQueryMatchesTweetAuthorConditionParam extends RuleParam(default = false)
+  o-object enabweseawchquewymatchestweetauthowconditionpawam extends wuwepawam(defauwt = fawse)
 
-  object EnableSearchBasicBlockMuteRulesParam extends RuleParam(default = false)
+  object enabweseawchbasicbwockmutewuwespawam extends w-wuwepawam(defauwt = fawse)
 
-  object EnableAbusiveBehaviorDropRuleParam extends RuleParam(default = false)
-  object EnableAbusiveBehaviorInterstitialRuleParam extends RuleParam(default = false)
-  object EnableAbusiveBehaviorLimitedEngagementsRuleParam extends RuleParam(default = false)
+  o-object enabweabusivebehaviowdwopwuwepawam extends w-wuwepawam(defauwt = fawse)
+  o-object enabweabusivebehaviowintewstitiawwuwepawam extends wuwepawam(defauwt = fawse)
+  o-object enabweabusivebehaviowwimitedengagementswuwepawam e-extends wuwepawam(defauwt = f-fawse)
 
-  object EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam extends RuleParam(default = false)
-  object EnableNotGraduatedSearchDropRuleParam extends RuleParam(default = false)
-  object EnableNotGraduatedDropRuleParam extends RuleParam(default = false)
+  o-object enabwenotgwaduateddownwankconvosabusivequawitywuwepawam e-extends wuwepawam(defauwt = fawse)
+  object enabwenotgwaduatedseawchdwopwuwepawam extends wuwepawam(defauwt = fawse)
+  object enabwenotgwaduateddwopwuwepawam extends wuwepawam(defauwt = fawse)
 
-  object EnableFosnrRuleParam extends RuleParam(default = false)
+  o-object e-enabwefosnwwuwepawam e-extends wuwepawam(defauwt = fawse)
 
-  object EnableAuthorBlocksViewerDropRuleParam extends RuleParam(default = false)
+  object e-enabweauthowbwocksviewewdwopwuwepawam extends wuwepawam(defauwt = fawse)
 }

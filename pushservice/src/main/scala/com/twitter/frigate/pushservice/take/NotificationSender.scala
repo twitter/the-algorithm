@@ -1,95 +1,95 @@
-package com.twitter.frigate.pushservice.take
+package com.twittew.fwigate.pushsewvice.take
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats.track
-import com.twitter.frigate.common.store.IbisResponse
-import com.twitter.frigate.common.store.Sent
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.take.sender.Ibis2Sender
-import com.twitter.frigate.pushservice.take.sender.NtabSender
-import com.twitter.frigate.scribe.thriftscala.NotificationScribe
-import com.twitter.util.Future
-import com.twitter.frigate.thriftscala.ChannelName
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.stats.twack
+impowt c-com.twittew.fwigate.common.stowe.ibiswesponse
+i-impowt com.twittew.fwigate.common.stowe.sent
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.take.sendew.ibis2sendew
+i-impowt com.twittew.fwigate.pushsewvice.take.sendew.ntabsendew
+impowt com.twittew.fwigate.scwibe.thwiftscawa.notificationscwibe
+impowt com.twittew.utiw.futuwe
+impowt com.twittew.fwigate.thwiftscawa.channewname
 
 /**
- * NotificationSender wraps up all the notification infra send logic, and serves as an abstract layer
- * between CandidateNotifier and the respective senders including ntab, ibis, which is being
- * gated with both a decider/feature switch
+ * nyotificationsendew w-wwaps up aww the nyotification infwa send wogic, (U ﹏ U) a-and sewves as an abstwact wayew
+ * b-between candidatenotifiew and the wespective sendews incwuding nytab, (///ˬ///✿) ibis, w-which is being
+ * gated with both a-a decidew/featuwe s-switch
  */
-class NotificationSender(
-  ibis2Sender: Ibis2Sender,
-  ntabSender: NtabSender,
-  statsReceiver: StatsReceiver,
-  notificationScribe: NotificationScribe => Unit) {
+cwass nyotificationsendew(
+  ibis2sendew: ibis2sendew, 😳
+  nytabsendew: n-nytabsendew, 😳
+  statsweceivew: statsweceivew, σωσ
+  nyotificationscwibe: nyotificationscwibe => u-unit) {
 
-  private val notificationNotifierStats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val ibis2SendLatency = notificationNotifierStats.scope("ibis2_send")
-  private val loggedOutIbis2SendLatency = notificationNotifierStats.scope("logged_out_ibis2_send")
-  private val ntabSendLatency = notificationNotifierStats.scope("ntab_send")
+  pwivate vaw nyotificationnotifiewstats = s-statsweceivew.scope(this.getcwass.getsimpwename)
+  p-pwivate v-vaw ibis2sendwatency = n-notificationnotifiewstats.scope("ibis2_send")
+  pwivate vaw woggedoutibis2sendwatency = n-nyotificationnotifiewstats.scope("wogged_out_ibis2_send")
+  pwivate vaw nytabsendwatency = n-nyotificationnotifiewstats.scope("ntab_send")
 
-  private val ntabWriteThenSkipPushCounter =
-    notificationNotifierStats.counter("ntab_write_then_skip_push")
-  private val ntabWriteThenIbisSendCounter =
-    notificationNotifierStats.counter("ntab_write_then_ibis_send")
-  notificationNotifierStats.counter("ins_dark_traffic_send")
+  pwivate vaw nytabwwitethenskippushcountew =
+    notificationnotifiewstats.countew("ntab_wwite_then_skip_push")
+  pwivate vaw nytabwwitethenibissendcountew =
+    n-notificationnotifiewstats.countew("ntab_wwite_then_ibis_send")
+  nyotificationnotifiewstats.countew("ins_dawk_twaffic_send")
 
-  private val ntabOnlyChannelSenderV3Counter =
-    notificationNotifierStats.counter("ntab_only_channel_send_v3")
+  p-pwivate v-vaw nytabonwychannewsendewv3countew =
+    notificationnotifiewstats.countew("ntab_onwy_channew_send_v3")
 
-  def sendIbisDarkWrite(candidate: PushCandidate): Future[IbisResponse] = {
-    ibis2Sender.sendAsDarkWrite(candidate)
+  d-def sendibisdawkwwite(candidate: pushcandidate): futuwe[ibiswesponse] = {
+    ibis2sendew.sendasdawkwwite(candidate)
   }
 
-  private def isNtabOnlySend(
-    channels: Seq[ChannelName]
-  ): Future[Boolean] = {
-    val isNtabOnlyChannel = channels.contains(ChannelName.NtabOnly)
-    if (isNtabOnlyChannel) ntabOnlyChannelSenderV3Counter.incr()
+  pwivate d-def isntabonwysend(
+    c-channews: seq[channewname]
+  ): f-futuwe[boowean] = {
+    v-vaw isntabonwychannew = channews.contains(channewname.ntabonwy)
+    i-if (isntabonwychannew) nytabonwychannewsendewv3countew.incw()
 
-    Future.value(isNtabOnlyChannel)
+    f-futuwe.vawue(isntabonwychannew)
   }
 
-  private def isPushOnly(channels: Seq[ChannelName], candidate: PushCandidate): Future[Boolean] = {
-    Future.value(channels.contains(ChannelName.PushOnly))
+  pwivate def ispushonwy(channews: seq[channewname], rawr x3 c-candidate: pushcandidate): f-futuwe[boowean] = {
+    futuwe.vawue(channews.contains(channewname.pushonwy))
   }
 
-  def notify(
-    channels: Seq[ChannelName],
-    candidate: PushCandidate
-  ): Future[IbisResponse] = {
-    Future
-      .join(isPushOnly(channels, candidate), isNtabOnlySend(channels)).map {
-        case (isPushOnly, isNtabOnly) =>
-          if (isPushOnly) {
-            track(ibis2SendLatency)(ibis2Sender.send(channels, candidate, notificationScribe, None))
-          } else {
-            track(ntabSendLatency)(
-              ntabSender
-                .send(candidate, isNtabOnly))
-              .flatMap { ntabResponse =>
-                if (isNtabOnly) {
-                  ntabWriteThenSkipPushCounter.incr()
-                  candidate
-                    .scribeData(channels = channels).foreach(notificationScribe).map(_ =>
-                      IbisResponse(Sent))
-                } else {
-                  ntabWriteThenIbisSendCounter.incr()
-                  track(ibis2SendLatency)(
-                    ibis2Sender.send(channels, candidate, notificationScribe, ntabResponse))
+  d-def nyotify(
+    c-channews: seq[channewname], OwO
+    candidate: pushcandidate
+  ): futuwe[ibiswesponse] = {
+    futuwe
+      .join(ispushonwy(channews, /(^•ω•^) candidate), i-isntabonwysend(channews)).map {
+        c-case (ispushonwy, 😳😳😳 isntabonwy) =>
+          i-if (ispushonwy) {
+            t-twack(ibis2sendwatency)(ibis2sendew.send(channews, ( ͡o ω ͡o ) c-candidate, >_< nyotificationscwibe, >w< nyone))
+          } ewse {
+            t-twack(ntabsendwatency)(
+              nytabsendew
+                .send(candidate, rawr isntabonwy))
+              .fwatmap { nytabwesponse =>
+                if (isntabonwy) {
+                  nytabwwitethenskippushcountew.incw()
+                  c-candidate
+                    .scwibedata(channews = channews).foweach(notificationscwibe).map(_ =>
+                      i-ibiswesponse(sent))
+                } e-ewse {
+                  nytabwwitethenibissendcountew.incw()
+                  t-twack(ibis2sendwatency)(
+                    ibis2sendew.send(channews, 😳 c-candidate, >w< n-nyotificationscwibe, (⑅˘꒳˘) n-nytabwesponse))
                 }
               }
 
           }
-      }.flatten
+      }.fwatten
   }
 
-  def loggedOutNotify(
-    candidate: PushCandidate
-  ): Future[IbisResponse] = {
-    val ibisResponse = {
-      track(loggedOutIbis2SendLatency)(
-        ibis2Sender.send(Seq(ChannelName.PushNtab), candidate, notificationScribe, None))
+  d-def woggedoutnotify(
+    candidate: pushcandidate
+  ): f-futuwe[ibiswesponse] = {
+    v-vaw ibiswesponse = {
+      t-twack(woggedoutibis2sendwatency)(
+        i-ibis2sendew.send(seq(channewname.pushntab), OwO c-candidate, (ꈍᴗꈍ) nyotificationscwibe, 😳 nyone))
     }
-    ibisResponse
+    ibiswesponse
   }
 }

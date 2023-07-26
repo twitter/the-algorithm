@@ -1,79 +1,79 @@
-package com.twitter.tweetypie.thriftscala
+package com.twittew.tweetypie.thwiftscawa
 
-import com.twitter.util.Future
+impowt c-com.twittew.utiw.futuwe
 
 /**
- * A trait for TweetService implementations that wrap an underlying
- * TweetService and need to modify only some of the methods.
+ * a-a twait fow tweetsewvice i-impwementations t-that wwap a-an undewwying
+ * t-tweetsewvice a-and nyeed to modify o-onwy some of the methods.
  */
-trait TweetServiceProxy extends TweetService.MethodPerEndpoint {
-  protected def underlying: TweetService.MethodPerEndpoint
+twait tweetsewvicepwoxy extends tweetsewvice.methodpewendpoint {
+  p-pwotected def undewwying: tweetsewvice.methodpewendpoint
 
   /**
-   * Default implementation simply passes through the Future but logic can be added to wrap each
-   * invocation to the underlying TweetService
+   * d-defauwt impwementation s-simpwy passes thwough the futuwe but wogic can be added to wwap e-each
+   * invocation to the undewwying t-tweetsewvice
    */
-  protected def wrap[A](f: => Future[A]): Future[A] =
+  pwotected d-def wwap[a](f: => futuwe[a]): futuwe[a] =
     f
 
-  override def getTweets(request: GetTweetsRequest): Future[Seq[GetTweetResult]] =
-    wrap(underlying.getTweets(request))
+  ovewwide def gettweets(wequest: g-gettweetswequest): futuwe[seq[gettweetwesuwt]] =
+    wwap(undewwying.gettweets(wequest))
 
-  override def getTweetFields(request: GetTweetFieldsRequest): Future[Seq[GetTweetFieldsResult]] =
-    wrap(underlying.getTweetFields(request))
+  ovewwide def gettweetfiewds(wequest: gettweetfiewdswequest): f-futuwe[seq[gettweetfiewdswesuwt]] =
+    wwap(undewwying.gettweetfiewds(wequest))
 
-  override def getTweetCounts(request: GetTweetCountsRequest): Future[Seq[GetTweetCountsResult]] =
-    wrap(underlying.getTweetCounts(request))
+  o-ovewwide d-def gettweetcounts(wequest: g-gettweetcountswequest): f-futuwe[seq[gettweetcountswesuwt]] =
+    wwap(undewwying.gettweetcounts(wequest))
 
-  override def setAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] =
-    wrap(underlying.setAdditionalFields(request))
+  ovewwide d-def setadditionawfiewds(wequest: setadditionawfiewdswequest): futuwe[unit] =
+    w-wwap(undewwying.setadditionawfiewds(wequest))
 
-  override def deleteAdditionalFields(request: DeleteAdditionalFieldsRequest): Future[Unit] =
-    wrap(underlying.deleteAdditionalFields(request))
+  ovewwide def deweteadditionawfiewds(wequest: deweteadditionawfiewdswequest): futuwe[unit] =
+    wwap(undewwying.deweteadditionawfiewds(wequest))
 
-  override def postTweet(request: PostTweetRequest): Future[PostTweetResult] =
-    wrap(underlying.postTweet(request))
+  o-ovewwide def posttweet(wequest: p-posttweetwequest): f-futuwe[posttweetwesuwt] =
+    w-wwap(undewwying.posttweet(wequest))
 
-  override def postRetweet(request: RetweetRequest): Future[PostTweetResult] =
-    wrap(underlying.postRetweet(request))
+  ovewwide def postwetweet(wequest: wetweetwequest): futuwe[posttweetwesuwt] =
+    w-wwap(undewwying.postwetweet(wequest))
 
-  override def unretweet(request: UnretweetRequest): Future[UnretweetResult] =
-    wrap(underlying.unretweet(request))
+  o-ovewwide def unwetweet(wequest: u-unwetweetwequest): f-futuwe[unwetweetwesuwt] =
+    wwap(undewwying.unwetweet(wequest))
 
-  override def getDeletedTweets(
-    request: GetDeletedTweetsRequest
-  ): Future[Seq[GetDeletedTweetResult]] =
-    wrap(underlying.getDeletedTweets(request))
+  o-ovewwide def getdewetedtweets(
+    w-wequest: getdewetedtweetswequest
+  ): futuwe[seq[getdewetedtweetwesuwt]] =
+    wwap(undewwying.getdewetedtweets(wequest))
 
-  override def deleteTweets(request: DeleteTweetsRequest): Future[Seq[DeleteTweetResult]] =
-    wrap(underlying.deleteTweets(request))
+  o-ovewwide def dewetetweets(wequest: d-dewetetweetswequest): futuwe[seq[dewetetweetwesuwt]] =
+    w-wwap(undewwying.dewetetweets(wequest))
 
-  override def updatePossiblySensitiveTweet(
-    request: UpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] =
-    wrap(underlying.updatePossiblySensitiveTweet(request))
+  o-ovewwide def updatepossibwysensitivetweet(
+    wequest: updatepossibwysensitivetweetwequest
+  ): futuwe[unit] =
+    wwap(undewwying.updatepossibwysensitivetweet(wequest))
 
-  override def undeleteTweet(request: UndeleteTweetRequest): Future[UndeleteTweetResponse] =
-    wrap(underlying.undeleteTweet(request))
+  ovewwide def undewetetweet(wequest: u-undewetetweetwequest): f-futuwe[undewetetweetwesponse] =
+    wwap(undewwying.undewetetweet(wequest))
 
-  override def eraseUserTweets(request: EraseUserTweetsRequest): Future[Unit] =
-    wrap(underlying.eraseUserTweets(request))
+  o-ovewwide def e-ewaseusewtweets(wequest: e-ewaseusewtweetswequest): futuwe[unit] =
+    wwap(undewwying.ewaseusewtweets(wequest))
 
-  override def incrTweetFavCount(request: IncrTweetFavCountRequest): Future[Unit] =
-    wrap(underlying.incrTweetFavCount(request))
+  ovewwide def incwtweetfavcount(wequest: i-incwtweetfavcountwequest): futuwe[unit] =
+    wwap(undewwying.incwtweetfavcount(wequest))
 
-  override def deleteLocationData(request: DeleteLocationDataRequest): Future[Unit] =
-    wrap(underlying.deleteLocationData(request))
+  ovewwide def dewetewocationdata(wequest: d-dewetewocationdatawequest): futuwe[unit] =
+    wwap(undewwying.dewetewocationdata(wequest))
 
-  override def scrubGeo(request: GeoScrub): Future[Unit] =
-    wrap(underlying.scrubGeo(request))
+  ovewwide d-def scwubgeo(wequest: g-geoscwub): f-futuwe[unit] =
+    wwap(undewwying.scwubgeo(wequest))
 
-  override def takedown(request: TakedownRequest): Future[Unit] =
-    wrap(underlying.takedown(request))
+  o-ovewwide def takedown(wequest: t-takedownwequest): f-futuwe[unit] =
+    w-wwap(undewwying.takedown(wequest))
 
-  override def flush(request: FlushRequest): Future[Unit] =
-    wrap(underlying.flush(request))
+  ovewwide def fwush(wequest: f-fwushwequest): f-futuwe[unit] =
+    w-wwap(undewwying.fwush(wequest))
 
-  override def incrTweetBookmarkCount(request: IncrTweetBookmarkCountRequest): Future[Unit] =
-    wrap(underlying.incrTweetBookmarkCount(request))
+  o-ovewwide d-def incwtweetbookmawkcount(wequest: incwtweetbookmawkcountwequest): futuwe[unit] =
+    wwap(undewwying.incwtweetbookmawkcount(wequest))
 }

@@ -1,50 +1,50 @@
-package com.twitter.frigate.pushservice.util
+package com.twittew.fwigate.pushsewvice.utiw
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
+impowt c-com.twittew.finagwe.stats.statsweceivew
+i-impowt c-com.twittew.fwigate.common.base.candidatedetaiws
+i-impowt com.twittew.fwigate.pushsewvice.modew.pushtypes.pushcandidate
 
-object MediaAnnotationsUtil {
+o-object m-mediaannotationsutiw {
 
-  val mediaIdToCategoryMapping = Map("0" -> "0")
+  v-vaw mediaidtocategowymapping = m-map("0" -> "0")
 
-  val nudityCategoryId = "0"
-  val beautyCategoryId = "0"
-  val singlePersonCategoryId = "0"
-  val sensitiveMediaCategoryFeatureName =
-    "tweet.mediaunderstanding.tweet_annotations.sensitive_category_probabilities"
+  vaw nyuditycategowyid = "0"
+  vaw beautycategowyid = "0"
+  vaw singwepewsoncategowyid = "0"
+  v-vaw sensitivemediacategowyfeatuwename =
+    "tweet.mediaundewstanding.tweet_annotations.sensitive_categowy_pwobabiwities"
 
-  def updateMediaCategoryStats(
-    candidates: Seq[CandidateDetails[PushCandidate]]
+  def updatemediacategowystats(
+    candidates: s-seq[candidatedetaiws[pushcandidate]]
   )(
-    implicit statsReceiver: StatsReceiver
+    impwicit statsweceivew: s-statsweceivew
   ) = {
 
-    val statScope = statsReceiver.scope("mediaStats")
-    val filteredCandidates = candidates.filter { candidate =>
-      !candidate.candidate.sparseContinuousFeatures
-        .getOrElse(sensitiveMediaCategoryFeatureName, Map.empty[String, Double]).contains(
-          nudityCategoryId)
+    vaw statscope = statsweceivew.scope("mediastats")
+    vaw f-fiwtewedcandidates = candidates.fiwtew { c-candidate =>
+      !candidate.candidate.spawsecontinuousfeatuwes
+        .getowewse(sensitivemediacategowyfeatuwename, (✿oωo) m-map.empty[stwing, (ˆ ﻌ ˆ)♡ doubwe]).contains(
+          nuditycategowyid)
     }
 
-    if (filteredCandidates.isEmpty)
-      statScope.counter("emptyCandidateListAfterNudityFilter").incr()
-    else
-      statScope.counter("nonEmptyCandidateListAfterNudityFilter").incr()
-    candidates.foreach { candidate =>
-      statScope.counter("totalCandidates").incr()
-      val mediaFeature = candidate.candidate.sparseContinuousFeatures
-        .getOrElse(sensitiveMediaCategoryFeatureName, Map.empty[String, Double])
-      if (mediaFeature.nonEmpty) {
-        val mediaCategoryByMaxScore = mediaFeature.maxBy(_._2)._1
-        statScope
-          .scope("mediaCategoryByMaxScore").counter(mediaIdToCategoryMapping
-            .getOrElse(mediaCategoryByMaxScore, "undefined")).incr()
+    if (fiwtewedcandidates.isempty)
+      statscope.countew("emptycandidatewistaftewnudityfiwtew").incw()
+    e-ewse
+      statscope.countew("nonemptycandidatewistaftewnudityfiwtew").incw()
+    candidates.foweach { candidate =>
+      statscope.countew("totawcandidates").incw()
+      v-vaw mediafeatuwe = candidate.candidate.spawsecontinuousfeatuwes
+        .getowewse(sensitivemediacategowyfeatuwename, (˘ω˘) m-map.empty[stwing, (⑅˘꒳˘) d-doubwe])
+      i-if (mediafeatuwe.nonempty) {
+        vaw m-mediacategowybymaxscowe = mediafeatuwe.maxby(_._2)._1
+        statscope
+          .scope("mediacategowybymaxscowe").countew(mediaidtocategowymapping
+            .getowewse(mediacategowybymaxscowe, "undefined")).incw()
 
-        mediaFeature.keys.map { feature =>
-          statScope
-            .scope("mediaCategory").counter(mediaIdToCategoryMapping
-              .getOrElse(feature, "undefined")).incr()
+        m-mediafeatuwe.keys.map { featuwe =>
+          statscope
+            .scope("mediacategowy").countew(mediaidtocategowymapping
+              .getowewse(featuwe, (///ˬ///✿) "undefined")).incw()
         }
       }
     }

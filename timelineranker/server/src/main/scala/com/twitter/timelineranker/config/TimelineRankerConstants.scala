@@ -1,8 +1,8 @@
-package com.twitter.timelineranker.config
+package com.twittew.timewinewankew.config
 
-object TimelineRankerConstants {
-  val ClientPrefix = "timelineranker."
-  val ManhattanStarbuckAppId = "timelineranker"
-  val WarmupClientName = "timelineranker.warmup"
-  val ForwardedClientName = "timelineranker.forwarded"
+object t-timewinewankewconstants {
+  v-vaw c-cwientpwefix = "timewinewankew."
+  v-vaw manhattanstawbuckappid = "timewinewankew"
+  v-vaw wawmupcwientname = "timewinewankew.wawmup"
+  v-vaw fowwawdedcwientname = "timewinewankew.fowwawded"
 }

@@ -1,49 +1,49 @@
-package com.twitter.follow_recommendations.configapi
+package com.twittew.fowwow_wecommendations.configapi
 
-import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsParams.AccountsFilteringAndRankingLogics
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsParams.{
-  AccountsFilteringAndRankingLogics => OrganicAccountsFilteringAndRankingLogics
+impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.cwowd_seawch_accounts.cwowdseawchaccountspawams.accountsfiwtewingandwankingwogics
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.top_owganic_fowwows_accounts.topowganicfowwowsaccountspawams.{
+  a-accountsfiwtewingandwankingwogics => o-owganicaccountsfiwtewingandwankingwogics
 }
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersParams
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.SimsExpansionSourceParams
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.MlRankerParams.CandidateScorerIdParam
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.CandidateSourcesToFilter
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableCandidateParamHydrations
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableGFSSocialProofTransform
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableRecommendationFlowLogs
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableWhoToFollowProducts
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.KeepSocialUserCandidate
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.KeepUserCandidate
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+i-impowt c-com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion.wecentengagementsimiwawusewspawams
+i-impowt com.twittew.fowwow_wecommendations.common.candidate_souwces.sims_expansion.simsexpansionsouwcepawams
+impowt c-com.twittew.fowwow_wecommendations.common.wankews.mw_wankew.wanking.mwwankewpawams.candidatescowewidpawam
+impowt com.twittew.fowwow_wecommendations.configapi.common.featuweswitchconfig
+impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams.candidatesouwcestofiwtew
+impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams.enabwecandidatepawamhydwations
+impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams.enabwegfssociawpwooftwansfowm
+i-impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams.enabwewecommendationfwowwogs
+impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams.enabwewhotofowwowpwoducts
+i-impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams.keepsociawusewcandidate
+impowt com.twittew.fowwow_wecommendations.configapi.pawams.gwobawpawams.keepusewcandidate
+i-impowt com.twittew.timewines.configapi.fsname
+impowt com.twittew.timewines.configapi.pawam
+i-impowt javax.inject.inject
+i-impowt javax.inject.singweton
 
-@Singleton
-class GlobalFeatureSwitchConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = {
-    Seq(
-      EnableCandidateParamHydrations,
-      KeepUserCandidate,
-      KeepSocialUserCandidate,
-      EnableGFSSocialProofTransform,
-      EnableWhoToFollowProducts,
-      EnableRecommendationFlowLogs
+@singweton
+c-cwass gwobawfeatuweswitchconfig @inject() () extends featuweswitchconfig {
+  ovewwide v-vaw booweanfspawams: seq[pawam[boowean] with fsname] = {
+    seq(
+      enabwecandidatepawamhydwations, (⑅˘꒳˘)
+      k-keepusewcandidate, (///ˬ///✿)
+      keepsociawusewcandidate, 😳😳😳
+      e-enabwegfssociawpwooftwansfowm, 🥺
+      enabwewhotofowwowpwoducts, mya
+      e-enabwewecommendationfwowwogs
     )
   }
 
-  val enumFsParams =
-    Seq(
-      CandidateScorerIdParam,
-      SimsExpansionSourceParams.Aggregator,
-      RecentEngagementSimilarUsersParams.Aggregator,
-      CandidateSourcesToFilter,
+  v-vaw enumfspawams =
+    s-seq(
+      candidatescowewidpawam, 🥺
+      simsexpansionsouwcepawams.aggwegatow, >_<
+      wecentengagementsimiwawusewspawams.aggwegatow, >_<
+      c-candidatesouwcestofiwtew, (⑅˘꒳˘)
     )
 
-  val enumSeqFsParams =
-    Seq(
-      AccountsFilteringAndRankingLogics,
-      OrganicAccountsFilteringAndRankingLogics
+  vaw enumseqfspawams =
+    s-seq(
+      accountsfiwtewingandwankingwogics, /(^•ω•^)
+      owganicaccountsfiwtewingandwankingwogics
     )
 }

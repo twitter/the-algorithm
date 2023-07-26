@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.service.selector_executor
+package com.twittew.pwoduct_mixew.cowe.sewvice.sewectow_executow
 
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.service.ExecutorResult
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.sewectow.sewectowwesuwt
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.pwesentation.candidatewithdetaiws
+i-impowt c-com.twittew.pwoduct_mixew.cowe.sewvice.executowwesuwt
 
-case class SelectorExecutorResult(
-  selectedCandidates: Seq[CandidateWithDetails],
-  remainingCandidates: Seq[CandidateWithDetails],
-  droppedCandidates: Seq[CandidateWithDetails],
-  individualSelectorResults: Seq[SelectorResult])
-    extends ExecutorResult
+c-case cwass s-sewectowexecutowwesuwt(
+  s-sewectedcandidates: s-seq[candidatewithdetaiws], rawr
+  w-wemainingcandidates: seq[candidatewithdetaiws], σωσ
+  dwoppedcandidates: seq[candidatewithdetaiws], σωσ
+  individuawsewectowwesuwts: seq[sewectowwesuwt])
+    extends executowwesuwt

@@ -1,20 +1,20 @@
 /*
- * This file defines additional thrift objects that should be specified in FRS request for context of recommendation, specifically the previous recommendations / new interactions in an interactive flow (series of follow steps). These typically are sent from OCF
+ * this fiwe defines additionaw t-thwift objects t-that shouwd be s-specified in fws w-wequest fow context o-of wecommendation, -.- s-specificawwy t-the pwevious w-wecommendations / nyew intewactions in an intewactive fwow (sewies of fowwow steps). ( ͡o ω ͡o ) t-these typicawwy awe sent fwom ocf
  */
 
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+nyamespace j-java com.twittew.fowwow_wecommendations.thwiftjava
+#@namespace scawa com.twittew.fowwow_wecommendations.thwiftscawa
+#@namespace s-stwato com.twittew.fowwow_wecommendations
 
-struct FlowRecommendation {
-  1: required i64 userId(personalDataType='UserId')
-}(hasPersonalData='true')
+stwuct fwowwecommendation {
+  1: wequiwed i64 u-usewid(pewsonawdatatype='usewid')
+}(haspewsonawdata='twue')
 
-struct RecommendationStep {
-  1: required list<FlowRecommendation> recommendations
-  2: required set<i64> followedUserIds(personalDataType='UserId')
-}(hasPersonalData='true')
+stwuct wecommendationstep {
+  1: w-wequiwed wist<fwowwecommendation> w-wecommendations
+  2: wequiwed set<i64> fowwowedusewids(pewsonawdatatype='usewid')
+}(haspewsonawdata='twue')
 
-struct FlowContext {
-  1: required list<RecommendationStep> steps
-}(hasPersonalData='true')
+stwuct fwowcontext {
+  1: wequiwed w-wist<wecommendationstep> steps
+}(haspewsonawdata='twue')

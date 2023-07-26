@@ -1,271 +1,271 @@
-package com.twitter.tweetypie.handler
+package com.twittew.tweetypie.handwew
 
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.UserId
-import com.twitter.tweetypie._
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.repository.UserIdentityRepository
-import com.twitter.tweetypie.repository.UserKey
-import com.twitter.tweetypie.thriftscala.ConversationControl
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.thriftscala.TweetCreateConversationControl
-import com.twitter.tweetypie.thriftscala.TweetCreateState.ConversationControlNotAllowed
-import com.twitter.tweetypie.thriftscala.TweetCreateState.InvalidConversationControl
-import com.twitter.tweetypie.util.ConversationControls
-import com.twitter.util.logging.Logging
+impowt com.twittew.featuweswitches.v2.featuweswitchwesuwts
+i-impowt com.twittew.stitch.stitch
+i-impowt com.twittew.tweetypie.usewid
+i-impowt com.twittew.tweetypie._
+i-impowt com.twittew.tweetypie.cowe.tweetcweatefaiwuwe
+i-impowt c-com.twittew.tweetypie.wepositowy.usewidentitywepositowy
+i-impowt c-com.twittew.tweetypie.wepositowy.usewkey
+impowt com.twittew.tweetypie.thwiftscawa.convewsationcontwow
+impowt com.twittew.tweetypie.thwiftscawa.tweet
+impowt com.twittew.tweetypie.thwiftscawa.tweetcweateconvewsationcontwow
+i-impowt com.twittew.tweetypie.thwiftscawa.tweetcweatestate.convewsationcontwownotawwowed
+impowt com.twittew.tweetypie.thwiftscawa.tweetcweatestate.invawidconvewsationcontwow
+i-impowt com.twittew.tweetypie.utiw.convewsationcontwows
+i-impowt com.twittew.utiw.wogging.wogging
 
 /**
- * Process request parameters into a ConversationControl value.
+ * pwocess wequest pawametews into a convewsationcontwow v-vawue. (U ﹏ U)
  */
-object ConversationControlBuilder extends Logging {
-  type Type = Request => Stitch[Option[ConversationControl]]
+object convewsationcontwowbuiwdew e-extends wogging {
+  t-type type = wequest => stitch[option[convewsationcontwow]]
 
-  type ScreenName = String
+  type scweenname = stwing
 
   /**
-   * The fields necessary to create a [[ConversationControl]].
+   * the fiewds n-nyecessawy to cweate a [[convewsationcontwow]]. (˘ω˘)
    *
-   * This is a trait rather than a case class to avoid running the
-   * code to extract the mentions in the cases where handling the
-   * request doesn't need to use them (the common case where
-   * tweetCreateConversationControl is None).
+   * this is a twait wathew than a case cwass to avoid w-wunning the
+   * code to extwact t-the mentions i-in the cases whewe h-handwing the
+   * w-wequest doesn't nyeed to use them (the common c-case whewe
+   * tweetcweateconvewsationcontwow is nyone). (ꈍᴗꈍ)
    */
-  trait Request {
-    def tweetCreateConversationControl: Option[TweetCreateConversationControl]
-    def tweetAuthorId: UserId
-    def mentionedUserScreenNames: Set[String]
+  t-twait wequest {
+    def tweetcweateconvewsationcontwow: option[tweetcweateconvewsationcontwow]
+    def tweetauthowid: usewid
+    def mentionedusewscweennames: s-set[stwing]
 
-    def noteTweetMentionedUserIds: Option[Set[Long]]
+    def nyotetweetmentionedusewids: o-option[set[wong]]
   }
 
-  object Request {
+  o-object w-wequest {
 
     /**
-     * Extract the data necessary to create a [[ConversationControl]]
-     * for a new [[Tweet]]. This is intended for use when creating
-     * Tweets. It must be called after the Tweet has had its entities
-     * extracted.
+     * extwact the data nyecessawy to cweate a [[convewsationcontwow]]
+     * f-fow a nyew [[tweet]]. /(^•ω•^) t-this is intended fow u-use when cweating
+     * t-tweets. >_< it must be cawwed a-aftew the tweet has had its e-entities
+     * extwacted. σωσ
      */
-    def fromTweet(
-      tweet: Tweet,
-      tweetCreateConversationControl: Option[TweetCreateConversationControl],
-      noteTweetMentionedUserIdsList: Option[Seq[Long]]
-    ): Request = {
-      val cctl = tweetCreateConversationControl
-      new Request {
-        def tweetCreateConversationControl: Option[TweetCreateConversationControl] = cctl
-        def mentionedUserScreenNames: Set[ScreenName] =
-          tweet.mentions
-          // Enforce that the Tweet's mentions have already been
-          // extracted from the text. (Mentions will be None if they
-          // have not yet been extracted.)
-            .getOrElse(
-              throw new RuntimeException(
-                "Mentions must be extracted before applying ConversationControls"))
-            .map(_.screenName)
-            .toSet
+    def fwomtweet(
+      t-tweet: tweet, ^^;;
+      t-tweetcweateconvewsationcontwow: option[tweetcweateconvewsationcontwow], 😳
+      n-nyotetweetmentionedusewidswist: o-option[seq[wong]]
+    ): wequest = {
+      vaw cctw = tweetcweateconvewsationcontwow
+      nyew wequest {
+        def tweetcweateconvewsationcontwow: option[tweetcweateconvewsationcontwow] = c-cctw
+        d-def mentionedusewscweennames: set[scweenname] =
+          t-tweet.mentions
+          // e-enfowce that the t-tweet's mentions have awweady been
+          // extwacted fwom the text. >_< (mentions w-wiww be nyone if they
+          // have nyot yet been extwacted.)
+            .getowewse(
+              thwow n-nyew wuntimeexception(
+                "mentions must be extwacted b-befowe appwying c-convewsationcontwows"))
+            .map(_.scweenname)
+            .toset
 
-        def tweetAuthorId: UserId = tweet.coreData.get.userId
-        def noteTweetMentionedUserIds: Option[Set[Long]] =
-          noteTweetMentionedUserIdsList.map(_.toSet)
+        d-def tweetauthowid: usewid = t-tweet.cowedata.get.usewid
+        d-def notetweetmentionedusewids: o-option[set[wong]] =
+          n-nyotetweetmentionedusewidswist.map(_.toset)
       }
     }
   }
 
   /**
-   * Create a ConversationControlBuilder that looks up user ids for
-   * screen names using the specified UserIdentityRepository.
+   * cweate a convewsationcontwowbuiwdew t-that wooks up usew i-ids fow
+   * s-scween nyames using t-the specified u-usewidentitywepositowy. -.-
    */
-  def fromUserIdentityRepo(
-    statsReceiver: StatsReceiver,
-    userIdentityRepo: UserIdentityRepository.Type
-  ): Request => Stitch[Option[ConversationControl]] =
-    ConversationControlBuilder(
-      getUserId = screenName => userIdentityRepo(UserKey.byScreenName(screenName)).map(_.id),
-      statsReceiver = statsReceiver
+  def fwomusewidentitywepo(
+    statsweceivew: statsweceivew, UwU
+    u-usewidentitywepo: usewidentitywepositowy.type
+  ): wequest => stitch[option[convewsationcontwow]] =
+    convewsationcontwowbuiwdew(
+      getusewid = s-scweenname => usewidentitywepo(usewkey.byscweenname(scweenname)).map(_.id), :3
+      statsweceivew = statsweceivew
     )
 
   /**
-   * Extract the inviteViaMention value which does not exist on the TweetCreateConversationControl
-   * itself but does exist on the structures it unions.
+   * e-extwact t-the inviteviamention v-vawue which does nyot exist o-on the tweetcweateconvewsationcontwow
+   * itsewf but does exist o-on the stwuctuwes i-it unions.
    */
-  def inviteViaMention(tccc: TweetCreateConversationControl): Boolean =
+  def inviteviamention(tccc: tweetcweateconvewsationcontwow): boowean =
     tccc match {
-      case TweetCreateConversationControl.ByInvitation(c) => c.inviteViaMention.contains(true)
-      case TweetCreateConversationControl.Community(c) => c.inviteViaMention.contains(true)
-      case TweetCreateConversationControl.Followers(c) => c.inviteViaMention.contains(true)
-      case _ => false
+      case tweetcweateconvewsationcontwow.byinvitation(c) => c-c.inviteviamention.contains(twue)
+      case tweetcweateconvewsationcontwow.community(c) => c-c.inviteviamention.contains(twue)
+      case tweetcweateconvewsationcontwow.fowwowews(c) => c-c.inviteviamention.contains(twue)
+      c-case _ => fawse
     }
 
   /**
-   * Translates the TweetCreateConversationControl into
-   * ConversationControl using the context from the rest of the tweet
-   * creation. For the most part, this is just a direct translation,
-   * plus filling in the contextual user ids (mentioned users and tweet
-   * author).
+   * twanswates the tweetcweateconvewsationcontwow i-into
+   * c-convewsationcontwow using t-the context fwom t-the west of the tweet
+   * cweation. σωσ fow the most pawt, >w< this is just a diwect t-twanswation, (ˆ ﻌ ˆ)♡
+   * p-pwus fiwwing i-in the contextuaw usew ids (mentioned u-usews and t-tweet
+   * authow). ʘwʘ
    */
-  def apply(
-    statsReceiver: StatsReceiver,
-    getUserId: ScreenName => Stitch[UserId]
-  ): Request => Stitch[Option[ConversationControl]] = {
-    val userIdLookupsCounter = statsReceiver.counter("user_id_lookups")
-    val conversationControlPresentCounter = statsReceiver.counter("conversation_control_present")
-    val conversationControlInviteViaMentionPresentCounter =
-      statsReceiver.counter("conversation_control_invite_via_mention_present")
-    val failureCounter = statsReceiver.counter("failures")
+  def a-appwy(
+    statsweceivew: statsweceivew, :3
+    getusewid: scweenname => stitch[usewid]
+  ): w-wequest => s-stitch[option[convewsationcontwow]] = {
+    vaw usewidwookupscountew = statsweceivew.countew("usew_id_wookups")
+    v-vaw convewsationcontwowpwesentcountew = s-statsweceivew.countew("convewsation_contwow_pwesent")
+    vaw convewsationcontwowinviteviamentionpwesentcountew =
+      statsweceivew.countew("convewsation_contwow_invite_via_mention_pwesent")
+    vaw faiwuwecountew = s-statsweceivew.countew("faiwuwes")
 
-    // Get the user ids for these screen names. Any users who do not
-    // exist will be silently dropped.
-    def getExistingUserIds(
-      screenNames: Set[ScreenName],
-      mentionedUserIds: Option[Set[Long]]
-    ): Stitch[Set[UserId]] = {
-      mentionedUserIds match {
-        case Some(userIds) => Stitch.value(userIds)
+    // get the usew ids fow these scween nyames. (˘ω˘) any usews who do n-nyot
+    // exist wiww be siwentwy dwopped. 😳😳😳
+    d-def getexistingusewids(
+      s-scweennames: set[scweenname], rawr x3
+      mentionedusewids: option[set[wong]]
+    ): s-stitch[set[usewid]] = {
+      m-mentionedusewids match {
+        case some(usewids) => s-stitch.vawue(usewids)
         case _ =>
-          Stitch
-            .traverse(screenNames.toSeq) { screenName =>
-              getUserId(screenName).liftNotFoundToOption
-                .ensure(userIdLookupsCounter.incr())
+          s-stitch
+            .twavewse(scweennames.toseq) { scweenname =>
+              getusewid(scweenname).wiftnotfoundtooption
+                .ensuwe(usewidwookupscountew.incw())
             }
-            .map(userIdOptions => userIdOptions.flatten.toSet)
+            .map(usewidoptions => usewidoptions.fwatten.toset)
       }
     }
 
-    // This is broken out just to make it syntactically nicer to add
-    // the stats handling
-    def process(request: Request): Stitch[Option[ConversationControl]] =
-      request.tweetCreateConversationControl match {
-        case None => Stitch.None
-        case Some(cctl) =>
-          cctl match {
-            case TweetCreateConversationControl.ByInvitation(byInvitationControl) =>
-              for {
-                invitedUserIds <- getExistingUserIds(
-                  request.mentionedUserScreenNames,
-                  request.noteTweetMentionedUserIds)
-              } yield Some(
-                ConversationControls.byInvitation(
-                  invitedUserIds = invitedUserIds.toSeq.filterNot(_ == request.tweetAuthorId),
-                  conversationTweetAuthorId = request.tweetAuthorId,
-                  byInvitationControl.inviteViaMention
+    // t-this is bwoken out just to m-make it syntacticawwy n-nyicew to add
+    // the stats h-handwing
+    def pwocess(wequest: w-wequest): s-stitch[option[convewsationcontwow]] =
+      w-wequest.tweetcweateconvewsationcontwow match {
+        c-case nyone => s-stitch.none
+        case some(cctw) =>
+          cctw match {
+            c-case t-tweetcweateconvewsationcontwow.byinvitation(byinvitationcontwow) =>
+              f-fow {
+                invitedusewids <- getexistingusewids(
+                  w-wequest.mentionedusewscweennames, (✿oωo)
+                  wequest.notetweetmentionedusewids)
+              } y-yiewd some(
+                c-convewsationcontwows.byinvitation(
+                  invitedusewids = invitedusewids.toseq.fiwtewnot(_ == wequest.tweetauthowid), (ˆ ﻌ ˆ)♡
+                  c-convewsationtweetauthowid = w-wequest.tweetauthowid, :3
+                  b-byinvitationcontwow.inviteviamention
                 )
               )
 
-            case TweetCreateConversationControl.Community(communityControl) =>
-              for {
-                invitedUserIds <- getExistingUserIds(
-                  request.mentionedUserScreenNames,
-                  request.noteTweetMentionedUserIds)
-              } yield Some(
-                ConversationControls.community(
-                  invitedUserIds = invitedUserIds.toSeq.filterNot(_ == request.tweetAuthorId),
-                  conversationTweetAuthorId = request.tweetAuthorId,
-                  communityControl.inviteViaMention
+            c-case tweetcweateconvewsationcontwow.community(communitycontwow) =>
+              fow {
+                i-invitedusewids <- getexistingusewids(
+                  wequest.mentionedusewscweennames, (U ᵕ U❁)
+                  wequest.notetweetmentionedusewids)
+              } yiewd some(
+                convewsationcontwows.community(
+                  i-invitedusewids = invitedusewids.toseq.fiwtewnot(_ == w-wequest.tweetauthowid),
+                  convewsationtweetauthowid = w-wequest.tweetauthowid, ^^;;
+                  communitycontwow.inviteviamention
                 )
               )
-            case TweetCreateConversationControl.Followers(followersControl) =>
-              for {
-                invitedUserIds <- getExistingUserIds(
-                  request.mentionedUserScreenNames,
-                  request.noteTweetMentionedUserIds)
-              } yield Some(
-                ConversationControls.followers(
-                  invitedUserIds = invitedUserIds.toSeq.filterNot(_ == request.tweetAuthorId),
-                  conversationTweetAuthorId = request.tweetAuthorId,
-                  followersControl.inviteViaMention
+            c-case tweetcweateconvewsationcontwow.fowwowews(fowwowewscontwow) =>
+              fow {
+                i-invitedusewids <- g-getexistingusewids(
+                  w-wequest.mentionedusewscweennames, mya
+                  w-wequest.notetweetmentionedusewids)
+              } yiewd s-some(
+                convewsationcontwows.fowwowews(
+                  invitedusewids = invitedusewids.toseq.fiwtewnot(_ == wequest.tweetauthowid), 😳😳😳
+                  convewsationtweetauthowid = wequest.tweetauthowid, OwO
+                  f-fowwowewscontwow.inviteviamention
                 )
               )
-            // This should only ever happen if a new value is added to the
-            // union and we don't update this code.
-            case TweetCreateConversationControl.UnknownUnionField(fld) =>
-              throw new RuntimeException(s"Unexpected TweetCreateConversationControl: $fld")
+            // t-this shouwd o-onwy evew happen if a nyew vawue i-is added to the
+            // union and we don't update this code. rawr
+            case tweetcweateconvewsationcontwow.unknownunionfiewd(fwd) =>
+              t-thwow n-nyew wuntimeexception(s"unexpected tweetcweateconvewsationcontwow: $fwd")
           }
       }
 
-    (request: Request) => {
-      // Wrap in Stitch to encapsulate any exceptions that happen
-      // before making a Stitch call inside of process.
-      Stitch(process(request)).flatten.respond { response =>
-        // If we count this before doing the work, and the stats are
-        // collected before the RPC completes, then any failures
-        // will get counted in a different minute than the request
-        // that caused it.
-        request.tweetCreateConversationControl.foreach { cc =>
-          conversationControlPresentCounter.incr()
-          if (inviteViaMention(cc)) conversationControlInviteViaMentionPresentCounter.incr()
+    (wequest: w-wequest) => {
+      // wwap in stitch to encapsuwate a-any exceptions t-that happen
+      // befowe m-making a stitch c-caww inside of pwocess. XD
+      stitch(pwocess(wequest)).fwatten.wespond { wesponse =>
+        // if we count this befowe doing the w-wowk, (U ﹏ U) and the s-stats awe
+        // c-cowwected befowe t-the wpc compwetes, (˘ω˘) t-then any faiwuwes
+        // w-wiww get counted i-in a diffewent minute than t-the wequest
+        // t-that caused it. UwU
+        w-wequest.tweetcweateconvewsationcontwow.foweach { cc =>
+          convewsationcontwowpwesentcountew.incw()
+          i-if (inviteviamention(cc)) convewsationcontwowinviteviamentionpwesentcountew.incw()
         }
 
-        response.onFailure { e =>
-          error(message = "Failed to create conversation control", cause = e)
-          // Don't bother counting individual exceptions, because
-          // the cost of keeping those stats is probably not worth
-          // the convenience of not having to look in the logs.
-          failureCounter.incr()
+        wesponse.onfaiwuwe { e-e =>
+          ewwow(message = "faiwed t-to cweate convewsation contwow", >_< c-cause = e)
+          // don't bothew counting i-individuaw e-exceptions, σωσ because
+          // t-the cost of keeping those stats is pwobabwy nyot wowth
+          // t-the convenience of nyot having to wook in t-the wogs. 🥺
+          f-faiwuwecountew.incw()
         }
       }
     }
   }
 
   /**
-   * Validates if a conversation control request is allowed by feature switches
-   * and is only requested on a root tweet.
+   * vawidates if a c-convewsation contwow wequest is a-awwowed by featuwe s-switches
+   * and is onwy wequested on a woot t-tweet. 🥺
    */
-  object Validate {
-    case class Request(
-      matchedResults: Option[FeatureSwitchResults],
-      conversationControl: Option[TweetCreateConversationControl],
-      inReplyToTweetId: Option[TweetId])
+  object vawidate {
+    case cwass w-wequest(
+      m-matchedwesuwts: option[featuweswitchwesuwts], ʘwʘ
+      c-convewsationcontwow: option[tweetcweateconvewsationcontwow], :3
+      i-inwepwytotweetid: o-option[tweetid])
 
-    type Type = FutureEffect[Request]
+    t-type type = futuweeffect[wequest]
 
-    val ExInvalidConversationControl = TweetCreateFailure.State(InvalidConversationControl)
-    val ExConversationControlNotAllowed = TweetCreateFailure.State(ConversationControlNotAllowed)
-    val ConversationControlStatusUpdateEnabledKey = "conversation_control_status_update_enabled"
-    val ConversationControlFollowersEnabledKey = "conversation_control_my_followers_enabled"
+    vaw exinvawidconvewsationcontwow = tweetcweatefaiwuwe.state(invawidconvewsationcontwow)
+    vaw exconvewsationcontwownotawwowed = tweetcweatefaiwuwe.state(convewsationcontwownotawwowed)
+    vaw convewsationcontwowstatusupdateenabwedkey = "convewsation_contwow_status_update_enabwed"
+    vaw convewsationcontwowfowwowewsenabwedkey = "convewsation_contwow_my_fowwowews_enabwed"
 
-    def apply(
-      useFeatureSwitchResults: Gate[Unit],
-      statsReceiver: StatsReceiver
-    ): Type = request => {
-      def fsDenied(fsKey: String): Boolean = {
-        val featureEnabledOpt: Option[Boolean] =
-          // Do not log impressions, which would interfere with shared client experiment data.
-          request.matchedResults.flatMap(_.getBoolean(fsKey, shouldLogImpression = false))
-        val fsEnabled = featureEnabledOpt.contains(true)
-        if (!fsEnabled) {
-          statsReceiver.counter(s"check_conversation_control/unauthorized/fs/$fsKey").incr()
+    def appwy(
+      usefeatuweswitchwesuwts: gate[unit], (U ﹏ U)
+      statsweceivew: statsweceivew
+    ): type = wequest => {
+      def f-fsdenied(fskey: s-stwing): boowean = {
+        vaw featuweenabwedopt: option[boowean] =
+          // d-do nyot wog i-impwessions, (U ﹏ U) which w-wouwd intewfewe with shawed c-cwient expewiment data. ʘwʘ
+          w-wequest.matchedwesuwts.fwatmap(_.getboowean(fskey, >w< s-shouwdwogimpwession = fawse))
+        v-vaw fsenabwed = featuweenabwedopt.contains(twue)
+        i-if (!fsenabwed) {
+          s-statsweceivew.countew(s"check_convewsation_contwow/unauthowized/fs/$fskey").incw()
         }
-        !fsEnabled
+        !fsenabwed
       }
 
-      val isCcRequest: Boolean = request.conversationControl.isDefined
+      vaw isccwequest: boowean = wequest.convewsationcontwow.isdefined
 
-      val isCcInvalidParams = isCcRequest && {
-        val isRootTweet = request.inReplyToTweetId.isEmpty
-        if (!isRootTweet) {
-          statsReceiver.counter("check_conversation_control/invalid").incr()
+      v-vaw isccinvawidpawams = isccwequest && {
+        v-vaw iswoottweet = w-wequest.inwepwytotweetid.isempty
+        i-if (!iswoottweet) {
+          s-statsweceivew.countew("check_convewsation_contwow/invawid").incw()
         }
-        !isRootTweet
+        !iswoottweet
       }
 
-      val isCcDeniedByFs = isCcRequest && {
-        val isFollower = request.conversationControl.exists {
-          case _: TweetCreateConversationControl.Followers => true
-          case _ => false
+      v-vaw isccdeniedbyfs = i-isccwequest && {
+        v-vaw isfowwowew = w-wequest.convewsationcontwow.exists {
+          case _: tweetcweateconvewsationcontwow.fowwowews => t-twue
+          c-case _ => fawse
         }
 
-        fsDenied(ConversationControlStatusUpdateEnabledKey) ||
-        (isFollower && fsDenied(ConversationControlFollowersEnabledKey))
+        f-fsdenied(convewsationcontwowstatusupdateenabwedkey) ||
+        (isfowwowew && fsdenied(convewsationcontwowfowwowewsenabwedkey))
       }
 
-      if (isCcDeniedByFs && useFeatureSwitchResults()) {
-        Future.exception(ExConversationControlNotAllowed)
-      } else if (isCcInvalidParams) {
-        Future.exception(ExInvalidConversationControl)
-      } else {
-        Future.Unit
+      i-if (isccdeniedbyfs && usefeatuweswitchwesuwts()) {
+        futuwe.exception(exconvewsationcontwownotawwowed)
+      } e-ewse if (isccinvawidpawams) {
+        futuwe.exception(exinvawidconvewsationcontwow)
+      } e-ewse {
+        f-futuwe.unit
       }
     }
   }

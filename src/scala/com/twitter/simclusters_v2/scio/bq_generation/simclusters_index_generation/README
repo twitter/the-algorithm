@@ -1,146 +1,146 @@
-# Adhoc SimClusters Cluster-to-tweet Index Generation Jobs
-## Build and bundle the binaries
+# adhoc simcwustews cwustew-to-tweet i-index genewation j-jobs
+## buiwd a-and bundwe the b-binawies
 
 ```
- bazel bundle src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/...
+ b-bazew bundwe swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/... >w<
 ```
 
-## Run the adhoc jobs
-### To run fav based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/fav-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/fav-based-cluster-to-tweet-index-generation-adhoc-job-bundle/fav-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-07-15" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="fav-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:fav-based-cluster-to-tweet-index-generation-adhoc-job"
+## wun t-the adhoc jobs
+### t-to wun fav b-based cwustew-to-tweet index genewation job (adhoc):
+bin/d6w cweate \
+  twttw-wecos-mw-pwod/us-centwaw1/fav-based-index-genewation-adhoc-job \
+  s-swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/engagement-event-based-simcwustews-index-genewation-job.d6w \
+  --jaw dist/fav-based-cwustew-to-tweet-index-genewation-adhoc-job-bundwe/fav-based-cwustew-to-tweet-index-genewation-adhoc-job.jaw \
+  --bind=pwofiwe.usew_name=youw_wdap \
+  --bind=pwofiwe.date="2022-07-15" \
+  --bind=pwofiwe.fwequency="pt1h" \
+  --bind=pwofiwe.enviwonment=dev \
+  --bind=pwofiwe.job_name="fav-based-index-genewation-adhoc-job" \
+  --bind=pwofiwe.buiwd_tawget="swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation:fav-based-cwustew-to-tweet-index-genewation-adhoc-job"
 
-### To run VideoView based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/video-view-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/video-view-based-cluster-to-tweet-index-generation-adhoc-job-bundle/video-view-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-07-15" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="video-view-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:video-view-based-cluster-to-tweet-index-generation-adhoc-job"
+### to wun videoview b-based cwustew-to-tweet index genewation j-job (adhoc):
+bin/d6w cweate \
+  twttw-wecos-mw-pwod/us-centwaw1/video-view-based-index-genewation-adhoc-job \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/engagement-event-based-simcwustews-index-genewation-job.d6w \
+  --jaw d-dist/video-view-based-cwustew-to-tweet-index-genewation-adhoc-job-bundwe/video-view-based-cwustew-to-tweet-index-genewation-adhoc-job.jaw \
+  --bind=pwofiwe.usew_name=youw_wdap \
+  --bind=pwofiwe.date="2022-07-15" \
+  --bind=pwofiwe.fwequency="pt1h" \
+  --bind=pwofiwe.enviwonment=dev \
+  --bind=pwofiwe.job_name="video-view-based-index-genewation-adhoc-job" \
+  --bind=pwofiwe.buiwd_tawget="swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation:video-view-based-cwustew-to-tweet-index-genewation-adhoc-job"
 
-### To run retweet based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/retweet-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/retweet-based-cluster-to-tweet-index-generation-adhoc-job-bundle/retweet-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-07-15" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="retweet-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:retweet-based-cluster-to-tweet-index-generation-adhoc-job"
+### to wun wetweet b-based cwustew-to-tweet i-index genewation job (adhoc):
+bin/d6w cweate \
+  twttw-wecos-mw-pwod/us-centwaw1/wetweet-based-index-genewation-adhoc-job \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/engagement-event-based-simcwustews-index-genewation-job.d6w \
+  --jaw d-dist/wetweet-based-cwustew-to-tweet-index-genewation-adhoc-job-bundwe/wetweet-based-cwustew-to-tweet-index-genewation-adhoc-job.jaw \
+  --bind=pwofiwe.usew_name=youw_wdap \
+  --bind=pwofiwe.date="2022-07-15" \
+  --bind=pwofiwe.fwequency="pt1h" \
+  --bind=pwofiwe.enviwonment=dev \
+  --bind=pwofiwe.job_name="wetweet-based-index-genewation-adhoc-job" \
+  --bind=pwofiwe.buiwd_tawget="swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation:wetweet-based-cwustew-to-tweet-index-genewation-adhoc-job"
 
-### To run reply based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/reply-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/reply-based-cluster-to-tweet-index-generation-adhoc-job-bundle/reply-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-07-15" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="reply-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:reply-based-cluster-to-tweet-index-generation-adhoc-job"
+### to wun wepwy based cwustew-to-tweet index genewation job (adhoc):
+b-bin/d6w cweate \
+  twttw-wecos-mw-pwod/us-centwaw1/wepwy-based-index-genewation-adhoc-job \
+  s-swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/engagement-event-based-simcwustews-index-genewation-job.d6w \
+  --jaw d-dist/wepwy-based-cwustew-to-tweet-index-genewation-adhoc-job-bundwe/wepwy-based-cwustew-to-tweet-index-genewation-adhoc-job.jaw \
+  --bind=pwofiwe.usew_name=youw_wdap \
+  --bind=pwofiwe.date="2022-07-15" \
+  --bind=pwofiwe.fwequency="pt1h" \
+  --bind=pwofiwe.enviwonment=dev \
+  --bind=pwofiwe.job_name="wepwy-based-index-genewation-adhoc-job" \
+  --bind=pwofiwe.buiwd_tawget="swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation:wepwy-based-cwustew-to-tweet-index-genewation-adhoc-job"
 
-### To run push open based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/push-open-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/push-open-based-cluster-to-tweet-index-generation-adhoc-job-bundle/push-open-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-10-06" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="push-open-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:push-open-based-cluster-to-tweet-index-generation-adhoc-job"
+### to w-wun push open b-based cwustew-to-tweet index genewation job (adhoc):
+b-bin/d6w cweate \
+  twttw-wecos-mw-pwod/us-centwaw1/push-open-based-index-genewation-adhoc-job \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/engagement-event-based-simcwustews-index-genewation-job.d6w \
+  --jaw d-dist/push-open-based-cwustew-to-tweet-index-genewation-adhoc-job-bundwe/push-open-based-cwustew-to-tweet-index-genewation-adhoc-job.jaw \
+  --bind=pwofiwe.usew_name=youw_wdap \
+  --bind=pwofiwe.date="2022-10-06" \
+  --bind=pwofiwe.fwequency="pt1h" \
+  --bind=pwofiwe.enviwonment=dev \
+  --bind=pwofiwe.job_name="push-open-based-index-genewation-adhoc-job" \
+  --bind=pwofiwe.buiwd_tawget="swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation:push-open-based-cwustew-to-tweet-index-genewation-adhoc-job"
 
-# For prod scheduled Cluster-to-tweet Index Generation Jobs
-### To run Fav based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/fav-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-07-19" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="fav-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:fav-based-cluster-to-tweet-index-generation-batch-job"
+# fow pwod scheduwed cwustew-to-tweet index genewation jobs
+### to wun fav based cwustew-to-tweet i-index genewation job (batch):
+ b-bin/d6w s-scheduwe \
+  t-twttw-wecos-mw-pwod/us-centwaw1/fav-based-index-genewation-batch-job  \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/engagement-event-based-simcwustews-index-genewation-job.d6w \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.enviwonment=pwod \
+  --bind=pwofiwe.date="2022-07-19" \
+  --bind=pwofiwe.fwequency="pt1h" \
+  --bind=pwofiwe.job_name="fav-based-index-genewation-batch-job" \
+  --bind=pwofiwe.buiwd_tawget="swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation:fav-based-cwustew-to-tweet-index-genewation-batch-job"
 
-### To run VideoView based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/video-view-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-07-19" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="video-view-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:video-view-based-cluster-to-tweet-index-generation-batch-job"
+### to wun videoview based cwustew-to-tweet i-index g-genewation job (batch):
+ bin/d6w s-scheduwe \
+  t-twttw-wecos-mw-pwod/us-centwaw1/video-view-based-index-genewation-batch-job  \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/engagement-event-based-simcwustews-index-genewation-job.d6w \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.enviwonment=pwod \
+  --bind=pwofiwe.date="2022-07-19" \
+  --bind=pwofiwe.fwequency="pt1h" \
+  --bind=pwofiwe.job_name="video-view-based-index-genewation-batch-job" \
+  --bind=pwofiwe.buiwd_tawget="swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation:video-view-based-cwustew-to-tweet-index-genewation-batch-job"
 
-### To run Retweet based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/retweet-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-07-19" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="retweet-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:retweet-based-cluster-to-tweet-index-generation-batch-job"
+### t-to wun wetweet based cwustew-to-tweet index g-genewation job (batch):
+ bin/d6w scheduwe \
+  t-twttw-wecos-mw-pwod/us-centwaw1/wetweet-based-index-genewation-batch-job  \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/engagement-event-based-simcwustews-index-genewation-job.d6w \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.enviwonment=pwod \
+  --bind=pwofiwe.date="2022-07-19" \
+  --bind=pwofiwe.fwequency="pt1h" \
+  --bind=pwofiwe.job_name="wetweet-based-index-genewation-batch-job" \
+  --bind=pwofiwe.buiwd_tawget="swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation:wetweet-based-cwustew-to-tweet-index-genewation-batch-job"
 
-### To run Reply based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/reply-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-07-19" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="reply-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:reply-based-cluster-to-tweet-index-generation-batch-job"
+### t-to wun wepwy based cwustew-to-tweet i-index genewation j-job (batch):
+ bin/d6w scheduwe \
+  twttw-wecos-mw-pwod/us-centwaw1/wepwy-based-index-genewation-batch-job  \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/engagement-event-based-simcwustews-index-genewation-job.d6w \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.enviwonment=pwod \
+  --bind=pwofiwe.date="2022-07-19" \
+  --bind=pwofiwe.fwequency="pt1h" \
+  --bind=pwofiwe.job_name="wepwy-based-index-genewation-batch-job" \
+  --bind=pwofiwe.buiwd_tawget="swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation:wepwy-based-cwustew-to-tweet-index-genewation-batch-job"
 
-### To run Push open based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/push-open-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-10-06" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="push-open-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:push-open-based-cluster-to-tweet-index-generation-batch-job"
+### to wun push open based cwustew-to-tweet index g-genewation job (batch):
+ b-bin/d6w scheduwe \
+  t-twttw-wecos-mw-pwod/us-centwaw1/push-open-based-index-genewation-batch-job  \
+  s-swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/engagement-event-based-simcwustews-index-genewation-job.d6w \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.enviwonment=pwod \
+  --bind=pwofiwe.date="2022-10-06" \
+  --bind=pwofiwe.fwequency="pt1h" \
+  --bind=pwofiwe.job_name="push-open-based-index-genewation-batch-job" \
+  --bind=pwofiwe.buiwd_tawget="swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation:push-open-based-cwustew-to-tweet-index-genewation-batch-job"
 
-### To run Ads Fav based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/ads-fav-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-10-06" \
-  --bind=profile.frequency="PT3H" \
-  --bind=profile.job_name="ads-fav-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:ads-fav-based-cluster-to-tweet-index-generation-batch-job"
+### t-to wun ads fav based cwustew-to-tweet index genewation job (batch):
+ b-bin/d6w scheduwe \
+  twttw-wecos-mw-pwod/us-centwaw1/ads-fav-based-index-genewation-batch-job  \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/engagement-event-based-simcwustews-index-genewation-job.d6w \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.enviwonment=pwod \
+  --bind=pwofiwe.date="2022-10-06" \
+  --bind=pwofiwe.fwequency="pt3h" \
+  --bind=pwofiwe.job_name="ads-fav-based-index-genewation-batch-job" \
+  --bind=pwofiwe.buiwd_tawget="swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation:ads-fav-based-cwustew-to-tweet-index-genewation-batch-job"
 
-### To run Ads Fav Click based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/ads-fav-click-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-12-09" \
-  --bind=profile.frequency="PT3H" \
-  --bind=profile.job_name="ads-fav-click-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:ads-fav-click-based-cluster-to-tweet-index-generation-batch-job"
+### to wun ads fav cwick based cwustew-to-tweet i-index genewation job (batch):
+ b-bin/d6w s-scheduwe \
+  t-twttw-wecos-mw-pwod/us-centwaw1/ads-fav-cwick-based-index-genewation-batch-job  \
+  swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation/engagement-event-based-simcwustews-index-genewation-job.d6w \
+  --bind=pwofiwe.usew_name=cassowawy \
+  --bind=pwofiwe.enviwonment=pwod \
+  --bind=pwofiwe.date="2022-12-09" \
+  --bind=pwofiwe.fwequency="pt3h" \
+  --bind=pwofiwe.job_name="ads-fav-cwick-based-index-genewation-batch-job" \
+  --bind=pwofiwe.buiwd_tawget="swc/scawa/com/twittew/simcwustews_v2/scio/bq_genewation/simcwustews_index_genewation:ads-fav-cwick-based-cwustew-to-tweet-index-genewation-batch-job"
 

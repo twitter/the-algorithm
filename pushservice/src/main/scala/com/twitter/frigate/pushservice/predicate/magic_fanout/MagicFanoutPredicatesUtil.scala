@@ -1,218 +1,218 @@
-package com.twitter.frigate.pushservice.predicate.magic_fanout
+package com.twittew.fwigate.pushsewvice.pwedicate.magic_fanout
 
-import com.twitter.eventdetection.event_context.util.SimClustersUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.magic_events.thriftscala._
-import com.twitter.frigate.pushservice.model.MagicFanoutEventPushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutNewsEventPushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutProductLaunchPushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.util.Future
+impowt com.twittew.eventdetection.event_context.utiw.simcwustewsutiw
+i-impowt com.twittew.finagwe.stats.statsweceivew
+i-impowt com.twittew.fwigate.magic_events.thwiftscawa._
+i-impowt c-com.twittew.fwigate.pushsewvice.modew.magicfanouteventpushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.magicfanoutnewseventpushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.modew.magicfanoutpwoductwaunchpushcandidate
+i-impowt com.twittew.fwigate.pushsewvice.pawams.pushfeatuweswitchpawams
+i-impowt com.twittew.fwigate.thwiftscawa.commonwecommendationtype
+impowt com.twittew.simcwustews_v2.common.simcwustewsembedding
+impowt c-com.twittew.simcwustews_v2.thwiftscawa.embeddingtype
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+impowt com.twittew.simcwustews_v2.thwiftscawa.simcwustewsembeddingid
+i-impowt com.twittew.simcwustews_v2.thwiftscawa.{simcwustewsembedding => thwiftsimcwustewsembedding}
+i-impowt com.twittew.utiw.futuwe
 
-object MagicFanoutPredicatesUtil {
+object magicfanoutpwedicatesutiw {
 
-  val UttDomain: Long = 0L
-  type DomainId = Long
-  type EntityId = Long
-  val BroadCategoryTag = "utt:broad_category"
-  val UgmMomentTag = "MMTS.isUGMMoment"
-  val TopKSimClustersCount = 50
+  vaw u-uttdomain: wong = 0w
+  type domainid = w-wong
+  t-type entityid = wong
+  vaw bwoadcategowytag = "utt:bwoad_categowy"
+  vaw ugmmomenttag = "mmts.isugmmoment"
+  vaw topksimcwustewscount = 50
 
-  case class SimClusterScores(simClusterScoreVector: Map[Int, Double]) {
-    def dotProduct(other: SimClusterScores): Double = {
-      simClusterScoreVector
+  case c-cwass simcwustewscowes(simcwustewscowevectow: map[int, rawr x3 doubwe]) {
+    def dotpwoduct(othew: simcwustewscowes): doubwe = {
+      s-simcwustewscowevectow
         .map {
-          case (clusterId, score) => other.simClusterScoreVector.getOrElse(clusterId, 0.0) * score
-        }.foldLeft(0.0) { _ + _ }
+          case (cwustewid, nyaa~~ s-scowe) => othew.simcwustewscowevectow.getowewse(cwustewid, >_< 0.0) * s-scowe
+        }.fowdweft(0.0) { _ + _ }
     }
 
-    def norm(): Double = {
-      val sumOfSquares: Double = simClusterScoreVector
+    d-def nyowm(): d-doubwe = {
+      vaw sumofsquawes: doubwe = s-simcwustewscowevectow
         .map {
-          case (clusterId, score) => score * score
-        }.foldLeft(0.0)(_ + _)
-      scala.math.sqrt(sumOfSquares)
+          case (cwustewid, ^^;; scowe) => scowe * s-scowe
+        }.fowdweft(0.0)(_ + _)
+      scawa.math.sqwt(sumofsquawes)
     }
 
-    def normedDotProduct(other: SimClusterScores, normalizer: SimClusterScores): Double = {
-      val denominator = normalizer.norm()
-      val score = dotProduct(other)
-      if (denominator != 0.0) {
-        score / denominator
-      } else {
-        score
+    def nyowmeddotpwoduct(othew: simcwustewscowes, (ˆ ﻌ ˆ)♡ nyowmawizew: simcwustewscowes): doubwe = {
+      v-vaw denominatow = nyowmawizew.nowm()
+      v-vaw scowe = dotpwoduct(othew)
+      i-if (denominatow != 0.0) {
+        s-scowe / denominatow
+      } ewse {
+        scowe
       }
     }
   }
 
-  private def isSemanticCoreEntityBroad(
-    semanticCoreEntityTags: Map[(DomainId, EntityId), Set[String]],
-    scEntityId: SemanticCoreID
-  ): Boolean = {
-    semanticCoreEntityTags
-      .getOrElse((scEntityId.domainId, scEntityId.entityId), Set.empty).contains(BroadCategoryTag)
+  pwivate d-def issemanticcoweentitybwoad(
+    s-semanticcoweentitytags: map[(domainid, ^^;; e-entityid), (⑅˘꒳˘) set[stwing]], rawr x3
+    s-scentityid: semanticcoweid
+  ): b-boowean = {
+    semanticcoweentitytags
+      .getowewse((scentityid.domainid, (///ˬ///✿) s-scentityid.entityid), 🥺 set.empty).contains(bwoadcategowytag)
   }
 
-  def isInCountryList(accountCountryCode: String, locales: Seq[String]): Boolean = {
-    locales.map(_.toLowerCase).contains(accountCountryCode.toLowerCase)
+  def isincountwywist(accountcountwycode: s-stwing, >_< wocawes: seq[stwing]): b-boowean = {
+    wocawes.map(_.towowewcase).contains(accountcountwycode.towowewcase)
   }
 
   /**
-   * Boolean check of if a MagicFanout is high priority push
+   * b-boowean c-check of if a magicfanout is high pwiowity push
    */
-  def checkIfHighPriorityNewsEventForCandidate(
-    candidate: MagicFanoutNewsEventPushCandidate
-  ): Future[Boolean] = {
-    candidate.isHighPriorityEvent.map { isHighPriority =>
-      isHighPriority && (candidate.target.params(PushFeatureSwitchParams.EnableHighPriorityPush))
+  def checkifhighpwiowitynewseventfowcandidate(
+    candidate: magicfanoutnewseventpushcandidate
+  ): futuwe[boowean] = {
+    c-candidate.ishighpwiowityevent.map { i-ishighpwiowity =>
+      ishighpwiowity && (candidate.tawget.pawams(pushfeatuweswitchpawams.enabwehighpwiowitypush))
     }
   }
 
   /**
-   * Boolean check of if a MagicFanout event is high priority push
+   * b-boowean check o-of if a magicfanout e-event is high pwiowity push
    */
-  def checkIfHighPriorityEventForCandidate(
-    candidate: MagicFanoutEventPushCandidate
-  ): Future[Boolean] = {
-    candidate.isHighPriorityEvent.map { isHighPriority =>
-      candidate.commonRecType match {
-        case CommonRecommendationType.MagicFanoutSportsEvent =>
-          isHighPriority && (candidate.target.params(
-            PushFeatureSwitchParams.EnableHighPrioritySportsPush))
-        case _ => false
+  def checkifhighpwiowityeventfowcandidate(
+    candidate: m-magicfanouteventpushcandidate
+  ): futuwe[boowean] = {
+    candidate.ishighpwiowityevent.map { ishighpwiowity =>
+      candidate.commonwectype m-match {
+        case commonwecommendationtype.magicfanoutspowtsevent =>
+          i-ishighpwiowity && (candidate.tawget.pawams(
+            p-pushfeatuweswitchpawams.enabwehighpwiowityspowtspush))
+        c-case _ => fawse
       }
     }
   }
 
   /**
-   * Boolean check if to skip target blue verified
+   * b-boowean c-check if to skip t-tawget bwue vewified
    */
-  def shouldSkipBlueVerifiedCheckForCandidate(
-    candidate: MagicFanoutProductLaunchPushCandidate
-  ): Future[Boolean] =
-    Future.value(
-      candidate.target.params(PushFeatureSwitchParams.DisableIsTargetBlueVerifiedPredicate))
+  def s-shouwdskipbwuevewifiedcheckfowcandidate(
+    candidate: magicfanoutpwoductwaunchpushcandidate
+  ): futuwe[boowean] =
+    f-futuwe.vawue(
+      c-candidate.tawget.pawams(pushfeatuweswitchpawams.disabweistawgetbwuevewifiedpwedicate))
 
   /**
-   * Boolean check if to skip target is legacy verified
+   * b-boowean check i-if to skip tawget i-is wegacy vewified
    */
-  def shouldSkipLegacyVerifiedCheckForCandidate(
-    candidate: MagicFanoutProductLaunchPushCandidate
-  ): Future[Boolean] =
-    Future.value(
-      candidate.target.params(PushFeatureSwitchParams.DisableIsTargetLegacyVerifiedPredicate))
+  def shouwdskipwegacyvewifiedcheckfowcandidate(
+    candidate: magicfanoutpwoductwaunchpushcandidate
+  ): f-futuwe[boowean] =
+    futuwe.vawue(
+      candidate.tawget.pawams(pushfeatuweswitchpawams.disabweistawgetwegacyvewifiedpwedicate))
 
-  def shouldSkipSuperFollowCreatorCheckForCandidate(
-    candidate: MagicFanoutProductLaunchPushCandidate
-  ): Future[Boolean] =
-    Future.value(
-      !candidate.target.params(PushFeatureSwitchParams.EnableIsTargetSuperFollowCreatorPredicate))
+  def shouwdskipsupewfowwowcweatowcheckfowcandidate(
+    candidate: magicfanoutpwoductwaunchpushcandidate
+  ): f-futuwe[boowean] =
+    futuwe.vawue(
+      !candidate.tawget.pawams(pushfeatuweswitchpawams.enabweistawgetsupewfowwowcweatowpwedicate))
 
   /**
-   * Boolean check of if a reason of a MagicFanout is higher than the rank threshold of an event
+   * boowean check of if a-a weason of a magicfanout i-is highew t-than the wank thweshowd of a-an event
    */
-  def checkIfErgScEntityReasonMeetsThreshold(
-    rankThreshold: Int,
-    reason: MagicEventsReason,
-  ): Boolean = {
-    reason.reason match {
-      case TargetID.SemanticCoreID(scEntityId: SemanticCoreID) =>
-        reason.rank match {
-          case Some(rank) => rank < rankThreshold
-          case _ => false
+  def checkifewgscentityweasonmeetsthweshowd(
+    w-wankthweshowd: i-int, UwU
+    weason: magiceventsweason, >_<
+  ): boowean = {
+    weason.weason match {
+      case tawgetid.semanticcoweid(scentityid: s-semanticcoweid) =>
+        weason.wank m-match {
+          case some(wank) => w-wank < w-wankthweshowd
+          case _ => fawse
         }
-      case _ => false
+      c-case _ => f-fawse
     }
   }
 
   /**
-   * Check if MagicEventsReasons contains a reason that matches the thresholdw
+   * check if magiceventsweasons c-contains a-a weason that matches the thweshowdw
    */
-  def checkIfValidErgScEntityReasonExists(
-    magicEventsReasons: Option[Seq[MagicEventsReason]],
-    rankThreshold: Int
+  def checkifvawidewgscentityweasonexists(
+    magiceventsweasons: option[seq[magiceventsweason]],
+    w-wankthweshowd: i-int
   )(
-    implicit stats: StatsReceiver
-  ): Boolean = {
-    magicEventsReasons match {
-      case Some(reasons) if reasons.exists(_.isNewUser.contains(true)) => true
-      case Some(reasons) =>
-        reasons.exists { reason =>
-          reason.source.contains(ReasonSource.ErgShortTermInterestSemanticCore) &&
-          checkIfErgScEntityReasonMeetsThreshold(
-            rankThreshold,
-            reason
+    i-impwicit stats: statsweceivew
+  ): b-boowean = {
+    m-magiceventsweasons match {
+      c-case some(weasons) if weasons.exists(_.isnewusew.contains(twue)) => twue
+      case some(weasons) =>
+        weasons.exists { w-weason =>
+          w-weason.souwce.contains(weasonsouwce.ewgshowttewmintewestsemanticcowe) &&
+          checkifewgscentityweasonmeetsthweshowd(
+            wankthweshowd, -.-
+            weason
           )
         }
 
-      case _ => false
+      c-case _ => f-fawse
     }
   }
 
   /**
-   * Get event simcluster vector from event context
+   * get event simcwustew vectow fwom event context
    */
-  def getEventSimClusterVector(
-    simClustersEmbeddingOption: Option[Map[SimClustersEmbeddingId, ThriftSimClustersEmbedding]],
-    embeddingMapKey: (ModelVersion, EmbeddingType),
-    topKSimClustersCount: Int
-  ): Option[SimClusterScores] = {
-    simClustersEmbeddingOption.map { thriftSimClustersEmbeddings =>
-      val simClustersEmbeddings: Map[SimClustersEmbeddingId, SimClustersEmbedding] =
-        thriftSimClustersEmbeddings.map {
-          case (simClustersEmbeddingId, simClustersEmbeddingValue) =>
-            (simClustersEmbeddingId, SimClustersEmbedding(simClustersEmbeddingValue))
-        }.toMap
-      val emptySeq = Seq[(Int, Double)]()
-      val simClusterScoreTuple: Map[(ModelVersion, EmbeddingType), Seq[(Int, Double)]] =
-        SimClustersUtil
-          .getMaxTopKTweetSimClusters(simClustersEmbeddings, topKSimClustersCount)
-      SimClusterScores(simClusterScoreTuple.getOrElse(embeddingMapKey, emptySeq).toMap)
+  d-def geteventsimcwustewvectow(
+    simcwustewsembeddingoption: option[map[simcwustewsembeddingid, thwiftsimcwustewsembedding]], mya
+    embeddingmapkey: (modewvewsion, >w< e-embeddingtype), (U ﹏ U)
+    topksimcwustewscount: int
+  ): o-option[simcwustewscowes] = {
+    s-simcwustewsembeddingoption.map { thwiftsimcwustewsembeddings =>
+      vaw simcwustewsembeddings: map[simcwustewsembeddingid, 😳😳😳 simcwustewsembedding] =
+        thwiftsimcwustewsembeddings.map {
+          c-case (simcwustewsembeddingid, o.O s-simcwustewsembeddingvawue) =>
+            (simcwustewsembeddingid, òωó simcwustewsembedding(simcwustewsembeddingvawue))
+        }.tomap
+      vaw emptyseq = seq[(int, 😳😳😳 doubwe)]()
+      v-vaw simcwustewscowetupwe: m-map[(modewvewsion, σωσ embeddingtype), (⑅˘꒳˘) seq[(int, (///ˬ///✿) doubwe)]] =
+        s-simcwustewsutiw
+          .getmaxtopktweetsimcwustews(simcwustewsembeddings, 🥺 topksimcwustewscount)
+      s-simcwustewscowes(simcwustewscowetupwe.getowewse(embeddingmapkey, OwO e-emptyseq).tomap)
     }
   }
 
   /**
-   * Get user simcluster vector magic events reasons
+   * get usew s-simcwustew vectow magic events w-weasons
    */
-  def getUserSimClusterVector(
-    magicEventsReasonsOpt: Option[Seq[MagicEventsReason]]
-  ): Option[SimClusterScores] = {
-    magicEventsReasonsOpt.map { magicEventsReasons: Seq[MagicEventsReason] =>
-      val reasons: Seq[(Int, Double)] = magicEventsReasons.flatMap { reason =>
-        reason.reason match {
-          case TargetID.SimClusterID(simClusterId: SimClusterID) =>
-            Some((simClusterId.clusterId, reason.score.getOrElse(0.0)))
+  d-def getusewsimcwustewvectow(
+    m-magiceventsweasonsopt: option[seq[magiceventsweason]]
+  ): o-option[simcwustewscowes] = {
+    m-magiceventsweasonsopt.map { magiceventsweasons: seq[magiceventsweason] =>
+      v-vaw w-weasons: seq[(int, >w< d-doubwe)] = magiceventsweasons.fwatmap { weason =>
+        weason.weason m-match {
+          case tawgetid.simcwustewid(simcwustewid: s-simcwustewid) =>
+            s-some((simcwustewid.cwustewid, 🥺 weason.scowe.getowewse(0.0)))
           case _ =>
-            None
+            nyone
         }
       }
-      SimClusterScores(reasons.toMap)
+      simcwustewscowes(weasons.tomap)
     }
   }
 
-  def reasonsContainGeoTarget(reasons: Seq[MagicEventsReason]): Boolean = {
-    reasons.exists { reason =>
-      val isGeoGraphSource = reason.source.contains(ReasonSource.GeoGraph)
-      reason.reason match {
-        case TargetID.PlaceID(_) if isGeoGraphSource => true
-        case _ => false
+  d-def w-weasonscontaingeotawget(weasons: s-seq[magiceventsweason]): b-boowean = {
+    weasons.exists { w-weason =>
+      vaw isgeogwaphsouwce = weason.souwce.contains(weasonsouwce.geogwaph)
+      weason.weason match {
+        case tawgetid.pwaceid(_) i-if isgeogwaphsouwce => t-twue
+        case _ => fawse
       }
     }
   }
 
-  def geoPlaceIdsFromReasons(reasons: Seq[MagicEventsReason]): Set[Long] = {
-    reasons.flatMap { reason =>
-      val isGeoGraphSource = reason.source.contains(ReasonSource.GeoGraph)
-      reason.reason match {
-        case TargetID.PlaceID(PlaceID(id)) if isGeoGraphSource => Some(id)
-        case _ => None
+  d-def geopwaceidsfwomweasons(weasons: seq[magiceventsweason]): s-set[wong] = {
+    weasons.fwatmap { w-weason =>
+      v-vaw isgeogwaphsouwce = w-weason.souwce.contains(weasonsouwce.geogwaph)
+      w-weason.weason m-match {
+        case tawgetid.pwaceid(pwaceid(id)) if isgeogwaphsouwce => some(id)
+        case _ => nyone
       }
-    }.toSet
+    }.toset
   }
 }

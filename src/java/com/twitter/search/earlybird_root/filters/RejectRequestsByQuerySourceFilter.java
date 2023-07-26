@@ -1,94 +1,94 @@
-package com.twitter.search.earlybird_root.filters;
+package com.twittew.seawch.eawwybiwd_woot.fiwtews;
 
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
+impowt java.utiw.hashmap;
+i-impowt j-java.utiw.map;
+i-impowt javax.annotation.nuwwabwe;
+i-impowt javax.inject.inject;
 
-import com.google.common.annotations.VisibleForTesting;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.util.Future;
+i-impowt c-com.twittew.finagwe.sewvice;
+impowt c-com.twittew.finagwe.simpwefiwtew;
+impowt com.twittew.seawch.common.constants.thwiftjava.thwiftquewysouwce;
+impowt com.twittew.seawch.common.decidew.seawchdecidew;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.common.schema.eawwybiwd.eawwybiwdcwustew;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwequest;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponse;
+impowt com.twittew.seawch.eawwybiwd.thwift.eawwybiwdwesponsecode;
+i-impowt com.twittew.seawch.eawwybiwd.thwift.thwiftseawchwesuwts;
+impowt com.twittew.utiw.futuwe;
 
 /**
- * Rejects requests based on the query source of the request. Intended to be used at super-root
- * or archive-root. If used to reject client request at super-root, the client will get a response
- * with empty results and a REQUEST_BLOCKED_ERROR status code. If used at archive-root the client
- * will get a response which might contain some results from realtime and protected and the status
- * code of the response will depend on how super-root combines responses from the three downstream
- * roots.
+ * wejects wequests based o-on the quewy souwce of the w-wequest. >w< intended t-to be used at supew-woot
+ * ow awchive-woot. rawr if used to weject cwient wequest a-at supew-woot, 😳 the cwient wiww get a wesponse
+ * with empty wesuwts and a wequest_bwocked_ewwow s-status code. >w< if used at awchive-woot t-the cwient
+ * w-wiww get a wesponse w-which might c-contain some wesuwts fwom weawtime and pwotected a-and the status
+ * code of the wesponse wiww d-depend on how supew-woot combines wesponses fwom the thwee downstweam
+ * woots. (⑅˘꒳˘)
  */
-public class RejectRequestsByQuerySourceFilter extends
-    SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+pubwic cwass w-wejectwequestsbyquewysouwcefiwtew extends
+    simpwefiwtew<eawwybiwdwequest, OwO e-eawwybiwdwesponse> {
 
-  @VisibleForTesting
-  protected static final String NUM_REJECTED_REQUESTS_STAT_NAME_PATTERN =
-      "num_root_%s_rejected_requests_with_query_source_%s";
-  @VisibleForTesting
-  protected static final String REJECT_REQUESTS_DECIDER_KEY_PATTERN =
-      "root_%s_reject_requests_with_query_source_%s";
-  private final Map<ThriftQuerySource, SearchRateCounter> rejectedRequestsCounterPerQuerySource =
-      new HashMap<>();
-  private final Map<ThriftQuerySource, String> rejectRequestsDeciderKeyPerQuerySource =
-      new HashMap<>();
-  private final SearchDecider searchDecider;
+  @visibwefowtesting
+  p-pwotected s-static finaw stwing nyum_wejected_wequests_stat_name_pattewn =
+      "num_woot_%s_wejected_wequests_with_quewy_souwce_%s";
+  @visibwefowtesting
+  pwotected static finaw stwing w-weject_wequests_decidew_key_pattewn =
+      "woot_%s_weject_wequests_with_quewy_souwce_%s";
+  p-pwivate finaw map<thwiftquewysouwce, s-seawchwatecountew> w-wejectedwequestscountewpewquewysouwce =
+      nyew hashmap<>();
+  p-pwivate finaw map<thwiftquewysouwce, s-stwing> wejectwequestsdecidewkeypewquewysouwce =
+      nyew hashmap<>();
+  pwivate f-finaw seawchdecidew seawchdecidew;
 
 
-  @Inject
-  public RejectRequestsByQuerySourceFilter(
-      @Nullable EarlybirdCluster cluster,
-      SearchDecider searchDecider) {
+  @inject
+  p-pubwic wejectwequestsbyquewysouwcefiwtew(
+      @nuwwabwe eawwybiwdcwustew c-cwustew,
+      s-seawchdecidew seawchdecidew) {
 
-    this.searchDecider = searchDecider;
+    this.seawchdecidew = seawchdecidew;
 
-    String clusterName = cluster != null
-        ? cluster.getNameForStats()
-        : EarlybirdCluster.SUPERROOT.getNameForStats();
+    stwing cwustewname = cwustew != nyuww
+        ? cwustew.getnamefowstats()
+        : e-eawwybiwdcwustew.supewwoot.getnamefowstats();
 
-    for (ThriftQuerySource querySource : ThriftQuerySource.values()) {
-      String querySourceName = querySource.name().toLowerCase();
+    f-fow (thwiftquewysouwce quewysouwce : t-thwiftquewysouwce.vawues()) {
+      s-stwing q-quewysouwcename = quewysouwce.name().towowewcase();
 
-      rejectedRequestsCounterPerQuerySource.put(querySource,
-          SearchRateCounter.export(
-              String.format(
-                  NUM_REJECTED_REQUESTS_STAT_NAME_PATTERN, clusterName, querySourceName)));
+      wejectedwequestscountewpewquewysouwce.put(quewysouwce, (ꈍᴗꈍ)
+          seawchwatecountew.expowt(
+              stwing.fowmat(
+                  n-nyum_wejected_wequests_stat_name_pattewn, 😳 cwustewname, 😳😳😳 quewysouwcename)));
 
-      rejectRequestsDeciderKeyPerQuerySource.put(querySource,
-          String.format(
-              REJECT_REQUESTS_DECIDER_KEY_PATTERN, clusterName, querySourceName));
+      wejectwequestsdecidewkeypewquewysouwce.put(quewysouwce, mya
+          stwing.fowmat(
+              w-weject_wequests_decidew_key_pattewn, mya cwustewname, (⑅˘꒳˘) quewysouwcename));
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @ovewwide
+  p-pubwic futuwe<eawwybiwdwesponse> a-appwy(eawwybiwdwequest w-wequest, (U ﹏ U)
+                                         sewvice<eawwybiwdwequest, mya e-eawwybiwdwesponse> sewvice) {
 
-    ThriftQuerySource querySource = request.isSetQuerySource()
-        ? request.getQuerySource()
-        : ThriftQuerySource.UNKNOWN;
+    thwiftquewysouwce q-quewysouwce = wequest.issetquewysouwce()
+        ? w-wequest.getquewysouwce()
+        : t-thwiftquewysouwce.unknown;
 
-    String deciderKey = rejectRequestsDeciderKeyPerQuerySource.get(querySource);
-    if (searchDecider.isAvailable(deciderKey)) {
-      rejectedRequestsCounterPerQuerySource.get(querySource).increment();
-      return Future.value(getRejectedRequestResponse(querySource, deciderKey));
+    stwing decidewkey = wejectwequestsdecidewkeypewquewysouwce.get(quewysouwce);
+    i-if (seawchdecidew.isavaiwabwe(decidewkey)) {
+      w-wejectedwequestscountewpewquewysouwce.get(quewysouwce).incwement();
+      w-wetuwn futuwe.vawue(getwejectedwequestwesponse(quewysouwce, ʘwʘ d-decidewkey));
     }
-    return service.apply(request);
+    w-wetuwn sewvice.appwy(wequest);
   }
 
-  private static EarlybirdResponse getRejectedRequestResponse(
-      ThriftQuerySource querySource, String deciderKey) {
-    return new EarlybirdResponse(EarlybirdResponseCode.REQUEST_BLOCKED_ERROR, 0)
-        .setSearchResults(new ThriftSearchResults())
-        .setDebugString(String.format(
-            "Request with query source %s is blocked by decider %s", querySource, deciderKey));
+  pwivate static eawwybiwdwesponse getwejectedwequestwesponse(
+      t-thwiftquewysouwce quewysouwce, (˘ω˘) stwing decidewkey) {
+    wetuwn nyew eawwybiwdwesponse(eawwybiwdwesponsecode.wequest_bwocked_ewwow, (U ﹏ U) 0)
+        .setseawchwesuwts(new thwiftseawchwesuwts())
+        .setdebugstwing(stwing.fowmat(
+            "wequest w-with quewy souwce %s is bwocked by decidew %s", ^•ﻌ•^ quewysouwce, (˘ω˘) d-decidewkey));
   }
 }

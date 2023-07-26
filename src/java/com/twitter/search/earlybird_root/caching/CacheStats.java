@@ -1,13 +1,13 @@
-package com.twitter.search.earlybird_root.caching;
+package com.twittew.seawch.eawwybiwd_woot.caching;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
+impowt com.twittew.seawch.common.metwics.seawchwatecountew;
 
-public final class CacheStats {
-  public static final SearchRateCounter REQUEST_FAILED_COUNTER =
-      SearchRateCounter.export("memcache_request_failed");
-  public static final SearchRateCounter REQUEST_TIMEOUT_COUNTER =
-      SearchRateCounter.export("memcache_request_timeout");
+p-pubwic finaw cwass c-cachestats {
+  p-pubwic static f-finaw seawchwatecountew w-wequest_faiwed_countew =
+      s-seawchwatecountew.expowt("memcache_wequest_faiwed");
+  p-pubwic s-static finaw seawchwatecountew wequest_timeout_countew =
+      seawchwatecountew.expowt("memcache_wequest_timeout");
 
-  private CacheStats() {
+  pwivate c-cachestats() {
   }
 }

@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.Predicate
-import com.twitter.strato.catalog.OpTag
+impowt c-com.twittew.pwoduct_mixew.cowe.functionaw_component.common.awewt.pwedicate.pwedicate
+i-impowt com.twittew.stwato.catawog.optag
 
 /**
- * triggers when the a Strato column's is outside of the predicate set by the provided [[Alert]]
+ * t-twiggews when t-the a stwato c-cowumn's is outside o-of the pwedicate s-set by the p-pwovided [[awewt]]
  *
- * @note the [[Alert]] passed into a [[StratoColumnAlert]]
- *       can not be a [[StratoColumnAlert]]
+ * @note the [[awewt]] passed into a [[stwatocowumnawewt]]
+ *       can nyot be a [[stwatocowumnawewt]]
  */
-case class StratoColumnAlert(column: String, op: OpTag, alert: Alert with IsObservableFromStrato)
-    extends Alert {
+c-case cwass stwatocowumnawewt(cowumn: stwing, 🥺 op: optag, awewt: a-awewt with isobsewvabwefwomstwato)
+    extends a-awewt {
 
-  override val source: Source = Strato(column, op.tag)
-  override val notificationGroup: NotificationGroup = alert.notificationGroup
-  override val warnPredicate: Predicate = alert.warnPredicate
-  override val criticalPredicate: Predicate = alert.criticalPredicate
-  override val runbookLink: Option[String] = alert.runbookLink
-  override val alertType: AlertType = alert.alertType
-  override val metricSuffix: Option[String] = alert.metricSuffix
+  ovewwide vaw souwce: souwce = stwato(cowumn, >_< op.tag)
+  o-ovewwide vaw nyotificationgwoup: nyotificationgwoup = a-awewt.notificationgwoup
+  o-ovewwide vaw wawnpwedicate: pwedicate = awewt.wawnpwedicate
+  ovewwide vaw cwiticawpwedicate: pwedicate = awewt.cwiticawpwedicate
+  o-ovewwide vaw wunbookwink: option[stwing] = awewt.wunbookwink
+  ovewwide vaw a-awewttype: awewttype = awewt.awewttype
+  o-ovewwide v-vaw metwicsuffix: o-option[stwing] = a-awewt.metwicsuffix
 }
 
-object StratoColumnAlerts {
+object stwatocowumnawewts {
 
-  /** Make a seq of Alerts for the provided Strato column */
-  def apply(
-    column: String,
-    op: OpTag,
-    alerts: Seq[Alert with IsObservableFromStrato]
-  ): Seq[Alert] = {
-    alerts.map(StratoColumnAlert(column, op, _))
+  /** m-make a seq of awewts fow the pwovided stwato cowumn */
+  d-def appwy(
+    cowumn: stwing, >_<
+    op: optag, (⑅˘꒳˘)
+    awewts: seq[awewt with isobsewvabwefwomstwato]
+  ): seq[awewt] = {
+    a-awewts.map(stwatocowumnawewt(cowumn, /(^•ω•^) op, _))
   }
 }

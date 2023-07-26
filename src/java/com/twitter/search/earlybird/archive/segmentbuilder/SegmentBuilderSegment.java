@@ -1,100 +1,100 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.twittew.seawch.eawwybiwd.awchive.segmentbuiwdew;
 
-import java.io.IOException;
+impowt j-java.io.ioexception;
 
-import com.google.common.base.Preconditions;
+i-impowt c-com.googwe.common.base.pweconditions;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.archive.ArchiveSegment;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+i-impowt com.twittew.common.quantity.amount;
+i-impowt com.twittew.common.quantity.time;
+i-impowt c-com.twittew.seawch.common.database.databaseconfig;
+i-impowt com.twittew.seawch.common.utiw.zktwywock.twywock;
+impowt com.twittew.seawch.common.utiw.zktwywock.zookeepewtwywockfactowy;
+impowt com.twittew.seawch.eawwybiwd.awchive.awchivesegment;
+impowt com.twittew.seawch.eawwybiwd.common.config.eawwybiwdconfig;
+impowt com.twittew.seawch.eawwybiwd.index.eawwybiwdsegmentfactowy;
+i-impowt com.twittew.seawch.eawwybiwd.pawtition.segmentinfo;
+impowt com.twittew.seawch.eawwybiwd.pawtition.segmentsyncconfig;
 
-public abstract class SegmentBuilderSegment {
-  protected final SegmentInfo segmentInfo;
-  protected final SegmentConfig segmentConfig;
-  protected final EarlybirdSegmentFactory earlybirdSegmentFactory;
-  protected final int alreadyRetriedCount;
-  protected final SegmentSyncConfig sync;
+p-pubwic abstwact cwass segmentbuiwdewsegment {
+  p-pwotected finaw segmentinfo segmentinfo;
+  pwotected finaw s-segmentconfig segmentconfig;
+  p-pwotected finaw e-eawwybiwdsegmentfactowy eawwybiwdsegmentfactowy;
+  pwotected finaw int awweadywetwiedcount;
+  pwotected finaw segmentsyncconfig s-sync;
 
-  public SegmentBuilderSegment(SegmentInfo segmentInfo,
-                               SegmentConfig segmentConfig,
-                               EarlybirdSegmentFactory earlybirdSegmentFactory,
-                               int alreadyRetriedCount,
-                               SegmentSyncConfig segmentSyncConfig) {
-    this.segmentConfig = segmentConfig;
-    this.earlybirdSegmentFactory = earlybirdSegmentFactory;
-    this.alreadyRetriedCount = alreadyRetriedCount;
-    this.sync = segmentSyncConfig;
-    Preconditions.checkState(segmentInfo.getSegment() instanceof ArchiveSegment);
-    this.segmentInfo = Preconditions.checkNotNull(segmentInfo);
+  pubwic segmentbuiwdewsegment(segmentinfo segmentinfo, (ꈍᴗꈍ)
+                               segmentconfig segmentconfig, 😳
+                               eawwybiwdsegmentfactowy e-eawwybiwdsegmentfactowy, 😳😳😳
+                               int awweadywetwiedcount, mya
+                               s-segmentsyncconfig s-segmentsyncconfig) {
+    t-this.segmentconfig = s-segmentconfig;
+    this.eawwybiwdsegmentfactowy = eawwybiwdsegmentfactowy;
+    t-this.awweadywetwiedcount = awweadywetwiedcount;
+    this.sync = s-segmentsyncconfig;
+    pweconditions.checkstate(segmentinfo.getsegment() instanceof awchivesegment);
+    this.segmentinfo = pweconditions.checknotnuww(segmentinfo);
   }
 
-  public SegmentInfo getSegmentInfo() {
-    return segmentInfo;
+  p-pubwic segmentinfo g-getsegmentinfo() {
+    w-wetuwn segmentinfo;
   }
 
-  public String getSegmentName() {
-    return segmentInfo.getSegmentName();
+  p-pubwic stwing getsegmentname() {
+    wetuwn segmentinfo.getsegmentname();
   }
 
-  public int getAlreadyRetriedCount() {
-    return alreadyRetriedCount;
-  }
-
-  /**
-   * Handle the segment, potentially transitioning to a new state.
-   * @return The state after handling.
-   */
-  public abstract SegmentBuilderSegment handle()
-      throws SegmentInfoConstructionException, SegmentUpdaterException;
-
-  public boolean isBuilt() {
-    return false;
-  }
-
-  @Override
-  public String toString() {
-    return "SegmentBuilderSegment{"
-        + "segmentInfo=" + segmentInfo
-        + ", state=" + this.getClass().getSimpleName()
-        + ", alreadyRetriedCount=" + alreadyRetriedCount + '}';
+  pubwic int getawweadywetwiedcount() {
+    w-wetuwn a-awweadywetwiedcount;
   }
 
   /**
-   * Given a SegmentInfo, create a new one with the same time slice and partitionID but clean
-   * internal state.
+   * handwe t-the segment, mya potentiawwy t-twansitioning to a nyew s-state. (⑅˘꒳˘)
+   * @wetuwn the state a-aftew handwing.
    */
-  protected SegmentInfo createNewSegmentInfo(SegmentInfo oldSegmentInfo)
-      throws SegmentInfoConstructionException {
-    Preconditions.checkArgument(oldSegmentInfo.getSegment() instanceof ArchiveSegment);
-    ArchiveSegment archiveSegment = (ArchiveSegment) oldSegmentInfo.getSegment();
+  pubwic abstwact segmentbuiwdewsegment h-handwe()
+      thwows s-segmentinfoconstwuctionexception, (U ﹏ U) segmentupdatewexception;
 
-    try {
-      ArchiveSegment segment = new ArchiveSegment(archiveSegment.getArchiveTimeSlice(),
-          archiveSegment.getHashPartitionID(), EarlybirdConfig.getMaxSegmentSize());
+  p-pubwic boowean i-isbuiwt() {
+    wetuwn fawse;
+  }
 
-      return new SegmentInfo(segment, earlybirdSegmentFactory, sync);
-    } catch (IOException e) {
-      throw new SegmentInfoConstructionException("Error creating new segments", e);
+  @ovewwide
+  pubwic stwing tostwing() {
+    wetuwn "segmentbuiwdewsegment{"
+        + "segmentinfo=" + segmentinfo
+        + ", mya state=" + this.getcwass().getsimpwename()
+        + ", ʘwʘ a-awweadywetwiedcount=" + a-awweadywetwiedcount + '}';
+  }
+
+  /**
+   * given a segmentinfo, c-cweate a nyew o-one with the same t-time swice and pawtitionid but cwean
+   * intewnaw state.
+   */
+  p-pwotected segmentinfo cweatenewsegmentinfo(segmentinfo owdsegmentinfo)
+      thwows segmentinfoconstwuctionexception {
+    pweconditions.checkawgument(owdsegmentinfo.getsegment() i-instanceof awchivesegment);
+    a-awchivesegment a-awchivesegment = (awchivesegment) o-owdsegmentinfo.getsegment();
+
+    twy {
+      a-awchivesegment s-segment = n-new awchivesegment(awchivesegment.getawchivetimeswice(), (˘ω˘)
+          a-awchivesegment.gethashpawtitionid(), (U ﹏ U) eawwybiwdconfig.getmaxsegmentsize());
+
+      wetuwn nyew s-segmentinfo(segment, ^•ﻌ•^ e-eawwybiwdsegmentfactowy, (˘ω˘) s-sync);
+    } catch (ioexception e-e) {
+      thwow n-nyew segmentinfoconstwuctionexception("ewwow cweating nyew segments", :3 e);
     }
   }
 
-  protected TryLock getZooKeeperTryLock() {
-    ZooKeeperTryLockFactory tryLockFactory = segmentConfig.getTryLockFactory();
-    String zkRootPath = sync.getZooKeeperSyncFullPath();
-    String nodeName = segmentInfo.getZkNodeName();
-    Amount<Long, Time> expirationTime = segmentConfig.getSegmentZKLockExpirationTime();
+  p-pwotected twywock getzookeepewtwywock() {
+    zookeepewtwywockfactowy twywockfactowy = segmentconfig.gettwywockfactowy();
+    stwing zkwootpath = sync.getzookeepewsyncfuwwpath();
+    stwing n-nyodename = segmentinfo.getzknodename();
+    amount<wong, ^^;; time> expiwationtime = s-segmentconfig.getsegmentzkwockexpiwationtime();
 
-    return tryLockFactory.createTryLock(
-        DatabaseConfig.getLocalHostname(),
-        zkRootPath,
-        nodeName,
-        expirationTime);
+    w-wetuwn t-twywockfactowy.cweatetwywock(
+        databaseconfig.getwocawhostname(), 🥺
+        z-zkwootpath, (⑅˘꒳˘)
+        nyodename, nyaa~~
+        e-expiwationtime);
   }
 }

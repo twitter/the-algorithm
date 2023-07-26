@@ -1,148 +1,148 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow
 
-import com.twitter.contentrecommender.{thriftscala => cr}
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.TSPMetricTagFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicContextFunctionalityTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.inferred_topic.InferredTopicAdapter
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContextFunctionalityType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.clients.strato.topics.TopicSocialProofClient
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => sid}
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.tsp.{thriftscala => tsp}
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+impowt com.twittew.contentwecommendew.{thwiftscawa => c-cw}
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.candidatesouwceidfeatuwe
+i-impowt c-com.twittew.home_mixew.modew.homefeatuwes.tspmetwictagfeatuwe
+impowt c-com.twittew.home_mixew.modew.homefeatuwes.topiccontextfunctionawitytypefeatuwe
+i-impowt com.twittew.home_mixew.modew.homefeatuwes.topicidsociawcontextfeatuwe
+i-impowt com.twittew.home_mixew.pwoduct.scowed_tweets.featuwe_hydwatow.adaptews.infewwed_topic.infewwedtopicadaptew
+i-impowt com.twittew.mw.api.datawecowd
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.candidate.tweetcandidate
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwewithdefauwtonfaiwuwe
+impowt com.twittew.pwoduct_mixew.cowe.featuwe.datawecowd.datawecowdinafeatuwe
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemap
+i-impowt com.twittew.pwoduct_mixew.cowe.featuwe.featuwemap.featuwemapbuiwdew
+impowt com.twittew.pwoduct_mixew.cowe.functionaw_component.featuwe_hydwatow.buwkcandidatefeatuwehydwatow
+impowt com.twittew.pwoduct_mixew.cowe.modew.common.candidatewithfeatuwes
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.common.identifiew.featuwehydwatowidentifiew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.basictopiccontextfunctionawitytype
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.wecommendationtopiccontextfunctionawitytype
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.topiccontextfunctionawitytype
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
+i-impowt com.twittew.pwoduct_mixew.cowe.utiw.offwoadfutuwepoows
+impowt com.twittew.stitch.stitch
+impowt com.twittew.timewines.cwients.stwato.topics.topicsociawpwoofcwient
+impowt com.twittew.timewinesewvice.suggests.wogging.candidate_tweet_souwce_id.{thwiftscawa => sid}
+i-impowt com.twittew.topicwisting.topicwistingviewewcontext
+impowt c-com.twittew.tsp.{thwiftscawa => t-tsp}
+impowt javax.inject.inject
+i-impowt javax.inject.singweton
+i-impowt scawa.cowwection.javaconvewtews._
 
-object TSPInferredTopicFeature extends Feature[TweetCandidate, Map[Long, Double]]
-object TSPInferredTopicDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object tspinfewwedtopicfeatuwe e-extends featuwe[tweetcandidate, :3 map[wong, d-doubwe]]
+object tspinfewwedtopicdatawecowdfeatuwe
+    extends datawecowdinafeatuwe[tweetcandidate]
+    with featuwewithdefauwtonfaiwuwe[tweetcandidate, nyaa~~ d-datawecowd] {
+  ovewwide d-def defauwtvawue: d-datawecowd = n-nyew datawecowd()
 }
 
-@Singleton
-class TSPInferredTopicFeatureHydrator @Inject() (
-  topicSocialProofClient: TopicSocialProofClient)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@singweton
+cwass tspinfewwedtopicfeatuwehydwatow @inject() (
+  topicsociawpwoofcwient: topicsociawpwoofcwient)
+    e-extends b-buwkcandidatefeatuwehydwatow[pipewinequewy, 😳 tweetcandidate] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TSPInferredTopic")
+  o-ovewwide vaw i-identifiew: featuwehydwatowidentifiew = featuwehydwatowidentifiew("tspinfewwedtopic")
 
-  override val features: Set[Feature[_, _]] = Set(
-    TSPInferredTopicFeature,
-    TSPInferredTopicDataRecordFeature,
-    TopicIdSocialContextFeature,
-    TopicContextFunctionalityTypeFeature
+  o-ovewwide vaw featuwes: s-set[featuwe[_, (⑅˘꒳˘) _]] = set(
+    tspinfewwedtopicfeatuwe, nyaa~~
+    t-tspinfewwedtopicdatawecowdfeatuwe, OwO
+    topicidsociawcontextfeatuwe, rawr x3
+    t-topiccontextfunctionawitytypefeatuwe
   )
 
-  private val topK = 3
+  pwivate vaw topk = 3
 
-  private val SourcesToSetSocialProof: Set[sid.CandidateTweetSourceId] =
-    Set(sid.CandidateTweetSourceId.Simcluster)
+  p-pwivate v-vaw souwcestosetsociawpwoof: set[sid.candidatetweetsouwceid] =
+    set(sid.candidatetweetsouwceid.simcwustew)
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(TSPInferredTopicFeature, Map.empty[Long, Double])
-    .add(TSPInferredTopicDataRecordFeature, new DataRecord())
-    .add(TopicIdSocialContextFeature, None)
-    .add(TopicContextFunctionalityTypeFeature, None)
-    .build()
+  pwivate vaw defauwtfeatuwemap = featuwemapbuiwdew()
+    .add(tspinfewwedtopicfeatuwe, map.empty[wong, doubwe])
+    .add(tspinfewwedtopicdatawecowdfeatuwe, XD n-nyew d-datawecowd())
+    .add(topicidsociawcontextfeatuwe, σωσ nyone)
+    .add(topiccontextfunctionawitytypefeatuwe, (U ᵕ U❁) n-nyone)
+    .buiwd()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val tags = candidates.collect {
-      case candidate if candidate.features.getTry(TSPMetricTagFeature).isReturn =>
-        candidate.candidate.id -> candidate.features
-          .getOrElse(TSPMetricTagFeature, Set.empty[tsp.MetricTag])
-    }.toMap
+  o-ovewwide def a-appwy(
+    quewy: pipewinequewy, (U ﹏ U)
+    candidates: seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-stitch[seq[featuwemap]] = offwoadfutuwepoows.offwoadfutuwe {
+    vaw tags = candidates.cowwect {
+      case candidate if candidate.featuwes.gettwy(tspmetwictagfeatuwe).iswetuwn =>
+        c-candidate.candidate.id -> candidate.featuwes
+          .getowewse(tspmetwictagfeatuwe, :3 s-set.empty[tsp.metwictag])
+    }.tomap
 
-    val topicSocialProofRequest = tsp.TopicSocialProofRequest(
-      userId = query.getRequiredUserId,
-      tweetIds = candidates.map(_.candidate.id).toSet,
-      displayLocation = cr.DisplayLocation.HomeTimeline,
-      topicListingSetting = tsp.TopicListingSetting.Followable,
-      context = TopicListingViewerContext.fromClientContext(query.clientContext).toThrift,
-      bypassModes = None,
-      // Only TweetMixer source has this data. Convert the TweetMixer metric tag to tsp metric tag.
-      tags = if (tags.isEmpty) None else Some(tags)
+    vaw t-topicsociawpwoofwequest = t-tsp.topicsociawpwoofwequest(
+      usewid = quewy.getwequiwedusewid, ( ͡o ω ͡o )
+      t-tweetids = c-candidates.map(_.candidate.id).toset, σωσ
+      dispwaywocation = c-cw.dispwaywocation.hometimewine, >w<
+      t-topicwistingsetting = tsp.topicwistingsetting.fowwowabwe, 😳😳😳
+      context = t-topicwistingviewewcontext.fwomcwientcontext(quewy.cwientcontext).tothwift, OwO
+      b-bypassmodes = n-nyone, 😳
+      // o-onwy tweetmixew s-souwce has this data. 😳😳😳 convewt the tweetmixew metwic tag to tsp m-metwic tag. (˘ω˘)
+      tags = if (tags.isempty) nyone ewse some(tags)
     )
 
-    topicSocialProofClient
-      .getTopicTweetSocialProofResponse(topicSocialProofRequest)
+    topicsociawpwoofcwient
+      .gettopictweetsociawpwoofwesponse(topicsociawpwoofwequest)
       .map {
-        case Some(response) =>
-          handleResponse(response, candidates)
-        case _ => candidates.map { _ => DefaultFeatureMap }
+        case some(wesponse) =>
+          h-handwewesponse(wesponse, ʘwʘ candidates)
+        case _ => candidates.map { _ => d-defauwtfeatuwemap }
       }
   }
 
-  private def handleResponse(
-    response: tsp.TopicSocialProofResponse,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[FeatureMap] = {
+  p-pwivate d-def handwewesponse(
+    wesponse: t-tsp.topicsociawpwoofwesponse, ( ͡o ω ͡o )
+    candidates: s-seq[candidatewithfeatuwes[tweetcandidate]]
+  ): s-seq[featuwemap] = {
     candidates.map { candidate =>
-      val topicWithScores = response.socialProofs.getOrElse(candidate.candidate.id, Seq.empty)
-      if (topicWithScores.nonEmpty) {
-        val (socialProofId, socialProofFunctionalityType) =
-          if (candidate.features
-              .getOrElse(CandidateSourceIdFeature, None)
-              .exists(SourcesToSetSocialProof.contains)) {
-            getSocialProof(topicWithScores)
-          } else (None, None)
+      vaw topicwithscowes = wesponse.sociawpwoofs.getowewse(candidate.candidate.id, o.O s-seq.empty)
+      if (topicwithscowes.nonempty) {
+        v-vaw (sociawpwoofid, >w< sociawpwooffunctionawitytype) =
+          i-if (candidate.featuwes
+              .getowewse(candidatesouwceidfeatuwe, 😳 n-nyone)
+              .exists(souwcestosetsociawpwoof.contains)) {
+            getsociawpwoof(topicwithscowes)
+          } ewse (none, 🥺 n-nyone)
 
-        val inferredTopicFeatures =
-          topicWithScores.sortBy(-_.score).take(topK).map(a => (a.topicId, a.score)).toMap
+        v-vaw infewwedtopicfeatuwes =
+          topicwithscowes.sowtby(-_.scowe).take(topk).map(a => (a.topicid, rawr x3 a-a.scowe)).tomap
 
-        val inferredTopicDataRecord =
-          InferredTopicAdapter.adaptToDataRecords(inferredTopicFeatures).asScala.head
+        v-vaw infewwedtopicdatawecowd =
+          infewwedtopicadaptew.adapttodatawecowds(infewwedtopicfeatuwes).asscawa.head
 
-        FeatureMapBuilder()
-          .add(TSPInferredTopicFeature, inferredTopicFeatures)
-          .add(TSPInferredTopicDataRecordFeature, inferredTopicDataRecord)
-          .add(TopicIdSocialContextFeature, socialProofId)
-          .add(TopicContextFunctionalityTypeFeature, socialProofFunctionalityType)
-          .build()
-      } else DefaultFeatureMap
+        featuwemapbuiwdew()
+          .add(tspinfewwedtopicfeatuwe, o.O infewwedtopicfeatuwes)
+          .add(tspinfewwedtopicdatawecowdfeatuwe, rawr infewwedtopicdatawecowd)
+          .add(topicidsociawcontextfeatuwe, ʘwʘ s-sociawpwoofid)
+          .add(topiccontextfunctionawitytypefeatuwe, 😳😳😳 s-sociawpwooffunctionawitytype)
+          .buiwd()
+      } e-ewse defauwtfeatuwemap
     }
   }
 
-  private def getSocialProof(
-    topicWithScores: Seq[tsp.TopicWithScore]
-  ): (Option[Long], Option[TopicContextFunctionalityType]) = {
-    val followingTopicId = topicWithScores.collectFirst {
-      case tsp.TopicWithScore(topicId, _, _, Some(tsp.TopicFollowType.Following)) => topicId
+  pwivate d-def getsociawpwoof(
+    t-topicwithscowes: seq[tsp.topicwithscowe]
+  ): (option[wong], o-option[topiccontextfunctionawitytype]) = {
+    vaw fowwowingtopicid = topicwithscowes.cowwectfiwst {
+      case tsp.topicwithscowe(topicid, ^^;; _, o.O _, some(tsp.topicfowwowtype.fowwowing)) => t-topicid
     }
 
-    if (followingTopicId.nonEmpty) {
-      return (followingTopicId, Some(BasicTopicContextFunctionalityType))
+    i-if (fowwowingtopicid.nonempty) {
+      wetuwn (fowwowingtopicid, (///ˬ///✿) some(basictopiccontextfunctionawitytype))
     }
 
-    val implicitFollowingId = topicWithScores.collectFirst {
-      case tsp.TopicWithScore(topicId, _, _, Some(tsp.TopicFollowType.ImplicitFollow)) =>
-        topicId
+    v-vaw impwicitfowwowingid = t-topicwithscowes.cowwectfiwst {
+      case tsp.topicwithscowe(topicid, σωσ _, _, nyaa~~ some(tsp.topicfowwowtype.impwicitfowwow)) =>
+        topicid
     }
 
-    if (implicitFollowingId.nonEmpty) {
-      return (implicitFollowingId, Some(RecommendationTopicContextFunctionalityType))
+    i-if (impwicitfowwowingid.nonempty) {
+      wetuwn (impwicitfowwowingid, ^^;; some(wecommendationtopiccontextfunctionawitytype))
     }
 
-    (None, None)
+    (none, ^•ﻌ•^ nyone)
   }
 }

@@ -1,196 +1,196 @@
-package com.twitter.ann.faiss
+package com.twittew.ann.faiss
 
-import com.twitter.ann.common.Cosine
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.NeighborWithDistance
-import com.twitter.ann.common.Queryable
-import com.twitter.ml.api.embedding.EmbeddingMath
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.Future
-import com.twitter.util.logging.Logging
-import java.io.File
-import java.util.concurrent.locks.ReentrantReadWriteLock
+impowt c-com.twittew.ann.common.cosine
+i-impowt com.twittew.ann.common.distance
+i-impowt c-com.twittew.ann.common.embeddingtype.embeddingvectow
+i-impowt com.twittew.ann.common.metwic
+i-impowt c-com.twittew.ann.common.neighbowwithdistance
+i-impowt com.twittew.ann.common.quewyabwe
+impowt com.twittew.mw.api.embedding.embeddingmath
+impowt com.twittew.seawch.common.fiwe.abstwactfiwe
+impowt c-com.twittew.seawch.common.fiwe.fiweutiws
+impowt com.twittew.utiw.futuwe
+i-impowt com.twittew.utiw.wogging.wogging
+i-impowt java.io.fiwe
+impowt java.utiw.concuwwent.wocks.weentwantweadwwitewock
 
-object QueryableIndexAdapter extends Logging {
-  // swigfaiss.read_index doesn't support hdfs files, hence a copy to temporary directory
-  def loadJavaIndex(directory: AbstractFile): Index = {
-    val indexFile = directory.getChild("faiss.index")
-    val tmpFile = File.createTempFile("faiss.index", ".tmp")
-    val tmpAbstractFile = FileUtils.getFileHandle(tmpFile.toString)
-    indexFile.copyTo(tmpAbstractFile)
-    val index = swigfaiss.read_index(tmpAbstractFile.getPath)
+object quewyabweindexadaptew extends w-wogging {
+  // swigfaiss.wead_index d-doesn't s-suppowt hdfs fiwes, 😳😳😳 hence a copy to tempowawy diwectowy
+  def woadjavaindex(diwectowy: abstwactfiwe): i-index = {
+    vaw indexfiwe = diwectowy.getchiwd("faiss.index")
+    vaw tmpfiwe = fiwe.cweatetempfiwe("faiss.index", (ˆ ﻌ ˆ)♡ ".tmp")
+    v-vaw tmpabstwactfiwe = fiweutiws.getfiwehandwe(tmpfiwe.tostwing)
+    i-indexfiwe.copyto(tmpabstwactfiwe)
+    v-vaw index = swigfaiss.wead_index(tmpabstwactfiwe.getpath)
 
-    if (!tmpFile.delete()) {
-      error(s"Failed to delete ${tmpFile.toString}")
+    i-if (!tmpfiwe.dewete()) {
+      e-ewwow(s"faiwed to dewete ${tmpfiwe.tostwing}")
     }
 
     index
   }
 }
 
-trait QueryableIndexAdapter[T, D <: Distance[D]] extends Queryable[T, FaissParams, D] {
-  this: Logging =>
+t-twait quewyabweindexadaptew[t, d <: distance[d]] extends q-quewyabwe[t, XD faisspawams, (ˆ ﻌ ˆ)♡ d] {
+  this: wogging =>
 
-  private val MAX_COSINE_DISTANCE = 1f
+  pwivate vaw max_cosine_distance = 1f
 
-  protected def index: Index
-  protected val metric: Metric[D]
-  protected val dimension: Int
+  pwotected d-def index: index
+  pwotected v-vaw metwic: m-metwic[d]
+  pwotected v-vaw dimension: int
 
-  private def maybeNormalizeEmbedding(embeddingVector: EmbeddingVector): EmbeddingVector = {
-    // There is no direct support for Cosine, but l2norm + ip == Cosine by definition
-    if (metric == Cosine) {
-      EmbeddingMath.Float.normalize(embeddingVector)
-    } else {
-      embeddingVector
+  pwivate def maybenowmawizeembedding(embeddingvectow: embeddingvectow): e-embeddingvectow = {
+    // t-thewe is nyo diwect s-suppowt fow cosine, b-but w2nowm + ip == cosine b-by definition
+    if (metwic == c-cosine) {
+      embeddingmath.fwoat.nowmawize(embeddingvectow)
+    } ewse {
+      e-embeddingvectow
     }
   }
 
-  private def maybeTranslateToCosineDistanceInplace(array: floatArray, len: Int): Unit = {
-    // Faiss reports Cosine similarity while we need Cosine distance.
-    if (metric == Cosine) {
-      for (index <- 0 until len) {
-        val similarity = array.getitem(index)
-        if (similarity < 0 || similarity > 1) {
-          warn(s"Expected similarity to be between 0 and 1, got ${similarity} instead")
-          array.setitem(index, MAX_COSINE_DISTANCE)
-        } else {
-          array.setitem(index, 1 - similarity)
+  pwivate def maybetwanswatetocosinedistanceinpwace(awway: f-fwoatawway, ( ͡o ω ͡o ) wen: int): unit = {
+    // faiss w-wepowts cosine s-simiwawity whiwe we nyeed cosine distance. rawr x3
+    if (metwic == cosine) {
+      fow (index <- 0 untiw wen) {
+        v-vaw simiwawity = a-awway.getitem(index)
+        if (simiwawity < 0 || s-simiwawity > 1) {
+          w-wawn(s"expected s-simiwawity to be between 0 and 1, nyaa~~ got ${simiwawity} instead")
+          a-awway.setitem(index, >_< max_cosine_distance)
+        } ewse {
+          awway.setitem(index, ^^;; 1 - simiwawity)
         }
       }
     }
   }
 
-  private val paramsLock = new ReentrantReadWriteLock()
-  private var currentParams: Option[String] = None
-  // Assume that parameters rarely change and try read lock first
-  private def ensuringParams[R](parameterString: String, f: () => R): R = {
-    paramsLock.readLock().lock()
-    try {
-      if (currentParams.contains(parameterString)) {
-        return f()
+  p-pwivate vaw pawamswock = n-nyew weentwantweadwwitewock()
+  p-pwivate vaw cuwwentpawams: o-option[stwing] = nyone
+  // a-assume that p-pawametews wawewy c-change and t-twy wead wock fiwst
+  pwivate def ensuwingpawams[w](pawametewstwing: s-stwing, (ˆ ﻌ ˆ)♡ f: () => w-w): w = {
+    p-pawamswock.weadwock().wock()
+    t-twy {
+      i-if (cuwwentpawams.contains(pawametewstwing)) {
+        wetuwn f()
       }
-    } finally {
-      paramsLock.readLock().unlock()
+    } finawwy {
+      pawamswock.weadwock().unwock()
     }
 
-    paramsLock.writeLock().lock()
-    try {
-      currentParams = Some(parameterString)
-      new ParameterSpace().set_index_parameters(index, parameterString)
+    p-pawamswock.wwitewock().wock()
+    twy {
+      cuwwentpawams = some(pawametewstwing)
+      nyew pawametewspace().set_index_pawametews(index, ^^;; pawametewstwing)
 
       f()
-    } finally {
-      paramsLock.writeLock().unlock()
+    } f-finawwy {
+      pawamswock.wwitewock().unwock()
     }
   }
 
-  def replaceIndex(f: () => Unit): Unit = {
-    paramsLock.writeLock().lock()
-    try {
-      currentParams = None
+  def wepwaceindex(f: () => unit): unit = {
+    p-pawamswock.wwitewock().wock()
+    t-twy {
+      c-cuwwentpawams = nyone
 
       f()
-    } finally {
-      paramsLock.writeLock().unlock()
+    } f-finawwy {
+      pawamswock.wwitewock().unwock()
     }
   }
 
-  def query(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: FaissParams
-  ): Future[List[T]] = {
-    Future.value(
-      ensuringParams(
-        runtimeParams.toLibraryString,
+  d-def quewy(
+    e-embedding: embeddingvectow, (⑅˘꒳˘)
+    numofneighbows: int, rawr x3
+    wuntimepawams: faisspawams
+  ): futuwe[wist[t]] = {
+    f-futuwe.vawue(
+      ensuwingpawams(
+        w-wuntimepawams.towibwawystwing, (///ˬ///✿)
         () => {
-          val distances = new floatArray(numOfNeighbors)
-          val indexes = new LongVector()
-          indexes.resize(numOfNeighbors)
+          vaw distances = n-nyew f-fwoatawway(numofneighbows)
+          vaw indexes = nyew wongvectow()
+          indexes.wesize(numofneighbows)
 
-          val normalizedEmbedding = maybeNormalizeEmbedding(embedding)
-          index.search(
-            // Number of query embeddings
-            1,
-            // Array of query embeddings
-            toFloatArray(normalizedEmbedding).cast(),
-            // Number of neighbours to return
-            numOfNeighbors,
-            // Location to store neighbour distances
-            distances.cast(),
-            // Location to store neighbour identifiers
+          v-vaw nyowmawizedembedding = m-maybenowmawizeembedding(embedding)
+          index.seawch(
+            // n-nyumbew o-of quewy embeddings
+            1, 🥺
+            // awway of quewy embeddings
+            tofwoatawway(nowmawizedembedding).cast(), >_<
+            // nyumbew of n-nyeighbouws to w-wetuwn
+            n-nyumofneighbows, UwU
+            // wocation to s-stowe nyeighbouw d-distances
+            distances.cast(), >_<
+            // w-wocation to stowe nyeighbouw identifiews
             indexes
           )
-          // This is a shortcoming of current swig bindings
-          // Nothing prevents JVM from freeing distances while inside index.search
-          // This might be removed once we start passing FloatVector
-          // Why java.lang.ref.Reference.reachabilityFence doesn't compile?
-          debug(distances)
+          // this i-is a showtcoming o-of cuwwent swig bindings
+          // nyothing p-pwevents jvm f-fwom fweeing distances whiwe inside index.seawch
+          // this m-might be wemoved once we stawt passing fwoatvectow
+          // why java.wang.wef.wefewence.weachabiwityfence doesn't compiwe?
+          d-debug(distances)
 
-          toSeq(indexes, numOfNeighbors).toList.asInstanceOf[List[T]]
+          toseq(indexes, -.- nyumofneighbows).towist.asinstanceof[wist[t]]
         }
       ))
   }
 
-  def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: FaissParams
-  ): Future[List[NeighborWithDistance[T, D]]] = {
-    Future.value(
-      ensuringParams(
-        runtimeParams.toLibraryString,
+  def q-quewywithdistance(
+    e-embedding: embeddingvectow,
+    nyumofneighbows: int, mya
+    w-wuntimepawams: f-faisspawams
+  ): futuwe[wist[neighbowwithdistance[t, >w< d]]] = {
+    futuwe.vawue(
+      e-ensuwingpawams(
+        wuntimepawams.towibwawystwing,
         () => {
-          val distances = new floatArray(numOfNeighbors)
-          val indexes = new LongVector()
-          indexes.resize(numOfNeighbors)
+          v-vaw distances = nyew fwoatawway(numofneighbows)
+          vaw indexes = new wongvectow()
+          i-indexes.wesize(numofneighbows)
 
-          val normalizedEmbedding = maybeNormalizeEmbedding(embedding)
-          index.search(
-            // Number of query embeddings
-            1,
-            // Array of query embeddings
-            toFloatArray(normalizedEmbedding).cast(),
-            // Number of neighbours to return
-            numOfNeighbors,
-            // Location to store neighbour distances
-            distances.cast(),
-            // Location to store neighbour identifiers
-            indexes
+          vaw nyowmawizedembedding = m-maybenowmawizeembedding(embedding)
+          index.seawch(
+            // n-nyumbew of quewy embeddings
+            1, (U ﹏ U)
+            // a-awway of quewy embeddings
+            t-tofwoatawway(nowmawizedembedding).cast(), 😳😳😳
+            // n-nyumbew of n-nyeighbouws to wetuwn
+            nyumofneighbows, o.O
+            // w-wocation to stowe n-nyeighbouw distances
+            distances.cast(), òωó
+            // wocation to s-stowe neighbouw i-identifiews
+            i-indexes
           )
 
-          val ids = toSeq(indexes, numOfNeighbors).toList.asInstanceOf[List[T]]
+          vaw ids = toseq(indexes, 😳😳😳 n-nyumofneighbows).towist.asinstanceof[wist[t]]
 
-          maybeTranslateToCosineDistanceInplace(distances, numOfNeighbors)
+          maybetwanswatetocosinedistanceinpwace(distances, σωσ n-nyumofneighbows)
 
-          val distancesSeq = toSeq(distances, numOfNeighbors)
+          v-vaw distancesseq = toseq(distances, (⑅˘꒳˘) nyumofneighbows)
 
-          ids.zip(distancesSeq).map {
-            case (id, distance) =>
-              NeighborWithDistance(id, metric.fromAbsoluteDistance(distance))
+          ids.zip(distancesseq).map {
+            c-case (id, (///ˬ///✿) distance) =>
+              n-nyeighbowwithdistance(id, 🥺 metwic.fwomabsowutedistance(distance))
           }
         }
       ))
   }
 
-  private def toFloatArray(emb: EmbeddingVector): floatArray = {
-    val nativeArray = new floatArray(emb.length)
-    for ((value, aIdx) <- emb.iterator.zipWithIndex) {
-      nativeArray.setitem(aIdx, value)
+  p-pwivate d-def tofwoatawway(emb: embeddingvectow): f-fwoatawway = {
+    vaw nyativeawway = nyew fwoatawway(emb.wength)
+    fow ((vawue, OwO aidx) <- emb.itewatow.zipwithindex) {
+      nyativeawway.setitem(aidx, v-vawue)
     }
 
-    nativeArray
+    nyativeawway
   }
 
-  private def toSeq(vector: LongVector, len: Long): Seq[Long] = {
-    (0L until len).map(vector.at)
+  p-pwivate def toseq(vectow: w-wongvectow, >w< wen: wong): seq[wong] = {
+    (0w u-untiw wen).map(vectow.at)
   }
 
-  private def toSeq(array: floatArray, len: Int): Seq[Float] = {
-    (0 until len).map(array.getitem)
+  pwivate def t-toseq(awway: fwoatawway, 🥺 w-wen: int): s-seq[fwoat] = {
+    (0 u-untiw w-wen).map(awway.getitem)
   }
 }

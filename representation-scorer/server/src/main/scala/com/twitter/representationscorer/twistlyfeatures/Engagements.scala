@@ -1,65 +1,65 @@
-package com.twitter.representationscorer.twistlyfeatures
+package com.twittew.wepwesentationscowew.twistwyfeatuwes
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.util.Duration
-import com.twitter.util.Time
+impowt c-com.twittew.convewsions.duwationops._
+i-impowt com.twittew.utiw.duwation
+i-impowt com.twittew.utiw.time
 
-case class Engagements(
-  favs7d: Seq[UserSignal] = Nil,
-  retweets7d: Seq[UserSignal] = Nil,
-  follows30d: Seq[UserSignal] = Nil,
-  shares7d: Seq[UserSignal] = Nil,
-  replies7d: Seq[UserSignal] = Nil,
-  originalTweets7d: Seq[UserSignal] = Nil,
-  videoPlaybacks7d: Seq[UserSignal] = Nil,
-  block30d: Seq[UserSignal] = Nil,
-  mute30d: Seq[UserSignal] = Nil,
-  report30d: Seq[UserSignal] = Nil,
-  dontlike30d: Seq[UserSignal] = Nil,
-  seeFewer30d: Seq[UserSignal] = Nil) {
+c-case cwass e-engagements(
+  favs7d: s-seq[usewsignaw] = n-nyiw, >w<
+  w-wetweets7d: seq[usewsignaw] = nyiw, (⑅˘꒳˘)
+  fowwows30d: seq[usewsignaw] = nyiw, OwO
+  shawes7d: seq[usewsignaw] = n-nyiw, (ꈍᴗꈍ)
+  wepwies7d: seq[usewsignaw] = nyiw, 😳
+  o-owiginawtweets7d: seq[usewsignaw] = n-nyiw, 😳😳😳
+  videopwaybacks7d: seq[usewsignaw] = nyiw, mya
+  bwock30d: s-seq[usewsignaw] = nyiw, mya
+  m-mute30d: seq[usewsignaw] = n-nyiw, (⑅˘꒳˘)
+  wepowt30d: seq[usewsignaw] = nyiw, (U ﹏ U)
+  dontwike30d: seq[usewsignaw] = n-niw, mya
+  seefewew30d: seq[usewsignaw] = nyiw) {
 
-  import Engagements._
+  impowt engagements._
 
-  private val now = Time.now
-  private val oneDayAgo = (now - OneDaySpan).inMillis
-  private val sevenDaysAgo = (now - SevenDaysSpan).inMillis
+  pwivate vaw nyow = t-time.now
+  pwivate vaw onedayago = (now - onedayspan).inmiwwis
+  p-pwivate vaw s-sevendaysago = (now - s-sevendaysspan).inmiwwis
 
-  // All ids from the signals grouped by type (tweetIds, userIds, etc)
-  val tweetIds: Seq[Long] =
-    (favs7d ++ retweets7d ++ shares7d
-      ++ replies7d ++ originalTweets7d ++ videoPlaybacks7d
-      ++ report30d ++ dontlike30d ++ seeFewer30d)
-      .map(_.targetId)
-  val authorIds: Seq[Long] = (follows30d ++ block30d ++ mute30d).map(_.targetId)
+  // a-aww ids fwom the signaws gwouped by type (tweetids, ʘwʘ u-usewids, etc)
+  vaw tweetids: seq[wong] =
+    (favs7d ++ w-wetweets7d ++ shawes7d
+      ++ wepwies7d ++ owiginawtweets7d ++ videopwaybacks7d
+      ++ wepowt30d ++ d-dontwike30d ++ seefewew30d)
+      .map(_.tawgetid)
+  v-vaw authowids: seq[wong] = (fowwows30d ++ b-bwock30d ++ m-mute30d).map(_.tawgetid)
 
-  // Tweet signals
-  val dontlike7d: Seq[UserSignal] = dontlike30d.filter(_.timestamp > sevenDaysAgo)
-  val seeFewer7d: Seq[UserSignal] = seeFewer30d.filter(_.timestamp > sevenDaysAgo)
+  // tweet signaws
+  vaw dontwike7d: seq[usewsignaw] = d-dontwike30d.fiwtew(_.timestamp > s-sevendaysago)
+  vaw seefewew7d: s-seq[usewsignaw] = s-seefewew30d.fiwtew(_.timestamp > sevendaysago)
 
-  val favs1d: Seq[UserSignal] = favs7d.filter(_.timestamp > oneDayAgo)
-  val retweets1d: Seq[UserSignal] = retweets7d.filter(_.timestamp > oneDayAgo)
-  val shares1d: Seq[UserSignal] = shares7d.filter(_.timestamp > oneDayAgo)
-  val replies1d: Seq[UserSignal] = replies7d.filter(_.timestamp > oneDayAgo)
-  val originalTweets1d: Seq[UserSignal] = originalTweets7d.filter(_.timestamp > oneDayAgo)
-  val videoPlaybacks1d: Seq[UserSignal] = videoPlaybacks7d.filter(_.timestamp > oneDayAgo)
-  val dontlike1d: Seq[UserSignal] = dontlike7d.filter(_.timestamp > oneDayAgo)
-  val seeFewer1d: Seq[UserSignal] = seeFewer7d.filter(_.timestamp > oneDayAgo)
+  v-vaw favs1d: seq[usewsignaw] = f-favs7d.fiwtew(_.timestamp > onedayago)
+  vaw wetweets1d: s-seq[usewsignaw] = wetweets7d.fiwtew(_.timestamp > o-onedayago)
+  vaw shawes1d: s-seq[usewsignaw] = s-shawes7d.fiwtew(_.timestamp > onedayago)
+  vaw wepwies1d: seq[usewsignaw] = wepwies7d.fiwtew(_.timestamp > onedayago)
+  vaw owiginawtweets1d: seq[usewsignaw] = o-owiginawtweets7d.fiwtew(_.timestamp > o-onedayago)
+  vaw videopwaybacks1d: s-seq[usewsignaw] = v-videopwaybacks7d.fiwtew(_.timestamp > o-onedayago)
+  vaw dontwike1d: seq[usewsignaw] = dontwike7d.fiwtew(_.timestamp > o-onedayago)
+  vaw seefewew1d: seq[usewsignaw] = seefewew7d.fiwtew(_.timestamp > onedayago)
 
-  // User signals
-  val follows7d: Seq[UserSignal] = follows30d.filter(_.timestamp > sevenDaysAgo)
-  val block7d: Seq[UserSignal] = block30d.filter(_.timestamp > sevenDaysAgo)
-  val mute7d: Seq[UserSignal] = mute30d.filter(_.timestamp > sevenDaysAgo)
-  val report7d: Seq[UserSignal] = report30d.filter(_.timestamp > sevenDaysAgo)
+  // usew signaws
+  v-vaw fowwows7d: seq[usewsignaw] = f-fowwows30d.fiwtew(_.timestamp > s-sevendaysago)
+  v-vaw bwock7d: seq[usewsignaw] = bwock30d.fiwtew(_.timestamp > sevendaysago)
+  vaw m-mute7d: seq[usewsignaw] = m-mute30d.fiwtew(_.timestamp > s-sevendaysago)
+  v-vaw wepowt7d: seq[usewsignaw] = wepowt30d.fiwtew(_.timestamp > s-sevendaysago)
 
-  val block1d: Seq[UserSignal] = block7d.filter(_.timestamp > oneDayAgo)
-  val mute1d: Seq[UserSignal] = mute7d.filter(_.timestamp > oneDayAgo)
-  val report1d: Seq[UserSignal] = report7d.filter(_.timestamp > oneDayAgo)
+  v-vaw bwock1d: s-seq[usewsignaw] = b-bwock7d.fiwtew(_.timestamp > o-onedayago)
+  vaw mute1d: seq[usewsignaw] = mute7d.fiwtew(_.timestamp > onedayago)
+  v-vaw wepowt1d: seq[usewsignaw] = wepowt7d.fiwtew(_.timestamp > onedayago)
 }
 
-object Engagements {
-  val OneDaySpan: Duration = 1.days
-  val SevenDaysSpan: Duration = 7.days
-  val ThirtyDaysSpan: Duration = 30.days
+object engagements {
+  vaw o-onedayspan: duwation = 1.days
+  vaw sevendaysspan: duwation = 7.days
+  vaw thiwtydaysspan: d-duwation = 30.days
 }
 
-case class UserSignal(targetId: Long, timestamp: Long)
+c-case cwass usewsignaw(tawgetid: w-wong, timestamp: wong)

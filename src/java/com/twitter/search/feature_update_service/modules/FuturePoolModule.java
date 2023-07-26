@@ -1,57 +1,57 @@
-package com.twitter.search.feature_update_service.modules;
+package com.twittew.seawch.featuwe_update_sewvice.moduwes;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+impowt j-java.utiw.concuwwent.winkedbwockingqueue;
+i-impowt j-java.utiw.concuwwent.thweadpoowexecutow;
+i-impowt j-java.utiw.concuwwent.timeunit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+i-impowt com.googwe.common.annotations.visibwefowtesting;
+i-impowt c-com.googwe.inject.pwovides;
+impowt com.googwe.inject.singweton;
 
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.feature_update_service.stats.FeatureUpdateStats;
-import com.twitter.util.ExecutorServiceFuturePool;
-import com.twitter.util.InterruptibleExecutorServiceFuturePool;
+impowt com.twittew.inject.twittewmoduwe;
+impowt c-com.twittew.seawch.common.metwics.seawchcustomgauge;
+impowt com.twittew.seawch.featuwe_update_sewvice.stats.featuweupdatestats;
+impowt com.twittew.utiw.executowsewvicefutuwepoow;
+i-impowt com.twittew.utiw.intewwuptibweexecutowsewvicefutuwepoow;
 
-public class FuturePoolModule extends TwitterModule {
+pubwic cwass f-futuwepoowmoduwe extends twittewmoduwe {
   /**
-   * Provide future pool backed by executor service, with bounded thread pool and bounded backing
-   * queue.
+   * pwovide futuwe poow backed b-by executow sewvice, with bounded t-thwead poow a-and bounded backing
+   * queue. (˘ω˘)
    */
-  @Provides
-  @Singleton
-  public ExecutorServiceFuturePool futurePool() {
-    // These limits are based on service capacity estimates and testing on staging,
-    // attempting to give the pool as many resources as possible without overloading anything.
-    // 100-200 threads is manageable, and the 2000 queue size is based on a conservative upper
-    // limit that tasks in the queue take 1 MB each, meaning queue maxes out at 2 GB, which should
-    // be okay given 4 GB RAM with 3 GB reserved heap.
-    return createFuturePool(100, 200, 2000);
+  @pwovides
+  @singweton
+  pubwic executowsewvicefutuwepoow futuwepoow() {
+    // these wimits a-awe based on sewvice capacity estimates and testing on staging, ^^
+    // attempting t-to give the poow as many w-wesouwces as possibwe w-without ovewwoading a-anything. :3
+    // 100-200 t-thweads is manageabwe, -.- and the 2000 queue size i-is based on a consewvative uppew
+    // wimit t-that tasks in the queue take 1 mb each, 😳 meaning queue maxes out at 2 gb, mya which shouwd
+    // be o-okay given 4 gb wam with 3 gb wesewved h-heap. (˘ω˘)
+    w-wetuwn cweatefutuwepoow(100, >_< 200, 2000);
   }
 
   /**
-   * Create a future pool backed by executor service, with bounded thread pool and bounded backing
-   * queue. ONLY VISIBILE FOR TESTING; don't invoke outside this class.
+   * c-cweate a futuwe poow backed by executow sewvice, with b-bounded thwead p-poow and bounded backing
+   * queue. -.- o-onwy visibiwe f-fow testing; don't invoke outside t-this cwass. 🥺
    */
-  @VisibleForTesting
-  public static ExecutorServiceFuturePool createFuturePool(
-      int corePoolSize, int maximumPoolSize, int queueCapacity) {
-    final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(queueCapacity);
+  @visibwefowtesting
+  pubwic s-static executowsewvicefutuwepoow cweatefutuwepoow(
+      int c-cowepoowsize, (U ﹏ U) int maximumpoowsize, >w< i-int queuecapacity) {
+    finaw w-winkedbwockingqueue<wunnabwe> q-queue = nyew winkedbwockingqueue<>(queuecapacity);
 
-    ExecutorServiceFuturePool futurePool = new InterruptibleExecutorServiceFuturePool(
-        new ThreadPoolExecutor(
-            corePoolSize,
-            maximumPoolSize,
-            60L,
-            TimeUnit.SECONDS,
-            queue));
+    executowsewvicefutuwepoow futuwepoow = nyew intewwuptibweexecutowsewvicefutuwepoow(
+        nyew thweadpoowexecutow(
+            cowepoowsize, mya
+            maximumpoowsize, >w<
+            60w, nyaa~~
+            t-timeunit.seconds, (✿oωo)
+            q-queue));
 
-    SearchCustomGauge.export(FeatureUpdateStats.PREFIX + "thread_pool_size",
-        futurePool::poolSize);
-    SearchCustomGauge.export(FeatureUpdateStats.PREFIX + "work_queue_size",
-        queue::size);
+    seawchcustomgauge.expowt(featuweupdatestats.pwefix + "thwead_poow_size", ʘwʘ
+        futuwepoow::poowsize);
+    s-seawchcustomgauge.expowt(featuweupdatestats.pwefix + "wowk_queue_size", (ˆ ﻌ ˆ)♡
+        q-queue::size);
 
-    return futurePool;
+    w-wetuwn futuwepoow;
   }
 }

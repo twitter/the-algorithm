@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.clients.real_time_real_graph
+package com.twittew.fowwow_wecommendations.common.cwients.weaw_time_weaw_gwaph
 
-sealed trait EngagementType
+seawed twait engagementtype
 
-// We do not include SoftFollow since it's deprecated
-object EngagementType {
-  object Click extends EngagementType
-  object Like extends EngagementType
-  object Mention extends EngagementType
-  object Retweet extends EngagementType
-  object ProfileView extends EngagementType
+// we d-do nyot incwude s-softfowwow since i-it's depwecated
+o-object engagementtype {
+  o-object c-cwick extends e-engagementtype
+  o-object wike extends engagementtype
+  object mention extends engagementtype
+  object wetweet extends e-engagementtype
+  object pwofiweview extends e-engagementtype
 }
 
-case class Engagement(engagementType: EngagementType, timestamp: Long)
+case cwass e-engagement(engagementtype: engagementtype, (U ᵕ U❁) timestamp: wong)

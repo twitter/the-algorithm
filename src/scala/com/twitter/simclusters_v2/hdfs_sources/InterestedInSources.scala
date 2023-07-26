@@ -1,177 +1,177 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.twittew.simcwustews_v2.hdfs_souwces
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.{DateOps, DateRange, Days, TypedPipe}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import java.util.TimeZone
+impowt com.twittew.daw.cwient.dataset.keyvawdawdataset
+i-impowt com.twittew.scawding.{dateops, (⑅˘꒳˘) d-datewange, ( ͡o ω ͡o ) d-days, òωó typedpipe}
+i-impowt c-com.twittew.scawding_intewnaw.dawv2.daw
+i-impowt com.twittew.scawding_intewnaw.dawv2.wemote_access.{expwicitwocation, p-pwocatwa}
+impowt c-com.twittew.scawding_intewnaw.muwtifowmat.fowmat.keyvaw.keyvaw
+impowt com.twittew.simcwustews_v2.common.usewid
+impowt com.twittew.simcwustews_v2.thwiftscawa.modewvewsion
+impowt com.twittew.simcwustews_v2.thwiftscawa.cwustewsusewisintewestedin
+impowt java.utiw.timezone
 
-object InterestedInSources {
+o-object intewestedinsouwces {
 
-  private val ModelVersionInterestedInDatasetMap: Map[ModelVersion, KeyValDALDataset[
-    KeyVal[UserId, ClustersUserIsInterestedIn]
-  ]] = Map(
-    ModelVersion.Model20m145kDec11 -> SimclustersV2InterestedInScalaDataset,
-    ModelVersion.Model20m145kUpdated -> SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-    ModelVersion.Model20m145k2020 -> SimclustersV2InterestedIn20M145K2020ScalaDataset
+  pwivate vaw modewvewsionintewestedindatasetmap: map[modewvewsion, (⑅˘꒳˘) k-keyvawdawdataset[
+    keyvaw[usewid, XD c-cwustewsusewisintewestedin]
+  ]] = map(
+    modewvewsion.modew20m145kdec11 -> simcwustewsv2intewestedinscawadataset, -.-
+    m-modewvewsion.modew20m145kupdated -> simcwustewsv2intewestedin20m145kupdatedscawadataset, :3
+    m-modewvewsion.modew20m145k2020 -> s-simcwustewsv2intewestedin20m145k2020scawadataset
   )
 
   /**
-   * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145KDec11 production InterestedIn data from atla-proc, with a 14-day extended window
+   * intewnaw vewsion, nyot pdp compwiant, nyaa~~ nyot to be used outside s-simcwustews_v2
+   * weads 20m145kdec11 pwoduction intewestedin data fwom atwa-pwoc, 😳 w-with a 14-day extended window
    */
-  private[simclusters_v2] def simClustersRawInterestedInDec11Source(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+  p-pwivate[simcwustews_v2] d-def simcwustewswawintewestedindec11souwce(
+    d-datewange: datewange, (⑅˘꒳˘)
+    t-timezone: timezone
+  ): typedpipe[(usewid, nyaa~~ c-cwustewsusewisintewestedin)] = {
 
-    DAL
-      .readMostRecentSnapshot(
-        SimclustersV2RawInterestedIn20M145KDec11ScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+    daw
+      .weadmostwecentsnapshot(
+        simcwustewsv2wawintewestedin20m145kdec11scawadataset, OwO
+        d-datewange.pwepend(days(14)(timezone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe
       .map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+        case keyvaw(usewid, rawr x3 cwustewsusewisintewestedin) =>
+          (usewid, XD cwustewsusewisintewestedin)
       }
   }
 
   /**
-   * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145KUpdated InterestedIn data from atla-proc, with a 14-day extended window
+   * intewnaw vewsion, σωσ nyot p-pdp compwiant, (U ᵕ U❁) nyot to be used o-outside simcwustews_v2
+   * weads 20m145kupdated i-intewestedin d-data fwom atwa-pwoc, (U ﹏ U) with a 14-day extended window
    */
-  private[simclusters_v2] def simClustersRawInterestedInUpdatedSource(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-    DAL
-      .readMostRecentSnapshot(
-        SimclustersV2RawInterestedIn20M145KUpdatedScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+  pwivate[simcwustews_v2] d-def simcwustewswawintewestedinupdatedsouwce(
+    d-datewange: datewange, :3
+    timezone: t-timezone
+  ): t-typedpipe[(usewid, ( ͡o ω ͡o ) cwustewsusewisintewestedin)] = {
+    daw
+      .weadmostwecentsnapshot(
+        s-simcwustewsv2wawintewestedin20m145kupdatedscawadataset,
+        datewange.pwepend(days(14)(timezone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe.map {
+        c-case keyvaw(usewid, σωσ cwustewsusewisintewestedin) =>
+          (usewid, >w< cwustewsusewisintewestedin)
       }
   }
 
   /**
-   * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145K2020 InterestedIn data from atla-proc, with a 14-day extended window
+   * i-intewnaw vewsion, 😳😳😳 nyot p-pdp compwiant, OwO nyot to be used o-outside simcwustews_v2
+   * w-weads 20m145k2020 intewestedin data fwom atwa-pwoc, 😳 with a 14-day extended window
    */
-  private[simclusters_v2] def simClustersRawInterestedIn2020Source(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-    DAL
-      .readMostRecentSnapshot(
-        SimclustersV2RawInterestedIn20M145K2020ScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+  pwivate[simcwustews_v2] def simcwustewswawintewestedin2020souwce(
+    d-datewange: d-datewange, 😳😳😳
+    timezone: t-timezone
+  ): typedpipe[(usewid, c-cwustewsusewisintewestedin)] = {
+    d-daw
+      .weadmostwecentsnapshot(
+        simcwustewsv2wawintewestedin20m145k2020scawadataset, (˘ω˘)
+        datewange.pwepend(days(14)(timezone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe.map {
+        case keyvaw(usewid, ʘwʘ cwustewsusewisintewestedin) =>
+          (usewid, ( ͡o ω ͡o ) c-cwustewsusewisintewestedin)
       }
   }
 
-  private[simclusters_v2] def simClustersRawInterestedInLite2020Source(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-    DAL
-      .readMostRecentSnapshot(
-        SimclustersV2RawInterestedInLite20M145K2020ScalaDataset,
-        dateRange.extend(Days(14)(timeZone)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
-      }
-  }
-
-  /**
-   * Reads 20M145KDec11 production InterestedIn data from atla-proc, with a 14-day extended window
-   */
-  def simClustersInterestedInDec11Source(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-
-    DAL
-      .readMostRecentSnapshot(
-        SimclustersV2InterestedInScalaDataset,
-        dateRange.prepend(Days(14)(timeZone)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+  pwivate[simcwustews_v2] def simcwustewswawintewestedinwite2020souwce(
+    datewange: datewange, o.O
+    timezone: t-timezone
+  ): typedpipe[(usewid, >w< c-cwustewsusewisintewestedin)] = {
+    d-daw
+      .weadmostwecentsnapshot(
+        s-simcwustewsv2wawintewestedinwite20m145k2020scawadataset, 😳
+        datewange.extend(days(14)(timezone)))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe.map {
+        c-case keyvaw(usewid, 🥺 c-cwustewsusewisintewestedin) =>
+          (usewid, rawr x3 c-cwustewsusewisintewestedin)
       }
   }
 
   /**
-   * Reads 20M145KUpdated InterestedIn data from atla-proc, with a 14-day extended window
+   * w-weads 20m145kdec11 pwoduction intewestedin data f-fwom atwa-pwoc, o.O w-with a 14-day extended w-window
    */
-  def simClustersInterestedInUpdatedSource(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-    DAL
-      .readMostRecentSnapshot(
-        SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+  d-def simcwustewsintewestedindec11souwce(
+    d-datewange: datewange, rawr
+    timezone: timezone
+  ): typedpipe[(usewid, ʘwʘ c-cwustewsusewisintewestedin)] = {
+
+    daw
+      .weadmostwecentsnapshot(
+        simcwustewsv2intewestedinscawadataset, 😳😳😳
+        datewange.pwepend(days(14)(timezone)))
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe.map {
+        case keyvaw(usewid, ^^;; cwustewsusewisintewestedin) =>
+          (usewid, o.O c-cwustewsusewisintewestedin)
+      }
+  }
+
+  /**
+   * weads 20m145kupdated intewestedin data fwom atwa-pwoc, (///ˬ///✿) w-with a 14-day e-extended window
+   */
+  d-def simcwustewsintewestedinupdatedsouwce(
+    d-datewange: datewange, σωσ
+    t-timezone: t-timezone
+  ): typedpipe[(usewid, nyaa~~ cwustewsusewisintewestedin)] = {
+    daw
+      .weadmostwecentsnapshot(
+        simcwustewsv2intewestedin20m145kupdatedscawadataset, ^^;;
+        datewange.pwepend(days(14)(timezone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe.map {
+        case keyvaw(usewid, ^•ﻌ•^ c-cwustewsusewisintewestedin) =>
+          (usewid, σωσ cwustewsusewisintewestedin)
       }
   }
 
   /**
-   * Reads 20M145K2020 InterestedIn data from atla-proc, with a 14-day extended window
+   * weads 20m145k2020 i-intewestedin data fwom atwa-pwoc, -.- w-with a 14-day e-extended window
    */
-  def simClustersInterestedIn2020Source(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-    DAL
-      .readMostRecentSnapshot(
-        SimclustersV2InterestedIn20M145K2020ScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+  def simcwustewsintewestedin2020souwce(
+    datewange: datewange,
+    t-timezone: t-timezone
+  ): typedpipe[(usewid, ^^;; c-cwustewsusewisintewestedin)] = {
+    d-daw
+      .weadmostwecentsnapshot(
+        simcwustewsv2intewestedin20m145k2020scawadataset, XD
+        datewange.pwepend(days(14)(timezone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe.map {
+        case keyvaw(usewid, 🥺 cwustewsusewisintewestedin) =>
+          (usewid, òωó c-cwustewsusewisintewestedin)
       }
   }
 
   /**
-   * Reads InterestedIn data based on ModelVersion from atla-proc, with a 14-day extended window
+   * w-weads intewestedin d-data based on modewvewsion f-fwom atwa-pwoc, (ˆ ﻌ ˆ)♡ w-with a 14-day extended window
    */
-  def simClustersInterestedInSource(
-    modelVersion: ModelVersion,
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+  d-def simcwustewsintewestedinsouwce(
+    modewvewsion: modewvewsion, -.-
+    datewange: datewange, :3
+    timezone: timezone
+  ): t-typedpipe[(usewid, c-cwustewsusewisintewestedin)] = {
 
-    DAL
-      .readMostRecentSnapshot(
-        ModelVersionInterestedInDatasetMap(modelVersion),
-        dateRange.prepend(Days(14)(timeZone))
+    daw
+      .weadmostwecentsnapshot(
+        modewvewsionintewestedindatasetmap(modewvewsion), ʘwʘ
+        datewange.pwepend(days(14)(timezone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .withwemoteweadpowicy(expwicitwocation(pwocatwa))
+      .totypedpipe.map {
+        c-case keyvaw(usewid, 🥺 c-cwustewsusewisintewestedin) =>
+          (usewid, >_< cwustewsusewisintewestedin)
       }
   }
 

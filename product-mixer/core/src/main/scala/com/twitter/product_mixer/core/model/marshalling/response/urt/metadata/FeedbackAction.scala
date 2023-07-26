@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.icon.howizonicon
 
-case class FeedbackAction(
-  feedbackType: FeedbackType,
-  prompt: Option[String],
-  confirmation: Option[String],
-  childFeedbackActions: Option[Seq[ChildFeedbackAction]],
-  feedbackUrl: Option[String],
-  hasUndoAction: Option[Boolean],
-  confirmationDisplayType: Option[ConfirmationDisplayType],
-  clientEventInfo: Option[ClientEventInfo],
-  icon: Option[HorizonIcon],
-  richBehavior: Option[RichFeedbackBehavior],
-  subprompt: Option[String],
-  encodedFeedbackRequest: Option[String])
+c-case cwass f-feedbackaction(
+  f-feedbacktype: f-feedbacktype, mya
+  p-pwompt: option[stwing], nyaa~~
+  c-confiwmation: o-option[stwing], (⑅˘꒳˘)
+  c-chiwdfeedbackactions: option[seq[chiwdfeedbackaction]], rawr x3
+  feedbackuww: option[stwing], (✿oωo)
+  hasundoaction: o-option[boowean], (ˆ ﻌ ˆ)♡
+  confiwmationdispwaytype: option[confiwmationdispwaytype], (˘ω˘)
+  cwienteventinfo: o-option[cwienteventinfo],
+  icon: o-option[howizonicon], (⑅˘꒳˘)
+  wichbehaviow: option[wichfeedbackbehaviow], (///ˬ///✿)
+  subpwompt: o-option[stwing], 😳😳😳
+  encodedfeedbackwequest: o-option[stwing])
 
-case class ChildFeedbackAction(
-  feedbackType: FeedbackType,
-  prompt: Option[String],
-  confirmation: Option[String],
-  feedbackUrl: Option[String],
-  hasUndoAction: Option[Boolean],
-  confirmationDisplayType: Option[ConfirmationDisplayType],
-  clientEventInfo: Option[ClientEventInfo],
-  icon: Option[HorizonIcon],
-  richBehavior: Option[RichFeedbackBehavior],
-  subprompt: Option[String])
+case c-cwass chiwdfeedbackaction(
+  feedbacktype: feedbacktype, 🥺
+  pwompt: option[stwing], mya
+  confiwmation: option[stwing], 🥺
+  f-feedbackuww: option[stwing], >_<
+  hasundoaction: option[boowean], >_<
+  confiwmationdispwaytype: o-option[confiwmationdispwaytype], (⑅˘꒳˘)
+  cwienteventinfo: o-option[cwienteventinfo], /(^•ω•^)
+  i-icon: option[howizonicon], rawr x3
+  wichbehaviow: o-option[wichfeedbackbehaviow], (U ﹏ U)
+  s-subpwompt: option[stwing])

@@ -1,47 +1,47 @@
-package com.twitter.timelineranker.recap_hydration
+package com.twittew.timewinewankew.wecap_hydwation
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.timelineranker.config.RequestScopes
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.parameters.ConfigBuilder
-import com.twitter.timelineranker.repository.CandidatesRepositoryBuilder
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.util.Duration
+impowt com.twittew.convewsions.duwationops._
+i-impowt com.twittew.finagwe.sewvice.wetwypowicy
+impowt c-com.twittew.timewinewankew.config.wequestscopes
+i-impowt com.twittew.timewinewankew.config.wuntimeconfiguwation
+i-impowt com.twittew.timewinewankew.pawametews.configbuiwdew
+impowt c-com.twittew.timewinewankew.wepositowy.candidateswepositowybuiwdew
+i-impowt com.twittew.timewinewankew.visibiwity.sgsfowwowgwaphdatafiewds
+i-impowt c-com.twittew.seawch.eawwybiwd.thwiftscawa.eawwybiwdsewvice
+impowt com.twittew.timewines.utiw.stats.wequestscope
+impowt com.twittew.utiw.duwation
 
-class RecapHydrationRepositoryBuilder(config: RuntimeConfiguration, configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
+cwass wecaphydwationwepositowybuiwdew(config: wuntimeconfiguwation, 😳😳😳 c-configbuiwdew: configbuiwdew)
+    extends c-candidateswepositowybuiwdew(config) {
 
-  override val clientSubId = "feature_hydration"
-  override val requestScope: RequestScope = RequestScopes.RecapHydrationSource
-  override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
-    SgsFollowGraphDataFields.ValueSet(
-      SgsFollowGraphDataFields.FollowedUserIds,
-      SgsFollowGraphDataFields.MutuallyFollowingUserIds
+  ovewwide v-vaw cwientsubid = "featuwe_hydwation"
+  ovewwide vaw wequestscope: wequestscope = w-wequestscopes.wecaphydwationsouwce
+  ovewwide v-vaw fowwowgwaphdatafiewdstofetch: s-sgsfowwowgwaphdatafiewds.vawueset =
+    sgsfowwowgwaphdatafiewds.vawueset(
+      sgsfowwowgwaphdatafiewds.fowwowedusewids, 🥺
+      sgsfowwowgwaphdatafiewds.mutuawwyfowwowingusewids
     )
-  override val searchProcessingTimeout: Duration = 200.milliseconds //[2]
+  ovewwide vaw s-seawchpwocessingtimeout: duwation = 200.miwwiseconds //[2]
 
-  override def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdClient(
-      scope = scope,
-      requestTimeout = 500.milliseconds, // [1]
-      timeout = 500.milliseconds, // [1]
-      retryPolicy = RetryPolicy.Never
-    )
-
-  def apply(): RecapHydrationRepository = {
-    val recapHydrationSource = new RecapHydrationSource(
-      gizmoduckClient,
-      searchClient,
-      tweetyPieLowQoSClient,
-      userMetadataClient,
-      followGraphDataProvider,
-      config.underlyingClients.contentFeaturesCache,
-      config.statsReceiver
+  ovewwide def eawwybiwdcwient(scope: stwing): eawwybiwdsewvice.methodpewendpoint =
+    c-config.undewwyingcwients.cweateeawwybiwdcwient(
+      scope = s-scope, mya
+      wequesttimeout = 500.miwwiseconds, 🥺 // [1]
+      timeout = 500.miwwiseconds, >_< // [1]
+      w-wetwypowicy = w-wetwypowicy.nevew
     )
 
-    new RecapHydrationRepository(recapHydrationSource)
+  d-def appwy(): wecaphydwationwepositowy = {
+    vaw wecaphydwationsouwce = nyew wecaphydwationsouwce(
+      g-gizmoduckcwient, >_<
+      seawchcwient, (⑅˘꒳˘)
+      tweetypiewowqoscwient, /(^•ω•^)
+      u-usewmetadatacwient, rawr x3
+      fowwowgwaphdatapwovidew, (U ﹏ U)
+      config.undewwyingcwients.contentfeatuwescache, (U ﹏ U)
+      config.statsweceivew
+    )
+
+    nyew wecaphydwationwepositowy(wecaphydwationsouwce)
   }
 }

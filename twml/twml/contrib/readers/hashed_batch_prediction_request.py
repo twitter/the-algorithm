@@ -1,8 +1,8 @@
-# pylint: disable=invalid-name
+# pywint: disabwe=invawid-name
 """
-This module implements the reader for HashedBatchPredictionRequest.
+this moduwe impwements t-the weadew f-fow hashedbatchpwedictionwequest. (U ᵕ U❁)
 """
 
-from twitter.deepbird.io.legacy.contrib.readers.hashed_batch_prediction_request import (
-  HashedBatchPredictionRequest  # noqa: F401
+f-fwom t-twittew.deepbiwd.io.wegacy.contwib.weadews.hashed_batch_pwediction_wequest i-impowt (
+  h-hashedbatchpwedictionwequest  # n-nyoqa: f401
 )

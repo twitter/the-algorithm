@@ -1,65 +1,65 @@
-package com.twitter.search.common.search.termination;
+package com.twittew.seawch.common.seawch.tewmination;
 
-import com.google.common.base.Preconditions;
+impowt com.googwe.common.base.pweconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.search.DocIdTracker;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.common.search.TerminationTracker;
+i-impowt com.twittew.common.utiw.cwock;
+i-impowt c-com.twittew.seawch.common.metwics.seawchwatecountew;
+i-impowt com.twittew.seawch.common.seawch.docidtwackew;
+i-impowt c-com.twittew.seawch.common.seawch.eawwytewminationstate;
+i-impowt c-com.twittew.seawch.common.seawch.tewminationtwackew;
 
 /**
- * QueryTimeoutImpl provides a method for early termination of queries based on time.
+ * quewytimeoutimpw pwovides a method fow eawwy tewmination of quewies based on time. o.O
  */
-public class QueryTimeoutImpl implements QueryTimeout {
-  private final String clientId;
-  private final TerminationTracker tracker;
-  private final Clock clock;
+p-pubwic cwass quewytimeoutimpw impwements quewytimeout {
+  p-pwivate finaw stwing cwientid;
+  p-pwivate finaw tewminationtwackew twackew;
+  pwivate finaw cwock cwock;
 
-  private final SearchRateCounter shouldTerminateCounter;
+  pwivate f-finaw seawchwatecountew shouwdtewminatecountew;
 
-  public QueryTimeoutImpl(String clientId, TerminationTracker tracker, Clock clock) {
-    this.clientId = Preconditions.checkNotNull(clientId);
-    this.tracker = Preconditions.checkNotNull(tracker);
-    this.clock = Preconditions.checkNotNull(clock);
-    shouldTerminateCounter =
-        SearchRateCounter.export("query_timeout_should_terminate_" + clientId);
+  p-pubwic quewytimeoutimpw(stwing c-cwientid, ( ͡o ω ͡o ) tewminationtwackew twackew, (U ﹏ U) cwock cwock) {
+    this.cwientid = pweconditions.checknotnuww(cwientid);
+    this.twackew = p-pweconditions.checknotnuww(twackew);
+    this.cwock = pweconditions.checknotnuww(cwock);
+    shouwdtewminatecountew =
+        seawchwatecountew.expowt("quewy_timeout_shouwd_tewminate_" + cwientid);
   }
 
   /**
-   * Returns true when the clock's time has met or exceeded the tracker's timeout end.
+   * w-wetuwns twue when the c-cwock's time h-has met ow exceeded t-the twackew's t-timeout end. (///ˬ///✿)
    */
-  public boolean shouldExit() {
-    if (clock.nowMillis() >= tracker.getTimeoutEndTimeWithReservation()) {
-      tracker.setEarlyTerminationState(EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
-      shouldTerminateCounter.increment();
-      return true;
+  pubwic boowean shouwdexit() {
+    i-if (cwock.nowmiwwis() >= twackew.gettimeoutendtimewithwesewvation()) {
+      twackew.seteawwytewminationstate(eawwytewminationstate.tewminated_time_out_exceeded);
+      s-shouwdtewminatecountew.incwement();
+      wetuwn twue;
     }
-    return false;
+    wetuwn fawse;
   }
 
-  @Override
-  public void registerDocIdTracker(DocIdTracker docIdTracker) {
-    tracker.addDocIdTracker(docIdTracker);
+  @ovewwide
+  pubwic void wegistewdocidtwackew(docidtwackew d-docidtwackew) {
+    twackew.adddocidtwackew(docidtwackew);
   }
 
-  @Override
-  public String getClientId() {
-    return clientId;
+  @ovewwide
+  p-pubwic stwing getcwientid() {
+    w-wetuwn cwientid;
   }
 
-  @Override
-  public int hashCode() {
-    return clientId.hashCode() * 13 + tracker.hashCode();
+  @ovewwide
+  p-pubwic int hashcode() {
+    wetuwn cwientid.hashcode() * 13 + twackew.hashcode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof QueryTimeoutImpl)) {
-      return false;
+  @ovewwide
+  p-pubwic b-boowean equaws(object obj) {
+    i-if (!(obj instanceof q-quewytimeoutimpw)) {
+      wetuwn fawse;
     }
 
-    QueryTimeoutImpl queryTimeout = QueryTimeoutImpl.class.cast(obj);
-    return clientId.equals(queryTimeout.clientId) && tracker.equals(queryTimeout.tracker);
+    q-quewytimeoutimpw quewytimeout = q-quewytimeoutimpw.cwass.cast(obj);
+    wetuwn cwientid.equaws(quewytimeout.cwientid) && twackew.equaws(quewytimeout.twackew);
   }
 }

@@ -1,3 +1,3 @@
-package com.twitter.frigate.pushservice.params
+package com.twittew.fwigate.pushsewvice.pawams
 
-case class ShardParams(numShards: Int, shardId: Int)
+case cwass shawdpawams(numshawds: i-int, (ꈍᴗꈍ) shawdid: int)

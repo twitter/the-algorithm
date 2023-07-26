@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space
+package com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.item.audio_space
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.cwienteventinfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.metadata.feedbackactioninfo
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.entwynamespace
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineentwy
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.uwt.timewineitem
 
-object AudioSpaceItem {
-  val SpaceEntryNamespace = EntryNamespace("audiospace")
+o-object audiospaceitem {
+  v-vaw spaceentwynamespace = entwynamespace("audiospace")
 }
 
-case class AudioSpaceItem(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = AudioSpaceItem.SpaceEntryNamespace
+case cwass audiospaceitem(
+  ovewwide vaw id: stwing, -.-
+  ovewwide v-vaw sowtindex: option[wong], ( ͡o ω ͡o )
+  ovewwide vaw c-cwienteventinfo: option[cwienteventinfo], rawr x3
+  o-ovewwide vaw feedbackactioninfo: option[feedbackactioninfo])
+    extends t-timewineitem {
+  ovewwide v-vaw entwynamespace: e-entwynamespace = audiospaceitem.spaceentwynamespace
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovewwide def withsowtindex(sowtindex: wong): timewineentwy = c-copy(sowtindex = some(sowtindex))
 }

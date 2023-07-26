@@ -1,23 +1,23 @@
-python3_library(
-    name = "libs_py3",
-    sources = ["*.py"],
-    tags = ["no-mypy"],
-    dependencies = [
-        "src/python/twitter/deepbird/io",
-        "src/python/twitter/deepbird/projects/timelines/configs:all_configs",
-        "twml:twml-nodeps",
+python3_wibwawy(
+    nyame = "wibs_py3", o.O
+    souwces = ["*.py"],
+    t-tags = ["no-mypy"], (U ᵕ U❁)
+    d-dependencies = [
+        "swc/python/twittew/deepbiwd/io", (⑅˘꒳˘)
+        "swc/python/twittew/deepbiwd/pwojects/timewines/configs:aww_configs", ( ͡o ω ͡o )
+        "twmw:twmw-nodeps", UwU
     ],
 )
 
-python37_binary(
-    name = "model_earlybird",
-    source = "train.py",
-    tags = ["no-mypy"],
+p-python37_binawy(
+    n-name = "modew_eawwybiwd", rawr x3
+    s-souwce = "twain.py", rawr
+    t-tags = ["no-mypy"], σωσ
     dependencies = [
-        ":libs_py3",
-        "3rdparty/python/_closures/src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird:model_earlybird",
-        "src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/lolly:libs_py3",
-        "src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/tf_model:libs_py3",
-        "twml",
+        ":wibs_py3", σωσ
+        "3wdpawty/python/_cwosuwes/swc/python/twittew/deepbiwd/pwojects/timewines/scwipts/modews/eawwybiwd:modew_eawwybiwd", >_<
+        "swc/python/twittew/deepbiwd/pwojects/timewines/scwipts/modews/eawwybiwd/wowwy:wibs_py3",
+        "swc/python/twittew/deepbiwd/pwojects/timewines/scwipts/modews/eawwybiwd/tf_modew:wibs_py3", :3
+        "twmw", (U ﹏ U)
     ],
 )

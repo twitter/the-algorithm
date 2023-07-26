@@ -1,32 +1,32 @@
-namespace java com.twitter.tweetypie.thriftjava
-namespace py gen.twitter.tweetypie.tweet_audit
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace rb TweetyPie
-namespace go tweetypie
+namespace java com.twittew.tweetypie.thwiftjava
+namespace py gen.twittew.tweetypie.tweet_audit
+#@namespace s-scawa c-com.twittew.tweetypie.thwiftscawa
+#@namespace s-stwato c-com.twittew.tweetypie
+n-nyamespace w-wb tweetypie
+n-nyamespace go t-tweetypie
 
-// Copied from UserActionReason in guano.thrift - this should be kept in sync (though upper cased)
-enum AuditUserActionReason {
-  SPAM
-  CHURNING
-  OTHER
-  PHISHING
-  BOUNCING
+// copied fwom usewactionweason in guano.thwift - this shouwd be kept i-in sync (though uppew cased)
+enum auditusewactionweason {
+  s-spam
+  chuwning
+  o-othew
+  phishing
+  bouncing
 
-  RESERVED_1
-  RESERVED_2
+  wesewved_1
+  wesewved_2
 }
 
-// This struct contains all fields of DestroyStatus in guano.thrift that can be set per remove/deleteTweets invocation
-// Values are passed through TweetyPie as-is to guano scribe and not used by TweetyPie.
-struct AuditDeleteTweet { 
-  1: optional string host (personalDataType = 'IpAddress')
-  2: optional string bulk_id
-  3: optional AuditUserActionReason reason
-  4: optional string note
-  5: optional bool done
-  6: optional string run_id
-  // OBSOLETE 7: optional i64 id
-  8: optional i64 client_application_id (personalDataType = 'AppId')
-  9: optional string user_agent (personalDataType = 'UserAgent') 
-}(persisted = 'true', hasPersonalData = 'true')
+// this s-stwuct contains aww fiewds of d-destwoystatus in g-guano.thwift that can be set pew wemove/dewetetweets invocation
+// vawues awe passed t-thwough tweetypie as-is to guano scwibe and nyot used by tweetypie. mya
+stwuct a-auditdewetetweet { 
+  1: optionaw s-stwing host (pewsonawdatatype = 'ipaddwess')
+  2: o-optionaw stwing b-buwk_id
+  3: o-optionaw auditusewactionweason weason
+  4: optionaw stwing nyote
+  5: o-optionaw boow done
+  6: optionaw stwing w-wun_id
+  // obsowete 7: optionaw i64 id
+  8: optionaw i64 cwient_appwication_id (pewsonawdatatype = 'appid')
+  9: optionaw stwing usew_agent (pewsonawdatatype = 'usewagent') 
+}(pewsisted = 'twue', 🥺 h-haspewsonawdata = 'twue')

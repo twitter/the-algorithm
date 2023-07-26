@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice.builder
+package com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.swice.buiwdew
 
-import com.twitter.product_mixer.component_library.model.cursor.OrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.CursorSerializer
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.NextCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+impowt com.twittew.pwoduct_mixew.component_wibwawy.modew.cuwsow.owdewedcuwsow
+i-impowt c-com.twittew.pwoduct_mixew.component_wibwawy.pwemawshawwew.cuwsow.cuwsowsewiawizew
+i-impowt com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.cuwsowtype
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.nextcuwsow
+i-impowt c-com.twittew.pwoduct_mixew.cowe.modew.mawshawwing.wesponse.swice.swiceitem
+i-impowt com.twittew.pwoduct_mixew.cowe.pipewine.haspipewinecuwsow
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinecuwsowsewiawizew
+impowt com.twittew.pwoduct_mixew.cowe.pipewine.pipewinequewy
 
 /**
- * Builds [[OrderedCursor]] in the Next position
+ * b-buiwds [[owdewedcuwsow]] in the nyext position
  *
- * @param idSelector Specifies the entry from which to derive the `id` field
- * @param includeOperation Specifies whether to include the builder operation in the response
- * @param serializer Converts the cursor to an encoded string
+ * @pawam i-idsewectow specifies the entwy f-fwom which to dewive the `id` fiewd
+ * @pawam incwudeopewation s-specifies whethew to incwude t-the buiwdew opewation i-in the wesponse
+ * @pawam sewiawizew convewts the cuwsow to an encoded stwing
  */
-case class OrderedNextCursorBuilder[Query <: PipelineQuery with HasPipelineCursor[OrderedCursor]](
-  idSelector: PartialFunction[SliceItem, Long],
-  override val includeOperation: ShouldInclude[Query] = AlwaysInclude,
-  serializer: PipelineCursorSerializer[OrderedCursor] = CursorSerializer)
-    extends SliceCursorBuilder[Query] {
-  override val cursorType: CursorType = NextCursor
+case cwass o-owdewednextcuwsowbuiwdew[quewy <: pipewinequewy with haspipewinecuwsow[owdewedcuwsow]](
+  idsewectow: pawtiawfunction[swiceitem, (U ﹏ U) w-wong],
+  ovewwide vaw incwudeopewation: s-shouwdincwude[quewy] = a-awwaysincwude, (U ﹏ U)
+  s-sewiawizew: p-pipewinecuwsowsewiawizew[owdewedcuwsow] = cuwsowsewiawizew)
+    extends swicecuwsowbuiwdew[quewy] {
+  o-ovewwide vaw cuwsowtype: cuwsowtype = nyextcuwsow
 
-  override def cursorValue(
-    query: Query,
-    entries: Seq[SliceItem]
-  ): String = {
-    val bottomId = entries.reverseIterator.collectFirst(idSelector)
+  o-ovewwide def cuwsowvawue(
+    quewy: quewy, (⑅˘꒳˘)
+    entwies: seq[swiceitem]
+  ): stwing = {
+    v-vaw bottomid = entwies.wevewseitewatow.cowwectfiwst(idsewectow)
 
-    val id = bottomId.orElse(query.pipelineCursor.flatMap(_.id))
+    v-vaw i-id = bottomid.owewse(quewy.pipewinecuwsow.fwatmap(_.id))
 
-    val cursor = OrderedCursor(id = id, cursorType = Some(cursorType))
+    vaw c-cuwsow = owdewedcuwsow(id = id, òωó cuwsowtype = some(cuwsowtype))
 
-    serializer.serializeCursor(cursor)
+    sewiawizew.sewiawizecuwsow(cuwsow)
   }
 }
